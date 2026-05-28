@@ -1,0 +1,78 @@
+name: Audit
+
+# Kernel-grounded sorry/axiom audit of the Atlas library. Builds Atlas against
+# the pinned Mathlib (from cache, not compiled) and runs `lake exe atlas_audit`,
+# which classifies every Atlas declaration as proved / sorry / other-axiom and
+# uploads the report.
+#
+# Building Atlas's own ~484K lines is the cost driver; Mathlib comes from
+# `lake exe cache get` (download, not compile). The `.lake` directory is cached
+# across runs so unchanged files are not recompiled.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Fast regression test for the classifier itself. Imports only `Lean`, so it
+  # runs in under a minute without building Mathlib or Atlas, and gates every
+  # PR even when the full audit build below is slow.
+  classifier-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- --default-toolchain none -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Run classifier fixtures
+        run: lean Audit/Test.lean
+
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- --default-toolchain none -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Restore .lake build cache
+        id: lake-cache
+        uses: actions/cache@v4
+        with:
+          path: .lake
+          key: lake-${{ runner.os }}-${{ hashFiles('lakefile.toml', 'lake-manifest.json', 'lean-toolchain') }}-${{ github.sha }}
+          restore-keys: |
+            lake-${{ runner.os }}-${{ hashFiles('lakefile.toml', 'lake-manifest.json', 'lean-toolchain') }}-
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      - name: Build Atlas
+        run: lake build Atlas
+
+      - name: Run axiom / sorry audit
+        run: lake exe atlas_audit audit
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-audit
+          path: audit/proved.json
+          if-no-files-found: warn

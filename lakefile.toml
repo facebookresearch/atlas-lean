@@ -13,3 +13,10 @@ globs = ["Atlas.+"]
 
 [[lean_lib]]
 name = "Unproved"
+
+# Kernel-grounded sorry/axiom auditor. Its root imports only `Lean`, so
+# `lake build atlas_audit` compiles without building Mathlib or Atlas; the
+# Atlas library is loaded at runtime (`lake exe atlas_audit`) to be audited.
+[[lean_exe]]
+name = "atlas_audit"
+root = "Audit.Audit"
