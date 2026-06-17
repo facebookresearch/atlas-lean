@@ -59,6 +59,18 @@ To build the full library with the pinned Lean and Mathlib versions, run:
 lake build
 ```
 
+The Lean toolchain is pinned via `lean-toolchain` (currently `leanprover/lean4:v4.29.0`)
+and Lake will fetch and use it automatically when `elan` is installed. If you see
+errors about a missing or wrong Lean version, install or refresh `elan` first:
+
+```bash
+curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh
+```
+
+Mathlib is pinned to a specific commit in `lakefile.toml`. After a fresh clone,
+Lake will fetch the matching Mathlib revision on first build; subsequent builds
+reuse the cached checkout under `lake-packages/`.
+
 ## Statistics (May 2026)
 **26** books · **630,999** lines of code · **483,917** lines of Lean code (excl. comments/blanks) · **46,203** declarations · **42,837** proved (92.7%) · **2,855** / **4,007** statements formalized (71.3%) · **183,157M** tokens
 
