@@ -87,4 +87,15 @@ noncomputable def uniformAmplitude (α : Type*) [Fintype α] : Amplitude α :=
 theorem uniformAmplitude_apply (α : Type*) [Fintype α] (x : α) :
     uniformAmplitude α x = 1 / Real.sqrt (Fintype.card α) := rfl
 
+/-- The uniform amplitude vector on a nonempty finite type has squared norm one. -/
+@[simp]
+theorem amplitudeNormSq_uniformAmplitude (α : Type*) [Fintype α] [Nonempty α] :
+    amplitudeNormSq (uniformAmplitude α) = 1 := by
+  rw [amplitudeNormSq]
+  simp only [uniformAmplitude, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  have hcardpos : 0 < (Fintype.card α : ℝ) := by
+    exact_mod_cast Fintype.card_pos
+  rw [div_pow, one_pow, Real.sq_sqrt hcardpos.le]
+  field_simp
+
 end Cslib.Grover

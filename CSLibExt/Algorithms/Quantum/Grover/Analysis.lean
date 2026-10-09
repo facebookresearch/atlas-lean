@@ -253,6 +253,25 @@ noncomputable def groverIterate {α : Type*} [Fintype α] [DecidableEq α]
     (marked : Finset α) (k : ℕ) (ψ : Amplitude α) : Amplitude α :=
   (groverStep marked)^[k] ψ
 
+/-- Every finite sequence of Grover steps preserves squared norm. -/
+@[simp]
+theorem amplitudeNormSq_groverIterate {α : Type*} [Fintype α]
+    [DecidableEq α] [Nonempty α] (marked : Finset α) (k : ℕ)
+    (ψ : Amplitude α) :
+    amplitudeNormSq (groverIterate marked k ψ) = amplitudeNormSq ψ := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+      rw [groverIterate, Function.iterate_succ_apply', amplitudeNormSq_groverStep]
+      simpa [groverIterate] using ih
+
+/-- Grover iteration preserves normalization of the uniform initial state. -/
+@[simp]
+theorem amplitudeNormSq_groverIterate_uniform {α : Type*} [Fintype α]
+    [DecidableEq α] [Nonempty α] (marked : Finset α) (k : ℕ) :
+    amplitudeNormSq (groverIterate marked k (uniformAmplitude α)) = 1 := by
+  rw [amplitudeNormSq_groverIterate, amplitudeNormSq_uniformAmplitude]
+
 /-- Phase reached from the uniform initial state after `k` iterations. -/
 noncomputable def groverPhase {α : Type*} [Fintype α]
     (marked : Finset α) (k : ℕ) : ℝ :=

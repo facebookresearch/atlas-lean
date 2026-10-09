@@ -56,10 +56,26 @@ example (k : ℕ) :
   markedProbability_groverIterate_uniform oneMarked oneMarked_nonempty
     oneMarked_compl_nonempty k
 
+example : amplitudeNormSq (uniformAmplitude (Fin 4)) = 1 :=
+  amplitudeNormSq_uniformAmplitude (Fin 4)
+
+example {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
+    (marked : Finset α) (k : ℕ) :
+    amplitudeNormSq (groverIterate marked k (uniformAmplitude α)) = 1 :=
+  amplitudeNormSq_groverIterate_uniform marked k
+
+example (k : ℕ) :
+    amplitudeNormSq
+        (groverIterate oneMarked k (uniformAmplitude (Fin 4))) = 1 :=
+  amplitudeNormSq_groverIterate_uniform oneMarked k
+
+#print axioms Cslib.Grover.amplitudeNormSq_uniformAmplitude
+#print axioms Cslib.Grover.amplitudeNormSq_groverIterate
+#print axioms Cslib.Grover.amplitudeNormSq_groverIterate_uniform
 #print axioms Cslib.Grover.amplitudeNormSq_groverStep
 #print axioms Cslib.Grover.groverIterate_uniform_eq_angleAmplitude
 #print axioms Cslib.Grover.markedProbability_groverIterate_uniform
-#print axioms Cslib.Grover.optimal_failure_probability_le
+#print axioms Cslib.Grover.floorIterations_failure_probability_le
 #print axioms Cslib.Grover.one_step_success_of_four_mul_card_eq
 
 end Cslib.Grover.Tests

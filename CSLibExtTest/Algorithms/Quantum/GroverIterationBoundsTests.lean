@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Algorithms.Quantum.Grover.Optimal
+public import CSLibExt.Algorithms.Quantum.Grover.IterationBounds
 
 @[expose] public section
 
@@ -20,7 +20,7 @@ failure bound, the square-root iteration bound, and the one-quarter exact
 success corollary through the public API.
 -/
 
-namespace Cslib.Grover.OptimalTests
+namespace Cslib.Grover.IterationBoundsTests
 
 def oneMarked : Finset (Fin 4) := {0}
 
@@ -32,23 +32,23 @@ theorem oneMarked_compl_nonempty : oneMarkedᶜ.Nonempty := by
   simp [oneMarked]
 
 example :
-    |groverPhase oneMarked (optimalIterations oneMarked) - Real.pi / 2| ≤
+    |groverPhase oneMarked (floorIterations oneMarked) - Real.pi / 2| ≤
       groverAngle oneMarked :=
-  optimal_phase_distance oneMarked oneMarked_nonempty
+  floorIterations_phase_distance oneMarked oneMarked_nonempty
 
 example :
     1 - markedProbability oneMarked
-        (groverIterate oneMarked (optimalIterations oneMarked)
+        (groverIterate oneMarked (floorIterations oneMarked)
           (uniformAmplitude (Fin 4))) ≤ 1 / 4 := by
   simpa [oneMarked] using
-    optimal_failure_probability_le oneMarked oneMarked_nonempty
+    floorIterations_failure_probability_le oneMarked oneMarked_nonempty
       oneMarked_compl_nonempty
 
 example :
-    (optimalIterations oneMarked : ℝ) ≤
+    (floorIterations oneMarked : ℝ) ≤
       Real.pi / 4 * Real.sqrt 4 := by
   simpa [oneMarked] using
-    optimalIterations_le_sqrt_ratio oneMarked oneMarked_nonempty
+    floorIterations_le_sqrt_ratio oneMarked oneMarked_nonempty
 
 example :
     markedProbability oneMarked
@@ -56,4 +56,4 @@ example :
   apply one_step_success_of_four_mul_card_eq oneMarked oneMarked_nonempty
   norm_num [oneMarked]
 
-end Cslib.Grover.OptimalTests
+end Cslib.Grover.IterationBoundsTests
