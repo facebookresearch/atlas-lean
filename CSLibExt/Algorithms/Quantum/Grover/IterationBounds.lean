@@ -53,40 +53,40 @@ theorem sin_sq_groverAngle {α : Type*} [Fintype α]
     Real.sq_sqrt hn]
 
 /-- Standard integer choice `⌊π / (4θ)⌋` for known marked count. -/
-noncomputable def optimalIterations {α : Type*} [Fintype α]
+noncomputable def floorIterations {α : Type*} [Fintype α]
     (marked : Finset α) : ℕ :=
   ⌊Real.pi / (4 * groverAngle marked)⌋₊
 
-theorem optimal_phase_distance {α : Type*} [Fintype α]
+theorem floorIterations_phase_distance {α : Type*} [Fintype α]
     (marked : Finset α) (hMarked : marked.Nonempty) :
-    |groverPhase marked (optimalIterations marked) - Real.pi / 2| ≤
+    |groverPhase marked (floorIterations marked) - Real.pi / 2| ≤
       groverAngle marked := by
   have hθpos := groverAngle_pos marked hMarked
   have hdenpos : 0 < 4 * groverAngle marked := mul_pos (by norm_num) hθpos
   have hxnonneg : 0 ≤ Real.pi / (4 * groverAngle marked) :=
     div_nonneg Real.pi_pos.le hdenpos.le
   have hfloor :
-      (optimalIterations marked : ℝ) ≤
+      (floorIterations marked : ℝ) ≤
         Real.pi / (4 * groverAngle marked) := by
     exact Nat.floor_le hxnonneg
   have hnext :
       Real.pi / (4 * groverAngle marked) <
-        (optimalIterations marked : ℝ) + 1 := by
+        (floorIterations marked : ℝ) + 1 := by
     exact Nat.lt_floor_add_one _
   have hfloorMul :
-      (optimalIterations marked : ℝ) * (4 * groverAngle marked) ≤
+      (floorIterations marked : ℝ) * (4 * groverAngle marked) ≤
         Real.pi :=
     (le_div_iff₀ hdenpos).mp hfloor
   have hnextMul :
-      Real.pi < ((optimalIterations marked : ℝ) + 1) *
+      Real.pi < ((floorIterations marked : ℝ) + 1) *
         (4 * groverAngle marked) :=
     (div_lt_iff₀ hdenpos).mp hnext
   rw [abs_le]
   constructor <;> simp only [groverPhase] <;> nlinarith
 
-theorem optimalIterations_le_sqrt_ratio {α : Type*} [Fintype α]
+theorem floorIterations_le_sqrt_ratio {α : Type*} [Fintype α]
     (marked : Finset α) (hMarked : marked.Nonempty) :
-    (optimalIterations marked : ℝ) ≤
+    (floorIterations marked : ℝ) ≤
       Real.pi / 4 *
         Real.sqrt ((Fintype.card α : ℝ) / marked.card) := by
   have hθpos := groverAngle_pos marked hMarked
@@ -101,7 +101,7 @@ theorem optimalIterations_le_sqrt_ratio {α : Type*} [Fintype α]
   have hsinle : Real.sin (groverAngle marked) ≤ groverAngle marked :=
     Real.sin_le hθpos.le
   have hfloor :
-      (optimalIterations marked : ℝ) ≤
+      (floorIterations marked : ℝ) ≤
         Real.pi / (4 * groverAngle marked) := by
     exact Nat.floor_le (div_nonneg Real.pi_pos.le (by positivity))
   have hratio :
@@ -110,7 +110,7 @@ theorem optimalIterations_le_sqrt_ratio {α : Type*} [Fintype α]
     apply div_le_div_of_nonneg_left Real.pi_pos.le (by positivity)
     nlinarith
   calc
-    (optimalIterations marked : ℝ) ≤
+    (floorIterations marked : ℝ) ≤
         Real.pi / (4 * groverAngle marked) := hfloor
     _ ≤ Real.pi / (4 * Real.sin (groverAngle marked)) := hratio
     _ = Real.pi / 4 *
@@ -159,18 +159,18 @@ theorem one_step_success_of_four_mul_card_eq {α : Type*} [Fintype α]
   rw [hu, ← hquarterReal]
   ring
 
-theorem optimal_failure_probability_le {α : Type*} [Fintype α]
+theorem floorIterations_failure_probability_le {α : Type*} [Fintype α]
     [DecidableEq α] (marked : Finset α) (hMarked : marked.Nonempty)
     (hUnmarked : markedᶜ.Nonempty) :
     1 - markedProbability marked
-        (groverIterate marked (optimalIterations marked) (uniformAmplitude α)) ≤
+        (groverIterate marked (floorIterations marked) (uniformAmplitude α)) ≤
       (marked.card : ℝ) / Fintype.card α := by
   let θ := groverAngle marked
-  let phase := groverPhase marked (optimalIterations marked)
+  let phase := groverPhase marked (floorIterations marked)
   have hθpos : 0 < θ := groverAngle_pos marked hMarked
   have hθle : θ ≤ Real.pi / 2 := groverAngle_le_pi_div_two marked
   have hdist : |phase - Real.pi / 2| ≤ θ :=
-    optimal_phase_distance marked hMarked
+    floorIterations_phase_distance marked hMarked
   have hbounds := abs_le.mp hdist
   have hupper : Real.sin (phase - Real.pi / 2) ≤ Real.sin θ := by
     apply Real.sin_le_sin_of_le_of_le_pi_div_two
