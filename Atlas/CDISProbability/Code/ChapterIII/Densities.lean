@@ -19,7 +19,8 @@ its law is `volume.withDensity f` on `ℝ × ℝ`.
 * id 38: `X` and `Y` have the marginal densities `f_X(x) = ∫ f(x, y) dy`, `f_Y(y) = ∫ f(x, y) dx`.
 * id 51: for `0 < f_X(x) < ∞`, `f_{Y|X=x}(y) = f(x, y) / f_X(x)` is a density, and
   `P_{Y|X=x} = f_{Y|X=x} ℓ` for `P_X`-almost every `x`.
-* id 52: `E(g(X, Y)) = ∫ (∫ g(x, y) f_{Y|X=x}(y) dy) f_X(x) dx` (nonnegative `g`), and
+* id 52: `E(g(X, Y)) = ∫ (∫ g(x, y) f_{Y|X=x}(y) dy) f_X(x) dx`, for nonnegative `g` and for
+  every `g` with `g(X, Y)` integrable, and
   `P(X ∈ B₁, Y ∈ B₂) = ∫_{B₁} (∫_{B₂} f_{Y|X=x}(y) dy) f_X(x) dx`.
 * id 54 (density case): `f_Y(y) = ∫ f_{Y|X=x}(y) f_X(x) dx` for almost every `y`, and Bayes'
   formula for densities.
@@ -132,6 +133,18 @@ lemma condDensityKernel_apply (hf : Measurable f) (x : ℝ) :
   rw [condDensityKernel, Kernel.withDensity_apply _ (measurable_kernelDensity hf),
     Kernel.const_apply]
 
+/-- Where `0 < f_X(x) < ∞`, the kernel at `x` is the law with density `f_{Y|X=x}`. -/
+lemma condDensityKernel_apply_of_mem (hf : Measurable f) {x : ℝ} (hx : x ∈ goodSet f) :
+    condDensityKernel f x = volume.withDensity (condDensity f x) := by
+  rw [condDensityKernel_apply hf]
+  congr 1
+  funext y
+  simp only [kernelDensity, hx, ite_true]
+
+/-- `y ↦ f_{Y|X=x}(y)` is measurable. -/
+lemma measurable_condDensity (hf : Measurable f) (x : ℝ) : Measurable (condDensity f x) :=
+  (hf.comp measurable_prodMk_left).div_const _
+
 lemma isMarkovKernel_condDensityKernel (hf : Measurable f) :
     IsMarkovKernel (condDensityKernel f) := by
   refine ⟨fun x ↦ ⟨?_⟩⟩
@@ -211,10 +224,7 @@ theorem condDistrib_ae_eq_withDensity_condDensity (hf : Measurable f) (hX : Meas
     ∀ᵐ x ∂(P.map X), condDistrib Y X P x = volume.withDensity (condDensity f x) := by
   filter_upwards [condDistrib_ae_eq_condDensityKernel hf hX hY hXY, ae_mem_goodSet hf hXY]
     with x hx hgood
-  rw [hx, condDensityKernel_apply hf]
-  congr 1
-  funext y
-  simp only [kernelDensity, hgood, ite_true]
+  rw [hx, condDensityKernel_apply_of_mem hf hgood]
 
 /-- CDIS P.III, id 52: `E(g(X, Y)) = ∫ (∫ g(x, y) f_{Y|X=x}(y) dy) f_X(x) dx` for nonnegative
 measurable `g`. -/
@@ -234,14 +244,40 @@ theorem lintegral_comp_eq_lintegral_condDensity (hf : Measurable f) (hX : Measur
   simp only [Pi.mul_apply]
   by_cases hx0 : marginalFst f x = 0
   · simp [hx0]
-  · have hx : x ∈ goodSet f := ⟨hx0, hxtop⟩
-    rw [condDensityKernel_apply hf, lintegral_withDensity_eq_lintegral_mul volume
-      (show Measurable (kernelDensity f x) from
-        (measurable_kernelDensity hf).comp measurable_prodMk_left)
+  · rw [condDensityKernel_apply_of_mem hf ⟨hx0, hxtop⟩, lintegral_withDensity_eq_lintegral_mul
+      volume (measurable_condDensity hf x)
       (show Measurable fun y ↦ g (x, y) from hg.comp measurable_prodMk_left), mul_comm]
     congr 1
-    refine lintegral_congr fun y ↦ ?_
-    simp only [Pi.mul_apply, kernelDensity, hx, ite_true, mul_comm]
+    exact lintegral_congr fun y ↦ mul_comm _ _
+
+/-- CDIS P.III, id 52, as stated in the course:
+`E(g(X, Y)) = ∫ (∫ g(x, y) f_{Y|X=x}(y) dy) f_X(x) dx` for every measurable `g` with `g(X, Y)`
+integrable. -/
+theorem integral_comp_eq_integral_condDensity (hf : Measurable f) (hX : Measurable X)
+    (hY : Measurable Y) (hXY : HasLaw (fun ω ↦ (X ω, Y ω)) (volume.withDensity f) P)
+    {g : ℝ × ℝ → ℝ} (hg : Measurable g) (hint : Integrable (fun ω ↦ g (X ω, Y ω)) P) :
+    ∫ ω, g (X ω, Y ω) ∂P =
+      ∫ x, (∫ y, g (x, y) * (condDensity f x y).toReal) * (marginalFst f x).toReal := by
+  have h1 := lintegral_eq_one_of_hasLaw hXY
+  have := isMarkovKernel_condDensityKernel hf
+  have hgi : Integrable g (volume.withDensity (marginalFst f) ⊗ₘ condDensityKernel f) := by
+    rw [← withDensity_eq_compProd_condDensityKernel hf h1, ← hXY.map_eq]
+    exact (integrable_map_measure hg.aestronglyMeasurable (hX.prodMk hY).aemeasurable).2 hint
+  rw [← integral_map (hX.prodMk hY).aemeasurable hg.aestronglyMeasurable, hXY.map_eq,
+    withDensity_eq_compProd_condDensityKernel hf h1, Measure.integral_compProd hgi,
+    integral_withDensity_eq_integral_toReal_smul (measurable_marginalFst hf)
+      ((ae_marginalFst_ne_top hf h1).mono fun x hx ↦ lt_top_iff_ne_top.2 hx)]
+  refine integral_congr_ae ?_
+  filter_upwards [ae_marginalFst_ne_top hf h1] with x hxtop
+  rw [smul_eq_mul, mul_comm]
+  by_cases hx0 : marginalFst f x = 0
+  · simp [hx0]
+  have hx : x ∈ goodSet f := ⟨hx0, hxtop⟩
+  have hcm := measurable_condDensity hf x
+  rw [condDensityKernel_apply_of_mem hf hx, integral_withDensity_eq_integral_toReal_smul hcm
+    (ae_lt_top hcm (by rw [lintegral_condDensity hx]; exact ENNReal.one_ne_top))]
+  congr 1
+  exact integral_congr_ae (Filter.Eventually.of_forall fun y ↦ mul_comm _ _)
 
 /-- CDIS P.III, id 52 (rectangles):
 `P(X ∈ B₁, Y ∈ B₂) = ∫_{B₁} (∫_{B₂} f_{Y|X=x}(y) dy) f_X(x) dx`. -/
