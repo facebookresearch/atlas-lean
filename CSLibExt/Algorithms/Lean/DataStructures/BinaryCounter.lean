@@ -14,8 +14,8 @@ public import Mathlib.Algebra.BigOperators.Group.List.Basic
 /-!
 # Fixed-width binary counter
 
-The low-first binary counter of CLRS, fourth edition, Section 16.1, pages 451-453.
-The two executors use canonical `Vector Bool` and CSLib `TimeM`.
+Increment and run formalize the CLRS binary counter, fourth edition, Section 16.1, pages 451-453.
+Supplemental reset uses the same representation and charges true-to-false bit changes.
 
 ## Main statements
 
@@ -377,5 +377,133 @@ public theorem run_time_ge (k n : Nat) (hk : 0 < k) :
     n ≤ (run (Vector.replicate k false) n).time := by
   rw [run_time_floorSum]
   exact floorSum_ge k n hk
+
+@[no_expose] private def resetBits : List Bool → TimeM Nat (List Bool)
+  | [] => pure []
+  | false :: bits => do
+      let rest ← resetBits bits
+      pure (false :: rest)
+  | true :: bits => do
+      TimeM.tick 1
+      let rest ← resetBits bits
+      pure (false :: rest)
+
+private lemma resetBits_length (bits : List Bool) :
+    (resetBits bits).ret.length = bits.length := by
+  induction bits with
+  | nil => simp [resetBits]
+  | cons bit bits ih => cases bit <;> simp [resetBits, ih]
+
+private lemma resetBits_ret (bits : List Bool) :
+    (resetBits bits).ret = List.replicate bits.length false := by
+  induction bits with
+  | nil => simp [resetBits]
+  | cons bit bits ih => cases bit <;> simp [resetBits, ih, List.replicate_succ]
+
+private lemma resetBits_time_sum (bits : List Bool) :
+    (resetBits bits).time = (bits.map Bool.toNat).sum := by
+  induction bits with
+  | nil => simp [resetBits]
+  | cons bit bits ih => cases bit <;> simp [resetBits, ih]
+
+private lemma resetBits_time_changedBits (bits : List Bool) :
+    (resetBits bits).time = changedBits bits (resetBits bits).ret := by
+  induction bits with
+  | nil => simp [resetBits, changedBits]
+  | cons bit bits ih => cases bit <;> simpa [resetBits, changedBits] using ih
+
+private lemma boolSum_le_length (bits : List Bool) :
+    (bits.map Bool.toNat).sum ≤ bits.length := by
+  induction bits with
+  | nil => simp
+  | cons bit bits ih => cases bit <;> simp_all <;> omega
+
+private lemma ofBoolListLE_replicate_false (k : Nat) :
+    (BitVec.ofBoolListLE (List.replicate k false)).toNat = 0 := by
+  induction k with
+  | zero => simp [BitVec.ofBoolListLE.eq_1]
+  | succ k ih =>
+    simp [List.replicate_succ, BitVec.ofBoolListLE.eq_2, BitVec.toNat_concat, ih]
+
+private lemma vector_eq_of_toList_eq {k : Nat} (left right : Vector Bool k)
+    (h : left.toList = right.toList) : left = right := by
+  exact Vector.toList_inj.mp h
+
+/-- Reset every set bit to false, charging one tick for each changed existing bit. -/
+public def reset {k : Nat} (bits : Vector Bool k) : TimeM Nat (Vector Bool k) :=
+  let result := resetBits bits.toList
+  ⟨⟨result.ret.toArray, by
+      change (resetBits bits.toList).ret.toArray.size = k
+      simp only [List.size_toArray, resetBits_length, Vector.length_toList]⟩, result.time⟩
+
+private lemma reset_toList_impl {k : Nat} (bits : Vector Bool k) :
+    (reset bits).ret.toList = (resetBits bits.toList).ret := by
+  simp only [reset, Vector.toList_mk]
+
+/-- Reset returns the all-false bit list at the original width. -/
+public theorem reset_toList {k : Nat} (bits : Vector Bool k) :
+    (reset bits).ret.toList = List.replicate k false := by
+  rw [reset_toList_impl, resetBits_ret, Vector.length_toList]
+
+/-- Reset refines the unsigned numeric constant zero. -/
+public theorem reset_value {k : Nat} (bits : Vector Bool k) :
+    (BitVec.ofBoolListLE (reset bits).ret.toList).toNat = 0 := by
+  rw [reset_toList]
+  exact ofBoolListLE_replicate_false k
+
+/-- The exact reset charge is the number of set input bits. -/
+public theorem reset_time {k : Nat} (bits : Vector Bool k) :
+    (reset bits).time = (bits.toList.map Bool.toNat).sum := by
+  simpa only [reset] using resetBits_time_sum bits.toList
+
+/-- The exact reset charge is the indexed Hamming difference of input and output. -/
+public theorem reset_time_changes {k : Nat} (bits : Vector Bool k) :
+    (reset bits).time = ((List.range k).map fun i =>
+      if bits.toList.getD i false ≠ (reset bits).ret.toList.getD i false
+      then 1 else 0).sum := by
+  change (resetBits bits.toList).time = _
+  rw [resetBits_time_changedBits]
+  simpa only [reset_toList_impl, Vector.length_toList] using
+    changedBits_indexed bits.toList (resetBits bits.toList).ret
+      (resetBits_length bits.toList).symm
+
+/-- Reset changes at most the fixed number of existing bits. -/
+public theorem reset_time_le {k : Nat} (bits : Vector Bool k) :
+    (reset bits).time ≤ k := by
+  rw [reset_time]
+  simpa only [Vector.length_toList] using boolSum_le_length bits.toList
+
+/-- Reset at width zero has zero flip charge. -/
+public theorem reset_time_zero_width (bits : Vector Bool 0) :
+    (reset bits).time = 0 := by
+  rw [reset_time]
+  have empty : bits.toList = [] :=
+    List.eq_nil_of_length_eq_zero (Vector.length_toList (xs := bits))
+  simp [empty]
+
+/-- Resetting an all-false counter has zero flip charge. -/
+public theorem reset_time_replicate_false (k : Nat) :
+    (reset (Vector.replicate k false)).time = 0 := by
+  rw [reset_time, Vector.toList_replicate]
+  simp
+
+/-- Resetting a reset counter preserves the complete returned vector. -/
+public theorem reset_ret_idempotent {k : Nat} (bits : Vector Bool k) :
+    (reset (reset bits).ret).ret = (reset bits).ret := by
+  apply vector_eq_of_toList_eq
+  rw [reset_toList, reset_toList]
+
+/-- A second reset has zero flip charge. -/
+public theorem reset_time_after_reset {k : Nat} (bits : Vector Bool k) :
+    (reset (reset bits).ret).time = 0 := by
+  rw [reset_time, reset_toList]
+  simp
+
+/-- Reset charge plus final one-bit potential equals the initial potential. -/
+public theorem reset_potential {k : Nat} (bits : Vector Bool k) :
+    (reset bits).time + ((reset bits).ret.toList.map Bool.toNat).sum =
+      (bits.toList.map Bool.toNat).sum := by
+  rw [reset_time, reset_toList]
+  simp
 
 end Cslib.Algorithms.Lean.BinaryCounter
