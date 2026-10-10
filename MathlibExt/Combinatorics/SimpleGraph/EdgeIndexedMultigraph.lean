@@ -706,5 +706,43 @@ public theorem exists_indexedEulerian_connectedSupport [Finite V] [Finite E]
     obtain ⟨e, he⟩ := M.underlying_adj.mp huv
     exact isEmptyElim e
 
+/-- The line graph of an edge-indexed multigraph: vertices are edge identities,
+adjacent when distinct and sharing an endpoint. Parallel edges are adjacent. -/
+public def lineGraph : SimpleGraph E where
+  Adj e₁ e₂ := e₁ ≠ e₂ ∧ ∃ v, M.Inc v e₁ ∧ M.Inc v e₂
+  symm := ⟨by
+    intro e₁ e₂ h
+    obtain ⟨hne, v, hv₁, hv₂⟩ := h
+    exact ⟨Ne.symm hne, v, hv₂, hv₁⟩⟩
+  loopless := ⟨by
+    intro e h
+    exact h.1 rfl⟩
+
+/-- Adjacency in the multigraph line graph: distinct edges sharing a vertex. -/
+@[simp]
+public theorem lineGraph_adj {e₁ e₂ : E} :
+    M.lineGraph.Adj e₁ e₂ ↔ e₁ ≠ e₂ ∧ ∃ v, M.Inc v e₁ ∧ M.Inc v e₂ :=
+  Iff.rfl
+
+/-- The maximum degree of a finite edge-indexed multigraph. Requires finite edge
+identities: `M.degree` counts via `Set.ncard`, which collapses infinite
+incident sets, so without `[Finite E]` this could report `0` for a genuinely
+infinite-degree multigraph. -/
+public noncomputable def maxDegree [Fintype V] [Finite E] : ℕ :=
+  Finset.univ.sup M.degree
+
+/-- Every vertex degree is bounded by the maximum degree. -/
+public theorem degree_le_maxDegree [Fintype V] [Finite E] (v : V) :
+    M.degree v ≤ M.maxDegree :=
+  Finset.le_sup (Finset.mem_univ v)
+
+/-- The multigraph degree counts incident edge identities. -/
+public theorem filter_inc_card [Fintype E] (v : V)
+    [DecidablePred fun e => M.Inc v e] :
+    (Finset.univ.filter (fun e => M.Inc v e)).card = M.degree v := by
+  classical
+  change (Finset.univ.filter (fun e => M.Inc v e)).card = {e | M.Inc v e}.ncard
+  rw [Set.ncard_eq_toFinset_card', Set.toFinset_ofPred]
+
 end EdgeIndexedMultigraph
 end SimpleGraph
