@@ -162,4 +162,71 @@ example : ∃ (u : Fin 2) (p : double.IndexedWalk u u),
     exact even_two)
   exact ⟨u, p, hp.1, hp.2 (Sum.inl ()), hp.2 (Sum.inr ())⟩
 
+/-- Parallel edges are adjacent in the line graph. -/
+example : double.lineGraph.Adj (Sum.inl ()) (Sum.inr ()) := by
+  rw [SimpleGraph.EdgeIndexedMultigraph.lineGraph_adj]
+  refine ⟨by decide, 0, ?_, ?_⟩
+  · rw [SimpleGraph.EdgeIndexedMultigraph.inc_iff]
+    show (0 : Fin 2) ∈ s(0, 1)
+    exact Sym2.mem_mk_left 0 1
+  · rw [SimpleGraph.EdgeIndexedMultigraph.inc_iff]
+    show (0 : Fin 2) ∈ s(0, 1)
+    exact Sym2.mem_mk_left 0 1
+
+/-- The line graph has no loops. -/
+example : ¬ double.lineGraph.Adj (Sum.inl ()) (Sum.inl ()) := by
+  rw [SimpleGraph.EdgeIndexedMultigraph.lineGraph_adj]
+  rintro ⟨hne, -⟩
+  exact hne rfl
+
+/-- Multiplicity is visible to `maxDegree`: the doubled edge has max degree two. -/
+example : double.maxDegree = 2 := by
+  apply le_antisymm
+  · show Finset.univ.sup double.degree ≤ 2
+    refine Finset.sup_le ?_
+    intro v _
+    exact (double_degree v).le
+  · calc 2 = double.degree 0 := (double_degree 0).symm
+      _ ≤ double.maxDegree := double.degree_le_maxDegree 0
+
+/-- A single edge has max degree one. -/
+example : single.maxDegree = 1 := by
+  apply le_antisymm
+  · show Finset.univ.sup single.degree ≤ 1
+    refine Finset.sup_le ?_
+    intro v _
+    exact (single_degree v).le
+  · calc 1 = single.degree 0 := (single_degree 0).symm
+      _ ≤ single.maxDegree := single.degree_le_maxDegree 0
+
+/-- The edgeless multigraph on two vertices. -/
+def empty2 : EdgeIndexedMultigraph (Fin 2) Empty where
+  ends e := e.elim
+  loopless e := e.elim
+
+private theorem empty2_degree (v : Fin 2) : empty2.degree v = 0 := by
+  have hempty : {e : Empty | empty2.Inc v e} = ∅ := by
+    ext e
+    exact e.elim
+  rw [SimpleGraph.EdgeIndexedMultigraph.degree_eq_ncard_inc, hempty, Set.ncard_empty]
+
+/-- The edgeless multigraph has maximum degree zero. -/
+example : empty2.maxDegree = 0 := by
+  apply le_antisymm
+  · show Finset.univ.sup empty2.degree ≤ 0
+    refine Finset.sup_le ?_
+    intro v _
+    exact (empty2_degree v).le
+  · exact Nat.zero_le _
+
+/-- The line graph of the edgeless multigraph has no adjacency. -/
+example : ∀ e₁ e₂ : Empty, ¬ empty2.lineGraph.Adj e₁ e₂ := by
+  intro e₁
+  exact e₁.elim
+
+-- The multigraph degree counts incident edge identities.
+open Classical in
+example : (Finset.univ.filter (fun e => single.Inc 0 e)).card = single.degree 0 :=
+  single.filter_inc_card 0
+
 end MathlibExtTest.EdgeIndexedMultigraph
