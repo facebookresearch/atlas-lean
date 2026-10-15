@@ -36,6 +36,8 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.GroupTheory.PresentedGroup
+public import Mathlib.GroupTheory.FinitelyPresentedGroup
+public import Mathlib.GroupTheory.Subgroup.Simple
 public import Mathlib.Computability.PartrecCode
 public import WantedExt.GroupTheory.WordProblemSolvableShared
 
