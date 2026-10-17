@@ -1,0 +1,4410 @@
+{
+ "book": "TensorCategories",
+ "source": "MIT 18.769 Topics in Lie Theory: Tensor Categories, Spring 2009, course notes (P. Etingof et al.), text conversion MIT18_769S09_notes.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 1,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:170",
+   "quote": "A monoidal subcategory of a monoidal category",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:174",
+   "quote": "The opposite monoidal category Cop to C is the",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:213",
+   "quote": "In particular, one has r1 = l1 = ι.",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:183",
+   "quote": "Let (C, ⊗, a, 1,ι) be a monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "MIT18_769S09_notes.txt:277",
+   "quote": "The triangle axiom (1.2.1)",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:183",
+   "quote": "Let (C, ⊗, a, 1,ι) be a monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:302",
+   "quote": "The unit object in a monoidal category is unique",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 3,
+   "evidence": "MIT18_769S09_notes.txt:322",
+   "quote": "(as ι = r1), so b ⊗ b = b ⊗ Id",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 4,
+   "evidence": "MIT18_769S09_notes.txt:325",
+   "quote": "Hint. Use Propositions 1.2.1 and 1.2.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 7,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:329",
+   "quote": "satisfying the pentagon axiom (1.1.2)",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 3,
+   "evidence": "MIT18_769S09_notes.txt:329",
+   "quote": "and the triangle axiom (1.2.1)",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:349",
+   "quote": "phisms of the unit object of a monoidal category is commutative.",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:551",
+   "quote": "be two monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:592",
+   "quote": "For any monoidal functor (F, J)",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:614",
+   "quote": "satisﬁes the monoidal structure axiom",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "MIT18_769S09_notes.txt:614",
+   "quote": "and Proposition 1.4.3",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:633",
+   "quote": "be two monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:634",
+   "quote": "two monoidal functors from C to",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 1,
+   "evidence": "MIT18_769S09_notes.txt:679",
+   "quote": "in the full monoidal subcategory Endre(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:680",
+   "quote": "deﬁnes an equivalence between monoidal categories",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:741",
+   "quote": "The structures of a monoidal category on (CG, ⊗) are parametrized",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:737",
+   "quote": "monoidal functors Ff,µi",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 12,
+   "evidence": "MIT18_769S09_notes.txt:736",
+   "quote": "(i) The monoidal isomorphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:792",
+   "quote": "A monoidal category C is strict if for all objects",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:829",
+   "quote": "Any monoidal category is monoidally equivalent to a",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 3,
+   "evidence": "MIT18_769S09_notes.txt:906",
+   "quote": "the rows are the identity morphisms by the triangle axiom (1.2.1)",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:829",
+   "quote": "is monoidally equivalent to a",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "MIT18_769S09_notes.txt:830",
+   "quote": "strict monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1010",
+   "quote": "obtained by composing associativity and unit",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1018",
+   "quote": "in (1.4.1), and do similarly for the unit morphisms.",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 15,
+   "evidence": "MIT18_769S09_notes.txt:1019",
+   "quote": "a prism one of whose faces consists of identity maps (associativity and",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "MIT18_769S09_notes.txt:1013",
+   "quote": "We derive this theorem as a corollary of the MacLane’s strictness",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1030",
+   "quote": "Let (C, ⊗, 1, a, ι) be a monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1030",
+   "quote": "Let (C, ⊗, 1, a, ι) be a monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1061",
+   "quote": "If X ∈ C has a right (respectively, left) dual",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1061",
+   "quote": "If X ∈ C has a right (respectively, left) dual",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1127",
+   "quote": "Let C be a monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1128",
+   "quote": "(i) Let U, V, W be objects in C admitting right (respectively, left)",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1128",
+   "quote": "(i) Let U, V, W be objects in C admitting right (respectively, left)",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1135",
+   "quote": "(i) If an object V has a right dual V",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1143",
+   "quote": "(ii) If an object V has a left dual",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1168",
+   "quote": "A monoidal category C is called rigid if every",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1169",
+   "quote": "object X ∈C has a right dual object and a left dual object.",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1169",
+   "quote": "object X ∈C has a right dual object and a left dual object.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1227",
+   "quote": "An object X in C is invertible if evX",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:1226",
+   "quote": "Let C be a rigid monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1233",
+   "quote": "X∗ is invertible",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1233",
+   "quote": "(i) ∗X ∼= X∗",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "MIT18_769S09_notes.txt:1232",
+   "quote": "Let X be an invertible object in C.",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "MIT18_769S09_notes.txt:1292",
+   "quote": "In a locally ﬁnite abelian category C",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:1303",
+   "quote": "Let C be a locally ﬁnite k-linear abelian rigid",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 26,
+   "evidence": "MIT18_769S09_notes.txt:1303",
+   "quote": "Let C be a locally ﬁnite k-linear abelian rigid",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:1348",
+   "quote": "by Proposition 1.10.9",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:1345",
+   "quote": "Let C be a multitensor cate",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1367",
+   "quote": "linear abelian monoidal category C with biexact tensor product.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 26,
+   "evidence": "MIT18_769S09_notes.txt:1366",
+   "quote": "A multiring category over k is a locally ﬁnite k-",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 29,
+   "evidence": "MIT18_769S09_notes.txt:1379",
+   "quote": "Tensoring the sequence X1 → I1 → 0 with I2, by Proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1374",
+   "quote": "For any pair of morphisms f1,f2 in a multiring",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1393",
+   "quote": "If C is a multiring category with right duals, then",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:1399",
+   "quote": "By Proposition 1.10.9, it can be written as",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1393",
+   "quote": "If C is a multiring category with right duals, then",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1415",
+   "quote": "If X ∈C has a right dual, then the object P ⊗ X is projective.",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1416",
+   "quote": "if X ∈C has a left dual, then the object X ⊗ P is projective.",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:1420",
+   "quote": "In the ﬁrst case by Proposition 1.10.9 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1414",
+   "quote": "Let P be a projective object in a multiring cate",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1424",
+   "quote": "If C multiring category with right duals, then 1",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1424",
+   "quote": "If C multiring category with right duals, then 1",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:1426",
+   "quote": "X ∼= 1 ⊗ X is projective.",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1434",
+   "quote": "satisﬁes the monoidal structure axiom",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1429",
+   "quote": "Let C, D be multiring categories over k",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 8,
+   "evidence": "MIT18_769S09_notes.txt:1443",
+   "quote": "By Proposition 1.2.7, End(1) is a commutative algebra",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 29,
+   "evidence": "MIT18_769S09_notes.txt:1451",
+   "quote": "and applying Proposition 1.13.1, we get that J = 0, so a = 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1440",
+   "quote": "In any multiring category, End(1) is a semisimple",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 31,
+   "evidence": "MIT18_769S09_notes.txt:1445",
+   "quote": "Then by Corollary 1.13.4 J ⊗ J = Im(a ⊗ a)",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1454",
+   "quote": "In any multiring category C the unit object 1 is",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "MIT18_769S09_notes.txt:1462",
+   "quote": "Let Cij := 1i ⊗C⊗ 1j .",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1472",
+   "quote": "The functors of left and right duals, if they are deﬁned, map Cij",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1472",
+   "quote": "The functors of left and right duals, if they are deﬁned, map Cij",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:1471",
+   "quote": "are tensor categories if C is rigid",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:1471",
+   "quote": "are tensor categories if C is rigid",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1465",
+   "quote": "Let C be a multiring category.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 37,
+   "evidence": "MIT18_769S09_notes.txt:1470",
+   "quote": "are ring categories with unit objects 1i",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "MIT18_769S09_notes.txt:1466",
+   "quote": "Thus every indecomposable object of C belongs",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1481",
+   "quote": "In a ring category with right duals, the unit",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1481",
+   "quote": "In a ring category with right duals, the unit",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 32,
+   "evidence": "MIT18_769S09_notes.txt:1491",
+   "quote": "By Proposition 1.13.5, the right",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 37,
+   "evidence": "MIT18_769S09_notes.txt:1484",
+   "quote": "semisimple, and is a direct sum of pairwise non-isomorphic simple ob",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 38,
+   "evidence": "MIT18_769S09_notes.txt:1486",
+   "quote": "by applying (i) to the component cate",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1507",
+   "quote": "In a ring category with right duals, the evaluation",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1507",
+   "quote": "In a ring category with right duals, the evaluation",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1560",
+   "quote": "Let C and D be multiring categories and F : C",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 35,
+   "evidence": "MIT18_769S09_notes.txt:1561",
+   "quote": "D be a quasi-tensor functor.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:1561",
+   "quote": "Then F deﬁnes a homomorphism of unital",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1556",
+   "quote": "(Xi ⊗ Xj ) ⊗ Xp ∼= Xi ⊗ (Xj ⊗ Xp)",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:1544",
+   "quote": "Now let C be a multiring category.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:1681",
+   "quote": "Now let C be a ﬁnite k-linear abelian category",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1689",
+   "quote": "Let C be a k-linear abelian monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1694",
+   "quote": "satisﬁes the monoidal structure axiom",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1726",
+   "quote": "A left comodule over a coalgebra C is a vector",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1765",
+   "quote": "The coassociativity of Δ follows form axiom (1.4.1) of a monoidal",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 10,
+   "evidence": "MIT18_769S09_notes.txt:1766",
+   "quote": "The counit axiom follows from (1.4.3) and (1.4.4).",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:1752",
+   "quote": "Let C be a ﬁnite monoidal category",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 46,
+   "evidence": "MIT18_769S09_notes.txt:1757",
+   "quote": "Δ(a) = α−1 Δ(a)),F,F",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:1753",
+   "quote": "be a ﬁber functor",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1762",
+   "quote": "The algebra H is a coalgebra with comultiplica",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1771",
+   "quote": "An algebra H equipped with a comultiplication Δ",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "MIT18_769S09_notes.txt:1772",
+   "quote": "satisfying properties (i),(ii) of Theorem 1.21.1 is called",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:1797",
+   "quote": "ﬁnite abelian k-linear monoidal categories C with a ﬁber functor",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1798",
+   "quote": "up to monoidal equivalence and isomorphism of monoidal functors;",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 12,
+   "evidence": "MIT18_769S09_notes.txt:1798",
+   "quote": "up to monoidal equivalence and isomorphism of monoidal functors;",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:1797",
+   "quote": "ﬁnite abelian k-linear monoidal categories C with a ﬁber functor",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:1797",
+   "quote": "ﬁnite abelian k-linear monoidal categories C with a ﬁber functor",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "MIT18_769S09_notes.txt:1774",
+   "quote": "Thus, Theorem 1.21.1 claims that the algebra H = End(F ) has a",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1799",
+   "quote": "2) ﬁnite dimensional bialgebras H over k up to isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1843",
+   "quote": "when the category C has right duals.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1842",
+   "quote": "on the bialgebra H = End(F ) from the previous subsection in the case",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1890",
+   "quote": "An antipode on a bialgebra H is a linear map",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 53,
+   "evidence": "MIT18_769S09_notes.txt:1891",
+   "quote": "which satisﬁes the equalities of Proposition 1.22.1.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1900",
+   "quote": "associativity of µ, and coassociativity of Δ, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1897",
+   "quote": "An antipode on a bialgebra H is unique if exists.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:1897",
+   "quote": "An antipode on a bialgebra H is unique if exists.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1906",
+   "quote": "antihomomorphism of algebras with unit and of coalgebras with counit.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1905",
+   "quote": "If S is an antipode on a bialgebra H then S is an",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:1905",
+   "quote": "If S is an antipode on a bialgebra H then S is an",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:1931",
+   "quote": "the abelian monoidal category C = Rep(H) has right duals.",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:1937",
+   "quote": "If in addition S is invertible, then C also admits left duals, i.e.",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:1938",
+   "quote": "is rigid (in other words, C is tensor category).",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:1938",
+   "quote": "is rigid (in other words, C is tensor category).",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1930",
+   "quote": "If H is a bialgebra with an antipode S, then",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:1930",
+   "quote": "If H is a bialgebra with an antipode S, then",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "MIT18_769S09_notes.txt:1944",
+   "quote": "Part (i) follows from the antipode axiom and Proposition 1.22.5.",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1957",
+   "quote": "A bialgebra equipped with an invertible antipode",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:1957",
+   "quote": "A bialgebra equipped with an invertible antipode",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:1967",
+   "quote": "equivalence and isomorphism of monoidal functors;",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 12,
+   "evidence": "MIT18_769S09_notes.txt:1967",
+   "quote": "equivalence and isomorphism of monoidal functors;",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:1966",
+   "quote": "ﬁnite tensor categories C with a ﬁber functor F",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:1966",
+   "quote": "ﬁnite tensor categories C with a ﬁber functor F",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:1966",
+   "quote": "ﬁnite tensor categories C with a ﬁber functor F",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 57,
+   "evidence": "MIT18_769S09_notes.txt:1961",
+   "quote": "Thus, Corollary 1.22.6 states that if H is a Hopf algebra then Rep(H)",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:1973",
+   "quote": "2) ﬁnite dimensional Hopf algebras over k up to isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:1984",
+   "quote": "In any coalgebra C, a nonzero element g",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:1992",
+   "quote": "If H is a ﬁnite dimensional bialgebra with an",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:1993",
+   "quote": "antipode S, then S is invertible, so H is a Hopf algebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 56,
+   "evidence": "MIT18_769S09_notes.txt:1994",
+   "quote": "Since S is an antihomomorphism",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:1993",
+   "quote": "antipode S, then S is invertible, so H is a Hopf algebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 49,
+   "evidence": "MIT18_769S09_notes.txt:2047",
+   "quote": "between C and the category of ﬁnite dimensional right comodules over",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2086",
+   "quote": "1) k-linear abelian monoidal categories C with a ﬁber functor F , up",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:2087",
+   "quote": "to monoidal equivalence and isomorphism of monoidal functors, and",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 12,
+   "evidence": "MIT18_769S09_notes.txt:2087",
+   "quote": "to monoidal equivalence and isomorphism of monoidal functors, and",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:2092",
+   "quote": "2) k-linear abelian monoidal categories C with right duals with a ﬁber",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2095",
+   "quote": "3) tensor categories C over k with a ﬁber functor F , up to monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2086",
+   "quote": "1) k-linear abelian monoidal categories C with a ﬁber functor F , up",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 49,
+   "evidence": "MIT18_769S09_notes.txt:2085",
+   "quote": "(H − Comod, Forget) are mutually inverse bijections between",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:2088",
+   "quote": "bialgebras over k, up to isomorphism;",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 54,
+   "evidence": "MIT18_769S09_notes.txt:2094",
+   "quote": "functors, and bialgebras over k with an antipode, up to isomorphism;",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2096",
+   "quote": "equivalence and isomorphism of monoidal functors, and Hopf algebras",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "MIT18_769S09_notes.txt:2082",
+   "quote": "1.23.1 implies the following",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:2121",
+   "quote": "An element x of a bialgebra H is called primitive",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2154",
+   "quote": "Let g, h be grouplike elements of a coalgebra H.",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2154",
+   "quote": "Let g, h be grouplike elements of a coalgebra H.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2190",
+   "quote": "There exists a unique Hopf algebra structure on",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2192",
+   "quote": "(thus K is a grouplike element)",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 65,
+   "evidence": "MIT18_769S09_notes.txt:2194",
+   "quote": "(thus E, F are skew-primitive ele",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "MIT18_769S09_notes.txt:2191",
+   "quote": "Uq (sl2), given by",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "MIT18_769S09_notes.txt:2237",
+   "quote": "[l]q ![1",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2264",
+   "quote": "There exists a unique Hopf algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "MIT18_769S09_notes.txt:2265",
+   "quote": "structure on Uq (g), given by",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2277",
+   "quote": "Let g, h be grouplike elements of a coalgebra",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 49,
+   "evidence": "MIT18_769S09_notes.txt:2280",
+   "quote": "where g, h are regarded as 1-dimensional right C-comodules.",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2277",
+   "quote": "Let g, h be grouplike elements of a coalgebra",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 65,
+   "evidence": "MIT18_769S09_notes.txt:2278",
+   "quote": "C, and Primh,g(C) be the space of skew-primitive elements of type",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:2337",
+   "quote": "ring category over k with simple object 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2336",
+   "quote": "Let C be a ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:2378",
+   "quote": "If a ﬁnite ring category C over a ﬁeld of charac",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2378",
+   "quote": "If a ﬁnite ring category C over a ﬁeld of charac",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:2384",
+   "quote": "A ﬁnite dimensional bialgebra H over a ﬁeld of",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 64,
+   "evidence": "MIT18_769S09_notes.txt:2385",
+   "quote": "characteristic zero cannot contain nonzero primitive elements.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 71,
+   "evidence": "MIT18_769S09_notes.txt:2387",
+   "quote": "Proposition 1.27.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 72,
+   "evidence": "MIT18_769S09_notes.txt:2386",
+   "quote": "Apply Theorem 1.27.4 to the category H − comod and use",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2392",
+   "quote": "If H is a ﬁnite dimensional commutative Hopf",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 64,
+   "evidence": "MIT18_769S09_notes.txt:2399",
+   "quote": "This implies that x is a primitive element in H",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 74,
+   "evidence": "MIT18_769S09_notes.txt:2400",
+   "quote": "1.27.6, x = 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2407",
+   "quote": "A coalgebra C is pointed if its category of right co",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 49,
+   "evidence": "MIT18_769S09_notes.txt:2408",
+   "quote": "modules is pointed, i.e., if any simple right C-comodule is 1-dimensional.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 24,
+   "evidence": "MIT18_769S09_notes.txt:2414",
+   "quote": "object of C is invertible.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2413",
+   "quote": "A tensor category C is pointed if every simple",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 26,
+   "evidence": "MIT18_769S09_notes.txt:2425",
+   "quote": "Let C be a locally ﬁnite abelian cat",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2477",
+   "quote": "A coalgebra C is said to be cosemisimple if C is a",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2483",
+   "quote": "(ii) A coalgebra C is cosemisimple if and only if C0 = C1.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "MIT18_769S09_notes.txt:2481",
+   "quote": "(i) A category C is semisimple if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 79,
+   "evidence": "MIT18_769S09_notes.txt:2483",
+   "quote": "(ii) A coalgebra C is cosemisimple if and only if C0 = C1.",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2489",
+   "quote": "gebra, then C0 is spanned by (linearly independent) grouplike elements",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 65,
+   "evidence": "MIT18_769S09_notes.txt:2491",
+   "quote": "cosemisimple pointed coalgebra contains nontrivial skew-primitive ele",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 71,
+   "evidence": "MIT18_769S09_notes.txt:2490",
+   "quote": "g, and C1/C0 = ⊕h,gPrimh,g(C)/k(h − g).",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 76,
+   "evidence": "MIT18_769S09_notes.txt:2488",
+   "quote": "If C is a pointed coal",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 79,
+   "evidence": "MIT18_769S09_notes.txt:2491",
+   "quote": "cosemisimple pointed coalgebra contains nontrivial skew-primitive ele",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2515",
+   "quote": "If C, D are coalgebras, and f : C D is a",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2528",
+   "quote": "If H is a Hopf algebra over a ﬁeld of characteristic",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 64,
+   "evidence": "MIT18_769S09_notes.txt:2529",
+   "quote": "zero, then the natural map ξ : U(Prim(H)) H is injective.",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 82,
+   "evidence": "MIT18_769S09_notes.txt:2530",
+   "quote": "By Proposition 1.29.6, it suﬃces to check the injectivity of ξ in",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 85,
+   "evidence": "MIT18_769S09_notes.txt:2554",
+   "quote": "1.30.2 GV ,GW are reductive.",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2566",
+   "quote": "A tensor category C is said to have Chevalley prop",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 77,
+   "evidence": "MIT18_769S09_notes.txt:2571",
+   "quote": "A pointed tensor category has Chevalley prop",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 86,
+   "evidence": "MIT18_769S09_notes.txt:2571",
+   "quote": "A pointed tensor category has Chevalley prop",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2574",
+   "quote": "In a tensor category with Chevalley property,",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 78,
+   "evidence": "MIT18_769S09_notes.txt:2576",
+   "quote": "Thus Ci ⊗Cj ⊂Ci+j .",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 86,
+   "evidence": "MIT18_769S09_notes.txt:2574",
+   "quote": "In a tensor category with Chevalley property,",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2585",
+   "quote": "In a pointed Hopf algebra H, the coradical ﬁltration",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 76,
+   "evidence": "MIT18_769S09_notes.txt:2585",
+   "quote": "In a pointed Hopf algebra H, the coradical ﬁltration",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 78,
+   "evidence": "MIT18_769S09_notes.txt:2585",
+   "quote": "In a pointed Hopf algebra H, the coradical ﬁltration",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2621",
+   "quote": "Any ﬁnite dimensional pointed Hopf algebra over",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2623",
+   "quote": "ﬁltration, i.e., by grouplike and skew-primitive elements.",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 65,
+   "evidence": "MIT18_769S09_notes.txt:2623",
+   "quote": "ﬁltration, i.e., by grouplike and skew-primitive elements.",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 76,
+   "evidence": "MIT18_769S09_notes.txt:2621",
+   "quote": "Any ﬁnite dimensional pointed Hopf algebra over",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 78,
+   "evidence": "MIT18_769S09_notes.txt:2622",
+   "quote": "a ﬁeld of characteristic zero is generated in degree 1 of its coradical",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2629",
+   "quote": "We say that a tensor category C is tensor-generated",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2633",
+   "quote": "plike and skew-primitive elements if and only if the tensor category",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 49,
+   "evidence": "MIT18_769S09_notes.txt:2634",
+   "quote": "H − comod is tensor-generated by objects of length 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2632",
+   "quote": "A pointed Hopf algebra H is generated by grou",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 60,
+   "evidence": "MIT18_769S09_notes.txt:2633",
+   "quote": "plike and skew-primitive elements if and only if the tensor category",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 65,
+   "evidence": "MIT18_769S09_notes.txt:2633",
+   "quote": "plike and skew-primitive elements if and only if the tensor category",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 76,
+   "evidence": "MIT18_769S09_notes.txt:2632",
+   "quote": "A pointed Hopf algebra H is generated by grou",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "MIT18_769S09_notes.txt:2634",
+   "quote": "H − comod is tensor-generated by objects of length 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2640",
+   "quote": "Any ﬁnite pointed tensor category over a ﬁeld of",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 77,
+   "evidence": "MIT18_769S09_notes.txt:2640",
+   "quote": "Any ﬁnite pointed tensor category over a ﬁeld of",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 91,
+   "evidence": "MIT18_769S09_notes.txt:2641",
+   "quote": "characteristic zero is tensor generated by objects of length 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 48,
+   "evidence": "MIT18_769S09_notes.txt:2673",
+   "quote": "Then it is easy to see from the counit axiom",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2651",
+   "quote": "Any cocommutative Hopf algebra H over an alge",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 64,
+   "evidence": "MIT18_769S09_notes.txt:2704",
+   "quote": "that z − w is a primitive element",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 83,
+   "evidence": "MIT18_769S09_notes.txt:2669",
+   "quote": "Corollary 1.29.7, it is injective.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 95,
+   "evidence": "MIT18_769S09_notes.txt:2703",
+   "quote": "Now, applying Lemma 1.33.2, we get that there exists w",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 58,
+   "evidence": "MIT18_769S09_notes.txt:2728",
+   "quote": "Let H be a commutative Hopf algebra over a ﬁeld",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 94,
+   "evidence": "MIT18_769S09_notes.txt:2736",
+   "quote": "by the Cartier-Kostant theorem B = U(g)",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2746",
+   "quote": "Let C be an abelian monoidal category over k,",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2747",
+   "quote": "be a quasi-ﬁber functor.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2749",
+   "quote": "Two quasi-ﬁber functors (F, J1) and (F, J2) are",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2787",
+   "quote": "the pentagon axiom for C",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 3,
+   "evidence": "MIT18_769S09_notes.txt:2788",
+   "quote": "and the fourth one from the triangle axiom",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 97,
+   "evidence": "MIT18_769S09_notes.txt:2759",
+   "quote": "(F, J) be a normalized quasi-ﬁber functor.",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "MIT18_769S09_notes.txt:2793",
+   "quote": "the identities of Proposition 1.34.4 is called a quasi-bialgebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 100,
+   "evidence": "MIT18_769S09_notes.txt:2817",
+   "quote": "A twist for a quasi-bialgebra H is an invertible",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2828",
+   "quote": "If a ﬁnite k-linear abelian monoidal category C",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:2835",
+   "quote": "Grothendieck ring of C in the basis",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2828",
+   "quote": "If a ﬁnite k-linear abelian monoidal category C",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2829",
+   "quote": "admits a quasi-ﬁber functor, then this functor is unique up to twisting.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 98,
+   "evidence": "MIT18_769S09_notes.txt:2829",
+   "quote": "admits a quasi-ﬁber functor, then this functor is unique up to twisting.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2855",
+   "quote": "1) ﬁnite k-linear abelian monoidal categories C admitting a quasi",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:2856",
+   "quote": "ﬁber functor, up to monoidal equivalence of categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2855",
+   "quote": "1) ﬁnite k-linear abelian monoidal categories C admitting a quasi",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2855",
+   "quote": "1) ﬁnite k-linear abelian monoidal categories C admitting a quasi",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 100,
+   "evidence": "MIT18_769S09_notes.txt:2857",
+   "quote": "2) ﬁnite dimensional quasi-bialgebras H over k up to twist equiva",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 101,
+   "evidence": "MIT18_769S09_notes.txt:2857",
+   "quote": "2) ﬁnite dimensional quasi-bialgebras H over k up to twist equiva",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 102,
+   "evidence": "MIT18_769S09_notes.txt:2846",
+   "quote": "Therefore, we have the following reconstruction theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:2895",
+   "quote": "This follows directly from the duality axioms.",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 100,
+   "evidence": "MIT18_769S09_notes.txt:2879",
+   "quote": "bialgebra H = End(F ) has the following additional structures.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 100,
+   "evidence": "MIT18_769S09_notes.txt:2896",
+   "quote": "An antipode on a quasi-bialgebra H is a triple",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 104,
+   "evidence": "MIT18_769S09_notes.txt:2898",
+   "quote": "satisfying identities (1.35.1) and (1.35.2).",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:2962",
+   "quote": "(i) ﬁnite abelian k-linear monoidal categories C with right duals ad",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:2963",
+   "quote": "mitting a quasi-ﬁber functor, up to monoidal equivalence of categories,",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:2962",
+   "quote": "(i) ﬁnite abelian k-linear monoidal categories C with right duals ad",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:2873",
+   "quote": "sition 1.10.9.",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:2966",
+   "quote": "(ii) ﬁnite tensor categories C admitting a quasi-ﬁber functor, up to",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 32,
+   "evidence": "MIT18_769S09_notes.txt:2872",
+   "quote": "1.13.5, the right dualization functor is exact",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:2962",
+   "quote": "(i) ﬁnite abelian k-linear monoidal categories C with right duals ad",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:2963",
+   "quote": "mitting a quasi-ﬁber functor, up to monoidal equivalence of categories,",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 100,
+   "evidence": "MIT18_769S09_notes.txt:2964",
+   "quote": "and ﬁnite dimensional quasi-bialgebras H over k with an antipode, up",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 101,
+   "evidence": "MIT18_769S09_notes.txt:2965",
+   "quote": "to twist equivalence and isomorphism;",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 102,
+   "evidence": "MIT18_769S09_notes.txt:2874",
+   "quote": "So by Proposition 1.34.7, this functor is isomorphic to F .",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:2964",
+   "quote": "and ﬁnite dimensional quasi-bialgebras H over k with an antipode, up",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:2980",
+   "quote": "J is called a bialgebra twist if HJ is a bialgebra,",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 101,
+   "evidence": "MIT18_769S09_notes.txt:2980",
+   "quote": "J is called a bialgebra twist if HJ is a bialgebra,",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:3007",
+   "quote": "2) ﬁber functors on C = Rep(H), up to isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 51,
+   "evidence": "MIT18_769S09_notes.txt:3004",
+   "quote": "Let H be a ﬁnite dimensional bialgebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 102,
+   "evidence": "MIT18_769S09_notes.txt:3008",
+   "quote": "By Proposition 1.34.7, any ﬁber functor on C is isomorphic to",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 107,
+   "evidence": "MIT18_769S09_notes.txt:3006",
+   "quote": "1) gauge equivalence classes of bialgebra twists for H, and",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:3022",
+   "quote": "the monoidal structure condition is the condition that J is a 2-cocycle,",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:3018",
+   "quote": "Let G be a group. Then ﬁber functors on VecG",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3048",
+   "quote": "If a ∈ Hom(V, V ∗∗), b ∈ Hom(W, W ∗∗) then",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:3037",
+   "quote": "Let C be a rigid monoidal category, V be an",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3057",
+   "quote": "If a Hom(V, V ∗∗) and W V such that",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3055",
+   "quote": "If C is a multitensor category, it is useful to generalize Proposi",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 12,
+   "evidence": "MIT18_769S09_notes.txt:3064",
+   "quote": "structure on C is an isomorphism of monoidal functors",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:3063",
+   "quote": "Let C be a rigid monoidal category. A pivotal",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:3072",
+   "quote": "A rigid monoidal category C equipped with a piv",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 112,
+   "evidence": "MIT18_769S09_notes.txt:3072",
+   "quote": "A rigid monoidal category C equipped with a piv",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:3083",
+   "quote": "Let a be a pivotal structure on a rigid monoidal category C.",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 112,
+   "evidence": "MIT18_769S09_notes.txt:3083",
+   "quote": "Let a be a pivotal structure on a rigid monoidal category C.",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3088",
+   "quote": "If C is a tensor category, then the function",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3089",
+   "quote": "dima(X) is a character of the Grothendieck ring Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 110,
+   "evidence": "MIT18_769S09_notes.txt:3093",
+   "quote": "obvious fact that dima(1) = 1 and Proposition 1.37.1(3)",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 111,
+   "evidence": "MIT18_769S09_notes.txt:3090",
+   "quote": "Proposition 1.37.3 implies that dima is additive on exact",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "MIT18_769S09_notes.txt:3089",
+   "quote": "dima(X) is a character of the Grothendieck ring Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3094",
+   "quote": "pivotal ﬁnite tensor cat",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3094",
+   "quote": "pivotal ﬁnite tensor cat",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 113,
+   "evidence": "MIT18_769S09_notes.txt:3094",
+   "quote": "Dimensions of objects in a pivotal",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 114,
+   "evidence": "MIT18_769S09_notes.txt:3094",
+   "quote": "Dimensions of objects in a pivotal",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 115,
+   "evidence": "MIT18_769S09_notes.txt:3096",
+   "quote": "This follows from the fact that a character of any ring that is",
+   "kind": "proof"
+  },
+  {
+   "from": 117,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3100",
+   "quote": "spherical if dima(V ) = dima(V ∗)",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3099",
+   "quote": "A pivotal structure a on a tensor category C is",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 112,
+   "evidence": "MIT18_769S09_notes.txt:3099",
+   "quote": "A pivotal structure a on a tensor category C is",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 114,
+   "evidence": "MIT18_769S09_notes.txt:3100",
+   "quote": "spherical if dima(V ) = dima(V ∗)",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 110,
+   "evidence": "MIT18_769S09_notes.txt:3107",
+   "quote": "Proposition 1.37.1(1) and Exercise 1.38.3(1)",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 111,
+   "evidence": "MIT18_769S09_notes.txt:3127",
+   "quote": "are additive on exact sequences by Proposition 1.37.3",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 114,
+   "evidence": "MIT18_769S09_notes.txt:3106",
+   "quote": "We ﬁrst note that TrR (a−1) = dima(X∗) for any object X by",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 117,
+   "evidence": "MIT18_769S09_notes.txt:3104",
+   "quote": "Let C be a spherical category and V be an object of",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3141",
+   "quote": "= V ∗∗.Then ∗V ∼",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:3141",
+   "quote": "= V ∗∗.Then ∗V ∼",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:3144",
+   "quote": "Indeed, Hom(1,V ⊗ X) ∼ Hom(∗X, V )",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3140",
+   "quote": "Let C be a semisimple multitensor category and",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3168",
+   "quote": "V ∗∗ for a simple object V then Tr(a)",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3165",
+   "quote": "If C is a semisimple tensor category and a : V",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 121,
+   "evidence": "MIT18_769S09_notes.txt:3186",
+   "quote": "A Z+−ring A with basis {bi}i∈I is called a",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3211",
+   "quote": "If C is a semisimple multitensor category then",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3212",
+   "quote": "Gr(C) is a based ring",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 119,
+   "evidence": "MIT18_769S09_notes.txt:3217",
+   "quote": "by Proposition 1.41.1 it does",
+   "kind": "proof"
+  },
+  {
+   "from": 123,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3212",
+   "quote": "Gr(C) is a based ring",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 14,
+   "evidence": "MIT18_769S09_notes.txt:3295",
+   "quote": "from the results of Subsection 1.7.",
+   "kind": "proof"
+  },
+  {
+   "from": 126,
+   "to": 125,
+   "evidence": "MIT18_769S09_notes.txt:3342",
+   "quote": "Any ﬁnite dimensional ∗-algebra B is semisim",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 125,
+   "evidence": "MIT18_769S09_notes.txt:3350",
+   "quote": "∗-algebra B then τ(e) > 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3352",
+   "quote": "Let A be a based ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 125,
+   "evidence": "MIT18_769S09_notes.txt:3353",
+   "quote": "is canonically a ∗-algebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3354",
+   "quote": "Let A be a multifusion ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3356",
+   "quote": "Let X be a basis element of a fusion ring A.",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 127,
+   "evidence": "MIT18_769S09_notes.txt:3375",
+   "quote": "idempotent, so by Corollary 1.43.3",
+   "kind": "proof"
+  },
+  {
+   "from": 132,
+   "to": 121,
+   "evidence": "MIT18_769S09_notes.txt:3447",
+   "quote": "Let A be a Z+-ring with Z+-basis I.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3451",
+   "quote": "If C is a ring category with right duals then Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:3451",
+   "quote": "If C is a ring category with right duals then Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 40,
+   "evidence": "MIT18_769S09_notes.txt:3453",
+   "quote": "Recall from Theorem 1.15.8 that the unit object 1 in C is simple.",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3451",
+   "quote": "If C is a ring category with right duals then Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3452",
+   "quote": "is a transitive unital Z+-ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "MIT18_769S09_notes.txt:3452",
+   "quote": "is a transitive unital Z+-ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3461",
+   "quote": "Let A be a transitive unital Z+-ring of ﬁnite rank.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 131,
+   "evidence": "MIT18_769S09_notes.txt:3464",
+   "quote": "It exists by the Frobenius-Perron theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 134,
+   "to": 132,
+   "evidence": "MIT18_769S09_notes.txt:3461",
+   "quote": "Let A be a transitive unital Z+-ring of ﬁnite rank.",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 131,
+   "evidence": "MIT18_769S09_notes.txt:3479",
+   "quote": "Thus by the Frobenius-Perron theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 135,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3473",
+   "quote": "The number α = FPdim(X) is an algebraic integer",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 131,
+   "evidence": "MIT18_769S09_notes.txt:3498",
+   "quote": "then FPdim(X) is the largest nonnegative eigenvalue λ(NX )",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 132,
+   "evidence": "MIT18_769S09_notes.txt:3501",
+   "quote": "By transitivity, this matrix has strictly positive entries,",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3489",
+   "quote": "The function FPdim : A C is a ring",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 136,
+   "evidence": "MIT18_769S09_notes.txt:3538",
+   "quote": "The element R will be called a regular element of",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3541",
+   "quote": "Then FPdim is invariant",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 136,
+   "evidence": "MIT18_769S09_notes.txt:3545",
+   "quote": "Thus the required statement follows from",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3547",
+   "quote": "Let C be a ring category with right duals and",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 24,
+   "evidence": "MIT18_769S09_notes.txt:3549",
+   "quote": "then X is invertible.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 30,
+   "evidence": "MIT18_769S09_notes.txt:3547",
+   "quote": "Let C be a ring category with right duals and",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3548",
+   "quote": "If FPdim(X) = 1",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 136,
+   "evidence": "MIT18_769S09_notes.txt:3552",
+   "quote": "FPdim(X ⊗ X∗) = FPdim(X) FPdim(X∗) = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3554",
+   "quote": "transitive unital Z+-rings of ﬁnite rank",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 132,
+   "evidence": "MIT18_769S09_notes.txt:3554",
+   "quote": "transitive unital Z+-rings of ﬁnite rank",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3556",
+   "quote": "f preserves Frobenius-Perron dimensions",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 136,
+   "evidence": "MIT18_769S09_notes.txt:3562",
+   "quote": "By Proposition 1.45.5(3)",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 137,
+   "evidence": "MIT18_769S09_notes.txt:3559",
+   "quote": "If R is a regular element of A1 then f(R) is",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3568",
+   "quote": "Let C and D be tensor categories with ﬁnitely",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 35,
+   "evidence": "MIT18_769S09_notes.txt:3569",
+   "quote": "quasi-tensor functor",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3570",
+   "quote": "then FPdimD(F (X)) = FPdimC (X)",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 131,
+   "evidence": "MIT18_769S09_notes.txt:3612",
+   "quote": "such that λ(BBT ) = λ(B)2",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3627",
+   "quote": "Let A be a fusion ring",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3628",
+   "quote": "Then if F P dim(X) < 2",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 142,
+   "evidence": "MIT18_769S09_notes.txt:3630",
+   "quote": "This follows from Proposition 1.45.15",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3633",
+   "quote": "two ﬁnite abelian categories over a ﬁeld k",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3643",
+   "quote": "is a ﬁnite abelian category",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 144,
+   "evidence": "MIT18_769S09_notes.txt:3642",
+   "quote": "(i) The tensor product",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 23,
+   "evidence": "MIT18_769S09_notes.txt:3679",
+   "quote": "that if C, D are rigid, then so is C",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3669",
+   "quote": "If C, D are multitensor categories then the cate",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 144,
+   "evidence": "MIT18_769S09_notes.txt:3670",
+   "quote": "has a natural structure of a multitensor category",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3705",
+   "quote": "Let C be a ﬁnite multitensor category.",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:3708",
+   "quote": "object with any object is projective, Proposition 1.13.6.",
+   "kind": "proof"
+  },
+  {
+   "from": 147,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3706",
+   "quote": "K0(C) is a Gr(C)-bimodule.",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3705",
+   "quote": "Let C be a ﬁnite multitensor category.",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3695",
+   "quote": "let i∗, ∗i denote the right and",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:3695",
+   "quote": "let i∗, ∗i denote the right and",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:3712",
+   "quote": "Hom(Pi ⊗ Z, Xk) = Hom(Pi,Xk ⊗ Z∗)",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3694",
+   "quote": "Now let C be a ﬁnite multitensor category",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:3713",
+   "quote": "follows from Proposition 1.13.6",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3696",
+   "quote": "Let Gr(C) be the Grothendieck ring of C",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3715",
+   "quote": "Then P ∗ is also projective.",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:3718",
+   "quote": "functor is isomorphic to Hom(1,P ⊗•)",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3714",
+   "quote": "Let P be a projective object in a multitensor",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 29,
+   "evidence": "MIT18_769S09_notes.txt:3718",
+   "quote": "The functor P ⊗• is exact",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:3719",
+   "quote": "by Proposition 1.13.6, any exact sequence splits after",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3724",
+   "quote": "For any ﬁnite tensor category C deﬁne an element",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3724",
+   "quote": "For any ﬁnite tensor category C deﬁne an element",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3726",
+   "quote": "R = FPdim(Xi)Pi",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3730",
+   "quote": "Let C be a ﬁnite tensor category.",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3730",
+   "quote": "Let C be a ﬁnite tensor category.",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3732",
+   "quote": "FPdim(C) := FPdim(RC)",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 150,
+   "evidence": "MIT18_769S09_notes.txt:3732",
+   "quote": "FPdim(C) := FPdim(RC)",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:3747",
+   "quote": "dim Hom(Pi ⊗ Z, Y ) = FPdim(Xi) dim Hom(Pi, Y ⊗ Z∗)",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:3754",
+   "quote": "are projective objects by Proposition 1.13.6",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3737",
+   "quote": "Z ∈ Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3736",
+   "quote": "Z ⊗ RC = RC ⊗ Z = FPdim(Z)RC",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 136,
+   "evidence": "MIT18_769S09_notes.txt:3750",
+   "quote": "= FPdim(Y ) FPdim(Z∗)",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 137,
+   "evidence": "MIT18_769S09_notes.txt:3738",
+   "quote": "is a regular element",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 138,
+   "evidence": "MIT18_769S09_notes.txt:3751",
+   "quote": "= FPdim(Y ) FPdim(Z)",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 150,
+   "evidence": "MIT18_769S09_notes.txt:3736",
+   "quote": "Z ⊗ RC = RC ⊗ Z = FPdim(Z)RC",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3768",
+   "quote": "A tensor category C is integral if Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:3768",
+   "quote": "A tensor category C is integral if Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:3766",
+   "quote": "A transitive unital Z+-ring A of ﬁnite rank is said",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 132,
+   "evidence": "MIT18_769S09_notes.txt:3766",
+   "quote": "A transitive unital Z+-ring A of ﬁnite rank is said",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3767",
+   "quote": "to be integral if FPdim",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3770",
+   "quote": "A ﬁnite tensor category C is integral if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3770",
+   "quote": "A ﬁnite tensor category C is integral if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 47,
+   "evidence": "MIT18_769S09_notes.txt:3774",
+   "quote": "it is enough to construct a quasi-ﬁber functor on C",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3772",
+   "quote": "quasi-Hopf algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 106,
+   "evidence": "MIT18_769S09_notes.txt:3774",
+   "quote": "it is enough to construct a quasi-ﬁber functor on C",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 145,
+   "evidence": "MIT18_769S09_notes.txt:3778",
+   "quote": "Using Proposition 1.46.2",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 153,
+   "evidence": "MIT18_769S09_notes.txt:3770",
+   "quote": "A ﬁnite tensor category C is integral if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3790",
+   "quote": "between integral ﬁnite tensor categories C over k",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3790",
+   "quote": "between integral ﬁnite tensor categories C over k",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 101,
+   "evidence": "MIT18_769S09_notes.txt:3791",
+   "quote": "quasi-Hopf algebras H over k, up to twist",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3791",
+   "quote": "quasi-Hopf algebras H over k, up to twist",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 153,
+   "evidence": "MIT18_769S09_notes.txt:3790",
+   "quote": "between integral ﬁnite tensor categories C over k",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3800",
+   "quote": "Now let C, D be ﬁnite tensor categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:3808",
+   "quote": "Also, it follows from Proposition 1.13.6",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 35,
+   "evidence": "MIT18_769S09_notes.txt:3801",
+   "quote": "Let F : C→D be a surjective quasi-tensor",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3800",
+   "quote": "Now let C, D be ﬁnite tensor categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 134,
+   "evidence": "MIT18_769S09_notes.txt:3806",
+   "quote": "of Frobenius-Perron dimensions of all the non-projective summands in",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 149,
+   "evidence": "MIT18_769S09_notes.txt:3833",
+   "quote": "As Q is both projective and injective",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 156,
+   "evidence": "MIT18_769S09_notes.txt:3801",
+   "quote": "Let F : C→D be a surjective quasi-tensor",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 35,
+   "evidence": "MIT18_769S09_notes.txt:3837",
+   "quote": "F : C→D be a quasi-tensor functor.",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 131,
+   "evidence": "MIT18_769S09_notes.txt:3842",
+   "quote": "are eigenvectors of a matrix with strictly positive entries with its",
+   "kind": "proof"
+  },
+  {
+   "from": 158,
+   "to": 150,
+   "evidence": "MIT18_769S09_notes.txt:3839",
+   "quote": "F (RC ) = FPdim(D) RD",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 151,
+   "evidence": "MIT18_769S09_notes.txt:3839",
+   "quote": "F (RC ) = FPdim(D) RD",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 156,
+   "evidence": "MIT18_769S09_notes.txt:3845",
+   "quote": "such exists by the surjectivity",
+   "kind": "proof"
+  },
+  {
+   "from": 158,
+   "to": 157,
+   "evidence": "MIT18_769S09_notes.txt:3840",
+   "quote": "By Theorem 1.49.3, F (RC) is a virtually projective object.",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 151,
+   "evidence": "MIT18_769S09_notes.txt:3848",
+   "quote": "one has FPdim(C) ≥ FPdim(D)",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 158,
+   "evidence": "MIT18_769S09_notes.txt:3854",
+   "quote": "for both sides of (1.50.1)",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 35,
+   "evidence": "MIT18_769S09_notes.txt:3863",
+   "quote": "quasi-tensor functor then D is also integral",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 150,
+   "evidence": "MIT18_769S09_notes.txt:3863",
+   "quote": "and the object F (RC) is",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 151,
+   "evidence": "MIT18_769S09_notes.txt:3864",
+   "quote": "free of rank FPdim(C)/ FPdim(D)",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 153,
+   "evidence": "MIT18_769S09_notes.txt:3862",
+   "quote": "If C is integral, and F : C →D is a surjective",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 154,
+   "evidence": "MIT18_769S09_notes.txt:3855",
+   "quote": "by Proposition 1.48.2",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 156,
+   "evidence": "MIT18_769S09_notes.txt:3862",
+   "quote": "If C is integral, and F : C →D is a surjective",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 157,
+   "evidence": "MIT18_769S09_notes.txt:3860",
+   "quote": "Then Theorem 1.49.3 and the fact that F (RC ) is proportional to RD",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 158,
+   "evidence": "MIT18_769S09_notes.txt:3860",
+   "quote": "the fact that F (RC ) is proportional to RD",
+   "kind": "proof"
+  },
+  {
+   "from": 161,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3876",
+   "quote": "quasi-Hopf algebra is a free module over its quasi",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 24,
+   "evidence": "MIT18_769S09_notes.txt:3897",
+   "quote": "Lρ is an invertible object.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 139,
+   "evidence": "MIT18_769S09_notes.txt:3900",
+   "quote": "mension of Lρ∗ is 1, and we are done.",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 148,
+   "evidence": "MIT18_769S09_notes.txt:3894",
+   "quote": "By Proposition 1.47.2",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:3901",
+   "quote": "PD(i) = P∗i ⊗ Lρ",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 25,
+   "evidence": "MIT18_769S09_notes.txt:3906",
+   "quote": "we use that ρ∗ = ∗ρ for an invertible object ρ",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 162,
+   "evidence": "MIT18_769S09_notes.txt:3906",
+   "quote": "we use that ρ∗ = ∗ρ for an invertible object ρ",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:3908",
+   "quote": "Pi∗∗ = L∗ ρ⊗P∗∗i⊗Lρ",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:3908",
+   "quote": "Pi∗∗ = L∗ ρ⊗P∗∗i⊗Lρ",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 163,
+   "evidence": "MIT18_769S09_notes.txt:3910",
+   "quote": "Pi∗∗ = Pi ∗∗ = (P∗i ⊗ Lρ)∗",
+   "kind": "proof"
+  },
+  {
+   "from": 165,
+   "to": 24,
+   "evidence": "MIT18_769S09_notes.txt:3911",
+   "quote": "Lρ is called the distinguished invertible object of C.",
+   "kind": "statement"
+  },
+  {
+   "from": 165,
+   "to": 162,
+   "evidence": "MIT18_769S09_notes.txt:3911",
+   "quote": "Lρ is called the distinguished invertible object of C.",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3914",
+   "quote": "Any ﬁnite dimensional quasi-Hopf algebra H is a",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3940",
+   "quote": "Any ﬁnite dimensional quasi-Hopf algebra ad",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 166,
+   "evidence": "MIT18_769S09_notes.txt:3946",
+   "quote": "Since H is Frobenius",
+   "kind": "proof"
+  },
+  {
+   "from": 168,
+   "to": 167,
+   "evidence": "MIT18_769S09_notes.txt:3941",
+   "quote": "mits a unique nonzero left integral up to scaling",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3958",
+   "quote": "Let H be a ﬁnite dimensional quasi-Hopf algebra,",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 163,
+   "evidence": "MIT18_769S09_notes.txt:3970",
+   "quote": "hence by Lemma 1.51.2",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 165,
+   "evidence": "MIT18_769S09_notes.txt:3959",
+   "quote": "Then Lρ coincides with the distinguished character",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 167,
+   "evidence": "MIT18_769S09_notes.txt:3961",
+   "quote": "We have xI = ε(x)I and",
+   "kind": "proof"
+  },
+  {
+   "from": 170,
+   "to": 34,
+   "evidence": "MIT18_769S09_notes.txt:3983",
+   "quote": "(Corollary 1.13.7)",
+   "kind": "proof"
+  },
+  {
+   "from": 170,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3976",
+   "quote": "quasi-Hopf algebra H are equivalent",
+   "kind": "statement"
+  },
+  {
+   "from": 170,
+   "to": 167,
+   "evidence": "MIT18_769S09_notes.txt:3978",
+   "quote": "where I is a left integral in H",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:3988",
+   "quote": "A ﬁnite tensor category C is unimodular if Lρ = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:3988",
+   "quote": "A ﬁnite tensor category C is unimodular if Lρ = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 105,
+   "evidence": "MIT18_769S09_notes.txt:3989",
+   "quote": "A ﬁnite dimensional quasi-Hopf algebra H is unimodular",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 165,
+   "evidence": "MIT18_769S09_notes.txt:3988",
+   "quote": "A ﬁnite tensor category C is unimodular if Lρ = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 167,
+   "evidence": "MIT18_769S09_notes.txt:3990",
+   "quote": "if left and right integrals in H coincide",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:4017",
+   "quote": "isomorphism of additive functors u : Id → ∗∗",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4014",
+   "quote": "Cartan matrix of a ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 33,
+   "evidence": "MIT18_769S09_notes.txt:4026",
+   "quote": "then 1 is a direct summand in P ⊗ P ∗, which is projective",
+   "kind": "proof"
+  },
+  {
+   "from": 172,
+   "to": 34,
+   "evidence": "MIT18_769S09_notes.txt:4027",
+   "quote": "So C is semisimple by Corollary 1.13.7",
+   "kind": "proof"
+  },
+  {
+   "from": 172,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4014",
+   "quote": "Cartan matrix of a ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 111,
+   "evidence": "MIT18_769S09_notes.txt:4020",
+   "quote": "This function is additive on exact",
+   "kind": "proof"
+  },
+  {
+   "from": 173,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:4041",
+   "quote": "Let C be a monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 0,
+   "evidence": "MIT18_769S09_notes.txt:4041",
+   "quote": "Let C be a monoidal",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:4098",
+   "quote": "monoidal functors F : C→ End(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4097",
+   "quote": "Structures of a C-module category on M are in a",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4115",
+   "quote": "A module subcategory of a C-module category M is",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4123",
+   "quote": "Let M1 and M2 be two module categories over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 26,
+   "evidence": "MIT18_769S09_notes.txt:4167",
+   "quote": "a locally ﬁnite abelian category M over k",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4165",
+   "quote": "Let C be a multitensor category over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4168",
+   "quote": "structure of a (left or right) C-module category",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 9,
+   "evidence": "MIT18_769S09_notes.txt:4185",
+   "quote": "a natural 1-1 correspondence with exact monoidal functors",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4184",
+   "quote": "Structures of a C-module category on M are in",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 178,
+   "evidence": "MIT18_769S09_notes.txt:4173",
+   "quote": "sider will be abelian, so we will usually suppress the word",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4193",
+   "quote": "Let M1, M2 be two module categories over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4197",
+   "quote": "The module category M is called the direct sum of",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 180,
+   "evidence": "MIT18_769S09_notes.txt:4197",
+   "quote": "The module category M is called the direct sum of",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4199",
+   "quote": "We will say that a module category M over C is in",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4200",
+   "quote": "decomposable if it is not equivalent to a nontrivial direct sum of module",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 181,
+   "evidence": "MIT18_769S09_notes.txt:4200",
+   "quote": "decomposable if it is not equivalent to a nontrivial direct sum of module",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 2,
+   "evidence": "MIT18_769S09_notes.txt:4217",
+   "quote": "category is a module category over C � Dop.",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4216",
+   "quote": "Let C, D be multitensor categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 144,
+   "evidence": "MIT18_769S09_notes.txt:4217",
+   "quote": "category is a module category over C",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4217",
+   "quote": "category is a module category over C",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4278",
+   "quote": "Let C be a multitensor category with enough pro",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4279",
+   "quote": "A module category M over C is called exact if for any",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4317",
+   "quote": "Let M be an exact module category over ﬁnite multi",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4317",
+   "quote": "Let M be an exact module category over ﬁnite multi",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4317",
+   "quote": "Let M be an exact module category over ﬁnite multi",
+   "kind": "statement"
+  },
+  {
+   "from": 186,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4324",
+   "quote": "has ﬁnitely many isomorphism classes of simple objects. Then M is",
+   "kind": "statement"
+  },
+  {
+   "from": 186,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4323",
+   "quote": "Assume that an exact module category M over C",
+   "kind": "statement"
+  },
+  {
+   "from": 187,
+   "to": 149,
+   "evidence": "MIT18_769S09_notes.txt:4329",
+   "quote": "The object P ∗ is projective by Proposition 1.47.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 187,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4326",
+   "quote": "Let M be an exact module category over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 188,
+   "to": 187,
+   "evidence": "MIT18_769S09_notes.txt:4339",
+   "quote": "of the form P0 ⊗ X and thus is injective.",
+   "kind": "proof"
+  },
+  {
+   "from": 190,
+   "to": 176,
+   "evidence": "MIT18_769S09_notes.txt:4374",
+   "quote": "M is the direct sum of its module subcategories Mi.",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 181,
+   "evidence": "MIT18_769S09_notes.txt:4374",
+   "quote": "M is the direct sum of its module subcategories Mi.",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4373",
+   "quote": "The module categories Mi are exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 189,
+   "evidence": "MIT18_769S09_notes.txt:4369",
+   "quote": "Thus our relation is an equivalence relation.",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4379",
+   "quote": "Let M1 and M2 be two module categories over",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4380",
+   "quote": "Then any additive module functor F",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4380",
+   "quote": "Assume that M1 is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 192,
+   "to": 121,
+   "evidence": "MIT18_769S09_notes.txt:4401",
+   "quote": "Let K be a Z+−ring with basis {bi}.",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 121,
+   "evidence": "MIT18_769S09_notes.txt:4417",
+   "quote": "A Z+−module M over a Z+−ring K is called irre",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 192,
+   "evidence": "MIT18_769S09_notes.txt:4417",
+   "quote": "A Z+−module M over a Z+−ring K is called irre",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:4423",
+   "quote": "Then Gr(M) is an irreducible Z+−module over Gr(C).",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 182,
+   "evidence": "MIT18_769S09_notes.txt:4422",
+   "quote": "Let M be an indecomposable exact module category",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4422",
+   "quote": "Let M be an indecomposable exact module category",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 193,
+   "evidence": "MIT18_769S09_notes.txt:4423",
+   "quote": "Then Gr(M) is an irreducible Z+−module over Gr(C).",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 122,
+   "evidence": "MIT18_769S09_notes.txt:4425",
+   "quote": "Let K be a based ring of ﬁnite rank over Z.",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 193,
+   "evidence": "MIT18_769S09_notes.txt:4426",
+   "quote": "only ﬁnitely many irreducible Z+−modules over K.",
+   "kind": "statement"
+  },
+  {
+   "from": 196,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4465",
+   "quote": "An algebra in a multitensor category C is a triple",
+   "kind": "statement"
+  },
+  {
+   "from": 197,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4513",
+   "quote": "A (right) module over an algebra (A, m, u)",
+   "kind": "statement"
+  },
+  {
+   "from": 198,
+   "to": 197,
+   "evidence": "MIT18_769S09_notes.txt:4526",
+   "quote": "The homomorphism between two A−modules",
+   "kind": "statement"
+  },
+  {
+   "from": 199,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4552",
+   "quote": "is a left module category over",
+   "kind": "statement"
+  },
+  {
+   "from": 199,
+   "to": 197,
+   "evidence": "MIT18_769S09_notes.txt:4538",
+   "quote": "Thus A−modules form a category ModC (A).",
+   "kind": "statement"
+  },
+  {
+   "from": 199,
+   "to": 198,
+   "evidence": "MIT18_769S09_notes.txt:4538",
+   "quote": "Thus A−modules form a category ModC (A).",
+   "kind": "statement"
+  },
+  {
+   "from": 200,
+   "to": 198,
+   "evidence": "MIT18_769S09_notes.txt:4536",
+   "quote": "We will denote this subspace by HomA(M1,M2).",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4582",
+   "quote": "equivalent if the module categories ModC (A) and ModC (B) are module",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4581",
+   "quote": "We say that two algebras A and B in C are Morita",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 199,
+   "evidence": "MIT18_769S09_notes.txt:4582",
+   "quote": "equivalent if the module categories ModC (A) and ModC (B) are module",
+   "kind": "statement"
+  },
+  {
+   "from": 202,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4597",
+   "quote": "the module category ModC (A) is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 202,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4596",
+   "quote": "An algebra A in the category C is called exact if",
+   "kind": "statement"
+  },
+  {
+   "from": 202,
+   "to": 199,
+   "evidence": "MIT18_769S09_notes.txt:4597",
+   "quote": "the module category ModC (A) is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 203,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4601",
+   "quote": "Let A be an algebra in C and let (M, pM ) be a right",
+   "kind": "statement"
+  },
+  {
+   "from": 203,
+   "to": 197,
+   "evidence": "MIT18_769S09_notes.txt:4602",
+   "quote": "A−module, and (N, pN ) be a left A−module.",
+   "kind": "statement"
+  },
+  {
+   "from": 204,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4608",
+   "quote": "Let A, B be two algebras in C.",
+   "kind": "statement"
+  },
+  {
+   "from": 204,
+   "to": 197,
+   "evidence": "MIT18_769S09_notes.txt:4611",
+   "quote": "The pair (M, p) is a left A−module.",
+   "kind": "statement"
+  },
+  {
+   "from": 205,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4626",
+   "quote": "Let M be a module category over C and",
+   "kind": "statement"
+  },
+  {
+   "from": 206,
+   "to": 18,
+   "evidence": "MIT18_769S09_notes.txt:4648",
+   "quote": "Hom(X ⊗ M1,M2) ∼= Hom(M1,M2) ⊗ X∗",
+   "kind": "statement"
+  },
+  {
+   "from": 206,
+   "to": 22,
+   "evidence": "MIT18_769S09_notes.txt:4657",
+   "quote": "= Hom(Y ⊗ X, Hom(M1,M2)) = Hom(Y, Hom(M1,M2) ⊗ X∗)",
+   "kind": "proof"
+  },
+  {
+   "from": 206,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4646",
+   "quote": "Hom(X ⊗ M1,M2) ∼= Hom(X, Hom(M1,M2))",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4663",
+   "quote": "is a module functor M→C;",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4662",
+   "quote": "the assignment M2 �→ Hom(M1,M2)",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 206,
+   "evidence": "MIT18_769S09_notes.txt:4666",
+   "quote": "This follows from the isomorphisms (4) and (3) of Lemma 2.10.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 208,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4668",
+   "quote": "Assume that M is an exact module category.",
+   "kind": "statement"
+  },
+  {
+   "from": 208,
+   "to": 191,
+   "evidence": "MIT18_769S09_notes.txt:4667",
+   "quote": "Corollary 2.10.5 and Proposition 2.7.8 imply",
+   "kind": "proof"
+  },
+  {
+   "from": 208,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4669",
+   "quote": "the functor Hom(•, •) is exact in each variable.",
+   "kind": "statement"
+  },
+  {
+   "from": 208,
+   "to": 207,
+   "evidence": "MIT18_769S09_notes.txt:4667",
+   "quote": "Corollary 2.10.5 and Proposition 2.7.8 imply",
+   "kind": "proof"
+  },
+  {
+   "from": 209,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4680",
+   "quote": "that any module functor from M1 to M2 is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4678",
+   "quote": "Then M is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4677",
+   "quote": "the bifunctor Hom is exact in the second variable",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 206,
+   "evidence": "MIT18_769S09_notes.txt:4683",
+   "quote": "one has Hom(P ⊗ N, ) = Hom(P, Hom(N, ))",
+   "kind": "proof"
+  },
+  {
+   "from": 209,
+   "to": 207,
+   "evidence": "MIT18_769S09_notes.txt:4691",
+   "quote": "Hom(N, •) : M1 → C is exact, since it is a module functor.",
+   "kind": "proof"
+  },
+  {
+   "from": 210,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4723",
+   "quote": "Let M be a module category over C, and assume",
+   "kind": "statement"
+  },
+  {
+   "from": 210,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4729",
+   "quote": "ModC (A) is an equivalence of module categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 210,
+   "to": 199,
+   "evidence": "MIT18_769S09_notes.txt:4729",
+   "quote": "ModC (A) is an equivalence of module categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 210,
+   "to": 200,
+   "evidence": "MIT18_769S09_notes.txt:4735",
+   "quote": "HomA(F (N1),F (N2)) = HomA(X ⊗ A, F (N2)) = Hom(X, F (N2))",
+   "kind": "proof"
+  },
+  {
+   "from": 210,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4725",
+   "quote": "The functor Hom(M, ) is right exact",
+   "kind": "statement"
+  },
+  {
+   "from": 210,
+   "to": 206,
+   "evidence": "MIT18_769S09_notes.txt:4733",
+   "quote": "Indeed, F (N1) = Hom(M, X ⊗ M) = X ⊗ A",
+   "kind": "proof"
+  },
+  {
+   "from": 211,
+   "to": 43,
+   "evidence": "MIT18_769S09_notes.txt:4786",
+   "quote": "generates Gr(M) as Z+−module over Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4783",
+   "quote": "Let M be a ﬁnite module category over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 173,
+   "evidence": "MIT18_769S09_notes.txt:4783",
+   "quote": "Let M be a ﬁnite module category over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4784",
+   "quote": "there exists an algebra A ∈C and a module equivalence",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4785",
+   "quote": "Let M be an exact module category over C",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 192,
+   "evidence": "MIT18_769S09_notes.txt:4786",
+   "quote": "generates Gr(M) as Z+−module over Gr(C)",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4784",
+   "quote": "there exists an algebra A ∈C and a module equivalence",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 199,
+   "evidence": "MIT18_769S09_notes.txt:4784",
+   "quote": "a module equivalence M� ModC (A)",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4787",
+   "quote": "where A = Hom(M, M)",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 210,
+   "evidence": "MIT18_769S09_notes.txt:4771",
+   "quote": "We have two situations where condition 1 of Theorem 2.11.2 is sat",
+   "kind": "proof"
+  },
+  {
+   "from": 212,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4791",
+   "quote": "A module functor morphism from (F, s) to (G, t)",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4808",
+   "quote": "functors consisting of right exact module functors",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 196,
+   "evidence": "MIT18_769S09_notes.txt:4812",
+   "quote": "for some algebras A, B ∈C.",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 199,
+   "evidence": "MIT18_769S09_notes.txt:4811",
+   "quote": "Assume that M1 � ModC (A) and M2 � ModC (B)",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 203,
+   "evidence": "MIT18_769S09_notes.txt:4814",
+   "quote": "bimodule M to the functor •⊗A M.",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 204,
+   "evidence": "MIT18_769S09_notes.txt:4813",
+   "quote": "lent to the category of A − B−bimodules",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 212,
+   "evidence": "MIT18_769S09_notes.txt:4803",
+   "quote": "It is easy to see that the module functors with module functor mor",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4818",
+   "quote": "The category F unC(M1, M2) of right exact module",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 212,
+   "evidence": "MIT18_769S09_notes.txt:4803",
+   "quote": "It is easy to see that the module functors with module functor mor",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 213,
+   "evidence": "MIT18_769S09_notes.txt:4817",
+   "quote": "Thus we have the following",
+   "kind": "proof"
+  },
+  {
+   "from": 215,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4845",
+   "quote": "The bifunctor of composition F unC(M2, M3)",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4844",
+   "quote": "Let M1, M2, M3 be exact module categories over",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 191,
+   "evidence": "MIT18_769S09_notes.txt:4847",
+   "quote": "This is an immediate consequence of Proposition 2.7.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 216,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4850",
+   "quote": "functor F ∈ F unC (M1, M2) has both right and left adjoint.",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4849",
+   "quote": "Let M1, M2 be exact module categories over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 191,
+   "evidence": "MIT18_769S09_notes.txt:4848",
+   "quote": "Another immediate consequence of Proposition 2.7.8 is the following",
+   "kind": "proof"
+  },
+  {
+   "from": 217,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4853",
+   "quote": "Any functor F ∈ F unC (M1, M2) maps projective objects to projectives.",
+   "kind": "statement"
+  },
+  {
+   "from": 217,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4852",
+   "quote": "Let M1, M2 be exact module categories over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4856",
+   "quote": "The category F unC (M1, M2) is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4856",
+   "quote": "The category F unC (M1, M2) is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4835",
+   "quote": "M1 and M2 be two exact module categories over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 210,
+   "evidence": "MIT18_769S09_notes.txt:4857",
+   "quote": "We are going to use Theorem 2.11.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 218,
+   "to": 212,
+   "evidence": "MIT18_769S09_notes.txt:4803",
+   "quote": "It is easy to see that the module functors with module functor mor",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 213,
+   "evidence": "MIT18_769S09_notes.txt:4859",
+   "quote": "see that the category F unC(M1, M2) is equivalent to the category of",
+   "kind": "proof"
+  },
+  {
+   "from": 219,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4865",
+   "quote": "F unC (M, M) is a rigid monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 219,
+   "to": 212,
+   "evidence": "MIT18_769S09_notes.txt:4865",
+   "quote": "F unC (M, M) is a rigid monoidal category.",
+   "kind": "statement"
+  },
+  {
+   "from": 220,
+   "to": 190,
+   "evidence": "MIT18_769S09_notes.txt:4873",
+   "quote": "to subcategories Mi. Each such projector is a simple object.",
+   "kind": "statement"
+  },
+  {
+   "from": 220,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4872",
+   "quote": "The unit object 1 ∈C∗ is a direct sum of projectors",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4887",
+   "quote": "The module category M over C∗ is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 213,
+   "evidence": "MIT18_769S09_notes.txt:4891",
+   "quote": "category C∗ is identiﬁed with the category Bimod(A)op of A−bimodules",
+   "kind": "proof"
+  },
+  {
+   "from": 221,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4887",
+   "quote": "The module category M over C∗ is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4912",
+   "quote": "Thus for any exact module category M over C the category (C∗ )∗",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 213,
+   "evidence": "MIT18_769S09_notes.txt:4917",
+   "quote": "gory C∗ is identiﬁed with the category Bimod(A)op.",
+   "kind": "proof"
+  },
+  {
+   "from": 222,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4914",
+   "quote": "The functor can : C→ (C∗ )∗ is an equivalence of",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 221,
+   "evidence": "MIT18_769S09_notes.txt:4912",
+   "quote": "Thus for any exact module category M over C the category (C∗ )∗",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 223,
+   "evidence": "MIT18_769S09_notes.txt:4938",
+   "quote": "It follows from the Lemma that any B−bimodule is of the form",
+   "kind": "proof"
+  },
+  {
+   "from": 223,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:4927",
+   "quote": "Any left B−module is of the form ∗A ⊗ X for some",
+   "kind": "statement"
+  },
+  {
+   "from": 223,
+   "to": 197,
+   "evidence": "MIT18_769S09_notes.txt:4927",
+   "quote": "Any left B−module is of the form ∗A ⊗ X for some",
+   "kind": "statement"
+  },
+  {
+   "from": 223,
+   "to": 210,
+   "evidence": "MIT18_769S09_notes.txt:4936",
+   "quote": "= ∗A ⊗ A = B and the statement follows from",
+   "kind": "proof"
+  },
+  {
+   "from": 224,
+   "to": 28,
+   "evidence": "MIT18_769S09_notes.txt:4945",
+   "quote": "Assume that C is a ﬁnite tensor (not only multi",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 44,
+   "evidence": "MIT18_769S09_notes.txt:4945",
+   "quote": "Assume that C is a ﬁnite tensor (not only multi",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 182,
+   "evidence": "MIT18_769S09_notes.txt:4946",
+   "quote": "Then an exact module category M over C is inde",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4946",
+   "quote": "Then an exact module category M over C is inde",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4947",
+   "quote": "composable over C∗ .M",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 220,
+   "evidence": "MIT18_769S09_notes.txt:4948",
+   "quote": "This is an immediate consequence of Theorem 2.14.6 and Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 224,
+   "to": 222,
+   "evidence": "MIT18_769S09_notes.txt:4948",
+   "quote": "This is an immediate consequence of Theorem 2.14.6 and Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 225,
+   "to": 149,
+   "evidence": "MIT18_769S09_notes.txt:4966",
+   "quote": "results follows from projectivity of P ∗ and",
+   "kind": "proof"
+  },
+  {
+   "from": 225,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4953",
+   "quote": "The module category FunC (M1, M) over C∗ is ex",
+   "kind": "statement"
+  },
+  {
+   "from": 225,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4953",
+   "quote": "The module category FunC (M1, M) over C∗ is ex",
+   "kind": "statement"
+  },
+  {
+   "from": 225,
+   "to": 187,
+   "evidence": "MIT18_769S09_notes.txt:4967",
+   "quote": "Lemma 2.7.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 225,
+   "to": 213,
+   "evidence": "MIT18_769S09_notes.txt:4956",
+   "quote": "C∗ with the category of A−bimodules and FunC(M1, M) with the",
+   "kind": "proof"
+  },
+  {
+   "from": 225,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4953",
+   "quote": "The module category FunC (M1, M) over C∗ is ex",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 177,
+   "evidence": "MIT18_769S09_notes.txt:4974",
+   "quote": "FunC(M1, M)",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4973",
+   "quote": "Let M be an exact module category over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4978",
+   "quote": "categories over C and over C∗ .M",
+   "kind": "statement"
+  },
+  {
+   "from": 227,
+   "to": 2,
+   "evidence": "MIT18_769S09_notes.txt:4983",
+   "quote": "Z(C) := CC∗�Cop",
+   "kind": "statement"
+  },
+  {
+   "from": 227,
+   "to": 144,
+   "evidence": "MIT18_769S09_notes.txt:4983",
+   "quote": "The corresponding dual category Z(C) := CC∗",
+   "kind": "statement"
+  },
+  {
+   "from": 227,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4983",
+   "quote": "The corresponding dual category Z(C) := CC∗",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 19,
+   "evidence": "MIT18_769S09_notes.txt:4996",
+   "quote": "∗Hom∗MC (Z, X) ⊗ Y.",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 184,
+   "evidence": "MIT18_769S09_notes.txt:4987",
+   "quote": "Let M be an exact module category over C.",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 205,
+   "evidence": "MIT18_769S09_notes.txt:4996",
+   "quote": "HomC (X, Y ) ⊗ Z",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 219,
+   "evidence": "MIT18_769S09_notes.txt:4996",
+   "quote": "∗Hom∗MC (Z, X) ⊗ Y.",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 222,
+   "evidence": "MIT18_769S09_notes.txt:4997",
+   "quote": "By Theorem 2.14.6 it is enough to ﬁnd a canonical isomorphism",
+   "kind": "proof"
+  }
+ ]
+}

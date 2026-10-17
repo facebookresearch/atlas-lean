@@ -1,0 +1,532 @@
+{
+ "book": "IntroductionToPartialDifferentialEquations",
+ "source": "MIT OCW 18.152 Introduction to PDEs, Fall 2011 (Jared Speck), class meeting notes 1-12, 15, 24 as text/mit18_152f11_lec_NN.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 1,
+   "evidence": "mit18_152f11_lec_01.txt:107",
+   "quote": "for some linear operator L and some function f of the coordinates.",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 2,
+   "evidence": "mit18_152f11_lec_01.txt:108",
+   "quote": "If f = 0, then we say that the PDE is homogeneous.",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 1,
+   "evidence": "mit18_152f11_lec_01.txt:123",
+   "quote": "(4.0.12) L",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 2,
+   "evidence": "mit18_152f11_lec_01.txt:114",
+   "quote": "are solutions to the linear PDE",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 1,
+   "evidence": "mit18_152f11_lec_01.txt:148",
+   "quote": "Lw =L(uI +uH) =LuI +LuH =f + 0 =f",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 2,
+   "evidence": "mit18_152f11_lec_01.txt:138",
+   "quote": "the set of all solutions to the homogeneous linear PDE",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 3,
+   "evidence": "mit18_152f11_lec_01.txt:140",
+   "quote": "solution to the inhomogeneous linear PDE",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 8,
+   "evidence": "mit18_152f11_lec_01.txt:278",
+   "quote": "that acts on vectorﬁelds.",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 8,
+   "evidence": "mit18_152f11_lec_01.txt:294",
+   "quote": "F(σ)· N(σ)dσ.",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "mit18_152f11_lec_01.txt:292",
+   "quote": "∇· ˆ(7.2.3) F(x,y,z )dxdydz =",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 6,
+   "evidence": "mit18_152f11_lec_02.txt:817",
+   "quote": "(4.0.16) f A m sin mπx C0",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 7,
+   "evidence": "mit18_152f11_lec_02.txt:777",
+   "quote": "f 2L2",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "mit18_152f11_lec_04.txt:87",
+   "quote": "Then by Theorem 1.1, since u≤ 0 on ∂pQT we have that u≤ 0 on QT.",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:28",
+   "quote": "ΓD(t,x) is a solution to the heat equation (1.0.1) when f = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:51",
+   "quote": "ΓD(t,x) has the following properties:",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:87",
+   "quote": "ΓD(t,x)φ (x)dnx =φ(0)",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 16,
+   "evidence": "mit18_152f11_lec_05.txt:88",
+   "quote": "Using Property (3) of Lemma 1.0.2",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:199",
+   "quote": "ΓD(t,x) is a solution to the heat equation (1.0.1)",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 15,
+   "evidence": "mit18_152f11_lec_05.txt:198",
+   "quote": "summarize the above results.",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_152f11_lec_05.txt:202",
+   "quote": "lim ΓD(t,x) = δ(x)",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "mit18_152f11_lec_05.txt:191",
+   "quote": "1.0.3 can be restated as",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:306",
+   "quote": "g(y)ΓD(t,x",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 19,
+   "evidence": "mit18_152f11_lec_05.txt:397",
+   "quote": "Recall that by Proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "mit18_152f11_lec_05.txt:304",
+   "quote": "[g (·)∗ Γ nD(t,·)](x)",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "mit18_152f11_lec_05.txt:412",
+   "quote": "we have used Proposition 1.1.1 to diﬀerentiate under the integral",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 12,
+   "evidence": "mit18_152f11_lec_05.txt:446",
+   "quote": "(ΓD(t,·)∗g)(x )",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 20,
+   "evidence": "mit18_152f11_lec_05.txt:446",
+   "quote": "(ΓD(t,·)∗g)(x )",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "mit18_152f11_lec_05.txt:435",
+   "quote": "be as in Theorem 1.1",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 10,
+   "evidence": "mit18_152f11_lec_05.txt:512",
+   "quote": "the divergence theorem, and recalling that",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 21,
+   "evidence": "mit18_152f11_lec_05.txt:509",
+   "quote": "ensure that we can diﬀerentiate under the integral",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 25,
+   "evidence": "mit18_152f11_lec_05.txt:501",
+   "quote": "Then the total thermal energy of u( t,x) is constant in time",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 10,
+   "evidence": "mit18_152f11_lec_06.txt:285",
+   "quote": "parts via the divergence theorem:",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 10,
+   "evidence": "mit18_152f11_lec_06.txt:428",
+   "quote": "By the divergence",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "mit18_152f11_lec_06.txt:517",
+   "quote": "veriﬁes the mean value property (4.0.12a)",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "mit18_152f11_lec_06.txt:664",
+   "quote": "Theorem 5.1 implies that w is",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "mit18_152f11_lec_07.txt:105",
+   "quote": "≠ 0, then ∆Φ(x)= 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 20,
+   "evidence": "mit18_152f11_lec_07.txt:164",
+   "quote": "u(x)= (Φ f x",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 21,
+   "evidence": "mit18_152f11_lec_07.txt:223",
+   "quote": "(we use one of our prior propositions to justify this)",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 31,
+   "evidence": "mit18_152f11_lec_07.txt:164",
+   "quote": "u(x)= (Φ f x",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "mit18_152f11_lec_07.txt:315",
+   "quote": "Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 17,
+   "evidence": "mit18_152f11_lec_07.txt:481",
+   "quote": "x,y)=δ(",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 31,
+   "evidence": "mit18_152f11_lec_07.txt:491",
+   "quote": "Let Φ be the fundamental",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "mit18_152f11_lec_07.txt:495",
+   "quote": "Then the Green function G x,y for Ω can be decomposed as",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 31,
+   "evidence": "mit18_152f11_lec_07.txt:555",
+   "quote": "Let Φ be the fundamental solution (1.0.3)",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 35,
+   "evidence": "mit18_152f11_lec_07.txt:777",
+   "quote": "fΩ (y)G(x,y)dny−",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 36,
+   "evidence": "mit18_152f11_lec_07.txt:791",
+   "quote": "(2.0.31) G(x,y)= Φ(x−y",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "mit18_152f11_lec_07.txt:778",
+   "quote": "Applying Proposition 2.0.3, we have that",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "mit18_152f11_lec_07.txt:1095",
+   "quote": "follows immediately from Theorem 2.2 and (3.0.50)",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 42,
+   "evidence": "mit18_152f11_lec_09.txt:359",
+   "quote": "follows immediately from Theorem 1.1 and Lemma 2.0.1",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 28,
+   "evidence": "mit18_152f11_lec_07.txt:1126",
+   "quote": "with simple inequalities and the mean value property.",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 39,
+   "evidence": "mit18_152f11_lec_07.txt:1126",
+   "quote": "By Theorem 3.1, we have that",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 40,
+   "evidence": "mit18_152f11_lec_07.txt:1196",
+   "quote": "and veriﬁes the hypotheses of Theorem 4.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 35,
+   "evidence": "mit18_152f11_lec_09.txt:285",
+   "quote": "The Green function for a ball",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 36,
+   "evidence": "mit18_152f11_lec_09.txt:91",
+   "quote": "from the decomposition G x,y Φ x y φ x,y",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "mit18_152f11_lec_10.txt:605",
+   "quote": "of Theorem 4.1. Motivated by this, we deﬁne",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 10,
+   "evidence": "mit18_152f11_lec_11.txt:222",
+   "quote": "and applying divergence theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 21,
+   "evidence": "mit18_152f11_lec_11.txt:299",
+   "quote": "to diﬀerentiate under the integral in",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 44,
+   "evidence": "mit18_152f11_lec_11.txt:320",
+   "quote": "and the Corollary to",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 45,
+   "evidence": "mit18_152f11_lec_11.txt:315",
+   "quote": "Under the assumptions of Proposition",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 45,
+   "evidence": "mit18_152f11_lec_12.txt:131",
+   "quote": "By the deﬁnition of F and G (see the Spherical averages",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "mit18_152f11_lec_12.txt:87",
+   "quote": "tation formula for U(t,r ;x) corollary",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 48,
+   "evidence": "mit18_152f11_lec_12.txt:425",
+   "quote": "If X is timelike",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "mit18_152f11_lec_12.txt:425",
+   "quote": "Λ is a Lorentz transformation",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 48,
+   "evidence": "mit18_152f11_lec_12.txt:541",
+   "quote": "L and L are null vectors normalized by m L,",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 52,
+   "evidence": "mit18_152f11_lec_12.txt:675",
+   "quote": "is a null frame,",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 101,
+   "evidence": "mit18_152f11_lec_24.txt:152",
+   "quote": "According to the ODEs (2.0.11a)",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 102,
+   "evidence": "mit18_152f11_lec_24.txt:158",
+   "quote": "Consequently, by Proposition 2.0.2, we have that",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 103,
+   "evidence": "mit18_152f11_lec_24.txt:154",
+   "quote": "- (2.0.11b) and Proposition 2.0.3, γ(s) is a straight line",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 8,
+   "evidence": "mit18_152f11_lec_24.txt:20",
+   "quote": "known as the integral curves of the vectorﬁeld X",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 7,
+   "evidence": "mit18_152f11_lec_24.txt:94",
+   "quote": "the spatial L2 norm of u(t,·) is preserved in time.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 101,
+   "evidence": "mit18_152f11_lec_24.txt:122",
+   "quote": "are constant along the characteristic curves (2.0.11a) - (2.0.11b).",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 101,
+   "evidence": "mit18_152f11_lec_24.txt:130",
+   "quote": "(2.0.11a) - (2.0.11b) are straight lines in R1+1.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 102,
+   "evidence": "mit18_152f11_lec_24.txt:137",
+   "quote": "using the ODE (2.0.11b) and the computation (2.0.12)",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 98,
+   "evidence": "mit18_152f11_lec_24.txt:188",
+   "quote": "Therefore, by Theorem 3.1",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 102,
+   "evidence": "mit18_152f11_lec_24.txt:175",
+   "quote": "Then by Proposition 2.0.2",
+   "kind": "proof"
+  }
+ ]
+}

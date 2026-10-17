@@ -1,0 +1,18 @@
+# Sylvester Sequence Wanted
+
+- [Sylvester Number](sylvester-number.md)
+- [Proposition 1, divisibility](sylvester-sub-dvd.md)
+- [Proposition 1, congruence (5)](sylvester-mod-eq-three-mod-four.md)
+- [Proposition 1, congruence (6)](sylvester-mod-eq-seven-mod-thirty-six.md)
+- [Proposition 1, congruence (7)](sylvester-mod-eq-forty-three-mod-1764.md)
+- [Proposition 2, divisibility](sylvester-sq-add-one-dvd-sub.md)
+- [Proposition 2, congruence (9), even indices](sylvester-even-index-mod-ten.md)
+- [Proposition 2, congruence (9), odd indices](sylvester-odd-index-mod-ten.md)
+- [Corollary 1(a)](mersenne-sylvester-values-eq.md)
+- [Corollary 1(b)](triangular-sylvester-values-eq.md)
+- [Corollary 1(c)](sylvester-not-perfect.md)
+- [Corollary 1(d)](sylvester-exists-prime-divisor-mod-four.md)
+- [Proposition 3(a)](sylvester-not-perfect-power.md)
+- [Proposition 3(b)](sylvester-ne-pow-add-or-sub-one.md)
+- [Theorem 1, `C = 3`](lebesgue-nagell-three-solutions-iff.md)
+- [Theorem 1, `C = 7`](lebesgue-nagell-seven-solutions-iff.md)

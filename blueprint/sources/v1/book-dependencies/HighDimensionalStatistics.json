@@ -1,0 +1,770 @@
+{
+ "book": "HighDimensionalStatistics",
+ "source": "MIT 18.S997 High-Dimensional Statistics (Spring 2015) course notes by Philippe Rigollet, MIT OCW PDF converted to text (MIT18_S997S15_CourseNotes.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:788",
+   "quote": "Let X ∼ subG(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 2,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:863",
+   "quote": "If (1.3) holds, then for any s> 0, it holds",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:871",
+   "quote": "(2σ2s2)k/2kΓ(k/2) ≤ 1 +",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:908",
+   "quote": "a vector of independent sub-Gaussian",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:916",
+   "quote": "Xi ∼ subG(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:914",
+   "quote": "Using a Chernoﬀ bound, we immediately get the following corollary",
+   "kind": "proof"
+  },
+  {
+   "from": 7,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:941",
+   "quote": "In particular, X ∼ subG( ) .4",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 7,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:966",
+   "quote": "Using a Chernoﬀ bound, we get the following (extremely useful) result.",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1077",
+   "quote": "Let X ∼ subG(σ2) then the random variable",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 3,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1105",
+   "quote": "(Lemma 1.4)",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1078",
+   "quote": "is sub-exponential: Z ∼ subE(16σ2).",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 10,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1118",
+   "quote": "Xi ∼ subE(λ)",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1160",
+   "quote": "Xi ∼ subG(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 2,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1209",
+   "quote": "where we used Lemma 1.3 in the last inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1270",
+   "quote": "are sub-Gaussian",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1268",
+   "quote": "It immediately yields the following theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1311",
+   "quote": "the unit Euclidean ball B2 has an ε-net N",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1335",
+   "quote": "Let X ∈ I Rd be a sub-Gaussian random vector with variance",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 13,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1353",
+   "quote": "Therefore, using Theorem 1.14, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 16,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1345",
+   "quote": "observe that for every θ ∈ B2, there exists z ∈ N and",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 17,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1345",
+   "quote": "satisﬁes |N | ≤ 6d",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1638",
+   "quote": "holds where ε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 3,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1679",
+   "quote": "observe that Lemma 1.4 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 18,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1686",
+   "quote": "it follows from the last step in the proof 1 of",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1759",
+   "quote": "Observe now that since ε ∼ subGn(σ2),then for any column Xj such that",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 15,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1761",
+   "quote": "Therefore, applyingˆTheorem 1.16, we get the bound",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1745",
+   "quote": "assume the conditions of Theorem 2.2",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 18,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1865",
+   "quote": "It follows from the proof of Theorem 1.19 that",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1832",
+   "quote": "conditions of Theorem 2.2",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 22,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1928",
+   "quote": "Under the assumptions of Theorem 2.6",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1927",
+   "quote": "It immediately leads to the following corollary:",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 22,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:1945",
+   "quote": "Under the assumptions of Theorem 2.6",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 13,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2119",
+   "quote": "and recall that Theorem 1.14 yie",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2102",
+   "quote": "hard thresholding estimator θhrd with threshold",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 34,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2101",
+   "quote": "tion ORT or, equivalenty, the sub-Gaussian sequence model (2.9)",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2271",
+   "quote": "holds whereε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 18,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2348",
+   "quote": "using the ε-net argument from Theorem 1.19",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 23,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2374",
+   "quote": "by Lemma 2.7",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2272",
+   "quote": "Then, the BIC estimator θbic with regularization parameter",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2410",
+   "quote": "holds whereε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 28,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2412",
+   "quote": "Then, the Lasso estimator θL with regularization parameter",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 8,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2543",
+   "quote": "(Hoeﬀding: Theorem 1.9)",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 35,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2504",
+   "quote": "X has incoherence k with probability 1 −δ as soon as",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 35,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2560",
+   "quote": "sumption INC(k)",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2586",
+   "quote": "subG",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 28,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2589",
+   "quote": "Then the Lasso estimator θL with regularization parameter",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2634",
+   "quote": "Schwarz inequality and Lemma 2.17 respectively",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 35,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2589",
+   "quote": "INC ˆ(k)",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2878",
+   "quote": "withε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2908",
+   "quote": "withε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2971",
+   "quote": "withε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 32,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3017",
+   "quote": "Schwarz inequality and Lemma 2.17 respectively",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 35,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:2973",
+   "quote": "assumption INC(k) holds",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 38,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3106",
+   "quote": "Assume that the assumptions of Theorem 3.4 hold",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 40,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3123",
+   "quote": "it follows from Maurey’s argument that there exist",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3320",
+   "quote": "f ∈W (β,L ) can be represented as",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3413",
+   "quote": "The Sobolev ellipsoids enjoy the following properties",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 34,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3428",
+   "quote": "satisﬁes the ORT condition.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 43,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3523",
+   "quote": "f ∈ Θ(β,Q ), β >1/2",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3622",
+   "quote": "ε ∼ subG (σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 37,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3591",
+   "quote": "proved (Theorem 3.3) an oracle inequality for the MSE",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 43,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3622",
+   "quote": "with f ∈ Θ(β,Q )",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 45,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3599",
+   "quote": "where we used Lemma 3.13 in the last equality.",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3638",
+   "quote": "Using now Lemma 3.14 and σ2 ≤ 1, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3673",
+   "quote": "ε ∼ subGn(σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 38,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3675",
+   "quote": "with regularization parameter given by (3.5)",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 39,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3676",
+   "quote": "(resp. (3.6))",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 43,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3673",
+   "quote": "f ∈ Θ(β,Q )",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 45,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3709",
+   "quote": "Lemma 3.13, it yields",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 46,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:3708",
+   "quote": "Next, it follows from ( 3.11) that",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4001",
+   "quote": "A ∼ subGd×T (σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 17,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4010",
+   "quote": "It follows from Lemma 1.18",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 34,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4055",
+   "quote": "the assumption ORT or, equivalently, the sub-Gaussian matrix model (4.2).",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 49,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4056",
+   "quote": "the singular value thresholding estimator Θsvt with threshold",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4072",
+   "quote": "it follows from Lemma 4.2 that ‖F ‖op ≤τ",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4167",
+   "quote": "Next, note that Lemma 4.2 yields ‖Φ⊤E‖2op ≤nτ 2",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4136",
+   "quote": "τ is deﬁned in (4.3) satisﬁes",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4264",
+   "quote": "X ∼ subGd(‖Σ‖op)",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 10,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4357",
+   "quote": "∼ subE(16).",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 11,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4343",
+   "quote": "it follows from Lemma 1.12 that",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 12,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4358",
+   "quote": "Applying now Bernstein’s inequalit",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 17,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4283",
+   "quote": "Let N be a 1/4-net for Sd−1 such that |N | ≤ 12d.",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 54,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4485",
+   "quote": "Let Σ satisfy the spiked covari-",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4521",
+   "quote": "X ∼ subGd(‖Σ‖op)",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 53,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4519",
+   "quote": "Combined with Theorem 4.6, we immediately get the following corollary.",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 54,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4522",
+   "quote": "satisﬁes the spiked covariance model",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 55,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4519",
+   "quote": "Combined with Theorem 4.6, we immediately get the following corollary.",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 1,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4560",
+   "quote": "X ∼ subGd(‖Σ‖op)",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 23,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4606",
+   "quote": "Using Lemma 2.7, we get that",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 53,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4606",
+   "quote": "where we used ( 4.7) in the second inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 54,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4561",
+   "quote": "satisﬁes the spiked covariance model for v such",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4947",
+   "quote": "the Neyman-Pearson Lemma gives ( iv) = ( v).",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:4999",
+   "quote": "1. KL(I P, Q) ≥ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 61,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5051",
+   "quote": "TV(I P, Q) ≤",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 62,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5053",
+   "quote": "KL(I P, Q).",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 61,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5124",
+   "quote": "(Prop.-def. 5.4)",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 64,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5125",
+   "quote": "(Lemma 5.8)",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 62,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5155",
+   "quote": "KL≥ − M j,k=1 (Pj,Pk)",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5277",
+   "quote": "The proof then follows from Fano’s inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 8,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5312",
+   "quote": "Hoeﬀding’s inequality then yields",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 58,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5359",
+   "quote": "The minimax rate of estimation of over I Rd in the Gaussian",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 67,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5356",
+   "quote": "Applying now Theorem 5.11 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5346",
+   "quote": "apply the Varshamov-Gilbert Lemma to obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 58,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5525",
+   "quote": "The minimax rate of estimation over B0(k) in the Gaussian sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 67,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5519",
+   "quote": "Applying now Theorem 5.11 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5509",
+   "quote": "Apply the sparse Varshamov-Gilbert lemma to obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 58,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5568",
+   "quote": "minimax rate of estimation over B1(R) in the Gaussian sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 67,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5562",
+   "quote": "Applying now Theorem 5.11 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 70,
+   "evidence": "MIT18_S997S15_CourseNotes.txt:5547",
+   "quote": "obtained from the sparse Varshamov-Gilbert Lemma 5.14",
+   "kind": "proof"
+  }
+ ]
+}

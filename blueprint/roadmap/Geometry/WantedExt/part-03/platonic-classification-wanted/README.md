@@ -1,0 +1,18 @@
+# Platonic Classification Wanted
+
+- [E](e.md)
+- [Convex Polytope](convex-polytope.md)
+- [To Set](to-set.md)
+- [Dim](dim.md)
+- [Is Full Dim](is-full-dim.md)
+- [Is Face](is-face.md)
+- [Face Dim](face-dim.md)
+- [Flag](flag.md)
+- [Isom](isom.md)
+- [Is Symmetry](is-symmetry.md)
+- [Is Regular](is-regular.md)
+- [Similar](similar.md)
+- [Regular Polytopes](regular-polytopes.md)
+- [Regular Similar](regular-similar.md)
+- [Platonic Count](platonic-count.md)
+- [Platonic classification](platonic-classification.md)

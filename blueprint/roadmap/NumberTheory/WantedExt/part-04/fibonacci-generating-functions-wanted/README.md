@@ -1,0 +1,15 @@
+# Fibonacci Generating Functions Wanted
+
+- [Gibonacci Generating Value](gibonacci-generating-value.md)
+- [Gibonacci Generating Value zero](gibonacci-generating-value-zero.md)
+- [Gibonacci Generating Value one](gibonacci-generating-value-one.md)
+- [Is Gibonacci Good](is-gibonacci-good.md)
+- [Is Gibonacci Good zero](is-gibonacci-good-zero.md)
+- [Is Gibonacci Good one](is-gibonacci-good-one.md)
+- [Gibonacci power Series mul](gibonacci-power-series-mul.md)
+- [Is Gibonacci Good transform](is-gibonacci-good-transform.md)
+- [Is Gibonacci Good iff](is-gibonacci-good-iff.md)
+- [Is Gibonacci Good fib div](is-gibonacci-good-fib-div.md)
+- [Is Gibonacci Good standard values](is-gibonacci-good-standard-values.md)
+- [Is Gibonacci Good shifted ratio](is-gibonacci-good-shifted-ratio.md)
+- [Is Gibonacci Good ratios infinite iff](is-gibonacci-good-ratios-infinite-iff.md)

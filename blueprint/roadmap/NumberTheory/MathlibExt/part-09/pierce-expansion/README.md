@@ -1,0 +1,17 @@
+# Pierce Expansion
+
+- [Traj](traj.md)
+- [Traj zero](traj-zero.md)
+- [Traj succ of eq zero](traj-succ-of-eq-zero.md)
+- [Traj succ of ne zero](traj-succ-of-ne-zero.md)
+- [Traj one](traj-one.md)
+- [Exists traj eq zero](exists-traj-eq-zero.md)
+- [Exists traj eq zero pos](exists-traj-eq-zero-pos.md)
+- [Length](length.md)
+- [Length pos](length-pos.md)
+- [Traj length eq zero](traj-length-eq-zero.md)
+- [Length le of traj eq zero](length-le-of-traj-eq-zero.md)
+- [Traj ne zero of lt length](traj-ne-zero-of-lt-length.md)
+- [Max Length](max-length.md)
+- [Length le max Length](length-le-max-length.md)
+- [Max Length le of forall](max-length-le-of-forall.md)
