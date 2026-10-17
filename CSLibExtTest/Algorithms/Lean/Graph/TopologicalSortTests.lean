@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Graph.DirectedAdjacency
-public import CSLibExt.Algorithms.Lean.Graph.TopologicalSort
+public meta import CSLibExt.Algorithms.Lean.Graph.TopologicalSort
 import CSLibExt.Algorithms.Lean.DataStructures.Queue.Semantics
 import all CSLibExt.Algorithms.Lean.Graph.TopologicalSort
 

@@ -1002,13 +1002,9 @@ private theorem implRel_after_dequeue {α : Type u} [DecidableEq α] [Hashable �
   · rw [hrel.count, List.length_erase_of_mem hsource]
 
 /--
-Execute deterministic FIFO Kahn sorting. The executable implementation scans each outgoing
-adjacency list twice on a successful run (once while computing initial indegrees and once while
-updating neighbors of a processed source) and uses hash-indexed active membership and indegree
-storage. Initial-ready vertices follow `g.vertices`; vertices released together follow first
-adjacency occurrence.
+Execute deterministic FIFO Kahn sorting. Initial-ready vertices follow `g.vertices`; vertices
+released together follow first adjacency occurrence.
 -/
-@[implemented_by sortImpl]
 public def sort {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) : Result α :=
   let advance := fun (s : List α × (α → Nat) × Std.Queue α × List α) =>
