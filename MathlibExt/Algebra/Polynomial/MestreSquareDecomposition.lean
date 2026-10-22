@@ -43,10 +43,13 @@ private lemma natDegree_sub_lt_of_coeff_eq {R : Type*} [Ring R] {p q : Polynomia
   rw [heq] at hne
   exact hne hcoeff
 
-/-- Mestre's square decomposition: over a field of characteristic different from 2, every
-monic `P` of degree `2 * d + 2` decomposes uniquely as `P = Q ^ 2 - R` with `Q` monic of
-degree `d + 1` and `R` of degree at most `d`. This includes the quadratic case `d = 0`;
-`mestre_monic_square_decomposition` is the source-shaped form. -/
+/-- **Mestre's square decomposition, including the quadratic case.** Let $K$ be a field of
+characteristic different from $2$ and let $d \ge 0$ be an integer. Every monic polynomial
+$P \in K[X]$ of degree $2d + 2$ can be written as $P = Q^2 - R$ with $Q, R \in K[X]$, $Q$ monic
+of degree $d + 1$ and $R$ of degree at most $d$ (possibly $R = 0$), and the pair $(Q, R)$ is
+unique.
+
+Source: `mestre_monic_square_decomposition` is the source-shaped form, which assumes $d \ge 1$. -/
 theorem mestre_monic_square_decomposition_general
     {K : Type*} [Field K] (hchar : (2 : K) ≠ 0)
     {d : ℕ} {P : Polynomial K} (hPmonic : P.Monic) (hPdeg : P.natDegree = 2 * d + 2) :
@@ -243,18 +246,16 @@ theorem mestre_monic_square_decomposition_general
       exact ⟨Q, hQm, hQd, hQle⟩
 
 set_option linter.unusedVariables false in
-/-- Specialized Mestre square decomposition (Arvind Suresh, "Constructing curves
-of high rank via composite polynomials", arXiv:2102.02113v2,
-<https://arxiv.org/abs/2102.02113>, TeX lines 1158-1179,
-Lemma `lem:sqroot`): the section assumes the coefficient field has characteristic
-different from 2; the generic monic `m` has degree `2 * d + 2`, the square-root
-polynomial `q` is monic of degree `d + 1`, and the remainder `h` has degree at most
-`d`, with coefficient comparison inducing a `k`-algebra isomorphism. Hence every
-monic `P` of degree `2 * d + 2` over such a field decomposes uniquely as
-`P = Q ^ 2 - R` with `Q` monic of degree `d + 1` and `R` of degree at most `d`.
-It follows from `mestre_monic_square_decomposition_general`; the hypothesis `hd` is unused
-and keeps the source's shape.
-Proves `Wanted` entry `mestre_monic_square_decomposition`.
+/-- **Mestre's square decomposition.** Let $K$ be a field of characteristic different from $2$
+and let $d \ge 1$ be an integer. Every monic polynomial $P \in K[X]$ of degree $2d + 2$ can be
+written as $P = Q^2 - R$ with $Q, R \in K[X]$, $Q$ monic of degree $d + 1$ and $R$ of degree at
+most $d$ (possibly $R = 0$), and the pair $(Q, R)$ is unique.
+
+Source: Arvind Suresh, "Constructing curves of high rank via composite polynomials",
+arXiv:2102.02113v2, <https://arxiv.org/abs/2102.02113>, TeX lines 1158-1179,
+Lemma `lem:sqroot`; there coefficient comparison induces a `k`-algebra isomorphism.
+Follows from `mestre_monic_square_decomposition_general`; the hypothesis `hd` is unused and
+keeps the source's shape. Proves `Wanted` entry `mestre_monic_square_decomposition`.
 -/
 theorem mestre_monic_square_decomposition
     {K : Type*} [Field K] (hchar : (2 : K) ≠ 0)

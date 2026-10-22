@@ -850,14 +850,16 @@ private lemma quatHom_surjective {A : Type*} [DivisionRing A] [Algebra ℝ A]
 
 set_option linter.dupNamespace false in
 /--
-If `A` is a finite-dimensional associative unital division algebra over `ℝ` (`DivisionRing A`,
-`Algebra ℝ A`, `FiniteDimensional ℝ A`), then `A` is `ℝ`-algebra isomorphic to `ℝ`, `ℂ`, or
-`Quaternion ℝ`. Source: G. Frobenius, Ueber lineare Substitutionen und bilineare Formen,
+**Frobenius theorem on real division algebras.** Let $A$ be a finite-dimensional associative
+unital division algebra over $\mathbb{R}$. Then $A$ is isomorphic as an $\mathbb{R}$-algebra to
+$\mathbb{R}$, to $\mathbb{C}$, or to the algebra $\mathbb{H}$ of real quaternions.
+
+Proves `Wanted` entry `frobenius_real_division_algebra`.
+
+Source: G. Frobenius, Ueber lineare Substitutionen und bilineare Formen,
 J. reine angew. Math. 84 (1878), 1–63, DOI 10.1515/crelle-1878-18788403; textbook in Jacobson,
 Basic Algebra II; Lean states associative unital case via `DivisionRing` excluding octonions
 intentionally.
-
-Proves `Wanted` entry `frobenius_real_division_algebra`.
 -/
 theorem frobenius_real_division_algebra
     {A : Type*} [DivisionRing A] [Algebra ℝ A] [FiniteDimensional ℝ A] :
