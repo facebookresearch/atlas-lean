@@ -74,21 +74,25 @@ open MvPolynomial
 
 variable {K : Type*} [Field K]
 
-/-- The projective space `ℙⁿ(K)`. -/
+/-- **Projective space.** For a division ring $K$ and $n \in \mathbb{N}$, the projective space
+$\mathbb{P}^n(K)$ is the projectivization of $K^{n+1}$: the set of nonzero vectors of $K^{n+1}$
+modulo multiplication by nonzero scalars, equivalently the lines through the origin. -/
 abbrev ProjSpace (K : Type*) [DivisionRing K] (n : ℕ) :=
   ℙ K (Fin (n + 1) → K)
 
-/-- The projective vanishing set, defined by evaluating `f` on a chosen
-representative `Projectivization.rep p`.
+/-- **Projective vanishing set.** For a field $K$ and a polynomial $f \in K[X_0, \dots, X_n]$, the
+vanishing set of $f$ is the set of points $p \in \mathbb{P}^n(K)$ such that $f(v) = 0$, where
+$v \in K^{n+1} \setminus \{0\}$ is the chosen representative of $p$.
 
-This is representative-independent only when `f` is homogeneous of
-positive degree (`f(λv) = λᵈ f(v)`); the theorem below uses it only
-under that hypothesis. -/
+When $f$ is homogeneous of degree $d$, $f(\lambda v) = \lambda^d f(v)$, so this set does not depend
+on the choice of representatives. -/
 def vanishingSet {n : ℕ} (f : MvPolynomial (Fin (n + 1)) K) :
     Set (ProjSpace K n) :=
   {p | MvPolynomial.eval (Projectivization.rep p) f = 0}
 
-/-- A chosen index `i : Fin (n+1)` with `p.rep i ≠ 0`. -/
+/-- **Chart index of a projective point.** For a field $K$ and a point $p \in \mathbb{P}^n(K)$
+with chosen representative $v = (v_0, \dots, v_n) \in K^{n+1} \setminus \{0\}$, the chart index of
+$p$ is a fixed choice of an index $i \in \{0, \dots, n\}$ with $v_i \neq 0$. -/
 noncomputable def chartIndex {n : ℕ} (p : ProjSpace K n) : Fin (n + 1) :=
   Classical.choose (Function.ne_iff.mp p.rep_nonzero)
 
@@ -96,12 +100,18 @@ lemma chartIndex_rep_ne_zero {n : ℕ} (p : ProjSpace K n) :
     Projectivization.rep p (chartIndex p) ≠ 0 :=
   Classical.choose_spec (Function.ne_iff.mp p.rep_nonzero)
 
-/-- Affine cone coordinates of `p` on the chart `X_{chartIndex p} = 1`. -/
+/-- **Affine coordinates of a projective point.** For a field $K$ and a point
+$p \in \mathbb{P}^n(K)$, let $v = (v_0, \dots, v_n) \in K^{n+1} \setminus \{0\}$ be the chosen
+representative of $p$ and $i$ its chart index (a chosen index with $v_i \neq 0$). The affine cone
+coordinates of $p$ are the vector $q \in K^{n+1}$ with $q_j = v_j / v_i$ for every $j$; in
+particular $q_i = 1$. -/
 noncomputable def affineConeCoord {n : ℕ} (p : ProjSpace K n) :
     Fin (n + 1) → K :=
   fun j => Projectivization.rep p j / Projectivization.rep p (chartIndex p)
 
-/-- Evaluation ring-hom `K[X_0, …, X_n] →+* K` sending `X_j ↦ q_j`. -/
+/-- **Evaluation at an affine point.** For a field $K$ and a point
+$q = (q_0, \dots, q_n) \in K^{n+1}$, this is the ring homomorphism $K[X_0, \dots, X_n] \to K$
+sending each polynomial $g$ to its value $g(q)$; it fixes $K$ and sends $X_j$ to $q_j$. -/
 noncomputable def evalAt {n : ℕ} (q : Fin (n + 1) → K) :
     MvPolynomial (Fin (n + 1)) K →+* K :=
   MvPolynomial.eval q
@@ -112,7 +122,11 @@ lemma evalAt_surjective {n : ℕ} (q : Fin (n + 1) → K) :
   refine ⟨MvPolynomial.C k, ?_⟩
   simp [evalAt, MvPolynomial.eval_C]
 
-/-- Maximal ideal of `K[X_0, …, X_n]` at the affine point `q`. -/
+/-- **Maximal ideal of an affine point.** For a field $K$ and a point $q \in K^{n+1}$, this is the
+ideal of $K[X_0, \dots, X_n]$ consisting of the polynomials $g$ with $g(q) = 0$, that is, the
+kernel of evaluation at $q$.
+
+It is a maximal ideal, since evaluation at $q$ is surjective onto $K$. -/
 noncomputable def maxIdealAt {n : ℕ} (q : Fin (n + 1) → K) :
     Ideal (MvPolynomial (Fin (n + 1)) K) :=
   RingHom.ker (evalAt q)
@@ -125,14 +139,22 @@ instance maxIdealAt_isPrime {n : ℕ} (q : Fin (n + 1) → K) :
     (maxIdealAt q).IsPrime :=
   (maxIdealAt_isMaximal q).isPrime
 
-/-- The local ring of `𝔸^{n+1}` at the affine point `q`. -/
+/-- **Local ring of affine space at a point.** For a field $K$ and a point $q \in K^{n+1}$, this is
+the localization of $K[X_0, \dots, X_n]$ at the maximal ideal of $q$ (the ideal of polynomials
+vanishing at $q$), that is, the local ring of affine space $\mathbb{A}^{n+1}$ at $q$. -/
 noncomputable abbrev localRingAt {n : ℕ} (q : Fin (n + 1) → K) :=
   Localization.AtPrime (maxIdealAt q)
 
-/-- Intersection multiplicity at a projective point of homogeneous
-polynomials, via the affine-cone construction. `Module.length` over the local ring
-returns `⊤` on non-proper / positive-dimensional components and a
-natural number on a zero-dimensional intersection point. -/
+/-- **Intersection multiplicity at a projective point.** Let $K$ be a field and
+$f_1, \dots, f_n \in K[X_0, \dots, X_n]$. For a point $p \in \mathbb{P}^n(K)$, let $i$ be its chart
+index, $q \in K^{n+1}$ its affine cone coordinates (so $q_i = 1$), and $\mathcal{O}_q$ the
+localization of $K[X_0, \dots, X_n]$ at the maximal ideal of $q$. The intersection multiplicity
+of $f_1, \dots, f_n$ at $p$ is the length, as an $\mathcal{O}_q$-module, of the quotient of
+$\mathcal{O}_q$ by the ideal generated by $f_1, \dots, f_n$ and $X_i - 1$; it is an element of
+$\mathbb{N} \cup \{\infty\}$.
+
+The value is $\infty$ exactly when this quotient does not have finite length, for example along
+a positive-dimensional component of the common zero set. -/
 noncomputable def intersectionMultiplicity {n : ℕ}
     (f : Fin n → MvPolynomial (Fin (n + 1)) K)
     (p : ProjSpace K n) : ℕ∞ :=
@@ -149,7 +171,18 @@ polynomials `f_k` in `n + 1` variables, each of total degree exactly
 projective zero set, the sum of intersection multiplicities equals
 `∏ d_k`. The `totalDegree` hypothesis rules out the zero polynomial
 (which is `IsHomogeneous d` for every `d` but has `totalDegree = 0`). -/
-/-- Source: É. Bézout, *Théorie générale des équations algébriques*, Paris, 1779. Modern projective formulation: see Eisenbud, *Commutative Algebra*, Chapter 12, or Hartshorne, *Algebraic Geometry*, Ch. I §7. Listed as §50 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `bezout_projective_multiplicity`. -/
+/-- **Bézout's theorem (with multiplicity).** Let $K$ be an algebraically closed field, let
+$n \in \mathbb{N}$, and let $f_1, \dots, f_n \in K[X_0, \dots, X_n]$ and integers
+$d_1, \dots, d_n \ge 1$ be such that each $f_k$ is homogeneous of degree $d_k$ and has total
+degree exactly $d_k$. Suppose the common projective zero set
+$Z = V(f_1) \cap \dots \cap V(f_n) \subseteq \mathbb{P}^n(K)$ is finite. Then
+$\sum_{p \in Z} i_p(f_1, \dots, f_n) = d_1 d_2 \cdots d_n$ in $\mathbb{N} \cup \{\infty\}$,
+where $i_p(f_1, \dots, f_n)$ is the intersection multiplicity of $f_1, \dots, f_n$ at $p$.
+
+The total degree hypothesis rules out $f_k = 0$, which is homogeneous of every degree but has
+total degree $0$.
+
+Source: É. Bézout, *Théorie générale des équations algébriques*, Paris, 1779. Modern projective formulation: see Eisenbud, *Commutative Algebra*, Chapter 12, or Hartshorne, *Algebraic Geometry*, Ch. I §7. Listed as §50 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `bezout_projective_multiplicity`. -/
 public theorem_wanted bezout_multiplicity [IsAlgClosed K] {n : ℕ}
     (f : Fin n → MvPolynomial (Fin (n + 1)) K)
     (d : Fin n → ℕ) (_hd : ∀ k, (f k).IsHomogeneous (d k))

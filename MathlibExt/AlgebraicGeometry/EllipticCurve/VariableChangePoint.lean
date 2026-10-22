@@ -27,7 +27,9 @@ universe u
 
 variable {F : Type u} [Field F]
 
-/-- The affine-coordinate map associated to an admissible Weierstrass variable change. -/
+/-- **Coordinate map of a Weierstrass variable change.** For a variable change $C = (u, r, s, t)$
+over a field $F$, with $u \in F^\times$ and $r, s, t \in F$, the affine coordinate map of $C$
+sends $(x, y) \in F^2$ to $(u^2 x + r,\ u^3 y + u^2 s x + t)$. -/
 def mapAffineCoordinates (C : VariableChange F) (xy : F × F) : F × F :=
   (C.u ^ 2 * xy.1 + C.r,
     C.u ^ 3 * xy.2 + C.u ^ 2 * C.s * xy.1 + C.t)
@@ -56,14 +58,20 @@ theorem mapAffineCoordinates_apply_inv (C : VariableChange F) (xy : F × F) :
   rw [← mapAffineCoordinates_mul]
   simp
 
-/-- Affine coordinates form an equivalence under an admissible Weierstrass variable change. -/
+/-- **Variable changes act bijectively on affine coordinates.** For a variable change
+$C = (u, r, s, t)$ over a field $F$, the map $(x, y) \mapsto (u^2 x + r,\ u^3 y + u^2 s x + t)$
+is a bijection $F^2 \to F^2$, whose inverse is the corresponding map of the inverse variable
+change $C^{-1}$. -/
 def affineCoordinatesEquiv (C : VariableChange F) : F × F ≃ F × F where
   toFun := mapAffineCoordinates C
   invFun := mapAffineCoordinates C⁻¹
   left_inv := mapAffineCoordinates_inv_apply C
   right_inv := mapAffineCoordinates_apply_inv C
 
-/-- The affine-coordinate map carries the changed Weierstrass equation to the original one. -/
+/-- **Variable changes transform the Weierstrass equation.** Let $W$ be a Weierstrass curve over
+a field $F$, let $C = (u, r, s, t)$ be a variable change and let $C \cdot W$ be the transformed
+curve. A pair $(x, y) \in F^2$ satisfies the Weierstrass equation of $C \cdot W$ if and only if
+$(u^2 x + r,\ u^3 y + u^2 s x + t)$ satisfies the Weierstrass equation of $W$. -/
 theorem equation_mapAffineCoordinates_iff (C : VariableChange F) (W : WeierstrassCurve F)
     (xy : F × F) :
     (C • W).toAffine.Equation xy.1 xy.2 ↔
@@ -84,7 +92,11 @@ theorem equation_mapAffineCoordinates_iff (C : VariableChange F) (W : Weierstras
     Units.val_one, one_pow]
   constructor <;> intro h <;> ring_nf at h ⊢ <;> exact h
 
-/-- Affine solutions of Weierstrass equations are equivalent under a variable change. -/
+/-- **Variable changes biject affine solutions.** Let $W$ be a Weierstrass curve over a field $F$,
+let $C = (u, r, s, t)$ be a variable change and let $C \cdot W$ be the transformed curve. The map
+$(x, y) \mapsto (u^2 x + r,\ u^3 y + u^2 s x + t)$ is a bijection from the solutions
+$(x, y) \in F^2$ of the Weierstrass equation of $C \cdot W$ onto the solutions in $F^2$ of the
+Weierstrass equation of $W$; its inverse is the corresponding map of $C^{-1}$. -/
 def affineEquationEquiv (C : VariableChange F) (W : WeierstrassCurve F) :
     {xy : F × F // (C • W).toAffine.Equation xy.1 xy.2} ≃
       {xy : F × F // W.toAffine.Equation xy.1 xy.2} where
@@ -102,15 +114,20 @@ def affineEquationEquiv (C : VariableChange F) (W : WeierstrassCurve F) :
     apply Subtype.ext
     exact mapAffineCoordinates_apply_inv C xy.1
 
-/-- Rational points of elliptic Weierstrass equations are equivalent under a variable change. -/
+/-- **Variable changes biject rational points.** Let $W$ be an elliptic Weierstrass curve over a
+field $F$, let $C = (u, r, s, t)$ be a variable change and let $C \cdot W$ be the transformed
+curve. There is a bijection from the rational points of $C \cdot W$ to the rational points of
+$W$, where in both cases the point at infinity is included; it sends the point at infinity to
+the point at infinity and an affine point $(x, y)$ to $(u^2 x + r,\ u^3 y + u^2 s x + t)$. -/
 noncomputable def pointEquiv (C : VariableChange F) (W : WeierstrassCurve F)
     [W.IsElliptic] :
     (C • W).toAffine.Point ≃ W.toAffine.Point :=
   (C • W).toAffine.pointEquiv |>.trans
     ((affineEquationEquiv C W).optionCongr.trans W.toAffine.pointEquiv.symm)
 
-/-- An admissible variable change preserves the number of rational points of an elliptic
-Weierstrass equation over a finite field. -/
+/-- **Variable changes preserve the point count.** Let $W$ be an elliptic Weierstrass curve over
+a finite field $F$, let $C$ be a variable change and let $C \cdot W$ be the transformed curve.
+Then $C \cdot W$ and $W$ have the same number of rational points. -/
 theorem natCard_point_eq [Finite F] (C : VariableChange F) (W : WeierstrassCurve F)
     [W.IsElliptic] :
     Nat.card ((C • W).toAffine.Point) = Nat.card W.toAffine.Point :=

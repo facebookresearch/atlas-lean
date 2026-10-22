@@ -69,8 +69,13 @@ variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 class BundledFunctionField extends
   Algebra (RatFunc K) F, IsScalarTower K (RatFunc K) F, FunctionField K F
 
-/-- The type of places of a 1-dimensional function field. See [Stichtenoth,
-Definition 1.1.4 and 1.1.8]. We omit the condition `toSubalgebra ≠ ⊥` since it is automatic. -/
+/-- **Place.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. A place of $F/K$ is a
+valuation ring of $F$ containing $K$ and different from $F$: a $K$-subalgebra $\mathcal{O}$ of
+$F$ with $\mathcal{O} \neq F$ such that $z \in \mathcal{O}$ or $z^{-1} \in \mathcal{O}$ for
+every $z \in F$. See [Stichtenoth, Definition 1.1.4 and 1.1.8].
+
+Stichtenoth calls the maximal ideal of $\mathcal{O}$ the place, which determines $\mathcal{O}$,
+and also requires $\mathcal{O} \neq K$; that condition is omitted since it is automatic. -/
 @[ext] structure Place extends ValuationSubalgebra K F where
   ne_top : toSubalgebra ≠ ⊤
 
@@ -101,7 +106,12 @@ instance : ValuationRing v := inferInstanceAs (ValuationRing v.toValuationSubrin
 variable {F}
 
 /- [Stichtenoth, Corollary 1.3.4] (finitely many poles). -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Finitely many poles.** Let $F$ be a function field over a field $K$, that is, a finite
+extension of the rational function field $K(t)$. For every $x \in F$, there are only finitely
+many places $P$ of $F/K$ whose valuation ring $\mathcal{O}_P$ does not contain $x$, that is,
+$x$ has only finitely many poles. See [Stichtenoth, Corollary 1.3.4].
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted finite_setOf_place_notMem [BundledFunctionField K F] (x : F) :
     {v : Place K F | x ∉ v}.Finite
 
@@ -109,7 +119,12 @@ variable (F)
 
 open scoped RestrictedProduct
 
-/-- [Stichtenoth, Definition 1.5.2]. -/
+/-- **Adele ring.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. The adele ring
+$\mathcal{A}_F$ of $F/K$ is the restricted product of copies of $F$ indexed by the places $P$
+of $F/K$, with respect to their valuation rings $\mathcal{O}_P$ and the cofinite filter: its
+elements are the families $\alpha = (\alpha_P)_P$ with $\alpha_P \in F$ for every place $P$
+and $\alpha_P \in \mathcal{O}_P$ for all but finitely many $P$. See [Stichtenoth, Definition
+1.5.2]. -/
 abbrev Adele : Type _ :=
   RestrictedProduct (fun _ ↦ F) (fun v : Place K F ↦ (v : Set F)) Filter.cofinite
 
@@ -123,11 +138,22 @@ variable {F}
 embedding, well defined by finiteness of poles (`finite_setOf_place_notMem` above). It is
 recorded as a hole because ordinary definitions cannot use a `theorem_wanted` in their
 bodies; its coordinate formula is `Adele.principal_apply` below. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Principal adele map.** Let $F$ be a function field over a field $K$, that is, a finite
+extension of the rational function field $K(t)$. The principal adele map is a ring homomorphism
+from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is meant to be the diagonal embedding
+sending $x \in F$ to the adele whose coordinate at every place $P$ of $F/K$ is $x$, which is
+well defined since $x$ has only finitely many poles; this coordinate formula is stated
+separately.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public def_wanted Adele.principal [BundledFunctionField K F] : F →+* Adele K F
 
 /- The coordinates of a principal adele are constant. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Coordinates of a principal adele.** Let $F$ be a function field over a field $K$, that is,
+a finite extension of the rational function field $K(t)$. For every $x \in F$ and every place
+$P$ of $F/K$, the coordinate at $P$ of the principal adele of $x$ is $x$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted Adele.principal_apply [BundledFunctionField K F] (x : F)
     (v : Place K F) : (❰Adele.principal❱ K x) v = x
 
@@ -138,7 +164,11 @@ below to be the one whose algebra map is the principal embedding.
 Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public instance_wanted instAlgebraAdele [BundledFunctionField K F] : Algebra F (Adele K F)
 
-/-- The algebra map of the adele algebra is the principal embedding.
+/-- **The adele algebra map is the principal embedding.** Let $F$ be a function field over a
+field $K$, that is, a finite extension of the rational function field $K(t)$. The algebra map
+$F \to \mathcal{A}_F$ of the $F$-algebra structure on the adele ring $\mathcal{A}_F$ equals the
+principal adele map $F \to \mathcal{A}_F$.
+
 Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted instAlgebraAdele_algebraMap [BundledFunctionField K F] :
     algebraMap F (Adele K F) = ❰Adele.principal❱ K
@@ -160,7 +190,11 @@ Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public instance_wanted instIsScalarTowerAdele [BundledFunctionField K F] :
     IsScalarTower K F (Adele K F)
 
-/-- The $K$-subspace $\mathcal{A}_F(0)$, see [Stichtenoth, Definition 1.5.3]. -/
+/-- **Integral adeles.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. The integral
+adeles $\mathcal{A}_F(0)$ form the $K$-subspace of the adele ring $\mathcal{A}_F$ of $F/K$
+consisting of the adeles $\alpha = (\alpha_P)_P$ whose coordinate $\alpha_P$ lies in the
+valuation ring $\mathcal{O}_P$ of $P$ for every place $P$ of $F/K$. See [Stichtenoth,
+Definition 1.5.3]. -/
 def integralAdele : Submodule K (Adele K F) where
   carrier := {x | ∀ v, x v ∈ v}
   add_mem' h₁ h₂ v := add_mem (h₁ v) (h₂ v)
@@ -171,11 +205,27 @@ def integralAdele : Submodule K (Adele K F) where
 formula in `genus_eq` below. The formula cannot be the body of an ordinary definition here
 because it uses the wanted scalar-tower instance above, so the genus itself is recorded as a
 hole of the same displayed type. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Genus of a function field.** For a function field $F$ over a field $K$, that is, a finite
+extension of the rational function field $K(t)$, the genus of $F/K$ is a natural number $g$,
+specified by the separately stated formula $g = \dim_K \mathcal{A}_F / (\mathcal{A}_F(0) + F)$,
+where $\mathcal{A}_F$ is the adele ring and $\mathcal{A}_F(0)$ the integral adeles.
+See [Stichtenoth, Corollary 1.5.5].
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public noncomputable def_wanted genus [BundledFunctionField K F] : ℕ
 
 /- The genus is the finrank of the adele class quotient. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Genus as the dimension of the adele class space.** Let $F$ be a function field over a
+field $K$, that is, a finite extension of the rational function field $K(t)$. The genus $g$ of
+$F/K$ equals the dimension over $K$ of the quotient
+$\mathcal{A}_F / (\mathcal{A}_F(0) + F)$, where $\mathcal{A}_F$ is the adele ring,
+$\mathcal{A}_F(0)$ the integral adeles, and $F$ is embedded in $\mathcal{A}_F$ by the algebra
+map of the $F$-algebra structure on the adeles (stated separately to be the principal
+embedding). See [Stichtenoth, Corollary 1.5.5].
+
+The dimension is the finite rank, taken to be $0$ if the quotient is infinite-dimensional.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted genus_eq [BundledFunctionField K F] :
     ❰genus❱ = Module.finrank K
       (Adele K F ⧸ integralAdele K F ⊔ (IsScalarTower.toAlgHom K F _).toLinearMap.range)
@@ -184,7 +234,13 @@ public theorem_wanted genus_eq [BundledFunctionField K F] :
 at least 2) over a number field has only finitely many rational points.
 Note: if K is not the full constant field of F/K then there are no rational points, because
 every place contains the full constant field. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+/-- **Faltings' theorem (Mordell conjecture).** Let $K$ be a number field and $F$ a function
+field over $K$, that is, a finite extension of the rational function field $K(t)$. If the genus
+of $F/K$ is at least $2$, then $F/K$ has only finitely many places of degree one, that is,
+places $P$ whose residue field (the quotient of the valuation ring of $P$ by its maximal ideal)
+has dimension $1$ over $K$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted faltings [NumberField K] [BundledFunctionField K F] :
     2 ≤ ❰genus❱ K F →
     {v : Place K F | Module.rank K (IsLocalRing.ResidueField v) = 1}.Finite
