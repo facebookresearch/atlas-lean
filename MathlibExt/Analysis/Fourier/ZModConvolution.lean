@@ -47,8 +47,15 @@ private theorem lift_coeff_dft (a : AddMonoidAlgebra ℂ (ZMod n)) (k : ZMod n) 
   change a.coeff j * stdAddChar ((-k) * j) = stdAddChar (-(j * k)) * a.coeff j
   rw [neg_mul, mul_comm k j, mul_comm]
 
-/-- The normalized inverse DFT turns pointwise products into circular convolution.
-Uses the canonical additive monoid algebra product and its character lift.
+/-- **Convolution theorem for the discrete Fourier transform.** Let $n \ge 1$. For
+$\varphi : \mathbb{Z}/n\mathbb{Z} \to \mathbb{C}$ write
+$\hat\varphi(k) = \sum_{j \in \mathbb{Z}/n\mathbb{Z}} e^{-2\pi i jk/n} \varphi(j)$ for its discrete
+Fourier transform, and let $\mathcal{F}^{-1}$ be the inverse of the map
+$\varphi \mapsto \hat\varphi$. Then for all $f, g : \mathbb{Z}/n\mathbb{Z} \to \mathbb{C}$ and every
+$t \in \mathbb{Z}/n\mathbb{Z}$, the value at $t$ of $\mathcal{F}^{-1}$ applied to
+$k \mapsto \hat f(k)\,\hat g(k)$ equals the circular convolution
+$\sum_{j \in \mathbb{Z}/n\mathbb{Z}} f(j)\,g(t - j)$.
+
 Source: MIT 6.046J Spring 2015 Lecture 3, polynomial product theorem, cyclic form. -/
 theorem invDFT_mul_dft (f g : ZMod n → ℂ) (t : ZMod n) :
     dft.symm (fun k => dft f k * dft g k) t = ∑ j : ZMod n, f j * g (t - j) := by

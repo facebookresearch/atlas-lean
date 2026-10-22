@@ -22,7 +22,10 @@ namespace MathlibExt.Analysis.CStarAlgebra.KadisonSingerWanted
 
 open MathlibExt.Analysis.CStarAlgebra.KadisonSinger
 
-/-- Diagonal `0-1` projection onto colour `j` of `c : Fin n → Fin r`. -/
+/-- **Paving projection.** Given a colouring $c$ of the indices $\{0, \dots, n-1\}$ with the
+colours $\{0, \dots, r-1\}$ and a colour $j$, the paving projection of $c$ onto colour $j$ is the
+diagonal complex $n \times n$ matrix whose $i$-th diagonal entry is $1$ if $c(i) = j$ and $0$
+otherwise. -/
 noncomputable def pavingProj (n r : ℕ) (c : Fin n → Fin r) (j : Fin r) :
     Matrix (Fin n) (Fin n) ℂ :=
   Matrix.diagonal (fun i => if c i = j then (1 : ℂ) else 0)
@@ -76,19 +79,23 @@ private theorem ksKadisonSingerPaving_of_finiteMSS
   simpa only [pavingProj] using hc j
 
 /--
-For every `ε > 0` there exists `r > 0` depending only on `ε` such that for all `n` and all
-Hermitian `A : Matrix (Fin n) (Fin n) ℂ` with zero diagonal and `‖A‖ ≤ 1` in `L2Operator` norm,
-there is a colouring `c : Fin n → Fin r` with `‖pavingProj n r c j * A * pavingProj n r c j‖ ≤ ε`
-for every `j`. Source: Anderson paving formulation equivalent to Kadison–Singer conjecture; proved
-by Marcus–Spielman–Srivastava, Ann. of Math. 182 (2015), 327–350; original Kadison–Singer, Amer.
-J. Math. 81 (1959) and Anderson, Trans. Amer. Math. Soc. 249 (1979); Lean is finite-dimensional
-Hermitian zero-diagonal paving with r(ε) independent of n.
-
-Proves `Wanted` entry `kadison_singer_paving`.
+**Anderson paving theorem.** For every real $\varepsilon > 0$ there is a positive integer $r$ such
+that for every $n \in \mathbb{N}$ and every Hermitian complex $n \times n$ matrix $A$ with zero
+diagonal and $\|A\| \le 1$, where $\|\cdot\|$ is the operator norm for the Euclidean norm on
+$\mathbb{C}^n$, there is a colouring $c$ of the indices $\{0, \dots, n-1\}$ with the $r$ colours
+$\{0, \dots, r-1\}$ such that $\|P_j A P_j\| \le \varepsilon$ for every colour $j$, where $P_j$ is
+the paving projection of $c$ onto colour $j$.
 
 Proof: We formalize the Marcus--Spielman--Srivastava mixed-characteristic-polynomial bound via
 real stability, interlacing families, and the barrier argument, then use Timotin's projection
 dilation reduction to derive Anderson paving.
+
+Proves `Wanted` entry `kadison_singer_paving`.
+
+Source: Anderson paving formulation equivalent to Kadison–Singer conjecture; proved
+by Marcus–Spielman–Srivastava, Ann. of Math. 182 (2015), 327–350; original Kadison–Singer, Amer.
+J. Math. 81 (1959) and Anderson, Trans. Amer. Math. Soc. 249 (1979); Lean is finite-dimensional
+Hermitian zero-diagonal paving with r(ε) independent of n.
 -/
 theorem kadison_singer_paving
     (ε : ℝ) (hε : 0 < ε) :

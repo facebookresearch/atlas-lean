@@ -265,10 +265,15 @@ private lemma weyl_one_sided {E : Type*} [NormedAddCommGroup E] [InnerProductSpa
       (((TA - TB).toContinuousLinearMap).rayleighQuotient_le_norm x))
 
 /--
-Weyl perturbation: Hermitian eigenvalues satisfy `|λ_A i - λ_B i| ≤ ‖A - B‖`.
-Source: H. Weyl, Math. Ann. 71 (1912), DOI 10.1007/BF01456804.
+**Weyl's perturbation inequality.** Let $A$ and $B$ be Hermitian $n \times n$ complex matrices,
+and let $\lambda_1(A) \ge \dots \ge \lambda_n(A)$ and $\lambda_1(B) \ge \dots \ge \lambda_n(B)$ be
+their eigenvalues, listed with multiplicity in decreasing order. Then
+$|\lambda_i(A) - \lambda_i(B)| \le \|A - B\|$ for every $i$, where $\|A - B\|$ is the operator
+norm of $A - B$ acting on $\mathbb{C}^n$ with the Euclidean norm.
 
 Proves `Wanted` entry `weyl_eigenvalue_perturbation_le`.
+
+Source: H. Weyl, Math. Ann. 71 (1912), DOI 10.1007/BF01456804.
 -/
 theorem weyl_eigenvalue_perturbation_le
     {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ)
