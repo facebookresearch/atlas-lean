@@ -38,9 +38,9 @@ def chapter5DerivativeExpansion {R : Type*} [Semiring R]
 def chapter5Entry1PlusCoeff (n : ℕ) : ℝ :=
   (1 - (2 : ℝ) ^ n) * (bernoulli n : ℝ) / (n.factorial : ℝ)
 
-/-- The source's shift `p(x) ↦ p(x + h)`. It is `Polynomial.taylor h p` (see
-`chapter5PolynomialShift_eq_taylor`); the name is kept because the frozen `Wanted` statement uses
-it. -/
+/-- **Polynomial shift.** For a semiring $R$, an element $h \in R$ and a polynomial
+$p \in R[x]$, the shift of $p$ by $h$ is the polynomial $p(x + h)$, the composition of $p$ with
+$x + h$. -/
 def chapter5PolynomialShift {R : Type*} [Semiring R]
     (h : R) (p : R[X]) : R[X] :=
   p.comp (Polynomial.X + Polynomial.C h)
@@ -866,7 +866,17 @@ private theorem uniqueness_part (a : ℕ → ℝ)
   funext n
   exact hQ n n le_rfl
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
+/-- **Ramanujan's operator identity for $(1 - 2^n) B_n / n!$.** For a sequence
+$a = (a_n)_{n \ge 0}$ of real numbers, a real number $h$ and a real polynomial $\varphi$ of
+degree $d$ (with $d = 0$ for $\varphi = 0$), let
+$S_a(h, \varphi) = \sum_{n=0}^{d} a_n h^n \varphi^{(n)}$. Let $c_n = (1 - 2^n) B_n / n!$, where
+$B_n$ are the Bernoulli numbers with $B_1 = -\tfrac12$. Then for every real polynomial $\varphi$
+and every real $h$, $S_c(h, \varphi)(x + h) + S_c(h, \varphi)(x) = h \varphi'(x)$ as polynomials
+in $x$. Moreover $c$ is the only such sequence: if a real sequence $a$ satisfies
+$S_a(h, \varphi)(x + h) + S_a(h, \varphi)(x) = h \varphi'(x)$ for every real polynomial $\varphi$
+and every real $h$, then $a_n = c_n$ for every $n$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
 Proves `Wanted` entry `ramanujan_part1_ch5_entry1_euleriangf`.
 -/
 theorem ramanujan_part1_ch5_entry1_euleriangf :
