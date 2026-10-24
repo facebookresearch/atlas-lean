@@ -31,7 +31,18 @@ namespace MathlibExt.Analysis.CStarAlgebra.KadisonSinger
 universe u v
 
 open scoped Matrix.Norms.L2Operator in
-/-- Finite-support form of the Marcus--Spielman--Srivastava random-vector bound. -/
+/-- **Finite-support Marcus–Spielman–Srivastava bound.** The proposition that the following holds
+for every natural number $m$ and every finite index set $D$. Let $s_1, \dots, s_m$ be positive
+integers, let $p_{i,a} \ge 0$ be reals and $v_{i,a} \in \mathbb{C}^D$ be vectors for
+$1 \le i \le m$ and $1 \le a \le s_i$, and let $\eta \ge 0$ be real. Suppose that
+$\sum_a p_{i,a} = 1$ for each $i$, that $\sum_i \sum_a p_{i,a} v_{i,a} v_{i,a}^* = \mathrm{Id}_D$,
+and that $\sum_a p_{i,a} \|v_{i,a}\|^2 \le \eta$ for each $i$, where $\|v_{i,a}\|$ is the
+Euclidean norm. Then there are choices $a_i \in \{1, \dots, s_i\}$ for $i = 1, \dots, m$ such
+that $\left\|\sum_i v_{i,a_i} v_{i,a_i}^*\right\| \le (1 + \sqrt{\eta})^2$, where the norm of a
+matrix is the operator norm.
+
+In probabilistic terms, $p_{i,a}$ is the probability that an independent random vector $v_i$
+takes the value $v_{i,a}$, and the conclusion is that some choice of values meets the bound. -/
 public def FiniteMSSBound : Prop :=
   ∀ (m : ℕ) (d : Type u) [Fintype d] [DecidableEq d] (s : Fin m → ℕ),
     (∀ i, 0 < s i) →
@@ -533,8 +544,13 @@ private theorem ksExists_fin_frame_partition
           (le_div_iff₀ (Nat.cast_pos.2 hr)).2 (by simpa [mul_comm] using hblock)
         _ = (1 / Real.sqrt r + Real.sqrt δ) ^ 2 := ksMSS_rescale hr
 
-/-- The finite MSS random-vector bound partitions a finite Parseval frame into uniformly bounded
-subframes. -/
+/-- **Partitioning a Parseval frame with the finite MSS bound.** Assume the finite-support
+Marcus–Spielman–Srivastava bound holds. Let $I$ be a finite index set, let $d$ and $r$ be natural
+numbers with $r > 0$, let $\delta \ge 0$ be real, and let $u_i \in \mathbb{C}^d$ for $i \in I$
+be vectors with $\sum_{i \in I} u_i u_i^* = \mathrm{Id}_d$ and $\|u_i\|^2 \le \delta$ for every
+$i$. Then there is a map $c : I \to \{1, \dots, r\}$ such that for every $j$,
+$\left\|\sum_{i \in I,\ c(i) = j} u_i u_i^*\right\| \le (1/\sqrt{r} + \sqrt{\delta})^2$, where
+$\|u_i\|$ is the Euclidean norm of $u_i$ and the norm of a matrix is the operator norm. -/
 public theorem exists_frame_partition_of_finiteMSS
     (hMSS : FiniteMSSBound.{0}) {I : Type v} [Fintype I] {d r : ℕ}
     (hr : 0 < r) (u : I → Fin d → ℂ) (δ : ℝ) (hδ : 0 ≤ δ)
@@ -819,7 +835,14 @@ private theorem ksHermitian_paving_of_mss
     _ = ‖β • Q‖ := by simp
     _ ≤ β := hendpoint
 
-/-- A quantitative Anderson paving bound follows from the finite MSS random-vector bound. -/
+/-- **Anderson paving from the finite MSS bound.** Assume the finite-support
+Marcus–Spielman–Srivastava bound holds. Let $n$ and $r$ be natural numbers with $r > 0$, and let
+$A$ be a Hermitian complex $n \times n$ matrix with zero diagonal and operator norm
+$\|A\| \le 1$. Then there is a coloring $c$ of the indices $\{1, \dots, n\}$ with $r^2$ colors
+such that for every color $j$, writing $P_j$ for the diagonal matrix with entry $1$ at the
+indices of color $j$ and $0$ elsewhere,
+$\|P_j A P_j\| \le 2\left(1/\sqrt{r} + \sqrt{1/2}\right)^2 - 1$, where $\|\cdot\|$ is the
+operator norm. -/
 public theorem andersonPaving_of_finiteMSS
     (hMSS : FiniteMSSBound.{0}) {n r : ℕ} (hr : 0 < r)
     (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
