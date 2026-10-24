@@ -29,13 +29,16 @@ distributed under the Apache License, Version 2.0. lean-eval ships no
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.FourierConvergenceWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Analysis.FourierConvergenceWanted` namespace. The
+definitions `fourierPartialSum` and `fourierCesaroMean` and the proved Fejér statement moved to
+`MathlibExt.Analysis.Fourier.Fejer`. Mathematical
 statements are unchanged. Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Analysis.Fourier.Fejer
 
 @[expose] public section
 
@@ -52,7 +55,9 @@ namespace Analysis
   `S_N(f)(x) = ∑_{n = -N}^{N} f̂_n e^{inx}` converge to `f(x)` at every `x ∈ ℝ`.
 * **Fejér's theorem** (additional): for a merely *continuous* 2π-periodic `f`,
   the Cesàro means `σ_N(f) = (S_0 + ⋯ + S_N)/(N+1)` of the partial sums converge
-  to `f` uniformly on `ℝ`.
+  to `f` uniformly on `ℝ`. It is proved as
+  `MathlibExt.Analysis.Fourier.tendstoUniformly_fourierCesaroMean`, next to the
+  definitions `fourierPartialSum` and `fourierCesaroMean`.
 
 mathlib has the circle, the Fourier characters, `fourierCoeffOn`, the `L²`
 Fourier series, and uniform convergence under `ℓ¹`-summability
@@ -64,18 +69,7 @@ symmetric partial-sum order `Finset.Icc (-N) N` is essential, since the Fourier
 series of a `C¹` function need not converge absolutely.
 -/
 
-open Filter Topology
-
-/-- The symmetric Fourier partial sum of `f : ℝ → ℂ` on the period `[0, 2π]`:
-`S_N(f)(x) = ∑_{n = -N}^{N} f̂_n · e^{inx}`, with `f̂_n = fourierCoeffOn _ f n`. -/
-noncomputable def fourierPartialSum (f : ℝ → ℂ) (N : ℕ) (x : ℝ) : ℂ :=
-  ∑ n ∈ Finset.Icc (-(N : ℤ)) N,
-    fourierCoeffOn Real.two_pi_pos f n * Complex.exp (Complex.I * (n : ℂ) * (x : ℂ))
-
-/-- The Cesàro mean of the first `N + 1` Fourier partial sums:
-`σ_N(f)(x) = (S_0(f)(x) + S_1(f)(x) + ⋯ + S_N(f)(x)) / (N + 1)`. -/
-noncomputable def fourierCesaroMean (f : ℝ → ℂ) (N : ℕ) (x : ℝ) : ℂ :=
-  (∑ k ∈ Finset.range (N + 1), fourierPartialSum f k x) / (N + 1 : ℂ)
+open Filter Topology MathlibExt.Analysis.Fourier
 
 /- **Dirichlet's pointwise convergence theorem** (§46). For every `C¹`
 2π-periodic complex function `f`, the symmetric Fourier partial sums `S_N(f)(x)`
@@ -85,15 +79,6 @@ public theorem_wanted dirichlet_pointwise
     {f : ℝ → ℂ} (_hperiod : Function.Periodic f (2 * Real.pi)) (_hC1 : ContDiff ℝ 1 f)
     (x : ℝ) :
     Tendsto (fun N : ℕ => fourierPartialSum f N x) atTop (𝓝 (f x))
-
-/- **Fejér's theorem** (§46). For every *continuous* 2π-periodic complex
-function `f` — without the `C¹` hypothesis of Dirichlet's theorem — the Cesàro
-means `σ_N(f)` of the symmetric Fourier partial sums converge to `f` uniformly
-on `ℝ`. -/
-/-- Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `fourier_dirichlet_fejer`. -/
-public theorem_wanted fejer
-    {f : ℝ → ℂ} (_hperiod : Function.Periodic f (2 * Real.pi)) (_hcont : Continuous f) :
-    TendstoUniformly (fun N : ℕ => fourierCesaroMean f N) f atTop
 
 end Analysis
 
