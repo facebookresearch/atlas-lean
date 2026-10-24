@@ -1,0 +1,17 @@
+# Syntax
+
+- [Instantiate Term](instantiate-term.md)
+- [Instantiate](instantiate.md)
+- [Instantiate Term var zero](instantiate-term-var-zero.md)
+- [Instantiate Term var succ](instantiate-term-var-succ.md)
+- [Instantiate all](instantiate-all.md)
+- [Realize instantiate formula](realize-instantiate-formula.md)
+- [Realize all formula](realize-all-formula.md)
+- [Realize congr](realize-congr.md)
+- [Rename Term](rename-term.md)
+- [Rename](rename.md)
+- [Realize rename](realize-rename.md)
+- [Relabel inl comp eq cast LE rename](relabel-inl-comp-eq-cast-le-rename.md)
+- [Formula relabel eq rename](formula-relabel-eq-rename.md)
+- [Rename congr](rename-congr.md)
+- [Free Var Finset rename](free-var-finset-rename.md)

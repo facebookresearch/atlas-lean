@@ -1,0 +1,3255 @@
+{
+ "book": "AlgebraicTopologyI",
+ "source": "MIT 18.905 Algebraic Topology I (Fall 2016) lecture notes, Haynes Miller, PDF converted to text (MIT18_905F16_lecture_notes.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 1,
+   "to": 0,
+   "evidence": "MIT18_905F16_lecture_notes.txt:142",
+   "quote": "σ : ∆n→X. Denote bySinn(X) the set of alln-simplices inX.",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 1,
+   "evidence": "MIT18_905F16_lecture_notes.txt:153",
+   "quote": "Sn(X) = ZSinn(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:172",
+   "quote": "An n-cycle in X is ann-chainc with dc = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:176",
+   "quote": "Any boundary is a cycle; that is,d2 = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:187",
+   "quote": "ker(d :Sn(X)→Sn−1(X))",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:187",
+   "quote": "Hn(X) = Zn(X)Bn(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:336",
+   "quote": "If X,Y ∈C , thenf : X→ Y is an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:357",
+   "quote": "LetC,D be categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:370",
+   "quote": "Let F,G :C → Dbe two functors.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:420",
+   "quote": "LetC be any category.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:420",
+   "quote": "Asimplicial objectinC is a functorK : ∆op→C .",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:421",
+   "quote": "objects inC form a category with natural transformations as morphisms.",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:426",
+   "quote": "A morphismf :X→Y in a categoryC is asplit epimorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 8,
+   "evidence": "MIT18_905F16_lecture_notes.txt:444",
+   "quote": "A map is an isomorphism if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 12,
+   "evidence": "MIT18_905F16_lecture_notes.txt:444",
+   "quote": "if it is both a split epimorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "MIT18_905F16_lecture_notes.txt:444",
+   "quote": "both a split epimorphism and a split",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:449",
+   "quote": "Any functor sends split epis to split epis",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 12,
+   "evidence": "MIT18_905F16_lecture_notes.txt:449",
+   "quote": "sends split epis to split epis",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 13,
+   "evidence": "MIT18_905F16_lecture_notes.txt:449",
+   "quote": "split monos to split monos.",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:494",
+   "quote": "thenH∗(f0) = H∗(f1): homology",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:494",
+   "quote": "If f0≃ f1, thenH∗(f0) = H∗(f1)",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 25,
+   "evidence": "MIT18_905F16_lecture_notes.txt:555",
+   "quote": "So homotopy invariance of homology will follow from",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 28,
+   "evidence": "MIT18_905F16_lecture_notes.txt:603",
+   "quote": "We will use that fact, which is a special case of homotopy invariance",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 30,
+   "evidence": "MIT18_905F16_lecture_notes.txt:673",
+   "quote": "we proved homotopy invariance of homology using the construction of a chain",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:508",
+   "quote": "The homotopy category(of topological spaces)Ho(Top) has the same objects as",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:509",
+   "quote": "Ho(Top)(X,Y ) = [X,Y ] = Top(X,Y )/≃.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 8,
+   "evidence": "MIT18_905F16_lecture_notes.txt:514",
+   "quote": "[f]∈ [X,Y ] is an isomorphism in",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:515",
+   "quote": "such thatfg≃ 1Y and gf≃ 1X.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "MIT18_905F16_lecture_notes.txt:515",
+   "quote": "Ho(Top). In other words",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:523",
+   "quote": "Homotopy equivalences induce isomorphisms in homology.",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 17,
+   "evidence": "MIT18_905F16_lecture_notes.txt:524",
+   "quote": "If f has homotopy inverseg, thenf∗ has inverseg∗.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:523",
+   "quote": "Homotopy equivalences induce isomorphisms in homology.",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:525",
+   "quote": "A spaceX is contractibleif the mapX→∗ is a homotopy equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:526",
+   "quote": "The augmentationϵ :H∗(X)→ Z is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "MIT18_905F16_lecture_notes.txt:526",
+   "quote": "LetX be a contractible space.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:535",
+   "quote": "Let C∗,D∗ be chain complexes",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:552",
+   "quote": "If f0,f 1 :C∗→D∗ are chain homotopic",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:552",
+   "quote": "thenf0∗ =f1∗ :H∗(C)→H∗(D).",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:552",
+   "quote": "If f0,f 1 :C∗→D∗ are chain homotopic",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:556",
+   "quote": "Then f0∗,f 1∗ : S∗(X)→ S∗(Y ) are chain",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:556",
+   "quote": "Let f0,f 1 : X→ Y be homotopic.",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:556",
+   "quote": "S∗(Y ) are chain",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 28,
+   "evidence": "MIT18_905F16_lecture_notes.txt:603",
+   "quote": "We will use that fact, which is a special case of homotopy invariance",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 30,
+   "evidence": "MIT18_905F16_lecture_notes.txt:671",
+   "quote": "using the normalization axiom of the cross-product. This is the result.",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:568",
+   "quote": "Proposition 5.13.S∗(X)→ Z is a chain homotopy equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:568",
+   "quote": "is a chain homotopy equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "MIT18_905F16_lecture_notes.txt:566",
+   "quote": "ifX is star-shaped.",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:606",
+   "quote": "S∗(X)→S∗(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:605",
+   "quote": "determines a natural chain homotopy",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:605",
+   "quote": "A homotopyh :f0≃f1 :X→Y determines a natural chain homotopyf0∗≃f1∗ :",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:605",
+   "quote": "natural chain homotopyf0∗≃f1∗ :",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "MIT18_905F16_lecture_notes.txt:603",
+   "quote": "We will use that fact, which is a special case of homotopy invariance",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 30,
+   "evidence": "MIT18_905F16_lecture_notes.txt:671",
+   "quote": "using the normalization axiom of the cross-product. This is the result.",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:623",
+   "quote": "There exists a map× :Sp(X)×Sq(Y )→Sp+q(X×Y ), thecross product",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 4,
+   "evidence": "MIT18_905F16_lecture_notes.txt:644",
+   "quote": "Since d2 = 0, a necessary condition forιp×ιq to exist is that",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 27,
+   "evidence": "MIT18_905F16_lecture_notes.txt:652",
+   "quote": "isconvexandnonempty, andhencestar-shaped.",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 28,
+   "evidence": "MIT18_905F16_lecture_notes.txt:653",
+   "quote": "we know thatHp+q−1(∆p× ∆q) = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:684",
+   "quote": "We need to check thata×b is a cycle.",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:679",
+   "quote": "Suppose we have three chain complexesA∗,B∗, andC∗",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:682",
+   "quote": "These data determine a bilinear map× :Hp(A)×Hq(B)→Hp+q(C).",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:708",
+   "quote": "× :Hp(X)×Hq(Y )→Hp+q(X×Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 30,
+   "evidence": "MIT18_905F16_lecture_notes.txt:709",
+   "quote": "that is natural, bilinear, and normalized.",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "MIT18_905F16_lecture_notes.txt:706",
+   "quote": "This gives the following result.",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:801",
+   "quote": "A short exact sequenceis an exact sequence of the form",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:829",
+   "quote": "LetA∗ be a subcomplex of the chain complexB∗.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:840",
+   "quote": "S∗(X,A ) = S∗(X)S∗(A) .",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:841",
+   "quote": "This is a functor from pairs of spaces to chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "MIT18_905F16_lecture_notes.txt:840",
+   "quote": "S∗(X,A ) = S∗(X)S∗(A) .",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:845",
+   "quote": "Hn(X,A ) =Hn(S∗(X,A )).",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 36,
+   "evidence": "MIT18_905F16_lecture_notes.txt:843",
+   "quote": "is the homology of the relative",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:916",
+   "quote": "We need to check thata is a cycle.",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:878",
+   "quote": "sequence of chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:878",
+   "quote": "natural homomorphism∂ : Hn(C)→ Hn−1(A)",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:878",
+   "quote": "Then there is a natural homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:887",
+   "quote": "is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:877",
+   "quote": "Let 0→A∗→B∗→C∗→ 0 be a short exact",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:999",
+   "quote": "In the map of exact sequences above,",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1016",
+   "quote": "If two of the three maps induced in homology",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1016",
+   "quote": "be a map of short exact sequences of chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1002",
+   "quote": "Very commonly one knows thatf0,f 1,f 3, andf4 are all isomorphisms",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1020",
+   "quote": "and (X,A )→ (Y,B ) induce isomorphims in homology.",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1020",
+   "quote": "and (X,A )→ (Y,B ) induce isomorphims in homology.",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1021",
+   "quote": "the map between the two homology long exact sequences.",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1021",
+   "quote": "Just apply the ﬁve lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1030",
+   "quote": "H∗(X−U,A−U)",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1218",
+   "quote": "long exact sequences combine with the ﬁve-lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1218",
+   "quote": "long exact sequences combine with the ﬁve-lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1029",
+   "quote": "An excision induces an isomorphism in homology,",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 51,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1199",
+   "quote": "then A ={A,B} is a cover ofX.",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 53,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1217",
+   "quote": "The middle vertical induces an isomorphism in homology by the locality principle",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 23,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1042",
+   "quote": "is a deformation retract. Then",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1043",
+   "quote": "H∗(X,A )→H∗(X/A,∗)",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1058",
+   "quote": "(2), the long exact sequences, and the ﬁve-lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1058",
+   "quote": "(2), the long exact sequences, and the ﬁve-lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 42,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1057",
+   "quote": "is an excision by assumption (1).",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1062",
+   "quote": "induces an isomorphism by excision.",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1071",
+   "quote": "Hq(Sn) =",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 22,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1096",
+   "quote": "since Dn is contractible.",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1080",
+   "quote": "Hq(Dn,Sn−1) =",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1095",
+   "quote": "follows from the long exact sequence in reduced homology",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1099",
+   "quote": "The right hand arrow is an isomorphism sinceSn−1 is a deformation retract",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1102",
+   "quote": "thenSm and Sn are not homotopy equivalent.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 45,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1103",
+   "quote": "Their homology groups are not isomorphic.",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1107",
+   "quote": "equivalent to spheres of diﬀerent dimension.",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 45,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1113",
+   "quote": "with our computation because the identity map induces the identity map on",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1120",
+   "quote": "induces an endomorphism of the inﬁnite cyclic groupHn(Sn).",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1126",
+   "quote": "deg : [Sn,Sn]→ Z×.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 45,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1118",
+   "quote": "Our computation of the homology of a sphere also implies",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1151",
+   "quote": "a sequence of functorshn : Top2→ Ab",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1152",
+   "quote": "a sequence of natural transformations",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1154",
+   "quote": "are homotopic, thenf0∗ =f1∗",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1158",
+   "quote": "is exact, where we have writtenhq(X) for hq(X, ∅).",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 42,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1155",
+   "quote": "Excisions induce isomorphisms.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 1,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1188",
+   "quote": "An n-simplex σ is A-small",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1188",
+   "quote": "Let A be a cover ofX.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1195",
+   "quote": "The inclusionSA∗ (X)⊆ S∗(X) induces an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1428",
+   "quote": "since c is a cycle.",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1196",
+   "quote": "in homology,H A∗ (X) ∼=− →H∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 51,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1421",
+   "quote": "Let A be a cover of a spaceX.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 52,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1195",
+   "quote": "The inclusionSA∗ (X)⊆ S∗(X) induces an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 56,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1425",
+   "quote": "because because $k is a chain map.",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 58,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1424",
+   "quote": "Pickk such that $kc isA-small.",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 60,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1426",
+   "quote": "homotopyTk is designed for:",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1237",
+   "quote": "maps ∂ :Hn(X)→Hn−1(A∩B) such that the sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1236",
+   "quote": "There are natural",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1246",
+   "quote": "is exact, where",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1252",
+   "quote": "This is the homology long exact sequence associated to the short exact sequence of chain",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 43,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1259",
+   "quote": "The Mayer-Vietoris theorem follows from excision as well",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 51,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1236",
+   "quote": "Assume that A ={A,B} is a cover ofX.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 53,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1255",
+   "quote": "combined with the locality principle.",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 55,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1292",
+   "quote": "To get the Mayer-Vietoris sequence, let{A,B} be a cover ofX and apply the lemma to",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1291",
+   "quote": "is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1337",
+   "quote": "natural chain mapS∗(X)→S∗(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 4,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1357",
+   "quote": "because d2 = 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1337",
+   "quote": "$ is a natural chain mapS∗(X)→S∗(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1337",
+   "quote": "naturally chain-homotopic to",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 28,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1308",
+   "quote": "It will use the “cone construction”b∗ from Lecture 5.",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1396",
+   "quote": "For any singular chainc",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 52,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1397",
+   "quote": "A-small chain.",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 57,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1395",
+   "quote": "Now let’s transfer this calculation to singular simplices",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 59,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1407",
+   "quote": "To apply this, we will have to understand iterates of the subdivision operator.",
+   "kind": "proof"
+  },
+  {
+   "from": 60,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1408",
+   "quote": "$k≃ 1 :S∗(X)→S∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1408",
+   "quote": "$k≃ 1 :S∗(X)→S∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 56,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1409",
+   "quote": "sincedT +Td = $−1.",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1422",
+   "quote": "S∗(X) is a quasi-isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 3,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1428",
+   "quote": "since c is a cycle.",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1422",
+   "quote": "H A∗ (X)→H∗(X) is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 51,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1421",
+   "quote": "Let A be a cover of a spaceX.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 52,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1421",
+   "quote": "The inclusion SA∗ (X)⊆",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 56,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1425",
+   "quote": "because because $k is a chain map.",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 58,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1424",
+   "quote": "Pickk such that $kc isA-small.",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1426",
+   "quote": "homotopyTk is designed for:",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1568",
+   "quote": "A CW-complex isﬁnite-dimensional if SknX = X for somen",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1575",
+   "quote": "Any CW-complex is Hausdorﬀ",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 63,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1575",
+   "quote": "it’s compact if and only if it’s ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1604",
+   "quote": "Let X be a CW-complex with a cell structure",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1608",
+   "quote": "LetX be a CW-complex with a chosen cell structure.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 63,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1609",
+   "quote": "lies in some ﬁnite subcomplex.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 65,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1609",
+   "quote": "lies in some ﬁnite subcomplex.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 16,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1645",
+   "quote": "provides a homotopy1≃ T.",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 21,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1639",
+   "quote": "Proposition 15.5.S∞ is contractible.",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1697",
+   "quote": "Ck(X) :=Hk(Xk,Xk−1) = Z[Ak].",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 44,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1683",
+   "quote": "Luckily, the inclusionXk−1⊆Xk satisﬁes what’s needed to conclude that",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1696",
+   "quote": "The group ofcellular n-chains in a CW complexX is",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1726",
+   "quote": "In particular,Hq(X) = 0 if q exceeds the dimension ofX.",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1698",
+   "quote": "into the homology long exact sequence",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1722",
+   "quote": "Hq(Xk) = 0 for k<q",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 66,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1716",
+   "quote": "lies in a ﬁnite subcomplex and in particular lies in a ﬁnite skeleton.",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1774",
+   "quote": "H∗(C∗(X))∼=H∗(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1775",
+   "quote": "natural with respect to ﬁltration-preserving maps between CW complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1773",
+   "quote": "For a CW complexX, there is an isomorpphism",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 68,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1774",
+   "quote": "H∗(C∗(X))∼=H∗(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1771",
+   "quote": "but as we know this is exactlyHn(X)!",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1780",
+   "quote": "That is,Hn(X) = 0 for n odd",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1777",
+   "quote": "Suppose that the CW complexX has only even cells",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 68,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1779",
+   "quote": "H∗(X)∼=C∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1776",
+   "quote": "This has an immediate and surprisingly useful corollary.",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1844",
+   "quote": "Hk(RPn) =",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 49,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1838",
+   "quote": "degα = (−1)n.",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 68,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1793",
+   "quote": "This computation will invoke a second way to think of the cellular",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 70,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1842",
+   "quote": "The homology is then easy to read oﬀ.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1888",
+   "quote": "depends only on the homotopy type ofX",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 20,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1893",
+   "quote": "computed from the homology groups ofX, which are themselves",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1883",
+   "quote": "LetX be a ﬁnite CW-complex withan n-cells.",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 63,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1883",
+   "quote": "LetX be a ﬁnite CW-complex withan n-cells.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1909",
+   "quote": "be a short exact sequence of ﬁnitely generated abelian",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1916",
+   "quote": "(−1)krankHk(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1912",
+   "quote": "LetX be a ﬁnite CW complex.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 63,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1912",
+   "quote": "LetX be a ﬁnite CW complex.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 68,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1917",
+   "quote": "We have the cellular chain complex",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 70,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1938",
+   "quote": "But Hk∼=H singk (X).",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 73,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1913",
+   "quote": "χ(X) =",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 74,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1923",
+   "quote": "Let’s use them and facts about rank rewrite the alternating sum:",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1971",
+   "quote": "and a homotopy equivalence",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1970",
+   "quote": "Let X be a simply connected CW-complex of ﬁnite type.",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 63,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1970",
+   "quote": "Let X be a simply connected CW-complex of ﬁnite type.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 49,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1998",
+   "quote": "by a map of degreeni.",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 62,
+   "evidence": "MIT18_905F16_lecture_notes.txt:1975",
+   "quote": "there exists a CW",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2103",
+   "quote": "bilinear mapβ0 :M×N→P such that for everyR-bilinear mapβ :M×N→Q",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2120",
+   "quote": "I want to construct a univeralR-bilinear map out ofM×N.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2120",
+   "quote": "I want to construct a univeralR-bilinear map out ofM×N.",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 50,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2254",
+   "quote": "provides a homology theory",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2293",
+   "quote": "The functorN↦→M⊗RN preserves cokernels",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2293",
+   "quote": "The functorN↦→M⊗RN preserves cokernels",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2323",
+   "quote": "is exact for alli∈I, then so is",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2414",
+   "quote": "uniquely up to chain homotopy.",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2413",
+   "quote": "be an exact sequence; and letf :M→N be a homomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2563",
+   "quote": "You should check that this new functionˆf is R-bilinear!",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2567",
+   "quote": "Hom(L⊗M,N ) is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2601",
+   "quote": "AnI-directed systemin a categoryC is a functorI→C .",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2601",
+   "quote": "AnI-directed systemin a categoryC is a functorI→C .",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2601",
+   "quote": "LetI be a directed set.",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 88,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2630",
+   "quote": "Let X :I→C be a directed system.",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2678",
+   "quote": "There is a natural isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2679",
+   "quote": "(lim−→I Mi)⊗RN∼= lim−→I (Mi⊗RN).",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 86,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2676",
+   "quote": "adjunction with Hom that we started with today.",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 87,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2677",
+   "quote": "LetI be a direct set",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 88,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2677",
+   "quote": "letM :I →ModR be aI-directed system of",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2679",
+   "quote": "(lim−→I Mi)⊗RN∼= lim−→I (Mi⊗RN).",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 88,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2683",
+   "quote": "LetX :I→ Ab (or ModR).",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2684",
+   "quote": "is the direct limit if and only if:",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2689",
+   "quote": "The direct limit functorlim−→I : Fun(I, Ab)→ Ab is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 88,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2694",
+   "quote": "is an exact sequence ofI-directed systems",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2689",
+   "quote": "The direct limit functorlim−→I : Fun(I, Ab)→ Ab is exact.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2700",
+   "quote": "By condition (1) of Lemma 23.11",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2705",
+   "quote": "directed system of chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2707",
+   "quote": "lim−→i∈IH∗(C(i))→H∗(lim−→i∈IC(i)).",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2705",
+   "quote": "Then there is a natural",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 88,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2705",
+   "quote": "be a directed system of chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2707",
+   "quote": "lim−→i∈IH∗(C(i))→H∗(lim−→i∈IC(i)).",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 92,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2704",
+   "quote": "The exactness of the direct limit has many useful consequences.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2709",
+   "quote": "Corollary 23.14.H∗(X; Q) =H∗(X)⊗ Q.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2709",
+   "quote": "Corollary 23.14.H∗(X; Q) =H∗(X)⊗ Q.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 90,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2708",
+   "quote": "Putting together things we have just said:",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2708",
+   "quote": "Putting together things we have just said:",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2798",
+   "quote": "Let R be a PID andC∗ a chain complex ofR-",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2800",
+   "quote": "0→Hn(C∗)⊗M α− →Hn(C∗⊗M)",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2799",
+   "quote": "Then there is a natural short exact sequence ofR-modules",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 13,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2758",
+   "quote": "SoZn(C∗)→Cn is a split monomorphism, and henceZn(C∗)⊗M→Cn⊗M is too.",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 15,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2758",
+   "quote": "SoZn(C∗)→Cn is a split monomorphism, and henceZn(C∗)⊗M→Cn⊗M is too.",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2799",
+   "quote": "Then there is a natural short exact sequence ofR-modules",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 38,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2769",
+   "quote": "In homology, this gives a long exact sequence.",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2800",
+   "quote": "0→Hn(C∗)⊗M α− →Hn(C∗⊗M)",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2828",
+   "quote": "Let C∗,D∗ be two chain complexes.",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2833",
+   "quote": "Cp⊗Dq.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2847",
+   "quote": "LetR be a PID andC∗,D∗ be chain complexes ofR-modules.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2852",
+   "quote": "Hp(C)⊗Hq(D)→Hn(C∗⊗D∗)→",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2856",
+   "quote": "natural in these data",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2848",
+   "quote": "There is a short exact sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2852",
+   "quote": "Hp(C)⊗Hq(D)→Hn(C∗⊗D∗)→",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2852",
+   "quote": "Hp(C)⊗Hq(D)→Hn(C∗⊗D∗)→",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2860",
+   "quote": "are homology isomorphisms then so isC′∗⊗D′∗→C∗⊗D∗.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 96,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2860",
+   "quote": "are homology isomorphisms then so isC′∗⊗D′∗→C∗⊗D∗.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2863",
+   "quote": "LetC be a category, and ﬁx a setM of objects inC",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2864",
+   "quote": "A functor F : C →Ab isM-free",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2887",
+   "quote": "A natural transformation of functors θ : F → G is an M-epimorphism if",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2891",
+   "quote": "is exact for allM∈M .",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2888",
+   "quote": "is a surjection of abelian groups for everyM ∈M .",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2899",
+   "quote": "be functors.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2900",
+   "quote": "letf : F → G be any natural",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 99,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2900",
+   "quote": "Suppose thatF isM-free",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 100,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2900",
+   "quote": "letG′→ G be aM-epimorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2936",
+   "quote": "a natural transformation of functors fromC to Ab.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2936",
+   "quote": "a natural transformation of functors fromC to Ab.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2938",
+   "quote": "Then there is a unique chain homotopy class of chain maps",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 99,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2935",
+   "quote": "LetM be a set of models in a categoryC.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 100,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2938",
+   "quote": "G∗→G→ 0 is anM-exact sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 101,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2933",
+   "quote": "This is precisely the condition required to prove the Fundamental Theorem of Homological",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2940",
+   "quote": "Suppose furthermore thatθ is a natural isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2942",
+   "quote": "chain homotopy equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 99,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2940",
+   "quote": "If eachGn isM-free",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 100,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2941",
+   "quote": "F∗→F→ 0 is anM-exact sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2947",
+   "quote": "S∗(X)⊗S∗(Y )⇆S∗(X×Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2949",
+   "quote": "H0(X)⊗H0(Y )∼=H0(X×Y ),",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2945",
+   "quote": "There are unique chain homotopy classes of natural",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 24,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2945",
+   "quote": "There are unique chain homotopy classes of natural",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 96,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2947",
+   "quote": "S∗(X)⊗S∗(Y )⇆S∗(X×Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 102,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2943",
+   "quote": "Applying this to our categoryTop2 with models as before",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 103,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2943",
+   "quote": "Applying this to our categoryTop2 with models as before",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2951",
+   "quote": "H(S∗(X)⊗S∗(Y ))∼=H∗(X×Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2951",
+   "quote": "There is a canonical natural isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 96,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2951",
+   "quote": "H(S∗(X)⊗S∗(Y ))∼=H∗(X×Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2957",
+   "quote": "Hp(X)⊗RHq(Y )→Hn(X×Y )→",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2961",
+   "quote": "natural inX, Y.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2953",
+   "quote": "There is a short exact sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2957",
+   "quote": "Hp(X)⊗RHq(Y )→Hn(X×Y )→",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 97,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2952",
+   "quote": "Combining this theorem with the algebraic Künneth theorem, we get:",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 104,
+   "evidence": "MIT18_905F16_lecture_notes.txt:2952",
+   "quote": "Combining this theorem with the algebraic Künneth theorem, we get:",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3082",
+   "quote": "ThenH∗(X;R) has the natural",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 102,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3057",
+   "quote": "Using acyclic models, you saw for homework that the the Künneth map",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 106,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3017",
+   "quote": "If R is a PID, the Künneth Theorem tells us that this map is a monomorphism.",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 108,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3083",
+   "quote": "structure of a commutative graded coalgebra overR.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3026",
+   "quote": "∆ :M→M⊗RM",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 1,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3093",
+   "quote": "function Sinn(X)→N.",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 109,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3109",
+   "quote": "Hn(X;N) = ker(Sn(X;N)→Sn+1(X;N))",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 109,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3111",
+   "quote": "A 0-cochain is a functionSin0(X)→N",
+   "kind": "proof"
+  },
+  {
+   "from": 111,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3116",
+   "quote": "Lemma 26.6.H0(X;N) = Map(π0(X),N ).",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 109,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3151",
+   "quote": "Sn(X,A ;N) = ker (Sn(X;N)→Sn(A;N)) .",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3153",
+   "quote": "Hn(X,A ;N) =Hn(S∗(X,A ;N)).",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 5,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3178",
+   "quote": "and letC∗ be a chain-complex of freeR-modules.",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3180",
+   "quote": "HomR(Hn(C∗),N )→ 0,",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3181",
+   "quote": "natural inC∗ and N",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 34,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3178",
+   "quote": "Then there is a short exact sequence of",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 114,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3245",
+   "quote": "so this cokernel is preciselyExt1R(Hn−1(C∗),N ).",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 1,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3295",
+   "quote": "be a singular(p +q)-simplex in the",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 2,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3294",
+   "quote": "α :Sp+q(X×Y )→Sp(X)⊗Sq(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3293",
+   "quote": "we will deﬁne a natural homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3294",
+   "quote": "α :Sp+q(X×Y )→Sp(X)⊗Sq(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3335",
+   "quote": "∪ :Hp(X)⊗Hq(X) ×− →Hp+q(X×X)",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 115,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3333",
+   "quote": "The cup productis the map obtained by takingX =Y and composing with the",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 109,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3345",
+   "quote": "Letf∈Sp(X), g∈Sq(Y ), andh∈Sr(Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 115,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3350",
+   "quote": "((f×g)×h)(σ) = (−1)(p+q)r(f×g)(σ12◦αp+q)h(σ3◦ωr).",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3371",
+   "quote": "equipped with maps Ap⊗R Aq → Ap+q",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3427",
+   "quote": "× :H∗(X)⊗H∗(Y )→H∗(X×Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 116,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3428",
+   "quote": "is anR-algebra homomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 118,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3428",
+   "quote": "is anR-algebra homomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3469",
+   "quote": "Any mapSp+q→Sp×Sq induces the zero map inHp+q(−).",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3486",
+   "quote": "Hn(M), called thefundamental class",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3487",
+   "quote": "Hp(M)⊗Hq(M) ∪− →Hn(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 116,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3487",
+   "quote": "Hp(M)⊗Hq(M) ∪− →Hn(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3485",
+   "quote": "LetM be a compact manifold of dimensionn.",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3547",
+   "quote": "The restriction of a nondegenerate bilinear form onV",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3559",
+   "quote": "Any ﬁnite dimensional nondegenerate symmetric bilinear form overF2 splits",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 123,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3551",
+   "quote": "Using this easy lemma, we may inductively decompose",
+   "kind": "proof"
+  },
+  {
+   "from": 126,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3615",
+   "quote": "H1(Σ1#Σ2)∼=H1(Σ1)⊕H1(Σ2)",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 78,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3626",
+   "quote": "Formation of the intersection bilinear form",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 128,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3674",
+   "quote": "then the orbit projection mapX→ π\\X is a covering",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 129,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3674",
+   "quote": "If π acts principally onX",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 128,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3677",
+   "quote": "Let p : E→ B be a covering space",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3713",
+   "quote": "is an equivalence of categories.",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 9,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3712",
+   "quote": "Then the functor CovB →",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 128,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3712",
+   "quote": "Then the functor CovB →",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 7,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3765",
+   "quote": "gives an equivalence of categories",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3763",
+   "quote": "The classiﬁcation theorem for covering spaces has as a corollary:",
+   "kind": "proof"
+  },
+  {
+   "from": 134,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3797",
+   "quote": "An R-orientation of ann-manifold M",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3807",
+   "quote": "the mapj :Hn(M;R)→ Γ(M;oM⊗R)",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3807",
+   "quote": "If M is compact",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 137,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3847",
+   "quote": "TakingA =M (assuming M compact) we ﬁnd thatHq(M;R) = 0 for q >n and",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3814",
+   "quote": "Hn(M;R)∼=",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3813",
+   "quote": "If M is a compact connectedn-manifold, then",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 134,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3816",
+   "quote": "R if M is orientable",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 23,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3929",
+   "quote": "deformation retract. A retraction is given byr(x) =x/||x||",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3845",
+   "quote": "ThenHq(M|A;R) = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 43,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3967",
+   "quote": "excise the closed subsetM−Ui to see that",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3845",
+   "quote": "LetM be ann-manifold and letA be a compact subset ofM.",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 138,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3949",
+   "quote": "(2) by Proposition 32.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 139,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3963",
+   "quote": "So the result follows from (1), (2), and Proposition 32.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3870",
+   "quote": "So the ﬁve-lemma shows thatjA∪B is an isomorphism.",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 137,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3855",
+   "quote": "suppose the result holds forA, B,",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 91,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3908",
+   "quote": "direct limit from Lecture 23.",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 131,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3910",
+   "quote": "by unique path lifting.",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 137,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3876",
+   "quote": "assume that the theorem holds for eachAn.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 140,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3896",
+   "quote": "By Lemma 32.4,Hq(M|A) = 0 for q > n.",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 141,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3910",
+   "quote": "By Lemma 32.5 this open set contains someAi",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3880",
+   "quote": "lim−→i Hq(X,X−Ai)",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3880",
+   "quote": "lim−→i Hq(X,X−Ai)",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 92,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3889",
+   "quote": "by exactness of direct limit",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3979",
+   "quote": "How does⟨f∗b,x⟩ relate to⟨b,f∗x⟩?",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:3979",
+   "quote": "How does⟨f∗b,x⟩ relate to⟨b,f∗x⟩?",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4009",
+   "quote": "Leta∈Hp(X),b∈Hq(Y ),x∈Hp(X),y∈Hq(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 30,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4014",
+   "quote": "Look at the chain-level cross product and the Alexander-Whitney maps:",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 32,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4007",
+   "quote": "the chain-level cross product (or Eilenberg-Zilber",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 102,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4017",
+   "quote": "so by acyclic models they are natural chain homotopy inverses.",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4009",
+   "quote": "Leta∈Hp(X),b∈Hq(Y ),x∈Hp(X),y∈Hq(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 115,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4008",
+   "quote": "the Alexander-Whitney map for cohomology.",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4023",
+   "quote": "Assume thatHp(X) is a ﬁnitely generated freeR-module for all",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 79,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4025",
+   "quote": "× :H∗(X;R)⊗RH∗(Y ;R)→H∗(X×Y ;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 106,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4029",
+   "quote": "The homology Künneth theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4025",
+   "quote": "× :H∗(X;R)⊗RH∗(Y ;R)→H∗(X×Y ;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 143,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4039",
+   "quote": "Commutativity of this diagram is exactly the content of Lemma 33.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4075",
+   "quote": "H∗(X) is a module forH∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4075",
+   "quote": "H∗(X) is a module forH∗(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 115,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4084",
+   "quote": "f∗(f∗(β)∩σ) =f∗((f∗(β)(σ◦αp))· (σ◦ωq))",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 116,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4075",
+   "quote": "(a∪b)∩x =a∩ (b∩x) and 1∩x =x",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4101",
+   "quote": "−∩ [M] :Hp(M;R)→Hq(M;R), p +q =n,",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4100",
+   "quote": "orientation class inHn(M,M −a;R) for everya∈M.",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4101",
+   "quote": "−∩ [M] :Hp(M;R)→Hq(M;R), p +q =n,",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4098",
+   "quote": "LetM be a topologicaln-manifold that is compact and oriented",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 134,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4098",
+   "quote": "LetM be a topologicaln-manifold that is compact and oriented",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 135,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4096",
+   "quote": "We recall the notion of an orientation, and Theorem 31.9 asserting the",
+   "kind": "proof"
+  },
+  {
+   "from": 147,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4151",
+   "quote": "Hp(U)⊗Hn(X,X−K)",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4151",
+   "quote": "Hp(U)⊗Hn(X,X−K)",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 145,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4161",
+   "quote": "This is just the projection formula again!",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 87,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4163",
+   "quote": "This poset is directed",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4166",
+   "quote": "ˇHp(K) = lim−→U∈UKHp(U).",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4166",
+   "quote": "ˇHp(K) = lim−→U∈UKHp(U).",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 147,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4163",
+   "quote": "By the lemma,Hp :UK→ Ab",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 19,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4178",
+   "quote": "homotopy equivalence (or actually just a homology isomorphism).",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 91,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4183",
+   "quote": "We will check that the map toHp(K) satisﬁes the conditions we established in Lecture 23",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4182",
+   "quote": "ˇH∗(K)→H∗(K) is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4182",
+   "quote": "ˇH∗(K)→H∗(K) is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4213",
+   "quote": "thenˇH∗(X;R) is canonically isomorphic",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4254",
+   "quote": "that is natural in the pair.",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4251",
+   "quote": "There is a long exact",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 92,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4289",
+   "quote": "the direct limit of the system of long exact sequences",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4253",
+   "quote": "ˇHp(K,L )→ ˇHp(K)→ ˇHp(L)",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 153,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4288",
+   "quote": "are both surjective and hence coﬁnal.",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 154,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4284",
+   "quote": "We can rewrite the entire sequence as the direct limit of a directed system",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4260",
+   "quote": "ˇHp(A∪B,A ) ∼=− →ˇHp(B,A∩B)",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 155,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4307",
+   "quote": "Combine Lemma 35.8 with excision for singular cohomology:",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 89,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4274",
+   "quote": "thenlim−→J Aϕ→ lim−→IA is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 91,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4275",
+   "quote": "satisﬁes the necessary and suﬃcient conditions to belim−→J Aϕ.",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 153,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4274",
+   "quote": "If ϕ :J→I is coﬁnal",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 153,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4300",
+   "quote": "are both coﬁnal.",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 10,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4318",
+   "quote": "There is a natural long exact sequence:",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 33,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4318",
+   "quote": "There is a natural long exact sequence:",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 55,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4323",
+   "quote": "Apply Lemma 11.6 to the ladder",
+   "kind": "proof"
+  },
+  {
+   "from": 156,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4319",
+   "quote": "ˇHp−1(A∪B)→ ˇHp−1(A)⊕ ˇHp(B)",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 151,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4316",
+   "quote": "The Mayer-Vietoris long exact sequence is a consequence of these two results.",
+   "kind": "proof"
+  },
+  {
+   "from": 156,
+   "to": 152,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4316",
+   "quote": "The Mayer-Vietoris long exact sequence is a consequence of these two results.",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4361",
+   "quote": "∩ : ˇHp(K,L )⊗Hn(X,X−K)→Hq(X−L,X−K), p +q =n,",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 43,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4426",
+   "quote": "By excision,Hn(U,U −K)→ Hn(X,X −K) is an isomorphism.",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 53,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4425",
+   "quote": "the locality principle then guarantees that",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 145,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4358",
+   "quote": "commutes by the projection formula.",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4361",
+   "quote": "∩ : ˇHp(K,L )⊗Hn(X,X−K)→Hq(X−L,X−K), p +q =n,",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4446",
+   "quote": "Hn(X,X −A∪B), there is a commutative ladder",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4445",
+   "quote": "Čech cohomology and singular homology Mayer-Vietoris sequences are compatible",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 156,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4445",
+   "quote": "Čech cohomology and singular homology Mayer-Vietoris sequences are compatible",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 157,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4443",
+   "quote": "The construction of the Mayer-Vietoris sequences now gives:",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4484",
+   "quote": "∩[M]K : ˇHp(K,L ;R)→Hq(M−L,M−K;R).",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 39,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4528",
+   "quote": "By the top ladder and the ﬁve-lemma, we may assumeL = ∅",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4481",
+   "quote": "Let M be ann-manifold and K⊇ L a pair of",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 137,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4472",
+   "quote": "By Theorem 32.1",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 140,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4569",
+   "quote": "32.4 and 37.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 145,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4564",
+   "quote": "since capping with 1 is the identity",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4484",
+   "quote": "∩[M]K : ˇHp(K,L ;R)→Hq(M−L,M−K;R).",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 149,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4532",
+   "quote": "(1) M = Rn, K a compact convex set. We claim that",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 157,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4477",
+   "quote": "We recall also the fully relative cap product pairing",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 158,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4567",
+   "quote": "lemma applied to the Mayer-Vietoris ladder 36.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 160,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4569",
+   "quote": "32.4 and 37.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4525",
+   "quote": "ˇHp(Ak)→ ˇHp(A)",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4590",
+   "quote": "Hq+1(M,M −L)",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4583",
+   "quote": "Hp(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4575",
+   "quote": "Suppose thatM is a compactR-orientedn-manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 134,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4575",
+   "quote": "Suppose thatM is a compactR-orientedn-manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4577",
+   "quote": "ˇHp−1(L)",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 159,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4574",
+   "quote": "Let’s point out some special cases. WithK =M, we get:",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4594",
+   "quote": "∩[M]K : ˇHp(K;R)→Hq(M,M −K;R).",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4592",
+   "quote": "Suppose thatM is ann-manifold, and letK be a compact subset.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4594",
+   "quote": "∩[M]K : ˇHp(K;R)→Hq(M,M −K;R).",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 159,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4591",
+   "quote": "With L = ∅, we get:",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 6,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4597",
+   "quote": "∩[M] :Hp(M;R)→Hn−p(M;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4597",
+   "quote": "∩[M] :Hp(M;R)→Hn−p(M;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4596",
+   "quote": "LetM be a compactR-orientedn-manifold.",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 134,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4596",
+   "quote": "LetM be a compactR-orientedn-manifold.",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 161,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4595",
+   "quote": "The intersection of these two special cases is:",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 162,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4595",
+   "quote": "The intersection of these two special cases is:",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4605",
+   "quote": "determines a fundamental class[M]K∈Hn(M,M −K)",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4604",
+   "quote": "Let M be an n-manifold and K a compact subset.",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4606",
+   "quote": "∩[M]K : ˇHn−q(K;R) ∼=− →Hq(M,M −K;R).",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 159,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4591",
+   "quote": "With L = ∅, we get:",
+   "kind": "proof"
+  },
+  {
+   "from": 165,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4607",
+   "quote": "ˇHp(K;R) = 0 for p>n .",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 37,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4613",
+   "quote": "ˇHn−q(K;R) ∩[Rn]K−−−−−→Hq(Rn, Rn−K;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4613",
+   "quote": "ˇHn−q(K;R) ∩[Rn]K−−−−−→Hq(Rn, Rn−K;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 148,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4617",
+   "quote": "then ˇHn(K;R) = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 166,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4616",
+   "quote": "This is extremely useful! For example",
+   "kind": "proof"
+  },
+  {
+   "from": 168,
+   "to": 166,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4616",
+   "quote": "This is extremely useful! For example",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 110,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4661",
+   "quote": "Hp(M;R)",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 113,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4626",
+   "quote": "it with the universal coeﬃent theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 116,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4659",
+   "quote": "a⊗b↦→⟨a∪b, [M]⟩",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 121,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4658",
+   "quote": "anM a compactR-orientedn-manifold.",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 134,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4658",
+   "quote": "anM a compactR-orientedn-manifold.",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 145,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4655",
+   "quote": "⟨a,b∩ [M]⟩ =⟨a∪b, [M]⟩",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 146,
+   "evidence": "MIT18_905F16_lecture_notes.txt:4640",
+   "quote": "Let’s combine this with Poincaré duality.",
+   "kind": "proof"
+  }
+ ]
+}

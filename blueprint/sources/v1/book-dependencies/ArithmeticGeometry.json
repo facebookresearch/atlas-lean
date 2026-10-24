@@ -1,0 +1,6860 @@
+{
+ "book": "ArithmeticGeometry",
+ "source": "mit18_782f13_lec{1-5,7-26}.txt: MIT 18.782 Introduction to Arithmetic Geometry (Fall 2013, A. V. Sutherland) lecture notes, PDFs converted to text",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 10,
+   "to": 2,
+   "evidence": "mit18_782f13_lec3.txt:123",
+   "quote": "As shown in Lecture 2, by completing the square we can put C",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "mit18_782f13_lec3.txt:125",
+   "quote": "The group F×q is cyclic and has even order q− 1",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 3,
+   "evidence": "mit18_782f13_lec3.txt:141",
+   "quote": "Theorem 2.3, since we know by Theorem3.4 thatC has a rational point.",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "mit18_782f13_lec3.txt:141",
+   "quote": "Theorem 2.3, since we know by Theorem3.4 thatC has a rational point.",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "mit18_782f13_lec4.txt:30",
+   "quote": "the ring of p-adic inte gers Zp is the inv erse limit",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:74",
+   "quote": "an) be a p-adic integer with each an uniquely represented by an",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:78",
+   "quote": "f Zp has a unique p-adic expansion and every sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "mit18_782f13_lec4.txt:78",
+   "quote": "f Zp has a unique p-adic expansion and every sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:128",
+   "quote": "[pm] π0 p → Z mp−→ Z/pmZ−→0 ,",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 15,
+   "evidence": "mit18_782f13_lec4.txt:132",
+   "quote": "[pm] shifts the p-adic expansion (b 0,b 1,... ) of each element in Zp to the",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "mit18_782f13_lec4.txt:136",
+   "quote": "onp-adic expansions, and hence on Zp",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:145",
+   "quote": "Corollary 4.9. For all positive integers m we have Zp/pmZp≃ Z/pmZ.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:146",
+   "quote": "For each nonzero a∈ Zp the p-adic valuation of a, denoted vp(a), is the",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 15,
+   "evidence": "mit18_782f13_lec4.txt:148",
+   "quote": "the ﬁrst nonzero entry in the p-adic expansion of a.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_782f13_lec4.txt:147",
+   "quote": "greatest integer m for which a lies in the image of [p m]",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "mit18_782f13_lec4.txt:151",
+   "quote": "Theorem 4.11. The p-adic valuation vp satisﬁes the following properties:",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "mit18_782f13_lec4.txt:175",
+   "quote": "satisﬁes the three properties listed in Theorem 4.11.",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:180",
+   "quote": "Corollary 4.13. Zp is an integral domain (a ring with no zero divisors).",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "mit18_782f13_lec4.txt:181",
+   "quote": "If a and b are both nonzero then vp(ab) =vp(a) +vp(b)<∞, so ab = 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:183",
+   "quote": "The group of p-adic units Z×p is the multiplicative group of invertible",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:186",
+   "quote": "(1) Z×p = Zp−pZp; equivalently, Z×p ={a∈ Zp :vp(a) = 0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 19,
+   "evidence": "mit18_782f13_lec4.txt:186",
+   "quote": "(1) Z×p = Zp−pZp; equivalently, Z×p ={a∈ Zp :vp(a) = 0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 20,
+   "evidence": "mit18_782f13_lec4.txt:190",
+   "quote": "a has a multiplicative inverse a−1 and we h avevp(a) +vp(a−1) = vp(1) = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "mit18_782f13_lec4.txt:186",
+   "quote": "(1) Z×p = Zp−pZp; equivalently, Z×p ={a∈ Zp :vp(a) = 0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:200",
+   "quote": "o ideal in Zp is of the form (pm) for some integer m≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 19,
+   "evidence": "mit18_782f13_lec4.txt:204",
+   "quote": "everya∈I lies in im[pm] = (pm).",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "mit18_782f13_lec4.txt:207",
+   "quote": "and we can write a =pmu for some unit u.",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 14,
+   "evidence": "mit18_782f13_lec4.txt:210",
+   "quote": "Corollary 4.17. The ring Zp is a principal ideal domain with a unique maximal ideal.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 14,
+   "evidence": "mit18_782f13_lec5.txt:6",
+   "quote": "-adic numbers Qp is the fraction ﬁeld of Zp.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "mit18_782f13_lec5.txt:87",
+   "quote": "Letk be a ﬁeld with absolute value ‖‖ and multiplicative identity 1k.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 29,
+   "evidence": "mit18_782f13_lec5.txt:132",
+   "quote": "In a ﬁeld k of positive characteristic p every absolute value ‖‖ is nonar-",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "mit18_782f13_lec5.txt:138",
+   "quote": "part (c) of Theorem 5.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 29,
+   "evidence": "mit18_782f13_lec5.txt:170",
+   "quote": "Two absolute values‖‖ and‖‖′ on a ﬁeld k are said to be equivalent if",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 29,
+   "evidence": "mit18_782f13_lec5.txt:178",
+   "quote": "nontrivial absolute value on Q is equivalent to some|| p,",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 30,
+   "evidence": "mit18_782f13_lec5.txt:181",
+   "quote": "If ‖‖ is archimedean then‖b‖> 1 for",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "mit18_782f13_lec5.txt:178",
+   "quote": "nontrivial absolute value on Q is equivalent to some|| p,",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 34,
+   "evidence": "mit18_782f13_lec7.txt:80",
+   "quote": "Then N(α) =|NL/ ( α)Q |.",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 36,
+   "evidence": "mit18_782f13_lec7.txt:80",
+   "quote": "Then N(α) =|NL/ ( α)Q |.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 34,
+   "evidence": "mit18_782f13_lec7.txt:163",
+   "quote": "since NL/ (α) is equal",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "mit18_782f13_lec7.txt:174",
+   "quote": "eorem 7.5, and therefore ∏p|α|p = 1, as desired.",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:182",
+   "quote": "there is a positive integer N such that‖xn−𝓁‖<ϵ for all",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:196",
+   "quote": "Convergence of (xnyn) to xy follows immediately from the multiplicativity of ‖‖.",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 39,
+   "evidence": "mit18_782f13_lec7.txt:194",
+   "quote": "Let (xn) and (yn) be sequences in k that conver ge to x and y respectively.",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:202",
+   "quote": "a positive integer N such that‖xm−xn‖<ϵ for all m,n≥N.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 30,
+   "evidence": "mit18_782f13_lec7.txt:208",
+   "quote": "where we have again used‖− x‖ =‖x‖.",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 39,
+   "evidence": "mit18_782f13_lec7.txt:204",
+   "quote": "7.10. Every convergent sequence is a Cauchy sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 41,
+   "evidence": "mit18_782f13_lec7.txt:204",
+   "quote": "7.10. Every convergent sequence is a Cauchy sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 39,
+   "evidence": "mit18_782f13_lec7.txt:217",
+   "quote": "converges (to an element of k).",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 41,
+   "evidence": "mit18_782f13_lec7.txt:216",
+   "quote": "A ﬁeld k is complete (with respect to‖‖) if every Cauchy sequence in k",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:223",
+   "quote": "Two sequences (an) and (bn) are equivalent if‖an−bn‖→ 0 as n→∞ .",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 41,
+   "evidence": "mit18_782f13_lec7.txt:229",
+   "quote": "are equivalence classes of Cauchy sequences in k, where",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "mit18_782f13_lec7.txt:229",
+   "quote": "are equivalence classes of Cauchy sequences in k, where",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:260",
+   "quote": "Let S be any subset of a ﬁeld k with absolute value ‖‖.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:267",
+   "quote": "Letk be a ﬁeld with absolute value‖‖.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 41,
+   "evidence": "mit18_782f13_lec7.txt:269",
+   "quote": "there is anxm with the property that‖xm−xn‖ for alln≥m.",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 45,
+   "evidence": "mit18_782f13_lec7.txt:267",
+   "quote": "Then k is dense in its completionk.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "mit18_782f13_lec7.txt:267",
+   "quote": "Then k is dense in its completionk.",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 29,
+   "evidence": "mit18_782f13_lec7.txt:279",
+   "quote": "from the triangle inequality that‖xm−xn‖<ϵ for allm,n≥N, hence (xn) is Cauchy.",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 41,
+   "evidence": "mit18_782f13_lec7.txt:274",
+   "quote": "Every Cauchy sequence in k is equivalent to a Cauchy sequence whose",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 44,
+   "evidence": "mit18_782f13_lec7.txt:274",
+   "quote": "Every Cauchy sequence in k is equivalent to a Cauchy sequence whose",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 45,
+   "evidence": "mit18_782f13_lec7.txt:274",
+   "quote": "ˆCorollary 7.16. Every Cauchy sequence in k",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 47,
+   "evidence": "mit18_782f13_lec7.txt:276",
+   "quote": "Since k is dense in k, for each zn we may",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 40,
+   "evidence": "mit18_782f13_lec7.txt:289",
+   "quote": "multiplication, by Lemma 7.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 43,
+   "evidence": "mit18_782f13_lec7.txt:280",
+   "quote": "The completion k of k is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 45,
+   "evidence": "mit18_782f13_lec7.txt:280",
+   "quote": "The completion k of k is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "mit18_782f13_lec7.txt:283",
+   "quote": "The ﬁrst statement follows immediately from Corollary 7.16 and the discussion",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 14,
+   "evidence": "mit18_782f13_lec8.txt:30",
+   "quote": "in both Z ˆp and Q as element-wise operations on representative sequences that π is a ring",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 28,
+   "evidence": "mit18_782f13_lec8.txt:11",
+   "quote": "isomorphic to Qp.",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 41,
+   "evidence": "mit18_782f13_lec8.txt:26",
+   "quote": "us each a∈ Zp corresponds to a sequence of integers ( an) that is Cauchy",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 43,
+   "evidence": "mit18_782f13_lec8.txt:56",
+   "quote": "sequence in Qp converges, so Qp is complete.",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 45,
+   "evidence": "mit18_782f13_lec8.txt:8",
+   "quote": "Theorem 8.1. The completion Q of Q with respect to the p-adic absolute value",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 49,
+   "evidence": "mit18_782f13_lec8.txt:44",
+   "quote": "e can embed Q into Qp, by Corollary 7.17.",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 13,
+   "evidence": "mit18_782f13_lec8.txt:84",
+   "quote": "Let (Sn) be an inverse system of ﬁnite non-empty sets with a compatible",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 13,
+   "evidence": "mit18_782f13_lec8.txt:105",
+   "quote": "consider the inverse system (S n) of",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 14,
+   "evidence": "mit18_782f13_lec8.txt:99",
+   "quote": "Theorem 8.4. For any f∈ Zp[x] the following are equivalent:",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "mit18_782f13_lec8.txt:107",
+   "quote": "By Lemma 8.3, the set S = limSn⊆ lim Z/pnZ = Zp is non-empty",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 53,
+   "evidence": "mit18_782f13_lec8.txt:157",
+   "quote": "consider the degree d Taylor expansion of f about a:",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 54,
+   "evidence": "mit18_782f13_lec8.txt:151",
+   "quote": "Then f(a) =f′( a) = 0 if and only if a is (at least)",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 14,
+   "evidence": "mit18_782f13_lec8.txt:177",
+   "quote": "Leta∈ Zp and f∈ Zp[x]. Suppose f(a)≡ 0 modp and",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 24,
+   "evidence": "mit18_782f13_lec8.txt:189",
+   "quote": "Note that (1) ensures that f′(an)∈ Z×p",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 53,
+   "evidence": "mit18_782f13_lec8.txt:197",
+   "quote": "consider the Taylor expansion of f",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 54,
+   "evidence": "mit18_782f13_lec8.txt:178",
+   "quote": "f′(a)⁄≡ 0 modp. Then there is a unique b∈ Zp such that",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:52",
+   "quote": "Two quadratic forms f and g are equivalent if g(v) = f(Tv ) for some",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:62",
+   "quote": "9.3. The rank of a quadratic",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "mit18_782f13_lec9.txt:64",
+   "quote": "preserved under equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:70",
+   "quote": "The discriminant of a nondegenerate quadratic form with matrix A is the",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 58,
+   "evidence": "mit18_782f13_lec9.txt:71",
+   "quote": "it is clearly preserv ed by equivalence.",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 59,
+   "evidence": "mit18_782f13_lec9.txt:70",
+   "quote": "The discriminant of a nondegenerate quadratic form with matrix A is the",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:79",
+   "quote": "Theorem 9.5. Every quadratic form is equivalent to a diagonal quadratic form.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 58,
+   "evidence": "mit18_782f13_lec9.txt:79",
+   "quote": "Theorem 9.5. Every quadratic form is equivalent to a diagonal quadratic form.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:109",
+   "quote": "A quadratic formf onV representsa∈k ifa lies in the image off : V →k.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 58,
+   "evidence": "mit18_782f13_lec9.txt:110",
+   "quote": "Equivalent forms necessarily represent the same elements",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:115",
+   "quote": "If a nondegenerate quadratic form f represents 0 then it represents every",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 59,
+   "evidence": "mit18_782f13_lec9.txt:115",
+   "quote": "If a nondegenerate quadratic form f represents 0 then it represents every",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "mit18_782f13_lec9.txt:115",
+   "quote": "If a nondegenerate quadratic form f represents 0 then it represents every",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 28,
+   "evidence": "mit18_782f13_lec9.txt:129",
+   "quote": "represents 0 over every completion of Q, that is, over Qp for all primes p≤∞ .",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 45,
+   "evidence": "mit18_782f13_lec9.txt:129",
+   "quote": "represents 0 over every completion of Q, that is, over Qp for all primes p≤∞ .",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 57,
+   "evidence": "mit18_782f13_lec9.txt:128",
+   "quote": "A quadratic form over Q represents 0 if and only if it",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 61,
+   "evidence": "mit18_782f13_lec11.txt:207",
+   "quote": "generality that f is a diagonal form",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 62,
+   "evidence": "mit18_782f13_lec9.txt:128",
+   "quote": "A quadratic form over Q represents 0 if and only if it",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 63,
+   "evidence": "mit18_782f13_lec11.txt:253",
+   "quote": "both forms, so is every element of Qp).",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 66,
+   "evidence": "mit18_782f13_lec11.txt:199",
+   "quote": "of Lemma 10.2 and Corollary 10.3 still apply.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 67,
+   "evidence": "mit18_782f13_lec11.txt:199",
+   "quote": "of Lemma 10.2 and Corollary 10.3 still apply.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 69,
+   "evidence": "mit18_782f13_lec11.txt:258",
+   "quote": "are odd, and ai,±t∈ Z×p , so (a 1,a 2)p = 1 = (t,−a1a2)p",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 76,
+   "evidence": "mit18_782f13_lec11.txt:269",
+   "quote": "The set S is ﬁnite, by Corollary 11.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 78,
+   "evidence": "mit18_782f13_lec11.txt:262",
+   "quote": "may apply Corollary 11.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 79,
+   "evidence": "mit18_782f13_lec11.txt:265",
+   "quote": "and by Corollary 11.5, also for p =p0.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 81,
+   "evidence": "mit18_782f13_lec11.txt:274",
+   "quote": "By the weak approximation theorem there exists",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 83,
+   "evidence": "mit18_782f13_lec11.txt:253",
+   "quote": "By Lemma 11.11, there is a rational number t and",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:13",
+   "quote": "or a,b∈ Q×p the Hilbert symbol (a,b)p is deﬁned by",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:35",
+   "quote": "Lemma 10.2. For any a,b∈ Q×p , the following are equivalent:",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 34,
+   "evidence": "mit18_782f13_lec10.txt:40",
+   "quote": "norm of an element in Qp(",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 57,
+   "evidence": "mit18_782f13_lec10.txt:37",
+   "quote": "(ii) The quadratic form z2−ax2−by2 represents 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 62,
+   "evidence": "mit18_782f13_lec10.txt:37",
+   "quote": "(ii) The quadratic form z2−ax2−by2 represents 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 63,
+   "evidence": "mit18_782f13_lec10.txt:45",
+   "quote": "ax2 +by2 represents 0, hence it represents every element of Qp including 1, so (ii)⇒(i).",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:36",
+   "quote": "(i) (a,b)p = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:64",
+   "quote": "Corollary 10.3. For all a,b,c ∈ Q×p , the following hold:",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 34,
+   "evidence": "mit18_782f13_lec10.txt:75",
+   "quote": "by the multiplicativity of the norm map",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:65",
+   "quote": "(i) (1,c )p = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "mit18_782f13_lec10.txt:72",
+   "quote": "map from Qp(√c) to Qp. For (i) we have N(1) = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:81",
+   "quote": "and only if a,b< 0∞",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 66,
+   "evidence": "mit18_782f13_lec10.txt:87",
+   "quote": "is not a norm in C = Q (∞ −1).",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 67,
+   "evidence": "mit18_782f13_lec10.txt:85",
+   "quote": "then (√a,b) = 1, by Corollary 10.3.(i)",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 10,
+   "evidence": "mit18_782f13_lec10.txt:90",
+   "quote": "Recall from Lecture 3 (or the Chevalley-Warning theorem on problem set 2) that",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 23,
+   "evidence": "mit18_782f13_lec10.txt:89",
+   "quote": "all u,v∈ Z×p .",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 56,
+   "evidence": "mit18_782f13_lec10.txt:93",
+   "quote": "Hensel’s lemma gives a solution over Zp.",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:88",
+   "quote": "Lemma 10.5. If p is odd, then (u,v )p = 1 for",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 23,
+   "evidence": "mit18_782f13_lec10.txt:97",
+   "quote": "α,β ∈ Z and u,v∈ Z×p . Then",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:96",
+   "quote": "and write a,b∈ Q×p as a =pαu and b =pβv, with",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:98",
+   "quote": "(a,b)p = (−",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 67,
+   "evidence": "mit18_782f13_lec10.txt:113",
+   "quote": "by Corollary 10.3 .(iii)",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "mit18_782f13_lec10.txt:110",
+   "quote": "We have (u,v )p = 1, by Lemma 10.5",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 14,
+   "evidence": "mit18_782f13_lec10.txt:145",
+   "quote": "have primitive solutions over Z2 if and only if they have primitive solutions modulo 8.",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 23,
+   "evidence": "mit18_782f13_lec10.txt:144",
+   "quote": "Lemma 10.8. Letu,v ∈ Z×.",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 23,
+   "evidence": "mit18_782f13_lec10.txt:162",
+   "quote": "with α,β ∈ Z and u,v ∈ Z×2 .",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:162",
+   "quote": "Write a,b ∈ Q×2 as a = 2αu and b = 2βv",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:165",
+   "quote": "a,b) 2 = (−1)ϵ(u)ϵ(v)+αω(v)+βω(u),",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 71,
+   "evidence": "mit18_782f13_lec10.txt:180",
+   "quote": "By Lemma 10.8, to",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 28,
+   "evidence": "mit18_782f13_lec10.txt:188",
+   "quote": "that for all a,b,c ∈ Q×p we have",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:187",
+   "quote": "The Hilbert symbol (a,b)p is a nondegenerate bilinear map.",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 68,
+   "evidence": "mit18_782f13_lec10.txt:186",
+   "quote": "We now note the following corollary to Theorems 10.4, 10.7, and 10.9.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 70,
+   "evidence": "mit18_782f13_lec10.txt:186",
+   "quote": "We now note the following corollary to Theorems 10.4, 10.7, and 10.9.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 72,
+   "evidence": "mit18_782f13_lec10.txt:186",
+   "quote": "We now note the following corollary to Theorems 10.4, 10.7, and 10.9.",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 8,
+   "evidence": "mit18_782f13_lec10.txt:307",
+   "quote": "by quadratic",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 65,
+   "evidence": "mit18_782f13_lec10.txt:252",
+   "quote": "Then (a,b)p = 1 for all but ﬁnitely many primes p and",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 67,
+   "evidence": "mit18_782f13_lec10.txt:281",
+   "quote": "Then by Corollary 10.3",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 69,
+   "evidence": "mit18_782f13_lec10.txt:265",
+   "quote": "for all u,v ∈ Z×p when p is odd, b y Lemma 10.5.",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 72,
+   "evidence": "mit18_782f13_lec10.txt:294",
+   "quote": "(−1)ϵ(a)ϵ(b",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 73,
+   "evidence": "mit18_782f13_lec10.txt:260",
+   "quote": "by the bilinearity of the Hilbert symbol",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 23,
+   "evidence": "mit18_782f13_lec11.txt:10",
+   "quote": "n> 2 with coeﬃcients a1,...,a n∈ Zp×. Then f represents 0 over Qp.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:10",
+   "quote": "n> 2 with coeﬃcients a1,...,a n∈ Zp×. Then f represents 0 over Qp.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 56,
+   "evidence": "mit18_782f13_lec11.txt:16",
+   "quote": "so by Hensel’s lemma there is a root z1 of",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 57,
+   "evidence": "mit18_782f13_lec11.txt:9",
+   "quote": "let f be a diagonal quadratic form of dimension",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 62,
+   "evidence": "mit18_782f13_lec11.txt:10",
+   "quote": "n> 2 with coeﬃcients a1,...,a n∈ Zp×. Then f represents 0 over Qp.",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:18",
+   "quote": "Every quadratic form of dimension n >2 over Q represents 0 over Qp",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 57,
+   "evidence": "mit18_782f13_lec11.txt:18",
+   "quote": "Every quadratic form of dimension n >2 over Q represents 0 over Qp",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 61,
+   "evidence": "mit18_782f13_lec11.txt:20",
+   "quote": "Proof. In diagonal",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 62,
+   "evidence": "mit18_782f13_lec11.txt:18",
+   "quote": "Every quadratic form of dimension n >2 over Q represents 0 over Qp",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 75,
+   "evidence": "mit18_782f13_lec11.txt:21",
+   "quote": "form the coeﬃcients a1,...,a n lie in Z×p for all odd p ∤a1··· an.",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:28",
+   "quote": "The nondegenerate quadratic form ax2 +by2 over Qp representst∈ Q∗p if",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 57,
+   "evidence": "mit18_782f13_lec11.txt:28",
+   "quote": "The nondegenerate quadratic form ax2 +by2 over Qp representst∈ Q∗p if",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 59,
+   "evidence": "mit18_782f13_lec11.txt:28",
+   "quote": "The nondegenerate quadratic form ax2 +by2 over Qp representst∈ Q∗p if",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 62,
+   "evidence": "mit18_782f13_lec11.txt:28",
+   "quote": "The nondegenerate quadratic form ax2 +by2 over Qp representst∈ Q∗p if",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 65,
+   "evidence": "mit18_782f13_lec11.txt:29",
+   "quote": "and only if (a,b) p = (t,−ab)p.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 67,
+   "evidence": "mit18_782f13_lec11.txt:39",
+   "quote": "classes, and satisﬁes (x,−x)p = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 73,
+   "evidence": "mit18_782f13_lec11.txt:38",
+   "quote": "ve used that the Hilbert symbol is symmetric, bilinear, invariant on square",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:43",
+   "quote": "nondegenerate formax2 +by2 +cz2 over Qp represents 0 if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 57,
+   "evidence": "mit18_782f13_lec11.txt:43",
+   "quote": "nondegenerate formax2 +by2 +cz2 over Qp represents 0 if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 59,
+   "evidence": "mit18_782f13_lec11.txt:43",
+   "quote": "nondegenerate formax2 +by2 +cz2 over Qp represents 0 if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 62,
+   "evidence": "mit18_782f13_lec11.txt:43",
+   "quote": "nondegenerate formax2 +by2 +cz2 over Qp represents 0 if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 63,
+   "evidence": "mit18_782f13_lec11.txt:50",
+   "quote": "every element of Qp, including−c.",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 65,
+   "evidence": "mit18_782f13_lec11.txt:44",
+   "quote": "if (a,b) p = (−c,−ab)p",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 77,
+   "evidence": "mit18_782f13_lec11.txt:46",
+   "quote": "lemma, if suﬃces to show that ax2 +by2 +cz2 represents 0 if and only if",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 45,
+   "evidence": "mit18_782f13_lec11.txt:61",
+   "quote": "one completion of Q represents 0 over every completion of Q.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 57,
+   "evidence": "mit18_782f13_lec11.txt:60",
+   "quote": "A ternary quadratic form over Q that represents 0 over all but at most",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 62,
+   "evidence": "mit18_782f13_lec11.txt:60",
+   "quote": "A ternary quadratic form over Q that represents 0 over all but at most",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 74,
+   "evidence": "mit18_782f13_lec11.txt:63",
+   "quote": "the product formula for Hilbert symbols and the corollary above.",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 78,
+   "evidence": "mit18_782f13_lec11.txt:63",
+   "quote": "the product formula for Hilbert symbols and the corollary above.",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 14,
+   "evidence": "mit18_782f13_lec11.txt:70",
+   "quote": "set Q is dense in Qp and the set Z is dense in Zp.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:70",
+   "quote": "set Q is dense in Qp and the set Z is dense in Zp.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 46,
+   "evidence": "mit18_782f13_lec11.txt:70",
+   "quote": "set Q is dense in Qp and the set Z is dense in Zp.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 47,
+   "evidence": "mit18_782f13_lec11.txt:72",
+   "quote": "any ﬁeld is dense in its completion (this follows",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 50,
+   "evidence": "mit18_782f13_lec11.txt:71",
+   "quote": "we proved that Q∞ p is (isomorphic",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:79",
+   "quote": "p∈S let xp∈ Qp b",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 80,
+   "evidence": "mit18_782f13_lec11.txt:84",
+   "quote": "IfS has cardinality 1 we can apply Theorem 11.6",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 14,
+   "evidence": "mit18_782f13_lec11.txt:123",
+   "quote": "eachp∈S let xp∈ Zp be given.",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 80,
+   "evidence": "mit18_782f13_lec11.txt:126",
+   "quote": "By Theorem 11.6, for eachxp we can pic kyp∈ Z≥0",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 28,
+   "evidence": "mit18_782f13_lec11.txt:170",
+   "quote": "for each p∈S let xp∈ Q×p be",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 82,
+   "evidence": "mit18_782f13_lec11.txt:188",
+   "quote": "By the strong approximation theorem there exists an integer",
+   "kind": "proof"
+  },
+  {
+   "from": 85,
+   "to": 84,
+   "evidence": "mit18_782f13_lec12.txt:77",
+   "quote": "any (hence every) transcendence basis for L/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 86,
+   "evidence": "mit18_782f13_lec12.txt:183",
+   "quote": "ZS ={P∈ An :f(P ) = 0 for all f∈S},",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 88,
+   "evidence": "mit18_782f13_lec12.txt:210",
+   "quote": "If R is a noetherian ring, then so is R[x].",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:219",
+   "quote": "For an algebraic set Z⊆ An, the ideal of Z is the set",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "mit18_782f13_lec12.txt:245",
+   "quote": "For any ideal I in a commutative ring R, the set",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:264",
+   "quote": "I(ZI) =",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 90,
+   "evidence": "mit18_782f13_lec12.txt:264",
+   "quote": "I(ZI) =",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 91,
+   "evidence": "mit18_782f13_lec12.txt:264",
+   "quote": "I(ZI) =",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:273",
+   "quote": "ZI is nonempty.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "mit18_782f13_lec12.txt:276",
+   "quote": "strong Nullstellensatz, I =",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 86,
+   "evidence": "mit18_782f13_lec12.txt:283",
+   "quote": "for some point P = (P1,...,P n) in An(k).",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 94,
+   "evidence": "mit18_782f13_lec12.txt:288",
+   "quote": "the weak Nullstellensatz the algebraic set Zm is nonempty and contains a point P ∈ An.",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:294",
+   "quote": "and algebraic sets Z⊆ An( k) in which I =I(Z) and Z =ZI.",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 90,
+   "evidence": "mit18_782f13_lec12.txt:294",
+   "quote": "and algebraic sets Z⊆ An( k) in which I =I(Z) and Z =ZI.",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 91,
+   "evidence": "mit18_782f13_lec12.txt:293",
+   "quote": "There is a one-to-one inclusion-reversing correspondence between radical",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 93,
+   "evidence": "mit18_782f13_lec12.txt:292",
+   "quote": "ve the following corollary of the strong Nullstellensatz.",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:305",
+   "quote": "A algebraic set is irreducible if it is nonempty and not the union of two",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 87,
+   "evidence": "mit18_782f13_lec12.txt:307",
+   "quote": "An algebraic set is irreducible if and only if its ideal is prime.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 90,
+   "evidence": "mit18_782f13_lec12.txt:307",
+   "quote": "An algebraic set is irreducible if and only if its ideal is prime.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 97,
+   "evidence": "mit18_782f13_lec12.txt:307",
+   "quote": "An algebraic set is irreducible if and only if its ideal is prime.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 87,
+   "evidence": "mit18_782f13_lec13.txt:7",
+   "quote": "An algebraic set Z ∈ An is said to be deﬁned over k if its ideal is",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 90,
+   "evidence": "mit18_782f13_lec13.txt:8",
+   "quote": "that is, I(Z) is equal to the ideal generated by",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 90,
+   "evidence": "mit18_782f13_lec13.txt:25",
+   "quote": "...,x¯ n]k[Z] = .I(Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "mit18_782f13_lec13.txt:19",
+   "quote": "algebraic set deﬁned over k. The aﬃne coordinate ring of",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 87,
+   "evidence": "mit18_782f13_lec13.txt:35",
+   "quote": "An aﬃne variety V is an irreducible algebraic set in An.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 97,
+   "evidence": "mit18_782f13_lec13.txt:35",
+   "quote": "An aﬃne variety V is an irreducible algebraic set in An.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 99,
+   "evidence": "mit18_782f13_lec13.txt:41",
+   "quote": "LetV/k be an aﬃne variety deﬁned overk.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 100,
+   "evidence": "mit18_782f13_lec13.txt:42",
+   "quote": "is the fraction ﬁeld of the coordinate ring k[V ].",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:41",
+   "quote": "LetV/k be an aﬃne variety deﬁned overk.",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 85,
+   "evidence": "mit18_782f13_lec13.txt:53",
+   "quote": "The dimension of an aﬃne variety V is the transcendence degree of the",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:53",
+   "quote": "The dimension of an aﬃne variety V is the transcendence degree of the",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 102,
+   "evidence": "mit18_782f13_lec13.txt:54",
+   "quote": "ﬁeld extension k(V )/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 86,
+   "evidence": "mit18_782f13_lec13.txt:55",
+   "quote": "The dimension of An is n, and the dimension of any point P∈ An is 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 95,
+   "evidence": "mit18_782f13_lec13.txt:59",
+   "quote": "ideal I(P ) = mP is maximal",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 100,
+   "evidence": "mit18_782f13_lec13.txt:57",
+   "quote": "] = k[x1,. ..,x n]/(0) = k[x1,...,x n], so k(An) = k( x1,...,x n) is a",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 102,
+   "evidence": "mit18_782f13_lec13.txt:57",
+   "quote": "] = k[x1,. ..,x n]/(0) = k[x1,...,x n], so k(An) = k( x1,...,x n) is a",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 103,
+   "evidence": "mit18_782f13_lec13.txt:55",
+   "quote": "The dimension of An is n, and the dimension of any point P∈ An is 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 85,
+   "evidence": "mit18_782f13_lec13.txt:74",
+   "quote": "The Krull dimension of R is the transcendence degree of its fraction ﬁeld over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 105,
+   "evidence": "mit18_782f13_lec13.txt:74",
+   "quote": "The Krull dimension of R is the transcendence degree of its fraction ﬁeld over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:94",
+   "quote": "The geometric dimension of a varietyV is the largest integerd for which",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 90,
+   "evidence": "mit18_782f13_lec13.txt:108",
+   "quote": "generators for I(V ).",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:107",
+   "quote": "Let V ⊆ An ¯be a variety",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 103,
+   "evidence": "mit18_782f13_lec13.txt:111",
+   "quote": "has rank n− dimV",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 86,
+   "evidence": "mit18_782f13_lec13.txt:119",
+   "quote": "An+1−{0} modulo the equivalence relation",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 86,
+   "evidence": "mit18_782f13_lec13.txt:172",
+   "quote": "a copy of An embedded in Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 109,
+   "evidence": "mit18_782f13_lec13.txt:169",
+   "quote": "The complement of Hi in Pn is the aﬃne patch",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 110,
+   "evidence": "mit18_782f13_lec13.txt:198",
+   "quote": "set of homogeneous",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 109,
+   "evidence": "mit18_782f13_lec13.txt:204",
+   "quote": "Let Z be an algebraic set in Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 110,
+   "evidence": "mit18_782f13_lec13.txt:205",
+   "quote": "generated by all the homogeneous polynomials",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 97,
+   "evidence": "mit18_782f13_lec13.txt:213",
+   "quote": "we say that an algebraic set in Pn is irreducible if it is nonempty",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 109,
+   "evidence": "mit18_782f13_lec13.txt:215",
+   "quote": "A (projective) variety is an irreducible algebraic set in Pn.",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:224",
+   "quote": "aﬃne part of V is the aﬃne variety Vi =V∩Ui",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 111,
+   "evidence": "mit18_782f13_lec13.txt:224",
+   "quote": "Vi =V∩Ui",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 113,
+   "evidence": "mit18_782f13_lec13.txt:221",
+   "quote": "homogeneous ideal I = (f1,...,f m)",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "mit18_782f13_lec13.txt:221",
+   "quote": "LetV be a projective variety with homogeneous ideal",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 103,
+   "evidence": "mit18_782f13_lec13.txt:225",
+   "quote": "maximum of the dimen-",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 108,
+   "evidence": "mit18_782f13_lec13.txt:226",
+   "quote": "V is smooth if and only if all its aﬃne parts are.",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 114,
+   "evidence": "mit18_782f13_lec13.txt:225",
+   "quote": "The dimension of a projective variety V is the maximum",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 115,
+   "evidence": "mit18_782f13_lec13.txt:226",
+   "quote": "sions of its aﬃne parts",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 87,
+   "evidence": "mit18_782f13_lec13.txt:232",
+   "quote": "IfZ⊆ An is any aﬃne algebraic set",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 90,
+   "evidence": "mit18_782f13_lec13.txt:235",
+   "quote": "of all the polynomials in I(Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 109,
+   "evidence": "mit18_782f13_lec13.txt:232",
+   "quote": "we can embed it inPn",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 111,
+   "evidence": "mit18_782f13_lec13.txt:233",
+   "quote": "An with the aﬃne patch U0 of Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 98,
+   "evidence": "mit18_782f13_lec13.txt:278",
+   "quote": "But I(V ) is prime (since V is a variety)",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:269",
+   "quote": "is an aﬃne variety then its projective closure V is a",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 114,
+   "evidence": "mit18_782f13_lec13.txt:270",
+   "quote": "projective variety, and V =V∩ An is an aﬃne part of V",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 115,
+   "evidence": "mit18_782f13_lec13.txt:270",
+   "quote": "is an aﬃne part of V",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 117,
+   "evidence": "mit18_782f13_lec13.txt:269",
+   "quote": "its projective closure V is a",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 98,
+   "evidence": "mit18_782f13_lec13.txt:292",
+   "quote": "we just need to check that I(V0) is a prime ideal.",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:281",
+   "quote": "Then Vi is an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 114,
+   "evidence": "mit18_782f13_lec13.txt:280",
+   "quote": "Let V be a projective variety and let Vi be any of its nonempty aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 115,
+   "evidence": "mit18_782f13_lec13.txt:280",
+   "quote": "any of its nonempty aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 117,
+   "evidence": "mit18_782f13_lec13.txt:281",
+   "quote": "V is its projective closure",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 100,
+   "evidence": "mit18_782f13_lec13.txt:297",
+   "quote": "The dimension, coordinate ring, and function ﬁeld of an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 101,
+   "evidence": "mit18_782f13_lec13.txt:297",
+   "quote": "The dimension, coordinate ring, and function ﬁeld of an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 102,
+   "evidence": "mit18_782f13_lec13.txt:297",
+   "quote": "The dimension, coordinate ring, and function ﬁeld of an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 103,
+   "evidence": "mit18_782f13_lec13.txt:297",
+   "quote": "The dimension, coordinate ring, and function ﬁeld of an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 114,
+   "evidence": "mit18_782f13_lec13.txt:299",
+   "quote": "projective variety are equal to those of each of its nonempty aﬃne parts.",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 115,
+   "evidence": "mit18_782f13_lec13.txt:299",
+   "quote": "projective variety are equal to those of each of its nonempty aﬃne parts.",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 116,
+   "evidence": "mit18_782f13_lec13.txt:298",
+   "quote": "are equal to those of its projective closure. The dimension",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 117,
+   "evidence": "mit18_782f13_lec13.txt:298",
+   "quote": "are equal to those of its projective closure",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 101,
+   "evidence": "mit18_782f13_lec14.txt:9",
+   "quote": "LetX⊆ Am andY ⊆ An be aﬃne varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 86,
+   "evidence": "mit18_782f13_lec14.txt:41",
+   "quote": "In the Zariski topology on An (resp. Pn)",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 87,
+   "evidence": "mit18_782f13_lec14.txt:42",
+   "quote": "Any algebraic set in An (resp. Pn) then inherits the subspace topology.",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 109,
+   "evidence": "mit18_782f13_lec14.txt:41",
+   "quote": "In the Zariski topology on An (resp. Pn)",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 87,
+   "evidence": "mit18_782f13_lec14.txt:71",
+   "quote": "of any algebraic subset Z⊆Y is an algebraic subset of X",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 101,
+   "evidence": "mit18_782f13_lec14.txt:70",
+   "quote": "of aﬃne varieties is continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 121,
+   "evidence": "mit18_782f13_lec14.txt:68",
+   "quote": "Every morphism f :X",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 122,
+   "evidence": "mit18_782f13_lec14.txt:70",
+   "quote": "is continuous. That is, the",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 121,
+   "evidence": "mit18_782f13_lec14.txt:84",
+   "quote": "are isomorphic if there exist morphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 93,
+   "evidence": "mit18_782f13_lec14.txt:135",
+   "quote": "Hilbert’s Nullstellensatz, we have I = I(V )",
+   "kind": "proof"
+  },
+  {
+   "from": 125,
+   "to": 100,
+   "evidence": "mit18_782f13_lec14.txt:149",
+   "quote": "varieties with R≃k[Y ]",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 101,
+   "evidence": "mit18_782f13_lec14.txt:145",
+   "quote": "morphism Y of aﬃne varieties induces a morphism",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 121,
+   "evidence": "mit18_782f13_lec14.txt:145",
+   "quote": "morphism Y of aﬃne varieties induces a morphism",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 101,
+   "evidence": "mit18_782f13_lec14.txt:201",
+   "quote": "ategories of aﬃne varieties and aﬃne algebras are contravariantly",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 121,
+   "evidence": "mit18_782f13_lec14.txt:28",
+   "quote": "Thus we have a category whose objects are aﬃne varieties and whose morphisms are",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 125,
+   "evidence": "mit18_782f13_lec14.txt:204",
+   "quote": "and (ii) of Theorem 14.8 are inverses",
+   "kind": "proof"
+  },
+  {
+   "from": 127,
+   "to": 114,
+   "evidence": "mit18_782f13_lec14.txt:221",
+   "quote": "All the nonempty aﬃne parts of a projective variety are isomorphic.",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 115,
+   "evidence": "mit18_782f13_lec14.txt:221",
+   "quote": "All the nonempty aﬃne parts of a projective variety are isomorphic.",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 120,
+   "evidence": "mit18_782f13_lec14.txt:222",
+   "quote": "We proved in Lecture 13 (see Corollary 13.26)",
+   "kind": "proof"
+  },
+  {
+   "from": 127,
+   "to": 124,
+   "evidence": "mit18_782f13_lec14.txt:221",
+   "quote": "All the nonempty aﬃne parts of a projective variety are isomorphic.",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 99,
+   "evidence": "mit18_782f13_lec14.txt:224",
+   "quote": "is a morphism of varieties X→Y that are deﬁned",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 100,
+   "evidence": "mit18_782f13_lec14.txt:225",
+   "quote": "ifφ1,...,φ n k[Y ]",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 121,
+   "evidence": "mit18_782f13_lec14.txt:224",
+   "quote": "is a morphism of varieties X→Y that are deﬁned",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 124,
+   "evidence": "mit18_782f13_lec14.txt:228",
+   "quote": "If φ is an isomorphism deﬁned over k and it has",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 99,
+   "evidence": "mit18_782f13_lec14.txt:230",
+   "quote": "Let X and Y be aﬃne varieties deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 100,
+   "evidence": "mit18_782f13_lec14.txt:233",
+   "quote": "fromk[Y ] to k[X].",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 101,
+   "evidence": "mit18_782f13_lec14.txt:230",
+   "quote": "Let X and Y be aﬃne varieties deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 125,
+   "evidence": "mit18_782f13_lec14.txt:231",
+   "quote": "the aﬃne algebra morphism φ∗",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 128,
+   "evidence": "mit18_782f13_lec14.txt:231",
+   "quote": "morphism deﬁned over k then the aﬃne algebra morphism",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 100,
+   "evidence": "mit18_782f13_lec15.txt:63",
+   "quote": "if gr∈k[X]",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:63",
+   "quote": "A function r∈ ¯k(X) is said to be regular at a point P∈X",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 100,
+   "evidence": "mit18_782f13_lec15.txt:77",
+   "quote": "lies in k[X]",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:77",
+   "quote": "A rational function r∈",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 130,
+   "evidence": "mit18_782f13_lec15.txt:77",
+   "quote": "lies in k[X] if and only if dom(r) =X.",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:82",
+   "quote": "Let X Am and Y An be aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:86",
+   "quote": "withφi k(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 130,
+   "evidence": "mit18_782f13_lec15.txt:86",
+   "quote": "is regular atP∈X if theφi are all regular atP",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:96",
+   "quote": "rational map of aﬃne varieties is a morphism if and only if it is regular.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 121,
+   "evidence": "mit18_782f13_lec15.txt:96",
+   "quote": "rational map of aﬃne varieties is a morphism if and only if it is regular.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 131,
+   "evidence": "mit18_782f13_lec15.txt:97",
+   "quote": "For the converse, apply Lemma 15.3",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "mit18_782f13_lec15.txt:96",
+   "quote": "rational map of aﬃne varieties is a morphism if and only if it is regular.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 122,
+   "evidence": "mit18_782f13_lec15.txt:125",
+   "quote": "dense in its codomain.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 132,
+   "evidence": "mit18_782f13_lec15.txt:126",
+   "quote": "A rational map φ: X→Y is dominant if φ(dom(φ)) =Y",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:154",
+   "quote": "Every dominant rational map φ: X Y of aﬃne varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:157",
+   "quote": "of function ﬁelds such that φ∗(r) =r◦φ.",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 134,
+   "evidence": "mit18_782f13_lec15.txt:154",
+   "quote": "Every dominant rational map φ: X Y of aﬃne varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:193",
+   "quote": "The category of aﬃne varieties with dominant rational maps",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:194",
+   "quote": "category of function ﬁelds are contravariantly equivalent.",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 134,
+   "evidence": "mit18_782f13_lec15.txt:193",
+   "quote": "The category of aﬃne varieties with dominant rational maps",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 135,
+   "evidence": "mit18_782f13_lec15.txt:196",
+   "quote": "but both follow from Theorem 15.8 and its proof.",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:197",
+   "quote": "Two aﬃne varieties X and Y are said to be birationally equivalent",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 134,
+   "evidence": "mit18_782f13_lec15.txt:198",
+   "quote": "there exist dominant rational maps",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:203",
+   "quote": "tion ﬁelds are isomorphic.",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 137,
+   "evidence": "mit18_782f13_lec15.txt:202",
+   "quote": "varieties are birationally equivalent if and only if their func-",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 99,
+   "evidence": "mit18_782f13_lec15.txt:207",
+   "quote": "aﬃne varieties deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 101,
+   "evidence": "mit18_782f13_lec15.txt:207",
+   "quote": "aﬃne varieties deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:208",
+   "quote": "φ∗ : k(Y ) → ¯k(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 134,
+   "evidence": "mit18_782f13_lec15.txt:208",
+   "quote": "dominant rational map deﬁned over k then φ∗",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 135,
+   "evidence": "mit18_782f13_lec15.txt:208",
+   "quote": "then φ∗ : k(Y ) → ¯k(X) restricts to a morphism",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:223",
+   "quote": "We say that r∈ k(X) is regular",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 114,
+   "evidence": "mit18_782f13_lec15.txt:223",
+   "quote": "Let X be a projective variety. We say that r∈ k(X) is regular at a",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 102,
+   "evidence": "mit18_782f13_lec15.txt:228",
+   "quote": "with φi∈k(X) not all zero",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 114,
+   "evidence": "mit18_782f13_lec15.txt:227",
+   "quote": "Let X ⊆ Pm and Y ⊆ Pn be projective varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 140,
+   "evidence": "mit18_782f13_lec15.txt:229",
+   "quote": "where all the φi are regular and at least one is nonzero",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 122,
+   "evidence": "mit18_782f13_lec15.txt:252",
+   "quote": "its image is dense in its codomain.",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 132,
+   "evidence": "mit18_782f13_lec15.txt:251",
+   "quote": "A morphism is a regular rational map.",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 141,
+   "evidence": "mit18_782f13_lec15.txt:251",
+   "quote": "A morphism is a regular rational map.",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 114,
+   "evidence": "mit18_782f13_lec15.txt:262",
+   "quote": "Theorem 15.8 and Corollary 15.9 hold for projective varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 127,
+   "evidence": "mit18_782f13_lec15.txt:259",
+   "quote": "isomorphic as aﬃne varieties; see Corollary 14.10)",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 135,
+   "evidence": "mit18_782f13_lec15.txt:262",
+   "quote": "Theorem 15.8 and Corollary 15.9 hold for projective varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 136,
+   "evidence": "mit18_782f13_lec15.txt:262",
+   "quote": "Theorem 15.8 and Corollary 15.9 hold for projective varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 86,
+   "evidence": "mit18_782f13_lec16.txt:10",
+   "quote": "Let S be a subset of An",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 88,
+   "evidence": "mit18_782f13_lec16.txt:21",
+   "quote": "Noetherian, so B must be ﬁnite",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 122,
+   "evidence": "mit18_782f13_lec16.txt:10",
+   "quote": "be any collection of open sets",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 87,
+   "evidence": "mit18_782f13_lec16.txt:26",
+   "quote": "be algebraic sets.",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 90,
+   "evidence": "mit18_782f13_lec16.txt:32",
+   "quote": "locus of the ideal I(X)k[An] +I(Y )k[Am]",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 93,
+   "evidence": "mit18_782f13_lec16.txt:83",
+   "quote": "by Hilbert’s Nullstellensatz.",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 95,
+   "evidence": "mit18_782f13_lec16.txt:83",
+   "quote": "which is necessarily of the form mP for some P∈V",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 100,
+   "evidence": "mit18_782f13_lec16.txt:75",
+   "quote": "LetV be an aﬃne variety with coordinate ring k[V ].",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 101,
+   "evidence": "mit18_782f13_lec16.txt:75",
+   "quote": "LetV be an aﬃne variety with coordinate ring k[V ].",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 97,
+   "evidence": "mit18_782f13_lec16.txt:111",
+   "quote": "Thus X = Xu∪Xv. But X is irreducible, so either",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 101,
+   "evidence": "mit18_782f13_lec16.txt:117",
+   "quote": "If X and Y are aﬃne varieties, then so is X×Y",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 145,
+   "evidence": "mit18_782f13_lec16.txt:117",
+   "quote": "If X and Y are aﬃne varieties, then so is X×Y",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 147,
+   "evidence": "mit18_782f13_lec16.txt:120",
+   "quote": "a tensor product of aﬃne algebras is an aﬃne algebra",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 109,
+   "evidence": "mit18_782f13_lec16.txt:139",
+   "quote": "Let X ⊆ Pm and Y ⊆ Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 149,
+   "to": 113,
+   "evidence": "mit18_782f13_lec16.txt:139",
+   "quote": "be algebraic sets with homogeneous ideals",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 122,
+   "evidence": "mit18_782f13_lec16.txt:166",
+   "quote": "is a closed map",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 145,
+   "evidence": "mit18_782f13_lec16.txt:165",
+   "quote": "the projectionX×Y →Y",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 149,
+   "evidence": "mit18_782f13_lec16.txt:165",
+   "quote": "the projectionX×Y →Y",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 122,
+   "evidence": "mit18_782f13_lec16.txt:172",
+   "quote": "is a closed map",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 123,
+   "evidence": "mit18_782f13_lec16.txt:189",
+   "quote": "since Φ is continuous.",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 142,
+   "evidence": "mit18_782f13_lec16.txt:172",
+   "quote": "then any morphism φ: X→Y is a closed map",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:172",
+   "quote": "If X is a complete variety",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:191",
+   "quote": "If X is complete then so is every subvariety of X.",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 101,
+   "evidence": "mit18_782f13_lec16.txt:197",
+   "quote": "Every complete aﬃne variety consists of a single point.",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 103,
+   "evidence": "mit18_782f13_lec16.txt:203",
+   "quote": "since k(X) has positive transcendence degree.",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 125,
+   "evidence": "mit18_782f13_lec16.txt:205",
+   "quote": "dual morphism of aﬃne algebras k[A1]→k[X] is injective",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:197",
+   "quote": "Every complete aﬃne variety consists of a single point.",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 151,
+   "evidence": "mit18_782f13_lec16.txt:207",
+   "quote": "so by Lemma 16.12 the image off",
+   "kind": "proof"
+  },
+  {
+   "from": 156,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:239",
+   "quote": "R is a local ring if and only if the set R−R× is an ideal.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:243",
+   "quote": "Every valuation ring is a local ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:243",
+   "quote": "Every valuation ring is a local ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 156,
+   "evidence": "mit18_782f13_lec16.txt:244",
+   "quote": "let m =R−R×. We must show that m is an ideal.",
+   "kind": "proof"
+  },
+  {
+   "from": 158,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:249",
+   "quote": "two ideals of a valuation ring R",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:254",
+   "quote": "Let R be a valuation ring with fraction ﬁeld K.",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:283",
+   "quote": "Every ﬁnitely generated ideal of a valuation ring is principal.",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:287",
+   "quote": "A local ring is a valuation ring if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:287",
+   "quote": "A local ring is a valuation ring if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 27,
+   "evidence": "mit18_782f13_lec16.txt:297",
+   "quote": "A valuation ring is discrete if and only if it is Noetherian.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 88,
+   "evidence": "mit18_782f13_lec16.txt:297",
+   "quote": "A valuation ring is discrete if and only if it is Noetherian.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:297",
+   "quote": "A valuation ring is discrete if and only if it is Noetherian.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 160,
+   "evidence": "mit18_782f13_lec16.txt:296",
+   "quote": "Together the two lemmas give a third deﬁnition.",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 161,
+   "evidence": "mit18_782f13_lec16.txt:296",
+   "quote": "Together the two lemmas give a third deﬁnition.",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:318",
+   "quote": "The ring Rp is a local ring with maximal ideal pRp",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 156,
+   "evidence": "mit18_782f13_lec16.txt:324",
+   "quote": "Rp = pRp⊔Rp×, therefore Rp is a local ring with maximal ideal pRp.",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 163,
+   "evidence": "mit18_782f13_lec16.txt:318",
+   "quote": "The ring Rp is a local ring with maximal ideal pRp",
+   "kind": "statement"
+  },
+  {
+   "from": 165,
+   "to": 100,
+   "evidence": "mit18_782f13_lec16.txt:336",
+   "quote": "LetX be a variety with coordinate ring k[X]",
+   "kind": "statement"
+  },
+  {
+   "from": 165,
+   "to": 102,
+   "evidence": "mit18_782f13_lec16.txt:338",
+   "quote": "={g/h∈k(X) :h⁄∈mP}",
+   "kind": "statement"
+  },
+  {
+   "from": 165,
+   "to": 163,
+   "evidence": "mit18_782f13_lec16.txt:338",
+   "quote": "OP :=OP,X :=k[X]mP",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 88,
+   "evidence": "mit18_782f13_lec16.txt:353",
+   "quote": "coordinate ring of X×Y is Noetherian)",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 102,
+   "evidence": "mit18_782f13_lec16.txt:349",
+   "quote": "ring R of k(Z)/k",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 125,
+   "evidence": "mit18_782f13_lec16.txt:371",
+   "quote": "The morphism of aﬃne algebras ϕ∗ : k[Y ]→k[V ] is injective",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 135,
+   "evidence": "mit18_782f13_lec16.txt:378",
+   "quote": "of S under ψ∗ : k(Z)→ k( V )",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 146,
+   "evidence": "mit18_782f13_lec16.txt:387",
+   "quote": "The intersection of ker Φ with k[V ] is a maximal ideal of k[V ]",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:349",
+   "quote": "Then X is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:348",
+   "quote": "for every subvariety Z⊆X and valuation",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 165,
+   "evidence": "mit18_782f13_lec16.txt:349",
+   "quote": "there exists a point P∈Z such thatOP,Z⊆R",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:402",
+   "quote": "Then there exists a valuation ring B ofK",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:405",
+   "quote": "ideal of B and k is its residue ﬁeld.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:410",
+   "quote": "Let R be a valuation ring of an extension F/k",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:411",
+   "quote": "with residue ﬁeld isomorphic to k.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 167,
+   "evidence": "mit18_782f13_lec16.txt:415",
+   "quote": "By Lemma 16.29, there is a valuation",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:430",
+   "quote": "is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:428",
+   "quote": "for every subvariety Z⊆ X and valuation",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 155,
+   "evidence": "mit18_782f13_lec16.txt:429",
+   "quote": "with residue ﬁeld k",
+   "kind": "statement"
+  },
+  {
+   "from": 169,
+   "to": 165,
+   "evidence": "mit18_782f13_lec16.txt:429",
+   "quote": "such that OP,Z⊆R",
+   "kind": "statement"
+  },
+  {
+   "from": 170,
+   "to": 154,
+   "evidence": "mit18_782f13_lec16.txt:433",
+   "quote": "Let R be a valuation ring of F",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 114,
+   "evidence": "mit18_782f13_lec16.txt:440",
+   "quote": "All projective varieties are complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 150,
+   "evidence": "mit18_782f13_lec16.txt:440",
+   "quote": "All projective varieties are complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 152,
+   "evidence": "mit18_782f13_lec16.txt:441",
+   "quote": "By Lemma 16.13, it is enough to show that Pn is complete.",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 165,
+   "evidence": "mit18_782f13_lec16.txt:462",
+   "quote": "Any element of the local ring OP can be written as g/h",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 169,
+   "evidence": "mit18_782f13_lec16.txt:442",
+   "quote": "Corollary 16.31. Let Z be a variety in Pn",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 170,
+   "evidence": "mit18_782f13_lec16.txt:455",
+   "quote": "By Lemma 16.32 there exists",
+   "kind": "proof"
+  },
+  {
+   "from": 172,
+   "to": 90,
+   "evidence": "mit18_782f13_lec17.txt:11",
+   "quote": "deﬁned by the ideal { fp :f∈I(V )}",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:10",
+   "quote": "Let P be a point on an aﬃne variety V",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:19",
+   "quote": "LetP be a point on an aﬃne variety V",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 172,
+   "evidence": "mit18_782f13_lec17.txt:20",
+   "quote": "generateI(TP (V ))",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:45",
+   "quote": "LetP be a point on an aﬃne varietyV ⊆ An",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 172,
+   "evidence": "mit18_782f13_lec17.txt:47",
+   "quote": "is TP (V )⊥, the orthogonal complement of Tp(V )",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 173,
+   "evidence": "mit18_782f13_lec17.txt:52",
+   "quote": "This follows immediately from Lemma 17.2 and its proof",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:74",
+   "quote": "Let P be a point on an aﬃne variety V ⊆ An",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 103,
+   "evidence": "mit18_782f13_lec17.txt:78",
+   "quote": "smooth point of V if and only if dimTP = dimV",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 108,
+   "evidence": "mit18_782f13_lec17.txt:78",
+   "quote": "smooth point of V if and only if dimTP = dimV",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 172,
+   "evidence": "mit18_782f13_lec17.txt:75",
+   "quote": "dimTP (V ) = n− rankJP",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 174,
+   "evidence": "mit18_782f13_lec17.txt:73",
+   "quote": "of Theorem 17.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 176,
+   "to": 90,
+   "evidence": "mit18_782f13_lec17.txt:91",
+   "quote": "A varietyV for whichI(V ) is a nonzero principal ideal is a hypersurface.",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:91",
+   "quote": "A varietyV for whichI(V ) is a nonzero principal ideal is a hypersurface.",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 103,
+   "evidence": "mit18_782f13_lec17.txt:92",
+   "quote": "Every hypersurface in An or Pn has dimension n− 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 115,
+   "evidence": "mit18_782f13_lec17.txt:102",
+   "quote": "one of itsaﬃne parts Vi is a hypersurface in A",
+   "kind": "proof"
+  },
+  {
+   "from": 177,
+   "to": 116,
+   "evidence": "mit18_782f13_lec17.txt:92",
+   "quote": "Every hypersurface in An or Pn has dimension n− 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 120,
+   "evidence": "mit18_782f13_lec17.txt:102",
+   "quote": "and then dim V = dimVi =n− 1",
+   "kind": "proof"
+  },
+  {
+   "from": 177,
+   "to": 176,
+   "evidence": "mit18_782f13_lec17.txt:92",
+   "quote": "Every hypersurface in An or Pn has dimension n− 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 85,
+   "evidence": "mit18_782f13_lec17.txt:112",
+   "quote": "LetF/k be a function ﬁeld of dimension n.",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:133",
+   "quote": "Every aﬃne (resp. projective) variety of dimension n is birationally",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 103,
+   "evidence": "mit18_782f13_lec17.txt:133",
+   "quote": "Every aﬃne (resp. projective) variety of dimension n is birationally",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 114,
+   "evidence": "mit18_782f13_lec17.txt:133",
+   "quote": "Every aﬃne (resp. projective) variety of dimension n is birationally",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 116,
+   "evidence": "mit18_782f13_lec17.txt:133",
+   "quote": "Every aﬃne (resp. projective) variety of dimension n is birationally",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 117,
+   "evidence": "mit18_782f13_lec17.txt:136",
+   "quote": "the projective closure of a hypersurface is a hypersurface",
+   "kind": "proof"
+  },
+  {
+   "from": 179,
+   "to": 137,
+   "evidence": "mit18_782f13_lec17.txt:133",
+   "quote": "Every aﬃne (resp. projective) variety of dimension n is birationally",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 138,
+   "evidence": "mit18_782f13_lec17.txt:137",
+   "quote": "Recall from Lecture 15 that varieties are birationally equivalent",
+   "kind": "proof"
+  },
+  {
+   "from": 179,
+   "to": 176,
+   "evidence": "mit18_782f13_lec17.txt:134",
+   "quote": "equivalent to a hypersurface in An+1",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 178,
+   "evidence": "mit18_782f13_lec17.txt:138",
+   "quote": "it follows from Theorem 17.8 that",
+   "kind": "proof"
+  },
+  {
+   "from": 180,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:143",
+   "quote": "For any point P on an aﬃne variety V",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 103,
+   "evidence": "mit18_782f13_lec17.txt:143",
+   "quote": "we have dimTP (V )≥ dimV",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 172,
+   "evidence": "mit18_782f13_lec17.txt:143",
+   "quote": "we have dimTP (V )≥ dimV",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 108,
+   "evidence": "mit18_782f13_lec17.txt:145",
+   "quote": "set of singular points of a variety is a closed subset",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 122,
+   "evidence": "mit18_782f13_lec17.txt:145",
+   "quote": "set of singular points of a variety is a closed subset",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 175,
+   "evidence": "mit18_782f13_lec17.txt:150",
+   "quote": "Sing(V) :={P: dim T P(V)> dim V} ={ P: rank J P< n− dim V}",
+   "kind": "proof"
+  },
+  {
+   "from": 182,
+   "to": 101,
+   "evidence": "mit18_782f13_lec17.txt:173",
+   "quote": "LetP be a point on an aﬃne variety V",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 172,
+   "evidence": "mit18_782f13_lec17.txt:173",
+   "quote": "Then TP (V )∨≃mP/m2P",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 100,
+   "evidence": "mit18_782f13_lec17.txt:195",
+   "quote": "dimmP/m2P = dimV = dimk[V ]",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 103,
+   "evidence": "mit18_782f13_lec17.txt:195",
+   "quote": "dimmP/m2P = dimV = dimk[V ]",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 105,
+   "evidence": "mit18_782f13_lec17.txt:195",
+   "quote": "dimmP/m2P = dimV = dimk[V ]",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 106,
+   "evidence": "mit18_782f13_lec17.txt:199",
+   "quote": "as noted in Lecture 13, we always have dim V = dimk[V ]",
+   "kind": "proof"
+  },
+  {
+   "from": 183,
+   "to": 108,
+   "evidence": "mit18_782f13_lec17.txt:194",
+   "quote": "The smooth pointsP on a variety V are precisely the pointsP for which",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 88,
+   "evidence": "mit18_782f13_lec18.txt:25",
+   "quote": "A Noetherian local ring R with maximal ideal m is a regular local ring if",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 105,
+   "evidence": "mit18_782f13_lec18.txt:24",
+   "quote": "dimR to denote the (Krull) dimension of the ring R.",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 155,
+   "evidence": "mit18_782f13_lec18.txt:25",
+   "quote": "A Noetherian local ring R with maximal ideal m is a regular local ring if",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 27,
+   "evidence": "mit18_782f13_lec18.txt:30",
+   "quote": "discrete valuation ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 88,
+   "evidence": "mit18_782f13_lec18.txt:32",
+   "quote": "it is certainly Noetherian, since it is a",
+   "kind": "proof"
+  },
+  {
+   "from": 185,
+   "to": 105,
+   "evidence": "mit18_782f13_lec18.txt:29",
+   "quote": "R is a regular local ring of dimension one",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 184,
+   "evidence": "mit18_782f13_lec18.txt:29",
+   "quote": "R is a regular local ring of dimension one",
+   "kind": "statement"
+  },
+  {
+   "from": 186,
+   "to": 155,
+   "evidence": "mit18_782f13_lec18.txt:53",
+   "quote": "L et R be a local ring with maximal ideal m",
+   "kind": "statement"
+  },
+  {
+   "from": 186,
+   "to": 156,
+   "evidence": "mit18_782f13_lec18.txt:59",
+   "quote": "every element of R− m is a unit (since R is a local ring)",
+   "kind": "proof"
+  },
+  {
+   "from": 187,
+   "to": 88,
+   "evidence": "mit18_782f13_lec18.txt:63",
+   "quote": "LetR be a local Noetherian ring with maximal idealm.",
+   "kind": "statement"
+  },
+  {
+   "from": 187,
+   "to": 155,
+   "evidence": "mit18_782f13_lec18.txt:63",
+   "quote": "LetR be a local Noetherian ring with maximal idealm.",
+   "kind": "statement"
+  },
+  {
+   "from": 187,
+   "to": 186,
+   "evidence": "mit18_782f13_lec18.txt:72",
+   "quote": "By Nakayama’s lemma,",
+   "kind": "proof"
+  },
+  {
+   "from": 188,
+   "to": 27,
+   "evidence": "mit18_782f13_lec18.txt:85",
+   "quote": "R1 cannot be a discrete valuation ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 188,
+   "to": 105,
+   "evidence": "mit18_782f13_lec18.txt:85",
+   "quote": "dimR2< dimR1.",
+   "kind": "statement"
+  },
+  {
+   "from": 188,
+   "to": 154,
+   "evidence": "mit18_782f13_lec18.txt:83",
+   "quote": "Let R1 and R2 be valuation rings with the same fraction ﬁeld",
+   "kind": "statement"
+  },
+  {
+   "from": 188,
+   "to": 185,
+   "evidence": "mit18_782f13_lec18.txt:92",
+   "quote": "If R1 is a DVR then dim R2 < dimR1 = 1",
+   "kind": "proof"
+  },
+  {
+   "from": 189,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:99",
+   "quote": "LetC be a smooth projective curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 189,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:99",
+   "quote": "LetC be a smooth projective curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 189,
+   "to": 141,
+   "evidence": "mit18_782f13_lec18.txt:99",
+   "quote": "Every rational map φ: C→V from",
+   "kind": "statement"
+  },
+  {
+   "from": 189,
+   "to": 142,
+   "evidence": "mit18_782f13_lec18.txt:100",
+   "quote": "C to a projective variety V is a morphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 189,
+   "to": 185,
+   "evidence": "mit18_782f13_lec18.txt:102",
+   "quote": "for the discrete valuation ring OP",
+   "kind": "proof"
+  },
+  {
+   "from": 190,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:115",
+   "quote": "Every rational mapφ: C1→C2 between smooth projective curves",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:115",
+   "quote": "Every rational mapφ: C1→C2 between smooth projective curves",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 141,
+   "evidence": "mit18_782f13_lec18.txt:115",
+   "quote": "Every rational mapφ: C1→C2 between smooth projective curves",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 151,
+   "evidence": "mit18_782f13_lec18.txt:117",
+   "quote": "so im(φ) is a subvariety ofC2",
+   "kind": "proof"
+  },
+  {
+   "from": 190,
+   "to": 171,
+   "evidence": "mit18_782f13_lec18.txt:117",
+   "quote": "Projective varieties are complete",
+   "kind": "proof"
+  },
+  {
+   "from": 191,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:119",
+   "quote": "Every birational map between smooth projective curves is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:119",
+   "quote": "Every birational map between smooth projective curves is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 124,
+   "evidence": "mit18_782f13_lec18.txt:119",
+   "quote": "Every birational map between smooth projective curves is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 191,
+   "to": 137,
+   "evidence": "mit18_782f13_lec18.txt:119",
+   "quote": "Every birational map between smooth projective curves is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 192,
+   "to": 27,
+   "evidence": "mit18_782f13_lec18.txt:131",
+   "quote": "be the set of all maximal ideals P of discrete valuation rings of F/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 192,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:149",
+   "quote": "between abstract curves or projective varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 102,
+   "evidence": "mit18_782f13_lec18.txt:162",
+   "quote": "curve associated to its function ﬁeld.",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:161",
+   "quote": "Let C be a smooth projective curve",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:161",
+   "quote": "Let C be a smooth projective curve",
+   "kind": "statement"
+  },
+  {
+   "from": 193,
+   "to": 192,
+   "evidence": "mit18_782f13_lec18.txt:161",
+   "quote": "let X = Xk(C) be the abstract",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 27,
+   "evidence": "mit18_782f13_lec18.txt:187",
+   "quote": "LetR be a discrete valuation ring of a function ﬁeld F/k",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 102,
+   "evidence": "mit18_782f13_lec18.txt:188",
+   "quote": "There exists a smooth aﬃne curve C with k(C) =F",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 108,
+   "evidence": "mit18_782f13_lec18.txt:188",
+   "quote": "There exists a smooth aﬃne curve",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 165,
+   "evidence": "mit18_782f13_lec18.txt:188",
+   "quote": "such that R =OP for some P∈C",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 183,
+   "evidence": "mit18_782f13_lec18.txt:199",
+   "quote": "point P∈C is smooth.",
+   "kind": "proof"
+  },
+  {
+   "from": 194,
+   "to": 184,
+   "evidence": "mit18_782f13_lec18.txt:198",
+   "quote": "hence regular, and therefore every",
+   "kind": "proof"
+  },
+  {
+   "from": 194,
+   "to": 185,
+   "evidence": "mit18_782f13_lec18.txt:198",
+   "quote": "all its local rings OP are discrete valuation rings, hence regular",
+   "kind": "proof"
+  },
+  {
+   "from": 194,
+   "to": 188,
+   "evidence": "mit18_782f13_lec18.txt:203",
+   "quote": "By Theorem 18.5, R =OP as desired.",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 27,
+   "evidence": "mit18_782f13_lec18.txt:209",
+   "quote": "of its localizations at nonzero prime ideals are discrete valuation rings.",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 88,
+   "evidence": "mit18_782f13_lec18.txt:208",
+   "quote": "an integrally closed Noetherian domain of dimension one then all",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 105,
+   "evidence": "mit18_782f13_lec18.txt:208",
+   "quote": "an integrally closed Noetherian domain of dimension one then all",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 163,
+   "evidence": "mit18_782f13_lec18.txt:209",
+   "quote": "of its localizations at nonzero prime ideals are discrete valuation rings.",
+   "kind": "statement"
+  },
+  {
+   "from": 195,
+   "to": 164,
+   "evidence": "mit18_782f13_lec18.txt:216",
+   "quote": "Let m = pAp be the maximal ideal of Ap.",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 184,
+   "evidence": "mit18_782f13_lec18.txt:221",
+   "quote": "it suﬃces to prove that R is regular",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 185,
+   "evidence": "mit18_782f13_lec18.txt:219",
+   "quote": "By Theorem 18.2, to show",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 186,
+   "evidence": "mit18_782f13_lec18.txt:222",
+   "quote": "By Nakayama’s lemma, m2 = m,",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:269",
+   "quote": "Every abstract curve is isomorphic to a smooth projective curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 196,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:269",
+   "quote": "Every abstract curve is isomorphic to a smooth projective curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 196,
+   "to": 117,
+   "evidence": "mit18_782f13_lec18.txt:274",
+   "quote": "So let C be the projective closure of A",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 166,
+   "evidence": "mit18_782f13_lec18.txt:275",
+   "quote": "it satisﬁes Chevalley’s criterion",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 171,
+   "evidence": "mit18_782f13_lec18.txt:275",
+   "quote": "complete, and it satisﬁes",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 185,
+   "evidence": "mit18_782f13_lec18.txt:272",
+   "quote": "since all its local rings OP are discrete valuation rings",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 192,
+   "evidence": "mit18_782f13_lec18.txt:269",
+   "quote": "Every abstract curve is isomorphic to a smooth projective curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 196,
+   "to": 193,
+   "evidence": "mit18_782f13_lec18.txt:307",
+   "quote": "By Theorem 18.10, the smooth projective",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 194,
+   "evidence": "mit18_782f13_lec18.txt:296",
+   "quote": "given by Lemma 18.11",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 114,
+   "evidence": "mit18_782f13_lec18.txt:310",
+   "quote": "Every curve C is birationally equivalent to a smooth projective curve",
+   "kind": "statement"
+  },
+  {
+   "from": 197,
+   "to": 116,
+   "evidence": "mit18_782f13_lec18.txt:310",
+   "quote": "Every curve C is birationally equivalent to a smooth projective curve",
+   "kind": "statement"
+  },
+  {
+   "from": 197,
+   "to": 124,
+   "evidence": "mit18_782f13_lec18.txt:311",
+   "quote": "that is unique up to isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 197,
+   "to": 137,
+   "evidence": "mit18_782f13_lec18.txt:310",
+   "quote": "Every curve C is birationally equivalent to a smooth projective curve",
+   "kind": "statement"
+  },
+  {
+   "from": 197,
+   "to": 191,
+   "evidence": "mit18_782f13_lec18.txt:314",
+   "quote": "Uniqueness follows from Corollary 18.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 193,
+   "evidence": "mit18_782f13_lec18.txt:312",
+   "quote": "By 18.10 there exists an abstract curve",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 196,
+   "evidence": "mit18_782f13_lec18.txt:313",
+   "quote": "by Theorem 18.13 this abstract curve is isomorphic",
+   "kind": "proof"
+  },
+  {
+   "from": 198,
+   "to": 85,
+   "evidence": "mit18_782f13_lec19.txt:9",
+   "quote": "is a ﬁnitely generated extension of k with transcendence",
+   "kind": "statement"
+  },
+  {
+   "from": 198,
+   "to": 114,
+   "evidence": "mit18_782f13_lec19.txt:8",
+   "quote": "A curve C/k is a smooth projective variety of dimension one",
+   "kind": "statement"
+  },
+  {
+   "from": 198,
+   "to": 116,
+   "evidence": "mit18_782f13_lec19.txt:8",
+   "quote": "A curve C/k is a smooth projective variety of dimension one",
+   "kind": "statement"
+  },
+  {
+   "from": 199,
+   "to": 139,
+   "evidence": "mit18_782f13_lec19.txt:29",
+   "quote": "recall from Lecture 15 that ifC1 is deﬁned overk",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 142,
+   "evidence": "mit18_782f13_lec19.txt:19",
+   "quote": "The category of curves C/k with nonconstant morphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 199,
+   "to": 178,
+   "evidence": "mit18_782f13_lec19.txt:34",
+   "quote": "by Theorem 17.8 and Remark 17.9",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 190,
+   "evidence": "mit18_782f13_lec19.txt:25",
+   "quote": "is surjective (Corollary 18.7)",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 191,
+   "evidence": "mit18_782f13_lec19.txt:28",
+   "quote": "which is unique up to isomorphism (Corollary 18.8).",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 193,
+   "evidence": "mit18_782f13_lec19.txt:26",
+   "quote": "curve deﬁned by its function ﬁeld (Theorem 18.10)",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 196,
+   "evidence": "mit18_782f13_lec19.txt:27",
+   "quote": "the abstract curve deﬁned by F/k (Theorem 18.13)",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 197,
+   "evidence": "mit18_782f13_lec19.txt:42",
+   "quote": "desingularization of this aﬃne variety",
+   "kind": "proof"
+  },
+  {
+   "from": 199,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:19",
+   "quote": "The category of curves C/k with nonconstant morphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 200,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:57",
+   "quote": "The degree of a morphism of curves φ: C1→ C2",
+   "kind": "statement"
+  },
+  {
+   "from": 200,
+   "to": 199,
+   "evidence": "mit18_782f13_lec19.txt:58",
+   "quote": "deg φ = [k(C1) :φ∗(k(C2))]",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 124,
+   "evidence": "mit18_782f13_lec19.txt:75",
+   "quote": "A morphism of curves is an isomorphism if and only if its degree is one.",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:75",
+   "quote": "A morphism of curves is an isomorphism if and only if its degree is one.",
+   "kind": "statement"
+  },
+  {
+   "from": 201,
+   "to": 200,
+   "evidence": "mit18_782f13_lec19.txt:75",
+   "quote": "A morphism of curves is an isomorphism if and only if its degree is one.",
+   "kind": "statement"
+  },
+  {
+   "from": 202,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:77",
+   "quote": "Let C/k be a curve with k =k.",
+   "kind": "statement"
+  },
+  {
+   "from": 203,
+   "to": 27,
+   "evidence": "mit18_782f13_lec19.txt:94",
+   "quote": "whose points P are the maximal ideals of the discrete valuation rings of",
+   "kind": "statement"
+  },
+  {
+   "from": 203,
+   "to": 192,
+   "evidence": "mit18_782f13_lec19.txt:93",
+   "quote": "Here XF denotes the abstract curve",
+   "kind": "statement"
+  },
+  {
+   "from": 203,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:87",
+   "quote": "Let F/k be a function ﬁeld with k =k.",
+   "kind": "statement"
+  },
+  {
+   "from": 204,
+   "to": 202,
+   "evidence": "mit18_782f13_lec19.txt:104",
+   "quote": "∈ DivC is deﬁned over k",
+   "kind": "statement"
+  },
+  {
+   "from": 205,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:120",
+   "quote": "Let C/k be a curve deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 206,
+   "to": 159,
+   "evidence": "mit18_782f13_lec19.txt:154",
+   "quote": "ordP (f)P.",
+   "kind": "statement"
+  },
+  {
+   "from": 206,
+   "to": 192,
+   "evidence": "mit18_782f13_lec19.txt:155",
+   "quote": "∈XF",
+   "kind": "statement"
+  },
+  {
+   "from": 206,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:150",
+   "quote": "Letf be a nonzero element of a function ﬁeld F/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 159,
+   "evidence": "mit18_782f13_lec19.txt:168",
+   "quote": "For any f∈ F× we have ordP (f) = 0 for",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 192,
+   "evidence": "mit18_782f13_lec19.txt:169",
+   "quote": "all but ﬁnitely many places P of F .",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:168",
+   "quote": "Let F/k be a function ﬁeld.",
+   "kind": "statement"
+  },
+  {
+   "from": 207,
+   "to": 199,
+   "evidence": "mit18_782f13_lec19.txt:163",
+   "quote": "Under our categorical equivalence, we can assume that F =k(C)",
+   "kind": "proof"
+  },
+  {
+   "from": 208,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:182",
+   "quote": "Let C/k be a curve. The quotient group",
+   "kind": "statement"
+  },
+  {
+   "from": 208,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:183",
+   "quote": "PickC := DivkC/ PrinckC",
+   "kind": "statement"
+  },
+  {
+   "from": 208,
+   "to": 206,
+   "evidence": "mit18_782f13_lec19.txt:183",
+   "quote": "PickC := DivkC/ PrinckC",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 102,
+   "evidence": "mit18_782f13_lec19.txt:188",
+   "quote": "1→k×→k(C)×−div→ DivkC→ PickC→ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:194",
+   "quote": "Equality follows from the fact that k is algebraically closed in k(C).",
+   "kind": "proof"
+  },
+  {
+   "from": 209,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:188",
+   "quote": "1→k×→k(C)×−div→ DivkC→ PickC→ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 206,
+   "evidence": "mit18_782f13_lec19.txt:188",
+   "quote": "1→k×→k(C)×−div→ DivkC→ PickC→ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 209,
+   "to": 208,
+   "evidence": "mit18_782f13_lec19.txt:188",
+   "quote": "1→k×→k(C)×−div→ DivkC→ PickC→ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 210,
+   "to": 206,
+   "evidence": "mit18_782f13_lec19.txt:200",
+   "quote": "For a principal divisor div f = n",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 128,
+   "evidence": "mit18_782f13_lec19.txt:229",
+   "quote": "Let φ: C1→ C2 be a morphism of curves deﬁned over k",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:229",
+   "quote": "Let φ: C1→ C2 be a morphism of curves deﬁned over k",
+   "kind": "statement"
+  },
+  {
+   "from": 211,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:230",
+   "quote": "closed point of C1/k. Then φ(P ) is a closed point of C2/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 212,
+   "to": 159,
+   "evidence": "mit18_782f13_lec19.txt:245",
+   "quote": "eφ(P ) := ordP ( φ∗tQ),",
+   "kind": "statement"
+  },
+  {
+   "from": 212,
+   "to": 199,
+   "evidence": "mit18_782f13_lec19.txt:243",
+   "quote": "the corresponding morphism of function ﬁelds.",
+   "kind": "statement"
+  },
+  {
+   "from": 212,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:244",
+   "quote": "of φ at a closed point P of C1",
+   "kind": "statement"
+  },
+  {
+   "from": 212,
+   "to": 211,
+   "evidence": "mit18_782f13_lec19.txt:240",
+   "quote": "With Lemma 19.17 in hand, we can now sensibly speak of a morphism",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:251",
+   "quote": "on divisors is the homomorphism φ∗ : DivkC2→ DivkC1",
+   "kind": "statement"
+  },
+  {
+   "from": 213,
+   "to": 212,
+   "evidence": "mit18_782f13_lec19.txt:252",
+   "quote": "φ∗(Q) := ∑ eφ(P )P,",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 155,
+   "evidence": "mit18_782f13_lec19.txt:278",
+   "quote": "of the residue ﬁeld k(P ) =OP/mP",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 165,
+   "evidence": "mit18_782f13_lec19.txt:278",
+   "quote": "of the residue ﬁeld k(P ) =OP/mP",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:276",
+   "quote": "Let C/k be a curve and let F/k be the corresponding function ﬁeld.",
+   "kind": "statement"
+  },
+  {
+   "from": 214,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:277",
+   "quote": "IfP is a closed point ofC/k",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 165,
+   "evidence": "mit18_782f13_lec20.txt:19",
+   "quote": "letOQ be its local ring of regular functions",
+   "kind": "proof"
+  },
+  {
+   "from": 215,
+   "to": 200,
+   "evidence": "mit18_782f13_lec19.txt:292",
+   "quote": "degφ∗(Q) = degφ degQ",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 205,
+   "evidence": "mit18_782f13_lec19.txt:291",
+   "quote": "closed point Q of C2/k,",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 212,
+   "evidence": "mit18_782f13_lec20.txt:43",
+   "quote": "where ei = ordPi(φ∗tQ) = eφ(Pi)",
+   "kind": "proof"
+  },
+  {
+   "from": 215,
+   "to": 213,
+   "evidence": "mit18_782f13_lec19.txt:294",
+   "quote": "pullback map on divisors.",
+   "kind": "statement"
+  },
+  {
+   "from": 215,
+   "to": 214,
+   "evidence": "mit18_782f13_lec19.txt:292",
+   "quote": "degφ∗(Q) = degφ degQ",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 189,
+   "evidence": "mit18_782f13_lec19.txt:368",
+   "quote": "Because every rational map from a (smooth projective) curve to a",
+   "kind": "proof"
+  },
+  {
+   "from": 216,
+   "to": 198,
+   "evidence": "mit18_782f13_lec19.txt:305",
+   "quote": "Let f∈ k(C)× for some curve C/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 200,
+   "evidence": "mit18_782f13_lec19.txt:378",
+   "quote": "is the degree of f as a morphism",
+   "kind": "proof"
+  },
+  {
+   "from": 216,
+   "to": 206,
+   "evidence": "mit18_782f13_lec19.txt:310",
+   "quote": "we always have deg divf = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 210,
+   "evidence": "mit18_782f13_lec19.txt:307",
+   "quote": "deg div0f = deg div f.∞",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 212,
+   "evidence": "mit18_782f13_lec19.txt:336",
+   "quote": "The ramiﬁcation index of f at P is, by deﬁnition,",
+   "kind": "proof"
+  },
+  {
+   "from": 216,
+   "to": 213,
+   "evidence": "mit18_782f13_lec19.txt:342",
+   "quote": "Applying the pullback map f∗",
+   "kind": "proof"
+  },
+  {
+   "from": 216,
+   "to": 214,
+   "evidence": "mit18_782f13_lec19.txt:307",
+   "quote": "deg div0f = deg div f.∞",
+   "kind": "statement"
+  },
+  {
+   "from": 216,
+   "to": 215,
+   "evidence": "mit18_782f13_lec19.txt:375",
+   "quote": "Applying Theorem 19.22 tof : C→ P1",
+   "kind": "proof"
+  },
+  {
+   "from": 217,
+   "to": 159,
+   "evidence": "mit18_782f13_lec20.txt:96",
+   "quote": "Let v : F ×→ Γ be a valuation on a ﬁeld F",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 159,
+   "evidence": "mit18_782f13_lec20.txt:113",
+   "quote": "the valuation for Pi.",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 188,
+   "evidence": "mit18_782f13_lec20.txt:121",
+   "quote": "Theorem 18.5. Then vn(si)≥ e0",
+   "kind": "proof"
+  },
+  {
+   "from": 218,
+   "to": 192,
+   "evidence": "mit18_782f13_lec20.txt:111",
+   "quote": "LetP1,...,P n be distinct places of a function",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 198,
+   "evidence": "mit18_782f13_lec20.txt:112",
+   "quote": "ﬁeld F . Then there exist t1,...,t n so that vi(tj) =δij",
+   "kind": "statement"
+  },
+  {
+   "from": 218,
+   "to": 217,
+   "evidence": "mit18_782f13_lec20.txt:124",
+   "quote": "by the triangle equality,",
+   "kind": "proof"
+  },
+  {
+   "from": 219,
+   "to": 27,
+   "evidence": "mit18_782f13_lec20.txt:144",
+   "quote": "be distinct discrete valuation rings of a function ﬁeld",
+   "kind": "statement"
+  },
+  {
+   "from": 219,
+   "to": 198,
+   "evidence": "mit18_782f13_lec20.txt:144",
+   "quote": "be distinct discrete valuation rings of a function ﬁeld",
+   "kind": "statement"
+  },
+  {
+   "from": 219,
+   "to": 218,
+   "evidence": "mit18_782f13_lec20.txt:149",
+   "quote": "given by Lemma 20.3 are uniformizers",
+   "kind": "proof"
+  },
+  {
+   "from": 220,
+   "to": 159,
+   "evidence": "mit18_782f13_lec20.txt:157",
+   "quote": "such that ordPi(f−fi)>N",
+   "kind": "statement"
+  },
+  {
+   "from": 220,
+   "to": 192,
+   "evidence": "mit18_782f13_lec20.txt:155",
+   "quote": "LetP1, ...,P n be distinct places",
+   "kind": "statement"
+  },
+  {
+   "from": 220,
+   "to": 198,
+   "evidence": "mit18_782f13_lec20.txt:156",
+   "quote": "of a function ﬁeld F/k",
+   "kind": "statement"
+  },
+  {
+   "from": 220,
+   "to": 218,
+   "evidence": "mit18_782f13_lec20.txt:158",
+   "quote": "Lett1,...,t n be as in Lemma 20.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 221,
+   "to": 109,
+   "evidence": "mit18_782f13_lec20.txt:184",
+   "quote": "Then C≃ P1 if and only if Pic0kC ={0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 124,
+   "evidence": "mit18_782f13_lec20.txt:184",
+   "quote": "Then C≃ P1 if and only if Pic0kC ={0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 201,
+   "evidence": "mit18_782f13_lec20.txt:197",
+   "quote": "that the morphism f has degree one and is an isomorphism.",
+   "kind": "proof"
+  },
+  {
+   "from": 221,
+   "to": 206,
+   "evidence": "mit18_782f13_lec20.txt:191",
+   "quote": "so D = divf. Thus DivkC = PrinckC",
+   "kind": "proof"
+  },
+  {
+   "from": 221,
+   "to": 208,
+   "evidence": "mit18_782f13_lec20.txt:177",
+   "quote": "Equivalently, Pic0kC is the kernel of the degree map Pic C→ Z.",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 212,
+   "evidence": "mit18_782f13_lec20.txt:199",
+   "quote": "=ef(P ) = ordP (f ∗t0)",
+   "kind": "proof"
+  },
+  {
+   "from": 221,
+   "to": 214,
+   "evidence": "mit18_782f13_lec20.txt:176",
+   "quote": "the group of degree zero divisors Div 0kC",
+   "kind": "statement"
+  },
+  {
+   "from": 221,
+   "to": 215,
+   "evidence": "mit18_782f13_lec20.txt:198",
+   "quote": "Theorem 20.1 with Q = 0 and t0 =x/y to compute",
+   "kind": "proof"
+  },
+  {
+   "from": 222,
+   "to": 109,
+   "evidence": "mit18_782f13_lec20.txt:222",
+   "quote": "is isomorphic to P1/k (with the isomorphism deﬁned over k)",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 128,
+   "evidence": "mit18_782f13_lec20.txt:222",
+   "quote": "is isomorphic to P1/k (with the isomorphism deﬁned over k)",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 198,
+   "evidence": "mit18_782f13_lec20.txt:221",
+   "quote": "Let C/k be a curve with at least two distinct rational points.",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 208,
+   "evidence": "mit18_782f13_lec20.txt:222",
+   "quote": "if and only if Pic0kC ={0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 222,
+   "to": 214,
+   "evidence": "mit18_782f13_lec20.txt:176",
+   "quote": "the group of degree zero divisors Div 0kC",
+   "kind": "statement"
+  },
+  {
+   "from": 223,
+   "to": 205,
+   "evidence": "mit18_782f13_lec21.txt:12",
+   "quote": "deﬁning the relation ≤ on Div kC by",
+   "kind": "statement"
+  },
+  {
+   "from": 223,
+   "to": 210,
+   "evidence": "mit18_782f13_lec21.txt:24",
+   "quote": "divf = div 0f− div f, every divisor can be written uniquely",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 205,
+   "evidence": "mit18_782f13_lec21.txt:34",
+   "quote": "The Riemann-Roch space of a divisor D is the k-vector space",
+   "kind": "statement"
+  },
+  {
+   "from": 224,
+   "to": 206,
+   "evidence": "mit18_782f13_lec21.txt:35",
+   "quote": "L(D) :={ f∈k(C)× : divf≥ −D}∪{0}.",
+   "kind": "statement"
+  },
+  {
+   "from": 225,
+   "to": 208,
+   "evidence": "mit18_782f13_lec21.txt:59",
+   "quote": "For any linearly equivalent divisors A∼B we haveL(A)≃L( B).",
+   "kind": "statement"
+  },
+  {
+   "from": 225,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:59",
+   "quote": "For any linearly equivalent divisors A∼B we haveL(A)≃L( B).",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 208,
+   "evidence": "mit18_782f13_lec21.txt:73",
+   "quote": "We haveL(D) ={ 0} if and only if D∼D′ for some D′≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 223,
+   "evidence": "mit18_782f13_lec21.txt:73",
+   "quote": "We haveL(D) ={ 0} if and only if D∼D′ for some D′≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 226,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:73",
+   "quote": "We haveL(D) ={ 0} if and only if D∼D′ for some D′≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 227,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:79",
+   "quote": "(B)/L(A))≤ degB− degA.",
+   "kind": "statement"
+  },
+  {
+   "from": 227,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:77",
+   "quote": "For any two divisors A≤B we haveL(A)⊆L (B) and",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:103",
+   "quote": "For any divisor D we have dimL(D)≤ degD0 + 1 .",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 223,
+   "evidence": "mit18_782f13_lec21.txt:103",
+   "quote": "For any divisor D we have dimL(D)≤ degD0 + 1 .",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:103",
+   "quote": "For any divisor D we have dimL(D)≤ degD0 + 1 .",
+   "kind": "statement"
+  },
+  {
+   "from": 228,
+   "to": 227,
+   "evidence": "mit18_782f13_lec21.txt:105",
+   "quote": "Applying Lemma 21.8 with B =D and A = 0 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 229,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:114",
+   "quote": "The dimension 𝓁(D) of a divisor is the dimension of L (D).",
+   "kind": "statement"
+  },
+  {
+   "from": 230,
+   "to": 208,
+   "evidence": "mit18_782f13_lec21.txt:120",
+   "quote": "If A∼B then 𝓁(A) =𝓁( B) and deg(A) = deg(B).",
+   "kind": "statement"
+  },
+  {
+   "from": 230,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:121",
+   "quote": "For any A≤B we have 𝓁(B)−𝓁(A)≤ degB− degA.",
+   "kind": "statement"
+  },
+  {
+   "from": 230,
+   "to": 216,
+   "evidence": "mit18_782f13_lec21.txt:127",
+   "quote": "(b) is Lemma 21.6 and Corollary 19.23",
+   "kind": "proof"
+  },
+  {
+   "from": 230,
+   "to": 223,
+   "evidence": "mit18_782f13_lec21.txt:123",
+   "quote": "all D≥ 0 we have 𝓁(D)≤ degD + 1 .",
+   "kind": "statement"
+  },
+  {
+   "from": 230,
+   "to": 225,
+   "evidence": "mit18_782f13_lec21.txt:127",
+   "quote": "(b) is Lemma 21.6 and Corollary 19.23",
+   "kind": "proof"
+  },
+  {
+   "from": 230,
+   "to": 226,
+   "evidence": "mit18_782f13_lec21.txt:128",
+   "quote": "(d) is Theorem 21.9, and (e) follows from Lemma 21.7.",
+   "kind": "proof"
+  },
+  {
+   "from": 230,
+   "to": 228,
+   "evidence": "mit18_782f13_lec21.txt:128",
+   "quote": "(d) is Theorem 21.9, and (e) follows from Lemma 21.7.",
+   "kind": "proof"
+  },
+  {
+   "from": 230,
+   "to": 229,
+   "evidence": "mit18_782f13_lec21.txt:119",
+   "quote": "(a) 𝓁(0) = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 231,
+   "to": 206,
+   "evidence": "mit18_782f13_lec21.txt:133",
+   "quote": "0 then 𝓁(D) = 1 if D is principal and 𝓁(D) = 0 otherwise.",
+   "kind": "statement"
+  },
+  {
+   "from": 231,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:133",
+   "quote": "0 then 𝓁(D) = 1 if D is principal and 𝓁(D) = 0 otherwise.",
+   "kind": "statement"
+  },
+  {
+   "from": 231,
+   "to": 226,
+   "evidence": "mit18_782f13_lec21.txt:135",
+   "quote": "so 𝓁(D)≥ 1 and by Lemma 21.7 w e must",
+   "kind": "proof"
+  },
+  {
+   "from": 231,
+   "to": 229,
+   "evidence": "mit18_782f13_lec21.txt:133",
+   "quote": "0 then 𝓁(D) = 1 if D is principal and 𝓁(D) = 0 otherwise.",
+   "kind": "statement"
+  },
+  {
+   "from": 232,
+   "to": 109,
+   "evidence": "mit18_782f13_lec21.txt:147",
+   "quote": "If C is isomorphic to P1 then 𝓁(D) = degD + 1 for all D≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 232,
+   "to": 210,
+   "evidence": "mit18_782f13_lec21.txt:153",
+   "quote": "We just need to show that we can construct div 0f with support disjoint",
+   "kind": "proof"
+  },
+  {
+   "from": 232,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:147",
+   "quote": "If C is isomorphic to P1 then 𝓁(D) = degD + 1 for all D≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 232,
+   "to": 217,
+   "evidence": "mit18_782f13_lec21.txt:167",
+   "quote": "the triangle equality then precludes any non-trivial relations.",
+   "kind": "proof"
+  },
+  {
+   "from": 232,
+   "to": 223,
+   "evidence": "mit18_782f13_lec21.txt:147",
+   "quote": "If C is isomorphic to P1 then 𝓁(D) = degD + 1 for all D≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 232,
+   "to": 229,
+   "evidence": "mit18_782f13_lec21.txt:147",
+   "quote": "If C is isomorphic to P1 then 𝓁(D) = degD + 1 for all D≥ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 233,
+   "to": 205,
+   "evidence": "mit18_782f13_lec21.txt:195",
+   "quote": "all D∈ DivkC.",
+   "kind": "statement"
+  },
+  {
+   "from": 233,
+   "to": 214,
+   "evidence": "mit18_782f13_lec21.txt:193",
+   "quote": "deg(D) + 1−𝓁(D)≤g",
+   "kind": "statement"
+  },
+  {
+   "from": 233,
+   "to": 216,
+   "evidence": "mit18_782f13_lec21.txt:198",
+   "quote": "where d = degA = [k (C) : k(f)] (by Corollary 19.24)",
+   "kind": "proof"
+  },
+  {
+   "from": 233,
+   "to": 223,
+   "evidence": "mit18_782f13_lec21.txt:224",
+   "quote": "write D = D0−D as the diﬀerence of two∞",
+   "kind": "proof"
+  },
+  {
+   "from": 233,
+   "to": 224,
+   "evidence": "mit18_782f13_lec21.txt:209",
+   "quote": "And S⊆L (nA +B), since div(vif j)≥− nA−B",
+   "kind": "proof"
+  },
+  {
+   "from": 233,
+   "to": 229,
+   "evidence": "mit18_782f13_lec21.txt:193",
+   "quote": "deg(D) + 1−𝓁(D)≤g",
+   "kind": "statement"
+  },
+  {
+   "from": 233,
+   "to": 230,
+   "evidence": "mit18_782f13_lec21.txt:212",
+   "quote": "and Corollary 21.11.c implies",
+   "kind": "proof"
+  },
+  {
+   "from": 234,
+   "to": 198,
+   "evidence": "mit18_782f13_lec22.txt:28",
+   "quote": "The genus of the curve C/k is deﬁned by",
+   "kind": "statement"
+  },
+  {
+   "from": 234,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:29",
+   "quote": "g := max{r(D) + 1 : D∈ Divk(C)} .",
+   "kind": "statement"
+  },
+  {
+   "from": 234,
+   "to": 233,
+   "evidence": "mit18_782f13_lec22.txt:30",
+   "quote": "In other words, g is the least integer for which (1) holds.",
+   "kind": "statement"
+  },
+  {
+   "from": 235,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:37",
+   "quote": "for all D∈ DivkC, and equality holds for all divisors of suﬃciently large degree.",
+   "kind": "statement"
+  },
+  {
+   "from": 235,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:37",
+   "quote": "for all D∈ DivkC, and equality holds for all divisors of suﬃciently large degree.",
+   "kind": "statement"
+  },
+  {
+   "from": 235,
+   "to": 233,
+   "evidence": "mit18_782f13_lec22.txt:35",
+   "quote": "in Theorem 21.15.",
+   "kind": "proof"
+  },
+  {
+   "from": 235,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:36",
+   "quote": "LetC/k be a curve of genus g. Then r(D)≤g− 1",
+   "kind": "statement"
+  },
+  {
+   "from": 236,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:59",
+   "quote": "LetC/k be a curve of genusg. For D∈ DivkC, the non-negative integer",
+   "kind": "statement"
+  },
+  {
+   "from": 236,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:59",
+   "quote": "LetC/k be a curve of genusg. For D∈ DivkC, the non-negative integer",
+   "kind": "statement"
+  },
+  {
+   "from": 237,
+   "to": 198,
+   "evidence": "mit18_782f13_lec22.txt:69",
+   "quote": "ring of the function ﬁeld F/k is the subring A =AF of the",
+   "kind": "statement"
+  },
+  {
+   "from": 238,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:83",
+   "quote": "For a divisor D the adele space of D is the k-vector space",
+   "kind": "statement"
+  },
+  {
+   "from": 238,
+   "to": 224,
+   "evidence": "mit18_782f13_lec22.txt:86",
+   "quote": "ontains the Riemann-Roch space L(D) =A (D)∩F as a subspace",
+   "kind": "statement"
+  },
+  {
+   "from": 238,
+   "to": 237,
+   "evidence": "mit18_782f13_lec22.txt:84",
+   "quote": "A(D) :={α∈A : ord P (α)≥− ordP (D) for all places P}.",
+   "kind": "statement"
+  },
+  {
+   "from": 239,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:97",
+   "quote": "dimA(B)/A(A) = degB− deg( A),",
+   "kind": "statement"
+  },
+  {
+   "from": 239,
+   "to": 238,
+   "evidence": "mit18_782f13_lec22.txt:96",
+   "quote": "For any two divisors A≤B we haveA(A)⊆A (B) and",
+   "kind": "statement"
+  },
+  {
+   "from": 240,
+   "to": 238,
+   "evidence": "mit18_782f13_lec22.txt:105",
+   "quote": "For any two divisors A≤B we haveA(A) +F⊆A ( B) +F and",
+   "kind": "statement"
+  },
+  {
+   "from": 240,
+   "to": 239,
+   "evidence": "mit18_782f13_lec22.txt:114",
+   "quote": "Applying Lemma 22.8 and",
+   "kind": "proof"
+  },
+  {
+   "from": 241,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:124",
+   "quote": "or any divisor D for which r(D) =g− 1 we have",
+   "kind": "statement"
+  },
+  {
+   "from": 241,
+   "to": 235,
+   "evidence": "mit18_782f13_lec22.txt:127",
+   "quote": "r(D′)≤g−1, by Riemann’s",
+   "kind": "proof"
+  },
+  {
+   "from": 241,
+   "to": 238,
+   "evidence": "mit18_782f13_lec22.txt:125",
+   "quote": "A =A(D) +F.",
+   "kind": "statement"
+  },
+  {
+   "from": 241,
+   "to": 240,
+   "evidence": "mit18_782f13_lec22.txt:128",
+   "quote": "By Lemma 22.9 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 242,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:135",
+   "quote": "For any divisor D∈ DivkF we have",
+   "kind": "statement"
+  },
+  {
+   "from": 242,
+   "to": 235,
+   "evidence": "mit18_782f13_lec22.txt:137",
+   "quote": "By Riemann’s Theorem there exists a divisor D′≥ D for which r(D′) = g− 1",
+   "kind": "proof"
+  },
+  {
+   "from": 242,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:136",
+   "quote": "i(D) = dimA/(A(D) +F ) .",
+   "kind": "statement"
+  },
+  {
+   "from": 242,
+   "to": 237,
+   "evidence": "mit18_782f13_lec22.txt:136",
+   "quote": "i(D) = dimA/(A(D) +F ) .",
+   "kind": "statement"
+  },
+  {
+   "from": 242,
+   "to": 238,
+   "evidence": "mit18_782f13_lec22.txt:136",
+   "quote": "i(D) = dimA/(A(D) +F ) .",
+   "kind": "statement"
+  },
+  {
+   "from": 242,
+   "to": 240,
+   "evidence": "mit18_782f13_lec22.txt:141",
+   "quote": "where we use Lemma 22.9 to get the second equality.",
+   "kind": "proof"
+  },
+  {
+   "from": 242,
+   "to": 241,
+   "evidence": "mit18_782f13_lec22.txt:139",
+   "quote": "By Lemma 22.10 we then have",
+   "kind": "proof"
+  },
+  {
+   "from": 243,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:151",
+   "quote": "D∈ DivkF the space of Weil diﬀerentials Ω(D) is the orthogonal complement ofA( D)+F",
+   "kind": "statement"
+  },
+  {
+   "from": 243,
+   "to": 237,
+   "evidence": "mit18_782f13_lec22.txt:150",
+   "quote": "Let F/k be a function ﬁeld and let A be its adele ring.",
+   "kind": "statement"
+  },
+  {
+   "from": 243,
+   "to": 238,
+   "evidence": "mit18_782f13_lec22.txt:151",
+   "quote": "D∈ DivkF the space of Weil diﬀerentials Ω(D) is the orthogonal complement ofA( D)+F",
+   "kind": "statement"
+  },
+  {
+   "from": 244,
+   "to": 205,
+   "evidence": "mit18_782f13_lec22.txt:163",
+   "quote": "For any divisor D∈ DivkF we have dim Ω(D) =i(D).",
+   "kind": "statement"
+  },
+  {
+   "from": 244,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:163",
+   "quote": "For any divisor D∈ DivkF we have dim Ω(D) =i(D).",
+   "kind": "statement"
+  },
+  {
+   "from": 244,
+   "to": 242,
+   "evidence": "mit18_782f13_lec22.txt:165",
+   "quote": "has ﬁnite dimension i(A), by Theorem 22.11",
+   "kind": "proof"
+  },
+  {
+   "from": 244,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:163",
+   "quote": "For any divisor D∈ DivkF we have dim Ω(D) =i(D).",
+   "kind": "statement"
+  },
+  {
+   "from": 245,
+   "to": 235,
+   "evidence": "mit18_782f13_lec22.txt:199",
+   "quote": "By Riemann’s Theorem, we",
+   "kind": "proof"
+  },
+  {
+   "from": 245,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:202",
+   "quote": "dim Ω(−D) =i (−D) = g− 1−r(−D)",
+   "kind": "proof"
+  },
+  {
+   "from": 245,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:180",
+   "quote": "Let F/k be a function ﬁeld and let Ω be its space of Weil diﬀerentials.",
+   "kind": "statement"
+  },
+  {
+   "from": 245,
+   "to": 244,
+   "evidence": "mit18_782f13_lec22.txt:202",
+   "quote": "dim Ω(−D) =i (−D) = g− 1−r(−D)",
+   "kind": "proof"
+  },
+  {
+   "from": 246,
+   "to": 235,
+   "evidence": "mit18_782f13_lec22.txt:222",
+   "quote": "large degree, by Riemann’s Theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 246,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:216",
+   "quote": "For any nonzero ω∈ Ω there is a unique divisor Dω such that D≤Dω for",
+   "kind": "statement"
+  },
+  {
+   "from": 246,
+   "to": 244,
+   "evidence": "mit18_782f13_lec22.txt:219",
+   "quote": "By Lemma 22.13, we have dim Ω(D) =i( D)",
+   "kind": "proof"
+  },
+  {
+   "from": 247,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:237",
+   "quote": "For a nonzero Weil diﬀerential ω∈ Ω we deﬁne the divisor of ω to be",
+   "kind": "statement"
+  },
+  {
+   "from": 247,
+   "to": 246,
+   "evidence": "mit18_782f13_lec22.txt:240",
+   "quote": "given by Lemma 22.15.",
+   "kind": "statement"
+  },
+  {
+   "from": 248,
+   "to": 206,
+   "evidence": "mit18_782f13_lec22.txt:243",
+   "quote": "div(fω ) = divf + divω.",
+   "kind": "statement"
+  },
+  {
+   "from": 248,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:242",
+   "quote": "For any nonzero f∈F and nonzero ω∈ Ω we have",
+   "kind": "statement"
+  },
+  {
+   "from": 248,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:243",
+   "quote": "div(fω ) = divf + divω.",
+   "kind": "statement"
+  },
+  {
+   "from": 249,
+   "to": 208,
+   "evidence": "mit18_782f13_lec22.txt:252",
+   "quote": "The canonical divisors form a single linear equivalence class.",
+   "kind": "statement"
+  },
+  {
+   "from": 249,
+   "to": 245,
+   "evidence": "mit18_782f13_lec22.txt:254",
+   "quote": "by Theorem 22.14, we haveω2 =fω 1 for somef∈F×",
+   "kind": "proof"
+  },
+  {
+   "from": 249,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:252",
+   "quote": "The canonical divisors form a single linear equivalence class.",
+   "kind": "statement"
+  },
+  {
+   "from": 249,
+   "to": 248,
+   "evidence": "mit18_782f13_lec22.txt:255",
+   "quote": "D2 = divω2 = divfω 1 = divf + divω1 = divf +D1, so D1∼D2.",
+   "kind": "proof"
+  },
+  {
+   "from": 250,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:266",
+   "quote": "Two nonzero Weil diﬀerentials ω1,ω 2∈ Ω have the same divisor if and",
+   "kind": "statement"
+  },
+  {
+   "from": 250,
+   "to": 245,
+   "evidence": "mit18_782f13_lec22.txt:268",
+   "quote": "dim F Ω = 1, we can write ω2 = fω 1",
+   "kind": "proof"
+  },
+  {
+   "from": 250,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:266",
+   "quote": "Two nonzero Weil diﬀerentials ω1,ω 2∈ Ω have the same divisor if and",
+   "kind": "statement"
+  },
+  {
+   "from": 250,
+   "to": 248,
+   "evidence": "mit18_782f13_lec22.txt:269",
+   "quote": "divω2 = div fω 1 = div f + divω1",
+   "kind": "proof"
+  },
+  {
+   "from": 251,
+   "to": 224,
+   "evidence": "mit18_782f13_lec22.txt:280",
+   "quote": "map φ:L(W−D)→ Ω(D) deﬁned by φ (f) =f ω is an isomorphism of k-vector spaces.",
+   "kind": "statement"
+  },
+  {
+   "from": 251,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:281",
+   "quote": "particular, we have i(D) =𝓁 (W−D) for all divisors D.",
+   "kind": "statement"
+  },
+  {
+   "from": 251,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:281",
+   "quote": "particular, we have i(D) =𝓁 (W−D) for all divisors D.",
+   "kind": "statement"
+  },
+  {
+   "from": 251,
+   "to": 243,
+   "evidence": "mit18_782f13_lec22.txt:280",
+   "quote": "map φ:L(W−D)→ Ω(D) deﬁned by φ (f) =f ω is an isomorphism of k-vector spaces.",
+   "kind": "statement"
+  },
+  {
+   "from": 251,
+   "to": 244,
+   "evidence": "mit18_782f13_lec22.txt:290",
+   "quote": "i(D) = dim Ω(D) =𝓁 (W−D), by Lemma 22.13 .",
+   "kind": "proof"
+  },
+  {
+   "from": 251,
+   "to": 245,
+   "evidence": "mit18_782f13_lec22.txt:287",
+   "quote": "By Theorem 22.14 we can write ω′ =fω for some f∈F×",
+   "kind": "proof"
+  },
+  {
+   "from": 251,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:279",
+   "quote": "canonical divisor W = divω",
+   "kind": "statement"
+  },
+  {
+   "from": 251,
+   "to": 248,
+   "evidence": "mit18_782f13_lec22.txt:284",
+   "quote": "ω = divf + divω≥− (W−D) +W =D,",
+   "kind": "proof"
+  },
+  {
+   "from": 252,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:294",
+   "quote": "𝓁(D) = deg(D) + 1−g +𝓁(W−D).",
+   "kind": "statement"
+  },
+  {
+   "from": 252,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:294",
+   "quote": "𝓁(D) = deg(D) + 1−g +𝓁(W−D).",
+   "kind": "statement"
+  },
+  {
+   "from": 252,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:292",
+   "quote": "Let W be a canonical divisor of the genus g",
+   "kind": "statement"
+  },
+  {
+   "from": 252,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:295",
+   "quote": "Immediate from Deﬁnition 22.4 and Theorem 22.20.",
+   "kind": "proof"
+  },
+  {
+   "from": 252,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:292",
+   "quote": "Let W be a canonical divisor of the genus g",
+   "kind": "statement"
+  },
+  {
+   "from": 252,
+   "to": 251,
+   "evidence": "mit18_782f13_lec22.txt:295",
+   "quote": "Immediate from Deﬁnition 22.4 and Theorem 22.20.",
+   "kind": "proof"
+  },
+  {
+   "from": 253,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:297",
+   "quote": "𝓁(W ) =g, degW = 2g− 2, i (W ) = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 253,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:297",
+   "quote": "𝓁(W ) =g, degW = 2g− 2, i (W ) = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 253,
+   "to": 230,
+   "evidence": "mit18_782f13_lec22.txt:301",
+   "quote": "and since deg 0 = 0 and 𝓁(0) = 1, we have 𝓁(W ) =g.",
+   "kind": "proof"
+  },
+  {
+   "from": 253,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:296",
+   "quote": "For any canonical divisor W of a genus g curve we have",
+   "kind": "statement"
+  },
+  {
+   "from": 253,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:297",
+   "quote": "𝓁(W ) =g, degW = 2g− 2, i (W ) = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 253,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:296",
+   "quote": "For any canonical divisor W of a genus g curve we have",
+   "kind": "statement"
+  },
+  {
+   "from": 253,
+   "to": 251,
+   "evidence": "mit18_782f13_lec22.txt:303",
+   "quote": "i(W ) =𝓁(W−W ) = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 253,
+   "to": 252,
+   "evidence": "mit18_782f13_lec22.txt:299",
+   "quote": "We apply the Riemann-Roch Theorem twice",
+   "kind": "proof"
+  },
+  {
+   "from": 254,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:305",
+   "quote": "For all divisors D of a genus g curve C/k with degD> 2g− 2 we have",
+   "kind": "statement"
+  },
+  {
+   "from": 254,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:307",
+   "quote": "(D) = degD + 1−g,",
+   "kind": "statement"
+  },
+  {
+   "from": 254,
+   "to": 230,
+   "evidence": "mit18_782f13_lec22.txt:316",
+   "quote": "so 𝓁(W−D) = 0 and the corollary follows.",
+   "kind": "proof"
+  },
+  {
+   "from": 254,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:305",
+   "quote": "For all divisors D of a genus g curve C/k with degD> 2g− 2 we have",
+   "kind": "statement"
+  },
+  {
+   "from": 254,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:308",
+   "quote": "equivalently,i(D) = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 254,
+   "to": 252,
+   "evidence": "mit18_782f13_lec22.txt:312",
+   "quote": "Proof. By the Riemann-Roch Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 254,
+   "to": 253,
+   "evidence": "mit18_782f13_lec22.txt:315",
+   "quote": "deg(W−D) = degW− degD< 2g− 2− (2g− 2) = 0,",
+   "kind": "proof"
+  },
+  {
+   "from": 255,
+   "to": 214,
+   "evidence": "mit18_782f13_lec22.txt:321",
+   "quote": "(b) 𝓁(D) =g and degD = 2g− 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 255,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:321",
+   "quote": "(b) 𝓁(D) =g and degD = 2g− 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 255,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:321",
+   "quote": "(b) 𝓁(D) =g and degD = 2g− 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 255,
+   "to": 236,
+   "evidence": "mit18_782f13_lec22.txt:322",
+   "quote": "(c) i(D)",
+   "kind": "statement"
+  },
+  {
+   "from": 255,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:320",
+   "quote": "(a) D is a canonical divisor.",
+   "kind": "statement"
+  },
+  {
+   "from": 255,
+   "to": 253,
+   "evidence": "mit18_782f13_lec22.txt:324",
+   "quote": "That (a) implies (b) is immediate from Corollary22.22",
+   "kind": "proof"
+  },
+  {
+   "from": 255,
+   "to": 254,
+   "evidence": "mit18_782f13_lec22.txt:325",
+   "quote": "both follow from the combination of Corollaries 22.22 and 22.23.",
+   "kind": "proof"
+  },
+  {
+   "from": 256,
+   "to": 229,
+   "evidence": "mit18_782f13_lec22.txt:334",
+   "quote": "of the Riemann-Roch space L(D)⊆k(C) does not change under base extension.",
+   "kind": "proof"
+  },
+  {
+   "from": 256,
+   "to": 234,
+   "evidence": "mit18_782f13_lec22.txt:328",
+   "quote": "The genus of a curve C/k over a perfect ﬁeld k is preserved under base",
+   "kind": "statement"
+  },
+  {
+   "from": 256,
+   "to": 247,
+   "evidence": "mit18_782f13_lec22.txt:331",
+   "quote": "if D∈ DivkC is a canonical divisor for C/k then it is also a canonical",
+   "kind": "proof"
+  },
+  {
+   "from": 257,
+   "to": 109,
+   "evidence": "mit18_782f13_lec23.txt:10",
+   "quote": "only if it is isomorphic to P1 (over k).",
+   "kind": "statement"
+  },
+  {
+   "from": 257,
+   "to": 200,
+   "evidence": "mit18_782f13_lec23.txt:20",
+   "quote": "here we use Corollaries 19.3 and 19.5",
+   "kind": "proof"
+  },
+  {
+   "from": 257,
+   "to": 201,
+   "evidence": "mit18_782f13_lec23.txt:20",
+   "quote": "here we use Corollaries 19.3 and 19.5",
+   "kind": "proof"
+  },
+  {
+   "from": 257,
+   "to": 232,
+   "evidence": "mit18_782f13_lec23.txt:11",
+   "quote": "this follows from Lemma 21.13",
+   "kind": "proof"
+  },
+  {
+   "from": 257,
+   "to": 234,
+   "evidence": "mit18_782f13_lec23.txt:9",
+   "quote": "Then C has genus zero if and",
+   "kind": "statement"
+  },
+  {
+   "from": 257,
+   "to": 252,
+   "evidence": "mit18_782f13_lec23.txt:11",
+   "quote": "this follows from Lemma 21.13",
+   "kind": "proof"
+  },
+  {
+   "from": 257,
+   "to": 254,
+   "evidence": "mit18_782f13_lec23.txt:15",
+   "quote": "since degP = 1 > 2g− 2 =− 2.",
+   "kind": "proof"
+  },
+  {
+   "from": 258,
+   "to": 200,
+   "evidence": "mit18_782f13_lec23.txt:59",
+   "quote": "to P1 of degree [k (C) : k( x)] = 2",
+   "kind": "proof"
+  },
+  {
+   "from": 258,
+   "to": 216,
+   "evidence": "mit18_782f13_lec23.txt:61",
+   "quote": "It follows that div x = 2 (by Corollary 19.23)",
+   "kind": "proof"
+  },
+  {
+   "from": 258,
+   "to": 234,
+   "evidence": "mit18_782f13_lec23.txt:29",
+   "quote": "Then C has genus one if and",
+   "kind": "statement"
+  },
+  {
+   "from": 258,
+   "to": 252,
+   "evidence": "mit18_782f13_lec23.txt:34",
+   "quote": "we have degnP =n> 2g− 2 = 0, so by the Riemann-Roch theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 258,
+   "to": 254,
+   "evidence": "mit18_782f13_lec23.txt:34",
+   "quote": "we have degnP =n> 2g− 2 = 0, so by the Riemann-Roch theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 258,
+   "to": 257,
+   "evidence": "mit18_782f13_lec23.txt:85",
+   "quote": "to P1, by Theorem 23.1",
+   "kind": "proof"
+  },
+  {
+   "from": 259,
+   "to": 234,
+   "evidence": "mit18_782f13_lec23.txt:91",
+   "quote": "genus one curve C/k with a rational point is isomorphic to a plane",
+   "kind": "statement"
+  },
+  {
+   "from": 260,
+   "to": 109,
+   "evidence": "mit18_782f13_lec23.txt:108",
+   "quote": "Supposeφ is an automorphism of P1",
+   "kind": "statement"
+  },
+  {
+   "from": 260,
+   "to": 121,
+   "evidence": "mit18_782f13_lec23.txt:117",
+   "quote": "a morphism from A1→ A1 the mapφa is a polynomial map",
+   "kind": "proof"
+  },
+  {
+   "from": 261,
+   "to": 258,
+   "evidence": "mit18_782f13_lec23.txt:125",
+   "quote": "Equation (1) in Theorem 23.3 is called a Weierstrass equation.",
+   "kind": "statement"
+  },
+  {
+   "from": 262,
+   "to": 261,
+   "evidence": "mit18_782f13_lec23.txt:132",
+   "quote": "LetC/k be a curve deﬁned by a Weierstrass equation",
+   "kind": "statement"
+  },
+  {
+   "from": 263,
+   "to": 261,
+   "evidence": "mit18_782f13_lec23.txt:146",
+   "quote": "A Weierstrass equation witha1a2a3 = 0 is a short Weierstrass equation.",
+   "kind": "statement"
+  },
+  {
+   "from": 264,
+   "to": 234,
+   "evidence": "mit18_782f13_lec23.txt:153",
+   "quote": "The short Weierstrass equation y2 = x3−a4x−a6 deﬁnes a genus one",
+   "kind": "statement"
+  },
+  {
+   "from": 264,
+   "to": 258,
+   "evidence": "mit18_782f13_lec23.txt:173",
+   "quote": "Theorem 23.3 it has genus one.",
+   "kind": "proof"
+  },
+  {
+   "from": 264,
+   "to": 263,
+   "evidence": "mit18_782f13_lec23.txt:153",
+   "quote": "The short Weierstrass equation y2 = x3−a4x−a6 deﬁnes a genus one",
+   "kind": "statement"
+  },
+  {
+   "from": 265,
+   "to": 198,
+   "evidence": "mit18_782f13_lec23.txt:179",
+   "quote": "an elliptic curve is a curve E/k deﬁned by a Weierstrass equation",
+   "kind": "statement"
+  },
+  {
+   "from": 265,
+   "to": 234,
+   "evidence": "mit18_782f13_lec23.txt:178",
+   "quote": "An elliptic curve E/k is a genus one curve with a distinguished rational",
+   "kind": "statement"
+  },
+  {
+   "from": 265,
+   "to": 261,
+   "evidence": "mit18_782f13_lec23.txt:179",
+   "quote": "an elliptic curve is a curve E/k deﬁned by a Weierstrass equation",
+   "kind": "statement"
+  },
+  {
+   "from": 266,
+   "to": 208,
+   "evidence": "mit18_782f13_lec23.txt:211",
+   "quote": "to the class of the divisor P−O in Pic0k(E) is a bijection.",
+   "kind": "statement"
+  },
+  {
+   "from": 266,
+   "to": 224,
+   "evidence": "mit18_782f13_lec23.txt:224",
+   "quote": "so there is a nonzerof∈L (D+O) such that divf +D+O≥ 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 266,
+   "to": 252,
+   "evidence": "mit18_782f13_lec23.txt:222",
+   "quote": "y the Riemann-Roch theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 266,
+   "to": 257,
+   "evidence": "mit18_782f13_lec23.txt:219",
+   "quote": "which is impossible, since E has genus one.",
+   "kind": "proof"
+  },
+  {
+   "from": 266,
+   "to": 265,
+   "evidence": "mit18_782f13_lec23.txt:210",
+   "quote": "LetE/k be an elliptic curve with distinguished point O.",
+   "kind": "statement"
+  },
+  {
+   "from": 267,
+   "to": 109,
+   "evidence": "mit18_782f13_lec23.txt:239",
+   "quote": "Let E/k be an elliptic curve in P2",
+   "kind": "statement"
+  },
+  {
+   "from": 267,
+   "to": 206,
+   "evidence": "mit18_782f13_lec23.txt:242",
+   "quote": "divf = (L1∩E)− (L2∩E).",
+   "kind": "statement"
+  },
+  {
+   "from": 267,
+   "to": 265,
+   "evidence": "mit18_782f13_lec23.txt:239",
+   "quote": "Let E/k be an elliptic curve in P2",
+   "kind": "statement"
+  },
+  {
+   "from": 268,
+   "to": 261,
+   "evidence": "mit18_782f13_lec23.txt:263",
+   "quote": "LetE/k be an elliptic curve deﬁned by a Weierstrass equation.",
+   "kind": "statement"
+  },
+  {
+   "from": 268,
+   "to": 265,
+   "evidence": "mit18_782f13_lec23.txt:263",
+   "quote": "LetE/k be an elliptic curve deﬁned by a Weierstrass equation.",
+   "kind": "statement"
+  },
+  {
+   "from": 268,
+   "to": 266,
+   "evidence": "mit18_782f13_lec23.txt:264",
+   "quote": "lie on a line is zero under the group law on E(k).",
+   "kind": "statement"
+  },
+  {
+   "from": 268,
+   "to": 267,
+   "evidence": "mit18_782f13_lec23.txt:255",
+   "quote": "div𝓁1/𝓁2 = (L1∩E)− (L2∩E) =P +Q +R− 3O",
+   "kind": "proof"
+  },
+  {
+   "from": 269,
+   "to": 109,
+   "evidence": "mit18_782f13_lec23.txt:277",
+   "quote": "embedded in P2. Then P⊕Q is the negation of the third point",
+   "kind": "statement"
+  },
+  {
+   "from": 269,
+   "to": 265,
+   "evidence": "mit18_782f13_lec23.txt:276",
+   "quote": "LetP and Q be rational points on elliptic curve",
+   "kind": "statement"
+  },
+  {
+   "from": 269,
+   "to": 266,
+   "evidence": "mit18_782f13_lec23.txt:277",
+   "quote": "embedded in P2. Then P⊕Q is the negation of the third point",
+   "kind": "statement"
+  },
+  {
+   "from": 269,
+   "to": 268,
+   "evidence": "mit18_782f13_lec23.txt:265",
+   "quote": "Corollary 23.18 completely dete",
+   "kind": "proof"
+  },
+  {
+   "from": 270,
+   "to": 263,
+   "evidence": "mit18_782f13_lec23.txt:316",
+   "quote": "Weierstrass equation y2 = x3 +a4x +a6.",
+   "kind": "statement"
+  },
+  {
+   "from": 270,
+   "to": 265,
+   "evidence": "mit18_782f13_lec23.txt:315",
+   "quote": "Let E/k be an elliptic curve given by the short",
+   "kind": "statement"
+  },
+  {
+   "from": 270,
+   "to": 266,
+   "evidence": "mit18_782f13_lec23.txt:317",
+   "quote": "aﬃne points whose sum is an aﬃne point P3 = (x3 :y3 :z3), then",
+   "kind": "statement"
+  },
+  {
+   "from": 270,
+   "to": 269,
+   "evidence": "mit18_782f13_lec23.txt:314",
+   "quote": "plugging x3 into the equation for L and negating the result gives y3.",
+   "kind": "proof"
+  },
+  {
+   "from": 271,
+   "to": 114,
+   "evidence": "mit18_782f13_lec23.txt:346",
+   "quote": "An abelian variety is a projective algrebraic group.",
+   "kind": "statement"
+  },
+  {
+   "from": 272,
+   "to": 151,
+   "evidence": "mit18_782f13_lec23.txt:360",
+   "quote": "variety (hence complete), the image of φh is also a projective variety",
+   "kind": "proof"
+  },
+  {
+   "from": 272,
+   "to": 171,
+   "evidence": "mit18_782f13_lec23.txt:360",
+   "quote": "variety (hence complete), the image of φh is also a projective variety",
+   "kind": "proof"
+  },
+  {
+   "from": 272,
+   "to": 271,
+   "evidence": "mit18_782f13_lec23.txt:357",
+   "quote": "An abelian variety is an abelian group.",
+   "kind": "statement"
+  },
+  {
+   "from": 273,
+   "to": 271,
+   "evidence": "mit18_782f13_lec23.txt:376",
+   "quote": "be a morphism of abelian varieties for which φ(0) = 0 .",
+   "kind": "statement"
+  },
+  {
+   "from": 274,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:5",
+   "quote": "Let E1/k and E2/k be elliptic curves with distinguished rational points",
+   "kind": "statement"
+  },
+  {
+   "from": 275,
+   "to": 213,
+   "evidence": "mit18_782f13_lec24.txt:27",
+   "quote": "be the pushforward∗",
+   "kind": "proof"
+  },
+  {
+   "from": 275,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:19",
+   "quote": "Let E1/k and E2/k be elliptic curves and let ϕ: E1→ E2 be an isogeny",
+   "kind": "statement"
+  },
+  {
+   "from": 275,
+   "to": 266,
+   "evidence": "mit18_782f13_lec24.txt:20",
+   "quote": "Then ϕ is a group homomorphism from E1(L) to E2(L )",
+   "kind": "statement"
+  },
+  {
+   "from": 275,
+   "to": 274,
+   "evidence": "mit18_782f13_lec24.txt:19",
+   "quote": "Let E1/k and E2/k be elliptic curves and let ϕ: E1→ E2 be an isogeny",
+   "kind": "statement"
+  },
+  {
+   "from": 276,
+   "to": 274,
+   "evidence": "mit18_782f13_lec24.txt:52",
+   "quote": "Letϕ: E1→E2 be an isogeny of elliptic curves over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 276,
+   "to": 275,
+   "evidence": "mit18_782f13_lec24.txt:53",
+   "quote": "denoted kerϕ is the kernel of the group homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 277,
+   "to": 274,
+   "evidence": "mit18_782f13_lec24.txt:56",
+   "quote": "be an isogeny of elliptic curves. For each P∈ kerϕ, the",
+   "kind": "statement"
+  },
+  {
+   "from": 277,
+   "to": 275,
+   "evidence": "mit18_782f13_lec24.txt:62",
+   "quote": "group homomorphism and P lies in its kernel.",
+   "kind": "proof"
+  },
+  {
+   "from": 277,
+   "to": 276,
+   "evidence": "mit18_782f13_lec24.txt:56",
+   "quote": "be an isogeny of elliptic curves. For each P∈ kerϕ, the",
+   "kind": "statement"
+  },
+  {
+   "from": 278,
+   "to": 200,
+   "evidence": "mit18_782f13_lec24.txt:71",
+   "quote": "For any isogeny ϕ: E1→E2 of elliptic curves, # kerϕ divides degϕ.",
+   "kind": "statement"
+  },
+  {
+   "from": 278,
+   "to": 274,
+   "evidence": "mit18_782f13_lec24.txt:71",
+   "quote": "For any isogeny ϕ: E1→E2 of elliptic curves, # kerϕ divides degϕ.",
+   "kind": "statement"
+  },
+  {
+   "from": 278,
+   "to": 276,
+   "evidence": "mit18_782f13_lec24.txt:71",
+   "quote": "For any isogeny ϕ: E1→E2 of elliptic curves, # kerϕ divides degϕ.",
+   "kind": "statement"
+  },
+  {
+   "from": 278,
+   "to": 277,
+   "evidence": "mit18_782f13_lec24.txt:76",
+   "quote": "Since kerϕ injects into Aut(k(E1)/ϕ∗(k(E2))), its order must divide deg ϕ.",
+   "kind": "proof"
+  },
+  {
+   "from": 279,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:82",
+   "quote": "Let E/k be an elliptic curve and let n be a positive integer.",
+   "kind": "statement"
+  },
+  {
+   "from": 279,
+   "to": 266,
+   "evidence": "mit18_782f13_lec24.txt:84",
+   "quote": "nP =P⊕P⊕···⊕ P.",
+   "kind": "statement"
+  },
+  {
+   "from": 280,
+   "to": 189,
+   "evidence": "mit18_782f13_lec24.txt:99",
+   "quote": "by Theorem 18.6, a rational map from a smooth",
+   "kind": "proof"
+  },
+  {
+   "from": 280,
+   "to": 190,
+   "evidence": "mit18_782f13_lec24.txt:109",
+   "quote": "constant (by Corollary 18.7).",
+   "kind": "proof"
+  },
+  {
+   "from": 280,
+   "to": 270,
+   "evidence": "mit18_782f13_lec24.txt:101",
+   "quote": "the coordinates of P via the algebraic formulas for the group operation",
+   "kind": "proof"
+  },
+  {
+   "from": 280,
+   "to": 274,
+   "evidence": "mit18_782f13_lec24.txt:93",
+   "quote": "The multiplication-by-n map on an elliptic curve E/k is an isogeny.",
+   "kind": "statement"
+  },
+  {
+   "from": 280,
+   "to": 279,
+   "evidence": "mit18_782f13_lec24.txt:93",
+   "quote": "The multiplication-by-n map on an elliptic curve E/k is an isogeny.",
+   "kind": "statement"
+  },
+  {
+   "from": 281,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:118",
+   "quote": "LetE/k be an elliptic curve. For any positive integer n, the number of",
+   "kind": "statement"
+  },
+  {
+   "from": 281,
+   "to": 279,
+   "evidence": "mit18_782f13_lec24.txt:119",
+   "quote": "n-torsion points in E(k) is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 282,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:159",
+   "quote": "each of the sets En+1( Qp) is an index p sub group of En(Qp).",
+   "kind": "statement"
+  },
+  {
+   "from": 282,
+   "to": 268,
+   "evidence": "mit18_782f13_lec24.txt:180",
+   "quote": "we still have an operation deﬁned by the rule that three colinear",
+   "kind": "proof"
+  },
+  {
+   "from": 283,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:208",
+   "quote": "E0(Qp)⊃E1(Qp)⊃E2(Qp)⊃···",
+   "kind": "statement"
+  },
+  {
+   "from": 283,
+   "to": 282,
+   "evidence": "mit18_782f13_lec24.txt:207",
+   "quote": "The inﬁnite chain of groups",
+   "kind": "statement"
+  },
+  {
+   "from": 284,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:214",
+   "quote": "(2) En(Qp)/En+1(Qp)≃E(Fp)≃ Z/pZ for all n> 0;",
+   "kind": "statement"
+  },
+  {
+   "from": 284,
+   "to": 56,
+   "evidence": "mit18_782f13_lec24.txt:226",
+   "quote": "we can apply Hensel’s to the polynomial",
+   "kind": "proof"
+  },
+  {
+   "from": 284,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:210",
+   "quote": "Let E/Q be an elliptic curve and let p be a prime not dividing ∆(E).",
+   "kind": "statement"
+  },
+  {
+   "from": 284,
+   "to": 282,
+   "evidence": "mit18_782f13_lec24.txt:230",
+   "quote": "Property (2) follows from the lemma above.",
+   "kind": "proof"
+  },
+  {
+   "from": 284,
+   "to": 283,
+   "evidence": "mit18_782f13_lec24.txt:211",
+   "quote": "The p-adic ﬁltration of E satisﬁes",
+   "kind": "statement"
+  },
+  {
+   "from": 285,
+   "to": 14,
+   "evidence": "mit18_782f13_lec24.txt:249",
+   "quote": "prime to p. Then x,y∈ Zp.",
+   "kind": "statement"
+  },
+  {
+   "from": 285,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:248",
+   "quote": "is an aﬃne point in E0(Qp) with ﬁnite order",
+   "kind": "statement"
+  },
+  {
+   "from": 285,
+   "to": 284,
+   "evidence": "mit18_782f13_lec24.txt:254",
+   "quote": "En(Qp)/En+1(Qp)≃ Z/p Z",
+   "kind": "proof"
+  },
+  {
+   "from": 286,
+   "to": 19,
+   "evidence": "mit18_782f13_lec24.txt:264",
+   "quote": "Then vp(x1 +x2 +x3)≥ 5n.",
+   "kind": "statement"
+  },
+  {
+   "from": 286,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:263",
+   "quote": "Suppose P1,P 2,P 3 are colinear points in En(Qp), for some n > 0, with",
+   "kind": "statement"
+  },
+  {
+   "from": 287,
+   "to": 28,
+   "evidence": "mit18_782f13_lec24.txt:297",
+   "quote": "The group E1(Qp) is torsion-free.",
+   "kind": "statement"
+  },
+  {
+   "from": 287,
+   "to": 285,
+   "evidence": "mit18_782f13_lec24.txt:298",
+   "quote": "By the previous corollary we only need to consider the case",
+   "kind": "proof"
+  },
+  {
+   "from": 287,
+   "to": 286,
+   "evidence": "mit18_782f13_lec24.txt:302",
+   "quote": "By the lemma above, this is",
+   "kind": "proof"
+  },
+  {
+   "from": 288,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:306",
+   "quote": "LetE/Q be an elliptic curve and let p be a prime of good reduction.",
+   "kind": "statement"
+  },
+  {
+   "from": 288,
+   "to": 284,
+   "evidence": "mit18_782f13_lec24.txt:308",
+   "quote": "E( Fp) =E0(Qp)/E1( Qp).",
+   "kind": "proof"
+  },
+  {
+   "from": 288,
+   "to": 287,
+   "evidence": "mit18_782f13_lec24.txt:309",
+   "quote": "But E1(Qp) is torison free",
+   "kind": "proof"
+  },
+  {
+   "from": 289,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:321",
+   "quote": "LetE/Q be an elliptic curve. The torsion subgroup of E(Q) is",
+   "kind": "statement"
+  },
+  {
+   "from": 290,
+   "to": 265,
+   "evidence": "mit18_782f13_lec24.txt:328",
+   "quote": "the elliptic curve y2 =x3 +a4x+a6 over Q",
+   "kind": "statement"
+  },
+  {
+   "from": 290,
+   "to": 270,
+   "evidence": "mit18_782f13_lec24.txt:338",
+   "quote": "is the slope of the tangent at P",
+   "kind": "proof"
+  },
+  {
+   "from": 290,
+   "to": 287,
+   "evidence": "mit18_782f13_lec24.txt:334",
+   "quote": "thatP∈E1(Q), but then P cannot be a torsion point.",
+   "kind": "proof"
+  },
+  {
+   "from": 292,
+   "to": 266,
+   "evidence": "mit18_782f13_lec25.txt:201",
+   "quote": "The map π : E′(Q)→ Q×/Q×2 is a group homomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 292,
+   "to": 269,
+   "evidence": "mit18_782f13_lec25.txt:211",
+   "quote": "TheX-coordinates X1,X 2,X 3 ofP,Q,R are all roots of the cubic on the RHS",
+   "kind": "proof"
+  },
+  {
+   "from": 294,
+   "to": 291,
+   "evidence": "mit18_782f13_lec25.txt:241",
+   "quote": "Lemma 25.3 implies that ker π = ϕ(E(Q))",
+   "kind": "proof"
+  },
+  {
+   "from": 294,
+   "to": 292,
+   "evidence": "mit18_782f13_lec25.txt:241",
+   "quote": "thus E′(Q)/ϕ(E(Q))≃ imπ is ﬁnite,",
+   "kind": "proof"
+  },
+  {
+   "from": 294,
+   "to": 293,
+   "evidence": "mit18_782f13_lec25.txt:241",
+   "quote": "thus E′(Q)/ϕ(E(Q))≃ imπ is ﬁnite,",
+   "kind": "proof"
+  },
+  {
+   "from": 295,
+   "to": 279,
+   "evidence": "mit18_782f13_lec25.txt:243",
+   "quote": "E(Q)/2E(Q) is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 295,
+   "to": 294,
+   "evidence": "mit18_782f13_lec25.txt:248",
+   "quote": "#E(Q)/2E(Q) = #E(Q)/ϕˆ(E′(Q)) #E′(Q)/ϕ(E(Q))",
+   "kind": "proof"
+  },
+  {
+   "from": 296,
+   "to": 29,
+   "evidence": "mit18_782f13_lec25.txt:280",
+   "quote": "max|xii |p,p∈Pk",
+   "kind": "statement"
+  },
+  {
+   "from": 296,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:277",
+   "quote": "The (absolute) height of a projective point",
+   "kind": "statement"
+  },
+  {
+   "from": 297,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:302",
+   "quote": "we have H(P )≥ 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 297,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:302",
+   "quote": "we have H(P )≥ 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 298,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:310",
+   "quote": "The logarithmic height of P∈ Pn(Q) is the nonnegative real number",
+   "kind": "statement"
+  },
+  {
+   "from": 298,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:311",
+   "quote": "h(P ) := logH(P ).",
+   "kind": "statement"
+  },
+  {
+   "from": 299,
+   "to": 29,
+   "evidence": "mit18_782f13_lec25.txt:339",
+   "quote": "by the multiplicativity of|| p and the triangle inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 299,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:320",
+   "quote": "let φ: Pn→ Pm be a morphism (φ0 : ··· : φn)",
+   "kind": "statement"
+  },
+  {
+   "from": 299,
+   "to": 110,
+   "evidence": "mit18_782f13_lec25.txt:321",
+   "quote": "deﬁned by homogeneous polynomials φi∈ k[x0,...,x n] of degree d.",
+   "kind": "statement"
+  },
+  {
+   "from": 299,
+   "to": 142,
+   "evidence": "mit18_782f13_lec25.txt:320",
+   "quote": "let φ: Pn→ Pm be a morphism (φ0 : ··· : φn)",
+   "kind": "statement"
+  },
+  {
+   "from": 299,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:334",
+   "quote": "H(φ(P )) =",
+   "kind": "proof"
+  },
+  {
+   "from": 299,
+   "to": 298,
+   "evidence": "mit18_782f13_lec25.txt:323",
+   "quote": "h(φ(P ))≤dh(P ) +c",
+   "kind": "statement"
+  },
+  {
+   "from": 300,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:355",
+   "quote": "is any automorphism of Pn, then",
+   "kind": "statement"
+  },
+  {
+   "from": 300,
+   "to": 298,
+   "evidence": "mit18_782f13_lec25.txt:356",
+   "quote": "h(φ(P )) =h(P ) +O(1). (1)",
+   "kind": "statement"
+  },
+  {
+   "from": 300,
+   "to": 299,
+   "evidence": "mit18_782f13_lec25.txt:357",
+   "quote": "we can apply Lemma 25.12 to φ−1 as well.",
+   "kind": "proof"
+  },
+  {
+   "from": 301,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:364",
+   "quote": "let φ: Pn→ Pm be a morphism (φ0 : ··· : φn)",
+   "kind": "statement"
+  },
+  {
+   "from": 301,
+   "to": 110,
+   "evidence": "mit18_782f13_lec25.txt:365",
+   "quote": "deﬁned by homogeneous polynomials φi∈k[x0,...,x n] of degreed.",
+   "kind": "statement"
+  },
+  {
+   "from": 301,
+   "to": 142,
+   "evidence": "mit18_782f13_lec25.txt:364",
+   "quote": "let φ: Pn→ Pm be a morphism (φ0 : ··· : φn)",
+   "kind": "statement"
+  },
+  {
+   "from": 301,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:385",
+   "quote": "H(ψ(P )) =",
+   "kind": "proof"
+  },
+  {
+   "from": 301,
+   "to": 298,
+   "evidence": "mit18_782f13_lec25.txt:366",
+   "quote": "h(φ(P )) =dh(P ) +O(1). (2)",
+   "kind": "statement"
+  },
+  {
+   "from": 301,
+   "to": 300,
+   "evidence": "mit18_782f13_lec25.txt:372",
+   "quote": "All but the morphism ψ change the logarithmic height of a point P",
+   "kind": "proof"
+  },
+  {
+   "from": 302,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:396",
+   "quote": "Then h(Pσ) =h(P ) for all P∈ Pn(k)",
+   "kind": "statement"
+  },
+  {
+   "from": 302,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:399",
+   "quote": "H(Pσ) = ∏ max|xσi|p",
+   "kind": "proof"
+  },
+  {
+   "from": 302,
+   "to": 298,
+   "evidence": "mit18_782f13_lec25.txt:396",
+   "quote": "Then h(Pσ) =h(P ) for all P∈ Pn(k)",
+   "kind": "statement"
+  },
+  {
+   "from": 303,
+   "to": 109,
+   "evidence": "mit18_782f13_lec25.txt:402",
+   "quote": "{P∈ Pn(k) :h(P )≤B and [k : Q]≤d}",
+   "kind": "statement"
+  },
+  {
+   "from": 303,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:408",
+   "quote": "max|xi|p≥ max",
+   "kind": "proof"
+  },
+  {
+   "from": 303,
+   "to": 298,
+   "evidence": "mit18_782f13_lec25.txt:402",
+   "quote": "{P∈ Pn(k) :h(P )≤B and [k : Q]≤d}",
+   "kind": "statement"
+  },
+  {
+   "from": 303,
+   "to": 302,
+   "evidence": "mit18_782f13_lec25.txt:414",
+   "quote": "By Lemma 25.16, h(Q ) = h(P )",
+   "kind": "proof"
+  },
+  {
+   "from": 305,
+   "to": 265,
+   "evidence": "mit18_782f13_lec25.txt:465",
+   "quote": "Let E be an elliptic curve over a number ﬁeld k. The canonical height",
+   "kind": "statement"
+  },
+  {
+   "from": 305,
+   "to": 296,
+   "evidence": "mit18_782f13_lec25.txt:469",
+   "quote": "h the absolute height on P1",
+   "kind": "statement"
+  },
+  {
+   "from": 305,
+   "to": 301,
+   "evidence": "mit18_782f13_lec25.txt:458",
+   "quote": "Theorem 25.14 implies that",
+   "kind": "proof"
+  },
+  {
+   "from": 305,
+   "to": 304,
+   "evidence": "mit18_782f13_lec25.txt:467",
+   "quote": "is the function given by Theorem25.19",
+   "kind": "statement"
+  },
+  {
+   "from": 306,
+   "to": 265,
+   "evidence": "mit18_782f13_lec25.txt:470",
+   "quote": "Let E be an elliptic curve over a number ﬁeld k. For any bound B the",
+   "kind": "statement"
+  },
+  {
+   "from": 306,
+   "to": 303,
+   "evidence": "mit18_782f13_lec25.txt:472",
+   "quote": "This follows immediately from Northcott’s theorem and Theorem 25.19 part (i).",
+   "kind": "proof"
+  },
+  {
+   "from": 306,
+   "to": 304,
+   "evidence": "mit18_782f13_lec25.txt:472",
+   "quote": "This follows immediately from Northcott’s theorem and Theorem 25.19 part (i).",
+   "kind": "proof"
+  },
+  {
+   "from": 306,
+   "to": 305,
+   "evidence": "mit18_782f13_lec25.txt:471",
+   "quote": "set P∈E(k) :h(P )≤B} is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 307,
+   "to": 265,
+   "evidence": "mit18_782f13_lec25.txt:473",
+   "quote": "Leth be the canonical height function of an elliptic",
+   "kind": "statement"
+  },
+  {
+   "from": 307,
+   "to": 305,
+   "evidence": "mit18_782f13_lec25.txt:473",
+   "quote": "Leth be the canonical height function of an elliptic",
+   "kind": "statement"
+  },
+  {
+   "from": 308,
+   "to": 265,
+   "evidence": "mit18_782f13_lec25.txt:481",
+   "quote": "LetE/Q be an elliptic curve with a rational point of order 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 308,
+   "to": 295,
+   "evidence": "mit18_782f13_lec25.txt:483",
+   "quote": "By the weak Mordell-Weil theorem that we proved in §25.4 for this case we know",
+   "kind": "proof"
+  },
+  {
+   "from": 308,
+   "to": 305,
+   "evidence": "mit18_782f13_lec25.txt:494",
+   "quote": "= 4h(R)−",
+   "kind": "proof"
+  },
+  {
+   "from": 308,
+   "to": 306,
+   "evidence": "mit18_782f13_lec25.txt:489",
+   "quote": "is ﬁnite implies that h takes on discrete values",
+   "kind": "proof"
+  },
+  {
+   "from": 308,
+   "to": 307,
+   "evidence": "mit18_782f13_lec25.txt:491",
+   "quote": "By the parallelogram law,",
+   "kind": "proof"
+  },
+  {
+   "from": 309,
+   "to": 124,
+   "evidence": "mit18_782f13_lec26.txt:71",
+   "quote": "Two varieties deﬁned over a ﬁeld k that are related by an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 309,
+   "to": 128,
+   "evidence": "mit18_782f13_lec26.txt:71",
+   "quote": "Two varieties deﬁned over a ﬁeld k that are related by an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 310,
+   "to": 261,
+   "evidence": "mit18_782f13_lec26.txt:84",
+   "quote": "LetE/k be an elliptic curve with Weierstrass equationy2 =x3+a4x+a6.",
+   "kind": "statement"
+  },
+  {
+   "from": 310,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:84",
+   "quote": "LetE/k be an elliptic curve with Weierstrass equationy2 =x3+a4x+a6.",
+   "kind": "statement"
+  },
+  {
+   "from": 311,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:89",
+   "quote": "For every j∈k there exists an elliptic curve E/k with j(E) =j.",
+   "kind": "statement"
+  },
+  {
+   "from": 311,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:89",
+   "quote": "For every j∈k there exists an elliptic curve E/k with j(E) =j.",
+   "kind": "statement"
+  },
+  {
+   "from": 312,
+   "to": 124,
+   "evidence": "mit18_782f13_lec26.txt:94",
+   "quote": "if they are isomorphic over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 312,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:93",
+   "quote": "Two elliptic curves deﬁned over k have the same j-invariant if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 312,
+   "to": 279,
+   "evidence": "mit18_782f13_lec26.txt:106",
+   "quote": "so that E[2] = E′[2]",
+   "kind": "proof"
+  },
+  {
+   "from": 312,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:93",
+   "quote": "Two elliptic curves deﬁned over k have the same j-invariant if and only",
+   "kind": "statement"
+  },
+  {
+   "from": 313,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:108",
+   "quote": "LetC/k be a genus one curve and let O andO′ be any two points in C(k).",
+   "kind": "statement"
+  },
+  {
+   "from": 313,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:109",
+   "quote": "Then the elliptic curves (C,O ) and (C,O′ ¯) over k have the same j-invariant.",
+   "kind": "statement"
+  },
+  {
+   "from": 313,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:109",
+   "quote": "Then the elliptic curves (C,O ) and (C,O′ ¯) over k have the same j-invariant.",
+   "kind": "statement"
+  },
+  {
+   "from": 313,
+   "to": 312,
+   "evidence": "mit18_782f13_lec26.txt:110",
+   "quote": "is an isomorphism from (C,O ) to (C,O′).",
+   "kind": "proof"
+  },
+  {
+   "from": 314,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:113",
+   "quote": "Let C/k be a curve of genus one. The j-invariant j(C) of C is the",
+   "kind": "statement"
+  },
+  {
+   "from": 314,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:114",
+   "quote": "j-invariant of the elliptic curve (C,O ) over k",
+   "kind": "statement"
+  },
+  {
+   "from": 314,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:114",
+   "quote": "j-invariant of the elliptic curve (C,O ) over k",
+   "kind": "statement"
+  },
+  {
+   "from": 314,
+   "to": 313,
+   "evidence": "mit18_782f13_lec26.txt:114",
+   "quote": "for any O∈C(k).",
+   "kind": "statement"
+  },
+  {
+   "from": 315,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:115",
+   "quote": "LetC/k be a curve of genus one. Then j(C)∈k.",
+   "kind": "statement"
+  },
+  {
+   "from": 315,
+   "to": 312,
+   "evidence": "mit18_782f13_lec26.txt:120",
+   "quote": "so j(Eσ) =j(E).",
+   "kind": "proof"
+  },
+  {
+   "from": 315,
+   "to": 314,
+   "evidence": "mit18_782f13_lec26.txt:115",
+   "quote": "LetC/k be a curve of genus one. Then j(C)∈k.",
+   "kind": "statement"
+  },
+  {
+   "from": 316,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:121",
+   "quote": "Every genus one curve C/k is a twist of an elliptic curve E/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 316,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:121",
+   "quote": "Every genus one curve C/k is a twist of an elliptic curve E/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 316,
+   "to": 309,
+   "evidence": "mit18_782f13_lec26.txt:121",
+   "quote": "Every genus one curve C/k is a twist of an elliptic curve E/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 317,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:136",
+   "quote": "be elliptic curves¯deﬁned overk, with j(E) =j(E′).",
+   "kind": "statement"
+  },
+  {
+   "from": 317,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:136",
+   "quote": "be elliptic curves¯deﬁned overk, with j(E) =j(E′).",
+   "kind": "statement"
+  },
+  {
+   "from": 318,
+   "to": 124,
+   "evidence": "mit18_782f13_lec26.txt:162",
+   "quote": "An automorphism of an elliptic curveE is an isomorphismE→E that",
+   "kind": "statement"
+  },
+  {
+   "from": 318,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:162",
+   "quote": "An automorphism of an elliptic curveE is an isomorphismE→E that",
+   "kind": "statement"
+  },
+  {
+   "from": 318,
+   "to": 274,
+   "evidence": "mit18_782f13_lec26.txt:163",
+   "quote": "is also an isogeny.",
+   "kind": "statement"
+  },
+  {
+   "from": 319,
+   "to": 224,
+   "evidence": "mit18_782f13_lec26.txt:168",
+   "quote": "must preserve the Riemann-Roch space L(O)",
+   "kind": "proof"
+  },
+  {
+   "from": 319,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:165",
+   "quote": "group of an elliptic curve E/k is a cyclic group of order 6, 4, or 2",
+   "kind": "statement"
+  },
+  {
+   "from": 319,
+   "to": 310,
+   "evidence": "mit18_782f13_lec26.txt:166",
+   "quote": "j(E) is equal to 0, 1728, or neither, respectively.",
+   "kind": "statement"
+  },
+  {
+   "from": 319,
+   "to": 317,
+   "evidence": "mit18_782f13_lec26.txt:169",
+   "quote": "It follows from Lemma 26.9 that",
+   "kind": "proof"
+  },
+  {
+   "from": 319,
+   "to": 318,
+   "evidence": "mit18_782f13_lec26.txt:165",
+   "quote": "group of an elliptic curve E/k is a cyclic group of order 6, 4, or 2",
+   "kind": "statement"
+  },
+  {
+   "from": 320,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:179",
+   "quote": "Let C/k be a genus one curve. There is an elliptic curve E/k related",
+   "kind": "statement"
+  },
+  {
+   "from": 320,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:179",
+   "quote": "Let C/k be a genus one curve. There is an elliptic curve E/k related",
+   "kind": "statement"
+  },
+  {
+   "from": 320,
+   "to": 275,
+   "evidence": "mit18_782f13_lec26.txt:213",
+   "quote": "utes group operations on E and Ed (since it is an",
+   "kind": "proof"
+  },
+  {
+   "from": 320,
+   "to": 315,
+   "evidence": "mit18_782f13_lec26.txt:184",
+   "quote": "We have j(E) = j(C)∈ k,",
+   "kind": "proof"
+  },
+  {
+   "from": 320,
+   "to": 319,
+   "evidence": "mit18_782f13_lec26.txt:191",
+   "quote": "Since j(E) = 0, 1728, we have #Aut(E ) = 2.",
+   "kind": "proof"
+  },
+  {
+   "from": 321,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:229",
+   "quote": "genus one curve C/k",
+   "kind": "statement"
+  },
+  {
+   "from": 321,
+   "to": 320,
+   "evidence": "mit18_782f13_lec26.txt:228",
+   "quote": "The elliptic curve E/k given by Theorem 26.12 is the Jacobian of the",
+   "kind": "statement"
+  },
+  {
+   "from": 323,
+   "to": 128,
+   "evidence": "mit18_782f13_lec26.txt:276",
+   "quote": "C×E→C deﬁned by (Q,P )↦→Q +P is a morphism of varieties that is deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 323,
+   "to": 149,
+   "evidence": "mit18_782f13_lec26.txt:276",
+   "quote": "C×E→C deﬁned by (Q,P )↦→Q +P is a morphism of varieties that is deﬁned over k.",
+   "kind": "statement"
+  },
+  {
+   "from": 323,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:275",
+   "quote": "is a genus one curve C/k such that the set C(k) is an E(k)-torsor",
+   "kind": "statement"
+  },
+  {
+   "from": 323,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:274",
+   "quote": "Let E/k be an elliptic curve. A principal homogeneous space for E (or",
+   "kind": "statement"
+  },
+  {
+   "from": 323,
+   "to": 322,
+   "evidence": "mit18_782f13_lec26.txt:275",
+   "quote": "is a genus one curve C/k such that the set C(k) is an E(k)-torsor",
+   "kind": "statement"
+  },
+  {
+   "from": 324,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:282",
+   "quote": "LetC/k be a curve of genus one and let E/k be an elliptic curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 324,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:282",
+   "quote": "LetC/k be a curve of genus one and let E/k be an elliptic curve.",
+   "kind": "statement"
+  },
+  {
+   "from": 324,
+   "to": 320,
+   "evidence": "mit18_782f13_lec26.txt:292",
+   "quote": "given by Theorem 26.12.",
+   "kind": "proof"
+  },
+  {
+   "from": 324,
+   "to": 321,
+   "evidence": "mit18_782f13_lec26.txt:283",
+   "quote": "is an E-torsor if and only if E is the Jacobian of C.",
+   "kind": "statement"
+  },
+  {
+   "from": 324,
+   "to": 323,
+   "evidence": "mit18_782f13_lec26.txt:283",
+   "quote": "is an E-torsor if and only if E is the Jacobian of C.",
+   "kind": "statement"
+  },
+  {
+   "from": 325,
+   "to": 206,
+   "evidence": "mit18_782f13_lec26.txt:316",
+   "quote": "of the principal divisors",
+   "kind": "statement"
+  },
+  {
+   "from": 325,
+   "to": 208,
+   "evidence": "mit18_782f13_lec26.txt:318",
+   "quote": "induces a canonical isomorphism Pic0LC≃E(L).",
+   "kind": "statement"
+  },
+  {
+   "from": 325,
+   "to": 214,
+   "evidence": "mit18_782f13_lec26.txt:344",
+   "quote": "since ∑ni = deg(D) = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 325,
+   "to": 266,
+   "evidence": "mit18_782f13_lec26.txt:333",
+   "quote": "hence is linearly equivalent to 0 and therefore a principal divisor.",
+   "kind": "proof"
+  },
+  {
+   "from": 325,
+   "to": 323,
+   "evidence": "mit18_782f13_lec26.txt:307",
+   "quote": "LetC/k be an E-torsor",
+   "kind": "statement"
+  },
+  {
+   "from": 326,
+   "to": 128,
+   "evidence": "mit18_782f13_lec26.txt:351",
+   "quote": "if there is an isomorphismθ : C→C′ deﬁned overk that is compatible with the action ofE.",
+   "kind": "statement"
+  },
+  {
+   "from": 326,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:350",
+   "quote": "LetE/k be an elliptic curve. TwoE-torsorsC/k andC′/k are equivalent",
+   "kind": "statement"
+  },
+  {
+   "from": 326,
+   "to": 323,
+   "evidence": "mit18_782f13_lec26.txt:350",
+   "quote": "LetE/k be an elliptic curve. TwoE-torsorsC/k andC′/k are equivalent",
+   "kind": "statement"
+  },
+  {
+   "from": 327,
+   "to": 326,
+   "evidence": "mit18_782f13_lec26.txt:359",
+   "quote": "If θ : C→C′ is an equivalence of E-torsors then",
+   "kind": "statement"
+  },
+  {
+   "from": 328,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:383",
+   "quote": "E(k) that satisﬁes",
+   "kind": "statement"
+  },
+  {
+   "from": 329,
+   "to": 328,
+   "evidence": "mit18_782f13_lec26.txt:411",
+   "quote": "Crossed homomorphisms of the form σ↦→ Pσ−P with P∈ ¯E(k) are",
+   "kind": "statement"
+  },
+  {
+   "from": 330,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:416",
+   "quote": "Let E/k be an elliptic curve. The group of continuous crossed homo-",
+   "kind": "statement"
+  },
+  {
+   "from": 330,
+   "to": 328,
+   "evidence": "mit18_782f13_lec26.txt:416",
+   "quote": "Let E/k be an elliptic curve. The group of continuous crossed homo-",
+   "kind": "statement"
+  },
+  {
+   "from": 330,
+   "to": 329,
+   "evidence": "mit18_782f13_lec26.txt:417",
+   "quote": "modulo its subgroup of principal crossed homomorphisms is the ﬁrst",
+   "kind": "statement"
+  },
+  {
+   "from": 331,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:425",
+   "quote": "Let E/k be an elliptic curve. There is a bijection between the Weil-",
+   "kind": "statement"
+  },
+  {
+   "from": 331,
+   "to": 270,
+   "evidence": "mit18_782f13_lec26.txt:457",
+   "quote": "we apply the algebraic formulas deﬁning the group operation on",
+   "kind": "proof"
+  },
+  {
+   "from": 331,
+   "to": 320,
+   "evidence": "mit18_782f13_lec26.txt:464",
+   "quote": "E is the Jacobian of C, by Theorem 26.12, and therefore an E-torsor, by Theorem 26.16.",
+   "kind": "proof"
+  },
+  {
+   "from": 331,
+   "to": 324,
+   "evidence": "mit18_782f13_lec26.txt:464",
+   "quote": "E is the Jacobian of C, by Theorem 26.12, and therefore an E-torsor, by Theorem 26.16.",
+   "kind": "proof"
+  },
+  {
+   "from": 331,
+   "to": 326,
+   "evidence": "mit18_782f13_lec26.txt:426",
+   "quote": "atelet groupWC(E/k) of E and its ﬁrst cohomology group H1(k,E ).",
+   "kind": "statement"
+  },
+  {
+   "from": 331,
+   "to": 329,
+   "evidence": "mit18_782f13_lec26.txt:436",
+   "quote": "Then their diﬀerence is a principal crossed homomorphism",
+   "kind": "proof"
+  },
+  {
+   "from": 331,
+   "to": 330,
+   "evidence": "mit18_782f13_lec26.txt:426",
+   "quote": "atelet groupWC(E/k) of E and its ﬁrst cohomology group H1(k,E ).",
+   "kind": "statement"
+  },
+  {
+   "from": 332,
+   "to": 45,
+   "evidence": "mit18_782f13_lec26.txt:480",
+   "quote": "where kp ranges over the completions of k",
+   "kind": "statement"
+  },
+  {
+   "from": 332,
+   "to": 265,
+   "evidence": "mit18_782f13_lec26.txt:474",
+   "quote": "LetE/k be an elliptic curve. The Tate-Shafarevich group X(E) is the",
+   "kind": "statement"
+  },
+  {
+   "from": 332,
+   "to": 326,
+   "evidence": "mit18_782f13_lec26.txt:476",
+   "quote": "WC(E/k)→",
+   "kind": "statement"
+  },
+  {
+   "from": 333,
+   "to": 45,
+   "evidence": "mit18_782f13_lec26.txt:485",
+   "quote": "for some completion kp.",
+   "kind": "statement"
+  },
+  {
+   "from": 333,
+   "to": 198,
+   "evidence": "mit18_782f13_lec26.txt:484",
+   "quote": "A curve C/k satisﬁes the local-global principle (or Hasse principle ) if",
+   "kind": "statement"
+  },
+  {
+   "from": 334,
+   "to": 234,
+   "evidence": "mit18_782f13_lec26.txt:486",
+   "quote": "Let C/k be a genus one curve with Jacobian E/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 334,
+   "to": 321,
+   "evidence": "mit18_782f13_lec26.txt:486",
+   "quote": "Let C/k be a genus one curve with Jacobian E/k.",
+   "kind": "statement"
+  },
+  {
+   "from": 334,
+   "to": 332,
+   "evidence": "mit18_782f13_lec26.txt:487",
+   "quote": "fails the local-global principle if and only if it represents a non-trivial element of X(E).",
+   "kind": "statement"
+  },
+  {
+   "from": 334,
+   "to": 333,
+   "evidence": "mit18_782f13_lec26.txt:487",
+   "quote": "fails the local-global principle if and only if it represents a non-trivial element of X(E).",
+   "kind": "statement"
+  }
+ ]
+}

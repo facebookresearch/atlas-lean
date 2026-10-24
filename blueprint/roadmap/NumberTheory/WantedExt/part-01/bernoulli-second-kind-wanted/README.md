@@ -1,0 +1,15 @@
+# Bernoulli Second Kind Wanted
+
+- [Theorem 1](bernoulli-poly-eq.md)
+- [Corollary 2](bernoulli-eq-neg-sum.md)
+- [Lemma 3](stirling-inversion-iff.md)
+- [Theorem 4](bernoulli-second-eq-neg-sum.md)
+- [Theorem 5](desc-pochhammer-eq.md)
+- [Corollary 7](sum-stirling-second-signed-div.md)
+- [Corollary 9](bernoulli-eq-sum-stirling-second.md)
+- [Corollary 10](sum-stirling-second-signed-div-delta.md)
+- [Proposition 11](bernoulli-second-eq-sum.md)
+- [Theorem 13](sum-signed-stirling-second-div.md)
+- [Corollary 15](sum-signed-stirling-second-div-eq.md)
+- [Theorem 17](sum-stirling-second-div-add.md)
+- [Theorem 19](sum-signed-div-add.md)

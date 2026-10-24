@@ -1,0 +1,15 @@
+# Part 2 of 2
+
+- [Card eq Vars elim lt](card-eq-vars-elim-lt.md)
+- [Unify](unify.md)
+- [Unify Spec](unify-spec.md)
+- [Congr](congr.md)
+- [None of head](none-of-head.md)
+- [Elim](elim.md)
+- [Soundness](unifies-unify.md)
+- [Most generality](unify-eq-some-comp.md)
+- [Is MGU unify](is-mgu-unify.md)
+- [Unify comp self](unify-comp-self.md)
+- [Completeness](unify-eq-none-iff.md)
+- [Vars single comp subset](vars-single-comp-subset.md)
+- [Vars unify subset](vars-unify-subset.md)

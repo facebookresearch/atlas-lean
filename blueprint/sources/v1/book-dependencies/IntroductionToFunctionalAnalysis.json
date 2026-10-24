@@ -1,0 +1,700 @@
+{
+ "book": "IntroductionToFunctionalAnalysis",
+ "source": "MIT 18.102 Introduction to Functional Analysis, Spring 2021, full lecture notes (Casey Rodriguez, notes by Andrew Lin), text/MIT18_102s21_full_lec.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 2,
+   "evidence": "MIT18_102s21_full_lec.txt:520",
+   "quote": "is then a Banach space by Theorem 27",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 0,
+   "evidence": "MIT18_102s21_full_lec.txt:1040",
+   "quote": "there exists anf ∈ V′ (a bounded linear functional)",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 12,
+   "evidence": "MIT18_102s21_full_lec.txt:1045",
+   "quote": "by Hahn-Banach, there exists an element of the dual spacef extendingu",
+   "kind": "proof"
+  },
+  {
+   "from": 7,
+   "to": 6,
+   "evidence": "MIT18_102s21_full_lec.txt:690",
+   "quote": "and thus by Baire’s theorem, one of theCks contains an",
+   "kind": "proof"
+  },
+  {
+   "from": 8,
+   "to": 6,
+   "evidence": "MIT18_102s21_full_lec.txt:727",
+   "quote": "so by Baire, there exists somen0∈ N",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 8,
+   "evidence": "MIT18_102s21_full_lec.txt:798",
+   "quote": "And this is true by the Open Mapping Theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 4,
+   "evidence": "MIT18_102s21_full_lec.txt:816",
+   "quote": "is closed inB1×B2.",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "MIT18_102s21_full_lec.txt:846",
+   "quote": "so by Corollary 38, it has an inverseS",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 0,
+   "evidence": "MIT18_102s21_full_lec.txt:934",
+   "quote": "(which is an element ofB(V, C) =V′)",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 11,
+   "evidence": "MIT18_102s21_full_lec.txt:973",
+   "quote": "we’ve veriﬁed the Zorn’s lemma condition",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 13,
+   "evidence": "MIT18_102s21_full_lec.txt:975",
+   "quote": "and then Lemma 49 tells us that there is a continuous extensionv",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 15,
+   "evidence": "MIT18_102s21_full_lec.txt:1546",
+   "quote": "is aσ-algebra.",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 16,
+   "evidence": "MIT18_102s21_full_lec.txt:1547",
+   "quote": "Lemma 73 tells us that it remains to show closure under countable",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 18,
+   "evidence": "MIT18_102s21_full_lec.txt:1551",
+   "quote": "the ﬁnite union⋃Nn=1En⊂M is measurable",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "MIT18_102s21_full_lec.txt:1456",
+   "quote": "LetA be an algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "MIT18_102s21_full_lec.txt:2881",
+   "quote": "f +−",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "MIT18_102s21_full_lec.txt:2994",
+   "quote": "1. Iff is integrable, then",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 28,
+   "evidence": "MIT18_102s21_full_lec.txt:3012",
+   "quote": "and then we can simplify this further by",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 22,
+   "evidence": "MIT18_102s21_full_lec.txt:2535",
+   "quote": "continuity of Lebesgue measuretells us that asn→∞",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 23,
+   "evidence": "MIT18_102s21_full_lec.txt:2459",
+   "quote": "because the pointwise limit of measurable functions is",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 19,
+   "evidence": "MIT18_102s21_full_lec.txt:2579",
+   "quote": "is a simple function (because it’s the sum of two simple functions)",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 20,
+   "evidence": "MIT18_102s21_full_lec.txt:2576",
+   "quote": "two sequences of simple functions, such that0≤ φ1≤ φ2≤···≤ f",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "MIT18_102s21_full_lec.txt:2580",
+   "quote": "Then the Monotone Convergence Theorem tells us that",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 27,
+   "evidence": "MIT18_102s21_full_lec.txt:2773",
+   "quote": "So now by the Monotone Convergence Theorem, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 23,
+   "evidence": "MIT18_102s21_full_lec.txt:3082",
+   "quote": "f is measurable (because pointwise convergence of measurable functions is",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 24,
+   "evidence": "MIT18_102s21_full_lec.txt:3068",
+   "quote": "let{fn}n be a sequence of real-valued measurable",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 26,
+   "evidence": "MIT18_102s21_full_lec.txt:3087",
+   "quote": "notice that ⏐⏐⏐⏐∫Efn⏐⏐⏐⏐≤∫E|fn|≤ ∫Eg",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "MIT18_102s21_full_lec.txt:3105",
+   "quote": "second step is by Fatou’s lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3349",
+   "quote": "|fg|≤||f ||Lp(E)||g||Lq(E).",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "MIT18_102s21_full_lec.txt:3350",
+   "quote": "and then again from Holder’s inequality we obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3353",
+   "quote": "then||f +g||Lp(E)≤||f||Lp(E) +||g||Lp(E)",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 25,
+   "evidence": "MIT18_102s21_full_lec.txt:3497",
+   "quote": "(because its integral is ﬁnite), and thus∑k|fk(x)| is ﬁnite almost everywhere",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 29,
+   "evidence": "MIT18_102s21_full_lec.txt:3480",
+   "quote": "So if we now use Fatou’s lemma, we ﬁnd that",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 30,
+   "evidence": "MIT18_102s21_full_lec.txt:3535",
+   "quote": "DominatedConvergenceTheorem: sincewehaveconvergence",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "MIT18_102s21_full_lec.txt:3477",
+   "quote": "By the triangle inequality, we know that if we take norms on both sides",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:3457",
+   "quote": "For all1≤p≤∞, Lp(E) is a Banach space.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3628",
+   "quote": "in a pre-Hilbert space equipped with the norm||·||",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3628",
+   "quote": "in a pre-Hilbert space equipped with the norm||·||",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 49,
+   "evidence": "MIT18_102s21_full_lec.txt:3637",
+   "quote": "The Cauchy-Schwarz inequality then allows us to bound this by",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3675",
+   "quote": "LetH be a pre-Hilbert space.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3676",
+   "quote": "||u +v||2 +||u−v||2 = 2(||u||2 +||v||2).",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3614",
+   "quote": "IfH is a pre-Hilbert space, then||·|| is a norm onH.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3614",
+   "quote": "IfH is a pre-Hilbert space, then||·|| is a norm onH.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 49,
+   "evidence": "MIT18_102s21_full_lec.txt:3623",
+   "quote": "using the Cauchy-Schwarz inequality, this can be bounded by",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3452",
+   "quote": "so that||f−g||p <ε.",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:3451",
+   "quote": "so thatf ∈Lp([a,b ])",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3648",
+   "quote": "A Hilbert spaceis a pre-Hilbert space that is complete",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3648",
+   "quote": "with respect to the norm||·|| =⟨·,·⟩1/2.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 40,
+   "evidence": "MIT18_102s21_full_lec.txt:3447",
+   "quote": "is continuous and thus the Riemann and Lebesgue integrals agree",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:3437",
+   "quote": "thenf∈Lp(R) for allp≥ 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 46,
+   "evidence": "MIT18_102s21_full_lec.txt:3448",
+   "quote": "at most some ﬁnite numberCpB(p) for some constant depending onp, independent of",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 21,
+   "evidence": "MIT18_102s21_full_lec.txt:3169",
+   "quote": "Now the positive part and negative part off are continuous",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 24,
+   "evidence": "MIT18_102s21_full_lec.txt:3160",
+   "quote": "f is integrable and the Riemann and Lebesgue integrals agree",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 30,
+   "evidence": "MIT18_102s21_full_lec.txt:3241",
+   "quote": "Dominated Convergence Theorem then gives us the desired result",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 26,
+   "evidence": "MIT18_102s21_full_lec.txt:3304",
+   "quote": "by the triangle inequality for real-valued functions",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3341",
+   "quote": "then|f (x)|≤|| f||L∞(E) almost everywhere onE",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3363",
+   "quote": "Lp(E) ={f :E→ C :f measurable and||f||p <∞},",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 32,
+   "evidence": "MIT18_102s21_full_lec.txt:3391",
+   "quote": "follow from the deﬁnition and Minkowski’s inequality, respectively",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 42,
+   "evidence": "MIT18_102s21_full_lec.txt:3379",
+   "quote": "a normed vector space under||·|| p.",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:3378",
+   "quote": "The spaceLp(E) with pointwise addition and natural scalar multiplication",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 27,
+   "evidence": "MIT18_102s21_full_lec.txt:3421",
+   "quote": "Thus, by the Monotone Convergence Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:3398",
+   "quote": "Thenf∈Lp(E) if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3567",
+   "quote": "LetH be a pre-Hilbert space.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3571",
+   "quote": "LetH be a pre-Hilbert space.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3572",
+   "quote": "|⟨u,v⟩|≤|| u||||v||.",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:4155",
+   "quote": "Letf∈L2([−π,π ]).",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:3719",
+   "quote": "orthonormal subset of a pre-Hilbert spaceH",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3722",
+   "quote": "|⟨u,en⟩|2≤||u||2.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:3999",
+   "quote": "If H is an inﬁnite-dimensional separable Hilbert space",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 54,
+   "evidence": "MIT18_102s21_full_lec.txt:4010",
+   "quote": "for allu∈H, which implies that",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:3935",
+   "quote": "If a Hilbert spaceH has an orthonormal basis, thenH is separable.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 34,
+   "evidence": "MIT18_102s21_full_lec.txt:3966",
+   "quote": "Otherwise, by continuity of the inner product, we can write",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:3954",
+   "quote": "LetH be a Hilbert space, and let{en} be a countable orthonormal basis ofH.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 48,
+   "evidence": "MIT18_102s21_full_lec.txt:3957",
+   "quote": "|⟨u,en⟩|2 =||u||2.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:4205",
+   "quote": "For allf∈L2([−π,π ]), we have",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 50,
+   "evidence": "MIT18_102s21_full_lec.txt:4206",
+   "quote": "σNf (x) =",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 50,
+   "evidence": "MIT18_102s21_full_lec.txt:4330",
+   "quote": "ThenσNf→f uniformly on [−π,π ].",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 55,
+   "evidence": "MIT18_102s21_full_lec.txt:4386",
+   "quote": "we can use condition(4) of the Fejér kernel",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:4617",
+   "quote": "LetH be a Hilbert space, and letW⊂H be a closed subspace.",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:4813",
+   "quote": "LetH be a Hilbert space, and letA :H→H be a bounded linear operator.",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 0,
+   "evidence": "MIT18_102s21_full_lec.txt:4635",
+   "quote": "Then for allf∈H′, there exists a uniquev∈H",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:4635",
+   "quote": "LetH be a Hilbert space.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 59,
+   "evidence": "MIT18_102s21_full_lec.txt:4842",
+   "quote": "is compact if and only ifK is closed and bounded.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 35,
+   "evidence": "MIT18_102s21_full_lec.txt:5402",
+   "quote": "and by the parallelogram law this simpliﬁes to",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 47,
+   "evidence": "MIT18_102s21_full_lec.txt:5387",
+   "quote": "using the deﬁnition of the inner product and the adjoint",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 49,
+   "evidence": "MIT18_102s21_full_lec.txt:5388",
+   "quote": "we have (by Cauchy-Schwarz)",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 37,
+   "evidence": "MIT18_102s21_full_lec.txt:5954",
+   "quote": "and that set is dense inL2",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 58,
+   "evidence": "MIT18_102s21_full_lec.txt:5955",
+   "quote": "From here, notice thatRange(A) = Null(A)⊥, so",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 63,
+   "evidence": "MIT18_102s21_full_lec.txt:5940",
+   "quote": "the orthonormal eigenvectors forA are given by",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 44,
+   "evidence": "MIT18_102s21_full_lec.txt:5987",
+   "quote": "Letf ∈L2([0, 1])",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 65,
+   "evidence": "MIT18_102s21_full_lec.txt:5987",
+   "quote": "suppose thatf (x) =∑∞k=1ck√2 sin(kπx )",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 57,
+   "evidence": "MIT18_102s21_full_lec.txt:5589",
+   "quote": "the projection onto the orthogonal complement of Null(A−λ)",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 63,
+   "evidence": "MIT18_102s21_full_lec.txt:5663",
+   "quote": "Then the nonzero eigenvalues ofA can be ordered as",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 38,
+   "evidence": "MIT18_102s21_full_lec.txt:5735",
+   "quote": "a self-adjoint compact operator on a separable Hilbert spaceH",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 58,
+   "evidence": "MIT18_102s21_full_lec.txt:5775",
+   "quote": "Range(A) = (Range(A)⊥)⊥ = (Null(A))⊥,",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 63,
+   "evidence": "MIT18_102s21_full_lec.txt:5736",
+   "quote": "nonzero eigenvalues ofA, counted with multiplicity",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "MIT18_102s21_full_lec.txt:5750",
+   "quote": "so by the maximum principle,",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 67,
+   "evidence": "MIT18_102s21_full_lec.txt:6138",
+   "quote": "v = (I +A1/2mVA1/2)−1A1/2f, u =A1/2v.",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 68,
+   "evidence": "MIT18_102s21_full_lec.txt:6124",
+   "quote": "so by the Fredholm alternative",
+   "kind": "proof"
+  }
+ ]
+}

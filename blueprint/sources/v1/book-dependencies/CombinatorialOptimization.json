@@ -1,0 +1,147 @@
+{
+ "book": "CombinatorialOptimization",
+ "source": "MIT 18.433 Combinatorial Optimization lecture notes, Fall 2003 (text/l*.txt, PDF-to-text; most files are OT1 glyph-coded, quotes copied in that raw form)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "l5.txt:41",
+   "quote": "/BU/D9/D8 /D8/CW/CT/D2 /D8/CW/CT/DD /D1 /D9/D7/D8 /CQ /CT /CP /D1/CP/D8/CR /CW/CX/D2/CV/BA",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 3,
+   "evidence": "l5.txt:138",
+   "quote": "/CW/D3/D0/CS/D7 /D7/CX/D2/CR/CT /BT /CX/D7 /CP/D2 /CX/D2 /D8/CT/CV/D6/CP/D0 /D1/CP/D8/D6/CX/DC /CP/D2/CS /CQ /CX/D7 /CX/D2 /D8/CT/CV/D6/CP/D0/BA",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 4,
+   "evidence": "l5.txt:146",
+   "quote": "/D8/D3/D8/CP/D0/D0/DD /D9/D2/CX/D1/D3 /CS/D9/D0/CP/D6/B8 /DB/CW/CX/CR /CW/DB /CX /D0 /D0 /CV /CX /DA /CT /D9/D7 /D3/D9/D6 /CS/CT/D7/CX/D6/CT/CS",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 5,
+   "evidence": "l5.txt:195",
+   "quote": "/BT /CX/D7 /D8/D3/D8/CP/D0/D0/DD /D9/D2/CX/D1/D3 /CS/D9/D0/CP/D6/B8 /DB/CW/CX/CR /CW/D4 /D6 /D3 /DA /CT/D7 /D3/D9/D6 /D0/CT/D1/D1/CP/B8",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 4,
+   "evidence": "l5.txt:173",
+   "quote": "/D8/CW/CT/D2 /D8/CW/CT /CR /D3/D2/D7/D8/D6 /CP/CX/D2/D8 /D1/CP/D8/D6/CX/DC /CX/D7 /D8/D3/D8/CP/D0 /D0/DD /D9/D2/CX/D1/D3 /CS/D9/D0/CP/D6/BA",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 7,
+   "evidence": "l6.txt:459",
+   "quote": "/D7/CW/D3 /DB/D2 /DC /CX/D7 /CP /CR/D3/D2 /DA /CT/DC /CR/D3/D1 /CQ/CX/D2/CP/D8/CX/D3/D2 /D3/CU /D4 /CT/D6/CU/CT/CR/D8 /D1/CP/D8/CR /CW/CX/D2/CV/D7",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 34,
+   "evidence": "l15.txt:37",
+   "quote": "By adding 1 and 2 and using the strong duality theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "l78.txt:183",
+   "quote": "/CP/D2 /DD/D1/D3/D6/CT /D8/CW/CP/D2 /D8/CW/CT /CR/CP/D4/CP/CR/CX/D8 /DD /D3/CU /D8/CW/CT /CR/D9/D8",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 12,
+   "evidence": "l78.txt:192",
+   "quote": "/CB/CX/D2/CR/CT /D2/D3 /CR/D9/D8 /CR/CP/D2 /CW/CP /DA /CT /CP /CR/CP/D4/CP/CR/CX/D8 /DD /D0/CT/D7/D7 /D8/CW/CP/D2 /CU",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "l78.txt:188",
+   "quote": "/CC/CW/CT/D6/CT/CU/D3/D6/CT /D8/CW/CT /AD/D3 /DB /CU /CW/CP/D7 /D2/D3 /CP/D9/CV/D1/CT/D2 /D8/CX/D2/CV",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "l78.txt:320",
+   "quote": "/CC/CW/CT/D6/CT/CU/D3/D6/CT /D8/CW/CT/D6/CT /CT/DC/CX/D7/D8/D7 /CP /D4/CP/D8/CW /C8 /CX/D2",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "l123.txt:286",
+   "quote": "/CP/D9/CV/D1/CT/D2 /D8/CX/D2/CV /D4/CP/D8/CW/BA /C0/CT/D2/CR/CT /C5 /CX/D7 /D2/D3/D8 /D1/CP/DC/CX/D1 /D9/D1/BA",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "l123.txt:322",
+   "quote": "/C0/CP/D0/D0 /D8/CW/CT/D2 /CU/D3/D0/D0/D3 /DB/D7 /CU/D6/D3/D1 /C3/DJ /D3/D2/CX/CV/B3/D7 /D8/CW/CT/D3/D6/CT/D1",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 26,
+   "evidence": "l123.txt:351",
+   "quote": "/BZ/CX/DA /CT/D2 /D8/CW/CX/D7 /D3/CQ/D7/CT/D6/DA /CP/D8/CX/D3/D2/B8 /D8/CW/CT/D2 /CP/CU/D8/CT/D6",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 21,
+   "evidence": "l123.txt:403",
+   "quote": "/BY /D6/D3/D1 /C4/CT/D1/D1/CP /BE /CX/D8 /CU/D3/D0/D0/D3 /DB/D7 /D8/CW/CP/D8 /BZ",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "l123.txt:483",
+   "quote": "/CR/DD/CR/D0/CT /D7/CW/D6/CX/D2/CZ/CX/D2/CV /D0/CT/D1/D1/CP/BA /CB/D3 /DB /CT /D7/CW/D6/CX/D2/CZ /BV /D8/D3 /CP /D7/CX/D2/CV/D0/CT /DA /CT/D6/D8/CT/DC",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "l1314.txt:36",
+   "quote": "/CC/CW/CT /CU/D3/D0/D0/D3 /DB/CX/D2/CV /CR/D3/D6/D3/D0/D0/CP/D6/DD /CX/D7 /CP/D2 /CX/D1/D1/CT/CS/CX/CP/D8/CT /CR/D3/D2/D7/CT/D5/D9/CT/D2/CR/CT/BM",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 9,
+   "evidence": "l1314.txt:1013",
+   "quote": "/CF /CT/CP/CZ /CS/D9/CP/D0/CX/D8 /DD /D4/D6/D3 /DA /CT/CS",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 31,
+   "evidence": "l1314.txt:61",
+   "quote": "/BT/D4/D4/D0/DD /BY /CP/D6/CZ /CP/D7/B3 /D0/CT/D1/D1/CP /D8/D3 /BT",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 32,
+   "evidence": "l1314.txt:55",
+   "quote": "/CF /CT/CP/CZ /CS/D9/CP/D0/CX/D8 /DD /CP/D0/D6/CT/CP/CS/DD /D6/D9/D0/CT/CS /D3/D9/D8",
+   "kind": "proof"
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+site_name: "ATLAS"
+repo_url: "https://github.com/facebookresearch/atlas-lean"
+
+# `autoform render` writes this directory from blueprint/. The vault stays the
+# source of truth; everything here is regenerated.
+docs_dir: site-src
+site_dir: site
+use_directory_urls: false
+
+hooks:
+  # Material eagerly builds its search index in every browser tab. Keep one
+  # title-only record per page so the ~5,000-page wiki stays bounded.
+  - hooks/title_only_search.py
+
+# The nav is not listed here. `autoform render` writes it to SUMMARY.md from
+# the vault's own page order, which mkdocs-literate-nav reads, so a project's
+# chapters cannot drift out of step with a second list kept in this file.
+theme:
+  name: material
+  custom_dir: theme
+  # `autoform render` writes this mark into the site source on every build, so
+  # it is always present and never has to be committed to the project.
+  logo: assets/autoform.svg
+  favicon: assets/autoform.svg
+  font:
+    # Meta's own Optimistic is not publicly licensed; Plus Jakarta Sans is the
+    # nearest geometric humanist, and carries display and body on weight alone.
+    text: Plus Jakarta Sans
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    # Book and Graph sit across the top; the sidebar shows the open tab.
+    - navigation.tabs
+    - navigation.tabs.sticky
+    # The chapter tree stays visible, which is what makes a blueprint readable
+    # as a book rather than as a pile of pages.
+    - navigation.sections
+    - navigation.prune
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+  palette:
+    scheme: slate
+
+plugins:
+  - search
+  # The nav is generated from the vault into SUMMARY.md; mkdocs.yml cannot
+  # know a project's chapters and a hand-written list would drift.
+  - literate-nav:
+      nav_file: SUMMARY.md
+
+markdown_extensions:
+  - attr_list
+  # Statement boxes carry h6 note headings; keep them out of the TOC.
+  - toc:
+      toc_depth: 2-3
+  - md_in_html          # lets the generated statement boxes contain Markdown
+  - tables
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+extra_css:
+  - stylesheets/blueprint.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js
+  - javascripts/blueprint-mermaid.js
+  - javascripts/blueprint-live.js

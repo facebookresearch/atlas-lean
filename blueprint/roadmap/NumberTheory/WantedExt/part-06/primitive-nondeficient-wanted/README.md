@@ -1,0 +1,15 @@
+# Primitive Nondeficient Wanted
+
+- [Is Nondeficient](is-nondeficient.md)
+- [Is Primitive Nondeficient](is-primitive-nondeficient.md)
+- [Abundancy Index](abundancy-index.md)
+- [Abundancy Sup](abundancy-sup.md)
+- [Lemma](is-primitive-nondeficient-two-pow-mul-pr.md)
+- [Lemma](deficient-of-odd-card-prime-factors-eq-t.md)
+- [Lemma](exists-pow-factorization-add-one-lt-two.md)
+- [Lemma](grun-bounds-of-is-nondeficient.md)
+- [Proposition](two-pow-factorization-add-one-lt-radical.md)
+- [Lemma](one-div-one-sub-mul-lt-add.md)
+- [Lemma](abundancy-index-div-le.md)
+- [Lemma](exists-pow-factorization-add-one-lt-max.md)
+- [Proposition](max-prime-factor-lt-sqrt-radical-or-exis.md)

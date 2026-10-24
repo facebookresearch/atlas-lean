@@ -1,0 +1,2576 @@
+{
+ "book": "RealAnalysis",
+ "source": "MIT 18.100A Real Analysis (Fall 2020) lecture notes, LaTeX source from MIT OCW (mit18_100af20_notes_tex2.zip)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 1,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec1.tex:87",
+   "quote": "$(B\\cup C)^c = B^c \\cap C^c$",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec1.tex:108",
+   "quote": "if $S\\subset \\NN$ then there exists an $x\\in S$",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 2,
+   "evidence": "MIT18_100af20_lec1.tex:125",
+   "quote": "by the well-ordering property of $\\NN$, $S$ has a least element",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec4.tex:93",
+   "quote": "such that $\\QQ\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 12,
+   "evidence": "MIT18_100af20_lec4.tex:93",
+   "quote": "$\\RR$ has the least upper bound property",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 14,
+   "evidence": "MIT18_100af20_lec4.tex:93",
+   "quote": "There exists a \"unique\" ordered field",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "MIT18_100af20_lec2.tex:49",
+   "quote": "If $|A| \\leq |B|$ and $|B| \\leq |A|$ then $|A| = |B|$.",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 5,
+   "evidence": "MIT18_100af20_lec3.tex:20",
+   "quote": "If $A$ is a set, then $|A| < |\\mathcal P(A)|$.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec3.tex:85",
+   "quote": "Let $S$ be an ordered set and let $E\\subset S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec3.tex:85",
+   "quote": "Let $S$ be an ordered set and let $E\\subset S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "if every $E\\subset S$ which is nonempty",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "An ordered set $S$ has the",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 11,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "which is nonempty and bounded above has a supremum",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec4.tex:49",
+   "quote": "if $F$ is also an ordered set with ordering $<$",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "MIT18_100af20_lec4.tex:49",
+   "quote": "A field $F$ is an \\vocab{ordered field} if",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec7.tex:72",
+   "quote": "Then, $\\{x_n\\}$ is convergent if and only if $\\{x_n\\}$ is bounded.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec7.tex:72",
+   "quote": "Then, $\\{x_n\\}$ is convergent if and only if $\\{x_n\\}$ is bounded.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 22,
+   "evidence": "MIT18_100af20_lec7.tex:72",
+   "quote": "Let $\\{x_n\\}$ be a monotone decreasing function.",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec6.tex:99",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{bounded} if",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "MIT18_100af20_lec6.tex:83",
+   "quote": "So $(0,1]\\subset \\RR$ is uncountable!",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec6.tex:116",
+   "quote": "A sequence $\\{x_n\\}$ \\vocab{converges} to $x\\in \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec7.tex:47",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{monotone increasing}",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec7.tex:80",
+   "quote": "let $\\{x_n\\}$ be a sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Then, $\\{x_n\\}$ converges if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec9.tex:162",
+   "quote": "By the Squeeze Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 27,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "$\\liminf x_n = \\limsup x_n.$",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 163,
+   "evidence": "MIT18_100af20_lec9.tex:168",
+   "quote": "by a theorem we proved in Lecture 7",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec8.tex:12",
+   "quote": "be sequences such that",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec8.tex:16",
+   "quote": "Suppose that $\\{a_n\\}$ and $\\{b_n\\}$ converge and",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:11",
+   "quote": "If $p>0$, then $\\lim_{n\\to \\infty} n^{-p} = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec9.tex:27",
+   "quote": "Hence, we may apply the Squeeze Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:48",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:48",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:50",
+   "quote": "\\limsup_{n\\to \\infty} x_n &:= \\lim_{n\\to \\infty}(\\sup\\{x_k \\mid k \\geq n\\})",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 23,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec10.tex:9",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{Cauchy} if",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:143",
+   "quote": "Suppose $\\sum x_n$ converges absolutely and $\\sum x_n = x$.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:143",
+   "quote": "Suppose $\\sum x_n$ converges absolutely and $\\sum x_n = x$.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec11.tex:63",
+   "quote": "$\\sum x_n$ \\vocab{converges absolutely} if $\\sum |x_n|$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "does not absolutely converge",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 36,
+   "evidence": "MIT18_100af20_lec12.tex:140",
+   "quote": "This follows immediately from the Alternating Series test.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "However, $\\sum \\frac{(-1)^n}{n}$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec11.tex:96",
+   "quote": "if $\\sum y_n$ converges, then $\\sum x_n$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:11",
+   "quote": "L = \\lim_{n\\to \\infty} \\frac{|x_{n+1}|}{|x_n|}",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:15",
+   "quote": "if $L<1$ then $\\sum x_n$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:16",
+   "quote": "if $L>1$ then $\\sum x_n$ diverges.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:74",
+   "quote": "L = \\lim_{n\\to \\infty} |x_n|^{1/n}",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:78",
+   "quote": "if $L<1$ then $\\sum x_n$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:72",
+   "quote": "Let $\\sum x_n$ be a series and suppose that",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 15,
+   "evidence": "MIT18_100af20_lec12.tex:115",
+   "quote": "is a bounded below monotone decreasing sequence. Thus, $\\{s_{2k}\\}_{k=1}^\\infty$ converges.",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Let $\\{x_n\\}$ be a monotone decreasing sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "such that $x_n \\to 0.$",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 22,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Let $\\{x_n\\}$ be a monotone decreasing sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Then, $\\sum (-1)^n x_n$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "does not absolutely converge",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 36,
+   "evidence": "MIT18_100af20_lec12.tex:140",
+   "quote": "This follows immediately from the Alternating Series test.",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "However, $\\sum \\frac{(-1)^n}{n}$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 23,
+   "evidence": "MIT18_100af20_lec16.tex:22",
+   "quote": "But by the definition of a subsequence, we must have $k\\leq n_k$",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 28,
+   "evidence": "MIT18_100af20_lec16.tex:18",
+   "quote": "By the Bolzano-Weierstrass theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec16.tex:16",
+   "quote": "If $f:[a,b]\\to \\RR$ is continuous then $f$ is bounded.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 43,
+   "evidence": "MIT18_100af20_lec16.tex:16",
+   "quote": "If $f:[a,b]\\to \\RR$ is continuous then $f$ is bounded.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:16",
+   "quote": "Let $S\\subset \\RR$.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "Let $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "let $c$ be a cluster point of $S$",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec14.tex:59",
+   "quote": "let $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec14.tex:59",
+   "quote": "suppose $c$ is a cluster point of $S\\cap (c,\\infty)$",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec14.tex:86",
+   "quote": "Let $S\\subset \\RR$ and let $c\\in S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 28,
+   "evidence": "MIT18_100af20_lec16.tex:49",
+   "quote": "By the Bolzano-Weierstrass theorem, there exists a subsequence",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 38,
+   "evidence": "MIT18_100af20_lec16.tex:39",
+   "quote": "then $f$ is bounded by the previous theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec16.tex:33",
+   "quote": "If $f$ is continuous, then $f$ achieves an absolute maximum and absolute minimum.",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "MIT18_100af20_lec16.tex:33",
+   "quote": "If $f$ is continuous, then $f$ achieves an absolute maximum and absolute minimum.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:79",
+   "quote": "$f$ is differentiable at $c$",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 55,
+   "evidence": "MIT18_100af20_lec19.tex:79",
+   "quote": "has a relative max or min at $c\\in (a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec16.tex:96",
+   "quote": "Let $f:[a,b] \\to \\RR$ be continuous.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 40,
+   "evidence": "MIT18_100af20_lec17.tex:86",
+   "quote": "\\lim_{x\\to c} \\frac{f(x)-f(c)}{x-c}",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 17,
+   "evidence": "MIT18_100af20_lec18.tex:74",
+   "quote": "We apply the Triangle Inequality twice",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec18.tex:82",
+   "quote": "is absolutely convergent.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 33,
+   "evidence": "MIT18_100af20_lec18.tex:88",
+   "quote": "Hence, by the Comparison Test",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec18.tex:83",
+   "quote": "is bounded and continuous.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 43,
+   "evidence": "MIT18_100af20_lec18.tex:83",
+   "quote": "is bounded and continuous.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec18.tex:82",
+   "quote": "\\sum_{k=0}^\\infty \\frac{\\cos(160^k x)}{4^k}",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec18.tex:106",
+   "quote": "is nowhere differentiable.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 50,
+   "evidence": "MIT18_100af20_lec18.tex:108",
+   "quote": "By Theorem I 2)",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 51,
+   "evidence": "MIT18_100af20_lec18.tex:115",
+   "quote": "Therefore, by Theorem II,",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec18.tex:105",
+   "quote": "The function $f(x) = \\sum_{k=0}^\\infty \\frac{\\cos(160^k x)}{4^k}$",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:32",
+   "quote": "be differentiable at $c\\in I_1$",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec19.tex:71",
+   "quote": "Let $S \\subset \\RR$ and $f:S\\to \\RR$.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec19.tex:104",
+   "quote": "be continuous and differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 45,
+   "evidence": "MIT18_100af20_lec19.tex:113",
+   "quote": "such that $f$ achieves an absolute maximum at $c_1$ and absolute minimum at $c_2$",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 46,
+   "evidence": "MIT18_100af20_lec19.tex:113",
+   "quote": "Therefore, $f'(c_1) = 0$ by the previous theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:104",
+   "quote": "be continuous and differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec19.tex:119",
+   "quote": "Let $f:[a,b] \\to \\RR$ be continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:119",
+   "quote": "let $f$ be differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "MIT18_100af20_lec19.tex:137",
+   "quote": "Thus, by Rolle's theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:145",
+   "quote": "If $f:I\\to \\RR$ is differentiable",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec19.tex:147",
+   "quote": "such that $f(b) -f(a) = (b-a) f'(c) = 0$",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec20.tex:12",
+   "quote": "on $J\\subset I$",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec20.tex:12",
+   "quote": "if $f', f'', \\dots, f^{(n)}$ exist at every point in $J.$",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:20",
+   "quote": "Suppose $f:[a,b]\\to \\RR$ is continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec20.tex:48",
+   "quote": "By the MVT, there exists an $x_1\\in (x_0,x)$ such that $g'(x_1) = 0$.",
+   "kind": "proof"
+  },
+  {
+   "from": 60,
+   "to": 59,
+   "evidence": "MIT18_100af20_lec20.tex:20",
+   "quote": "has $n$ continuous derivatives on $[a,b]$ such that $f^{(n+1)}$ exists on $(a,b).$",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "MIT18_100af20_lec20.tex:28",
+   "quote": "$P_n(x)$ is the $n$-th order Taylor polynomial for $f$ at $x_0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "has two continuous derivatives",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 55,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "then $f$ has a strict relative minimum at $x_0.$",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 59,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "has two continuous derivatives",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 60,
+   "evidence": "MIT18_100af20_lec20.tex:72",
+   "quote": "Then, by Taylor's theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:89",
+   "quote": "f \\text{~~is continuous}",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec20.tex:105",
+   "quote": "If $\\underline{x}$ is a partition, a \\vocab{tag} of",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec20.tex:125",
+   "quote": "corresponding to $(\\underline{x},\\underline{\\xi})$",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 17,
+   "evidence": "MIT18_100af20_lec21.tex:115",
+   "quote": "we have by the Triangle Inequality and Theorem III that",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec21.tex:9",
+   "quote": "\\lim_{r \\to \\infty} S_f(\\underline{x}^r, \\underline{\\xi}^r)",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec21.tex:120",
+   "quote": "Thus, by the Squeeze Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "Let $f\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "\\lVert \\underline{x}^r\\rVert \\to 0",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "for all sequences of tagged partitions",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:9",
+   "quote": "\\lim_{r \\to \\infty} S_f(\\underline{x}^r, \\underline{\\xi}^r)",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 89,
+   "evidence": "MIT18_100af20_lec21.tex:109",
+   "quote": "which exists as Cauchy sequences of real numbers are convergent sequences.",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:19",
+   "quote": "For $f\\in C([a,b])$, $\\eta >0$",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 40,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "then if $f\\in C([a,b])$ then",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "\\leq w_f(\\lVert \\underline{x}\\rVert) (b-a).",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "|S_f(\\underline{x},\\underline{\\xi}) - S_f(\\underline{x}',\\underline{\\xi}')|",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "\\leq w_f(\\lVert \\underline{x}\\rVert) (b-a).",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec21.tex:49",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:49",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:79",
+   "quote": "are any two tagged partitions of $[a,b]$ and $f\\in C([a,b])$",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "w_f(\\lVert \\underline{x}'\\rVert)",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:79",
+   "quote": "are any two tagged partitions of $[a,b]$ and $f\\in C([a,b])$",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "|S_f(\\underline{x}, \\underline{\\xi}) - S_f(\\underline{x}', \\underline{\\xi}')|",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "w_f(\\lVert \\underline{x}'\\rVert)",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 70,
+   "evidence": "MIT18_100af20_lec21.tex:84",
+   "quote": "Then, by Theorem II,",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:132",
+   "quote": "If $f,g\\in C([a,b])$ and $\\alpha \\in \\RR$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec21.tex:134",
+   "quote": "\\int_a^b (\\alpha f + g) = \\alpha \\int_a^b f + \\int_a^b g.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:7",
+   "quote": "If $f\\in C([a,b])$ and $a<c<b$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:9",
+   "quote": "\\int_a^b f = \\int_a^c f + \\int_c^b f.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:29",
+   "quote": "Let $f\\in C([a,b])$, and",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:36",
+   "quote": "m_f(b-a) \\leq \\int_a^b f \\leq M_f(b-a).",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:53",
+   "quote": "Suppose $f\\in C([a,b])$ and $g\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:57",
+   "quote": "\\int_a^b f \\leq \\int_a^b g.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:94",
+   "quote": "If $F:[a,b] \\to \\RR$ is differentiable and $F' = f$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec22.tex:113",
+   "quote": "Then, by the Mean Value Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:92",
+   "quote": "Suppose $f\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:96",
+   "quote": "\\int_a^b f = F(b) - F(a).",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec22.tex:139",
+   "quote": "\\leq \\frac{1}{x-c}\\int_c^x |f(t)-f(c)|\\,\\mathrm dt",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:150",
+   "quote": "Let $f:I\\to \\RR$ be differentiable.",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec19.tex:158",
+   "quote": "Then, by MVT, $\\exists c\\in (a,b)$ such that",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:150",
+   "quote": "Suppose $f,g\\in C([a,b])$ and $f',g'\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:150",
+   "quote": "Suppose $f,g\\in C([a,b])$ and $f',g'\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:152",
+   "quote": "\\int_a^b f'g = (f(b)g(b)-f(a)g(a))",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 77,
+   "evidence": "MIT18_100af20_lec22.tex:158",
+   "quote": "Therefore, by the Fundamental Theorem of Calculus,",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec22.tex:175",
+   "quote": "\\lim_{n\\to \\infty} a_n = \\lim_{n\\to \\infty} b_n = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec22.tex:190",
+   "quote": "By the Squeeze Theorem, $|b_n|\\to 0$.",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:168",
+   "quote": "Suppose $f\\in C([-\\pi, \\pi])$ and $f'\\in C([-\\pi,\\pi])$",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:168",
+   "quote": "Suppose $f\\in C([-\\pi, \\pi])$ and $f'\\in C([-\\pi,\\pi])$",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:170",
+   "quote": "a_n &= \\frac{1}{\\pi}\\int_{-\\pi}^\\pi f(x) \\sin(nx)\\,\\mathrm dx",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec22.tex:187",
+   "quote": "|b_n| &\\leq \\frac{1}{n} \\int_{-\\pi}^\\pi |\\sin(nx)||f'(x)|\\,\\mathrm dx",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 79,
+   "evidence": "MIT18_100af20_lec22.tex:181",
+   "quote": "Using IBP, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 80,
+   "evidence": "MIT18_100af20_lec22.tex:179",
+   "quote": "The $a_n,b_n$ defined in the above lemma are referred to as the",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec22.tex:193",
+   "quote": "be continuously differentiable with $\\varphi'>0$ on $[a,b]$",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:193",
+   "quote": "be continuously differentiable with $\\varphi'>0$ on $[a,b]$",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:195",
+   "quote": "\\int_c^d f(u)\\,\\mathrm du = \\int_a^b f(\\varphi(x))\\varphi'(x)\\,\\mathrm dx.",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 77,
+   "evidence": "MIT18_100af20_lec22.tex:202",
+   "quote": "Hence, by the FTC,",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec23.tex:15",
+   "quote": "A power series about $x_0$ is a series of the form",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec25.tex:88",
+   "quote": "is continuously differentiable",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec25.tex:88",
+   "quote": "is continuously differentiable",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 77,
+   "evidence": "MIT18_100af20_lec25.tex:95",
+   "quote": "By the FTC, $\\forall n\\forall x\\in[a,b]$,",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 86,
+   "evidence": "MIT18_100af20_lec25.tex:90",
+   "quote": "f_n &\\to f \\text{~~pointwise}, \\\\",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec25.tex:91",
+   "quote": "f_n' &\\to g \\text{~~uniformly},",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec23.tex:84",
+   "quote": "\\lim_{n\\to \\infty} f_n(x) = f(x).",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec24.tex:41",
+   "quote": "$\\sum_{j=1}^\\infty f_j(x)$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 33,
+   "evidence": "MIT18_100af20_lec24.tex:50",
+   "quote": "The first part follows from a), b), and the Comparison Test.",
+   "kind": "proof"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec24.tex:44",
+   "quote": "\\sum_{j=1}^n f_j\\to f \\text{~~uniformly on~~} S.",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec24.tex:37",
+   "quote": "$\\sum_{j=1}^\\infty M_j$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec10.tex:70",
+   "quote": "A sequence of real numbers $\\{x_n\\}$ is Cauchy if and only if $\\{x_n\\}$ is convergent.",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec10.tex:70",
+   "quote": "A sequence of real numbers $\\{x_n\\}$ is Cauchy if and only if $\\{x_n\\}$ is convergent.",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 28,
+   "evidence": "MIT18_100af20_lec10.tex:72",
+   "quote": "has a convergent subsequence by Bolzano-Weierstrass",
+   "kind": "proof"
+  },
+  {
+   "from": 89,
+   "to": 29,
+   "evidence": "MIT18_100af20_lec10.tex:70",
+   "quote": "A sequence of real numbers $\\{x_n\\}$ is Cauchy if and only if $\\{x_n\\}$ is convergent.",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 45,
+   "evidence": "MIT18_100af20_lec25.tex:262",
+   "quote": "which exists by the Min/Max theorem i.e. the EVT",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec25.tex:161",
+   "quote": "If $f\\in C([a,b])$, there exists a sequence of polynomials",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec25.tex:269",
+   "quote": "\\leq \\int_{-1}^1 |f(x-t)-f(x)|Q_{n}(t)\\,\\mathrm dt",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 82,
+   "evidence": "MIT18_100af20_lec25.tex:260",
+   "quote": "The second equality is true by a change of variable",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec25.tex:163",
+   "quote": "P_n\\to f \\text{~~uniformly on~~} [a,b].",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec1.tex:87",
+   "quote": "$(B\\cup C)^c = B^c \\cap C^c$",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec1.tex:108",
+   "quote": "if $S\\subset \\NN$ then there exists an $x\\in S$",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 2,
+   "evidence": "MIT18_100af20_lec1.tex:125",
+   "quote": "by the well-ordering property of $\\NN$, $S$ has a least element",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec10.tex:9",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{Cauchy} if",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec10.tex:89",
+   "quote": "We say $\\sum x_n$ converges if the sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec10.tex:89",
+   "quote": "We say $\\sum x_n$ converges if the sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:41",
+   "quote": "Let $c$ be a cluster point of $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec13.tex:41",
+   "quote": "Let $c$ be a cluster point of $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 40,
+   "evidence": "MIT18_100af20_lec13.tex:41",
+   "quote": "If $f(x) \\to L_1$ and $f(x)\\to L_2$ as $x\\to c$, then $L_1 = L_2$.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec11.tex:63",
+   "quote": "$\\sum x_n$ \\vocab{converges absolutely} if $\\sum |x_n|$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "does not absolutely converge",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 36,
+   "evidence": "MIT18_100af20_lec12.tex:140",
+   "quote": "This follows immediately from the Alternating Series test.",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:138",
+   "quote": "However, $\\sum \\frac{(-1)^n}{n}$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec11.tex:96",
+   "quote": "if $\\sum y_n$ converges, then $\\sum x_n$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:11",
+   "quote": "L = \\lim_{n\\to \\infty} \\frac{|x_{n+1}|}{|x_n|}",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:15",
+   "quote": "if $L<1$ then $\\sum x_n$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:16",
+   "quote": "if $L>1$ then $\\sum x_n$ diverges.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:74",
+   "quote": "L = \\lim_{n\\to \\infty} |x_n|^{1/n}",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec12.tex:78",
+   "quote": "if $L<1$ then $\\sum x_n$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:72",
+   "quote": "Let $\\sum x_n$ be a series and suppose that",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 15,
+   "evidence": "MIT18_100af20_lec12.tex:115",
+   "quote": "is a bounded below monotone decreasing sequence. Thus, $\\{s_{2k}\\}_{k=1}^\\infty$ converges.",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Let $\\{x_n\\}$ be a monotone decreasing sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "such that $x_n \\to 0.$",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 22,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Let $\\{x_n\\}$ be a monotone decreasing sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec12.tex:102",
+   "quote": "Then, $\\sum (-1)^n x_n$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:16",
+   "quote": "Let $S\\subset \\RR$.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "Let $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "let $c$ be a cluster point of $S$",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:16",
+   "quote": "Let $S\\subset \\RR$.",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 47,
+   "evidence": "MIT18_100af20_lec16.tex:128",
+   "quote": "Thus, by IVT",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "Let $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec13.tex:33",
+   "quote": "let $c$ be a cluster point of $S$",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec14.tex:59",
+   "quote": "let $S\\subset \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 39,
+   "evidence": "MIT18_100af20_lec14.tex:59",
+   "quote": "suppose $c$ is a cluster point of $S\\cap (c,\\infty)$",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec14.tex:86",
+   "quote": "Let $S\\subset \\RR$ and let $c\\in S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 28,
+   "evidence": "MIT18_100af20_lec16.tex:49",
+   "quote": "By the Bolzano-Weierstrass theorem, there exists a subsequence",
+   "kind": "proof"
+  },
+  {
+   "from": 113,
+   "to": 38,
+   "evidence": "MIT18_100af20_lec16.tex:39",
+   "quote": "then $f$ is bounded by the previous theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 113,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec16.tex:33",
+   "quote": "If $f$ is continuous, then $f$ achieves an absolute maximum and absolute minimum.",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 44,
+   "evidence": "MIT18_100af20_lec16.tex:33",
+   "quote": "If $f$ is continuous, then $f$ achieves an absolute maximum and absolute minimum.",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec16.tex:96",
+   "quote": "Let $f:[a,b] \\to \\RR$ be continuous.",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:150",
+   "quote": "Let $f:I\\to \\RR$ be differentiable.",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec19.tex:158",
+   "quote": "Then, by MVT, $\\exists c\\in (a,b)$ such that",
+   "kind": "proof"
+  },
+  {
+   "from": 117,
+   "to": 40,
+   "evidence": "MIT18_100af20_lec17.tex:86",
+   "quote": "\\lim_{x\\to c} \\frac{f(x)-f(c)}{x-c}",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec18.tex:106",
+   "quote": "is nowhere differentiable.",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 50,
+   "evidence": "MIT18_100af20_lec18.tex:108",
+   "quote": "By Theorem I 2)",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 51,
+   "evidence": "MIT18_100af20_lec18.tex:115",
+   "quote": "Therefore, by Theorem II,",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec18.tex:105",
+   "quote": "The function $f(x) = \\sum_{k=0}^\\infty \\frac{\\cos(160^k x)}{4^k}$",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:32",
+   "quote": "be differentiable at $c\\in I_1$",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec19.tex:71",
+   "quote": "Let $S \\subset \\RR$ and $f:S\\to \\RR$.",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec19.tex:104",
+   "quote": "be continuous and differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 45,
+   "evidence": "MIT18_100af20_lec19.tex:113",
+   "quote": "such that $f$ achieves an absolute maximum at $c_1$ and absolute minimum at $c_2$",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 46,
+   "evidence": "MIT18_100af20_lec19.tex:113",
+   "quote": "Therefore, $f'(c_1) = 0$ by the previous theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:104",
+   "quote": "be continuous and differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec19.tex:119",
+   "quote": "Let $f:[a,b] \\to \\RR$ be continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec19.tex:119",
+   "quote": "let $f$ be differentiable on $(a,b)$",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 56,
+   "evidence": "MIT18_100af20_lec19.tex:137",
+   "quote": "Thus, by Rolle's theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 123,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:53",
+   "quote": "Suppose $f\\in C([a,b])$ and $g\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:57",
+   "quote": "\\int_a^b f \\leq \\int_a^b g.",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 5,
+   "evidence": "MIT18_100af20_lec2.tex:49",
+   "quote": "If $|A| \\leq |B|$ and $|B| \\leq |A|$ then $|A| = |B|$.",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec20.tex:12",
+   "quote": "on $J\\subset I$",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec20.tex:12",
+   "quote": "if $f', f'', \\dots, f^{(n)}$ exist at every point in $J.$",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:20",
+   "quote": "Suppose $f:[a,b]\\to \\RR$ is continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec20.tex:48",
+   "quote": "By the MVT, there exists an $x_1\\in (x_0,x)$ such that $g'(x_1) = 0$.",
+   "kind": "proof"
+  },
+  {
+   "from": 127,
+   "to": 59,
+   "evidence": "MIT18_100af20_lec20.tex:20",
+   "quote": "has $n$ continuous derivatives on $[a,b]$ such that $f^{(n+1)}$ exists on $(a,b).$",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:89",
+   "quote": "f \\text{~~is continuous}",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "has two continuous derivatives",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 55,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "then $f$ has a strict relative minimum at $x_0.$",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 59,
+   "evidence": "MIT18_100af20_lec20.tex:66",
+   "quote": "has two continuous derivatives",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 60,
+   "evidence": "MIT18_100af20_lec20.tex:72",
+   "quote": "Then, by Taylor's theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 131,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec20.tex:105",
+   "quote": "If $\\underline{x}$ is a partition, a \\vocab{tag} of",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec20.tex:125",
+   "quote": "corresponding to $(\\underline{x},\\underline{\\xi})$",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 17,
+   "evidence": "MIT18_100af20_lec21.tex:115",
+   "quote": "we have by the Triangle Inequality and Theorem III that",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec21.tex:9",
+   "quote": "\\lim_{r \\to \\infty} S_f(\\underline{x}^r, \\underline{\\xi}^r)",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec21.tex:120",
+   "quote": "Thus, by the Squeeze Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "Let $f\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "\\lVert \\underline{x}^r\\rVert \\to 0",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:7",
+   "quote": "for all sequences of tagged partitions",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:9",
+   "quote": "\\lim_{r \\to \\infty} S_f(\\underline{x}^r, \\underline{\\xi}^r)",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 89,
+   "evidence": "MIT18_100af20_lec21.tex:109",
+   "quote": "which exists as Cauchy sequences of real numbers are convergent sequences.",
+   "kind": "proof"
+  },
+  {
+   "from": 134,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:19",
+   "quote": "For $f\\in C([a,b])$, $\\eta >0$",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec21.tex:49",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:49",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:132",
+   "quote": "If $f,g\\in C([a,b])$ and $\\alpha \\in \\RR$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec21.tex:134",
+   "quote": "\\int_a^b (\\alpha f + g) = \\alpha \\int_a^b f + \\int_a^b g.",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:7",
+   "quote": "If $f\\in C([a,b])$ and $a<c<b$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:9",
+   "quote": "\\int_a^b f = \\int_a^c f + \\int_c^b f.",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:94",
+   "quote": "If $F:[a,b] \\to \\RR$ is differentiable and $F' = f$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec22.tex:113",
+   "quote": "Then, by the Mean Value Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:92",
+   "quote": "Suppose $f\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:96",
+   "quote": "\\int_a^b f = F(b) - F(a).",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec22.tex:139",
+   "quote": "\\leq \\frac{1}{x-c}\\int_c^x |f(t)-f(c)|\\,\\mathrm dt",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 40,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:30",
+   "quote": "For all $f\\in C([a,b])$, $\\lim_{\\eta\\to 0} w_f(\\eta) = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "then if $f\\in C([a,b])$ then",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "\\leq w_f(\\lVert \\underline{x}\\rVert) (b-a).",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:42",
+   "quote": "are tagged partitions of $[a,b]$ such that $\\underline{x}\\subset \\underline{x}'$",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "|S_f(\\underline{x},\\underline{\\xi}) - S_f(\\underline{x}',\\underline{\\xi}')|",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:44",
+   "quote": "\\leq w_f(\\lVert \\underline{x}\\rVert) (b-a).",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec21.tex:79",
+   "quote": "are any two tagged partitions of $[a,b]$ and $f\\in C([a,b])$",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 64,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "w_f(\\lVert \\underline{x}'\\rVert)",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 65,
+   "evidence": "MIT18_100af20_lec21.tex:79",
+   "quote": "are any two tagged partitions of $[a,b]$ and $f\\in C([a,b])$",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 66,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "|S_f(\\underline{x}, \\underline{\\xi}) - S_f(\\underline{x}', \\underline{\\xi}')|",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 68,
+   "evidence": "MIT18_100af20_lec21.tex:81",
+   "quote": "w_f(\\lVert \\underline{x}'\\rVert)",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 70,
+   "evidence": "MIT18_100af20_lec21.tex:84",
+   "quote": "Then, by Theorem II,",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:94",
+   "quote": "If $F:[a,b] \\to \\RR$ is differentiable and $F' = f$, then",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 57,
+   "evidence": "MIT18_100af20_lec22.tex:113",
+   "quote": "Then, by the Mean Value Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:92",
+   "quote": "Suppose $f\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:96",
+   "quote": "\\int_a^b f = F(b) - F(a).",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec22.tex:139",
+   "quote": "\\leq \\frac{1}{x-c}\\int_c^x |f(t)-f(c)|\\,\\mathrm dt",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:150",
+   "quote": "Suppose $f,g\\in C([a,b])$ and $f',g'\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:150",
+   "quote": "Suppose $f,g\\in C([a,b])$ and $f',g'\\in C([a,b])$.",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:152",
+   "quote": "\\int_a^b f'g = (f(b)g(b)-f(a)g(a))",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 77,
+   "evidence": "MIT18_100af20_lec22.tex:158",
+   "quote": "Therefore, by the Fundamental Theorem of Calculus,",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec22.tex:175",
+   "quote": "\\lim_{n\\to \\infty} a_n = \\lim_{n\\to \\infty} b_n = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec22.tex:190",
+   "quote": "By the Squeeze Theorem, $|b_n|\\to 0$.",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:168",
+   "quote": "Suppose $f\\in C([-\\pi, \\pi])$ and $f'\\in C([-\\pi,\\pi])$",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec22.tex:168",
+   "quote": "Suppose $f\\in C([-\\pi, \\pi])$ and $f'\\in C([-\\pi,\\pi])$",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:170",
+   "quote": "a_n &= \\frac{1}{\\pi}\\int_{-\\pi}^\\pi f(x) \\sin(nx)\\,\\mathrm dx",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec22.tex:187",
+   "quote": "|b_n| &\\leq \\frac{1}{n} \\int_{-\\pi}^\\pi |\\sin(nx)||f'(x)|\\,\\mathrm dx",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 79,
+   "evidence": "MIT18_100af20_lec22.tex:181",
+   "quote": "Using IBP, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 80,
+   "evidence": "MIT18_100af20_lec22.tex:179",
+   "quote": "The $a_n,b_n$ defined in the above lemma are referred to as the",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 42,
+   "evidence": "MIT18_100af20_lec22.tex:193",
+   "quote": "be continuously differentiable with $\\varphi'>0$ on $[a,b]$",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 49,
+   "evidence": "MIT18_100af20_lec22.tex:193",
+   "quote": "be continuously differentiable with $\\varphi'>0$ on $[a,b]$",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 67,
+   "evidence": "MIT18_100af20_lec22.tex:195",
+   "quote": "\\int_c^d f(u)\\,\\mathrm du = \\int_a^b f(\\varphi(x))\\varphi'(x)\\,\\mathrm dx.",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 77,
+   "evidence": "MIT18_100af20_lec22.tex:202",
+   "quote": "Hence, by the FTC,",
+   "kind": "proof"
+  },
+  {
+   "from": 147,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec23.tex:15",
+   "quote": "A power series about $x_0$ is a series of the form",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 35,
+   "evidence": "MIT18_100af20_lec25.tex:125",
+   "quote": "\\lim_{j\\to \\infty}M_j^{1/j} < 1 \\implies \\sum_{j=0}^\\infty M_j \\text{~~converges.}",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 83,
+   "evidence": "MIT18_100af20_lec25.tex:110",
+   "quote": "be a power series of radius of convergence $p\\in (0,\\infty]$",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 85,
+   "evidence": "MIT18_100af20_lec25.tex:110",
+   "quote": "be a power series of radius of convergence $p\\in (0,\\infty]$",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec25.tex:110",
+   "quote": "converges uniformly on $[x_0-r,x_0+r]$",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 88,
+   "evidence": "MIT18_100af20_lec25.tex:127",
+   "quote": "By the Weierstrass M-test, it follows that",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec23.tex:84",
+   "quote": "\\lim_{n\\to \\infty} f_n(x) = f(x).",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 31,
+   "evidence": "MIT18_100af20_lec24.tex:41",
+   "quote": "$\\sum_{j=1}^\\infty f_j(x)$ converges absolutely.",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 33,
+   "evidence": "MIT18_100af20_lec24.tex:50",
+   "quote": "The first part follows from a), b), and the Comparison Test.",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec24.tex:44",
+   "quote": "\\sum_{j=1}^n f_j\\to f \\text{~~uniformly on~~} S.",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 96,
+   "evidence": "MIT18_100af20_lec24.tex:37",
+   "quote": "$\\sum_{j=1}^\\infty M_j$ converges.",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 4,
+   "evidence": "MIT18_100af20_lec4.tex:100",
+   "quote": "we have that $r:= \\sup\\Tilde{E}$ exists in $\\RR$",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 45,
+   "evidence": "MIT18_100af20_lec25.tex:262",
+   "quote": "which exists by the Min/Max theorem i.e. the EVT",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 63,
+   "evidence": "MIT18_100af20_lec25.tex:161",
+   "quote": "If $f\\in C([a,b])$, there exists a sequence of polynomials",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 76,
+   "evidence": "MIT18_100af20_lec25.tex:269",
+   "quote": "\\leq \\int_{-1}^1 |f(x-t)-f(x)|Q_{n}(t)\\,\\mathrm dt",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 82,
+   "evidence": "MIT18_100af20_lec25.tex:260",
+   "quote": "The second equality is true by a change of variable",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 87,
+   "evidence": "MIT18_100af20_lec25.tex:163",
+   "quote": "P_n\\to f \\text{~~uniformly on~~} [a,b].",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 5,
+   "evidence": "MIT18_100af20_lec3.tex:20",
+   "quote": "If $A$ is a set, then $|A| < |\\mathcal P(A)|$.",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec3.tex:85",
+   "quote": "Let $S$ be an ordered set and let $E\\subset S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec3.tex:85",
+   "quote": "Let $S$ be an ordered set and let $E\\subset S$.",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 0,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "if every $E\\subset S$ which is nonempty",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "An ordered set $S$ has the",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 11,
+   "evidence": "MIT18_100af20_lec3.tex:114",
+   "quote": "which is nonempty and bounded above has a supremum",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 10,
+   "evidence": "MIT18_100af20_lec4.tex:49",
+   "quote": "if $F$ is also an ordered set with ordering $<$",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 13,
+   "evidence": "MIT18_100af20_lec4.tex:49",
+   "quote": "A field $F$ is an \\vocab{ordered field} if",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec7.tex:112",
+   "quote": "If $\\{x_n\\}$ converges to $x$, then any subsequence of $x_n$ will converge to $x$.",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 23,
+   "evidence": "MIT18_100af20_lec7.tex:112",
+   "quote": "If $\\{x_n\\}$ converges to $x$, then any subsequence of $x_n$ will converge to $x$.",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec6.tex:99",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{bounded} if",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 18,
+   "evidence": "MIT18_100af20_lec6.tex:83",
+   "quote": "So $(0,1]\\subset \\RR$ is uncountable!",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec6.tex:116",
+   "quote": "A sequence $\\{x_n\\}$ \\vocab{converges} to $x\\in \\RR$",
+   "kind": "statement"
+  },
+  {
+   "from": 170,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec7.tex:47",
+   "quote": "A sequence $\\{x_n\\}$ is \\vocab{monotone increasing}",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec7.tex:80",
+   "quote": "let $\\{x_n\\}$ be a sequence",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "Then, $\\{x_n\\}$ converges if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec9.tex:162",
+   "quote": "By the Squeeze Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 172,
+   "to": 27,
+   "evidence": "MIT18_100af20_lec9.tex:156",
+   "quote": "$\\liminf x_n = \\limsup x_n.$",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 163,
+   "evidence": "MIT18_100af20_lec9.tex:168",
+   "quote": "by a theorem we proved in Lecture 7",
+   "kind": "proof"
+  },
+  {
+   "from": 173,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec8.tex:12",
+   "quote": "be sequences such that",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec8.tex:16",
+   "quote": "Suppose that $\\{a_n\\}$ and $\\{b_n\\}$ converge and",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:11",
+   "quote": "If $p>0$, then $\\lim_{n\\to \\infty} n^{-p} = 0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 25,
+   "evidence": "MIT18_100af20_lec9.tex:27",
+   "quote": "Hence, we may apply the Squeeze Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:48",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:48",
+   "quote": "Let $\\{x_n\\}$ be a bounded sequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:50",
+   "quote": "\\limsup_{n\\to \\infty} x_n &:= \\lim_{n\\to \\infty}(\\sup\\{x_k \\mid k \\geq n\\})",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 16,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 20,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 21,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 23,
+   "evidence": "MIT18_100af20_lec9.tex:143",
+   "quote": "Every bounded sequence has a convergent subsequence.",
+   "kind": "statement"
+  }
+ ]
+}

@@ -1,0 +1,2373 @@
+{
+ "book": "LieGroups",
+ "source": "MIT 18.757 Representations of Lie Groups, Fall 2023, full lecture notes (Pavel Etingof), text/mit18_757_f23_lec_full.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 1,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:440",
+   "quote": "A continuous representation is called unitary if V",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:528",
+   "quote": "ofG is continuous if and only if the map π :G→ Aut(V ) is continuous",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:550",
+   "quote": "A subrepresentation of a continuous representa-",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:616",
+   "quote": "dimensional subrepresentation of V . The space of K-ﬁnite vectors of",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:621",
+   "quote": "ξ :⊕ρ∈IrrKHom(ρ,V )⊗ρ→V ﬁn",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:698",
+   "quote": "(Peter-Weyl) L2(K)ﬁn is a dense subspace of L2(K).",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 7,
+   "evidence": "mit18_757_f23_lec_full.txt:886",
+   "quote": "and that Measc(X) is sequentially complete.",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "mit18_757_f23_lec_full.txt:885",
+   "quote": "follows from the facts that Meas0c(X) is sequentially dense in Measc(X)",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:968",
+   "quote": "Now let V be a continuous representation of G with the associated",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:994",
+   "quote": "If (V,π ) is a continuous representation of G then π",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 9,
+   "evidence": "mit18_757_f23_lec_full.txt:1001",
+   "quote": "lows from Lemmas 3.4 and 3.7 since V is complete.",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 11,
+   "evidence": "mit18_757_f23_lec_full.txt:1001",
+   "quote": "lows from Lemmas 3.4 and 3.7 since V is complete.",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 6,
+   "evidence": "mit18_757_f23_lec_full.txt:1022",
+   "quote": "applying this formula to the orthonormal basis provided by the Peter-",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 6,
+   "evidence": "mit18_757_f23_lec_full.txt:1070",
+   "quote": "sition of L2(K) into the direct sum of ρ⊗ρ∗ and acts on each such",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 9,
+   "evidence": "mit18_757_f23_lec_full.txt:1097",
+   "quote": "result follows from Lemma 3.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "mit18_757_f23_lec_full.txt:1094",
+   "quote": "By translating a Dirac sequence, for anyg∈G we can construct",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1102",
+   "quote": "Let V be a continuous representation of a compact",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1103",
+   "quote": "groupK. Then V ﬁn is dense in V .",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 6,
+   "evidence": "mit18_757_f23_lec_full.txt:1106",
+   "quote": "so by the Peter-Weyl theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 12,
+   "evidence": "mit18_757_f23_lec_full.txt:1109",
+   "quote": "So by Corollary 3.8",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 15,
+   "evidence": "mit18_757_f23_lec_full.txt:1105",
+   "quote": "exists by Lemma 4.5",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1112",
+   "quote": "L2(K)ﬁn⊂C(K) is a dense subspace.",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 17,
+   "evidence": "mit18_757_f23_lec_full.txt:1117",
+   "quote": "The density then follows from Corollary 4.7.",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:1118",
+   "quote": "If V is an irreducible continuous representation of K",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_757_f23_lec_full.txt:1120",
+   "quote": "By Corollary 4.7, V ﬁn is dense in V .",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1146",
+   "quote": "Let (V,π ) be a continuous representation of a Lie",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1154",
+   "quote": "Let (V,π ) be a continuous representation of a Lie",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "mit18_757_f23_lec_full.txt:1155",
+   "quote": "group G with g = Lie(G). Let v∈ V∞.",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1162",
+   "quote": "(ii) V ﬁn⊂V∞.",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 15,
+   "evidence": "mit18_757_f23_lec_full.txt:1163",
+   "quote": "Let φn→δ1 be a smooth Dirac sequence.",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "mit18_757_f23_lec_full.txt:1161",
+   "quote": "(i) V∞ is dense in V .",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1172",
+   "quote": "K⊂G a compact subgroup. For a continuous representation V of G,",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1173",
+   "quote": "denote by VK-ﬁn the space (V|K)ﬁn",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 15,
+   "evidence": "mit18_757_f23_lec_full.txt:1245",
+   "quote": "Let φn→δ1 be a smooth Dirac sequence on G.",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 20,
+   "evidence": "mit18_757_f23_lec_full.txt:1232",
+   "quote": "If V is K-admissible then VK-ﬁn⊂V∞, and it is a",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "mit18_757_f23_lec_full.txt:1233",
+   "quote": "g-submodule (although not in general a G-submodule).",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1232",
+   "quote": "If V is K-admissible then VK-ﬁn⊂V∞, and it is a",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1315",
+   "quote": "If V is a K-admissible continuous representation",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1316",
+   "quote": "of G then VK-ﬁn is an admissible (g,K )-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1315",
+   "quote": "If V is a K-admissible continuous representation",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1316",
+   "quote": "of G then VK-ﬁn is an admissible (g,K )-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:1348",
+   "quote": "ery irreducible unitary representation of a semisimple Lie group is ad-",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:1348",
+   "quote": "ery irreducible unitary representation of a semisimple Lie group is ad-",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1345",
+   "quote": "it isK-admissible with respect to a maximal compact subgroupK⊂G",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 0,
+   "evidence": "mit18_757_f23_lec_full.txt:1371",
+   "quote": "ity. Let G be a Lie group and V a continuous representation of G.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1385",
+   "quote": "pact subgroupK then every v∈VK-ﬁn is a weakly analytic vector.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 21,
+   "evidence": "mit18_757_f23_lec_full.txt:1453",
+   "quote": "we have a linear operator π∗(b) : V∞→ V∞, which we will write just",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1384",
+   "quote": "missible representation of a semisimple Lie groupG with maximal com-",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 24,
+   "evidence": "mit18_757_f23_lec_full.txt:1455",
+   "quote": "Vρ⊂V∞ for each irreducible representation ρ of K.",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "mit18_757_f23_lec_full.txt:1385",
+   "quote": "pact subgroupK then every v∈VK-ﬁn is a weakly analytic vector.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 33,
+   "evidence": "mit18_757_f23_lec_full.txt:1466",
+   "quote": "Corollary 6.7 that ψh,v is real analytic, as desired.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "mit18_757_f23_lec_full.txt:1413",
+   "quote": "Suppose D is an elliptic operator",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 31,
+   "evidence": "mit18_757_f23_lec_full.txt:1418",
+   "quote": "Let X be a real analytic manifold and D an elliptic",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1480",
+   "quote": "the corresponding (g,K )-moduleVK-ﬁn.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 17,
+   "evidence": "mit18_757_f23_lec_full.txt:1481",
+   "quote": "SinceVK-ﬁn is dense inV , it suﬃces to specifygv forv∈VK-ﬁn.",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1480",
+   "quote": "the corresponding (g,K )-moduleVK-ﬁn.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 30,
+   "evidence": "mit18_757_f23_lec_full.txt:1482",
+   "quote": "By Theorem 6.3 and",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1486",
+   "quote": "Let W ⊂ VK-ﬁn be a sub-(g,K )-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1486",
+   "quote": "Let W ⊂ VK-ﬁn be a sub-(g,K )-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 30,
+   "evidence": "mit18_757_f23_lec_full.txt:1497",
+   "quote": "But by Theorem 6.3, this",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:1502",
+   "quote": "is a bijection between subrepresentations of V and (g,K )-submodules",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1503",
+   "quote": "of VK-ﬁn, given by α : U ⊂ V ↦→ UK-ﬁn.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 17,
+   "evidence": "mit18_757_f23_lec_full.txt:1505",
+   "quote": "Since UK-ﬁn is dense in U, we have β◦α = Id.",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1501",
+   "quote": "Let V be an admissible representation of G.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1502",
+   "quote": "is a bijection between subrepresentations of V and (g,K )-submodules",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:1520",
+   "quote": "IfV is irreducible thenVK-ﬁn is an irreducible (g,K )-",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1520",
+   "quote": "IfV is irreducible thenVK-ﬁn is an irreducible (g,K )-",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1520",
+   "quote": "IfV is irreducible thenVK-ﬁn is an irreducible (g,K )-",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1522",
+   "quote": "IfV is of ﬁnite length thenVK-ﬁn is a Harish-Chandra",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1522",
+   "quote": "IfV is of ﬁnite length thenVK-ﬁn is a Harish-Chandra",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 36,
+   "evidence": "mit18_757_f23_lec_full.txt:1524",
+   "quote": "By Corollary 6.13",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1530",
+   "quote": "The assignment V↦→VK-ﬁn deﬁnes an exact, faithful",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1527",
+   "quote": "Let RepG denote the category of admissible representations of G of",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1528",
+   "quote": "ﬁnite length, andHCG the category of Harish-Chandra modules for G.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:1548",
+   "quote": "Let V,W be two unitary representations in RepG.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1549",
+   "quote": "If VK−ﬁn∼= WK−ﬁn as Harish-Chandra modules, then V ∼= W as uni-",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 17,
+   "evidence": "mit18_757_f23_lec_full.txt:1567",
+   "quote": "v ∈ VK−ﬁn, as it is dense in V .",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1527",
+   "quote": "Let RepG denote the category of admissible representations of G of",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1549",
+   "quote": "If VK−ﬁn∼= WK−ﬁn as Harish-Chandra modules, then V ∼= W as uni-",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 30,
+   "evidence": "mit18_757_f23_lec_full.txt:1568",
+   "quote": "analyticity theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1598",
+   "quote": "(Schur’s lemma for (g,K )-modules) Any endomor-",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 41,
+   "evidence": "mit18_757_f23_lec_full.txt:1594",
+   "quote": "By Lemma 7.2, the center Z(g) ofU(g) acts onM by",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:1608",
+   "quote": "(=globalizes) to an irreducible admissible unitary representation of G.",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:1608",
+   "quote": "(=globalizes) to an irreducible admissible unitary representation of G.",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:1608",
+   "quote": "(=globalizes) to an irreducible admissible unitary representation of G.",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1606",
+   "quote": "(Harish-Chandra’s globalization theorem) Every uni-",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "mit18_757_f23_lec_full.txt:1619",
+   "quote": "Also Cg|M = CM is a scalar.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:1657",
+   "quote": "VK−ﬁn is an equivalence of categories between unitary representations",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:1657",
+   "quote": "VK−ﬁn is an equivalence of categories between unitary representations",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:1658",
+   "quote": "of G of ﬁnite length and unitary Harish-Chandra modules of ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 28,
+   "evidence": "mit18_757_f23_lec_full.txt:1655",
+   "quote": "Thus, using Harish-Chandra’s admissibility theorem, we obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "mit18_757_f23_lec_full.txt:1655",
+   "quote": "Thus, using Harish-Chandra’s admissibility theorem, we obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:1692",
+   "quote": "i.e., if V =⊕λ∈h∗V [λ].",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:1696",
+   "quote": "A vector v in V [λ] is called a singular (or highest",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:1713",
+   "quote": "The map φ : U(n−)→ Mλ given by φ(x) = xvλ is",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:1734",
+   "quote": "Mλ has a weight decomposition with P (Mλ) =λ−Q+,",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 46,
+   "evidence": "mit18_757_f23_lec_full.txt:1734",
+   "quote": "Mλ has a weight decomposition with P (Mλ) =λ−Q+,",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:1734",
+   "quote": "Mλ has a weight decomposition with P (Mλ) =λ−Q+,",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 46,
+   "evidence": "mit18_757_f23_lec_full.txt:1741",
+   "quote": "(ii) Every highest weight representation has a weight decomposition",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 47,
+   "evidence": "mit18_757_f23_lec_full.txt:1740",
+   "quote": "with highest weight vector v) then V is a quotient of Mλ.",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:1738",
+   "quote": "homomorphism η : Mλ→ V such that η(vλ) = v.",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "mit18_757_f23_lec_full.txt:1756",
+   "quote": "λ,µ. If λ =µ then they are proportional since dimV [λ]≤ dimMλ[λ] =",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 47,
+   "evidence": "mit18_757_f23_lec_full.txt:1763",
+   "quote": "highest weight g-moduleV with highest weight λ.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:1761",
+   "quote": "For every λ ∈ h∗, the Verma module Mλ has a",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "mit18_757_f23_lec_full.txt:1766",
+   "quote": "so P (Y )⊂ (λ−Q+)\\{λ}.",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "mit18_757_f23_lec_full.txt:1770",
+   "quote": "over, if V is any nonzero quotient of Mλ then the kernel K of the",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 47,
+   "evidence": "mit18_757_f23_lec_full.txt:1775",
+   "quote": "Irreducible highest weight g-modules are classiﬁed by",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:1776",
+   "quote": "their highest weight λ∈ h∗, via the bijection λ↦→Lλ.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:1784",
+   "quote": "Lλ is ﬁnite-dimensional if and only if λ∈P+.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:2015",
+   "quote": "The simple (g,K )-modules (or equivalently, Harish-",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:2016",
+   "quote": "Chandra modules) are Lm,m∈Z≥0, M−m,M +−m, m∈Z≥1, and P+(s),",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:2124",
+   "quote": "(Gelfand-Naimark [GN], Bargmann [Ba]). The irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:2125",
+   "quote": "ducible unitary representations ofSL2(R) are Hilbert space completions",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:2126",
+   "quote": "of the following unitary Harish-Chandra modules:",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:2230",
+   "quote": "whereχλ is the character ofLλ.",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "mit18_757_f23_lec_full.txt:2362",
+   "quote": "a ﬁnite subgroup. Then C[V ]G is a polynomial algebra if and only if G",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 60,
+   "evidence": "mit18_757_f23_lec_full.txt:2482",
+   "quote": "Now, by Lemmas 11.4 and 11.1, we have C[V ]G =C[f1,...,f r]. This",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 62,
+   "evidence": "mit18_757_f23_lec_full.txt:2482",
+   "quote": "Now, by Lemmas 11.4 and 11.1, we have C[V ]G =C[f1,...,f r]. This",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 63,
+   "evidence": "mit18_757_f23_lec_full.txt:2515",
+   "quote": "In other words, using Lemma 11.6(ii), U := V/H is an aﬃne space",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 58,
+   "evidence": "mit18_757_f23_lec_full.txt:2394",
+   "quote": "Assume that G is a complex reﬂection group.",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 61,
+   "evidence": "mit18_757_f23_lec_full.txt:2460",
+   "quote": "by Lemma 11.3 applied to Fi =hi(f),",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 58,
+   "evidence": "mit18_757_f23_lec_full.txt:2606",
+   "quote": "[ST]) If G is a complex reﬂection group then for any irreducible rep-",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 59,
+   "evidence": "mit18_757_f23_lec_full.txt:2847",
+   "quote": "and Theorem 10.6 that C[V ] is a free C[V ]G-module.",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 64,
+   "evidence": "mit18_757_f23_lec_full.txt:2846",
+   "quote": "It follows from Proposition 12.10, Lemma 12.1",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 66,
+   "evidence": "mit18_757_f23_lec_full.txt:2848",
+   "quote": "it follows by Lemma 12.3(ii) that HomG(ρ,C[V ])",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 73,
+   "evidence": "mit18_757_f23_lec_full.txt:2846",
+   "quote": "It follows from Proposition 12.10, Lemma 12.1",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 66,
+   "evidence": "mit18_757_f23_lec_full.txt:2723",
+   "quote": "projective, hence free by Lemma 12.3",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 67,
+   "evidence": "mit18_757_f23_lec_full.txt:2721",
+   "quote": "and Proposition 12.4 then imply by induction inj that Exti(Mj,N ) = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "mit18_757_f23_lec_full.txt:2774",
+   "quote": "Applying Lemma 12.6 repeatedly, we get dim mpk[Z]≥ n−m.",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 69,
+   "evidence": "mit18_757_f23_lec_full.txt:2799",
+   "quote": "using Lemma 12.6 repeatedly, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 70,
+   "evidence": "mit18_757_f23_lec_full.txt:2798",
+   "quote": "By Corollary 12.7, we have dim m0k[Z0m]≥n−m.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 66,
+   "evidence": "mit18_757_f23_lec_full.txt:2817",
+   "quote": "By Lemma 12.3, it suﬃces to show that R is a free S-module.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 71,
+   "evidence": "mit18_757_f23_lec_full.txt:2821",
+   "quote": "so by Lemma 12.8 the Koszul complex",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 72,
+   "evidence": "mit18_757_f23_lec_full.txt:2820",
+   "quote": "By Proposition 12.9, this implies that",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:2865",
+   "quote": "Homg(V,S g) is a free (Sg)g module of rank dimV [0], the dimension of",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 57,
+   "evidence": "mit18_757_f23_lec_full.txt:2869",
+   "quote": "deg h = 2. Then gr(S g) = Sn−⊗Sh⊗Sn+ and by the Chevalley",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 59,
+   "evidence": "mit18_757_f23_lec_full.txt:2903",
+   "quote": "Thus by the Chevalley-Shephard-Todd theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 65,
+   "evidence": "mit18_757_f23_lec_full.txt:2871",
+   "quote": "of the middle factor. Thus by the Chevalley-Shephard-Todd theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 66,
+   "evidence": "mit18_757_f23_lec_full.txt:2878",
+   "quote": "Homg(V,S g) is a projective, hence free (S g)g-module (using Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 75,
+   "evidence": "mit18_757_f23_lec_full.txt:2989",
+   "quote": "By Lemma 13.2 we may take the limit q→ 1 under the integral in",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:3000",
+   "quote": "H(Homg(L∗λ, (Sg)0),q ) =",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 76,
+   "evidence": "mit18_757_f23_lec_full.txt:3021",
+   "quote": "Substituting λ = 0, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3079",
+   "quote": "dimensional representation V of g, the space Homg(V,U (g)) is a free",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 74,
+   "evidence": "mit18_757_f23_lec_full.txt:3087",
+   "quote": "Thus Theorem 13.1 implies all the statements of",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 47,
+   "evidence": "mit18_757_f23_lec_full.txt:3141",
+   "quote": "(iii) If V be a highest weight representation of g with highest weight",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3166",
+   "quote": "consider the Verma module Mλ with (λ +ρ,α∨i ) = n∈ Z>0. Then",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 57,
+   "evidence": "mit18_757_f23_lec_full.txt:3149",
+   "quote": "phism and gr(HC ) = Res, the Chevalley restriction homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3201",
+   "quote": "have dim Homg(V,Uχ) = dim V [0], where g acts on Uχ by the adjoint",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "mit18_757_f23_lec_full.txt:3196",
+   "quote": "Theorem 13.5 immediately implies",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 80,
+   "evidence": "mit18_757_f23_lec_full.txt:3205",
+   "quote": "This follows from Corollary 14.3 and Exercise 5.12.",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 41,
+   "evidence": "mit18_757_f23_lec_full.txt:3213",
+   "quote": "By Dixmier’s lemma (Lemma 7.2), M has some inﬁnitesimal character",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 81,
+   "evidence": "mit18_757_f23_lec_full.txt:3212",
+   "quote": "(ii) follows from (i) and Corollary 14.4, so it suﬃces to prove (i).",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3235",
+   "quote": "decomposition and P (M)⊂∪ mi=1(λi−Q+), where λ1,...,λ m∈ h∗.",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 46,
+   "evidence": "mit18_757_f23_lec_full.txt:3234",
+   "quote": "mod, which consists of ﬁnitely generated g-modules M with weight",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3249",
+   "quote": "If M ∈O then the weight subspaces of M are ﬁnite-",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3249",
+   "quote": "If M ∈O then the weight subspaces of M are ﬁnite-",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3276",
+   "quote": "The action of Z(g) on every M∈O factors through",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 84,
+   "evidence": "mit18_757_f23_lec_full.txt:3281",
+   "quote": "Lemma 15.3, this space is ﬁnite-dimensional, and it is preserved by z.",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3290",
+   "quote": "(i) Any M∈O has a canonical decomposition",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 85,
+   "evidence": "mit18_757_f23_lec_full.txt:3300",
+   "quote": "nihilator in M. This algebra is ﬁnite-dimensional, so has the form",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3324",
+   "quote": "Every object of O has ﬁnite length.",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 84,
+   "evidence": "mit18_757_f23_lec_full.txt:3336",
+   "quote": "Also by Lemma 15.3 we have dim M[S] < ∞.",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 86,
+   "evidence": "mit18_757_f23_lec_full.txt:3325",
+   "quote": "By Corollary 15.7 we may assume thatM has inﬁnitesimal char-",
+   "kind": "proof"
+  },
+  {
+   "from": 88,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3358",
+   "quote": "dim Hom(Mµ−ρ,Mλ−ρ) = 1 and Mµ−ρ can be uniquely realized as a",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:3359",
+   "quote": "submodule of Mλ−ρ. In particular, Lµ−ρ occurs in the composition se-",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 59,
+   "evidence": "mit18_757_f23_lec_full.txt:3381",
+   "quote": "by the Chevalley-Shephard-Todd theorem that for each x ∈ T the",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 89,
+   "evidence": "mit18_757_f23_lec_full.txt:3422",
+   "quote": "By Proposition 15.12, Wλ+Q is",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3511",
+   "quote": "If λ is dominant then Mλ−ρ is a projective object",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 51,
+   "evidence": "mit18_757_f23_lec_full.txt:3516",
+   "quote": "> λ−ρ. Thus every v∈ X[λ−ρ] is singular, so there is a unique",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3512",
+   "quote": "inO.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 86,
+   "evidence": "mit18_757_f23_lec_full.txt:3514",
+   "quote": "It suﬃces to show this on Oχλ(S), where S is the equivalence class",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3522",
+   "quote": "(ii) If λ∈ h∗ is dominant then the object V⊗Mλ−ρ∈O is projective.",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3521",
+   "quote": "(i) If P∈O is projective then so is V⊗P .",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 92,
+   "evidence": "mit18_757_f23_lec_full.txt:3531",
+   "quote": "(ii) follows from (i) and Proposition 16.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3533",
+   "quote": "and a ﬁnite-dimensional g-moduleV such that Hom(V⊗Mλ−ρ,Lµ)⁄= 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 49,
+   "evidence": "mit18_757_f23_lec_full.txt:3542",
+   "quote": "is a free graded U(n−)-module.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:3533",
+   "quote": "and a ﬁnite-dimensional g-moduleV such that Hom(V⊗Mλ−ρ,Lµ)⁄= 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 66,
+   "evidence": "mit18_757_f23_lec_full.txt:3540",
+   "quote": "(ii) This follows by Lemma 12.3 since every indecomposable projec-",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3534",
+   "quote": "ThusO has enough projectives.",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 95,
+   "evidence": "mit18_757_f23_lec_full.txt:3599",
+   "quote": "By Lemma 17.1, the centralizer Zg(e) is spanned by the highest",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "mit18_757_f23_lec_full.txt:3605",
+   "quote": "Since by Lemma 17.2 dim Zg(e) =r, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 97,
+   "evidence": "mit18_757_f23_lec_full.txt:3660",
+   "quote": "(i) This follows from Corollary 17.3 and the fact that every",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 98,
+   "evidence": "mit18_757_f23_lec_full.txt:3666",
+   "quote": "(iii) follows from (i) and Proposition 17.4, since Oe is smooth and",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "mit18_757_f23_lec_full.txt:3669",
+   "quote": "This follows from Proposition 17.6(iii) since gr(Uχ) = (Sg)0.",
+   "kind": "proof"
+  },
+  {
+   "from": 101,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3733",
+   "quote": "If M,N ∈O then Homﬁn(M,N ) is an admissible",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 87,
+   "evidence": "mit18_757_f23_lec_full.txt:3745",
+   "quote": "Thus, since M,N have ﬁnite length, it suﬃces to establish the result",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3755",
+   "quote": "ForM,N ∈O and a ﬁnite-dimensional g-module",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3761",
+   "quote": "dim Homg(Mλ,V ⊗Mλ) = dimV [0].",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3761",
+   "quote": "dim Homg(Mλ,V ⊗Mλ) = dimV [0].",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3796",
+   "quote": "φ :Uχλ+ρ→ Homﬁn(Mλ,Mλ)",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 99,
+   "evidence": "mit18_757_f23_lec_full.txt:3820",
+   "quote": "nonzero homogeneous element. Since O(N ) is a domain (Proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 78,
+   "evidence": "mit18_757_f23_lec_full.txt:3833",
+   "quote": "By Kostant’s theorem, the source of this map has dimension dim V [0],",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 103,
+   "evidence": "mit18_757_f23_lec_full.txt:3834",
+   "quote": "while by Proposition 18.5, so does the target. Since by Proposition 18.7",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 104,
+   "evidence": "mit18_757_f23_lec_full.txt:3826",
+   "quote": "(The Duﬂo-Joseph theorem) φ is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:3838",
+   "quote": "map V⊗Uχλ+ρ→ Homﬁn(Mλ,V ⊗Mλ) is an isomorphism.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 102,
+   "evidence": "mit18_757_f23_lec_full.txt:3839",
+   "quote": "This follows from Proposition 18.3 and Corollary 18.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 105,
+   "evidence": "mit18_757_f23_lec_full.txt:3839",
+   "quote": "This follows from Proposition 18.3 and Corollary 18.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 45,
+   "evidence": "mit18_757_f23_lec_full.txt:3843",
+   "quote": "whereν runs over weights of V .",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 82,
+   "evidence": "mit18_757_f23_lec_full.txt:3852",
+   "quote": "(iii) This follows from (i) since by Corollary 14.5 any irreducible",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 106,
+   "evidence": "mit18_757_f23_lec_full.txt:3849",
+   "quote": "(i) This follows from Corollary 18.9.",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 107,
+   "evidence": "mit18_757_f23_lec_full.txt:3862",
+   "quote": "This follows from Exercise 15.5 and Corollary 18.10.",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 6,
+   "evidence": "mit18_757_f23_lec_full.txt:3871",
+   "quote": "algebra g. Then by the Peter-Weyl theorem,x acts by zero onO(G) :=",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:3868",
+   "quote": "The homomorphism φ : U(g)→∏λ∈P+ End(Lλ)",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 93,
+   "evidence": "mit18_757_f23_lec_full.txt:3992",
+   "quote": "which is exact as V⊗Mλ−ρ is projective.",
+   "kind": "proof"
+  },
+  {
+   "from": 114,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:3998",
+   "quote": "Let X ∈ Obe a free U(n−)-module. Then for any",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 94,
+   "evidence": "mit18_757_f23_lec_full.txt:4009",
+   "quote": "By Proposition 16.6(ii), Pi are free U(n−)-modules, so the exact se-",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4019",
+   "quote": "IfX is standardly ﬁltered then ExtiO(X,M∨µ ) = 0 for",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "mit18_757_f23_lec_full.txt:4021",
+   "quote": "This follows from Lemma 20.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4024",
+   "quote": "Ext1O(X,M∨λ ) = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 115,
+   "evidence": "mit18_757_f23_lec_full.txt:4060",
+   "quote": "standardly ﬁltered, so by Corollary 20.2, Exti(Y,M∨µ ) = 0 for all i≥ 1,",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 117,
+   "evidence": "mit18_757_f23_lec_full.txt:4064",
+   "quote": "hence Z = E⊗Mλ by Lemma 20.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 117,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4030",
+   "quote": "a short exact sequence in O:",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4071",
+   "quote": "g-moduleV , the module V⊗Mλ is standardly ﬁltered.",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4069",
+   "quote": "(i) Every X ∈O which is a free U(n−)-module is",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 114,
+   "evidence": "mit18_757_f23_lec_full.txt:4073",
+   "quote": "(i) Follows from Theorem 20.3 and Lemma 20.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 116,
+   "evidence": "mit18_757_f23_lec_full.txt:4073",
+   "quote": "(i) Follows from Theorem 20.3 and Lemma 20.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 114,
+   "evidence": "mit18_757_f23_lec_full.txt:4097",
+   "quote": "standard ﬁltration ofPλ and Lemma 20.1, we have dim Hom(Pλ,M∨µ ) =",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 118,
+   "evidence": "mit18_757_f23_lec_full.txt:4084",
+   "quote": "Since by Corollary 20.5(ii) the projective covers Pλ of Lλ are stan-",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4156",
+   "quote": "(ii) (Mλ)∨ =M∨λ , L∨λ =Lλ.",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4156",
+   "quote": "(ii) (Mλ)∨ =M∨λ , L∨λ =Lλ.",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4154",
+   "quote": "(i) X∨∈O and has the same character and com-",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4160",
+   "quote": "of Lλ is P∨λ .",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 83,
+   "evidence": "mit18_757_f23_lec_full.txt:4159",
+   "quote": "O has enough injectives, namely the injective hull",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4205",
+   "quote": "in the composition series of Mλ−ρ (i.e., dλ−ρ,µ−ρ⁄= 0) then µ≼λ.",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4204",
+   "quote": "(Bernstein – I. Gelfand – S. Gelfand) If Lµ−ρ occurs",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4219",
+   "quote": "(ii) Lµ−ρ occurs in Mλ−ρ.",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4219",
+   "quote": "(ii) Lµ−ρ occurs in Mλ−ρ.",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4369",
+   "quote": "(ii) The multiplicity [My•λ :Lw•λ] equalsPy,w(1).",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4369",
+   "quote": "(ii) The multiplicity [My•λ :Lw•λ] equalsPy,w(1).",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 126,
+   "evidence": "mit18_757_f23_lec_full.txt:4368",
+   "quote": "(i) Py,w has non-negative coeﬃcients.",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4426",
+   "quote": "For a projective functor F denote by F (θ) the restriction of F to",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4433",
+   "quote": "iλ : Hom(F1,F 2)→ Hom(F1(Mλ−ρ),F 2(Mλ−ρ)).",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 105,
+   "evidence": "mit18_757_f23_lec_full.txt:4449",
+   "quote": "But this map is an isomorphism by the Duﬂo-Joseph theorem, as it is",
+   "kind": "proof"
+  },
+  {
+   "from": 130,
+   "to": 129,
+   "evidence": "mit18_757_f23_lec_full.txt:4432",
+   "quote": "LetF1,F 2 be projectiveθ-functors for θ =χλ. Let",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4454",
+   "quote": "(i) IfF1,F 2 are projective functors then every mor-",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4507",
+   "quote": "morphism F1(Mλ−ρ)∼=F2(Mλ−ρ) lifts to an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4506",
+   "quote": "(i) Let F1,F 2 be projective functors. Then: any iso-",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 129,
+   "evidence": "mit18_757_f23_lec_full.txt:4512",
+   "quote": "(iii) Every projective θ-functor is of the form F (θ) for a projective",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 130,
+   "evidence": "mit18_757_f23_lec_full.txt:4514",
+   "quote": "(i) follows from Proposition 22.5(i),(iii) and Theorem 22.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 132,
+   "to": 131,
+   "evidence": "mit18_757_f23_lec_full.txt:4514",
+   "quote": "(i) follows from Proposition 22.5(i),(iii) and Theorem 22.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4525",
+   "quote": "functor then F (Mλ−ρ) =Pµ−ρ for some µ∈ h∗.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 92,
+   "evidence": "mit18_757_f23_lec_full.txt:4531",
+   "quote": "(ii) Since F is indecomposable and Mλ−ρ is projective, F (Mλ−ρ) is",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4521",
+   "quote": "(i) Each projective functor F is a direct sum of",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "mit18_757_f23_lec_full.txt:4529",
+   "quote": "Then by Corollary 22.6(ii) we get a decomposition F◦ Πθ =⊕Ni=1Fi,",
+   "kind": "proof"
+  },
+  {
+   "from": 134,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4557",
+   "quote": "(i) If F1,F 2 are projective functors with [F1] = [F 2]",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 132,
+   "evidence": "mit18_757_f23_lec_full.txt:4563",
+   "quote": "(i) By Corollary 22.6, to prove (i), it suﬃces to show that",
+   "kind": "proof"
+  },
+  {
+   "from": 135,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4580",
+   "quote": "If F is a projective functor then [F ] commutes with",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 136,
+   "evidence": "mit18_757_f23_lec_full.txt:4654",
+   "quote": "We have shown in Lemma 23.3(ii) that there exists an indecomposable",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4589",
+   "quote": "Fµ sending Mλ−ρ to Pµ−ρ.",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 119,
+   "evidence": "mit18_757_f23_lec_full.txt:4609",
+   "quote": "d∗νj,γδγ =∑",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4588",
+   "quote": "(ii) For eachµ∈S there exists an indecomposable projective functor",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 133,
+   "evidence": "mit18_757_f23_lec_full.txt:4594",
+   "quote": "By Proposition 22.7(ii), F (Mλ−ρ) = Pµ−ρ, where µ∈ S. Let β :=",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 135,
+   "evidence": "mit18_757_f23_lec_full.txt:4587",
+   "quote": "(i) Theorem 23.2 holds;",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 89,
+   "evidence": "mit18_757_f23_lec_full.txt:4666",
+   "quote": "By Proposition 15.12, it is",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 90,
+   "evidence": "mit18_757_f23_lec_full.txt:4669",
+   "quote": "Proposition 16.1",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4703",
+   "quote": "tive functor Fξ such that Fξ(Mν−ρ) = 0 if χν⁄= χλ and Fξ(Mλ−ρ) =",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 128,
+   "evidence": "mit18_757_f23_lec_full.txt:4702",
+   "quote": "For any ξ∈ Ξ there exists an indecomposable projec-",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 132,
+   "evidence": "mit18_757_f23_lec_full.txt:4742",
+   "quote": "Corollary 22.6. It remains to show that any ξ∈ Ξ is obtained in this",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 135,
+   "evidence": "mit18_757_f23_lec_full.txt:4710",
+   "quote": "Since by Theorem 23.2 [F ]",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 139,
+   "evidence": "mit18_757_f23_lec_full.txt:4740",
+   "quote": "ξ = S∗(F )/W ∈ Ξ. If (µ,λ) is a proper representation of ξ then it",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 123,
+   "evidence": "mit18_757_f23_lec_full.txt:4730",
+   "quote": "there exists w∈W such that µ =wφ. Moreover, by Theorem 20.13,",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 137,
+   "evidence": "mit18_757_f23_lec_full.txt:4735",
+   "quote": "we get that µ≼ ψ. Thus we may apply Lemma 23.4 with ψ = µ. It",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 118,
+   "evidence": "mit18_757_f23_lec_full.txt:4771",
+   "quote": "By Corollary 20.5(i), V⊗Mλ−ρ has a standard ﬁltration whose com-",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 137,
+   "evidence": "mit18_757_f23_lec_full.txt:4775",
+   "quote": "dominant). Thus, applying Lemma 23.4 with φ =µ,ψ =wµ, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4834",
+   "quote": "(ii) The image of ν is the set of submodules of Mλ−ρ which are quo-",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 90,
+   "evidence": "mit18_757_f23_lec_full.txt:4877",
+   "quote": "with χµ = χλ,µ ≤ λ. Hence by Proposition 16.1 µ ≼ λ, as λ is",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 123,
+   "evidence": "mit18_757_f23_lec_full.txt:4878",
+   "quote": "dominant. (This also follows from Theorem 20.13). So if Wλ = 1 then",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 130,
+   "evidence": "mit18_757_f23_lec_full.txt:4858",
+   "quote": "i.e.,φ′Mλ−ρ◦~α =φMλ−ρ. But by Theorem 22.4, morphisms of projective",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 132,
+   "evidence": "mit18_757_f23_lec_full.txt:4866",
+   "quote": "under a morphism. But F is a projective θ-functor, so by Corollary",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 138,
+   "evidence": "mit18_757_f23_lec_full.txt:4868",
+   "quote": "by Theorem 23.6, ~F is a direct sum of Fξ",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4883",
+   "quote": "Let θ = χλ where λ is dominant. If Mλ−ρ is irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 105,
+   "evidence": "mit18_757_f23_lec_full.txt:4888",
+   "quote": "Mµ1−ρ ↪→ Mµ2−ρ and Mµ1−ρ is simple. Then in view of the Duﬂo-",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 141,
+   "evidence": "mit18_757_f23_lec_full.txt:4886",
+   "quote": "The direct implication follows from Theorem 24.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:4947",
+   "quote": "the annihilator of a simple highest weight module Lµ−ρ, where χµ =θ.",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 87,
+   "evidence": "mit18_757_f23_lec_full.txt:4948",
+   "quote": "The module M :=Mλ−ρ/ν(J) has ﬁnite length, so let us endow",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 141,
+   "evidence": "mit18_757_f23_lec_full.txt:4952",
+   "quote": "I1...InM = 0, hence I1...InMλ−ρ⊂ JMλ−ρ. By Theorem 24.1(i), this",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 143,
+   "evidence": "mit18_757_f23_lec_full.txt:4946",
+   "quote": "Every prime idealJ⊂Uθ is primitive and moreover is",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 144,
+   "evidence": "mit18_757_f23_lec_full.txt:4946",
+   "quote": "Every prime idealJ⊂Uθ is primitive and moreover is",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 48,
+   "evidence": "mit18_757_f23_lec_full.txt:4994",
+   "quote": "proper representation then Pξ is the unique indecomposable projective",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 91,
+   "evidence": "mit18_757_f23_lec_full.txt:4989",
+   "quote": "from Proposition 16.2 the indecomposable projectives and the simples",
+   "kind": "proof"
+  },
+  {
+   "from": 147,
+   "to": 138,
+   "evidence": "mit18_757_f23_lec_full.txt:4998",
+   "quote": "projective functors (Theorem 23.6) it follows that the indecomposable",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 91,
+   "evidence": "mit18_757_f23_lec_full.txt:5005",
+   "quote": "follows from Proposition 16.2.",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 147,
+   "evidence": "mit18_757_f23_lec_full.txt:5003",
+   "quote": "left generalized inﬁnitesimal characters. By Theorem 25.6, each sub-",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 113,
+   "evidence": "mit18_757_f23_lec_full.txt:5082",
+   "quote": "Hom(P,Hλ(Y )) is exact in Y since Hλ is exact by Proposition 19.7",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 130,
+   "evidence": "mit18_757_f23_lec_full.txt:5085",
+   "quote": "projective functors (Theorem 22.4). So Proposition 25.10 applies to",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 138,
+   "evidence": "mit18_757_f23_lec_full.txt:5087",
+   "quote": "the categoryO(λ) by the classiﬁcation of projective functors (Theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 146,
+   "evidence": "mit18_757_f23_lec_full.txt:5079",
+   "quote": "By Lemma 25.5, HC 1θ has",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 150,
+   "evidence": "mit18_757_f23_lec_full.txt:5085",
+   "quote": "So Proposition 25.10 applies to",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 4,
+   "evidence": "mit18_757_f23_lec_full.txt:5092",
+   "quote": "ﬁnitesimal character θ is realizable as Vﬁn whereV is a (not necessar-",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 23,
+   "evidence": "mit18_757_f23_lec_full.txt:5093",
+   "quote": "ily unitary) admissible representation of the complex simply connected",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 36,
+   "evidence": "mit18_757_f23_lec_full.txt:5112",
+   "quote": "19.5, we are done by Corollary 6.13.",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 92,
+   "evidence": "mit18_757_f23_lec_full.txt:5102",
+   "quote": "M(λ,µ) is injective in HC 1θ ifµ is dominant (since Mµ−ρ is projective,",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 112,
+   "evidence": "mit18_757_f23_lec_full.txt:5112",
+   "quote": "19.5, we are done by Corollary 6.13.",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 149,
+   "evidence": "mit18_757_f23_lec_full.txt:5098",
+   "quote": "ries module M(λ,µ) = Hom ﬁn(Mλ−ρ,M∨µ−ρ). Thus by Theorem 25.8",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 147,
+   "evidence": "mit18_757_f23_lec_full.txt:5149",
+   "quote": "Lξ = M(λ,µ). If ξ = (µ,λ) where λ∈Z≥1 then Lξ = L∗λ−1⊗Lµ−1 if",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 149,
+   "evidence": "mit18_757_f23_lec_full.txt:5153",
+   "quote": "by Theorem 25.8 M(λ,µ) is also simple and isomorphic to M(−λ,−µ).",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 1,
+   "evidence": "mit18_757_f23_lec_full.txt:5268",
+   "quote": "(Gelfand-Naimark) The irreducible unitary represen-",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 3,
+   "evidence": "mit18_757_f23_lec_full.txt:5268",
+   "quote": "(Gelfand-Naimark) The irreducible unitary represen-",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:5270",
+   "quote": "Harish-Chandra modules:",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 147,
+   "evidence": "mit18_757_f23_lec_full.txt:5252",
+   "quote": "i.e., λ = µ∈R. In this case by Theorem 25.6 the module M(µ,µ) is",
+   "kind": "proof"
+  },
+  {
+   "from": 154,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:5337",
+   "quote": "Γ(G/B,L−λ)∼=L∗λ.",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 52,
+   "evidence": "mit18_757_f23_lec_full.txt:5356",
+   "quote": "Γ(G/PS,L−λ,S)∼=L∗λ.",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 154,
+   "evidence": "mit18_757_f23_lec_full.txt:5354",
+   "quote": "that Γ(G/B,Lλ) = Γ(G/PS,Lλ,S). Thus we get",
+   "kind": "proof"
+  },
+  {
+   "from": 156,
+   "to": 99,
+   "evidence": "mit18_757_f23_lec_full.txt:5433",
+   "quote": "e =∑ri=1ei.",
+   "kind": "proof"
+  },
+  {
+   "from": 158,
+   "to": 157,
+   "evidence": "mit18_757_f23_lec_full.txt:5482",
+   "quote": "and by Theorem 27.11 they all have even dimension.",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 158,
+   "evidence": "mit18_757_f23_lec_full.txt:5485",
+   "quote": "This follows from Corollary 27.12 since N is a complete inter-",
+   "kind": "proof"
+  },
+  {
+   "from": 161,
+   "to": 160,
+   "evidence": "mit18_757_f23_lec_full.txt:5509",
+   "quote": "connected due to normality ofY by Proposition 27.14(iii),f is constant",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 156,
+   "evidence": "mit18_757_f23_lec_full.txt:5514",
+   "quote": "Letp :T∗F→N be the Springer resolution. Then",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 159,
+   "evidence": "mit18_757_f23_lec_full.txt:5517",
+   "quote": "(Corollary 27.13).",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 161,
+   "evidence": "mit18_757_f23_lec_full.txt:5516",
+   "quote": "This follows from Proposition 27.15 and the normality of N",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 163,
+   "evidence": "mit18_757_f23_lec_full.txt:5563",
+   "quote": "left (respectively, right) D(X)-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:5630",
+   "quote": "A left DX-module is the same thing as an OX-",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 166,
+   "evidence": "mit18_757_f23_lec_full.txt:5631",
+   "quote": "module with a ﬂat connection.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 79,
+   "evidence": "mit18_757_f23_lec_full.txt:5706",
+   "quote": "on the trivial representation, using the Harish-Chandra isomorphism,",
+   "kind": "proof"
+  },
+  {
+   "from": 168,
+   "to": 162,
+   "evidence": "mit18_757_f23_lec_full.txt:5713",
+   "quote": "isomorphism (Theorem 27.16).",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:5727",
+   "quote": "gory U0− mod is canonically equivalent to the category of D-modules",
+   "kind": "statement"
+  },
+  {
+   "from": 170,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:5732",
+   "quote": "D-aﬃne if the global sections functor Γ : M(X) → D(X)− mod",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 170,
+   "evidence": "mit18_757_f23_lec_full.txt:5736",
+   "quote": "areD-aﬃne.",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:5919",
+   "quote": "The support of an irreducible D-module is irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:5956",
+   "quote": "egoriesMZ(X)→M(Z ).",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 165,
+   "evidence": "mit18_757_f23_lec_full.txt:6002",
+   "quote": "Deﬁnition 30.8. A weaklyG-equivariantD-module onX is aDX-",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 176,
+   "evidence": "mit18_757_f23_lec_full.txt:6003",
+   "quote": "moduleE with a G-equivariant quasicoherent sheaf structure, where φ",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 177,
+   "evidence": "mit18_757_f23_lec_full.txt:6018",
+   "quote": "Deﬁnition 30.9. A (strongly)G-equivariantDX-module is a weakly",
+   "kind": "statement"
+  },
+  {
+   "from": 179,
+   "to": 177,
+   "evidence": "mit18_757_f23_lec_full.txt:6101",
+   "quote": "bundle ~X ↠X) is a weakly T -equivariantD ~X-module.",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 170,
+   "evidence": "mit18_757_f23_lec_full.txt:6104",
+   "quote": "Assume that X is a D-aﬃne variety and that",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 178,
+   "evidence": "mit18_757_f23_lec_full.txt:6106",
+   "quote": "global sections of DX. Then the category of K-equivariantDX-modules",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:6116",
+   "quote": "restrict to mutually inverse equivalences between the category of (g,K )-",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 169,
+   "evidence": "mit18_757_f23_lec_full.txt:6111",
+   "quote": "In particular, by the Beilinson-Bernstein localization theorem, Propo-",
+   "kind": "proof"
+  },
+  {
+   "from": 181,
+   "to": 173,
+   "evidence": "mit18_757_f23_lec_full.txt:6111",
+   "quote": "In particular, by the Beilinson-Bernstein localization theorem, Propo-",
+   "kind": "proof"
+  },
+  {
+   "from": 181,
+   "to": 178,
+   "evidence": "mit18_757_f23_lec_full.txt:6117",
+   "quote": "modules with inﬁnitesimal characterχλ−ρ and the category ofK-equivariant",
+   "kind": "statement"
+  },
+  {
+   "from": 181,
+   "to": 180,
+   "evidence": "mit18_757_f23_lec_full.txt:6111",
+   "quote": "In particular, by the Beilinson-Bernstein localization theorem, Propo-",
+   "kind": "proof"
+  },
+  {
+   "from": 182,
+   "to": 174,
+   "evidence": "mit18_757_f23_lec_full.txt:6132",
+   "quote": "by Proposition 30.2, the support Z of M is irreducible.",
+   "kind": "proof"
+  },
+  {
+   "from": 182,
+   "to": 175,
+   "evidence": "mit18_757_f23_lec_full.txt:6136",
+   "quote": "By Kashiwara’s theorem (Theorem 30.4)i†M is a simpleK-equivariant",
+   "kind": "proof"
+  },
+  {
+   "from": 182,
+   "to": 178,
+   "evidence": "mit18_757_f23_lec_full.txt:6127",
+   "quote": "many irreducible K-equivariant D-modules on X.",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 25,
+   "evidence": "mit18_757_f23_lec_full.txt:6184",
+   "quote": "Irreducible (g,K )-modules with (pure) inﬁnitesimal",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 181,
+   "evidence": "mit18_757_f23_lec_full.txt:6167",
+   "quote": "lary 30.20, if λ is antidominant then the Beilinson-Bernstein equiva-",
+   "kind": "proof"
+  },
+  {
+   "from": 184,
+   "to": 182,
+   "evidence": "mit18_757_f23_lec_full.txt:6187",
+   "quote": "character λx. Namely, π(O,V ) corresponds to M(O,V ) under the",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 183,
+   "evidence": "mit18_757_f23_lec_full.txt:6174",
+   "quote": "Proposition 31.3 along with Theorem 31.1 allows us to classify ir-",
+   "kind": "proof"
+  }
+ ]
+}

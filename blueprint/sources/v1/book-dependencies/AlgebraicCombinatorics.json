@@ -1,0 +1,280 @@
+{
+ "book": "AlgebraicCombinatorics",
+ "source": "MIT 18.318 Topics in Algebraic Combinatorics (Spring 2006, R. Stanley) topic notes, PDF text: hadamard.txt, sperner.txt (Sec. 4), boolean.txt (Sec. 5), young.txt (Sec. 6), notes2.txt (Sec. 8)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 2,
+   "evidence": "hadamard.txt:195",
+   "quote": "we have yet to use the hypothesis that ai = ±1. By Lemma 3 we",
+   "kind": "proof"
+  },
+  {
+   "from": 0,
+   "to": 6,
+   "evidence": "hadamard.txt:198",
+   "quote": "Hence by Corollary 7 and Theorem 9 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 0,
+   "to": 8,
+   "evidence": "hadamard.txt:198",
+   "quote": "Hence by Corollary 7 and Theorem 9 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "hadamard.txt:138",
+   "quote": "Thus by Lemma 4, 1 −",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 3,
+   "evidence": "hadamard.txt:150",
+   "quote": "Since 2 is a multiple of 1 −",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 4,
+   "evidence": "hadamard.txt:155",
+   "quote": "is a domain by Lemma 6, some factor",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "hadamard.txt:164",
+   "quote": "By the previous lemma, each βj has the form",
+   "kind": "proof"
+  },
+  {
+   "from": 8,
+   "to": 7,
+   "evidence": "hadamard.txt:193",
+   "quote": "is a root of unity by the previous lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "sperner.txt:127",
+   "quote": "Let P be a graded poset of rank n.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "sperner.txt:146",
+   "quote": "Let P be a graded poset of rank n.",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "sperner.txt:149",
+   "quote": "Then P is rank-unimodal and Sperner.",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "sperner.txt:289",
+   "quote": "Lemma 4.6 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 10,
+   "evidence": "sperner.txt:307",
+   "quote": "The boolean algebra Bn has the Sperner property.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 11,
+   "evidence": "sperner.txt:305",
+   "quote": "Combining Proposition 4.4, Lemma 4.5, and Theorem 4.7, we obtain the",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 12,
+   "evidence": "sperner.txt:305",
+   "quote": "Combining Proposition 4.4, Lemma 4.5, and Theorem 4.7, we obtain the",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "sperner.txt:305",
+   "quote": "Combining Proposition 4.4, Lemma 4.5, and Theorem 4.7, we obtain the",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "boolean.txt:119",
+   "quote": "The quotient poset Bn/G deﬁned above is graded of",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 11,
+   "evidence": "boolean.txt:222",
+   "quote": "It follows from Proposition 4.4, Lemma 4.5, and (20) that Bn/G is",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 12,
+   "evidence": "boolean.txt:222",
+   "quote": "It follows from Proposition 4.4, Lemma 4.5, and (20) that Bn/G is",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 14,
+   "evidence": "boolean.txt:209",
+   "quote": "Now by Theorem 4.7, Ui is one-to-one for i < n/2.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 16,
+   "evidence": "boolean.txt:182",
+   "quote": "Then the quotient poset",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 17,
+   "evidence": "boolean.txt:184",
+   "quote": "We have already seen in Proposition 5.6 that",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 18,
+   "evidence": "boolean.txt:187",
+   "quote": "The idea is to identify the basis element vO of",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "boolean.txt:193",
+   "quote": "(Note that by Lemma 5.8, Ui(vO ) does indeed have",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 16,
+   "evidence": "boolean.txt:243",
+   "quote": "We have x � y in BX /G if there",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "boolean.txt:246",
+   "quote": "Hence by Theorem 5.9 there",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 22,
+   "evidence": "young.txt:167",
+   "quote": "Let pi(m, n) denote the number of elements of L(m, n)",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "young.txt:186",
+   "quote": "the initial conditions of Lemma 6.5 show that",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "young.txt:300",
+   "quote": "by Lemma 6.8. Moreover, two",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 20,
+   "evidence": "young.txt:325",
+   "quote": "Combining the previous theorem with Theorem 5.9 yields:",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "young.txt:325",
+   "quote": "Combining the previous theorem with Theorem 5.9 yields:",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 25,
+   "evidence": "young.txt:448",
+   "quote": "By Theorem 6.6",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "young.txt:449",
+   "quote": "and Corollary 6.10, the size of the largest antichain in L(k, n−k)",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 30,
+   "evidence": "notes2.txt:185",
+   "quote": "If w is a word in U and D satisfying the conditions of Lemma 8.1, then",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "notes2.txt:275",
+   "quote": "When w = DnUn in Theorem 8.3 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 34,
+   "evidence": "notes2.txt:351",
+   "quote": "Since by Lemma 8.5 we have bi0(φ)",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "notes2.txt:362",
+   "quote": "and φ = 2m in Theorem 8.6.",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 31,
+   "evidence": "notes2.txt:388",
+   "quote": "we deduce from Lemma 8.2",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "notes2.txt:435",
+   "quote": "given by Theorem 8.8 yields (50).",
+   "kind": "proof"
+  }
+ ]
+}

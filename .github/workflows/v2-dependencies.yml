@@ -1,0 +1,160 @@
+# Builds the ATLAS v2 libraries and dumps, for every declaration, the v2
+# declarations its statement and proof use. The wiki generator collapses the
+# dump onto articles (scripts/extract_v2_lean_dependencies.py).
+
+name: v2 dependencies
+
+on:
+  push:
+    branches: ["wiki/**"]
+    paths:
+      - ".github/workflows/v2-dependencies.yml"
+      - "scripts/dump_v2_dependencies.lean"
+      - "scripts/extract_v2_lean_dependencies.py"
+      - "blueprint/roadmap/**"
+      - "MathlibExt/**"
+      - "CSLibExt/**"
+      - "WantedExt/**"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v2-dependencies-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dump:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Free disk space for Lean caches
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Add swap for cold Lean builds
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 16G /mnt/lean-swap
+          sudo chmod 600 /mnt/lean-swap
+          sudo mkswap /mnt/lean-swap
+          sudo swapon /mnt/lean-swap
+          free -h
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Restore local build
+        id: build-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # A module that fails upstream must not cost the rest of the dump: keep
+      # building, record the failures, and dump every module that compiled.
+      - name: Build the v2 libraries
+        run: |
+          # The runner's shell has -e on; turn it off so a failed module still
+          # lets the dump step run.
+          set +e -uo pipefail
+          lake build MathlibExt CSLibExt WantedExt 2>&1 | tee build.log
+          echo "lake build exit: ${PIPESTATUS[0]}"
+          grep -E '^(✖|error:)' build.log > build-failures.txt || true
+          cat build-failures.txt
+
+      # Saved even after a failed build, so the next run only rebuilds what is missing.
+      - name: Save local build
+        if: always() && steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Dump declaration dependencies
+        run: |
+          set -euo pipefail
+          olean_root=.lake/build/lib/lean
+          [ -d "$olean_root" ] || olean_root=.lake/build/lib
+          : > v2-modules.txt
+          : > v2-unbuilt.txt
+          for source in $(git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'WantedExt/*.lean'); do
+            module=$(echo "${source%.lean}" | tr / .)
+            if [ -f "$olean_root/${source%.lean}.olean" ]; then
+              echo "$module" >> v2-modules.txt
+            else
+              echo "$module" >> v2-unbuilt.txt
+            fi
+          done
+          echo "dumping $(wc -l < v2-modules.txt) modules; $(wc -l < v2-unbuilt.txt) did not build:"
+          cat v2-unbuilt.txt
+          # Importing every module at once fails when two of them declare the
+          # same name (an upstream copy of something Mathlib now has). Drop the
+          # ATLAS side of each collision and retry; v2-conflicts.txt lists them.
+          : > v2-conflicts.txt
+          dumped=
+          for _attempt in $(seq 1 30); do
+            if lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt > v2-dependencies.jsonl 2> dump.err; then
+              dumped=1
+              break
+            fi
+            cat dump.err
+            first=$(grep -oE "already contains '[^']+' from [A-Za-z0-9_.']+" dump.err | awk '{print $NF}' | head -1 || true)
+            second=$(grep -oE "import [A-Za-z0-9_.']+ failed" dump.err | awk '{print $2}' | head -1 || true)
+            if grep -qxF "$first" v2-modules.txt; then drop=$first
+            elif grep -qxF "$second" v2-modules.txt; then drop=$second
+            else exit 1
+            fi
+            echo "$drop (with $([ "$drop" = "$first" ] && echo "$second" || echo "$first"))" | tee -a v2-conflicts.txt
+            grep -vxF "$drop" v2-modules.txt > v2-modules.next && mv v2-modules.next v2-modules.txt
+          done
+          [ -n "$dumped" ] || exit 1
+          echo "collisions: $(wc -l < v2-conflicts.txt)"
+          cat v2-conflicts.txt
+          wc -l < v2-dependencies.jsonl
+          gzip -9 v2-dependencies.jsonl
+
+      - name: Collapse dependencies onto the exact roadmap article manifest
+        run: >-
+          python scripts/extract_v2_lean_dependencies.py
+          v2-dependencies.jsonl.gz
+          "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: v2-dependencies
+          path: |
+            v2-dependencies.jsonl.gz
+            v2-unbuilt.txt
+            v2-conflicts.txt
+            build-failures.txt
+            blueprint/sources/v2/lean-dependencies.json
+          retention-days: 14

@@ -1,0 +1,273 @@
+{
+ "book": "FourierAnalysis",
+ "source": "MIT OpenCourseWare 18.103 Fourier Analysis, Fall 2013, lecture notes: intro, booleanrings, lptheory, orthonormal, fseries1-3, fourierint1-2, brownian (PDF text)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "mit18_103f13_fseries3.txt:63",
+   "quote": "and Proposition 1 implies",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 24,
+   "evidence": "mit18_103f13_fseries1.txt:171",
+   "quote": "form an orthonormal basis for L2(T).",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 10,
+   "evidence": "mit18_103f13_fourierint1.txt:52",
+   "quote": "the deﬁnition by continuity in Corollary 2 for ˆf",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 10,
+   "evidence": "mit18_103f13_fourierint1.txt:86",
+   "quote": "the inverse Fourier tranform obtained by conti-",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 12,
+   "evidence": "mit18_103f13_fourierint1.txt:88",
+   "quote": "G(h)(x) = 12π∫ ∞−∞h(ξ)eixξdξ",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 8,
+   "evidence": "mit18_103f13_fourierint1.txt:89",
+   "quote": "Then h∈L1(R)∩L2(R) and Proposition 2 implies",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 10,
+   "evidence": "mit18_103f13_fourierint1.txt:77",
+   "quote": "Suppose that f∈L2(R). Then ˆf(ξ)1[−N,N ](ξ) is in L2(R)∩L1(R)",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 12,
+   "evidence": "mit18_103f13_fourierint1.txt:92",
+   "quote": "apply Theorem 4 to obtain",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 7,
+   "evidence": "mit18_103f13_fourierint1.txt:27",
+   "quote": "Corollary 1 leads to a deﬁnition of the Fourier transform for f∈L2(R)",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "mit18_103f13_fourierint1.txt:41",
+   "quote": "If f∈L2(R), and ˆf = 0 almost everywhere, then f = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 6,
+   "evidence": "mit18_103f13_fourierint1.txt:42",
+   "quote": "Fourier inversion formula on the Schwartz class extends by continuity to Fourier inversion",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 10,
+   "evidence": "mit18_103f13_fourierint1.txt:46",
+   "quote": "then for all f∈L2(R),",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 8,
+   "evidence": "mit18_103f13_fourierint1.txt:145",
+   "quote": "Then Proposition 2 gives",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 9,
+   "evidence": "mit18_103f13_fourierint1.txt:178",
+   "quote": "Theorem 2 applied to FN imply",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "mit18_103f13_fourierint1.txt:163",
+   "quote": "the inverse Fourier transform is 1/2π times the Fourier transform (with a sign",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 15,
+   "evidence": "mit18_103f13_fourierint1.txt:134",
+   "quote": "Thus the approximate identity theorem implies that ‖σN−f‖1 → 0",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 6,
+   "evidence": "mit18_103f13_fourierint2.txt:58",
+   "quote": "Since the Fourier transform is invertible on S, we can also write this as",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "mit18_103f13_fourierint2.txt:24",
+   "quote": "Then µ is uniquely determined by ˆµ.",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 6,
+   "evidence": "mit18_103f13_fourierint2.txt:145",
+   "quote": "But the set of all ˆϕ such that ϕ∈S is all ofS",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 16,
+   "evidence": "mit18_103f13_fourierint2.txt:104",
+   "quote": "ˆµj(ξ) = ˆµ(ξ)",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 16,
+   "evidence": "mit18_103f13_fourierint2.txt:353",
+   "quote": "compute the Fourier transform of the measure µn deﬁned by",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 18,
+   "evidence": "mit18_103f13_fourierint2.txt:378",
+   "quote": "Then we apply Proposition 2 and 3 to ﬁnish the proof.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "mit18_103f13_fourierint2.txt:378",
+   "quote": "Then we apply Proposition 2 and 3 to ﬁnish the proof.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 21,
+   "evidence": "mit18_103f13_fourierint2.txt:368",
+   "quote": "[1−ixξ/√n + (−ixξ)2/2n +R(−xξ/√n)]dµ1(x)",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 6,
+   "evidence": "mit18_103f13_fourierint2.txt:533",
+   "quote": "S(ϕ) =T ( ˇϕ)",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 23,
+   "evidence": "mit18_103f13_orthonormal.txt:152",
+   "quote": "continuity property (1),⟨uN , vN⟩→⟨ u, v⟩, gives (6).",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 24,
+   "evidence": "mit18_103f13_orthonormal.txt:110",
+   "quote": "Let ϕn be an orthonormal sequence in a Hilbert space H",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 25,
+   "evidence": "mit18_103f13_orthonormal.txt:110",
+   "quote": "orthonormal sequence in a Hilbert space H",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 20,
+   "evidence": "mit18_103f13_brownian.txt:42",
+   "quote": "the central limit theorem implies Xj tends to a gaussian with mean",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 31,
+   "evidence": "mit18_103f13_brownian.txt:294",
+   "quote": "is gaussian of mean zero follows from Proposition 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 33,
+   "evidence": "mit18_103f13_brownian.txt:295",
+   "quote": "According to Proposition 2 it remains to show that",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 36,
+   "evidence": "mit18_103f13_brownian.txt:668",
+   "quote": "|∇F (reit)|4(1−r)βrdrdt< ∞",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 17,
+   "evidence": "mit18_103f13_brownian.txt:147",
+   "quote": "By the uniqueness of the Fourier transform of measures, S =X1 +··· +Xn is gaussian",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "mit18_103f13_brownian.txt:242",
+   "quote": "by Proposition 1, a·Y is a gaussian random variable with mean zero.",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 31,
+   "evidence": "mit18_103f13_brownian.txt:281",
+   "quote": "from Proposition 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "mit18_103f13_brownian.txt:289",
+   "quote": "and by Lemma 1, Z satisﬁes (2).",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 34,
+   "evidence": "mit18_103f13_brownian.txt:609",
+   "quote": "By Lemma 2, E(|ajaj′akak′|)≤ 3.",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "mit18_103f13_brownian.txt:589",
+   "quote": "Rβ(2j + 2k + 1)",
+   "kind": "proof"
+  }
+ ]
+}

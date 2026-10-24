@@ -1,0 +1,18 @@
+# Two Sets Sumset Squares Wanted
+
+- [Pairwise Sums Squares](pairwise-sums-squares.md)
+- [Is Semi Magic Roots](is-semi-magic-roots.md)
+- [Lemma 1](exists-int-pairwise-sums-squares-scale-t.md)
+- [Lemma 2, triple construction](pairwise-sums-squares-triple-of-is-semi.md)
+- [Lemma 2, triple converse](exists-is-semi-magic-roots-of-pairwise-s.md)
+- [Lemma 2, quintuple construction](pairwise-sums-squares-quintuple-of-is-se.md)
+- [Lemma 2, quintuple converse](exists-is-semi-magic-roots-f-of-pairwise.md)
+- [Lemma 2, quadruple construction](pairwise-sums-squares-quadruple-of-is-se.md)
+- [Lemma 2, quadruple converse](exists-is-semi-magic-roots-gh-of-pairwis.md)
+- [Theorem 1, family (3.1)](pairwise-sums-squares-triple-family31.md)
+- [Theorem 1, family (3.2)](pairwise-sums-squares-triple-family32.md)
+- [Theorem 1, family (3.3)](pairwise-sums-squares-triple-family33.md)
+- [Theorem 2](pairwise-sums-squares-quintuple-family41.md)
+- [Theorem 3](pairwise-sums-squares-quadruple-family51.md)
+- [Theorem 4, family (5.8)](pairwise-sums-squares-quadruple-family58.md)
+- [Theorem 4, family (5.9)](pairwise-sums-squares-quadruple-family59.md)

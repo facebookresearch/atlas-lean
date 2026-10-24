@@ -1,0 +1,16 @@
+# Quantify
+
+- [Restrict](restrict.md)
+- [Reduced restrict](reduced-restrict.md)
+- [Is ROBDD restrict](is-robdd-restrict.md)
+- [Exists Var](exists-var.md)
+- [Forall Var](forall-var.md)
+- [Is ROBDD exists Var](is-robdd-exists-var.md)
+- [Sat Path](sat-path.md)
+- [Of Path](of-path.md)
+- [Eval of Path sat Path](eval-of-path-sat-path.md)
+- [Sat Path is Some of ne](sat-path-is-some-of-ne.md)
+- [Exists eval Bool eq false at iff](exists-eval-bool-eq-false-at-iff.md)
+- [Satisfy-one](sat-path-restrict-of-proposition.md)
+- [Eval Bool all True](eval-bool-all-true.md)
+- [Satisfy-one](of-proposition-sat-path.md)

@@ -1,0 +1,1099 @@
+{
+ "book": "BooleanFunctions",
+ "source": "MIT 18.218 Topics in Combinatorics: Analysis of Boolean Functions (Dor Minzer, Spring 2021), lecture notes lec1-lec17 (text/mit18_218s21_lec*.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 7,
+   "evidence": "mit18_218s21_lec3.txt:54",
+   "quote": "We recall from the last lecture that",
+   "kind": "proof"
+  },
+  {
+   "from": 0,
+   "to": 14,
+   "evidence": "mit18_218s21_lec3.txt:64",
+   "quote": "Chernoff’s bound.",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 1,
+   "evidence": "mit18_218s21_lec2.txt:39",
+   "quote": "Next, using Plancherel and Claim 1.1, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "mit18_218s21_lec2.txt:39",
+   "quote": "Next, using Plancherel and Claim 1.1, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "mit18_218s21_lec4.txt:46",
+   "quote": "Ii[f ] = k∂ifk22",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 1,
+   "evidence": "mit18_218s21_lec2.txt:105",
+   "quote": "Parseval.",
+   "kind": "proof"
+  },
+  {
+   "from": 7,
+   "to": 2,
+   "evidence": "mit18_218s21_lec2.txt:104",
+   "quote": "the claim follows from the last claim and",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 7,
+   "evidence": "mit18_218s21_lec2.txt:142",
+   "quote": "Using Claim 2.4 we calculate the innermost expectation",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 8,
+   "evidence": "mit18_218s21_lec2.txt:136",
+   "quote": "let (J, z) be a p-random restriction",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "mit18_218s21_lec2.txt:138",
+   "quote": "E W =d[f ¯ ] = fb(Q)2Pr",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 1,
+   "evidence": "mit18_218s21_lec2.txt:158",
+   "quote": "W =k[f]exp(−Θ(pd)) = kfk22exp(−Θ(pd))",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 8,
+   "evidence": "mit18_218s21_lec2.txt:149",
+   "quote": "let (J, z) be a p-random",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "mit18_218s21_lec2.txt:149",
+   "quote": "satisﬁes W>d[f] 6 ε",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "mit18_218s21_lec2.txt:153",
+   "quote": "Summing the previous claim, we have that",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 9,
+   "evidence": "mit18_218s21_lec2.txt:166",
+   "quote": "W ≈d[f]= W =k[f]",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 8,
+   "evidence": "mit18_218s21_lec2.txt:169",
+   "quote": "let (J, z) be a p-random restriction",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 9,
+   "evidence": "mit18_218s21_lec2.txt:169",
+   "quote": "satisﬁes W>d[f] 6 ε",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "mit18_218s21_lec2.txt:171",
+   "quote": "W ≈pd[f ¯E ] > Ω(W ≈d[f])",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "mit18_218s21_lec3.txt:31",
+   "quote": "The Chernoff bound applied on Yi",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 0,
+   "evidence": "mit18_218s21_lec3.txt:94",
+   "quote": "using the algorithm from Claim 2.1",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 1,
+   "evidence": "mit18_218s21_lec3.txt:88",
+   "quote": "sum up to fb(S)2 = kfk22 = 1",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "mit18_218s21_lec3.txt:112",
+   "quote": "algorithm from Claim 1.2, we may estimate fb(S)",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 17,
+   "evidence": "mit18_218s21_lec4.txt:36",
+   "quote": "I[f ] = Ii[f ].",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_218s21_lec4.txt:67",
+   "quote": "The proof is now concluded by noting that Ex [Zi,x] = Ii[f ].",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "mit18_218s21_lec4.txt:61",
+   "quote": "then I[f ] = Ex [sf (x)]",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 5,
+   "evidence": "mit18_218s21_lec4.txt:114",
+   "quote": "∂if (y) = fb(S)χS\\{i}(y)",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 1,
+   "evidence": "mit18_218s21_lec4.txt:124",
+   "quote": "the corollary follows from the last claim and Parseval",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 6,
+   "evidence": "mit18_218s21_lec4.txt:122",
+   "quote": "Corollary 5.2. Ii[f ] =",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "mit18_218s21_lec4.txt:124",
+   "quote": "the corollary follows from the last claim and Parseval",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 6,
+   "evidence": "mit18_218s21_lec4.txt:125",
+   "quote": "Corollary 5.3. I[f ] = |S| fb(S)2",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "mit18_218s21_lec4.txt:127",
+   "quote": "By deﬁnition and Corollary 5.2,",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 6,
+   "evidence": "mit18_218s21_lec4.txt:137",
+   "quote": "we have that I[f ] > var(f )",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "mit18_218s21_lec4.txt:138",
+   "quote": "This is immediate by the Fourier analytic formulas for var(f ) and I[f ].",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 6,
+   "evidence": "mit18_218s21_lec4.txt:152",
+   "quote": "there is i ∈ [n] such that Ii[f ] > c var(f )",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 45,
+   "evidence": "mit18_218s21_lec6.txt:178",
+   "quote": "we get from Theorem 3.1 that",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "mit18_218s21_lec5.txt:42",
+   "quote": "has degree 1, then‖f‖4 ⩽",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 1,
+   "evidence": "mit18_218s21_lec7.txt:90",
+   "quote": "‖f−G‖22 = ∑",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 5,
+   "evidence": "mit18_218s21_lec7.txt:107",
+   "quote": "Fixi⁄∈J, andg =∂if.",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 6,
+   "evidence": "mit18_218s21_lec7.txt:76",
+   "quote": "( I[f ]",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 23,
+   "evidence": "mit18_218s21_lec7.txt:106",
+   "quote": "2I[f]/ε ⩽ I[f]2I[f]/ε = ε2. (2)",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 41,
+   "evidence": "mit18_218s21_lec7.txt:114",
+   "quote": "ˆg(S)2 ⩽Ii[f]24/20.",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 26,
+   "evidence": "mit18_218s21_lec5.txt:119",
+   "quote": "it holds that‖Tρf‖q ⩽‖f‖p.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "mit18_218s21_lec5.txt:119",
+   "quote": "it holds that‖Tρf‖q ⩽‖f‖p.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 29,
+   "evidence": "mit18_218s21_lec5.txt:127",
+   "quote": "Tρf(x) =",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 29,
+   "evidence": "mit18_218s21_lec5.txt:155",
+   "quote": "whose edges are sampled according to the Tρ process",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "mit18_218s21_lec5.txt:167",
+   "quote": "it holds that ΦG(S) > 1−ε.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 29,
+   "evidence": "mit18_218s21_lec5.txt:177",
+   "quote": "⟨1S, Tρ1S⟩ = Prx∼{−1,1}n",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 30,
+   "evidence": "mit18_218s21_lec5.txt:188",
+   "quote": "In the penultimate inequality we used hypercontractivity.",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 32,
+   "evidence": "mit18_218s21_lec5.txt:174",
+   "quote": "the noisy hypercube graph is a small-set expander",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 33,
+   "evidence": "mit18_218s21_lec5.txt:183",
+   "quote": "[y∈S] = 1− ΦG(S).",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 34,
+   "evidence": "mit18_218s21_lec5.txt:174",
+   "quote": "the noisy hypercube graph is a small-set expander",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 26,
+   "evidence": "mit18_218s21_lec5.txt:200",
+   "quote": "[|f(x)| >t‖f‖2] ⩽e−t2/d2 .",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 26,
+   "evidence": "mit18_218s21_lec5.txt:227",
+   "quote": "[|f(x)| >θ‖f‖2] > (1−θ2)29d .",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 26,
+   "evidence": "mit18_218s21_lec5.txt:255",
+   "quote": "Then‖f‖2 ⩽ 3d‖f‖1.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 1,
+   "evidence": "mit18_218s21_lec7.txt:46",
+   "quote": "‖gi‖22 = ∑",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 5,
+   "evidence": "mit18_218s21_lec7.txt:62",
+   "quote": "For the ﬁrst sum, we consider the function ∂if(x), note it is 1,−1, 0 valued",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 6,
+   "evidence": "mit18_218s21_lec7.txt:20",
+   "quote": "log(1/Ii[f]) > var(f).",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 22,
+   "evidence": "mit18_218s21_lec7.txt:64",
+   "quote": "it is clearly bounded byIi[f]",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 41,
+   "evidence": "mit18_218s21_lec7.txt:63",
+   "quote": "so by Claim 2 in the last lecture the ﬁrst sum is at mostIi[f]24/20",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 1,
+   "evidence": "mit18_218s21_lec6.txt:112",
+   "quote": "to bound is‖f ⩽d‖22 = ∑",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 6,
+   "evidence": "mit18_218s21_lec7.txt:145",
+   "quote": "I[f] > Pr [f(x) =−1] log",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 6,
+   "evidence": "mit18_218s21_lec6.txt:176",
+   "quote": "there isi∈ [n] such thatIi[f] > Ω( lognn var(f)).",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 45,
+   "evidence": "mit18_218s21_lec6.txt:178",
+   "quote": "we get from Theorem 3.1 that",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 17,
+   "evidence": "mit18_218s21_lec6.txt:189",
+   "quote": "andIi[f] =O(logn/n) for alli∈ [n].",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 5,
+   "evidence": "mit18_218s21_lec6.txt:137",
+   "quote": "consider the function g =∂if(x); note thatg is−1, 0, 1 valued",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 6,
+   "evidence": "mit18_218s21_lec6.txt:126",
+   "quote": "be such that I[f] ⩽ Kvar(f)",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 21,
+   "evidence": "mit18_218s21_lec6.txt:142",
+   "quote": "If i∈ S,ˆg(S) = ˆf(S) and",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 23,
+   "evidence": "mit18_218s21_lec6.txt:130",
+   "quote": "I[f] is the average degree, a Markov-inequality type bound shows",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 41,
+   "evidence": "mit18_218s21_lec6.txt:138",
+   "quote": "so by Lemma 2.2 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 6,
+   "evidence": "mit18_218s21_lec7.txt:158",
+   "quote": "µ(V− boundary(S))I[f] > Ω(var(f)2).",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 68,
+   "evidence": "mit18_218s21_lec11-12.txt:232",
+   "quote": "As we argued last time, by moving from F to its upwards",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 71,
+   "evidence": "mit18_218s21_lec11-12.txt:234",
+   "quote": "We now take J from Lemma 3.6",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 74,
+   "evidence": "mit18_218s21_lec11-12.txt:234",
+   "quote": "choose (r, ε0) from Lemma 4.3",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 6,
+   "evidence": "mit18_218s21_lec7.txt:241",
+   "quote": "Ii[f]2. Talagrand showed that:",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 29,
+   "evidence": "mit18_218s21_lec8-10.txt:16",
+   "quote": "deﬁned as Stabρ(f ) = ⟨f, Tρf⟩.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:37",
+   "quote": "Ii[f ] ⩽τ for alli∈ [n], then",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "mit18_218s21_lec8-10.txt:38",
+   "quote": "Stabρ(f ) ⩽ Stabρ(Majority) +δ.",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 1,
+   "evidence": "mit18_218s21_lec8-10.txt:53",
+   "quote": "Proof. Plancherel.",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 51,
+   "evidence": "mit18_218s21_lec8-10.txt:50",
+   "quote": "Then Stabρ(f ) =∑",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 29,
+   "evidence": "mit18_218s21_lec8-10.txt:63",
+   "quote": "according to theρ-correlated distribution over{−1, 1}n",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 51,
+   "evidence": "mit18_218s21_lec8-10.txt:104",
+   "quote": "Theorem 1.4 (Sheppards Formula). Stabρ(Majorityn)",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 1,
+   "evidence": "mit18_218s21_lec8-10.txt:176",
+   "quote": "n∑k=0W =k[f ] =− 13‖f‖22 =− 13.",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:171",
+   "quote": "− 13 = Stab−1/3(f ) = n∑k=0(− 13)kW =k[f ],",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 51,
+   "evidence": "mit18_218s21_lec8-10.txt:165",
+   "quote": "Thus, Ex,y,z [f (x)f (y)] = Stab−1/3(f )",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 53,
+   "evidence": "mit18_218s21_lec8-10.txt:169",
+   "quote": "We now use Claim 1.3 to extract from this information",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 56,
+   "evidence": "mit18_218s21_lec8-10.txt:154",
+   "quote": "Claim 2.2,",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 57,
+   "evidence": "mit18_218s21_lec8-10.txt:165",
+   "quote": "so (xi,yi) isρ-correlated withρ =− 13.",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 1,
+   "evidence": "mit18_218s21_lec8-10.txt:190",
+   "quote": "= 827‖f−f =1‖22,",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:190",
+   "quote": "Stab−1/3(f ) + 13 = ∞∑k=0( 13 +(− 13)k)W =k[f ]",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 53,
+   "evidence": "mit18_218s21_lec8-10.txt:190",
+   "quote": "Stab−1/3(f ) + 13 = ∞∑k=0( 13 +(− 13)k)W =k[f ]",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 51,
+   "evidence": "mit18_218s21_lec8-10.txt:203",
+   "quote": "NSε(f ) = 12− 12 Stab1−2ε(f ).",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 53,
+   "evidence": "mit18_218s21_lec8-10.txt:214",
+   "quote": "Proof. Plug in Claim 1.3 into the deﬁnition of NSε.",
+   "kind": "proof"
+  },
+  {
+   "from": 60,
+   "to": 59,
+   "evidence": "mit18_218s21_lec8-10.txt:213",
+   "quote": "Then NSε(f ) = 12∑S",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:228",
+   "quote": "Ii[f ]2. Before we state the theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:238",
+   "quote": "W =k[f ] ⩽",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:228",
+   "quote": "Ii[f ]2. Before we state the theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:269",
+   "quote": "W =k[f ] ⩽√M (f ).",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 61,
+   "evidence": "mit18_218s21_lec8-10.txt:247",
+   "quote": "We ﬁrst show several consequences of",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:228",
+   "quote": "Ii[f ]2. Before we state the theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 59,
+   "evidence": "mit18_218s21_lec8-10.txt:271",
+   "quote": "12 var(f )− NSε(f )",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "mit18_218s21_lec8-10.txt:272",
+   "quote": "Letc> 0 be from the previous corollary",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:228",
+   "quote": "Ii[f ]2. Before we state the theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 59,
+   "evidence": "mit18_218s21_lec8-10.txt:288",
+   "quote": "12 var(f )− NSε(f )",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 6,
+   "evidence": "mit18_218s21_lec8-10.txt:228",
+   "quote": "Ii[f ]2. Before we state the theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:293",
+   "quote": "W =k[f ] ⩽CkM (f ) log",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 17,
+   "evidence": "mit18_218s21_lec8-10.txt:431",
+   "quote": "Ez,y[1f (y,z)⁄=f (y,z+ei)]2 =T 2Ii[f ]2,",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 36,
+   "evidence": "mit18_218s21_lec8-10.txt:477",
+   "quote": "tail bound from Lecture 5.",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 67,
+   "evidence": "mit18_218s21_lec8-10.txt:399",
+   "quote": "Fix (I,J ) as in the claim.",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 1,
+   "evidence": "mit18_218s21_lec8-10.txt:314",
+   "quote": "W ⩽k[g] =⟨g⩽k,g⟩",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:312",
+   "quote": "W ⩽k[g] ⩽δ2(e log(2/δ))k.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 9,
+   "evidence": "mit18_218s21_lec8-10.txt:360",
+   "quote": "ˆf (S)2 > 1eW =k[f ].",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 69,
+   "evidence": "mit18_218s21_lec11-12.txt:99",
+   "quote": "We say F is (r, ε) quasi-random with respect to p if 1F is",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 69,
+   "evidence": "mit18_218s21_lec11-12.txt:106",
+   "quote": "Pr [fT →z is not (r, ε) quasi-random] 6 δ.",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 20,
+   "evidence": "mit18_218s21_lec11-12.txt:186",
+   "quote": "By the Russo-Margulis lemma, as f is monotone",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 28,
+   "evidence": "mit18_218s21_lec11-12.txt:186",
+   "quote": "so by Friedgut’s junta theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 69,
+   "evidence": "mit18_218s21_lec11-12.txt:182",
+   "quote": "If f is (r, ε) quasi-random, then µp+ζ/2 (f ) > 0.9.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 70,
+   "evidence": "mit18_218s21_lec11-12.txt:224",
+   "quote": "and each one of them is (r, ε)-",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 72,
+   "evidence": "mit18_218s21_lec11-12.txt:227",
+   "quote": "ﬁnd (r, ε) from Lemma 4.1",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 73,
+   "evidence": "mit18_218s21_lec11-12.txt:229",
+   "quote": "we conclude from Claim 4.2",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 6,
+   "evidence": "mit18_218s21_lec13-14.txt:40",
+   "quote": "C Ii[f ]3/2",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 21,
+   "evidence": "mit18_218s21_lec13-14.txt:196",
+   "quote": "∂ t+1f (Ut+1) = fb(S)χS\\{t+1}(Ut+1),",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 79,
+   "evidence": "mit18_218s21_lec13-14.txt:221",
+   "quote": "C ·k∂ t+1fk33 6 C( 2 k∂t+1fk2)3",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 75,
+   "evidence": "mit18_218s21_lec13-14.txt:47",
+   "quote": "Using the last theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 6,
+   "evidence": "mit18_218s21_lec13-14.txt:233",
+   "quote": "and maxi Ii[f ] 6 τ , then",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 75,
+   "evidence": "mit18_218s21_lec13-14.txt:275",
+   "quote": "where we used Theorem 1.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 81,
+   "evidence": "mit18_218s21_lec13-14.txt:279",
+   "quote": "using Theorem 5.2",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 6,
+   "evidence": "mit18_218s21_lec13-14.txt:294",
+   "quote": "function such that maxi Ii[f 6d] 6 τ",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 80,
+   "evidence": "mit18_218s21_lec13-14.txt:306",
+   "quote": "The result now follows from Theorem 5.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "mit18_218s21_lec13-14.txt:324",
+   "quote": "hf, Uρfi.",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 84,
+   "evidence": "mit18_218s21_lec13-14.txt:330",
+   "quote": "with E[f ] = 0. Then Stabρ(f ) 6",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 6,
+   "evidence": "mit18_218s21_lec13-14.txt:336",
+   "quote": "balanced and maxi Ii[f 6d] 6 τ, then",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 51,
+   "evidence": "mit18_218s21_lec13-14.txt:337",
+   "quote": "Stabρ(f ) 6 1 − 2 Arccos(ρ) + ε.",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 82,
+   "evidence": "mit18_218s21_lec13-14.txt:346",
+   "quote": "Thus, by Theorem 5.3 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 83,
+   "evidence": "mit18_218s21_lec13-14.txt:354",
+   "quote": "T√ ρf0 = U√ ρf0",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 84,
+   "evidence": "mit18_218s21_lec13-14.txt:363",
+   "quote": "= Stabρ(F ) + 4(1 − δ)d",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 85,
+   "evidence": "mit18_218s21_lec13-14.txt:353",
+   "quote": "Next, we would like to apply Theorem 6.3.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "mit18_218s21_lec15.txt:180",
+   "quote": "Unique-Games instance Ψ, it is NP-hard to distinguish between:",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 93,
+   "evidence": "mit18_218s21_lec16.txt:112",
+   "quote": "Starting with a bi-partite UG instance",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 94,
+   "evidence": "mit18_218s21_lec16.txt:61",
+   "quote": "Assuming the Unique-Games Conjecture",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 93,
+   "evidence": "mit18_218s21_lec16.txt:78",
+   "quote": "Unique-Games instance Ψ, it is NP-hard to distinguish between:",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 51,
+   "evidence": "mit18_218s21_lec16.txt:193",
+   "quote": "= (1 − E [Stab−ρ[gu]]).",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 93,
+   "evidence": "mit18_218s21_lec16.txt:145",
+   "quote": "if Ψ is at least 1 − η satisﬁable",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 99,
+   "evidence": "mit18_218s21_lec16.txt:204",
+   "quote": "as in Theorem 2.5 and apply it",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 51,
+   "evidence": "mit18_218s21_lec16.txt:200",
+   "quote": "2 Stab−ρ(f) > Arccos(ρ) − 1 − δ.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 53,
+   "evidence": "mit18_218s21_lec16.txt:201",
+   "quote": "by the Fourier expression for",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 57,
+   "evidence": "mit18_218s21_lec16.txt:200",
+   "quote": "2 Stab−ρ(f) > Arccos(ρ) − 1 − δ.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 86,
+   "evidence": "mit18_218s21_lec16.txt:202",
+   "quote": "By the Majority is stablest theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 101,
+   "to": 94,
+   "evidence": "mit18_218s21_lec17.txt:14",
+   "quote": "Theorem 1.1. Assuming UGC",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 105,
+   "evidence": "mit18_218s21_lec17.txt:88",
+   "quote": "This lemma, together with Theorem 1.5, immediately implies Theorem 1.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 101,
+   "to": 106,
+   "evidence": "mit18_218s21_lec17.txt:88",
+   "quote": "This lemma, together with Theorem 1.5, immediately implies Theorem 1.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 94,
+   "evidence": "mit18_218s21_lec17.txt:20",
+   "quote": "Corollary 1.2. Assuming UGC",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 93,
+   "evidence": "mit18_218s21_lec17.txt:52",
+   "quote": "non-bipartite Unique-Games",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 94,
+   "evidence": "mit18_218s21_lec17.txt:60",
+   "quote": "Theorem 1.5. Assuming UGC",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 104,
+   "evidence": "mit18_218s21_lec17.txt:60",
+   "quote": "the problem gap-StrongishUGt[1 − η, η] is NP-hard.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 28,
+   "evidence": "mit18_218s21_lec17.txt:126",
+   "quote": "by Friedgut’s Theorem we get that",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 104,
+   "evidence": "mit18_218s21_lec17.txt:84",
+   "quote": "If Ψ is from the YES case of Strongish Unique-Games",
+   "kind": "statement"
+  }
+ ]
+}

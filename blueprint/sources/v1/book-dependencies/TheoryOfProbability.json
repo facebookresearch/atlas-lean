@@ -1,0 +1,875 @@
+{
+ "book": "TheoryOfProbability",
+ "source": "MIT OCW 18.175 Theory of Probability (Spring 2014, Scott Sheffield), lecture slide PDFs 1-39 converted to text (no Lecture 19 file; Lectures 21, 22, 24 are 'not yet posted' placeholders)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 2,
+   "evidence": "MIT18_175S14_Lecture3.txt:101",
+   "quote": "Proved using Carathe´ eodory Extension Theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 3,
+   "to": 2,
+   "evidence": "MIT18_175S14_Lecture3.txt:126",
+   "quote": "Also proved using Carathe´ eodory Extension Theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 8,
+   "evidence": "MIT18_175S14_Lecture5.txt:169",
+   "quote": "bounded convergence, take limits.",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "MIT18_175S14_Lecture5.txt:184",
+   "quote": "one direction obvious, Fatou gives other.",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "MIT18_175S14_Lecture5.txt:188",
+   "quote": "Fatou for functions g + fn ≥ 0 gives one",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 14,
+   "evidence": "MIT18_175S14_Lecture9.txt:154",
+   "quote": "Use Fubini (interchange sum/integral,",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 17,
+   "evidence": "MIT18_175S14_Lecture9.txt:180",
+   "quote": "Chebyshev, if E> 0 then",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 20,
+   "evidence": "MIT18_175S14_Lecture9.txt:152",
+   "quote": "(Borel Cantelli,",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 17,
+   "evidence": "MIT18_175S14_Lecture9.txt:57",
+   "quote": "Then Chebyshev implies",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 20,
+   "evidence": "MIT18_175S14_Lecture9.txt:63",
+   "quote": "Use Borel Cantelli to get a.s.",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 1,
+   "evidence": "MIT18_175S14_Lecture7.txt:189",
+   "quote": "use π − λ to extend",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 5,
+   "evidence": "MIT18_175S14_Lecture8.txt:214",
+   "quote": "follows that E [X ] ≥ E [Y ]",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "MIT18_175S14_Lecture8.txt:222",
+   "quote": "Markov’s inequality with a = k2",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 14,
+   "evidence": "MIT18_175S14_Lecture15.txt:241",
+   "quote": "second statement, ﬁrst play around with Fubini and establish",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture8.txt:478",
+   "quote": "lim φXn (t) = φX (t)",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture8.txt:479",
+   "quote": "for all t, then Xn converge in law to X .",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 31,
+   "evidence": "MIT18_175S14_Lecture15.txt:243",
+   "quote": "tightness of the µn.",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 34,
+   "evidence": "MIT18_175S14_Lecture15.txt:247",
+   "quote": "converges to fdµ for every bounded continuous f .",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 20,
+   "evidence": "MIT18_175S14_Lecture9.txt:42",
+   "quote": "Use Borel-Cantelli.",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 32,
+   "evidence": "MIT18_175S14_Lecture10.txt:74",
+   "quote": "If X1, X2,... are independent and A ∈T then",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 20,
+   "evidence": "MIT18_175S14_Lecture11.txt:86",
+   "quote": "apply Borel-Cantelli to see that",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 23,
+   "evidence": "MIT18_175S14_Lecture11.txt:82",
+   "quote": "Kolmogorov zero-one law",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "MIT18_175S14_Lecture11.txt:89",
+   "quote": "Kolmogorov maximal inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture12.txt:134",
+   "quote": "Theorem: If Fn → F∞, then we can ﬁnd corresponding",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 8,
+   "evidence": "MIT18_175S14_Lecture12.txt:141",
+   "quote": "use bounded convergence theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture12.txt:138",
+   "quote": "Theorem: Xn =⇒ X∞ if and only if for every bounded",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "MIT18_175S14_Lecture12.txt:140",
+   "quote": "Deﬁne Xn on common sample space so converge",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 8,
+   "evidence": "MIT18_175S14_Lecture12.txt:146",
+   "quote": "use bounded convergence theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture12.txt:143",
+   "quote": "Then Xn =⇒ X∞",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 33,
+   "evidence": "MIT18_175S14_Lecture12.txt:145",
+   "quote": "Deﬁne Xn on common sample space so converge",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 31,
+   "evidence": "MIT18_175S14_Lecture12.txt:172",
+   "quote": "Fn are tight.",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 36,
+   "evidence": "MIT18_175S14_Lecture12.txt:170",
+   "quote": "Every subsequential limit of the Fn above is the",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 15,
+   "evidence": "MIT18_175S14_Lecture13.txt:180",
+   "quote": "Deﬁne log moment generating function of X by",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 28,
+   "evidence": "MIT18_175S14_Lecture13.txt:183",
+   "quote": "Deﬁne Legendre transform of Λ by",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "MIT18_175S14_Lecture13.txt:186",
+   "quote": "µn satisfy LDP with convex rate",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture15.txt:197",
+   "quote": "is a characteristic function of a some probability",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture15.txt:265",
+   "quote": "the characteristic function φ of µ has",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 19,
+   "evidence": "MIT18_175S14_Lecture15.txt:270",
+   "quote": "This and the continuity theorem together imply the central",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture15.txt:274",
+   "quote": "converges in law to a standard normal.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture16.txt:168",
+   "quote": "Use characteristic functions φn,m = φXn,m",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture16.txt:166",
+   "quote": "=⇒ σχ (where χ is",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 14,
+   "evidence": "MIT18_175S14_Lecture16.txt:191",
+   "quote": "with Fubini, error estimates.",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture16.txt:190",
+   "quote": "characteristic function with compact support.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture17.txt:303",
+   "quote": "Just write down the log characteristic functions",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 19,
+   "evidence": "MIT18_175S14_Lecture17.txt:307",
+   "quote": "conditions of the continuity theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture17.txt:301",
+   "quote": "Sn = Xn,1 + ... + Xn,n =⇒ Z",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 46,
+   "evidence": "MIT18_175S14_Lecture17.txt:301",
+   "quote": "Z is Poisson(λ).",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture16.txt:207",
+   "quote": "Observe that if φX (λ) = 1 for some λ",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 18,
+   "evidence": "MIT18_175S14_Lecture16.txt:221",
+   "quote": "Use characteristic functions, reduce to periodic",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 45,
+   "evidence": "MIT18_175S14_Lecture16.txt:213",
+   "quote": "Assume Xi are i.i.d. lattice with EXi = 0 and",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 30,
+   "evidence": "MIT18_175S14_Lecture18.txt:149",
+   "quote": "converges in law to limiting",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 55,
+   "evidence": "MIT18_175S14_Lecture23.txt:96",
+   "quote": "Hewitt-Savage implies the lim sup Sn and",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture23.txt:176",
+   "quote": "N a stopping time with",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture23.txt:187",
+   "quote": "stopping time with EN < ∞ then ESN = EX1EN.",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture23.txt:191",
+   "quote": "If N is a stopping time with EN < ∞ then",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 53,
+   "evidence": "MIT18_175S14_Lecture25.txt:73",
+   "quote": "ν is absolutely continuous w.r.t. µ,",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:286",
+   "quote": "Xn are uniformly integrable",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture26.txt:119",
+   "quote": "is a version of P(X ∈ A|G).",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture27.txt:253",
+   "quote": "values Xn − E (Xn|Fn−1)).",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture27.txt:244",
+   "quote": "Any submartingale Xn can be",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture28.txt:207",
+   "quote": "E E (Xn − Xm)Y |Fm",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:204",
+   "quote": "Let Xn be a martingale with EX 2 < ∞",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 60,
+   "evidence": "MIT18_175S14_Lecture29.txt:228",
+   "quote": "previous result implies Xn → X in probability.",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:300",
+   "quote": "It’s uniformly integrable.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 68,
+   "evidence": "MIT18_175S14_Lecture29.txt:227",
+   "quote": "martingale convergence then implies Xn → X",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:299",
+   "quote": "Following are equivalent for a submartingale:",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 68,
+   "evidence": "MIT18_175S14_Lecture28.txt:186",
+   "quote": "martingale convergence theorem Xn → X a.s.",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:183",
+   "quote": "Theorem: If Xn is a martingale with sup E |Xn|p < ∞ where",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture27.txt:217",
+   "quote": "If Xn is a submartingale",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 61,
+   "evidence": "MIT18_175S14_Lecture26.txt:121",
+   "quote": "Theorem: Regular conditional probabilities exist if (S, S) is",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 68,
+   "evidence": "MIT18_175S14_Lecture28.txt:186",
+   "quote": "martingale convergence theorem Xn → X a.s.",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:183",
+   "quote": "Theorem: If Xn is a martingale with sup E |Xn|p < ∞ where",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture28.txt:211",
+   "quote": "E (X 2|Fm)",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:209",
+   "quote": "If Xn is a martingale with",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 10,
+   "evidence": "MIT18_175S14_Lecture28.txt:244",
+   "quote": "Use monotone",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture28.txt:236",
+   "quote": "E (Xm−Xm−1)2|Fm−1",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 63,
+   "evidence": "MIT18_175S14_Lecture28.txt:233",
+   "quote": "By Doob’s decomposition",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:232",
+   "quote": "Suppose we have a martingale Xn with EX 2 < ∞ for all n.",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 63,
+   "evidence": "MIT18_175S14_Lecture29.txt:168",
+   "quote": "By Doob, can write",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 67,
+   "evidence": "MIT18_175S14_Lecture28.txt:265",
+   "quote": "use L2 convergence theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:260",
+   "quote": "Suppose we have a martingale Xn with EX 2 < ∞ for all n.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:286",
+   "quote": "Xn are uniformly integrable",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture26.txt:180",
+   "quote": "if Xn is a martingale w.r.t. Fn and φ is convex with",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture28.txt:310",
+   "quote": "Suppose E (Xn+1|Fn) = X with n ≤ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 60,
+   "evidence": "MIT18_175S14_Lecture28.txt:316",
+   "quote": "deduce convergence in L1",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:315",
+   "quote": "the Xn are uniformly integrable, and we can",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture28.txt:331",
+   "quote": "For any stopping time N, XN∧n is uniformly",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:330",
+   "quote": "Let Xn be a uniformly integrable submartingale.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:330",
+   "quote": "Let Xn be a uniformly integrable submartingale.",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:333",
+   "quote": "Xn1(N>n) is uniformly",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:330",
+   "quote": "Let Xn be a uniformly integrable submartingale.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture28.txt:335",
+   "quote": "For any stopping time N ≤∞, we have",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:330",
+   "quote": "Let Xn be a uniformly integrable submartingale.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:330",
+   "quote": "Let Xn be a uniformly integrable submartingale.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture28.txt:338",
+   "quote": "L ≤ M are stopping times",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture28.txt:339",
+   "quote": "YL ≤ E (YM |FL)",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture28.txt:338",
+   "quote": "YM∧n is a uniformly integrable",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture28.txt:339",
+   "quote": "submartingale, then EYL ≤ EYM",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture29.txt:252",
+   "quote": "Xn = E (X |Fn).",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 65,
+   "evidence": "MIT18_175S14_Lecture29.txt:248",
+   "quote": "It’s uniformly integrable.",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture29.txt:247",
+   "quote": "equivalent for a martingale:",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 82,
+   "evidence": "MIT18_175S14_Lecture30.txt:404",
+   "quote": "probability p if P(Xn+1 ∈ B|Fn) = p(Xn, B).",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "MIT18_175S14_Lecture30.txt:441",
+   "quote": "chosen from Pµ is Markov chain.",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 82,
+   "evidence": "MIT18_175S14_Lecture30.txt:443",
+   "quote": "µ and transition p,",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 83,
+   "evidence": "MIT18_175S14_Lecture30.txt:442",
+   "quote": "If Xn is any Markov chain with initial distribution",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 89,
+   "evidence": "MIT18_175S14_Lecture30.txt:312",
+   "quote": "Say Markov chain is ergodic if some power of the transition",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture31.txt:303",
+   "quote": "Eµ(Y ◦ θn|Fn) = EXn Y .",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 83,
+   "evidence": "MIT18_175S14_Lecture31.txt:300",
+   "quote": "let Pµ be Markov chain measure",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 50,
+   "evidence": "MIT18_175S14_Lecture31.txt:305",
+   "quote": "stopping time N and function Y can vary with time.",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture31.txt:308",
+   "quote": "Eµ(YN ◦ θN |FN ) = EXN YN ,",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "MIT18_175S14_Lecture31.txt:304",
+   "quote": "Can replace n with a.s. ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture26.txt:154",
+   "quote": "E (Xn+1|Fn) = Xn",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 62,
+   "evidence": "MIT18_175S14_Lecture26.txt:151",
+   "quote": "A sequence Xn is adapted to Fn if Xn ∈F n for all n.",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture29.txt:19",
+   "quote": "Theorem: E (X |Fi )",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 90,
+   "evidence": "MIT18_175S14_Lecture29.txt:19",
+   "quote": "E (X |Fi ) is a martingale if Fi is an increasing",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 82,
+   "evidence": "MIT18_175S14_Lecture32.txt:160",
+   "quote": "p(x, y) > 0 implies p(y, x) > 0",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture33.txt:161",
+   "quote": "E (X |I)",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture38.txt:260",
+   "quote": "Ex (1A|F +0 )",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 97,
+   "evidence": "MIT18_175S14_Lecture38.txt:259",
+   "quote": "then previous theorem implies",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture36.txt:134",
+   "quote": "Ex (Y ◦ θs |F +)",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture38.txt:233",
+   "quote": "Ex (Z |F +) = Ex (Z |F o )",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 8,
+   "evidence": "MIT18_175S14_Lecture39.txt:182",
+   "quote": "bounded convergence, monotone",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 52,
+   "evidence": "MIT18_175S14_Lecture39.txt:164",
+   "quote": "Ex (YS ◦ θS |FS )",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 99,
+   "evidence": "MIT18_175S14_Lecture39.txt:163",
+   "quote": "is a stopping time, then for all x ∈ Rd",
+   "kind": "statement"
+  }
+ ]
+}
