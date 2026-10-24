@@ -59,7 +59,8 @@ namespace Complex
 open Filter MeasureTheory Set intervalIntegral
 
 open Real in
-/-- Scaled arctan integral, via FTC on `arctan (x / d)`. -/
+/-- **Arctangent integral.** For real numbers $a$, $b$ and $d$ with $d \ne 0$,
+$\int_a^b \frac{d}{x^2 + d^2}\,dx = \arctan\frac{b}{d} - \arctan\frac{a}{d}$. -/
 theorem integral_div_add_sq {d a b : ℝ} (hc : d ≠ 0) :
     ∫ x : ℝ in a..b, d / (x ^ 2 + d ^ 2) = arctan (b / d) - arctan (a / d) := by
   have hsq : (0 : ℝ) < d ^ 2 := sq_pos_iff.mpr hc
@@ -85,7 +86,9 @@ theorem integral_div_add_sq {d a b : ℝ} (hc : d ≠ 0) :
     exact ne_of_gt (lt_of_lt_of_le hsq (le_add_of_nonneg_left (sq_nonneg x)))
   exact integral_deriv_eq_sub' _ hderivfun hdiff hcont
 
-/-- Integral of an odd real function over a symmetric interval vanishes. -/
+/-- **Integral of an odd function over a symmetric interval.** If $f : \mathbb{R} \to \mathbb{R}$
+satisfies $f(-x) = -f(x)$ for every real $x$, then $\int_{-T}^{T} f(x)\,dx = 0$ for every real
+$T$. -/
 theorem odd_integral_eq_zero {f : ℝ → ℝ} (hodd : ∀ x, f (-x) = -f x) (T : ℝ) :
     ∫ x : ℝ in (-T)..T, f x = 0 := by
   have hcomp : ∫ x : ℝ in (-T)..T, f (-x) = ∫ x : ℝ in (-T)..T, f x := by
@@ -97,7 +100,9 @@ theorem odd_integral_eq_zero {f : ℝ → ℝ} (hodd : ∀ x, f (-x) = -f x) (T 
   linarith [hcomp, hodd']
 
 open Real in
-/-- Vertical side integral of `1/s`: `2 * arctan (T / c)`. -/
+/-- **Integral of $1/(c + iy)$ over a symmetric interval.** For real numbers $c \ne 0$ and
+$T \ge 0$, $\int_{-T}^{T} \frac{1}{c + iy}\,dy = 2\arctan(T/c)$, where the integrand is complex
+valued and the integral is taken over the real variable $y$. -/
 theorem vertical_side_one_div {c T : ℝ} (hc : c ≠ 0) (hT : 0 ≤ T) :
     ∫ y : ℝ in (-T)..T, (1 : ℂ) / (c + y * Complex.I) = 2 * arctan (T / c) := by
   have hab : -T ≤ T := by linarith
@@ -155,7 +160,10 @@ theorem vertical_side_one_div {c T : ℝ} (hc : c ≠ 0) (hT : 0 ≤ T) :
     simp
 
 open Real in
-/-- Bottom-minus-top of `1/s`: `2i·Δarctan` (log parts cancel). -/
+/-- **Difference of horizontal integrals of the reciprocal.** Let $a \le b$ and $T \ne 0$ be
+real numbers. Then
+$\int_a^b \frac{dx}{x - iT} - \int_a^b \frac{dx}{x + iT}
+= 2i\left(\arctan\frac{b}{T} - \arctan\frac{a}{T}\right)$. -/
 theorem horiz_diff_one_div {a b T : ℝ} (hT : T ≠ 0) (hab : a ≤ b) :
     (∫ x : ℝ in a..b, (1 : ℂ) / (x + -T * Complex.I))
       - (∫ x : ℝ in a..b, (1 : ℂ) / (x + T * Complex.I))
@@ -260,7 +268,12 @@ theorem horiz_diff_one_div {a b T : ℝ} (hT : T ≠ 0) (hab : a ≤ b) :
     ring
 
 open Real in
-/-- Boundary integral of `1/s` over a rectangle containing `0`: `2πi`. -/
+/-- **Rectangle integral of $1/s$ around the origin.** Let $a, b, T$ be real numbers with
+$a < 0 < b$ and $T > 0$. Then
+$$\int_a^b \frac{dx}{x - iT} - \int_a^b \frac{dx}{x + iT} +
+i \left( \int_{-T}^{T} \frac{dy}{b + iy} - \int_{-T}^{T} \frac{dy}{a + iy} \right) = 2\pi i,$$
+that is, the integral of $1/s$ over the positively oriented boundary of the rectangle with
+corners $a - iT$ and $b + iT$ equals $2\pi i$. -/
 theorem boundary_rect_one_div {a b T : ℝ} (ha : a < 0) (hb : 0 < b) (hT : 0 < T) :
     (∫ x : ℝ in a..b, (1 : ℂ) / (x + -T * Complex.I))
       - (∫ x : ℝ in a..b, (1 : ℂ) / (x + T * Complex.I))
@@ -280,7 +293,12 @@ theorem boundary_rect_one_div {a b T : ℝ} (ha : a < 0) (hb : 0 < b) (hT : 0 < 
   ring
 
 open Real in
-/-- Rectangle boundary of `1/s` with the pole outside (`0 < a`): vanishes. -/
+/-- **Rectangle integral of $1/s$ with the pole outside.** Let $a, b, T$ be real numbers with
+$0 < a \le b$ and $T > 0$. Then
+$$\int_a^b \frac{dx}{x - iT} - \int_a^b \frac{dx}{x + iT} +
+i \left( \int_{-T}^{T} \frac{dy}{b + iy} - \int_{-T}^{T} \frac{dy}{a + iy} \right) = 0,$$
+that is, the integral of $1/s$ over the positively oriented boundary of the rectangle with
+corners $a - iT$ and $b + iT$ vanishes. -/
 theorem boundary_rect_one_div_outside {a b T : ℝ} (ha : 0 < a) (hab : a ≤ b)
     (hT : 0 < T) :
     (∫ x : ℝ in a..b, (1 : ℂ) / (x + -T * Complex.I))
@@ -321,7 +339,9 @@ theorem RectilinearRectangle.ext {r s : RectilinearRectangle} (hfirst : r.first 
 
 namespace RectilinearRectangle
 
-/-- Axis-parallel rectangle specified by its real-coordinate bounds. -/
+/-- **Rectangle with given coordinate bounds.** For real numbers $x_0, x_1, y_0, y_1$, this is the
+rectilinear rectangle whose first corner is $x_0 + i y_0$ and whose second corner is
+$x_1 + i y_1$. -/
 noncomputable def ofBounds (x₀ x₁ y₀ y₁ : ℝ) : RectilinearRectangle where
   first := (x₀ : ℂ) + (y₀ : ℂ) * Complex.I
   second := (x₁ : ℂ) + (y₁ : ℂ) * Complex.I
@@ -338,7 +358,11 @@ noncomputable def ofBounds (x₀ x₁ y₀ y₁ : ℝ) : RectilinearRectangle wh
 @[simp] theorem ofBounds_second_im (x₀ x₁ y₀ y₁ : ℝ) :
     (ofBounds x₀ x₁ y₀ y₁).second.im = y₁ := by simp [ofBounds]
 
-/-- The closed rectangle determined by the two opposite corners. -/
+/-- **Carrier of an axis-parallel rectangle.** For an axis-parallel rectangle with opposite
+corners $z$ and $w$, its carrier is the closed rectangle of all $u \in \mathbb{C}$ such that
+$\operatorname{Re} u$ lies in the closed interval with endpoints $\operatorname{Re} z$ and
+$\operatorname{Re} w$, and $\operatorname{Im} u$ lies in the closed interval with endpoints
+$\operatorname{Im} z$ and $\operatorname{Im} w$. -/
 def carrier (r : RectilinearRectangle) : Set ℂ :=
   Complex.Rectangle r.first r.second
 
@@ -350,10 +374,18 @@ theorem convex_carrier (r : RectilinearRectangle) : Convex ℝ r.carrier := by
     (convex_uIcc r.first.im r.second.im).convexHull_eq] at h
   exact h
 
-/-- The Banach-valued integral over the displayed oriented boundary of a
-rectangle. The corner order determines the sign; for increasing real and
-imaginary coordinates this is the positive orientation. This is written in
-exactly the form used by Mathlib's rectangular Cauchy--Goursat theorem. -/
+/-- **Boundary integral over a rectangle.** Let $E$ be a complex Banach space and let $R$ be a
+rectilinear rectangle with first corner $z$ and second corner $w$. The boundary integral of a
+function $f : \mathbb{C} \to E$ over $R$ is
+$$\int_{\operatorname{Re} z}^{\operatorname{Re} w} f(x + i \operatorname{Im} z)\,dx -
+\int_{\operatorname{Re} z}^{\operatorname{Re} w} f(x + i \operatorname{Im} w)\,dx +
+i \int_{\operatorname{Im} z}^{\operatorname{Im} w} f(\operatorname{Re} w + iy)\,dy -
+i \int_{\operatorname{Im} z}^{\operatorname{Im} w} f(\operatorname{Re} z + iy)\,dy,$$
+where each integral is an oriented Bochner interval integral, so $\int_a^b = -\int_b^a$.
+
+The corner order determines the sign; when $\operatorname{Re} z \le \operatorname{Re} w$ and
+$\operatorname{Im} z \le \operatorname{Im} w$ this is the integral of $f$ over the positively
+oriented boundary of the rectangle. -/
 noncomputable def boundaryIntegral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (r : RectilinearRectangle) (f : ℂ → E) : E :=
   (∫ x : ℝ in r.first.re..r.second.re, f (x + r.first.im * Complex.I)) -
@@ -361,15 +393,25 @@ noncomputable def boundaryIntegral {E : Type*} [NormedAddCommGroup E]
       Complex.I • (∫ y : ℝ in r.first.im..r.second.im, f (r.second.re + y * Complex.I)) -
         Complex.I • (∫ y : ℝ in r.first.im..r.second.im, f (r.first.re + y * Complex.I))
 
-/-- Banach-valued Cauchy--Goursat on a rectangle boundary. -/
+/-- **Cauchy–Goursat theorem for rectangles.** Let $E$ be a complex Banach space, let $R$ be a
+rectilinear rectangle and let $f : \mathbb{C} \to E$ be complex differentiable on the closed
+rectangle spanned by the corners of $R$ (the carrier of $R$). Then the boundary integral of $f$
+over $R$ is $0$. -/
 theorem boundaryIntegral_eq_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (r : RectilinearRectangle) {f : ℂ → E}
     (hf : DifferentiableOn ℂ f r.carrier) : r.boundaryIntegral f = 0 := by
   simpa only [boundaryIntegral, carrier, Complex.Rectangle] using
     Complex.integral_boundary_rect_eq_zero_of_differentiableOn f r.first r.second hf
 
-/-- Horizontal gluing of two rectangle boundary integrals.  The common
-horizontal side cancels and the two vertical integrals concatenate. -/
+/-- **Gluing rectangles along a horizontal side.** Let $E$ be a complex Banach space, let
+$f : \mathbb{C} \to E$ and let $x_0, x_1, y_0, y_1, y_2$ be real numbers such that the maps
+$y \mapsto f(x_0 + iy)$ and $y \mapsto f(x_1 + iy)$ are continuous on $\mathbb{R}$. For real
+$a, b, c, d$ write $R(a, b, c, d)$ for the rectangle with corners $a + ic$ and $b + id$. Then the
+boundary integral of $f$ over $R(x_0, x_1, y_0, y_2)$ equals the sum of the boundary integrals of
+$f$ over $R(x_0, x_1, y_0, y_1)$ and over $R(x_0, x_1, y_1, y_2)$.
+
+No ordering of $y_0, y_1, y_2$ is assumed: the common horizontal side cancels and the vertical
+integrals concatenate as oriented integrals. -/
 theorem boundaryIntegral_ofBounds_horizontal_concat {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (f : ℂ → E) (x₀ x₁ y₀ y₁ y₂ : ℝ)
@@ -403,8 +445,15 @@ theorem boundaryIntegral_ofBounds_horizontal_concat {E : Type*}
   simp only [smul_add]
   abel_nf
 
-/-- Vertical gluing of two rectangle boundary integrals.  The common vertical
-side cancels and the two horizontal integrals concatenate. -/
+/-- **Gluing rectangles along a vertical side.** Let $E$ be a complex Banach space, let
+$f : \mathbb{C} \to E$ and let $x_0, x_1, x_2, y_0, y_1$ be real numbers such that the maps
+$x \mapsto f(x + iy_0)$ and $x \mapsto f(x + iy_1)$ are continuous on $\mathbb{R}$. For real
+$a, b, c, d$ write $R(a, b, c, d)$ for the rectangle with corners $a + ic$ and $b + id$. Then the
+boundary integral of $f$ over $R(x_0, x_2, y_0, y_1)$ equals the sum of the boundary integrals of
+$f$ over $R(x_0, x_1, y_0, y_1)$ and over $R(x_1, x_2, y_0, y_1)$.
+
+No ordering of $x_0, x_1, x_2$ is assumed: the common vertical side cancels and the horizontal
+integrals concatenate as oriented integrals. -/
 theorem boundaryIntegral_ofBounds_vertical_concat {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (f : ℂ → E) (x₀ x₁ x₂ y₀ y₁ : ℝ)
@@ -439,8 +488,9 @@ theorem boundaryIntegral_ofBounds_vertical_concat {E : Type*}
   simp_rw [hhorizontal]
   abel_nf
 
-/-- The Cauchy kernel has zero boundary integral when its pole is outside
-the closed rectangle. -/
+/-- **Cauchy kernel with the pole outside a rectangle.** Let $R$ be a rectilinear rectangle and
+let $w$ be a complex number that does not lie in the closed rectangle spanned by the corners of
+$R$ (the carrier of $R$). Then the boundary integral of $z \mapsto 1/(z - w)$ over $R$ is $0$. -/
 theorem boundaryIntegral_inv_sub_eq_zero_of_not_mem_carrier
     (r : RectilinearRectangle) {w : ℂ} (hw : w ∉ r.carrier) :
     r.boundaryIntegral (fun z : ℂ ↦ (z - w)⁻¹) = 0 := by
@@ -500,9 +550,9 @@ theorem boundaryIntegral_congr_of_eqOn_carrier {E : Type*}
   simp only [boundaryIntegral]
   rw [hbottom, htop, hright, hleft]
 
-/-- The boundary integral of the Cauchy kernel on a rectangle centered
-vertically at the origin is its residue, provided the origin is strictly
-between the two vertical sides. -/
+/-- **Rectangle integral of $1/z$ around the origin.** Let $a, b, T$ be real numbers with
+$a < 0 < b$ and $T > 0$. Then the boundary integral of $z \mapsto 1/z$ over the rectangle with
+corners $a - iT$ and $b + iT$ equals $2\pi i$. -/
 theorem boundaryIntegral_ofBounds_inv_eq_two_pi_mul_I {a b T : ℝ}
     (ha : a < 0) (hb : 0 < b) (hT : 0 < T) :
     (ofBounds a b (-T) T).boundaryIntegral (fun z : ℂ ↦ z⁻¹) =
@@ -513,8 +563,11 @@ theorem boundaryIntegral_ofBounds_inv_eq_two_pi_mul_I {a b T : ℝ}
   simp only [one_div] at hp
   linear_combination hp
 
-/-- Translating the rectangle and pole by the same amount reduces the
-Cauchy-kernel boundary integral to a pole at the origin. -/
+/-- **Translating the Cauchy kernel to the origin.** For all real numbers $x_0, x_1, y_0, y_1$ and
+every complex number $w$, the boundary integral of $z \mapsto 1/(z - w)$ over the rectangle with
+corners $x_0 + iy_0$ and $x_1 + iy_1$ equals the boundary integral of $z \mapsto 1/z$ over the
+rectangle with corners $(x_0 - \operatorname{Re} w) + i(y_0 - \operatorname{Im} w)$ and
+$(x_1 - \operatorname{Re} w) + i(y_1 - \operatorname{Im} w)$. -/
 theorem boundaryIntegral_ofBounds_inv_sub_eq_translate
     (x₀ x₁ y₀ y₁ : ℝ) (w : ℂ) :
     (ofBounds x₀ x₁ y₀ y₁).boundaryIntegral (fun z : ℂ ↦ (z - w)⁻¹) =
@@ -544,8 +597,10 @@ theorem boundaryIntegral_ofBounds_inv_sub_eq_translate
   simp_rw [hpoint]
   rw [hx, hx, hy, hy]
 
-/-- A positively oriented rectangle has Cauchy-kernel boundary integral
-`2πi` at every point of its open interior. -/
+/-- **Rectangle integral of the Cauchy kernel at an interior point.** Let $x_0, x_1, y_0, y_1$ be
+real numbers and let $w$ be a complex number with $x_0 < \operatorname{Re} w < x_1$ and
+$y_0 < \operatorname{Im} w < y_1$. Then the boundary integral of $z \mapsto 1/(z - w)$ over the
+rectangle with corners $x_0 + iy_0$ and $x_1 + iy_1$ equals $2\pi i$. -/
 theorem boundaryIntegral_ofBounds_inv_sub_eq_two_pi_mul_I
     {x₀ x₁ y₀ y₁ : ℝ} {w : ℂ}
     (hx₀ : x₀ < w.re) (hx₁ : w.re < x₁)
@@ -623,12 +678,17 @@ abbrev RectilinearCycle := RectilinearRectangle →₀ ℤ
 
 namespace RectilinearCycle
 
-/-- The cycle consisting of one rectangle boundary with its displayed
-corner-order orientation. -/
+/-- **The cycle of a single rectangle.** For a rectilinear rectangle $r$, this is the rectilinear
+cycle in which $r$ has coefficient $1$ and every other rectangle has coefficient $0$, that is, the
+boundary of $r$ with the orientation given by its corner order. -/
 noncomputable def ofRectangle (r : RectilinearRectangle) : RectilinearCycle :=
   Finsupp.single r 1
 
-/-- The Banach-valued contour integral of a finite rectilinear cycle. -/
+/-- **Contour integral over a rectilinear cycle.** Let $E$ be a complex Banach space and
+$f : \mathbb{C} \to E$. For a rectilinear cycle $\Gamma$, a finite formal sum $\sum_r n_r\, r$ of
+rectangles $r$ with integer coefficients $n_r$, the contour integral of $f$ over $\Gamma$ is
+$\sum_r n_r \int_{\partial r} f$, where $\int_{\partial r} f$ is the boundary integral of $f$
+over the oriented rectangle $r$. -/
 noncomputable def integral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (Γ : RectilinearCycle) (f : ℂ → E) : E :=
   Γ.sum fun r n ↦ n • r.boundaryIntegral f
@@ -645,7 +705,10 @@ theorem integral_zero {E : Type*} [NormedAddCommGroup E]
     integral (0 : RectilinearCycle) f = 0 := by
   simp [integral]
 
-/-- Contour integration is additive in the rectilinear cycle. -/
+/-- **Additivity of the contour integral in the cycle.** Let $E$ be a complex Banach space and
+$f : \mathbb{C} \to E$. For rectilinear cycles $\Gamma$ and $\Lambda$, the contour integral of
+$f$ over $\Gamma + \Lambda$ equals the integral of $f$ over $\Gamma$ plus the integral of $f$
+over $\Lambda$. -/
 theorem integral_add {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (Γ Λ : RectilinearCycle) (f : ℂ → E) :
     integral (Γ + Λ) f = integral Γ f + integral Λ f := by
@@ -656,22 +719,27 @@ theorem integral_add {E : Type*} [NormedAddCommGroup E]
   · intro r m n
     simp [add_zsmul]
 
-/-- Reversing a rectilinear cycle negates its contour integral. -/
+/-- **Reversing a cycle negates its integral.** For every rectilinear cycle $\Gamma$, every
+complex Banach space $E$ and every function $f : \mathbb{C} \to E$, the contour integral of $f$
+over $-\Gamma$ is the negative of the contour integral of $f$ over $\Gamma$. -/
 theorem integral_neg {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (Γ : RectilinearCycle) (f : ℂ → E) :
     integral (-Γ) f = -integral Γ f := by
   apply eq_neg_of_add_eq_zero_left
   rw [← integral_add, neg_add_cancel, integral_zero]
 
-/-- Contour integration turns subtraction of cycles into subtraction in the
-Banach-space codomain. -/
+/-- **Integral over a difference of cycles.** For rectilinear cycles $\Gamma$ and $\Lambda$, a
+complex Banach space $E$ and a function $f : \mathbb{C} \to E$, the contour integral of $f$ over
+$\Gamma - \Lambda$ equals the contour integral of $f$ over $\Gamma$ minus the contour integral of
+$f$ over $\Lambda$. -/
 theorem integral_sub {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (Γ Λ : RectilinearCycle) (f : ℂ → E) :
     integral (Γ - Λ) f = integral Γ f - integral Λ f := by
   rw [sub_eq_add_neg, integral_add, integral_neg, sub_eq_add_neg]
 
-/-- Contour integration against a fixed function, bundled as an additive
-homomorphism in the rectilinear cycle. -/
+/-- **Contour integration as an additive map.** Let $E$ be a complex Banach space and
+$f : \mathbb{C} \to E$. The map sending a rectilinear cycle $\Gamma$ to the contour integral of
+$f$ over $\Gamma$ is an additive group homomorphism from rectilinear cycles to $E$. -/
 noncomputable def integralAddHom {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (f : ℂ → E) : RectilinearCycle →+ E where
   toFun Γ := Γ.integral f
@@ -683,8 +751,9 @@ theorem integralAddHom_apply {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (f : ℂ → E) (Γ : RectilinearCycle) :
     integralAddHom f Γ = Γ.integral f := rfl
 
-/-- A rectangle filling is supported in `G` when every rectangle occurring
-with nonzero coefficient is contained in `G`. -/
+/-- **Rectangle filling supported in a set.** Let $G \subseteq \mathbb{C}$. A rectilinear cycle
+$\Gamma$, read as a filling by rectangles, is supported in $G$ when, for every rectangle $r$ whose
+coefficient in $\Gamma$ is nonzero, the closed carrier of $r$ is contained in $G$. -/
 def FillingSupportedIn (Γ : RectilinearCycle) (G : Set ℂ) : Prop :=
   ∀ r ∈ Γ.support, r.carrier ⊆ G
 
@@ -698,8 +767,11 @@ theorem integral_congr_of_fillingSupportedIn {E : Type*}
   intro r hr
   rw [r.boundaryIntegral_congr_of_eqOn_carrier (hfg.mono (hΓ r hr))]
 
-/-- Cauchy--Goursat for a finite rectilinear cycle whose rectangle filling is
-contained in the domain of differentiability. -/
+/-- **Cauchy–Goursat theorem for rectilinear cycles.** Let $E$ be a complex Banach space, let
+$G \subseteq \mathbb{C}$, and let $f : \mathbb{C} \to E$ be complex differentiable on $G$. If
+$\Gamma$ is a rectilinear cycle whose rectangle filling is supported in $G$, that is, the closed
+rectangle of every rectangle occurring in $\Gamma$ with nonzero coefficient is contained in $G$,
+then the contour integral of $f$ over $\Gamma$ is $0$. -/
 theorem integral_eq_zero_of_fillingSupportedIn {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     {Γ : RectilinearCycle} {G : Set ℂ} {f : ℂ → E}
@@ -714,13 +786,19 @@ theorem integral_eq_zero_of_fillingSupportedIn {E : Type*}
       rw [r.boundaryIntegral_eq_zero (hf.mono (hΓ r hr)), smul_zero]
     _ = 0 := by simp
 
-/-- A present rectangular homology relation: the difference of two
-cycles has a rectangle filling contained in `G`. -/
+/-- **Rectilinear cycles homologous in a set.** Let $G \subseteq \mathbb{C}$. Two rectilinear
+cycles $\Gamma$ and $\Lambda$ are homologous in $G$ when the rectangle filling of
+$\Gamma - \Lambda$ is supported in $G$: every rectangle with nonzero coefficient in
+$\Gamma - \Lambda$ has its closed carrier contained in $G$. -/
 def HomologousIn (Γ Λ : RectilinearCycle) (G : Set ℂ) : Prop :=
   (Γ - Λ).FillingSupportedIn G
 
-/-- Homologous rectilinear cycles have the same integral for a function
-differentiable on the filling domain. -/
+/-- **Homologous rectilinear cycles have equal integrals.** Let $E$ be a complex Banach space,
+let $G \subseteq \mathbb{C}$, and let $f : \mathbb{C} \to E$ be complex differentiable on $G$. If
+$\Gamma$ and $\Lambda$ are rectilinear cycles that are homologous in $G$, that is, the closed
+rectangle of every rectangle occurring in $\Gamma - \Lambda$ with nonzero coefficient is contained
+in $G$, then the contour integral of $f$ over $\Gamma$ equals the contour integral of $f$ over
+$\Lambda$. -/
 theorem integral_eq_of_homologousIn {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] {Γ Λ : RectilinearCycle}
     {G : Set ℂ} {f : ℂ → E} (hΓΛ : Γ.HomologousIn Λ G)
@@ -728,11 +806,14 @@ theorem integral_eq_of_homologousIn {E : Type*} [NormedAddCommGroup E]
   rw [← sub_eq_zero, ← integral_sub]
   exact integral_eq_zero_of_fillingSupportedIn hΓΛ hf
 
-/-- The analytic index expression of a rectilinear cycle about `w`.
+/-- **Index of a rectilinear cycle.** For a rectilinear cycle $\Gamma$ and a point
+$w \in \mathbb{C}$, the index of $\Gamma$ about $w$ is
+$\frac{1}{2\pi i}\int_\Gamma \frac{dz}{z - w}$, the contour integral over $\Gamma$ of
+$z \mapsto (z - w)^{-1}$, multiplied by $(2\pi i)^{-1}$.
 
-Lean's inverse is total, so the definition also has a value when `w` lies
-on a presented rectangle boundary; no geometric winding-number claim is made
-there. -/
+With the conventions $0^{-1} = 0$ and that a non-integrable integral is $0$, the formula also
+has a value when $w$ lies on the boundary of a rectangle occurring in $\Gamma$; no geometric
+winding-number claim is made there. -/
 noncomputable def index (Γ : RectilinearCycle) (w : ℂ) : ℂ :=
   ((2 * Real.pi : ℂ) * Complex.I)⁻¹ *
     Γ.integral (fun z : ℂ ↦ (z - w)⁻¹)
@@ -749,8 +830,9 @@ theorem index_sub (Γ Λ : RectilinearCycle) (w : ℂ) :
     index (Γ - Λ) w = index Γ w - index Λ w := by
   simp [index, integral_sub, mul_sub]
 
-/-- Winding index at a fixed point, bundled as an additive homomorphism in
-the rectilinear cycle. -/
+/-- **Winding index as an additive map.** For a fixed point $w \in \mathbb{C}$, the map sending a
+rectilinear cycle $\Gamma$ to its index about $w$ is an additive group homomorphism from
+rectilinear cycles to $\mathbb{C}$. -/
 noncomputable def indexAddHom (w : ℂ) : RectilinearCycle →+ ℂ where
   toFun Γ := Γ.index w
   map_zero' := by simp [index]
@@ -766,8 +848,9 @@ theorem index_ofRectangle (r : RectilinearRectangle) (w : ℂ) :
       r.boundaryIntegral (fun z : ℂ ↦ (z - w)⁻¹) := by
   simp [index]
 
-/-- A rectangle has winding index zero about every point outside its closed
-carrier. -/
+/-- **Rectangle index vanishes outside the rectangle.** For an axis-parallel rectangle $r$ and a
+point $w \in \mathbb{C}$ outside the closed carrier of $r$, the index about $w$ of the cycle
+consisting of the boundary of $r$ is $0$. -/
 theorem index_ofRectangle_eq_zero_of_not_mem_carrier
     (r : RectilinearRectangle) {w : ℂ} (hw : w ∉ r.carrier) :
     index (ofRectangle r) w = 0 := by
