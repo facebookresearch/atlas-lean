@@ -1,0 +1,87 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.RingTheory.DiscreteValuationRing.TotallyRamified
+import Mathlib.NumberTheory.Padics.PadicIntegers
+import Mathlib.NumberTheory.Padics.PadicNumbers
+
+/-!
+# Tests for totally ramified extensions of discrete valuation rings
+
+Applies the main theorem of
+`MathlibExt.RingTheory.DiscreteValuationRing.TotallyRamified`
+(Theorem 11.5 of ATLAS `NumberTheoryI`) at general extensions and at
+the identity extension `ℤ_[5] ⊆ ℤ_[5]` with fraction fields
+`ℚ_[5] ⊆ ℚ_[5]`.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Polynomial
+
+variable {A B : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
+  [CommRing B] [IsDomain B] [IsDiscreteValuationRing B]
+  [Algebra A B] [IsLocalHom (algebraMap A B)] [Module.Finite A B]
+  [FaithfulSMul A B]
+variable {K L : Type*} [Field K] [Field L] [Algebra A K] [IsFractionRing A K]
+  [Algebra B L] [IsFractionRing B L] [Algebra K L] [Algebra A L]
+  [IsScalarTower A B L] [IsScalarTower A K L] [FiniteDimensional K L]
+
+/-- The main theorem, applied at a general extension of discrete
+valuation rings. -/
+example (π : B) (hπ : Irreducible π) :
+    (IsLocalRing.maximalIdeal B).ramificationIdx A = Module.finrank K L ↔
+      Algebra.adjoin A ({π} : Set B) = ⊤ ∧
+        (minpoly A π).IsEisensteinAt (IsLocalRing.maximalIdeal A) :=
+  IsDiscreteValuationRing.ramificationIdx_eq_finrank_iff_eisenstein_adjoin π hπ
+
+/-- The Eisenstein direction, applied at a general extension of discrete
+valuation rings. -/
+example (π : B) (hπ : Irreducible π)
+    (hadj : Algebra.adjoin A ({π} : Set B) = ⊤)
+    (heis : (minpoly A π).IsEisensteinAt (IsLocalRing.maximalIdeal A)) :
+    (IsLocalRing.maximalIdeal B).ramificationIdx A = Module.finrank K L :=
+  IsDiscreteValuationRing.ramificationIdx_eq_finrank_of_eisenstein_adjoin
+    π hπ hadj heis
+
+/-- The totally-ramified direction, applied at a general extension of
+discrete valuation rings. -/
+example (π : B) (hπ : Irreducible π)
+    (htotram : (IsLocalRing.maximalIdeal B).ramificationIdx A =
+      Module.finrank K L) :
+    Algebra.adjoin A ({π} : Set B) = ⊤ ∧
+      (minpoly A π).IsEisensteinAt (IsLocalRing.maximalIdeal A) :=
+  IsDiscreteValuationRing.eisenstein_adjoin_of_ramificationIdx_eq_finrank
+    π hπ htotram
+
+private instance : Fact (Nat.Prime 5) := ⟨by decide⟩
+
+/-- The main theorem, applied to the identity extension `ℤ_[5] ⊆ ℤ_[5]`
+with fraction fields `ℚ_[5] ⊆ ℚ_[5]` and uniformizer `5`. Since the
+extension is trivial, the ramification index is `1 = [ℚ_[5] : ℚ_[5]]`,
+and `5` generates `ℤ_[5]` over itself with Eisenstein minimal
+polynomial `X - 5`. -/
+example :
+    (IsLocalRing.maximalIdeal ℤ_[5]).ramificationIdx ℤ_[5] =
+        Module.finrank ℚ_[5] ℚ_[5] ↔
+      Algebra.adjoin ℤ_[5] ({(5 : ℤ_[5])} : Set ℤ_[5]) = ⊤ ∧
+        (minpoly ℤ_[5] (5 : ℤ_[5])).IsEisensteinAt
+          (IsLocalRing.maximalIdeal ℤ_[5]) :=
+  IsDiscreteValuationRing.ramificationIdx_eq_finrank_iff_eisenstein_adjoin
+    (5 : ℤ_[5]) (PadicInt.irreducible_p (p := 5))
+
+open IsDiscreteValuationRing in
+#print axioms ramificationIdx_eq_finrank_iff_eisenstein_adjoin
+open IsDiscreteValuationRing in
+#print axioms ramificationIdx_eq_finrank_of_eisenstein_adjoin
+open IsDiscreteValuationRing in
+#print axioms eisenstein_adjoin_of_ramificationIdx_eq_finrank
