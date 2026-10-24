@@ -240,21 +240,26 @@ private theorem picard_integrands_tendstoUniformlyOn
       mul_lt_mul_of_pos_left (hn t ht) (by positivity)
     _ = ε := by field_simp
 
-/-- Picard iteration converges: for a continuous right-hand side, globally
-Lipschitz in the state, the Picard iterates from the constant map converge
-pointwise to a global solution.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
-`Iterative methods of solving systems of real and vector-valued equations`,
-entry `Picard method` (unmapped);
-G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 2.3;
-stable ref https://en.wikipedia.org/wiki/Picard%E2%80%93Lindel%C3%B6f_theorem.
-
-Proves `Wanted` entry `picard_iterates_converge`.
+/-- **Picard iterates converge.** Let $E$ be a real Banach space, let
+$f : \mathbb{R} \times E \to E$ be continuous, and let $L \ge 0$ be such that $f(t, \cdot)$ is
+$L$-Lipschitz for every $t \in \mathbb{R}$. Fix $t_0 \in \mathbb{R}$ and $x_0 \in E$, and let
+$(u_n)_{n \ge 0}$ be maps $\mathbb{R} \to E$ with $u_0(t) = x_0$ and
+$u_{n+1}(t) = x_0 + \int_{t_0}^{t} f(s, u_n(s))\,ds$ for all $n$ and $t$. Then there is a map
+$x : \mathbb{R} \to E$ with $x(t_0) = x_0$ and $x'(t) = f(t, x(t))$ for every $t \in \mathbb{R}$,
+such that $u_n(t) \to x(t)$ as $n \to \infty$ for every $t \in \mathbb{R}$.
 
 Proof: Sum the factorially bounded successive differences, obtaining locally uniform convergence
 on every compact time interval. Pass the recursion through the integral and apply the fundamental
 theorem of calculus. This is the argument of Teschl, Theorem 2.5 and Corollary 2.6 (Section 2.3),
 for the Picard iterates (2.13) of Section 2.2, with a constant global Lipschitz constant.
+
+Proves `Wanted` entry `picard_iterates_converge`.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
+`Iterative methods of solving systems of real and vector-valued equations`,
+entry `Picard method` (unmapped);
+G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 2.3;
+stable ref https://en.wikipedia.org/wiki/Picard%E2%80%93Lindel%C3%B6f_theorem.
 -/
 theorem picard_iterates_converge
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -308,9 +313,16 @@ theorem picard_iterates_converge
   refine ⟨x, ?_, hderiv, hconv⟩
   simpa using heq t₀
 
-/-- The Picard iterates converge pointwise to every global solution through the initial condition.
+/-- **Picard iterates converge to every global solution of the initial value problem.** Let $E$
+be a real Banach space, let $f : \mathbb{R} \times E \to E$ be continuous, and let $L \ge 0$ be
+such that $f(t, \cdot)$ is $L$-Lipschitz for every $t \in \mathbb{R}$. Fix $t_0 \in \mathbb{R}$
+and $x_0 \in E$, and let $(u_n)_{n \ge 0}$ be maps $\mathbb{R} \to E$ with $u_0(t) = x_0$ and
+$u_{n+1}(t) = x_0 + \int_{t_0}^{t} f(s, u_n(s))\,ds$ for all $n$ and $t$. If $y : \mathbb{R} \to E$
+satisfies $y(t_0) = x_0$ and $y'(t) = f(t, y(t))$ for every $t \in \mathbb{R}$, then
+$u_n(t) \to y(t)$ as $n \to \infty$ for every $t \in \mathbb{R}$.
 
-Proof: Use `ODE_solution_unique_univ` to identify the constructed solution with the given one.
+Proof: By the convergence of Picard iterates, the iterates converge pointwise to a global solution
+through $x_0$ at $t_0$; by uniqueness of solutions for a Lipschitz right-hand side, it equals $y$.
 -/
 theorem picard_iterates_tendsto_of_hasDerivAt
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -329,19 +341,27 @@ theorem picard_iterates_tendsto_of_hasDerivAt
     (hx₀.trans hy₀.symm)
   simpa only [hxy] using hconv
 
-/-- Picard step estimate: successive iterates differ by at most
-`M * L^n * |t - t₀|^(n+1) / (n+1)!`.
+/-- **Step estimate for Picard iterates.** Let $E$ be a real normed space, let
+$f : \mathbb{R} \times E \to E$ be continuous, and let $L \ge 0$ be such that $f(t, \cdot)$ is
+$L$-Lipschitz for every $t \in \mathbb{R}$. Fix $t_0 \in \mathbb{R}$ and $x_0 \in E$, and let
+$(u_n)_{n \ge 0}$ be maps $\mathbb{R} \to E$ with $u_0(t) = x_0$ and
+$u_{n+1}(t) = x_0 + \int_{t_0}^{t} f(s, u_n(s))\,ds$ for all $n$ and $t$. If $M$ is a real number
+with $\|f(s, x_0)\| \le M$ for every $s \in \mathbb{R}$, then for every $n \ge 0$ and every
+$t \in \mathbb{R}$, $\|u_{n+1}(t) - u_n(t)\| \le M L^n |t - t_0|^{n+1} / (n+1)!$.
+
+The integral is the Bochner integral, which is taken to be $0$ when $E$ is not complete.
+
+Proof: Induct on the iterate index, apply the Lipschitz bound under the interval integral, and
+integrate the absolute-power majorant exactly, as in the induction for estimate (2.29) in the proof
+of Teschl, Theorem 2.5 (Section 2.3).
+
+Proves `Wanted` entry `picard_iterates_step_estimate`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Iterative methods of solving systems of real and vector-valued equations`,
 entries `Picard method` and `rate of convergence and estimation of error`
 (unmapped); G. Teschl, Ordinary Differential Equations and Dynamical Systems,
 Section 2.3.
-
-Proves `Wanted` entry `picard_iterates_step_estimate`.
-
-Proof: Induct on the iterate index, apply the Lipschitz bound under the interval integral, and
-integrate the absolute-power majorant exactly, as in the induction for estimate (2.29) in the proof
-of Teschl, Theorem 2.5 (Section 2.3).
 -/
 theorem picard_iterates_step_estimate
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

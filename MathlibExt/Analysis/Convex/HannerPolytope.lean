@@ -23,20 +23,27 @@ open Set
 
 namespace MetaMathlibExt
 
-/-- The centered unit segment, the one-dimensional leaf in the recursive
-definition of Hanner polytopes. -/
+/-- **Centered unit segment.** The centered unit segment is the closed unit ball
+$\{x \in \mathbb{R}^1 : \|x\| \le 1\}$, that is, the segment $[-1, 1]$. It is the
+one-dimensional leaf in the recursive definition of Hanner polytopes. -/
 def hannerUnitSegment : Set (EuclideanSpace ℝ (Fin 1)) :=
   Metric.closedBall 0 1
 
-/-- The `l_infinity` body sum, expressed in canonical product coordinates. -/
+/-- **$\ell_\infty$ sum of bodies.** For sets $K \subseteq \mathbb{R}^m$ and
+$L \subseteq \mathbb{R}^n$, the $\ell_\infty$ sum of $K$ and $L$ is the set of points of
+$\mathbb{R}^{m+n}$ whose first $m$ coordinates form a point of $K$ and whose last $n$
+coordinates form a point of $L$; that is, the product $K \times L$ under the identification
+$\mathbb{R}^{m+n} = \mathbb{R}^m \times \mathbb{R}^n$. -/
 noncomputable def hannerInfinitySum {m n : ℕ}
     (K : Set (EuclideanSpace ℝ (Fin m)))
     (L : Set (EuclideanSpace ℝ (Fin n))) :
     Set (EuclideanSpace ℝ (Fin (m + n))) :=
   EuclideanSpace.finAddEquivProd.symm.toLinearEquiv '' (K ×ˢ L)
 
-/-- The `l_1` body sum, the convex hull of the two factors embedded in
-complementary coordinate subspaces. -/
+/-- **$\ell_1$ sum of bodies.** For sets $K \subseteq \mathbb{R}^m$ and $L \subseteq \mathbb{R}^n$,
+the $\ell_1$ sum of $K$ and $L$ is the convex hull in $\mathbb{R}^{m+n}$ of
+$(K \times \{0\}) \cup (\{0\} \times L)$, where $\mathbb{R}^{m+n}$ is identified with
+$\mathbb{R}^m \times \mathbb{R}^n$ by splitting off the first $m$ coordinates. -/
 noncomputable def hannerOneSum {m n : ℕ}
     (K : Set (EuclideanSpace ℝ (Fin m)))
     (L : Set (EuclideanSpace ℝ (Fin n))) :
@@ -45,9 +52,16 @@ noncomputable def hannerOneSum {m n : ℕ}
     convexHull ℝ ((K ×ˢ ({0} : Set (EuclideanSpace ℝ (Fin n)))) ∪
       (({0} : Set (EuclideanSpace ℝ (Fin m))) ×ˢ L))
 
-/-- Hanner polytopes as actual subsets of finite-dimensional Euclidean space.
-They are generated from the unit segment by invertible linear changes of
-coordinates and the two source-recursive body sums. -/
+/-- **Hanner polytopes.** For $K \subseteq \mathbb{R}^m$ and $L \subseteq \mathbb{R}^n$, identify
+$\mathbb{R}^{m+n}$ with $\mathbb{R}^m \times \mathbb{R}^n$ by splitting off the first $m$
+coordinates; the $\ell_\infty$ sum of $K$ and $L$ is $K \times L$, and their $\ell_1$ sum is the
+convex hull of $(K \times \{0\}) \cup (\{0\} \times L)$, both viewed as subsets of
+$\mathbb{R}^{m+n}$. The Hanner polytopes are the smallest family of subsets of the Euclidean
+spaces $\mathbb{R}^n$ such that: the unit segment $[-1, 1] \subseteq \mathbb{R}^1$ is a Hanner
+polytope; if $K \subseteq \mathbb{R}^n$ is a Hanner polytope and
+$e \colon \mathbb{R}^n \to \mathbb{R}^n$ is an invertible linear map, then $e(K)$ is a Hanner
+polytope; and if $K \subseteq \mathbb{R}^m$ and $L \subseteq \mathbb{R}^n$ are Hanner polytopes
+with $m, n > 0$, then their $\ell_\infty$ sum and their $\ell_1$ sum are Hanner polytopes. -/
 inductive IsHannerPolytope : {n : ℕ} → Set (EuclideanSpace ℝ (Fin n)) → Prop
   | unitSegment : IsHannerPolytope hannerUnitSegment
   | linearImage {n : ℕ} {K : Set (EuclideanSpace ℝ (Fin n))}
@@ -65,12 +79,18 @@ inductive IsHannerPolytope : {n : ℕ} → Set (EuclideanSpace ℝ (Fin n)) → 
       (hK : IsHannerPolytope K) (hL : IsHannerPolytope L) :
       IsHannerPolytope (hannerOneSum K L)
 
-/-- The recursively constructed coordinate cube in positive dimension. -/
+/-- **Hanner cube.** For $n \in \mathbb{N}$, the Hanner cube $C_n \subseteq \mathbb{R}^{n+1}$ is
+defined by recursion on $n$: $C_0$ is the centered unit segment $[-1, 1] \subseteq \mathbb{R}^1$,
+and $C_{n+1} \subseteq \mathbb{R}^{n+2}$ is the $\ell_\infty$ sum of $C_n$ and the centered
+unit segment. -/
 noncomputable def hannerCube : (n : ℕ) → Set (EuclideanSpace ℝ (Fin (n + 1)))
   | 0 => hannerUnitSegment
   | n + 1 => hannerInfinitySum (hannerCube n) hannerUnitSegment
 
-/-- The recursively constructed coordinate cross-polytope in positive dimension. -/
+/-- **Hanner cross-polytope.** For $n \in \mathbb{N}$, the Hanner cross-polytope
+$P_n \subseteq \mathbb{R}^{n+1}$ is defined by recursion on $n$: $P_0$ is the centered unit
+segment $[-1, 1] \subseteq \mathbb{R}^1$, and $P_{n+1} \subseteq \mathbb{R}^{n+2}$ is the
+$\ell_1$ sum of $P_n$ and the centered unit segment. -/
 noncomputable def hannerCrossPolytope : (n : ℕ) → Set (EuclideanSpace ℝ (Fin (n + 1)))
   | 0 => hannerUnitSegment
   | n + 1 => hannerOneSum (hannerCrossPolytope n) hannerUnitSegment
@@ -88,7 +108,8 @@ theorem hannerCrossPolytope_isHannerPolytope (n : ℕ) :
   | zero => exact .unitSegment
   | succ n ih => exact .oneSum (Nat.succ_pos n) Nat.zero_lt_one ih .unitSegment
 
-/-- Membership in the one-dimensional Hanner leaf is the coordinate bound. -/
+/-- **Membership in the Hanner unit segment.** A point $x \in \mathbb{R}^1$ lies in the Hanner
+unit segment if and only if every coordinate $x_i$ of $x$ satisfies $|x_i| \le 1$. -/
 theorem mem_hannerUnitSegment_iff (x : EuclideanSpace ℝ (Fin 1)) :
     x ∈ hannerUnitSegment ↔ ∀ i, |x i| ≤ 1 := by
   rw [hannerUnitSegment, Metric.mem_closedBall, dist_zero_right, PiLp.norm_eq_sum]
@@ -101,8 +122,10 @@ theorem mem_hannerUnitSegment_iff (x : EuclideanSpace ℝ (Fin 1)) :
       simpa [Subsingleton.elim default (0 : Fin 1)] using h 0
   · norm_num
 
-/-- Membership in an `l_infinity` Hanner sum splits across the canonical
-Euclidean coordinate decomposition. -/
+/-- **Membership in the $\ell_\infty$ Hanner sum.** Let $K \subseteq \mathbb{R}^m$ and
+$L \subseteq \mathbb{R}^n$. A point $x \in \mathbb{R}^{m+n}$ lies in the $\ell_\infty$ Hanner
+sum of $K$ and $L$ if and only if $(x_1, \dots, x_m) \in K$ and
+$(x_{m+1}, \dots, x_{m+n}) \in L$. -/
 theorem mem_hannerInfinitySum_iff {m n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin m))} {L : Set (EuclideanSpace ℝ (Fin n))}
     (x : EuclideanSpace ℝ (Fin (m + n))) :
@@ -116,7 +139,9 @@ theorem mem_hannerInfinitySum_iff {m n : ℕ}
     exact ⟨EuclideanSpace.finAddEquivProd x, hx,
       EuclideanSpace.finAddEquivProd.symm_apply_apply x⟩
 
-/-- The recursively constructed Hanner cube is the usual coordinate cube. -/
+/-- **The Hanner cube is the coordinate cube.** For every $n \in \mathbb{N}$, the Hanner cube
+$C_n \subseteq \mathbb{R}^{n+1}$ equals the coordinate cube
+$\{x \in \mathbb{R}^{n+1} : -1 \le x_i \le 1 \text{ for every } i\} = [-1, 1]^{n+1}$. -/
 theorem hannerCube_eq_coordinateCube (n : ℕ) :
     hannerCube n = ConvexCovering.coordinateCube (n + 1) := by
   rw [ConvexCovering.coordinateCube_eq_absSet]
@@ -137,7 +162,8 @@ theorem hannerCube_eq_coordinateCube (n : ℕ) :
         exact ⟨fun i => by simpa using h (Fin.castAdd 1 i),
           fun j => by simpa using h (Fin.natAdd (n + 1) j)⟩
 
-/-- Every Hanner polytope has positive dimension. -/
+/-- **Hanner polytopes live in positive dimension.** If $K \subseteq \mathbb{R}^n$ is a Hanner
+polytope, then $0 < n$. -/
 theorem IsHannerPolytope.dimension_pos {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K) : 0 < n := by
   induction hK with
@@ -159,7 +185,8 @@ private theorem neg_mem_iff_of_neg_eq_self {E : Type*} [AddCommGroup E]
     {K : Set E} (hK : -K = K) {x : E} : -x ∈ K ↔ x ∈ K :=
   (Set.mem_neg (s := K) (a := x)).symm.trans (by rw [hK])
 
-/-- Hanner polytopes are centrally symmetric about the origin. -/
+/-- **Hanner polytopes are centrally symmetric.** Every Hanner polytope $K$ is centrally
+symmetric about the origin: $-K = K$. -/
 theorem IsHannerPolytope.neg_eq_self {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K) : -K = K := by
   induction hK with
@@ -181,13 +208,15 @@ theorem IsHannerPolytope.neg_eq_self {n : ℕ}
       rw [neg_mem_iff_of_neg_eq_self ihK, neg_mem_iff_of_neg_eq_self ihL]
       simp
 
-/-- Membership in a Hanner polytope is invariant under negation. -/
+/-- **Negation preserves membership in a Hanner polytope.** For every Hanner polytope
+$K \subseteq \mathbb{R}^n$ and every $x \in \mathbb{R}^n$, $-x \in K$ if and only if $x \in K$. -/
 theorem IsHannerPolytope.neg_mem_iff {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K)
     {x : EuclideanSpace ℝ (Fin n)} : -x ∈ K ↔ x ∈ K :=
   neg_mem_iff_of_neg_eq_self hK.neg_eq_self
 
-/-- Every Hanner polytope is convex. -/
+/-- **Hanner polytopes are convex.** Every Hanner polytope $K \subseteq \mathbb{R}^n$ is
+convex. -/
 theorem IsHannerPolytope.convex {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K) : Convex ℝ K := by
   induction hK with
@@ -200,7 +229,7 @@ theorem IsHannerPolytope.convex {n : ℕ}
       exact (convex_convexHull ℝ _).linear_image
         EuclideanSpace.finAddEquivProd.symm.toLinearEquiv.toLinearMap
 
-/-- The origin belongs to every Hanner polytope. -/
+/-- **Hanner polytopes contain the origin.** The origin belongs to every Hanner polytope. -/
 theorem IsHannerPolytope.zero_mem {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K) : 0 ∈ K := by
   induction hK with
@@ -252,7 +281,7 @@ private theorem isCompact_hannerOneSum {m n : ℕ}
   exact (isCompact_convexJoin hK0compact h0Lcompact).image
     EuclideanSpace.finAddEquivProd.symm.continuous
 
-/-- Every Hanner polytope is compact. -/
+/-- **Hanner polytopes are compact.** Every Hanner polytope is compact. -/
 theorem IsHannerPolytope.isCompact {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : IsHannerPolytope K) : IsCompact K := by
   induction hK with
