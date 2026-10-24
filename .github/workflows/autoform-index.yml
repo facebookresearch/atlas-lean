@@ -2,24 +2,36 @@ name: Autoform index
 
 # Publishes the search index AutoformBot reads, for one commit of main.
 # The index goes in a tagged commit on top of that commit; main never changes.
+# It runs after CI passes on a push to main, reusing the build CI cached for
+# that commit, and can be dispatched for main's current commit.
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.sha }}
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.sha }}
   cancel-in-progress: false
 
 env:
-  # The bytes of an index depend on the Autoform revision that writes it.
-  AUTOFORM_REV: feec945b81669827a9d066f7b432714d482f8c1b
+  # The commit CI passed on, or main's commit when dispatched.
+  INDEX_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
 
 jobs:
   index:
-    # Index only what main holds.
-    if: github.ref == 'refs/heads/main'
+    # Index only what main holds: a dispatch from main, or a CI run that
+    # passed on a push to this repository's main.
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     outputs:
@@ -30,7 +42,7 @@ jobs:
         id: tag
         run: |
           set -euo pipefail
-          tag="autoform-index/${GITHUB_SHA::12}"
+          tag="autoform-index/${INDEX_SHA::12}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           status=0
           git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}.git" \
@@ -44,6 +56,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.tag.outputs.tagged == 'false'
         with:
+          ref: ${{ env.INDEX_SHA }}
           persist-credentials: false
 
       - name: Free disk space for Lean caches
@@ -88,7 +101,7 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
-          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ env.INDEX_SHA }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
@@ -96,13 +109,17 @@ jobs:
         if: steps.tag.outputs.tagged == 'false'
         run: lake build MathlibExt CSLibExt WantedExt
 
+      # The bytes of an index depend on the Autoform revision that writes it.
+      # CI's pull-request check reads the same pin.
       - name: Install Autoform
         if: steps.tag.outputs.tagged == 'false'
         run: |
           set -euo pipefail
+          rev="$(cat .github/autoform-rev)"
+          [[ "$rev" =~ ^[0-9a-f]{40}$ ]] || { echo ".github/autoform-rev is not a full commit SHA" >&2; exit 1; }
           python3 -m venv "${RUNNER_TEMP}/autoform"
           "${RUNNER_TEMP}/autoform/bin/pip" install --quiet \
-            "autoform @ git+https://github.com/facebookresearch/autoform-bot@${AUTOFORM_REV}"
+            "autoform @ git+https://github.com/facebookresearch/autoform-bot@${rev}"
           echo "${RUNNER_TEMP}/autoform/bin" >> "$GITHUB_PATH"
 
       - name: Write the index
@@ -139,6 +156,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.INDEX_SHA }}
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -152,8 +171,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add autoform-library-index.jsonl
-          git commit --quiet -m "Add the Autoform library index for ${GITHUB_SHA::12}" \
-            -m "Written by autoform-bot ${AUTOFORM_REV}."
+          git commit --quiet -m "Add the Autoform library index for ${INDEX_SHA::12}" \
+            -m "Written by autoform-bot $(cat .github/autoform-rev)."
           git diff --exit-code HEAD
           git tag "$TAG"
           git push origin "refs/tags/$TAG"
