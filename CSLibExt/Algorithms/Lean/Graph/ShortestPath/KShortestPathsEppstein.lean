@@ -86,11 +86,6 @@ inductive DiWalk (G : Digraph V) : V → V → Type u where
   | nil (u : V) : DiWalk G u u
   | cons (u v w : V) : G.Adj u v → DiWalk G v w → DiWalk G u w
 
-/-- The edge (vertex-pair) sequence traversed by a walk. -/
-def DiWalk.edges {G : Digraph V} {s t : V} : DiWalk G s t → List (V × V)
-  | .nil _ => []
-  | .cons u v _ _ tl => (u, v) :: tl.edges
-
 /-- Total length `ℓ(p)` of a walk: the sum of its edge lengths. -/
 noncomputable def DiWalk.length (len : V → V → ℝ) {G : Digraph V}
     {s t : V} : DiWalk G s t → ℝ
@@ -287,11 +282,6 @@ def DiWalk.liftT {G T : Digraph V}
     DiWalk T a b → DiWalk G a b
   | .nil u => .nil u
   | .cons u v w h tl => .cons u v w (Tle u v h) (tl.liftT Tle)
-
-/-- Vertices visited by a walk, in order. -/
-def DiWalk.vertices {G : Digraph V} {s t : V} : DiWalk G s t → List V
-  | .nil u => [u]
-  | .cons u _ _ _ tl => u :: tl.vertices
 
 /-- A path of the path graph `P(G)` starting from the root: the sidetrack
 sequence of an `s`-rooted walk, with consecutive sidetracks joined by an
@@ -632,14 +622,13 @@ Unlike a bare `∃ L` existence claim (which an oracle could provide), this
 states correctness of the lists the algorithm produces (`IsBFSTrace`:
 successive frontier minima).  Neither `δ`-fact is assumed.  No finiteness
 hypothesis: correctness is universal over traces; only the existence of
-length-`k` traces would need a finite graph.  `T` is a spanning tree
-(`htree`: unique tree walks), so Lemma 5 is a bijection: every walk has a
-unique `PPath`. -/
+length-`k` traces would need a finite graph.  No uniqueness is claimed:
+the Lemma 5 correspondence is existence in both directions (every `PPath`
+decodes, every walk encodes), and tree walks are not assumed unique. -/
 theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
     (treeWalk : ∀ a : V, DiWalk T a t)
-    (htree : ∀ a b (p q : DiWalk T a b), p = q)
     (hdist_t : dist t = 0)
     (htight : ∀ a b : V, T.Adj a b → len a b + dist b = dist a)
     (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b) :
@@ -793,8 +782,8 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
 `t`, every best-first-search trace over the path tree of `T t` is correct
 as in Theorem 1 (duplicate-free, weight-sorted, minimal, decoding to
 `s–t` walks with `length = dist t s + weight`, represented-or-longer
-completeness).  `htree` gives unique tree walks (spanning tree), hence
-the Lemma 5 bijection, as in Theorem 1.  (The paper applies the
+completeness).  As in Theorem 1, no uniqueness is claimed (existence in
+both directions only).  (The paper applies the
 construction to the reversed graph `Gᴿ` with destination `s`; here the
 per-target trees are taken as parameters.)  Complexity
 `O(m + n log n + kn log k)` not formalized. -/
@@ -803,7 +792,6 @@ theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
     (T : V → Digraph V)
     (Tle : ∀ t a b : V, (T t).Adj a b → G.Adj a b)
     (treeWalk : ∀ t a : V, DiWalk (T t) a t)
-    (htree : ∀ t a b (p q : DiWalk (T t) a b), p = q)
     (hdist : ∀ t : V, dist t t = 0)
     (htight : ∀ t a b : V, (T t).Adj a b → len a b + dist t b = dist t a)
     (htri : ∀ t a b : V, G.Adj a b → dist t a ≤ len a b + dist t b) :
@@ -825,6 +813,6 @@ theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
           p.length len ≤ y.length len)) := by
   intro t L hL
   exact thm1_bfs_enumeration (T t) len (dist t) (Tle t) (treeWalk t)
-    (htree t) (hdist t) (htight t) (htri t) L hL
+    (hdist t) (htight t) (htri t) L hL
 
 end Cslib.Algorithms.Lean.KShortestPathsEppstein
