@@ -19,7 +19,7 @@ and not formalized yet. Everything lives in namespace `CDIS`; the module prefix 
 | Course | Lean | File |
 |---|---|---|
 | Inversion method: `F⁻(U)` has the law of `X` | `CDIS.hasLaw_genInv_cdf` | `Code/ChapterV/Inversion.lean` |
-| Uniform law on the subgraph of a density (rejection) | `CDIS.isUniform_subgraph` | `Code/ChapterV/Rejection.lean` |
+| Uniform law on the subgraph of a density, behind the rejection method | `CDIS.isUniform_subgraph` | `Code/ChapterV/Rejection.lean` |
 | Box-Muller: two independent `N(0, 1)` | `CDIS.boxMuller_gaussian` | `Code/ChapterV/BoxMuller.lean` |
 | Importance sampling, optimal instrumental density | `CDIS.tendsto_importanceSampling`, `CDIS.variance_estimator_optimal_le` | `Code/ChapterV/ImportanceSampling.lean` |
 | Conditional density and conditional law | `CDIS.condDistrib_ae_eq_withDensity_condDensity` | `Code/ChapterIII/Densities.lean` |
@@ -39,8 +39,8 @@ corrected versions.
   corrected with `a > 0` (`CDIS.markov_abs_pow`).
 - Bienaymé-Chebyshev does not quantify `a` and fails for `a < 0` (`CDIS.not_chebyshev_of_neg`);
   corrected with `a > 0` (`CDIS.chebyshev_abs_sub`).
-- The importance sampling identity needs `g > 0` wherever `h f ≠ 0`
-  (`CDIS.not_forall_integral_eq_integral_ratio`); corrected with that hypothesis
+- The importance sampling identity needs `g > 0` almost everywhere where `h f ≠ 0`
+  (`CDIS.not_forall_integral_withDensity_ratio_eq`); corrected with that hypothesis
   (`CDIS.integral_mul_eq_integral_ratio`).
 
 ## Roadmap
@@ -60,6 +60,7 @@ lake build Verify
 `lake build Verify` fails if any declaration compiled in `Code`, private and auxiliary ones
 included, depends on an axiom other than `propext`, `Classical.choice` and `Quot.sound` (so in
 particular on any `sorry`), or is outside namespace `CDIS`; and if a name listed under `lean:`
-or `mathlib_declaration:` in `roadmap/` does not resolve. The roadmap is an input of `Verify`,
-so editing an article re-runs that check. Both checks fail if they find nothing to check.
+or `mathlib_declaration:` in `roadmap/` does not resolve, or if an article's front matter cannot
+be read. The roadmap is an input of `Verify`, so editing an article re-runs that check. Both
+checks fail if they find nothing to check.
 Toolchain: Lean `v4.34.0`, Mathlib `v4.34.0`.

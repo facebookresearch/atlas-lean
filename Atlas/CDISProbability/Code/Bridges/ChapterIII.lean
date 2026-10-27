@@ -5,7 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-import Code.Basic
 import Mathlib.Probability.Kernel.CondDistrib
 
 /-!
@@ -41,8 +40,6 @@ theorem condDistrib_ae_eq_of_rectangles (hX : Measurable X) (hY : Measurable Y)
     (hκ : ∀ {B₁ B₂ : Set ℝ}, MeasurableSet B₁ → MeasurableSet B₂ →
       P.map (fun ω ↦ (X ω, Y ω)) (B₁ ×ˢ B₂) = ∫⁻ x in B₁, κ x B₂ ∂(P.map X)) :
     condDistrib Y X P =ᵐ[P.map X] κ := by
-  have : IsProbabilityMeasure (P.map fun ω ↦ (X ω, Y ω)) :=
-    isProbabilityMeasure_map (hX.prodMk hY).aemeasurable
   refine condDistrib_ae_eq_of_measure_eq_compProd hX.aemeasurable hY.aemeasurable ?_
   refine Measure.ext_prod fun hB₁ hB₂ ↦ ?_
   rw [hκ hB₁ hB₂, Measure.compProd_apply_prod hB₁ hB₂]

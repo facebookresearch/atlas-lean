@@ -111,10 +111,6 @@ lemma boxMuller_subst {r : ℝ} (hr : 0 < r) (θ : ℝ) :
 
 end Substitution
 
-lemma measurable_polarCoord_symm : Measurable polarCoord.symm := by
-  change Measurable fun p : ℝ × ℝ ↦ (p.1 * cos p.2, p.1 * sin p.2)
-  fun_prop
-
 section Gaussian
 
 /-- Density of the standard Gaussian on `ℝ²`. -/
@@ -188,8 +184,8 @@ lemma lintegral_boxMuller {g : ℝ × ℝ → ℝ≥0∞} (hg : Measurable g) :
           rw [gaussianPDF2_polarCoord_symm, smul_eq_mul, ← mul_assoc, ← mul_assoc, key]
         · refine Measurable.aemeasurable ?_
           refine ((measurable_fst.ennreal_ofReal).smul ?_)
-          exact (measurable_gaussianPDF2.comp measurable_polarCoord_symm).mul
-            (hg.comp measurable_polarCoord_symm.neg)
+          exact (measurable_gaussianPDF2.comp continuous_polarCoord_symm.measurable).mul
+            (hg.comp continuous_polarCoord_symm.measurable.neg)
     _ = ∫⁻ x, gaussianPDF2 x * g (-x) :=
         lintegral_comp_polarCoord_symm (fun x ↦ gaussianPDF2 x * g (-x))
     _ = ∫⁻ x, g (-x) ∂((gaussianReal 0 1).prod (gaussianReal 0 1)) := by

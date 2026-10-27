@@ -1,7 +1,8 @@
 # CDIS, Probabilités V
 
 Source: `Probabilités V/Probabilité V.md` in https://github.com/boisgera/CDIS at commit
-afa15a2 (CC BY-NC-SA 4.0).
+afa15a2. The course is distributed under CC BY-NC-SA 4.0; the section and statement titles quoted
+below remain subject to that license.
 
 | Locator (section, statement) | Roadmap article |
 | --- | --- |

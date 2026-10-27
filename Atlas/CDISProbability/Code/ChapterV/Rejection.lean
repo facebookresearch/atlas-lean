@@ -5,11 +5,13 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-import Code.Basic
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# CDIS Probabilités V: the rejection method
+# CDIS Probabilités V: the two results behind the rejection method
+
+The course justifies the rejection method by two statements, formalized here. The algorithm
+itself (acceptance probability, law of the accepted sample, geometric number of trials) is not.
 
 * id 97: uniform law on the subgraph of a density. If `X` has density `f` and `U` is uniform
   on `]0,1[` and independent of `X`, then `(X, U f(X))` is uniform on
@@ -28,17 +30,17 @@ namespace CDIS
 variable {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E] {P : Measure Ω} {μ : Measure E}
 
 /-- Conditioning on `{U ∈ B}` then pushing forward by `U` is conditioning the law of `U` on `B`. -/
-lemma map_cond_preimage {U : Ω → E} (hU : Measurable U) {B : Set E} (hB : MeasurableSet B) :
+lemma map_cond_preimage {U : Ω → E} (hU : AEMeasurable U P) {B : Set E} (hB : MeasurableSet B) :
     (P[|U ⁻¹' B]).map U = (P.map U)[|B] := by
-  simp only [ProbabilityTheory.cond, Measure.map_apply hU hB]
-  rw [Measure.map_smul, Measure.restrict_map hU hB]
-  exact hU.aemeasurable
+  simp only [ProbabilityTheory.cond, Measure.map_apply_of_aemeasurable hU hB]
+  rw [Measure.map_smul, Measure.restrict_map_of_aemeasurable hU hB]
+  exact hU.restrict
 
 /-- CDIS P.V, id 96 (stability of the uniform law under conditioning). -/
-theorem isUniform_cond_preimage {U : Ω → E} (hU : Measurable U) {A B : Set E}
+theorem isUniform_cond_preimage {U : Ω → E} (hU : AEMeasurable U P) {A B : Set E}
     (hA : MeasurableSet A) (hB : MeasurableSet B) (hBA : B ⊆ A) (hAfin : μ A ≠ ⊤)
     (hu : pdf.IsUniform U A P μ) : pdf.IsUniform U B (P[|U ⁻¹' B]) μ where
-  aemeasurable := hU.aemeasurable
+  aemeasurable := hU.mono_ac cond_absolutelyContinuous
   map_eq := by
     rw [map_cond_preimage hU hB, hu.map_eq, cond_cond_eq_cond_inter' hA hB hAfin,
       inter_eq_right.2 hBA]
@@ -89,7 +91,7 @@ theorem isUniform_subgraph [IsProbabilityMeasure P] {f : ℝ → ℝ} (hf : Meas
     rfl
   have : IsProbabilityMeasure ((μX.prod ν).map T) := by
     rw [← hlaw]
-    exact isProbabilityMeasure_map (hT.comp_aemeasurable hXU')
+    infer_instance
   -- the two measures agree on rectangles
   have hrect : ∀ {s t : Set ℝ}, MeasurableSet s → MeasurableSet t →
       (μX.prod ν).map T (s ×ˢ t) = volume.restrict (subgraph f) (s ×ˢ t) := by

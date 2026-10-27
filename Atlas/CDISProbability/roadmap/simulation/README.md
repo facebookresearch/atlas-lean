@@ -16,7 +16,8 @@ variable with any prescribed law.
 ## Rejection
 
 Uniform laws are stable under conditioning, and a density is the projection of the
-uniform law on its subgraph: together they justify the rejection method.
+uniform law on its subgraph: these are the two results the course uses to justify the
+rejection method. The algorithm itself is not formalized.
 
 - [Uniform law](uniform-law.md)
 - [Stability under conditioning](uniform-conditioning.md)

@@ -61,7 +61,7 @@ lemma cdf_withDensity_eq (hf0 : ∀ x, 0 ≤ f x) (hfi : Integrable f)
     ENNReal.toReal_ofReal (setIntegral_nonneg measurableSet_Iic fun t _ ↦ hf0 t)]
 
 /-- CDIS P.I, id 28 (2): `F'(x) = f(x)` at every point where `f` is continuous. -/
-theorem hasDerivAt_cdf_withDensity (hf0 : ∀ x, 0 ≤ f x) (hfm : Measurable f) (hfi : Integrable f)
+theorem hasDerivAt_cdf_withDensity (hf0 : ∀ x, 0 ≤ f x) (hfi : Integrable f)
     [IsProbabilityMeasure (volume.withDensity fun x ↦ ENNReal.ofReal (f x))] {x : ℝ}
     (hc : ContinuousAt f x) :
     HasDerivAt (cdf (volume.withDensity fun x ↦ ENNReal.ofReal (f x))) (f x) x := by
@@ -73,7 +73,7 @@ theorem hasDerivAt_cdf_withDensity (hf0 : ∀ x, 0 ≤ f x) (hfm : Measurable f)
     ring
   rw [key]
   exact (intervalIntegral.integral_hasDerivAt_right hfi.intervalIntegrable
-    hfm.stronglyMeasurable.stronglyMeasurableAtFilter hc).const_add _
+    hfi.aestronglyMeasurable.stronglyMeasurableAtFilter hc).const_add _
 
 /-- CDIS P.I, id 28 (3): if the distribution function is continuous and differentiable outside a
 countable set, the law has density `F'`. -/

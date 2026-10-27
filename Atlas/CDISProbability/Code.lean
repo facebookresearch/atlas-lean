@@ -6,7 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Basic
 import Code.Bridges.ChapterI
 import Code.Bridges.ChapterII
 import Code.Bridges.ChapterIII

@@ -5,7 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-import Code.Basic
 import Mathlib.Probability.CDF
 import Mathlib.Probability.HasLaw
 import Mathlib.Probability.Distributions.Exponential
@@ -159,8 +158,6 @@ theorem map_genInv_cdf (μ : Measure ℝ) [IsProbabilityMeasure μ] :
     (volume.restrict (Ioo (0 : ℝ) 1)).map (genInv (cdf μ)) = μ := by
   have hm := measurable_genInv_cdf μ
   have : IsProbabilityMeasure (volume.restrict (Ioo (0 : ℝ) 1)) := ⟨by simp⟩
-  have : IsProbabilityMeasure ((volume.restrict (Ioo (0 : ℝ) 1)).map (genInv (cdf μ))) :=
-    isProbabilityMeasure_map hm.aemeasurable
   refine Measure.ext_of_Iic _ _ fun x ↦ ?_
   rw [Measure.map_apply hm measurableSet_Iic, Measure.restrict_apply (hm measurableSet_Iic),
     ← ofReal_cdf μ x]
@@ -184,10 +181,9 @@ theorem hasLaw_genInv_cdf (μ : Measure ℝ) [IsProbabilityMeasure μ] {U : Ω �
         hU.aemeasurable, hU.map_eq, map_genInv_cdf]
 
 /-- CDIS P.V, id 94, in the course's form: `F_X⁻(U)` has the same law as `X`. -/
-theorem hasLaw_genInv_cdf_map {X U : Ω → ℝ} (hX : AEMeasurable X P)
+theorem hasLaw_genInv_cdf_map {X U : Ω → ℝ}
     (hU : HasLaw U (volume.restrict (Ioo (0 : ℝ) 1)) P) :
     HasLaw (fun ω ↦ genInv (cdf (P.map X)) (U ω)) (P.map X) P :=
-  have : IsProbabilityMeasure (P.map X) := isProbabilityMeasure_map hX
   hasLaw_genInv_cdf (P.map X) hU
 
 end Inversion
@@ -249,7 +245,6 @@ theorem IsCdfBijection.map_cdf (h : IsCdfBijection (cdf μ) I G) :
     μ.map (cdf μ) = volume.restrict (Ioo (0 : ℝ) 1) := by
   have hm : Measurable (cdf μ) := (monotone_cdf μ).measurable
   have : IsProbabilityMeasure (volume.restrict (Ioo (0 : ℝ) 1)) := ⟨by simp⟩
-  have : IsProbabilityMeasure (μ.map (cdf μ)) := isProbabilityMeasure_map hm.aemeasurable
   refine Measure.ext_of_Iic _ _ fun c ↦ ?_
   rw [Measure.map_apply hm measurableSet_Iic, Measure.restrict_apply measurableSet_Iic,
     inter_comm]

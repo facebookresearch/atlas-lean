@@ -24,7 +24,8 @@ its law is `volume.withDensity f` on `ℝ × ℝ`.
   `P(X ∈ B₁, Y ∈ B₂) = ∫_{B₁} (∫_{B₂} f_{Y|X=x}(y) dy) f_X(x) dx`.
 * id 54 (density case): `f_Y(y) = ∫ f_{Y|X=x}(y) f_X(x) dx` for almost every `y`, and Bayes'
   formula for densities.
-* id 55 (2): `X` and `Y` are independent iff `f_{Y|X=x} ℓ = f_Y ℓ` for `P_X`-almost every `x`.
+* id 55 (2): `X` and `Y` are independent iff `f_{Y|X=x} ℓ = f_Y ℓ` for `P_X`-almost every `x`,
+  and iff `f_{Y|X=x}` does not depend on `x`.
 -/
 
 open MeasureTheory ProbabilityTheory Set
@@ -194,7 +195,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasur
 
 lemma lintegral_eq_one_of_hasLaw (hXY : HasLaw (fun ω ↦ (X ω, Y ω)) (volume.withDensity f) P) :
     ∫⁻ p, f p = 1 := by
-  have := hXY.map_eq ▸ isProbabilityMeasure_map hXY.aemeasurable
+  have : IsProbabilityMeasure (volume.withDensity f) := hXY.map_eq ▸ inferInstance
   have h := this.measure_univ
   rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ] at h
 
@@ -351,6 +352,26 @@ theorem indepFun_iff_ae_withDensity_condDensity_eq (hf : Measurable f) (hX : Mea
   · intro h
     filter_upwards [h, hcd] with x h1 h2
     rw [h2, h1, Kernel.const_apply, hYlaw]
+
+/-- CDIS P.III, id 55 (2), as stated in the course: when `(X, Y)` has a density, `X` and `Y` are
+independent iff the conditional density `f_{Y|X=x}` does not depend on `x`, that is, iff one
+density `q` is (almost everywhere) `f_{Y|X=x}` for `P_X`-almost every `x`. -/
+theorem indepFun_iff_exists_condDensity_ae_eq (hf : Measurable f) (hX : Measurable X)
+    (hY : Measurable Y) (hXY : HasLaw (fun ω ↦ (X ω, Y ω)) (volume.withDensity f) P) :
+    IndepFun X Y P ↔ ∃ q : ℝ → ℝ≥0∞, ∀ᵐ x ∂(P.map X), condDensity f x =ᵐ[volume] q := by
+  refine ⟨fun h ↦ ⟨marginalSnd f, ?_⟩, fun ⟨q, hq⟩ ↦ ?_⟩
+  · filter_upwards [(indepFun_iff_ae_withDensity_condDensity_eq hf hX hY hXY).1 h] with x hx
+    exact (withDensity_eq_iff_of_sigmaFinite (measurable_condDensity hf x).aemeasurable
+      (measurable_marginalSnd hf).aemeasurable).1 hx
+  have hconst : condDistrib Y X P =ᵐ[P.map X] Kernel.const ℝ (volume.withDensity q) := by
+    filter_upwards [condDistrib_ae_eq_withDensity_condDensity hf hX hY hXY, hq] with x h1 h2
+    rw [h1, Kernel.const_apply, withDensity_congr_ae h2]
+  -- the common value is a probability, being `P_{Y|X=x}` for some `x`
+  obtain ⟨x, hx⟩ := hconst.exists
+  have : IsProbabilityMeasure (volume.withDensity q) := by
+    rw [← Kernel.const_apply (volume.withDensity q) x, ← hx]
+    infer_instance
+  exact (indepFun_of_condDistrib_ae_eq_const hX hY hconst).2
 
 end ConditionalDensity
 

@@ -5,7 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-import Code.Basic
 import Mathlib.Probability.CDF
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 
@@ -48,11 +47,9 @@ theorem prob_properties {A B : Set Ω} (hA : MeasurableSet A) (hB : MeasurableSe
 
 /-- CDIS P.I, id 24: two real random variables with the same distribution function have the same
 law. -/
-theorem law_eq_of_cdf_eq {X Y : Ω → ℝ} (hX : AEMeasurable X P) (hY : AEMeasurable Y P)
-    (h : cdf (P.map X) = cdf (P.map Y)) : P.map X = P.map Y := by
-  have := isProbabilityMeasure_map hX
-  have := isProbabilityMeasure_map hY
-  exact Measure.eq_of_cdf _ _ h
+theorem law_eq_of_cdf_eq {X Y : Ω → ℝ} (h : cdf (P.map X) = cdf (P.map Y)) :
+    P.map X = P.map Y :=
+  Measure.eq_of_cdf _ _ h
 
 /-- CDIS P.I, id 25: `F` is the distribution function of a unique probability on `ℝ` if and only
 if it is nondecreasing, right-continuous, with limits `0` at `-∞` and `1` at `+∞`. -/

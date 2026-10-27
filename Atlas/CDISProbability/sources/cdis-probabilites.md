@@ -5,7 +5,8 @@ Source: the Markdown chapters `Probabilités I/Probabilité I.md` to
 (CC BY-NC-SA 4.0). Statement ids number the tagged statements of chapters I to V in order (102 in
 total). Ids 0 and 1 (the sample space and events, which only fix vocabulary) and id 91 (a
 pseudo-random generator, an algorithm without a statement) have no article. Chapter V is mapped
-in [cdis-probabilites-v.md](cdis-probabilites-v.md).
+in [cdis-probabilites-v.md](cdis-probabilites-v.md). The course is distributed under CC BY-NC-SA
+4.0; the chapter, section and statement titles quoted below remain subject to that license.
 
 | Id | Chapter | Section | Statement (anchor) | Roadmap article |
 | --- | --- | --- | --- | --- |

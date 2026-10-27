@@ -5,7 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-import Code.Basic
 import Mathlib.Probability.Kernel.CondDistrib
 import Mathlib.Probability.Independence.Basic
 
@@ -74,7 +73,6 @@ section Independence
 every `x`. -/
 theorem indepFun_iff_condDistrib_ae_eq_const (hX : Measurable X) (hY : Measurable Y) :
     IndepFun X Y P ↔ condDistrib Y X P =ᵐ[P.map X] Kernel.const ℝ (P.map Y) := by
-  have : IsProbabilityMeasure (P.map Y) := isProbabilityMeasure_map hY.aemeasurable
   rw [condDistrib_ae_eq_iff_measure_eq_compProd hX.aemeasurable hY.aemeasurable,
     Measure.compProd_const, indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable]
 
@@ -83,7 +81,6 @@ theorem indepFun_iff_condDistrib_ae_eq_const (hX : Measurable X) (hY : Measurabl
 theorem indepFun_of_condDistrib_ae_eq_const (hX : Measurable X) (hY : Measurable Y)
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     (h : condDistrib Y X P =ᵐ[P.map X] Kernel.const ℝ ν) : ν = P.map Y ∧ IndepFun X Y P := by
-  have : IsProbabilityMeasure (P.map X) := isProbabilityMeasure_map hX.aemeasurable
   have hmap := (condDistrib_ae_eq_iff_measure_eq_compProd hX.aemeasurable hY.aemeasurable _).1 h
   rw [Measure.compProd_const] at hmap
   have hν : ν = P.map Y := by
@@ -160,7 +157,6 @@ given `X = x` is the law of `g(x, Y')` with `Y' ~ P_{Y|X=x}`, for `P_X`-almost e
 theorem condDistrib_comp_prod_ae_eq (hX : Measurable X) (hY : Measurable Y) {g : ℝ × ℝ → ℝ}
     (hg : Measurable g) :
     condDistrib (fun ω ↦ g (X ω, Y ω)) X P =ᵐ[P.map X] transferKernel (condDistrib Y X P) g := by
-  have : IsProbabilityMeasure (P.map X) := isProbabilityMeasure_map hX.aemeasurable
   have := isMarkovKernel_transferKernel (condDistrib Y X P) hg
   refine condDistrib_ae_eq_of_measure_eq_compProd hX.aemeasurable
     (hg.comp (hX.prodMk hY)).aemeasurable ?_
