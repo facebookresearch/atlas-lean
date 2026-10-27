@@ -1,0 +1,15 @@
+# Palindromic Zero One Wanted
+
+- [Is Reciprocal Poly](is-reciprocal-poly.md)
+- [Is Reciprocal Poly iff](is-reciprocal-poly-iff.md)
+- [Is Zero One Poly](is-zero-one-poly.md)
+- [Is Zero One Poly iff](is-zero-one-poly-iff.md)
+- [Is Noncyclotomic](is-noncyclotomic.md)
+- [Is Noncyclotomic iff](is-noncyclotomic-iff.md)
+- [Lemma 2.1](exists-unique-even-odd-reciprocal.md)
+- [Lemma 2.2](exists-unique-even-odd-zero-one.md)
+- [Lemma 2.3](l-eq-min-support-and-lt.md)
+- [Theorem 1.1](irreducible-comp-pow-two-pow-of-card-lt.md)
+- [Theorem 1.2](not-irreducible-comp-pow-iff.md)
+- [Theorem 1.3](map-comp-sq-eq-mul.md)
+- [Theorem 1.4](not-irreducible-comp-four-iff.md)

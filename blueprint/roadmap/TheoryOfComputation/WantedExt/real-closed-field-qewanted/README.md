@@ -1,0 +1,17 @@
+# Real Closed Field QEWanted
+
+- [Term](term.md)
+- [Formula](formula.md)
+- [Not](not.md)
+- [Tru](tru.md)
+- [Or](or.md)
+- [And](and.md)
+- [Ex](ex.md)
+- [Cons](cons.md)
+- [Eval](eval.md)
+- [Holds](holds.md)
+- [Is QF](is-qf.md)
+- [Qe](qe.md)
+- [Is QF qe](is-qf-qe.md)
+- [Holds qe](holds-qe.md)
+- [Holds ex sq](holds-ex-sq.md)

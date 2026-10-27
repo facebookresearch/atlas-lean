@@ -1,0 +1,1701 @@
+{
+ "book": "DifferentialGeometry",
+ "source": "MIT OCW 18.950 Differential Geometry, Fall 2008 lecture notes, Chapters 1-4 (text/ch1_revised.txt .. ch4_revised.txt, PDF-to-text)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 1,
+   "evidence": "ch1_revised.txt:46",
+   "quote": "For a regular curve c,",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 1,
+   "evidence": "ch1_revised.txt:49",
+   "quote": "If κ(t) = 0 for all t",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 1,
+   "evidence": "ch1_revised.txt:51",
+   "quote": "Suppose that κ(t) = 1/R is a nonzero constant.",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 1,
+   "evidence": "ch1_revised.txt:57",
+   "quote": "The curvature of a graph is",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 1,
+   "evidence": "ch1_revised.txt:60",
+   "quote": "The curvature of a unit speed curve is",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 1,
+   "evidence": "ch1_revised.txt:68",
+   "quote": "whose curvature is κ.",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 1,
+   "evidence": "ch1_revised.txt:74",
+   "quote": "curvatures are related by",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 1,
+   "evidence": "ch1_revised.txt:93",
+   "quote": "t0 a point where κ(t0)",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 1,
+   "evidence": "ch1_revised.txt:101",
+   "quote": "U be a regular curve, which is contained in",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 16,
+   "evidence": "ch1_revised.txt:175",
+   "quote": "is a Frenet curve and d(t) = c(φ(t)) a reparametrization",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 16,
+   "evidence": "ch1_revised.txt:182",
+   "quote": "Take a Frenet curve c in Rn.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 16,
+   "evidence": "ch1_revised.txt:198",
+   "quote": "Let c be a Frenet curve in Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "ch1_revised.txt:200",
+   "quote": "= κni −i .",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "ch1_revised.txt:230",
+   "quote": "1deg(f) = 2π (θ(T ) − θ(0))",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "ch1_revised.txt:232",
+   "quote": "If deg(f) = 0, � f is a surjective",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 21,
+   "evidence": "ch1_revised.txt:237",
+   "quote": "deg(f) = sign det(p, f�(tk))",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 1,
+   "evidence": "ch1_revised.txt:246",
+   "quote": "A closed curve of period T is a regular curve",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "ch1_revised.txt:249",
+   "quote": "Let c be a simple",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 1,
+   "evidence": "ch1_revised.txt:258",
+   "quote": "κtot(c) = κ(t)",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "ch1_revised.txt:257",
+   "quote": "The total curvature of a closed curve is deﬁned to be",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 11,
+   "evidence": "ch1_revised.txt:263",
+   "quote": "Let d be the unit speed reparametrization of c.",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 24,
+   "evidence": "ch1_revised.txt:261",
+   "quote": "Let c be a closed curve of period T",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "ch1_revised.txt:264",
+   "quote": "Moreover, the total curvature of d is the",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 21,
+   "evidence": "ch1_revised.txt:266",
+   "quote": "κtot(c)/2π is the degree of f(t)",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 26,
+   "evidence": "ch1_revised.txt:266",
+   "quote": "κtot(c)/2π is the degree of f(t)",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 1,
+   "evidence": "ch1_revised.txt:272",
+   "quote": "any such point satisﬁes κ(tk) = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 24,
+   "evidence": "ch1_revised.txt:270",
+   "quote": "Let c be a closed curve of period T",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 26,
+   "evidence": "ch1_revised.txt:276",
+   "quote": "κtot(c)/2π = sign(κ(tk)).",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "ch1_revised.txt:272",
+   "quote": "Then, the rotation",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 24,
+   "evidence": "ch1_revised.txt:282",
+   "quote": "Let c be a simple closed",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 26,
+   "evidence": "ch1_revised.txt:283",
+   "quote": "Then κtot(c) = ±2π.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 24,
+   "evidence": "ch1_revised.txt:286",
+   "quote": "Let c be a simple closed curve. We say that c is convex",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 1,
+   "evidence": "ch1_revised.txt:291",
+   "quote": "only if its curvature never changes sign.",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 24,
+   "evidence": "ch1_revised.txt:290",
+   "quote": "A simple closed curve is convex if and",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "ch1_revised.txt:290",
+   "quote": "A simple closed curve is convex if and",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 1,
+   "evidence": "ch1_revised.txt:294",
+   "quote": "|κ(t)|�c�(t)� dt ≥ 2π.",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 24,
+   "evidence": "ch1_revised.txt:292",
+   "quote": "Let c be a closed curve of period T",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 24,
+   "evidence": "ch1_revised.txt:301",
+   "quote": "Let c be a closed curve with normal",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 26,
+   "evidence": "ch1_revised.txt:304",
+   "quote": "κtot(c)/2π = sign c� (0)",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 1,
+   "evidence": "ch1_revised.txt:318",
+   "quote": "Take a simple closed curve whose curvature is everywhere",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 24,
+   "evidence": "ch1_revised.txt:318",
+   "quote": "Take a simple closed curve whose curvature is everywhere",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 1,
+   "evidence": "ch1_revised.txt:326",
+   "quote": "closed curve whose curvature is everywhere positive.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 24,
+   "evidence": "ch1_revised.txt:326",
+   "quote": "closed curve whose curvature is everywhere positive.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 39,
+   "evidence": "ch2_revised.txt:51",
+   "quote": "Let f be a hypersurface patch.",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 39,
+   "evidence": "ch2_revised.txt:63",
+   "quote": "Deﬁne Gij (x) = �∂xi f, ∂xj f�",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 40,
+   "evidence": "ch2_revised.txt:67",
+   "quote": "Deﬁne Hij (x) = −�∂xi ν, ∂xj f�",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 41,
+   "evidence": "ch2_revised.txt:74",
+   "quote": "IIx(X, Y ) = Ix(LxX, Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "ch2_revised.txt:74",
+   "quote": "IIx(X, Y ) = Ix(LxX, Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 40,
+   "evidence": "ch2_revised.txt:75",
+   "quote": "Dν = −Df L (matrix multiplication).",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "ch2_revised.txt:77",
+   "quote": "shape operator allows us to express it",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 40,
+   "evidence": "ch2_revised.txt:110",
+   "quote": "ν˜(x) = ν(φ(x)),",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 41,
+   "evidence": "ch2_revised.txt:111",
+   "quote": "G˜(x) = Dφ(x)tr G(φ(x)) Dφ(x)",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 42,
+   "evidence": "ch2_revised.txt:112",
+   "quote": "H˜ (x) = Dφ(x)tr H(φ(x)) Dφ(x)",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 43,
+   "evidence": "ch2_revised.txt:113",
+   "quote": "L˜(x) = Dφ(x)−1 L(φ(x)) Dφ(x).",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 39,
+   "evidence": "ch2_revised.txt:120",
+   "quote": "be two hypersurface patches",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 41,
+   "evidence": "ch2_revised.txt:121",
+   "quote": "Suppose that their ﬁrst and",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 42,
+   "evidence": "ch2_revised.txt:122",
+   "quote": "second fundamental forms coincide.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 39,
+   "evidence": "ch2_revised.txt:133",
+   "quote": "curvatures of the hypersurface patch f at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 43,
+   "evidence": "ch2_revised.txt:132",
+   "quote": "The eigenvalues (λ1,...,λn) of Lx are called the principal",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 41,
+   "evidence": "ch2_revised.txt:148",
+   "quote": "= det(L) = det(H)/ det(G)",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 42,
+   "evidence": "ch2_revised.txt:148",
+   "quote": "= det(L) = det(H)/ det(G)",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 43,
+   "evidence": "ch2_revised.txt:146",
+   "quote": "κmean = λ1 + + λn = trace(L)",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 47,
+   "evidence": "ch2_revised.txt:144",
+   "quote": "Let λ1,...,λn be the principal curvatures of f at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 40,
+   "evidence": "ch2_revised.txt:153",
+   "quote": "det(∂x1 ν, . . . , ∂xn ν, ν)κgauss",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 41,
+   "evidence": "ch2_revised.txt:153",
+   "quote": "(−1)n √det G",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "ch2_revised.txt:152",
+   "quote": "The Gauss curvature is",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 40,
+   "evidence": "ch2_revised.txt:183",
+   "quote": "= Γijk + Hij ν",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 42,
+   "evidence": "ch2_revised.txt:183",
+   "quote": "= Γijk + Hij ν",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 41,
+   "evidence": "ch2_revised.txt:187",
+   "quote": "the inverse matrix G−1",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "ch2_revised.txt:188",
+   "quote": "Γl = 12 g kl",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 42,
+   "evidence": "ch2_revised.txt:198",
+   "quote": "Hij Lsk − HikLsj",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 43,
+   "evidence": "ch2_revised.txt:198",
+   "quote": "Hij Lsk − HikLsj",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "ch2_revised.txt:198",
+   "quote": "= ∂kΓs Γt Γs Γs ij − ∂jΓsik",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 41,
+   "evidence": "ch2_revised.txt:225",
+   "quote": "of a surface patch is given in terms of the ﬁrst fundamental form by",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 43,
+   "evidence": "ch2_revised.txt:216",
+   "quote": "Since H = GL",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 48,
+   "evidence": "ch2_revised.txt:224",
+   "quote": "The Gauss curvature",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 52,
+   "evidence": "ch2_revised.txt:226",
+   "quote": "Ru u G2u 121κgauss = det(G)",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 39,
+   "evidence": "ch2_revised.txt:250",
+   "quote": "be a hypersurface patch. A moving",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 41,
+   "evidence": "ch2_revised.txt:253",
+   "quote": "with respect to the ﬁrst fundamental form",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 50,
+   "evidence": "ch2_revised.txt:257",
+   "quote": "X−1ΓjX",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 52,
+   "evidence": "ch2_revised.txt:259",
+   "quote": "For any moving basis, Fkj = X−1Rkj X.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 54,
+   "evidence": "ch2_revised.txt:259",
+   "quote": "For any moving basis, Fkj = X−1Rkj X.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 54,
+   "evidence": "ch2_revised.txt:260",
+   "quote": "If the moving basis is a frame, the Aj and Fkj are skew",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 41,
+   "evidence": "ch2_revised.txt:270",
+   "quote": "κgauss det(G) = (F21)12",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 48,
+   "evidence": "ch2_revised.txt:270",
+   "quote": "κgauss det(G) = (F21)12",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 52,
+   "evidence": "ch2_revised.txt:263",
+   "quote": "From the Gauss equation,",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 54,
+   "evidence": "ch2_revised.txt:269",
+   "quote": "If αi = (Ai)12, then",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 55,
+   "evidence": "ch2_revised.txt:266",
+   "quote": "= (XF21X−1G−1)12 = (XF21Xtr)12",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "ch2_revised.txt:263",
+   "quote": "Then, F12 is necessarily a multiple of J.",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 39,
+   "evidence": "ch2_revised.txt:272",
+   "quote": "periodic surface patch, which means that",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 41,
+   "evidence": "ch2_revised.txt:276",
+   "quote": "κtot def = κgauss det(G) dx1dx2",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 48,
+   "evidence": "ch2_revised.txt:276",
+   "quote": "κtot def = κgauss det(G) dx1dx2",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 48,
+   "evidence": "ch2_revised.txt:280",
+   "quote": "curvature must be > 0 at some point",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "ch2_revised.txt:279",
+   "quote": "If f is a doubly-periodic surface patch, then the Gauss",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 52,
+   "evidence": "ch2_revised.txt:321",
+   "quote": "(Lij Lsk − Lsj Lik)ei ∧ es = g ukj ei ∧ es",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 47,
+   "evidence": "ch2_revised.txt:326",
+   "quote": "The unordered collection of n(n − 1)/2 numbers λiλj is",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 48,
+   "evidence": "ch2_revised.txt:328",
+   "quote": "κscalar and κn−1 are intrinsic.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 39,
+   "evidence": "ch2_revised.txt:330",
+   "quote": "be a hypersurface patch, deﬁned on a",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 41,
+   "evidence": "ch2_revised.txt:334",
+   "quote": "same ﬁrst fundamental form as f, then necessarily",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 42,
+   "evidence": "ch2_revised.txt:331",
+   "quote": "the matrix Hx has rank",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 41,
+   "evidence": "ch2_revised.txt:349",
+   "quote": "that in the new coordinates, G˜p = 1 is the identity matrix.",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 41,
+   "evidence": "ch2_revised.txt:355",
+   "quote": "in the new coordinates, G˜p = 1 and ∂xk G˜p = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "ch2_revised.txt:372",
+   "quote": "The Gauss normal vector of a spacelike hypersurface",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 41,
+   "evidence": "ch2_revised.txt:437",
+   "quote": "Lw = G−1Hw",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 73,
+   "evidence": "ch2_revised.txt:434",
+   "quote": "Given a set of Gauss normal vectors",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 48,
+   "evidence": "ch2_revised.txt:464",
+   "quote": "κtot gauss = κgauss det(G)dx1dx2 = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 76,
+   "evidence": "ch3_revised.txt:24",
+   "quote": "local deﬁning function for M",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 85,
+   "evidence": "ch3_revised.txt:176",
+   "quote": "This and the previous Corollary together imply our version of l’Hopital’s",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 88,
+   "evidence": "ch3_revised.txt:176",
+   "quote": "This and the previous Corollary together imply our version of l’Hopital’s",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 76,
+   "evidence": "ch3_revised.txt:27",
+   "quote": "be two local deﬁning functions for M.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 76,
+   "evidence": "ch3_revised.txt:58",
+   "quote": "ψ��X, D2ψy · Y �",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 48,
+   "evidence": "ch3_revised.txt:75",
+   "quote": "κgauss = ± ��ψy�n+1",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 76,
+   "evidence": "ch3_revised.txt:70",
+   "quote": "a local deﬁning function ψ for M near y",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 76,
+   "evidence": "ch3_revised.txt:79",
+   "quote": "Let M ⊂ Rn+1 be a hypersurface.",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 81,
+   "evidence": "ch3_revised.txt:91",
+   "quote": "A Gauss map for M is a smooth map",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "ch3_revised.txt:119",
+   "quote": "φ|V : V → U is a diﬀeomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 83,
+   "evidence": "ch3_revised.txt:123",
+   "quote": "and a diﬀeomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 83,
+   "evidence": "ch3_revised.txt:159",
+   "quote": "φ|V : V → U is a diﬀeomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 83,
+   "evidence": "ch3_revised.txt:168",
+   "quote": "and a diﬀeomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 39,
+   "evidence": "ch3_revised.txt:180",
+   "quote": "hypersurface patch f : U Rn+1 which is one-to-one",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 76,
+   "evidence": "ch3_revised.txt:178",
+   "quote": "Let M be a hypersurface. A partial parametrization of",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 89,
+   "evidence": "ch3_revised.txt:183",
+   "quote": "there is a partial parametrization",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 41,
+   "evidence": "ch3_revised.txt:190",
+   "quote": "Denote by If its ﬁrst",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 43,
+   "evidence": "ch3_revised.txt:191",
+   "quote": "fundamental form, and by Sf its shape operator",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 89,
+   "evidence": "ch3_revised.txt:190",
+   "quote": "Let f be a partial parametrization.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 76,
+   "evidence": "ch3_revised.txt:211",
+   "quote": "A hypersurface M ⊂ Rn+1 is compact if it is bounded",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 76,
+   "evidence": "ch3_revised.txt:214",
+   "quote": "A hypersurface M ⊂ Rn+1 is connected if every smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 81,
+   "evidence": "ch3_revised.txt:215",
+   "quote": "whose derivative is identically zero is actually constant",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 82,
+   "evidence": "ch3_revised.txt:217",
+   "quote": "there are precisely two choices of Gauss",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 92,
+   "evidence": "ch3_revised.txt:216",
+   "quote": "A connected compact hypersur",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "ch3_revised.txt:216",
+   "quote": "A connected compact hypersur",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 81,
+   "evidence": "ch3_revised.txt:225",
+   "quote": "that Dφy : TMy → TSn is an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 92,
+   "evidence": "ch3_revised.txt:224",
+   "quote": "compact hypersurface, with n ≥ 2",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 93,
+   "evidence": "ch3_revised.txt:223",
+   "quote": "be a connected",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 76,
+   "evidence": "ch3_revised.txt:227",
+   "quote": "A hypersurface M is convex if for all y ∈ M",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 48,
+   "evidence": "ch3_revised.txt:233",
+   "quote": "whose Gauss curvature is everywhere nonzero.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 92,
+   "evidence": "ch3_revised.txt:232",
+   "quote": "be a compact connected",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 93,
+   "evidence": "ch3_revised.txt:232",
+   "quote": "be a compact connected",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "ch3_revised.txt:233",
+   "quote": "whose Gauss curvature is everywhere nonzero. Then M is",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 40,
+   "evidence": "ch3_revised.txt:276",
+   "quote": "Gauss normal. Then det(Gf )",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 41,
+   "evidence": "ch3_revised.txt:276",
+   "quote": "Gauss normal. Then det(Gf )",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 89,
+   "evidence": "ch3_revised.txt:275",
+   "quote": "Let f be a partial parametrization, and νf the associated",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 81,
+   "evidence": "ch3_revised.txt:280",
+   "quote": "a smooth map",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 82,
+   "evidence": "ch3_revised.txt:281",
+   "quote": "Suppose that both our hypersurfaces come with Gauss normal vectors",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 41,
+   "evidence": "ch3_revised.txt:304",
+   "quote": "and let Gf be the ﬁrst fundamental form.",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 81,
+   "evidence": "ch3_revised.txt:300",
+   "quote": "be a smooth map. Suppose that we have a parametrization f",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 82,
+   "evidence": "ch3_revised.txt:299",
+   "quote": "with Gauss maps ν, ν˜, and φ :",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 89,
+   "evidence": "ch3_revised.txt:300",
+   "quote": "be a smooth map. Suppose that we have a parametrization f",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "ch3_revised.txt:305",
+   "quote": "det(Dφ)y",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 81,
+   "evidence": "ch3_revised.txt:307",
+   "quote": "be a smooth map.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 82,
+   "evidence": "ch3_revised.txt:306",
+   "quote": "Let M, M˜ be compact hypersurfaces equipped with Gauss",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 92,
+   "evidence": "ch3_revised.txt:306",
+   "quote": "Let M, M˜ be compact hypersurfaces equipped with Gauss",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 93,
+   "evidence": "ch3_revised.txt:307",
+   "quote": "Assume that M˜ is connected.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 99,
+   "evidence": "ch3_revised.txt:310",
+   "quote": "det(Dφy) dvoly",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 89,
+   "evidence": "ch3_revised.txt:312",
+   "quote": "are partial parametrization",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 101,
+   "evidence": "ch3_revised.txt:316",
+   "quote": "deg(φ) =",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 99,
+   "evidence": "ch3_revised.txt:321",
+   "quote": "and that det(Dφ) is everywhere positive",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 101,
+   "evidence": "ch3_revised.txt:322",
+   "quote": "Then deg(φ) = 1 (or −1).",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 101,
+   "evidence": "ch3_revised.txt:323",
+   "quote": "The degree is always an integer.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 81,
+   "evidence": "ch3_revised.txt:353",
+   "quote": "and φ : M → Sn a smooth map.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 82,
+   "evidence": "ch3_revised.txt:352",
+   "quote": "be a compact hypersurface with a Gauss map,",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 92,
+   "evidence": "ch3_revised.txt:352",
+   "quote": "be a compact hypersurface with a Gauss map,",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 101,
+   "evidence": "ch3_revised.txt:353",
+   "quote": "If deg(φ) = 0, then � φ is necessarily onto.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 104,
+   "evidence": "ch3_revised.txt:350",
+   "quote": "Since the degree is an integer, it is constant under smooth deformations of",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 81,
+   "evidence": "ch3_revised.txt:357",
+   "quote": "a smooth map",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 82,
+   "evidence": "ch3_revised.txt:357",
+   "quote": "persurfaces with orientations",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 92,
+   "evidence": "ch3_revised.txt:356",
+   "quote": "be compact connected hy",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 93,
+   "evidence": "ch3_revised.txt:356",
+   "quote": "be compact connected hy",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 99,
+   "evidence": "ch3_revised.txt:360",
+   "quote": "det(Dφyi ) = 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 101,
+   "evidence": "ch3_revised.txt:362",
+   "quote": "deg(φ) = sign(det(Dφyi )).",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 48,
+   "evidence": "ch3_revised.txt:369",
+   "quote": "κtot gauss = κgauss dvol.",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 82,
+   "evidence": "ch3_revised.txt:367",
+   "quote": "Let M be a compact hypersurface with an orientation.",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 92,
+   "evidence": "ch3_revised.txt:367",
+   "quote": "Let M be a compact hypersurface with an orientation.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 48,
+   "evidence": "ch3_revised.txt:373",
+   "quote": "then det(Dφy) = det(−Ly) = (−1)nκgauss, hence:",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 82,
+   "evidence": "ch3_revised.txt:374",
+   "quote": "Let M be a compact hypersurface with an orientation.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 92,
+   "evidence": "ch3_revised.txt:374",
+   "quote": "Let M be a compact hypersurface with an orientation.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 99,
+   "evidence": "ch3_revised.txt:373",
+   "quote": "then det(Dφy) = det(−Ly) = (−1)nκgauss, hence:",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 101,
+   "evidence": "ch3_revised.txt:376",
+   "quote": "κtot = (−1)nvol(Sn) deg(ν)",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 107,
+   "evidence": "ch3_revised.txt:376",
+   "quote": "κtot = (−1)nvol(Sn) deg(ν)",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 39,
+   "evidence": "ch3_revised.txt:388",
+   "quote": "be a surface patch",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 54,
+   "evidence": "ch3_revised.txt:389",
+   "quote": "be a moving frame",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 57,
+   "evidence": "ch3_revised.txt:402",
+   "quote": "which was such that curl(α) = κgauss det(G).",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 109,
+   "evidence": "ch3_revised.txt:399",
+   "quote": "Let X be a moving frame with a singularity of order m.",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 82,
+   "evidence": "ch3_revised.txt:413",
+   "quote": "positively oriented orthonormal basis of TM",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 89,
+   "evidence": "ch3_revised.txt:414",
+   "quote": "there is a partial parametrization in which Yj = Df(Xj ) for some frame",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 92,
+   "evidence": "ch3_revised.txt:410",
+   "quote": "Let M ⊂ R3 be a compact surface.",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 109,
+   "evidence": "ch3_revised.txt:415",
+   "quote": "with singularity of order m(pi) at p.",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 111,
+   "evidence": "ch3_revised.txt:416",
+   "quote": "Moving frames with singularities always exist.",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 92,
+   "evidence": "ch3_revised.txt:425",
+   "quote": "For any compact",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 107,
+   "evidence": "ch3_revised.txt:426",
+   "quote": "κtot = 2π χ(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 112,
+   "evidence": "ch3_revised.txt:426",
+   "quote": "κtot = 2π χ(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 82,
+   "evidence": "ch3_revised.txt:427",
+   "quote": "The Gauss map ν of a compact surface M ⊂ R3 satisﬁes",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 92,
+   "evidence": "ch3_revised.txt:427",
+   "quote": "The Gauss map ν of a compact surface M ⊂ R3 satisﬁes",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 101,
+   "evidence": "ch3_revised.txt:428",
+   "quote": "χ(M) = 2 deg(ν).",
+   "kind": "statement"
+  },
+  {
+   "from": 114,
+   "to": 112,
+   "evidence": "ch3_revised.txt:428",
+   "quote": "χ(M) = 2 deg(ν).",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 92,
+   "evidence": "ch3_revised.txt:433",
+   "quote": "For any compact surface M ⊂ R3",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 82,
+   "evidence": "ch3_revised.txt:446",
+   "quote": "a Gauss map.",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 101,
+   "evidence": "ch3_revised.txt:446",
+   "quote": "Then deg(ν) = χ(M)/2.",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 112,
+   "evidence": "ch3_revised.txt:446",
+   "quote": "Then deg(ν) = χ(M)/2.",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 107,
+   "evidence": "ch3_revised.txt:448",
+   "quote": "κtot = χ(M)vol(Sn)/2",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 112,
+   "evidence": "ch3_revised.txt:448",
+   "quote": "κtot = χ(M)vol(Sn)/2",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 116,
+   "evidence": "ch3_revised.txt:447",
+   "quote": "In the same situation as",
+   "kind": "statement"
+  },
+  {
+   "from": 119,
+   "to": 118,
+   "evidence": "ch3_revised.txt:475",
+   "quote": "(combinatorial Gauss-Bonnet; sketch proof). k gauss(Vk) =",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 76,
+   "evidence": "ch4_revised.txt:30",
+   "quote": "Let M ⊂ Rn+1 be a hypersurface.",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 121,
+   "evidence": "ch4_revised.txt:35",
+   "quote": "If γ is a geodesic, the speed",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 50,
+   "evidence": "ch4_revised.txt:40",
+   "quote": "+ Γk = 0",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 89,
+   "evidence": "ch4_revised.txt:36",
+   "quote": "be a partial parametrization of M,",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 121,
+   "evidence": "ch4_revised.txt:38",
+   "quote": "Then γ = f(c) is a geodesic",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 121,
+   "evidence": "ch4_revised.txt:42",
+   "quote": "Two geodesics γ, γ˜ : I M with γ(0) =",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 121,
+   "evidence": "ch4_revised.txt:46",
+   "quote": "containing 0 and a geodesic",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 121,
+   "evidence": "ch4_revised.txt:105",
+   "quote": "M is a geodesic if and",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 121,
+   "evidence": "ch4_revised.txt:113",
+   "quote": "necessarily a geodesic.",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 93,
+   "evidence": "ch4_revised.txt:117",
+   "quote": "Suppose that M is closed and connected.",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 121,
+   "evidence": "ch4_revised.txt:118",
+   "quote": "there is a geodesic",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 41,
+   "evidence": "ch4_revised.txt:124",
+   "quote": "ated ﬁrst fundamental form G = (gij )",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 51,
+   "evidence": "ch4_revised.txt:125",
+   "quote": "geodesic equations (using the intrinsic formula for Christoﬀel symbols) can",
+   "kind": "proof"
+  },
+  {
+   "from": 129,
+   "to": 123,
+   "evidence": "ch4_revised.txt:125",
+   "quote": "geodesic equations (using the intrinsic formula for Christoﬀel symbols) can",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 93,
+   "evidence": "ch4_revised.txt:168",
+   "quote": "If M is a connected hypersurface, then (M, dist) is a metric",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 93,
+   "evidence": "ch4_revised.txt:187",
+   "quote": "Let M be a closed connected hypersurface.",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 41,
+   "evidence": "ch4_revised.txt:215",
+   "quote": "Ih(z)(Dh(z)X, Dh(z)X) ≤ Iz(X, X).",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 136,
+   "evidence": "ch4_revised.txt:214",
+   "quote": "For h as before,",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 130,
+   "evidence": "ch4_revised.txt:224",
+   "quote": "a function satisfying the three axioms from the last lecture.",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 130,
+   "evidence": "ch4_revised.txt:233",
+   "quote": "Let X be a geodesic metric space.",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 139,
+   "evidence": "ch4_revised.txt:235",
+   "quote": "are metric geodesics",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 139,
+   "evidence": "ch4_revised.txt:249",
+   "quote": "metric geodesic.",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 140,
+   "evidence": "ch4_revised.txt:248",
+   "quote": "Any two points in a Busemann space are joined by a unique",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 130,
+   "evidence": "ch4_revised.txt:257",
+   "quote": "Let X be a geodesic metric space.",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 139,
+   "evidence": "ch4_revised.txt:257",
+   "quote": "Let X be a geodesic metric space.",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 82,
+   "evidence": "ch4_revised.txt:275",
+   "quote": "with a Gauss map ν",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 41,
+   "evidence": "ch4_revised.txt:290",
+   "quote": "Ic(t)(c�(t),c�(t))1/2",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 54,
+   "evidence": "ch4_revised.txt:289",
+   "quote": "that we have a moving frame",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 82,
+   "evidence": "ch4_revised.txt:288",
+   "quote": "is compatible with our choice of orientation",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 89,
+   "evidence": "ch4_revised.txt:287",
+   "quote": "Take a partial parametrization f : U → M ⊂ R3 which",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 143,
+   "evidence": "ch4_revised.txt:292",
+   "quote": "κgeod(t) = (A1)12c�1(t)",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 41,
+   "evidence": "ch4_revised.txt:300",
+   "quote": "where G is the ﬁrst fundamental form.",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 48,
+   "evidence": "ch4_revised.txt:298",
+   "quote": "2π − κgauss √det G dx",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 89,
+   "evidence": "ch4_revised.txt:294",
+   "quote": "a partial parametrization",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 143,
+   "evidence": "ch4_revised.txt:296",
+   "quote": "consider the total geodesic curvature of γ = f(c)",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 41,
+   "evidence": "ch4_revised.txt:311",
+   "quote": "measured with respect to the ﬁrst fundamental form.",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 48,
+   "evidence": "ch4_revised.txt:312",
+   "quote": "α1 + α2 + α3 = π + κgauss",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 89,
+   "evidence": "ch4_revised.txt:309",
+   "quote": "partial parametrization, and T ⊂ U a curvilinear triangle, whose sides map",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 121,
+   "evidence": "ch4_revised.txt:310",
+   "quote": "to geodesics in M.",
+   "kind": "statement"
+  }
+ ]
+}

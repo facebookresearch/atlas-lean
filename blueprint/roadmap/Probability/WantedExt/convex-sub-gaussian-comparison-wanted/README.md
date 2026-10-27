@@ -1,0 +1,17 @@
+# Convex Sub Gaussian Comparison Wanted
+
+- [Standard Normal Tail](standard-normal-tail.md)
+- [Davis Power T0](davis-power-t0.md)
+- [Davis Power A](davis-power-a.md)
+- [Davis Power B](davis-power-b.md)
+- [Davis Power H](davis-power-h.md)
+- [Davis Power Solution](davis-power-solution.md)
+- [Is Valid](is-valid.md)
+- [Davis Power C0 Values](davis-power-c0-values.md)
+- [Davis Power C0](davis-power-c0.md)
+- [Davis Power System exists Unique](davis-power-system-exists-unique.md)
+- [Historical Finiteness Upper Bound](historical-finiteness-upper-bound.md)
+- [Davis Power Sharp Upper](davis-power-sharp-upper.md)
+- [Davis Power Sharp Lower](davis-power-sharp-lower.md)
+- [Comparison Constant eq davis Power C0 sq](comparison-constant-eq-davis-power-c0-sq.md)
+- [Davis Power Extremal Attainment](davis-power-extremal-attainment.md)

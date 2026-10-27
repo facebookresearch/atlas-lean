@@ -1,0 +1,15 @@
+# Graphic Matroid
+
+- [Card connected Component delete Edges of not reachable](card-connected-component-delete-edges-of.md)
+- [Ncard edge Set add card connected Component](ncard-edge-set-add-card-connected-compon.md)
+- [Exists insert is Acyclic](exists-insert-is-acyclic.md)
+- [Is Forest Set](is-forest-set.md)
+- [Graphic Matroid](graphic-matroid.md)
+- [Chosen](chosen.md)
+- [Bridge In](bridge-in.md)
+- [Bridge In iff](bridge-in-iff.md)
+- [Forest Oracle](forest-oracle.md)
+- [Forest Oracle iff](forest-oracle-iff.md)
+- [Kruskal is Forest](kruskal-is-forest.md)
+- [Kruskal optimal](kruskal-optimal.md)
+- [Kruskal is Base](kruskal-is-base.md)

@@ -1,0 +1,1428 @@
+{
+ "book": "DifferentialAnalysis",
+ "source": "Richard B. Melrose, Lecture Notes for 18.155 (MIT Differential Analysis), Fall 2004, PDF converted to text (text/lecture_notes.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "lecture_notes.txt:242",
+   "quote": "u+(f ) =�u+(f+)−u+(f",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "lecture_notes.txt:293",
+   "quote": "then�µ∗,� deﬁned� by�(1.11),�(1.12)�is� an� outer� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 7,
+   "evidence": "lecture_notes.txt:313",
+   "quote": "Applying� Lemma� 1.8� we",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 5,
+   "evidence": "lecture_notes.txt:339",
+   "quote": "for� an� outer� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 5,
+   "evidence": "lecture_notes.txt:342",
+   "quote": "collection� of�µ∗­measurable� sets� for� any� outer",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 8,
+   "evidence": "lecture_notes.txt:343",
+   "quote": "measure� is� a�σ­algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "lecture_notes.txt:342",
+   "quote": "collection� of�µ∗­measurable� sets� for� any� outer",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 5,
+   "evidence": "lecture_notes.txt:420",
+   "quote": "If�µ∗ is� an� outer� measure� on�X",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 8,
+   "evidence": "lecture_notes.txt:421",
+   "quote": "measurable� subsets� of�X is� a�σ­algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "lecture_notes.txt:421",
+   "quote": "measurable� subsets� of�X is� a�σ­algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "lecture_notes.txt:423",
+   "quote": "We� have� already� shown� that� the� collection� of",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 5,
+   "evidence": "lecture_notes.txt:443",
+   "quote": "each� open� subset� of�X is�µ∗­measurable� for� the� outer",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 6,
+   "evidence": "lecture_notes.txt:464",
+   "quote": "using� subadditivity� of",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 9,
+   "evidence": "lecture_notes.txt:443",
+   "quote": "each� open� subset� of�X is�µ∗­measurable� for� the� outer",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 11,
+   "evidence": "lecture_notes.txt:440",
+   "quote": "the� measure� whose� existence� follows� from� Caratheodory’s� theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 11,
+   "evidence": "lecture_notes.txt:484",
+   "quote": "by� Caratheodory’s� theorem� is� a� Borel� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "lecture_notes.txt:485",
+   "quote": "This� is� what� Proposition� 2.5� says",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 7,
+   "evidence": "lecture_notes.txt:507",
+   "quote": "we� can� choose�g∈ C(X), supp(g",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 11,
+   "evidence": "lecture_notes.txt:501",
+   "quote": "using� Caratheodory’s� theorem� is� a� Radon� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "lecture_notes.txt:501",
+   "quote": "using� Caratheodory’s� theorem� is� a� Radon� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 9,
+   "evidence": "lecture_notes.txt:556",
+   "quote": "To� prove� this� we� just� need� to� show� that� (open)� rectangular� sets� are",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 8,
+   "evidence": "lecture_notes.txt:574",
+   "quote": "a�σ­algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 0,
+   "evidence": "lecture_notes.txt:607",
+   "quote": "The� continuity� of�fψshows� that�f −1(E)�⊂ Xψis� open� if�Eψ⊂ Y",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 8,
+   "evidence": "lecture_notes.txt:598",
+   "quote": "measurable� with� respect� to� the� Borel�σ­algebras� on�X",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "lecture_notes.txt:609",
+   "quote": "the� preceeding� Lemma� shows� that",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "lecture_notes.txt:707",
+   "quote": "measurable� then�Eψfd",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 18,
+   "evidence": "lecture_notes.txt:734",
+   "quote": "Since� the� sets� (a,ψ∞]� generate� the� Borel",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 21,
+   "evidence": "lecture_notes.txt:727",
+   "quote": "fdµψ=� lim� fnd",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "lecture_notes.txt:775",
+   "quote": "ﬁnite� integrals� over�E",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 21,
+   "evidence": "lecture_notes.txt:819",
+   "quote": "lim� inf�fnψdµψ≤ lim� inf�fnψd",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 23,
+   "evidence": "lecture_notes.txt:822",
+   "quote": "By� the� monotone� convergence� theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "lecture_notes.txt:817",
+   "quote": "sequence� of� non­negative� integrable",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 23,
+   "evidence": "lecture_notes.txt:879",
+   "quote": "By� monotone� convergence� and� Fatou’s� lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "lecture_notes.txt:870",
+   "quote": "sequence� of� integrable� functions",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 25,
+   "evidence": "lecture_notes.txt:879",
+   "quote": "By� monotone� convergence� and� Fatou’s� lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "lecture_notes.txt:957",
+   "quote": "apply� (4.11)� with",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "lecture_notes.txt:972",
+   "quote": "apply� H¨older’s� inequality",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 23,
+   "evidence": "lecture_notes.txt:1011",
+   "quote": "bythe� monotone� convergence� theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 26,
+   "evidence": "lecture_notes.txt:1028",
+   "quote": "the� dominated� convergence� theorem� applies� and",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 29,
+   "evidence": "lecture_notes.txt:1014",
+   "quote": "where� we� have� also� used� Minkowski’s� inequality",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "lecture_notes.txt:996",
+   "quote": "are� Banach� spaces",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 3,
+   "evidence": "lecture_notes.txt:1104",
+   "quote": "the� decomposition� of� continuous� functions� into� positive� and� negative",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 4,
+   "evidence": "lecture_notes.txt:1075",
+   "quote": "this� is� Lemma� 1.5",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 7,
+   "evidence": "lecture_notes.txt:1107",
+   "quote": "As� you� showed� in� the� problems,� there� exists",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 14,
+   "evidence": "lecture_notes.txt:1067",
+   "quote": "a� unique� ﬁnite� Radon� measure",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 15,
+   "evidence": "lecture_notes.txt:1085",
+   "quote": "From� Proposition� 2.8� we� conclude� that",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 19,
+   "evidence": "lecture_notes.txt:1130",
+   "quote": "Here� we� need� to� recall� from� Proposition� 3.2� that� continuous� functions",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 20,
+   "evidence": "lecture_notes.txt:1132",
+   "quote": "we� know� that� there� is� an� increasing� sequence� of� simple� functions",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 30,
+   "evidence": "lecture_notes.txt:1223",
+   "quote": "i.e.,� is� a� Banach� space",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "lecture_notes.txt:1234",
+   "quote": "in� a� Hilbert� space,� be� closed� and� convex",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 33,
+   "evidence": "lecture_notes.txt:1262",
+   "quote": "a� Hilbert� space� then� this� is� a� unique� element",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 34,
+   "evidence": "lecture_notes.txt:1270",
+   "quote": "Applying� Lemma� 5.2",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 31,
+   "evidence": "lecture_notes.txt:1293",
+   "quote": "the�completeness�of�L2(X",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "lecture_notes.txt:1294",
+   "quote": "argument� abstractly� for� a� general� Hilbert� space",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 30,
+   "evidence": "lecture_notes.txt:1374",
+   "quote": "is� a� norm� on�C0 (Rn)�with� respect� to� which� it� is� a� Banach� space",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "lecture_notes.txt:1374",
+   "quote": "is� a� norm� on�C0 (Rn)�with� respect� to� which� it� is� a� Banach� space",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 38,
+   "evidence": "lecture_notes.txt:1438",
+   "quote": "is� deﬁned� induc­0 (Rn)�⊂ C",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1467",
+   "quote": "with� norm,��u�k,lψ=�v�Ck",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 41,
+   "evidence": "lecture_notes.txt:1474",
+   "quote": "x�−l 0 (Rn)�for� all�kψand�l",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1498",
+   "quote": "x� u�Ck",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 41,
+   "evidence": "lecture_notes.txt:1541",
+   "quote": "so� the� sequence� is� Cauchy� in��x�−k 0",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1497",
+   "quote": "For�uψ∈S (Rn),� set",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1654",
+   "quote": "condition�ϕ∈S (Rn)�can� be� written",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1673",
+   "quote": "x�kϕ�Ckψ and",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1684",
+   "quote": "A� linear� functional�u :�S(Rn)�→ C is� continuous� if",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 43,
+   "evidence": "lecture_notes.txt:1684",
+   "quote": "A� linear� functional�u :�S(Rn)�→ C is� continuous� if",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 45,
+   "evidence": "lecture_notes.txt:1701",
+   "quote": "This� is� just� the� equivalence� of� the� norms",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1706",
+   "quote": "S(Rn ))�→S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 43,
+   "evidence": "lecture_notes.txt:1707",
+   "quote": "is� continuous� if� and� only� if� for�each�kψthere� exist",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1780",
+   "quote": "reduces� to�(7.18)�if�uψ∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1924",
+   "quote": "C 0∞(Rn) =� C0 (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1923",
+   "quote": "and�ψψ∈S (Rn)�then",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1946",
+   "quote": "C0 (Rn)�is� dense� in�C0p(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 40,
+   "evidence": "lecture_notes.txt:1947",
+   "quote": "S(Rn)�is� dense� in�C0�(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 42,
+   "evidence": "lecture_notes.txt:1947",
+   "quote": "S(Rn)�is� dense� in�C0�(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "lecture_notes.txt:1959",
+   "quote": "Since�vψ∗ϕtψ→ vψthe� result� follows",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 14,
+   "evidence": "lecture_notes.txt:1963",
+   "quote": "The� map� from� ﬁnite� Radon� measures",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 7,
+   "evidence": "lecture_notes.txt:2045",
+   "quote": "Using� Lemma� 1.8� we� may� choose� a� continuous� partition",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2051",
+   "quote": "is� dense� in�S(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 55,
+   "evidence": "lecture_notes.txt:2072",
+   "quote": "the� construction� of� smooth� partitions",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "lecture_notes.txt:2072",
+   "quote": "Using� the� preceding� lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2171",
+   "quote": "F :�S(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 43,
+   "evidence": "lecture_notes.txt:2169",
+   "quote": "deﬁnes� a� continu",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 47,
+   "evidence": "lecture_notes.txt:2191",
+   "quote": "shows� that�F is� continuous� as� a� map",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2279",
+   "quote": "Fourier� transform�F :�S(Rn)�→S (Rn)�is� an� isomor",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 58,
+   "evidence": "lecture_notes.txt:2214",
+   "quote": "Applying� Proposition� 8.10� we� conclude� that",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 59,
+   "evidence": "lecture_notes.txt:2279",
+   "quote": "Fourier� transform�F :�S(Rn)�→S (Rn)�is� an� isomor",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "lecture_notes.txt:2255",
+   "quote": "Since� this� is� true� for�ϕψ=� exp(− x /2",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2289",
+   "quote": "S (Rn),� Paseval’s� identity� holds",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 61,
+   "evidence": "lecture_notes.txt:2304",
+   "quote": "Using� the� inversion� formula� on",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 59,
+   "evidence": "lecture_notes.txt:2310",
+   "quote": "Fourier� transform� extends� to� an� isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 61,
+   "evidence": "lecture_notes.txt:2315",
+   "quote": "that�F is� an� isomorphism,� with� inverse�G",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "lecture_notes.txt:2312",
+   "quote": "Setting�ϕψ=�ψψin� (9.5)� shows� that",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2354",
+   "quote": "u( ˆ ).ϕ)�∀ ϕψ∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 61,
+   "evidence": "lecture_notes.txt:2361",
+   "quote": "and�G is� the� 2­sided� inverse� of�F",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 65,
+   "evidence": "lecture_notes.txt:2357",
+   "quote": "The� deﬁnition�(9.7)�gives� an� isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "lecture_notes.txt:2384",
+   "quote": "9.16)� uψ=� ξαvˆαψwith",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 33,
+   "evidence": "lecture_notes.txt:2399",
+   "quote": "is� a� Hilbert� space",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 36,
+   "evidence": "lecture_notes.txt:2428",
+   "quote": "by� the� self­duality of�L2(Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2407",
+   "quote": "The� Schwartz� space�S(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 68,
+   "to": 61,
+   "evidence": "lecture_notes.txt:2423",
+   "quote": "since�F is� an� isomorphism� in�S(Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 61,
+   "evidence": "lecture_notes.txt:2470",
+   "quote": "The� Fourier� inversion� formula",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "lecture_notes.txt:2485",
+   "quote": "but�S(Rn)�� H m(Rn)� is� dense",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 66,
+   "evidence": "lecture_notes.txt:2521",
+   "quote": "Since��Dju",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 40,
+   "evidence": "lecture_notes.txt:2528",
+   "quote": "H )⊂C 0�k(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 68,
+   "evidence": "lecture_notes.txt:2532",
+   "quote": "follows� from� the� density� of�S(Rn)� in�Hm(Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 69,
+   "evidence": "lecture_notes.txt:2529",
+   "quote": "Thus� the� ‘weak�| | m−k(Rn)�⊂ C",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "lecture_notes.txt:2526",
+   "quote": "Applying� this� result� we� see",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2539",
+   "quote": "Schwartz� space� can� be� written� in� terms� of� weighted",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 71,
+   "evidence": "lecture_notes.txt:2562",
+   "quote": "This� follows� directly� from� (10.5",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 68,
+   "evidence": "lecture_notes.txt:2585",
+   "quote": "from� Proposition� 9.8",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 69,
+   "evidence": "lecture_notes.txt:2580",
+   "quote": "From� the� Sobolev� embedding",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 74,
+   "evidence": "lecture_notes.txt:2638",
+   "quote": "Applying� Lemma� 10.6� to� (10.10)� gives� (10.9",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2659",
+   "quote": "The� subspace�S(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 73,
+   "evidence": "lecture_notes.txt:2661",
+   "quote": "We� can� use� Schwartz� representation� theorem� to� write",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 77,
+   "evidence": "lecture_notes.txt:2708",
+   "quote": "has� a� tempered� fundamental� solution",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 77,
+   "evidence": "lecture_notes.txt:2716",
+   "quote": "is� a� tempered� fundamental� solution� of",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2786",
+   "quote": "S(Rn)�then",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 46,
+   "evidence": "lecture_notes.txt:2800",
+   "quote": "The� continuity� of�uψ∈S �(Rn)� means� that� for� some�k",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 42,
+   "evidence": "lecture_notes.txt:2862",
+   "quote": "has� compact� support� and�ϕψ∈S (Rn)�then",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 43,
+   "evidence": "lecture_notes.txt:2871",
+   "quote": "is� one� of� our� norms� on�S(Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 80,
+   "evidence": "lecture_notes.txt:2886",
+   "quote": "applies� to� the� derivative� using� Theorem\t11.6",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 80,
+   "evidence": "lecture_notes.txt:2948",
+   "quote": "Since�ψ∗u∈C ∞ it� suﬃces� to� show� that",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 82,
+   "evidence": "lecture_notes.txt:2925",
+   "quote": "is� hypoelliptic� then",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 84,
+   "evidence": "lecture_notes.txt:2941",
+   "quote": "It� remains� to� show� the� converse� of� (11.26",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 82,
+   "evidence": "lecture_notes.txt:2929",
+   "quote": "sing� supp(P (D)u)⊂ sing� supp(u",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3001",
+   "quote": "Every� elliptic� diﬀerential� operator�P (D)�is� hypoel",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 85,
+   "evidence": "lecture_notes.txt:3001",
+   "quote": "Every� elliptic� diﬀerential� operator�P (D)�is� hypoel",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 88,
+   "evidence": "lecture_notes.txt:3117",
+   "quote": "itself� satisﬁes� the� conditions� of� Lemma� 11.14",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3034",
+   "quote": "is� the� Fourier� transform� of� a� parametrix� for�Pm(D",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 66,
+   "evidence": "lecture_notes.txt:3036",
+   "quote": "It� therefore�is�the� Fourier� transform� of� some",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 69,
+   "evidence": "lecture_notes.txt:3088",
+   "quote": "Sobolev’s� embedding� theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3034",
+   "quote": "is� the� Fourier� transform� of� a� parametrix� for�Pm(D",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 85,
+   "evidence": "lecture_notes.txt:3032",
+   "quote": "is� homogeneous� of� degree�mψand� elliptic",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 88,
+   "evidence": "lecture_notes.txt:3084",
+   "quote": "so� (11.36)� implies� that",
+   "kind": "proof"
+  },
+  {
+   "from": 89,
+   "to": 80,
+   "evidence": "lecture_notes.txt:3150",
+   "quote": "by� the� support� property� of� convolution",
+   "kind": "proof"
+  },
+  {
+   "from": 89,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3136",
+   "quote": "sing� supp(u∗f )�⊂ sing� supp(u) +� sing� supp(f",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3249",
+   "quote": "If�f∈S Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 49,
+   "evidence": "lecture_notes.txt:3249",
+   "quote": "0∃ !u∈C",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 80,
+   "evidence": "lecture_notes.txt:3253",
+   "quote": "Since� convolution�uψ=�E∗ fψ∈ S�Rnψ∩C ∞Rnψis� deﬁned",
+   "kind": "proof"
+  },
+  {
+   "from": 91,
+   "to": 81,
+   "evidence": "lecture_notes.txt:3259",
+   "quote": "F1�∗f∈S Rn,� as� we� showed� before",
+   "kind": "proof"
+  },
+  {
+   "from": 91,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3255",
+   "quote": "First� we� know� that� Δ� is� hypoelliptic� so� we� can� decompose",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3346",
+   "quote": "Ru .� ∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3344",
+   "quote": "Css(u)∩ Rnψ= singsupp(u",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3378",
+   "quote": "large�ψRu∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3376",
+   "quote": "Csp(u)�and�Css(u)�are� closed",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3399",
+   "quote": "S(Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3398",
+   "quote": "then�Css(u) =�∅ if� and� only� if�u",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 94,
+   "evidence": "lecture_notes.txt:3401",
+   "quote": "then� from� Lemma� 12.3",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3430",
+   "quote": "Css(u)�⊂K1",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 95,
+   "evidence": "lecture_notes.txt:3441",
+   "quote": "since� in� both� cases� Css� is� empty� from� the� deﬁnition",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3495",
+   "quote": "If�Css(u)∩ Sn−1�=�∅ then�u∗v is� deﬁned� unambiguously",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3512",
+   "quote": "where�Csp(u1)∩ Γ =�∅ and�u2�∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3512",
+   "quote": "where�Csp(u1)∩ Γ =�∅ and�u2�∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3536",
+   "quote": "and�φ∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 46,
+   "evidence": "lecture_notes.txt:3555",
+   "quote": "The� continuity� of�uψmeans� that� this� is� estimated� by� some� Schwartz",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 80,
+   "evidence": "lecture_notes.txt:3538",
+   "quote": "We� already� know� that�φ∗u is� smooth",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 81,
+   "evidence": "lecture_notes.txt:3543",
+   "quote": "are� both� in�S(Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3537",
+   "quote": "Css(φ∗u)�⊂ Css(u)∩ Sn−1",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 98,
+   "evidence": "lecture_notes.txt:3542",
+   "quote": "then� apply� Lemma� 12.7",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 81,
+   "evidence": "lecture_notes.txt:3583",
+   "quote": "Then�uψ∗v1�is� Schwartz",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3569",
+   "quote": "Css(u∗v)�⊂ (singsupp(u) +� singsupp(v",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 89,
+   "evidence": "lecture_notes.txt:3577",
+   "quote": "In� that� case� we� know� that� the� singular� support� of� the� con",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3569",
+   "quote": "Css(u∗v)�⊂ (singsupp(u) +� singsupp(v",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 97,
+   "evidence": "lecture_notes.txt:3568",
+   "quote": "Under� the� conditions� of� Lemma� 12.6",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 98,
+   "evidence": "lecture_notes.txt:3580",
+   "quote": "Using� Lemma� 12.7",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "lecture_notes.txt:3570",
+   "quote": "We� can� apply� Lemma� 12.8� to� the� ﬁrst� term",
+   "kind": "proof"
+  },
+  {
+   "from": 101,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3589",
+   "quote": "u(ˇ ).vψ∗φ)�∀ φψ∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3586",
+   "quote": "Css(u)�∩ Sn−1",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 96,
+   "evidence": "lecture_notes.txt:3588",
+   "quote": "ing� in� Lemma� 12.5,� by",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 99,
+   "evidence": "lecture_notes.txt:3590",
+   "quote": "applying� Lemma� 12.8",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3600",
+   "quote": "Css(� .ψR)�⊂{ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 92,
+   "evidence": "lecture_notes.txt:3602",
+   "quote": "know� that�Dα(ψR)� is� smooth� and� homogeneous� of� degree",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3600",
+   "quote": "Css(� .ψR)�⊂{ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3642",
+   "quote": "Css(�(Rn),ψ φ(x)� = 0,ψ ωψ / φu",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3642",
+   "quote": "Css(�(Rn),ψ φ(x)� = 0,ψ ωψ / φu",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3653",
+   "quote": "with� support� in�U,ψ U� ∩ Css(�φu",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3653",
+   "quote": "with� support� in�U,ψ U� ∩ Css(�φu",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 99,
+   "evidence": "lecture_notes.txt:3672",
+   "quote": "Lemma� 12.8� we� see� that� Css",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 100,
+   "evidence": "lecture_notes.txt:3678",
+   "quote": "From� Lemma� 12.11� and� Corollary12.9� we� deduce� that",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 102,
+   "evidence": "lecture_notes.txt:3678",
+   "quote": "From� Lemma� 12.11� and� Corollary12.9� we� deduce� that",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3651",
+   "quote": "If�(p,q )�/∈ WFsc(u)�then� if�pψ∈ Rnψthere� exists� a",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 82,
+   "evidence": "lecture_notes.txt:3687",
+   "quote": "WF(u))� =� singsupp(u)⊂ Rn,ψ π1(WFsc(u))� =� Css(u",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3687",
+   "quote": "WF(u))� =� singsupp(u)⊂ Rn,ψ π1(WFsc(u))� =� Css(u",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 94,
+   "evidence": "lecture_notes.txt:3691",
+   "quote": "Since� Css(φu)� is",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 95,
+   "evidence": "lecture_notes.txt:3725",
+   "quote": "but� this� just� means� that�ψRu∈S (Rn",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3682",
+   "quote": "WFsc�(u)�⊂∂(Bnψ× Bn",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 104,
+   "evidence": "lecture_notes.txt:3694",
+   "quote": "Now� applying� Lemma� 12.13� above",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 42,
+   "evidence": "lecture_notes.txt:3730",
+   "quote": "WFsc(u) =�∅⇐⇒ u∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3730",
+   "quote": "WFsc(u) =�∅⇐⇒ u∈S (Rn",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3735",
+   "quote": "Css(u�2",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 93,
+   "evidence": "lecture_notes.txt:3735",
+   "quote": "Css(u1),ψ qψ /u =�u1�+�u2",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3734",
+   "quote": "p,q )�/∈ WFsc(u",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 65,
+   "evidence": "lecture_notes.txt:3751",
+   "quote": "WFsc(u))�⇐⇒ (q,−p)∈ WFsc�(ˆu",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 66,
+   "evidence": "lecture_notes.txt:3755",
+   "quote": "since� the� reverse� is� the� same� by� Fourier� inversion",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3751",
+   "quote": "WFsc(u))�⇐⇒ (q,−p)∈ WFsc�(ˆu",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 107,
+   "evidence": "lecture_notes.txt:3755",
+   "quote": "By� (12.45)� the",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 101,
+   "evidence": "lecture_notes.txt:3804",
+   "quote": "using� Lemma� 12.10",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 103,
+   "evidence": "lecture_notes.txt:3764",
+   "quote": "WFsc�(u)∩ (Bnψ× Sn−1",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 105,
+   "evidence": "lecture_notes.txt:3772",
+   "quote": "the� fact� that� WFsc� is� always� a� closed� set",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 108,
+   "evidence": "lecture_notes.txt:3811",
+   "quote": "Indeed,� using� (12.47",
+   "kind": "proof"
+  },
+  {
+   "from": 110,
+   "to": 33,
+   "evidence": "lecture_notes.txt:3843",
+   "quote": "For� any� bounded� linear� operator� on� a� Hilbert� space",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 110,
+   "evidence": "lecture_notes.txt:3919",
+   "quote": "proof� of� Proposition� 16.1",
+   "kind": "proof"
+  }
+ ]
+}

@@ -4,3 +4,6 @@ build/
 *.ilean
 *.trace
 .DS_Store
+site/
+site-src/
+__pycache__/

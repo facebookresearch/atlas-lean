@@ -1,0 +1,2842 @@
+{
+ "book": "AlgebraicGeometryI",
+ "source": "MIT 18.725 Algebraic Geometry I (Fall 2015, Bezrukavnikov) lecture notes, MIT OCW PDF converted to text (MIT18_725F15_notes.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:394",
+   "quote": "it follows from the Noether normalization lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 0,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:397",
+   "quote": "It follows from Nakayama’s lemma that mA",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "MIT18_725F15_notes.txt:112",
+   "quote": "then we know that m corresponds to some point",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 1,
+   "evidence": "MIT18_725F15_notes.txt:104",
+   "quote": "Zariski closed subsets in kn are in bijection with radical ideals",
+   "kind": "statement"
+  },
+  {
+   "from": 3,
+   "to": 1,
+   "evidence": "MIT18_725F15_notes.txt:120",
+   "quote": "where the closed sets are the Zariski closed sets",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 2,
+   "evidence": "MIT18_725F15_notes.txt:193",
+   "quote": "y set, thus by Nullstellensatz",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:182",
+   "quote": "Thus we get some X1,..., Xd such that A(a)",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 20,
+   "evidence": "MIT18_725F15_notes.txt:367",
+   "quote": "By the lemma above, we can",
+   "kind": "proof"
+  },
+  {
+   "from": 8,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:214",
+   "quote": "X, X is an aﬃne variety if and only if X = Spec A",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 5,
+   "evidence": "MIT18_725F15_notes.txt:269",
+   "quote": "the isomorphism k[X] =A∼=k[X′] gives a map X′−→X.",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:228",
+   "quote": "each one is an aﬃne variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:229",
+   "quote": "A closed subspace in an aﬃne variety is also aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 5,
+   "evidence": "MIT18_725F15_notes.txt:231",
+   "quote": "Surjectivitly follows from the fact that",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:233",
+   "quote": "A closed subspace of a variety is a variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 20,
+   "evidence": "MIT18_725F15_notes.txt:375",
+   "quote": "Without loss of generality, we can assume that A/(P ) is",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:236",
+   "quote": "An algebraic variety is a Noetherian topological space",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:238",
+   "quote": "An open subspace of an algebraic variety is an algebraic variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:240",
+   "quote": "This follow from quasi-compactness.",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:263",
+   "quote": "Then, X is aﬃne if and only if X = SpecA",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 5,
+   "evidence": "MIT18_725F15_notes.txt:269",
+   "quote": "the isomorphism k[X] =A∼=k[X′] gives a map X′−→X.",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 8,
+   "evidence": "MIT18_725F15_notes.txt:265",
+   "quote": "if X = Spec A for some A was done in the last lecture.",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:293",
+   "quote": "An algebraic variety is projective if it is isomorphic",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:293",
+   "quote": "isomorphic to a closed subvariety of a projective",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:296",
+   "quote": "An algebraic variety is quasiprojective if",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:296",
+   "quote": "a locally closed subvariety in a projective space.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 20,
+   "evidence": "MIT18_725F15_notes.txt:367",
+   "quote": "By the lemma above, we can",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "MIT18_725F15_notes.txt:375",
+   "quote": "Without loss of generality, we can assume that A/(P ) is",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:394",
+   "quote": "it follows from the Noether normalization lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:397",
+   "quote": "It follows from Nakayama’s lemma that mA",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 2,
+   "evidence": "MIT18_725F15_notes.txt:492",
+   "quote": "Since proper closed subsets correspond to nonzero ideals",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:408",
+   "quote": "SpecA is irreducible if and only if A has no zerodivisors.",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:409",
+   "quote": "A component of a topological space is a maximal irreducible closed subset.",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:410",
+   "quote": "A Noetherian topological space is the union of its components",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:448",
+   "quote": "of its components (i.e. maximal irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:410",
+   "quote": "A Noetherian topological space is the union of its components",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 31,
+   "evidence": "MIT18_725F15_notes.txt:462",
+   "quote": "where the Xi are closed irreducible subsets of X.",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:412",
+   "quote": "Irreducible closed subsets in Spec A",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:413",
+   "quote": "Components ↔ minimal prime ideals",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "MIT18_725F15_notes.txt:416",
+   "quote": "(minimal prime ideals).",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:448",
+   "quote": "A Noetherian topological space X is a ﬁnite union of its components",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:448",
+   "quote": "union of its components (i.e. maximal irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:448",
+   "quote": "union of its components (i.e. maximal irre-",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 31,
+   "evidence": "MIT18_725F15_notes.txt:462",
+   "quote": "where the Xi are closed irreducible subsets of X.",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:451",
+   "quote": "A Noetherian topological space X is a ﬁnite union of closed irreducible subsets.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:451",
+   "quote": "union of closed irreducible subsets.",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 2,
+   "evidence": "MIT18_725F15_notes.txt:476",
+   "quote": "Then, I =IZ for some closed subsetZ⊂ Spec A.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:476",
+   "quote": "Since Z is Noetherian",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 27,
+   "evidence": "MIT18_725F15_notes.txt:479",
+   "quote": "where the Zi are irreducible components of Z.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 28,
+   "evidence": "MIT18_725F15_notes.txt:479",
+   "quote": "Note that IZi is prime since",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:485",
+   "quote": "A closed subset Z⊂ SpecA is irreducible if and only if IZ is prime.",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:513",
+   "quote": "The embedding of Gr(k,n) into projective space",
+   "kind": "statement"
+  },
+  {
+   "from": 34,
+   "to": 17,
+   "evidence": "MIT18_725F15_notes.txt:513",
+   "quote": "This deﬁnes a projective algebraic variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:548",
+   "quote": "where the Ui are aﬃne open pieces",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:547",
+   "quote": "A morphism of algebraic varieties f : X −→ Y is called aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:552",
+   "quote": "The morphism f is ﬁnite if there is an aﬃne open cover",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 0,
+   "evidence": "MIT18_725F15_notes.txt:578",
+   "quote": "Nullstellensatz that ZI ⊂ f(X).",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 2,
+   "evidence": "MIT18_725F15_notes.txt:575",
+   "quote": "ideal, it corresponds to the closed subsetZI of SpecB.",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:576",
+   "quote": "0 by Nakayama’s lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:558",
+   "quote": "A ﬁnite map satisﬁes the following properties:",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "MIT18_725F15_notes.txt:569",
+   "quote": "map is closed, we have that the map is surjective.",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:595",
+   "quote": "irreducible closed subsets of an algebraic variety X.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:595",
+   "quote": "Let Z1 ⊊ Z2 be irreducible closed subsets of an algebraic variety X.",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:595",
+   "quote": "If f : X−→Y is a ﬁnite",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:600",
+   "quote": "The dimension of a Noetherian topological space is the maximal number",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:601",
+   "quote": "of irreducible subsets in X.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:615",
+   "quote": "map of varieties and Z1 ⊊ Z2 irreducible subvarieties of X.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:615",
+   "quote": "map of varieties and Z1 ⊊ Z2 irreducible subvarieties of X.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:615",
+   "quote": "Let f : X→ Y be a ﬁnite map of varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:627",
+   "quote": "surjection of varieties, then dim(X) =dim(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 27,
+   "evidence": "MIT18_725F15_notes.txt:633",
+   "quote": "of irreducible components V1∪...∪Vt.",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:627",
+   "quote": "If f :X→Y is a ﬁnite surjection of varieties, then dim(X) =dim(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 38,
+   "evidence": "MIT18_725F15_notes.txt:629",
+   "quote": "since f is ﬁnite{Yi} are closed.",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 40,
+   "evidence": "MIT18_725F15_notes.txt:629",
+   "quote": "By the previous lemma, the",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:627",
+   "quote": "surjection of varieties, then dim(X) =dim(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:641",
+   "quote": "Noether normalization, there is a ﬁnite surjective morphism",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:637",
+   "quote": "Theorem 5.1. dim(An) =n",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "MIT18_725F15_notes.txt:642",
+   "quote": "lemma implies dim(Z(g)) = dim(An",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:646",
+   "quote": "then dim(X) =n− 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:647",
+   "quote": "Every variety has ﬁnite dimension.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:647",
+   "quote": "Every variety has ﬁnite dimension.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:649",
+   "quote": "All irreducible curves over a given ﬁeld",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:651",
+   "quote": "From the deﬁnition of dimension it is clear that a closed irreducible subset",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:659",
+   "quote": "two curves in A2 with no common component",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:668",
+   "quote": "LetX,Y ⊂ P2 be curves without a common component",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:668",
+   "quote": "LetX,Y ⊂ P2 be curves without a common component",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 49,
+   "evidence": "MIT18_725F15_notes.txt:669",
+   "quote": "points, counted with multiplicities.",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:671",
+   "quote": "Let Q be a circle in P2",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "MIT18_725F15_notes.txt:676",
+   "quote": "By Bezout’s theorem, the intersection of Q with a deg 3 curve",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:680",
+   "quote": "LetX be an irreducible variety of dimension n",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:680",
+   "quote": "LetX be an irreducible variety of dimension n",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:681",
+   "quote": "Then any irreducible component of Z(g) has dimension n− 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:680",
+   "quote": "LetX be an irreducible variety of dimension n",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 53,
+   "evidence": "MIT18_725F15_notes.txt:707",
+   "quote": "Then by lemma 11, g|U is constant.",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 54,
+   "evidence": "MIT18_725F15_notes.txt:706",
+   "quote": "Then by lemma 12 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:685",
+   "quote": "We will reduce to this special case by Noether’s lemma:",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:682",
+   "quote": "Lemma 11. dim(",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 45,
+   "evidence": "MIT18_725F15_notes.txt:685",
+   "quote": "ecial case X = An is proved above.",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:699",
+   "quote": "For X aﬃne, use Noether’s lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:696",
+   "quote": "LetX be an irreducible variety and U⊂X a non-empty open subset.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:696",
+   "quote": "LetX be an irreducible variety and U⊂X a non-empty open subset.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 38,
+   "evidence": "MIT18_725F15_notes.txt:700",
+   "quote": "Since π is closed, V = An−π(X−U) is open.",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:696",
+   "quote": "Then dim(U) =dim(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 43,
+   "evidence": "MIT18_725F15_notes.txt:701",
+   "quote": "Then π : U′→ V is a ﬁnite surjection. Hence, dim",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:715",
+   "quote": "Let X be an irreducible variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:715",
+   "quote": "Let X be an irreducible variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:734",
+   "quote": "map of irreducible varieties f : X → Y we obtain a ﬁeld extension",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:734",
+   "quote": "map of irreducible varieties f : X → Y we obtain a ﬁeld extension",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 55,
+   "evidence": "MIT18_725F15_notes.txt:735",
+   "quote": "k(X)/f∗k(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:736",
+   "quote": "Let X and Y be irreducible varieties with Y normal",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:736",
+   "quote": "Let X and Y be irreducible varieties with Y normal",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:736",
+   "quote": "f : X→ Y a ﬁnite dominant map.",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "MIT18_725F15_notes.txt:737",
+   "quote": "#f−1(y)≤deg(f).",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:751",
+   "quote": "LetX, Y be irreducible varieties, and let f :X→Y be a dominant map of degree n.",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:751",
+   "quote": "LetX, Y be irreducible varieties, and let f :X→Y be a dominant map of degree n.",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 56,
+   "evidence": "MIT18_725F15_notes.txt:751",
+   "quote": "be a dominant map of degree n.",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:755",
+   "quote": "dominant map of irreducible varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:755",
+   "quote": "dominant map of irreducible varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:755",
+   "quote": "Letf :X→Y be a ﬁnite dominant map of irreducible varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 55,
+   "evidence": "MIT18_725F15_notes.txt:756",
+   "quote": "the ﬁeld extension k(X)/f∗k(Y ) is separable",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 56,
+   "evidence": "MIT18_725F15_notes.txt:756",
+   "quote": "the ﬁeld extension k(X)/f∗k(Y ) is separable",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "MIT18_725F15_notes.txt:756",
+   "quote": "of ramiﬁcation points.",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:837",
+   "quote": "Theorem 7.1. dim(X×Y ) = dim(X) + dim(Y)",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 43,
+   "evidence": "MIT18_725F15_notes.txt:839",
+   "quote": "so their product is a ﬁnite onto map X×Y → An+m, which implies",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:841",
+   "quote": "Xi is a closed subvariety of Yi. Then X1×X2 is a closed subvariety",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 17,
+   "evidence": "MIT18_725F15_notes.txt:849",
+   "quote": "The product of projective varieties is projective.",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "MIT18_725F15_notes.txt:850",
+   "quote": "By the previous lemma, it suﬃces to check that Pn× Pm is projective.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:859",
+   "quote": "An algebraic variety is separated if its diagonal ∆X is a closed subvariety in X×X.",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:863",
+   "quote": "A locally closed subvariety in a separated variety is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:863",
+   "quote": "A locally closed subvariety in a separated variety is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:866",
+   "quote": "Lemma 18. Pn is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:866",
+   "quote": "Lemma 18. Pn is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 18,
+   "evidence": "MIT18_725F15_notes.txt:870",
+   "quote": "A quasiprojective variety is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:870",
+   "quote": "A quasiprojective variety is separated.",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:880",
+   "quote": "If X is irreducible and Y is separated",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:880",
+   "quote": "If X is irreducible and Y is separated",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "MIT18_725F15_notes.txt:882",
+   "quote": "Then Γ f|U = Γg|U, and taking closures gives",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:884",
+   "quote": "SupposeX is irreducible,Y is separated",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:884",
+   "quote": "SupposeX is irreducible,Y is separated",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:898",
+   "quote": "then X is separated iﬀ and only if Xcl",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:909",
+   "quote": "for any aﬃne open U,V ⊆X, U∩V is aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 72,
+   "to": 10,
+   "evidence": "MIT18_725F15_notes.txt:913",
+   "quote": "is aﬃne and U∩V is closed, we see that U∩V is aﬃne.",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:909",
+   "quote": "X is separated if and only if for any aﬃne open U,V ⊆X",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:922",
+   "quote": "Let X be an algebraic variety",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:923",
+   "quote": "where each Zi is closed irreducible.",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:923",
+   "quote": "then dimZi =i.",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:928",
+   "quote": "where X is aﬃne of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:928",
+   "quote": "where X is aﬃne of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:946",
+   "quote": "SupposeX,Y are irreducible subvarieties in An.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:946",
+   "quote": "SupposeX,Y are irreducible subvarieties in An.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:946",
+   "quote": "Then each component of X∩Y has codi-",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:947",
+   "quote": "mension at most codimX + codimY",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:949",
+   "quote": "By a theorem of last time we know",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 61,
+   "evidence": "MIT18_725F15_notes.txt:948",
+   "quote": "From last time, dim( X×Y ) = dimX + dimY",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:954",
+   "quote": "The previous theorem holds for X,Y ⊆ Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:955",
+   "quote": "dimX + dimY >n",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 75,
+   "evidence": "MIT18_725F15_notes.txt:954",
+   "quote": "The previous theorem holds for X,Y ⊆ Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:963",
+   "quote": "A variety X is complete if it is separated and universally closed",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:963",
+   "quote": "A variety X is complete if it is separated and universally closed",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:970",
+   "quote": "is a closed complete",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 62,
+   "evidence": "MIT18_725F15_notes.txt:973",
+   "quote": "We see that Y×Z is closed in Y×X",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:970",
+   "quote": "is a morphism with Z separated and X complete",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 65,
+   "evidence": "MIT18_725F15_notes.txt:975",
+   "quote": "X×Z, it is also separated",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 68,
+   "evidence": "MIT18_725F15_notes.txt:974",
+   "quote": "Identify f(X) with Γf in X×Z.",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:969",
+   "quote": "Then X is complete implies Z is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:987",
+   "quote": "Proposition 12. Pn is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 79,
+   "to": 66,
+   "evidence": "MIT18_725F15_notes.txt:988",
+   "quote": "We know Pn is separated",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:987",
+   "quote": "Proposition 12. Pn is complete.",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:1015",
+   "quote": "If X is a complete, irreducible variety",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 17,
+   "evidence": "MIT18_725F15_notes.txt:1015",
+   "quote": "then there exists a projective variety",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1015",
+   "quote": "If X is a complete, irreducible variety",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 64,
+   "evidence": "MIT18_725F15_notes.txt:1027",
+   "quote": "which is closed as Y is separated.",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 68,
+   "evidence": "MIT18_725F15_notes.txt:1026",
+   "quote": "the graph of",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:1015",
+   "quote": "If X is a complete, irreducible variety",
+   "kind": "statement"
+  },
+  {
+   "from": 81,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1067",
+   "quote": "Let X an aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 81,
+   "evidence": "MIT18_725F15_notes.txt:1071",
+   "quote": "for two blo wups at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "MIT18_725F15_notes.txt:1121",
+   "quote": "A presheafF on the topological space",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 83,
+   "evidence": "MIT18_725F15_notes.txt:1138",
+   "quote": "LetF be a presheaf on X. Then its pushforward along f is a presheaf",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 83,
+   "evidence": "MIT18_725F15_notes.txt:1144",
+   "quote": "LetG be a presheaf on Y . Then its pullback alongf is a presheaf",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 84,
+   "evidence": "MIT18_725F15_notes.txt:1165",
+   "quote": "LetM be a sheaf on X. We say that M is a sheaf ofOX-modules",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:1173",
+   "quote": "A locally free sheafM of rank n on an algebraic variety X",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1173",
+   "quote": "is a sheaf of OX-modules such",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 83,
+   "evidence": "MIT18_725F15_notes.txt:1197",
+   "quote": "Presheaf of abelian groups on k-vector space is an abelian category.",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 83,
+   "evidence": "MIT18_725F15_notes.txt:1231",
+   "quote": "is left adjoint to the embedding Presh→ Sh",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 84,
+   "evidence": "MIT18_725F15_notes.txt:1231",
+   "quote": "and is an isomorphism if F itself is a sheaf.",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:1332",
+   "quote": "j∗F means the sheaf whose section on V is",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 86,
+   "evidence": "MIT18_725F15_notes.txt:1332",
+   "quote": "Proposition 16. j j∗∗ F",
+   "kind": "statement"
+  },
+  {
+   "from": 91,
+   "to": 95,
+   "evidence": "MIT18_725F15_notes.txt:1340",
+   "quote": "that taking direct limit in presheaves and sheaves yield the same result for Noetherian spaces",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1297",
+   "quote": "Let X = Spec(A) be an aﬃne variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1275",
+   "quote": "If X = Spec(A), then QCoh(X)∼= Mod(A)",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "MIT18_725F15_notes.txt:1354",
+   "quote": "Let s/fn =σ˜∈ Γ(F)f =F(U)",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 101,
+   "evidence": "MIT18_725F15_notes.txt:1441",
+   "quote": "We already know that Loc is fully faithful",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1289",
+   "quote": "M is a quasicoherent OX module.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1297",
+   "quote": "Let X = Spec(A) be an aﬃne variety.",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1298",
+   "quote": "QCoh(X)∼= Mod(A).",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 91,
+   "evidence": "MIT18_725F15_notes.txt:1354",
+   "quote": "Let s/fn =σ˜∈ Γ(F)f =F(U)",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 101,
+   "evidence": "MIT18_725F15_notes.txt:1441",
+   "quote": "We already know that Loc is fully faithful",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:1306",
+   "quote": "If X is a Noetherian topological space,",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 84,
+   "evidence": "MIT18_725F15_notes.txt:1306",
+   "quote": "directed system indexing sheaves Fi.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:1385",
+   "quote": "sends QCoh(X) to QCoh(Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1385",
+   "quote": "sends QCoh(X) to QCoh(Y )",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1403",
+   "quote": "is exact for a map of aﬃne varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 98,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:1403",
+   "quote": "is exact for a map of aﬃne varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:1421",
+   "quote": "use Nakayama to ﬁnd some",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:1418",
+   "quote": "is locally constant if and only if F is locally free.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 100,
+   "evidence": "MIT18_725F15_notes.txt:1437",
+   "quote": "R is conservative, then the",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1460",
+   "quote": "f−1(U) is aﬃne.",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 36,
+   "evidence": "MIT18_725F15_notes.txt:1460",
+   "quote": "an aﬃne morphism if and only if for every open",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:1461",
+   "quote": "is a ﬁnite morphism if and only if it is aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 36,
+   "evidence": "MIT18_725F15_notes.txt:1473",
+   "quote": "the category of X that has an aﬃne morphism to Y",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1474",
+   "quote": "opposite category of quasicoherent sheaves of OY -algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 36,
+   "evidence": "MIT18_725F15_notes.txt:1479",
+   "quote": "SupposeX→Y is aﬃne.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:1480",
+   "quote": "where the map is F↦→ f∗F.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1479",
+   "quote": "then Qcoh(X) ={Qcoh(Y ) with an",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:1490",
+   "quote": "i : Qcoh(Z)→ Qcoh(X) (or coherent to coherent) is a full embedding",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1490",
+   "quote": "i : Qcoh(Z)→ Qcoh(X) (or coherent to coherent) is a full embedding",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 13,
+   "evidence": "MIT18_725F15_notes.txt:1269",
+   "quote": "Lemma 21. If X is Noetherian",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 84,
+   "evidence": "MIT18_725F15_notes.txt:1306",
+   "quote": "directed system indexing sheaves Fi.",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:1548",
+   "quote": "Every F that is a quasicoherent sheaf on Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1548",
+   "quote": "Every F that is a quasicoherent sheaf on Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 103,
+   "evidence": "MIT18_725F15_notes.txt:1583",
+   "quote": "every coherent sheaf is a quotient of a vector bundle.",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 109,
+   "evidence": "MIT18_725F15_notes.txt:1584",
+   "quote": "M ﬁnitely generated, pick d",
+   "kind": "proof"
+  },
+  {
+   "from": 111,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:1600",
+   "quote": "QCoh(Pn) is equivalent to Modgr(A)",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:1600",
+   "quote": "QCoh(Pn) is equivalent to Modgr(A)",
+   "kind": "statement"
+  },
+  {
+   "from": 111,
+   "to": 92,
+   "evidence": "MIT18_725F15_notes.txt:1606",
+   "quote": "Recall that A-moduleM is the same as a quasicoherent sheaf onX.",
+   "kind": "proof"
+  },
+  {
+   "from": 112,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:1621",
+   "quote": "Isomorphism classes of invertible sheaves on X is an abelian group",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1623",
+   "quote": "is a free abelian group spanned by irreducible codimension",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:1623",
+   "quote": "is a free abelian group spanned by irreducible codimension",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:1708",
+   "quote": "then we know that all components of Zf have codimension 1",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 112,
+   "evidence": "MIT18_725F15_notes.txt:1635",
+   "quote": "Pic(X) =DC(X)/K∗",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 113,
+   "evidence": "MIT18_725F15_notes.txt:1634",
+   "quote": "DW (X) = DC(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1634",
+   "quote": "DW (X) = DC(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 112,
+   "evidence": "MIT18_725F15_notes.txt:1660",
+   "quote": "Pic(X) = DivC(X)/Im(K∗)",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1660",
+   "quote": "Pic(X) = DivC(X)/Im(K∗)",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:1708",
+   "quote": "then we know that all components of Zf have codimension 1",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 113,
+   "evidence": "MIT18_725F15_notes.txt:1666",
+   "quote": "then DivW (X) = DivC(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1666",
+   "quote": "then DivW (X) = DivC(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1783",
+   "quote": "X irreducible curve, deg(D) = 0 if D is a principal divisor.",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 56,
+   "evidence": "MIT18_725F15_notes.txt:1800",
+   "quote": "Then [K(X) :K(A1)] =d, which is the",
+   "kind": "proof"
+  },
+  {
+   "from": 120,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1759",
+   "quote": "The degree of a principal divisor is zero.",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1766",
+   "quote": "Two (Cartier) divisors are linearly equivalent",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1783",
+   "quote": "X irreducible curve, deg(D) = 0 if D is a principal divisor.",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 56,
+   "evidence": "MIT18_725F15_notes.txt:1800",
+   "quote": "Then [K(X) :K(A1)] =d, which is the",
+   "kind": "proof"
+  },
+  {
+   "from": 122,
+   "to": 114,
+   "evidence": "MIT18_725F15_notes.txt:1783",
+   "quote": "deg(D) = 0 if D is a principal divisor.",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:1807",
+   "quote": "multiplicity of intersection of two curves X,Y in P2",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 26,
+   "evidence": "MIT18_725F15_notes.txt:1808",
+   "quote": "no common components)",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 49,
+   "evidence": "MIT18_725F15_notes.txt:1820",
+   "quote": "multx(X,Y ) = deg(X) deg(Y ).",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:1865",
+   "quote": "x is a smooth point on X if dimx(X) = dim( mx/m2x)",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:1869",
+   "quote": "ForX,Y curves in P2, the intersection multiplicity",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 49,
+   "evidence": "MIT18_725F15_notes.txt:1869",
+   "quote": "ForX,Y curves in P2, the intersection multiplicity",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:1870",
+   "quote": "smooth at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:1889",
+   "quote": "is itself a complex variety",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 112,
+   "evidence": "MIT18_725F15_notes.txt:1889",
+   "quote": "Pic◦(X) is itself a complex variety",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 112,
+   "evidence": "MIT18_725F15_notes.txt:1896",
+   "quote": "The A-J map gives a map X→ Pic◦(X)",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1928",
+   "quote": "A non-constant map between irreducible compact curves is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:1928",
+   "quote": "A non-constant map between irreducible compact curves is ﬁnite.",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 131,
+   "evidence": "MIT18_725F15_notes.txt:1958",
+   "quote": "through normalization X→ Nor(Y )→Y",
+   "kind": "proof"
+  },
+  {
+   "from": 131,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:1935",
+   "quote": "such that for every aﬃne",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:1939",
+   "quote": "using Noether normalization reduce",
+   "kind": "proof"
+  },
+  {
+   "from": 131,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:1935",
+   "quote": "There exists a variety Y along with a ﬁnite map",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:1935",
+   "quote": "There exists a variety Y along with a ﬁnite map",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1946",
+   "quote": "e irreducible, if X is normal, f is ﬁnite, onto",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:1946",
+   "quote": "e irreducible, if X is normal, f is ﬁnite, onto",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:1951",
+   "quote": "irreducible curves, suppose f is onto, birational, Y is normal",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:1955",
+   "quote": "X is complete, Y is normal, then X∼=Y iso.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 78,
+   "evidence": "MIT18_725F15_notes.txt:1956",
+   "quote": "Since f(X) is closed and not ﬁnite, we know f must be onto.",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:1998",
+   "quote": "LetX be a variety. The Zariski cotangent space",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:2008",
+   "quote": "By Nakayama lemma, fi generate m.",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2004",
+   "quote": "Lemma 30. dim(Tx∗X)≥ dimx(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:2009",
+   "quote": "consequence of the hypersurface theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 137,
+   "to": 136,
+   "evidence": "MIT18_725F15_notes.txt:2004",
+   "quote": "Lemma 30. dim(Tx∗X)≥ dimx(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2010",
+   "quote": "X is said to be smooth at x if dim(Tx∗X) = dimx(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 138,
+   "to": 136,
+   "evidence": "MIT18_725F15_notes.txt:2010",
+   "quote": "X is said to be smooth at x if dim(Tx∗X) = dimx(X).",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2011",
+   "quote": "if and only if ΩX is locally free on a neighborhood of x.",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 99,
+   "evidence": "MIT18_725F15_notes.txt:2013",
+   "quote": "recall the lemma stated during the lecture on October 22th",
+   "kind": "proof"
+  },
+  {
+   "from": 139,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2011",
+   "quote": "X is smooth at x∈X if and only if ΩX is locally free",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2011",
+   "quote": "if and only if ΩX is locally free on a neighborhood of x.",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2020",
+   "quote": "For a variety X, the set of smooth points in X is open",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 43,
+   "evidence": "MIT18_725F15_notes.txt:2031",
+   "quote": "Then since π is ﬁnite, dimY = dimX.",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2020",
+   "quote": "For a variety X, the set of smooth points in X is open",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 137,
+   "evidence": "MIT18_725F15_notes.txt:2035",
+   "quote": "By a previous lemma, dim Tx∗X = dimX.",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 139,
+   "evidence": "MIT18_725F15_notes.txt:2021",
+   "quote": "It follows from the previous proposition(left to right)",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2062",
+   "quote": "Suppose X⊆ An has dimension n−m",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2057",
+   "quote": "then x∈ X is smooth if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 136,
+   "evidence": "MIT18_725F15_notes.txt:2058",
+   "quote": "Tx∗An",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 22,
+   "evidence": "MIT18_725F15_notes.txt:2081",
+   "quote": "which follows from Nakayama",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2072",
+   "quote": "x∈X is a smooth point if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 137,
+   "evidence": "MIT18_725F15_notes.txt:2074",
+   "quote": "while dimxX ≥ n− m also dimxX ≤",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 143,
+   "evidence": "MIT18_725F15_notes.txt:2080",
+   "quote": "Why does this imply Z locally irreducible?",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 144,
+   "evidence": "MIT18_725F15_notes.txt:2101",
+   "quote": "i.e. gr(k [x1,...,x n]/(f1,...,f i))∼=k[t1,...,t n−1], and if",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2103",
+   "quote": "whered = dimxX.",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2103",
+   "quote": "X is smooth at x i",
+   "kind": "statement"
+  },
+  {
+   "from": 145,
+   "to": 142,
+   "evidence": "MIT18_725F15_notes.txt:2104",
+   "quote": "The forward direction follows from the proof of the previous proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2114",
+   "quote": "SupposeZ⊆X is a closed subvariety.",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2118",
+   "quote": "is a locally free sheaf of rank m",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2115",
+   "quote": "→ ΩX|Z→ ΩZ→ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "IfX is a smooth irreducible variety of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "IfX is a smooth irreducible variety of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "IfX is a smooth irreducible variety of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "then Ω(X) is a locally free sheaf of rank",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "IfX is a smooth irreducible variety of dimension d",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2124",
+   "quote": "then Ω(X) is a locally free sheaf of rank",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2136",
+   "quote": "D =ωX(−D)|D.",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 81,
+   "evidence": "MIT18_725F15_notes.txt:2139",
+   "quote": "The tangent cone is the cone over the exceptional locus in the blowup at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 149,
+   "evidence": "MIT18_725F15_notes.txt:2139",
+   "quote": "The tangent cone is the cone over the exceptional locus in the blowup at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2150",
+   "quote": "If Z⊆X is a closed subvariety",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2154",
+   "quote": "3. If X is smooth, the last condition can be checked at x.",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2150",
+   "quote": "→ ΩX|Z→ ΩZ→ 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2165",
+   "quote": "X smooth,Z⊆X closed, then Z is smooth if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 151,
+   "evidence": "MIT18_725F15_notes.txt:2167",
+   "quote": "Use proposition 3) above.",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2171",
+   "quote": "then we get a s.e.s. of locally free sheaves",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2171",
+   "quote": "If X,Z smooth, Z closed in X",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2172",
+   "quote": "ΩX|Z→ ΩZ→ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2172",
+   "quote": "and thus K|Z =KZω(IZ/I 2Z).",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:2176",
+   "quote": "We have a s.e.s. 0→ Ω (Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2176",
+   "quote": "We have a s.e.s. 0→ Ω (Pn",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2179",
+   "quote": "a corollary, KP =O(−(n + 1)).",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 155,
+   "evidence": "MIT18_725F15_notes.txt:2191",
+   "quote": "implies the last proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 155,
+   "to": 34,
+   "evidence": "MIT18_725F15_notes.txt:2188",
+   "quote": "TGr(k,n) = Hom(V,W ⊗O/V)",
+   "kind": "statement"
+  },
+  {
+   "from": 155,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2188",
+   "quote": "and ΩGr(k,n) = Hom(W⊗O/V,V).",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 81,
+   "evidence": "MIT18_725F15_notes.txt:2236",
+   "quote": "the exceptional locus over x when blowing up X∋x.",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2239",
+   "quote": "If we know that x is a smooth point",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 136,
+   "evidence": "MIT18_725F15_notes.txt:2242",
+   "quote": "Tx∗X).",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 149,
+   "evidence": "MIT18_725F15_notes.txt:2239",
+   "quote": "which we call the tangent cone.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2278",
+   "quote": "Let f : X→ Y be a morphism of smooth irreducible curves.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 55,
+   "evidence": "MIT18_725F15_notes.txt:2279",
+   "quote": "Then k(X)/k(Y ) is a separable extension.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2278",
+   "quote": "Let f : X→ Y be a morphism of smooth irreducible curves.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2283",
+   "quote": "Then f∗KY →KX extends",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:2290",
+   "quote": "If X,Y are complete then degKX =n· degKY +",
+   "kind": "statement"
+  },
+  {
+   "from": 158,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2290",
+   "quote": "If X,Y are complete then degKX =n· degKY +",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:2307",
+   "quote": "Let X be a normal irreducible aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2307",
+   "quote": "be a closed subvariety.",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2307",
+   "quote": "Let X be a normal irreducible aﬃne variety",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2308",
+   "quote": "dimZ≤ dimX− 2 then k[X] =k[X\\Z].",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:2322",
+   "quote": "Indeed, by the hypersurface theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:2351",
+   "quote": "using Noether normalization for Y",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2333",
+   "quote": "Letf :X→Y be a morphism of varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2335",
+   "quote": "if we assume that X,Y are irreducible",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 41,
+   "evidence": "MIT18_725F15_notes.txt:2336",
+   "quote": "(the dimension of the ﬁber) is upper semi-continuous.",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 52,
+   "evidence": "MIT18_725F15_notes.txt:2350",
+   "quote": "Use the hypersurface theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 161,
+   "evidence": "MIT18_725F15_notes.txt:2349",
+   "quote": "By the lemma, obtain an open subset U in Y",
+   "kind": "proof"
+  },
+  {
+   "from": 161,
+   "to": 4,
+   "evidence": "MIT18_725F15_notes.txt:2340",
+   "quote": "a morphism of irreducible aﬃne varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 6,
+   "evidence": "MIT18_725F15_notes.txt:2343",
+   "quote": "We can apply Noether normalization lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 161,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2340",
+   "quote": "a morphism of irreducible aﬃne varieties",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 37,
+   "evidence": "MIT18_725F15_notes.txt:2341",
+   "quote": "is a nonempty open subset U∈Y such that f−1(U)→U factors as f :f− −ﬁnite,onto",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2361",
+   "quote": "Let X⊆ PV be a smooth subvariety.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:2361",
+   "quote": "Let X⊆ PV be a smooth subvariety.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2361",
+   "quote": "Let X⊆ PV be a smooth subvariety.",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 160,
+   "evidence": "MIT18_725F15_notes.txt:2380",
+   "quote": "Recall from a theorem last time that a generic",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:2384",
+   "quote": "Moreover, if X⊂ Pn is smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2384",
+   "quote": "A generic hypersurface of degree d is smooth.",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 162,
+   "evidence": "MIT18_725F15_notes.txt:2387",
+   "quote": "then we reduce to the previous",
+   "kind": "proof"
+  },
+  {
+   "from": 164,
+   "to": 84,
+   "evidence": "MIT18_725F15_notes.txt:2400",
+   "quote": "is a subsheaf of F generated by torsion sections.",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 9,
+   "evidence": "MIT18_725F15_notes.txt:2443",
+   "quote": "(F/torsion) when we work over smooth varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2443",
+   "quote": "(for any irreducible variety), one deﬁnes",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 55,
+   "evidence": "MIT18_725F15_notes.txt:2445",
+   "quote": "For a ﬁeld K = limk[U]",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2442",
+   "quote": "deﬁned as the rank of the locally free sheaf",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2443",
+   "quote": "(F/torsion) when we work over smooth varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 164,
+   "evidence": "MIT18_725F15_notes.txt:2443",
+   "quote": "(F/torsion) when we work over smooth varieties.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2457",
+   "quote": "δ([E])↦→ deg(det(E)) whereE is locally free.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 164,
+   "evidence": "MIT18_725F15_notes.txt:2458",
+   "quote": "For torsion sheaves, we setδ to be the length ofT",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 165,
+   "evidence": "MIT18_725F15_notes.txt:2485",
+   "quote": "If Fs′ is the saturation ofF′",
+   "kind": "proof"
+  },
+  {
+   "from": 168,
+   "to": 167,
+   "evidence": "MIT18_725F15_notes.txt:2456",
+   "quote": "Deﬁne another homomorphism δ : K0(Coh(X)) → Z",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 169,
+   "evidence": "MIT18_725F15_notes.txt:2485",
+   "quote": "δ(Fs′) =δ(F′) +δ(torsionofF′′)",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 164,
+   "evidence": "MIT18_725F15_notes.txt:2472",
+   "quote": "whereT is torsion and the other two",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 170,
+   "evidence": "MIT18_725F15_notes.txt:2498",
+   "quote": "Aδ-functor is universal if it has a canonical morphism from any δ-functor.",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 170,
+   "evidence": "MIT18_725F15_notes.txt:2500",
+   "quote": "The universal δ-functor is called the derived functor",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 171,
+   "evidence": "MIT18_725F15_notes.txt:2500",
+   "quote": "The universal δ-functor is called the derived functor",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 170,
+   "evidence": "MIT18_725F15_notes.txt:2534",
+   "quote": "Proposition 41 (Grothendieck). A δ-functor (",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 171,
+   "evidence": "MIT18_725F15_notes.txt:2536",
+   "quote": "for given F is universal provided that",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 172,
+   "evidence": "MIT18_725F15_notes.txt:2603",
+   "quote": "There is always a canonical map Hi(F(C))→R iF(M)",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 36,
+   "evidence": "MIT18_725F15_notes.txt:2617",
+   "quote": "If f is aﬃne, F is quasicoherent, then Hif F = Hi(F).",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 85,
+   "evidence": "MIT18_725F15_notes.txt:2617",
+   "quote": "F is quasicoherent, then Hif F = Hi(F).",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 87,
+   "evidence": "MIT18_725F15_notes.txt:2617",
+   "quote": "F is quasicoherent, then Hif F = Hi(F).",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 172,
+   "evidence": "MIT18_725F15_notes.txt:2617",
+   "quote": "F is quasicoherent, then Hif F = Hi(F).",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 15,
+   "evidence": "MIT18_725F15_notes.txt:2651",
+   "quote": "A locally free coherent sheaf of rank n on P1",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2651",
+   "quote": "A locally free coherent sheaf of rank n on P1",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 110,
+   "evidence": "MIT18_725F15_notes.txt:2658",
+   "quote": "E is a quotient, i.e.",
+   "kind": "proof"
+  },
+  {
+   "from": 178,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2714",
+   "quote": "Let X be irreducible complete (or smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:2714",
+   "quote": "Let X be irreducible complete (or smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2714",
+   "quote": "Let X be irreducible complete (or smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 166,
+   "evidence": "MIT18_725F15_notes.txt:2715",
+   "quote": "Then χ(F) = deg(F )− rank(F )",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 167,
+   "evidence": "MIT18_725F15_notes.txt:2718",
+   "quote": "Enough to check on generators of K0(Coh(X)).",
+   "kind": "proof"
+  },
+  {
+   "from": 178,
+   "to": 168,
+   "evidence": "MIT18_725F15_notes.txt:2715",
+   "quote": "Then χ(F) = deg(F )− rank(F )",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 172,
+   "evidence": "MIT18_725F15_notes.txt:2715",
+   "quote": "wherega = dimH (O).",
+   "kind": "statement"
+  },
+  {
+   "from": 178,
+   "to": 179,
+   "evidence": "MIT18_725F15_notes.txt:2721",
+   "quote": "To see it implies the theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 179,
+   "to": 167,
+   "evidence": "MIT18_725F15_notes.txt:2719",
+   "quote": "Lemma 35. O(X) along withOx generate",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 24,
+   "evidence": "MIT18_725F15_notes.txt:2731",
+   "quote": "irreducible curve, then we have a canonical isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:2730",
+   "quote": "IfE is a locally free sheaf on a complete smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 88,
+   "evidence": "MIT18_725F15_notes.txt:2730",
+   "quote": "IfE is a locally free sheaf on a complete smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2730",
+   "quote": "IfE is a locally free sheaf on a complete smooth",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2731",
+   "quote": "Γ(E)∗∼=H1(E∨⊗KX).",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 172,
+   "evidence": "MIT18_725F15_notes.txt:2731",
+   "quote": "Γ(E)∗∼=H1(E∨⊗KX).",
+   "kind": "statement"
+  },
+  {
+   "from": 180,
+   "to": 182,
+   "evidence": "MIT18_725F15_notes.txt:2905",
+   "quote": "which follows from Res xiω = 0 (the lemma above)",
+   "kind": "proof"
+  },
+  {
+   "from": 182,
+   "to": 77,
+   "evidence": "MIT18_725F15_notes.txt:2829",
+   "quote": "Suppose X is a complete smooth curve, ω ∈ Γ(U, Ω)",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 124,
+   "evidence": "MIT18_725F15_notes.txt:2829",
+   "quote": "Suppose X is a complete smooth curve, ω ∈ Γ(U, Ω)",
+   "kind": "statement"
+  },
+  {
+   "from": 182,
+   "to": 135,
+   "evidence": "MIT18_725F15_notes.txt:2829",
+   "quote": "Suppose X is a complete smooth curve, ω ∈ Γ(U, Ω)",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2925",
+   "quote": "the geometric genus gm = dim(G(KX)).",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 172,
+   "evidence": "MIT18_725F15_notes.txt:2925",
+   "quote": "Deﬁne the arithmetic genus ga = dim(H1(O))",
+   "kind": "statement"
+  },
+  {
+   "from": 183,
+   "to": 180,
+   "evidence": "MIT18_725F15_notes.txt:2926",
+   "quote": "Then apply Serre duality to E =O to get ga =gm.",
+   "kind": "proof"
+  },
+  {
+   "from": 184,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2927",
+   "quote": "dim(Γ(K⊗E∗)) = deg(E) + rank(E)(1−g).",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 166,
+   "evidence": "MIT18_725F15_notes.txt:2927",
+   "quote": "dim(Γ(K⊗E∗)) = deg(E) + rank(E)(1−g).",
+   "kind": "statement"
+  },
+  {
+   "from": 184,
+   "to": 178,
+   "evidence": "MIT18_725F15_notes.txt:2927",
+   "quote": "Riemann-Roch implies",
+   "kind": "proof"
+  },
+  {
+   "from": 185,
+   "to": 147,
+   "evidence": "MIT18_725F15_notes.txt:2933",
+   "quote": "Corollary 31. deg(K) = 2g− 2.",
+   "kind": "statement"
+  },
+  {
+   "from": 185,
+   "to": 178,
+   "evidence": "MIT18_725F15_notes.txt:2934",
+   "quote": "deg(K) =χ(K) +g− 1 = 2g− 2.",
+   "kind": "proof"
+  },
+  {
+   "from": 185,
+   "to": 180,
+   "evidence": "MIT18_725F15_notes.txt:2934",
+   "quote": "by Serre duality.",
+   "kind": "proof"
+  }
+ ]
+}

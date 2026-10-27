@@ -1,0 +1,16 @@
+# Restriction
+
+- [Vars](vars.md)
+- [Restrict](restrict.md)
+- [Satisfies restrict iff](satisfies-restrict-iff.md)
+- [Vars](vars-2.md)
+- [Restrict](restrict-2.md)
+- [Vars restrict subset](vars-restrict-subset.md)
+- [Not mem vars restrict](not-mem-vars-restrict.md)
+- [Vars restrict ssubset](vars-restrict-ssubset.md)
+- [Card vars restrict lt](card-vars-restrict-lt.md)
+- [Satisfies restrict iff](satisfies-restrict-iff-2.md)
+- [Satisfies congr](satisfies-congr.md)
+- [Satisfies of satisfies restrict](satisfies-of-satisfies-restrict.md)
+- [Sat iff restrict true or false](sat-iff-restrict-true-or-false.md)
+- [Sat iff restrict of unit](sat-iff-restrict-of-unit.md)

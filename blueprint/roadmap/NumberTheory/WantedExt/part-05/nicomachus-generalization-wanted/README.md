@@ -1,0 +1,18 @@
+# Nicomachus Generalization Wanted
+
+- [Nicomachus Triangular](nicomachus-triangular.md)
+- [Nicomachus LOdd](nicomachus-lodd.md)
+- [Nicomachus ROdd](nicomachus-rodd.md)
+- [Nicomachus POdd](nicomachus-podd.md)
+- [Nicomachus LEven](nicomachus-leven.md)
+- [Nicomachus REven](nicomachus-reven.md)
+- [Nicomachus PClosed](nicomachus-pclosed.md)
+- [Nicomachus PEven](nicomachus-peven.md)
+- [Nicomachus Alpha](nicomachus-alpha.md)
+- [Nicomachus U](nicomachus-u.md)
+- [Theorem 1, odd case](nicomachus-lodd-sub-rodd-succ-eq.md)
+- [Theorem 1, even case](nicomachus-leven-sub-reven-eq.md)
+- [Proposition 1, closed form (14)](nicomachus-u-eq-closed-form.md)
+- [Proposition 1, recurrence (15)](nicomachus-u-succ-eq.md)
+- [Proposition 2 (16)](nicomachus-alpha-eq.md)
+- [Theorem 2 (18)](sum-quadratic-mul-quadratic-eq.md)

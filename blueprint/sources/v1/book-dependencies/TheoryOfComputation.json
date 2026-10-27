@@ -1,0 +1,1225 @@
+{
+ "book": "TheoryOfComputation",
+ "source": "MIT 18.404J/6.840J Theory of Computation, Fall 2020 (Sipser), lecture slides 2-12 and 14-25 converted to text (mit18_404f20_lecN.txt); lectures 1, 13, 26 absent",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 8,
+   "evidence": "mit18_404f20_lec2.txt:134",
+   "quote": "Construct NFA & recognizing",
+   "kind": "proof"
+  },
+  {
+   "from": 1,
+   "to": 8,
+   "evidence": "mit18_404f20_lec2.txt:145",
+   "quote": "Construct NFA & recognizing",
+   "kind": "proof"
+  },
+  {
+   "from": 2,
+   "to": 8,
+   "evidence": "mit18_404f20_lec2.txt:167",
+   "quote": "Construct NFA #′ recognizing",
+   "kind": "proof"
+  },
+  {
+   "from": 3,
+   "to": 8,
+   "evidence": "mit18_404f20_lec2.txt:110",
+   "quote": "Theorem: If an NFA recognizes ! then ! is regular",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 0,
+   "evidence": "mit18_404f20_lec2.txt:192",
+   "quote": "Use closure constructions",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 1,
+   "evidence": "mit18_404f20_lec2.txt:192",
+   "quote": "Use closure constructions",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 2,
+   "evidence": "mit18_404f20_lec2.txt:192",
+   "quote": "Use closure constructions",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "mit18_404f20_lec3.txt:21",
+   "quote": "Proof: Conversion \" → NFA & → DFA &′",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 8,
+   "evidence": "mit18_404f20_lec2.txt:185",
+   "quote": "Proof: Convert \" to equivalent NFA &:",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 11,
+   "evidence": "mit18_404f20_lec3.txt:45",
+   "quote": "Lemma: Every GNFA ! has an equivalent regular expression",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 8,
+   "evidence": "mit18_404f20_lec3.txt:34",
+   "quote": "similar to an NFA, but allows regular expressions as transition labels",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "mit18_404f20_lec4.txt:96",
+   "quote": "is a C ontext Free Language (CFL) if 8 = 5(!)",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 8,
+   "evidence": "mit18_404f20_lec4.txt:183",
+   "quote": "Operates like an NFA except can write-add or read-remove symbols",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 12,
+   "evidence": "mit18_404f20_lec4.txt:228",
+   "quote": "Convert the CFG for ! to the following PDA.",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 13,
+   "evidence": "mit18_404f20_lec4.txt:211",
+   "quote": "Theorem: If ! is a CFL then some PDA recognizes !",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "mit18_404f20_lec4.txt:211",
+   "quote": "Theorem: If ! is a CFL then some PDA recognizes !",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 13,
+   "evidence": "mit18_404f20_lec4.txt:252",
+   "quote": "Theorem: ! is a CFL iff* some PDA recognizes !",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 14,
+   "evidence": "mit18_404f20_lec4.txt:252",
+   "quote": "Theorem: ! is a CFL iff* some PDA recognizes !",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "mit18_404f20_lec4.txt:253",
+   "quote": "Done.",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 22,
+   "evidence": "mit18_404f20_lec6.txt:123",
+   "quote": "A is T-rec ognizable iff",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 25,
+   "evidence": "mit18_404f20_lec6.txt:123",
+   "quote": "for some T-enumerator",
+   "kind": "statement"
+  },
+  {
+   "from": 18,
+   "to": 13,
+   "evidence": "mit18_404f20_lec5.txt:20",
+   "quote": "1) Every regular language is a CFL.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 13,
+   "evidence": "mit18_404f20_lec5.txt:21",
+   "quote": "is a CFL and \"  is regular then ! ∩ \" is a CFL.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 16,
+   "evidence": "mit18_404f20_lec5.txt:23",
+   "quote": "the finite control of the PDA for ! sim ulates the DFA for \".",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 12,
+   "evidence": "mit18_404f20_lec5.txt:81",
+   "quote": "# variables in the grammar.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 13,
+   "evidence": "mit18_404f20_lec5.txt:32",
+   "quote": "Pumping Lemma for CFLs: For ev ery CFL *",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 21,
+   "evidence": "mit18_404f20_lec5.txt:197",
+   "quote": "is Turing-recognizable if & = \"(!) for some TM !.",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 21,
+   "evidence": "mit18_404f20_lec5.txt:198",
+   "quote": "Defn: TM ! is a decider if ! halts on all inputs.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "mit18_404f20_lec5.txt:201",
+   "quote": "r some TM decider !.",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 23,
+   "evidence": "mit18_404f20_lec5.txt:201",
+   "quote": "r some TM decider !.",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 21,
+   "evidence": "mit18_404f20_lec6.txt:118",
+   "quote": "Defn: A Turing Enumerator is a deterministic TM with a printer.",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 22,
+   "evidence": "mit18_404f20_lec8.txt:221",
+   "quote": "are T-recognizable then ! is decidable",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "mit18_404f20_lec8.txt:221",
+   "quote": "are T-recognizable then ! is decidable",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 12,
+   "evidence": "mit18_404f20_lec7.txt:112",
+   "quote": "Lemma 1: Can convert every CFG into CNF.",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 12,
+   "evidence": "mit18_404f20_lec7.txt:115",
+   "quote": "every derivation of ) has 2| )| − 1 steps.",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 29,
+   "evidence": "mit18_404f20_lec8.txt:149",
+   "quote": "Corollary 1: ℒ is u ncountable",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 24,
+   "evidence": "mit18_404f20_lec8.txt:155",
+   "quote": "Corollary 2: Some language is not decidable.",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "mit18_404f20_lec8.txt:156",
+   "quote": "Because there are more languages than TMs.",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 22,
+   "evidence": "mit18_404f20_lec8.txt:228",
+   "quote": "Corollary: !TM is T-unrecognizable",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 26,
+   "evidence": "mit18_404f20_lec8.txt:229",
+   "quote": "Proof: !TM is T-recognizable but also undecidable",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 45,
+   "evidence": "mit18_404f20_lec8.txt:229",
+   "quote": "Proof: !TM is T-recognizable but also undecidable",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 24,
+   "evidence": "mit18_404f20_lec10.txt:155",
+   "quote": "Theorem: !LBA is undecidable",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 35,
+   "evidence": "mit18_404f20_lec10.txt:154",
+   "quote": "& is an LBA and",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 45,
+   "evidence": "mit18_404f20_lec10.txt:156",
+   "quote": "Proof: Show )TM is reducible to !LBA.",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 22,
+   "evidence": "mit18_404f20_lec9.txt:112",
+   "quote": "is T-unrecognizable then so is $",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 21,
+   "evidence": "mit18_404f20_lec10.txt:85",
+   "quote": "is a 1 -tape TM",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 24,
+   "evidence": "mit18_404f20_lec9.txt:21",
+   "quote": "Recall Theorem: $!%&TM is undecidable",
+   "kind": "statement"
+  },
+  {
+   "from": 36,
+   "to": 45,
+   "evidence": "mit18_404f20_lec9.txt:23",
+   "quote": "show that !TM is decidable (false!).",
+   "kind": "proof"
+  },
+  {
+   "from": 37,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:127",
+   "quote": "there is a TM & such t hat",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 44,
+   "evidence": "mit18_404f20_lec11.txt:132",
+   "quote": "1. Get own description 〈&〉.",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 21,
+   "evidence": "mit18_404f20_lec12.txt:69",
+   "quote": "Theorem: A 1-tape TM ' can decide ! by using",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 23,
+   "evidence": "mit18_404f20_lec12.txt:69",
+   "quote": "Theorem: A 1-tape TM ' can decide ! by using",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 24,
+   "evidence": "mit18_404f20_lec10.txt:89",
+   "quote": "Theorem:  !LBA is decidable",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 35,
+   "evidence": "mit18_404f20_lec10.txt:88",
+   "quote": "LBA & accepts (",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 24,
+   "evidence": "mit18_404f20_lec10.txt:171",
+   "quote": "Theorem: !\"! is undecidable",
+   "kind": "statement"
+  },
+  {
+   "from": 40,
+   "to": 45,
+   "evidence": "mit18_404f20_lec10.txt:172",
+   "quote": "Proof: Show %TM is reducible to !\"!.",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 12,
+   "evidence": "mit18_404f20_lec10.txt:213",
+   "quote": "is a CFG and \" ' = Σ∗}",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 14,
+   "evidence": "mit18_404f20_lec10.txt:220",
+   "quote": "onstruct PDA 45,6 which tests whether its input 7 is an accepting",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 24,
+   "evidence": "mit18_404f20_lec10.txt:215",
+   "quote": "is undecidable",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 45,
+   "evidence": "mit18_404f20_lec10.txt:216",
+   "quote": "Proof: Show !TM is reducible to !\"\"PDA via the computation history method.",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:44",
+   "quote": "Theorem: There is a TM !\"#$ which (on any input) halts",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 43,
+   "evidence": "mit18_404f20_lec11.txt:52",
+   "quote": "Compute '(tape contents) to get 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:48",
+   "quote": "the TM ./ = “Print , on the tape and halt”.",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:93",
+   "quote": "Theorem: For any TM ! there is a TM \" where for all #",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 43,
+   "evidence": "mit18_404f20_lec11.txt:98",
+   "quote": "Compute -(tape contents after #) to get %.",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 24,
+   "evidence": "mit18_404f20_lec8.txt:179",
+   "quote": "Theorem: !TM is not decidable",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "mit18_404f20_lec11.txt:119",
+   "quote": "1. Get own description 〈%〉.",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:140",
+   "quote": "is a minimal TM if",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 17,
+   "evidence": "mit18_404f20_lec11.txt:144",
+   "quote": "Proof by contradiction: Assume some TM / enu merates",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 22,
+   "evidence": "mit18_404f20_lec11.txt:143",
+   "quote": "Theorem: !\"#TM is T-unrecognizable.",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 25,
+   "evidence": "mit18_404f20_lec11.txt:154",
+   "quote": "2. Run enumerator / until some TM 4 appears",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 44,
+   "evidence": "mit18_404f20_lec11.txt:148",
+   "quote": "1. Get own description 〈0〉.",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "mit18_404f20_lec11.txt:142",
+   "quote": "is a minimal TM }.",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 22,
+   "evidence": "mit18_404f20_lec11.txt:176",
+   "quote": "Checkability implies the set of provable statements",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 32,
+   "evidence": "mit18_404f20_lec11.txt:177",
+   "quote": "then *TM is T-recognizable (false!).",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:187",
+   "quote": "where # is the following TM:",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 44,
+   "evidence": "mit18_404f20_lec11.txt:179",
+   "quote": "Next, we use the Recursion Theorem to give a specific example",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 21,
+   "evidence": "mit18_404f20_lec11.txt:127",
+   "quote": "there is a TM & such t hat",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 44,
+   "evidence": "mit18_404f20_lec11.txt:132",
+   "quote": "1. Get own description 〈&〉.",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 52,
+   "evidence": "mit18_404f20_lec14.txt:235",
+   "quote": "Theorem:  If ! ≤ $ \" and  \" ∈ P  then  ! ∈ P.",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 56,
+   "evidence": "mit18_404f20_lec16.txt:173",
+   "quote": "converting formula (to 3CNF formula (′, preserving satisfiability.",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 57,
+   "evidence": "mit18_404f20_lec16.txt:171",
+   "quote": "Theorem:  3\"#$is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 60,
+   "evidence": "mit18_404f20_lec16.txt:171",
+   "quote": "Theorem:  3\"#$is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 70,
+   "evidence": "mit18_404f20_lec16.txt:172",
+   "quote": "Proof:  Show \"#$≤&3\"#$",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 52,
+   "evidence": "mit18_404f20_lec15.txt:25",
+   "quote": "is polynomial time reducible to (!).",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 53,
+   "evidence": "mit18_404f20_lec15.txt:24",
+   "quote": "Cook-Levin Theorem: (!)  ∈ P → P = NP",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 56,
+   "evidence": "mit18_404f20_lec15.txt:38",
+   "quote": "is a satisfiable 3CNF formula}",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 57,
+   "evidence": "mit18_404f20_lec15.txt:56",
+   "quote": "Corollary:   '()*+, ∈ P → 3\"#$ ∈ P",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "mit18_404f20_lec15.txt:56",
+   "quote": "Corollary:   '()*+, ∈ P → 3\"#$ ∈ P",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 52,
+   "evidence": "mit18_404f20_lec15.txt:88",
+   "quote": "2) For all # ∈ NP ,  # ≤ % !",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 57,
+   "evidence": "mit18_404f20_lec15.txt:114",
+   "quote": "Proof:  Show 3'\"% ≤) !\"#$\"%!",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "mit18_404f20_lec15.txt:113",
+   "quote": "Theorem:  !\"#$\"%! is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 52,
+   "evidence": "mit18_404f20_lec16.txt:26",
+   "quote": "2) For all # ∈ NP , # ≤% !",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 21,
+   "evidence": "mit18_404f20_lec17.txt:24",
+   "quote": "Say TM ' runs in space !(%) if",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 85,
+   "evidence": "mit18_404f20_lec17.txt:44",
+   "quote": "1) TIME ! \" ⊆ SPACE ! \"",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:51",
+   "quote": "Corollary: P ⊆ PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 52,
+   "evidence": "mit18_404f20_lec17.txt:60",
+   "quote": "2. If # ≤' ( and ( ∈ PSPACE then # ∈ PSPACE",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 53,
+   "evidence": "mit18_404f20_lec17.txt:59",
+   "quote": "1. \"#$ ∈ PSPACE",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:57",
+   "quote": "Theorem: NP ⊆ PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 68,
+   "evidence": "mit18_404f20_lec17.txt:89",
+   "quote": "Theorem: !\"#$ ∈ PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 85,
+   "evidence": "mit18_404f20_lec17.txt:100",
+   "quote": "So !\"#$ ∈ SP ACE(.)",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:89",
+   "quote": "Theorem: !\"#$ ∈ PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 52,
+   "evidence": "mit18_404f20_lec16.txt:56",
+   "quote": "Give a polynomial-time reduction , mapping \" to !\"#.",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 53,
+   "evidence": "mit18_404f20_lec15.txt:90",
+   "quote": "Cook-Levin Theorem:  '#( is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 60,
+   "evidence": "mit18_404f20_lec15.txt:90",
+   "quote": "Cook-Levin Theorem:  '#( is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 71,
+   "evidence": "mit18_404f20_lec16.txt:76",
+   "quote": "“says” a tableau for ! on \" exists.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 52,
+   "evidence": "mit18_404f20_lec16.txt:56",
+   "quote": "Give a polynomial-time reduction , mapping \" to !\"#.",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 53,
+   "evidence": "mit18_404f20_lec16.txt:52",
+   "quote": "Theorem: !\"# is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 60,
+   "evidence": "mit18_404f20_lec16.txt:52",
+   "quote": "Theorem: !\"# is NP-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 71,
+   "evidence": "mit18_404f20_lec16.txt:76",
+   "quote": "“says” a tableau for ! on \" exists.",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 72,
+   "evidence": "mit18_404f20_lec17.txt:119",
+   "quote": "Theorem: !\"##$%DFA ∈ NPSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:119",
+   "quote": "Theorem: !\"##$%DFA ∈ NPSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 72,
+   "evidence": "mit18_404f20_lec17.txt:140",
+   "quote": "Theorem: !\"##$%DFA ∈ PSPACE (!)",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 76,
+   "evidence": "mit18_404f20_lec18.txt:35",
+   "quote": "Theorem: !\"##$%DFA ∈ SPACE(+,)",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:140",
+   "quote": "Theorem: !\"##$%DFA ∈ PSPACE (!)",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 72,
+   "evidence": "mit18_404f20_lec17.txt:152",
+   "quote": "Theorem: !\"##$%DFA ∈ SPACE(+,)",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 85,
+   "evidence": "mit18_404f20_lec17.txt:152",
+   "quote": "Theorem: !\"##$%DFA ∈ SPACE(+,)",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 52,
+   "evidence": "mit18_404f20_lec18.txt:142",
+   "quote": "all # ∈ PSP ACE, # ≤% !",
+   "kind": "statement"
+  },
+  {
+   "from": 77,
+   "to": 86,
+   "evidence": "mit18_404f20_lec18.txt:140",
+   "quote": "1) ! ∈ PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 52,
+   "evidence": "mit18_404f20_lec18.txt:171",
+   "quote": "Give a polynomial-time reduction 8 mapping 2 to !\"#$.",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 68,
+   "evidence": "mit18_404f20_lec18.txt:167",
+   "quote": "Theorem: !\"#$ is PSPACE-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 78,
+   "to": 69,
+   "evidence": "mit18_404f20_lec18.txt:168",
+   "quote": "Proof: 1) !\"#$ ∈ PSPACE •",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 71,
+   "evidence": "mit18_404f20_lec18.txt:181",
+   "quote": "Recall: A tableau for % on & represents",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 77,
+   "evidence": "mit18_404f20_lec18.txt:167",
+   "quote": "Theorem: !\"#$ is PSPACE-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 77,
+   "evidence": "mit18_404f20_lec19.txt:107",
+   "quote": "Theorem: !! is PSPACE-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "mit18_404f20_lec19.txt:109",
+   "quote": "2) #$%& ≤( !!",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 79,
+   "evidence": "mit18_404f20_lec19.txt:107",
+   "quote": "Theorem: !! is PSPACE-complete",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 81,
+   "evidence": "mit18_404f20_lec19.txt:111",
+   "quote": "Construct ! to mimic the formula game on *.",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 68,
+   "evidence": "mit18_404f20_lec19.txt:99",
+   "quote": "Player ∃ has a forced win on !} = /012.",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 85,
+   "evidence": "mit18_404f20_lec19.txt:161",
+   "quote": "Defn: L = SPACE log $",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 82,
+   "evidence": "mit18_404f20_lec19.txt:176",
+   "quote": "Theorem: L ⊆ P",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 88,
+   "evidence": "mit18_404f20_lec19.txt:181",
+   "quote": "Therefore \" runs in polynomial time.",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 82,
+   "evidence": "mit18_404f20_lec19.txt:184",
+   "quote": "Theorem: NL ⊆ SPACE log. (",
+   "kind": "statement"
+  },
+  {
+   "from": 84,
+   "to": 85,
+   "evidence": "mit18_404f20_lec19.txt:184",
+   "quote": "Theorem: NL ⊆ SPACE log. (",
+   "kind": "statement"
+  },
+  {
+   "from": 85,
+   "to": 21,
+   "evidence": "mit18_404f20_lec17.txt:17",
+   "quote": "some deterministic 1-tape TM' decides",
+   "kind": "statement"
+  },
+  {
+   "from": 86,
+   "to": 85,
+   "evidence": "mit18_404f20_lec17.txt:21",
+   "quote": "PSPACE = ⋃1 SPACE(%1)",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 85,
+   "evidence": "mit18_404f20_lec18.txt:78",
+   "quote": "NSPACE ! ⊆ SPACE !%",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 72,
+   "evidence": "mit18_404f20_lec17.txt:139",
+   "quote": "!\"##$%DFA ∈ NSPACE(8).",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 85,
+   "evidence": "mit18_404f20_lec17.txt:139",
+   "quote": "!\"##$%DFA ∈ NSPACE(8).",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 86,
+   "evidence": "mit18_404f20_lec17.txt:118",
+   "quote": "!\"##$%DFA ∈ NPSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 82,
+   "evidence": "mit18_404f20_lec19.txt:232",
+   "quote": "Theorem: NL ⊆ P",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 88,
+   "evidence": "mit18_404f20_lec19.txt:235",
+   "quote": "nodes: all configurations for \" on -",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 94,
+   "evidence": "mit18_404f20_lec19.txt:243",
+   "quote": "2. Accept if there is a path from .23453 to .466783.",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 82,
+   "evidence": "mit18_404f20_lec20.txt:171",
+   "quote": "Theorem (Immerman-Szelepcsényi): NL = coNL",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "mit18_404f20_lec20.txt:187",
+   "quote": "Theorem:  If some NL-machine computes !, then some NL-machine computes \"#$ℎ.",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 93,
+   "evidence": "mit18_404f20_lec21.txt:109",
+   "quote": "2. Compute each !\"'( from !\" for 3 = 1 to @.",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 91,
+   "evidence": "mit18_404f20_lec20.txt:253",
+   "quote": "ollary: Some NL-machine computes !\"'( from !\" .",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 68,
+   "evidence": "mit18_404f20_lec22.txt:166",
+   "quote": "Proof: Let ! = $%&'",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 86,
+   "evidence": "mit18_404f20_lec22.txt:167",
+   "quote": "⊆ NPSPACE = PSPACE ⊆",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 87,
+   "evidence": "mit18_404f20_lec22.txt:167",
+   "quote": "⊆ NPSPACE = PSPACE ⊆",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 82,
+   "evidence": "mit18_404f20_lec22.txt:33",
+   "quote": "Corollary: NL ⊆, PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 84,
+   "evidence": "mit18_404f20_lec21.txt:266",
+   "quote": "NL ⊆ SPACE log& ' ⊆, SPACE ' ⊆ PSPACE",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 86,
+   "evidence": "mit18_404f20_lec22.txt:33",
+   "quote": "Corollary: NL ⊆, PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 98,
+   "evidence": "mit18_404f20_lec22.txt:22",
+   "quote": "SPACE ! \" # ⊆, SPACE \" # for space constructible \".",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 85,
+   "evidence": "mit18_404f20_lec21.txt:132",
+   "quote": "On other words, SPACE ( ! ' ⊆, SPACE ! '",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 85,
+   "evidence": "mit18_404f20_lec21.txt:132",
+   "quote": "On other words, SPACE ( ! ' ⊆, SPACE ! '",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 97,
+   "evidence": "mit18_404f20_lec23.txt:98",
+   "quote": "Theorem:   !\"ROBP ∈ BPP",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 109,
+   "evidence": "mit18_404f20_lec24.txt:204",
+   "quote": "!\"ROBP∈BPP",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 105,
+   "evidence": "mit18_404f20_lec24.txt:134",
+   "quote": "Proof:  Let ! =! ( −! * .",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 105,
+   "evidence": "mit18_404f20_lec24.txt:138",
+   "quote": "Proof:  There are at most 0 roots out of 7 possibilities.",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 108,
+   "evidence": "mit18_404f20_lec24.txt:202",
+   "quote": "From Schwartz-Zippel",
+   "kind": "proof"
+  },
+  {
+   "from": 110,
+   "to": 114,
+   "evidence": "mit18_404f20_lec25.txt:78",
+   "quote": "→ Pr [ (V ↔ P) accepts ! ] ≥",
+   "kind": "statement"
+  },
+  {
+   "from": 112,
+   "to": 52,
+   "evidence": "mit18_404f20_lec25.txt:128",
+   "quote": "is NP-ha rd if # ≤, * for every # ∈ NP .",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 53,
+   "evidence": "mit18_404f20_lec25.txt:131",
+   "quote": "Proof: Show \"#$ ≤. #\"#$",
+   "kind": "proof"
+  },
+  {
+   "from": 113,
+   "to": 67,
+   "evidence": "mit18_404f20_lec25.txt:130",
+   "quote": "Theorem: #\"#$ is coNP-hard",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 111,
+   "evidence": "mit18_404f20_lec25.txt:130",
+   "quote": "Theorem: #\"#$ is coNP-hard",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 112,
+   "evidence": "mit18_404f20_lec25.txt:130",
+   "quote": "Theorem: #\"#$ is coNP-hard",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 103,
+   "evidence": "mit18_404f20_lec25.txt:92",
+   "quote": "Theorem: !\"# ∈ IP",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 110,
+   "evidence": "mit18_404f20_lec25.txt:92",
+   "quote": "Theorem: !\"# ∈ IP",
+   "kind": "statement"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "mit18_404f20_lec25.txt:87",
+   "quote": "Thus Pr [ (V ↔ P) accepts 〈&, (〉] = 1",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 110,
+   "evidence": "mit18_404f20_lec25.txt:140",
+   "quote": "Theorem: #\"#$ ∈ IP",
+   "kind": "statement"
+  },
+  {
+   "from": 116,
+   "to": 111,
+   "evidence": "mit18_404f20_lec25.txt:140",
+   "quote": "Theorem: #\"#$ ∈ IP",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 86,
+   "evidence": "mit18_404f20_lec25.txt:118",
+   "quote": "Surprising Theorem: PSPACE ⊆ IP so IP = PSPACE",
+   "kind": "statement"
+  },
+  {
+   "from": 117,
+   "to": 110,
+   "evidence": "mit18_404f20_lec25.txt:118",
+   "quote": "Surprising Theorem: PSPACE ⊆ IP so IP = PSPACE",
+   "kind": "statement"
+  }
+ ]
+}

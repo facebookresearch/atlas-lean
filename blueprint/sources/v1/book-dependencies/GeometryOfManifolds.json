@@ -1,0 +1,658 @@
+{
+ "book": "GeometryOfManifolds",
+ "source": "MIT 18.966 Geometry of Manifolds (Spring 2007, D. Auroux) lecture notes, PDF text lect01.txt-lect25.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 10,
+   "evidence": "lect04.txt:16",
+   "quote": "X is a symplectic vector ﬁeld if LXω =0",
+   "kind": "statement"
+  },
+  {
+   "from": 1,
+   "to": 10,
+   "evidence": "lect04.txt:51",
+   "quote": "a continuous family of symplectic",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 14,
+   "evidence": "lect05.txt:33",
+   "quote": "Identify U ∼= U0 ⊂ NX",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 8,
+   "evidence": "lect05.txt:69",
+   "quote": "E ⊂ (V, Ω) a Lagrangian subspace",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 10,
+   "evidence": "lect05.txt:66",
+   "quote": "be a Lagrangian submanifold",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 10,
+   "evidence": "lect06.txt:17",
+   "quote": "For (M, ω) compact",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 11,
+   "evidence": "lect06.txt:17",
+   "quote": "every symplectomorphism of M which is C1",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 12,
+   "evidence": "lect06.txt:21",
+   "quote": "The ﬁrst theorem follows from the second, using the diagonal embedding",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 14,
+   "evidence": "lect05.txt:31",
+   "quote": "i∗ : H∗(U1, R) H∗(X, R) is an isomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 3,
+   "evidence": "lect02.txt:64",
+   "quote": "e.g. in a standard basis E is the span",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 3,
+   "evidence": "lect02.txt:69",
+   "quote": "e.g. in a standard basis E is the span of (e1, . . . , ek)",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 9,
+   "evidence": "lect02.txt:79",
+   "quote": "which is nondegenerate (i.e. 1 ωn is a volume form)",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "lect02.txt:95",
+   "quote": "A symplectomorphism is a diﬀeomorphism φ : (M, ω) (M �, ω�)",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 10,
+   "evidence": "lect06.txt:19",
+   "quote": "For (M, ω) symplectic",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 10,
+   "evidence": "lect03.txt:56",
+   "quote": "let (M, ω) be a symplectic manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 13,
+   "to": 11,
+   "evidence": "lect03.txt:60",
+   "quote": "ρt are symplectomorphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 2,
+   "evidence": "lect05.txt:59",
+   "quote": "by the above proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 15,
+   "to": 10,
+   "evidence": "lect05.txt:43",
+   "quote": "ω0,ω1 symplectic forms on M",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "lect05.txt:59",
+   "quote": "Let U0 be a tubular neighborhood of X.",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 4,
+   "evidence": "lect05.txt:76",
+   "quote": "NX ∼= T ∗X, so ∃N0 ⊃ X in T ∗X",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 10,
+   "evidence": "lect05.txt:71",
+   "quote": "Let (M, ω) be a symplectic manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 11,
+   "evidence": "lect05.txt:73",
+   "quote": "we have a symplectomorphism (U0,ω0)",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 14,
+   "evidence": "lect05.txt:76",
+   "quote": "and a diﬀeomorphism ψ : N0 ∼ N which preserves X",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "lect05.txt:84",
+   "quote": "local Moser for h∗ω1 and ω0",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 28,
+   "evidence": "lect09.txt:38",
+   "quote": "R� = dA + A ∧ A is a well-deﬁned element of",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "lect12.txt:27",
+   "quote": "Q([A], [A]) mod 2",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 22,
+   "evidence": "lect12.txt:26",
+   "quote": "α = c1(T M, J) ∈ H2(M, Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 28,
+   "evidence": "lect10.txt:51",
+   "quote": "The ﬁrst Chern class of L is c1(L) = [ 1 R�]",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 29,
+   "evidence": "lect10.txt:46",
+   "quote": "always choose a connection compatible with a given Hermitian form",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 22,
+   "evidence": "lect11.txt:9",
+   "quote": "cr (E) = e(E) ∈ H2r (M, Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 28,
+   "evidence": "lect10.txt:57",
+   "quote": "c(E, �) = det (I + 2π R�)",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 18,
+   "evidence": "lect12.txt:21",
+   "quote": "c2 [M ] = 2χ(M ) + 3σ(M )",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "lect12.txt:21",
+   "quote": "c2 [M ] = 2χ(M ) + 3σ(M )",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 10,
+   "evidence": "lect08.txt:20",
+   "quote": "compatible almost-complex structures on (M, ω)",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 10,
+   "evidence": "lect08.txt:30",
+   "quote": "ω0, ω1 two symplectic forms compatible with J",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 10,
+   "evidence": "lect08.txt:47",
+   "quote": "in compatible (M, ω, J), then X is symplectic",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "lect08.txt:88",
+   "quote": "is compatible with the metric if",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 33,
+   "evidence": "lect16.txt:15",
+   "quote": "Every elliptic operator has a pseudoinverse",
+   "kind": "statement"
+  },
+  {
+   "from": 30,
+   "to": 42,
+   "evidence": "lect16.txt:15",
+   "quote": "Every elliptic operator has a pseudoinverse",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "lect15.txt:73",
+   "quote": "Proof. Let P be a parametrix.",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 33,
+   "evidence": "lect15.txt:75",
+   "quote": "the latter in W s+1(E)",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 42,
+   "evidence": "lect16.txt:16",
+   "quote": "L elliptic, Lξ ∈ C∞(F )",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 42,
+   "evidence": "lect16.txt:17",
+   "quote": "L elliptic = Ls is Fredholm",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 42,
+   "evidence": "lect16.txt:9",
+   "quote": "For L : Γ(E) Γ(F ) a diﬀerential operator",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 34,
+   "evidence": "lect15.txt:36",
+   "quote": "The Laplacian is Δ = dd∗ + d∗d",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 35,
+   "evidence": "lect16.txt:74",
+   "quote": "ΔC = J−1ΔJ",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 48,
+   "evidence": "lect16.txt:75",
+   "quote": "Using the above identities, we have that",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 42,
+   "evidence": "lect16.txt:20",
+   "quote": "L elliptic, τ ∈ (Ker L∗)⊥ = Im L",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 35,
+   "evidence": "lect15.txt:46",
+   "quote": "The space of harmonic forms is the set Hk = {α ∈ Ωk|Δα = 0}",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "lect15.txt:65",
+   "quote": "For L : Γ(E) Γ(F ) a diﬀerential operator",
+   "kind": "statement"
+  },
+  {
+   "from": 44,
+   "to": 42,
+   "evidence": "lect16.txt:21",
+   "quote": "L elliptic, self-adjoint",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 35,
+   "evidence": "lect16.txt:30",
+   "quote": "GΔ = ΔG = id − H",
+   "kind": "statement"
+  },
+  {
+   "from": 45,
+   "to": 41,
+   "evidence": "lect16.txt:30",
+   "quote": "H : Ωk → Hk = Ker Δ",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 34,
+   "evidence": "lect16.txt:31",
+   "quote": "Ωk = Hk ⊕⊥L2 Im d ⊕⊥L2 Im d∗",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 41,
+   "evidence": "lect16.txt:31",
+   "quote": "Ωk = Hk ⊕⊥L2 Im d ⊕⊥L2 Im d∗",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 45,
+   "evidence": "lect16.txt:32",
+   "quote": "Every α ∈ Ωk decomposes as α = Hα + d(d∗Gα) + d∗(dGα)",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 41,
+   "evidence": "lect16.txt:35",
+   "quote": "harmonic representative",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "lect16.txt:33",
+   "quote": "Using this decomposition, we immediately obtain the theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 34,
+   "evidence": "lect16.txt:72",
+   "quote": "[L∗,d∗] = 0, [L, d∗] = dC",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 35,
+   "evidence": "lect16.txt:96",
+   "quote": "Theorem 7. Δ = 2",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 37,
+   "evidence": "lect16.txt:101",
+   "quote": "= Δ + Δc + 0 + 0 = 2Δ",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 48,
+   "evidence": "lect16.txt:97",
+   "quote": "By the ﬁrst lemma, d∗dc = d∗[L, d∗]",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 35,
+   "evidence": "lect16.txt:102",
+   "quote": "Δ maps Ωp,q to itself",
+   "kind": "statement"
+  },
+  {
+   "from": 52,
+   "to": 41,
+   "evidence": "lect16.txt:103",
+   "quote": "Hk (M, C) = Hk = Hp,q",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 10,
+   "evidence": "lect21.txt:27",
+   "quote": "∃ a symplectic form on",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 55,
+   "evidence": "lect21.txt:25",
+   "quote": "a compact, locally trivial symplectic ﬁbration",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 10,
+   "evidence": "lect21.txt:69",
+   "quote": "a symplectic form s.t. the ﬁbers are symplectic",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 56,
+   "evidence": "lect21.txt:68",
+   "quote": "is a Lefschetz ﬁbration with",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 10,
+   "evidence": "lect21.txt:22",
+   "quote": "with generic ﬁber (F, ωF ) a symplectic manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 11,
+   "evidence": "lect21.txt:24",
+   "quote": "the change of trivialization is a symplectomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 10,
+   "evidence": "lect21.txt:70",
+   "quote": "For (M 4, ω) symplectic",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 56,
+   "evidence": "lect21.txt:71",
+   "quote": "Lefschetz ﬁbration to S2",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 20,
+   "evidence": "lect25.txt:37",
+   "quote": "(c1(L)2 · [X] − (2χ + 3σ))",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 31,
+   "evidence": "lect25.txt:53",
+   "quote": "Elliptic regularity implies that both Ker , Coker lie in C∞",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 32,
+   "evidence": "lect25.txt:50",
+   "quote": "and is Fredholm (f.d. kernel and",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 63,
+   "evidence": "lect25.txt:43",
+   "quote": "We linearize the SW equations",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 64,
+   "evidence": "lect25.txt:36",
+   "quote": "M (if nonempty) is a smooth, compact, orientable manifold",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 28,
+   "evidence": "lect25.txt:22",
+   "quote": "where A is a Hermitian connection on L",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 29,
+   "evidence": "lect25.txt:22",
+   "quote": "where A is a Hermitian connection on L",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 65,
+   "evidence": "lect25.txt:20",
+   "quote": "DAψ = 0 ∈ Γ(S−)",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 66,
+   "evidence": "lect25.txt:21",
+   "quote": "(ψ∗ ⊗ ψ)0[+γ(µ)] ∈ Γ(End(S+))",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 70,
+   "evidence": "lect25.txt:22",
+   "quote": "(corresponding to a spinc connection",
+   "kind": "statement"
+  },
+  {
+   "from": 64,
+   "to": 63,
+   "evidence": "lect25.txt:35",
+   "quote": "The moduli space of solutions M(S, g, µ)",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 28,
+   "evidence": "lect24.txt:86",
+   "quote": "Given a spinc structure and a connection",
+   "kind": "statement"
+  },
+  {
+   "from": 67,
+   "to": 63,
+   "evidence": "lect25.txt:28",
+   "quote": "This preserves the solution space",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 20,
+   "evidence": "lect24.txt:68",
+   "quote": "c1(S−) = c1(L) ∈ H2(X, Z)",
+   "kind": "statement"
+  },
+  {
+   "from": 69,
+   "to": 22,
+   "evidence": "lect24.txt:67",
+   "quote": "classiﬁed up to 2-torsion by c = c1(S+)",
+   "kind": "statement"
+  },
+  {
+   "from": 70,
+   "to": 28,
+   "evidence": "lect24.txt:85",
+   "quote": "connection A on L = ∧2S± deﬁnes the spinc connection uniquely",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 28,
+   "evidence": "lect24.txt:103",
+   "quote": "where A is a Hermitian connection on L",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 29,
+   "evidence": "lect24.txt:103",
+   "quote": "where A is a Hermitian connection on L",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 65,
+   "evidence": "lect24.txt:101",
+   "quote": "DAψ = 0 ∈ Γ(S−)",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 66,
+   "evidence": "lect24.txt:102",
+   "quote": "γ(FA +) = (ψ∗ ⊗ ψ)0 ∈ Γ(End(S+))",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "lect24.txt:103",
+   "quote": "(corresponding to a spinc connection on S±)",
+   "kind": "statement"
+  }
+ ]
+}

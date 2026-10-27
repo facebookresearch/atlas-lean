@@ -1,0 +1,1638 @@
+{
+ "book": "AlgebraNotes",
+ "source": "702s22_full_lec.txt: MIT OCW Algebra II Student Notes (18.702, Spring 2022; lectures by Bezrukavnikov, notes by Das and Ng), PDF converted to text; earlier targets in mit18_701f21_full_lec_new.txt (18.701 Algebra I, Fall 2021)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 1,
+   "evidence": "mit18_701f21_full_lec_new.txt:578",
+   "quote": "Given groups G and G ′ , a homomorphism between them is a map",
+   "kind": "statement"
+  },
+  {
+   "from": 4,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:590",
+   "quote": "Since f is a homomorphism,",
+   "kind": "proof"
+  },
+  {
+   "from": 4,
+   "to": 1,
+   "evidence": "mit18_701f21_full_lec_new.txt:590",
+   "quote": "by the defnition of eG ′",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 8,
+   "evidence": "mit18_701f21_full_lec_new.txt:834",
+   "quote": "yH = C by Lemma 4.15, and so C = C",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 5,
+   "evidence": "mit18_701f21_full_lec_new.txt:848",
+   "quote": "each of the cosets have the same number of elements and partition G",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 6,
+   "evidence": "mit18_701f21_full_lec_new.txt:856",
+   "quote": "From our theorem, we get Lagrange’s Theorem:",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:931",
+   "quote": "Let f : G → G ′ be a homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 10,
+   "to": 6,
+   "evidence": "mit18_701f21_full_lec_new.txt:936",
+   "quote": "applying the counting formula",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 5,
+   "evidence": "mit18_701f21_full_lec_new.txt:876",
+   "quote": "The left cosets partition22 G into equally sized sets.",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 6,
+   "evidence": "mit18_701f21_full_lec_new.txt:884",
+   "quote": "From the Counting Formula, we immediately obtain Lagrange’s Theorem as a corollary",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:1056",
+   "quote": "is a surjectivea homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:1143",
+   "quote": "There exists a surjective homomorphism",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 1,
+   "evidence": "mit18_701f21_full_lec_new.txt:1141",
+   "quote": "does defne a group structure on G/N (all the group",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 7,
+   "evidence": "mit18_701f21_full_lec_new.txt:1153",
+   "quote": "but because N is normal, they are the same",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 13,
+   "evidence": "mit18_701f21_full_lec_new.txt:1299",
+   "quote": "Removing elements of S gets a basis of V.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 13,
+   "evidence": "mit18_701f21_full_lec_new.txt:1490",
+   "quote": "To prove that it is a basis, we need to show that they are linearly independent",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_701f21_full_lec_new.txt:1480",
+   "quote": "From a theorem from last class, we can add vectors",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 16,
+   "evidence": "mit18_701f21_full_lec_new.txt:1877",
+   "quote": "A will have an eigenbasis and will thus be diagonalizable.",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "mit18_701f21_full_lec_new.txt:1879",
+   "quote": "by Proposition 10.4",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 13,
+   "evidence": "mit18_701f21_full_lec_new.txt:1927",
+   "quote": "there exists a basis",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 19,
+   "evidence": "mit18_701f21_full_lec_new.txt:2190",
+   "quote": "Using the rank-nullity theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 21,
+   "evidence": "mit18_701f21_full_lec_new.txt:2187",
+   "quote": "which is the defnition of being nilpotent",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 25,
+   "evidence": "mit18_701f21_full_lec_new.txt:2191",
+   "quote": "so by Theorem 11.7, W ⊕ U is in fact a splitting",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 20,
+   "evidence": "mit18_701f21_full_lec_new.txt:2548",
+   "quote": "vectors, pA(1) ̸= 0, and so Aθ − I2 has a trivial kernel",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "mit18_701f21_full_lec_new.txt:2544",
+   "quote": "We split the proof up into two cases depending on whether f is orientation-preserving or reversing.",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 28,
+   "evidence": "mit18_701f21_full_lec_new.txt:2294",
+   "quote": "form a subgroup SOn ⊂ On ⊂ GLn",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "mit18_701f21_full_lec_new.txt:2800",
+   "quote": "If G ⊆ R2 is discrete, then",
+   "kind": "statement"
+  },
+  {
+   "from": 33,
+   "to": 7,
+   "evidence": "mit18_701f21_full_lec_new.txt:2918",
+   "quote": "is actually normal, so conjugating an element of L by anything in G stays in L",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 31,
+   "evidence": "mit18_701f21_full_lec_new.txt:2967",
+   "quote": "Since L is discrete, there is a (non-unique) shortest nonzero vector",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "mit18_701f21_full_lec_new.txt:2968",
+   "quote": "result of rotating α by θ is another vector in L",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 35,
+   "evidence": "mit18_701f21_full_lec_new.txt:3210",
+   "quote": "Fix some s ∈ S and let H := Stab(s).",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 35,
+   "evidence": "mit18_701f21_full_lec_new.txt:3223",
+   "quote": "|Os| = [G : Stab(s)].",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 36,
+   "evidence": "mit18_701f21_full_lec_new.txt:3222",
+   "quote": "there is a bijective correspondence between them",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "mit18_701f21_full_lec_new.txt:3519",
+   "quote": "since the order of the conjugacy class must divide the order of G.",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 41,
+   "evidence": "mit18_701f21_full_lec_new.txt:3510",
+   "quote": "Every p-group has non-trivial center.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 9,
+   "evidence": "mit18_701f21_full_lec_new.txt:3577",
+   "quote": "the only possibility is that |Z(x)| = p2 since Z(x)",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 39,
+   "evidence": "mit18_701f21_full_lec_new.txt:3574",
+   "quote": "p divides |Z|, and that |Z|≥ p, so the only two possibilities are p and p2",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 6,
+   "evidence": "mit18_701f21_full_lec_new.txt:856",
+   "quote": "From our theorem, we get Lagrange’s Theorem:",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 43,
+   "evidence": "mit18_701f21_full_lec_new.txt:3829",
+   "quote": "conjugate if and only if σ and τ have the same cycle type.",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 35,
+   "evidence": "mit18_701f21_full_lec_new.txt:4310",
+   "quote": "by looking at stabilizers, as they are always subgroups",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 38,
+   "evidence": "mit18_701f21_full_lec_new.txt:4344",
+   "quote": "By the counting formula, we also know that",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 54,
+   "evidence": "mit18_701f21_full_lec_new.txt:4346",
+   "quote": "By the second lemma, |Stab(u)| divides",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 1,
+   "evidence": "mit18_701f21_full_lec_new.txt:4027",
+   "quote": "Let G be a group such that",
+   "kind": "statement"
+  },
+  {
+   "from": 48,
+   "to": 9,
+   "evidence": "mit18_701f21_full_lec_new.txt:4055",
+   "quote": "some cyclic group with order dividing",
+   "kind": "proof"
+  },
+  {
+   "from": 48,
+   "to": 46,
+   "evidence": "mit18_701f21_full_lec_new.txt:4052",
+   "quote": "Using Sylow I, there exists a subgroup H ≤ G such that",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 38,
+   "evidence": "mit18_701f21_full_lec_new.txt:4370",
+   "quote": "We have that |Oi| divides",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 47,
+   "evidence": "mit18_701f21_full_lec_new.txt:4067",
+   "quote": "where H is a Sylow p-subgroup",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 9,
+   "evidence": "mit18_701f21_full_lec_new.txt:4405",
+   "quote": "is a subgroup of G as well, so the largest power of p that divides",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 38,
+   "evidence": "mit18_701f21_full_lec_new.txt:4390",
+   "quote": "The counting formula then says that",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 47,
+   "evidence": "mit18_701f21_full_lec_new.txt:4090",
+   "quote": "The number of Sylow p-subgroups of G divides",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 49,
+   "evidence": "mit18_701f21_full_lec_new.txt:4385",
+   "quote": "By Sylow II, there is only one orbit.",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 7,
+   "evidence": "mit18_701f21_full_lec_new.txt:4187",
+   "quote": "Since K is normal and generated by",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 50,
+   "evidence": "mit18_701f21_full_lec_new.txt:4179",
+   "quote": "From Sylow III, the number of Sylow 5-groups divides 2",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "mit18_701f21_full_lec_new.txt:4178",
+   "quote": "G ∼= C5 ×C2",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 9,
+   "evidence": "mit18_701f21_full_lec_new.txt:4405",
+   "quote": "is a subgroup of G as well, so the largest power of p that divides",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 35,
+   "evidence": "mit18_701f21_full_lec_new.txt:4310",
+   "quote": "by looking at stabilizers, as they are always subgroups",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 38,
+   "evidence": "mit18_701f21_full_lec_new.txt:4344",
+   "quote": "By the counting formula, we also know that",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 47,
+   "evidence": "mit18_701f21_full_lec_new.txt:4253",
+   "quote": "Recall that a Sylow p-subgroup is a subgroup H ≤ G such that",
+   "kind": "statement"
+  },
+  {
+   "from": 53,
+   "to": 49,
+   "evidence": "mit18_701f21_full_lec_new.txt:4385",
+   "quote": "By Sylow II, there is only one orbit.",
+   "kind": "proof"
+  },
+  {
+   "from": 53,
+   "to": 54,
+   "evidence": "mit18_701f21_full_lec_new.txt:4346",
+   "quote": "By the second lemma, |Stab(u)| divides",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 5,
+   "evidence": "mit18_701f21_full_lec_new.txt:4337",
+   "quote": "cosets partition U",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:4280",
+   "quote": "f is a homomorphism because G is abelian and the terms will commute when verifying the",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 9,
+   "evidence": "mit18_701f21_full_lec_new.txt:4284",
+   "quote": "Thus, p divides |im(f )| for each i",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 46,
+   "evidence": "mit18_701f21_full_lec_new.txt:4261",
+   "quote": "Then we know that we have a Sylow subgroup Hi such that",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 49,
+   "evidence": "mit18_701f21_full_lec_new.txt:4263",
+   "quote": "so by Sylow II, these",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 51,
+   "evidence": "mit18_701f21_full_lec_new.txt:4266",
+   "quote": "isomorphic to a product of groups of prime power order",
+   "kind": "statement"
+  },
+  {
+   "from": 60,
+   "to": 56,
+   "evidence": "mit18_701f21_full_lec_new.txt:4820",
+   "quote": "is non-degenerate if and only if the matrix of the form, A, is invertible",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 13,
+   "evidence": "mit18_701f21_full_lec_new.txt:5017",
+   "quote": "then there exists an orthonormal basis",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 62,
+   "evidence": "mit18_701f21_full_lec_new.txt:5020",
+   "quote": "for any pairing, there exists an orthogonal basis where all of the self-pairings",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 13,
+   "evidence": "mit18_701f21_full_lec_new.txt:4923",
+   "quote": "In fact, V has an orthogonal basis",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "mit18_701f21_full_lec_new.txt:4937",
+   "quote": "of 0s that occur in the diagonal form",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 59,
+   "evidence": "mit18_701f21_full_lec_new.txt:5157",
+   "quote": "for any normal linear operator T",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 66,
+   "evidence": "mit18_701f21_full_lec_new.txt:5197",
+   "quote": "and by Lemma 1",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 68,
+   "evidence": "mit18_701f21_full_lec_new.txt:5196",
+   "quote": "By Lemma 2, w is also an eigenvector of T ∗",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 57,
+   "evidence": "mit18_701f21_full_lec_new.txt:5172",
+   "quote": "then T ∗(W ⊥) ⊂ W ⊥",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 64,
+   "evidence": "mit18_701f21_full_lec_new.txt:5175",
+   "quote": "by the defnition of the adjoint linear operator",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 59,
+   "evidence": "mit18_701f21_full_lec_new.txt:5182",
+   "quote": "by normality (this was a property shown last time)",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 0,
+   "evidence": "mit18_701f21_full_lec_new.txt:5722",
+   "quote": "Since φ is a homomorphism, φ(s + t) = φ(s)φ(t) for",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 24,
+   "evidence": "mit18_701f21_full_lec_new.txt:5896",
+   "quote": "without loss of generality, we can assume that A is in Jordan",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 74,
+   "evidence": "mit18_701f21_full_lec_new.txt:6144",
+   "quote": "A Lie algebra (over R) is a vector space V with a Lie bracket",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 7,
+   "evidence": "mit18_701f21_full_lec_new.txt:6191",
+   "quote": "If N ⊴ SU2, then N must be {I}, SU2, or {±I}.",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 67,
+   "evidence": "mit18_701f21_full_lec_new.txt:6240",
+   "quote": "pick some v on the equator, and look at Long ≤ SU2",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 14,
+   "evidence": "mit18_701f21_full_lec_new.txt:6197",
+   "quote": "This follows from the Correspondence Principle",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 75,
+   "evidence": "mit18_701f21_full_lec_new.txt:6199",
+   "quote": "But any normal subgroup of SU2 containing the kernel is equal to either the kernel or the",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 7,
+   "evidence": "mit18_701f21_full_lec_new.txt:6314",
+   "quote": "since N is normal, this implies the entire set is contained in N",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 16,
+   "evidence": "mit18_701f21_full_lec_new.txt:6315",
+   "quote": "we know Q is diagonalizable",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 23,
+   "evidence": "mit18_701f21_full_lec_new.txt:6315",
+   "quote": "we know Q is diagonalizable (since it has distinct eigenvalues)",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 79,
+   "evidence": "mit18_701f21_full_lec_new.txt:6512",
+   "quote": "If C is a cube and T is a regular tetrahedron, then d(C) = d(T ).",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 81,
+   "evidence": "mit18_701f21_full_lec_new.txt:6514",
+   "quote": "d(C) = 12ℓ ⊗ = ℓ ⊗ 6π = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 83,
+   "evidence": "mit18_701f21_full_lec_new.txt:6553",
+   "quote": "So d(T ) = ℓ ′ ⊗ α is nonzero, which means",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 57,
+   "evidence": "702s22_full_lec.txt:857",
+   "quote": "W ⊥ = {v | ⟨v, w⟩ = 0 for all w ∈ W },",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 82,
+   "evidence": "702s22_full_lec.txt:878",
+   "quote": "W, and we can therefore decomposeρ as a direct sum!",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:637",
+   "quote": "can be written as a directsum ofirreducible",
+   "kind": "statement"
+  },
+  {
+   "from": 87,
+   "to": 86,
+   "evidence": "702s22_full_lec.txt:637",
+   "quote": "can be written as a directsum ofirreducible",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 85,
+   "evidence": "702s22_full_lec.txt:1015",
+   "quote": "(a) χρ(g) is a sum of roots of unity;",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:1077",
+   "quote": "The characters of irreducible representations form a basis in the space of class functions",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 85,
+   "evidence": "702s22_full_lec.txt:1077",
+   "quote": "The characters of irreducible representations form a basis in the space of class functions",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 87,
+   "evidence": "702s22_full_lec.txt:1902",
+   "quote": "But by Maschke’s Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 88,
+   "evidence": "702s22_full_lec.txt:1554",
+   "quote": "We saw earlier thatχρ(g−1) = χρ(g)",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 89,
+   "evidence": "702s22_full_lec.txt:1077",
+   "quote": "The characters of irreducible representations form a basis in the space of class functions",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 94,
+   "evidence": "702s22_full_lec.txt:1591",
+   "quote": "which are described by Schur’s Lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 97,
+   "evidence": "702s22_full_lec.txt:1842",
+   "quote": "But using Proposition7.14,",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:1411",
+   "quote": "the list of all irreducible representations ofG",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 87,
+   "evidence": "702s22_full_lec.txt:1419",
+   "quote": "From Maschke’s Theorem, we know that we can write",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "702s22_full_lec.txt:1417",
+   "quote": "where dk = dim HomG(ρk, ρ) for all k.",
+   "kind": "statement"
+  },
+  {
+   "from": 92,
+   "to": 94,
+   "evidence": "702s22_full_lec.txt:1435",
+   "quote": "using the fact that by Schur’s Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:1207",
+   "quote": "If G is abelian, then every irreducible representation is one-dimensional.",
+   "kind": "statement"
+  },
+  {
+   "from": 93,
+   "to": 89,
+   "evidence": "702s22_full_lec.txt:1215",
+   "quote": "every function is a class function, as every element is in its own conjugacy class",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 90,
+   "evidence": "702s22_full_lec.txt:1209",
+   "quote": "We use the Main Theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:1337",
+   "quote": "be irreducible representations. Then HomG(ρ, ψ) is 0",
+   "kind": "statement"
+  },
+  {
+   "from": 94,
+   "to": 91,
+   "evidence": "702s22_full_lec.txt:1337",
+   "quote": "be irreducible representations. Then HomG(ρ, ψ) is 0",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:1669",
+   "quote": "In particular, ρ is irreducible if and only if⟨χρ, χρ⟩ = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 85,
+   "evidence": "702s22_full_lec.txt:1669",
+   "quote": "In particular, ρ is irreducible if and only if⟨χρ, χρ⟩ = 1.",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 86,
+   "evidence": "702s22_full_lec.txt:1665",
+   "quote": "If ρ = L ρnii as before, then",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 90,
+   "evidence": "702s22_full_lec.txt:1683",
+   "quote": "since again by orthonormality,",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 89,
+   "evidence": "702s22_full_lec.txt:1876",
+   "quote": "If f is a class function, thenρ(f ) ∈ EndG(ρ).",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 91,
+   "evidence": "702s22_full_lec.txt:1876",
+   "quote": "If f is a class function, thenρ(f ) ∈ EndG(ρ).",
+   "kind": "statement"
+  },
+  {
+   "from": 96,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:1876",
+   "quote": "If f is a class function, thenρ(f ) ∈ EndG(ρ).",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 85,
+   "evidence": "702s22_full_lec.txt:1828",
+   "quote": "If f is a class function and⟨f, χk⟩ = 0 for all k",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 87,
+   "evidence": "702s22_full_lec.txt:1902",
+   "quote": "But by Maschke’s Theorem,",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 89,
+   "evidence": "702s22_full_lec.txt:1828",
+   "quote": "If f is a class function and⟨f, χk⟩ = 0 for all k",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 94,
+   "evidence": "702s22_full_lec.txt:1900",
+   "quote": "And by Schur’s Lemma (sinceρi is irreducible)",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "702s22_full_lec.txt:1900",
+   "quote": "But we also know thatρi(f ) ∈ EndG(ρi).",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:1908",
+   "quote": "in particular,f acts on the basis vectorv1 as",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:2096",
+   "quote": "the idealaR is called aprincipal ideal",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 7,
+   "evidence": "702s22_full_lec.txt:2114",
+   "quote": "Since I is a normal subgroup ofR under addition",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:2114",
+   "quote": "Let R be a ring and I ⊂ R an ideal.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 99,
+   "evidence": "702s22_full_lec.txt:2309",
+   "quote": "The unique extension is just evaluation",
+   "kind": "proof"
+  },
+  {
+   "from": 107,
+   "to": 111,
+   "evidence": "702s22_full_lec.txt:2697",
+   "quote": "By Lemma11.14, since P1 divides",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:2431",
+   "quote": "the only ideals ofR containing I are R and I itself.",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 99,
+   "evidence": "702s22_full_lec.txt:2551",
+   "quote": "are exactly the kernels of evaluation homomorphisms",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:2551",
+   "quote": "The maximal ideals inC[x1",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 104,
+   "evidence": "702s22_full_lec.txt:2554",
+   "quote": "The maximal ideals inC[x1, · · ·, xn]/(P1, · · ·, Pm) are in bijection",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:2554",
+   "quote": "The maximal ideals inC[x1",
+   "kind": "statement"
+  },
+  {
+   "from": 110,
+   "to": 109,
+   "evidence": "702s22_full_lec.txt:2555",
+   "quote": "It’s clear that this corollary follows from the theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 111,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:2683",
+   "quote": "(P ) is a maximal ideal",
+   "kind": "proof"
+  },
+  {
+   "from": 113,
+   "to": 106,
+   "evidence": "702s22_full_lec.txt:3061",
+   "quote": "up to association",
+   "kind": "statement"
+  },
+  {
+   "from": 113,
+   "to": 117,
+   "evidence": "702s22_full_lec.txt:3075",
+   "quote": "we saw last class that every integer primep = 4k + 3 is still prime inZ[i].",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 113,
+   "evidence": "702s22_full_lec.txt:3085",
+   "quote": "As a corollary, we can find the complete answer to the sum of squares question.",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 112,
+   "evidence": "702s22_full_lec.txt:2915",
+   "quote": "If P and Q are primitive, thenP Qis as well.",
+   "kind": "statement"
+  },
+  {
+   "from": 118,
+   "to": 120,
+   "evidence": "702s22_full_lec.txt:2983",
+   "quote": "By Lemma13.5, since P is primitive, thenP must",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 120,
+   "evidence": "702s22_full_lec.txt:2983",
+   "quote": "By Lemma13.5, since P is primitive, thenP must",
+   "kind": "proof"
+  },
+  {
+   "from": 120,
+   "to": 112,
+   "evidence": "702s22_full_lec.txt:2927",
+   "quote": "and P is primitive, thenP divides Q in Z[x].",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 116,
+   "evidence": "702s22_full_lec.txt:2931",
+   "quote": "By Gauss’s Lemma,P Tis primitive",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:3325",
+   "quote": "every nonzero idealI ⊂ R factors uniquely",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:3579",
+   "quote": "since Qi is maximal, the only ideals",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 124,
+   "evidence": "702s22_full_lec.txt:3568",
+   "quote": "we can consider the norm",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 125,
+   "evidence": "702s22_full_lec.txt:3564",
+   "quote": "Then by Lemma16.4, there is a maximal idealm with I ⊂ m",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 126,
+   "evidence": "702s22_full_lec.txt:3565",
+   "quote": "Proposition 16.3, we can factorI",
+   "kind": "proof"
+  },
+  {
+   "from": 122,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:3381",
+   "quote": "Every nonzero ideal ofR is again a lattice.",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 103,
+   "evidence": "702s22_full_lec.txt:3382",
+   "quote": "if I = ( α), then we can writeI = αR",
+   "kind": "proof"
+  },
+  {
+   "from": 124,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:3487",
+   "quote": "The norm of an idealI",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:3532",
+   "quote": "Every non-unit idealI in R is contained in a maximal ideal.",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:3494",
+   "quote": "Multiplication of ideals has the following two properties:",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 124,
+   "evidence": "702s22_full_lec.txt:3518",
+   "quote": "where n = N(J).",
+   "kind": "proof"
+  },
+  {
+   "from": 127,
+   "to": 128,
+   "evidence": "702s22_full_lec.txt:3714",
+   "quote": "The two similarity classes ofideals are represented",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:3605",
+   "quote": "Two nonzero idealsI, J⊂ R are similar",
+   "kind": "statement"
+  },
+  {
+   "from": 129,
+   "to": 128,
+   "evidence": "702s22_full_lec.txt:3621",
+   "quote": "If I ∼ I ′, then IJ ∼ I ′J.",
+   "kind": "statement"
+  },
+  {
+   "from": 130,
+   "to": 132,
+   "evidence": "702s22_full_lec.txt:3957",
+   "quote": "It’s clear that this proposition implies the class group is finite",
+   "kind": "proof"
+  },
+  {
+   "from": 132,
+   "to": 124,
+   "evidence": "702s22_full_lec.txt:3950",
+   "quote": "Every ideal class has a representative with bounded norm",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 126,
+   "evidence": "702s22_full_lec.txt:3968",
+   "quote": "We saw previously that inclusion of ideals implies divisibility",
+   "kind": "proof"
+  },
+  {
+   "from": 132,
+   "to": 128,
+   "evidence": "702s22_full_lec.txt:3950",
+   "quote": "Every ideal class has a representative with bounded norm",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 133,
+   "evidence": "702s22_full_lec.txt:3967",
+   "quote": "and findα ∈ I with",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 121,
+   "evidence": "702s22_full_lec.txt:4010",
+   "quote": "I as a product of primes, and use this property repeatedly.",
+   "kind": "proof"
+  },
+  {
+   "from": 133,
+   "to": 124,
+   "evidence": "702s22_full_lec.txt:3964",
+   "quote": "An ideal I of norm n contains a nonzero element",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "702s22_full_lec.txt:3964",
+   "quote": "with αα ≤ µn.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 135,
+   "evidence": "702s22_full_lec.txt:4626",
+   "quote": "Af = Z/d1Z × · · · ×Z/dnZ.",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 131,
+   "evidence": "702s22_full_lec.txt:4600",
+   "quote": "Any finitely presented abelian groupA is isomorphic to",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 131,
+   "evidence": "702s22_full_lec.txt:4573",
+   "quote": "Every finitely presented abelian group is isomorphic to",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 108,
+   "evidence": "702s22_full_lec.txt:4964",
+   "quote": "every (non-unit) ideal is contained in a maximal ideal.",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 147,
+   "evidence": "702s22_full_lec.txt:4974",
+   "quote": "This contradicts chain",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 139,
+   "evidence": "702s22_full_lec.txt:5124",
+   "quote": "the set of elements inL which are algebraic overK form a subfield ofL",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 143,
+   "evidence": "702s22_full_lec.txt:4909",
+   "quote": "is a submodule ofR[x]≤d, which is a finitely generated module overR; so since",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:4805",
+   "quote": "an ideal ofR, by definition, is the same as a submodule of",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 145,
+   "evidence": "702s22_full_lec.txt:4818",
+   "quote": "Then by the correspondence theorem and the above lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 131,
+   "evidence": "702s22_full_lec.txt:4782",
+   "quote": "every finitely generated module is finitely presented.",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 143,
+   "evidence": "702s22_full_lec.txt:4840",
+   "quote": "ker φ is a submodule ofRn, so it must be finitely generated as well.",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 143,
+   "evidence": "702s22_full_lec.txt:4909",
+   "quote": "is a submodule ofR[x]≤d, which is a finitely generated module overR; so since",
+   "kind": "proof"
+  },
+  {
+   "from": 147,
+   "to": 102,
+   "evidence": "702s22_full_lec.txt:4913",
+   "quote": "every increasing chain of ideals stabilizes",
+   "kind": "statement"
+  },
+  {
+   "from": 148,
+   "to": 13,
+   "evidence": "702s22_full_lec.txt:5051",
+   "quote": "Then we’ll show that the termsαiβj form a basis forK/F.",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 13,
+   "evidence": "702s22_full_lec.txt:5051",
+   "quote": "Then we’ll show that the termsαiβj form a basis forK/F.",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 138,
+   "evidence": "702s22_full_lec.txt:5120",
+   "quote": "If α and β are algebraic, thenK(α)/K and K(α, β)/K(α) are both finite",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 139,
+   "evidence": "702s22_full_lec.txt:5115",
+   "quote": "are algebraic overK, then α + β, αβ, and αβ are also algebraic.",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 148,
+   "evidence": "702s22_full_lec.txt:5122",
+   "quote": "conclude that K(α, β)/K is finite",
+   "kind": "proof"
+  },
+  {
+   "from": 151,
+   "to": 139,
+   "evidence": "702s22_full_lec.txt:5524",
+   "quote": "of every algebraic elementα ∈ E has",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 107,
+   "evidence": "702s22_full_lec.txt:5381",
+   "quote": "so by unique factorization inF [x], the",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 152,
+   "evidence": "702s22_full_lec.txt:5454",
+   "quote": "We haveFq ∼= Fp(α)",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 103,
+   "evidence": "702s22_full_lec.txt:5480",
+   "quote": "then R/(p) is a field",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 104,
+   "evidence": "702s22_full_lec.txt:5480",
+   "quote": "then R/(p) is a field",
+   "kind": "statement"
+  },
+  {
+   "from": 154,
+   "to": 152,
+   "evidence": "702s22_full_lec.txt:5483",
+   "quote": "Then we haveR/m ∼= Fpa for some a.",
+   "kind": "proof"
+  },
+  {
+   "from": 155,
+   "to": 135,
+   "evidence": "702s22_full_lec.txt:5440",
+   "quote": "By the classification of finite abelian groups",
+   "kind": "proof"
+  },
+  {
+   "from": 159,
+   "to": 151,
+   "evidence": "702s22_full_lec.txt:5832",
+   "quote": "For any finite (separable) extensionE/F, we have",
+   "kind": "statement"
+  },
+  {
+   "from": 159,
+   "to": 157,
+   "evidence": "702s22_full_lec.txt:5849",
+   "quote": "by Theorem29.5, P must split completely inE.",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 161,
+   "evidence": "702s22_full_lec.txt:6245",
+   "quote": "Sn is not solvable forn ≥ 5.",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 7,
+   "evidence": "702s22_full_lec.txt:6237",
+   "quote": "Gi is a normal subgroup ofGi−1",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 156,
+   "evidence": "702s22_full_lec.txt:5933",
+   "quote": "If E/F is a Galois extension",
+   "kind": "statement"
+  },
+  {
+   "from": 162,
+   "to": 159,
+   "evidence": "702s22_full_lec.txt:6017",
+   "quote": "So then |Gal(E/K )| = [E : K].",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 7,
+   "evidence": "702s22_full_lec.txt:6307",
+   "quote": "If N is a normal subgroup, then it’s a union of conjugacy classes",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 9,
+   "evidence": "702s22_full_lec.txt:6308",
+   "quote": "But it also has to divide60.",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 161,
+   "evidence": "702s22_full_lec.txt:6296",
+   "quote": "S5 is not solvable.",
+   "kind": "statement"
+  },
+  {
+   "from": 164,
+   "to": 160,
+   "evidence": "702s22_full_lec.txt:6263",
+   "quote": "so this would implyS5 is solvable,",
+   "kind": "proof"
+  },
+  {
+   "from": 165,
+   "to": 170,
+   "evidence": "702s22_full_lec.txt:6591",
+   "quote": "By Theorem 33.1, we can write",
+   "kind": "statement"
+  },
+  {
+   "from": 166,
+   "to": 47,
+   "evidence": "702s22_full_lec.txt:6859",
+   "quote": "Let H ⊂ G be a Sylow2-subgroup (a subgroup of order2n, where n",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 148,
+   "evidence": "702s22_full_lec.txt:6883",
+   "quote": "by the fact that[K : F ] = [K : E][E : F ] for",
+   "kind": "proof"
+  },
+  {
+   "from": 166,
+   "to": 156,
+   "evidence": "702s22_full_lec.txt:6856",
+   "quote": "soE/F is a Galois extension. LetG = Gal(E/F ).",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 39,
+   "evidence": "702s22_full_lec.txt:6839",
+   "quote": "By the lemma, we haveG ⊃ Z (where Z is the center, and",
+   "kind": "proof"
+  },
+  {
+   "from": 167,
+   "to": 41,
+   "evidence": "702s22_full_lec.txt:6824",
+   "quote": "Every p-group is solvable",
+   "kind": "statement"
+  },
+  {
+   "from": 167,
+   "to": 161,
+   "evidence": "702s22_full_lec.txt:6824",
+   "quote": "Every p-group is solvable",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 170,
+   "evidence": "702s22_full_lec.txt:6443",
+   "quote": "We’ll prove the theorem later, but the reason it’s useful here is the following:",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 156,
+   "evidence": "702s22_full_lec.txt:6856",
+   "quote": "soE/F is a Galois extension.",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 159,
+   "evidence": "702s22_full_lec.txt:6856",
+   "quote": "soE/F is a Galois extension.",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 162,
+   "evidence": "702s22_full_lec.txt:6869",
+   "quote": "where Fi is the fixed field ofGi. Then we have[Fi+1 : Fi] = 2",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 166,
+   "evidence": "702s22_full_lec.txt:6867",
+   "quote": "where Gi/Gi+1 ∼= Z/2Z for all i",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 167,
+   "evidence": "702s22_full_lec.txt:6865",
+   "quote": "But now we can use the proposition",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:7073",
+   "quote": "is an irreducible representation of dimensiond, then d divides |G|.",
+   "kind": "statement"
+  },
+  {
+   "from": 171,
+   "to": 88,
+   "evidence": "702s22_full_lec.txt:7106",
+   "quote": "since χρ(g) is a sum of roots of",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 90,
+   "evidence": "702s22_full_lec.txt:7090",
+   "quote": "using the fact that the irreducible characters are orthonormal",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 94,
+   "evidence": "702s22_full_lec.txt:7086",
+   "quote": "But by Schur’s Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 96,
+   "evidence": "702s22_full_lec.txt:7086",
+   "quote": "Since χρ is a class function, thenρ(χρ) is G-equivariant.",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:7075",
+   "quote": "Recall that we extended the definition ofρ to alllinear combinationsof elements inG",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 173,
+   "evidence": "702s22_full_lec.txt:7105",
+   "quote": "It’s clear that the two propositions together imply our theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 173,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:7104",
+   "quote": "and ρ(f ) = r · Id for a rational numberr",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 172,
+   "evidence": "702s22_full_lec.txt:7143",
+   "quote": "fn = f ∗ f ∗",
+   "kind": "proof"
+  },
+  {
+   "from": 173,
+   "to": 174,
+   "evidence": "702s22_full_lec.txt:7146",
+   "quote": "This satisfies ρ(fn) = ρ(f )n",
+   "kind": "proof"
+  },
+  {
+   "from": 174,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:7136",
+   "quote": "ρ(ϕ ∗ ψ) = ρ(ϕ)ρ(ψ).",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 172,
+   "evidence": "702s22_full_lec.txt:7136",
+   "quote": "ρ(ϕ ∗ ψ) = ρ(ϕ)ρ(ψ).",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 84,
+   "evidence": "702s22_full_lec.txt:7073",
+   "quote": "is an irreducible representation of dimensiond, then d divides |G|.",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 88,
+   "evidence": "702s22_full_lec.txt:7106",
+   "quote": "since χρ(g) is a sum of roots of",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 90,
+   "evidence": "702s22_full_lec.txt:7090",
+   "quote": "using the fact that the irreducible characters are orthonormal",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 94,
+   "evidence": "702s22_full_lec.txt:7086",
+   "quote": "But by Schur’s Lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 96,
+   "evidence": "702s22_full_lec.txt:7086",
+   "quote": "Since χρ is a class function, thenρ(χρ) is G-equivariant.",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 98,
+   "evidence": "702s22_full_lec.txt:7075",
+   "quote": "Recall that we extended the definition ofρ to alllinear combinationsof elements inG",
+   "kind": "proof"
+  },
+  {
+   "from": 175,
+   "to": 173,
+   "evidence": "702s22_full_lec.txt:7105",
+   "quote": "It’s clear that the two propositions together imply our theorem",
+   "kind": "proof"
+  }
+ ]
+}
