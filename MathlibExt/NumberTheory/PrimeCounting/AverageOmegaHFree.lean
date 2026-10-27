@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Algebra.Order.Floor.Semifield
+import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusSeries
 
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -33,6 +34,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.PrimeCounting.Mertens
 
 @[expose] public section
 
@@ -40,156 +42,6 @@ open Finset ArithmeticFunction
 
 section
 namespace MetaMathlibExt
-
--- Node proofs (n1).
--- N1: log N! = Σ Λ(d) * (N/d)
-private theorem log_factorial_eq_sum_vonMangoldt_mul_div (N : ℕ) :
-    Real.log (N.factorial : ℝ) =
-      ∑ d ∈ Finset.Icc 1 N, vonMangoldt d * ((N / d : ℕ) : ℝ) := by
-  have hcast : ((N.factorial : ℕ) : ℝ) = ∏ m ∈ Finset.Ico 1 (N + 1), (m : ℝ) := by
-    have h := Finset.prod_Ico_id_eq_factorial N
-    rw [← h, Finset.prod_natCast]
-  rw [hcast, Real.log_prod (fun m hm => by
-    rw [Finset.mem_Ico] at hm
-    exact_mod_cast ne_of_gt hm.1)]
-  have h1 : ∀ m ∈ Finset.Ico 1 (N + 1), Real.log (m : ℝ) =
-      ∑ d ∈ Finset.Icc 1 N, (if d ∣ m then vonMangoldt d else 0) := by
-    intro m hm
-    rw [Finset.mem_Ico] at hm
-    have hmpos : 0 < m := hm.1
-    have hmN : m ≤ N := by omega
-    have hsub : m.divisors ⊆ Finset.Icc 1 N := by
-      intro x hx
-      rw [Nat.mem_divisors] at hx
-      rw [Finset.mem_Icc]
-      exact ⟨Nat.pos_of_dvd_of_pos hx.1 hmpos, le_trans (Nat.le_of_dvd hmpos hx.1) hmN⟩
-    have hfilter : m.divisors = (Finset.Icc 1 N).filter (fun d => d ∣ m) := by
-      ext d
-      simp only [Finset.mem_filter, Nat.mem_divisors]
-      constructor
-      · rintro ⟨hdvd, -⟩
-        exact ⟨hsub (Nat.mem_divisors.mpr ⟨hdvd, ne_of_gt hmpos⟩), hdvd⟩
-      · rintro ⟨-, hdvd⟩
-        exact ⟨hdvd, ne_of_gt hmpos⟩
-    conv_lhs => rw [← vonMangoldt_sum (n := m), hfilter, Finset.sum_filter]
-  rw [Finset.sum_congr rfl h1, Finset.sum_comm]
-  apply Finset.sum_congr rfl
-  intro d hd
-  rw [← Finset.sum_filter]
-  have hcard : ({m ∈ Finset.Ico 1 (N + 1) | d ∣ m}.card : ℝ)
-      = ((N / d : ℕ) : ℝ) := by
-    congr 1
-    have hset : {m ∈ Finset.Ico 1 (N + 1) | d ∣ m} = {x ∈ Finset.Ioc 0 N | d ∣ x} := by
-      ext x
-      simp [Finset.mem_Ico, Finset.mem_Ioc]
-      omega
-    rw [hset, Nat.Ioc_filter_dvd_card_eq_div]
-  simp [Finset.sum_const, nsmul_eq_mul, hcard, mul_comm]
-
--- N2: Mertens I: |Σ_{n≤x} Λ(n)/n - log x| ≤ log 4 + 6.
-private theorem abs_sum_vonMangoldt_div_sub_log_le (x : ℝ) (hx : 1 ≤ x) :
-    |∑ n ∈ Finset.Icc 1 ⌊x⌋₊, vonMangoldt n / (n : ℝ) - Real.log x|
-      ≤ Real.log 4 + 6 := by
-  set N := ⌊x⌋₊ with hNdef
-  have hN : 1 ≤ N := (Nat.one_le_floor_iff x).mpr hx
-  have hNge1R : (1:ℝ) ≤ (N:ℝ) := by exact_mod_cast hN
-  have hNpos : (0:ℝ) < (N:ℝ) := by linarith
-  have hNx : (N:ℝ) ≤ x := Nat.floor_le (by linarith)
-  have hxN1 : x < (N:ℝ) + 1 := Nat.lt_floor_add_one x
-  set A := ∑ d ∈ Finset.Icc 1 N, vonMangoldt d / (d : ℝ) with hAdef
-  have hpsi : ∑ d ∈ Finset.Icc 1 N, vonMangoldt d = Chebyshev.psi (N:ℝ) := by
-    have h := Chebyshev.psi_eq_sum_Icc (N:ℝ)
-    rw [Nat.floor_natCast] at h
-    have hsplit : Finset.Icc 0 N = insert 0 (Finset.Icc 1 N) := by
-      ext n
-      simp only [Finset.mem_Icc, Finset.mem_insert]
-      omega
-    rw [hsplit, Finset.sum_insert (by simp)] at h
-    simp at h
-    exact h.symm
-  have hNA : Real.log (N.factorial : ℝ) ≤ (N:ℝ) * A := by
-    rw [log_factorial_eq_sum_vonMangoldt_mul_div, Finset.mul_sum]
-    apply Finset.sum_le_sum
-    intro d hd
-    rw [Finset.mem_Icc] at hd
-    have hle : ((N / d : ℕ):ℝ) ≤ (N:ℝ)/(d:ℝ) := Nat.cast_div_le
-    have hnn : 0 ≤ vonMangoldt d := vonMangoldt_nonneg
-    calc vonMangoldt d * ((N/d:ℕ):ℝ)
-        ≤ vonMangoldt d * ((N:ℝ)/(d:ℝ)) :=
-          mul_le_mul_of_nonneg_left hle hnn
-      _ = (N:ℝ) * (vonMangoldt d / (d:ℝ)) := by ring
-  have hStirl := Stirling.le_log_factorial_stirling (n := N) (by omega)
-  have hlogNnn : 0 ≤ Real.log (N:ℝ) := Real.log_nonneg hNge1R
-  have h2pi : 0 ≤ Real.log (2 * Real.pi) / 2 := by
-    apply div_nonneg _ (by norm_num)
-    apply Real.log_nonneg
-    have hpi := Real.pi_gt_three
-    linarith
-  have hlow : (N:ℝ) * Real.log (N:ℝ) - (N:ℝ) ≤ Real.log (N.factorial : ℝ) := by
-    linarith
-  have hdiff : ∀ d ∈ Finset.Icc 1 N, (N:ℝ)/(d:ℝ) - ((N/d:ℕ):ℝ) ≤ 1 := by
-    intro d hd
-    rw [Finset.mem_Icc] at hd
-    have hdposN : 0 < d := by omega
-    have hmod : N % d < d := Nat.mod_lt N hdposN
-    have hdecomp : d * (N / d) + N % d = N := Nat.div_add_mod N d
-    have hdR : (0:ℝ) < (d:ℝ) := by exact_mod_cast hdposN
-    have heq : (N:ℝ)/(d:ℝ) - ((N/d:ℕ):ℝ) = ((N % d : ℕ):ℝ)/(d:ℝ) := by
-      have hcast : ((d * (N/d) + N % d : ℕ):ℝ) = (N:ℝ) := by rw [hdecomp]
-      push_cast at hcast
-      field_simp
-      linarith
-    rw [heq, div_le_one hdR]
-    exact_mod_cast le_of_lt hmod
-  have hup : (N:ℝ) * A ≤ Real.log (N.factorial : ℝ) + Chebyshev.psi (N:ℝ) := by
-    rw [log_factorial_eq_sum_vonMangoldt_mul_div, Finset.mul_sum, ← hpsi,
-      ← Finset.sum_add_distrib]
-    apply Finset.sum_le_sum
-    intro d hd
-    have hnn : 0 ≤ vonMangoldt d := vonMangoldt_nonneg
-    have h1 := hdiff d hd
-    have e1 : (N:ℝ) * (vonMangoldt d / (d:ℝ))
-        = vonMangoldt d * ((N:ℝ)/(d:ℝ)) := by ring
-    rw [e1]
-    have hmul := mul_le_mul_of_nonneg_left h1 hnn
-    rw [mul_one] at hmul
-    have hsub := mul_sub (vonMangoldt d) ((N:ℝ)/(d:ℝ)) ((N/d:ℕ):ℝ)
-    linarith
-  have hfact : Real.log (N.factorial : ℝ) ≤ (N:ℝ) * Real.log (N:ℝ) := by
-    have h := Nat.factorial_le_pow N
-    have hpos : (0:ℝ) < (N.factorial : ℝ) := by
-      exact_mod_cast Nat.factorial_pos N
-    have hle : ((N.factorial : ℕ):ℝ) ≤ ((N ^ N : ℕ):ℝ) := by exact_mod_cast h
-    rw [Nat.cast_pow] at hle
-    calc Real.log (N.factorial:ℝ) ≤ Real.log ((N:ℝ)^N) :=
-          Real.log_le_log hpos hle
-      _ = (N:ℝ) * Real.log (N:ℝ) := by rw [Real.log_pow]
-  have hpsile := Chebyshev.psi_le_const_mul_self (x := (N:ℝ)) (le_of_lt hNpos)
-  have hAge1 : Real.log (N:ℝ) - 1 ≤ A := by
-    have hmul : (N:ℝ) * (Real.log (N:ℝ) - 1) ≤ (N:ℝ) * A := by
-      have hexpand : (N:ℝ)*(Real.log (N:ℝ) - 1)
-        = (N:ℝ)*Real.log (N:ℝ) - (N:ℝ) := by ring
-      linarith
-    exact le_of_mul_le_mul_left hmul hNpos
-  have hAle1 : A ≤ Real.log (N:ℝ) + Real.log 4 + 4 := by
-    have hmul : (N:ℝ) * A ≤ (N:ℝ) * (Real.log (N:ℝ) + Real.log 4 + 4) := by
-      have hexpand : (N:ℝ)*(Real.log (N:ℝ) + Real.log 4 + 4)
-        = (N:ℝ)*Real.log (N:ℝ) + (Real.log 4 + 4)*(N:ℝ) := by ring
-      linarith
-    exact le_of_mul_le_mul_left hmul hNpos
-  have hlogNx : Real.log (N:ℝ) ≤ Real.log x := Real.log_le_log hNpos hNx
-  have hx2N : x ≤ 2 * (N:ℝ) := by linarith
-  have hlogx : Real.log x ≤ Real.log (N:ℝ) + Real.log 2 := by
-    have h2N : Real.log x ≤ Real.log (2 * (N:ℝ)) :=
-      Real.log_le_log (by linarith) hx2N
-    rw [Real.log_mul (by norm_num) (ne_of_gt hNpos)] at h2N
-    linarith
-  have hlog2 : Real.log 2 < 1 := lt_trans Real.log_two_lt_d9 (by norm_num)
-  have hlog4nn : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num)
-  have h1 : A - Real.log x ≤ Real.log 4 + 4 := by linarith
-  have h2 : -(Real.log 4 + 6) ≤ A - Real.log x := by linarith
-  rw [abs_le]
-  constructor <;> linarith
 
 -- Node proofs (n3).
 open MeasureTheory Set intervalIntegral
@@ -613,7 +465,7 @@ private theorem abs_sum_vonMangoldt_div_mul_log_sub_loglog_le :
         ≤ Real.log 4 + 6 := by
     intro t ht
     rw [hSeq t ht]
-    exact abs_sum_vonMangoldt_div_sub_log_le t ht
+    exact Chebyshev.abs_sum_vonMangoldt_div_sub_log_le t ht
   have hc0 : (fun k : ℕ => vonMangoldt k / (k:ℝ)) 0 = 0 := by simp
   have hc1 : (fun k : ℕ => vonMangoldt k / (k:ℝ)) 1 = 0 := by
     simp [vonMangoldt_apply_one]
@@ -899,87 +751,6 @@ private theorem factorization_pow_apply (d h p : ℕ) :
     (d ^ h).factorization p = h * d.factorization p := by
   rw [Nat.factorization_pow, Finsupp.smul_apply, smul_eq_mul]
 
--- N8(i): summability of the real Möbius-over-power series.
-private theorem summable_moebius_div_pow (h : ℕ) (hh : 2 ≤ h) :
-    Summable (fun d : ℕ => (moebius d : ℝ) / (d : ℝ) ^ h) := by
-  have hsum1 : Summable (fun n : ℕ => (1:ℝ)/(n:ℝ)^h) :=
-    Real.summable_one_div_nat_pow.mpr (by omega : 1 < h)
-  have hmuR : ∀ d : ℕ, |(moebius d : ℝ)| ≤ 1 := by
-    intro d
-    have h := ArithmeticFunction.abs_moebius_le_one (n := d)
-    rw [← Int.cast_abs]
-    exact_mod_cast h
-  have hbound : ∀ d : ℕ, ‖(moebius d : ℝ) / (d:ℝ)^h‖ ≤ (1:ℝ)/(d:ℝ)^h := by
-    intro d
-    have hnn : (0:ℝ) ≤ (d:ℝ)^h := pow_nonneg (Nat.cast_nonneg d) h
-    rw [Real.norm_eq_abs, abs_div, abs_of_nonneg hnn]
-    exact div_le_div_of_nonneg_right (hmuR d) hnn
-  exact Summable.of_norm_bounded hsum1 hbound
-
--- N8 helper: `riemannZeta` at a natural is the cast of the real p-series tsum.
-private theorem riemannZeta_natCast_eq_ofReal_tsum (h : ℕ) (hh : 2 ≤ h) :
-    riemannZeta (h:ℂ) = ((∑' n : ℕ, (1:ℝ)/(n:ℝ)^h : ℝ):ℂ) := by
-  rw [zeta_nat_eq_tsum_of_gt_one (by omega : 1 < h), Complex.ofReal_tsum]
-  apply tsum_congr
-  intro n
-  simp only [Complex.ofReal_one, Complex.ofReal_div, Complex.ofReal_pow,
-    Complex.ofReal_natCast]
-
--- N8(iii): the zeta value is at least 1.
-private theorem one_le_riemannZeta_natCast_re (h : ℕ) (hh : 2 ≤ h) :
-    1 ≤ (riemannZeta (h:ℂ)).re := by
-  have hsum1 : Summable (fun n : ℕ => (1:ℝ)/(n:ℝ)^h) :=
-    Real.summable_one_div_nat_pow.mpr (by omega : 1 < h)
-  have hle := hsum1.le_tsum (1:ℕ) (fun j _ => by positivity)
-  have h1 : (1:ℝ) ≤ ∑' n : ℕ, (1:ℝ)/(n:ℝ)^h := by
-    simpa using hle
-  have hre : (riemannZeta (h:ℂ)).re = ∑' n : ℕ, (1:ℝ)/(n:ℝ)^h := by
-    rw [riemannZeta_natCast_eq_ofReal_tsum h hh, Complex.ofReal_re]
-  rw [hre]
-  exact h1
-
--- N8(ii): the Möbius tsum is the reciprocal of the zeta value.
-private theorem tsum_moebius_div_pow_eq (h : ℕ) (hh : 2 ≤ h) :
-    (∑' d : ℕ, (moebius d : ℝ) / (d : ℝ) ^ h)
-      = 1 / (riemannZeta (h : ℂ)).re := by
-  have hs : 1 < ((h : ℂ)).re := by
-    rw [← Complex.ofReal_natCast, Complex.ofReal_re, ← Nat.cast_one, Nat.cast_lt]
-    omega
-  have hmul := LSeries_zeta_mul_Lseries_moebius (s := (h:ℂ)) hs
-  rw [LSeries_zeta_eq_riemannZeta hs] at hmul
-  have hcastM : LSeries (fun n : ℕ => ((moebius n : ℤ) : ℂ)) (h:ℂ)
-      = ((∑' d : ℕ, (moebius d : ℝ) / (d : ℝ) ^ h : ℝ):ℂ) := by
-    unfold LSeries
-    rw [Complex.ofReal_tsum]
-    apply tsum_congr
-    intro n
-    by_cases hn : n = 0
-    · subst hn
-      rw [LSeries.term_zero]
-      have h0 : ((moebius 0 : ℝ) / ((0:ℕ):ℝ)^h : ℝ) = 0 := by
-        rw [Nat.cast_zero, zero_pow (by omega : h ≠ 0), div_zero]
-      rw [h0, Complex.ofReal_zero]
-    · rw [LSeries.term_of_ne_zero hn, Complex.cpow_natCast]
-      simp only [Complex.ofReal_div, Complex.ofReal_pow, Complex.ofReal_natCast,
-        Complex.ofReal_intCast]
-  rw [hcastM, riemannZeta_natCast_eq_ofReal_tsum h hh] at hmul
-  have hZ1 : (1:ℝ) ≤ ∑' n : ℕ, (1:ℝ)/(n:ℝ)^h := by
-    have hsum1 : Summable (fun n : ℕ => (1:ℝ)/(n:ℝ)^h) :=
-      Real.summable_one_div_nat_pow.mpr (by omega : 1 < h)
-    have hle := hsum1.le_tsum (1:ℕ) (fun j _ => by positivity)
-    simpa using hle
-  have hZS : (∑' n : ℕ, (1:ℝ)/(n:ℝ)^h) * (∑' d : ℕ, (moebius d:ℝ)/(d:ℝ)^h)
-      = 1 := by
-    have h := congrArg Complex.re hmul
-    rw [← Complex.ofReal_mul, Complex.ofReal_re] at h
-    simpa using h
-  have hZne : (∑' n : ℕ, (1:ℝ)/(n:ℝ)^h) ≠ 0 :=
-    ne_of_gt (lt_of_lt_of_le (by norm_num) hZ1)
-  have hre : (riemannZeta (h:ℂ)).re = ∑' n : ℕ, (1:ℝ)/(n:ℝ)^h := by
-    rw [riemannZeta_natCast_eq_ofReal_tsum h hh, Complex.ofReal_re]
-  rw [hre, eq_div_iff hZne]
-  exact (mul_comm _ _).trans hZS
-
 -- N7: Möbius indicator for h-free numbers.
 private theorem sum_moebius_pow_dvd_eq_ite_hfree (h n : ℕ) (hh : 1 ≤ h)
     (hn : 1 ≤ n) :
@@ -1102,7 +873,7 @@ private theorem abs_tsum_moebius_div_pow_sub_partial_le (h : ℕ) (hh : 2 ≤ h)
     rwa [Real.sqrt_sq (le_of_lt hypos)] at hle
   have hfsum : Summable f := summable_moebius_div_pow h hh
   have hSeq : ∑' d : ℕ, f d = 1 / (riemannZeta (h:ℂ)).re :=
-    tsum_moebius_div_pow_eq h hh
+    tsum_moebius_div_pow h hh
   have hf0 : f 0 = 0 := by
     simp only [hfdef]
     rw [Nat.cast_zero, zero_pow (by omega : h ≠ 0), div_zero]
@@ -1646,7 +1417,7 @@ private theorem abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0
         (fun n => ∀ p ∈ n.primeFactors, n.factorization p < h)).card : ℕ) : ℝ)
       - y / (riemannZeta (h : ℂ)).re| ≤ 4 * Real.sqrt y := by
   have hZ1 : (1:ℝ) ≤ (riemannZeta (h : ℂ)).re :=
-    one_le_riemannZeta_natCast_re h hh
+    one_le_re_riemannZeta_natCast h hh
   have hZpos : (0:ℝ) < (riemannZeta (h : ℂ)).re :=
     lt_of_lt_of_le (by norm_num) hZ1
   have hZinv_le : (1:ℝ) / (riemannZeta (h : ℂ)).re ≤ 1 := by
@@ -2365,7 +2136,7 @@ theorem average_cardFactors_over_h_free
       (fun x : ℝ => x) := by
   obtain ⟨C6, hC6⟩ := abs_sum_prime_inv_sub_loglog_le
   have hZ1 : (1 : ℝ) ≤ (riemannZeta (h : ℂ)).re :=
-    one_le_riemannZeta_natCast_re h hh
+    one_le_re_riemannZeta_natCast h hh
   have hZpos : (0 : ℝ) < (riemannZeta (h : ℂ)).re :=
     lt_of_lt_of_le (by norm_num) hZ1
   have hZinv_le : (1 : ℝ) / (riemannZeta (h : ℂ)).re ≤ 1 := by
