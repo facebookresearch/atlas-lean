@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GaussianIntPrimeClassification
+public import MathlibExt.NumberTheory.GaussianIntSplitPrimes
 
 import Mathlib.Tactic
 
@@ -53,10 +54,21 @@ example : ∃ a b : ℕ, a ^ 2 + b ^ 2 = 13 ∧
       Prime (⟨(a : ℤ), -(b : ℤ)⟩ : GaussianInt) :=
   @gaussianInt_split_prime_sq_add_sq 13 ⟨by norm_num⟩ (by norm_num)
 
--- The two split factors for `p = 5` are associates up to a unit:
--- `(1 - 2 * i) * i = 2 + i`.
+-- The alternate presentations `5 = 1 ^ 2 + 2 ^ 2 = 2 ^ 2 + 1 ^ 2` give
+-- factors in the same associate class: `(1 - 2 * i) * i = 2 + i`, so
+-- `1 - 2 * i` (from `a = 1, b = 2`) is associated to `2 + i` (from
+-- `a = 2, b = 1`). This is not association of the conjugate split
+-- factors of either presentation; those are nonassociated (next example).
 example : Associated (⟨1, -2⟩ : GaussianInt) (⟨2, 1⟩ : GaussianInt) :=
   ⟨⟨⟨0, 1⟩, ⟨0, -1⟩, by decide, by decide⟩, by decide⟩
+
+-- The actual conjugate split factors `2 + i` and `2 - i` for `p = 5`
+-- are not associates.
+example : ¬Associated (⟨2, -1⟩ : GaussianInt) (⟨2, 1⟩ : GaussianInt) := by
+  let _ : Fact (5 : ℕ).Prime := ⟨by norm_num⟩
+  have hstar : star (⟨2, 1⟩ : GaussianInt) = ⟨2, -1⟩ := by ext <;> simp
+  rw [← hstar]
+  exact gaussianInt_split_nonassociated (p := 5) (by decide) (by norm_num)
 
 -- The classification applied to the three kinds of Gaussian prime:
 -- `3`, `2 + i`, and `1 + i`.
