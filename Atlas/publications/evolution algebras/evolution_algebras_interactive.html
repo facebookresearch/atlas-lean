@@ -164,7 +164,7 @@
 <p class="authors">Andres Barei</p>
 <p class="affil center">with Muse Spark via <a target="_blank" rel="noopener" href="https://meta.ai">meta.ai</a></p>
 <p class="authors reviewer">Reviewed by Nicol&aacute;s Jaramillo Torres</p>
-<p class="affil">PDF: <a target="_blank" rel="noopener" href="evolution_algebras.pdf">evolution_algebras.pdf</a>.</p>
+<p class="affil">PDF: <a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/evolution_algebras.pdf">evolution_algebras.pdf</a>.</p>
 <p class="affil">Lean library: <a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean">abarei96/atlas-lean</a>.</p>
 
 <div class="abstract">
@@ -205,7 +205,7 @@
     [NonUnitalNonAssocAlgebra K E] : Prop where
   exists_natural_basis : ∃ (n : ℕ) (b : Module.Basis (Fin n) K E),
     ∀ i j : Fin n, i ≠ j → b i * b j = 0</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_1_Introduction/A_EvolutionAlgebra.lean" title="Lines 64–67">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_1_Introduction/A_EvolutionAlgebra.lean#L64-L67" title="Lines 64–67">source</a></div>
 </details>
 
 <div class="env conjecture" id="conj11">
@@ -223,7 +223,7 @@
   ∀ (E : Type 0) [NonUnitalNonAssocSemiring E]
     [NonUnitalNonAssocAlgebra ℂ E] [EvolutionAlgebra ℂ E],
     IsSolvable ℂ E ↔ ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_1_Introduction/B_Conjecture_1_1_SolvableIffIdempotentFree.lean" title="Lines 27–30">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_1_Introduction/B_Conjecture_1_1_SolvableIffIdempotentFree.lean#L27-L30" title="Lines 27–30">source</a></div>
 </details>
 
 <p>
@@ -291,15 +291,15 @@
   <pre class="vars"><code>-- Variables: (K E : Type*) [CommSemiring K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
   <pre><code>def square (V : Submodule K E) : Submodule K E :=
   Submodule.span K {z | ∃ x ∈ V, ∃ y ∈ V, x * y = z}</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 46–47">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L46-L47" title="Lines 46–47">source</a></div>
   <p class="lean-note"> The derived series of the algebra 𝓔 is ℰ⁽¹⁾ ⊇ ℰ⁽²⁾ ⊇ ... <br> Note there is an index shift in the Lean definition.</p>
   <pre><code>abbrev derivedSeries (k : ℕ) : Submodule K E :=
   derivedSeriesOfSubmodule K E k ⊤</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 88–89">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L88-L89" title="Lines 88–89">source</a></div>
   <pre><code>class IsSolvable : Prop where
   mk_int ::
   solvable_int : ∃ k, derivedSeries K E k = ⊥</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 140–142">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L140-L142" title="Lines 140–142">source</a></div>
 </details>
 
 <details class="leanbox res">
@@ -309,10 +309,10 @@
   </summary>
   <pre><code>theorem derivedSeries_succ_le (k : ℕ) :
     derivedSeries K E (k + 1) ≤ derivedSeries K E k</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 105–106">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L105-L106" title="Lines 105–106">source</a></div>
   <pre><code>theorem derivedSeries_stabilizes [FiniteDimensional K E] :
     ∃ l, derivedSeries K E (l + 1) = derivedSeries K E l</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean" title="Lines 70–71">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L70-L71" title="Lines 70–71">source</a></div>
 </details>
 
 <p>
@@ -332,7 +332,7 @@
 
 def absNilpotent (V : Submodule K E) : Set E :=
   {x | x ∈ V ∧ IsAbsNilpotent E x}</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 155–162">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L155-L162" title="Lines 155–162">source</a></div>
 </details>
 
 </div>
@@ -398,9 +398,9 @@ def absNilpotent (V : Submodule K E) : Set E :=
 
 def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
   !![-2, 0, 2; 0, 1, -1; 0, -1, 1]</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean" title="Lines 48–58">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L48-L58" title="Lines 48–58">source</a></div>
   <pre><code>instance : EvolutionAlgebra ℂ Counterexample</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean" title="Line 402">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L402" title="Line 402">source</a></div>
 </details>
 
 <details class="leanbox res">
@@ -409,12 +409,12 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
     <span class="lean-name">not_solvable · no_nonzero_idempotent · conjecture_false</span>
   </summary>
   <pre><code>theorem not_solvable : ¬ IsSolvable ℂ Counterexample</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean" title="Line 581">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L581" title="Line 581">source</a></div>
   <pre><code>theorem no_nonzero_idempotent :
     ¬ ∃ x : Counterexample, IsIdempotentElem x ∧ x ≠ 0</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean" title="Lines 603–604">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L603-L604" title="Lines 603–604">source</a></div>
   <pre><code>theorem conjecture_false : ¬ Conjecture</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean" title="Line 666">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L666" title="Line 666">source</a></div>
 </details>
 
 </div>
@@ -435,7 +435,7 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
   </summary>
   <pre><code>def IsIdempotentSubmodule (V : Submodule K E) : Prop :=
   square K E V = V</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean" title="Lines 63–64">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_2_Preliminaries/A_Preliminaries.lean#L63-L64" title="Lines 63–64">source</a></div>
 </details>
 
 <div class="env lemma" id="lem31">
@@ -456,7 +456,7 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
     [EvolutionAlgebra K E] [FiniteDimensional K E] :
     square K E (derivedSeriesInf K E) = derivedSeriesInf K E ∧
       ∀ V : Submodule K E, square K E V = V → V ≤ derivedSeriesInf K E</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean" title="Lines 129–132">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L129-L132" title="Lines 129–132">source</a></div>
 </details>
 
 <details class="proof">
@@ -491,12 +491,12 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
     [EvolutionAlgebra K E] [FiniteDimensional K E] :
     IsSolvable K E ↔
       ∀ V : Submodule K E, IsIdempotentSubmodule K E V → V = ⊥</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean" title="Lines 158–161">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L158-L161" title="Lines 158–161">source</a></div>
   <p class="lean-note">The equivalence 1 ↔ 2:</p>
   <pre><code>theorem solvable_iff_derivedSeriesInf_eq_bot [NonUnitalNonAssocAlgebra K E]
     [EvolutionAlgebra K E] [FiniteDimensional K E] :
     IsSolvable K E ↔ derivedSeriesInf K E = ⊥</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean" title="Lines 189–191">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L189-L191" title="Lines 189–191">source</a></div>
 </details>
 
 <details class="proof">
@@ -532,7 +532,7 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
     (∃ x : E, IsIdempotentElem x ∧ x ≠ 0) ↔
       ∃ V : Submodule K E, V ≠ ⊥ ∧ IsIdempotentSubmodule K E V ∧
         absNilpotent K E V = {0}</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/B_Theorem_3_3_IdempotentElementsAndSubspaces.lean" title="Lines 146–150">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/B_Theorem_3_3_IdempotentElementsAndSubspaces.lean#L146-L150" title="Lines 146–150">source</a></div>
 </details>
 
 <details class="proof">
@@ -566,7 +566,7 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
     (hfin : Module.Finite K E) (hV : IsIdempotentSubmodule K E V)
     (hN : absNilpotent K E V = {0}) (hneV : V ≠ ⊥) :
     ∃ x : E, x ∈ V ∧ x ≠ 0 ∧ ∃ lam : K, lam ≠ 0 ∧ x * x = lam • x</code></pre>
-    <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Appendix_FixedPoint/A_FixedPoint.lean" title="Lines 52–56">source</a></div>
+    <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Appendix_FixedPoint/A_FixedPoint.lean#L52-L56" title="Lines 52–56">source</a></div>
   </details>
   <p class="qed">□</p>
 </details>
@@ -597,17 +597,17 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
 --   (hN : absNilpotent K E (derivedSeriesInf K E) = {0}).</code></pre>
   <pre><code>theorem isSolvable_iff_no_nonzero_idempotent :
     IsSolvable K E ↔ ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean" title="Lines 129–133">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L129-L133" title="Lines 129–133">source</a></div>
   <p class="lean-note">Forward half — a solvable algebra has no nonzero idempotent elements:</p>
   <pre><code>theorem no_nonzero_idempotent_of_isSolvable (hsol : IsSolvable K E) :
     ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean" title="Lines 54–58">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L54-L58" title="Lines 54–58">source</a></div>
   <p class="lean-note">Converse half — with <code>N(𝓔^(∞)) = 0</code>, no nonzero idempotent elements implies solvable:</p>
   <pre><code>theorem isSolvable_of_no_nonzero_idempotent
     (hN : absNilpotent K E (derivedSeriesInf K E) = {0})
     (hno : ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0) :
     IsSolvable K E</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean" title="Lines 89–93">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L89-L93" title="Lines 89–93">source</a></div>
 </details>
 
 <details class="proof">
@@ -655,7 +655,7 @@ def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
   <pre><code>theorem einfty_absNilpotent_eq_zero
     [EvolutionAlgebra K ↥(derivedSeriesInf K E)] :
     absNilpotent K E (derivedSeriesInf K E) = {0}</code></pre>
-  <div class="srcline"><a target="_blank" rel="noopener" href="lean%20formalization/Section_3_SolvableAlgebras/D_Remark_3_6_SufficientConditionsForCorollary3_4.lean" title="Lines 127–129">source</a></div>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Atlas/publications/evolution%20algebras/lean%20formalization/Section_3_SolvableAlgebras/D_Remark_3_6_SufficientConditionsForCorollary3_4.lean#L127-L129" title="Lines 127–129">source</a></div>
 </details>
 
 <details class="proof">
