@@ -1,0 +1,377 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightMathieuReducedCertified
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightCompactQConjugation
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinLabelMatrixFast
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinQuadraticFast
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthSpinPauliFast
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthFullQBlockTransfer
+
+/-! Combined genuine monomial normalizers retain the actual reduced words up to central sign. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open Multiplicative
+open scoped Matrix
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+/-- Complete original coefficients of each combined label equivalence. -/
+def generatedRootEightMathieuReducedTensorRightColumns : Fin 2 → Fin 12 → ℕ :=
+  ![![1835, 295, 436, 1708, 350, 394, 185, 2002, 2045, 1374, 1444, 2048],
+    ![2, 1, 8, 4, 16, 32, 80, 160, 272, 544, 1024, 2048]]
+
+/-- Complete original coefficients of each combined inverse equivalence. -/
+def generatedRootEightMathieuReducedTensorRightInverseColumns : Fin 2 → Fin 12 → ℕ :=
+  ![![1968, 305, 1654, 495, 1556, 152, 193, 147, 109, 1418, 528, 2048],
+    ![2, 1, 8, 4, 16, 32, 80, 160, 272, 544, 1024, 2048]]
+
+/-- Every diagonal and off-diagonal coefficient of the genuine combined phase. -/
+def generatedRootEightMathieuReducedTensorPhaseRows : Fin 2 → Fin 12 → ℕ :=
+  ![![699, 860, 1224, 1088, 160, 1568, 64, 1152, 0, 0, 1024, 0],
+    ![0, 0, 0, 0, 0, 0, 576, 256, 256, 0, 0, 0]]
+
+set_option maxHeartbeats 4000000 in
+/-- Both full binary inverse identities hold in every original spin coordinate. -/
+theorem generatedRootEight_mathieu_reduced_tensor_matrix_inverse : ∀ j : Fin 2,
+    generatedNinthLowerSpinCompactMatrix (generatedRootEightMathieuReducedTensorRightInverseColumns j) *
+      generatedNinthLowerSpinCompactMatrix (generatedRootEightMathieuReducedTensorRightColumns j) = 1 ∧
+    generatedNinthLowerSpinCompactMatrix (generatedRootEightMathieuReducedTensorRightColumns j) *
+      generatedNinthLowerSpinCompactMatrix (generatedRootEightMathieuReducedTensorRightInverseColumns j) = 1 := by
+  decide +kernel
+
+/-- Each combined label map is an actual original binary linear equivalence. -/
+def generatedRootEightMathieuReducedTensorRight (j : Fin 2) : SpinIndex ≃ₗ[ZMod 2] SpinIndex :=
+  generatedNinthLowerSpinCompactEquiv (generatedRootEightMathieuReducedTensorRightColumns j)
+    (generatedRootEightMathieuReducedTensorRightInverseColumns j)
+    (generatedRootEight_mathieu_reduced_tensor_matrix_inverse j).1
+    (generatedRootEight_mathieu_reduced_tensor_matrix_inverse j).2
+
+/-- The genuine original translation part of each combined corrected monomial. -/
+def generatedRootEightMathieuReducedTensorPauli (j : Fin 2) : Q :=
+  ⟨ofAdd (Fin.append (golayLabelCoefficients
+    (if j = 0 then (115 : Fin 4096) else 15)) (golayLabelCoefficients 0)), ofAdd (0 : ZMod 2)⟩
+
+/-- Genuine rank-zero original normalizers with the entire combined quadratic phase. -/
+def generatedRootEightMathieuReducedTensorSpin (j : Fin 2) : SpinHolomorph :=
+  spinHolomorphIncl (generatedRootEightMathieuReducedTensorPauli j) *
+    monsterMonomialDiagonalHolomorph
+      (generatedNinthLowerSpinCompactPhase (generatedRootEightMathieuReducedTensorPhaseRows j)) *
+    monsterMonomialPermutationHolomorph (generatedRootEightMathieuReducedTensorRight j)
+
+/-- The whole original Q image, including all central terms of the combined normalizer. -/
+def generatedRootEightMathieuReducedTensorQImage (j : Fin 2) (q : Q) : Q :=
+  generatedRootEightMathieuReducedTensorPauli j *
+    monsterMonomialDiagonalImage
+      (generatedNinthLowerSpinCompactPhase (generatedRootEightMathieuReducedTensorPhaseRows j))
+      (monsterMonomialPermutationImage (generatedRootEightMathieuReducedTensorRight j) q) *
+    (generatedRootEightMathieuReducedTensorPauli j)⁻¹
+
+/-- The full original corrected source image uses every frozen source central phase. -/
+def generatedRootEightMathieuReducedTensorSourceQImage (j : Fin 2) (q : Q) : Q :=
+  generatedRootEightMathieuReducedCorrection j *
+    (if j = 0 then generatedRootEightCompactQImage 0
+      (generatedRootEightCompactQImage 4 (generatedRootEightCompactQImage 1 q))
+      else generatedRootEightCompactQImage 8 q) *
+    (generatedRootEightMathieuReducedCorrection j)⁻¹
+
+set_option maxHeartbeats 16000000 in
+/-- Every full original Q coordinate image retains the reduced source word and its central coefficient. -/
+theorem generatedRootEight_mathieu_reduced_tensor_q_basis : ∀ j : Fin 2, ∀ k : Fin 24,
+    generatedRootEightMathieuReducedTensorQImage j (qCoordinateGenerator k) =
+      generatedRootEightMathieuReducedTensorSourceQImage j (qCoordinateGenerator k) := by
+  decide +kernel
+
+/-- Genuine conjugation is the full displayed combined monomial formula. -/
+theorem generatedRootEight_mathieu_reduced_tensor_conjugation (j : Fin 2) (q : Q) :
+    spinConjugation (generatedRootEightMathieuReducedTensorSpin j) q =
+      generatedRootEightMathieuReducedTensorQImage j q := by
+  rw [generatedRootEightMathieuReducedTensorSpin]
+  simp only [map_mul, MulAut.mul_apply]
+  rw [monsterMonomialPermutationHolomorph_conjugation,
+    monsterMonomialDiagonalHolomorph_conjugation, spinConjugation_incl]
+  rfl
+
+/-- Complete packed original combined spin addresses. -/
+def generatedRootEightMathieuReducedTensorAddressWords : Fin 2 → Fin 16 → Fin 16 → ℕ :=
+  ![![![0x1d46640e57557a201269312303b78b10a6ba64d1fd77c0cc, 0x7c00706f11411b660608773762f19f71e0ae0597e91686d8, 0x14c6fc07d7cd73a08a60b1bb0a37131926226d51657e4054, 0x7580e86691d912e69e01f7af6b71077860360c17711f0640, 0x1156a50247947630d36521e20fa74a1cb67b68c13c7bd00d, 0x7010b16301801776c70467f66ee15e7df06f0987281a9619, 0x18d63d0bc70c7fb04b6ca17a0627d21536e36141a4725095, 0x7990296a81181ef65f0de76e6761c67470f70007b0131681, 0x1476f70767c67310816001b00a87181996296de16e7ef05f, 0x7530e36621d21256950147a46bc10c78d03d0ca77a1fb64b, 0x1df66f0ee75e7a90196981280307801016b16461f67770c7, 0x7cb07b6fa14a1bd60d08c73c6241947150a50527e21636d3, 0x1866360b77077f00406c11710697d91586e861f1af72e09e, 0x7920226a31131e46540d576567d1cd74c0fc00b7bb13a68a, 0x11e6ae02f79f7680d86591e90f17411c06706871377b6006, 0x70a0ba63b18b17c6cc04d7fd6e51557d40640937231a2612],
+      ![0x1b96090887387cf07f6fe14e0567e61676d76201907110a1, 0x7ad01d69c12c1db66b0ea75a6421f27730c30347841056b5, 0x1216910107a07570e76661d60ce77e1ff64f6b8108789039, 0x7350856041b41436f30727c26da16a7eb05b0ac71c19d62d, 0x1786c80497f970e0be63f18f0977271a66166e11517d0060, 0x76c0dc65d1ed11a6aa02b79b6831337b20020f57451c4674, 0x1e06500d17617960266a711700f7bf13e68e6791c97480f8, 0x7f40446c51751826320b370361b1ab72a09a06d7dd15c6ec, 0x12a69a01b7ab75c0ec66d1dd0c57751f46446b3103782032, 0x73e08e60f1bf1486f80797c96d11617e00500a7717196626, 0x1b26020837337c40746f514505d7ed16c6dc62b19b71a0aa, 0x7a60166971271d06600e17516491f97780c803f78f10e6be, 0x1eb65b0da76a79d02d6ac11c0047b41356856721c27430f3, 0x7ff04f6ce17e1896390b87086101a07210910667d61576e7, 0x1736c30427f27050b563418409c72c1ad61d6ea15a7db06b, 0x7670d76561e61116a10207906881387b90090fe74e1cf67f],
+      ![0x45e3ee56f2df2285983194a95b12014803303c74772f6546, 0x24a5fa37b4cb43c38c50d2bd3a54152945245d32634e2352, 0x4c63765f72472b05003814315292994183a835f4ef26e5de, 0x2d25623e34534a431459522533d48d20c5bc54b2fb47a3ca, 0x49f32f5ae21e2e95593d84685702c04413f13064b6237587, 0x28b53b3ba40a4fd34d5cc27c3644d42555e55122a2423393, 0x4073b75362862715c13404f05e82584d936939e42e2af51f, 0x2135a33224924653d55542e43fc44c2cd57d58a23a4bb30b, 0x4cd37d5fc24c2bb50b38a43a5222924133a33544e42655d5, 0x2d95693e84584af31f59e22e3364862075b75402f04713c1, 0x4553e55642d42235933124a25ba20a48b33b3cc47c2fd54d, 0x2415f13704c04373875062b63ae41e29f52f5d82684e9359, 0x40c3bc53d28d27a5ca34b4fb5e32534d23623954252a4514, 0x2185a832949946e3de55f2ef3f74472c65765812314b0300, 0x4943245a52152e25523d346357b2cb44a3fa30d4bd23c58c, 0x2805303b14014f63465c727736f4df25e5ee5192a9428398],
+      ![0x4333835022b22455f53744c45dc26c4ed35d3aa41a29b52b, 0x2275973164a64513e15602d03c84782f95495be20e48f33f, 0x4ab31b59a22a2dd56d3ec45c5442f44753c53324822035b3, 0x2bf50f38e43e4c93795f82483504e02615d15262964173a7, 0x4f23425c32732845343b540551d2ad42c39c36b4db25a5ea, 0x2e65563d74674903205a12113094b923858857f2cf44e3fe, 0x46a3da55b2eb21c5ac32d49d5852354b43043f34432c2572, 0x27e5ce34f4ff4083b85392893914212a05105e72574d6366, 0x4a03105912212d65663e745754f2ff47e3ce3394892085b8, 0x2b45043854354c23725f324335b4eb26a5da52d29d41c3ac, 0x4383885092b924e5fe37f4cf5d72674e63563a1411290520, 0x22c59c31d4ad45a3ea56b2db3c34732f25425b5205484334, 0x4613d15502e02175a732649658e23e4bf30f3f84482c9579, 0x2755c53444f44033b353228239a42a2ab51b5ec25c4dd36d, 0x4f93495c827828f53f3be40e5162a64273973604d02515e1, 0x2ed55d3dc46c49b32b5aa21a3024b22335835742c44453f5],
+      ![0x3c44742f55455b220248333322b59b31a4aa45d3ed56c2dc, 0x5d02604e13513a641629752743f38f50e2be2495f93784c8, 0x35c4ec26d5dd52a29a41b3ab2b35033824324c53755f4244, 0x5482f84793c933e48e20f5bf4a73175962262d15613e0450, 0x3054b52345845732c34423f22ea55a3db46b49c32c5ad21d, 0x5112a14203903674d72565e64fe34e5cf27f2885383b9409, 0x39d42d2ac51c5eb25b4da36a2725c23434f34043b4535285, 0x5892394b83083ff44f2ce57e4663d65572e72105a0321491, 0x3574e72665d65212914103a02b85083894394ce37e5ff24f, 0x5432f34723c23354852045b44ac31c59d22d2da56a3eb45b, 0x3cf47f2fe54e5b92094883382205903114a14563e65672d7, 0x5db26b4ea35a3ad41d29c52c4343845052b52425f23734c3, 0x3964262a75175e02504d13612795c93484f840f3bf53e28e, 0x5822324b33033f44442c557546d3dd55c2ec21b5ab32a49a, 0x30e4be23f58f5782c84493f92e15513d04604973275a6216, 0x51a2aa42b39b36c4dc25d5ed4f53455c42742835333b2402],
+      ![0x3a94192985285df26f4ee35e2465f63774c74303805012b1, 0x5bd20d48c33c3cb47b2fa54a4523e25632d32245943154a5, 0x3314812005b05472f74763c62de56e3ef45f4a8318599229, 0x5252954143a43534e32625d24ca37a5fb24b2bc50c38d43d, 0x3684d82595e951e2ae42f39f2875373b64064f13415c0270, 0x57c2cc44d3fd30a4ba23b58b4933235a22122e55553d4464, 0x3f04402c15715862364b730721f5af32e49e4693d95582e8, 0x5e42544d53653924222a351340b3bb53a28a27d5cd34c4fc, 0x33a48a20b5bb54c2fc47d3cd2d55653e44544a3313592222, 0x52e29e41f3af3584e82695d94c13715f02402b7507386436, 0x3a24122935235d42644e535524d5fd37c4cc43b38b50a2ba, 0x5b62064873373c04702f15414593e95682d822f59f31e4ae, 0x3fb44b2ca57a58d23d4bc30c2145a43254954623d25532e3, 0x5ef25f4de36e3994292a85184003b05312812765c63474f7, 0x3634d32525e25152a542439428c53c3bd40d4fa34a5cb27b, 0x5772c74463f63014b12305804983285a92192ee55e3df46f],
+      ![0x64e1fe77f0cf0387881096b97a10116901201d76670e6756, 0x5a7ea16b6db62c19c71d0ad1b56050847347c30736f2142, 0x6d61667e70570a07101916217390896081b814f6ff07e7ce, 0xc27721f36436b410478503512d69d01c7ac75b0eb66a1da, 0x68f13f7be00e0f97491c86787600d06511e11166a6027797, 0x9b72b1aa61a6ed15d7dc06c1746c40457f57020b2633183, 0x6171a77260960617d11506e07f80486c917918e63e0bf70f, 0x37b31326826751c57440f41ec65c0dd76d79a02a6ab11b, 0x6dd16d7ec05c0ab71b19a62a7320826031b31446f40757c5, 0xc97791f86486bf10f78e03e1266960177a77500e06611d1, 0x6451f57740c40337831026b27aa01a69b12b1dc66c0ed75d, 0x517e11606d06271977160a61be60e08f73f7c80786f9149, 0x61c1ac72d09d06a7da15b6eb7f30436c21721856350b4704, 0x87b813968967e1ce74f0ff1e76570d67667910216a0110, 0x6841347b50050f27421c367376b0db65a1ea11d6ad02c79c, 0x907201a16116e61567d706717f6cf04e7fe7090b9638188],
+      ![0x6231937120a20557e51646d47cc07c6fd14d1ba60a08b73b, 0x377871066b66411f17700c01d86680e97597ae01e69f12f, 0x6bb10b78a03a0cd77d1fc64c7540e46651d51226920137a3, 0xaf71f19e62e6d91697e80581406f00717c17360866071b7, 0x6e21527d30630947241a561570d0bd63c18c17b6cb04a7fa, 0xf67461c76776801307b10011196a902879876f0df65e1ee, 0x67a1ca74b0fb00c7bc13d68d7950256a41141e36530d2762, 0x6e7de15f6ef6181a87290991816310b07007f70476c6176, 0x6b01007810310c67761f764775f0ef66e1de1296990187a8, 0xa47141956256d21627e305314b6fb07a7ca73d08d60c1bc, 0x6281987190a905e7ee16f6df7c70776f61461b1601080730, 0x3c78c10d6bd64a1fa77b0cb1d36630e27527a5015694124, 0x6711c17400f00077b713668679e02e6af11f1e86580d9769, 0x657d51546e46131a372209218a63a0bb70b7fc04c6cd17d, 0x6e91597d806809f72f1ae61e7060b66371871706c00417f1, 0xfd74d1cc67c68b13b7ba00a1126a20237937640d46551e5],
+      ![0x9d4e648e5f55fa2812e9392383bf8b90aebae4d9fdf7c8cc, 0xfc0870ef19419b6e06887f37e2f99ff1e8ae859fe9968ed8, 0x94cefc87dfcdf3a88ae0b9bb8a3f13992e22ed5965fe4854, 0xf588e8e699d992ee9e81ffafeb7907f868368c1f719f0e40, 0x915ea5824f94f638d3e529e28faf4a9cbe7be8c93cfbd80d, 0xf018b1e30980977ec7846ff6eee95efdf86f898f289a9e19, 0x98de3d8bcf0cffb84beca97a862fd2953ee3e149a4f25895, 0xf99829ea89189efe5f8def6ee769c6f478f7800fb0931e81, 0x947ef7876fc6f31881e009b08a8f18999e29ede96efef85f, 0xf538e3e629d2925e95814fa4ebc90cf8d83d8caf7a9fbe4b, 0x9dfe6f8eef5efa9819e98928830f80901eb1e469f6f778c7, 0xfcb87befa94a9bde0d88cf3ce24994f158a5852fe2963ed3, 0x986e368b7f07ff0840ec1971869fd9958ee8e1f9aff2e89e, 0xf92822ea39139e4e548d5f65e7d9cdf4c8fc80bfbb93ae8a, 0x91eeae82ff9ff688d8e599e98f1f419c0e70e87937fb6806, 0xf0a8bae3b98b97cecc84dffdee5955fd4864893f239a2e12],
+      ![0x9b9e09888f38fcf87fefe94e856fe6967ed7e20990f118a1, 0xfad81de9c92c9dbe6b8eaf5ae429f2f738c3834f84905eb5, 0x921e91810fa0f578e7e669d68cef7e9ffe4feb8908f89839, 0xf35885e049b4943ef3872fc2eda96afeb85b8acf1c99de2d, 0x978ec8849ff9f0e8bee3f98f897f279a6e16ee1951fd0860, 0xf6c8dce5d9ed91aeaa82bf9be83933fb28028f5f459c4e74, 0x9e0e508d1f61f96826ea791780ffbf93ee8ee799c9f488f8, 0xff4844ec5975982e328b3f03e1b9abf2a89a86dfdd95ceec, 0x92ae9a81bfabf5c8ece6d9dd8c5f759f4e44eb3903f82832, 0xf3e88ee0f9bf948ef8879fc9ed1961fe08508a7f17996e26, 0x9b2e02883f33fc4874ef594585dfed96cedce2b99bf1a8aa, 0xfa6816e979279d0e608e1f51e499f9f788c883ff8f90eebe, 0x9ebe5b8daf6af9d82deac91c804fb4935e85e729c2f438f3, 0xfff84fece97e989e398b8f08e109a0f21891866fd6957ee7, 0x973ec3842ff2f058b5e3498489cf2c9ade1deea95afdb86b, 0xf678d7e569e6911ea1820f90e88938fb98098fef4e9cfe7f],
+      ![0xc5ebeed6fadfa28d98b19ca9db1a01c80b30bc7c77af6d46, 0xa4adfab7bccbc3cb8cd0dabdba5c15a94d24dd3a63ce2b52, 0xcc6b76df7a47ab0d00b81c31d29a99c18ba8b5fcefa6edde, 0xad2d62be3c53ca4b14d95a25b3dc8da0cdbcd4bafbc7abca, 0xc9fb2fdaea1eae9d59bd8c68d70ac0c41bf1b06cb6a37d87, 0xa8bd3bbbac0acfdb4ddcca7cb64cd4a55de5d12aa2c23b93, 0xc07bb7d36a86a71dc1b40cf0de8a58cd9b69b9ec2eaafd1f, 0xa13da3b22c92c65bd5d54ae4bfcc4cacdd7dd8aa3acbbb0b, 0xccdb7ddfca4cabbd0bb8ac3ad22a92c13ba3b54ce4a65dd5, 0xad9d69be8c58cafb1fd9ea2eb36c86a07db7d40af0c71bc1, 0xc55be5d64ad4a23d93b12ca2dbaa0ac8bb3bbccc7cafdd4d, 0xa41df1b70cc0c37b87d06ab6baec1ea9fd2fdd8a68ce9b59, 0xc0cbbcd3da8da7adcab4bcfbde3a53cd2b62b95c25aa4d14, 0xa18da8b29c99c6ebded5faefbf7c47ac6d76d81a31cb0b00, 0xc94b24da5a15ae2d52bd3c63d7bacbc4abfab0dcbda3cd8c, 0xa80d30bb1c01cf6b46dc7a77b6fcdfa5edeed19aa9c28b98],
+      ![0xc33b83d02ab2a45df5b74cc4ddca6ccedb5dbaac1aa9bd2b, 0xa27d97b16ca6c51be1d60ad0bc8c78af9d49dbea0ec8fb3f, 0xcabb1bd9aa2aaddd6dbecc5cd44af4c75bc5b32c82a03db3, 0xabfd0fb8ec3ecc9b79df8a48b50ce0a61dd1d26a96c17ba7, 0xcf2b42dc3a73a84d34bb5c05d1daadc2cb9cb6bcdba5adea, 0xae6d56bd7c67c90b20da1a11b09cb9a38d88d7facfc4ebfe, 0xc6abdad5baeba1cdacb2dc9dd85a35cb4b04bf3c43ac2d72, 0xa7edceb4fcffc08bb8d39a89b91c21aa0d10de7a57cd6b66, 0xca0b10d91a21ad6d66be7c57d4faffc7ebceb39c89a08db8, 0xab4d04b85c35cc2b72df3a43b5bceba6addad2da9dc1cbac, 0xc38b88d09ab9a4edfeb7fccfdd7a67ce6b56ba1c11a90d20, 0xa2cd9cb1dcadc5abead6badbbc3c73af2d42db5a05c84b34, 0xc61bd1d50ae0a17da7b26c96d8ea3ecbfb0fbf8c48ac9d79, 0xa75dc5b44cf4c03bb3d32a82b9ac2aaabd1bdeca5ccddb6d, 0xcf9b49dc8a78a8fd3fbbec0ed16aa6c27b97b60cd0a51de1, 0xaedd5dbdcc6cc9bb2bdaaa1ab02cb2a33d83d74ac4c45bf5],
+      ![0xbc4c74af5d45db2a02c83b33a2bd9bb1acaac5dbedd6cadc, 0xdd0a60ce1b51ba6c16a97d27c3fb8fd0eabea49df9b78cc8, 0xb5cceca6ddddd2aa9ac1bbabab3d03b82c32cc5b75df4a44, 0xd48af8c79bc9b3ec8ea0fdbfca7b17d96a26ad1d61be0c50, 0xb05cb5a34d84d73ac3c42bf2aead5abdbc6bc9cb2cdada1d, 0xd11aa1c20b90b67cd7a56de6cfeb4edcfa7fa88d38bb9c09, 0xb9dc2daacd1cdeba5bcdab6aa72dc2b43cf3c04bb4d35a85, 0xd89a39cb8b08bffc4faced7ec66bd6d57ae7a10da0b21c91, 0xb57ce7a66dd6d21a91c10ba0ab8d08b89c39cceb7edffa4f, 0xd43af3c72bc2b35c85a04db4cacb1cd9da2dadad6abebc5b, 0xbcfc7fafed4edb9a09c88b38a20d90b11ca1c56be6d67ad7, 0xddba6bceab5abadc1da9cd2cc34b84d05ab5a42df2b73cc3, 0xb96c26aa7d17de0a50cd1b61a79dc9b48cf8c0fbbfd3ea8e, 0xd82a32cb3b03bf4c44ac5d75c6dbddd5caeca1bdabb2ac9a, 0xb0ecbea3fd8fd78ac8c49bf9ae1d51bd0c60c97b27da6a16, 0xd1aaaac2bb9bb6ccdca5ddedcf5b45dc4a74a83d33bb2c02],
+      ![0xba9c19a98d28ddfa6fceeb5ea46df6b77cc7c30b80d01ab1, 0xdbda0dc8cb3cbcbc7bafad4ac52be2d63ad3a24d94b15ca5, 0xb31c81a00db0d47af7c76bc6aded6ebefc5fca8b18d99a29, 0xd25a95c14ba4b53ce3a62dd2ccab7adfba4babcd0cb8dc3d, 0xb68cd8a59de9d1eaaec2fb9fa87d37bb6c06cf1b41dc0a70, 0xd7caccc4dbfdb0acbaa3bd8bc93b23da2a12ae5d55bd4c64, 0xbf0c40ac1d71d86a36cb7b07a1fdafb2ec9ec69bd9d58ae8, 0xde4a54cd5b65b92c22aa3d13c0bbbbd3aa8aa7ddcdb4ccfc, 0xb3ac8aa0bdbbd4cafcc7dbcdad5d65be4c54ca3b13d92a22, 0xd2ea9ec1fbafb58ce8a69dd9cc1b71df0a40ab7d07b86c36, 0xba2c12a93d23dd4a64ce5b55a4ddfdb7ccccc3bb8bd0aaba, 0xdb6a06c87b37bc0c70af1d41c59be9d68ad8a2fd9fb1ecae, 0xbfbc4bacad7ad8da3dcbcb0ca14da4b25c95c62bd2d53ae3, 0xdefa5fcdeb6eb99c29aa8d18c00bb0d31a81a76dc6b47cf7, 0xb63cd3a52de2d15aa5c24b94a8cd3cbbdc0dcfab4adcba7b, 0xd77ac7c46bf6b01cb1a30d80c98b28da9a19aeed5ebdfc6f],
+      ![0xe4e9fef7f8cf838f88909eb9fa1811e909209d7e678e6f56, 0x85afea96bedbe2c99cf1d8ad9b5e05884f34fc3873ef2942, 0xed6966fe78578a0f10991e21f39889e089b894feff87efce, 0x8c2f729f3e43eb4904f8583592de9d81cfacf5b8ebe6a9da, 0xe8f93ffbe80e8f9f499c8e78f608d0e519e1916ea6827f97, 0x89bf2b9aae1aeed95dfdc86c974ec4845ff5f028b2e33983, 0xe179a7f26896861fd1950ee0ff8848ec997998ee3e8bff0f, 0x803fb3932e82e759c5f448f49ece5c8ddf6df9a82aeab91b, 0xedd96dfec85c8abf1b99ae2af32882e039b3944ef4875fc5, 0x8c9f799f8e48ebf90ff8e83e926e96817fa7f508e0e619d1, 0xe459f5f748c4833f83902eb2faa81ae9b92b9dce6c8edf5d, 0x851fe1960ed0e27997f168a69bee0e88ff3ffc8878ef9949, 0xe1c9acf2d89d86afda95beebff3843ec2972985e358b4f04, 0x808fb8939e89e7e9cef4f8ff9e7e578d6f66f91821ea0910, 0xe84934fb58058f2f429c3e73f6b8dbe5a9ea91dead82cf9c, 0x890f209a1e11ee6956fd786797fecf84effef098b9e38988],
+      ![0xe23993f128a2855fe5964ed4fcc87cefd94d9bae0a88bf3b, 0x837f87906eb6e419f1f708c09d8e688e9f59fae81ee9f92f, 0xebb90bf8a83a8cdf7d9fce4cf548e4e659d5922e92813fa3, 0x8aff1f99ee2eed9969fe8858940ef0871fc1f36886e079b7, 0xee2952fd3863894f249a5e15f0d8bde3c98c97becb84affa, 0x8f6f469c7e77e80930fb1801919ea9828f98f6f8dfe5e9ee, 0xe7a9caf4b8fb80cfbc93de8df95825ea49149e3e538d2f62, 0x86efde95feefe189a8f29899981e318b0f00ff7847ec6976, 0xeb0900f818318c6f769f7e47f5f8efe6e9de929e99818fa8, 0x8a4f14995e25ed2962fe385394befb87afcaf3d88de0c9bc, 0xe28998f198a985efee96fedffc7877ef69469b1e01880f30, 0x83cf8c90debde4a9faf7b8cb9d3e638e2f52fa5815e94924, 0xe719c1f408f0807fb7936e86f9e82eeaf91f9e8e588d9f69, 0x865fd5954ee4e139a3f2289298ae3a8bbf0bffc84cecd97d, 0xee9959fd886889ff2f9aee1ef068b6e37987970ec0841ff1, 0x8fdf4d9cce7ce8b93bfba80a912ea2823f93f648d4e559e5]],
+    ![![0x200100300800a00900b00400600500700c00e00d00f, 0x1001201101301801a01901b01401601501701c01e01d01f, 0x2002202102302802a02902b02402602502702c02e02d02f, 0x3003203103303803a03903b03403603503703c03e03d03f, 0x5005205105305805a05905b05405605505705c05e05d05f, 0x4004204104304804a04904b04404604504704c04e04d04f, 0x7007207107307807a07907b07407607507707c07e07d07f, 0x6006206106306806a06906b06406606506706c06e06d06f, 0xa00a20a10a30a80aa0a90ab0a40a60a50a70ac0ae0ad0af, 0xb00b20b10b30b80ba0b90bb0b40b60b50b70bc0be0bd0bf, 0x8008208108308808a08908b08408608508708c08e08d08f, 0x9009209109309809a09909b09409609509709c09e09d09f, 0xf00f20f10f30f80fa0f90fb0f40f60f50f70fc0fe0fd0ff, 0xe00e20e10e30e80ea0e90eb0e40e60e50e70ec0ee0ed0ef, 0xd00d20d10d30d80da0d90db0d40d60d50d70dc0de0dd0df, 0xc00c20c10c30c80ca0c90cb0c40c60c50c70cc0ce0cd0cf],
+      ![0x11011211111311811a11911b11411611511711c11e11d11f, 0x10010210110310810a10910b10410610510710c10e10d10f, 0x13013213113313813a13913b13413613513713c13e13d13f, 0x12012212112312812a12912b12412612512712c12e12d12f, 0x14014214114314814a14914b14414614514714c14e14d14f, 0x15015215115315815a15915b15415615515715c15e15d15f, 0x16016216116316816a16916b16416616516716c16e16d16f, 0x17017217117317817a17917b17417617517717c17e17d17f, 0x1b01b21b11b31b81ba1b91bb1b41b61b51b71bc1be1bd1bf, 0x1a01a21a11a31a81aa1a91ab1a41a61a51a71ac1ae1ad1af, 0x19019219119319819a19919b19419619519719c19e19d19f, 0x18018218118318818a18918b18418618518718c18e18d18f, 0x1e01e21e11e31e81ea1e91eb1e41e61e51e71ec1ee1ed1ef, 0x1f01f21f11f31f81fa1f91fb1f41f61f51f71fc1fe1fd1ff, 0x1c01c21c11c31c81ca1c91cb1c41c61c51c71cc1ce1cd1cf, 0x1d01d21d11d31d81da1d91db1d41d61d51d71dc1de1dd1df],
+      ![0x22022222122322822a22922b22422622522722c22e22d22f, 0x23023223123323823a23923b23423623523723c23e23d23f, 0x20020220120320820a20920b20420620520720c20e20d20f, 0x21021221121321821a21921b21421621521721c21e21d21f, 0x27027227127327827a27927b27427627527727c27e27d27f, 0x26026226126326826a26926b26426626526726c26e26d26f, 0x25025225125325825a25925b25425625525725c25e25d25f, 0x24024224124324824a24924b24424624524724c24e24d24f, 0x28028228128328828a28928b28428628528728c28e28d28f, 0x29029229129329829a29929b29429629529729c29e29d29f, 0x2a02a22a12a32a82aa2a92ab2a42a62a52a72ac2ae2ad2af, 0x2b02b22b12b32b82ba2b92bb2b42b62b52b72bc2be2bd2bf, 0x2d02d22d12d32d82da2d92db2d42d62d52d72dc2de2dd2df, 0x2c02c22c12c32c82ca2c92cb2c42c62c52c72cc2ce2cd2cf, 0x2f02f22f12f32f82fa2f92fb2f42f62f52f72fc2fe2fd2ff, 0x2e02e22e12e32e82ea2e92eb2e42e62e52e72ec2ee2ed2ef],
+      ![0x33033233133333833a33933b33433633533733c33e33d33f, 0x32032232132332832a32932b32432632532732c32e32d32f, 0x31031231131331831a31931b31431631531731c31e31d31f, 0x30030230130330830a30930b30430630530730c30e30d30f, 0x36036236136336836a36936b36436636536736c36e36d36f, 0x37037237137337837a37937b37437637537737c37e37d37f, 0x34034234134334834a34934b34434634534734c34e34d34f, 0x35035235135335835a35935b35435635535735c35e35d35f, 0x39039239139339839a39939b39439639539739c39e39d39f, 0x38038238138338838a38938b38438638538738c38e38d38f, 0x3b03b23b13b33b83ba3b93bb3b43b63b53b73bc3be3bd3bf, 0x3a03a23a13a33a83aa3a93ab3a43a63a53a73ac3ae3ad3af, 0x3c03c23c13c33c83ca3c93cb3c43c63c53c73cc3ce3cd3cf, 0x3d03d23d13d33d83da3d93db3d43d63d53d73dc3de3dd3df, 0x3e03e23e13e33e83ea3e93eb3e43e63e53e73ec3ee3ed3ef, 0x3f03f23f13f33f83fa3f93fb3f43f63f53f73fc3fe3fd3ff],
+      ![0x40040240140340840a40940b40440640540740c40e40d40f, 0x41041241141341841a41941b41441641541741c41e41d41f, 0x42042242142342842a42942b42442642542742c42e42d42f, 0x43043243143343843a43943b43443643543743c43e43d43f, 0x45045245145345845a45945b45445645545745c45e45d45f, 0x44044244144344844a44944b44444644544744c44e44d44f, 0x47047247147347847a47947b47447647547747c47e47d47f, 0x46046246146346846a46946b46446646546746c46e46d46f, 0x4a04a24a14a34a84aa4a94ab4a44a64a54a74ac4ae4ad4af, 0x4b04b24b14b34b84ba4b94bb4b44b64b54b74bc4be4bd4bf, 0x48048248148348848a48948b48448648548748c48e48d48f, 0x49049249149349849a49949b49449649549749c49e49d49f, 0x4f04f24f14f34f84fa4f94fb4f44f64f54f74fc4fe4fd4ff, 0x4e04e24e14e34e84ea4e94eb4e44e64e54e74ec4ee4ed4ef, 0x4d04d24d14d34d84da4d94db4d44d64d54d74dc4de4dd4df, 0x4c04c24c14c34c84ca4c94cb4c44c64c54c74cc4ce4cd4cf],
+      ![0x51051251151351851a51951b51451651551751c51e51d51f, 0x50050250150350850a50950b50450650550750c50e50d50f, 0x53053253153353853a53953b53453653553753c53e53d53f, 0x52052252152352852a52952b52452652552752c52e52d52f, 0x54054254154354854a54954b54454654554754c54e54d54f, 0x55055255155355855a55955b55455655555755c55e55d55f, 0x56056256156356856a56956b56456656556756c56e56d56f, 0x57057257157357857a57957b57457657557757c57e57d57f, 0x5b05b25b15b35b85ba5b95bb5b45b65b55b75bc5be5bd5bf, 0x5a05a25a15a35a85aa5a95ab5a45a65a55a75ac5ae5ad5af, 0x59059259159359859a59959b59459659559759c59e59d59f, 0x58058258158358858a58958b58458658558758c58e58d58f, 0x5e05e25e15e35e85ea5e95eb5e45e65e55e75ec5ee5ed5ef, 0x5f05f25f15f35f85fa5f95fb5f45f65f55f75fc5fe5fd5ff, 0x5c05c25c15c35c85ca5c95cb5c45c65c55c75cc5ce5cd5cf, 0x5d05d25d15d35d85da5d95db5d45d65d55d75dc5de5dd5df],
+      ![0x62062262162362862a62962b62462662562762c62e62d62f, 0x63063263163363863a63963b63463663563763c63e63d63f, 0x60060260160360860a60960b60460660560760c60e60d60f, 0x61061261161361861a61961b61461661561761c61e61d61f, 0x67067267167367867a67967b67467667567767c67e67d67f, 0x66066266166366866a66966b66466666566766c66e66d66f, 0x65065265165365865a65965b65465665565765c65e65d65f, 0x64064264164364864a64964b64464664564764c64e64d64f, 0x68068268168368868a68968b68468668568768c68e68d68f, 0x69069269169369869a69969b69469669569769c69e69d69f, 0x6a06a26a16a36a86aa6a96ab6a46a66a56a76ac6ae6ad6af, 0x6b06b26b16b36b86ba6b96bb6b46b66b56b76bc6be6bd6bf, 0x6d06d26d16d36d86da6d96db6d46d66d56d76dc6de6dd6df, 0x6c06c26c16c36c86ca6c96cb6c46c66c56c76cc6ce6cd6cf, 0x6f06f26f16f36f86fa6f96fb6f46f66f56f76fc6fe6fd6ff, 0x6e06e26e16e36e86ea6e96eb6e46e66e56e76ec6ee6ed6ef],
+      ![0x73073273173373873a73973b73473673573773c73e73d73f, 0x72072272172372872a72972b72472672572772c72e72d72f, 0x71071271171371871a71971b71471671571771c71e71d71f, 0x70070270170370870a70970b70470670570770c70e70d70f, 0x76076276176376876a76976b76476676576776c76e76d76f, 0x77077277177377877a77977b77477677577777c77e77d77f, 0x74074274174374874a74974b74474674574774c74e74d74f, 0x75075275175375875a75975b75475675575775c75e75d75f, 0x79079279179379879a79979b79479679579779c79e79d79f, 0x78078278178378878a78978b78478678578778c78e78d78f, 0x7b07b27b17b37b87ba7b97bb7b47b67b57b77bc7be7bd7bf, 0x7a07a27a17a37a87aa7a97ab7a47a67a57a77ac7ae7ad7af, 0x7c07c27c17c37c87ca7c97cb7c47c67c57c77cc7ce7cd7cf, 0x7d07d27d17d37d87da7d97db7d47d67d57d77dc7de7dd7df, 0x7e07e27e17e37e87ea7e97eb7e47e67e57e77ec7ee7ed7ef, 0x7f07f27f17f37f87fa7f97fb7f47f67f57f77fc7fe7fd7ff],
+      ![0x80080280180380880a80980b80480680580780c80e80d80f, 0x81081281181381881a81981b81481681581781c81e81d81f, 0x82082282182382882a82982b82482682582782c82e82d82f, 0x83083283183383883a83983b83483683583783c83e83d83f, 0x85085285185385885a85985b85485685585785c85e85d85f, 0x84084284184384884a84984b84484684584784c84e84d84f, 0x87087287187387887a87987b87487687587787c87e87d87f, 0x86086286186386886a86986b86486686586786c86e86d86f, 0x8a08a28a18a38a88aa8a98ab8a48a68a58a78ac8ae8ad8af, 0x8b08b28b18b38b88ba8b98bb8b48b68b58b78bc8be8bd8bf, 0x88088288188388888a88988b88488688588788c88e88d88f, 0x89089289189389889a89989b89489689589789c89e89d89f, 0x8f08f28f18f38f88fa8f98fb8f48f68f58f78fc8fe8fd8ff, 0x8e08e28e18e38e88ea8e98eb8e48e68e58e78ec8ee8ed8ef, 0x8d08d28d18d38d88da8d98db8d48d68d58d78dc8de8dd8df, 0x8c08c28c18c38c88ca8c98cb8c48c68c58c78cc8ce8cd8cf],
+      ![0x91091291191391891a91991b91491691591791c91e91d91f, 0x90090290190390890a90990b90490690590790c90e90d90f, 0x93093293193393893a93993b93493693593793c93e93d93f, 0x92092292192392892a92992b92492692592792c92e92d92f, 0x94094294194394894a94994b94494694594794c94e94d94f, 0x95095295195395895a95995b95495695595795c95e95d95f, 0x96096296196396896a96996b96496696596796c96e96d96f, 0x97097297197397897a97997b97497697597797c97e97d97f, 0x9b09b29b19b39b89ba9b99bb9b49b69b59b79bc9be9bd9bf, 0x9a09a29a19a39a89aa9a99ab9a49a69a59a79ac9ae9ad9af, 0x99099299199399899a99999b99499699599799c99e99d99f, 0x98098298198398898a98998b98498698598798c98e98d98f, 0x9e09e29e19e39e89ea9e99eb9e49e69e59e79ec9ee9ed9ef, 0x9f09f29f19f39f89fa9f99fb9f49f69f59f79fc9fe9fd9ff, 0x9c09c29c19c39c89ca9c99cb9c49c69c59c79cc9ce9cd9cf, 0x9d09d29d19d39d89da9d99db9d49d69d59d79dc9de9dd9df],
+      ![0xa20a22a21a23a28a2aa29a2ba24a26a25a27a2ca2ea2da2f, 0xa30a32a31a33a38a3aa39a3ba34a36a35a37a3ca3ea3da3f, 0xa00a02a01a03a08a0aa09a0ba04a06a05a07a0ca0ea0da0f, 0xa10a12a11a13a18a1aa19a1ba14a16a15a17a1ca1ea1da1f, 0xa70a72a71a73a78a7aa79a7ba74a76a75a77a7ca7ea7da7f, 0xa60a62a61a63a68a6aa69a6ba64a66a65a67a6ca6ea6da6f, 0xa50a52a51a53a58a5aa59a5ba54a56a55a57a5ca5ea5da5f, 0xa40a42a41a43a48a4aa49a4ba44a46a45a47a4ca4ea4da4f, 0xa80a82a81a83a88a8aa89a8ba84a86a85a87a8ca8ea8da8f, 0xa90a92a91a93a98a9aa99a9ba94a96a95a97a9ca9ea9da9f, 0xaa0aa2aa1aa3aa8aaaaa9aabaa4aa6aa5aa7aacaaeaadaaf, 0xab0ab2ab1ab3ab8abaab9abbab4ab6ab5ab7abcabeabdabf, 0xad0ad2ad1ad3ad8adaad9adbad4ad6ad5ad7adcadeaddadf, 0xac0ac2ac1ac3ac8acaac9acbac4ac6ac5ac7accaceacdacf, 0xaf0af2af1af3af8afaaf9afbaf4af6af5af7afcafeafdaff, 0xae0ae2ae1ae3ae8aeaae9aebae4ae6ae5ae7aecaeeaedaef],
+      ![0xb30b32b31b33b38b3ab39b3bb34b36b35b37b3cb3eb3db3f, 0xb20b22b21b23b28b2ab29b2bb24b26b25b27b2cb2eb2db2f, 0xb10b12b11b13b18b1ab19b1bb14b16b15b17b1cb1eb1db1f, 0xb00b02b01b03b08b0ab09b0bb04b06b05b07b0cb0eb0db0f, 0xb60b62b61b63b68b6ab69b6bb64b66b65b67b6cb6eb6db6f, 0xb70b72b71b73b78b7ab79b7bb74b76b75b77b7cb7eb7db7f, 0xb40b42b41b43b48b4ab49b4bb44b46b45b47b4cb4eb4db4f, 0xb50b52b51b53b58b5ab59b5bb54b56b55b57b5cb5eb5db5f, 0xb90b92b91b93b98b9ab99b9bb94b96b95b97b9cb9eb9db9f, 0xb80b82b81b83b88b8ab89b8bb84b86b85b87b8cb8eb8db8f, 0xbb0bb2bb1bb3bb8bbabb9bbbbb4bb6bb5bb7bbcbbebbdbbf, 0xba0ba2ba1ba3ba8baaba9babba4ba6ba5ba7bacbaebadbaf, 0xbc0bc2bc1bc3bc8bcabc9bcbbc4bc6bc5bc7bccbcebcdbcf, 0xbd0bd2bd1bd3bd8bdabd9bdbbd4bd6bd5bd7bdcbdebddbdf, 0xbe0be2be1be3be8beabe9bebbe4be6be5be7becbeebedbef, 0xbf0bf2bf1bf3bf8bfabf9bfbbf4bf6bf5bf7bfcbfebfdbff],
+      ![0xc00c02c01c03c08c0ac09c0bc04c06c05c07c0cc0ec0dc0f, 0xc10c12c11c13c18c1ac19c1bc14c16c15c17c1cc1ec1dc1f, 0xc20c22c21c23c28c2ac29c2bc24c26c25c27c2cc2ec2dc2f, 0xc30c32c31c33c38c3ac39c3bc34c36c35c37c3cc3ec3dc3f, 0xc50c52c51c53c58c5ac59c5bc54c56c55c57c5cc5ec5dc5f, 0xc40c42c41c43c48c4ac49c4bc44c46c45c47c4cc4ec4dc4f, 0xc70c72c71c73c78c7ac79c7bc74c76c75c77c7cc7ec7dc7f, 0xc60c62c61c63c68c6ac69c6bc64c66c65c67c6cc6ec6dc6f, 0xca0ca2ca1ca3ca8caaca9cabca4ca6ca5ca7caccaecadcaf, 0xcb0cb2cb1cb3cb8cbacb9cbbcb4cb6cb5cb7cbccbecbdcbf, 0xc80c82c81c83c88c8ac89c8bc84c86c85c87c8cc8ec8dc8f, 0xc90c92c91c93c98c9ac99c9bc94c96c95c97c9cc9ec9dc9f, 0xcf0cf2cf1cf3cf8cfacf9cfbcf4cf6cf5cf7cfccfecfdcff, 0xce0ce2ce1ce3ce8ceace9cebce4ce6ce5ce7cecceecedcef, 0xcd0cd2cd1cd3cd8cdacd9cdbcd4cd6cd5cd7cdccdecddcdf, 0xcc0cc2cc1cc3cc8ccacc9ccbcc4cc6cc5cc7ccccceccdccf],
+      ![0xd10d12d11d13d18d1ad19d1bd14d16d15d17d1cd1ed1dd1f, 0xd00d02d01d03d08d0ad09d0bd04d06d05d07d0cd0ed0dd0f, 0xd30d32d31d33d38d3ad39d3bd34d36d35d37d3cd3ed3dd3f, 0xd20d22d21d23d28d2ad29d2bd24d26d25d27d2cd2ed2dd2f, 0xd40d42d41d43d48d4ad49d4bd44d46d45d47d4cd4ed4dd4f, 0xd50d52d51d53d58d5ad59d5bd54d56d55d57d5cd5ed5dd5f, 0xd60d62d61d63d68d6ad69d6bd64d66d65d67d6cd6ed6dd6f, 0xd70d72d71d73d78d7ad79d7bd74d76d75d77d7cd7ed7dd7f, 0xdb0db2db1db3db8dbadb9dbbdb4db6db5db7dbcdbedbddbf, 0xda0da2da1da3da8daada9dabda4da6da5da7dacdaedaddaf, 0xd90d92d91d93d98d9ad99d9bd94d96d95d97d9cd9ed9dd9f, 0xd80d82d81d83d88d8ad89d8bd84d86d85d87d8cd8ed8dd8f, 0xde0de2de1de3de8deade9debde4de6de5de7decdeededdef, 0xdf0df2df1df3df8dfadf9dfbdf4df6df5df7dfcdfedfddff, 0xdc0dc2dc1dc3dc8dcadc9dcbdc4dc6dc5dc7dccdcedcddcf, 0xdd0dd2dd1dd3dd8ddadd9ddbdd4dd6dd5dd7ddcddedddddf],
+      ![0xe20e22e21e23e28e2ae29e2be24e26e25e27e2ce2ee2de2f, 0xe30e32e31e33e38e3ae39e3be34e36e35e37e3ce3ee3de3f, 0xe00e02e01e03e08e0ae09e0be04e06e05e07e0ce0ee0de0f, 0xe10e12e11e13e18e1ae19e1be14e16e15e17e1ce1ee1de1f, 0xe70e72e71e73e78e7ae79e7be74e76e75e77e7ce7ee7de7f, 0xe60e62e61e63e68e6ae69e6be64e66e65e67e6ce6ee6de6f, 0xe50e52e51e53e58e5ae59e5be54e56e55e57e5ce5ee5de5f, 0xe40e42e41e43e48e4ae49e4be44e46e45e47e4ce4ee4de4f, 0xe80e82e81e83e88e8ae89e8be84e86e85e87e8ce8ee8de8f, 0xe90e92e91e93e98e9ae99e9be94e96e95e97e9ce9ee9de9f, 0xea0ea2ea1ea3ea8eaaea9eabea4ea6ea5ea7eaceaeeadeaf, 0xeb0eb2eb1eb3eb8ebaeb9ebbeb4eb6eb5eb7ebcebeebdebf, 0xed0ed2ed1ed3ed8edaed9edbed4ed6ed5ed7edcedeeddedf, 0xec0ec2ec1ec3ec8ecaec9ecbec4ec6ec5ec7ecceceecdecf, 0xef0ef2ef1ef3ef8efaef9efbef4ef6ef5ef7efcefeefdeff, 0xee0ee2ee1ee3ee8eeaee9eebee4ee6ee5ee7eeceeeeedeef],
+      ![0xf30f32f31f33f38f3af39f3bf34f36f35f37f3cf3ef3df3f, 0xf20f22f21f23f28f2af29f2bf24f26f25f27f2cf2ef2df2f, 0xf10f12f11f13f18f1af19f1bf14f16f15f17f1cf1ef1df1f, 0xf00f02f01f03f08f0af09f0bf04f06f05f07f0cf0ef0df0f, 0xf60f62f61f63f68f6af69f6bf64f66f65f67f6cf6ef6df6f, 0xf70f72f71f73f78f7af79f7bf74f76f75f77f7cf7ef7df7f, 0xf40f42f41f43f48f4af49f4bf44f46f45f47f4cf4ef4df4f, 0xf50f52f51f53f58f5af59f5bf54f56f55f57f5cf5ef5df5f, 0xf90f92f91f93f98f9af99f9bf94f96f95f97f9cf9ef9df9f, 0xf80f82f81f83f88f8af89f8bf84f86f85f87f8cf8ef8df8f, 0xfb0fb2fb1fb3fb8fbafb9fbbfb4fb6fb5fb7fbcfbefbdfbf, 0xfa0fa2fa1fa3fa8faafa9fabfa4fa6fa5fa7facfaefadfaf, 0xfc0fc2fc1fc3fc8fcafc9fcbfc4fc6fc5fc7fccfcefcdfcf, 0xfd0fd2fd1fd3fd8fdafd9fdbfd4fd6fd5fd7fdcfdefddfdf, 0xfe0fe2fe1fe3fe8feafe9febfe4fe6fe5fe7fecfeefedfef, 0xff0ff2ff1ff3ff8ffaff9ffbff4ff6ff5ff7ffcffeffdfff]]]
+
+/-- Complete packed original combined phase signs. -/
+def generatedRootEightMathieuReducedTensorSignWords : Fin 2 → Fin 8 → Fin 8 → ℕ :=
+  ![![![0x2148472e8be2127b, 0xe274841248ded147, 0x7b12e28bd1b8b7de, 0xb82e21b7128474e2, 0x127b741db8d12148, 0xd147b7217bede274, 0x4821d1b8e28b84ed, 0x8b1d128421b747d1],
+      ![0x472e2148127b8be2, 0x8412e274d14748de, 0x1d7484ed48212e47, 0xde4847d18b1ded7b, 0x741d127b2148b8d1, 0xb721d147e2747bed, 0x2e47b7de7b121d74, 0xed7b74e2b82ede48],
+      ![0xd147b72184121d8b, 0x127b741d472edeb7, 0x74e2ed7b21b747d1, 0xb7de2e47e28b84ed, 0xe2748412b7212eb8, 0x2148472e741ded84, 0x47d1de48128474e2, 0x84ed1d74d1b8b7de],
+      ![0xb721d1471d8b8412, 0x741d127bdeb7472e, 0x12848b1db82ede48, 0xd1b848217b121d74, 0x8412e2742eb8b721, 0x472e2148ed84741d, 0x21b7b82e8b1ded7b, 0xe28b7b1248212e47],
+      ![0x2148472e8be2127b, 0xe274841248ded147, 0x7b12e28bd1b8b7de, 0xb82e21b7128474e2, 0x127b741db8d12148, 0xd147b7217bede274, 0x4821d1b8e28b84ed, 0x8b1d128421b747d1],
+      ![0x472e2148127b8be2, 0x8412e274d14748de, 0x1d7484ed48212e47, 0xde4847d18b1ded7b, 0x741d127b2148b8d1, 0xb721d147e2747bed, 0x2e47b7de7b121d74, 0xed7b74e2b82ede48],
+      ![0xd147b72184121d8b, 0x127b741d472edeb7, 0x74e2ed7b21b747d1, 0xb7de2e47e28b84ed, 0xe2748412b7212eb8, 0x2148472e741ded84, 0x47d1de48128474e2, 0x84ed1d74d1b8b7de],
+      ![0xb721d1471d8b8412, 0x741d127bdeb7472e, 0x12848b1db82ede48, 0xd1b848217b121d74, 0x8412e2742eb8b721, 0x472e2148ed84741d, 0x21b7b82e8b1ded7b, 0xe28b7b1248212e47]],
+    ![![0x0, 0xffffffffffffffff, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0, 0xffffffffffffffff],
+      ![0x0, 0x0, 0x0, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0],
+      ![0x0, 0xffffffffffffffff, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0, 0xffffffffffffffff],
+      ![0x0, 0x0, 0x0, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0],
+      ![0x0, 0xffffffffffffffff, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0, 0xffffffffffffffff],
+      ![0x0, 0x0, 0x0, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0],
+      ![0x0, 0xffffffffffffffff, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0, 0xffffffffffffffff],
+      ![0x0, 0x0, 0x0, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0, 0x0]]]
+
+/-- Every combined source label is decoded without discarding any original coordinate. -/
+def generatedRootEightMathieuReducedTensorAddress (j : Fin 2) (n : Fin 4096) : Fin 4096 :=
+  ⟨(generatedRootEightMathieuReducedTensorAddressWords j
+    ⟨n.val / 256, by omega⟩ ⟨n.val / 16 % 16, Nat.mod_lt _ (by decide)⟩).shiftRight
+      (12 * (n.val % 16)) % 4096, Nat.mod_lt _ (by decide)⟩
+
+/-- Every combined source sign is retained at its full original label. -/
+def generatedRootEightMathieuReducedTensorSign (j : Fin 2) (n : Fin 4096) : ℤ :=
+  if (generatedRootEightMathieuReducedTensorSignWords j
+    ⟨n.val / 512, by omega⟩ ⟨n.val / 64 % 8, Nat.mod_lt _ (by decide)⟩).testBit (n.val % 64)
+    then -1 else 1
+
+
+
+private theorem reduced_tensor_fiber_spin_mul (f g : localFiberSubgroup) :
+    (f * g).val.1 = f.val.1 * g.val.1 := rfl
+
+private theorem reduced_tensor_fiber_spin_three (f g h : localFiberSubgroup) :
+    (f * g * h).val.1 = f.val.1 * g.val.1 * h.val.1 := rfl
+
+private theorem reduced_tensor_compact_spin (i : Fin 14)
+    (h : generatedRootEightCompactSourceCondition i) :
+    (generatedRootEightCompactSourceCertifiedFiber i h).val.1 =
+      generatedRootEightCompactSpin i := rfl
+
+/-- The actual corrected reduced fiber retains the whole compact source product. -/
+theorem generatedRootEight_mathieu_reduced_tensor_source_spin (j : Fin 2) :
+    (generatedRootEightMathieuReducedCertifiedFiber j).val.1 =
+      spinHolomorphIncl (generatedRootEightMathieuReducedCorrection j) *
+        (if j = 0 then generatedRootEightCompactSpin 0 * generatedRootEightCompactSpin 4 *
+          generatedRootEightCompactSpin 1 else generatedRootEightCompactSpin 8) := by
+  unfold generatedRootEightMathieuReducedCertifiedFiber generatedRootEightMathieuReducedCorrectedFiber
+  rw [reduced_tensor_fiber_spin_mul, show (localFiberIncl _).val.1 = spinHolomorphIncl _ from rfl]
+  unfold generatedRootEightMathieuReducedCompactFiber
+  split_ifs
+  · rw [reduced_tensor_fiber_spin_three, reduced_tensor_compact_spin,
+      reduced_tensor_compact_spin, reduced_tensor_compact_spin]
+  · rw [reduced_tensor_compact_spin]
+
+private theorem reduced_tensor_conjugation_mul (f g : SpinHolomorph) (q : Q) :
+    spinConjugation (f * g) q = spinConjugation f (spinConjugation g q) := by
+  rw [map_mul, MulAut.mul_apply]
+
+/-- Every full original source conjugation is the displayed phase-sensitive formula. -/
+theorem generatedRootEight_mathieu_reduced_tensor_source_conjugation (j : Fin 2) (q : Q) :
+    spinConjugation (generatedRootEightMathieuReducedCertifiedFiber j).val.1 q =
+      generatedRootEightMathieuReducedTensorSourceQImage j q := by
+  rw [generatedRootEight_mathieu_reduced_tensor_source_spin, reduced_tensor_conjugation_mul,
+    spinConjugation_incl]
+  unfold generatedRootEightMathieuReducedTensorSourceQImage
+  split_ifs
+  · rw [reduced_tensor_conjugation_mul, reduced_tensor_conjugation_mul,
+      generatedRootEight_compact_conjugation, generatedRootEight_compact_conjugation,
+      generatedRootEight_compact_conjugation]
+  · rw [generatedRootEight_compact_conjugation]
+
+/-- Twenty-four complete Q images establish actual full-Q equality, without scalar assumptions. -/
+theorem generatedRootEight_mathieu_reduced_tensor_full_Q (j : Fin 2) :
+    spinConjugation (generatedRootEightMathieuReducedTensorSpin j) =
+      spinConjugation (generatedRootEightMathieuReducedCertifiedFiber j).val.1 := by
+  apply MulEquiv.ext
+  intro q
+  let images := fun k => spinConjugation (generatedRootEightMathieuReducedCertifiedFiber j).val.1
+    (qCoordinateGenerator k)
+  have hb : ∀ k : Fin 24, spinConjugation (generatedRootEightMathieuReducedTensorSpin j)
+      (qCoordinateGenerator k) = images k := by
+    intro k
+    rw [generatedRootEight_mathieu_reduced_tensor_conjugation]
+    exact (generatedRootEight_mathieu_reduced_tensor_q_basis j k).trans
+      (generatedRootEight_mathieu_reduced_tensor_source_conjugation j _).symm
+  exact (monsterNortonCoordinateEvaluation_eq (generatedRootEightMathieuReducedTensorSpin j)
+    images hb q).trans (monsterNortonCoordinateEvaluation_eq
+      (generatedRootEightMathieuReducedCertifiedFiber j).val.1 images (fun _ => rfl) q).symm
+
+/-- The genuine rank-zero model is compatible with the actual positive reduced permutation. -/
+theorem generatedRootEight_mathieu_reduced_tensor_compatible (j : Fin 2) :
+    spinBinaryAction (generatedRootEightMathieuReducedTensorSpin j) =
+      leechBinaryAction (golayPermutationIsometry (generatedRootEightMathieuReducedGenerator j)) := by
+  have hb := congrArg qBinaryAction (generatedRootEight_mathieu_reduced_tensor_full_Q j)
+  exact hb.trans ((generatedRootEightMathieuReducedCertifiedFiber j).property.trans
+    (congrArg leechBinaryAction (generatedRootEight_mathieu_reduced_certified_spatial j)))
+
+/-- Actual full local fibers pair the exact rank-zero spin with the original positive permutations. -/
+def generatedRootEightMathieuReducedTensorFiber (j : Fin 2) : localFiberSubgroup :=
+  ⟨(generatedRootEightMathieuReducedTensorSpin j,
+    golayPermutationIsometry (generatedRootEightMathieuReducedGenerator j)),
+      generatedRootEight_mathieu_reduced_tensor_compatible j⟩
+
+/-- The rank-zero model gives an attained actual local element. -/
+def generatedRootEightMathieuReducedTensorLocal (j : Fin 2) : H :=
+  localFiberIntoH (generatedRootEightMathieuReducedTensorFiber j)
+
+/-- The actual rank-zero fibers retain exactly the original reduced Conway projections. -/
+theorem generatedRootEight_mathieu_reduced_tensor_projection (j : Fin 2) :
+    projH (generatedRootEightMathieuReducedTensorLocal j) =
+      projH (generatedRootEightMathieuReducedCertifiedLocal j) := by
+  rw [generatedRootEight_mathieu_reduced_certified_projection]
+  rfl
+
+/-- The actual source and rank-zero model differ only by a genuine central local sign. -/
+theorem generatedRootEight_mathieu_reduced_tensor_central_difference (j : Fin 2) :
+    generatedRootEightMathieuReducedCertifiedLocal j = generatedRootEightMathieuReducedTensorLocal j ∨
+      generatedRootEightMathieuReducedCertifiedLocal j = inclQ qCentralInvolution *
+        generatedRootEightMathieuReducedTensorLocal j :=
+  generatedTwelfth_full_Q_fiber_central_difference _ _
+    (generatedRootEight_mathieu_reduced_tensor_full_Q j).symm
+
+/-- The full actual matrix and short actions are unchanged by the rank-zero replacement. -/
+theorem generatedRootEight_mathieu_reduced_tensor_matrix_short (j : Fin 2) (x : GriessSpace) :
+    (griessConwayEncode (rhoLocal (generatedRootEightMathieuReducedTensorLocal j) x)).1 =
+      (griessConwayEncode (rhoLocal (generatedRootEightMathieuReducedCertifiedLocal j) x)).1 ∧
+    (griessConwayEncode (rhoLocal (generatedRootEightMathieuReducedTensorLocal j) x)).2.1 =
+      (griessConwayEncode (rhoLocal (generatedRootEightMathieuReducedCertifiedLocal j) x)).2.1 :=
+  generatedTwelfth_full_Q_matrix_short_blocks
+    (generatedRootEightMathieuReducedTensorFiber j)
+    (generatedRootEightMathieuReducedCertifiedFiber j)
+    (generatedRootEight_mathieu_reduced_tensor_full_Q j) x
+
+/-- The original full spin action is exactly a signed permutation, with its entire quadratic phase. -/
+theorem generatedRootEight_mathieu_reduced_tensor_spin_apply (j : Fin 2) (f : SpinSpace) (t : SpinIndex) :
+    (generatedRootEightMathieuReducedTensorSpin j).val f t =
+      qSign (spinPhase (generatedRootEightMathieuReducedTensorPauli j) t) *
+        (qSign (monsterMonomialQuadratic
+          (generatedNinthLowerSpinCompactPhase (generatedRootEightMathieuReducedTensorPhaseRows j))
+            (t + spinTranslation (generatedRootEightMathieuReducedTensorPauli j))) *
+          f ((generatedRootEightMathieuReducedTensorRight j).symm
+            (t + spinTranslation (generatedRootEightMathieuReducedTensorPauli j)))) := rfl
+
+/-- All inverse columns have the full original twelve-coordinate bound. -/
+theorem generatedRootEight_mathieu_reduced_tensor_inverse_bound : ∀ j : Fin 2, ∀ k : Fin 12,
+    generatedRootEightMathieuReducedTensorRightInverseColumns j k < 4096 := by
+  decide +kernel
+
+private theorem reduced_tensor_inverse_matrix_apply (a b : Fin 12 → ℕ)
+    (hl : generatedNinthLowerSpinCompactMatrix b * generatedNinthLowerSpinCompactMatrix a = 1)
+    (hr : generatedNinthLowerSpinCompactMatrix a * generatedNinthLowerSpinCompactMatrix b = 1)
+    (t : SpinIndex) :
+    (generatedNinthLowerSpinCompactEquiv a b hl hr).symm t =
+      generatedNinthLowerSpinCompactMatrix b *ᵥ t := rfl
+
+/-- Exact column XOR computes every genuine original signed-permutation address. -/
+theorem generatedRootEight_mathieu_reduced_tensor_address_fast (j : Fin 2) (n : Fin 4096) :
+    nortonUIntegerLabel ((generatedRootEightMathieuReducedTensorRight j).symm
+      (golayLabelCoefficients n + spinTranslation (generatedRootEightMathieuReducedTensorPauli j))) =
+      ⟨generatedNinthLowerSpinLabelMatrixFast
+        (generatedRootEightMathieuReducedTensorRightInverseColumns j)
+        (Nat.xor n.val (nortonUIntegerLabel
+          (spinTranslation (generatedRootEightMathieuReducedTensorPauli j))).val % 4096) % 4096,
+        Nat.mod_lt _ (by decide)⟩ := by
+  rw [generatedRootEightMathieuReducedTensorRight, reduced_tensor_inverse_matrix_apply,
+    generatedNinth_lower_spin_label_matrix_fast_index _
+    (generatedRootEight_mathieu_reduced_tensor_inverse_bound j), generatedNinth_lower_spin_label_add]
+
+
+/-- The complete translated original label is retained inside the full diagonal phase. -/
+def generatedRootEightMathieuReducedTensorTranslatedLabel (j : Fin 2) (n : Fin 4096) : Fin 4096 :=
+  ⟨Nat.xor n.val (nortonUIntegerLabel
+    (spinTranslation (generatedRootEightMathieuReducedTensorPauli j))).val % 4096,
+      Nat.mod_lt _ (by decide)⟩
+
+/-- The translated label decodes to the exact original translation of all twelve coordinates. -/
+theorem generatedRootEight_mathieu_reduced_tensor_translated_label (j : Fin 2) (n : Fin 4096) :
+    golayLabelCoefficients (generatedRootEightMathieuReducedTensorTranslatedLabel j n) =
+      golayLabelCoefficients n + spinTranslation (generatedRootEightMathieuReducedTensorPauli j) := by
+  have h := generatedNinth_lower_spin_label_add n
+    (spinTranslation (generatedRootEightMathieuReducedTensorPauli j))
+  have he := congrArg golayLabelCoefficients h
+  simpa only [nortonUIntegerLabel_inverse, generatedRootEightMathieuReducedTensorTranslatedLabel] using he.symm
+
+/-- Exact address and sign conditions contain every original central and quadratic contribution. -/
+def generatedRootEightMathieuReducedTensorCoordinateCondition (j : Fin 2) (n : Fin 4096) : Prop :=
+  generatedRootEightMathieuReducedTensorAddress j n = nortonUIntegerLabel
+    ((generatedRootEightMathieuReducedTensorRight j).symm
+      (golayLabelCoefficients n + spinTranslation (generatedRootEightMathieuReducedTensorPauli j))) ∧
+  generatedRootEightMathieuReducedTensorSign j n =
+    nortonUIntegerSign (spinPhase (generatedRootEightMathieuReducedTensorPauli j)
+      (golayLabelCoefficients n)) *
+    nortonUIntegerSign (monsterMonomialQuadratic
+      (generatedNinthLowerSpinCompactPhase (generatedRootEightMathieuReducedTensorPhaseRows j))
+        (golayLabelCoefficients (generatedRootEightMathieuReducedTensorTranslatedLabel j n)))
+
+/-- The entire signed-permutation operator is exact on arbitrary actual real spin vectors. -/
+theorem generatedRootEight_mathieu_reduced_tensor_spin_coordinate (j : Fin 2)
+    (h : ∀ n, generatedRootEightMathieuReducedTensorCoordinateCondition j n)
+    (f : SpinSpace) (t : SpinIndex) :
+    (generatedRootEightMathieuReducedTensorSpin j).val f t =
+      (generatedRootEightMathieuReducedTensorSign j (nortonUIntegerLabel t) : ℝ) *
+        f (golayLabelCoefficients
+          (generatedRootEightMathieuReducedTensorAddress j (nortonUIntegerLabel t))) := by
+  have hn := h (nortonUIntegerLabel t)
+  simp only [generatedRootEightMathieuReducedTensorCoordinateCondition,
+    generatedRootEight_mathieu_reduced_tensor_translated_label,
+    nortonUIntegerLabel_inverse] at hn
+  rw [generatedRootEight_mathieu_reduced_tensor_spin_apply, hn.1, hn.2,
+    nortonUIntegerLabel_inverse, Int.cast_mul, nortonUIntegerSign_real, nortonUIntegerSign_real]
+  ring
+
+/-- Every tensor coordinate is the actual signed spin address and positive physical permutation. -/
+theorem generatedRootEight_mathieu_reduced_tensor_coordinate (j : Fin 2)
+    (h : ∀ n, generatedRootEightMathieuReducedTensorCoordinateCondition j n)
+    (T : SpinIndex → Fin 24 → ℝ) (t : SpinIndex) (i : Fin 24) :
+    localTensorRepresentation (generatedRootEightMathieuReducedTensorFiber j) T t i =
+      (generatedRootEightMathieuReducedTensorSign j (nortonUIntegerLabel t) : ℝ) *
+        T (golayLabelCoefficients
+          (generatedRootEightMathieuReducedTensorAddress j (nortonUIntegerLabel t)))
+            (generatedRootEightMathieuReducedInverse j i) := by
+  rw [generatedAxisGlobalTensor_local_coordinate]
+  have hs (k : Fin 24) :
+      (generatedRootEightMathieuReducedTensorFiber j).val.2.val (Pi.single k 1) i =
+        (Pi.single k 1 : Fin 24 → ℝ)
+          ((generatedRootEightMathieuReducedGenerator j).val.symm i) := rfl
+  have hp (k : Fin 24) :
+      (generatedRootEightMathieuReducedTensorFiber j).val.1.val (fun u => T u k) t =
+        (generatedRootEightMathieuReducedTensorSign j (nortonUIntegerLabel t) : ℝ) *
+          T (golayLabelCoefficients
+            (generatedRootEightMathieuReducedTensorAddress j (nortonUIntegerLabel t))) k :=
+    generatedRootEight_mathieu_reduced_tensor_spin_coordinate j h _ t
+  simp_rw [hs, hp, generatedRootEight_mathieu_reduced_inverse]
+  simp [Pi.single_apply]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

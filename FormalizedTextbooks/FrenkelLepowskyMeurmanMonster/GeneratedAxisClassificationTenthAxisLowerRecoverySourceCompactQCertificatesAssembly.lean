@@ -1,0 +1,102 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactQCertificatesBasis23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsFifthQFast
+
+/-! Complete original full-Q source certificates. All finite proof bodies remain uncompiled. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open Multiplicative
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- All24 complete original basis images retain their actual central phases. -/
+theorem generatedTenth_source_q_certificates_all (j : Fin 24) :
+    generatedTenthAxisLowerRecoverySourceCompactQImage 0 (qCoordinateGenerator j) =
+      generatedAxisGlobalFifthQCache 2 j := by
+  fin_cases j
+  · exact generatedTenth_source_q_certificates_image_00
+  · exact generatedTenth_source_q_certificates_image_01
+  · exact generatedTenth_source_q_certificates_image_02
+  · exact generatedTenth_source_q_certificates_image_03
+  · exact generatedTenth_source_q_certificates_image_04
+  · exact generatedTenth_source_q_certificates_image_05
+  · exact generatedTenth_source_q_certificates_image_06
+  · exact generatedTenth_source_q_certificates_image_07
+  · exact generatedTenth_source_q_certificates_image_08
+  · exact generatedTenth_source_q_certificates_image_09
+  · exact generatedTenth_source_q_certificates_image_10
+  · exact generatedTenth_source_q_certificates_image_11
+  · exact generatedTenth_source_q_certificates_image_12
+  · exact generatedTenth_source_q_certificates_image_13
+  · exact generatedTenth_source_q_certificates_image_14
+  · exact generatedTenth_source_q_certificates_image_15
+  · exact generatedTenth_source_q_certificates_image_16
+  · exact generatedTenth_source_q_certificates_image_17
+  · exact generatedTenth_source_q_certificates_image_18
+  · exact generatedTenth_source_q_certificates_image_19
+  · exact generatedTenth_source_q_certificates_image_20
+  · exact generatedTenth_source_q_certificates_image_21
+  · exact generatedTenth_source_q_certificates_image_22
+  · exact generatedTenth_source_q_certificates_image_23
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- The original cache evaluates the entire genuine explicit compact source conjugation. -/
+theorem generatedTenth_source_q_certificates_fast (q : Q) :
+    spinConjugation (generatedTenthAxisLowerRecoverySourceCompactSpin 0) q =
+      monsterNortonCoordinateEvaluation (generatedAxisGlobalFifthQCache 2) q := by
+  apply monsterNortonCoordinateEvaluation_eq
+  intro j
+  rw [generatedTenth_axis_lower_recovery_source_compact_conjugation]
+  exact generatedTenth_source_q_certificates_all j
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- Full original Q equality binds the chosen source spin without choosing its central scalar. -/
+theorem generatedTenth_source_q_certificates_original_Q_eq (q : Q) :
+    spinConjugation ((generatedAxisGlobalFifthShortWordFiber 2).val.1) q =
+      spinConjugation (generatedTenthAxisLowerRecoverySourceCompactSpin 0) q := by
+  have ha : spinConjugation ((generatedAxisGlobalFifthShortWordFiber 2).val.1) q =
+      monsterNortonCoordinateEvaluation (generatedAxisGlobalFifthQCache 2) q := by
+    apply monsterNortonCoordinateEvaluation_eq
+    intro j
+    exact (generatedAxisGlobalFifthShortWord_QImage 2 _).trans
+      (generatedAxisGlobalFifthQCache02_actual j)
+  exact ha.trans (generatedTenth_source_q_certificates_fast q).symm
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

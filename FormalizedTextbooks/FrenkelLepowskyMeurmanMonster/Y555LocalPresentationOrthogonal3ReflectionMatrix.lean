@@ -1,0 +1,52 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Genuine independent finite reflections as actual invertible seven-dimensional matrices. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3ReflectionForm
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open scoped Matrix
+
+/-- Convert the genuine independent reflection to its actual invertible coordinate matrix. -/
+def y322Orthogonal3RootReflection (v : Fin 7 → ZMod 3)
+    (hv : y322Orthogonal3VectorNorm v ≠ 0) : Matrix.GeneralLinearGroup (Fin 7) (ZMod 3) :=
+  Matrix.GeneralLinearGroup.toLin.symm
+    (LinearMap.GeneralLinearGroup.ofLinearEquiv (y322Orthogonal3VectorReflection v hv))
+
+/-- The actual coordinate matrix acts as exactly the independently defined finite reflection. -/
+theorem y322Orthogonal3RootReflection_action (v w : Fin 7 → ZMod 3)
+    (hv : y322Orthogonal3VectorNorm v ≠ 0) :
+    (y322Orthogonal3RootReflection v hv).val *ᵥ w = y322Orthogonal3VectorReflection v hv w := by
+  have h := Matrix.GeneralLinearGroup.toLin.apply_symm_apply
+    (LinearMap.GeneralLinearGroup.ofLinearEquiv (y322Orthogonal3VectorReflection v hv))
+  exact congrArg (fun f : LinearMap.GeneralLinearGroup (ZMod 3) (Fin 7 → ZMod 3) => f.val w) h
+
+/-- The actual finite reflection matrix has square one by its independent involutive action. -/
+theorem y322Orthogonal3RootReflection_square (v : Fin 7 → ZMod 3)
+    (hv : y322Orthogonal3VectorNorm v ≠ 0) : y322Orthogonal3RootReflection v hv ^ 2 = 1 := by
+  have hi : (y322Orthogonal3RootReflection v hv)⁻¹ = y322Orthogonal3RootReflection v hv := by
+    unfold y322Orthogonal3RootReflection
+    rw [← map_inv, ← LinearMap.GeneralLinearGroup.ofLinearEquiv_inv]
+    rfl
+  calc
+    _ = y322Orthogonal3RootReflection v hv * y322Orthogonal3RootReflection v hv := pow_two _
+    _ = y322Orthogonal3RootReflection v hv * (y322Orthogonal3RootReflection v hv)⁻¹ :=
+      congrArg (fun g => y322Orthogonal3RootReflection v hv * g) hi.symm
+    _ = 1 := mul_inv_cancel _
+
+/-- Equal actual nonisotropic root vectors give the same genuine reflection matrix. -/
+theorem y322Orthogonal3RootReflection_congr (v w : Fin 7 → ZMod 3)
+    (hv : y322Orthogonal3VectorNorm v ≠ 0) (hw : y322Orthogonal3VectorNorm w ≠ 0)
+    (h : v = w) : y322Orthogonal3RootReflection v hv = y322Orthogonal3RootReflection w hw := by
+  cases h
+  rfl
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

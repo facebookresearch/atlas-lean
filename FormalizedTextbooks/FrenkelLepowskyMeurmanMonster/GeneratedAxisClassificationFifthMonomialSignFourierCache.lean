@@ -1,0 +1,50 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationFifthMonomialSignOctadAction
+
+/-! A finite integer DH table checked against the original actual triality definition. -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+
+/-- Negative-entry masks of the original integer DH rows. -/
+def generatedFifthSignFourierMasks : Fin 64 → ℕ :=
+  ![0, 4378557928475212995, 6531808643310574245, 11068046444225730969,
+    7393108929244718745, 11936128518282651045, 14106333703424951235, 18374687574905061120,
+    7595767820052752745, 12273903644374837845, 14714328930390887475, 17361393120864891120,
+    17298308644996116495, 14757226373981654220, 12297735557480819370, 7608384715226507670,
+    7608384715978544745, 12297735558912431445, 14757226376558555955, 17298308641235931120,
+    17361393124654452495, 14714328927833961420, 12273903642954323370, 7595767819294840470,
+    18374687579166474495, 14106333701151145020, 11936128517019425370, 7393108928392436070,
+    11068046443366737510, 6531808642057217370, 4378557926219170620, 4294967295,
+    7608433999976240745, 12297829381041378645, 14757395256390660915, 17298062221247451120,
+    17361641477348724495, 14714161362241795020, 12273810550958675370, 7595718148755986070,
+    18374966855153418495, 14106184689534581820, 11936045732788001370, 7393053073195047270,
+    11067990150089369190, 6531726502061057370, 4378410074226082620, 281470681808895,
+    18446462598732906495, 14068334001739580220, 11915017572901889370, 7378753924479149670,
+    11053691001366813030, 6510698342184737370, 4340559386448706620, 71777214294589695,
+    10851025925711500950, 6172933524171347370, 3732582714024604620, 1085102592571150095,
+    1148681856222171120, 3689348814741910323, 6148914691236517205, 10838310072981296745]
+
+/-- Executable integer entries of the original octad triality matrix. -/
+def generatedFifthSignFourierCache (e f : Fin 64) : ℤ :=
+  if (generatedFifthSignFourierMasks e).testBit f.val then -1 else 1
+
+set_option maxRecDepth 10000 in
+set_option maxHeartbeats 8000000 in
+-- Check each of the 4096 entries against the original integer DH definition.
+/-- Every cached integer matrix entry is the actual original Fourier entry. -/
+theorem generatedFifth_sign_fourier_cache : ∀ e f : Fin 64,
+    generatedFifthSignFourierCache e f = trialityIntegerMatrix e f := by
+  decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

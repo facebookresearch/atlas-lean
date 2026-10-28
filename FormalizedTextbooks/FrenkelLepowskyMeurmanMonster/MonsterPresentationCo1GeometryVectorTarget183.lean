@@ -1,0 +1,199 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- A literal target generator lies in the twenty-four-point span by prior source equations. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorBasis
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation001
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation004
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation007
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation008
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation011
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation012
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation018
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation020
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation021
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation032
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation034
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation044
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation045
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation055
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation082
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation090
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation091
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation149
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation154
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation155
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation159
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation191
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation195
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation206
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation208
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation226
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation236
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation261
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation266
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation287
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation290
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation292
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation307
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation321
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation345
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation353
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation356
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation376
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation379
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation391
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation436
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation440
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation441
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation472
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation474
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation477
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation480
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation484
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation485
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation488
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation490
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation492
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation612
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationCo1GeometryVectorEquation633
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+set_option maxRecDepth 16000 in
+set_option maxHeartbeats 24000000 in
+-- Verify the final sparse row using only prior proved original-source equations.
+/-- Target point 183 belongs to the proposed source span by the exact finite source certificate. -/
+theorem monsterCo1GeometryVectorTarget183 :
+    monsterCo1GeometryVectorValue 183 ∈ monsterCo1GeometryVectorBasisSpan := by
+  have hp : ∀ r ∈ ([monsterCo1GeometryVectorRow1, monsterCo1GeometryVectorRow4,
+      monsterCo1GeometryVectorRow7, monsterCo1GeometryVectorRow8,
+      monsterCo1GeometryVectorRow11, monsterCo1GeometryVectorRow12,
+      monsterCo1GeometryVectorRow18, monsterCo1GeometryVectorRow20,
+      monsterCo1GeometryVectorRow21, monsterCo1GeometryVectorRow32,
+      monsterCo1GeometryVectorRow34, monsterCo1GeometryVectorRow44,
+      monsterCo1GeometryVectorRow45, monsterCo1GeometryVectorRow55,
+      monsterCo1GeometryVectorRow82, monsterCo1GeometryVectorRow90,
+      monsterCo1GeometryVectorRow91, monsterCo1GeometryVectorRow149,
+      monsterCo1GeometryVectorRow154, monsterCo1GeometryVectorRow155,
+      monsterCo1GeometryVectorRow159, monsterCo1GeometryVectorRow191,
+      monsterCo1GeometryVectorRow195, monsterCo1GeometryVectorRow206,
+      monsterCo1GeometryVectorRow208, monsterCo1GeometryVectorRow226,
+      monsterCo1GeometryVectorRow236, monsterCo1GeometryVectorRow261,
+      monsterCo1GeometryVectorRow266, monsterCo1GeometryVectorRow287,
+      monsterCo1GeometryVectorRow290, monsterCo1GeometryVectorRow292,
+      monsterCo1GeometryVectorRow307, monsterCo1GeometryVectorRow321,
+      monsterCo1GeometryVectorRow345, monsterCo1GeometryVectorRow353,
+      monsterCo1GeometryVectorRow356, monsterCo1GeometryVectorRow376,
+      monsterCo1GeometryVectorRow379, monsterCo1GeometryVectorRow391,
+      monsterCo1GeometryVectorRow436, monsterCo1GeometryVectorRow440,
+      monsterCo1GeometryVectorRow441, monsterCo1GeometryVectorRow472,
+      monsterCo1GeometryVectorRow474, monsterCo1GeometryVectorRow477,
+      monsterCo1GeometryVectorRow480, monsterCo1GeometryVectorRow484,
+      monsterCo1GeometryVectorRow485, monsterCo1GeometryVectorRow488,
+      monsterCo1GeometryVectorRow490, monsterCo1GeometryVectorRow492,
+      monsterCo1GeometryVectorRow612, monsterCo1GeometryVectorRow633] : List (List (Fin 867))),
+      monsterCo1GeometryVectorRowEval monsterCo1GeometryVectorValue r = 0 := by
+    intro r hr
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+    rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    · exact monsterCo1GeometryVectorEquation1
+    · exact monsterCo1GeometryVectorEquation4
+    · exact monsterCo1GeometryVectorEquation7
+    · exact monsterCo1GeometryVectorEquation8
+    · exact monsterCo1GeometryVectorEquation11
+    · exact monsterCo1GeometryVectorEquation12
+    · exact monsterCo1GeometryVectorEquation18
+    · exact monsterCo1GeometryVectorEquation20
+    · exact monsterCo1GeometryVectorEquation21
+    · exact monsterCo1GeometryVectorEquation32
+    · exact monsterCo1GeometryVectorEquation34
+    · exact monsterCo1GeometryVectorEquation44
+    · exact monsterCo1GeometryVectorEquation45
+    · exact monsterCo1GeometryVectorEquation55
+    · exact monsterCo1GeometryVectorEquation82
+    · exact monsterCo1GeometryVectorEquation90
+    · exact monsterCo1GeometryVectorEquation91
+    · exact monsterCo1GeometryVectorEquation149
+    · exact monsterCo1GeometryVectorEquation154
+    · exact monsterCo1GeometryVectorEquation155
+    · exact monsterCo1GeometryVectorEquation159
+    · exact monsterCo1GeometryVectorEquation191
+    · exact monsterCo1GeometryVectorEquation195
+    · exact monsterCo1GeometryVectorEquation206
+    · exact monsterCo1GeometryVectorEquation208
+    · exact monsterCo1GeometryVectorEquation226
+    · exact monsterCo1GeometryVectorEquation236
+    · exact monsterCo1GeometryVectorEquation261
+    · exact monsterCo1GeometryVectorEquation266
+    · exact monsterCo1GeometryVectorEquation287
+    · exact monsterCo1GeometryVectorEquation290
+    · exact monsterCo1GeometryVectorEquation292
+    · exact monsterCo1GeometryVectorEquation307
+    · exact monsterCo1GeometryVectorEquation321
+    · exact monsterCo1GeometryVectorEquation345
+    · exact monsterCo1GeometryVectorEquation353
+    · exact monsterCo1GeometryVectorEquation356
+    · exact monsterCo1GeometryVectorEquation376
+    · exact monsterCo1GeometryVectorEquation379
+    · exact monsterCo1GeometryVectorEquation391
+    · exact monsterCo1GeometryVectorEquation436
+    · exact monsterCo1GeometryVectorEquation440
+    · exact monsterCo1GeometryVectorEquation441
+    · exact monsterCo1GeometryVectorEquation472
+    · exact monsterCo1GeometryVectorEquation474
+    · exact monsterCo1GeometryVectorEquation477
+    · exact monsterCo1GeometryVectorEquation480
+    · exact monsterCo1GeometryVectorEquation484
+    · exact monsterCo1GeometryVectorEquation485
+    · exact monsterCo1GeometryVectorEquation488
+    · exact monsterCo1GeometryVectorEquation490
+    · exact monsterCo1GeometryVectorEquation492
+    · exact monsterCo1GeometryVectorEquation612
+    · exact monsterCo1GeometryVectorEquation633
+  have hs : monsterCo1GeometryVectorRowEval monsterCo1GeometryVectorValue [183, 7, 11, 13,
+      15, 19] = 0 := by
+    apply monsterCo1GeometryVectorRowEval_zero_of_prior _ [monsterCo1GeometryVectorRow1,
+      monsterCo1GeometryVectorRow4, monsterCo1GeometryVectorRow7, monsterCo1GeometryVectorRow8,
+      monsterCo1GeometryVectorRow11, monsterCo1GeometryVectorRow12,
+      monsterCo1GeometryVectorRow18, monsterCo1GeometryVectorRow20,
+      monsterCo1GeometryVectorRow21, monsterCo1GeometryVectorRow32,
+      monsterCo1GeometryVectorRow34, monsterCo1GeometryVectorRow44,
+      monsterCo1GeometryVectorRow45, monsterCo1GeometryVectorRow55,
+      monsterCo1GeometryVectorRow82, monsterCo1GeometryVectorRow90,
+      monsterCo1GeometryVectorRow91, monsterCo1GeometryVectorRow149,
+      monsterCo1GeometryVectorRow154, monsterCo1GeometryVectorRow155,
+      monsterCo1GeometryVectorRow159, monsterCo1GeometryVectorRow191,
+      monsterCo1GeometryVectorRow195, monsterCo1GeometryVectorRow206,
+      monsterCo1GeometryVectorRow208, monsterCo1GeometryVectorRow226,
+      monsterCo1GeometryVectorRow236, monsterCo1GeometryVectorRow261,
+      monsterCo1GeometryVectorRow266, monsterCo1GeometryVectorRow287,
+      monsterCo1GeometryVectorRow290, monsterCo1GeometryVectorRow292,
+      monsterCo1GeometryVectorRow307, monsterCo1GeometryVectorRow321,
+      monsterCo1GeometryVectorRow345, monsterCo1GeometryVectorRow353,
+      monsterCo1GeometryVectorRow356, monsterCo1GeometryVectorRow376,
+      monsterCo1GeometryVectorRow379, monsterCo1GeometryVectorRow391,
+      monsterCo1GeometryVectorRow436, monsterCo1GeometryVectorRow440,
+      monsterCo1GeometryVectorRow441, monsterCo1GeometryVectorRow472,
+      monsterCo1GeometryVectorRow474, monsterCo1GeometryVectorRow477,
+      monsterCo1GeometryVectorRow480, monsterCo1GeometryVectorRow484,
+      monsterCo1GeometryVectorRow485, monsterCo1GeometryVectorRow488,
+      monsterCo1GeometryVectorRow490, monsterCo1GeometryVectorRow492,
+      monsterCo1GeometryVectorRow612, monsterCo1GeometryVectorRow633] hp
+    decide +kernel
+  apply monsterCo1GeometryVectorRowEval_leading_mem _ _ 183 [7, 11, 13, 15, 19] _ hs
+  have hb : ∀ j ∈ ([7, 11, 13, 15, 19] : List (Fin 867)), j.val < 24 := by decide +kernel
+  exact fun j hj => monsterCo1GeometryVectorBasis_mem j (hb j hj)
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

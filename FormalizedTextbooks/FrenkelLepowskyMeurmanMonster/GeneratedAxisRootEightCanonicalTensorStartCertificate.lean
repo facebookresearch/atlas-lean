@@ -1,0 +1,255 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightCanonicalTensorStageBlocks
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightPositiveFinalTensorNumeratorData
+
+/-! The full original final tensor initializes every canonical Fourier source column. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_00 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 0 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 0 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_01 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 1 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 1 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_02 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 2 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 2 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_03 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 3 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 3 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_04 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 4 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 4 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_05 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 5 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 5 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_06 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 6 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 6 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_07 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 7 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 7 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_08 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 8 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 8 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_09 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 9 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 9 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_10 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 10 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 10 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_11 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 11 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 11 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_12 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 12 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 12 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_13 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 13 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 13 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_14 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 14 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 14 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Check every original physical column and every coordinate of this complete source row.
+private theorem block_15 : ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex 15 u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex 15 u) := by
+  simp_rw [generatedRootEight_canonical_tensor_stage_block]
+  unfold generatedRootEightCanonicalTensorPreInteger generatedRootEightPositiveFinalTensorNumerator
+  simp only [spinDictionaryCode, spinDictionaryLabel_coeff]
+  decide +kernel
+
+/-- Every complete canonical source row retains the entire original final numerator. -/
+theorem generatedRootEight_canonical_tensor_start_blocks : ∀ b : Fin 16, ∀ r : Fin 24, ∀ u : Fin 256,
+    generatedRootEightCanonicalTensorStageInteger 0 r
+      (generatedNinthLowerSpinTensorBlockIndex b u) =
+      16 * generatedRootEightCanonicalTensorPreInteger
+        (fun n => generatedRootEightPositiveFinalTensorNumerator n r)
+          (generatedNinthLowerSpinTensorBlockIndex b u) := by
+  intro b r u
+  fin_cases b
+  · exact block_00 r u
+  · exact block_01 r u
+  · exact block_02 r u
+  · exact block_03 r u
+  · exact block_04 r u
+  · exact block_05 r u
+  · exact block_06 r u
+  · exact block_07 r u
+  · exact block_08 r u
+  · exact block_09 r u
+  · exact block_10 r u
+  · exact block_11 r u
+  · exact block_12 r u
+  · exact block_13 r u
+  · exact block_14 r u
+  · exact block_15 r u
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

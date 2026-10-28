@@ -1,0 +1,317 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortKeyCheck60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortCoverageCheck64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthIncomingShortGeneric
+
+/-! Complete exact source bindings of all original root-nine incoming short coordinates. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Every bounded packet preserves its complete original source equation. -/
+theorem generatedTwelfth_incoming_short_key_all (a : Fin 3856) :
+    generatedTwelfthIncomingShortKey a =
+      generatedNinthLowerShortAddress
+        (generatedTwelfthIncomingShortTarget (generatedTwelfthIncomingShortRow a)) := by
+  have hp : ∀ (b : Fin 61) (i : Fin 64),
+      let a : Fin 3856 := ⟨(64 * b.val + i.val) % 3856, Nat.mod_lt _ (by decide)⟩
+      generatedTwelfthIncomingShortKey a =
+      generatedNinthLowerShortAddress
+        (generatedTwelfthIncomingShortTarget (generatedTwelfthIncomingShortRow a)) := by
+    intro b i
+    fin_cases b
+    · exact generatedTwelfth_incoming_short_key_check00 i
+    · exact generatedTwelfth_incoming_short_key_check01 i
+    · exact generatedTwelfth_incoming_short_key_check02 i
+    · exact generatedTwelfth_incoming_short_key_check03 i
+    · exact generatedTwelfth_incoming_short_key_check04 i
+    · exact generatedTwelfth_incoming_short_key_check05 i
+    · exact generatedTwelfth_incoming_short_key_check06 i
+    · exact generatedTwelfth_incoming_short_key_check07 i
+    · exact generatedTwelfth_incoming_short_key_check08 i
+    · exact generatedTwelfth_incoming_short_key_check09 i
+    · exact generatedTwelfth_incoming_short_key_check10 i
+    · exact generatedTwelfth_incoming_short_key_check11 i
+    · exact generatedTwelfth_incoming_short_key_check12 i
+    · exact generatedTwelfth_incoming_short_key_check13 i
+    · exact generatedTwelfth_incoming_short_key_check14 i
+    · exact generatedTwelfth_incoming_short_key_check15 i
+    · exact generatedTwelfth_incoming_short_key_check16 i
+    · exact generatedTwelfth_incoming_short_key_check17 i
+    · exact generatedTwelfth_incoming_short_key_check18 i
+    · exact generatedTwelfth_incoming_short_key_check19 i
+    · exact generatedTwelfth_incoming_short_key_check20 i
+    · exact generatedTwelfth_incoming_short_key_check21 i
+    · exact generatedTwelfth_incoming_short_key_check22 i
+    · exact generatedTwelfth_incoming_short_key_check23 i
+    · exact generatedTwelfth_incoming_short_key_check24 i
+    · exact generatedTwelfth_incoming_short_key_check25 i
+    · exact generatedTwelfth_incoming_short_key_check26 i
+    · exact generatedTwelfth_incoming_short_key_check27 i
+    · exact generatedTwelfth_incoming_short_key_check28 i
+    · exact generatedTwelfth_incoming_short_key_check29 i
+    · exact generatedTwelfth_incoming_short_key_check30 i
+    · exact generatedTwelfth_incoming_short_key_check31 i
+    · exact generatedTwelfth_incoming_short_key_check32 i
+    · exact generatedTwelfth_incoming_short_key_check33 i
+    · exact generatedTwelfth_incoming_short_key_check34 i
+    · exact generatedTwelfth_incoming_short_key_check35 i
+    · exact generatedTwelfth_incoming_short_key_check36 i
+    · exact generatedTwelfth_incoming_short_key_check37 i
+    · exact generatedTwelfth_incoming_short_key_check38 i
+    · exact generatedTwelfth_incoming_short_key_check39 i
+    · exact generatedTwelfth_incoming_short_key_check40 i
+    · exact generatedTwelfth_incoming_short_key_check41 i
+    · exact generatedTwelfth_incoming_short_key_check42 i
+    · exact generatedTwelfth_incoming_short_key_check43 i
+    · exact generatedTwelfth_incoming_short_key_check44 i
+    · exact generatedTwelfth_incoming_short_key_check45 i
+    · exact generatedTwelfth_incoming_short_key_check46 i
+    · exact generatedTwelfth_incoming_short_key_check47 i
+    · exact generatedTwelfth_incoming_short_key_check48 i
+    · exact generatedTwelfth_incoming_short_key_check49 i
+    · exact generatedTwelfth_incoming_short_key_check50 i
+    · exact generatedTwelfth_incoming_short_key_check51 i
+    · exact generatedTwelfth_incoming_short_key_check52 i
+    · exact generatedTwelfth_incoming_short_key_check53 i
+    · exact generatedTwelfth_incoming_short_key_check54 i
+    · exact generatedTwelfth_incoming_short_key_check55 i
+    · exact generatedTwelfth_incoming_short_key_check56 i
+    · exact generatedTwelfth_incoming_short_key_check57 i
+    · exact generatedTwelfth_incoming_short_key_check58 i
+    · exact generatedTwelfth_incoming_short_key_check59 i
+    · exact generatedTwelfth_incoming_short_key_check60 i
+  have h := hp ⟨a.val / 64, by omega⟩
+    ⟨a.val % 64, Nat.mod_lt _ (by decide)⟩
+  have he : (⟨(64 * (a.val / 64) + a.val % 64) % 3856,
+      Nat.mod_lt _ (by decide)⟩ : Fin 3856) = a := by
+    apply Fin.ext
+    change (64 * (a.val / 64) + a.val % 64) % 3856 = a.val
+    omega
+  simpa only [he] using h
+
+/-- Every bounded packet preserves its complete original source equation. -/
+theorem generatedTwelfth_incoming_short_coverage_all (k : Fin 4136) :
+    generatedTwelfthIncomingShortCoefficient (generatedTwelfthIncomingShortTarget k) =
+      generatedTwelfthIncomingSignedRowNumerator k := by
+  have hp : ∀ (b : Fin 65) (i : Fin 64),
+      let k : Fin 4136 := ⟨(64 * b.val + i.val) % 4136, Nat.mod_lt _ (by decide)⟩
+      generatedTwelfthIncomingShortCoefficient (generatedTwelfthIncomingShortTarget k) =
+      generatedTwelfthIncomingSignedRowNumerator k := by
+    intro b i
+    fin_cases b
+    · exact generatedTwelfth_incoming_short_coverage_check00 i
+    · exact generatedTwelfth_incoming_short_coverage_check01 i
+    · exact generatedTwelfth_incoming_short_coverage_check02 i
+    · exact generatedTwelfth_incoming_short_coverage_check03 i
+    · exact generatedTwelfth_incoming_short_coverage_check04 i
+    · exact generatedTwelfth_incoming_short_coverage_check05 i
+    · exact generatedTwelfth_incoming_short_coverage_check06 i
+    · exact generatedTwelfth_incoming_short_coverage_check07 i
+    · exact generatedTwelfth_incoming_short_coverage_check08 i
+    · exact generatedTwelfth_incoming_short_coverage_check09 i
+    · exact generatedTwelfth_incoming_short_coverage_check10 i
+    · exact generatedTwelfth_incoming_short_coverage_check11 i
+    · exact generatedTwelfth_incoming_short_coverage_check12 i
+    · exact generatedTwelfth_incoming_short_coverage_check13 i
+    · exact generatedTwelfth_incoming_short_coverage_check14 i
+    · exact generatedTwelfth_incoming_short_coverage_check15 i
+    · exact generatedTwelfth_incoming_short_coverage_check16 i
+    · exact generatedTwelfth_incoming_short_coverage_check17 i
+    · exact generatedTwelfth_incoming_short_coverage_check18 i
+    · exact generatedTwelfth_incoming_short_coverage_check19 i
+    · exact generatedTwelfth_incoming_short_coverage_check20 i
+    · exact generatedTwelfth_incoming_short_coverage_check21 i
+    · exact generatedTwelfth_incoming_short_coverage_check22 i
+    · exact generatedTwelfth_incoming_short_coverage_check23 i
+    · exact generatedTwelfth_incoming_short_coverage_check24 i
+    · exact generatedTwelfth_incoming_short_coverage_check25 i
+    · exact generatedTwelfth_incoming_short_coverage_check26 i
+    · exact generatedTwelfth_incoming_short_coverage_check27 i
+    · exact generatedTwelfth_incoming_short_coverage_check28 i
+    · exact generatedTwelfth_incoming_short_coverage_check29 i
+    · exact generatedTwelfth_incoming_short_coverage_check30 i
+    · exact generatedTwelfth_incoming_short_coverage_check31 i
+    · exact generatedTwelfth_incoming_short_coverage_check32 i
+    · exact generatedTwelfth_incoming_short_coverage_check33 i
+    · exact generatedTwelfth_incoming_short_coverage_check34 i
+    · exact generatedTwelfth_incoming_short_coverage_check35 i
+    · exact generatedTwelfth_incoming_short_coverage_check36 i
+    · exact generatedTwelfth_incoming_short_coverage_check37 i
+    · exact generatedTwelfth_incoming_short_coverage_check38 i
+    · exact generatedTwelfth_incoming_short_coverage_check39 i
+    · exact generatedTwelfth_incoming_short_coverage_check40 i
+    · exact generatedTwelfth_incoming_short_coverage_check41 i
+    · exact generatedTwelfth_incoming_short_coverage_check42 i
+    · exact generatedTwelfth_incoming_short_coverage_check43 i
+    · exact generatedTwelfth_incoming_short_coverage_check44 i
+    · exact generatedTwelfth_incoming_short_coverage_check45 i
+    · exact generatedTwelfth_incoming_short_coverage_check46 i
+    · exact generatedTwelfth_incoming_short_coverage_check47 i
+    · exact generatedTwelfth_incoming_short_coverage_check48 i
+    · exact generatedTwelfth_incoming_short_coverage_check49 i
+    · exact generatedTwelfth_incoming_short_coverage_check50 i
+    · exact generatedTwelfth_incoming_short_coverage_check51 i
+    · exact generatedTwelfth_incoming_short_coverage_check52 i
+    · exact generatedTwelfth_incoming_short_coverage_check53 i
+    · exact generatedTwelfth_incoming_short_coverage_check54 i
+    · exact generatedTwelfth_incoming_short_coverage_check55 i
+    · exact generatedTwelfth_incoming_short_coverage_check56 i
+    · exact generatedTwelfth_incoming_short_coverage_check57 i
+    · exact generatedTwelfth_incoming_short_coverage_check58 i
+    · exact generatedTwelfth_incoming_short_coverage_check59 i
+    · exact generatedTwelfth_incoming_short_coverage_check60 i
+    · exact generatedTwelfth_incoming_short_coverage_check61 i
+    · exact generatedTwelfth_incoming_short_coverage_check62 i
+    · exact generatedTwelfth_incoming_short_coverage_check63 i
+    · exact generatedTwelfth_incoming_short_coverage_check64 i
+  have h := hp ⟨k.val / 64, by omega⟩
+    ⟨k.val % 64, Nat.mod_lt _ (by decide)⟩
+  have he : (⟨(64 * (k.val / 64) + k.val % 64) % 4136,
+      Nat.mod_lt _ (by decide)⟩ : Fin 4136) = k := by
+    apply Fin.ext
+    change (64 * (k.val / 64) + k.val % 64) % 4136 = k.val
+    omega
+  simpa only [he] using h
+
+/-- The entire genuine original root-nine source short constituent has its complete exact lookup. -/
+theorem generatedTwelfth_incoming_short_actual (r : GriessShortIndex) :
+    generatedAxisGlobalFifthRoot09Packet.2.1 r =
+      (generatedTwelfthIncomingShortCoefficient r : ℝ) / 16 :=
+  generatedTwelfth_incoming_short_generic_actual
+    generatedTwelfth_incoming_short_key_all generatedTwelfth_incoming_short_coverage_all r
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

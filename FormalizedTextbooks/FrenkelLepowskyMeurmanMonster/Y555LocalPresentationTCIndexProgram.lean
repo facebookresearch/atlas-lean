@@ -1,0 +1,379 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Actual acyclic finite contextual equation program for local coset-table transitions. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds000
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds001
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds002
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds003
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds004
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds005
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds006
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds007
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds008
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds009
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds010
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds011
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds012
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds013
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds014
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds015
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds016
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds017
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds018
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds019
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds020
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds021
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds022
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds023
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds024
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds025
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds026
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds027
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds028
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds029
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds030
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds031
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds032
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds033
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds034
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds035
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds036
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds037
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds038
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds039
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds040
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds041
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds042
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds043
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds044
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds045
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds046
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds047
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds048
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds049
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds050
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds051
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds052
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds053
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds054
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds055
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds056
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds057
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds058
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds059
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds060
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds061
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds062
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds063
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds064
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds065
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds066
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds067
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds068
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds069
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds070
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds071
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds072
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds073
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds074
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds075
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds076
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds077
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds078
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds079
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds080
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds081
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds082
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds083
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds084
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds085
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds086
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds087
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds088
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds089
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds090
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds091
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds092
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds093
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds094
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds095
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds096
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds097
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds098
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds099
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds100
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds101
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds102
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds103
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds104
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds105
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds106
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds107
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds108
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds109
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds110
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds111
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds112
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds113
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds114
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds115
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds116
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds117
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds118
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds119
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds120
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds121
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds122
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds123
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds124
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds125
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds126
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds127
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds128
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds129
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds130
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds131
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds132
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds133
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds134
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds135
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds136
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds137
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds138
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds139
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds140
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds141
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds142
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds143
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds144
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds145
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds146
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds147
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds148
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds149
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds150
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds151
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds152
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds153
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds154
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds155
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds156
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds157
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds158
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds159
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds160
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds161
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds162
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds163
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds164
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds165
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds166
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds167
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds168
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds169
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexBounds170
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Every block of actual index-equation certificates has exact literal chronological bounds. -/
+theorem y322TCIndexAllowedBlock (block : Fin 171) (i : Fin 1024) :
+    y322TCIndexAllowedAt (block.val * 1024 + i.val) := by
+  fin_cases block
+  · exact y322TCIndexAllowed000 i
+  · exact y322TCIndexAllowed001 i
+  · exact y322TCIndexAllowed002 i
+  · exact y322TCIndexAllowed003 i
+  · exact y322TCIndexAllowed004 i
+  · exact y322TCIndexAllowed005 i
+  · exact y322TCIndexAllowed006 i
+  · exact y322TCIndexAllowed007 i
+  · exact y322TCIndexAllowed008 i
+  · exact y322TCIndexAllowed009 i
+  · exact y322TCIndexAllowed010 i
+  · exact y322TCIndexAllowed011 i
+  · exact y322TCIndexAllowed012 i
+  · exact y322TCIndexAllowed013 i
+  · exact y322TCIndexAllowed014 i
+  · exact y322TCIndexAllowed015 i
+  · exact y322TCIndexAllowed016 i
+  · exact y322TCIndexAllowed017 i
+  · exact y322TCIndexAllowed018 i
+  · exact y322TCIndexAllowed019 i
+  · exact y322TCIndexAllowed020 i
+  · exact y322TCIndexAllowed021 i
+  · exact y322TCIndexAllowed022 i
+  · exact y322TCIndexAllowed023 i
+  · exact y322TCIndexAllowed024 i
+  · exact y322TCIndexAllowed025 i
+  · exact y322TCIndexAllowed026 i
+  · exact y322TCIndexAllowed027 i
+  · exact y322TCIndexAllowed028 i
+  · exact y322TCIndexAllowed029 i
+  · exact y322TCIndexAllowed030 i
+  · exact y322TCIndexAllowed031 i
+  · exact y322TCIndexAllowed032 i
+  · exact y322TCIndexAllowed033 i
+  · exact y322TCIndexAllowed034 i
+  · exact y322TCIndexAllowed035 i
+  · exact y322TCIndexAllowed036 i
+  · exact y322TCIndexAllowed037 i
+  · exact y322TCIndexAllowed038 i
+  · exact y322TCIndexAllowed039 i
+  · exact y322TCIndexAllowed040 i
+  · exact y322TCIndexAllowed041 i
+  · exact y322TCIndexAllowed042 i
+  · exact y322TCIndexAllowed043 i
+  · exact y322TCIndexAllowed044 i
+  · exact y322TCIndexAllowed045 i
+  · exact y322TCIndexAllowed046 i
+  · exact y322TCIndexAllowed047 i
+  · exact y322TCIndexAllowed048 i
+  · exact y322TCIndexAllowed049 i
+  · exact y322TCIndexAllowed050 i
+  · exact y322TCIndexAllowed051 i
+  · exact y322TCIndexAllowed052 i
+  · exact y322TCIndexAllowed053 i
+  · exact y322TCIndexAllowed054 i
+  · exact y322TCIndexAllowed055 i
+  · exact y322TCIndexAllowed056 i
+  · exact y322TCIndexAllowed057 i
+  · exact y322TCIndexAllowed058 i
+  · exact y322TCIndexAllowed059 i
+  · exact y322TCIndexAllowed060 i
+  · exact y322TCIndexAllowed061 i
+  · exact y322TCIndexAllowed062 i
+  · exact y322TCIndexAllowed063 i
+  · exact y322TCIndexAllowed064 i
+  · exact y322TCIndexAllowed065 i
+  · exact y322TCIndexAllowed066 i
+  · exact y322TCIndexAllowed067 i
+  · exact y322TCIndexAllowed068 i
+  · exact y322TCIndexAllowed069 i
+  · exact y322TCIndexAllowed070 i
+  · exact y322TCIndexAllowed071 i
+  · exact y322TCIndexAllowed072 i
+  · exact y322TCIndexAllowed073 i
+  · exact y322TCIndexAllowed074 i
+  · exact y322TCIndexAllowed075 i
+  · exact y322TCIndexAllowed076 i
+  · exact y322TCIndexAllowed077 i
+  · exact y322TCIndexAllowed078 i
+  · exact y322TCIndexAllowed079 i
+  · exact y322TCIndexAllowed080 i
+  · exact y322TCIndexAllowed081 i
+  · exact y322TCIndexAllowed082 i
+  · exact y322TCIndexAllowed083 i
+  · exact y322TCIndexAllowed084 i
+  · exact y322TCIndexAllowed085 i
+  · exact y322TCIndexAllowed086 i
+  · exact y322TCIndexAllowed087 i
+  · exact y322TCIndexAllowed088 i
+  · exact y322TCIndexAllowed089 i
+  · exact y322TCIndexAllowed090 i
+  · exact y322TCIndexAllowed091 i
+  · exact y322TCIndexAllowed092 i
+  · exact y322TCIndexAllowed093 i
+  · exact y322TCIndexAllowed094 i
+  · exact y322TCIndexAllowed095 i
+  · exact y322TCIndexAllowed096 i
+  · exact y322TCIndexAllowed097 i
+  · exact y322TCIndexAllowed098 i
+  · exact y322TCIndexAllowed099 i
+  · exact y322TCIndexAllowed100 i
+  · exact y322TCIndexAllowed101 i
+  · exact y322TCIndexAllowed102 i
+  · exact y322TCIndexAllowed103 i
+  · exact y322TCIndexAllowed104 i
+  · exact y322TCIndexAllowed105 i
+  · exact y322TCIndexAllowed106 i
+  · exact y322TCIndexAllowed107 i
+  · exact y322TCIndexAllowed108 i
+  · exact y322TCIndexAllowed109 i
+  · exact y322TCIndexAllowed110 i
+  · exact y322TCIndexAllowed111 i
+  · exact y322TCIndexAllowed112 i
+  · exact y322TCIndexAllowed113 i
+  · exact y322TCIndexAllowed114 i
+  · exact y322TCIndexAllowed115 i
+  · exact y322TCIndexAllowed116 i
+  · exact y322TCIndexAllowed117 i
+  · exact y322TCIndexAllowed118 i
+  · exact y322TCIndexAllowed119 i
+  · exact y322TCIndexAllowed120 i
+  · exact y322TCIndexAllowed121 i
+  · exact y322TCIndexAllowed122 i
+  · exact y322TCIndexAllowed123 i
+  · exact y322TCIndexAllowed124 i
+  · exact y322TCIndexAllowed125 i
+  · exact y322TCIndexAllowed126 i
+  · exact y322TCIndexAllowed127 i
+  · exact y322TCIndexAllowed128 i
+  · exact y322TCIndexAllowed129 i
+  · exact y322TCIndexAllowed130 i
+  · exact y322TCIndexAllowed131 i
+  · exact y322TCIndexAllowed132 i
+  · exact y322TCIndexAllowed133 i
+  · exact y322TCIndexAllowed134 i
+  · exact y322TCIndexAllowed135 i
+  · exact y322TCIndexAllowed136 i
+  · exact y322TCIndexAllowed137 i
+  · exact y322TCIndexAllowed138 i
+  · exact y322TCIndexAllowed139 i
+  · exact y322TCIndexAllowed140 i
+  · exact y322TCIndexAllowed141 i
+  · exact y322TCIndexAllowed142 i
+  · exact y322TCIndexAllowed143 i
+  · exact y322TCIndexAllowed144 i
+  · exact y322TCIndexAllowed145 i
+  · exact y322TCIndexAllowed146 i
+  · exact y322TCIndexAllowed147 i
+  · exact y322TCIndexAllowed148 i
+  · exact y322TCIndexAllowed149 i
+  · exact y322TCIndexAllowed150 i
+  · exact y322TCIndexAllowed151 i
+  · exact y322TCIndexAllowed152 i
+  · exact y322TCIndexAllowed153 i
+  · exact y322TCIndexAllowed154 i
+  · exact y322TCIndexAllowed155 i
+  · exact y322TCIndexAllowed156 i
+  · exact y322TCIndexAllowed157 i
+  · exact y322TCIndexAllowed158 i
+  · exact y322TCIndexAllowed159 i
+  · exact y322TCIndexAllowed160 i
+  · exact y322TCIndexAllowed161 i
+  · exact y322TCIndexAllowed162 i
+  · exact y322TCIndexAllowed163 i
+  · exact y322TCIndexAllowed164 i
+  · exact y322TCIndexAllowed165 i
+  · exact y322TCIndexAllowed166 i
+  · exact y322TCIndexAllowed167 i
+  · exact y322TCIndexAllowed168 i
+  · exact y322TCIndexAllowed169 i
+  · exact y322TCIndexAllowed170 i
+
+/-- Every full table-edge certificate names only actual letters, sources and earlier equations. -/
+theorem y322TCIndexRaw_allowed (i : Fin 174819) :
+    (y322TCIndexRaw i).Allowed 48648 77243 i.val := by
+  let block : Fin 171 := ⟨i.val / 1024, by omega⟩
+  let offset : Fin 1024 := ⟨i.val % 1024, Nat.mod_lt _ (by decide)⟩
+  have h := y322TCIndexAllowedBlock block offset
+  have he : block.val * 1024 + offset.val = i.val := by
+    dsimp [block, offset]
+    omega
+  rw [he] at h
+  simpa only [y322TCIndexAllowedAt, dite_eq_left i.isLt] using h
+
+/-- The exact literal table-edge proof program with all finite references decoded faithfully. -/
+def y322TCIndexProgram : Y322ContextEquationProgram (Fin 48648) (Fin 77243) 174819 :=
+  y322RawContextProgram 48648 77243 y322TCIndexRaw y322TCIndexRaw_allowed
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
