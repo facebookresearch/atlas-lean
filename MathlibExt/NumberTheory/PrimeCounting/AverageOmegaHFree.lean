@@ -1177,9 +1177,9 @@ private theorem card_hfree_eq_sum_moebius_mul_div (h N : ℕ) (hh : 1 ≤ h) :
         Finset.sum_congr rfl hstep
     _ = ∑ d ∈ Finset.Icc 1 N, moebius d * ((N / d ^ h : ℕ) : ℤ) := hswap
 
--- N6: Mertens II for primes, from the von Mangoldt form (N4) and the
--- prime-power correction (N5).
-private theorem abs_sum_prime_inv_sub_loglog_le :
+/-- **Mertens' second theorem**: `∑_{p ≤ x} 1/p = log log x + O(1)`, uniformly for `x ≥ 2`.
+Proved from the von Mangoldt form and the prime-power correction. -/
+theorem abs_sum_prime_inv_sub_loglog_le :
     ∃ C : ℝ, ∀ x : ℝ, 2 ≤ x →
       |∑ p ∈ (Finset.Icc 1 ⌊x⌋₊).filter Nat.Prime, (1 : ℝ) / p
         - Real.log (Real.log x)| ≤ C := by
@@ -1411,8 +1411,9 @@ private theorem abs_nat_div_sub_div_le_one (M b : ℕ) (hb : 0 < b) :
   rw [hdiff]
   exact le_of_lt hfrac
 
--- N11: h-free counting function `x/ζ(h) + O(√x)`.
-private theorem abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0 ≤ y) :
+/-- **Counting `h`-free numbers.** For `h ≥ 2` and `y ≥ 0`, the number of `n ≤ y` all of whose
+prime exponents are `< h` differs from `y / ζ(h)` by at most `4 √y`. -/
+theorem abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0 ≤ y) :
     |((((Finset.Icc 1 ⌊y⌋₊).filter
         (fun n => ∀ p ∈ n.primeFactors, n.factorization p < h)).card : ℕ) : ℝ)
       - y / (riemannZeta (h : ℂ)).re| ≤ 4 * Real.sqrt y := by

@@ -47,6 +47,8 @@ then `∑_{n ≤ x} (g * ζ)(n) = (∑ g(d) / d) x + O(log x)`.
   `ArithmeticFunction.sum_sigma_zero_sub_mul_log_isBigO`: `∑_{n ≤ x} d(n) = x log x + O(x)`.
 * `Nat.abs_sum_coprime_sub_totient_div_mul_sq_le`:
   `∑_{n ≤ x, (n, k) = 1} n = φ(k) / (2k) · x² + O(d(k) x)`, uniformly in `k` and `x`.
+* `Nat.sum_div_totient_isBigO_id`, `Nat.sum_one_div_totient_isBigO_log`:
+  `∑_{n ≤ x} n / φ(n) = O(x)` and `∑_{n ≤ x} 1 / φ(n) = O(log x)`.
 -/
 
 @[expose] public section
@@ -675,5 +677,226 @@ theorem abs_sum_coprime_sub_totient_div_mul_sq_le {k : ℕ} (hk0 : k ≠ 0) {x :
             - (k.totient : ℝ) / (2 * k) * x ^ 2| := abs_sub_le _ _ _
     _ ≤ (k.divisors.card : ℝ) * x + x := by linarith
     _ ≤ 2 * (k.divisors.card : ℝ) * x := by nlinarith
+
+/-- `∑_{n ≤ x} n / φ(n) = O(x)`. -/
+theorem sum_div_totient_isBigO_id :
+    (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, (n : ℝ) / (n.totient : ℝ)) =O[atTop] fun x : ℝ => x := by
+  classical
+  -- `n / φ n = ∏_{p ∣ n} (1 + 1/(p-1)) = ∑_{t ⊆ pf n} ∏_{p ∈ t} 1/(p-1)`; swap and count.
+  set g : ℕ → ℝ := fun p => 1 / ((p : ℝ) - 1) with hg
+  set h : ℕ → ℝ := fun p => 1 / ((p : ℝ) * ((p : ℝ) - 1)) with hh
+  have hS : Summable fun n : ℕ => (1 : ℝ) / (n : ℝ) ^ 2 :=
+    Real.summable_one_div_nat_pow.2 one_lt_two
+  refine IsBigO.of_bound (Real.exp (2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2)) ?_
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
+  set N := ⌊x⌋₊ with hN
+  set P := (range (N + 1)).filter Nat.Prime with hP
+  have hrat : ∀ n ∈ Ioc 0 N,
+      (n : ℝ) / (n.totient : ℝ) = ∑ t ∈ n.primeFactors.powerset, ∏ p ∈ t, g p := by
+    intro n hn
+    have hn1 : 0 < n := (mem_Ioc.1 hn).1
+    have hr : (n.totient : ℝ) = n * ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹) := by
+      have := congrArg (fun q : ℚ => (q : ℝ)) (Nat.totient_eq_mul_prod_factors n)
+      push_cast at this
+      exact this
+    rw [← prod_one_add, hr]
+    have hnpos : (0 : ℝ) < n := by exact_mod_cast hn1
+    have hfac : ∀ p ∈ n.primeFactors, (1 + g p) * (1 - (p : ℝ)⁻¹) = 1 := by
+      intro p hp
+      have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast (Nat.prime_of_mem_primeFactors hp).two_le
+      have h1 : (p : ℝ) - 1 ≠ 0 := by linarith
+      have h2 : (p : ℝ) ≠ 0 := by linarith
+      simp only [hg]
+      field_simp
+      ring
+    have hprod : (∏ p ∈ n.primeFactors, (1 + g p)) * ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹)
+        = 1 := by
+      rw [← prod_mul_distrib]; exact prod_eq_one hfac
+    have hne : (∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹)) ≠ 0 := by
+      intro h0; rw [h0, mul_zero] at hprod; exact zero_ne_one hprod
+    rw [div_eq_iff (mul_ne_zero hnpos.ne' hne)]
+    linear_combination (-(n : ℝ)) * hprod
+  have hsplit : ∀ n ∈ Ioc 0 N, ∑ t ∈ n.primeFactors.powerset, ∏ p ∈ t, g p
+      = ∑ t ∈ P.powerset, if t ⊆ n.primeFactors then ∏ p ∈ t, g p else 0 := by
+    intro n hn
+    rw [← sum_filter]
+    congr 1
+    ext t
+    simp only [mem_powerset, mem_filter, hP]
+    constructor
+    · intro ht
+      refine ⟨fun p hp => ?_, ht⟩
+      have hpf := ht hp
+      have hle := Nat.le_of_mem_primeFactors hpf
+      simp only [mem_filter, mem_range]
+      exact ⟨by have := (mem_Ioc.1 hn).2; omega, Nat.prime_of_mem_primeFactors hpf⟩
+    · exact fun h => h.2
+  have hinner : ∀ t ∈ P.powerset,
+      (∑ n ∈ Ioc 0 N, if t ⊆ n.primeFactors then ∏ p ∈ t, g p else 0) ≤ x * ∏ p ∈ t, h p := by
+    intro t ht
+    rw [← sum_filter, sum_const, nsmul_eq_mul]
+    have hG : 0 ≤ ∏ p ∈ t, g p := by
+      refine prod_nonneg fun p hp => ?_
+      have hp2 : (2 : ℝ) ≤ p := by
+        have := (mem_filter.1 (mem_powerset.1 ht hp)).2.two_le
+        exact_mod_cast this
+      simp only [hg]; exact div_nonneg zero_le_one (by linarith)
+    have hdpos : (0 : ℝ) < ∏ p ∈ t, (p : ℝ) := by
+      refine prod_pos fun p hp => ?_
+      have := (mem_filter.1 (mem_powerset.1 ht hp)).2.pos
+      exact_mod_cast this
+    have hcard : ((filter (fun n => t ⊆ n.primeFactors) (Ioc 0 N)).card : ℝ)
+        ≤ x / ∏ p ∈ t, (p : ℝ) := by
+      have hsub : filter (fun n => t ⊆ n.primeFactors) (Ioc 0 N)
+          ⊆ filter (fun n => (∏ p ∈ t, p) ∣ n) (Ioc 0 N) := by
+        intro n hn
+        simp only [mem_filter] at hn ⊢
+        exact ⟨hn.1, (prod_dvd_prod_of_subset _ _ _ hn.2).trans (Nat.prod_primeFactors_dvd n)⟩
+      have h1 := card_le_card hsub
+      rw [Nat.Ioc_filter_dvd_card_eq_div] at h1
+      have h2 : ((filter (fun n => t ⊆ n.primeFactors) (Ioc 0 N)).card : ℝ)
+          ≤ ((N / ∏ p ∈ t, p : ℕ) : ℝ) := by exact_mod_cast h1
+      refine h2.trans (Nat.cast_div_le.trans ?_)
+      push_cast
+      exact div_le_div_of_nonneg_right (Nat.floor_le hx) hdpos.le
+    calc ((filter (fun n => t ⊆ n.primeFactors) (Ioc 0 N)).card : ℝ) * ∏ p ∈ t, g p
+        ≤ (x / ∏ p ∈ t, (p : ℝ)) * ∏ p ∈ t, g p := mul_le_mul_of_nonneg_right hcard hG
+      _ = x * ∏ p ∈ t, h p := by
+          rw [div_mul_eq_mul_div, mul_div_assoc, ← prod_div_distrib]
+          congr 1
+          refine prod_congr rfl fun p _ => ?_
+          simp only [hg, hh]
+          rw [div_div, mul_comm]
+  have hhnn : ∀ p, 0 ≤ h p := by
+    intro p
+    simp only [hh]
+    rcases Nat.lt_or_ge p 1 with hp | hp
+    · interval_cases p; simp
+    · have : (1 : ℝ) ≤ p := by exact_mod_cast hp
+      exact div_nonneg zero_le_one (mul_nonneg (by linarith) (by linarith))
+  have hsumh : ∑ p ∈ P, h p ≤ 2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2 := by
+    calc ∑ p ∈ P, h p ≤ ∑ p ∈ P, 2 * ((1 : ℝ) / (p : ℝ) ^ 2) := by
+          refine sum_le_sum fun p hp => ?_
+          have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast (mem_filter.1 hp).2.two_le
+          simp only [hh]
+          rw [div_le_iff₀ (by nlinarith)]
+          field_simp
+          nlinarith
+      _ = 2 * ∑ p ∈ P, (1 : ℝ) / (p : ℝ) ^ 2 := by rw [mul_sum]
+      _ ≤ 2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2 := by
+          gcongr
+          exact hS.sum_le_tsum _ (fun n _ => by positivity)
+  have hsum_nn : 0 ≤ ∑ n ∈ Ioc 0 N, (n : ℝ) / (n.totient : ℝ) :=
+    sum_nonneg fun n _ => by positivity
+  rw [Real.norm_of_nonneg hsum_nn, Real.norm_of_nonneg hx]
+  calc ∑ n ∈ Ioc 0 N, (n : ℝ) / (n.totient : ℝ)
+        = ∑ n ∈ Ioc 0 N, ∑ t ∈ P.powerset,
+            (if t ⊆ n.primeFactors then ∏ p ∈ t, g p else 0) := by
+        refine sum_congr rfl fun n hn => ?_
+        rw [hrat n hn, hsplit n hn]
+    _ = ∑ t ∈ P.powerset, ∑ n ∈ Ioc 0 N,
+            (if t ⊆ n.primeFactors then ∏ p ∈ t, g p else 0) := sum_comm
+    _ ≤ ∑ t ∈ P.powerset, x * ∏ p ∈ t, h p := sum_le_sum hinner
+    _ = x * ∏ p ∈ P, (1 + h p) := by rw [← mul_sum, prod_one_add]
+    _ ≤ x * Real.exp (∑ p ∈ P, h p) := by
+        gcongr
+        exact Real.prod_one_add_le_exp_sum P hhnn
+    _ ≤ x * Real.exp (2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2) := by gcongr
+    _ = Real.exp (2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2) * x := mul_comm _ _
+
+/-- `∑_{n ≤ x} 1 / φ(n) = O(log x)`. -/
+theorem sum_one_div_totient_isBigO_log :
+    (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, 1 / (n.totient : ℝ)) =O[atTop] fun x : ℝ => Real.log x := by
+  classical
+  -- Discrete partial summation: `∑ a n / n = S N / N + ∑_{n<N} S n / (n (n+1))`.
+  set a : ℕ → ℝ := fun n => (n : ℝ) / (n.totient : ℝ) with ha
+  set S : ℕ → ℝ := fun N => ∑ n ∈ Ioc 0 N, a n with hS
+  have ha0 : ∀ n, 0 ≤ a n := fun n => by simp only [ha]; positivity
+  have hSmono : ∀ {m n : ℕ}, m ≤ n → S m ≤ S n := fun hmn =>
+    sum_le_sum_of_subset_of_nonneg (Ioc_subset_Ioc_right hmn) (fun i _ _ => ha0 i)
+  have hS0 : ∀ n, 0 ≤ S n := fun n => sum_nonneg fun i _ => ha0 i
+  obtain ⟨C, hC⟩ := sum_div_totient_isBigO_id.bound
+  obtain ⟨X, hX⟩ := eventually_atTop.1 hC
+  set D := S ⌈X⌉₊ with hD
+  set K := |C| + D with hK
+  have hD0 : 0 ≤ D := hS0 _
+  have hSle : ∀ n : ℕ, 1 ≤ n → S n ≤ K * n := by
+    intro n hn
+    have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
+    have h1 : S n ≤ |C| * n + D := by
+      by_cases hXn : X ≤ n
+      · have := hX n hXn
+        rw [Nat.floor_natCast] at this
+        have h2 : S n ≤ C * n := by
+          rw [Real.norm_of_nonneg (hS0 n), Real.norm_of_nonneg (by positivity)] at this
+          exact this
+        nlinarith [le_abs_self C]
+      · have : n ≤ ⌈X⌉₊ := by
+          have : (n : ℝ) ≤ ⌈X⌉₊ := (not_le.1 hXn).le.trans (Nat.le_ceil X)
+          exact_mod_cast this
+        have := hSmono this
+        nlinarith [abs_nonneg C]
+    nlinarith
+  set T : ℕ → ℝ := fun N => ∑ n ∈ Ioc 0 N, 1 / (n.totient : ℝ) with hT
+  have hid : ∀ N, T N = S N / N + ∑ n ∈ range N, S n / (n * (n + 1)) := by
+    intro N
+    induction N with
+    | zero => simp [hT, hS]
+    | succ N ih =>
+      have hT1 : T (N + 1) = T N + 1 / ((N + 1).totient : ℝ) := by
+        simp only [hT]; rw [sum_Ioc_succ_top (by omega)]
+      have hS1 : S (N + 1) = S N + a (N + 1) := by
+        simp only [hS]; rw [sum_Ioc_succ_top (by omega)]
+      rw [hT1, ih, hS1, sum_range_succ]
+      have hN1 : ((N + 1 : ℕ) : ℝ) ≠ 0 := by positivity
+      have hdiv : a (N + 1) / ((N + 1 : ℕ) : ℝ) = 1 / ((N + 1).totient : ℝ) := by
+        simp only [ha]; field_simp
+      rw [← hdiv]
+      rcases Nat.eq_zero_or_pos N with h0 | hpos
+      · subst h0; simp [hS]
+      · have hN : (N : ℝ) ≠ 0 := by positivity
+        push_cast at hN1 ⊢
+        field_simp
+        ring
+  have hbound : ∀ N : ℕ, 1 ≤ N → T N ≤ K * (2 + Real.log N) := by
+    intro N hN
+    have hN' : (0 : ℝ) < N := by exact_mod_cast hN
+    have hK0 : 0 ≤ K := by positivity
+    have h1 : S N / N ≤ K := by
+      rw [div_le_iff₀ hN']; exact hSle N hN
+    have h2 : ∀ n ∈ range N, S n / (n * (n + 1)) ≤ K * (1 / ((n : ℝ) + 1)) := by
+      intro n _
+      rcases Nat.eq_zero_or_pos n with h0 | hpos
+      · subst h0; simpa using hK0
+      · have hn' : (0 : ℝ) < n := by exact_mod_cast hpos
+        rw [div_le_iff₀ (by positivity)]
+        have := hSle n hpos
+        have : K * (1 / ((n : ℝ) + 1)) * (n * (n + 1)) = K * n := by field_simp
+        linarith
+    have hH : ∑ n ∈ range N, (1 / ((n : ℝ) + 1)) ≤ 1 + Real.log N := by
+      have := harmonic_le_one_add_log N
+      simp only [harmonic] at this
+      push_cast at this
+      simpa [one_div] using this
+    rw [hid N]
+    calc S N / N + ∑ n ∈ range N, S n / (n * (n + 1))
+        ≤ K + ∑ n ∈ range N, K * (1 / ((n : ℝ) + 1)) := by
+          gcongr with n hn; exact h2 n hn
+      _ = K + K * ∑ n ∈ range N, (1 / ((n : ℝ) + 1)) := by rw [mul_sum]
+      _ ≤ K + K * (1 + Real.log N) := by gcongr
+      _ = K * (2 + Real.log N) := by ring
+  refine IsBigO.of_bound (3 * K) ?_
+  filter_upwards [eventually_ge_atTop (Real.exp 1)] with x hx
+  have hx1 : 1 ≤ x := (Real.one_le_exp zero_le_one).trans hx
+  have hN : 1 ≤ ⌊x⌋₊ := Nat.le_floor (by exact_mod_cast hx1)
+  have hlogx : 1 ≤ Real.log x := (Real.le_log_iff_exp_le (by linarith)).2 hx
+  have hlogN : Real.log ⌊x⌋₊ ≤ Real.log x :=
+    Real.log_le_log (by exact_mod_cast hN) (Nat.floor_le (by linarith))
+  have hT0 : 0 ≤ T ⌊x⌋₊ := sum_nonneg fun n _ => by positivity
+  have hK0 : 0 ≤ K := by positivity
+  change ‖T ⌊x⌋₊‖ ≤ 3 * K * ‖Real.log x‖
+  rw [Real.norm_of_nonneg hT0, Real.norm_of_nonneg (by linarith)]
+  have := hbound _ hN
+  nlinarith
 
 end Nat

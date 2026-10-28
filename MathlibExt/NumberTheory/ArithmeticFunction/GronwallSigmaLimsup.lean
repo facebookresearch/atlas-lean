@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
+public import Mathlib.NumberTheory.PrimeCounting
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import Mathlib.NumberTheory.LSeries.RiemannZeta
@@ -38,7 +39,8 @@ namespace MathlibExt.NumberTheory.ArithmeticFunction.GronwallSigmaLimsupWanted
 /-!
 # Gronwall's maximal order of σ
 This file proves Gronwall's exact maximal-order theorem for the divisor-sum
-function.
+function. Along the way it proves Mertens' third theorem, recorded publicly as
+`Nat.tendsto_prod_primesLE_one_sub_inv_mul_log`.
 -/
 
 -- Proof roadmap. Names are chosen to avoid shadowing Mathlib.
@@ -3254,3 +3256,19 @@ theorem gronwall_sigma_limsup :
 
 end MathlibExt.NumberTheory.ArithmeticFunction.GronwallSigmaLimsupWanted
 end
+
+namespace Nat
+
+open MathlibExt.NumberTheory.ArithmeticFunction.GronwallSigmaLimsupWanted in
+/-- **Mertens' third theorem**: `(∏_{p ≤ x} (1 - 1/p)) · log x → e^{-γ}` as `x → ∞`. -/
+theorem tendsto_prod_primesLE_one_sub_inv_mul_log :
+    Filter.Tendsto (fun x : ℝ => (∏ p ∈ primesLE ⌊x⌋₊, (1 - (p : ℝ)⁻¹)) * Real.log x)
+      Filter.atTop (nhds (Real.exp (-Real.eulerMascheroniConstant))) := by
+  have h := (tendsto_mertensP_div_log).inv₀ (Real.exp_pos _).ne'
+  rw [← Real.exp_neg] at h
+  refine h.congr' ?_
+  filter_upwards with x
+  simp only [mertensP, Finset.prod_inv_distrib]
+  rw [inv_div, div_eq_mul_inv, inv_inv, mul_comm]
+
+end Nat

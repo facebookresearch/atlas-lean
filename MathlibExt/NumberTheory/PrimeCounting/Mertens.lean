@@ -27,6 +27,7 @@ Legendre's identity `log N! = ∑_{d ≤ N} Λ(d) ⌊N / d⌋` with Stirling's l
 * `Chebyshev.abs_sum_vonMangoldt_div_sub_log_le`: Mertens' first theorem with the explicit
   constant `log 4 + 6`.
 * `Chebyshev.sum_vonMangoldt_div_sub_log_isBigO_one`: the same statement as a `IsBigO` bound.
+* `Chebyshev.sum_primesLE_log_div_le`: the upper bound `∑_{p ≤ N} log p / p ≤ log N + O(1)`.
 -/
 
 @[expose] public section
@@ -193,5 +194,24 @@ theorem sum_vonMangoldt_div_sub_log_isBigO_one :
   refine Asymptotics.IsBigO.of_bound (Real.log 4 + 6) ?_
   filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with x hx
   simpa using abs_sum_vonMangoldt_div_sub_log_le x hx
+
+/-- The prime part of Mertens' first theorem, as an upper bound:
+`∑_{p ≤ N} log p / p ≤ log N + log 4 + 6` for every `N ≥ 1`. -/
+theorem sum_primesLE_log_div_le (N : ℕ) (hN : 1 ≤ N) :
+    ∑ p ∈ Nat.primesLE N, Real.log p / (p : ℝ) ≤ Real.log N + (Real.log 4 + 6) := by
+  have h := abs_sum_vonMangoldt_div_sub_log_le (N : ℝ) (by exact_mod_cast hN)
+  rw [Nat.floor_natCast] at h
+  have hle : ∑ p ∈ Nat.primesLE N, Real.log p / (p : ℝ) ≤
+      ∑ n ∈ Finset.Ioc 0 N, vonMangoldt n / (n : ℝ) := by
+    calc ∑ p ∈ Nat.primesLE N, Real.log p / (p : ℝ)
+        = ∑ p ∈ Nat.primesLE N, vonMangoldt p / (p : ℝ) :=
+          Finset.sum_congr rfl fun p hp => by
+            rw [vonMangoldt_apply_prime (Nat.prime_of_mem_primesLE hp)]
+      _ ≤ _ := by
+          refine Finset.sum_le_sum_of_subset_of_nonneg (fun p hp => ?_)
+            fun n _ _ => div_nonneg vonMangoldt_nonneg (Nat.cast_nonneg _)
+          have := Nat.mem_primesLE.mp hp
+          exact Finset.mem_Ioc.mpr ⟨this.2.pos, this.1⟩
+  linarith [(abs_le.mp h).2]
 
 end Chebyshev

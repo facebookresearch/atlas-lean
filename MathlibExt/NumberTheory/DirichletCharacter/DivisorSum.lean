@@ -37,6 +37,8 @@ with an absolute implied constant, and its weighted variant
 
 ## Main statements
 
+* `ZMod.norm_sum_Ico_le_of_sum_eq_zero`: `‖∑_{m ≤ n < m'} Φ n‖ ≤ ∑_a ‖Φ a‖` for every
+  `Φ : ZMod q → E` with total sum `0`.
 * `DirichletCharacter.norm_sum_Ico_le`: `‖∑_{m ≤ n < m'} χ n‖ ≤ q` for `χ ≠ 1`.
 * `DirichletCharacter.norm_sum_Ioc_mul_le_of_antitoneOn`: Abel's inequality for `χ`.
 * `DirichletCharacter.norm_LFunction_one_sub_sum_Ioc_le`: the tail of `∑ χ n / n`.
@@ -55,6 +57,67 @@ open Finset Filter Asymptotics ArithmeticFunction
 
 open scoped Topology ArithmeticFunction.zeta
 
+namespace ZMod
+
+variable {E : Type*} {q : ℕ} [NeZero q]
+
+/-- A function on `ZMod q` summed over `q` consecutive integers gives its total sum. -/
+theorem sum_Ico_add_eq_sum [AddCommMonoid E] (Φ : ZMod q → E) (m : ℕ) :
+    ∑ n ∈ Ico m (m + q), Φ n = ∑ a, Φ a := by
+  rw [sum_Ico_eq_sum_range, Nat.add_sub_cancel_left]
+  have hshift : ∑ k ∈ range q, Φ ((m + k : ℕ) : ZMod q) = ∑ a : ZMod q, Φ ((m : ZMod q) + a) := by
+    refine sum_nbij' (fun k ↦ (k : ZMod q)) (fun a ↦ a.val) (fun _ _ ↦ mem_univ _)
+      (fun a _ ↦ mem_range.2 (ZMod.val_lt a)) (fun k hk ↦ ZMod.val_cast_of_lt (mem_range.1 hk))
+      (fun a _ ↦ by simp) (fun k _ ↦ by push_cast; ring_nf)
+  rw [hshift]
+  exact Fintype.sum_equiv (Equiv.addLeft (m : ZMod q)) _ _ (fun _ ↦ rfl)
+
+/-- **Sums of a mean-zero periodic function over intervals.** If `Φ : ZMod q → E` has total
+sum `0`, then every sum of `Φ` over an interval of integers has norm at most `∑_a ‖Φ a‖`. -/
+theorem norm_sum_Ico_le_of_sum_eq_zero [SeminormedAddCommGroup E] {Φ : ZMod q → E}
+    (hΦ : ∑ a, Φ a = 0) (m n : ℕ) : ‖∑ k ∈ Ico m n, Φ k‖ ≤ ∑ a, ‖Φ a‖ := by
+  rcases le_or_gt n m with hnm | hmn
+  · simp only [Ico_eq_empty_of_le hnm, sum_empty, norm_zero]
+    exact sum_nonneg fun _ _ ↦ norm_nonneg _
+  have hblocks : ∀ k j : ℕ, ∑ n ∈ Ico j (j + q * k), Φ n = 0 := by
+    intro k
+    induction k with
+    | zero => simp
+    | succ k ih =>
+      intro j
+      rw [show j + q * (k + 1) = (j + q * k) + q by ring,
+        ← sum_Ico_consecutive _ (Nat.le_add_right j (q * k)) (Nat.le_add_right _ q), ih j,
+        sum_Ico_add_eq_sum, hΦ, add_zero]
+  have hq : 0 < q := Nat.pos_of_neZero q
+  set j := m + q * ((n - m) / q)
+  have h1 : m ≤ j := Nat.le_add_right _ _
+  have h2 : j ≤ n := by
+    have := Nat.mul_div_le (n - m) q
+    omega
+  have h3 : n < j + q := by
+    have := Nat.div_add_mod (n - m) q
+    have := Nat.mod_lt (n - m) hq
+    omega
+  rw [← sum_Ico_consecutive _ h1 h2, hblocks, zero_add]
+  -- The remaining block is shorter than `q`, so it meets each residue at most once.
+  have hinj : Set.InjOn (fun k : ℕ ↦ (k : ZMod q)) (Ico j n : Set ℕ) := by
+    intro k hk l hl hkl
+    simp only [coe_Ico, Set.mem_Ico] at hk hl
+    have h := (ZMod.natCast_eq_natCast_iff' k l q).mp hkl
+    have h1 : k - l = 0 :=
+      Nat.eq_zero_of_dvd_of_lt (Nat.dvd_of_mod_eq_zero (Nat.sub_mod_eq_zero_of_mod_eq h))
+        (by omega)
+    have h2 : l - k = 0 :=
+      Nat.eq_zero_of_dvd_of_lt (Nat.dvd_of_mod_eq_zero (Nat.sub_mod_eq_zero_of_mod_eq h.symm))
+        (by omega)
+    omega
+  calc ‖∑ k ∈ Ico j n, Φ k‖ ≤ ∑ k ∈ Ico j n, ‖Φ k‖ := norm_sum_le _ _
+    _ = ∑ a ∈ (Ico j n).image (fun k : ℕ ↦ (k : ZMod q)), ‖Φ a‖ :=
+        (sum_image (f := fun a ↦ ‖Φ a‖) hinj).symm
+    _ ≤ ∑ a, ‖Φ a‖ := sum_le_univ_sum_of_nonneg fun _ ↦ norm_nonneg _
+
+end ZMod
+
 namespace DirichletCharacter
 
 section NormedField
@@ -64,15 +127,8 @@ variable {F : Type*} [NormedField F] {q : ℕ} [NeZero q] {χ : DirichletCharact
 /-- A nontrivial Dirichlet character modulo `q` sums to zero over any `q` consecutive
 integers. -/
 theorem sum_Ico_add_modulus_eq_zero (hχ : χ ≠ 1) (m : ℕ) :
-    ∑ n ∈ Ico m (m + q), χ n = 0 := by
-  rw [sum_Ico_eq_sum_range, Nat.add_sub_cancel_left]
-  have hshift : ∑ k ∈ range q, χ ((m + k : ℕ) : ZMod q) = ∑ a : ZMod q, χ ((m : ZMod q) + a) := by
-    refine sum_nbij' (fun k ↦ (k : ZMod q)) (fun a ↦ a.val) (fun _ _ ↦ mem_univ _)
-      (fun a _ ↦ mem_range.2 (ZMod.val_lt a)) (fun k hk ↦ ZMod.val_cast_of_lt (mem_range.1 hk))
-      (fun a _ ↦ by simp) (fun k _ ↦ by push_cast; ring_nf)
-  rw [hshift]
-  exact (Fintype.sum_equiv (Equiv.addLeft (m : ZMod q)) _ (fun a ↦ χ a) (fun _ ↦ rfl)).trans
-    (MulChar.sum_eq_zero_of_ne_one hχ)
+    ∑ n ∈ Ico m (m + q), χ n = 0 :=
+  (ZMod.sum_Ico_add_eq_sum _ m).trans (MulChar.sum_eq_zero_of_ne_one hχ)
 
 /-- **The trivial bound for character sums.** For a nontrivial Dirichlet character `χ` modulo
 `q`, every sum of `χ` over an interval has norm at most `q`. -/

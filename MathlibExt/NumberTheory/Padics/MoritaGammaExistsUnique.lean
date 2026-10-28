@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.Padics.MoritaGamma
+import MathlibExt.NumberTheory.WilsonPrimePow
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.NumberTheory.Padics.RingHoms
 import Mathlib.RingTheory.ZMod.UnitsCyclic
@@ -27,110 +28,6 @@ import Mathlib.Topology.Separation.CompletelyRegular
 
 section
 namespace MetaMathlibExt
-
-/-- The element `-1` of the unit group mod `p ^ (s+1)` has order two. -/
-private lemma orderOf_neg_one_units_prime_pow (p s : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) :
-    orderOf (-1 : (ZMod (p ^ (s + 1)))ˣ) = 2 := by
-  have h1 : (-1 : (ZMod (p ^ (s + 1)))ˣ) ≠ 1 := by
-    rw [Ne, Units.ext_iff]
-    simp only [Units.val_neg, Units.val_one]
-    have h23 : 2 < p ^ (s + 1) := by
-      have h2le := (Fact.out : p.Prime).two_le
-      have h3 : 3 ≤ p := by omega
-      calc 2 < 3 := by norm_num
-        _ ≤ p := h3
-        _ ≤ p ^ (s + 1) := Nat.le_self_pow (Nat.succ_ne_zero s) p
-    have : Fact (2 < p ^ (s + 1)) := ⟨h23⟩
-    exact ZMod.neg_one_ne_one
-  have h2 : (-1 : (ZMod (p ^ (s + 1)))ˣ) ^ 2 = 1 := by
-    rw [Units.ext_iff, Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, neg_one_sq]
-  have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  exact orderOf_eq_prime h2 h1
-
-/-- In the unit group mod an odd prime power, `x ^ 2 = 1` forces `x = 1` or `x = -1`. -/
-private lemma sq_eq_one_iff_units_prime_pow (p s : ℕ) [Fact p.Prime] (hp2 : p ≠ 2)
-    (x : (ZMod (p ^ (s + 1)))ˣ) (hx : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
-  have : IsCyclic (ZMod (p ^ (s + 1)))ˣ :=
-    ZMod.isCyclic_units_of_prime_pow p Fact.out hp2 (s + 1)
-  have hneg : orderOf (-1 : (ZMod (p ^ (s + 1)))ˣ) = 2 :=
-    orderOf_neg_one_units_prime_pow p s hp2
-  have h2dvd : 2 ∣ Fintype.card (ZMod (p ^ (s + 1)))ˣ := hneg ▸ orderOf_dvd_card
-  have hcount : (Finset.univ.filter
-      (fun a : (ZMod (p ^ (s + 1)))ˣ => orderOf a = 2)).card = 1 :=
-    (IsCyclic.card_orderOf_eq_totient (α := (ZMod (p ^ (s + 1)))ˣ) (d := 2) h2dvd).trans
-      Nat.totient_two
-  obtain ⟨a, ha⟩ := Finset.card_eq_one.mp hcount
-  have hx2 : orderOf x = 1 ∨ orderOf x = 2 := by
-    have hdvd := orderOf_dvd_of_pow_eq_one hx
-    rcases (Nat.dvd_prime Nat.prime_two).mp hdvd with h | h
-    · exact Or.inl h
-    · exact Or.inr h
-  rcases hx2 with h | h
-  · exact Or.inl (orderOf_eq_one_iff.mp h)
-  · have hxm : x ∈ ({a} : Finset (ZMod (p ^ (s + 1)))ˣ) := by
-      rw [← ha]
-      exact Finset.mem_filter.mpr ⟨Finset.mem_univ x, h⟩
-    have hnm : (-1 : (ZMod (p ^ (s + 1)))ˣ) ∈ ({a} : Finset (ZMod (p ^ (s + 1)))ˣ) := by
-      rw [← ha]
-      exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hneg⟩
-    rw [Finset.mem_singleton] at hxm hnm
-    exact Or.inr (hxm.trans hnm.symm)
-
-/-- Wilson's theorem for odd prime powers: the product of all units is `-1`. -/
-private lemma prod_units_zmod_prime_pow (p s : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) :
-    ∏ u : (ZMod (p ^ (s + 1)))ˣ, (u : ZMod (p ^ (s + 1))) = -1 := by
-  classical
-  have h1lt : 1 < p ^ (s + 1) := by
-    have h2le := (Fact.out : p.Prime).two_le
-    calc 1 < 2 := by norm_num
-      _ ≤ p := h2le
-      _ ≤ p ^ (s + 1) := Nat.le_self_pow (Nat.succ_ne_zero s) p
-  have : Fact (1 < p ^ (s + 1)) := ⟨h1lt⟩
-  have key := sq_eq_one_iff_units_prime_pow p s hp2
-  have hg1 : ∀ (a : (ZMod (p ^ (s + 1)))ˣ)
-      (_ : a ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ)),
-      ((a : ZMod (p ^ (s + 1))) * (((a⁻¹ : (ZMod (p ^ (s + 1)))ˣ)) : ZMod (p ^ (s + 1))) = 1) := by
-    intro a _
-    rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
-  have hg3 : ∀ (a : (ZMod (p ^ (s + 1)))ˣ)
-      (ha : a ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ)),
-      ((a : ZMod (p ^ (s + 1))) ≠ 1 → a⁻¹ ≠ a) := by
-    intro a ha hne hcon
-    apply hne
-    have hmem : a ≠ (-1 : (ZMod (p ^ (s + 1)))ˣ) := (Finset.mem_erase.mp ha).1
-    have hmul : a * a = a * a⁻¹ := by rw [hcon]
-    have hsq : a ^ 2 = 1 := by
-      rw [sq, hmul]
-      exact mul_inv_cancel a
-    rcases key a hsq with h | h
-    · rw [h]
-      rfl
-    · exact absurd h hmem
-  have hgmem : ∀ (a : (ZMod (p ^ (s + 1)))ˣ)
-      (ha : a ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ)),
-      a⁻¹ ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ) := by
-    intro a ha
-    rw [Finset.mem_erase]
-    refine ⟨?_, Finset.mem_univ _⟩
-    intro hcon
-    have hmem : a ≠ (-1 : (ZMod (p ^ (s + 1)))ˣ) := (Finset.mem_erase.mp ha).1
-    apply hmem
-    have h1 : a = a⁻¹⁻¹ := (inv_inv a).symm
-    rw [h1, hcon]
-    apply Units.ext
-    simp
-  have hg4 : ∀ (a : (ZMod (p ^ (s + 1)))ˣ)
-      (ha : a ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ)),
-      (a⁻¹⁻¹ : (ZMod (p ^ (s + 1)))ˣ) = a := by
-    intro a _
-    exact inv_inv a
-  have hrest : ∏ x ∈ Finset.univ.erase (-1 : (ZMod (p ^ (s + 1)))ˣ),
-      (x : ZMod (p ^ (s + 1))) = 1 :=
-    Finset.prod_involution (fun x _ => x⁻¹) hg1 hg3 hgmem hg4
-  have hmem : (-1 : (ZMod (p ^ (s + 1)))ˣ) ∈ Finset.univ := Finset.mem_univ _
-  conv_lhs => rw [← Finset.insert_erase hmem,
-    Finset.prod_insert (Finset.notMem_erase _ _), hrest, mul_one]
-  simp [Units.val_neg, Units.val_one]
 
 /-- The unit of `ZMod (p ^ (s+1))` attached to `k` with `¬ p ∣ k`. -/
 private noncomputable def unitOfNotDvd (p s k : ℕ) [Fact p.Prime] (hk : ¬ p ∣ k) :
@@ -156,7 +53,7 @@ private lemma prod_range_filter_prime_pow (p s : ℕ) [Fact p.Prime] (hp2 : p �
       _ ≤ p ^ (s + 1) := Nat.le_self_pow (Nat.succ_ne_zero s) p
   have : Fact (1 < p ^ (s + 1)) := ⟨h1lt⟩
   have : NeZero (p ^ (s + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  rw [← prod_units_zmod_prime_pow p s hp2]
+  rw [← ZMod.prod_units_prime_pow_eq_neg_one p s hp2]
   apply Finset.prod_bij (fun k hk => unitOfNotDvd p s k (Finset.mem_filter.mp hk).2)
   · intro a _
     exact Finset.mem_univ _
@@ -192,7 +89,7 @@ private lemma prod_Ico_filter_prime_pow (p s m : ℕ) [Fact p.Prime] (hp2 : p �
   have hpos : 0 < s + 1 := Nat.succ_pos s
   have hPpos : 0 < p ^ (s + 1) := pow_pos (Fact.out : p.Prime).pos _
   have : NeZero (p ^ (s + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  rw [← prod_units_zmod_prime_pow p s hp2]
+  rw [← ZMod.prod_units_prime_pow_eq_neg_one p s hp2]
   apply Finset.prod_bij (fun k hk => unitOfNotDvd p s k (Finset.mem_filter.mp hk).2)
   · intro a _
     exact Finset.mem_univ _
