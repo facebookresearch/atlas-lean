@@ -1,0 +1,191 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedFeasibleAmbientIdentW2nSH
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedFeasibleAmbientIdentW2nSG
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentPairWord
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentTensorXiFastSign
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTwelveTenthScale
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedFeasibleAmbientTwelfthSrcX
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTwelveTenthSrcX
+
+/-! # Checks of the identification gtwelfth:W2- (Twelfth root 2 to Tenth root 8, e = -1)
+
+Letter, composite and label checks; the tensor blocks of both images by fast plans, canonical form
+    and
+exact division; the representations of both images bound to the genuine coordinates. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+namespace GeneratedAxisGlobalIdent
+set_option autoImplicit false
+open GeneratedAxisGlobalTwelveTwelfthIdent
+set_option Elab.async false
+
+/-- The source word. -/
+def fbW2nH : List IdentLetter := fbW2nHW.map Prod.fst
+
+/-- The target word. -/
+def fbW2nG : List IdentLetter := fbW2nGW.map Prod.fst
+
+set_option maxRecDepth 100000 in
+/-- The plan expands to the H word. -/
+theorem fbW2nHPlan_word : planWord fbW2nHPlan = fbW2nH := rfl
+
+set_option maxRecDepth 100000 in
+/-- The runs of the H plan are admissible. -/
+theorem fbW2nHPlan_ok : planOk fbW2nHPlan = true := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The growth bound of the H word. -/
+theorem fbW2nH_growth : tensorWordGrowthAll fbW2nH * 15 = 251658240 := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The denominator factor of the H word. -/
+theorem fbW2nH_den : tensorWordDenAll fbW2nH = 4096 := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The letter data of the H word are certified. -/
+theorem fbW2nH_check : fbW2nHW.all (fun p => identLetterCheckP p.1 p.2) = true := by
+  decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The composite data of the H word evaluate the word on the generators. -/
+theorem fbW2nHD_cols : ∀ i : Fin 24, qmWordP (fbW2nHW.map Prod.snd) (2 ^ i.val, false) =
+    (fld 24 fbW2nHD.colsP i.val, fbW2nHD.coeff.testBit i.val) := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The correction rows of the composite data of the H word. -/
+theorem fbW2nHD_rows : ∀ i : Fin 24,
+    fld 24 fbW2nHD.rowsP i.val = rowsOf (fun j => fld 24 fbW2nHD.colsP j.val) i := by
+  decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The plan expands to the G word. -/
+theorem fbW2nGPlan_word : planWord fbW2nGPlan = fbW2nG := rfl
+
+set_option maxRecDepth 100000 in
+/-- The runs of the G plan are admissible. -/
+theorem fbW2nGPlan_ok : planOk fbW2nGPlan = true := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The growth bound of the G word. -/
+theorem fbW2nG_growth : tensorWordGrowthAll fbW2nG * 15 = 7864320 := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The denominator factor of the G word. -/
+theorem fbW2nG_den : tensorWordDenAll fbW2nG = 512 := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The letter data of the G word are certified. -/
+theorem fbW2nG_check : fbW2nGW.all (fun p => identLetterCheckP p.1 p.2) = true := by
+  decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The composite data of the G word evaluate the word on the generators. -/
+theorem fbW2nGD_cols : ∀ i : Fin 24, qmWordP (fbW2nGW.map Prod.snd) (2 ^ i.val, false) =
+    (fld 24 fbW2nGD.colsP i.val, fbW2nGD.coeff.testBit i.val) := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The correction rows of the composite data of the G word. -/
+theorem fbW2nGD_rows : ∀ i : Fin 24,
+    fld 24 fbW2nGD.rowsP i.val = rowsOf (fun j => fld 24 fbW2nGD.colsP j.val) i := by
+  decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The composite data are packed. -/
+theorem fbW2nD_ok : fbW2nHD.ok = true ∧ fbW2nGD.ok = true := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The transported lists have valid labels. -/
+theorem fbW2nHT_labels : fbW2nHT.all (fun p => decide (p.1 < 98280)) = true := by decide +kernel
+
+set_option maxRecDepth 100000 in
+/-- The transported lists have valid labels. -/
+theorem fbW2nGT_labels : fbW2nGT.all (fun p => decide (p.1 < 98280)) = true := by decide +kernel
+
+/-- The tight packed tensor of the H image (canonical form divided by `2^12`). -/
+def fbW2nHX : List SVec := shiftT 12 (canonT 64 (tensorPlanS 64 fbW2nHPlan fbt12X64))
+
+set_option maxRecDepth 100000 in
+/-- The tight tensor has fields below `2^4` and is exact. -/
+theorem fbW2nHX_chk : colsLtB 64 4 fbW2nHX = true ∧
+    fbW2nHX.map (sscale (2 ^ 12)) = canonT 64 (tensorPlanS 64 fbW2nHPlan fbt12X64) := by
+  decide +kernel
+
+/-- The tensor block of the H image: tight bound and the genuine tensor action. -/
+theorem fbW2nH_tensor : TBnd 64 (2 ^ 4 - 1) fbW2nHX ∧
+    localTensorRepresentation (identWordFiber fbW2nH)
+        (generatedAxisGlobalRationalTensorReal (twelfthSrcVecS 64).ten) =
+      generatedAxisGlobalRationalTensorReal
+        (tensorRat 64 fbW2nHX ((tensorWordDenAll fbW2nH : ℚ) * 32 / 2 ^ 12)) := by
+  have hP := tensorPlanS_actual fbW2nHPlan fbW2nHPlan_ok fbt12X64_bnd
+    (by rw [fbW2nHPlan_word, fbW2nH_growth]; norm_num) 32
+  rw [fbW2nHPlan_word, fbW2nH_growth] at hP
+  have hc := canonT_spec (by norm_num) hP.1 (by norm_num) ((tensorWordDenAll fbW2nH : ℚ) * 32)
+  have hs := tensorRat_shiftT 64 12 4 _ (canonT 64 (tensorPlanS 64 fbW2nHPlan fbt12X64))
+      ((tensorWordDenAll fbW2nH : ℚ) * 32)
+    hc.1 (by norm_num) (by norm_num) fbW2nHX_chk.1 fbW2nHX_chk.2
+  refine ⟨hs.1, ?_⟩
+  rw [fbt12V_ten64, hP.2, ← hc.2, hs.2]
+  rfl
+
+/-- The tight packed tensor of the G image (canonical form divided by `2^9`). -/
+def fbW2nGX : List SVec := shiftT 9 (canonT 64 (tensorPlanS 64 fbW2nGPlan t10X64))
+
+set_option maxRecDepth 100000 in
+/-- The tight tensor has fields below `2^4` and is exact. -/
+theorem fbW2nGX_chk : colsLtB 64 4 fbW2nGX = true ∧
+    fbW2nGX.map (sscale (2 ^ 9)) = canonT 64 (tensorPlanS 64 fbW2nGPlan t10X64) := by
+  decide +kernel
+
+/-- The tensor block of the G image: tight bound and the genuine tensor action. -/
+theorem fbW2nG_tensor : TBnd 64 (2 ^ 4 - 1) fbW2nGX ∧
+    localTensorRepresentation (identWordFiber fbW2nG)
+        (generatedAxisGlobalRationalTensorReal t10V.ten) =
+      generatedAxisGlobalRationalTensorReal
+        (tensorRat 64 fbW2nGX ((tensorWordDenAll fbW2nG : ℚ) * 32 / 2 ^ 9)) := by
+  have hP := tensorPlanS_actual fbW2nGPlan fbW2nGPlan_ok t10X64_bnd
+    (by rw [fbW2nGPlan_word, fbW2nG_growth]; norm_num) 32
+  rw [fbW2nGPlan_word, fbW2nG_growth] at hP
+  have hc := canonT_spec (by norm_num) hP.1 (by norm_num) ((tensorWordDenAll fbW2nG : ℚ) * 32)
+  have hs := tensorRat_shiftT 64 9 4 _ (canonT 64 (tensorPlanS 64 fbW2nGPlan t10X64))
+      ((tensorWordDenAll fbW2nG : ℚ) * 32)
+    hc.1 (by norm_num) (by norm_num) fbW2nGX_chk.1 fbW2nGX_chk.2
+  refine ⟨hs.1, ?_⟩
+  rw [t10V_ten64, hP.2, ← hc.2, hs.2]
+  rfl
+
+/-- The representation of the H image. -/
+def fbW2nL : IdentVec :=
+  ⟨twelfthSrcMat.act identSpatialAlphabet fbW2nH, ShortData.ofList fbW2nHT, 1 / 128,
+    tensorRat 64 fbW2nHX ((tensorWordDenAll fbW2nH : ℚ) * 32 / 2 ^ 12)⟩
+
+/-- The coordinates of the H image. -/
+theorem fbW2nL_actual : griessConwayEncode (rhoLocal (identWordLocal fbW2nH)
+    (generatedAxisGlobalTwelveRepresentative 10)) = fbW2nL.real :=
+  IdentVec.word_actual (twelfthSrcVecS 64) fbW2nHW fbW2nH_check fbW2nHD
+    fbW2nD_ok.1 fbW2nHD_cols fbW2nHD_rows fbW2nHT fbW2nHT_check _
+    fbW2nH_tensor.2 _ (twelfthSrcS_rep (w := 64) (by norm_num))
+
+/-- The representation of the G image. -/
+def fbW2nW : IdentVec :=
+  ⟨srcTenthMat.act identSpatialAlphabet fbW2nG, ShortData.ofList fbW2nGT, 1 / 32,
+    tensorRat 64 fbW2nGX ((tensorWordDenAll fbW2nG : ℚ) * 32 / 2 ^ 9)⟩
+
+/-- The coordinates of the G image. -/
+theorem fbW2nW_actual : griessConwayEncode (rhoLocal (identWordLocal fbW2nG)
+    (generatedAxisGlobalTwelveRepresentative 11)) = fbW2nW.real :=
+  IdentVec.word_actual t10V fbW2nGW fbW2nG_check fbW2nGD
+    fbW2nD_ok.2 fbW2nGD_cols fbW2nGD_rows fbW2nGT fbW2nGT_check _
+    fbW2nG_tensor.2 _ t10V_rep
+
+end GeneratedAxisGlobalIdent
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

@@ -192,7 +192,9 @@ Section 10 fixes the orthogonal decomposition
 and tensors q⊗λ. Section 11's dictionary is the same dictionary underlying
 Seysen's Table 5 and the current `Triality.lean`.
 
-Section 12, page 526, gives all six multiplication cases:
+Section 12, page 526, gives all six multiplication cases in its source
+inner-product and tensor conventions (these displayed rules precede the
+conversion to the implemented unit dictionary coordinates):
 
 - `A * A′ = 2(AA′ + A′A)`.
 - `A * X_r = (A, λ_r⊗λ_r) X_r`.
@@ -205,10 +207,13 @@ Section 12, page 526, gives all six multiplication cases:
   `Σ_r (q^r,q′)[(λ,λ′)-2(λ,λ_r)(λ′,λ_r)] X_r / 2`.
 
 The matrix of an integral-coordinate tensor λ⊗λ is `λ_i λ_j / 8`,
-as explained on page 525. Source basis vectors in the 24-space are unit
-vectors; one must not apply this factor a second time to their normalized
-coordinates. The identity of the algebra is `I/4` (page 528). These
-normalizations must be retained during implementation.
+as explained on page 525. The integral lattice coordinate frame has basis
+norm `1/√8` (Seysen §6.1); the monomial 24-space basis of §7.3 and the
+dictionary tensor basis of §7.4 are declared orthonormal. These coordinate
+conventions must be distinguished when transcribing the displayed tensor rule.
+In the implemented unit dictionary coordinates, both tensor-times-tensor
+contractions carry `1/8`, as checked against Conway Appendix 5 below.
+The identity of the algebra is `I/4` (page 528).
 
 The six rules are implemented in `conwayRawProduct`. `griessConwayEncode`
 and `griessConwayDecode` use the explicit dictionary, preferred short labels,
@@ -254,10 +259,64 @@ Gram entries are divisible by four, and its polar matrix modulo two is the
 standard twelve-pair hyperbolic matrix. The minimum norm and the complete,
 unique catalog of short vectors modulo global sign are now proved. Their
 actual classes modulo 2Λ define the preferred short lifts and give the Co₀
-permutation action. General half-norm comparison remains a proof obligation.
+permutation action. `LeechQuadratic.lean` proves the general lattice
+half-norm comparison with the fixed hyperbolic binary form.
 
 `H` is the source fiber product of the actual orthogonal Schrödinger
 normalizer with the actual Leech isometry group, over their binary actions,
 modulo simultaneous scalar signs. The diagonal subgroup's normality and
 its containment in the projection kernel are proved. The resulting type,
 group laws, `inclQ`, and `projH` have no `sorryAx` dependency.
+
+## Proof-stage normalization audit: Conway Appendix 5
+
+Conway, printed page 536, Calculation (1), expands the square of a unit
+signed dictionary tensor. Its matrix contribution has diagonal coefficients
+`9/8` at the selected coordinate and `1/8` at every other coordinate. This
+exposed an error in the earlier transcription, which used unit tensor
+coordinates while omitting the `1/8` factor on that matrix contraction.
+
+The coordinate tensor-times-tensor matrix term is therefore
+
+`[dot(v,w) I + 4 v⊗w + 4 w⊗v] / 8`,
+
+summed over the unit spin basis. The short-vector contraction also carries
+`1/8` in this coordinate normalization, rather than the earlier `1/2`.
+This agrees with the appendix's pair-short coefficients `-3/8` and `1/8`
+and with pairing the tensor/short rule against unit tensor vectors.
+The tensor/short and matrix/tensor input rules retain their original factors.
+
+`conwayPureTensor_unit_square_diagonal` in `TrialityInvariance.lean`
+proves the diagonal normalization for every unit spin vector. This focused
+check by itself does not establish all triality multiplication cases.
+`TrialityFullProduct.lean` now proves every product case for the implemented
+coordinate model, including the actual dictionary signs and Q selectors.
+The comparison with the primary FLM construction remains a separate proof
+obligation, as recorded in `GAPS.md`.
+
+
+## Subsequent order and simplicity source
+
+Gerald Höhn and Martin Seysen, *The Order of the Monster Finite Simple Group*,
+[arXiv:2508.01037v1](https://arxiv.org/pdf/2508.01037), 1 August 2025.
+The source concerns the same local-group-plus-triality coordinate construction.
+Tables 2 and 4 give integer transition matrices of degrees 16584750 and 93150.
+Their stationary count vectors, anchored at 196560 and 1, have totals
+97239461142009186000 and 11707448673375. The present Lean modules transcribe
+these mathematical tables and verify independently computed rational inverse
+certificates. This checks the numerical counting step, not its application
+or the source's computational certificates against the actual G.
+
+Theorem 5.1 multiplies those two orbit counts by the common stabilizer order
+`2^24 * |Co₂|`, with `|Co₂| = 42305421312000`. The needed Conway-group facts,
+actual orbit coverage and transitions, and common-stabilizer identification
+remain proof obligations. Section 5's simplicity proof uses the fusion of
+three involutions and the local centralizer's normal-subgroup structure.
+The generic fixed-point-free involution result used here is already in the
+pinned Mathlib, and the fused-involution argument is instantiated in actual G.
+
+The public companion repository was inspected at commit
+`9d954ec8bd94c977e72e56d11d48dd8979e1014f`. Its source code and certificate
+files have not been incorporated: no license file was found. The mathematical
+tables above are attributed to the paper, and the rational inverses were
+computed independently.

@@ -1,0 +1,31 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthTensorSourceSignCacheData
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+set_option maxRecDepth 20000 in
+set_option maxHeartbeats 20000000 in
+/-- Every actual source phase is checked, retaining the full high-bit and physical corrections. -/
+theorem generatedTwelfth_tensor_source_sign_cache_check02 : ∀ e : Fin 2048,
+    generatedAxisGlobalIntSign (golayLabelCoefficients (generatedTwelfthTensorSourceSignCode 2) 11) *
+        generatedAxisGlobalIntSign (generatedAxisGlobalSignYPhase
+          (generatedTwelfthTensorSourceSignCode 2) 0
+          (generatedAxisGlobalSignInputCode (generatedTwelfthTensorSourceSignCode 2) e) e) =
+      generatedTwelfthTensorSourceSignPhase 2 0 e ∧
+    generatedTwelfthTensorPhysicalSign (generatedTwelfthTensorSourceSignCode 2) 0 *
+        generatedAxisGlobalIntSign (generatedAxisGlobalSignZPhase
+          (generatedTwelfthTensorSourceSignCode 2) e 0) =
+      generatedTwelfthTensorSourceSignPhase 2 1 e := by
+  decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

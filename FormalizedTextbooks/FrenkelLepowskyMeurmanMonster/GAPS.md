@@ -1,214 +1,1511 @@
-# FLM Monster milestone statements: gap inventory
+# FLM Monster: proof and source-comparison gaps
 
-Skeleton with T1–T6 `sorry` proof bodies (no endpoint is proved), proved
-subgroup framework laws, and a genuine coordinate extraspecial model whose
-FLM comparison is pending. This file enumerates every hole so future work
-cannot silently prove degenerate formulations.
+All shared construction definitions in [Definitions.lean](Definitions.lean)
+are implemented. Their transitive dependencies contain no `sorryAx` or custom
+axioms. T1–T3 and T5 are proved in full; T4 and T6 remain unfinished.
 
-Lean files (namespace `FormalizedTextbooks.FrenkelLepowskyMeurmanMonster`):
+## Verified prerequisites
 
-* [Definitions.lean](Definitions.lean) — shared construction interfaces.
-* [Milestones.lean](Milestones.lean) — the six endpoint theorem statements.
-* [Triality.lean](Triality.lean) — the explicit dictionary-coordinate symmetry and its inverse.
-* [LeechBasisData.lean](LeechBasisData.lean) — explicit integral and binary matrix data, with kernel-checked identities.
+- [LocalStructure.lean](LocalStructure.lean): all ten extraspecial and
+  quadratic-form clauses of T1, including order `2^25`, center = commutator =
+  Frattini, center order two, the actual quotient, and plus type.
+- [LocalExactness.lean](LocalExactness.lean): `inclQ` is injective, its image
+  equals `projH.ker`, `projH` is surjective, and `rhoLocal` is injective. The tensor representation
+  has exactly the simultaneous-sign kernel used in the definition of H.
+- [Finiteness.lean](Finiteness.lean): the actual lattice stabilizer Co₀,
+  its quotient Co₁, the spin normalizer, the local fiber product, and H are
+  finite. The Schrödinger commutant consists of scalars; orthogonality limits
+  the conjugation kernel to the two signs.
+- [GeneratedSubgroups.lean](GeneratedSubgroups.lean): H and Q embed in G,
+  so G is nontrivial. These proofs do not use any milestone theorem.
+- [TrialityInvariance.lean](TrialityInvariance.lean): the extra symmetry
+  preserves the Griess form on all vectors; a pure tensor square has the
+  corrected source diagonal coefficients `9/8` and `1/8`.
+- [LeechQuadratic.lean](LeechQuadratic.lean): the actual lattice half-norm
+  reduces to `squareQuad` in the source coordinates. Co₀ preserves it,
+  and every preferred short lift squares to the identity.
+- [LocalForm.lean](LocalForm.lean): the signed short-vector and full spin-tensor
+  action blocks preserve their Euclidean pairings.
+- [LocalInvariance.lean](LocalInvariance.lean) and
+  [LocalProductInvariance.lean](LocalProductInvariance.lean): the full local
+  action preserves the actual form and all six Conway multiplication rules.
+- [SpinIrreducible.lean](SpinIrreducible.lean), [SpinLift.lean](SpinLift.lean),
+  and [SpinOrthogonalLift.lean](SpinOrthogonalLift.lean): every center-fixing
+  automorphism of Q has an orthogonal real spin implementation.
+- [BinaryAutomorphism.lean](BinaryAutomorphism.lean): binary isometries of
+  the actual quadratic form lift to automorphisms of Q.
+- [GeneratedForm.lean](GeneratedForm.lean): every element of G preserves
+  the weighted Griess form, without using an endpoint theorem.
+- [TrialityOrder.lean](TrialityOrder.lean): the actual extra symmetry has cube one.
+- [ShortGeometry.lean](ShortGeometry.lean): addition of distinct short classes
+  and their pairing bounds follow from the actual lattice minimum.
+- [AxialVector.lean](AxialVector.lean): Conway's pair axis has squared norm
+  128, is fixed by triality, and satisfies `t*t = 64t`.
+- [AxialFiniteness.lean](AxialFiniteness.lean): a bounded spanning orbit of an
+  isolated scaled idempotent gives a finite algebra automorphism group.
+  The finite-family version avoids a separate transitivity theorem.
+  `GeneratedFiniteness.lean` applies it to G using the proved triality product law.
+- [GeneralAxialVector.lean](GeneralAxialVector.lean): every signed short axis
+  has squared norm 128 and square equal to 64 times itself.
+- [GriessNorm.lean](GriessNorm.lean): a genuine Euclidean realization of the
+  entire space, with its actual continuous bilinear product and norm-preserving G action.
+- [AxialSpectrum.lean](AxialSpectrum.lean): every signed short axis has no
+  eigenvector with eigenvalue 32, for the actual matrix, short, and tensor blocks.
+- [AxialSpan.lean](AxialSpan.lean): the signed short axes and their first two
+  triality images span the entire space.
+- [Presentation.lean](Presentation.lean): the defining Coxeter relations,
+  a surjective parity quotient, and the distinguished involution's order two.
+- [WreathCentralizer.lean](WreathCentralizer.lean): in any two-factor wreath
+  product, the swap centralizer modulo the swap is isomorphic to the factor.
+- [PresentationComparison.lean](PresentationComparison.lean): transports this
+  quotient comparison **given** a presentation-recognition isomorphism taking
+  the distinguished generator to the factor swap. That input is explicit and
+  is not assumed by T6 or by the construction definitions.
 
-Module style follows the repository convention (`module` header, `public
-import`, `@[expose] public section`). Theorem names are mathematical
-snake_case; the T1–T6 labels appear in docstrings, not in declaration names.
+## Checked triality product prerequisites
 
-## Six proof holes (all in `Milestones.lean`)
+- `SourceCocode`, `SourceCodeAddition`, and `ParkerThetaAddition` prove the
+  actual source code/cocode coordinates for every Golay word.
+  `PairSpinDictionary` and `OctadOddSpinDictionary` derive the preferred-Q
+  spin operators for all three short-vector families from physical lattice lifts.
+- `TrialityBilinearReduction` proves the actual source basis spans and reduces
+  full triality product preservation to six explicit block-pair families.
+- `TrialityABCProduct` and `TrialityABCGeneral` prove all A/B/C pair products,
+  including equal edges, shared endpoints, and disjoint edges.
+  `PairEdgeQProducts` and `PairShortSupport` derive the exact class, phase,
+  and support identities from the physical pair vectors.
+- `TrialityPairShort`, `TrialityPairYZ`, `TrialityPairCZ`, and
+  `TrialityPairOdd` prove all nine A/B/C × X/Y/Z product families.
+  `PairOddQProducts` proves the actual pair/odd preferred-Q products.
+- `ConwayFrobenius` proves the actual form is associative with multiplication:
+  `griessForm (griessProd x y) z = griessForm x (griessProd y z)`.
+- `TrialityABCOctad` proves every A/B/C × octad product.
+- `TrialityXYZMixedCubic` proves the nonzero XYZ cubic and its cyclic phase,
+  completing the XYZ cubic calculations. `TrialityXYZProductReduction`
+  reduces XYZ products to octad × XYZ products.
+- `SameOctadPreservation` proves every same-octad product.
+  `DisjointOctadTriality` proves products of distinct octads meeting in at
+  most two positions are zero and preserved. `OctadIntersection` proves
+  that the only remaining distinct-octad intersection has four positions.
+- `OctadProductInvariance` proves all octad × octad products, including
+  four-point intersections. The actual syndrome kernel has 512 elements,
+  is self-annihilating, and gives the proved affine-coset Fourier identity.
+- `OctadXTransition` and `OctadTensorFourier` prove the actual octad cubic
+  color transitions X→Y and Y→Z. `OctadXYZCycleClosure` proves the third
+  transition follows from them. `TrialityFullProduct` instantiates every
+  source product family and proves full triality product preservation.
+- `OctadSmallSupport` proves that a codeword supported on an octad plus two
+  additional positions is zero or that octad's codeword. `OctadSignSpace`
+  identifies the actual 64 signs with a six-dimensional binary space.
+  `LagrangianFourier` proves the generic coset Fourier identity with explicit
+  self-annihilator and cardinality hypotheses. `OctadFourierPreservation`
+  instantiates these hypotheses for the actual physical octad coordinates.
 
-| Theorem name | Milestone | Statement | Status |
-| --- | --- | --- | --- |
-| `local_subgroup_structure` | T1 | extraspecial `Q`, bijective raw `centerMap`, exactness, faithful product/form-preserving action | `sorry`, unproved |
-| `extra_symmetry_preserves_griess` | T2 | `sExtra` preserves product/form; `G ≤ griessAutSubgroup` | `sorry`, unproved |
-| `generated_group_finite` | T3 | `Finite ↥G`, no finiteness hypothesis | `sorry`, unproved |
-| `generated_group_order` | T4 | `Nat.card ↥G` equals the Monster numeral | `sorry`, unproved |
-| `generated_group_simple` | T5 | `IsSimpleGroup ↥G` (includes nontriviality) | `sorry`, unproved |
-| `generated_group_iso_classical_monster` | T6 | `Nonempty (classicalMonster ≃* ↥G)` | `sorry`, unproved |
+These proofs complete T1–T3. Four independent adversarial reviews approved
+the checkpoint after the required fixes. Work on T4–T6 resumed at the
+user's request. T5 is now proved and independently approved.
+The T4 and T6 endpoint proofs remain open.
 
-`#print axioms` on all six reports `sorryAx` (plus the repository-permitted
-`propext`, `Classical.choice`, `Quot.sound`). No proof is complete.
+## Verified progress toward T4–T6
 
-## Remaining source bindings and model comparisons
+### Latest local recognition and completed fourth-axis orbit checkpoint
 
-The remaining placeholders must be fixed to audited FLM formulas/passages,
-and the coordinate model must be compared with the FLM construction, before
-endpoint proofs establish the intended Monster results. No FLM source excerpts
-have been read for this follow-up. Supplementary formulas have been inspected
-in Seysen §6.1, §7.4, §8.1, and §9.1, Conway §9–12,
-and Basak §1.1; see
-[the source record](blueprint/sources/concrete-coordinates.md). The FLM
-passage checklist is at [blueprint/sources/flm.md](blueprint/sources/flm.md).
-These signatures alone do NOT fix FLM: while the entries below are holes,
-proving the six theorems would prove nothing about the Monster.
+- The entire fourth-axis Q stabilizer is exactly the counted affine subgroup,
+  has order 128, and has an actual full-axis orbit of 262144 points.
+  The normalized flag generator and all four corrected permutation words fix
+  the entire original axis. Every one of the 2048 equal-pair Golay signs has
+  a genuine stabilizing lift. The four actual permutation words now generate
+  the genuine code14 and unordered-pair stabilizer of order 11520. Sixty-three
+  actual reachable frame classes and all 2048 equal-pair signs force full
+  physical flag generation and projection surjectivity. The entire H stabilizer
+  has order 95126814720 and its actual axis orbit has 1466587938816000 points.
+  The physical matrix fiber is exactly the 262144-axis Q orbit. The first four
+  counted actual H orbits are proved mutually disjoint and contained in the
+  global orbit. Both global classifications, coverage and transitions remain open.
+- The original C322 presentation now has exact order 9170703360, a faithful
+  characteristic-three representation, and exact E7 index 3159. The corrected
+  certificate checks all 174819 original equations and 25272 transitions.
+  It replaces 135 stale prior references while preserving every equation and
+  the original checker. Its commutator is isomorphic to the derived subgroup
+  of the independently defined full finite Cartan-isometry group, of order
+  4585351680. Full local recognition no longer depends on an assumed kernel.
+- The original C431 cubic is proved and transported into Y555. All three
+  terminal generators equal their actual longest words, and the terminal
+  substitution is the identity. Both inverse maps to the independent
+  13-generator Coxeter/spider presentation are proved. This closes terminal
+  elimination, not the remaining full Monster/wreath recognition kernel.
+- The literal first line-difference square fixes the entire nonzero tensor
+  start and two complete preferred short units, and belongs to actual H.
+  The remaining short tests and all 36 line–line relations remain open;
+  the verified Coxeter relation count is still 84 of 120. All twelve non-tensor
+  forward-half packets are now bound in every Griess block, together with their
+  actual inverse-packet pairings; no additional whole short return is claimed.
+- Independent [U13 review](https://artifacts.internalmeta.com/a/1097903456386921)
+  and [complete third-orbit review](https://artifacts.internalmeta.com/a/977331758752417)
+  approved their scopes with no blocking findings. The new local C322/Ω7
+  bundle is undergoing independent review. Full T4/T6 review and comparison
+  with the primary FLM construction remain open.
 
-| Label | Definition name(s) | What is missing |
-| --- | --- | --- |
-| S-GriessProd | `griessProd` (coordinate construction complete) | Conway §12’s six rules in the fixed dictionary, with bilinearity proved; primary FLM comparison remains pending |
-| C-GriessForm | `griessForm` (definition complete) | Explicit diagonal pairing in the Seysen dictionary basis; bilinearity proved. FLM normalization comparison and invariance under the local action remain |
-| C-Leech | `LeechLattice` (definition complete) | Explicit Golay congruences and `1 / sqrt 8` embedding, with module laws and exact source-membership equivalence proved. Rank 24 and an actual integer basis and lattice quotient are proved. Evenness, unimodularity, minimum norm, and compatible quadratic coordinates remain theorem obligations |
-| S-Q | `Q`, `instGroupQ` (model genuine; FLM comparison pending) | Concrete plus-type coordinate model (`qBeta`/`qBilin`/`qCocycle`/`Q`/`instGroupQ`) is genuine with proved group laws via `NormalizedCocycleExtension`. PENDING: the comparison isomorphism between this model and the FLM extraspecial group |
-| S-H | `H`, `instGroupH` (coordinate construction complete) | Explicit orthogonal-normalizer/Co₀ fiber product modulo simultaneous signs; primary FLM comparison remains pending |
-| S-inclQ | `inclQ` (coordinate construction complete) | Natural quotient inclusion; injectivity and exactness remain endpoint proofs |
-| S-projH | `projH` (coordinate construction complete) | Projection to Co₁ kills simultaneous signs; surjectivity remains an endpoint proof |
-| S-rho | `rhoLocal` | FLM local action formulas (raw map into ambient GL) |
-| C-sExtra | `sExtra` (definition complete) | Explicit source triality with proved linearity and inverse. Its FLM comparison and product/form preservation remain |
-| S-qQuotHom | `qQuotHom`, `qQuotientEquiv` (coordinate data complete; FLM identification pending) | Kernel/range and the induced quotient isomorphism are proved for the coordinate model. PENDING: identifying the FLM quotient with this projection |
-| S-centerMap | `centerMap` (coordinate definition complete) | The central coefficient is now a genuine homomorphism with an explicit inverse and proved bijectivity. PENDING: compatibility with FLM through S-Q; no local `sorry` remains here |
-| S-squareQuad | `squareQuad` (coordinate diagonal and squares link complete) | `squareQuad_eq_centerMap_square` proves the group-squares link, and `qHyperbolicEquiv_form` proves compatibility with the explicit hyperbolic form. PENDING: transporting these identifications through the FLM comparison S-Q |
-| C-classicalMonster | `classicalMonster`, `instGroupClassical` (definitions complete) | Independent Ivanov–Norton presentation reference: centralize the central tree generator in the presented bimonster, then quotient by its cyclic subgroup. Historical recognition requires the presentation theorem and the wreath-product centralizer argument; no recognition axiom or isomorphism to `G` is assumed |
+The new C422 source and projective prerequisites include a genuine source map,
+injective C322 parabolic inclusion, and actual reflection/spider/Q identities.
+The C422 index-1080 replay, full projective faithfulness and global recognition
+are unfinished and excluded from this completed checkpoint.
 
-Former hole labels S-LeechIsom, S-signs, and S-centerIso are retired: the
-isometry/signs carriers and the center map shape are now genuine or raw
-definitions (see below). The isometry/signs definitions now use the explicit coordinate lattice.
-The lattice/FLM comparison remains C-Leech. The coordinate center identification is now complete; its FLM
-comparison remains under S-Q.
+The preceding local-recognition checkpoint built in 6826 jobs with 3429 imports. The strict audit
+checks all 58883 collection constants, including private/generated declarations,
+under only `propext`, `Classical.choice` and `Quot.sound`, excluding exactly the
+two unfinished endpoint values. All 1776 new leaf modules pass fifteen linters
+on 32024 declarations (5776 authored and 26248 generated), with zero errors.
+The independent review's verified duplicate lemma was replaced by Mathlib's
+`Abelianization.commutator_subset_ker`; the affected build and final audits pass.
+Repository preflight and cached diff checks pass. These gates do not constitute
+approval of the still-unfinished full T4/T6 proofs.
 
-### One remaining construction placeholder
+- `GeneratedOrderCounting`, `GeneratedOrbitCoverage`, and
+  `GeneratedOrbitStabilizers` prove counting identities for the actual G,
+  soundness of an explicit local-orbit coverage argument, and the exact
+  two-vector orbit–stabilizer identity. No numerical orbit size is assumed
+  by these unconditional identities.
+- `TransitionCountSystem`, `AxisTransitionCounts`, and
+  `FeasibleAxisTransitionCounts` verify the rational transition matrices,
+  anchored uniqueness, and numerical totals from Höhn–Seysen Tables 2 and 4.
+  The matrix inverses and stationary vectors are checked by Lean's kernel.
+  The application to actual group orbits still requires their transition
+  equations, coverage, and anchor calculations. Checking the numerical tables
+  alone does not prove the group's order.
+- `GeneratedCentralizerBlocks` and `GeneratedCentralizerTensor` prove that
+  every element of the actual central involution's centralizer preserves
+  its matrix-plus-short and tensor eigenspaces. The tensor restriction and
+  trace invariants are proved. `GeneratedCentralizerTraceOperators` and
+  `GeneratedCentralizerMatrixTrace` compute the constituent trace terms.
+  The reverse inclusion is now proved in `GeneratedCentralizerRecognition`: intrinsic trace separates matrix and short constituents; Jordan and short-square recognition recover a genuine Leech isometry; the remaining signed spin action is an actual Q element. Thus the full actual centralizer equals the actual H image.
+- `FusedInvolutionNormal` proves that a normal subgroup of actual G with
+  trivial intersection with the central involution's centralizer is trivial.
+  `GeneratedNormalSubgroups` and `GeneratedNormalLocal` prove that every
+  nontrivial normal subgroup of H contains its central involution, using
+  the actual Q embedding and binary faithfulness. `GeneratedNormalTrialityOmega`
+  proves actual fusion into a noncentral Q element; `GeneratedNormalTrialityReflection`
+  proves that the odd singleton cocode inverts triality. Hence every normal
+  subgroup containing embedded Q also contains triality. `GeneratedNormalOrbit`
+  gives the explicit binary orbit-span criterion for acquiring Q.
+  `LeechOrbitData`, `LeechOrbitActions`, and `LeechOrbitSpan` discharge it:
+  a kernel-checked family of 24 actual Ω orbit vectors spans the entire binary
+  lattice quotient. Thus every normal subgroup with nontrivial local
+  intersection contains actual Q and triality. `GeneratedNormalReduction`
+  connects the full centralizer inclusion to this local intersection, and
+  connects Q containment plus full local projection to exhaustion of G.
+  `GeneratedNormalCompletionSigns` supplies every actual Golay sign in the
+  projected normal subgroup after centralizer recognition. The checked
+  pair-swap words supply both actual Mathieu generators.
+  `GeneratedNormalCompletion` now proves the full normal-subgroup dichotomy
+  with only the full-centralizer inclusion as an explicit remaining input.
+  `GeneratedCentralizerRecognition` now proves that inclusion unconditionally, completing T5 in `Milestones`. The endpoint audit and independent review passed.
+- `Co1OrderSigns` proves the actual Co₀/Co₁ factor of two.
+  `GolayAutomorphism` and its orthogonality, sign and permutation modules
+  construct the actual monomial lattice maps, including the signed Golay
+  subgroup of order 4096. `GolayAutomorphismOrder` proves the actual M₂₄
+  order 244823040, and `GolayAutomorphismGeneration` proves that the two
+  concrete permutations generate the full code automorphism group.
+  `Co1OrderMonomial` counts its signed extension as 1002795171840;
+  `Co1OrderMonomialRecognition` recognizes every geometrically signed
+  lattice isometry in that subgroup. `LeechNormEightCount` now counts all
+  398034000 actual norm-eight vectors by kernel-certified coefficient recurrences.
+  `Co1OrderExact` completes the actual Co₀, Co₁, short-stabilizer, and local H orders.
+- `LeechNormEightCatalog` classifies all eight actual norm-eight shapes.
+  The preparation and transition modules prove the concrete Golay/ξ
+  generators are transitive on these vectors. `LeechCoordinateFrameClass`
+  proves the distinguished binary class contains exactly the signed
+  coordinate-frame vectors. `LeechFrameMonomial` and
+  `LeechConcreteGeneration` complete generation of the entire actual Co₀.
+  This construction does not assume an Atlas maximality or simplicity fact.
+- `GeneratedAxisPairCentralizer`, `GeneratedAxisPairLocal`, and
+  `GeneratedAxisPairCount` identify the actual global opposite-axis stabilizer
+  with the actual local stabilizer and prove the genuine two-orbit counting identity.
+  Its exact order is 709767191322427392000. `GeneratedOrderAssembly` needs only
+  the two explicit, still-unproved actual global orbit cardinalities.
+- `GeneratedAxisEnumerationLocal` proves the actual first local axis orbit has
+  196560 elements. `GeneratedAxisEnumerationFeasibleAnchor` proves the actual
+  first feasible local orbit is a singleton. First-classification-fiber transport
+  retains explicit actual-orbit identification hypotheses.
+- `GeneratedAxisEnumerationFeasibleSecondaryCount` proves the actual second
+  feasible local orbit has 93150 vectors and lies in the actual global feasible
+  orbit. Its stabilizer is exactly the actual feasible transition subgroup,
+  proved using the actual axis transposition polynomial and full centralizer.
+- `GeneratedAxisTransitionPairOrbit` proves the actual Ω-centralizer orbit
+  consists of all 1104 signed pair axes. The actual common stabilizer has
+  order 7619615580487680; its index inside the first-axis stabilizer is 93150.
+  `GeneratedAxisTransitionFeasibleCosets` proves genuine triality normalization
+  and feasible local-orbit invariance for this subgroup.
+- `GeneratedAxisTransitionIndex` identifies the triality transition subgroup
+  with the embedded actual Ω centralizer and proves its local index 16584750.
+  The chain counts the actual binary Ω orbit as 8292375 and its norm-eight
+  coordinate-frame fiber as 48, and proves the actual Ω-fixing lift projection
+  surjective with kernel order 2²⁴. `GeneratedAxisTransitionCosets` proves that
+  changing an input by this subgroup preserves its resulting local orbit.
+  Coverage of all twelve axis classes and ten feasible-axis classes, and their
+  complete actual transition counts, remain open.
+- `GeneratedAxisTransitionDestinations` constructs the genuine transition map
+  from actual left Ω cosets to actual H orbit classes. `GeneratedAxisClassificationFirstColumn`
+  proves its complete first column: exactly three distinct destinations, with
+  actual coset fibers 93150, 8197200, and 8294400. The latter two are proved from
+  actual octad and odd vector fibers 97152 and 98304. The general balance
+  `GeneratedAxisTransitionFiberCounts` is 8 times the coset count equals 675
+  times the vector count, from actual group-fiber equivalences.
+- `GeneratedAxisTransitionFeasibleDestinations` constructs the genuine feasible
+  transition map and proves its complete first column: all 93150 inputs from
+  the singleton feasible orbit reach the proved secondary feasible local orbit.
+  Both statements concern the first input column; they do not supply complete
+  classification or either global orbit cardinality.
+- The octad-image axis has its exact actual short support of 120 labels and a
+  Q stabilizer of order 2¹⁷. Eight actual short binary bases have checked integer
+  coordinates and duals; all 120 supported bases lie in their span. Thus the
+  actual phase kernel and actual Q stabilizer agree. The actual ordered root-pair
+  count is 56, and extremal idempotent convolution proves sign coherence.
+  Comparing coherent actual signs gives genuine Q conjugation. Every actual
+  section-stabilizer element now has an actual axis-fixing local lift.
+- `GeneratedOctadNormEight` proves internal norm-eight transitivity within every
+  coordinate Golay octad section, preserving the section in both directions.
+  The actual bounded source enumeration has 1136 residue-zero assignments and
+  1024 residue-two assignments, bijective with its 2160 norm-eight lattice
+  vectors. Their actual lattice reduction has sixteen vectors in each nonempty
+  fiber and 135 represented classes. Rooted sections are exactly the 759
+  coordinate octads. Every actual frame class belongs to 759 sections, and
+  every section contains 135 frame classes. The actual sigma-incidence
+  equivalence proves the full Co₀ E8-section orbit has 46621575 sections.
+  Fixing the real coordinate projection is equivalent to preserving the actual
+  integral section. Its actual Co0 and Co1 stabilizers have orders 178362777600
+  and 89181388800. The actual H-axis stabilizer projects onto the latter with
+  kernel 2¹⁷, hence has order 11689182992793600. The unconditional actual local
+  axis orbit count is 11935123200. Complete orbit classification remains open.
+- `SymmetricJordanRecognition` reconstructs orthogonal conjugation from a
+  symmetric-matrix Jordan automorphism preserving the trace pairing.
+  `LeechShortSpan` proves actual short vectors generate the lattice over ℤ.
+  `TensorMatrixCommutant` and `SpinPauliCommutant` prove the linear-algebra
+  prerequisites for the residual centralizer kernel. Their application to
+  an arbitrary element of the full centralizer is now proved in the intrinsic
+  constituent, spatial reconstruction, local reduction, and tensor residual modules.
+- `SourceQGenerators` and `SourceQCodeMultiplication` prove the code/cocode
+  source generator squares, additive normalization, and multiplication law
+  in actual Q and G, including the quarter-weight central phase.
+- `Y555Parity`, `Y555WreathGenerators`, `Y555WreathCertificate`, and
+  `BimonsterRecognitionTransport` supply presentation and comparison tools
+  with explicit missing recognition inputs. `Y555NortonPoints` verifies
+  involution and commutation relations for six actual Q-valued parameters.
+  The literal source y82 and Norton U words are now bound to the actual group.
+  Eighty-four of the 120 Coxeter pairs are verified, including all 63 point–line
+  and center–line pairs through an exact phase-sensitive thirteen-state Q orbit.
+  The remaining 36 line–line pairs are open. The actual U thirteenth power
+  has trivial Leech and binary actions and a central spin action; eliminating
+  its remaining central sign is still open. `Y555ActualWreathGenerationWords`
+  reduces actual generation to inclusion of the actual local H diagonal.
+  The remaining relation certificate, local diagonal inclusion, and independent
+  presentation kernel recognition are open.
+- The actual norm-eight physical line carrier has 199017000 members, with
+  exactly two actual opposite vectors in each fiber. Its Co0 stabilizer has
+  order 41783132160; its actual central-sign quotient image in Co1 has order
+  20891566080. Equality of the physical outer matrices is proved equivalent
+  to equality of real one-dimensional spans. The full line stabilizer is an
+  actual signed Golay monomial subgroup.
+- The actual odd-image axis has Q stabilizer order 2^12 and a genuine full-axis
+  Q orbit of 8192 points. Its restricted H projection has this exact kernel and
+  is onto the actual Co1 line stabilizer. The actual H stabilizer has order
+  85571854663680, so the genuine third H orbit has exactly 1630347264000 axes.
+  Its actual matrix fiber is exactly its 8192-axis Q phase orbit. Independent
+  review of the complete third-orbit chain is approved.
+- Every actual E8 section contains exactly 120 actual short lines. Concrete
+  section-preserving Golay and ξ generators act transitively on these lines.
+  The full actual section-line flag orbit has 5594589000 elements; its actual
+  Co0 stabilizer has order 1486356480 and its Co1 image has order 743178240.
+  Polynomial recovery proves that fixing the flag matrix fixes both the
+  actual section projection and the incident short-line outer matrix.
+  The literal fourth candidate is now bound to its actual flag matrix, with
+  an actual stabilizer projection into the Co1 flag stabilizer. Its original
+  tensor is exactly the 56 verified signed Y states, paired into 28 affine
+  states from 22 distinct common-plane families. Exhaustive original support
+  coverage and all coefficient phases are proved. The actual tensor Q stabilizer
+  has exactly 128 elements, via an explicit seven-dimensional binary kernel.
+  The genuine full-axis projection kernel has exactly 128 elements. All seven
+  basis short fixes and the required corrected flag/permutation lifts are
+  proved. Full projected generation remains open; the fourth H orbit is not yet counted.
+- The actual octad-image matrix fiber inside its genuine H orbit is exactly
+  its full-axis Q orbit, and therefore contains precisely 256 actual axes.
+- `Y555LocalPresentation` defines the actual eight-generator C322 presentation,
+  its Coxeter and spider relations, and its restricted vertex map into the
+  independently defined Y555 presentation. The E7 source words retain all
+  seven letters, including the c-j letter omitted in a secondary source.
+  No finite coset order, local kernel identity, or Monster recognition is assumed.
+- The local presentation certificate checker validates each literal square,
+  commutation, and braid rewrite against the actual diagram. `Y555LocalPresentationE7Certificates`
+  proves the corrected F12 word is an involution, and `Y555LocalPresentationE7Symmetry`
+  transports this proof to F13. `Y555LocalPresentationE7Centrality` proves F12
+  commutes with its seven parabolic generators. `Y555LocalPresentationE7Residual`
+  checks the 572-letter residual word with 3009 elementary rewrites. The
+  actual Todd–Coxeter derivation now replays 28530 chronological word equations
+  and proves the corrected F12 = F13 in the original C322 presentation and
+  its restricted Y555 image. The exact 3159-coset index and independent local
+  classical derived-group recognition are now proved; the global kernel remains open.
+- The actual local presentation has a concrete eight-generator homomorphism
+  into GL7 over F3, preserving an explicit nondegenerate bilinear form and
+  sending the corrected F12 word to negative identity. Its image order and
+  kernel are now identified: the source map is injective and its image has
+  order 9170703360. The genuine A5, D6 and E7 source parabolics
+  have exact orders 720, 23040 and 2903040. Their actual characteristic-three
+  image orders agree, and all three restricted source homomorphisms are
+  injective; no matrix faithfulness is assumed. The actual E7 auxiliary prefixes
+  and all 25272 index-certificate coefficients lie in the E7 parabolic. All
+  25272 transition-target bindings and chronological index bounds are checked;
+  the full original-source equation replay and exact 3159-coset index are proved.
+- `GeneratedAxisTransitionOmegaTransport` and `GeneratedAxisTransitionOmegaNormEight`
+  lift actual binary/norm-eight transports to actual Q conjugacy with Ω,
+  including central phases. The actual first-line ratio has a proved conjugate
+  in H via its four-point norm-eight witness. This is a reduction, not its required
+  square relation. `GeneratedQCentralizerIdentity` proves the actual centralizer
+  of all embedded Q consists of 1 and the central involution; fixing one vector
+  with nonzero tensor coordinate then forces identity.
+- `QCoordinateGenerators` proves that twenty-four positive binary coordinate
+  lifts and the central involution generate actual Q, including all central
+  phases. `GeneratedQCoordinateIdentity` reduces actual identity to twenty-five
+  commutation checks and one fixed vector with nonzero tensor coordinate;
+  for an actual local element, only twenty-four checks are needed.
+- The actual first-line conjugator now has a checked word and maps its four-point
+  Q witness to minus Ω, retaining the central sign. `YAllTensor` and
+  `YAllConjugation` bind every source Y word to its actual tensor and Q action,
+  with the quarter-weight phase retained. These inputs do not yet prove any
+  of the remaining thirty-six line–line squares.
+- An actual preferred-short binary basis now generates Q, including its central
+  phases. Fixing its 24 actual pure-short Griess vectors and one nonzero-tensor
+  vector forces a local group element to be the identity. The full actual U
+  integral matrix and generic signed short-vector action are proved. All 24
+  code-zero short-vector images under U have checked actual shortest-vector
+  labels. The reduced first-line square remains open.
+- The actual Norton U has order thirteen. Its genuine nonzero invariant integer
+  spin vector resolves the remaining central sign by nine independently checked
+  primitive actions, including the two 64-term ξ blocks. The exact 26-leaf chain
+  passes a recursive standard-axiom audit of 936 constants and all fifteen
+  linters. Forward and inverse actual U spin actions now have compact formulas
+  with one 64-term integer numerator, independent of the order-thirteen endpoint.
+- `GeneratedAxisRepresentativeWords` constructs twelve axis and ten feasible-axis
+  candidate words as actual G elements through a compact generator DAG. Their
+  names record source sample labels. Complete source-permutation identification,
+  actual class assignments, distinctness, feasibility, and coverage are still
+  separate proof obligations; the literal words alone do not close them.
 
-`rhoLocal` still has a `sorry` body. `griessProd` now uses Conway’s six
-multiplication rules, transported to the explicit dictionary basis and
-extended bilinearly through concrete structure constants.
-`H`, `instGroupH`, `inclQ`, and `projH` now use the explicit source fiber product
-and its simultaneous-sign quotient, with their laws proved. They are the remaining data/group-law holes;
-all six milestone proofs are also unproved. Removing these bodies by using
-arbitrary replacements would not formalize the intended construction.
+## Remaining endpoint obligations
 
-The full Conway article is now available through the public Göttingen scan,
-and its multiplication formulas in §12 have been visually inspected. Tits's
-public Bourbaki account supplies a second formulation. These formulas still
-need to be implemented with compatible lattice quotient, short-vector, and
-Schrödinger basis labels. The source record documents the normalization.
-The Griess product, local extension, and its two natural maps are constructed.
-The local action and its supporting short-label invariance proof remain unfinished.
+The [independent octad counting and Q identity review](https://artifacts.internalmeta.com/a/2390724688434621)
+approved seventeen scoped leaves with no blocking findings. Fresh isolated
+replay, all 169 private/generated constants under standard axioms, all fifteen
+linters, and six semantic probes passed. Upstream author exclusions are explicit.
+The [section-count and saturation review](https://artifacts.internalmeta.com/a/1666526895149276)
+approved seven scoped leaves with no blocking findings: fresh isolated replay,
+all 69 constants under standard axioms, fifteen linters, and five semantic probes
+passed. The [physical projection recognition review](https://artifacts.internalmeta.com/a/1133521452695039)
+approved three scoped leaves: fresh isolated replay, all seventeen constants
+under standard axioms, fifteen linters, and four semantic probes passed.
+The [complete second-orbit review](https://artifacts.internalmeta.com/a/2129702950992604)
+approved all twenty-one scoped leaves with no blocking findings: fresh isolated
+replay, all 189 private/generated constants under standard axioms, fifteen
+linters, four semantic probes, and unchanged final hashes passed. Upstream
+authorship exclusions are explicit. Full global orbit counting remains open.
 
-The local prerequisites now include the explicit Schrödinger representation,
-proved faithful and orthogonal, its orthogonal normalizer and actual
-conjugation action, and the actual quotient Λ/2Λ with a proved coordinate
-linear equivalence. The explicit integer matrix is now proved to be a basis.
-The binary frame uses the published cocode and Parker cocycle tables; its
-inverse and source Gram identities are checked in the kernel. General
-half-norm compatibility and the dictionary representation are still being completed.
+The historical fourth-tensor and faithful-parabolic checkpoint built the canonical
+collection in 5046 jobs, with 1653 collection imports. The recursive audit checks
+all 26847 collection constants, including private/generated declarations,
+under only the three standard axioms, excluding only the T4/T6 endpoint values.
+All 460 new leaf modules pass fifteen linters on 4157 declarations with zero
+errors; repository preflight and diff checks pass. The actual fourth tensor has
+an exact 128-element Q stabilizer and the full-axis projection kernel has at
+most 128 elements. The seven actual affine generators, all their central signs,
+and their group generation are bound. The genuine A5/D6/E7 source and matrix
+image orders agree with faithful restrictions. Complete 120-root fourth-middle
+physical support is proved. Full short fixation, flag projection surjectivity,
+actual fourth H orbit count, global orbit coverage, full presentation kernels,
+and T4/T6 endpoints remain open. These new scopes await independent review.
 
-## Framework-law holes: all discharged (in `Definitions.lean`)
+The historical third-orbit, E8 flag, and local-index prerequisite checkpoint built
+the canonical collection in 4585 jobs. Its recursive audit checks all 22690
+collection constants, including private/generated declarations, under only the
+three standard axioms, excluding only the T4/T6 endpoint values. All 250 new
+leaves pass fifteen linters on 4560 declarations with zero errors. Repository
+preflight and diff checks pass. The actual third H orbit and its matrix fiber
+are now exact, and the full actual E8 section-short-line flag orbit is counted.
+The actual characteristic-three local representation and finite A5 bound are
+proved. Full T4/T6 endpoints, the fourth axis phase lift, and the 3159-coset
+index replay remain open. Independent U-order review is in progress; the
+complete third-orbit chain is next in its review queue.
 
-Former holes F-Aut*, F-LeechIsom*, F-signs*, F-signsNormal, F-centerNormal
-are now proved, with no `sorry`:
+The earlier actual contextual-replay and phase-fiber checkpoint builds the canonical
+collection in 4335 jobs. Its recursive audit checks all 18130 collection
+constants, including private/generated declarations, using only the three
+standard axioms and excluding only the T4/T6 endpoint values. The 257 new leaves
+pass fifteen linters on 742 declarations with zero errors. Repository preflight
+and diff checks pass. The corrected F12 = F13 and the actual octad matrix fiber
+of 256 axes are proved. At that checkpoint the third H orbit had only the
+lower bound 1630347264000; its projected lift and exact count have since been
+proved, as described above. Full T4/T6 endpoints remain open.
 
-* F-Aut* (`griessAutSubgroup`): `one_mem'`, `mul_mem'`, `inv_mem'` proved
-  from the specified product/form; only the product remains a placeholder.
-* F-LeechIsom* (`leechIsomSubgroup`): `one_mem'`, `mul_mem'`, `inv_mem'`
-  proved by general submodule laws and now applied to the explicit lattice.
-* F-signs* (`signsSubgroup`): `one_mem'`, `mul_mem'`, `inv_mem'` proved for
-  `{±1}` by identity/negative-identity computation.
-* F-signsNormal (`signsNormal`): normality proved by direct conjugation
-  computation.
-* F-centerNormal (`centerQNormal`): via the Mathlib normal-center instance
-  (`Subgroup.instNormalCenter`); fixes the name used by `Q ⧸ centerQ`.
+The octad-axis and actual U-order checkpoint builds the canonical collection in
+4078 jobs. Its recursive audit checks all 17382 collection declarations,
+including private/generated constants, using only the three standard axioms and
+excluding only the T4/T6 endpoint values. The 133 new leaves pass fifteen linters
+on 3248 declarations with zero errors. Repository preflight passes. The actual
+second H-axis orbit has 11935123200 axes, and the actual Norton U has order
+thirteen. Full global orbit coverage, remaining line squares, local diagonal
+generation, and independent classical presentation recognition remain open.
 
-## Explicit definitions and completed supporting laws
+The section-incidence and compressed-word checkpoint builds the canonical
+collection in 3941 jobs. Its recursive audit checks all 14134 collection
+declarations, including private/generated constants, using only the three
+standard axioms and excluding only the T4/T6 endpoint values. Eighty new leaves
+pass fifteen linters on 4813 declarations with zero errors. Repository preflight
+passes. At that earlier checkpoint the actual E8-section orbit count was
+46621575, and projected axis-stabilizer identification was still open. Sixty-two finite word-normalization leaves check 3956
+identities using 296986 elementary Coxeter moves. Acyclic auxiliary generators
+are proved equivalent to the original local presentation. These certificates
+and the generic equation checker still require the actual Todd–Coxeter
+connection; they do not establish classical presentation recognition.
 
-The entries below have no local proof or data holes. Some still depend on
-unfinished source data, such as the Griess product;
-they are not all transitively free of `sorryAx`.
+The E8 counting and preferred-short transport checkpoint builds the canonical
+collection in 3860 jobs. Its recursive audit checks all 9321 collection
+declarations, including private/generated constants, using only the three
+standard axioms and excluding only the T4/T6 endpoint values. Forty new leaves
+pass fifteen linters on 716 declarations with zero errors. Repository preflight
+and diff checks pass. Independent review of the new E8 counting and coordinate
+identity leaves is in progress; full orbit coverage and recognition are open.
 
-* `GriessSpace` (carrier `Fin 196884 → ℝ`), `IsGriessAuto`.
-* `stdPairingFun` (explicit `Σᵢ xᵢ * yᵢ` on `Fin 24 → ℝ`), `IsLeechIsom`
-  (pairing preservation plus onto-`LeechLattice` membership equivalence),
-  `leechIsomSubgroup` (carrier plus proved closure laws).
-* `IsSign` (identity or pointwise negative identity), `signsSubgroup`
-  (carrier plus proved closure laws), `signsNormal`, `centerQNormal`.
-* `Co1` (quotient shape `Isom(Λ)/{±1}`), `centerQ`,
-  `G` (`Subgroup.closure`, no conclusions
-  built in), `hyperbolicFun` (explicit `Σᵢ aᵢ * bᵢ`).
-* Coordinate extraspecial model: `qBeta` (explicit `Σᵢ vᵢ * w_{i+12}`),
-  `qBeta_*` bilinearity lemmas, `qBilin`, `qCocycle` (proved normalized
-  cocycle), `Q` (cocycle extension, nonabelian twisted model — not a direct
-  product), `instGroupQ` (proved via `NormalizedCocycleExtension`),
-  `qQuotHom` (proved projection), `squareQuad` (diagonal `v ↦ β(v,v)`).
-  These coordinate definitions have no `sorryAx` dependency. The
-  model-to-FLM comparison is NOT proved (pending S-Q).
+The coordinate identity and local-word checkpoint builds the canonical collection
+in 3820 jobs. Its recursive audit checks all 8604 collection declarations,
+including private/generated constants, using only the three standard axioms
+and excluding only the T4/T6 endpoint values. Its eleven changed leaves pass
+fifteen linters on 357 declarations with zero errors. Repository preflight and
+diff checks pass. These new leaves have kernel, trust, and lint checks; their
+independent adversarial review remains pending.
 
-The coordinate `centerMap` is now defined as the central coefficient. Its
-homomorphism law uses the proved center characterization, and
-`qCenterHom` supplies an explicit inverse. `centerMap_bijective`,
-`qQuotHom_ker`, `qQuotHom_surjective`, and `qQuotHom_range` are proved.
-`qQuotientEquiv` constructs the actual quotient isomorphism;
-`q_square_mem_center` and `squareQuad_eq_centerMap_square` establish the
-squares link; `qHyperbolicEquiv` explicitly splits the coordinates and
-`qHyperbolicEquiv_form` proves form preservation. All these definitions and
-supporting theorems have no `sorryAx` dependency. They concern the coordinate
-model, not an audited FLM comparison.
+The subsequent first-column checkpoint builds the canonical collection
+in 3809 jobs. Its recursive audit checks 8247 collection declarations,
+including private/generated constants, using only the three standard axioms
+and excluding only the T4/T6 endpoint values. Its 24 changed leaf modules pass
+15 linters on 450 declarations with zero errors; repository preflight and
+diff checks also pass. The independent scoped pair-stabilizer/order review is
+[approved](https://artifacts.internalmeta.com/a/1814400673093555).
+The nine-leaf actual transition subgroup index review is also
+[approved](https://artifacts.internalmeta.com/a/2157891354936211).
+The nine-leaf signed-pair and secondary feasible orbit chain is independently
+[approved](https://artifacts.internalmeta.com/a/1658609605982919), with no blocking
+findings and its global coverage limitations explicitly scoped.
+The six-leaf actual destination/counting and phase-correct Ω transport chain is
+also [independently approved](https://artifacts.internalmeta.com/a/1128903889576659).
+The nine-leaf phase and first-column classification chain is
+[independently approved](https://artifacts.internalmeta.com/a/945880241514491),
+excluding Atlas label assignments and full orbit coverage.
 
-### Exact remaining Lean placeholders
+T1–T3 and T5 in [Milestones.lean](Milestones.lean) are proved in full. T4 and T6
+retain documented `sorry` proofs.
 
-There is **one** `sorry` body in `Definitions.lean`: `rhoLocal`.
-The six milestone proof bodies remain unchanged. The model-comparison gaps
-above are additional unfinished mathematics, even where the coordinate
-objects no longer contain a placeholder.
+- **T1:** complete, using the actual extraspecial group, exact maps, and faithful
+  product-and-form action.
+- **T2:** complete, with full triality product and form preservation and
+  generated-group containment by the proved subgroup closure argument.
+- **T3:** complete through [GeneratedFiniteness.lean](GeneratedFiniteness.lean),
+  using the actual axis kernels, spanning, norm, isolation arguments,
+  and the full product preservation theorem.
+- **T4:** the full Monster order, requiring the structural counting or
+  recognition argument and all its prerequisites.
+- **T5:** complete through the actual full-centralizer recognition and actual
+  normal-generation argument. The endpoint audit and independent review passed.
+- **T6:** the independent Y₅₅₅ presentation-recognition theorem and its
+  comparison with the concrete generated group.
 
-## Semantic omissions and faithfulness risks
+Conway (1985), §13, printed page 527, proves finiteness using an axial vector
+whose orbit spans and whose multiplication operator has a simple top
+eigenvalue separated from the remaining spectrum. The actual midpoint-eigenvalue exclusion has now been proved for every signed
+short axis, and the axis-family spanning theorem is proved. The complete
+finiteness application now uses the proved triality product preservation. His order argument then
+uses a theorem of S. Smith characterizing a finite group from its involution
+centralizer. Merely citing that theorem does not prove T4 in Lean.
 
-* No splitting of `1 → Q → H → Co1 → 1` is asserted (matches review scope).
-* Plus type is stated via a `ZMod 2`-linear iso preserving values against the
-  explicit sum formula; the squares link is the T1 equation tying
-  `squareQuad` to `g * g` through the raw `centerMap` (whose bijectivity T1
-  also concludes). If S-squareQuad were bound to a free form ignoring
-  squares, T1's link equation would fail — that is the intended
-  non-degeneracy guard. No record or definition assumes `centerMap` is an
-  isomorphism as input. Bijectivity is independently proved for the coordinate
-  model by constructing an inverse.
-* T2's first conjunct is a genuine preservation property of the raw element
-  `sExtra`, not a typing tautology; T1's preservation conjuncts play the same
-  role for `rhoLocal` (which targets ambient GL, not `griessAutSubgroup`).
-* The Leech lattice is now defined by the explicit Golay congruences, and its
-  rank is proved to be 24. Integrality, evenness, unimodularity, minimum norm, and the compatible FLM
-  quotient identification remain theorem obligations; the isometry/signs
-  carriers do not prove them.
-* The real carrier, dictionary basis, pairing weights, and triality are
-  fixed in Seysen coordinates. The eventual product and local-action formulas
-  must use the same basis; their FLM comparison and complexification remain
-  source-audit obligations.
-* No T7/VOA content is included. The completed infrastructure consists of
-  subgroup laws, the coordinate cocycle model and its center/quotient/squares
-  identifications, the Golay lattice, dictionary form and triality, and the
-  presentation reference; no endpoint is proved.
+## Product normalization correction
 
-## Additional complete coordinate and presentation definitions
+The proof work found an error in the earlier coordinate transcription of
+the tensor-times-tensor rule. In the present unit tensor coordinates, both
+the matrix contraction and short-vector contraction carry a factor `1/8`.
+The earlier matrix term omitted it, and the short-vector term used `1/2`.
+Conway, Appendix 5, printed page 536, Calculation (1), explicitly gives
+diagonal entries `9/8` and `1/8` for the relevant unit tensor square.
+The corrected rule satisfies the complete product preservation proofs used in T1–T3.
 
-The Golay generators, `golayEncoder`, and `golayCode` are explicit.
-`LeechCongruences`, `leechIntegral`, `leechCoordinateEmbedding`, and
-`LeechLattice` have no `sorryAx` dependency.
-`leechCongruences_normalize` proves that the common residue can be chosen
-as 0 or 1, and `mem_leechIntegral_iff_source` proves equivalence with the
-published binary-code membership condition.
+## Source faithfulness
 
-`griessForm` uses squared norm 2 on dictionary blocks A/B/C, and squared
-norm 1 on diagonals, octad blocks, and signed X/Y/Z blocks.
-`Triality.lean` implements the two three-cycles and the octad Fourier/sign
-operation. The matrix inverse is certified using the Sylvester Hadamard
-construction and a kernel-checked finite row-permutation equality.
-Neither `griessForm` nor `sExtra` depends on `sorryAx`.
+The construction uses explicit supplementary formulas from Seysen §6–9,
+Conway §9–12 and appendices, and Basak §1.1; see the
+[source record](blueprint/sources/concrete-coordinates.md).
+The product invariance proofs establish compatibility of the lattice half-norm,
+preferred short lifts, Schrödinger basis, and dictionary signs in this concrete
+supplementary coordinate model. Comparison with the primary FLM construction
+remains unproved. These coordinate proofs do not establish the identification
+with the primary VOA construction.
 
-The classical reference is specified by the Y555 tree, its involution and
-Coxeter relators, and `(a b1 c1 a b2 c2 a b3 c3)^10`. The quotient group laws
-are supplied by `PresentedGroup` and the proved normality of the cyclic
-subgroup inside the chosen centralizer. This construction does not refer to
-`G`, the Griess product, or any local-action placeholder. Its identification
-with the historical Monster remains a recognition proof, not an assumed axiom.
+The VOA, generator lifts, full VOA automorphism equality, character formula,
+and genus-zero moonshine are outside the six finite-group milestones.
 
-## Further completed local prerequisites
+## T5 independent review
 
-- `spinRepresentation` explicitly acts by `(-1)^(c+b·t) f(t+a)` on 4096
-  binary labels. Its multiplication, inverses, faithfulness, and pairing
-  invariance are proved; no local-group or Griess-product hole is used.
-- `spinHolomorphSubgroup` is the orthogonal normalizer of the actual Q image.
-  `spinConjugation` is induced by conjugation, not supplied as an assumed action.
-- `leechIntegral_finrank` proves rank 24. `LeechModTwo` is the actual quotient
-  by doubles inside the lattice. `leechModTwoLinearEquiv` is a proved
-  equivalence using an integer lattice basis; quadratic compatibility is pending.
-- `leechBasisMatrix_gram`, `leechHyperbolicMatrix_inverse`, and
-  `leechBasisMatrix_congruences` are finite kernel checks of concrete data.
-  They do not yet assert that the matrix columns span the lattice or that
-  the binary change of basis preserves the lattice quadratic form.
+The complete actual centralizer and simplicity argument was independently
+re-elaborated and approved with no blocking findings. The full checkpoint
+audited 6759 declarations using only standard axioms, excluding only the
+remaining T4 and T6 endpoint values. Complementary review reports record
+their source scope and authorship exclusions:
+
+- [Centralizer and actual T5](https://artifacts.internalmeta.com/a/1125455316925458).
+- [Normal generation](https://artifacts.internalmeta.com/a/2416843395509880).
+- [Spin recognition and axis polynomial](https://artifacts.internalmeta.com/a/959174976739879).
+
+
+The [independent fourth-orbit assembly review](https://artifacts.internalmeta.com/a/1835071391027554)
+approved seven root-authored modules with no blocking findings: fresh isolated
+source replay, all 45 private/generated constants under the three standard
+axioms, and fifteen linters on 34 authored plus 11 generated declarations with
+zero errors. It explicitly excludes independent certification of that
+reviewer’s affine Q128, short-fixation and 63-frame prerequisites, and excludes
+Atlas labels and full global orbit coverage.
+
+
+The completed fourth-orbit checkpoint builds the canonical collection in
+6862 jobs with 3460 imports. Its strict recursive audit checks all 59321
+private/generated collection constants under only `propext`, `Classical.choice`
+and `Quot.sound`, excluding exactly the unfinished T4 and T6 endpoint values.
+All 32 changed leaf modules pass fifteen linters on 443 declarations
+(226 authored plus 217 generated), with zero errors. Repository preflight and
+cached diff checks pass. New transition-reciprocity, C422, geometry and binary
+irreducibility investigations remain excluded until fully proved and gated.
+
+### Actual binary irreducibility, transition reciprocity, and fifth-axis coordinates
+
+The actual binary Co1 action is now proved irreducible. The proof uses only the
+five actual lattice isometries, checked original matrix products, a nonzero
+rank-one operator, and two complete cyclic bases. Consequently every normal
+2-subgroup of actual Co1 is trivial, without a recognition assumption.
+The [independent binary review](https://artifacts.internalmeta.com/a/1477997121060276)
+approved all seven irreducibility leaves after isolated forced replay, a recursive
+92-constant standard-axiom audit, and fifteen linters with zero errors.
+The reviewer authored the separate normal-2-subgroup consequence and does not
+independently certify that consequence.
+
+Actual E8-section/frame incidence is counted and transitive: 135 frame classes
+per section, 6293912625 flags, full Co0 stabilizer 1321205760 and Co1 image
+660602880. The full frame-zero stabilizer is identified with actual Golay signs
+and octad-fixing permutations. The
+[independent frame-flags review](https://artifacts.internalmeta.com/a/3938607539614506)
+approved these four leaves after isolated forced replay, all 32 private/generated
+constants using only standard axioms, and fifteen linters with zero errors.
+This does not identify the fifth axis stabilizer.
+
+Actual H transitions and feasible transitions now satisfy weighted reciprocity
+for arbitrary actual local orbits. The explicit original odd-cocode reflector
+fixes every first pair axis and reverses the original triality transitions.
+The actual reverse H entries into the first orbit are 135 from the second,
+1 from the third, and 0 from the fourth. The reverse feasible entry from the
+93150-vector secondary orbit into the singleton orbit is exactly 1.
+No orbit-table classification or global coverage is assumed. The [independent feasible-transition review](https://artifacts.internalmeta.com/a/2308666636341233)
+approved all four leaves after isolated forced replay, a recursive 53-constant
+standard-axiom audit, and fifteen linters with zero errors.
+
+The literal fifth candidate is an actual original six-factor generated-group
+word. Its matrix is proved diagonal, with value 1/2 on the actual octad of
+code label 2052 and 1/4 elsewhere, and square trace 3. Thus it cannot be in any
+of the first four counted H orbits. All 552 middle pair-short coefficients are
+proved zero. The later fifth-Q checkpoint below closes its full Q stabilizer and
+identifies the actual fifteen-frame system. Full projection generation and
+H orbit size remain open.
+
+The actual norm-eight frame-class point set has 8292375 points, is invariant
+under the genuine Conway action, and spans the whole 24-dimensional binary
+module. This proves the spanning component of Ivanov II Lemma 5.1.2. The
+source excludes some zero-sum triples from its line set; no universal geometry
+presentation, universal-module upper bound, or all-triples line identification
+is claimed here.
+
+The literal first-line square now fixes eleven whole preferred short units,
+namely basis indices 0 through 9 and 11, using all 1552 actual preferred-Q
+transport inputs with their central phases. Twelve whole short returns remain.
+The count of verified Coxeter pairs remains 84/120, with all 36 line-line
+relations open. C422 replay and geometry/presentation-kernel work remain
+unfinished and excluded from this checkpoint. Both T4 and T6 endpoints,
+global axis and feasible-axis coverage/counts, and primary FLM comparison remain open.
+
+The binary/transition checkpoint builds the canonical collection in 6913 jobs
+with 3511 imports. Strict recursive auditing checks all 59888 private/generated
+collection constants under only `propext`, `Classical.choice`, and `Quot.sound`,
+excluding exactly the unfinished T4 and T6 endpoint values. All 51 new leaves
+pass fifteen linters on 565 declarations (292 authored and 273 generated), with
+zero errors. Repository preflight and cached diff checks pass.
+
+The [independent Conway points/span review](https://artifacts.internalmeta.com/a/2064643920881930)
+approved the two point/action/cardinality/spanning leaves after isolated forced
+replay, a recursive 20-constant standard-axiom audit, and fifteen linters with
+zero errors. Its scope excludes the line predicate, universal representation,
+and dimension upper bound.
+
+
+## Fifth-Q and frame-system checkpoint
+
+The fifth representative's entire Q stabilizer is proved to have order 32,
+with Q orbit size 1048576. This uses the original matrix, all middle short
+coordinates, and all tensor coordinates, including the actual central phases.
+Its binary image is exactly the displayed 32 translation/modulation classes;
+every actual full-axis stabilizer element preserves this image.
+
+The actual selected octad section has a complete integral eight-root basis,
+with a verified rank-eight binary matrix. Its intersection with the fifth Q
+image is a sixteen-element binary subspace whose fifteen nonzero classes
+have explicit genuine norm-eight lattice representatives. Every actual
+full-axis stabilizer lift preserves this fifteen-frame system. Neither
+uniqueness of the original frame class nor identification with the previously
+counted single-frame flag is used: both uniqueness claims are false for this
+representative. Full spatial stabilizer generation, its projection order,
+and the fifth H orbit size remain open. Independent review of these fourteen
+intersection leaves is queued after the current C322 review.
+
+The first-line square now fixes twelve whole preferred short units: basis
+indices 0 through 9, 11, and 12. Eleven returns remain (index 10 and indices
+13 through 22). The verified Coxeter-pair count is still 84/120, with the
+36 line-line relations open.
+
+A generic theorem proves that the commutator subgroup of a group satisfying
+Ivanov II Proposition 2.3.7's explicit point/line and connectivity hypotheses
+is finite of order at most two. This is not yet applied to the actual Conway
+geometry; the genuine line predicate, connectivity, universal-module upper
+bound, and abelianization remain to be proved.
+
+Seventeen further C422 prerequisites construct the independent split
+quadratic form, actual reflections and conjugation, and the 1080 distinct
+norm-two projective lines. They do not yet prove full source faithfulness or
+Monster recognition. The original C422 coset replay and actual Monster
+geometry/kernel developments remain outside this checkpoint.
+
+T4 and T6 are still unfinished. The twelve-axis and ten-feasible-orbit
+coverage, final global counts/order, presentation kernel, and primary FLM
+comparison remain open.
+
+The canonical collection builds in 7001 jobs with 3595 imports. The strict
+collection audit checks 60658 private/generated declarations using only
+`propext`, `Classical.choice`, and `Quot.sound`, excluding exactly the two
+unfinished T4/T6 endpoint values. All 84 new leaf modules pass fifteen linters
+on 758 declarations (442 authored and 316 generated), with zero errors.
+Repository preflight and the cached diff check pass.
+
+
+## Local C422 recognition and fifth generators checkpoint (2026-10-14)
+
+The original nine-generator C422/S/Q presentation from Soicher (1985), Table 3,
+and Ivanov I, §8.4, is now proved finite of exact order 9,904,359,628,800.
+The literal original-source coset equations give index at most 1080 over the
+proved faithful C322 parabolic. The independent projective norm-two reflections
+of the split eight-dimensional form over F₃ give the matching lower bound and
+prove the actual presentation map injective. The generator-preserving
+`y422ClassicalReflectionEquiv` identifies that source presentation with the
+independently defined group generated by **all** norm-two projective reflections.
+Its 1216-leaf dependency bundle passes a recursive audit of all 3192 private and
+generated constants under only `propext`, `Classical.choice`, and `Quot.sound`,
+and all fifteen linters. Conventional Ω₈⁺(3):2 comparison through spinor and
+determinant definitions, global parabolic inclusion faithfulness, and the
+Monster presentation kernel remain open.
+
+For the fifth actual axis, the restricted local projection kernel has exact
+order 32. Its full local stabilizer cardinal is therefore 32 times the cardinal
+of its actual Co1 projection range; that range has not yet been identified in
+full. Six genuine original permutation words preserve the selected integral E8
+section and its actual sixteen-element frame system, with all ninety nonzero
+frame-class images verified through genuine integer lattice coordinates. Five
+actual source permutation words generate the full source-octad permutation
+stabilizer, of order 322560, and their original transport gives the full actual
+selected-octad permutation group of the same order.
+
+The corrected Xi and twelve corrected original source sign words now fix the
+entire original tensor and matrix blocks. Their whole short-block proofs, the
+six corrected permutation whole-axis lifts, full projected stabilizer
+generation, and fifth H-orbit cardinal remain open. The generic Xi short
+physical/Q caches and executable final-axis coefficient numerators are proved;
+the remaining bounded short-coordinate packets are outside this checkpoint.
+
+Additional actual geometry leaves identify Q-incidence with the two-core of the
+actual involution centralizer, identify the actual Conway base-point two-core
+with 2048 Golay sign classes, construct a genuine original two-orbit tetrad
+line, and define the universal binary module using exactly the genuine line
+relations. The universal-module dimension bound and global geometry kernels
+remain open. Norton proof counts remain twelve of twenty-three preferred-short
+returns and eighty-four of one hundred twenty Coxeter pairs.
+
+T4 and T6 still have their original documented endpoint proof holes. The full
+twelve-axis and ten-feasible-orbit classifications, global count assembly,
+presentation kernels, and primary FLM comparison remain open. The newly added
+scopes have not yet received a complete independent adversarial review.
+
+Canonical collection build: 8312 jobs, 4906 imports. Strict recursive audit: 64724 declarations, including private and generated declarations, use only the standard three axioms; exactly the unfinished T4 and T6 endpoint values were excluded. The 1311 new leaf modules passed all 15 linters: 4066 declarations (1756 authored and 2310 generated), zero errors. Repository preflight and cached diff checks passed.
+
+
+## Full fifth Xi and actual system stabilizer checkpoint (2026-10-14)
+
+The genuine Q-corrected Xi now fixes the entire original fifth axis: matrix,
+short, and tensor blocks. All 3856 actual nonzero short coordinates have their
+original transport, preferred-Q phase, and coefficient equality checked;
+orthogonality proves equality at the remaining coordinates. The 186-leaf
+bundle passed canonical build (4122 jobs), recursive standard-three-axiom
+audit (1236 private/generated constants), and all fifteen linters (564 authored
+and 672 generated declarations, zero errors).
+
+The full original Co0 group preserving both the selected integral E8 section
+and the entire actual sixteen-element binary frame system is now identified
+and counted: 1321205760 in Co0, 660602880 in the actual quotient Co1. It acts
+transitively on the fifteen genuine nonzero frame classes. The first-frame
+stabilizer has exactly 4096 signs times 21504 actual permutations. The twelve
+original Golay signs, six original spatial permutation words, and original Xi
+generate this full simultaneous stabilizer. The actual selected-octad
+permutation orbit of the whole system contains exactly fifteen systems.
+
+This does not yet identify the full fifth-axis stabilizer projection: the
+twelve corrected sign and six corrected permutation whole-axis lifts remain
+in progress. Its H-orbit cardinal therefore remains open. Seven further
+local classes, twelve-axis and ten-feasible coverage, actual transition
+equations, and the global Monster order remain open.
+
+Additional genuine E8 finite-core and maximality results, actual Co1 universal
+binary-module prerequisites and relation transport semantics, and original
+Norton Gaussian packet certificates are included. The unconditional270-system
+coverage and exact universal-module dimension/kernel are still in replay.
+The Norton counts remain12/23 preferred-short returns and84/120 Coxeter pairs.
+T6 global geometry, presentation kernels, and Monster recognition remain open.
+Independent adversarial review of these new scopes and the final primary FLM
+comparison remain pending.
+
+Canonical collection build: 8590 jobs, 5183 imports. Strict recursive audit: 68400 private/generated declarations use only `propext`, `Classical.choice`, and `Quot.sound`; exactly the unfinished T4/T6 endpoint values were excluded. All277 new leaf modules passed all15 linters:3673 declarations (1929 authored,1744 generated), zero errors. Repository preflight and cached diff checks passed.
+
+
+## Twelve fifth signs, complete E8 systems, and universal source bridge (2026-10-14)
+
+All twelve genuine corrected source Golay signs now fix the whole original
+fifth axis, including the complete short block. They give the original
+twelve encoder-basis signs in its actual Co1 stabilizer projection; source
+generation proves every original Golay sign also lies in that image. The
+corrected Xi is already a whole-axis lift. The remaining six corrected
+permutation lifts, actual full image equality, and fifth H orbit remain open.
+The staged assembly proves the full stabilizer order21139292160 and orbit
+6599645724672000 conditional on that actual image equality.
+
+The actual selected E8 section has exactly270 genuine sixteen-element totally
+singular frame systems. An unconditional Fin270 parametrization, completeness,
+and maximality are proved. A proved first-label pigeonhole bound reduces the
+finite coverage to labels0–31. Classification of their two full actual spatial
+orbits is in progress and remains outside this checkpoint.
+
+The actual Conway geometry now has an independent nonabelian universal
+presentation using precisely point squares and genuine source line products.
+Its actual commutator quotient is proved isomorphic to the independent binary
+module defined by those genuine line equations, preserving every point
+generator. The natural group-to-module kernel is exactly the commutator. The
+whole actual Conway group acts faithfully on the source presentation by
+automorphisms. This does not prove the source group abelian. The binary
+module's dimension24 and natural map injectivity, actual geometry commutator
+bound, abelianity, and global Monster kernels remain open. New exact binary
+mask decoders retain the literal full matrix and original genuine-line tests.
+
+The literal preferred-basis13 Norton first-line square return is proved. Its
+whole forward/inverse packets and complete actual U transport are identified
+with all256 short phases and both tensor factors retained. Counts are now
+13/23 preferred-short returns and84/120 Coxeter pairs. Remaining returns are
+basis10 and14–22; all36 line–line Coxeter relations remain open.
+
+T4 and T6 remain unfinished. Seven further local axis classes, twelve-axis
+and ten-feasible coverage, all required transition equations, global counts,
+presentation and geometry kernels, final recognition, independent review of
+these new scopes, and primary FLM comparison remain open.
+
+Canonical collection build:8683 jobs,5276 imports. Strict recursive audit:68938 private/generated declarations use only `propext`, `Classical.choice`, and `Quot.sound`, excluding exactly the unfinished T4/T6 endpoint values. All93 new leaf modules passed all15 linters:535 declarations (286 authored,249 generated), zero errors. Repository preflight and cached diff checks passed.
+
+
+## Two E8 orbits, invariant forms, and Norton basis15 (2026-10-14)
+
+The 270 actual maximal singular frame systems of the selected E8 section
+now split into exactly two disjoint full actual spatial orbits of 135 each.
+Original generator words cover both families. The second representative has
+actual stabilizer order 1321205760 in Co0 and 660602880 in Co1. These are
+orbits of frame systems within a section; they do not establish the global
+axis or feasible-axis classifications.
+
+Every linear endomorphism commuting with the actual Conway action on the
+24-dimensional binary space is zero or identity. The actual polar form gives
+an explicit linear equivalence with its dual. The invariant bilinear forms
+are zero and polar; invariant quadratic forms are zero and the actual
+squares form. These unconditional statements concern the existing binary
+space. The independent genuine-line universal module's dimension 24 and
+natural map injectivity, and the nonabelian universal group's commutator
+bound and abelianity, remain open.
+
+The whole original Norton returns at preferred basis14 and basis15 are
+proved, including all short-vector phases and both tensor factors.
+Counts are 15/23 preferred-short returns and 84/120 Coxeter pairs.
+The remaining returns are basis10 and basis16–22. All 36 line–line pairs
+remain open. Six corrected fifth-axis permutation lifts have complete
+original tensor certificates checked in work outside this checkpoint;
+their full short block and final stabilizer image equality remain open.
+This checkpoint includes 16 proved generic/source helpers for those lifts.
+
+T4 and T6 remain unfinished. Seven further local axis classes, global
+12-axis and 10-feasible coverage, the required transition equations and
+counts, source presentation and geometry kernels, and final Monster
+recognition and primary FLM comparison remain open.
+
+Canonical collection build: 8759 jobs and 5352 imports. Strict recursive audit:
+69902 private/generated declarations use only `propext`, `Classical.choice`,
+and `Quot.sound`, excluding exactly the unfinished T4/T6 endpoint values.
+All 76 new leaf modules passed 15 linters: 960 declarations (410 authored,
+550 generated), zero errors. Repository preflight and cached diff checks
+passed.
+
+Independent adversarial review approved the preceding 22-leaf genuine Co1
+universal-presentation and whole Norton basis13 bundle, with no blocking
+findings. The isolated replay checked all 194 private/generated constants
+with only the standard three axioms, and all 191 lint declarations (102
+authored, 89 generated) with 15 linters and zero errors. Its source comparison
+preserves genuine line semantics and does not infer source abelianity or
+module dimension 24. Report:
+https://artifacts.internalmeta.com/a/881633951609451
+
+Independent adversarial review of the eight invariant-form and CodeNine
+transport leaves is approved: isolated replay, all 82 private/generated constants
+using only standard axioms, 36 authored plus 46 generated lint declarations,
+15 linters and zero errors. Report:
+https://artifacts.internalmeta.com/a/1665853261640576
+
+The new E8 orbit bundle and other new scopes still require independent
+review; final endpoint review remains open.
+
+## Actual fifth orbit, nonsplitting, and six Norton returns (2026-10-14)
+
+The fifth axis now has an unconditional full local stabilizer and orbit count.
+All six original corrected Golay permutation lifts fix the complete axis,
+including all 3856 short coordinates and the whole tensor part. Together
+with the proved signs and Xi these establish the actual projected stabilizer,
+full H stabilizer order 21139292160, and H orbit size 6599645724672000.
+The first five local axis orbits are complete; seven further classes and
+all global twelve-class coverage, remaining transitions, anchors and total
+axis count remain open. Eight further feasible classes and global ten-class
+coverage/counting remain open. The global pair-stabilizer identification
+and its order are already proved.
+
+For the existing actual binary Conway action, there is no homomorphism
+Co1 → Aut(Q) lifting that action. The proof uses fourteen literal original
+source-word powers and a contradictory affine correction system, with all
+central phases bound to the genuine cocycle. Mathematical evidence report:
+https://artifacts.internalmeta.com/a/1127139053333300
+This does not establish the universal source group's commutator bound,
+abelianity, local kernel, or its independent universal module dimension.
+The actual polar point graph is connected and genuine adjacent source point
+involutions commute. The commutator bound still explicitly requires local
+polar-neighbor connectivity and polar-zero source commutation.
+
+Whole original Norton returns at preferred bases16–21 are now included,
+with complete signed short transport and full tensor transport. This
+checkpoint contains 21/23 preferred-basis returns and 84/120 Coxeter pairs.
+Basis10 is separately gated outside this checkpoint; basis22 is still in
+assembly. All 36 line–line relations and the spider relation remain open.
+The full generator and presentation-kernel recognition steps remain open.
+
+The independent universal-module replay has checked all 171 initial point
+bindings and all 147 genuine-line certificates in work outside this
+checkpoint. Remaining action/image replay, chronological equations,
+spanning targets and final injectivity/dimension24 are not asserted here.
+No replay candidates are included in this checkpoint. Only two small
+unconditional action/polar-line helpers from that work are included.
+
+Independent review approved the earlier eight invariant-form/CodeNine
+leaves (report above). Review of the new polar/commutator and basis18 scope
+found only comment-count errors, now corrected and rechecked: all 330
+private/generated constants use standard axioms, and 159 authored plus
+171 generated declarations passed all 15 linters. That independent review
+and review of the full fifth orbit are still underway. T4 and T6 remain open.
+
+Canonical collection build: 9147 jobs and 5740 imports. Strict recursive
+audit: 73396 private/generated declarations use only propext,
+Classical.choice and Quot.sound, excluding exactly the unfinished T4/T6
+endpoint values. All 388 new leaf modules passed 15 linters: 3489
+declarations (1755 authored, 1734 generated), zero errors. Repository
+preflight and cached diff checks passed.
+
+## All Norton returns, sixth-axis geometry, and local connectivity (2026-10-14)
+
+All 23 original preferred-basis Norton returns are now proved. Their assembly
+proves the first literal line-difference square is the identity in the actual G,
+and transports it to the six selected consecutive line pairs. The verified
+Coxeter pair count is 90/120; the remaining 30 line-line pairs and the spider
+relation are open. The actual Singer lift now conjugates U to U cubed and
+commutes with V, with all central phases and the spin scalar sign verified.
+Its triality compatibility and the second seed relation remain open; no
+additional Coxeter relations are inferred from the normalizer alone.
+
+The sixth actual axis has a complete matrix formula. All 549 excluded middle
+pair rows vanish and the three remaining signed coefficients are verified.
+Its matrix stabilizer is exactly the subgroup preserving the actual real
+plane spanned by the two short roots at coordinates 16–17 and 16–19 and fixing
+the specified short-vector line. Both roots have integral square 32 and
+pairing 16. The full sixth H stabilizer projects into the genuine Co1 flag
+stabilizer. Full Q stabilization, projection surjectivity and the sixth orbit
+count remain open. The first five actual H orbits are complete; seven further
+classes, global twelve-class coverage/transitions/anchors and the total axis
+count remain open. The remaining eight feasible classes and global ten-class
+counting also remain open.
+
+For the standard root 4(e0+e1), the original catalogue neighbor families have
+88 pair, 2464 octad and 2048 odd short classes. Their faithful actual catalogue
+identifications prove the full 4600 count. A sign-normalization equivalence
+also proves exactly 4600 actual lattice vectors of integral square 32 with
+positive root pairing 16. The A2 plane count 2300 and flag transitivity are not
+asserted by these leaves and remain under construction.
+
+The actual polar-neighbor sets are connected by genuine original source
+lines, unconditionally. The thirteen-leaf proof normalizes both odd norm-eight
+shapes, proves actual monomial transitivity/generation, and binds all nine
+source-word line transports. Author proof report:
+https://artifacts.internalmeta.com/a/1603338647942399
+The separate polar-zero commutation hypothesis is still open. Neither local
+connectivity nor the already proved nonsplitting obstruction establishes the
+universal source group's commutator bound or abelianity without that input.
+
+Outside this checkpoint, all 867 point bindings, 147 genuine lines, 946 actual
+images and 833 chronological source equations now compile. Twelve of 88
+spanning targets are checked at this checkpoint's documentation update.
+The remaining targets, spanning assembly, natural equivariant equivalence,
+dimension 24 and full replay gates are not asserted here. Replay candidates
+remain untracked and are excluded from the generated collection.
+
+Independent adversarial review approved the 28 polar/basis18 leaves, with no
+remaining findings after the earlier comment-only corrections:
+https://artifacts.internalmeta.com/a/1625672549058188
+Independent review also approved all 23 CodeTwentyTwo/tensor-row leaves with
+no findings: isolated forced replay, 471 standard-axiom constants, 470 lint
+declarations, genuine source indices and full sixteen-column Gram checks.
+https://artifacts.internalmeta.com/a/1126644969904051
+New sixth geometry, local connectivity and final endpoints still require
+independent review. T4 and T6 remain unfinished.
+
+Canonical collection build: 9254 jobs, 5847 imports. Strict recursive audit:
+75236 private/generated declarations use only propext, Classical.choice and
+Quot.sound, excluding exactly the unfinished T4/T6 endpoint values. All 107
+new leaves pass all 15 linters: 1828 declarations (626 authored, 1202 generated),
+zero errors. Frozen disk/index hashes and indexed import closure, repository
+preflight and cached diff checks pass.
+
+## Natural Conway module identification and rooted A2 planes (2026-10-14)
+
+The independently defined original genuine-line universal Conway module is
+now naturally isomorphic to the actual binary 24 module. The equivalence
+preserves every original point generator and intertwines the exact existing
+Co1 action; its dimension is 24. This closes the universal-module replay:
+867 actual point bindings, 147 genuine source lines, 946 actual image bindings,
+833 chronological source equations, 88 spanning targets and 120 five-generator
+basis images, followed by full span and natural-map injectivity. All 1980
+replay leaves are frozen and included. The subgroup R itself is not proved
+abelian by this module identification; its source commutator/recognition
+argument and the global presentation kernel remain open.
+
+The actual standard-root neighbor catalogue and oriented lattice vectors
+have 4600 elements. Their real-span map has exactly two neighbors in every
+fiber, so the actual rooted A2 plane set has 2300 elements. Independent
+adversarial review approved all six count/plane leaves with no findings:
+isolated replay, 122 standard-axiom constants, 64 authored plus 58 generated
+lint declarations, 15 linters and zero errors. No transitivity or abstract
+Co2/U6 stabilizer identification was assumed. Report:
+https://artifacts.internalmeta.com/a/1452299556800507
+
+Five further actual monomial leaves normalize the pair and octad neighbor
+families while preserving the root line. The octad permutation uses genuine
+Mathieu five-transitivity and fixes both root coordinates; the sign extension
+and pair normalization preserve the actual signed root line. The remaining
+odd-family and cross-family transitions are outside this checkpoint, so full
+rooted-flag transitivity/stabilizer counting is still open. Full sixth-axis Q
+stabilization, projected-stabilizer surjectivity and orbit count also remain
+open. Two actual eight-factor spin-circuit/middle-tensor helpers are included,
+without treating the pending complete tensor cache as a proof input.
+
+Eight genuine residue helpers construct the actual local source quotient,
+its point generators and genuine induced line relations, and prove the
+two-distinct-common-neighbor commutation bridge with residue abelianity
+explicit. Actual equivariance reduces that abelianity input to the base
+residue. A six-element hexad representation is abelian under its exact
+involution and perfect-matching triple relations. The comparison with the
+actual Mathieu sextet/residue and the needed Co2 subgeometry arguments
+remain open; these helpers do not discharge polar-zero commutation.
+
+Seven further Singer triality helpers are included, including its exact
+commutator tensor coefficient and the original signed-coordinate identity
+criterion. Triality compatibility, the remaining 30 line-line Coxeter pairs,
+the spider relation and the full presentation recognition remain open.
+The verified Coxeter pair count stays 90/120. T4 and T6 remain unfinished.
+
+Canonical collection build: 11258 jobs, 7851 imports. Strict recursive audit:
+91680 private/generated declarations use only propext, Classical.choice and
+Quot.sound, excluding exactly the unfinished T4/T6 endpoint values. All 2004
+new leaves pass all 15 linters: 16305 declarations (4899 authored, 11406 generated),
+zero errors. Frozen disk/index hashes and indexed dependency closure,
+repository preflight and cached diff checks pass. The 1980 module replay and
+new residue/monomial scopes still require independent review; the six rooted
+A2 count leaves have the independent approval linked above.
+
+
+### Singer relations and sixth-axis Q bounds (2026-10-14)
+
+The actual verified Coxeter-pair count is now **103/120**. Eleven new Norton
+leaves prove the original Singer short/tensor covariance, source triality
+commutation, seeds 3, 9, 4, and all 19 selected line pairs in those Singer distance
+classes. Thirteen of these pairs are new; six overlap the already proved
+consecutive pairs. Three further actual distance-two local transport helpers
+are included, but their square relation is not yet proved. The remaining 17
+pairs are the distance-two Singer class. The spider relation and global
+presentation recognition remain open.
+
+Twenty-eight sixth-axis leaves bind the complete initial spin sign decoder
+and source tensor formula, prove three actual preferred-short Q elements fix
+the whole axis, and derive **4 ≤ Nat.card(genuine sixth-axis Q stabilizer)**.
+Twelve genuine transported Pauli fixers, translation rank 9, squared norm 2,
+and the actual odd-modulation fixer prove actual spin and Omega-difference
+coordinate squares at most 1/256. A separate generic coordinate-orbit norm
+lemma supplies the elementary 512-coordinate inequality. This checkpoint
+does not claim Q card 4: the high tensor-column uniqueness and resulting upper
+bound, projected-stabilizer surjectivity, whole-axis lifts and orbit count
+remain open. Global twelve-class and feasible ten-class coverage and totals
+also remain open.
+
+Four root-neighbor leaves close odd-family monomial normalization and prove
+all three original neighboring short families are individually transitive
+under the genuine root-line-preserving monomial subgroup. Coordinate squares
+prove exact catalogue-family preservation, and the integer-pairing proof
+shows the actual root-line stabilizer preserves the original neighbor
+predicate. Cross-family Xi transitions and full rooted-flag transitivity are
+outside this checkpoint. The independently reviewed 4600-neighbor/2300-plane
+count remains unchanged.
+
+Seven actual source-group leaves identify its binary abelianization with the
+already proved natural F2^24 module and exact Co1 action, and develop central
+commutator, square-representative and square-coefficient invariance helpers.
+Their finite commutator/card≤2 assumptions remain explicit. No actual source
+abelianity, extraspecial Q identification or global presentation kernel is
+inferred. Four actual auxiliary M22/Golay residue helpers bind genuine pair
+points, rooted octads, hexad representations and nearby commutation; finite
+catalogue connectivity, module and quadratic certificates remain outside
+this checkpoint.
+
+Canonical collection build passes 11316 jobs with 7909 imports. The strict
+recursive audit checks 93272 private/generated declarations with only
+propext, Classical.choice and Quot.sound, excluding exactly the two unfinished
+T4/T6 endpoint values. All 58 new leaves pass all 15 linters: 1592 declarations
+(246 authored, 1346 generated), zero errors. Frozen disk/index hashes and
+indexed import closure, repository preflight and cached diff checks pass.
+These new scopes still need independent review. T4 and T6 remain unfinished.
+
+
+### Exact sixth-axis Q and rooted spatial stabilizers (2026-10-14)
+
+The genuine sixth-axis Q stabilizer now has exactly **four** elements.
+Fourteen support/tensor leaves exhaust the actual cocodes 0, 1504, 1648 and
+912, proving fixation of the complete axis and the matching upper bound.
+
+Actual Xi transitions connect all three rooted-neighbor families; the genuine
+root-line subgroup acts transitively on 4600 neighbors and 2300 planes.
+Actual stabilizer transport proves the original sixth spatial Co1 stabilizer
+has order **18393661440**. The full H axis stabilizer has projection kernel
+four, order four times its actual projection range and upper bound
+**73574645760**. Spatial surjectivity and whole-axis lifts remain open.
+Two further leaves prove the actual Mathieu flag-permutation order **40320**.
+
+Independent adversarial reviews approved the 13 rooted transitivity leaves
+and eight rooted stabilizer/projection leaves, with fresh replays, recursive
+standard-axiom audits, zero lint errors and no findings:
+https://artifacts.internalmeta.com/a/2931330043919117
+https://artifacts.internalmeta.com/a/28810231631927141
+
+Fourteen Norton leaves prove the actual U squared Gaussian action, its exact
+spin sign, all 24 Q images and full forward/inverse tensor dictionaries. Five
+distance-two helpers bind the first four literal states. The verified pair
+count remains **103/120**; the remaining 17 pairs, spider relation and global
+presentation recognition remain open.
+
+Seventeen source-group leaves construct the actual extraspecial Q
+identification and exact Co1 action under explicit finite central commutator
+and card-at-most-two assumptions. Actual automorphism nonsplitting then
+forces source abelianity under those assumptions. The actual geometric
+commutator bound remains open. Eleven auxiliary M22 residue leaves prove
+genuine global/local connectivity and the universal commutator bound; new
+module/quadratic certificates and source-residue comparison are outside this
+checkpoint. Global twelve-class and feasible ten-class coverage, transitions
+and totals remain open. T4 and T6 are unfinished.
+
+Canonical collection: **11391 jobs, 7984 imports**. Recursive strict audit:
+**94271** private/generated declarations use only propext, Classical.choice
+and Quot.sound, excluding exactly unfinished T4/T6 endpoint values. All
+**75** new leaves pass 15 linters: **999 declarations** (463 authored,
+536 generated), zero errors. Frozen disk/index hashes, indexed import closure,
+preflight and cached diff checks pass. Other new scopes await independent
+review beyond the two approved rooted scopes above.
+
+
+### Full sign lifts, actual monomial generation and auxiliary residue abelianity (2026-10-14)
+
+All genuine Golay signs with equal bits on coordinates 16,17,19 now belong
+to the actual full sixth-axis projected stabilizer. Ten structural full-axis
+lifts are proved; the generic forward-triality locality and matrix projection
+formula applies to every actual Q input with even modulation. No tensor-only
+fixation or unproved scalar anchor is used for these sign lifts.
+
+Three original full permutation fibers generate the actual ordered-triple
+Mathieu stabilizer. Explicit original two-generator words bind its transport
+to 16,17,19, an actual root-pair swap, and the transport to the original Xi
+fixed coordinate triple. The three transported permutations and swap generate
+all **40320** actual flag permutations. The constructed equal-sign monomial
+subgroup has **41287680** elements in Co0 and **20643840** in Co1; its fourteen
+source generators genuinely generate this counted subgroup. Full sixth-axis
+permutation/Xi lifts and the actual 891-frame orbit lower bound remain open.
+The earlier exact Q card four and spatial Co1 order 18393661440 stand; the
+full H stabilizer order 73574645760 is still only a conditional consequence
+of spatial surjectivity. The root's fifteen new leaves await independent review.
+
+Seventeen auxiliary M22 leaves now prove abelianity for every group generated
+by the original 231 pair-point involutions satisfying the actual 77 rooted
+Golay hexad matching line products. Original point-product reductions, eleven
+source coordinates and all 66 quadratic coefficients are kernel-checked.
+No abstract Todd-module classification or assumed invariant form is used.
+Author verification (not independent approval):
+https://artifacts.internalmeta.com/a/961280483702884
+The genuine Co1/M24/M22 residue comparison remains open.
+
+Sixteen actual source-geometry leaves construct phase-independent genuine
+Monster lines through z for every original Conway frame point, a central
+source-local subgroup mapping onto actual Q, its central generator of exact
+order two, and the explicit residual kernel decomposition. Four of these
+leaves prove actual squareQuad(v)=0 exactly when v is zero, an original short
+class, or an original norm-eight frame point; the singular count is 8390656.
+The trace distinction, converse 2B classification, source local injectivity,
+geometric commutator premise and global kernel are outside this checkpoint.
+
+Twenty-six Norton leaves extend the literal distance-two forward/inverse
+packet states, certify 512 full preferred-Q images and actual parity transport,
+and bind exact denominator-four physical U squared/inverse matrices. Whole
+forward seven-step and inverse six-step packets are proved for inputs 2–9.
+The exact packet pairing/returns remain open; the verified pair count stays
+**103/120**. The remaining seventeen relations, spider and global presentation
+recognition are unfinished.
+
+Independent review approved all 560 C322 local-order leaves, with fresh
+replays, 15680 recursive standard-axiom checks and zero unresolved findings:
+https://artifacts.internalmeta.com/a/1438369844914843
+The fourteen fifth-axis intersection leaves were also independently approved:
+https://artifacts.internalmeta.com/a/1086890394220512
+The complete fifth spatial/full-lift reviews remain in progress.
+
+Canonical collection: **11475 jobs, 8068 imports**. Strict recursive audit:
+**95829** private/generated declarations use only propext, Classical.choice
+and Quot.sound, excluding exactly unfinished T4/T6 endpoint values. All
+**84** new leaves pass 15 linters: **1557 declarations** (821 authored,
+736 generated), zero errors. A generated-name collision in two new Norton
+helpers was repaired and the combined build and all gates rerun. Frozen
+disk/index hashes, indexed import closure, preflight and cached diff checks
+pass. T4/T6, global twelve-class and feasible ten-class coverage, transitions
+and totals remain open. Other new scopes await independent review.
+
+## T4 priority: exact eighth coordinates and coverage reductions (2026-10-14)
+
+The team is now assigned entirely to T4. T1–T3 and T5 remain proved and
+reviewed; additional T6 work is paused. This checkpoint contains 43 new Lean
+leaves and six narrow fifth-orbit API repairs, together with the regenerated
+collection root.
+
+The actual eighth prototype is a seven-factor original local word between two
+actual triality factors. All 24 spatial frame columns and inverse coordinates
+are checked. All 552 inverse signed-pair labels are outside the actual pair
+family, so every original off-diagonal matrix entry is zero. Its diagonal is
+3/4 at coordinate 20, 3/8 at coordinates 0,1,2,3,5,6,9,10,16,18,22,23, and 1/4
+elsewhere. These are coordinates of the actual generated vector, without an
+assumed source class, extraspecial kernel, or local orbit order.
+
+Six actual sixth-phase leaves establish the nine-stage Pauli models and the
+signed terminal spin value +1/16. Eight new global reduction leaves establish
+all-vector transition destinations, genuine orbit/coset counting, both source
+signs, and reduction of real triality coverage to finite binary orbit forests
+and verified full-vector transports. The concrete later-family forests,
+whole-axis transports, twelve-class coverage, ten-feasible coverage, and final
+orbit counts remain open. The separately checked 891-point discovery tree is
+not included here; its actual stabilizer-generator binding is still being
+proved. No sixth full projection or order is asserted by this checkpoint.
+
+Previously completed T6 work is preserved: the actual local 2B criterion for
+Q elements is central z or a genuine norm-eight frame class. Genuine 2B points
+have full trace 276; both central phases over every actual short class have
+trace 4372. The full local point-generated source subgroup is identified with
+the verified frame-generated subgroup, and source z is central there. The
+residual source-to-Q kernel and global recognition remain open. Three rooted
+auxiliary M22 star-generation helpers are also preserved.
+
+Independent reviews completed since the previous checkpoint:
+
+- The fifteen original even-Q, permutation-generation, and monomial leaves:
+  https://artifacts.internalmeta.com/a/1116464044415485 (approved).
+- The fifth system and corrected-Xi scope of 203 leaves:
+  https://artifacts.internalmeta.com/a/2237411990154857 (approved).
+
+The fifth full-lift/local-order review identified six copies of a private
+inverse-coordinate lemma already supplied by `Equiv.symm_apply_eq`. Exactly
+those six copies were removed and replaced by the standard API; all public
+statements are unchanged. The revised 150-leaf independent review remains
+pending its final fresh replay and audit gates. The new eighth and sixth
+phase scopes also await independent review.
+
+Verification: the canonical collection build passed 11,518 jobs. The strict
+recursive audit passed 96,183 private/generated declarations with the three
+standard Lean axioms, excluding only the existing T4 and T6 endpoint values.
+All 49 changed Lean modules passed 15 linters: 426 declarations, consisting of
+238 authored and 188 generated declarations, with zero errors. Frozen source
+and index hashes and the indexed import closure match.
+
+## T4 priority: genuine frame orbits and seventh kernel (2026-10-14)
+
+This checkpoint adds 81 Lean leaves devoted to T4. All five workers and the
+primary agent are assigned to T4; T6 remains paused.
+
+- Sixth local class: all 891 distinct genuine frames and all 890 actual
+  transition equations are proved. The actual counted monomial subgroup fixes
+  the base frame. The projection and local-order conclusions retain precisely
+  the five corrected full-axis generator membership premises; those full
+  fixation proofs remain open. New original-Q basis-image formulas determine
+  the full images and phases of all 552 signed source pairs.
+- Seventh local prototype: the whole actual matrix and the full extraspecial
+  axis stabilizer are identified. The extraspecial stabilizer has exactly four
+  elements. Its full local stabilizer cardinality is four times the actual
+  projection-range cardinality; that range and its order remain open.
+- Eighth local prototype: polynomial identities recover its actual dodecad
+  and distinguished coordinate-line projections from its matrix. Every actual
+  spatial isometry fixing the matrix belongs to the genuine Golay monomial
+  subgroup. The full-axis kernel, projection range and local order remain open.
+- Global coverage: the entire genuine 8,292,375-element binary Omega orbit
+  is covered for the first local family by three actual roots, using genuine
+  monomial transitivity and phase lifts. Later-family forests and real triality
+  transports, all twelve axis classes, all ten feasible classes and both global
+  orbit totals remain open.
+
+The revised 150-leaf fifth full-lift/local-order review is independently
+approved: https://artifacts.internalmeta.com/a/2164026557848918 . All 150 fresh
+leaf logs and semantic probes pass; all 1,017 private/generated declarations
+use the three standard axioms; all 15 linters pass. The six standard inverse-API
+repairs are resolved and independently replayed. The fifth actual local
+stabilizer order 21,139,292,160 and local orbit size 6,599,645,724,672,000 are
+reviewed. The new sixth, seventh and eighth scopes await independent review.
+
+Verification: the canonical FLM collection build passed 11,599 jobs. All 81
+new Lean modules passed 15 linters: 1,314 declarations, consisting of 392
+authored and 922 generated declarations, with zero errors. The strict recursive
+audit passed all 97,497 private/generated declarations with only the three
+standard axioms, excluding exactly the existing T4 and T6 endpoint values.
+Frozen disk/index hashes, indexed import closure, preflight and whitespace
+checks pass. T4 and T6 remain open.
+
+## T4 priority: eighth spatial order and actual fifth binary orbit (2026-10-14)
+
+This checkpoint adds 47 Lean leaves and repairs one seventh-prototype
+mathematical docstring (the source pair is zero/twelve). T4 remains open;
+five of twelve planned local axis-orbit counts are closed. That fraction
+measures this subtask, not the entire T4 proof.
+
+- Sixth: the actual spatial frame orbit has 891 elements unconditionally,
+  and its actual spatial base stabilizer has order 20,643,840. All 276 middle
+  odd images, their coefficient phases, and the full final tensor integer
+  formula are formalized. The five corrected full-axis fixation proofs and
+  the resulting full projection and local order remain open.
+- Seventh: the genuine E8 section and its A2 plane are recognized. The
+  complete 120-root catalogue, all eighteen actual signed actions and the
+  real root spans are proved. The 1,120-plane orbit, its coverage and the
+  resulting spatial and full-axis stabilizer orders remain open.
+- Eighth: all 2,576 genuine Golay dodecads, the 1,288-element point-stabilizer
+  orbit and its original-generator transition forest are proved. The actual
+  permutation flag stabilizer has order 7,920. The full actual matrix
+  stabilizer has order 32,440,320 in Co0 and 16,220,160 in Co1. Full-axis
+  projection containment and exact kernel/range factorization are proved;
+  the numeric extraspecial kernel, projection surjectivity and local orbit
+  count remain open.
+- Global coverage: nineteen genuine fifth-family generators are proved to
+  generate the entire projected stabilizer, and fourteen candidate roots
+  are certified as actual norm-eight roots. The first actual projected
+  binary orbit has 120 elements. Complete fourteen-orbit coverage, real
+  triality transports, all twelve axis classes, all ten feasible classes
+  and both global orbit totals remain open.
+
+Independent approvals:
+
+- Fifth full lifts and local order:
+  https://artifacts.internalmeta.com/a/2164026557848918
+- Sixth phase scope:
+  https://artifacts.internalmeta.com/a/1110012125334638
+- Seventh full tensor/kernel and spatial recognition, including the docstring repair:
+  https://artifacts.internalmeta.com/a/1457989573059091
+- Eighth coordinate and matrix-recognition scopes:
+  https://artifacts.internalmeta.com/a/1479217804051026
+- Eighth actual dodecad orbit and flag order:
+  https://artifacts.internalmeta.com/a/2036299670408744
+- Eighth full spatial stabilizer and projection containment:
+  https://artifacts.internalmeta.com/a/1118151963929009
+
+Verification: the canonical FLM collection build passed 11,646 jobs. All
+48 changed Lean modules passed fifteen linters: 406 declarations, consisting
+of 232 authored and 174 generated declarations, with zero errors. The strict
+recursive audit passed 97,896 private/generated declarations using only the
+three standard axioms, excluding exactly the existing T4 and T6 endpoint
+values. Preflight passed. No new proof gaps were introduced.
+
+
+## Working progress toward T4 (2026-10-19)
+
+T4 remains open. Eight of the twelve actual local axis orbit counts are proved;
+this fraction measures that component, not completion of the order theorem.
+T1–T3 and T5 remain proved for the implemented coordinate model. T6 is open.
+All six active agents are assigned to T4.
+
+- Sixth: the actual full-axis stabilizer has order 73,574,645,760 and its
+  actual H orbit has 1,896,194,506,752,000 elements.
+- Seventh: the actual full-axis stabilizer has order 318,504,960 and its
+  actual H orbit has 438,020,931,059,712,000 elements.
+- Eighth: the actual full-axis stabilizer has order 16,220,160 and its
+  actual H orbit has 8,601,138,282,627,072,000 elements.
+- Source position 9 (the Ninth prototype): all 4,136 original signed-short
+  source rows, the complete 960-state spread certificates, and actual binary
+  E8 root-range preservation are proved. Eleven compact lifts have genuine
+  local-fiber compatibility and the intended original Conway projections.
+  All eleven original candidate projections are now exact words in
+  candidates 0, 9, and 10. A checked lower-bound assembly requires exactly
+  those three genuine full-axis fixers. The unconditional actual projected and
+  full H stabilizer upper bounds are now proved; the full H bound is 92,897,280.
+  Complete C/T fixation, remaining short source bindings, and the attained
+  matching lower bound remain open.
+- Candidate for source position 10 (the actual FifthRoot8 positive-triality prototype):
+  the original positive-root Co0 subgroup has order 42,305,421,312,000.
+  The entire actual paired norm-six catalogue has 953,856 elements and is
+  proved to be one orbit, with point stabilizer order 44,352,000. Four
+  genuine matrix-flag orientations give the complete original Co0 matrix
+  stabilizer order 177,408,000. Independent adversarial review approved
+  all 34 new norm-six and matrix-extension modules. The actual full-axis
+  extraspecial kernel now has exactly two elements. Its genuine nonidentity
+  fixer is obtained from an original complete Fifth fixer by the actual Q word
+  and triality relation. The whole H stabilizer is at most 177,408,000;
+  independent adversarial review approved that upper bound. The complete actual
+  incoming C cache and eight-factor incoming T formula are proved. Every genuine
+  norm-four/norm-six flag of pairing sixteen also has an exact 100-point lattice
+  catalogue, action, and transport. A literal original local word transports
+  the root-eight flag to canonical coordinates. The actual Mathieu point stabilizer has
+  orbits of sizes 1, 77, and 22 and is maximal in the actual flag group.
+  A literal original Conway element moves its pair point and generates the full
+  flag group together with that point stabilizer. These are lattice/group results;
+  complete axis fixation for those generators remains open.
+  The complete 135-letter canonical Q replay is now proved, retaining
+  all central phases. The original Mathieu point subgroup is now generated
+  by two explicitly checked original words. The full positive canonical spatial
+  matrix, the complete incoming tensor address map, its source initialization,
+  and all four incoming Fourier pairs are checked. Every actual positive incoming
+  and final triality tensor coordinate now has its proved integer formula. Both
+  reduced Mathieu generators have genuine full-Q actions, exact projections,
+  and matrix fixation. Their complete short and tensor fixation remains open.
+  The original mover and mate also have fully proved compact full-Q source actions
+  and complete actual canonical matrix fixation. The entire positive canonical
+  tensor now has its unconditional exact integer formula: the original full
+  source, four Fourier pairs, post action and spatial action are all proved.
+  Its complete 98,304-coordinate integer cache is also proved. Every actual
+  final short coordinate has its exact integer formula, and all 759 by 64
+  packed original incoming octad coefficients are bound to their actual source.
+  Full short cache binding and actual C/T fixation of the generators remain open.
+  Attaining all 88,704,000 matrix-quotient
+  values by full-axis fixers, and the resulting exact local orbit count, remain open.
+- Candidate for source position 11 (the Twelfth prototype): the complete original Co0
+  matrix stabilizer has order 7,372,800; the actual Q stabilizer is trivial.
+  The actual H stabilizer is therefore at most 3,686,400. The entire genuine
+  incoming C cache is proved, including all zero coefficients. Every one of the
+  twelve actual candidate projections is a literal positive word in the first
+  three. A checked assembly derives the matching actual H order from exactly
+  three genuine full-axis fixers. Complete C/T fixation of those three
+  candidates and the attained matching lower bound remain open.
+- Candidate for source position 12 (the Tenth prototype): the actual Q stabilizer is
+  trivial. A complete certified original Leech isometry now transports the
+  seven-pair eigenspace to its genuine octad E7 hyperplane; the exact projector
+  and distinguished-line transport are proved. Every actual original matrix
+  fixer now preserves the transported full octad E8 section and the outside
+  norm-twelve unsigned line, using the genuine E7 slice and orthogonality.
+  The entire actual pointwise E8 subgroup has order 512; its full unsigned-line
+  kernel is exactly two elements and its full actual unsigned-line orbit has
+  256 elements. Its sign subgroup separately has order 32. The complete actual
+  E7 preferred root-line set has 63 elements and is one orbit of the entire
+  actual matrix group. All original integral edge actions, positive-normal
+  witnesses, whole-set preservation and original matrix transport are proved.
+  The full matrix count is reduced to 63 times its actual root stabilizer.
+  The monomial anchor count, attained projected stabilizer order and complete
+  actual local axis count remain open.
+- The older Eleventh prototype at root 3 has original Co0 matrix stabilizer
+  order 159,252,480. It is not the missing source-position-10 candidate;
+  source-position-10 work uses the actual root-8 prototype above.
+- Odd global coverage: all 128 finite forest batches and their unconditional
+  actual coverage join are proved. All eighteen actual signed Odd transition
+  destinations are proved, including the final root 3 negative endpoint.
+- Feasible axes: five of ten local classes are proved. The secondary return
+  count is 925; its full local orbit has 93,150 elements. The genuine secondary
+  nonpair catalogue is partitioned into signed sectors of sizes 4,928,
+  42,240, and 45,056, with actual binary independence proved. The entire actual
+  45,056-element, 4,928-element, and 42,240-element sectors are each complete
+  genuine local orbits, and their triality destinations are proved. The actual
+  disjoint-pair sector is also a complete 924-element orbit with its original
+  triality destination proved. Each signed mate is an actual singleton orbit.
+  The six orbits are pairwise disjoint and cover all 93,150 secondary inputs.
+  Their source triality destinations are proved, including both mates.
+  The containing-octad actual A stabilizer has order 97,409,858,273,280;
+  its actual orbit has 7,286,400 elements, and the reverse transition count is 63.
+  These conclusions use the genuine simultaneous axis transport and complete
+  original Q kernel. The outside-octad actual A stabilizer has order
+  2,705,829,396,480; its actual orbit has 262,310,400 elements, and its
+  reverse transition count is 15. The entire original orthogonal flag and
+  its full extraspecial kernel are identified. The odd-destination actual
+  A stabilizer has order 169,114,337,280; its actual orbit has 4,196,966,400
+  elements, and the reverse transition count is 1. All five destinations
+  from the secondary column now have actual A counts. The containing class
+  now maps surjectively onto its complete 56,925-element actual section orbit,
+  with exactly 128 actual axes in every fiber; the original spatial lift and
+  simultaneous source conjugation are bound explicitly. The complete 77 by 128
+  coordinate phase catalogue is proved. The entire containing self-return has
+  4,928 vectors and 63 original cosets, with actual mate recognition proved.
+  A genuine sixth feasible destination is distinct from all five previous ones;
+  its first coefficient is 1/8. The full original residual containing-input
+  coefficient fibers 0, 1/8 and 1/4 have exact counts 4,320, 64,512 and 24,192.
+  These are coefficient fibers; their full class recognition and transitivity
+  remain obligations. The complete original E7 projection catalogue and
+  genuine positive-normal transport are being used for that recognition.
+  Classification of the later
+  classes, complete transition equations,
+  global coverage,
+  and the global feasible-axis count remain open.
+
+The final global axis count, feasible-axis count, Monster-order assembly,
+and independent review of the completed T4 proof are still required.
+Candidate matrix counts and numerical discoveries are not actual-axis
+stabilizer proofs. Comparison with the primary FLM construction also remains
+unproved, as described in the source and coverage notes above.
+
+Verification boundary: this summary includes frozen working-tree results
+beyond the integrated checkpoint. The integrated frozen checkpoint passes
+its canonical collection build (14,162 jobs), a recursive audit of 133,267
+private/generated declarations using only the three standard axioms with
+exactly the existing T4/T6 endpoint values excluded, and all fifteen linters
+on 35,332 declarations in 2,515 changed Lean modules with zero errors.
+Collection consistency, whitespace, and disk/index source hashes also pass.
+Later working-tree results are integrated only after their own canonical,
+private/generated axiom, fifteen-linter, and source-hash gates close.
+
+The independent norm-six and original matrix review separately verified
+327 declarations with only the three standard axioms and all fifteen linters
+with zero errors; it approved the exact stated scope without supplying the
+remaining full-axis recognition hypotheses. Its report is at
+https://artifacts.internalmeta.com/a/1844388163425133 .
+The complete new checkpoint has not yet been independently reviewed.
+A broader legacy transition-dependency lint run found 164 existing missing
+source-documentation flags and three simplifier-normal-form flags; the
+newly gated transition scopes have zero lint errors. T4 and T6 remain open.

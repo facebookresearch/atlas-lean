@@ -1,0 +1,33 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceCompactCanonicalBActual
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryIncomingBPackedCertificatesActual
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceSparseFastQCertificate
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceDeltaZeroSignCacheAll
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoverySourceSpatialWordLiteralCertificate
+
+/-! Complete genuine compact incoming tensor calibration, retaining every original coordinate. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Full-Q, source signs, physical matrix and complete integer certificates close incoming B. -/
+theorem generatedTenth_source_compact_canonical_B_closed :
+    GeneratedTenthSourceCompactCanonicalBCondition := by
+  exact generatedTenth_source_compact_canonical_B_of_certificates
+    generatedTenth_source_sparse_fast_q_certificate
+    generatedTenth_source_delta_zero_sign_cache_certificate
+    generatedTenth_source_spatial_word_literal_certificate
+    generatedTenthSourceColumnSpinSumCache
+    generatedTenth_source_column_spin_sum_source_certificate
+    generatedTenth_incoming_B_packed_certificates_integer
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

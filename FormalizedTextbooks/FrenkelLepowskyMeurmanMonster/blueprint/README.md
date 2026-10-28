@@ -3,8 +3,9 @@
 This Autoform blueprint plans the finite-group work in
 Frenkel–Lepowsky–Meurman's *Vertex Operator Algebras and the Monster* (1988).
 It is a coarse roadmap for review. The [six Lean milestone declarations](../Milestones.lean)
-have `sorry` proof bodies and [documented construction gaps](../GAPS.md).
-No proofs are complete, and the detailed FLM passages still need source verification.
+have complete proofs for T1–T3 in the implemented supplementary coordinate
+model and documented `sorry` proofs for T4–T6. See [the gap inventory](../GAPS.md).
+Comparison with the primary FLM construction still needs proof and source verification.
 
 ## Read in order
 
@@ -21,8 +22,9 @@ No proofs are complete, and the detailed FLM passages still need source verifica
 - [Project-authored scope and external interfaces](sources/scope.md)
 
 The chapter dependencies express coarse mathematical prerequisites. There are
-no declaration-sized proof tasks yet. Review the roadmap and coverage contract
-before expanding them into a source-grounded theorem DAG.
+no declaration-sized tasks in this coarse roadmap yet; the Lean implementation
+contains the concrete proof infrastructure. Review the roadmap and coverage contract
+before expanding the chapter outlines into a source-grounded theorem DAG.
 
 For introductory terminology and entry tasks, see the
 [textbook README](../README.md).

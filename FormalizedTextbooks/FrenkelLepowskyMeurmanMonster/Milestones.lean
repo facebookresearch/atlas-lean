@@ -12,22 +12,30 @@ Six FLM Monster milestone theorem statements (T1–T6), mapping to
 symmetry and generated group, T3 finiteness, T4 Monster order, T5 simplicity,
 T6 identification with the classical Monster.
 
-Status: STATEMENT-ONLY. Every proof body is `sorry`; no proof is complete and
-no endpoint is claimed. All six refer to the SAME named construction objects
+Status: PARTIAL PROOFS. T1–T3 and T5 are proved in full. T4 and T6 retain documented
+`sorry` proof holes. All six refer to the SAME named construction objects
 from `Definitions.lean` (`Q`, `H`, `Co1`, `rhoLocal`, `sExtra`, `G`,
 `classicalMonster`). No theorem assumes finiteness, simplicity, order, or any
 isomorphism as a hypothesis: such hypotheses would make the endpoints circular.
 In particular, `centerMap` is a raw hom here; its bijectivity is a T1
 conclusion, not a definition.
 
-Reviewing endpoint signatures alone is NOT sufficient for faithfulness: the
-`TODO(S-*)` source-binding definitions in `Definitions.lean` must be fixed to
-the audited FLM formulas before these statements are fully faithful. See
-`GAPS.md` for the exact hole inventory.
+Reviewing endpoint signatures alone is NOT sufficient for faithfulness:
+the implemented supplementary coordinate model still needs comparison
+with FLM. See `GAPS.md` for the proof and source-comparison inventory.
 -/
 module
 
 public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Definitions
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.LocalStructure
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.LocalExactness
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.LocalInvariance
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.LocalProductInvariance
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.TrialityInvariance
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.TrialityFullProduct
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedFiniteness
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedCentralizerRecognition
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedNormalCompletion
 public import Mathlib.GroupTheory.Frattini
 public import Mathlib.GroupTheory.Commutator.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Basic
@@ -41,7 +49,7 @@ public import Mathlib.GroupTheory.Subgroup.Simple
 
 namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
 
-/-- T1 (statement-only, proof `sorry`): the concrete local subgroup has the
+/-- T1: the concrete local subgroup has the
 claimed extraspecial structure (`|Q| = 2^25`, center = derived = Frattini,
 center of order two, quotient `Q/Z(Q) ≅ (F₂^24, +)`), the raw center hom is
 bijective, the squares-induced form has plus type (isometric to the explicit
@@ -72,22 +80,34 @@ theorem local_subgroup_structure :
       griessProd (rhoLocal h x) (rhoLocal h y)) ∧
     (∀ h x y, griessForm (rhoLocal h x) (rhoLocal h y) =
       griessForm x y) := by
-  sorry
+  obtain ⟨hcard, hcenter, hfrattini, hcenterCard, hcenterMap, hquotient,
+    hkernel, hrange, hsquares, hhyperbolic⟩ := q_extraspecial_structure
+  refine ⟨hcard, hcenter, hfrattini, hcenterCard, hcenterMap, hquotient,
+    hkernel, hrange, hsquares, hhyperbolic, inclQ_injective, projH_surjective,
+    inclQ_range_eq_projH_ker,
+    rhoLocal_injective, rhoLocal_product, rhoLocal_form⟩
 
-/-- T2 (statement-only, proof `sorry`): the source-specified extra symmetry
+/-- T2: the source-specified extra symmetry
 `sExtra` preserves the Griess product and form (a genuine property of the raw
 ambient-GL element, not a typing tautology), and the generated group `G` lies
 in the product-and-form preserving subgroup. `G` is defined by
 `Subgroup.closure`, so no exactness or membership conclusion is built in. -/
 theorem extra_symmetry_preserves_griess :
     IsGriessAuto sExtra ∧ G ≤ griessAutSubgroup := by
-  sorry
+  have hproduct : ∀ x y, sExtra (griessProd x y) =
+      griessProd (sExtra x) (sExtra y) := by
+    exact sExtra_preserves_griessProd
+  have hextra : IsGriessAuto sExtra := ⟨hproduct, sExtra_preserves_griessForm⟩
+  exact ⟨hextra, G_le_griessAutSubgroup_of_generator_invariance
+    rhoLocal_isGriessAuto hextra⟩
 
-/-- T3 (statement-only, proof `sorry`): the generated group `G` is finite.
-Unconditional: no `[Finite G]` hypothesis appears anywhere in the statement. -/
+/-- T3: the generated group `G` is finite, by the actual spanning axial orbit
+and its proved isolation properties, using full triality product preservation.
+No `[Finite G]` hypothesis appears in the statement. -/
 theorem generated_group_finite :
     Finite ↥G := by
-  sorry
+  exact generated_group_finite_of_triality_product
+    extra_symmetry_preserves_griess.1.1
 
 /-- T4 (statement-only, proof `sorry`): `G` has the Monster order. No
 finiteness or order hypothesis is assumed (T3 is separate, so `Nat.card`
@@ -99,11 +119,12 @@ theorem generated_group_order :
       17 * 19 * 23 * 29 * 31 * 41 * 47 * 59 * 71 := by
   sorry
 
-/-- T5 (statement-only, proof `sorry`): `G` is simple. `IsSimpleGroup`
+/-- T5: `G` is simple, using the proved full centralizer and actual normal generation.
+`IsSimpleGroup`
 includes nontriviality, so the trivial group cannot satisfy this. -/
 theorem generated_group_simple :
     IsSimpleGroup ↥G := by
-  sorry
+  exact generated_simple_of_centralizer_le_local generatedCentralizer_eq_local_range.le
 
 /-- T6 (statement-only, proof `sorry`): `G` is isomorphic to the
 independently source-bound classical Monster model. The reference model is a

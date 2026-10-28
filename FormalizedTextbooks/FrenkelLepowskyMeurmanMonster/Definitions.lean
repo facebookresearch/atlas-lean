@@ -14,7 +14,8 @@ The six endpoint theorems live in `Milestones.lean`; this file holds the
 shared construction interfaces they all refer to. The subgroup closure and
 normality laws (former `F-*` holes) are proved, and `Q` is a genuine
 concrete plus-type coordinate model (not the audited FLM group: the
-model-to-FLM comparison is pending). No endpoint theorem is proved.
+model-to-FLM comparison is pending). T1–T3 are proved for this coordinate
+model in `Milestones.lean`; T4–T6 retain documented proof holes.
 
 The Griess space is `Fin 196884 → ℝ`, in the dictionary coordinates of
 Seysen §8.1. Its form and extra triality are explicit, with proved linearity
@@ -32,7 +33,7 @@ Comparison with the primary FLM source is pending.
 Proof status:
 * Every shared construction is implemented without `sorry` or custom axioms.
 * Historical comparison and recognition results remain proof obligations.
-* `sorry` bodies on the six milestone theorems in `Milestones.lean`: proof holes.
+* Remaining `sorry` bodies in `Milestones.lean`: documented endpoint proof holes.
 * Former framework-law sorries (`F-*`): all discharged; the closure/normality
   proofs below are complete.
 * The carriers of `leechIsomSubgroup` and `signsSubgroup` are genuine
@@ -99,8 +100,8 @@ def griessBasisWeight (i : Fin 196884) : ℝ := if 24 ≤ i.val ∧ i.val < 852 
 def griessFormFun (x y : GriessSpace) : ℝ := ∑ i, griessBasisWeight i * x i * y i
 /-- Bilinear form from Seysen, arXiv:2002.10921v3, §7.4 (paragraph preceding
 Table 3), expressed in the dictionary basis of §8.1, Table 5.
-Bilinearity is proved; invariance under the remaining source-bound
-actions and comparison with FLM are separate obligations. -/
+Bilinearity and invariance under the implemented local and triality actions
+are proved. Comparison with the primary FLM form remains unproved. -/
 noncomputable def griessForm : GriessSpace →ₗ[ℝ] GriessSpace →ₗ[ℝ] ℝ :=
   LinearMap.mk₂ ℝ griessFormFun
     (by intros; simp [griessFormFun, mul_add, add_mul, Finset.sum_add_distrib])
@@ -624,7 +625,8 @@ noncomputable def leechModTwoEquiv : LeechModTwo ≃+ (Fin 24 → ZMod 2) :=
     (QuotientAddGroup.quotientKerEquivOfSurjective leechBasisParity leechBasisParity_surjective)
 
 /-- The additive quotient equivalence is F₂-linear. Compatibility with the
-quadratic form and the fixed hyperbolic coordinates of Q remains to be constructed. -/
+quadratic form in the fixed hyperbolic coordinates of Q is proved in
+`LeechQuadratic.lean`. -/
 noncomputable def leechModTwoLinearEquiv : LeechModTwo ≃ₗ[ZMod 2] (Fin 24 → ZMod 2) :=
   { leechModTwoEquiv with map_smul' := ZMod.map_smul leechModTwoEquiv }
 
@@ -1167,7 +1169,7 @@ end QCoordinates
 
 The representation is explicit in the fixed hyperbolic coordinates of Q. Its
 linearity, multiplication, inverses, faithfulness, and pairing invariance are
-proved independently of the pending Griess multiplication and local group.
+proved before its use in the explicit Griess product and local group.
 -/
 
 section SpinCoordinates
@@ -1272,7 +1274,9 @@ noncomputable def spinEquiv (g : Q) : SpinSpace ≃ₗ[ℝ] SpinSpace :=
 
 /-- The concrete 4096-dimensional real representation of the coordinate model Q.
 This realizes the faithful representation described in Seysen §9.1; compatibility
-with the code-loop basis of §7.2 and the FLM basis remains to be proved. -/
+with the code-loop dictionary is proved in `PairSpinDictionary.lean`,
+`ShortSpinDictionary.lean`, and `OctadOddSpinDictionary.lean`; comparison
+with the primary FLM basis remains unproved. -/
 noncomputable def spinRepresentation : Q →* (SpinSpace ≃ₗ[ℝ] SpinSpace) where
   toFun := spinEquiv
   map_one' := by
@@ -3014,7 +3018,11 @@ noncomputable def conwayTensorCoefficient (r : GriessShortIndex) (i j : Fin 24) 
   (if i = j then 1 else 0) - 2 * griessShortVector r i * griessShortVector r j
 
 /-- Conway §12's six multiplication rules, extended bilinearly to the three
-blocks: symmetric matrices, signed short vectors, and spin tensors. -/
+blocks: symmetric matrices, signed short vectors, and spin tensors.
+The tensor coordinates here use unit Euclidean basis vectors. Conway's
+Appendix 5, calculation (1), fixes the tensor-square matrix coefficients
+at `9/8` and `1/8`; both tensor-output contractions therefore carry the
+`1/8` normalization in these coordinates. -/
 noncomputable def conwayRawProduct (x y : ConwayRawSpace) : ConwayRawSpace :=
   (fun i j =>
       2 * ∑ k, (x.1 i k * y.1 k j + y.1 i k * x.1 k j) +
@@ -3022,14 +3030,14 @@ noncomputable def conwayRawProduct (x y : ConwayRawSpace) : ConwayRawSpace :=
         qSign (toAdd (griessShortQ r * griessShortQ s).coeff) * x.2.1 r * y.2.1 s *
           griessShortVector r i * griessShortVector r j else 0) +
       (∑ t, ((∑ k, x.2.2 t k * y.2.2 t k) * (if i = j then 1 else 0) +
-        4 * x.2.2 t i * y.2.2 t j + 4 * y.2.2 t i * x.2.2 t j)),
+        4 * x.2.2 t i * y.2.2 t j + 4 * y.2.2 t i * x.2.2 t j)) / 8,
     ((fun u =>
       conwayShortPairing x.1 u * y.2.1 u + conwayShortPairing y.1 u * x.2.1 u +
       (∑ r, ∑ s, if (griessShortQ r * griessShortQ s).base = (griessShortQ u).base then
         qSign (toAdd (griessShortQ r * griessShortQ s).coeff) * x.2.1 r * y.2.1 s else 0) +
       (∑ t, ∑ i, ∑ j,
         spinOperator (griessShortQ u) (fun v => x.2.2 v i) t * y.2.2 t j *
-          conwayTensorCoefficient u i j) / 2),
+          conwayTensorCoefficient u i j) / 8),
     (fun t i =>
       (∑ j, (x.1 j i * y.2.2 t j + y.1 j i * x.2.2 t j)) +
       Matrix.trace x.1 / 8 * y.2.2 t i + Matrix.trace y.1 / 8 * x.2.2 t i +
@@ -3751,8 +3759,8 @@ noncomputable def griessAutSubgroup : Subgroup (GriessSpace ≃ₗ[ℝ] GriessSp
 
 /-- Explicit source triality from Seysen §8.1 in the dictionary basis fixed
 by `griessBasisWeight` and `trialityBlocksEquiv`. Linearity and inverse laws
-are complete; comparison with the FLM symmetry and product preservation
-remain to be proved. -/
+are complete; product preservation is proved in `TrialityFullProduct.lean`.
+Comparison with the primary FLM symmetry remains unproved. -/
 noncomputable def sExtra : GriessSpace ≃ₗ[ℝ] GriessSpace := griessTriality
 
 /-- Genuine definition (no endpoint conclusions built in): the concrete group
