@@ -19,7 +19,6 @@ import MathlibExt.NumberTheory.PrimeCounting.Mertens
 
 open Nat Finset
 
-example : (10 : ℕ).primesLE = (Icc 1 10).filter Nat.Prime := primesLE_eq_filter_Icc 10
 example : (10 : ℕ).primesLE = {2, 3, 5, 7} := by decide
 
 -- Boundary `p = 1` of the elementary estimate: `1 ≤ 1 + e · 0`.
@@ -35,10 +34,6 @@ example : ((smoothNumbersUpTo 10 3).card : ℝ) ≤
     (10 : ℝ) ^ (1 : ℝ) * ∏ p ∈ (3 : ℕ).primesBelow, (1 - (p : ℝ) ^ (-1 : ℝ))⁻¹ := by
   exact_mod_cast card_smoothNumbersUpTo_le_rpow_mul_prod 10 3 one_pos
 
-example : ∃ C : ℝ, ∀ z : ℝ, 2 ≤ z →
-    ∑ p ∈ primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C :=
-  sum_primesLE_inv_le_log_log_add
-
 /-! ### The weighted bounds have satisfiable hypotheses
 
 For `P = ⊤` and `ω ≡ 1` (dimension `κ = 1`), the hypothesis is Mertens' first theorem. -/
@@ -49,13 +44,10 @@ example : ∃ C : ℝ, ∀ t : ℝ, 1 ≤ t → ∀ z : ℝ, 3 ≤ z →
       C * t * Real.log z ^ (1 : ℝ) * Real.exp (-(Real.log t / Real.log z)) := by
   refine sum_divisors_siftingPrimorial_le (fun _ => True) (fun _ => 1) 1 (Real.log 4 + 6)
     (fun _ => zero_le_one) fun z hz => ?_
-  have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊ (Nat.le_floor (by norm_num; linarith))
+  have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊
   have h1 : (1 : ℝ) ≤ ⌊z⌋₊ := by exact_mod_cast Nat.le_floor (show ((1 : ℕ) : ℝ) ≤ z by
     norm_num; linarith)
   have hfl : Real.log ⌊z⌋₊ ≤ Real.log z :=
     Real.log_le_log (by linarith) (Nat.floor_le (by linarith))
   simp only [Finset.filter_true, one_mul]
   linarith
-
--- `Nat.primesLE_eq_filter_Icc` restates Mathlib's `Nat.primesLE_eq_filter_Icc_one`.
-example (N : ℕ) : N.primesLE = (Icc 1 N).filter Nat.Prime := Nat.primesLE_eq_filter_Icc_one N

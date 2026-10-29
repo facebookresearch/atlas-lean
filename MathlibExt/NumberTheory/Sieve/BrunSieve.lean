@@ -66,30 +66,14 @@ theorem moebius_prod_of_prime {s : Finset ℕ} (hs : ∀ p ∈ s, p.Prime) :
     ← (cardDistinctFactors_eq_cardFactors_iff_squarefree hsq.ne_zero).mpr hsq,
     cardDistinctFactors_prod_of_prime hs]
 
-/-- Squarefree divisors of `n ≠ 0` correspond to subsets of `n.primeFactors`. -/
+/-- Squarefree divisors of `n ≠ 0` correspond to subsets of `n.primeFactors`. This is Mathlib's
+`Nat.sum_divisors_filter_squarefree`, indexed by `primeFactors` instead of `normalizedFactors`. -/
 theorem sum_divisors_filter_squarefree_eq_sum_powerset {M : Type*} [AddCommMonoid M] {n : ℕ}
     (hn : n ≠ 0) (f : ℕ → M) :
     ∑ d ∈ n.divisors with Squarefree d, f d = ∑ s ∈ n.primeFactors.powerset, f (∏ p ∈ s, p) := by
-  refine Finset.sum_nbij' (fun d => d.primeFactors) (fun s => ∏ p ∈ s, p) ?_ ?_ ?_ ?_ ?_
-  · intro d hd
-    simp only [Finset.mem_filter, Finset.mem_powerset, Nat.mem_divisors] at hd ⊢
-    exact Nat.primeFactors_mono hd.1.1 hn
-  · intro s hs
-    simp only [Finset.mem_powerset] at hs
-    have hp : ∀ p ∈ s, p.Prime := fun p hp => Nat.prime_of_mem_primeFactors (hs hp)
-    simp only [Finset.mem_filter, Nat.mem_divisors]
-    refine ⟨⟨?_, hn⟩, Nat.squarefree_prod_of_prime hp⟩
-    calc ∏ p ∈ s, p ∣ ∏ p ∈ n.primeFactors, p := Finset.prod_dvd_prod_of_subset _ _ _ hs
-      _ ∣ n := Nat.prod_primeFactors_dvd n
-  · intro d hd
-    simp only [Finset.mem_filter, Nat.mem_divisors] at hd
-    exact Nat.prod_primeFactors_of_squarefree hd.2
-  · intro s hs
-    simp only [Finset.mem_powerset] at hs
-    exact Nat.primeFactors_prod fun p hp => Nat.prime_of_mem_primeFactors (hs hp)
-  · intro d hd
-    simp only [Finset.mem_filter] at hd
-    rw [Nat.prod_primeFactors_of_squarefree hd.2]
+  rw [Nat.sum_divisors_filter_squarefree hn, Nat.factors_eq]
+  simp only [Finset.prod_val]
+  rfl
 
 /-- Brun's truncated Möbius function: `μ_r(d) = μ(d)` if `d` has at most `r` distinct prime
 factors, and `0` otherwise. -/

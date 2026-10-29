@@ -40,21 +40,8 @@ example : ¬ IsSelbergPrimitive ((2 : ℂ) • zetaC) := fun h => by
   have := h.1.1
   simp at this
 
-/-- **`ζ` is primitive.** A factorisation `ζ = b c` with `b, c ≠ 1` would give
-`1 = deg ζ = deg b + deg c ≥ 2`. -/
-theorem isSelbergPrimitive_zeta : IsSelbergPrimitive zetaC := by
-  refine ⟨zeta_mem_selbergClass, zetaC_ne_one, fun b hb c hc h => ?_⟩
-  by_contra hbc
-  push Not at hbc
-  obtain ⟨_, ⟨Fb, hFb, _, ⟨Db⟩⟩, _⟩ := id hb
-  obtain ⟨_, ⟨Fc, hFc, _, ⟨Dc⟩⟩, _⟩ := id hc
-  have hF : IsLSeriesContinuation (b * c) riemannZeta := h ▸ isLSeriesContinuation_zeta
-  have hdeg := FunctionalEquation.degree_eq_add_of_mul b c hb hc Fb Fc riemannZeta hFb hFc hF
-    Db Dc zetaFE
-  have h1 := one_le_degree_of_ne_one hb hbc.1 hFb Db
-  have h2 := one_le_degree_of_ne_one hc hbc.2 hFc Dc
-  rw [zetaFE_degree] at hdeg
-  linarith
+/-- **`ζ` is primitive.** -/
+example : IsSelbergPrimitive zetaC := isSelbergPrimitive_zeta
 
 /-- `ζ ⋆ ζ` (the coefficients of `ζ²`) is not primitive. -/
 example : ¬ IsSelbergPrimitive (zetaC * zetaC) :=

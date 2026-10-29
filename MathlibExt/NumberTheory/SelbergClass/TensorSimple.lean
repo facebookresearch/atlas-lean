@@ -308,7 +308,7 @@ private lemma summable_tensorLog_properPrimePow (a : ArithmeticFunction ℂ) (ha
     Summable (fun n : ℕ => if ¬ n.Prime ∧ IsPrimePow n then
       (n.factorization n.minFac : ℝ) * ‖b n‖ ^ 2 / n else 0) := by
   obtain ⟨ha1, -, ⟨b₀, θ, hθ, hb₀, C₀, hC₀⟩, haO⟩ := id ha
-  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable_of_forall_norm_le_mul_rpow haO hs
+  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable.of_forall_norm_le_mul_rpow haO hs
   have hbb : b₀ = b := IsEulerLog.unique ha1 haS hb₀ hb
   subst hbb
   obtain ⟨c₁, hc₁⟩ := haO (1 / 8) (by norm_num)
@@ -492,7 +492,7 @@ private lemma exists_log_norm_tensor_eq_tsum_add (a : ArithmeticFunction ℂ) (h
         ∑' n : ℕ, (if n.Prime then ‖a n‖ ^ 2 / n else 0) * (n : ℝ) ^ (-δ) + P ∧
       0 ≤ P ∧ P ≤ K := by
   obtain ⟨ha1, -, -, haO⟩ := id ha
-  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable_of_forall_norm_le_mul_rpow haO hs
+  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable.of_forall_norm_le_mul_rpow haO hs
   set bb : ℕ → ℂ := fun n => starRingEnd ℂ (b n) with hbb
   set τ : ℕ → ℝ := fun n =>
     if IsPrimePow n then (n.factorization n.minFac : ℝ) * ‖b n‖ ^ 2 else 0 with hτ
@@ -596,7 +596,7 @@ theorem isTensorSimple_iff_isSelbergPrimitive (hA : ConjectureA) (hB : Conjectur
     IsTensorSimple a ↔ IsSelbergPrimitive a := by
   classical
   obtain ⟨ha1, -, -, haO⟩ := id ha
-  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable_of_forall_norm_le_mul_rpow haO hs
+  have haS := fun (s : ℂ) (hs : 1 < s.re) => LSeriesSummable.of_forall_norm_le_mul_rpow haO hs
   obtain ⟨c, hcS, hcL⟩ := hab
   obtain ⟨K, key⟩ := exists_log_norm_tensor_eq_tsum_add a ha b hb hcL
   set bb : ℕ → ℂ := fun n => starRingEnd ℂ (b n) with hbb

@@ -19,9 +19,7 @@ import Mathlib.Tactic.NormNum.Prime
 
 open Finset Nat
 
-example : 7 ≡ 1 [MOD 3] ↔ 3 ∣ 7 - 1 := Nat.Prime.modEq_one_iff_dvd_sub_one (p := 7) (by norm_num)
--- The primality hypothesis is only used through `1 ≤ p`; Mathlib's `Nat.modEq_iff_dvd'` gives
--- the same statement for any `p ≥ 1`.
+-- `p ≡ 1 [MOD m] ↔ m ∣ p - 1` for `p ≥ 1` is Mathlib's `Nat.modEq_iff_dvd'`.
 example (p m : ℕ) (hp : 1 ≤ p) : p ≡ 1 [MOD m] ↔ m ∣ p - 1 :=
   ⟨fun h => (Nat.modEq_iff_dvd' hp).mp h.symm, fun h => ((Nat.modEq_iff_dvd' hp).mpr h).symm⟩
 example : primeCountingMod 10 3 1 = 1 := by decide

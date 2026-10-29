@@ -11,6 +11,7 @@ module
 public import Mathlib.NumberTheory.ArithmeticFunction.Liouville
 public import Mathlib.NumberTheory.LSeries.Dirichlet
 import Mathlib.NumberTheory.ArithmeticFunction.Zeta
+import MathlibExt.NumberTheory.LSeries.Operations
 
 /-!
 # Divisor sums and the Dirichlet series of the Liouville function
@@ -23,8 +24,8 @@ This file develops basic facts about Mathlib's Liouville function `ArithmeticFun
 * `ArithmeticFunction.liouville_apply_prime_pow`: `λ(p ^ k) = (-1) ^ k`.
 * `ArithmeticFunction.sum_divisors_liouville`: `∑_{d ∣ n} λ(d)` is `1` if `n` is a square and
   `0` otherwise.
-* `LSeries_isSquare_indicator`: the Dirichlet series of the indicator function of the squares is
-  `ζ(2s)`.
+* `ArithmeticFunction.LSeries_isSquare_indicator`: the Dirichlet series of the indicator
+  function of the squares is `ζ(2s)`.
 * `ArithmeticFunction.riemannZeta_mul_LSeries_liouville`: `ζ(s) L(λ, s) = ζ(2s)` for `1 < re s`.
 * `ArithmeticFunction.LSeries_liouville_eq_riemannZeta_two_mul_div`: `L(λ, s) = ζ(2s) / ζ(s)`
   for `1 < re s`.
@@ -85,31 +86,23 @@ theorem LSeriesSummable_liouville {s : ℂ} (hs : 1 < s.re) :
   rw [Complex.norm_intCast]
   exact_mod_cast abs_liouville_le_one n
 
-end ArithmeticFunction
-
-/-- The Dirichlet series of the indicator function of the squares is `ζ(2s)`. -/
+/-- The Dirichlet series of the indicator function of the squares is `ζ(2s)`. This is
+`ArithmeticFunction.LSeries_squareLift` applied to `ζ`. -/
 theorem LSeries_isSquare_indicator {s : ℂ} (hs : 1 / 2 < s.re) :
     LSeries (fun n ↦ if IsSquare n then 1 else 0) s = riemannZeta (2 * s) := by
   classical
   have hs2 : 1 < (2 * s).re := by simp; linarith
-  rw [← LSeries_one_eq_riemannZeta hs2]
-  simp only [LSeries]
-  rw [← (Nat.pow_left_injective (n := 2) two_ne_zero).tsum_eq]
-  · refine tsum_congr fun m => ?_
-    rcases eq_or_ne m 0 with rfl | hm
-    · simp
-    rw [LSeries.term_of_ne_zero (pow_ne_zero 2 hm), LSeries.term_of_ne_zero hm,
-      ite_eq_left ⟨m, sq m⟩, Pi.one_apply, Nat.cast_pow, ← Complex.natCast_cpow_natCast_mul]
-    norm_num
-  · intro n hn
-    rcases eq_or_ne n 0 with rfl | hn0
-    · exact ⟨0, rfl⟩
-    by_cases hsq : IsSquare n
-    · obtain ⟨r, rfl⟩ := hsq
-      exact ⟨r, sq r⟩
-    · simp [LSeries.term_of_ne_zero hn0, hsq] at hn
-
-namespace ArithmeticFunction
+  rw [← LSeries_zeta_eq_riemannZeta hs2]
+  have h := LSeries_squareLift (ζ : ArithmeticFunction ℂ) s
+  simp only [natCoe_apply] at h
+  rw [← h]
+  refine LSeries_congr (fun {n} hn => ?_) s
+  rw [squareLift_apply]
+  split_ifs with hsq
+  · obtain ⟨r, rfl⟩ := hsq
+    have hr : r ≠ 0 := by rintro rfl; simp at hn
+    simp [natCoe_apply, ← sq, Nat.sqrt_eq', hr]
+  · rfl
 
 /-- The Liouville Dirichlet series satisfies `ζ(s) L(λ, s) = ζ(2s)` for `1 < re s`. -/
 theorem riemannZeta_mul_LSeries_liouville {s : ℂ} (hs : 1 < s.re) :

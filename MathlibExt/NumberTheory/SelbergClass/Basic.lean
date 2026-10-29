@@ -108,6 +108,39 @@ structure FunctionalEquation (F : ℂ → ℂ) where
 /-- The *degree* of a functional equation: `2 ∑ i, α i`. -/
 def FunctionalEquation.degree {F : ℂ → ℂ} (D : FunctionalEquation F) : ℝ := 2 * ∑ i, D.α i
 
+/-- **The functional equation of a product.** Functional equations of `F₁` and `F₂` give one of
+`F₁ F₂`: concatenate the Gamma factors and multiply the conductors and the root numbers. -/
+noncomputable def FunctionalEquation.mul {F₁ F₂ : ℂ → ℂ} (D₁ : FunctionalEquation F₁)
+    (D₂ : FunctionalEquation F₂) : FunctionalEquation (fun s => F₁ s * F₂ s) where
+  d := D₁.d + D₂.d
+  Q := D₁.Q * D₂.Q
+  α := Fin.append D₁.α D₂.α
+  r := Fin.append D₁.r D₂.r
+  w := D₁.w * D₂.w
+  Q_pos := mul_pos D₁.Q_pos D₂.Q_pos
+  α_pos := Fin.addCases (by simpa using D₁.α_pos) (by simpa using D₂.α_pos)
+  r_re_nonneg := Fin.addCases (by simpa using D₁.r_re_nonneg) (by simpa using D₂.r_re_nonneg)
+  norm_w := by rw [norm_mul, D₁.norm_w, D₂.norm_w, one_mul]
+  eqn s h0 h1 := by
+    have hQ : ∀ z : ℂ, ((D₁.Q * D₂.Q : ℝ) : ℂ) ^ z = (D₁.Q : ℂ) ^ z * (D₂.Q : ℂ) ^ z :=
+      fun z => by rw [ofReal_mul, mul_cpow_ofReal_nonneg D₁.Q_pos.le D₂.Q_pos.le]
+    have hP : ∀ z : ℂ,
+        ∏ i, Gamma ((Fin.append D₁.α D₂.α i : ℝ) * z + Fin.append D₁.r D₂.r i) =
+          (∏ i, Gamma (D₁.α i * z + D₁.r i)) * ∏ i, Gamma (D₂.α i * z + D₂.r i) :=
+      fun z => by simp [Fin.prod_univ_add]
+    rw [hQ, hQ, hP, hP]
+    calc _ = ((D₁.Q : ℂ) ^ s * (∏ i, Gamma (D₁.α i * s + D₁.r i)) * F₁ s) *
+          ((D₂.Q : ℂ) ^ s * (∏ i, Gamma (D₂.α i * s + D₂.r i)) * F₂ s) := by ring
+      _ = _ := by rw [D₁.eqn s h0 h1, D₂.eqn s h0 h1]; simp only [map_mul]; ring
+
+/-- The degree of the functional equation of a product is the sum of the degrees. -/
+theorem FunctionalEquation.degree_mul {F₁ F₂ : ℂ → ℂ} (D₁ : FunctionalEquation F₁)
+    (D₂ : FunctionalEquation F₂) : (D₁.mul D₂).degree = D₁.degree + D₂.degree := by
+  change 2 * ∑ i : Fin (D₁.d + D₂.d), Fin.append D₁.α D₂.α i = 2 * _ + 2 * _
+  rw [Fin.sum_univ_add]
+  simp only [Fin.append_left, Fin.append_right]
+  ring
+
 end SelbergClass
 
 namespace ArithmeticFunction
@@ -146,7 +179,7 @@ end ArithmeticFunction
 
 /-- A coefficient bound `a n = O(n ^ ε)` for every `ε > 0` makes the Dirichlet series absolutely
 convergent on `Re s > 1`. -/
-theorem LSeriesSummable_of_forall_norm_le_mul_rpow {a : ℕ → ℂ}
+theorem LSeriesSummable.of_forall_norm_le_mul_rpow {a : ℕ → ℂ}
     (hram : ∀ ε > (0 : ℝ), ∃ C, ∀ n, ‖a n‖ ≤ C * (n : ℝ) ^ ε) {s : ℂ} (hs : 1 < s.re) :
     LSeriesSummable a s := by
   obtain ⟨C, hC⟩ := hram ((s.re - 1) / 2) (by linarith)
@@ -154,6 +187,13 @@ theorem LSeriesSummable_of_forall_norm_le_mul_rpow {a : ℕ → ℂ}
   intro n _
   have : 1 + (s.re - 1) / 2 - 1 = (s.re - 1) / 2 := by ring
   rw [this]; exact hC n
+
+/-- `Re (α s + r) > 0` when `α > 0`, `Re s > 0` and `Re r ≥ 0`. -/
+theorem Complex.re_ofReal_mul_add_pos {α : ℝ} {r s : ℂ} (hα : 0 < α) (hr : 0 ≤ r.re)
+    (hs : 0 < s.re) : 0 < ((α : ℂ) * s + r).re := by
+  simp only [add_re, re_ofReal_mul]
+  have := mul_pos hα hs
+  linarith
 
 namespace ArithmeticFunction
 
@@ -282,14 +322,7 @@ open ArithmeticFunction
 /-- The Dirichlet series of a member of `𝒮` converges absolutely on `Re s > 1`. -/
 theorem LSeriesSummable_of_mem {a : ArithmeticFunction ℂ} (ha : a ∈ selbergClass) {s : ℂ}
     (hs : 1 < s.re) : LSeriesSummable (fun n => a n) s :=
-  LSeriesSummable_of_forall_norm_le_mul_rpow ha.2.2.2 hs
-
-/-- `Re (α s + r) > 0` when `α > 0`, `Re s > 0` and `Re r ≥ 0`. -/
-theorem re_mul_add_pos {α : ℝ} {r s : ℂ} (hα : 0 < α) (hr : 0 ≤ r.re) (hs : 0 < s.re) :
-    0 < ((α : ℂ) * s + r).re := by
-  simp only [add_re, re_ofReal_mul]
-  have := mul_pos hα hs
-  linarith
+  LSeriesSummable.of_forall_norm_le_mul_rpow ha.2.2.2 hs
 
 /-- **The functional equation on the half-plane `Re s < 1`.** For a functional equation of `F`
 (with `F` holomorphic off `1`), analytic continuation extends the functional equation from the
@@ -314,7 +347,7 @@ theorem FunctionalEquation.eq_of_re_lt_one {F : ℂ → ℂ} (hFd : Differentiab
       · apply differentiableAt_Gamma
         intro m hm
         have := congrArg re hm
-        have h3 := re_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hu
+        have h3 := re_ofReal_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hu
         simp only [neg_re, natCast_re] at this
         have h4 : (0 : ℝ) ≤ m := Nat.cast_nonneg m
         linarith
@@ -402,7 +435,7 @@ theorem FunctionalEquation.eq_of_re_lt_one {F : ℂ → ℂ} (hFd : Differentiab
     simp only [hR, hΦ, hc]
     rw [← he]
     have hG : ∀ i, Gamma (D.α i * s + D.r i) ≠ 0 := fun i =>
-      Gamma_ne_zero_of_re_pos (re_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hs.1)
+      Gamma_ne_zero_of_re_pos (re_ofReal_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hs.1)
     have hP : (∏ i, (Gamma (D.α i * s + D.r i))⁻¹) *
         ∏ i, Gamma (D.α i * s + D.r i) = 1 := by
       rw [← Finset.prod_mul_distrib]
@@ -432,29 +465,3 @@ theorem meromorphicAt_one {a : ArithmeticFunction ℂ} (ha : a ∈ selbergClass)
     (((MeromorphicAt.id 1).sub (MeromorphicAt.const 1 1)).pow m)
 
 end SelbergClass
-
-/-- **The pole of `ζ`.** The Riemann zeta function is meromorphic at `1` with a simple pole. -/
-theorem meromorphicAt_riemannZeta_one_and_meromorphicOrderAt_eq :
-    MeromorphicAt riemannZeta 1 ∧ meromorphicOrderAt riemannZeta 1 = -1 := by
-  set g : ℂ → ℂ := Function.update (fun s => (s - 1) * riemannZeta s) 1 1 with hg
-  have hga : AnalyticAt ℂ g 1 := by
-    refine analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt ?_ ?_
-    · filter_upwards [self_mem_nhdsWithin] with z hz
-      have h1 : g =ᶠ[𝓝 z] (fun s => (s - 1) * riemannZeta s) := by
-        filter_upwards [isOpen_compl_singleton.mem_nhds hz] with w hw
-        exact Function.update_of_ne hw _ _
-      exact (((differentiableAt_id.sub_const 1).mul
-        (differentiableAt_riemannZeta hz))).congr_of_eventuallyEq h1
-    · simpa only [hg, continuousAt_update_same] using riemannZeta_residue_one
-  have heq : ∀ᶠ z in 𝓝[≠] 1, riemannZeta z = (z - 1) ^ (-1 : ℤ) • g z := by
-    filter_upwards [self_mem_nhdsWithin] with z hz
-    have hz1 : z - 1 ≠ 0 := sub_ne_zero.mpr hz
-    rw [hg, Function.update_of_ne hz, smul_eq_mul, zpow_neg_one]
-    field_simp
-  have hm : MeromorphicAt riemannZeta 1 := by
-    refine MeromorphicAt.congr ?_ (Filter.EventuallyEq.symm heq)
-    exact ((MeromorphicAt.id 1).sub (MeromorphicAt.const 1 1)).zpow (-1) |>.smul
-      hga.meromorphicAt
-  refine ⟨hm, ?_⟩
-  have := (meromorphicOrderAt_eq_int_iff (n := -1) hm).2 ⟨g, hga, by simp [hg], heq⟩
-  simpa using this

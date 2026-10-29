@@ -63,7 +63,7 @@ example : ((ArithmeticFunction.id : ArithmeticFunction ℕ) ^ 2) 6 = 24 := by
   decide
 
 example {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < piltz k n := piltz_pos hk hn
-example : piltz 2 12 ≤ piltz 3 12 := piltz_le_piltz_succ 2 (by norm_num)
+example : piltz 2 12 ≤ piltz 3 12 := piltz_le_piltz_succ 2 12
 
--- The hypothesis `n ≠ 0` of `piltz_le_piltz_succ` is not needed: both sides vanish at `0`.
-example (k : ℕ) : piltz k 0 ≤ piltz (k + 1) 0 := by simp
+-- `piltz_le_piltz_succ` holds at `n = 0`, where both sides vanish.
+example (k : ℕ) : piltz k 0 ≤ piltz (k + 1) 0 := piltz_le_piltz_succ k 0

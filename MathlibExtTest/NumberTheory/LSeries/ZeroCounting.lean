@@ -14,8 +14,7 @@ import MathlibExt.NumberTheory.LSeries.RiemannXiZeros
 /-!
 # Tests for zero counting
 
-`DirichletCharacter.zeroCount` at its boundary (`T ≤ 0`), and instantiations of the zero-density
-bounds for `ζ` at an actual enumeration of the zeros.
+Instantiations of the zero-density bounds for `ζ` at an actual enumeration of the zeros.
 -/
 
 @[expose] public section
@@ -23,21 +22,6 @@ bounds for `ζ` at an actual enumeration of the zeros.
 open RiemannXi
 
 namespace ZeroCountingTest
-
-/-- `N(T, χ) = 0` for `T ≤ 0`: the rectangle `|Im s| < T` is empty. -/
-example {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {T : ℝ} (hT : T ≤ 0) :
-    χ.zeroCount T = 0 := by
-  have h : {ρ : ℂ | DirichletCharacter.LFunction χ ρ = 0 ∧ 0 < ρ.re ∧ ρ.re < 1 ∧ |ρ.im| < T} =
-      ∅ := by
-    refine Set.eq_empty_of_forall_notMem fun ρ hρ => ?_
-    exact absurd (hρ.2.2.2.trans_le hT) (not_lt.mpr (abs_nonneg _))
-  rw [DirichletCharacter.zeroCount, h, finsum_mem_empty]
-
-/-- The definition counts zeros with multiplicity in the open strip. -/
-example {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (T : ℝ) :
-    χ.zeroCount T = ∑ᶠ ρ ∈ {ρ : ℂ | DirichletCharacter.LFunction χ ρ = 0 ∧ 0 < ρ.re ∧
-      ρ.re < 1 ∧ |ρ.im| < T}, analyticOrderNatAt (DirichletCharacter.LFunction χ) ρ :=
-  rfl
 
 /-- The elementary inequality `1 / (1 + (T - γ)²) ≤ 4 Re (1 / (2 + iT - ρ) + 1 / ρ)` at
 `ρ = 1/2 + iT`. -/

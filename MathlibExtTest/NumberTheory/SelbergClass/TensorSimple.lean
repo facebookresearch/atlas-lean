@@ -28,7 +28,8 @@ namespace SelbergClassTest
 example (hA : ConjectureA) (hB : ConjectureB) :
     IsTensorSimple zetaC ↔ IsSelbergPrimitive zetaC :=
   isTensorSimple_iff_isSelbergPrimitive hA hB zetaC zeta_mem_selbergClass zetaLog
-    isEulerLog_zeta ⟨zetaC, zeta_mem_selbergClass, by rw [tensorLog_zetaLog]; exact isEulerLog_zeta⟩
+    isEulerLog_zeta
+    ⟨zetaC, zeta_mem_selbergClass, by rw [tensorLog_zetaLog_conj]; exact isEulerLog_zeta⟩
 
 example (hA : ConjectureA) (hB : ConjectureB) :
     IsTensorSimple (1 : ArithmeticFunction ℂ) ↔ IsSelbergPrimitive 1 := by

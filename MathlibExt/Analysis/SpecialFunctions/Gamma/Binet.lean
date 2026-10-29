@@ -813,7 +813,7 @@ theorem hasGrowthOrder_inv_Gamma : HasGrowthOrder (fun z => (Complex.Gamma z)⁻
     have h3 : Real.pi * r ≤ 4 * r := by nlinarith
     simp only [hG]
     nlinarith
-  refine ⟨fun ε hε => ?_, fun b' hb' hb => ?_⟩
+  refine ⟨zero_le_one, fun ε hε => ?_, fun b' ⟨_, hb'⟩ hb => ?_⟩
   · -- order at most `1`
     have hlo := (isLittleO_log_rpow_atTop hε).bound (show (0 : ℝ) < 1 / 6 by norm_num)
     have htend := (tendsto_rpow_atTop hε).eventually_ge_atTop (2 * (21 + K))

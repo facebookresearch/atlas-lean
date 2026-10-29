@@ -123,7 +123,7 @@ theorem re_mem_Icc_of_analyticOrderAt_xi_ne_zero {q : ℕ} [NeZero q] {χ : Diri
       by_contra h
       exact hne (analyticOrderAt_eq_zero.mpr (Or.inr h))
     have hm := (xi_eq_zero_iff hχ hχ1 _).mp h0
-    exact ⟨hm.2.1, hm.2.2.1⟩
+    exact ⟨hm.2.1.le, hm.2.2.le⟩
 
 /-- For primitive `χ`, a family listing the zeros of `ξ(s, χ)` with multiplicity lies in the
 closed critical strip. -/
@@ -244,7 +244,7 @@ theorem finite_setOf_mem_nontrivialZeros_abs_im_lt (hχ : χ.IsPrimitive) (hχ1 
   have hK : IsCompact (Icc (0 : ℝ) 1 ×ℂ Icc (-T) T) := isCompact_Icc.reProdIm isCompact_Icc
   obtain ⟨p, -, hp⟩ := Set.Infinite.exists_accPt_of_subset_isCompact hinf hK (by
     rintro ρ ⟨hρ, hρT⟩
-    exact Complex.mem_reProdIm.mpr ⟨⟨hρ.2.1, hρ.2.2.1⟩, abs_le.mp hρT.le⟩)
+    exact Complex.mem_reProdIm.mpr ⟨⟨hρ.2.1.le, hρ.2.2.le⟩, abs_le.mp hρT.le⟩)
   rw [accPt_iff_frequently_nhdsNE] at hp
   have hd := differentiable_xi hχ1
   have h := AnalyticOnNhd.eqOn_zero_of_preconnected_of_frequently_eq_zero
@@ -293,6 +293,53 @@ theorem finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt (hχ : χ.IsPrimitive)
   simp only [mem_iUnion]
   exact ⟨z n, ⟨mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n, hn⟩, rfl⟩
 
+/-- For `χ ≠ 1`, on `Re s > 0` the functions `L(s, χ)` and `ξ(s, χ)` vanish to the same order:
+they differ by a factor that is analytic and nonzero there. -/
+theorem analyticOrderAt_LFunction_eq_analyticOrderAt_xi (hχ1 : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
+    analyticOrderAt (LFunction χ) s = analyticOrderAt (xi χ) s := by
+  obtain ⟨a, ha, hapar, hgf, -⟩ := exists_parity_gammaFactor_eq χ
+  have hq : q ≠ 1 := fun h => hχ1 (level_one' χ h)
+  have ha0 : 0 ≤ a := by rcases ha with h | h <;> simp [h]
+  have hL : LFunction χ = xi χ * fun w : ℂ => (q : ℂ) ^ (-((w + a) / 2)) *
+      ((Real.pi : ℂ) ^ ((w + a) / 2) * (Complex.Gamma ((w + a) / 2))⁻¹) :=
+    funext (LFunction_eq_xi_mul_cofactor χ hq hapar hgf)
+  have hH0 := xi_cofactor_ne_zero q a (s := s) fun n h => by
+    have := congrArg Complex.re h
+    simp at this
+    linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ n)]
+  rw [hL, analyticOrderAt_mul ((differentiable_xi hχ1).analyticAt s)
+      ((differentiable_xi_cofactor q a).analyticAt s),
+    ((differentiable_xi_cofactor q a).analyticAt s).analyticOrderAt_eq_zero.mpr hH0, add_zero]
+
+/-- For primitive `χ ≠ 1`, `N(T, χ)` is monotone in `T`. -/
+theorem monotone_zeroCount (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) : Monotone χ.zeroCount :=
+  fun _ T₂ hT => zeroCount_mono hT (finite_setOf_mem_nontrivialZeros_abs_im_lt hχ hχ1 T₂)
+
+/-- **`N(T, χ)` through a family listing the zeros.** For primitive `χ ≠ 1` and a family `z`
+listing the zeros of `ξ(s, χ)` with multiplicity, `N(T, χ)` is the number of indices `n` with
+`|Im z n| < T`. -/
+theorem zeroCount_eq_ncard (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1)
+    (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) (T : ℝ) :
+    χ.zeroCount T = {n | |(z n).im| < T}.ncard := by
+  classical
+  have hS := finite_setOf_mem_nontrivialZeros_abs_im_lt hχ hχ1 T
+  have hN := finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hχ hχ1 hz T
+  have hmaps : ∀ n ∈ hN.toFinset, z n ∈ hS.toFinset := fun n hn => by
+    rw [Set.Finite.mem_toFinset] at hn ⊢
+    exact ⟨mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n, hn⟩
+  rw [zeroCount, finsum_mem_eq_finite_toFinset_sum _ hS, Set.ncard_eq_toFinset_card _ hN,
+    Finset.card_eq_sum_card_fiberwise hmaps]
+  refine Finset.sum_congr rfl fun ρ hρ => ?_
+  rw [Set.Finite.mem_toFinset] at hρ
+  have := finite_of_card_eq_analyticOrderAt hχ hχ1 hz ρ
+  have h := hz ρ
+  rw [ENat.card_eq_coe_natCard, Nat.subtype_card (hN.toFinset.filter (fun n => z n = ρ)) (by
+    intro n
+    simp only [Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
+    exact ⟨And.right, fun h => ⟨h ▸ hρ.2, h⟩⟩),
+    ← analyticOrderAt_LFunction_eq_analyticOrderAt_xi hχ1 hρ.1.2.1] at h
+  rw [analyticOrderNatAt, ← h, ENat.toNat_natCast]
+
 end Family
 
 /-! ### `-Re L'/L` against the zero sum -/
@@ -317,7 +364,7 @@ private lemma exists_neg_re_logDeriv_add_sum_le :
   have hzero : ∀ n, f (z n) = 0 := Complex.apply_eq_zero_of_card_eq_analyticOrderAt hz
   have hz0 : ∀ n, z n ≠ 0 := fun n h => hX0 (h ▸ hzero n)
   have hzre : ∀ n, (z n).re ≤ 1 := fun n =>
-    (mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n).2.2.1
+    (mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n).2.2.le
   have hsum := Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd
     (hasGrowthOrderLE_xi hχ1) hX0 hz
   have hm := Complex.summable_one_div_sub_add_one_div hz0 hsum s

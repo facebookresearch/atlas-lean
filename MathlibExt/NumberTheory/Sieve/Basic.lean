@@ -39,7 +39,7 @@ primorial `z#`.
 * `Nat.Prime.dvd_siftingPrimorial_iff`: a prime divides `P(z)` iff it is `≤ z` and satisfies
   `P`.
 * `Nat.cast_totient_eq_mul_prod_one_sub_inv`: Euler's product `φ(n) = n ∏_{p ∣ n} (1 - 1/p)`
-  over `ℝ`.
+  in any field of characteristic zero.
 * `Nat.div_totient_le_two_mul_prod_one_add_inv`: `n / φ(n) ≤ 2 ∏_{p ∣ n} (1 + 1/p)`.
 -/
 
@@ -95,14 +95,14 @@ theorem Prime.dvd_siftingPrimorial_iff {p : ℕ} (hp : p.Prime) :
 theorem siftingPrimorial_true (z : ℕ) : siftingPrimorial (fun _ => True) z = primorial z := by
   rw [siftingPrimorial, primorial_eq_prod_primesLE, Finset.filter_true]
 
-/-! ### Totient products over `ℝ` -/
+/-! ### Totient products in a field of characteristic zero -/
 
-/-- Euler's product over `ℝ`: `(φ n : ℝ) = n ∏_{p ∣ n} (1 - p⁻¹)`. -/
-theorem cast_totient_eq_mul_prod_one_sub_inv (n : ℕ) :
-    (totient n : ℝ) = n * ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹) := by
-  have := congrArg (Rat.cast : ℚ → ℝ) (totient_eq_mul_prod_factors n)
-  push_cast at this
-  exact this
+/-- Euler's product in any field `K` of characteristic zero:
+`(φ n : K) = n ∏_{p ∣ n} (1 - p⁻¹)`. This is the image of Mathlib's
+`Nat.totient_eq_mul_prod_factors` (stated over `ℚ`) under `ℚ → K`. -/
+theorem cast_totient_eq_mul_prod_one_sub_inv {K : Type*} [Field K] [CharZero K] (n : ℕ) :
+    (totient n : K) = n * ∏ p ∈ n.primeFactors, (1 - (p : K)⁻¹) := by
+  simpa using congrArg (Rat.cast : ℚ → K) (totient_eq_mul_prod_factors n)
 
 /-- `∏_{1 < m ≤ N} (1 - 1/m²) = (N + 1) / (2N)` for `N ≥ 1`. -/
 theorem prod_Ioc_one_sub_inv_sq (N : ℕ) (hN : 1 ≤ N) :
@@ -119,7 +119,7 @@ theorem prod_Ioc_one_sub_inv_sq (N : ℕ) (hN : 1 ≤ N) :
 /-- `n / φ(n) = ∏_{p ∣ n} (1 - 1/p)⁻¹ ≤ 2 ∏_{p ∣ n} (1 + 1/p)` for `n ≠ 0`. -/
 theorem div_totient_le_two_mul_prod_one_add_inv {n : ℕ} (hn : n ≠ 0) :
     (n : ℝ) / totient n ≤ 2 * ∏ p ∈ n.primeFactors, (1 + (p : ℝ)⁻¹) := by
-  have hq := cast_totient_eq_mul_prod_one_sub_inv n
+  have hq := cast_totient_eq_mul_prod_one_sub_inv (K := ℝ) n
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn
   have hpos : 0 < ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹) := by
     refine Finset.prod_pos fun p hp => ?_

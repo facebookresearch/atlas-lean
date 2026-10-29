@@ -62,6 +62,19 @@ example : moritaGamma 5 ((5 : ℕ) : ℤ_[5]) = -24 := by
   simp [moritaGammaNat, Finset.prod_filter, Finset.prod_range_succ]
   norm_num
 
+/-- `moritaGamma_ofNat` lets `simp` evaluate `Γ_p` at numerals directly. -/
+example : moritaGamma 3 3 = -2 := by
+  simp [moritaGammaNat, Finset.prod_filter, Finset.prod_range_succ]
+  norm_num
+
+example : moritaGamma 5 (4 : ℤ_[5]) = 6 := by
+  simp [moritaGammaNat, Finset.prod_filter, Finset.prod_range_succ]
+  norm_num
+
+/-- `simp` normalises `((3 : ℕ) : ℤ_[3])` to `(3 : ℤ_[3])`, and `moritaGamma_ofNat` still
+fires. -/
+example : moritaGamma 3 ((3 : ℕ) : ℤ_[3]) = moritaGammaNat 3 3 := by simp
+
 /-- At `p = 2` only odd factors contribute: `Γ_2(4) = 1 · 3`. -/
 example : moritaGamma 2 ((4 : ℕ) : ℤ_[2]) = 3 := by
   rw [moritaGamma_natCast]
@@ -162,6 +175,22 @@ example (p : ℕ) [Fact p.Prime] (x : ℤ_[p]) : IsUnit (moritaGamma p x) := isU
 /-! ### Existence and uniqueness, including `p = 2` -/
 
 example : ∃! Γ : C(ℤ_[2], ℤ_[2]), IsMoritaPadicGamma 2 Γ := existsUnique_isMoritaPadicGamma 2
+
+example : ∃! Γ : C(ℤ_[3], ℤ_[3]), IsMoritaPadicGamma 3 Γ := existsUnique_isMoritaPadicGamma 3
+
+-- The deprecated odd-prime statement still elaborates.
+set_option linter.deprecated false in
+example : ∃! Γ : C(ℤ_[3], ℤ_[3]), IsMoritaPadicGamma 3 Γ :=
+  existsUnique_moritaPadicGamma 3 (by decide)
+
+/-- An extension is pinned down at the naturals. -/
+example (Γ : C(ℤ_[3], ℤ_[3])) (hΓ : IsMoritaPadicGamma 3 Γ) :
+    Γ ((3 : ℕ) : ℤ_[3]) = moritaGammaNat 3 3 :=
+  hΓ.natCast_eq (by decide)
+
+/-- Any extension is `moritaGamma`. -/
+example (Γ : C(ℤ_[2], ℤ_[2])) (hΓ : IsMoritaPadicGamma 2 Γ) : Γ = moritaGamma 2 :=
+  hΓ.eq_moritaGamma
 
 example : IsMoritaPadicGamma 5 (moritaGamma 5) := isMoritaPadicGamma_moritaGamma 5
 

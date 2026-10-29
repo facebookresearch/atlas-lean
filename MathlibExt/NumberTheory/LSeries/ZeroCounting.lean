@@ -9,25 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.LSeries.RiemannXiZeros
-public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.Analysis.Analytic.Order
-public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 import MathlibExt.NumberTheory.LSeries.ZeroFreeRegion
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.NumberTheory.LSeries.Dirichlet
 
 /-!
-# Counting the zeros of `ζ` and of Dirichlet `L`-functions near a height
+# Counting the zeros of `ζ` near a height
 
 We bound the number of nontrivial zeros `ρ = β + iγ` of `ζ` near a height `T`: the weighted
 count `∑_ρ 1 / (1 + (T - γ)²)` is `O(log T)`, so a window of bounded width around `T` contains
 `O(log T)` zeros, and consequently `∑_{|γ| < R} 1 / |ρ| = O(log² R)`. All sums run over a family
 listing the zeros of `ξ` with multiplicity.
-
-## Main definitions
-
-* `DirichletCharacter.zeroCount χ T`: the number `N(T, χ)` of zeros of `L(s, χ)` with
-  `0 < Re s < 1` and `|Im s| < T`, counted with multiplicity.
 
 ## Main statements
 
@@ -44,18 +36,6 @@ listing the zeros of `ξ` with multiplicity.
 universe u
 
 open ArithmeticFunction LSeries RiemannXi
-
-namespace DirichletCharacter
-
-/-- **`N(T, χ)`**: the number of zeros of `L(s, χ)` in the open rectangle `0 < Re s < 1`,
-`|Im s| < T`, counted with multiplicity (`analyticOrderNatAt`). The strip is open, so the
-trivial zero at `s = 0` of an even character is not counted. If there were infinitely many such
-zeros, the `finsum` would take the junk value `0`. -/
-noncomputable def zeroCount {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (T : ℝ) : ℕ :=
-  ∑ᶠ ρ ∈ {ρ : ℂ | LFunction χ ρ = 0 ∧ 0 < ρ.re ∧ ρ.re < 1 ∧ |ρ.im| < T},
-    analyticOrderNatAt (LFunction χ) ρ
-
-end DirichletCharacter
 
 /-- For `Re s ≥ σ > 1`, `‖ζ'(s)/ζ(s)‖ ≤ ∑ Λ(n) / n^σ`. -/
 theorem norm_logDeriv_riemannZeta_le_tsum {σ : ℝ} (hσ : 1 < σ) {s : ℂ} (hs : σ ≤ s.re) :

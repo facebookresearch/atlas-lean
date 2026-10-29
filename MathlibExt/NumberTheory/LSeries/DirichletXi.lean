@@ -108,36 +108,25 @@ theorem xi_eq_zero_iff (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) (s : ℂ) :
       exact hneg 0 (by simp) h
     have hL := LFunction_eq_completed_div_gammaFactor χ s (Or.inl hs0)
     rw [h, zero_div] at hL
-    refine ⟨hL, ?_, ?_, hs0⟩
+    refine ⟨hL, ?_, ?_⟩
     · by_contra h0
-      exact hneg s (by linarith [not_le.mp h0]) h
+      exact hneg s (by linarith [not_lt.mp h0]) h
     · by_contra h1
-      exact hgood χ hχ1 s (by linarith [not_le.mp h1]) h
-  · rintro ⟨hL, h0, h1, hs0⟩
+      exact hgood χ hχ1 s (by linarith [not_lt.mp h1]) h
+  · rintro ⟨hL, h0, -⟩
+    have hs0 : s ≠ 0 := fun h => by rw [h, Complex.zero_re] at h0; exact lt_irrefl _ h0
     rw [LFunction_eq_completed_div_gammaFactor χ s (Or.inl hs0), div_eq_zero_iff] at hL
     refine hL.resolve_right ?_
     rcases χ.even_or_odd with hχe | hχo
-    · rw [hχe.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff]
-      rintro ⟨n, hn⟩
-      have hre := congrArg Complex.re hn
-      simp at hre
-      have hn0 : (n : ℝ) = 0 := by
-        have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-        linarith
-      apply hs0
-      rw [hn]
-      simp [show n = 0 by exact_mod_cast hn0]
-    · rw [hχo.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff]
-      rintro ⟨n, hn⟩
-      have hre := congrArg Complex.re hn
-      simp at hre
-      have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-      linarith
+    · rw [hχe.gammaFactor_def]
+      exact Complex.Gammaℝ_ne_zero_of_re_pos h0
+    · rw [hχo.gammaFactor_def]
+      exact Complex.Gammaℝ_ne_zero_of_re_pos (by rw [Complex.add_re, Complex.one_re]; linarith)
 
 /-- `ξ(0, χ) ≠ 0` for primitive `χ ≠ 1`. -/
 theorem xi_zero_ne_zero (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) : xi χ 0 ≠ 0 := by
   rw [Ne, xi_eq_zero_iff hχ hχ1]
-  exact fun h => h.2.2.2 rfl
+  exact fun h => ne_zero_of_mem_nontrivialZeros h rfl
 
 /-! ### Conjugation and the functional equation -/
 
@@ -482,7 +471,7 @@ theorem hasSum_re_one_div_of_xi_eq_exp_mul_tprod (hχ : χ.IsPrimitive) (hχ1 : 
   Complex.hasSum_re_one_div_of_eq_exp_mul_tprod (differentiable_xi hχ1) (hasGrowthOrderLE_xi hχ1)
     (xi_zero_ne_zero hχ hχ1) hz (xi_eq_rootNumber_mul_conj hχ hχ1)
     (fun w hw => by
-      obtain ⟨-, h0, h1, -⟩ := (xi_eq_zero_iff hχ hχ1 w).mp hw
-      exact ⟨h0, h1⟩) hAB
+      obtain ⟨-, h0, h1⟩ := (xi_eq_zero_iff hχ hχ1 w).mp hw
+      exact ⟨h0.le, h1.le⟩) hAB
 
 end DirichletCharacter

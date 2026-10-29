@@ -26,8 +26,8 @@ square roots of `1` modulo a power of `2`.
 
 * `Int.sq_modEq_one_two_pow_iff`: for `s ≥ 2`, `x ^ 2 ≡ 1 [ZMOD 2 ^ s]` iff `x` is congruent to
   `1`, `-1`, `2 ^ (s - 1) - 1` or `2 ^ (s - 1) + 1` modulo `2 ^ s`.
-* `prod_univ_eq_prod_filter_sq_eq_one`: in a finite abelian group, the product of all elements is
-  the product of the elements of order dividing `2`.
+* `Finset.prod_univ_eq_prod_filter_sq_eq_one`: in a finite abelian group, the product of all
+  elements is the product of the elements of order dividing `2`.
 * `ZMod.units_eq_one_or_eq_neg_one_of_sq_eq_one`: modulo an odd prime power, the only square
   roots of `1` are `±1`.
 * `ZMod.prod_units_prime_pow_eq_neg_one`: modulo an odd prime power, the product of all units is
@@ -121,7 +121,7 @@ end Int
 
 /-- In a finite abelian group, the product of all elements equals the product of the elements
 `g` with `g ^ 2 = 1`: the other elements cancel in pairs `g, g⁻¹`. -/
-theorem prod_univ_eq_prod_filter_sq_eq_one (G : Type*) [CommGroup G] [Fintype G]
+theorem Finset.prod_univ_eq_prod_filter_sq_eq_one (G : Type*) [CommGroup G] [Fintype G]
     [DecidableEq G] :
     ∏ g : G, g = ∏ g ∈ Finset.univ.filter (fun g : G => g ^ 2 = 1), g := by
   rw [← Finset.prod_filter_mul_prod_filter_not Finset.univ (fun g : G => g ^ 2 = 1)]
@@ -328,7 +328,7 @@ theorem prod_units_two_pow_eq_one (t : ℕ) :
       Finset.mem_singleton]
     exact units_two_pow_sq_eq_one_iff t u
   have hc2 : c ^ 2 = 1 := (units_two_pow_sq_eq_one_iff t c).mpr (Or.inr (Or.inr (Or.inr rfl)))
-  rw [prod_univ_eq_prod_filter_sq_eq_one, hfilter]
+  rw [Finset.prod_univ_eq_prod_filter_sq_eq_one, hfilter]
   rw [Finset.prod_insert, Finset.prod_insert, Finset.prod_pair]
   · rw [show (1 : (ZMod (2 ^ (t + 3)))ˣ) * (-1 * (-c * c)) = c ^ 2 by simp [sq], hc2]
   · refine hne _ _ _ _ hnc hc ?_

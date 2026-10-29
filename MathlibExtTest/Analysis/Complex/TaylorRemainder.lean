@@ -42,3 +42,14 @@ example (f : ℂ → ℂ) (hf : Differentiable ℂ f) : ∃ b : ℕ → ℂ, ∃
     DifferentiableOn ℂ g Set.univ ∧ ∀ s ∈ Set.univ, f s =
       (∑ j ∈ Finset.range 0, b j * (s - 0) ^ j) + (s - 0) ^ 0 * g s :=
   hf.differentiableOn.exists_eq_sum_add_pow_mul Filter.univ_mem 0
+
+/-- With explicit coefficients: `exp s = 1 + s + s ^ 2 / 2 + s ^ 3 g(s)`. -/
+example : ∃ g : ℂ → ℂ, DifferentiableOn ℂ g Set.univ ∧
+    ∀ s : ℂ, Complex.exp s = 1 + s + s ^ 2 / 2 + s ^ 3 * g s := by
+  obtain ⟨g, hg, h⟩ :=
+    Complex.differentiable_exp.differentiableOn.eq_sum_iteratedDeriv_add_pow_mul
+      (a := 0) Filter.univ_mem 3
+  refine ⟨g, hg, fun s => ?_⟩
+  rw [h s]
+  simp [Finset.sum_range_succ, iteratedDeriv_eq_iterate, Nat.factorial]
+  ring

@@ -337,13 +337,13 @@ theorem exists_neg_re_logDeriv_LFunction_le :
   have hRe := hasSum_re_one_div_of_xi_eq_exp_mul_tprod hψ hψ1 hz hAB
   have hzero : ∀ n, f (z n) = 0 := Complex.apply_eq_zero_of_card_eq_analyticOrderAt hz
   have hz0 : ∀ n, z n ≠ 0 := fun n h => hX0 (h ▸ hzero n)
-  have hzre : ∀ n, (z n).re ≤ 1 := fun n => ((xi_eq_zero_iff hψ hψ1 (z n)).mp (hzero n)).2.2.1
+  have hzre : ∀ n, (z n).re ≤ 1 := fun n => ((xi_eq_zero_iff hψ hψ1 (z n)).mp (hzero n)).2.2.le
   have hsum := Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd
     (hasGrowthOrderLE_xi hψ1) hX0 hz
   have hm := Complex.summable_one_div_sub_add_one_div hz0 hsum s
   have hfs : f s ≠ 0 := by
     rw [hf, Ne, xi_eq_zero_iff hψ hψ1]
-    exact fun h => by linarith [h.2.2.1]
+    exact fun h => by linarith [h.2.2]
   -- the log-derivative of the product
   have hLDs : logDeriv f s = B + ∑' n, (1 / (s - z n) + 1 / z n) :=
     Complex.logDeriv_eq_add_tsum_of_eq_exp_mul_tprod hz0 hsum hAB hzero (hd s) hfs

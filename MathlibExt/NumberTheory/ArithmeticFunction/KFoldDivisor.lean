@@ -114,8 +114,10 @@ theorem piltz_succ_apply (k n : ℕ) : piltz (k + 1) n = ∑ d ∈ n.divisors, p
   refine sum_congr rfl fun d hd => ?_
   simp [Nat.ne_of_gt (Nat.pos_of_mem_divisors hd)]
 
-/-- `d_k(n) ≤ d_{k+1}(n)` for `n ≠ 0`. -/
-theorem piltz_le_piltz_succ (k : ℕ) {n : ℕ} (hn : n ≠ 0) : piltz k n ≤ piltz (k + 1) n := by
+/-- `d_k(n) ≤ d_{k+1}(n)`. -/
+theorem piltz_le_piltz_succ (k n : ℕ) : piltz k n ≤ piltz (k + 1) n := by
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp
   rw [piltz_succ_apply]
   exact single_le_sum (fun _ _ => Nat.zero_le _) (Nat.mem_divisors_self n hn)
 
@@ -124,7 +126,7 @@ theorem piltz_pos {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < piltz k n := b
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk
   induction k with
   | zero => simp [hn]
-  | succ k ih => exact (ih k.succ_ne_zero).trans_le (piltz_le_piltz_succ _ hn)
+  | succ k ih => exact (ih k.succ_ne_zero).trans_le (piltz_le_piltz_succ _ _)
 
 /-- The **nontrivial Piltz divisor function** `d_k^*`: `piltzNontrivial k n` is the number of
 ways of writing `n` as an ordered product of `k` natural numbers that are all at least `2`.

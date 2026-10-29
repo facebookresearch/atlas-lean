@@ -38,11 +38,6 @@ excludes.
 
 ## Main statements
 
-* `SelbergClass.apply_eq_tsum_of_gammaFree_functionalEquation`: the analytic half, each `a n`
-  as a sum over the reflected coefficients.
-* `SelbergClass.false_of_isEulerLog_of_support_dvd`: the arithmetic half, a Dirichlet
-  polynomial supported on the divisors of `q ≥ 2` with `a 1 = 1` and `|a q| = √q` has no Euler
-  logarithm `b n = O(n^θ)`, `θ < 1/2`.
 * `SelbergClass.eq_one_of_degree_eq_zero`: **Conrey–Ghosh**, a member of `𝒮` with a functional
   equation of degree `0` is `1`.
 -/
@@ -427,8 +422,8 @@ private theorem isMultiplicative_of_logMul_eq_sum (a : ArithmeticFunction ℂ) (
 
 /-- The arithmetic half of Conrey–Ghosh: a Dirichlet polynomial supported on the divisors of
 `q ≥ 2`, with `a 1 = 1` and `|a q| = √q`, has no Euler logarithm `b n = O(n ^ θ)`, `θ < 1/2`. -/
-theorem false_of_isEulerLog_of_support_dvd (a : ArithmeticFunction ℂ) (b : ℕ → ℂ) (θ C : ℝ) (hθ : θ
-    < 1 / 2)
+private theorem false_of_isEulerLog_of_support_dvd (a : ArithmeticFunction ℂ) (b : ℕ → ℂ)
+    (θ C : ℝ) (hθ : θ < 1 / 2)
     (hlog : IsEulerLog a b) (hbC : ∀ n, ‖b n‖ ≤ C * (n : ℝ) ^ θ)
     (ha_abs : LSeries.abscissaOfAbsConv (fun n => a n) ≤ (2 : ℝ)) (ha1 : a 1 = 1)
     (q : ℕ) (hq : 2 ≤ q) (hsupp : ∀ n, ¬ n ∣ q → a n = 0) (haq : ‖a q‖ = Real.sqrt q) :
@@ -892,10 +887,10 @@ private theorem mul_cpow_line_neg_one (a : ArithmeticFunction ℂ) (Q : ℝ) (hQ
 
 /-- The analytic half of Conrey–Ghosh: comparing mean values on `Re s = 2` and `Re s = -1`
 expresses each `a n` through the coefficients of the reflected series. -/
-theorem apply_eq_tsum_of_gammaFree_functionalEquation (a : ArithmeticFunction ℂ) (F G : ℂ → ℂ) (m :
-    ℕ) (β : ℝ)
-    (hF : IsLSeriesContinuation a F) (hsum : ∀ s : ℂ, 3 / 2 < s.re → LSeriesSummable (fun n => a n)
-        s)
+private theorem apply_eq_tsum_of_gammaFree_functionalEquation (a : ArithmeticFunction ℂ)
+    (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
+    (hF : IsLSeriesContinuation a F)
+    (hsum : ∀ s : ℂ, 3 / 2 < s.re → LSeriesSummable (fun n => a n) s)
     (hGd : Differentiable ℂ G) (hGo : Complex.HasGrowthOrderLE G β)
     (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) (Q : ℝ) (hQ : 0 < Q) (w : ℂ) (hw : ‖w‖ = 1)
     (heqn : ∀ s : ℂ, 0 < s.re → s.re < 1 → (Q : ℂ) ^ s * F s =

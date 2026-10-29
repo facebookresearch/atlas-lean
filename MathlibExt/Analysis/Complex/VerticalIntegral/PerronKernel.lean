@@ -53,6 +53,17 @@ namespace Complex
 
 /-! ### The discontinuous integral -/
 
+/-- `x ^ s / s ^ k` is continuous on a vertical line `re s = c` with `c ≠ 0`, for `x > 0`. -/
+private theorem continuous_cpow_div_pow_line {x c : ℝ} (hx : 0 < x) (hc : c ≠ 0) (k : ℕ) :
+    Continuous fun t : ℝ => (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) ^ k :=
+  (Continuous.const_cpow (by fun_prop) (Or.inl (by exact_mod_cast hx.ne'))).div (by fun_prop)
+    fun t => pow_ne_zero _ (ofReal_add_mul_I_ne_zero (Or.inl hc))
+
+/-- `x ^ s / s` is continuous on a vertical line `re s = c` with `c ≠ 0`, for `x > 0`. -/
+private theorem continuous_cpow_div_self_line {x c : ℝ} (hx : 0 < x) (hc : c ≠ 0) :
+    Continuous fun t : ℝ => (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) := by
+  simpa using continuous_cpow_div_pow_line hx hc 1
+
 private theorem smul_integral_eq_perronKernel (x c R : ℝ) :
     (1 / (2 * π)) • ∫ t in (-R)..R, (fun s : ℂ => (x : ℂ) ^ s / s) (c + t * I) =
       PerronKernel.perronKernel x c R := by
@@ -66,7 +77,7 @@ private theorem tendsto_const_div_div_pi (K : ℝ) :
 `(1 / 2πi) ∫_(c) x ^ s / s ds = 1` as a principal value. -/
 theorem hasVerticalIntegral_cpow_div_self_of_one_lt {x c : ℝ} (hx : 1 < x) (hc : 0 < c) :
     HasVerticalIntegral c (fun s : ℂ => (x : ℂ) ^ s / s) 1 := by
-  unfold HasVerticalIntegral
+  refine hasVerticalIntegral_of_continuous (continuous_cpow_div_self_line (by linarith) hc.ne') ?_
   simp only [smul_integral_eq_perronKernel]
   rw [tendsto_iff_norm_sub_tendsto_zero]
   refine squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) ?_
@@ -78,7 +89,7 @@ theorem hasVerticalIntegral_cpow_div_self_of_one_lt {x c : ℝ} (hx : 1 < x) (hc
 `(1 / 2πi) ∫_(c) x ^ s / s ds = 0` as a principal value. -/
 theorem hasVerticalIntegral_cpow_div_self_of_lt_one {x c : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
     (hc : 0 < c) : HasVerticalIntegral c (fun s : ℂ => (x : ℂ) ^ s / s) 0 := by
-  unfold HasVerticalIntegral
+  refine hasVerticalIntegral_of_continuous (continuous_cpow_div_self_line hx0 hc.ne') ?_
   simp only [smul_integral_eq_perronKernel]
   rw [tendsto_zero_iff_norm_tendsto_zero]
   refine squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) ?_
@@ -90,7 +101,8 @@ theorem hasVerticalIntegral_cpow_div_self_of_lt_one {x c : ℝ} (hx0 : 0 < x) (h
 as a principal value. -/
 theorem hasVerticalIntegral_one_div {c : ℝ} (hc : 0 < c) :
     HasVerticalIntegral c (fun s : ℂ => 1 / s) (1 / 2) := by
-  unfold HasVerticalIntegral
+  refine hasVerticalIntegral_of_continuous
+    (continuous_const.div (by fun_prop) fun t => ofReal_add_mul_I_ne_zero (Or.inl hc.ne')) ?_
   have hev : (fun R : ℝ => ((1 / π * Real.arctan (R / c) : ℝ) : ℂ)) =ᶠ[atTop]
       fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R, (fun s : ℂ => 1 / s) (c + t * I) := by
     filter_upwards [eventually_ge_atTop (0 : ℝ)] with R hR
@@ -275,7 +287,8 @@ theorem hasVerticalIntegral_cpow_div_pow_succ_of_one_le {k : ℕ} {x c : ℝ} (h
         rw [mul_zero, sub_zero] at h1
         exact h1.congr fun R => (h0 R).symm
       have hK : Tendsto (fun R : ℝ => ((1 / (2 * π) : ℝ) : ℂ) * A 0 R) atTop (𝓝 1) := by
-        refine Tendsto.congr (fun R => ?_) (hasVerticalIntegral_cpow_div_self_of_one_lt hx1 hc)
+        refine Tendsto.congr (fun R => ?_)
+          (hasVerticalIntegral_cpow_div_self_of_one_lt hx1 hc).tendsto
         rw [Complex.real_smul, hAval]
         congr 1
         refine intervalIntegral.integral_congr fun t _ => ?_
@@ -319,7 +332,7 @@ theorem hasVerticalIntegral_cpow_div_pow_succ_of_one_le {k : ℕ} {x c : ℝ} (h
         exact ht.congr fun R => (heq R).symm
   -- conclusion
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n + 1 := ⟨k - 1, by omega⟩
-  unfold HasVerticalIntegral
+  refine hasVerticalIntegral_of_continuous (continuous_cpow_div_pow_line hx0 hcne _) ?_
   have hfun : ∀ R : ℝ, ((1 / (2 * π) : ℝ) : ℂ) * A (n + 1) R =
       (1 / (2 * π)) • ∫ t in (-R)..R,
         (fun s : ℂ => (x : ℂ) ^ s / s ^ (n + 1 + 1)) (c + t * I) := by
@@ -488,12 +501,6 @@ private theorem hasVerticalIntegral_cpow_div_prod_of_base {x : ℝ} (hx : 0 < x)
     have h' := congrArg re h
     simp only [add_re, natCast_re, zero_re] at h'
     linarith [(Nat.cast_nonneg j : (0 : ℝ) ≤ j)]
-  have hcont : ∀ n (d : ℝ), 0 < d → ∀ R : ℝ, IntervalIntegrable
-      (fun t : ℝ => (x : ℂ) ^ ((d : ℂ) + t * I) / P n ((d : ℂ) + t * I)) volume (-R) R := by
-    intro n d hd R
-    refine (Continuous.div ?_ ?_ fun t => hPne n _ (by simp [hd])).intervalIntegrable _ _
-    · exact Continuous.const_cpow (by fun_prop) (Or.inl hxC)
-    · exact continuous_finsetProd _ fun j _ => by fun_prop
   induction n generalizing d with
   | zero => simpa using hbase d hd
   | succ n ih =>
@@ -501,14 +508,7 @@ private theorem hasVerticalIntegral_cpow_div_prod_of_base {x : ℝ} (hx : 0 < x)
     have hB0 := ih (d := d + 1) (by linarith)
     rw [show d + 1 = d - (-1) by ring] at hB0
     have hB := hB0.comp_sub_ofReal.const_mul ((x : ℂ)⁻¹)
-    have iB : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => (x : ℂ)⁻¹ *
-        ((x : ℂ) ^ ((d : ℂ) + t * I - ((-1 : ℝ) : ℂ)) /
-          P n ((d : ℂ) + t * I - ((-1 : ℝ) : ℂ)))) volume (-R) R := by
-      intro R
-      have := (hcont n (d + 1) (by linarith) R).const_mul ((x : ℂ)⁻¹)
-      convert this using 3 with t
-      rw [show (d : ℂ) + t * I - ((-1 : ℝ) : ℂ) = ((d + 1 : ℝ) : ℂ) + t * I by push_cast; ring]
-    have hS := ((hA.sub hB (hcont n d hd) iB).const_mul (1 / ((n : ℂ) + 1))).congr_line
+    have hS := ((hA.sub hB).const_mul (1 / ((n : ℂ) + 1))).congr_line
       (g := fun s => (x : ℂ) ^ s / P (n + 1) s) fun t => by
         have hs : 0 < ((d : ℂ) + t * I).re := by simp [hd]
         have e : (d : ℂ) + t * I - ((-1 : ℝ) : ℂ) = (d : ℂ) + t * I + 1 := by push_cast; ring

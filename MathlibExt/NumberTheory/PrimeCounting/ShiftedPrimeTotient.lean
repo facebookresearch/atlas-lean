@@ -16,6 +16,7 @@ import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.NumberTheory.Harmonic.Bounds
 import MathlibExt.NumberTheory.PrimeCounting.BrunTitchmarsh
+import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusSummatory
 
 /-!
 # The average of `(p - 1) / φ(p - 1)` over primes
@@ -38,42 +39,6 @@ the Brun–Titchmarsh inequality for small `δ` and the trivial bound for large 
 open Finset
 
 namespace Nat
-
-/-- **Hyperbola reindexing**: `∑_{n ≤ N} ∑_{m ≤ N/n} f n m = ∑_{r ≤ N} ∑_{d ∣ r} f d (r / d)`. -/
-private theorem sum_Icc_sum_Icc_div_eq_sum_Icc_sum_divisors {M : Type*} [AddCommMonoid M]
-    (N : ℕ) (f : ℕ → ℕ → M) :
-    ∑ n ∈ Icc 1 N, ∑ m ∈ Icc 1 (N / n), f n m = ∑ r ∈ Icc 1 N, ∑ d ∈ r.divisors, f d (r / d) := by
-  rw [Finset.sum_sigma' (Icc 1 N) (fun n => Icc 1 (N / n)) f,
-    Finset.sum_sigma' (Icc 1 N) (fun r => r.divisors) (fun r d => f d (r / d))]
-  refine Finset.sum_nbij' (fun p => ⟨p.1 * p.2, p.1⟩) (fun p => ⟨p.2, p.1 / p.2⟩)
-    ?_ ?_ ?_ ?_ ?_
-  · rintro ⟨n, m⟩ h
-    simp only [Finset.mem_sigma, Finset.mem_Icc] at h ⊢
-    obtain ⟨⟨hn1, hnN⟩, hm1, hmN⟩ := h
-    have hnm : n * m ≤ N := by
-      rw [mul_comm]; exact (Nat.le_div_iff_mul_le hn1).1 hmN
-    refine ⟨⟨Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega)), hnm⟩, ?_⟩
-    exact Nat.mem_divisors.2 ⟨dvd_mul_right n m, Nat.mul_ne_zero (by omega) (by omega)⟩
-  · rintro ⟨r, d⟩ h
-    simp only [Finset.mem_sigma, Finset.mem_Icc] at h ⊢
-    obtain ⟨⟨hr1, hrN⟩, hd⟩ := h
-    have hd0 : 0 < d := Nat.pos_of_mem_divisors hd
-    have hdr : d ≤ r := Nat.le_of_dvd (by omega) (Nat.dvd_of_mem_divisors hd)
-    exact ⟨⟨hd0, by omega⟩, (Nat.one_le_div_iff hd0).2 hdr, Nat.div_le_div_right hrN⟩
-  · rintro ⟨n, m⟩ h
-    simp only [Finset.mem_sigma, Finset.mem_Icc] at h
-    simp [Nat.mul_div_cancel_left _ (show 0 < n from h.1.1)]
-  · rintro ⟨r, d⟩ h
-    simp only [Finset.mem_sigma, Finset.mem_Icc] at h
-    simp [Nat.mul_div_cancel' (Nat.dvd_of_mem_divisors h.2)]
-  · rintro ⟨n, m⟩ h
-    simp only [Finset.mem_sigma, Finset.mem_Icc] at h
-    simp [Nat.mul_div_cancel_left _ (show 0 < n from h.1.1)]
-
-/-- For a prime `p`, `p ≡ 1 [MOD m] ↔ m ∣ p - 1`. -/
-theorem Prime.modEq_one_iff_dvd_sub_one {p m : ℕ} (hp : p.Prime) :
-    p ≡ 1 [MOD m] ↔ m ∣ p - 1 := by
-  rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' hp.one_lt.le]
 
 /-- `∑_{p ≤ N} ∑_{δ ∣ p - 1} f(δ) = ∑_{δ ≤ N} π(N; δ, 1) f(δ)`. -/
 theorem sum_primesLE_sum_divisors_sub_one_eq {R : Type*} [NonAssocSemiring R] (N : ℕ)
@@ -100,7 +65,7 @@ theorem sum_primesLE_sum_divisors_sub_one_eq {R : Type*} [NonAssocSemiring R] (N
     rw [Finset.sum_const, nsmul_eq_mul, primeCountingMod]
     congr 2
     exact congrArg Finset.card (Finset.filter_congr fun p hp =>
-      ((mem_primesLE.mp hp).2.modEq_one_iff_dvd_sub_one).symm)
+      (Nat.ModEq.comm.trans (Nat.modEq_iff_dvd' (mem_primesLE.mp hp).2.one_lt.le)).symm)
   · intro p δ
     simp only [Finset.mem_filter]
     tauto
@@ -115,7 +80,7 @@ theorem primeCountingMod_one_le_div (N δ : ℕ) : primeCountingMod N δ 1 ≤ N
     simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hp
     have hp' := mem_primesLE.mp hp.1
     have h2 := hp'.2.two_le
-    have h3 := hp'.2.modEq_one_iff_dvd_sub_one.1 hp.2
+    have h3 := (Nat.modEq_iff_dvd' hp'.2.one_lt.le).1 hp.2.symm
     simp only [Finset.coe_filter, Finset.mem_Ioc, Set.mem_ofPred_eq]
     exact ⟨⟨by omega, by omega⟩, h3⟩
   · intro a ha b hb hab

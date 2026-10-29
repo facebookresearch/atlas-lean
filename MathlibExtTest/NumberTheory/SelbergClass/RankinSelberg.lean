@@ -47,17 +47,8 @@ example (b : ℕ → ℂ) (s : ℂ) : tensor b 0 s = 1 := by
   simp [tensor, this, LSeries_zero]
 
 /-- For `ζ`, `k · (1/k) · (1/k) = 1/k`: the Rankin–Selberg logarithm of `ζ ⊗ ζ̄` is that of `ζ`. -/
-theorem tensorLog_zetaLog : tensorLog zetaLog (fun n => starRingEnd ℂ (zetaLog n)) = zetaLog := by
-  funext n
-  by_cases hn : IsPrimePow n
-  · obtain ⟨p, k, hp, hk, rfl⟩ := (isPrimePow_nat_iff n).1 hn
-    rw [tensorLog_prime_pow _ _ hp hk.ne', zetaLog_prime_pow hp hk.ne']
-    have hk' : (k : ℂ) ≠ 0 := by exact_mod_cast hk.ne'
-    simp only [map_div₀, map_one, map_natCast]
-    field_simp
-  · rw [tensorLog_of_not_isPrimePow _ _ hn]
-    by_contra h
-    exact hn (isEulerLog_zeta.1 n (Ne.symm h))
+example : tensorLog zetaLog (fun n => starRingEnd ℂ (zetaLog n)) = zetaLog :=
+  tensorLog_zetaLog_conj
 
 /-- `IsEulerLog.norm_apply_prime_pow_le` at `ζ` (`c = 1`, `ε = 0`): `1/k ≤ (2^k - 1)/k`. -/
 example {p k : ℕ} (hp : p.Prime) (hk : 1 ≤ k) :
@@ -75,13 +66,7 @@ example {s : ℂ} (hs : 1 < s.re) :
 /-! ### `IsTensorSimple` -/
 
 /-- **`ζ` is `⊗`-simple.** -/
-theorem isTensorSimple_zeta : IsTensorSimple zetaC := by
-  refine ⟨zeta_mem_selbergClass, zetaLog, isEulerLog_zeta, riemannZeta, fun s hs => ?_, ?_,
-    meromorphicAt_riemannZeta_one_and_meromorphicOrderAt_eq.2⟩
-  · rw [tensor, tensorLog_zetaLog, ← (isEulerLog_zeta.2 s hs).2,
-      isLSeriesContinuation_zeta.1 s hs]
-  · exact (isLSeriesContinuation_zeta.2.analyticOnNhd isOpen_compl_singleton).mono
-      fun s hs => hs.2
+example : IsTensorSimple zetaC := isTensorSimple_zeta
 
 /-- **`1` is not `⊗`-simple**: `1 ⊗ 1 = 1` has no pole at `s = 1`. -/
 theorem not_isTensorSimple_one : ¬ IsTensorSimple (1 : ArithmeticFunction ℂ) := by

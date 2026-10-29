@@ -17,26 +17,40 @@ import MathlibExt.NumberTheory.LSeries.DirichletLeftHalfPlane
 import MathlibExt.NumberTheory.LSeries.RiemannZetaLogDerivZeros
 import MathlibExt.NumberTheory.LSeries.VerticalLine
 import MathlibExt.NumberTheory.PrimeCounting.ExplicitFormula
+import MathlibExt.NumberTheory.PrimeCounting.ExplicitFormulaContour
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.NumberTheory.LSeries.Dirichlet
 
 /-!
-# The truncated explicit formula for `ψ(x, χ)`
+# The explicit formula for `ψ(x, χ)`
 
 For a primitive nonprincipal Dirichlet character `χ` modulo `q` of parity
-`a = (1 - χ(-1))/2`, we prove the truncated explicit formula
+`a = (1 - χ(-1))/2`, we prove the explicit formula
+`ψ(x, χ) = -∑_ρ x^ρ/ρ - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ) + ∑_{m ≥ 1} x^{a - 2m}/(2m - a)`
+for every real `x > 1` that is not a prime power, the sum over the zeros being the limit of its
+truncations to `|γ| < R`, and its truncated form
 `ψ(x, χ) = -∑_{|γ| < R} x^ρ/ρ - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ)
   + ∑_{m ≥ 1} x^{a - 2m}/(2m - a) + O(x log² (q x R) / R)`
-uniformly in `χ`, and deduce that the generalized Riemann hypothesis for `L(s, χ)` gives
-`ψ(x, χ) = O(√x log² (q x))`.
+uniformly in `χ`, for `x - 1/2` a positive integer. We deduce that the generalized Riemann
+hypothesis for `L(s, χ)` gives `ψ(x, χ) = O(√x log² (q x))`.
+
+Both formulas come from the residue theorem for `-L'/L(s, χ) x^s / s` on the rectangle
+`[-(2M + 1 - a), c] × [-T, T]` at a good height `T`, letting `M → ∞`.
 
 ## Main statements
 
+* `DirichletCharacter.mem_nontrivialZeros_or_eq_of_LFunction_eq_zero`: the zeros of `L(s, χ)` are
+  the nontrivial zeros and the trivial zeros `-a - 2n`.
+* `DirichletCharacter.integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div`: the residue
+  theorem for `-L'/L(s, χ) x^s / s` on the rectangle.
 * `DirichletCharacter.exists_good_height_norm_logDeriv_LFunction_le`: in every window `[R, R + 1]`
   there is a height `T` at which `L'/L(σ ± iT, χ) = O(log² (q R))` for `-1 ≤ σ ≤ 2`.
 * `DirichletCharacter.exists_truncated_explicit_formula_chebyshevPsi`: the truncated explicit
   formula for `ψ(x, χ)`.
+* `DirichletCharacter.tendsto_tsum_cpow_div_zeros_explicit_formula`: the explicit formula for
+  `ψ(x, χ)`.
 * `DirichletCharacter.exists_norm_chebyshevPsi_le_of_forall_re_eq_half`: under the generalized
   Riemann hypothesis for `L(s, χ)`, `‖ψ(x, χ)‖ ≤ C √x log² (q x)` for `x ≥ 2`.
 -/
@@ -49,7 +63,7 @@ open Complex Filter Topology Set ArithmeticFunction RiemannXi
 
 namespace DirichletCharacter
 
-/-! ### The residues of `-L'/L(s, χ) x^s / s` -/
+/-! ### Moving the truncation height -/
 
 /-- Moving the truncation height of the zero sum from `R` to `T ∈ [R, R + 1]` costs
 `O(log (q R) x / R)`. -/
@@ -63,36 +77,8 @@ private lemma norm_tsum_cpow_div_sub_tsum_cpow_div_le {q : ℕ} [NeZero q]
         ∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0)‖ ≤
       2 * (|C₁| * Real.log (q * (R + 3))) * (x / R) := by
   classical
-  have hx0 : 0 < x := by linarith
-  set N := (finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hχ hχ1 hz T).toFinset with hN
-  have hmemN : ∀ n, n ∈ N ↔ |(z n).im| < T := fun n => by simp [N]
-  rw [tsum_eq_sum (s := N) (fun n hn => ite_eq_right (by rwa [hmemN] at hn)),
-    tsum_eq_sum (s := N) (fun n hn => ite_eq_right (by
-      rw [hmemN] at hn; intro h; exact hn (by linarith))), ← Finset.sum_sub_distrib]
-  set D := N.filter (fun n => R ≤ |(z n).im|) with hD
-  have hterm : ∀ n ∈ N, ‖(if |(z n).im| < T then (x : ℂ) ^ z n / z n else 0) -
-      (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0)‖ ≤
-      if n ∈ D then x / R else 0 := by
-    intro n hn
-    have hT' := (hmemN n).mp hn
-    rw [ite_eq_left hT']
-    by_cases hRn : |(z n).im| < R
-    · rw [ite_eq_left hRn, sub_self, norm_zero]; split_ifs <;> positivity
-    · rw [ite_eq_right hRn, sub_zero,
-        ite_eq_left (by rw [hD, Finset.mem_filter]; exact ⟨hn, not_lt.mp hRn⟩)]
-      have hre1 : (z n).re ≤ 1 := (re_mem_Icc_of_card_eq_analyticOrderAt hχ hz n).2
-      have hnorm : R ≤ ‖z n‖ := (not_lt.mp hRn).trans (Complex.abs_im_le_norm _)
-      rw [norm_div, Complex.norm_cpow_eq_rpow_re_of_pos hx0]
-      have h1 : x ^ (z n).re ≤ x := by
-        calc x ^ (z n).re ≤ x ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx.le hre1
-          _ = x := Real.rpow_one x
-      calc x ^ (z n).re / ‖z n‖ ≤ x / ‖z n‖ :=
-            div_le_div_of_nonneg_right h1 (norm_nonneg _)
-        _ ≤ x / R := div_le_div_of_nonneg_left hx0.le (by linarith) hnorm
-  refine (norm_sum_le _ _).trans ((Finset.sum_le_sum hterm).trans ?_)
-  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, Finset.filter_mem_eq_inter,
-    Finset.inter_eq_right.mpr (Finset.filter_subset _ _)]
-  -- counting
+  have hmin : min R T = R := min_eq_left hRT
+  have hmax : max R T = T := max_eq_right hRT
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne q)
   set t₀ : ℝ := R + 1 / 2 with ht₀
   have hlog : Real.log (q * (|t₀| + 2)) ≤ Real.log (q * (R + 3)) := by
@@ -102,30 +88,38 @@ private lemma norm_tsum_cpow_div_sub_tsum_cpow_div_le {q : ℕ} [NeZero q]
   have hlog0 : 0 ≤ Real.log (q * (|t₀| + 2)) := Real.log_nonneg (by nlinarith [abs_nonneg t₀])
   have hlog0' : 0 ≤ Real.log (q * (|-t₀| + 2)) :=
     Real.log_nonneg (by nlinarith [abs_nonneg (-t₀)])
-  have hDP := hC₁ t₀ (D.filter (fun n => 0 ≤ (z n).im)) (by
-    intro n hn
-    rw [Finset.mem_filter, hD, Finset.mem_filter, hmemN] at hn
-    obtain ⟨⟨h1, h2⟩, h3⟩ := hn
-    rw [abs_of_nonneg h3] at h1 h2
-    rw [abs_lt]; constructor <;> linarith)
-  have hDM := hC₁ (-t₀) (D.filter (fun n => ¬ 0 ≤ (z n).im)) (by
-    intro n hn
-    rw [Finset.mem_filter, hD, Finset.mem_filter, hmemN] at hn
-    obtain ⟨⟨h1, h2⟩, h3⟩ := hn
-    rw [abs_of_neg (not_le.mp h3)] at h1 h2
-    rw [abs_lt]; constructor <;> linarith)
-  have hcard := Finset.card_filter_add_card_filter_not (s := D) (fun n => 0 ≤ (z n).im)
   have hc1 : C₁ * Real.log (q * (|t₀| + 2)) ≤ |C₁| * Real.log (q * (R + 3)) :=
     (mul_le_mul_of_nonneg_right (le_abs_self _) hlog0).trans
       (mul_le_mul_of_nonneg_left hlog (abs_nonneg _))
   have hc2 : C₁ * Real.log (q * (|-t₀| + 2)) ≤ |C₁| * Real.log (q * (R + 3)) :=
     (mul_le_mul_of_nonneg_right (le_abs_self _) hlog0').trans
       (mul_le_mul_of_nonneg_left hlog' (abs_nonneg _))
-  have hDc : (D.card : ℝ) ≤ 2 * (|C₁| * Real.log (q * (R + 3))) := by
-    have : (D.card : ℝ) = (D.filter (fun n => 0 ≤ (z n).im)).card +
-        (D.filter (fun n => ¬ 0 ≤ (z n).im)).card := by exact_mod_cast hcard.symm
-    linarith
-  exact mul_le_mul_of_nonneg_right hDc (by positivity)
+  have h := norm_tsum_ite_cpow_div_sub_tsum_ite_cpow_div_le z
+    (fun n => (re_mem_Icc_of_card_eq_analyticOrderAt hχ hz n).2) hx (R := R) (T := T)
+    (by rw [hmin]; linarith)
+    (by rw [hmax]; exact finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hχ hχ1 hz T)
+    (B := 2 * (|C₁| * Real.log (q * (R + 3)))) (fun D hD => by
+      rw [hmin, hmax] at hD
+      have hDP := hC₁ t₀ (D.filter (fun n => 0 ≤ (z n).im)) (by
+        intro n hn
+        rw [Finset.mem_filter] at hn
+        obtain ⟨h1, h2⟩ := hD n hn.1
+        rw [abs_of_nonneg hn.2] at h1 h2
+        rw [abs_lt]; constructor <;> linarith)
+      have hDM := hC₁ (-t₀) (D.filter (fun n => ¬ 0 ≤ (z n).im)) (by
+        intro n hn
+        rw [Finset.mem_filter] at hn
+        obtain ⟨h1, h2⟩ := hD n hn.1
+        rw [abs_of_neg (not_le.mp hn.2)] at h1 h2
+        rw [abs_lt]; constructor <;> linarith)
+      have hcard := Finset.card_filter_add_card_filter_not (s := D) (fun n => 0 ≤ (z n).im)
+      have : (D.card : ℝ) = (D.filter (fun n => 0 ≤ (z n).im)).card +
+          (D.filter (fun n => ¬ 0 ≤ (z n).im)).card := by exact_mod_cast hcard.symm
+      linarith)
+  rw [hmin] at h
+  rwa [norm_sub_rev]
+
+/-! ### The residues of `-L'/L(s, χ) x^s / s` -/
 
 /-- On the lines `Re z = π/2 + kπ`, `sin z ≠ 0` and `|cos z| ≤ 2 |sin z|`. -/
 private lemma sin_ne_zero_and_norm_cos_le_of_cos_eq_zero (x y : ℝ) (hx : Real.cos x = 0) :
@@ -136,11 +130,12 @@ private lemma sin_ne_zero_and_norm_cos_le_of_cos_eq_zero (x y : ℝ) (hx : Real.
     (Complex.norm_cos_le_norm_sin_of_cos_re_eq_zero hre).trans
       (by linarith [norm_nonneg (Complex.sin ((x : ℂ) + y * I))])⟩
 
-/-- At a simple zero `L(s, χ) = s E(s)` at `0`, the integrand `-L'/L(s) x^s/s + 1/s²` has a
-simple pole at `0` with residue `-(log x + b(χ))`. -/
-private lemma exists_local_pole_origin_of_eq_mul {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
-    {x : ℝ} (hx : 0 < x) {E : ℂ → ℂ} (hE : AnalyticAt ℂ E 0) (hE0 : E 0 ≠ 0)
-    (hf : ∀ᶠ s in 𝓝[≠] (0 : ℂ), LFunction χ s = s * E s) :
+/-- **The pole at `s = 0` for a simple zero of `L(s, χ)`.** If `L(s, χ) = s E(s)` near `0` with
+`E` analytic and nonzero at `0`, then `-L'/L(s, χ) x^s/s + 1/s²` has a simple pole at `0` with
+residue `-(log x + b(χ))`, `b(χ) = DirichletCharacter.logDerivConstAtZero χ`. -/
+theorem exists_neg_logDeriv_LFunction_mul_cpow_div_add_eq_of_eq_mul {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} {x : ℝ} (hx : 0 < x) {E : ℂ → ℂ} (hE : AnalyticAt ℂ E 0)
+    (hE0 : E 0 ≠ 0) (hf : ∀ᶠ s in 𝓝[≠] (0 : ℂ), LFunction χ s = s * E s) :
     ∃ φ : ℂ → ℂ, DifferentiableAt ℂ φ 0 ∧ ∀ᶠ s in 𝓝[≠] (0 : ℂ),
       -(deriv (LFunction χ) s / LFunction χ s) * ((x : ℂ) ^ s / s) + 1 / s ^ 2 =
         (-((Real.log x : ℂ) + χ.logDerivConstAtZero)) / (s - 0) + φ s := by
@@ -153,9 +148,9 @@ private lemma exists_local_pole_origin_of_eq_mul {q : ℕ} [NeZero q] {χ : Diri
   rw [hs, sub_zero, hb]
   ring
 
-/-- Near a zero `p` of `ξ(s, χ)` of order `m` that is not a pole of `Γ((s + a)/2)`,
-`L(s, χ) = (s - p)^m E(s)` with `E` analytic and nonzero at `p`. -/
-private lemma exists_LFunction_eventually_eq_pow_mul_of_xi {q : ℕ} [NeZero q]
+/-- **`L(s, χ)` near a zero of `ξ(s, χ)`.** Near a zero `p` of `ξ(s, χ)` of order `m` that is not
+a pole of `Γ((s + a)/2)`, `L(s, χ) = (s - p)^m E(s)` with `E` analytic and nonzero at `p`. -/
+theorem exists_LFunction_eventually_eq_pow_mul_of_analyticOrderAt_xi {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hq : q ≠ 1) {a : ℝ} (hapar : (1 - χ (-1)) / 2 = (a : ℂ))
     (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
     (hxid : Differentiable ℂ (xi χ)) {p : ℂ} {m : ℕ} (hm : analyticOrderAt (xi χ) p = m)
@@ -171,9 +166,9 @@ private lemma exists_LFunction_eventually_eq_pow_mul_of_xi {q : ℕ} [NeZero q]
     rw [LFunction_eq_xi_mul_cofactor χ hq hapar hgf s, hs, smul_eq_mul]
     ring
 
-/-- At a trivial zero `p = -a - 2n` with `ξ(p, χ) ≠ 0`, `L(s, χ) = (s - p) E(s)` with `E`
-analytic and nonzero at `p`. -/
-private lemma exists_LFunction_eventually_eq_mul_of_trivial {q : ℕ} [NeZero q]
+/-- **The trivial zeros of `L(s, χ)` are simple.** At a pole `p = -a - 2n` of `Γ((s + a)/2)`
+with `ξ(p, χ) ≠ 0`, `L(s, χ) = (s - p) E(s)` with `E` analytic and nonzero at `p`. -/
+theorem exists_LFunction_eventually_eq_mul_of_xi_ne_zero {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hq : q ≠ 1) {a : ℝ} (hapar : (1 - χ (-1)) / 2 = (a : ℂ))
     (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
     (hxid : Differentiable ℂ (xi χ)) (n : ℕ) (hxi : xi χ (-(a : ℂ) - 2 * n) ≠ 0) :
@@ -209,32 +204,35 @@ private lemma exists_LFunction_eventually_eq_mul_of_trivial {q : ℕ} [NeZero q]
     rw [LFunction_eq_xi_mul_cofactor χ hq hapar hgf s, hs, pow_one, smul_eq_mul, hpdef]
     ring
 
-/-- The trivial zeros `a - 2m`, `m ≥ 1`, are simple zeros of `L(s, χ)`. -/
-private lemma exists_LFunction_eventually_eq_mul_of_trivial' {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : q ≠ 1) {a : ℝ} (ha : a = 0 ∨ a = 1)
+/-- **The zeros of `L(s, χ)`.** For primitive `χ ≠ 1` of parity `a`, every zero of `L(s, χ)` is a
+nontrivial zero or a trivial zero `-a - 2n`. -/
+theorem mem_nontrivialZeros_or_eq_of_LFunction_eq_zero {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {a : ℝ}
     (hapar : (1 - χ (-1)) / 2 = (a : ℂ)) (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
-    (hxid : Differentiable ℂ (xi χ)) (m : ℕ) (hm : 1 ≤ m) (hxi : xi χ ((a : ℂ) - 2 * m) ≠ 0) :
-    ∃ E : ℂ → ℂ, AnalyticAt ℂ E ((a : ℂ) - 2 * m) ∧ E ((a : ℂ) - 2 * m) ≠ 0 ∧
-      ∀ᶠ s in 𝓝 ((a : ℂ) - 2 * m), LFunction χ s = (s - ((a : ℂ) - 2 * m)) * E s := by
-  obtain ⟨n, hn⟩ : ∃ n : ℕ, (a : ℂ) - 2 * m = -(a : ℂ) - 2 * n := by
-    rcases ha with rfl | rfl
-    · exact ⟨m, by simp⟩
-    · refine ⟨m - 1, ?_⟩
-      rw [Nat.cast_sub hm]; push_cast; ring
-  rw [hn] at hxi ⊢
-  exact exists_LFunction_eventually_eq_mul_of_trivial hq hapar hgf hxid n hxi
+    {s : ℂ} (hs : LFunction χ s = 0) :
+    s ∈ χ.nontrivialZeros ∨ ∃ n : ℕ, s = -(a : ℂ) - 2 * n := by
+  have hq : q ≠ 1 := fun h => hχ1 (level_one' χ h)
+  rw [LFunction_eq_xi_mul_cofactor χ hq hapar hgf s, mul_eq_zero] at hs
+  rcases hs with h | h
+  · exact Or.inl ((xi_eq_zero_iff hχ hχ1 s).mp h)
+  · right
+    by_contra hne
+    push Not at hne
+    exact xi_cofactor_ne_zero q a (fun n hn => hne n (by linear_combination 2 * hn)) h
 
 /-- **The residue theorem for `-L'/L(s, χ) x^s / s`.** For primitive `χ ≠ 1` of parity `a`,
-`x > 1`, `M ≥ 1`, `U = 2M + 1 - a`, `c = 1 + 1/log x` and `T > 0` not the ordinate of a zero, the
-boundary integral of `F(s) = -L'/L(s, χ) x^s/s` over `[-U, c] × [-T, T]`, divided by `2πi`, is
-`-∑_{|γ| < T} x^ρ/ρ - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ) + ∑_{m=1}^{M} x^{a-2m}/(2m-a)`. -/
-private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [NeZero q]
+`x > 1`, `M ≥ 1`, `U = 2M + 1 - a`, `c > 1` and `T > 0` not the absolute value of the ordinate of
+a zero, the boundary integral of `F(s) = -L'/L(s, χ) x^s/s` over `[-U, c] × [-T, T]`, divided by
+`2πi`, is
+`-∑_{|γ| < T} x^ρ/ρ - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ) + ∑_{m=1}^{M} x^{a-2m}/(2m-a)`,
+with `b(χ) = DirichletCharacter.logDerivConstAtZero χ`. -/
+theorem integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {a : ℝ}
     (ha : a = 0 ∨ a = 1) (hapar : (1 - χ (-1)) / 2 = (a : ℂ))
     (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
     {ι : Type u} (z : ι → ℂ) (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w)
     {x : ℝ} (hx : 1 < x) {M : ℕ} (hM : 1 ≤ M) {T : ℝ} (hT : 0 < T)
-    (hTz : ∀ n, |(z n).im| ≠ T) {c : ℝ} (hc : c = 1 + 1 / Real.log x)
+    (hTz : ∀ n, |(z n).im| ≠ T) {c : ℝ} (hc : 1 < c)
     {U : ℝ} (hU : U = 2 * M + 1 - a) {F : ℂ → ℂ}
     (hF : F = fun s => -(deriv (LFunction χ) s / LFunction χ s) * ((x : ℂ) ^ s / s)) :
     (1 / (2 * Real.pi * I)) *
@@ -249,12 +247,8 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
   have hxid := differentiable_xi hχ1
   have hLd : Differentiable ℂ (LFunction χ) := fun s =>
     differentiableAt_LFunction χ s (Or.inr hχ1)
-  have hlogx : 0 < Real.log x := Real.log_pos hx
   have hx0 : 0 < x := by linarith
-  have hc1 : 1 < c := by
-    have := one_div_pos.mpr hlogx
-    rw [hc]
-    linarith
+  have hc1 : 1 < c := hc
   have hM' : (1 : ℝ) ≤ M := by exact_mod_cast hM
   have hU2 : 2 ≤ U := by rcases ha with h | h <;> rw [hU, h] <;> linarith
   -- facts about `ξ(s, χ)` and the zeros
@@ -286,7 +280,7 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
   have hZprop : ∀ p ∈ Z, p ≠ 0 ∧ 0 ≤ p.re ∧ p.re ≤ 1 ∧ |p.im| < T := by
     intro p hp
     obtain ⟨hnt, hpR⟩ := (hZmem p).mp hp
-    exact ⟨hnt.2.2.2, hnt.2.1, hnt.2.2.1, hpR⟩
+    exact ⟨ne_zero_of_mem_nontrivialZeros hnt, hnt.2.1.le, hnt.2.2.le, hpR⟩
   have hTrprop : ∀ p ∈ Tr, p.re < 0 ∧ -U < p.re ∧ p.im = 0 := by
     intro p hp
     obtain ⟨m, h1, h2, rfl⟩ := (hTrmem p).mp hp
@@ -323,14 +317,15 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
           (a : ℂ) * (deriv (LFunction χ) 0 / LFunction χ 0) := by simp [r]
       rw [hr0]
       rcases ha with rfl | rfl
-      · obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_mul_of_trivial hq hapar hgf
+      · obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_mul_of_xi_ne_zero hq hapar hgf
           hxid 0 (by simpa using hxi0)
         have hp0 : (-(((0 : ℝ)) : ℂ) - 2 * ((0 : ℕ) : ℂ)) = 0 := by simp
         rw [hp0] at hEa hE0 hEe
         have hf : ∀ᶠ s in 𝓝[≠] (0 : ℂ), LFunction χ s = s * E s := by
           filter_upwards [nhdsWithin_le_nhds hEe] with s hs
           rw [hs, sub_zero]
-        obtain ⟨φ, hφ, hφe⟩ := exists_local_pole_origin_of_eq_mul hx0 hEa hE0 hf
+        obtain ⟨φ, hφ, hφe⟩ :=
+          exists_neg_logDeriv_LFunction_mul_cpow_div_add_eq_of_eq_mul hx0 hEa hE0 hf
         refine ⟨φ, hφ, ?_⟩
         filter_upwards [hφe] with s hs
         simp only [Ft, h2, hF, Pi.add_apply]
@@ -364,8 +359,8 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
         apply hp0
         rw [hpe, ha', show ((n : ℕ) : ℂ) = ((n : ℝ) : ℂ) by simp, hn']
         simp
-      obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_pow_mul_of_xi hq hapar hgf hxid
-        hm hHp
+      obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_pow_mul_of_analyticOrderAt_xi hq
+        hapar hgf hxid hm hHp
       have hf : ∀ᶠ s in 𝓝[≠] p, LFunction χ s = (s - p) ^ ((mo p : ℕ) : ℤ) * E s := by
         filter_upwards [nhdsWithin_le_nhds hEe] with s hs
         rw [hs, zpow_natCast]
@@ -385,8 +380,14 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
       have hxi : xi χ ((a : ℂ) - 2 * m) ≠ 0 := by
         rw [Ne, xi_eq_zero_iff hχ hχ1]
         intro h; linarith [h.2.1]
-      obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_mul_of_trivial' hq ha hapar hgf
-        hxid m hm1 hxi
+      obtain ⟨n, hn⟩ : ∃ n : ℕ, (a : ℂ) - 2 * m = -(a : ℂ) - 2 * n := by
+        rcases ha with rfl | rfl
+        · exact ⟨m, by simp⟩
+        · refine ⟨m - 1, ?_⟩
+          rw [Nat.cast_sub hm1]; push_cast; ring
+      obtain ⟨E, hEa, hE0, hEe⟩ := exists_LFunction_eventually_eq_mul_of_xi_ne_zero hq hapar hgf
+        hxid n (hn ▸ hxi)
+      rw [← hn] at hEa hE0 hEe
       have hf : ∀ᶠ s in 𝓝[≠] ((a : ℂ) - 2 * m), LFunction χ s =
           (s - ((a : ℂ) - 2 * m)) ^ (1 : ℤ) * E s := by
         filter_upwards [nhdsWithin_le_nhds hEe] with s hs
@@ -418,18 +419,11 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
     have hs0 : s ≠ 0 := fun h => hsS (by simp [S, h])
     have hLs : LFunction χ s ≠ 0 := by
       intro h0
-      rw [LFunction_eq_xi_mul_cofactor χ hq hapar hgf s, mul_eq_zero] at h0
-      rcases h0 with h0 | h0
-      · have hnt := (xi_eq_zero_iff hχ hχ1 s).mp h0
-        obtain ⟨n, hn⟩ := hexists s h0
+      rcases mem_nontrivialZeros_or_eq_of_LFunction_eq_zero hχ hχ1 hapar hgf h0 with hnt | ⟨n, hse⟩
+      · obtain ⟨n, hn⟩ := hexists s ((xi_eq_zero_iff hχ hχ1 s).mpr hnt)
         have hIm : |s.im| < T := lt_of_le_of_ne (abs_le.mpr ⟨k3, k4⟩) (hn ▸ hTz n)
         exact hsS (by simp [S, (hZmem s).mpr ⟨hnt, hIm⟩])
-      · obtain ⟨n, hn⟩ : ∃ n : ℕ, (s + a) / 2 = -(n : ℂ) := by
-          by_contra hne
-          push Not at hne
-          exact xi_cofactor_ne_zero q a hne h0
-        have hse : s = -(a : ℂ) - 2 * n := by linear_combination 2 * hn
-        have hre : s.re = -a - 2 * n := by rw [hse]; simp
+      · have hre : s.re = -a - 2 * n := by rw [hse]; simp
         have hk1 : -(2 * (M : ℝ) + 1 - a) ≤ -a - 2 * n := by rw [← hre, ← hU]; exact k1
         apply hsS
         refine Finset.mem_insert_of_mem (Finset.mem_union_right _ ((hTrmem s).mpr ?_))
@@ -548,6 +542,7 @@ private lemma integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div {q : ℕ} [
     simp [Real.pi_ne_zero, Complex.I_ne_zero]
   rw [div_mul_eq_mul_div, one_mul, div_eq_iff hpi]
   linear_combination hRS
+
 
 /-! ### Good heights and the edges of the rectangle -/
 
@@ -807,29 +802,6 @@ theorem exists_good_height_norm_logDeriv_LFunction_le :
     rw [e] at this
     linarith
 
-private lemma integral_sub_mul_exp_le (Φ ℓ U c : ℝ) (hℓ : 0 < ℓ) (hU : -U ≤ c) (hΦ : c ≤ Φ) :
-    ∫ σ in (-U)..c, (Φ - σ) * Real.exp (σ * ℓ) ≤
-      Real.exp (c * ℓ) * ((Φ - c) / ℓ + 1 / ℓ ^ 2) := by
-  have hd : ∀ σ : ℝ, HasDerivAt (fun σ => Real.exp (σ * ℓ) * ((Φ - σ) / ℓ + 1 / ℓ ^ 2))
-      ((Φ - σ) * Real.exp (σ * ℓ)) σ := by
-    intro σ
-    have h1 : HasDerivAt (fun σ => Real.exp (σ * ℓ)) (Real.exp (σ * ℓ) * ℓ) σ := by
-      have := ((hasDerivAt_id σ).mul_const ℓ).exp
-      simpa using this
-    have h2 : HasDerivAt (fun σ : ℝ => (Φ - σ) / ℓ + 1 / ℓ ^ 2) (-1 / ℓ) σ := by
-      have := (((hasDerivAt_const σ Φ).sub (hasDerivAt_id σ)).div_const ℓ).add_const (1 / ℓ ^ 2)
-      simpa [neg_div] using this
-    refine (h1.mul h2).congr_deriv ?_
-    field_simp
-    ring
-  have hc : Continuous (fun σ : ℝ => (Φ - σ) * Real.exp (σ * ℓ)) := by fun_prop
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt (fun σ _ => hd σ) (hc.intervalIntegrable _ _)]
-  have : 0 ≤ Real.exp (-U * ℓ) * ((Φ - -U) / ℓ + 1 / ℓ ^ 2) := by
-    apply mul_nonneg (Real.exp_pos _).le
-    have : 0 ≤ Φ - -U := by linarith
-    positivity
-  linarith
-
 private lemma one_div_log_le_three {x : ℝ} (hx : 3 / 2 ≤ x) : 1 / Real.log x ≤ 3 := by
   have hl : 1 / 3 < Real.log x := by
     rw [Real.lt_log_iff_exp_lt (by linarith)]
@@ -841,6 +813,9 @@ private lemma one_div_log_le_three {x : ℝ} (hx : 3 / 2 ≤ x) : 1 / Real.log x
   rw [div_le_iff₀ (by linarith)]
   linarith
 
+/-- On a horizontal line `Im s = y`, `|y| = T ≥ 2`, where `‖L'/L(σ + iy, χ)‖ ≤ B` for
+`-1 ≤ σ ≤ 2`: for `σ ≤ c`, `‖-L'/L(s, χ) x^s/s‖ ≤ (Φ - σ) x^σ / T` with
+`Φ = log q + log (T + 2) + 7 + |C_d| + 2 K₀ + 2c + B`. -/
 private lemma norm_integrand_le_of_abs_im_eq (Cd : ℝ)
     (hCd : ∀ v : ℂ, 0 < v.re → 1 ≤ ‖v‖ → ‖Complex.digamma v‖ ≤ Real.log ‖v‖ + Cd) (K₀ : ℝ)
     (hK₀0 : 0 ≤ K₀)
@@ -849,20 +824,18 @@ private lemma norm_integrand_le_of_abs_im_eq (Cd : ℝ)
     {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (a : ℝ)
     (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
     (hgf' : ∀ w, χ⁻¹.gammaFactor w = Complex.Gammaℝ (w + a)) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
-    (x : ℝ) (hx : 1 < x) (T y B : ℝ) (hT : 2 ≤ T) (hy : |y| = T) (hB0 : 0 ≤ B)
+    (x : ℝ) (hx : 1 < x) (c : ℝ) (hc : 1 ≤ c) (T y B : ℝ) (hT : 2 ≤ T) (hy : |y| = T)
+    (hB0 : 0 ≤ B)
     (hB : ∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
       ‖deriv (LFunction χ) ((σ : ℂ) + y * I) /
         LFunction χ ((σ : ℂ) + y * I)‖ ≤ B)
-    (σ : ℝ) (hσ : σ ≤ 1 + 1 / Real.log x) :
+    (σ : ℝ) (hσ : σ ≤ c) :
     ‖-(deriv (LFunction χ) ((σ : ℂ) + y * I) /
         LFunction χ ((σ : ℂ) + y * I)) *
       ((x : ℂ) ^ ((σ : ℂ) + y * I) / ((σ : ℂ) + y * I))‖ ≤
-      (Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * (1 + 1 / Real.log x) + B + K₀ - σ) *
-        Real.exp (σ * Real.log x) / T := by
+      (Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * c + B + K₀ - σ) * x ^ σ / T := by
   set s : ℂ := (σ : ℂ) + y * I with hs
   have hx0 : 0 < x := by linarith
-  have hlog : 0 < Real.log x := Real.log_pos hx
-  have hc1 : 1 ≤ 1 + 1 / Real.log x := by have := one_div_pos.mpr hlog; linarith
   have hsre : s.re = σ := by simp [hs]
   have hsim : s.im = y := by simp [hs]
   have hsT : T ≤ ‖s‖ := by rw [← hy, ← hsim]; exact Complex.abs_im_le_norm s
@@ -870,8 +843,7 @@ private lemma norm_integrand_le_of_abs_im_eq (Cd : ℝ)
   have hlq : 0 ≤ Real.log q := Real.log_nonneg hq1
   have hlT : 0 ≤ Real.log (T + 2) := Real.log_nonneg (by linarith)
   have hCd0 := abs_nonneg Cd
-  set Φ := Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * (1 + 1 / Real.log x) + B + K₀
-    with hΦ
+  set Φ := Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * c + B + K₀ with hΦ
   have hLD : ‖deriv (LFunction χ) s / LFunction χ s‖ ≤
       Φ - σ := by
     rcases le_or_gt σ (-1) with h1 | h1
@@ -907,25 +879,12 @@ private lemma norm_integrand_le_of_abs_im_eq (Cd : ℝ)
         linarith
   have hΦσ : 0 ≤ Φ - σ := (norm_nonneg _).trans hLD
   have hTpos : 0 < T := by linarith
-  rw [norm_mul, norm_neg, norm_div ((x : ℂ) ^ s) s, Complex.norm_cpow_eq_rpow_re_of_pos hx0, hsre,
-    Real.rpow_def_of_pos hx0, mul_comm (Real.log x) σ]
-  have he := Real.exp_pos (σ * Real.log x)
-  calc ‖deriv (LFunction χ) s / LFunction χ s‖ *
-        (Real.exp (σ * Real.log x) / ‖s‖) ≤ (Φ - σ) * (Real.exp (σ * Real.log x) / T) := by
+  rw [norm_mul, norm_neg, norm_div ((x : ℂ) ^ s) s, Complex.norm_cpow_eq_rpow_re_of_pos hx0, hsre]
+  have he := Real.rpow_pos_of_pos hx0 σ
+  calc ‖deriv (LFunction χ) s / LFunction χ s‖ * (x ^ σ / ‖s‖) ≤ (Φ - σ) * (x ^ σ / T) := by
         apply mul_le_mul hLD _ (by positivity) hΦσ
         exact div_le_div_of_nonneg_left he.le hTpos hsT
-    _ = (Φ - σ) * Real.exp (σ * Real.log x) / T := by ring
-
-private lemma norm_integral_horizontal_le (f : ℝ → ℂ) (U c Φ ℓ T : ℝ) (hℓ : 0 < ℓ) (hU : -U ≤ c)
-    (hΦ : c ≤ Φ) (hT : 0 < T)
-    (hbd : ∀ σ ∈ Set.Icc (-U) c, ‖f σ‖ ≤ (Φ - σ) * Real.exp (σ * ℓ) / T) :
-    ‖∫ σ in (-U)..c, f σ‖ ≤ Real.exp (c * ℓ) * ((Φ - c) / ℓ + 1 / ℓ ^ 2) / T := by
-  have hc : Continuous (fun σ : ℝ => (Φ - σ) * Real.exp (σ * ℓ) / T) := by fun_prop
-  refine (intervalIntegral.norm_integral_le_of_norm_le hU
-    (Filter.Eventually.of_forall fun σ hσ => hbd σ ⟨hσ.1.le, hσ.2⟩)
-    (hc.intervalIntegrable _ _)).trans ?_
-  rw [intervalIntegral.integral_div]
-  exact div_le_div_of_nonneg_right (integral_sub_mul_exp_le Φ ℓ U c hℓ hU hΦ) hT.le
+    _ = (Φ - σ) * x ^ σ / T := by ring
 
 private lemma cos_pi_mul_neg_half_eq_zero (a : ℝ) (ha : a = 0 ∨ a = 1) (M : ℕ) :
     Real.cos (Real.pi * ((-(2 * (M : ℝ) + 1 - a) + a) / 2)) = 0 := by
@@ -1027,45 +986,6 @@ private lemma tendsto_vertical_bound (W T ℓ a : ℝ) (hℓ : 0 < ℓ) :
   rw [this]
   field_simp
 
-private lemma tendsto_sum_trivial_zeros (x a : ℝ) (hx : 1 < x) (ha1 : a ≤ 1) :
-    Filter.Tendsto (fun M : ℕ => ∑ m ∈ Finset.Icc 1 M,
-        (x : ℂ) ^ ((a : ℂ) - 2 * m) / (2 * m - (a : ℂ))) Filter.atTop
-      (𝓝 (∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) / (2 * ((m : ℂ) + 1) - a))) := by
-  have hx0 : 0 < x := by linarith
-  set g : ℕ → ℂ := fun m => (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) / (2 * ((m : ℂ) + 1) - a)
-    with hg
-  have hr0 : 0 ≤ x ^ (-2 : ℝ) := by positivity
-  have hr1 : x ^ (-2 : ℝ) < 1 := Real.rpow_lt_one_of_one_lt_of_neg hx (by norm_num)
-  have hbound : ∀ m : ℕ, ‖g m‖ ≤ (x ^ (-2 : ℝ)) ^ m := by
-    intro m
-    have hden : 1 ≤ ‖(2 * ((m : ℂ) + 1) - a)‖ := by
-      have h := Complex.re_le_norm (2 * ((m : ℂ) + 1) - a)
-      have : (2 * ((m : ℂ) + 1) - a).re = 2 * ((m : ℝ) + 1) - a := by simp
-      rw [this] at h
-      have : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-      linarith
-    rw [hg]
-    simp only
-    rw [norm_div, Complex.norm_cpow_eq_rpow_re_of_pos hx0]
-    have hre : ((a : ℂ) - 2 * ((m : ℂ) + 1)).re = a - 2 * ((m : ℝ) + 1) := by simp
-    rw [hre, ← Real.rpow_natCast, ← Real.rpow_mul hx0.le]
-    have h1 : x ^ (a - 2 * ((m : ℝ) + 1)) ≤ x ^ ((-2 : ℝ) * m) :=
-      Real.rpow_le_rpow_of_exponent_le hx.le (by linarith)
-    calc x ^ (a - 2 * ((m : ℝ) + 1)) / ‖(2 * ((m : ℂ) + 1) - a)‖
-        ≤ x ^ (a - 2 * ((m : ℝ) + 1)) := div_le_self (by positivity) hden
-      _ ≤ x ^ ((-2 : ℝ) * m) := h1
-  have hsum : Summable g :=
-    Summable.of_norm_bounded (summable_geometric_of_lt_one hr0 hr1) hbound
-  have ht := hsum.hasSum.tendsto_sum_nat
-  refine ht.congr fun M => ?_
-  induction M with
-  | zero => simp
-  | succ M ih =>
-    rw [Finset.sum_range_succ, ih, Finset.sum_Icc_succ_top (by omega)]
-    simp only [hg]
-    push_cast
-    ring_nf
-
 private lemma log_bounds (q x R : ℝ) (hq : 1 ≤ q) (hx : 3 / 2 ≤ x) (hR : 2 ≤ R) :
     1 ≤ Real.log (q * x * R) ∧ Real.log x ≤ Real.log (q * x * R) ∧
       Real.log q ≤ Real.log (q * x * R) ∧
@@ -1136,13 +1056,10 @@ private lemma norm_sub_le_of_rectangle (ψ P H₁ V H₂ ST SR Pm Sinf Bc Ac : �
     ((1 / (2 * Real.pi * I)) * (H₁ + V + H₂))
   linarith
 
-private lemma final_bound (Cp C₁ Kφ Φ x ℓ T R ℒ lR : ℝ) (hx0 : 0 < x) (hR : 2 ≤ R)
+private lemma final_bound (Cp C₁ Kφ Φ x ℓ T R ℒ lR xc : ℝ) (hx0 : 0 < x) (hR : 2 ≤ R)
     (hT1 : R ≤ T) (hℓ : 0 < ℓ) (hℓ3 : 1 / ℓ ≤ 3) (hlx : ℓ ≤ ℒ) (hℒ1 : 1 ≤ ℒ)
-    (hlR : lR ≤ 2 * ℒ) (hΦc : 1 + 1 / ℓ ≤ Φ) (hΦK : Φ ≤ Kφ * ℒ ^ 2)
-    (hexp : Real.exp ((1 + 1 / ℓ) * ℓ) ≤ 3 * x) :
-    Cp * (x * ℓ ^ 2 / T) +
-        2 * (Real.exp ((1 + 1 / ℓ) * ℓ) * ((Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2) / T) +
-        2 * (|C₁| * lR) * (x / R) ≤
+    (hlR : lR ≤ 2 * ℒ) (hΦ0 : 0 ≤ Φ) (hΦK : Φ ≤ Kφ * ℒ ^ 2) (hexp : xc ≤ 3 * x) :
+    Cp * (x * ℓ ^ 2 / T) + 2 * (xc * (Φ / ℓ + 1 / ℓ ^ 2) / T) + 2 * (|C₁| * lR) * (x / R) ≤
       (|Cp| + 6 * (3 * Kφ + 9) + 4 * |C₁|) * (x * ℒ ^ 2 / R) := by
   obtain ⟨Q, hQ⟩ : ∃ Q : ℝ, Q = x * ℒ ^ 2 / R := ⟨_, rfl⟩
   rw [← hQ]
@@ -1161,29 +1078,22 @@ private lemma final_bound (Cp C₁ Kφ Φ x ℓ T R ℒ lR : ℝ) (hx0 : 0 < x) 
     calc Cp * (x * ℓ ^ 2 / T) ≤ |Cp| * (x * ℓ ^ 2 / T) :=
           mul_le_mul_of_nonneg_right (le_abs_self _) (by positivity)
       _ ≤ |Cp| * Q := mul_le_mul_of_nonneg_left h1 (abs_nonneg _)
-  have e2 : Real.exp ((1 + 1 / ℓ) * ℓ) * ((Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2) / T ≤
-      3 * (3 * Kφ + 9) * Q := by
-    have hin : (Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2 ≤ 3 * Φ + 9 := by
-      have h1 : (Φ - (1 + 1 / ℓ)) / ℓ ≤ 3 * Φ := by
+  have e2 : xc * (Φ / ℓ + 1 / ℓ ^ 2) / T ≤ 3 * (3 * Kφ + 9) * Q := by
+    have hin : Φ / ℓ + 1 / ℓ ^ 2 ≤ 3 * Φ + 9 := by
+      have h1 : Φ / ℓ ≤ 3 * Φ := by
         rw [div_eq_mul_one_div]
-        have hp : 0 < 1 / ℓ := one_div_pos.mpr hℓ
-        calc (Φ - (1 + 1 / ℓ)) * (1 / ℓ) ≤ (Φ - (1 + 1 / ℓ)) * 3 :=
-              mul_le_mul_of_nonneg_left hℓ3 (by linarith)
-          _ ≤ 3 * Φ := by linarith
+        calc Φ * (1 / ℓ) ≤ Φ * 3 := mul_le_mul_of_nonneg_left hℓ3 hΦ0
+          _ = 3 * Φ := by ring
       have h2 : 1 / ℓ ^ 2 ≤ 9 := by
         rw [show 1 / ℓ ^ 2 = (1 / ℓ) ^ 2 by ring]
         have := one_div_pos.mpr hℓ
         nlinarith
       linarith
-    have hin0 : 0 ≤ (Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2 := by
-      have : 0 ≤ Φ - (1 + 1 / ℓ) := by linarith
-      positivity
+    have hin0 : 0 ≤ Φ / ℓ + 1 / ℓ ^ 2 := by positivity
     have h3 : 3 * Φ + 9 ≤ (3 * Kφ + 9) * ℒ ^ 2 := by nlinarith
     have hT0 : 0 < T := by linarith
-    calc Real.exp ((1 + 1 / ℓ) * ℓ) * ((Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2) / T
-        = Real.exp ((1 + 1 / ℓ) * ℓ) * ((Φ - (1 + 1 / ℓ)) / ℓ + 1 / ℓ ^ 2) * (1 / T) := by ring
+    calc xc * (Φ / ℓ + 1 / ℓ ^ 2) / T = xc * (Φ / ℓ + 1 / ℓ ^ 2) * (1 / T) := by ring
       _ ≤ (3 * x) * ((3 * Kφ + 9) * ℒ ^ 2) * (1 / R) := by
-          have hΦ0 : 0 ≤ Φ := by linarith [one_div_pos.mpr hℓ]
           apply mul_le_mul (mul_le_mul hexp (hin.trans h3) hin0 (by linarith))
             (one_div_le_one_div_of_le hRpos hT1) (one_div_pos.mpr hT0).le
             (mul_nonneg (by linarith) (le_trans (by linarith) h3))
@@ -1198,13 +1108,149 @@ private lemma final_bound (Cp C₁ Kφ Φ x ℓ T R ℒ lR : ℝ) (hx0 : 0 < x) 
       _ = 4 * |C₁| * (x * ℒ ^ 2 / R) := by ring
   linarith
 
+
+/-! ### The explicit formula at one height -/
+
+/-- **The explicit formula at one height**, with the Perron integral left in. For `x > 1`,
+`c > 1` and a height `T ≥ 2` that is not the absolute value of the ordinate of a zero, at which
+`‖L'/L(σ ± iT, χ)‖ ≤ B` for `-1 ≤ σ ≤ 2`, the explicit formula truncated at `T` differs from
+`ψ(x, χ)` by at most the error of the truncated Perron integral on `Re s = c` plus twice the
+bound `x^c (Φ / log x + 1 / log² x) / T` for a horizontal side of the rectangle. -/
+private lemma norm_chebyshevPsi_sub_le_of_height (Cd : ℝ)
+    (hCd : ∀ v : ℂ, 0 < v.re → 1 ≤ ‖v‖ → ‖Complex.digamma v‖ ≤ Real.log ‖v‖ + Cd) (K₀ : ℝ)
+    (hK₀0 : 0 ≤ K₀)
+    (hK₀ : ∀ {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ), 2 ≤ s.re →
+      ‖deriv (LFunction χ) s / LFunction χ s‖ ≤ K₀)
+    {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {a : ℝ}
+    (ha : a = 0 ∨ a = 1) (hapar : (1 - χ (-1)) / 2 = (a : ℂ))
+    (hgf : ∀ w, χ.gammaFactor w = Complex.Gammaℝ (w + a))
+    (hgf' : ∀ w, χ⁻¹.gammaFactor w = Complex.Gammaℝ (w + a))
+    {ι : Type u} (z : ι → ℂ) (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w)
+    {x : ℝ} (hx : 1 < x) {c : ℝ} (hc : 1 < c) {T : ℝ} (hT : 2 ≤ T)
+    (hTz : ∀ n, |(z n).im| ≠ T) {B : ℝ} (hB0 : 0 ≤ B)
+    (hB : ∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
+      ‖deriv (LFunction χ) ((σ : ℂ) + T * I) / LFunction χ ((σ : ℂ) + T * I)‖ ≤ B ∧
+      ‖deriv (LFunction χ) ((σ : ℂ) - T * I) / LFunction χ ((σ : ℂ) - T * I)‖ ≤ B) :
+    ‖χ.chebyshevPsi x -
+        (-(∑' n, (if |(z n).im| < T then (x : ℂ) ^ z n / z n else 0))
+          - (1 - (a : ℂ)) * ((Real.log x : ℂ) + χ.logDerivConstAtZero)
+          - (a : ℂ) * (deriv (LFunction χ) 0 / LFunction χ 0)
+          + ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) /
+              (2 * ((m : ℂ) + 1) - (a : ℂ)))‖ ≤
+      ‖χ.chebyshevPsi x - (1 / (2 * Real.pi)) * ∫ t in (-T)..T,
+          -(deriv (LFunction χ) (c + t * I) / LFunction χ (c + t * I)) *
+            ((x : ℂ) ^ (c + t * I) / (c + t * I))‖ +
+        2 * (x ^ c * ((Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * c + B + K₀) /
+          Real.log x + 1 / Real.log x ^ 2) / T) := by
+  classical
+  have ha0 : 0 ≤ a := by rcases ha with h | h <;> simp [h]
+  have ha1 : a ≤ 1 := by rcases ha with h | h <;> simp [h]
+  have hℓ : 0 < Real.log x := Real.log_pos hx
+  have hTpos : 0 < T := by linarith
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne q)
+  set e₁ : ℝ := ‖χ.chebyshevPsi x - (1 / (2 * Real.pi)) * ∫ t in (-T)..T,
+      -(deriv (LFunction χ) (c + t * I) / LFunction χ (c + t * I)) *
+        ((x : ℂ) ^ (c + t * I) / (c + t * I))‖ with he₁
+  obtain ⟨F, hF⟩ : ∃ F : ℂ → ℂ, F = fun s => -(deriv (LFunction χ) s /
+      LFunction χ s) * ((x : ℂ) ^ s / s) := ⟨_, rfl⟩
+  obtain ⟨Φ, hΦ⟩ : ∃ Φ : ℝ,
+      Φ = Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * c + B + K₀ := ⟨_, rfl⟩
+  rw [← hΦ]
+  have hΦ0 : 0 ≤ Φ := by
+    have := Real.log_nonneg hq1
+    have := Real.log_nonneg (show (1 : ℝ) ≤ T + 2 by linarith)
+    rw [hΦ]
+    linarith [abs_nonneg Cd]
+  obtain ⟨Hb, hHb⟩ : ∃ Hb : ℝ, Hb = x ^ c * (Φ / Real.log x + 1 / Real.log x ^ 2) / T :=
+    ⟨_, rfl⟩
+  rw [← hHb]
+  -- the horizontal sides
+  have hptw : ∀ y : ℝ, |y| = T → (∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
+      ‖deriv (LFunction χ) ((σ : ℂ) + y * I) / LFunction χ ((σ : ℂ) + y * I)‖ ≤ B) →
+      ∀ U : ℝ, 0 ≤ U → ‖∫ σ in (-U)..c, F ((σ : ℂ) + y * I)‖ ≤ Hb := by
+    intro y hy hBy U hU
+    rw [hHb]
+    refine norm_intervalIntegral_le_of_norm_le_sub_mul_rpow hx hTpos zero_le_one (by linarith)
+      (by linarith) (by linarith) fun σ hσ => ?_
+    rw [one_mul, hF, hΦ]
+    exact norm_integrand_le_of_abs_im_eq Cd hCd K₀ hK₀0 hK₀ χ hχ a hgf hgf' ha0 ha1 x hx c hc.le
+      T y B hT hy hB0 hBy σ hσ.2
+  have hemT : ∀ σ : ℝ, (σ : ℂ) - T * I = (σ : ℂ) + ((-T : ℝ) : ℂ) * I := by
+    intro σ; push_cast; ring
+  have hBT' : ∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
+      ‖deriv (LFunction χ) ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) /
+        LFunction χ ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)‖ ≤ B := by
+    intro σ h1 h2
+    rw [← hemT]
+    exact (hB σ h1 h2).2
+  have hTabs : |T| = T := abs_of_pos hTpos
+  have hH1 : ∀ M : ℕ, 1 ≤ M →
+      ‖∫ σ in c..(-(2 * M + 1 - a : ℝ)), F ((σ : ℂ) + T * I)‖ ≤ Hb := by
+    intro M hM
+    have hM' : (1 : ℝ) ≤ M := by exact_mod_cast hM
+    rw [intervalIntegral.integral_symm, norm_neg]
+    exact hptw T hTabs (fun σ h1 h2 => (hB σ h1 h2).1) _ (by linarith)
+  have hH2 : ∀ M : ℕ, 1 ≤ M →
+      ‖∫ σ in (-(2 * M + 1 - a : ℝ))..c, F ((σ : ℂ) - T * I)‖ ≤ Hb := by
+    intro M hM
+    have hM' : (1 : ℝ) ≤ M := by exact_mod_cast hM
+    simp only [hemT]
+    exact hptw (-T) (by rw [abs_neg, hTabs]) hBT' _ (by linarith)
+  -- the left side
+  obtain ⟨W, hW⟩ : ∃ W : ℝ, W = Real.log q + T + 2 + (7 + |Cd| + K₀) := ⟨_, rfl⟩
+  have hV : ∀ M : ℕ, 1 ≤ M →
+      ‖∫ t in T..(-T), F (-((2 * M + 1 - a : ℝ) : ℂ) + t * I) * I‖ ≤
+        (W + (2 * M + 1 - a)) * Real.exp (-(2 * M + 1 - a) * Real.log x) * (2 * T) := by
+    intro M hM
+    simp only [hF]
+    rw [hW]
+    exact norm_integral_vertical_le Cd hCd K₀ hK₀ χ hχ a ha hgf hgf' x hx T hTpos M hM
+  have hVt := tendsto_vertical_bound W T (Real.log x) a hℓ
+  -- the right side
+  have hPeq : (1 / (2 * Real.pi * I)) * ∫ t in (-T)..T, F ((c : ℂ) + t * I) * I =
+      (1 / (2 * Real.pi)) * ∫ t in (-T)..T,
+        -(deriv (LFunction χ) (c + t * I) / LFunction χ (c + t * I)) *
+          ((x : ℂ) ^ (c + t * I) / (c + t * I)) := by
+    rw [intervalIntegral.integral_mul_const]
+    simp only [hF]
+    have hI : I ≠ 0 := Complex.I_ne_zero
+    have hpi : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+    have hX : ∀ X : ℂ, 1 / (2 * Real.pi * I) * (X * I) = 1 / (2 * (Real.pi : ℂ)) * X := by
+      intro X; field_simp
+    exact hX _
+  have hP : ‖χ.chebyshevPsi x -
+      (1 / (2 * Real.pi * I)) * ∫ t in (-T)..T, F ((c : ℂ) + t * I) * I‖ ≤ e₁ := by
+    rw [hPeq]
+  -- the trivial zeros
+  have hS := tendsto_sum_cpow_sub_two_mul_div_two_mul_sub hx ha1
+  -- the estimate for each `M`
+  have hstep : ∀ M : ℕ, 1 ≤ M →
+      ‖χ.chebyshevPsi x -
+          (-(∑' n, (if |(z n).im| < T then (x : ℂ) ^ z n / z n else 0))
+            - (1 - (a : ℂ)) * ((Real.log x : ℂ) + χ.logDerivConstAtZero)
+            - (a : ℂ) * (deriv (LFunction χ) 0 / LFunction χ 0)
+            + ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) /
+                (2 * ((m : ℂ) + 1) - (a : ℂ)))‖ ≤
+        e₁ + 2 * Hb + 0 +
+          (W + (2 * M + 1 - a)) * Real.exp (-(2 * M + 1 - a) * Real.log x) * (2 * T) +
+          ‖(∑ m ∈ Finset.Icc 1 M, (x : ℂ) ^ ((a : ℂ) - 2 * m) / (2 * m - (a : ℂ))) -
+            ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) / (2 * ((m : ℂ) + 1) - a)‖ := by
+    intro M hM
+    have hrect := integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div hχ hχ1 ha hapar hgf z hz
+      hx hM hTpos hTz hc rfl hF
+    exact norm_sub_le_of_rectangle _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hrect hP (hH1 M hM) (hH2 M hM)
+      (hV M hM) (by rw [sub_self, norm_zero])
+  -- the limit `M → ∞`
+  have hlim := (hVt.const_add (e₁ + 2 * Hb + 0)).add (tendsto_iff_norm_sub_tendsto_zero.mp hS)
+  have hmain := ge_of_tendsto hlim (Filter.eventually_atTop.mpr ⟨1, hstep⟩)
+  simpa only [add_zero] using hmain
+
 /-! ### The truncated explicit formula -/
 
 /-- **The truncated explicit formula for `ψ(x, χ)`.** There is an absolute constant `C` such that
 for every primitive Dirichlet character `χ ≠ 1` modulo `q`, with parity `a = (1 - χ(-1))/2`, every
 family `z` listing the zeros of `ξ(s, χ)` with multiplicity (the nontrivial zeros `ρ = β + iγ` of
-`L(s, χ)`), every `x` with `x - 1/2` a positive integer and every `R ≥ 2` that is not the absolute
-value of the ordinate of a zero,
+`L(s, χ)`), every `x` with `x - 1/2` a positive integer and every `R ≥ 2`,
 `ψ(x, χ) = -∑_{|γ| < R} x^ρ/ρ - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ)
   + ∑_{m ≥ 1} x^{a - 2m}/(2m - a) + O(x log² (q x R) / R)`,
 with `b(χ) = DirichletCharacter.logDerivConstAtZero χ`. The term `-a L'(0, χ)/L(0, χ)` is the
@@ -1214,7 +1260,7 @@ theorem exists_truncated_explicit_formula_chebyshevPsi :
       ∀ {ι : Type u} (z : ι → ℂ),
         (∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) →
         ∀ x : ℝ, (∃ n : ℕ, 0 < n ∧ x = n + 1 / 2) →
-        ∀ R : ℝ, 2 ≤ R → (∀ n, |(z n).im| ≠ R) →
+        ∀ R : ℝ, 2 ≤ R →
           ‖χ.chebyshevPsi x -
               (-(∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0))
                 - (1 - (1 - χ (-1)) / 2) * ((Real.log x : ℂ) + χ.logDerivConstAtZero)
@@ -1229,11 +1275,9 @@ theorem exists_truncated_explicit_formula_chebyshevPsi :
   obtain ⟨Cp, hCp⟩ := exists_norm_chebyshevPsi_sub_truncated_integral_le_log_sq
   obtain ⟨C₁, hC₁⟩ := exists_card_le_log_of_abs_sub_im_lt.{u}
   refine ⟨|Cp| + 6 * (3 * (11 + (7 + |Cd| + K₀) + K₀ + 4 * |Kg|) + 9) + 4 * |C₁|, ?_⟩
-  intro q _ χ hχ hχ1 ι z hz x hxn R hR hRz
+  intro q _ χ hχ hχ1 ι z hz x hxn R hR
   obtain ⟨a, ha, hapar, hgf, hgf'⟩ := exists_parity_gammaFactor_eq χ
   rw [hapar]
-  have ha0 : 0 ≤ a := by rcases ha with h | h <;> simp [h]
-  have ha1 : a ≤ 1 := by rcases ha with h | h <;> simp [h]
   -- facts about `x`
   obtain ⟨n₀, hn₀, hxn₀⟩ := hxn
   have hx32 : 3 / 2 ≤ x := by
@@ -1245,6 +1289,7 @@ theorem exists_truncated_explicit_formula_chebyshevPsi :
   have hℓ3 : 1 / Real.log x ≤ 3 := one_div_log_le_three hx32
   have hc4 : 1 + 1 / Real.log x ≤ 4 := by linarith
   have hc0 : 0 < 1 / Real.log x := one_div_pos.mpr hℓ
+  have hc1 : 1 < 1 + 1 / Real.log x := by linarith
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne q)
   obtain ⟨hℒ1, hlx, hlq, hlR⟩ := log_bounds q x R hq1 hx32 hR
   have hlR0 : 0 ≤ Real.log (q * (R + 3)) := Real.log_nonneg (by nlinarith)
@@ -1262,130 +1307,48 @@ theorem exists_truncated_explicit_formula_chebyshevPsi :
       pow_le_pow_left₀ hlR0 hlR 2
     have h4 := mul_le_mul_of_nonneg_left this (abs_nonneg Kg)
     linarith
-  -- the integrand
-  obtain ⟨F, hF⟩ : ∃ F : ℂ → ℂ, F = fun s => -(deriv (LFunction χ) s /
-      LFunction χ s) * ((x : ℂ) ^ s / s) := ⟨_, rfl⟩
+  -- the explicit formula at height `T`
+  have hstep := norm_chebyshevPsi_sub_le_of_height Cd hCd K₀ hK₀0 hK₀ hχ hχ1 ha hapar hgf hgf'
+    z hz hx1 hc1 hT2' hTz hB0
+    (fun σ h1 h2 => ⟨(hTb σ h1 h2).1.trans hKgB, (hTb σ h1 h2).2.trans hKgB⟩)
+  -- Perron
+  have hP := hCp χ x T ⟨n₀, hn₀, hxn₀⟩ hTpos
+  -- the zeros between `R` and `T`
+  have hZd := norm_tsum_cpow_div_sub_tsum_cpow_div_le hχ hχ1 z hz hx1 hR hT1 hT2 (hC₁ χ hχ z hz)
+  -- the size of the horizontal sides
   obtain ⟨Φ, hΦ⟩ : ∃ Φ : ℝ, Φ = Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) +
       2 * (1 + 1 / Real.log x) + B + K₀ := ⟨_, rfl⟩
+  rw [← hΦ] at hstep
   have hlT : Real.log (T + 2) ≤ 2 * Real.log (q * x * R) := by
     refine (Real.log_le_log (by linarith) ?_).trans hlR
     have : T + 2 ≤ R + 3 := by linarith
     nlinarith
   have hlT0 : 0 ≤ Real.log (T + 2) := Real.log_nonneg (by linarith)
   have hlq0 : 0 ≤ Real.log q := Real.log_nonneg hq1
-  have hΦc : 1 + 1 / Real.log x ≤ Φ := by
+  have hΦ0 : 0 ≤ Φ := by
     rw [hΦ]; linarith [abs_nonneg Cd]
   have hΦK : Φ ≤ (11 + (7 + |Cd| + K₀) + K₀ + 4 * |Kg|) * Real.log (q * x * R) ^ 2 := by
     rw [hΦ]
     exact phi_le _ _ _ _ _ _ _ _ hℒ1 hlq hlT (by linarith [abs_nonneg Cd]) hK₀0 hc4 hB4
-  obtain ⟨Hb, hHb⟩ : ∃ Hb : ℝ, Hb = Real.exp ((1 + 1 / Real.log x) * Real.log x) *
-      ((Φ - (1 + 1 / Real.log x)) / Real.log x + 1 / Real.log x ^ 2) / T := ⟨_, rfl⟩
-  -- horizontal bounds
-  have hptw : ∀ y : ℝ, |y| = T → (∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
-      ‖deriv (LFunction χ) ((σ : ℂ) + y * I) /
-        LFunction χ ((σ : ℂ) + y * I)‖ ≤ B) →
-      ∀ U : ℝ, -U ≤ 1 + 1 / Real.log x →
-      ‖∫ σ in (-U)..(1 + 1 / Real.log x), F ((σ : ℂ) + y * I)‖ ≤ Hb := by
-    intro y hy hBy U hU
-    rw [hHb]
-    refine norm_integral_horizontal_le (fun σ => F ((σ : ℂ) + y * I)) U _ Φ _ T hℓ hU hΦc hTpos ?_
-    intro σ hσ
-    simp only [hF]
-    have := norm_integrand_le_of_abs_im_eq Cd hCd K₀ hK₀0 hK₀ χ hχ a hgf hgf' ha0 ha1 x hx1 T y B
-      hT2' hy hB0
-      hBy σ hσ.2
-    rw [hΦ]
-    exact this
-  have hBT : ∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
-      ‖deriv (LFunction χ) ((σ : ℂ) + T * I) /
-        LFunction χ ((σ : ℂ) + T * I)‖ ≤ B :=
-    fun σ h1 h2 => (hTb σ h1 h2).1.trans hKgB
-  have hemT : ∀ σ : ℝ, (σ : ℂ) - T * I = (σ : ℂ) + ((-T : ℝ) : ℂ) * I := by
-    intro σ; push_cast; ring
-  have hBT' : ∀ σ : ℝ, -1 ≤ σ → σ ≤ 2 →
-      ‖deriv (LFunction χ) ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) /
-        LFunction χ ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)‖ ≤ B := by
-    intro σ h1 h2
-    rw [← hemT]
-    exact (hTb σ h1 h2).2.trans hKgB
-  have hTabs : |T| = T := abs_of_pos hTpos
-  have hH1 : ∀ M : ℕ, 1 ≤ M →
-      ‖∫ σ in (1 + 1 / Real.log x)..(-(2 * M + 1 - a : ℝ)), F ((σ : ℂ) + T * I)‖ ≤ Hb := by
-    intro M hM
-    have hM' : (1 : ℝ) ≤ M := by exact_mod_cast hM
-    rw [intervalIntegral.integral_symm, norm_neg]
-    exact hptw T hTabs hBT _ (by linarith)
-  have hH2 : ∀ M : ℕ, 1 ≤ M →
-      ‖∫ σ in (-(2 * M + 1 - a : ℝ))..(1 + 1 / Real.log x), F ((σ : ℂ) - T * I)‖ ≤ Hb := by
-    intro M hM
-    have hM' : (1 : ℝ) ≤ M := by exact_mod_cast hM
-    simp only [hemT]
-    exact hptw (-T) (by rw [abs_neg, hTabs]) hBT' _ (by linarith)
-  -- vertical bound
-  obtain ⟨W, hW⟩ : ∃ W : ℝ, W = Real.log q + T + 2 + (7 + |Cd| + K₀) := ⟨_, rfl⟩
-  have hV : ∀ M : ℕ, 1 ≤ M →
-      ‖∫ t in T..(-T), F (-((2 * M + 1 - a : ℝ) : ℂ) + t * I) * I‖ ≤
-        (W + (2 * M + 1 - a)) * Real.exp (-(2 * M + 1 - a) * Real.log x) * (2 * T) := by
-    intro M hM
-    simp only [hF]
-    rw [hW]
-    exact norm_integral_vertical_le Cd hCd K₀ hK₀ χ hχ a ha hgf hgf' x hx1 T hTpos M hM
-  have hVt := tendsto_vertical_bound W T (Real.log x) a hℓ
-  -- Perron
-  have hP := hCp χ x T ⟨n₀, hn₀, hxn₀⟩ hTpos
-  have hPeq : (1 / (2 * Real.pi)) * ∫ t in (-T)..T,
-          -(deriv (LFunction χ) ((1 + 1 / Real.log x : ℝ) + t * I) /
-              LFunction χ ((1 + 1 / Real.log x : ℝ) + t * I)) *
-            ((x : ℂ) ^ (((1 + 1 / Real.log x : ℝ) : ℂ) + t * I) /
-              (((1 + 1 / Real.log x : ℝ) : ℂ) + t * I)) =
-      (1 / (2 * Real.pi * I)) *
-        ∫ t in (-T)..T, F (((1 + 1 / Real.log x : ℝ) : ℂ) + t * I) * I := by
-    rw [intervalIntegral.integral_mul_const]
-    simp only [hF]
-    have hI : I ≠ 0 := Complex.I_ne_zero
-    have hpi : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-    have hX : ∀ X : ℂ, 1 / (2 * (Real.pi : ℂ)) * X = 1 / (2 * Real.pi * I) * (X * I) := by
-      intro X; field_simp
-    exact hX _
-  rw [hPeq] at hP
-  -- the zeros between `R` and `T`
-  have hZd := norm_tsum_cpow_div_sub_tsum_cpow_div_le hχ hχ1 z hz hx1 hR hT1 hT2 (hC₁ χ hχ z hz)
-  -- the trivial zeros
-  have hS := tendsto_sum_trivial_zeros x a hx1 ha1
-  -- the per-`M` estimate
-  have hstep : ∀ M : ℕ, 1 ≤ M →
-      ‖χ.chebyshevPsi x -
-          (-(∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0))
-            - (1 - (a : ℂ)) * ((Real.log x : ℂ) + χ.logDerivConstAtZero)
-            - (a : ℂ) * (deriv (LFunction χ) 0 /
-                  LFunction χ 0)
-            + ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) /
-                (2 * ((m : ℂ) + 1) - (a : ℂ)))‖ ≤
-        Cp * (x * Real.log x ^ 2 / T) + 2 * Hb +
-          2 * (|C₁| * Real.log (q * (R + 3))) * (x / R) +
-          (W + (2 * M + 1 - a)) * Real.exp (-(2 * M + 1 - a) * Real.log x) * (2 * T) +
-          ‖(∑ m ∈ Finset.Icc 1 M, (x : ℂ) ^ ((a : ℂ) - 2 * m) / (2 * m - (a : ℂ))) -
-            ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) / (2 * ((m : ℂ) + 1) - a)‖ := by
-    intro M hM
-    have hrect := integral_rectangle_neg_logDeriv_LFunction_mul_cpow_div hχ hχ1 ha hapar hgf z hz
-      hx1 hM hTpos hTz rfl rfl hF
-    exact norm_sub_le_of_rectangle _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hrect hP (hH1 M hM) (hH2 M hM)
-      (hV M hM) hZd
-  -- the limit `M → ∞`
-  have hlim := (hVt.const_add (Cp * (x * Real.log x ^ 2 / T) + 2 * Hb +
-    2 * (|C₁| * Real.log (q * (R + 3))) * (x / R))).add
-    (tendsto_iff_norm_sub_tendsto_zero.mp hS)
-  have hmain := ge_of_tendsto hlim (Filter.eventually_atTop.mpr ⟨1, hstep⟩)
-  rw [add_zero, add_zero] at hmain
-  refine hmain.trans ?_
-  have hexp : Real.exp ((1 + 1 / Real.log x) * Real.log x) ≤ 3 * x := by
-    have : (1 + 1 / Real.log x) * Real.log x = Real.log x + 1 := by field_simp
-    rw [this, Real.exp_add, Real.exp_log hx0]
+  have hexp : x ^ (1 + 1 / Real.log x) ≤ 3 * x := by
+    rw [Real.rpow_add hx0, Real.rpow_one, Real.rpow_def_of_pos hx0,
+      mul_one_div_cancel hℓ.ne']
     have := Real.exp_one_lt_d9
     nlinarith
-  rw [hHb]
-  exact final_bound Cp C₁ _ Φ x (Real.log x) T R (Real.log (q * x * R)) _ hx0 hR hT1 hℓ hℓ3 hlx
-    hℒ1 hlR hΦc hΦK hexp
+  -- moving from `T` to `R`
+  set SR := ∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0) with hSR
+  set ST := ∑' n, (if |(z n).im| < T then (x : ℂ) ^ z n / z n else 0) with hST
+  set Bc := (1 - (a : ℂ)) * ((Real.log x : ℂ) + χ.logDerivConstAtZero) with hBc
+  set Ac := (a : ℂ) * (deriv (LFunction χ) 0 / LFunction χ 0) with hAc
+  set Sinf := ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) /
+    (2 * ((m : ℂ) + 1) - (a : ℂ)) with hSinf
+  have hid : χ.chebyshevPsi x - (-SR - Bc - Ac + Sinf) =
+      (χ.chebyshevPsi x - (-ST - Bc - Ac + Sinf)) - (ST - SR) := by ring
+  rw [hid]
+  refine (norm_sub_le _ _).trans ?_
+  refine (add_le_add (hstep.trans (add_le_add hP le_rfl)) hZd).trans ?_
+  exact final_bound Cp C₁ _ Φ x (Real.log x) T R (Real.log (q * x * R)) _ _ hx0 hR hT1 hℓ hℓ3
+    hlx hℒ1 hlR hΦ0 hΦK hexp
 
 /-- Zeros whose ordinate has integer part `k` number at most `2 |C₁| log (q (k + 3))`. -/
 private lemma card_le_of_floor_abs_im_eq {q : ℕ} [NeZero q] {ι : Type u} (z : ι → ℂ) (C₁ : ℝ)
@@ -1731,17 +1694,10 @@ theorem exists_norm_chebyshevPsi_le_of_forall_re_eq_half :
     have hfl : ⌊(3 / 2 : ℝ)⌋₊ = 1 := by
       rw [Nat.floor_eq_iff (by norm_num)]; norm_num
     simp [chebyshevPsi, hfl]
-  -- a height `R ∈ [x', x' + 1]` avoiding the ordinates
-  obtain ⟨R, hR1, hR2, hRz⟩ : ∃ R : ℝ, x' ≤ R ∧ R ≤ x' + 1 ∧ ∀ n, |(z n).im| ≠ R := by
-    have hfin := finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hχ hχ1 hz (x' + 2)
-    obtain ⟨R, hRmem, hRnot⟩ := (Set.Icc_infinite (show x' < x' + 1 by linarith))
-      |>.exists_notMem_finite (hfin.image fun n => |(z n).im|)
-    refine ⟨R, hRmem.1, hRmem.2, fun n hn => hRnot ⟨n, ?_, hn⟩⟩
-    have : |(z n).im| < x' + 2 := by rw [hn]; linarith [hRmem.2]
-    exact this
+  obtain ⟨R, hR1, hR2⟩ : ∃ R : ℝ, x' ≤ R ∧ R ≤ x' + 1 := ⟨x', le_rfl, by linarith⟩
   have hR2' : 2 ≤ R := by linarith
-  have hE1 := hC₇ χ hχ hχ1 z hz x' ⟨n₀, by omega, hx'⟩ R hR2' hRz
-  have hE2 := hC₇ χ hχ hχ1 z hz (3 / 2) ⟨1, one_pos, by norm_num⟩ R hR2' hRz
+  have hE1 := hC₇ χ hχ hχ1 z hz x' ⟨n₀, by omega, hx'⟩ R hR2'
+  have hE2 := hC₇ χ hχ hχ1 z hz (3 / 2) ⟨1, one_pos, by norm_num⟩ R hR2'
   rw [hψ0] at hE2
   -- the zero sum
   set N := (finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hχ hχ1 hz R).toFinset with hN
@@ -1777,5 +1733,147 @@ theorem exists_norm_chebyshevPsi_le_of_forall_re_eq_half :
   exact final_bound_of_re_eq_half C₇ C₁ q x x' R ⌈R⌉₊ _ hq1 hx (by linarith) (by linarith)
     (by linarith) hR1 hR2 hK1 hKR
     hSig hSum0
+
+
+/-! ### The explicit formula -/
+
+/-- `log² (q (R + 3)) / R → 0` as `R → ∞`. -/
+private lemma tendsto_log_sq_div (q : ℕ) [NeZero q] :
+    Tendsto (fun R : ℝ => Real.log (q * (R + 3)) ^ 2 / R) atTop (𝓝 0) := by
+  have hq : (0 : ℝ) < q := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne q)
+  have h := Real.tendsto_pow_log_div_mul_add_atTop (1 / (q : ℝ)) (-3) 2 (by positivity)
+  have hg : Tendsto (fun R : ℝ => (q : ℝ) * (R + 3)) atTop atTop :=
+    (tendsto_atTop_add_const_right _ 3 tendsto_id).const_mul_atTop hq
+  refine (h.comp hg).congr fun R => ?_
+  simp only [Function.comp]
+  congr 1
+  field_simp
+  ring
+
+/-- **The explicit formula for `ψ(x, χ)`.** For a primitive Dirichlet character `χ ≠ 1` modulo
+`q` with parity `a = (1 - χ(-1))/2`, a family `z` listing the zeros of `ξ(s, χ)` with
+multiplicity (the nontrivial zeros `ρ = β + iγ` of `L(s, χ)`), and real `x > 1` not a prime power,
+`∑_ρ x^ρ/ρ = -ψ(x, χ) - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ) + ∑_{m ≥ 1} x^{a-2m}/(2m - a)`,
+where `b(χ) = DirichletCharacter.logDerivConstAtZero χ`. The sum over the zeros converges only
+conditionally: it is the limit as `R → ∞` of its truncations to `|γ| < R`, each with finite
+support. -/
+theorem tendsto_tsum_cpow_div_zeros_explicit_formula {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {ι : Type u} (z : ι → ℂ)
+    (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) {x : ℝ} (hx : 1 < x)
+    (hpp : ∀ n : ℕ, (n : ℝ) = x → ¬ IsPrimePow n) :
+    Tendsto (fun R : ℝ => ∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0)) atTop
+      (𝓝 (-χ.chebyshevPsi x
+        - (1 - (1 - χ (-1)) / 2) * ((Real.log x : ℂ) + χ.logDerivConstAtZero)
+        - (1 - χ (-1)) / 2 * (deriv (LFunction χ) 0 / LFunction χ 0)
+        + ∑' m : ℕ, (x : ℂ) ^ ((1 - χ (-1)) / 2 - 2 * ((m : ℂ) + 1)) /
+            (2 * ((m : ℂ) + 1) - (1 - χ (-1)) / 2))) := by
+  classical
+  obtain ⟨Cd, hCd⟩ := Complex.exists_norm_digamma_le_log_add
+  obtain ⟨K₀, hK₀0, hK₀⟩ := exists_norm_logDeriv_LFunction_le_of_two_le_re
+  obtain ⟨Kg, hKg⟩ := exists_good_height_norm_logDeriv_LFunction_le.{u}
+  obtain ⟨C₁, hC₁⟩ := exists_card_le_log_of_abs_sub_im_lt.{u}
+  obtain ⟨a, ha, hapar, hgf, hgf'⟩ := exists_parity_gammaFactor_eq χ
+  rw [hapar]
+  have hx0 : 0 < x := by linarith
+  have hℓ : 0 < Real.log x := Real.log_pos hx
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne q)
+  have hPer := tendsto_truncated_integral_chebyshevPsi χ hx hpp (c := 2) one_lt_two
+  -- the error terms are `O(log² (q (R + 3)) / R)`
+  set D₁ : ℝ := 2 + (7 + |Cd| + K₀) + 4 + K₀ + |Kg| with hD₁
+  have hD₁0 : 0 ≤ D₁ := by positivity
+  set D : ℝ := 2 * (x ^ (2 : ℝ) * (D₁ / Real.log x + 1 / Real.log x ^ 2)) + 2 * |C₁| * x
+    with hD
+  rw [Metric.tendsto_atTop]
+  intro ε hε
+  have hε2 : 0 < ε / 2 := by positivity
+  obtain ⟨N₁, hN₁⟩ := Metric.tendsto_atTop.mp hPer (ε / 2) hε2
+  obtain ⟨N₂, hN₂⟩ := Filter.eventually_atTop.mp (((tendsto_log_sq_div q).const_mul D).eventually
+    (gt_mem_nhds (by rw [mul_zero]; exact hε2)))
+  refine ⟨max 2 (max N₁ N₂), fun R hR => ?_⟩
+  have hR2 : 2 ≤ R := le_trans (le_max_left _ _) hR
+  have hRN₁ : N₁ ≤ R := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hR
+  have hRN₂ : N₂ ≤ R := le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) hR
+  have hR0 : 0 < R := by linarith
+  -- the good height
+  obtain ⟨T, hT1, hT2, hTz, hTb⟩ := hKg χ hχ z hz R hR2
+  have hZd := norm_tsum_cpow_div_sub_tsum_cpow_div_le hχ hχ1 z hz hx hR2 hT1 hT2 (hC₁ χ hχ z hz)
+  set L := Real.log (q * (R + 3)) with hL
+  have hqR : R + 3 ≤ q * (R + 3) := le_mul_of_one_le_left (by linarith) hq1
+  have hL1 : 1 ≤ L := by
+    rw [hL, Real.le_log_iff_exp_le (by positivity)]
+    linarith [Real.exp_one_lt_d9]
+  have hL2 : L ≤ L ^ 2 := le_self_pow₀ hL1 two_ne_zero
+  have hL2' : 1 ≤ L ^ 2 := hL1.trans hL2
+  obtain ⟨B, hB⟩ : ∃ B, B = |Kg| * L ^ 2 := ⟨_, rfl⟩
+  have hB0 : 0 ≤ B := by rw [hB]; positivity
+  have hKgB : Kg * L ^ 2 ≤ B := by
+    rw [hB]; exact mul_le_mul_of_nonneg_right (le_abs_self _) (by positivity)
+  have hstep := norm_chebyshevPsi_sub_le_of_height Cd hCd K₀ hK₀0 hK₀ hχ hχ1 ha hapar hgf hgf'
+    z hz hx (c := 2) one_lt_two (by linarith) hTz hB0
+    (fun σ h1 h2 => ⟨(hTb σ h1 h2).1.trans hKgB, (hTb σ h1 h2).2.trans hKgB⟩)
+  have hP := hN₁ T (by linarith)
+  rw [dist_eq_norm, norm_sub_rev] at hP
+  have h2 := hN₂ R hRN₂
+  -- the horizontal sides
+  have hlq : Real.log q ≤ L := by
+    rw [hL]
+    exact Real.log_le_log (by positivity) (le_mul_of_one_le_right (by positivity) (by linarith))
+  have hlT : Real.log (T + 2) ≤ L := by
+    rw [hL]; exact Real.log_le_log (by linarith) (by linarith)
+  have hΦ : Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B + K₀ ≤ D₁ * L ^ 2 := by
+    have h1 : 7 + |Cd| + K₀ ≤ (7 + |Cd| + K₀) * L ^ 2 :=
+      le_mul_of_one_le_right (by positivity) hL2'
+    have h2 : K₀ ≤ K₀ * L ^ 2 := le_mul_of_one_le_right hK₀0 hL2'
+    have e : D₁ * L ^ 2 = 2 * L ^ 2 + (7 + |Cd| + K₀) * L ^ 2 + 4 * L ^ 2 + K₀ * L ^ 2 +
+        |Kg| * L ^ 2 := by rw [hD₁]; ring
+    rw [e, hB]
+    linarith
+  have hΦ0 : 0 ≤ Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B + K₀ := by
+    have := Real.log_nonneg hq1
+    have := Real.log_nonneg (show (1 : ℝ) ≤ T + 2 by linarith)
+    positivity
+  have hHb : 2 * (x ^ (2 : ℝ) * ((Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B +
+      K₀) / Real.log x + 1 / Real.log x ^ 2) / T) ≤
+      2 * (x ^ (2 : ℝ) * (D₁ / Real.log x + 1 / Real.log x ^ 2)) * (L ^ 2 / R) := by
+    have hx2 : 0 < x ^ (2 : ℝ) := by positivity
+    have e1 : (Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B + K₀) / Real.log x +
+        1 / Real.log x ^ 2 ≤ (D₁ / Real.log x + 1 / Real.log x ^ 2) * L ^ 2 := by
+      have h3 : 1 / Real.log x ^ 2 ≤ 1 / Real.log x ^ 2 * L ^ 2 :=
+        le_mul_of_one_le_right (by positivity) (by nlinarith)
+      have h4 : (Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B + K₀) / Real.log x ≤
+          D₁ * L ^ 2 / Real.log x := div_le_div_of_nonneg_right hΦ hℓ.le
+      have e : (D₁ / Real.log x + 1 / Real.log x ^ 2) * L ^ 2 =
+          D₁ * L ^ 2 / Real.log x + 1 / Real.log x ^ 2 * L ^ 2 := by ring
+      linarith
+    have e0 : 0 ≤ (D₁ / Real.log x + 1 / Real.log x ^ 2) * L ^ 2 :=
+      mul_nonneg (add_nonneg (div_nonneg hD₁0 hℓ.le) (by positivity)) (sq_nonneg _)
+    calc 2 * (x ^ (2 : ℝ) * ((Real.log q + Real.log (T + 2) + (7 + |Cd| + K₀) + 2 * 2 + B + K₀) /
+          Real.log x + 1 / Real.log x ^ 2) / T)
+        ≤ 2 * (x ^ (2 : ℝ) * ((D₁ / Real.log x + 1 / Real.log x ^ 2) * L ^ 2) / R) := by
+          refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+          exact div_le_div₀ (mul_nonneg hx2.le e0) (mul_le_mul_of_nonneg_left e1 hx2.le) hR0 hT1
+      _ = 2 * (x ^ (2 : ℝ) * (D₁ / Real.log x + 1 / Real.log x ^ 2)) * (L ^ 2 / R) := by ring
+  -- the zeros between `R` and `T`
+  have hw : 2 * (|C₁| * L) * (x / R) ≤ 2 * |C₁| * x * (L ^ 2 / R) := by
+    have := mul_le_mul_of_nonneg_left hL2 (abs_nonneg C₁)
+    calc 2 * (|C₁| * L) * (x / R) ≤ 2 * (|C₁| * L ^ 2) * (x / R) := by gcongr
+      _ = 2 * |C₁| * x * (L ^ 2 / R) := by ring
+  -- combine
+  rw [dist_eq_norm]
+  set SR := ∑' n, (if |(z n).im| < R then (x : ℂ) ^ z n / z n else 0) with hSR
+  set ST := ∑' n, (if |(z n).im| < T then (x : ℂ) ^ z n / z n else 0) with hST
+  set Bc := (1 - (a : ℂ)) * ((Real.log x : ℂ) + χ.logDerivConstAtZero) with hBc
+  set Ac := (a : ℂ) * (deriv (LFunction χ) 0 / LFunction χ 0) with hAc
+  set Sinf := ∑' m : ℕ, (x : ℂ) ^ ((a : ℂ) - 2 * ((m : ℂ) + 1)) /
+    (2 * ((m : ℂ) + 1) - (a : ℂ)) with hSinf
+  have hid : SR - (-χ.chebyshevPsi x - Bc - Ac + Sinf) =
+      -(ST - SR) + (χ.chebyshevPsi x - (-ST - Bc - Ac + Sinf)) := by ring
+  rw [hid]
+  refine (norm_add_le _ _).trans_lt ?_
+  rw [norm_neg]
+  have hDe : D * (L ^ 2 / R) = 2 * (x ^ (2 : ℝ) * (D₁ / Real.log x + 1 / Real.log x ^ 2)) *
+      (L ^ 2 / R) + 2 * |C₁| * x * (L ^ 2 / R) := by rw [hD]; ring
+  have h2' : D * (L ^ 2 / R) < ε / 2 := h2
+  linarith [hstep]
 
 end DirichletCharacter

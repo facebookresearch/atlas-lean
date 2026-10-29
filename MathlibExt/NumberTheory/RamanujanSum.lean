@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+import MathlibExt.NumberTheory.ArithmeticFunction.VonMangoldtConvolution
 
 /-!
 # Ramanujan sums
@@ -124,12 +125,6 @@ private theorem sum_range_exp_eq (k : ℕ) (hk : k ≠ 0) (t : ℤ) :
       exact ⟨t, by field_simp⟩
     rw [geom_sum_eq hz1, hzk, sub_self, zero_div]
 
-private theorem sum_divisors_moebius (n : ℕ) :
-    ∑ d ∈ n.divisors, μ d = if n = 1 then 1 else 0 := by
-  have := congrArg (fun f : ArithmeticFunction ℤ => f n) moebius_mul_coe_zeta
-  rw [coe_mul_zeta_apply, one_apply] at this
-  exact this
-
 /-- **Divisor-sum evaluation of the Ramanujan sum**, indexed by the divisors `d` of `n` that
 divide `t`: `c_n(t) = ∑_{d ∣ n, d ∣ t} μ(n / d) d`. -/
 theorem ramanujanSum_eq_sum_divisors_moebius (n : ℕ) [NeZero n] (t : ℤ) :
@@ -146,8 +141,7 @@ theorem ramanujanSum_eq_sum_divisors_moebius (n : ℕ) [NeZero n] (t : ℤ) :
       constructor
       · rintro ⟨⟨h1, -⟩, h2⟩; exact ⟨⟨h2, h1⟩, by simp [Nat.gcd_eq_zero_iff, hn]⟩
       · rintro ⟨⟨h1, h2⟩, -⟩; exact ⟨⟨h2, hn⟩, h1⟩
-    rw [hset, ← Int.cast_sum, sum_divisors_moebius]
-    simp [Nat.Coprime]
+    rw [hset, ArithmeticFunction.sum_divisors_moebius]
   calc ∑ h ∈ range n with h.Coprime n, Complex.exp (2 * Real.pi * Complex.I * h * t / n)
       = ∑ h ∈ range n, ∑ d ∈ n.divisors with d ∣ h,
           (μ d : ℂ) * Complex.exp (2 * Real.pi * Complex.I * h * t / n) := by

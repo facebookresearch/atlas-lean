@@ -282,22 +282,6 @@ theorem sum_moebius_isBigO_mul_exp_neg_mul_log_rpow :
           _ = 1 + L := by rw [hc₀def]; field_simp; ring
       -- ## Truncation at height `T`
       have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx0.ne'
-      have hFc : ∀ s : ℂ, 0 < s.re → riemannZeta₁ s ≠ 0 → ContinuousAt F s := by
-        intro s hs hz
-        have hs0 : s ≠ 0 := by
-          intro h
-          rw [h, Complex.zero_re] at hs
-          exact lt_irrefl _ hs
-        rw [hF]
-        exact (((continuous_id.sub continuous_const).continuousAt.div
-          differentiable_riemannZeta₁.continuous.continuousAt hz).mul
-          (continuousAt_const_cpow hxC)).div (continuousAt_id.pow 2) (pow_ne_zero 2 hs0)
-      have hint : ∀ R : ℝ, IntervalIntegrable
-          (fun t : ℝ => F ((c₀ : ℂ) + (t : ℂ) * Complex.I)) volume (-R) R := by
-        intro R
-        refine (continuous_iff_continuousAt.2 fun t => ?_).intervalIntegrable _ _
-        have hre : 1 < ((c₀ : ℂ) + (t : ℂ) * Complex.I).re := by simpa using hc₀1
-        exact ContinuousAt.comp (g := F) (hFc _ (by linarith) (hne_one _ hre.le)) (by fun_prop)
       have hAt : ∀ t : ℝ, 1 ≤ |t| →
           ‖F ((c₀ : ℂ) + (t : ℂ) * Complex.I)‖ ≤ (1 + L) * (3 * x) / t ^ 2 := by
         intro t ht
@@ -313,7 +297,7 @@ theorem sum_moebius_isBigO_mul_exp_neg_mul_log_rpow :
           rw [sq_abs] at h
           linarith only [h]
         exact hFle _ _ _ _ (hline _ hre) (by rw [hre]; exact hxc₀) ht2 hN (by linarith)
-      have htr := hP.norm_sub_le_of_norm_le_div_sq hint hAt hT1
+      have htr := hP.norm_sub_le_of_norm_le_div_sq hAt hT1
       -- ## `1 / ζ` on the rectangle `[σ₁, c₀] × [-T, T]`
       have hrect : ∀ s : ℂ, σ₁ ≤ s.re → s.re ≤ c₀ → |s.im| ≤ T →
           riemannZeta₁ s ≠ 0 ∧ ‖(s - 1) / riemannZeta₁ s‖ ≤ K₁ * Q := by

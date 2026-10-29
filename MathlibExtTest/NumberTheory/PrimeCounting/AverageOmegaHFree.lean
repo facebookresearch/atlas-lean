@@ -18,10 +18,6 @@ import MathlibExt.NumberTheory.PrimeCounting.AverageOmegaHFree
 
 open Finset
 
-example : ∃ C : ℝ, ∀ x : ℝ, 2 ≤ x →
-    |∑ p ∈ (Icc 1 ⌊x⌋₊).filter Nat.Prime, (1 : ℝ) / p - Real.log (Real.log x)| ≤ C :=
-  MetaMathlibExt.abs_sum_prime_inv_sub_loglog_le
-
 -- `h = 2`, `y = 0`: no integers are counted and the bound is `|0 - 0| ≤ 0`.
 example : |((((Icc 1 ⌊(0 : ℝ)⌋₊).filter
       (fun n => ∀ p ∈ n.primeFactors, n.factorization p < 2)).card : ℕ) : ℝ)

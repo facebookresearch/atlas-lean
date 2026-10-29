@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.Padics.PadicNumbers
+import MathlibExt.Algebra.BigOperators.AffineEmod
 import Mathlib.RingTheory.PowerSeries.WellKnown
 import Mathlib.NumberTheory.Multiplicity
 import Mathlib.Tactic.FieldSimp
@@ -38,6 +39,8 @@ regularisation is `μ_{k,α}(U) = μ_k(U) - α ^ (-k) μ_k(α U)`; `μ_{1,α}` i
 
 ## Main statements
 
+* `Polynomial.pow_mul_sum_bernoulli_eval_add_div`: the multiplication formula
+  `m ^ n ∑_{b < m} B_n(x + b / m) = m B_n(m x)`.
 * `MetaMathlibExt.bernoulliDist_isPadicDistribution`: `μ_k` is a distribution.
 * `MetaMathlibExt.regBernoulliDist_one_isBoundedPadicDistribution`: the Mazur distribution
   `μ_{1,α}` is a measure, with values of norm at most `1`.
@@ -92,9 +95,9 @@ private lemma sum_rescale_exp_mul_eq_exp_sub_one (p : ℕ) (hp : (p : ℚ) ≠ 0
   rw [geom_sum_mul, ← hx, div_self hp, PowerSeries.rescale_one]
   rfl
 
-/-- The multiplication formula for Bernoulli polynomials over `ℚ`:
+/-- The multiplication formula over `ℚ` in the form used below:
 `∑_{b < p} B_n(x + b / p) = p ^ (1 - n) B_n(p x)`. -/
-private lemma sum_bernoulli_eval_add_div (p : ℕ) (hp : (p : ℚ) ≠ 0) (x : ℚ) (n : ℕ) :
+private lemma sum_bernoulli_eval_add_div_aux (p : ℕ) (hp : (p : ℚ) ≠ 0) (x : ℚ) (n : ℕ) :
     ∑ b ∈ Finset.range p, (Polynomial.bernoulli n).eval (x + b / p) =
       p * (1 / (p : ℚ)) ^ n * (Polynomial.bernoulli n).eval (p * x) := by
   set E := PowerSeries.exp ℚ with hE
@@ -141,6 +144,28 @@ private lemma sum_bernoulli_eval_add_div (p : ℕ) (hp : (p : ℚ) ≠ 0) (x : �
   apply mul_left_cancel₀ (one_div_ne_zero hf)
   linear_combination this
 
+end MetaMathlibExt
+
+namespace Polynomial
+
+/-- **Multiplication formula for Bernoulli polynomials** (Raabe):
+`m ^ n ∑_{b < m} B_n(x + b / m) = m B_n(m x)`, i.e.
+`∑_{b < m} B_n(x + b / m) = m ^ (1 - n) B_n(m x)` for `m ≠ 0`. -/
+theorem pow_mul_sum_bernoulli_eval_add_div (m n : ℕ) (x : ℚ) :
+    (m : ℚ) ^ n * ∑ b ∈ Finset.range m, (bernoulli n).eval (x + b / m) =
+      m * (bernoulli n).eval (m * x) := by
+  rcases eq_or_ne m 0 with rfl | hm
+  · simp
+  have hm' : (m : ℚ) ≠ 0 := by exact_mod_cast hm
+  have h : (m : ℚ) ^ n * (1 / (m : ℚ)) ^ n = 1 := by
+    rw [← mul_pow, mul_one_div_cancel hm', one_pow]
+  rw [MetaMathlibExt.sum_bernoulli_eval_add_div_aux m hm' x n]
+  linear_combination (m : ℚ) * (bernoulli n).eval (m * x) * h
+
+end Polynomial
+
+namespace MetaMathlibExt
+
 /-- The Bernoulli ball values `μ_k(a + p ^ N ℤ_[p]) = p ^ (N (k - 1)) B_k(a / p ^ N)` satisfy the
 distribution relation, so `μ_k` is a `p`-adic distribution on `ℤ_[p]`. -/
 theorem bernoulliDist_isPadicDistribution (p : ℕ) [Fact p.Prime] (k : ℕ) :
@@ -157,7 +182,7 @@ theorem bernoulliDist_isPadicDistribution (p : ℕ) [Fact p.Prime] (k : ℕ) :
     field_simp
     ring
   simp_rw [harg]
-  rw [← Finset.mul_sum, sum_bernoulli_eval_add_div p hp]
+  rw [← Finset.mul_sum, sum_bernoulli_eval_add_div_aux p hp]
   have hx : (p : ℚ) * ((a : ℚ) / (p : ℚ) ^ (N + 1)) = (a : ℚ) / (p : ℚ) ^ N := by
     field_simp
     ring
@@ -175,38 +200,6 @@ private lemma prime_not_dvd_of_isCoprime (p : ℕ) [Fact p.Prime] (α : ℤ)
   rw [Int.isUnit_iff] at hu
   have := (Fact.out : p.Prime).one_lt
   omega
-
-/-- For `α` coprime to `n > 0`, the affine map `b ↦ (m + α b) mod n` permutes `range n`. -/
-private lemma sum_range_add_mul_emod_eq {M : Type*} [AddCommMonoid M] {n : ℕ} (hn : 0 < n)
-    {α : ℤ} (hα : IsCoprime α (n : ℤ)) (m : ℤ) (f : ℤ → M) :
-    ∑ b ∈ Finset.range n, f ((m + α * b) % (n : ℤ)) = ∑ c ∈ Finset.range n, f (c : ℤ) := by
-  have hp0 : (n : ℤ) ≠ 0 := by exact_mod_cast hn.ne'
-  have hppos : (0 : ℤ) < n := by exact_mod_cast hn
-  let g : ℕ → ℕ := fun b => ((m + α * b) % (n : ℤ)).toNat
-  have hg : ∀ b, ((g b : ℕ) : ℤ) = (m + α * b) % (n : ℤ) := fun b =>
-    Int.toNat_of_nonneg (Int.emod_nonneg _ hp0)
-  have maps : ∀ b ∈ Finset.range n, g b ∈ Finset.range n := by
-    intro b _
-    have h1 := hg b
-    have h2 := Int.emod_lt_of_pos (m + α * b) hppos
-    rw [Finset.mem_range]
-    omega
-  have inj : Set.InjOn g (Finset.range n) := by
-    intro b hb b' hb' h
-    simp only [Finset.coe_range, Set.mem_Iio] at hb hb'
-    have h1 : (m + α * b) % (n : ℤ) = (m + α * b') % (n : ℤ) := by rw [← hg, ← hg, h]
-    have hd : (n : ℤ) ∣ α * ((b' : ℤ) - b) := by
-      have := Int.ModEq.dvd h1
-      have e : m + α * (b' : ℤ) - (m + α * b) = α * ((b' : ℤ) - b) := by ring
-      rwa [e] at this
-    have hd' := hα.symm.dvd_of_dvd_mul_left hd
-    have h0 := Int.eq_zero_of_dvd_of_natAbs_lt_natAbs hd' (by omega)
-    omega
-  have himg : (Finset.range n).image g = Finset.range n :=
-    Finset.eq_of_subset_of_card_le (Finset.image_subset_iff.2 maps)
-      (by rw [Finset.card_image_of_injOn inj])
-  conv_rhs => rw [← himg, Finset.sum_image inj]
-  exact Finset.sum_congr rfl fun b _ => by rw [hg]
 
 /-- Closed form of the Mazur distribution:
 `μ_{1,α}(a + p ^ N ℤ_[p]) = (2 ⌊α a / p ^ N⌋ + 1 - α) / (2 α)`. -/
@@ -280,7 +273,7 @@ theorem regBernoulliDist_one_isPadicDistribution (p : ℕ) [Fact p.Prime] {α : 
       have := Int.emod_add_mul_ediv (m + α * b) p
       linarith
     rw [Finset.sum_congr rfl this, Finset.sum_sub_distrib,
-      sum_range_add_mul_emod_eq (Fact.out : p.Prime).pos hα m (fun x => x),
+      Finset.sum_range_add_mul_emod hα m (fun x => x),
       Finset.sum_add_distrib, ← Finset.mul_sum]
     simp [hTdef]
   have hsplit : ∑ b ∈ Finset.range p, (2 * ((m + α * b) / p) + 1 - α) =
@@ -521,49 +514,6 @@ private lemma sum_bernoulliDist_units_eq (p : ℕ) [Fact p.Prime] (k : ℕ) :
   rw [h00, h10] at hrel
   linear_combination -hrel
 
-/-- For `α` prime to `p`, `a ↦ (α a) mod p` permutes `{1, …, p - 1}`, so twisting the level-`1`
-ball values of `μ_k` by it does not change their sum. -/
-private lemma sum_bernoulliDist_mul_emod_eq (p : ℕ) [Fact p.Prime] {α : ℤ}
-    (hα : IsCoprime α (p : ℤ)) (k : ℕ) :
-    ∑ a ∈ Finset.Icc 1 (p - 1), bernoulliDist p k 1 ((α * a) % (p : ℤ) ^ 1).toNat =
-      ∑ a ∈ Finset.Icc 1 (p - 1), bernoulliDist p k 1 a := by
-  have hp := (Fact.out : p.Prime)
-  have hp0 : (0 : ℤ) < p := by exact_mod_cast hp.pos
-  have hp2 := hp.two_le
-  set f : ℕ → ℕ := fun a => ((α * a) % (p : ℤ) ^ 1).toNat with hf
-  have hmaps : ∀ a ∈ Finset.Icc 1 (p - 1), f a ∈ Finset.Icc 1 (p - 1) := by
-    intro a ha
-    rw [Finset.mem_Icc] at ha ⊢
-    simp only [hf, pow_one]
-    have hlt := Int.emod_lt_of_pos (α * a) hp0
-    have hnn := Int.emod_nonneg (α * a) hp0.ne'
-    have hcop : IsCoprime (α * a) (p : ℤ) :=
-      hα.mul_left (Nat.isCoprime_iff_coprime.mpr
-        (Nat.coprime_of_lt_prime (by omega) (by omega) hp).symm)
-    have hne : (α * a) % p ≠ 0 := by
-      intro h
-      have hu := hcop.isUnit_of_dvd' (Int.dvd_of_emod_eq_zero h) dvd_rfl
-      rcases Int.isUnit_iff.mp hu with h1 | h1 <;> omega
-    omega
-  have hinj : Set.InjOn f (Finset.Icc 1 (p - 1) : Set ℕ) := by
-    intro a ha b hb hab
-    simp only [Finset.coe_Icc, Set.mem_Icc] at ha hb
-    simp only [hf, pow_one] at hab
-    have h1 : (α * a) % p = (α * b) % p := by
-      have := Int.emod_nonneg (α * a) hp0.ne'
-      have := Int.emod_nonneg (α * b) hp0.ne'
-      omega
-    have h2 : (p : ℤ) ∣ α * ((b : ℤ) - a) := by
-      rw [mul_sub]; exact Int.ModEq.dvd h1
-    have h3 : (p : ℤ) ∣ (b : ℤ) - a := hα.symm.dvd_of_dvd_mul_left h2
-    have h4 := Int.eq_zero_of_abs_lt_dvd h3 (by rw [abs_lt]; omega)
-    omega
-  have himg : (Finset.Icc 1 (p - 1)).image f = Finset.Icc 1 (p - 1) :=
-    Finset.eq_of_subset_of_card_le (Finset.image_subset_iff.2 hmaps)
-      (by rw [Finset.card_image_of_injOn hinj])
-  conv_rhs => rw [← himg]
-  rw [Finset.sum_image hinj]
-
 /-- For an integer `α` prime to `p`, `μ_{k,α}(ℤ_[p]ˣ) = (1 - α ^ (-k)) (1 - p ^ (k - 1)) B_k`.
 Here `ℤ_[p]ˣ` is the disjoint union of the balls `a + p ℤ_[p]`, `1 ≤ a ≤ p - 1`, and `B_k` is the
 `k`-th Bernoulli number (with `B_1 = -1/2`). -/
@@ -572,8 +522,12 @@ theorem sum_regBernoulliDist_units_eq (p : ℕ) [Fact p.Prime] {α : ℤ}
     ∑ a ∈ Finset.Icc 1 (p - 1), regBernoulliDist p k α 1 a =
       (1 - (α : ℚ_[p]) ^ (-(k : ℤ))) * (1 - (p : ℚ_[p]) ^ ((k : ℤ) - 1)) *
         (bernoulli k : ℚ_[p]) := by
-  simp only [regBernoulliDist, Finset.sum_sub_distrib, ← Finset.mul_sum,
-    sum_bernoulliDist_mul_emod_eq p hα k, sum_bernoulliDist_units_eq p k]
+  have hperm : ∑ a ∈ Finset.Icc 1 (p - 1), bernoulliDist p k 1 ((α * a) % (p : ℤ) ^ 1).toNat =
+      ∑ a ∈ Finset.Icc 1 (p - 1), bernoulliDist p k 1 a := by
+    simpa only [pow_one, Int.toNat_natCast] using
+      Finset.sum_Icc_mul_emod hα fun x : ℤ => bernoulliDist p k 1 x.toNat
+  simp only [regBernoulliDist, Finset.sum_sub_distrib, ← Finset.mul_sum, hperm,
+    sum_bernoulliDist_units_eq p k]
   ring
 
 end MetaMathlibExt

@@ -22,7 +22,8 @@ import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Data.Nat.Factorization.Basic
 import MathlibExt.NumberTheory.Sieve.Rankin
 import MathlibExt.NumberTheory.PrimeCounting.Mertens
-import MathlibExt.NumberTheory.ArithmeticFunction.GronwallSigmaLimsup
+import MathlibExt.NumberTheory.PrimeCounting.MertensThird
+import MathlibExt.NumberTheory.ArithmeticFunction.VonMangoldtConvolution
 
 /-!
 # The sieve of Eratosthenes–Legendre
@@ -63,12 +64,6 @@ namespace Nat
 
 /-! ### Legendre's identity -/
 
-private theorem sum_moebius_divisors_eq_ite (n : ℕ) :
-    ∑ m ∈ n.divisors, (μ m : ℤ) = if n = 1 then 1 else 0 := by
-  have h := congrArg (fun f : ArithmeticFunction ℤ => f n) (coe_moebius_mul_coe_zeta (R := ℤ))
-  simp only [coe_mul_zeta_apply, one_apply, intCoe_apply, Int.cast_id] at h
-  exact h
-
 /-- Legendre's identity: for `m ≠ 0`, the number of `n ∈ [1, N]` coprime to `m` is
 `∑_{d ∣ m} μ(d) ⌊N / d⌋`. -/
 theorem card_filter_coprime_eq_sum_moebius_mul_div {m : ℕ} (hm : m ≠ 0) (N : ℕ) :
@@ -84,8 +79,8 @@ theorem card_filter_coprime_eq_sum_moebius_mul_div {m : ℕ} (hm : m ≠ 0) (N :
       constructor
       · rintro ⟨⟨h1, h2⟩, h3⟩; exact ⟨⟨h3, h1⟩, Nat.gcd_ne_zero_right h2⟩
       · rintro ⟨⟨h1, h2⟩, -⟩; exact ⟨⟨h2, hm⟩, h1⟩
-    rw [this, sum_moebius_divisors_eq_ite]
-    simp [Nat.Coprime]
+    rw [this]
+    simpa [Nat.Coprime] using (ArithmeticFunction.sum_divisors_moebius (R := ℤ) (n.gcd m)).symm
   rw [Finset.sum_congr rfl h1, Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, Nat.Ioc_filter_dvd_card_eq_div,
@@ -227,7 +222,10 @@ theorem abs_sum_moebius_div_sub_prod_le :
           ∏ p ∈ primesLE ⌊z⌋₊, (1 - (p : ℝ)⁻¹)| ≤
         C * Real.log z * Real.exp (-(Real.log x / Real.log z)) := by
   classical
-  obtain ⟨C₁, hMert⟩ := sum_primesLE_inv_le_log_log_add
+  obtain ⟨C₁, hMert⟩ : ∃ C : ℝ, ∀ z : ℝ, 2 ≤ z →
+      ∑ p ∈ primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C := by
+    obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
+    exact ⟨C, fun z hz => by linarith [(abs_le.mp (hC z hz)).2]⟩
   set B := Real.log 4 + 6 with hB
   have hB0 : 0 ≤ B := by positivity
   have hlog3 : 1 < Real.log 3 := by
@@ -260,7 +258,7 @@ theorem abs_sum_moebius_div_sub_prod_le :
     exact Real.rpow_inv_log_sub_one_le (by linarith) hpz hlz0
   have hmert : ∑ p ∈ primesLE N, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C₁ := hMert z (by linarith)
   have hlp : E * η * ∑ p ∈ primesLE N, Real.log p / (p : ℝ) ≤ E + E * B := by
-    have h := Chebyshev.sum_primesLE_log_div_le N hz1
+    have h := Chebyshev.sum_primesLE_log_div_le N
     have hfl : Real.log N ≤ Real.log z :=
       Real.log_le_log (by exact_mod_cast hz1) (Nat.floor_le (by linarith))
     have : η * ∑ p ∈ primesLE N, Real.log p / (p : ℝ) ≤ 1 + B := by

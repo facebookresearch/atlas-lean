@@ -73,9 +73,9 @@ theorem perronStep_one : perronStep 1 = 1 / 2 := by
 theorem perronStep_of_one_lt {x : ℝ} (hx : 1 < x) : perronStep x = 1 := by
   simp [perronStep, not_lt.mpr hx.le, hx.ne']
 
-/-- **The truncated Perron kernel near the jump.** For `x > 0`, `x ≠ 1`, `c > 0`, `T > 0`
-and `T |log x| ≤ 1`,
-`‖(1 / 2π) ∫_{-T}^{T} x ^ (c + it) / (c + it) dt - perronStep x‖ < x ^ c`. -/
+/-- **The truncated Perron kernel near the jump.** For `x > 0`, `x ≠ 1`, `c > 0`, `R > 0`
+and `R |log x| ≤ 1`,
+`‖(1 / 2π) ∫_{-R}^{R} x ^ (c + it) / (c + it) dt - perronStep x‖ < x ^ c`. -/
 theorem norm_truncated_sub_perronStep_lt_rpow {x c R : ℝ} (hx : 0 < x)
     (hx1 : x ≠ 1) (hc : 0 < c) (hR : 0 < R) (hnear : R * |Real.log x| ≤ 1) :
     ‖((1 / (2 * π)) • ∫ t in (-R)..R,
@@ -293,8 +293,8 @@ theorem norm_truncated_sub_perronStep_lt_rpow {x c R : ℝ} (hx : 0 < x)
     constructor <;> linarith
 
 /-- **The truncated Perron kernel away from the jump.** For `x > 0`, `x ≠ 1`, `c > 0` and
-`T > 0`,
-`‖(1 / 2π) ∫_{-T}^{T} x ^ (c + it) / (c + it) dt - perronStep x‖ < x ^ c / (T |log x|)`. -/
+`R > 0`,
+`‖(1 / 2π) ∫_{-R}^{R} x ^ (c + it) / (c + it) dt - perronStep x‖ < x ^ c / (R |log x|)`. -/
 theorem norm_truncated_sub_perronStep_lt_rpow_div {x c R : ℝ} (hx : 0 < x)
     (hx1 : x ≠ 1) (hc : 0 < c) (hR : 0 < R) :
     ‖((1 / (2 * π)) • ∫ t in (-R)..R,
@@ -319,9 +319,9 @@ theorem norm_truncated_sub_perronStep_lt_rpow_div {x c R : ℝ} (hx : 0 < x)
     div_lt_div_iff_of_pos_left hxc (by positivity) hpos]
   nlinarith [Real.pi_gt_three]
 
-/-- **The truncated Perron kernel.** For `x > 0`, `x ≠ 1`, `c > 0` and `T > 0`,
-`‖(1 / 2π) ∫_{-T}^{T} x ^ (c + it) / (c + it) dt - perronStep x‖
-  < x ^ c * min 1 (1 / (T |log x|))`. -/
+/-- **The truncated Perron kernel.** For `x > 0`, `x ≠ 1`, `c > 0` and `R > 0`,
+`‖(1 / 2π) ∫_{-R}^{R} x ^ (c + it) / (c + it) dt - perronStep x‖
+  < x ^ c * min 1 (1 / (R |log x|))`. -/
 theorem norm_truncated_sub_perronStep_lt {x c R : ℝ} (hx : 0 < x)
     (hx1 : x ≠ 1) (hc : 0 < c) (hR : 0 < R) :
     ‖((1 / (2 * π)) • ∫ t in (-R)..R,
@@ -835,9 +835,9 @@ theorem tsum_perron_error_le :
 
 /-- **The truncated Perron formula.** Let `a` satisfy `‖a n‖ ≤ A_δ n ^ δ` for every `δ > 0`
 and let `ε > 0` and `c > 1`. There is `C > 0` such that for every `x` that is not an integer
-and every `T` with `1 ≤ T ≤ x`,
-`‖∑_{n ≤ x} a n - (1 / 2π) ∫_{-T}^{T} L(a, c + it) x ^ (c + it) / (c + it) dt‖
-  ≤ C (x ^ (c + ε) / T + x ^ ε log x / T)`. -/
+and every `R` with `1 ≤ R ≤ x`,
+`‖∑_{n ≤ x} a n - (1 / 2π) ∫_{-R}^{R} L(a, c + it) x ^ (c + it) / (c + it) dt‖
+  ≤ C (x ^ (c + ε) / R + x ^ ε log x / R)`. -/
 theorem norm_sum_sub_truncated_perron_le
     {a : ℕ → ℂ} {ε : ℝ} (hε : 0 < ε)
     (ha : ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, 1 ≤ n → ‖a n‖ ≤ A * (n : ℝ) ^ δ) :

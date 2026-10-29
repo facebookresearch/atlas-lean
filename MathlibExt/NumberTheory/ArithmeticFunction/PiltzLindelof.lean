@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Polynomial.Degree.Operations
 public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 public import MathlibExt.NumberTheory.ArithmeticFunction.KFoldDivisor
+public import MathlibExt.NumberTheory.LSeries.LindelofHypothesis
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Polynomial.Basic
 import Mathlib.Analysis.Real.Pi.Bounds
@@ -23,14 +24,16 @@ import MathlibExt.NumberTheory.ArithmeticFunction.DivisorBounds
 import MathlibExt.NumberTheory.LSeries.PerronError
 
 /-!
-# Summatory function of the Piltz divisor function under the Lindelöf hypothesis
+# Summatory function of the Piltz divisor function, conditional on the Lindelöf hypothesis
 
 Let `d_k = ArithmeticFunction.piltz k` be the `k`-fold divisor function. Its Dirichlet series
-is `ζ(s) ^ k`. Assuming the Lindelöf hypothesis, in the form `ζ(s) = O(|t| ^ δ)` for every
-`δ > 0` on the half-plane `re s ≥ 1 / 2` (away from the real axis), a truncated Perron formula
-and a contour shift to the line `re s = 1 / 2` give
-`∑_{n ≤ x} d_k(n) = x P_{k-1}(log x) + O(x ^ (1 / 2 + ε))` with `P_{k-1}` a real polynomial of
-degree `k - 1`.
+is `ζ(s) ^ k`. **Assuming the Lindelöf hypothesis** (`LindelofHypothesis`, an open conjecture),
+a truncated Perron formula and a contour shift to the line `re s = 1 / 2` give
+`∑_{n ≤ x} d_k(n) = x P_{k-1}(log x) + O(x ^ (1 / 2 + ε))` for every `ε > 0`. Here
+`P_{k-1} = ArithmeticFunction.piltzMainPoly k` is an explicit real polynomial of degree `k - 1`
+with leading coefficient `1 / (k - 1)!`: `x P_{k-1}(log x)` is the residue of
+`ζ(s) ^ k x ^ s / s` at `s = 1`. The results that depend on the hypothesis take it as an explicit
+argument `LindelofHypothesis`, and their names end in `_of_lindelofHypothesis`.
 
 ## Main statements
 
@@ -38,8 +41,11 @@ degree `k - 1`.
   `∑ d_k(n) n ^ (-s) = ζ(s) ^ k` for `re s > 1`.
 * `ArithmeticFunction.piltz_le_sigma_zero_pow`: `d_k(n) ≤ d(n) ^ k`.
 * `ArithmeticFunction.exists_piltz_le_mul_rpow`: `d_k(n) = O(n ^ δ)` for every `δ > 0`.
-* `ArithmeticFunction.exists_polynomial_sum_piltz_isBigO_of_lindelof`: the asymptotic formula
-  for `∑_{n ≤ x} d_k(n)` under the Lindelöf hypothesis.
+* `ArithmeticFunction.piltzMainPoly`: the main-term polynomial, with
+  `ArithmeticFunction.piltzMainPoly_degree` and `ArithmeticFunction.piltzMainPoly_leadingCoeff`.
+* `ArithmeticFunction.sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`,
+  `ArithmeticFunction.exists_polynomial_sum_piltz_isBigO_of_lindelofHypothesis`: the asymptotic
+  formula for `∑_{n ≤ x} d_k(n)`, **conditional on the Lindelöf hypothesis**.
 -/
 
 @[expose] public section
@@ -126,18 +132,55 @@ theorem LSeries_piltz (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
     LSeries (fun n : ℕ => (piltz k n : ℂ)) s = riemannZeta s ^ k :=
   (LSeriesSummable_piltz_and_LSeries_piltz k hs).2
 
-/-- **The summatory function of `d_k` under the Lindelöf hypothesis.** Let `k ≥ 1` and
-`ε > 0`, and assume the Lindelöf hypothesis in the form: for every `δ > 0` there is `A` with
-`‖ζ s‖ ≤ A * |im s| ^ δ` whenever `re s ≥ 1 / 2` and `|im s| ≥ 1`. Then there is a real
-polynomial `P` of degree `k - 1` with
-`∑_{n ≤ x} d_k(n) = x * P (log x) + O(x ^ (1 / 2 + ε))`. -/
-theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
-    {k : ℕ} (hk : 1 ≤ k) {ε : ℝ} (hε : 0 < ε)
-    (hLindelof : ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ s : ℂ,
-      1 / 2 ≤ s.re → 1 ≤ |s.im| → ‖riemannZeta s‖ ≤ A * |s.im| ^ δ) :
-    ∃ P : Polynomial ℝ, P.degree = ((k - 1 : ℕ) : WithBot ℕ) ∧
-      (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
-          - x * P.eval (Real.log x)) =O[atTop] fun x : ℝ => x ^ (1 / 2 + ε) := by
+open Nat in
+/-- The main-term polynomial of the Piltz divisor problem:
+`P_{k-1}(y) = ∑_{j < k} c_j y ^ (k - 1 - j) / (k - 1 - j)!`, where `c_j = G^{(j)}(1) / j!` are the
+Taylor coefficients at `s = 1` of the entire-near-`1` function `G(s) = ζ₁(s) ^ k / s`, and
+`ζ₁(s) = (s - 1) ζ(s)` (`riemannZeta₁`). Equivalently, `x P_{k-1}(log x)` is the residue of
+`ζ(s) ^ k x ^ s / s` at `s = 1`. (The coefficients `c_j` are real; the real part only serves to
+land in `ℝ`.) -/
+noncomputable def piltzMainPoly (k : ℕ) : Polynomial ℝ :=
+  ∑ j ∈ Finset.range k, Polynomial.C
+    ((iteratedDeriv j (fun s : ℂ => riemannZeta₁ s ^ k / s) 1 / (j ! : ℂ)).re
+      / ((k - 1 - j)! : ℝ)) * Polynomial.X ^ (k - 1 - j)
+
+open Nat in
+private theorem piltzMainPoly_coeff_sub_one {k : ℕ} (hk : 1 ≤ k) :
+    (piltzMainPoly k).coeff (k - 1) = 1 / ((k - 1)! : ℝ) := by
+  rw [piltzMainPoly, Polynomial.finsetSum_coeff, Finset.sum_eq_single 0]
+  · simp [riemannZeta₁_one]
+  · intro j hj hj0
+    have hj' := Finset.mem_range.mp hj
+    rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, ite_eq_right (by omega), mul_zero]
+  · intro h
+    exact absurd (Finset.mem_range.mpr (by omega)) h
+
+/-- `P_{k-1}` has degree `k - 1`. -/
+theorem piltzMainPoly_degree {k : ℕ} (hk : 1 ≤ k) :
+    (piltzMainPoly k).degree = ((k - 1 : ℕ) : WithBot ℕ) := by
+  refine Polynomial.degree_eq_of_le_of_coeff_ne_zero ?_ ?_
+  · refine Polynomial.degree_sum_le _ _ |>.trans (Finset.sup_le fun j hj => ?_)
+    exact (Polynomial.degree_C_mul_X_pow_le _ _).trans
+      (by exact_mod_cast (show k - 1 - j ≤ k - 1 by omega))
+  · rw [piltzMainPoly_coeff_sub_one hk]
+    exact one_div_ne_zero (by exact_mod_cast (k - 1).factorial_ne_zero)
+
+/-- The leading coefficient of `P_{k-1}` is `1 / (k - 1)!`, since `ζ` has residue `1` at
+`s = 1`. -/
+theorem piltzMainPoly_leadingCoeff {k : ℕ} (hk : 1 ≤ k) :
+    (piltzMainPoly k).leadingCoeff = 1 / ((k - 1).factorial : ℝ) := by
+  rw [Polynomial.leadingCoeff, Polynomial.natDegree_eq_of_degree_eq_some (piltzMainPoly_degree hk),
+    piltzMainPoly_coeff_sub_one hk]
+
+/-- **The summatory function of `d_k`, conditional on the Lindelöf hypothesis.** Assume the
+Lindelöf hypothesis (`LindelofHypothesis`, an open conjecture). Let `k ≥ 1` and `ε > 0`. Then
+`∑_{n ≤ x} d_k(n) = x * P_{k-1}(log x) + O(x ^ (1 / 2 + ε))`, where
+`P_{k-1} = piltzMainPoly k` is the explicit polynomial of degree `k - 1` and leading coefficient
+`1 / (k - 1)!` for which `x P_{k-1}(log x)` is the residue of `ζ(s) ^ k x ^ s / s` at `s = 1`. -/
+theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
+    (hLindelof : LindelofHypothesis) {k : ℕ} (hk : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) :
+    (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+        - x * (piltzMainPoly k).eval (Real.log x)) =O[atTop] fun x : ℝ => x ^ (1 / 2 + ε) := by
   classical
   have hgrowth : ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, 1 ≤ n →
       ‖(piltz k n : ℂ)‖ ≤ A * (n : ℝ) ^ δ := by
@@ -161,17 +204,12 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
       (by norm_num : (1 / 2 : ℝ) < (1 : ℂ).re)) fun s hs => ?_
     rw [hUdef]
     exact le_of_lt (show (1 / 2 : ℝ) < s.re from hs)
-  obtain ⟨b, g, hg, hGg⟩ := DifferentiableOn.exists_eq_sum_add_pow_mul
+  obtain ⟨g, hg, hGg'⟩ := DifferentiableOn.eq_sum_iteratedDeriv_add_pow_mul
     (fun s hs => (hGd s hs).differentiableWithinAt) hU1 k
-  have hb0 : b 0 = 1 := by
-    have h1 := hGg 1 (by rw [hUdef]; norm_num)
-    have hk0 : k ≠ 0 := by omega
-    rw [hGdef] at h1
-    simp only [riemannZeta₁_one, one_pow, div_one, sub_self, zero_pow hk0, zero_mul,
-      add_zero] at h1
-    rw [Finset.sum_eq_single 0 (fun j _ hj => by simp [zero_pow hj])
-      (fun h => absurd (Finset.mem_range.mpr (by omega)) h)] at h1
-    simpa using h1.symm
+  obtain ⟨b, hbdef⟩ : ∃ b : ℕ → ℂ, b = fun j => iteratedDeriv j G 1 / (j.factorial : ℂ) :=
+    ⟨_, rfl⟩
+  have hGg : ∀ s ∈ U, G s = (∑ j ∈ Finset.range k, b j * (s - 1) ^ j) + (s - 1) ^ k * g s :=
+    fun s _ => by rw [hbdef]; exact hGg' s
   -- ## The analytic core, at non-integral `x`
   have hcore : ∃ K : ℝ, ∀ x : ℝ, 1 < x → (∀ n : ℕ, (n : ℝ) ≠ x) →
       ‖(((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) : ℝ) : ℂ)
@@ -365,14 +403,13 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
         ring
       rw [hv] at h
       rw [hKk]
-      exact h
+      exact h.tendsto
     have hQc : Complex.HasVerticalIntegral (5 / 4) Q Mn := by
       rw [hQ, hMn]
       exact Complex.HasVerticalIntegral.finset_sum (Finset.range k)
         (f := fun j s => b j * Kk (k - 1 - j) s)
-        (fun j _ => Complex.HasVerticalIntegral.const_mul (hM4 j) (b j))
-        fun j _ R => ((hKline (k - 1 - j) (5 / 4) (by norm_num)).const_mul (b j)).intervalIntegrable
-          _ _
+        fun j _ => Complex.HasVerticalIntegral.const_mul (Complex.hasVerticalIntegral_of_continuous
+          (hKline (k - 1 - j) (5 / 4) (by norm_num)) (hM4 j)) (b j)
     -- on `Re s = 1 / 2` the kernels reflect to Perron kernels with base `1 / x < 1`
     have hq : ∀ m : ℕ, Tendsto (fun T : ℝ => (1 / (2 * Real.pi)) • ∫ t in (-T)..T,
         ((x⁻¹ : ℝ) : ℂ) ^ (((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)
@@ -395,7 +432,7 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
               mul_le_mul_of_nonneg_left (min_le_right _ _) (by positivity)
           _ = x⁻¹ ^ (1 / 2 : ℝ) / |Real.log x⁻¹| / T := by ring
       · exact Complex.hasVerticalIntegral_cpow_div_pow_succ_of_le_one (k := m + 1) (by omega)
-          (by norm_num) (by positivity) (inv_le_one_of_one_le₀ hx.le)
+          (by norm_num) (by positivity) (inv_le_one_of_one_le₀ hx.le) |>.tendsto
     have harg : (x : ℂ).arg ≠ Real.pi := by
       rw [Complex.arg_ofReal_of_nonneg hx0.le]
       exact hpi.ne
@@ -446,9 +483,10 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
     have hQh : Complex.HasVerticalIntegral (1 / 2) Q 0 := by
       have h := Complex.HasVerticalIntegral.finset_sum (Finset.range k) (c := 1 / 2)
         (f := fun j s => b j * Kk (k - 1 - j) s) (v := fun _ => 0)
-        (fun j _ => by simpa using Complex.HasVerticalIntegral.const_mul (hKhalf (k - 1 - j)) (b j))
-        fun j _ R => ((hKline (k - 1 - j) (1 / 2) (by norm_num)).const_mul (b j)).intervalIntegrable
-          _ _
+        fun j _ => by
+          simpa using Complex.HasVerticalIntegral.const_mul
+            (Complex.hasVerticalIntegral_of_continuous
+              (hKline (k - 1 - j) (1 / 2) (by norm_num)) (hKhalf (k - 1 - j))) (b j)
       rw [hQ]
       simpa using h
     -- the horizontal sides of `Q` vanish as `T → ∞`
@@ -481,9 +519,9 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
     have hlimQ : Tendsto (fun T : ℝ => Rect Q T) atTop
         (nhds (2 * (Real.pi : ℂ) * Complex.I * Mn)) := by
       have h1 : Tendsto (fun T : ℝ => (1 / (2 * Real.pi)) • ∫ t in (-T)..T,
-          Q (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) atTop (nhds Mn) := hQc
+          Q (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) atTop (nhds Mn) := hQc.tendsto
       have h2 : Tendsto (fun T : ℝ => (1 / (2 * Real.pi)) • ∫ t in (-T)..T,
-          Q (((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) atTop (nhds 0) := hQh
+          Q (((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) atTop (nhds 0) := hQh.tendsto
       have h := (hHq.add (h1.const_mul (2 * (Real.pi : ℂ) * Complex.I))).sub
         (h2.const_mul (2 * (Real.pi : ℂ) * Complex.I))
       simp only [zero_add, mul_zero, sub_zero] at h
@@ -581,7 +619,7 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
     rw [hS]
     clear hS hint hRFx hVr' hVr hRQ hRQconst hlimQ hHq hKb hQh hKhalf hrefl harg hq hQc hM4
       hQline hKline hMn hRF hside hRD hRect hmemU hDd hQd hKd hcpow hFeq hD hQ hKk hC
-      hGg hg hUdef hGdef hb0
+      hGg hGg' hg hUdef hGdef hbdef
     -- ## Real-variable facts
     have hxe : ∀ e : ℝ, e ≤ 1 / 2 + ε → x ^ e ≤ x ^ (1 / 2 + ε) :=
       fun e he => Real.rpow_le_rpow_of_exponent_le hx.le he
@@ -793,28 +831,14 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
       _ = (2 * C + 4 * M / a + 2 * A ^ k) * x ^ (1 / 2 + ε) := by ring
   -- ## The polynomial and the real part
   obtain ⟨K, hK⟩ := hcore
-  set P : Polynomial ℝ := ∑ j ∈ Finset.range k,
-    Polynomial.C ((b j).re / ((k - 1 - j).factorial : ℝ)) * Polynomial.X ^ (k - 1 - j) with hP
+  set P : Polynomial ℝ := piltzMainPoly k with hP
   have hPev : ∀ y : ℝ, P.eval y = ∑ j ∈ Finset.range k,
       (b j).re * y ^ (k - 1 - j) / ((k - 1 - j).factorial : ℝ) := by
     intro y
-    rw [hP, Polynomial.eval_finsetSum]
+    rw [hP, piltzMainPoly, Polynomial.eval_finsetSum, hbdef, hGdef]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
     ring
-  have hPdeg : P.degree = ((k - 1 : ℕ) : WithBot ℕ) := by
-    refine Polynomial.degree_eq_of_le_of_coeff_ne_zero ?_ ?_
-    · refine Polynomial.degree_sum_le _ _ |>.trans (Finset.sup_le fun j hj => ?_)
-      exact (Polynomial.degree_C_mul_X_pow_le _ _).trans
-        (by exact_mod_cast (show k - 1 - j ≤ k - 1 by omega))
-    · rw [hP, Polynomial.finsetSum_coeff]
-      rw [Finset.sum_eq_single 0]
-      · simp [hb0, Nat.factorial_ne_zero]
-      · intro j hj hj0
-        have hj' := Finset.mem_range.mp hj
-        rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, ite_eq_right (by omega), mul_zero]
-      · intro h
-        exact absurd (Finset.mem_range.mpr (by omega)) h
   have hreal : ∀ x : ℝ, 1 < x → (∀ n : ℕ, (n : ℝ) ≠ x) →
       |(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) - x * P.eval (Real.log x)|
         ≤ K * x ^ (1 / 2 + ε) := by
@@ -869,9 +893,25 @@ theorem exists_polynomial_sum_piltz_isBigO_of_lindelof
       continuousAt_const.mul (Real.continuousAt_rpow_const _ _ (Or.inl hx0.ne'))
     exact le_of_tendsto_of_tendsto (hcont.tendsto.mono_left nhdsWithin_le_nhds)
       (hcont2.tendsto.mono_left nhdsWithin_le_nhds) hev
-  refine ⟨P, hPdeg, IsBigO.of_bound K ?_⟩
+  refine IsBigO.of_bound K ?_
   filter_upwards [eventually_gt_atTop 1] with x hx
   have hx0 : 0 < x := by linarith
   rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos (Real.rpow_pos_of_pos hx0 _)]
   exact hall x hx
+
+/-- **The summatory function of `d_k`, conditional on the Lindelöf hypothesis**, in existential
+form. Assume the Lindelöf hypothesis (`LindelofHypothesis`, an open conjecture) and let `k ≥ 1`.
+Then there is a real polynomial `P` of degree `k - 1` and leading coefficient `1 / (k - 1)!`
+such that `∑_{n ≤ x} d_k(n) = x * P (log x) + O(x ^ (1 / 2 + ε))` for every `ε > 0`. The
+polynomial is `piltzMainPoly k`; see
+`ArithmeticFunction.sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`. -/
+theorem exists_polynomial_sum_piltz_isBigO_of_lindelofHypothesis
+    (hLindelof : LindelofHypothesis) {k : ℕ} (hk : 1 ≤ k) :
+    ∃ P : Polynomial ℝ, P.degree = ((k - 1 : ℕ) : WithBot ℕ) ∧
+      P.leadingCoeff = 1 / ((k - 1).factorial : ℝ) ∧ ∀ ε : ℝ, 0 < ε →
+        (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+          - x * P.eval (Real.log x)) =O[atTop] fun x : ℝ => x ^ (1 / 2 + ε) :=
+  ⟨piltzMainPoly k, piltzMainPoly_degree hk, piltzMainPoly_leadingCoeff hk, fun _ hε =>
+    sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis hLindelof hk hε⟩
+
 end ArithmeticFunction

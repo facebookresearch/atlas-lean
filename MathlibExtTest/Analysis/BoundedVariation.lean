@@ -24,6 +24,11 @@ open scoped ENNReal
 private lemma bv_step : BoundedVariationOn (fun y : ℝ => if 0 ≤ y then (1 : ℝ) else 0) Set.univ :=
   boundedVariationOn_ite_le 0 1 0 Set.univ
 
+/-- The variation of a single jump is at most its size: here `‖3 - (-2)‖ₑ = 5`. -/
+example : eVariationOn (fun y : ℝ => if 0 ≤ y then (3 : ℝ) else -2) Set.univ ≤ 5 := by
+  refine (eVariationOn_ite_le_enorm_sub 0 3 (-2) Set.univ).trans_eq ?_
+  norm_num [← ofReal_norm]
+
 /-- A staircase with two jumps, as a sum. -/
 example : BoundedVariationOn
     ((fun y : ℝ => if 0 ≤ y then (1 : ℝ) else 0) + fun y : ℝ => if 1 ≤ y then (1 : ℝ) else 0)

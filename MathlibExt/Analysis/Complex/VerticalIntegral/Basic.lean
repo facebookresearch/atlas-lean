@@ -27,8 +27,9 @@ This file defines the principal value and its convergence predicate, in the rela
 
 ## Main definitions
 
-* `Complex.HasVerticalIntegral c f v`: the symmetric truncations
-  `(1 / (2π)) • ∫ t in -R..R, f (c + t * I)` tend to `v` as `R → ∞`.
+* `Complex.HasVerticalIntegral c f v`: `t ↦ f (c + t * I)` is integrable on every bounded
+  interval, and the symmetric truncations `(1 / (2π)) • ∫ t in -R..R, f (c + t * I)` tend to `v`
+  as `R → ∞`.
 * `Complex.verticalIntegral c f`: the limit of the symmetric truncations (junk if it does not
   exist).
 
@@ -37,6 +38,8 @@ This file defines the principal value and its convergence predicate, in the rela
 * `Complex.HasVerticalIntegral.verticalIntegral_eq`, `Complex.HasVerticalIntegral.unique`.
 * `Complex.VerticalIntegrable.hasVerticalIntegral`: an absolutely convergent line integral is
   its own principal value; `Complex.hasVerticalIntegral_mellinInv` is the case of `mellinInv`.
+* `Complex.HasVerticalIntegral.intervalIntegrable`: the integrand is integrable on every
+  bounded segment of the line.
 * Linearity (`add`, `sub`, `neg`, `const_smul`, `const_mul`, `finset_sum`), congruence on the
   line (`congr_line`) and translation of the abscissa (`comp_sub_ofReal`).
 * `Complex.HasVerticalIntegral.norm_sub_le_of_norm_le_div_sq`: if `‖f(c + it)‖ ≤ A / t²` for
@@ -59,13 +62,18 @@ theorem MeasureTheory.Integrable.tendsto_intervalIntegral_neg_self {F : Type*}
 namespace Complex
 
 /-- `HasVerticalIntegral c f v` says that the principal-value line integral
-`(1 / (2πi)) ∫_{c - i∞}^{c + i∞} f(s) ds` converges to `v`: the symmetric truncations
-`(1 / (2π)) • ∫ t in -R..R, f (c + t * I)` tend to `v` as `R → ∞`.
+`(1 / (2πi)) ∫_{c - i∞}^{c + i∞} f(s) ds` converges to `v`: `t ↦ f (c + t * I)` is integrable on
+every segment `[-R, R]`, and the symmetric truncations `(1 / (2π)) • ∫ t in -R..R, f (c + t * I)`
+tend to `v` as `R → ∞`.
+
+The local integrability rules out junk values: without it, an integrand that is integrable on no
+segment (such as `|im s|⁻¹`) would have every truncation equal to `0`.
 
 This is weaker than absolute convergence (`Complex.VerticalIntegrable`), and is the natural
 notion for Perron-type integrals such as `∫_(c) x ^ s / s ds`. -/
 def HasVerticalIntegral (c : ℝ) (f : ℂ → E) (v : E) : Prop :=
-  Tendsto (fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R, f (c + t * I)) atTop (𝓝 v)
+  (∀ R : ℝ, IntervalIntegrable (fun t : ℝ => f (c + t * I)) volume (-R) R) ∧
+    Tendsto (fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R, f (c + t * I)) atTop (𝓝 v)
 
 /-- The principal-value line integral `(1 / (2πi)) ∫_{c - i∞}^{c + i∞} f(s) ds`, i.e. the limit
 of `(1 / (2π)) • ∫ t in -R..R, f (c + t * I)` as `R → ∞`. If the limit does not exist, the value
@@ -76,31 +84,50 @@ noncomputable def verticalIntegral (c : ℝ) (f : ℂ → E) : E :=
 variable {c : ℝ} {f g : ℂ → E} {v w : E}
 
 /-- The zero function has principal value zero. -/
-theorem hasVerticalIntegral_zero : HasVerticalIntegral c (fun _ => (0 : E)) 0 := by
-  simp [HasVerticalIntegral]
+theorem hasVerticalIntegral_zero : HasVerticalIntegral c (fun _ => (0 : E)) 0 :=
+  ⟨fun _ => intervalIntegrable_const, by simp⟩
+
+/-- A principal value from a continuous integrand on the line: only the convergence of the
+symmetric truncations needs checking. -/
+theorem hasVerticalIntegral_of_continuous (hf : Continuous fun t : ℝ => f (c + t * I))
+    (h : Tendsto (fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R, f (c + t * I)) atTop (𝓝 v)) :
+    HasVerticalIntegral c f v :=
+  ⟨fun _ => hf.intervalIntegrable _ _, h⟩
 
 namespace HasVerticalIntegral
 
+/-- The symmetric truncations converge to the principal value. -/
+theorem tendsto (h : HasVerticalIntegral c f v) :
+    Tendsto (fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R, f (c + t * I)) atTop (𝓝 v) :=
+  h.2
+
+/-- The integrand of a principal value is integrable on every bounded segment of the line. -/
+theorem intervalIntegrable (h : HasVerticalIntegral c f v) (a b : ℝ) :
+    IntervalIntegrable (fun t : ℝ => f (c + t * I)) volume a b := by
+  refine (h.1 (max |a| |b|)).mono_set (uIcc_subset_uIcc ?_ ?_) <;>
+    rw [mem_uIcc] <;> left <;> constructor <;>
+    linarith [neg_abs_le a, le_abs_self a, neg_abs_le b, le_abs_self b,
+      le_max_left |a| |b|, le_max_right |a| |b|]
+
 /-- A convergent principal value is the value of `Complex.verticalIntegral`. -/
 theorem verticalIntegral_eq (h : HasVerticalIntegral c f v) : verticalIntegral c f = v :=
-  h.limUnder_eq
+  h.2.limUnder_eq
 
 /-- The principal value is unique. -/
 theorem unique (hv : HasVerticalIntegral c f v) (hw : HasVerticalIntegral c f w) : v = w :=
-  tendsto_nhds_unique hv hw
+  tendsto_nhds_unique hv.2 hw.2
 
 /-- Only the values on the line `re s = c` matter. -/
 theorem congr_line (hf : HasVerticalIntegral c f v)
     (hfg : ∀ t : ℝ, f (c + t * I) = g (c + t * I)) : HasVerticalIntegral c g v := by
-  unfold HasVerticalIntegral at *
-  refine hf.congr fun R => ?_
-  rw [intervalIntegral.integral_congr fun t _ => hfg t]
+  have e : (fun t : ℝ => g (c + t * I)) = fun t : ℝ => f (c + t * I) :=
+    funext fun t => (hfg t).symm
+  exact ⟨fun R => e ▸ hf.1 R, by simpa only [e] using hf.2⟩
 
 /-- Scalar multiples of a principal value. -/
 theorem const_smul (h : HasVerticalIntegral c f v) (a : ℂ) :
     HasVerticalIntegral c (fun s => a • f s) (a • v) := by
-  unfold HasVerticalIntegral at *
-  refine (h.const_smul a).congr fun R => ?_
+  refine ⟨fun R => (h.1 R).smul a, (h.2.const_smul a).congr fun R => ?_⟩
   rw [intervalIntegral.integral_smul, smul_comm]
 
 /-- Scalar multiples of a scalar principal value. -/
@@ -111,63 +138,54 @@ theorem const_mul {f : ℂ → ℂ} {v : ℂ} (h : HasVerticalIntegral c f v) (a
 theorem neg (h : HasVerticalIntegral c f v) : HasVerticalIntegral c (fun s => -f s) (-v) := by
   simpa using h.const_smul (-1)
 
-/-- Principal values add, provided both integrands are integrable on every finite segment. -/
-theorem add (hf : HasVerticalIntegral c f v) (hg : HasVerticalIntegral c g w)
-    (hfi : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => f (c + t * I)) volume (-R) R)
-    (hgi : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => g (c + t * I)) volume (-R) R) :
+/-- Principal values add. -/
+theorem add (hf : HasVerticalIntegral c f v) (hg : HasVerticalIntegral c g w) :
     HasVerticalIntegral c (fun s => f s + g s) (v + w) := by
-  unfold HasVerticalIntegral at *
-  refine (hf.add hg).congr fun R => ?_
-  rw [intervalIntegral.integral_add (hfi R) (hgi R), smul_add]
+  refine ⟨fun R => (hf.1 R).add (hg.1 R), (hf.2.add hg.2).congr fun R => ?_⟩
+  rw [intervalIntegral.integral_add (hf.1 R) (hg.1 R), smul_add]
 
-/-- Principal values subtract, provided both integrands are integrable on every finite
-segment. -/
-theorem sub (hf : HasVerticalIntegral c f v) (hg : HasVerticalIntegral c g w)
-    (hfi : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => f (c + t * I)) volume (-R) R)
-    (hgi : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => g (c + t * I)) volume (-R) R) :
+/-- Principal values subtract. -/
+theorem sub (hf : HasVerticalIntegral c f v) (hg : HasVerticalIntegral c g w) :
     HasVerticalIntegral c (fun s => f s - g s) (v - w) := by
-  unfold HasVerticalIntegral at *
-  refine (hf.sub hg).congr fun R => ?_
-  rw [intervalIntegral.integral_sub (hfi R) (hgi R), smul_sub]
+  refine ⟨fun R => (hf.1 R).sub (hg.1 R), (hf.2.sub hg.2).congr fun R => ?_⟩
+  rw [intervalIntegral.integral_sub (hf.1 R) (hg.1 R), smul_sub]
 
 /-- Finite sums of principal values. -/
 theorem finset_sum {ι : Type*} (s : Finset ι) {f : ι → ℂ → E} {v : ι → E}
-    (hf : ∀ i ∈ s, HasVerticalIntegral c (f i) (v i))
-    (hfi : ∀ i ∈ s, ∀ R : ℝ,
-      IntervalIntegrable (fun t : ℝ => f i (c + t * I)) volume (-R) R) :
+    (hf : ∀ i ∈ s, HasVerticalIntegral c (f i) (v i)) :
     HasVerticalIntegral c (fun z => ∑ i ∈ s, f i z) (∑ i ∈ s, v i) := by
-  unfold HasVerticalIntegral at *
-  refine (tendsto_finsetSum s hf).congr fun R => ?_
-  rw [intervalIntegral.integral_finsetSum fun i hi => hfi i hi R, Finset.smul_sum]
+  refine ⟨fun R => by
+    simpa only [Finset.sum_fn] using IntervalIntegrable.sum s fun i hi => (hf i hi).1 R,
+    (tendsto_finsetSum s fun i hi => (hf i hi).2).congr fun R => ?_⟩
+  rw [intervalIntegral.integral_finsetSum fun i hi => (hf i hi).1 R, Finset.smul_sum]
 
 /-- Translating the abscissa: a principal value on `re s = c - a` is one on `re s = c` for the
 translated integrand. -/
 theorem comp_sub_ofReal {a : ℝ} (h : HasVerticalIntegral (c - a) f v) :
     HasVerticalIntegral c (fun s => f (s - a)) v := by
-  unfold HasVerticalIntegral at *
-  refine h.congr fun R => ?_
-  congr 1
-  refine intervalIntegral.integral_congr fun t _ => ?_
-  simp only
-  congr 1
-  push_cast
-  ring
+  have e : (fun t : ℝ => f (c + t * I - a)) = fun t : ℝ => f ((c - a : ℝ) + t * I) := by
+    funext t
+    congr 1
+    push_cast
+    ring
+  exact ⟨fun R => e ▸ h.1 R, by simpa only [e] using h.2⟩
 
 end HasVerticalIntegral
 
 /-- If the principal value exists, it is `Complex.verticalIntegral c f`. -/
 theorem hasVerticalIntegral_verticalIntegral (h : ∃ v, HasVerticalIntegral c f v) :
-    HasVerticalIntegral c f (verticalIntegral c f) :=
-  tendsto_nhds_limUnder h
+    HasVerticalIntegral c f (verticalIntegral c f) := by
+  obtain ⟨v, hv⟩ := h
+  rwa [hv.verticalIntegral_eq]
 
 /-- **An absolutely convergent line integral is its own principal value.** If `t ↦ f (c + t * I)`
 agrees with an integrable `F`, the principal value is `(1 / (2π)) • ∫ F`. -/
 theorem hasVerticalIntegral_of_integrable {F : ℝ → E} (hF : Integrable F)
     (hfF : ∀ t : ℝ, f (c + t * I) = F t) :
     HasVerticalIntegral c f ((1 / (2 * π)) • ∫ t, F t) := by
-  unfold HasVerticalIntegral
-  refine (hF.tendsto_intervalIntegral_neg_self.const_smul (1 / (2 * π))).congr fun R => ?_
-  rw [intervalIntegral.integral_congr fun t _ => hfF t]
+  have e : (fun t : ℝ => f (c + t * I)) = F := funext hfF
+  refine ⟨fun R => e ▸ hF.intervalIntegrable, ?_⟩
+  simpa only [e] using hF.tendsto_intervalIntegral_neg_self.const_smul (1 / (2 * π))
 
 /-- **An absolutely convergent line integral is its own principal value.** -/
 theorem VerticalIntegrable.hasVerticalIntegral (hf : VerticalIntegrable f c) :
@@ -196,12 +214,11 @@ private theorem integral_inv_sq_of_one_le_abs {a b : ℝ} (h : ∀ t ∈ uIcc a 
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hcont.intervalIntegrable]
   ring
 
-/-- **Truncating a principal value.** If `HasVerticalIntegral c f v`, the integrand is integrable
-on every finite segment of the line, and `‖f (c + t * I)‖ ≤ A / t ^ 2` for `|t| ≥ 1`, then for
-`T ≥ 1` the truncation at height `T` is within `A / (π T)` of `v`. -/
+/-- **Truncating a principal value.** If `HasVerticalIntegral c f v` and
+`‖f (c + t * I)‖ ≤ A / t ^ 2` for `|t| ≥ 1`, then for `T ≥ 1` the truncation at height `T` is
+within `A / (π T)` of `v`. -/
 theorem HasVerticalIntegral.norm_sub_le_of_norm_le_div_sq {A T : ℝ}
     (hf : HasVerticalIntegral c f v)
-    (hint : ∀ R : ℝ, IntervalIntegrable (fun t : ℝ => f (c + t * I)) volume (-R) R)
     (hA : ∀ t : ℝ, 1 ≤ |t| → ‖f (c + t * I)‖ ≤ A / t ^ 2) (hT : 1 ≤ T) :
     ‖v - (1 / (2 * π)) • ∫ t in (-T)..T, f (c + t * I)‖ ≤ A / (π * T) := by
   set F : ℝ → E := fun t : ℝ => f (c + t * I) with hFdef
@@ -222,7 +239,7 @@ theorem HasVerticalIntegral.norm_sub_le_of_norm_le_div_sq {A T : ℝ}
     intro R hR
     have hsub : ∀ a b : ℝ, -R ≤ a → a ≤ b → b ≤ R → IntervalIntegrable F volume a b := by
       intro a b h1 h2 h3
-      exact (hint R).mono_set (uIcc_subset_uIcc (mem_uIcc.2 (Or.inl ⟨h1, by linarith⟩))
+      exact (hf.1 R).mono_set (uIcc_subset_uIcc (mem_uIcc.2 (Or.inl ⟨h1, by linarith⟩))
         (mem_uIcc.2 (Or.inl ⟨by linarith, h3⟩)))
     have e1 := intervalIntegral.integral_add_adjacent_intervals
       (hsub (-R) (-T) le_rfl (by linarith) (by linarith))
@@ -272,7 +289,7 @@ theorem HasVerticalIntegral.norm_sub_le_of_norm_le_div_sq {A T : ℝ}
   have hlim : Tendsto (fun R : ℝ => ‖(1 / (2 * π)) • (∫ t in (-R)..R, F t) -
       (1 / (2 * π)) • ∫ t in (-T)..T, F t‖) atTop
       (𝓝 ‖v - (1 / (2 * π)) • ∫ t in (-T)..T, F t‖) :=
-    (hf.sub_const _).norm
+    (hf.2.sub_const _).norm
   exact le_of_tendsto hlim (eventually_atTop.2 ⟨T, key⟩)
 
 end Complex

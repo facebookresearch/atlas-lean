@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.Analysis.Complex.ExponentialBounds
-import MathlibExt.NumberTheory.Sieve.Rankin
+import MathlibExt.NumberTheory.PrimeCounting.Mertens
 
 /-!
 # A weighted sum of prime reciprocals
@@ -41,7 +41,10 @@ theorem sum_primesLE_inv_mul_log_div_le :
     ∃ C : ℝ, ∀ x : ℝ, 3 ≤ x →
       ∑ p ∈ primesLE ⌊x / 2⌋₊, (1 : ℝ) / (p * Real.log (x / p)) ≤
         C * Real.log (Real.log x) / Real.log x := by
-  obtain ⟨C₁, hMer⟩ := sum_primesLE_inv_le_log_log_add
+  obtain ⟨C₁, hMer⟩ : ∃ C : ℝ, ∀ z : ℝ, 2 ≤ z →
+      ∑ p ∈ primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C := by
+    obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
+    exact ⟨C, fun z hz => by linarith [(abs_le.mp (hC z hz)).2]⟩
   set C₀ := max C₁ 0 with hC₀def
   have hC₀ : 0 ≤ C₀ := le_max_right _ _
   have hlog3 : 1 < Real.log 3 := by

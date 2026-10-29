@@ -16,9 +16,9 @@ import Mathlib.Analysis.Normed.Ring.Lemmas
 /-!
 # Möbius inversion for series
 
-For functions `f g : ℝ → ℝ`, the relation `g(x) = ∑_{m ≥ 1} f(m x)` inverts to
-`f(x) = ∑_{n ≥ 1} μ(n) g(n x)`, under absolute convergence hypotheses weighted by the Piltz
-divisor functions `d_3` and `d = σ 0`.
+For functions `f g : ℝ → ℝ`, the relation `g(x) = ∑_{m ≥ 1} f(m x)` for `x > 0` inverts to
+`f(x) = ∑_{n ≥ 1} μ(n) g(n x)` for `x > 0`, under absolute convergence hypotheses weighted by the
+Piltz divisor functions `d_3` and `d = σ 0`. Only the values of `f` and `g` on `(0, ∞)` matter.
 
 ## Main statements
 
@@ -43,20 +43,21 @@ private theorem summable_shift_iff (w : ℕ → ℝ) (h : ℝ → ℝ) (x : ℝ)
   push_cast
   rfl
 
-/-- If `∑_k d_3(k) |f(k x)| < ∞` for every `x` and `g(x) = ∑_{m ≥ 1} f(m x)`, then
-`∑_k d(k) |g(k x)| < ∞`, where `d = σ 0` is the number-of-divisors function. -/
+/-- If `∑_k d_3(k) |f(k x)| < ∞` for every `x > 0` and `g(x) = ∑_{m ≥ 1} f(m x)` for every
+`x > 0`, then `∑_k d(k) |g(k x)| < ∞` for every `x > 0`, where `d = σ 0` is the
+number-of-divisors function. -/
 theorem summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs (f g : ℝ → ℝ)
-    (hf : ∀ x, Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
-    (hgf : ∀ x, g x = ∑' m : ℕ, f ((m + 1) * x)) (x : ℝ) :
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+    (hgf : ∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) {x : ℝ} (hx : 0 < x) :
     Summable fun k : ℕ => (σ 0 k : ℝ) * |g (k * x)| := by
   classical
   have hd3sum : ∀ A : ℕ, piltz 3 A = ∑ B ∈ A.divisors, σ 0 B := by
     intro A; rw [piltz_succ_apply, piltz_two]
   -- Along any ray, `∑_m |f (m y)| < ∞`, since `1 ≤ d₃`.
-  have hfabs : ∀ y : ℝ, Summable fun m : ℕ => |f (((m : ℝ) + 1) * y)| := by
-    intro y
+  have hfabs : ∀ y : ℝ, 0 < y → Summable fun m : ℕ => |f (((m : ℝ) + 1) * y)| := by
+    intro y hy
     refine Summable.of_nonneg_of_le (fun m => abs_nonneg _) (fun m => ?_)
-      ((summable_shift_iff _ f y).mp (hf y))
+      ((summable_shift_iff _ f y).mp (hf y hy))
     have h1 : (1 : ℝ) ≤ (piltz 3 (m + 1) : ℝ) := by
       exact_mod_cast piltz_pos (by norm_num) (Nat.succ_ne_zero m)
     exact le_mul_of_one_le_left (abs_nonneg _) h1
@@ -80,7 +81,7 @@ theorem summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs (f g : ℝ �
       hd3sum A, Nat.cast_sum]
   have hUsum : Summable U := by
     rw [summable_prod_of_nonneg hUnonneg]
-    exact ⟨hUrow, by simpa only [hUrowsum] using hf x⟩
+    exact ⟨hUrow, by simpa only [hUrowsum] using hf x hx⟩
   -- Pull `U` back along the injection `(k, m) ↦ ((k+1)(m+1), k+1)`.
   have hρinj : Function.Injective
       (fun p : ℕ × ℕ => ((p.1 + 1) * (p.2 + 1), p.1 + 1)) := by
@@ -114,26 +115,29 @@ theorem summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs (f g : ℝ �
   dsimp only
   rw [tsum_mul_left]
   refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-  rw [hgf (((k : ℝ) + 1) * x)]
+  have hkx : 0 < ((k : ℝ) + 1) * x := by positivity
+  rw [hgf (((k : ℝ) + 1) * x) hkx]
   have h1 : |∑' m : ℕ, f (((m : ℝ) + 1) * (((k : ℝ) + 1) * x))|
       ≤ ∑' m : ℕ, |f (((m : ℝ) + 1) * (((k : ℝ) + 1) * x))| := by
     simpa only [Real.norm_eq_abs] using
       norm_tsum_le_tsum_norm (f := fun m : ℕ => f (((m : ℝ) + 1) * (((k : ℝ) + 1) * x)))
-        (by simpa only [Real.norm_eq_abs] using hfabs (((k : ℝ) + 1) * x))
+        (by simpa only [Real.norm_eq_abs] using hfabs (((k : ℝ) + 1) * x) hkx)
   refine h1.trans_eq (tsum_congr fun m => ?_)
   rw [show ((m : ℝ) + 1) * (((k : ℝ) + 1) * x) = ((k : ℝ) + 1) * ((m : ℝ) + 1) * x by ring]
 
 /-- **Möbius inversion for series.** Suppose `∑_k d_3(k) |f(k x)|` and `∑_k d(k) |g(k x)|`
-converge for every `x`, where `d_3` is the Piltz divisor function and `d = σ 0`. Then
-`g(x) = ∑_{m ≥ 1} f(m x)` for all `x` if and only if `f(x) = ∑_{n ≥ 1} μ(n) g(n x)` for all `x`.
+converge for every `x > 0`, where `d_3` is the Piltz divisor function and `d = σ 0`. Then
+`g(x) = ∑_{m ≥ 1} f(m x)` for all `x > 0` if and only if `f(x) = ∑_{n ≥ 1} μ(n) g(n x)` for all
+`x > 0`. The values of `f` and `g` on `(-∞, 0]` play no role.
 
 The hypothesis on `g` follows from the one on `f` in the forward direction
 (`ArithmeticFunction.summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs`); see
 `ArithmeticFunction.eq_tsum_moebius_mul_of_eq_tsum`. -/
 theorem tsum_moebius_inversion (f g : ℝ → ℝ)
-    (hf : ∀ x, Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
-    (hg : ∀ x, Summable fun k : ℕ => (σ 0 k : ℝ) * |g (k * x)|) :
-    (∀ x, g x = ∑' m : ℕ, f ((m + 1) * x)) ↔ ∀ x, f x = ∑' n : ℕ, (μ n : ℝ) * g (n * x) := by
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+    (hg : ∀ x, 0 < x → Summable fun k : ℕ => (σ 0 k : ℝ) * |g (k * x)|) :
+    (∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) ↔
+      ∀ x, 0 < x → f x = ∑' n : ℕ, (μ n : ℝ) * g (n * x) := by
   classical
   -- shift the Möbius series to start at `n = 1`
   have hshift : ∀ x, (∑' n : ℕ, (μ n : ℝ) * g (n * x)) =
@@ -146,11 +150,8 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
       · simp at hn
       · exact ⟨n, rfl⟩
   simp_rw [hshift]
-  have hd23 : ∀ n : ℕ, σ 0 n ≤ piltz 3 n := by
-    intro n
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp
-    · simpa using piltz_le_piltz_succ 2 hn
+  have hd23 : ∀ n : ℕ, σ 0 n ≤ piltz 3 n := fun n => by
+    simpa using piltz_le_piltz_succ 2 n
   -- The Dirichlet rearrangement `∑_{n,m} μ n h (n m x) = ∑_N (∑_{δ ∣ N} μ δ) h (N x) = h x`,
   -- valid whenever `∑_N d N |h (N x)| < ∞`.
   have core : ∀ (h : ℝ → ℝ) (x : ℝ),
@@ -247,9 +248,9 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
     rw [tsum_congr e2, tsum_eq_single 1 (fun b hb => by simp [hb])]
     norm_num
   constructor
-  · intro hgf x
+  · intro hgf x hx
     have hfsum : Summable fun k : ℕ => (σ 0 k : ℝ) * |f (k * x)| := by
-      refine Summable.of_nonneg_of_le (fun k => by positivity) (fun k => ?_) (hf x)
+      refine Summable.of_nonneg_of_le (fun k => by positivity) (fun k => ?_) (hf x hx)
       exact mul_le_mul_of_nonneg_right (by exact_mod_cast hd23 k) (abs_nonneg _)
     obtain ⟨hps, hpe⟩ := core f x hfsum
     rw [← hpe, hps.tsum_prod]
@@ -257,12 +258,12 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
     dsimp only
     rw [tsum_mul_left]
     congr 1
-    rw [hgf (((n : ℝ) + 1) * x)]
+    rw [hgf (((n : ℝ) + 1) * x) (by positivity)]
     refine tsum_congr fun m => ?_
     congr 1
     ring
-  · intro hfg x
-    obtain ⟨hps, hpe⟩ := core g x (hg x)
+  · intro hfg x hx
+    obtain ⟨hps, hpe⟩ := core g x (hg x hx)
     rw [← hpe]
     have e0 : (∑' p : ℕ × ℕ, (μ (p.1 + 1) : ℝ) * g (((p.1 : ℝ) + 1) * ((p.2 : ℝ) + 1) * x))
         = ∑' p : ℕ × ℕ, (μ (p.2 + 1) : ℝ) * g (((p.2 : ℝ) + 1) * ((p.1 : ℝ) + 1) * x) :=
@@ -273,18 +274,20 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
     rw [e0, hsw.tsum_prod]
     refine tsum_congr fun m => ?_
     dsimp only
-    rw [hfg (((m : ℝ) + 1) * x)]
+    rw [hfg (((m : ℝ) + 1) * x) (by positivity)]
     refine tsum_congr fun n => ?_
     congr 2
     ring
 
 /-- **Möbius inversion for series**, forward direction: if `∑_k d_3(k) |f(k x)| < ∞` for every
-`x` and `g(x) = ∑_{m ≥ 1} f(m x)`, then `f(x) = ∑_{n ≥ 1} μ(n) g(n x)`. -/
+`x > 0` and `g(x) = ∑_{m ≥ 1} f(m x)` for every `x > 0`, then `f(x) = ∑_{n ≥ 1} μ(n) g(n x)` for
+every `x > 0`. -/
 theorem eq_tsum_moebius_mul_of_eq_tsum (f g : ℝ → ℝ)
-    (hf : ∀ x, Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
-    (hgf : ∀ x, g x = ∑' m : ℕ, f ((m + 1) * x)) (x : ℝ) :
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+    (hgf : ∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) {x : ℝ} (hx : 0 < x) :
     f x = ∑' n : ℕ, (μ n : ℝ) * g (n * x) :=
   (tsum_moebius_inversion f g hf
-    (summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs f g hf hgf)).mp hgf x
+    (fun _ hy => summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs f g hf hgf hy)).mp
+    hgf x hx
 
 end ArithmeticFunction

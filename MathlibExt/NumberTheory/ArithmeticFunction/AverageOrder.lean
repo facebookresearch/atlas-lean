@@ -96,18 +96,12 @@ private theorem abs_tsum_sub_sum_Ioc_le {f : ℕ → ℝ} (hf : ∀ d, |f d| ≤
         hnt.tsum_le_tsum (fun i => by rw [Real.norm_eq_abs]; exact hf _) hgt
     _ ≤ 2 / ((N : ℝ) + 1) := hfinal
 
-/-- `{1, …, N} = (0, N]`. -/
-private theorem Icc_one_eq_Ioc_zero (N : ℕ) : Icc 1 N = Ioc 0 N := by
-  ext n
-  simp only [mem_Icc, mem_Ioc]
-  omega
-
 /-- The harmonic sum `∑_{d ≤ N} 1 / d` is at most `1 + log N`. -/
 private theorem sum_Ioc_one_div_le (N : ℕ) : ∑ d ∈ Ioc 0 N, (1 : ℝ) / d ≤ 1 + log N := by
   have h := harmonic_le_one_add_log N
-  rw [harmonic_eq_sum_Icc] at h
+  rw [harmonic_eq_sum_Icc, show Icc 1 N = Ioc 0 N from rfl] at h
   push_cast at h
-  simpa only [one_div, Icc_one_eq_Ioc_zero] using h
+  simpa only [one_div] using h
 
 /-- `∑_{m ≤ M} m = M (M + 1) / 2`. -/
 private theorem sum_Ioc_natCast (M : ℕ) : ∑ m ∈ Ioc 0 M, (m : ℝ) = M * (M + 1) / 2 := by
@@ -417,7 +411,8 @@ theorem abs_sum_sigma_zero_sub_mul_log_le {x : ℝ} (hx : 1 ≤ x) :
   have hH : ∑ d ∈ Ioc 0 N, (1 / (d : ℝ)) = (harmonic N : ℝ) := by
     rw [harmonic_eq_sum_Icc]
     push_cast
-    simp only [one_div, Icc_one_eq_Ioc_zero]
+    simp only [one_div]
+    rfl
   have hup : ∑ d ∈ Ioc 0 N, ((N / d : ℕ) : ℝ) ≤ x * (harmonic N : ℝ) := by
     rw [← hH, mul_sum]
     refine sum_le_sum fun d hd => ?_
@@ -470,7 +465,6 @@ theorem abs_sum_coprime_sub_totient_div_mul_sq_le {k : ℕ} (hk0 : k ≠ 0) {x :
       - (k.totient : ℝ) / (2 * k) * x ^ 2| ≤ 2 * (k.divisors.card : ℝ) * x
   classical
   have gauss : ∀ M : ℕ, ∑ m ∈ Finset.Icc 1 M, (m : ℝ) = M * (M + 1) / 2 := fun M => by
-    rw [Icc_one_eq_Ioc_zero]
     exact sum_Ioc_natCast M
   -- The sum of the multiples of `D` in `[1, N]`.
   have mult : ∀ D N : ℕ, 0 < D →

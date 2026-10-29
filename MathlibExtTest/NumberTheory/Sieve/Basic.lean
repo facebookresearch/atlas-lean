@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.Sieve.Basic
+import Mathlib.Basic.Complex.Basic
 
 /-!
 # Tests for the sifting product
@@ -56,6 +57,10 @@ example : ((Nat.totient 12 : ℕ) : ℝ) = 12 * ∏ p ∈ (12 : ℕ).primeFactor
 -- Boundary `n = 0`: both sides vanish.
 example : ((Nat.totient 0 : ℕ) : ℝ) = ((0 : ℕ) : ℝ) * ∏ p ∈ (0 : ℕ).primeFactors, (1 - (p : ℝ)⁻¹) :=
   cast_totient_eq_mul_prod_one_sub_inv 0
+
+-- The same product in `ℂ`.
+example : ((Nat.totient 12 : ℕ) : ℂ) = 12 * ∏ p ∈ (12 : ℕ).primeFactors, (1 - (p : ℂ)⁻¹) :=
+  cast_totient_eq_mul_prod_one_sub_inv 12
 
 example : ∏ m ∈ Finset.Ioc 1 1, (1 - (((m : ℕ) : ℝ) ^ 2)⁻¹) = ((1 : ℝ) + 1) / (2 * 1) := by
   simp

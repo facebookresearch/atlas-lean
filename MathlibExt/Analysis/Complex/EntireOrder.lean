@@ -17,10 +17,11 @@ import Mathlib.Tactic.Bound
 # The order of growth of an entire function
 
 A function `f : ℂ → E` has *order of growth at most `ρ`* if for every `ε > 0` it is
-`O(exp (‖z‖ ^ (ρ + ε)))` as `z → ∞`. It has *order `ρ`* if moreover it has order at most no
-smaller exponent. For an entire function of order `ρ` this is the classical order
+`O(exp (‖z‖ ^ (ρ + ε)))` as `z → ∞`. It has *order `ρ`* if moreover `ρ ≥ 0` and it has order
+at most no smaller nonnegative exponent. For a nonzero entire function this is the classical order
 `limsup_{r → ∞} log log M(r) / log r`, where `M(r)` is the maximum of `‖f‖` on the circle of
-radius `r`.
+radius `r`; in particular constants and polynomials have order `0`. Negative exponents are
+excluded because a bounded function has order at most every real number.
 
 This is not Mathlib's `analyticOrderAt` or `meromorphicOrderAt`, which measure the order of
 vanishing at a point.
@@ -38,11 +39,14 @@ multiplicity) satisfy `∑ ‖z_n‖ ^ (-ρ - ε) < ∞`. Both follow from Jense
 ## Main statements
 
 * `Complex.HasGrowthOrderLE.mono`, `Complex.HasGrowthOrderLE.trans_isBigO`,
-  `Complex.HasGrowthOrderLE.mul`, `Complex.hasGrowthOrderLE_of_isBigO_one`,
+  `Complex.HasGrowthOrderLE.add`, `Complex.HasGrowthOrderLE.mul`,
+  `Complex.hasGrowthOrderLE_of_isBigO_one`,
   `Complex.hasGrowthOrderLE_one_of_isBigO_exp_mul_norm`: basic closure properties; in
   particular functions of exponential type have order at most `1`.
 * `Complex.HasGrowthOrder.nonneg`, `Complex.HasGrowthOrder.unique`: the order is a well-defined
   nonnegative real number.
+* `Complex.hasGrowthOrder_zero_iff`, `Complex.hasGrowthOrder_zero_of_isBigO_one`: order `0` is
+  order at most `0`; in particular bounded functions and constants have order `0`.
 * `Complex.HasGrowthOrderLE.isBigO_sum_divisor_closedBall`: the zero-counting function of an
   entire function of order at most `ρ` is `O(r ^ (ρ + ε))`.
 * `Complex.HasGrowthOrderLE.summable_norm_rpow_neg`: the zeros `z_n` of an entire function of
@@ -64,10 +68,11 @@ variable {E : Type*}
 def HasGrowthOrderLE [Norm E] (f : ℂ → E) (ρ : ℝ) : Prop :=
   ∀ ε > (0 : ℝ), f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + ε))
 
-/-- `f` has *order of growth `ρ`*: it has order at most `ρ`, and order at most no smaller
-exponent. For an entire `f` this is the classical order `limsup log log M(r) / log r`. -/
+/-- `f` has *order of growth `ρ`*: `ρ ≥ 0`, `f` has order at most `ρ`, and order at most no
+smaller nonnegative exponent. For a nonzero entire `f` this is the classical order
+`limsup log log M(r) / log r`; constants have order `0`. -/
 def HasGrowthOrder [Norm E] (f : ℂ → E) (ρ : ℝ) : Prop :=
-  HasGrowthOrderLE f ρ ∧ ∀ ρ' < ρ, ¬ HasGrowthOrderLE f ρ'
+  0 ≤ ρ ∧ HasGrowthOrderLE f ρ ∧ ∀ ρ' ∈ Set.Ico 0 ρ, ¬ HasGrowthOrderLE f ρ'
 
 section Basic
 
@@ -102,25 +107,39 @@ theorem hasGrowthOrderLE_of_isBigO_one (hf : f =O[cobounded ℂ] fun _ => (1 : �
 theorem hasGrowthOrderLE_const (c : E) (ρ : ℝ) : HasGrowthOrderLE (fun _ => c) ρ :=
   hasGrowthOrderLE_of_isBigO_one (isBigO_const_const c one_ne_zero _) ρ
 
-/-- **The order is nonnegative.** If `f` has order `ρ`, then `ρ ≥ 0`: for `ρ < 0` the bound with
-`ε = -ρ / 2` says that `f` is bounded, which gives order at most every exponent. -/
-theorem HasGrowthOrder.nonneg (h : HasGrowthOrder f ρ) : 0 ≤ ρ := by
-  by_contra hneg
-  push Not at hneg
-  apply h.2 (ρ - 1) (by linarith)
-  refine hasGrowthOrderLE_of_isBigO_one ((h.1 (-ρ / 2) (by linarith)).trans ?_) _
-  refine IsBigO.of_bound (Real.exp 1) ?_
-  filter_upwards [tendsto_norm_cobounded_atTop.eventually_ge_atTop 1] with z hz
-  rw [Real.norm_of_nonneg (Real.exp_pos _).le, norm_one, mul_one]
-  exact Real.exp_le_exp.mpr (Real.rpow_le_one_of_one_le_of_nonpos hz (by linarith))
+/-- A function of order `ρ` has order at most `ρ`. -/
+theorem HasGrowthOrder.hasGrowthOrderLE (h : HasGrowthOrder f ρ) : HasGrowthOrderLE f ρ :=
+  h.2.1
+
+/-- **The order is nonnegative.** -/
+theorem HasGrowthOrder.nonneg (h : HasGrowthOrder f ρ) : 0 ≤ ρ :=
+  h.1
+
+/-- A function of order `ρ` has order at most no nonnegative `ρ' < ρ`. -/
+theorem HasGrowthOrder.not_hasGrowthOrderLE (h : HasGrowthOrder f ρ) (h0 : 0 ≤ ρ')
+    (hlt : ρ' < ρ) : ¬ HasGrowthOrderLE f ρ' :=
+  h.2.2 ρ' ⟨h0, hlt⟩
 
 /-- **The order is unique.** -/
 theorem HasGrowthOrder.unique (h : HasGrowthOrder f ρ) (h' : HasGrowthOrder f ρ') :
     ρ = ρ' := by
   by_contra hne
   rcases lt_or_gt_of_ne hne with hlt | hlt
-  · exact h'.2 ρ hlt h.1
-  · exact h.2 ρ' hlt h'.1
+  · exact h'.not_hasGrowthOrderLE h.nonneg hlt h.hasGrowthOrderLE
+  · exact h.not_hasGrowthOrderLE h'.nonneg hlt h'.hasGrowthOrderLE
+
+/-- `f` has order `0` exactly when it has order at most `0`. -/
+theorem hasGrowthOrder_zero_iff : HasGrowthOrder f 0 ↔ HasGrowthOrderLE f 0 :=
+  ⟨HasGrowthOrder.hasGrowthOrderLE, fun h => ⟨le_rfl, h, fun _ h' => absurd h'.1 h'.2.not_ge⟩⟩
+
+/-- A function bounded at infinity has order `0`. -/
+theorem hasGrowthOrder_zero_of_isBigO_one (hf : f =O[cobounded ℂ] fun _ => (1 : ℝ)) :
+    HasGrowthOrder f 0 :=
+  hasGrowthOrder_zero_iff.mpr (hasGrowthOrderLE_of_isBigO_one hf 0)
+
+/-- A constant function has order `0`. -/
+theorem hasGrowthOrder_const (c : E) : HasGrowthOrder (fun _ => c) 0 :=
+  hasGrowthOrder_zero_iff.mpr (hasGrowthOrderLE_const c 0)
 
 /-- A function with `‖f z‖ ≤ C exp (A ‖z‖)` at infinity (a function of *exponential type*) has
 order at most `1`. -/
@@ -136,6 +155,12 @@ theorem hasGrowthOrderLE_one_of_isBigO_exp_mul_norm {A : ℝ}
   exact mul_le_mul_of_nonneg_left hz (by linarith)
 
 end Basic
+
+/-- **Sums.** If `f` and `g` have order at most `ρ`, so does `f + g`. -/
+theorem HasGrowthOrderLE.add {F : Type*} [SeminormedAddCommGroup F] {f g : ℂ → F} {ρ : ℝ}
+    (hf : HasGrowthOrderLE f ρ) (hg : HasGrowthOrderLE g ρ) :
+    HasGrowthOrderLE (fun z => f z + g z) ρ :=
+  fun ε hε => (hf ε hε).add (hg ε hε)
 
 /-- **Products.** If `f` and `g` have order at most `ρ`, so does `f * g`. -/
 theorem HasGrowthOrderLE.mul {R : Type*} [SeminormedRing R] {f g : ℂ → R} {ρ : ℝ}

@@ -224,7 +224,7 @@ theorem exists_completed (F G : ℂ → ℂ) (m : ℕ) (hGd : Differentiable ℂ
       · apply differentiableAt_Gamma
         intro k hk
         have := congrArg re hk
-        have h3 := re_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hs
+        have h3 := re_ofReal_mul_add_pos (D.α_pos i) (D.r_re_nonneg i) hs
         simp only [neg_re, natCast_re] at this
         have h4 : (0 : ℝ) ≤ k := Nat.cast_nonneg k
         linarith

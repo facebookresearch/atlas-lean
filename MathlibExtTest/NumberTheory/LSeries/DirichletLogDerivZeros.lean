@@ -72,4 +72,12 @@ example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimiti
     (T : ℝ) : {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T}.Finite :=
   finite_setOf_mem_nontrivialZeros_abs_im_lt hχ hχ1 T
 
+/-- `N(T, χ)` counts an actual enumeration of the zeros, and is monotone. -/
+example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1)
+    (T : ℝ) : ∃ (ι : Type) (z : ι → ℂ), χ.zeroCount T = {n | |(z n).im| < T}.ncard ∧
+      χ.zeroCount T ≤ χ.zeroCount (T + 1) := by
+  have hz := Complex.card_sigma_fin_analyticOrderAt (differentiable_xi hχ1)
+    (xi_zero_ne_zero hχ hχ1)
+  exact ⟨_, _, zeroCount_eq_ncard hχ hχ1 hz T, monotone_zeroCount hχ hχ1 (by linarith)⟩
+
 end DirichletLogDerivZerosTest

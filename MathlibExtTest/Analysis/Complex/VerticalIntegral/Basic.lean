@@ -16,9 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.NonIntegrable
 # Tests for principal-value integrals along a vertical line
 
 Non-vacuity of `Complex.HasVerticalIntegral`: it holds with the expected value for the
-absolutely integrable `(1 + (im s)²)⁻¹`, fails for the constant `1`, and (boundary probe) holds
-with value `0` for the positive, non-locally-integrable `|im s|⁻¹`, because interval integrals of
-non-integrable functions are `0`.
+absolutely integrable `(1 + (im s)²)⁻¹`, fails for the constant `1`, and (boundary probe) fails
+for the positive, non-locally-integrable `|im s|⁻¹`, whose truncations are all the junk value `0`.
 -/
 
 @[expose] public section
@@ -68,12 +67,20 @@ example : HasVerticalIntegral 0 cauchyLine ((1 / (2 * π)) • ∫ t : ℝ, cauc
 /-- Zero function. -/
 example : HasVerticalIntegral 5 (fun _ : ℂ => (0 : ℂ)) 0 := hasVerticalIntegral_zero
 
-/-- Linearity, with the segment-integrability side conditions. -/
+/-- Linearity needs no side conditions: segment integrability is part of the predicate. -/
 example : HasVerticalIntegral 0 (fun s => cauchyLine s + 2 * cauchyLine s) (1 / 2 + 2 * (1 / 2)) :=
   (hasVerticalIntegral_cauchyLine 0).add ((hasVerticalIntegral_cauchyLine 0).const_mul 2)
-    (fun R => by simpa [cauchyLine_apply] using integrable_cauchy.intervalIntegrable)
-    (fun R => by
-      simpa [cauchyLine_apply] using (integrable_cauchy.const_mul 2).intervalIntegrable)
+
+example : HasVerticalIntegral 0 (fun s => cauchyLine s - cauchyLine s) 0 := by
+  simpa using (hasVerticalIntegral_cauchyLine 0).sub (hasVerticalIntegral_cauchyLine 0)
+
+example : HasVerticalIntegral 0 (fun s => ∑ _i ∈ Finset.range 3, cauchyLine s)
+    (∑ _i ∈ Finset.range 3, (1 / 2 : ℂ)) :=
+  HasVerticalIntegral.finset_sum _ fun _ _ => hasVerticalIntegral_cauchyLine 0
+
+/-- A principal value gives integrability on every segment, not only the symmetric ones. -/
+example : IntervalIntegrable (fun t : ℝ => cauchyLine (0 + t * I)) volume 2 7 :=
+  (hasVerticalIntegral_cauchyLine 0).intervalIntegrable 2 7
 
 example : HasVerticalIntegral 0 (fun s => -cauchyLine s) (-(1 / 2)) :=
   (hasVerticalIntegral_cauchyLine 0).neg
@@ -90,9 +97,7 @@ example : HasVerticalIntegral 2 (fun s => cauchyLine (s - (5 : ℝ))) (1 / 2) :=
 /-- The truncation bound: `‖v - truncation at T‖ ≤ 1 / (π T)`. -/
 example {T : ℝ} (hT : 1 ≤ T) :
     ‖(1 / 2 : ℂ) - (1 / (2 * π)) • ∫ t in (-T)..T, cauchyLine (0 + t * I)‖ ≤ 1 / (π * T) := by
-  refine (hasVerticalIntegral_cauchyLine 0).norm_sub_le_of_norm_le_div_sq
-    (fun R => by simpa [cauchyLine_apply] using integrable_cauchy.intervalIntegrable)
-    (fun t ht => ?_) hT
+  refine (hasVerticalIntegral_cauchyLine 0).norm_sub_le_of_norm_le_div_sq (fun t ht => ?_) hT
   rw [cauchyLine_apply, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
   have ht2 : 0 < t ^ 2 := by
     have : (1 : ℝ) ≤ t ^ 2 := by nlinarith [sq_abs t, abs_nonneg t]
@@ -105,7 +110,7 @@ example {T : ℝ} (hT : 1 ≤ T) :
 /-- **Non-example.** The constant `1` has no principal value: the truncations are `R / π`. -/
 example (c : ℝ) (v : ℂ) : ¬ HasVerticalIntegral c (fun _ => (1 : ℂ)) v := by
   intro h
-  have hn := h.norm
+  have hn := h.tendsto.norm
   have hat : Tendsto (fun R : ℝ => ‖(1 / (2 * π)) • ∫ t in (-R)..R, (fun _ : ℂ => (1 : ℂ))
       (c + t * I)‖) atTop atTop := by
     refine (tendsto_id.atTop_div_const Real.pi_pos).congr' ?_
@@ -130,20 +135,17 @@ private lemma not_intervalIntegrable_abs_inv {R : ℝ} (hR : R ≠ 0) :
   · exact h' (Set.mem_uIcc.mpr (by rcases le_or_gt 0 R with h | h <;> [left; right] <;>
       constructor <;> linarith))
 
-/-- **Boundary probe (junk value).** The integrand `|im s|⁻¹` is positive and its integral over
-every segment `[-R, R]` diverges to `+∞`, yet `HasVerticalIntegral 0` holds with value `0`: the
-Bochner interval integral of a non-integrable function is `0`, so every truncation is `0`. -/
-example : HasVerticalIntegral 0 (fun s : ℂ => (((|s.im|⁻¹ : ℝ)) : ℂ)) 0 := by
-  unfold HasVerticalIntegral
-  refine tendsto_const_nhds.congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with R hR
-  have hni := not_intervalIntegrable_abs_inv (R := R) hR.ne'
-  rw [intervalIntegral.integral_undef (by simpa using hni), smul_zero]
+/-- **Boundary probe.** The integrand `|im s|⁻¹` is positive and its integral over every
+segment `[-R, R]` diverges to `+∞`. Every truncation is the junk value `0` (the Bochner interval
+integral of a non-integrable function is `0`), but the segment-integrability clause of
+`HasVerticalIntegral` rules out a principal value. -/
+example (v : ℂ) : ¬ HasVerticalIntegral 0 (fun s : ℂ => (((|s.im|⁻¹ : ℝ)) : ℂ)) v := fun h =>
+  not_intervalIntegrable_abs_inv one_ne_zero (by simpa using h.intervalIntegrable (-1) 1)
 
-/-- The same junk value is what `verticalIntegral` returns. -/
-example : verticalIntegral 0 (fun s : ℂ => (((|s.im|⁻¹ : ℝ)) : ℂ)) = 0 := by
-  apply HasVerticalIntegral.verticalIntegral_eq
-  unfold HasVerticalIntegral
+/-- The truncations themselves do converge (to the junk value `0`); this is exactly the
+behaviour the segment-integrability clause excludes. -/
+example : Tendsto (fun R : ℝ => (1 / (2 * π)) • ∫ t in (-R)..R,
+    (fun s : ℂ => (((|s.im|⁻¹ : ℝ)) : ℂ)) (0 + t * I)) atTop (𝓝 0) := by
   refine tendsto_const_nhds.congr' ?_
   filter_upwards [eventually_gt_atTop 0] with R hR
   have hni := not_intervalIntegrable_abs_inv (R := R) hR.ne'

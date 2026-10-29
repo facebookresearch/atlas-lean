@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.SelbergClass.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import MathlibExt.NumberTheory.LSeries.RiemannZeta
 import Mathlib.NumberTheory.EulerProduct.DirichletLSeries
 import Mathlib.Analysis.SpecificLimits.Normed
 
@@ -391,7 +392,8 @@ theorem IsTensorSimple.neg_one_le_meromorphicOrderAt {a : ArithmeticFunction ℂ
   have hFm : MeromorphicAt F 1 := SelbergClass.meromorphicAt_one ha𝒮 hF
   have hHm : MeromorphicAt H 1 :=
     meromorphicAt_of_meromorphicOrderAt_ne_zero (by rw [hHord]; decide)
-  obtain ⟨hZm, hZord⟩ := meromorphicAt_riemannZeta_one_and_meromorphicOrderAt_eq
+  have hZm := meromorphicAt_riemannZeta_one
+  have hZord := meromorphicOrderAt_riemannZeta_one
   by_contra hlt
   push Not at hlt
   have hFne : ∀ σ : ℝ, 1 < σ → F σ ≠ 0 := by

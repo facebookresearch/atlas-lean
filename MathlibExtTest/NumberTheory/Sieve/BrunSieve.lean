@@ -10,6 +10,7 @@ module
 
 import MathlibExt.NumberTheory.Sieve.BrunSieve
 import MathlibExt.NumberTheory.Sieve.Rankin
+import MathlibExt.NumberTheory.PrimeCounting.Mertens
 
 /-!
 # Tests for Brun's truncated Möbius function
@@ -77,7 +78,9 @@ example : ∃ c₄ K : ℝ, ∀ z : ℝ, 3 ≤ z → ∀ r : ℕ,
         (brunPsi r δ : ℝ) * (∏ _p ∈ δ.primeFactors, (1 : ℝ)) /
           ∏ p ∈ δ.primeFactors, ((p : ℝ) - 1)| ≤
       K * (1 * Real.log (Real.log z) + c₄) ^ r / r.factorial * Real.log z ^ (1 : ℝ) := by
-  obtain ⟨C, hC⟩ := Nat.sum_primesLE_inv_le_log_log_add
+  obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
   refine abs_sum_brunPsi_mul_div_le (fun _ => True) (fun _ => 1) 1 1 C (fun _ => zero_le_one)
     (fun _p _ hp => by exact_mod_cast hp.one_lt) (fun _ => le_rfl) fun z hz => ?_
-  simpa [one_div] using hC z (by linarith)
+  have h := (abs_le.mp (hC z (by linarith))).2
+  simp only [one_div, one_mul, Finset.filter_true]
+  linarith

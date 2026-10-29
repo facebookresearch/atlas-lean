@@ -414,9 +414,9 @@ theorem eq_of_isLittleO_sum_abs_sub_analyticOrderNatAt (a b : ArithmeticFunction
       exact mul_left_cancel₀ hl this
   subst hbeq
   have hsa : LSeriesSummable (fun n => a n) 2 :=
-    LSeriesSummable_of_forall_norm_le_mul_rpow ha.2.2.2 (by norm_num)
+    LSeriesSummable.of_forall_norm_le_mul_rpow ha.2.2.2 (by norm_num)
   have hsb : LSeriesSummable (fun n => b n) 2 :=
-    LSeriesSummable_of_forall_norm_le_mul_rpow hb.2.2.2 (by norm_num)
+    LSeriesSummable.of_forall_norm_le_mul_rpow hb.2.2.2 (by norm_num)
   have hA : LSeries.abscissaOfAbsConv (fun n => a n) < ⊤ :=
     lt_of_le_of_lt hsa.abscissaOfAbsConv_le (EReal.coe_lt_top _)
   have hB : LSeries.abscissaOfAbsConv (fun n => b n) < ⊤ :=

@@ -18,15 +18,15 @@ import MathlibExt.NumberTheory.SelbergClass.ZeroCounting
 /-!
 # The degree of a function in the Selberg class
 
-The Selberg class is closed under products whose continuation has a functional equation, and the
-degree `2 ∑ α_i` of a functional equation is additive: `deg (F₁ F₂) = deg F₁ + deg F₂`. The
-additivity follows from Selberg's zero-counting theorem, since the zeros of `F₁ F₂` are those of
-`F₁` and of `F₂`.
+The Selberg class is closed under products: the functional equation of `F₁ F₂` is
+`FunctionalEquation.mul`, which concatenates the Gamma factors. The degree `2 ∑ α_i` of a
+functional equation is additive: `deg (F₁ F₂) = deg F₁ + deg F₂` for *every* functional equation
+of `F₁ F₂`, not only the one built from those of `F₁` and `F₂`. This follows from Selberg's
+zero-counting theorem, since the zeros of `F₁ F₂` are those of `F₁` and of `F₂`.
 
 ## Main statements
 
-* `SelbergClass.mul_mem_of_functionalEquation`: `a₁ * a₂` is in the Selberg class when the
-  continuation of `L(a₁ * a₂, s)` has a functional equation.
+* `SelbergClass.mul_mem`: the Selberg class is closed under products.
 * `SelbergClass.FunctionalEquation.degree_eq_add_of_mul`: the degree is additive.
 -/
 
@@ -46,8 +46,8 @@ private lemma isLSeriesContinuation_mul {a₁ a₂ : ArithmeticFunction ℂ} (ha
     refine ⟨fun s hs => ?_, hF₁.2.mul hF₂.2⟩
     change F₁ s * F₂ s = _
     rw [hF₁.1 s hs, hF₂.1 s hs, ArithmeticFunction.LSeries_mul'
-      (LSeriesSummable_of_forall_norm_le_mul_rpow ha₁.2.2.2 hs)
-          (LSeriesSummable_of_forall_norm_le_mul_rpow ha₂.2.2.2 hs)]
+      (LSeriesSummable.of_forall_norm_le_mul_rpow ha₁.2.2.2 hs)
+          (LSeriesSummable.of_forall_norm_le_mul_rpow ha₂.2.2.2 hs)]
   exact IsLSeriesContinuation.eqOn_compl_one hF hP
 
 /-- The convolution of two coefficient sequences with subpolynomial growth has subpolynomial
@@ -91,27 +91,29 @@ private lemma forall_norm_mul_le_rpow {a₁ a₂ : ArithmeticFunction ℂ}
     _ = Cd * (|C₁| * |C₂|) * (n : ℝ) ^ ε := by
       rw [← Real.rpow_add (by positivity)]; ring_nf
 
-/-- **Products in the Selberg class.** If `a₁, a₂` are in the Selberg class and the continuation
-`F` of `L(a₁ * a₂, s)` has a functional equation, then `a₁ * a₂` is in the Selberg class. -/
-theorem mul_mem_of_functionalEquation {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergClass)
-    (ha₂ : a₂ ∈ selbergClass) {F₁ F₂ F : ℂ → ℂ} (hF₁ : IsLSeriesContinuation a₁ F₁)
-    (hF₂ : IsLSeriesContinuation a₂ F₂) (hF : IsLSeriesContinuation (a₁ * a₂) F) (D :
-        FunctionalEquation F) :
-    a₁ * a₂ ∈ selbergClass := by
-  have hmul := isLSeriesContinuation_mul ha₁ ha₂ hF₁ hF₂ hF
-  obtain ⟨h1₁, ⟨F₁', hF₁', ⟨m₁, G₁, β₁, hG₁d, hG₁o, hG₁F⟩, -⟩, ⟨b₁, θ₁, hθ₁, hlog₁, C₁, hb₁⟩,
+/-- **Products in the Selberg class.** The Selberg class is closed under products: if `a₁, a₂`
+are in the Selberg class, so is `a₁ * a₂`, whose `L`-function is the product of their
+`L`-functions. -/
+theorem mul_mem {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergClass)
+    (ha₂ : a₂ ∈ selbergClass) : a₁ * a₂ ∈ selbergClass := by
+  obtain ⟨h1₁, ⟨F₁, hF₁, ⟨m₁, G₁, β₁, hG₁d, hG₁o, hG₁F⟩, ⟨D₁⟩⟩, ⟨b₁, θ₁, hθ₁, hlog₁, C₁, hb₁⟩,
     hram₁⟩ := ha₁
-  obtain ⟨h1₂, ⟨F₂', hF₂', ⟨m₂, G₂, β₂, hG₂d, hG₂o, hG₂F⟩, -⟩, ⟨b₂, θ₂, hθ₂, hlog₂, C₂, hb₂⟩,
+  obtain ⟨h1₂, ⟨F₂, hF₂, ⟨m₂, G₂, β₂, hG₂d, hG₂o, hG₂F⟩, ⟨D₂⟩⟩, ⟨b₂, θ₂, hθ₂, hlog₂, C₂, hb₂⟩,
     hram₂⟩ := ha₂
+  have hF : IsLSeriesContinuation (a₁ * a₂) (fun s => F₁ s * F₂ s) := by
+    refine ⟨fun s hs => ?_, hF₁.2.mul hF₂.2⟩
+    change F₁ s * F₂ s = _
+    rw [hF₁.1 s hs, hF₂.1 s hs, ArithmeticFunction.LSeries_mul'
+      (LSeriesSummable.of_forall_norm_le_mul_rpow hram₁ hs)
+          (LSeriesSummable.of_forall_norm_le_mul_rpow hram₂ hs)]
   refine ⟨by rw [ArithmeticFunction.mul_apply_one, h1₁, h1₂, one_mul],
-    ⟨F, hF, ⟨m₁ + m₂, fun z => G₁ z * G₂ z, max β₁ β₂, hG₁d.mul hG₂d, (hG₁o.mono (le_max_left _
+    ⟨_, hF, ⟨m₁ + m₂, fun z => G₁ z * G₂ z, max β₁ β₂, hG₁d.mul hG₂d, (hG₁o.mono (le_max_left _
         _)).mul (hG₂o.mono (le_max_right _ _)), ?_⟩,
-      ⟨D⟩⟩, ⟨b₁ + b₂, max θ₁ θ₂, max_lt hθ₁ hθ₂, ⟨?_, ?_⟩, |C₁| + |C₂|, ?_⟩,
+      ⟨D₁.mul D₂⟩⟩, ⟨b₁ + b₂, max θ₁ θ₂, max_lt hθ₁ hθ₂, ⟨?_, ?_⟩, |C₁| + |C₂|, ?_⟩,
     forall_norm_mul_le_rpow hram₁ hram₂⟩
   · intro s hs
     change G₁ s * G₂ s = _
-    rw [hG₁F s hs, hG₂F s hs, hmul s hs, IsLSeriesContinuation.eqOn_compl_one hF₁ hF₁' s hs,
-      IsLSeriesContinuation.eqOn_compl_one hF₂ hF₂' s hs]
+    rw [hG₁F s hs, hG₂F s hs]
     ring
   · intro n hn
     have : b₁ n ≠ 0 ∨ b₂ n ≠ 0 := by
@@ -126,8 +128,8 @@ theorem mul_mem_of_functionalEquation {a₁ a₂ : ArithmeticFunction ℂ} (ha�
     obtain ⟨hs₂, he₂⟩ := hlog₂.2 s hs
     refine ⟨hs₁.add hs₂, ?_⟩
     rw [LSeries_add hs₁ hs₂, Complex.exp_add, ← he₁, ← he₂, ArithmeticFunction.LSeries_mul'
-      (LSeriesSummable_of_forall_norm_le_mul_rpow hram₁ hs)
-          (LSeriesSummable_of_forall_norm_le_mul_rpow hram₂ hs)]
+      (LSeriesSummable.of_forall_norm_le_mul_rpow hram₁ hs)
+          (LSeriesSummable.of_forall_norm_le_mul_rpow hram₂ hs)]
   · intro n
     rcases eq_or_ne n 0 with rfl | hn
     · have z1 : b₁ 0 = 0 := by
@@ -294,7 +296,7 @@ theorem FunctionalEquation.degree_eq_add_of_mul (a₁ a₂ : ArithmeticFunction 
     (hF₂ : IsLSeriesContinuation a₂ F₂) (hF : IsLSeriesContinuation (a₁ * a₂) F)
     (D₁ : FunctionalEquation F₁) (D₂ : FunctionalEquation F₂) (D : FunctionalEquation F) :
     D.degree = D₁.degree + D₂.degree := by
-  have ha := mul_mem_of_functionalEquation ha₁ ha₂ hF₁ hF₂ hF D
+  have ha := mul_mem ha₁ ha₂
   have l := isLittleO_of_isEquivalent (isEquivalent_zeroCount _ ha F hF D)
   have l₁ := isLittleO_of_isEquivalent (isEquivalent_zeroCount _ ha₁ F₁ hF₁ D₁)
   have l₂ := isLittleO_of_isEquivalent (isEquivalent_zeroCount _ ha₂ F₂ hF₂ D₂)

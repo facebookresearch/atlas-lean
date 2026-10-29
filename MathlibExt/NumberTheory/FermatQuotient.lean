@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 public import Mathlib.FieldTheory.Finite.Basic
 public import MathlibExt.NumberTheory.WieferichPrime
+import MathlibExt.Algebra.BigOperators.AffineEmod
 import MathlibExt.NumberTheory.WilsonPrimePow
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Data.Nat.Choose.Dvd
@@ -125,35 +126,6 @@ private theorem mul_mod_mem_Icc_one_sub_one {p : ℕ} [Fact p.Prime] {a j : ℕ}
   · have := Nat.mod_lt (a * j) hp.pos
     omega
 
-/-- For `p` prime and `a` a unit mod `p`, `j ↦ a j mod p` permutes `Icc 1 (p - 1)`. -/
-private theorem sum_Icc_mul_mod_eq {M : Type*} [AddCommMonoid M] {p : ℕ} [Fact p.Prime]
-    {a : ℕ} (ha : (a : ZMod p) ≠ 0) (f : ℕ → M) :
-    ∑ j ∈ Finset.Icc 1 (p - 1), f (a * j % p) = ∑ j ∈ Finset.Icc 1 (p - 1), f j := by
-  have hp : p.Prime := Fact.out
-  set b : ℕ := ((a : ZMod p)⁻¹).val with hb
-  have hbZ : ((b : ℕ) : ZMod p) = (a : ZMod p)⁻¹ := ZMod.natCast_zmod_val _
-  have key : ∀ m n : ℕ, m < p → n < p → (m : ZMod p) = n → m = n := by
-    intro m n hm hn h
-    rw [ZMod.natCast_eq_natCast_iff'] at h
-    rwa [Nat.mod_eq_of_lt hm, Nat.mod_eq_of_lt hn] at h
-  apply Finset.sum_nbij' (fun j => a * j % p) (fun j => b * j % p)
-  · intro j hj
-    exact mul_mod_mem_Icc_one_sub_one ha hj
-  · intro j hj
-    exact mul_mod_mem_Icc_one_sub_one (by rw [hbZ]; exact inv_ne_zero ha) hj
-  · intro j hj
-    simp only [Finset.mem_Icc] at hj
-    apply key _ _ (Nat.mod_lt _ hp.pos) (by omega)
-    simp only [ZMod.natCast_mod, Nat.cast_mul, hbZ]
-    rw [← mul_assoc, inv_mul_cancel₀ ha, one_mul]
-  · intro j hj
-    simp only [Finset.mem_Icc] at hj
-    apply key _ _ (Nat.mod_lt _ hp.pos) (by omega)
-    simp only [ZMod.natCast_mod, Nat.cast_mul, hbZ]
-    rw [← mul_assoc, mul_inv_cancel₀ ha, one_mul]
-  · intro j _
-    rfl
-
 /-- **Lerch's formula**: for a prime `p` and a natural number `a` prime to `p`,
 `a q_p(a) = (a ^ p - a) / p ≡ ∑_{j=1}^{p-1} j⁻¹ ⌊a j / p⌋ (mod p)`. -/
 theorem natCast_mul_fermatQuotient_eq_sum (p : ℕ) [hp : Fact p.Prime] {a : ℕ}
@@ -219,7 +191,9 @@ theorem natCast_mul_fermatQuotient_eq_sum (p : ℕ) [hp : Fact p.Prime] {a : ℕ
     unfold fermatQuotient at this
     push_cast at this ⊢
     rw [this, hāZ]
-  have h3 := sum_Icc_mul_mod_eq haZ F
+  have h3 : ∑ j ∈ Finset.Icc 1 (p - 1), F (a * j % p) = ∑ j ∈ Finset.Icc 1 (p - 1), F j := by
+    have := Finset.sum_Icc_mul_emod ha fun x : ℤ => F x.toNat
+    simpa only [← Nat.cast_mul, ← Int.natCast_mod, Int.toNat_natCast] using this
   have hsum1 : ∑ j ∈ Finset.Icc 1 (p - 1), F (a * j) =
       -F a + ∑ j ∈ Finset.Icc 1 (p - 1), F j := by
     rw [Finset.sum_congr rfl h1, Finset.sum_add_distrib, Finset.sum_const, Nat.card_Icc,
@@ -327,11 +301,16 @@ theorem fermatQuotient_two_eq_sum (p : ℕ) [hp : Fact p.Prime] (h2 : IsCoprime 
     ring
   rw [hR, ← hZ, ← mul_assoc, inv_mul_cancel₀ h2ne, one_mul]
 
-/-- For an odd prime `p`, `2 ^ (p - 1) ≡ 1 (mod p ^ 2)` if and only if `p` divides the numerator
-(in lowest terms) of the alternating harmonic sum `1 - 1/2 + 1/3 - ⋯ - 1/(p - 1)`. -/
-theorem two_pow_modEq_one_sq_iff_dvd_num_alternating (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
+/-- For a prime `p`, `2 ^ (p - 1) ≡ 1 (mod p ^ 2)` if and only if `p` divides the numerator
+(in lowest terms) of the alternating harmonic sum `1 - 1/2 + 1/3 - ⋯ - 1/(p - 1)`. At `p = 2`
+both sides are false. -/
+theorem two_pow_modEq_one_sq_iff_dvd_num_alternating (p : ℕ) (hp : p.Prime) :
     (2 : ℤ) ^ (p - 1) ≡ 1 [ZMOD (p : ℤ) ^ 2] ↔
       (p : ℤ) ∣ (∑ j ∈ Finset.Icc 1 (p - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
+  rcases eq_or_ne p 2 with rfl | hp2
+  · refine iff_of_false (by decide) ?_
+    rw [show Finset.Icc 1 (2 - 1) = {1} from rfl, Finset.sum_singleton]
+    norm_num
   have : Fact p.Prime := ⟨hp⟩
   have h2cop : IsCoprime (2 : ℤ) (p : ℤ) := by
     rw [Int.isCoprime_iff_gcd_eq_one]
@@ -433,13 +412,13 @@ end Int
 
 namespace Nat
 
-/-- An odd prime `p` is a Wieferich prime (to base two) if and only if `p` divides the numerator
+/-- A prime `p` is a Wieferich prime (to base two) if and only if `p` divides the numerator
 (in lowest terms) of the alternating harmonic sum `1 - 1/2 + 1/3 - ⋯ - 1/(p - 1)`. -/
-theorem isWieferichPrime_iff_dvd_num_alternating {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
+theorem isWieferichPrime_iff_dvd_num_alternating {p : ℕ} (hp : p.Prime) :
     p.IsWieferichPrime ↔
       (p : ℤ) ∣ (∑ j ∈ Finset.Icc 1 (p - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
   rw [isWieferichPrime_iff_modEq, and_iff_right hp,
-    ← Int.two_pow_modEq_one_sq_iff_dvd_num_alternating p hp hp2, ← Int.natCast_modEq_iff]
+    ← Int.two_pow_modEq_one_sq_iff_dvd_num_alternating p hp, ← Int.natCast_modEq_iff]
   push_cast
   rfl
 

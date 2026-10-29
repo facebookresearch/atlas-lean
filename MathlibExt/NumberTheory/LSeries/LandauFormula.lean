@@ -13,6 +13,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
 public import Mathlib.Analysis.Analytic.Order
 import MathlibExt.Analysis.Complex.RectangleResidue
 import MathlibExt.Analysis.SpecialFunctions.Gamma.DigammaAsymptotics
+import MathlibExt.NumberTheory.LSeries.RiemannXiLogDeriv
 import MathlibExt.NumberTheory.LSeries.RiemannZetaLogDerivZeros
 import MathlibExt.NumberTheory.LSeries.VerticalLine
 import Mathlib.Analysis.Real.Pi.Bounds
@@ -818,8 +819,9 @@ private lemma exists_norm_vertical_sides_sub_le {n : ℕ} (hn : 2 ≤ n) :
 
 /-! ### Good heights and the horizontal sides -/
 
-/-- `‖ξ'/ξ(σ ± iT')‖ = O(log² T')` for `-1/2 ≤ σ ≤ 3/2` at a good height `T'` near `T`. -/
-private lemma exists_good_height_norm_logDeriv_riemannXi_le :
+/-- `‖ξ'/ξ(σ ± iT')‖ = O(log² T')` for `-1/2 ≤ σ ≤ 3/2` at a good height `T'` near `T`, in the
+form used below (from `RiemannXi.exists_good_height_norm_logDeriv_riemannXi_le`). -/
+private lemma exists_good_height_norm_deriv_div_riemannXi_le :
     ∃ A T₀ : ℝ, 2 ≤ T₀ ∧ ∀ T ≥ T₀, ∃ T' : ℝ, |T' - T| ≤ 1 ∧ 2 ≤ T' ∧
       (∀ ρ ∈ riemannZetaNontrivialZeros, |ρ.im| ≠ T') ∧
       ∀ σ : ℝ, -1 / 2 ≤ σ → σ ≤ 3 / 2 →
@@ -827,90 +829,23 @@ private lemma exists_good_height_norm_logDeriv_riemannXi_le :
           A * (1 + Real.log T' + Real.log T' ^ 2) ∧
         ‖deriv riemannXi (σ - T' * I) / riemannXi (σ - T' * I)‖ ≤
           A * (1 + Real.log T' + Real.log T' ^ 2) := by
-  obtain ⟨Cg, T₁, hgood⟩ := exists_good_height_norm_logDeriv_riemannZeta_le
-  obtain ⟨Cψ, hCψ⟩ := Complex.exists_norm_digamma_le_log_add
-  set B0 : ℝ := 1 / 2 + |Real.log Real.pi| / 2 + (Real.pi + |Cψ|) / 2 with hB0
-  refine ⟨|Cg| + 1 + B0, max T₁ 3, le_trans (by norm_num) (le_max_right _ _), fun T hT => ?_⟩
-  obtain ⟨T', hT'1, hT'z, hT'b⟩ := hgood T (le_trans (le_max_left _ _) hT)
-  have hT3 : 3 ≤ T := le_trans (le_max_right _ _) hT
-  have hT'2 : 2 ≤ T' := by rw [abs_le] at hT'1; linarith
+  obtain ⟨K, T₁, -, hg⟩ := exists_good_height_norm_logDeriv_riemannXi_le (ε := 1 / 2)
+    (by norm_num)
+  refine ⟨|K|, max T₁ 2, le_max_right _ _, fun T hT => ?_⟩
+  obtain ⟨T', hT'1, hT'2, hz', hb⟩ := hg T (le_trans (le_max_left _ _) hT)
   have hlog0 : 0 ≤ Real.log T' := Real.log_nonneg (by linarith)
-  have hz' : ∀ ρ ∈ riemannZetaNontrivialZeros, |ρ.im| ≠ T' := by
-    intro ρ hρ h
-    rcases abs_eq (by linarith : (0 : ℝ) ≤ T') |>.mp h with h1 | h1
-    · exact hT'z ρ hρ h1
-    · apply hT'z (1 - ρ) (one_sub_mem_riemannZetaNontrivialZeros hρ); simp [h1]
-  -- the top side
-  have htop : ∀ σ : ℝ, -1 / 2 ≤ σ → σ ≤ 3 / 2 →
-      ‖deriv riemannXi (σ + T' * I) / riemannXi (σ + T' * I)‖ ≤
-        (|Cg| + 1 + B0) * (1 + Real.log T' + Real.log T' ^ 2) := by
-    intro σ h1 h2
-    set s : ℂ := σ + T' * I with hs
-    have hsre : s.re = σ := by simp [s]
-    have hsim : s.im = T' := by simp [s]
-    have hs1 : s ≠ 1 := fun h => by
-      have := congrArg Complex.im h; rw [hsim] at this; simp at this; linarith
-    have hζ : riemannZeta s ≠ 0 := by
-      intro h0
-      rcases le_or_gt 0 s.re with hre | hre
-      · rcases le_or_gt 1 s.re with hre1 | hre1
-        · exact riemannZeta_ne_zero_of_one_le_re hre1 h0
-        · exact hT'z s ⟨h0, hre, hre1.le⟩ hsim
-      · obtain ⟨m, -, hm⟩ := exists_eq_neg_two_mul_of_riemannZeta_eq_zero_of_re_neg hre h0
-        have := congrArg Complex.im hm; rw [hsim] at this; simp at this; linarith
-    obtain ⟨-, hx⟩ := riemannXi_ne_zero_and_deriv_div_eq hs1 hζ
-    rw [hx]
-    have hb := hT'b σ (by linarith) (by linarith)
-    -- the digamma term
-    have hψ : ‖Complex.digamma (s / 2 + 1)‖ ≤ 2 * Real.log T' + Real.pi + |Cψ| := by
-      have hwre : (s / 2 + 1).re = σ / 2 + 1 := by simp [hsre]
-      have hwim : (s / 2 + 1).im = T' / 2 := by simp [hsim]
-      have hw1 : 1 ≤ ‖s / 2 + 1‖ := by
-        calc (1 : ℝ) ≤ |(s / 2 + 1).im| := by rw [hwim, abs_of_pos (by linarith)]; linarith
-          _ ≤ _ := Complex.abs_im_le_norm _
-      have hw2 : ‖s / 2 + 1‖ ≤ 2 * T' := by
-        calc ‖s / 2 + 1‖ ≤ |(s / 2 + 1).re| + |(s / 2 + 1).im| :=
-              Complex.norm_le_abs_re_add_abs_im _
-          _ = (σ / 2 + 1) + T' / 2 := by
-              rw [hwre, hwim, abs_of_pos (by linarith), abs_of_pos (by linarith)]
-          _ ≤ 2 * T' := by linarith
-      have hl : Real.log ‖s / 2 + 1‖ ≤ 2 * Real.log T' := by
-        calc Real.log ‖s / 2 + 1‖ ≤ Real.log (2 * T') := Real.log_le_log (by linarith) hw2
-          _ = Real.log 2 + Real.log T' := Real.log_mul (by norm_num) (by linarith)
-          _ ≤ 2 * Real.log T' := by
-              linarith [Real.log_le_log (by norm_num : (0 : ℝ) < 2) hT'2]
-      have := hCψ _ (by rw [hwre]; linarith) hw1
-      linarith [le_abs_self Cψ, Real.pi_pos]
-    have hinv : ‖1 / (s - 1)‖ ≤ 1 / 2 := by
-      have hn : 2 ≤ ‖s - 1‖ := by
-        calc (2 : ℝ) ≤ |(s - 1).im| := by
-              simp only [Complex.sub_im, Complex.one_im, sub_zero, hsim]
-              rw [abs_of_pos (by linarith)]; exact hT'2
-          _ ≤ ‖s - 1‖ := Complex.abs_im_le_norm _
-      rw [norm_div, norm_one]
-      exact one_div_le_one_div_of_le (by norm_num) hn
-    have hlπ : ‖(Real.log Real.pi : ℂ) / 2‖ = |Real.log Real.pi| / 2 := by
-      rw [norm_div, Complex.norm_real, Real.norm_eq_abs, Complex.norm_two]
-    have hdg : ‖Complex.digamma (s / 2 + 1) / 2‖ ≤ (2 * Real.log T' + Real.pi + |Cψ|) / 2 := by
-      rw [norm_div, Complex.norm_two]; gcongr
-    have hcg : Cg * Real.log T' ^ 2 ≤ |Cg| * Real.log T' ^ 2 :=
+  have hK : ∀ y : ℝ, y ≤ K * Real.log T' ^ 2 →
+      y ≤ |K| * (1 + Real.log T' + Real.log T' ^ 2) := by
+    intro y hy
+    have h1 : K * Real.log T' ^ 2 ≤ |K| * Real.log T' ^ 2 :=
       mul_le_mul_of_nonneg_right (le_abs_self _) (sq_nonneg _)
-    calc _ ≤ ‖deriv riemannZeta s / riemannZeta s‖ + (‖1 / (s - 1)‖ +
-          ‖(Real.log Real.pi : ℂ) / 2‖ + ‖Complex.digamma (s / 2 + 1) / 2‖) := by
-          refine (norm_add_le _ _).trans (add_le_add le_rfl ?_)
-          exact (norm_add_le _ _).trans (add_le_add (norm_sub_le _ _) le_rfl)
-      _ ≤ |Cg| * Real.log T' ^ 2 + (1 / 2 + |Real.log Real.pi| / 2 +
-          (2 * Real.log T' + Real.pi + |Cψ|) / 2) := by
-          rw [hlπ]; gcongr; exact hb.trans hcg
-      _ ≤ _ := by
-          have hB : 0 ≤ B0 := by positivity
-          have hC : 0 ≤ |Cg| := abs_nonneg _
-          have hsq : 0 ≤ Real.log T' ^ 2 := sq_nonneg _
-          nlinarith [mul_nonneg hB hlog0, mul_nonneg hB hsq, mul_nonneg hC hlog0]
-  refine ⟨T', hT'1, hT'2, hz', fun σ h1 h2 => ⟨htop σ h1 h2, ?_⟩⟩
-  have e : (σ : ℂ) - T' * I = 1 - (((1 - σ : ℝ) : ℂ) + T' * I) := by push_cast; ring
-  rw [e, riemannXi_one_sub, deriv_riemannXi_one_sub, neg_div, norm_neg]
-  exact htop (1 - σ) (by linarith) (by linarith)
+    have h2 : |K| * Real.log T' ^ 2 ≤ |K| * (1 + Real.log T' + Real.log T' ^ 2) :=
+      mul_le_mul_of_nonneg_left (by linarith) (abs_nonneg _)
+    linarith
+  refine ⟨T', hT'1, hT'2, hz', fun σ h1 h2 => ?_⟩
+  obtain ⟨hp, hm⟩ := hb σ (by linarith) (by linarith)
+  rw [logDeriv_apply] at hp hm
+  exact ⟨hK _ hp, hK _ hm⟩
 
 /-- Moving the height from `T` to `T'` with `|T' - T| ≤ 1` changes the zero sum by `O(log T)`. -/
 private lemma exists_norm_tsum_le_sub_tsum_lt_le {ι : Type u} (z : ι → ℂ)
@@ -1151,7 +1086,7 @@ theorem tendsto_one_div_mul_tsum_natCast_cpow_zeros {ι : Type u} (z : ι → �
   have hn1 : 1 ≤ n := by omega
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
   obtain ⟨Cv, hCv⟩ := exists_norm_vertical_sides_sub_le hn2
-  obtain ⟨A, T₀, -, hgood⟩ := exists_good_height_norm_logDeriv_riemannXi_le
+  obtain ⟨A, T₀, -, hgood⟩ := exists_good_height_norm_deriv_div_riemannXi_le
   obtain ⟨Ct, hCt⟩ := exists_norm_tsum_le_sub_tsum_lt_le z hz n hn2
   have hΛ0 : 0 ≤ Λ n := vonMangoldt_nonneg
   have hmain : ∀ T : ℝ, max T₀ 3 ≤ T →

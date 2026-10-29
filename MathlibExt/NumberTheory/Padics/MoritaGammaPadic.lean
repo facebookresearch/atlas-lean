@@ -39,7 +39,8 @@ come from its analogue modulo `2 ^ s`, `s ≥ 3`.
   `Γ_p(n) ≡ Γ_p(m) (mod p ^ s)`, for `p` odd or `s ≥ 3`.
 * `MetaMathlibExt.isMoritaPadicGamma_moritaGamma` and
   `MetaMathlibExt.IsMoritaPadicGamma.eq_moritaGamma`: `moritaGamma p` is the unique continuous,
-  unit-valued extension of the finite values, for every prime `p` (including `p = 2`).
+  unit-valued extension of the finite values, for every prime `p` (including `p = 2`);
+  `MetaMathlibExt.existsUnique_isMoritaPadicGamma` packages this as `∃!`.
 * `MetaMathlibExt.moritaGamma_add_one`: the functional equation
   `Γ_p(x + 1) = h_p(x) Γ_p(x)`, where `h_p(x) = -x` if `x` is a unit and `-1` otherwise.
 * `MetaMathlibExt.moritaGamma_neg_natCast_mul_moritaGamma_natCast_add_one`:
@@ -197,6 +198,11 @@ theorem moritaGamma_natCast (n : ℕ) : moritaGamma p n = moritaGammaNat p n :=
   (existsUnique_continuous_moritaGammaNat p).exists.choose_spec n
 
 @[simp]
+theorem moritaGamma_ofNat (n : ℕ) [n.AtLeastTwo] :
+    moritaGamma p ofNat(n) = moritaGammaNat p ofNat(n) :=
+  moritaGamma_natCast n
+
+@[simp]
 theorem moritaGamma_zero : moritaGamma p 0 = 1 := by
   simpa using moritaGamma_natCast (p := p) 0
 
@@ -241,10 +247,22 @@ theorem IsMoritaPadicGamma.eq_moritaGamma {Γ : C(ℤ_[p], ℤ_[p])}
   · exact hΓ.natCast_eq hn
 
 /-- For every prime `p` (including `p = 2`), Morita's finite gamma values have a unique
-continuous, unit-valued extension to `ℤ_[p]`. -/
+continuous, unit-valued extension to `ℤ_[p]`.
+
+Source: Y. Morita, "A p-adic analogue of the Γ-function", J. Fac. Sci. Univ. Tokyo Sect. IA
+Math. 22 (1975), 255–266. The definition and extension theorem are reproduced in
+arXiv:2307.08940, arXiv:2307.10000, arXiv:2307.11982, arXiv:2310.15207, and arXiv:2311.03259.
+
+Proves `Wanted` entry `existsUnique_moritaPadicGamma` (stated there for odd primes). -/
 theorem existsUnique_isMoritaPadicGamma (p : ℕ) [Fact p.Prime] :
     ∃! Γ : C(ℤ_[p], ℤ_[p]), IsMoritaPadicGamma p Γ :=
   ⟨moritaGamma p, isMoritaPadicGamma_moritaGamma p, fun _ hΓ => hΓ.eq_moritaGamma⟩
+
+/-- The odd-prime case of `existsUnique_isMoritaPadicGamma`. -/
+@[deprecated existsUnique_isMoritaPadicGamma +typeChanged (since := "2026-10-29")]
+theorem existsUnique_moritaPadicGamma (p : ℕ) [Fact p.Prime] (_hp : p ≠ 2) :
+    ∃! Γ : C(ℤ_[p], ℤ_[p]), IsMoritaPadicGamma p Γ :=
+  existsUnique_isMoritaPadicGamma p
 
 /-- The recursion for the finite values: `Γ_p(n + 1) = -n Γ_p(n)` if `p ∤ n`, and
 `Γ_p(n + 1) = -Γ_p(n)` if `p ∣ n`. -/

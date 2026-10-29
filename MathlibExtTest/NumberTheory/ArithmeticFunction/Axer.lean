@@ -53,7 +53,7 @@ example : (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) * (fun _ : �
 -- The bounded-variation closure lemma, for `g = id`.
 example (T : ℝ) :
     BoundedVariationOn (fun y : ℝ => ∑ n ∈ Icc 1 ⌊y⌋₊, (y / n)) (Set.Icc 1 T) :=
-  boundedVariationOn_sum_comp_div_floor
+  Real.boundedVariationOn_sum_comp_div_floor
     (fun T => MonotoneOn.boundedVariationOn (f := fun y : ℝ => y) (C := |T|)
       (fun _ _ _ _ h => h) (fun x hx => by
         rw [abs_of_nonneg (by linarith [hx.1])]

@@ -23,6 +23,26 @@ open MetaMathlibExt
 
 private instance : Fact (Nat.Prime 5) := ⟨by decide⟩
 
+/-! ### The multiplication formula for Bernoulli polynomials -/
+
+example (m n : ℕ) (x : ℚ) :
+    (m : ℚ) ^ n * ∑ b ∈ Finset.range m, (Polynomial.bernoulli n).eval (x + b / m) =
+      m * (Polynomial.bernoulli n).eval (m * x) :=
+  Polynomial.pow_mul_sum_bernoulli_eval_add_div m n x
+
+/-- `m = 2`, `n = 1`: `2 (B_1(x) + B_1(x + 1/2)) = 2 B_1(2 x)`, checked by hand. -/
+example (x : ℚ) : (Polynomial.bernoulli 1).eval x + (Polynomial.bernoulli 1).eval (x + 1 / 2) =
+    (Polynomial.bernoulli 1).eval (2 * x) := by
+  simp only [Polynomial.bernoulli_one, Polynomial.eval_sub, Polynomial.eval_X,
+    Polynomial.eval_C]
+  ring
+
+/-- The formula holds at `m = 0` with no hypothesis (both sides vanish). -/
+example (n : ℕ) (x : ℚ) :
+    ((0 : ℕ) : ℚ) ^ n * ∑ b ∈ Finset.range 0, (Polynomial.bernoulli n).eval (x + b / (0 : ℕ)) =
+      ((0 : ℕ) : ℚ) * (Polynomial.bernoulli n).eval (((0 : ℕ) : ℚ) * x) :=
+  Polynomial.pow_mul_sum_bernoulli_eval_add_div 0 n x
+
 /-! ### `bernoulliDist`: values and the `B_1` convention -/
 
 /-- At level `0` the whole of `ℤ_[p]` has mass the Bernoulli number `B_k`. -/

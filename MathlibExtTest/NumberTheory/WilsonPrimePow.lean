@@ -36,7 +36,7 @@ example : ¬ ((0 : ℤ) ^ 2 ≡ 1 [ZMOD 2 ^ 1]) ∧ (0 : ℤ) ≡ 2 ^ (1 - 1) + 
 /-! ### Products of units -/
 
 example : ∏ g : (ZMod 5)ˣ, g = ∏ g ∈ Finset.univ.filter (fun g : (ZMod 5)ˣ => g ^ 2 = 1), g :=
-  prod_univ_eq_prod_filter_sq_eq_one _
+  Finset.prod_univ_eq_prod_filter_sq_eq_one _
 
 example : orderOf (-1 : (ZMod (3 ^ (1 + 1)))ˣ) = 2 :=
   ZMod.orderOf_neg_one_units_prime_pow 3 1 (by decide)

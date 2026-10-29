@@ -39,10 +39,10 @@ Sums over `n ≤ x` for real `x` are written `∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
 ## Main statements
 
 * `Real.sum_Icc_rpow_neg_le`: `∑_{n ≤ K} n ^ (-β) ≤ K ^ (1 - β) / (1 - β)` for `0 ≤ β < 1`.
-* `boundedVariationOn_sum_comp_div_floor`: if `g` has bounded variation on every `[1, T]`, so
-  does `y ↦ ∑_{n ≤ y} g(y / n)`.
-* `isBigO_sum_comp_div_sub_id_sub_const`: normalising `∑_{n ≤ x} f(x / n) = x log x + C x + O(g)`
-  to `∑_{n ≤ x} (f(x / n) - x / n - (C - γ)) = O(g)`.
+* `Real.boundedVariationOn_sum_comp_div_floor`: if `g` has bounded variation on every
+  `[1, T]`, so does `y ↦ ∑_{n ≤ y} g(y / n)`.
+* `Real.isBigO_sum_comp_div_sub_id_sub_const`: normalising
+  `∑_{n ≤ x} f(x / n) = x log x + C x + O(g)` to `∑_{n ≤ x} (f(x / n) - x / n - (C - γ)) = O(g)`.
 * `ArithmeticFunction.isLittleO_sum_moebius_mul_comp_div`: Axer's theorem.
 * `ArithmeticFunction.isLittleO_sub_id_of_isBigO_sum_comp_div_sub`: the Tauberian application.
 -/
@@ -80,8 +80,6 @@ theorem sum_Icc_rpow_neg_le {β : ℝ} (hβ₀ : 0 ≤ β) (hβ₁ : β < 1) {K 
   rw [hval, sub_div] at hint
   rw [hre]
   linarith
-
-end Real
 
 /-- A finite Abel bound: if the partial sums `A m = ∑_{n ≤ m} a n` satisfy `|A m| ≤ D` for
 `K ≤ m ≤ N`, and the weights `w` are nonnegative and nonincreasing on `(K, N]`, then
@@ -206,6 +204,8 @@ theorem isBigO_sum_comp_div_sub_id_sub_const {f g : ℝ → ℝ} {C : ℝ}
     exact sum_congr rfl fun n _ => by ring
   simp only [sum_sub_distrib, sum_const, Nat.card_Icc, Nat.add_sub_cancel, nsmul_eq_mul, hsum]
   ring
+
+end Real
 
 namespace ArithmeticFunction
 
@@ -337,7 +337,7 @@ theorem isLittleO_sum_moebius_mul_comp_div {G : ℝ → ℝ} {β : ℝ} (hβ₀ 
       |∑ n ∈ Ioc K N, (μ n : ℝ) * (r (x / (n : ℝ)) - r 1)|
         ≤ 2 * (η * x) * (r (1 / ε) - r 1) := by
     intro r hr
-    have hmain := abs_sum_Ioc_mul_le_of_antitoneOn (a := fun n : ℕ => (μ n : ℝ))
+    have hmain := Real.abs_sum_Ioc_mul_le_of_antitoneOn (a := fun n : ℕ => (μ n : ℝ))
       (w := fun n : ℕ => r (x / (n : ℝ)) - r 1) (D := η * x) hKN ?_ ?_ ?_
     · refine hmain.trans (mul_le_mul_of_nonneg_left ?_ (by positivity))
       exact sub_le_sub_right
@@ -466,10 +466,10 @@ theorem isLittleO_sub_id_of_isBigO_sum_comp_div_sub {f : ℝ → ℝ} {C β : �
     exact Real.one_le_rpow hx hβ₀
   have hGO : (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, (f (x / n) - x / n - (C - γ)))
       =O[atTop] fun x : ℝ => x ^ β :=
-    isBigO_sum_comp_div_sub_id_sub_const hone hF
+    Real.isBigO_sum_comp_div_sub_id_sub_const hone hF
   have hGbv : ∀ T : ℝ, BoundedVariationOn
       (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, (f (x / n) - x / n - (C - γ))) (Set.Icc 1 T) :=
-    boundedVariationOn_sum_comp_div_floor (g := fun y : ℝ => f y - y - (C - γ)) hbv0
+    Real.boundedVariationOn_sum_comp_div_floor (g := fun y : ℝ => f y - y - (C - γ)) hbv0
   have hAxer := isLittleO_sum_moebius_mul_comp_div hβ₀ hβ₁ hGO hGbv hM
   -- Möbius inversion recovers `f₀` from its dilation sum.
   have hinv := (sum_floor_div_eq_iff_sum_moebius_smul_floor_div_eq

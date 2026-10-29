@@ -23,7 +23,8 @@ constant functions and single jumps have bounded variation.
 * `BoundedVariationOn.add`, `BoundedVariationOn.neg`, `BoundedVariationOn.sub`
 * `BoundedVariationOn.finsetSum`
 * `boundedVariationOn_const`
-* `boundedVariationOn_ite_le`: a function with a single jump has bounded variation.
+* `eVariationOn_ite_le_enorm_sub`, `boundedVariationOn_ite_le`: a function with a single jump
+  has variation at most the size of the jump, hence bounded variation.
 -/
 
 @[expose] public section
@@ -90,32 +91,37 @@ theorem finsetSum {t : Finset ι} {F : ι → α → E}
 end BoundedVariationOn
 
 /-- A function taking one value to the right of a point `a` (inclusive) and another value to
-its left has bounded variation on every set: its variation is at most the jump `‖c₁ - c₂‖`. -/
+its left has variation at most the jump `‖c₁ - c₂‖` on every set. -/
+theorem eVariationOn_ite_le_enorm_sub (a : α) (c₁ c₂ : E) (s : Set α) :
+    eVariationOn (fun y : α => if a ≤ y then c₁ else c₂) s ≤ ‖c₁ - c₂‖ₑ := by
+  refine iSup_le fun ⟨n, u, hu, us⟩ => ?_
+  set w : ℕ → ℝ≥0∞ := fun i => if a ≤ u i then ‖c₁ - c₂‖ₑ else 0 with hw
+  have hterm : ∀ i : ℕ, w i +
+      edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂) = w (i + 1) := by
+    intro i
+    by_cases hi : a ≤ u i
+    · have hi' : a ≤ u (i + 1) := hi.trans (hu (Nat.le_succ i))
+      simp [hw, hi, hi']
+    · by_cases hi' : a ≤ u (i + 1)
+      · simp [hw, hi, hi', edist_eq_enorm_sub]
+      · simp [hw, hi, hi']
+  have htel : ∀ m : ℕ, (∑ i ∈ Finset.range m,
+      edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂)) + w 0 = w m := by
+    intro m
+    induction m with
+    | zero => simp
+    | succ m ih => rw [Finset.sum_range_succ, add_right_comm, ih]; exact hterm m
+  calc (∑ i ∈ Finset.range n,
+          edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂))
+      ≤ (∑ i ∈ Finset.range n,
+          edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂)) + w 0 :=
+        le_self_add
+    _ = w n := htel n
+    _ ≤ ‖c₁ - c₂‖ₑ := by simp only [hw]; split <;> simp
+
+/-- A function taking one value to the right of a point `a` (inclusive) and another value to
+its left has bounded variation on every set (see `eVariationOn_ite_le_enorm_sub` for the
+bound). -/
 theorem boundedVariationOn_ite_le (a : α) (c₁ c₂ : E) (s : Set α) :
-    BoundedVariationOn (fun y : α => if a ≤ y then c₁ else c₂) s := by
-  have key : eVariationOn (fun y : α => if a ≤ y then c₁ else c₂) s ≤ ‖c₁ - c₂‖ₑ := by
-    refine iSup_le fun ⟨n, u, hu, us⟩ => ?_
-    set w : ℕ → ℝ≥0∞ := fun i => if a ≤ u i then ‖c₁ - c₂‖ₑ else 0 with hw
-    have hterm : ∀ i : ℕ, w i +
-        edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂) = w (i + 1) := by
-      intro i
-      by_cases hi : a ≤ u i
-      · have hi' : a ≤ u (i + 1) := hi.trans (hu (Nat.le_succ i))
-        simp [hw, hi, hi']
-      · by_cases hi' : a ≤ u (i + 1)
-        · simp [hw, hi, hi', edist_eq_enorm_sub]
-        · simp [hw, hi, hi']
-    have htel : ∀ m : ℕ, (∑ i ∈ Finset.range m,
-        edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂)) + w 0 = w m := by
-      intro m
-      induction m with
-      | zero => simp
-      | succ m ih => rw [Finset.sum_range_succ, add_right_comm, ih]; exact hterm m
-    calc (∑ i ∈ Finset.range n,
-            edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂))
-        ≤ (∑ i ∈ Finset.range n,
-            edist (if a ≤ u (i + 1) then c₁ else c₂) (if a ≤ u i then c₁ else c₂)) + w 0 :=
-          le_self_add
-      _ = w n := htel n
-      _ ≤ ‖c₁ - c₂‖ₑ := by simp only [hw]; split <;> simp
-  exact (key.trans_lt enorm_lt_top).ne
+    BoundedVariationOn (fun y : α => if a ≤ y then c₁ else c₂) s :=
+  ((eVariationOn_ite_le_enorm_sub a c₁ c₂ s).trans_lt enorm_lt_top).ne

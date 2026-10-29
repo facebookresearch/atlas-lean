@@ -128,7 +128,7 @@ theorem not_isBigO_exp_mul_norm_of_factorial_le {F : Type*} [SeminormedAddGroup 
 /-- An entire function of order at most `1` that is not `O(exp ‖s‖)` has order exactly `1`. -/
 theorem hasGrowthOrder_one_of_not_isBigO_exp_norm (h1 : HasGrowthOrderLE f 1)
     (h : ¬ f =O[cobounded ℂ] fun s => Real.exp ‖s‖) : HasGrowthOrder f 1 :=
-  ⟨h1, fun _ hρ hρ' => h (hρ'.isBigO_exp_norm_of_lt_one hρ)⟩
+  ⟨zero_le_one, h1, fun _ hρ hρ' => h (hρ'.isBigO_exp_norm_of_lt_one hρ.2)⟩
 
 end Growth
 
@@ -314,8 +314,8 @@ theorem summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one (hd : Differentiable 
   convert this using 3
   norm_num
 
-/-- An entire function of order at most `1` with finitely many zeros (counted with multiplicity)
-is of exponential type. -/
+/-- A finite genus-one Hadamard product `exp (A + B s) ∏ (1 - s / zₙ) exp (s / zₙ)` is of
+exponential type. -/
 theorem exists_norm_le_exp_of_eq_exp_mul_tprod [Finite ι]
     (hAB : ∀ s, f s = exp (A + B * s) * ∏' n, (1 - s / z n) * exp (s / z n)) :
     ∃ b : ℝ, ∀ s, ‖f s‖ ≤ Real.exp (‖A‖ + b * ‖s‖) := by

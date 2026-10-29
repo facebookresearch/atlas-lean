@@ -140,7 +140,7 @@ example : ¬ IsCoprime (2 : ℤ) ((2 : ℕ) : ℤ) := by
 
 -- `p = 3`: `1 - 1/2 = 1/2` has numerator `1`, and `2 ^ 2 ≢ 1 (mod 9)`.
 example : ¬ ((3 : ℕ) : ℤ) ∣ (∑ j ∈ Finset.Icc (1 : ℕ) (3 - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
-  rw [← Int.two_pow_modEq_one_sq_iff_dvd_num_alternating 3 (by decide) (by decide)]
+  rw [← Int.two_pow_modEq_one_sq_iff_dvd_num_alternating 3 (by decide)]
   decide
 
 example : (∑ j ∈ Finset.Icc (1 : ℕ) (3 - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))) = 1 / 2 := by
@@ -152,13 +152,18 @@ set_option exponentiation.threshold 2048 in
 example : (1093 : ℤ) ∣
     (∑ j ∈ Finset.Icc (1 : ℕ) (1093 - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
   have hp : Nat.Prime 1093 := by norm_num
-  have h := (Nat.isWieferichPrime_iff_dvd_num_alternating hp (by decide)).mp
+  have h := (Nat.isWieferichPrime_iff_dvd_num_alternating hp).mp
     ((Nat.isWieferichPrime_iff_mod 1093).mpr ⟨hp, by decide⟩)
   exact_mod_cast h
 
--- The hypothesis `p ≠ 2` is not needed for the criterion: at `p = 2` both sides are false.
+-- The criterion covers `p = 2`, where both sides are false.
 example : ¬ Nat.IsWieferichPrime 2 ∧
     ¬ (2 : ℤ) ∣ (∑ j ∈ Finset.Icc (1 : ℕ) (2 - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
-  refine ⟨by norm_num [Nat.IsWieferichPrime], ?_⟩
-  rw [show Finset.Icc (1 : ℕ) (2 - 1) = {1} by rfl, Finset.sum_singleton]
-  norm_num
+  have hW : ¬ Nat.IsWieferichPrime 2 := by norm_num [Nat.IsWieferichPrime]
+  exact ⟨hW, fun h2 =>
+    hW ((Nat.isWieferichPrime_iff_dvd_num_alternating Nat.prime_two).mpr (by exact_mod_cast h2))⟩
+
+example : ¬ (2 : ℤ) ^ (2 - 1) ≡ 1 [ZMOD ((2 : ℕ) : ℤ) ^ 2] ∧
+    ¬ ((2 : ℕ) : ℤ) ∣ (∑ j ∈ Finset.Icc (1 : ℕ) (2 - 1), ((-1 : ℚ) ^ (j + 1) / (j : ℚ))).num := by
+  rw [← Int.two_pow_modEq_one_sq_iff_dvd_num_alternating 2 Nat.prime_two, and_self]
+  decide

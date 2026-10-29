@@ -626,7 +626,7 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
               mul_le_mul_of_nonneg_left (min_le_right _ _) (by positivity)
           _ = x⁻¹ ^ (1 / 2 : ℝ) / |Real.log x⁻¹| / T := by ring
       · exact hasVerticalIntegral_cpow_div_pow_succ_of_le_one (k := k + 1) (by omega)
-          (by norm_num) (by positivity) (inv_le_one_of_one_le₀ hx.le)
+          (by norm_num) (by positivity) (inv_le_one_of_one_le₀ hx.le) |>.tendsto
     have harg : (x : ℂ).arg ≠ Real.pi := by
       rw [Complex.arg_ofReal_of_nonneg hx0.le]
       exact hpi.ne
@@ -681,7 +681,7 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
             ((ArithmeticFunction.sigma 0 n : ℕ) : ℝ) ^ 2 * Real.log (x / n) ^ 3) / 6 : ℝ) : ℂ))
         := by
       have h := hasVerticalIntegral_riemannZeta_pow_four_div_riemannZeta_two_mul hx0
-      unfold HasVerticalIntegral at h
+      replace h := h.tendsto
       have hv : (∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
           ((ArithmeticFunction.sigma 0 n : ℕ) : ℂ) ^ 2 * (Real.log (x / n) : ℂ) ^ 3) / 6
           = (((∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
@@ -708,18 +708,19 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
         ring
       rw [hv] at h
       rw [hKk]
-      exact h
+      exact h.tendsto
     have hQ4 : HasVerticalIntegral 4 Q (∑ j ∈ Finset.range 4,
         b j * ((x * Real.log x ^ (3 - j) / ((3 - j).factorial : ℝ) : ℝ) : ℂ)) := by
       rw [hQ]
       exact HasVerticalIntegral.finset_sum (Finset.range 4) (f := fun j s => b j * Kk (3 - j) s)
-        (fun j _ => HasVerticalIntegral.const_mul (hM4 j) (b j))
-        fun j _ R => ((hKline (3 - j) 4 (by norm_num)).const_mul (b j)).intervalIntegrable _ _
+        fun j _ => HasVerticalIntegral.const_mul
+          (hasVerticalIntegral_of_continuous (hKline (3 - j) 4 (by norm_num)) (hM4 j)) (b j)
     have hQh : HasVerticalIntegral (1 / 2) Q 0 := by
       have h := HasVerticalIntegral.finset_sum (Finset.range 4) (c := 1 / 2)
         (f := fun j s => b j * Kk (3 - j) s) (v := fun _ => 0)
-        (fun j _ => by simpa using HasVerticalIntegral.const_mul (hKhalf (3 - j)) (b j))
-        fun j _ R => ((hKline (3 - j) (1 / 2) (by norm_num)).const_mul (b j)).intervalIntegrable _ _
+        fun j _ => by
+          simpa using HasVerticalIntegral.const_mul (hasVerticalIntegral_of_continuous
+            (hKline (3 - j) (1 / 2) (by norm_num)) (hKhalf (3 - j))) (b j)
       rw [hQ]
       simpa using h
     -- ## The rectangle identity, rewritten side by side from `D` to `Fp - Q`
@@ -769,7 +770,7 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
       set r : ℂ := ((1 / (2 * Real.pi) : ℝ) : ℂ)
       linear_combination (norm := (ring_nf; simp only [Complex.I_sq]; ring)) (Complex.I * r) * G0
     -- ## Hence the left-line integral of `Fp` converges to `S / 6 - main term`
-    have hlim := (((hL4.sub hQ4).add hQh).sub
+    have hlim := (((hL4.sub hQ4.tendsto).add hQh.tendsto).sub
       ((tendsto_const_nhds (x := ((1 / (2 * Real.pi) : ℝ) : ℂ) * Complex.I)).mul
         (hHf.sub hHq))).congr' ((eventually_ge_atTop 1).mono fun T hT => (hclaim T hT).symm)
     simp only [add_zero, sub_zero, mul_zero] at hlim

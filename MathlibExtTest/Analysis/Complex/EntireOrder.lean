@@ -16,8 +16,8 @@ public import Mathlib.Analysis.SpecificLimits.RCLike
 # Tests for the order of growth of entire functions
 
 Non-vacuity of `Complex.HasGrowthOrderLE` and `Complex.HasGrowthOrder`: `exp` has order `1`,
-`z ↦ z` has order `0`, `exp ∘ exp` has no finite order, and a constant function has order at
-most every real number but no order at all.
+`z ↦ z` and every polynomial have order `0`, `exp ∘ exp` has no finite order, and a constant
+function has order at most every real number and order exactly `0`.
 -/
 
 @[expose] public section
@@ -55,11 +55,19 @@ private lemma tendsto_sub_rpow_atTop {s : ℝ} (hs : s < 1) :
 example : HasGrowthOrderLE (fun _ : ℂ => (3 : ℂ)) (-5) :=
   hasGrowthOrderLE_const _ _
 
-/-- **Boundary probe.** A constant function has no growth order at all: since it has order at
-most every negative exponent, `HasGrowthOrder (fun _ => c) ρ` fails for every `ρ`, including the
-classical value `ρ = 0`. -/
-example (c : ℂ) (ρ : ℝ) : ¬ HasGrowthOrder (fun _ : ℂ => c) ρ :=
-  fun h => h.2 (ρ - 1) (by linarith) (hasGrowthOrderLE_const c _)
+/-- **Boundary probe.** A constant function has order `0`, the classical value, even though it
+has order at most every negative exponent. -/
+example (c : ℂ) : HasGrowthOrder (fun _ : ℂ => c) 0 :=
+  hasGrowthOrder_const c
+
+/-- A constant function has no order other than `0`; in particular no negative order. -/
+example (c : ℂ) (ρ : ℝ) (h : HasGrowthOrder (fun _ : ℂ => c) ρ) : ρ = 0 :=
+  h.unique (hasGrowthOrder_const c)
+
+/-- Negative orders are excluded outright. -/
+example (f : ℂ → ℂ) : ¬ HasGrowthOrder f (-1) := fun h => by
+  have := h.nonneg
+  norm_num at this
 
 /-- A bounded function has order at most every exponent. -/
 example : HasGrowthOrderLE (fun z : ℂ => Complex.exp (Complex.I * z.re)) (-1) := by
@@ -77,7 +85,8 @@ private theorem exp_hasGrowthOrderLE_one : HasGrowthOrderLE Complex.exp 1 := by
   exact Real.exp_le_exp.mpr (Complex.re_le_norm z)
 
 /-- `exp` does not have order at most any `ρ < 1`. -/
-private theorem exp_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 1) : ¬ HasGrowthOrderLE Complex.exp ρ := by
+private theorem exp_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 1) :
+    ¬ HasGrowthOrderLE Complex.exp ρ := by
   intro h
   have hO := isBigO_real_of_growth (F := id) (h ((1 - ρ) / 2) (by linarith))
   simp only [id, Complex.ofReal_re] at hO
@@ -87,12 +96,14 @@ private theorem exp_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 1) : ¬ HasGrowt
     (hO.trans_isLittleO hlo)
 
 /-- **`exp` has order exactly `1`.** -/
-example : HasGrowthOrder Complex.exp 1 :=
-  ⟨exp_hasGrowthOrderLE_one, fun _ hρ => exp_not_hasGrowthOrderLE hρ⟩
+private theorem exp_hasGrowthOrder_one : HasGrowthOrder Complex.exp 1 :=
+  ⟨zero_le_one, exp_hasGrowthOrderLE_one, fun _ hρ => exp_not_hasGrowthOrderLE hρ.2⟩
+
+example : HasGrowthOrder Complex.exp 1 := exp_hasGrowthOrder_one
 
 /-- Uniqueness: `exp` has no other order. -/
 example : ¬ HasGrowthOrder Complex.exp 2 := fun h => by
-  have := h.unique ⟨exp_hasGrowthOrderLE_one, fun _ hρ => exp_not_hasGrowthOrderLE hρ⟩
+  have := h.unique exp_hasGrowthOrder_one
   norm_num at this
 
 /-- Products: `exp z * exp z = exp (2z)` has order at most `1`. -/
@@ -120,7 +131,8 @@ private theorem id_hasGrowthOrderLE_zero : HasGrowthOrderLE (fun z : ℂ => z) 0
     rfl
 
 /-- `z` does not have order at most any `ρ < 0`: it would be bounded. -/
-private theorem id_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 0) : ¬ HasGrowthOrderLE (fun z : ℂ => z) ρ := by
+private theorem id_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 0) :
+    ¬ HasGrowthOrderLE (fun z : ℂ => z) ρ := by
   intro h
   have h1 : (fun z : ℂ => z) =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + -ρ / 2)) :=
     h (-ρ / 2) (by linarith)
@@ -139,7 +151,32 @@ private theorem id_not_hasGrowthOrderLE {ρ : ℝ} (hρ : ρ < 0) : ¬ HasGrowth
 
 /-- **`z ↦ z` has order exactly `0`.** -/
 example : HasGrowthOrder (fun z : ℂ => z) 0 :=
-  ⟨id_hasGrowthOrderLE_zero, fun _ hρ => id_not_hasGrowthOrderLE hρ⟩
+  hasGrowthOrder_zero_iff.mpr id_hasGrowthOrderLE_zero
+
+/-- `z ↦ z` has order at most no negative exponent, so order `0` is sharp also among the
+exponents of `HasGrowthOrderLE`. -/
+example : ¬ HasGrowthOrderLE (fun z : ℂ => z) (-1) :=
+  id_not_hasGrowthOrderLE (by norm_num)
+
+/-! ### Polynomials have order `0` -/
+
+/-- Every polynomial has order at most `0`. -/
+private theorem polynomial_hasGrowthOrderLE_zero (p : Polynomial ℂ) :
+    HasGrowthOrderLE (fun z => p.eval z) 0 := by
+  induction p using Polynomial.induction_on with
+  | C a => simpa using hasGrowthOrderLE_const a 0
+  | add p q hp hq => simpa using hp.add hq
+  | monomial n a h =>
+    simpa [pow_succ, mul_assoc] using h.mul id_hasGrowthOrderLE_zero
+
+/-- **Every polynomial has order exactly `0`.** -/
+example (p : Polynomial ℂ) : HasGrowthOrder (fun z => p.eval z) 0 :=
+  hasGrowthOrder_zero_iff.mpr (polynomial_hasGrowthOrderLE_zero p)
+
+/-- A concrete polynomial: `z ^ 3 - 2 z + 1` has order `0`. -/
+example : HasGrowthOrder (fun z : ℂ => z ^ 3 - 2 * z + 1) 0 := by
+  have := polynomial_hasGrowthOrderLE_zero (.X ^ 3 - .C 2 * .X + 1)
+  exact hasGrowthOrder_zero_iff.mpr (by simpa using this)
 
 /-! ### `exp ∘ exp` has no finite order -/
 

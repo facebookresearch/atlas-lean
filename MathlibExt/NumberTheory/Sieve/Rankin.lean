@@ -19,7 +19,6 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.Complex.ExponentialBounds
 import MathlibExt.NumberTheory.PrimeCounting.Mertens
-import MathlibExt.NumberTheory.PrimeCounting.AverageOmegaHFree
 
 /-!
 # Rankin's trick
@@ -31,8 +30,6 @@ product. Taking `δ = 1 - 1 / log z` and using Mertens' theorems gives the savin
 
 ## Main statements
 
-* `Nat.sum_primesLE_inv_le_log_log_add`: Mertens' second theorem as a uniform upper bound,
-  `∑_{p ≤ z} 1/p ≤ log log z + C`.
 * `Real.rpow_inv_log_sub_one_le`: the elementary estimate
   `p^{1/log z - 1} ≤ 1/p + e log p / (p log z)` for `1 ≤ p ≤ z`.
 * `Nat.card_smoothNumbersUpTo_le_rpow_mul_prod`: the number of `k`-smooth `n ≤ N` is at most
@@ -48,28 +45,6 @@ product. Taking `δ = 1 - 1 / log z` and using Mertens' theorems gives the savin
 @[expose] public section
 
 open Finset
-
-namespace Nat
-
-/-- `primesLE N` is the set of primes in `[1, N]`. -/
-theorem primesLE_eq_filter_Icc (N : ℕ) : N.primesLE = (Icc 1 N).filter Nat.Prime := by
-  ext p
-  simp only [mem_primesLE, mem_filter, mem_Icc]
-  exact ⟨fun h => ⟨⟨h.2.one_lt.le, h.1⟩, h.2⟩, fun h => ⟨h.1.2, h.2⟩⟩
-
-/-- **Mertens' second theorem**, as a uniform upper bound: there is `C` with
-`∑_{p ≤ z} 1/p ≤ log log z + C` for every real `z ≥ 2`. -/
-theorem sum_primesLE_inv_le_log_log_add :
-    ∃ C : ℝ, ∀ z : ℝ, 2 ≤ z →
-      ∑ p ∈ primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C := by
-  obtain ⟨C, hC⟩ := MetaMathlibExt.abs_sum_prime_inv_sub_loglog_le
-  refine ⟨C, fun z hz => ?_⟩
-  have h := (abs_le.mp (hC z hz)).2
-  rw [primesLE_eq_filter_Icc]
-  simp only [one_div] at h
-  linarith
-
-end Nat
 
 namespace Real
 
@@ -148,7 +123,10 @@ theorem card_smoothNumbersUpTo_le_mul_log_mul_exp :
     ∃ C : ℝ, ∀ x : ℝ, 1 ≤ x → ∀ z : ℝ, 3 ≤ z →
       ((⌊x⌋₊.smoothNumbersUpTo (⌊z⌋₊ + 1)).card : ℝ) ≤
         C * x * Real.log z * Real.exp (-(Real.log x / Real.log z)) := by
-  obtain ⟨C₁, hMert⟩ := sum_primesLE_inv_le_log_log_add
+  obtain ⟨C₁, hMert⟩ : ∃ C : ℝ, ∀ z : ℝ, 2 ≤ z →
+      ∑ p ∈ primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C := by
+    obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
+    exact ⟨C, fun z hz => by linarith [(abs_le.mp (hC z hz)).2]⟩
   set B := Real.log 4 + 6 with hB
   have hB0 : 0 ≤ B := by positivity
   have hS2 : ∃ M : ℝ, ∀ N : ℕ, ∑ p ∈ Nat.primesLE N, ((p : ℝ) ^ 2)⁻¹ ≤ M := by
@@ -264,7 +242,7 @@ theorem card_smoothNumbersUpTo_le_mul_log_mul_exp :
   have hmert : ∑ p ∈ Nat.primesLE ⌊z⌋₊, (p : ℝ)⁻¹ ≤ Real.log (Real.log z) + C₁ :=
     hMert z (by linarith)
   have hlp : E * η * ∑ p ∈ Nat.primesLE ⌊z⌋₊, Real.log p / (p : ℝ) ≤ E + E * B := by
-    have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊ hz1
+    have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊
     have hfl : Real.log ⌊z⌋₊ ≤ Real.log z :=
       Real.log_le_log (by exact_mod_cast hz1) (Nat.floor_le (by linarith))
     have : η * ∑ p ∈ Nat.primesLE ⌊z⌋₊, Real.log p / (p : ℝ) ≤ 1 + B := by
