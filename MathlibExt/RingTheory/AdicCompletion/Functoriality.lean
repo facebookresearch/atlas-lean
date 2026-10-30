@@ -19,12 +19,19 @@ comap.lean`,
 comp_algebraMap_of_ringEquiv.lean` and
 `P2M/Sol/S_IsLocalRing_exists_ringEquiv_adicCompletion_maximalIdeal_
 comp_algebraMap_of_ringEquiv.lean`
-(fermats-last-theorem):
+in https://github.com/anthropics/fermats-last-theorem
+at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The upstream NOTICE also credits Mathlib as a whole:
+https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 module
@@ -33,8 +40,8 @@ public import Mathlib.RingTheory.AdicCompletion.Algebra
 public import Mathlib.RingTheory.AdicCompletion.RingHom
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.RingTheory.AdicCompletion.Basic
-public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.RingTheory.Ideal.Quotient.PowTransition
+import Mathlib.RingTheory.Ideal.Quotient.Operations
+import Mathlib.RingTheory.Ideal.Quotient.PowTransition
 
 /-!
 # Functoriality of adic completions
