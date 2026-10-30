@@ -13,13 +13,13 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FinCases
 
 /-!
-# ADMIXTURE EM tests
+# Admixture-model likelihood and FRAPPE EM tests
 
 Closed checks:
 - the allele-copy encoding on the three genotypes (`isRef`);
 - a two-population, one-individual, one-SNP instance with `Q = (1/4, 3/4)`, `F = (1/2, 1/3)`,
   where `marginal_eq` gives the reference probability `3/8` and the alternative `5/8`;
-- `K = 1`: the ADMIXTURE log-likelihood is the binomial log-likelihood of the pooled allele counts,
+- `K = 1`: the admixture log-likelihood is the binomial log-likelihood of the pooled allele counts,
   `∑ j, (n j * log (F j) + (2 I - n j) * log (1 - F j))` with `n j = ∑ i, g i j`;
 - the EM theorems instantiated on a polymorphic `3 × 2` genotype matrix with `K = 2`.
 

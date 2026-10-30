@@ -16,7 +16,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# The ADMIXTURE / STRUCTURE likelihood and its EM algorithm
+# The admixture-model likelihood and the FRAPPE EM algorithm
 
 The admixture model of population structure (Pritchard, Stephens and Donnelly 2000, the
 "admixture model" of STRUCTURE; Tang, Peng, Wang and Risch 2005, FRAPPE; Alexander, Novembre and
@@ -33,23 +33,28 @@ with latent variable `z : K`, the ancestral population of that copy, and joint w
 the generic EM of `CSLibExt/MachineLearning/LatentVariable/ExpectationMaximization.lean`; the
 `2 |I| |J|` copies are indexed through `Fintype.equivFin` (`data`).
 
+The closed-form EM step proved optimal here is FRAPPE's (Tang et al. 2005). ADMIXTURE
+(Alexander, Novembre and Lange 2009) maximizes the same likelihood with a different optimizer
+(block relaxation with quasi-Newton acceleration), so the names `admixtureLogLik` refer to the
+shared likelihood, not to ADMIXTURE's update rule.
+
 ## Main results
 
 * `marginal_eq`: the marginal probability of a copy is `qf θ i j = ∑ k, Q i k * F k j` (reference)
   or `1 - qf θ i j` (alternative).
-* `logLik_eq_admixtureLogLik`: the EM log-likelihood of the allele copies is the ADMIXTURE
+* `logLik_eq_admixtureLogLik`: the EM log-likelihood of the allele copies is the admixture
   log-likelihood `∑ i, ∑ j, (g i j * log (qf θ i j) + (2 - g i j) * log (1 - qf θ i j))`.
 * `admixtureLogLik_le_of_emQ_le`, `admixtureLogLik_iterate_monotone`: the EM theorem for this
   model.
 * `emStep` (`mStepQ`, `mStepF`; `mStep_Q_pos`, `mStep_F_pos`, `mStep_F_lt_one`): the closed-form
-  FRAPPE / ADMIXTURE EM update `Q' i k = (∑ j, ∑ c, r) / (2 J)`,
+  FRAPPE EM update `Q' i k = (∑ j, ∑ c, r) / (2 J)`,
   `F' k j = (∑ i, ∑ c reference, r) / (∑ i, ∑ c, r)` with responsibilities `r = posterior`; it
   is strictly inside the parameter set when `J` is nonempty and every SNP is polymorphic in the
   sample (`Polymorphic`).
 * `emQ_le_emStep`: **the update maximizes `Q(· | θ)`** over the parameter set (Gibbs'
   inequality, separately for the `Q`-part and for each `(k, j)` in the `F`-part).
-* `admixtureLogLik_le_emStep`, `admixtureLogLik_iterate_emStep_monotone`: the ADMIXTURE
-  log-likelihood never decreases along the EM iterates.
+* `admixtureLogLik_le_emStep`, `admixtureLogLik_iterate_emStep_monotone`: the admixture
+  log-likelihood never decreases along the FRAPPE EM iterates.
 
 ## References
 
@@ -164,12 +169,12 @@ theorem sum_data (g : I → J → Fin 3) (f : I × J × Bool → ℝ) :
     Fintype.sum_prod_type]
   exact Finset.sum_congr rfl fun i _ => Fintype.sum_prod_type _
 
-/-- The ADMIXTURE log-likelihood
+/-- The admixture log-likelihood
 `ℓ(Q, F) = ∑ i, ∑ j, (g i j * log (qf θ i j) + (2 - g i j) * log (1 - qf θ i j))`. -/
 noncomputable def admixtureLogLik (g : I → J → Fin 3) (θ : Params I J K) : ℝ :=
   ∑ i, ∑ j, (((g i j).val : ℝ) * log (qf θ i j) + (2 - ((g i j).val : ℝ)) * log (1 - qf θ i j))
 
-/-- **The EM log-likelihood of the allele copies is the ADMIXTURE log-likelihood.** -/
+/-- **The EM log-likelihood of the allele copies is the admixture log-likelihood.** -/
 theorem logLik_eq_admixtureLogLik (g : I → J → Fin 3) (θ : Params I J K) :
     logLik joint (data g) θ = admixtureLogLik g θ := by
   rw [logLik, sum_data g (fun x => log (marginal joint θ x)), admixtureLogLik]
@@ -180,15 +185,15 @@ theorem logLik_eq_admixtureLogLik (g : I → J → Fin 3) (θ : Params I J K) :
 
 /-! ## The EM theorem -/
 
-/-- **The EM theorem for ADMIXTURE**: a step that does not decrease `Q(· | θ)` does not decrease
-the ADMIXTURE log-likelihood. -/
+/-- **The EM theorem for the admixture model**: a step that does not decrease `Q(· | θ)` does
+not decrease the admixture log-likelihood. -/
 theorem admixtureLogLik_le_of_emQ_le [Nonempty K] (g : I → J → Fin 3) {θ θ' : Params I J K}
     (h : emQ joint (data g) θ θ ≤ emQ joint (data g) θ' θ) :
     admixtureLogLik g θ ≤ admixtureLogLik g θ' := by
   rw [← logLik_eq_admixtureLogLik, ← logLik_eq_admixtureLogLik]
   exact logLik_le_of_emQ_le (fun θ x k => joint_pos θ x k) (data g) h
 
-/-- **The ADMIXTURE log-likelihood is monotone along the iterates** of any M-step `M` with
+/-- **The admixture log-likelihood is monotone along the iterates** of any M-step `M` with
 `Q(M θ | θ) ≥ Q(θ | θ)`. -/
 theorem admixtureLogLik_iterate_monotone [Nonempty K] (g : I → J → Fin 3)
     {M : Params I J K → Params I J K}
@@ -229,7 +234,7 @@ noncomputable def ancCount (θ : Params I J K) (i : I) (k : K) : ℝ :=
   ∑ j, ∑ c, resp g θ i j c k
 
 variable (g) in
-/-- The FRAPPE / ADMIXTURE update of the ancestry proportions,
+/-- The FRAPPE update of the ancestry proportions,
 `Q' i k = (∑ j, ∑ c, r) / (2 J)`. -/
 noncomputable def mStepQ (θ : Params I J K) (i : I) (k : K) : ℝ :=
   ancCount g θ i k / (2 * Fintype.card J)
@@ -281,7 +286,7 @@ noncomputable def altCount (θ : Params I J K) (k : K) (j : J) : ℝ :=
   ∑ i, ∑ c, if isRef g i j c then 0 else resp g θ i j c k
 
 variable (g) in
-/-- The FRAPPE / ADMIXTURE update of the allele frequencies,
+/-- The FRAPPE update of the allele frequencies,
 `F' k j = (∑ i, ∑ c reference, r) / (∑ i, ∑ c, r)`. -/
 noncomputable def mStepF (θ : Params I J K) (k : K) (j : J) : ℝ :=
   refCount g θ k j / popCount g θ k j
@@ -350,7 +355,7 @@ end FrequencyUpdate
 variable [Fintype I] [Fintype J]
 
 variable (g) in
-/-- **The FRAPPE / ADMIXTURE EM step** `θ ↦ (Q', F')`, with `Q' = mStepQ` and `F' = mStepF`; it
+/-- **The FRAPPE EM step** `θ ↦ (Q', F')`, with `Q' = mStepQ` and `F' = mStepF`; it
 lies in the strictly positive parameter set when `J` is nonempty and every SNP is
 polymorphic. -/
 noncomputable def emStep [Nonempty J] [Nonempty K] (hg : Polymorphic g) (θ : Params I J K) :
@@ -413,7 +418,7 @@ theorem emQ_eq (θ' θ : Params I J K) :
     simp only [Finset.sum_add_distrib, refCount, altCount, Finset.sum_mul]
 
 variable (g) in
-/-- **The FRAPPE / ADMIXTURE update maximizes `Q(· | θ)`**: no parameter `θ'` in the strictly
+/-- **The FRAPPE update maximizes `Q(· | θ)`**: no parameter `θ'` in the strictly
 positive parameter set has a larger `Q(θ' | θ)` than the closed-form update `emStep g hg θ`. -/
 theorem emQ_le_emStep [Nonempty J] [Nonempty K] (hg : Polymorphic g) (θ' θ : Params I J K) :
     emQ joint (data g) θ' θ ≤ emQ joint (data g) (emStep g hg θ) θ := by
@@ -448,13 +453,13 @@ theorem emQ_le_emStep [Nonempty J] [Nonempty K] (hg : Polymorphic g) (θ' θ : P
     linarith
 
 variable (g) in
-/-- **Each FRAPPE / ADMIXTURE EM step does not decrease the ADMIXTURE log-likelihood.** -/
+/-- **Each FRAPPE EM step does not decrease the admixture log-likelihood.** -/
 theorem admixtureLogLik_le_emStep [Nonempty J] [Nonempty K] (hg : Polymorphic g)
     (θ : Params I J K) : admixtureLogLik g θ ≤ admixtureLogLik g (emStep g hg θ) :=
   admixtureLogLik_le_of_emQ_le g (emQ_le_emStep g hg θ θ)
 
 variable (g) in
-/-- **The ADMIXTURE log-likelihood is monotone along the FRAPPE / ADMIXTURE EM iterates.** -/
+/-- **The admixture log-likelihood is monotone along the FRAPPE EM iterates.** -/
 theorem admixtureLogLik_iterate_emStep_monotone [Nonempty J] [Nonempty K] (hg : Polymorphic g)
     (θ₀ : Params I J K) : Monotone fun t => admixtureLogLik g ((emStep g hg)^[t] θ₀) :=
   admixtureLogLik_iterate_monotone g (fun θ => emQ_le_emStep g hg θ θ) θ₀
