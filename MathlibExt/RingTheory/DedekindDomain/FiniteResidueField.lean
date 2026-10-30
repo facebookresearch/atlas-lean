@@ -29,7 +29,8 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.RingTheory.DedekindDomain.AdicCompletionResidueField
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+import MathlibExt.RingTheory.DedekindDomain.AdicCompletionResidueField
 
 /-!
 # Finiteness of the residue field of adic completion integers
