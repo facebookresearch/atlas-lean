@@ -66,19 +66,19 @@ example (K : KingmanTimes μ 3) : Var[K.tmrca; μ] = 10 / 9 := by
 
 /-- Watterson's identity for `n = 3`: `E S = θ (1 + 1/2)`. -/
 example (K : KingmanTimes μ 3) {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
-    [SigmaFinite (μ.trim hm)] {S : Ω → ℝ} {θ : ℝ}
+    [SigmaFinite (μ.trim hm)] {S : Ω → ℝ} {θ : ℝ} (hSi : Integrable S μ)
     (hS : μ[S | m] =ᵐ[μ] fun ω => θ / 2 * K.totalLength ω) :
     μ[S] = 3 / 2 * θ := by
-  rw [K.integral_segSites hm hS]
+  rw [K.integral_segSites hm hSi hS]
   norm_num [harmonic, Finset.sum_range_succ]
   ring
 
 /-- Watterson's estimator for `n = 2` is `S` itself and is unbiased. -/
 example (K : KingmanTimes μ 2) {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
-    [SigmaFinite (μ.trim hm)] {S : Ω → ℝ} {θ : ℝ}
+    [SigmaFinite (μ.trim hm)] {S : Ω → ℝ} {θ : ℝ} (hSi : Integrable S μ)
     (hS : μ[S | m] =ᵐ[μ] fun ω => θ / 2 * K.totalLength ω) :
-    μ[fun ω => S ω / (harmonic 1 : ℝ)] = θ :=
-  K.watterson_unbiased hm hS le_rfl
+    Integrable (fun ω => S ω / (harmonic 1 : ℝ)) μ ∧ μ[fun ω => S ω / (harmonic 1 : ℝ)] = θ :=
+  ⟨KingmanTimes.integrable_watterson (n := 2) hSi, K.watterson_unbiased hm hSi hS le_rfl⟩
 
 /-- The concrete product model has `E[T_MRCA] = 4/3` for `n = 3`. -/
 example : (piMeasure 3)[(KingmanTimes.ofPi 3).tmrca] = 4 / 3 := by
