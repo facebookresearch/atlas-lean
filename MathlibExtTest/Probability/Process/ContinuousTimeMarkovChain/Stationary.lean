@@ -17,8 +17,9 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 On the two-state rate matrix `!![-1, 1; 2, -2]`, the distribution `(2/3, 1/3)` is the
 non-vacuity witness for `IsDetailedBalance`: it is in detailed balance, hence invariant for
 the generator and for every `P t`, and the chain is reversible at every time. The uniform
-distribution is a non-example: it is not invariant. Boundary case: every vector is invariant
-for the zero generator.
+distribution is a non-example: it is not invariant. Boundary cases: every vector is invariant
+for the zero generator, and the zero vector satisfies the detailed-balance equations for every
+matrix (so reversibility needs a probability vector).
 -/
 
 @[expose] public section
@@ -49,6 +50,12 @@ example (t : ℝ) : π2 ᵥ* ctmcTransition q2 t = π2 :=
 -- Reversibility at time `t`: `π 0 P t 0 1 = π 1 P t 1 0`.
 example (t : ℝ) : π2 0 * ctmcTransition q2 t 0 1 = π2 1 * ctmcTransition q2 t 1 0 :=
   isDetailedBalance_π2.ctmcTransition t 0 1
+
+-- The predicate alone is algebraic: the zero vector, which is not a distribution, is in
+-- detailed balance with every matrix.
+example (Q : Matrix (Fin 2) (Fin 2) ℝ) : IsDetailedBalance 0 Q := by
+  intro i j
+  simp
 
 -- The equivalence, used in the reverse direction.
 example : π2 ᵥ* q2 = 0 :=
