@@ -73,8 +73,13 @@ example : jcDistance 0 = 0 := by simp [jcDistance]
 -- Rate-matrix property for a nonnegative rate, and the domain of the distance.
 example : 0 ≤ jcRate 2 0 3 := jcRate_nonneg (by norm_num) (by decide)
 example (μ : ℝ) (k : Fin 4) : ∑ j, jcRate μ k j = 0 := sum_jcRate μ k
-example (i : Fin 4) : 0 ≤ pDiff 2 3 i ∧ pDiff 2 3 i < 3 / 4 :=
-  ⟨pDiff_nonneg (by norm_num) i, pDiff_lt_three_quarters 2 3 i⟩
+example (i : Fin 4) : pDiff 2 3 i ∈ Set.Ico 0 (3 / 4) := pDiff_mem_Ico (by norm_num) i
+-- Outside the biological domain (`μ * t < 0`) the proportion is negative.
+example : pDiff 1 (-1) 0 < 0 := by
+  rw [pDiff_eq]
+  have : (1 : ℝ) < exp (4 / 3) := one_lt_exp_iff.mpr (by norm_num)
+  norm_num
+  linarith
 -- Boundary: at the saturation value `p = 3/4` (outside the domain) the true distance diverges,
 -- and the totalized logarithm returns the junk value `0`.
 example : jcDistance (3 / 4) = 0 := by norm_num [jcDistance]
