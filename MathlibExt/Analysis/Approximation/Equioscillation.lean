@@ -10,13 +10,15 @@ module
 
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Algebra.Polynomial.Degree.Defs
-public import Mathlib.Algebra.Polynomial.Degree.Operations
-public import Mathlib.Algebra.Polynomial.Div
-public import Mathlib.Topology.Algebra.Polynomial
-public import Mathlib.Topology.Order.IntermediateValue
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Ring
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Polynomial.Degree.Operations
+import Mathlib.Algebra.Polynomial.Div
+import Mathlib.Topology.Algebra.Polynomial
+import Mathlib.Topology.Order.IntermediateValue
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring
 
 /-!
 # Chebyshev equioscillation theorem (sufficiency) and de la Vallée Poussin's theorem
