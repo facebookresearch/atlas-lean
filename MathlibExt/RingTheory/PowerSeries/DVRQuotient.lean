@@ -102,20 +102,18 @@ private theorem isPrecomplete_quotient {R : Type*} [CommRing R] (I P : Ideal R)
 
 end PowerSeriesDVRQuotientAux
 
-/-- Modulo `X - ϖ ^ e`, a power series ring over a discrete valuation ring
-is a principal ideal ring and a local ring, and the image of `ϖ` is
-irreducible. -/
-theorem PowerSeries.quotient_span_X_sub_C_pow_of_irreducible
+/-- Modulo `X - ϖ ^ e`, a power series ring over a discrete valuation ring is a
+discrete valuation ring, with uniformizer the image of `ϖ`. -/
+theorem PowerSeries.isDiscreteValuationRing_quotient_span_X_sub_C_pow_of_irreducible
     {W : Type*} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     (ϖ : W) (hϖ : Irreducible ϖ) (e : ℕ) (he : 1 ≤ e) :
-    (Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}).IsPrime ∧
-    IsPrincipalIdealRing (PowerSeries W ⧸
-      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) ∧
-    IsLocalRing (PowerSeries W ⧸
-      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) ∧
-    Irreducible (Ideal.Quotient.mk
-      (Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)})
-      (PowerSeries.C ϖ)) := by
+    ∃ (_ : IsDomain (PowerSeries W ⧸
+        Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}))
+      (_ : IsDiscreteValuationRing (PowerSeries W ⧸
+        Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)})),
+      Irreducible (Ideal.Quotient.mk
+        (Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)})
+        (PowerSeries.C ϖ)) := by
   have hmW : IsLocalRing.maximalIdeal W = Ideal.span {ϖ} :=
     (IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).mp hϖ
   have hϖu : ¬IsUnit ϖ := hϖ.not_isUnit
@@ -158,7 +156,8 @@ theorem PowerSeries.quotient_span_X_sub_C_pow_of_irreducible
   have _ := hIprime
   set D := PowerSeries W ⧸ I
   have : Nontrivial D := Ideal.Quotient.nontrivial_iff.mpr hIprime.ne_top
-  have : IsDomain D := Ideal.Quotient.isDomain I
+  have hDdom : IsDomain D := Ideal.Quotient.isDomain I
+  have _ := hDdom
   have hDloc : IsLocalRing D :=
     IsLocalRing.of_surjective' (Ideal.Quotient.mk I) Ideal.Quotient.mk_surjective
   have _ : IsNoetherianRing D := inferInstance
@@ -242,8 +241,30 @@ theorem PowerSeries.quotient_span_X_sub_C_pow_of_irreducible
   have hprinc : (IsLocalRing.maximalIdeal D).IsPrincipal := ⟨⟨π, hmax⟩⟩
   have hDVR : IsDiscreteValuationRing D :=
     ((IsDiscreteValuationRing.TFAE D hnf).out 5 1).mp hprinc
-  refine ⟨hIprime, inferInstance, hDloc, ?_⟩
-  exact (IsDiscreteValuationRing.irreducible_iff_uniformizer π).mpr hmax
+  exact ⟨hDdom, hDVR, (IsDiscreteValuationRing.irreducible_iff_uniformizer π).mpr hmax⟩
+
+/-- Modulo `X - ϖ ^ e`, a power series ring over a discrete valuation ring
+is a principal ideal ring and a local ring, and the image of `ϖ` is
+irreducible. -/
+theorem PowerSeries.quotient_span_X_sub_C_pow_of_irreducible
+    {W : Type*} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
+    (ϖ : W) (hϖ : Irreducible ϖ) (e : ℕ) (he : 1 ≤ e) :
+    (Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}).IsPrime ∧
+    IsPrincipalIdealRing (PowerSeries W ⧸
+      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) ∧
+    IsLocalRing (PowerSeries W ⧸
+      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) ∧
+    Irreducible (Ideal.Quotient.mk
+      (Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)})
+      (PowerSeries.C ϖ)) := by
+  obtain ⟨hdom, hdvr, hirr⟩ :=
+    PowerSeries.isDiscreteValuationRing_quotient_span_X_sub_C_pow_of_irreducible
+      ϖ hϖ e he
+  let _ : IsDomain (PowerSeries W ⧸
+      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) := hdom
+  let _ : IsDiscreteValuationRing (PowerSeries W ⧸
+      Ideal.span {(PowerSeries.X : PowerSeries W) - PowerSeries.C (ϖ ^ e)}) := hdvr
+  exact ⟨(Ideal.Quotient.isDomain_iff_prime _).mp hdom, inferInstance, inferInstance, hirr⟩
 
 /-- Modulo `X - ϖ`, a power series ring over a discrete valuation ring is a
 discrete valuation ring, adically complete at its maximal ideal, with
