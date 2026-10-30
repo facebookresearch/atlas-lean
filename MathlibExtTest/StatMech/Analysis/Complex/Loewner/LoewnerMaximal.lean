@@ -72,6 +72,40 @@ noncomputable def solI {S : ℝ} (hS : S < 1 / 4) : LoewnerForwardSolution (fun 
   deriv t ht := (hasDerivAt_gI (by linarith [ht.2])).hasDerivWithinAt
   upper t ht := gI_mem_upper (by linarith [ht.2])
 
+/-- The domain family from the review counterexample: `ℍ` at zero and empty afterwards. -/
+def emptyAfterZeroDomain (t : ℝ) : Set ℂ := if t = 0 then upperHalfPlaneSet else ∅
+
+/-- The map family from the review counterexample. -/
+noncomputable def vacuousMaps (t : ℝ) (z : ℂ) : ℂ := z + t * (2 / z)
+
+-- The reviewed family satisfies every clause of the old, under-specified predicate.
+theorem vacuousMaps_satisfy_old_core :
+    emptyAfterZeroDomain 0 = upperHalfPlaneSet ∧
+      (∀ z ∈ emptyAfterZeroDomain 0, vacuousMaps 0 z = z) ∧
+      (∀ z ∈ emptyAfterZeroDomain 0, HasDerivWithinAt (fun t => vacuousMaps t z)
+        (loewnerField (fun _ => 0) 0 (vacuousMaps 0 z)) (Ici (0 : ℝ)) 0) ∧
+      ∀ t, 0 < t → ∀ z ∈ emptyAfterZeroDomain t,
+        IsLoewnerSolutionAt (fun _ => 0) vacuousMaps z t := by
+  refine ⟨by simp [emptyAfterZeroDomain], ?_, ?_, ?_⟩
+  · intro z _
+    simp [vacuousMaps]
+  · intro z _
+    have h := ((hasDerivAt_id (𝕜 := ℝ) 0).ofReal_comp.mul_const (2 / z)).const_add z
+    simpa [vacuousMaps, loewnerField] using h.hasDerivWithinAt
+  · intro t ht z hz
+    simp [emptyAfterZeroDomain, ne_of_gt ht] at hz
+
+-- The exact lifetime-domain clause rejects the actual empty-positive-time counterexample.
+example : ¬SatisfiesMaximalLoewnerEquation (fun _ => 0) emptyAfterZeroDomain vacuousMaps := by
+  intro h
+  let G := solI (show (3 / 16 : ℝ) < 1 / 4 by norm_num)
+  have hI : HasLoewnerForwardExtension (fun _ => 0) I (1 / 8) :=
+    ⟨by simp, 3 / 16, by norm_num, G.curve, G.initial, G.deriv, G.upper⟩
+  have : I ∈ emptyAfterZeroDomain (1 / 8) := by
+    rw [h.domain_eq (by norm_num)]
+    exact hI
+  simp [emptyAfterZeroDomain] at this
+
 -- `1/8` is an admissible duration for `I`.
 example : IsLoewnerAdmissibleDuration (fun _ => 0) I (1 / 8) :=
   ⟨by norm_num, ⟨solI (by norm_num)⟩⟩
@@ -150,6 +184,16 @@ theorem maximalMaps_I {t : ℝ} (h0 : 0 ≤ t) (h1 : t < 1 / 4) :
 example {t : ℝ} : I ∈ loewnerUnswallowedDomain (fun _ => 0) t ↔ 0 ≤ t ∧ t < 1 / 4 := by
   simp [loewnerUnswallowedDomain, isBefore_iff]
 
+-- Positive time is nonvacuous both in the lifetime and intrinsic-extension formulations.
+example : I ∈ loewnerUnswallowedDomain (fun _ => 0) (1 / 8) ∧
+    HasLoewnerForwardExtension (fun _ => 0) I (1 / 8) := by
+  have hmem : I ∈ loewnerUnswallowedDomain (fun _ => 0) (1 / 8) :=
+    ⟨by simp, isBefore_iff.2 ⟨by norm_num, by norm_num⟩⟩
+  refine ⟨hmem, ?_⟩
+  change I ∈ {z | HasLoewnerForwardExtension (fun _ => 0) z (1 / 8)}
+  rw [← loewnerUnswallowedDomain_eq_setOf_hasLoewnerForwardExtension (by norm_num)]
+  exact hmem
+
 -- The swallowed set `K_{1/4}` contains `I`; `K_{1/8}` does not; `K_0 = ∅`.
 theorem I_mem_K : I ∈ loewnerSwallowedSet (fun _ => 0) (1 / 4) :=
   ⟨by simp, fun h => by simpa using (isBefore_iff.1 h.2).2⟩
@@ -167,6 +211,10 @@ example : IsCompactHull (loewnerSwallowedSet (fun _ => 0) (1 / 4)) ∧
     (loewnerSwallowedSet (fun _ => 0) (1 / 4)).Nonempty :=
   ⟨loewnerSwallowedSet_isCompactHull continuous_const (by norm_num), ⟨I, I_mem_K⟩⟩
 
+example : IsSimplyConnected
+    (upperHalfPlaneSet \ loewnerSwallowedSet (fun _ => 0) (1 / 4)) :=
+  (loewnerSwallowedSet_isCompactHull continuous_const (by norm_num)).complement_simplyConnected
+
 -- `loewner_maximal_forward_exists` at `z = I`: the derivative at `t = 1/8` is `2 / g_{1/8}(I)`.
 example : HasDerivAt (loewnerMaximalCurve (fun _ => 0) I)
     (loewnerField (fun _ => 0) (1 / 8) (loewnerMaximalCurve (fun _ => 0) I (1 / 8))) (1 / 8) := by
@@ -181,6 +229,10 @@ example : SatisfiesMaximalLoewnerEquation (fun _ => 0) (loewnerUnswallowedDomain
 example :
     SatisfiesMaximalLoewnerEquation id (loewnerUnswallowedDomain id) (loewnerMaximalMaps id) :=
   loewnerMaximalMaps_satisfiesMaximalLoewnerEquation continuous_id
+
+example : ConformalAt (loewnerMaximalMaps (fun _ => 0) (1 / 8)) I := by
+  apply loewnerMaximalMaps_conformalAt continuous_const (by norm_num)
+  exact ⟨by simp, isBefore_iff.2 ⟨by norm_num, by norm_num⟩⟩
 
 -- `g_{1/8} : H_{1/8} → ℍ` is a bijection; `H_{1/8}` is open and connected.
 example : BijOn (loewnerMaximalMaps (fun _ => 0) (1 / 8))

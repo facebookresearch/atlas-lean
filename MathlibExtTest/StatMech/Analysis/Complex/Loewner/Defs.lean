@@ -85,6 +85,10 @@ example : IsLoewnerSolutionOn (fun _ => 0) (fun s _ => gI s) I (Set.Icc 0 (1 / 8
 
 -- The empty set is a compact `ℍ`-hull (a nonempty one is in the `LoewnerMaximal` tests).
 example : IsCompactHull (∅ : Set ℂ) := isCompactHull_empty
+example : IsSimplyConnected (upperHalfPlaneSet \ (∅ : Set ℂ)) :=
+  isCompactHull_empty.complement_simplyConnected
+example : IsConnected (upperHalfPlaneSet \ (∅ : Set ℂ)) :=
+  isCompactHull_empty.complement_connected
 
 -- `HasHalfPlaneCapacity id 0`, and capacities are unique.
 example : HasHalfPlaneCapacity id 0 := hasHalfPlaneCapacity_id
@@ -97,5 +101,13 @@ example (B : ℝ → Unit → ℝ) (t : ℝ) : sleDriving 4 B () t = 2 * B t () 
   have : Real.sqrt 4 = 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   simp [this]
+
+-- An ordinary `IsChordalSLE` client receives continuous drivers from the strengthened predicate.
+example {Ω : Type*} [MeasurableSpace Ω] (κ : ℝ) (B : ℝ → Ω → ℝ)
+    (P : MeasureTheory.Measure Ω)
+    (D : Ω → ℝ → Set ℂ) (g : Ω → ℝ → ℂ → ℂ) (h : IsChordalSLE κ B P D g) :
+    ∀ᵐ ω ∂P, Continuous (sleDriving κ B ω) := by
+  filter_upwards [h.loewner] with ω hω
+  exact hω.continuous_driving
 
 end MathlibExtTest.StatMech.Analysis.Complex.Loewner.Defs
