@@ -887,6 +887,47 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Universality/STT.lean` | `MathlibExt.Probability.Percolation.Universality.STT` |
 | `Atlas/StatisticalMechanics/Code/Universality/STTTransport.lean` | `MathlibExt.Probability.Percolation.Universality.STTTransport` |
 
+## CSLibExt (second round)
+
+| Source file | Module |
+| --- | --- |
+| `Atlas/StatisticalMechanics/Code/OSSS/Coding.lean` | `CSLibExt.Complexity.BooleanFunctions.Coding` |
+| `Atlas/StatisticalMechanics/Code/OSSS/CovLowerBound.lean` | `CSLibExt.Complexity.BooleanFunctions.CovLowerBound` |
+| `Atlas/StatisticalMechanics/Code/OSSS/DecisionTreeReindex.lean` | `CSLibExt.Complexity.BooleanFunctions.DecisionTreeReindex` |
+| `Atlas/StatisticalMechanics/Code/OSSS/Revealment.lean` | `CSLibExt.Complexity.BooleanFunctions.Revealment` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentConstruction.lean` | `CSLibExt.Complexity.BooleanFunctions.RevealmentConstruction` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentCrossBox.lean` | `CSLibExt.Complexity.BooleanFunctions.RevealmentCrossBox` |
+| `Atlas/StatisticalMechanics/Code/OSSS/SharpnessFK.lean` | `CSLibExt.Complexity.BooleanFunctions.SharpnessFK` |
+| `Atlas/StatisticalMechanics/Code/OSSS/TreeComplete.lean` | `CSLibExt.Complexity.BooleanFunctions.TreeComplete` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLLevel2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLLevel2Close.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Equivalences` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLLevel2Final.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Fourier` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLLevel2Prove.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2VarGap` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLMeanInfl.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLMeanInfl` |
+| `Atlas/StatisticalMechanics/Code/Probability/BKKKLTruncation.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLTruncation` |
+| `Atlas/StatisticalMechanics/Code/Probability/CoupledTensorizeClose.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CoupledTensorizeRefutations` |
+| `Atlas/StatisticalMechanics/Code/Probability/CoupledTensorizeProve.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CoupledTensorizeWitness` |
+| `Atlas/StatisticalMechanics/Code/Probability/DecoupledTwoPointClose.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.DecoupledTwoPointRefutation` |
+| `Atlas/StatisticalMechanics/Code/Probability/EntropySubadditivity.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.EntropySubadditivity` |
+| `Atlas/StatisticalMechanics/Code/Probability/FSClose.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FourierLogSobolev` |
+| `Atlas/StatisticalMechanics/Code/Probability/GlobalLSI.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.GlobalLSI` |
+| `Atlas/StatisticalMechanics/Code/Probability/HCTensorLib.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.HCTensorLib` |
+| `Atlas/StatisticalMechanics/Code/Probability/LevelInfluenceBound.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.LevelInfluenceBound` |
+| `Atlas/StatisticalMechanics/Code/Probability/MasterFamilyProve.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyImplications` |
+| `Atlas/StatisticalMechanics/Code/Probability/MasterFamilyProve2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyHighNoise` |
+| `Atlas/StatisticalMechanics/Code/Probability/NearHalfBKKKL.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfBKKKL` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedEntropy.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedEntropy` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedKKLClose.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLImplications` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedKKLTruthCheck.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLTwoBit` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedRhoOptimise.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedRhoOptimise` |
+| `Atlas/StatisticalMechanics/Code/Probability/RhoOptimiseEngineApply.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.RhoOptimiseEngineApply` |
+| `Atlas/StatisticalMechanics/Code/Probability/SharpThresholdWire.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.SharpThresholdWire` |
+| `Atlas/StatisticalMechanics/Code/Probability/SummedBKKKLClose.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.SummedBKKKLWitness` |
+| `Atlas/StatisticalMechanics/Code/Probability/VarGapClose.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapImplications` |
+| `Atlas/StatisticalMechanics/Code/Probability/VarGapProve.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapDictator` |
+| `Atlas/StatisticalMechanics/Code/Probability/VarGapProve2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/NearHalfKKLWire.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfKKLWire` |
+
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
