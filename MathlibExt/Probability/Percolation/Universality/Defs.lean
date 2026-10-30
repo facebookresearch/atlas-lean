@@ -28,7 +28,8 @@ box-crossing property `BoxCrossingProperty μ ρ`: crossing probabilities of all
 * `StatMech.Universality.originCluster`, `StatMech.Universality.percolationEvent`,
   `StatMech.Universality.percolationProbability`, `StatMech.Universality.criticalProbability`:
   the cluster of the origin, `{0 ↔ ∞}`, `θ(p)` as an `ℝ≥0∞`, and `p_c` as a real number.
-* `StatMech.Universality.PositivelyAssociated`: `μ(A) μ(B) ≤ μ(A ∩ B)` for increasing `A`, `B`.
+* `StatMech.Universality.PositivelyAssociated`: `μ(A) μ(B) ≤ μ(A ∩ B)` for measurable increasing
+  events `A`, `B`.
 * `StatMech.Universality.translateConfig` and the translated crossing events.
 * `StatMech.Universality.boxCrossingInf`, `StatMech.Universality.BoxCrossingProperty`.
 
@@ -139,22 +140,25 @@ theorem criticalProbability_eq_pc : criticalProbability d = (Percolation.pc d : 
     exact (measureReal_eq_zero_iff hfin).mp h
 
 /-- A measure on configurations is positively associated (satisfies the Harris–FKG inequality)
-if `μ(A) μ(B) ≤ μ(A ∩ B)` for all increasing events `A`, `B`. -/
+if `μ(A) μ(B) ≤ μ(A ∩ B)` for all measurable increasing events `A`, `B`. -/
 def PositivelyAssociated {E : Type*} (μ : Measure (ConfigSpace E)) : Prop :=
-  ∀ A B : Set (ConfigSpace E), IsIncreasing A → IsIncreasing B →
+  ∀ A B : Set (ConfigSpace E), MeasurableSet A → MeasurableSet B →
+    IsIncreasing A → IsIncreasing B →
     μ.real A * μ.real B ≤ μ.real (A ∩ B)
 
 theorem PositivelyAssociated.symm {E : Type*} {μ : Measure (ConfigSpace E)}
     (h : PositivelyAssociated μ) (A B : Set (ConfigSpace E))
+    (hAm : MeasurableSet A) (hBm : MeasurableSet B)
     (hA : IsIncreasing A) (hB : IsIncreasing B) :
     μ.real B * μ.real A ≤ μ.real (B ∩ A) := by
   rw [mul_comm, Set.inter_comm]
-  exact h A B hA hB
+  exact h A B hAm hBm hA hB
 
 theorem PositivelyAssociated.sq_le_self {E : Type*} {μ : Measure (ConfigSpace E)}
-    (h : PositivelyAssociated μ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
+    (h : PositivelyAssociated μ) (A : Set (ConfigSpace E)) (hAm : MeasurableSet A)
+    (hA : IsIncreasing A) :
     μ.real A * μ.real A ≤ μ.real A := by
-  have key := h A A hA hA
+  have key := h A A hAm hAm hA hA
   rwa [Set.inter_self] at key
 
 /-- The configuration `ω` translated by `-v`: the state of `e` is the state of `e + v` in `ω`. -/

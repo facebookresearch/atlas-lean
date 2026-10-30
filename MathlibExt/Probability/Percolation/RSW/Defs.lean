@@ -76,6 +76,93 @@ theorem rect_finite (a b c d : ℤ) : (rect a b c d).Finite := by
   · simpa only [Matrix.cons_val_zero, Set.mem_Icc] using ⟨hx.1, hx.2.1⟩
   · simpa only [Matrix.cons_val_one, Matrix.head_cons, Set.mem_Icc] using ⟨hx.2.2.1, hx.2.2.2⟩
 
+private lemma measurableSet_inducedAdj {d : ℕ} (S : Set (Site d)) (x y : S) :
+    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) |
+      (openSubgraphInduce d ω S).Adj x y} := by
+  by_cases hxy : (hypercubicLattice d).Adj (x : Site d) (y : Site d)
+  · have heq : {ω : ConfigSpace (Sym2 (Site d)) |
+        (openSubgraphInduce d ω S).Adj x y} = {ω | ω s((x : Site d), y) = true} := by
+      ext ω
+      rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, openSubgraphInduce_adj, openSubgraph_adj]
+      exact and_iff_right hxy
+    rw [heq]
+    exact measurableSet_eq_fun (measurable_pi_apply s((x : Site d), y)) measurable_const
+  · have heq : {ω : ConfigSpace (Sym2 (Site d)) |
+        (openSubgraphInduce d ω S).Adj x y} = ∅ := by
+      ext ω
+      rw [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, openSubgraphInduce_adj,
+        openSubgraph_adj]
+      exact fun h => hxy h.1
+    rw [heq]
+    exact MeasurableSet.empty
+
+private lemma measurableSet_isChainWithin {d : ℕ} (S : Set (Site d)) (l : List S) :
+    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) |
+      List.IsChain (openSubgraphInduce d ω S).Adj l} := by
+  induction l with
+  | nil =>
+      have heq : {ω : ConfigSpace (Sym2 (Site d)) |
+          List.IsChain (openSubgraphInduce d ω S).Adj []} = Set.univ := by
+        ext ω
+        simp only [List.IsChain.nil, Set.mem_ofPred_eq, Set.mem_univ]
+      rw [heq]
+      exact MeasurableSet.univ
+  | cons x l ih =>
+      cases l with
+      | nil =>
+          have heq : {ω : ConfigSpace (Sym2 (Site d)) |
+              List.IsChain (openSubgraphInduce d ω S).Adj [x]} = Set.univ := by
+            ext ω
+            simp only [List.IsChain.singleton, Set.mem_ofPred_eq, Set.mem_univ]
+          rw [heq]
+          exact MeasurableSet.univ
+      | cons y l =>
+          simpa only [List.isChain_cons_cons, Set.ofPred_and] using
+            (measurableSet_inducedAdj S x y).inter ih
+
+private lemma connectedWithin_iff_chain {d : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
+    (S : Set (Site d)) (x y : S) :
+    ConnectedWithin d ω S x y ↔ ∃ l : List S,
+      List.IsChain (openSubgraphInduce d ω S).Adj (x :: l) ∧
+        (x :: l).getLast (List.cons_ne_nil _ _) = y := by
+  unfold ConnectedWithin
+  rw [SimpleGraph.reachable_iff_reflTransGen]
+  constructor
+  · intro h
+    obtain ⟨l, hchain, hlast⟩ := List.exists_isChain_cons_of_relationReflTransGen h
+    exact ⟨l, hchain, hlast⟩
+  · rintro ⟨l, hchain, hlast⟩
+    exact List.relationReflTransGen_of_exists_isChain_cons l hchain hlast
+
+/-- The event that two vertices are connected by an open path inside `S` is measurable. -/
+theorem measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S) :
+    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | ConnectedWithin d ω S x y} := by
+  classical
+  have heq : {ω : ConfigSpace (Sym2 (Site d)) | ConnectedWithin d ω S x y} =
+      ⋃ l : List S, ({ω | List.IsChain (openSubgraphInduce d ω S).Adj (x :: l)} ∩
+        if (x :: l).getLast (List.cons_ne_nil _ _) = y then Set.univ else ∅) := by
+    ext ω
+    rw [Set.mem_ofPred_eq, connectedWithin_iff_chain]
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨l, hchain, hlast⟩
+      exact ⟨l, hchain, by rw [ite_eq_left hlast]; trivial⟩
+    · rintro ⟨l, hchain, hlast⟩
+      refine ⟨l, hchain, ?_⟩
+      by_cases h : (x :: l).getLast (List.cons_ne_nil _ _) = y
+      · exact h
+      · rw [ite_eq_right h] at hlast
+        exact absurd hlast (Set.notMem_empty _)
+  rw [heq]
+  apply MeasurableSet.iUnion
+  intro l
+  apply (measurableSet_isChainWithin S (x :: l)).inter
+  by_cases h : (x :: l).getLast (List.cons_ne_nil _ _) = y
+  · rw [ite_eq_left h]
+    exact MeasurableSet.univ
+  · rw [ite_eq_right h]
+    exact MeasurableSet.empty
+
 /-- The left side `{a} × [c, d]` of `rect a b c d`. -/
 def leftSide (a b c d : ℤ) : Set (Site 2) := {x | x ∈ rect a b c d ∧ x 0 = a}
 
@@ -128,6 +215,34 @@ def verticalCrossingEvent (a b c d : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
 @[simp] theorem mem_verticalCrossingEvent {a b c d : ℤ}
     {ω : ConfigSpace (Sym2 (Site 2))} :
     ω ∈ verticalCrossingEvent a b c d ↔ VerticalCrossing ω a b c d := Iff.rfl
+
+/-- A left–right crossing event of a rectangle is measurable. -/
+theorem measurableSet_horizontalCrossingEvent (a b c d : ℤ) :
+    MeasurableSet (horizontalCrossingEvent a b c d) := by
+  have heq : horizontalCrossingEvent a b c d =
+      ⋃ x : leftSide a b c d, ⋃ y : rightSide a b c d,
+        {ω | ConnectedWithin 2 ω (rect a b c d)
+          ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩} := by
+    ext ω
+    simp only [horizontalCrossingEvent, HorizontalCrossing, Set.mem_ofPred_eq, Set.mem_iUnion]
+  rw [heq]
+  exact MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun y =>
+    measurableSet_connectedWithin _
+      ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩
+
+/-- A bottom–top crossing event of a rectangle is measurable. -/
+theorem measurableSet_verticalCrossingEvent (a b c d : ℤ) :
+    MeasurableSet (verticalCrossingEvent a b c d) := by
+  have heq : verticalCrossingEvent a b c d =
+      ⋃ x : bottomSide a b c d, ⋃ y : topSide a b c d,
+        {ω | ConnectedWithin 2 ω (rect a b c d)
+          ⟨(x : Site 2), bottomSide_subset x.2⟩ ⟨(y : Site 2), topSide_subset y.2⟩} := by
+    ext ω
+    simp only [verticalCrossingEvent, VerticalCrossing, Set.mem_ofPred_eq, Set.mem_iUnion]
+  rw [heq]
+  exact MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun y =>
+    measurableSet_connectedWithin _
+      ⟨(x : Site 2), bottomSide_subset x.2⟩ ⟨(y : Site 2), topSide_subset y.2⟩
 
 theorem HorizontalCrossing.connected {a b c d : ℤ} {ω : ConfigSpace (Sym2 (Site 2))}
     (h : HorizontalCrossing ω a b c d) :

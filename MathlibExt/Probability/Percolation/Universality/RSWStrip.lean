@@ -61,7 +61,7 @@ theorem PositivelyAssociated.decreasing {E : Type*} (μ : Measure (ConfigSpace E
     {A B : Set (ConfigSpace E)} (hA : IsDecreasing A) (hB : IsDecreasing B)
     (hAm : MeasurableSet A) (hBm : MeasurableSet B) :
     μ.real A * μ.real B ≤ μ.real (A ∩ B) := by
-  have hfkg := hpa Aᶜ Bᶜ hA.compl hB.compl
+  have hfkg := hpa Aᶜ Bᶜ hAm.compl hBm.compl hA.compl hB.compl
   have hca : μ.real Aᶜ = 1 - μ.real A := by rw [measureReal_compl hAm, probReal_univ]
   have hcb : μ.real Bᶜ = 1 - μ.real B := by rw [measureReal_compl hBm, probReal_univ]
   have hcum : μ.real (Aᶜ ∩ Bᶜ) = 1 - μ.real (A ∪ B) := by
@@ -156,6 +156,12 @@ theorem overlapConnectionEvent_isIncreasing (m m' c d : ℤ) (p q : Site 2)
   intro ω ω' hωω' hω
   exact StatMech.TwoDim.connectedWithin_mono hωω' hω
 
+/-- A connection event inside a rectangular overlap is measurable. -/
+theorem measurableSet_overlapConnectionEvent (m m' c d : ℤ) (p q : Site 2)
+    (hp : p ∈ rect m m' c d) (hq : q ∈ rect m m' c d) :
+    MeasurableSet (overlapConnectionEvent m m' c d p q hp hq) :=
+  measurableSet_connectedWithin _ ⟨p, hp⟩ ⟨q, hq⟩
+
 theorem hvHalf_glue_subset {a m m' b c d : ℤ} (ham : a ≤ m) (hmm' : m ≤ m')
     (hm'b : m' ≤ b) {p q : Site 2}
     (hpO : p ∈ rect m m' c d) (hqO : q ∈ rect m m' c d)
@@ -183,11 +189,14 @@ theorem rsw_strip_glue (μ : Measure (ConfigSpace (Sym2 (Site 2))))
   have hA : IsIncreasing A := leftHalfCrossingEvent_isIncreasing a m' c d p hpL
   have hB : IsIncreasing B := overlapConnectionEvent_isIncreasing m m' c d p q hpO hqO
   have hC : IsIncreasing C := rightHalfCrossingEvent_isIncreasing m b c d q hqR
+  have hAm : MeasurableSet A := measurableSet_leftHalfCrossingEvent a m' c d p hpL
+  have hBm : MeasurableSet B := measurableSet_overlapConnectionEvent m m' c d p q hpO hqO
+  have hCm : MeasurableSet C := measurableSet_rightHalfCrossingEvent m b c d q hqR
   have hsub : A ∩ B ∩ C ⊆ horizontalCrossingEvent a b c d :=
     hvHalf_glue_subset ham hmm' hm'b hpO hqO hpL hqR
-  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hA hB
+  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hAm hBm hA hB
   have h2 : μ.real (A ∩ B) * μ.real C ≤ μ.real (A ∩ B ∩ C) :=
-    hpa (A ∩ B) C (hA.inter hB) hC
+    hpa (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
   have hnn : (0 : ℝ) ≤ μ.real C := measureReal_nonneg
   calc μ.real A * μ.real B * μ.real C
       ≤ μ.real (A ∩ B) * μ.real C := mul_le_mul_of_nonneg_right h1 hnn
@@ -215,12 +224,15 @@ theorem rsw_strip_glue_of_intersection (μ : Measure (ConfigSpace (Sym2 (Site 2)
   have hA : IsIncreasing A := horizontalCrossingEvent_isIncreasing a m' c d
   have hB : IsIncreasing B := verticalCrossingEvent_isIncreasing m m' c d
   have hC : IsIncreasing C := horizontalCrossingEvent_isIncreasing m b c d
+  have hAm : MeasurableSet A := measurableSet_horizontalCrossingEvent a m' c d
+  have hBm : MeasurableSet B := measurableSet_verticalCrossingEvent m m' c d
+  have hCm : MeasurableSet C := measurableSet_horizontalCrossingEvent m b c d
   have hsub : A ∩ B ∩ C ⊆ horizontalCrossingEvent a b c d := by
     rintro ω ⟨⟨hAω, hBω⟩, hCω⟩
     exact hint ω hAω hBω hCω
-  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hA hB
+  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hAm hBm hA hB
   have h2 : μ.real (A ∩ B) * μ.real C ≤ μ.real (A ∩ B ∩ C) :=
-    hpa (A ∩ B) C (hA.inter hB) hC
+    hpa (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
   have hnn : (0 : ℝ) ≤ μ.real C := measureReal_nonneg
   calc μ.real A * μ.real B * μ.real C
       ≤ μ.real (A ∩ B) * μ.real C := mul_le_mul_of_nonneg_right h1 hnn
