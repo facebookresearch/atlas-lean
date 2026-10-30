@@ -6,89 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineForestCount
+
+/-!
+# Exploration leaves for classical coarse trifurcations
+
+An exploration forest whose components each meet the boundary gives distinct boundary leaves and
+bounds the classical coarse trifurcation count.
+
+## i. Overview
+
+`bfg_GenuineExploration ω L R` provides a finite forest in which every classical coarse trifurcation
+has degree at least three and every component meets the boundary of `B_R`. Choosing one boundary
+site per component (`bfg_leafSel`) is injective on disjoint components, so the certificate gives
+`bgt_GenuineForest` and the bound by `|∂B_R|`.
+
+The trifurcation notion here is the classical one: three open neighbours whose clusters stay
+infinite and pairwise disjoint after the centre is removed (`bc89_GenuineTrif`). For that notion the
+counting bound is the classical deterministic Burton–Keane estimate; results that assume a
+certificate for every configuration remain conditional on it.
+
+## ii. Key results
+
+- `bfg_leafSel_injOn` : boundary leaf selection is injective on disjoint components
+- `bfg_genuineForest_of_exploration` : an exploration gives the classical coarse forest
+- `bfg_genuineTcount_le_boundary` : the classical coarse count is at most the boundary size
+- `bfg_status` : the statements together
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+- C. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -109,34 +68,22 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 
-
-
-
-
-
-
+/-! ## A. Definitions -/
 
 open Classical in
-
-
-
+/-- A boundary site in the component `comp v`, or `default` if the component misses the boundary. -/
 noncomputable def bfg_leafSel {W : Type*} (comp : W → Set (Site d)) (R : ℕ) (v : W) : Site d :=
   if h : (comp v ∩ vertexBoundary d R).Nonempty then h.choose else default
 
+/-! ## B. Results -/
 
-theorem bfg_leafSel_mem {W : Type*} (comp : W → Set (Site d)) (R : ℕ) {v : W}
+lemma bfg_leafSel_mem {W : Type*} (comp : W → Set (Site d)) (R : ℕ) {v : W}
     (h : (comp v ∩ vertexBoundary d R).Nonempty) :
     bfg_leafSel comp R v ∈ comp v ∩ vertexBoundary d R := by
   classical
-  rw [bfg_leafSel, dif_pos h]; exact h.choose_spec
+  rw [bfg_leafSel, dite_eq_left h]; exact h.choose_spec
 
-
-
-
-
-
-
-theorem bfg_leafSel_injOn {W : Type*} {S : Set W} (comp : W → Set (Site d)) (R : ℕ)
+lemma bfg_leafSel_injOn {W : Type*} {S : Set W} (comp : W → Set (Site d)) (R : ℕ)
     (hne : ∀ v ∈ S, (comp v ∩ vertexBoundary d R).Nonempty)
     (hdisj : ∀ u ∈ S, ∀ v ∈ S, u ≠ v → Disjoint (comp u) (comp v)) :
     Set.InjOn (bfg_leafSel comp R) S := by
@@ -148,21 +95,9 @@ theorem bfg_leafSel_injOn {W : Type*} {S : Set W} (comp : W → Set (Site d)) (R
   rw [huv] at hmu
   exact Set.disjoint_left.mp (hdisj u hu v hv hne') hmu hmv
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- An exploration certificate: a finite forest without isolated vertices in which classical coarse
+trifurcations embed injectively with degree at least three, with a component map whose
+components are disjoint and meet the boundary of `B_R`. -/
 def bfg_GenuineExploration (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : Nonempty W) (_ : DecidableEq W)
     (G : SimpleGraph W) (_ : DecidableRel G.Adj) (ιT : Site d → W) (comp : W → Set (Site d)),
@@ -173,13 +108,7 @@ def bfg_GenuineExploration (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop
     (∀ v, G.degree v = 1 → (comp v ∩ vertexBoundary d R).Nonempty) ∧
     (∀ u, G.degree u = 1 → ∀ v, G.degree v = 1 → u ≠ v → Disjoint (comp u) (comp v))
 
-
-
-
-
-
-
-theorem bfg_genuineForest_of_exploration (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bfg_genuineForest_of_exploration (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bfg_GenuineExploration ω L R) :
     bgt_GenuineForest ω L R := by
   classical
@@ -195,26 +124,14 @@ theorem bfg_genuineForest_of_exploration (ω : ConfigSpace (Sym2 (Site d))) (L R
       rw [Finset.mem_coe, Finset.mem_filter] at hu hv
       exact hdisj u hu.2 v hv.2 huv
 
-
-
-
-theorem bfg_genuineTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bfg_genuineTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bfg_GenuineExploration ω L R) :
     (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R :=
   bgt_genuineTcount_le_boundary ω L R (bfg_genuineForest_of_exploration ω L R h)
 
 
-
-
-
-
-
-
 open Classical in
-
-
-
-theorem bfg_exploration_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bfg_exploration_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
     (hzne : z₀ ≠ z₁)
     (hno : ∀ y, y ∈ box d R → ¬ btr_IsGenuineCoarseTrif ω L y) :
@@ -236,73 +153,25 @@ theorem bfg_exploration_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     · simpa [Set.disjoint_singleton] using hzne.symm
     · exact absurd rfl huv
 
-
-
-
-
-theorem bfg_bc60_exploration (L R : ℕ)
+lemma bfg_bc60_exploration (L R : ℕ)
     {z₀ z₁ : Site 2} (hz₀ : z₀ ∈ vertexBoundary 2 R) (hz₁ : z₁ ∈ vertexBoundary 2 R)
     (hzne : z₀ ≠ z₁) :
     bfg_GenuineExploration bc60_upperLines L R :=
   bfg_exploration_of_noTrif bc60_upperLines L R hz₀ hz₁ hzne
     (fun y _ => btr_bc60_not_genuineTrif L y)
 
+/-! ## C. Summary -/
 
-
-
-
-theorem bfg_bc60_genuineForest (L R : ℕ)
-    {z₀ z₁ : Site 2} (hz₀ : z₀ ∈ vertexBoundary 2 R) (hz₁ : z₁ ∈ vertexBoundary 2 R)
-    (hzne : z₀ ≠ z₁) :
-    bgt_GenuineForest bc60_upperLines L R :=
-  bfg_genuineForest_of_exploration bc60_upperLines L R (bfg_bc60_exploration L R hz₀ hz₁ hzne)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfg_status :
-    
+lemma bfg_status :
     (∀ {W : Type} {S : Set W} (comp : W → Set (Site d)) (R : ℕ),
       (∀ v ∈ S, (comp v ∩ vertexBoundary d R).Nonempty) →
       (∀ u ∈ S, ∀ v ∈ S, u ≠ v → Disjoint (comp u) (comp v)) →
       Set.InjOn (bfg_leafSel comp R) S) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bfg_GenuineExploration ω L R → bgt_GenuineForest ω L R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bfg_GenuineExploration ω L R →
       (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       (∀ y, y ∈ box d R → ¬ btr_IsGenuineCoarseTrif ω L y) →

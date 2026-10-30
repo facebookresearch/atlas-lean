@@ -6,81 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestProbCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullUniqueness
+
+/-!
+# Open leaf edges and expected counts
+
+The expected number of open edges in a finite edge set is at most its size; forests whose leaves are
+open edges therefore exclude `N = ∞` under translation invariance.
+
+## i. Overview
+
+`bel_leafOpenCount F ω` counts the open edges of `F`. Its expectation is at most `|F|`. If the
+coarse trifurcations of `B_R` are bounded by the open leaves of a forest whose leaf edges `F R` grow
+like the boundary, translation invariance forces the coarse trifurcation probability to vanish,
+which excludes `N = ∞` and gives uniqueness for Bernoulli percolation.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bel_expLeaf_le` : the expected open count is at most `|F|`
+- `bel_top_null_of_forest_open` : open-leaf forests exclude `N = ∞`
+- `bel_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -100,34 +66,19 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-theorem bel_measurableSet_edgeOpen (e : Sym2 (Site d)) :
+/-- The event that the edge `e` is open is measurable. See also
+`StatMech.FK.idc_openEdgeEvent_measurable`, the same statement. -/
+lemma bel_measurableSet_edgeOpen (e : Sym2 (Site d)) :
     MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | ω e = true} :=
   measurableSet_eq_fun (measurable_pi_apply e) measurable_const
 
-
-
-
-
-
-
-
-
-
-
+/-- The number of open edges of `ω` in `F`. -/
 def bel_leafOpenCount (F : Finset (Sym2 (Site d))) (ω : ConfigSpace (Sym2 (Site d))) : ℕ :=
   (F.filter (fun e => ω e = true)).card
 
-
-
-
-theorem bel_leafOpenCount_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d)))
+lemma bel_leafOpenCount_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d)))
     (F : Finset (Sym2 (Site d))) :
     (bel_leafOpenCount F ω : ℝ≥0∞) =
       ∑ e ∈ F, ({ω' : ConfigSpace (Sym2 (Site d)) | ω' e = true}.indicator (fun _ => (1 : ℝ≥0∞))) ω := by
@@ -137,23 +88,10 @@ theorem bel_leafOpenCount_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d)))
   apply Finset.sum_congr rfl
   intro e _
   by_cases h : ω e = true
-  · rw [if_pos h, Set.indicator_of_mem (show ω ∈ {ω' | ω' e = true} from h)]
-  · rw [if_neg h, Set.indicator_of_notMem (show ω ∉ {ω' | ω' e = true} from h)]
+  · rw [ite_eq_left h, Set.indicator_of_mem (show ω ∈ {ω' | ω' e = true} from h)]
+  · rw [ite_eq_right h, Set.indicator_of_notMem (show ω ∉ {ω' | ω' e = true} from h)]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bel_expLeaf_le (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
+lemma bel_expLeaf_le (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (F : Finset (Sym2 (Site d))) :
     ∫⁻ ω, (bel_leafOpenCount F ω : ℝ≥0∞) ∂μ ≤ (F.card : ℝ≥0∞) := by
   classical
@@ -175,27 +113,7 @@ theorem bel_expLeaf_le (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabili
         apply Finset.sum_le_sum; intro e _; exact prob_le_one
     _ = (F.card : ℝ≥0∞) := by simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bel_top_null_of_forest_open
+lemma bel_top_null_of_forest_open
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (hd : 1 ≤ d) (L : ℕ)
     (F : ℕ → Finset (Sym2 (Site d)))
@@ -209,28 +127,7 @@ theorem bel_top_null_of_forest_open
     (fun ω R => bel_leafOpenCount (F R) ω) hforest
     (fun R => bel_expLeaf_le μ (F R)) hdens hexist
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bel_bk_uniqueness_of_forest_open (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
+lemma bel_bk_uniqueness_of_forest_open (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
     (F : ℕ → Finset (Sym2 (Site d)))
     (hforest : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ),
       bpe_CoarseForestNoBnd ω L R (bel_leafOpenCount (F R) ω))
@@ -252,54 +149,16 @@ theorem bel_bk_uniqueness_of_forest_open (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p �
   have herg : IsErgodic (G := Multiplicative (Site d)) μ := bkc_bernoulli_isErgodic hd p hp1
   have hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ := herg.isTranslationInvariant
   have hfe : HasFiniteEnergyMerge μ := bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0
-  
   have hexist : bc61_CoarseTrifExistence μ L := bc109_coarseTrifExistence_pp p hp1 hp0 L hcoarseRoute
-  
   have htop : μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
     bel_top_null_of_forest_open μ hinv hd L F hforest hdens hexist
-  
   exact bc120_uniqueness_of_top_null μ herg hfe htop
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bel_status (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
+lemma bel_status (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (F : ℕ → Finset (Sym2 (Site d))) :
-    
     (∀ R : ℕ, ∫⁻ ω, (bel_leafOpenCount (F R) ω : ℝ≥0∞) ∂μ ≤ ((F R).card : ℝ≥0∞)) ∧
-    
     (IsTranslationInvariant (G := Multiplicative (Site d)) μ → 1 ≤ d → ∀ L : ℕ,
       (∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ),
         bpe_CoarseForestNoBnd ω L R (bel_leafOpenCount (F R) ω)) →

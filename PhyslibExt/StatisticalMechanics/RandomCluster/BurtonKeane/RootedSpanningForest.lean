@@ -6,84 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -109,6 +31,46 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Directio
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedTreeArmSelection
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedColoredForest
 
+/-!
+# Rooted spanning forests of trifurcations
+
+A depth rank on the connectivity graph of trifurcations with a three-colouring of arms gives a
+rooted spanning forest, rooted coloured forests and the trifurcation count.
+
+## i. Overview
+
+`stt_trifGraph ω n` joins two trifurcations of `B_n` when they are connected; its components are the
+clusters. A depth rank on this graph exists (`stt_exists_depthRank`). `stt_RootedSpanningForest ω n`
+asks for arm sites, a rank and an arm colouring compatible with the depth order; it gives
+`rts_RootedColoredForest`, rooted tree arm selection and `Tcount ≤ |∂B_n|`. It holds for at most two
+trifurcations, claws and trees.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `stt_reachable_iff` : reachability in the trifurcation graph is connectivity
+- `stt_exists_depthRank` : a depth rank exists
+- `stt_rootedColoredForest_of_rootedSpanningForest` : a rooted spanning forest gives a rooted
+  coloured forest
+- `stt_Tcount_le_boundary_of_rootedSpanningForest` : the counting bound
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -122,29 +84,18 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The graph on the trifurcations of `B_n` joining connected pairs. -/
 noncomputable def stt_trifGraph (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     SimpleGraph {x : Site d // x ∈ tfc_trifFinset ω n} where
   Adj a b := a ≠ b ∧ Connected d ω a.1 b.1
   symm := ⟨by rintro a b ⟨hne, hc⟩; exact ⟨hne.symm, hc.symm⟩⟩
   loopless := ⟨fun a ⟨hne, _⟩ => hne rfl⟩
 
+/-! ## B. Results -/
 
-
-
-theorem stt_reachable_iff (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stt_reachable_iff (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (a b : {x : Site d // x ∈ tfc_trifFinset ω n}) :
     (stt_trifGraph ω n).Reachable a b ↔ Connected d ω a.1 b.1 := by
   constructor
@@ -158,103 +109,44 @@ theorem stt_reachable_iff (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     · exact hab ▸ Reachable.refl a
     · exact ⟨Walk.cons ⟨hab, hc⟩ Walk.nil⟩
 
-
-
-
-
-
-
-theorem stt_lex_ne_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ ≠ a₂) :
+lemma stt_lex_ne_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ ≠ a₂) :
     (toLex (a₁, b₁)) ≠ toLex (a₂, b₂) :=
   fun he => h (congrArg (fun p => (ofLex p).1) he)
 
-
-theorem stt_lex_ne_snd {a b₁ b₂ : ℕ} (h : b₁ ≠ b₂) :
+lemma stt_lex_ne_snd {a b₁ b₂ : ℕ} (h : b₁ ≠ b₂) :
     (toLex (a, b₁)) ≠ toLex (a, b₂) :=
   fun he => h (by simpa using congrArg (fun p => (ofLex p).2) he)
 
-
-theorem stt_lex_lt_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ < a₂) :
+lemma stt_lex_lt_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ < a₂) :
     (toLex (a₁, b₁)) < toLex (a₂, b₂) := by
   rw [Prod.Lex.toLex_lt_toLex]; exact Or.inl h
 
-
-theorem stt_lex_not_lt_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ < a₂) :
+lemma stt_lex_not_lt_fst {a₁ a₂ b₁ b₂ : ℕ} (h : a₁ < a₂) :
     ¬ ((toLex (a₂, b₂)) < toLex (a₁, b₁)) := by
   rw [Prod.Lex.toLex_lt_toLex]; rintro (h1 | ⟨h1, h2⟩) <;> omega
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-theorem stt_exists_depthRank (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma stt_exists_depthRank (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     ∃ rank : Site d → ℕ ×ₗ ℕ,
       ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
         x ≠ y → Connected d ω x y → rank x ≠ rank y := by
   classical
-  
   obtain ⟨idx, hidx⟩ := (inferInstance : Countable (Site d)).exists_injective_nat
-  
   obtain ⟨F, _hFle, _hFacyc, _hFreach⟩ :=
     (exists_isAcyclic_reachable_eq_le (G := stt_trifGraph ω n))
-  
   set root : F.ConnectedComponent → {x : Site d // x ∈ tfc_trifFinset ω n} :=
     fun C => C.nonempty_supp.some with hroot
-  
   set dep : Site d → ℕ := fun v =>
     if hv : v ∈ tfc_trifFinset ω n then
       F.dist (root (F.connectedComponentMk ⟨v, hv⟩)) ⟨v, hv⟩
     else 0 with hdep
   refine ⟨fun v => toLex (dep v, idx v), ?_⟩
-  
   intro x _hxbox _htri y _hybox _htriy hxy _hconn hrankeq
-  
   have hidxeq : idx x = idx y := by simpa using congrArg (fun p => (ofLex p).2) hrankeq
   exact hxy (hidx hidxeq)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A rooted spanning forest for `B_n`: infinite arm sites, a rank and an arm colouring compatible
+with the depth order on the trifurcation graph. -/
 def stt_RootedSpanningForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ) (c : Site d → Site d → Fin 3),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -268,53 +160,28 @@ def stt_RootedSpanningForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → rank x < rank y → c y (b x) ≠ c y (b y))
 
-
-
-
-
-
-
-
-
-
-
-
-theorem stt_rootedColoredForest_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
+lemma stt_rootedColoredForest_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (h : stt_RootedSpanningForest ω n) :
     rts_RootedColoredForest ω n := by
   obtain ⟨b, rank, c, hdata, hcolor, hinj, hdiv⟩ := h
   refine ⟨b, (fun x y => rank x < rank y), c, hdata, ?_, hcolor, ?_⟩
-  · 
-    intro x hxbox htri y hybox htriy hxy hconn
+  · intro x hxbox htri y hybox htriy hxy hconn
     have hne : rank x ≠ rank y := hinj x hxbox htri y hybox htriy hxy hconn
     rcases lt_trichotomy (rank x) (rank y) with h | h | h
     · exact Or.inl h
     · exact absurd h hne
     · exact Or.inr h
-  · 
-    intro x hxbox htri y hybox htriy hconn hlt
+  · intro x hxbox htri y hybox htriy hconn hlt
     have hxy : x ≠ y := by rintro rfl; exact lt_irrefl _ hlt
     exact hdiv x hxbox htri y hybox htriy hxy hconn hlt
 
-
-
-theorem stt_rootedTreeArmSelection_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
+lemma stt_rootedTreeArmSelection_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (h : stt_RootedSpanningForest ω n) :
     bas_RootedTreeArmSelection ω n :=
   rts_rootedTreeArmSelection_of_rootedColoredForest ω n
     (stt_rootedColoredForest_of_rootedSpanningForest ω n h)
 
-
-
-
-
-
-
-
-
-
-
-theorem stt_rootedSpanningForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stt_rootedSpanningForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     stt_RootedSpanningForest ω n := by
   refine ⟨id, (fun _ => (0, 0)), (fun _ _ => 0), ?_, ?_, ?_, ?_⟩
@@ -323,12 +190,7 @@ theorem stt_rootedSpanningForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
 
-
-
-
-
-
-theorem stt_rootedSpanningForest_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stt_rootedSpanningForest_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d) (cx0 cy0 : Site d → Fin 3) (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
     (hbx0 : b x₀ ∈ box d n ∧ Connected d ω x₀ (b x₀) ∧
@@ -344,55 +206,33 @@ theorem stt_rootedSpanningForest_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (
   classical
   refine ⟨b, (fun z => if z = y₀ then toLex (1, 0) else toLex (0, 0)),
     (fun z => if z = y₀ then cy0 else cx0), ?_, ?_, ?_, ?_⟩
-  · 
-    intro x hxbox htri
+  · intro x hxbox htri
     rcases htwo x hxbox htri with rfl | rfl
     · exact hbx0
     · exact hby0
-  · 
-    intro yy hyybox htriy u v hyu hneu hyv hnev
+  · intro yy hyybox htriy u v hyu hneu hyv hnev
     rcases htwo yy hyybox htriy with rfl | rfl
-    · simp only [if_neg hx0y0]; exact hcx0faith u v hyu hneu hyv hnev
-    · simp only [if_pos]; exact hcy0faith u v hyu hneu hyv hnev
-  · 
-    intro x hxbox htri y hybox htriy hxy _
+    · simp only [ite_eq_right hx0y0]; exact hcx0faith u v hyu hneu hyv hnev
+    · simp only [ite_eq_left]; exact hcy0faith u v hyu hneu hyv hnev
+  · intro x hxbox htri y hybox htriy hxy _
     rcases htwo x hxbox htri with rfl | rfl
     · rcases htwo y hybox htriy with rfl | rfl
       · exact absurd rfl hxy
-      · simp only [if_neg hx0y0, if_pos]; exact (stt_lex_ne_fst (by norm_num))
+      · simp only [ite_eq_right hx0y0, ite_eq_left]; exact (stt_lex_ne_fst (by norm_num))
     · rcases htwo y hybox htriy with rfl | rfl
-      · simp only [if_neg hx0y0, if_pos]; exact (stt_lex_ne_fst (by norm_num))
+      · simp only [ite_eq_right hx0y0, ite_eq_left]; exact (stt_lex_ne_fst (by norm_num))
       · exact absurd rfl hxy
-  · 
-    intro x hxbox htri y hybox htriy hxy _ hlt
+  · intro x hxbox htri y hybox htriy hxy _ hlt
     rcases htwo x hxbox htri with rfl | rfl
     · rcases htwo y hybox htriy with rfl | rfl
       · exact absurd rfl hxy
-      · simpa only [if_neg hx0y0, if_pos] using hdeep
+      · simpa only [ite_eq_right hx0y0, ite_eq_left] using hdeep
     · rcases htwo y hybox htriy with rfl | rfl
-      · 
-        simp only [if_neg hx0y0, if_pos] at hlt
+      · simp only [ite_eq_right hx0y0, ite_eq_left] at hlt
         exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
       · exact absurd rfl hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d) (y : Fin 3 → Site d) (lx : Site d → Fin 3) (ly : Fin 3 → Site d → Fin 3)
     (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hydata : ∀ i, y i ∈ box d n ∧ IsTrifurcation d ω (y i) ∧ x₀ ≠ y i ∧
@@ -434,7 +274,6 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
   have hx0bx0 : Connected d ω x₀ (b x₀) := (hbdata x₀ hx0box htri0).2.1
   have hyi_bx0 : ∀ i, Connected d ω (y i) (b x₀) := fun i =>
     (hydata i).2.2.2.symm.trans hx0bx0
-  
   set c : Site d → Site d → Fin 3 :=
     fun z => if z = x₀ then lx
              else if h : ∃ i, z = y i then ly h.choose else lx with hc
@@ -443,10 +282,9 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
     have hne : y i ≠ x₀ := (hx0y i).symm
     have hex : ∃ j, y i = y j := ⟨i, rfl⟩
     rw [hc]
-    simp only [if_neg hne, dif_pos hex]
+    simp only [ite_eq_right hne, dite_eq_left hex]
     rw [hyinj hex.choose_spec.symm]
   have hcx0 : c x₀ = lx := by simp [hc]
-  
   set rk : Site d → ℕ ×ₗ ℕ :=
     fun z => if z = x₀ then toLex (0, 0)
              else if h : ∃ i, z = y i then toLex (1, (h.choose : ℕ)) else toLex (2, 0) with hrk
@@ -456,16 +294,14 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
     have hne : y i ≠ x₀ := (hx0y i).symm
     have hex : ∃ j, y i = y j := ⟨i, rfl⟩
     rw [hrk]
-    simp only [if_neg hne, dif_pos hex]
+    simp only [ite_eq_right hne, dite_eq_left hex]
     rw [hyinj hex.choose_spec.symm]
   refine ⟨b, rk, c, hbdata, ?_, ?_, ?_⟩
-  · 
-    intro yy hyybox htriy u v hyu hneu hyv hnev
+  · intro yy hyybox htriy u v hyu hneu hyv hnev
     rcases hsingle yy hyybox htriy with rfl | ⟨i, rfl⟩
     · rw [hcx0]; exact hlxf u v hyu hneu hyv hnev
     · rw [hcyi i]; exact hlyf i u v hyu hneu hyv hnev
-  · 
-    intro x hxbox htri x' hx'box htri' hxx' _hconn
+  · intro x hxbox htri x' hx'box htri' hxx' _hconn
     rcases hsingle x hxbox htri with rfl | ⟨i, rfl⟩
     · rcases hsingle x' hx'box htri' with rfl | ⟨i, rfl⟩
       · exact absurd rfl hxx'
@@ -476,19 +312,14 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
         refine stt_lex_ne_snd ?_
         intro hij
         exact hxx' (by rw [Fin.val_inj.mp hij])
-  · 
-    intro x hxbox htri x' hx'box htri' hxx' _hconn hlt
+  · intro x hxbox htri x' hx'box htri' hxx' _hconn hlt
     rcases hsingle x hxbox htri with rfl | ⟨i, rfl⟩
-    · 
-      rcases hsingle x' hx'box htri' with rfl | ⟨i, rfl⟩
+    · rcases hsingle x' hx'box htri' with rfl | ⟨i, rfl⟩
       · exact absurd rfl hxx'
-      · 
-        rw [hcyi i]
+      · rw [hcyi i]
         by_cases hji : (j₀ : Fin 3) = i
-        · 
-          subst hji; exact hcentral
-        · 
-          have hG_bx0 : ly i (b x) = 0 :=
+        · subst hji; exact hcentral
+        · have hG_bx0 : ly i (b x) = 0 :=
             (hGstar i (b x) hx0bx0 hne_bx0 (hyi_bx0 i) (hne_yi_bx0 i)).mpr
               (by rw [hcx]; exact hji)
           have hG_byi : ly i (b (y i)) ≠ 0 :=
@@ -496,14 +327,10 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
               (hyi_byi i) (hne_yi_byj i i))).mpr (by rw [not_not, hcy i])
           rw [hG_bx0]; exact fun h => hG_byi h.symm
     · rcases hsingle x' hx'box htri' with rfl | ⟨j, rfl⟩
-      · 
-        rw [hrkx0, hrkyi i] at hlt
+      · rw [hrkx0, hrkyi i] at hlt
         exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
-      · 
-        rw [hcyi j]
-        
+      · rw [hcyi j]
         have hij' : i ≠ j := fun h => hxx' (by rw [h])
-        
         have hG_byi : ly j (b (y i)) = 0 :=
           (hGstar j (b (y i)) (hx0byi i) (hne_x0_byi i)
             (hyi_byj j i) (hne_yi_byj j i)).mpr (by rw [hcy i]; exact hij')
@@ -512,18 +339,7 @@ theorem stt_rootedSpanningForest_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
             (hyi_byi j) (hne_yi_byj j j))).mpr (by rw [not_not, hcy j])
         rw [hG_byi]; exact fun h => hG_byj h.symm
 
-
-
-
-
-
-
-
-
-
-
-
-theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (r m : Site d) (g : Fin 2 → Site d) (b : Site d → Site d)
     (cr cm : Site d → Fin 3) (cg : Fin 2 → Site d → Fin 3)
     (hdistinct : r ≠ m ∧ (∀ i, r ≠ g i) ∧ (∀ i, m ≠ g i) ∧ Function.Injective g)
@@ -544,7 +360,6 @@ theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n :
     stt_RootedSpanningForest ω n := by
   classical
   obtain ⟨hrm_ne, hrg_ne, hmg_ne, hginj⟩ := hdistinct
-  
   set c : Site d → Site d → Fin 3 :=
     fun z => if z = r then cr
              else if z = m then cm
@@ -557,9 +372,8 @@ theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n :
     have h2 : g i ≠ m := (hmg_ne i).symm
     have hex : ∃ j, g i = g j := ⟨i, rfl⟩
     rw [hc]
-    simp only [if_neg h1, if_neg h2, dif_pos hex]
+    simp only [ite_eq_right h1, ite_eq_right h2, dite_eq_left hex]
     rw [hginj hex.choose_spec.symm]
-  
   set rk : Site d → ℕ ×ₗ ℕ :=
     fun z => if z = r then toLex (0, 0) else if z = m then toLex (1, 0)
              else if h : ∃ i, z = g i then toLex (2, (h.choose : ℕ)) else toLex (3, 0) with hrk
@@ -571,17 +385,15 @@ theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n :
     have h2 : g i ≠ m := (hmg_ne i).symm
     have hex : ∃ j, g i = g j := ⟨i, rfl⟩
     rw [hrk]
-    simp only [if_neg h1, if_neg h2, dif_pos hex]
+    simp only [ite_eq_right h1, ite_eq_right h2, dite_eq_left hex]
     rw [hginj hex.choose_spec.symm]
   refine ⟨b, rk, c, hbdata, ?_, ?_, ?_⟩
-  · 
-    intro yy hyybox htriy u v hyu hneu hyv hnev
+  · intro yy hyybox htriy u v hyu hneu hyv hnev
     rcases hsingle yy hyybox htriy with rfl | rfl | ⟨i, rfl⟩
     · rw [hcr]; exact hcrf u v hyu hneu hyv hnev
     · rw [hcm]; exact hcmf u v hyu hneu hyv hnev
     · rw [hcg i]; exact hcgf i u v hyu hneu hyv hnev
-  · 
-    intro x hxbox htri x' hx'box htri' hxx' _hconn
+  · intro x hxbox htri x' hx'box htri' hxx' _hconn
     rcases hsingle x hxbox htri with rfl | rfl | ⟨i, rfl⟩ <;>
       rcases hsingle x' hx'box htri' with rfl | rfl | ⟨j, rfl⟩
     · exact absurd rfl hxx'
@@ -596,25 +408,20 @@ theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n :
       refine stt_lex_ne_snd ?_
       intro hij
       exact hxx' (by rw [Fin.val_inj.mp hij])
-  · 
-    intro x hxbox htri x' hx'box htri' hxx' _hconn hlt
+  · intro x hxbox htri x' hx'box htri' hxx' _hconn hlt
     rcases hsingle x hxbox htri with rfl | rfl | ⟨i, rfl⟩
     · rcases hsingle x' hx'box htri' with rfl | rfl | ⟨i, rfl⟩
       · exact absurd rfl hxx'
       · rw [hcm]; exact hrm
       · rw [hcg i]; exact hrg i
     · rcases hsingle x' hx'box htri' with rfl | rfl | ⟨i, rfl⟩
-      · 
-        rw [hrkr, hrkm] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
+      · rw [hrkr, hrkm] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
       · exact absurd rfl hxx'
       · rw [hcg i]; exact hmg i
     · rcases hsingle x' hx'box htri' with rfl | rfl | ⟨j, rfl⟩
-      · 
-        rw [hrkr, hrkg i] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
-      · 
-        rw [hrkm, hrkg i] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
-      · 
-        rw [hcg j]
+      · rw [hrkr, hrkg i] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
+      · rw [hrkm, hrkg i] at hlt; exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
+      · rw [hcg j]
         rw [hrkg i, hrkg j, Prod.Lex.toLex_lt_toLex] at hlt
         have hijlt : (i : ℕ) < (j : ℕ) := by rcases hlt with h | ⟨_, h⟩ <;> [omega; exact h]
         have hi0 : i = 0 := by omega
@@ -622,38 +429,17 @@ theorem stt_rootedSpanningForest_of_tree (ω : ConfigSpace (Sym2 (Site d))) (n :
         subst hi0; subst hj1
         exact hgg
 
-
-
-
-
-
-
-
-
-
-theorem stt_Tcount_le_boundary_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
+lemma stt_Tcount_le_boundary_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (hn : 1 ≤ n) (h : stt_RootedSpanningForest ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   rts_Tcount_le_boundary_of_rootedColoredForest ω n hn
     (stt_rootedColoredForest_of_rootedSpanningForest ω n h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem stt_burton_keane_bernoulli_of_rootedSpanningForest (hd : 1 ≤ d) (p : ℝ≥0)
+/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
+configuration and box. The certificate implies the trifurcation-to-boundary injection
+`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
+for `d ≥ 1`; so the statement is vacuous. -/
+lemma stt_burton_keane_bernoulli_of_rootedSpanningForest (hd : 1 ≤ d) (p : ℝ≥0)
     (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
       stt_RootedSpanningForest ω n)

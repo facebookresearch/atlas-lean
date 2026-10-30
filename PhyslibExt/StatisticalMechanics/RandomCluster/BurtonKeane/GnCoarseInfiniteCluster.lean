@@ -6,95 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -102,6 +13,45 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBranch
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullFiniteVolume
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxBuffer
+
+/-!
+# Coarse trifurcations and the number of infinite clusters
+
+Arms of a coarse trifurcation are infinite in the original configuration, and with at most one
+infinite cluster they are connected, so coarse trifurcations cannot by themselves exclude `N ≥ 2`.
+
+## i. Overview
+
+A coarse trifurcation gives three sites pairwise disconnected in the contracted lattice whose
+clusters are infinite in `ω`. When `ω` has at most one infinite cluster these sites are connected in
+`ω`, so a coarse trifurcation is compatible with uniqueness. Consequently deriving `N ≤ 1` from the
+coarse count needs an input that does not already assume uniqueness; the leaf-count route
+(`bc81_bk_from_leaf`) supplies such an input. The file also proves that `N < ∞` almost surely is
+equivalent to `N = ∞` being null.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bc81_cut_cluster_infinite_of_coarse` : coarse arms are infinite in `ω`
+- `bc81_coarseTrif_arms_connected_of_le_one` : with at most one infinite cluster the arms are
+  connected
+- `bc81_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -120,23 +70,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_singleBox_no_gap (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d)
+lemma bc81_singleBox_no_gap (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d)
     (h : bc61_IsCoarseTrifurcation ω L y) :
     ∃ a₁ a₂ a₃ : Site d,
       (bc67_GnIncident ω L y a₁ ∧ bc67_GnIncident ω L y a₂ ∧ bc67_GnIncident ω L y a₃) ∧
@@ -146,17 +82,7 @@ theorem bc81_singleBox_no_gap (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : 
   bc67_Gn_singleVertex_trifurcation_degree ω L y
     ((bc67_coarseTrif_is_G_n_trifurcation ω L y).mp h)
 
-
-
-
-
-
-
-
-
-
-
-theorem bc81_omega_cluster_infinite_of_cut (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a : Site d)
+lemma bc81_omega_cluster_infinite_of_cut (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a : Site d)
     (h : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     (cluster d ω a).Infinite := by
   apply h.mono
@@ -164,14 +90,10 @@ theorem bc81_omega_cluster_infinite_of_cut (ω : ConfigSpace (Sym2 (Site d))) (L
   rw [mem_cluster] at hz ⊢
   exact bc61_connected_of_cut hz
 
-
-
-
-theorem bc81_cut_cluster_infinite_of_coarse (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
+lemma bc81_cut_cluster_infinite_of_coarse (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
     (h : bc61_IsCoarseTrifurcation ω L y) :
     ∃ a₁ a₂ a₃ : Site d,
       (cluster d ω a₁).Infinite ∧ (cluster d ω a₂).Infinite ∧ (cluster d ω a₃).Infinite ∧
-      
       (¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₃ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₂ a₃) := by
@@ -181,11 +103,7 @@ theorem bc81_cut_cluster_infinite_of_coarse (ω : ConfigSpace (Sym2 (Site d))) (
     bc81_omega_cluster_infinite_of_cut ω L y a₂ hinf₂,
     bc81_omega_cluster_infinite_of_cut ω L y a₃ hinf₃, hcut⟩
 
-
-
-
-
-theorem bc81_infinite_clusters_coincide_of_le_one (ω : ConfigSpace (Sym2 (Site d))) {a b : Site d}
+lemma bc81_infinite_clusters_coincide_of_le_one (ω : ConfigSpace (Sym2 (Site d))) {a b : Site d}
     (hN : numInfiniteClusters d ω ≤ 1)
     (ha : (cluster d ω a).Infinite) (hb : (cluster d ω b).Infinite) :
     Connected d ω a b := by
@@ -197,18 +115,10 @@ theorem bc81_infinite_clusters_coincide_of_le_one (ω : ConfigSpace (Sym2 (Site 
   have : b ∈ cluster d ω a := by rw [heq]; exact self_mem_cluster ω b
   exact this
 
-
-
-
-
-
-
-
-theorem bc81_coarseTrif_arms_connected_of_le_one (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
+lemma bc81_coarseTrif_arms_connected_of_le_one (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
     (hN : numInfiniteClusters d ω ≤ 1) (h : bc61_IsCoarseTrifurcation ω L y) :
     ∃ a₁ a₂ a₃ : Site d,
       Connected d ω a₁ a₂ ∧ Connected d ω a₁ a₃ ∧ Connected d ω a₂ a₃ ∧
-      
       (¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₃ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₂ a₃) := by
@@ -218,61 +128,18 @@ theorem bc81_coarseTrif_arms_connected_of_le_one (ω : ConfigSpace (Sym2 (Site d
     bc81_infinite_clusters_coincide_of_le_one ω hN hinf₁ hinf₃,
     bc81_infinite_clusters_coincide_of_le_one ω hN hinf₂ hinf₃, hcut⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_route2_circular (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] :
-    μ {ω | numInfiniteClusters d ω < ⊤} = 1 ↔ μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc79_finite_N_iff_top_null μ
-
-
-
-
-
-
-
-theorem bc81_coarseTrif_consistent_with_le_one (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
+lemma bc81_coarseTrif_consistent_with_le_one (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
     (hN : numInfiniteClusters d ω ≤ 1) (h : bc61_IsCoarseTrifurcation ω L y) :
     ∃ a₁ a₂ a₃ : Site d,
-      
       (¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₃ ∧
        ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₂ a₃) ∧
-      
       (Connected d ω a₁ a₂ ∧ Connected d ω a₁ a₃ ∧ Connected d ω a₂ a₃) := by
   obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, hcut⟩ :=
     bc81_coarseTrif_arms_connected_of_le_one ω L hN h
   exact ⟨a₁, a₂, a₃, hcut, hc₁₂, hc₁₃, hc₂₃⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_route1_fails {L : ℕ} (hL : 3 ≤ L) :
+lemma bc81_route1_fails {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
     Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
@@ -280,125 +147,46 @@ theorem bc81_route1_fails {L : ℕ} (hL : 3 ≤ L) :
       ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   bc76_buffer_insufficient hL
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_leaf_noncircular (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (h0 : μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0) :
-    ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R :=
-  bc79_residue_noncircular μ L hinv h0
-
-
-
-
-theorem bc81_bk_from_leaf (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (hd : 1 ≤ d) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (h0 : μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0)
-    (hexist : bc61_CoarseTrifExistence μ L) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc78_bk_closed μ hd L hinv h0 hexist
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_cardinal_verdict (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
+lemma bc81_cardinal_verdict (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) :
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (y : Site d), bc61_IsCoarseTrifurcation ω L y →
       ∃ a₁ a₂ a₃ : Site d,
         ¬ (bc67_contractedLattice ω L y).Reachable a₁ a₂ ∧
         ¬ (bc67_contractedLattice ω L y).Reachable a₁ a₃ ∧
         ¬ (bc67_contractedLattice ω L y).Reachable a₂ a₃) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (y : Site d), numInfiniteClusters d ω ≤ 1 →
       bc61_IsCoarseTrifurcation ω L y →
       ∃ a₁ a₂ a₃ : Site d, Connected d ω a₁ a₂ ∧ Connected d ω a₁ a₃ ∧ Connected d ω a₂ a₃) ∧
-    
     (μ {ω | numInfiniteClusters d ω < ⊤} = 1 ↔ μ {ω | numInfiniteClusters d ω = ⊤} = 0) ∧
-    
     ((μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0) → bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters d ω = ⊤} = 0) := by
-  refine ⟨?_, ?_, bc81_route2_circular μ, ?_⟩
+  refine ⟨?_, ?_, bc79_finite_N_iff_top_null μ, ?_⟩
   · intro ω y h
     obtain ⟨a₁, a₂, a₃, _, hcut⟩ := bc81_singleBox_no_gap ω L y h
     exact ⟨a₁, a₂, a₃, hcut⟩
   · intro ω y hN h
     obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, _⟩ := bc81_coarseTrif_arms_connected_of_le_one ω L hN h
     exact ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃⟩
-  · intro h0 hexist; exact bc81_bk_from_leaf μ hd L hinv h0 hexist
+  · intro h0 hexist; exact bc79_bk_from_leaf μ hd L hinv h0 hexist
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc81_status :
-    
+lemma bc81_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (y : Site 2), bc61_IsCoarseTrifurcation ω L y →
       ∃ a₁ a₂ a₃ : Site 2,
         ¬ (bc67_contractedLattice ω L y).Reachable a₁ a₂ ∧
         ¬ (bc67_contractedLattice ω L y).Reachable a₁ a₃ ∧
         ¬ (bc67_contractedLattice ω L y).Reachable a₂ a₃) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (y : Site 2), numInfiniteClusters 2 ω ≤ 1 →
       bc61_IsCoarseTrifurcation ω L y →
       ∃ a₁ a₂ a₃ : Site 2, Connected 2 ω a₁ a₂ ∧ Connected 2 ω a₁ a₃ ∧ Connected 2 ω a₂ a₃) ∧
-    
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
       μ {ω | numInfiniteClusters 2 ω < ⊤} = 1 ↔ μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
-    
     (∀ {L : ℕ}, 3 ≤ L →
       ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
         ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
         ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) ∧
-    
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ] (L : ℕ),
       IsTranslationInvariant (G := Multiplicative (Site 2)) μ →
       μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0 → bc61_CoarseTrifExistence μ L →
@@ -410,8 +198,8 @@ theorem bc81_status :
   · intro ω L y hN h
     obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, _⟩ := bc81_coarseTrif_arms_connected_of_le_one ω L hN h
     exact ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃⟩
-  · intro μ _; exact bc81_route2_circular μ
+  · intro μ _; exact bc79_finite_N_iff_top_null μ
   · intro L hL; exact (bc81_route1_fails hL).2.2
-  · intro μ _ L hinv h0 hexist; exact bc81_bk_from_leaf μ (by norm_num) L hinv h0 hexist
+  · intro μ _ L hinv h0 hexist; exact bc79_bk_from_leaf μ (by norm_num) L hinv h0 hexist
 
 end StatMech.Walls

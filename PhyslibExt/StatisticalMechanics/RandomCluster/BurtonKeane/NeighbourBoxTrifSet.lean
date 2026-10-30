@@ -6,55 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BranchNeighbourArm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicArmSubforest
+
+/-!
+# Trifurcations whose branches leave through neighbouring boxes
+
+The set of trifurcations in `B_R` defined by neighbour-box branches is finite and has at most
+`|∂B_R|` elements.
+
+## i. Overview
+
+Neighbours of sites of `B_{R-1}` lie in `B_R`. The trifurcation set `bfin2_trifSet` (defined through
+branch neighbour arms) is a finite subset of the box, and the arm subforest it spans has its leaves
+on the boundary, which bounds its size by `|∂B_R|`.
+
+## ii. Key results
+
+- `bfin2_neighbor_in_box` : neighbours of `B_{R-1}` lie in `B_R`
+- `bfin2_trifSet_finite` : the trifurcation set is finite
+- `bfin2_count` : its size is at most the boundary size
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -74,13 +59,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-theorem bfin2_neighbor_in_box {d R : ℕ} (hR : 1 ≤ R) {x n : Site d}
+lemma bfin2_neighbor_in_box {d R : ℕ} (hR : 1 ≤ R) {x n : Site d}
     (hx : x ∈ box d (R - 1)) (hadj : (hypercubicLattice d).Adj x n) : n ∈ box d R := by
   rw [hypercubicLattice_adj] at hadj
   intro i
@@ -96,47 +77,26 @@ theorem bfin2_neighbor_in_box {d R : ℕ} (hR : 1 ≤ R) {x n : Site d}
       _ ≤ (x i).natAbs + (x i - n i).natAbs := Int.natAbs_sub_le _ _
   omega
 
-
-theorem bfin2_trifSet_finite (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) :
+lemma bfin2_trifSet_finite (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) :
     {x : Site d | bft_FineTrif ω x ∧ x ∈ box d (R - 1)}.Finite :=
   (box_finite d (R - 1)).subset (fun _ hx => hx.2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) :
+lemma bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) :
     (bfin2_trifSet_finite ω R).toFinset.card ≤ (vertexBoundary_finite d R).toFinset.card := by
   classical
-  
   set Sfin := (bfin2_trifSet_finite ω R).toFinset with hSfin
-  
   rcases Sfin.eq_empty_or_nonempty with hempty | hne
   · simp [hempty]
-  
   obtain ⟨F, hF_le, hF_acyc, hF_reach⟩ :=
     (openSubgraph d ω).exists_isAcyclic_reachable_eq_le
-  
-  haveI hlf : LocallyFinite F := by
+  have hlf : LocallyFinite F := by
     intro v
     apply Set.Finite.fintype
     apply Set.Finite.subset (Set.toFinite ((hypercubicLattice d).neighborSet v))
     intro w hw
     exact (hF_le.trans (openSubgraph_le ω)) hw
-  
   have hspan : ∀ (x z : Site d), (openSubgraph d ω).Reachable x z → F.Reachable x z := by
     intro x z h; rw [hF_reach]; exact h
-  
   have harms : ∀ i : ↥Sfin, ∃ (rr : Fin 3 → ℕ → Site d) (ll : Fin 3 → ℕ),
       (∀ j, rr j 0 = (i : Site d)) ∧
       (rr 0 1 ≠ rr 1 1 ∧ rr 0 1 ≠ rr 2 1 ∧ rr 1 1 ≠ rr 2 1) ∧
@@ -156,9 +116,7 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
       bae_trif_arms (i : Site d) F hF_le (hspan (i : Site d)) hR hnbox hfine
     refine ⟨![ρ₁, ρ₂, ρ₃], ![ℓ₁, ℓ₂, ℓ₃], ?_, ⟨hd12, hd13, hd23⟩, ?_, ?_, ?_, ?_⟩ <;>
       intro j <;> fin_cases j <;> assumption
-  
   choose rr ll hrr using harms
-  
   set rayS : (↥Sfin × Fin 3) → ℕ → Site d := fun a k => rr a.1 a.2 k with hrayS
   set lenS : (↥Sfin × Fin 3) → ℕ := fun a => ll a.1 a.2 with hlenS
   have hlenS_pos : ∀ a, 1 ≤ lenS a := fun a => (hrr a.1).2.2.1 a.2
@@ -177,7 +135,6 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
       | exact d01 | exact fun h => d01 h.symm
       | exact d02 | exact fun h => d02 h.symm
       | exact d12 | exact fun h => d12 h.symm
-  
   set Vset : Finset (Site d) :=
     Finset.univ.biUnion (fun a : ↥Sfin × Fin 3 =>
       (Finset.range (lenS a + 1)).image (fun k => rayS a k)) with hVset
@@ -193,24 +150,20 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
     · rintro ⟨a, k, hk, hkv⟩
       exact ⟨a, Finset.mem_univ _, by
         rw [Finset.mem_image]; exact ⟨k, Finset.mem_range.mpr (by omega), hkv⟩⟩
-  
   obtain ⟨i₀, hi₀⟩ := hne
   have hhub_mem : ∀ i : ↥Sfin, (i : Site d) ∈ Vset := by
     intro i
     rw [hmemVset]
     exact ⟨(i, 0), 0, Nat.zero_le _, by rw [hrayS_start]⟩
-  haveI hVne : Nonempty (↥Vset) := ⟨⟨(⟨i₀, hi₀⟩ : ↥Sfin), hhub_mem ⟨i₀, hi₀⟩⟩⟩
-  
+  have hVne : Nonempty (↥Vset) := ⟨⟨(⟨i₀, hi₀⟩ : ↥Sfin), hhub_mem ⟨i₀, hi₀⟩⟩⟩
   set ray : (↥Sfin × Fin 3) → ℕ → ↥Vset := fun a k =>
     ⟨rayS a (min k (lenS a)), by
       rw [hmemVset]; exact ⟨a, min k (lenS a), min_le_right _ _, rfl⟩⟩ with hray
   set len : (↥Sfin × Fin 3) → ℕ := lenS with hlen
-  
   have hray_val : ∀ a k, k ≤ len a → (ray a k : Site d) = rayS a k := by
     intro a k hk
     change rayS a (min k (lenS a)) = rayS a k
     rw [min_eq_left hk]
-  
   have hlen1 : ∀ a, 1 ≤ len a := hlenS_pos
   have hinj : ∀ a, Set.InjOn (ray a) {m | m ≤ len a} := by
     intro a m hm m' hm' hmm'
@@ -225,7 +178,6 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
     refine ⟨a, k, hk, ?_⟩
     apply Subtype.ext
     rw [hray_val a k hk]; exact hkv
-  
   set f : ↥Sfin → ↥Vset := fun i => ⟨(i : Site d), hhub_mem i⟩ with hf
   have hf_inj : Function.Injective f := by
     intro a b h
@@ -249,7 +201,6 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
       rwa [hval, hval] at this
     exact hrayS_dist i j j' hjj' hkey
   have hhub : ∀ a, ∃ i, ray a 0 = f i := fun a => ⟨a.1, harm3start a.1 a.2⟩
-  
   set B : Finset (↥Vset) :=
     Finset.univ.filter (fun v : ↥Vset => (v : Site d) ∈ vertexBoundary d R) with hB
   have htip : ∀ a, ray a (len a) ∈ B := by
@@ -259,9 +210,7 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
     change rayS a (min (lenS a) (lenS a)) ∈ vertexBoundary d R
     rw [min_self]
     exact hrayS_tip a
-  
-  haveI hdec : DecidableRel (bgf3_G ray len).Adj := Classical.decRel _
-  
+  have hdec : DecidableRel (bgf3_G ray len).Adj := Classical.decRel _
   have hcomap_acyc : (F.comap (⇑(Function.Embedding.subtype (fun v => v ∈ Vset)))).IsAcyclic :=
     hF_acyc.of_comap (Function.Embedding.subtype _)
   have hadjT : ∀ a, ∀ k < len a,
@@ -272,7 +221,6 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
     exact hrayS_adj a k hk
   have hacyc : (bgf3_G ray len).IsAcyclic :=
     bau_isAcyclic_of_le_acyclic hcomap_acyc (bgf3_le_tree ray len _ hadjT)
-  
   have hcount : Fintype.card (↥Sfin) ≤ B.card :=
     bfk_forestCount (bgf3_G ray len) hacyc
       (bgf3_min_deg1 ray len hlen1 hinj hcover)
@@ -280,7 +228,6 @@ theorem bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) 
       (fun i => bgf3_deg3 ray len hlen1 hinj f arm3 harm3start harm3dist i)
       B
       (fun v hv => bgf3_leaves_on_boundary ray len hlen1 hinj htip f arm3 harm3start harm3dist hhub hv)
-  
   have hB_le : B.card ≤ (vertexBoundary_finite d R).toFinset.card := by
     apply Finset.card_le_card_of_injOn (fun v : ↥Vset => (v : Site d))
     · intro v hv

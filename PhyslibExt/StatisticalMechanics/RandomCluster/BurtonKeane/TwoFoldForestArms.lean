@@ -6,77 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -93,6 +22,43 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HallArmE
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndDisjoint
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafSelection
 
+/-!
+# Two-fold forest arms
+
+A common root and two private infinite arms per trifurcation, satisfying Hall's condition, give a
+leaf selection and the spanning-tree certificate.
+
+## i. Overview
+
+`tfh_TwoFoldForestArms ω n` provides a root site and two arm sites per trifurcation, all in clusters
+that stay infinite after removing all trifurcations, with boundary arm ends satisfying a two-fold
+Hall condition. Hall's theorem then selects two distinct boundary leaves per trifurcation, giving
+`str_ForestLeafSelection`, the spanning-tree certificate and `Tcount ≤ |∂B_n|`. A single
+trifurcation always has two-fold forest arms.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `tfh_twoFold_hall_root` : the two-fold Hall selection
+- `tfh_forestLeafSelection_of_twoFoldForestArms` : two-fold arms give a leaf selection
+- `tfh_Tcount_le_boundary_of_twoFoldForestArms` : the counting bound
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -106,26 +72,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
+lemma tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
     (rootEnds : Finset V) (armEnds : V → Fin 2 → Finset V)
     (hrne : rootEnds.Nonempty)
     (hne : ∀ x ∈ T, ∀ i, (armEnds x i).Nonempty)
@@ -138,10 +87,10 @@ theorem tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
       (∀ x ∈ T, ∀ i, ℓ x i ≠ r₀) ∧
       (∀ x ∈ T, ∀ i, ∀ y ∈ T, ∀ j, ℓ x i = ℓ y j → x = y ∧ i = j) := by
   classical
-  
+
   set ι := Option ({x // x ∈ T} × Fin 2) with hι
   set t : ι → Finset V := fun p => p.elim rootEnds (fun q => armEnds q.1.1 q.2) with ht
-  
+
   have hHall : ∀ s : Finset ι, s.card ≤ (s.biUnion t).card := by
     intro s
     rw [Finset.card_biUnion]
@@ -152,8 +101,7 @@ theorem tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
             cases p with
             | none => exact Finset.Nonempty.card_pos hrne
             | some q => exact Finset.Nonempty.card_pos (hne q.1.1 q.1.2 q.2)
-    · 
-      intro p _ q _ hpq
+    · intro p _ q _ hpq
       cases p with
       | none =>
         cases q with
@@ -172,47 +120,21 @@ theorem tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
     (Finset.all_card_le_biUnion_card_iff_exists_injective t).mp hHall
   refine ⟨f none, fun x i => if hx : x ∈ T then f (some (⟨x, hx⟩, i)) else x, ?_, ?_, ?_, ?_⟩
   · exact hmem none
-  · intro x hx i; simp only [dif_pos hx]; exact hmem (some (⟨x, hx⟩, i))
+  · intro x hx i; simp only [dite_eq_left hx]; exact hmem (some (⟨x, hx⟩, i))
   · intro x hx i hcontra
-    simp only [dif_pos hx] at hcontra
+    simp only [dite_eq_left hx] at hcontra
     have : (some (⟨x, hx⟩, i) : ι) = none := hinj hcontra
     exact absurd this (by simp)
   · intro x hx i y hy j hxy
-    simp only [dif_pos hx, dif_pos hy] at hxy
+    simp only [dite_eq_left hx, dite_eq_left hy] at hxy
     have := hinj hxy
     rw [Option.some.injEq, Prod.mk.injEq] at this
     exact ⟨congrArg Subtype.val this.1, this.2⟩
 
-
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Two-fold forest arms for `B_n`: a root and two arm sites per trifurcation in clusters that stay
+infinite after all trifurcations are removed, with boundary arm ends satisfying a two-fold Hall
+condition. -/
 def tfh_TwoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (r : Site d) (b : Site d → Fin 2 → Site d),
     (r ∈ box d n ∧ (cluster d (removeSites (tfc_trifFinset ω n) ω) r).Infinite) ∧
@@ -225,99 +147,55 @@ def tfh_TwoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
       ∀ j, (x, i) ≠ (y, j) →
       ¬ aed_sameGlobalComponent (tfc_trifFinset ω n) ω (b x i) (b y j))
 
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-theorem tfh_forestLeafSelection_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma tfh_forestLeafSelection_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : tfh_TwoFoldForestArms ω n) :
     str_ForestLeafSelection ω n := by
   classical
   obtain ⟨r, b, ⟨hrbox, hrinf⟩, hexist, hrootSep, hbranchSep⟩ := h
   set T := tfc_trifFinset ω n with hT
-  
   set rootEnds : Finset (Site d) := daep_globalCutArmEnds T ω n r with hrootEnds
   set armEnds : Site d → Fin 2 → Finset (Site d) :=
     fun x i => daep_globalCutArmEnds T ω n (b x i) with harmEnds
-  
   have hrne : rootEnds.Nonempty := daep_globalCutArmEnds_nonempty T ω n hn r hrbox hrinf
-  
   have hne : ∀ x ∈ T, ∀ i, (armEnds x i).Nonempty := by
     intro x hxT i
     rw [hT, tfc_mem_trifFinset] at hxT
     obtain ⟨hbbox, _, hbinf⟩ := hexist x hxT.1 hxT.2 i
     exact daep_globalCutArmEnds_nonempty T ω n hn (b x i) hbbox hbinf
-  
   have hrdisj : ∀ x ∈ T, ∀ i, Disjoint rootEnds (armEnds x i) := by
     intro x hxT i
     rw [hT, tfc_mem_trifFinset] at hxT
     exact aed_globalCutArmEnds_disjoint_of_distinct T ω n (hrootSep x hxT.1 hxT.2 i)
-  
   have hdisj : ∀ x ∈ T, ∀ i, ∀ y ∈ T, ∀ j, (x, i) ≠ (y, j) →
       Disjoint (armEnds x i) (armEnds y j) := by
     intro x hxT i y hyT j hne'
     rw [hT, tfc_mem_trifFinset] at hxT hyT
     exact aed_globalCutArmEnds_disjoint_of_distinct T ω n
       (hbranchSep x hxT.1 hxT.2 i y hyT.1 hyT.2 j hne')
-  
   obtain ⟨r₀, ℓ, hr₀mem, hℓmem, hℓne, hℓinj⟩ :=
     tfh_twoFold_hall_root T rootEnds armEnds hrne hne hrdisj hdisj
-  
   refine ⟨r₀, ℓ, ?_, ?_, ?_, ?_, ?_⟩
-  · 
-    exact (daep_mem_globalCutArmEnds.mp hr₀mem).1
-  · 
-    intro x hxbox htri j
+  · exact (daep_mem_globalCutArmEnds.mp hr₀mem).1
+  · intro x hxbox htri j
     have hxT : x ∈ T := tfc_mem_trifFinset.mpr ⟨hxbox, htri⟩
     exact (daep_mem_globalCutArmEnds.mp (hℓmem x hxT j)).1
-  · 
-    intro x hxbox htri j
+  · intro x hxbox htri j
     have hxT : x ∈ T := tfc_mem_trifFinset.mpr ⟨hxbox, htri⟩
     obtain ⟨_, hbconn, _⟩ := hexist x hxbox htri j
     have hleaf : Connected d (removeSites T ω) (b x j) (ℓ x j) :=
       (daep_mem_globalCutArmEnds.mp (hℓmem x hxT j)).2
     exact hbconn.trans (connected_mono (daep_removeSites_le T ω) hleaf)
-  · 
-    intro x hxbox htri j
+  · intro x hxbox htri j
     have hxT : x ∈ T := tfc_mem_trifFinset.mpr ⟨hxbox, htri⟩
     exact hℓne x hxT j
-  · 
-    intro x hxbox htri y hybox htriy j j' hjj
+  · intro x hxbox htri y hybox htriy j j' hjj
     have hxT : x ∈ T := tfc_mem_trifFinset.mpr ⟨hxbox, htri⟩
     have hyT : y ∈ T := tfc_mem_trifFinset.mpr ⟨hybox, htriy⟩
     exact hℓinj x hxT j y hyT j' hjj
 
-
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-theorem tfh_twoFoldForestArms_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma tfh_twoFoldForestArms_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a₀ a₁ a₂ : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (ha0box : a₀ ∈ box d n) (ha1box : a₁ ∈ box d n) (ha2box : a₂ ∈ box d n)
     (hc0 : Connected d ω x₀ a₀) (hc1 : Connected d ω x₀ a₁)
@@ -330,7 +208,6 @@ theorem tfh_twoFoldForestArms_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (
     (huniq : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀) :
     tfh_TwoFoldForestArms ω n := by
   classical
-  
   have hTeq : tfc_trifFinset ω n = {x₀} := by
     apply Finset.eq_singleton_iff_unique_mem.mpr
     refine ⟨tfc_mem_trifFinset.mpr ⟨hx0box, htri0⟩, ?_⟩
@@ -339,31 +216,26 @@ theorem tfh_twoFoldForestArms_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (
     exact huniq y hy.1 hy.2
   have hcut : removeSites (tfc_trifFinset ω n) ω = removeSite x₀ ω := by
     rw [hTeq, daep_removeSites_singleton]
-  
   refine ⟨a₂, fun _ i => if i = 0 then a₀ else a₁, ⟨ha2box, ?_⟩, ?_, ?_, ?_⟩
   · rw [hcut]; exact hinf2
-  · 
-    intro x hxbox htri i
+  · intro x hxbox htri i
     have hx0 : x = x₀ := huniq x hxbox htri
     subst hx0
     rcases Fin.exists_fin_two.mp ⟨i, rfl⟩ with hi | hi <;> simp only [hi] <;>
       first
         | exact ⟨ha0box, by simpa using hc0, by rw [hcut]; exact hinf0⟩
         | exact ⟨ha1box, by simpa using hc1, by rw [hcut]; exact hinf1⟩
-  · 
-    intro x hxbox htri i
+  · intro x hxbox htri i
     have hx0 : x = x₀ := huniq x hxbox htri
     subst hx0
     rw [aed_sameGlobalComponent, hcut]
     rcases Fin.exists_fin_two.mp ⟨i, rfl⟩ with hi | hi <;> simp only [hi]
     · simpa using hsep0r
     · simpa using hsep1r
-  · 
-    intro x hxbox htri i y hybox htriy j hne'
+  · intro x hxbox htri i y hybox htriy j hne'
     have hx0 : x = x₀ := huniq x hxbox htri
     have hy0 : y = x₀ := huniq y hybox htriy
     subst hx0; subst hy0
-    
     have hij : i ≠ j := fun hc => hne' (by rw [hc])
     rw [aed_sameGlobalComponent, hcut]
     rcases Fin.exists_fin_two.mp ⟨i, rfl⟩ with hi | hi <;>
@@ -371,93 +243,30 @@ theorem tfh_twoFoldForestArms_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (
       simp only [hi, hj] at hij ⊢
     · exact absurd rfl hij
     · simpa using hsep01
-    · 
-      intro hcon; exact hsep01 hcon.symm
+    · intro hcon; exact hsep01 hcon.symm
     · exact absurd rfl hij
 
-
-
-
-
-
-
-
-
-
-theorem tfh_spanningTreeLeafCount_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d n) (hz₁ : z₁ ∈ vertexBoundary d n)
-    (hzne : z₀ ≠ z₁) (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
-    flc2_SpanningTreeLeafCount ω n :=
-  str_base_of_twoBoundary ω n hz₀ hz₁ hzne hno
-
-
-
-
-
-
-
-
-
-
-
-theorem tfh_spanningTreeLeafCount_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma tfh_spanningTreeLeafCount_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : tfh_TwoFoldForestArms ω n)
     (hbase : (∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) → flc2_SpanningTreeLeafCount ω n) :
     flc2_SpanningTreeLeafCount ω n :=
   str_spanningTreeLeafCount_of_forestLeafSelection ω n
     (tfh_forestLeafSelection_of_twoFoldForestArms ω n hn h) hbase
 
-
-theorem tfh_Tcount_le_boundary_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma tfh_Tcount_le_boundary_of_twoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : tfh_TwoFoldForestArms ω n)
     (hbase : (∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) → flc2_SpanningTreeLeafCount ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   flc2_Tcount_le_boundary_of_spanningTree ω n
     (tfh_spanningTreeLeafCount_of_twoFoldForestArms ω n hn h hbase)
 
-
-
-theorem tfh_spanningTree_of_twoFoldForestArms
+lemma tfh_spanningTree_of_twoFoldForestArms
     (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → tfh_TwoFoldForestArms ω n)
     (hbase : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
       (∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) → flc2_SpanningTreeLeafCount ω n) :
     ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → flc2_SpanningTreeLeafCount ω n :=
   fun ω n hn =>
     tfh_spanningTreeLeafCount_of_twoFoldForestArms ω n hn (hres ω n hn) (hbase ω n hn)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tfh_burton_keane_bernoulli_of_twoFoldForestArms (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → tfh_TwoFoldForestArms ω n)
-    (hbase : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) → flc2_SpanningTreeLeafCount ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  str_burton_keane_bernoulli_of_forestLeafSelection hd p hp1 hp0
-    (fun ω n hn => tfh_forestLeafSelection_of_twoFoldForestArms ω n hn (hres ω n hn))
-    hbase htrif
 
 end Percolation
 

@@ -6,73 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -88,6 +21,43 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLe
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalCutSeparation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleCutSeparation
 
+/-!
+# Private arms of trifurcations
+
+If each trifurcation has an infinite arm that no other connected trifurcation reaches once it is
+removed, single cuts separate branches and the Burton–Keane count holds.
+
+## i. Overview
+
+`daepf_PrivateArm ω n` chooses an arm site `b x` for each trifurcation, infinite after all
+trifurcations are removed, such that for connected `x ≠ y` the arm of `x` does not contain `y` after
+`x` is removed. Each site lies in at most one arm of `x`, so this gives single-cut branch separation
+and `Tcount ≤ |∂B_n|`. It holds for at most two trifurcations.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `daepf_arm_class_unique` : a site lies in at most one arm
+- `daepf_singleCutBranchSeparation_of_privateArm` : private arms give single-cut separation
+- `daepf_Tcount_le_boundary_of_privateArm` : the counting bound
+- `daepf_privateArm_of_twoTrif` : private arms with two trifurcations
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -101,49 +71,20 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-theorem daepf_shared_arm_reconnects (ω : ConfigSpace (Sym2 (Site d))) {x a b v : Site d}
-    (hva : Connected d (removeSite x ω) a v) (hvb : Connected d (removeSite x ω) b v) :
-    Connected d (removeSite x ω) a b :=
-  hva.trans hvb.symm
-
-
-
-
-
-theorem daepf_no_common_arm_vertex (ω : ConfigSpace (Sym2 (Site d))) {x a b : Site d}
-    (hdis : ¬ Connected d (removeSite x ω) a b) :
-    ∀ v, ¬ (Connected d (removeSite x ω) a v ∧ Connected d (removeSite x ω) b v) :=
-  fun _v ⟨hva, hvb⟩ => hdis (daepf_shared_arm_reconnects ω hva hvb)
-
-
-
-
-theorem daepf_arm_class_unique (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
+lemma daepf_arm_class_unique (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
     (hd12 : ¬ Connected d (removeSite x ω) a₁ a₂)
     (hd13 : ¬ Connected d (removeSite x ω) a₁ a₃)
     (hd23 : ¬ Connected d (removeSite x ω) a₂ a₃) (v : Site d) :
     ¬ (Connected d (removeSite x ω) a₁ v ∧ Connected d (removeSite x ω) a₂ v) ∧
     ¬ (Connected d (removeSite x ω) a₁ v ∧ Connected d (removeSite x ω) a₃ v) ∧
     ¬ (Connected d (removeSite x ω) a₂ v ∧ Connected d (removeSite x ω) a₃ v) :=
-  ⟨daepf_no_common_arm_vertex ω hd12 v, daepf_no_common_arm_vertex ω hd13 v,
-   daepf_no_common_arm_vertex ω hd23 v⟩
+  ⟨daep2_no_shared_boundary_of_disconnected_branches ω hd12 v,
+    daep2_no_shared_boundary_of_disconnected_branches ω hd13 v,
+   daep2_no_shared_boundary_of_disconnected_branches ω hd23 v⟩
 
-
-
-
-
-theorem daepf_in_some_or_no_arm (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
+lemma daepf_in_some_or_no_arm (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
     (hd12 : ¬ Connected d (removeSite x ω) a₁ a₂)
     (hd13 : ¬ Connected d (removeSite x ω) a₁ a₃)
     (hd23 : ¬ Connected d (removeSite x ω) a₂ a₃) (v : Site d) :
@@ -164,42 +105,9 @@ theorem daepf_in_some_or_no_arm (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ 
       · exact Or.inr (Or.inr (Or.inl ⟨h3, h1, h2⟩))
       · exact Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Private arms for `B_n`: each trifurcation has an arm site whose cluster stays infinite after all
+trifurcations are removed and which, for connected trifurcations `x ≠ y`, does not reach `y`
+once `x` is removed. -/
 def daepf_PrivateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -210,13 +118,7 @@ def daepf_PrivateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
       ¬ Connected d (removeSite x ω) (b x) y ∧
         Connected d (removeSite x ω) (b y) y)
 
-
-
-
-
-
-
-theorem daepf_singleCutBranchSeparation_of_privateArm (ω : ConfigSpace (Sym2 (Site d)))
+lemma daepf_singleCutBranchSeparation_of_privateArm (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (h : daepf_PrivateArm ω n) :
     daep2_SingleCutBranchSeparation ω n := by
   obtain ⟨b, hb, hpair⟩ := h
@@ -226,28 +128,14 @@ theorem daepf_singleCutBranchSeparation_of_privateArm (ω : ConfigSpace (Sym2 (S
   intro hbxby
   exact hpriv (hbxby.trans hfar)
 
-
-
-
-
-
-
-
-
-theorem daepf_privateArm_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma daepf_privateArm_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     daepf_PrivateArm ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro x hxbox htri _ _ _ _ _; exact absurd htri (hno x hxbox)
 
-
-
-
-
-
-
-theorem daepf_privateArm_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma daepf_privateArm_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (habox : a ∈ box d n) (haconn : Connected d ω x₀ a)
     (hainf : (cluster d (removeSite x₀ ω) a).Infinite)
@@ -271,21 +159,7 @@ theorem daepf_privateArm_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : �
   · intro x hxbox htri y hybox htriy hxy _
     exact absurd ((huniq x hxbox htri).trans (huniq y hybox htriy).symm) hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem daepf_privateArm_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma daepf_privateArm_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d)
     (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
@@ -300,56 +174,30 @@ theorem daepf_privateArm_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     daepf_PrivateArm ω n := by
   classical
   refine ⟨b, ?_, ?_⟩
-  · 
-    intro x hxbox htri
+  · intro x hxbox htri
     rcases htwo x hxbox htri with rfl | rfl
     · exact hbx0
     · exact hby0
-  · 
-    intro x hxbox htri y hybox htriy hxy hconn
+  · intro x hxbox htri y hybox htriy hxy hconn
     rcases htwo x hxbox htri with rfl | rfl
-    · 
-      rcases htwo y hybox htriy with rfl | rfl
+    · rcases htwo y hybox htriy with rfl | rfl
       · exact absurd rfl hxy
       · exact ⟨hpriv_xy, hfar_xy⟩
-    · 
-      rcases htwo y hybox htriy with rfl | rfl
+    · rcases htwo y hybox htriy with rfl | rfl
       · exact ⟨hpriv_yx, hfar_yx⟩
       · exact absurd rfl hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem daepf_Tcount_le_boundary_of_privateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma daepf_Tcount_le_boundary_of_privateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : daepf_PrivateArm ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   daep2_Tcount_le_boundary_of_singleCut ω n hn
     (daepf_singleCutBranchSeparation_of_privateArm ω n h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem daepf_burton_keane_bernoulli_of_privateArm (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
+/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
+configuration and box. The certificate implies the trifurcation-to-boundary injection
+`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
+for `d ≥ 1`; so the statement is vacuous. -/
+lemma daepf_burton_keane_bernoulli_of_privateArm (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
     (hp0 : 0 < p)
     (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
       daepf_PrivateArm ω n)

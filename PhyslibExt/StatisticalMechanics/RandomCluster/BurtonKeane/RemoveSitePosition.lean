@@ -6,65 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -72,6 +13,37 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MergeFre
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoherentArmSelector
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction
+
+/-!
+# Positive probability of three separated clusters at the origin
+
+If `N = ∞` has positive Bernoulli probability, some triple of sites in a box lies in three distinct
+infinite clusters with positive probability.
+
+## i. Overview
+
+`bxp_Y` is the event that the sites `b_i` of `MergeFree` lie in infinite, pairwise disconnected
+clusters avoiding the origin; it is contained in the precursor event `bmf_X`. `bxp_tripleEvent d n x
+y z` is the event that `N = ∞` and the three box sites lie in distinct infinite clusters. The event
+`threeMeetBox d n` is the countable union of these, so positive probability of `N = ∞` gives a
+triple with positive probability.
+
+## ii. Key results
+
+- `bxp_Y_subset_X` : `bxp_Y` lies in the precursor event
+- `bxp_threeMeetBox_subset_iUnion` : `threeMeetBox` is a union of triple events
+- `bxp_exists_triple_pos` : some triple event has positive probability
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -88,57 +60,15 @@ set_option linter.unusedVariables false
 set_option linter.unusedSectionVars false
 set_option maxRecDepth 4000
 
-
-
-
-
-
-
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-theorem bxp_cluster_removeSite_eq (ω : ConfigSpace (Sym2 (Site d))) {b : Site d}
-    (h0 : (0 : Site d) ∉ cluster d ω b) :
-    cluster d (removeSite 0 ω) b = cluster d ω b := by
-  apply Set.Subset.antisymm
-  · exact cluster_mono (removeSite_le 0 ω) b
-  · intro y hy
-    have hcon : Connected d ω b y := mem_cluster.mp hy
-    obtain ⟨p⟩ := hcon
-    have hcl : cluster d ω b = cluster d ω y := cluster_eq_of_connected (mem_cluster.mp hy)
-    have h0y : (0 : Site d) ∉ cluster d ω y := hcl ▸ h0
-    have h0p : (0 : Site d) ∉ p.support :=
-      ava_origin_notMem_support_of_notMem_cluster ω p h0y
-    exact mem_cluster.mpr (pap_connected_removeSite_of_walk_avoid ω 0 p h0p)
-
-
-theorem bxp_infinite_removeSite (ω : ConfigSpace (Sym2 (Site d))) {b : Site d}
-    (h0 : (0 : Site d) ∉ cluster d ω b) (hinf : (cluster d ω b).Infinite) :
-    (cluster d (removeSite 0 ω) b).Infinite := by
-  rw [bxp_cluster_removeSite_eq ω h0]; exact hinf
-
-
-
-
-theorem bxp_notConnected_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a b : Site d}
+lemma bxp_notConnected_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a b : Site d}
     (h : ¬ Connected d ω a b) : ¬ Connected d (removeSite 0 ω) a b :=
   fun hc => h (ava_connected_of_removeSite ω hc)
 
-
-
-
-
-
-
-
-
-
+/-- The sites `b_i` lie in infinite, pairwise disconnected clusters avoiding the origin. -/
 def bxp_Y : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω |
     ((0 : Site 2) ∉ cluster 2 ω bmf_b₁ ∧ (0 : Site 2) ∉ cluster 2 ω bmf_b₂ ∧
@@ -148,63 +78,33 @@ def bxp_Y : Set (ConfigSpace (Sym2 (Site 2))) :=
     (¬ Connected 2 ω bmf_b₁ bmf_b₂ ∧ ¬ Connected 2 ω bmf_b₁ bmf_b₃ ∧
       ¬ Connected 2 ω bmf_b₂ bmf_b₃)}
 
-
-
-
-
-theorem bxp_Y_subset_X : bxp_Y ⊆ bmf_X := by
+lemma bxp_Y_subset_X : bxp_Y ⊆ bmf_X := by
   rintro ω ⟨⟨h01, h02, h03⟩, ⟨hi1, hi2, hi3⟩, ⟨hd12, hd13, hd23⟩⟩
-  exact ⟨⟨bxp_infinite_removeSite ω h01 hi1, bxp_infinite_removeSite ω h02 hi2,
-      bxp_infinite_removeSite ω h03 hi3⟩,
+  exact ⟨⟨bc20_removeSite_infinite_of_originFree ω _ h01 hi1, bc20_removeSite_infinite_of_originFree ω _ h02 hi2,
+      bc20_removeSite_infinite_of_originFree ω _ h03 hi3⟩,
     bxp_notConnected_removeSite ω hd12, bxp_notConnected_removeSite ω hd13,
     bxp_notConnected_removeSite ω hd23⟩
 
-
-
-
-
-
-
-
-theorem bxp_hXpos_of_fullPos (p : ℝ≥0) (hp1 : p ≤ 1)
+lemma bxp_hXpos_of_fullPos (p : ℝ≥0) (hp1 : p ≤ 1)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 bxp_Y) :
     0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 bmf_X :=
   lt_of_lt_of_le hpos (measure_mono bxp_Y_subset_X)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- `N = ∞` and the box sites `x, y, z` lie in three pairwise distinct infinite clusters. -/
 def bxp_tripleEvent (d n : ℕ) (x y z : Site d) : Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | numInfiniteClusters d ω = ⊤ ∧ x ∈ box d n ∧ y ∈ box d n ∧ z ∈ box d n ∧
     (cluster d ω x).Infinite ∧ (cluster d ω y).Infinite ∧ (cluster d ω z).Infinite ∧
     cluster d ω x ≠ cluster d ω y ∧ cluster d ω x ≠ cluster d ω z ∧
     cluster d ω y ≠ cluster d ω z}
 
-
-
-theorem bxp_threeMeetBox_subset_iUnion (d n : ℕ) :
+lemma bxp_threeMeetBox_subset_iUnion (d n : ℕ) :
     threeMeetBox d n ⊆ ⋃ x, ⋃ y, ⋃ z, bxp_tripleEvent d n x y z := by
   intro ω hω
   obtain ⟨htop, x, y, z, hx, hy, hz, hix, hiy, hiz, h12, h13, h23⟩ := hω
   exact Set.mem_iUnion.mpr ⟨x, Set.mem_iUnion.mpr ⟨y, Set.mem_iUnion.mpr ⟨z,
     htop, hx, hy, hz, hix, hiy, hiz, h12, h13, h23⟩⟩⟩
 
-
-
-
-
-theorem bxp_exists_triple_pos (p : ℝ≥0) (hp1 : p ≤ 1)
+lemma bxp_exists_triple_pos (p : ℝ≥0) (hp1 : p ≤ 1)
     (htop : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
       {ω | numInfiniteClusters d ω = ⊤}) :
     ∃ (n : ℕ) (x y z : Site d),

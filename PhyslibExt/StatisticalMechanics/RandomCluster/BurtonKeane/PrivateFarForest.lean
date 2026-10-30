@@ -6,67 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -76,6 +15,43 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateA
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RenormalizedForestCount
+
+/-!
+# Private-far orders and global cut arm data
+
+Global cut arm data give global forest arms and the trifurcation count; a private-far order is the
+same as a coherent arm selector.
+
+## i. Overview
+
+`bc26_GlobalCutArmData ω n` chooses an infinite arm for each trifurcation such that distinct arms
+are in different components after all trifurcations are removed; this gives global forest arms and
+`Tcount ≤ |∂B_n|`. `bc26_PrivateFarOrder` is equivalent to `bkfl_CoherentArmSelector` and gives
+private arms. Both hold for at most two trifurcations.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `bc26_globalForestArms_of_globalCutArmData` : global cut arm data give global forest arms
+- `bc26_Tcount_le_boundary_of_globalCutArmData` : the counting bound
+- `bc26_privateFarOrder_iff_coherentSelector` : private-far orders are coherent selectors
+- `bc26_privateFarOrder_of_twoTrif` : private-far orders with two trifurcations
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -89,19 +65,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc26_arms_globalCut_pairwise_disconnected (T : Finset (Site d))
+lemma bc26_arms_globalCut_pairwise_disconnected (T : Finset (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) {x : Site d} (hxT : x ∈ T)
     (htri : IsTrifurcation d ω x) :
     ∃ a₁ a₂ a₃ : Site d,
@@ -117,58 +83,20 @@ theorem bc26_arms_globalCut_pairwise_disconnected (T : Finset (Site d))
   · exact daep2_globalCut_disconnected_of_singleCut T ω hxT hsep.2.1
   · exact daep2_globalCut_disconnected_of_singleCut T ω hxT hsep.2.2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc26_two_arms_avoid_vertex (ω : ConfigSpace (Sym2 (Site d)))
-    {x a₁ a₂ a₃ : Site d}
-    (hd12 : ¬ Connected d (removeSite x ω) a₁ a₂)
-    (hd13 : ¬ Connected d (removeSite x ω) a₁ a₃)
-    (hd23 : ¬ Connected d (removeSite x ω) a₂ a₃) (y : Site d) :
-    (¬ Connected d (removeSite x ω) a₁ y ∧ ¬ Connected d (removeSite x ω) a₂ y) ∨
-    (¬ Connected d (removeSite x ω) a₁ y ∧ ¬ Connected d (removeSite x ω) a₃ y) ∨
-    (¬ Connected d (removeSite x ω) a₂ y ∧ ¬ Connected d (removeSite x ω) a₃ y) :=
-  daep2_two_branches_avoid ω hd12 hd13 hd23 y
-
-
-
-
-
-
-
-theorem bc26_avoiding_arm_of_trif (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc26_avoiding_arm_of_trif (ω : ConfigSpace (Sym2 (Site d)))
     {x : Site d} (htri : IsTrifurcation d ω x) (y : Site d) :
     ∃ a : Site d, Connected d ω x a ∧ (cluster d ω a).Infinite ∧
       ¬ bkfl_inArm ω x a y := by
   obtain ⟨a₁, a₂, a₃, _hne, hconn, hinf, hsep⟩ := htri
-  rcases bc26_two_arms_avoid_vertex ω hsep.1 hsep.2.1 hsep.2.2 y with
+  rcases StatMech.Percolation.daep2_two_branches_avoid ω hsep.1 hsep.2.1 hsep.2.2 y with
     ⟨h1, _⟩ | ⟨h1, _⟩ | ⟨h2, _⟩
   · exact ⟨a₁, hconn.1, hinf.1, h1⟩
   · exact ⟨a₁, hconn.1, hinf.1, h1⟩
   · exact ⟨a₂, hconn.2.1, hinf.2.1, h2⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Global cut arm data for `B_n`: each trifurcation has an arm site whose cluster stays infinite
+after all trifurcations are removed, and the arm sites of distinct trifurcations lie in
+different components of that configuration. -/
 def bc26_GlobalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -177,110 +105,38 @@ def bc26_GlobalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → ¬ aed_sameGlobalComponent (tfc_trifFinset ω n) ω (b x) (b y))
 
-
-
-theorem bc26_globalForestArms_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_globalForestArms_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : bc26_GlobalCutArmData ω n) : aed_GlobalForestArms ω n :=
   h
 
-
-theorem bc26_Tcount_le_boundary_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_Tcount_le_boundary_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : bc26_GlobalCutArmData ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   aed_Tcount_le_boundary_of_globalForestArms ω n hn
     (bc26_globalForestArms_of_globalCutArmData ω n h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A private-far order for `B_n`: arm data for every trifurcation, private with respect to every
+other connected trifurcation. -/
 def bc26_PrivateFarOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → bkfl_ArmData ω n b x) ∧
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → bkfl_PrivateFar ω b x y)
 
-
-
-
-theorem bc26_privateFarOrder_iff_coherentSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma bc26_privateFarOrder_iff_coherentSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     bc26_PrivateFarOrder ω n ↔ bkfl_CoherentArmSelector ω n := Iff.rfl
 
-
-
-
-theorem bc26_privateArm_of_privateFarOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_privateArm_of_privateFarOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : bc26_PrivateFarOrder ω n) : daepf_PrivateArm ω n :=
   bkfl_privateArm_of_coherentSelector ω n h
 
-
-
-
-
-
-
-
-theorem bc26_count_of_privateFarOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_count_of_privateFarOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : bc26_PrivateFarOrder ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   daepf_Tcount_le_boundary_of_privateArm ω n hn
     (bc26_privateArm_of_privateFarOrder ω n h)
 
-
-
-
-
-
-
-
-theorem bc26_burton_keane_bernoulli_of_privateFarOrder (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc26_PrivateFarOrder ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  daepf_burton_keane_bernoulli_of_privateArm hd p hp1 hp0
-    (fun ω n hn => bc26_privateArm_of_privateFarOrder ω n (hres ω n hn)) htrif
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc26_coarseTrif_arms_cutInfinite {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc26_coarseTrif_arms_cutInfinite {ω : ConfigSpace (Sym2 (Site d))}
     (h : IsCoarseTrifurcation d 0 ω) :
     ∃ a₁ a₂ a₃ : Site d,
       (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -303,13 +159,7 @@ theorem bc26_coarseTrif_arms_cutInfinite {ω : ConfigSpace (Sym2 (Site d))}
   refine ⟨a₁, a₂, a₃, hne, ?_, hinf, hsep⟩
   exact ⟨(hb₁0 ▸ hconn.1).symm, (hb₂0 ▸ hconn.2.1).symm, (hb₃0 ▸ hconn.2.2).symm⟩
 
-
-
-
-
-
-
-theorem bc26_globalForestArms_of_uniqueTrif_cutArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_globalForestArms_of_uniqueTrif_cutArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (habox : a ∈ box d n) (haconn : Connected d ω x₀ a)
     (hainf : (cluster d (removeSite x₀ ω) a).Infinite)
@@ -317,36 +167,20 @@ theorem bc26_globalForestArms_of_uniqueTrif_cutArm (ω : ConfigSpace (Sym2 (Site
     aed_GlobalForestArms ω n :=
   aed_globalForestArms_of_uniqueTrif ω n hx0box htri0 habox haconn hainf huniq
 
-
-
-
-
-
-
-
-
-
-
-theorem bc26_privateFarOrder_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_privateFarOrder_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     bc26_PrivateFarOrder ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro x hxbox htri _ _ _ _ _; exact absurd htri (hno x hxbox)
 
-
-
-
-
-
-theorem bc26_privateFarOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_privateFarOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (habox : a ∈ box d n) (haconn : Connected d ω x₀ a)
     (hainf : (cluster d (removeSite x₀ ω) a).Infinite)
     (huniq : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀) :
     bc26_PrivateFarOrder ω n := by
   classical
-  
   have hT : tfc_trifFinset ω n = {x₀} := by
     apply Finset.eq_singleton_iff_unique_mem.mpr
     refine ⟨tfc_mem_trifFinset.mpr ⟨hx0box, htri0⟩, ?_⟩
@@ -362,12 +196,7 @@ theorem bc26_privateFarOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n
   · intro x hxbox htri y hybox htriy hxy _
     exact absurd ((huniq x hxbox htri).trans (huniq y hybox htriy).symm) hxy
 
-
-
-
-
-
-theorem bc26_privateFarOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc26_privateFarOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d)
     (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)

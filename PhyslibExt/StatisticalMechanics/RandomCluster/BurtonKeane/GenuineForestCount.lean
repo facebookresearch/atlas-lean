@@ -6,95 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifNotion
+
+/-!
+# Forest count for classical coarse trifurcations
+
+A forest certificate for classical coarse trifurcations bounds their number by its leaves, and by
+the boundary when the leaves lie on it.
+
+## i. Overview
+
+`bgt_GenuineForest` is a finite forest in which every classical coarse trifurcation of `B_R` embeds
+with degree at least three and leaves map injectively to the boundary. The branch–leaf inequality
+for forests bounds the count by the number of leaves. Without the boundary condition
+(`bgt_GenuineForestNoBnd`) the count is bounded by any bound on the leaves. The certificate exists
+when there are no classical coarse trifurcations, for example in `bc60_upperLines`.
+
+The trifurcation notion here is the classical one: three open neighbours whose clusters stay
+infinite and pairwise disjoint after the centre is removed (`bc89_GenuineTrif`). For that notion the
+counting bound is the classical deterministic Burton–Keane estimate; results that assume a
+certificate for every configuration remain conditional on it.
+
+## ii. Key results
+
+- `bgt_genuineTcount_le_leafCard` : the count is at most the number of leaves
+- `bgt_genuineTcount_le_boundary` : the count is at most the boundary size
+- `bgt_genuineForest_of_noTrif` : the certificate with no classical coarse trifurcations
+- `bgt_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -114,30 +67,14 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-theorem bgt_mem_genuineTrifFinset (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (y : Site d) :
+lemma bgt_mem_genuineTrifFinset (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (y : Site d) :
     y ∈ btr_genuineTrifFinset ω L R ↔ y ∈ box d R ∧ btr_IsGenuineCoarseTrif ω L y := by
   classical
   rw [btr_genuineTrifFinset, Finset.mem_filter, boxFinsetBK, Set.Finite.mem_toFinset]
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A forest certificate for classical coarse trifurcations whose leaves number at most `m`. -/
 def bgt_GenuineForestNoBnd (ω : ConfigSpace (Sym2 (Site d))) (L R m : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : Nonempty W) (_ : DecidableEq W)
     (G : SimpleGraph W) (_ : DecidableRel G.Adj) (ιT : Site d → W),
@@ -147,18 +84,12 @@ def bgt_GenuineForestNoBnd (ω : ConfigSpace (Sym2 (Site d))) (L R m : ℕ) : Pr
       btr_IsGenuineCoarseTrif ω L z → ιT y = ιT z → y = z) ∧
     (univ.filter (fun v => G.degree v = 1)).card ≤ m
 
-
-
-
-
-
-
-theorem bgt_genuineTcount_le_leafCard (ω : ConfigSpace (Sym2 (Site d))) (L R m : ℕ)
+lemma bgt_genuineTcount_le_leafCard (ω : ConfigSpace (Sym2 (Site d))) (L R m : ℕ)
     (h : bgt_GenuineForestNoBnd ω L R m) :
     (btr_genuineTrifFinset ω L R).card ≤ m := by
   classical
   obtain ⟨W, _, hne, _, G, _, ιT, hacyc, hmin, hdeg3, hιinj, hleaf⟩ := h
-  haveI := hne
+  have := hne
   set Tf := btr_genuineTrifFinset ω L R with hTf
   set Tw : Finset W := Tf.image ιT with hTw
   have hιinjOn : Set.InjOn ιT Tf := by
@@ -178,15 +109,8 @@ theorem bgt_genuineTcount_le_leafCard (ω : ConfigSpace (Sym2 (Site d))) (L R m 
     _ ≤ (univ.filter (fun v => G.degree v = 1)).card := flc2_forest_internal_le_leaves G hacyc hmin
     _ ≤ m := hleaf
 
-
-
-
-
-
-
-
-
-
+/-- A forest certificate for classical coarse trifurcations of `B_R` whose leaves map injectively to
+the boundary of `B_R`. -/
 def bgt_GenuineForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : Nonempty W) (_ : DecidableEq W)
     (G : SimpleGraph W) (_ : DecidableRel G.Adj) (ιT : Site d → W) (lamL : W → Site d),
@@ -197,11 +121,7 @@ def bgt_GenuineForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
     (∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R) ∧
     Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))
 
-
-
-
-
-theorem bgt_genuineForest_imp_noBnd (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bgt_genuineForest_imp_noBnd (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bgt_GenuineForest ω L R) :
     bgt_GenuineForestNoBnd ω L R (boxSV_boundaryCard d R) := by
   classical
@@ -209,30 +129,14 @@ theorem bgt_genuineForest_imp_noBnd (ω : ConfigSpace (Sym2 (Site d))) (L R : �
   exact ⟨W, hWf, hWne, hWde, G, hGdr, ιT, hacyc, hmin, hdeg3, hιinj,
     flc2_leaf_card_le_boundary G R lamL hlammap hlaminj⟩
 
-
-
-
-
-
-
-
-theorem bgt_genuineTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bgt_genuineTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bgt_GenuineForest ω L R) :
     (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R :=
   bgt_genuineTcount_le_leafCard ω L R _ (bgt_genuineForest_imp_noBnd ω L R h)
 
 
-
-
-
-
-
-
 open Classical in
-
-
-
-theorem bgt_genuineForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bgt_genuineForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
     (hzne : z₀ ≠ z₁)
     (hno : ∀ y, y ∈ box d R → ¬ btr_IsGenuineCoarseTrif ω L y) :
@@ -253,73 +157,27 @@ theorem bgt_genuineForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : �
     · exact absurd huv.symm hzne
     · rfl
 
-
-
-
-
-
-
-theorem bgt_bc60_genuineForest (L R : ℕ)
+lemma bgt_bc60_genuineForest (L R : ℕ)
     {z₀ z₁ : Site 2} (hz₀ : z₀ ∈ vertexBoundary 2 R) (hz₁ : z₁ ∈ vertexBoundary 2 R)
     (hzne : z₀ ≠ z₁) :
     bgt_GenuineForest bc60_upperLines L R :=
   bgt_genuineForest_of_noTrif bc60_upperLines L R hz₀ hz₁ hzne
     (fun y _ => btr_bc60_not_genuineTrif L y)
 
+/-! ## B. Summary -/
 
-
-
-
-theorem bgt_bc60_genuineTcount_zero (L R : ℕ) :
-    (btr_genuineTrifFinset bc60_upperLines L R).card = 0 :=
-  btr_bc60_genuineTcount_zero L R
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bgt_status (hd : 1 ≤ d) :
-    
+lemma bgt_status (hd : 1 ≤ d) :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), bgt_GenuineForest ω L R →
       (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R m : ℕ), bgt_GenuineForestNoBnd ω L R m →
       (btr_genuineTrifFinset ω L R).card ≤ m) ∧
-    
     (∀ (L R : ℕ), (btr_genuineTrifFinset bc60_upperLines L R).card = 0) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       (∀ y, y ∈ box d R → ¬ btr_IsGenuineCoarseTrif ω L y) → bgt_GenuineForest ω L R) := by
   refine ⟨fun ω L R h => bgt_genuineTcount_le_boundary ω L R h,
     fun ω L R m h => bgt_genuineTcount_le_leafCard ω L R m h,
-    fun L R => bgt_bc60_genuineTcount_zero L R, ?_⟩
+    fun L R => btr_bc60_genuineTcount_zero L R, ?_⟩
   intro ω L R z₀ z₁ hz₀ hz₁ hzne hno
   exact bgt_genuineForest_of_noTrif ω L R hz₀ hz₁ hzne hno
 

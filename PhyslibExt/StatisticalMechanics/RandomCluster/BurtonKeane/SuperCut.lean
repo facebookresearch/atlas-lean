@@ -6,48 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalArmSubforest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex
+
+/-!
+# Super-vertex cuts in the coarse graph
+
+When a contracted-lattice trifurcation is a box centre and the other boxes are internally connected,
+its arms give three coarse neighbours that are separated after deleting it.
+
+## i. Overview
+
+`bsc_IsBoxCentre L y` says that the `L`-box around `y` is exactly the coarse box of `y`;
+`bsc_BoxesInternallyConnected ω L y` says that sites in the same other coarse box are connected
+after removing the box of `y`. Under these conditions coarse reachability matches site connectivity,
+so the three arms of the trifurcation give the super-cut bridge `bfin_SuperCutBridge`. In
+`bc60_upperLines` the coarse origin has three neighbours with infinite avoiding clusters.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bsc_siteConn_of_superReach` : coarse reachability gives site connectivity
+- `bsc_super_disconnected` : separated arms give separated coarse neighbours
+- `bsc_bfin_SuperCutBridge_of_hyp` : the super-cut bridge under the two conditions
+- `bsc_status` : the statements together
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+- C. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -69,23 +71,15 @@ variable {d : ℕ}
 
 #check @bfin_SuperCutBridge
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
+/-- The `L`-box around `y` is exactly the coarse box of `y`. -/
 def bsc_IsBoxCentre (L : ℕ) (y : Site d) : Prop :=
   ∀ x : Site d, x ∈ bc61_boxAround d L y ↔ bgn_idx L x = bgn_idx L y
 
+/-! ## B. Results -/
 
-theorem bsc_ediv_zero_iff {L : ℕ} {a : ℤ} :
+lemma bsc_ediv_zero_iff {L : ℕ} {a : ℤ} :
     (a + (L : ℤ)) / (2 * (L : ℤ) + 1) = 0 ↔ a.natAbs ≤ L := by
   have hb : (0 : ℤ) < 2 * (L : ℤ) + 1 := by positivity
   constructor
@@ -99,14 +93,11 @@ theorem bsc_ediv_zero_iff {L : ℕ} {a : ℤ} :
   · intro h
     exact Int.ediv_eq_zero_of_lt (by omega) (by omega)
 
-
-
-
-theorem bsc_boxCentre_zero (d L : ℕ) : bsc_IsBoxCentre L (0 : Site d) := by
+lemma bsc_boxCentre_zero (d L : ℕ) : bsc_IsBoxCentre L (0 : Site d) := by
   intro x
   have hidx0 : bgn_idx L (0 : Site d) = 0 := by
     funext i
-    show ((0 : Site d) i + (L : ℤ)) / (2 * (L : ℤ) + 1) = (0 : Site d) i
+    change ((0 : Site d) i + (L : ℤ)) / (2 * (L : ℤ) + 1) = (0 : Site d) i
     simp only [Pi.zero_apply, zero_add]
     exact Int.ediv_eq_zero_of_lt (by positivity) (by omega)
   rw [hidx0, bc61_mem_boxAround, sub_zero, mem_box]
@@ -121,29 +112,19 @@ theorem bsc_boxCentre_zero (d L : ℕ) : bsc_IsBoxCentre L (0 : Site d) := by
 
 #check @bsc_boxCentre_zero
 
-
-
-
-
-
-
-
-
-theorem bsc_box_isolated {L : ℕ} {y a : Site d} (ω : ConfigSpace (Sym2 (Site d)))
+lemma bsc_box_isolated {L : ℕ} {y a : Site d} (ω : ConfigSpace (Sym2 (Site d)))
     (ha : a ∈ bc61_boxAround d L y) (w : Site d) :
     ¬ (openSubgraph d (removeSites (bc61_boxAround d L y) ω)).Adj a w := by
   intro hadj
   have hopen : removeSites (bc61_boxAround d L y) ω s(a, w) = true := hadj.2
   unfold removeSites at hopen
-  rw [if_pos ⟨a, ha, by rw [Sym2.mem_iff]; left; rfl⟩] at hopen
+  rw [ite_eq_left ⟨a, ha, by rw [Sym2.mem_iff]; left; rfl⟩] at hopen
   exact absurd hopen (by simp)
 
-
-theorem bsc_notMem_box_of_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_notMem_box_of_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     a ∉ bc61_boxAround d L y := by
   intro ha
-  
   have hsub : cluster d (removeSites (bc61_boxAround d L y) ω) a ⊆ {a} := by
     intro z hz
     have hr : (openSubgraph d (removeSites (bc61_boxAround d L y) ω)).Reachable a z := hz
@@ -153,11 +134,7 @@ theorem bsc_notMem_box_of_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (S
     | cons hadj _ => exact absurd hadj (bsc_box_isolated ω ha _)
   exact hinf (Set.Finite.subset (Set.finite_singleton a) hsub)
 
-
-
-
-
-theorem bsc_hub_adj_armImage {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_hub_adj_armImage {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y)
     (hinc : bc67_GnIncident ω L y a)
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
@@ -170,17 +147,7 @@ theorem bsc_hub_adj_armImage {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (S
   have hbidx : bgn_idx L b = bgn_idx L y := (hy b).mp hbbox
   exact ⟨b, a, hbidx, rfl, hbadj⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem bsc_superReach_of_siteConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_superReach_of_siteConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y) {a b : Site d}
     (h : Connected d (removeSites (bc61_boxAround d L y) ω) a b) :
     (bkg_deleteVertex (bgn_Gn ω L) (bgn_idx L y)).Reachable (bgn_idx L a) (bgn_idx L b) := by
@@ -189,15 +156,13 @@ theorem bsc_superReach_of_siteConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym
   | nil => exact Reachable.refl _
   | @cons x z b hadj q ih =>
     refine Reachable.trans ?_ ih
-    
     have hopen : removeSites (bc61_boxAround d L y) ω s(x, z) = true := hadj.2
     have hcond : ¬ ∃ t ∈ bc61_boxAround d L y, t ∈ s(x, z) := by
-      intro hh; unfold removeSites at hopen; rw [if_pos hh] at hopen; exact absurd hopen (by simp)
+      intro hh; unfold removeSites at hopen; rw [ite_eq_left hh] at hopen; exact absurd hopen (by simp)
     have hxout : x ∉ bc61_boxAround d L y := fun hx => hcond ⟨x, hx, by rw [Sym2.mem_iff]; left; rfl⟩
     have hzout : z ∉ bc61_boxAround d L y := fun hz => hcond ⟨z, hz, by rw [Sym2.mem_iff]; right; rfl⟩
     have hxne : bgn_idx L x ≠ bgn_idx L y := fun hh => hxout ((hy x).mpr hh)
     have hzne : bgn_idx L z ≠ bgn_idx L y := fun hh => hzout ((hy z).mpr hh)
-    
     have hωopen : (openSubgraph d ω).Adj x z := by
       refine ⟨hadj.1, ?_⟩
       have hle := bc61_removeBox_le d L y ω s(x, z)
@@ -212,14 +177,7 @@ theorem bsc_superReach_of_siteConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym
 #check @bsc_hub_adj_armImage
 #check @bsc_superReach_of_siteConn
 
-
-
-
-
-
-
-
-theorem bsc_ediv_eq_iff {L : ℕ} {a m : ℤ} :
+lemma bsc_ediv_eq_iff {L : ℕ} {a m : ℤ} :
     (a + (L : ℤ)) / (2 * (L : ℤ) + 1) = m ↔ (a - (2 * (L : ℤ) + 1) * m).natAbs ≤ L := by
   have hb : (0 : ℤ) < 2 * (L : ℤ) + 1 := by positivity
   have hkey : (a + (L : ℤ)) / (2 * (L : ℤ) + 1)
@@ -231,13 +189,11 @@ theorem bsc_ediv_eq_iff {L : ℕ} {a m : ℤ} :
   · intro h; exact (bsc_ediv_zero_iff).mp (by omega)
   · intro h; have := (bsc_ediv_zero_iff).mpr h; omega
 
-
-
-theorem bsc_fiber_finite (L : ℕ) (j : Site d) : {x : Site d | bgn_idx L x = j}.Finite := by
+lemma bsc_fiber_finite (L : ℕ) (j : Site d) : {x : Site d | bgn_idx L x = j}.Finite := by
   set c : Site d := fun i => (2 * (L : ℤ) + 1) * j i with hc
   have hset : {x : Site d | bgn_idx L x = j} = ↑(bc61_boxAround d L c) := by
     ext x
-    simp only [Set.mem_setOf_eq, Finset.mem_coe, bc61_mem_boxAround, mem_box]
+    simp only [Set.mem_ofPred_eq, Finset.mem_coe, bc61_mem_boxAround, mem_box]
     constructor
     · intro h i
       have := congrFun h i
@@ -251,19 +207,17 @@ theorem bsc_fiber_finite (L : ℕ) (j : Site d) : {x : Site d | bgn_idx L x = j}
       simpa [Pi.sub_apply, hc] using this
   rw [hset]; exact (bc61_boxAround d L c).finite_toSet
 
-
-theorem bsc_deleteWalk_support_avoid {V : Type*} {G : SimpleGraph V} {t : V} :
+lemma bsc_deleteWalk_support_avoid {V : Type*} {G : SimpleGraph V} {t : V} :
     ∀ {u v : V} (p : (bkg_deleteVertex G t).Walk u v), u ≠ t → t ∉ p.support := by
   intro u v p
   induction p with
   | nil => intro hu; simpa using hu.symm
   | @cons u z v hadj q ih =>
     intro hu
-    rw [Walk.support_cons, List.mem_cons]; push_neg
+    rw [Walk.support_cons, List.mem_cons]; push Not
     exact ⟨hu.symm, ih hadj.2.2⟩
 
-
-theorem bsc_ray34_of_deleteReach {V : Type*} {G : SimpleGraph V} {t u v : V}
+lemma bsc_ray34_of_deleteReach {V : Type*} {G : SimpleGraph V} {t u v : V}
     (hu : u ≠ t) (h : (bkg_deleteVertex G t).Reachable u v) :
     ray34_AvoidReach G {t} u v := by
   obtain ⟨p⟩ := h
@@ -275,16 +229,12 @@ theorem bsc_ray34_of_deleteReach {V : Type*} {G : SimpleGraph V} {t u v : V}
   intro hwt; subst hwt
   exact bsc_deleteWalk_support_avoid p hu hw
 
-
-
-
-theorem bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y)
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     (ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} (bgn_idx L a)).Infinite := by
   have haout : a ∉ bc61_boxAround d L y := bsc_notMem_box_of_infinite hinf
   have haidx : bgn_idx L a ≠ bgn_idx L y := fun h => haout ((hy a).mpr h)
-  
   have himg : (bgn_idx L) '' (cluster d (removeSites (bc61_boxAround d L y) ω) a)
       ⊆ ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} (bgn_idx L a) := by
     rintro _ ⟨c, hc, rfl⟩
@@ -292,7 +242,6 @@ theorem bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (S
     have hreach := bsc_superReach_of_siteConn hy hconn
     exact bsc_ray34_of_deleteReach haidx hreach
   refine Set.Infinite.mono himg ?_
-  
   intro hfin
   apply hinf
   have hsub : cluster d (removeSites (bc61_boxAround d L y) ω) a
@@ -304,38 +253,18 @@ theorem bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (S
 
 #check @bsc_arm_ray_infinite
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Sites in the same coarse box, other than that of `y`, are connected after removing the box of
+`y`. -/
 def bsc_BoxesInternallyConnected (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d) : Prop :=
   ∀ u v : Site d, bgn_idx L u = bgn_idx L v → bgn_idx L u ≠ bgn_idx L y →
     Connected d (removeSites (bc61_boxAround d L y) ω) u v
 
-
-
-
-
-
-theorem bsc_siteConn_of_superReach {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_siteConn_of_superReach {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y) (hint : bsc_BoxesInternallyConnected ω L y)
     {a b : Site d} (ha : bgn_idx L a ≠ bgn_idx L y) (hb : bgn_idx L b ≠ bgn_idx L y)
     (h : (bkg_deleteVertex (bgn_Gn ω L) (bgn_idx L y)).Reachable (bgn_idx L a) (bgn_idx L b)) :
     Connected d (removeSites (bc61_boxAround d L y) ω) a b := by
   obtain ⟨p⟩ := h
-  
   have key : ∀ {j k : Site d}
       (p : (bkg_deleteVertex (bgn_Gn ω L) (bgn_idx L y)).Walk j k),
       ∀ a' b', bgn_idx L a' = j → bgn_idx L b' = k →
@@ -345,43 +274,29 @@ theorem bsc_siteConn_of_superReach {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym
     induction p with
     | nil =>
       intro a' b' ha' hb' hjne hkne
-      
       exact hint a' b' (ha'.trans hb'.symm) (by rw [ha']; exact hjne)
     | @cons j z k hadj q ih =>
       intro a' b' ha' hb' hjne hkne
       obtain ⟨hbgnadj, hjne', hzne⟩ := hadj
       obtain ⟨_, c, e, hc, he, hce⟩ := hbgnadj
-      
       have hac : Connected d (removeSites (bc61_boxAround d L y) ω) a' c :=
         hint a' c (ha'.trans hc.symm) (by rw [ha']; exact hjne)
-      
       have hcout : c ∉ bc61_boxAround d L y := fun hcbox => hjne (hc ▸ (hy c).mp hcbox)
       have heout : e ∉ bc61_boxAround d L y := fun hebox => hzne (he ▸ (hy e).mp hebox)
       have hce_conn : Connected d (removeSites (bc61_boxAround d L y) ω) c e :=
         bc61_cut_adj_connected hce.1 hce.2 hcout heout
-      
       have heb : Connected d (removeSites (bc61_boxAround d L y) ω) e b' := ih e b' he hb' hzne hkne
       exact (hac.trans hce_conn).trans heb
   exact key p a b rfl rfl ha hb
 
-
-
-
-
-theorem bsc_super_disconnected {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_super_disconnected {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y) (hint : bsc_BoxesInternallyConnected ω L y)
     {a b : Site d} (ha : bgn_idx L a ≠ bgn_idx L y) (hb : bgn_idx L b ≠ bgn_idx L y)
     (hdis : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a b) :
     ¬ (bkg_deleteVertex (bgn_Gn ω L) (bgn_idx L y)).Reachable (bgn_idx L a) (bgn_idx L b) :=
   fun hr => hdis (bsc_siteConn_of_superReach hy hint ha hb hr)
 
-
-
-
-
-
-
-theorem bsc_bridge_of_internalConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bsc_bridge_of_internalConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y) (hint : bsc_BoxesInternallyConnected ω L y)
     (htri : bc67_IsGnTrifurcation ω L y) :
     ∃ w₁ w₂ w₃ : Site d,
@@ -395,7 +310,6 @@ theorem bsc_bridge_of_internalConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym
       (ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} w₂).Infinite ∧
       (ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} w₃).Infinite := by
   obtain ⟨a₁, a₂, a₃, ⟨hi₁, hi₂, hi₃⟩, ⟨hf₁, hf₂, hf₃⟩, hcut₁₂, hcut₁₃, hcut₂₃⟩ := htri
-  
   have hd₁₂ : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ := hcut₁₂
   have hd₁₃ : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₃ := hcut₁₃
   have hd₂₃ : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₂ a₃ := hcut₂₃
@@ -409,11 +323,7 @@ theorem bsc_bridge_of_internalConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym
   · exact bsc_super_disconnected hy hint hne₁ hne₃ hd₁₃
   · exact bsc_super_disconnected hy hint hne₂ hne₃ hd₂₃
 
-
-
-
-
-theorem bsc_bfin_SuperCutBridge_of_hyp (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ)
+lemma bsc_bfin_SuperCutBridge_of_hyp (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ)
     (H : ∀ y : Site 2, bc67_IsGnTrifurcation ω L y →
       bsc_IsBoxCentre L y ∧ bsc_BoxesInternallyConnected ω L y) :
     bfin_SuperCutBridge ω L := by
@@ -424,13 +334,7 @@ theorem bsc_bfin_SuperCutBridge_of_hyp (ω : ConfigSpace (Sym2 (Site 2))) (L : �
 #check @bsc_siteConn_of_superReach
 #check @bsc_bfin_SuperCutBridge_of_hyp
 
-
-
-
-
-
-
-theorem bsc_upperLines_forward {L : ℕ} (hL : 3 ≤ L) :
+lemma bsc_upperLines_forward {L : ℕ} (hL : 3 ≤ L) :
     ∃ w₁ w₂ w₃ : Site 2,
       (w₁ ≠ bgn_idx L (0 : Site 2) ∧ w₂ ≠ bgn_idx L (0 : Site 2) ∧ w₃ ≠ bgn_idx L (0 : Site 2)) ∧
       ((bgn_Gn bc60_upperLines L).Adj (bgn_idx L (0 : Site 2)) w₁ ∧
@@ -451,46 +355,9 @@ theorem bsc_upperLines_forward {L : ℕ} (hL : 3 ≤ L) :
 
 #check @bsc_upperLines_forward
 
+/-! ## C. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bsc_status {L : ℕ} (hL : 3 ≤ L) :
-    
+lemma bsc_status {L : ℕ} (hL : 3 ≤ L) :
     (∃ w₁ w₂ w₃ : Site 2,
       (w₁ ≠ bgn_idx L (0 : Site 2) ∧ w₂ ≠ bgn_idx L (0 : Site 2) ∧ w₃ ≠ bgn_idx L (0 : Site 2)) ∧
       ((bgn_Gn bc60_upperLines L).Adj (bgn_idx L (0 : Site 2)) w₁ ∧
@@ -499,7 +366,6 @@ theorem bsc_status {L : ℕ} (hL : 3 ≤ L) :
       ((ray34_AvoidCluster (bgn_Gn bc60_upperLines L) {bgn_idx L (0 : Site 2)} w₁).Infinite ∧
        (ray34_AvoidCluster (bgn_Gn bc60_upperLines L) {bgn_idx L (0 : Site 2)} w₂).Infinite ∧
        (ray34_AvoidCluster (bgn_Gn bc60_upperLines L) {bgn_idx L (0 : Site 2)} w₃).Infinite)) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site 2))),
       (∀ y : Site 2, bc67_IsGnTrifurcation ω L y →
         bsc_IsBoxCentre L y ∧ bsc_BoxesInternallyConnected ω L y) →
@@ -509,7 +375,6 @@ theorem bsc_status {L : ℕ} (hL : 3 ≤ L) :
 #check @bsc_status
 
 end StatMech.Walls
-
 
 #print axioms StatMech.Walls.bsc_hub_adj_armImage
 #print axioms StatMech.Walls.bsc_arm_ray_infinite

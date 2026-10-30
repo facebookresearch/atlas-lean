@@ -6,69 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment
+
+/-!
+# Disjoint axis corridors at the origin
+
+Three infinite clusters reaching the origin through disjoint neighbours give a merge-free precursor,
+and in `d ≥ 3` three disjoint axis corridors always exist.
+
+## i. Overview
+
+`mco_ThreeClustersReachOrigin ω` asks for three neighbours of the origin that reach, after the
+origin is removed, three distinct infinite clusters. It gives the merge-free condition and disjoint
+routing. In `d ≥ 3` the corridors `mco_corridorVerts` along three distinct axes are pairwise
+disjoint, avoid the origin and are connected once opened.
+
+## ii. Key results
+
+- `mco_mergeFree_of_reach` : reaching the origin gives the merge-free condition
+- `mco_corridorVerts_disjoint` : corridors along distinct axes are disjoint
+- `mco_exists_three_disjoint_corridors` : three disjoint opened corridors in `d ≥ 3`
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -82,23 +53,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem mco_mergeFree_of_reach (ω : ConfigSpace (Sym2 (Site d)))
+lemma mco_mergeFree_of_reach (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ x₁ x₂ x₃ : Site d)
     (hadj : (hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
       (hypercubicLattice d).Adj 0 a₃)
@@ -114,7 +71,6 @@ theorem mco_mergeFree_of_reach (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨hc1, hc2, hc3⟩ := hconn
   obtain ⟨hi1, hi2, hi3⟩ := hinf
   obtain ⟨hd12, hd13, hd23⟩ := hdist
-  
   have e1 : cluster d (removeSite 0 ω) a₁ = cluster d (removeSite 0 ω) x₁ :=
     cluster_eq_of_connected hc1
   have e2 : cluster d (removeSite 0 ω) a₂ = cluster d (removeSite 0 ω) x₂ :=
@@ -132,20 +88,8 @@ theorem mco_mergeFree_of_reach (ω : ConfigSpace (Sym2 (Site d)))
   · rw [e1, e3]; exact hd13
   · rw [e2, e3]; exact hd23
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Three neighbours of the origin reach, after the origin is removed, sites in three pairwise
+distinct infinite clusters. -/
 def mco_ThreeClustersReachOrigin (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ a₁ a₂ a₃ x₁ x₂ x₃ : Site d,
     ((hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
@@ -158,70 +102,39 @@ def mco_ThreeClustersReachOrigin (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
       cluster d (removeSite 0 ω) x₁ ≠ cluster d (removeSite 0 ω) x₃ ∧
       cluster d (removeSite 0 ω) x₂ ≠ cluster d (removeSite 0 ω) x₃)
 
-
-
-
-
-
-
-theorem mco_mergeFree (ω : ConfigSpace (Sym2 (Site d)))
+lemma mco_mergeFree (ω : ConfigSpace (Sym2 (Site d)))
     (h : mco_ThreeClustersReachOrigin ω) : bka_MergeFree ω := by
   obtain ⟨a₁, a₂, a₃, x₁, x₂, x₃, hadj, hconn, hinf, hdist⟩ := h
   exact mco_mergeFree_of_reach ω a₁ a₂ a₃ x₁ x₂ x₃ hadj hconn hinf hdist
 
-
-
-
-
-theorem mco_distinct_clusters_residue (ω : ConfigSpace (Sym2 (Site d)))
+lemma mco_distinct_clusters_residue (ω : ConfigSpace (Sym2 (Site d)))
     (h : mco_ThreeClustersReachOrigin ω) : bcc_distinct_clusters_residue ω :=
   bka_distinct_clusters ω (mco_mergeFree ω h)
 
-
-
-theorem mco_disjointRouting (ω : ConfigSpace (Sym2 (Site d)))
+lemma mco_disjointRouting (ω : ConfigSpace (Sym2 (Site d)))
     (h : mco_ThreeClustersReachOrigin ω) : DisjointPaths.DisjointCorridorRouting ω :=
   bka_disjointRouting_of_mergeFree ω (mco_mergeFree ω h)
 
-
-
-
-
-theorem mco_routing (n : ℕ)
+lemma mco_routing (n : ℕ)
     (hreach : ∀ ω ∈ threeMeetBox d n, mco_ThreeClustersReachOrigin ω) :
     hrHD_DisjointRouting d n :=
   bka_routing_of_mergeFree n (fun ω hω => mco_mergeFree ω (hreach ω hω))
 
-
-
-
-
-
-
-
-
-
-
+/-- The axis sites `m e_j` with `1 ≤ m ≤ L`. -/
 def mco_corridorVerts (j : Fin d) (L : ℕ) : Set (Site d) :=
   {y | ∃ m : ℕ, 1 ≤ m ∧ m ≤ L ∧ y = hrHD_rayPt j (m : ℤ)}
 
-
-theorem mco_rayPt_one_mem_corridorVerts (j : Fin d) (L : ℕ) (hL : 1 ≤ L) :
+lemma mco_rayPt_one_mem_corridorVerts (j : Fin d) (L : ℕ) (hL : 1 ≤ L) :
     hrHD_rayPt j 1 ∈ mco_corridorVerts j L :=
   ⟨1, le_rfl, hL, by norm_num⟩
 
-
-
-theorem mco_origin_notMem_corridorVerts (j : Fin d) (L : ℕ) :
+lemma mco_origin_notMem_corridorVerts (j : Fin d) (L : ℕ) :
     (0 : Site d) ∉ mco_corridorVerts j L := by
   rintro ⟨m, hm1, _, heq⟩
   rw [eq_comm, hrHD_rayPt_eq_zero_iff] at heq
   omega
 
-
-
-
-theorem mco_corridorVerts_disjoint {j₁ j₂ : Fin d} (h : j₁ ≠ j₂) (L : ℕ) :
+lemma mco_corridorVerts_disjoint {j₁ j₂ : Fin d} (h : j₁ ≠ j₂) (L : ℕ) :
     Disjoint (mco_corridorVerts j₁ L) (mco_corridorVerts j₂ L) := by
   rw [Set.disjoint_left]
   rintro y ⟨m, hm1, _, rfl⟩ ⟨n, _, _, hn⟩
@@ -230,12 +143,7 @@ theorem mco_corridorVerts_disjoint {j₁ j₂ : Fin d} (h : j₁ ≠ j₂) (L : 
     omega
   exact hrHD_rayPt_disjoint_of_ne h hm0 hn
 
-
-
-
-
-
-theorem mco_corridorVert_connected (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
+lemma mco_corridorVert_connected (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
     (m : ℕ) (hm1 : 1 ≤ m) (hmL : m ≤ L) :
     Connected d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j L) ω))
       (hrHD_rayPt j 1) (hrHD_rayPt j (m : ℤ)) := by
@@ -255,10 +163,7 @@ theorem mco_corridorVert_connected (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d
     · have hp1 : p + 1 = 1 := by omega
       rw [hp1]; simpa using connected_rfl
 
-
-
-
-theorem mco_corridorVerts_subset_cluster (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
+lemma mco_corridorVerts_subset_cluster (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
     (L : ℕ) :
     mco_corridorVerts j L ⊆
       cluster d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j L) ω)) (hrHD_rayPt j 1) := by
@@ -266,18 +171,7 @@ theorem mco_corridorVerts_subset_cluster (ω : ConfigSpace (Sym2 (Site d))) (j :
   rw [mem_cluster]
   exact mco_corridorVert_connected ω j L m hm1 hmL
 
-
-
-
-
-
-
-
-
-
-
-
-theorem mco_three_disjoint_corridors (ω : ConfigSpace (Sym2 (Site d)))
+lemma mco_three_disjoint_corridors (ω : ConfigSpace (Sym2 (Site d)))
     {j₁ j₂ j₃ : Fin d} (h12 : j₁ ≠ j₂) (h13 : j₁ ≠ j₃) (h23 : j₂ ≠ j₃)
     (L : ℕ) (hL : 1 ≤ L) :
     ∃ C₁ C₂ C₃ : Set (Site d),
@@ -305,24 +199,11 @@ theorem mco_three_disjoint_corridors (ω : ConfigSpace (Sym2 (Site d)))
   · rintro y ⟨m, hm1, hmL, rfl⟩; exact mco_corridorVert_connected ω j₂ L m hm1 hmL
   · rintro y ⟨m, hm1, hmL, rfl⟩; exact mco_corridorVert_connected ω j₃ L m hm1 hmL
 
-
-
-
-theorem mco_corridors_nonvacuous (j : Fin d) (L : ℕ) (hL : 1 ≤ L) :
+lemma mco_corridors_nonvacuous (j : Fin d) (L : ℕ) (hL : 1 ≤ L) :
     (mco_corridorVerts j L).Nonempty :=
   ⟨hrHD_rayPt j 1, mco_rayPt_one_mem_corridorVerts j L hL⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem mco_exists_three_disjoint_corridors (ω : ConfigSpace (Sym2 (Site d))) (hd : 3 ≤ d)
+lemma mco_exists_three_disjoint_corridors (ω : ConfigSpace (Sym2 (Site d))) (hd : 3 ≤ d)
     (L : ℕ) (hL : 1 ≤ L) :
     ∃ (j₁ j₂ j₃ : Fin d) (C₁ C₂ C₃ : Set (Site d)),
       (j₁ ≠ j₂ ∧ j₁ ≠ j₃ ∧ j₂ ≠ j₃) ∧

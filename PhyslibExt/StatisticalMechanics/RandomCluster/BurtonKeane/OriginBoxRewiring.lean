@@ -6,91 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -98,6 +13,39 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Canonica
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourCutCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterSurvives
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDistinctCutClusters
+
+/-!
+# Rewiring a box to make the origin a trifurcation
+
+If in every configuration with three distinct infinite clusters a finite rewiring away from the
+origin joins the origin to three separated infinite branches, the origin becomes a canonical
+trifurcation with positive probability.
+
+## i. Overview
+
+`bc9_BoxOriginReach d n` asks that every configuration in `threeMeetBox d n` have a finite edge set
+`W`, not touching the origin, after which the origin is connected to three sites whose clusters
+without the origin are infinite and distinct. This gives the origin rewiring condition and a
+canonical trifurcation at the origin with positive probability.
+
+## ii. Key results
+
+- `bc9_originRewiring_of_boxOriginReach` : box origin reach gives origin rewiring
+- `bc9_canonicalTrif_of_boxOriginReach` : a canonical trifurcation at the origin with positive
+  probability
+- `bc9_burtonKeane_uniqueness_of_boxOriginReach` : the corresponding uniqueness statement
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -112,32 +60,11 @@ namespace Walls
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Box origin reach in `B_n`: every configuration with three distinct infinite clusters meeting
+`B_n` has a finite rewiring away from the origin joining the origin to three sites whose
+clusters without the origin are infinite and pairwise distinct. -/
 def bc9_BoxOriginReach (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n, ∃ W : Finset (Sym2 (Site d)),
     (∀ e ∈ W, (0 : Site d) ∉ e) ∧
@@ -156,39 +83,19 @@ def bc9_BoxOriginReach (d n : ℕ) : Prop :=
       cluster d (removeSite 0 (forceOpenFinset W ω)) y₂ ≠
         cluster d (removeSite 0 (forceOpenFinset W ω)) y₃
 
+/-! ## B. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc9_originRewiring_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n) :
+lemma bc9_originRewiring_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n) :
     bc8_OriginRewiring d n := by
   intro ω hω
   obtain ⟨W, hW0, y₁, y₂, y₃, hy1, hy2, hy3, hc1, hc2, hc3,
     hi1, hi2, hi3, hd12, hd13, hd23⟩ := h ω hω
-  
   obtain ⟨n₁, hadj1, hconn1, _hmem1⟩ :=
     bc9nbr_mem_neighbour_cutCluster_strong (forceOpenFinset W ω) hy1 hc1
   obtain ⟨n₂, hadj2, hconn2, _hmem2⟩ :=
     bc9nbr_mem_neighbour_cutCluster_strong (forceOpenFinset W ω) hy2 hc2
   obtain ⟨n₃, hadj3, hconn3, _hmem3⟩ :=
     bc9nbr_mem_neighbour_cutCluster_strong (forceOpenFinset W ω) hy3 hc3
-  
   have e1 : cluster d (removeSite 0 (forceOpenFinset W ω)) n₁
       = cluster d (removeSite 0 (forceOpenFinset W ω)) y₁ := cluster_eq_of_connected hconn1
   have e2 : cluster d (removeSite 0 (forceOpenFinset W ω)) n₂
@@ -203,31 +110,13 @@ theorem bc9_originRewiring_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d
   · rw [e1, e3]; exact hd13
   · rw [e2, e3]; exact hd23
 
-
-
-
-
-
-
-
-
-
-theorem bc9_canonicalTrif_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n)
+lemma bc9_canonicalTrif_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n)
     (ω : ConfigSpace (Sym2 (Site d))) (hω : ω ∈ threeMeetBox d n) :
     ∃ W : Finset (Sym2 (Site d)), (∀ e ∈ W, (0 : Site d) ∉ e) ∧
       IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
   bc8_canonicalTrif_of_originRewiring n (bc9_originRewiring_of_boxOriginReach n h) ω hω
 
-
-
-
-
-
-
-
-
-
-theorem bc9_burtonKeane_uniqueness_of_boxOriginReach
+lemma bc9_burtonKeane_uniqueness_of_boxOriginReach
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
     (hfe : HasFiniteEnergyMerge μ)
@@ -244,24 +133,7 @@ theorem bc9_burtonKeane_uniqueness_of_boxOriginReach
   bc8_burtonKeane_uniqueness_of_originRewiring μ herg hfe bdry hbound hvol hdens
     (fun n => bc9_originRewiring_of_boxOriginReach n (hr n))
 
-
-
-
-
-
-
-
-
-theorem bc9_forceOpenFinset_empty (ω : ConfigSpace (Sym2 (Site d))) :
-    forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by
-  funext e; simp [forceOpenFinset]
-
-
-
-
-
-
-theorem bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
     {y₁ y₂ y₃ : Site d} (hy1 : y₁ ≠ 0) (hy2 : y₂ ≠ 0) (hy3 : y₃ ≠ 0)
     (hc1 : Connected d ω 0 y₁) (hc2 : Connected d ω 0 y₂) (hc3 : Connected d ω 0 y₃)
     (hi1 : (cluster d (removeSite 0 ω) y₁).Infinite)
@@ -287,7 +159,7 @@ theorem bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
         cluster d (removeSite 0 (forceOpenFinset W ω)) z₂ ≠
           cluster d (removeSite 0 (forceOpenFinset W ω)) z₃ := by
   refine ⟨∅, by simp, y₁, y₂, y₃, hy1, hy2, hy3, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    rw [bc9_forceOpenFinset_empty]
+    rw [StatMech.Percolation.DisjointPaths.mng_forceOpenFinset_empty]
   · exact hc1
   · exact hc2
   · exact hc3
@@ -298,48 +170,19 @@ theorem bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
   · exact hd13
   · exact hd23
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc9_originRewiring_iff_residue (n : ℕ) :
-    bc9_BoxOriginReach d n → bc8_OriginRewiring d n :=
-  bc9_originRewiring_of_boxOriginReach n
-
-
-
 section AxiomAudit
-
 
 /-- info: 'StatMech.Walls.bc9_originRewiring_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_originRewiring_of_boxOriginReach
 
-
 /-- info: 'StatMech.Walls.bc9_canonicalTrif_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_canonicalTrif_of_boxOriginReach
 
-
 /-- info: 'StatMech.Walls.bc9_burtonKeane_uniqueness_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_burtonKeane_uniqueness_of_boxOriginReach
-
 
 /-- info: 'StatMech.Walls.bc9_boxOriginReach_of_reach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in

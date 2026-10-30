@@ -6,85 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom
+
+/-!
+# Trifurcation precursors and the counting route
+
+A neighbour trifurcation precursor at the origin becomes a trifurcation after opening its three
+edges; positive probability of `N = ∞` with routing gives the trifurcation input of Burton–Keane.
+
+## i. Overview
+
+`NeighborTrifPrecursor d a₁ a₂ a₃` is the event that three neighbours of the origin lie in pairwise
+distinct infinite clusters of `removeSite 0 ω`. Opening the three edges at the origin makes the
+origin a trifurcation (`precursor_subset_force_trif`), and under finite-energy merging a
+positive-probability precursor gives a positive-probability trifurcation. `threeMeetBox d n` is the
+event that three distinct infinite clusters meet `B_n`; their union over `n` contains `N = ∞`.
+`burton_keane_uniqueness_trif_route` combines this with the counting route.
+
+## ii. Key results
+
+- `precursor_subset_force_trif` : opening the edges makes the origin a trifurcation
+- `trif_pos_of_precursor_pos` : positive precursor probability gives positive trifurcation
+  probability
+- `iEqTop_subset_iUnion_threeMeetBox` : `N = ∞` is covered by the events `threeMeetBox d n`
+- `burton_keane_uniqueness_trif_route` : uniqueness from routing and a trifurcation bound for every
+  configuration
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -98,54 +60,25 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-theorem removeSite_forceOpen_eq (x : Site d) (F : Finset (Sym2 (Site d)))
+lemma removeSite_forceOpen_eq (x : Site d) (F : Finset (Sym2 (Site d)))
     (hF : ∀ e ∈ F, x ∈ e) (ω : ConfigSpace (Sym2 (Site d))) :
     removeSite x (forceOpenFinset F ω) = removeSite x ω := by
   funext e
   unfold removeSite forceOpenFinset
   by_cases hx : x ∈ e
   · simp [hx]
-  · simp only [hx, if_false]
+  · simp only [hx, ite_false]
     by_cases hef : e ∈ F
     · exact absurd (hF e hef) hx
     · simp [hef]
 
-
-theorem removeSite_le (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
+lemma removeSite_le (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
     removeSite x ω ≤ ω := by
   intro e; unfold removeSite; by_cases hx : x ∈ e <;> simp [hx]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem isTrifurcation_of_neighbors
+lemma isTrifurcation_of_neighbors
     (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d)
     (hne : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃)
@@ -164,42 +97,28 @@ theorem isTrifurcation_of_neighbors
   set F : Finset (Sym2 (Site d)) :=
     {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} with hFdef
   set ω' := forceOpenFinset F ω with hω'
-  
   have hFmem : ∀ e ∈ F, (0 : Site d) ∈ e := by
     intro e he
     simp only [hFdef, Finset.mem_insert, Finset.mem_singleton] at he
     rcases he with h | h | h <;> (rw [h]; exact Sym2.mem_mk_left _ _)
-  
   have hrm : removeSite (0:Site d) ω' = removeSite (0:Site d) ω :=
     removeSite_forceOpen_eq 0 F hFmem ω
-  
   have hconn1 : Connected d ω' 0 a₁ := by
     apply IsOpenEdge.connected; exact ⟨hadj1, forceOpenFinset_of_mem (by simp [hFdef]) ω⟩
   have hconn2 : Connected d ω' 0 a₂ := by
     apply IsOpenEdge.connected; exact ⟨hadj2, forceOpenFinset_of_mem (by simp [hFdef]) ω⟩
   have hconn3 : Connected d ω' 0 a₃ := by
     apply IsOpenEdge.connected; exact ⟨hadj3, forceOpenFinset_of_mem (by simp [hFdef]) ω⟩
-  
   have hle : removeSite (0:Site d) ω ≤ ω' := by rw [← hrm]; exact removeSite_le 0 ω'
   have hinf1' : (cluster d ω' a₁).Infinite := hinf1.mono (cluster_mono hle a₁)
   have hinf2' : (cluster d ω' a₂).Infinite := hinf2.mono (cluster_mono hle a₂)
   have hinf3' : (cluster d ω' a₃).Infinite := hinf3.mono (cluster_mono hle a₃)
-  
   refine ⟨a₁, a₂, a₃, hne, ⟨hconn1, hconn2, hconn3⟩, ⟨hinf1', hinf2', hinf3'⟩, ?_⟩
   rw [hrm]
   exact ⟨hsep12, hsep13, hsep23⟩
 
-
-
-
-
-
-
-
-
-
-
-
+/-- The neighbour trifurcation precursor: `a₁, a₂, a₃` are distinct neighbours of the origin lying
+in pairwise distinct infinite clusters after the origin is removed. -/
 def NeighborTrifPrecursor (d : ℕ) (a₁ a₂ a₃ : Site d) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -210,27 +129,16 @@ def NeighborTrifPrecursor (d : ℕ) (a₁ a₂ a₃ : Site d) :
     (¬ Connected d (removeSite 0 ω) a₁ a₂ ∧ ¬ Connected d (removeSite 0 ω) a₁ a₃ ∧
       ¬ Connected d (removeSite 0 ω) a₂ a₃)}
 
-
-
-
-
-theorem precursor_subset_force_trif (a₁ a₂ a₃ : Site d) :
+lemma precursor_subset_force_trif (a₁ a₂ a₃ : Site d) :
     NeighborTrifPrecursor d a₁ a₂ a₃ ⊆
       (fun ω => forceOpenFinset {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} ω)
         ⁻¹' {ω | IsTrifurcation d ω 0} := by
   rintro ω ⟨hne, ⟨hadj1, hadj2, hadj3⟩, ⟨hinf1, hinf2, hinf3⟩, ⟨hsep12, hsep13, hsep23⟩⟩
-  simp only [Set.mem_preimage, Set.mem_setOf_eq]
+  simp only [Set.mem_preimage, Set.mem_ofPred_eq]
   exact isTrifurcation_of_neighbors ω a₁ a₂ a₃ hne hadj1 hadj2 hadj3 hinf1 hinf2 hinf3
     hsep12 hsep13 hsep23
 
-
-
-
-
-
-
-
-theorem trif_pos_of_precursor_pos
+lemma trif_pos_of_precursor_pos
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ) (a₁ a₂ a₃ : Site d)
     (hpos : 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃)) :
@@ -239,7 +147,6 @@ theorem trif_pos_of_precursor_pos
     {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} with hFdef
   by_contra h
   rw [not_lt, nonpos_iff_eq_zero] at h
-  
   have hac : (μ.map (fun ω => forceOpenFinset F ω)) ≪ μ := hfe F
   have hpush : (μ.map (fun ω => forceOpenFinset F ω)) {ω | IsTrifurcation d ω 0}
       = μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | IsTrifurcation d ω 0}) :=
@@ -252,16 +159,7 @@ theorem trif_pos_of_precursor_pos
   rw [hpre0] at hAle
   exact absurd (le_antisymm hAle bot_le) (ne_of_gt hpos)
 
-
-
-
-
-
-
-
-
-
-theorem exists_three_distinct {α : Type*} {S : Set α} (h : S.encard = ⊤) :
+lemma exists_three_distinct {α : Type*} {S : Set α} (h : S.encard = ⊤) :
     ∃ a b c, a ∈ S ∧ b ∈ S ∧ c ∈ S ∧ a ≠ b ∧ a ≠ c ∧ b ≠ c := by
   have h3 : (3 : ℕ∞) ≤ S.encard := by rw [h]; exact le_top
   obtain ⟨t, hts, ht3⟩ := Set.exists_subset_encard_eq h3
@@ -269,11 +167,7 @@ theorem exists_three_distinct {α : Type*} {S : Set α} (h : S.encard = ⊤) :
   obtain ⟨a, b, c, hab, hac, hbc, rfl⟩ := ht3
   exact ⟨a, b, c, hts (by simp), hts (by simp), hts (by simp), hab, hac, hbc⟩
 
-
-
-
-
-
+/-- `N = ∞` and three distinct infinite clusters meet the box `B_n`. -/
 def threeMeetBox (d n : ℕ) : Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | numInfiniteClusters d ω = ⊤ ∧
     ∃ x y z : Site d, x ∈ box d n ∧ y ∈ box d n ∧ z ∈ box d n ∧
@@ -281,18 +175,14 @@ def threeMeetBox (d n : ℕ) : Set (ConfigSpace (Sym2 (Site d))) :=
       cluster d ω x ≠ cluster d ω y ∧ cluster d ω x ≠ cluster d ω z ∧
       cluster d ω y ≠ cluster d ω z}
 
-
-
-
-
-theorem iEqTop_subset_iUnion_threeMeetBox :
+lemma iEqTop_subset_iUnion_threeMeetBox :
     {ω : ConfigSpace (Sym2 (Site d)) | numInfiniteClusters d ω = ⊤}
       ⊆ ⋃ n, threeMeetBox d n := by
   intro ω hω
-  simp only [Set.mem_setOf_eq] at hω
+  simp only [Set.mem_ofPred_eq] at hω
   have hcard : (infiniteClusters d ω).encard = ⊤ := hω
   obtain ⟨C₁, C₂, C₃, hC₁, hC₂, hC₃, h12, h13, h23⟩ := exists_three_distinct hcard
-  simp only [infiniteClusters, Set.mem_setOf_eq] at hC₁ hC₂ hC₃
+  simp only [infiniteClusters, Set.mem_ofPred_eq] at hC₁ hC₂ hC₃
   obtain ⟨hinf1, x, hxeq⟩ := hC₁
   obtain ⟨hinf2, y, hyeq⟩ := hC₂
   obtain ⟨hinf3, z, hzeq⟩ := hC₃
@@ -309,13 +199,7 @@ theorem iEqTop_subset_iUnion_threeMeetBox :
   exact Set.mem_iUnion.mpr ⟨n, hω, x, y, z, hxbox, hybox, hzbox, hxinf, hyinf, hzinf,
     hcl12, hcl13, hcl23⟩
 
-
-
-
-
-
-
-theorem exists_threeMeetBox_pos
+lemma exists_threeMeetBox_pos
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hpos : 0 < μ {ω | numInfiniteClusters d ω = ⊤}) :
     ∃ n : ℕ, 0 < μ (threeMeetBox d n) := by
@@ -331,32 +215,7 @@ theorem exists_threeMeetBox_pos
   rw [hunion0] at hle
   exact absurd (le_antisymm hle bot_le) (ne_of_gt hpos)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem htrif_discharged
+lemma htrif_discharged
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ)
     (hroute : ∀ n : ℕ, 0 < μ (threeMeetBox d n) →
@@ -368,32 +227,10 @@ theorem htrif_discharged
   obtain ⟨a₁, a₂, a₃, hpre⟩ := hroute n hn
   exact trif_pos_of_precursor_pos μ hfe a₁ a₂ a₃ hpre
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Burton–Keane uniqueness from a precursor route and a trifurcation count (Burton and Keane,
+*Density and uniqueness in percolation*, 1989). For `d ≥ 1` the hypotheses `hbound` and `hdens`
+cannot hold together (`tfc_not_hbound_hdens`): with the trifurcation notion `IsTrifurcation` no
+configuration-wide bound of order `o(|B_n|)` exists. -/
 theorem burton_keane_uniqueness_trif_route
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)

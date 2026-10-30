@@ -6,92 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -99,6 +13,48 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTr
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
+
+/-!
+# Insertion tolerance and coarse trifurcations in the plane
+
+Under a translation-invariant measure with finite-energy merging, infinitely many infinite clusters
+force coarse trifurcations of positive probability, and a global forest on the contracted lattice
+turns this into uniqueness.
+
+## i. Overview
+
+These are the two probabilistic steps of the Burton–Keane argument in `ℤ²`, stated for the coarse
+trifurcations of `L`-boxes (`bc61_IsCoarseTrifurcation`). Insertion tolerance
+(`HasFiniteEnergyMerge`) opens a box joining three infinite clusters, so `N = ∞` with positive
+probability gives a coarse trifurcation at the origin with positive probability. If every
+configuration admits the contracted-lattice forest `bc69_Gn_globalForest`, counting coarse
+trifurcations against the box boundary excludes `N = ∞`, and for Bernoulli percolation this yields
+at most one infinite cluster.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bkw_lemma26_insertion_tolerance_pp` : `N = ∞` with positive probability gives a coarse
+  trifurcation at the origin with positive probability for some box size `L`
+- `bkw_count_half_of_forest` : a global contracted forest for every configuration excludes `N = ∞`
+- `bkw_bk_uniqueness_of_forest` : the resulting uniqueness statement for Bernoulli bond percolation
+- `bkw_status` : the three statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -115,24 +71,9 @@ namespace StatMech.Walls
 
 open StatMech.Percolation
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkw_lemma26_insertion_tolerance_pp
+lemma bkw_lemma26_insertion_tolerance_pp
     (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
     (hinv : IsTranslationInvariant (G := Multiplicative (Site 2)) μ)
     (hfe : HasFiniteEnergyMerge μ)
@@ -140,24 +81,7 @@ theorem bkw_lemma26_insertion_tolerance_pp
     ∃ L : ℕ, 0 < μ {ω | bc61_IsCoarseTrifurcation ω L 0} :=
   bkm_coarseTrifExistence_diag μ hinv hfe htop
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkw_count_half_of_forest
+lemma bkw_count_half_of_forest
     (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
     (hinv : IsTranslationInvariant (G := Multiplicative (Site 2)) μ)
     (hfe : HasFiniteEnergyMerge μ)
@@ -165,10 +89,8 @@ theorem bkw_count_half_of_forest
     μ {ω | numInfiniteClusters 2 ω = ⊤} = 0 := by
   by_contra hne
   have htop : 0 < μ {ω | numInfiniteClusters 2 ω = ⊤} := pos_iff_ne_zero.mpr hne
-  
   obtain ⟨L, hpos⟩ := bkw_lemma26_insertion_tolerance_pp μ hinv hfe htop
   have hexist : bc61_CoarseTrifExistence μ L := fun _ => hpos
-  
   have hzero : μ {ω | numInfiniteClusters 2 ω = ⊤} = 0 :=
     bc61_infiniteClusters_top_null_of_coarse μ L (fun R => boxSV_boundaryCard 2 R)
       (fun R => bc62_coarse_expectation μ hinv L R)
@@ -178,21 +100,7 @@ theorem bkw_count_half_of_forest
       hexist
   exact hne hzero
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkw_bk_uniqueness_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bkw_bk_uniqueness_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hforest : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
         {ω | numInfiniteClusters 2 ω = 0} = 1 ∨
@@ -210,11 +118,7 @@ theorem bkw_bk_uniqueness_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     bkw_count_half_of_forest μ hinv hfe hforest
   exact bc120_uniqueness_of_top_null μ herg hfe htop
 
-
-
-
-
-theorem bkw_top_null_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bkw_top_null_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hforest : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       {ω | numInfiniteClusters 2 ω = ⊤} = 0 := by
@@ -224,51 +128,17 @@ theorem bkw_top_null_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
   have hfe : HasFiniteEnergyMerge μ := bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0
   exact bkw_count_half_of_forest μ hinv hfe hforest
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkw_status (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
-    
+lemma bkw_status (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
       IsTranslationInvariant (G := Multiplicative (Site 2)) μ → HasFiniteEnergyMerge μ →
       0 < μ {ω | numInfiniteClusters 2 ω = ⊤} →
       ∃ L : ℕ, 0 < μ {ω | bc61_IsCoarseTrifurcation ω L 0}) ∧
-    
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
       IsTranslationInvariant (G := Multiplicative (Site 2)) μ → HasFiniteEnergyMerge μ →
       (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
-    
     ((∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) := by
   refine ⟨?_, ?_, ?_⟩

@@ -6,99 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBoundaryForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
+
+/-!
+# Global forests on the contracted lattice
+
+A finite forest carrying the contracted-lattice trifurcations as branch vertices, with leaves on the
+boundary, bounds the coarse trifurcation count by the boundary size.
+
+## i. Overview
+
+`bc69_Gn_globalForest ω L R` asks for a finite acyclic graph on a set of sites without isolated
+vertices, an injective placement of the contracted-lattice trifurcations of `B_R` as vertices of
+degree at least three, and all leaves on the boundary of `B_R`. The branch–leaf inequality for
+forests then gives `bc61_coarseTcount ≤ |∂B_R|`. Under translation invariance and finite-energy
+merging, the forest for every configuration excludes `N = ∞`. In `bc60_upperLines` the coarse count
+is controlled by an explicit forest.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bc69_coarseTcount_le_boundary` : a global forest bounds the coarse count by the boundary size
+- `bc69_globalForest_of_noTrif` : the forest exists when there is no contracted-lattice trifurcation
+- `bc69_infiniteClusters_top_null_of_globalForest` : a global forest for every configuration
+  excludes `N = ∞`
+- `bc69_status` : the branch–leaf inequality and the counting bound together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -117,53 +69,23 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_subtypeVal_injOn {p : Site d → Prop} (S : Set (Subtype p)) :
+lemma bc69_subtypeVal_injOn {p : Site d → Prop} (S : Set (Subtype p)) :
     Set.InjOn (Subtype.val : Subtype p → Site d) S :=
   Subtype.val_injective.injOn
 
-
-
-theorem bc69_box_zero_mem (d R : ℕ) : (0 : Site d) ∈ box d R := by
+/-- The origin lies in every box. See also `StatMech.FK.ocs_zero_mem_box`, the same statement. -/
+lemma bc69_box_zero_mem (d R : ℕ) : (0 : Site d) ∈ box d R := by
   rw [mem_box]; intro i; simp
 
-
+/-- The box `B_R` is nonempty: it contains the origin. -/
 noncomputable instance bc69_boxNonempty (d R : ℕ) : Nonempty (↑(box d R) : Type) :=
   ⟨⟨0, bc69_box_zero_mem d R⟩⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A global forest for box size `L` and box `B_R`: a finite forest without isolated vertices in
+which the contracted-lattice trifurcations of `B_R` embed injectively with degree at least three
+and whose leaves lie on the boundary of `B_R`. -/
 def bc69_Gn_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj) (ιU : Site d → (↑S : Type)),
@@ -173,104 +95,38 @@ def bc69_Gn_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :
       bc67_IsGnTrifurcation ω L z → ιU y = ιU z → y = z) ∧
     (∀ v : (↑S : Type), G.degree v = 1 → (v : Site d) ∈ vertexBoundary d R)
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_forestData_of_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc69_forestData_of_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc69_Gn_globalForest ω L R) : bc68_GnForestData ω L R := by
   classical
   obtain ⟨S, hSfin, hSne, G, hGdec, ιU, hacyc, hmin, hdeg3, hιinj, hlammap⟩ := h
   refine ⟨(↑S : Type), hSfin, hSne, inferInstance, G, hGdec, ιU,
     (Subtype.val : (↑S : Type) → Site d), hacyc, hmin, hdeg3, hιinj, hlammap, ?_⟩
-  
   exact bc69_subtypeVal_injOn _
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_count_via_leafBound (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc69_count_via_leafBound (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc69_Gn_globalForest ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc68_coarseTcount_le_boundary_of_GnForestData ω L R (bc69_forestData_of_globalForest ω L R h)
 
-
-
-
-theorem bc69_coarseTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc69_coarseTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc69_Gn_globalForest ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc69_count_via_leafBound ω L R h
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_leaf_count_absorbs_shared {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
+lemma bc69_leaf_count_absorbs_shared {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v) :
     (univ.filter (fun v => 3 ≤ G.degree v)).card
       ≤ (univ.filter (fun v => G.degree v = 1)).card :=
   flc2_forest_internal_le_leaves G hacyc hmin
 
-
-
-
-
-
-theorem bc69_leaf_card_le_boundary_subtype (R : ℕ) {S : Set (Site d)} [Fintype (↑S : Type)]
+lemma bc69_leaf_card_le_boundary_subtype (R : ℕ) {S : Set (Site d)} [Fintype (↑S : Type)]
     (G : SimpleGraph (↑S : Type)) [DecidableRel G.Adj]
     (hlammap : ∀ v : (↑S : Type), G.degree v = 1 → (v : Site d) ∈ vertexBoundary d R) :
     (univ.filter (fun v => G.degree v = 1)).card ≤ boxSV_boundaryCard d R :=
   flc2_leaf_card_le_boundary G R (Subtype.val : (↑S : Type) → Site d) hlammap
     (bc69_subtypeVal_injOn _)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_single_edge_degree {V : Type*} [Fintype V] [DecidableEq V] (a b : V) (hab : a ≠ b)
+lemma bc69_single_edge_degree {V : Type*} [Fintype V] [DecidableEq V] (a b : V) (hab : a ≠ b)
     [DecidableRel (SimpleGraph.fromEdgeSet {s(a,b)}).Adj] :
     (SimpleGraph.fromEdgeSet {s(a,b)}).degree a = 1 := by
   classical
@@ -286,8 +142,7 @@ theorem bc69_single_edge_degree {V : Type*} [Fintype V] [DecidableEq V] (a b : V
     · rintro rfl; exact ⟨by tauto, hab⟩
   rw [hset]; simp
 
-
-theorem bc69_single_edge_degree_b {V : Type*} [Fintype V] [DecidableEq V] (a b : V) (hab : a ≠ b)
+lemma bc69_single_edge_degree_b {V : Type*} [Fintype V] [DecidableEq V] (a b : V) (hab : a ≠ b)
     [DecidableRel (SimpleGraph.fromEdgeSet {s(a,b)}).Adj] :
     (SimpleGraph.fromEdgeSet {s(a,b)}).degree b = 1 := by
   classical
@@ -303,9 +158,7 @@ theorem bc69_single_edge_degree_b {V : Type*} [Fintype V] [DecidableEq V] (a b :
     · rintro rfl; exact ⟨by tauto, Ne.symm hab⟩
   rw [hset]; simp
 
-
-
-theorem bc69_single_edge_acyclic {V : Type*} [DecidableEq V] (a b : V) (hab : a ≠ b) :
+lemma bc69_single_edge_acyclic {V : Type*} [DecidableEq V] (a b : V) (hab : a ≠ b) :
     (SimpleGraph.fromEdgeSet {s(a,b)}).IsAcyclic := by
   rw [SimpleGraph.isAcyclic_iff_forall_adj_isBridge]
   intro u v huv
@@ -328,33 +181,23 @@ theorem bc69_single_edge_acyclic {V : Type*} [DecidableEq V] (a b : V) (hab : a 
   exact hne (w.eq_of_length_eq_zero
     (by cases w with | nil => rfl | cons h _ => exact absurd h (by simp)))
 
+
 open Classical in
-
-
-
-
-
-
-
-
-theorem bc69_globalForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc69_globalForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R) (hzne : z₀ ≠ z₁)
     (hno : ∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) :
     bc69_Gn_globalForest ω L R := by
   classical
-  
   set S : Set (Site d) := {z₀, z₁} with hS
   have hz₀S : z₀ ∈ S := by rw [hS]; left; rfl
   have hz₁S : z₁ ∈ S := by rw [hS]; right; rfl
-  haveI hSfin : Fintype (↑S : Type) := (Set.toFinite S).fintype
+  have hSfin : Fintype (↑S : Type) := (Set.toFinite S).fintype
   set a : (↑S : Type) := ⟨z₀, hz₀S⟩ with ha
   set b : (↑S : Type) := ⟨z₁, hz₁S⟩ with hb
   have hab : a ≠ b := by
     intro h; exact hzne (congrArg Subtype.val h)
-  
   let G : SimpleGraph (↑S : Type) := SimpleGraph.fromEdgeSet {s(a, b)}
-  haveI hGdec : DecidableRel G.Adj := Classical.decRel _
-  
+  have hGdec : DecidableRel G.Adj := Classical.decRel _
   have hVall : ∀ v : (↑S : Type), v = a ∨ v = b := by
     intro v
     obtain ⟨x, hx⟩ := v
@@ -365,35 +208,17 @@ theorem bc69_globalForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : �
   have hda : G.degree a = 1 := bc69_single_edge_degree a b hab
   have hdb : G.degree b = 1 := bc69_single_edge_degree_b a b hab
   refine ⟨S, hSfin, ⟨a⟩, G, hGdec, (fun _ => a), ?_, ?_, ?_, ?_, ?_⟩
-  · 
-    exact bc69_single_edge_acyclic a b hab
-  · 
-    intro v; rcases hVall v with rfl | rfl
+  · exact bc69_single_edge_acyclic a b hab
+  · intro v; rcases hVall v with rfl | rfl
     · rw [hda]
     · rw [hdb]
-  · 
-    intro y hybox htri; exact absurd htri (hno y hybox)
-  · 
-    intro y hybox htri; exact absurd htri (hno y hybox)
-  · 
-    intro v _; rcases hVall v with rfl | rfl
+  · intro y hybox htri; exact absurd htri (hno y hybox)
+  · intro y hybox htri; exact absurd htri (hno y hybox)
+  · intro v _; rcases hVall v with rfl | rfl
     · exact hz₀
     · exact hz₁
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_infiniteClusters_top_null_of_globalForest
+lemma bc69_infiniteClusters_top_null_of_globalForest
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
@@ -405,88 +230,27 @@ theorem bc69_infiniteClusters_top_null_of_globalForest
   bc68_infiniteClusters_top_null_of_GnForestData μ hd hinv hfe L
     (fun ω R => bc69_forestData_of_globalForest ω L R (hGlobal ω R)) hcoarseRoute
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_upperLines_boundary_mem {R : ℕ} (hR3 : 4 ≤ R) (i : Fin 3) :
+lemma bc69_upperLines_boundary_mem {R : ℕ} (hR3 : 4 ≤ R) (i : Fin 3) :
     bc57_pt (R : ℤ) ((i : ℤ) + 1) ∈ box 2 R := by
   rw [mem_box]; intro j; fin_cases j
   · change ((bc57_pt (R : ℤ) ((i : ℤ) + 1)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
   · change ((bc57_pt (R : ℤ) ((i : ℤ) + 1)) 1).natAbs ≤ R; rw [bc57_pt_snd]
     fin_cases i <;> · push_cast; omega
 
-
-
-
-
-
-
-
-
-theorem bc69_upperLines_globalForest_count {L R : ℕ}
+lemma bc69_upperLines_globalForest_count {L R : ℕ}
     (h : bc69_Gn_globalForest bc60_upperLines L R) :
     bc61_coarseTcount bc60_upperLines L R ≤ boxSV_boundaryCard 2 R :=
   bc69_count_via_leafBound bc60_upperLines L R h
 
+/-! ## B. Summary -/
 
-
-
-
-
-theorem bc69_upperLines_arms_reach_distinct {L R : ℕ} (hLR : L + 1 ≤ R) (hR3 : 4 ≤ R) :
-    (∀ i : Fin 3,
-      (bc67_contractedLattice bc60_upperLines L (0 : Site 2)).Reachable
-        (bc57_pt ((L : ℤ) + 1) ((i : ℤ) + 1)) (bc57_pt (R : ℤ) ((i : ℤ) + 1)) ∧
-      bc57_pt (R : ℤ) ((i : ℤ) + 1) ∈ vertexBoundary 2 R) ∧
-    Function.Injective (fun i : Fin 3 => bc57_pt (R : ℤ) ((i : ℤ) + 1)) :=
-  bc68_upperLines_arms_reach_distinct hLR hR3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc69_status :
-    
+lemma bc69_status :
     (∀ {V : Type} [Fintype V] [Nonempty V] (G : SimpleGraph V) [_inst : DecidableRel G.Adj],
       G.IsAcyclic → (∀ v, 1 ≤ G.degree v) →
       (univ.filter (fun v => 3 ≤ G.degree v)).card
         ≤ (univ.filter (fun v => G.degree v = 1)).card) ∧
-    
     (∀ (R : ℕ) (S : Set (↑(box d R) : Type)),
       Set.InjOn (Subtype.val : (↑(box d R) : Type) → Site d) S) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc69_Gn_globalForest ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) := by
   refine ⟨?_, ?_, ?_⟩

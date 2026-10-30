@@ -6,56 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HandshakeLeafCount
+
+/-!
+# Acyclic arm unions and boundary leaves
+
+If every vertex off the boundary has degree at least two, every leaf lies on the boundary; an
+acyclic arm union therefore gives the global contracted forest.
+
+## i. Overview
+
+`blf_AcyclicArmUnion ω L R` is a finite acyclic graph carrying the contracted-lattice trifurcations
+of `B_R` as branch vertices, with interior vertices of degree at least two. Then leaves lie on the
+boundary, giving `bc69_Gn_globalForest`. The three-vertex path `blf_pathG` shows the degree
+condition is needed.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `blf_leaf_of_interiorDeg2` : interior degree at least two puts leaves on the boundary
+- `blf_bc69_of_acyclicArmUnion` : an acyclic arm union gives the global contracted forest
+- `blf_bk_of_acyclicArmUnion` : uniqueness for Bernoulli percolation from an acyclic arm union for
+  every configuration
+- `blf_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -73,14 +65,9 @@ namespace StatMech.Walls
 
 open StatMech.Percolation
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-theorem blf_leaf_of_interiorDeg2 {V : Type*} [Fintype V] [DecidableEq V]
+lemma blf_leaf_of_interiorDeg2 {V : Type*} [Fintype V] [DecidableEq V]
     {F : SimpleGraph V} [DecidableRel F.Adj] {B : V → Prop}
     (h2 : ∀ v, ¬ B v → 2 ≤ F.degree v) :
     ∀ v, F.degree v = 1 → B v := by
@@ -89,19 +76,7 @@ theorem blf_leaf_of_interiorDeg2 {V : Type*} [Fintype V] [DecidableEq V]
   have := h2 v hB
   omega
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem blf_bc69_of_interiorDeg2 {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma blf_bc69_of_interiorDeg2 {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (S : Set (Site d)) (hSfin : Fintype (↑S : Type)) (hSne : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (hGdec : DecidableRel G.Adj) (ιU : Site d → (↑S : Type))
     (hac : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v)
@@ -116,13 +91,9 @@ theorem blf_bc69_of_interiorDeg2 {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (L
   have := hint v hvb
   omega
 
-
-
-
-
-
-
-
+/-- An acyclic arm union for box size `L` and box `B_R`: a finite forest without isolated vertices
+with the contracted-lattice trifurcations of `B_R` as branch vertices and degree at least two at
+every vertex off the boundary. -/
 def blf_AcyclicArmUnion (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site 2)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj) (ιU : Site 2 → (↑S : Type)),
@@ -132,18 +103,12 @@ def blf_AcyclicArmUnion (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) : Prop :=
       bc67_IsGnTrifurcation ω L z → ιU y = ιU z → y = z) ∧
     (∀ v : (↑S : Type), ((v : Site 2) ∉ vertexBoundary 2 R) → 2 ≤ G.degree v)
 
-
-theorem blf_bc69_of_acyclicArmUnion (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ)
+lemma blf_bc69_of_acyclicArmUnion (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ)
     (h : blf_AcyclicArmUnion ω L R) : bc69_Gn_globalForest ω L R := by
   obtain ⟨S, hSfin, hSne, G, hGdec, ιU, hac, hmin, hdeg3, hinj, hint⟩ := h
   exact blf_bc69_of_interiorDeg2 ω L R S hSfin hSne G hGdec ιU hac hmin hdeg3 hinj hint
 
-
-
-
-
-
-theorem blf_bk_of_acyclicArmUnion (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma blf_bk_of_acyclicArmUnion (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), blf_AcyclicArmUnion ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 := by
   apply bgn_bk_of_forest p hp1 hp0
@@ -151,43 +116,20 @@ theorem blf_bk_of_acyclicArmUnion (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
   rw [bgn_forest_iff_bc69]
   exact blf_bc69_of_acyclicArmUnion ω L R (hdata ω L R)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The path on three vertices. -/
 def blf_pathG : SimpleGraph (Fin 3) := SimpleGraph.fromEdgeSet {s(0,1), s(1,2)}
 
+/-- Adjacency in the three-vertex path is decidable. -/
 instance : DecidableRel blf_pathG.Adj := by unfold blf_pathG; infer_instance
 
-
-
-
-
-theorem blf_acyclic_closes_witness :
+lemma blf_acyclic_closes_witness :
     blf_pathG.degree 0 = 1 ∧ blf_pathG.degree 1 = 2 ∧ blf_pathG.degree 2 = 1 ∧
     (∀ v : Fin 3, blf_pathG.degree v = 1 → (v = 0 ∨ v = 2)) := by
   refine ⟨by decide, by decide, by decide, ?_⟩
   exact blf_leaf_of_interiorDeg2 (B := fun v => v = 0 ∨ v = 2)
     (by intro v hv; fin_cases v <;> first | exact absurd (by decide) hv | decide)
 
-
-
-
-
-
-
-theorem blf_interiorCycle_obstructs :
+lemma blf_interiorCycle_obstructs :
     bof2_advT ≤ bof2_advG ∧ bof2_advT.IsAcyclic ∧
     bof2_advG.degree 2 = 2 ∧ bof2_advT.degree 2 = 1 ∧ (2 : Fin 4) ∉ ({0} : Finset (Fin 4)) := by
   have hle : bof2_advT ≤ bof2_advG := by
@@ -199,53 +141,16 @@ theorem blf_interiorCycle_obstructs :
     decide
   exact ⟨hle, htree.isAcyclic, by decide, by decide, by decide⟩
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem blf_status :
-    
+lemma blf_status :
     (∀ {V : Type} [Fintype V] [DecidableEq V] {F : SimpleGraph V} [_i : DecidableRel F.Adj]
       {B : V → Prop}, (∀ v, ¬ B v → 2 ≤ F.degree v) → ∀ v, F.degree v = 1 → B v) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ),
       blf_AcyclicArmUnion ω L R → bc69_Gn_globalForest ω L R) ∧
-    
     (∀ (p : ℝ≥0) (hp1 : p ≤ 1), 0 < p →
       (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), blf_AcyclicArmUnion ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) ∧
-    
     (bof2_advT ≤ bof2_advG ∧ bof2_advT.IsAcyclic ∧
       bof2_advG.degree 2 = 2 ∧ bof2_advT.degree 2 = 1 ∧ (2 : Fin 4) ∉ ({0} : Finset (Fin 4))) := by
   refine ⟨?_, ?_, ?_, ?_⟩

@@ -6,92 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifOverlapContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerGapThreeArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes
+
+/-!
+# Separated coarse trifurcations
+
+Coarse trifurcations on the sublattice `(2L + 1)ℤ^d` have disjoint boxes; a contracted graph on them
+bounds their number by the boundary size.
+
+## i. Overview
+
+`bc106_SeparatedCoarseTrif ω L y` is a coarse trifurcation at a sublattice site. Boxes of distinct
+separated trifurcations are disjoint, and the separated set is the residue-zero fibre. A contracted
+graph in which each has three separated neighbours (`bc106_SeparatedContractedTrifGraph`) bounds the
+separated count by `|∂B_R|`. At the origin separated and coarse trifurcations coincide.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bc106_boxes_disjoint` : boxes of separated trifurcations are disjoint
+- `bc106_separated_count_le_boundary_of_forest` : a contracted graph bounds the separated count
+- `bc106_origin_event_eq` : at the origin the two notions agree
+- `bc106_status` : the statements together
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+- C. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -110,84 +68,39 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
+/-- A coarse trifurcation at a site of the sublattice `(2L + 1)ℤ^d`. -/
 def bc106_SeparatedCoarseTrif (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d) : Prop :=
   bc61_IsCoarseTrifurcation ω L y ∧ bc73_onSublattice L y
 
+/-! ## B. Results -/
 
-
-
-theorem bc106_origin_onSublattice (L : ℕ) : bc73_onSublattice L (0 : Site d) := by
+lemma bc106_origin_onSublattice (L : ℕ) : bc73_onSublattice L (0 : Site d) := by
   intro i; simp
 
-
-
-
-
-
-theorem bc106_boxes_disjoint {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
+lemma bc106_boxes_disjoint {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hne : y ≠ z) :
     Disjoint (bc61_boxAround d L y) (bc61_boxAround d L z) :=
   bc73_sublattice_boxes_disjoint hy.2 hz.2 hne
 
-
-
-
-theorem bc106_far_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
+lemma bc106_far_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hne : y ≠ z) :
     ∃ i, 2 * L < ((y - z) i).natAbs :=
   bc73_far_of_onSublattice hy.2 hz.2 hne
 
-
-
-theorem bc106_isCoarseTrif_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y : Site d}
+lemma bc106_isCoarseTrif_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y : Site d}
     (h : bc106_SeparatedCoarseTrif ω L y) : bc61_IsCoarseTrifurcation ω L y := h.1
 
-
-
-
-theorem bc106_gnTrif_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y : Site d}
+lemma bc106_gnTrif_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y : Site d}
     (h : bc106_SeparatedCoarseTrif ω L y) : bc67_IsGnTrifurcation ω L y :=
   bc67_gnTrif_of_coarseTrif ω L y h.1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc106_ιU_injective_free {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
+lemma bc106_ιU_injective_free {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hyz : y = z) :
     y = z := hyz
 
-
-
-
-
-
-theorem bc106_supervertex_sites_distinct {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
+lemma bc106_supervertex_sites_distinct {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hne : y ≠ z) :
     y ∈ bc61_boxAround d L y ∧ y ∉ bc61_boxAround d L z := by
   refine ⟨bc105_centre_mem_own_box L y, ?_⟩
@@ -195,17 +108,7 @@ theorem bc106_supervertex_sites_distinct {L : ℕ} {ω : ConfigSpace (Sym2 (Site
   exact (Finset.disjoint_left.mp (bc106_boxes_disjoint hy hz hne)
     (bc105_centre_mem_own_box L y)) hmem
 
-
-
-
-
-
-
-
-
-
-
-theorem bc106_resVec_eq_zero {L : ℕ} {y : Site d} (hy : bc73_onSublattice L y) :
+lemma bc106_resVec_eq_zero {L : ℕ} {y : Site d} (hy : bc73_onSublattice L y) :
     bc73_resVec L y = 0 := by
   funext i
   have hpos : (0 : ℤ) < 2 * L + 1 := by positivity
@@ -215,22 +118,17 @@ theorem bc106_resVec_eq_zero {L : ℕ} {y : Site d} (hy : bc73_onSublattice L y)
   simp only [bc73_resVec, hmod]
   rfl
 
-
-
+/-- The separated coarse trifurcations of `B_R`. -/
 noncomputable def bc106_separatedTrifFinset (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     Finset (Site d) := by
   classical
   exact (bc61_coarseTrifFinset ω L R).filter (fun y => bc73_onSublattice L y)
 
-
+/-- The number of separated coarse trifurcations of `B_R`. -/
 noncomputable def bc106_separatedTcount (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : ℕ :=
   (bc106_separatedTrifFinset ω L R).card
 
-
-
-
-
-theorem bc106_separatedTrifFinset_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
+lemma bc106_separatedTrifFinset_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     bc106_separatedTrifFinset ω L R = bc73_fiber ω L R 0 := by
   classical
   unfold bc106_separatedTrifFinset bc73_fiber
@@ -239,7 +137,6 @@ theorem bc106_separatedTrifFinset_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L
   constructor
   · intro hsub; exact bc106_resVec_eq_zero hsub
   · intro hres i
-    
     have hposZ : (0 : ℤ) < 2 * L + 1 := by positivity
     have hi : (bc73_resVec L y i).val = (0 : Fin (2 * L + 1)).val := by
       rw [hres]; rfl
@@ -249,51 +146,28 @@ theorem bc106_separatedTrifFinset_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L
     have hmod0 : y i % (2 * L + 1 : ℤ) = 0 := by omega
     exact Int.dvd_of_emod_eq_zero hmod0
 
-
-theorem bc106_separatedTcount_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
+lemma bc106_separatedTcount_eq_fiber (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     bc106_separatedTcount ω L R = (bc73_fiber ω L R 0).card := by
   unfold bc106_separatedTcount
   rw [bc106_separatedTrifFinset_eq_fiber]
 
-
-
-theorem bc106_separatedTrifFinset_pairwise_disjoint (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
+lemma bc106_separatedTrifFinset_pairwise_disjoint (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     (bc106_separatedTrifFinset ω L R : Set (Site d)).Pairwise
       (fun y y' => Disjoint (bc61_boxAround d L y) (bc61_boxAround d L y')) := by
   rw [bc106_separatedTrifFinset_eq_fiber]
   exact bc73_fiber_pairwise_disjoint ω L R 0
 
-
-
-
-
-
-theorem bc106_separated_count_le_boundary_of_forest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc106_separated_count_le_boundary_of_forest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc73_SublatticeForest ω L R) :
     bc106_separatedTcount ω L R ≤ boxSV_boundaryCard d R := by
   rw [bc106_separatedTcount_eq_fiber]
   exact h 0
 
 
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-
-
+/-- A finite graph in which each separated coarse trifurcation of `B_R` has three neighbours,
+pairwise disconnected after its removal, and whose spanning forest has its leaves on the
+boundary. -/
 def bc106_SeparatedContractedTrifGraph (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj)
@@ -309,15 +183,9 @@ def bc106_SeparatedContractedTrifGraph (ω : ConfigSpace (Sym2 (Site d))) (L R :
       bc106_SeparatedCoarseTrif ω L z → ιU y = ιU z → y = z) ∧
     (∀ v : (↑S : Type), (osf_spanForest G).degree v = 1 → (v : Site d) ∈ vertexBoundary d R)
 
+
 open Classical in
-
-
-
-
-
-
-
-theorem bc106_separatedContractedTrifGraph_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc106_separatedContractedTrifGraph_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R) (hzne : z₀ ≠ z₁)
     (hno : ∀ y, y ∈ box d R → ¬ bc106_SeparatedCoarseTrif ω L y) :
     bc106_SeparatedContractedTrifGraph ω L R := by
@@ -325,14 +193,14 @@ theorem bc106_separatedContractedTrifGraph_of_noTrif (ω : ConfigSpace (Sym2 (Si
   set S : Set (Site d) := {z₀, z₁} with hS
   have hz₀S : z₀ ∈ S := by rw [hS]; left; rfl
   have hz₁S : z₁ ∈ S := by rw [hS]; right; rfl
-  haveI hSfin : Fintype (↑S : Type) := (Set.toFinite S).fintype
+  have hSfin : Fintype (↑S : Type) := (Set.toFinite S).fintype
   set a : (↑S : Type) := ⟨z₀, hz₀S⟩ with ha
   set b : (↑S : Type) := ⟨z₁, hz₁S⟩ with hb
   have hab : a ≠ b := by intro h; exact hzne (congrArg Subtype.val h)
   let G : SimpleGraph (↑S : Type) := SimpleGraph.fromEdgeSet {s(a, b)}
-  haveI hGdec : DecidableRel G.Adj := Classical.decRel _
+  have hGdec : DecidableRel G.Adj := Classical.decRel _
   have hGac : G.IsAcyclic := bc69_single_edge_acyclic a b hab
-  haveI hFdec : DecidableRel (osf_spanForest G).Adj := Classical.decRel _
+  have hFdec : DecidableRel (osf_spanForest G).Adj := Classical.decRel _
   have hVall : ∀ v : (↑S : Type), v = a ∨ v = b := by
     intro v; obtain ⟨x, hx⟩ := v
     rw [hS, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
@@ -353,19 +221,11 @@ theorem bc106_separatedContractedTrifGraph_of_noTrif (ω : ConfigSpace (Sym2 (Si
     · exact hz₀
     · exact hz₁
 
-
-
-
-
-
-
-
-theorem bc106_separatedCount_of_contractedGraph (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc106_separatedCount_of_contractedGraph (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc106_SeparatedContractedTrifGraph ω L R) :
     bc106_separatedTcount ω L R ≤ boxSV_boundaryCard d R := by
   classical
   obtain ⟨S, hSfin, hSne, G, hGdec, hFdec, ιU, hnbr, hmin, hιinj, hleaf⟩ := h
-  
   have hdeg3 : ∀ y, y ∈ box d R → bc106_SeparatedCoarseTrif ω L y →
       3 ≤ (osf_spanForest G).degree (ιU y) := by
     intro y hybox htri
@@ -373,7 +233,6 @@ theorem bc106_separatedCount_of_contractedGraph (ω : ConfigSpace (Sym2 (Site d)
     exact bc103_deg3_spanForest_of_noBypass G ha₁ ha₂ ha₃ hc₁₂ hc₁₃ hc₂₃
   set Tf := bc106_separatedTrifFinset ω L R with hTf
   set Tw : Finset (↑S : Type) := Tf.image ιU with hTw
-  
   have hmemTf : ∀ {y : Site d}, y ∈ Tf ↔ y ∈ box d R ∧ bc106_SeparatedCoarseTrif ω L y := by
     intro y
     rw [hTf, bc106_separatedTrifFinset, Finset.mem_filter, bc61_mem_coarseTrifFinset,
@@ -400,19 +259,10 @@ theorem bc106_separatedCount_of_contractedGraph (ω : ConfigSpace (Sym2 (Site d)
     _ ≤ boxSV_boundaryCard d R :=
         flc2_leaf_card_le_boundary (osf_spanForest G) R (fun v => (v : Site d)) hleaf
           (by
-            
             intro v hv w hw hvw
             exact Subtype.ext hvw)
 
-
-
-
-
-
-
-
-
-theorem bc106_separatedContractedTrifGraph_of_bc103 (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc106_separatedContractedTrifGraph_of_bc103 (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc103_ContractedTrifGraph ω L R) : bc106_SeparatedContractedTrifGraph ω L R := by
   obtain ⟨S, hSfin, hSne, G, hGdec, hFdec, ιU, hnbr, hmin, hιinj, hleaf⟩ := h
   refine ⟨S, hSfin, hSne, G, hGdec, hFdec, ιU, ?_, hmin, ?_, hleaf⟩
@@ -422,128 +272,24 @@ theorem bc106_separatedContractedTrifGraph_of_bc103 (ω : ConfigSpace (Sym2 (Sit
     exact hιinj y hybox (bc106_gnTrif_of_separated hsep) z hzbox
       (bc106_gnTrif_of_separated hsepz) hUeq
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc106_origin_event_eq (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) :
+lemma bc106_origin_event_eq (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) :
     bc106_SeparatedCoarseTrif ω L (0 : Site d) ↔ bc61_IsCoarseTrifurcation ω L (0 : Site d) := by
   unfold bc106_SeparatedCoarseTrif
   exact ⟨fun h => h.1, fun h => ⟨h, bc106_origin_onSublattice L⟩⟩
 
+/-! ## C. Summary -/
 
-
-
-
-
-theorem bc106_full_covering_of_forest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc73_SublatticeForest ω L R) :
-    bc61_coarseTcount ω L R ≤ (2 * L + 1) ^ d * boxSV_boundaryCard d R :=
-  bc73_covering ω L R h
-
-
-
-
-
-
-
-
-theorem bc106_separated_drives_prob_zero
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
-    (hexp : ∀ R : ℕ,
-      ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
-        = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ)
-    (hforest : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc73_SublatticeForest ω L R) :
-    μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0 :=
-  bc73_coarseTrif_prob_eq_zero_of_sublatticeForest μ hd L hexp hforest
-
-
-
-
-
-
-
-
-theorem bc106_separated_drives_dichotomy
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
-    (hexp : ∀ R : ℕ,
-      ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
-        = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ)
-    (hforest : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc73_SublatticeForest ω L R)
-    (hexist : bc61_CoarseTrifExistence μ L) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc73_infiniteClusters_top_null μ hd L hexp hforest hexist
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc106_status :
-    
+lemma bc106_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y z : Site d),
       bc106_SeparatedCoarseTrif ω L y → bc106_SeparatedCoarseTrif ω L z → y ≠ z →
       Disjoint (bc61_boxAround d L y) (bc61_boxAround d L z)) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc103_ContractedTrifGraph ω L R → bc106_SeparatedContractedTrifGraph ω L R) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc106_SeparatedContractedTrifGraph ω L R →
       bc106_separatedTcount ω L R ≤ boxSV_boundaryCard d R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc73_SublatticeForest ω L R → bc106_separatedTcount ω L R ≤ boxSV_boundaryCard d R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ),
       bc106_SeparatedCoarseTrif ω L (0 : Site d) ↔ bc61_IsCoarseTrifurcation ω L (0 : Site d)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩

@@ -6,101 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxBuffer
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
+
+/-!
+# Excluding `N = ∞` from an almost-sure coarse count bound
+
+If the coarse count is almost surely `o(|B_R|)` and coarse trifurcations exist when `N = ∞`,
+translation invariance excludes `N = ∞`.
+
+## i. Overview
+
+For a translation-invariant measure, `|B_R| · μ(coarse trifurcation at 0)` equals the expected
+coarse count. An almost-sure bound `bdry R` with `bdry R / |B_R| → 0` therefore forces the coarse
+trifurcation probability to vanish, and with coarse trifurcation existence
+(`bc61_CoarseTrifExistence`) this excludes `N = ∞`. An almost-sure forest gives such a bound; it is
+equivalent to the null probability of a bad set.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bc77_expected_count` : the expectation identity
+- `bc77_top_null_of_ae_bound` : an almost-sure `o(volume)` bound excludes `N = ∞`
+- `bc77_top_null_of_ae_forest` : an almost-sure forest excludes `N = ∞`
+- `bc77_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -119,45 +68,15 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_expected_count (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma bc77_expected_count (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (L R : ℕ) :
     ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
       = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ :=
   bc62_coarse_expectation μ hinv L R
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_coarseTrif_prob_eq_zero_ae (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma bc77_coarseTrif_prob_eq_zero_ae (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (L : ℕ) (bdry : ℕ → ℕ)
     (hexp : ∀ R : ℕ,
       ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
@@ -174,7 +93,6 @@ theorem bc77_coarseTrif_prob_eq_zero_ae (μ : Measure (ConfigSpace (Sym2 (Site d
     have hle : ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ ≤ (bdry R : ℝ≥0∞) := by
       calc ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ
           ≤ ∫⁻ _ω, (bdry R : ℝ≥0∞) ∂μ := by
-            
             refine lintegral_mono_ae ?_
             filter_upwards [hbound_ae R] with ω hω
             exact_mod_cast hω
@@ -201,18 +119,7 @@ theorem bc77_coarseTrif_prob_eq_zero_ae (μ : Measure (ConfigSpace (Sym2 (Site d
   have : p = 0 := (ENNReal.toReal_eq_zero_iff p).mp hptoreal |>.resolve_right hpfin
   rw [hp] at this; exact this
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_top_null_of_ae_bound (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma bc77_top_null_of_ae_bound (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (L : ℕ) (bdry : ℕ → ℕ)
     (hexp : ∀ R : ℕ,
       ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
@@ -231,18 +138,7 @@ theorem bc77_top_null_of_ae_bound (μ : Measure (ConfigSpace (Sym2 (Site d))))
   rw [hprob0] at this
   exact lt_irrefl 0 this
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_ae_bound_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
+lemma bc77_ae_bound_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
     (hforest_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) :
     ∀ R : ℕ, ∀ᵐ ω ∂μ,
       bc61_coarseTcount ω L R ≤ (2 * L + 1) ^ d * boxSV_boundaryCard d R := by
@@ -250,18 +146,7 @@ theorem bc77_ae_bound_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d)))) 
   filter_upwards [hforest_ae R] with ω hω
   exact bc73_covering ω L R hω
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_top_null_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma bc77_top_null_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (hforest_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R)
@@ -275,16 +160,7 @@ theorem bc77_top_null_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (bc73_const_boundary_vol_tendsto d hd L)
     hexist
 
-
-
-
-
-
-
-
-
-
-theorem bc77_ae_forest_iff_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L R : ℕ)
+lemma bc77_ae_forest_iff_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L R : ℕ)
     (hmeas : MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | ¬ bc73_SublatticeForest ω L R}) :
     (∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) ↔
       μ {ω : ConfigSpace (Sym2 (Site d)) | ¬ bc73_SublatticeForest ω L R} = 0 := by
@@ -296,12 +172,7 @@ theorem bc77_ae_forest_iff_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d))))
     rw [MeasureTheory.ae_iff]
     simpa using hnull
 
-
-
-
-
-
-theorem bc77_top_null_of_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma bc77_top_null_of_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (hmeasbad : ∀ R : ℕ, MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | ¬ bc73_SublatticeForest ω L R})
@@ -312,82 +183,21 @@ theorem bc77_top_null_of_bad_null (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (fun R => (bc77_ae_forest_iff_bad_null μ L R (hmeasbad R)).mpr (hbadnull R))
     hexist
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_upperLines_singleton :
+lemma bc77_upperLines_singleton :
     ({bc60_upperLines} : Set (ConfigSpace (Sym2 (Site 2)))) = {ω | ω = bc60_upperLines} := by
   ext ω; simp [Set.mem_singleton_iff]
 
-
-
-
-
-theorem bc77_upperLines_null_of_singleton_null
+lemma bc77_upperLines_null_of_singleton_null
     (μ : Measure (ConfigSpace (Sym2 (Site 2))))
     (h0 : μ {bc60_upperLines} = 0) :
     μ {ω : ConfigSpace (Sym2 (Site 2)) | ω = bc60_upperLines} = 0 := by
   rwa [← bc77_upperLines_singleton]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_circularity_note
+lemma bc77_circularity_note
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) :
-    
     ((∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) → bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters d ω = ⊤} = 0) ∧
-    
     (∀ R : ℕ, MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | ¬ bc73_SublatticeForest ω L R} →
       ((∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) ↔
         μ {ω : ConfigSpace (Sym2 (Site d)) | ¬ bc73_SublatticeForest ω L R} = 0)) := by
@@ -395,36 +205,9 @@ theorem bc77_circularity_note
   intro R hmeas
   exact bc77_ae_forest_iff_bad_null μ L R hmeas
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc77_status :
-    
+lemma bc77_status :
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
         (L : ℕ) (bdry : ℕ → ℕ),
       (∀ R : ℕ, ((boxFinsetBK 2 R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
@@ -434,13 +217,11 @@ theorem bc77_status :
       Filter.Tendsto (fun R => (bdry R : ℝ) / ((boxFinsetBK 2 R).card : ℝ)) Filter.atTop (nhds 0) →
       bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
-    
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ] (L : ℕ),
       IsTranslationInvariant (G := Multiplicative (Site 2)) μ →
       (∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) →
       bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
-    
     (({bc60_upperLines} : Set (ConfigSpace (Sym2 (Site 2)))) = {ω | ω = bc60_upperLines}) := by
   refine ⟨?_, ?_, ?_⟩
   · intro μ _ L bdry hexp hbound_ae hvol hdens hexist

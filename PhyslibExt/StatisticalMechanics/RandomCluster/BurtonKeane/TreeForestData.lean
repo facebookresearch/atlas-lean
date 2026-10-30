@@ -6,70 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -81,6 +17,42 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniquenes
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
+
+/-!
+# Tree forest data
+
+A finite tree mapped into the open subgraph, separating the branches of each trifurcation, gives the
+spanning-tree leaf count and the trifurcation count.
+
+## i. Overview
+
+`slh_TreeForestData ω n` is a finite tree with an injective map `π` into the open subgraph, a vertex
+`ιT x` over each trifurcation, and sections `sec x a` of its branches such that the tree reflects
+connectivity after removing `x`. Separated branches then give degree three at `ιT x`, which yields
+`flc2_SpanningTreeLeafCount` and `Tcount ≤ |∂B_n|`.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `slh_deg_ge_three_of_cut` : separated branches give degree three
+- `slh_spanningTreeLeafCount_of_treeForest` : tree forest data give the spanning-tree certificate
+- `slh_Tcount_le_boundary_of_treeForest` : the counting bound
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -95,15 +67,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-theorem slh_cut_neighbor {W : Type*} [DecidableEq W] {G : SimpleGraph W} {x a : W} (hxa : x ≠ a)
+lemma slh_cut_neighbor {W : Type*} [DecidableEq W] {G : SimpleGraph W} {x a : W} (hxa : x ≠ a)
     (h : G.Reachable x a) :
     ∃ (c : W) (hc : c ≠ x) (ha : a ≠ x), G.Adj x c ∧
       (G.induce ({x}ᶜ : Set W)).Reachable ⟨c, by simpa using hc⟩ ⟨a, by simpa using ha⟩ := by
@@ -129,10 +95,7 @@ theorem slh_cut_neighbor {W : Type*} [DecidableEq W] {G : SimpleGraph W} {x a : 
   have hind := q.tail.induce ({x}ᶜ : Set W) hsupp
   exact ⟨c, hcx, hax, hadj, ⟨hind.copy (by simp [hc]) rfl⟩⟩
 
-
-
-
-theorem slh_deg_ge_three_of_cut {W : Type*} [DecidableEq W] [Fintype W] {G : SimpleGraph W}
+lemma slh_deg_ge_three_of_cut {W : Type*} [DecidableEq W] [Fintype W] {G : SimpleGraph W}
     [DecidableRel G.Adj] {x a₁ a₂ a₃ : W}
     (hr₁ : G.Reachable x a₁) (hr₂ : G.Reachable x a₂) (hr₃ : G.Reachable x a₃)
     (hx₁ : x ≠ a₁) (hx₂ : x ≠ a₂) (hx₃ : x ≠ a₃)
@@ -164,16 +127,7 @@ theorem slh_deg_ge_three_of_cut {W : Type*} [DecidableEq W] [Fintype W] {G : Sim
     _ ≤ (G.neighborFinset x).card := Finset.card_le_card hsub
     _ = G.degree x := G.card_neighborFinset_eq_degree x
 
-
-
-
-
-
-
-
-
-
-theorem slh_edge_transfer (x u v : Site d) (ω : ConfigSpace (Sym2 (Site d)))
+lemma slh_edge_transfer (x u v : Site d) (ω : ConfigSpace (Sym2 (Site d)))
     (hadj : (openSubgraph d ω).Adj u v) (hux : u ≠ x) (hvx : v ≠ x) :
     (openSubgraph d (removeSite x ω)).Adj u v := by
   obtain ⟨hl, ho⟩ := hadj
@@ -186,9 +140,7 @@ theorem slh_edge_transfer (x u v : Site d) (ω : ConfigSpace (Sym2 (Site d)))
     · exact hux rfl
     · exact hvx rfl
 
-
-
-theorem slh_walk_avoid_transfer {x u v : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma slh_walk_avoid_transfer {x u v : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (w : (openSubgraph d ω).Walk u v) (hw : x ∉ w.support) :
     (openSubgraph d (removeSite x ω)).Reachable u v := by
   induction w with
@@ -200,10 +152,7 @@ theorem slh_walk_avoid_transfer {x u v : Site d} {ω : ConfigSpace (Sym2 (Site d
     exact (Adj.reachable
       (slh_edge_transfer x a b ω hab (Ne.symm hax) (Ne.symm hbx))).trans (ih hw')
 
-
-
-
-theorem slh_connected_removeSite_of_G_induce {W : Type*} {ω : ConfigSpace (Sym2 (Site d))}
+lemma slh_connected_removeSite_of_G_induce {W : Type*} {ω : ConfigSpace (Sym2 (Site d))}
     {G : SimpleGraph W} (π : W → Site d)
     (hπ : ∀ u v, G.Adj u v → (openSubgraph d ω).Adj (π u) (π v))
     (hπinj : Function.Injective π)
@@ -223,31 +172,10 @@ theorem slh_connected_removeSite_of_G_induce {W : Type*} {ω : ConfigSpace (Sym2
     exact hc (hπinj (by simpa [hf] using hcx))
   exact slh_walk_avoid_transfer w' hsupp
 
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Tree forest data for `B_n`: a finite tree mapped injectively into the open subgraph, with a
+vertex over each trifurcation, branch sections that reflect connectivity after removing the
+trifurcation, and leaves mapped injectively to the boundary. -/
 def slh_TreeForestData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W) (G : SimpleGraph W) (_ : DecidableRel G.Adj)
     (π : W → Site d) (ιT : Site d → W) (sec : Site d → Site d → W) (lamL : W → Site d),
@@ -262,14 +190,7 @@ def slh_TreeForestData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
     (∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d n) ∧
     Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))
 
-
-
-
-
-
-
-
-theorem slh_spanningTreeLeafCount_of_treeForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma slh_spanningTreeLeafCount_of_treeForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : slh_TreeForestData ω n) :
     flc2_SpanningTreeLeafCount ω n := by
   classical
@@ -277,18 +198,14 @@ theorem slh_spanningTreeLeafCount_of_treeForest (ω : ConfigSpace (Sym2 (Site d)
     hπιT, hιinj, hsec, hlammap, hlaminj⟩ := h
   refine ⟨W, inferInstance, inferInstance, G, inferInstance, ιT, lamL, hTree, hWcard,
     ?_, hιinj, hlammap, hlaminj⟩
-  
   intro x hxbox htri
   have htri' := htri
-  
   obtain ⟨a₁, a₂, a₃, ⟨hne12, hne13, hne23⟩, ⟨hc1, hc2, hc3⟩, _, ⟨hcut12, hcut13, hcut23⟩⟩ := htri'
   set p := ιT x with hp
   have hpx : π p = x := hπιT x hxbox htri
-  
   obtain ⟨hπw1, hw1p, hr1⟩ := hsec x hxbox htri a₁ hc1
   obtain ⟨hπw2, hw2p, hr2⟩ := hsec x hxbox htri a₂ hc2
   obtain ⟨hπw3, hw3p, hr3⟩ := hsec x hxbox htri a₃ hc3
-  
   have hcutG : ∀ (u v : W) (b c : Site d), π u = b → π v = c →
       (hup : u ≠ p) → (hvp : v ≠ p) →
       ¬ Connected d (removeSite x ω) b c →
@@ -303,27 +220,13 @@ theorem slh_spanningTreeLeafCount_of_treeForest (ω : ConfigSpace (Sym2 (Site d)
     (hcutG _ _ _ _ hπw1 hπw3 hw1p hw3p hcut13)
     (hcutG _ _ _ _ hπw2 hπw3 hw2p hw3p hcut23)
 
-
-theorem slh_Tcount_le_boundary_of_treeForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma slh_Tcount_le_boundary_of_treeForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : slh_TreeForestData ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   flc2_Tcount_le_boundary_of_spanningTree ω n (slh_spanningTreeLeafCount_of_treeForest ω n h)
 
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-theorem slh_treeForestData_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma slh_treeForestData_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d n) (hz₁ : z₁ ∈ vertexBoundary d n)
     (hopen : (openSubgraph d ω).Adj z₀ z₁)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
@@ -334,98 +237,22 @@ theorem slh_treeForestData_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ
     (fun v => if v = 0 then z₀ else z₁), (fun _ => (0 : Fin 2)), (fun _ _ => (0 : Fin 2)),
     (fun v => if v = 0 then z₀ else z₁), Flc2Witness.pathG_isTree, by decide, ?_, ?_, ?_, ?_, ?_,
     ?_, ?_⟩
-  · 
-    intro u v huv
-    
+  · intro u v huv
     have h01 : (u = 0 ∧ v = 1) ∨ (u = 1 ∧ v = 0) := by
-      revert huv; fin_cases u <;> fin_cases v <;> simp_all <;> decide
+      revert huv; fin_cases u <;> fin_cases v <;> simp_all
     rcases h01 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · simpa using hopen
     · simpa using hopen.symm
-  · 
-    intro u v huv
+  · intro u v huv
     fin_cases u <;> fin_cases v <;> simp_all
-  · 
-    intro x hxbox htri; exact absurd htri (hno x hxbox)
-  · 
-    intro x hxbox htri; exact absurd htri (hno x hxbox)
-  · 
-    intro x hxbox htri; exact absurd htri (hno x hxbox)
-  · 
-    intro v _; fin_cases v
+  · intro x hxbox htri; exact absurd htri (hno x hxbox)
+  · intro x hxbox htri; exact absurd htri (hno x hxbox)
+  · intro x hxbox htri; exact absurd htri (hno x hxbox)
+  · intro v _; fin_cases v
     · simpa using hz₀
     · simpa using hz₁
-  · 
-    intro u hu v hv huv
+  · intro u hu v hv huv
     fin_cases u <;> fin_cases v <;> simp_all
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem slh_claw_survives_branchingCount {W : Type*} [Fintype W] (G : SimpleGraph W)
-    [DecidableRel G.Adj] (hTree : G.IsTree) (hWcard : 2 ≤ Fintype.card W) :
-    (univ.filter (fun v => 3 ≤ G.degree v)).card
-      < (univ.filter (fun v => G.degree v = 1)).card :=
-  flc2_tree_internal_lt_leaves G hTree hWcard
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem slh_burton_keane_bernoulli_of_treeForest (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → slh_TreeForestData ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  tfc_burton_keane_uniqueness_full (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n)
-    (fun ω n hn => slh_Tcount_le_boundary_of_treeForest ω n (hres ω n hn))
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd)
-    htrif
 
 end Percolation
 

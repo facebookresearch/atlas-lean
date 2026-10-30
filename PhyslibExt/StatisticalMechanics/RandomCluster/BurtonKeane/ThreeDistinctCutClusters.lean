@@ -6,73 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalOriginRewiring
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DistinctCutClusters
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DisjointCutNoCrossing
+
+/-!
+# Three distinct clusters after removing the origin
+
+Every configuration in `threeMeetBox d n` has three distinct infinite clusters after removing the
+origin, and their arms do not cross.
+
+## i. Overview
+
+`bc9_DistinctCutClusters d n` asks for three sites whose clusters in `removeSite 0 ω` are infinite
+and pairwise distinct. It holds for every `n`, the three arms are pairwise distinct and do not
+merge, and with origin rewiring the origin becomes a canonical trifurcation after a finite rewiring
+away from it.
+
+## ii. Key results
+
+- `bc9_distinctCutClusters` : three distinct infinite clusters after removing the origin
+- `bc9_cut_no_crossing` : the arms do not cross
+- `bc9_distinctCutClusters_originRewiring` : origin rewiring gives a canonical trifurcation
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -86,33 +56,10 @@ namespace Walls
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Every configuration with three distinct infinite clusters meeting `B_n` has three sites whose
+clusters after removing the origin are infinite and pairwise distinct. -/
 def bc9_DistinctCutClusters (d n : ℕ) : Prop :=
   (∀ ω ∈ threeMeetBox d n,
       ∃ x₁ x₂ x₃ : Site d,
@@ -128,31 +75,13 @@ def bc9_DistinctCutClusters (d n : ℕ) : Prop :=
           ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
             ¬ IsOpenEdge d (removeSite 0 ω) u v)
 
+/-! ## B. Results -/
 
-
-
-
-
-
-
-
-
-
-
-theorem bc9_distinctCutClusters (n : ℕ) : bc9_DistinctCutClusters d n :=
+lemma bc9_distinctCutClusters (n : ℕ) : bc9_DistinctCutClusters d n :=
   ⟨fun ω hω => bc8_threeArmClusters_distinct n ω hω,
    fun _ω _x _y hne => bc8_cut_no_crossing hne⟩
 
-
-
-
-
-
-
-
-
-
-theorem bc9_threeArms_distinct (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc9_threeArms_distinct (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :
     ∃ x₁ x₂ x₃ : Site d,
       (cluster d (removeSite 0 ω) x₁).Infinite ∧
@@ -163,40 +92,14 @@ theorem bc9_threeArms_distinct (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
       cluster d (removeSite 0 ω) x₂ ≠ cluster d (removeSite 0 ω) x₃ :=
   (bc9_distinctCutClusters n).1 ω hω
 
-
-
-
-
-
-
-
-theorem bc9_cut_no_crossing (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
+lemma bc9_cut_no_crossing (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
     (hne : cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y) :
     ∀ ⦃u : Site d⦄, u ∈ cluster d (removeSite 0 ω) x →
       ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
         ¬ IsOpenEdge d (removeSite 0 ω) u v :=
   (bc9_distinctCutClusters (n := 0)).2 ω x y hne
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc9_threeArms_pairwiseNoMerge (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc9_threeArms_pairwiseNoMerge (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :
     ∃ x₁ x₂ x₃ : Site d,
       (cluster d (removeSite 0 ω) x₁).Infinite ∧
@@ -222,72 +125,33 @@ theorem bc9_threeArms_pairwiseNoMerge (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)
     bc8_disjoint_of_cut_ne hd12, bc8_disjoint_of_cut_ne hd13, bc8_disjoint_of_cut_ne hd23,
     bc9_cut_no_crossing ω hd12, bc9_cut_no_crossing ω hd13, bc9_cut_no_crossing ω hd23⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc9_noCrossing_of_node (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
+lemma bc9_noCrossing_of_node (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
     bc8_NoCrossing ω x y :=
   bc8_noCrossing ω x y
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc9_distinctCutClusters_originRewiring (n : ℕ) (hrw : bc8_OriginRewiring d n)
+lemma bc9_distinctCutClusters_originRewiring (n : ℕ) (hrw : bc8_OriginRewiring d n)
     (ω : ConfigSpace (Sym2 (Site d))) (hω : ω ∈ threeMeetBox d n) :
     ∃ W : Finset (Sym2 (Site d)), (∀ e ∈ W, (0 : Site d) ∉ e) ∧
       IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
   bc8_canonicalTrif_of_originRewiring n hrw ω hω
 
-
-
 section AxiomAudit
-
 
 /-- info: 'StatMech.Walls.bc9_distinctCutClusters' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_distinctCutClusters
 
-
 /-- info: 'StatMech.Walls.bc9_threeArms_distinct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_threeArms_distinct
-
 
 /-- info: 'StatMech.Walls.bc9_cut_no_crossing' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_cut_no_crossing
 
-
 /-- info: 'StatMech.Walls.bc9_threeArms_pairwiseNoMerge' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9_threeArms_pairwiseNoMerge
-
 
 /-- info: 'StatMech.Walls.bc9_distinctCutClusters_originRewiring' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in

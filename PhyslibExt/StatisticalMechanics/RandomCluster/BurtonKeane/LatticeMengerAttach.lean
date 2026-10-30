@@ -6,85 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence2
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment
+
+/-!
+# Axis corridors attached to infinite clusters
+
+If three distinct infinite clusters reach the origin along three axis corridors, opening the
+corridors gives the attachment data of a trifurcation precursor.
+
+## i. Overview
+
+`lma_corridorEdges j L` are the axis edges from `e_j` to `(L + 1) e_j`. `lma_ClusterReachesRay ω x
+j` says that the cluster of `x` contains such a corridor and stays infinite after the origin is
+removed. Three such clusters along distinct axes give cluster attachment data at the origin, the
+condition `mco_ThreeClustersReachOrigin`, and box-level disjoint routing
+(`lma_BoxClusterReachesRay`).
+
+## ii. Key results
+
+- `lma_corridorVerts_disjoint` : corridors along distinct axes are disjoint
+- `lma_attachData_of_three_reachesRay` : three corridor clusters give attachment data
+- `lma_disjointRouting_of_reachesRay` : the box condition gives disjoint routing
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -98,30 +56,21 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
+/-- The axis edges from `e_j` to `(L + 1) e_j`. -/
 noncomputable def lma_corridorEdges (j : Fin d) (L : ℕ) : Finset (Sym2 (Site d)) :=
   (Finset.range L).image
     (fun t : ℕ => s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)))
 
+/-! ## B. Results -/
 
 lemma lma_mem_corridorEdges {j : Fin d} {L : ℕ} {t : ℕ} (ht : t < L) :
     s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)) ∈ lma_corridorEdges j L := by
   rw [lma_corridorEdges, Finset.mem_image]; exact ⟨t, Finset.mem_range.mpr ht, rfl⟩
 
-
 @[simp] lemma lma_corridorEdges_zero (j : Fin d) : lma_corridorEdges j 0 = ∅ := by
   rw [lma_corridorEdges]; simp
-
-
 
 lemma lma_origin_notMem_corridorEdges (j : Fin d) (L : ℕ) :
     ∀ e ∈ lma_corridorEdges j L, (0 : Site d) ∉ e := by
@@ -134,15 +83,6 @@ lemma lma_origin_notMem_corridorEdges (j : Fin d) (L : ℕ) :
   refine ⟨?_, ?_⟩
   · intro h; rw [eq_comm, hrHD_rayPt_eq_zero_iff] at h; omega
   · intro h; rw [eq_comm, hrHD_rayPt_eq_zero_iff] at h; omega
-
-
-
-
-
-
-
-
-
 
 lemma lma_corridor_step_open (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ) (t : ℕ)
     (ht : t < L) :
@@ -157,10 +97,6 @@ lemma lma_corridor_step_open (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L :
     have hno0 : (0 : Site d) ∉ s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)) :=
       lma_origin_notMem_corridorEdges j L _ hmem
     rw [removeSite_apply_of_notMem hno0, forceOpenFinset_of_mem hmem]
-
-
-
-
 
 lemma lma_corridor_connected (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ) (m : ℕ)
     (hm : m ≤ L) :
@@ -178,28 +114,14 @@ lemma lma_corridor_connected (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L :
     have he : ((p : ℤ) + 2) = (((p : ℕ) + 1 : ℕ) : ℤ) + 1 := by push_cast; ring
     rwa [he] at hgoal
 
-
-
-
-
-
-
-
-
-
-
+/-- The axis sites `m e_j` with `1 ≤ m ≤ L + 1`. -/
 def lma_corridorVerts (j : Fin d) (L : ℕ) : Set (Site d) :=
   {y | ∃ m : ℕ, 1 ≤ m ∧ m ≤ L + 1 ∧ y = hrHD_rayPt j (m : ℤ)}
-
-
 
 lemma lma_origin_notMem_corridorVerts (j : Fin d) (L : ℕ) :
     (0 : Site d) ∉ lma_corridorVerts j L := by
   rintro ⟨m, hm1, _, heq⟩
   rw [eq_comm, hrHD_rayPt_eq_zero_iff] at heq; omega
-
-
-
 
 lemma lma_corridorVerts_disjoint {j₁ j₂ : Fin d} (h : j₁ ≠ j₂) (L : ℕ) :
     Disjoint (lma_corridorVerts j₁ L) (lma_corridorVerts j₂ L) := by
@@ -209,9 +131,6 @@ lemma lma_corridorVerts_disjoint {j₁ j₂ : Fin d} (h : j₁ ≠ j₂) (L : �
     have : (1 : ℤ) ≤ (m : ℤ) := by exact_mod_cast hm1
     omega
   exact hrHD_rayPt_disjoint_of_ne h hm0 hn
-
-
-
 
 lemma lma_corridorEdges_endpoints_mem (j : Fin d) (L : ℕ) :
     ∀ e ∈ lma_corridorEdges j L, ∀ p, p ∈ e → p ∈ lma_corridorVerts j L := by
@@ -225,15 +144,6 @@ lemma lma_corridorEdges_endpoints_mem (j : Fin d) (L : ℕ) :
   · exact ⟨t + 1, by omega, by omega, by push_cast; ring_nf⟩
   · exact ⟨t + 2, by omega, by omega, by push_cast; ring_nf⟩
 
-
-
-
-
-
-
-
-
-
 lemma lma_removeSite_le_forceOpen (ω : ConfigSpace (Sym2 (Site d)))
     (W : Finset (Sym2 (Site d))) :
     removeSite 0 ω ≤ removeSite 0 (forceOpenFinset W ω) := by
@@ -244,26 +154,8 @@ lemma lma_removeSite_le_forceOpen (ω : ConfigSpace (Sym2 (Site d)))
     funext e; simp [forceOpenFinset]
   rwa [he] at h
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The cluster of `x` contains an axis corridor along `e_j` starting at `e_j`, and stays infinite
+and connected to the corridor's end after the origin is removed. -/
 def lma_ClusterReachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d) : Prop :=
   ∃ L : ℕ,
     hrHD_rayPt j 1 ∈ cluster d ω x ∧
@@ -271,20 +163,7 @@ def lma_ClusterReachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : F
     Connected d (removeSite 0 ω) (hrHD_rayPt j ((L : ℤ) + 1)) x ∧
     (cluster d (removeSite 0 ω) x).Infinite
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lma_clusterAttachment_of_reachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
+lemma lma_clusterAttachment_of_reachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (j : Fin d) (h : lma_ClusterReachesRay ω x j) :
     bma_ClusterAttachment ω x := by
   obtain ⟨L, he1, hin, hreach, hinf⟩ := h
@@ -297,23 +176,7 @@ theorem lma_clusterAttachment_of_reachesRay (ω : ConfigSpace (Sym2 (Site d))) (
     connected_mono (lma_removeSite_le_forceOpen ω (lma_corridorEdges j L)) hreach
   exact hcorr.trans htail
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lma_attachData_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))
+lemma lma_attachData_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d) (j₁ j₂ j₃ : Fin d)
     (hcd12 : cluster d ω x₁ ≠ cluster d ω x₂) (hcd13 : cluster d ω x₁ ≠ cluster d ω x₃)
     (hcd23 : cluster d ω x₂ ≠ cluster d ω x₃)
@@ -325,12 +188,7 @@ theorem lma_attachData_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))
     (lma_clusterAttachment_of_reachesRay ω x₂ j₂ h2)
     (lma_clusterAttachment_of_reachesRay ω x₃ j₃ h3)
 
-
-
-
-
-
-theorem lma_threeClustersReachOrigin_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))
+lemma lma_threeClustersReachOrigin_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d) (j₁ j₂ j₃ : Fin d)
     (hcd12 : cluster d ω x₁ ≠ cluster d ω x₂) (hcd13 : cluster d ω x₁ ≠ cluster d ω x₃)
     (hcd23 : cluster d ω x₂ ≠ cluster d ω x₃)
@@ -340,18 +198,8 @@ theorem lma_threeClustersReachOrigin_of_three_reachesRay (ω : ConfigSpace (Sym2
   tex_threeClustersReachOrigin ω x₁ x₂ x₃ ⟨hcd12, hcd13, hcd23⟩
     (lma_attachData_of_three_reachesRay ω x₁ x₂ x₃ j₁ j₂ j₃ hcd12 hcd13 hcd23 h1 h2 h3)
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- In every configuration with three distinct infinite clusters meeting `B_n`, the three clusters
+reach the origin along corridors on three distinct axes. -/
 def lma_BoxClusterReachesRay (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →
@@ -362,55 +210,25 @@ def lma_BoxClusterReachesRay (d n : ℕ) : Prop :=
         lma_ClusterReachesRay ω x₁ j₁ ∧ lma_ClusterReachesRay ω x₂ j₂ ∧
           lma_ClusterReachesRay ω x₃ j₃
 
-
-
-
-
-
-theorem lma_boxAttachData_of_reachesRay {n : ℕ}
+lemma lma_boxAttachData_of_reachesRay {n : ℕ}
     (h : lma_BoxClusterReachesRay d n) : tex_BoxAttachData d n := by
   intro ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
   obtain ⟨j₁, j₂, j₃, h1, h2, h3⟩ :=
     h ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
   exact lma_attachData_of_three_reachesRay ω x₁ x₂ x₃ j₁ j₂ j₃ hcd12 hcd13 hcd23 h1 h2 h3
 
-
-
-theorem lma_disjointRouting_of_reachesRay {n : ℕ}
+lemma lma_disjointRouting_of_reachesRay {n : ℕ}
     (h : lma_BoxClusterReachesRay d n) : hrHD_DisjointRouting d n :=
   tex_disjointRouting_of_box (lma_boxAttachData_of_reachesRay h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lma_clusterReachesRay_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
+lemma lma_clusterReachesRay_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
     (hinf : (cluster d (removeSite 0 ω) (hrHD_rayPt j 1)).Infinite) :
     lma_ClusterReachesRay ω (hrHD_rayPt j 1) j := by
   refine ⟨0, self_mem_cluster ω (hrHD_rayPt j 1), ?_, ?_, hinf⟩
   · rw [lma_corridorEdges_zero]; intro e he; exact absurd he (Finset.notMem_empty e)
   · simpa using connected_rfl
 
-
-
-
-
-theorem lma_attachData_of_neighbour_witnesses (ω : ConfigSpace (Sym2 (Site d)))
+lemma lma_attachData_of_neighbour_witnesses (ω : ConfigSpace (Sym2 (Site d)))
     (j₁ j₂ j₃ : Fin d)
     (hcd12 : cluster d ω (hrHD_rayPt j₁ 1) ≠ cluster d ω (hrHD_rayPt j₂ 1))
     (hcd13 : cluster d ω (hrHD_rayPt j₁ 1) ≠ cluster d ω (hrHD_rayPt j₃ 1))
@@ -425,10 +243,7 @@ theorem lma_attachData_of_neighbour_witnesses (ω : ConfigSpace (Sym2 (Site d)))
     (lma_clusterReachesRay_of_neighbour ω j₂ hi2)
     (lma_clusterReachesRay_of_neighbour ω j₃ hi3)
 
-
-
-
-theorem lma_corridorVerts_nonempty (j : Fin d) (L : ℕ) :
+lemma lma_corridorVerts_nonempty (j : Fin d) (L : ℕ) :
     (lma_corridorVerts j L).Nonempty :=
   ⟨hrHD_rayPt j 1, 1, le_rfl, by omega, by norm_num⟩
 

@@ -6,88 +6,49 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
+
+/-!
+# Boundary forests for contracted-lattice trifurcations
+
+Forest data with boundary leaves for contracted-lattice trifurcations bound the coarse count and,
+for every configuration, exclude `N = ∞`.
+
+## i. Overview
+
+`bc68_GnForestData ω L R` is a finite forest without isolated vertices in which the
+contracted-lattice trifurcations of `B_R` are branch vertices and whose leaves map injectively to
+the boundary. Distinct arms of one trifurcation reach distinct boundary sites, and the branch–leaf
+inequality gives the coarse counting bound. Two trifurcations can share a boundary site, so the
+injectivity of leaves is a genuine condition; `bc60_upperLines` illustrates both facts.
+
+The trifurcation notion here is the coarse one on `L`-boxes (`bc61_IsCoarseTrifurcation`,
+`bc67_IsGnTrifurcation`), whose arms are infinite after the whole `L`-box is removed. Results that
+assume a certificate for every configuration are conditional: no such certificate is constructed for
+all configurations.
+
+## ii. Key results
+
+- `bc68_Gn_singleTrif_distinct_leaves` : one trifurcation reaches three distinct boundary sites
+- `bc68_coarseTcount_le_boundary_of_GnForestData` : the coarse counting bound
+- `bc68_multiTrif_shared_boundary_survives` : two trifurcations can share boundary sites
+- `bc68_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -106,77 +67,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc68_Gn_spanForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (W : Type) [Fintype W] [Nonempty W] [DecidableEq W]
-    (G : SimpleGraph W) [DecidableRel G.Adj] (ιU : Site d → W) (lamL : W → Site d)
-    (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v)
-    (hdeg3 : ∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → 3 ≤ G.degree (ιU y))
-    (hιinj : ∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → ∀ z, z ∈ box d R →
-      bc67_IsGnTrifurcation ω L z → ιU y = ιU z → y = z)
-    (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
-    (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
-    bc65_ConnectedCoarseForest ω L R :=
-  bc67_Gn_armForest_of_forestData ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
-
-
-
-
-theorem bc68_Gn_subgraph_acyclic {W : Type*} {G G' : SimpleGraph W} (hsub : G ≤ G')
-    (h : G'.IsAcyclic) : G.IsAcyclic :=
-  h.anti hsub
-
-
-
-
-theorem bc68_Gn_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R)
-    (y a : Site d) (habox : a ∈ box d R)
-    (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
-    ∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a z :=
-  bc67_Gn_arm_reaches_boundary ω L R hR y a habox hinf
-
-
-
-
-
-theorem bc68_Gn_leaf_count {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v) :
-    (univ.filter (fun v => 3 ≤ G.degree v)).card
-      ≤ (univ.filter (fun v => G.degree v = 1)).card :=
-  flc2_forest_internal_le_leaves G hacyc hmin
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc68_no_shared_target (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a b z : Site d)
+lemma bc68_no_shared_target (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a b z : Site d)
     (hcut : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a b)
     (haz : (bc67_contractedLattice ω L y).Reachable a z)
     (hbz : (bc67_contractedLattice ω L y).Reachable b z) : False := by
@@ -186,14 +79,7 @@ theorem bc68_no_shared_target (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a 
     (bc67_Gn_deletion_eq_removeSites ω L y b z).mp hbz
   exact hcut (haz'.trans hbz'.symm)
 
-
-
-
-
-
-
-
-theorem bc68_Gn_singleTrif_distinct_leaves (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d)
+lemma bc68_Gn_singleTrif_distinct_leaves (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d)
     (a : Fin 3 → Site d)
     (hcut01 : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) (a 0) (a 1))
     (hcut02 : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) (a 0) (a 2))
@@ -202,12 +88,6 @@ theorem bc68_Gn_singleTrif_distinct_leaves (ω : ConfigSpace (Sym2 (Site d))) (L
     (hreach : ∀ i, (bc67_contractedLattice ω L y).Reachable (a i) (z i)) :
     Function.Injective z := by
   intro i j hij
-  
-  
-  
-  
-  
-  
   fin_cases i <;> fin_cases j <;>
     first
       | rfl
@@ -218,21 +98,9 @@ theorem bc68_Gn_singleTrif_distinct_leaves (ω : ConfigSpace (Sym2 (Site d))) (L
       | (exfalso; exact bc68_no_shared_target ω L y (a 1) (a 2) (z 1)
           hcut12 (hreach 1) (hij ▸ hreach 2))
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc68_upperLines_boundaryPt {R : ℕ} (hR : 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) (hhR : h ≤ (R : ℤ) - 1) :
+lemma bc68_upperLines_boundaryPt {R : ℕ} (hR : 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) (hhR : h ≤ (R : ℤ) - 1) :
     bc57_pt (R : ℤ) h ∈ vertexBoundary 2 R := by
-  rw [vertexBoundary, Set.mem_diff]
+  rw [vertexBoundary, Set.mem_sdiff]
   refine ⟨?_, ?_⟩
   · rw [mem_box]; intro i; fin_cases i
     · change ((bc57_pt (R : ℤ) h) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
@@ -243,10 +111,7 @@ theorem bc68_upperLines_boundaryPt {R : ℕ} (hR : 1 ≤ R) {h : ℤ} (hh : 1 �
       rw [bc57_pt_fst]; exact Int.natAbs_natCast R
     rw [hcoord]; omega
 
-
-
-
-theorem bc68_upperLines_arm_reaches_R {L R : ℕ} (hLR : L + 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) :
+lemma bc68_upperLines_arm_reaches_R {L R : ℕ} (hLR : L + 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) :
     Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
       (bc57_pt ((L : ℤ) + 1) h) (bc57_pt (R : ℤ) h) := by
   have hj := bc61_upperLines_rightArm_reach (L := L) hh (R - (L + 1))
@@ -256,14 +121,7 @@ theorem bc68_upperLines_arm_reaches_R {L R : ℕ} (hLR : L + 1 ≤ R) {h : ℤ} 
     rw [this]; ring
   rwa [hcast] at hj
 
-
-
-
-
-
-
-
-theorem bc68_upperLines_arms_reach_distinct {L R : ℕ} (hLR : L + 1 ≤ R) (hR3 : 4 ≤ R) :
+lemma bc68_upperLines_arms_reach_distinct {L R : ℕ} (hLR : L + 1 ≤ R) (hR3 : 4 ≤ R) :
     (∀ i : Fin 3,
       (bc67_contractedLattice bc60_upperLines L (0 : Site 2)).Reachable
         (bc57_pt ((L : ℤ) + 1) ((i : ℤ) + 1)) (bc57_pt (R : ℤ) ((i : ℤ) + 1)) ∧
@@ -283,19 +141,9 @@ theorem bc68_upperLines_arms_reach_distinct {L R : ℕ} (hLR : L + 1 ≤ R) (hR3
     have hijZ : (i : ℤ) = (j : ℤ) := by omega
     exact Fin.ext (by exact_mod_cast hijZ)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Forest data for box size `L` and box `B_R`: a finite forest without isolated vertices with the
+contracted-lattice trifurcations of `B_R` as branch vertices and leaves mapped injectively to
+the boundary of `B_R`. -/
 def bc68_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : Nonempty W) (_ : DecidableEq W)
     (G : SimpleGraph W) (_ : DecidableRel G.Adj) (ιU : Site d → W) (lamL : W → Site d),
@@ -306,32 +154,18 @@ def bc68_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
     (∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R) ∧
     Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))
 
-
-
-
-
-theorem bc68_connectedForest_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc68_connectedForest_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc68_GnForestData ω L R) : bc65_ConnectedCoarseForest ω L R := by
   obtain ⟨W, _, _, _, G, _, ιU, lamL, hacyc, hmin, hdeg3, hιinj, hlammap, hlaminj⟩ := h
-  exact bc68_Gn_spanForest ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
+  exact bc67_Gn_armForest_of_forestData ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
 
-
-
-
-
-theorem bc68_coarseTcount_le_boundary_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc68_coarseTcount_le_boundary_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc68_GnForestData ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc65_coarseTcount_le_boundary_of_connectedForest ω L R
     (bc68_connectedForest_of_GnForestData ω L R h)
 
-
-
-
-
-
-
-theorem bc68_infiniteClusters_top_null_of_GnForestData
+lemma bc68_infiniteClusters_top_null_of_GnForestData
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
@@ -343,68 +177,16 @@ theorem bc68_infiniteClusters_top_null_of_GnForestData
   bc67_infiniteClusters_top_null_of_GnForest_route μ hd hinv hfe L
     (fun ω R => bc68_connectedForest_of_GnForestData ω L R (hGnData ω R)) hcoarseRoute
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc68_multiTrif_shared_boundary_survives (L : ℕ) :
+lemma bc68_multiTrif_shared_boundary_survives (L : ℕ) :
     Disjoint (bc61_boxAround 2 L (0 : Site 2))
         (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
       Connected 2 bc60_upperLines
         (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
   bc66_shared_boundary_survives L
 
+/-! ## B. Summary -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc68_status :
-    
+lemma bc68_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d) (a : Fin 3 → Site d)
       (z : Fin 3 → Site d),
       ¬ Connected d (removeSites (bc61_boxAround d L y) ω) (a 0) (a 1) →
@@ -412,10 +194,8 @@ theorem bc68_status :
       ¬ Connected d (removeSites (bc61_boxAround d L y) ω) (a 1) (a 2) →
       (∀ i, (bc67_contractedLattice ω L y).Reachable (a i) (z i)) →
       Function.Injective z) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc68_GnForestData ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
-    
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
           (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧

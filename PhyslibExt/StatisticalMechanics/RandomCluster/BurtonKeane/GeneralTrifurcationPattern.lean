@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteClusterTail
@@ -22,6 +17,40 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FinitePatternEnergy
 public import PhyslibExt.CondensedMatter.IsingModel.FKRepresentation.BoxMagnetization
 public import PhyslibExt.CondensedMatter.IsingModel.Peierls.ContourCountInjection
 
+/-!
+# Finite patterns that create a trifurcation
+
+Three disjoint infinite clusters meeting a box can be joined by a finite pattern on the box so that
+the modified configuration has a trifurcation.
+
+## i. Overview
+
+Given three sites of `B_n` in distinct infinite clusters, the file builds a finite tree inside the
+box with three exits, one leading to each cluster's exterior tail, and programs its edges into the
+box bonds (`programmedTreePattern`). After `StatMech.FK.setPattern` the hub of the tree is a
+canonical trifurcation of the new configuration. This is the deterministic insertion step of the
+Burton–Keane argument: positive probability of three infinite clusters gives positive probability of
+a trifurcation once finite patterns have positive conditional probability.
+
+## ii. Key results
+
+- `three_infinite_clusters_finite_pattern_canonical_trifurcation` : three distinct infinite clusters
+  meeting the box give a finite pattern with a canonical trifurcation
+- `three_sites_finite_pattern_trifurcation` : the same for three sites in distinct infinite
+  clusters, with a trifurcation
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset
@@ -31,29 +60,30 @@ namespace StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
+/-- The lattice edges traced by the tree `T` under the placement `f`. -/
 noncomputable def programmedTreeEdges {W : Type*} [Fintype W]
     (T : SimpleGraph W) [DecidableRel T.Adj] (f : W → Site d) :
     Finset (Sym2 (Site d)) := T.edgeFinset.image (Sym2.map f)
 
-
+/-- The pattern on the bonds `I` that opens exactly the edges in `O`. -/
 noncomputable def programmedTreePattern (I O : Finset (Sym2 (Site d))) :
     ConfigSpace ↥I := fun e => decide (e.1 ∈ O)
 
-
+/-- The open edges of `omega` with both endpoints outside the box `B_n`. -/
 def exteriorOpenGraph (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     SimpleGraph (Site d) where
   Adj x y := (openSubgraph d omega).Adj x y ∧ x ∉ box d n ∧ y ∉ box d n
   symm := ⟨by rintro x y ⟨h, hx, hy⟩; exact ⟨h.symm, hy, hx⟩⟩
   loopless := ⟨fun _ h => (openSubgraph d omega).irrefl h.1⟩
 
-theorem exteriorOpenGraph_le (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+/-! ## B. Results -/
+
+lemma exteriorOpenGraph_le (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     exteriorOpenGraph omega n ≤ openSubgraph d omega := fun _ _ h => h.1
 
-
-
-
-theorem three_infinite_clusters_finite_pattern_canonical_trifurcation
+lemma three_infinite_clusters_finite_pattern_canonical_trifurcation
     (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x : Fin 3 → Site d)
     (hx : ∀ i, x i ∈ box d n)
     (hinf : ∀ i, (cluster d omega (x i)).Infinite)
@@ -315,8 +345,7 @@ theorem three_infinite_clusters_finite_pattern_canonical_trifurcation
     exact ⟨hstemSep 0 1 (by decide), hstemSep 0 2 (by decide),
       hstemSep 1 2 (by decide)⟩
 
-
-theorem three_infinite_clusters_finite_pattern_trifurcation
+lemma three_infinite_clusters_finite_pattern_trifurcation
     (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x : Fin 3 → Site d)
     (hx : ∀ i, x i ∈ box d n)
     (hinf : ∀ i, (cluster d omega (x i)).Infinite)
@@ -330,8 +359,7 @@ theorem three_infinite_clusters_finite_pattern_trifurcation
       omega n x hx hinf hclusters
   exact ⟨eta, hub, ctc2_isTrifurcation_of_canonical h⟩
 
-
-theorem three_sites_finite_pattern_canonical_trifurcation
+lemma three_sites_finite_pattern_canonical_trifurcation
     (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) (a b c : Site d)
     (ha : a ∈ box d n) (hb : b ∈ box d n) (hc : c ∈ box d n)
     (hia : (cluster d omega a).Infinite)
@@ -352,8 +380,7 @@ theorem three_sites_finite_pattern_canonical_trifurcation
   · intro i j hij
     fin_cases i <;> fin_cases j <;> simp_all [x, ne_comm]
 
-
-theorem three_sites_finite_pattern_trifurcation
+lemma three_sites_finite_pattern_trifurcation
     (omega : ConfigSpace (Sym2 (Site d))) (n : ℕ) (a b c : Site d)
     (ha : a ∈ box d n) (hb : b ∈ box d n) (hc : c ∈ box d n)
     (hia : (cluster d omega a).Infinite)

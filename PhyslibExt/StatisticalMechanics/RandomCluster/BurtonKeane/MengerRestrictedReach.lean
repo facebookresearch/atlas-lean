@@ -6,74 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerEdgeRestriction
 public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 public import Mathlib.Combinatorics.SimpleGraph.Walk.Maps
+
+/-!
+# Reach sets for Menger's theorem
+
+The set of vertices reachable from `A` before meeting `S`, and the transfer of separators and paths
+to the graph restricted to it.
+
+## i. Overview
+
+`bc18_AReach G A S` is the set of vertices reached from `A` by walks that meet `S` only at their
+end. A minimum separator splits the graph into the restriction to this set and the rest. Walks
+avoiding `Y` live in the restriction to the complement of `Y`, and in the restriction an `A`–`S`
+path family of size `k` exists by induction (`bc18_aside_fan`). These are the A-side steps of the
+proof of Menger's theorem.
+
+## ii. Key results
+
+- `bc18_firstHitPath` : cut a path at its first vertex in `S`
+- `bc18_AReach_separator_transfer` : separators transfer to the reach set
+- `bc18_aside_fan` : the A-side fan from the induction hypothesis
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- K. Menger, *Zur allgemeinen Kurventheorie*, Fund. Math. 10 (1927), 96–115.
+- R. Diestel, *Graph Theory*, 5th ed., Springer (2017), §3.3.
+-/
 
 @[expose] public section
 
@@ -87,13 +54,10 @@ variable {V : Type u} [DecidableEq V]
 
 variable {G : SimpleGraph V}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-theorem bc18_firstHit {S : Set V} {a b : V} (p : G.Walk a b) :
+omit [DecidableEq V] in
+lemma bc18_firstHit {S : Set V} {a b : V} (p : G.Walk a b) :
     (∃ z ∈ p.support, z ∈ S) →
     ∃ (c : V) (q : G.Walk a c), c ∈ S ∧ q.support ⊆ p.support ∧
       (∀ z ∈ q.support, z ∈ S → z = c) := by
@@ -131,32 +95,25 @@ theorem bc18_firstHit {S : Set V} {a b : V} (p : G.Walk a b) :
           · exact absurd hzS huS
           · exact hq z hz hzS
 
-
-theorem bc18_firstHitPath {S : Set V} {a b : V} (p : G.Walk a b)
+lemma bc18_firstHitPath {S : Set V} {a b : V} (p : G.Walk a b)
     (hmem : ∃ z ∈ p.support, z ∈ S) :
     ∃ (c : V) (q : G.Walk a c), q.IsPath ∧ c ∈ S ∧ q.support ⊆ p.support ∧
       (∀ z ∈ q.support, z ∈ S → z = c) := by
   obtain ⟨c, q, hcS, hqsub, hq⟩ := bc18_firstHit p hmem
-  refine ⟨c, q.bypass, q.bypass_isPath, hcS, fun z hz => hqsub (q.support_bypass_subset hz),
-    fun z hz hzS => hq z (q.support_bypass_subset hz) hzS⟩
+  refine ⟨c, q.bypass, q.bypass_isPath, hcS, fun z hz => hqsub (q.support_bypass_subset_support hz),
+    fun z hz hzS => hq z (q.support_bypass_subset_support hz) hzS⟩
 
-
-
-
-
-
+/-- Vertices reached from `A` by walks meeting `S` only at their end. -/
 def bc18_AReach (G : SimpleGraph V) (A S : Set V) : Set V :=
   {v | ∃ (a : V), a ∈ A ∧ ∃ p : G.Walk a v, ∀ z ∈ p.support, z ∈ S → z = v}
 
 omit [DecidableEq V] in
-theorem bc18_subset_AReach (G : SimpleGraph V) (A S : Set V) : A ⊆ bc18_AReach G A S := by
+lemma bc18_subset_AReach (G : SimpleGraph V) (A S : Set V) : A ⊆ bc18_AReach G A S := by
   intro a ha
   exact ⟨a, ha, Walk.nil, fun z hz _ => by
     rw [Walk.support_nil, List.mem_singleton] at hz; exact hz⟩
 
-
-
-theorem bc18_mem_AReach_of_mem_support {A S : Set V} {a v : V}
+lemma bc18_mem_AReach_of_mem_support {A S : Set V} {a v : V}
     (ha : a ∈ A) {q : G.Walk a v} (hqpath : q.IsPath)
     (hq : ∀ z ∈ q.support, z ∈ S → z = v) {z : V} (hz : z ∈ q.support) :
     z ∈ bc18_AReach G A S := by
@@ -169,11 +126,7 @@ theorem bc18_mem_AReach_of_mem_support {A S : Set V} {a v : V}
   · subst hwv
     exact absurd hw (Walk.endpoint_notMem_support_takeUntil hqpath hz (Ne.symm hzv))
 
-
-
-
-
-theorem bc18_AReach_separator_transfer {A B S C : Set V}
+lemma bc18_AReach_separator_transfer {A B S C : Set V}
     (hS : bc16_IsSeparator G A B S)
     (hC : bc16_IsSeparator (bc17_restr G (bc18_AReach G A S)) A S C) :
     bc16_IsSeparator G A B C := by
@@ -193,17 +146,8 @@ theorem bc18_AReach_separator_transfer {A B S C : Set V}
   exact hqsub hc'q
 
 
-
-
-
-
-
-
 omit [DecidableEq V] in
-
-
-
-theorem bc18_splitAtEdge {K : SimpleGraph V} {x y a₀ b₀ : V} (R : K.Walk a₀ b₀) :
+lemma bc18_splitAtEdge {K : SimpleGraph V} {x y a₀ b₀ : V} (R : K.Walk a₀ b₀) :
     (K.deleteEdges {s(x, y)}).Reachable a₀ b₀ ∨
     ((K.deleteEdges {s(x, y)}).Reachable a₀ x ∧ (K.deleteEdges {s(x, y)}).Reachable y b₀) ∨
     ((K.deleteEdges {s(x, y)}).Reachable a₀ y ∧ (K.deleteEdges {s(x, y)}).Reachable x b₀) := by
@@ -234,14 +178,7 @@ theorem bc18_splitAtEdge {K : SimpleGraph V} {x y a₀ b₀ : V} (R : K.Walk a�
         · exact Or.inr (Or.inl ⟨hstep.trans h1, h2⟩)
         · exact Or.inr (Or.inr ⟨hstep.trans h1, h2⟩)
 
-
-
-
-
-
-
-
-
+/-- A walk avoiding `Y`, viewed in the graph restricted to the complement of `Y`. -/
 def bc18_walkToRestrCompl {Y : Set V} {a b : V} (p : G.Walk a b)
     (hp : ∀ w ∈ p.support, w ∉ Y) : (bc17_restr G {v | v ∉ Y}).Walk a b :=
   p.transfer _ (by
@@ -251,9 +188,8 @@ def bc18_walkToRestrCompl {Y : Set V} {a b : V} (p : G.Walk a b)
     exact ⟨p.adj_of_mem_edges he,
       hp _ (p.fst_mem_support_of_mem_edges he), hp _ (p.snd_mem_support_of_mem_edges he)⟩)
 
-
-
-theorem bc18_reachableRestrCompl_to_walk {Y : Set V} {a b : V} (ha : a ∉ Y)
+omit [DecidableEq V] in
+lemma bc18_reachableRestrCompl_to_walk {Y : Set V} {a b : V} (ha : a ∉ Y)
     (h : (bc17_restr G {v | v ∉ Y}).Reachable a b) :
     ∃ p : G.Walk a b, ∀ w ∈ p.support, w ∉ Y := by
   obtain ⟨q⟩ := h
@@ -262,21 +198,16 @@ theorem bc18_reachableRestrCompl_to_walk {Y : Set V} {a b : V} (ha : a ∉ Y)
   rw [Walk.support_mapLe_eq_support] at hw
   exact bc17_restr_support_subset G _ ha q w hw
 
-
-theorem bc18_restr_compl_deleteEdges {Y : Set V} {x y : V} :
+omit [DecidableEq V] in
+lemma bc18_restr_compl_deleteEdges {Y : Set V} {x y : V} :
     (bc17_restr G {v | v ∉ Y}).deleteEdges {s(x, y)}
       = bc17_restr (G.deleteEdges {s(x, y)}) {v | v ∉ Y} := by
   ext u v
   simp only [deleteEdges_adj, bc17_restr_adj, Set.mem_singleton_iff]
   tauto
 
-
-
-
-
-
-
-theorem bc18_areach_to_reachable_del {A Y : Set V} {c x y z : V}
+omit [DecidableEq V] in
+lemma bc18_areach_to_reachable_del {A Y : Set V} {c x y z : V}
     (hz : z ∈ bc18_AReach G A (insert c Y)) (hzS : z ∉ insert c Y)
     (hc : c = x ∨ c = y) :
     ∃ a ∈ A, a ∉ Y ∧
@@ -296,9 +227,8 @@ theorem bc18_areach_to_reachable_del {A Y : Set V} {c x y z : V}
   rw [Walk.support_transfer] at hw
   exact hpY w hw
 
-
-
-theorem bc18_contra_of_reachable {A B Y : Set V} {x y a b : V}
+omit [DecidableEq V] in
+lemma bc18_contra_of_reachable {A B Y : Set V} {x y a b : V}
     (hYsep : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y)
     (ha : a ∈ A) (hb : b ∈ B) (haY : a ∉ Y)
     (h : (bc17_restr (G.deleteEdges {s(x, y)}) {v | v ∉ Y}).Reachable a b) : False := by
@@ -306,17 +236,8 @@ theorem bc18_contra_of_reachable {A B Y : Set V} {x y a b : V}
   obtain ⟨cc, hccY, hccp⟩ := hYsep ha hb p
   exact hp cc hccp hccY
 
-
-
-
-
-
-
-
-
-
-
-theorem bc18_notBoth {A B Y : Set V} {x y : V}
+omit [DecidableEq V] in
+lemma bc18_notBoth {A B Y : Set V} {x y : V}
     (hxy : G.Adj x y) (hxY : x ∉ Y) (hyY : y ∉ Y)
     (hYsep : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y)
     (hYnotG : ¬ bc16_IsSeparator G A B Y) :
@@ -344,17 +265,8 @@ theorem bc18_notBoth {A B Y : Set V} {x y : V}
   · rw [bc18_restr_compl_deleteEdges] at h2
     exact bc18_contra_of_reachable hYsep haxA hb₀ haxY (haxreach.trans h2)
 
-
-
-
-
-
-
-
-
-
-
-theorem bc18_AReach_inter_subset {A B S : Set V} (hS : bc16_IsSeparator G A B S) :
+omit [DecidableEq V] in
+lemma bc18_AReach_inter_subset {A B S : Set V} (hS : bc16_IsSeparator G A B S) :
     bc18_AReach G A S ∩ bc18_AReach G B S ⊆ S := by
   rintro z ⟨⟨a, ha, pa, hpa⟩, ⟨b, hb, pb, hpb⟩⟩
   by_contra hzS
@@ -367,11 +279,7 @@ theorem bc18_AReach_inter_subset {A B S : Set V} (hS : bc16_IsSeparator G A B S)
   · rw [Walk.support_reverse, List.mem_reverse] at h
     exact hpbS cc h hccS
 
-
-
-
-
-theorem bc18_mem_AReach_of_essential {A B S : Set V} {w : V}
+lemma bc18_mem_AReach_of_essential {A B S : Set V} {w : V}
     (hSsep : bc16_IsSeparator G A B S)
     (hnotSep : ¬ bc16_IsSeparator G A B (S \ {w})) :
     w ∈ bc18_AReach G A S := by
@@ -388,15 +296,8 @@ theorem bc18_mem_AReach_of_essential {A B S : Set V} {w : V}
   rw [← hc'w]
   exact ⟨a, ha, q, hq⟩
 
-
-
-
-
-
-
-
-
-theorem bc18_appendPath_of_inter {a v b : V} {p : G.Walk a v} {q : G.Walk v b}
+omit [DecidableEq V] in
+lemma bc18_appendPath_of_inter {a v b : V} {p : G.Walk a v} {q : G.Walk v b}
     (hp : p.IsPath) (hq : q.IsPath)
     (hint : ∀ z, z ∈ p.support → z ∈ q.support → z = v) :
     (p.append q).IsPath := by
@@ -411,19 +312,7 @@ theorem bc18_appendPath_of_inter {a v b : V} {p : G.Walk a v} {q : G.Walk v b}
     rw [Walk.cons_tail_support]; exact hq.support_nodup
   exact (List.nodup_cons.mp hnd).1 hw
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc18_aside_fan {A B S : Set V} {k : ℕ}
+lemma bc18_aside_fan {A B S : Set V} {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hSsep : bc16_IsSeparator G A B S)
     (hH : bc17_HardDir (bc17_restr G (bc18_AReach G A S)) A S) :

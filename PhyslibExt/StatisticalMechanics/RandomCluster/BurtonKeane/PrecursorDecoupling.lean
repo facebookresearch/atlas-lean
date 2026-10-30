@@ -6,94 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrecursorRouting
 public import MathlibExt.Probability.Configuration.CylinderDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Ergodicity
+
+/-!
+# Positive precursor probability under Bernoulli measures
+
+For a Bernoulli product measure a positive-probability event that becomes a trifurcation precursor
+after opening finitely many edges gives a positive-probability precursor, and with it uniqueness.
+
+## i. Overview
+
+Opening a finite set of edges is absolutely continuous for Bernoulli measures with `0 < p`: cylinder
+events have positive probability and factor over finitely many coordinates. So positive routing
+gives a neighbour trifurcation precursor with positive probability, and the precursor route gives at
+most one infinite cluster. The hypothesis is the existence, for each `n`, of a positive-probability
+precursor.
+
+## ii. Key results
+
+- `bdec_cylinder_singleton_pos` : cylinder events have positive probability
+- `bdec_precursorPos_of_decoupled` : decoupled routing gives a positive precursor
+- `bdec_bk_atLeastTwo_of_precursorPos` : at most one infinite cluster from positive precursors
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -113,24 +62,13 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-theorem bdec_forceOpen_empty (ω : ConfigSpace (Sym2 (Site d))) :
-    forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by
-  funext e; simp [forceOpenFinset]
-
-
-theorem bdec_forceOpen_empty_preimage (A : Set (ConfigSpace (Sym2 (Site d)))) :
+lemma bdec_forceOpen_empty_preimage (A : Set (ConfigSpace (Sym2 (Site d)))) :
     (fun ω => forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω) ⁻¹' A = A := by
-  ext ω; simp only [Set.mem_preimage, bdec_forceOpen_empty]
+  ext ω; simp only [Set.mem_preimage, StatMech.Percolation.DisjointPaths.mng_forceOpenFinset_empty]
 
-
-
-
-
-
-theorem bdec_posRouting_of_precursorPos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
+lemma bdec_posRouting_of_precursorPos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (a₁ a₂ a₃ : Site d)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
              (NeighborTrifPrecursor d a₁ a₂ a₃)) :
@@ -140,14 +78,7 @@ theorem bdec_posRouting_of_precursorPos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
   rw [bdec_forceOpen_empty_preimage]
   exact hpos
 
-
-
-
-
-
-
-
-theorem bdec_cylinder_singleton_pos (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
+lemma bdec_cylinder_singleton_pos (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
     (I : Finset (Sym2 (Site d))) (η₀ : ConfigSpace ↥I) :
     0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (cylinder I {η₀}) := by
   rw [bernoulliProductMeasure_cylinder p hp1 I {η₀},
@@ -161,17 +92,7 @@ theorem bdec_cylinder_singleton_pos (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) 
     rw [h, bernoulliMeasure_apply_false, ne_eq, ENNReal.coe_eq_zero]
     exact ne_of_gt (tsub_pos_iff_lt.mpr hplt)
 
-
-
-
-
-
-
-
-
-
-
-theorem bdec_factor_finite_pos (p : ℝ≥0) (hp1 : p ≤ 1)
+lemma bdec_factor_finite_pos (p : ℝ≥0) (hp1 : p ≤ 1)
     {s t : Finset (Sym2 (Site d))} {S : Set (∀ i : s, Bool)} {T : Set (∀ i : t, Bool)}
     (hS : MeasurableSet S) (hT : MeasurableSet T) (hdisj : Disjoint s t)
     (hSpos : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (cylinder s S))
@@ -180,25 +101,7 @@ theorem bdec_factor_finite_pos (p : ℝ≥0) (hp1 : p ≤ 1)
   rw [StatMech.FK.bernoulli_cylinder_factor p hp1 hS hT hdisj]
   exact ENNReal.mul_pos (ne_of_gt hSpos) (ne_of_gt hTpos)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bdec_precursorPos_of_decoupled (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
+lemma bdec_precursorPos_of_decoupled (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
     (a₁ a₂ a₃ : Site d)
     (I : Finset (Sym2 (Site d))) (η₀ : ConfigSpace ↥I)
     (X : Set (ConfigSpace (Sym2 (Site d))))
@@ -215,14 +118,7 @@ theorem bdec_precursorPos_of_decoupled (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < 
     rw [hindep]; exact ENNReal.mul_pos (ne_of_gt hCpos) (ne_of_gt hXpos)
   exact lt_of_lt_of_le hInter (measure_mono hgeo)
 
-
-
-
-
-
-
-
-theorem bdec_bk_of_precursorPos (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bdec_bk_of_precursorPos (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hpre : ∀ n : ℕ, ∃ a₁ a₂ a₃ : Site d,
         0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
           (NeighborTrifPrecursor d a₁ a₂ a₃)) :
@@ -237,9 +133,7 @@ theorem bdec_bk_of_precursorPos (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp
     obtain ⟨a₁, a₂, a₃, h⟩ := hpre n
     exact bdec_posRouting_of_precursorPos p hp1 n a₁ a₂ a₃ h)
 
-
-
-theorem bdec_bk_atLeastTwo_of_precursorPos (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bdec_bk_atLeastTwo_of_precursorPos (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hpre : ∀ n : ℕ, ∃ a₁ a₂ a₃ : Site d,
         0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
           (NeighborTrifPrecursor d a₁ a₂ a₃)) :

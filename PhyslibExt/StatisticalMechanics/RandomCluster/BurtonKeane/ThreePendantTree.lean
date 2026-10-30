@@ -6,18 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.TreeTripod
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AnchoredLeafTrifCount
+
+/-!
+# Tripods joining three leaves
+
+In a finite connected graph, three vertices of degree one are joined by a tripod: a tree with a hub
+and three disjoint legs ending at them.
+
+## i. Overview
+
+Positive degree is preserved along reachability, and degree is monotone in the graph. From a
+spanning tree of a connected graph, the union of the paths between three degree-one vertices is a
+tripod whose hub has three stems, with each leg ending at one of the vertices. This tree is the
+template programmed into a box in the finite-pattern construction of trifurcations.
+
+## ii. Key results
+
+- `tpt_degree_pos_of_connected` : vertices of a nontrivial connected graph have positive degree
+- `three_pendant_vertices_have_tripod` : three degree-one vertices are joined by a tripod
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -25,8 +46,9 @@ open Set SimpleGraph Finset
 
 namespace StatMech.Percolation
 
+/-! ## A. Results -/
 
-private theorem tpt_degree_pos_of_connected {V : Type*} [Fintype V]
+private lemma tpt_degree_pos_of_connected {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hG : G.Connected)
     {x y : V} (hxy : x ≠ y) : 1 ≤ G.degree x := by
   have hr := hG.preconnected x y
@@ -38,7 +60,7 @@ private theorem tpt_degree_pos_of_connected {V : Type*} [Fintype V]
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, G.degree_pos_iff_exists_adj]
   exact hex
 
-private theorem tpt_degree_pos_of_reachable_ne {V : Type*} [Fintype V]
+private lemma tpt_degree_pos_of_reachable_ne {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V}
     (hr : G.Reachable x y) (hxy : x ≠ y) : 1 ≤ G.degree x := by
   have hex : ∃ z, G.Adj x z := by
@@ -49,8 +71,7 @@ private theorem tpt_degree_pos_of_reachable_ne {V : Type*} [Fintype V]
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, G.degree_pos_iff_exists_adj]
   exact hex
 
-
-private theorem tpt_degree_mono {V : Type*} [Fintype V]
+private lemma tpt_degree_mono {V : Type*} [Fintype V]
     {F G : SimpleGraph V} [DecidableRel F.Adj] [DecidableRel G.Adj]
     (hFG : F ≤ G) (x : V) : F.degree x ≤ G.degree x := by
   rw [← F.card_neighborFinset_eq_degree, ← G.card_neighborFinset_eq_degree]
@@ -59,11 +80,7 @@ private theorem tpt_degree_mono {V : Type*} [Fintype V]
   rw [SimpleGraph.mem_neighborFinset] at hy ⊢
   exact hFG hy
 
-
-
-
-
-theorem three_pendant_vertices_have_tripod {V : Type*} [Fintype V] [DecidableEq V]
+lemma three_pendant_vertices_have_tripod {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hG : G.Connected)
     (p : Fin 3 → V) (hpinj : Function.Injective p)
     (hpdeg : ∀ i, G.degree (p i) = 1) :
@@ -81,7 +98,7 @@ theorem three_pendant_vertices_have_tripod {V : Type*} [Fintype V] [DecidableEq 
         ¬ (T.deleteIncidenceSet hub).Reachable (leaf i) (leaf j)) := by
   classical
   obtain ⟨S, hSG, hStree⟩ := hG.exists_isTree_le
-  letI : DecidableRel S.Adj := Classical.decRel _
+  let : DecidableRel S.Adj := Classical.decRel _
   have hpSdeg : ∀ i, S.degree (p i) = 1 := by
     intro i
     have hj : ∃ j : Fin 3, i ≠ j := by
@@ -98,10 +115,10 @@ theorem three_pendant_vertices_have_tripod {V : Type*} [Fintype V] [DecidableEq 
       exact tpt_degree_mono hSG (p i)
     omega
   let B : V → Prop := fun v => ∃ i, p i = v
-  letI : DecidablePred B := Classical.decPred _
+  let : DecidablePred B := Classical.decPred _
   obtain ⟨F, hFdec, hFS, hFac, hFleaf, hFpres⟩ :=
     StatMech.Walls.bc121_boundaryAnchored_subforest S B hStree.isAcyclic
-  letI : DecidableRel F.Adj := hFdec
+  let : DecidableRel F.Adj := hFdec
   have hpFreach : ∀ i j, F.Reachable (p i) (p j) := by
     intro i j
     apply hFpres (p i) (p j) ⟨i, rfl⟩ ⟨j, rfl⟩

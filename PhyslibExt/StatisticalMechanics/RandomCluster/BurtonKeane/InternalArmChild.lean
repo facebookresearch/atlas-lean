@@ -6,82 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryForestDegree
+
+/-!
+# Internal vertices of arms
+
+A vertex strictly inside a path has two neighbours; if every non-boundary, non-hub vertex is
+internal to an arm path, every leaf of the forest lies on the boundary.
+
+## i. Overview
+
+`bc114_IsInternal F v` says that `v` is an interior vertex of some path in `F`, hence has degree at
+least two. Arm coverage (`bc114_ArmCovered`) asks this for every vertex that is neither on the
+boundary nor a hub; with hubs of degree at least three it forces every leaf onto the boundary. A
+three-vertex example shows that a forest cannot have all its leaves at one vertex.
+
+## ii. Key results
+
+- `bc114_internal_degree_ge_two` : internal vertices have degree at least two
+- `bc114_leaf_on_boundary_of_armCovered` : arm coverage puts leaves on the boundary
+- `bc114_armForest_boundaryAnchored` : an arm-covered forest is boundary anchored
+- `bc114_status` : the statements together
+
+## iii. Table of contents
+
+- A. Results
+- B. Summary
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -96,42 +56,29 @@ namespace StatMech.Walls
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-
-
-
-
-
-
-
-
 variable {G : SimpleGraph V}
 
+/-! ## A. Results -/
 
-
-
-theorem bc114_internal_two_neighbours (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
+lemma bc114_internal_two_neighbours (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
     (hp : p.IsPath) {i : ℕ} (hi0 : 0 < i) (hilt : i < p.length) :
     F.Adj (p.getVert i) (p.getVert (i - 1)) ∧ F.Adj (p.getVert i) (p.getVert (i + 1)) ∧
       p.getVert (i - 1) ≠ p.getVert (i + 1) := by
   refine ⟨?_, ?_, ?_⟩
-  · 
-    have hprev : (i - 1) < p.length := by omega
+  · have hprev : (i - 1) < p.length := by omega
     have hadj : F.Adj (p.getVert (i - 1)) (p.getVert ((i - 1) + 1)) := p.adj_getVert_succ hprev
     have : (i - 1) + 1 = i := by omega
     rw [this] at hadj
     exact hadj.symm
   · exact p.adj_getVert_succ hilt
-  · 
-    have hinj := hp.getVert_injOn
+  · have hinj := hp.getVert_injOn
     intro heq
     have h1 : (i - 1) ∈ {j | j ≤ p.length} := by simp; omega
     have h2 : (i + 1) ∈ {j | j ≤ p.length} := by simp; omega
     have := hinj h1 h2 heq
     omega
 
-
-
-theorem bc114_internal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {s t : V}
+lemma bc114_internal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {s t : V}
     (p : F.Walk s t) (hp : p.IsPath) {i : ℕ} (hi0 : 0 < i) (hilt : i < p.length) :
     2 ≤ F.degree (p.getVert i) := by
   obtain ⟨hadj1, hadj2, hne⟩ := bc114_internal_two_neighbours F p hp hi0 hilt
@@ -147,85 +94,42 @@ theorem bc114_internal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {s
     _ ≤ (F.neighborFinset (p.getVert i)).card := Finset.card_le_card hsub
     _ = F.degree (p.getVert i) := SimpleGraph.card_neighborFinset_eq_degree _ _
 
-
-
-
-
-
-
-
-
-
-
+/-- `v` is an interior vertex of some path in `F`. -/
 def bc114_IsInternal (F : SimpleGraph V) (v : V) : Prop :=
   ∃ (s t : V) (p : F.Walk s t) (i : ℕ), p.IsPath ∧ 0 < i ∧ i < p.length ∧ p.getVert i = v
 
-
-theorem bc114_isInternal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
+lemma bc114_isInternal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
     (hv : bc114_IsInternal F v) : 2 ≤ F.degree v := by
   obtain ⟨s, t, p, i, hp, hi0, hilt, hveq⟩ := hv
   rw [← hveq]
   exact bc114_internal_degree_ge_two F p hp hi0 hilt
 
-
-
-theorem bc114_leaf_not_internal (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
+lemma bc114_leaf_not_internal (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
     (hdeg : F.degree v = 1) : ¬ bc114_IsInternal F v := by
   intro hv
   have := bc114_isInternal_degree_ge_two F hv
   omega
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Every vertex that is neither on the boundary (`B`) nor a hub (`H`) is internal to a path. -/
 def bc114_ArmCovered (F : SimpleGraph V) (B H : V → Prop) : Prop :=
   ∀ v, ¬ B v → ¬ H v → bc114_IsInternal F v
 
-
-
-
-
-
-theorem bc114_leaf_on_boundary_of_armCovered (F : SimpleGraph V) [DecidableRel F.Adj]
+lemma bc114_leaf_on_boundary_of_armCovered (F : SimpleGraph V) [DecidableRel F.Adj]
     {B H : V → Prop} (hcov : bc114_ArmCovered F B H)
     (hhub : ∀ v, H v → 3 ≤ F.degree v)
     {v : V} (hdeg : F.degree v = 1) : B v := by
   by_contra hvB
   by_cases hvH : H v
-  · 
-    have := hhub v hvH
+  · have := hhub v hvH
     omega
-  · 
-    have hint := hcov v hvB hvH
+  · have hint := hcov v hvB hvH
     have := bc114_isInternal_degree_ge_two F hint
     omega
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_isInternal_of_mem_support (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
+lemma bc114_isInternal_of_mem_support (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
     (hp : p.IsPath) {v : V} (hv : v ∈ p.support) (hvs : v ≠ s) (hvt : v ≠ t) :
     bc114_IsInternal F v := by
-  
+
   rw [SimpleGraph.Walk.mem_support_iff_exists_getVert] at hv
   obtain ⟨i, hvi, hile⟩ := hv
   refine ⟨s, t, p, i, hp, ?_, ?_, hvi⟩
@@ -238,166 +142,76 @@ theorem bc114_isInternal_of_mem_support (F : SimpleGraph V) {s t : V} (p : F.Wal
       have : i = p.length := by omega
       rw [← hvi, this, p.getVert_length]
 
-
-
-
-
-theorem bc114_internal_of_reachable_boundary (F : SimpleGraph V) {a z : V} (hr : F.Reachable a z)
+lemma bc114_internal_of_reachable_boundary (F : SimpleGraph V) {a z : V} (hr : F.Reachable a z)
     {v : V} (hva : v ≠ a) (hvz : v ≠ z)
     (hmem : ∃ p : F.Walk a z, p.IsPath ∧ v ∈ p.support) :
     bc114_IsInternal F v := by
   obtain ⟨p, hp, hvp⟩ := hmem
   exact bc114_isInternal_of_mem_support F p hp hvp hva hvz
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_hasChild_of_forestNeighbour_up (G : SimpleGraph V) (B : V → Prop)
+lemma bc114_hasChild_of_forestNeighbour_up (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B)
     (hup : ∀ v, ¬ B v → ∃ w, (bc113_bForest G B hreach).Adj v w ∧
       bc113_toB G B v < bc113_toB G B w) :
     bc113_HasChild G B hreach := hup
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_bForest_internal_has_child (G : SimpleGraph V) (B : V → Prop)
+lemma bc114_bForest_internal_has_child (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     {v : V} (hv : ¬ B v)
     (hint : bc114_IsInternal (bc113_bForest G B hreach) v) :
     ∃ w, (bc113_bForest G B hreach).Adj v w ∧ bc113_toB G B v < bc113_toB G B w := by
   classical
   set F := bc113_bForest G B hreach with hF
-  
+
   have hdeg2 : 2 ≤ F.degree v := bc114_isInternal_degree_ge_two F hint
-  
+
   have hpar : F.Adj v (bc113_parent G B hreach v) := bc113_bForest_adj_parent G B hreach hv
   have hparlt : bc113_toB G B (bc113_parent G B hreach v) < bc113_toB G B v :=
     (bc113_parent_spec G B hreach hv).2
-  
+
   have hcard : 2 ≤ (F.neighborFinset v).card := by
     rwa [SimpleGraph.card_neighborFinset_eq_degree]
-  
+
   have hpmem : bc113_parent G B hreach v ∈ F.neighborFinset v := by
     rw [SimpleGraph.mem_neighborFinset]; exact hpar
   obtain ⟨w, hwmem, hwne⟩ := Finset.exists_mem_ne (by omega : 1 < (F.neighborFinset v).card)
     (bc113_parent G B hreach v)
   rw [SimpleGraph.mem_neighborFinset] at hwmem
   refine ⟨w, hwmem, ?_⟩
-  
-  
+
+
   have hsep : bc113_toB G B v ≠ bc113_toB G B w := bc113_bForest_toB_ne G B hreach hwmem
   rcases lt_or_gt_of_ne hsep with hlt | hgt
   · exact hlt
-  · 
-    exfalso
+  · exfalso
     have := bc113_bForest_down_unique G B hreach hwmem hpar hgt hparlt
     exact hwne this
 
-
-
-
-
-
-theorem bc114_hasChild_of_armCovered (G : SimpleGraph V) (B : V → Prop)
+lemma bc114_hasChild_of_armCovered (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     (hcov : ∀ v, ¬ B v → bc114_IsInternal (bc113_bForest G B hreach) v) :
     bc113_HasChild G B hreach := by
   intro v hv
   exact bc114_bForest_internal_has_child G B hreach hv (hcov v hv)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_armForest_boundaryAnchored (F : SimpleGraph V) [DecidableRel F.Adj]
+lemma bc114_armForest_boundaryAnchored (F : SimpleGraph V) [DecidableRel F.Adj]
     {B H : V → Prop} (hcov : bc114_ArmCovered F B H) (hhub : ∀ v, H v → 3 ≤ F.degree v)
     (hac : F.IsAcyclic) (hmin : ∀ v, 1 ≤ F.degree v) :
     F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v) :=
   ⟨hac, hmin, fun v hdeg => bc114_leaf_on_boundary_of_armCovered F hcov hhub hdeg⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem bc114_obstruction_real :
+lemma bc114_obstruction_real :
     ¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
         F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
         (∀ v, F.degree v = 1 → v = 0) :=
   bc113_no_boundaryAnchored_on_triangle
 
-
-
-
-
-
-
-
-theorem bc114_leaf_not_armCovered (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
-    (hdeg : F.degree v = 1) : ¬ bc114_IsInternal F v :=
-  bc114_leaf_not_internal F hdeg
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_armCovered_nonvacuous :
+lemma bc114_armCovered_nonvacuous :
     bc114_IsInternal (SimpleGraph.fromEdgeSet {s((0 : Fin 3), 1), s((1 : Fin 3), 2)}) 1 := by
   classical
   set F := SimpleGraph.fromEdgeSet {s((0 : Fin 3), 1), s((1 : Fin 3), 2)} with hF
   have h01 : F.Adj 0 1 := by rw [hF, SimpleGraph.fromEdgeSet_adj]; exact ⟨by simp, by decide⟩
   have h12 : F.Adj 1 2 := by rw [hF, SimpleGraph.fromEdgeSet_adj]; exact ⟨by simp, by decide⟩
-  
   set p : F.Walk 0 2 := SimpleGraph.Walk.cons h01 (SimpleGraph.Walk.cons h12 SimpleGraph.Walk.nil)
     with hp
   have hpath : p.IsPath := by
@@ -408,69 +222,23 @@ theorem bc114_armCovered_nonvacuous :
   · rw [hp]; simp [SimpleGraph.Walk.length_cons]
   · rw [hp]; rfl
 
+/-! ## B. Summary -/
 
+lemma bc114_status :
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc114_status :
-    
     (¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
         F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
         (∀ v, F.degree v = 1 → v = 0)) ∧
-    
+
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (B H : V → Prop),
       bc114_ArmCovered F B H → (∀ v, H v → 3 ≤ F.degree v) →
       ∀ v, F.degree v = 1 → B v) ∧
-    
+
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (B H : V → Prop),
       bc114_ArmCovered F B H → (∀ v, H v → 3 ≤ F.degree v) →
       F.IsAcyclic → (∀ v, 1 ≤ F.degree v) →
       F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v)) ∧
-    
+
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (v : V),
       F.degree v = 1 → ¬ bc114_IsInternal F v) := by
   refine ⟨bc114_obstruction_real, ?_, ?_, ?_⟩
@@ -479,6 +247,6 @@ theorem bc114_status :
   · intro F _ B H hcov hhub hac hmin
     exact bc114_armForest_boundaryAnchored F hcov hhub hac hmin
   · intro F _ v hdeg
-    exact bc114_leaf_not_armCovered F hdeg
+    exact bc114_leaf_not_internal F hdeg
 
 end StatMech.Walls

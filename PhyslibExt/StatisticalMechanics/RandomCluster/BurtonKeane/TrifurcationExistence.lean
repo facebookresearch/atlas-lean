@@ -6,93 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
+
+/-!
+# Merge-free insertion at the origin
+
+A finite rewiring away from the origin that routes three distinct infinite clusters into three
+neighbours of the origin gives the merge-free precursor and disjoint routing.
+
+## i. Overview
+
+`tre_MergeFreeInsertion ω` provides three neighbours `a_i`, a finite edge set `W` avoiding the
+origin, targets `x_i` and disjoint regions `R_i` such that after opening `W` each `a_i` reaches
+`x_i` inside `R_i` without the origin and the `x_i` lie in infinite clusters. Disjoint regions keep
+the branches distinct, so this gives `mco_ThreeClustersReachOrigin` and the merge-free condition.
+The box version and the variant `tre_MergeFreeInsertionRho` feed disjoint routing.
+
+## ii. Key results
+
+- `tre_branch_distinct_of_regions` : disjoint regions keep the branches distinct
+- `tre_threeClustersReachOrigin_of_insertion` : insertion gives the reach-origin condition
+- `tre_disjointRouting_of_finiteEnergy` : box insertion gives disjoint routing
+- `tre_mergeFreeInsertionRho_of_reachOrigin` : the reach-origin condition gives the variant
+  insertion
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -106,22 +56,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_removeSite_forceOpen_comm (W : Finset (Sym2 (Site d)))
+lemma tre_removeSite_forceOpen_comm (W : Finset (Sym2 (Site d)))
     (hW : ∀ e ∈ W, (0 : Site d) ∉ e) (ω : ConfigSpace (Sym2 (Site d))) :
     removeSite 0 (forceOpenFinset W ω) = forceOpenFinset W (removeSite 0 ω) := by
   funext e
@@ -131,60 +68,25 @@ theorem tre_removeSite_forceOpen_comm (W : Finset (Sym2 (Site d)))
     simp [hx, hnW]
   · by_cases heW : e ∈ W <;> simp [hx, heW]
 
-
-
-
-
-theorem tre_removeSite_mono_forceOpen (W : Finset (Sym2 (Site d)))
+lemma tre_removeSite_mono_forceOpen (W : Finset (Sym2 (Site d)))
     (hW : ∀ e ∈ W, (0 : Site d) ∉ e) (ω : ConfigSpace (Sym2 (Site d))) :
     removeSite 0 ω ≤ removeSite 0 (forceOpenFinset W ω) := by
   rw [tre_removeSite_forceOpen_comm W hW]
   exact forceOpenFinset_le W (removeSite 0 ω)
 
-
-
-
-
-
-
-
-
-
-
-theorem tre_cluster_infinite_of_omega (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_cluster_infinite_of_omega (ω : ConfigSpace (Sym2 (Site d)))
     (W : Finset (Sym2 (Site d))) (hW : ∀ e ∈ W, (0 : Site d) ∉ e) (x : Site d)
     (hinf : (cluster d (removeSite 0 ω) x).Infinite) :
     (cluster d (removeSite 0 (forceOpenFinset W ω)) x).Infinite :=
   hinf.mono (cluster_mono (tre_removeSite_mono_forceOpen W hW ω) x)
 
-
-
-
-theorem tre_branch_infinite_of_reach (ω' : ConfigSpace (Sym2 (Site d))) (a x : Site d)
+lemma tre_branch_infinite_of_reach (ω' : ConfigSpace (Sym2 (Site d))) (a x : Site d)
     (hc : Connected d (removeSite 0 ω') a x)
     (hinf : (cluster d (removeSite 0 ω') x).Infinite) :
     (cluster d (removeSite 0 ω') a).Infinite := by
   rw [cluster_eq_of_connected hc]; exact hinf
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_branch_distinct_of_regions (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_branch_distinct_of_regions (ω : ConfigSpace (Sym2 (Site d)))
     (W : Finset (Sym2 (Site d))) (a b : Site d) (R S : Set (Site d))
     (haR : a ∈ R) (hbS : b ∈ S)
     (homR : ∀ u v, u ∈ R → IsOpenEdge d ω u v → v ∈ R)
@@ -203,30 +105,9 @@ theorem tre_branch_distinct_of_regions (ω : ConfigSpace (Sym2 (Site d)))
   have hsubS : cluster d ϱ b ⊆ S := DisjointPaths.cluster_subset_of_adjClosed ϱ S b hbS hScl
   exact DisjointPaths.cluster_ne_of_disjoint ϱ a b R S hsubR hsubS hdisj
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Merge-free insertion at the origin: neighbours `a_i`, a finite rewiring `W` away from the
+origin, targets `x_i` and disjoint regions `R_i` such that after opening `W` each `a_i` reaches
+`x_i` inside `R_i` without the origin and the `x_i` lie in infinite clusters. -/
 def tre_MergeFreeInsertion (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)
     (R₁ R₂ R₃ : Set (Site d)),
@@ -248,28 +129,7 @@ def tre_MergeFreeInsertion (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
       (∀ u v, u ∈ R₃ → s(u, v) ∈ W → v ∈ R₃)) ∧
     (Disjoint R₁ R₂ ∧ Disjoint R₁ R₃ ∧ Disjoint R₂ R₃)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_threeClustersReachOrigin_of_insertion (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_threeClustersReachOrigin_of_insertion (ω : ConfigSpace (Sym2 (Site d)))
     (h : tre_MergeFreeInsertion ω) :
     ∃ W : Finset (Sym2 (Site d)),
       mco_ThreeClustersReachOrigin (forceOpenFinset W ω) := by
@@ -277,17 +137,13 @@ theorem tre_threeClustersReachOrigin_of_insertion (ω : ConfigSpace (Sym2 (Site 
     ⟨hc1, hc2, hc3⟩, ⟨hi1, hi2, hi3⟩, ⟨hm1, hm2, hm3⟩,
     ⟨ho1, ho2, ho3⟩, ⟨hg1, hg2, hg3⟩, hd12, hd13, hd23⟩ := h
   refine ⟨W, a₁, a₂, a₃, x₁, x₂, x₃, hadj, ⟨hc1, hc2, hc3⟩, ?_, ?_⟩
-  · 
-    exact ⟨tre_cluster_infinite_of_omega ω W hW x₁ hi1,
+  · exact ⟨tre_cluster_infinite_of_omega ω W hW x₁ hi1,
       tre_cluster_infinite_of_omega ω W hW x₂ hi2,
       tre_cluster_infinite_of_omega ω W hW x₃ hi3⟩
-  · 
-    set ϱ := removeSite (0 : Site d) (forceOpenFinset W ω) with hϱ
-    
+  · set ϱ := removeSite (0 : Site d) (forceOpenFinset W ω) with hϱ
     have ea1 : cluster d ϱ a₁ = cluster d ϱ x₁ := cluster_eq_of_connected hc1
     have ea2 : cluster d ϱ a₂ = cluster d ϱ x₂ := cluster_eq_of_connected hc2
     have ea3 : cluster d ϱ a₃ = cluster d ϱ x₃ := cluster_eq_of_connected hc3
-    
     have nd12 : cluster d ϱ a₁ ≠ cluster d ϱ a₂ :=
       tre_branch_distinct_of_regions ω W a₁ a₂ R₁ R₂ hm1 hm2 ho1 hg1 ho2 hg2 hd12
     have nd13 : cluster d ϱ a₁ ≠ cluster d ϱ a₃ :=
@@ -299,43 +155,14 @@ theorem tre_threeClustersReachOrigin_of_insertion (ω : ConfigSpace (Sym2 (Site 
     · rw [← ea1, ← ea3]; exact nd13
     · rw [← ea2, ← ea3]; exact nd23
 
-
-
-
-
-
-
-
-
-
-theorem tre_mergeFree_of_insertion (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_mergeFree_of_insertion (ω : ConfigSpace (Sym2 (Site d)))
     (h : tre_MergeFreeInsertion ω) :
     ∃ W : Finset (Sym2 (Site d)), bka_MergeFree (forceOpenFinset W ω) := by
   obtain ⟨W, hreach⟩ := tre_threeClustersReachOrigin_of_insertion ω h
   exact ⟨W, mco_mergeFree (forceOpenFinset W ω) hreach⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Every configuration with three distinct infinite clusters meeting `B_n` admits merge-free
+insertion. -/
 def tre_BoxMergeFreeInsertion (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)
@@ -359,50 +186,18 @@ def tre_BoxMergeFreeInsertion (d n : ℕ) : Prop :=
         (∀ u v, u ∈ R₃ → s(u, v) ∈ W → v ∈ R₃)) ∧
       (Disjoint R₁ R₂ ∧ Disjoint R₁ R₃ ∧ Disjoint R₂ R₃)
 
-
-
-theorem tre_insertion_of_boxResidue {n : ℕ} (h : tre_BoxMergeFreeInsertion d n)
+lemma tre_insertion_of_boxResidue {n : ℕ} (h : tre_BoxMergeFreeInsertion d n)
     {ω : ConfigSpace (Sym2 (Site d))} (hω : ω ∈ threeMeetBox d n) :
     tre_MergeFreeInsertion ω := h ω hω
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_threeClustersReachOrigin_of_finiteEnergy {n : ℕ}
+lemma tre_threeClustersReachOrigin_of_finiteEnergy {n : ℕ}
     (h : tre_BoxMergeFreeInsertion d n) :
     ∀ ω ∈ threeMeetBox d n, ∃ W : Finset (Sym2 (Site d)),
       mco_ThreeClustersReachOrigin (forceOpenFinset W ω) := by
   intro ω hω
   exact tre_threeClustersReachOrigin_of_insertion ω (tre_insertion_of_boxResidue h hω)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_forceOpenFinset_comp (F W : Finset (Sym2 (Site d)))
+lemma tre_forceOpenFinset_comp (F W : Finset (Sym2 (Site d)))
     (ω : ConfigSpace (Sym2 (Site d))) :
     forceOpenFinset F (forceOpenFinset W ω) = forceOpenFinset (F ∪ W) ω := by
   funext e
@@ -411,17 +206,7 @@ theorem tre_forceOpenFinset_comp (F W : Finset (Sym2 (Site d)))
   · simp [hF, Finset.mem_union]
   · by_cases hW : e ∈ W <;> simp [hF, hW, Finset.mem_union]
 
-
-
-
-
-
-
-
-
-
-
-theorem tre_precursor_of_modifiedMergeFree (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_precursor_of_modifiedMergeFree (ω : ConfigSpace (Sym2 (Site d)))
     (W : Finset (Sym2 (Site d))) (h : bka_MergeFree (forceOpenFinset W ω)) :
     ∃ (G : Finset (Sym2 (Site d))) (a₁ a₂ a₃ : Site d),
       forceOpenFinset G ω ∈ NeighborTrifPrecursor d a₁ a₂ a₃ := by
@@ -444,44 +229,14 @@ theorem tre_precursor_of_modifiedMergeFree (ω : ConfigSpace (Sym2 (Site d)))
   · rw [hrm]; intro hc; exact hd13 (cluster_eq_of_connected hc)
   · rw [hrm]; intro hc; exact hd23 (cluster_eq_of_connected hc)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_disjointRouting_of_finiteEnergy {n : ℕ}
+lemma tre_disjointRouting_of_finiteEnergy {n : ℕ}
     (h : tre_BoxMergeFreeInsertion d n) : hrHD_DisjointRouting d n := by
   intro ω hω
   obtain ⟨W, hmf⟩ := tre_mergeFree_of_insertion ω (tre_insertion_of_boxResidue h hω)
   exact tre_precursor_of_modifiedMergeFree ω W hmf
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The variant of merge-free insertion in which the regions are taken in the opened configuration.
+-/
 def tre_MergeFreeInsertionRho (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)
     (R₁ R₂ R₃ : Set (Site d)),
@@ -500,11 +255,7 @@ def tre_MergeFreeInsertionRho (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
       (∀ u v, u ∈ R₃ → (openSubgraph d (removeSite 0 (forceOpenFinset W ω))).Adj u v → v ∈ R₃)) ∧
     (Disjoint R₁ R₂ ∧ Disjoint R₁ R₃ ∧ Disjoint R₂ R₃)
 
-
-
-
-
-theorem tre_threeClustersReachOrigin_of_insertionRho (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_threeClustersReachOrigin_of_insertionRho (ω : ConfigSpace (Sym2 (Site d)))
     (h : tre_MergeFreeInsertionRho ω) :
     ∃ W : Finset (Sym2 (Site d)),
       mco_ThreeClustersReachOrigin (forceOpenFinset W ω) := by
@@ -531,28 +282,15 @@ theorem tre_threeClustersReachOrigin_of_insertionRho (ω : ConfigSpace (Sym2 (Si
     exact ⟨by rw [← ea1, ← ea2]; exact nd12, by rw [← ea1, ← ea3]; exact nd13,
       by rw [← ea2, ← ea3]; exact nd23⟩
 
-
-
-
-
-
-
-
-
-
-
-
-theorem tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d)))
+lemma tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d)))
     (h : mco_ThreeClustersReachOrigin ω) : tre_MergeFreeInsertionRho ω := by
   classical
   obtain ⟨a₁, a₂, a₃, x₁, x₂, x₃, hadj, ⟨hc1, hc2, hc3⟩, ⟨hi1, hi2, hi3⟩,
     hd12, hd13, hd23⟩ := h
   set ϱ := removeSite (0 : Site d) ω with hϱ
   have hemp : forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := bka_forceOpenFinset_empty ω
-  
   have hrm : removeSite (0 : Site d) (forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω) = ϱ := by
     rw [hemp]
-  
   have ea1 : cluster d ϱ a₁ = cluster d ϱ x₁ := cluster_eq_of_connected hc1
   have ea2 : cluster d ϱ a₂ = cluster d ϱ x₂ := cluster_eq_of_connected hc2
   have ea3 : cluster d ϱ a₃ = cluster d ϱ x₃ := cluster_eq_of_connected hc3
@@ -562,7 +300,6 @@ theorem tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d
   have hne12 : a₁ ≠ a₂ := fun he => nda12 (by rw [he])
   have hne13 : a₁ ≠ a₃ := fun he => nda13 (by rw [he])
   have hne23 : a₂ ≠ a₃ := fun he => nda23 (by rw [he])
-  
   have hdisj : ∀ (b c : Site d), cluster d ϱ b ≠ cluster d ϱ c →
       Disjoint (cluster d ϱ b) (cluster d ϱ c) := by
     intro b c hbc
@@ -573,26 +310,20 @@ theorem tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d
   refine ⟨a₁, a₂, a₃, ∅, a₁, a₂, a₃,
     cluster d ϱ a₁, cluster d ϱ a₂, cluster d ϱ a₃,
     ⟨hne12, hne13, hne23⟩, hadj, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · 
-    intro e he; exact absurd he (Finset.notMem_empty e)
-  · 
-    rw [hrm]; exact ⟨connected_rfl, connected_rfl, connected_rfl⟩
-  · 
-    refine ⟨?_, ?_, ?_⟩
+  · intro e he; exact absurd he (Finset.notMem_empty e)
+  · rw [hrm]; exact ⟨connected_rfl, connected_rfl, connected_rfl⟩
+  · refine ⟨?_, ?_, ?_⟩
     · show (cluster d (removeSite 0 ω) a₁).Infinite
       rw [← hϱ, ea1]; exact hi1
     · show (cluster d (removeSite 0 ω) a₂).Infinite
       rw [← hϱ, ea2]; exact hi2
     · show (cluster d (removeSite 0 ω) a₃).Infinite
       rw [← hϱ, ea3]; exact hi3
-  · 
-    exact ⟨self_mem_cluster ϱ a₁, self_mem_cluster ϱ a₂, self_mem_cluster ϱ a₃⟩
-  · 
-    rw [hrm]
+  · exact ⟨self_mem_cluster ϱ a₁, self_mem_cluster ϱ a₂, self_mem_cluster ϱ a₃⟩
+  · rw [hrm]
     exact ⟨bcc_cluster_adjClosed ϱ a₁, bcc_cluster_adjClosed ϱ a₂,
       bcc_cluster_adjClosed ϱ a₃⟩
-  · 
-    exact ⟨hdisj a₁ a₂ nda12, hdisj a₁ a₃ nda13, hdisj a₂ a₃ nda23⟩
+  · exact ⟨hdisj a₁ a₂ nda12, hdisj a₁ a₃ nda13, hdisj a₂ a₃ nda23⟩
 
 end Percolation
 

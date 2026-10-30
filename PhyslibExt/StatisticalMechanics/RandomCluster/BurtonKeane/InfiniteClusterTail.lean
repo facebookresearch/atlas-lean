@@ -6,21 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Ends.Properties
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanContour
+
+/-!
+# Tails of infinite clusters outside a finite set
+
+An infinite cluster meeting a finite set `K` has an infinite connected tail outside `K` reached by
+an open exit edge, and three distinct infinite clusters have disjoint tails.
+
+## i. Overview
+
+The cluster of `x` is a connected, locally finite graph (`tailClusterGraph`). Removing the finite
+set `K` leaves an infinite component (`tailComponentSites`), so an infinite cluster has an open edge
+from a site of `K` to an infinite connected tail outside `K` (`InfiniteClusterTailData`). Tails of
+distinct clusters are disjoint. These tails are the arms joined in the finite-pattern construction
+of trifurcations.
+
+## ii. Key results
+
+- `infiniteCluster_component_after_finset` : an infinite cluster minus a finite set has an infinite
+  component
+- `infiniteCluster_has_open_exit_to_infinite_tail` : an open exit edge from `K` into an infinite
+  tail
+- `threeInfiniteClusters_have_disjoint_tails` : three distinct infinite clusters have disjoint tails
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -31,18 +55,23 @@ namespace StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
+
+/-- Sites of the open cluster of `x`. -/
 abbrev tailClusterVertex (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) :=
   {y : Site d // y ∈ cluster d omega x}
 
+/-- The open subgraph induced on the cluster of `x`. -/
 abbrev tailClusterGraph (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     SimpleGraph (tailClusterVertex omega x) :=
   (openSubgraph d omega).induce (cluster d omega x)
 
+/-- The sites of the cluster of `x` that lie in `K`. -/
 noncomputable def tailClusterCut (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (K : Finset (Site d)) : Finset (tailClusterVertex omega x) :=
   K.preimage Subtype.val Subtype.val_injective.injOn
 
-
+/-- The cluster graph is locally finite. -/
 noncomputable instance tailClusterGraphLocallyFinite
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     SimpleGraph.LocallyFinite (tailClusterGraph omega x) := by
@@ -56,7 +85,7 @@ noncomputable instance tailClusterGraphLocallyFinite
     apply Subtype.ext
     exact congrArg (fun z : (hypercubicLattice d).neighborSet v.1 => (z : Site d)) h)
 
-
+/-- The cluster graph is preconnected. -/
 instance tailClusterGraphPreconnected
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     Fact (tailClusterGraph omega x).Preconnected := ⟨by
@@ -68,13 +97,14 @@ instance tailClusterGraphPreconnected
       have hzx : z ∈ cluster d omega v.1 := ava_support_mem_cluster omega w hz
       rwa [← cluster_eq_of_connected v.2] at hzx) u.2 v.2⟩
 
+/-! ## B. Results -/
 
-theorem infiniteCluster_component_after_finset
+lemma infiniteCluster_component_after_finset
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hinf : (cluster d omega x).Infinite) (K : Finset (Site d)) :
     ∃ D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K),
       D.supp.Infinite := by
-  letI : Infinite (tailClusterVertex omega x) := hinf.to_subtype
+  let : Infinite (tailClusterVertex omega x) := hinf.to_subtype
   let e : (tailClusterGraph omega x).end :=
     ⟨(SimpleGraph.nonempty_ends_of_infinite (tailClusterGraph omega x)).choose,
       (SimpleGraph.nonempty_ends_of_infinite (tailClusterGraph omega x)).choose_spec⟩
@@ -85,25 +115,26 @@ theorem infiniteCluster_component_after_finset
   exact ⟨D, SimpleGraph.end_componentCompl_infinite
     (tailClusterGraph omega x) e (Opposite.op (tailClusterCut omega x K))⟩
 
+/-- The sites of a component of the cluster graph minus `K`. -/
 def tailComponentSites (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (K : Finset (Site d))
     (D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K)) :
     Set (Site d) := Subtype.val '' (D : Set (tailClusterVertex omega x))
 
-theorem tailComponentSites_infinite
+lemma tailComponentSites_infinite
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) (K : Finset (Site d))
     (D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K))
     (hD : D.supp.Infinite) : (tailComponentSites omega x K D).Infinite := by
   exact hD.image Subtype.val_injective.injOn
 
-theorem tailComponentSites_subset_cluster
+lemma tailComponentSites_subset_cluster
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) (K : Finset (Site d))
     (D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K)) :
     tailComponentSites omega x K D ⊆ cluster d omega x := by
   rintro _ ⟨y, _, rfl⟩
   exact y.2
 
-theorem tailComponentSites_connected_outside
+lemma tailComponentSites_connected_outside
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) (K : Finset (Site d))
     (D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K)) :
     ∀ u ∈ tailComponentSites omega x K D,
@@ -143,10 +174,7 @@ theorem tailComponentSites_connected_outside
   }
   exact hreach.map f
 
-
-
-
-theorem infiniteCluster_has_tail_outside_finset
+lemma infiniteCluster_has_tail_outside_finset
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hinf : (cluster d omega x).Infinite) (K : Finset (Site d)) :
     ∃ T : Set (Site d), T.Infinite ∧ T ⊆ cluster d omega x ∧
@@ -160,10 +188,7 @@ theorem infiniteCluster_has_tail_outside_finset
     tailComponentSites_subset_cluster omega x K D,
     tailComponentSites_connected_outside omega x K D⟩
 
-
-
-
-theorem infiniteCluster_has_open_exit_to_infinite_tail
+lemma infiniteCluster_has_open_exit_to_infinite_tail
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hinf : (cluster d omega x).Infinite) (K : Finset (Site d))
     (hxK : x ∈ K) :
@@ -191,7 +216,8 @@ theorem infiniteCluster_has_open_exit_to_infinite_tail
   · exact tailComponentSites_subset_cluster omega x K D
   · exact tailComponentSites_connected_outside omega x K D
 
-
+/-- Tail data for the cluster of `x` outside `K`: an open exit edge from `inside ∈ K` to `outside ∉
+K` and an infinite connected tail of the cluster outside `K` containing `outside`. -/
 structure InfiniteClusterTailData (omega : ConfigSpace (Sym2 (Site d)))
     (K : Finset (Site d)) (x : Site d) where
   inside : Site d
@@ -209,7 +235,7 @@ structure InfiniteClusterTailData (omega : ConfigSpace (Sym2 (Site d)))
         ((openSubgraph d omega).induce (K : Set (Site d))ᶜ).Reachable
           ⟨a, ha⟩ ⟨b, hb⟩
 
-
+/-- A choice of tail data for an infinite cluster containing a site of `K`. -/
 noncomputable def infiniteClusterTailData
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hinf : (cluster d omega x).Infinite) (K : Finset (Site d))
@@ -220,17 +246,14 @@ noncomputable def infiniteClusterTailData
       infiniteCluster_has_open_exit_to_infinite_tail omega x hinf K hxK
     exact ⟨⟨u, v, T, hu, hv, huv, hvT, hTinf, hTsub, hTconn⟩⟩)
 
-
-theorem disjoint_clusters_of_ne (omega : ConfigSpace (Sym2 (Site d)))
+lemma disjoint_clusters_of_ne (omega : ConfigSpace (Sym2 (Site d)))
     {x y : Site d} (hne : cluster d omega x ≠ cluster d omega y) :
     Disjoint (cluster d omega x) (cluster d omega y) := by
   rw [Set.disjoint_left]
   intro z hzx hzy
   exact hne ((cluster_eq_of_connected hzx).trans (cluster_eq_of_connected hzy).symm)
 
-
-
-theorem threeInfiniteClusters_have_disjoint_tails
+lemma threeInfiniteClusters_have_disjoint_tails
     (omega : ConfigSpace (Sym2 (Site d))) (K : Finset (Site d))
     (x1 x2 x3 : Site d)
     (hx1 : x1 ∈ K) (hx2 : x2 ∈ K) (hx3 : x3 ∈ K)

@@ -6,15 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreePendantTree
+
+/-!
+# A tree in the box with three exits
+
+Three boundary exits of a box are joined by a tree inside the box whose hub has degree three.
+
+## i. Overview
+
+`threeExitGraph inside` is the lattice graph on `B_n` with three extra tips joined to the sites
+`inside i`. It is connected, so it contains a tree joining the three tips; the tips have degree one
+and the tree has a hub of degree three. Mapping tips to sites `outside i` just outside the box
+embeds the tree into the lattice. This tree is programmed into the box in the finite-pattern
+construction of trifurcations.
+
+## ii. Key results
+
+- `threeExitGraph_connected` : the extended box graph is connected
+- `threeExitTip_degree_one` : each tip has degree one
+- `lattice_three_exit_tree` : a lattice tree in the box joining the three exits through a hub
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -25,12 +51,13 @@ namespace StatMech.Percolation
 
 variable {d n : ℕ}
 
+/-! ## A. Definitions -/
 
+/-- Vertices of the box `B_n` together with three tips. -/
 abbrev ThreeExitVertex (d n : ℕ) :=
   Sum (↑(boxFinsetBK d n) : Type) (Fin 3)
 
-
-
+/-- The lattice graph on `B_n` with tip `i` joined to the site `inside i`. -/
 def threeExitGraph (inside : Fin 3 → Site d) :
     SimpleGraph (ThreeExitVertex d n) where
   Adj a b := match a, b with
@@ -47,17 +74,19 @@ def threeExitGraph (inside : Fin 3 → Site d) :
     · exact (hypercubicLattice d).irrefl
     · simp⟩
 
+/-- Adjacency in the extended box graph is decidable. -/
 instance (inside : Fin 3 → Site d) : DecidableRel (threeExitGraph (n := n) inside).Adj :=
-  fun a b => by cases a <;> cases b <;> simp [threeExitGraph] <;> infer_instance
+  fun a b => by cases a <;> cases b <;> simp only [threeExitGraph] <;> infer_instance
 
-
+/-- The `i`-th tip. -/
 def threeExitTip (i : Fin 3) : ThreeExitVertex d n := Sum.inr i
 
-theorem threeExitTip_injective :
+/-! ## B. Results -/
+
+lemma threeExitTip_injective :
     Function.Injective (threeExitTip (d := d) (n := n)) := Sum.inr_injective
 
-
-theorem threeExitTip_degree_one (inside : Fin 3 → Site d)
+lemma threeExitTip_degree_one (inside : Fin 3 → Site d)
     (hinside : ∀ i, inside i ∈ box d n) (i : Fin 3) :
     (threeExitGraph (n := n) inside).degree (threeExitTip i) = 1 := by
   classical
@@ -70,7 +99,7 @@ theorem threeExitTip_degree_one (inside : Fin 3 → Site d)
     exact congrArg Sum.inl (Subtype.ext hz)
   · simp [threeExitGraph, threeExitTip] at hz
 
-private theorem boxEdgeWalk_support_mem {x y : Site d}
+private lemma boxEdgeWalk_support_mem {x y : Site d}
     (w : (openSubgraph d (forceOpenFinset (boxEdges d n) (fun _ => false))).Walk x y)
     (hx : x ∈ box d n) : ∀ z ∈ w.support, z ∈ box d n := by
   induction w with
@@ -91,8 +120,7 @@ private theorem boxEdgeWalk_support_mem {x y : Site d}
         have hb : b ∈ box d n := (mem_boxEdges_iff.mp hedge).2.1
         exact ih hb z hz
 
-
-theorem threeExitGraph_core_reachable (inside : Fin 3 → Site d)
+lemma threeExitGraph_core_reachable (inside : Fin 3 → Site d)
     {x y : ↑(boxFinsetBK d n)} :
     (threeExitGraph inside).Reachable (Sum.inl x) (Sum.inl y) := by
   classical
@@ -115,8 +143,7 @@ theorem threeExitGraph_core_reachable (inside : Fin 3 → Site d)
   }
   exact ⟨wi.map f⟩
 
-
-theorem threeExitGraph_connected (inside : Fin 3 → Site d)
+lemma threeExitGraph_connected (inside : Fin 3 → Site d)
     (hinside : ∀ i, inside i ∈ box d n) :
     (threeExitGraph (n := n) inside).Connected := by
   classical
@@ -138,13 +165,12 @@ theorem threeExitGraph_connected (inside : Fin 3 → Site d)
   obtain ⟨qb, hb⟩ := toCore b
   exact ha.trans ((threeExitGraph_core_reachable inside).trans hb.symm)
 
-
-
+/-- The lattice site of a vertex: box sites map to themselves and tip `i` to `outside i`. -/
 def threeExitSite (outside : Fin 3 → Site d) : ThreeExitVertex d n → Site d
   | Sum.inl x => x.1
   | Sum.inr i => outside i
 
-theorem threeExitSite_injective (outside : Fin 3 → Site d)
+lemma threeExitSite_injective (outside : Fin 3 → Site d)
     (hout : ∀ i, outside i ∉ box d n) (houtinj : Function.Injective outside) :
     Function.Injective (threeExitSite (d := d) (n := n) outside) := by
   intro a b h
@@ -160,7 +186,7 @@ theorem threeExitSite_injective (outside : Fin 3 → Site d)
       simpa only [boxFinsetBK, Set.Finite.mem_toFinset] using b.2))
   · exact congrArg Sum.inr (houtinj h)
 
-theorem threeExitGraph_maps_to_lattice (inside outside : Fin 3 → Site d)
+lemma threeExitGraph_maps_to_lattice (inside outside : Fin 3 → Site d)
     (hexit : ∀ i, (hypercubicLattice d).Adj (inside i) (outside i))
     {a b : ThreeExitVertex d n} (hab : (threeExitGraph inside).Adj a b) :
     (hypercubicLattice d).Adj (threeExitSite outside a) (threeExitSite outside b) := by
@@ -170,8 +196,7 @@ theorem threeExitGraph_maps_to_lattice (inside outside : Fin 3 → Site d)
   · simpa [threeExitGraph, threeExitSite] using hab ▸ (hexit i).symm
   · simp [threeExitGraph] at hab
 
-
-theorem lattice_three_exit_tree (inside outside : Fin 3 → Site d)
+lemma lattice_three_exit_tree (inside outside : Fin 3 → Site d)
     (hinside : ∀ i, inside i ∈ box d n)
     (hout : ∀ i, outside i ∉ box d n)
     (houtinj : Function.Injective outside)

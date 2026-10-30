@@ -6,76 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+
+/-!
+# Menger cores and corridor routing
+
+A Menger core, three corridors from neighbours of the origin to three distinct clusters, gives
+disjoint routing and the corridor cover of a trifurcation route.
+
+## i. Overview
+
+`MengerCore ω` consists of three neighbours `a_i` of the origin and a finite edge set `G` whose
+corridor steps lead from `a_i` to sites `w_i` in three distinct infinite clusters. Corridors to
+distinct clusters are disjoint, so the core gives disjoint routing. `MengerRoutingCover d n` asks
+for a core in every configuration with three distinct infinite clusters meeting `B_n`.
+
+## ii. Key results
+
+- `mng_disjoint_of_cluster_ne` : corridors to distinct clusters are disjoint
+- `mng_disjointRouting_of_mengerCore` : a Menger core gives disjoint routing
+- `mng_corridorCover_of_mengerCover` : the routing cover gives the corridor cover
+- `mng_burton_keane_uniqueness_mengerCover` : uniqueness from the routing cover and a
+  configuration-wide trifurcation bound
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -91,39 +58,22 @@ namespace DisjointPaths
 
 variable {d : ℕ}
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem mng_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (w : Site d)
+lemma mng_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (w : Site d)
     {u v : Site d} (hu : u ∈ cluster d ϱ w) (hadj : (openSubgraph d ϱ).Adj u v) :
     v ∈ cluster d ϱ w := by
   rw [mem_cluster] at hu ⊢
   exact hu.trans hadj.reachable
 
-
-
-
-
-theorem mng_corridor_mem_destCluster (ω : ConfigSpace (Sym2 (Site d)))
+lemma mng_corridor_mem_destCluster (ω : ConfigSpace (Sym2 (Site d)))
     (G : Finset (Sym2 (Site d))) {a w : Site d}
     (hc : Relation.ReflTransGen (CorridorStep G) a w) :
     a ∈ cluster d (removeSite 0 (forceOpenFinset G ω)) w := by
   rw [mem_cluster]
   exact (connected_removeSite_forceOpen_of_corridor ω G hc).symm
 
-
-
-
-theorem mng_disjoint_of_cluster_ne (ϱ : ConfigSpace (Sym2 (Site d))) (w₁ w₂ : Site d)
+lemma mng_disjoint_of_cluster_ne (ϱ : ConfigSpace (Sym2 (Site d))) (w₁ w₂ : Site d)
     (h : cluster d ϱ w₁ ≠ cluster d ϱ w₂) :
     Disjoint (cluster d ϱ w₁) (cluster d ϱ w₂) := by
   rw [Set.disjoint_left]
@@ -131,22 +81,8 @@ theorem mng_disjoint_of_cluster_ne (ϱ : ConfigSpace (Sym2 (Site d))) (w₁ w₂
   rw [mem_cluster] at hz1 hz2
   exact h (cluster_eq_of_connected (hz1.trans hz2.symm))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A Menger core at the origin: three neighbours `a_i` and an edge set `G` whose corridor steps
+lead from `a_i` to sites in three pairwise distinct infinite clusters. -/
 def MengerCore (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (G : Finset (Sym2 (Site d))) (w₁ w₂ w₃ : Site d),
     (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -165,67 +101,29 @@ def MengerCore (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
       cluster d (removeSite 0 (forceOpenFinset G ω)) w₂
         ≠ cluster d (removeSite 0 (forceOpenFinset G ω)) w₃)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem mng_disjointRouting_of_mengerCore (ω : ConfigSpace (Sym2 (Site d)))
+lemma mng_disjointRouting_of_mengerCore (ω : ConfigSpace (Sym2 (Site d)))
     (h : MengerCore ω) : DisjointCorridorRouting ω := by
   obtain ⟨a₁, a₂, a₃, G, w₁, w₂, w₃, hne, hadj,
     ⟨hc1, hc2, hc3⟩, ⟨hw1, hw2, hw3⟩, hd12, hd13, hd23⟩ := h
   set ϱ := removeSite (0 : Site d) (forceOpenFinset G ω) with hϱ
-  
   refine ⟨a₁, a₂, a₃, G, w₁, w₂, w₃,
     cluster d ϱ w₁, cluster d ϱ w₂, cluster d ϱ w₃,
     hne, hadj, ⟨hc1, hc2, hc3⟩, ⟨hw1, hw2, hw3⟩, ?_, ?_, ?_⟩
-  · 
-    exact ⟨mng_corridor_mem_destCluster ω G hc1,
+  · exact ⟨mng_corridor_mem_destCluster ω G hc1,
       mng_corridor_mem_destCluster ω G hc2,
       mng_corridor_mem_destCluster ω G hc3⟩
-  · 
-    exact ⟨fun u v hu hadj => mng_cluster_adjClosed ϱ w₁ hu hadj,
+  · exact ⟨fun u v hu hadj => mng_cluster_adjClosed ϱ w₁ hu hadj,
       fun u v hu hadj => mng_cluster_adjClosed ϱ w₂ hu hadj,
       fun u v hu hadj => mng_cluster_adjClosed ϱ w₃ hu hadj⟩
-  · 
-    exact ⟨mng_disjoint_of_cluster_ne ϱ w₁ w₂ hd12,
+  · exact ⟨mng_disjoint_of_cluster_ne ϱ w₁ w₂ hd12,
       mng_disjoint_of_cluster_ne ϱ w₁ w₃ hd13,
       mng_disjoint_of_cluster_ne ϱ w₂ w₃ hd23⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem mng_forceOpenFinset_empty (ω : ConfigSpace (Sym2 (Site d))) :
+lemma mng_forceOpenFinset_empty (ω : ConfigSpace (Sym2 (Site d))) :
     forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by
   funext e; simp [forceOpenFinset]
 
-
-
-
-
-
-
-
-
-
-
-theorem mng_mengerCore_of_neighborClusters (ω : ConfigSpace (Sym2 (Site d)))
+lemma mng_mengerCore_of_neighborClusters (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d)
     (hne : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃)
     (hadj : (hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
@@ -243,57 +141,23 @@ theorem mng_mengerCore_of_neighborClusters (ω : ConfigSpace (Sym2 (Site d)))
   · rw [mng_forceOpenFinset_empty]; exact hinf
   · rw [mng_forceOpenFinset_empty]; exact hdist
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Every configuration with three distinct infinite clusters meeting `B_n` has a Menger core. -/
 def MengerRoutingCover (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n, MengerCore ω
 
-
-
-
-
-theorem mng_disjointRouting (d n : ℕ) (hcov : MengerRoutingCover d n) :
+lemma mng_disjointRouting (d n : ℕ) (hcov : MengerRoutingCover d n) :
     ∀ ω ∈ threeMeetBox d n, DisjointCorridorRouting ω :=
   fun ω hω => mng_disjointRouting_of_mengerCore ω (hcov ω hω)
 
-
-
-
-theorem mng_corridorCover_of_mengerCover {n : ℕ} (hcov : MengerRoutingCover d n) :
+lemma mng_corridorCover_of_mengerCover {n : ℕ} (hcov : MengerRoutingCover d n) :
     threeMeetBox d n ⊆
       ⋃ (a₁ : Site d) (a₂ : Site d) (a₃ : Site d) (G : Finset (Sym2 (Site d))),
         CorridorWorks a₁ a₂ a₃ G :=
   corridorCover_of_routing (fun ω hω => mng_disjointRouting d n hcov ω hω)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Burton–Keane uniqueness from a Menger routing cover. The configuration-wide trifurcation bound
+`hbound` together with `hdens` is unsatisfiable when `d ≥ 1` (`tfc_not_hbound_hdens`), so the
+statement is vacuous for `d ≥ 1`. -/
 theorem mng_burton_keane_uniqueness_mengerCover
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)

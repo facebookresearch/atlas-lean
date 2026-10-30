@@ -6,77 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -84,6 +13,41 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BridgeTh
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ReflectedCorridors
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxCutMerge
 public import PhyslibExt.CondensedMatter.IsingModel.FKRepresentation.BoxMagnetization
+
+/-!
+# Insertion tolerance through the box shell in the plane
+
+For Bernoulli percolation in `ℤ²` with `0 < p < 1`, three distinct infinite clusters meeting a box
+can be routed through the shell of the box to the origin, which excludes two or more infinite
+clusters under the shell routing hypothesis.
+
+## i. Overview
+
+Closing the bonds touching `B_n` and removing the origin give the same clusters as removing the
+whole box (`bins_cluster_closeTouch_eq_removeBox`). The event `bins_ExtEvent` that three outside
+sites lie in distinct infinite clusters of that configuration depends only on bonds outside the box,
+so it is independent of the box pattern. Nine distinct infinite clusters meeting the box give three
+exits on the same side of the box (`bins_NineShellEvent_three_same_side`), where reflected corridors
+join them to the origin. `bins_Route` packages the required routing; under it Bernoulli percolation
+has at most one infinite cluster.
+
+## ii. Key results
+
+- `bins_ExtEvent_dependsOn` : the exterior event depends only on bonds outside the box
+- `bins_cluster_closeTouch_eq_removeBox` : closing the box bonds is removing the box
+- `bins_NineShellEvent_three_same_side` : three of nine exits lie on one side
+- `bins_bk_atLeastTwo` : at most one infinite cluster under the shell routing hypothesis
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -100,19 +64,9 @@ set_option linter.unusedVariables false
 set_option linter.unusedSectionVars false
 set_option maxRecDepth 4000
 
+/-! ## A. Results -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bins_cluster_subset_of_openClosed (ω : ConfigSpace (Sym2 (Site 2)))
+lemma bins_cluster_subset_of_openClosed (ω : ConfigSpace (Sym2 (Site 2)))
     {a : Site 2} {S : Set (Site 2)} (ha : a ∈ S)
     (hclosed : ∀ u v : Site 2, u ∈ S → IsOpenEdge 2 (removeSite 0 ω) u v → v ∈ S) :
     cluster 2 (removeSite 0 ω) a ⊆ S := by
@@ -120,14 +74,7 @@ theorem bins_cluster_subset_of_openClosed (ω : ConfigSpace (Sym2 (Site 2)))
   obtain ⟨w⟩ := (hy : (openSubgraph 2 (removeSite 0 ω)).Reachable a y)
   exact bpt2_walk_invariant ω hclosed w ha
 
-
-
-
-
-
-
-
-theorem bins_precursor_of_sides (ω : ConfigSpace (Sym2 (Site 2))) (a₁ a₂ a₃ : Site 2)
+lemma bins_precursor_of_sides (ω : ConfigSpace (Sym2 (Site 2))) (a₁ a₂ a₃ : Site 2)
     (hne : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃)
     (hadj : (hypercubicLattice 2).Adj 0 a₁ ∧ (hypercubicLattice 2).Adj 0 a₂ ∧
       (hypercubicLattice 2).Adj 0 a₃)
@@ -155,53 +102,36 @@ theorem bins_precursor_of_sides (ω : ConfigSpace (Sym2 (Site 2))) (a₁ a₂ a�
   · intro hconn; exact (Set.disjoint_left.mp hd13) (hsub1 (mem_cluster.mpr hconn)) ha3
   · intro hconn; exact (Set.disjoint_left.mp hd23) (hsub2 (mem_cluster.mpr hconn)) ha3
 
-
-
-
-
-
-
-
-
-
-
+/-- The sites `u_i` lie in three pairwise distinct infinite clusters of `ρ`. -/
 def bins_ExtPred (u₁ u₂ u₃ : Site 2) (ρ : ConfigSpace (Sym2 (Site 2))) : Prop :=
   ((cluster 2 ρ u₁).Infinite ∧ (cluster 2 ρ u₂).Infinite ∧ (cluster 2 ρ u₃).Infinite) ∧
     (cluster 2 ρ u₁ ≠ cluster 2 ρ u₂ ∧ cluster 2 ρ u₁ ≠ cluster 2 ρ u₃ ∧
       cluster 2 ρ u₂ ≠ cluster 2 ρ u₃)
 
-
-
-
+/-- The exterior event: after closing the bonds of `I` and removing the origin, the `u_i` lie in
+three pairwise distinct infinite clusters. -/
 def bins_ExtEvent (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : Site 2) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | bins_ExtPred u₁ u₂ u₃ (removeSite 0 (bpt2_closeI I ω))}
 
-
-
-
-theorem bins_ExtEvent_dependsOn (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : Site 2) :
+lemma bins_ExtEvent_dependsOn (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : Site 2) :
     DependsOn (bins_ExtEvent I u₁ u₂ u₃) ((↑I : Set (Sym2 (Site 2)))ᶜ) := by
   intro ω ω' hag
   change bins_ExtPred u₁ u₂ u₃ (removeSite 0 (bpt2_closeI I ω))
       ↔ bins_ExtPred u₁ u₂ u₃ (removeSite 0 (bpt2_closeI I ω'))
   rw [bpt2_removeSite_closeI_congr I hag]
 
-
-theorem bins_measurable_closeI (I : Finset (Sym2 (Site 2))) :
+lemma bins_measurable_closeI (I : Finset (Sym2 (Site 2))) :
     Measurable (fun ω : ConfigSpace (Sym2 (Site 2)) ↦ bpt2_closeI I ω) := by
   apply measurable_pi_iff.mpr
   intro e
   unfold bpt2_closeI
   by_cases he : e ∈ I
   · simp [he]
-  · simp only [he, if_false]
+  · simp only [he, ite_false]
     exact measurable_pi_apply e
 
-
-
-
-theorem bins_ExtEvent_measurable (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : Site 2) :
+lemma bins_ExtEvent_measurable (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : Site 2) :
     MeasurableSet (bins_ExtEvent I u₁ u₂ u₃) := by
   let f : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2)) :=
     fun ω ↦ removeSite 0 (bpt2_closeI I ω)
@@ -220,7 +150,7 @@ theorem bins_ExtEvent_measurable (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : 
         ({ω | Connected 2 (f ω) u₁ u₃}ᶜ)) ∩
         ({ω | Connected 2 (f ω) u₂ u₃}ᶜ)) := by
     ext ω
-    simp only [bins_ExtEvent, bins_ExtPred, Set.mem_setOf_eq, Set.mem_inter_iff,
+    simp only [bins_ExtEvent, bins_ExtPred, Set.mem_ofPred_eq, Set.mem_inter_iff,
       Set.mem_compl_iff, f]
     constructor
     · rintro ⟨⟨hi1, hi2, hi3⟩, hd12, hd13, hd23⟩
@@ -238,11 +168,7 @@ theorem bins_ExtEvent_measurable (I : Finset (Sym2 (Site 2))) (u₁ u₂ u₃ : 
     ((((hconn u₁ u₂).compl).inter ((hconn u₁ u₃).compl)).inter
       ((hconn u₂ u₃).compl))
 
-
-
-
-
-theorem bins_exists_ExtEvent_pos_of_cover (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
+lemma bins_exists_ExtEvent_pos_of_cover (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (I : Finset (Sym2 (Site 2)))
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (threeMeetBox 2 n))
     (hcover : threeMeetBox 2 n ⊆
@@ -263,15 +189,7 @@ theorem bins_exists_ExtEvent_pos_of_cover (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ
   apply (ne_of_gt hpos)
   simpa [μ] using hz
 
-
-
-
-
-
-
-
-
-theorem bins_openSubgraph_closeTouch_eq_removeBox (n : ℕ)
+lemma bins_openSubgraph_closeTouch_eq_removeBox (n : ℕ)
     (ω : ConfigSpace (Sym2 (Site 2))) :
     openSubgraph 2 (removeSite 0 (bpt2_closeI (bondFinsetTouch 2 n) ω)) =
       openSubgraph 2 (removeSites (Ising.boxFinset 2 n) ω) := by
@@ -290,12 +208,12 @@ theorem bins_openSubgraph_closeTouch_eq_removeBox (n : ℕ)
       aesop
     by_cases h0 : (0 : Site 2) ∈ s(x,y)
     · simp [h0] at hopen
-    · simp only [h0, if_false] at hopen
+    · simp only [h0, ite_false] at hopen
       by_cases ht : x ∈ box 2 n ∨ y ∈ box 2 n
-      · rw [if_pos (htouch.mpr ht)] at hopen
+      · rw [ite_eq_left (htouch.mpr ht)] at hopen
         contradiction
-      · rw [if_neg (fun h ↦ ht (hsite.mp h))]
-        rw [if_neg (fun h ↦ ht (htouch.mp h))] at hopen
+      · rw [ite_eq_right (fun h ↦ ht (hsite.mp h))]
+        rw [ite_eq_right (fun h ↦ ht (htouch.mp h))] at hopen
         exact hopen
   · rintro ⟨hadj, hopen⟩
     refine ⟨hadj, ?_⟩
@@ -308,18 +226,17 @@ theorem bins_openSubgraph_closeTouch_eq_removeBox (n : ℕ)
       simp only [Sym2.mem_iff, Ising.mem_boxFinset]
       aesop
     by_cases ht : x ∈ box 2 n ∨ y ∈ box 2 n
-    · rw [if_pos (hsite.mpr ht)] at hopen
+    · rw [ite_eq_left (hsite.mpr ht)] at hopen
       contradiction
     · have h0 : (0 : Site 2) ∉ s(x,y) := by
         intro h
         rw [Sym2.mem_iff] at h
         rcases h with h | h <;> subst_vars <;> apply ht <;> simp [mem_box]
-      rw [if_neg h0, if_neg (fun h ↦ ht (htouch.mp h))]
-      rw [if_neg (fun h ↦ ht (hsite.mp h))] at hopen
+      rw [ite_eq_right h0, ite_eq_right (fun h ↦ ht (htouch.mp h))]
+      rw [ite_eq_right (fun h ↦ ht (hsite.mp h))] at hopen
       exact hopen
 
-
-theorem bins_cluster_closeTouch_eq_removeBox (n : ℕ)
+lemma bins_cluster_closeTouch_eq_removeBox (n : ℕ)
     (ω : ConfigSpace (Sym2 (Site 2))) (u : Site 2) :
     cluster 2 (removeSite 0 (bpt2_closeI (bondFinsetTouch 2 n) ω)) u =
       cluster 2 (removeSites (Ising.boxFinset 2 n) ω) u := by
@@ -328,10 +245,7 @@ theorem bins_cluster_closeTouch_eq_removeBox (n : ℕ)
     (openSubgraph 2 (removeSites (Ising.boxFinset 2 n) ω)).Reachable u z
   rw [bins_openSubgraph_closeTouch_eq_removeBox]
 
-
-
-
-theorem bins_threeMeetBox_subset_iUnion_ExtEvent_touch (n : ℕ) :
+lemma bins_threeMeetBox_subset_iUnion_ExtEvent_touch (n : ℕ) :
     threeMeetBox 2 n ⊆
       ⋃ u₁ : Site 2, ⋃ u₂ : Site 2, ⋃ u₃ : Site 2,
         bins_ExtEvent (bondFinsetTouch 2 n) u₁ u₂ u₃ := by
@@ -370,9 +284,7 @@ theorem bins_threeMeetBox_subset_iUnion_ExtEvent_touch (n : ℕ) :
     bins_cluster_closeTouch_eq_removeBox, bins_cluster_closeTouch_eq_removeBox]
   simpa [T] using ⟨⟨hu1, hu2, hu3⟩, hcut12, hcut13, hcut23⟩
 
-
-
-theorem bins_exists_ExtEvent_touch_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
+lemma bins_exists_ExtEvent_touch_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (threeMeetBox 2 n)) :
     ∃ u₁ u₂ u₃ : Site 2,
       0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
@@ -380,7 +292,8 @@ theorem bins_exists_ExtEvent_touch_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
   bins_exists_ExtEvent_pos_of_cover p hp1 n (bondFinsetTouch 2 n) hpos
     (bins_threeMeetBox_subset_iUnion_ExtEvent_touch n)
 
-
+/-- The exterior event for the bonds touching `B_n`, with boundary sites `v_i` of the box adjacent
+to `u_i`. -/
 def bins_ShellExtEvent (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | (v₁ ∈ box 2 n ∧ (hypercubicLattice 2).Adj v₁ u₁) ∧
@@ -388,15 +301,15 @@ def bins_ShellExtEvent (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
     (v₃ ∈ box 2 n ∧ (hypercubicLattice 2).Adj v₃ u₃) ∧
     ω ∈ bins_ExtEvent (bondFinsetTouch 2 n) u₁ u₂ u₃}
 
-theorem bins_ShellExtEvent_dependsOn (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
+lemma bins_ShellExtEvent_dependsOn (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
     DependsOn (bins_ShellExtEvent n v₁ v₂ v₃ u₁ u₂ u₃)
       ((↑(bondFinsetTouch 2 n) : Set (Sym2 (Site 2)))ᶜ) := by
   intro ω ω' hag
-  simp only [bins_ShellExtEvent, Set.mem_setOf_eq]
+  simp only [bins_ShellExtEvent, Set.mem_ofPred_eq]
   have hExt := (bins_ExtEvent_dependsOn (bondFinsetTouch 2 n) u₁ u₂ u₃) ω ω' hag
   tauto
 
-theorem bins_ShellExtEvent_measurable (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
+lemma bins_ShellExtEvent_measurable (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ : Site 2) :
     MeasurableSet (bins_ShellExtEvent n v₁ v₂ v₃ u₁ u₂ u₃) := by
   by_cases h : (v₁ ∈ box 2 n ∧ (hypercubicLattice 2).Adj v₁ u₁) ∧
       (v₂ ∈ box 2 n ∧ (hypercubicLattice 2).Adj v₂ u₂) ∧
@@ -404,7 +317,7 @@ theorem bins_ShellExtEvent_measurable (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ :
   · have heq : bins_ShellExtEvent n v₁ v₂ v₃ u₁ u₂ u₃ =
         bins_ExtEvent (bondFinsetTouch 2 n) u₁ u₂ u₃ := by
       ext ω
-      simp only [bins_ShellExtEvent, Set.mem_setOf_eq]
+      simp only [bins_ShellExtEvent, Set.mem_ofPred_eq]
       constructor
       · exact fun h' ↦ h'.2.2.2
       · intro h'
@@ -413,14 +326,12 @@ theorem bins_ShellExtEvent_measurable (n : ℕ) (v₁ v₂ v₃ u₁ u₂ u₃ :
     exact bins_ExtEvent_measurable _ _ _ _
   · have heq : bins_ShellExtEvent n v₁ v₂ v₃ u₁ u₂ u₃ = ∅ := by
       ext ω
-      simp only [bins_ShellExtEvent, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [bins_ShellExtEvent, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       tauto
     rw [heq]
     exact MeasurableSet.empty
 
-
-
-theorem bins_threeMeetBox_subset_iUnion_ShellExtEvent (n : ℕ) :
+lemma bins_threeMeetBox_subset_iUnion_ShellExtEvent (n : ℕ) :
     threeMeetBox 2 n ⊆
       ⋃ v₁ : Site 2, ⋃ v₂ : Site 2, ⋃ v₃ : Site 2,
       ⋃ u₁ : Site 2, ⋃ u₂ : Site 2, ⋃ u₃ : Site 2,
@@ -479,8 +390,7 @@ theorem bins_threeMeetBox_subset_iUnion_ShellExtEvent (n : ℕ) :
     bins_cluster_closeTouch_eq_removeBox, bins_cluster_closeTouch_eq_removeBox]
   exact ⟨⟨hu1', hu2', hu3'⟩, hcut12, hcut13, hcut23⟩
 
-
-theorem bins_exists_ShellExtEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
+lemma bins_exists_ShellExtEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (threeMeetBox 2 n)) :
     ∃ v₁ v₂ v₃ u₁ u₂ u₃ : Site 2,
       0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
@@ -500,19 +410,13 @@ theorem bins_exists_ShellExtEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
   apply (ne_of_gt hpos)
   simpa [μ] using hz
 
-
-
-
-
-
-
+/-- `N = ∞` and nine sites of `B_n` lie in pairwise distinct infinite clusters. -/
 def bins_NineMeetBox (n : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | numInfiniteClusters 2 ω = ⊤ ∧ ∃ x : Fin 9 → Site 2,
     (∀ i, x i ∈ box 2 n ∧ (cluster 2 ω (x i)).Infinite) ∧
     ∀ i j, i ≠ j → cluster 2 ω (x i) ≠ cluster 2 ω (x j)}
 
-
-theorem bins_iEqTop_subset_iUnion_NineMeetBox :
+lemma bins_iEqTop_subset_iUnion_NineMeetBox :
     {ω : ConfigSpace (Sym2 (Site 2)) | numInfiniteClusters 2 ω = ⊤}
       ⊆ ⋃ n, bins_NineMeetBox n := by
   intro ω htop
@@ -538,8 +442,7 @@ theorem bins_iEqTop_subset_iUnion_NineMeetBox :
     have hijval : i.val = j.val := emb.injective hemb
     exact hij (Fin.ext hijval)
 
-
-theorem bins_exists_NineMeetBox_pos (p : ℝ≥0) (hp1 : p ≤ 1)
+lemma bins_exists_NineMeetBox_pos (p : ℝ≥0) (hp1 : p ≤ 1)
     (htop : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       {ω | numInfiniteClusters 2 ω = ⊤}) :
     ∃ n : ℕ, 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
@@ -553,7 +456,8 @@ theorem bins_exists_NineMeetBox_pos (p : ℝ≥0) (hp1 : p ≤ 1)
   apply (ne_of_gt htop)
   simpa [μ] using hz
 
-
+/-- Nine shell exits `v_i → u_i` of `B_n` whose outer ends lie in distinct infinite clusters of the
+configuration with the box removed. -/
 def bins_NineShellEvent (n : ℕ) (v u : Fin 9 → Site 2) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | (∀ i, v i ∈ box 2 n ∧ (hypercubicLattice 2).Adj (v i) (u i)) ∧
@@ -563,8 +467,7 @@ def bins_NineShellEvent (n : ℕ) (v u : Fin 9 → Site 2) :
       cluster 2 (removeSite 0 (bpt2_closeI (bondFinsetTouch 2 n) ω)) (u i) ≠
       cluster 2 (removeSite 0 (bpt2_closeI (bondFinsetTouch 2 n) ω)) (u j)}
 
-
-theorem bins_NineMeetBox_subset_iUnion_NineShellEvent (n : ℕ) :
+lemma bins_NineMeetBox_subset_iUnion_NineShellEvent (n : ℕ) :
     bins_NineMeetBox n ⊆
       ⋃ v : Fin 9 → Site 2, ⋃ u : Fin 9 → Site 2, bins_NineShellEvent n v u := by
   intro ω hω
@@ -612,8 +515,7 @@ theorem bins_NineMeetBox_subset_iUnion_NineShellEvent (n : ℕ) :
     rw [bins_cluster_closeTouch_eq_removeBox, bins_cluster_closeTouch_eq_removeBox]
     exact hcut i j hij
 
-
-theorem bins_exists_NineShellEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
+lemma bins_exists_NineShellEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       (bins_NineMeetBox n)) :
     ∃ (v u : Fin 9 → Site 2),
@@ -630,9 +532,7 @@ theorem bins_exists_NineShellEvent_pos (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
   apply (ne_of_gt hpos)
   simpa [μ] using hz
 
-
-
-theorem bins_exists_NineShellEvent_pos_of_threeMeetBox
+lemma bins_exists_NineShellEvent_pos_of_threeMeetBox
     (p : ℝ≥0) (hp1 : p ≤ 1) (n : ℕ)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       (threeMeetBox 2 n)) :
@@ -646,16 +546,14 @@ theorem bins_exists_NineShellEvent_pos_of_threeMeetBox
   obtain ⟨v, u, hvu⟩ := bins_exists_NineShellEvent_pos p hp1 m hm
   exact ⟨m, v, u, hvu⟩
 
-
+/-- The side of `B_n` on which the outside neighbour `u` lies (right, left, top, bottom). -/
 def bins_outSide (n : ℕ) (u : Site 2) : Fin 4 :=
   if u 0 = (n : ℤ) + 1 then 0
   else if u 0 = -((n : ℤ) + 1) then 1
   else if u 1 = (n : ℤ) + 1 then 2
   else 3
 
-
-
-theorem bins_outside_neighbor_side {n : ℕ} {v u : Site 2}
+lemma bins_outside_neighbor_side {n : ℕ} {v u : Site 2}
     (hv : v ∈ box 2 n) (hadj : (hypercubicLattice 2).Adj v u) (hu : u ∉ box 2 n) :
     u 0 = (n : ℤ) + 1 ∨ u 0 = -((n : ℤ) + 1) ∨
       u 1 = (n : ℤ) + 1 ∨ u 1 = -((n : ℤ) + 1) := by
@@ -687,8 +585,7 @@ theorem bins_outside_neighbor_side {n : ℕ} {v u : Site 2}
       right; right; right
       omega
 
-
-theorem bins_v_coord_of_outSide {n : ℕ} {v u : Site 2}
+lemma bins_v_coord_of_outSide {n : ℕ} {v u : Site 2}
     (hv : v ∈ box 2 n) (hadj : (hypercubicLattice 2).Adj v u) (hu : u ∉ box 2 n) :
     (bins_outSide n u = 0 → v 0 = (n : ℤ)) ∧
     (bins_outSide n u = 1 → v 0 = -(n : ℤ)) ∧
@@ -699,9 +596,7 @@ theorem bins_v_coord_of_outSide {n : ℕ} {v u : Site 2}
   unfold bins_outSide
   split_ifs with hR hL hT <;> simp_all <;> omega
 
-
-
-theorem bins_u_coord_of_outSide {n : ℕ} {v u : Site 2}
+lemma bins_u_coord_of_outSide {n : ℕ} {v u : Site 2}
     (hv : v ∈ box 2 n) (hadj : (hypercubicLattice 2).Adj v u) (hu : u ∉ box 2 n) :
     (bins_outSide n u = 0 → u 0 = (n : ℤ) + 1 ∧ u 1 = v 1) ∧
     (bins_outSide n u = 1 → u 0 = -((n : ℤ) + 1) ∧ u 1 = v 1) ∧
@@ -713,9 +608,7 @@ theorem bins_u_coord_of_outSide {n : ℕ} {v u : Site 2}
   unfold bins_outSide at hc ⊢
   split_ifs with hR hL hT <;> simp_all <;> omega
 
-
-
-theorem bins_NineShellEvent_three_same_side {n : ℕ} {v u : Fin 9 → Site 2}
+lemma bins_NineShellEvent_three_same_side {n : ℕ} {v u : Fin 9 → Site 2}
     {ω : ConfigSpace (Sym2 (Site 2))} (hE : ω ∈ bins_NineShellEvent n v u) :
     ∃ i j k : Fin 9, i ≠ j ∧ i ≠ k ∧ j ≠ k ∧
       v i ≠ v j ∧ v i ≠ v k ∧ v j ≠ v k ∧
@@ -815,11 +708,7 @@ theorem bins_NineShellEvent_three_same_side {n : ℕ} {v u : Fin 9 → Site 2}
     exact ⟨hci.2.2.2 (by simpa [side] using hi),
       hcj.2.2.2 (by simpa [side] using hj), hck.2.2.2 (by simpa [side] using hk)⟩
 
-
-
-
-
-theorem bins_routePackage_of_corridors (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
+lemma bins_routePackage_of_corridors (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
     (u₁ u₂ u₃ : Site 2) (I : Finset (Sym2 (Site 2)))
     (hu₁ : u₁ ≠ ![0, 0]) (hu₂ : u₂ ≠ ![0, 0]) (hu₃ : u₃ ≠ ![0, 0])
     (hC : bcor_Corridors m u₁ u₂ u₃)
@@ -847,21 +736,9 @@ theorem bins_routePackage_of_corridors (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
     hne, hadj, bins_ExtEvent_measurable I u₁ u₂ u₃,
     bins_ExtEvent_dependsOn I u₁ u₂ u₃, hXpos, hgeo⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The shell routing hypothesis for Bernoulli percolation at density `p`: positive probability of
+three distinct infinite clusters meeting `B_n` yields a finite pattern and a precursor event of
+positive probability at the origin. -/
 def bins_Route (p : ℝ≥0) (hp1 : p ≤ 1) : Prop :=
   ∀ n : ℕ, 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (threeMeetBox 2 n) →
     ∃ (I : Finset (Sym2 (Site 2))) (η₀ : ConfigSpace ↥I) (a₁ a₂ a₃ : Site 2)
@@ -873,12 +750,7 @@ def bins_Route (p : ℝ≥0) (hp1 : p ≤ 1) : Prop :=
       0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 X ∧
       cylinder I ({η₀} : Set (ConfigSpace ↥I)) ∩ X ⊆ NeighborTrifPrecursor 2 a₁ a₂ a₃
 
-
-
-
-
-
-theorem bins_hroute_of_route (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
+lemma bins_hroute_of_route (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
     (hres : bins_Route p hp1) :
     ∀ n : ℕ, 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (threeMeetBox 2 n) →
       ∃ a₁ a₂ a₃ : Site 2,
@@ -891,11 +763,7 @@ theorem bins_hroute_of_route (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt :
     (bcl_cylinder_measurable I η₀) hXmeas (bcl_cylinder_dependsOn I η₀) hXdep
   exact bdec_precursorPos_of_decoupled p hp1 hp0 hplt a₁ a₂ a₃ I η₀ X hindep hXpos hgeo
 
-
-
-
-
-theorem bins_bk (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
+lemma bins_bk (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
     (hres : bins_Route p hp1) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
         {ω | numInfiniteClusters 2 ω = 0} = 1 ∨
@@ -906,9 +774,7 @@ theorem bins_bk (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
           {ω | numInfiniteClusters 2 ω ≤ 1} = 1 :=
   bfx_bk_of_route (by norm_num) p hp1 hp0 (bins_hroute_of_route p hp1 hp0 hplt hres)
 
-
-
-theorem bins_bk_atLeastTwo (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
+lemma bins_bk_atLeastTwo (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1)
     (hres : bins_Route p hp1) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
   (bins_bk p hp1 hp0 hplt hres).2.1

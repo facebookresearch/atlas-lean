@@ -6,51 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRestrictedReach
+
+/-!
+# Menger's theorem for finite graphs
+
+In a finite graph the maximum number of disjoint `A`–`B` paths equals the minimum size of an `A`–`B`
+separator.
+
+## i. Overview
+
+The proof is the classical induction on the number of edges. If some minimum separator `S` is
+neither contained in `A` nor in `B`, the graph splits at `S` into an `A`-side and a `B`-side; each
+side has fewer edges and yields a fan of `k` disjoint paths to `S` (`bc19_AFan`), and the two fans
+glue along `S` (`bc19_glueFans`). Otherwise an edge can be contracted or deleted (`bc19_directSum`).
+`bc19_menger_minmax` is the resulting min–max theorem for sets. `MathlibExt.menger_vertex` proves
+the two-vertex version.
+
+## ii. Key results
+
+- `bc19_glueFans` : gluing two fans along a separator
+- `bc19_hardDir_all` : the hard direction for every finite graph
+- `bc19_menger_minmax` : Menger's theorem: `k` disjoint paths when every separator has `k` vertices
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- K. Menger, *Zur allgemeinen Kurventheorie*, Fund. Math. 10 (1927), 96–115.
+- R. Diestel, *Graph Theory*, 5th ed., Springer (2017), Theorem 3.3.1.
+-/
 
 @[expose] public section
 
@@ -62,35 +52,32 @@ universe u
 
 variable {V : Type u} [DecidableEq V] {G : SimpleGraph V} {k : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
+/-- A fan of `k` paths from distinct vertices of `A` to distinct vertices of `S`, inside the region
+`R`. -/
 structure bc19_AFan (G : SimpleGraph V) (A S R : Set V) (k : ℕ) where
-  
+
   a : Fin k → V
-  
+
   c : Fin k → V
-  
+
   q : ∀ i, G.Walk (a i) (c i)
   ha : ∀ i, a i ∈ A
   hc : ∀ i, c i ∈ S
   hq : ∀ i, (q i).IsPath
-  
+
   hmeet : ∀ i, ∀ z ∈ (q i).support, z ∈ S → z = c i
-  
+
   hreg : ∀ i, ∀ z ∈ (q i).support, z ∈ R
-  
+
   hdisj : ∀ ⦃i j⦄, i ≠ j → ∀ ⦃z⦄, z ∈ (q i).support → z ∉ (q j).support
 
-omit [DecidableEq V] in
+/-! ## B. Results -/
 
-theorem bc19_AFan_c_inj {A S R : Set V} (F : bc19_AFan G A S R k) :
+
+omit [DecidableEq V] in
+lemma bc19_AFan_c_inj {A S R : Set V} (F : bc19_AFan G A S R k) :
     Function.Injective F.c := by
   intro i j hij
   by_contra hne
@@ -99,9 +86,9 @@ theorem bc19_AFan_c_inj {A S R : Set V} (F : bc19_AFan G A S R k) :
   have hj' : F.c i ∈ (F.q j).support := by rw [hij]; exact hj
   exact F.hdisj hne hi hj'
 
-omit [DecidableEq V] in
 
-theorem bc19_AFan_c_cover [Fintype V] {A S R : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_AFan_c_cover [Fintype V] {A S R : Set V} (hS : S.ncard = k)
     (F : bc19_AFan G A S R k) : ∀ s ∈ S, ∃ i, F.c i = s := by
   have hinj := bc19_AFan_c_inj F
   set T := Set.range F.c with hT
@@ -112,14 +99,8 @@ theorem bc19_AFan_c_cover [Fintype V] {A S R : Set V} (hS : S.ncard = k)
   intro s hs
   rw [← hTeq] at hs; obtain ⟨i, hi⟩ := hs; exact ⟨i, hi⟩
 
-
-
-
-
-
-
-
-
+/-- The fan obtained by cutting each path of a disjoint `A`–`S` family at its first vertex in `S`.
+-/
 noncomputable def bc19_AFan_of_family {A S R : Set V}
     (F : bc16_DisjointPathFamily G A S (Fin k))
     (hreg : ∀ i, ∀ z ∈ (F.p i).support, z ∈ R) :
@@ -140,23 +121,19 @@ noncomputable def bc19_AFan_of_family {A S R : Set V}
       intro i j hij z hzi hzj
       exact F.hdisj hij (hqsub i hzi) (hqsub j hzj) }
 
-
-
-
-
-
-
-
+/-- Matching of an `A`-fan and a `B`-fan with the same end set `S`. -/
 noncomputable def bc19_match [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) : Fin k → Fin k :=
   fun i => (bc19_AFan_c_cover hS FB (FA.c i) (FA.hc i)).choose
 
-theorem bc19_match_spec [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_match_spec [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) (i : Fin k) :
     FB.c (bc19_match hS FA FB i) = FA.c i :=
   (bc19_AFan_c_cover hS FB (FA.c i) (FA.hc i)).choose_spec
 
-theorem bc19_match_inj [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_match_inj [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) :
     Function.Injective (bc19_match hS FA FB) := by
   intro i j hij
@@ -165,28 +142,28 @@ theorem bc19_match_inj [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
   rw [hij] at h1
   exact bc19_AFan_c_inj FA (h1.symm.trans h2)
 
-
-
-
-
+/-- The path obtained by following an `A`-fan path to `S` and the matched `B`-fan path back. -/
 noncomputable def bc19_gluedPath [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) (i : Fin k) :
     G.Walk (FA.a i) (FB.a (bc19_match hS FA FB i)) :=
   (FA.q i).append ((FB.q (bc19_match hS FA FB i)).reverse.copy (bc19_match_spec hS FA FB i) rfl)
 
-theorem bc19_Bhalf_support [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_Bhalf_support [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) (i : Fin k) :
     ((FB.q (bc19_match hS FA FB i)).reverse.copy (bc19_match_spec hS FA FB i) rfl).support
       = (FB.q (bc19_match hS FA FB i)).support.reverse := by
   rw [Walk.support_copy, Walk.support_reverse]
 
-theorem bc19_gluedPath_support_mem [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_gluedPath_support_mem [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) (i : Fin k) {z : V} :
     z ∈ (bc19_gluedPath hS FA FB i).support ↔
       z ∈ (FA.q i).support ∨ z ∈ (FB.q (bc19_match hS FA FB i)).support := by
   rw [bc19_gluedPath, Walk.mem_support_append_iff, bc19_Bhalf_support, List.mem_reverse]
 
-theorem bc19_gluedPath_isPath [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_gluedPath_isPath [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (hRR : RA ∩ RB ⊆ S)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) (i : Fin k) :
     (bc19_gluedPath hS FA FB i).IsPath := by
@@ -197,10 +174,8 @@ theorem bc19_gluedPath_isPath [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = 
     rw [bc19_Bhalf_support, List.mem_reverse] at hzB
     exact FA.hmeet i z hzA (hRR ⟨FA.hreg i z hzA, FB.hreg _ z hzB⟩)
 
-
-
-
-theorem bc19_cross_eq [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
+omit [DecidableEq V] in
+lemma bc19_cross_eq [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (hRR : RA ∩ RB ⊆ S)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) {i j : Fin k} {z : V}
     (hzA : z ∈ (FA.q i).support) (hzB : z ∈ (FB.q (bc19_match hS FA FB j)).support) :
@@ -211,10 +186,7 @@ theorem bc19_cross_eq [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
   rw [bc19_match_spec hS FA FB j] at h2
   rw [← h1, ← h2]
 
-
-
-
-
+/-- The disjoint `A`–`B` family obtained by gluing two fans along a separator `S`. -/
 noncomputable def bc19_glueFans [Fintype V] {A B S RA RB : Set V} (hS : S.ncard = k)
     (hRR : RA ∩ RB ⊆ S)
     (FA : bc19_AFan G A S RA k) (FB : bc19_AFan G B S RB k) :
@@ -234,16 +206,7 @@ noncomputable def bc19_glueFans [Fintype V] {A B S RA RB : Set V} (hS : S.ncard 
     · exact hij (bc19_AFan_c_inj FA (bc19_cross_eq hS hRR FA FB hjA hiB)).symm
     · exact FB.hdisj ((bc19_match_inj hS FA FB).ne hij) hiB hjB
 
-
-
-
-
-
-
-
-
-
-theorem bc19_aFan_extract [Fintype V] {A B S : Set V}
+lemma bc19_aFan_extract [Fintype V] {A B S : Set V}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hSsep : bc16_IsSeparator G A B S)
     (hH : bc17_HardDir (bc17_restr G (bc18_AReach G A S)) A S) :
@@ -259,9 +222,8 @@ theorem bc19_aFan_extract [Fintype V] {A B S : Set V}
     rw [Walk.support_mapLe_eq_support] at hz; exact hregF i z hz
   exact ⟨bc19_AFan_of_family F' hregF'⟩
 
-
-
-theorem bc19_trivFan [Fintype V] {B S : Set V} (hS : S.ncard = k) (hSB : S ⊆ B) :
+omit [DecidableEq V] in
+lemma bc19_trivFan [Fintype V] {B S : Set V} (hS : S.ncard = k) (hSB : S ⊆ B) :
     Nonempty (bc19_AFan G B S S k) := by
   obtain ⟨f, hinj, hf⟩ := bc17_exists_finInj_of_le_ncard (Set.toFinite S) (le_of_eq hS.symm)
   exact ⟨{
@@ -283,16 +245,8 @@ theorem bc19_trivFan [Fintype V] {B S : Set V} (hS : S.ncard = k) (hSB : S ⊆ B
       exact hij (hinj (hzi.symm.trans hzj)) }⟩
 
 
-
-
-
-
-
-
-
 omit [DecidableEq V] in
-
-theorem bc19_lastEdge {a s : V} (Q : G.Walk a s) (hne : a ≠ s) :
+lemma bc19_lastEdge {a s : V} (Q : G.Walk a s) (hne : a ≠ s) :
     ∃ u, G.Adj u s ∧ u ∈ Q.support := by
   induction Q with
   | nil => exact absurd rfl hne
@@ -302,24 +256,19 @@ theorem bc19_lastEdge {a s : V} (Q : G.Walk a s) (hne : a ≠ s) :
       · obtain ⟨u, hu, hut⟩ := ih hbs
         exact ⟨u, hu, by rw [Walk.support_cons]; exact List.mem_cons.2 (Or.inr hut)⟩
 
+
 omit [DecidableEq V] in
-
-
-theorem bc19_essential [Fintype V] {A B S : Set V} {s : V}
+lemma bc19_essential [Fintype V] {A B S : Set V} {s : V}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hScard : S.ncard = k) (hsS : s ∈ S) :
     ¬ bc16_IsSeparator G A B (S \ {s}) := by
   intro hsep
   have hle := hmin _ hsep
   have : (S \ {s}).ncard < S.ncard :=
-    Set.ncard_lt_ncard ⟨Set.diff_subset, fun h => (h hsS).2 rfl⟩ (Set.toFinite S)
+    Set.ncard_lt_ncard ⟨Set.sdiff_subset, fun h => (h hsS).2 rfl⟩ (Set.toFinite S)
   rw [hScard] at this; omega
 
-
-
-
-
-theorem bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
+lemma bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hScard : S.ncard = k)
@@ -331,7 +280,8 @@ theorem bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
   obtain ⟨a, ha, Q0, hQ0⟩ := bc18_mem_AReach_of_essential hSsep hess
   set Q := Q0.bypass with hQdef
   have hQpath : Q.IsPath := Q0.bypass_isPath
-  have hQmeet : ∀ z ∈ Q.support, z ∈ S → z = s := fun z hz => hQ0 z (Q0.support_bypass_subset hz)
+  have hQmeet : ∀ z ∈ Q.support, z ∈ S → z = s :=
+    fun z hz => hQ0 z (Q0.support_bypass_subset_support hz)
   have hane : a ≠ s := fun h => hsA (h ▸ ha)
   obtain ⟨u, hAdj, huQ⟩ := bc19_lastEdge Q hane
   have huS : u ∉ S := fun huS => hAdj.ne (hQmeet u huQ huS)
@@ -340,10 +290,7 @@ theorem bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
     huS (bc18_AReach_inter_subset hSsep ⟨huRA, huRB⟩)
   exact bc17_restr_edgeSet_ncard_lt G (bc18_AReach G B S) (x := s) (y := u) hAdj.symm huRB
 
-
-
-
-theorem bc19_Aside_strict_of_notSubsetB [Fintype V] {A B S : Set V}
+lemma bc19_Aside_strict_of_notSubsetB [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hScard : S.ncard = k)
@@ -352,15 +299,7 @@ theorem bc19_Aside_strict_of_notSubsetB [Fintype V] {A B S : Set V}
   bc19_Bside_strict_of_notSubsetA (bc16_separator_symm hSsep)
     (fun C hC => hmin C (bc16_separator_symm hC)) hScard hnsub
 
-
-
-
-
-
-
-
-
-
+/-- Reindex a disjoint path family along an equivalence. -/
 def bc19_reindex {A B : Set V} {ι κ : Type*} (E : κ ≃ ι)
     (F : bc16_DisjointPathFamily G A B ι) : bc16_DisjointPathFamily G A B κ where
   a := fun i => F.a (E i)
@@ -373,8 +312,7 @@ def bc19_reindex {A B : Set V} {ι κ : Type*} (E : κ ≃ ι)
     intro i j hij z hzi hzj
     exact F.hdisj (fun h => hij (E.injective h)) hzi hzj
 
-
-
+/-- Add the one-edge path `x y` to a family of trivial paths in `Y`. -/
 def bc19_directSum {A B Y : Set V} {x y : V} {m : ℕ}
     (hxy : G.Adj x y) (f : Fin m → V) (hf : ∀ i, f i ∈ Y)
     (hinj : Function.Injective f)
@@ -410,14 +348,12 @@ def bc19_directSum {A B Y : Set V} {x y : V} {m : ℕ}
       · exact hyY (by rw [← h, h2]; exact hf j)
     · exact hij rfl
 
-
+/-- The equivalence `Fin m ⊕ Unit ≃ Fin (m + 1)`. -/
 noncomputable def bc19_sumEquiv (m : ℕ) : (Sum (Fin m) Unit) ≃ Fin (m + 1) :=
   Fintype.equivFinOfCardEq (by simp)
 
-
-
-
-theorem bc19_directSolution [Fintype V] {A B Y : Set V} {x y : V}
+omit [DecidableEq V] in
+lemma bc19_directSolution [Fintype V] {A B Y : Set V} {x y : V}
     (hxy : G.Adj x y) (hxY : x ∉ Y) (hyY : y ∉ Y)
     (hxA : x ∈ A) (hyB : y ∈ B) (hYA : Y ⊆ A) (hYB : Y ⊆ B)
     (hk : Y.ncard + 1 = k) :
@@ -427,15 +363,8 @@ theorem bc19_directSolution [Fintype V] {A B Y : Set V} {x y : V}
   refine ⟨bc19_reindex ?_ F⟩
   rw [← hk]; exact (bc19_sumEquiv Y.ncard).symm
 
-
-
-
-
-
-
-
-
-theorem bc19_Y_sep_of_xyA {A B Y : Set V} {x y : V}
+omit [DecidableEq V] in
+lemma bc19_Y_sep_of_xyA {A B Y : Set V} {x y : V}
     (hxY : x ∉ Y) (hyY : y ∉ Y) (hxA : x ∈ A) (hyA : y ∈ A)
     (hYsep : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y) :
     bc16_IsSeparator G A B Y := by
@@ -455,27 +384,13 @@ theorem bc19_Y_sep_of_xyA {A B Y : Set V} {x y : V}
   · rw [bc18_restr_compl_deleteEdges] at h2
     exact bc18_contra_of_reachable hYsep hxA hb₀ hxY h2
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc19_subset_AReach_of_min [Fintype V] {A B S : Set V}
+lemma bc19_subset_AReach_of_min [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hScard : S.ncard = k) : S ⊆ bc18_AReach G A S :=
-  fun s hsS => bc18_mem_AReach_of_essential hSsep (bc19_essential hmin hScard hsS)
+  fun _s hsS => bc18_mem_AReach_of_essential hSsep (bc19_essential hmin hScard hsS)
 
-
-
-
-theorem bc19_getAFan [Fintype V] {N : ℕ} {A B S : Set V}
+lemma bc19_getAFan [Fintype V] {N : ℕ} {A B S : Set V}
     (IH : ∀ (G' : SimpleGraph V), G'.edgeSet.ncard < N → ∀ (A' B' : Set V), bc17_HardDir G' A' B')
     (hltN : (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < G.edgeSet.ncard →
             (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < N)
@@ -490,10 +405,7 @@ theorem bc19_getAFan [Fintype V] {N : ℕ} {A B S : Set V}
       bc19_aFan_extract hmin hSsep
         (IH _ (hltN (bc19_Aside_strict_of_notSubsetB hSsep hmin hScard hSB)) A S)⟩
 
-
-
-
-theorem bc19_routeS [Fintype V] {N : ℕ} {A B S : Set V}
+lemma bc19_routeS [Fintype V] {N : ℕ} {A B S : Set V}
     (IH : ∀ (G' : SimpleGraph V), G'.edgeSet.ncard < N → ∀ (A' B' : Set V), bc17_HardDir G' A' B')
     (hltA : (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < G.edgeSet.ncard →
             (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < N)
@@ -509,11 +421,7 @@ theorem bc19_routeS [Fintype V] {N : ℕ} {A B S : Set V}
   exact ⟨bc19_glueFans hScard
     (fun z ⟨hzA, hzB⟩ => bc18_AReach_inter_subset hSsep ⟨hRA hzA, hRB hzB⟩) FA.some FB.some⟩
 
-
-
-
-
-theorem bc19_hardDir_aux [Fintype V] (N : ℕ) :
+lemma bc19_hardDir_aux [Fintype V] (N : ℕ) :
     ∀ (G : SimpleGraph V), G.edgeSet.ncard < N → ∀ (A B : Set V), bc17_HardDir G A B := by
   induction N with
   | zero => intro G hlt; exact absurd hlt (by omega)
@@ -532,10 +440,8 @@ theorem bc19_hardDir_aux [Fintype V] (N : ℕ) :
       have hdel_lt : (G.deleteEdges {s(x, y)}).edgeSet.ncard < N := by
         have := bc17_edgeSet_ncard_lt_of_deleteEdge (G := G) hxy; omega
       rcases bc17_deleteEdge_dichotomy hxy hmin with hC1 | hC2
-      · 
-        exact bc17_hardDir_step_case1 (IH _ hdel_lt A B) hC1
-      · 
-        obtain ⟨Y, hYsep, hYlt, hxY, hyY, hSxsep, hSysep⟩ := hC2
+      · exact bc17_hardDir_step_case1 (IH _ hdel_lt A B) hC1
+      · obtain ⟨Y, hYsep, hYlt, hxY, hyY, hSxsep, hSysep⟩ := hC2
         have hYnotG : ¬ bc16_IsSeparator G A B Y :=
           fun hG => absurd (hmin Y hG) (by omega)
         have hSxcard : (insert x Y).ncard = k := by
@@ -584,21 +490,16 @@ theorem bc19_hardDir_aux [Fintype V] (N : ℕ) :
         · exact bc19_routeS IH (mkLtA _) (mkLtB _) hmin hSxsep hSxcard
             (Or.inr hSxB) (Or.inr hSxA)
 
-
-
-
-
-theorem bc19_hardDir_all [Fintype V] (G : SimpleGraph V) (A B : Set V) :
+lemma bc19_hardDir_all [Fintype V] (G : SimpleGraph V) (A B : Set V) :
     bc17_HardDir G A B :=
   bc19_hardDir_aux (G.edgeSet.ncard + 1) G (by omega) A B
 
-
-
-
-
+/-- **Menger's theorem** (set version) for finite graphs: if every `A`–`B` separator has at least
+`k` vertices, there are `k` pairwise disjoint `A`–`B` paths (K. Menger, *Zur allgemeinen
+Kurventheorie*, 1927). See also `MathlibExt.menger_vertex` for the two-vertex form. -/
 theorem bc19_menger_minmax [Fintype V] (G : SimpleGraph V) (A B : Set V) {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard) :
-    ∃ F : bc16_DisjointPathFamily G A B (Fin k),
+    ∃ _F : bc16_DisjointPathFamily G A B (Fin k),
       ∀ C, bc16_IsSeparator G A B C → Fintype.card (Fin k) ≤ C.ncard := by
   obtain ⟨F⟩ := bc19_hardDir_all G A B k hmin
   exact ⟨F, fun C hC => by simpa using hmin C hC⟩

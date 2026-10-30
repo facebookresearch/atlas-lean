@@ -6,60 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -81,6 +27,43 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutFu
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRootSide
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootwardAvoidingWalk
 
+/-!
+# Root-ward parents
+
+If whenever `x` precedes `y` the parent of `y` blocks `y` from `x`, the parent structure funnels
+arms and gives self down arms.
+
+## i. Overview
+
+`bc43_RootWardRootParent ω n rank par` says: for connected trifurcations with `rank x < rank y`, `x`
+different from the parent of `y`, the parent separates. It follows from root-ward avoiding walks and
+holds with at most two trifurcations. With the fixed arm-cut geometry it gives parent funnelling and
+self down arms; a far-witness example shows the rank must be injective.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `bc43_rootWardRootParent_of_rootWardAvoidingWalk` : root-ward avoiding walks give the condition
+- `bc43_farWitness_rank_not_injective` : far witnesses force a non-injective rank
+- `bc43_selfDownArm_of_cutGeometryFixed'_rootParent` : the condition gives self down arms
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -97,40 +80,13 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The root-ward parent condition for `rank` and `par`: if the rank is injective on connected
+trifurcations, then for connected trifurcations with `rank x < rank y` and `x ≠ par y`, the
+parent of `y` separates `y` from `x`. -/
 def bc43_RootWardRootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
-  
-  
-  
   (∀ a, a ∈ box d n → IsTrifurcation d ω a → ∀ b, b ∈ box d n → IsTrifurcation d ω b →
       a ≠ b → Connected d ω a b → rank a ≠ rank b) →
   ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
@@ -139,47 +95,16 @@ def bc43_RootWardRootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     bc37_ArmAdjacent ω n y (par y) → rank (par y) < rank y →
     ∃ p : (openSubgraph d ω).Walk x (par y), ∀ v ∈ p.support, v ≠ y
 
+/-! ## B. Results -/
 
-
-
-
-
-theorem bc43_rootWardRootParent_of_rootWardAvoidingWalk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_rootWardRootParent_of_rootWardAvoidingWalk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d)
     (hold : bc41_RootWardAvoidingWalk ω n rank par) :
     bc43_RootWardRootParent ω n rank par := by
   intro _hinj x hxbox htri y hybox htriy hxy hconn hlt hxpar _hpbox _hptri hadj _hprank
   exact hold x hxbox htri y hybox htriy hxy hconn hlt hxpar hadj
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_farWitness_rank_not_injective (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_farWitness_rank_not_injective (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ z₀ : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hz0box : z₀ ∈ box d n) (htriz0 : IsTrifurcation d ω z₀)
     (hne : x₀ ≠ y₀) (hz0y0 : z₀ ≠ y₀) (hx0z0 : x₀ ≠ z₀) (hconnxz : Connected d ω x₀ z₀) :
@@ -188,26 +113,11 @@ theorem bc43_farWitness_rank_not_injective (ω : ConfigSpace (Sym2 (Site d))) (n
         (fun w => toLex (if w = y₀ then (1 : ℕ) else 0, (0 : ℕ))) a ≠
           (fun w => toLex (if w = y₀ then (1 : ℕ) else 0, (0 : ℕ))) b) := by
   intro hinj
-  
   refine hinj x₀ hx0box htri0 z₀ hz0box htriz0 hx0z0 hconnxz ?_
-  simp only [if_neg hne, if_neg hz0y0]
+  simp only [ite_eq_right hne, ite_eq_right hz0y0]
 
 set_option linter.unusedVariables false in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_rootWardRootParent_no_farParent_trap
+lemma bc43_rootWardRootParent_no_farParent_trap
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ z₀ : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hz0box : z₀ ∈ box d n) (htriz0 : IsTrifurcation d ω z₀)
@@ -216,125 +126,56 @@ theorem bc43_rootWardRootParent_no_farParent_trap
     bc43_RootWardRootParent ω n
       (fun w => toLex (if w = y₀ then (1 : ℕ) else 0, (0 : ℕ))) (fun _ => z₀) := by
   intro hinj
-  
   exact absurd hinj
     (bc43_farWitness_rank_not_injective ω n hx0box htri0 hz0box htriz0 hne hz0y0 hx0z0 hconnxz)
 
-
-
-
-
-
-
-
-
-
-theorem bc43_rootWardRootParent_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_rootWardRootParent_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     bc43_RootWardRootParent ω n rank par := by
   intro _hinj x hxbox htri; exact absurd htri (hno x hxbox)
 
 set_option linter.unusedVariables false in
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_rootWardRootParent_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_rootWardRootParent_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d}
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
     (hx0y0 : x₀ ≠ y₀) :
     ∀ (rank : Site d → ℕ ×ₗ ℕ), bc43_RootWardRootParent ω n rank (fun _ => x₀) := by
   intro rank _hinj x hxbox htri y hybox htriy hxy hconn hlt hxpar _hpbox _hptri hadj _hprank
-  
   simp only at hxpar hadj
   rcases htwo x hxbox htri with hx | hx
-  · 
-    exact absurd hx hxpar
-  · 
-    rcases htwo y hybox htriy with hy | hy
+  · exact absurd hx hxpar
+  · rcases htwo y hybox htriy with hy | hy
     · rw [hy] at hadj
       exact absurd hadj (bc37_armAdjacent_irrefl ω n x₀)
     · rw [hx, hy] at hxy
       exact absurd rfl hxy
 
 set_option linter.unusedVariables false in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_rootWardRootParent_of_twoTrif_allPar (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_rootWardRootParent_of_twoTrif_allPar (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d}
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
     (hx0y0 : x₀ ≠ y₀) :
     ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc43_RootWardRootParent ω n rank par := by
   intro rank par _hinj x hxbox htri y hybox htriy hxy hconn hlt hxpar hpbox hptri hadj _hprank
-  
   obtain ⟨hpne, hpconn, _⟩ := hadj
   have hpar_two : par y = x₀ ∨ par y = y₀ := htwo (par y) hpbox hptri
   have hx_two : x = x₀ ∨ x = y₀ := htwo x hxbox htri
   have hy_two : y = x₀ ∨ y = y₀ := htwo y hybox htriy
-  
   refine absurd ?_ hxpar
-  
   rcases hx_two with hx | hx <;> rcases hy_two with hy | hy <;>
     rcases hpar_two with hp | hp
-  · exact absurd (hx.trans hy.symm) hxy              
-  · exact absurd (hx.trans hy.symm) hxy              
-  · rw [hx, hp]                                       
-  · exact absurd (hy.trans hp.symm) hpne             
-  · exact absurd (hy.trans hp.symm) hpne             
-  · rw [hx, hp]                                       
-  · exact absurd (hx.trans hy.symm) hxy              
-  · exact absurd (hx.trans hy.symm) hxy              
+  · exact absurd (hx.trans hy.symm) hxy
+  · exact absurd (hx.trans hy.symm) hxy
+  · rw [hx, hp]
+  · exact absurd (hy.trans hp.symm) hpne
+  · exact absurd (hy.trans hp.symm) hpne
+  · rw [hx, hp]
+  · exact absurd (hx.trans hy.symm) hxy
+  · exact absurd (hx.trans hy.symm) hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_exists_rootedArmForest_mem (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma bc43_exists_rootedArmForest_mem (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     ∃ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
         x ≠ y → Connected d ω x y → rank x ≠ rank y) ∧
@@ -362,7 +203,7 @@ theorem bc43_exists_rootedArmForest_mem (ω : ConfigSpace (Sym2 (Site d))) (n : 
   have hdep0 : ∀ (v : Site d) (hv : v ∈ tfc_trifFinset ω n),
       dep v = 0 ↔ (⟨v, hv⟩ : {x : Site d // x ∈ tfc_trifFinset ω n}) = root ⟨v, hv⟩ := by
     intro v hv
-    simp only [hdep, dif_pos hv]
+    simp only [hdep, dite_eq_left hv]
     rw [SimpleGraph.dist_eq_zero_iff_eq_or_not_reachable]
     constructor
     · rintro (h | h); · exact h.symm
@@ -391,7 +232,7 @@ theorem bc43_exists_rootedArmForest_mem (ω : ConfigSpace (Sym2 (Site d))) (n : 
         rw [hxroot, hrootxy, ← hyroot]
       exact congrArg Subtype.val hxy_eq
     obtain ⟨hadj, hdlt⟩ := bc38_parentTo_spec G root hynonroot (hrr ⟨y, hyT⟩)
-    have hpary : par y = (bc38_parentTo G root ⟨y, hyT⟩).1 := by simp only [hpar, dif_pos hyT]
+    have hpary : par y = (bc38_parentTo G root ⟨y, hyT⟩).1 := by simp only [hpar, dite_eq_left hyT]
     have hparyT : par y ∈ tfc_trifFinset ω n := by
       rw [hpary]; exact (bc38_parentTo G root ⟨y, hyT⟩).2
     have hpar_pack : (⟨par y, hparyT⟩ : {x : Site d // x ∈ tfc_trifFinset ω n})
@@ -403,30 +244,13 @@ theorem bc43_exists_rootedArmForest_mem (ω : ConfigSpace (Sym2 (Site d))) (n : 
       have hrootpary : root (bc38_parentTo G root ⟨y, hyT⟩) = root ⟨y, hyT⟩ :=
         hroot_inv _ _ hyparreach.symm
       have hdeppary : dep (par y) = G.dist (root ⟨y, hyT⟩) (bc38_parentTo G root ⟨y, hyT⟩) := by
-        simp only [hdep, dif_pos hparyT]
+        simp only [hdep, dite_eq_left hparyT]
         rw [hpar_pack, hrootpary]
-      have hdepy : dep y = G.dist (root ⟨y, hyT⟩) ⟨y, hyT⟩ := by simp only [hdep, dif_pos hyT]
+      have hdepy : dep y = G.dist (root ⟨y, hyT⟩) ⟨y, hyT⟩ := by simp only [hdep, dite_eq_left hyT]
       have hdeplt : dep (par y) < dep y := by rw [hdeppary, hdepy]; exact hdlt
       exact Prod.Lex.toLex_lt_toLex.mpr (Or.inl hdeplt)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_parentFunneling_of_cutGeometryFixed'_rootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_parentFunneling_of_cutGeometryFixed'_rootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hwalk : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc43_RootWardRootParent ω n rank par) :
@@ -439,55 +263,18 @@ theorem bc43_parentFunneling_of_cutGeometryFixed'_rootParent (ω : ConfigSpace (
   obtain ⟨hpbox, hptri⟩ := tfc_mem_trifFinset.mp hparyT
   obtain ⟨hloc, hself, hfun⟩ := hclauses y (par y) hybox htriy hpadj
   refine ⟨hloc, hself, fun hxne => ?_⟩
-  
   obtain ⟨p, hp⟩ :=
     hwalk rank par hinj x hxbox htri y hybox htriy hxy hconn hlt hxne hpbox hptri hpadj hprank
-  
   have hrs : Connected d (removeSite y ω) x (par y) :=
     (bc42_avoidingWalk_iff_connected_removeSite ω hxy).mp ⟨p, hp⟩
   exact hfun x hxy hrs
 
-
-theorem bc43_selfDownArm_of_cutGeometryFixed'_rootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc43_selfDownArm_of_cutGeometryFixed'_rootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hwalk : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc43_RootWardRootParent ω n rank par) :
     bc36_SelfDownArm ω n :=
   bc37_selfDownArm_of_parentFunneling ω n
     (bc43_parentFunneling_of_cutGeometryFixed'_rootParent ω n hgeo hwalk)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc43_burton_keane_bernoulli_of_rootWardRootParent (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hgeo : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc40_ArmCutGeometryFixed' ω n)
-    (hwalk : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d), bc43_RootWardRootParent ω n rank par)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc36_burton_keane_bernoulli_of_selfDownArm hd p hp1 hp0
-    (fun ω n hn =>
-      bc43_selfDownArm_of_cutGeometryFixed'_rootParent ω n (hgeo ω n hn) (hwalk ω n hn))
-    htrif
 
 end StatMech.Walls

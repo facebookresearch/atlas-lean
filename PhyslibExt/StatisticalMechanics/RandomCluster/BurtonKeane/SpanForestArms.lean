@@ -6,77 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -93,6 +22,45 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Boundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest
 
+/-!
+# Spanning forest arms
+
+An acyclic open subgraph with three arms from each trifurcation to boundary sites gives a peeled box
+forest and the trifurcation count.
+
+## i. Overview
+
+`spc_SpanForestArms ω n` is an acyclic subgraph of the open subgraph on finitely many sites, with
+boundary set `B` and three neighbours `m x i` of each trifurcation lying on paths between boundary
+sites (`spc_OnBPath`). Vertices on such paths have degree at least two and trifurcations degree at
+least three, so this gives a peeled box forest, a box open forest and `Tcount ≤ |∂B_n|`. It holds
+with a single trifurcation (a star) and with a single boundary edge.
+
+No certificate of this kind can hold for every configuration: each one yields the
+trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
+that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
+every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
+configuration by configuration; the deterministic counting bound is the reusable content.
+
+## ii. Key results
+
+- `spc_deg_ge_three` : trifurcations have degree at least three
+- `spc_boxOpenForest_of_spanForestArms` : spanning forest arms give a box open forest
+- `spc_Tcount_le_boundary_of_spanForestArms` : the counting bound
+- `spc_spanForestArms_star` : the certificate for a single trifurcation
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -106,24 +74,15 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
-
-
-
-
-
-
-
-
+/-- `v` lies on a path of `T` between two distinct sites of `B`. -/
 def spc_OnBPath {V : Type*} (T : SimpleGraph V) (B : Set V) (v : V) : Prop :=
   ∃ b₁ b₂ : V, b₁ ∈ B ∧ b₂ ∈ B ∧ b₁ ≠ b₂ ∧ ∃ p : T.Walk b₁ b₂, p.IsPath ∧ v ∈ p.support
 
+/-! ## B. Results -/
 
-
-
-theorem spc_survivor_has_neighbor {V : Type*} (T : SimpleGraph V) (B : Set V)
+lemma spc_survivor_has_neighbor {V : Type*} (T : SimpleGraph V) (B : Set V)
     (v : V) (h : spc_OnBPath T B v) : ∃ w, T.Adj v w ∧ spc_OnBPath T B w := by
   obtain ⟨b₁, b₂, hb₁, hb₂, hne, p, hp, hmem⟩ := h
   rw [SimpleGraph.Walk.mem_support_iff_exists_getVert] at hmem
@@ -142,11 +101,7 @@ theorem spc_survivor_has_neighbor {V : Type*} (T : SimpleGraph V) (B : Set V)
     rw [Nat.sub_add_cancel hlen] at hadj
     rw [← hvi, hieq]; exact hadj.symm
 
-
-
-
-
-theorem spc_interior_two_neighbors {V : Type*} (T : SimpleGraph V) (B : Set V)
+lemma spc_interior_two_neighbors {V : Type*} (T : SimpleGraph V) (B : Set V)
     (v : V) (hv : spc_OnBPath T B v) (hvB : v ∉ B) :
     ∃ w₁ w₂ : V, w₁ ≠ w₂ ∧ T.Adj v w₁ ∧ T.Adj v w₂ ∧
       spc_OnBPath T B w₁ ∧ spc_OnBPath T B w₂ := by
@@ -163,7 +118,7 @@ theorem spc_interior_two_neighbors {V : Type*} (T : SimpleGraph V) (B : Set V)
   refine ⟨p.getVert (i - 1), p.getVert (i + 1), ?_, ?_, ?_, ?_, ?_⟩
   · intro hcontra
     have := hp.getVert_injOn (x₁ := i - 1) (x₂ := i + 1)
-      (by simp only [Set.mem_setOf_eq]; omega) (by simp only [Set.mem_setOf_eq]; omega) hcontra
+      (by simp only [Set.mem_ofPred_eq]; omega) (by simp only [Set.mem_ofPred_eq]; omega) hcontra
     omega
   · rw [← hvi]
     have hadj := p.adj_getVert_succ (i := i - 1) (by omega)
@@ -172,23 +127,17 @@ theorem spc_interior_two_neighbors {V : Type*} (T : SimpleGraph V) (B : Set V)
   · exact ⟨b₁, b₂, hb₁, hb₂, hne, p, hp, p.getVert_mem_support _⟩
   · exact ⟨b₁, b₂, hb₁, hb₂, hne, p, hp, p.getVert_mem_support _⟩
 
-
-
-
-
-
-
 section Degrees
 variable {W : Type*} [Fintype W] [DecidableEq W] (F : SimpleGraph W) [DecidableRel F.Adj]
 
-omit [DecidableEq W] in
 
-theorem spc_deg_ge_one (v w : W) (h : F.Adj v w) : 1 ≤ F.degree v := by
+omit [DecidableEq W] in
+lemma spc_deg_ge_one (v w : W) (h : F.Adj v w) : 1 ≤ F.degree v := by
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, F.degree_pos_iff_exists_adj]; exact ⟨w, h⟩
 
-set_option linter.unusedDecidableInType false in
 
-theorem spc_deg_ge_two (v w₁ w₂ : W) (hne : w₁ ≠ w₂) (h1 : F.Adj v w₁) (h2 : F.Adj v w₂) :
+set_option linter.unusedDecidableInType false in
+lemma spc_deg_ge_two (v w₁ w₂ : W) (hne : w₁ ≠ w₂) (h1 : F.Adj v w₁) (h2 : F.Adj v w₂) :
     2 ≤ F.degree v := by
   rw [← F.card_neighborFinset_eq_degree]
   have hsub : ({w₁, w₂} : Finset W) ⊆ F.neighborFinset v := by
@@ -197,9 +146,9 @@ theorem spc_deg_ge_two (v w₁ w₂ : W) (hne : w₁ ≠ w₂) (h1 : F.Adj v w�
   calc (2 : ℕ) = ({w₁, w₂} : Finset W).card := (Finset.card_pair hne).symm
     _ ≤ _ := Finset.card_le_card hsub
 
-set_option linter.unusedDecidableInType false in
 
-theorem spc_deg_ge_three (v w₁ w₂ w₃ : W) (h12 : w₁ ≠ w₂) (h13 : w₁ ≠ w₃) (h23 : w₂ ≠ w₃)
+set_option linter.unusedDecidableInType false in
+lemma spc_deg_ge_three (v w₁ w₂ w₃ : W) (h12 : w₁ ≠ w₂) (h13 : w₁ ≠ w₃) (h23 : w₂ ≠ w₃)
     (h1 : F.Adj v w₁) (h2 : F.Adj v w₂) (h3 : F.Adj v w₃) : 3 ≤ F.degree v := by
   rw [← F.card_neighborFinset_eq_degree]
   have hsub : ({w₁, w₂, w₃} : Finset W) ⊆ F.neighborFinset v := by
@@ -211,17 +160,7 @@ theorem spc_deg_ge_three (v w₁ w₂ w₃ : W) (h12 : w₁ ≠ w₂) (h13 : w�
 
 end Degrees
 
-
-
-
-
-
-
-
-
-
-
-theorem spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (f : V ↪ V') :
+lemma spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (f : V ↪ V') :
     (SimpleGraph.map f G).IsAcyclic := by
   classical
   rcases isEmpty_or_nonempty V with hV | hV
@@ -237,7 +176,6 @@ theorem spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (
   have hgHom_apply : ∀ w, gHom w = g w := fun _ => rfl
   intro u c hc
   have hlen : 0 < c.length := by have := hc.three_le_length; omega
-  
   have hsupp_mem : ∀ w ∈ c.support, ∃ a, f a = w := by
     intro w hw
     rw [SimpleGraph.Walk.mem_support_iff_exists_getVert] at hw
@@ -250,13 +188,11 @@ theorem spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (
       have hadj := c.adj_getVert_succ (i := c.length - 1) (by omega)
       rw [SimpleGraph.map_adj] at hadj; obtain ⟨a, b, hab, h1, h2⟩ := hadj
       refine ⟨b, ?_⟩; rw [h2, ← hi, hieq]; congr 1; omega
-  
   have hginj : ∀ x ∈ c.support, ∀ y ∈ c.support, g x = g y → x = y := by
     intro x hx y hy hxy
     obtain ⟨ax, rfl⟩ := hsupp_mem x hx
     obtain ⟨ay, rfl⟩ := hsupp_mem y hy
     rw [hg, hg] at hxy; rw [hxy]
-  
   refine hac (c.map gHom) ⟨⟨⟨?_⟩, ?_⟩, ?_⟩
   · rw [SimpleGraph.Walk.edges_map]
     refine List.Nodup.map_on ?_ hc.edges_nodup
@@ -287,28 +223,9 @@ theorem spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (
     exact fun h => hginj x (List.mem_of_mem_tail hx) y (List.mem_of_mem_tail hy) h
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
+/-- Spanning forest arms for `B_n`: an acyclic open subgraph on finitely many sites with boundary
+set `B` and three neighbours of each trifurcation lying on paths between boundary sites. -/
 def spc_SpanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),
@@ -325,27 +242,12 @@ def spc_SpanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
         ¬ Connected d (removeSite x ω) (m x 0) (m x 2) ∧
         ¬ Connected d (removeSite x ω) (m x 1) (m x 2))))
 
+
 open Classical in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem spc_peeledBoxForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma spc_peeledBoxForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : spc_SpanForestArms ω n) : osf_PeeledBoxForest ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, m, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
-  
   have hRfin : {v | spc_OnBPath T B v}.Finite := by
     apply Set.Finite.subset (Vall.finite_toSet)
     intro v hv
@@ -357,35 +259,31 @@ theorem spc_peeledBoxForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)))
   have hVne : Nonempty (↥Vset) := by
     obtain ⟨v, hv⟩ := hRne; exact ⟨⟨v, (hmemVset v).mpr hv⟩⟩
   set F₀ : SimpleGraph (↥Vset) := T.comap (fun (u : ↥Vset) => (u : Site d)) with hF₀
-  haveI hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
+  have hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
   have hF₀adj : ∀ u v : ↥Vset, F₀.Adj u v ↔ T.Adj (u : Site d) (v : Site d) := by
     intro u v; rw [hF₀, comap_adj]
   have hF₀ac : F₀.IsAcyclic :=
     hTac.comap ⟨(fun (u : ↥Vset) => (u : Site d)), fun {a b} h => h⟩ (fun a b h => Subtype.ext h)
   have hlift : ∀ v, spc_OnBPath T B v → v ∈ Vset := fun v hv => (hmemVset v).mpr hv
-  
   let dflt : ↥Vset := hVne.some
   set vx : Site d → ↥Vset := fun x =>
     if hx : spc_OnBPath T B x then ⟨x, hlift x hx⟩ else dflt with hvxdef
   set bb : Site d → Fin 3 → ↥Vset := fun x i =>
     if hx : spc_OnBPath T B (m x i) then ⟨m x i, hlift _ hx⟩ else dflt with hbbdef
   refine osf_peeledBoxForest_of_acyclic ω n Vset hVne F₀ hF₀ac vx bb ?_ ?_ ?_ ?_
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hF₀adj] at huv; exact hTopen _ _ huv
-  · 
-    intro v
+  · intro v
     have hvR : spc_OnBPath T B (v : Site d) := (hmemVset (v : Site d)).mp v.2
     obtain ⟨w, hadjw, hwR⟩ := spc_survivor_has_neighbor T B (v : Site d) hvR
     exact spc_deg_ge_one F₀ v ⟨w, hlift w hwR⟩ (by rw [hF₀adj]; exact hadjw)
-  · 
-    intro x hxbox htri
+  · intro x hxbox htri
     obtain ⟨hxR, hmne, hmadj, hmsep⟩ := hData x hxbox htri
-    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dif_pos hxR]
+    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dite_eq_left hxR]
     refine ⟨hvxval, ?_, ?_⟩
     · intro i
       have hmi := hmadj i
-      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dif_pos hmi.2]
+      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dite_eq_left hmi.2]
       refine ⟨?_, ?_⟩
       · refine Adj.reachable ?_
         rw [hF₀adj, hvxval, hbbval]; exact hmi.1
@@ -394,12 +292,11 @@ theorem spc_peeledBoxForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)))
           congrArg (fun (u : ↥Vset) => (u : Site d)) hh
         rw [hbbval, hvxval] at hval
         exact (T.ne_of_adj hmi.1) hval.symm
-    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dif_pos (hmadj 0).2]
-      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dif_pos (hmadj 1).2]
-      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dif_pos (hmadj 2).2]
+    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dite_eq_left (hmadj 0).2]
+      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dite_eq_left (hmadj 1).2]
+      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dite_eq_left (hmadj 2).2]
       rw [h0, h1, h2]; exact hmsep
-  · 
-    intro v hv
+  · intro v hv
     have hvR : spc_OnBPath T B (v : Site d) := (hmemVset (v : Site d)).mp v.2
     by_cases hvB : (v : Site d) ∈ B
     · exact hBbd hvB
@@ -412,30 +309,17 @@ theorem spc_peeledBoxForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)))
           (by rw [hF₀adj]; exact ha1) (by rw [hF₀adj]; exact ha2)
       omega
 
-
-
-theorem spc_boxOpenForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma spc_boxOpenForest_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : spc_SpanForestArms ω n) : bst_BoxOpenForest ω n :=
   osf_boxOpenForest_of_peeled ω n (spc_peeledBoxForest_of_spanForestArms ω n h)
 
-
-theorem spc_Tcount_le_boundary_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma spc_Tcount_le_boundary_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : spc_SpanForestArms ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
   bst_Tcount_le_boundary_of_boxOpenForest ω n (spc_boxOpenForest_of_spanForestArms ω n h)
 
 
-
-
-
-
-
-
-
 open Classical in
-
-
-
-theorem spc_spanForestArms_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma spc_spanForestArms_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {b₁ b₂ : Site d} (hb1 : b₁ ∈ vertexBoundary d n) (hb2 : b₂ ∈ vertexBoundary d n)
     (hbne : b₁ ≠ b₂) (hopen : (openSubgraph d ω).Adj b₁ b₂)
     (hnotrif : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
@@ -492,21 +376,8 @@ theorem spc_spanForestArms_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))) (
   · intro x hxbox htri; exact absurd htri (hnotrif x hxbox)
 
 
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-theorem spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x : Site d} (a : Fin 3 → Site d)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (hadj : ∀ i, (openSubgraph d ω).Adj x (a i))
@@ -548,7 +419,6 @@ theorem spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     rwa [show lab 0 = x from rfl, hlabsucc i] at this
   set B : Set (Site d) := {a 0, a 1, a 2} with hB
   have hai_in_B : ∀ i : Fin 3, a i ∈ B := by intro i; fin_cases i <;> simp [hB]
-  
   have hpathij : ∀ i j : Fin 3, i ≠ j →
       ∃ p : T.Walk (a i) (a j), p.IsPath ∧ x ∈ p.support ∧ a i ∈ p.support ∧ a j ∈ p.support := by
     intro i j hij
@@ -577,8 +447,7 @@ theorem spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     · exact honB_path 2 0 (by decide) (a 2) (Or.inl rfl)
   refine ⟨{x, a 0, a 1, a 2}, T, by rw [hT]; infer_instance, B, fun _ => a, hTac, ?_, ?_, ?_,
     ⟨x, honB_x⟩, ?_⟩
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hT, SimpleGraph.map_adj] at huv
     obtain ⟨p, q, hpq, rfl, rfl⟩ := huv
     rw [Flc2Witness.starG, fromRel_adj] at hpq
@@ -589,8 +458,7 @@ theorem spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
         | (exfalso; revert hor; simp only [Flc2Witness.starE]; decide)
         | exact hadj 0 | exact hadj 1 | exact hadj 2
         | exact (hadj 0).symm | exact (hadj 1).symm | exact (hadj 2).symm
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hT, SimpleGraph.map_adj] at huv
     obtain ⟨p, q, hpq, rfl, rfl⟩ := huv
     fin_cases p <;>
@@ -598,15 +466,13 @@ theorem spc_spanForestArms_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
         show (emb : Fin 4 → Site d) = lab from rfl] <;>
       first
         | (left; rfl) | (right; left; rfl) | (right; right; left; rfl) | (right; right; right; rfl)
-  · 
-    rw [hB]; intro z hz
+  · rw [hB]; intro z hz
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
     rcases hz with rfl | rfl | rfl
     · exact habdry 0
     · exact habdry 1
     · exact habdry 2
-  · 
-    intro y hybox htri
+  · intro y hybox htri
     have hyx : y = x := hsingle y hybox htri; subst hyx
     refine ⟨honB_x, ⟨?_, ?_, ?_⟩, ?_, ?_⟩
     · exact fun h => (by decide : (0 : Fin 3) ≠ 1) (hainj h)

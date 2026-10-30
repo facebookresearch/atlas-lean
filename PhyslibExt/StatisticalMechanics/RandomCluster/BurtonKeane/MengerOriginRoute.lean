@@ -6,94 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerFanPaths
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
+
+/-!
+# Menger routing at the origin
+
+Menger's theorem in the box graph turns three origin branches with distinct infinite clusters into
+three origin-avoiding routes, the Menger core of a trifurcation.
+
+## i. Overview
+
+`bc20_boxGraph d m ω` is the open subgraph induced on `B_m`. If every separator of the neighbours of
+the origin from the boundary has at least two vertices, Menger gives origin-avoiding paths, so
+connections survive the removal of the origin. `bc20_OriginBranchSurvival` asks for three neighbours
+of the origin in distinct infinite clusters with branches surviving the removal of the origin; it
+yields `MengerCore` and the routing cover.
+
+## ii. Key results
+
+- `bc20_hardDir_boxGraph` : Menger's hard direction in the box graph
+- `bc20_connected_removeSite_of_min2` : two-vertex separators give origin-avoiding connections
+- `bc20_mengerCore_of_originBranchSurvival` : origin branch survival gives the Menger core
+- `bc20_originBranchSurvival_of_originFree` : survival when the clusters avoid the origin
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -104,52 +54,46 @@ namespace StatMech.Walls
 
 variable {d : ℕ}
 
+/-! ## A. Definitions -/
 
-
-
+/-- The box `B_m` is finite. -/
 noncomputable instance bc20_boxFintype (d m : ℕ) : Fintype (box d m) :=
   (box_finite d m).fintype
 
-
-
-
+/-- The open subgraph of `ω` induced on `B_m`. -/
 noncomputable def bc20_boxGraph (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d))) :
     SimpleGraph (box d m) :=
   (openSubgraph d ω).induce (box d m)
 
-
+/-- The origin as a vertex of `B_m`. -/
 def bc20_originBox (d m : ℕ) : box d m := ⟨0, by intro i; simp⟩
 
-@[simp] theorem bc20_originBox_coe (d m : ℕ) : (bc20_originBox d m : Site d) = 0 := rfl
+/-! ## B. Results -/
 
+@[simp] lemma bc20_originBox_coe (d m : ℕ) : (bc20_originBox d m : Site d) = 0 := rfl
 
-
-theorem bc20_hardDir_boxGraph (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_hardDir_boxGraph (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (A B : Set (box d m)) : bc17_HardDir (bc20_boxGraph d m ω) A B :=
   bc19_hardDir_all (bc20_boxGraph d m ω) A B
 
-
+/-- A walk in the box graph viewed as an open walk in `ℤ^d`. -/
 noncomputable def bc20_mapWalk (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v) :
     (openSubgraph d ω).Walk (u : Site d) (v : Site d) :=
   p.map (Embedding.induce (box d m)).toHom
 
-theorem bc20_mapWalk_support (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_mapWalk_support (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v) :
     (bc20_mapWalk d m ω p).support
       = (p.support).map (Embedding.induce (G := openSubgraph d ω) (box d m)).toHom :=
   Walk.support_map _ _
 
-
-
-theorem bc20_connected_of_boxWalk (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_connected_of_boxWalk (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v) :
     Connected d ω (u : Site d) (v : Site d) :=
   (bc20_mapWalk d m ω p).reachable
 
-
-
-theorem bc20_boxWalk_support_mem_box (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_boxWalk_support_mem_box (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v) :
     ∀ z ∈ (bc20_mapWalk d m ω p).support, z ∈ box d m := by
   intro z hz
@@ -157,10 +101,7 @@ theorem bc20_boxWalk_support_mem_box (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d
   obtain ⟨w, _, rfl⟩ := hz
   exact w.2
 
-
-
-
-theorem bc20_edge_removeSite (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
+lemma bc20_edge_removeSite (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
     (hadj : (openSubgraph d ω).Adj x y) (hx : x ≠ 0) (hy : y ≠ 0) :
     (openSubgraph d (removeSite 0 ω)).Adj x y := by
   obtain ⟨hadj', hval⟩ := hadj
@@ -169,9 +110,7 @@ theorem bc20_edge_removeSite (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
     rw [Sym2.mem_iff]; push Not; exact ⟨fun h => hx h.symm, fun h => hy h.symm⟩
   rw [removeSite_apply_of_notMem h0]; exact hval
 
-
-
-
+/-- A walk avoiding the origin, viewed as a walk after the origin is removed. -/
 noncomputable def bc20_walk_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (w : (openSubgraph d ω).Walk a x) (h0 : (0 : Site d) ∉ w.support) :
     (openSubgraph d (removeSite 0 ω)).Walk a x := by
@@ -184,16 +123,12 @@ noncomputable def bc20_walk_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a x :
       have hv0 : v ≠ 0 := fun hv => hrest (hv ▸ p.start_mem_support)
       exact Walk.cons (bc20_edge_removeSite ω hadj (Ne.symm hu0) hv0) (ih hrest)
 
-
-
-theorem bc20_connected_removeSite_of_avoiding (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_connected_removeSite_of_avoiding (ω : ConfigSpace (Sym2 (Site d)))
     {a x : Site d} (w : (openSubgraph d ω).Walk a x) (h0 : (0 : Site d) ∉ w.support) :
     Connected d (removeSite 0 ω) a x :=
   (bc20_walk_removeSite ω w h0).reachable
 
-
-
-theorem bc20_origin_avoid_of_boxAvoid (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_origin_avoid_of_boxAvoid (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v)
     (h : bc20_originBox d m ∉ p.support) :
     (0 : Site d) ∉ (bc20_mapWalk d m ω p).support := by
@@ -203,49 +138,27 @@ theorem bc20_origin_avoid_of_boxAvoid (d m : ℕ) (ω : ConfigSpace (Sym2 (Site 
   have hwe : w = bc20_originBox d m := Subtype.ext hw0
   exact h (hwe ▸ hw)
 
-
-
-
-
-
-
-
 universe u
 variable {V : Type u} [DecidableEq V] {GG : SimpleGraph V}
 
+
 omit [DecidableEq V] in
-
-
-theorem bc20_unique_index_through {A B : Set V} {k : ℕ}
+lemma bc20_unique_index_through {A B : Set V} {k : ℕ}
     (F : bc16_DisjointPathFamily GG A B (Fin k)) (z₀ : V) {i j : Fin k}
     (hi : z₀ ∈ (F.p i).support) (hj : z₀ ∈ (F.p j).support) : i = j := by
   by_contra hne
   exact F.hdisj hne hi hj
 
+
 omit [DecidableEq V] in
-
-
-
-theorem bc20_disjointFamily_avoids_origin {A B : Set V}
+lemma bc20_disjointFamily_avoids_origin {A B : Set V}
     (F : bc16_DisjointPathFamily GG A B (Fin 2)) (z₀ : V) :
     ∃ i : Fin 2, z₀ ∉ (F.p i).support := by
   by_contra h
   push Not at h
   exact F.hdisj (by decide) (h 0) (h 1)
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc20_origin_avoiding_boxPath_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_origin_avoiding_boxPath_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {A B : Set (box d m)}
     (hmin : ∀ C, bc16_IsSeparator (bc20_boxGraph d m ω) A B C → 2 ≤ C.ncard) :
     ∃ (u v : box d m) (p : (bc20_boxGraph d m ω).Walk u v),
@@ -254,14 +167,7 @@ theorem bc20_origin_avoiding_boxPath_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2
   obtain ⟨i, hi⟩ := bc20_disjointFamily_avoids_origin F (bc20_originBox d m)
   exact ⟨F.a i, F.b i, F.p i, F.ha i, F.hb i, hi⟩
 
-
-
-
-
-
-
-
-theorem bc20_connected_removeSite_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_connected_removeSite_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {A B : Set (box d m)}
     (hmin : ∀ C, bc16_IsSeparator (bc20_boxGraph d m ω) A B C → 2 ≤ C.ncard) :
     ∃ (u v : box d m), u ∈ A ∧ v ∈ B ∧
@@ -271,33 +177,13 @@ theorem bc20_connected_removeSite_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (S
   exact bc20_connected_removeSite_of_avoiding ω (bc20_mapWalk d m ω p)
     (bc20_origin_avoid_of_boxAvoid d m ω p h0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The boundary vertices of `B_m`, as vertices of the box graph. -/
 def bc20_boundaryV (d m : ℕ) : Set (box d m) := {v | (v : Site d) ∈ vertexBoundary d m}
 
-
+/-- The vertices of `B_m` on the boundary of `B_R`. -/
 def bc20_shellV (d m R : ℕ) : Set (box d m) := {v | (v : Site d) ∈ vertexBoundary d R}
 
-
-
-
-
-theorem bc20_shellReach_at (d m R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_shellReach_at (d m R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hmin : ∀ C, bc16_IsSeparator (bc20_boxGraph d m ω)
       (bc20_shellV d m R) (bc20_boundaryV d m) C → 2 ≤ C.ncard) :
     ∃ (u z : Site d), u ∈ vertexBoundary d R ∧ z ∈ vertexBoundary d m ∧
@@ -307,26 +193,14 @@ theorem bc20_shellReach_at (d m R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     bc20_connected_removeSite_of_avoiding ω (bc20_mapWalk d m ω p)
       (bc20_origin_avoid_of_boxAvoid d m ω p hp0)⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc20_exists_shellVertex_infinite (d R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_exists_shellVertex_infinite (d R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hmin : ∀ m : ℕ, ∀ C, bc16_IsSeparator (bc20_boxGraph d m ω)
       (bc20_shellV d m R) (bc20_boundaryV d m) C → 2 ≤ C.ncard) :
     ∃ u ∈ vertexBoundary d R, (cluster d (removeSite 0 ω) u).Infinite := by
   classical
   choose us zs hus hzs hconns using fun m => bc20_shellReach_at d m R ω (hmin m)
   set Vb := vertexBoundary d R with hVb
-  haveI : Finite Vb := vertexBoundary_finite d R
+  have : Finite Vb := vertexBoundary_finite d R
   let f : ℕ → Vb := fun m => ⟨us m, hus m⟩
   have hpig : ∃ u : Vb, {m | f m = u}.Infinite := by
     by_contra h
@@ -339,16 +213,12 @@ theorem bc20_exists_shellVertex_infinite (d R : ℕ) (ω : ConfigSpace (Sym2 (Si
   rw [cluster_infinite_iff]
   intro n
   obtain ⟨m, hmS, hmge⟩ := hinf.exists_gt (n + 1)
-  simp only [Set.mem_setOf_eq] at hmS
+  simp only [Set.mem_ofPred_eq] at hmS
   have huseq : us m = u := congrArg Subtype.val hmS
   refine ⟨zs m, ?_, by rw [← huseq]; exact hconns m⟩
   exact fun hzn => (hzs m).2 (box_mono d (by omega : n ≤ m - 1) hzn)
 
-
-
-
-
-theorem bc20_removeSite_cluster_ne (ω : ConfigSpace (Sym2 (Site d))) (a₁ a₂ : Site d)
+lemma bc20_removeSite_cluster_ne (ω : ConfigSpace (Sym2 (Site d))) (a₁ a₂ : Site d)
     (hne : cluster d ω a₁ ≠ cluster d ω a₂) :
     cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₂ := by
   have hle : removeSite (0 : Site d) ω ≤ ω := by
@@ -356,20 +226,8 @@ theorem bc20_removeSite_cluster_ne (ω : ConfigSpace (Sym2 (Site d))) (a₁ a₂
   exact cluster_ne_of_disjoint (removeSite 0 ω) a₁ a₂ (cluster d ω a₁) (cluster d ω a₂)
     (cluster_mono hle a₁) (cluster_mono hle a₂) (mng_disjoint_of_cluster_ne ω a₁ a₂ hne)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Three distinct neighbours of the origin lie in pairwise distinct infinite clusters whose
+branches survive the removal of the origin. -/
 def bc20_OriginBranchSurvival (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ a₁ a₂ a₃ : Site d,
     (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -381,13 +239,7 @@ def bc20_OriginBranchSurvival (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) : Pro
       (cluster d (removeSite 0 ω) a₂).Infinite ∧
       (cluster d (removeSite 0 ω) a₃).Infinite)
 
-
-
-
-
-
-
-theorem bc20_mengerCore_of_originBranchSurvival (d : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_mengerCore_of_originBranchSurvival (d : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (h : bc20_OriginBranchSurvival d ω) : MengerCore ω := by
   obtain ⟨a₁, a₂, a₃, hne, hadj, ⟨hd12, hd13, hd23⟩, hinf⟩ := h
   exact mng_mengerCore_of_neighborClusters ω a₁ a₂ a₃ hne hadj hinf
@@ -395,29 +247,12 @@ theorem bc20_mengerCore_of_originBranchSurvival (d : ℕ) (ω : ConfigSpace (Sym
       bc20_removeSite_cluster_ne ω a₁ a₃ hd13,
       bc20_removeSite_cluster_ne ω a₂ a₃ hd23⟩
 
-
-
-
-
-theorem bc20_mengerRoutingCover_of_originBranchSurvival (d n : ℕ)
+lemma bc20_mengerRoutingCover_of_originBranchSurvival (d n : ℕ)
     (h : ∀ ω ∈ threeMeetBox d n, bc20_OriginBranchSurvival d ω) :
     MengerRoutingCover d n :=
   fun ω hω => bc20_mengerCore_of_originBranchSurvival d ω (h ω hω)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc20_removeSite_infinite_of_originFree (ω : ConfigSpace (Sym2 (Site d))) (a : Site d)
+lemma bc20_removeSite_infinite_of_originFree (ω : ConfigSpace (Sym2 (Site d))) (a : Site d)
     (h0 : (0 : Site d) ∉ cluster d ω a) (hinf : (cluster d ω a).Infinite) :
     (cluster d (removeSite 0 ω) a).Infinite := by
   rw [cluster_infinite_iff]
@@ -428,11 +263,7 @@ theorem bc20_removeSite_infinite_of_originFree (ω : ConfigSpace (Sym2 (Site d))
   rw [cluster_eq_of_connected w.reachable]
   exact ava_support_mem_cluster ω w hmem
 
-
-
-
-
-theorem bc20_originBranchSurvival_of_originFree (d : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc20_originBranchSurvival_of_originFree (d : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d)
     (hne : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃)
     (hadj : (hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
@@ -448,39 +279,5 @@ theorem bc20_originBranchSurvival_of_originFree (d : ℕ) (ω : ConfigSpace (Sym
     bc20_removeSite_infinite_of_originFree ω a₁ h0.1 hinf.1,
     bc20_removeSite_infinite_of_originFree ω a₂ h0.2.1 hinf.2.1,
     bc20_removeSite_infinite_of_originFree ω a₃ h0.2.2 hinf.2.2⟩
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 end StatMech.Walls

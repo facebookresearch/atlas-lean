@@ -6,72 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StraightWalk
+
+/-!
+# Three disjoint corridors in a planar box
+
+Three vertex-disjoint paths from the origin inside a box of `ℤ²` are preserved by rotations and
+reflections, which reduces the corridor problem to a few cases.
+
+## i. Overview
+
+`bcor_Corridors n u₁ u₂ u₃` asks for three paths from the origin to `u_i` inside `B_n` that meet
+only at the origin. Rotation by `90°` and the reflection `bcor_reflFun` are graph automorphisms
+preserving the box, so corridors transform with their endpoints; together with permutations of the
+endpoints this reduces the general case to right, top and left targets. The file then constructs the
+corridors in the remaining cases and shows that the three first steps from the origin can be chosen
+distinct.
+
+## ii. Key results
+
+- `bcor_corridors_rot90` : corridors are preserved by rotation
+- `bcor_corridors_refl` : corridors are preserved by reflection
+- `bcor_corridors_same_right_of_distinct` : corridors to three targets on the right side
+- `bcor_witness_firstSteps` : three distinct first steps from the origin
+
+## iii. Table of contents
+
+- A. Results
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §8.2.
+-/
 
 @[expose] public section
 
@@ -85,34 +57,25 @@ set_option linter.unusedVariables false
 set_option linter.unusedSectionVars false
 set_option linter.unusedSimpArgs false
 set_option maxRecDepth 4000
-set_option maxHeartbeats 800000
 
+/-! ## A. Results -/
 
-
-
-theorem bcor_origin_eq : (![0, 0] : Site 2) = 0 := by
+lemma bcor_origin_eq : (![0, 0] : Site 2) = 0 := by
   funext i; fin_cases i <;> rfl
 
-
-theorem bcor_mem_box {a b : ℤ} {n : ℕ} (ha : a.natAbs ≤ n) (hb : b.natAbs ≤ n) :
+lemma bcor_mem_box {a b : ℤ} {n : ℕ} (ha : a.natAbs ≤ n) (hb : b.natAbs ≤ n) :
     (![a, b] : Site 2) ∈ box 2 n := by
   rw [mem_box]
   intro i; fin_cases i
   · simpa using ha
   · simpa using hb
 
-
-theorem bcor_uIcc_natAbs {s t : ℤ} {n : ℕ} (hs : s.natAbs ≤ n) (ht : t ∈ Set.uIcc 0 s) :
+lemma bcor_uIcc_natAbs {s t : ℤ} {n : ℕ} (hs : s.natAbs ≤ n) (ht : t ∈ Set.uIcc 0 s) :
     t.natAbs ≤ n := by
   rw [Set.mem_uIcc] at ht
   omega
 
-
-
-
-
-
-
+/-- Three paths from the origin to `u₁, u₂, u₃` inside `B_n` that meet only at the origin. -/
 def bcor_Corridors (n : ℕ) (u₁ u₂ u₃ : Site 2) : Prop :=
   ∃ (P₁ : (hypercubicLattice 2).Walk ![0, 0] u₁)
     (P₂ : (hypercubicLattice 2).Walk ![0, 0] u₂)
@@ -125,10 +88,9 @@ def bcor_Corridors (n : ℕ) (u₁ u₂ u₃ : Site 2) : Prop :=
       (∀ z, z ∈ P₁.support → z ∈ P₃.support → z = ![0, 0]) ∧
       (∀ z, z ∈ P₂.support → z ∈ P₃.support → z = ![0, 0])
 
-
-
-
-theorem bcor_rot90_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
+/-- Rotation by `90°` maps the box `B_n` of `ℤ²` to itself. See also
+`StatMech.Lattice.rot90Fun_mem_box`, the same statement. -/
+lemma bcor_rot90_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
     rot90Fun x ∈ box 2 n := by
   rw [mem_box] at hx ⊢
   intro i
@@ -136,10 +98,7 @@ theorem bcor_rot90_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
   · simpa [rot90Fun] using hx 1
   · simpa [rot90Fun] using hx 0
 
-
-
-
-theorem bcor_corridors_rot90 {n : ℕ} {u₁ u₂ u₃ : Site 2}
+lemma bcor_corridors_rot90 {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) :
     bcor_Corridors n (rot90Fun u₁) (rot90Fun u₂) (rot90Fun u₃) := by
   obtain ⟨P₁, P₂, P₃, hp1, hp2, hp3, hb1, hb2, hb3, hd12, hd13, hd23⟩ := hC
@@ -202,9 +161,7 @@ theorem bcor_corridors_rot90 {n : ℕ} {u₁ u₂ u₃ : Site 2}
     subst y
     simpa [rot90Fun_apply] using congrArg rot90Fun (hd23 x hx hy)
 
-
-
-theorem bcor_corridors_rot90_iterate (k : ℕ) {n : ℕ} {u₁ u₂ u₃ : Site 2}
+lemma bcor_corridors_rot90_iterate (k : ℕ) {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) :
     bcor_Corridors n ((rot90Fun^[k]) u₁) ((rot90Fun^[k]) u₂)
       ((rot90Fun^[k]) u₃) := by
@@ -213,8 +170,7 @@ theorem bcor_corridors_rot90_iterate (k : ℕ) {n : ℕ} {u₁ u₂ u₃ : Site 
   | succ k ih =>
       simpa [Function.iterate_succ_apply'] using bcor_corridors_rot90 ih
 
-
-theorem bcor_corridors_swap12 {n : ℕ} {u₁ u₂ u₃ : Site 2}
+lemma bcor_corridors_swap12 {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) : bcor_Corridors n u₂ u₁ u₃ := by
   obtain ⟨P₁, P₂, P₃, hp1, hp2, hp3, hb1, hb2, hb3, hd12, hd13, hd23⟩ := hC
   refine ⟨P₂, P₁, P₃, hp2, hp1, hp3, hb2, hb1, hb3, ?_, ?_, ?_⟩
@@ -223,31 +179,28 @@ theorem bcor_corridors_swap12 {n : ℕ} {u₁ u₂ u₃ : Site 2}
   · exact hd23
   · exact hd13
 
-
-theorem bcor_corridors_swap23 {n : ℕ} {u₁ u₂ u₃ : Site 2}
+lemma bcor_corridors_swap23 {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) : bcor_Corridors n u₁ u₃ u₂ := by
   obtain ⟨P₁, P₂, P₃, hp1, hp2, hp3, hb1, hb2, hb3, hd12, hd13, hd23⟩ := hC
   refine ⟨P₁, P₃, P₂, hp1, hp3, hp2, hb1, hb3, hb2, hd13, hd12, ?_⟩
   intro z hz3 hz2
   exact hd23 z hz2 hz3
 
-
-
-
+/-- Reflection of `ℤ²` in the horizontal axis. -/
 def bcor_reflFun (x : Site 2) : Site 2 := ![x 0, -x 1]
 
-@[simp] theorem bcor_reflFun_apply (a b : ℤ) :
+@[simp] lemma bcor_reflFun_apply (a b : ℤ) :
     bcor_reflFun ![a, b] = ![a, -b] := by
   funext i; fin_cases i <;> simp [bcor_reflFun]
 
-
+/-- The reflection as an equivalence of `ℤ²`. -/
 def bcor_reflEquiv : Site 2 ≃ Site 2 where
   toFun := bcor_reflFun
   invFun := bcor_reflFun
   left_inv := by intro x; funext i; fin_cases i <;> simp [bcor_reflFun]
   right_inv := by intro x; funext i; fin_cases i <;> simp [bcor_reflFun]
 
-theorem bcor_refl_adj (x y : Site 2) :
+lemma bcor_refl_adj (x y : Site 2) :
     (hypercubicLattice 2).Adj (bcor_reflFun x) (bcor_reflFun y) ↔
       (hypercubicLattice 2).Adj x y := by
   simp only [hypercubicLattice_adj]
@@ -255,11 +208,11 @@ theorem bcor_refl_adj (x y : Site 2) :
   simp only [bcor_reflFun, Matrix.cons_val_zero, Matrix.cons_val_one]
   rw [show -x 1 - -y 1 = -(x 1 - y 1) by ring, Int.natAbs_neg]
 
-
+/-- The reflection as an automorphism of the square lattice. -/
 def bcor_reflIso : hypercubicLattice 2 ≃g hypercubicLattice 2 :=
   ⟨bcor_reflEquiv, fun {x y} ↦ bcor_refl_adj x y⟩
 
-theorem bcor_refl_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
+lemma bcor_refl_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
     bcor_reflFun x ∈ box 2 n := by
   rw [mem_box] at hx ⊢
   intro i
@@ -267,8 +220,7 @@ theorem bcor_refl_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
   · simpa [bcor_reflFun] using hx 0
   · simpa [bcor_reflFun] using hx 1
 
-
-theorem bcor_corridors_refl {n : ℕ} {u₁ u₂ u₃ : Site 2}
+lemma bcor_corridors_refl {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) :
     bcor_Corridors n (bcor_reflFun u₁) (bcor_reflFun u₂) (bcor_reflFun u₃) := by
   obtain ⟨P₁, P₂, P₃, hp1, hp2, hp3, hb1, hb2, hb3, hd12, hd13, hd23⟩ := hC
@@ -326,36 +278,15 @@ theorem bcor_corridors_refl {n : ℕ} {u₁ u₂ u₃ : Site 2}
     subst y
     exact (congrArg bcor_reflFun (hd23 x hx hy)).trans (by simp)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bcor_corridors_RTL (n : ℕ) (hn : 1 ≤ n) (s t r : ℤ)
+lemma bcor_corridors_RTL (n : ℕ) (hn : 1 ≤ n) (s t r : ℤ)
     (hs : s.natAbs ≤ n) (ht : t.natAbs ≤ n) (hr : r.natAbs ≤ n)
     (h12 : (![(n : ℤ), s] : Site 2) ≠ ![t, (n : ℤ)])
     (h23 : (![t, (n : ℤ)] : Site 2) ≠ ![(-(n : ℤ)), r]) :
     bcor_Corridors n ![(n : ℤ), s] ![t, (n : ℤ)] ![(-(n : ℤ)), r] := by
-  
   set W₁ : (hypercubicLattice 2).Walk ![0, 0] ![(n : ℤ), s] := sw_lshape 0 0 (n : ℤ) s with hW1
   set W₂ : (hypercubicLattice 2).Walk ![0, 0] ![t, (n : ℤ)] :=
     (sw_vertSeg 0 0 (n : ℤ)).append (sw_horizSeg (n : ℤ) 0 t) with hW2
   set W₃ : (hypercubicLattice 2).Walk ![0, 0] ![(-(n : ℤ)), r] := sw_lshape 0 0 (-(n : ℤ)) r with hW3
-  
   have hW1supp : ∀ z : Site 2, z ∈ W₁.support ↔
       (∃ a : ℤ, a ∈ Set.uIcc 0 (n : ℤ) ∧ z = ![a, 0]) ∨
       (∃ a : ℤ, a ∈ Set.uIcc 0 s ∧ z = ![(n : ℤ), a]) := by
@@ -371,102 +302,84 @@ theorem bcor_corridors_RTL (n : ℕ) (hn : 1 ≤ n) (s t r : ℤ)
     rw [hW2, Walk.mem_support_append_iff, sw_vertSeg_mem_support, sw_horizSeg_mem_support]
   refine ⟨W₁.bypass, W₂.bypass, W₃.bypass, W₁.bypass_isPath, W₂.bypass_isPath,
     W₃.bypass_isPath, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · 
-    intro z hz
-    rcases (hW1supp z).mp (W₁.support_bypass_subset hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
+  · intro z hz
+    rcases (hW1supp z).mp (W₁.support_bypass_subset_support hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (bcor_uIcc_natAbs (by simp : ((n:ℤ)).natAbs ≤ n) ha) (by simp)
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs hs ha)
-  · 
-    intro z hz
-    rcases (hW2supp z).mp (W₂.support_bypass_subset hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
+  · intro z hz
+    rcases (hW2supp z).mp (W₂.support_bypass_subset_support hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs (by simp : ((n:ℤ)).natAbs ≤ n) ha)
     · exact bcor_mem_box (bcor_uIcc_natAbs ht ha) (by simp)
-  · 
-    intro z hz
-    rcases (hW3supp z).mp (W₃.support_bypass_subset hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
+  · intro z hz
+    rcases (hW3supp z).mp (W₃.support_bypass_subset_support hz) with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
     · refine bcor_mem_box ?_ (by simp)
       have : (-(n : ℤ)).natAbs ≤ n := by simp
       exact bcor_uIcc_natAbs this ha
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs hr ha)
-  · 
-    intro z h1 h2
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
+  · intro z h1 h2
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
     rcases h1' with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩ <;>
       rcases h2' with ⟨b, hb, hz⟩ | ⟨b, hb, hz⟩
-    · 
-      have e0 := congrFun hz 0; have e1 := congrFun hz 1
+    · have e0 := congrFun hz 0; have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0 e1
       subst e0; rfl
-    · 
-      exfalso; have e1 := congrFun hz 1
+    · exfalso; have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e1
       omega
-    · 
-      exfalso; have e0 := congrFun hz 0
+    · exfalso; have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       omega
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0; have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0 e1
       rw [Set.mem_uIcc] at ha hb
       have hsn : s = (n : ℤ) := by omega
       have htn : t = (n : ℤ) := by omega
       exact h12 (by rw [hsn, htn])
-  · 
-    intro z h1 h3
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+  · intro z h1 h3
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h1' with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩ <;>
       rcases h3' with ⟨b, hb, hz⟩ | ⟨b, hb, hz⟩
-    · 
-      have e0 := congrFun hz 0
+    · have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       rw [Set.mem_uIcc] at ha hb
       have : a = 0 := by omega
       subst this; rfl
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       rw [Set.mem_uIcc] at ha
       omega
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       rw [Set.mem_uIcc] at hb
       omega
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       omega
-  · 
-    intro z h2 h3
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+  · intro z h2 h3
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h2' with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩ <;>
       rcases h3' with ⟨b, hb, hz⟩ | ⟨b, hb, hz⟩
-    · 
-      have e0 := congrFun hz 0; have e1 := congrFun hz 1
+    · have e0 := congrFun hz 0; have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0 e1
       rw [Set.mem_uIcc] at ha hb
       have : a = 0 := by omega
       subst this; ext i; fin_cases i <;> simp_all
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0
       omega
-    · 
-      exfalso
+    · exfalso
       have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e1
       omega
-    · 
-      exfalso
+    · exfalso
       have e0 := congrFun hz 0; have e1 := congrFun hz 1
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at e0 e1
       rw [Set.mem_uIcc] at ha hb
@@ -474,17 +387,9 @@ theorem bcor_corridors_RTL (n : ℕ) (hn : 1 ≤ n) (s t r : ℤ)
       have hrn : r = (n : ℤ) := by omega
       exact h23 (by rw [htn, hrn])
 
-
-
-
-
-
-
-
-
-
-
-theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
+set_option maxHeartbeats 800000 in
+-- The `simp` calls over the explicit corridor paths need more than the default heartbeats.
+lemma bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
     (y₁ y₂ x y : ℤ)
     (hy₁ : y₁.natAbs ≤ n) (hy₂ : y₂.natAbs ≤ n)
     (hx : x.natAbs ≤ n) (hy : y.natAbs ≤ n)
@@ -524,7 +429,7 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
   refine ⟨W₁.bypass, W₂.bypass, W₃.bypass, W₁.bypass_isPath, W₂.bypass_isPath,
     W₃.bypass_isPath, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro z hz
-    rcases (hW1supp z).mp (W₁.support_bypass_subset hz) with
+    rcases (hW1supp z).mp (W₁.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs (by simp) ha)
     · exact bcor_mem_box (bcor_uIcc_natAbs (by simp) ha) (by simp)
@@ -532,7 +437,7 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       apply bcor_mem_box (by simp)
       omega
   · intro z hz
-    rcases (hW2supp z).mp (W₂.support_bypass_subset hz) with
+    rcases (hW2supp z).mp (W₂.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · apply bcor_mem_box
       · rw [Set.mem_uIcc] at ha
@@ -543,7 +448,7 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       apply bcor_mem_box ?_ hy₂
       omega
   · intro z hz
-    rcases (hW3supp z).mp (W₃.support_bypass_subset hz) with
+    rcases (hW3supp z).mp (W₃.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs (by simp) ha)
     · exact bcor_mem_box (bcor_uIcc_natAbs hx ha) (by simp)
@@ -551,8 +456,8 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       rw [Set.mem_uIcc] at ha
       omega
   · intro z h1 h2
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
     rcases h1' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h2' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -562,8 +467,8 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
   · intro z h1 h3
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h1' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h3' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -574,8 +479,8 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] at * <;> omega
   · intro z h2 h3
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h2' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h3' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -586,8 +491,7 @@ theorem bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] at * <;> omega
 
-
-theorem bcor_corridors_two_right_lower (n : ℕ) (hn : 1 ≤ n)
+lemma bcor_corridors_two_right_lower (n : ℕ) (hn : 1 ≤ n)
     (y₁ y₂ x y : ℤ)
     (hy₁ : y₁.natAbs ≤ n) (hy₂ : y₂.natAbs ≤ n)
     (hx : x.natAbs ≤ n) (hy : y.natAbs ≤ n)
@@ -599,15 +503,7 @@ theorem bcor_corridors_two_right_lower (n : ℕ) (hn : 1 ≤ n)
     (by omega) (by omega) (by rcases houter with h | h <;> simp [h])
   simpa using bcor_corridors_swap12 (bcor_corridors_refl hu)
 
-
-
-
-
-
-
-
-
-theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ)
+lemma bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ)
     (hy₁ : y₁.natAbs ≤ n) (hy₂ : y₂.natAbs ≤ n) (hy₃ : y₃.natAbs ≤ n)
     (h12 : y₁ < y₂) (h23 : y₂ < y₃) :
     bcor_Corridors n ![(n : ℤ), y₁] ![(n : ℤ), y₂] ![(n : ℤ), y₃] := by
@@ -644,7 +540,7 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
   refine ⟨W₁.bypass, W₂.bypass, W₃.bypass, W₁.bypass_isPath, W₂.bypass_isPath,
     W₃.bypass_isPath, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro z hz
-    rcases (hW1supp z).mp (W₁.support_bypass_subset hz) with
+    rcases (hW1supp z).mp (W₁.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs (by simp) ha)
     · exact bcor_mem_box (bcor_uIcc_natAbs (by simp) ha) (by simp)
@@ -652,7 +548,7 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       apply bcor_mem_box (by simp)
       omega
   · intro z hz
-    rcases (hW2supp z).mp (W₂.support_bypass_subset hz) with
+    rcases (hW2supp z).mp (W₂.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · apply bcor_mem_box
       · rw [Set.mem_uIcc] at ha
@@ -663,7 +559,7 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       apply bcor_mem_box ?_ hy₂
       omega
   · intro z hz
-    rcases (hW3supp z).mp (W₃.support_bypass_subset hz) with
+    rcases (hW3supp z).mp (W₃.support_bypass_subset_support hz) with
       (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩
     · exact bcor_mem_box (by simp) (bcor_uIcc_natAbs (by simp) ha)
     · exact bcor_mem_box (bcor_uIcc_natAbs (by simp) ha) (by simp)
@@ -671,8 +567,8 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       apply bcor_mem_box (by simp)
       omega
   · intro z h1 h2
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
     rcases h1' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h2' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -682,8 +578,8 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
   · intro z h1 h3
-    have h1' := (hW1supp z).mp (W₁.support_bypass_subset h1)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+    have h1' := (hW1supp z).mp (W₁.support_bypass_subset_support h1)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h1' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h3' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -693,8 +589,8 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
   · intro z h2 h3
-    have h2' := (hW2supp z).mp (W₂.support_bypass_subset h2)
-    have h3' := (hW3supp z).mp (W₃.support_bypass_subset h3)
+    have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
+    have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
     rcases h2' with (⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩) | ⟨a, ha, rfl⟩ <;>
       rcases h3' with (⟨b, hb, hz⟩ | ⟨b, hb, hz⟩) | ⟨b, hb, hz⟩ <;>
       have e0 := congrFun hz 0 <;> have e1 := congrFun hz 1 <;>
@@ -704,10 +600,7 @@ theorem bcor_corridors_same_right (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ
       ext i <;> fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
 
-
-
-
-theorem bcor_corridors_same_right_of_distinct (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ)
+lemma bcor_corridors_same_right_of_distinct (n : ℕ) (hn : 1 ≤ n) (y₁ y₂ y₃ : ℤ)
     (hy₁ : y₁.natAbs ≤ n) (hy₂ : y₂.natAbs ≤ n) (hy₃ : y₃.natAbs ≤ n)
     (hne12 : y₁ ≠ y₂) (hne13 : y₁ ≠ y₃) (hne23 : y₂ ≠ y₃) :
     bcor_Corridors n ![(n : ℤ), y₁] ![(n : ℤ), y₂] ![(n : ℤ), y₃] := by
@@ -728,24 +621,13 @@ theorem bcor_corridors_same_right_of_distinct (n : ℕ) (hn : 1 ≤ n) (y₁ y�
       · exact bcor_corridors_swap12 (bcor_corridors_swap23 (bcor_corridors_swap12
           (bcor_corridors_same_right n hn y₃ y₂ y₁ hy₃ hy₂ hy₁ h32 h21)))
 
-
-
-
-
-
-
-
-
-
-
-theorem bcor_firstSteps (n : ℕ) {u₁ u₂ u₃ : Site 2}
+lemma bcor_firstSteps (n : ℕ) {u₁ u₂ u₃ : Site 2}
     (hu₁ : u₁ ≠ ![0, 0]) (hu₂ : u₂ ≠ ![0, 0]) (hu₃ : u₃ ≠ ![0, 0])
     (hC : bcor_Corridors n u₁ u₂ u₃) :
     ∃ a₁ a₂ a₃ : Site 2,
       ((hypercubicLattice 2).Adj 0 a₁ ∧ (hypercubicLattice 2).Adj 0 a₂ ∧
         (hypercubicLattice 2).Adj 0 a₃) ∧ (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) := by
   obtain ⟨P₁, P₂, P₃, _, _, _, _, _, _, d12, d13, d23⟩ := hC
-  
   have step : ∀ {u : Site 2} (P : (hypercubicLattice 2).Walk ![0, 0] u), u ≠ ![0, 0] →
       (hypercubicLattice 2).Adj ![0, 0] (P.getVert 1) ∧ P.getVert 1 ∈ P.support ∧
         P.getVert 1 ≠ ![0, 0] := by
@@ -770,29 +652,14 @@ theorem bcor_firstSteps (n : ℕ) {u₁ u₂ u₃ : Site 2}
   · intro h; exact hn1 (d13 _ hm1 (h ▸ hm3))
   · intro h; exact hn2 (d23 _ hm2 (h ▸ hm3))
 
-
-
-
-
-
-
-
-
-theorem bcor_witness :
+lemma bcor_witness :
     bcor_Corridors 3 ![(3 : ℤ), 1] ![(-2 : ℤ), (3 : ℤ)] ![(-3 : ℤ), -2] := by
   have h := bcor_corridors_RTL 3 (by norm_num) 1 (-2) (-2)
     (by norm_num) (by norm_num) (by norm_num)
     (by decide) (by decide)
   simpa using h
 
-
-
-
-
-
-
-
-theorem bcor_incident_corner_impossible (n : ℕ) (hn : 1 ≤ n) :
+lemma bcor_incident_corner_impossible (n : ℕ) (hn : 1 ≤ n) :
     ¬ bcor_Corridors n
       ![(n : ℤ), (n : ℤ) - 1]
       ![(n : ℤ), (n : ℤ)]
@@ -849,8 +716,7 @@ theorem bcor_incident_corner_impossible (n : ℕ) (hn : 1 ≤ n) :
     norm_num [Matrix.cons_val_one] at this
     omega
 
-
-theorem bcor_witness_firstSteps :
+lemma bcor_witness_firstSteps :
     ∃ a₁ a₂ a₃ : Site 2,
       ((hypercubicLattice 2).Adj 0 a₁ ∧ (hypercubicLattice 2).Adj 0 a₂ ∧
         (hypercubicLattice 2).Adj 0 a₃) ∧ (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) :=
