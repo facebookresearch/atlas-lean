@@ -89,7 +89,7 @@ theorem minkowski_diag_swap :
       show (25 : ℝ) = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   rw [h4, h25]
   rw [h4, h25] at h'
-  exact h' 
+  exact h'
 
 /-- `diagonal ![2, 1]` is positive semidefinite. -/
 theorem psd_diag_two_one :
@@ -136,7 +136,7 @@ theorem minkowski_diag_two_one_one_three :
   rw [hA, hB, hAB]
   rw [show ((2 : ℝ)⁻¹) = 1 / 2 by norm_num, ← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow,
     ← Real.sqrt_eq_rpow]
-  exact h' 
+  exact h'
 
 /-- `diagonal ![1, 0]` is positive semidefinite (singular). -/
 theorem psd_diag_one_zero :
@@ -181,7 +181,7 @@ theorem minkowski_diag_singular :
   rw [Real.zero_rpow (by norm_num : ((2 : ℝ)⁻¹) ≠ 0), Real.one_rpow] at h'
   rw [hA, hB, hAB]
   rw [Real.zero_rpow (by norm_num : ((2 : ℝ)⁻¹) ≠ 0), Real.one_rpow]
-  exact h' 
+  exact h'
 
 /-- `diagonal ![2]` is positive semidefinite. -/
 theorem psd_diag_single_two :
@@ -231,7 +231,7 @@ theorem minkowski_one_dim :
   rw [show ((1 : ℝ)⁻¹) = 1 by norm_num, Real.rpow_one, Real.rpow_one, Real.rpow_one] at h'
   rw [hA, hB, hAB]
   rw [show ((1 : ℝ)⁻¹) = 1 by norm_num, Real.rpow_one, Real.rpow_one, Real.rpow_one]
-  exact h' 
+  exact h'
 
 /-- Determinant monotonicity: `3 = det (diagonal ![1, 3]) ≤
 det (diagonal ![3, 4]) = 12`. -/

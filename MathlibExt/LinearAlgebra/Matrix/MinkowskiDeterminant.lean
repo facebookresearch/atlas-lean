@@ -24,7 +24,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Minkowski's determinant inequality for positive semidefinite matrices
 
-For positive semidefinite matrices `A` and `B` of size `n`,
+For positive semidefinite matrices `A` and `B` of size `n ≥ 1`,
 `det (A + B) ^ (1 / n) ≥ det A ^ (1 / n) + det B ^ (1 / n)`.
 In particular the determinant is monotone on the positive semidefinite cone.
 
