@@ -12,9 +12,16 @@ Portions of this file are adapted from:
 `Theorems/Thm_MeasureTheory_IsFundamentalDomain_iUnion_inv_smul_of_leftCosetRepresentatives.lean`
 and
 `P2M/Sol/S_MeasureTheory_IsFundamentalDomain_iUnion_inv_smul_of_leftCosetRepresentatives.lean`
-(fermats-last-theorem):
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statement and proof are reused here with that machinery
 removed and the name restated in Mathlib style.
@@ -26,11 +33,11 @@ public import Mathlib.MeasureTheory.Group.FundamentalDomain
 public import Mathlib.MeasureTheory.Group.Action
 
 /-!
-# Fundamental domains for subgroups of finite index
+# Fundamental domains for subgroups of countable index
 
-If `Γ₂ ≤ Γ₁` and `R` picks one representative of each left coset of `Γ₂`
-in `Γ₁`, the union of the `R i`-translates of a fundamental domain for `Γ₁`
-is a fundamental domain for `Γ₂`.
+If `Γ₂ ≤ Γ₁` and a countable family `R : ι → Γ₁` picks one representative
+of each left coset of `Γ₂` in `Γ₁`, the union of the inverse `R i`-translates
+of a fundamental domain for `Γ₁` is a fundamental domain for `Γ₂`.
 -/
 
 @[expose] public section
@@ -48,8 +55,9 @@ private theorem smul_iUnion_inv_smul {G X ι : Type*} [Group G] [MulAction G X]
   refine Set.iUnion_congr fun i => ?_
   rw [smul_smul]
 
-/-- From a fundamental domain for `Γ₁`, a union of coset-representative
-translates gives a fundamental domain for a subgroup `Γ₂ ≤ Γ₁`. -/
+/-- From a fundamental domain for `Γ₁`, a countable union of inverse
+coset-representative translates gives a fundamental domain for a subgroup
+`Γ₂ ≤ Γ₁` of countable index. -/
 theorem MeasureTheory.IsFundamentalDomain.iUnion_inv_smul_of_leftCosetRepresentatives
     {G X ι : Type*} [Group G] [MulAction G X] [MeasurableSpace X] [Countable ι]
     (μ : Measure X) (Γ₁ Γ₂ : Subgroup G) (hle : Γ₂ ≤ Γ₁) [Countable Γ₁]
