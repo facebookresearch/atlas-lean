@@ -26,7 +26,8 @@ import Mathlib.Tactic.Ring
 
 The Bergman space `A²(𝔻)` is the Hilbert space of holomorphic functions
 `f(z) = ∑ₙ aₙ zⁿ` on the open unit disc that are square-integrable with
-respect to area measure. Its monomials `zⁿ` are orthogonal, with
+respect to normalized planar area measure `dA / π`, so the disc has measure `1`.
+With this normalization, the monomials `zⁿ` are orthogonal, with
 `‖zⁿ‖² = 1 / (n + 1)`, so the rescaled monomials `eₙ(z) = √(n + 1) zⁿ`
 form an orthonormal basis. We model the space by the coefficients of a
 function in this basis, i.e. by `ℓ²(ℕ, ℂ)`: a sequence `b` represents
@@ -69,7 +70,9 @@ Duren, *Theory of `H^p` Spaces*, for the classical theory.
   `⟪k_z, k_w⟫ = (1 - z * conj w)⁻¹ ^ 2`.
 * `bergmanEval_bergmanKernel` : `f_z(k_z) = ((1 - ‖z‖² : ℝ) : ℂ)⁻¹ ^ 2`,
   so the pointwise bound is sharp.
-* `bergmanMonomial_orthonormal` : the rescaled monomials are orthonormal.
+* `bergmanMonomial` : the family of rescaled monomials in the coefficient model.
+* `orthonormal_bergmanMonomial` : `Orthonormal ℂ bergmanMonomial`.
+* `bergmanMonomial_orthonormal` : the coordinate inner-product equality.
 -/
 
 @[expose] public section
@@ -304,8 +307,14 @@ theorem bergmanEval_bergmanKernel (z : ℂ) (hz : ‖z‖ < 1) :
   rw [inner_bergmanKernel_bergmanKernel, Complex.mul_conj, Complex.normSq_eq_norm_sq,
     Complex.ofReal_sub, Complex.ofReal_one]
 
-/-- The rescaled monomials `eₙ(z) = √(n + 1) zⁿ`, i.e. the standard basis
-vectors of the coefficient model, are orthonormal. -/
+/-- The rescaled monomial `eₙ(z) = √(n + 1) zⁿ` for normalized area
+measure `dA / π`, represented by the `n`th standard basis vector in the
+coefficient model. -/
+noncomputable def bergmanMonomial (n : ℕ) : ℓ²(ℕ, ℂ) :=
+  lp.single 2 n (1 : ℂ)
+
+/-- The coordinate inner products of the rescaled monomials equal the
+Kronecker delta. -/
 theorem bergmanMonomial_orthonormal (m n : ℕ) :
     ⟪(lp.single 2 m (1 : ℂ) : ℓ²(ℕ, ℂ)), (lp.single 2 n (1 : ℂ) : ℓ²(ℕ, ℂ))⟫_ℂ =
       if m = n then (1 : ℂ) else 0 := by
@@ -314,6 +323,11 @@ theorem bergmanMonomial_orthonormal (m n : ℕ) :
   · subst h
     simp [Pi.single_eq_same]
   · simp [h]
+
+/-- The rescaled monomial family satisfies Mathlib's standard orthonormal
+predicate. -/
+theorem orthonormal_bergmanMonomial : Orthonormal ℂ bergmanMonomial :=
+  orthonormal_iff_ite.mpr bergmanMonomial_orthonormal
 
 /-- The coefficient of `a` at `n` is the inner product with `eₙ`. -/
 theorem bergmanCoeff_eq_inner (a : ℓ²(ℕ, ℂ)) (n : ℕ) :

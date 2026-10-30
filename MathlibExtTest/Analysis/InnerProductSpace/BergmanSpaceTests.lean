@@ -141,4 +141,19 @@ example (a : ℓ²(ℕ, ℂ)) :
     Summable (fun n => a n * (Real.sqrt ((n : ℝ) + 1) : ℂ) * (((1 / 2 : ℝ) : ℂ)) ^ n) :=
   summable_bergmanEval_terms ((1 / 2 : ℝ) : ℂ) half_mem_disc a
 
+/-- The named monomial family satisfies Mathlib's standard orthonormal
+predicate. -/
+example : Orthonormal ℂ bergmanMonomial :=
+  orthonormal_bergmanMonomial
+
+/-- Standard orthonormal-family APIs establish linear independence. -/
+example : LinearIndependent ℂ bergmanMonomial :=
+  orthonormal_bergmanMonomial.linearIndependent
+
+/-- The named family evaluates to the normalized monomials. -/
+example (z : ℂ) (hz : ‖z‖ < 1) (n : ℕ) :
+    bergmanEval z hz (bergmanMonomial n) =
+      (Real.sqrt ((n : ℝ) + 1) : ℂ) * z ^ n := by
+  simpa [bergmanMonomial] using bergmanEval_single z hz n (1 : ℂ)
+
 end MathlibExtTest.Analysis.InnerProductSpace.BergmanSpaceTests
