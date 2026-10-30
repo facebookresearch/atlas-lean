@@ -176,11 +176,29 @@ private theorem bijective_prodMap_iff {f : E → E'} {g : F → F'} :
     exact hf.prodMap hg
 
 /-- A direct sum is a unit iff both summands are units. -/
-theorem isUnit_prodMap_iff [CompleteSpace E] [CompleteSpace F]
-    (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
+theorem isUnit_prodMap_iff (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
     IsUnit (T.prodMap S) ↔ IsUnit T ∧ IsUnit S := by
-  simp only [ContinuousLinearMap.isUnit_iff_bijective, ContinuousLinearMap.coe_prodMap']
-  exact bijective_prodMap_iff
+  constructor
+  · rintro ⟨u, hu⟩
+    have hright := u.val_inv
+    have hleft := u.inv_val
+    rw [hu] at hright hleft
+    refine ⟨⟨⟨T, (fst 𝕜 E F) ∘L u.inv ∘L (inl 𝕜 E F), ?_, ?_⟩, rfl⟩,
+      ⟨⟨S, (snd 𝕜 E F) ∘L u.inv ∘L (inr 𝕜 E F), ?_, ?_⟩, rfl⟩⟩
+    · ext x
+      exact congrArg (fun W : E × F →L[𝕜] E × F => (W (x, 0)).1) hright
+    · ext x
+      simpa using congrArg (fun W : E × F →L[𝕜] E × F => (W (x, 0)).1) hleft
+    · ext y
+      exact congrArg (fun W : E × F →L[𝕜] E × F => (W (0, y)).2) hright
+    · ext y
+      simpa using congrArg (fun W : E × F →L[𝕜] E × F => (W (0, y)).2) hleft
+  · rintro ⟨⟨uT, rfl⟩, ⟨uS, rfl⟩⟩
+    refine ⟨⟨uT.val.prodMap uS.val, uT.inv.prodMap uS.inv, ?_, ?_⟩, rfl⟩
+    · rw [ContinuousLinearMap.mul_def, prodMap_comp, ← ContinuousLinearMap.mul_def,
+        ← ContinuousLinearMap.mul_def, uT.val_inv, uS.val_inv, prodMap_one]
+    · rw [ContinuousLinearMap.mul_def, prodMap_comp, ← ContinuousLinearMap.mul_def,
+        ← ContinuousLinearMap.mul_def, uT.inv_val, uS.inv_val, prodMap_one]
 
 /-- Subtracting a direct sum from a scalar is a direct sum of the
 componentwise differences. -/
@@ -192,8 +210,7 @@ private theorem algebraMap_sub_prodMap (z : 𝕜) (T : E →L[𝕜] E) (S : F �
   simp [ContinuousLinearMap.coe_prodMap', Prod.map, Algebra.algebraMap_eq_smul_one]
 
 /-- The spectrum of a direct sum is the union of the spectra. -/
-theorem spectrum_prodMap [CompleteSpace E] [CompleteSpace F]
-    (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
+theorem spectrum_prodMap (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
     spectrum 𝕜 (T.prodMap S) = spectrum 𝕜 T ∪ spectrum 𝕜 S := by
   ext z
   simp only [spectrum.mem_iff, Set.mem_union]
@@ -201,8 +218,7 @@ theorem spectrum_prodMap [CompleteSpace E] [CompleteSpace F]
   exact not_and_or
 
 /-- The resolvent set of a direct sum is the intersection of the resolvent sets. -/
-theorem resolventSet_prodMap [CompleteSpace E] [CompleteSpace F]
-    (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
+theorem resolventSet_prodMap (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
     resolventSet 𝕜 (T.prodMap S) = resolventSet 𝕜 T ∩ resolventSet 𝕜 S := by
   ext z
   simp only [spectrum.mem_resolventSet_iff, Set.mem_inter_iff]

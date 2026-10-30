@@ -130,10 +130,43 @@ example : ((ContinuousLinearMap.id ℝ ℝ).prodMap (ContinuousLinearMap.id ℝ 
   rw [prodMap_comp]
   simp
 
+section
+
+variable {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+
+/-- Inverse extraction from a direct sum works without completeness assumptions. -/
+example (T : E →L[𝕜] E) (S : F →L[𝕜] F) (h : IsUnit (T.prodMap S)) :
+    IsUnit T ∧ IsUnit S :=
+  (isUnit_prodMap_iff T S).mp h
+
+/-- Units assemble into a direct sum without completeness assumptions. -/
+example (T : E →L[𝕜] E) (S : F →L[𝕜] F) (hT : IsUnit T) (hS : IsUnit S) :
+    IsUnit (T.prodMap S) :=
+  (isUnit_prodMap_iff T S).mpr ⟨hT, hS⟩
+
+/-- Spectrum membership is componentwise for arbitrary normed spaces. -/
+example (T : E →L[𝕜] E) (S : F →L[𝕜] F) (z : 𝕜) :
+    z ∈ spectrum 𝕜 (T.prodMap S) ↔ z ∈ spectrum 𝕜 T ∨ z ∈ spectrum 𝕜 S := by
+  rw [spectrum_prodMap]
+  rfl
+
+/-- Resolvent membership is componentwise for arbitrary normed spaces. -/
+example (T : E →L[𝕜] E) (S : F →L[𝕜] F) (z : 𝕜) :
+    z ∈ resolventSet 𝕜 (T.prodMap S) ↔
+      z ∈ resolventSet 𝕜 T ∧ z ∈ resolventSet 𝕜 S := by
+  rw [resolventSet_prodMap]
+  rfl
+
+end
+
 end
 
 #print axioms norm_prodMap
+#print axioms isUnit_prodMap_iff
 #print axioms spectrum_prodMap
+#print axioms resolventSet_prodMap
 #print axioms isCompactOperator_prodMap_iff
 #print axioms isFredholm_prodMap_iff
 #print axioms index_prodMap
