@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic
 
+import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 import Mathlib.Analysis.Normed.Lp.lpSpace
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Tactic.NormNum
@@ -35,6 +36,8 @@ open scoped _root_.lp ENNReal
 open MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic
 open MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 open MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
+open MathlibExt.Analysis.Normed.Lp.Compactness
+open MathlibExt.Analysis.Normed.Lp.SchauderBasis
 
 namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczPeriodicTests
 
@@ -142,6 +145,14 @@ example {𝕜 : Type*} [RCLike 𝕜] (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ) 
     (backwardCLM ^ n) x i = x (i + n) ∧
       (shiftCLM ^ n) x i = if i < n then 0 else x (i - n) :=
   ⟨backwardCLM_pow_apply n x i, shiftCLM_pow_apply n x i⟩
+
+/-- The public geometric bound composes with the canonical Schauder projection. -/
+example {𝕜 : Type*} [RCLike 𝕜] {μ : 𝕜} (hμ : 1 < ‖μ‖)
+    {N : ℕ} (hN : 0 < N) (y : ℓ²(ℕ, 𝕜)) :
+    ‖periodicApprox μ N y - (lpSchauderBasis (𝕜 := 𝕜) (p := 2) (by simp)).proj N y‖ ≤
+      (‖μ‖⁻¹ ^ N / (1 - ‖μ‖⁻¹ ^ N)) * ‖y‖ := by
+  rw [← lpTrunc_eq_lpSchauderBasis_proj (p := 2) (by simp)]
+  exact norm_periodicApprox_sub_trunc hμ hN y
 
 #print axioms MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic.dense_periodicPoints_iff
 
