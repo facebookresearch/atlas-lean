@@ -163,7 +163,7 @@ def SatisfiesMaximalLoewnerEquation
     ∀ t, 0 ≤ t → ∀ z ∈ D t, ConformalAt (g t) z
 
 namespace SatisfiesMaximalLoewnerEquation
-
+variable {W : ℝ → ℝ} {D : ℝ → Set ℂ} {g : ℝ → ℂ → ℂ}
 lemma domain_zero (h : SatisfiesMaximalLoewnerEquation W D g) :
     D 0 = upperHalfPlaneSet := h.1
 
