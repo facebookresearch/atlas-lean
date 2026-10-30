@@ -122,6 +122,16 @@ noncomputable def oneVariantPrior : ColocPrior (Fin 1) where
   p12_nonneg := by norm_num
   sum_le_one := by simp; norm_num
 
+/-- The parent's finite signed-BF boundary probe. -/
+noncomputable def signedBFProbePrior : ColocPrior (Fin 1) where
+  p1 := 1
+  p2 := 0
+  p12 := 0
+  p1_nonneg := by norm_num
+  p2_nonneg := by norm_num
+  p12_nonneg := by norm_num
+  sum_le_one := by simp
+
 example : colocHypothesis ((some 0, some 0) : Option (Fin 2) × Option (Fin 2)) = .h4 := rfl
 
 example : colocHypothesis ((some 0, some 1) : Option (Fin 2) × Option (Fin 2)) = .h3 := rfl
@@ -142,6 +152,47 @@ example : colocClosedForm oneVariantPrior 1 1 .h0 /
   rw [show (Finset.univ : Finset ColocHypothesis) = {.h0, .h1, .h2, .h3, .h4} from rfl]
   simp [colocClosedForm, oneVariantPrior]
   norm_num
+
+/-- Outside the probability domain, the raw algebraic H0 ratio can be `2`. -/
+example : colocClosedForm signedBFProbePrior ![-1 / 2] ![1] .h0 /
+    ∑ h, colocClosedForm signedBFProbePrior ![-1 / 2] ![1] h = 2 := by
+  rw [show (Finset.univ : Finset ColocHypothesis) = {.h0, .h1, .h2, .h3, .h4} from rfl]
+  simp [colocClosedForm, signedBFProbePrior]
+  norm_num
+
+/-- Outside the probability domain, the raw algebraic H1 ratio can be `-1`. -/
+example : colocClosedForm signedBFProbePrior ![-1 / 2] ![1] .h1 /
+    ∑ h, colocClosedForm signedBFProbePrior ![-1 / 2] ![1] h = -1 := by
+  rw [show (Finset.univ : Finset ColocHypothesis) = {.h0, .h1, .h2, .h3, .h4} from rfl]
+  simp [colocClosedForm, signedBFProbePrior]
+  norm_num
+
+/-- Non-negative Bayes factors give strictly positive coloc evidence, including zero factors. -/
+example : 0 < ∑ h, colocClosedForm defaultPrior ![0, 2] ![3, 0] h := by
+  apply colocEvidence_pos
+  · intro j
+    fin_cases j <;> norm_num
+  · intro j
+    fin_cases j <;> norm_num
+
+/-- Normalized coloc hypothesis weights are non-negative on the Bayes-factor domain. -/
+example (h : ColocHypothesis) :
+    0 ≤ colocClosedForm defaultPrior ![0, 2] ![3, 0] h /
+      ∑ h', colocClosedForm defaultPrior ![0, 2] ![3, 0] h' := by
+  apply colocPosterior_nonneg
+  · intro j
+    fin_cases j <;> norm_num
+  · intro j
+    fin_cases j <;> norm_num
+
+/-- Normalized coloc hypothesis weights sum to one on the Bayes-factor domain. -/
+example : ∑ h, colocClosedForm defaultPrior ![0, 2] ![3, 0] h /
+    ∑ h', colocClosedForm defaultPrior ![0, 2] ![3, 0] h' = 1 := by
+  apply sum_colocPosterior_eq_one
+  · intro j
+    fin_cases j <;> norm_num
+  · intro j
+    fin_cases j <;> norm_num
 
 /-- The optional categorical configuration priors retain their normalized interpretation. -/
 example : ∑ S, defaultPrior.categoricalPrior S = 1 := defaultPrior.sum_categoricalPrior
@@ -191,6 +242,11 @@ example (S : Finset (Fin 3)) (hS : IsCredibleSet α3 (4 / 5) S) : 2 ≤ S.card :
 #print axioms sum_pip
 #print axioms condDistrib_ser_effect
 #print axioms sum_colocWeight_mul_colocBF
+#print axioms colocBF_nonneg
+#print axioms colocClosedForm_nonneg
+#print axioms colocEvidence_pos
+#print axioms colocPosterior_nonneg
+#print axioms sum_colocPosterior_eq_one
 #print axioms ColocPrior.sum_categoricalPrior
 #print axioms colocCategoricalPosterior_eq
 #print axioms exists_minimal_credible_prefix

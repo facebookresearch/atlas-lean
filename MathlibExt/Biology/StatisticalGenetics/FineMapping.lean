@@ -47,8 +47,10 @@ credible sets.
   `condDistrib_ser_effect`: given `y`, the effect is `N(σ₀² β̂ / (σ₀² + s²), σ₀² s² / (σ₀² + s²))`.
 * `sum_colocWeight_mul_colocBF`: **the coloc closed forms**: the sums of unnormalized weight ×
   Bayes factor over the configurations of H0–H4 equal `1`, `p1 ∑ BF1`, `p2 ∑ BF2`,
-  `p1 p2 (∑ BF1 ∑ BF2 - ∑ BF1 BF2)` and `p12 ∑ BF1 BF2`; `colocPosterior_eq` normalizes them,
-  while `ColocPrior.sum_categoricalPrior` preserves the separate categorical-prior model.
+  `p1 p2 (∑ BF1 ∑ BF2 - ∑ BF1 BF2)` and `p12 ∑ BF1 BF2`; `colocPosterior_eq` is the
+  unconditional algebraic normalization identity, while `colocPosterior_nonneg` and
+  `sum_colocPosterior_eq_one` give its probability interpretation for non-negative Bayes factors.
+  `ColocPrior.sum_categoricalPrior` preserves the separate categorical-prior model.
 * `le_card_of_isCredibleSet`, `exists_minimal_credible_prefix`: **credible sets**: the shortest
   prefix of the variants sorted by decreasing inclusion probability whose mass is at least `ρ`
   has the minimum size among all sets of mass at least `ρ`.
@@ -58,7 +60,9 @@ credible sets.
 The posterior over the causal variant is Bayes' rule for densities (`serPosterior_eq_pip`), not
 Mathlib's posterior kernel of the mixture model. The iterative Bayesian stepwise selection of
 SuSiE (several effects), the estimation of `σ²` and `σ₀²`, and the coloc approximation of
-per-variant Bayes factors from p-values are not formalized.
+per-variant Bayes factors from p-values are not formalized. Raw coloc closed forms accept arbitrary
+real inputs as algebraic scores; their probability-domain theorems assume non-negative Bayes
+factors.
 
 ## References
 
@@ -372,7 +376,9 @@ noncomputable def normalizedWeightedEvidence {ι : Type*} [Fintype ι]
     (w BF : ι → ℝ) (j : ι) : ℝ :=
   w j * BF j / ∑ k, w k * BF k
 
-/-- Posterior inclusion probability from a normalized non-negative prior and variant evidence. -/
+/-- Posterior inclusion probability from a normalized non-negative prior and variant evidence.
+When every evidence value is positive, `PriorWeights.evidence_pos` makes the denominator strictly
+positive, and `pip_nonneg` and `sum_pip` prove that these values form a probability distribution. -/
 noncomputable def pip {ι : Type*} [Fintype ι] (w : PriorWeights ι)
     (BF : ι → ℝ) (j : ι) : ℝ :=
   normalizedWeightedEvidence w.weight BF j
@@ -613,8 +619,24 @@ factors, `1` for a trait without a causal variant (the two studies are independe
 def colocBF (bf1 bf2 : ι → ℝ) (S : Option ι × Option ι) : ℝ :=
   S.1.elim 1 bf1 * S.2.elim 1 bf2
 
-/-- The cited coloc closed forms as unnormalized hypothesis weights. H0 has weight `1`; H1--H4
-retain the per-configuration coefficients of Giambartolomei et al. (2014). -/
+omit [Fintype ι] [DecidableEq ι] in
+/-- A configuration Bayes factor is non-negative when both traits' Bayes factors are. -/
+theorem colocBF_nonneg (bf1 bf2 : ι → ℝ) (hbf1 : ∀ j, 0 ≤ bf1 j)
+    (hbf2 : ∀ j, 0 ≤ bf2 j) (S : Option ι × Option ι) : 0 ≤ colocBF bf1 bf2 S := by
+  rcases S with ⟨a, b⟩
+  cases a with
+  | none =>
+      cases b with
+      | none => simp [colocBF]
+      | some k => simpa [colocBF] using hbf2 k
+  | some j =>
+      cases b with
+      | none => simpa [colocBF] using hbf1 j
+      | some k => exact mul_nonneg (hbf1 j) (hbf2 k)
+
+/-- The cited coloc closed-form algebraic scores. H0 has score `1`; H1--H4 retain the
+per-configuration coefficients of Giambartolomei et al. (2014). They are unnormalized hypothesis
+weights, and hence have a probability interpretation, when the Bayes factors are non-negative. -/
 def colocClosedForm (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) : ColocHypothesis → ℝ
   | .h0 => 1
   | .h1 => P.p1 * ∑ j, bf1 j
@@ -657,6 +679,25 @@ theorem sum_colocWeight_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
   all_goals
     simp [colocHypothesis, ColocPrior.weight, colocBF, colocClosedForm, Finset.mul_sum,
       Finset.sum_ite_eq]
+
+omit [DecidableEq ι] in
+/-- Cited coloc closed-form scores are non-negative on the Bayes-factor domain. -/
+theorem colocClosedForm_nonneg (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (hbf1 : ∀ j, 0 ≤ bf1 j) (hbf2 : ∀ j, 0 ≤ bf2 j) (h : ColocHypothesis) :
+    0 ≤ colocClosedForm P bf1 bf2 h := by
+  classical
+  rw [← sum_colocWeight_mul_colocBF]
+  exact Finset.sum_nonneg fun S _ =>
+    mul_nonneg (P.weight_nonneg S) (colocBF_nonneg bf1 bf2 hbf1 hbf2 S)
+
+omit [DecidableEq ι] in
+/-- Cited coloc evidence is strictly positive for non-negative Bayes factors because H0 has
+unnormalized weight `1`. -/
+theorem colocEvidence_pos (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (hbf1 : ∀ j, 0 ≤ bf1 j) (hbf2 : ∀ j, 0 ≤ bf2 j) :
+    0 < ∑ h, colocClosedForm P bf1 bf2 h := by
+  refine Finset.sum_pos' (fun h _ => colocClosedForm_nonneg P bf1 bf2 hbf1 hbf2 h) ?_
+  exact ⟨.h0, Finset.mem_univ _, by simp [colocClosedForm]⟩
 
 /-- The corresponding closed forms for the optional normalized categorical-prior model. -/
 theorem sum_categoricalPrior_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
@@ -709,13 +750,31 @@ theorem ColocPrior.sum_categoricalPrior (P : ColocPrior ι) :
   simp [colocCategoricalClosedForm, ColocPrior.p0]
   ring
 
-/-- **coloc posterior probabilities**: each hypothesis's unnormalized cited configuration-weight
-sum, normalized over the five hypotheses, equals its normalized closed form. -/
+/-- The unconditional algebraic coloc normalization identity: each hypothesis's configuration
+score divided by the total score equals its closed-form score divided by the closed-form total.
+For arbitrary real `bf1` and `bf2` these ratios need not be probabilities. See
+`colocPosterior_nonneg` and `sum_colocPosterior_eq_one` for the probability-domain results. -/
 theorem colocPosterior_eq (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) (h : ColocHypothesis) :
     (∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h), P.weight S * colocBF bf1 bf2 S) /
         ∑ S, P.weight S * colocBF bf1 bf2 S =
       colocClosedForm P bf1 bf2 h / ∑ h', colocClosedForm P bf1 bf2 h' := by
   rw [sum_colocWeight_mul_colocBF, sum_weight_mul_colocBF]
+
+omit [DecidableEq ι] in
+/-- Normalized cited coloc hypothesis weights are non-negative for non-negative Bayes factors. -/
+theorem colocPosterior_nonneg (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (hbf1 : ∀ j, 0 ≤ bf1 j) (hbf2 : ∀ j, 0 ≤ bf2 j) (h : ColocHypothesis) :
+    0 ≤ colocClosedForm P bf1 bf2 h / ∑ h', colocClosedForm P bf1 bf2 h' := by
+  exact div_nonneg (colocClosedForm_nonneg P bf1 bf2 hbf1 hbf2 h)
+    (colocEvidence_pos P bf1 bf2 hbf1 hbf2).le
+
+omit [DecidableEq ι] in
+/-- Normalized cited coloc hypothesis weights sum to one for non-negative Bayes factors. -/
+theorem sum_colocPosterior_eq_one (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (hbf1 : ∀ j, 0 ≤ bf1 j) (hbf2 : ∀ j, 0 ≤ bf2 j) :
+    ∑ h, colocClosedForm P bf1 bf2 h / ∑ h', colocClosedForm P bf1 bf2 h' = 1 := by
+  simp only [← Finset.sum_div]
+  exact div_self (colocEvidence_pos P bf1 bf2 hbf1 hbf2).ne'
 
 /-- The normalized posterior identity for the separate categorical-prior model. -/
 theorem colocCategoricalPosterior_eq (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
