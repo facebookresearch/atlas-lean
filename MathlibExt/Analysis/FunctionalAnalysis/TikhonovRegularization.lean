@@ -53,6 +53,23 @@ behaviour; and from Mathlib's Lax–Milgram theorem, which is stated for
 real bilinear forms, while the argument here works over any `RCLike`
 field (in particular `ℂ`) via adjoints.
 
+## References
+
+* A. N. Tikhonov, "Regularization of incorrectly posed problems",
+  *Doklady Akademii Nauk SSSR* **153** (1963).
+* A. N. Tikhonov and V. Y. Arsenin, *Solutions of Ill-Posed Problems*,
+  John Wiley & Sons, 1977.
+
+Tikhonov's paper is the original regularization source. Tikhonov and
+Arsenin's monograph treats the quadratic regularization method and its
+normal-equation formulation. The bounded-operator Hilbert-space results
+proved here are the normal operator's invertibility for `Λ > 0`, the
+unique minimizer, and the elementary stability estimate
+`‖x‖ ≤ ‖A‖ * ‖b‖ / Λ`. The `Λ → ∞` limit is a direct consequence of
+that estimate, proved here by comparison with `‖A‖ * ‖b‖ / Λ → 0`.
+The v1 Hilbert-space file supplies projection and adjoint background;
+it contains no Tikhonov regularization statement.
+
 ## Main declarations
 
 * `tikhonovFunctional` : the Tikhonov functional `J`.
