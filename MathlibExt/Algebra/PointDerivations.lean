@@ -24,14 +24,13 @@ Released under the Apache License, Version 2.0.
 
 module
 
-public import Mathlib.Algebra.Algebra.Basic
+public import Mathlib.Algebra.Algebra.Hom
 public import Mathlib.Algebra.Module.Submodule.Defs
-public import Mathlib.Tactic.Abel
 
 /-!
 # Point derivations
 
-A point derivation at a `k`-point `ev : A →+* k` of a `k`-algebra `A` is
+A point derivation at a `k`-point `ev : A →ₐ[k] k` of a `k`-algebra `A` is
 a `k`-linear map `D : A →ₗ[k] M` satisfying the Leibniz rule
 `D (a * b) = ev a • D b + ev b • D a`. They form a submodule of
 `A →ₗ[k] M`, functorial in `M`, and vanish on constants and on the image
@@ -47,12 +46,12 @@ namespace Algebra
 /-- Point derivations at a `k`-point `ev` of a `k`-algebra `A` with values
 in a `k`-module `M`. -/
 def PointDerivations (k : Type u) (A : Type v) [Field k] [CommRing A] [Algebra k A]
-    (ev : A →+* k) (M : Type w) [AddCommGroup M] [Module k M] : Submodule k (A →ₗ[k] M) where
+    (ev : A →ₐ[k] k) (M : Type w) [AddCommGroup M] [Module k M] : Submodule k (A →ₗ[k] M) where
   carrier := {D | ∀ a b : A, D (a * b) = ev a • D b + ev b • D a}
   add_mem' := by
     intro D D' hD hD' a b
     simp only [LinearMap.add_apply, hD a b, hD' a b, smul_add]
-    abel
+    ac_rfl
   zero_mem' := by
     intro a b
     simp
@@ -62,7 +61,7 @@ def PointDerivations (k : Type u) (A : Type v) [Field k] [CommRing A] [Algebra k
 
 namespace PointDerivations
 
-variable {k : Type u} {A : Type v} [Field k] [CommRing A] [Algebra k A] {ev : A →+* k}
+variable {k : Type u} {A : Type v} [Field k] [CommRing A] [Algebra k A] {ev : A →ₐ[k] k}
   {M : Type w} [AddCommGroup M] [Module k M] {M' : Type w'} [AddCommGroup M'] [Module k M']
 
 theorem mem_iff (D : A →ₗ[k] M) :
@@ -82,27 +81,26 @@ theorem apply_algebraMap {D : A →ₗ[k] M} (hD : D ∈ PointDerivations k A ev
     D (algebraMap k A c) = 0 := by
   rw [Algebra.algebraMap_eq_smul_one, LinearMap.map_smul, apply_one hD, smul_zero]
 
-theorem ev_smul (hev : ev.comp (algebraMap k A) = RingHom.id k) (c : k) (a : A) :
-    ev (c • a) = c * ev a := by
-  rw [Algebra.smul_def, map_mul, ← RingHom.comp_apply, hev, RingHom.id_apply]
+theorem ev_smul (c : k) (a : A) : ev (c • a) = c * ev a := by
+  simp only [map_smul, smul_eq_mul]
 
 /-- Functoriality of point derivations in the coefficient module. -/
-def map (ev : A →+* k) (φ : M →ₗ[k] M') :
+def map (ev : A →ₐ[k] k) (φ : M →ₗ[k] M') :
     ↥(PointDerivations k A ev M) →ₗ[k] ↥(PointDerivations k A ev M') where
   toFun D := ⟨φ.comp D.1, fun a b => by
     simp only [LinearMap.comp_apply, D.2 a b, map_add, map_smul]⟩
   map_add' D D' := by ext a; simp
   map_smul' c D := by ext a; simp
 
-@[simp] theorem map_apply_coe (ev : A →+* k) (φ : M →ₗ[k] M')
+@[simp] theorem map_apply_coe (ev : A →ₐ[k] k) (φ : M →ₗ[k] M')
     (D : ↥(PointDerivations k A ev M)) (a : A) :
     (map ev φ D : A →ₗ[k] M') a = φ (D.1 a) := rfl
 
-theorem map_id (ev : A →+* k) (D : ↥(PointDerivations k A ev M)) :
+theorem map_id (ev : A →ₐ[k] k) (D : ↥(PointDerivations k A ev M)) :
     map ev (LinearMap.id : M →ₗ[k] M) D = D := by
   ext a; rfl
 
-theorem map_comp {M'' : Type w} [AddCommGroup M''] [Module k M''] (ev : A →+* k)
+theorem map_comp {M'' : Type w} [AddCommGroup M''] [Module k M''] (ev : A →ₐ[k] k)
     (φ : M →ₗ[k] M') (ψ : M' →ₗ[k] M'') (D : ↥(PointDerivations k A ev M)) :
     map ev (ψ.comp φ) D = map ev ψ (map ev φ D) := by
   ext a; rfl
