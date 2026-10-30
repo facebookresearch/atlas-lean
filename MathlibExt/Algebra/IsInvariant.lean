@@ -11,9 +11,16 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_Algebra_IsInvariant_moduleFinite_and_finiteType_of_finiteType.lean` and
 `P2M/Sol/S_Algebra_IsInvariant_moduleFinite_and_finiteType_of_finiteType.lean`
-(fermats-last-theorem):
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statement and proof are reused here with that machinery
 removed and the name restated in Mathlib style.
@@ -25,19 +32,23 @@ public import Mathlib.RingTheory.Invariant.Basic
 public import Mathlib.RingTheory.Finiteness.Basic
 
 /-!
-# Finiteness of rings of invariants
+# Finiteness when the algebra-map image contains the fixed elements
 
-Over a Noetherian base, the ring of invariants of a finite group acting on
-a finite-type algebra is finite type, and the algebra is finite over it:
-invariants are integral, and finite generation descends along the inclusion
-once both finite generation statements are known.
+Let `R → A → B` be an algebra tower over a Noetherian ring `R`, with
+`algebraMap A B` injective and `B` finite type over `R`. Let a finite
+group `G` act on `B` by semiring automorphisms. If every element fixed by `G` lies in the
+image of `algebraMap A B`, then `B` is finite as an `A`-module and `A` is
+finite type over `R`. This containment is `Algebra.IsInvariant A B G`.
+It gives integrality of `B` over `A`; finite generation then descends
+along the injective algebra map.
 -/
 
 @[expose] public section
 
-/-- Over a Noetherian ring, if `B` is finite type and `A` is the ring of
-invariants of a finite group acting on `B`, then `B` is finite over `A`
-and `A` is finite type over the base. -/
+/-- Over a Noetherian ring `R`, suppose `B` is finite type over `R` and
+the faithful image of `A` in `B` contains every fixed element of a finite
+group acting on `B` by semiring automorphisms. Then `B` is finite over `A`
+and `A` is finite type over `R`. -/
 theorem Algebra.IsInvariant.moduleFinite_and_finiteType_of_finiteType
     (R : Type*) [CommRing R] [IsNoetherianRing R]
     (A : Type*) [CommRing A] [Algebra R A]
