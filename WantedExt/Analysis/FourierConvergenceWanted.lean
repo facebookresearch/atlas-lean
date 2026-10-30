@@ -59,9 +59,18 @@ Fourier series, and uniform convergence under `ℓ¹`-summability
 (`hasSum_fourier_series_of_summable`). It has neither the Dirichlet kernel nor
 the statement that `C¹` forces pointwise convergence of the symmetric partial
 sums — the `C¹` bound `|f̂_n| ≤ C/n` is not `ℓ¹`-summable, so the summable case
-does not apply — and it has no Fejér kernel, Cesàro means, or Fejér theorem. The
+does not apply. The
 symmetric partial-sum order `Finset.Icc (-N) N` is essential, since the Fourier
 series of a `C¹` function need not converge absolutely.
+
+`MathlibExt/Analysis/Fourier/AddCircle/FejerTheorem.lean` supplies the Fejér
+kernel, Cesàro–Fourier means, and uniform convergence on `AddCircle T`.
+The circle and real-line Fourier-coefficient interfaces use the same symmetric
+partial-sum order and `N + 1` normalization. Transport from the circle interface
+requires descending a continuous periodic function to `AddCircle (2 * Real.pi)`,
+identifying `fourierCoeffOn` and the exponential modes with the circle coefficients
+and modes, and pulling uniform convergence back to `ℝ`. This catalogue does not
+supply those interface bridges.
 -/
 
 open Filter Topology
