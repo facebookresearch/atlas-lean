@@ -6,22 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellFKDuality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellDefectClassify
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.SelfDualValue
+
+/-!
+# Radon–Nikodym bounds for torus self-duality
+
+At the self-dual point, the torus random-cluster probability of a configuration and of its dual
+differ by a factor `q ^ k` with `k ∈ {-1, 0, 1}`.
+
+## i. Overview
+
+Configurations on the torus edges (`TorusAmbientConfig`) carry the random-cluster weight
+`torusAmbientFKWeight` and probability `torusAmbientProbability`. The duality bijection maps the
+defect `δ` to `2 - δ`, and at `p_sd(q)` the weight ratio is `q ^ (δ - 1)`. Since `δ ∈ {0, 1, 2}`,
+the probability ratio lies in `{q⁻¹, 1, q}` (`torusAmbientProbability_selfDual_ratio_mem`, `q ≥ 1`).
+All results are unconditional.
+
+## ii. Key results
+
+- `torusAmbientFKWeight_selfDual_relation`: weight relation at the self-dual point.
+- `torusAmbientProbability_selfDual_ratio_mem`: the probability ratio is `q⁻¹`, `1` or `q`.
+
+## iii. Table of contents
+
+- A. Torus configurations and duality
+- B. Weights and partition function
+- C. Self-dual ratios
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -31,16 +51,18 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Torus configurations and duality -/
 
+/-- Configurations of the edges of the `L × L` torus. -/
 abbrev TorusAmbientConfig (L : ℕ) [Fact (2 < L)] :=
   TorusAmbientEdge L → Bool
 
-
+/-- The dual configuration on torus edges, transported along the cell crossing. -/
 noncomputable def torusCellDualAmbientConfig (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) : TorusAmbientConfig L :=
   fun e => !(omega ((torusCellCrossing L).symm e))
 
-
+/-- The duality of torus configurations, as an equivalence. -/
 noncomputable def torusCellDualAmbientConfigEquiv (L : ℕ) [Fact (2 < L)] :
     TorusAmbientConfig L ≃ TorusAmbientConfig L where
   toFun := torusCellDualAmbientConfig L
@@ -52,26 +74,24 @@ noncomputable def torusCellDualAmbientConfigEquiv (L : ℕ) [Fact (2 < L)] :
     funext e
     simp [torusCellDualAmbientConfig]
 
-
+/-- Extend a torus configuration to all pairs of torus sites, closed off the torus edges. -/
 def torusAmbientConfigExtend (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     ConfigSpace (Sym2 (ZMod L × ZMod L)) := fun e =>
   if he : e ∈ (onsTorusGraph L).edgeFinset then omega ⟨e, he⟩ else false
 
-
+/-- Restrict a configuration on all pairs of torus sites to the torus edges. -/
 def torusAmbientConfigRestrict (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     TorusAmbientConfig L := fun e => omega e.1
 
-@[simp] theorem torusAmbientConfigRestrict_extend
+@[simp] lemma torusAmbientConfigRestrict_extend
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L) :
     torusAmbientConfigRestrict L (torusAmbientConfigExtend L omega) = omega := by
   funext e
   simp [torusAmbientConfigRestrict, torusAmbientConfigExtend, e.2]
 
-
-
-theorem torusAmbientConfigExtend_dual (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientConfigExtend_dual (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     torusAmbientConfigExtend L (torusCellDualAmbientConfig L omega) =
       torusCellDualConfig L (torusAmbientConfigExtend L omega) := by
@@ -82,19 +102,20 @@ theorem torusAmbientConfigExtend_dual (L : ℕ) [Fact (2 < L)]
         (⟨e, he⟩ : TorusAmbientEdge L) : TorusAmbientEdge L) :
         Sym2 (ZMod L × ZMod L)) ∈ (onsTorusGraph L).edgeFinset :=
       ((torusCellCrossing L).symm (⟨e, he⟩ : TorusAmbientEdge L)).2
-    rw [torusAmbientConfigExtend, dif_pos he, torusCellDualConfig,
-      dif_pos he, torusCellDualAmbientConfig]
+    rw [torusAmbientConfigExtend, dite_eq_left he, torusCellDualConfig,
+      dite_eq_left he, torusCellDualAmbientConfig]
     rw [torusCellPrimalOfDualEdge_of_mem L he]
-    rw [torusAmbientConfigExtend, dif_pos hp']
-  · rw [torusAmbientConfigExtend, dif_neg he, torusCellDualConfig, dif_neg he]
+    rw [torusAmbientConfigExtend, dite_eq_left hp']
+  · rw [torusAmbientConfigExtend, dite_eq_right he, torusCellDualConfig, dite_eq_right he]
 
+/-! ## B. Weights and partition function -/
 
+/-- The random-cluster weight of a torus configuration. -/
 noncomputable def torusAmbientFKWeight (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) (omega : TorusAmbientConfig L) : ℝ :=
   FK.fkWeight (onsTorusGraph L) p q (torusAmbientConfigExtend L omega)
 
-
-theorem torusAmbientFKWeight_duality_signed
+lemma torusAmbientFKWeight_duality_signed
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     torusAmbientFKWeight L p q omega *
@@ -110,14 +131,13 @@ theorem torusAmbientFKWeight_duality_signed
   exact torusCell_fkWeight_duality_signed L
     (torusAmbientConfigExtend L omega) hp hp1 hq
 
-
+/-- The Euler defect of the open subgraph of a torus configuration. -/
 noncomputable def torusAmbientDefect (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) : ℤ :=
   torusCellDefect L
     (FK.openSub (onsTorusGraph L) (torusAmbientConfigExtend L omega))
 
-
-theorem torusAmbientDefect_classified (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientDefect_classified (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     torusAmbientDefect L omega = 0 ∨ torusAmbientDefect L omega = 1 ∨
       torusAmbientDefect L omega = 2 := by
@@ -125,8 +145,7 @@ theorem torusAmbientDefect_classified (L : ℕ) [Fact (2 < L)]
   exact torusCellDefect_classified_unconditional L _
     (FK.openSub_le (onsTorusGraph L) (torusAmbientConfigExtend L omega))
 
-
-theorem torusAmbientDefect_add_dual (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientDefect_add_dual (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     torusAmbientDefect L omega +
       torusAmbientDefect L (torusCellDualAmbientConfig L omega) = 2 := by
@@ -134,14 +153,12 @@ theorem torusAmbientDefect_add_dual (L : ℕ) [Fact (2 < L)]
   rw [torusAmbientConfigExtend_dual]
   exact torusCellDefect_add_dualConfig L (torusAmbientConfigExtend L omega)
 
-
+/-- The random-cluster partition function on the torus. -/
 noncomputable def torusAmbientPartition (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) : ℝ :=
   ∑ omega : TorusAmbientConfig L, torusAmbientFKWeight L p q omega
 
-
-
-theorem torusAmbientPartition_reindex_dual (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientPartition_reindex_dual (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) :
     (∑ omega : TorusAmbientConfig L,
         torusAmbientFKWeight L p q (torusCellDualAmbientConfig L omega)) =
@@ -150,17 +167,16 @@ theorem torusAmbientPartition_reindex_dual (L : ℕ) [Fact (2 < L)]
   exact Equiv.sum_comp (torusCellDualAmbientConfigEquiv L)
     (torusAmbientFKWeight L p q)
 
+/-! ## C. Self-dual ratios -/
 
-theorem selfDualPoint_odds {q : ℝ} (hq : 0 < q) :
+lemma selfDualPoint_odds {q : ℝ} (hq : 0 < q) :
     selfDualPoint q / (1 - selfDualPoint q) = Real.sqrt q := by
   have hs : 0 < Real.sqrt q := Real.sqrt_pos.mpr hq
   unfold selfDualPoint
   field_simp
   ring
 
-
-
-theorem torusAmbient_selfDual_prefactor (L : ℕ) [Fact (2 < L)]
+lemma torusAmbient_selfDual_prefactor (L : ℕ) [Fact (2 < L)]
     {q : ℝ} (hq : 0 < q) :
     (selfDualPoint q /
           (1 - dualParam (selfDualPoint q) q)) ^
@@ -177,8 +193,7 @@ theorem torusAmbient_selfDual_prefactor (L : ℕ) [Fact (2 < L)]
   congr 2
   omega
 
-
-theorem torusAmbientFKWeight_selfDual_relation
+lemma torusAmbientFKWeight_selfDual_relation
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq : 0 < q) :
     torusAmbientFKWeight L (selfDualPoint q) q omega * q =
@@ -205,17 +220,14 @@ theorem torusAmbientFKWeight_selfDual_relation
           q ^ torusAmbientDefect L omega) := by
       simpa only [torusAmbientDefect, mul_assoc] using h
 
-
-
-theorem torusAmbientFKWeight_pos (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientFKWeight_pos (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < torusAmbientFKWeight L p q omega := by
   unfold torusAmbientFKWeight
   exact FK.fkWeight_pos (onsTorusGraph L) hp hp1 hq _
 
-
-theorem torusAmbientPartition_pos (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientPartition_pos (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < torusAmbientPartition L p q := by
   unfold torusAmbientPartition
@@ -223,13 +235,12 @@ theorem torusAmbientPartition_pos (L : ℕ) [Fact (2 < L)]
     (fun omega _ => torusAmbientFKWeight_pos L omega hp hp1 hq)
     Finset.univ_nonempty
 
-
+/-- The random-cluster probability of a torus configuration. -/
 noncomputable def torusAmbientProbability (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) (omega : TorusAmbientConfig L) : ℝ :=
   torusAmbientFKWeight L p q omega / torusAmbientPartition L p q
 
-
-theorem torusAmbientProbability_sum_one (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientProbability_sum_one (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ omega : TorusAmbientConfig L, torusAmbientProbability L p q omega = 1 := by
   have hZ : torusAmbientPartition L p q ≠ 0 :=
@@ -240,8 +251,7 @@ theorem torusAmbientProbability_sum_one (L : ℕ) [Fact (2 < L)]
   unfold torusAmbientProbability torusAmbientPartition
   rw [← Finset.sum_div, div_self hZ']
 
-
-theorem torusAmbientProbability_ratio_eq_weight_ratio
+lemma torusAmbientProbability_ratio_eq_weight_ratio
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     torusAmbientProbability L p q omega /
@@ -256,8 +266,7 @@ theorem torusAmbientProbability_ratio_eq_weight_ratio
   unfold torusAmbientProbability
   field_simp
 
-
-theorem torusAmbientProbability_selfDual_ratio_eq_zpow
+lemma torusAmbientProbability_selfDual_ratio_eq_zpow
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq : 0 < q) :
     torusAmbientProbability L (selfDualPoint q) q omega /
@@ -293,9 +302,7 @@ theorem torusAmbientProbability_selfDual_ratio_eq_zpow
       rw [← hpow]
       ring
 
-
-
-theorem torusAmbientProbability_selfDual_ratio_values
+lemma torusAmbientProbability_selfDual_ratio_values
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq : 0 < q) :
     let ratio := torusAmbientProbability L (selfDualPoint q) q omega /
@@ -327,8 +334,7 @@ theorem torusAmbientProbability_selfDual_ratio_values
       simpa [mul_assoc] using hrel
     rw [hw, mul_div_cancel_left₀ _ hWD]
 
-
-
+/-- The probability ratio is `q⁻¹`, `1` or `q`. -/
 theorem torusAmbientProbability_selfDual_ratio_mem
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq1 : 1 ≤ q) :

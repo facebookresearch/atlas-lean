@@ -6,27 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdges
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCovLowerGeom
 public import MathlibExt.Probability.OSSS.RussoPrefactor
 
+/-!
+# Differential inequality for the active random-cluster model
+
+The OSSS-based differential inequality for crossing probabilities of the random-cluster model on the
+active edges of a finite graph embedded in `ℤ^d`.
+
+## i. Overview
+
+For coupling constants `J > 0`, `q ≥ 1` and `β ≤ β₀`, finite energy bounds the cross term
+(`active_cross_one_sub_lower`). The OSSS inequality applied to the boundary exploration gives
+`active_fk_differential_inequality`. Its hypotheses are geometric: an injective embedding of the
+edges into `ℤ^d`, a discrete vertex-boundary family, and containment of all edges in a box. There is
+no probabilistic assumption.
+
+## ii. Key results
+
+- `active_fk_differential_logistic`: logistic differential inequality.
+- `active_fk_differential_inequality`: the OSSS differential inequality, given the embedding
+  hypotheses.
+
+## iii. Table of contents
+
+- A. Incident edges
+- B. Differential inequality
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace ActiveEdgeDifferential
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open RevealmentTranslation
 open LindebergTree
 
@@ -47,7 +73,9 @@ lemma cov_active_eq (G : SimpleGraph V) [DecidableRel G.Adj]
   unfold Lindeberg.cov FK.activeCov
   rw [mean_active_eq, mean_active_eq, mean_active_eq]
 
+/-! ## A. Incident edges -/
 
+/-- The edges, among an embedded family, with an endpoint at the site `o`. -/
 noncomputable def incidentEdges {E : Type*} [Fintype E]
     (endU endV : E → Site d) (o : Site d) : Finset E :=
   Finset.univ.filter (fun e => endU e = o ∨ endV e = o)
@@ -64,6 +92,8 @@ lemma reachOpen_first_incident {E X : Type*}
       · exact Or.inl hpair.1
       · exact Or.inr hpair.2
 
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
 lemma closedProd_incident_le_cross_complement
     {E : Type*} [Fintype E] [DecidableEq E]
     {edge : E → Sym2 (Site d)} {endU endV : E → Site d}
@@ -91,9 +121,9 @@ lemma closedProd_incident_le_cross_complement
     unfold FK.closedProd
     exact Finset.prod_le_one₀ (fun e he => by positivity) (fun e he => by split <;> norm_num)
 
+/-! ## B. Differential inequality -/
 
-
-theorem active_cross_one_sub_lower
+lemma active_cross_one_sub_lower
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V → ℝ) (hJ : ∀ e, 0 < J e)
     (q β β₀ : ℝ) (hq : 1 ≤ q) (hβ : 0 < β) (hββ₀ : β ≤ β₀)
@@ -152,9 +182,8 @@ theorem active_cross_one_sub_lower
       intro ω _
       ring
 
-
-
-theorem active_fk_differential_logistic
+open Classical in
+lemma active_fk_differential_logistic
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (J : Sym2 V → ℝ) (hJ : ∀ e, 0 < J e)
     (q β : ℝ) (hq : 1 ≤ q) (hβ : 0 < β)
@@ -228,6 +257,7 @@ theorem active_fk_differential_logistic
   have hscaled := mul_le_mul_of_nonneg_left hcov hcR.le
   exact hscaled.trans hRusso
 
+open Classical in
 lemma geometricDenom_pos
     {E : Type*} [Fintype E] [DecidableEq E]
     (μ : ConfigSpace E → ℝ) (hμ0 : ∀ ω, 0 ≤ μ ω) (hμ1 : ∑ ω, μ ω = 1)
@@ -249,7 +279,7 @@ lemma geometricDenom_pos
         if ConnectedToSet d (liftCfg edge ω) x (centeredBoundary x 0)
         then (1 : ℝ) else 0) = fun _ => 1 := by
       funext ω
-      rw [if_pos]
+      rw [ite_eq_left]
       exact ⟨x, centeredRadius_self x, connected_refl _ _⟩
     unfold conn
     rw [hall]
@@ -280,8 +310,8 @@ lemma absorb_cross_complement {θ D κ cR θ' : ℝ}
     _ = cR * (θ * (1 - θ) / D) := by ring
     _ ≤ θ' := hlog
 
-
-
+open Classical in
+/-- The OSSS differential inequality, given the embedding hypotheses. -/
 theorem active_fk_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (J : Sym2 V → ℝ) (hJ : ∀ e, 0 < J e)

@@ -6,71 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.AnimalLLNAlmostSure
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned
+
+/-!
+# Signed animal values
+
+The signed animal value `animalValue ω n - c n` and its almost-sure law of large numbers through the
+signed Kingman theorem.
+
+## i. Overview
+
+Subtracting a linear drift `c n` from the animal value keeps subadditivity, and the signed version
+of Kingman's theorem applies. The limit equals `animalLimit ρ - c`. As a consequence the signed
+value is eventually positive (negative) almost surely when `c` is below (above) the limit. All
+results are unconditional given integrability of `ρ`.
+
+## ii. Key results
+
+- `signedAnimalValue_lln_ae`: almost-sure convergence of the signed value.
+- `signedAnimalLimit_eq`: the signed limit is `animalLimit ρ - c`.
+- `signedAnimalValue_eventually_pos_ae`, `signedAnimalValue_eventually_neg_ae`: sign of the signed
+  value for large `n`.
+
+## iii. Table of contents
+
+- A. Signed animal values
+- B. Limits and signs
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
@@ -83,48 +53,33 @@ namespace BeffaraDC
 
 variable {ρ : Measure ℝ}
 
+/-! ## A. Signed animal values -/
 
-
-
-
-
-
-
+/-- The animal value with a linear drift removed: `animalValue ω n - c * n`. -/
 noncomputable def signedAnimalValue (ω : ℤ → ℝ) (c : ℝ) (n : ℕ) : ℝ :=
   animalValue ω n - c * n
 
-
-@[simp] theorem signedAnimalValue_zero (ω : ℤ → ℝ) (c : ℝ) : signedAnimalValue ω c 0 = 0 := by
+@[simp] lemma signedAnimalValue_zero (ω : ℤ → ℝ) (c : ℝ) : signedAnimalValue ω c 0 = 0 := by
   simp [signedAnimalValue, animalValue]
 
-
-
-
-theorem signedAnimalValue_subadditive (ω : ℤ → ℝ) (c : ℝ) (m n : ℕ) :
+lemma signedAnimalValue_subadditive (ω : ℤ → ℝ) (c : ℝ) (m n : ℕ) :
     signedAnimalValue ω c (m + n)
       ≤ signedAnimalValue ω c m + signedAnimalValue (shiftEnv^[m] ω) c n := by
   have hsub := animalValue_subadditive ω m n
   simp only [signedAnimalValue, Nat.cast_add]
   linarith [hsub]
 
-
-theorem measurable_signedAnimalValue (c : ℝ) (n : ℕ) :
+lemma measurable_signedAnimalValue (c : ℝ) (n : ℕ) :
     Measurable (fun ω : ℤ → ℝ => signedAnimalValue ω c n) := by
   exact (measurable_animalValue n).sub measurable_const
 
-
-
-theorem integrable_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
+lemma integrable_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
     (c : ℝ) (n : ℕ) :
     Integrable (fun ω : ℤ → ℝ => signedAnimalValue ω c n)
       (Measure.infinitePi (fun _ : ℤ => ρ)) := by
   exact (integrable_animalValue hρ n).sub (integrable_const (c * n))
 
-
-
-
-
-theorem signedAnimalCocycle [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
+lemma signedAnimalCocycle [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     SubadditiveCocycle shiftEnv (Measure.infinitePi (fun _ : ℤ => ρ))
       (fun n ω => signedAnimalValue ω c n) where
   measurePreserving := shiftEnv_measurePreserving ρ
@@ -132,10 +87,7 @@ theorem signedAnimalCocycle [IsProbabilityMeasure ρ] (hρ : Integrable (id : �
   subadditive := fun m n =>
     Filter.Eventually.of_forall (fun ω => signedAnimalValue_subadditive ω c m n)
 
-
-
-
-theorem expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
+lemma expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
     (c : ℝ) (n : ℕ) :
     SubadditiveCocycle.expSeq (fun n ω => signedAnimalValue ω c n)
         (Measure.infinitePi (fun _ : ℤ => ρ)) n
@@ -146,11 +98,7 @@ theorem expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id
   rw [integral_sub (integrable_animalValue hρ n) (integrable_const (c * n)), integral_const,
     probReal_univ, smul_eq_mul, one_mul]
 
-
-
-
-
-theorem bddBelow_expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
+lemma bddBelow_expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
     (c : ℝ) :
     BddBelow (Set.range fun n => SubadditiveCocycle.expSeq
       (fun n ω => signedAnimalValue ω c n) (Measure.infinitePi (fun _ : ℤ => ρ)) n / n) := by
@@ -171,19 +119,9 @@ theorem bddBelow_expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integ
       _ ≤ SubadditiveCocycle.expSeq (fun n ω => animalValue ω n)
           (Measure.infinitePi (fun _ : ℤ => ρ)) n / n - c := by linarith
 
+/-! ## B. Limits and signs -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Almost-sure convergence of the signed value. -/
 theorem signedAnimalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
     (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
@@ -191,15 +129,12 @@ theorem signedAnimalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id
         (𝓝 (kingmanLimit shiftEnv (fun n ω => signedAnimalValue ω c n) ω)) :=
   kingman_ae_general (signedAnimalCocycle hρ c) (bddBelow_expSeq_signedAnimalValue hρ c)
 
-
-theorem signedAnimalValue_div_eq (ω : ℤ → ℝ) (c : ℝ) {n : ℕ} (hn : 1 ≤ n) :
+lemma signedAnimalValue_div_eq (ω : ℤ → ℝ) (c : ℝ) {n : ℕ} (hn : 1 ≤ n) :
     signedAnimalValue ω c n / n = animalValue ω n / n - c := by
   have hn0 : (n : ℝ) ≠ 0 := by positivity
   simp only [signedAnimalValue, sub_div, mul_div_assoc, div_self hn0, mul_one]
 
-
-
-theorem tendsto_signedAnimalValue_div_animalLimit [IsProbabilityMeasure ρ]
+lemma tendsto_signedAnimalValue_div_animalLimit [IsProbabilityMeasure ρ]
     (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       Tendsto (fun n => signedAnimalValue ω c n / n) atTop (𝓝 (animalLimit ρ ω - c)) := by
@@ -211,13 +146,7 @@ theorem tendsto_signedAnimalValue_div_animalLimit [IsProbabilityMeasure ρ]
   exact (show animalLimit ρ ω = kingmanLimit shiftEnv (fun n ω => animalValue ω n) ω from rfl) ▸
     hω.sub_const c
 
-
-
-
-
-
-
-
+/-- The signed limit is `animalLimit ρ - c`. -/
 theorem signedAnimalLimit_eq [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       kingmanLimit shiftEnv (fun n ω => signedAnimalValue ω c n) ω = animalLimit ρ ω - c := by
@@ -225,12 +154,7 @@ theorem signedAnimalLimit_eq [IsProbabilityMeasure ρ] (hρ : Integrable (id : �
     with ω h1 h2
   exact tendsto_nhds_unique h1 h2
 
-
-
-
-
-
-theorem animalValue_lln_ae_via_signed [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma animalValue_lln_ae_via_signed [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       Tendsto (fun n => animalValue ω n / n) atTop (𝓝 (animalLimit ρ ω)) := by
   filter_upwards [signedAnimalValue_lln_ae hρ 0, signedAnimalLimit_eq hρ 0] with ω h1 h2
@@ -239,20 +163,7 @@ theorem animalValue_lln_ae_via_signed [IsProbabilityMeasure ρ] (hρ : Integrabl
   rw [h2, sub_zero] at h1
   simpa only [heq] using h1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem signedAnimalValue_eventually_pos_ae [IsProbabilityMeasure ρ]
+lemma signedAnimalValue_eventually_pos_ae [IsProbabilityMeasure ρ]
     (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       c < animalLimit ρ ω →
@@ -268,12 +179,7 @@ theorem signedAnimalValue_eventually_pos_ae [IsProbabilityMeasure ρ]
   · exact h1
   · linarith
 
-
-
-
-
-
-theorem signedAnimalValue_eventually_neg_ae [IsProbabilityMeasure ρ]
+lemma signedAnimalValue_eventually_neg_ae [IsProbabilityMeasure ρ]
     (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       animalLimit ρ ω < c →

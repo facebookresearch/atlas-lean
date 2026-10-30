@@ -6,21 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxDifferential
+
+/-!
+# Differential inequality for the weighted wired box
+
+The crossing probability of the wired box with inhomogeneous couplings `J` and its OSSS differential
+inequality in `β`.
+
+## i. Overview
+
+`weightedWiredActiveTheta` is the probability that the origin is connected to the boundary of the
+box of radius `n` under the wired random-cluster measure with parameters `1 - exp(-β J e)`.
+`weighted_wired_box_differential_inequality` gives `c θ / D ≤ θ'` for some `c > 0`, unconditionally
+for `q ≥ 1`, `J > 0` and `β ≤ β₀`. The `Weighted*` files extend the OSSS sharpness argument to
+random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase : Site
+d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how translates of
+the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weighted_wired_box_differential_inequality`: `c θ / D ≤ ∂θ/∂β` (unconditional).
+
+## iii. Table of contents
+
+- A. Weighted wired box
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -31,12 +53,15 @@ namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeighted
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open ActiveBoundaryDifferential WiredBoxDifferential
 open ActiveEdgeDifferential
 open FK RevealmentTranslation
 
+/-! ## A. Weighted wired box -/
 
+/-- The probability, under the wired random-cluster measure on the box with couplings `J`, that the
+  origin is connected to the boundary. -/
 noncomputable def weightedWiredActiveTheta
     (d n : ℕ) (J : Sym2 (boxVerts d n) → ℝ) (q beta : ℝ) : ℝ :=
   Lindeberg.mean
@@ -44,11 +69,11 @@ noncomputable def weightedWiredActiveTheta
       (FK.betaParams J beta) q)
     (crossIndG (boxActiveEdge d n) 0 n)
 
-
+/-- The OSSS denominator: four times the maximal summed connection probability from a box site. -/
 noncomputable def weightedWiredActiveDenom
     (d n : ℕ) (J : Sym2 (boxVerts d n) → ℝ) (q beta : ℝ) : ℝ := by
   classical
-  exact 4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  exact 4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
       (fun x => ∑ j ∈ Finset.range n,
         Lindeberg.mean
           (FK.activeBCProb (boxGraph d n) (wiredBoxBoundaryGraph d n)
@@ -57,8 +82,7 @@ noncomputable def weightedWiredActiveDenom
             (liftCfg (boxActiveEdge d n) omega) x (centeredBoundary x j)
             then (1 : ℝ) else 0)) / (n : ℝ)
 
-
-theorem weighted_wired_box_hasDerivAt
+lemma weighted_wired_box_hasDerivAt
     (d n : ℕ)
     (J : Sym2 (boxVerts d n) → ℝ) (hJ : ∀ e, 0 < J e)
     (q beta : ℝ) (hq : 1 ≤ q) (hbeta : 0 < beta) :
@@ -75,10 +99,7 @@ theorem weighted_wired_box_hasDerivAt
     (boxGraph d n) (wiredBoxBoundaryGraph d n) hJ hbeta
       (zero_lt_one.trans_le hq) (crossIndG (boxActiveEdge d n) 0 n)
 
-
-
-
-
+/-- `c θ / D ≤ ∂θ/∂β` (unconditional). -/
 theorem weighted_wired_box_differential_inequality
     (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n)
     (J : Sym2 (boxVerts d n) → ℝ) (hJ : ∀ e, 0 < J e)
@@ -91,9 +112,9 @@ theorem weighted_wired_box_differential_inequality
         (wiredBoxBoundaryGraph d n) (FK.betaParams J b) q
         (crossEvent (boxActiveEdge d n) 0 (vertexBoundary d n))) beta := by
   classical
-  letI : Nonempty (boxGraph d n).edgeSet :=
+  let : Nonempty (boxGraph d n).edgeSet :=
     boxGraph_edgeSet_nonempty d n hd hn
-  let Lambda := osssBoxFinset d n
+  let Lambda := StatMech.Percolation.boxFinset d n
   have hne : Lambda.Nonempty := ⟨0, origin_mem_osssBoxFinset d n⟩
   let disc0 : ℕ → Finset (Site d) := osssBoundaryFinset d
   let C := wiredBoxBoundaryGraph d n
@@ -130,9 +151,7 @@ theorem weighted_wired_box_differential_inequality
   simpa [weightedWiredActiveTheta, weightedWiredActiveDenom,
     C, Lambda, disc0] using hmain
 
-
-
-theorem weightedWiredActiveDenom_pos
+lemma weightedWiredActiveDenom_pos
     (d n : ℕ) (hn : 1 ≤ n)
     (J : Sym2 (boxVerts d n) → ℝ) (hJ : ∀ e, 0 < J e)
     (q beta : ℝ) (hq : 1 ≤ q) (hbeta : 0 < beta) :
@@ -149,7 +168,7 @@ theorem weightedWiredActiveDenom_pos
       (FK.betaParams_lt_one J beta) hq0
   simpa [weightedWiredActiveDenom, mu] using
     geometricDenom_pos mu hmu0 hmu1 (boxActiveEdge d n) n hn
-      (osssBoxFinset d n) ⟨0, origin_mem_osssBoxFinset d n⟩
+      (StatMech.Percolation.boxFinset d n) ⟨0, origin_mem_osssBoxFinset d n⟩
 
 end FKSharpnessWeighted
 end OSSS

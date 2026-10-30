@@ -13,16 +13,37 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusC
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerComponentCount
 
+/-!
+# The torus defect takes only the values 0, 1, 2
+
+For every spanning subgraph of the `L × L` torus, the Euler defect `E + c - V - F` is `0`, `1` or
+`2`.
+
+## i. Overview
+
+Cuts of a vertex set give even-degree dual graphs (`torusCellCutDualGraph_degree_even`), and adding
+one edge changes the face count by at most one in a controlled way. Induction on edges, starting
+from the empty graph, gives `0 ≤ defect ≤ 2`. The `_unconditional` versions use the connectivity of
+the torus (`onsTorusGraph_connected`) and are unconditional.
+
+## ii. Key results
+
+- `torusCellDefect_le_sup_edge`: adding an edge does not lower the defect by more than its bound.
+- `torusCellDefect_classified_unconditional`: the defect is `0`, `1` or `2` (unconditional).
+
+## iii. Table of contents
+
+- A. Cut dual graphs
+- B. Adding an edge
+- C. Classification
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open SimpleGraph Set
 
@@ -31,17 +52,19 @@ namespace StatMech.BeffaraDC
 open StatMech.Lattice
 open StatMech.Onsager
 
+/-! ## A. Cut dual graphs -/
 
+/-- The edge `e` has exactly one endpoint in `S`. -/
 def torusCellEdgeStraddles {V : Type*} (S : Set V) (e : Sym2 V) : Prop :=
   Sym2.lift ⟨fun x y => (x ∈ S ↔ y ∉ S), by
     intro x y
     simp only [eq_iff_iff]
     tauto⟩ e
 
-@[simp] theorem torusCellEdgeStraddles_mk {V : Type*} (S : Set V) (x y : V) :
+@[simp] lemma torusCellEdgeStraddles_mk {V : Type*} (S : Set V) (x y : V) :
     torusCellEdgeStraddles S s(x, y) ↔ (x ∈ S ↔ y ∉ S) := Iff.rfl
 
-
+/-- The dual graph of the cut of `S`: dual edges crossing primal edges that straddle `S`. -/
 noncomputable def torusCellCutDualGraph (L : ℕ) [Fact (2 < L)]
     (S : Set (ZMod L × ZMod L)) : SimpleGraph (ZMod L × ZMod L) where
   Adj f g := (onsTorusGraph L).Adj f g ∧
@@ -53,7 +76,7 @@ noncomputable def torusCellCutDualGraph (L : ℕ) [Fact (2 < L)]
     simpa [Sym2.eq_swap] using hcut
   loopless := ⟨fun f h => (onsTorusGraph L).irrefl h.1⟩
 
-@[simp] theorem torusCellCutDualGraph_adj (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusCellCutDualGraph_adj (L : ℕ) [Fact (2 < L)]
     (S : Set (ZMod L × ZMod L)) (f g : ZMod L × ZMod L) :
     (torusCellCutDualGraph L S).Adj f g ↔
       (onsTorusGraph L).Adj f g ∧
@@ -64,7 +87,7 @@ noncomputable local instance torusCellCutDualGraph_decidableRel
     (L : ℕ) [Fact (2 < L)] (S : Set (ZMod L × ZMod L)) :
     DecidableRel (torusCellCutDualGraph L S).Adj := Classical.decRel _
 
-@[simp] theorem torusCellPrimalOfDualEdge_horizontal
+@[simp] lemma torusCellPrimalOfDualEdge_horizontal
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellPrimalOfDualEdge L
       s((x, y), (x + 1, y)) =
@@ -78,7 +101,7 @@ noncomputable local instance torusCellCutDualGraph_decidableRel
       Sym2 (ZMod L × ZMod L)) = _
   simp
 
-@[simp] theorem torusCellPrimalOfDualEdge_vertical
+@[simp] lemma torusCellPrimalOfDualEdge_vertical
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellPrimalOfDualEdge L
       s((x, y), (x, y + 1)) =
@@ -92,40 +115,25 @@ noncomputable local instance torusCellCutDualGraph_decidableRel
       Sym2 (ZMod L × ZMod L)) = _
   simp
 
-@[simp] theorem torusCellPrimalOfDualEdge_down
+@[simp] lemma torusCellPrimalOfDualEdge_down
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellPrimalOfDualEdge L
       s((x, y), (x, y - 1)) =
         s((x, y), (x + 1, y)) := by
   rw [Sym2.eq_swap]
   convert torusCellPrimalOfDualEdge_vertical L x (y - 1) using 1 <;>
-    congr 1 <;> ext <;> simp <;> ring
+    congr 1 <;> ext <;> simp
 
-@[simp] theorem torusCellPrimalOfDualEdge_left
+@[simp] lemma torusCellPrimalOfDualEdge_left
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellPrimalOfDualEdge L
       s((x, y), (x - 1, y)) =
         s((x, y), (x, y + 1)) := by
   rw [Sym2.eq_swap]
   convert torusCellPrimalOfDualEdge_horizontal L (x - 1) y using 1 <;>
-    congr 1 <;> ext <;> simp <;> ring
+    congr 1 <;> ext <;> simp
 
-@[simp] theorem torusCellPrimalOfDualEdge_up
-    (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
-    torusCellPrimalOfDualEdge L
-      s((x, y), (x, y + 1)) =
-        s((x, y + 1), (x + 1, y + 1)) :=
-  torusCellPrimalOfDualEdge_vertical L x y
-
-@[simp] theorem torusCellPrimalOfDualEdge_right
-    (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
-    torusCellPrimalOfDualEdge L
-      s((x, y), (x + 1, y)) =
-        s((x + 1, y), (x + 1, y + 1)) :=
-  torusCellPrimalOfDualEdge_horizontal L x y
-
-
-theorem torusCell_ambient_neighborFinset (L : ℕ) [Fact (2 < L)]
+lemma torusCell_ambient_neighborFinset (L : ℕ) [Fact (2 < L)]
     (v : ZMod L × ZMod L) :
     (onsTorusGraph L).neighborFinset v =
       {(v.1, v.2 - 1), (v.1, v.2 + 1),
@@ -149,9 +157,7 @@ theorem torusCell_ambient_neighborFinset (L : ℕ) [Fact (2 < L)]
     · exact Or.inr ⟨rfl, Or.inl (by ring)⟩
     · exact Or.inr ⟨rfl, Or.inr (by ring)⟩
 
-
-
-theorem torusCellCutDualGraph_degree_even (L : ℕ) [Fact (2 < L)]
+lemma torusCellCutDualGraph_degree_even (L : ℕ) [Fact (2 < L)]
     (S : Set (ZMod L × ZMod L)) (v : ZMod L × ZMod L) :
     Even ((torusCellCutDualGraph L S).degree v) := by
   classical
@@ -208,13 +214,14 @@ theorem torusCellCutDualGraph_degree_even (L : ℕ) [Fact (2 < L)]
   by_cases h11 : (x + 1, y + 1) ∈ S <;>
     simp only [Finset.filter_insert, Finset.filter_singleton] <;>
     simp [torusCellPrimalOfDualEdge_down,
-      torusCellPrimalOfDualEdge_up,
+      StatMech.BeffaraDC.torusCellPrimalOfDualEdge_vertical,
       torusCellPrimalOfDualEdge_left,
-      torusCellPrimalOfDualEdge_right, h00, h10, h01, h11,
+      StatMech.BeffaraDC.torusCellPrimalOfDualEdge_horizontal, h00, h10, h01, h11,
       hAB, hAC, hAD, hBC, hBD, hCD] <;> norm_num
 
+/-! ## B. Adding an edge -/
 
-theorem torusCellPrimalOfDualOfPrimalEdge (L : ℕ) [Fact (2 < L)]
+lemma torusCellPrimalOfDualOfPrimalEdge (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellPrimalOfDualEdge L (torusCellDualOfPrimalEdge L e) = e := by
@@ -225,9 +232,7 @@ theorem torusCellPrimalOfDualOfPrimalEdge (L : ℕ) [Fact (2 < L)]
   rw [torusCellPrimalOfDualEdge_of_mem L hd]
   exact congrArg Subtype.val ((torusCellCrossing L).symm_apply_apply ⟨e, he⟩)
 
-
-
-theorem torusCellCutDualGraph_le_dualCutGraph
+lemma torusCellCutDualGraph_le_dualCutGraph
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (S : Set (ZMod L × ZMod L))
@@ -241,16 +246,12 @@ theorem torusCellCutDualGraph_le_dualCutGraph
   revert hcut
   induction e using Sym2.inductionOn with
   | _ u v =>
-      intro hcut
-      intro hopen
+      intro hcut hopen
       rw [SimpleGraph.mem_edgeSet] at hopen
       have hs := hclosed hopen
-      simpa [torusCellEdgeStraddles_mk, hs] using hcut
+      simp [torusCellEdgeStraddles_mk, hs] at hcut
 
-
-
-
-theorem torusCellDualCutGraph_crossed_reachable_of_primal_not_reachable
+lemma torusCellDualCutGraph_crossed_reachable_of_primal_not_reachable
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q f g : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q)
@@ -294,10 +295,7 @@ theorem torusCellDualCutGraph_crossed_reachable_of_primal_not_reachable
     (G := torusCellDualCutGraph L G)).mpr
       ⟨u, c', hcyc', hedge'⟩ |>.2
 
-
-
-
-theorem torusCellFaceCount_sup_edge_le
+lemma torusCellFaceCount_sup_edge_le
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q) :
@@ -307,9 +305,7 @@ theorem torusCellFaceCount_sup_edge_le
   exact ecc_deleteEdge_card_le (torusCellDualCutGraph L G)
     (torusCellDualOfPrimalEdge L s(p, q))
 
-
-
-theorem torusCellDefect_le_sup_edge_of_reachable
+lemma torusCellDefect_le_sup_edge_of_reachable
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q) (hnew : ¬ G.Adj p q)
@@ -323,9 +319,7 @@ theorem torusCellDefect_le_sup_edge_of_reachable
   push_cast
   omega
 
-
-
-theorem torusCellFaceCount_sup_edge_of_not_reachable
+lemma torusCellFaceCount_sup_edge_of_not_reachable
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q)
@@ -351,8 +345,7 @@ theorem torusCellFaceCount_sup_edge_of_not_reachable
       have heD : D.Adj f g := by
         refine ⟨?_, ?_⟩
         · simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using heDual
-        · change torusCellPrimalOfDualEdge L s(f, g) ∉ G.edgeSet
-          rw [hprimal, SimpleGraph.mem_edgeSet]
+        · rw [hprimal, SimpleGraph.mem_edgeSet]
           exact fun hadj => hmerge hadj.reachable
       have hr : (D.deleteEdges {s(f, g)}).Reachable f g := by
         apply torusCellDualCutGraph_crossed_reachable_of_primal_not_reachable
@@ -363,8 +356,7 @@ theorem torusCellFaceCount_sup_edge_of_not_reachable
       rw [torusCellDualCutGraph_sup_edge L G hpq]
       simpa only [D, ed, hed] using hcard
 
-
-theorem torusCellDefect_sup_edge_of_not_reachable
+lemma torusCellDefect_sup_edge_of_not_reachable
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q)
@@ -379,9 +371,7 @@ theorem torusCellDefect_sup_edge_of_not_reachable
   push_cast
   omega
 
-
-
-theorem torusCellDefect_le_sup_edge
+lemma torusCellDefect_le_sup_edge
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q) (hnew : ¬ G.Adj p q) :
@@ -390,11 +380,9 @@ theorem torusCellDefect_le_sup_edge
   · exact torusCellDefect_le_sup_edge_of_reachable L G hpq hnew hreach
   · exact (torusCellDefect_sup_edge_of_not_reachable L G hpq hreach).ge
 
+/-! ## C. Classification -/
 
-
-
-
-theorem torusCellDefect_nonnegative
+lemma torusCellDefect_nonnegative
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hconn : (onsTorusGraph L).Connected)
@@ -438,8 +426,7 @@ theorem torusCellDefect_nonnegative
         rw [← hGeq] at hstep
         exact ihG'.trans hstep
 
-
-theorem torusCellDefect_le_two
+lemma torusCellDefect_le_two
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hconn : (onsTorusGraph L).Connected)
@@ -450,9 +437,7 @@ theorem torusCellDefect_le_two
   have hsum := torusCellDefect_add_dualCutGraph L G hG
   omega
 
-
-
-theorem torusCellDefect_classified
+lemma torusCellDefect_classified
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hconn : (onsTorusGraph L).Connected)
@@ -463,23 +448,21 @@ theorem torusCellDefect_classified
   have h2 := torusCellDefect_le_two L G hconn hG
   omega
 
-
-theorem torusCellDefect_nonnegative_unconditional
+lemma torusCellDefect_nonnegative_unconditional
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hG : G ≤ onsTorusGraph L) :
     0 ≤ torusCellDefect L G :=
   torusCellDefect_nonnegative L G (onsTorusGraph_connected L) hG
 
-
-theorem torusCellDefect_le_two_unconditional
+lemma torusCellDefect_le_two_unconditional
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hG : G ≤ onsTorusGraph L) :
     torusCellDefect L G ≤ 2 :=
   torusCellDefect_le_two L G (onsTorusGraph_connected L) hG
 
-
+/-- The defect is `0`, `1` or `2` (unconditional). -/
 theorem torusCellDefect_classified_unconditional
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))

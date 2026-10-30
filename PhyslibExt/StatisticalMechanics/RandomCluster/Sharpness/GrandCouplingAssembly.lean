@@ -6,104 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.GrandCoupling
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LindebergTree
+
+/-!
+# Poincaré inequality from the grand coupling
+
+The variance of a monotone observable of a monotonic measure is at most the sum of its covariances
+with the coordinates, proved by telescoping the grand coupling.
+
+## i. Overview
+
+Swapping label copies (`sw`, `selMap`) computes each step of the telescope. FKG on the product cube
+bounds each step by twice a covariance (`step_le_two_cov`), and telescoping gives
+`tree_osss_unconditional`: `Var f ≤ ∑ Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1`. This is the OSSS
+inequality with all revealments replaced by `1`, i.e. a Poincaré inequality. `fk_q2_osss` is its `q
+= 2` random-cluster case. Both are unconditional.
+
+## ii. Key results
+
+- `tree_osss_unconditional`: Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for monotonic measures
+  (unconditional).
+- `fk_q2_osss`: the `q = 2` random-cluster case (unconditional).
+
+## iii. Table of contents
+
+- A. Label swaps
+- B. Step bounds
+- C. Telescope and Poincaré inequality
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -114,14 +60,6 @@ namespace GrandCouplingAssembly
 open OSSS.Monotonic OSSS.Coding OSSS.GrandCoupling StatMech.Probability
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
-
-
-
-
-
-
-
-
 
 lemma codePrefix_congr_of_agree (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u u' : Fin n → ℝ) (m : ℕ) (hm : m ≤ n)
@@ -135,10 +73,8 @@ lemma codePrefix_congr_of_agree (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin
       ih (by omega) (fun i hi => h i (by omega))
     conv_lhs => unfold codePrefix
     conv_rhs => unfold codePrefix
-    simp only [hmn, dif_pos]
+    simp only [hmn, dite_eq_left]
     rw [iheq, h ⟨m, hmn⟩ (Nat.lt_succ_self m)]
-
-
 
 lemma codePrefix_step_congr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u u' : Fin n → ℝ) (m : ℕ) (hmn : m < n)
@@ -147,10 +83,8 @@ lemma codePrefix_step_congr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n �
     codePrefix μ σ u (m+1) = codePrefix μ σ u' (m+1) := by
   conv_lhs => unfold codePrefix
   conv_rhs => unfold codePrefix
-  simp only [hmn, dif_pos]
+  simp only [hmn, dite_eq_left]
   rw [hpre, hum]
-
-
 
 lemma codePrefix_forward (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u u' : Fin n → ℝ) (start : ℕ)
@@ -170,8 +104,6 @@ lemma codePrefix_forward (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → 
     have := codePrefix_step_congr μ σ u u' (start+d) hmn hpre hum
     convert this using 2
 
-
-
 lemma codePrefix_det (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u u' : Fin n → ℝ) (k : ℕ) (hk : k < n)
     (hagree : ∀ i : Fin n, (i : ℕ) ≠ k → u i = u' i)
@@ -185,23 +117,18 @@ lemma codePrefix_det (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     · subst he; exact hbit
     · conv_lhs => unfold codePrefix
       conv_rhs => unfold codePrefix
-      simp only [hk, dif_pos]
+      simp only [hk, dite_eq_left]
       rw [Function.update_of_ne he, Function.update_of_ne he, hk_agree]
   intro m hm
   rcases le_or_gt m k with hmk | hmk
   · exact codePrefix_congr_of_agree μ σ u u' m hm (fun i hi => hagree i (by omega))
   · exact codePrefix_forward μ σ u u' (k+1) (fun i hi => hagree i (by omega)) hk1_agree m hmk hm
 
-
-
-
-
 lemma codeMap_det (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (hσ : Function.Injective σ) (u u' : Fin n → ℝ) (k : ℕ) (hk : k < n)
     (hagree : ∀ i : Fin n, (i : ℕ) ≠ k → u i = u' i)
     (hbit : codeMap μ σ u (σ ⟨k, hk⟩) = codeMap μ σ u' (σ ⟨k, hk⟩)) :
     codeMap μ σ u = codeMap μ σ u' := by
-  
   have hval : ∀ v : Fin n → ℝ,
       codeMap μ σ v (σ ⟨k, hk⟩) = codePrefix μ σ v (k+1) (σ ⟨k, hk⟩) := by
     intro v
@@ -214,13 +141,6 @@ lemma codeMap_det (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
   unfold codeMap
   exact this
 
-
-
-
-
-
-
-
 lemma Wt_agree_off {n : ℕ} (U V : Fin n → ℝ) (t : ℕ) (ht : 1 ≤ t) :
     ∀ i : Fin n, (i : ℕ) ≠ t - 1 → Wt U V t i = Wt U V (t-1) i := by
   intro i hi
@@ -231,25 +151,19 @@ lemma Wt_agree_off {n : ℕ} (U V : Fin n → ℝ) (t : ℕ) (ht : 1 ≤ t) :
   · have h' : ¬ (i:ℕ) < t - 1 := by omega
     simp [h, h']
 
-
 lemma Wt_at_pos {n : ℕ} (U V : Fin n → ℝ) (t : ℕ) (ht : 1 ≤ t) (htn : t - 1 < n) :
     Wt U V t ⟨t-1, htn⟩ = V ⟨t-1, htn⟩ ∧ Wt U V (t-1) ⟨t-1, htn⟩ = U ⟨t-1, htn⟩ := by
   unfold Wt
   refine ⟨?_, ?_⟩
-  · have h : (⟨t-1, htn⟩ : Fin n).val < t := by show t - 1 < t; omega
+  · have h : (⟨t-1, htn⟩ : Fin n).val < t := by change t - 1 < t; omega
     simp [h]
-  · have h : ¬ (⟨t-1, htn⟩ : Fin n).val < t - 1 := by show ¬ t - 1 < t - 1; exact lt_irrefl _
-    simp only [h, if_false]
+  · have h : ¬ (⟨t-1, htn⟩ : Fin n).val < t - 1 := by change ¬ t - 1 < t - 1; exact lt_irrefl _
+    simp only [h, ite_false]
 
+/-! ## A. Label swaps -/
 
-
-
-
-
-
-
-
-
+/-- The involution of `Fin n ⊕ Fin n` swapping the two copies of the coordinates with
+  index `< s`. -/
 def sw (n s : ℕ) : Fin n ⊕ Fin n → Fin n ⊕ Fin n
   | Sum.inl i => if (i : ℕ) < s then Sum.inr i else Sum.inl i
   | Sum.inr i => if (i : ℕ) < s then Sum.inl i else Sum.inr i
@@ -260,17 +174,17 @@ lemma sw_invol (n s : ℕ) : Function.Involutive (sw n s) := by
   | inl i => by_cases h : (i:ℕ) < s <;> simp [sw, h]
   | inr i => by_cases h : (i:ℕ) < s <;> simp [sw, h]
 
-
+/-- The swap `sw` as a permutation. -/
 noncomputable def swEquiv (n s : ℕ) : Equiv.Perm (Fin n ⊕ Fin n) := (sw_invol n s).toPerm
 
 lemma swEquiv_symm_apply (n s : ℕ) (x : Fin n ⊕ Fin n) :
     (swEquiv n s).symm x = sw n s x := rfl
 
-
+/-- The first copy of a vector indexed by `Fin n ⊕ Fin n`. -/
 def projInl (n : ℕ) (w : Fin n ⊕ Fin n → ℝ) : Fin n → ℝ := fun i => w (Sum.inl i)
 
-
-
+/-- The measurable equivalence between pairs of label vectors and vectors indexed by `Fin n ⊕ Fin
+  n`. -/
 noncomputable def combine (n : ℕ) :
     ((Fin n → ℝ) × (Fin n → ℝ)) ≃ᵐ (Fin n ⊕ Fin n → ℝ) :=
   (MeasurableEquiv.sumPiEquivProdPi (fun _ : Fin n ⊕ Fin n => ℝ)).symm
@@ -278,12 +192,10 @@ noncomputable def combine (n : ℕ) :
 lemma combine_apply (n : ℕ) (U V : Fin n → ℝ) (x : Fin n ⊕ Fin n) :
     combine n (U, V) x = Sum.elim U V x := by cases x <;> rfl
 
-
-
+/-- The label vector seen at step `s`: the first copy after swapping the first `s` coordinates. -/
 noncomputable def selMap (n s : ℕ) : ((Fin n → ℝ) × (Fin n → ℝ)) → (Fin n → ℝ) :=
   fun p => projInl n
     ((MeasurableEquiv.piCongrLeft (fun _ : Fin n ⊕ Fin n => ℝ) (swEquiv n s)) (combine n p))
-
 
 lemma selMap_eq_Wt (n s : ℕ) (U V : Fin n → ℝ) : selMap n s (U, V) = Wt U V s := by
   funext i
@@ -294,11 +206,9 @@ lemma selMap_eq_Wt (n s : ℕ) (U V : Fin n → ℝ) : selMap n s (U, V) = Wt U 
   unfold sw
   by_cases h : (i:ℕ) < s <;> simp [h]
 
-
-
 lemma selMap_measurePreserving (n s : ℕ) :
     MeasurePreserving (selMap n s) ((Vcube n).prod (Vcube n)) (Vcube n) := by
-  show MeasurePreserving (selMap n s)
+  change MeasurePreserving (selMap n s)
     ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n => unitMeasure)))
     (Measure.pi (fun _ : Fin n => unitMeasure))
   have hcombine : MeasurePreserving (combine n)
@@ -318,7 +228,8 @@ lemma selMap_measurePreserving (n s : ℕ) :
     have hsum := measurePreserving_sumPiEquivProdPi (X := fun _ : Fin n ⊕ Fin n => ℝ)
       (fun _ : Fin n ⊕ Fin n => unitMeasure)
     have hfst : MeasurePreserving Prod.fst
-        ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n => unitMeasure)))
+        ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n =>
+            unitMeasure)))
         (Measure.pi (fun _ : Fin n => unitMeasure)) := measurePreserving_fst
     have := hfst.comp hsum
     convert this using 1
@@ -327,16 +238,7 @@ lemma selMap_measurePreserving (n s : ℕ) :
   convert this using 1
   rfl
 
-
-
-
-
-
-
-
-
-
-theorem integral_g_codeMap_Wt (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma integral_g_codeMap_Wt (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (g : ConfigSpace E → ℝ) (s : ℕ) :
     ∫ p, g (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s)) ∂((Vcube n).prod (Vcube n))
       = ∑ x, g x * μ x := by
@@ -355,23 +257,14 @@ theorem integral_g_codeMap_Wt (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < �
   rw [hrw] at hcomp
   rw [hcomp, integral_g_codeMap μ hpos hμ1 σ g]
 
-
-
-
-
-
-
-
-
 lemma Wt_mono_prod {n : ℕ} (s : ℕ) :
     Monotone (fun p : (Fin n → ℝ) × (Fin n → ℝ) => Wt p.1 p.2 s) := by
   intro p p' hpp i
   unfold Wt
   rw [Prod.le_def] at hpp
   by_cases h : (i:ℕ) < s
-  · simp only [h, if_true]; exact hpp.2 i
-  · simp only [h, if_false]; exact hpp.1 i
-
+  · simp only [h, ite_true]; exact hpp.2 i
+  · simp only [h, ite_false]; exact hpp.1 i
 
 lemma f_codeMap_Wt_mono_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n → E) {f : ConfigSpace E → ℝ}
@@ -379,39 +272,31 @@ lemma f_codeMap_Wt_mono_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ
     Monotone (fun p : (Fin n → ℝ) × (Fin n → ℝ) => f (codeMap μ σ (Wt p.1 p.2 s))) :=
   fun _ _ hpp => hf ((codeMap_mono_u hpos hmono σ) ((Wt_mono_prod s) hpp))
 
-
 lemma coord_codeMap_Wt_mono_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n → E) (e : E) (s : ℕ) :
     Monotone (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
         Lindeberg.coord e (codeMap μ σ (Wt p.1 p.2 s))) :=
   fun _ _ hpp => Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono σ) ((Wt_mono_prod s) hpp))
 
-
 lemma measurable_g_codeMap_Wt_prod (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (g : ConfigSpace E → ℝ) (s : ℕ) :
     Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
         g (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s))) := by
   apply (measurable_g_codeMap μ σ g).comp
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i; unfold Wt
   by_cases h : (i:ℕ) < s
-  · simp only [h, if_true]; exact (measurable_pi_apply i).comp measurable_snd
-  · simp only [h, if_false]; exact (measurable_pi_apply i).comp measurable_fst
+  · simp only [h, ite_true]; exact (measurable_pi_apply i).comp measurable_snd
+  · simp only [h, ite_false]; exact (measurable_pi_apply i).comp measurable_fst
 
-
-
-
-
-
-
-
+/-- The measurable equivalence between pairs of label vectors and vectors of length `n + n`. -/
 noncomputable def comb2 (n : ℕ) : ((Fin n → ℝ) × (Fin n → ℝ)) ≃ᵐ (Fin (n+n) → ℝ) :=
   (MeasurableEquiv.sumPiEquivProdPi (fun _ : Fin n ⊕ Fin n => ℝ)).symm.trans
     (MeasurableEquiv.piCongrLeft (fun _ : Fin (n+n) => ℝ) finSumFinEquiv)
 
 lemma comb2_measurePreserving (n : ℕ) :
     MeasurePreserving (comb2 n) ((Vcube n).prod (Vcube n)) (Vcube (n+n)) := by
-  show MeasurePreserving (comb2 n)
+  change MeasurePreserving (comb2 n)
     ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n => unitMeasure)))
     (Measure.pi (fun _ : Fin (n+n) => unitMeasure))
   unfold comb2
@@ -429,14 +314,14 @@ lemma comb2_measurePreserving (n : ℕ) :
     convert h using 2
   exact h2.comp h1
 
-lemma comb2_symm_fst (n : ℕ) (w : Fin (n+n) → ℝ) (i : Fin n) :
+lemma comb2_symm_fst (n : ℕ) (w : Fin (n + n) → ℝ) (i : Fin n) :
     ((comb2 n).symm w).1 i = w (finSumFinEquiv (Sum.inl i)) := by
   unfold comb2
   simp only [MeasurableEquiv.trans_symm, MeasurableEquiv.coe_trans, MeasurableEquiv.symm_symm,
     Function.comp_apply]
   rfl
 
-lemma comb2_symm_snd (n : ℕ) (w : Fin (n+n) → ℝ) (i : Fin n) :
+lemma comb2_symm_snd (n : ℕ) (w : Fin (n + n) → ℝ) (i : Fin n) :
     ((comb2 n).symm w).2 i = w (finSumFinEquiv (Sum.inr i)) := by
   unfold comb2
   simp only [MeasurableEquiv.trans_symm, MeasurableEquiv.coe_trans, MeasurableEquiv.symm_symm,
@@ -450,25 +335,15 @@ lemma comb2_symm_mono (n : ℕ) : Monotone (comb2 n).symm := by
   · rw [comb2_symm_fst, comb2_symm_fst]; exact hww _
   · rw [comb2_symm_snd, comb2_symm_snd]; exact hww _
 
+/-! ## B. Step bounds -/
 
-
-theorem hasFKG_prod_Vcube (n : ℕ) : HasFKG ((Vcube n).prod (Vcube n)) := by
+lemma hasFKG_prod_Vcube (n : ℕ) : HasFKG ((Vcube n).prod (Vcube n)) := by
   refine hasFKG_of_orderIso ((Vcube n).prod (Vcube n)) (Vcube (n+n)) (comb2 n)
     (comb2_measurePreserving n) (comb2_symm_mono n) ?_
-  show HasFKG (Measure.pi (fun _ : Fin (n+n) => unitMeasure))
+  change HasFKG (Measure.pi (fun _ : Fin (n+n) => unitMeasure))
   exact hasFKG_pi_unitMeasure (n+n)
 
-
-lemma abs_coord_le_one (e : E) (ω : ConfigSpace E) : |Lindeberg.coord e ω| ≤ 1 := by
-  unfold Lindeberg.coord; split <;> norm_num
-
-
-
-
-
-
-
-theorem grandCoupling_fkg_cross_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma grandCoupling_fkg_cross_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (s₁ s₂ : ℕ) :
     (∫ p, f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₁)) ∂((Vcube n).prod (Vcube n)))
@@ -480,25 +355,16 @@ theorem grandCoupling_fkg_cross_prod {μ : ConfigSpace E → ℝ} (hpos : ∀ ω
   hasFKG_prod_Vcube n _ _
     (measurable_g_codeMap_Wt_prod μ σ f s₁)
     (measurable_g_codeMap_Wt_prod μ σ (Lindeberg.coord e) s₂)
-    ⟨Cf, fun _ => hfC _⟩ ⟨1, fun _ => abs_coord_le_one e _⟩
+    ⟨Cf, fun _ => hfC _⟩ ⟨1, fun _ => StatMech.OSSS.GrandCoupling.abs_coord_le_one e _⟩
     (f_codeMap_Wt_mono_prod hpos hmono (σ : Fin n → E) hf s₁)
     (coord_codeMap_Wt_mono_prod hpos hmono (σ : Fin n → E) e s₂)
 
-
-
-
-
-
-
-
+omit [DecidableEq E] [Fintype E] in
 lemma coord_eq01 (e : E) (ω : ConfigSpace E) :
     Lindeberg.coord e ω = 0 ∨ Lindeberg.coord e ω = 1 := by
   unfold Lindeberg.coord; split
   · right; rfl
   · left; rfl
-
-
-
 
 lemma tt_algebra (a b p q : ℝ) (hp : p = 0 ∨ p = 1) (hq : q = 0 ∨ q = 1)
     (hcmp : (b ≤ a ∧ q ≤ p) ∨ (a ≤ b ∧ p ≤ q)) (hdet : p = q → a = b) :
@@ -521,16 +387,7 @@ lemma tt_algebra (a b p q : ℝ) (hp : p = 0 ∨ p = 1) (hq : q = 0 ∨ q = 1)
         rw [hpq1]; ring
   rw [key]; ring
 
-
-
-
-
-
-
-
-
-
-theorem abs_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma abs_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (t : ℕ) (ht : 1 ≤ t) (htn : t - 1 < n) (U V : Fin n → ℝ) :
     |f (codeMap μ (σ : Fin n → E) (Wt U V t))
@@ -542,14 +399,13 @@ theorem abs_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < 
         - f (codeMap μ (σ : Fin n → E) (Wt U V (t-1)))
           * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (Wt U V t))
         - f (codeMap μ (σ : Fin n → E) (Wt U V t))
-          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (Wt U V (t-1))) := by
+          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (Wt U V (t-1)))
+              := by
   set k := t - 1 with hk
   set e := (σ : Fin n → E) ⟨k, htn⟩ with he
   set Yt := codeMap μ (σ : Fin n → E) (Wt U V t) with hYt
   set Ys := codeMap μ (σ : Fin n → E) (Wt U V (t-1)) with hYs
-  
   have hoff : ∀ i : Fin n, (i:ℕ) ≠ k → Wt U V t i = Wt U V (t-1) i := Wt_agree_off U V t ht
-  
   have hdet : Lindeberg.coord e Yt = Lindeberg.coord e Ys → Yt = Ys := by
     intro hcoord
     have hbit : Yt e = Ys e := by
@@ -557,9 +413,7 @@ theorem abs_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < 
       by_cases h1 : Yt e <;> by_cases h2 : Ys e <;> simp_all
     exact codeMap_det μ (σ : Fin n → E) σ.injective (Wt U V t) (Wt U V (t-1)) k htn
       (fun i hi => hoff i hi) hbit
-  
   obtain ⟨hVt, hUt⟩ := Wt_at_pos U V t ht htn
-  
   have hcmp : (f Ys ≤ f Yt ∧ Lindeberg.coord e Ys ≤ Lindeberg.coord e Yt)
       ∨ (f Yt ≤ f Ys ∧ Lindeberg.coord e Yt ≤ Lindeberg.coord e Ys) := by
     rcases le_total (U ⟨k, htn⟩) (V ⟨k, htn⟩) with hUV | hVU
@@ -584,14 +438,6 @@ theorem abs_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < 
   exact tt_algebra (f Yt) (f Ys) (Lindeberg.coord e Yt) (Lindeberg.coord e Ys)
     (coord_eq01 e Yt) (coord_eq01 e Ys) hcmp (fun h => by rw [hdet h])
 
-
-
-
-
-
-
-
-
 lemma integrable_prod_obs (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (s₁ s₂ : ℕ) :
     Integrable (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
@@ -603,22 +449,12 @@ lemma integrable_prod_obs (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃
     ((measurable_g_codeMap_Wt_prod μ σ f s₁).mul
       (measurable_g_codeMap_Wt_prod μ σ (Lindeberg.coord e) s₂)) (C := Cf * 1) (fun p => ?_)
   rw [abs_mul]
-  exact mul_le_mul (hfC _) (abs_coord_le_one e _) (abs_nonneg _) hCf0
-
+  exact mul_le_mul (hfC _) (StatMech.OSSS.GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) hCf0
 
 lemma sum_eq_mean (μ : ConfigSpace E → ℝ) (g : ConfigSpace E → ℝ) :
     ∑ x, g x * μ x = Lindeberg.mean μ g := rfl
 
-
-
-
-
-
-
-
-
-
-theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf)
     (t : ℕ) (ht : 1 ≤ t) (htn : t - 1 < n) :
@@ -626,7 +462,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1)))| ∂((Vcube n).prod (Vcube n)))
       ≤ 2 * Lindeberg.cov μ f (Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩)) := by
   set e := (σ : Fin n → E) ⟨t-1, htn⟩ with he
-  
   set D1 := fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
     f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1)))
       * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1))) with hD1
@@ -643,7 +478,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
   have hI2 : Integrable D2 ((Vcube n).prod (Vcube n)) := integrable_prod_obs μ σ hfC e t t
   have hIc1 : Integrable C1 ((Vcube n).prod (Vcube n)) := integrable_prod_obs μ σ hfC e (t-1) t
   have hIc2 : Integrable C2 ((Vcube n).prod (Vcube n)) := integrable_prod_obs μ σ hfC e t (t-1)
-  
   have hcongr : (∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 t))
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1)))| ∂((Vcube n).prod (Vcube n)))
       = ∫ p, (D1 p + D2 p - C1 p - C2 p) ∂((Vcube n).prod (Vcube n)) := by
@@ -652,7 +486,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     intro p
     exact abs_step_eq_four_terms hpos hmono σ hf t ht htn p.1 p.2
   rw [hcongr]
-  
   have esplit : (fun p => D1 p + D2 p - C1 p - C2 p) = (D1 + D2 - C1) - C2 := by
     funext p; simp only [Pi.add_apply, Pi.sub_apply]
   rw [show (∫ p, (D1 p + D2 p - C1 p - C2 p) ∂((Vcube n).prod (Vcube n)))
@@ -661,7 +494,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
   rw [show (∫ p, (D1 + D2 - C1) p ∂((Vcube n).prod (Vcube n)))
         = ∫ p, ((D1 + D2) - C1) p ∂((Vcube n).prod (Vcube n)) from rfl]
   rw [integral_sub' (hI1.add hI2) hIc1, integral_add' hI1 hI2]
-  
   have hbbb1 : (∫ p, D1 p ∂((Vcube n).prod (Vcube n)))
       = Lindeberg.mean μ (fun ω => f ω * Lindeberg.coord e ω) := by
     rw [hD1, integral_g_codeMap_Wt μ hpos hμ1 σ (fun ω => f ω * Lindeberg.coord e ω) (t-1)]
@@ -670,8 +502,8 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
       = Lindeberg.mean μ (fun ω => f ω * Lindeberg.coord e ω) := by
     rw [hD2, integral_g_codeMap_Wt μ hpos hμ1 σ (fun ω => f ω * Lindeberg.coord e ω) t]
     rfl
-  
-  have hmeanf_s : (∫ p, f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1))) ∂((Vcube n).prod (Vcube n)))
+  have hmeanf_s : (∫ p, f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t-1))) ∂((Vcube n).prod (Vcube
+      n)))
       = Lindeberg.mean μ f := by
     rw [integral_g_codeMap_Wt μ hpos hμ1 σ f (t-1)]; rfl
   have hmeanf_t : (∫ p, f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 t)) ∂((Vcube n).prod (Vcube n)))
@@ -685,7 +517,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
         ∂((Vcube n).prod (Vcube n)))
       = Lindeberg.mean μ (Lindeberg.coord e) := by
     rw [integral_g_codeMap_Wt μ hpos hμ1 σ (Lindeberg.coord e) t]; rfl
-  
   have hFKG1 : Lindeberg.mean μ f * Lindeberg.mean μ (Lindeberg.coord e)
       ≤ ∫ p, C1 p ∂((Vcube n).prod (Vcube n)) := by
     have := grandCoupling_fkg_cross_prod hpos hmono σ hf hfC e (t-1) t
@@ -696,7 +527,6 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     have := grandCoupling_fkg_cross_prod hpos hmono σ hf hfC e t (t-1)
     rw [hmeanf_t, hmeanc_s] at this
     exact this
-  
   rw [hbbb1, hbbb2]
   have hcov : Lindeberg.cov μ f (Lindeberg.coord e)
       = Lindeberg.mean μ (fun ω => f ω * Lindeberg.coord e ω)
@@ -704,21 +534,11 @@ theorem step_le_two_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
   rw [hcov]
   linarith [hFKG1, hFKG2]
 
-
-
-
-
-
-
-
 lemma Wt_zero {n : ℕ} (U V : Fin n → ℝ) : Wt U V 0 = U := by
   funext i; unfold Wt; simp
 
-
 lemma Wt_card {n : ℕ} (U V : Fin n → ℝ) : Wt U V n = V := by
   funext i; unfold Wt; simp [i.2]
-
-
 
 lemma integral_two_codeMap (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (h : ConfigSpace E → ConfigSpace E → ℝ)
@@ -742,7 +562,7 @@ lemma integral_two_codeMap (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ �
     exact integral_g_codeMap μ hpos hμ1 σ (fun y => h (codeMap μ (σ:Fin n→E) U) y)]
   rw [integral_g_codeMap μ hpos hμ1 σ (fun x => ∑ y, h x y * μ y)]
 
-
+omit [DecidableEq E] [Fintype E] in
 lemma abs_f_diff_le_one {f : ConfigSpace E → ℝ} (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
     (x y : ConfigSpace E) : |f x - f y| ≤ 1 := by
   have hx0 : 0 ≤ f x := hf0 x
@@ -750,19 +570,14 @@ lemma abs_f_diff_le_one {f : ConfigSpace E → ℝ} (hf0 : 0 ≤ f) (hf1 : ∀ �
   rw [abs_le]
   exact ⟨by linarith [hf1 y], by linarith [hf1 x]⟩
 
+/-! ## C. Telescope and Poincaré inequality -/
 
-
-
-
-
-
-theorem var_le_grandCoupling_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma var_le_grandCoupling_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f
       ≤ (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 0))
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 n))| ∂((Vcube n).prod (Vcube n)) := by
-  
   have hrw : (∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 0))
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 n))| ∂((Vcube n).prod (Vcube n)))
       = ∑ x, (∑ y, |f x - f y| * μ y) * μ x := by
@@ -781,7 +596,6 @@ theorem var_le_grandCoupling_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀
   rw [Finset.sum_mul]
   apply Finset.sum_le_sum
   intro y _
-  
   have hbound : |f x - f y| ≤ 1 := abs_f_diff_le_one hf0 hf1 x y
   have hsq : (f x - f y) ^ 2 ≤ |f x - f y| := by
     calc (f x - f y) ^ 2 = |f x - f y| * |f x - f y| := by
@@ -792,10 +606,7 @@ theorem var_le_grandCoupling_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀
   have hμy : 0 ≤ μ y := (hpos y).le
   nlinarith [hsq, hμx, hμy, mul_nonneg hμx hμy, abs_nonneg (f x - f y)]
 
-
-
-
-theorem grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
+lemma grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) :
     (∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 0))
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 n))| ∂((Vcube n).prod (Vcube n)))
@@ -803,7 +614,6 @@ theorem grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin
           ∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t+1)))
                 - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 t))| ∂((Vcube n).prod (Vcube n)) := by
   have hCf0 : 0 ≤ Cf := le_trans (abs_nonneg _) (hfC (fun _ => false))
-  
   have hintdiff : ∀ s₁ s₂ : ℕ, Integrable (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
       |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₁))
         - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₂))|) ((Vcube n).prod (Vcube n)) := by
@@ -818,35 +628,19 @@ theorem grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin
           + |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₂))| := abs_sub _ _
       _ ≤ 2*Cf := by linarith [hfC (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₁)),
                                 hfC (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 s₂))]
-  
   rw [← integral_finsetSum (Finset.range n) (fun t _ => hintdiff (t+1) t)]
-  
   apply integral_mono (hintdiff 0 n)
   · apply integrable_finsetSum; intro t _; exact hintdiff (t+1) t
   · intro p
     set F : ℕ → ℝ := fun s => f (codeMap μ (σ:Fin n→E) (Wt p.1 p.2 s)) with hF
-    show |F 0 - F n| ≤ ∑ t ∈ Finset.range n, |F (t+1) - F t|
+    change |F 0 - F n| ≤ ∑ t ∈ Finset.range n, |F (t+1) - F t|
     have htel : F 0 - F n = ∑ t ∈ Finset.range n, (F t - F (t+1)) := by
       rw [Finset.sum_range_sub' F n]
     rw [htel]
     refine (Finset.abs_sum_le_sum_abs _ _).trans (le_of_eq ?_)
     apply Finset.sum_congr rfl; intro t _; rw [abs_sub_comm]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for monotonic measures (unconditional). -/
 theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
@@ -857,12 +651,10 @@ theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
   have hf0' : ∀ ω, (0:ℝ) ≤ f ω := fun ω => hf0 ω
   have hfC : ∀ ω, |f ω| ≤ 1 := fun ω => by
     rw [abs_le]; exact ⟨by linarith [hf0' ω], hf1 ω⟩
-  
   refine (var_le_grandCoupling_first_step hpos hμ1 σ hf0 hf1).trans ?_
-  refine (mul_le_mul_of_nonneg_left (grandCoupling_telescope σ hfC) (by norm_num : (0:ℝ) ≤ 1/2)).trans ?_
-  
+  refine (mul_le_mul_of_nonneg_left (grandCoupling_telescope σ hfC) (by norm_num : (0:ℝ) ≤
+      1/2)).trans ?_
   rw [Finset.mul_sum]
-  
   have hstep : ∀ i : Fin n,
       (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 ((i:ℕ)+1)))
               - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (i:ℕ)))| ∂((Vcube n).prod (Vcube n))
@@ -872,15 +664,13 @@ theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
     have hbound2 : (∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 ((i:ℕ)+1)))
             - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (i:ℕ)))| ∂((Vcube n).prod (Vcube n)))
         ≤ 2 * Lindeberg.cov μ f (Lindeberg.coord ((σ : Fin n → E) i)) := by
-      
-      
       have htn : ((i:ℕ)+1) - 1 < n := by
         have h : ((i:ℕ)+1) - 1 = (i:ℕ) := by omega
         rw [h]; exact i.2
       have hbound := step_le_two_cov hpos hμ1 hmono σ hf hfC ((i:ℕ)+1) hpos1 htn
       have heq : ((i:ℕ)+1) - 1 = (i:ℕ) := by omega
       have hi : (⟨((i:ℕ)+1) - 1, htn⟩ : Fin n) = i := by
-        apply Fin.ext; show ((i:ℕ)+1) - 1 = (i:ℕ); omega
+        apply Fin.ext; change ((i:ℕ)+1) - 1 = (i:ℕ); omega
       simp only [hi] at hbound
       rwa [heq] at hbound
     linarith [hbound2]
@@ -889,7 +679,8 @@ theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
                 - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 t))| ∂((Vcube n).prod (Vcube n))
       = ∑ i : Fin n,
           (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 ((i:ℕ)+1)))
-                - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (i:ℕ)))| ∂((Vcube n).prod (Vcube n)) := by
+                - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (i:ℕ)))| ∂((Vcube n).prod (Vcube n)) :=
+                    by
         rw [Finset.sum_range (fun t =>
           (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 (t+1)))
                   - f (codeMap μ (σ : Fin n → E) (Wt p.1 p.2 t))| ∂((Vcube n).prod (Vcube n)))]
@@ -898,21 +689,8 @@ theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
     _ = ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) :=
         Equiv.sum_comp σ (fun e => Lindeberg.cov μ f (Lindeberg.coord e))
 
-
-
-
-
-
-
-
 open OSSS.MonotonicMeasure in
-
-
-
-
-
-
-theorem osss_monotonicOSSSBound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma osss_monotonicOSSSBound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     MonotonicOSSSBound μ Finset.univ f 1 1 1 := by
@@ -927,24 +705,11 @@ theorem osss_monotonicOSSSBound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
     funext ω; ring]
   ring
 
-
-
-
-
-
 section FK
 
 open StatMech.OSSS.MonotonicFK
 
-
-
-
-
-
-
-
-
-theorem fk_q2_osss {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_q2_osss {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {f : ConfigSpace (Sym2 V) → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var (fkMass G p 2) f
@@ -955,11 +720,7 @@ theorem fk_q2_osss {V : Type*} [Fintype V] [DecidableEq V]
     (fkMass_isMonotonic G hp hp1 (by norm_num)) hf hf0 hf1
 
 open OSSS.MonotonicMeasure in
-
-
-
-
-theorem fk_q2_monotonicOSSSBound {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_q2_monotonicOSSSBound {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {f : ConfigSpace (Sym2 V) → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     MonotonicOSSSBound (fkMass G p 2) Finset.univ f 1 1 1 :=

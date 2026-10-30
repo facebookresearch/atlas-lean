@@ -6,16 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveRussoHamming
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
+
+/-!
+# Influences for the random-cluster model on active edges
+
+Edge influences for the random-cluster measure on the active edges of a finite graph, and the
+Russo-type lower bound of the derivative by the total influence.
+
+## i. Overview
+
+For a finite graph `G`, the random-cluster measure `activeProb G (fun _ => p) q` lives on
+configurations of the edges of `G`. The influence of an edge on an increasing event is its
+covariance with the edge coordinate, normalized by the variance of the open marginal. The headline
+`active_deriv_ge_total_influence` is proved unconditionally: for `q ≥ 1` and `p` in `[ε, 1 - ε]`,
+the derivative of the probability of an increasing event is at least `ε ^ 2 / q` times the total
+influence.
+
+## ii. Key results
+
+- `activeInfluence`: the influence of an edge on an event.
+- `activeCov_eq_marginal_mul_influence`: covariance with an edge coordinate equals marginal variance
+  times influence.
+- `active_deriv_ge_total_influence`: derivative ≥ `(ε ^ 2 / q) ·` total influence (unconditional).
+
+## iii. Table of contents
+
+- A. Finite-energy bounds for the open marginal
+- B. Influences and the derivative bound
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -29,8 +57,9 @@ open StatMech.FK
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Finite-energy bounds for the open marginal -/
 
-theorem activeWeight_open_pair {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma activeWeight_open_pair {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) (e : G.edgeSet) (ω : ConfigSpace G.edgeSet) :
     p * activeWeight G (fun _ => p) q (setClosed e ω) ≤
       q * (1 - p) * activeWeight G (fun _ => p) q (setOpen e ω) := by
@@ -77,7 +106,7 @@ lemma openMarginal_lower_of_open_pair {E : Type*} [Fintype E] [DecidableEq E]
   rw [div_le_iff₀ hden]
   nlinarith [hs]
 
-theorem active_reducedDensity_le_openMarginal {p q : ℝ}
+lemma active_reducedDensity_le_openMarginal {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (e : G.edgeSet) :
     reducedDensity p q ≤ openMarginal (activeProb G (fun _ => p) q) e := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
@@ -98,14 +127,18 @@ theorem active_reducedDensity_le_openMarginal {p q : ℝ}
   exact (div_le_div_iff_of_pos_right hZ).2
     (activeWeight_open_pair G hp hp1 hq e ψ)
 
+/-! ## B. Influences and the derivative bound -/
 
+/-- The influence of edge `e` on the event `A` under the active random-cluster measure: the
+  covariance of the indicator of `A` with the coordinate of `e`, divided by `m (1 - m)` where `m`
+  is the open marginal of `e`. -/
 noncomputable def activeInfluence (p q : ℝ)
     (A : Set (ConfigSpace G.edgeSet)) (e : G.edgeSet) : ℝ :=
   let m := openMarginal (activeProb G (fun _ => p) q) e
   activeCov G (fun _ => p) q (A.indicator fun _ => (1 : ℝ))
     (OSSS.Lindeberg.coord e) / (m * (1 - m))
 
-theorem activeInfluence_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma activeInfluence_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A)
     (e : G.edgeSet) : 0 ≤ activeInfluence G p q A e := by
   have hcov := active_fkg_cov G hp hp1 hq hA.indicator_monotone
@@ -118,7 +151,7 @@ theorem activeInfluence_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (active_openMarginal_le_param G (fun _ => hp) (fun _ => hp1) hq e).trans_lt hp1
   exact div_nonneg (by linarith) (mul_nonneg hm0.le (by linarith))
 
-theorem activeCov_eq_marginal_mul_influence {p q : ℝ}
+lemma activeCov_eq_marginal_mul_influence {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (e : G.edgeSet) :
     activeCov G (fun _ => p) q (A.indicator fun _ => (1 : ℝ))
@@ -134,8 +167,7 @@ theorem activeCov_eq_marginal_mul_influence {p q : ℝ}
   unfold activeInfluence
   field_simp [hm0.ne', (sub_pos.mpr hm1).ne']
 
-
-
+/-- Derivative ≥ `(ε ^ 2 / q) ·` total influence (unconditional). -/
 theorem active_deriv_ge_total_influence {p q ε : ℝ} (hε : 0 < ε)
     (hp0 : ε ≤ p) (hp1 : p ≤ 1 - ε) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :

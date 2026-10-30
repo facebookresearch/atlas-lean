@@ -6,72 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.Percolation.RussoInfluence
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Hamming
 public import MathlibExt.Probability.CorrelationInequalities.FKG
+
+/-!
+# Russo–Hamming inequality for Bernoulli percolation
+
+The Hamming-distance form of Russo's formula for increasing events under the product Bernoulli
+measure on a finite set, and its integrated form.
+
+## i. Overview
+
+Harris–FKG for the product measure bounds `P(A) · E[d(ω, A)]` by the covariance of the indicator of
+`A` with the number of open edges, which Russo's formula relates to the derivative of `P(A)` in `p`.
+Integration (Grönwall) gives `russoHammingIntegrated`. Both headlines are unconditional.
+`ActiveRussoHamming` is the random-cluster version.
+
+## ii. Key results
+
+- `russoHamming`: `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound (unconditional).
+- `russoHammingIntegrated`: integrated comparison between `p₁ < p₂` (unconditional).
+
+## iii. Table of contents
+
+- A. Expectations and FKG
+- B. Russo–Hamming inequality
+- C. Integration
+
+## iv. References
+
+* M. Talagrand, *On Russo's approximate zero-one law*, Ann. Probab. 22 (1994).
+* L. Russo, *An approximate zero-one law*, Z. Wahrsch. Verw. Gebiete 61 (1982).
+-/
 
 @[expose] public section
 
@@ -83,18 +52,15 @@ open ConfigSpace Function Finset
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Expectations and FKG -/
 
-
-
-
-
+/-- The expectation of `f` under the Bernoulli(`p`) product measure on configurations of a finite
+  set. -/
 noncomputable def expect (p : ℝ) (f : ConfigSpace E → ℝ) : ℝ :=
   ∑ ω, f ω * configWeight p ω
 
-
 lemma expect_indicator (p : ℝ) (A : Set (ConfigSpace E)) :
     expect p (A.indicator (fun _ => (1 : ℝ))) = prob p A := rfl
-
 
 lemma expect_add (p : ℝ) (f g : ConfigSpace E → ℝ) :
     expect p (fun ω => f ω + g ω) = expect p f + expect p g := by
@@ -102,13 +68,11 @@ lemma expect_add (p : ℝ) (f g : ConfigSpace E → ℝ) :
   rw [← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
 
-
 lemma expect_const_mul (p : ℝ) (c : ℝ) (f : ConfigSpace E → ℝ) :
     expect p (fun ω => c * f ω) = c * expect p f := by
   unfold expect
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
-
 
 lemma expect_mono {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E → ℝ}
     (h : ∀ ω, f ω ≤ g ω) : expect p f ≤ expect p g := by
@@ -116,14 +80,10 @@ lemma expect_mono {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E
   refine Finset.sum_le_sum (fun ω _ => ?_)
   exact mul_le_mul_of_nonneg_right (h ω) (configWeight_nonneg hp0 hp1 ω)
 
-
 lemma expect_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f : ConfigSpace E → ℝ}
     (h : ∀ ω, 0 ≤ f ω) : 0 ≤ expect p f := by
   have := expect_mono hp0 hp1 (f := fun _ => (0 : ℝ)) (g := f) h
   simpa [expect] using this
-
-
-
 
 lemma configWeight_sum_one (p : ℝ) : ∑ ω : ConfigSpace E, configWeight p ω = 1 := by
   unfold configWeight edgeWeight
@@ -132,10 +92,6 @@ lemma configWeight_sum_one (p : ℝ) : ∑ ω : ConfigSpace E, configWeight p ω
   rw [Fintype.sum_bool]; simp
 
 omit [DecidableEq E] in
-
-
-
-
 lemma configWeight_logModular (p : ℝ) (a b : ConfigSpace E) :
     configWeight p a * configWeight p b = configWeight p (a ⊔ b) * configWeight p (a ⊓ b) := by
   have coord : ∀ (φ : Bool → ℝ) (x y : Bool), φ x * φ y = φ (x ⊔ y) * φ (x ⊓ y) := by
@@ -150,14 +106,10 @@ lemma configWeight_logModular (p : ℝ) (a b : ConfigSpace E) :
   exact coord (fun c => if c = true then p else 1 - p) (a e) (b e)
 
 omit [DecidableEq E] in
-
 lemma configWeight_fkg (p : ℝ) : FKGLatticeCondition (configWeight (E := E) p) :=
   FKGLatticeCondition.of_logModular (fun a b => configWeight_logModular p a b)
 
-
-
-
-theorem fkg_cov {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E → ℝ}
+lemma fkg_cov {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E → ℝ}
     (hf : Monotone f) (hg : Monotone g) :
     expect p f * expect p g ≤ expect p (fun ω => f ω * g ω) := by
   have hπ0 : (0 : ConfigSpace E → ℝ) ≤ configWeight p :=
@@ -172,14 +124,12 @@ theorem fkg_cov {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E �
     _ = ∑ ω, (fun ω => f ω * g ω) ω * configWeight p ω :=
         Finset.sum_congr rfl (fun ω _ => by ring)
 
+/-! ## B. Russo–Hamming inequality -/
 
-
-
-
+/-- The number of open edges of a configuration. -/
 def numOpen (ω : ConfigSpace E) : ℕ := (univ.filter (fun e => ω e = true)).card
 
 omit [DecidableEq E] in
-
 lemma numOpen_eq_sum (ω : ConfigSpace E) :
     (numOpen ω : ℝ) = ∑ e, (if ω e then (1 : ℝ) else 0) := by
   unfold numOpen
@@ -189,7 +139,6 @@ lemma numOpen_eq_sum (ω : ConfigSpace E) :
   by_cases h : ω e <;> simp [h]
 
 omit [Fintype E] [DecidableEq E] in
-
 lemma le_open_coord {ω ω' : ConfigSpace E} (hle : ω ≤ ω') (e : E) (h : ω e = true) :
     ω' e = true := by
   have := hle e; rw [h] at this
@@ -197,10 +146,10 @@ lemma le_open_coord {ω ω' : ConfigSpace E} (hle : ω ≤ ω') (e : E) (h : ω 
   | false => rw [h'] at this; exact absurd this (by simp)
   | true => rfl
 
-
-
+omit [DecidableEq E] in
 lemma numOpen_add_hammingDist {ω ω' : ConfigSpace E} (hle : ω ≤ ω') :
     numOpen ω' = numOpen ω + hammingDist ω ω' := by
+  classical
   unfold numOpen hammingDist
   rw [← Finset.card_union_of_disjoint]
   · congr 1
@@ -225,7 +174,7 @@ lemma numOpen_add_hammingDist {ω ω' : ConfigSpace E} (hle : ω ≤ ω') :
     intro e _ h1 h2
     exact h2 (by rw [h1]; exact (le_open_coord hle e h1).symm)
 
-
+omit [DecidableEq E] in
 lemma numOpen_mono : Monotone (fun ω : ConfigSpace E => (numOpen ω : ℝ)) := by
   intro ω ω' hle
   simp only
@@ -233,10 +182,8 @@ lemma numOpen_mono : Monotone (fun ω : ConfigSpace E => (numOpen ω : ℝ)) := 
   have : numOpen ω ≤ numOpen ω' := by rw [h]; omega
   exact_mod_cast this
 
-
-
-
-theorem numOpen_add_hamming_mono (A : Set (ConfigSpace E)) :
+omit [DecidableEq E] in
+lemma numOpen_add_hamming_mono (A : Set (ConfigSpace E)) :
     Monotone (fun ω => (numOpen ω : ℝ) + (hammingToSet A ω : ℝ)) := by
   intro ω ω' hle
   simp only
@@ -252,10 +199,6 @@ theorem numOpen_add_hamming_mono (A : Set (ConfigSpace E)) :
       exact_mod_cast hammingToSet_le_add A hne ω ω'
     rw [h1]; push_cast; linarith
 
-
-
-
-
 lemma sum_prob_openEdge (p : ℝ) :
     ∑ e : E, prob p (openEdge e) = expect p (fun ω : ConfigSpace E => (numOpen ω : ℝ)) := by
   have step : ∀ e : E, prob p (openEdge e)
@@ -268,8 +211,6 @@ lemma sum_prob_openEdge (p : ℝ) :
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   simp only []
   rw [numOpen_eq_sum, Finset.sum_mul]
-
-
 
 lemma sum_prob_inter_openEdge (p : ℝ) (A : Set (ConfigSpace E)) :
     ∑ e : E, prob p (A ∩ openEdge e)
@@ -295,10 +236,7 @@ lemma sum_prob_inter_openEdge (p : ℝ) (A : Set (ConfigSpace E)) :
   simp only []
   rw [numOpen_eq_sum, Finset.mul_sum, Finset.sum_mul]
 
-
-
-
-theorem cov_with_numOpen (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
+lemma cov_with_numOpen (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     p * (1 - p) * ∑ e, pivotalProb p A e
       = expect p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (numOpen ω : ℝ))
         - prob p A * expect p (fun ω : ConfigSpace E => (numOpen ω : ℝ)) := by
@@ -310,10 +248,6 @@ theorem cov_with_numOpen (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing 
   rw [hsplit, sum_prob_inter_openEdge, sum_prob_openEdge]
   ring
 
-
-
-
-
 lemma expect_indicator_hamming_zero (p : ℝ) (A : Set (ConfigSpace E)) :
     expect p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (hammingToSet A ω : ℝ)) = 0 := by
   unfold expect
@@ -324,25 +258,17 @@ lemma expect_indicator_hamming_zero (p : ℝ) (A : Set (ConfigSpace E)) :
   · rw [Set.indicator_of_mem h, hammingToSet_eq_zero_of_mem A h]; simp
   · rw [Set.indicator_of_notMem h]; simp
 
-
-
-
-
-theorem prob_mul_expect_hamming_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+lemma prob_mul_expect_hamming_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
       ≤ expect p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (numOpen ω : ℝ))
         - prob p A * expect p (fun ω : ConfigSpace E => (numOpen ω : ℝ)) := by
-  
-  
   have hfkg := fkg_cov hp0 hp1 hA.indicator_monotone (numOpen_add_hamming_mono A)
   rw [expect_indicator p A] at hfkg
-  
   have hNH : expect p (fun ω => (numOpen ω : ℝ) + (hammingToSet A ω : ℝ))
       = expect p (fun ω : ConfigSpace E => (numOpen ω : ℝ))
         + expect p (fun ω => (hammingToSet A ω : ℝ)) :=
     expect_add p (fun ω => (numOpen ω : ℝ)) (fun ω => (hammingToSet A ω : ℝ))
-  
   have hprod : expect p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω
         * ((numOpen ω : ℝ) + (hammingToSet A ω : ℝ)))
       = expect p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (numOpen ω : ℝ))
@@ -350,39 +276,25 @@ theorem prob_mul_expect_hamming_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     rw [← expect_add p (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (numOpen ω : ℝ))
           (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * (hammingToSet A ω : ℝ))]
     exact Finset.sum_congr rfl (fun ω _ => by ring)
-  
   have hzero := expect_indicator_hamming_zero p A
-  
   rw [hNH, hprod, hzero, add_zero] at hfkg
   nlinarith [hfkg]
 
-
-
-
-
-
-
-
-
+/-- `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound (unconditional). -/
 theorem russoHamming {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     4 * prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
       ≤ deriv (fun p => prob p A) p := by
   have hp0' : (0 : ℝ) ≤ p := hp0.le
   have hp1' : p ≤ 1 := hp1.le
-  
   rw [deriv_prob_eq_sum_pivotalProb A hA p]
-  
   have hcov : prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
       ≤ p * (1 - p) * ∑ e, pivotalProb p A e := by
     rw [cov_with_numOpen p A hA]
     exact prob_mul_expect_hamming_le hp0' hp1' A hA
-  
   have hpiv : 0 ≤ ∑ e, pivotalProb p A e :=
     Finset.sum_nonneg (fun e _ => pivotalProb_nonneg hp0' hp1' A e)
-  
   have hquarter : p * (1 - p) ≤ 1 / 4 := by nlinarith [sq_nonneg (p - 1 / 2)]
-  
   calc 4 * prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
       = 4 * (prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))) := by ring
     _ ≤ 4 * (p * (1 - p) * ∑ e, pivotalProb p A e) := by
@@ -390,24 +302,15 @@ theorem russoHamming {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
         nlinarith [hcov]
     _ ≤ ∑ e, pivotalProb p A e := by nlinarith [hquarter, hpiv]
 
-
-
-
-
-
-
-
-
 lemma expect_neg (p : ℝ) (f : ConfigSpace E → ℝ) :
     expect p (fun ω => - f ω) = - expect p f := by
   unfold expect
   rw [← Finset.sum_neg_distrib]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
 
+/-! ## C. Integration -/
 
-
-
-theorem fkg_anticorr {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E → ℝ}
+lemma fkg_anticorr {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E → ℝ}
     (hf : Antitone f) (hg : Monotone g) :
     expect p (fun ω => f ω * g ω) ≤ expect p f * expect p g := by
   have hnf : Monotone (fun ω => - f ω) := fun a b h => neg_le_neg (hf h)
@@ -420,8 +323,6 @@ theorem fkg_anticorr {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpac
   rw [heq] at h
   linarith
 
-
-
 lemma hasDerivAt_expect_raw (f : ConfigSpace E → ℝ) (p : ℝ) :
     HasDerivAt (fun p => expect p f)
       (∑ ω, f ω * ∑ e, weightOff p e ω * (if ω e then (1 : ℝ) else -1)) p := by
@@ -429,12 +330,9 @@ lemma hasDerivAt_expect_raw (f : ConfigSpace E → ℝ) (p : ℝ) :
   refine HasDerivAt.fun_sum (fun ω _ => ?_)
   exact (hasDerivAt_configWeight ω p).const_mul (f ω)
 
-
 lemma differentiable_expect (f : ConfigSpace E → ℝ) :
     Differentiable ℝ (fun p => expect p f) :=
   fun p => (hasDerivAt_expect_raw f p).differentiableAt
-
-
 
 lemma deriv_term_eq {p : ℝ} (hp0 : p ≠ 0) (hp1 : (1 : ℝ) - p ≠ 0)
     (ω : ConfigSpace E) (e : E) :
@@ -443,12 +341,10 @@ lemma deriv_term_eq {p : ℝ} (hp0 : p ≠ 0) (hp1 : (1 : ℝ) - p ≠ 0)
   have hcw : configWeight p ω = edgeWeight p ω e * weightOff p e ω := configWeight_eq p e ω
   unfold edgeWeight at hcw
   cases h : ω e
-  · rw [hcw, h]; simp only [Bool.false_eq_true, if_false]
+  · rw [hcw, h]; simp only [Bool.false_eq_true, ite_false]
     rw [eq_div_iff (mul_ne_zero hp0 hp1)]; ring
-  · rw [hcw, h]; simp only [if_true]
+  · rw [hcw, h]; simp only [ite_true]
     rw [eq_div_iff (mul_ne_zero hp0 hp1)]; ring
-
-
 
 lemma deriv_omega_eq {p : ℝ} (hp0 : p ≠ 0) (hp1 : (1 : ℝ) - p ≠ 0) (ω : ConfigSpace E) :
     ∑ e, weightOff p e ω * (if ω e then (1 : ℝ) else -1)
@@ -458,8 +354,6 @@ lemma deriv_omega_eq {p : ℝ} (hp0 : p ≠ 0) (hp1 : (1 : ℝ) - p ≠ 0) (ω :
   rw [← Finset.mul_sum]; congr 1
   rw [Finset.sum_sub_distrib, ← numOpen_eq_sum]; congr 1
   rw [Finset.sum_const, Finset.card_univ]; ring
-
-
 
 lemma hasDerivAt_expect {p : ℝ} (f : ConfigSpace E → ℝ) (hp0 : p ≠ 0)
     (hp1 : (1 : ℝ) - p ≠ 0) :
@@ -473,7 +367,6 @@ lemma hasDerivAt_expect {p : ℝ} (f : ConfigSpace E → ℝ) (hp0 : p ≠ 0)
   rw [sub_div, Finset.sum_div, Finset.mul_sum, Finset.sum_div, ← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
 
-
 lemma deriv_expect_eq {p : ℝ} (f : ConfigSpace E → ℝ) (hp0 : p ≠ 0)
     (hp1 : (1 : ℝ) - p ≠ 0) :
     deriv (fun p => expect p f) p
@@ -481,18 +374,13 @@ lemma deriv_expect_eq {p : ℝ} (f : ConfigSpace E → ℝ) (hp0 : p ≠ 0)
         - p * (Fintype.card E) * expect p f) / (p * (1 - p)) :=
   (hasDerivAt_expect f hp0 hp1).deriv
 
-
 lemma expect_numOpen (p : ℝ) :
     expect p (fun ω : ConfigSpace E => (numOpen ω : ℝ)) = p * (Fintype.card E) := by
   rw [← sum_prob_openEdge]
   rw [Finset.sum_congr rfl (fun e (_ : e ∈ univ) => prob_openEdge p e)]
   rw [Finset.sum_const, Finset.card_univ]; ring
 
-
-
-
-
-theorem expect_antitoneOn {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp2 : p₂ < 1)
+lemma expect_antitoneOn {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp2 : p₂ < 1)
     {f : ConfigSpace E → ℝ} (hf : Antitone f) :
     AntitoneOn (fun p => expect p f) (Set.Icc p₁ p₂) := by
   apply antitoneOn_of_deriv_nonpos (convex_Icc p₁ p₂)
@@ -514,22 +402,16 @@ theorem expect_antitoneOn {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp2 : p₂ < 1)
     linarith
   · nlinarith [hpp0, hpp1]
 
-
-
 omit [DecidableEq E] in
-
-
 lemma hammingToSet_real_antitone (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     Antitone (fun ω => (hammingToSet A ω : ℝ)) := by
   intro ω ω' hle
   simp only
   exact_mod_cast hammingToSet_antitone A hA hle
 
-
 lemma differentiable_prob (A : Set (ConfigSpace E)) :
     Differentiable ℝ (fun p => prob p A) :=
   fun p => (hasDerivAt_prob A p).differentiableAt
-
 
 lemma prob_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (A : Set (ConfigSpace E)) :
     0 ≤ prob p A := by
@@ -537,15 +419,11 @@ lemma prob_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (A : Set (ConfigSpac
   refine Finset.sum_nonneg (fun ω _ => ?_)
   exact mul_nonneg (Set.indicator_nonneg (fun _ _ => zero_le_one) ω) (configWeight_nonneg hp0 hp1 ω)
 
-
 lemma expect_hamming_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (A : Set (ConfigSpace E)) :
     0 ≤ expect p (fun ω => (hammingToSet A ω : ℝ)) :=
   expect_nonneg hp0 hp1 (fun ω => by positivity)
 
-
-
-
-theorem gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : p₁ ≤ p₂)
+lemma gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : p₁ ≤ p₂)
     (hdiff : ∀ p ∈ Set.Icc p₁ p₂, c * prob p A ≤ deriv (fun p => prob p A) p) :
     prob p₁ A ≤ prob p₂ A * Real.exp (- c * (p₂ - p₁)) := by
   set h := fun p => prob p A * Real.exp (- c * p) with hh
@@ -578,33 +456,21 @@ theorem gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp 
   rw [le_div_iff₀ hexp1]
   exact hle
 
-
-
-
-
-
-
-
-
-
+/-- Integrated comparison between `p₁ < p₂` (unconditional). -/
 theorem russoHammingIntegrated {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp12 : p₁ < p₂) (hp2 : p₂ < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     prob p₁ A
       ≤ prob p₂ A
           * Real.exp (- 4 * (p₂ - p₁) * expect p₂ (fun ω => (hammingToSet A ω : ℝ))) := by
   set H₂ := expect p₂ (fun ω => (hammingToSet A ω : ℝ)) with hH₂
-  
   have hgr := gronwall_prob A (4 * H₂) (le_of_lt hp12) ?_
   · rw [show (- 4 * (p₂ - p₁) * H₂) = (- (4 * H₂) * (p₂ - p₁)) by ring]
     exact hgr
-  · 
-    intro p hp
+  · intro p hp
     obtain ⟨hpl, hpr⟩ := hp
     have hpp0 : 0 < p := lt_of_lt_of_le hp1 hpl
     have hpp1 : p < 1 := lt_of_le_of_lt hpr hp2
-    
     have hrh := russoHamming hpp0 hpp1 A hA
-    
     have hanti := expect_antitoneOn hp1 hp2 (hammingToSet_real_antitone A hA)
     have hH2le : H₂ ≤ expect p (fun ω => (hammingToSet A ω : ℝ)) :=
       hanti ⟨hpl, hpr⟩ ⟨le_of_lt hp12, le_refl _⟩ hpr

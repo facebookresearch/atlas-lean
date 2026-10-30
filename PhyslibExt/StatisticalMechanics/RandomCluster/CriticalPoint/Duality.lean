@@ -6,76 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -83,6 +13,38 @@ public import MathlibExt.Probability.Configuration.ConfigSpace
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Tilt
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.SelfDualValue
+
+/-!
+# Planar duality identities for the random-cluster weights
+
+Algebraic identities behind planar duality of the random-cluster model: the edge-product duality,
+the self-dual relation, and the crossing estimates they imply.
+
+## i. Overview
+
+The edge product `p ^ o (1 - p) ^ (m - o)` transforms under the dual parameter so that `(p / (1 -
+p)) (p* / (1 - p*)) = q`. With a Radon–Nikodym sandwich between primal and dual weights this yields
+the self-duality estimate `1 / (1 + q²) ≤ P(connection)` and the square-crossing estimate `1 / (1 +
+c) ≤ P(horizontal crossing)`. These estimates are abstract inequalities: they take the dichotomy and
+the comparison bound as hypotheses.
+
+## ii. Key results
+
+- `dlt_edgeProduct_duality`: edge-product duality.
+- `dlt_self_duality_estimate`: `1 / (1 + q ^ 2) ≤` connection probability, from the dichotomy and a
+  comparison hypothesis.
+- `dlt_square_crossing_estimate`: the analogous square-crossing bound.
+
+## iii. Table of contents
+
+- A. Edge products and the dual parameter
+- B. Radon–Nikodym sandwich and crossing estimates
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -92,39 +54,28 @@ namespace StatMech
 
 namespace BeffaraDC
 
+/-! ## A. Edge products and the dual parameter -/
 
-
-
-
-
-
+/-- The edge product `p ^ o * (1 - p) ^ (m - o)` for `o` open edges out of `m`. -/
 noncomputable def edgeProductCount (p : ℝ) (m o : ℕ) : ℝ :=
   p ^ o * (1 - p) ^ (m - o)
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
 omit [DecidableEq V] in
-
-
-
-theorem dlt_edgeProduct_eq_count (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
+lemma dlt_edgeProduct_eq_count (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
     StatMech.FK.edgeProduct G p ω
       = edgeProductCount p G.edgeFinset.card (StatMech.FK.openCount G ω) := by
   unfold StatMech.FK.edgeProduct edgeProductCount StatMech.FK.openCount
   rw [Finset.prod_ite (f := fun _ => p) (g := fun _ => (1 - p))]
   simp only [Finset.prod_const]
   congr 1
-  
   have hcard :=
     Finset.card_filter_add_card_filter_not (s := G.edgeFinset) (fun e => ω e = true)
   congr 1
   omega
 
-
-
-
-
-theorem dlt_edgeProductCount_yates {p : ℝ} (hp1 : p < 1) (m o : ℕ) (hom : o ≤ m) :
+lemma dlt_edgeProductCount_yates {p : ℝ} (hp1 : p < 1) (m o : ℕ) (hom : o ≤ m) :
     edgeProductCount p m o = (1 - p) ^ m * (p / (1 - p)) ^ o := by
   unfold edgeProductCount
   have h1p : (0 : ℝ) < 1 - p := by linarith
@@ -132,11 +83,7 @@ theorem dlt_edgeProductCount_yates {p : ℝ} (hp1 : p < 1) (m o : ℕ) (hom : o 
     rw [← pow_add, Nat.sub_add_cancel hom]
   rw [hmo, div_pow]; field_simp
 
-
-
-
-
-theorem dlt_dual_ratio_rel {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
+lemma dlt_dual_ratio_rel {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     (p / (1 - p)) * (dualParam p q / (1 - dualParam p q)) = q := by
   have hden : 0 < (1 - p) * q + p := by nlinarith
   have h1md : 1 - dualParam p q = p / ((1 - p) * q + p) := by
@@ -146,19 +93,7 @@ theorem dlt_dual_ratio_rel {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
   have h1pne : (1 : ℝ) - p ≠ 0 := by intro h; linarith [sub_eq_zero.mp h]
   field_simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem dlt_edgeProduct_duality {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
+lemma dlt_edgeProduct_duality {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (m o : ℕ) (hom : o ≤ m) :
     edgeProductCount p m o * q ^ m
       = (p / (1 - dualParam p q)) ^ m * q ^ o
@@ -187,32 +122,18 @@ theorem dlt_edgeProduct_duality {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 <
   rw [show ((1 : ℝ) - p) ^ m * a ^ o * (a ^ m * b ^ m)
         = ((1 - p) * a) ^ m * (a ^ o * b ^ m) by rw [mul_pow]; ring, hpa]
 
-
-
-
-
-theorem dlt_edgeProduct_duality_selfdual {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma dlt_edgeProduct_duality_selfdual {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 0 < q) (hsd : dualParam p q = p) (m o : ℕ) (hom : o ≤ m) :
     edgeProductCount p m o * q ^ m
       = (p / (1 - p)) ^ m * q ^ o * edgeProductCount p m (m - o) := by
   have := dlt_edgeProduct_duality hp hp1 hq m o hom
   rwa [hsd] at this
 
-
-
 variable {Ω : Type*} [Fintype Ω] [Nonempty Ω]
 
+/-! ## B. Radon–Nikodym sandwich and crossing estimates -/
 
-
-
-
-
-
-
-
-
-
-theorem dlt_rn_sandwich (w w' : Ω → ℝ) (q : ℝ) (hq : 1 ≤ q) (c : ℕ)
+lemma dlt_rn_sandwich (w w' : Ω → ℝ) (q : ℝ) (hq : 1 ≤ q) (c : ℕ)
     (hw'pos : ∀ ω, 0 < w' ω) (hwpos : ∀ ω, 0 < w ω)
     (hlb : ∀ ω, q ^ (-(c : ℤ)) * w' ω ≤ w ω)
     (hub : ∀ ω, w ω ≤ q ^ (c : ℤ) * w' ω) (A : Finset Ω) :
@@ -238,49 +159,29 @@ theorem dlt_rn_sandwich (w w' : Ω → ℝ) (q : ℝ) (hq : 1 ≤ q) (c : ℕ)
   refine key.trans (le_of_eq ?_)
   rw [pow_mul]; field_simp; ring
 
-
-
-
-
-
-
-
-theorem dlt_dichotomy_lower_bound {x y Q : ℝ} (hsum : x + y = 1) (hQ : 0 ≤ Q)
+lemma dlt_dichotomy_lower_bound {x y Q : ℝ} (hsum : x + y = 1) (hQ : 0 ≤ Q)
     (hyx : y ≤ Q * x) : 1 / (1 + Q) ≤ x := by
   have h1Q : 0 < 1 + Q := by linarith
   rw [div_le_iff₀ h1Q]
   nlinarith [hsum, hyx]
 
-
-
-
-
-theorem dlt_self_duality_estimate {connectProb dualConnectProb q : ℝ}
+lemma dlt_self_duality_estimate {connectProb dualConnectProb q : ℝ}
     (hdichotomy : connectProb + dualConnectProb = 1)
     (hRN : dualConnectProb ≤ q ^ 2 * connectProb) :
     1 / (1 + q ^ 2) ≤ connectProb :=
   dlt_dichotomy_lower_bound hdichotomy (by positivity) hRN
 
-
-
-
-
-theorem dlt_square_crossing_estimate {horizCross vertDualCross c : ℝ} (hc : 0 ≤ c)
+lemma dlt_square_crossing_estimate {horizCross vertDualCross c : ℝ} (hc : 0 ≤ c)
     (hdichotomy : horizCross + vertDualCross = 1)
     (hsym : vertDualCross ≤ c * horizCross) :
     1 / (1 + c) ≤ horizCross :=
   dlt_dichotomy_lower_bound hdichotomy hc hsym
 
-
-
-
-theorem dlt_square_crossing_const_pos {c : ℝ} (hc : 0 ≤ c) : 0 < 1 / (1 + c) := by
+lemma dlt_square_crossing_const_pos {c : ℝ} (hc : 0 ≤ c) : 0 < 1 / (1 + c) := by
   have h : (0 : ℝ) < 1 + c := by linarith
   exact div_pos one_pos h
 
-
-
-theorem dlt_self_duality_const_pos (q : ℝ) : 0 < 1 / (1 + q ^ 2) := by
+lemma dlt_self_duality_const_pos (q : ℝ) : 0 < 1 / (1 + q ^ 2) := by
   have h : (0 : ℝ) < 1 + q ^ 2 := by positivity
   exact div_pos one_pos h
 

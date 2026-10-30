@@ -6,14 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalCrossBridge
+
+/-!
+# Causal labels and the adaptive weight
+
+The labels driving the decision-tree causal orders coincide with the adaptive mixtures `adaptWt` of
+`AdaptMConditional`.
+
+## i. Overview
+
+Splicing identities relating the causal-kernel construction to the coordinate-wise adaptive
+coupling. Unconditional. Part of the causal-kernel proof of the decision-tree OSSS inequality for
+monotonic measures (`AdaptiveCausalKernel` → `AdaptiveCausalOSSS.adaptive_tree_osss`).
+
+## ii. Key results
+
+- `causalMixLabels_extendDecisionTreeAt_eq_adaptWt`: causal labels equal the adaptive mixture.
+
+## iii. Table of contents
+
+- A. Splicing
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
@@ -33,12 +54,11 @@ lemma mem_take_realizedEquiv_iff
     rw [← List.mem_toFinset, realizedList_toFinset]
     simp
   rw [List.mem_take_iff_idxOf_lt hefull]
-  simpa only [← realizedEquiv_symm_val, Equiv.symm_apply_apply]
+  simp only [← realizedEquiv_symm_val, Equiv.symm_apply_apply]
 
+/-! ## A. Splicing -/
 
-
-
-theorem causalMixLabels_extendDecisionTreeAt_eq_adaptWt
+lemma causalMixLabels_extendDecisionTreeAt_eq_adaptWt
     (t : ℕ) (T : DecisionTree E) (base : ConfigSpace E)
     (U V : Fin (Fintype.card E) → ℝ) :
     causalMixLabels
@@ -101,9 +121,7 @@ theorem causalMixLabels_extendDecisionTreeAt_eq_adaptWt
         exact (mem_sharedEdges_iff_independentAt_false St base e (by simp)).mpr hfalse
       simp [hit, him, hind]
 
-
-
-theorem causalMixLabels_extendDecisionTreeTriple_left_eq_adaptWt
+lemma causalMixLabels_extendDecisionTreeTriple_left_eq_adaptWt
     (t : ℕ) (T : DecisionTree E) (base : ConfigSpace E)
     (U V : Fin (Fintype.card E) → ℝ) :
     let S := extendDecisionTreeTriple (some t) T base
@@ -114,9 +132,7 @@ theorem causalMixLabels_extendDecisionTreeTriple_left_eq_adaptWt
   rw [extendDecisionTreeTriple_leftOrder]
   exact causalMixLabels_extendDecisionTreeAt_eq_adaptWt t T base U V
 
-
-
-theorem causalMixLabels_extendDecisionTreeTriple_right_eq_adaptWt
+lemma causalMixLabels_extendDecisionTreeTriple_right_eq_adaptWt
     (t : ℕ) (T : DecisionTree E) (base : ConfigSpace E)
     (U V : Fin (Fintype.card E) → ℝ) :
     let S := extendDecisionTreeTriple (some t) T base

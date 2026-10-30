@@ -6,21 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailCondLawConstant
+
+/-!
+# Optional stopping for the tail selection map
+
+The tail selection at a fixed stopping value is measure preserving; the measure-preserving property
+of the stopped tail selection follows from a constant switch, while naive per-partition gluing
+fails.
+
+## i. Overview
+
+`osp_tailSelFixed` selects tail labels for a fixed stopping value `s`; it is measure preserving
+(`osp_tailSelFixed_mp`), and its law is computed in `osp_tailSelFixed_law`.
+`osp_tailSelMP_of_const_switch` derives the stopped version from a constant-switch hypothesis.
+`osp_naive_per_partition_glue_false` is a Lean-checked refutation: gluing two measure-preserving
+maps along a partition is not measure preserving in general. This file is one step of the OSSS chain
+for monotonic measures: `AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration`
+(`AdaptCondBBB` ⇒ `AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
+`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
+unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `osp_tailSelFixed_law`: law of the fixed tail selection.
+- `osp_tailSelMP_of_const_switch`: the stopped selection is measure preserving, conditional on a
+  constant switch.
+- `osp_naive_per_partition_glue_false`: naive gluing fails.
+
+## iii. Table of contents
+
+- A. Fixed tail selection
+- B. Stopped tail selection
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
-set_option maxHeartbeats 2000000
 
 namespace StatMech
 
@@ -33,13 +64,14 @@ open StatMech.Probability OSSS.AdaptiveTau OSSS.AdaptMConditional
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Fixed tail selection -/
 
-
+/-- The tail selection for a fixed stopping value `s`: the coordinates before `t` from `A`, then
+  tail labels chosen according to `s` and `k`. -/
 noncomputable def osp_tailSelFixed {n : ℕ} (t s k : ℕ)
     (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (p : ({i : Fin n // ¬ (i : ℕ) < t} → ℝ) × (Fin n → ℝ)) : Fin n → ℝ :=
   adaptWt (acp_join t A p.1) p.2 k s
-
 
 lemma osp_tailSelFixed_meas {n : ℕ} (t s k : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     Measurable (osp_tailSelFixed t s k A) := by
@@ -50,7 +82,7 @@ lemma osp_tailSelFixed_meas {n : ℕ} (t s k : ℕ) (A : {i : Fin n // (i : ℕ)
       measurable_snd
   exact (measurable_adaptWt_fixed k s).comp hpair
 
-
+/-- The projection of the joined label triple to the tail labels used by the selection. -/
 def osp_proj {n : ℕ} (t : ℕ) :
     ((({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ)) × (Fin n → ℝ))
       → (({i : Fin n // ¬ (i : ℕ) < t} → ℝ) × (Fin n → ℝ)) :=
@@ -59,44 +91,26 @@ def osp_proj {n : ℕ} (t : ℕ) :
 lemma osp_proj_meas {n : ℕ} (t : ℕ) : Measurable (osp_proj (n := n) t) :=
   (measurable_snd.comp measurable_fst).prodMk measurable_snd
 
-
-
-
 lemma osp_proj_measurePreserving {n : ℕ} (t : ℕ) :
     MeasurePreserving (osp_proj (n := n) t)
       (((ubfHead n t).prod (ubfTail n t)).prod (Vcube n))
       ((ubfTail n t).prod (Vcube n)) := by
   unfold osp_proj
-  have h1 : MeasurePreserving (Prod.snd : (({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ)) → _)
+  have h1 : MeasurePreserving (Prod.snd : (({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i :
+      ℕ) < t} → ℝ)) → _)
       ((ubfHead n t).prod (ubfTail n t)) (ubfTail n t) := measurePreserving_snd
   exact (h1.prod (MeasurePreserving.id (Vcube n)))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Fill the tail coordinates of a label triple according to the stopping value `s` and the step
+  `k`. -/
 noncomputable def osp_fill {n : ℕ} (t s k : ℕ)
     (q : ((({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ))
             × (Fin n → ℝ))) : Fin n → ℝ :=
   adaptWt (acp_join t q.1.1 q.1.2) q.2 k s
 
-
-
-
 lemma osp_fill_measurePreserving {n : ℕ} (t s k : ℕ) :
     MeasurePreserving (osp_fill (n := n) t s k)
       (((ubfHead n t).prod (ubfTail n t)).prod (Vcube n)) (Vcube n) := by
-  
   have hreassemble : MeasurePreserving
       (fun q : ((({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ))
             × (Fin n → ℝ)) => ((ubfSplit n t).symm q.1, q.2))
@@ -106,71 +120,38 @@ lemma osp_fill_measurePreserving {n : ℕ} (t s k : ℕ) :
         ((ubfHead n t).prod (ubfTail n t)) (cube n) :=
       (ubf_pi_block_split n t).symm _
     exact hsymm.prod (MeasurePreserving.id (Vcube n))
-  
   have hsel : MeasurePreserving (selMap2 n s k) ((cube n).prod (Vcube n)) (Vcube n) := by
     rw [Vcube_eq_cube]
     exact adsD_selMap2_measurePreserving n s k
   have hcomp := hsel.comp hreassemble
-  
   have heq : (selMap2 n s k) ∘ (fun q => ((ubfSplit n t).symm q.1, q.2))
       = osp_fill (n := n) t s k := by
     funext q
-    show selMap2 n s k ((ubfSplit n t).symm q.1, q.2) = adaptWt (acp_join t q.1.1 q.1.2) q.2 k s
+    change selMap2 n s k ((ubfSplit n t).symm q.1, q.2) = adaptWt (acp_join t q.1.1 q.1.2) q.2 k s
     rw [adsD_selMap2_eq_adaptWt]
     rfl
   rw [heq] at hcomp
   exact hcomp
 
-
-
-
 lemma osp_fill_eq_tailSel_comp_proj {n : ℕ} (t s k : ℕ) (hts : t ≤ s)
     (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     osp_fill (n := n) t s k = (osp_tailSelFixed t s k A) ∘ (osp_proj (n := n) t) := by
   funext q
-  show adaptWt (acp_join t q.1.1 q.1.2) q.2 k s = adaptWt (acp_join t A q.1.2) q.2 k s
+  change adaptWt (acp_join t q.1.1 q.1.2) q.2 k s = adaptWt (acp_join t A q.1.2) q.2 k s
   exact atc_adaptWt_join_indep_head t s k hts q.1.1 A q.1.2 q.2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem osp_tailSelFixed_mp {n : ℕ} (t s k : ℕ) (hts : t ≤ s)
+lemma osp_tailSelFixed_mp {n : ℕ} (t s k : ℕ) (hts : t ≤ s)
     (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     MeasurePreserving (osp_tailSelFixed t s k A)
       ((ubfTail n t).prod (Vcube n)) (Vcube n) := by
-  
   have hfill := osp_fill_measurePreserving (n := n) t s k
   rw [osp_fill_eq_tailSel_comp_proj t s k hts A] at hfill
-  
   have hproj := osp_proj_measurePreserving (n := n) t
   refine ⟨osp_tailSelFixed_meas t s k A, ?_⟩
-  
   rw [← hproj.map_eq, Measure.map_map (osp_tailSelFixed_meas t s k A) (osp_proj_meas t)]
   exact hfill.map_eq
 
-
-
-
-
-
-
-
-
-
-
-theorem osp_tailSelFixed_law (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma osp_tailSelFixed_law (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (g : ConfigSpace E → ℝ) {Cg : ℝ}
     (hgC : ∀ ω, |g ω| ≤ Cg) (t s k : ℕ) (hts : t ≤ s)
     (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
@@ -178,7 +159,6 @@ theorem osp_tailSelFixed_law (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
         ∂(ubfTail n t))
       = Lindeberg.mean μ g := by
   have hMP := osp_tailSelFixed_mp t s k hts A
-  
   have hjm : Measurable (fun p : ({i : Fin n // ¬ (i : ℕ) < t} → ℝ) × (Fin n → ℝ) =>
       g (codeMap μ (σ : Fin n → E) (osp_tailSelFixed t s k A p))) :=
     (measurable_g_codeMap μ σ g).comp (osp_tailSelFixed_meas t s k A)
@@ -186,13 +166,11 @@ theorem osp_tailSelFixed_law (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
       g (codeMap μ (σ : Fin n → E) (osp_tailSelFixed t s k A p)))
       ((ubfTail n t).prod (Vcube n)) :=
     ContinuousFKG.integrable_of_bdd _ hjm (fun p => hgC _)
-  
   have hfub : (∫ p, g (codeMap μ (σ : Fin n → E) (osp_tailSelFixed t s k A p))
         ∂((ubfTail n t).prod (Vcube n)))
       = ∫ B, (∫ V, g (codeMap μ (σ : Fin n → E)
             (adaptWt (acp_join t A B) V k s)) ∂(Vcube n)) ∂(ubfTail n t) := by
     rw [integral_prod _ hint]; rfl
-  
   have hmean : (∫ p, g (codeMap μ (σ : Fin n → E) (osp_tailSelFixed t s k A p))
         ∂((ubfTail n t).prod (Vcube n)))
       = ∑ x, g x * μ x := by
@@ -204,57 +182,21 @@ theorem osp_tailSelFixed_law (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
     rw [hcomp, integral_g_codeMap μ hpos hμ1 σ g]
   rw [← hfub, hmean]; rfl
 
+/-! ## B. Stopped tail selection -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem osp_tailSelMP_of_const_switch (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
+lemma osp_tailSelMP_of_const_switch (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (t s : ℕ) (hts : t ≤ s) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (k₀ : ℕ) (hconst : ∀ B : {i : Fin n // ¬ (i : ℕ) < t} → ℝ,
         stopVal μ σ f (acp_join t A B) = k₀) :
     atl_TailSelMP μ σ f t s A := by
   have heq : atl_selRand μ σ f t s A = osp_tailSelFixed t s k₀ A := by
     funext p
-    show adaptWt (acp_join t A p.1) p.2 (stopVal μ σ f (acp_join t A p.1)) s
+    change adaptWt (acp_join t A p.1) p.2 (stopVal μ σ f (acp_join t A p.1)) s
         = adaptWt (acp_join t A p.1) p.2 k₀ s
     rw [hconst p.1]
-  show MeasurePreserving (atl_selRand μ σ f t s A) ((ubfTail n t).prod (Vcube n)) (Vcube n)
+  change MeasurePreserving (atl_selRand μ σ f t s A) ((ubfTail n t).prod (Vcube n)) (Vcube n)
   rw [heq]
   exact osp_tailSelFixed_mp t s k₀ hts A
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 private lemma osp_map_not_count :
     Measure.map (fun b => !b) (Measure.count : Measure Bool) = Measure.count := by
@@ -270,21 +212,7 @@ private lemma osp_map_not_count :
       _ ≤ Measure.map (fun b => !b) Measure.count := Measure.map_mono hle1 hmeas
   exact le_antisymm hle1 hle2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Naive gluing fails. -/
 theorem osp_naive_per_partition_glue_false :
     ¬ (∀ {Ω β : Type} [MeasurableSpace Ω] [MeasurableSpace β] (μ : Measure Ω) (ν : Measure β)
         (h₀ h₁ : Ω → β) (p : Ω → Prop) [DecidablePred p]
@@ -296,10 +224,8 @@ theorem osp_naive_per_partition_glue_false :
     ⟨measurable_id, by rw [Measure.map_id]⟩
   have h1 : MeasurePreserving (fun b : Bool => !b) Measure.count Measure.count :=
     ⟨by fun_prop, osp_map_not_count⟩
-  
   have key := H Measure.count Measure.count id (fun b => !b) (fun b : Bool => b = true)
     h0 h1 (fun _ => true) (by intro x; cases x <;> simp)
-  
   have hbad : (Measure.map (fun _ : Bool => true) Measure.count) {false} = 0 := by
     rw [Measure.map_apply (by fun_prop) (by trivial)]
     have : (fun _ : Bool => true) ⁻¹' ({false} : Set Bool) = ∅ := by ext x; simp

@@ -6,24 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.Percolation.Exploration
@@ -37,6 +19,52 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StraightWalk
 public import MathlibExt.Probability.Percolation.Universality.CrossingTranslationInvariance
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LeftFillInteriorArc
 public import Mathlib.Combinatorics.SimpleGraph.Walk.Counting
+
+/-!
+# Lowest crossings and the RSW gluing at p = 1/2
+
+The lowest-crossing exploration for critical bond percolation on `ℤ²`, the diagonal crossing events
+of two adjacent rectangles, and the connector events that glue them into a horizontal crossing; it
+proves the square-crossing bound `P(H) ≥ 1/2` and the diagonal bounds `≥ 1/32`.
+
+## i. Overview
+
+Crossing paths of a rectangle are finite, so open crossings are decomposed by first witnesses and by
+lowest (highest) open diagonal paths, ranked by the size of the explored region. Reflections and the
+rotation by `π` relate right and left diagonal events. The connector events of section F join a
+right and a left diagonal path through the vertical axis; a dual reflection of the face-dual
+configuration shows each has probability at least `1/2`, given the self-duality hypothesis `hdual`
+of the `*_of_dual_reflection` lemmas. `rlc_square_half` and `rlc_half_rightDiagonal_unconditional` /
+`rlc_half_leftDiagonal_unconditional` are unconditional. The `Rlc*Property` / `Rlc*Reachability`
+predicates are hypotheses of intermediate lemmas, not proved here.
+
+## ii. Key results
+
+- `rlc_square_half`: `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2` (unconditional).
+- `rlc_half_rightDiagonal_unconditional`: `1/32 ≤ P(right diagonal event)` (unconditional).
+- `rlc_mixedWiredConnector_half_of_dual_reflection`: connector probability `≥ 1/2`, conditional on
+  the dual-reflection hypothesis `hdual`.
+- `rlc_mixedWiredConnector_glues_horizontal`: open diagonal paths plus a connector give a horizontal
+  crossing of `[-2n, 2n] × [-n, n]`.
+
+## iii. Table of contents
+
+- A. Crossing paths and restricted events
+- B. Reflections and diagonal events
+- C. Diagonal paths and their regions
+- D. Lowest and highest open paths
+- E. Trace graphs of two paths
+- F. Connectors across the axis
+- G. Dual reflection
+
+## iv. References
+
+* L. Russo, *A note on percolation*, Z. Wahrsch. Verw. Gebiete 43 (1978); P. D. Seymour, D. J. A.
+  Welsh, *Percolation probabilities on the square lattice*, Ann. Discrete Math. 3 (1978).
+* V. Tassion, *Crossing probabilities for Voronoi percolation*, Ann. Probab. 44 (2016).
+* H. Kesten, *The critical probability of bond percolation on the square lattice equals 1/2*, Comm.
+  Math. Phys. 74 (1980).
+-/
 
 @[expose] public section
 
@@ -53,11 +81,10 @@ open StatMech.RSW.Box
 
 variable {E : Type*}
 
+/-! ## A. Crossing paths and restricted events -/
 
-
-
-
-
+/-- An explicit lattice walk from a right-side site `z` back to a top-side site `x` of the rectangle
+  `[0, 2n] × [-n, n]`, along its boundary. -/
 noncomputable def rlc_cornerReturn {n : ℤ}
     (x : topSide 0 (2 * n) (-n) n)
     (z : rightSide 0 (2 * n) (-n) n) :
@@ -112,9 +139,7 @@ noncomputable def rlc_cornerReturn {n : ℤ}
       · simp
       · simpa using hx1.symm))))
 
-
-
-theorem rlc_cornerReturn_support_inside {n : ℤ}
+lemma rlc_cornerReturn_support_inside {n : ℤ}
     (x : topSide 0 (2 * n) (-n) n)
     (z : rightSide 0 (2 * n) (-n) n) {p : Site 2}
     (hp : p ∈ (rlc_cornerReturn x z).support)
@@ -163,9 +188,7 @@ theorem rlc_cornerReturn_support_inside {n : ℤ}
     · have hp1 : p 1 = n := by omega
       simpa [hx1] using hp1
 
-
-
-theorem rlc_cornerReturn_rayCount_zero {n : ℤ}
+lemma rlc_cornerReturn_rayCount_zero {n : ℤ}
     (x : topSide 0 (2 * n) (-n) n)
     (z : rightSide 0 (2 * n) (-n) n)
     (p : Site 2) (hpR : p ∈ rect 0 (2 * n) (-n) n) :
@@ -183,11 +206,7 @@ theorem rlc_cornerReturn_rayCount_zero {n : ℤ}
     jec_rayCount_reverse, jec_rayCount_hsegRight, jec_rayCount_vsegUp]
   split_ifs <;> omega
 
-
-
-
-
-theorem rlc_ray_eq_below_right_of_avoids {n : ℤ}
+lemma rlc_ray_eq_below_right_of_avoids {n : ℤ}
     (t : rightSide 0 (2 * n) (-n) n) {a b : Site 2}
     (w : (hypercubicLattice 2).Walk a b)
     (hbox : ∀ p ∈ w.support, p ∈ rect 0 (2 * n) (-n) n)
@@ -206,7 +225,7 @@ theorem rlc_ray_eq_below_right_of_avoids {n : ℤ}
   have hvR := hbox v hvSupp
   have ht0 : (t : Site 2) 0 = 2 * n := t.2.2
   simp only [decide_eq_true_eq]
-  show jec_rayEdge (t : Site 2) s(u, v) ↔
+  change jec_rayEdge (t : Site 2) s(u, v) ↔
     bdEdge (jec_belowSet ((t : Site 2) 1)) s(u, v)
   rw [jec_rayEdge_mk,
     jec_belowSet_bdEdge ((t : Site 2) 1) u v hadj]
@@ -233,12 +252,9 @@ theorem rlc_ray_eq_below_right_of_avoids {n : ℤ}
         · exact hrow.2
       exact havoid (huEq ▸ huSupp)
 
-
-
-
-
-
-theorem rlc_harris_cylinder {E : Type*} [Countable E] [DecidableEq E]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma rlc_harris_cylinder {E : Type*} [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1) {A B : Set (ConfigSpace E)}
     (hAinc : IsIncreasing A) (hBinc : IsIncreasing B)
     (T U : Finset E)
@@ -275,9 +291,9 @@ theorem rlc_harris_cylinder {E : Type*} [Countable E] [DecidableEq E]
     (isIncreasing_restrict_image A hAinc F)
     (isIncreasing_restrict_image B hBinc F)
 
-
-
-theorem rlc_harris_three_cylinder {E : Type*} [Countable E] [DecidableEq E]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma rlc_harris_three_cylinder {E : Type*} [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1) {A B C : Set (ConfigSpace E)}
     (hAinc : IsIncreasing A) (hBinc : IsIncreasing B) (hCinc : IsIncreasing C)
     (T U V : Finset E)
@@ -302,11 +318,9 @@ theorem rlc_harris_three_cylinder {E : Type*} [Countable E] [DecidableEq E]
           mul_le_mul_of_nonneg_right hAB measureReal_nonneg
     _ ≤ μ.real (A ∩ B ∩ C) := hABC
 
-
-
-
-
-theorem rlc_diagonal_event_lower_bound {E : Type*} [Countable E] [DecidableEq E]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma rlc_diagonal_event_lower_bound {E : Type*} [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1) (α : ℝ) (hα : 0 ≤ α)
     (A B C Diag : Set (ConfigSpace E))
     (T U V : Finset E)
@@ -333,11 +347,7 @@ theorem rlc_diagonal_event_lower_bound {E : Type*} [Countable E] [DecidableEq E]
     _ ≤ μ.real (A ∩ B ∩ C) := hfkg
     _ ≤ μ.real Diag := measureReal_mono hforce
 
-
-
-
-
-theorem rlc_connector_half_of_dual_reflection {E : Type*}
+lemma rlc_connector_half_of_dual_reflection {E : Type*}
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (sigma : ConfigSpace E → ConfigSpace E)
     (hsigma : MeasurePreserving sigma mu mu)
@@ -353,10 +363,7 @@ theorem rlc_connector_half_of_dual_reflection {E : Type*}
   rw [hpres, hcompl] at hmono
   linarith
 
-
-
-
-theorem rlc_connector_half_of_dual_comparison {E : Type*}
+lemma rlc_connector_half_of_dual_comparison {E : Type*}
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (sigma : ConfigSpace E → ConfigSpace E)
     (hsigma : MeasurePreserving sigma mu mu)
@@ -377,21 +384,18 @@ theorem rlc_connector_half_of_dual_comparison {E : Type*}
   rw [hpres, hcompl] at hmono
   linarith
 
-
-
-
+/-- The first-witness decomposition: configurations in `W i` but in no `W j` with `j < i`. -/
 def rlc_firstWitness {N : ℕ} (W : Fin N → Set (ConfigSpace E)) (i : Fin N) :
     Set (ConfigSpace E) :=
   W i \ ⋃ j : Fin N, ⋃ (_hji : j < i), W j
 
-theorem rlc_mem_firstWitness_iff {N : ℕ} {W : Fin N → Set (ConfigSpace E)}
+lemma rlc_mem_firstWitness_iff {N : ℕ} {W : Fin N → Set (ConfigSpace E)}
     {i : Fin N} {omega : ConfigSpace E} :
     omega ∈ rlc_firstWitness W i ↔
       omega ∈ W i ∧ ∀ j : Fin N, j < i → omega ∉ W j := by
   simp [rlc_firstWitness]
 
-
-theorem rlc_firstWitness_pairwiseDisjoint {N : ℕ}
+lemma rlc_firstWitness_pairwiseDisjoint {N : ℕ}
     (W : Fin N → Set (ConfigSpace E)) :
     Pairwise (Disjoint on rlc_firstWitness W) := by
   intro i j hij
@@ -407,12 +411,11 @@ theorem rlc_firstWitness_pairwiseDisjoint {N : ℕ}
     exact (rlc_mem_firstWitness_iff.mp hi).2 j hji'
       (rlc_mem_firstWitness_iff.mp hj).1
 
-
-theorem rlc_iUnion_firstWitness {N : ℕ} (W : Fin N → Set (ConfigSpace E)) :
+lemma rlc_iUnion_firstWitness {N : ℕ} (W : Fin N → Set (ConfigSpace E)) :
     (⋃ i, rlc_firstWitness W i) = ⋃ i, W i := by
   classical
   apply Set.Subset.antisymm
-  · exact Set.iUnion_mono fun i => diff_subset
+  · exact Set.iUnion_mono fun i => sdiff_subset
   · intro omega homega
     simp only [Set.mem_iUnion] at homega ⊢
     obtain ⟨i, hi⟩ := homega
@@ -425,13 +428,12 @@ theorem rlc_iUnion_firstWitness {N : ℕ} (W : Fin N → Set (ConfigSpace E)) :
     have hmin : k ≤ j := Nat.find_min' hP ⟨j.isLt, hj⟩
     exact (not_le_of_gt hji) hmin
 
-
-
+/-- The union of the supports `T j` over `j ≤ i`. -/
 noncomputable def rlc_exploredSupport {N : ℕ} [DecidableEq E]
     (T : Fin N → Finset E) (i : Fin N) : Finset E :=
   (Finset.univ.filter fun j : Fin N => j ≤ i).biUnion T
 
-theorem rlc_mem_exploredSupport {N : ℕ} [DecidableEq E]
+lemma rlc_mem_exploredSupport {N : ℕ} [DecidableEq E]
     {T : Fin N → Finset E} {i j : Fin N} (hji : j ≤ i) {e : E} (he : e ∈ T j) :
     e ∈ rlc_exploredSupport T i := by
   classical
@@ -439,9 +441,7 @@ theorem rlc_mem_exploredSupport {N : ℕ} [DecidableEq E]
     Finset.mem_univ, true_and]
   exact ⟨j, hji, he⟩
 
-
-
-theorem rlc_firstWitness_dependsOn {N : ℕ} [DecidableEq E]
+lemma rlc_firstWitness_dependsOn {N : ℕ} [DecidableEq E]
     (W : Fin N → Set (ConfigSpace E)) (T : Fin N → Finset E)
     (hW : ∀ i, DependsOn ((W i).indicator (fun _ => (1 : ℝ))) (T i : Set E))
     (i : Fin N) :
@@ -470,27 +470,13 @@ theorem rlc_firstWitness_dependsOn {N : ℕ} [DecidableEq E]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hfirst.mpr h))]
 
-
-
-theorem rlc_firstWitness_inter_pairwiseDisjoint {N : ℕ}
+lemma rlc_firstWitness_inter_pairwiseDisjoint {N : ℕ}
     (W X : Fin N → Set (ConfigSpace E)) :
     Pairwise (Disjoint on fun i => rlc_firstWitness W i ∩ X i) := by
   intro i j hij
   exact (rlc_firstWitness_pairwiseDisjoint W hij).mono inter_subset_left inter_subset_left
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem rlc_exploration_lower_bound {N : ℕ} [Countable E] [DecidableEq E]
+lemma rlc_exploration_lower_bound {N : ℕ} [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1)
     (W X : Fin N → Set (ConfigSpace E))
     (T U : Fin N → Finset E) (Goal : Set (ConfigSpace E)) (c : ℝ)
@@ -538,12 +524,10 @@ theorem rlc_exploration_lower_bound {N : ℕ} [Countable E] [DecidableEq E]
       (measureReal_iUnion_fintype (rlc_firstWitness_inter_pairwiseDisjoint W X) hFMeas).symm
     _ ≤ mu.real Goal := measureReal_mono hFsub (measure_ne_top mu Goal)
 
-
-
-
-
-
-theorem rlc_stoppingPartition_lower_bound {I : Type*} [Fintype I]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+set_option linter.unusedDecidableInType false in
+lemma rlc_stoppingPartition_lower_bound {I : Type*} [Fintype I]
     [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1)
     (H Goal : Set (ConfigSpace E))
@@ -592,11 +576,10 @@ theorem rlc_stoppingPartition_lower_bound {I : Type*} [Fintype I]
       (measureReal_iUnion_fintype hFpair hFMeas).symm
     _ ≤ mu.real Goal := measureReal_mono hFsub (measure_ne_top mu Goal)
 
-
-
-
-
-theorem rlc_bernoulli_rsw_stopping_sixth_power
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+set_option linter.unusedDecidableInType false in
+lemma rlc_bernoulli_rsw_stopping_sixth_power
     {I : Type*} [Fintype I] [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1) (α : ℝ) (hα : 0 ≤ α)
     (E₀ E₁ Goal : Set (ConfigSpace E))
@@ -633,24 +616,7 @@ theorem rlc_bernoulli_rsw_stopping_sixth_power
       mul_le_mul_of_nonneg_left hdiag (by norm_num)
     _ ≤ μ.real Goal := hexplore
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem rlc_bernoulli_rsw_sixth_power {N : ℕ} [Countable E] [DecidableEq E]
+lemma rlc_bernoulli_rsw_sixth_power {N : ℕ} [Countable E] [DecidableEq E]
     (p : ℝ≥0) (hp : p ≤ 1) (α : ℝ) (hα : 0 ≤ α)
     (E₀ E₁ Goal : Set (ConfigSpace E))
     (S₀ S₁ : Finset E)
@@ -686,48 +652,44 @@ theorem rlc_bernoulli_rsw_sixth_power {N : ℕ} [Countable E] [DecidableEq E]
       exact mul_le_mul_of_nonneg_left hdiag (by norm_num)
     _ ≤ μ.real Goal := hexplore
 
-
-
+/-- The finite rectangle `rect a b c d` as a `Fintype`. -/
 noncomputable instance rlc_rectFintype (a b c d : ℤ) : Fintype (rect a b c d) :=
   (rect_finite a b c d).fintype
 
-
+/-- The finite rectangle `rect a b c d` as a `Finset` of sites. -/
 noncomputable def rlc_rectFinset (a b c d : ℤ) : Finset (Site 2) :=
   (rect_finite a b c d).toFinset
 
-@[simp] theorem rlc_mem_rectFinset {a b c d : ℤ} {x : Site 2} :
+@[simp] lemma rlc_mem_rectFinset {a b c d : ℤ} {x : Site 2} :
     x ∈ rlc_rectFinset a b c d ↔ x ∈ rect a b c d := by
   simp [rlc_rectFinset]
 
-
-
-
+/-- The sites of the rectangle on the vertical line `x = x₀` with height in `[lo, hi]`. -/
 noncomputable def rlc_verticalSegment (a b c d x₀ lo hi : ℤ) :
     Finset (rect a b c d) :=
   Finset.univ.filter fun z : rect a b c d =>
     (z : Site 2) 0 = x₀ ∧ lo ≤ (z : Site 2) 1 ∧ (z : Site 2) 1 ≤ hi
 
-@[simp] theorem rlc_mem_verticalSegment {a b c d x₀ lo hi : ℤ}
+@[simp] lemma rlc_mem_verticalSegment {a b c d x₀ lo hi : ℤ}
     {z : rect a b c d} :
     z ∈ rlc_verticalSegment a b c d x₀ lo hi ↔
       (z : Site 2) 0 = x₀ ∧ lo ≤ (z : Site 2) 1 ∧ (z : Site 2) 1 ≤ hi := by
   simp [rlc_verticalSegment]
 
-
+/-- The event that some site of `P` is connected to some site of `Q` by an open path inside the
+  rectangle. -/
 def rlc_betweenEvent {a b c d : ℤ} (P Q : Finset (rect a b c d)) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x : ↥P, ∃ y : ↥Q,
     ConnectedWithin 2 omega (rect a b c d) x.1 y.1}
 
-theorem rlc_betweenEvent_isIncreasing {a b c d : ℤ}
+lemma rlc_betweenEvent_isIncreasing {a b c d : ℤ}
     (P Q : Finset (rect a b c d)) : IsIncreasing (rlc_betweenEvent P Q) := by
   intro omega omega' homega
   rintro ⟨x, y, hxy⟩
   exact ⟨x, y, StatMech.TwoDim.connectedWithin_mono homega hxy⟩
 
-
-
-theorem rlc_betweenEvent_dependsOn {a b c d : ℤ}
+lemma rlc_betweenEvent_dependsOn {a b c d : ℤ}
     (P Q : Finset (rect a b c d)) :
     DependsOn ((rlc_betweenEvent P Q).indicator (fun _ => (1 : ℝ)))
       (StatMech.Percolation.edgesWithinFinset (rlc_rectFinset a b c d) :
@@ -747,39 +709,40 @@ theorem rlc_betweenEvent_dependsOn {a b c d : ℤ}
     simp only [openSubgraphInduce_adj, openSubgraph_adj]
     rw [hcoord u v u.2 v.2]
   have hiff : omega ∈ rlc_betweenEvent P Q ↔ omega' ∈ rlc_betweenEvent P Q := by
-    simp only [rlc_betweenEvent, Set.mem_setOf_eq, ConnectedWithin, hG]
+    simp only [rlc_betweenEvent, Set.mem_ofPred_eq, ConnectedWithin, hG]
   by_cases hmem : omega ∈ rlc_betweenEvent P Q
   · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hiff.mp hmem)]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hiff.mpr h))]
 
-theorem rlc_betweenEvent_measurableSet {a b c d : ℤ}
+lemma rlc_betweenEvent_measurableSet {a b c d : ℤ}
     (P Q : Finset (rect a b c d)) : MeasurableSet (rlc_betweenEvent P Q) :=
   measurableSet_of_dependsOn (rlc_betweenEvent_dependsOn P Q)
 
-
+/-- Self-avoiding lattice paths inside the rectangle from a site of `P` to a site of `Q`. -/
 abbrev RlcBetweenPath {a b c d : ℤ} (P Q : Finset (rect a b c d)) :=
   Σ x : ↥P, Σ y : ↥Q,
     ((hypercubicLattice 2).induce (rect a b c d)).Path x.1 y.1
 
+/-- There are finitely many paths between `P` and `Q` inside the rectangle. -/
 noncomputable instance rlc_betweenPathFintype {a b c d : ℤ}
     (P Q : Finset (rect a b c d)) : Fintype (RlcBetweenPath P Q) := by
   classical
   unfold RlcBetweenPath
   infer_instance
 
-
+/-- The edges of a path between `P` and `Q`, as edges of `ℤ²`. -/
 noncomputable def rlc_betweenPathEdges {a b c d : ℤ}
     {P Q : Finset (rect a b c d)} (gamma : RlcBetweenPath P Q) :
     Finset (Sym2 (Site 2)) :=
   gamma.2.2.1.edges.toFinset.image (Sym2.map Subtype.val)
 
-
+/-- The event that every edge of the given path is open. -/
 def rlc_betweenPathOpen {a b c d : ℤ} {P Q : Finset (rect a b c d)}
     (gamma : RlcBetweenPath P Q) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∀ e ∈ rlc_betweenPathEdges gamma, omega e = true}
 
-theorem rlc_betweenPathOpen_dependsOn {a b c d : ℤ}
+lemma rlc_betweenPathOpen_dependsOn {a b c d : ℤ}
     {P Q : Finset (rect a b c d)} (gamma : RlcBetweenPath P Q) :
     DependsOn ((rlc_betweenPathOpen gamma).indicator (fun _ => (1 : ℝ)))
       (rlc_betweenPathEdges gamma : Set (Sym2 (Site 2))) := by
@@ -798,41 +761,41 @@ theorem rlc_betweenPathOpen_dependsOn {a b c d : ℤ}
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hiff.mpr h))]
 
+/-- The left side of a rectangle is finite. -/
 noncomputable instance rlc_leftSideFintype (a b c d : ℤ) :
     Fintype (leftSide a b c d) :=
   ((rect_finite a b c d).subset leftSide_subset).fintype
 
+/-- The right side of a rectangle is finite. -/
 noncomputable instance rlc_rightSideFintype (a b c d : ℤ) :
     Fintype (rightSide a b c d) :=
   ((rect_finite a b c d).subset rightSide_subset).fintype
 
-
-
-
+/-- Self-avoiding lattice paths inside the rectangle from its left side to its right side. -/
 abbrev RlcCrossingPath (a b c d : ℤ) :=
   Σ x : leftSide a b c d, Σ y : rightSide a b c d,
     ((hypercubicLattice 2).induce (rect a b c d)).Path
       ⟨(x : Site 2), leftSide_subset x.2⟩
       ⟨(y : Site 2), rightSide_subset y.2⟩
 
+/-- There are finitely many left-right crossing paths of a rectangle. -/
 noncomputable instance rlc_crossingPathFintype (a b c d : ℤ) :
     Fintype (RlcCrossingPath a b c d) := by
   classical
   unfold RlcCrossingPath
   infer_instance
 
-
-
+/-- The edges of a crossing path, as edges of `ℤ²`. -/
 noncomputable def rlc_pathEdges {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
     Finset (Sym2 (Site 2)) :=
   gamma.2.2.1.edges.toFinset.image (Sym2.map Subtype.val)
 
-
+/-- The event that every edge of the crossing path is open. -/
 def rlc_pathOpen {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∀ e ∈ rlc_pathEdges gamma, omega e = true}
 
-theorem rlc_pathOpen_dependsOn {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
+lemma rlc_pathOpen_dependsOn {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
     DependsOn ((rlc_pathOpen gamma).indicator (fun _ => (1 : ℝ)))
       (rlc_pathEdges gamma : Set (Sym2 (Site 2))) := by
   intro omega omega' hagree
@@ -849,20 +812,12 @@ theorem rlc_pathOpen_dependsOn {a b c d : ℤ} (gamma : RlcCrossingPath a b c d)
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hiff.mpr h))]
 
-theorem rlc_pathOpen_measurableSet {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
+lemma rlc_pathOpen_measurableSet {a b c d : ℤ} (gamma : RlcCrossingPath a b c d) :
     MeasurableSet (rlc_pathOpen gamma) :=
   measurableSet_of_dependsOn (rlc_pathOpen_dependsOn gamma)
 
-
-
-theorem rlc_edges_mapLe_eq {V : Type*} {G G' : SimpleGraph V} (h : G ≤ G')
-    {u v : V} (w : G.Walk u v) : (w.mapLe h).edges = w.edges := by
-  induction w with
-  | nil => rfl
-  | cons huv w ih => simp [SimpleGraph.Walk.mapLe, ih]
-
-
-
+/-- A walk in the induced rectangle graph all of whose edges are open, viewed as a walk in the open
+  subgraph. -/
 noncomputable def rlc_openWalkOfEdges {a b c d : ℤ}
     (omega : ConfigSpace (Sym2 (Site 2))) {u v : rect a b c d}
     (w : ((hypercubicLattice 2).induce (rect a b c d)).Walk u v)
@@ -885,9 +840,7 @@ noncomputable def rlc_openWalkOfEdges {a b c d : ℤ}
         Finset.image_insert, Finset.mem_insert]
       exact Or.inr he
 
-
-
-theorem rlc_iUnion_pathOpen (a b c d : ℤ) :
+lemma rlc_iUnion_pathOpen (a b c d : ℤ) :
     (⋃ gamma : RlcCrossingPath a b c d, rlc_pathOpen gamma) =
       horizontalCrossingEvent a b c d := by
   ext omega
@@ -913,8 +866,8 @@ theorem rlc_iUnion_pathOpen (a b c d : ℤ) :
     intro e he
     simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset] at he
     obtain ⟨z, hz, rfl⟩ := he
-    have hzq : z ∈ q.edges := q.edges_toPath_subset hz
-    have hedge : q.edges = q0.edges := rlc_edges_mapLe_eq hle q0
+    have hzq : z ∈ q.edges := q.edges_toPath_subset_edges hz
+    have hedge : q.edges = q0.edges := SimpleGraph.Walk.edges_mapLe_eq_edges hle q0
     have hzq0 : z ∈ q0.edges := hedge ▸ hzq
     induction z using Sym2.inductionOn with
     | _ u v =>
@@ -922,9 +875,7 @@ theorem rlc_iUnion_pathOpen (a b c d : ℤ) :
       rw [openSubgraphInduce_adj, openSubgraph_adj] at hadj
       simpa using hadj.2
 
-
-
-theorem rlc_iUnion_betweenPathOpen {a b c d : ℤ}
+lemma rlc_iUnion_betweenPathOpen {a b c d : ℤ}
     (P Q : Finset (rect a b c d)) :
     (⋃ gamma : RlcBetweenPath P Q, rlc_betweenPathOpen gamma) =
       rlc_betweenEvent P Q := by
@@ -951,8 +902,8 @@ theorem rlc_iUnion_betweenPathOpen {a b c d : ℤ}
     intro e he
     simp only [rlc_betweenPathEdges, Finset.mem_image, List.mem_toFinset] at he
     obtain ⟨z, hz, rfl⟩ := he
-    have hzq : z ∈ q.edges := q.edges_toPath_subset hz
-    have hedge : q.edges = q0.edges := rlc_edges_mapLe_eq hle q0
+    have hzq : z ∈ q.edges := q.edges_toPath_subset_edges hz
+    have hedge : q.edges = q0.edges := SimpleGraph.Walk.edges_mapLe_eq_edges hle q0
     have hzq0 : z ∈ q0.edges := hedge ▸ hzq
     induction z using Sym2.inductionOn with
     | _ u v =>
@@ -960,14 +911,7 @@ theorem rlc_iUnion_betweenPathOpen {a b c d : ℤ}
       rw [openSubgraphInduce_adj, openSubgraph_adj] at hadj
       simpa using hadj.2
 
-theorem rlc_horizontalCrossingEvent_measurableSet (a b c d : ℤ) :
-    MeasurableSet (horizontalCrossingEvent a b c d) := by
-  rw [← rlc_iUnion_pathOpen]
-  exact MeasurableSet.iUnion fun gamma => rlc_pathOpen_measurableSet gamma
-
-
-
-theorem rlc_verticalCrossingEvent_dependsOn (a b c d : ℤ) :
+lemma rlc_verticalCrossingEvent_dependsOn (a b c d : ℤ) :
     DependsOn ((verticalCrossingEvent a b c d).indicator (fun _ => (1 : ℝ)))
       (edgesWithinFinset (rect_finite a b c d).toFinset : Set (Sym2 (Site 2))) := by
   let S := (rect_finite a b c d).toFinset
@@ -1005,14 +949,7 @@ theorem rlc_verticalCrossingEvent_dependsOn (a b c d : ℤ) :
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-theorem rlc_verticalCrossingEvent_measurableSet (a b c d : ℤ) :
-    MeasurableSet (verticalCrossingEvent a b c d) :=
-  measurableSet_of_dependsOn (rlc_verticalCrossingEvent_dependsOn a b c d)
-
-
-
-
-
+/-- The event of an open left-right crossing of the rectangle that starts in `L` and ends in `R`. -/
 def rlc_lrRestrictedEvent (a b c d : ℤ) (L R : Set (Site 2)) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ (x : leftSide a b c d) (y : rightSide a b c d),
@@ -1021,15 +958,13 @@ def rlc_lrRestrictedEvent (a b c d : ℤ) (L R : Set (Site 2)) :
       ⟨(x : Site 2), leftSide_subset x.2⟩
       ⟨(y : Site 2), rightSide_subset y.2⟩}
 
-theorem rlc_lrRestrictedEvent_isIncreasing (a b c d : ℤ) (L R : Set (Site 2)) :
+lemma rlc_lrRestrictedEvent_isIncreasing (a b c d : ℤ) (L R : Set (Site 2)) :
     IsIncreasing (rlc_lrRestrictedEvent a b c d L R) := by
   intro omega omega' homega hle
   obtain ⟨x, y, hx, hy, hxy⟩ := hle
   exact ⟨x, y, hx, hy, StatMech.TwoDim.connectedWithin_mono homega hxy⟩
 
-
-
-theorem rlc_lrRestrictedEvent_dependsOn (a b c d : ℤ) (L R : Set (Site 2)) :
+lemma rlc_lrRestrictedEvent_dependsOn (a b c d : ℤ) (L R : Set (Site 2)) :
     DependsOn ((rlc_lrRestrictedEvent a b c d L R).indicator
       (fun _ => (1 : ℝ)))
       (edgesWithinFinset (rect_finite a b c d).toFinset : Set (Sym2 (Site 2))) := by
@@ -1068,28 +1003,30 @@ theorem rlc_lrRestrictedEvent_dependsOn (a b c d : ℤ) (L R : Set (Site 2)) :
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
+/-- The closed lower half-plane `{z | z 1 ≤ 0}`. -/
 def rlc_lowerHalf : Set (Site 2) := {z | z 1 ≤ 0}
+/-- The closed upper half-plane `{z | 0 ≤ z 1}`. -/
 def rlc_upperHalf : Set (Site 2) := {z | 0 ≤ z 1}
 
-
-
+/-- The right diagonal event: a crossing of `[0, 2n] × [-n, n]` from the lower half of its left side
+  to the upper half of its right side. -/
 def rlc_rightDiagonal (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent 0 (2 * n) (-n) n rlc_lowerHalf rlc_upperHalf
 
+/-- A crossing of `[0, 2n] × [-n, n]` ending in the upper half of the right side. -/
 def rlc_rightToUpper (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent 0 (2 * n) (-n) n Set.univ rlc_upperHalf
 
+/-- A crossing of `[0, 2n] × [-n, n]` starting in the lower half of the left side. -/
 def rlc_lowerToRight (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent 0 (2 * n) (-n) n rlc_lowerHalf Set.univ
 
-
+/-- The left diagonal event: a crossing of `[-2n, 0] × [-n, n]` from the lower half of its left side
+  to the upper half of its right side. -/
 def rlc_leftDiagonal (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent (-2 * n) 0 (-n) n rlc_lowerHalf rlc_upperHalf
 
-
-
-
-theorem rlc_rightDiagonal_of_three (n : ℤ) (hn : 0 < n) :
+lemma rlc_rightDiagonal_of_three (n : ℤ) (hn : 0 < n) :
     rlc_rightToUpper n ∩ rlc_lowerToRight n ∩
         verticalCrossingEvent 0 (2 * n) (-n) n ⊆ rlc_rightDiagonal n := by
   intro omega homega
@@ -1118,27 +1055,29 @@ theorem rlc_rightDiagonal_of_three (n : ℤ) (hn : 0 < n) :
     hclzl.trans (hzlzu.trans (hcuzu.symm.trans hcu))
   exact ⟨xl, yu, hxl, hyu, hconn⟩
 
+/-! ## B. Reflections and diagonal events -/
 
-
+/-- Reflection in the horizontal axis: `(x, y) ↦ (x, -y)`. -/
 def rlc_flipYFun (x : Site 2) : Site 2 := ![x 0, -x 1]
 
+/-- Reflection in the horizontal axis, as an equivalence of sites. -/
 def rlc_flipY : Site 2 ≃ Site 2 where
   toFun := rlc_flipYFun
   invFun := rlc_flipYFun
   left_inv x := by funext i; fin_cases i <;> simp [rlc_flipYFun]
   right_inv x := by funext i; fin_cases i <;> simp [rlc_flipYFun]
 
-@[simp] theorem rlc_flipY_zero (x : Site 2) : rlc_flipY x 0 = x 0 := by
+@[simp] lemma rlc_flipY_zero (x : Site 2) : rlc_flipY x 0 = x 0 := by
   simp [rlc_flipY, rlc_flipYFun]
 
-@[simp] theorem rlc_flipY_one (x : Site 2) : rlc_flipY x 1 = -x 1 := by
+@[simp] lemma rlc_flipY_one (x : Site 2) : rlc_flipY x 1 = -x 1 := by
   simp [rlc_flipY, rlc_flipYFun]
 
-@[simp] theorem rlc_flipY_involutive (x : Site 2) : rlc_flipY (rlc_flipY x) = x := by
+@[simp] lemma rlc_flipY_involutive (x : Site 2) : rlc_flipY (rlc_flipY x) = x := by
   funext i
   fin_cases i <;> simp
 
-theorem rlc_adj_flipY (x y : Site 2) :
+lemma rlc_adj_flipY (x y : Site 2) :
     (hypercubicLattice 2).Adj x y ↔
       (hypercubicLattice 2).Adj (rlc_flipY x) (rlc_flipY y) := by
   rw [hypercubicLattice_adj, hypercubicLattice_adj,
@@ -1146,27 +1085,29 @@ theorem rlc_adj_flipY (x y : Site 2) :
   simp only [rlc_flipY_zero, rlc_flipY_one]
   rw [show -x 1 - -y 1 = -(x 1 - y 1) by ring, Int.natAbs_neg]
 
+/-- Reflection in the horizontal axis, acting on edges. -/
 noncomputable def rlc_flipYEdge : Sym2 (Site 2) ≃ Sym2 (Site 2) :=
   sym2Congr rlc_flipY
 
-theorem rlc_flipYEdge_symm_apply (e : Sym2 (Site 2)) :
+lemma rlc_flipYEdge_symm_apply (e : Sym2 (Site 2)) :
     rlc_flipYEdge.symm e = e.map rlc_flipY := by
   simp [rlc_flipYEdge, sym2Congr, rlc_flipY]
 
+/-- Reflection in the horizontal axis, acting on configurations. -/
 noncomputable def rlc_flipYConfig :
     ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2)) :=
   Equiv.piCongrLeft (fun _ => Bool) rlc_flipYEdge
 
-theorem rlc_flipYConfig_apply (omega : ConfigSpace (Sym2 (Site 2)))
+lemma rlc_flipYConfig_apply (omega : ConfigSpace (Sym2 (Site 2)))
     (e : Sym2 (Site 2)) :
     rlc_flipYConfig omega e = omega (e.map rlc_flipY) := by
   rw [rlc_flipYConfig, Equiv.piCongrLeft_apply, eq_rec_constant,
     rlc_flipYEdge_symm_apply]
 
-theorem rlc_measurable_flipYConfig : Measurable rlc_flipYConfig :=
+lemma rlc_measurable_flipYConfig : Measurable rlc_flipYConfig :=
   (MeasurableEquiv.piCongrLeft (fun _ => Bool) rlc_flipYEdge).measurable
 
-theorem rlc_flipY_measurePreserving (p : ℝ≥0) (hp : p ≤ 1) :
+lemma rlc_flipY_measurePreserving (p : ℝ≥0) (hp : p ≤ 1) :
     MeasurePreserving rlc_flipYConfig
       (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp)
       (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp) := by
@@ -1176,22 +1117,22 @@ theorem rlc_flipY_measurePreserving (p : ℝ≥0) (hp : p ≤ 1) :
   exact Measure.infinitePi_map_piCongrLeft
     (fun _ : Sym2 (Site 2) => bernoulliMeasure p hp) rlc_flipYEdge
 
-theorem rlc_mem_centeredRect_flipY (a b n : ℤ) (x : Site 2) :
+lemma rlc_mem_centeredRect_flipY (a b n : ℤ) (x : Site 2) :
     x ∈ rect a b (-n) n ↔ rlc_flipY x ∈ rect a b (-n) n := by
   simp only [mem_rect, rlc_flipY_zero, rlc_flipY_one]
   omega
 
-theorem rlc_mem_leftSide_flipY (a b n : ℤ) (x : Site 2) :
+lemma rlc_mem_leftSide_flipY (a b n : ℤ) (x : Site 2) :
     x ∈ leftSide a b (-n) n ↔ rlc_flipY x ∈ leftSide a b (-n) n := by
   rw [mem_leftSide, mem_leftSide]
   exact and_congr (rlc_mem_centeredRect_flipY a b n x) (by simp)
 
-theorem rlc_mem_rightSide_flipY (a b n : ℤ) (x : Site 2) :
+lemma rlc_mem_rightSide_flipY (a b n : ℤ) (x : Site 2) :
     x ∈ rightSide a b (-n) n ↔ rlc_flipY x ∈ rightSide a b (-n) n := by
   rw [mem_rightSide, mem_rightSide]
   exact and_congr (rlc_mem_centeredRect_flipY a b n x) (by simp)
 
-theorem rlc_isOpenEdge_flipY (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2) :
+lemma rlc_isOpenEdge_flipY (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2) :
     IsOpenEdge 2 (rlc_flipYConfig omega) x y ↔
       IsOpenEdge 2 omega (rlc_flipY x) (rlc_flipY y) := by
   unfold IsOpenEdge
@@ -1200,6 +1141,8 @@ theorem rlc_isOpenEdge_flipY (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2
       s(rlc_flipY x, rlc_flipY y) := Sym2.map_mk _ _ _
   rw [rlc_flipYConfig_apply, hedge]
 
+/-- Reflection in the horizontal axis as a homomorphism of open subgraphs induced on the centred
+  rectangle. -/
 noncomputable def rlc_flipYInducedHom (a b n : ℤ)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraphInduce 2 omega (rect a b (-n) n) →g
@@ -1214,7 +1157,7 @@ noncomputable def rlc_flipYInducedHom (a b n : ℤ)
     rw [rlc_isOpenEdge_flipY, rlc_flipY_involutive, rlc_flipY_involutive]
     exact hxy
 
-theorem rlc_flipY_lrRestricted_iff (a b n : ℤ) (L R : Set (Site 2))
+lemma rlc_flipY_lrRestricted_iff (a b n : ℤ) (L R : Set (Site 2))
     (omega : ConfigSpace (Sym2 (Site 2))) :
     omega ∈ rlc_lrRestrictedEvent a b (-n) n L R →
       rlc_flipYConfig omega ∈ rlc_lrRestrictedEvent a b (-n) n
@@ -1227,7 +1170,7 @@ theorem rlc_flipY_lrRestricted_iff (a b n : ℤ) (L R : Set (Site 2))
   refine ⟨xf, yf, ⟨x, hxL, rfl⟩, ⟨y, hyR, rfl⟩, ?_⟩
   exact hxy.map (rlc_flipYInducedHom a b n omega)
 
-theorem rlc_flipY_image_univ : rlc_flipY '' (Set.univ : Set (Site 2)) = Set.univ := by
+lemma rlc_flipY_image_univ : rlc_flipY '' (Set.univ : Set (Site 2)) = Set.univ := by
   ext x
   constructor
   · intro _
@@ -1235,7 +1178,7 @@ theorem rlc_flipY_image_univ : rlc_flipY '' (Set.univ : Set (Site 2)) = Set.univ
   · intro _
     exact ⟨rlc_flipY x, Set.mem_univ _, rlc_flipY_involutive x⟩
 
-theorem rlc_flipY_image_upper : rlc_flipY '' rlc_upperHalf = rlc_lowerHalf := by
+lemma rlc_flipY_image_upper : rlc_flipY '' rlc_upperHalf = rlc_lowerHalf := by
   ext x
   constructor
   · rintro ⟨y, hy, rfl⟩
@@ -1248,7 +1191,7 @@ theorem rlc_flipY_image_upper : rlc_flipY '' rlc_upperHalf = rlc_lowerHalf := by
     change 0 ≤ -(x 1)
     omega
 
-theorem rlc_flipY_image_lower : rlc_flipY '' rlc_lowerHalf = rlc_upperHalf := by
+lemma rlc_flipY_image_lower : rlc_flipY '' rlc_lowerHalf = rlc_upperHalf := by
   ext x
   constructor
   · rintro ⟨y, hy, rfl⟩
@@ -1261,20 +1204,22 @@ theorem rlc_flipY_image_lower : rlc_flipY '' rlc_lowerHalf = rlc_upperHalf := by
     change -(x 1) ≤ 0
     omega
 
+/-- A crossing of `[0, 2n] × [-n, n]` ending in the lower half of the right side. -/
 def rlc_rightToLower (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent 0 (2 * n) (-n) n Set.univ rlc_lowerHalf
 
+/-- A crossing of `[0, 2n] × [-n, n]` starting in the upper half of the left side. -/
 def rlc_upperToRight (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_lrRestrictedEvent 0 (2 * n) (-n) n rlc_upperHalf Set.univ
 
-theorem rlc_flipYConfig_involutive (omega : ConfigSpace (Sym2 (Site 2))) :
+lemma rlc_flipYConfig_involutive (omega : ConfigSpace (Sym2 (Site 2))) :
     rlc_flipYConfig (rlc_flipYConfig omega) = omega := by
   funext e
   rw [rlc_flipYConfig_apply, rlc_flipYConfig_apply]
   induction e using Sym2.inductionOn with
   | _ x y => simp
 
-theorem rlc_flip_rightToUpper (n : ℤ)
+lemma rlc_flip_rightToUpper (n : ℤ)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (h : omega ∈ rlc_rightToUpper n) :
     rlc_flipYConfig omega ∈ rlc_rightToLower n := by
@@ -1282,7 +1227,7 @@ theorem rlc_flip_rightToUpper (n : ℤ)
   simpa [rlc_rightToUpper, rlc_rightToLower, rlc_flipY_image_univ,
     rlc_flipY_image_upper] using ht
 
-theorem rlc_flip_rightToLower (n : ℤ)
+lemma rlc_flip_rightToLower (n : ℤ)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (h : omega ∈ rlc_rightToLower n) :
     rlc_flipYConfig omega ∈ rlc_rightToUpper n := by
@@ -1290,7 +1235,7 @@ theorem rlc_flip_rightToLower (n : ℤ)
   simpa [rlc_rightToUpper, rlc_rightToLower, rlc_flipY_image_univ,
     rlc_flipY_image_lower] using ht
 
-theorem rlc_flip_lowerToRight (n : ℤ)
+lemma rlc_flip_lowerToRight (n : ℤ)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (h : omega ∈ rlc_lowerToRight n) :
     rlc_flipYConfig omega ∈ rlc_upperToRight n := by
@@ -1298,7 +1243,7 @@ theorem rlc_flip_lowerToRight (n : ℤ)
   simpa [rlc_lowerToRight, rlc_upperToRight, rlc_flipY_image_univ,
     rlc_flipY_image_lower] using ht
 
-theorem rlc_flip_upperToRight (n : ℤ)
+lemma rlc_flip_upperToRight (n : ℤ)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (h : omega ∈ rlc_upperToRight n) :
     rlc_flipYConfig omega ∈ rlc_lowerToRight n := by
@@ -1306,7 +1251,7 @@ theorem rlc_flip_upperToRight (n : ℤ)
   simpa [rlc_lowerToRight, rlc_upperToRight, rlc_flipY_image_univ,
     rlc_flipY_image_upper] using ht
 
-theorem rlc_rightToUpper_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) :
+lemma rlc_rightToUpper_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real (rlc_rightToUpper n) =
       (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real (rlc_rightToLower n) := by
   let mu := bernoulliProductMeasure (E := Sym2 (Site 2)) p hp
@@ -1326,7 +1271,7 @@ theorem rlc_rightToUpper_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) 
             Set.univ rlc_upperHalf)).nullMeasurableSet).symm
     _ = mu.real (rlc_rightToLower n) := by rw [hpre]
 
-theorem rlc_lowerToRight_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) :
+lemma rlc_lowerToRight_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real (rlc_lowerToRight n) =
       (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real (rlc_upperToRight n) := by
   let mu := bernoulliProductMeasure (E := Sym2 (Site 2)) p hp
@@ -1346,7 +1291,7 @@ theorem rlc_lowerToRight_reflection_prob (p : ℝ≥0) (hp : p ≤ 1) (n : ℤ) 
             rlc_lowerHalf Set.univ)).nullMeasurableSet).symm
     _ = mu.real (rlc_upperToRight n) := by rw [hpre]
 
-theorem rlc_horizontal_subset_right_halves (n : ℤ) :
+lemma rlc_horizontal_subset_right_halves (n : ℤ) :
     horizontalCrossingEvent 0 (2 * n) (-n) n ⊆
       rlc_rightToUpper n ∪ rlc_rightToLower n := by
   rintro omega ⟨x, y, hxy⟩
@@ -1354,7 +1299,7 @@ theorem rlc_horizontal_subset_right_halves (n : ℤ) :
   · exact Or.inl ⟨x, y, Set.mem_univ _, hy, hxy⟩
   · exact Or.inr ⟨x, y, Set.mem_univ _, hy, hxy⟩
 
-theorem rlc_horizontal_subset_left_halves (n : ℤ) :
+lemma rlc_horizontal_subset_left_halves (n : ℤ) :
     horizontalCrossingEvent 0 (2 * n) (-n) n ⊆
       rlc_lowerToRight n ∪ rlc_upperToRight n := by
   rintro omega ⟨x, y, hxy⟩
@@ -1362,7 +1307,7 @@ theorem rlc_horizontal_subset_left_halves (n : ℤ) :
   · exact Or.inr ⟨x, y, hx, Set.mem_univ _, hxy⟩
   · exact Or.inl ⟨x, y, hx, Set.mem_univ _, hxy⟩
 
-theorem rlc_rightToUpper_half_localization (p : ℝ≥0) (hp : p ≤ 1)
+lemma rlc_rightToUpper_half_localization (p : ℝ≥0) (hp : p ≤ 1)
     (n : ℤ) (alpha : ℝ)
     (hcross : alpha ≤ (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real
       (horizontalCrossingEvent 0 (2 * n) (-n) n)) :
@@ -1376,7 +1321,7 @@ theorem rlc_rightToUpper_half_localization (p : ℝ≥0) (hp : p ≤ 1)
   rw [← rlc_rightToUpper_reflection_prob p hp n] at hunion
   linarith
 
-theorem rlc_lowerToRight_half_localization (p : ℝ≥0) (hp : p ≤ 1)
+lemma rlc_lowerToRight_half_localization (p : ℝ≥0) (hp : p ≤ 1)
     (n : ℤ) (alpha : ℝ)
     (hcross : alpha ≤ (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real
       (horizontalCrossingEvent 0 (2 * n) (-n) n)) :
@@ -1390,49 +1335,7 @@ theorem rlc_lowerToRight_half_localization (p : ℝ≥0) (hp : p ≤ 1)
   rw [← rlc_lowerToRight_reflection_prob p hp n] at hunion
   linarith
 
-theorem rlc_verticalCrossing_dependsOn (a b c d : ℤ) :
-    DependsOn ((verticalCrossingEvent a b c d).indicator (fun _ => (1 : ℝ)))
-      (edgesWithinFinset (rect_finite a b c d).toFinset : Set (Sym2 (Site 2))) := by
-  let S := (rect_finite a b c d).toFinset
-  have hSco : (S : Set (Site 2)) = rect a b c d := by
-    ext z
-    simp [S]
-  intro omega omega' hagree
-  have hconn : ∀ (x y : Site 2),
-      (∃ (hx : x ∈ rect a b c d) (hy : y ∈ rect a b c d),
-        ConnectedWithin 2 omega (rect a b c d) ⟨x, hx⟩ ⟨y, hy⟩) ↔
-      (∃ (hx : x ∈ rect a b c d) (hy : y ∈ rect a b c d),
-        ConnectedWithin 2 omega' (rect a b c d) ⟨x, hx⟩ ⟨y, hy⟩) := by
-    intro x y
-    rw [← hSco]
-    exact withinConn_congr S x y hagree
-  have hevent : omega ∈ verticalCrossingEvent a b c d ↔
-      omega' ∈ verticalCrossingEvent a b c d := by
-    constructor
-    · rintro ⟨x, y, hxy⟩
-      have hc : ∃ (hx : (x : Site 2) ∈ rect a b c d)
-          (hy : (y : Site 2) ∈ rect a b c d),
-          ConnectedWithin 2 omega (rect a b c d) ⟨x, hx⟩ ⟨y, hy⟩ :=
-        ⟨bottomSide_subset x.2, topSide_subset y.2, hxy⟩
-      obtain ⟨_, _, hc'⟩ := (hconn x y).mp hc
-      exact ⟨x, y, hc'⟩
-    · rintro ⟨x, y, hxy⟩
-      have hc : ∃ (hx : (x : Site 2) ∈ rect a b c d)
-          (hy : (y : Site 2) ∈ rect a b c d),
-          ConnectedWithin 2 omega' (rect a b c d) ⟨x, hx⟩ ⟨y, hy⟩ :=
-        ⟨bottomSide_subset x.2, topSide_subset y.2, hxy⟩
-      obtain ⟨_, _, hc'⟩ := (hconn x y).mpr hc
-      exact ⟨x, y, hc'⟩
-  by_cases hmem : omega ∈ verticalCrossingEvent a b c d
-  · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hevent.mp hmem)]
-  · rw [Set.indicator_of_notMem hmem,
-      Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
-
-
-
-
-
-theorem rlc_rightDiagonal_lower_bound (p : ℝ≥0) (hp : p ≤ 1)
+lemma rlc_rightDiagonal_lower_bound (p : ℝ≥0) (hp : p ≤ 1)
     (n : ℤ) (hn : 0 < n) (alpha : ℝ) (halpha : 0 ≤ alpha)
     (hH : alpha ≤ (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp).real
       (horizontalCrossingEvent 0 (2 * n) (-n) n))
@@ -1452,25 +1355,25 @@ theorem rlc_rightDiagonal_lower_bound (p : ℝ≥0) (hp : p ≤ 1)
       rlc_lrRestrictedEvent_dependsOn 0 (2 * n) (-n) n Set.univ rlc_upperHalf
   · simpa [F, rlc_lowerToRight] using
       rlc_lrRestrictedEvent_dependsOn 0 (2 * n) (-n) n rlc_lowerHalf Set.univ
-  · simpa [F] using rlc_verticalCrossing_dependsOn 0 (2 * n) (-n) n
+  · simpa [F] using StatMech.Universality.rlc_verticalCrossingEvent_dependsOn 0 (2 * n) (-n) n
   · exact rlc_rightToUpper_half_localization p hp n alpha hH
   · exact rlc_lowerToRight_half_localization p hp n alpha hH
   · exact hV
   · exact rlc_rightDiagonal_of_three n hn
 
-
-
+/-- The translation vector `(-2n, 0)`. -/
 def rlc_leftShift (n : ℤ) : Site 2 := ![-2 * n, 0]
 
-@[simp] theorem rlc_leftShift_zero (n : ℤ) : rlc_leftShift n 0 = -2 * n := rfl
-@[simp] theorem rlc_leftShift_one (n : ℤ) : rlc_leftShift n 1 = 0 := rfl
+@[simp] lemma rlc_leftShift_zero (n : ℤ) : rlc_leftShift n 0 = -2 * n := rfl
+@[simp] lemma rlc_leftShift_one (n : ℤ) : rlc_leftShift n 1 = 0 := rfl
 
-theorem rlc_leftShift_rect (n : ℤ) :
+lemma rlc_leftShift_rect (n : ℤ) :
     rect (0 + rlc_leftShift n 0) (2 * n + rlc_leftShift n 0)
         (-n + rlc_leftShift n 1) (n + rlc_leftShift n 1) =
       rect (-2 * n) 0 (-n) n := by
   congr 1 <;> simp
 
+/-- The left translation by `2n` as a homomorphism of induced open subgraphs. -/
 noncomputable def rlc_leftShiftHom (n : ℤ)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraphInduce 2 (translateConfig (rlc_leftShift n) omega)
@@ -1484,6 +1387,7 @@ noncomputable def rlc_leftShiftHom (n : ℤ)
     rw [openSubgraphInduce_adj, openSubgraph_adj] at hxy ⊢
     exact (cti_isOpenEdge_translate (rlc_leftShift n) omega x y).mp hxy
 
+/-- The inverse of the left translation, as a homomorphism of induced open subgraphs. -/
 noncomputable def rlc_leftShiftHomInv (n : ℤ)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraphInduce 2 omega (rect (-2 * n) 0 (-n) n) →g
@@ -1500,7 +1404,7 @@ noncomputable def rlc_leftShiftHomInv (n : ℤ)
     simp only [sub_add_cancel] at key
     exact key hxy
 
-theorem rlc_translate_rightDiagonal_to_left (n : ℤ)
+lemma rlc_translate_rightDiagonal_to_left (n : ℤ)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (h : translateConfig (rlc_leftShift n) omega ∈ rlc_rightDiagonal n) :
     omega ∈ rlc_leftDiagonal n := by
@@ -1518,7 +1422,7 @@ theorem rlc_translate_rightDiagonal_to_left (n : ℤ)
   · simpa [yl, rlc_upperHalf] using hy
   · exact hxy.map (rlc_leftShiftHom n omega)
 
-theorem rlc_translate_leftDiagonal_to_right (n : ℤ)
+lemma rlc_translate_leftDiagonal_to_right (n : ℤ)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (h : omega ∈ rlc_leftDiagonal n) :
     translateConfig (rlc_leftShift n) omega ∈ rlc_rightDiagonal n := by
@@ -1536,14 +1440,14 @@ theorem rlc_translate_leftDiagonal_to_right (n : ℤ)
   · simpa [yr, rlc_upperHalf] using hy
   · exact hxy.map (rlc_leftShiftHomInv n omega)
 
-theorem rlc_leftDiagonal_preimage (n : ℤ) :
+lemma rlc_leftDiagonal_preimage (n : ℤ) :
     translateConfig (rlc_leftShift n) ⁻¹' rlc_rightDiagonal n =
       rlc_leftDiagonal n := by
   ext omega
   exact ⟨rlc_translate_rightDiagonal_to_left n omega,
     rlc_translate_leftDiagonal_to_right n omega⟩
 
-theorem rlc_leftDiagonal_prob_eq_right (n : ℤ) :
+lemma rlc_leftDiagonal_prob_eq_right (n : ℤ) :
     halfMeasure.real (rlc_leftDiagonal n) =
       halfMeasure.real (rlc_rightDiagonal n) := by
   rw [← rlc_leftDiagonal_preimage n]
@@ -1552,12 +1456,14 @@ theorem rlc_leftDiagonal_prob_eq_right (n : ℤ) :
       (rlc_lrRestrictedEvent_dependsOn 0 (2 * n) (-n) n
         rlc_lowerHalf rlc_upperHalf)).nullMeasurableSet
 
+/-! ## C. Diagonal paths and their regions -/
 
-
+/-- Crossing paths of the rectangle that start in `L` and end in `R`. -/
 abbrev RlcRestrictedCrossingPath (a b c d : ℤ) (L R : Set (Site 2)) :=
   {gamma : RlcCrossingPath a b c d //
     (gamma.1 : Site 2) ∈ L ∧ (gamma.2.1 : Site 2) ∈ R}
 
+/-- There are finitely many restricted crossing paths. -/
 noncomputable instance rlc_restrictedCrossingPathFintype
     (a b c d : ℤ) (L R : Set (Site 2)) :
     Fintype (RlcRestrictedCrossingPath a b c d L R) := by
@@ -1565,7 +1471,7 @@ noncomputable instance rlc_restrictedCrossingPathFintype
   unfold RlcRestrictedCrossingPath
   infer_instance
 
-theorem rlc_iUnion_restrictedPathOpen (a b c d : ℤ) (L R : Set (Site 2)) :
+lemma rlc_iUnion_restrictedPathOpen (a b c d : ℤ) (L R : Set (Site 2)) :
     (⋃ gamma : RlcRestrictedCrossingPath a b c d L R,
       rlc_pathOpen gamma.1) = rlc_lrRestrictedEvent a b c d L R := by
   ext omega
@@ -1594,8 +1500,8 @@ theorem rlc_iUnion_restrictedPathOpen (a b c d : ℤ) (L R : Set (Site 2)) :
     intro e he
     simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset] at he
     obtain ⟨z, hz, rfl⟩ := he
-    have hzq : z ∈ q.edges := q.edges_toPath_subset hz
-    have hedge : q.edges = q0.edges := rlc_edges_mapLe_eq hle q0
+    have hzq : z ∈ q.edges := q.edges_toPath_subset_edges hz
+    have hedge : q.edges = q0.edges := SimpleGraph.Walk.edges_mapLe_eq_edges hle q0
     have hzq0 : z ∈ q0.edges := hedge ▸ hzq
     induction z using Sym2.inductionOn with
     | _ u v =>
@@ -1603,36 +1509,41 @@ theorem rlc_iUnion_restrictedPathOpen (a b c d : ℤ) (L R : Set (Site 2)) :
       rw [openSubgraphInduce_adj, openSubgraph_adj] at hadj
       simpa using hadj.2
 
+/-- Diagonal crossing paths of `[0, 2n] × [-n, n]`: from the lower half of the left side to the
+  upper half of the right side. -/
 abbrev RlcRightDiagonalPath (n : ℤ) :=
   RlcRestrictedCrossingPath 0 (2 * n) (-n) n rlc_lowerHalf rlc_upperHalf
 
+/-- Diagonal crossing paths of `[-2n, 0] × [-n, n]`: from the lower half of the left side to the
+  upper half of the right side. -/
 abbrev RlcLeftDiagonalPath (n : ℤ) :=
   RlcRestrictedCrossingPath (-2 * n) 0 (-n) n rlc_lowerHalf rlc_upperHalf
 
-
+/-- Rotation by `π`: `(x, y) ↦ (-x, -y)`. -/
 def rlc_rot180Fun (x : Site 2) : Site 2 := ![-x 0, -x 1]
 
+/-- Rotation by `π`, as an equivalence of sites. -/
 def rlc_rot180 : Site 2 ≃ Site 2 where
   toFun := rlc_rot180Fun
   invFun := rlc_rot180Fun
   left_inv x := by funext i; fin_cases i <;> simp [rlc_rot180Fun]
   right_inv x := by funext i; fin_cases i <;> simp [rlc_rot180Fun]
 
-@[simp] theorem rlc_rot180_zero (x : Site 2) : rlc_rot180 x 0 = -x 0 := by
+@[simp] lemma rlc_rot180_zero (x : Site 2) : rlc_rot180 x 0 = -x 0 := by
   simp [rlc_rot180, rlc_rot180Fun]
 
-@[simp] theorem rlc_rot180_one (x : Site 2) : rlc_rot180 x 1 = -x 1 := by
+@[simp] lemma rlc_rot180_one (x : Site 2) : rlc_rot180 x 1 = -x 1 := by
   simp [rlc_rot180, rlc_rot180Fun]
 
-@[simp] theorem rlc_rot180_involutive (x : Site 2) :
+@[simp] lemma rlc_rot180_involutive (x : Site 2) :
     rlc_rot180 (rlc_rot180 x) = x := rlc_rot180.left_inv x
 
-@[simp] theorem rlc_rot180Edge_involutive (e : Sym2 (Site 2)) :
+@[simp] lemma rlc_rot180Edge_involutive (e : Sym2 (Site 2)) :
     Sym2.map rlc_rot180 (Sym2.map rlc_rot180 e) = e := by
   induction e using Sym2.inductionOn with
   | _ u v => simp
 
-theorem rlc_adj_rot180 (x y : Site 2) :
+lemma rlc_adj_rot180 (x y : Site 2) :
     (hypercubicLattice 2).Adj x y ↔
       (hypercubicLattice 2).Adj (rlc_rot180 x) (rlc_rot180 y) := by
   simp only [hypercubicLattice_adj, Fin.sum_univ_two, rlc_rot180_zero,
@@ -1643,12 +1554,14 @@ theorem rlc_adj_rot180 (x y : Site 2) :
     rw [show -x 1 - -y 1 = -(x 1 - y 1) by ring, Int.natAbs_neg]
   rw [h0, h1]
 
-theorem rlc_rot180_mem_rightRect_iff_leftRect (n : ℤ) (x : Site 2) :
+lemma rlc_rot180_mem_rightRect_iff_leftRect (n : ℤ) (x : Site 2) :
     x ∈ rect 0 (2 * n) (-n) n ↔
       rlc_rot180 x ∈ rect (-2 * n) 0 (-n) n := by
   simp only [mem_rect, rlc_rot180_zero, rlc_rot180_one]
   omega
 
+/-- Rotation by `π` from the right rectangle to the left rectangle, as a homomorphism of induced
+  graphs. -/
 noncomputable def rlc_rot180RightInducedHom (n : ℤ) :
     ((hypercubicLattice 2).induce (rect 0 (2 * n) (-n) n)) →g
       ((hypercubicLattice 2).induce (rect (-2 * n) 0 (-n) n)) where
@@ -1658,13 +1571,13 @@ noncomputable def rlc_rot180RightInducedHom (n : ℤ) :
     intro x y hxy
     exact (rlc_adj_rot180 (x : Site 2) (y : Site 2)).mp hxy
 
-theorem rlc_rot180RightInducedHom_injective (n : ℤ) :
+lemma rlc_rot180RightInducedHom_injective (n : ℤ) :
     Function.Injective (rlc_rot180RightInducedHom n) := by
   intro x y hxy
   apply Subtype.ext
   exact rlc_rot180.injective (congrArg Subtype.val hxy)
 
-
+/-- The image of a right diagonal path under rotation by `π`, as a left diagonal path. -/
 noncomputable def rlc_rot180RightPath {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : RlcLeftDiagonalPath n := by
   let x : leftSide (-2 * n) 0 (-n) n :=
@@ -1683,7 +1596,7 @@ noncomputable def rlc_rot180RightPath {n : ℤ}
       simpa using congrArg Neg.neg hx.2⟩
   let w := gamma.1.2.2.1.reverse.map (rlc_rot180RightInducedHom n)
   have hw : w.IsPath := by
-    exact gamma.1.2.2.1.reverse.map_isPath_of_injective
+    exact SimpleGraph.Walk.IsPath.map
       (rlc_rot180RightInducedHom_injective n) gamma.1.2.2.2.reverse
   refine ⟨⟨x, y, ⟨w, hw⟩⟩, ?_, ?_⟩
   · change -(gamma.1.2.1 : Site 2) 1 ≤ 0
@@ -1691,12 +1604,14 @@ noncomputable def rlc_rot180RightPath {n : ℤ}
   · change 0 ≤ -(gamma.1.1 : Site 2) 1
     simpa [rlc_lowerHalf] using gamma.2.1
 
-theorem rlc_rot180_mem_leftRect_iff_rightRect (n : ℤ) (x : Site 2) :
+lemma rlc_rot180_mem_leftRect_iff_rightRect (n : ℤ) (x : Site 2) :
     x ∈ rect (-2 * n) 0 (-n) n ↔
       rlc_rot180 x ∈ rect 0 (2 * n) (-n) n := by
   have h := rlc_rot180_mem_rightRect_iff_leftRect n (rlc_rot180 x)
   simpa using h.symm
 
+/-- Rotation by `π` from the left rectangle to the right rectangle, as a homomorphism of induced
+  graphs. -/
 noncomputable def rlc_rot180LeftInducedHom (n : ℤ) :
     ((hypercubicLattice 2).induce (rect (-2 * n) 0 (-n) n)) →g
       ((hypercubicLattice 2).induce (rect 0 (2 * n) (-n) n)) where
@@ -1706,12 +1621,13 @@ noncomputable def rlc_rot180LeftInducedHom (n : ℤ) :
     intro x y hxy
     exact (rlc_adj_rot180 (x : Site 2) (y : Site 2)).mp hxy
 
-theorem rlc_rot180LeftInducedHom_injective (n : ℤ) :
+lemma rlc_rot180LeftInducedHom_injective (n : ℤ) :
     Function.Injective (rlc_rot180LeftInducedHom n) := by
   intro x y hxy
   apply Subtype.ext
   exact rlc_rot180.injective (congrArg Subtype.val hxy)
 
+/-- The image of a left diagonal path under rotation by `π`, as a right diagonal path. -/
 noncomputable def rlc_rot180LeftPath {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : RlcRightDiagonalPath n := by
   let x : leftSide 0 (2 * n) (-n) n :=
@@ -1730,7 +1646,7 @@ noncomputable def rlc_rot180LeftPath {n : ℤ}
       simpa using congrArg Neg.neg hx.2⟩
   let w := gamma.1.2.2.1.reverse.map (rlc_rot180LeftInducedHom n)
   have hw : w.IsPath := by
-    exact gamma.1.2.2.1.reverse.map_isPath_of_injective
+    exact SimpleGraph.Walk.IsPath.map
       (rlc_rot180LeftInducedHom_injective n) gamma.1.2.2.2.reverse
   refine ⟨⟨x, y, ⟨w, hw⟩⟩, ?_, ?_⟩
   · change -(gamma.1.2.1 : Site 2) 1 ≤ 0
@@ -1738,38 +1654,37 @@ noncomputable def rlc_rot180LeftPath {n : ℤ}
   · change 0 ≤ -(gamma.1.1 : Site 2) 1
     simpa [rlc_lowerHalf] using gamma.2.1
 
-theorem rlc_iUnion_rightDiagonalPath (n : ℤ) :
+lemma rlc_iUnion_rightDiagonalPath (n : ℤ) :
     (⋃ gamma : RlcRightDiagonalPath n, rlc_pathOpen gamma.1) =
       rlc_rightDiagonal n :=
   rlc_iUnion_restrictedPathOpen 0 (2 * n) (-n) n rlc_lowerHalf rlc_upperHalf
 
-theorem rlc_iUnion_leftDiagonalPath (n : ℤ) :
+lemma rlc_iUnion_leftDiagonalPath (n : ℤ) :
     (⋃ gamma : RlcLeftDiagonalPath n, rlc_pathOpen gamma.1) =
       rlc_leftDiagonal n :=
   rlc_iUnion_restrictedPathOpen (-2 * n) 0 (-n) n rlc_lowerHalf rlc_upperHalf
 
-
-
-
+/-- A pair of a right and a left diagonal path. -/
 abbrev RlcDiagonalPathPair (n : ℤ) :=
   RlcRightDiagonalPath n × RlcLeftDiagonalPath n
 
+/-- There are finitely many pairs of diagonal paths. -/
 noncomputable instance rlc_diagonalPathPairFintype (n : ℤ) :
     Fintype (RlcDiagonalPathPair n) := by
   unfold RlcDiagonalPathPair
   infer_instance
 
-
+/-- The event that both paths of the pair are open. -/
 def rlc_pathPairOpen {n : ℤ} (pair : RlcDiagonalPathPair n) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_pathOpen pair.1.1 ∩ rlc_pathOpen pair.2.1
 
-
+/-- The union of the edges of the two paths of the pair. -/
 noncomputable def rlc_pathPairEdges {n : ℤ}
     (pair : RlcDiagonalPathPair n) : Finset (Sym2 (Site 2)) :=
   rlc_pathEdges pair.1.1 ∪ rlc_pathEdges pair.2.1
 
-theorem rlc_pathPairOpen_dependsOn {n : ℤ}
+lemma rlc_pathPairOpen_dependsOn {n : ℤ}
     (pair : RlcDiagonalPathPair n) :
     DependsOn ((rlc_pathPairOpen pair).indicator (fun _ => (1 : ℝ)))
       (rlc_pathPairEdges pair : Set (Sym2 (Site 2))) := by
@@ -1777,10 +1692,7 @@ theorem rlc_pathPairOpen_dependsOn {n : ℤ}
     dependsOn_inter (rlc_pathOpen_dependsOn pair.1.1)
       (rlc_pathOpen_dependsOn pair.2.1)
 
-
-
-
-theorem rlc_iUnion_pathPairOpen (n : ℤ) :
+lemma rlc_iUnion_pathPairOpen (n : ℤ) :
     (⋃ pair : RlcDiagonalPathPair n, rlc_pathPairOpen pair) =
       rlc_rightDiagonal n ∩ rlc_leftDiagonal n := by
   ext omega
@@ -1800,10 +1712,8 @@ theorem rlc_iUnion_pathPairOpen (n : ℤ) :
     obtain ⟨gamma', hgamma'⟩ := Set.mem_iUnion.mp hleft
     exact Set.mem_iUnion.mpr ⟨(gamma, gamma'), hgamma, hgamma'⟩
 
-
-
-
-
+/-- The coordinate swap `(x, y) ↦ (y, x)` on the right rectangle, as a homomorphism of induced
+  graphs. -/
 noncomputable def rlc_swapRightInducedHom (n : ℤ) :
     ((hypercubicLattice 2).induce (rect 0 (2 * n) (-n) n)) →g
       hypercubicLattice 2 where
@@ -1812,8 +1722,7 @@ noncomputable def rlc_swapRightInducedHom (n : ℤ) :
     intro x y hxy
     exact (crf_adj_swap (x : Site 2) (y : Site 2)).mp hxy
 
-
-
+/-- The walk obtained by swapping the coordinates of a right diagonal path. -/
 noncomputable def rlc_swappedRightPathWalk {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     (hypercubicLattice 2).Walk
@@ -1821,16 +1730,13 @@ noncomputable def rlc_swappedRightPathWalk {n : ℤ}
       (crf_swap (gamma.1.2.1 : Site 2)) :=
   gamma.1.2.2.1.map (rlc_swapRightInducedHom n)
 
-
+/-- The sites of the swapped right diagonal path. -/
 def rlc_swappedRightPathSupport {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Set (Site 2) :=
   {p | ∃ z ∈ gamma.1.2.2.1.support,
     p = crf_swap (z : Site 2)}
 
-
-
-
-theorem rlc_rightPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
+lemma rlc_rightPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     ArcSeparatingSet (rlc_swappedRightPathSupport gamma)
       (-n) n 0 (2 * n) := by
@@ -1884,13 +1790,13 @@ theorem rlc_rightPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
     hs.1.2.2.1 hs.1.2.2.2 he.1.2.2.1 he.1.2.2.2
     V hVbox _ hVP
 
-
-
+/-- A set of sites separating the swapped right diagonal path from its other side (chosen by the
+  arc-separation lemma). -/
 noncomputable def rlc_swappedBelowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) : Set (Site 2) :=
   Classical.choose (rlc_rightPath_arcSeparatingSet hn gamma)
 
-theorem rlc_swappedBelowSet_spec {n : ℤ} (hn : 0 < n)
+lemma rlc_swappedBelowSet_spec {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     (∀ z : Site 2, z ∈ rect (-n) n 0 (2 * n) → z 0 = -n →
       z ∈ rlc_swappedBelowSet hn gamma) ∧
@@ -1904,13 +1810,12 @@ theorem rlc_swappedBelowSet_spec {n : ℤ} (hn : 0 < n)
         v ∈ rlc_swappedRightPathSupport gamma) :=
   Classical.choose_spec (rlc_rightPath_arcSeparatingSet hn gamma)
 
-
-
+/-- The sites below a right diagonal path: the swap-preimage of the swapped separating set. -/
 noncomputable def rlc_belowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) : Set (Site 2) :=
   crf_swap ⁻¹' rlc_swappedBelowSet hn gamma
 
-theorem rlc_bottomSide_subset_belowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_bottomSide_subset_belowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     bottomSide 0 (2 * n) (-n) n ⊆ rlc_belowSet hn gamma := by
   intro z hz
@@ -1918,7 +1823,7 @@ theorem rlc_bottomSide_subset_belowSet {n : ℤ} (hn : 0 < n)
   · exact (crf_mem_rect_swap 0 (2 * n) (-n) n z).mp hz.1
   · simpa using hz.2
 
-theorem rlc_topSide_disjoint_belowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_topSide_disjoint_belowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (topSide 0 (2 * n) (-n) n) (rlc_belowSet hn gamma) := by
   rw [Set.disjoint_left]
@@ -1927,7 +1832,7 @@ theorem rlc_topSide_disjoint_belowSet {n : ℤ} (hn : 0 < n)
     ((crf_mem_rect_swap 0 (2 * n) (-n) n z).mp hzTop.1)
     (by simpa using hzTop.2) hzBelow
 
-
+/-- The coordinate swap on the left rectangle, as a homomorphism of induced graphs. -/
 noncomputable def rlc_swapLeftInducedHom (n : ℤ) :
     ((hypercubicLattice 2).induce (rect (-2 * n) 0 (-n) n)) →g
       hypercubicLattice 2 where
@@ -1936,6 +1841,7 @@ noncomputable def rlc_swapLeftInducedHom (n : ℤ) :
     intro x y hxy
     exact (crf_adj_swap (x : Site 2) (y : Site 2)).mp hxy
 
+/-- The walk obtained by swapping the coordinates of a left diagonal path. -/
 noncomputable def rlc_swappedLeftPathWalk {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     (hypercubicLattice 2).Walk
@@ -1943,14 +1849,13 @@ noncomputable def rlc_swappedLeftPathWalk {n : ℤ}
       (crf_swap (gamma.1.2.1 : Site 2)) :=
   gamma.1.2.2.1.map (rlc_swapLeftInducedHom n)
 
+/-- The sites of the swapped left diagonal path. -/
 def rlc_swappedLeftPathSupport {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Set (Site 2) :=
   {p | ∃ z ∈ gamma.1.2.2.1.support,
     p = crf_swap (z : Site 2)}
 
-
-
-theorem rlc_leftPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
+lemma rlc_leftPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     ArcSeparatingSet (rlc_swappedLeftPathSupport gamma)
       (-n) n (-2 * n) 0 := by
@@ -1996,11 +1901,12 @@ theorem rlc_leftPath_arcSeparatingSet {n : ℤ} (hn : 0 < n)
     hs.1.2.2.1 hs.1.2.2.2 he.1.2.2.1 he.1.2.2.2
     V hVbox _ hVP
 
+/-- A set of sites separating the swapped left diagonal path from its other side. -/
 noncomputable def rlc_swappedLeftBelowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) : Set (Site 2) :=
   Classical.choose (rlc_leftPath_arcSeparatingSet hn gamma)
 
-theorem rlc_swappedLeftBelowSet_spec {n : ℤ} (hn : 0 < n)
+lemma rlc_swappedLeftBelowSet_spec {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     (∀ z : Site 2, z ∈ rect (-n) n (-2 * n) 0 → z 0 = -n →
       z ∈ rlc_swappedLeftBelowSet hn gamma) ∧
@@ -2014,12 +1920,12 @@ theorem rlc_swappedLeftBelowSet_spec {n : ℤ} (hn : 0 < n)
         v ∈ rlc_swappedLeftPathSupport gamma) :=
   Classical.choose_spec (rlc_leftPath_arcSeparatingSet hn gamma)
 
-
+/-- The sites above a left diagonal path. -/
 noncomputable def rlc_aboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) : Set (Site 2) :=
   crf_swap ⁻¹' (rlc_swappedLeftBelowSet hn gamma)ᶜ
 
-theorem rlc_leftTopSide_subset_aboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_leftTopSide_subset_aboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     topSide (-2 * n) 0 (-n) n ⊆ rlc_aboveSet hn gamma := by
   intro z hz
@@ -2027,7 +1933,7 @@ theorem rlc_leftTopSide_subset_aboveSet {n : ℤ} (hn : 0 < n)
     ((crf_mem_rect_swap (-2 * n) 0 (-n) n z).mp hz.1)
     (by simpa using hz.2)
 
-theorem rlc_leftBottomSide_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_leftBottomSide_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (bottomSide (-2 * n) 0 (-n) n) (rlc_aboveSet hn gamma) := by
   rw [Set.disjoint_left]
@@ -2036,9 +1942,7 @@ theorem rlc_leftBottomSide_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
     ((crf_mem_rect_swap (-2 * n) 0 (-n) n z).mp hzBottom.1)
     (by simpa using hzBottom.2))
 
-
-
-theorem rlc_half_rightDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
+lemma rlc_half_rightDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
     (hH : (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 (2 * n) (-n) n))
     (hV : (1 : ℝ) / 2 ≤ halfMeasure.real
@@ -2049,7 +1953,7 @@ theorem rlc_half_rightDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
   norm_num at h
   simpa [halfMeasure] using h
 
-theorem rlc_half_leftDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
+lemma rlc_half_leftDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
     (hH : (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 (2 * n) (-n) n))
     (hV : (1 : ℝ) / 2 ≤ halfMeasure.real
@@ -2058,63 +1962,52 @@ theorem rlc_half_leftDiagonal_lower_bound (n : ℤ) (hn : 0 < n)
   rw [rlc_leftDiagonal_prob_eq_right]
   exact rlc_half_rightDiagonal_lower_bound n hn hH hV
 
-
-
-theorem rlc_lrRestricted_univ (a b c d : ℤ) :
+lemma rlc_lrRestricted_univ (a b c d : ℤ) :
     rlc_lrRestrictedEvent a b c d Set.univ Set.univ =
       horizontalCrossingEvent a b c d := by
   ext omega
-  simp only [rlc_lrRestrictedEvent, Set.mem_setOf_eq, Set.mem_univ, true_and,
+  simp only [rlc_lrRestrictedEvent, Set.mem_ofPred_eq, Set.mem_univ, true_and,
     mem_horizontalCrossingEvent, HorizontalCrossing]
 
-theorem rlc_horizontalCrossing_dependsOn (a b c d : ℤ) :
+lemma rlc_horizontalCrossing_dependsOn (a b c d : ℤ) :
     DependsOn ((horizontalCrossingEvent a b c d).indicator (fun _ => (1 : ℝ)))
       (edgesWithinFinset (rect_finite a b c d).toFinset : Set (Sym2 (Site 2))) := by
   rw [← rlc_lrRestricted_univ]
   exact rlc_lrRestrictedEvent_dependsOn a b c d Set.univ Set.univ
 
-theorem rlc_horizontalCrossing_measurableSet (a b c d : ℤ) :
-    MeasurableSet (horizontalCrossingEvent a b c d) :=
-  measurableSet_of_dependsOn (rlc_horizontalCrossing_dependsOn a b c d)
-
-theorem rlc_verticalCrossing_measurableSet (a b c d : ℤ) :
-    MeasurableSet (verticalCrossingEvent a b c d) :=
-  measurableSet_of_dependsOn (rlc_verticalCrossing_dependsOn a b c d)
-
-
-
+/-- `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2` (unconditional). -/
 theorem rlc_square_half (m : ℤ) (hm : 0 < m) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 m 0 m) := by
   exact crr_square_half m hm
-    (rlc_horizontalCrossing_measurableSet 0 m 0 m)
+    (StatMech.Universality.measurableSet_horizontalCrossingEvent 0 m 0 m)
     (by
       change MeasurableSet (verticalCrossingEvent 0 (m - 1) (-1) m)
-      exact rlc_verticalCrossing_measurableSet 0 (m - 1) (-1) m)
-    (rlc_horizontalCrossing_measurableSet (-1) m 0 (m - 1))
+      exact StatMech.Universality.measurableSet_verticalCrossingEvent 0 (m - 1) (-1) m)
+    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-1) m 0 (m - 1))
 
-theorem rlc_centered_square_horizontal_half (n : ℤ) (hn : 0 < n) :
+lemma rlc_centered_square_horizontal_half (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 (2 * n) (-n) n) := by
   have hbase := rlc_square_half (2 * n) (by omega)
   have htrans := cti_horizontalCrossing_translation_invariant
     0 (2 * n) 0 (2 * n) (![0, -n] : Site 2)
-    (rlc_horizontalCrossing_measurableSet 0 (2 * n) 0 (2 * n))
+    (StatMech.Universality.measurableSet_horizontalCrossingEvent 0 (2 * n) 0 (2 * n))
   have heq : halfMeasure.real
       (horizontalCrossingEvent 0 (2 * n) (-n) n) =
       halfMeasure.real (horizontalCrossingEvent 0 (2 * n) 0 (2 * n)) := by
     simpa [show 2 * n + -n = n by ring] using htrans
   rwa [heq]
 
-theorem rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
+lemma rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
       (verticalCrossingEvent 0 (2 * n) (-n) n) := by
   have hH := rlc_centered_square_horizontal_half n hn
   have hswap := crf_verticalCrossing_eq_horizontal_swap 0 (2 * n) (-n) n
-    (rlc_horizontalCrossing_measurableSet (-n) n 0 (2 * n))
+    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
   have htrans := cti_horizontalCrossing_translation_invariant
     (-n) n 0 (2 * n) (![n, -n] : Site 2)
-    (rlc_horizontalCrossing_measurableSet (-n) n 0 (2 * n))
+    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
   have heq : halfMeasure.real
       (verticalCrossingEvent 0 (2 * n) (-n) n) =
       halfMeasure.real (horizontalCrossingEvent 0 (2 * n) (-n) n) := by
@@ -2123,25 +2016,25 @@ theorem rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
       show 2 * n + -n = n by ring] using htrans.symm
   rwa [heq]
 
+/-- `1/32 ≤ P(right diagonal event)` (unconditional). -/
 theorem rlc_half_rightDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_rightDiagonal n) :=
   rlc_half_rightDiagonal_lower_bound n hn
     (rlc_centered_square_horizontal_half n hn)
     (rlc_centered_square_vertical_half n hn)
 
+/-- `1/32 ≤ P(left diagonal event)` at `p = 1/2` (unconditional). -/
 theorem rlc_half_leftDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_leftDiagonal n) := by
   rw [rlc_leftDiagonal_prob_eq_right]
   exact rlc_half_rightDiagonal_unconditional n hn
 
-
-
-
+/-- The sites visited by a crossing path. -/
 noncomputable def rlc_pathVertices {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) : Finset (Site 2) :=
   gamma.2.2.1.support.toFinset.image Subtype.val
 
-theorem rlc_pathVertices_rot180RightPath {n : ℤ}
+lemma rlc_pathVertices_rot180RightPath {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_pathVertices (rlc_rot180RightPath gamma).1 =
       (rlc_pathVertices gamma.1).image rlc_rot180 := by
@@ -2173,7 +2066,7 @@ theorem rlc_pathVertices_rot180RightPath {n : ℤ}
       exact humap
     · exact hvz
 
-theorem rlc_pathVertices_rot180LeftPath {n : ℤ}
+lemma rlc_pathVertices_rot180LeftPath {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_pathVertices (rlc_rot180LeftPath gamma).1 =
       (rlc_pathVertices gamma.1).image rlc_rot180 := by
@@ -2205,23 +2098,23 @@ theorem rlc_pathVertices_rot180LeftPath {n : ℤ}
       exact humap
     · exact hvz
 
-theorem rlc_pathVertices_rot180_roundtrip_left {n : ℤ}
+lemma rlc_pathVertices_rot180_roundtrip_left {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_pathVertices (rlc_rot180RightPath
       (rlc_rot180LeftPath gamma)).1 = rlc_pathVertices gamma.1 := by
   rw [rlc_pathVertices_rot180RightPath,
     rlc_pathVertices_rot180LeftPath, Finset.image_image]
-  simpa [Function.comp_def, rlc_rot180_involutive]
+  simp [Function.comp_def, rlc_rot180_involutive]
 
-theorem rlc_pathVertices_rot180_roundtrip_right {n : ℤ}
+lemma rlc_pathVertices_rot180_roundtrip_right {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_pathVertices (rlc_rot180LeftPath
       (rlc_rot180RightPath gamma)).1 = rlc_pathVertices gamma.1 := by
   rw [rlc_pathVertices_rot180LeftPath,
     rlc_pathVertices_rot180RightPath, Finset.image_image]
-  simpa [Function.comp_def, rlc_rot180_involutive]
+  simp [Function.comp_def, rlc_rot180_involutive]
 
-theorem rlc_pathEdges_rot180RightPath {n : ℤ}
+lemma rlc_pathEdges_rot180RightPath {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_pathEdges (rlc_rot180RightPath gamma).1 =
       (rlc_pathEdges gamma.1).image (Sym2.map rlc_rot180) := by
@@ -2267,7 +2160,7 @@ theorem rlc_pathEdges_rot180RightPath {n : ℤ}
         _ = Sym2.map rlc_rot180 a := congrArg (Sym2.map rlc_rot180) hda
         _ = e := hae
 
-theorem rlc_pathEdges_rot180LeftPath {n : ℤ}
+lemma rlc_pathEdges_rot180LeftPath {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_pathEdges (rlc_rot180LeftPath gamma).1 =
       (rlc_pathEdges gamma.1).image (Sym2.map rlc_rot180) := by
@@ -2313,7 +2206,7 @@ theorem rlc_pathEdges_rot180LeftPath {n : ℤ}
         _ = Sym2.map rlc_rot180 a := congrArg (Sym2.map rlc_rot180) hda
         _ = e := hae
 
-theorem rlc_pathEdges_rot180_roundtrip_left {n : ℤ}
+lemma rlc_pathEdges_rot180_roundtrip_left {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_pathEdges (rlc_rot180RightPath
       (rlc_rot180LeftPath gamma)).1 = rlc_pathEdges gamma.1 := by
@@ -2325,7 +2218,7 @@ theorem rlc_pathEdges_rot180_roundtrip_left {n : ℤ}
     | _ u v => simp
   rw [hinvol, Finset.image_id]
 
-theorem rlc_swappedRightPathSupport_eq {n : ℤ}
+lemma rlc_swappedRightPathSupport_eq {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_swappedRightPathSupport gamma =
       crf_swap '' (rlc_pathVertices gamma.1 : Set (Site 2)) := by
@@ -2342,7 +2235,7 @@ theorem rlc_swappedRightPathSupport_eq {n : ℤ}
     obtain ⟨u, hu, rfl⟩ := hz
     exact ⟨u, hu, rfl⟩
 
-theorem rlc_swappedLeftPathSupport_eq {n : ℤ}
+lemma rlc_swappedLeftPathSupport_eq {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_swappedLeftPathSupport gamma =
       crf_swap '' (rlc_pathVertices gamma.1 : Set (Site 2)) := by
@@ -2359,8 +2252,7 @@ theorem rlc_swappedLeftPathSupport_eq {n : ℤ}
     obtain ⟨u, hu, rfl⟩ := hz
     exact ⟨u, hu, rfl⟩
 
-
-theorem rlc_belowSet_boundary_path {n : ℤ} (hn : 0 < n)
+lemma rlc_belowSet_boundary_path {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rect 0 (2 * n) (-n) n)
     (hv : v ∈ rect 0 (2 * n) (-n) n)
@@ -2383,8 +2275,7 @@ theorem rlc_belowSet_boundary_path {n : ℤ} (hn : 0 < n)
   · right
     exact crf_swap.injective hzv |>.symm ▸ hz
 
-
-theorem rlc_aboveSet_boundary_path {n : ℤ} (hn : 0 < n)
+lemma rlc_aboveSet_boundary_path {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rect (-2 * n) 0 (-n) n)
     (hv : v ∈ rect (-2 * n) 0 (-n) n)
@@ -2408,9 +2299,7 @@ theorem rlc_aboveSet_boundary_path {n : ℤ} (hn : 0 < n)
   · right
     exact crf_swap.injective hzv |>.symm ▸ hz
 
-
-
-
+/-- The lattice graph on the right rectangle with the sites of the given path removed. -/
 def rlc_rightPathAvoidGraph {n : ℤ} (gamma : RlcRightDiagonalPath n) :
     SimpleGraph (Site 2) where
   Adj u v := (hypercubicLattice 2).Adj u v ∧
@@ -2422,7 +2311,7 @@ def rlc_rightPathAvoidGraph {n : ℤ} (gamma : RlcRightDiagonalPath n) :
     exact ⟨h.1.symm, h.2.2.1, h.2.1, h.2.2.2.2, h.2.2.2.1⟩
   loopless := ⟨fun u h => (hypercubicLattice 2).irrefl h.1⟩
 
-theorem rlc_rightPathAvoidGraph_walk_dest {n : ℤ}
+lemma rlc_rightPathAvoidGraph_walk_dest {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {x z : Site 2}
     (hxR : x ∈ rect 0 (2 * n) (-n) n)
     (hxP : x ∉ rlc_pathVertices gamma.1)
@@ -2433,21 +2322,22 @@ theorem rlc_rightPathAvoidGraph_walk_dest {n : ℤ}
   | @cons a b c hab w ih =>
       exact ih hab.2.2.1 hab.2.2.2.2
 
-
+/-- The sites reachable from the top side while avoiding the path: the strict region above a right
+  diagonal path. -/
 def rlc_strictTopSet {n : ℤ} (gamma : RlcRightDiagonalPath n) :
     Set (Site 2) :=
   {z | ∃ x : Site 2, x ∈ topSide 0 (2 * n) (-n) n ∧
     x ∉ rlc_pathVertices gamma.1 ∧
     (rlc_rightPathAvoidGraph gamma).Reachable x z}
 
-theorem rlc_strictTopSet_subset_box {n : ℤ}
+lemma rlc_strictTopSet_subset_box {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_strictTopSet gamma ⊆ rect 0 (2 * n) (-n) n := by
   rintro z ⟨x, hxTop, hxP, hreach⟩
   obtain ⟨w⟩ := hreach
   exact (rlc_rightPathAvoidGraph_walk_dest gamma hxTop.1 hxP w).1
 
-theorem rlc_strictTopSet_disjoint_path {n : ℤ}
+lemma rlc_strictTopSet_disjoint_path {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (rlc_strictTopSet gamma)
       (rlc_pathVertices gamma.1 : Set (Site 2)) := by
@@ -2456,7 +2346,7 @@ theorem rlc_strictTopSet_disjoint_path {n : ℤ}
   obtain ⟨w⟩ := hreach
   exact (rlc_rightPathAvoidGraph_walk_dest gamma hxTop.1 hxP w).2 hzPath
 
-theorem rlc_strictTopSet_step {n : ℤ}
+lemma rlc_strictTopSet_step {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_strictTopSet gamma)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -2470,7 +2360,7 @@ theorem rlc_strictTopSet_step {n : ℤ}
     ⟨hadj, huData.1, hvR, huData.2, hvp⟩
   exact ⟨x, hxTop, hxPath, ⟨w.concat hstep⟩⟩
 
-theorem rlc_strictTopSet_boundary_path {n : ℤ}
+lemma rlc_strictTopSet_boundary_path {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect 0 (2 * n) (-n) n)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -2489,9 +2379,7 @@ theorem rlc_strictTopSet_boundary_path {n : ℤ}
       exact hu (hbd.mpr hv)
     exact hu (rlc_strictTopSet_step gamma hv huR hup hadj.symm)
 
-
-
-theorem rlc_strictTopSet_mono_of_disjoint_path {n : ℤ}
+lemma rlc_strictTopSet_mono_of_disjoint_path {n : ℤ}
     (gamma lambda : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_strictTopSet gamma)
       (rlc_pathVertices lambda.1 : Set (Site 2))) :
@@ -2523,22 +2411,22 @@ theorem rlc_strictTopSet_mono_of_disjoint_path {n : ℤ}
           (ih hbTop)
   exact ⟨x, hxTop, hxLambda, ⟨lift_walk w hxMem⟩⟩
 
-
-
+/-- The sites reachable from the bottom side while avoiding the path: the strict region below a
+  right diagonal path. -/
 def rlc_strictBelowSet {n : ℤ} (gamma : RlcRightDiagonalPath n) :
     Set (Site 2) :=
   {z | ∃ x : Site 2, x ∈ bottomSide 0 (2 * n) (-n) n ∧
     x ∉ rlc_pathVertices gamma.1 ∧
     (rlc_rightPathAvoidGraph gamma).Reachable x z}
 
-theorem rlc_strictBelowSet_subset_box {n : ℤ}
+lemma rlc_strictBelowSet_subset_box {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_strictBelowSet gamma ⊆ rect 0 (2 * n) (-n) n := by
   rintro z ⟨x, hxBottom, hxP, hreach⟩
   obtain ⟨w⟩ := hreach
   exact (rlc_rightPathAvoidGraph_walk_dest gamma hxBottom.1 hxP w).1
 
-theorem rlc_strictBelowSet_disjoint_path {n : ℤ}
+lemma rlc_strictBelowSet_disjoint_path {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (rlc_strictBelowSet gamma) (rlc_pathVertices gamma.1 : Set (Site 2)) := by
   rw [Set.disjoint_left]
@@ -2546,7 +2434,7 @@ theorem rlc_strictBelowSet_disjoint_path {n : ℤ}
   obtain ⟨w⟩ := hreach
   exact (rlc_rightPathAvoidGraph_walk_dest gamma hxBottom.1 hxP w).2 hzPath
 
-theorem rlc_strictBelowSet_step {n : ℤ}
+lemma rlc_strictBelowSet_step {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_strictBelowSet gamma)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -2561,9 +2449,7 @@ theorem rlc_strictBelowSet_step {n : ℤ}
     ⟨hadj, huData.1, hvR, huData.2, hvp⟩
   exact ⟨x, hxBottom, hxPath, ⟨w.concat hstep⟩⟩
 
-
-
-theorem rlc_strictBelowSet_mono_of_disjoint_path {n : ℤ}
+lemma rlc_strictBelowSet_mono_of_disjoint_path {n : ℤ}
     (gamma lambda : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_strictBelowSet gamma)
       (rlc_pathVertices lambda.1 : Set (Site 2))) :
@@ -2595,9 +2481,7 @@ theorem rlc_strictBelowSet_mono_of_disjoint_path {n : ℤ}
           (ih hbBelow)
   exact ⟨x, hxBottom, hxLambda, ⟨lift_walk w hxMem⟩⟩
 
-
-
-theorem rlc_strictBelowSet_boundary_path {n : ℤ}
+lemma rlc_strictBelowSet_boundary_path {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect 0 (2 * n) (-n) n)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -2616,8 +2500,7 @@ theorem rlc_strictBelowSet_boundary_path {n : ℤ}
       exact hu (hbd.mpr hv)
     exact hu (rlc_strictBelowSet_step gamma hv huR hup hadj.symm)
 
-
-
+/-- The coordinate swap restricted to the graph avoiding a right diagonal path. -/
 noncomputable def rlc_swapRightAvoidHom {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_rightPathAvoidGraph gamma →g hypercubicLattice 2 where
@@ -2626,10 +2509,7 @@ noncomputable def rlc_swapRightAvoidHom {n : ℤ}
     intro u v huv
     exact (crf_adj_swap u v).mp huv.1
 
-
-
-
-theorem rlc_topSide_disjoint_strictBelowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_topSide_disjoint_strictBelowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (topSide 0 (2 * n) (-n) n) (rlc_strictBelowSet gamma) := by
   rw [Set.disjoint_left]
@@ -2673,10 +2553,7 @@ theorem rlc_topSide_disjoint_strictBelowSet {n : ℤ} (hn : 0 < n)
     hxBottom.1 hxPath (w.takeUntil q hq)
   exact hqData.2 (hqr ▸ hrPath)
 
-
-
-
-theorem rlc_strictBelowSet_subset_belowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictBelowSet_subset_belowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     rlc_strictBelowSet gamma ⊆ rlc_belowSet hn gamma := by
   rintro z ⟨x, hxBottom, hxPath, hreach⟩
@@ -2702,9 +2579,7 @@ theorem rlc_strictBelowSet_subset_belowSet {n : ℤ} (hn : 0 < n)
       exact ih hbBelow
   exact walk_stays w hxBelow
 
-
-
-theorem rlc_strictTopSet_disjoint_belowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictTopSet_disjoint_belowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (rlc_strictTopSet gamma) (rlc_belowSet hn gamma) := by
   rw [Set.disjoint_left]
@@ -2731,18 +2606,13 @@ theorem rlc_strictTopSet_disjoint_belowSet {n : ℤ} (hn : 0 < n)
       exact ih hbOutside
   exact (walk_stays w hxOutside) hzBelow
 
-theorem rlc_strictTopSet_disjoint_strictBelowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictTopSet_disjoint_strictBelowSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) :
     Disjoint (rlc_strictTopSet gamma) (rlc_strictBelowSet gamma) :=
   (rlc_strictTopSet_disjoint_belowSet hn gamma).mono_right
     (rlc_strictBelowSet_subset_belowSet hn gamma)
 
-
-
-
-
-
-theorem rlc_disjointRightPaths_not_mutually_top {n : ℤ} (hn : 0 < n)
+lemma rlc_disjointRightPaths_not_mutually_top {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -2816,8 +2686,7 @@ theorem rlc_disjointRightPaths_not_mutually_top {n : ℤ} (hn : 0 < n)
       (rlc_strictTopSet_disjoint_strictBelowSet hn gamma))
         (hdeltaTop hbDelta) hbBelowGamma
 
-
-
+/-- The lattice graph on the left rectangle with the sites of the given path removed. -/
 def rlc_leftPathAvoidGraph {n : ℤ} (gamma : RlcLeftDiagonalPath n) :
     SimpleGraph (Site 2) where
   Adj u v := (hypercubicLattice 2).Adj u v ∧
@@ -2829,7 +2698,7 @@ def rlc_leftPathAvoidGraph {n : ℤ} (gamma : RlcLeftDiagonalPath n) :
     exact ⟨h.1.symm, h.2.2.1, h.2.1, h.2.2.2.2, h.2.2.2.1⟩
   loopless := ⟨fun u h => (hypercubicLattice 2).irrefl h.1⟩
 
-theorem rlc_leftPathAvoidGraph_walk_dest {n : ℤ}
+lemma rlc_leftPathAvoidGraph_walk_dest {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {x z : Site 2}
     (hxR : x ∈ rect (-2 * n) 0 (-n) n)
     (hxP : x ∉ rlc_pathVertices gamma.1)
@@ -2840,21 +2709,22 @@ theorem rlc_leftPathAvoidGraph_walk_dest {n : ℤ}
   | @cons a b c hab w ih =>
       exact ih hab.2.2.1 hab.2.2.2.2
 
-
+/-- The strict region below a left diagonal path: sites reachable from the bottom side while
+  avoiding it. -/
 def rlc_strictBottomSet {n : ℤ} (gamma : RlcLeftDiagonalPath n) :
     Set (Site 2) :=
   {z | ∃ x : Site 2, x ∈ bottomSide (-2 * n) 0 (-n) n ∧
     x ∉ rlc_pathVertices gamma.1 ∧
     (rlc_leftPathAvoidGraph gamma).Reachable x z}
 
-theorem rlc_strictBottomSet_subset_box {n : ℤ}
+lemma rlc_strictBottomSet_subset_box {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_strictBottomSet gamma ⊆ rect (-2 * n) 0 (-n) n := by
   rintro z ⟨x, hxBottom, hxP, hreach⟩
   obtain ⟨w⟩ := hreach
   exact (rlc_leftPathAvoidGraph_walk_dest gamma hxBottom.1 hxP w).1
 
-theorem rlc_strictBottomSet_disjoint_path {n : ℤ}
+lemma rlc_strictBottomSet_disjoint_path {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (rlc_strictBottomSet gamma)
       (rlc_pathVertices gamma.1 : Set (Site 2)) := by
@@ -2863,7 +2733,7 @@ theorem rlc_strictBottomSet_disjoint_path {n : ℤ}
   obtain ⟨w⟩ := hreach
   exact (rlc_leftPathAvoidGraph_walk_dest gamma hxBottom.1 hxP w).2 hzPath
 
-theorem rlc_strictBottomSet_step {n : ℤ}
+lemma rlc_strictBottomSet_step {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_strictBottomSet gamma)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -2877,7 +2747,7 @@ theorem rlc_strictBottomSet_step {n : ℤ}
     ⟨hadj, huData.1, hvR, huData.2, hvp⟩
   exact ⟨x, hxBottom, hxPath, ⟨w.concat hstep⟩⟩
 
-theorem rlc_strictBottomSet_boundary_path {n : ℤ}
+lemma rlc_strictBottomSet_boundary_path {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect (-2 * n) 0 (-n) n)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -2896,7 +2766,7 @@ theorem rlc_strictBottomSet_boundary_path {n : ℤ}
       exact hu (hbd.mpr hv)
     exact hu (rlc_strictBottomSet_step gamma hv huR hup hadj.symm)
 
-theorem rlc_strictTopSet_eq_of_pathVertices_eq {n : ℤ}
+lemma rlc_strictTopSet_eq_of_pathVertices_eq {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hverts : rlc_pathVertices gamma.1 = rlc_pathVertices delta.1) :
     rlc_strictTopSet gamma = rlc_strictTopSet delta := by
@@ -2906,10 +2776,10 @@ theorem rlc_strictTopSet_eq_of_pathVertices_eq {n : ℤ}
     simp only [rlc_rightPathAvoidGraph]
     rw [hverts]
   ext z
-  simp only [rlc_strictTopSet, Set.mem_setOf_eq]
+  simp only [rlc_strictTopSet, Set.mem_ofPred_eq]
   rw [hgraph, hverts]
 
-theorem rlc_strictBottomSet_eq_of_pathVertices_eq {n : ℤ}
+lemma rlc_strictBottomSet_eq_of_pathVertices_eq {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n)
     (hverts : rlc_pathVertices gamma.1 = rlc_pathVertices delta.1) :
     rlc_strictBottomSet gamma = rlc_strictBottomSet delta := by
@@ -2919,9 +2789,10 @@ theorem rlc_strictBottomSet_eq_of_pathVertices_eq {n : ℤ}
     simp only [rlc_leftPathAvoidGraph]
     rw [hverts]
   ext z
-  simp only [rlc_strictBottomSet, Set.mem_setOf_eq]
+  simp only [rlc_strictBottomSet, Set.mem_ofPred_eq]
   rw [hgraph, hverts]
 
+/-- Rotation by `π` between the avoid-graphs of a right path and its rotated left path. -/
 noncomputable def rlc_rot180RightAvoidHom {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_rightPathAvoidGraph gamma →g
@@ -2945,7 +2816,7 @@ noncomputable def rlc_rot180RightAvoidHom {n : ℤ}
         simpa using hzv)
       exact h.2.2.2.2 (hzv' ▸ hz)
 
-theorem rlc_rot180_mem_strictBottom_of_mem_strictTop {n : ℤ}
+lemma rlc_rot180_mem_strictBottom_of_mem_strictTop {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_strictTopSet gamma) :
     rlc_rot180 z ∈ rlc_strictBottomSet (rlc_rot180RightPath gamma) := by
@@ -2966,6 +2837,7 @@ theorem rlc_rot180_mem_strictBottom_of_mem_strictTop {n : ℤ}
   exact ⟨rlc_rot180 x, hxBottom, hxNot,
     ⟨w.map (rlc_rot180RightAvoidHom gamma)⟩⟩
 
+/-- Rotation by `π` between the avoid-graphs of a left path and its rotated right path. -/
 noncomputable def rlc_rot180LeftAvoidHom {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_leftPathAvoidGraph gamma →g
@@ -2987,7 +2859,7 @@ noncomputable def rlc_rot180LeftAvoidHom {n : ℤ}
       have hzv' : z = v := rlc_rot180.injective (by simpa using hzv)
       exact h.2.2.2.2 (hzv' ▸ hz)
 
-theorem rlc_rot180_mem_strictTop_of_mem_strictBottom {n : ℤ}
+lemma rlc_rot180_mem_strictTop_of_mem_strictBottom {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_strictBottomSet gamma) :
     rlc_rot180 z ∈ rlc_strictTopSet (rlc_rot180LeftPath gamma) := by
@@ -3009,7 +2881,7 @@ theorem rlc_rot180_mem_strictTop_of_mem_strictBottom {n : ℤ}
   exact ⟨rlc_rot180 x, hxTop, hxNot,
     ⟨w.map (rlc_rot180LeftAvoidHom gamma)⟩⟩
 
-theorem rlc_rot180_mem_strictBottom_iff_mem_strictTop {n : ℤ}
+lemma rlc_rot180_mem_strictBottom_iff_mem_strictTop {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (z : Site 2) :
     rlc_rot180 z ∈ rlc_strictBottomSet (rlc_rot180RightPath gamma) ↔
       z ∈ rlc_strictTopSet gamma := by
@@ -3024,7 +2896,7 @@ theorem rlc_rot180_mem_strictBottom_iff_mem_strictTop {n : ℤ}
     simpa using hdouble
   · exact rlc_rot180_mem_strictBottom_of_mem_strictTop gamma
 
-theorem rlc_rot180_mem_strictTop_iff_mem_strictBottom {n : ℤ}
+lemma rlc_rot180_mem_strictTop_iff_mem_strictBottom {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) (z : Site 2) :
     rlc_rot180 z ∈ rlc_strictTopSet (rlc_rot180LeftPath gamma) ↔
       z ∈ rlc_strictBottomSet gamma := by
@@ -3039,7 +2911,7 @@ theorem rlc_rot180_mem_strictTop_iff_mem_strictBottom {n : ℤ}
     simpa using hdouble
   · exact rlc_rot180_mem_strictTop_of_mem_strictBottom gamma
 
-theorem rlc_strictBottomSet_mono_of_disjoint_path {n : ℤ}
+lemma rlc_strictBottomSet_mono_of_disjoint_path {n : ℤ}
     (gamma lambda : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_strictBottomSet gamma)
       (rlc_pathVertices lambda.1 : Set (Site 2))) :
@@ -3071,21 +2943,22 @@ theorem rlc_strictBottomSet_mono_of_disjoint_path {n : ℤ}
           (ih hbBottom)
   exact ⟨x, hxBottom, hxLambda, ⟨lift_walk w hxMem⟩⟩
 
-
+/-- The strict region above a left diagonal path: sites reachable from the top side while avoiding
+  it. -/
 def rlc_strictAboveSet {n : ℤ} (gamma : RlcLeftDiagonalPath n) :
     Set (Site 2) :=
   {z | ∃ x : Site 2, x ∈ topSide (-2 * n) 0 (-n) n ∧
     x ∉ rlc_pathVertices gamma.1 ∧
     (rlc_leftPathAvoidGraph gamma).Reachable x z}
 
-theorem rlc_strictAboveSet_subset_box {n : ℤ}
+lemma rlc_strictAboveSet_subset_box {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_strictAboveSet gamma ⊆ rect (-2 * n) 0 (-n) n := by
   rintro z ⟨x, hxTop, hxP, hreach⟩
   obtain ⟨w⟩ := hreach
   exact (rlc_leftPathAvoidGraph_walk_dest gamma hxTop.1 hxP w).1
 
-theorem rlc_strictAboveSet_disjoint_path {n : ℤ}
+lemma rlc_strictAboveSet_disjoint_path {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (rlc_strictAboveSet gamma) (rlc_pathVertices gamma.1 : Set (Site 2)) := by
   rw [Set.disjoint_left]
@@ -3093,7 +2966,7 @@ theorem rlc_strictAboveSet_disjoint_path {n : ℤ}
   obtain ⟨w⟩ := hreach
   exact (rlc_leftPathAvoidGraph_walk_dest gamma hxTop.1 hxP w).2 hzPath
 
-theorem rlc_strictAboveSet_step {n : ℤ}
+lemma rlc_strictAboveSet_step {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_strictAboveSet gamma)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -3107,9 +2980,7 @@ theorem rlc_strictAboveSet_step {n : ℤ}
     ⟨hadj, huData.1, hvR, huData.2, hvp⟩
   exact ⟨x, hxTop, hxPath, ⟨w.concat hstep⟩⟩
 
-
-
-theorem rlc_strictAboveSet_boundary_path {n : ℤ}
+lemma rlc_strictAboveSet_boundary_path {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect (-2 * n) 0 (-n) n)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -3128,6 +2999,7 @@ theorem rlc_strictAboveSet_boundary_path {n : ℤ}
       exact hu (hbd.mpr hv)
     exact hu (rlc_strictAboveSet_step gamma hv huR hup hadj.symm)
 
+/-- The coordinate swap restricted to the graph avoiding a left diagonal path. -/
 noncomputable def rlc_swapLeftAvoidHom {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_leftPathAvoidGraph gamma →g hypercubicLattice 2 where
@@ -3136,8 +3008,7 @@ noncomputable def rlc_swapLeftAvoidHom {n : ℤ}
     intro u v huv
     exact (crf_adj_swap u v).mp huv.1
 
-
-theorem rlc_leftBottomSide_disjoint_strictAboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_leftBottomSide_disjoint_strictAboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (bottomSide (-2 * n) 0 (-n) n)
       (rlc_strictAboveSet gamma) := by
@@ -3188,9 +3059,7 @@ theorem rlc_leftBottomSide_disjoint_strictAboveSet {n : ℤ} (hn : 0 < n)
     hxTop.1 hxPath (w.takeUntil q hq')
   exact hqData.2 (hqr ▸ hrPath)
 
-
-
-theorem rlc_strictAboveSet_subset_aboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictAboveSet_subset_aboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     rlc_strictAboveSet gamma ⊆ rlc_aboveSet hn gamma := by
   rintro z ⟨x, hxTop, hxPath, hreach⟩
@@ -3216,9 +3085,7 @@ theorem rlc_strictAboveSet_subset_aboveSet {n : ℤ} (hn : 0 < n)
       exact ih hbAbove
   exact walk_stays w hxAbove
 
-
-
-theorem rlc_strictBottomSet_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictBottomSet_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (rlc_strictBottomSet gamma) (rlc_aboveSet hn gamma) := by
   rw [Set.disjoint_left]
@@ -3246,61 +3113,62 @@ theorem rlc_strictBottomSet_disjoint_aboveSet {n : ℤ} (hn : 0 < n)
       exact ih hbOutside
   exact (walk_stays w hxOutside) hzAbove
 
-theorem rlc_strictBottomSet_disjoint_strictAboveSet {n : ℤ} (hn : 0 < n)
+lemma rlc_strictBottomSet_disjoint_strictAboveSet {n : ℤ} (hn : 0 < n)
     (gamma : RlcLeftDiagonalPath n) :
     Disjoint (rlc_strictBottomSet gamma) (rlc_strictAboveSet gamma) :=
   (rlc_strictBottomSet_disjoint_aboveSet hn gamma).mono_right
     (rlc_strictAboveSet_subset_aboveSet hn gamma)
 
-theorem rlc_strictBelowSet_finite {n : ℤ}
+lemma rlc_strictBelowSet_finite {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     (rlc_strictBelowSet gamma).Finite :=
   (rect_finite 0 (2 * n) (-n) n).subset
     (rlc_strictBelowSet_subset_box gamma)
 
-theorem rlc_strictAboveSet_finite {n : ℤ}
+lemma rlc_strictAboveSet_finite {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     (rlc_strictAboveSet gamma).Finite :=
   (rect_finite (-2 * n) 0 (-n) n).subset
     (rlc_strictAboveSet_subset_box gamma)
 
-theorem rlc_strictTopSet_finite {n : ℤ}
+lemma rlc_strictTopSet_finite {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     (rlc_strictTopSet gamma).Finite :=
   (rect_finite 0 (2 * n) (-n) n).subset
     (rlc_strictTopSet_subset_box gamma)
 
-theorem rlc_strictBottomSet_finite {n : ℤ}
+lemma rlc_strictBottomSet_finite {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     (rlc_strictBottomSet gamma).Finite :=
   (rect_finite (-2 * n) 0 (-n) n).subset
     (rlc_strictBottomSet_subset_box gamma)
 
-theorem rlc_bdEdge_inter {S T : Set (Site 2)} {e : Sym2 (Site 2)}
+lemma rlc_bdEdge_inter {S T : Set (Site 2)} {e : Sym2 (Site 2)}
     (h : bdEdge (S ∩ T) e) : bdEdge S e ∨ bdEdge T e := by
   induction e using Sym2.inductionOn with
   | _ u v =>
       simp only [bdEdge_mk, Set.mem_inter_iff] at h ⊢
       tauto
 
-theorem rlc_bdEdge_union {S T : Set (Site 2)} {e : Sym2 (Site 2)}
+lemma rlc_bdEdge_union {S T : Set (Site 2)} {e : Sym2 (Site 2)}
     (h : bdEdge (S ∪ T) e) : bdEdge S e ∨ bdEdge T e := by
   induction e using Sym2.inductionOn with
   | _ u v =>
       simp only [bdEdge_mk, Set.mem_union] at h ⊢
       tauto
 
+/-- The union of the strict regions above two right diagonal paths. -/
 def rlc_rightUpperUnionSet {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   rlc_strictTopSet gamma ∪ rlc_strictTopSet delta
 
-theorem rlc_rightUpperUnionSet_finite {n : ℤ}
+lemma rlc_rightUpperUnionSet_finite {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_rightUpperUnionSet gamma delta).Finite :=
   (rlc_strictTopSet_finite gamma).union
     (rlc_strictTopSet_finite delta)
 
-theorem rlc_rightUpperUnionSet_boundary_paths {n : ℤ}
+lemma rlc_rightUpperUnionSet_boundary_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect 0 (2 * n) (-n) n)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3312,9 +3180,7 @@ theorem rlc_rightUpperUnionSet_boundary_paths {n : ℤ}
   · exact Or.inl (rlc_strictTopSet_boundary_path gamma huR hvR hadj hgamma)
   · exact Or.inr (rlc_strictTopSet_boundary_path delta huR hvR hadj hdelta)
 
-
-
-theorem rlc_rightUpperUnionSet_exit_mem_paths {n : ℤ}
+lemma rlc_rightUpperUnionSet_exit_mem_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_rightUpperUnionSet gamma delta)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3341,17 +3207,18 @@ theorem rlc_rightUpperUnionSet_exit_mem_paths {n : ℤ}
         (rlc_strictTopSet_disjoint_path delta)) huDelta huP)
     · exact Or.inr hvP
 
+/-- The union of the strict regions below two left diagonal paths. -/
 def rlc_leftLowerUnionSet {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) : Set (Site 2) :=
   rlc_strictBottomSet gamma ∪ rlc_strictBottomSet delta
 
-theorem rlc_leftLowerUnionSet_finite {n : ℤ}
+lemma rlc_leftLowerUnionSet_finite {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) :
     (rlc_leftLowerUnionSet gamma delta).Finite :=
   (rlc_strictBottomSet_finite gamma).union
     (rlc_strictBottomSet_finite delta)
 
-theorem rlc_leftLowerUnionSet_boundary_paths {n : ℤ}
+lemma rlc_leftLowerUnionSet_boundary_paths {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect (-2 * n) 0 (-n) n)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -3363,7 +3230,7 @@ theorem rlc_leftLowerUnionSet_boundary_paths {n : ℤ}
   · exact Or.inl (rlc_strictBottomSet_boundary_path gamma huR hvR hadj hgamma)
   · exact Or.inr (rlc_strictBottomSet_boundary_path delta huR hvR hadj hdelta)
 
-theorem rlc_leftLowerUnionSet_exit_mem_paths {n : ℤ}
+lemma rlc_leftLowerUnionSet_exit_mem_paths {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_leftLowerUnionSet gamma delta)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -3390,20 +3257,18 @@ theorem rlc_leftLowerUnionSet_exit_mem_paths {n : ℤ}
         (rlc_strictBottomSet_disjoint_path delta)) huDelta huP)
     · exact Or.inr hvP
 
-
-
-
+/-- The intersection of the strict regions below two right diagonal paths. -/
 def rlc_commonStrictBelowSet {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   rlc_strictBelowSet gamma ∩ rlc_strictBelowSet delta
 
-theorem rlc_commonStrictBelowSet_finite {n : ℤ}
+lemma rlc_commonStrictBelowSet_finite {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_commonStrictBelowSet gamma delta).Finite :=
   (rlc_strictBelowSet_finite gamma).inter_of_left
     (rlc_strictBelowSet delta)
 
-theorem rlc_bottom_mem_commonStrictBelowSet {n : ℤ}
+lemma rlc_bottom_mem_commonStrictBelowSet {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {z : Site 2}
     (hz : z ∈ bottomSide 0 (2 * n) (-n) n)
     (hgamma : z ∉ rlc_pathVertices gamma.1)
@@ -3412,7 +3277,7 @@ theorem rlc_bottom_mem_commonStrictBelowSet {n : ℤ}
   exact ⟨⟨z, hz, hgamma, SimpleGraph.Reachable.refl z⟩,
     ⟨z, hz, hdelta, SimpleGraph.Reachable.refl z⟩⟩
 
-theorem rlc_topSide_disjoint_commonStrictBelowSet {n : ℤ} (hn : 0 < n)
+lemma rlc_topSide_disjoint_commonStrictBelowSet {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) :
     Disjoint (topSide 0 (2 * n) (-n) n)
       (rlc_commonStrictBelowSet gamma delta) := by
@@ -3421,9 +3286,7 @@ theorem rlc_topSide_disjoint_commonStrictBelowSet {n : ℤ} (hn : 0 < n)
   exact (Set.disjoint_left.mp (rlc_topSide_disjoint_strictBelowSet hn gamma))
     hzTop hzCommon.1
 
-
-
-theorem rlc_commonStrictBelowSet_boundary_paths {n : ℤ}
+lemma rlc_commonStrictBelowSet_boundary_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect 0 (2 * n) (-n) n)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3435,9 +3298,7 @@ theorem rlc_commonStrictBelowSet_boundary_paths {n : ℤ}
   · exact Or.inl (rlc_strictBelowSet_boundary_path gamma huR hvR hadj hgamma)
   · exact Or.inr (rlc_strictBelowSet_boundary_path delta huR hvR hadj hdelta)
 
-
-
-
+/-- The lattice graph on the right rectangle with the sites of both paths removed. -/
 def rlc_rightPairAvoidGraph {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : SimpleGraph (Site 2) where
   Adj u v := (hypercubicLattice 2).Adj u v ∧
@@ -3451,7 +3312,7 @@ def rlc_rightPairAvoidGraph {n : ℤ}
       h.2.2.2.1, h.2.2.2.2.2.2, h.2.2.2.2.2.1⟩
   loopless := ⟨fun u h => (hypercubicLattice 2).irrefl h.1⟩
 
-theorem rlc_rightPairAvoidGraph_walk_dest {n : ℤ}
+lemma rlc_rightPairAvoidGraph_walk_dest {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {x z : Site 2}
     (hxR : x ∈ rect 0 (2 * n) (-n) n)
     (hxGamma : x ∉ rlc_pathVertices gamma.1)
@@ -3465,9 +3326,7 @@ theorem rlc_rightPairAvoidGraph_walk_dest {n : ℤ}
   | @cons a b c hab w ih =>
       exact ih hab.2.2.1 hab.2.2.2.2.1 hab.2.2.2.2.2.2
 
-
-
-
+/-- The sites reachable from the bottom side while avoiding both right diagonal paths. -/
 def rlc_jointBottomSet {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   {z | ∃ x : Site 2, x ∈ bottomSide 0 (2 * n) (-n) n ∧
@@ -3475,7 +3334,7 @@ def rlc_jointBottomSet {n : ℤ}
     x ∉ rlc_pathVertices delta.1 ∧
     (rlc_rightPairAvoidGraph gamma delta).Reachable x z}
 
-theorem rlc_jointBottomSet_subset_box {n : ℤ}
+lemma rlc_jointBottomSet_subset_box {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_jointBottomSet gamma delta ⊆ rect 0 (2 * n) (-n) n := by
   rintro z ⟨x, hxBottom, hxGamma, hxDelta, hreach⟩
@@ -3483,15 +3342,13 @@ theorem rlc_jointBottomSet_subset_box {n : ℤ}
   exact (rlc_rightPairAvoidGraph_walk_dest gamma delta
     hxBottom.1 hxGamma hxDelta w).1
 
-
-
-theorem rlc_jointBottomSet_finite {n : ℤ}
+lemma rlc_jointBottomSet_finite {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_jointBottomSet gamma delta).Finite :=
   (rect_finite 0 (2 * n) (-n) n).subset
     (rlc_jointBottomSet_subset_box gamma delta)
 
-theorem rlc_jointBottomSet_disjoint_paths {n : ℤ}
+lemma rlc_jointBottomSet_disjoint_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     Disjoint (rlc_jointBottomSet gamma delta)
       ((rlc_pathVertices gamma.1 : Set (Site 2)) ∪
@@ -3503,9 +3360,7 @@ theorem rlc_jointBottomSet_disjoint_paths {n : ℤ}
     hxBottom.1 hxGamma hxDelta w
   exact hzPath.elim hz.2.1 hz.2.2
 
-
-
-theorem rlc_jointBottomSet_subset_commonStrictBelowSet {n : ℤ}
+lemma rlc_jointBottomSet_subset_commonStrictBelowSet {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_jointBottomSet gamma delta ⊆
       rlc_commonStrictBelowSet gamma delta := by
@@ -3530,9 +3385,7 @@ theorem rlc_jointBottomSet_subset_commonStrictBelowSet {n : ℤ}
   exact ⟨⟨x, hxBottom, hxGamma, ⟨wg⟩⟩,
     ⟨x, hxBottom, hxDelta, ⟨wd⟩⟩⟩
 
-
-
-theorem rlc_jointBottomSet_exit_mem_paths {n : ℤ}
+lemma rlc_jointBottomSet_exit_mem_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_jointBottomSet gamma delta)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3549,10 +3402,7 @@ theorem rlc_jointBottomSet_exit_mem_paths {n : ℤ}
       huData.2.2, hvPath.2⟩
   exact hv ⟨x, hxBottom, hxGamma, hxDelta, ⟨w.concat hstep⟩⟩
 
-
-
-
-theorem rlc_jointBottomSet_boundary_trace_safe {n : ℤ} (hn : 0 < n)
+lemma rlc_jointBottomSet_boundary_trace_safe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_jointBottomSet gamma delta)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3589,9 +3439,7 @@ theorem rlc_jointBottomSet_boundary_trace_safe {n : ℤ} (hn : 0 < n)
     · exact (Set.disjoint_left.mp
         (rlc_strictTopSet_disjoint_path delta)) hvTopDelta hvDelta
 
-
-
-theorem rlc_jointBottomSet_exit_mem_paths_and_safe {n : ℤ} (hn : 0 < n)
+lemma rlc_jointBottomSet_exit_mem_paths_and_safe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (hu : u ∈ rlc_jointBottomSet gamma delta)
     (hvR : v ∈ rect 0 (2 * n) (-n) n)
@@ -3605,9 +3453,7 @@ theorem rlc_jointBottomSet_exit_mem_paths_and_safe {n : ℤ} (hn : 0 < n)
   exact ⟨hvPath, rlc_jointBottomSet_boundary_trace_safe
     hn gamma delta hu hvR hadj hvPath⟩
 
-
-
-
+/-- The path sites adjacent to the joint bottom region. -/
 def rlc_jointBottomTraceBoundary {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   {v | v ∈ rect 0 (2 * n) (-n) n ∧
@@ -3616,7 +3462,7 @@ def rlc_jointBottomTraceBoundary {n : ℤ}
     ∃ u, u ∈ rlc_jointBottomSet gamma delta ∧
       (hypercubicLattice 2).Adj u v}
 
-theorem rlc_jointBottomTraceBoundary_subset_paths {n : ℤ}
+lemma rlc_jointBottomTraceBoundary_subset_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_jointBottomTraceBoundary gamma delta ⊆
       (rlc_pathVertices gamma.1 : Set (Site 2)) ∪
@@ -3624,17 +3470,14 @@ theorem rlc_jointBottomTraceBoundary_subset_paths {n : ℤ}
   rintro v ⟨_vR, hvPath, _u, _hu, _hadj⟩
   exact hvPath
 
-
-theorem rlc_jointBottomTraceBoundary_finite {n : ℤ}
+lemma rlc_jointBottomTraceBoundary_finite {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_jointBottomTraceBoundary gamma delta).Finite :=
   ((rlc_pathVertices gamma.1 ∪ rlc_pathVertices delta.1).finite_toSet).subset (by
     intro v hv
     simpa using rlc_jointBottomTraceBoundary_subset_paths gamma delta hv)
 
-
-
-theorem rlc_jointBottomTraceBoundary_safe {n : ℤ} (hn : 0 < n)
+lemma rlc_jointBottomTraceBoundary_safe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) {v : Site 2}
     (hv : v ∈ rlc_jointBottomTraceBoundary gamma delta) :
     v ∉ rlc_rightUpperUnionSet gamma delta := by
@@ -3642,8 +3485,7 @@ theorem rlc_jointBottomTraceBoundary_safe {n : ℤ} (hn : 0 < n)
   exact rlc_jointBottomSet_boundary_trace_safe
     hn gamma delta hu hvR hadj hvPath
 
-
-theorem rlc_bottomTraceVertex_safe {n : ℤ} (hn : 0 < n)
+lemma rlc_bottomTraceVertex_safe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) {v : Site 2}
     (hvBottom : v ∈ bottomSide 0 (2 * n) (-n) n)
     (_hvPath : v ∈ rlc_pathVertices gamma.1 ∨
@@ -3668,11 +3510,7 @@ theorem rlc_bottomTraceVertex_safe {n : ℤ} (hn : 0 < n)
         (rlc_strictTopSet_disjoint_strictBelowSet hn delta))
           hvTopDelta hvBelowDelta
 
-
-
-
-
-
+/-- The frontier of the joint bottom region along the union of the two paths. -/
 def rlc_jointBottomTraceFrontier {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   rlc_jointBottomTraceBoundary gamma delta ∪
@@ -3680,7 +3518,7 @@ def rlc_jointBottomTraceFrontier {n : ℤ}
       ((rlc_pathVertices gamma.1 : Set (Site 2)) ∪
         rlc_pathVertices delta.1))
 
-theorem rlc_jointBottomTraceFrontier_subset_paths {n : ℤ}
+lemma rlc_jointBottomTraceFrontier_subset_paths {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_jointBottomTraceFrontier gamma delta ⊆
       (rlc_pathVertices gamma.1 : Set (Site 2)) ∪
@@ -3689,15 +3527,14 @@ theorem rlc_jointBottomTraceFrontier_subset_paths {n : ℤ}
   · exact rlc_jointBottomTraceBoundary_subset_paths gamma delta hvBoundary
   · exact hvPath
 
-theorem rlc_jointBottomTraceFrontier_finite {n : ℤ}
+lemma rlc_jointBottomTraceFrontier_finite {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_jointBottomTraceFrontier gamma delta).Finite :=
   ((rlc_pathVertices gamma.1 ∪ rlc_pathVertices delta.1).finite_toSet).subset (by
     intro v hv
     simpa using rlc_jointBottomTraceFrontier_subset_paths gamma delta hv)
 
-
-theorem rlc_jointBottomTraceFrontier_safe {n : ℤ} (hn : 0 < n)
+lemma rlc_jointBottomTraceFrontier_safe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) {v : Site 2}
     (hv : v ∈ rlc_jointBottomTraceFrontier gamma delta) :
     v ∉ rlc_rightUpperUnionSet gamma delta := by
@@ -3705,18 +3542,18 @@ theorem rlc_jointBottomTraceFrontier_safe {n : ℤ} (hn : 0 < n)
   · exact rlc_jointBottomTraceBoundary_safe hn gamma delta hvBoundary
   · exact rlc_bottomTraceVertex_safe hn gamma delta hvBottom hvPath
 
-
+/-- The intersection of the strict regions above two left diagonal paths. -/
 def rlc_commonStrictAboveSet {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) : Set (Site 2) :=
   rlc_strictAboveSet gamma ∩ rlc_strictAboveSet delta
 
-theorem rlc_commonStrictAboveSet_finite {n : ℤ}
+lemma rlc_commonStrictAboveSet_finite {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) :
     (rlc_commonStrictAboveSet gamma delta).Finite :=
   (rlc_strictAboveSet_finite gamma).inter_of_left
     (rlc_strictAboveSet delta)
 
-theorem rlc_top_mem_commonStrictAboveSet {n : ℤ}
+lemma rlc_top_mem_commonStrictAboveSet {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {z : Site 2}
     (hz : z ∈ topSide (-2 * n) 0 (-n) n)
     (hgamma : z ∉ rlc_pathVertices gamma.1)
@@ -3725,7 +3562,7 @@ theorem rlc_top_mem_commonStrictAboveSet {n : ℤ}
   exact ⟨⟨z, hz, hgamma, SimpleGraph.Reachable.refl z⟩,
     ⟨z, hz, hdelta, SimpleGraph.Reachable.refl z⟩⟩
 
-theorem rlc_leftBottomSide_disjoint_commonStrictAboveSet {n : ℤ}
+lemma rlc_leftBottomSide_disjoint_commonStrictAboveSet {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcLeftDiagonalPath n) :
     Disjoint (bottomSide (-2 * n) 0 (-n) n)
       (rlc_commonStrictAboveSet gamma delta) := by
@@ -3734,7 +3571,7 @@ theorem rlc_leftBottomSide_disjoint_commonStrictAboveSet {n : ℤ}
   exact (Set.disjoint_left.mp
     (rlc_leftBottomSide_disjoint_strictAboveSet hn gamma)) hzBottom hzCommon.1
 
-theorem rlc_commonStrictAboveSet_boundary_paths {n : ℤ}
+lemma rlc_commonStrictAboveSet_boundary_paths {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {u v : Site 2}
     (huR : u ∈ rect (-2 * n) 0 (-n) n)
     (hvR : v ∈ rect (-2 * n) 0 (-n) n)
@@ -3746,62 +3583,64 @@ theorem rlc_commonStrictAboveSet_boundary_paths {n : ℤ}
   · exact Or.inl (rlc_strictAboveSet_boundary_path gamma huR hvR hadj hgamma)
   · exact Or.inr (rlc_strictAboveSet_boundary_path delta huR hvR hadj hdelta)
 
+/-- The strict region below a right diagonal path, as a `Finset`. -/
 noncomputable def rlc_strictBelowVertices {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Finset (Site 2) :=
   (rlc_strictBelowSet_finite gamma).toFinset
 
+/-- The strict region above a left diagonal path, as a `Finset`. -/
 noncomputable def rlc_strictAboveVertices {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Finset (Site 2) :=
   (rlc_strictAboveSet_finite gamma).toFinset
 
+/-- The strict region above a right diagonal path, as a `Finset`. -/
 noncomputable def rlc_strictTopVertices {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Finset (Site 2) :=
   (rlc_strictTopSet_finite gamma).toFinset
 
+/-- The strict region below a left diagonal path, as a `Finset`. -/
 noncomputable def rlc_strictBottomVertices {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Finset (Site 2) :=
   (rlc_strictBottomSet_finite gamma).toFinset
 
-@[simp] theorem rlc_mem_strictBelowVertices {n : ℤ}
+@[simp] lemma rlc_mem_strictBelowVertices {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {z : Site 2} :
     z ∈ rlc_strictBelowVertices gamma ↔ z ∈ rlc_strictBelowSet gamma := by
   simp [rlc_strictBelowVertices]
 
-@[simp] theorem rlc_mem_strictAboveVertices {n : ℤ}
+@[simp] lemma rlc_mem_strictAboveVertices {n : ℤ}
     {gamma : RlcLeftDiagonalPath n} {z : Site 2} :
     z ∈ rlc_strictAboveVertices gamma ↔ z ∈ rlc_strictAboveSet gamma := by
   simp [rlc_strictAboveVertices]
 
-@[simp] theorem rlc_mem_strictTopVertices {n : ℤ}
+@[simp] lemma rlc_mem_strictTopVertices {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {z : Site 2} :
     z ∈ rlc_strictTopVertices gamma ↔ z ∈ rlc_strictTopSet gamma := by
   simp [rlc_strictTopVertices]
 
-@[simp] theorem rlc_mem_strictBottomVertices {n : ℤ}
+@[simp] lemma rlc_mem_strictBottomVertices {n : ℤ}
     {gamma : RlcLeftDiagonalPath n} {z : Site 2} :
     z ∈ rlc_strictBottomVertices gamma ↔ z ∈ rlc_strictBottomSet gamma := by
   simp [rlc_strictBottomVertices]
 
-
-
+/-- Path `delta` lies in the strict region below path `gamma`. -/
 def rlc_rightPathStrictlyBelow {n : ℤ}
     (delta gamma : RlcRightDiagonalPath n) : Prop :=
   (rlc_pathVertices delta.1 : Set (Site 2)) ⊆ rlc_strictBelowSet gamma
 
-
-
+/-- Path `delta` lies in the strict region above path `gamma`. -/
 def rlc_leftPathStrictlyAbove {n : ℤ}
     (delta gamma : RlcLeftDiagonalPath n) : Prop :=
   (rlc_pathVertices delta.1 : Set (Site 2)) ⊆ rlc_strictAboveSet gamma
 
-theorem rlc_path_start_mem_vertices {a b c d : ℤ}
+lemma rlc_path_start_mem_vertices {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) :
     (gamma.1 : Site 2) ∈ rlc_pathVertices gamma := by
   simp only [rlc_pathVertices, Finset.mem_image, List.mem_toFinset]
   exact ⟨⟨(gamma.1 : Site 2), leftSide_subset gamma.1.2⟩,
     gamma.2.2.1.start_mem_support, rfl⟩
 
-theorem rlc_rightPathStrictlyBelow_irrefl {n : ℤ}
+lemma rlc_rightPathStrictlyBelow_irrefl {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     ¬ rlc_rightPathStrictlyBelow gamma gamma := by
   intro h
@@ -3809,7 +3648,7 @@ theorem rlc_rightPathStrictlyBelow_irrefl {n : ℤ}
   exact (Set.disjoint_left.mp (rlc_strictBelowSet_disjoint_path gamma))
     (h hstart) hstart
 
-theorem rlc_leftPathStrictlyAbove_irrefl {n : ℤ}
+lemma rlc_leftPathStrictlyAbove_irrefl {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     ¬ rlc_leftPathStrictlyAbove gamma gamma := by
   intro h
@@ -3817,15 +3656,20 @@ theorem rlc_leftPathStrictlyAbove_irrefl {n : ℤ}
   exact (Set.disjoint_left.mp (rlc_strictAboveSet_disjoint_path gamma))
     (h hstart) hstart
 
+/-! ## D. Lowest and highest open paths -/
+
+/-- The sites of the right rectangle on or below a right diagonal path (the explored region of a
+  lowest-path exploration). -/
 noncomputable def rlc_rightExploredVertices {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Finset (Site 2) :=
   rlc_rectFinset 0 (2 * n) (-n) n \ rlc_strictTopVertices gamma
 
+/-- The sites of the left rectangle on or above a left diagonal path. -/
 noncomputable def rlc_leftExploredVertices {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Finset (Site 2) :=
   rlc_rectFinset (-2 * n) 0 (-n) n \ rlc_strictBottomVertices gamma
 
-theorem rlc_rightPathVertex_mem_explored {n : ℤ}
+lemma rlc_rightPathVertex_mem_explored {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma.1) :
     z ∈ rlc_rightExploredVertices gamma := by
@@ -3833,12 +3677,12 @@ theorem rlc_rightPathVertex_mem_explored {n : ℤ}
   constructor
   · simp only [rlc_pathVertices, Finset.mem_image, List.mem_toFinset] at hz
     obtain ⟨u, _hu, rfl⟩ := hz
-    simpa using u.2
+    simp
   · intro hzTop
     exact (Set.disjoint_left.mp (rlc_strictTopSet_disjoint_path gamma))
       (by simpa using hzTop) hz
 
-theorem rlc_leftPathVertex_mem_explored {n : ℤ}
+lemma rlc_leftPathVertex_mem_explored {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma.1) :
     z ∈ rlc_leftExploredVertices gamma := by
@@ -3851,53 +3695,56 @@ theorem rlc_leftPathVertex_mem_explored {n : ℤ}
     exact (Set.disjoint_left.mp (rlc_strictBottomSet_disjoint_path gamma))
       (by simpa using hzBottom) hz
 
+/-- An enumeration index of right diagonal paths, used to break ties. -/
 noncomputable def rlc_rightPathIndex {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : ℕ :=
   (Fintype.equivFin (RlcRightDiagonalPath n) gamma).val
 
+/-- An enumeration index of left diagonal paths, used to break ties. -/
 noncomputable def rlc_leftPathIndex {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : ℕ :=
   (Fintype.equivFin (RlcLeftDiagonalPath n) gamma).val
 
+/-- The rank of a right diagonal path: size of its explored region, with the index as tie-
+  breaker. -/
 noncomputable def rlc_rightPathRank {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : ℕ :=
   (rlc_rightExploredVertices gamma).card *
       Fintype.card (RlcRightDiagonalPath n) + rlc_rightPathIndex gamma
 
+/-- The rank of a left diagonal path: size of its explored region, with the index as tie-breaker. -/
 noncomputable def rlc_leftPathRank {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : ℕ :=
   (rlc_leftExploredVertices gamma).card *
       Fintype.card (RlcLeftDiagonalPath n) + rlc_leftPathIndex gamma
 
-
-
-
+/-- Path `delta` is below path `gamma`: its explored region is a strict subset. -/
 def rlc_rightPathBelow {n : ℤ}
     (delta gamma : RlcRightDiagonalPath n) : Prop :=
   rlc_rightExploredVertices delta ⊂ rlc_rightExploredVertices gamma ∨
     (rlc_rightExploredVertices delta = rlc_rightExploredVertices gamma ∧
       rlc_rightPathIndex delta < rlc_rightPathIndex gamma)
 
-
+/-- Path `delta` is above path `gamma`: its explored region is a strict subset. -/
 def rlc_leftPathAbove {n : ℤ}
     (delta gamma : RlcLeftDiagonalPath n) : Prop :=
   rlc_leftExploredVertices delta ⊂ rlc_leftExploredVertices gamma ∨
     (rlc_leftExploredVertices delta = rlc_leftExploredVertices gamma ∧
       rlc_leftPathIndex delta < rlc_leftPathIndex gamma)
 
-theorem rlc_rightPathBelow_irrefl {n : ℤ}
+lemma rlc_rightPathBelow_irrefl {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : ¬ rlc_rightPathBelow gamma gamma := by
   rintro (h | h)
   · exact (Finset.ssubset_iff_subset_ne.mp h).2 rfl
   · exact (lt_irrefl _ h.2)
 
-theorem rlc_leftPathAbove_irrefl {n : ℤ}
+lemma rlc_leftPathAbove_irrefl {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : ¬ rlc_leftPathAbove gamma gamma := by
   rintro (h | h)
   · exact (Finset.ssubset_iff_subset_ne.mp h).2 rfl
   · exact (lt_irrefl _ h.2)
 
-theorem rlc_rightPathBelow_rank_lt {n : ℤ}
+lemma rlc_rightPathBelow_rank_lt {n : ℤ}
     {delta gamma : RlcRightDiagonalPath n}
     (h : rlc_rightPathBelow delta gamma) :
     rlc_rightPathRank delta < rlc_rightPathRank gamma := by
@@ -3925,7 +3772,7 @@ theorem rlc_rightPathBelow_rank_lt {n : ℤ}
     rw [heq.1]
     exact Nat.add_lt_add_left heq.2 _
 
-theorem rlc_leftPathAbove_rank_lt {n : ℤ}
+lemma rlc_leftPathAbove_rank_lt {n : ℤ}
     {delta gamma : RlcLeftDiagonalPath n}
     (h : rlc_leftPathAbove delta gamma) :
     rlc_leftPathRank delta < rlc_leftPathRank gamma := by
@@ -3953,7 +3800,7 @@ theorem rlc_leftPathAbove_rank_lt {n : ℤ}
     rw [heq.1]
     exact Nat.add_lt_add_left heq.2 _
 
-theorem rlc_pathEdge_endpoints_mem_vertices {a b c d : ℤ}
+lemma rlc_pathEdge_endpoints_mem_vertices {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) {x y : Site 2}
     (he : s(x, y) ∈ rlc_pathEdges gamma) :
     x ∈ rlc_pathVertices gamma ∧ y ∈ rlc_pathVertices gamma := by
@@ -3978,17 +3825,14 @@ theorem rlc_pathEdge_endpoints_mem_vertices {a b c d : ℤ}
       · simp only [rlc_pathVertices, Finset.mem_image, List.mem_toFinset]
         exact ⟨u, gamma.2.2.1.fst_mem_support_of_mem_edges he, rfl⟩
 
-
-theorem rlc_pathVertex_mem_rect {a b c d : ℤ}
+lemma rlc_pathVertex_mem_rect {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma) : z ∈ rect a b c d := by
   simp only [rlc_pathVertices, Finset.mem_image, List.mem_toFinset] at hz
   obtain ⟨u, hu, rfl⟩ := hz
   exact u.2
 
-
-
-theorem rlc_rightSide_strictTop_height_gt {n : ℤ} (hn : 0 < n)
+lemma rlc_rightSide_strictTop_height_gt {n : ℤ} (_hn : 0 < n)
     (gamma : RlcRightDiagonalPath n)
     (z : rightSide 0 (2 * n) (-n) n)
     (hzTop : (z : Site 2) ∈ rlc_strictTopSet gamma) :
@@ -4136,11 +3980,7 @@ theorem rlc_rightSide_strictTop_height_gt {n : ℤ} (hn : 0 < n)
         hqx ▸ hqPath
       simpa [x] using hxPath'
 
-
-
-
-
-theorem rlc_right_endpoints_not_both_unsafe {n : ℤ} (hn : 0 < n)
+lemma rlc_right_endpoints_not_both_unsafe {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) :
     ¬ ((gamma.1.2.1 : Site 2) ∈ rlc_rightUpperUnionSet gamma delta ∧
       (delta.1.2.1 : Site 2) ∈ rlc_rightUpperUnionSet gamma delta) := by
@@ -4173,18 +4013,15 @@ theorem rlc_right_endpoints_not_both_unsafe {n : ℤ} (hn : 0 < n)
     delta.1.2.1 hdeltaTopGamma
   omega
 
-
-
-theorem rlc_exists_safe_right_endpoint {n : ℤ} (hn : 0 < n)
+lemma rlc_exists_safe_right_endpoint {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) :
     (gamma.1.2.1 : Site 2) ∉ rlc_rightUpperUnionSet gamma delta ∨
       (delta.1.2.1 : Site 2) ∉ rlc_rightUpperUnionSet gamma delta := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact rlc_right_endpoints_not_both_unsafe hn gamma delta h
 
-
-theorem rlc_pathEdge_lattice {a b c d : ℤ}
+lemma rlc_pathEdge_lattice {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) {x y : Site 2}
     (he : s(x, y) ∈ rlc_pathEdges gamma) :
     (hypercubicLattice 2).Adj x y := by
@@ -4200,9 +4037,7 @@ theorem rlc_pathEdge_lattice {a b c d : ℤ}
       · exact hadj
       · exact hadj.symm
 
-
-
-theorem rlc_walk_pred_constant {V : Type*} {G : SimpleGraph V} {a b : V}
+lemma rlc_walk_pred_constant {V : Type*} {G : SimpleGraph V} {a b : V}
     (p : G.Walk a b) (P : V → Prop)
     (hstep : ∀ {u v : V}, s(u, v) ∈ p.edges → (P u ↔ P v))
     {z : V} (hz : z ∈ p.support) : P z ↔ P a := by
@@ -4220,11 +4055,7 @@ theorem rlc_walk_pred_constant {V : Type*} {G : SimpleGraph V} {a b : V}
           simpa using Or.inr he
         exact (ih htail hz).trans (hstep (by simp)).symm
 
-
-
-
-
-theorem rlc_strictTopSet_mem_iff_walk_start_of_avoids {n : ℤ}
+lemma rlc_strictTopSet_mem_iff_walk_start_of_avoids {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {a b : Site 2}
     (p : (hypercubicLattice 2).Walk a b)
     (hbox : ∀ z ∈ p.support, z ∈ rect 0 (2 * n) (-n) n)
@@ -4244,9 +4075,7 @@ theorem rlc_strictTopSet_mem_iff_walk_start_of_avoids {n : ℤ}
         (p.adj_of_mem_edges he).symm
   · exact hz
 
-
-
-theorem rlc_strictBelowSet_mem_iff_walk_start_of_avoids {n : ℤ}
+lemma rlc_strictBelowSet_mem_iff_walk_start_of_avoids {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {a b : Site 2}
     (p : (hypercubicLattice 2).Walk a b)
     (hbox : ∀ z ∈ p.support, z ∈ rect 0 (2 * n) (-n) n)
@@ -4266,8 +4095,7 @@ theorem rlc_strictBelowSet_mem_iff_walk_start_of_avoids {n : ℤ}
         (p.adj_of_mem_edges he).symm
   · exact hz
 
-
-theorem rlc_strictTopSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
+lemma rlc_strictTopSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
     (gamma : RlcRightDiagonalPath n)
     {a b : rect 0 (2 * n) (-n) n}
     (p : ((hypercubicLattice 2).induce
@@ -4291,9 +4119,7 @@ theorem rlc_strictTopSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
         (p.adj_of_mem_edges he).symm
   · exact hz
 
-
-
-theorem rlc_strictBelowSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
+lemma rlc_strictBelowSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
     (gamma : RlcRightDiagonalPath n)
     {a b : rect 0 (2 * n) (-n) n}
     (p : ((hypercubicLattice 2).induce
@@ -4317,9 +4143,7 @@ theorem rlc_strictBelowSet_mem_iff_rectWalk_start_of_avoids {n : ℤ}
         (p.adj_of_mem_edges he).symm
   · exact hz
 
-
-
-theorem rlc_strictTopSet_mem_iff_path_start_of_disjoint {n : ℤ}
+lemma rlc_strictTopSet_mem_iff_path_start_of_disjoint {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -4351,7 +4175,7 @@ theorem rlc_strictTopSet_mem_iff_path_start_of_disjoint {n : ℤ}
       exact rlc_strictTopSet_step gamma hvTop u.2 huNot
         (rlc_pathEdge_lattice delta.1 heAmb).symm
 
-theorem rlc_strictBottomSet_mem_iff_path_start_of_disjoint {n : ℤ}
+lemma rlc_strictBottomSet_mem_iff_path_start_of_disjoint {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -4383,9 +4207,7 @@ theorem rlc_strictBottomSet_mem_iff_path_start_of_disjoint {n : ℤ}
       exact rlc_strictBottomSet_step gamma hvBottom u.2 huNot
         (rlc_pathEdge_lattice delta.1 heAmb).symm
 
-
-
-theorem rlc_rightPathEdge_enter_strictTop_common {n : ℤ}
+lemma rlc_rightPathEdge_enter_strictTop_common {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges gamma.1)
     (hu : u ∉ rlc_strictTopSet delta)
@@ -4403,9 +4225,7 @@ theorem rlc_rightPathEdge_enter_strictTop_common {n : ℤ}
   · exact False.elim ((Set.disjoint_left.mp
       (rlc_strictTopSet_disjoint_path delta)) hv hvDelta)
 
-
-
-theorem rlc_rightPathEdge_exit_strictTop_common {n : ℤ}
+lemma rlc_rightPathEdge_exit_strictTop_common {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges gamma.1)
     (hu : u ∈ rlc_strictTopSet delta)
@@ -4423,7 +4243,7 @@ theorem rlc_rightPathEdge_exit_strictTop_common {n : ℤ}
       (rlc_strictTopSet_disjoint_path delta)) hu huDelta)
   · exact hvDelta
 
-theorem rlc_leftPathEdge_enter_strictBottom_common {n : ℤ}
+lemma rlc_leftPathEdge_enter_strictBottom_common {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges gamma.1)
     (hu : u ∉ rlc_strictBottomSet delta)
@@ -4441,7 +4261,7 @@ theorem rlc_leftPathEdge_enter_strictBottom_common {n : ℤ}
   · exact False.elim ((Set.disjoint_left.mp
       (rlc_strictBottomSet_disjoint_path delta)) hv hvDelta)
 
-theorem rlc_leftPathEdge_exit_strictBottom_common {n : ℤ}
+lemma rlc_leftPathEdge_exit_strictBottom_common {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges gamma.1)
     (hu : u ∈ rlc_strictBottomSet delta)
@@ -4459,15 +4279,17 @@ theorem rlc_leftPathEdge_exit_strictBottom_common {n : ℤ}
       (rlc_strictBottomSet_disjoint_path delta)) hu huDelta)
   · exact hvDelta
 
-
-
+/-- Configurations in `W i` but in no `W j` with `j` preceding `i`: the minimal-candidate
+  decomposition. -/
 noncomputable def rlc_rankedMinimalCandidate {I : Type*}
     (W : I → Set (ConfigSpace E)) (prec : I → I → Prop) (i : I) :
     Set (ConfigSpace E) := by
   classical
   exact W i \ ⋃ j : I, if prec j i then W j else ∅
 
-theorem rlc_iUnion_rankedMinimalCandidate {I : Type*} [Fintype I]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+lemma rlc_iUnion_rankedMinimalCandidate {I : Type*} [Fintype I]
     (W : I → Set (ConfigSpace E)) (prec : I → I → Prop) (rank : I → ℕ)
     (hrank : ∀ {j i}, prec j i → rank j < rank i) :
     (⋃ i, rlc_rankedMinimalCandidate W prec i) = ⋃ i, W i := by
@@ -4500,12 +4322,9 @@ theorem rlc_iUnion_rankedMinimalCandidate {I : Type*} [Fintype I]
       have hlt := hrank hji
       rw [hirank] at hlt
       exact (not_lt_of_ge hmin) hlt
-    · simpa [hji] using hj
+    · simp [hji] at hj
 
-
-
-
-
+/-- The edges of all right diagonal paths below the given one. -/
 noncomputable def rlc_rightLowerPathEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Finset (Sym2 (Site 2)) := by
   classical
@@ -4513,7 +4332,7 @@ noncomputable def rlc_rightLowerPathEdges {n : ℤ}
       rlc_rightPathBelow delta gamma).biUnion
         (fun delta => rlc_pathEdges delta.1)
 
-theorem rlc_mem_rightLowerPathEdges {n : ℤ}
+lemma rlc_mem_rightLowerPathEdges {n : ℤ}
     {gamma delta : RlcRightDiagonalPath n} {e : Sym2 (Site 2)}
     (hbelow : rlc_rightPathBelow delta gamma)
     (he : e ∈ rlc_pathEdges delta.1) :
@@ -4523,9 +4342,8 @@ theorem rlc_mem_rightLowerPathEdges {n : ℤ}
     Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨delta, hbelow, he⟩
 
-
-
-
+/-- The event that `gamma` is open and no right diagonal path below it is open: `gamma` is the
+  lowest open path. -/
 noncomputable def rlc_rightLowestCandidate {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     Set (ConfigSpace (Sym2 (Site 2))) := by
@@ -4533,13 +4351,12 @@ noncomputable def rlc_rightLowestCandidate {n : ℤ}
   exact rlc_pathOpen gamma.1 \ ⋃ delta : RlcRightDiagonalPath n,
     if rlc_rightPathBelow delta gamma then rlc_pathOpen delta.1 else ∅
 
+/-- The edges determining the lowest-candidate event of `gamma`. -/
 noncomputable def rlc_rightLowestCandidateEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) : Finset (Sym2 (Site 2)) :=
   rlc_pathEdges gamma.1 ∪ rlc_rightLowerPathEdges gamma
 
-
-
-theorem rlc_rightLowestCandidateEdges_subset {n : ℤ}
+lemma rlc_rightLowestCandidateEdges_subset {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     rlc_rightLowestCandidateEdges gamma ⊆
       edgesWithinFinset (rlc_rightExploredVertices gamma) := by
@@ -4563,13 +4380,13 @@ theorem rlc_rightLowestCandidateEdges_subset {n : ℤ}
               rlc_rightExploredVertices gamma := by
             rcases hbelow with hstrict | heq
             · exact (Finset.ssubset_iff_subset_ne.mp hstrict).1
-            · simpa [heq.1]
+            · simp [heq.1]
           constructor
           · exact hsub (rlc_rightPathVertex_mem_explored delta hends.1)
           · exact hsub (rlc_rightPathVertex_mem_explored delta hends.2)
       exact ⟨x, hxy.1, y, hxy.2, rfl⟩
 
-theorem rlc_rightLowestCandidate_dependsOn {n : ℤ}
+lemma rlc_rightLowestCandidate_dependsOn {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     DependsOn ((rlc_rightLowestCandidate gamma).indicator (fun _ => (1 : ℝ)))
       (rlc_rightLowestCandidateEdges gamma : Set (Sym2 (Site 2))) := by
@@ -4617,8 +4434,7 @@ theorem rlc_rightLowestCandidate_dependsOn {n : ℤ}
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-
-theorem rlc_iUnion_rightLowestCandidate (n : ℤ) :
+lemma rlc_iUnion_rightLowestCandidate (n : ℤ) :
     (⋃ gamma : RlcRightDiagonalPath n, rlc_rightLowestCandidate gamma) =
       rlc_rightDiagonal n := by
   calc
@@ -4630,8 +4446,7 @@ theorem rlc_iUnion_rightLowestCandidate (n : ℤ) :
           (fun h => rlc_rightPathBelow_rank_lt h))
     _ = rlc_rightDiagonal n := rlc_iUnion_rightDiagonalPath n
 
-
-
+/-- The edges of all left diagonal paths above the given one. -/
 noncomputable def rlc_leftUpperPathEdges {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Finset (Sym2 (Site 2)) := by
   classical
@@ -4639,7 +4454,7 @@ noncomputable def rlc_leftUpperPathEdges {n : ℤ}
       rlc_leftPathAbove delta gamma).biUnion
         (fun delta => rlc_pathEdges delta.1)
 
-theorem rlc_mem_leftUpperPathEdges {n : ℤ}
+lemma rlc_mem_leftUpperPathEdges {n : ℤ}
     {gamma delta : RlcLeftDiagonalPath n} {e : Sym2 (Site 2)}
     (habove : rlc_leftPathAbove delta gamma)
     (he : e ∈ rlc_pathEdges delta.1) :
@@ -4649,7 +4464,8 @@ theorem rlc_mem_leftUpperPathEdges {n : ℤ}
     Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨delta, habove, he⟩
 
-
+/-- The event that `gamma` is open and no left diagonal path above it is open: `gamma` is the
+  highest open path. -/
 noncomputable def rlc_leftHighestCandidate {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     Set (ConfigSpace (Sym2 (Site 2))) := by
@@ -4657,13 +4473,12 @@ noncomputable def rlc_leftHighestCandidate {n : ℤ}
   exact rlc_pathOpen gamma.1 \ ⋃ delta : RlcLeftDiagonalPath n,
     if rlc_leftPathAbove delta gamma then rlc_pathOpen delta.1 else ∅
 
+/-- The edges determining the highest-candidate event of `gamma`. -/
 noncomputable def rlc_leftHighestCandidateEdges {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) : Finset (Sym2 (Site 2)) :=
   rlc_pathEdges gamma.1 ∪ rlc_leftUpperPathEdges gamma
 
-
-
-theorem rlc_leftHighestCandidateEdges_subset {n : ℤ}
+lemma rlc_leftHighestCandidateEdges_subset {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     rlc_leftHighestCandidateEdges gamma ⊆
       edgesWithinFinset (rlc_leftExploredVertices gamma) := by
@@ -4687,15 +4502,15 @@ theorem rlc_leftHighestCandidateEdges_subset {n : ℤ}
               rlc_leftExploredVertices gamma := by
             rcases habove with hstrict | heq
             · exact (Finset.ssubset_iff_subset_ne.mp hstrict).1
-            · simpa [heq.1]
+            · simp [heq.1]
           constructor
           · exact hsub (rlc_leftPathVertex_mem_explored delta hends.1)
           · exact hsub (rlc_leftPathVertex_mem_explored delta hends.2)
-      show ∃ x' ∈ rlc_leftExploredVertices gamma,
+      change ∃ x' ∈ rlc_leftExploredVertices gamma,
         ∃ y' ∈ rlc_leftExploredVertices gamma, s(x, y) = s(x', y')
       exact ⟨x, hxy.1, y, hxy.2, rfl⟩
 
-theorem rlc_leftHighestCandidate_dependsOn {n : ℤ}
+lemma rlc_leftHighestCandidate_dependsOn {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) :
     DependsOn ((rlc_leftHighestCandidate gamma).indicator (fun _ => (1 : ℝ)))
       (rlc_leftHighestCandidateEdges gamma : Set (Sym2 (Site 2))) := by
@@ -4743,8 +4558,7 @@ theorem rlc_leftHighestCandidate_dependsOn {n : ℤ}
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-
-theorem rlc_iUnion_leftHighestCandidate (n : ℤ) :
+lemma rlc_iUnion_leftHighestCandidate (n : ℤ) :
     (⋃ gamma : RlcLeftDiagonalPath n, rlc_leftHighestCandidate gamma) =
       rlc_leftDiagonal n := by
   calc
@@ -4756,18 +4570,19 @@ theorem rlc_iUnion_leftHighestCandidate (n : ℤ) :
           (fun h => rlc_leftPathAbove_rank_lt h))
     _ = rlc_leftDiagonal n := rlc_iUnion_leftDiagonalPath n
 
-
+/-- The event that the pair is the lowest right and highest left open diagonal path. -/
 noncomputable def rlc_extremalPairCandidate {n : ℤ}
     (pair : RlcDiagonalPathPair n) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_rightLowestCandidate pair.1 ∩ rlc_leftHighestCandidate pair.2
 
+/-- The edges determining the extremal-pair event. -/
 noncomputable def rlc_extremalPairCandidateEdges {n : ℤ}
     (pair : RlcDiagonalPathPair n) : Finset (Sym2 (Site 2)) :=
   rlc_rightLowestCandidateEdges pair.1 ∪
     rlc_leftHighestCandidateEdges pair.2
 
-theorem rlc_extremalPairCandidate_dependsOn {n : ℤ}
+lemma rlc_extremalPairCandidate_dependsOn {n : ℤ}
     (pair : RlcDiagonalPathPair n) :
     DependsOn ((rlc_extremalPairCandidate pair).indicator (fun _ => (1 : ℝ)))
       (rlc_extremalPairCandidateEdges pair : Set (Sym2 (Site 2))) := by
@@ -4776,15 +4591,13 @@ theorem rlc_extremalPairCandidate_dependsOn {n : ℤ}
       dependsOn_inter (rlc_rightLowestCandidate_dependsOn pair.1)
         (rlc_leftHighestCandidate_dependsOn pair.2)
 
-theorem rlc_extremalPairCandidate_subset_pathPairOpen {n : ℤ}
+lemma rlc_extremalPairCandidate_subset_pathPairOpen {n : ℤ}
     (pair : RlcDiagonalPathPair n) :
     rlc_extremalPairCandidate pair ⊆ rlc_pathPairOpen pair := by
   rintro omega ⟨hright, hleft⟩
   exact ⟨hright.1, hleft.1⟩
 
-
-
-theorem rlc_iUnion_extremalPairCandidate (n : ℤ) :
+lemma rlc_iUnion_extremalPairCandidate (n : ℤ) :
     (⋃ pair : RlcDiagonalPathPair n, rlc_extremalPairCandidate pair) =
       rlc_rightDiagonal n ∩ rlc_leftDiagonal n := by
   ext omega
@@ -4803,7 +4616,7 @@ theorem rlc_iUnion_extremalPairCandidate (n : ℤ) :
     obtain ⟨delta, hdelta⟩ := Set.mem_iUnion.mp hleft
     exact Set.mem_iUnion.mpr ⟨(gamma, delta), hgamma, hdelta⟩
 
-theorem rlc_rightLowestCandidate_not_open_of_below {n : ℤ}
+lemma rlc_rightLowestCandidate_not_open_of_below {n : ℤ}
     {gamma delta : RlcRightDiagonalPath n}
     {omega : ConfigSpace (Sym2 (Site 2))}
     (hgamma : omega ∈ rlc_rightLowestCandidate gamma)
@@ -4813,7 +4626,7 @@ theorem rlc_rightLowestCandidate_not_open_of_below {n : ℤ}
   apply hgamma.2
   exact Set.mem_iUnion.mpr ⟨delta, by simp [hbelow, hdelta]⟩
 
-theorem rlc_leftHighestCandidate_not_open_of_above {n : ℤ}
+lemma rlc_leftHighestCandidate_not_open_of_above {n : ℤ}
     {gamma delta : RlcLeftDiagonalPath n}
     {omega : ConfigSpace (Sym2 (Site 2))}
     (hgamma : omega ∈ rlc_leftHighestCandidate gamma)
@@ -4823,7 +4636,9 @@ theorem rlc_leftHighestCandidate_not_open_of_above {n : ℤ}
   apply hgamma.2
   exact Set.mem_iUnion.mpr ⟨delta, by simp [habove, hdelta]⟩
 
+/-! ## E. Trace graphs of two paths -/
 
+/-- The graph on the right rectangle whose edges are the edges of two right diagonal paths. -/
 def rlc_rightTraceGraph {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     SimpleGraph (rect 0 (2 * n) (-n) n) where
@@ -4838,7 +4653,7 @@ def rlc_rightTraceGraph {n : ℤ}
     exact ⟨h.1.symm, by simpa [Sym2.eq_swap] using h.2⟩
   loopless := ⟨fun _ h => h.1.ne rfl⟩
 
-
+/-- The walk along `gamma` in the trace graph of `gamma` and `delta`. -/
 noncomputable def rlc_rightTraceGraph_walk_left {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_rightTraceGraph gamma delta).Walk
@@ -4855,7 +4670,7 @@ noncomputable def rlc_rightTraceGraph_walk_left {n : ℤ}
       exact ⟨gamma.1.2.2.1.adj_of_mem_edges he,
         Finset.mem_union_left _ heAmb⟩
 
-
+/-- The walk along `delta` in the trace graph of `gamma` and `delta`. -/
 noncomputable def rlc_rightTraceGraph_walk_right {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_rightTraceGraph gamma delta).Walk
@@ -4872,11 +4687,7 @@ noncomputable def rlc_rightTraceGraph_walk_right {n : ℤ}
       exact ⟨delta.1.2.2.1.adj_of_mem_edges he,
         Finset.mem_union_right _ heAmb⟩
 
-
-
-
-
-theorem rlc_rightTraceGraph_reachable_of_common {n : ℤ}
+lemma rlc_rightTraceGraph_reachable_of_common {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {z u v : rect 0 (2 * n) (-n) n}
     (hzGamma : z ∈ gamma.1.2.2.1.support)
@@ -4904,8 +4715,7 @@ theorem rlc_rightTraceGraph_reachable_of_common {n : ℤ}
     ⟨(pd.takeUntil z hzPd).reverse.append (pd.takeUntil v hvPd)⟩
   exact huz.trans hzv
 
-
-
+/-- The trace graph restricted to sites outside the strict regions above the two paths. -/
 def rlc_rightSafeTraceGraph {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     SimpleGraph (rect 0 (2 * n) (-n) n) where
@@ -4922,16 +4732,14 @@ def rlc_rightSafeTraceGraph {n : ℤ}
       h.2.2.2, h.2.2.1⟩
   loopless := ⟨fun _ h => h.1.ne rfl⟩
 
-theorem rlc_rightSafeTraceGraph_le_traceGraph {n : ℤ}
+lemma rlc_rightSafeTraceGraph_le_traceGraph {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightSafeTraceGraph gamma delta ≤
       rlc_rightTraceGraph gamma delta := by
   intro u v huv
   exact ⟨huv.1, huv.2.1⟩
 
-
-
-theorem rlc_jointBottomTraceBoundary_adj_safeTraceGraph {n : ℤ}
+lemma rlc_jointBottomTraceBoundary_adj_safeTraceGraph {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcRightDiagonalPath n)
     {u v : rect 0 (2 * n) (-n) n}
     (hu : (u : Site 2) ∈ rlc_jointBottomTraceBoundary gamma delta)
@@ -4944,10 +4752,7 @@ theorem rlc_jointBottomTraceBoundary_adj_safeTraceGraph {n : ℤ}
   ⟨hadj, he, rlc_jointBottomTraceBoundary_safe hn gamma delta hu,
     rlc_jointBottomTraceBoundary_safe hn gamma delta hv⟩
 
-
-
-
-theorem rlc_jointBottomTraceBoundary_walk_safe {n : ℤ}
+lemma rlc_jointBottomTraceBoundary_walk_safe {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcRightDiagonalPath n)
     {x y : rect 0 (2 * n) (-n) n}
     (w : (rlc_rightTraceGraph gamma delta).Walk x y)
@@ -4963,9 +4768,7 @@ theorem rlc_jointBottomTraceBoundary_walk_safe {n : ℤ}
         (hboundary u (w.fst_mem_support_of_mem_edges he))
         (hboundary v (w.snd_mem_support_of_mem_edges he)) huv.2 huv.1
 
-
-
-theorem rlc_jointBottomTraceFrontier_adj_safeTraceGraph {n : ℤ}
+lemma rlc_jointBottomTraceFrontier_adj_safeTraceGraph {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcRightDiagonalPath n)
     {u v : rect 0 (2 * n) (-n) n}
     (hu : (u : Site 2) ∈ rlc_jointBottomTraceFrontier gamma delta)
@@ -4978,9 +4781,7 @@ theorem rlc_jointBottomTraceFrontier_adj_safeTraceGraph {n : ℤ}
   ⟨hadj, he, rlc_jointBottomTraceFrontier_safe hn gamma delta hu,
     rlc_jointBottomTraceFrontier_safe hn gamma delta hv⟩
 
-
-
-theorem rlc_jointBottomTraceFrontier_walk_safe {n : ℤ}
+lemma rlc_jointBottomTraceFrontier_walk_safe {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcRightDiagonalPath n)
     {x y : rect 0 (2 * n) (-n) n}
     (w : (rlc_rightTraceGraph gamma delta).Walk x y)
@@ -4996,9 +4797,7 @@ theorem rlc_jointBottomTraceFrontier_walk_safe {n : ℤ}
         (hfrontier u (w.fst_mem_support_of_mem_edges he))
         (hfrontier v (w.snd_mem_support_of_mem_edges he)) huv.2 huv.1
 
-
-
-theorem rlc_rightSafeTraceGraph_reachable_iff_traceWalk_safe {n : ℤ}
+lemma rlc_rightSafeTraceGraph_reachable_iff_traceWalk_safe {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {u v : rect 0 (2 * n) (-n) n}
     (hu : (u : Site 2) ∉ rlc_rightUpperUnionSet gamma delta) :
@@ -5036,15 +4835,13 @@ theorem rlc_rightSafeTraceGraph_reachable_iff_traceWalk_safe {n : ℤ}
         have hb : b ∈ p.support := p.snd_mem_support_of_mem_edges he
         exact ⟨hab.1, hab.2, hp a ha, hp b hb⟩
 
-
-
-
+/-- The heights of the sites of the two paths on the left side. -/
 noncomputable def rlc_rightLeftTraceHeights {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Finset ℤ :=
   ((rlc_pathVertices gamma.1 ∪ rlc_pathVertices delta.1).filter
       (fun z => z 0 = 0)).image (fun z => z 1)
 
-theorem rlc_rightLeftTraceHeights_nonempty {n : ℤ}
+lemma rlc_rightLeftTraceHeights_nonempty {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_rightLeftTraceHeights gamma delta).Nonempty := by
   classical
@@ -5054,24 +4851,24 @@ theorem rlc_rightLeftTraceHeights_nonempty {n : ℤ}
   rw [Finset.mem_filter, Finset.mem_union]
   exact ⟨Or.inl (rlc_path_start_mem_vertices gamma.1), gamma.1.1.2.2⟩
 
-
+/-- The lowest height of a path site on the left side. -/
 noncomputable def rlc_rightLeftTraceMin {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : ℤ :=
   (rlc_rightLeftTraceHeights gamma delta).min'
     (rlc_rightLeftTraceHeights_nonempty gamma delta)
 
-
+/-- The left-side site at the lowest trace height. -/
 noncomputable def rlc_rightLeftTraceMinVertex {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Site 2 :=
   ![0, rlc_rightLeftTraceMin gamma delta]
 
-theorem rlc_rightLeftTraceMin_mem_heights {n : ℤ}
+lemma rlc_rightLeftTraceMin_mem_heights {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightLeftTraceMin gamma delta ∈
       rlc_rightLeftTraceHeights gamma delta := by
   exact Finset.min'_mem _ _
 
-theorem rlc_rightLeftTraceMinVertex_mem_union {n : ℤ}
+lemma rlc_rightLeftTraceMinVertex_mem_union {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightLeftTraceMinVertex gamma delta ∈
       rlc_pathVertices gamma.1 ∪ rlc_pathVertices delta.1 := by
@@ -5089,7 +4886,7 @@ theorem rlc_rightLeftTraceMinVertex_mem_union {n : ℤ}
   rw [← hzeq]
   exact hz.1
 
-theorem rlc_rightLeftTraceMinVertex_lowerHalf {n : ℤ}
+lemma rlc_rightLeftTraceMinVertex_lowerHalf {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightLeftTraceMinVertex gamma delta ∈ rlc_lowerHalf := by
   have hstart : (gamma.1.1 : Site 2) 1 ∈
@@ -5104,10 +4901,7 @@ theorem rlc_rightLeftTraceMinVertex_lowerHalf {n : ℤ}
     Finset.min'_le _ _ hstart
   exact hle.trans gamma.2.1
 
-
-
-
-theorem rlc_rightLeftTraceMinVertex_mem_strictBelow_of_not_path {n : ℤ}
+lemma rlc_rightLeftTraceMinVertex_mem_strictBelow_of_not_path {n : ℤ}
     (gamma delta eta : RlcRightDiagonalPath n)
     (heta : eta = gamma ∨ eta = delta)
     (hnot : rlc_rightLeftTraceMinVertex gamma delta ∉
@@ -5179,8 +4973,7 @@ theorem rlc_rightLeftTraceMinVertex_mem_strictBelow_of_not_path {n : ℤ}
   have hstartAvoid := (hsupport ![0, -n] w.start_mem_support).2
   exact ⟨![0, -n], hbottom, hstartAvoid, ⟨hw⟩⟩
 
-
-theorem rlc_rightLeftTraceMinVertex_not_upperUnion {n : ℤ} (hn : 0 < n)
+lemma rlc_rightLeftTraceMinVertex_not_upperUnion {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightLeftTraceMinVertex gamma delta ∉
       rlc_rightUpperUnionSet gamma delta := by
@@ -5203,8 +4996,7 @@ theorem rlc_rightLeftTraceMinVertex_not_upperUnion {n : ℤ} (hn : 0 < n)
           (rlc_rightLeftTraceMinVertex_mem_strictBelow_of_not_path
             gamma delta delta (Or.inr rfl) hpath)
 
-
-theorem rlc_exists_safe_left_trace_anchor {n : ℤ} (hn : 0 < n)
+lemma rlc_exists_safe_left_trace_anchor {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n) :
     ∃ x : leftSide 0 (2 * n) (-n) n,
       (x : Site 2) ∈ rlc_lowerHalf ∧
@@ -5223,7 +5015,7 @@ theorem rlc_exists_safe_left_trace_anchor {n : ℤ} (hn : 0 < n)
     rlc_rightLeftTraceMinVertex_lowerHalf gamma delta,
     hzUnion, rlc_rightLeftTraceMinVertex_not_upperUnion hn gamma delta⟩
 
-
+/-- The lowest left-side trace site, as an element of the left side. -/
 noncomputable def rlc_rightLeftTraceMinSide {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     leftSide 0 (2 * n) (-n) n := by
@@ -5235,17 +5027,13 @@ noncomputable def rlc_rightLeftTraceMinSide {n : ℤ}
     · exact rlc_pathVertex_mem_rect delta.1 hz
   exact ⟨z, hzRect, by simp [z, rlc_rightLeftTraceMinVertex]⟩
 
-@[simp] theorem rlc_rightLeftTraceMinSide_val {n : ℤ}
+@[simp] lemma rlc_rightLeftTraceMinSide_val {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     (rlc_rightLeftTraceMinSide gamma delta : Site 2) =
       rlc_rightLeftTraceMinVertex gamma delta := by
   rfl
 
-
-
-
-
-theorem rlc_rightLeftTraceMinVertex_mem_jointBottomTraceFrontier {n : ℤ}
+lemma rlc_rightLeftTraceMinVertex_mem_jointBottomTraceFrontier {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     rlc_rightLeftTraceMinVertex gamma delta ∈
       rlc_jointBottomTraceFrontier gamma delta := by
@@ -5267,7 +5055,7 @@ theorem rlc_rightLeftTraceMinVertex_mem_jointBottomTraceFrontier {n : ℤ}
   · right
     refine ⟨?_, ?_⟩
     · rw [mem_bottomSide]
-      exact ⟨hzRect, by simp [z, m, rlc_rightLeftTraceMinVertex, hm]⟩
+      exact ⟨hzRect, by simp [m, rlc_rightLeftTraceMinVertex, hm]⟩
     · exact hzPath
   · left
     refine ⟨hzRect, hzPath, ?_⟩
@@ -5336,7 +5124,8 @@ theorem rlc_rightLeftTraceMinVertex_mem_jointBottomTraceFrontier {n : ℤ}
       omega
     exact ⟨u, huJoint, huz⟩
 
-
+/-- For every two right diagonal paths, the safe trace graph joins a lower-left site to an upper-
+  right site outside the regions above the paths. -/
 def RlcRightSafeTraceReachability (n : ℤ) : Prop :=
   ∀ gamma delta : RlcRightDiagonalPath n,
     ∃ (x : leftSide 0 (2 * n) (-n) n)
@@ -5348,9 +5137,7 @@ def RlcRightSafeTraceReachability (n : ℤ) : Prop :=
       (rlc_rightSafeTraceGraph gamma delta).Reachable
         ⟨x, leftSide_subset x.2⟩ ⟨y, rightSide_subset y.2⟩
 
-
-
-theorem rlc_commonRightPathVertex_not_upperUnion {n : ℤ}
+lemma rlc_commonRightPathVertex_not_upperUnion {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {z : Site 2}
     (hzGamma : z ∈ rlc_pathVertices gamma.1)
     (hzDelta : z ∈ rlc_pathVertices delta.1) :
@@ -5361,9 +5148,7 @@ theorem rlc_commonRightPathVertex_not_upperUnion {n : ℤ}
   · exact (Set.disjoint_left.mp
       (rlc_strictTopSet_disjoint_path delta)) hzTopDelta hzDelta
 
-
-
-theorem rlc_walk_pred_first_exit {V : Type*} {G : SimpleGraph V} {x y : V}
+lemma rlc_walk_pred_first_exit {V : Type*} {G : SimpleGraph V} {x y : V}
     (w : G.Walk x y) (P : V → Prop) (hx : P x) (hy : ¬ P y) :
     ∃ u v, s(u, v) ∈ w.edges ∧ P u ∧ ¬ P v := by
   classical
@@ -5375,10 +5160,7 @@ theorem rlc_walk_pred_first_exit {V : Type*} {G : SimpleGraph V} {x y : V}
         exact ⟨u, v, by simp [huv], hu, hv⟩
       · exact ⟨a, b, by simp, hx, hb⟩
 
-
-
-
-theorem rlc_walk_pred_first_exit_prefix {V : Type*} {G : SimpleGraph V}
+lemma rlc_walk_pred_first_exit_prefix {V : Type*} {G : SimpleGraph V}
     {x y : V} (w : G.Walk x y) (P : V → Prop) (hx : P x) (hy : ¬ P y) :
     ∃ (u v : V) (q : G.Walk x u),
       G.Adj u v ∧ s(u, v) ∈ w.edges ∧
@@ -5408,10 +5190,7 @@ theorem rlc_walk_pred_first_exit_prefix {V : Type*} {G : SimpleGraph V}
           rw [SimpleGraph.Walk.support_nil, List.mem_singleton] at hz
           exact hz ▸ hx
 
-
-
-
-theorem rlc_rightTrace_switchPoint_of_enter_upperUnion {n : ℤ}
+lemma rlc_rightTrace_switchPoint_of_enter_upperUnion {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges gamma.1)
     (hu : u ∉ rlc_rightUpperUnionSet gamma delta)
@@ -5426,8 +5205,7 @@ theorem rlc_rightTrace_switchPoint_of_enter_upperUnion {n : ℤ}
   · exact rlc_rightPathEdge_enter_strictTop_common
       gamma delta he (fun h => hu (Or.inr h)) hvDelta
 
-
-theorem rlc_rightTrace_switchPoint_of_enter_upperUnion' {n : ℤ}
+lemma rlc_rightTrace_switchPoint_of_enter_upperUnion' {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) {u v : Site 2}
     (he : s(u, v) ∈ rlc_pathEdges delta.1)
     (hu : u ∉ rlc_rightUpperUnionSet gamma delta)
@@ -5439,10 +5217,7 @@ theorem rlc_rightTrace_switchPoint_of_enter_upperUnion' {n : ℤ}
       (by simpa [rlc_rightUpperUnionSet, Set.union_comm] using hv)
   exact ⟨h.2, h.1⟩
 
-
-
-
-theorem rlc_rightTrace_common_switch_before_unsafe_end {n : ℤ}
+lemma rlc_rightTrace_common_switch_before_unsafe_end {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hstart : (gamma.1.1 : Site 2) ∉
       rlc_rightUpperUnionSet gamma delta)
@@ -5467,8 +5242,7 @@ theorem rlc_rightTrace_common_switch_before_unsafe_end {n : ℤ}
     gamma delta he hu (not_not.mp hv)
   exact ⟨u, v, he, hu, not_not.mp hv, hcommon.1, hcommon.2⟩
 
-
-theorem rlc_rightTrace_common_switch_before_unsafe_end' {n : ℤ}
+lemma rlc_rightTrace_common_switch_before_unsafe_end' {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hstart : (delta.1.1 : Site 2) ∉
       rlc_rightUpperUnionSet gamma delta)
@@ -5489,9 +5263,7 @@ theorem rlc_rightTrace_common_switch_before_unsafe_end' {n : ℤ}
     by simpa [rlc_rightUpperUnionSet, Set.union_comm] using hv,
     huGamma, huDelta⟩
 
-
-
-theorem rlc_rightSafeTrace_reaches_common_before_unsafe_end {n : ℤ}
+lemma rlc_rightSafeTrace_reaches_common_before_unsafe_end {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hstart : (gamma.1.1 : Site 2) ∉
       rlc_rightUpperUnionSet gamma delta)
@@ -5529,11 +5301,7 @@ theorem rlc_rightSafeTrace_reaches_common_before_unsafe_end {n : ℤ}
         hqSafe a (q.fst_mem_support_of_mem_edges heq),
         hqSafe b (q.snd_mem_support_of_mem_edges heq)⟩
 
-
-
-
-
-theorem rlc_rightSafeTrace_reaches_common_from_vertex {n : ℤ}
+lemma rlc_rightSafeTrace_reaches_common_from_vertex {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {z : rect 0 (2 * n) (-n) n}
     (hz : z ∈ gamma.1.2.2.1.support)
@@ -5552,7 +5320,7 @@ theorem rlc_rightSafeTrace_reaches_common_from_vertex {n : ℤ}
       (fun w => (w : Site 2) ∉ rlc_rightUpperUnionSet gamma delta)
       (by simpa [tail] using hzSafe) (by simpa [tail, p] using hend)
   have huvOrig : s(u, v) ∈ p.edges := by
-    exact (p.edges_dropUntil_subset (by simpa [p] using hz)) huvEdge
+    exact (p.edges_dropUntil_subset_edges (by simpa [p] using hz)) huvEdge
   have he : s((u : Site 2), (v : Site 2)) ∈
       rlc_pathEdges gamma.1 := by
     simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
@@ -5567,7 +5335,7 @@ theorem rlc_rightSafeTrace_reaches_common_from_vertex {n : ℤ}
       have hab := q.adj_of_mem_edges heq
       have habTail : s(a, b) ∈ tail.edges := hqEdges s(a, b) heq
       have habOrig : s(a, b) ∈ p.edges := by
-        exact (p.edges_dropUntil_subset (by simpa [p] using hz)) habTail
+        exact (p.edges_dropUntil_subset_edges (by simpa [p] using hz)) habTail
       have habPath : s((a : Site 2), (b : Site 2)) ∈
           rlc_pathEdges gamma.1 := by
         simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
@@ -5576,10 +5344,7 @@ theorem rlc_rightSafeTrace_reaches_common_from_vertex {n : ℤ}
         hqSafe a (q.fst_mem_support_of_mem_edges heq),
         hqSafe b (q.snd_mem_support_of_mem_edges heq)⟩
 
-
-
-
-theorem rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
+lemma rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {z : rect 0 (2 * n) (-n) n}
     (hz : z ∈ gamma.1.2.2.1.support)
@@ -5602,7 +5367,7 @@ theorem rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
     | _ a b =>
         have habTail := tail.adj_of_mem_edges he
         have habOrig : s(a, b) ∈ p.edges :=
-          p.edges_dropUntil_subset hz he
+          p.edges_dropUntil_subset_edges hz he
         have habPath : s((a : Site 2), (b : Site 2)) ∈
             rlc_pathEdges gamma.1 := by
           simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
@@ -5620,9 +5385,9 @@ theorem rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
         (by simpa [initial, tail] using hzSafe)
         (by simpa [initial] using hv0Unsafe)
     have huvTail : s(u, v) ∈ tail.edges :=
-      tail.edges_takeUntil_subset hv0Supp huvEdge
+      tail.edges_takeUntil_subset_edges hv0Supp huvEdge
     have huvOrig : s(u, v) ∈ p.edges :=
-      p.edges_dropUntil_subset hz huvTail
+      p.edges_dropUntil_subset_edges hz huvTail
     have he : s((u : Site 2), (v : Site 2)) ∈
         rlc_pathEdges gamma.1 := by
       simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
@@ -5637,9 +5402,9 @@ theorem rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
         have hab := q.adj_of_mem_edges heq
         have habInitial : s(a, b) ∈ initial.edges := hqEdges s(a, b) heq
         have habTail : s(a, b) ∈ tail.edges :=
-          tail.edges_takeUntil_subset hv0Supp habInitial
+          tail.edges_takeUntil_subset_edges hv0Supp habInitial
         have habOrig : s(a, b) ∈ p.edges :=
-          p.edges_dropUntil_subset hz habTail
+          p.edges_dropUntil_subset_edges hz habTail
         have habPath : s((a : Site 2), (b : Site 2)) ∈
             rlc_pathEdges gamma.1 := by
           simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
@@ -5648,11 +5413,7 @@ theorem rlc_safe_vertex_reaches_endpoint_or_common {n : ℤ}
           hqSafe a (q.fst_mem_support_of_mem_edges heq),
           hqSafe b (q.snd_mem_support_of_mem_edges heq)⟩
 
-
-
-
-
-theorem rlc_safe_left_anchor_reaches_common_of_unsafe_ends {n : ℤ}
+lemma rlc_safe_left_anchor_reaches_common_of_unsafe_ends {n : ℤ}
     (hn : 0 < n) (gamma delta : RlcRightDiagonalPath n)
     (hgammaEnd : (gamma.1.2.1 : Site 2) ∈
       rlc_rightUpperUnionSet gamma delta)
@@ -5693,9 +5454,7 @@ theorem rlc_safe_left_anchor_reaches_common_of_unsafe_ends {n : ℤ}
     simpa [rlc_rightSafeTraceGraph, rlc_rightUpperUnionSet,
       Finset.union_comm, Set.union_comm] using hreach
 
-
-
-theorem rlc_rightSafeTraceGraph_adj_of_pathEdge {n : ℤ}
+lemma rlc_rightSafeTraceGraph_adj_of_pathEdge {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {u v : rect 0 (2 * n) (-n) n}
     (he : s((u : Site 2), (v : Site 2)) ∈
@@ -5710,8 +5469,7 @@ theorem rlc_rightSafeTraceGraph_adj_of_pathEdge {n : ℤ}
   · exact ⟨rlc_pathEdge_lattice delta.1 heDelta,
       Finset.mem_union_right _ heDelta, hu, hv⟩
 
-
-theorem rlc_rightSafeTraceGraph_reachable_dest_safe {n : ℤ}
+lemma rlc_rightSafeTraceGraph_reachable_dest_safe {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {u v : rect 0 (2 * n) (-n) n}
     (hu : (u : Site 2) ∉ rlc_rightUpperUnionSet gamma delta)
@@ -5723,11 +5481,7 @@ theorem rlc_rightSafeTraceGraph_reachable_dest_safe {n : ℤ}
   | @cons a b c hab p ih =>
       exact ih hab.2.2.2
 
-
-
-
-
-theorem rlc_rightSafeTraceReachable_of_path_safe {n : ℤ}
+lemma rlc_rightSafeTraceReachable_of_path_safe {n : ℤ}
     (gamma delta eta : RlcRightDiagonalPath n)
     (hedges : rlc_pathEdges eta.1 ⊆
       rlc_pathEdges gamma.1 ∪ rlc_pathEdges delta.1)
@@ -5775,9 +5529,7 @@ theorem rlc_rightSafeTraceReachable_of_path_safe {n : ℤ}
   exact ⟨eta.1.1, eta.1.2.1, eta.2.1, eta.2.2,
     hstartSafe, hendSafe, ⟨hp⟩⟩
 
-
-
-theorem rlc_rightSafeTraceReachable_of_left_trace {n : ℤ}
+lemma rlc_rightSafeTraceReachable_of_left_trace {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hcross : Disjoint (rlc_strictTopSet delta)
       (rlc_pathVertices gamma.1 : Set (Site 2))) :
@@ -5795,8 +5547,7 @@ theorem rlc_rightSafeTraceReachable_of_left_trace {n : ℤ}
   · rw [rlc_rightUpperUnionSet, Set.disjoint_union_left]
     exact ⟨rlc_strictTopSet_disjoint_path gamma, hcross⟩
 
-
-theorem rlc_rightSafeTraceReachable_of_right_trace {n : ℤ}
+lemma rlc_rightSafeTraceReachable_of_right_trace {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hcross : Disjoint (rlc_strictTopSet gamma)
       (rlc_pathVertices delta.1 : Set (Site 2))) :
@@ -5814,9 +5565,7 @@ theorem rlc_rightSafeTraceReachable_of_right_trace {n : ℤ}
   · rw [rlc_rightUpperUnionSet, Set.disjoint_union_left]
     exact ⟨hcross, rlc_strictTopSet_disjoint_path delta⟩
 
-
-
-theorem rlc_rightSafeTraceReachable_self {n : ℤ}
+lemma rlc_rightSafeTraceReachable_self {n : ℤ}
     (gamma : RlcRightDiagonalPath n) :
     ∃ (x : leftSide 0 (2 * n) (-n) n)
       (y : rightSide 0 (2 * n) (-n) n),
@@ -5829,9 +5578,7 @@ theorem rlc_rightSafeTraceReachable_self {n : ℤ}
   rlc_rightSafeTraceReachable_of_left_trace gamma gamma
     (rlc_strictTopSet_disjoint_path gamma)
 
-
-
-theorem rlc_rightSafeTraceReachable_of_disjoint_start_left {n : ℤ}
+lemma rlc_rightSafeTraceReachable_of_disjoint_start_left {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices delta.1)
       (rlc_pathVertices gamma.1))
@@ -5851,9 +5598,7 @@ theorem rlc_rightSafeTraceReachable_of_disjoint_start_left {n : ℤ}
     delta gamma hdisj hzGamma
   exact hstart (hiff.mp hzTop)
 
-
-
-theorem rlc_rightSafeTraceReachable_of_disjoint_start_right {n : ℤ}
+lemma rlc_rightSafeTraceReachable_of_disjoint_start_right {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -5873,11 +5618,7 @@ theorem rlc_rightSafeTraceReachable_of_disjoint_start_right {n : ℤ}
     gamma delta hdisj hzDelta
   exact hstart (hiff.mp hzTop)
 
-
-
-
-
-theorem rlc_rightSafeTraceReachable_of_disjoint {n : ℤ} (hn : 0 < n)
+lemma rlc_rightSafeTraceReachable_of_disjoint {n : ℤ} (hn : 0 < n)
     (gamma delta : RlcRightDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -5911,8 +5652,8 @@ theorem rlc_rightSafeTraceReachable_of_disjoint {n : ℤ} (hn : 0 < n)
   · exact rlc_rightSafeTraceReachable_of_disjoint_start_left
       gamma delta hdisj.symm hgammaStart
 
-
-
+/-- The safe-trace reachability property, required only for intersecting pairs of right diagonal
+  paths. -/
 def RlcRightIntersectingSafeTraceReachability (n : ℤ) : Prop :=
   ∀ (gamma delta : RlcRightDiagonalPath n),
     ¬ Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices delta.1) →
@@ -5925,16 +5666,13 @@ def RlcRightIntersectingSafeTraceReachability (n : ℤ) : Prop :=
       (rlc_rightSafeTraceGraph gamma delta).Reachable
         ⟨x, leftSide_subset x.2⟩ ⟨y, rightSide_subset y.2⟩
 
-
-
+/-- The sites common to two right diagonal paths. -/
 noncomputable def rlc_rightCommonSupport {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) :
     Finset (rect 0 (2 * n) (-n) n) :=
   gamma.1.2.2.1.support.toFinset ∩ delta.1.2.2.1.support.toFinset
 
-
-
-theorem rlc_rightCommonSupport_nonempty_of_not_disjoint {n : ℤ}
+lemma rlc_rightCommonSupport_nonempty_of_not_disjoint {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -5951,9 +5689,7 @@ theorem rlc_rightCommonSupport_nonempty_of_not_disjoint {n : ℤ}
   refine ⟨u, ?_⟩
   simp [rlc_rightCommonSupport, huGamma, hvDelta]
 
-
-
-
+/-- The position along `delta` of a common site of `gamma` and `delta`. -/
 noncomputable def rlc_rightCommonRank {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta)) : ℕ := by
@@ -5964,9 +5700,7 @@ noncomputable def rlc_rightCommonRank {n : ℤ}
   exact (gamma.1.2.2.1.takeUntil z.1 hz.1).length +
     (delta.1.2.2.1.takeUntil z.1 hz.2).length
 
-
-
-theorem rlc_exists_min_rightCommonSupport {n : ℤ}
+lemma rlc_exists_min_rightCommonSupport {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -5977,7 +5711,7 @@ theorem rlc_exists_min_rightCommonSupport {n : ℤ}
   classical
   have hne := rlc_rightCommonSupport_nonempty_of_not_disjoint
     gamma delta hinter
-  letI : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
+  let : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
     ⟨⟨hne.choose, hne.choose_spec⟩⟩
   have huniv : (Finset.univ :
       Finset ↑(rlc_rightCommonSupport gamma delta)).Nonempty :=
@@ -5987,10 +5721,7 @@ theorem rlc_exists_min_rightCommonSupport {n : ℤ}
     (rlc_rightCommonRank gamma delta) huniv
   exact ⟨z, fun q => hmin q (by simp)⟩
 
-
-
-
-theorem rlc_min_rightCommon_prefixes_inter_only {n : ℤ}
+lemma rlc_min_rightCommon_prefixes_inter_only {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta))
     (hzGamma : z.1 ∈ gamma.1.2.2.1.support)
@@ -6014,13 +5745,13 @@ theorem rlc_min_rightCommon_prefixes_inter_only {n : ℤ}
   have hgammaLt :
       (gamma.1.2.2.1.takeUntil q hqGammaFull).length <
         (gamma.1.2.2.1.takeUntil z.1 hzGamma).length := by
-    have hlen := (gamma.1.2.2.1.takeUntil z.1 hzGamma).length_takeUntil_lt
+    have hlen := (gamma.1.2.2.1.takeUntil z.1 hzGamma).length_takeUntil_lt_length
       hqGamma hqz
     rwa [gamma.1.2.2.1.takeUntil_takeUntil hzGamma hqGamma] at hlen
   have hdeltaLt :
       (delta.1.2.2.1.takeUntil q hqDeltaFull).length <
         (delta.1.2.2.1.takeUntil z.1 hzDelta).length := by
-    have hlen := (delta.1.2.2.1.takeUntil z.1 hzDelta).length_takeUntil_lt
+    have hlen := (delta.1.2.2.1.takeUntil z.1 hzDelta).length_takeUntil_lt_length
       hqDelta hqz
     rwa [delta.1.2.2.1.takeUntil_takeUntil hzDelta hqDelta] at hlen
   have hrankLt : rlc_rightCommonRank gamma delta qs <
@@ -6032,7 +5763,7 @@ theorem rlc_min_rightCommon_prefixes_inter_only {n : ℤ}
     omega
   exact (not_lt_of_ge (hmin qs)) hrankLt
 
-
+/-- The position from the end along `delta` of a common site of `gamma` and `delta`. -/
 noncomputable def rlc_rightCommonReverseRank {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta)) : ℕ := by
@@ -6045,8 +5776,7 @@ noncomputable def rlc_rightCommonReverseRank {n : ℤ}
   exact (gamma.1.2.2.1.reverse.takeUntil z.1 hz.1).length +
     (delta.1.2.2.1.reverse.takeUntil z.1 hz.2).length
 
-
-
+/-- The position from the end along `gamma` of a common site of `gamma` and `delta`. -/
 noncomputable def rlc_rightCommonGammaReverseRank {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta)) : ℕ := by
@@ -6055,9 +5785,7 @@ noncomputable def rlc_rightCommonGammaReverseRank {n : ℤ}
     simpa [SimpleGraph.Walk.support_reverse] using hz'
   exact (gamma.1.2.2.1.reverse.takeUntil z.1 hz).length
 
-
-
-theorem rlc_exists_min_gamma_reverse_rightCommonSupport {n : ℤ}
+lemma rlc_exists_min_gamma_reverse_rightCommonSupport {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -6068,7 +5796,7 @@ theorem rlc_exists_min_gamma_reverse_rightCommonSupport {n : ℤ}
   classical
   have hne := rlc_rightCommonSupport_nonempty_of_not_disjoint
     gamma delta hinter
-  letI : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
+  let : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
     ⟨⟨hne.choose, hne.choose_spec⟩⟩
   have huniv : (Finset.univ :
       Finset ↑(rlc_rightCommonSupport gamma delta)).Nonempty :=
@@ -6078,9 +5806,7 @@ theorem rlc_exists_min_gamma_reverse_rightCommonSupport {n : ℤ}
     (rlc_rightCommonGammaReverseRank gamma delta) huniv
   exact ⟨z, fun q => hmin q (by simp)⟩
 
-
-
-theorem rlc_min_gamma_reverse_rightCommon_prefix_inter_only {n : ℤ}
+lemma rlc_min_gamma_reverse_rightCommon_prefix_inter_only {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta))
     (hzGamma : z.1 ∈ gamma.1.2.2.1.reverse.support)
@@ -6107,15 +5833,12 @@ theorem rlc_min_gamma_reverse_rightCommon_prefix_inter_only {n : ℤ}
     change (gamma.1.2.2.1.reverse.takeUntil q hqGammaRev).length <
       (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length
     have hlen :=
-      (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length_takeUntil_lt
+      (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length_takeUntil_lt_length
         hqGamma hqz
     rwa [gamma.1.2.2.1.reverse.takeUntil_takeUntil hzGamma hqGamma] at hlen
   exact (not_lt_of_ge (hmin qs)) hrankLt
 
-
-
-
-theorem rlc_last_gamma_terminal_suffix_top_of_unsafe_end {n : ℤ}
+lemma rlc_last_gamma_terminal_suffix_top_of_unsafe_end {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6198,8 +5921,7 @@ theorem rlc_last_gamma_terminal_suffix_top_of_unsafe_end {n : ℤ}
       delta pg.dropLast hAvoid hq).mpr hgammaTopDelta
   exact ⟨z, hzGamma, hpg, hAvoid, hTop⟩
 
-
-theorem rlc_last_delta_terminal_suffix_top_of_unsafe_end {n : ℤ}
+lemma rlc_last_delta_terminal_suffix_top_of_unsafe_end {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6217,9 +5939,7 @@ theorem rlc_last_delta_terminal_suffix_top_of_unsafe_end {n : ℤ}
   · exact fun h => hinter h.symm
   · simpa [rlc_rightUpperUnionSet, Set.union_comm] using hdeltaEnd
 
-
-
-theorem rlc_last_common_reaches_safe_gamma_endpoint {n : ℤ}
+lemma rlc_last_common_reaches_safe_gamma_endpoint {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6305,7 +6025,7 @@ theorem rlc_last_common_reaches_safe_gamma_endpoint {n : ℤ}
     induction e using Sym2.inductionOn with
     | _ u v =>
         have heRev : s(u, v) ∈ gamma.1.2.2.1.reverse.edges :=
-          gamma.1.2.2.1.reverse.edges_takeUntil_subset hzGamma he
+          gamma.1.2.2.1.reverse.edges_takeUntil_subset_edges hzGamma he
         have heOrig : s(u, v) ∈ gamma.1.2.2.1.edges := by
           simpa [SimpleGraph.Walk.edges_reverse] using heRev
         have hePath : s((u : Site 2), (v : Site 2)) ∈
@@ -6318,8 +6038,7 @@ theorem rlc_last_common_reaches_safe_gamma_endpoint {n : ℤ}
           (hSupportSafe v (pg.snd_mem_support_of_mem_edges he))
   exact ⟨z, ⟨pSafe.reverse⟩⟩
 
-
-theorem rlc_last_common_reaches_safe_delta_endpoint {n : ℤ}
+lemma rlc_last_common_reaches_safe_delta_endpoint {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6335,22 +6054,13 @@ theorem rlc_last_common_reaches_safe_delta_endpoint {n : ℤ}
   simpa [rlc_rightSafeTraceGraph, rlc_rightUpperUnionSet,
     Finset.union_comm, Set.union_comm] using hz
 
-
-
-
-
-
-
+/-- Any two common sites of two right diagonal paths are joined in their safe trace graph. -/
 def RlcRightCommonSafeConnectivity (n : ℤ) : Prop :=
   ∀ (gamma delta : RlcRightDiagonalPath n)
     (u v : ↑(rlc_rightCommonSupport gamma delta)),
     (rlc_rightSafeTraceGraph gamma delta).Reachable u.1 v.1
 
-
-
-
-
-theorem rlc_rightSafeTraceReachability_of_commonSafeConnectivity {n : ℤ}
+lemma rlc_rightSafeTraceReachability_of_commonSafeConnectivity {n : ℤ}
     (hn : 0 < n) (hcommon : RlcRightCommonSafeConnectivity n) :
     RlcRightSafeTraceReachability n := by
   classical
@@ -6456,10 +6166,7 @@ theorem rlc_rightSafeTraceReachability_of_commonSafeConnectivity {n : ℤ}
       exact ⟨x, y, hxHalf, hyHalf, hxSafe, hySafe,
         hxu'.trans (by simpa [us] using huy)⟩
 
-
-
-
-
+/-- The lowest left-side trace site is joined in the safe trace graph to an upper-right site. -/
 def RlcRightCanonicalAnchorReachability (n : ℤ) : Prop :=
   ∀ gamma delta : RlcRightDiagonalPath n,
     ∃ y : rightSide 0 (2 * n) (-n) n,
@@ -6470,9 +6177,7 @@ def RlcRightCanonicalAnchorReachability (n : ℤ) : Prop :=
           leftSide_subset (rlc_rightLeftTraceMinSide gamma delta).2⟩
         ⟨y, rightSide_subset y.2⟩
 
-
-
-theorem rlc_rightSafeTraceReachability_of_canonicalAnchor {n : ℤ}
+lemma rlc_rightSafeTraceReachability_of_canonicalAnchor {n : ℤ}
     (hn : 0 < n) (hanchor : RlcRightCanonicalAnchorReachability n) :
     RlcRightSafeTraceReachability n := by
   intro gamma delta
@@ -6483,9 +6188,7 @@ theorem rlc_rightSafeTraceReachability_of_canonicalAnchor {n : ℤ}
   · simpa [x] using
       rlc_rightLeftTraceMinVertex_not_upperUnion hn gamma delta
 
-
-
-theorem rlc_exists_min_reverse_rightCommonSupport {n : ℤ}
+lemma rlc_exists_min_reverse_rightCommonSupport {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1)) :
@@ -6496,7 +6199,7 @@ theorem rlc_exists_min_reverse_rightCommonSupport {n : ℤ}
   classical
   have hne := rlc_rightCommonSupport_nonempty_of_not_disjoint
     gamma delta hinter
-  letI : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
+  let : Nonempty ↑(rlc_rightCommonSupport gamma delta) :=
     ⟨⟨hne.choose, hne.choose_spec⟩⟩
   have huniv : (Finset.univ :
       Finset ↑(rlc_rightCommonSupport gamma delta)).Nonempty :=
@@ -6506,10 +6209,7 @@ theorem rlc_exists_min_reverse_rightCommonSupport {n : ℤ}
     (rlc_rightCommonReverseRank gamma delta) huniv
   exact ⟨z, fun q => hmin q (by simp)⟩
 
-
-
-
-theorem rlc_min_reverse_rightCommon_prefixes_inter_only {n : ℤ}
+lemma rlc_min_reverse_rightCommon_prefixes_inter_only {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (z : ↑(rlc_rightCommonSupport gamma delta))
     (hzGamma : z.1 ∈ gamma.1.2.2.1.reverse.support)
@@ -6540,14 +6240,14 @@ theorem rlc_min_reverse_rightCommon_prefixes_inter_only {n : ℤ}
       (gamma.1.2.2.1.reverse.takeUntil q hqGammaFull).length <
         (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length := by
     have hlen :=
-      (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length_takeUntil_lt
+      (gamma.1.2.2.1.reverse.takeUntil z.1 hzGamma).length_takeUntil_lt_length
         hqGamma hqz
     rwa [gamma.1.2.2.1.reverse.takeUntil_takeUntil hzGamma hqGamma] at hlen
   have hdeltaLt :
       (delta.1.2.2.1.reverse.takeUntil q hqDeltaFull).length <
         (delta.1.2.2.1.reverse.takeUntil z.1 hzDelta).length := by
     have hlen :=
-      (delta.1.2.2.1.reverse.takeUntil z.1 hzDelta).length_takeUntil_lt
+      (delta.1.2.2.1.reverse.takeUntil z.1 hzDelta).length_takeUntil_lt_length
         hqDelta hqz
     rwa [delta.1.2.2.1.reverse.takeUntil_takeUntil hzDelta hqDelta] at hlen
   have hrankLt : rlc_rightCommonReverseRank gamma delta qs <
@@ -6559,10 +6259,7 @@ theorem rlc_min_reverse_rightCommon_prefixes_inter_only {n : ℤ}
     omega
   exact (not_lt_of_ge (hmin qs)) hrankLt
 
-
-
-
-theorem rlc_terminal_lens_of_unsafe_ends {n : ℤ}
+lemma rlc_terminal_lens_of_unsafe_ends {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6614,9 +6311,7 @@ theorem rlc_terminal_lens_of_unsafe_ends {n : ℤ}
   exact rlc_min_reverse_rightCommon_prefixes_inter_only gamma delta z
     hzGammaRev hzDeltaRev hmin hqGamma hqDelta
 
-
-
-theorem rlc_lens_penultimate_ne {V : Type*} {G : SimpleGraph V}
+lemma rlc_lens_penultimate_ne {V : Type*} {G : SimpleGraph V}
     {a b z : V} (p : G.Walk a z) (q : G.Walk b z)
     (ha : a ≠ z) (hb : b ≠ z)
     (hinter : ∀ u : V, u ∈ p.support → u ∈ q.support → u = z) :
@@ -6631,9 +6326,7 @@ theorem rlc_lens_penultimate_ne {V : Type*} {G : SimpleGraph V}
   have hpz : p.penultimate = z := hinter p.penultimate hpMem hqMem
   exact (p.adj_penultimate hp).ne hpz
 
-
-
-theorem rlc_terminal_lens_distinct_branches_of_unsafe_ends {n : ℤ}
+lemma rlc_terminal_lens_distinct_branches_of_unsafe_ends {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     (hinter : ¬ Disjoint (rlc_pathVertices gamma.1)
       (rlc_pathVertices delta.1))
@@ -6676,9 +6369,7 @@ theorem rlc_terminal_lens_distinct_branches_of_unsafe_ends {n : ℤ}
   exact ⟨z, hzGamma, hzDelta, hpg, hpd,
     pg.adj_penultimate hpg, pd.adj_penultimate hpd, hbranches⟩
 
-
-
-theorem rlc_rightSafeTraceReachability_of_intersecting {n : ℤ} (hn : 0 < n)
+lemma rlc_rightSafeTraceReachability_of_intersecting {n : ℤ} (hn : 0 < n)
     (hinter : RlcRightIntersectingSafeTraceReachability n) :
     RlcRightSafeTraceReachability n := by
   intro gamma delta
@@ -6687,7 +6378,7 @@ theorem rlc_rightSafeTraceReachability_of_intersecting {n : ℤ} (hn : 0 < n)
   · exact rlc_rightSafeTraceReachable_of_disjoint hn gamma delta hdisj
   · exact hinter gamma delta hdisj
 
-theorem rlc_rightSafeTraceGraph_walk_support_safe {n : ℤ}
+lemma rlc_rightSafeTraceGraph_walk_support_safe {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n)
     {x y : rect 0 (2 * n) (-n) n}
     (w : (rlc_rightSafeTraceGraph gamma delta).Walk x y)
@@ -6704,8 +6395,7 @@ theorem rlc_rightSafeTraceGraph_walk_support_safe {n : ℤ}
       · exact hab.2.2.1
       · exact ih hab.2.2.2 hz
 
-
-
+/-- The safe trace graph of two left diagonal paths. -/
 def rlc_leftSafeTraceGraph {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n) :
     SimpleGraph (rect (-2 * n) 0 (-n) n) where
@@ -6722,6 +6412,7 @@ def rlc_leftSafeTraceGraph {n : ℤ}
       h.2.2.2, h.2.2.1⟩
   loopless := ⟨fun _ h => h.1.ne rfl⟩
 
+/-- The safe-trace reachability property for left diagonal paths. -/
 def RlcLeftSafeTraceReachability (n : ℤ) : Prop :=
   ∀ gamma delta : RlcLeftDiagonalPath n,
     ∃ (x : leftSide (-2 * n) 0 (-n) n)
@@ -6733,7 +6424,7 @@ def RlcLeftSafeTraceReachability (n : ℤ) : Prop :=
       (rlc_leftSafeTraceGraph gamma delta).Reachable
         ⟨x, leftSide_subset x.2⟩ ⟨y, rightSide_subset y.2⟩
 
-theorem rlc_leftSafeTraceGraph_walk_support_safe {n : ℤ}
+lemma rlc_leftSafeTraceGraph_walk_support_safe {n : ℤ}
     (gamma delta : RlcLeftDiagonalPath n)
     {x y : rect (-2 * n) 0 (-n) n}
     (w : (rlc_leftSafeTraceGraph gamma delta).Walk x y)
@@ -6750,9 +6441,8 @@ theorem rlc_leftSafeTraceGraph_walk_support_safe {n : ℤ}
       · exact hab.2.2.1
       · exact ih hab.2.2.2 hz
 
-
-
-
+/-- For every two right diagonal paths there is a third using only their edges whose explored region
+  lies in both explored regions. -/
 def RlcRightEnvelopeProperty (n : ℤ) : Prop :=
   ∀ gamma delta : RlcRightDiagonalPath n,
     ∃ lambda : RlcRightDiagonalPath n,
@@ -6762,7 +6452,7 @@ def RlcRightEnvelopeProperty (n : ℤ) : Prop :=
           rlc_rightExploredVertices gamma ∩
             rlc_rightExploredVertices delta
 
-
+/-- The envelope property for left diagonal paths. -/
 def RlcLeftEnvelopeProperty (n : ℤ) : Prop :=
   ∀ gamma delta : RlcLeftDiagonalPath n,
     ∃ lambda : RlcLeftDiagonalPath n,
@@ -6772,8 +6462,8 @@ def RlcLeftEnvelopeProperty (n : ℤ) : Prop :=
           rlc_leftExploredVertices gamma ∩
             rlc_leftExploredVertices delta
 
-
-
+/-- For every two right diagonal paths there is a third using only their edges that avoids both
+  strict upper regions. -/
 def RlcRightFrontierPathProperty (n : ℤ) : Prop :=
   ∀ gamma delta : RlcRightDiagonalPath n,
     ∃ lambda : RlcRightDiagonalPath n,
@@ -6782,6 +6472,7 @@ def RlcRightFrontierPathProperty (n : ℤ) : Prop :=
         Disjoint (rlc_strictTopSet gamma ∪ rlc_strictTopSet delta)
           (rlc_pathVertices lambda.1 : Set (Site 2))
 
+/-- The frontier-path property for left diagonal paths. -/
 def RlcLeftFrontierPathProperty (n : ℤ) : Prop :=
   ∀ gamma delta : RlcLeftDiagonalPath n,
     ∃ lambda : RlcLeftDiagonalPath n,
@@ -6790,10 +6481,7 @@ def RlcLeftFrontierPathProperty (n : ℤ) : Prop :=
         Disjoint (rlc_strictBottomSet gamma ∪ rlc_strictBottomSet delta)
           (rlc_pathVertices lambda.1 : Set (Site 2))
 
-
-
-
-theorem rlc_rightSafeTraceReachability_of_frontierPathProperty {n : ℤ}
+lemma rlc_rightSafeTraceReachability_of_frontierPathProperty {n : ℤ}
     (hfrontier : RlcRightFrontierPathProperty n) :
     RlcRightSafeTraceReachability n := by
   intro gamma delta
@@ -6801,9 +6489,7 @@ theorem rlc_rightSafeTraceReachability_of_frontierPathProperty {n : ℤ}
   exact rlc_rightSafeTraceReachable_of_path_safe
     gamma delta lambda hedges hsafe
 
-
-
-theorem rlc_rightFrontierPathProperty_of_safeTraceReachability {n : ℤ}
+lemma rlc_rightFrontierPathProperty_of_safeTraceReachability {n : ℤ}
     (hsafe : RlcRightSafeTraceReachability n) :
     RlcRightFrontierPathProperty n := by
   classical
@@ -6819,7 +6505,7 @@ theorem rlc_rightFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       ⟨x, leftSide_subset x.2⟩ ⟨y, rightSide_subset y.2⟩ :=
     q.1.mapLe hle
   have hqRect : qRect.IsPath := by
-    exact (SimpleGraph.Walk.mapLe_isPath hle).mpr q.2
+    exact (SimpleGraph.Walk.isPath_mapLe hle).mpr q.2
   let lambda0 : RlcCrossingPath 0 (2 * n) (-n) n :=
     ⟨x, y, ⟨qRect, hqRect⟩⟩
   let lambda : RlcRightDiagonalPath n :=
@@ -6830,7 +6516,7 @@ theorem rlc_rightFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       List.mem_toFinset] at he
     obtain ⟨e0, he0, rfl⟩ := he
     have heq : e0 ∈ q.1.edges := by
-      rw [← rlc_edges_mapLe_eq hle q.1]
+      rw [← SimpleGraph.Walk.edges_mapLe_eq_edges hle q.1]
       exact he0
     induction e0 using Sym2.inductionOn with
     | _ u v =>
@@ -6847,13 +6533,13 @@ theorem rlc_rightFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       gamma delta q.1 hxSafe huq
     exact huSafe (huz ▸ hzUpper)
 
-theorem rlc_rightSafeTraceReachability_iff_frontierPathProperty {n : ℤ} :
+lemma rlc_rightSafeTraceReachability_iff_frontierPathProperty {n : ℤ} :
     RlcRightSafeTraceReachability n ↔ RlcRightFrontierPathProperty n := by
   constructor
   · exact rlc_rightFrontierPathProperty_of_safeTraceReachability
   · exact rlc_rightSafeTraceReachability_of_frontierPathProperty
 
-theorem rlc_leftFrontierPathProperty_of_safeTraceReachability {n : ℤ}
+lemma rlc_leftFrontierPathProperty_of_safeTraceReachability {n : ℤ}
     (hsafe : RlcLeftSafeTraceReachability n) :
     RlcLeftFrontierPathProperty n := by
   classical
@@ -6869,7 +6555,7 @@ theorem rlc_leftFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       ⟨x, leftSide_subset x.2⟩ ⟨y, rightSide_subset y.2⟩ :=
     q.1.mapLe hle
   have hqRect : qRect.IsPath := by
-    exact (SimpleGraph.Walk.mapLe_isPath hle).mpr q.2
+    exact (SimpleGraph.Walk.isPath_mapLe hle).mpr q.2
   let lambda0 : RlcCrossingPath (-2 * n) 0 (-n) n :=
     ⟨x, y, ⟨qRect, hqRect⟩⟩
   let lambda : RlcLeftDiagonalPath n :=
@@ -6880,7 +6566,7 @@ theorem rlc_leftFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       List.mem_toFinset] at he
     obtain ⟨e0, he0, rfl⟩ := he
     have heq : e0 ∈ q.1.edges := by
-      rw [← rlc_edges_mapLe_eq hle q.1]
+      rw [← SimpleGraph.Walk.edges_mapLe_eq_edges hle q.1]
       exact he0
     induction e0 using Sym2.inductionOn with
     | _ u v =>
@@ -6897,7 +6583,7 @@ theorem rlc_leftFrontierPathProperty_of_safeTraceReachability {n : ℤ}
       gamma delta q.1 hxSafe huq
     exact huSafe (huz ▸ hzLower)
 
-theorem rlc_leftFrontierPathProperty_of_right {n : ℤ}
+lemma rlc_leftFrontierPathProperty_of_right {n : ℤ}
     (hright : RlcRightFrontierPathProperty n) :
     RlcLeftFrontierPathProperty n := by
   classical
@@ -6939,13 +6625,11 @@ theorem rlc_leftFrontierPathProperty_of_right {n : ℤ}
     apply (Set.disjoint_left.mp hdisj) ?_ (hza ▸ ha)
     rcases hzLower with hzGamma | hzDelta
     · left
-      change rlc_rot180 z ∈ rlc_strictTopSet gammaR
       exact (rlc_rot180_mem_strictTop_iff_mem_strictBottom gamma z).mpr hzGamma
     · right
-      change rlc_rot180 z ∈ rlc_strictTopSet deltaR
       exact (rlc_rot180_mem_strictTop_iff_mem_strictBottom delta z).mpr hzDelta
 
-theorem rlc_rightEnvelopeProperty_of_frontierPath {n : ℤ}
+lemma rlc_rightEnvelopeProperty_of_frontierPath {n : ℤ}
     (hfrontier : RlcRightFrontierPathProperty n) :
     RlcRightEnvelopeProperty n := by
   intro gamma delta
@@ -6980,7 +6664,7 @@ theorem rlc_rightEnvelopeProperty_of_frontierPath {n : ℤ}
     exact hz.2 (by
       simpa using htopDelta (by simpa using hzTop))
 
-theorem rlc_leftEnvelopeProperty_of_frontierPath {n : ℤ}
+lemma rlc_leftEnvelopeProperty_of_frontierPath {n : ℤ}
     (hfrontier : RlcLeftFrontierPathProperty n) :
     RlcLeftEnvelopeProperty n := by
   intro gamma delta
@@ -7017,9 +6701,7 @@ theorem rlc_leftEnvelopeProperty_of_frontierPath {n : ℤ}
     exact hz.2 (by
       simpa using hbottomDelta (by simpa using hzBottom))
 
-
-
-theorem rlc_envelopeProperties_of_rightSafeTraceReachability {n : ℤ}
+lemma rlc_envelopeProperties_of_rightSafeTraceReachability {n : ℤ}
     (hsafe : RlcRightSafeTraceReachability n) :
     RlcRightEnvelopeProperty n ∧ RlcLeftEnvelopeProperty n := by
   have hright : RlcRightFrontierPathProperty n :=
@@ -7029,7 +6711,7 @@ theorem rlc_envelopeProperties_of_rightSafeTraceReachability {n : ℤ}
   exact ⟨rlc_rightEnvelopeProperty_of_frontierPath hright,
     rlc_leftEnvelopeProperty_of_frontierPath hleft⟩
 
-theorem rlc_pathOpen_of_edges_subset_union {a b c d : ℤ}
+lemma rlc_pathOpen_of_edges_subset_union {a b c d : ℤ}
     (lambda gamma delta : RlcCrossingPath a b c d)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (hedges : rlc_pathEdges lambda ⊆
@@ -7042,7 +6724,7 @@ theorem rlc_pathOpen_of_edges_subset_union {a b c d : ℤ}
   · exact hgamma e he
   · exact hdelta e he
 
-theorem rlc_rightLowestCandidate_pairwiseDisjoint {n : ℤ}
+lemma rlc_rightLowestCandidate_pairwiseDisjoint {n : ℤ}
     (henv : RlcRightEnvelopeProperty n) :
     Pairwise (Disjoint on fun gamma : RlcRightDiagonalPath n =>
       rlc_rightLowestCandidate gamma) := by
@@ -7092,7 +6774,7 @@ theorem rlc_rightLowestCandidate_pairwiseDisjoint {n : ℤ}
     exact (rlc_rightLowestCandidate_not_open_of_below hgamma
       (Or.inl hstrict)) hlambda
 
-theorem rlc_leftHighestCandidate_pairwiseDisjoint {n : ℤ}
+lemma rlc_leftHighestCandidate_pairwiseDisjoint {n : ℤ}
     (henv : RlcLeftEnvelopeProperty n) :
     Pairwise (Disjoint on fun gamma : RlcLeftDiagonalPath n =>
       rlc_leftHighestCandidate gamma) := by
@@ -7142,7 +6824,7 @@ theorem rlc_leftHighestCandidate_pairwiseDisjoint {n : ℤ}
     exact (rlc_leftHighestCandidate_not_open_of_above hgamma
       (Or.inl hstrict)) hlambda
 
-theorem rlc_extremalPairCandidate_pairwiseDisjoint {n : ℤ}
+lemma rlc_extremalPairCandidate_pairwiseDisjoint {n : ℤ}
     (hright : RlcRightEnvelopeProperty n)
     (hleft : RlcLeftEnvelopeProperty n) :
     Pairwise (Disjoint on fun pair : RlcDiagonalPathPair n =>
@@ -7156,28 +6838,32 @@ theorem rlc_extremalPairCandidate_pairwiseDisjoint {n : ℤ}
   · exact (rlc_rightLowestCandidate_pairwiseDisjoint hright hrightEq).mono
       inter_subset_left inter_subset_left
 
+/-! ## F. Connectors across the axis -/
+
+/-- Reflection in the vertical axis: `(x, y) ↦ (-x, y)`. -/
 def rlc_flipXFun (x : Site 2) : Site 2 := ![-x 0, x 1]
 
+/-- Reflection in the vertical axis, as an equivalence of sites. -/
 def rlc_flipX : Site 2 ≃ Site 2 where
   toFun := rlc_flipXFun
   invFun := rlc_flipXFun
   left_inv x := by funext i; fin_cases i <;> simp [rlc_flipXFun]
   right_inv x := by funext i; fin_cases i <;> simp [rlc_flipXFun]
 
-@[simp] theorem rlc_flipX_involutive (x : Site 2) : rlc_flipX (rlc_flipX x) = x := by
+@[simp] lemma rlc_flipX_involutive (x : Site 2) : rlc_flipX (rlc_flipX x) = x := by
   funext i
   fin_cases i <;> simp [rlc_flipX, rlc_flipXFun]
 
-theorem rlc_flipX_eq_self_of_zero {x : Site 2} (hx : x 0 = 0) :
+lemma rlc_flipX_eq_self_of_zero {x : Site 2} (hx : x 0 = 0) :
     rlc_flipX x = x := by
   funext i
   fin_cases i <;> simp [rlc_flipX, rlc_flipXFun, hx]
 
-
+/-- The heights at which a set of sites meets the vertical axis `x = 0`. -/
 noncomputable def rlc_axisHeights (P : Finset (Site 2)) : Finset ℤ :=
   (P.filter fun z => z 0 = 0).image fun z => z 1
 
-@[simp] theorem rlc_mem_axisHeights_iff (P : Finset (Site 2)) (t : ℤ) :
+@[simp] lemma rlc_mem_axisHeights_iff (P : Finset (Site 2)) (t : ℤ) :
     t ∈ rlc_axisHeights P ↔ ![0, t] ∈ P := by
   classical
   constructor
@@ -7193,9 +6879,7 @@ noncomputable def rlc_axisHeights (P : Finset (Site 2)) : Finset ℤ :=
     apply Finset.mem_image.mpr
     exact ⟨![0, t], by simp [ht], by simp⟩
 
-
-
-theorem rlc_exists_finset_gap (A B : Finset ℤ) {x y : ℤ}
+lemma rlc_exists_finset_gap (A B : Finset ℤ) {x y : ℤ}
     (hx : x ∈ A) (hy : y ∈ B) (hxy : x < y) :
     ∃ a b : ℤ, a ∈ A ∧ b ∈ B ∧ x ≤ a ∧ a < b ∧
       b ≤ y ∧ ∀ t : ℤ, a < t → t < b → t ∉ A ∧ t ∉ B := by
@@ -7225,8 +6909,7 @@ theorem rlc_exists_finset_gap (A B : Finset ℤ) {x y : ℤ}
     have htBup : t ∈ Bup := by simp [Bup, htB, hxt]
     exact (not_lt_of_ge (Bup.min'_le t htBup)) htb
 
-
-
+/-- The sites of the two diagonal paths and of their reflections in the vertical axis. -/
 noncomputable def rlc_connectorBarrier {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Finset (Site 2) :=
@@ -7234,9 +6917,7 @@ noncomputable def rlc_connectorBarrier {n : ℤ}
     (rlc_pathVertices gamma.1).image rlc_flipX ∪
     (rlc_pathVertices gamma'.1).image rlc_flipX
 
-
-
-theorem rlc_axis_mem_connectorBarrier_iff {n : ℤ}
+lemma rlc_axis_mem_connectorBarrier_iff {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (t : ℤ) :
     ![0, t] ∈ rlc_connectorBarrier gamma gamma' ↔
@@ -7261,17 +6942,17 @@ theorem rlc_axis_mem_connectorBarrier_iff {n : ℤ}
   simp only [rlc_connectorBarrier, Finset.mem_union, himage]
   tauto
 
+/-- The box `[-2n, 2n] × [-n, n]`, as a `Finset`. -/
 noncomputable def rlc_connectorBox (n : ℤ) : Finset (Site 2) :=
   (rect_finite (-2 * n) (2 * n) (-n) n).toFinset
 
+/-- The sites of the connector box not on the connector barrier. -/
 noncomputable def rlc_connectorAllowed {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Finset (Site 2) :=
   rlc_connectorBox n \ rlc_connectorBarrier gamma gamma'
 
-
-
-
+/-- The allowed sites reachable from the origin inside the allowed region. -/
 def rlc_connectorOriginRegionSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Set (Site 2) :=
@@ -7281,49 +6962,49 @@ def rlc_connectorOriginRegionSet {n : ℤ}
       (rlc_connectorAllowed gamma gamma' : Set (Site 2))).Reachable
       ⟨origin 2, ho⟩ ⟨z, hz⟩}
 
-theorem rlc_connectorOriginRegionSet_finite {n : ℤ}
+lemma rlc_connectorOriginRegionSet_finite {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     (rlc_connectorOriginRegionSet gamma gamma').Finite := by
   apply (rlc_connectorAllowed gamma gamma').finite_toSet.subset
   rintro z ⟨hz, _ho, _hreach⟩
   exact hz
 
+/-- The origin region of the connector, as a `Finset`. -/
 noncomputable def rlc_connectorOriginRegion {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Finset (Site 2) :=
   (rlc_connectorOriginRegionSet_finite gamma gamma').toFinset
 
-
-
+/-- The edges with both endpoints in the origin region of the connector. -/
 noncomputable def rlc_connectorEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Finset (Sym2 (Site 2)) :=
   (edgesWithinFinset (rlc_connectorBox n)).filter fun e =>
     ∃ z ∈ rlc_connectorOriginRegion gamma gamma', z ∈ e
 
-
+/-- The configuration `omega` restricted to the edge set `U` (edges outside `U` closed). -/
 noncomputable def rlc_maskConfig (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2))) : ConfigSpace (Sym2 (Site 2)) :=
   fun e => if e ∈ U then omega e else false
 
-theorem rlc_maskConfig_congr {U : Finset (Sym2 (Site 2))}
+lemma rlc_maskConfig_congr {U : Finset (Sym2 (Site 2))}
     {omega omega' : ConfigSpace (Sym2 (Site 2))}
     (h : ∀ e ∈ (U : Set (Sym2 (Site 2))), omega e = omega' e) :
     rlc_maskConfig U omega = rlc_maskConfig U omega' := by
   funext e
   by_cases he : e ∈ U
-  · simp only [rlc_maskConfig, if_pos he]
+  · simp only [rlc_maskConfig, ite_eq_left he]
     exact h e he
   · simp [rlc_maskConfig, he]
 
-theorem rlc_maskConfig_mono (U : Finset (Sym2 (Site 2)))
+lemma rlc_maskConfig_mono (U : Finset (Sym2 (Site 2)))
     {omega omega' : ConfigSpace (Sym2 (Site 2))} (h : omega ≤ omega') :
     rlc_maskConfig U omega ≤ rlc_maskConfig U omega' := by
   intro e
   by_cases he : e ∈ U <;> simp [rlc_maskConfig, he, h e]
 
-
-
+/-- The event that the two diagonal paths are joined inside the connector box using only connector
+  edges. -/
 def rlc_connectorEvent {n : ℤ}
   (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
@@ -7335,7 +7016,7 @@ def rlc_connectorEvent {n : ℤ}
         (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega)
         (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩ ⟨y, hyR⟩}
 
-theorem rlc_connectorEvent_dependsOn {n : ℤ}
+lemma rlc_connectorEvent_dependsOn {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     DependsOn ((rlc_connectorEvent gamma gamma').indicator (fun _ => (1 : ℝ)))
       (rlc_connectorEdges gamma gamma' : Set (Sym2 (Site 2))) := by
@@ -7345,27 +7026,25 @@ theorem rlc_connectorEvent_dependsOn {n : ℤ}
     rlc_maskConfig_congr hagree
   have hevent : omega ∈ rlc_connectorEvent gamma gamma' ↔
       omega' ∈ rlc_connectorEvent gamma gamma' := by
-    simp only [rlc_connectorEvent, Set.mem_setOf_eq, hmask]
+    simp only [rlc_connectorEvent, Set.mem_ofPred_eq, hmask]
   by_cases hmem : omega ∈ rlc_connectorEvent gamma gamma'
   · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hevent.mp hmem)]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-theorem rlc_connectorEvent_measurableSet {n : ℤ}
+lemma rlc_connectorEvent_measurableSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     MeasurableSet (rlc_connectorEvent gamma gamma') :=
   measurableSet_of_dependsOn (rlc_connectorEvent_dependsOn gamma gamma')
 
-theorem rlc_maskConfig_le (U : Finset (Sym2 (Site 2)))
+lemma rlc_maskConfig_le (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2))) : rlc_maskConfig U omega ≤ omega := by
   intro e
   by_cases he : e ∈ U
   · simp [rlc_maskConfig, he]
   · simp [rlc_maskConfig, he]
 
-
-
-theorem rlc_pathOpen_connected_start {a b c d : ℤ}
+lemma rlc_pathOpen_connected_start {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hopen : omega ∈ rlc_pathOpen gamma)
@@ -7384,10 +7063,10 @@ theorem rlc_pathOpen_connected_start {a b c d : ℤ}
     obtain ⟨e0, he0, rfl⟩ := he
     apply hopen
     simp only [rlc_pathEdges, Finset.mem_image, List.mem_toFinset]
-    exact ⟨e0, gamma.2.2.1.edges_takeUntil_subset hzs he0, rfl⟩
+    exact ⟨e0, gamma.2.2.1.edges_takeUntil_subset_edges hzs he0, rfl⟩
   exact ⟨zs.2, ⟨rlc_openWalkOfEdges omega q hqopen⟩⟩
 
-theorem rlc_pathOpen_connected_finish {a b c d : ℤ}
+lemma rlc_pathOpen_connected_finish {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hopen : omega ∈ rlc_pathOpen gamma)
@@ -7404,9 +7083,7 @@ theorem rlc_pathOpen_connected_finish {a b c d : ℤ}
     exact hopen e (by simpa only [rlc_pathEdges] using he)
   exact ⟨hzR, hstart.symm.trans hfull⟩
 
-
-
-theorem rlc_connector_glues_horizontal (n : ℤ) (_hn : 0 < n)
+lemma rlc_connector_glues_horizontal (n : ℤ) (_hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     rlc_pathOpen gamma.1 ∩ rlc_pathOpen gamma'.1 ∩
         rlc_connectorEvent gamma gamma' ⊆
@@ -7451,7 +7128,7 @@ theorem rlc_connector_glues_horizontal (n : ℤ) (_hn : 0 < n)
   refine ⟨xL, yR, ?_⟩
   exact hleftToY.trans (hxy.symm.trans hxToRight)
 
-theorem rlc_originRegion_not_barrier {n : ℤ}
+lemma rlc_originRegion_not_barrier {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     {z : Site 2} (hz : z ∈ rlc_connectorOriginRegion gamma gamma') :
     z ∉ rlc_connectorBarrier gamma gamma' := by
@@ -7460,7 +7137,7 @@ theorem rlc_originRegion_not_barrier {n : ℤ}
   obtain ⟨hzAllowed, _ho, _hreach⟩ := hzset
   exact (Finset.mem_sdiff.mp hzAllowed).2
 
-theorem rlc_rightPathEdges_disjoint_connector {n : ℤ}
+lemma rlc_rightPathEdges_disjoint_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Disjoint (rlc_pathEdges gamma.1) (rlc_connectorEdges gamma gamma') := by
   rw [Finset.disjoint_left]
@@ -7477,7 +7154,7 @@ theorem rlc_rightPathEdges_disjoint_connector {n : ℤ}
     · exact rlc_originRegion_not_barrier hzRegion (by
         simp [rlc_connectorBarrier, hends.2])
 
-theorem rlc_leftPathEdges_disjoint_connector {n : ℤ}
+lemma rlc_leftPathEdges_disjoint_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Disjoint (rlc_pathEdges gamma'.1) (rlc_connectorEdges gamma gamma') := by
   rw [Finset.disjoint_left]
@@ -7494,10 +7171,7 @@ theorem rlc_leftPathEdges_disjoint_connector {n : ℤ}
     · exact rlc_originRegion_not_barrier hzRegion (by
         simp [rlc_connectorBarrier, hends.2])
 
-
-
-
-theorem rlc_rightPathVertex_mem_connectorBox {n : ℤ}
+lemma rlc_rightPathVertex_mem_connectorBox {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma.1) :
     z ∈ rect (-2 * n) (2 * n) (-n) n := by
@@ -7505,7 +7179,7 @@ theorem rlc_rightPathVertex_mem_connectorBox {n : ℤ}
   rw [mem_rect] at hzsmall ⊢
   omega
 
-theorem rlc_leftPathVertex_mem_connectorBox {n : ℤ}
+lemma rlc_leftPathVertex_mem_connectorBox {n : ℤ}
     (gamma : RlcLeftDiagonalPath n) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma.1) :
     z ∈ rect (-2 * n) (2 * n) (-n) n := by
@@ -7513,9 +7187,7 @@ theorem rlc_leftPathVertex_mem_connectorBox {n : ℤ}
   rw [mem_rect] at hzsmall ⊢
   omega
 
-
-
-theorem rlc_mem_connectorEvent_of_common_vertex {n : ℤ}
+lemma rlc_mem_connectorEvent_of_common_vertex {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {z : Site 2}
     (hz : z ∈ rlc_pathVertices gamma.1)
@@ -7529,8 +7201,7 @@ theorem rlc_mem_connectorEvent_of_common_vertex {n : ℤ}
       (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega)
       (rect (-2 * n) (2 * n) (-n) n) ⟨z, hzR⟩)
 
-
-theorem rlc_pathVertices_disjoint_of_not_connector {n : ℤ}
+lemma rlc_pathVertices_disjoint_of_not_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -7539,9 +7210,7 @@ theorem rlc_pathVertices_disjoint_of_not_connector {n : ℤ}
   intro z hz hz'
   exact hno (rlc_mem_connectorEvent_of_common_vertex gamma gamma' omega hz hz')
 
-
-
-theorem rlc_axis_endpoints_strict_of_disjoint {n : ℤ}
+lemma rlc_axis_endpoints_strict_of_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     (gamma.1.1 : Site 2) 1 < (gamma'.1.2.1 : Site 2) 1 := by
@@ -7573,9 +7242,7 @@ theorem rlc_axis_endpoints_strict_of_disjoint {n : ℤ}
   change x 1 < y 1
   omega
 
-
-
-theorem rlc_axis_endpoints_strict_of_not_connector {n : ℤ}
+lemma rlc_axis_endpoints_strict_of_not_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -7583,10 +7250,7 @@ theorem rlc_axis_endpoints_strict_of_not_connector {n : ℤ}
   rlc_axis_endpoints_strict_of_disjoint gamma gamma'
     (rlc_pathVertices_disjoint_of_not_connector gamma gamma' omega hno)
 
-
-
-
-theorem rlc_exists_axis_barrier_gap_of_disjoint {n : ℤ}
+lemma rlc_exists_axis_barrier_gap_of_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     ∃ a b : ℤ,
@@ -7635,8 +7299,8 @@ theorem rlc_exists_axis_barrier_gap_of_disjoint {n : ℤ}
   · exact htA ((rlc_mem_axisHeights_iff _ _).2 hbarrier)
   · exact htB ((rlc_mem_axisHeights_iff _ _).2 hbarrier)
 
-
-
+/-- A gap on the vertical axis between a height met by the right path and a higher height met by the
+  left path, with no path site strictly in between. -/
 structure RlcAxisBarrierGap {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) where
   lower : ℤ
@@ -7649,7 +7313,7 @@ structure RlcAxisBarrierGap {n : ℤ}
   interior_free : ∀ t : ℤ, lower < t → t < upper →
     ![0, t] ∉ rlc_connectorBarrier gamma gamma'
 
-theorem rlc_axisBarrierGap_nonempty_of_disjoint {n : ℤ}
+lemma rlc_axisBarrierGap_nonempty_of_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     Nonempty (RlcAxisBarrierGap gamma gamma') := by
@@ -7657,8 +7321,7 @@ theorem rlc_axisBarrierGap_nonempty_of_disjoint {n : ℤ}
     rlc_exists_axis_barrier_gap_of_disjoint gamma gamma' hdisj
   exact ⟨⟨a, b, ha, hb, hstart, hab, hfinish, hfree⟩⟩
 
-
-
+/-- An axis barrier gap of the two paths, if one exists. -/
 noncomputable def rlc_axisBarrierGap? {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Option (RlcAxisBarrierGap gamma gamma') :=
@@ -7666,7 +7329,7 @@ noncomputable def rlc_axisBarrierGap? {n : ℤ}
     some (Classical.choice (rlc_axisBarrierGap_nonempty_of_disjoint gamma gamma' hdisj))
   else none
 
-theorem rlc_axisBarrierGap?_eq_some_of_disjoint {n : ℤ}
+lemma rlc_axisBarrierGap?_eq_some_of_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     ∃ G : RlcAxisBarrierGap gamma gamma', rlc_axisBarrierGap? gamma gamma' = some G := by
@@ -7674,50 +7337,54 @@ theorem rlc_axisBarrierGap?_eq_some_of_disjoint {n : ℤ}
     (rlc_axisBarrierGap_nonempty_of_disjoint gamma gamma' hdisj), ?_⟩
   simp [rlc_axisBarrierGap?, hdisj]
 
-theorem rlc_axisBarrierGap?_eq_none_of_not_disjoint {n : ℤ}
+lemma rlc_axisBarrierGap?_eq_none_of_not_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : ¬ Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     rlc_axisBarrierGap? gamma gamma' = none := by
   simp [rlc_axisBarrierGap?, hdisj]
 
+/-- The site of the right path on the axis at the lower gap height. -/
 def RlcAxisBarrierGap.lowerVertex {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Site 2 := ![0, G.lower]
 
+/-- The site just above the lower gap vertex: the seed of the gap region. -/
 def RlcAxisBarrierGap.seedVertex {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Site 2 := ![0, G.lower + 1]
 
+/-- The site of the left path on the axis at the upper gap height. -/
 def RlcAxisBarrierGap.upperVertex {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Site 2 := ![0, G.upper]
 
+/-- The vertical edge from the lower gap vertex to the seed vertex. -/
 def RlcAxisBarrierGap.firstEdge {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Sym2 (Site 2) :=
   s(G.lowerVertex, G.seedVertex)
 
-theorem RlcAxisBarrierGap.lowerVertex_mem_right {n : ℤ}
+lemma RlcAxisBarrierGap.lowerVertex_mem_right {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     G.lowerVertex ∈ rlc_pathVertices gamma.1 := by
   simpa [RlcAxisBarrierGap.lowerVertex] using
     (rlc_mem_axisHeights_iff (rlc_pathVertices gamma.1) G.lower).mp G.lower_mem
 
-theorem RlcAxisBarrierGap.upperVertex_mem_left {n : ℤ}
+lemma RlcAxisBarrierGap.upperVertex_mem_left {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     G.upperVertex ∈ rlc_pathVertices gamma'.1 := by
   simpa [RlcAxisBarrierGap.upperVertex] using
     (rlc_mem_axisHeights_iff (rlc_pathVertices gamma'.1) G.upper).mp G.upper_mem
 
-theorem RlcAxisBarrierGap.seedVertex_not_barrier_of_lt {n : ℤ}
+lemma RlcAxisBarrierGap.seedVertex_not_barrier_of_lt {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (h : G.lower + 1 < G.upper) :
     G.seedVertex ∉ rlc_connectorBarrier gamma gamma' := by
   exact G.interior_free (G.lower + 1) (by omega) h
 
-theorem RlcAxisBarrierGap.seedVertex_mem_box_of_lt {n : ℤ}
+lemma RlcAxisBarrierGap.seedVertex_mem_box_of_lt {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (h : G.lower + 1 < G.upper) :
@@ -7731,7 +7398,7 @@ theorem RlcAxisBarrierGap.seedVertex_mem_box_of_lt {n : ℤ}
     RlcAxisBarrierGap.seedVertex, Matrix.cons_val_zero, Matrix.cons_val_one]
   omega
 
-theorem RlcAxisBarrierGap.seedVertex_mem_allowed_of_lt {n : ℤ}
+lemma RlcAxisBarrierGap.seedVertex_mem_allowed_of_lt {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (h : G.lower + 1 < G.upper) :
@@ -7739,7 +7406,7 @@ theorem RlcAxisBarrierGap.seedVertex_mem_allowed_of_lt {n : ℤ}
   rw [rlc_connectorAllowed, Finset.mem_sdiff]
   exact ⟨G.seedVertex_mem_box_of_lt hn h, G.seedVertex_not_barrier_of_lt h⟩
 
-theorem RlcAxisBarrierGap.firstEdge_lattice {n : ℤ}
+lemma RlcAxisBarrierGap.firstEdge_lattice {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     G.firstEdge ∈ (hypercubicLattice 2).edgeSet := by
@@ -7748,9 +7415,7 @@ theorem RlcAxisBarrierGap.firstEdge_lattice {n : ℤ}
   simp [RlcAxisBarrierGap.lowerVertex, RlcAxisBarrierGap.seedVertex,
     hypercubicLattice_adj, Fin.sum_univ_two]
 
-
-
-
+/-- The allowed sites reachable from the seed vertex of an axis gap. -/
 def rlc_axisGapRegionSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Set (Site 2) :=
@@ -7760,7 +7425,7 @@ def rlc_axisGapRegionSet {n : ℤ}
       (rlc_connectorAllowed gamma gamma' : Set (Site 2))).Reachable
       ⟨G.seedVertex, hs⟩ ⟨z, hz⟩}
 
-theorem rlc_axisGapRegionSet_finite {n : ℤ}
+lemma rlc_axisGapRegionSet_finite {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     (rlc_axisGapRegionSet G).Finite := by
@@ -7768,12 +7433,13 @@ theorem rlc_axisGapRegionSet_finite {n : ℤ}
   rintro z ⟨hz, _hs, _hreach⟩
   exact hz
 
+/-- The region of an axis gap, as a `Finset`. -/
 noncomputable def rlc_axisGapRegion {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Finset (Site 2) :=
   (rlc_axisGapRegionSet_finite G).toFinset
 
-theorem RlcAxisBarrierGap.seedVertex_mem_region_of_lt {n : ℤ}
+lemma RlcAxisBarrierGap.seedVertex_mem_region_of_lt {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (h : G.lower + 1 < G.upper) :
@@ -7783,9 +7449,7 @@ theorem RlcAxisBarrierGap.seedVertex_mem_region_of_lt {n : ℤ}
     ⟨hs, hs, SimpleGraph.Reachable.refl _⟩
   simpa [rlc_axisGapRegion] using hsSet
 
-
-
-theorem RlcAxisBarrierGap.axisVertex_mem_region_of_between {n : ℤ}
+lemma RlcAxisBarrierGap.axisVertex_mem_region_of_between {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n) {t : ℤ}
     (hlower : G.lower < t) (hupper : t < G.upper) :
@@ -7833,18 +7497,14 @@ theorem RlcAxisBarrierGap.axisVertex_mem_region_of_between {n : ℤ}
     ⟨hzAllowed, hs, hreach⟩
   simpa [rlc_axisGapRegion] using hzSet
 
-
-
+/-- The edges with both endpoints in the region of an axis gap. -/
 noncomputable def rlc_axisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Finset (Sym2 (Site 2)) :=
   (edgesWithinFinset (rlc_connectorBox n)).filter (fun e =>
     ∃ z ∈ rlc_axisGapRegion G, z ∈ e) ∪ {G.firstEdge}
 
-
-
-
-theorem RlcAxisBarrierGap.verticalEdge_mem_axisGapEdges {n : ℤ}
+lemma RlcAxisBarrierGap.verticalEdge_mem_axisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n) {t : ℤ}
     (hlower : G.lower ≤ t) (hupper : t < G.upper) :
@@ -7878,7 +7538,7 @@ theorem RlcAxisBarrierGap.verticalEdge_mem_axisGapEdges {n : ℤ}
       exact ⟨![0, t], htBox, ![0, t + 1], hnextBox, rfl⟩
     · exact ⟨![0, t], htRegion, Sym2.mem_mk_left _ _⟩
 
-
+/-- The event that the two paths are joined through the region of an axis gap. -/
 def rlc_axisGapConnectorEvent {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
@@ -7891,7 +7551,7 @@ def rlc_axisGapConnectorEvent {n : ℤ}
         (rlc_maskConfig (rlc_axisGapEdges G) omega)
         (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩ ⟨y, hyR⟩}
 
-theorem rlc_axisGapConnectorEvent_dependsOn {n : ℤ}
+lemma rlc_axisGapConnectorEvent_dependsOn {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     DependsOn ((rlc_axisGapConnectorEvent G).indicator (fun _ => (1 : ℝ)))
@@ -7902,20 +7562,19 @@ theorem rlc_axisGapConnectorEvent_dependsOn {n : ℤ}
     rlc_maskConfig_congr hagree
   have hevent : omega ∈ rlc_axisGapConnectorEvent G ↔
       omega' ∈ rlc_axisGapConnectorEvent G := by
-    simp only [rlc_axisGapConnectorEvent, Set.mem_setOf_eq, hmask]
+    simp only [rlc_axisGapConnectorEvent, Set.mem_ofPred_eq, hmask]
   by_cases hmem : omega ∈ rlc_axisGapConnectorEvent G
   · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hevent.mp hmem)]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-theorem rlc_axisGapConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_axisGapConnectorEvent_measurableSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     MeasurableSet (rlc_axisGapConnectorEvent G) :=
   measurableSet_of_dependsOn (rlc_axisGapConnectorEvent_dependsOn G)
 
-
-
+/-- The connector event chosen adaptively: through an axis gap if one exists, otherwise directly. -/
 noncomputable def rlc_adaptiveConnectorEvent {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
@@ -7923,7 +7582,7 @@ noncomputable def rlc_adaptiveConnectorEvent {n : ℤ}
   | none => Set.univ
   | some G => rlc_axisGapConnectorEvent G
 
-theorem rlc_adaptiveConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_adaptiveConnectorEvent_measurableSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     MeasurableSet (rlc_adaptiveConnectorEvent gamma gamma') := by
   unfold rlc_adaptiveConnectorEvent
@@ -7931,21 +7590,21 @@ theorem rlc_adaptiveConnectorEvent_measurableSet {n : ℤ}
   · exact MeasurableSet.univ
   · exact rlc_axisGapConnectorEvent_measurableSet _
 
-theorem rlc_adaptiveConnectorEvent_eq_univ_of_not_disjoint {n : ℤ}
+lemma rlc_adaptiveConnectorEvent_eq_univ_of_not_disjoint {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdisj : ¬ Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
     rlc_adaptiveConnectorEvent gamma gamma' = Set.univ := by
   rw [rlc_adaptiveConnectorEvent,
     rlc_axisBarrierGap?_eq_none_of_not_disjoint gamma gamma' hdisj]
 
-theorem rlc_adaptiveConnectorEvent_eq_gap_of_some {n : ℤ}
+lemma rlc_adaptiveConnectorEvent_eq_gap_of_some {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (G : RlcAxisBarrierGap gamma gamma')
     (hG : rlc_axisBarrierGap? gamma gamma' = some G) :
     rlc_adaptiveConnectorEvent gamma gamma' = rlc_axisGapConnectorEvent G := by
   rw [rlc_adaptiveConnectorEvent, hG]
 
-theorem rlc_axisGapRegion_not_barrier {n : ℤ}
+lemma rlc_axisGapRegion_not_barrier {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     {G : RlcAxisBarrierGap gamma gamma'} {z : Site 2}
     (hz : z ∈ rlc_axisGapRegion G) :
@@ -7955,7 +7614,7 @@ theorem rlc_axisGapRegion_not_barrier {n : ℤ}
   obtain ⟨hzAllowed, _hs, _hreach⟩ := hzset
   exact (Finset.mem_sdiff.mp hzAllowed).2
 
-theorem RlcAxisBarrierGap.seedVertex_not_right_of_disjoint {n : ℤ}
+lemma RlcAxisBarrierGap.seedVertex_not_right_of_disjoint {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
@@ -7973,7 +7632,7 @@ theorem RlcAxisBarrierGap.seedVertex_not_right_of_disjoint {n : ℤ}
     apply hnotBarrier
     simp [rlc_connectorBarrier, hseed]
 
-theorem RlcAxisBarrierGap.firstEdge_not_mem_rightPath_of_disjoint {n : ℤ}
+lemma RlcAxisBarrierGap.firstEdge_not_mem_rightPath_of_disjoint {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
@@ -7984,7 +7643,7 @@ theorem RlcAxisBarrierGap.firstEdge_not_mem_rightPath_of_disjoint {n : ℤ}
   exact G.seedVertex_not_right_of_disjoint hdisj
     (rlc_pathEdge_endpoints_mem_vertices gamma.1 he').2
 
-theorem RlcAxisBarrierGap.firstEdge_not_mem_leftPath_of_disjoint {n : ℤ}
+lemma RlcAxisBarrierGap.firstEdge_not_mem_leftPath_of_disjoint {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
@@ -7995,7 +7654,7 @@ theorem RlcAxisBarrierGap.firstEdge_not_mem_leftPath_of_disjoint {n : ℤ}
   exact (Finset.disjoint_left.mp hdisj) G.lowerVertex_mem_right
     (rlc_pathEdge_endpoints_mem_vertices gamma'.1 he').1
 
-theorem rlc_rightPathEdges_disjoint_axisGapEdges {n : ℤ}
+lemma rlc_rightPathEdges_disjoint_axisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
@@ -8018,7 +7677,7 @@ theorem rlc_rightPathEdges_disjoint_axisGapEdges {n : ℤ}
   · have heEq : e = G.firstEdge := by simpa using heFirst
     exact G.firstEdge_not_mem_rightPath_of_disjoint hdisj (heEq ▸ hePath)
 
-theorem rlc_leftPathEdges_disjoint_axisGapEdges {n : ℤ}
+lemma rlc_leftPathEdges_disjoint_axisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdisj : Disjoint (rlc_pathVertices gamma.1) (rlc_pathVertices gamma'.1)) :
@@ -8041,9 +7700,7 @@ theorem rlc_leftPathEdges_disjoint_axisGapEdges {n : ℤ}
   · have heEq : e = G.firstEdge := by simpa using heFirst
     exact G.firstEdge_not_mem_leftPath_of_disjoint hdisj (heEq ▸ hePath)
 
-
-
-theorem rlc_mem_axisGapConnectorEvent_of_firstEdge_open {n : ℤ}
+lemma rlc_mem_axisGapConnectorEvent_of_firstEdge_open {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hadjGap : G.lower + 1 = G.upper)
@@ -8064,7 +7721,7 @@ theorem rlc_mem_axisGapConnectorEvent_of_firstEdge_open {n : ℤ}
     simp [rlc_axisGapEdges]
   have hmask : rlc_maskConfig (rlc_axisGapEdges G) omega
       s(G.lowerVertex, G.upperVertex) = true := by
-    rw [hfirst, rlc_maskConfig, if_pos hfirstMem]
+    rw [hfirst, rlc_maskConfig, ite_eq_left hfirstMem]
     exact hopen
   have hstep :
       (openSubgraphInduce 2 (rlc_maskConfig (rlc_axisGapEdges G) omega)
@@ -8074,9 +7731,7 @@ theorem rlc_mem_axisGapConnectorEvent_of_firstEdge_open {n : ℤ}
     exact ⟨hlat, hmask⟩
   exact hstep.reachable
 
-
-
-theorem rlc_axisGapConnector_half_of_adjacent {n : ℤ}
+lemma rlc_axisGapConnector_half_of_adjacent {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hadjGap : G.lower + 1 = G.upper) :
@@ -8091,14 +7746,7 @@ theorem rlc_axisGapConnector_half_of_adjacent {n : ℤ}
   rw [← hprob]
   exact measureReal_mono hsub
 
-
-
-
-
-
-
-
-theorem rlc_adaptiveConnector_half_of_nonadjacent {n : ℤ}
+lemma rlc_adaptiveConnector_half_of_nonadjacent {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hnonadj : ∀ G : RlcAxisBarrierGap gamma gamma',
       G.lower + 1 < G.upper →
@@ -8118,7 +7766,7 @@ theorem rlc_adaptiveConnector_half_of_nonadjacent {n : ℤ}
       probReal_univ]
     norm_num
 
-theorem rlc_exists_axis_barrier_gap_of_not_connector {n : ℤ}
+lemma rlc_exists_axis_barrier_gap_of_not_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -8132,8 +7780,7 @@ theorem rlc_exists_axis_barrier_gap_of_not_connector {n : ℤ}
   rlc_exists_axis_barrier_gap_of_disjoint gamma gamma'
     (rlc_pathVertices_disjoint_of_not_connector gamma gamma' omega hno)
 
-
-
+/-- The sites reachable from the right path in the masked configuration inside the connector box. -/
 def rlc_connectorReachSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) : Set (Site 2) :=
@@ -8144,7 +7791,7 @@ def rlc_connectorReachSet {n : ℤ}
         (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega)
         (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩ ⟨z, hzR⟩}
 
-theorem rlc_connectorReachSet_subset_box {n : ℤ}
+lemma rlc_connectorReachSet_subset_box {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     rlc_connectorReachSet gamma gamma' omega ⊆
@@ -8152,15 +7799,14 @@ theorem rlc_connectorReachSet_subset_box {n : ℤ}
   rintro z ⟨hzR, _⟩
   exact hzR
 
-theorem rlc_connectorReachSet_finite {n : ℤ}
+lemma rlc_connectorReachSet_finite {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     (rlc_connectorReachSet gamma gamma' omega).Finite :=
   (rect_finite (-2 * n) (2 * n) (-n) n).subset
     (rlc_connectorReachSet_subset_box gamma gamma' omega)
 
-
-theorem rlc_rightPathVertex_mem_connectorReachSet {n : ℤ}
+lemma rlc_rightPathVertex_mem_connectorReachSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {x : Site 2}
     (hx : x ∈ rlc_pathVertices gamma.1) :
@@ -8171,8 +7817,7 @@ theorem rlc_rightPathVertex_mem_connectorReachSet {n : ℤ}
       (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega)
       (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩⟩
 
-
-theorem rlc_connectorReachSet_extend {n : ℤ}
+lemma rlc_connectorReachSet_extend {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
     (hv : v ∈ rlc_connectorReachSet gamma gamma' omega)
@@ -8190,9 +7835,7 @@ theorem rlc_connectorReachSet_extend {n : ℤ}
     exact ⟨hadj, hopen⟩
   exact hstep.reachable
 
-
-
-theorem rlc_leftPathVertex_not_mem_connectorReachSet_of_not_connector {n : ℤ}
+lemma rlc_leftPathVertex_not_mem_connectorReachSet_of_not_connector {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') {y : Site 2}
@@ -8201,10 +7844,7 @@ theorem rlc_leftPathVertex_not_mem_connectorReachSet_of_not_connector {n : ℤ}
   rintro ⟨hyR, x, hx, hxR, hxy⟩
   exact hno ⟨x, hx, y, hy, hxR, hyR, hxy⟩
 
-
-
-
-theorem rlc_connectorReachSet_boundary_closed {n : ℤ}
+lemma rlc_connectorReachSet_boundary_closed {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
     (hv : v ∈ rlc_connectorReachSet gamma gamma' omega)
@@ -8228,8 +7868,7 @@ theorem rlc_connectorReachSet_boundary_closed {n : ℤ}
       exact hwR (by simpa [rlc_connectorBox] using hbox)
     simp [rlc_maskConfig, hnotU]
 
-
-theorem rlc_connectorReachSet_boundary_dual_open {n : ℤ}
+lemma rlc_connectorReachSet_boundary_dual_open {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
     (hv : v ∈ rlc_connectorReachSet gamma gamma' omega)
@@ -8241,9 +7880,7 @@ theorem rlc_connectorReachSet_boundary_dual_open {n : ℤ}
     (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega) s(v, w)).mp
     (rlc_connectorReachSet_boundary_closed gamma gamma' omega hv hadj hw)
 
-
-
-theorem rlc_connectorReachSet_edgeBoundary_closed {n : ℤ}
+lemma rlc_connectorReachSet_edgeBoundary_closed {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
     (hvw : (v, w) ∈ edgeBoundary 2
@@ -8259,7 +7896,7 @@ theorem rlc_connectorReachSet_edgeBoundary_closed {n : ℤ}
     rw [Sym2.eq_swap]
     exact rlc_connectorReachSet_boundary_closed gamma gamma' omega hw hadj.symm hv
 
-theorem rlc_connectorReachSet_edgeBoundary_dual_open {n : ℤ}
+lemma rlc_connectorReachSet_edgeBoundary_dual_open {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
     (hvw : (v, w) ∈ edgeBoundary 2
@@ -8270,9 +7907,7 @@ theorem rlc_connectorReachSet_edgeBoundary_dual_open {n : ℤ}
     (rlc_maskConfig (rlc_connectorEdges gamma gamma') omega) s(v, w)).mp
     (rlc_connectorReachSet_edgeBoundary_closed gamma gamma' omega hvw)
 
-
-
-theorem rlc_faceBoundaryWalk_edges_dual_open {n : ℤ}
+lemma rlc_faceBoundaryWalk_edges_dual_open {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) {u v f g : Site 2}
     (c : (faceBoundaryGraph
@@ -8298,9 +7933,7 @@ theorem rlc_faceBoundaryWalk_edges_dual_open {n : ℤ}
   exact rlc_connectorReachSet_edgeBoundary_dual_open
     gamma gamma' omega hpqBoundary
 
-
-
-theorem rlc_faceBoundaryGraph_le_openFaceDual {n : ℤ}
+lemma rlc_faceBoundaryGraph_le_openFaceDual {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     faceBoundaryGraph (rlc_connectorReachSet gamma gamma' omega) ≤
@@ -8320,9 +7953,7 @@ theorem rlc_faceBoundaryGraph_le_openFaceDual {n : ℤ}
   rw [fci_faceDualConfig, fci_faceEdgeEquiv_mk_of_adj hfg.1, hpq]
   simpa using hclosed
 
-
-
-theorem rlc_connectorReachSet_edgeBoundary_nonempty {n : ℤ}
+lemma rlc_connectorReachSet_edgeBoundary_nonempty {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     (edgeBoundary 2 (rlc_connectorReachSet gamma gamma' omega)).Nonempty := by
@@ -8357,8 +7988,7 @@ theorem rlc_connectorReachSet_edgeBoundary_nonempty {n : ℤ}
     omega
   exact ⟨(v, w), hadj, iff_of_true hv hw⟩
 
-
-theorem rlc_connectorReachSet_dualCircuit {n : ℤ}
+lemma rlc_connectorReachSet_dualCircuit {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     ∃ (u : Site 2)
@@ -8370,9 +8000,7 @@ theorem rlc_connectorReachSet_dualCircuit {n : ℤ}
     (rlc_connectorReachSet gamma gamma' omega)
     (rlc_connectorReachSet_finite gamma gamma' omega) hvw
 
-
-
-theorem rlc_walk_mem_edgeBoundary_edges (S : Set (Site 2)) {x y : Site 2}
+lemma rlc_walk_mem_edgeBoundary_edges (S : Set (Site 2)) {x y : Site 2}
     (w : (hypercubicLattice 2).Walk x y) (hx : x ∈ S) (hy : y ∉ S) :
     ∃ u v, (u, v) ∈ edgeBoundary 2 S ∧ s(u, v) ∈ w.edges := by
   classical
@@ -8384,10 +8012,7 @@ theorem rlc_walk_mem_edgeBoundary_edges (S : Set (Site 2)) {x y : Site 2}
       exact ⟨u, v, huv, by simp [he]⟩
     · exact ⟨a, b, ⟨hab, by simp [hx, hb]⟩, by simp⟩
 
-
-
-
-theorem rlc_connectorReachSet_axis_boundary {n : ℤ}
+lemma rlc_connectorReachSet_axis_boundary {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -8455,10 +8080,7 @@ theorem rlc_connectorReachSet_axis_boundary {n : ℤ}
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     omega
 
-
-
-
-theorem rlc_connectorReachSet_axis_anchored_dualCircuit {n : ℤ}
+lemma rlc_connectorReachSet_axis_anchored_dualCircuit {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -8493,9 +8115,7 @@ theorem rlc_connectorReachSet_axis_anchored_dualCircuit {n : ℤ}
   exact ⟨p, q, f, g, u, c, hpq, hpR, hqR, hp0, hq0,
     hfg, hshared, hcyc, hedge⟩
 
-
-
-theorem rlc_connectorReachSet_axis_anchored_openDualCircuit {n : ℤ}
+lemma rlc_connectorReachSet_axis_anchored_openDualCircuit {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -8521,9 +8141,7 @@ theorem rlc_connectorReachSet_axis_anchored_openDualCircuit {n : ℤ}
   intro a b hab
   exact rlc_faceBoundaryWalk_edges_dual_open gamma gamma' omega c hab
 
-
-
-theorem rlc_connectorReachSet_openFaceDualCircuit {n : ℤ}
+lemma rlc_connectorReachSet_openFaceDualCircuit {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hno : omega ∉ rlc_connectorEvent gamma gamma') :
@@ -8537,17 +8155,15 @@ theorem rlc_connectorReachSet_openFaceDualCircuit {n : ℤ}
   let hle := rlc_faceBoundaryGraph_le_openFaceDual gamma gamma' omega
   exact ⟨u, c.mapLe hle, hcyc.mapLe hle⟩
 
+/-! ## G. Dual reflection -/
 
-
-
-
-
+/-- The reflection `(x, y) ↦ (-x - 1, y + 1)` that maps primal edges to dual edges of the faces. -/
 def rlc_dualReflectFun (x : Site 2) : Site 2 := ![-x 0 - 1, x 1 + 1]
 
-
+/-- The inverse of the dual reflection: `(x, y) ↦ (-x - 1, y - 1)`. -/
 def rlc_dualReflectInvFun (x : Site 2) : Site 2 := ![-x 0 - 1, x 1 - 1]
 
-
+/-- The dual reflection, as an equivalence of sites. -/
 def rlc_dualReflect : Site 2 ≃ Site 2 where
   toFun := rlc_dualReflectFun
   invFun := rlc_dualReflectInvFun
@@ -8558,24 +8174,23 @@ def rlc_dualReflect : Site 2 ≃ Site 2 where
     ext i
     fin_cases i <;> simp [rlc_dualReflectFun, rlc_dualReflectInvFun]
 
-@[simp] theorem rlc_dualReflect_zero (x : Site 2) :
+@[simp] lemma rlc_dualReflect_zero (x : Site 2) :
     rlc_dualReflect x 0 = -x 0 - 1 := by
   rfl
 
-@[simp] theorem rlc_dualReflect_one (x : Site 2) :
+@[simp] lemma rlc_dualReflect_one (x : Site 2) :
     rlc_dualReflect x 1 = x 1 + 1 := by
   rfl
 
-@[simp] theorem rlc_dualReflect_symm_zero (x : Site 2) :
+@[simp] lemma rlc_dualReflect_symm_zero (x : Site 2) :
     rlc_dualReflect.symm x 0 = -x 0 - 1 := by
   rfl
 
-@[simp] theorem rlc_dualReflect_symm_one (x : Site 2) :
+@[simp] lemma rlc_dualReflect_symm_one (x : Site 2) :
     rlc_dualReflect.symm x 1 = x 1 - 1 := by
   rfl
 
-
-theorem rlc_adj_dualReflect (x y : Site 2) :
+lemma rlc_adj_dualReflect (x y : Site 2) :
     (hypercubicLattice 2).Adj x y ↔
       (hypercubicLattice 2).Adj (rlc_dualReflect x) (rlc_dualReflect y) := by
   rw [hypercubicLattice_adj, hypercubicLattice_adj,
@@ -8585,54 +8200,48 @@ theorem rlc_adj_dualReflect (x y : Site 2) :
     Int.natAbs_neg,
     show (x 1 + 1) - (y 1 + 1) = x 1 - y 1 by ring]
 
-
+/-- The dual reflection, acting on edges. -/
 noncomputable def rlc_dualReflectEdge :
     Sym2 (Site 2) ≃ Sym2 (Site 2) :=
   sym2Congr rlc_dualReflect
 
-theorem rlc_dualReflectEdge_symm_apply (e : Sym2 (Site 2)) :
+lemma rlc_dualReflectEdge_symm_apply (e : Sym2 (Site 2)) :
     rlc_dualReflectEdge.symm e = e.map rlc_dualReflect.symm := by
   simp [rlc_dualReflectEdge, sym2Congr]
 
-
-
+/-- The dual reflection, acting on configurations. -/
 noncomputable def rlc_dualReflectConfig
     (omega : ConfigSpace (Sym2 (Site 2))) :
     ConfigSpace (Sym2 (Site 2)) :=
   Equiv.piCongrLeft (fun _ => Bool) rlc_dualReflectEdge
     (fci_faceDualConfig omega)
 
-theorem rlc_dualReflectConfig_apply
+lemma rlc_dualReflectConfig_apply
     (omega : ConfigSpace (Sym2 (Site 2))) (e : Sym2 (Site 2)) :
     rlc_dualReflectConfig omega e =
       fci_faceDualConfig omega (e.map rlc_dualReflect.symm) := by
   rw [rlc_dualReflectConfig, Equiv.piCongrLeft_apply, eq_rec_constant,
     rlc_dualReflectEdge_symm_apply]
 
-
-
-
+/-- The composite of the inverse dual reflection with the face-edge equivalence: an equivalence of
+  edges. -/
 noncomputable def rlc_pimsEdgeEquiv :
     Sym2 (Site 2) ≃ Sym2 (Site 2) :=
   rlc_dualReflectEdge.symm.trans fci_faceEdgeEquiv
 
-theorem rlc_pimsEdgeEquiv_apply (e : Sym2 (Site 2)) :
+lemma rlc_pimsEdgeEquiv_apply (e : Sym2 (Site 2)) :
     rlc_pimsEdgeEquiv e =
       fci_faceEdgeEquiv (e.map rlc_dualReflect.symm) := by
   simp [rlc_pimsEdgeEquiv, Equiv.trans_apply,
     rlc_dualReflectEdge_symm_apply]
 
-
-
-theorem rlc_dualReflectConfig_eq_pims
+lemma rlc_dualReflectConfig_eq_pims
     (omega : ConfigSpace (Sym2 (Site 2))) (e : Sym2 (Site 2)) :
     rlc_dualReflectConfig omega e = !(omega (rlc_pimsEdgeEquiv e)) := by
   rw [rlc_dualReflectConfig_apply, rlc_pimsEdgeEquiv_apply,
     fci_faceDualConfig]
 
-
-
-theorem rlc_pimsEdgeEquiv_reflected_mk_of_adj
+lemma rlc_pimsEdgeEquiv_reflected_mk_of_adj
     {f g : Site 2} (hfg : (hypercubicLattice 2).Adj f g) :
     rlc_pimsEdgeEquiv s(rlc_dualReflect f, rlc_dualReflect g) =
       sharedPrimalEdge f g := by
@@ -8640,8 +8249,7 @@ theorem rlc_pimsEdgeEquiv_reflected_mk_of_adj
   simp only [Equiv.symm_apply_apply]
   exact fci_faceEdgeEquiv_mk_of_adj hfg
 
-
-theorem rlc_pimsEdgeEquiv_horizontal (a b : ℤ) :
+lemma rlc_pimsEdgeEquiv_horizontal (a b : ℤ) :
     rlc_pimsEdgeEquiv s(![a, b], ![a + 1, b]) =
       s(![-a - 1, b - 1], ![-a - 1, b]) := by
   rw [rlc_pimsEdgeEquiv_apply, Sym2.map_mk]
@@ -8655,16 +8263,16 @@ theorem rlc_pimsEdgeEquiv_horizontal (a b : ℤ) :
   have hy : rlc_dualReflect.symm (![a + 1, b] : Site 2) =
       ![-a - 2, b - 1] := by
     ext i
-    fin_cases i <;> simp <;> ring
+    fin_cases i <;> simp
+    ring_nf
   have hleft : (![-a - 2, b - 1] : Site 2) =
       ![(-a - 1) - 1, b - 1] := by
-    congr 1 <;> ring
+    congr 1; ring
   rw [hx, hy, fci_faceEdgeEquiv_mk_of_adj hadj, hleft,
     sharedPrimalEdge_left]
   simp [faceCorner00, faceCorner01]
 
-
-theorem rlc_pimsEdgeEquiv_vertical (a b : ℤ) :
+lemma rlc_pimsEdgeEquiv_vertical (a b : ℤ) :
     rlc_pimsEdgeEquiv s(![a, b], ![a, b + 1]) =
       s(![-a - 1, b], ![-a, b]) := by
   rw [rlc_pimsEdgeEquiv_apply, Sym2.map_mk]
@@ -8681,14 +8289,12 @@ theorem rlc_pimsEdgeEquiv_vertical (a b : ℤ) :
     fin_cases i <;> simp
   have htop : (![-a - 1, b] : Site 2) =
       ![-a - 1, (b - 1) + 1] := by
-    congr 1 <;> ring
+    congr 1; ring_nf
   rw [hx, hy, fci_faceEdgeEquiv_mk_of_adj hadj, htop,
     sharedPrimalEdge_top]
   simp [faceCorner01, faceCorner11]
 
-
-
-theorem rlc_reflectedEdge_eq_horizontal_of_shared_vertical
+lemma rlc_reflectedEdge_eq_horizontal_of_shared_vertical
     {f g : Site 2} (hfg : (hypercubicLattice 2).Adj f g) {t : ℤ}
     (hshared : sharedPrimalEdge f g = s(![0, t], ![0, t + 1])) :
     s(rlc_dualReflect f, rlc_dualReflect g) =
@@ -8698,8 +8304,7 @@ theorem rlc_reflectedEdge_eq_horizontal_of_shared_vertical
   symm
   simpa using (rlc_pimsEdgeEquiv_horizontal (-1) (t + 1))
 
-
-theorem rlc_dualReflectConfig_mk
+lemma rlc_dualReflectConfig_mk
     (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2) :
     rlc_dualReflectConfig omega
         s(rlc_dualReflect x, rlc_dualReflect y) =
@@ -8707,9 +8312,7 @@ theorem rlc_dualReflectConfig_mk
   rw [rlc_dualReflectConfig_apply, Sym2.map_mk]
   simp
 
-
-
-theorem rlc_dualReflectConfig_measurePreserving :
+lemma rlc_dualReflectConfig_measurePreserving :
     MeasurePreserving rlc_dualReflectConfig
       halfMeasure halfMeasure := by
   have hreindex : MeasurePreserving
@@ -8725,8 +8328,7 @@ theorem rlc_dualReflectConfig_measurePreserving :
       rlc_dualReflectEdge
   exact hreindex.comp fci_faceDualConfig_measurePreserving
 
-
-
+/-- The dual reflection as a homomorphism from the open subgraph of the face-dual configuration. -/
 noncomputable def rlc_dualReflectOpenHom
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraph 2 (fci_faceDualConfig omega) →g
@@ -8739,8 +8341,7 @@ noncomputable def rlc_dualReflectOpenHom
     rw [rlc_dualReflectConfig_mk]
     exact hxy.2
 
-
-
+/-- The image of an open walk of the face-dual configuration under the dual reflection. -/
 noncomputable def rlc_dualReflectOpenWalk
     (omega : ConfigSpace (Sym2 (Site 2))) {x y : Site 2}
     (w : (openSubgraph 2 (fci_faceDualConfig omega)).Walk x y) :
@@ -8748,18 +8349,14 @@ noncomputable def rlc_dualReflectOpenWalk
       (rlc_dualReflect x) (rlc_dualReflect y) :=
   w.map (rlc_dualReflectOpenHom omega)
 
-theorem rlc_dualReflectOpenWalk_isCycle
+lemma rlc_dualReflectOpenWalk_isCycle
     (omega : ConfigSpace (Sym2 (Site 2))) {x : Site 2}
     {w : (openSubgraph 2 (fci_faceDualConfig omega)).Walk x x}
     (hw : w.IsCycle) :
     (rlc_dualReflectOpenWalk omega w).IsCycle := by
   exact hw.map rlc_dualReflect.injective
 
-
-
-
-
-
+/-- The sites reachable from the lower gap vertex in the masked configuration. -/
 def rlc_axisGapReachSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
@@ -8771,7 +8368,7 @@ def rlc_axisGapReachSet {n : ℤ}
         (rlc_maskConfig (rlc_axisGapEdges G) omega)
         (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩ ⟨z, hzR⟩}
 
-theorem rlc_axisGapReachSet_subset_box {n : ℤ}
+lemma rlc_axisGapReachSet_subset_box {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -8780,7 +8377,7 @@ theorem rlc_axisGapReachSet_subset_box {n : ℤ}
   rintro z ⟨hzR, _⟩
   exact hzR
 
-theorem rlc_axisGapReachSet_finite {n : ℤ}
+lemma rlc_axisGapReachSet_finite {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -8788,7 +8385,7 @@ theorem rlc_axisGapReachSet_finite {n : ℤ}
   (rect_finite (-2 * n) (2 * n) (-n) n).subset
     (rlc_axisGapReachSet_subset_box G omega)
 
-theorem rlc_rightPathVertex_mem_axisGapReachSet {n : ℤ}
+lemma rlc_rightPathVertex_mem_axisGapReachSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {x : Site 2}
@@ -8800,7 +8397,7 @@ theorem rlc_rightPathVertex_mem_axisGapReachSet {n : ℤ}
       (rlc_maskConfig (rlc_axisGapEdges G) omega)
       (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩⟩
 
-theorem rlc_axisGapReachSet_extend {n : ℤ}
+lemma rlc_axisGapReachSet_extend {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
@@ -8819,7 +8416,7 @@ theorem rlc_axisGapReachSet_extend {n : ℤ}
     exact ⟨hadj, hopen⟩
   exact hstep.reachable
 
-theorem rlc_leftPathVertex_not_mem_axisGapReachSet_of_failure {n : ℤ}
+lemma rlc_leftPathVertex_not_mem_axisGapReachSet_of_failure {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -8829,9 +8426,7 @@ theorem rlc_leftPathVertex_not_mem_axisGapReachSet_of_failure {n : ℤ}
   rintro ⟨hyR, x, hx, hxR, hxy⟩
   exact hno ⟨x, hx, y, hy, hxR, hyR, hxy⟩
 
-
-
-theorem rlc_axisGapEdges_endpoints_mem_box {n : ℤ}
+lemma rlc_axisGapEdges_endpoints_mem_box {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper) {v w : Site 2}
@@ -8857,9 +8452,7 @@ theorem rlc_axisGapEdges_endpoints_mem_box {n : ℤ}
     · exact ⟨hlower, by simpa [rlc_connectorBox] using hseed⟩
     · exact ⟨by simpa [rlc_connectorBox] using hseed, hlower⟩
 
-
-
-theorem rlc_axisGapReachSet_boundary_closed {n : ℤ}
+lemma rlc_axisGapReachSet_boundary_closed {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -8877,7 +8470,7 @@ theorem rlc_axisGapReachSet_boundary_closed {n : ℤ}
       exact hwR (rlc_axisGapEdges_endpoints_mem_box G hn hlt he).2
     simp [rlc_maskConfig, hnotU]
 
-theorem rlc_axisGapReachSet_edgeBoundary_closed {n : ℤ}
+lemma rlc_axisGapReachSet_edgeBoundary_closed {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -8894,9 +8487,7 @@ theorem rlc_axisGapReachSet_edgeBoundary_closed {n : ℤ}
     rw [Sym2.eq_swap]
     exact rlc_axisGapReachSet_boundary_closed G hn hlt omega hw hadj.symm hv
 
-
-
-theorem rlc_axisGapFaceBoundaryGraph_le_openFaceDual {n : ℤ}
+lemma rlc_axisGapFaceBoundaryGraph_le_openFaceDual {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -8918,9 +8509,7 @@ theorem rlc_axisGapFaceBoundaryGraph_le_openFaceDual {n : ℤ}
   rw [fci_faceDualConfig, fci_faceEdgeEquiv_mk_of_adj hfg.1, hpq]
   simpa using hclosed
 
-
-
-theorem rlc_axisGapReachSet_axis_boundary {n : ℤ}
+lemma rlc_axisGapReachSet_axis_boundary {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -8947,9 +8536,7 @@ theorem rlc_axisGapReachSet_axis_boundary {n : ℤ}
     simp
   exact ⟨p, q, hpq, haxis p hpSupp, haxis q hqSupp⟩
 
-
-
-theorem rlc_axisGapReachSet_axis_anchored_dualCircuit {n : ℤ}
+lemma rlc_axisGapReachSet_axis_anchored_dualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -8979,9 +8566,7 @@ theorem rlc_axisGapReachSet_axis_anchored_dualCircuit {n : ℤ}
   exact ⟨p, q, f, g, u, c, hpq, hp0, hq0,
     hfg, hshared, hcyc, hedge⟩
 
-
-
-theorem rlc_axisGapReachSet_openFaceDualCircuit {n : ℤ}
+lemma rlc_axisGapReachSet_openFaceDualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -9002,8 +8587,7 @@ theorem rlc_axisGapReachSet_openFaceDualCircuit {n : ℤ}
   rw [SimpleGraph.Walk.edges_mapLe_eq_edges]
   exact hedge
 
-
-theorem rlc_axisGapReachSet_reflectedOpenDualCircuit {n : ℤ}
+lemma rlc_axisGapReachSet_reflectedOpenDualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -9035,11 +8619,7 @@ theorem rlc_axisGapReachSet_reflectedOpenDualCircuit {n : ℤ}
   change s(rlc_dualReflect f, rlc_dualReflect g) ∈ (c.map hom).edges
   exact hedgeEq ▸ hEdges.symm ▸ hmapped
 
-
-
-
-
-theorem rlc_axisGapConnector_half_of_dual_reflection {n : ℤ}
+lemma rlc_axisGapConnector_half_of_dual_reflection {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdual : ∀ omega : ConfigSpace (Sym2 (Site 2)),
@@ -9054,9 +8634,7 @@ theorem rlc_axisGapConnector_half_of_dual_reflection {n : ℤ}
   intro omega hno
   exact hdual omega hno
 
-
-
-theorem rlc_adaptiveConnector_half_of_dual_reflection {n : ℤ}
+lemma rlc_adaptiveConnector_half_of_dual_reflection {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (hdual : ∀ (G : RlcAxisBarrierGap gamma gamma')
       (_hlt : G.lower + 1 < G.upper)
@@ -9071,19 +8649,12 @@ theorem rlc_adaptiveConnector_half_of_dual_reflection {n : ℤ}
   exact rlc_axisGapConnector_half_of_dual_reflection G
     (hdual G hlt)
 
-
-
-
+/-- The edges of a crossing path reflected in the vertical axis. -/
 noncomputable def rlc_reflectedPathEdges {a b c d : ℤ}
     (gamma : RlcCrossingPath a b c d) : Finset (Sym2 (Site 2)) :=
   (rlc_pathEdges gamma).image (Sym2.map rlc_flipX)
 
-
-
-
-
-
-
+/-- The axis-gap edges together with the reflected path edges. -/
 noncomputable def rlc_mixedAxisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') : Finset (Sym2 (Site 2)) :=
@@ -9091,10 +8662,7 @@ noncomputable def rlc_mixedAxisGapEdges {n : ℤ}
       rlc_reflectedPathEdges gamma'.1) \
     (rlc_pathEdges gamma.1 ∪ rlc_pathEdges gamma'.1)
 
-
-
-
-theorem RlcAxisBarrierGap.verticalEdge_mem_mixedAxisGapEdges {n : ℤ}
+lemma RlcAxisBarrierGap.verticalEdge_mem_mixedAxisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper) {t : ℤ}
@@ -9122,7 +8690,7 @@ theorem RlcAxisBarrierGap.verticalEdge_mem_mixedAxisGapEdges {n : ℤ}
       · have hfree := G.interior_free t (by omega) hupper
         exact hfree (by simp [rlc_connectorBarrier, hends.1])
 
-theorem rlc_rightPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
+lemma rlc_rightPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     Disjoint (rlc_pathEdges gamma.1) (rlc_mixedAxisGapEdges G) := by
@@ -9130,7 +8698,7 @@ theorem rlc_rightPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
   intro e he hmix
   exact (Finset.mem_sdiff.mp hmix).2 (by simp [he])
 
-theorem rlc_leftPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
+lemma rlc_leftPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     Disjoint (rlc_pathEdges gamma'.1) (rlc_mixedAxisGapEdges G) := by
@@ -9138,7 +8706,7 @@ theorem rlc_leftPathEdges_disjoint_mixedAxisGapEdges {n : ℤ}
   intro e he hmix
   exact (Finset.mem_sdiff.mp hmix).2 (by simp [he])
 
-
+/-- The event that the two paths are joined inside the connector box using only edges of `U`. -/
 def rlc_supportConnectorEvent {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2))) :
@@ -9150,7 +8718,7 @@ def rlc_supportConnectorEvent {n : ℤ}
       ConnectedWithin 2 (rlc_maskConfig U omega)
         (rect (-2 * n) (2 * n) (-n) n) ⟨x, hxR⟩ ⟨y, hyR⟩}
 
-theorem rlc_supportConnectorEvent_isIncreasing {n : ℤ}
+lemma rlc_supportConnectorEvent_isIncreasing {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2))) :
     IsIncreasing (rlc_supportConnectorEvent gamma gamma' U) := by
@@ -9159,7 +8727,7 @@ theorem rlc_supportConnectorEvent_isIncreasing {n : ℤ}
   exact ⟨x, hx, y, hy, hxR, hyR,
     StatMech.TwoDim.connectedWithin_mono (rlc_maskConfig_mono U hle) hxy⟩
 
-theorem rlc_supportConnectorEvent_dependsOn {n : ℤ}
+lemma rlc_supportConnectorEvent_dependsOn {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2))) :
     DependsOn ((rlc_supportConnectorEvent gamma gamma' U).indicator
@@ -9169,27 +8737,27 @@ theorem rlc_supportConnectorEvent_dependsOn {n : ℤ}
     rlc_maskConfig_congr hagree
   have hevent : omega ∈ rlc_supportConnectorEvent gamma gamma' U ↔
       omega' ∈ rlc_supportConnectorEvent gamma gamma' U := by
-    simp only [rlc_supportConnectorEvent, Set.mem_setOf_eq, hmask]
+    simp only [rlc_supportConnectorEvent, Set.mem_ofPred_eq, hmask]
   by_cases hmem : omega ∈ rlc_supportConnectorEvent gamma gamma' U
   · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hevent.mp hmem)]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-theorem rlc_supportConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_supportConnectorEvent_measurableSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2))) :
     MeasurableSet (rlc_supportConnectorEvent gamma gamma' U) :=
   measurableSet_of_dependsOn
     (rlc_supportConnectorEvent_dependsOn gamma gamma' U)
 
-
+/-- The support-connector event for the mixed axis-gap edge set. -/
 noncomputable def rlc_mixedAxisGapConnectorEvent {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   rlc_supportConnectorEvent gamma gamma' (rlc_mixedAxisGapEdges G)
 
-theorem rlc_mixedAxisGapConnectorEvent_dependsOn {n : ℤ}
+lemma rlc_mixedAxisGapConnectorEvent_dependsOn {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     DependsOn ((rlc_mixedAxisGapConnectorEvent G).indicator
@@ -9198,16 +8766,14 @@ theorem rlc_mixedAxisGapConnectorEvent_dependsOn {n : ℤ}
   rlc_supportConnectorEvent_dependsOn gamma gamma'
     (rlc_mixedAxisGapEdges G)
 
-theorem rlc_mixedAxisGapConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_mixedAxisGapConnectorEvent_measurableSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     MeasurableSet (rlc_mixedAxisGapConnectorEvent G) :=
   rlc_supportConnectorEvent_measurableSet gamma gamma'
     (rlc_mixedAxisGapEdges G)
 
-
-
-theorem rlc_supportConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
+lemma rlc_supportConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2))) :
     rlc_pathOpen gamma.1 ∩ rlc_pathOpen gamma'.1 ∩
@@ -9252,7 +8818,7 @@ theorem rlc_supportConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
   refine ⟨xL, yR, ?_⟩
   exact hleftToY.trans (hxy.symm.trans hxToRight)
 
-theorem rlc_mixedAxisGapConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
+lemma rlc_mixedAxisGapConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (G : RlcAxisBarrierGap gamma gamma') :
     rlc_pathOpen gamma.1 ∩ rlc_pathOpen gamma'.1 ∩
@@ -9261,8 +8827,7 @@ theorem rlc_mixedAxisGapConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
   rlc_supportConnector_glues_horizontal n hn gamma gamma'
     (rlc_mixedAxisGapEdges G)
 
-
-
+/-- The mixed edge set chosen adaptively from the axis gap, if any. -/
 noncomputable def rlc_mixedAdaptiveEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Finset (Sym2 (Site 2)) :=
@@ -9270,7 +8835,7 @@ noncomputable def rlc_mixedAdaptiveEdges {n : ℤ}
   | none => ∅
   | some G => rlc_mixedAxisGapEdges G
 
-
+/-- The support-connector event for the adaptive mixed edge set. -/
 noncomputable def rlc_mixedAdaptiveConnectorEvent {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
@@ -9278,7 +8843,7 @@ noncomputable def rlc_mixedAdaptiveConnectorEvent {n : ℤ}
   | none => Set.univ
   | some G => rlc_mixedAxisGapConnectorEvent G
 
-theorem rlc_mixedAdaptiveConnectorEvent_dependsOn {n : ℤ}
+lemma rlc_mixedAdaptiveConnectorEvent_dependsOn {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     DependsOn ((rlc_mixedAdaptiveConnectorEvent gamma gamma').indicator
       (fun _ => (1 : ℝ)))
@@ -9289,13 +8854,13 @@ theorem rlc_mixedAdaptiveConnectorEvent_dependsOn {n : ℤ}
     simp
   · exact rlc_mixedAxisGapConnectorEvent_dependsOn _
 
-theorem rlc_mixedAdaptiveConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_mixedAdaptiveConnectorEvent_measurableSet {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     MeasurableSet (rlc_mixedAdaptiveConnectorEvent gamma gamma') :=
   measurableSet_of_dependsOn
     (rlc_mixedAdaptiveConnectorEvent_dependsOn gamma gamma')
 
-theorem rlc_rightPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
+lemma rlc_rightPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Disjoint (rlc_pathEdges gamma.1)
       (rlc_mixedAdaptiveEdges gamma gamma') := by
@@ -9304,7 +8869,7 @@ theorem rlc_rightPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
   · simp
   · exact rlc_rightPathEdges_disjoint_mixedAxisGapEdges _
 
-theorem rlc_leftPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
+lemma rlc_leftPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     Disjoint (rlc_pathEdges gamma'.1)
       (rlc_mixedAdaptiveEdges gamma gamma') := by
@@ -9313,9 +8878,7 @@ theorem rlc_leftPathEdges_disjoint_mixedAdaptiveEdges {n : ℤ}
   · simp
   · exact rlc_leftPathEdges_disjoint_mixedAxisGapEdges _
 
-
-
-theorem rlc_mixedAdaptiveConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
+lemma rlc_mixedAdaptiveConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n) :
     rlc_pathOpen gamma.1 ∩ rlc_pathOpen gamma'.1 ∩
         rlc_mixedAdaptiveConnectorEvent gamma gamma' ⊆
@@ -9335,10 +8898,7 @@ theorem rlc_mixedAdaptiveConnector_glues_horizontal (n : ℤ) (hn : 0 < n)
     exact ⟨⟨hgamma, hgamma'⟩,
       rlc_mem_connectorEvent_of_common_vertex gamma gamma' omega hz hz'⟩
 
-
-
-
-
+/-- The configuration with the edges of both paths forced open and the rest restricted to `U`. -/
 noncomputable def rlc_wiredConnectorConfig {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
@@ -9347,7 +8907,7 @@ noncomputable def rlc_wiredConnectorConfig {n : ℤ}
   fun e => if e ∈ rlc_pathEdges gamma.1 ∪ rlc_pathEdges gamma'.1 then true
     else rlc_maskConfig U omega e
 
-theorem rlc_wiredConnectorConfig_congr {n : ℤ}
+lemma rlc_wiredConnectorConfig_congr {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     {omega omega' : ConfigSpace (Sym2 (Site 2))}
@@ -9359,7 +8919,7 @@ theorem rlc_wiredConnectorConfig_congr {n : ℤ}
   funext e
   simp only [rlc_wiredConnectorConfig, hmask]
 
-theorem rlc_wiredConnectorConfig_mono {n : ℤ}
+lemma rlc_wiredConnectorConfig_mono {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     {omega omega' : ConfigSpace (Sym2 (Site 2))} (h : omega ≤ omega') :
@@ -9368,14 +8928,10 @@ theorem rlc_wiredConnectorConfig_mono {n : ℤ}
   intro e
   by_cases hp : e ∈ rlc_pathEdges gamma.1 ∪ rlc_pathEdges gamma'.1
   · simp [rlc_wiredConnectorConfig, hp]
-  · simp only [rlc_wiredConnectorConfig, if_neg hp]
+  · simp only [rlc_wiredConnectorConfig, ite_eq_right hp]
     exact rlc_maskConfig_mono U h e
 
-
-
-
-
-theorem rlc_dualReflect_wired_open_of_support {n : ℤ}
+lemma rlc_dualReflect_wired_open_of_support {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {e : Sym2 (Site 2)}
@@ -9399,8 +8955,8 @@ theorem rlc_dualReflect_wired_open_of_support {n : ℤ}
         (rlc_leftPathEdges_disjoint_mixedAxisGapEdges G)) he heSource
   have hrawOpen : rlc_dualReflectConfig omega e = true := by
     rw [rlc_dualReflectConfig_eq_pims] at hopen ⊢
-    rw [rlc_wiredConnectorConfig, if_neg hsourceNotPaths,
-      rlc_maskConfig, if_pos heSource] at hopen
+    rw [rlc_wiredConnectorConfig, ite_eq_right hsourceNotPaths,
+      rlc_maskConfig, ite_eq_left heSource] at hopen
     exact hopen
   rw [Finset.mem_union] at heTarget
   rcases heTarget with hePath | heU
@@ -9411,10 +8967,7 @@ theorem rlc_dualReflect_wired_open_of_support {n : ℤ}
     · simp [rlc_wiredConnectorConfig, hePath, rlc_maskConfig, heU,
         hrawOpen]
 
-
-
-
-theorem rlc_dualReflect_wired_walk_of_support {n : ℤ}
+lemma rlc_dualReflect_wired_walk_of_support {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {x y : Site 2}
@@ -9445,9 +8998,7 @@ theorem rlc_dualReflect_wired_walk_of_support {n : ℤ}
   let q := p.transfer H htransfer
   exact ⟨q, p.edges_transfer htransfer, p.support_transfer htransfer⟩
 
-
-
-theorem rlc_wiredConnectorConfig_le_of_pathOpen {n : ℤ}
+lemma rlc_wiredConnectorConfig_le_of_pathOpen {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -9461,14 +9012,12 @@ theorem rlc_wiredConnectorConfig_le_of_pathOpen {n : ℤ}
       rcases hp with hp | hp
       · exact hgamma e hp
       · exact hgamma' e hp
-    rw [rlc_wiredConnectorConfig, if_pos hp, hopen]
-  · rw [rlc_wiredConnectorConfig, if_neg hp]
+    rw [rlc_wiredConnectorConfig, ite_eq_left hp, hopen]
+  · rw [rlc_wiredConnectorConfig, ite_eq_right hp]
     exact rlc_maskConfig_le U omega e
 
-
-
-
-
+/-- The event that the lower and upper gap vertices are connected in the wired connector
+  configuration. -/
 noncomputable def rlc_mixedWiredConnectorEvent {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
@@ -9481,7 +9030,7 @@ noncomputable def rlc_mixedWiredConnectorEvent {n : ℤ}
     ⟨G.upperVertex,
       rlc_leftPathVertex_mem_connectorBox gamma' G.upperVertex_mem_left⟩}
 
-theorem rlc_mixedWiredConnectorEvent_isIncreasing {n : ℤ}
+lemma rlc_mixedWiredConnectorEvent_isIncreasing {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     IsIncreasing (rlc_mixedWiredConnectorEvent G) := by
@@ -9490,7 +9039,7 @@ theorem rlc_mixedWiredConnectorEvent_isIncreasing {n : ℤ}
     (rlc_wiredConnectorConfig_mono gamma gamma'
       (rlc_mixedAxisGapEdges G) hle) hconn
 
-theorem rlc_mixedWiredConnectorEvent_dependsOn {n : ℤ}
+lemma rlc_mixedWiredConnectorEvent_dependsOn {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     DependsOn ((rlc_mixedWiredConnectorEvent G).indicator
@@ -9501,21 +9050,19 @@ theorem rlc_mixedWiredConnectorEvent_dependsOn {n : ℤ}
     (rlc_mixedAxisGapEdges G) hagree
   have hevent : omega ∈ rlc_mixedWiredConnectorEvent G ↔
       omega' ∈ rlc_mixedWiredConnectorEvent G := by
-    simp only [rlc_mixedWiredConnectorEvent, Set.mem_setOf_eq, hcfg]
+    simp only [rlc_mixedWiredConnectorEvent, Set.mem_ofPred_eq, hcfg]
   by_cases hmem : omega ∈ rlc_mixedWiredConnectorEvent G
   · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem (hevent.mp hmem)]
   · rw [Set.indicator_of_notMem hmem,
       Set.indicator_of_notMem (fun h => hmem (hevent.mpr h))]
 
-theorem rlc_mixedWiredConnectorEvent_measurableSet {n : ℤ}
+lemma rlc_mixedWiredConnectorEvent_measurableSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     MeasurableSet (rlc_mixedWiredConnectorEvent G) :=
   measurableSet_of_dependsOn (rlc_mixedWiredConnectorEvent_dependsOn G)
 
-
-
-theorem rlc_mixedWiredConnector_half_of_dual_reflection {n : ℤ}
+lemma rlc_mixedWiredConnector_half_of_dual_reflection {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (hdual : ∀ omega : ConfigSpace (Sym2 (Site 2)),
@@ -9530,9 +9077,7 @@ theorem rlc_mixedWiredConnector_half_of_dual_reflection {n : ℤ}
   intro omega hno
   exact hdual omega hno
 
-
-
-theorem rlc_mixedWiredConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
+lemma rlc_mixedWiredConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (G : RlcAxisBarrierGap gamma gamma') :
     rlc_pathOpen gamma.1 ∩ rlc_pathOpen gamma'.1 ∩
@@ -9582,9 +9127,7 @@ theorem rlc_mixedWiredConnector_glues_horizontal (n : ℤ) (_hn : 0 < n)
   refine ⟨xL, yR, ?_⟩
   exact hleftUpper.trans (hconn.symm.trans hlowerRight)
 
-
-
-theorem rlc_wiredConnectorConfig_rightPathOpen {n : ℤ}
+lemma rlc_wiredConnectorConfig_rightPathOpen {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9593,7 +9136,7 @@ theorem rlc_wiredConnectorConfig_rightPathOpen {n : ℤ}
   intro e he
   simp [rlc_wiredConnectorConfig, he]
 
-theorem rlc_wiredConnectorConfig_leftPathOpen {n : ℤ}
+lemma rlc_wiredConnectorConfig_leftPathOpen {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9602,9 +9145,7 @@ theorem rlc_wiredConnectorConfig_leftPathOpen {n : ℤ}
   intro e he
   simp [rlc_wiredConnectorConfig, he]
 
-
-
-theorem rlc_maskConfig_le_wiredConnectorConfig {n : ℤ}
+lemma rlc_maskConfig_le_wiredConnectorConfig {n : ℤ}
     (gamma : RlcRightDiagonalPath n) (gamma' : RlcLeftDiagonalPath n)
     (U : Finset (Sym2 (Site 2)))
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9614,11 +9155,7 @@ theorem rlc_maskConfig_le_wiredConnectorConfig {n : ℤ}
   by_cases hp : e ∈ rlc_pathEdges gamma.1 ∪ rlc_pathEdges gamma'.1 <;>
     simp [rlc_wiredConnectorConfig, hp]
 
-
-
-
-
-theorem rlc_mixedAxisGapConnectorEvent_subset_mixedWiredConnectorEvent {n : ℤ}
+lemma rlc_mixedAxisGapConnectorEvent_subset_mixedWiredConnectorEvent {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') :
     rlc_mixedAxisGapConnectorEvent G ⊆
@@ -9681,8 +9218,7 @@ theorem rlc_mixedAxisGapConnectorEvent_subset_mixedWiredConnectorEvent {n : ℤ}
         (rlc_mixedAxisGapEdges G) omega) hxyMask
   exact hlowerX.trans (hxy.trans hyUpper)
 
-
-
+/-- The sites reachable from the lower gap vertex in the wired connector configuration. -/
 def rlc_mixedWiredReachSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
@@ -9696,7 +9232,7 @@ def rlc_mixedWiredReachSet {n : ℤ}
         rlc_rightPathVertex_mem_connectorBox gamma G.lowerVertex_mem_right⟩
       ⟨z, hzR⟩}
 
-theorem rlc_mixedWiredReachSet_subset_box {n : ℤ}
+lemma rlc_mixedWiredReachSet_subset_box {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9705,7 +9241,7 @@ theorem rlc_mixedWiredReachSet_subset_box {n : ℤ}
   rintro z ⟨hzR, _⟩
   exact hzR
 
-theorem rlc_mixedWiredReachSet_finite {n : ℤ}
+lemma rlc_mixedWiredReachSet_finite {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9713,7 +9249,7 @@ theorem rlc_mixedWiredReachSet_finite {n : ℤ}
   (rect_finite (-2 * n) (2 * n) (-n) n).subset
     (rlc_mixedWiredReachSet_subset_box G omega)
 
-theorem RlcAxisBarrierGap.lowerVertex_mem_mixedWiredReachSet {n : ℤ}
+lemma RlcAxisBarrierGap.lowerVertex_mem_mixedWiredReachSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) :
@@ -9721,9 +9257,7 @@ theorem RlcAxisBarrierGap.lowerVertex_mem_mixedWiredReachSet {n : ℤ}
   exact ⟨rlc_rightPathVertex_mem_connectorBox gamma G.lowerVertex_mem_right,
     connectedWithin_refl _ _ _⟩
 
-
-
-theorem rlc_rightPathVertex_mem_mixedWiredReachSet {n : ℤ}
+lemma rlc_rightPathVertex_mem_mixedWiredReachSet {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {x : Site 2}
@@ -9747,9 +9281,7 @@ theorem rlc_rightPathVertex_mem_mixedWiredReachSet {n : ℤ}
     hstartLower).symm.trans
       (StatMech.Lattice.connectedWithin_mono_set eta hsub hstartX)
 
-
-
-theorem rlc_leftPathVertex_not_mem_mixedWiredReachSet_of_failure {n : ℤ}
+lemma rlc_leftPathVertex_not_mem_mixedWiredReachSet_of_failure {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -9779,9 +9311,7 @@ theorem rlc_leftPathVertex_not_mem_mixedWiredReachSet_of_failure {n : ℤ}
       (StatMech.Lattice.connectedWithin_mono_set eta hsub hstartUpper)
   exact hno (hlowerY.trans hyUpper)
 
-
-
-theorem rlc_mixedWiredReachSet_axis_boundary {n : ℤ}
+lemma rlc_mixedWiredReachSet_axis_boundary {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -9807,11 +9337,7 @@ theorem rlc_mixedWiredReachSet_axis_boundary {n : ℤ}
     simp
   exact ⟨p, q, hpq, haxis p hpSupp, haxis q hqSupp⟩
 
-
-
-
-
-theorem rlc_mixedWiredReachSet_verticalGap_boundary {n : ℤ}
+lemma rlc_mixedWiredReachSet_verticalGap_boundary {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -9858,7 +9384,7 @@ theorem rlc_mixedWiredReachSet_verticalGap_boundary {n : ℤ}
   exact ⟨t, htBounds.1, htlt, htS, hsuccNot,
     ⟨hadj, iff_of_true htS hsuccNot⟩⟩
 
-theorem rlc_mem_connectorBox_flipX {n : ℤ} (z : Site 2) :
+lemma rlc_mem_connectorBox_flipX {n : ℤ} (z : Site 2) :
     z ∈ rect (-2 * n) (2 * n) (-n) n ↔
       rlc_flipX z ∈ rect (-2 * n) (2 * n) (-n) n := by
   have hzero : rlc_flipX z 0 = -z 0 := rfl
@@ -9866,7 +9392,7 @@ theorem rlc_mem_connectorBox_flipX {n : ℤ} (z : Site 2) :
   simp only [mem_rect, hzero, hone]
   omega
 
-theorem rlc_reflectedRightPathEdge_endpoint_mem_box {n : ℤ}
+lemma rlc_reflectedRightPathEdge_endpoint_mem_box {n : ℤ}
     (gamma : RlcRightDiagonalPath n) {e : Sym2 (Site 2)}
     (he : e ∈ rlc_reflectedPathEdges gamma.1) {z : Site 2}
     (hz : z ∈ e) : z ∈ rect (-2 * n) (2 * n) (-n) n := by
@@ -9883,7 +9409,7 @@ theorem rlc_reflectedRightPathEdge_endpoint_mem_box {n : ℤ}
     · exact (rlc_mem_connectorBox_flipX x).mp hxR
     · exact (rlc_mem_connectorBox_flipX y).mp hyR
 
-theorem rlc_reflectedLeftPathEdge_endpoint_mem_box {n : ℤ}
+lemma rlc_reflectedLeftPathEdge_endpoint_mem_box {n : ℤ}
     (gamma' : RlcLeftDiagonalPath n) {e : Sym2 (Site 2)}
     (he : e ∈ rlc_reflectedPathEdges gamma'.1) {z : Site 2}
     (hz : z ∈ e) : z ∈ rect (-2 * n) (2 * n) (-n) n := by
@@ -9900,8 +9426,7 @@ theorem rlc_reflectedLeftPathEdge_endpoint_mem_box {n : ℤ}
     · exact (rlc_mem_connectorBox_flipX x).mp hxR
     · exact (rlc_mem_connectorBox_flipX y).mp hyR
 
-
-theorem rlc_mixedAxisGapEdges_endpoints_mem_box {n : ℤ}
+lemma rlc_mixedAxisGapEdges_endpoints_mem_box {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper) {v w : Site 2}
@@ -9922,7 +9447,7 @@ theorem rlc_mixedAxisGapEdges_endpoints_mem_box {n : ℤ}
       rlc_reflectedLeftPathEdge_endpoint_mem_box gamma' heLeft
         (Sym2.mem_mk_right v w)⟩
 
-theorem rlc_exposedPathEdges_endpoints_mem_box {n : ℤ}
+lemma rlc_exposedPathEdges_endpoints_mem_box {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     {v w : Site 2}
     (he : s(v, w) ∈ rlc_pathEdges gamma.1 ∪ rlc_pathEdges gamma'.1) :
@@ -9937,7 +9462,7 @@ theorem rlc_exposedPathEdges_endpoints_mem_box {n : ℤ}
     exact ⟨rlc_leftPathVertex_mem_connectorBox gamma' hends.1,
       rlc_leftPathVertex_mem_connectorBox gamma' hends.2⟩
 
-theorem rlc_mixedWiredReachSet_extend {n : ℤ}
+lemma rlc_mixedWiredReachSet_extend {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2))) {v w : Site 2}
@@ -9957,9 +9482,7 @@ theorem rlc_mixedWiredReachSet_extend {n : ℤ}
     exact ⟨hadj, hopen⟩
   exact hstep.reachable
 
-
-
-theorem rlc_mixedWiredReachSet_boundary_closed {n : ℤ}
+lemma rlc_mixedWiredReachSet_boundary_closed {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -9982,7 +9505,7 @@ theorem rlc_mixedWiredReachSet_boundary_closed {n : ℤ}
       exact hwR (rlc_mixedAxisGapEdges_endpoints_mem_box G hn hlt he).2
     simp [rlc_wiredConnectorConfig, hnotPaths, rlc_maskConfig, hnotU]
 
-theorem rlc_mixedWiredReachSet_edgeBoundary_closed {n : ℤ}
+lemma rlc_mixedWiredReachSet_edgeBoundary_closed {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10000,9 +9523,7 @@ theorem rlc_mixedWiredReachSet_edgeBoundary_closed {n : ℤ}
     rw [Sym2.eq_swap]
     exact rlc_mixedWiredReachSet_boundary_closed G hn hlt omega hw hadj.symm hv
 
-
-
-theorem rlc_mixedWiredFaceBoundaryGraph_le_openFaceDual {n : ℤ}
+lemma rlc_mixedWiredFaceBoundaryGraph_le_openFaceDual {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10025,9 +9546,7 @@ theorem rlc_mixedWiredFaceBoundaryGraph_le_openFaceDual {n : ℤ}
   rw [fci_faceDualConfig, fci_faceEdgeEquiv_mk_of_adj hfg.1, hpq]
   simpa using hclosed
 
-
-
-theorem rlc_mixedWiredReachSet_axis_anchored_dualCircuit {n : ℤ}
+lemma rlc_mixedWiredReachSet_axis_anchored_dualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma')
     (omega : ConfigSpace (Sym2 (Site 2)))
@@ -10059,7 +9578,7 @@ theorem rlc_mixedWiredReachSet_axis_anchored_dualCircuit {n : ℤ}
   exact ⟨t, f, g, u, c, htlower, htupper, htIn, htOut,
     hfg, hshared, hcyc, hedge⟩
 
-theorem rlc_mixedWiredReachSet_openFaceDualCircuit {n : ℤ}
+lemma rlc_mixedWiredReachSet_openFaceDualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10085,9 +9604,7 @@ theorem rlc_mixedWiredReachSet_openFaceDualCircuit {n : ℤ}
   rw [SimpleGraph.Walk.edges_mapLe_eq_edges]
   exact hedge
 
-
-
-theorem rlc_mixedWiredReachSet_reflectedOpenDualCircuit {n : ℤ}
+lemma rlc_mixedWiredReachSet_reflectedOpenDualCircuit {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10126,10 +9643,7 @@ theorem rlc_mixedWiredReachSet_reflectedOpenDualCircuit {n : ℤ}
   rw [← hreflected]
   exact hedgeEq ▸ hEdges.symm ▸ hmapped
 
-
-
-
-theorem rlc_mixedWiredReachSet_reflectedOpenDualComplementaryArc {n : ℤ}
+lemma rlc_mixedWiredReachSet_reflectedOpenDualComplementaryArc {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10157,10 +9671,7 @@ theorem rlc_mixedWiredReachSet_reflectedOpenDualComplementaryArc {n : ℤ}
     (SimpleGraph.reachable_deleteEdges_iff_exists_walk (G := H)).mp hreach
   exact ⟨t, htlower, htupper, htIn, htOut, p, hp⟩
 
-
-
-
-theorem rlc_mixedWiredFailure_reflectedAnchor_open_raw {n : ℤ}
+lemma rlc_mixedWiredFailure_reflectedAnchor_open_raw {n : ℤ}
     {gamma : RlcRightDiagonalPath n} {gamma' : RlcLeftDiagonalPath n}
     (G : RlcAxisBarrierGap gamma gamma') (hn : 0 < n)
     (hlt : G.lower + 1 < G.upper)
@@ -10188,8 +9699,8 @@ theorem rlc_mixedWiredFailure_reflectedAnchor_open_raw {n : ℤ}
   have homega : omega e = false := by
     change rlc_wiredConnectorConfig gamma gamma'
       (rlc_mixedAxisGapEdges G) omega e = false at hclosed
-    rw [rlc_wiredConnectorConfig, if_neg hnotPaths,
-      rlc_maskConfig, if_pos hU] at hclosed
+    rw [rlc_wiredConnectorConfig, ite_eq_right hnotPaths,
+      rlc_maskConfig, ite_eq_left hU] at hclosed
     exact hclosed
   refine ⟨t, htlower, htupper, ?_⟩
   have hpims : rlc_pimsEdgeEquiv

@@ -6,18 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellDual
+
+/-!
+# Double duality on the torus cell complex
+
+Applying the torus cell duality twice is the diagonal shift; this gives the defect relation between
+a configuration and its dual.
+
+## i. Overview
+
+The cell crossing on the `L × L` torus maps each edge to the crossing dual edge, which lives on the
+torus shifted by `(1/2, 1/2)`; doing it twice is the diagonal shift `torusCellDiagonalShift`. Hence
+the open subgraph of the double dual is the shifted open subgraph, and the defect of a configuration
+plus the defect of its dual is `2` (`torusCellDefect_add_dualConfig`). All results are
+unconditional.
+
+## ii. Key results
+
+- `torusCell_openSub_dualConfig_dualConfig`: the double dual is the diagonal shift.
+- `torusCellDefect_add_dualConfig`: defect of `ω` plus defect of its dual equals `2`.
+
+## iii. Table of contents
+
+- A. Diagonal shift
+- B. Defect of the dual
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -27,8 +48,9 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Diagonal shift -/
 
-
+/-- The diagonal shift `(x, y) ↦ (x + 1, y + 1)` of the torus sites. -/
 def torusCellDiagonalShift (L : ℕ) :
     (ZMod L × ZMod L) ≃ (ZMod L × ZMod L) where
   toFun v := (v.1 + 1, v.2 + 1)
@@ -36,12 +58,11 @@ def torusCellDiagonalShift (L : ℕ) :
   left_inv v := by ext <;> simp
   right_inv v := by ext <;> simp
 
-@[simp] theorem torusCellDiagonalShift_apply (L : ℕ)
+@[simp] lemma torusCellDiagonalShift_apply (L : ℕ)
     (v : ZMod L × ZMod L) :
     torusCellDiagonalShift L v = (v.1 + 1, v.2 + 1) := rfl
 
-
-theorem torusCellDiagonalShift_adj_iff (L : ℕ) [Fact (2 < L)]
+lemma torusCellDiagonalShift_adj_iff (L : ℕ) [Fact (2 < L)]
     (u v : ZMod L × ZMod L) :
     (onsTorusGraph L).Adj (torusCellDiagonalShift L u)
         (torusCellDiagonalShift L v) ↔
@@ -67,9 +88,7 @@ theorem torusCellDiagonalShift_adj_iff (L : ℕ) [Fact (2 < L)]
     · exact Or.inr ⟨by linear_combination h,
         Or.inr (by linear_combination h')⟩
 
-
-
-theorem torusCellCrossing_symm_sq (L : ℕ) [Fact (2 < L)]
+lemma torusCellCrossing_symm_sq (L : ℕ) [Fact (2 < L)]
     (e : TorusAmbientEdge L) :
     (((torusCellCrossing L).symm
         ((torusCellCrossing L).symm e) : TorusAmbientEdge L) :
@@ -82,9 +101,7 @@ theorem torusCellCrossing_symm_sq (L : ℕ) [Fact (2 < L)]
   · simp [torusEdgeOfCode, torusCellDiagonalShift, Sym2.map_mk]
   · simp [torusEdgeOfCode, torusCellDiagonalShift, Sym2.map_mk]
 
-
-
-theorem torusCellPrimalOfDualEdge_sq (L : ℕ) [Fact (2 < L)]
+lemma torusCellPrimalOfDualEdge_sq (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellPrimalOfDualEdge L (torusCellPrimalOfDualEdge L e) =
@@ -97,22 +114,20 @@ theorem torusCellPrimalOfDualEdge_sq (L : ℕ) [Fact (2 < L)]
   rw [torusCellPrimalOfDualEdge_of_mem L hp, hsub]
   exact torusCellCrossing_symm_sq L ⟨e, he⟩
 
+/-! ## B. Defect of the dual -/
 
-
-theorem torusCellDualConfig_dualConfig_of_mem (L : ℕ) [Fact (2 < L)]
+lemma torusCellDualConfig_dualConfig_of_mem (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellDualConfig L (torusCellDualConfig L omega) e =
       FK.reCfg (torusCellDiagonalShift L) omega e := by
   have hp := torusCellPrimalOfDualEdge_mem L he
-  simp only [torusCellDualConfig, dif_pos he, dif_pos hp, FK.reCfg]
+  simp only [torusCellDualConfig, dite_eq_left he, dite_eq_left hp, FK.reCfg]
   rw [torusCellPrimalOfDualEdge_sq L he]
   cases omega (Sym2.map (torusCellDiagonalShift L) e) <;> rfl
 
-
-
-theorem torusCell_openSub_dualConfig_dualConfig
+lemma torusCell_openSub_dualConfig_dualConfig
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.openSub (onsTorusGraph L)
@@ -127,8 +142,7 @@ theorem torusCell_openSub_dualConfig_dualConfig
     rw [torusCellDualConfig_dualConfig_of_mem L omega he]
   · simp [FK.openSub_adj, huv]
 
-
-theorem torusCell_numClusters_dualConfig_dualConfig
+lemma torusCell_numClusters_dualConfig_dualConfig
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.numClusters (onsTorusGraph L)
@@ -144,8 +158,7 @@ theorem torusCell_numClusters_dualConfig_dualConfig
   rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card] at hshift ⊢
   exact hcard.trans hshift
 
-
-
+/-- Defect of `ω` plus defect of its dual equals `2`. -/
 theorem torusCellDefect_add_dualConfig (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     torusCellDefect L (FK.openSub (onsTorusGraph L) omega) +
@@ -198,9 +211,7 @@ theorem torusCellDefect_add_dualConfig (L : ℕ) [Fact (2 < L)]
     exact_mod_cast htorus
   linarith
 
-
-
-theorem torusCellDefect_add_dualCutGraph (L : ℕ) [Fact (2 < L)]
+lemma torusCellDefect_add_dualCutGraph (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L) :
     torusCellDefect L K +
       torusCellDefect L (torusCellDualCutGraph L K) = 2 := by

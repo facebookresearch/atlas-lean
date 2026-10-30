@@ -6,21 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Duality
+
+/-!
+# Planar duality of the random-cluster model on finite planar subgraphs of ℤ²
+
+For a finite planar subgraph of `ℤ²`, open clusters of the dual correspond to face components,
+Euler's formula relates clusters and faces, and the random-cluster weights at `p` and the dual
+parameter agree up to a constant.
+
+## i. Overview
+
+`pfdClosedDual` is the dual graph whose edges cross closed primal edges. Its connected components
+are in bijection with the face components of the open subgraph (`pfdComponentEquiv`), whose number
+is the face count. Together with Euler's formula (`pfd_clusterEuler`) this gives the weight duality
+`pfd_weight_duality` and the measure duality `pfd_fkProb_duality`. All results are unconditional.
+
+## ii. Key results
+
+- `pfd_numDualClusters_eq_faceCount`: dual clusters = faces.
+- `pfd_clusterEuler`: Euler's formula for clusters and dual clusters.
+- `pfd_fkProb_duality`: the random-cluster measure equals the dual measure at the dual parameter.
+
+## iii. Table of contents
+
+- A. The closed dual graph
+- B. Face components and dual clusters
+- C. Weight and measure duality
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+* G. R. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 6.
+-/
 
 @[expose] public section
 
@@ -29,11 +51,12 @@ open Finset SimpleGraph Set
 namespace StatMech
 namespace BeffaraDC
 
-open Lattice Ising Walls
+open StatMech.Lattice Ising Walls
 
+/-! ## A. The closed dual graph -/
 
-
-
+/-- The closed dual graph on faces: two faces are adjacent when a closed primal edge separates
+  them. -/
 noncomputable def pfdClosedDual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) :
     SimpleGraph (kwg_Face P) where
   Adj C D := C ≠ D ∧ ∃ e : kwg_Edge P,
@@ -44,19 +67,17 @@ noncomputable def pfdClosedDual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) :
     exact ⟨hne.symm, e, heK, he.trans Sym2.eq_swap⟩
   loopless := ⟨fun C h => h.1 rfl⟩
 
-@[simp] theorem pfdClosedDual_adj (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+@[simp] lemma pfdClosedDual_adj (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (C D : kwg_Face P) :
     (pfdClosedDual P K).Adj C D ↔ C ≠ D ∧ ∃ e : kwg_Edge P,
       e.1 ∉ K.edgeSet ∧ kwg_dualEnds P e = s(C, D) :=
   Iff.rfl
 
-
+/-- The face of the planar subgraph containing the site `f`. -/
 noncomputable def pfdFace (P : PlanarZ2Subgraph) (f : Site 2) : kwg_Face P :=
   (whb_faceRegion (imageGraph P)).connectedComponentMk f
 
-
-
-theorem pfd_faceStep (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_faceStep (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     {f g : Site 2} (hfg : (whb_faceRegion (jei_pushGraph P K)).Adj f g) :
     (pfdClosedDual P K).Reachable (pfdFace P f) (pfdFace P g) := by
   classical
@@ -88,15 +109,14 @@ theorem pfd_faceStep (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
         exact congrArg (Sym2.map
           ((whb_faceRegion (imageGraph P)).connectedComponentMk)) hflank
       by_cases heq : pfdFace P f = pfdFace P g
-      · simpa [heq]
+      · simp [heq]
       · exact (pfdClosedDual_adj P K _ _).2 ⟨heq, e, heK, hends⟩ |>.reachable
   · have hamb : (whb_faceRegion (imageGraph P)).Adj f g := ⟨hfg.1, hwall⟩
     have heq : pfdFace P f = pfdFace P g :=
       ConnectedComponent.connectedComponentMk_eq_of_adj hamb
-    simpa [heq]
+    simp [heq]
 
-
-theorem pfd_regionReachable_to_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_regionReachable_to_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     {f g : Site 2}
     (hfg : (whb_faceRegion (jei_pushGraph P K)).Reachable f g) :
     (pfdClosedDual P K).Reachable (pfdFace P f) (pfdFace P g) := by
@@ -105,9 +125,7 @@ theorem pfd_regionReachable_to_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
   | nil => exact ⟨Walk.nil⟩
   | @cons a b c hab w ih => exact (pfd_faceStep P K hab).trans ih
 
-
-
-theorem pfd_embeddedEdge_not_mem_push (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_embeddedEdge_not_mem_push (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (e : kwg_Edge P) (heK : e.1 ∉ K.edgeSet) :
     kwg_embeddedEdge P e ∉ (jei_pushGraph P K).edgeSet := by
   rcases e with ⟨e, heG⟩
@@ -125,18 +143,14 @@ theorem pfd_embeddedEdge_not_mem_push (P : PlanarZ2Subgraph) (K : SimpleGraph P.
       subst b
       exact heK ((SimpleGraph.mem_edgeSet K).mpr hab)
 
-
-
-theorem pfd_ambientFace_le_openFace (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_ambientFace_le_openFace (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) :
     whb_faceRegion (imageGraph P) ≤ whb_faceRegion (jei_pushGraph P K) := by
   apply jwc_faceRegion_antitone
   rw [← jei_pushGraph_G P]
   exact jwc_pushGraph_mono P hKP
 
-
-
-theorem pfd_dualAdj_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_dualAdj_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) {f g : Site 2}
     (hfg : (pfdClosedDual P K).Adj (pfdFace P f) (pfdFace P g)) :
     (whb_faceRegion (jei_pushGraph P K)).Reachable f g := by
@@ -165,9 +179,7 @@ theorem pfd_dualAdj_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph P
       (hLU.symm.reachable.trans
         ((ConnectedComponent.eq.mp hLg).mono (pfd_ambientFace_le_openFace P K hKP)))
 
-
-
-theorem pfd_dualWalk_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_dualWalk_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) {C D : kwg_Face P}
     (w : (pfdClosedDual P K).Walk C D) {f g : Site 2}
     (hf : pfdFace P f = C) (hg : pfdFace P g = D) :
@@ -184,9 +196,7 @@ theorem pfd_dualWalk_to_regionReachable (P : PlanarZ2Subgraph) (K : SimpleGraph 
       exact (pfd_dualAdj_to_regionReachable P K hKP hadj).trans
         (ih hout hg)
 
-
-
-theorem pfd_regionReachable_iff_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_regionReachable_iff_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) {f g : Site 2} :
     (whb_faceRegion (jei_pushGraph P K)).Reachable f g ↔
       (pfdClosedDual P K).Reachable (pfdFace P f) (pfdFace P g) := by
@@ -195,15 +205,15 @@ theorem pfd_regionReachable_iff_dual (P : PlanarZ2Subgraph) (K : SimpleGraph P.V
   · rintro ⟨w⟩
     exact pfd_dualWalk_to_regionReachable P K hKP w rfl rfl
 
+/-! ## B. Face components and dual clusters -/
 
-
+/-- The map from face components of the open subgraph to dual clusters. -/
 noncomputable def pfdComponentMap (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) :
     (whb_faceRegion (jei_pushGraph P K)).ConnectedComponent →
       (pfdClosedDual P K).ConnectedComponent :=
   fun C => (pfdClosedDual P K).connectedComponentMk (pfdFace P C.out)
 
-
-
+/-- The bijection between face components of the open subgraph and clusters of the closed dual. -/
 noncomputable def pfdComponentEquiv (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) :
     (whb_faceRegion (jei_pushGraph P K)).ConnectedComponent ≃
@@ -227,14 +237,13 @@ noncomputable def pfdComponentEquiv (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     have hout : pfdFace P D.out.out = D.out := D.out.out_eq
     simpa only [pfdComponentMap, C, hout] using hdual
 
-
-theorem pfd_numDualClusters_eq_faceComponents (P : PlanarZ2Subgraph)
+lemma pfd_numDualClusters_eq_faceComponents (P : PlanarZ2Subgraph)
     (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     Nat.card (pfdClosedDual P K).ConnectedComponent =
       Nat.card (whb_faceRegion (jei_pushGraph P K)).ConnectedComponent := by
   rw [Nat.card_congr (pfdComponentEquiv P K hKP)]
 
-
+/-- The planar subgraph with the same vertices and only the edges of `K`. -/
 def pfdOpenPlanar (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     PlanarZ2Subgraph where
   V := P.V
@@ -246,74 +255,57 @@ def pfdOpenPlanar (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) (hKP : K ≤ P.G)
     intro x y h
     exact P.isSub (hKP h)
 
-@[simp] theorem pfdOpenPlanar_imageGraph (P : PlanarZ2Subgraph)
+@[simp] lemma pfdOpenPlanar_imageGraph (P : PlanarZ2Subgraph)
     (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     imageGraph (pfdOpenPlanar P K hKP) = jei_pushGraph P K := by
   ext a b
   simp only [imageGraph_adj, jei_pushGraph_adj, pfdOpenPlanar]
 
-@[simp] theorem pfdOpenPlanar_graph (P : PlanarZ2Subgraph)
+@[simp] lemma pfdOpenPlanar_graph (P : PlanarZ2Subgraph)
     (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     (pfdOpenPlanar P K hKP).G = K := rfl
 
-
-
-theorem pfd_numFaceComponents_eq_faceCount (P : PlanarZ2Subgraph)
+lemma pfd_numFaceComponents_eq_faceCount (P : PlanarZ2Subgraph)
     (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     Nat.card (whb_faceRegion (jei_pushGraph P K)).ConnectedComponent = faceCount K := by
   have h := kwg_card_face_eq_faceCount (pfdOpenPlanar P K hKP)
   exact h
 
-
-
-theorem pfd_numDualClusters_eq_faceCount (P : PlanarZ2Subgraph)
+lemma pfd_numDualClusters_eq_faceCount (P : PlanarZ2Subgraph)
     (K : SimpleGraph P.V) (hKP : K ≤ P.G) :
     Nat.card (pfdClosedDual P K).ConnectedComponent = faceCount K := by
   rw [pfd_numDualClusters_eq_faceComponents P K hKP,
     pfd_numFaceComponents_eq_faceCount P K hKP]
 
-
-
-
-
-
-
-
-theorem pfd_clusterEuler (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_clusterEuler (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) :
     Nat.card P.V + Nat.card (pfdClosedDual P K).ConnectedComponent =
       K.edgeSet.ncard + Nat.card K.ConnectedComponent + 1 := by
   rw [pfd_numDualClusters_eq_faceCount P K hKP]
   exact euler_relation K
 
+/-! ## C. Weight and measure duality -/
 
-
-
-
+/-- The primal random-cluster weight of the subgraph `K`. -/
 noncomputable def pfdPrimalWeight (P : PlanarZ2Subgraph) (p q : ℝ)
     (K : SimpleGraph P.V) : ℝ :=
   edgeProductCount p P.G.edgeFinset.card K.edgeSet.ncard *
     q ^ Nat.card K.ConnectedComponent
 
-
-
+/-- The dual random-cluster weight of the subgraph `K` at the dual parameter. -/
 noncomputable def pfdDualWeight (P : PlanarZ2Subgraph) (p q : ℝ)
     (K : SimpleGraph P.V) : ℝ :=
   edgeProductCount p P.G.edgeFinset.card
       (P.G.edgeFinset.card - K.edgeSet.ncard) *
     q ^ Nat.card (pfdClosedDual P K).ConnectedComponent
 
-theorem pfd_subgraph_edgeCount_le (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_subgraph_edgeCount_le (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) : K.edgeSet.ncard ≤ P.G.edgeFinset.card := by
   have hset : K.edgeSet ⊆ P.G.edgeSet := SimpleGraph.edgeSet_mono hKP
   have hn := Set.ncard_le_ncard hset (Set.toFinite P.G.edgeSet)
   simpa only [SimpleGraph.edgeFinset, Set.ncard_eq_toFinset_card'] using hn
 
-
-
-
-
-theorem pfd_weight_duality (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_weight_duality (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     (hKP : K ≤ P.G) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     pfdPrimalWeight P p q K * q ^ (P.G.edgeFinset.card + 1) =
       (p / (1 - dualParam p q)) ^ P.G.edgeFinset.card * q ^ Nat.card P.V *
@@ -352,10 +344,9 @@ theorem pfd_weight_duality (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
       rw [hpow]
       ring
 
-
-
-
-theorem pfd_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma pfd_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (omega : ConfigSpace (Sym2 V)) :
     (FK.openSub G omega).edgeSet.ncard = FK.openCount G omega := by
@@ -369,9 +360,7 @@ theorem pfd_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
       simp only [Set.mem_toFinset, SimpleGraph.mem_edgeSet, FK.openSub_adj,
         Finset.mem_filter, SimpleGraph.mem_edgeFinset]
 
-
-
-theorem pfd_primalWeight_openSub (P : PlanarZ2Subgraph)
+lemma pfd_primalWeight_openSub (P : PlanarZ2Subgraph)
     (p q : ℝ) (omega : ConfigSpace (Sym2 P.V)) :
     pfdPrimalWeight P p q (FK.openSub P.G omega) = FK.fkWeight P.G p q omega := by
   unfold pfdPrimalWeight FK.fkWeight
@@ -380,9 +369,7 @@ theorem pfd_primalWeight_openSub (P : PlanarZ2Subgraph)
   unfold FK.numClusters
   rw [Nat.card_eq_fintype_card]
 
-
-
-theorem pfd_fkWeight_duality (P : PlanarZ2Subgraph)
+lemma pfd_fkWeight_duality (P : PlanarZ2Subgraph)
     (omega : ConfigSpace (Sym2 P.V)) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkWeight P.G p q omega * q ^ (P.G.edgeFinset.card + 1) =
@@ -391,28 +378,24 @@ theorem pfd_fkWeight_duality (P : PlanarZ2Subgraph)
   rw [← pfd_primalWeight_openSub P p q omega]
   exact pfd_weight_duality P (FK.openSub P.G omega) (FK.openSub_le P.G omega) hp hp1 hq
 
-
-
-
-
+/-- The partition function of the dual weights. -/
 noncomputable def pfdDualZ (P : PlanarZ2Subgraph) (p q : ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 P.V),
     pfdDualWeight P p q (FK.openSub P.G omega)
 
-
-
+/-- The dual random-cluster probability of a configuration. -/
 noncomputable def pfdDualProb (P : PlanarZ2Subgraph) (p q : ℝ)
     (omega : ConfigSpace (Sym2 P.V)) : ℝ :=
   pfdDualWeight P p q (FK.openSub P.G omega) / pfdDualZ P p q
 
-theorem pfd_dualWeight_pos (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
+lemma pfd_dualWeight_pos (P : PlanarZ2Subgraph) (K : SimpleGraph P.V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < pfdDualWeight P p q K := by
   unfold pfdDualWeight edgeProductCount
   have h1p : 0 < 1 - p := by linarith
   exact mul_pos (mul_pos (pow_pos hp _) (pow_pos h1p _)) (pow_pos hq _)
 
-theorem pfd_dualZ_pos (P : PlanarZ2Subgraph) {p q : ℝ}
+lemma pfd_dualZ_pos (P : PlanarZ2Subgraph) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < pfdDualZ P p q := by
   unfold pfdDualZ
@@ -420,9 +403,7 @@ theorem pfd_dualZ_pos (P : PlanarZ2Subgraph) {p q : ℝ}
     (fun omega _ => pfd_dualWeight_pos P (FK.openSub P.G omega) hp hp1 hq)
     Finset.univ_nonempty
 
-
-
-theorem pfd_partition_duality (P : PlanarZ2Subgraph) {p q : ℝ}
+lemma pfd_partition_duality (P : PlanarZ2Subgraph) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkZ P.G p q * q ^ (P.G.edgeFinset.card + 1) =
       (p / (1 - dualParam p q)) ^ P.G.edgeFinset.card * q ^ Nat.card P.V *
@@ -433,10 +414,7 @@ theorem pfd_partition_duality (P : PlanarZ2Subgraph) {p q : ℝ}
   intro omega _
   exact pfd_fkWeight_duality P omega hp hp1 hq
 
-
-
-
-
+/-- The random-cluster measure equals the dual measure at the dual parameter. -/
 theorem pfd_fkProb_duality (P : PlanarZ2Subgraph)
     (omega : ConfigSpace (Sym2 P.V)) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

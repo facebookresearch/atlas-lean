@@ -6,74 +6,97 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Weighted
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxLocalized
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxOffCentre
 
+/-!
+# Periodic couplings and phases
+
+Translates of edges, phase-covariant couplings, box couplings for each phase, the phase envelope,
+and the periodic differential inequality.
+
+## i. Overview
+
+`PhaseCovariant J phase phaseJ` says that the coupling seen from `x` is `phaseJ (phase x)`. The
+translated box couplings then match the phase box couplings
+(`transBoxCoupling_map_eq_phaseBoxCoupling`), and the off-centre denominator is bounded by the phase
+envelope. `weighted_periodic_box_differential_inequality` is conditional on `WeightedPhaseOffCentre`
+/ `PeriodicWeightedNestedDomination`; `WeightedPeriodicRepair` proves the strict versions. Also
+included: elementary facts on `Finset.sup'` limits and zero sets of phase suprema. The `Weighted*`
+files extend the OSSS sharpness argument to random-cluster models with inhomogeneous, periodic
+couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite set of phases, with
+`PhaseCovariant J phase phaseJ`, describes how translates of the box see the couplings. The final
+results are `WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share
+one critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weighted_periodic_box_differential_inequality`: periodic differential inequality, conditional on
+  the off-centre domination hypotheses.
+- `phaseSup_critical_eq`: the supremum over phases has the common critical point.
+
+## iii. Table of contents
+
+- A. Translated edges and phase covariance
+- B. Phase envelopes and the periodic inequality
+- C. Phase suprema
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set Filter Topology
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedPeriodic
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open WiredBoxDifferential FK RevealmentTranslation
 open FKSharpnessWeighted
 open ActiveBoundaryDifferential ActiveEdgeDifferential LindebergTree
 
+/-! ## A. Translated edges and phase covariance -/
 
+/-- Translate an edge of `ℤ^d` by `x`. -/
 def translateAmbientEdge {d : Nat} (x : Site d) (e : Sym2 (Site d)) :
     Sym2 (Site d) :=
   Sym2.map (fun y => y + x) e
 
-
-
-
+/-- The coupling `J` is phase covariant: translating by `x` gives the coupling `phaseJ
+  (phase x)`. -/
 def PhaseCovariant {d : Nat} {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real) : Prop :=
   forall x e, J (translateAmbientEdge x e) = phaseJ (phase x) e
 
-
+/-- The coupling `J` restricted to the edges of the box of radius `R`. -/
 def boxCoupling {d : Nat} (J : Sym2 (Site d) -> Real) (R : Nat) :
     Sym2 (boxVerts d R) -> Real :=
   fun e => J (Sym2.map Subtype.val e)
 
-
+/-- The coupling `J` on the edges of the box of radius `R` centered at `x`. -/
 def transBoxCoupling {d : Nat} (J : Sym2 (Site d) -> Real)
     (R : Nat) (x : Site d) : Sym2 (fvs_transBoxVerts d R x) -> Real :=
   fun e => J (Sym2.map Subtype.val e)
 
-
+/-- The coupling of phase `a` on the edges of the box of radius `R`. -/
 def phaseBoxCoupling {d : Nat} {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P) (R : Nat) :
     Sym2 (boxVerts d R) -> Real :=
   boxCoupling (phaseJ a) R
 
-
-
-theorem transBoxCoupling_map_eq_phaseBoxCoupling
+lemma transBoxCoupling_map_eq_phaseBoxCoupling
     {d : Nat} {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -99,7 +122,7 @@ theorem transBoxCoupling_map_eq_phaseBoxCoupling
     _ = phaseJ (phase x) (Sym2.map Subtype.val e) :=
       hcov x (Sym2.map Subtype.val e)
 
-theorem PhaseCovariant.eq_of_same_phase
+lemma PhaseCovariant.eq_of_same_phase
     {d : Nat} {P : Type*}
     {J : Sym2 (Site d) -> Real} {phase : Site d -> P}
     {phaseJ : P -> Sym2 (Site d) -> Real}
@@ -108,7 +131,7 @@ theorem PhaseCovariant.eq_of_same_phase
     J (translateAmbientEdge x e) = J (translateAmbientEdge y e) := by
   rw [hcov x e, hcov y e, hxy]
 
-theorem PhaseCovariant.phaseCoupling_pos
+lemma PhaseCovariant.phaseCoupling_pos
     {d : Nat} {P : Type*}
     {J : Sym2 (Site d) -> Real} {phase : Site d -> P}
     {phaseJ : P -> Sym2 (Site d) -> Real}
@@ -120,8 +143,7 @@ theorem PhaseCovariant.phaseCoupling_pos
   rw [← hcov x e]
   exact hJ _
 
-
-theorem betaParams_transBox_map_eq_phaseBox
+lemma betaParams_transBox_map_eq_phaseBox
     {d : Nat} {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -133,14 +155,14 @@ theorem betaParams_transBox_map_eq_phaseBox
   unfold FK.betaParams
   rw [transBoxCoupling_map_eq_phaseBoxCoupling J phase phaseJ hcov R x e]
 
+/-! ## B. Phase envelopes and the periodic inequality -/
 
+/-- The maximum over phases of `theta a n`. -/
 noncomputable def phaseEnvelope {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (n : Nat) : Real :=
   Finset.univ.sup' Finset.univ_nonempty (fun a => theta a n)
 
-
-
-
+/-- The wired crossing probability of the box of radius `n` for the couplings of phase `a`. -/
 noncomputable def weightedPhaseWiredTheta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -151,7 +173,8 @@ noncomputable def weightedPhaseWiredTheta
       (FK.betaParams (phaseBoxCoupling phaseJ a (2 * k)) beta) q)
     (WiredBoxLocalized.innerCrossInd d k)
 
-theorem weightedPhaseWiredTheta_nonneg
+open Classical in
+lemma weightedPhaseWiredTheta_nonneg
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -169,24 +192,24 @@ theorem weightedPhaseWiredTheta_nonneg
       (FK.betaParams_pos (fun e => hJ a (Sym2.map Subtype.val e)) hbeta)
       (FK.betaParams_lt_one _ beta) hq omega).le
 
-theorem le_phaseEnvelope {P : Type*} [Fintype P] [Nonempty P]
+lemma le_phaseEnvelope {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (a : P) (n : Nat) :
     theta a n <= phaseEnvelope theta n := by
   exact Finset.le_sup' (fun b => theta b n) (Finset.mem_univ a)
 
-theorem phaseEnvelope_nonneg {P : Type*} [Fintype P] [Nonempty P]
+lemma phaseEnvelope_nonneg {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (htheta : forall a n, 0 <= theta a n)
     (n : Nat) : 0 <= phaseEnvelope theta n := by
   obtain ⟨a⟩ := (inferInstance : Nonempty P)
   exact (htheta a n).trans (le_phaseEnvelope theta a n)
 
-
-
-
+open Classical in
+/-- Off-centre connection probabilities in the box are bounded by the corresponding phase crossing
+  probabilities. -/
 def WeightedPhaseOffCentre (d n : Nat) {P : Type*}
     (J : Sym2 (boxVerts d n) -> Real) (phase : Site d -> P)
     (theta : P -> Nat -> Real) (q beta : Real) : Prop :=
-  forall x, x ∈ osssBoxFinset d n -> forall k, k ∈ Finset.range n ->
+  forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k, k ∈ Finset.range n ->
     Lindeberg.mean
         (FK.activeBCProb (boxGraph d n) (wiredBoxBoundaryGraph d n)
           (FK.betaParams J beta) q)
@@ -195,9 +218,8 @@ def WeightedPhaseOffCentre (d n : Nat) {P : Type*}
           then (1 : Real) else 0) <=
       theta (phase x) k
 
-
-
-
+/-- Nested domination: inner connections in the doubled box are bounded by the phase crossing
+  probabilities. -/
 def PeriodicWeightedNestedDomination
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
@@ -206,14 +228,12 @@ def PeriodicWeightedNestedDomination
     WeightedPhaseOffCentre d n (boxCoupling J n) phase
       (fun a => weightedPhaseWiredTheta d phaseJ a q beta) q beta
 
-
+/-- The OSSS denominator built from the phase envelope. -/
 noncomputable def weightedPhaseDenom {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (n : Nat) : Real :=
   4 * (∑ k ∈ Finset.range n, phaseEnvelope theta k) / (n : Real)
 
-
-
-theorem weightedWiredActiveDenom_le_phaseDenom
+lemma weightedWiredActiveDenom_le_phaseDenom
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (boxVerts d n) -> Real) (phase : Site d -> P)
     (theta : P -> Nat -> Real) (q beta : Real)
@@ -228,10 +248,7 @@ theorem weightedWiredActiveDenom_le_phaseDenom
   intro k hk
   exact (hoff x hx k hk).trans (le_phaseEnvelope theta (phase x) k)
 
-
-
-
-theorem weightedPhaseDenom_pos_of_pos
+lemma weightedPhaseDenom_pos_of_pos
     {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (htheta : forall a k, 0 <= theta a k)
     (n k : Nat) (hk : k ∈ Finset.range n)
@@ -249,9 +266,8 @@ theorem weightedPhaseDenom_pos_of_pos
   unfold weightedPhaseDenom
   positivity
 
-
-
-theorem weighted_wired_box_phase_differential_inequality
+open Classical in
+lemma weighted_wired_box_phase_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (boxVerts d n) -> Real) (hJ : forall e, 0 < J e)
@@ -288,9 +304,7 @@ theorem weighted_wired_box_phase_differential_inequality
   refine ⟨c, hc, ?_⟩
   exact (mul_le_mul_of_nonneg_left hratio hc.le).trans hdiff
 
-
-
-theorem weighted_wired_box_differential_uniform_bounds
+lemma weighted_wired_box_differential_uniform_bounds
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (J : Sym2 (boxVerts d n) -> Real)
     (Jmin Jmax q beta beta0 : Real)
@@ -304,14 +318,14 @@ theorem weighted_wired_box_differential_uniform_bounds
         (wiredBoxBoundaryGraph d n) (FK.betaParams J b) q
         (crossEvent (boxActiveEdge d n) 0 (vertexBoundary d n))) beta := by
   classical
-  letI : Nonempty (boxGraph d n).edgeSet :=
+  let : Nonempty (boxGraph d n).edgeSet :=
     boxGraph_edgeSet_nonempty d n hd hn
   let G := boxGraph d n
   let C := wiredBoxBoundaryGraph d n
   let edge := boxActiveEdge d n
   let endU := boxActiveEndU d n
   let endV := boxActiveEndV d n
-  let Lambda := osssBoxFinset d n
+  let Lambda := StatMech.Percolation.boxFinset d n
   let disc0 : Nat -> Finset (Site d) := osssBoundaryFinset d
   let mu := FK.activeBCProb G C (FK.betaParams J beta) q
   let f := crossIndG edge 0 n
@@ -447,9 +461,7 @@ theorem weighted_wired_box_differential_uniform_bounds
   simpa [G, C, edge, D, theta, kappa, weightedWiredActiveTheta,
     weightedWiredActiveDenom] using hmain
 
-
-
-theorem weighted_periodic_box_differential_inequality
+lemma weighted_periodic_box_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
@@ -471,9 +483,8 @@ theorem weighted_periodic_box_differential_inequality
     q beta beta0 hq hbeta hbeta0
   exact hnested.2
 
-
-
-theorem weighted_periodic_box_differential_uniform_bounds
+open Classical in
+lemma weighted_periodic_box_differential_uniform_bounds
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -525,8 +536,11 @@ theorem weighted_periodic_box_differential_uniform_bounds
   exact (mul_le_mul_of_nonneg_left hratio hconst).trans (by
     simpa [Jbox, theta] using hbase)
 
+/-! ## C. Phase suprema -/
 
-theorem tendsto_finset_sup'
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma tendsto_finset_sup'
     {P X : Type*} [DecidableEq P] {l : Filter X}
     (s : Finset P) (hs : s.Nonempty)
     (f : P -> X -> Real) (a : P -> Real)
@@ -546,10 +560,8 @@ theorem tendsto_finset_sup'
         subst s
         simpa using hf p (by simp)
 
-
-
-
-theorem phaseEnvelope_tendsto
+open Classical in
+lemma phaseEnvelope_tendsto
     {P : Type*} [Fintype P] [Nonempty P]
     (theta : P -> Nat -> Real) (thetaInf : P -> Real)
     (hlim : forall a, Tendsto (theta a) atTop (nhds (thetaInf a))) :
@@ -558,9 +570,7 @@ theorem phaseEnvelope_tendsto
   exact tendsto_finset_sup' Finset.univ Finset.univ_nonempty
     (fun a n => theta a n) thetaInf (fun a ha => hlim a)
 
-
-
-theorem phaseSup_pos_iff
+lemma phaseSup_pos_iff
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real) :
     0 < Finset.univ.sup' Finset.univ_nonempty thetaInf ↔
@@ -577,9 +587,7 @@ theorem phaseSup_pos_iff
   · rintro ⟨a, ha⟩
     exact ha.trans_le (Finset.le_sup' thetaInf (Finset.mem_univ a))
 
-
-
-theorem phaseSup_transition_iff
+lemma phaseSup_transition_iff
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real -> Real) (betaC beta : Real)
     (hphase : forall a, 0 < thetaInf a beta ↔ betaC < beta) :
@@ -593,9 +601,7 @@ theorem phaseSup_transition_iff
     obtain ⟨a⟩ := (inferInstance : Nonempty P)
     exact ⟨a, (hphase a).mpr h⟩
 
-
-
-theorem phaseSup_zeroSet_eq_Iic
+lemma phaseSup_zeroSet_eq_Iic
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real -> Real) (betaC : Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)
@@ -625,9 +631,7 @@ theorem phaseSup_zeroSet_eq_Iic
       exact (hnonneg a beta).trans
         (Finset.le_sup' (fun b => thetaInf b beta) (Finset.mem_univ a))
 
-
-
-theorem phaseSup_critical_eq
+lemma phaseSup_critical_eq
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real -> Real) (betaC : Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)

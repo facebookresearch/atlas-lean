@@ -6,50 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptFiberCross
+
+/-!
+# From the tail conditional law to the adaptive covariance bound
+
+The tail conditional law hypothesis implies the adaptive conditional covariance hypothesis
+`AdaptCondBBB`.
+
+## i. Overview
+
+`otc_adaptCondBBB_of_tailCondLaw` derives `AdaptCondBBB μ σ f` from `acp_TailCondLaw μ σ f` for
+bounded `f`; it is a conditional implication. This file is one step of the OSSS chain for monotonic
+measures: `AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration`
+(`AdaptCondBBB` ⇒ `AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
+`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
+unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `otc_adaptCondBBB_of_tailCondLaw`: `acp_TailCondLaw` ⇒ `AdaptCondBBB`.
+
+## iii. Table of contents
+
+- A. Reduction
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -61,20 +57,6 @@ open OSSS.Monotonic OSSS.Coding OSSS.GrandCoupling OSSS.GrandCouplingAssembly
 open StatMech.Probability OSSS.AdaptiveTau OSSS.AdaptMConditional
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 lemma otc_factor_step (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ)
@@ -91,13 +73,9 @@ lemma otc_factor_step (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
   convert this using 1
   rfl
 
-
 lemma otc_truncHead_nonneg (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     0 ≤ acp_truncHead μ σ f t A := truncInd_nonneg μ σ f _ (t + 1)
-
-
-
 
 lemma otc_delta_eq (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) :
@@ -110,11 +88,6 @@ lemma otc_delta_eq (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
   apply integral_congr_ae; apply Filter.Eventually.of_forall; intro A
   rw [integral_const]
   simp
-
-
-
-
-
 
 lemma otc_diag_component (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (t : ℕ) (e : E) (s : ℕ)
@@ -135,10 +108,6 @@ lemma otc_diag_component (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ 
       = (fun A => acp_truncHead μ σ f t A * Mfe) from by
     funext A; rw [hs A]]
   rw [integral_mul_const, otc_delta_eq μ σ f t, mul_comm]
-
-
-
-
 
 lemma otc_cross_component (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (t : ℕ) (e : E) (s₁ s₂ : ℕ)
@@ -161,7 +130,8 @@ lemma otc_cross_component (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃
     rw [integral_mul_const, mul_comm]]
   have hinnerm : Measurable (fun A : {i : Fin n // (i : ℕ) < t} → ℝ =>
       ∫ B, fiberCross μ σ f e s₁ s₂ (acp_join t A B) ∂(ubfTail n t)) := by
-    have hjm : Measurable (fun p : ({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ) =>
+    have hjm : Measurable (fun p : ({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t}
+        → ℝ) =>
         fiberCross μ σ f e s₁ s₂ (acp_join t p.1 p.2)) :=
       (acp_measurable_fiberCross μ σ e s₁ s₂).comp (ubfSplit n t).symm.measurable
     exact hjm.stronglyMeasurable.integral_prod_right'.measurable
@@ -188,32 +158,18 @@ lemma otc_cross_component (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃
       _ = 1 := by simp
   · exact mul_le_mul_of_nonneg_left (hs A) (otc_truncHead_nonneg μ σ f t A)
 
+/-! ## A. Reduction -/
 
-
-
-
-
-
-
-
-
-
-
-theorem otc_adaptCondBBB_of_tailCondLaw {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
+lemma otc_adaptCondBBB_of_tailCondLaw {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (hTCL : acp_TailCondLaw μ σ f) :
     AdaptCondBBB μ σ f := by
   intro t htn
   set e := (σ : Fin n → E) ⟨t, htn⟩ with he
-  
   refine ⟨?_, ?_, ?_, ?_⟩
-  · 
-    exact otc_diag_component μ σ hfC t e t (fun A => (hTCL t htn A).1)
-  · 
-    exact otc_diag_component μ σ hfC t e (t+1) (fun A => (hTCL t htn A).2.1)
-  · 
-    exact otc_cross_component μ σ hfC t e t (t+1) (fun A => (hTCL t htn A).2.2.1)
-  · 
-    exact otc_cross_component μ σ hfC t e (t+1) t (fun A => (hTCL t htn A).2.2.2)
+  · exact otc_diag_component μ σ hfC t e t (fun A => (hTCL t htn A).1)
+  · exact otc_diag_component μ σ hfC t e (t+1) (fun A => (hTCL t htn A).2.1)
+  · exact otc_cross_component μ σ hfC t e t (t+1) (fun A => (hTCL t htn A).2.2.1)
+  · exact otc_cross_component μ σ hfC t e (t+1) t (fun A => (hTCL t htn A).2.2.2)
 
 end AdaptDisintegration
 

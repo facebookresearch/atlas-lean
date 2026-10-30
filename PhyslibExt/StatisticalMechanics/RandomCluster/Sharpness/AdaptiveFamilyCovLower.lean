@@ -6,34 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FrontierFamilyRevealment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalOSSS
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredDomChain
 
+/-!
+# OSSS for families of decision trees
+
+Averaging the OSSS inequality over a family of decision trees that all compute the same monotone
+function, and the resulting covariance lower bound for the random-cluster model.
+
+## i. Overview
+
+`AdaptiveFamilyOSSS` is the averaged OSSS inequality for a family `Tf`. It holds for FKG measures by
+`adaptiveFamilyOSSS_of_causal`. The bare version without the monotonicity hypotheses,
+`BareAdaptiveFamilyOSSS`, is FALSE in general: `bareAdaptiveFamilyOSSS_not_arbitrary` refutes it for
+the counterexample measure `StepCov.Counterexample.muU`. The `_unconditional` headlines need only
+FKG, monotonicity and a bound `D` on the average revealment.
+
+## ii. Key results
+
+- `var_le_avg_adaptive_reveal_mul_sum_cov_unconditional`: `Var f ≤ D ∑ Cov` (FKG and revealment
+  bound only).
+- `fk_q2_cov_lower_bound_of_adaptive_family_unconditional`: `θ(1 - θ) / D ≤ ∑ Cov` for `q = 2`.
+- `bareAdaptiveFamilyOSSS_not_arbitrary`: the bare family OSSS fails without monotonicity.
+
+## iii. Table of contents
+
+- A. Family OSSS predicates
+- B. Covariance lower bounds
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory Filter Topology
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 namespace OSSS
@@ -45,24 +62,22 @@ open StatMech.OSSS.MonotonicFK
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Family OSSS predicates -/
 
-
-
+/-- The averaged OSSS inequality for a family of decision trees computing `f`, with no monotonicity
+  assumption; false in general (see `bareAdaptiveFamilyOSSS_not_arbitrary`). -/
 def BareAdaptiveFamilyOSSS {μ : ConfigSpace E → ℝ} {κ : Type*}
     (Tf : κ → DecisionTree E) (f : ConfigSpace E → ℝ) : Prop :=
   ∀ k, Lindeberg.var μ f ≤
     ∑ e, revealmentMu μ (Tf k) e * Lindeberg.cov μ f (Lindeberg.coord e)
 
-
-
-
+/-- The averaged OSSS inequality for a family of decision trees computing the monotone function
+  `f`. -/
 def AdaptiveFamilyOSSS {μ : ConfigSpace E → ℝ} {κ : Type*}
     (Tf : κ → DecisionTree E) (f : ConfigSpace E → ℝ) : Prop :=
   (∀ k, (Tf k).evalR = f) ∧ BareAdaptiveFamilyOSSS (μ := μ) Tf f
 
-
-
-theorem adaptiveFamilyOSSS_of_causal {μ : ConfigSpace E → ℝ}
+lemma adaptiveFamilyOSSS_of_causal {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {κ : Type*}
     (Tf : κ → DecisionTree E) {f : ConfigSpace E → ℝ}
@@ -79,10 +94,7 @@ theorem adaptiveFamilyOSSS_of_causal {μ : ConfigSpace E → ℝ}
   rw [hTf k] at h
   exact h
 
-
-
-
-theorem bareAdaptiveFamilyOSSS_not_arbitrary :
+lemma bareAdaptiveFamilyOSSS_not_arbitrary :
     ¬ BareAdaptiveFamilyOSSS (μ := StepCov.Counterexample.muU)
       (fun _ : Unit => DecisionTree.leaf false) (Lindeberg.coord false) := by
   intro h
@@ -101,10 +113,9 @@ theorem bareAdaptiveFamilyOSSS_not_arbitrary :
   simp_rw [hvar, hrev, zero_mul, Finset.sum_const_zero] at hb
   norm_num at hb
 
+/-! ## B. Covariance lower bounds -/
 
-
-
-theorem var_le_avg_adaptive_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ}
+lemma var_le_avg_adaptive_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {κ : Type*} [Fintype κ] [Nonempty κ]
     (Tf : κ → DecisionTree E) {f : ConfigSpace E → ℝ} (hf : Monotone f)
@@ -150,7 +161,7 @@ theorem var_le_avg_adaptive_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ}
         rw [Finset.mul_sum]
   exact le_of_mul_le_mul_left hmain hκpos
 
-
+/-- `Var f ≤ D ∑ Cov` (FKG and revealment bound only). -/
 theorem var_le_avg_adaptive_reveal_mul_sum_cov_unconditional
     {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
@@ -163,10 +174,7 @@ theorem var_le_avg_adaptive_reveal_mul_sum_cov_unconditional
   exact var_le_avg_adaptive_reveal_mul_sum_cov hpos hμ1 hFKG Tf hf
     (adaptiveFamilyOSSS_of_causal hpos hμ1 hFKG Tf hf hTf) D hD
 
-
-
-
-theorem fk_q2_cov_lower_bound_of_adaptive_family
+lemma fk_q2_cov_lower_bound_of_adaptive_family
     {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree (Sym2 W))
@@ -196,9 +204,7 @@ theorem fk_q2_cov_lower_bound_of_adaptive_family
         ≤ D * ∑ e, Lindeberg.cov (fkMass G p 2) f (Lindeberg.coord e) := hmain
     _ = (∑ e, Lindeberg.cov (fkMass G p 2) f (Lindeberg.coord e)) * D := by ring
 
-
-
-theorem fk_q2_cov_lower_bound_of_adaptive_family_unconditional
+lemma fk_q2_cov_lower_bound_of_adaptive_family_unconditional
     {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree (Sym2 W))
@@ -220,10 +226,7 @@ theorem fk_q2_cov_lower_bound_of_adaptive_family_unconditional
     (adaptiveFamilyOSSS_of_causal hpos hμ1 hFKG Tf hf hTf)
     R D hDpos hreach hsum
 
-
-
-
-theorem wired_box_theta_tendsto {d : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
+lemma wired_box_theta_tendsto {d : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Tendsto
       (fun n => IsingFK.boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
       atTop (nhds (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))) :=

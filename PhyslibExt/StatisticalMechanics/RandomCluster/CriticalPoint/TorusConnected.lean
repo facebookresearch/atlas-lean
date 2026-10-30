@@ -6,16 +6,34 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Combinatorics.SimpleGraph.Circulant
+
+/-!
+# The discrete torus is connected
+
+The `L × L` torus graph is the box product of two cycles, hence connected.
+
+## i. Overview
+
+`onsTorusGraph_eq_cycleGraph_boxProd` identifies the torus with `cycleGraph L □ cycleGraph L`;
+connectivity follows from that of cycles. Unconditional.
+
+## ii. Key results
+
+- `onsTorusGraph_connected`: the torus graph is connected.
+
+## iii. Table of contents
+
+- A. Connectivity
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
@@ -25,9 +43,9 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Connectivity -/
 
-
-theorem onsTorusGraph_eq_cycleGraph_boxProd (n : ℕ) [Fact (2 < n + 1)] :
+lemma onsTorusGraph_eq_cycleGraph_boxProd (n : ℕ) [Fact (2 < n + 1)] :
     onsTorusGraph (n + 1) = cycleGraph (n + 1) □ cycleGraph (n + 1) := by
   ext u v
   have hc : ∀ a b : ZMod (n + 1), (cycleGraph (n + 1)).Adj a b ↔
@@ -36,10 +54,6 @@ theorem onsTorusGraph_eq_cycleGraph_boxProd (n : ℕ) [Fact (2 < n + 1)] :
     ((cycleGraph (n + 1)).Adj u.1 v.1 ∧ u.2 = v.2 ∨ (cycleGraph (n + 1)).Adj u.2 v.2 ∧ u.1 = v.1)
   rw [hc, hc]
   unfold onsTorusAdj
-  change ((u.1 = v.1 ∧ (u.2 = v.2 + 1 ∨ u.2 = v.2 - 1)) ∨
-      (u.2 = v.2 ∧ (u.1 = v.1 + 1 ∨ u.1 = v.1 - 1))) ↔
-    ((((u.1 - v.1).val = 1 ∨ (v.1 - u.1).val = 1) ∧ u.2 = v.2) ∨
-      (((u.2 - v.2).val = 1 ∨ (v.2 - u.2).val = 1) ∧ u.1 = v.1))
   have hn2 : 2 < n + 1 := Fact.out
   have hn : 0 < n := by omega
   have hval {a b : ZMod (n + 1)} :
@@ -71,9 +85,7 @@ theorem onsTorusGraph_eq_cycleGraph_boxProd (n : ℕ) [Fact (2 < n + 1)] :
     · exact Or.inl ⟨h0, Or.inl h1⟩
     · exact Or.inl ⟨h0, Or.inr (by linear_combination -h1)⟩
 
-
-
-theorem onsTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
+lemma onsTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
     (onsTorusGraph L).Connected := by
   cases L with
   | zero =>
@@ -81,6 +93,6 @@ theorem onsTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
       exact (Nat.not_lt_zero 2) (Fact.out : 2 < 0)
   | succ n =>
       rw [onsTorusGraph_eq_cycleGraph_boxProd n]
-      exact cycleGraph_connected.boxProd cycleGraph_connected
+      exact connected_cycleGraph_add_one.boxProd connected_cycleGraph_add_one
 
 end StatMech.BeffaraDC

@@ -6,36 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedStrict
 
+/-!
+# Localized OSSS bounds for weighted boxes
+
+The covariance lower bound and differential inequality for the inner crossing of the doubled box
+with inhomogeneous couplings, in terms of the phase envelope.
+
+## i. Overview
+
+`weightedLocalizedTheta` is the probability that the origin is connected to the boundary of the box
+of radius `n`, computed in the wired box of radius `2n`. The OSSS bound with localized revealment
+gives `weighted_outer_inner_hcov`. Off-centre connections are compared to centered ones through the
+phase envelope, giving `weighted_outer_inner_differential_phaseEnvelope_uniform`. This is
+unconditional under `J > 0`, `q ≥ 1` and phase covariance. The `Weighted*` files extend the OSSS
+sharpness argument to random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A
+phase map `phase : Site d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`,
+describes how translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weighted_outer_inner_hcov`: covariance lower bound.
+- `weighted_outer_inner_differential_phaseEnvelope_uniform`: uniform differential inequality in
+  terms of the phase envelope.
+
+## iii. Table of contents
+
+- A. Localized crossing probability
+- B. Phase-envelope bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedLocalized
 
-open Lattice FK RevealmentConstruction RevealmentTranslation
+open StatMech.Lattice FK RevealmentConstruction RevealmentTranslation
 open AdaptiveCovLowerGeom LocalizedCrossTree DecisionTree
 open WiredBoxDifferential WiredBoxLocalized
 open ActiveBoundaryDifferential LindebergTree RussoPrefactor
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedPeriodicRepair
 open FKSharpnessWeightedStrict
 
+/-! ## A. Localized crossing probability -/
 
-
+/-- The probability that the origin is connected to the boundary of the box of radius `n`, in the
+  wired box of radius `2n` with couplings `J`. -/
 noncomputable def weightedLocalizedTheta
     (d n : Nat) (J : Sym2 (Site d) -> Real) (q beta : Real) : Real :=
   Lindeberg.mean
@@ -44,10 +76,7 @@ noncomputable def weightedLocalizedTheta
       (betaParams (boxCoupling J (2 * n)) beta) q)
     (innerCrossInd d n)
 
-
-
-
-theorem weighted_outer_inner_hcov
+lemma weighted_outer_inner_hcov
     (d n : Nat) (hn : 1 <= n)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta D : Real) (hq : 1 <= q) (hbeta : 0 < beta) (hD : 0 < D)
@@ -101,7 +130,8 @@ theorem weighted_outer_inner_hcov
       l hl (disc0 (k : Nat)) (hdisc0sup (k : Nat)) (hoB (k : Nat))
       (restrictConfig iota omega)
     rw [heval]
-    simp only [innerCrossInd, iota, crossIndG, crossEvent, Set.indicator, Set.mem_setOf_eq]
+    simp only [innerCrossInd, iota, crossIndG, crossEvent, Set.indicator, Set.mem_ofPred_eq]
+    congr 1
   have hJbox : forall e : Sym2 (boxVerts d (2 * n)),
       0 < boxCoupling J (2 * n) e :=
     fun e => hJ (Sym2.map Subtype.val e)
@@ -121,9 +151,7 @@ theorem weighted_outer_inner_hcov
     (by simpa [mu, iota] using hsum)
   simpa [weightedLocalizedTheta, mu] using hmain
 
-
-
-theorem weighted_outer_inner_hcov_geom
+lemma weighted_outer_inner_hcov_geom
     (d n : Nat) (hn : 1 <= n)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
@@ -140,7 +168,7 @@ theorem weighted_outer_inner_hcov_geom
     (wiredBoxBoundaryGraph d (2 * n))
     (betaParams (boxCoupling J (2 * n)) beta) q
   let iota := boxActiveEdgeLE d (n_le_two_mul n)
-  let Lambda := osssBoxFinset d n
+  let Lambda := StatMech.Percolation.boxFinset d n
   let conn : Site d -> Nat -> Real := fun x j =>
     Lindeberg.mean mu (fun omega => if ConnectedToSet d
       (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) x
@@ -167,7 +195,7 @@ theorem weighted_outer_inner_hcov_geom
             (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) 0
             (centeredBoundary 0 0) then (1 : Real) else 0) = fun _ => 1 := by
         funext omega
-        rw [if_pos]
+        rw [ite_eq_left]
         exact ⟨0, centeredRadius_self 0, connected_refl _ _⟩
       change Lindeberg.mean mu (fun omega => if ConnectedToSet d
         (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) 0
@@ -237,7 +265,8 @@ theorem weighted_outer_inner_hcov_geom
   simpa [weightedStrictDenom, weightedOuterInnerConn,
     weightedLocalizedTheta, mu, iota, Lambda, conn, M, D] using hmain
 
-theorem weightedLocalizedTheta_nonneg
+open Classical in
+lemma weightedLocalizedTheta_nonneg
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     0 <= weightedLocalizedTheta d n J q beta := by
@@ -252,7 +281,8 @@ theorem weightedLocalizedTheta_nonneg
       (betaParams_pos (fun e => hJ (Sym2.map Subtype.val e)) hbeta)
       (betaParams_lt_one _ beta) (zero_lt_one.trans_le hq) omega).le
 
-theorem weightedLocalizedTheta_le_one
+open Classical in
+lemma weightedLocalizedTheta_le_one
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     weightedLocalizedTheta d n J q beta <= 1 := by
@@ -279,9 +309,9 @@ theorem weightedLocalizedTheta_le_one
       split_ifs <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hsum 1
 
+/-! ## B. Phase-envelope bounds -/
 
-
-theorem weighted_outer_inner_hcov_phaseEnvelope
+lemma weighted_outer_inner_hcov_phaseEnvelope
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
@@ -315,9 +345,7 @@ theorem weighted_outer_inner_hcov_phaseEnvelope
     simpa [theta] using
       weighted_outer_inner_hcov_geom d n hn J hJ q beta hq hbeta)
 
-
-
-theorem weighted_outer_inner_differential_phaseEnvelope
+lemma weighted_outer_inner_differential_phaseEnvelope
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
@@ -334,7 +362,7 @@ theorem weighted_outer_inner_differential_phaseEnvelope
         (betaParams (boxCoupling J (2 * n)) b) q
         (innerCrossInd d n)) beta := by
   classical
-  letI : Nonempty (boxGraph d (2 * n)).edgeSet :=
+  let : Nonempty (boxGraph d (2 * n)).edgeSet :=
     boxGraph_edgeSet_nonempty d (2 * n) hd (by omega)
   let G := boxGraph d (2 * n)
   let C := wiredBoxBoundaryGraph d (2 * n)
@@ -387,10 +415,7 @@ theorem weighted_outer_inner_differential_phaseEnvelope
   have hmain := (mul_le_mul_of_nonneg_left hcov hcR.le).trans hRusso
   simpa [G, C, Jbox, mu, f] using hmain
 
-
-
-
-theorem weighted_outer_inner_differential_phaseEnvelope_uniform
+lemma weighted_outer_inner_differential_phaseEnvelope_uniform
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -475,4 +500,3 @@ theorem weighted_outer_inner_differential_phaseEnvelope_uniform
 end FKSharpnessWeightedLocalized
 end OSSS
 end StatMech
-

@@ -6,32 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseTransport
 public import PhyslibExt.StatisticalMechanics.RandomCluster.LimitTranslationInvariance
 
+/-!
+# Finite energy of the selected weighted laws
+
+Open-edge tolerance of weighted random-cluster measures, absolute-continuity bounds for opening
+edges, and box finite energy of the infinite-volume phase laws.
+
+## i. Overview
+
+Opening a single edge changes the measure by at most the factor `1 / weightedOpenTolerance p q`
+(`activeBCProb_singleOpen_preimage_bound`). This passes to cylinders in infinite volume and gives
+`weightedPhaseInfinite_hasBoxFiniteEnergy`. `coherentTranslatedLaw` translates a law, covariantly.
+All results are unconditional for `q ≥ 1`. The `Weighted*` files extend the OSSS sharpness argument
+to random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase :
+Site d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how
+translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseInfinite_hasBoxFiniteEnergy`: box finite energy of the infinite-volume phase laws.
+- `weightedSelectedPhaseFiniteEnergy`: `WeightedSelectedPhaseFiniteEnergy` holds.
+
+## iii. Table of contents
+
+- A. Single-edge bounds
+- B. Infinite-volume finite energy
+- C. Translated laws
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open MeasureTheory Set Filter Topology
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedSelectedLaws
 
-open Lattice FK Percolation
+open StatMech.Lattice FK Percolation
 open RevealmentConstruction WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open FKSharpnessWeightedPeriodic
 open FKSharpnessWeightedInfiniteVolume
@@ -40,9 +66,9 @@ open FKSharpnessWeightedPhaseTransport
 
 variable {d : Nat}
 
+/-! ## A. Single-edge bounds -/
 
-
-private theorem closedFiber_pairMass_eq_sum
+private lemma closedFiber_pairMass_eq_sum
     {E : Type*} [Fintype E] [DecidableEq E]
     (m : ConfigSpace E -> Real) (e : E) :
     (∑ psi ∈ Finset.univ.filter
@@ -73,7 +99,7 @@ private theorem closedFiber_pairMass_eq_sum
         simp]
   rw [Finset.sum_filter_add_sum_filter_not]
 
-private theorem finite_singleOpen_preimage_bound
+private lemma finite_singleOpen_preimage_bound
     {E : Type*} [Fintype E] [DecidableEq E]
     (mu : ConfigSpace E -> Real) (e : E) (c : Real)
     (hmu : forall omega, 0 <= mu omega)
@@ -129,19 +155,17 @@ private theorem finite_singleOpen_preimage_bound
     · rw [Set.indicator_of_notMem hAclosed, zero_mul, add_zero]
       simp
 
-
-
-
+/-- The conditional open probability lower bound `p / (p + q (1 - p))`. -/
 noncomputable def weightedOpenTolerance (p q : Real) : Real :=
   p / (p + q * (1 - p))
 
-theorem weightedOpenTolerance_pos {p q : Real}
+lemma weightedOpenTolerance_pos {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     0 < weightedOpenTolerance p q := by
   unfold weightedOpenTolerance
   positivity
 
-private theorem activeBCWeight_open_pair
+private lemma activeBCWeight_open_pair
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
@@ -172,7 +196,7 @@ private theorem activeBCWeight_open_pair
     mul_nonneg (hpf e.1).le hpclosed
   nlinarith [mul_le_mul_of_nonneg_left hpow (mul_nonneg hR hp)]
 
-private theorem activeBCProb_open_pair
+private lemma activeBCProb_open_pair
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
@@ -205,7 +229,7 @@ private theorem activeBCProb_open_pair
   rw [div_mul_eq_mul_div, div_le_iff₀ hden]
   nlinarith
 
-theorem activeBCProb_singleOpen_preimage_bound
+lemma activeBCProb_singleOpen_preimage_bound
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
@@ -222,9 +246,9 @@ theorem activeBCProb_singleOpen_preimage_bound
       (zero_lt_one.trans_le hq) omega).le)
     (activeBCProb_open_pair G C hpf hpf1 hq e) A
 
+/-! ## B. Infinite-volume finite energy -/
 
-
-theorem liftCfg_setOpen
+lemma liftCfg_setOpen
     {E : Type*} [Fintype E] [DecidableEq E]
     (edge : E -> Sym2 (Site d)) (hinj : Function.Injective edge)
     (e : E) (omega : ConfigSpace E) :
@@ -239,14 +263,14 @@ theorem liftCfg_setOpen
       rw [liftCfg_apply_edge hinj, setOpen_of_ne hfe, setOpen_of_ne hedge,
         liftCfg_apply_edge hinj]
   · unfold liftCfg
-    rw [dif_neg hx]
+    rw [dite_eq_right hx]
     have hne : x ≠ edge e := by
       intro h
       exact hx ⟨e, h.symm⟩
     rw [setOpen_of_ne hne]
-    rw [dif_neg hx]
+    rw [dite_eq_right hx]
 
-theorem weightedPhaseFiniteMeasure_singleOpen_bound
+lemma weightedPhaseFiniteMeasure_singleOpen_bound
     (d n : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -285,9 +309,7 @@ theorem weightedPhaseFiniteMeasure_singleOpen_bound
     (liftCfg (boxActiveEdge d n) ⁻¹' A)
   exact hbound
 
-
-
-theorem weightedPhaseInfinite_singleOpen_cylinder_bound
+lemma weightedPhaseInfinite_singleOpen_cylinder_bound
     (d N : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -341,7 +363,7 @@ theorem weightedPhaseInfinite_singleOpen_cylinder_bound
   rw [← hset]
   simpa only [hedge] using hbound
 
-theorem weightedPhaseInfinite_singleOpen_fullCylinder_bound
+lemma weightedPhaseInfinite_singleOpen_fullCylinder_bound
     (d N : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -395,7 +417,7 @@ theorem weightedPhaseInfinite_singleOpen_fullCylinder_bound
     d K phaseJ a hJ q beta hq hbeta eK.1
       (by rw [SimpleGraph.mem_edgeFinset]; exact eK.2) T
 
-theorem weightedPhaseInfinite_setOpen_absolutelyContinuous
+lemma weightedPhaseInfinite_setOpen_absolutelyContinuous
     (d N : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -432,7 +454,7 @@ theorem weightedPhaseInfinite_setOpen_absolutelyContinuous
     (weightedPhaseInfinite_singleOpen_fullCylinder_bound
       d N phaseJ a hJ q beta hq hbeta eN) A hA
 
-private theorem boxEdge_has_active_rep
+private lemma boxEdge_has_active_rep
     (d n : Nat) (e : Sym2 (Site d)) (he : e ∈ boxEdges d n) :
     exists eN : (boxGraph d n).edgeSet, boxActiveEdge d n eN = e := by
   induction e with
@@ -448,7 +470,7 @@ private theorem boxEdge_has_active_rep
       change edgeIncl d n s(xb, yb) = s(x, y)
       simp [edgeIncl, xb, yb]
 
-theorem weightedPhaseInfinite_hasBoxFiniteEnergy
+lemma weightedPhaseInfinite_hasBoxFiniteEnergy
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -486,6 +508,7 @@ theorem weightedPhaseInfinite_hasBoxFiniteEnergy
         rwa [← forceOpenFinset_insert e F] at htrans
   exact hforce (boxEdges d n) (fun _ => id)
 
+/-- `WeightedSelectedPhaseFiniteEnergy` holds. -/
 theorem weightedSelectedPhaseFiniteEnergy
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -497,11 +520,9 @@ theorem weightedSelectedPhaseFiniteEnergy
   exact weightedPhaseInfinite_hasBoxFiniteEnergy
     d phaseJ a (hJ a) q beta hq hbeta
 
+/-! ## C. Translated laws -/
 
-
-
-
-
+/-- The translate of the law `mu` by `x`. -/
 noncomputable def coherentTranslatedLaw
     (mu : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) (x : Site d) :
     ProbabilityMeasure (ConfigSpace (Sym2 (Site d))) :=
@@ -510,7 +531,7 @@ noncomputable def coherentTranslatedLaw
     (Measure.isProbabilityMeasure_map_iff
       (ConfigSpace.measurable_shift (Multiplicative.ofAdd (-x))).aemeasurable).mpr inferInstance⟩
 
-theorem coherentTranslatedLaw_covariant
+lemma coherentTranslatedLaw_covariant
     (mu : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) (x y : Site d) :
     (coherentTranslatedLaw mu y :
         Measure (ConfigSpace (Sym2 (Site d)))) =

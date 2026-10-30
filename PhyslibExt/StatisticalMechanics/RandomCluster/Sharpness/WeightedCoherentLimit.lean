@@ -6,39 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedInfiniteVolume
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredDomChain
 
+/-!
+# Coherent infinite-volume limits for weighted phases
+
+Monotonicity of shell events in the box size, convergence of finite-volume crossing probabilities to
+the infinite-volume one, and diagonal tail convergence for `q ≥ 1`.
+
+## i. Overview
+
+The wired finite measures restricted to an inner box are dominated as the outer box grows
+(`weightedPhaseFiniteMeasure_shell_mono`). Hence fixed-shell probabilities converge
+(`weightedPhaseFiniteMeasure_fixedShell_tendsto`), and so does the wired crossing probability
+(`weightedPhaseWiredTheta_tendsto_infiniteTheta`). This proves
+`WeightedPhaseDiagonalTailConvergence` for `q ≥ 1`
+(`weightedPhaseDiagonalTailConvergence_of_one_le`), unconditionally. The `Weighted*` files extend
+the OSSS sharpness argument to random-cluster models with inhomogeneous, periodic couplings `J` on
+`ℤ^d`. A phase map `phase : Site d → P` to a finite set of phases, with `PhaseCovariant J phase
+phaseJ`, describes how translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseWiredTheta_tendsto_infiniteTheta`: finite-volume crossing probabilities converge.
+- `weightedPhaseDiagonalTailConvergence_of_one_le`: diagonal tail convergence for `q ≥ 1`
+  (unconditional).
+
+## iii. Table of contents
+
+- A. Finite measures and shells
+- B. Limits
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open MeasureTheory
-open scoped BigOperators Classical
+open scoped BigOperators
 open Set Filter Topology
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedCoherentLimit
 
-open Lattice FK Percolation RevealmentConstruction
+open StatMech.Lattice FK Percolation RevealmentConstruction
 open WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedPeriodicRepair
 open FKSharpnessWeightedDomain FKSharpnessWeightedInfiniteVolume
 
+/-! ## A. Finite measures and shells -/
 
-
-theorem weightedWiredActivePMF_toMeasure_toReal
+lemma weightedWiredActivePMF_toMeasure_toReal
     (d n : Nat) (J : Sym2 (boxVerts d n) -> Real)
     (hJ : forall e, 0 < J e) (q beta : Real)
     (hq : 0 < q) (hbeta : 0 < beta)
@@ -67,8 +96,7 @@ theorem weightedWiredActivePMF_toMeasure_toReal
     · rw [Set.indicator_of_notMem ha]
       simp
 
-
-theorem weightedPhaseFiniteMeasure_real_eq
+lemma weightedPhaseFiniteMeasure_real_eq
     (d n : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -96,10 +124,7 @@ theorem weightedPhaseFiniteMeasure_real_eq
     rw [Measure.map_apply Measurable.of_discrete hA]
   rw [hmap, weightedWiredActivePMF_toMeasure_toReal]
 
-
-
-
-theorem boxRestrict_liftActive_eq_on_inner_edges
+lemma boxRestrict_liftActive_eq_on_inner_edges
     (d : Nat) {k R : Nat} (hkR : k <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R)))
     (e : Sym2 (boxVerts d k)) (he : e ∈ (boxGraph d k).edgeFinset) :
@@ -124,9 +149,7 @@ theorem boxRestrict_liftActive_eq_on_inner_edges
   rw [← hedge, hlift]
   rfl
 
-
-
-theorem openSub_boxRestrict_liftActive_eq_inner
+lemma openSub_boxRestrict_liftActive_eq_inner
     (d : Nat) {k R : Nat} (hkR : k <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     openSub (boxGraph d k)
@@ -138,21 +161,18 @@ theorem openSub_boxRestrict_liftActive_eq_inner
   intro e he
   exact boxRestrict_liftActive_eq_on_inner_edges d hkR rho e he
 
-
-
-theorem liftActive_mem_boxBdryConnEvent_iff
+lemma liftActive_mem_boxBdryConnEvent_iff
     (d : Nat) {k R : Nat} (hkR : k <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     liftCfg (boxActiveEdge d R) (restrictActive (boxGraph d R) rho) ∈
         boxBdryConnEvent d k ↔
       rho ∈ connToBdryEventLE d hkR := by
   simp only [boxBdryConnEvent, connToBdryEventLE, Set.mem_preimage,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   unfold IsingFK.ConnToBdry FK.Connected
   rw [openSub_boxRestrict_liftActive_eq_inner d hkR rho]
 
-
-theorem weightedPhaseFiniteMeasure_shell_eq
+lemma weightedPhaseFiniteMeasure_shell_eq
     (d : Nat) {k R : Nat} (hkR : k <= R) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -185,9 +205,7 @@ theorem weightedPhaseFiniteMeasure_shell_eq
   · exact betaParams_lt_one _ beta
   · exact hq
 
-
-
-theorem weighted_boxEvent_domain_dominated
+lemma weighted_boxEvent_domain_dominated
     (d r R : Nat) (hr : 1 <= r) (hrR : r < R)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (beta q : Real) (hbeta : 0 < beta) (hq : 1 <= q)
@@ -229,8 +247,7 @@ theorem weighted_boxEvent_domain_dominated
     (betaParams_lt_one _ beta) hq hA
   exact hdom
 
-
-theorem ocd_innerRestrict_box_comp
+lemma ocd_innerRestrict_box_comp
     (d : Nat) {k r R : Nat} (hkr : k <= r) (hrR : r <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     boxRestrictLE d hkr
@@ -241,19 +258,16 @@ theorem ocd_innerRestrict_box_comp
     innerEdgeLE, boxVertInclLE, Sym2.map_map, Function.comp_def]
   rfl
 
-
-
-theorem connToBdryEventLE_outer_eq_preimage
+lemma connToBdryEventLE_outer_eq_preimage
     (d : Nat) {k r R : Nat} (hkr : k <= r) (hrR : r <= R) :
     connToBdryEventLE d (hkr.trans hrR) =
       ocd_innerRestrict (flc_incl (box_mono d hrR)) ⁻¹'
         connToBdryEventLE d hkr := by
   ext rho
-  simp only [connToBdryEventLE, Set.mem_preimage, Set.mem_setOf_eq]
+  simp only [connToBdryEventLE, Set.mem_preimage, Set.mem_ofPred_eq]
   rw [ocd_innerRestrict_box_comp d hkr hrR rho]
 
-
-theorem weightedPhaseFiniteMeasure_shell_mono
+lemma weightedPhaseFiniteMeasure_shell_mono
     (d : Nat) {k r R : Nat} (hk : 1 <= k) (hkr : k <= r) (hrR : r < R)
     {P : Type*} (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -276,9 +290,9 @@ theorem weightedPhaseFiniteMeasure_shell_mono
     (hk.trans hkr) hrR (phaseJ a) hJ beta q hbeta hq
     (isIncreasing_connToBdryEventLE d hkr)
 
+/-! ## B. Limits -/
 
-
-theorem weightedPhaseWiredTheta_eq_finiteMeasure_double
+lemma weightedPhaseWiredTheta_eq_finiteMeasure_double
     (d k : Nat) (hk : 1 <= k) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -296,10 +310,7 @@ theorem weightedPhaseWiredTheta_eq_finiteMeasure_double
     centeredShellEvent_eq_connToBdryEventLE d k hk]
   rfl
 
-
-
-
-theorem weightedPhaseFiniteMeasure_fixedShell_tendsto
+lemma weightedPhaseFiniteMeasure_fixedShell_tendsto
     (d k : Nat) (hk : 1 <= k) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -349,8 +360,7 @@ theorem weightedPhaseFiniteMeasure_fixedShell_tendsto
           (boxBdryConnEvent d k) = mass (k + (phi (m + m0) - k))
     rw [show k + (phi (m + m0) - k) = phi (m + m0) by omega]
 
-
-theorem weightedPhaseWiredTheta_succ_le
+lemma weightedPhaseWiredTheta_succ_le
     (d n : Nat) (hn : 1 <= n) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -376,10 +386,7 @@ theorem weightedPhaseWiredTheta_succ_le
         (show 2 * n < 2 * (n + 1) by omega)
         phaseJ a hJ q beta hq hbeta
 
-
-
-
-theorem weightedPhaseWiredTheta_tendsto_infiniteTheta
+lemma weightedPhaseWiredTheta_tendsto_infiniteTheta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -470,8 +477,7 @@ theorem weightedPhaseWiredTheta_tendsto_infiniteTheta
     exact le_of_tendsto_of_tendsto hshell htheta <| by
       filter_upwards [eventually_ge_atTop 1] with k hk using hshell_le k hk
 
-
-
+/-- Diagonal tail convergence for `q ≥ 1` (unconditional). -/
 theorem weightedPhaseDiagonalTailConvergence_of_one_le
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)

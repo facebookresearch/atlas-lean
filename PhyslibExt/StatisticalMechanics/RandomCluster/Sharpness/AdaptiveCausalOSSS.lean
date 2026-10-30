@@ -6,14 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalCrossFlipMoment
+
+/-!
+# The OSSS inequality for decision trees under monotonic measures
+
+For a monotonic (FKG-type) positive probability measure and a decision tree computing a monotone
+function, the variance is at most the sum over coordinates of revealment times covariance.
+
+## i. Overview
+
+Each step of the decision tree is bounded by flip sums (`decisionTree_atom_step_le_flip_sum`). The
+common and cross flip moments are evaluated by the marginal identities, and the triple jump is
+bounded by covariances of the shared steps (`causalTripleJump_le_cov_sharedStep`). Summing over
+steps gives `adaptive_tree_osss`, unconditional under positivity, normalization and monotonicity of
+`mu` and monotonicity of `T.evalR`.
+
+## ii. Key results
+
+- `causalTripleJump_le_cov_sharedStep`: triple jump bounded by covariances.
+- `adaptive_tree_osss`: `Var f ≤ ∑ revealment(e) · Cov(f, ω_e)` for decision trees (unconditional).
+
+## iii. Table of contents
+
+- A. Step bounds
+- B. OSSS for decision trees
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -27,9 +54,9 @@ open Coding Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Step bounds -/
 
-
-theorem decisionTree_atom_step_le_flip_sum
+lemma decisionTree_atom_step_le_flip_sum
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmono : IsMonotonicMeasure mu) (T : DecisionTree E) (t : ℕ)
     (hf : Monotone T.evalR) (base : ConfigSpace E) :
@@ -74,9 +101,7 @@ theorem decisionTree_atom_step_le_flip_sum
       simpa [S] using hno e
     simp [he']
 
-
-
-theorem common_flip_moment_extendDecisionTreeTriple
+lemma common_flip_moment_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmu : ∑ ω, mu ω = 1) (T : DecisionTree E) (seed : ConfigSpace E)
     (t : ℕ) (e : E) :
@@ -176,9 +201,7 @@ theorem common_flip_moment_extendDecisionTreeTriple
   dsimp only [S]
   ring
 
-
-
-theorem causalTripleJump_le_of_cross_flip_moment
+lemma causalTripleJump_le_of_cross_flip_moment
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmu : ∑ ω, mu ω = 1) (hmono : IsMonotonicMeasure mu)
     (T : DecisionTree E) (hf : Monotone T.evalR) (seed : ConfigSpace E)
@@ -272,9 +295,7 @@ theorem causalTripleJump_le_of_cross_flip_moment
       dsimp only [S]
       ring
 
-
-
-theorem causalTripleJump_le_cov_sharedStep
+lemma causalTripleJump_le_cov_sharedStep
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmu : ∑ ω, mu ω = 1) (hmono : IsMonotonicMeasure mu)
     (T : DecisionTree E) (hf : Monotone T.evalR)
@@ -288,7 +309,9 @@ theorem causalTripleJump_le_cov_sharedStep
   exact le_of_eq
     (cross_flip_moment_extendDecisionTreeTriple_eq mu hpos hmu T seed t e).symm
 
+/-! ## B. OSSS for decision trees -/
 
+/-- `Var f ≤ ∑ revealment(e) · Cov(f, ω_e)` for decision trees (unconditional). -/
 theorem adaptive_tree_osss
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmu : ∑ ω, mu ω = 1) (hmono : IsMonotonicMeasure mu)

@@ -6,33 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
+
+/-!
+# Sharp threshold from symmetry and maximal influence
+
+An abstract inequality: a Russo-type derivative bound, edge symmetry and a KKL maximal-influence
+bound give a derivative lower bound of order `μ (1 - μ) log n`.
+
+## i. Overview
+
+This is an inequality between real numbers. Its hypotheses are the three inputs (derivative ≥
+constant · total influence, total influence ≥ half the edge count times the maximal influence, KKL),
+so it is conditional on all three.
+
+## ii. Key results
+
+- `symmetricThreshold_of_maxInfluence`: `(c_R c_M / 2) μ (1 - μ) log n ≤ deriv`, conditional on the
+  three inputs.
+
+## iii. Table of contents
+
+- A. Symmetric threshold
+
+## iv. References
+
+* J. Kahn, G. Kalai, N. Linial, *The influence of variables on Boolean functions*, FOCS 1988.
+* E. Friedgut, G. Kalai, *Every monotone graph property has a sharp threshold*, Proc. AMS 124
+  (1996).
+-/
 
 @[expose] public section
 
 namespace StatMech
 namespace BeffaraDC
 
+/-! ## A. Symmetric threshold -/
 
-
-
-
-
-
-
-theorem symmetricThreshold_of_maxInfluence
+lemma symmetricThreshold_of_maxInfluence
     {n edgeCount : ℕ} {μ deriv totalInfluence maxInfluence cRusso cMax : ℝ}
     (hn : 1 ≤ n) (hne : n ≤ edgeCount)
     (hμ0 : 0 ≤ μ) (hμ1 : μ ≤ 1)

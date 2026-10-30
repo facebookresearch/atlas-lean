@@ -6,90 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptMConditional
+
+/-!
+# Fiber disintegration for the adaptive OSSS step
+
+Disintegration of one adaptive revealment step over fibers, giving the step covariance bound from
+the conditional hypothesis `AdaptCondBBB` for monotonic measures.
+
+## i. Overview
+
+Swapping the two coordinate copies between steps `s` and `m` (`sw2`, `selMap2`) writes each step of
+the adaptive telescope as an integral over fibers (`fiberStep`, `fiberDiag`, `fiberCross`). FKG on
+each fiber of a monotonic measure gives `adsD_adaptStepCovBound_of_condBBB`. `adsD_tree_osss_sharp`
+and `adsD_fk_q2_sharp` are conditional on `AdaptCondBBB`. This file is one step of the OSSS chain
+for monotonic measures: `AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration`
+(`AdaptCondBBB` ⇒ `AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
+`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
+unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `adsD_adaptStepCovBound_of_condBBB`: `AdaptCondBBB` ⇒ `AdaptStepCovBound` for monotone `f` and
+  monotonic `μ`.
+- `adsD_tree_osss_sharp`: OSSS for monotonic measures, conditional on `AdaptCondBBB`.
+
+## iii. Table of contents
+
+- A. Coordinate swaps
+- B. One adaptive step on fibers
+- C. Fiber quantities and the conditional hypothesis
+- D. OSSS from the conditional hypothesis
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -102,17 +65,10 @@ open StatMech.Probability OSSS.AdaptiveTau OSSS.AdaptMConditional
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Coordinate swaps -/
 
-
-
-
-
-
-
-
-
-
-
+/-- The involution of `Fin n ⊕ Fin n` swapping the two copies of the coordinates with index in `[s,
+  m)`. -/
 def sw2 (n s m : ℕ) : Fin n ⊕ Fin n → Fin n ⊕ Fin n
   | Sum.inl i => if (i : ℕ) < s ∨ (i : ℕ) ≥ m then Sum.inr i else Sum.inl i
   | Sum.inr i => if (i : ℕ) < s ∨ (i : ℕ) ≥ m then Sum.inl i else Sum.inr i
@@ -123,18 +79,17 @@ lemma sw2_invol (n s m : ℕ) : Function.Involutive (sw2 n s m) := by
   | inl i => by_cases h : (i : ℕ) < s ∨ (i : ℕ) ≥ m <;> simp [sw2, h]
   | inr i => by_cases h : (i : ℕ) < s ∨ (i : ℕ) ≥ m <;> simp [sw2, h]
 
-
+/-- The coordinate swap `sw2` as a permutation. -/
 noncomputable def sw2Equiv (n s m : ℕ) : Equiv.Perm (Fin n ⊕ Fin n) := (sw2_invol n s m).toPerm
 
 lemma sw2Equiv_symm_apply (n s m : ℕ) (x : Fin n ⊕ Fin n) :
     (sw2Equiv n s m).symm x = sw2 n s m x := rfl
 
-
-
+/-- The map selecting the first copy after the coordinate swap: it assembles the coordinates used by
+  step `m` from two independent samples. -/
 noncomputable def selMap2 (n s m : ℕ) : ((Fin n → ℝ) × (Fin n → ℝ)) → (Fin n → ℝ) :=
   fun p => projInl n
     ((MeasurableEquiv.piCongrLeft (fun _ : Fin n ⊕ Fin n => ℝ) (sw2Equiv n s m)) (combine n p))
-
 
 lemma adsD_selMap2_eq_adaptWt (n s m : ℕ) (U V : Fin n → ℝ) :
     selMap2 n s m (U, V) = adaptWt U V m s := by
@@ -145,21 +100,17 @@ lemma adsD_selMap2_eq_adaptWt (n s m : ℕ) (U V : Fin n → ℝ) :
   rw [sw2Equiv_symm_apply, combine_apply]
   simp only [sw2]
   by_cases h : (i : ℕ) < s
-  · rw [if_pos (Or.inl h)]; simp [h]
+  · rw [ite_eq_left (Or.inl h)]; simp [h]
   · by_cases h2 : (i : ℕ) < m
     · have hcond : ¬ ((i:ℕ) < s ∨ (i:ℕ) ≥ m) := by
         rintro (hc | hc) <;> omega
-      rw [if_neg hcond]; simp [h, h2]
+      rw [ite_eq_right hcond]; simp [h, h2]
     · have hcond : (i:ℕ) < s ∨ (i:ℕ) ≥ m := Or.inr (by omega)
-      rw [if_pos hcond]; simp [h, h2]
-
-
-
-
+      rw [ite_eq_left hcond]; simp [h, h2]
 
 lemma adsD_selMap2_measurePreserving (n s m : ℕ) :
     MeasurePreserving (selMap2 n s m) ((Vcube n).prod (Vcube n)) (Vcube n) := by
-  show MeasurePreserving (selMap2 n s m)
+  change MeasurePreserving (selMap2 n s m)
     ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n => unitMeasure)))
     (Measure.pi (fun _ : Fin n => unitMeasure))
   have hcombine : MeasurePreserving (combine n)
@@ -179,7 +130,8 @@ lemma adsD_selMap2_measurePreserving (n s m : ℕ) :
     have hsum := measurePreserving_sumPiEquivProdPi (X := fun _ : Fin n ⊕ Fin n => ℝ)
       (fun _ : Fin n ⊕ Fin n => unitMeasure)
     have hfst : MeasurePreserving Prod.fst
-        ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n => unitMeasure)))
+        ((Measure.pi (fun _ : Fin n => unitMeasure)).prod (Measure.pi (fun _ : Fin n =>
+            unitMeasure)))
         (Measure.pi (fun _ : Fin n => unitMeasure)) := measurePreserving_fst
     have := hfst.comp hsum
     convert this using 1
@@ -188,17 +140,9 @@ lemma adsD_selMap2_measurePreserving (n s m : ℕ) :
   convert this using 1
   rfl
 
+/-! ## B. One adaptive step on fibers -/
 
-
-
-
-
-
-
-
-
-
-theorem adsD_integral_g_adaptWt_fixed (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_integral_g_adaptWt_fixed (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (g : ConfigSpace E → ℝ) (s m : ℕ) :
     ∫ p, g (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 m s)) ∂((Vcube n).prod (Vcube n))
       = ∑ x, g x * μ x := by
@@ -215,16 +159,6 @@ theorem adsD_integral_g_adaptWt_fixed (μ : ConfigSpace E → ℝ) (hpos : ∀ �
   rw [hrw] at hcomp
   rw [hcomp, integral_g_codeMap μ hpos hμ1 σ g]
 
-
-
-
-
-
-
-
-
-
-
 lemma adsD_measurable_f_adaptWt_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (m s : ℕ) :
     Measurable (fun V : Fin n → ℝ => f (codeMap μ (σ : Fin n → E) (adaptWt U V m s))) := by
@@ -233,16 +167,14 @@ lemma adsD_measurable_f_adaptWt_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ
     funext V; rw [adaptWt_eq_Wt_mix]
   rw [hrw]
   refine (measurable_g_codeMap μ σ f).comp ?_
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i; unfold Wt mixUV
   by_cases h : (i : ℕ) < s
-  · simp only [h, if_true]; exact measurable_pi_apply i
-  · simp only [h, if_false]
+  · simp only [h, ite_true]; exact measurable_pi_apply i
+  · simp only [h, ite_false]
     by_cases h2 : (i : ℕ) < m
-    · simp only [h2, if_true]; exact measurable_const
-    · simp only [h2, if_false]; exact measurable_pi_apply i
-
-
+    · simp only [h2, ite_true]; exact measurable_const
+    · simp only [h2, ite_false]; exact measurable_pi_apply i
 
 lemma adsD_measurable_f_adaptWt_prod (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (g : ConfigSpace E → ℝ) (m s : ℕ) :
@@ -250,20 +182,16 @@ lemma adsD_measurable_f_adaptWt_prod (μ : ConfigSpace E → ℝ) {n : ℕ} (σ 
         g (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 m s))) :=
   (measurable_g_codeMap μ σ g).comp (measurable_adaptWt_fixed m s)
 
-
-
 lemma adsD_adaptWt_mono_V {n : ℕ} (U : Fin n → ℝ) (m s : ℕ) :
     Monotone (fun V : Fin n → ℝ => adaptWt U V m s) := by
   intro V V' hle i
   unfold adaptWt
   by_cases h : (i : ℕ) < s
-  · simp only [h, if_true]; exact hle i
-  · simp only [h, if_false]
+  · simp only [h, ite_true]; exact hle i
+  · simp only [h, ite_false]
     by_cases h2 : (i : ℕ) < m
-    · simp only [h2, if_true]; exact le_refl _
-    · simp only [h2, if_false]; exact hle i
-
-
+    · simp only [h2, ite_true]; exact le_refl _
+    · simp only [h2, ite_false]; exact hle i
 
 lemma adsD_f_adaptWt_mono_V {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n → E) {f : ConfigSpace E → ℝ}
@@ -271,14 +199,11 @@ lemma adsD_f_adaptWt_mono_V {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
     Monotone (fun V : Fin n → ℝ => f (codeMap μ σ (adaptWt U V m s))) :=
   fun _ _ hle => hf ((codeMap_mono_u hpos hmono σ) ((adsD_adaptWt_mono_V U m s) hle))
 
-
 lemma adsD_coord_adaptWt_mono_V {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n → E) (e : E) (U : Fin n → ℝ) (m s : ℕ) :
     Monotone (fun V : Fin n → ℝ => Lindeberg.coord e (codeMap μ σ (adaptWt U V m s))) :=
   fun _ _ hle =>
     Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono σ) ((adsD_adaptWt_mono_V U m s) hle))
-
-
 
 lemma adsD_integrable_prod_obs_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (U : Fin n → ℝ)
@@ -293,44 +218,30 @@ lemma adsD_integrable_prod_obs_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ 
   rw [abs_mul]
   exact mul_le_mul (hfC _) (GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) hCf0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem adsD_abs_adapt_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_abs_adapt_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (t m : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) (htn : t - 1 < n)
     (U V : Fin n → ℝ) :
     |f (codeMap μ (σ : Fin n → E) (adaptWt U V m t))
         - f (codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1)))|
       = f (codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1)))
-          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1)))
+          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m
+              (t-1)))
         + f (codeMap μ (σ : Fin n → E) (adaptWt U V m t))
-          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m t))
+          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m
+              t))
         - f (codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1)))
-          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m t))
+          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m
+              t))
         - f (codeMap μ (σ : Fin n → E) (adaptWt U V m t))
-          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1))) := by
+          * Lindeberg.coord ((σ : Fin n → E) ⟨t-1, htn⟩) (codeMap μ (σ : Fin n → E) (adaptWt U V m
+              (t-1))) := by
   set k := t - 1 with hk
   set e := (σ : Fin n → E) ⟨k, htn⟩ with he
   set Yt := codeMap μ (σ : Fin n → E) (adaptWt U V m t) with hYt
   set Ys := codeMap μ (σ : Fin n → E) (adaptWt U V m (t-1)) with hYs
-  
   have hoff : ∀ i : Fin n, (i:ℕ) ≠ k → adaptWt U V m t i = adaptWt U V m (t-1) i :=
     adaptWt_agree_off U V m t ht
-  
   have hdet : Lindeberg.coord e Yt = Lindeberg.coord e Ys → Yt = Ys := by
     intro hcoord
     have hbit : Yt e = Ys e := by
@@ -338,9 +249,7 @@ theorem adsD_abs_adapt_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : �
       by_cases h1 : Yt e <;> by_cases h2 : Ys e <;> simp_all
     exact codeMap_det μ (σ : Fin n → E) σ.injective (adaptWt U V m t) (adaptWt U V m (t-1)) k htn
       (fun i hi => hoff i hi) hbit
-  
   obtain ⟨hVt, hUt⟩ := adaptWt_at_pos U V m t ht htm htn
-  
   have hcmp : (f Ys ≤ f Yt ∧ Lindeberg.coord e Ys ≤ Lindeberg.coord e Yt)
       ∨ (f Yt ≤ f Ys ∧ Lindeberg.coord e Yt ≤ Lindeberg.coord e Ys) := by
     rcases le_total (U ⟨k, htn⟩) (V ⟨k, htn⟩) with hUV | hVU
@@ -365,12 +274,7 @@ theorem adsD_abs_adapt_step_eq_four_terms {μ : ConfigSpace E → ℝ} (hpos : �
   exact tt_algebra (f Yt) (f Ys) (Lindeberg.coord e Yt) (Lindeberg.coord e Ys)
     (coord_eq01 e Yt) (coord_eq01 e Ys) hcmp (fun h => by rw [hdet h])
 
-
-
-
-
-
-theorem adsD_abs_adapt_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_abs_adapt_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf)
     (t m : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) (htn : t - 1 < n) (U : Fin n → ℝ) :
@@ -415,15 +319,7 @@ theorem adsD_abs_adapt_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : 
   rw [show (∫ V, (D1 + D2 - C1) V ∂(Vcube n)) = ∫ V, ((D1 + D2) - C1) V ∂(Vcube n) from rfl]
   rw [integral_sub' (hI1.add hI2) hIc1, integral_add' hI1 hI2]
 
-
-
-
-
-
-
-
-
-theorem adsD_adapt_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_adapt_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (m s₁ s₂ : ℕ)
     (U : Fin n → ℝ) :
@@ -445,18 +341,7 @@ theorem adsD_adapt_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 
     exact Lindeberg.coord_mono e
       ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((adsD_adaptWt_mono_V Ufix m s₂) hVV))
 
-
-
-
-
-
-
-
-
-
-
-
-theorem adsD_adapt_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_adapt_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf)
     (t m : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) (htn : t - 1 < n) (U : Fin n → ℝ) :
@@ -488,58 +373,29 @@ theorem adsD_adapt_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 
     adsD_adapt_fkg_cross_fiber hpos hmono σ hf hfC e m t (t-1) U
   linarith [key1, key2]
 
+/-! ## C. Fiber quantities and the conditional hypothesis -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The value of the adaptive telescope step `t` on the fiber of `U`. -/
 noncomputable def fiberStep (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (U : Fin n → ℝ) : ℝ :=
   ∫ V, |f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) (t+1)))
         - f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) t))| ∂(Vcube n)
 
-
+/-- The diagonal fiber term for coordinate `e` at step `s`. -/
 noncomputable def fiberDiag (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (e : E) (s : ℕ) (U : Fin n → ℝ) : ℝ :=
   ∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))
         * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube n)
 
-
-
+/-- The cross fiber term for coordinate `e` between steps `s₁` and `s₂`. -/
 noncomputable def fiberCross (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (e : E) (s₁ s₂ : ℕ) (U : Fin n → ℝ) : ℝ :=
   (∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁)) ∂(Vcube n))
-    * (∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂)) ∂(Vcube n))
+    * (∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂))
+        ∂(Vcube n))
 
-
-
-
-
-
-
-
+/-- The adaptive conditional covariance hypothesis: for every step, the conditional cross terms are
+  bounded by the diagonal ones. -/
 def AdaptCondBBB (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) :
     Prop :=
   ∀ (t : ℕ) (htn : t < n),
@@ -557,12 +413,9 @@ def AdaptCondBBB (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E) (f : 
           * ∫ U, truncInd μ σ f U (t+1) ∂(Vcube n)
         ≤ ∫ U, fiberCross μ σ f e (t+1) t U * truncInd μ σ f U (t+1) ∂(Vcube n))
 
-
 lemma truncInd_nonneg (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (t : ℕ) : 0 ≤ truncInd μ σ f U t := by
   unfold truncInd; split <;> norm_num
-
-
 
 lemma adsD_fubini_lhs (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (t : ℕ) :
@@ -576,18 +429,14 @@ lemma adsD_fubini_lhs (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
   simp only
   rw [integral_mul_const]; rfl
 
-
-
 lemma adsD_integrable_fiberStep (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (t : ℕ) :
     Integrable (fun U => fiberStep μ σ f t U * truncInd μ σ f U (t+1)) (Vcube n) := by
   have hint := (integrable_abs_adapt_step_trunc μ σ hfC t).integral_prod_left
   simp only at hint
   refine hint.congr (Filter.Eventually.of_forall (fun U => ?_))
-  show (∫ V, _ * _ ∂(Vcube n)) = fiberStep μ σ f t U * truncInd μ σ f U (t+1)
+  change (∫ V, _ * _ ∂(Vcube n)) = fiberStep μ σ f t U * truncInd μ σ f U (t+1)
   rw [integral_mul_const]; rfl
-
-
 
 lemma adsD_integrable_fiberDiag (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (e : E) (s : ℕ) (t : ℕ) :
@@ -600,27 +449,28 @@ lemma adsD_integrable_fiberDiag (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin
       (((measurable_g_adaptWt μ σ f f s).mul (measurable_g_adaptWt μ σ f (Lindeberg.coord e) s)).mul
         ((measurable_truncInd μ σ f (t+1)).comp measurable_fst)) (C := (1*1)*1) (fun p => ?_)
     rw [abs_mul, abs_mul]
-    refine mul_le_mul (mul_le_mul (hfC _) (GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) (by norm_num))
+    refine mul_le_mul (mul_le_mul (hfC _) (GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) (by
+        norm_num))
       (truncInd_le_one μ σ f p.1 (t+1)) (abs_nonneg _) (by positivity)
   have hm := hint.integral_prod_left
   simp only at hm
   refine hm.congr (Filter.Eventually.of_forall (fun U => ?_))
-  show (∫ V, _ * _ ∂(Vcube n)) = fiberDiag μ σ f e s U * truncInd μ σ f U (t+1)
+  change (∫ V, _ * _ ∂(Vcube n)) = fiberDiag μ σ f e s U * truncInd μ σ f U (t+1)
   rw [integral_mul_const]; rfl
-
-
 
 lemma adsD_integrable_fiberCross (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (e : E) (s₁ s₂ : ℕ) (t : ℕ) :
     Integrable (fun U => fiberCross μ σ f e s₁ s₂ U * truncInd μ σ f U (t+1)) (Vcube n) := by
-  
   have hmf : Measurable (fun U : Fin n → ℝ =>
       ∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁)) ∂(Vcube n)) :=
     ((measurable_g_adaptWt μ σ f f s₁).stronglyMeasurable.integral_prod_right').measurable
   have hmg : Measurable (fun U : Fin n → ℝ =>
-      ∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂)) ∂(Vcube n)) :=
-    ((measurable_g_adaptWt μ σ f (Lindeberg.coord e) s₂).stronglyMeasurable.integral_prod_right').measurable
-  have hbf : ∀ U, |∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁)) ∂(Vcube n)| ≤ 1 := by
+      ∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂)) ∂(Vcube
+          n)) :=
+    ((measurable_g_adaptWt μ σ f (Lindeberg.coord e)
+        s₂).stronglyMeasurable.integral_prod_right').measurable
+  have hbf : ∀ U, |∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁)) ∂(Vcube
+      n)| ≤ 1 := by
     intro U
     calc |∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁)) ∂(Vcube n)|
         ≤ ∫ V, |f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₁))| ∂(Vcube n) :=
@@ -631,14 +481,18 @@ lemma adsD_integrable_fiberCross (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fi
             (fun V => by rw [abs_abs]; exact hfC _))
             (integrable_const 1) (fun V => hfC _)
       _ = 1 := by simp
-  have hbg : ∀ U, |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂)) ∂(Vcube n)| ≤ 1 := by
+  have hbg : ∀ U, |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U)
+      s₂)) ∂(Vcube n)| ≤ 1 := by
     intro U
-    calc |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂)) ∂(Vcube n)|
-        ≤ ∫ V, |Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂))| ∂(Vcube n) :=
+    calc |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂))
+        ∂(Vcube n)|
+        ≤ ∫ V, |Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s₂))|
+            ∂(Vcube n) :=
           abs_integral_le_integral_abs
       _ ≤ ∫ V, (1:ℝ) ∂(Vcube n) :=
           integral_mono (ContinuousFKG.integrable_of_bdd _
-            (((measurable_g_adaptWt μ σ f (Lindeberg.coord e) s₂).comp (measurable_const.prodMk measurable_id)).abs)
+            (((measurable_g_adaptWt μ σ f (Lindeberg.coord e) s₂).comp (measurable_const.prodMk
+                measurable_id)).abs)
               (fun V => by rw [abs_abs]; exact GrandCoupling.abs_coord_le_one e _))
             (integrable_const 1) (fun V => GrandCoupling.abs_coord_le_one e _)
       _ = 1 := by simp
@@ -649,23 +503,15 @@ lemma adsD_integrable_fiberCross (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fi
   exact mul_le_mul (mul_le_mul (hbf U) (hbg U) (abs_nonneg _) (by norm_num))
     (truncInd_le_one μ σ f U (t+1)) (abs_nonneg _) (by positivity)
 
+/-! ## D. OSSS from the conditional hypothesis -/
 
-
-
-
-
-
-
-
-theorem adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hfC : ∀ ω, |f ω| ≤ 1) (hBBB : AdaptCondBBB μ σ f) :
     AdaptMConditional.AdaptStepCovBound μ σ f := by
   intro t htn
   set e := (σ : Fin n → E) ⟨t, htn⟩ with he
-  
   rw [adsD_fubini_lhs μ σ hfC t]
-  
   have hpt : ∀ U, fiberStep μ σ f t U * truncInd μ σ f U (t+1)
       ≤ (fiberDiag μ σ f e t U + fiberDiag μ σ f e (t+1) U
           - fiberCross μ σ f e t (t+1) U - fiberCross μ σ f e (t+1) t U)
@@ -673,21 +519,15 @@ theorem adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : �
     intro U
     unfold truncInd
     by_cases hev : t + 1 ≤ stopVal μ σ f U
-    · rw [if_pos hev, mul_one, mul_one]
-      
-      
+    · rw [ite_eq_left hev, mul_one, mul_one]
       have htn' : (t+1) - 1 < n := by simpa using htn
       have hbound := adsD_adapt_step_fiber_le hpos hmono σ hf hfC (t+1) (stopVal μ σ f U)
         (Nat.succ_le_succ (Nat.zero_le _)) hev htn' U
-      
-      
       unfold fiberStep fiberDiag fiberCross
       convert hbound using 2 <;> simp [he]
-    · rw [if_neg hev, mul_zero, mul_zero]
-  
+    · rw [ite_eq_right hev, mul_zero, mul_zero]
   refine (integral_mono (adsD_integrable_fiberStep μ σ hfC t) ?_ hpt).trans ?_
-  · 
-    have h1 := adsD_integrable_fiberDiag μ σ hfC e t t
+  · have h1 := adsD_integrable_fiberDiag μ σ hfC e t t
     have h2 := adsD_integrable_fiberDiag μ σ hfC e (t+1) t
     have h3 := adsD_integrable_fiberCross μ σ hfC e t (t+1) t
     have h4 := adsD_integrable_fiberCross μ σ hfC e (t+1) t t
@@ -701,8 +541,7 @@ theorem adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : �
       funext U; ring
     rw [hcomb]
     exact ((h1.add h2).sub h3).sub h4
-  · 
-    obtain ⟨hD1, hD2, hC1, hC2⟩ := hBBB t htn
+  · obtain ⟨hD1, hD2, hC1, hC2⟩ := hBBB t htn
     set A1 := fun U => fiberDiag μ σ f e t U * truncInd μ σ f U (t+1) with hA1
     set A2 := fun U => fiberDiag μ σ f e (t+1) U * truncInd μ σ f U (t+1) with hA2
     set B1 := fun U => fiberCross μ σ f e t (t+1) U * truncInd μ σ f U (t+1) with hB1
@@ -724,12 +563,10 @@ theorem adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : �
       rw [show (∫ U, (A1 + A2 - B1) U ∂(Vcube n)) = ∫ U, ((A1 + A2) - B1) U ∂(Vcube n) from rfl]
       rw [integral_sub' (h1.add h2) h3, integral_add' h1 h2]
     rw [hsplit]
-    
     set δ := ∫ U, truncInd μ σ f U (t+1) ∂(Vcube n) with hδ
     set Mfe := Lindeberg.mean μ (fun ω => f ω * Lindeberg.coord e ω) with hMfe
     set Mf := Lindeberg.mean μ f with hMf
     set Mc := Lindeberg.mean μ (Lindeberg.coord e) with hMc
-    
     have eA1 : (∫ U, A1 U ∂(Vcube n)) = Mfe * δ := hD1
     have eA2 : (∫ U, A2 U ∂(Vcube n)) = Mfe * δ := hD2
     have eB1 : Mf * Mc * δ ≤ ∫ U, B1 U ∂(Vcube n) := hC1
@@ -740,33 +577,10 @@ theorem adsD_adaptStepCovBound_of_condBBB {μ : ConfigSpace E → ℝ} (hpos : �
       apply integral_congr_ae; apply Filter.Eventually.of_forall; intro U
       simp only; rw [integral_const]; simp
     rw [hcov, ← hδeq]
-    
     rw [eA1, eA2]
     nlinarith [eB1, eB2]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem adsD_tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma adsD_tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
     (hBBB : AdaptCondBBB μ σ f) :
@@ -783,17 +597,7 @@ section FK
 
 open StatMech.OSSS.MonotonicFK
 
-
-
-
-
-
-
-
-
-
-
-theorem adsD_fk_q2_sharp {V : Type*} [Fintype V] [DecidableEq V]
+lemma adsD_fk_q2_sharp {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) {f : ConfigSpace (Sym2 V) → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)

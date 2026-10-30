@@ -6,81 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ClusterMoments
 public import MathlibExt.Probability.Percolation.SurfaceReassembly
 public import MathlibExt.Probability.Percolation.DctDifferential
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
+
+/-!
+# Cluster radius and size tails below a finite-volume criterion
+
+Geometric tails for the radius and the size of the origin cluster in Bernoulli percolation when the
+finite-volume criterion `φ_p(S) < 1` holds.
+
+## i. Overview
+
+If `phi d p S < 1` for a finite set `S ∋ 0` inside a box, crossing probabilities decay exponentially
+(`crossProb_exp_decay_of_phi_lt_one`, MathlibExt), hence geometrically. The cluster-size large event
+is contained in the crossing event, so cluster size has a geometric tail too, and all its moments
+are finite. All results are unconditional given `hphi : phi d p hp S < 1`.
+
+## ii. Key results
+
+- `crossProb_geometricTail`: geometric tail of the crossing probability.
+- `clusterSizeMoment_lt_top`: finite moments of the origin cluster size.
+
+## iii. Table of contents
+
+- A. Geometric tails
+- B. Cluster radius
+- C. Cluster size
+
+## iv. References
+
+* H. Duminil-Copin, V. Tassion, *A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model*, Comm. Math. Phys. 343 (2016).
+-/
 
 @[expose] public section
 
@@ -95,18 +56,9 @@ open StatMech.Percolation StatMech.Lattice
 
 variable {d : ℕ}
 
+/-! ## A. Geometric tails -/
 
-
-
-
-
-
-
-
-
-
-
-theorem geometricTail_of_expDecay {f : ℕ → ℝ} {C c : ℝ} (hc : 0 < c)
+lemma geometricTail_of_expDecay {f : ℕ → ℝ} {C c : ℝ} (hc : 0 < c)
     (hf : ∀ n, f n ≤ C * Real.exp (-c * n)) :
     ∃ r, 0 < r ∧ r < 1 ∧ ∀ n, f n ≤ C * r ^ n := by
   refine ⟨Real.exp (-c), Real.exp_pos _, ?_, fun n => ?_⟩
@@ -115,27 +67,7 @@ theorem geometricTail_of_expDecay {f : ℕ → ℝ} {C c : ℝ} (hc : 0 < c)
       rw [← Real.exp_nat_mul]; ring_nf
     rw [← hrw]; exact hf n
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem crossProb_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
+lemma crossProb_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) :
     ∃ C, 0 < C ∧ ∃ r, 0 < r ∧ r < 1 ∧
@@ -145,24 +77,10 @@ theorem crossProb_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d
   obtain ⟨r, hr0, hr1, hgeo⟩ := geometricTail_of_expDecay hc hbound
   exact ⟨C, hC, r, hr0, hr1, hgeo⟩
 
+/-! ## B. Cluster radius -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The cluster-domination data (tail, constant, rate) for the radius of the origin cluster, built
+  from the geometric crossing tail. -/
 noncomputable def clusterRadiusDomination (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) :
@@ -175,39 +93,19 @@ noncomputable def clusterRadiusDomination (p : ℝ≥0) (hp : p ≤ 1) (S : Fins
     h.choose_spec.2.choose_spec.2.1
     h.choose_spec.2.choose_spec.2.2
 
-@[simp] theorem clusterRadiusDomination_dist (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
+@[simp] lemma clusterRadiusDomination_dist (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) :
     (clusterRadiusDomination p hp S hoS hphi L hL hSbox).dist
       = fun n => crossProb d p hp n := rfl
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem clusterRadiusMoment_summable (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
+lemma clusterRadiusMoment_summable (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) (d' : ℕ) :
     Summable (fun n : ℕ => (n : ℝ) ^ d' * crossProb d p hp n) :=
   (clusterRadiusDomination p hp S hoS hphi L hL hSbox).summand_summable d'
 
-
-
-
-
-
-
-
-
-theorem clusterRadiusMoment_lt_top (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
+lemma clusterRadiusMoment_lt_top (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) (d' : ℕ) :
     ∃ C r, 0 ≤ r ∧ r < 1 ∧
@@ -218,24 +116,13 @@ theorem clusterRadiusMoment_lt_top (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Sit
   have := D.allMoments_lt_top d'
   exact this
 
-
-theorem clusterRadiusMoment_nonneg (p : ℝ≥0) (hp : p ≤ 1) (d' : ℕ) :
+lemma clusterRadiusMoment_nonneg (p : ℝ≥0) (hp : p ≤ 1) (d' : ℕ) :
     0 ≤ clusterMoment (fun n => crossProb d p hp n) d' :=
   clusterMoment_nonneg (fun n => crossProb_nonneg d p hp n) d'
 
+/-! ## C. Cluster size -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem crossingEvent_eq_cluster_not_subset (n : ℕ)
+lemma crossingEvent_eq_cluster_not_subset (n : ℕ)
     (ω : ConfigSpace (Sym2 (Site d))) :
     ω ∈ crossingEvent d n ↔ ¬ (cluster d ω (origin d) ⊆ box d (n - 1)) := by
   rw [mem_crossingEvent]
@@ -247,12 +134,7 @@ theorem crossingEvent_eq_cluster_not_subset (n : ℕ)
     obtain ⟨v, hv, hvb⟩ := h
     exact ⟨v, hv, hvb⟩
 
-
-
-
-
-
-theorem cluster_finite_card_le_of_subset {m : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
+lemma cluster_finite_card_le_of_subset {m : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
     (hsub : cluster d ω (origin d) ⊆ box d m) :
     ∃ hfin : (cluster d ω (origin d)).Finite, hfin.toFinset.card ≤ (boxFinset d m).card := by
   refine ⟨(box_finite d m).subset hsub, ?_⟩
@@ -261,17 +143,7 @@ theorem cluster_finite_card_le_of_subset {m : ℕ} (ω : ConfigSpace (Sym2 (Site
   rw [mem_boxFinset]
   exact hsub hy
 
-
-
-
-
-
-
-
-
-
-
-theorem clusterSize_large_subset_crossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma clusterSize_large_subset_crossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hsize : ¬ ∃ hfin : (cluster d ω (origin d)).Finite,
         hfin.toFinset.card ≤ (boxFinset d (n - 1)).card) :
     ω ∈ crossingEvent d n := by
@@ -279,13 +151,7 @@ theorem clusterSize_large_subset_crossing (n : ℕ) (ω : ConfigSpace (Sym2 (Sit
   intro hsub
   exact hsize (cluster_finite_card_le_of_subset ω hsub)
 
-
-
-
-
-
-
-theorem clusterSize_le_boxCard_of_finite (ω : ConfigSpace (Sym2 (Site d)))
+lemma clusterSize_le_boxCard_of_finite (ω : ConfigSpace (Sym2 (Site d)))
     (hfin : (cluster d ω (origin d)).Finite) :
     ∃ m, hfin.toFinset.card ≤ (boxFinset d m).card := by
   obtain ⟨m, hm⟩ := finite_subset_box (cluster d ω (origin d)) hfin
@@ -294,48 +160,23 @@ theorem clusterSize_le_boxCard_of_finite (ω : ConfigSpace (Sym2 (Site d)))
   rw [mem_boxFinset]
   exact hm hy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The event that the origin cluster is not a finite set of size at most the number of sites in the
+  box of radius `n - 1`. -/
 def clusterSizeLargeEvent (d n : ℕ) : Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | ¬ ∃ hfin : (cluster d ω (origin d)).Finite,
       hfin.toFinset.card ≤ (boxFinset d (n - 1)).card}
 
-
-
-
-theorem clusterSizeLargeEvent_subset_crossing (n : ℕ) :
+lemma clusterSizeLargeEvent_subset_crossing (n : ℕ) :
     clusterSizeLargeEvent d n ⊆ crossingEvent d n :=
   fun _ hω => clusterSize_large_subset_crossing n _ hω
 
-
-
-
-
-theorem clusterSizeLargeProb_le_crossProb (p : ℝ≥0) (hp : p ≤ 1) (n : ℕ) :
+lemma clusterSizeLargeProb_le_crossProb (p : ℝ≥0) (hp : p ≤ 1) (n : ℕ) :
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
         (clusterSizeLargeEvent d n)
       ≤ crossProb d p hp n :=
   measureReal_mono (clusterSizeLargeEvent_subset_crossing n) (measure_ne_top _ _)
 
-
-
-
-
-
-
-
-theorem clusterSizeTail_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
+lemma clusterSizeTail_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) :
     ∃ C, 0 < C ∧ ∃ r, 0 < r ∧ r < 1 ∧
@@ -347,13 +188,8 @@ theorem clusterSizeTail_geometricTail (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (
   refine ⟨C, hC, r, hr0, hr1, fun n => ?_⟩
   exact le_trans (clusterSizeLargeProb_le_crossProb p hp n) (hgeo n)
 
-
-
-
-
-
-
-
+/-- The cluster-domination data for the size of the origin cluster, built from the geometric size
+  tail. -/
 noncomputable def clusterSizeDomination (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) :
@@ -368,14 +204,7 @@ noncomputable def clusterSizeDomination (p : ℝ≥0) (hp : p ≤ 1) (S : Finset
     h.choose_spec.2.choose_spec.2.1
     h.choose_spec.2.choose_spec.2.2
 
-
-
-
-
-
-
-
-
+/-- Finite moments of the origin cluster size. -/
 theorem clusterSizeMoment_lt_top (p : ℝ≥0) (hp : p ≤ 1) (S : Finset (Site d))
     (hoS : origin d ∈ (S : Set (Site d))) (hphi : phi d p hp S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hSbox : (S : Set (Site d)) ⊆ box d (L - 1)) (d' : ℕ) :

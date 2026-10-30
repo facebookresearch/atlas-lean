@@ -6,14 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalKernel
+
+/-!
+# Marginals of flipped triple couplings
+
+Left and right marginals, and their sums, of the flipped (cross) triple probabilities along the
+decision-tree triple order.
+
+## i. Overview
+
+Summing the flipped triple probabilities over one of the two outputs recovers the pair coupling of
+the other. These marginal identities are unconditional for a positive probability weight. Part of
+the causal-kernel proof of the decision-tree OSSS inequality for monotonic measures
+(`AdaptiveCausalKernel` → `AdaptiveCausalOSSS.adaptive_tree_osss`).
+
+## ii. Key results
+
+- `flipTripleProb_left_marginal_extendDecisionTreeTriple`: left marginal of the flipped triple
+  coupling.
+- `flipCrossTripleProb_right_marginal_extendDecisionTreeTriple`: right marginal of the flipped cross
+  coupling.
+
+## iii. Table of contents
+
+- A. Flipped triple marginals
+- B. Flipped cross-triple marginals
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
@@ -27,10 +53,9 @@ open Coding Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Flipped triple marginals -/
 
-
-
-theorem flipTripleProb_left_marginal_extendDecisionTreeTriple
+lemma flipTripleProb_left_marginal_extendDecisionTreeTriple
     (mu : ConfigSpace E → Real) (hpos : ∀ omega, 0 < mu omega)
     (F : Finset E) (driver leftSeed right : ConfigSpace E) (z : E)
     (t : Nat) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -46,7 +71,7 @@ theorem flipTripleProb_left_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -61,7 +86,7 @@ theorem flipTripleProb_left_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipTripleProb, if_pos rfl, if_true, flipBaseProb, one_mul]
+              simp only [flipTripleProb, ite_true, flipBaseProb]
               rw [baseSum_tripleProb_left_eq_targetProb mu hpos F driver right leftSeed
                 (.node q hqR .flip
                   (extendDecisionTreeTriple none closed
@@ -123,9 +148,9 @@ theorem flipTripleProb_left_marginal_extendDecisionTreeTriple
                   have hl : condProbClosed mu F left q =
                       condProbClosed mu F leftSeed q :=
                     condProbClosed_congr mu F left leftSeed q (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipTripleProb, hl, hbit]
-                  simp [tripleWeight, hzq, mul_add, mul_assoc]
+                  simp [tripleWeight, hzq, mul_assoc]
                   ring
                 · simp [hA]
               rw [hbranch false, hbranch true]
@@ -143,21 +168,20 @@ theorem flipTripleProb_left_marginal_extendDecisionTreeTriple
                 (R.erase q) hchild]
               have hchain := condMass_chain_step mu hpos F right q hqF
               rw [condProbBit_eq_closed_or_one_sub mu hpos F right q] at hchain
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               rw [← add_mul]
               rw [overlapWeight_sum_base]
-              by_cases hrq : right q <;> simp [hrq, bitWeight] at hchain ⊢ <;>
+              by_cases hrq : right q <;>
+                simp only [hrq, ↓reduceIte, Bool.false_eq_true] at hchain ⊢ <;>
                 rw [hchain] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver leftSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver leftSeed t known R hR
 
-
-
-theorem sum_flipTripleProb_right_extendDecisionTreeTriple
+lemma sum_flipTripleProb_right_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver left rightSeed : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :
@@ -169,9 +193,7 @@ theorem sum_flipTripleProb_right_extendDecisionTreeTriple
     mu hpos ∅ driver left rightSeed z t T known Finset.univ (by simp)
   simpa [baseSum, Agree, condMass, condNorm_empty, hmu] using h
 
-
-
-theorem sum_flipTripleProb_left_extendDecisionTreeTriple
+lemma sum_flipTripleProb_left_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver leftSeed right : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :
@@ -183,9 +205,9 @@ theorem sum_flipTripleProb_left_extendDecisionTreeTriple
     mu hpos ∅ driver leftSeed right z t T known Finset.univ (by simp)
   simpa [baseSum, Agree, condMass, condNorm_empty, hmu] using h
 
+/-! ## B. Flipped cross-triple marginals -/
 
-
-theorem flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
+lemma flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (F : Finset E) (driver left rightSeed : ConfigSpace E) (z : E)
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -201,7 +223,7 @@ theorem flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -216,8 +238,8 @@ theorem flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipCrossTripleProb, if_pos rfl, if_true, flipBaseProb,
-                one_mul]
+              simp only [flipCrossTripleProb, ite_true, flipBaseProb,
+                ]
               rw [baseSum_crossTripleProb_right_eq_targetProb mu hpos F driver left
                 rightSeed
                 (.node q hqR .flip
@@ -282,9 +304,9 @@ theorem flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
                       condProbClosed mu F rightSeed q :=
                     condProbClosed_congr mu F right rightSeed q
                       (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipCrossTripleProb, hr, hbit]
-                  simp [crossTripleWeight, hzq, mul_add, mul_assoc]
+                  simp [crossTripleWeight, hzq, mul_assoc]
                   ring
                 · simp [hA]
               rw [hbranch false, hbranch true]
@@ -302,18 +324,20 @@ theorem flipCrossTripleProb_right_marginal_extendDecisionTreeTriple
                 (R.erase q) hchild]
               have hchain := condMass_chain_step mu hpos F left q hqF
               rw [condProbBit_eq_closed_or_one_sub mu hpos F left q] at hchain
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               rw [← add_mul]
-              by_cases hlq : left q <;> simp [hlq, bitWeight] at hchain ⊢ <;>
+              by_cases hlq : left q <;>
+                simp only [hlq, ↓reduceIte, Bool.false_eq_true, add_sub_cancel, one_mul]
+                  at hchain ⊢ <;>
                 rw [hchain] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver rightSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver rightSeed t known R hR
 
-theorem flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
+lemma flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (F : Finset E) (driver leftSeed right : ConfigSpace E) (z : E)
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -329,7 +353,7 @@ theorem flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -344,8 +368,8 @@ theorem flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipCrossTripleProb, if_pos rfl, if_true, flipBaseProb,
-                one_mul]
+              simp only [flipCrossTripleProb, ite_true, flipBaseProb,
+                ]
               rw [baseSum_crossTripleProb_left_eq_targetProb mu hpos F driver right
                 leftSeed
                 (.node q hqR .flip
@@ -410,9 +434,9 @@ theorem flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
                       condProbClosed mu F leftSeed q :=
                     condProbClosed_congr mu F left leftSeed q
                       (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipCrossTripleProb, hl, hbit]
-                  simp [crossTripleWeight, hzq, mul_add, mul_assoc]
+                  simp [crossTripleWeight, hzq, mul_assoc]
                   ring
                 · simp [hA]
               rw [hbranch false, hbranch true]
@@ -430,18 +454,20 @@ theorem flipCrossTripleProb_left_marginal_extendDecisionTreeTriple
                 (R.erase q) hchild]
               have hchain := condMass_chain_step mu hpos F right q hqF
               rw [condProbBit_eq_closed_or_one_sub mu hpos F right q] at hchain
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               rw [← add_mul]
-              by_cases hrq : right q <;> simp [hrq, bitWeight] at hchain ⊢ <;>
+              by_cases hrq : right q <;>
+                simp only [hrq, ↓reduceIte, Bool.false_eq_true, add_sub_cancel, one_mul]
+                  at hchain ⊢ <;>
                 rw [hchain] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver leftSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver leftSeed t known R hR
 
-theorem sum_flipCrossTripleProb_right_extendDecisionTreeTriple
+lemma sum_flipCrossTripleProb_right_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver left rightSeed : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :
@@ -453,7 +479,7 @@ theorem sum_flipCrossTripleProb_right_extendDecisionTreeTriple
     mu hpos ∅ driver left rightSeed z t T known Finset.univ (by simp)
   simpa [baseSum, Agree, condMass, condNorm_empty, hmu] using h
 
-theorem sum_flipCrossTripleProb_left_extendDecisionTreeTriple
+lemma sum_flipCrossTripleProb_left_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver leftSeed right : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :

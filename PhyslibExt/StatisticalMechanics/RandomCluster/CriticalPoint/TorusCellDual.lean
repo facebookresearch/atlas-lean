@@ -6,20 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusDefectComplement
+
+/-!
+# The torus dual cut graph, face count and defect
+
+The dual of a spanning subgraph of the torus, its face count, the defect `E + c - V - F`, and the
+dual configuration.
+
+## i. Overview
+
+`torusCellDualCutGraph L G` has a dual edge across every primal torus edge absent from `G`. Its
+number of components is the face count `torusCellFaceCount`, and `torusCellDefect` measures the
+failure of Euler's formula. The dual configuration `torusCellDualConfig` opens a dual edge exactly
+when the primal edge it crosses is closed. The values at the empty and full graphs are computed. All
+results are unconditional, except that `torusCellDefect_bot` and `torusCellDefect_full` take
+connectivity of the torus as a hypothesis (proved in `TorusConnected`).
+
+## ii. Key results
+
+- `torusCell_euler`: `V - E + F = c - defect`.
+- `torusCell_numClusters_dualConfig`: clusters of the dual configuration are faces.
+- `torusCellDefect_full`: the full torus has defect `2`.
+
+## iii. Table of contents
+
+- A. The dual cut graph
+- B. Dual configurations
+- C. Face count and defect
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -30,32 +53,30 @@ namespace StatMech.BeffaraDC
 open StatMech.Lattice
 open StatMech.Onsager
 
+/-! ## A. The dual cut graph -/
 
-
-
+/-- The primal torus edge crossed by a dual edge (identity off the torus edge set). -/
 noncomputable def torusCellPrimalOfDualEdge (L : ℕ) [Fact (2 < L)]
     (e : Sym2 (ZMod L × ZMod L)) : Sym2 (ZMod L × ZMod L) :=
   if he : e ∈ (onsTorusGraph L).edgeFinset then
     ((torusCellCrossing L).symm ⟨e, he⟩ : TorusAmbientEdge L)
   else e
 
-theorem torusCellPrimalOfDualEdge_of_mem (L : ℕ) [Fact (2 < L)]
+lemma torusCellPrimalOfDualEdge_of_mem (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellPrimalOfDualEdge L e =
       ((torusCellCrossing L).symm ⟨e, he⟩ : TorusAmbientEdge L) := by
   simp [torusCellPrimalOfDualEdge, he]
 
-
-theorem torusCellPrimalOfDualEdge_mem (L : ℕ) [Fact (2 < L)]
+lemma torusCellPrimalOfDualEdge_mem (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellPrimalOfDualEdge L e ∈ (onsTorusGraph L).edgeFinset := by
   rw [torusCellPrimalOfDualEdge_of_mem L he]
   exact ((torusCellCrossing L).symm ⟨e, he⟩).2
 
-
-theorem torusCellPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
+lemma torusCellPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
     Set.InjOn (torusCellPrimalOfDualEdge L)
       (↑(onsTorusGraph L).edgeFinset : Set (Sym2 (ZMod L × ZMod L))) := by
   intro e he e' he' h
@@ -66,8 +87,7 @@ theorem torusCellPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
   exact congrArg Subtype.val ((torusCellCrossing L).symm.injective
     (Subtype.ext h))
 
-
-
+/-- The dual graph with an edge across every torus edge that is not in `G`. -/
 noncomputable def torusCellDualCutGraph (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) :
     SimpleGraph (ZMod L × ZMod L) where
@@ -80,23 +100,24 @@ noncomputable def torusCellDualCutGraph (L : ℕ) [Fact (2 < L)]
     simpa [Sym2.eq_swap] using hwall
   loopless := ⟨fun f h => (onsTorusGraph L).irrefl h.1⟩
 
-@[simp] theorem torusCellDualCutGraph_adj (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusCellDualCutGraph_adj (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) (f g : ZMod L × ZMod L) :
     (torusCellDualCutGraph L G).Adj f g ↔
       (onsTorusGraph L).Adj f g ∧
         torusCellPrimalOfDualEdge L s(f, g) ∉ G.edgeSet := Iff.rfl
 
+/-! ## B. Dual configurations -/
 
+/-- The dual configuration: a dual edge is open exactly when the primal edge it crosses is
+  closed. -/
 noncomputable def torusCellDualConfig (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     ConfigSpace (Sym2 (ZMod L × ZMod L)) := fun e =>
-  if he : e ∈ (onsTorusGraph L).edgeFinset then
+  if _he : e ∈ (onsTorusGraph L).edgeFinset then
     !(ω (torusCellPrimalOfDualEdge L e))
   else false
 
-
-
-theorem torusCellPrimal_mem_openSub_iff (L : ℕ) [Fact (2 < L)]
+lemma torusCellPrimal_mem_openSub_iff (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
@@ -115,9 +136,7 @@ theorem torusCellPrimal_mem_openSub_iff (L : ℕ) [Fact (2 < L)]
       rw [SimpleGraph.mem_edgeSet, FK.openSub_adj]
       exact and_iff_right hp
 
-
-
-theorem torusCell_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
+lemma torusCell_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.openSub (onsTorusGraph L) (torusCellDualConfig L ω) =
       torusCellDualCutGraph L (FK.openSub (onsTorusGraph L) ω) := by
@@ -126,14 +145,12 @@ theorem torusCell_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
   · have he : s(f, g) ∈ (onsTorusGraph L).edgeFinset := by
       simpa only [SimpleGraph.mem_edgeFinset]
     simp only [FK.openSub_adj, torusCellDualCutGraph_adj, hfg, true_and,
-      torusCellDualConfig, dif_pos he]
+      torusCellDualConfig, dite_eq_left he]
     rw [torusCellPrimal_mem_openSub_iff L ω he]
     cases ω (torusCellPrimalOfDualEdge L s(f, g)) <;> simp
   · simp [FK.openSub_adj, torusCellDualCutGraph_adj, hfg]
 
-
-
-theorem torusCell_dual_openCount (L : ℕ) [Fact (2 < L)]
+lemma torusCell_dual_openCount (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.openCount (onsTorusGraph L) (torusCellDualConfig L ω) =
       (onsTorusGraph L).edgeFinset.card -
@@ -148,7 +165,7 @@ theorem torusCell_dual_openCount (L : ℕ) [Fact (2 < L)]
     by_cases he : e ∈ E
     · have he' : e ∈ (onsTorusGraph L).edgeFinset := by
         simpa [E] using he
-      simp only [he, true_and, torusCellDualConfig, dif_pos he']
+      simp only [he, true_and, torusCellDualConfig, dite_eq_left he']
       cases ω (torusCellPrimalOfDualEdge L e) <;> simp
     · simp [he]
   rw [hopen]
@@ -191,15 +208,13 @@ theorem torusCell_dual_openCount (L : ℕ) [Fact (2 < L)]
     E.card - (E.filter (fun e => ω e = true)).card
   omega
 
-
-@[simp] theorem torusCellDualCutGraph_bot (L : ℕ) [Fact (2 < L)] :
+@[simp] lemma torusCellDualCutGraph_bot (L : ℕ) [Fact (2 < L)] :
     torusCellDualCutGraph L
       (⊥ : SimpleGraph (ZMod L × ZMod L)) = onsTorusGraph L := by
   ext f g
   simp [torusCellDualCutGraph_adj]
 
-
-theorem torusCellDualCutGraph_full (L : ℕ) [Fact (2 < L)] :
+lemma torusCellDualCutGraph_full (L : ℕ) [Fact (2 < L)] :
     torusCellDualCutGraph L (onsTorusGraph L) = ⊥ := by
   ext f g
   simp only [torusCellDualCutGraph_adj, bot_adj, iff_false]
@@ -213,23 +228,21 @@ theorem torusCellDualCutGraph_full (L : ℕ) [Fact (2 < L)] :
   have hp := torusCellPrimalOfDualEdge_mem L he
   simpa [SimpleGraph.edgeFinset] using hp
 
-
+/-- The dual edge crossing a primal torus edge (identity off the torus edge set). -/
 noncomputable def torusCellDualOfPrimalEdge (L : ℕ) [Fact (2 < L)]
     (e : Sym2 (ZMod L × ZMod L)) : Sym2 (ZMod L × ZMod L) :=
   if he : e ∈ (onsTorusGraph L).edgeFinset then
     (torusCellCrossing L ⟨e, he⟩ : TorusAmbientEdge L)
   else e
 
-theorem torusCellDualOfPrimalEdge_of_mem (L : ℕ) [Fact (2 < L)]
+lemma torusCellDualOfPrimalEdge_of_mem (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (ZMod L × ZMod L)}
     (he : e ∈ (onsTorusGraph L).edgeFinset) :
     torusCellDualOfPrimalEdge L e =
       (torusCellCrossing L ⟨e, he⟩ : TorusAmbientEdge L) := by
   simp [torusCellDualOfPrimalEdge, he]
 
-
-
-theorem torusCellDualCutGraph_sup_edge (L : ℕ) [Fact (2 < L)]
+lemma torusCellDualCutGraph_sup_edge (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) {p q : ZMod L × ZMod L}
     (hpq : (onsTorusGraph L).Adj p q) :
     torusCellDualCutGraph L (G ⊔ edge p q) =
@@ -268,20 +281,20 @@ theorem torusCellDualCutGraph_sup_edge (L : ℕ) [Fact (2 < L)]
     exact and_congr_right (fun _ => not_congr hcross)
   · simp [torusCellDualCutGraph_adj, deleteEdges_adj, hfg]
 
+/-! ## C. Face count and defect -/
 
+/-- The face count of `G`: the number of components of its dual cut graph. -/
 noncomputable def torusCellFaceCount (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℕ :=
   Nat.card (torusCellDualCutGraph L G).ConnectedComponent
 
-
+/-- The Euler defect `E + c - V - F` of a spanning subgraph of the torus. -/
 noncomputable def torusCellDefect (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℤ :=
   (G.edgeSet.ncard : ℤ) - Nat.card (ZMod L × ZMod L) +
     Nat.card G.ConnectedComponent + 1 - torusCellFaceCount L G
 
-
-
-theorem torusCell_euler (L : ℕ) [Fact (2 < L)]
+lemma torusCell_euler (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) :
     (Nat.card (ZMod L × ZMod L) : ℤ) - G.edgeSet.ncard +
         torusCellFaceCount L G =
@@ -289,8 +302,7 @@ theorem torusCell_euler (L : ℕ) [Fact (2 < L)]
   unfold torusCellDefect
   ring
 
-
-theorem torusCell_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
+lemma torusCell_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.numClusters (onsTorusGraph L) (torusCellDualConfig L ω) =
       torusCellFaceCount L (FK.openSub (onsTorusGraph L) ω) := by
@@ -299,34 +311,28 @@ theorem torusCell_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
   exact congrArg (fun G : SimpleGraph (ZMod L × ZMod L) =>
     Nat.card G.ConnectedComponent) (torusCell_openSub_dualConfig L ω)
 
-
-
-theorem torusCellFaceCount_bot (L : ℕ) [Fact (2 < L)]
+lemma torusCellFaceCount_bot (L : ℕ) [Fact (2 < L)]
     (hconn : (onsTorusGraph L).Connected) :
     torusCellFaceCount L (⊥ : SimpleGraph (ZMod L × ZMod L)) = 1 := by
   unfold torusCellFaceCount
   rw [torusCellDualCutGraph_bot,
     StatMech.Lattice.card_components_eq_one_of_connected hconn]
 
-
-
-theorem torusCellFaceCount_full (L : ℕ) [Fact (2 < L)] :
+lemma torusCellFaceCount_full (L : ℕ) [Fact (2 < L)] :
     torusCellFaceCount L (onsTorusGraph L) = L ^ 2 := by
   unfold torusCellFaceCount
   rw [torusCellDualCutGraph_full, StatMech.Lattice.card_components_bot]
   rw [Nat.card_eq_fintype_card, Fintype.card_prod, ZMod.card]
   ring
 
-
-theorem torusCellDefect_bot (L : ℕ) [Fact (2 < L)]
+lemma torusCellDefect_bot (L : ℕ) [Fact (2 < L)]
     (hconn : (onsTorusGraph L).Connected) :
     torusCellDefect L (⊥ : SimpleGraph (ZMod L × ZMod L)) = 0 := by
   unfold torusCellDefect
   rw [torusCellFaceCount_bot L hconn, StatMech.Lattice.card_components_bot]
   simp
 
-
-theorem torusCellDefect_full (L : ℕ) [Fact (2 < L)]
+lemma torusCellDefect_full (L : ℕ) [Fact (2 < L)]
     (hconn : (onsTorusGraph L).Connected) :
     torusCellDefect L (onsTorusGraph L) = 2 := by
   have hedge : (onsTorusGraph L).edgeSet.ncard = 2 * L ^ 2 := by
@@ -339,8 +345,8 @@ theorem torusCellDefect_full (L : ℕ) [Fact (2 < L)]
   push_cast
   ring
 
-
-
+/-- An explicit configuration on the `3 × 3` torus, left from an earlier obstruction argument;
+  nothing in the library uses it now. -/
 def torusCellOldObstructionConfig3 :
     ConfigSpace (Sym2 (ZMod 3 × ZMod 3)) := fun e => decide (e ∈ ({
       s(((0, 0) : ZMod 3 × ZMod 3), ((1, 0) : ZMod 3 × ZMod 3)),

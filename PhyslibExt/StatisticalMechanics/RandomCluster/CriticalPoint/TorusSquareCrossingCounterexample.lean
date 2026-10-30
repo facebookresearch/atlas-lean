@@ -10,6 +10,36 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossing
 
+/-!
+# The exact square-crossing duality fails on the torus
+
+A configuration on the torus with both a horizontal crossing of the unit square and a dual vertical
+crossing, refuting the exact duality hypothesis; and the bound from a one-sided cover instead.
+
+## i. Overview
+
+`torus_concreteSquareCrossing_duality_iff_false` is a Lean-checked refutation of the `hdualCrossing`
+hypothesis of `torus_concreteSquareCrossing_ge_one_div_one_add_q` at `n = 1`. The replacement
+`torus_concreteSquareCrossing_ge_one_div_one_add_q_of_cover` needs only the one-sided cover (no
+horizontal crossing implies a dual vertical crossing), which `TorusSquareCrossingCover` proves.
+
+## ii. Key results
+
+- `torus_concreteSquareCrossing_duality_iff_false`: refutation of the exact duality.
+- `torus_concreteSquareCrossing_ge_one_div_one_add_q_of_cover`: `1 / (1 + q)` bound, conditional on
+  a one-sided cover.
+
+## iii. Table of contents
+
+- A. Counterexample
+- B. Bound from a cover
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
+
 @[expose] public section
 
 open SimpleGraph Set
@@ -18,16 +48,19 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Counterexample -/
 
+/-- The configuration with a single open horizontal edge, which crosses the unit square while its
+  dual also crosses vertically. -/
 noncomputable def torusSquareShiftCounterexampleConfig
     (L : ℕ) [Fact (2 < L)] : TorusAmbientConfig L :=
   fun e => decide (e = torusHorizontalEdge L 0 0)
 
-theorem torusSquareShiftCounterexample_horizontal
+lemma torusSquareShiftCounterexample_horizontal
     (L : ℕ) [Fact (2 < L)] :
     torusSquareHorizontalCrossing L 1
       (torusSquareShiftCounterexampleConfig L) := by
-  letI : Fact (1 < L) := ⟨by have := (Fact.out : 2 < L); omega⟩
+  let : Fact (1 < L) := ⟨by have := (Fact.out : 2 < L); omega⟩
   let x : ZMod L × ZMod L := (0, 0)
   let y : ZMod L × ZMod L := (1, 0)
   have hx : x ∈ torusSquareVertexSet L 1 := by
@@ -44,17 +77,17 @@ theorem torusSquareShiftCounterexample_horizontal
   refine ⟨hadj, ?_⟩
   have hedge : s(x, y) ∈ (onsTorusGraph L).edgeFinset := by
     simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hadj
-  rw [torusAmbientConfigExtend, dif_pos hedge]
+  rw [torusAmbientConfigExtend, dite_eq_left hedge]
   change torusSquareShiftCounterexampleConfig L ⟨s(x, y), hedge⟩ = true
   simp only [torusSquareShiftCounterexampleConfig, decide_eq_true_eq]
   apply Subtype.ext
   simp [x, y, torusHorizontalEdge_val]
 
-theorem torusSquareShiftCounterexample_dual_vertical
+lemma torusSquareShiftCounterexample_dual_vertical
     (L : ℕ) [Fact (2 < L)] :
     torusCellDualAmbientConfig L (torusSquareShiftCounterexampleConfig L) ∈
       torusSquareVerticalCrossingEvent L 1 := by
-  letI : Fact (1 < L) := ⟨by have := (Fact.out : 2 < L); omega⟩
+  let : Fact (1 < L) := ⟨by have := (Fact.out : 2 < L); omega⟩
   rw [mem_torusSquareVerticalCrossingEvent]
   let x : ZMod L × ZMod L := (0, 0)
   let y : ZMod L × ZMod L := (1, 0)
@@ -72,7 +105,7 @@ theorem torusSquareShiftCounterexample_dual_vertical
   refine ⟨hadj, ?_⟩
   have hedge : s(x, y) ∈ (onsTorusGraph L).edgeFinset := by
     simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hadj
-  rw [torusAmbientConfigExtend, dif_pos hedge]
+  rw [torusAmbientConfigExtend, dite_eq_left hedge]
   change torusAmbientSwapConfig L
       (torusCellDualAmbientConfig L (torusSquareShiftCounterexampleConfig L))
       ⟨s(x, y), hedge⟩ = true
@@ -94,10 +127,7 @@ theorem torusSquareShiftCounterexample_dual_vertical
   have hcode := torusEdgeOfCode_injective L heq
   simp at hcode
 
-
-
-
-
+/-- Refutation of the exact duality. -/
 theorem torus_concreteSquareCrossing_duality_iff_false
     (L : ℕ) [Fact (2 < L)] :
     ¬ ∀ omega : TorusAmbientConfig L,
@@ -109,10 +139,9 @@ theorem torus_concreteSquareCrossing_duality_iff_false
     (torusSquareShiftCounterexample_dual_vertical L))
       (torusSquareShiftCounterexample_horizontal L)
 
+/-! ## B. Bound from a cover -/
 
-
-
-theorem torus_squareCrossing_ge_one_div_one_add_q_of_cover
+lemma torus_squareCrossing_ge_one_div_one_add_q_of_cover
     (L : ℕ) [Fact (2 < L)] (horizontal : Finset (TorusAmbientConfig L))
     {q : ℝ} (hq1 : 1 ≤ q)
     (hdualCrossing : ∀ omega : TorusAmbientConfig L,
@@ -157,9 +186,7 @@ theorem torus_squareCrossing_ge_one_div_one_add_q_of_cover
   rw [div_le_iff₀ hden]
   nlinarith
 
-
-
-theorem torus_concreteSquareCrossing_ge_one_div_one_add_q_of_cover
+lemma torus_concreteSquareCrossing_ge_one_div_one_add_q_of_cover
     (L : ℕ) [Fact (2 < L)] (n : ℕ) (_hn : 1 ≤ n) (_hnL : n < L)
     {q : ℝ} (hq1 : 1 ≤ q)
     (hdualCrossing : ∀ omega : TorusAmbientConfig L,

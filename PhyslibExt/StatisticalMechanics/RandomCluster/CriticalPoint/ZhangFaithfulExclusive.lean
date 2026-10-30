@@ -6,16 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangHarris
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
+
+/-!
+# Exclusivity of matched crossings and Kesten's theorem
+
+The horizontal crossing of the matched rectangle and the face-dual vertical crossing cannot both
+occur; with Zhang's argument this proves `θ(1/2) = 0` and `p_c = 1/2` for bond percolation on `ℤ²`.
+
+## i. Overview
+
+Primal and face-dual walks are embedded in the doubled lattice (`zfe_primalSubdiv`,
+`zfe_faceSubdiv`); a primal crossing and a dual crossing would meet at a shared edge that is both
+open and closed. This proves `zfe_faithfulMatchedExclusive` for every `N`. Combined with
+`ZhangHarris`, the headlines `zfe_percolationProbability_zero` (`θ(1/2) = 0`) and
+`zfe_criticalProbability_eq_half` (`p_c = 1/2`) are unconditional.
+
+## ii. Key results
+
+- `zfe_faithfulMatchedExclusive`: primal horizontal and face-dual vertical crossings are disjoint.
+- `zfe_percolationProbability_zero`: no percolation at `p = 1/2` (unconditional).
+- `zfe_criticalProbability_eq_half`: Kesten's theorem `p_c = 1/2` (unconditional).
+
+## iii. Table of contents
+
+- A. Doubled-lattice embeddings
+- B. Exclusivity
+- C. Kesten's theorem
+
+## iv. References
+
+* H. Kesten, *The critical probability of bond percolation on the square lattice equals 1/2*, Comm.
+  Math. Phys. 74 (1980).
+* Y. Zhang's argument, as presented in G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section
+  11.3; and H. Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes (2018).
+-/
 
 @[expose] public section
 
@@ -27,48 +56,50 @@ namespace StatMech.TwoDim
 open StatMech.Lattice StatMech.Universality StatMech.Percolation
 open StatMech.RSW.Box
 
+/-! ## A. Doubled-lattice embeddings -/
 
+/-- The embedding of a primal site into the doubled lattice: `p ↦ 2p`. -/
 def zfe_primalEmb (p : Site 2) : Site 2 := ![2 * p 0, 2 * p 1]
 
-
+/-- The doubled-lattice midpoint `p + q` of a primal edge `{p, q}`. -/
 def zfe_primalMid (p q : Site 2) : Site 2 := ![p 0 + q 0, p 1 + q 1]
 
-
+/-- The embedding of a face into the doubled lattice: `f ↦ 2f + (1, 1)`. -/
 def zfe_faceEmb (f : Site 2) : Site 2 := ![2 * f 0 + 1, 2 * f 1 + 1]
 
-
+/-- The doubled-lattice midpoint of a dual edge `{f, g}`. -/
 def zfe_faceMid (f g : Site 2) : Site 2 :=
   ![f 0 + g 0 + 1, f 1 + g 1 + 1]
 
-theorem zfe_primalEmb_mid_adj {p q : Site 2}
+lemma zfe_primalEmb_mid_adj {p q : Site 2}
     (h : (hypercubicLattice 2).Adj p q) :
     (hypercubicLattice 2).Adj (zfe_primalEmb p) (zfe_primalMid p q) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at h ⊢
   simp only [zfe_primalEmb, zfe_primalMid, Matrix.cons_val_zero, Matrix.cons_val_one]
   omega
 
-theorem zfe_primalMid_emb_adj {p q : Site 2}
+lemma zfe_primalMid_emb_adj {p q : Site 2}
     (h : (hypercubicLattice 2).Adj p q) :
     (hypercubicLattice 2).Adj (zfe_primalMid p q) (zfe_primalEmb q) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at h ⊢
   simp only [zfe_primalEmb, zfe_primalMid, Matrix.cons_val_zero, Matrix.cons_val_one]
   omega
 
-theorem zfe_faceEmb_mid_adj {f g : Site 2}
+lemma zfe_faceEmb_mid_adj {f g : Site 2}
     (h : (hypercubicLattice 2).Adj f g) :
     (hypercubicLattice 2).Adj (zfe_faceEmb f) (zfe_faceMid f g) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at h ⊢
   simp only [zfe_faceEmb, zfe_faceMid, Matrix.cons_val_zero, Matrix.cons_val_one]
   omega
 
-theorem zfe_faceMid_emb_adj {f g : Site 2}
+lemma zfe_faceMid_emb_adj {f g : Site 2}
     (h : (hypercubicLattice 2).Adj f g) :
     (hypercubicLattice 2).Adj (zfe_faceMid f g) (zfe_faceEmb g) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at h ⊢
   simp only [zfe_faceEmb, zfe_faceMid, Matrix.cons_val_zero, Matrix.cons_val_one]
   omega
 
-
+/-- The subdivision of a primal walk in the doubled lattice. -/
 def zfe_primalSubdiv {p q : Site 2} :
     (hypercubicLattice 2).Walk p q →
       (hypercubicLattice 2).Walk (zfe_primalEmb p) (zfe_primalEmb q)
@@ -76,7 +107,7 @@ def zfe_primalSubdiv {p q : Site 2} :
   | .cons h w => .cons (zfe_primalEmb_mid_adj h)
       (.cons (zfe_primalMid_emb_adj h) (zfe_primalSubdiv w))
 
-
+/-- The subdivision of a face walk in the doubled lattice. -/
 def zfe_faceSubdiv {f g : Site 2} :
     (hypercubicLattice 2).Walk f g →
       (hypercubicLattice 2).Walk (zfe_faceEmb f) (zfe_faceEmb g)
@@ -84,7 +115,7 @@ def zfe_faceSubdiv {f g : Site 2} :
   | .cons h w => .cons (zfe_faceEmb_mid_adj h)
       (.cons (zfe_faceMid_emb_adj h) (zfe_faceSubdiv w))
 
-theorem zfe_primalSubdiv_support_cases {p q z : Site 2}
+lemma zfe_primalSubdiv_support_cases {p q z : Site 2}
     (w : (hypercubicLattice 2).Walk p q)
     (hz : z ∈ (zfe_primalSubdiv w).support) :
     (∃ u ∈ w.support, z = zfe_primalEmb u) ∨
@@ -105,7 +136,7 @@ theorem zfe_primalSubdiv_support_cases {p q z : Site 2}
           · obtain ⟨a, b, hab, rfl⟩ := h
             exact Or.inr ⟨a, b, by simp [hab], rfl⟩
 
-theorem zfe_faceSubdiv_support_cases {f g z : Site 2}
+lemma zfe_faceSubdiv_support_cases {f g z : Site 2}
     (w : (hypercubicLattice 2).Walk f g)
     (hz : z ∈ (zfe_faceSubdiv w).support) :
     (∃ u ∈ w.support, z = zfe_faceEmb u) ∨
@@ -126,14 +157,14 @@ theorem zfe_faceSubdiv_support_cases {f g z : Site 2}
           · obtain ⟨a, b, hab, rfl⟩ := h
             exact Or.inr ⟨a, b, by simp [hab], rfl⟩
 
-theorem zfe_primalEmb_ne_faceEmb (p f : Site 2) :
+lemma zfe_primalEmb_ne_faceEmb (p f : Site 2) :
     zfe_primalEmb p ≠ zfe_faceEmb f := by
   intro h
   have h0 := congrFun h 0
   simp only [zfe_primalEmb, zfe_faceEmb, Matrix.cons_val_zero] at h0
   omega
 
-theorem zfe_primalEmb_ne_faceMid {p f g : Site 2}
+lemma zfe_primalEmb_ne_faceMid {p f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) :
     zfe_primalEmb p ≠ zfe_faceMid f g := by
   intro h
@@ -143,7 +174,7 @@ theorem zfe_primalEmb_ne_faceMid {p f g : Site 2}
     simp only [zfe_primalEmb, zfe_faceMid, Matrix.cons_val_zero,
       Matrix.cons_val_one] at h0 h1 <;> omega
 
-theorem zfe_primalMid_ne_faceEmb {p q f : Site 2}
+lemma zfe_primalMid_ne_faceEmb {p q f : Site 2}
     (hpq : (hypercubicLattice 2).Adj p q) :
     zfe_primalMid p q ≠ zfe_faceEmb f := by
   intro h
@@ -153,9 +184,9 @@ theorem zfe_primalMid_ne_faceEmb {p q f : Site 2}
     simp only [zfe_primalMid, zfe_faceEmb, Matrix.cons_val_zero,
       Matrix.cons_val_one] at h0 h1 <;> omega
 
+/-! ## B. Exclusivity -/
 
-
-theorem zfe_midpoint_sharedPrimalEdge {p q f g : Site 2}
+lemma zfe_midpoint_sharedPrimalEdge {p q f g : Site 2}
     (hpq : (hypercubicLattice 2).Adj p q)
     (hfg : (hypercubicLattice 2).Adj f g)
     (hmid : zfe_primalMid p q = zfe_faceMid f g) :
@@ -170,9 +201,7 @@ theorem zfe_midpoint_sharedPrimalEdge {p q f g : Site 2}
        Sym2.eq_iff, site2_eq, Matrix.cons_val_zero, Matrix.cons_val_one] at hmid ⊢;
      omega)
 
-
-
-theorem zfe_subdiv_meeting_edge {a b c d z : Site 2}
+lemma zfe_subdiv_meeting_edge {a b c d z : Site 2}
     (H : (hypercubicLattice 2).Walk a b)
     (V : (hypercubicLattice 2).Walk c d)
     (hzH : z ∈ (zfe_primalSubdiv H).support)
@@ -199,9 +228,7 @@ theorem zfe_subdiv_meeting_edge {a b c d z : Site 2}
         (H.adj_of_mem_edges hpqE) (V.adj_of_mem_edges hfgE)
         (hzp.symm.trans hzf)
 
-
-
-theorem zfe_liftWalk_edge_open
+lemma zfe_liftWalk_edge_open
     (omega : ConfigSpace (Sym2 (Site 2))) (R : Set (Site 2))
     {x y : R} (w : (openSubgraphInduce 2 omega R).Walk x y)
     {e : Sym2 (Site 2)} (he : e ∈ (liftWalk omega R w).edges) :
@@ -219,12 +246,7 @@ theorem zfe_liftWalk_edge_open
       rw [← hmap]
       exact huv.2
 
-
-
-
-
-
-theorem zfe_faithfulMatchedExclusive (N : ℕ) :
+lemma zfe_faithfulMatchedExclusive (N : ℕ) :
     zfk_FaithfulMatchedExclusive N := by
   rw [zfk_FaithfulMatchedExclusive, Set.disjoint_left]
   intro omega hH hV
@@ -348,21 +370,25 @@ theorem zfe_faithfulMatchedExclusive (N : ℕ) :
   rw [hedge] at hopen
   simp_all
 
+/-! ## C. Kesten's theorem -/
+
+/-- No percolation at `p = 1/2` (unconditional). -/
 theorem zfe_percolationProbability_zero :
     percolationProbability 2 (2⁻¹ : NNReal)
       StatMech.Universality.half_le_one = 0 :=
   zih_percolationProbability_zero_of_faithful_exclusive
     zfe_faithfulMatchedExclusive
 
+/-- Kesten's theorem `p_c = 1/2` (unconditional). -/
 theorem zfe_criticalProbability_eq_half :
     criticalProbability 2 = (1 : ℝ) / 2 := by
   apply zih_criticalProbability_eq_half_of_faithful_exclusive
     zfe_faithfulMatchedExclusive
   · intro a b _ha _hb
-    exact rlc_horizontalCrossingEvent_measurableSet 0 a 0 b
+    exact StatMech.Universality.measurableSet_horizontalCrossingEvent 0 a 0 b
   · intro n _hn
-    exact rlc_verticalCrossingEvent_measurableSet 0 (n - 1) (-1) n
+    exact StatMech.Universality.measurableSet_verticalCrossingEvent 0 (n - 1) (-1) n
   · intro n _hn
-    exact rlc_horizontalCrossingEvent_measurableSet (-1) n 0 (n - 1)
+    exact StatMech.Universality.measurableSet_horizontalCrossingEvent (-1) n 0 (n - 1)
 
 end StatMech.TwoDim

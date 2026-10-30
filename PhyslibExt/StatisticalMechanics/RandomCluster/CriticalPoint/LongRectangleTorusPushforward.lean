@@ -6,30 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusCover
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
+
+/-!
+# The torus random-cluster measure pushed to the plane
+
+The random-cluster measure on the discrete torus, its FKG property, and its pushforward to periodic
+planar configurations, which is translation invariant and positively associated.
+
+## i. Overview
+
+`torusAmbientMeasure` is the random-cluster measure on the edges of the `L × L` torus. Its weight is
+log-supermodular for `q ≥ 1`, so it is positively associated. The pushforward
+`torusPlanarPushforward` along the planar pullback is positively associated and invariant under
+every lattice translation. The long-rectangle polynomial deficit therefore applies to it
+(`bdcLongRectangle_polynomial_deficit_of_torusCover`), conditional on a thin cover of the winding
+event. The other results are unconditional.
+
+## ii. Key results
+
+- `torusAmbientMeasure_positivelyAssociated`: FKG for the torus measure (`q ≥ 1`).
+- `torusPlanarPushforward_allShiftInvariant`: the planar pushforward is translation invariant.
+- `bdcLongRectangle_polynomial_deficit_of_torusCover`: polynomial deficit for the pushforward,
+  conditional on a thin cover.
+
+## iii. Table of contents
+
+- A. The torus random-cluster measure
+- B. Pushforward to the plane
+- C. Translations
+- D. Polynomial deficit
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -42,9 +57,9 @@ open StatMech.Lattice
 open StatMech.Onsager
 open StatMech.Universality
 
+/-! ## A. The torus random-cluster measure -/
 
-
-
+/-- The random-cluster probability mass function on configurations of the torus edges. -/
 noncomputable def torusAmbientPMF (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     PMF (TorusAmbientConfig L) :=
@@ -57,19 +72,20 @@ noncomputable def torusAmbientPMF (L : ℕ) [Fact (2 < L)]
         exact (div_pos (torusAmbientFKWeight_pos L omega hp hp1 hq)
           (torusAmbientPartition_pos L hp hp1 hq)).le
 
-@[simp] theorem torusAmbientPMF_apply (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusAmbientPMF_apply (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : TorusAmbientConfig L) :
     torusAmbientPMF L hp hp1 hq omega =
       ENNReal.ofReal (torusAmbientProbability L p q omega) :=
   PMF.ofFintype_apply _ _
 
-
+/-- The random-cluster measure on configurations of the torus edges. -/
 noncomputable def torusAmbientMeasure (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     Measure (TorusAmbientConfig L) :=
   (torusAmbientPMF L hp hp1 hq).toMeasure
 
+/-- The torus random-cluster measure is a probability measure. -/
 instance torusAmbientMeasure_isProbabilityMeasure
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -77,8 +93,7 @@ instance torusAmbientMeasure_isProbabilityMeasure
   unfold torusAmbientMeasure
   infer_instance
 
-
-theorem torusAmbientMeasure_singleton (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientMeasure_singleton (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : TorusAmbientConfig L) :
     torusAmbientMeasure L hp hp1 hq {omega} =
@@ -87,16 +102,14 @@ theorem torusAmbientMeasure_singleton (L : ℕ) [Fact (2 < L)]
   rw [PMF.toMeasure_apply_singleton _ omega (measurableSet_singleton omega),
     torusAmbientPMF_apply]
 
-
-theorem torusAmbientProbability_nonneg (L : ℕ) [Fact (2 < L)]
+lemma torusAmbientProbability_nonneg (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : TorusAmbientConfig L) :
     0 ≤ torusAmbientProbability L p q omega :=
   (div_pos (torusAmbientFKWeight_pos L omega hp hp1 hq)
     (torusAmbientPartition_pos L hp hp1 hq)).le
 
-
-theorem torusAmbientMeasure_real_eq_indicator_sum
+lemma torusAmbientMeasure_real_eq_indicator_sum
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (TorusAmbientConfig L)) :
@@ -118,8 +131,7 @@ theorem torusAmbientMeasure_real_eq_indicator_sum
     by_cases hmem : omega ∈ A <;>
       simp [Set.indicator, hmem, torusAmbientPMF_apply]
 
-
-theorem torusAmbientConfigExtend_sup
+lemma torusAmbientConfigExtend_sup
     (L : ℕ) [Fact (2 < L)] (omega eta : TorusAmbientConfig L) :
     torusAmbientConfigExtend L (omega ⊔ eta) =
       torusAmbientConfigExtend L omega ⊔
@@ -128,8 +140,7 @@ theorem torusAmbientConfigExtend_sup
   by_cases he : e ∈ (onsTorusGraph L).edgeFinset <;>
     simp [torusAmbientConfigExtend, he]
 
-
-theorem torusAmbientConfigExtend_inf
+lemma torusAmbientConfigExtend_inf
     (L : ℕ) [Fact (2 < L)] (omega eta : TorusAmbientConfig L) :
     torusAmbientConfigExtend L (omega ⊓ eta) =
       torusAmbientConfigExtend L omega ⊓
@@ -138,9 +149,7 @@ theorem torusAmbientConfigExtend_inf
   by_cases he : e ∈ (onsTorusGraph L).edgeFinset <;>
     simp [torusAmbientConfigExtend, he]
 
-
-
-theorem torusAmbientFKWeight_logSupermodular
+lemma torusAmbientFKWeight_logSupermodular
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (omega eta : TorusAmbientConfig L) :
@@ -152,9 +161,7 @@ theorem torusAmbientFKWeight_logSupermodular
   rw [torusAmbientConfigExtend_sup, torusAmbientConfigExtend_inf]
   exact FK.fkWeight_logSupermodular (onsTorusGraph L) hp hp1 hq _ _
 
-
-
-theorem torusAmbientProbability_FKGLatticeCondition
+lemma torusAmbientProbability_FKGLatticeCondition
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     FKGLatticeCondition (torusAmbientProbability L p q) := by
@@ -167,8 +174,7 @@ theorem torusAmbientProbability_FKGLatticeCondition
   exact (div_le_div_iff_of_pos_right (mul_pos hZpos hZpos)).mpr
     (torusAmbientFKWeight_logSupermodular L hp hp1 hq omega eta)
 
-
-theorem torusAmbientMeasure_positivelyAssociated
+lemma torusAmbientMeasure_positivelyAssociated
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq0 : 0 < q) (hq : 1 ≤ q) :
     PositivelyAssociated (torusAmbientMeasure L hp hp1 hq0) := by
@@ -182,25 +188,20 @@ theorem torusAmbientMeasure_positivelyAssociated
     (torusAmbientProbability_FKGLatticeCondition L hp hp1 hq)
     hA hB
 
+/-! ## B. Pushforward to the plane -/
 
-
-
-
+/-- The pushforward of the torus random-cluster measure to planar configurations along the periodic
+  pullback. -/
 noncomputable def torusPlanarPushforward (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     Measure (ConfigSpace (Sym2 (Site 2))) :=
   Measure.map (torusPlanarPullback L) (torusAmbientMeasure L hp hp1 hq)
 
-
-
-theorem measurable_torusPlanarPullback (L : ℕ) [Fact (2 < L)] :
+lemma measurable_torusPlanarPullback (L : ℕ) [Fact (2 < L)] :
     Measurable (torusPlanarPullback L) :=
   measurable_of_finite _
 
-
-
-
-theorem measurableEmbedding_torusPlanarPullback
+lemma measurableEmbedding_torusPlanarPullback
     (L : ℕ) [Fact (2 < L)] :
     MeasurableEmbedding (torusPlanarPullback L) := by
   refine MeasurableEmbedding.mk (torusPlanarPullback_injective L)
@@ -208,6 +209,7 @@ theorem measurableEmbedding_torusPlanarPullback
   intro A _hA
   exact (Set.toFinite A).image (torusPlanarPullback L) |>.measurableSet
 
+/-- The planar pushforward is a probability measure. -/
 instance torusPlanarPushforward_isProbabilityMeasure
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -216,9 +218,7 @@ instance torusPlanarPushforward_isProbabilityMeasure
   exact (Measure.isProbabilityMeasure_map_iff
     (measurable_torusPlanarPullback L).aemeasurable).mpr inferInstance
 
-
-
-theorem torusPlanarPushforward_apply (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPushforward_apply (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (B : Set (ConfigSpace (Sym2 (Site 2)))) :
     torusPlanarPushforward L hp hp1 hq B =
@@ -227,8 +227,7 @@ theorem torusPlanarPushforward_apply (L : ℕ) [Fact (2 < L)]
   exact (measurableEmbedding_torusPlanarPullback L).map_apply
     (torusAmbientMeasure L hp hp1 hq) B
 
-
-theorem torusPlanarPushforward_real_apply (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPushforward_real_apply (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (B : Set (ConfigSpace (Sym2 (Site 2)))) :
     (torusPlanarPushforward L hp hp1 hq).real B =
@@ -236,9 +235,7 @@ theorem torusPlanarPushforward_real_apply (L : ℕ) [Fact (2 < L)]
         (torusPlanarPullback L ⁻¹' B) := by
   simp only [Measure.real, torusPlanarPushforward_apply]
 
-
-
-theorem torusPlanarPushforward_image_apply (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPushforward_image_apply (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (TorusAmbientConfig L)) :
     torusPlanarPushforward L hp hp1 hq
@@ -247,8 +244,7 @@ theorem torusPlanarPushforward_image_apply (L : ℕ) [Fact (2 < L)]
   rw [torusPlanarPushforward_apply]
   rw [Set.preimage_image_eq A (torusPlanarPullback_injective L)]
 
-
-theorem torusPlanarPushforward_real_image_apply (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPushforward_real_image_apply (L : ℕ) [Fact (2 < L)]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (TorusAmbientConfig L)) :
     (torusPlanarPushforward L hp hp1 hq).real
@@ -256,8 +252,7 @@ theorem torusPlanarPushforward_real_image_apply (L : ℕ) [Fact (2 < L)]
       (torusAmbientMeasure L hp hp1 hq).real A := by
   simp only [Measure.real, torusPlanarPushforward_image_apply]
 
-
-theorem torusPlanarPushforward_planarLiftEvent_apply
+lemma torusPlanarPushforward_planarLiftEvent_apply
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (TorusAmbientConfig L)) :
@@ -266,8 +261,7 @@ theorem torusPlanarPushforward_planarLiftEvent_apply
       torusAmbientMeasure L hp hp1 hq A := by
   exact torusPlanarPushforward_image_apply L hp hp1 hq A
 
-
-theorem torusPlanarPushforward_real_planarLiftEvent_apply
+lemma torusPlanarPushforward_real_planarLiftEvent_apply
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (TorusAmbientConfig L)) :
@@ -276,10 +270,7 @@ theorem torusPlanarPushforward_real_planarLiftEvent_apply
       (torusAmbientMeasure L hp hp1 hq).real A := by
   exact torusPlanarPushforward_real_image_apply L hp hp1 hq A
 
-
-
-
-theorem monotone_torusPlanarPullback (L : ℕ) [Fact (2 < L)] :
+lemma monotone_torusPlanarPullback (L : ℕ) [Fact (2 < L)] :
     Monotone (torusPlanarPullback L) := by
   intro omega eta homega e
   unfold torusPlanarPullback torusAmbientConfigExtend
@@ -287,17 +278,14 @@ theorem monotone_torusPlanarPullback (L : ℕ) [Fact (2 < L)] :
   · exact homega ⟨Sym2.map (torusReduceSite L) e, he⟩
   · exact le_rfl
 
-
-theorem torusPlanarPullback_preimage_isIncreasing
+lemma torusPlanarPullback_preimage_isIncreasing
     (L : ℕ) [Fact (2 < L)]
     {A : Set (ConfigSpace (Sym2 (Site 2)))} (hA : IsIncreasing A) :
     IsIncreasing (torusPlanarPullback L ⁻¹' A) := by
   intro omega eta homegaeta homega
   exact hA (monotone_torusPlanarPullback L homegaeta) homega
 
-
-
-theorem torusPlanarPushforward_positivelyAssociated
+lemma torusPlanarPushforward_positivelyAssociated
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hpa : PositivelyAssociated (torusAmbientMeasure L hp hp1 hq)) :
@@ -311,18 +299,16 @@ theorem torusPlanarPushforward_positivelyAssociated
     (torusPlanarPullback_preimage_isIncreasing L hA)
     (torusPlanarPullback_preimage_isIncreasing L hB)
 
-
-
-theorem torusPlanarPushforward_positivelyAssociated_of_one_le
+lemma torusPlanarPushforward_positivelyAssociated_of_one_le
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq0 : 0 < q) (hq : 1 ≤ q) :
     PositivelyAssociated (torusPlanarPushforward L hp hp1 hq0) :=
   torusPlanarPushforward_positivelyAssociated L hp hp1 hq0
     (torusAmbientMeasure_positivelyAssociated L hp hp1 hq0 hq)
 
+/-! ## C. Translations -/
 
-
-
+/-- Translation of torus sites by the reduction of a lattice vector. -/
 def torusSiteTranslateEquiv (L : ℕ) (t : Site 2) :
     (ZMod L × ZMod L) ≃ (ZMod L × ZMod L) where
   toFun z := (z.1 + (t 0 : ZMod L), z.2 + (t 1 : ZMod L))
@@ -330,19 +316,17 @@ def torusSiteTranslateEquiv (L : ℕ) (t : Site 2) :
   left_inv z := by ext <;> simp
   right_inv z := by ext <;> simp
 
-@[simp] theorem torusSiteTranslateEquiv_apply
+@[simp] lemma torusSiteTranslateEquiv_apply
     (L : ℕ) (t : Site 2) (z : ZMod L × ZMod L) :
     torusSiteTranslateEquiv L t z =
       (z.1 + (t 0 : ZMod L), z.2 + (t 1 : ZMod L)) :=
   rfl
 
-
-theorem torusReduceSite_add (L : ℕ) (z t : Site 2) :
+lemma torusReduceSite_add (L : ℕ) (z t : Site 2) :
     torusReduceSite L (z + t) = torusSiteTranslateEquiv L t (torusReduceSite L z) := by
   apply Prod.ext <;> simp [torusReduceSite, torusSiteTranslateEquiv]
 
-
-theorem onsTorusGraph_adj_translate (L : ℕ) [Fact (2 < L)]
+lemma onsTorusGraph_adj_translate (L : ℕ) [Fact (2 < L)]
     (t : Site 2) (x y : ZMod L × ZMod L) :
     (onsTorusGraph L).Adj (torusSiteTranslateEquiv L t x)
         (torusSiteTranslateEquiv L t y) ↔
@@ -364,8 +348,7 @@ theorem onsTorusGraph_adj_translate (L : ℕ) [Fact (2 < L)]
     · exact Or.inr ⟨by linear_combination h1, Or.inl (by linear_combination h0)⟩
     · exact Or.inr ⟨by linear_combination h1, Or.inr (by linear_combination h0)⟩
 
-
-theorem torusSiteTranslate_mem_edgeFinset_iff
+lemma torusSiteTranslate_mem_edgeFinset_iff
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (e : Sym2 (ZMod L × ZMod L)) :
     Sym2.map (torusSiteTranslateEquiv L t) e ∈
@@ -377,7 +360,7 @@ theorem torusSiteTranslate_mem_edgeFinset_iff
         SimpleGraph.mem_edgeSet]
       exact onsTorusGraph_adj_translate L t x y
 
-
+/-- Translation of torus edges by a lattice vector. -/
 noncomputable def torusAmbientTranslateEdgeEquiv
     (L : ℕ) [Fact (2 < L)] (t : Site 2) :
     TorusAmbientEdge L ≃ TorusAmbientEdge L where
@@ -415,13 +398,13 @@ noncomputable def torusAmbientTranslateEdgeEquiv
         exact (torusSiteTranslateEquiv L t).apply_symm_apply x
       _ = e.1 := congrFun Sym2.map_id' e.1
 
-
+/-- Translation of a torus configuration by a lattice vector. -/
 noncomputable def torusAmbientTranslateConfig
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (omega : TorusAmbientConfig L) : TorusAmbientConfig L :=
   fun e => omega (torusAmbientTranslateEdgeEquiv L t e)
 
-
+/-- Translation of torus configurations by a lattice vector, as an equivalence. -/
 noncomputable def torusAmbientTranslateConfigEquiv
     (L : ℕ) [Fact (2 < L)] (t : Site 2) :
     TorusAmbientConfig L ≃ TorusAmbientConfig L where
@@ -434,8 +417,7 @@ noncomputable def torusAmbientTranslateConfigEquiv
     funext e
     simp [torusAmbientTranslateConfig]
 
-
-theorem torusAmbientConfigExtend_translate
+lemma torusAmbientConfigExtend_translate
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (omega : TorusAmbientConfig L) :
     torusAmbientConfigExtend L (torusAmbientTranslateConfig L t omega) =
@@ -446,19 +428,17 @@ theorem torusAmbientConfigExtend_translate
   · have hte : Sym2.map (torusSiteTranslateEquiv L t) e ∈
         (onsTorusGraph L).edgeFinset :=
       (torusSiteTranslate_mem_edgeFinset_iff L t e).2 he
-    rw [torusAmbientConfigExtend, dif_pos he, torusAmbientTranslateConfig,
-      FK.fvs_reCfgIso_apply, torusAmbientConfigExtend, dif_pos hte]
+    rw [torusAmbientConfigExtend, dite_eq_left he, torusAmbientTranslateConfig,
+      FK.fvs_reCfgIso_apply, torusAmbientConfigExtend, dite_eq_left hte]
     rfl
   · have hte : Sym2.map (torusSiteTranslateEquiv L t) e ∉
         (onsTorusGraph L).edgeFinset := by
       intro h
       exact he ((torusSiteTranslate_mem_edgeFinset_iff L t e).1 h)
-    rw [torusAmbientConfigExtend, dif_neg he, FK.fvs_reCfgIso_apply,
-      torusAmbientConfigExtend, dif_neg hte]
+    rw [torusAmbientConfigExtend, dite_eq_right he, FK.fvs_reCfgIso_apply,
+      torusAmbientConfigExtend, dite_eq_right hte]
 
-
-
-theorem torusPlanarPullback_translate
+lemma torusPlanarPullback_translate
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (omega : TorusAmbientConfig L) :
     torusPlanarPullback L (torusAmbientTranslateConfig L t omega) =
@@ -478,15 +458,12 @@ theorem torusPlanarPullback_translate
   intro z _hz
   exact (torusReduceSite_add L z t).symm
 
-
-
-theorem measurable_torusAmbientTranslateConfig
+lemma measurable_torusAmbientTranslateConfig
     (L : ℕ) [Fact (2 < L)] (t : Site 2) :
     Measurable (torusAmbientTranslateConfig L t) :=
   measurable_of_finite _
 
-
-theorem torusAmbientFKWeight_translate
+lemma torusAmbientFKWeight_translate
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (p q : ℝ) (omega : TorusAmbientConfig L) :
     torusAmbientFKWeight L p q
@@ -499,9 +476,7 @@ theorem torusAmbientFKWeight_translate
     (fun x y => (onsTorusGraph_adj_translate L t x y).symm)
     p q (torusAmbientConfigExtend L omega)
 
-
-
-theorem torusAmbientProbability_translate
+lemma torusAmbientProbability_translate
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (p q : ℝ) (omega : TorusAmbientConfig L) :
     torusAmbientProbability L p q
@@ -510,10 +485,7 @@ theorem torusAmbientProbability_translate
   unfold torusAmbientProbability
   rw [torusAmbientFKWeight_translate]
 
-
-
-
-theorem torusAmbientTranslateConfig_measurePreserving
+lemma torusAmbientTranslateConfig_measurePreserving
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (t : Site 2) :
@@ -551,9 +523,7 @@ theorem torusAmbientTranslateConfig_measurePreserving
           ((torusAmbientTranslateConfigEquiv L t).symm omega)) = _
       rw [Equiv.apply_symm_apply]
 
-
-
-theorem torusPlanarPushforward_shiftInvariant_of_torus
+lemma torusPlanarPushforward_shiftInvariant_of_torus
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (t : Site 2)
@@ -576,8 +546,7 @@ theorem torusPlanarPushforward_shiftInvariant_of_torus
     (measurable_torusAmbientTranslateConfig L t)]
   rw [hshift.map_eq]
 
-
-theorem torusPlanarPushforward_allShiftInvariant_of_torus
+lemma torusPlanarPushforward_allShiftInvariant_of_torus
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hshift : ∀ t : Site 2,
@@ -591,8 +560,7 @@ theorem torusPlanarPushforward_allShiftInvariant_of_torus
   exact torusPlanarPushforward_shiftInvariant_of_torus
     L hp hp1 hq t (hshift t)
 
-
-
+/-- The planar pushforward is translation invariant. -/
 theorem torusPlanarPushforward_allShiftInvariant
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -602,14 +570,9 @@ theorem torusPlanarPushforward_allShiftInvariant
   exact torusPlanarPushforward_allShiftInvariant_of_torus L hp hp1 hq
     (torusAmbientTranslateConfig_measurePreserving L hp hp1 hq)
 
+/-! ## D. Polynomial deficit -/
 
-
-
-
-
-
-
-theorem bdcLongRectangle_polynomial_deficit_of_torusCover
+lemma bdcLongRectangle_polynomial_deficit_of_torusCover
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq0 : 0 < q) (hq : 1 ≤ q)
     {alpha n : ℕ} (ha : 0 < alpha) (hn : 1 ≤ n)

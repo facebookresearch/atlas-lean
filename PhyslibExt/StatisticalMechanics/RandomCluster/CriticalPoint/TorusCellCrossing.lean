@@ -6,23 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+
+/-!
+# Edges of the discrete torus and the cell crossing
+
+Coordinates for the edges of the `L × L` torus and the cell-crossing bijection that sends each edge
+to the dual edge crossing it.
+
+## i. Overview
+
+Each torus edge is coded by its base site and orientation (`torusEdgeCodeEquiv`). The cell crossing
+`torusCellCrossing` rotates a horizontal edge at `(x, y)` to the vertical edge at `(x, y - 1)` and a
+vertical edge to a horizontal one; it is a bijection of the torus edges. All results are
+unconditional.
+
+## ii. Key results
+
+- `torusEdgeCodeEquiv`: edges are coded by site and orientation.
+- `torusCellCrossing_horizontal`, `torusCellCrossing_vertical`: explicit form of the crossing.
+
+## iii. Table of contents
+
+- A. Edge codes
+- B. The cell crossing
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -32,66 +47,65 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Edge codes -/
 
+/-- The orientation of a torus edge: horizontal or vertical. -/
 inductive TorusEdgeOrientation
   | horizontal
   | vertical
   deriving DecidableEq
 
-
-
+/-- A torus edge code: a base site and an orientation. -/
 abbrev TorusEdgeCode (L : ℕ) :=
   (ZMod L × ZMod L) × TorusEdgeOrientation
 
-
+/-- The edges of the `L × L` torus graph. -/
 abbrev TorusAmbientEdge (L : ℕ) [Fact (2 < L)] :=
   {e : Sym2 (ZMod L × ZMod L) // e ∈ (onsTorusGraph L).edgeFinset}
 
-
+/-- The horizontal torus edge from `(x, y)` to `(x + 1, y)`. -/
 def torusHorizontalEdge (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     TorusAmbientEdge L :=
   ⟨s((x, y), (x + 1, y)), by
     rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]; change onsTorusAdj L _ _
     exact Or.inr ⟨rfl, Or.inr (by ring)⟩⟩
 
-
+/-- The vertical torus edge from `(x, y)` to `(x, y + 1)`. -/
 def torusVerticalEdge (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     TorusAmbientEdge L :=
   ⟨s((x, y), (x, y + 1)), by
     rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]; change onsTorusAdj L _ _
     exact Or.inl ⟨rfl, Or.inr (by ring)⟩⟩
 
-@[simp] theorem torusHorizontalEdge_val (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusHorizontalEdge_val (L : ℕ) [Fact (2 < L)]
     (x y : ZMod L) :
     (torusHorizontalEdge L x y : Sym2 (ZMod L × ZMod L)) =
       s((x, y), (x + 1, y)) := rfl
 
-@[simp] theorem torusVerticalEdge_val (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusVerticalEdge_val (L : ℕ) [Fact (2 < L)]
     (x y : ZMod L) :
     (torusVerticalEdge L x y : Sym2 (ZMod L × ZMod L)) =
       s((x, y), (x, y + 1)) := rfl
 
-
-theorem torusHorizontalEdge_orientation_independent
+lemma torusHorizontalEdge_orientation_independent
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusHorizontalEdge L x y : Sym2 (ZMod L × ZMod L)) =
       s((x + 1, y), (x, y)) := by
   rw [torusHorizontalEdge_val, Sym2.eq_swap]
 
-
-theorem torusVerticalEdge_orientation_independent
+lemma torusVerticalEdge_orientation_independent
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusVerticalEdge L x y : Sym2 (ZMod L × ZMod L)) =
       s((x, y + 1), (x, y)) := by
   rw [torusVerticalEdge_val, Sym2.eq_swap]
 
-
+/-- The torus edge with the given code. -/
 def torusEdgeOfCode (L : ℕ) [Fact (2 < L)] :
     TorusEdgeCode L → TorusAmbientEdge L
   | ((x, y), .horizontal) => torusHorizontalEdge L x y
   | ((x, y), .vertical) => torusVerticalEdge L x y
 
-theorem torusEdgeOfCode_injective (L : ℕ) [Fact (2 < L)] :
+lemma torusEdgeOfCode_injective (L : ℕ) [Fact (2 < L)] :
     Function.Injective (torusEdgeOfCode L) := by
   have htwo : (2 : ZMod L) ≠ 0 := by
     have h : ((2 : ℕ) : ZMod L) ≠ 0 := by
@@ -142,7 +156,7 @@ theorem torusEdgeOfCode_injective (L : ℕ) [Fact (2 < L)] :
       apply htwo
       linear_combination hyy.2 - hxx.2
 
-theorem torusEdgeOfCode_surjective (L : ℕ) [Fact (2 < L)] :
+lemma torusEdgeOfCode_surjective (L : ℕ) [Fact (2 < L)] :
     Function.Surjective (torusEdgeOfCode L) := by
   rintro ⟨e, he⟩
   induction e using Sym2.inductionOn with
@@ -174,17 +188,20 @@ theorem torusEdgeOfCode_surjective (L : ℕ) [Fact (2 < L)] :
         left
         exact ⟨rfl, Prod.ext (by linear_combination h0) h1⟩
 
-
+/-- The bijection between edge codes and torus edges. -/
 noncomputable def torusEdgeCodeEquiv (L : ℕ) [Fact (2 < L)] :
     TorusEdgeCode L ≃ TorusAmbientEdge L :=
   Equiv.ofBijective (torusEdgeOfCode L)
     ⟨torusEdgeOfCode_injective L, torusEdgeOfCode_surjective L⟩
 
-@[simp] theorem torusEdgeCodeEquiv_apply (L : ℕ) [Fact (2 < L)]
+@[simp] lemma torusEdgeCodeEquiv_apply (L : ℕ) [Fact (2 < L)]
     (c : TorusEdgeCode L) :
     torusEdgeCodeEquiv L c = torusEdgeOfCode L c := rfl
 
+/-! ## B. The cell crossing -/
 
+/-- The cell crossing on edge codes: horizontal at `(x, y)` to vertical at `(x, y - 1)`, vertical at
+  `(x, y)` to horizontal at `(x - 1, y)`. -/
 def torusCellCrossingCode (L : ℕ) : TorusEdgeCode L ≃ TorusEdgeCode L where
   toFun
     | ((x, y), .horizontal) => ((x, y - 1), .vertical)
@@ -195,15 +212,14 @@ def torusCellCrossingCode (L : ℕ) : TorusEdgeCode L ≃ TorusEdgeCode L where
   left_inv c := by rcases c with ⟨⟨x, y⟩, o⟩; cases o <;> simp
   right_inv c := by rcases c with ⟨⟨x, y⟩, o⟩; cases o <;> simp
 
-
-
-
+/-- The cell crossing on torus edges: each edge goes to the edge crossing it in the shifted dual
+  torus. -/
 noncomputable def torusCellCrossing (L : ℕ) [Fact (2 < L)] :
     TorusAmbientEdge L ≃ TorusAmbientEdge L :=
   (torusEdgeCodeEquiv L).symm.trans
     ((torusCellCrossingCode L).trans (torusEdgeCodeEquiv L))
 
-@[simp] theorem torusCellCrossing_horizontal
+@[simp] lemma torusCellCrossing_horizontal
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellCrossing L (torusHorizontalEdge L x y) =
       torusVerticalEdge L x (y - 1) := by
@@ -217,7 +233,7 @@ noncomputable def torusCellCrossing (L : ℕ) [Fact (2 < L)] :
   rw [hcode]
   rfl
 
-@[simp] theorem torusCellCrossing_vertical
+@[simp] lemma torusCellCrossing_vertical
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     torusCellCrossing L (torusVerticalEdge L x y) =
       torusHorizontalEdge L (x - 1) y := by
@@ -231,7 +247,7 @@ noncomputable def torusCellCrossing (L : ℕ) [Fact (2 < L)] :
   rw [hcode]
   rfl
 
-@[simp] theorem torusCellCrossing_horizontal_val
+@[simp] lemma torusCellCrossing_horizontal_val
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusCellCrossing L (torusHorizontalEdge L x y) :
         Sym2 (ZMod L × ZMod L)) =
@@ -239,7 +255,7 @@ noncomputable def torusCellCrossing (L : ℕ) [Fact (2 < L)] :
   rw [torusCellCrossing_horizontal, torusVerticalEdge_val]
   simp
 
-@[simp] theorem torusCellCrossing_vertical_val
+@[simp] lemma torusCellCrossing_vertical_val
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusCellCrossing L (torusVerticalEdge L x y) :
         Sym2 (ZMod L × ZMod L)) =
@@ -247,9 +263,7 @@ noncomputable def torusCellCrossing (L : ℕ) [Fact (2 < L)] :
   rw [torusCellCrossing_vertical, torusHorizontalEdge_val]
   simp
 
-
-
-theorem torusCellCrossing_of_reversed_horizontal
+lemma torusCellCrossing_of_reversed_horizontal
     (L : ℕ) [Fact (2 < L)] (e : TorusAmbientEdge L) (x y : ZMod L)
     (he : (e : Sym2 (ZMod L × ZMod L)) =
       s((x + 1, y), (x, y))) :
@@ -259,9 +273,7 @@ theorem torusCellCrossing_of_reversed_horizontal
     rw [he, torusHorizontalEdge_orientation_independent]
   rw [heq, torusCellCrossing_horizontal]
 
-
-
-theorem torusCellCrossing_of_reversed_vertical
+lemma torusCellCrossing_of_reversed_vertical
     (L : ℕ) [Fact (2 < L)] (e : TorusAmbientEdge L) (x y : ZMod L)
     (he : (e : Sym2 (ZMod L × ZMod L)) =
       s((x, y + 1), (x, y))) :
@@ -271,43 +283,42 @@ theorem torusCellCrossing_of_reversed_vertical
     rw [he, torusVerticalEdge_orientation_independent]
   rw [heq, torusCellCrossing_vertical]
 
-@[simp] theorem torusCellCrossing_symm_horizontal
+@[simp] lemma torusCellCrossing_symm_horizontal
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusCellCrossing L).symm (torusHorizontalEdge L x y) =
       torusVerticalEdge L (x + 1) y := by
   apply (torusCellCrossing L).injective
   simp
 
-@[simp] theorem torusCellCrossing_symm_vertical
+@[simp] lemma torusCellCrossing_symm_vertical
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusCellCrossing L).symm (torusVerticalEdge L x y) =
       torusHorizontalEdge L x (y + 1) := by
   apply (torusCellCrossing L).injective
   simp
 
-
-theorem torusCellCrossing_mem_edgeFinset
+lemma torusCellCrossing_mem_edgeFinset
     (L : ℕ) [Fact (2 < L)] (e : TorusAmbientEdge L) :
     (torusCellCrossing L e : Sym2 (ZMod L × ZMod L)) ∈
       (onsTorusGraph L).edgeFinset :=
   (torusCellCrossing L e).2
 
-theorem torusCellCrossing_injective
+lemma torusCellCrossing_injective
     (L : ℕ) [Fact (2 < L)] :
     Function.Injective (torusCellCrossing L) :=
   (torusCellCrossing L).injective
 
-theorem torusCellCrossing_surjective
+lemma torusCellCrossing_surjective
     (L : ℕ) [Fact (2 < L)] :
     Function.Surjective (torusCellCrossing L) :=
   (torusCellCrossing L).surjective
 
-@[simp] theorem torusCellCrossing_symm_apply_apply
+@[simp] lemma torusCellCrossing_symm_apply_apply
     (L : ℕ) [Fact (2 < L)] (e : TorusAmbientEdge L) :
     (torusCellCrossing L).symm (torusCellCrossing L e) = e :=
   (torusCellCrossing L).symm_apply_apply e
 
-@[simp] theorem torusCellCrossing_apply_symm_apply
+@[simp] lemma torusCellCrossing_apply_symm_apply
     (L : ℕ) [Fact (2 < L)] (e : TorusAmbientEdge L) :
     torusCellCrossing L ((torusCellCrossing L).symm e) = e :=
   (torusCellCrossing L).apply_symm_apply e

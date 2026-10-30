@@ -6,82 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveFamilyCovLower
 public import MathlibExt.Probability.OSSS.RevealmentSum
+
+/-!
+# Poincaré and covariance lower bounds for random-cluster crossings
+
+For the `q = 2` random-cluster measure, the variance of the box crossing indicator is bounded by the
+sum of covariances (adaptive Poincaré inequality), and the covariance lower bound holds under a
+translation comparison.
+
+## i. Overview
+
+`crossInd` and `boxReveal` are the crossing indicator and the boundary-exploration revealment for
+edges embedded in `ℤ^d`. `acl_fk_q2_poincare_adaptive` holds under the geometric embedding
+hypotheses only. `acl_fk_q2_hcov_of_translationComparison` is conditional on the translation
+comparison `hcomp` between revealments and connection probabilities.
+
+## ii. Key results
+
+- `acl_fk_q2_poincare_adaptive`: `Var ≤ ∑ Cov` for the crossing indicator.
+- `acl_fk_q2_hcov_of_translationComparison`: covariance lower bound, conditional on `hcomp`.
+
+## iii. Table of contents
+
+- A. Crossing indicators and revealment
+- B. Covariance bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.unusedSectionVars false
-set_option linter.style.longLine false
-set_option linter.style.openClassical false
 
 namespace StatMech
 
@@ -98,26 +62,19 @@ open StatMech.OSSS.MonotonicFK
 open StatMech.OSSS.RevealmentConstruction
 open StatMech.Lattice
 open DecisionTree
-open scoped Classical
 
 variable {d : ℕ}
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
+/-! ## A. Crossing indicators and revealment -/
 
-
-
-
-
-
-
-
-
+/-- The indicator that `o` is connected to the vertex boundary of the box of radius `n`. -/
 noncomputable def crossInd (edge : Sym2 W → Sym2 (Site d)) (o : Site d) (n : ℕ) :
     ConfigSpace (Sym2 W) → ℝ :=
   (crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 : ℝ))
 
-
-
+open Classical in
+/-- The revealment of edge `e` by the exploration from the boundary of the box of radius `k`. -/
 noncomputable def boxReveal (μ : ConfigSpace (Sym2 W) → ℝ)
     (edge : Sym2 W → Sym2 (Site d)) (endU endV : Sym2 W → Site d)
     (k : ℕ) (e : Sym2 W) : ℝ :=
@@ -128,36 +85,9 @@ noncomputable def boxReveal (μ : ConfigSpace (Sym2 W) → ℝ)
       (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k)
                 then (1 : ℝ) else 0)
 
+/-! ## B. Covariance bounds -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem acl_fk_q2_hcov_crossTree
+lemma acl_fk_q2_hcov_crossTree
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : Sym2 W → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
@@ -177,7 +107,7 @@ theorem acl_fk_q2_hcov_crossTree
         * (1 - Lindeberg.mean (fkMass G p 2) (crossInd edge o n)) / D
       ≤ ∑ e, Lindeberg.cov (fkMass G p 2) (crossInd edge o n) (Lindeberg.coord e) := by
   classical
-  haveI hne : Nonempty (↥(Finset.Icc 1 n)) :=
+  have hne : Nonempty (↥(Finset.Icc 1 n)) :=
     ⟨⟨1, by rw [Finset.mem_Icc]; exact ⟨le_refl 1, hn⟩⟩⟩
   set μ := fkMass G p 2 with hμdef
   set f : ConfigSpace (Sym2 W) → ℝ := crossInd edge o n with hf0
@@ -186,14 +116,11 @@ theorem acl_fk_q2_hcov_crossTree
   set R : ↥(Finset.Icc 1 n) → Sym2 W → ℝ :=
     fun k e => boxReveal μ edge endU endV (k : ℕ) e with hRdef
   have hpos : ∀ ω, 0 < μ ω := fun ω => fkMass_pos G hp hp1 (by norm_num) ω
-  
   have hf : Monotone f := by
     rw [hf0, crossInd]
     exact (connectedToSet_increasing edge o (vertexBoundary d n)).indicator_monotone
-  
   have hidem : ∀ ω, f ω * f ω = f ω := by
     intro ω; rw [hf0, crossInd, Set.indicator_apply]; split_ifs <;> norm_num
-  
   have hTf : ∀ k, (Tf k).evalR = f := by
     intro k
     funext ω
@@ -205,10 +132,9 @@ theorem acl_fk_q2_hcov_crossTree
     rw [hTfdef, heval, hf0, crossInd]
     by_cases hconn : ConnectedToSet d (liftCfg edge ω) o (vertexBoundary d n)
     · have hmem : ω ∈ crossEvent edge o (vertexBoundary d n) := hconn
-      rw [if_pos hconn, Set.indicator_of_mem hmem]
+      rw [ite_eq_left hconn, Set.indicator_of_mem hmem]
     · have hmem : ω ∉ crossEvent edge o (vertexBoundary d n) := hconn
-      rw [if_neg hconn, Set.indicator_of_notMem hmem]
-  
+      rw [ite_eq_right hconn, Set.indicator_of_notMem hmem]
   have hreach : ∀ k e, revealmentMu μ (Tf k) e ≤ R k e := by
     intro k e
     rw [hTfdef, hRdef]
@@ -216,33 +142,13 @@ theorem acl_fk_q2_hcov_crossTree
     exact frf_mean_reveal_crossTree_le_connBox (μ := μ) (fun ω => (hpos ω).le)
       hinj hcoh hadj o (vertexBoundary d n) (k : ℕ) l (disc₀ (k : ℕ))
       (hdisc₀sub (k : ℕ)) e
-  
   have hsum' : ∀ e, (∑ k, R k e) ≤ (Fintype.card (↥(Finset.Icc 1 n)) : ℝ) * D := by
     intro e; rw [hRdef]; exact hsum e
-  
   exact fk_q2_cov_lower_bound_of_adaptive_family_unconditional G hp hp1 Tf hf hidem hTf
     R D hDpos hreach hsum'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem acl_boxReveal_sum_le
+open Classical in
+lemma acl_boxReveal_sum_le
     {μ : ConfigSpace (Sym2 W) → ℝ}
     {edge : Sym2 W → Sym2 (Site d)} {endU endV : Sym2 W → Site d}
     (n : ℕ) (Λ : Finset (Site d)) (hne : Λ.Nonempty)
@@ -273,31 +179,8 @@ theorem acl_boxReveal_sum_le
                 then (1 : ℝ) else 0))
     hcompu hcompv
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem acl_fk_q2_hcov_of_translationComparison
+open Classical in
+lemma acl_fk_q2_hcov_of_translationComparison
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : Sym2 W → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
@@ -338,7 +221,6 @@ theorem acl_fk_q2_hcov_of_translationComparison
   set D : ℝ := 4 * M / (n : ℝ) with hDdef
   have hDpos : 0 < D := by
     rw [hDdef]; positivity
-  
   have hsum : ∀ e : Sym2 W,
       (∑ k : ↥(Finset.Icc 1 n), boxReveal (fkMass G p 2) edge endU endV (k : ℕ) e)
         ≤ (Fintype.card (↥(Finset.Icc 1 n)) : ℝ) * D := by
@@ -346,29 +228,15 @@ theorem acl_fk_q2_hcov_of_translationComparison
     have hsl := acl_boxReveal_sum_le (μ := fkMass G p 2) (edge := edge)
       (endU := endU) (endV := endV) n Λ hne conn hconnnn e (rdist e).1 (rdist e).2
       (hru e) (hrv e) (hLu e) (hLv e) (hcomp e).1 (hcomp e).2
-    
     have hcardD : (Fintype.card (↥(Finset.Icc 1 n)) : ℝ) * D = 4 * M := by
       rw [hncard, hDdef]; field_simp
     rw [hcardD]; exact hsl
-  
   have hmain := acl_fk_q2_hcov_crossTree G hp hp1 hinj hcoh hadj o l hl disc₀
     hdisc₀sub hdisc₀sup hoB ho n hn D hDpos hsum
   rw [hDdef] at hmain
   exact hmain
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- `Var ≤ ∑ Cov` for the crossing indicator. -/
 theorem acl_fk_q2_poincare_adaptive
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
@@ -383,7 +251,7 @@ theorem acl_fk_q2_poincare_adaptive
     Lindeberg.var (fkMass G p 2) (crossInd edge o n)
       ≤ ∑ e, Lindeberg.cov (fkMass G p 2) (crossInd edge o n) (Lindeberg.coord e) := by
   classical
-  haveI hne : Nonempty (↥(Finset.Icc 1 n)) :=
+  have hne : Nonempty (↥(Finset.Icc 1 n)) :=
     ⟨⟨1, by rw [Finset.mem_Icc]; exact ⟨le_refl 1, hn⟩⟩⟩
   set f : ConfigSpace (Sym2 W) → ℝ := crossInd edge o n with hf0
   set Tf : ↥(Finset.Icc 1 n) → DecisionTree (Sym2 W) :=
@@ -402,9 +270,9 @@ theorem acl_fk_q2_poincare_adaptive
     rw [hTfdef, heval, hf0, crossInd]
     by_cases hconn : ConnectedToSet d (liftCfg edge ω) o (vertexBoundary d n)
     · have hmem : ω ∈ crossEvent edge o (vertexBoundary d n) := hconn
-      rw [if_pos hconn, Set.indicator_of_mem hmem]
+      rw [ite_eq_left hconn, Set.indicator_of_mem hmem]
     · have hmem : ω ∉ crossEvent edge o (vertexBoundary d n) := hconn
-      rw [if_neg hconn, Set.indicator_of_notMem hmem]
+      rw [ite_eq_right hconn, Set.indicator_of_notMem hmem]
   have hpos : ∀ ω, 0 < fkMass G p 2 ω :=
     fun ω => fkMass_pos G hp hp1 (by norm_num) ω
   have hμ1 : ∑ ω, fkMass G p 2 ω = 1 :=
@@ -414,28 +282,6 @@ theorem acl_fk_q2_poincare_adaptive
   have h := var_le_avg_adaptive_reveal_mul_sum_cov_unconditional hpos hμ1 hFKG Tf hf hTf 1
     (fun e => frf_avg_treeReveal_le_one (fun ω => (hpos ω).le) hμ1 Tf e)
   simpa using h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem acl_fixedFamily_route_false {κ : Type*} (σf : κ → (Fin 3 ≃ Fin 3))
-    (k₀ : κ) (hk₀ : ((σf k₀).symm 0 : ℕ) = 0) :
-    ¬ PerScaleRevealmentClose.psr_FamilyFrontierConn σf
-        (ReachDomination.indicatorConn PerScaleRevealmentClose.psr_witnessEndU
-          PerScaleRevealmentClose.psr_witnessEndV ({0} : Set (Fin 4)) ({3} : Set (Fin 4)))
-        PerScaleRevealmentClose.psr_witnessEndU PerScaleRevealmentClose.psr_witnessEndV
-        (fun _ => ({0} : Set (Fin 4))) :=
-  frf_familyFrontierConn_false_concrete σf k₀ hk₀
 
 end AdaptiveCovLowerClose
 

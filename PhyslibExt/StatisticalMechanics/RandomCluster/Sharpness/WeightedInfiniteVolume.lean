@@ -6,41 +6,71 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPeriodicRepair
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TwoPointConnectivity
 public import MathlibExt.Probability.Configuration.Prokhorov
 
+/-!
+# Infinite-volume weighted phases and the common critical point
+
+Finite and infinite-volume measures for each phase, the infinite-volume crossing probability, and
+the common critical point of all phases under a positivity-transport hypothesis.
+
+## i. Overview
+
+`weightedPhaseFiniteMeasure` is the wired measure on the box for the couplings of phase `a`.
+`weightedPhaseInfiniteVolume` is its weak limit and `weightedPhaseInfiniteTheta` the infinite-volume
+percolation probability. The phases share a zero set, hence a critical point, provided positivity
+transfers between phases (`WeightedPhasePositivityTransport`). This version of
+`covariant_weighted_phase_common_critical` is conditional on `htransport :
+CovariantWeightedPhasePositivityTransport`; `WeightedPhaseCommonCritical` proves that hypothesis and
+gives the unconditional statement. The `Weighted*` files extend the OSSS sharpness argument to
+random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase : Site
+d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how translates of
+the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseInfiniteVolume_isLimit`: the infinite-volume measure is the limit of the finite
+  ones.
+- `covariant_weighted_phase_common_critical`: common critical point, conditional on `htransport`.
+
+## iii. Table of contents
+
+- A. Finite and infinite-volume measures
+- B. Diagonal convergence and envelopes
+- C. Positivity transport and the common critical point
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open MeasureTheory
-open scoped BigOperators Classical
+open scoped BigOperators
 open Set Filter Topology
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedInfiniteVolume
 
-open Lattice FK Percolation RevealmentConstruction
+open StatMech.Lattice FK Percolation RevealmentConstruction
 open WiredBoxDifferential
 open FKSharpnessWeightedPeriodic
 
+/-! ## A. Finite and infinite-volume measures -/
 
-
-
+/-- The wired random-cluster probability mass function on the active edges of the box with couplings
+  `J`. -/
 noncomputable def weightedWiredActivePMF
     (d n : Nat) (J : Sym2 (boxVerts d n) -> Real)
     (hJ : forall e, 0 < J e) (q beta : Real)
@@ -59,7 +89,8 @@ noncomputable def weightedWiredActivePMF
       exact (activeBCProb_pos (boxGraph d n) (wiredBoxBoundaryGraph d n)
         (betaParams_pos hJ hbeta) (betaParams_lt_one J beta) hq omega).le
 
-
+/-- The wired random-cluster measure on the box of radius `n` for the couplings of phase `a`, pushed
+  to configurations of `ℤ^d`. -/
 noncomputable def weightedPhaseFiniteMeasure
     (d n : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -73,7 +104,7 @@ noncomputable def weightedPhaseFiniteMeasure
   ⟨mu.toMeasure.map (liftCfg (boxActiveEdge d n)),
     (Measure.isProbabilityMeasure_map_iff Measurable.of_discrete.aemeasurable).mpr inferInstance⟩
 
-
+/-- The infinite-volume measure of phase `a`: the weak limit of the finite wired measures. -/
 noncomputable def weightedPhaseInfiniteVolume
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -83,9 +114,7 @@ noncomputable def weightedPhaseInfiniteVolume
   (CompactSpace.tendsto_subseq
     (fun n => weightedPhaseFiniteMeasure d n phaseJ a hJ q beta hq hbeta)).choose
 
-
-
-theorem weightedPhaseInfiniteVolume_isLimit
+lemma weightedPhaseInfiniteVolume_isLimit
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -101,9 +130,8 @@ theorem weightedPhaseInfiniteVolume_isLimit
         phaseJ a hJ q beta hq hbeta)).choose_spec
   exact ⟨phi, hphi, hlim⟩
 
-
-
-
+/-- The infinite-volume probability that the origin is connected to the boundary of the box of
+  radius `k`. -/
 noncomputable def weightedPhaseInfiniteShell
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -113,7 +141,7 @@ noncomputable def weightedPhaseInfiniteShell
       ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) :
       Measure (ConfigSpace (Sym2 (Site d)))).real (boxBdryConnEvent d k)
 
-
+/-- The infinite-volume percolation probability of phase `a`. -/
 noncomputable def weightedPhaseInfiniteTheta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -123,7 +151,7 @@ noncomputable def weightedPhaseInfiniteTheta
       ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) :
       Measure (ConfigSpace (Sym2 (Site d)))).real (percolationEvent d)
 
-theorem weightedPhaseInfiniteTheta_nonneg
+lemma weightedPhaseInfiniteTheta_nonneg
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -131,8 +159,7 @@ theorem weightedPhaseInfiniteTheta_nonneg
     0 <= weightedPhaseInfiniteTheta d phaseJ a hJ q beta hq hbeta :=
   ENNReal.toReal_nonneg
 
-
-theorem weightedPhaseFiniteShell_tendsto_infinite
+lemma weightedPhaseFiniteShell_tendsto_infinite
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -150,9 +177,7 @@ theorem weightedPhaseFiniteShell_tendsto_infinite
   refine ⟨phi, hphi, fun k => ?_⟩
   exact hlim.tendsto_real_of_isClopen (isClopen_boxBdryConnEvent d k)
 
-
-
-theorem weightedPhaseInfiniteShell_tendsto_theta
+lemma weightedPhaseInfiniteShell_tendsto_theta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -166,10 +191,9 @@ theorem weightedPhaseInfiniteShell_tendsto_theta
       ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) :
       Measure (ConfigSpace (Sym2 (Site d))))
 
+/-! ## B. Diagonal convergence and envelopes -/
 
-
-
-theorem PhaseCovariant.phaseCoupling_translate
+lemma PhaseCovariant.phaseCoupling_translate
     {d : Nat} {P : Type*}
     {J : Sym2 (Site d) -> Real} {phase : Site d -> P}
     {phaseJ : P -> Sym2 (Site d) -> Real}
@@ -185,9 +209,8 @@ theorem PhaseCovariant.phaseCoupling_translate
   funext z
   simp [Function.comp_apply, add_assoc]
 
-
-
-
+/-- The finite-volume crossing probabilities of every phase converge along the diagonal to the
+  infinite-volume percolation probability. -/
 def WeightedPhaseDiagonalTailConvergence
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -196,9 +219,7 @@ def WeightedPhaseDiagonalTailConvergence
     Tendsto (weightedPhaseWiredTheta d phaseJ a q beta) atTop
       (nhds (weightedPhaseInfiniteTheta d phaseJ a (hJ a) q beta hq hbeta))
 
-
-
-theorem weightedPhaseEnvelope_tendsto_infinite_of_diagonal
+lemma weightedPhaseEnvelope_tendsto_infinite_of_diagonal
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e) (q beta : Real)
@@ -212,17 +233,14 @@ theorem weightedPhaseEnvelope_tendsto_infinite_of_diagonal
           q beta hq hbeta))) := by
   exact phaseEnvelope_tendsto _ _ (fun a => hdiag a beta hbeta hq)
 
+/-! ## C. Positivity transport and the common critical point -/
 
-
-
-
-
+/-- Positivity of `θ` transfers between phases: if one phase percolates at `β`, every phase does. -/
 def WeightedPhasePositivityTransport {P : Type*}
     (thetaInf : P -> Real -> Real) : Prop :=
   forall a b beta, 0 < thetaInf a beta ↔ 0 < thetaInf b beta
 
-
-
+/-- The infinite-volume percolation probability of each phase, as a function of `β`. -/
 noncomputable def weightedPhaseThetaProfile
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -232,7 +250,7 @@ noncomputable def weightedPhaseThetaProfile
     weightedPhaseInfiniteTheta d phaseJ a (hJ a) q beta hq hbeta
   else 0
 
-theorem weightedPhaseThetaProfile_nonneg
+lemma weightedPhaseThetaProfile_nonneg
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e) (q : Real) (hq : 0 < q)
@@ -244,9 +262,7 @@ theorem weightedPhaseThetaProfile_nonneg
       q beta hq hbeta
   · exact le_rfl
 
-
-
-
+/-- Positivity transport for the phases of a phase-covariant coupling. -/
 def CovariantWeightedPhasePositivityTransport
     (d : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
@@ -258,11 +274,7 @@ def CovariantWeightedPhasePositivityTransport
     (weightedPhaseThetaProfile d phaseJ
       (hcov.phaseCoupling_pos hsurj hJ) q hq)
 
-
-
-
-
-theorem phase_zeroSet_eq_of_positivityTransport
+lemma phase_zeroSet_eq_of_positivityTransport
     {P : Type*} (thetaInf : P -> Real -> Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)
     (htransport : WeightedPhasePositivityTransport thetaInf)
@@ -287,9 +299,7 @@ theorem phase_zeroSet_eq_of_positivityTransport
       linarith
     · exact hnonneg a beta
 
-
-
-theorem phase_critical_eq_of_positivityTransport
+lemma phase_critical_eq_of_positivityTransport
     {P : Type*} (thetaInf : P -> Real -> Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)
     (htransport : WeightedPhasePositivityTransport thetaInf)
@@ -298,9 +308,7 @@ theorem phase_critical_eq_of_positivityTransport
       sSup {beta | thetaInf b beta = 0} := by
   rw [phase_zeroSet_eq_of_positivityTransport thetaInf hnonneg htransport a b]
 
-
-
-theorem phaseEnvelope_zeroSet_eq_phase
+lemma phaseEnvelope_zeroSet_eq_phase
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real -> Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)
@@ -326,9 +334,7 @@ theorem phaseEnvelope_zeroSet_eq_phase
     · exact (hnonneg a beta).trans
         (Finset.le_sup' (fun b => thetaInf b beta) (Finset.mem_univ a))
 
-
-
-theorem phaseEnvelope_critical_eq_phase
+lemma phaseEnvelope_critical_eq_phase
     {P : Type*} [Fintype P] [Nonempty P]
     (thetaInf : P -> Real -> Real)
     (hnonneg : forall a beta, 0 <= thetaInf a beta)
@@ -339,11 +345,7 @@ theorem phaseEnvelope_critical_eq_phase
       sSup {beta | thetaInf a beta = 0} := by
   rw [phaseEnvelope_zeroSet_eq_phase thetaInf hnonneg htransport a]
 
-
-
-
-
-theorem covariant_weighted_phase_common_critical
+lemma covariant_weighted_phase_common_critical
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)

@@ -6,18 +6,49 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedLocalized
 
+/-!
+# Integrating the weighted differential inequalities
+
+Lower bounds on `1 - θ`, integration of the outer-inner differential inequality, and the phase-sum
+differential inequality.
+
+## i. Overview
+
+Finite energy bounds `1 - θ` from below (`weightedLocalizedTheta_one_sub_lower`). The outer-inner
+differential inequality is absorbed and integrated over `β`. Summing over phases gives
+`weightedPhaseSum_differential_integration`. These are real-analysis integrations of the
+inequalities proved in `WeightedLocalized`, with hypotheses `J_min ≤ J ≤ J_max` and `β ≤ β₀`. The
+`Weighted*` files extend the OSSS sharpness argument to random-cluster models with inhomogeneous,
+periodic couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite set of phases, with
+`PhaseCovariant J phase phaseJ`, describes how translates of the box see the couplings. The final
+results are `WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share
+one critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseSum_differential_integration`: integrated phase-sum inequality.
+- `weightedPhasePhysical_le_localized_half`: physical crossing ≤ localized crossing at half radius.
+
+## iii. Table of contents
+
+- A. Lower bounds and absorption
+- B. Phase sums
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 open MeasureTheory
 
@@ -25,7 +56,7 @@ namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedIntegration
 
-open Lattice FK RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice FK RevealmentConstruction AdaptiveCovLowerGeom
 open WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open ActiveBoundaryDifferential ActiveEdgeDifferential
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedStrict
@@ -33,10 +64,9 @@ open FKSharpnessWeightedLocalized
 open FKSharpnessWeightedInfiniteVolume
 open FKSharpnessWeightedCoherentLimit
 
+/-! ## A. Lower bounds and absorption -/
 
-
-
-theorem weightedLocalizedTheta_one_sub_lower
+lemma weightedLocalizedTheta_one_sub_lower
     (d n : Nat)
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax q beta beta0 : Real)
@@ -105,9 +135,7 @@ theorem weightedLocalizedTheta_one_sub_lower
     simpa [weightedLocalizedTheta, G, C, Jbox, mu, full] using
       sub_le_sub_left hmean 1))
 
-
-
-theorem weighted_outer_inner_differential_absorbed
+lemma weighted_outer_inner_differential_absorbed
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -153,10 +181,7 @@ theorem weighted_outer_inner_differential_absorbed
     htheta hD hkappa hJmin hgap hlog
   simpa [theta, D, kappa, mul_assoc] using hmain
 
-
-
-
-theorem weighted_outer_inner_differential_integration
+lemma weighted_outer_inner_differential_integration
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -194,9 +219,7 @@ theorem weighted_outer_inner_differential_integration
   convert hmain using 1
   field_simp
 
-
-
-theorem weightedLocalizedTheta_eq_phaseProfile_origin
+lemma weightedLocalizedTheta_eq_phaseProfile_origin
     (d n : Nat) (hn : 1 <= n)
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
@@ -206,7 +229,7 @@ theorem weightedLocalizedTheta_eq_phaseProfile_origin
     weightedLocalizedTheta d n J q beta =
       weightedPhaseProfile d phaseJ (phase 0) q beta n := by
   have hn0 : n ≠ 0 := Nat.ne_of_gt hn
-  rw [weightedPhaseProfile, if_neg hn0]
+  rw [weightedPhaseProfile, ite_eq_right hn0]
   unfold weightedLocalizedTheta weightedPhaseWiredTheta
   have hcoupling : phaseBoxCoupling phaseJ (phase 0) (2 * n) =
       boxCoupling J (2 * n) := by
@@ -216,9 +239,7 @@ theorem weightedLocalizedTheta_eq_phaseProfile_origin
     simpa [translateAmbientEdge] using hc.symm
   rw [hcoupling]
 
-
-
-theorem weightedPhaseProfile_differential_integration
+lemma weightedPhaseProfile_differential_integration
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -280,34 +301,36 @@ theorem weightedPhaseProfile_differential_integration
   rw [htheta, horigin] at hmain
   exact hmain
 
+/-! ## B. Phase sums -/
 
-
+/-- The sum over phases of the crossing probabilities at radius `n`. -/
 noncomputable def weightedPhaseSum
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (q beta : Real) (n : Nat) : Real :=
   ∑ a : P, weightedPhaseProfile d phaseJ a q beta n
 
+/-- The sum over radii `k < n` of the phase sums. -/
 noncomputable def weightedPhaseSumSig
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real) (q beta : Real) : Real :=
   ∑ k ∈ Finset.range n, weightedPhaseSum d phaseJ q beta k
 
-theorem weightedPhaseProfile_differentiableAt
+lemma weightedPhaseProfile_differentiableAt
     (d n : Nat) (hn : 1 <= n) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
     (a : P) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     DifferentiableAt Real (fun b => weightedPhaseProfile d phaseJ a q b n) beta := by
   have hn0 : n ≠ 0 := Nat.ne_of_gt hn
-  simp only [weightedPhaseProfile, if_neg hn0]
+  simp only [weightedPhaseProfile, ite_eq_right hn0]
   unfold weightedPhaseWiredTheta
   exact (hasDerivAt_activeBCMean_beta_sum
     (boxGraph d (2 * n)) (wiredBoxBoundaryGraph d (2 * n))
     (fun e => hJ a (Sym2.map Subtype.val e)) hbeta
     (zero_lt_one.trans_le hq) (innerCrossInd d n)).differentiableAt
 
-theorem weightedPhaseEnvelopeSig_le_sumSig
+lemma weightedPhaseEnvelopeSig_le_sumSig
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -323,10 +346,7 @@ theorem weightedPhaseEnvelopeSig_le_sumSig
     (fun b hb => weightedPhaseProfile_nonneg d phaseJ hJ b q beta hq hbeta k)
     (Finset.mem_univ a)
 
-
-
-
-theorem weightedPhaseSum_differential_integration
+lemma weightedPhaseSum_differential_integration
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -401,10 +421,7 @@ theorem weightedPhaseSum_differential_integration
   rw [hderiv]
   exact (mul_le_mul_of_nonneg_left hratio hc.le).trans hsum
 
-
-
-
-theorem weightedPhasePhysical_le_localized_half
+lemma weightedPhasePhysical_le_localized_half
     (d n : Nat) (hn : 2 <= n) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -456,4 +473,3 @@ theorem weightedPhasePhysical_le_localized_half
 end FKSharpnessWeightedIntegration
 end OSSS
 end StatMech
-

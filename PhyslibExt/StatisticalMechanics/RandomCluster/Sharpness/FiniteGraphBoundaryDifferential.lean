@@ -6,25 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ActiveBoundaryDifferential
 public import CSLibExt.Complexity.BooleanFunctions.DecisionTreeReindex
 
+/-!
+# Differential inequality on finite graphs with boundary conditions
+
+The OSSS differential inequality for the event that a vertex is connected by open edges to a set
+`B`, for the boundary-conditioned active random-cluster model on an arbitrary finite graph.
+
+## i. Overview
+
+`openCrossEvent endU endV o B` is the event that `o` is joined to `B` by open edges. Closing the
+edges incident to `o` destroys it, which gives the finite-energy lower bound on `1 - θ`. The
+covariance lower bound for the boundary exploration is `hcov_openCross_mass`. Together they give
+`activeBC_openCross_differential_inequality`, which needs only the combinatorial hypotheses (`o ∉
+B`, an exploration list covering all edges). No lattice embedding is required, unlike
+`ActiveBoundaryDifferential`.
+
+## ii. Key results
+
+- `hcov_openCross_mass`: covariance lower bound for the open-crossing event.
+- `activeBC_openCross_differential_inequality`: the OSSS differential inequality on finite graphs.
+
+## iii. Table of contents
+
+- A. Open crossing events
+- B. Finite-energy and covariance bounds
+- C. Differential inequality
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech.OSSS.FiniteGraphBoundaryDifferential
@@ -37,20 +58,26 @@ open PrefixCoversClose ReachBoxCrossing
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Open crossing events -/
+
+/-- The event that `o` is joined to the set `B` by open edges. -/
 def openCrossEvent (endU endV : E → V) (o : V) (B : Set V) :
     Set (ConfigSpace E) :=
   {omega | ConnOpenSet endU endV omega o B}
 
+/-- The edges incident to the vertex `o`. -/
 noncomputable def openIncidentEdges
     (endU endV : E → V) (o : V) : Finset E :=
   Finset.univ.filter (fun e => endU e = o ∨ endV e = o)
 
+/-- The edges incident to `o`, for edges reindexed along `iota`. -/
 noncomputable def reindexedOpenIncidentEdges
     {I O : Type*} [Fintype I] [DecidableEq I] [DecidableEq O]
     (iota : I → O) (endU endV : I → V) (o : V) : Finset O :=
   (openIncidentEdges endU endV o).image iota
 
-theorem openCrossEvent_isIncreasing
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
+lemma openCrossEvent_isIncreasing
     (endU endV : E → V) (o : V) (B : Set V) :
     IsIncreasing (openCrossEvent endU endV o B) := by
   intro omega eta hle hconn
@@ -60,7 +87,10 @@ theorem openCrossEvent_isIncreasing
     · exact ((by decide : ¬ ((true : Bool) ≤ false)) (by simpa [he, hη] using h)).elim
     · rfl) hconn
 
-theorem closedProd_incident_le_openCross_complement
+/-! ## B. Finite-energy and covariance bounds -/
+
+omit [Fintype V] [DecidableEq E] in
+lemma closedProd_incident_le_openCross_complement
     (endU endV : E → V) (o : V) (B : Set V) (hoB : o ∉ B)
     (omega : ConfigSpace E) :
     FK.closedProd (openIncidentEdges endU endV o) omega ≤
@@ -84,7 +114,10 @@ theorem closedProd_incident_le_openCross_complement
     exact Finset.prod_le_one₀ (fun e he => by positivity) (fun e he => by
       split <;> norm_num)
 
-theorem closedProd_reindexedIncident_le_openCross_complement
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+omit [Fintype V] in
+lemma closedProd_reindexedIncident_le_openCross_complement
     {I O : Type*} [Fintype I] [DecidableEq I]
     [Fintype O] [DecidableEq O]
     (iota : I → O) (endU endV : I → V) (o : V)
@@ -102,14 +135,16 @@ theorem closedProd_reindexedIncident_le_openCross_complement
       unfold reindexedOpenIncidentEdges openIncidentEdges
       exact Finset.mem_image.mpr ⟨e, by simp [heo], rfl⟩
     unfold FK.closedProd
-    exact (Finset.prod_eq_zero heI (by simp [restrictConfig] at hopen ⊢; exact hopen)).le
+    exact (Finset.prod_eq_zero heI (by simpa [restrictConfig] using hopen)).le
   · have hm : restrictConfig iota omega ∉ openCrossEvent endU endV o B := hc
     rw [Set.indicator_of_notMem hm, sub_zero]
     unfold FK.closedProd
     exact Finset.prod_le_one₀ (fun e he => by positivity) (fun e he => by
       split <;> norm_num)
 
-theorem activeBC_reindexed_openCross_one_sub_lower
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+lemma activeBC_reindexed_openCross_one_sub_lower
     {I W : Type*} [Fintype I] [DecidableEq I]
     [Fintype W] [DecidableEq W]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -178,7 +213,7 @@ theorem activeBC_reindexed_openCross_one_sub_lower
       congr 1
       exact Finset.sum_congr rfl fun omega _ => by ring
 
-theorem activeBC_openCross_one_sub_lower
+lemma activeBC_openCross_one_sub_lower
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V → Real) (hJ : ∀ e, 0 < J e)
@@ -242,8 +277,9 @@ theorem activeBC_openCross_one_sub_lower
       congr 1
       exact Finset.sum_congr rfl fun omega _ => by ring
 
-
-theorem hcov_openCross_mass
+open Classical in
+omit [DecidableEq V] [Fintype V] in
+lemma hcov_openCross_mass
     (mu : ConfigSpace E → Real) (hpos : ∀ omega, 0 < mu omega)
     (hmu1 : ∑ omega, mu omega = 1) (hFKG : FKGLatticeCondition mu)
     (endU endV : E → V) (o : V) (l : List E) (hl : ∀ e, e ∈ l)
@@ -296,16 +332,16 @@ theorem hcov_openCross_mass
     rw [show T k = crossTree endU endV o (shell n) l (disc k) by rfl,
       heval]
     by_cases hc : ConnOpenSet endU endV omega o (shell n)
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       simp [f, openCrossEvent, hc]
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       simp [f, openCrossEvent, hc]
   have hreach : ∀ k e, revealmentMu mu (T k) e ≤ R k e := by
     intro k e
     exact frf_mean_reveal_crossTree_le_connOpen
       (fun omega => (hpos omega).le) endU endV o (shell k) (shell n)
       l (disc k) (hdiscSub k) e
-  letI : Nonempty (↑(Finset.Icc 1 n)) :=
+  let : Nonempty (↑(Finset.Icc 1 n)) :=
     ⟨⟨1, Finset.mem_Icc.mpr ⟨le_rfl, hn⟩⟩⟩
   have havg : ∀ e,
       (1 / (Fintype.card (↑(Finset.Icc 1 n)) : Real)) *
@@ -331,10 +367,12 @@ theorem hcov_openCross_mass
   rw [div_le_iff₀ hD]
   simpa [f, mul_comm] using hmain
 
-
-
-
-theorem hcov_reindexed_openCross_mass
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+set_option linter.unusedDecidableInType false in
+open Classical in
+omit [DecidableEq V] [Fintype V] in
+lemma hcov_reindexed_openCross_mass
     {I O : Type*} [Fintype I] [DecidableEq I]
     [Fintype O] [DecidableEq O]
     (mu : ConfigSpace O → Real) (hpos : ∀ omega, 0 < mu omega)
@@ -391,9 +429,9 @@ theorem hcov_reindexed_openCross_mass
       (hcross k n hk1 hkn) (restrictConfig iota omega)
     rw [show T k = (Tinner k).reindex iota by rfl, evalR_reindex, heval]
     by_cases hc : ConnOpenSet endU endV (restrictConfig iota omega) o (shell n)
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       simp [f, openCrossEvent, hc]
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       simp [f, openCrossEvent, hc]
   have hmu0 : ∀ omega, 0 ≤ mu omega := fun omega => (hpos omega).le
   have hreachImage : ∀ k e,
@@ -415,7 +453,7 @@ theorem hcov_reindexed_openCross_mass
       simpa [T] using hquery
     exact queried_crossTree_imp endU endV o (shell k) (shell n) l
       (disc k) (hdiscSub k) (restrictConfig iota omega) e hqueryInner
-  letI : Nonempty (↑(Finset.Icc 1 n)) :=
+  let : Nonempty (↑(Finset.Icc 1 n)) :=
     ⟨⟨1, Finset.mem_Icc.mpr ⟨le_rfl, hn⟩⟩⟩
   have havg : ∀ e,
       (1 / (Fintype.card (↑(Finset.Icc 1 n)) : Real)) *
@@ -445,7 +483,7 @@ theorem hcov_reindexed_openCross_mass
         apply Finset.sum_eq_zero
         intro omega _
         change (if e ∈ (T k).queried omega then (1 : Real) else 0) * mu omega = 0
-        rw [if_neg]
+        rw [ite_eq_right]
         · ring
         · exact DecisionTree.not_mem_queried_reindex_of_not_range
             iota (Tinner k) omega e he
@@ -460,15 +498,17 @@ theorem hcov_reindexed_openCross_mass
   exact (div_le_iff₀ hD).2
     (by simpa [mul_assoc, mul_comm, mul_left_comm] using hmain)
 
+/-! ## C. Differential inequality -/
 
-
+open Classical in
+/-- The OSSS differential inequality on finite graphs. -/
 theorem activeBC_openCross_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V → Real) (hJ : ∀ e, 0 < J e)
     (q beta beta0 : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hbeta0 : beta ≤ beta0)
-    (endU endV : G.edgeSet → V) (hcoh : ∀ e, e.1 = s(endU e, endV e))
+    (endU endV : G.edgeSet → V) (_hcoh : ∀ e, e.1 = s(endU e, endV e))
     (o : V) (l : List G.edgeSet) (hl : ∀ e, e ∈ l)
     (shell disc : Nat → Finset V)
     (hdiscSub : ∀ k, ∀ x ∈ disc k, x ∈ shell k)

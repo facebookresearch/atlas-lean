@@ -6,32 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.GrandCouplingAssembly
+
+/-!
+# Coding law for predictable adaptive orders
+
+For a predictable adaptive order, the coding map of the measure has disjoint fibres covering almost
+all labels, so integrals against the adaptive code reduce to expectations under the measure.
+
+## i. Overview
+
+`PredictableOrder σ` says that the `t`-th coordinate revealed depends only on the earlier revealed
+values. Then the adaptive code `adaptiveCode` agrees almost everywhere with the coding map in the
+selected order, and its fibres have mass `μ x`. This gives `integral_g_adaptiveCode` and its
+mixtures. All results are conditional only on `PredictableOrder σ` and positivity/normalization of
+`μ`.
+
+## ii. Key results
+
+- `predictable_adaptive_fibres_full_measure`: the fibres cover almost all labels.
+- `integral_g_adaptiveCode`: integrals against the adaptive code are expectations under `μ`.
+
+## iii. Table of contents
+
+- A. Predictable orders and fibres
+- B. The adaptive code
+- C. Integrals
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.style.show false
-set_option linter.unusedSectionVars false
-set_option linter.unusedFintypeInType false
 
 namespace StatMech
 namespace OSSS
@@ -41,15 +55,16 @@ open Coding GrandCoupling GrandCouplingAssembly Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Predictable orders and fibres -/
 
-
+/-- An adaptive order is predictable: two configurations agreeing on the first `t` revealed
+  coordinates reveal the same coordinate at step `t`. -/
 def PredictableOrder {n : ℕ} (σ : ConfigSpace E → (Fin n ≃ E)) : Prop :=
   ∀ (x y : ConfigSpace E) (t : Fin n),
     Agree (prefixSet (σ x : Fin n → E) (t : ℕ)) x y →
       (σ y : Fin n → E) t = (σ x : Fin n → E) t
 
-
-
+omit [Fintype E] in
 lemma order_eq_on_prefix {n : ℕ} {σ : ConfigSpace E → (Fin n ≃ E)}
     (hσ : PredictableOrder σ) {x y : ConfigSpace E} {m : ℕ} (hm : m ≤ n)
     (hxy : Agree (prefixSet (σ x : Fin n → E) m) x y) :
@@ -64,7 +79,7 @@ lemma order_eq_on_prefix {n : ℕ} {σ : ConfigSpace E → (Fin n ≃ E)}
   rw [mem_prefixSet_iff]
   exact ⟨j, lt_trans hj hi, rfl⟩
 
-
+omit [Fintype E] in
 lemma prefixSet_eq_of_predictable {n : ℕ} {σ : ConfigSpace E → (Fin n ≃ E)}
     (hσ : PredictableOrder σ) {x y : ConfigSpace E} {m : ℕ} (hm : m ≤ n)
     (hxy : Agree (prefixSet (σ x : Fin n → E) m) x y) :
@@ -84,10 +99,7 @@ lemma prefixSet_eq_of_predictable {n : ℕ} {σ : ConfigSpace E → (Fin n ≃ E
     rw [← hie]
     exact order_eq_on_prefix hσ hm hxy (i : ℕ) hi
 
-
-
-
-theorem codeMap_eq_unique_of_predictable (μ : ConfigSpace E → ℝ) {n : ℕ}
+lemma codeMap_eq_unique_of_predictable (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (u : Fin n → ℝ) {x y : ConfigSpace E}
     (hx : codeMap μ (σ x : Fin n → E) u = x)
@@ -134,8 +146,7 @@ theorem codeMap_eq_unique_of_predictable (μ : ConfigSpace E → ℝ) {n : ℕ}
   funext e
   exact (hfull e (Finset.mem_univ e)).symm
 
-
-theorem predictable_fibres_disjoint (μ : ConfigSpace E → ℝ) {n : ℕ}
+lemma predictable_fibres_disjoint (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     {x y : ConfigSpace E} (hxy : x ≠ y) :
     Disjoint {u | codeMap μ (σ x : Fin n → E) u = x}
@@ -144,7 +155,7 @@ theorem predictable_fibres_disjoint (μ : ConfigSpace E → ℝ) {n : ℕ}
   intro u hux huy
   exact hxy (codeMap_eq_unique_of_predictable μ σ hσ u hux huy)
 
-
+/-- The labels whose adaptive code is the configuration `x`. -/
 def adaptiveFibre (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (x : ConfigSpace E) : Set (Fin n → ℝ) :=
   {u | codeMap μ (σ x : Fin n → E) u = x}
@@ -154,19 +165,13 @@ lemma measurableSet_adaptiveFibre (μ : ConfigSpace E → ℝ) {n : ℕ}
     MeasurableSet (adaptiveFibre μ σ x) := by
   exact (measurable_codeMap μ (σ x)) (measurableSet_singleton x)
 
-
-
 lemma vcube_adaptiveFibre (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : ConfigSpace E → (Fin n ≃ E))
     (x : ConfigSpace E) :
     ((Vcube n) (adaptiveFibre μ σ x)).toReal = μ x := by
   exact vcube_fibre μ hpos hμ1 (σ x) x
 
-
-
-
-
-theorem predictable_adaptive_fibres_full_measure (μ : ConfigSpace E → ℝ)
+lemma predictable_adaptive_fibres_full_measure (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ) :
     ((Vcube n) (⋃ x, adaptiveFibre μ σ x)).toReal = 1 := by
@@ -189,8 +194,10 @@ theorem predictable_adaptive_fibres_full_measure (μ : ConfigSpace E → ℝ)
   simp_rw [vcube_adaptiveFibre μ hpos hμ1 σ]
   exact hμ1
 
+/-! ## B. The adaptive code -/
 
-
+/-- The configuration coded by the labels `u` when coordinates are revealed in the
+  adaptive order. -/
 noncomputable def adaptiveCode (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (u : Fin n → ℝ) : ConfigSpace E := by
   classical
@@ -201,7 +208,7 @@ lemma adaptiveCode_eq_of_mem (μ : ConfigSpace E → ℝ) {n : ℕ}
     (u : Fin n → ℝ) (x : ConfigSpace E) (hx : u ∈ adaptiveFibre μ σ x) :
     adaptiveCode μ σ u = x := by
   unfold adaptiveCode
-  rw [dif_pos ⟨x, hx⟩]
+  rw [dite_eq_left ⟨x, hx⟩]
   let y := Classical.choose (show ∃ y, u ∈ adaptiveFibre μ σ y from ⟨x, hx⟩)
   have hy : u ∈ adaptiveFibre μ σ y :=
     Classical.choose_spec (show ∃ y, u ∈ adaptiveFibre μ σ y from ⟨x, hx⟩)
@@ -212,8 +219,7 @@ lemma measurableSet_adaptiveFibre_union (μ : ConfigSpace E → ℝ) {n : ℕ}
     MeasurableSet (⋃ x, adaptiveFibre μ σ x) := by
   exact MeasurableSet.iUnion (fun x => measurableSet_adaptiveFibre μ σ x)
 
-
-theorem ae_mem_adaptiveFibre_union (μ : ConfigSpace E → ℝ)
+lemma ae_mem_adaptiveFibre_union (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ) :
     ∀ᵐ u ∂(Vcube n), u ∈ ⋃ x, adaptiveFibre μ σ x := by
@@ -225,9 +231,7 @@ theorem ae_mem_adaptiveFibre_union (μ : ConfigSpace E → ℝ)
   rw [measure_univ]
   exact hmass
 
-
-
-theorem adaptiveCode_eq_iff_ae (μ : ConfigSpace E → ℝ)
+lemma adaptiveCode_eq_iff_ae (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (x : ConfigSpace E) :
@@ -242,10 +246,7 @@ theorem adaptiveCode_eq_iff_ae (μ : ConfigSpace E → ℝ)
     simpa [hyx] using hy
   · exact adaptiveCode_eq_of_mem μ σ hσ u x
 
-
-
-
-theorem codeMap_selectedOrder_eq_adaptiveCode_ae (μ : ConfigSpace E → ℝ)
+lemma codeMap_selectedOrder_eq_adaptiveCode_ae (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ) :
     ∀ᵐ u ∂(Vcube n),
@@ -257,10 +258,7 @@ theorem codeMap_selectedOrder_eq_adaptiveCode_ae (μ : ConfigSpace E → ℝ)
   rw [hcode]
   exact hx
 
-
-
-
-theorem adaptiveCode_fibre_mass (μ : ConfigSpace E → ℝ)
+lemma adaptiveCode_fibre_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (x : ConfigSpace E) :
@@ -270,8 +268,6 @@ theorem adaptiveCode_fibre_mass (μ : ConfigSpace E → ℝ)
     exact propext hu
   rw [measure_congr hset]
   exact vcube_adaptiveFibre μ hpos hμ1 σ x
-
-
 
 lemma observable_adaptiveCode_ae (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
@@ -294,9 +290,6 @@ lemma observable_adaptiveCode_ae (μ : ConfigSpace E → ℝ)
   · intro hyu
     exact absurd (Finset.mem_univ y) hyu
 
-
-
-
 lemma aestronglyMeasurable_observable_adaptiveCode (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
@@ -310,10 +303,9 @@ lemma aestronglyMeasurable_observable_adaptiveCode (μ : ConfigSpace E → ℝ)
   exact measurable_const.mul
     (measurable_const.indicator (measurableSet_adaptiveFibre μ σ x))
 
+/-! ## C. Integrals -/
 
-
-
-theorem integral_g_adaptiveCode (μ : ConfigSpace E → ℝ)
+lemma integral_g_adaptiveCode (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (g : ConfigSpace E → ℝ) :
@@ -324,21 +316,13 @@ theorem integral_g_adaptiveCode (μ : ConfigSpace E → ℝ)
     rw [integral_const_mul,
       integral_indicator_const (1 : ℝ) (measurableSet_adaptiveFibre μ σ x), smul_eq_mul,
       mul_one]
-    show g x * ((Vcube n) (adaptiveFibre μ σ x)).toReal = g x * μ x
+    change g x * ((Vcube n) (adaptiveFibre μ σ x)).toReal = g x * μ x
     rw [vcube_adaptiveFibre μ hpos hμ1 σ x]
   · intro x _
     exact Integrable.const_mul
       (Integrable.indicator (integrable_const 1) (measurableSet_adaptiveFibre μ σ x)) _
 
-
-
-
-
-
-
-
-
-theorem integral_g_adaptiveCode_Wt (μ : ConfigSpace E → ℝ)
+lemma integral_g_adaptiveCode_Wt (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (g : ConfigSpace E → ℝ) (s : ℕ) :
@@ -360,11 +344,7 @@ theorem integral_g_adaptiveCode_Wt (μ : ConfigSpace E → ℝ)
   rw [hrw] at hcomp
   rw [hcomp, integral_g_adaptiveCode μ hpos hμ1 σ hσ g]
 
-
-
-
-
-theorem integral_g_independent_randomOrder (μ : ConfigSpace E → ℝ)
+lemma integral_g_independent_randomOrder (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (order : (Fin n → ℝ) → (Fin n ≃ E)) (g : ConfigSpace E → ℝ) :
     ∫ U, (∫ V, g (codeMap μ (order U : Fin n → E) V) ∂(Vcube n)) ∂(Vcube n) =
@@ -378,11 +358,7 @@ theorem integral_g_independent_randomOrder (μ : ConfigSpace E → ℝ)
   rw [integral_const]
   simp
 
-
-
-
-
-theorem integral_g_frozenOrder_Wt_zero (μ : ConfigSpace E → ℝ)
+lemma integral_g_frozenOrder_Wt_zero (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (hσ : PredictableOrder σ)
     (g : ConfigSpace E → ℝ) :
@@ -400,11 +376,7 @@ theorem integral_g_frozenOrder_Wt_zero (μ : ConfigSpace E → ℝ)
           simp
     _ = ∑ x, g x * μ x := integral_g_adaptiveCode μ hpos hμ1 σ hσ g
 
-
-
-
-
-theorem integral_g_frozenOrder_Wt_card (μ : ConfigSpace E → ℝ)
+lemma integral_g_frozenOrder_Wt_card (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) {n : ℕ}
     (σ : ConfigSpace E → (Fin n ≃ E)) (g : ConfigSpace E → ℝ) :
     ∫ U, (∫ V, g (codeMap μ (σ (adaptiveCode μ σ U) : Fin n → E)

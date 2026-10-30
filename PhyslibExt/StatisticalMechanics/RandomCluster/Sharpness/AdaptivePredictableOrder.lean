@@ -6,14 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalKernel
+
+/-!
+# Realized orders of causal orders are predictable
+
+The order in which a causal order (or a decision tree) reveals coordinates is predictable, and its
+stopping time is at most the number of queried coordinates.
+
+## i. Overview
+
+`realizedEquiv_predictable` and `decisionTree_realizedEquiv_predictable` verify `PredictableOrder`
+for realized orders, so the coding law of `AdaptiveCodingLaw` applies. The shared edges at step `t`
+are the realized list minus its first `t` entries. All results are unconditional.
+
+## ii. Key results
+
+- `decisionTree_realizedEquiv_predictable`: decision-tree orders are predictable.
+- `stopVal_decisionTree_realizedEquiv_le_queried_card`: stopping time ≤ number of queried
+  coordinates.
+
+## iii. Table of contents
+
+- A. Predictability
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
@@ -25,8 +48,7 @@ open Coding Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-
-
+omit [Fintype E] in
 lemma realizedList_take_succ_eq_of_agree {R : Finset E} (S : CausalOrder R)
     (x y : ConfigSpace E) (t : ℕ) (ht : t < R.card)
     (hxy : Agree ((realizedList S x).take t).toFinset x y) :
@@ -48,14 +70,14 @@ lemma realizedList_take_succ_eq_of_agree {R : Finset E} (S : CausalOrder R)
             omega
           by_cases hx : x e
           · have hy : y e := by simpa [heq] using hx
-            simp only [realizedList, hx, hy, if_true, List.take_succ_cons]
+            simp only [realizedList, hx, hy, ite_true, List.take_succ_cons]
             congr 1
             apply iho (x := x) (y := y) t htchild
             intro z hz
             apply hxy z
             simpa [realizedList, hx] using Finset.mem_insert_of_mem hz
           · have hy : ¬ y e := by simpa [heq] using hx
-            simp only [realizedList, hx, hy, Bool.false_eq_true, if_false,
+            simp only [realizedList, hx, hy, Bool.false_eq_true, ite_false,
               List.take_succ_cons]
             congr 1
             apply ihc (x := x) (y := y) t htchild
@@ -63,9 +85,9 @@ lemma realizedList_take_succ_eq_of_agree {R : Finset E} (S : CausalOrder R)
             apply hxy z
             simpa [realizedList, hx] using Finset.mem_insert_of_mem hz
 
+/-! ## A. Predictability -/
 
-
-theorem realizedEquiv_predictable
+lemma realizedEquiv_predictable
     (S : CausalOrder (Finset.univ : Finset E)) :
     AdaptiveCodingLaw.PredictableOrder (fun x => realizedEquiv S x) := by
   intro x y t hxy
@@ -81,7 +103,7 @@ theorem realizedEquiv_predictable
     refine ⟨(realizedEquiv S x).symm e, ?_, by simp⟩
     simpa only [realizedEquiv_symm_val] using hidx
   have ht : (t : ℕ) < (Finset.univ : Finset E).card := by
-    simpa using t.isLt
+    simp
   have htake := realizedList_take_succ_eq_of_agree S x y (t : ℕ) ht hagree
   have htx : (t : ℕ) < (realizedList S x).length := by
     rw [realizedList_length]
@@ -97,14 +119,12 @@ theorem realizedEquiv_predictable
     simp [List.Nodup.getEquivOfForallMemList_apply]
   rw [hxget, hyget]
   have hopt := congrArg (fun l : List E => l[(t : ℕ)]?) htake
-  simp only [List.getElem?_take, Nat.lt_add_one, if_true,
+  simp only [List.getElem?_take, Nat.lt_add_one, ite_true,
     List.getElem?_eq_getElem hty, List.getElem?_eq_getElem htx,
     Option.some.injEq] at hopt
   exact hopt
 
-
-
-theorem extendDecisionTree_univ_known_congr (T : DecisionTree E)
+lemma extendDecisionTree_univ_known_congr (T : DecisionTree E)
     (known known' : ConfigSpace E) :
     extendDecisionTree T known (Finset.univ : Finset E) =
       extendDecisionTree T known' Finset.univ := by
@@ -115,9 +135,7 @@ theorem extendDecisionTree_univ_known_congr (T : DecisionTree E)
   exact congrArg TripleOrder.leftOrder
     (extendDecisionTreeTriple_univ_seed_congr none T known known')
 
-
-
-theorem decisionTree_realizedEquiv_predictable (T : DecisionTree E) :
+lemma decisionTree_realizedEquiv_predictable (T : DecisionTree E) :
     AdaptiveCodingLaw.PredictableOrder (fun x =>
       realizedEquiv (extendDecisionTree T x (Finset.univ : Finset E)) x) := by
   let S := extendDecisionTree T (fun _ => false) (Finset.univ : Finset E)
@@ -130,11 +148,8 @@ theorem decisionTree_realizedEquiv_predictable (T : DecisionTree E) :
   rw [heq]
   exact realizedEquiv_predictable S
 
-
-
-
-
-theorem sharedEdges_extendDecisionTreeAt_eq_sdiff_take
+omit [Fintype E] in
+lemma sharedEdges_extendDecisionTreeAt_eq_sdiff_take
     (t : ℕ) (T : DecisionTree E) (known base : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = base z) :
     sharedEdges (extendDecisionTreeAt t T known R) base =
@@ -145,7 +160,7 @@ theorem sharedEdges_extendDecisionTreeAt_eq_sdiff_take
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeAt, extendDecisionTree]
       by_cases heR : e ∈ R
-      · simp only [heR, dif_pos]
+      · simp only [heR, dite_eq_left]
         by_cases hb : base e
         · have hk : ∀ z, z ∉ R.erase e →
               Function.update known e true z = base z := by
@@ -159,14 +174,14 @@ theorem sharedEdges_extendDecisionTreeAt_eq_sdiff_take
               exact hz (Finset.mem_erase.mpr ⟨hze, hzR⟩)
           cases t with
           | zero =>
-              simp only [sharedEdges, hb, if_true, decide_false, Bool.false_eq_true,
-                if_false, DecisionTree.queried, List.take_zero, List.toFinset_nil,
+              simp only [sharedEdges, hb, ite_true,
+                DecisionTree.queried, List.take_zero, List.toFinset_nil,
                 Finset.sdiff_empty]
               rw [iho 0 (Function.update known e true) (R.erase e) hk]
               ext z
               by_cases hze : z = e <;> simp [hze, heR]
           | succ t =>
-              simp only [sharedEdges, hb, if_true, Nat.zero_lt_succ, decide_true,
+              simp only [sharedEdges, hb, ite_true, Nat.zero_lt_succ, decide_true,
                 DecisionTree.queried, realizedList, List.take_succ_cons, List.toFinset_cons]
               simp only [Nat.add_sub_cancel]
               rw [iho t (Function.update known e true) (R.erase e) hk]
@@ -187,38 +202,36 @@ theorem sharedEdges_extendDecisionTreeAt_eq_sdiff_take
               exact hz (Finset.mem_erase.mpr ⟨hze, hzR⟩)
           cases t with
           | zero =>
-              simp only [sharedEdges, hb, Bool.false_eq_true, if_false, decide_false,
+              simp only [sharedEdges, hb, Bool.false_eq_true, ite_false,
                 DecisionTree.queried, List.take_zero, List.toFinset_nil, Finset.sdiff_empty]
               rw [ihc 0 (Function.update known e false) (R.erase e) hk]
               ext z
               by_cases hze : z = e <;> simp [hze, heR]
           | succ t =>
-              simp only [sharedEdges, hb, Bool.false_eq_true, if_false, Nat.zero_lt_succ,
+              simp only [sharedEdges, hb, Bool.false_eq_true, ite_false, Nat.zero_lt_succ,
                 decide_true, DecisionTree.queried, realizedList, List.take_succ_cons,
                 List.toFinset_cons]
-              simp only [if_pos, Nat.add_sub_cancel]
+              simp only [ite_eq_left, Nat.add_sub_cancel]
               rw [ihc t (Function.update known e false) (R.erase e) hk]
               ext z
               simp only [Finset.mem_sdiff, Finset.mem_inter, Finset.mem_insert,
                 Finset.mem_erase]
               by_cases hze : z = e <;> simp [hze]
-      · rw [dif_neg heR]
+      · rw [dite_eq_right heR]
         have hkb : known e = base e := hknown e heR
         by_cases hb : base e
-        · simp only [hkb, hb, if_true, DecisionTree.queried]
+        · simp only [hkb, hb, ite_true, DecisionTree.queried]
           rw [iho t known R hknown]
           ext z
           simp [heR]
-        · simp only [hkb, hb, Bool.false_eq_true, if_false, DecisionTree.queried]
+        · simp only [hkb, hb, Bool.false_eq_true, ite_false, DecisionTree.queried]
           rw [ihc t known R hknown]
           ext z
           simp [heR]
 
-
-
 lemma prefixSet_realizedEquiv_eq_take
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
-    (m : ℕ) (hm : m ≤ Fintype.card E) :
+    (m : ℕ) (_hm : m ≤ Fintype.card E) :
     prefixSet (realizedEquiv S base : Fin (Fintype.card E) → E) m =
       ((realizedList S base).take m).toFinset := by
   ext e
@@ -241,8 +254,7 @@ lemma prefixSet_realizedEquiv_eq_take
     refine ⟨(realizedEquiv S base).symm e, ?_, by simp⟩
     simpa only [realizedEquiv_symm_val] using hidx
 
-
-
+omit [Fintype E] in
 lemma realizedList_take_queried_extendDecisionTree
     (T : DecisionTree E) (known base : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = base z) :
@@ -253,7 +265,7 @@ lemma realizedList_take_queried_extendDecisionTree
   | node e opened closed iho ihc =>
       rw [extendDecisionTree]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         by_cases hb : base e
         · have hk : ∀ z, z ∉ R.erase e →
               Function.update known e true z = base z := by
@@ -280,7 +292,7 @@ lemma realizedList_take_queried_extendDecisionTree
             · rintro (rfl | ⟨hz, hze, hzR⟩)
               · exact ⟨Or.inl rfl, he⟩
               · exact ⟨Or.inr hz, hzR⟩
-          simp only [DecisionTree.queried, hb, if_true, hset,
+          simp only [DecisionTree.queried, hb, ite_true, hset,
             Finset.card_insert_of_notMem heA, realizedList, List.take_succ_cons,
             List.toFinset_cons]
           rw [hi]
@@ -310,29 +322,27 @@ lemma realizedList_take_queried_extendDecisionTree
             · rintro (rfl | ⟨hz, hze, hzR⟩)
               · exact ⟨Or.inl rfl, he⟩
               · exact ⟨Or.inr hz, hzR⟩
-          simp only [DecisionTree.queried, hb, Bool.false_eq_true, if_false, hset,
+          simp only [DecisionTree.queried, hb, Bool.false_eq_true, ite_false, hset,
             Finset.card_insert_of_notMem heA, realizedList, List.take_succ_cons,
             List.toFinset_cons]
           rw [hi]
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         have hkb : known e = base e := hknown e he
         by_cases hb : base e
         · have hset : insert e (opened.queried base) ∩ R =
               opened.queried base ∩ R := by
             ext z
             simp [he]
-          simp only [hkb, hb, if_true, DecisionTree.queried, hset]
+          simp only [hkb, hb, ite_true, DecisionTree.queried, hset]
           exact iho known R hknown
         · have hset : insert e (closed.queried base) ∩ R =
               closed.queried base ∩ R := by
             ext z
             simp [he]
-          simp only [hkb, hb, Bool.false_eq_true, if_false, DecisionTree.queried, hset]
+          simp only [hkb, hb, Bool.false_eq_true, ite_false, DecisionTree.queried, hset]
           exact ihc known R hknown
 
-
-
-theorem prefixSet_decisionTree_realizedEquiv_queried (T : DecisionTree E)
+lemma prefixSet_decisionTree_realizedEquiv_queried (T : DecisionTree E)
     (base : ConfigSpace E) :
     prefixSet
       (realizedEquiv (extendDecisionTree T base (Finset.univ : Finset E)) base :
@@ -343,9 +353,7 @@ theorem prefixSet_decisionTree_realizedEquiv_queried (T : DecisionTree E)
       T base base Finset.univ (by simp)
   · simpa using Finset.card_le_card (Finset.subset_univ (T.queried base))
 
-
-
-theorem stopVal_decisionTree_realizedEquiv_le_queried_card
+lemma stopVal_decisionTree_realizedEquiv_le_queried_card
     (mu : ConfigSpace E → ℝ) (T : DecisionTree E) (base : ConfigSpace E)
     (U : Fin (Fintype.card E) → ℝ)
     (hU : codeMap mu

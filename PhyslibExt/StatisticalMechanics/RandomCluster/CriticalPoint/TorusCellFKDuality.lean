@@ -6,18 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellDual
+
+/-!
+# Random-cluster weight duality on the torus
+
+On the torus, the random-cluster weight of a configuration equals the dual weight of its dual
+configuration up to a factor `q ^ defect`.
+
+## i. Overview
+
+With the signed Euler relation `E + c = V + F + defect` the primal weight at `p` equals the dual
+weight at the dual parameter times `q` raised to the defect. All results are unconditional; the
+defect is not assumed zero.
+
+## ii. Key results
+
+- `torusCell_weight_duality_signed`: weight duality with the defect factor.
+- `torusCell_fkWeight_duality_signed`: the same for random-cluster weights of configurations.
+
+## iii. Table of contents
+
+- A. Signed weight duality
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -27,32 +45,25 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Signed weight duality -/
 
-noncomputable def torusCellPrimalWeight (L : ℕ) [Fact (2 < L)]
-    (p q : ℝ) (K : SimpleGraph (ZMod L × ZMod L)) : ℝ :=
-  edgeProductCount p (onsTorusGraph L).edgeFinset.card K.edgeSet.ncard *
-    q ^ Nat.card K.ConnectedComponent
-
-
+/-- The dual random-cluster weight of a subgraph `K` of the torus at the dual parameter. -/
 noncomputable def torusCellDualWeight (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) (K : SimpleGraph (ZMod L × ZMod L)) : ℝ :=
   edgeProductCount p (onsTorusGraph L).edgeFinset.card
       ((onsTorusGraph L).edgeFinset.card - K.edgeSet.ncard) *
     q ^ torusCellFaceCount L K
 
-
-theorem torusCell_primalWeight_openSub (L : ℕ) [Fact (2 < L)]
+lemma torusCell_primalWeight_openSub (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
-    torusCellPrimalWeight L p q (FK.openSub (onsTorusGraph L) ω) =
+    StatMech.BeffaraDC.torusPrimalWeight L p q (FK.openSub (onsTorusGraph L) ω) =
       FK.fkWeight (onsTorusGraph L) p q ω := by
-  unfold torusCellPrimalWeight FK.fkWeight
+  unfold StatMech.BeffaraDC.torusPrimalWeight FK.fkWeight
   rw [torus_openSub_edge_ncard, dlt_edgeProduct_eq_count]
   unfold FK.numClusters
   rw [Nat.card_eq_fintype_card]
 
-
-
-theorem torusCell_dualWeight_openSub (L : ℕ) [Fact (2 < L)]
+lemma torusCell_dualWeight_openSub (L : ℕ) [Fact (2 < L)]
     (p q : ℝ) (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     torusCellDualWeight L p q (FK.openSub (onsTorusGraph L) ω) =
       FK.fkWeight (onsTorusGraph L) p q (torusCellDualConfig L ω) := by
@@ -60,19 +71,7 @@ theorem torusCell_dualWeight_openSub (L : ℕ) [Fact (2 < L)]
   rw [torus_openSub_edge_ncard, ← torusCell_dual_openCount,
     ← dlt_edgeProduct_eq_count, torusCell_numClusters_dualConfig]
 
-
-theorem torusCell_subgraph_edgeCount_le (L : ℕ) [Fact (2 < L)]
-    (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L) :
-    K.edgeSet.ncard ≤ (onsTorusGraph L).edgeFinset.card := by
-  have hset : K.edgeSet ⊆ (onsTorusGraph L).edgeSet :=
-    SimpleGraph.edgeSet_mono hK
-  have hn := Set.ncard_le_ncard hset
-    (Set.toFinite (onsTorusGraph L).edgeSet)
-  simpa only [SimpleGraph.edgeFinset, Set.ncard_eq_toFinset_card'] using hn
-
-
-
-theorem torusCell_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
+lemma torusCell_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) :
     ((K.edgeSet.ncard + Nat.card K.ConnectedComponent + 1 : ℕ) : ℤ) =
       ((Nat.card (ZMod L × ZMod L) + torusCellFaceCount L K : ℕ) : ℤ) +
@@ -81,11 +80,10 @@ theorem torusCell_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
   push_cast at h ⊢
   linarith
 
-
-theorem torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
+lemma torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
-    torusCellPrimalWeight L p q K *
+    StatMech.BeffaraDC.torusPrimalWeight L p q K *
         q ^ ((onsTorusGraph L).edgeFinset.card + 1) =
       (p / (1 - dualParam p q)) ^ (onsTorusGraph L).edgeFinset.card *
         q ^ Nat.card (ZMod L × ZMod L) *
@@ -97,7 +95,7 @@ theorem torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
   let f := torusCellFaceCount L K
   let v := Nat.card (ZMod L × ZMod L)
   let d := torusCellDefect L K
-  have hom : o ≤ m := torusCell_subgraph_edgeCount_le L K hK
+  have hom : o ≤ m := StatMech.BeffaraDC.torus_subgraph_edgeCount_le L K hK
   have hedge := dlt_edgeProduct_duality hp hp1 hq m o hom
   have heuler : ((o + k + 1 : ℕ) : ℤ) = ((v + f : ℕ) : ℤ) + d := by
     simpa only [o, k, v, f, d] using torusCell_clusterEuler_signed L K
@@ -105,7 +103,7 @@ theorem torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
   have hpow : q ^ (o + k + 1) = q ^ (v + f) * q ^ d := by
     rw [← zpow_natCast, ← zpow_natCast]
     rw [heuler, zpow_add₀ hqne]
-  unfold torusCellPrimalWeight torusCellDualWeight
+  unfold StatMech.BeffaraDC.torusPrimalWeight torusCellDualWeight
   change edgeProductCount p m o * q ^ k * q ^ (m + 1) =
     (p / (1 - dualParam p q)) ^ m * q ^ v *
       (edgeProductCount (dualParam p q) m (m - o) * q ^ f) * q ^ d
@@ -133,7 +131,7 @@ theorem torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
       rw [pow_add]
       ring
 
-
+/-- The same for random-cluster weights of configurations. -/
 theorem torusCell_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

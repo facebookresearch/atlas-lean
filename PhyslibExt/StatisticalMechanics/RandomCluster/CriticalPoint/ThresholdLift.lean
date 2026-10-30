@@ -6,12 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveRussoHamming
+
+/-!
+# Threshold lift from a logistic differential inequality
+
+If a probability `f(p)` satisfies `f' ≥ κ f (1 - f)`, then `f` goes from at most `a` to close to `1`
+over an interval of length `O(1 / κ)`.
+
+## i. Overview
+
+Integrating the logistic differential inequality gives `thresholdLift_of_logisticDiffineq`; with `κ
+= c log n` this is the log-scale form `thresholdLift_logScale`. Both are real-analysis lemmas whose
+hypotheses include the differential inequality.
+
+## ii. Key results
+
+- `thresholdLift_of_logisticDiffineq`: integration of the logistic differential inequality.
+- `thresholdLift_logScale`: the threshold window has width `O(1 / log n)`.
+
+## iii. Table of contents
+
+- A. Logistic integration
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -20,9 +44,9 @@ open Set
 namespace StatMech
 namespace BeffaraDC
 
+/-! ## A. Logistic integration -/
 
-
-theorem thresholdLift_of_logisticDiffineq (f f' : ℝ → ℝ) {p₁ p₂ κ a : ℝ}
+lemma thresholdLift_of_logisticDiffineq (f f' : ℝ → ℝ) {p₁ p₂ κ a : ℝ}
     (hp : p₁ ≤ p₂) (hκ : 0 ≤ κ) (ha : 0 < a)
     (hf01 : ∀ p ∈ Icc p₁ p₂, f p ∈ Icc (0 : ℝ) 1)
     (hderiv : ∀ p ∈ Icc p₁ p₂, HasDerivAt f (f' p) p)
@@ -88,9 +112,7 @@ theorem thresholdLift_of_logisticDiffineq (f f' : ℝ → ℝ) {p₁ p₂ κ a :
   rw [hexp] at hend'
   linarith
 
-
-
-theorem thresholdLift_logScale (f f' : ℝ → ℝ) {p₁ p₂ c a : ℝ} (n : ℕ)
+lemma thresholdLift_logScale (f f' : ℝ → ℝ) {p₁ p₂ c a : ℝ} (n : ℕ)
     (hp : p₁ ≤ p₂) (hc : 0 ≤ c) (ha : 0 < a) (hn : 1 ≤ n)
     (hf01 : ∀ p ∈ Icc p₁ p₂, f p ∈ Icc (0 : ℝ) 1)
     (hderiv : ∀ p ∈ Icc p₁ p₂, HasDerivAt f (f' p) p)
@@ -104,7 +126,7 @@ theorem thresholdLift_logScale (f f' : ℝ → ℝ) {p₁ p₂ c a : ℝ} (n : �
   have h := thresholdLift_of_logisticDiffineq f f' hp
     (mul_nonneg hc hlog) ha hf01 hderiv hdiff hleft
   rw [Real.rpow_def_of_pos hnpos]
-  convert h using 1 <;> ring
+  convert h using 1; ring_nf
 
 end BeffaraDC
 end StatMech

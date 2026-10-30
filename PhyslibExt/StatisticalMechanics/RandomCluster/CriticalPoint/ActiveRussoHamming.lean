@@ -6,16 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdgeRussoP
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.RussoHamming
+
+/-!
+# Russo–Hamming inequality for the active random-cluster model
+
+The Hamming-distance form of Russo's formula for increasing events under the active random-cluster
+measure, and its integrated form.
+
+## i. Overview
+
+Using FKG for the active measure (`q ≥ 1`), the probability of an increasing event `A` times the
+expected Hamming distance to `A` is bounded by the covariance of the indicator with the number of
+open edges, which in turn is controlled by the derivative in `p`. Integrating (a Grönwall argument)
+gives `active_russoHammingIntegrated`, which compares the probability of `A` at `p₁ < p₂`. Both
+headlines are unconditional.
+
+## ii. Key results
+
+- `active_russoHamming`: `4 P(A) E[d(ω, A)] ≤` derivative bound (unconditional).
+- `active_russoHammingIntegrated`: integrated comparison between `p₁` and `p₂` (unconditional).
+
+## iii. Table of contents
+
+- A. FKG and the Hamming covariance
+- B. Grönwall integration
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -29,7 +54,9 @@ open StatMech.FK
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-theorem active_fkg_cov {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+/-! ## A. FKG and the Hamming covariance -/
+
+lemma active_fkg_cov {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) {f g : ConfigSpace G.edgeSet → ℝ}
     (hf : Monotone f) (hg : Monotone g) :
     activeMean G (fun _ => p) q f * activeMean G (fun _ => p) q g ≤
@@ -67,7 +94,7 @@ lemma activeCov_numOpen_eq_sum (p q : ℝ) (f : ConfigSpace G.edgeSet → ℝ) :
     rfl
   rw [hfun, activeCov_sum_right]
 
-theorem active_prob_mul_mean_hamming_le_cov {p q : ℝ}
+lemma active_prob_mul_mean_hamming_le_cov {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     activeProbOf G (fun _ => p) q A *
@@ -97,7 +124,7 @@ theorem active_prob_mul_mean_hamming_le_cov {p q : ℝ}
   unfold activeProbOf activeCov
   nlinarith [hfkg]
 
-
+/-- `4 P(A) E[d(ω, A)] ≤` derivative bound (unconditional). -/
 theorem active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     4 * activeProbOf G (fun _ => p) q A *
@@ -117,7 +144,8 @@ theorem active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
               (activeProb_pos G (fun _ => hp) (fun _ => hp1) hq0 ω).le)
           (by
             unfold activeMean
-            exact Finset.sum_nonneg fun ω _ => mul_nonneg (Nat.cast_nonneg _) (activeProb_pos G (fun _ => hp) (fun _ => hp1) hq0 ω).le))
+            exact Finset.sum_nonneg fun ω _ => mul_nonneg (Nat.cast_nonneg _)
+              (activeProb_pos G (fun _ => hp) (fun _ => hp1) hq0 ω).le))
   have hquarter : p * (1 - p) ≤ 1 / 4 := by
     nlinarith [sq_nonneg (p - 1 / 2)]
   rw [hderiv]
@@ -138,7 +166,9 @@ theorem active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
           (A.indicator fun _ => (1 : ℝ)) (OSSS.Lindeberg.coord e) := by
       nlinarith
 
-theorem active_fkg_anticorr {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+/-! ## B. Grönwall integration -/
+
+lemma active_fkg_anticorr {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) {f g : ConfigSpace G.edgeSet → ℝ}
     (hf : Antitone f) (hg : Monotone g) :
     activeMean G (fun _ => p) q (fun ω => f ω * g ω) ≤
@@ -157,7 +187,7 @@ theorem active_fkg_anticorr {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [hmneg, hpneg] at h
   nlinarith
 
-theorem activeMean_antitoneOn {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
+lemma activeMean_antitoneOn {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
     (hp₂ : p₂ < 1) (hq : 1 ≤ q) {f : ConfigSpace G.edgeSet → ℝ}
     (hf : Antitone f) :
     AntitoneOn (fun p => activeMean G (fun _ => p) q f) (Set.Icc p₁ p₂) := by
@@ -181,7 +211,7 @@ theorem activeMean_antitoneOn {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
   rw [activeCov_numOpen_eq_sum] at hcov
   exact div_nonpos_of_nonpos_of_nonneg hcov (mul_nonneg hp0.le (by linarith))
 
-theorem active_gronwall (q : ℝ) (A : Set (ConfigSpace G.edgeSet))
+lemma active_gronwall (q : ℝ) (A : Set (ConfigSpace G.edgeSet))
     (c : ℝ) {p₁ p₂ : ℝ} (hp₁ : 0 < p₁) (hp₂ : p₂ < 1)
     (hq : 0 < q) (hp : p₁ ≤ p₂)
     (hdiff : ∀ p ∈ Set.Icc p₁ p₂,
@@ -224,7 +254,7 @@ theorem active_gronwall (q : ℝ) (A : Set (ConfigSpace G.edgeSet))
     Real.exp_sub, mul_div_assoc', le_div_iff₀ he1]
   exact hle
 
-
+/-- Integrated comparison between `p₁` and `p₂` (unconditional). -/
 theorem active_russoHammingIntegrated {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
     (hp₁₂ : p₁ < p₂) (hp₂ : p₂ < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :

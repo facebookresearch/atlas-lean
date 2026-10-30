@@ -6,23 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedCoherentLimit
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
+
+/-!
+# Positivity transport from finite energy
+
+Box finite energy, positivity of the infinite-cluster event, and the reduction of positivity
+transport between phases to coherent finite energy and selected laws.
+
+## i. Overview
+
+`HasBoxFiniteEnergy` says that forcing the edges of a box open keeps the measure absolutely
+continuous. Under it, the probability that a given site is in an infinite cluster is positive for
+one site iff for all (`clusterInfiniteEvent_measure_pos_iff`).
+`phasePositivityTransport_of_coherentFiniteEnergy` and
+`covariant_weighted_phase_common_critical_of_selectedLaws` are conditional on
+`CovariantWeightedPhaseCoherentFiniteEnergy` and `CovariantWeightedSelectedPhaseLaws` respectively.
+The `Weighted*` files extend the OSSS sharpness argument to random-cluster models with
+inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite set of
+phases, with `PhaseCovariant J phase phaseJ`, describes how translates of the box see the couplings.
+The final results are `WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all
+phases share one critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `clusterInfiniteEvent_measure_pos_iff`: positivity of infinite clusters is site independent under
+  box finite energy.
+- `covariant_weighted_phase_common_critical_of_selectedLaws`: common critical point, conditional on
+  the selected-laws hypothesis.
+
+## iii. Table of contents
+
+- A. Box finite energy and infinite clusters
+- B. Coherent finite energy and selected laws
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -33,30 +61,26 @@ namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedPhaseTransport
 
-open Lattice FK Percolation
+open StatMech.Lattice FK Percolation
 open FKSharpnessWeightedPeriodic
 open FKSharpnessWeightedInfiniteVolume
 
 variable {d : Nat}
 
+/-! ## A. Box finite energy and infinite clusters -/
 
-
-
-
-
-
+/-- Forcing the edges of any box open gives a measure absolutely continuous with respect to the
+  original one. -/
 def HasBoxFiniteEnergy
     (mu : Measure (ConfigSpace (Sym2 (Site d)))) : Prop :=
   forall n, mu.map (forceOpenFinset (boxEdges d n)) ≪ mu
 
-theorem HasFiniteEnergyMerge.hasBoxFiniteEnergy
+lemma HasFiniteEnergyMerge.hasBoxFiniteEnergy
     (mu : Measure (ConfigSpace (Sym2 (Site d))))
     (hfe : HasFiniteEnergyMerge mu) : HasBoxFiniteEnergy mu :=
   fun n => hfe (boxEdges d n)
 
-
-
-theorem clusterInfiniteEvent_subset_forceOpen_preimage
+lemma clusterInfiniteEvent_subset_forceOpen_preimage
     (F : Finset (Sym2 (Site d))) (x y : Site d)
     (hconn : forall omega, Connected d (forceOpenFinset F omega) x y) :
     clusterInfiniteEvent d x <=
@@ -67,9 +91,7 @@ theorem clusterInfiniteEvent_subset_forceOpen_preimage
     hx.mono (cluster_mono (forceOpenFinset_le F omega) x)
   rwa [cluster_eq_of_connected (hconn omega)] at hx'
 
-
-
-theorem clusterInfiniteEvent_measure_pos_of_connector
+lemma clusterInfiniteEvent_measure_pos_of_connector
     (mu : Measure (ConfigSpace (Sym2 (Site d))))
     (F : Finset (Sym2 (Site d))) (x y : Site d)
     (hfe : mu.map (forceOpenFinset F) ≪ mu)
@@ -94,10 +116,7 @@ theorem clusterInfiniteEvent_measure_pos_of_connector
   rw [hpre0] at hle
   exact (not_lt_of_ge hle) hx
 
-
-
-
-theorem clusterInfiniteEvent_measure_pos_iff
+lemma clusterInfiniteEvent_measure_pos_iff
     (mu : Measure (ConfigSpace (Sym2 (Site d))))
     (hfe : HasBoxFiniteEnergy mu) (x y : Site d) :
     0 < mu (clusterInfiniteEvent d x) <->
@@ -115,8 +134,7 @@ theorem clusterInfiniteEvent_measure_pos_iff
   · exact clusterInfiniteEvent_measure_pos_of_connector mu
       (boxEdges d n) y x (hfe n) (fun omega => (hxy omega).symm)
 
-
-theorem clusterInfiniteEvent_real_pos_iff
+lemma clusterInfiniteEvent_real_pos_iff
     (mu : Measure (ConfigSpace (Sym2 (Site d)))) [IsFiniteMeasure mu]
     (hfe : HasBoxFiniteEnergy mu) (x y : Site d) :
     0 < mu.real (clusterInfiniteEvent d x) <->
@@ -141,11 +159,7 @@ theorem clusterInfiniteEvent_real_pos_iff
       (bot_lt_iff_ne_bot.mpr hy0)
     exact ENNReal.toReal_pos hx.ne' hxtop
 
-
-
-
-
-theorem shift_mem_clusterInfiniteEvent_iff
+lemma shift_mem_clusterInfiniteEvent_iff
     (g : Multiplicative (Site d))
     (omega : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     ConfigSpace.shift g omega ∈ clusterInfiniteEvent d (g • x) <->
@@ -156,8 +170,7 @@ theorem shift_mem_clusterInfiniteEvent_iff
   exact Set.infinite_image_iff
     (Set.injOn_of_injective (smul_injective g))
 
-
-theorem shift_preimage_clusterInfiniteEvent
+lemma shift_preimage_clusterInfiniteEvent
     (g : Multiplicative (Site d)) (x : Site d) :
     (ConfigSpace.shift g : ConfigSpace (Sym2 (Site d)) ->
       ConfigSpace (Sym2 (Site d))) ⁻¹'
@@ -166,16 +179,9 @@ theorem shift_preimage_clusterInfiniteEvent
   ext omega
   exact shift_mem_clusterInfiniteEvent_iff g omega x
 
+/-! ## B. Coherent finite energy and selected laws -/
 
-
-
-
-
-
-
-
-
-
+/-- The phase laws are translates of one another and each has box finite energy. -/
 def CovariantWeightedPhaseCoherentFiniteEnergy
     (d : Nat) {P : Type*}
     (phase : Site d -> P)
@@ -188,9 +194,7 @@ def CovariantWeightedPhaseCoherentFiniteEnergy
   (forall a, HasBoxFiniteEnergy
     (mu a : Measure (ConfigSpace (Sym2 (Site d)))))
 
-
-
-theorem phasePositivityTransport_of_coherentFiniteEnergy
+lemma phasePositivityTransport_of_coherentFiniteEnergy
     {P : Type*} (phase : Site d -> P)
     (hsurj : Function.Surjective phase)
     (mu : P -> ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
@@ -237,8 +241,7 @@ theorem phasePositivityTransport_of_coherentFiniteEnergy
   rw [hmeasure, hmapreal]
   simpa [percolationEvent, clusterInfiniteEvent] using hbase.symm
 
-
-
+/-- The selected infinite-volume phase laws are covariant under translations. -/
 def CovariantWeightedSelectedPhaseLaws
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -249,7 +252,8 @@ def CovariantWeightedSelectedPhaseLaws
       (fun a => weightedPhaseInfiniteVolume d phaseJ a (hJ a)
         q beta hq hbeta)
 
-
+/-- The selected law of the phase of `x + y` is the translate by `y` of the selected law of the
+  phase of `x`. -/
 def CovariantWeightedSelectedPhaseTranslation
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -262,10 +266,7 @@ def CovariantWeightedSelectedPhaseTranslation
           q beta hq hbeta : Measure (ConfigSpace (Sym2 (Site d)))).map
         (ConfigSpace.shift (Multiplicative.ofAdd (x - y)))
 
-
-
-
-
+/-- Each selected infinite-volume phase law has box finite energy. -/
 def WeightedSelectedPhaseFiniteEnergy
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -276,7 +277,7 @@ def WeightedSelectedPhaseFiniteEnergy
       (weightedPhaseInfiniteVolume d phaseJ a (hJ a)
         q beta hq hbeta : Measure (ConfigSpace (Sym2 (Site d))))
 
-theorem covariantWeightedSelectedPhaseLaws_iff
+lemma covariantWeightedSelectedPhaseLaws_iff
     {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -291,9 +292,7 @@ theorem covariantWeightedSelectedPhaseLaws_iff
   · rintro ⟨htrans, hfe⟩ beta hbeta
     exact ⟨htrans beta hbeta, hfe beta hbeta⟩
 
-
-
-theorem covariantWeightedPhasePositivityTransport_of_selectedLaws
+lemma covariantWeightedPhasePositivityTransport_of_selectedLaws
     {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -311,9 +310,7 @@ theorem covariantWeightedPhasePositivityTransport_of_selectedLaws
       (hlaws beta hbeta) a b beta
   · simp
 
-
-
-theorem covariantWeightedPhasePositivityTransport_of_selectedLaws'
+lemma covariantWeightedPhasePositivityTransport_of_selectedLaws'
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -327,8 +324,7 @@ theorem covariantWeightedPhasePositivityTransport_of_selectedLaws'
   exact covariantWeightedPhasePositivityTransport_of_selectedLaws
     phaseJ (hcov.phaseCoupling_pos hsurj hJ) phase hsurj q hq hlaws
 
-
-theorem covariant_weighted_phase_common_critical_of_selectedLaws
+lemma covariant_weighted_phase_common_critical_of_selectedLaws
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)

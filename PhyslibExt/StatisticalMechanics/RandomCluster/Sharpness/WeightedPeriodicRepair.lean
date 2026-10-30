@@ -6,31 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPeriodic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedDomain
 
+/-!
+# Strict off-centre domination for periodic couplings
+
+Relabelling invariance of weighted measures, the outer-inner connection function, and proofs of the
+strict off-centre and nested domination properties for phase-covariant couplings.
+
+## i. Overview
+
+Weighted boundary-conditioned measures are invariant under graph isomorphisms
+(`bcProbW_boundaryClique_reCfgIso`). Translated shell masses equal phase shell masses
+(`weighted_transShellEvent_mass_eq_phase`). Hence `WeightedPhaseOffCentreStrict` and
+`PeriodicWeightedNestedDominationStrict` hold for every phase-covariant coupling (`*_of_covariant`),
+unconditionally. The `Weighted*` files extend the OSSS sharpness argument to random-cluster models
+with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite
+set of phases, with `PhaseCovariant J phase phaseJ`, describes how translates of the box see the
+couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseOffCentreStrict_of_covariant`: strict off-centre domination (unconditional).
+- `periodicWeightedNestedDominationStrict_of_covariant`: strict nested domination (unconditional).
+
+## iii. Table of contents
+
+- A. Relabelling invariance
+- B. Strict domination
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedPeriodicRepair
 
-open Lattice FK RevealmentConstruction RevealmentTranslation
+open StatMech.Lattice FK RevealmentConstruction RevealmentTranslation
 open WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedDomain
 
@@ -39,9 +66,10 @@ section Relabel
 variable {V W : Type*} [Fintype V] [DecidableEq V]
 variable [Fintype W] [DecidableEq W]
 
+/-! ## A. Relabelling invariance -/
 
-
-theorem edgeProductW_reCfgIso
+omit [DecidableEq V] [DecidableEq W] in
+lemma edgeProductW_reCfgIso
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (sigma : V ≃ W)
@@ -77,9 +105,7 @@ theorem edgeProductW_reCfgIso
     rw [Sym2.map_map, hmap] at hpfe
     rw [hpfe]
 
-
-
-theorem bcWeightW_boundaryClique_reCfgIso
+lemma bcWeightW_boundaryClique_reCfgIso
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (bdryV : V -> Prop) [DecidablePred bdryV]
@@ -97,8 +123,7 @@ theorem bcWeightW_boundaryClique_reCfgIso
     numClustersBC_boundaryClique, numClustersBC_boundaryClique,
     fvs_numClustersWired_reCfgIso G H bdryV bdryW sigma hsigma hbdry omega]
 
-
-theorem bcProbW_boundaryClique_reCfgIso
+lemma bcProbW_boundaryClique_reCfgIso
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (bdryV : V -> Prop) [DecidablePred bdryV]
@@ -126,8 +151,11 @@ theorem bcProbW_boundaryClique_reCfgIso
 
 end Relabel
 
+/-! ## B. Strict domination -/
 
-
+open Classical in
+/-- The probability, in the wired box of radius `2n` with couplings `J`, that `x` is connected to
+  the boundary of the box of radius `k` around it. -/
 noncomputable def weightedOuterInnerConn
     (d n : Nat) (J : Sym2 (Site d) -> Real) (q beta : Real)
     (x : Site d) (k : Nat) : Real :=
@@ -140,17 +168,15 @@ noncomputable def weightedOuterInnerConn
         (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega))
       x (centeredBoundary x k) then (1 : Real) else 0)
 
-
-
-
+/-- Strict off-centre domination: `weightedOuterInnerConn` at `x` is bounded by the crossing
+  probability of the phase of `x`. -/
 def WeightedPhaseOffCentreStrict (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (theta : P -> Nat -> Real) (q beta : Real) : Prop :=
-  forall x, x ∈ osssBoxFinset d n -> forall k, 1 <= k -> 2 * k < n ->
+  forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k, 1 <= k -> 2 * k < n ->
     weightedOuterInnerConn d n J q beta x k <= theta (phase x) k
 
-
-
+/-- Strict nested domination for periodic couplings. -/
 def PeriodicWeightedNestedDominationStrict
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
@@ -159,9 +185,7 @@ def PeriodicWeightedNestedDominationStrict
     WeightedPhaseOffCentreStrict d n J phase
       (fun a => weightedPhaseWiredTheta d phaseJ a q beta) q beta
 
-
-
-theorem weighted_transShellEvent_mass_eq_phase
+lemma weighted_transShellEvent_mass_eq_phase
     (d k : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -199,8 +223,7 @@ theorem weighted_transShellEvent_mass_eq_phase
     (centeredShellEvent d k)
   rwa [reCfgIso_preimage_centeredShellEvent] at hmass
 
-
-theorem weightedPhaseWiredTheta_eq_centeredShellMass
+lemma weightedPhaseWiredTheta_eq_centeredShellMass
     (d k : Nat) (hk : 1 <= k) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e)
@@ -224,9 +247,8 @@ theorem weightedPhaseWiredTheta_eq_centeredShellMass
   · exact betaParams_lt_one _ beta
   · exact zero_lt_one.trans_le hq
 
-
-
-theorem weightedOuterInnerConn_le_transShellMass
+open Classical in
+lemma weightedOuterInnerConn_le_transShellMass
     (d n k : Nat) (x : Site d)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
@@ -257,9 +279,9 @@ theorem weightedOuterInnerConn_le_transShellMass
             (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n))
               (restrictActive (boxGraph d (2 * n)) rho)))
           x (centeredBoundary x k)
-      · rw [if_pos hc, Set.indicator_of_mem]
+      · rw [ite_eq_left hc, Set.indicator_of_mem]
         exact outerInnerConn_subset_transShell d n k x hsub rho hc
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         exact Set.indicator_nonneg (fun _ => by norm_num) _
     · exact bcProbW_nonneg _ _
         (betaParams_pos
@@ -270,9 +292,7 @@ theorem weightedOuterInnerConn_le_transShellMass
   · exact betaParams_lt_one _ beta
   · exact zero_lt_one.trans_le hq
 
-
-
-theorem weightedOuterInnerConn_le_phase_strict
+lemma weightedOuterInnerConn_le_phase_strict
     (d n k : Nat) (x : Site d) (hx : x ∈ box d n)
     (hk : 1 <= k) (hkn : 2 * k < n)
     {P : Type*}
@@ -333,8 +353,7 @@ theorem weightedOuterInnerConn_le_phase_strict
             q rho := htransport
     _ = weightedPhaseWiredTheta d phaseJ (phase x) q beta k := hprofile.symm
 
-
-
+/-- Strict off-centre domination (unconditional). -/
 theorem weightedPhaseOffCentreStrict_of_covariant
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
@@ -348,9 +367,7 @@ theorem weightedPhaseOffCentreStrict_of_covariant
     d n k x _ hk hkn J hJ phase phaseJ hcov q beta hq hbeta
   simpa [mem_osssBoxFinset] using hx
 
-
-
-theorem periodicWeightedNestedDominationStrict_of_covariant
+lemma periodicWeightedNestedDominationStrict_of_covariant
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (phase : Site d -> P) (phaseJ : P -> Sym2 (Site d) -> Real)

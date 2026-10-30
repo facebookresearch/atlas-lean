@@ -6,97 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PerScaleRevealment
@@ -104,13 +13,46 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.QueriedCro
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LindebergTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentBoundAssembly
 
+/-!
+# Revealment of exploration families at the frontier
+
+Bounds on the average revealment of a family of crossing explorations, a refutation of the naive
+frontier-connection hypothesis, and the resulting covariance lower bound for the `q = 2`
+random-cluster model.
+
+## i. Overview
+
+`frf_familyFrontierConn_false` and its concrete instance are Lean-checked refutations:
+`psr_FamilyFrontierConn` fails as soon as some first-queried edge is not connected to its frontier.
+The revealment of the exploration tree is instead bounded by connection probabilities to the box
+boundary (`frf_mean_reveal_crossTree_le_connBox`). `frf_fk_q2_cov_lower_bound_of_adaptiveFamily` is
+conditional on per-scale revealment bounds. `frf_fk_q2_cov_lower_bound_adaptive_poincare` is
+conditional on `hStep : StepCovBound` for each tree.
+
+## ii. Key results
+
+- `frf_familyFrontierConn_false`: refutation of the frontier-connection hypothesis.
+- `frf_mean_reveal_crossTree_le_connBox`: revealment ≤ connection probability to the box boundary.
+- `frf_fk_q2_cov_lower_bound_of_adaptiveFamily`: covariance lower bound, conditional on per-scale
+  revealment bounds.
+
+## iii. Table of contents
+
+- A. The frontier-connection hypothesis fails
+- B. Revealment bounds
+- C. Covariance lower bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.unusedSectionVars false
-set_option linter.style.longLine false
 
 namespace StatMech
 
@@ -129,25 +71,14 @@ open StatMech.OSSS.PerScaleRevealmentClose
 open StatMech.OSSS.MonotonicFK
 open StatMech.Lattice
 open DecisionTree
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {V : Type*} [DecidableEq V]
 
+/-! ## A. The frontier-connection hypothesis fails -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+omit [DecidableEq V] [Fintype E] in
+/-- Refutation of the frontier-connection hypothesis. -/
 theorem frf_familyFrontierConn_false {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
     (f : ConfigSpace E → ℝ) (endU endV : E → V) (B : κ → Set V)
     (k₀ : κ) {e₀ : E} (he₀ : ((σf k₀).symm e₀ : ℕ) = 0)
@@ -159,14 +90,7 @@ theorem frf_familyFrontierConn_false {κ : Type*} {nE : ℕ} (σf : κ → (Fin 
   exact psr_frontierConn_first_refutable (σf k₀) f endU endV (B k₀) he₀ X hnc hnotU hnotV
     (hfam k₀ e₀)
 
-
-
-
-
-
-
-
-theorem frf_familyFrontierConn_false_concrete {κ : Type*} (σf : κ → (Fin 3 ≃ Fin 3))
+lemma frf_familyFrontierConn_false_concrete {κ : Type*} (σf : κ → (Fin 3 ≃ Fin 3))
     (k₀ : κ) (hk₀ : ((σf k₀).symm 0 : ℕ) = 0) :
     ¬ psr_FamilyFrontierConn σf
         (indicatorConn psr_witnessEndU psr_witnessEndV ({0} : Set (Fin 4)) ({3} : Set (Fin 4)))
@@ -174,23 +98,9 @@ theorem frf_familyFrontierConn_false_concrete {κ : Type*} (σf : κ → (Fin 3 
   intro hfam
   exact psr_frontierConn_first_false_concrete (σf k₀) hk₀ (hfam k₀ 0)
 
+/-! ## B. Revealment bounds -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem frf_mean_reveal_le_of_queried_imp_or {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
+lemma frf_mean_reveal_le_of_queried_imp_or {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
     (T : DecisionTree E) (e : E) (P Q : ConfigSpace E → Prop)
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ ω, e ∈ T.queried ω → P ω ∨ Q ω) :
@@ -205,31 +115,20 @@ theorem frf_mean_reveal_le_of_queried_imp_or {μ : ConfigSpace E → ℝ} (hμ0 
   rw [← add_mul]
   apply mul_le_mul_of_nonneg_right _ (hμ0 ω)
   by_cases hq : e ∈ T.queried ω
-  · rw [if_pos hq]
+  · rw [ite_eq_left hq]
     rcases h ω hq with hP | hQ
-    · rw [if_pos hP]
+    · rw [ite_eq_left hP]
       have : (0 : ℝ) ≤ if Q ω then (1 : ℝ) else 0 := by split <;> norm_num
       linarith
-    · rw [if_pos hQ]
+    · rw [ite_eq_left hQ]
       have : (0 : ℝ) ≤ if P ω then (1 : ℝ) else 0 := by split <;> norm_num
       linarith
-  · rw [if_neg hq]
+  · rw [ite_eq_right hq]
     have h1 : (0 : ℝ) ≤ if P ω then (1 : ℝ) else 0 := by split <;> norm_num
     have h2 : (0 : ℝ) ≤ if Q ω then (1 : ℝ) else 0 := by split <;> norm_num
     linarith
 
-
-
-
-
-
-
-
-
-
-
-
-theorem frf_mean_reveal_crossTree_le_connOpen {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
+lemma frf_mean_reveal_crossTree_le_connOpen {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
     (endU endV : E → V) (o : V) (B C : Set V) (l : List E) (disc₀ : Finset V)
     (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (i : E)
     [DecidablePred (fun ω => ConnOpenSet endU endV ω (endU i) B)]
@@ -246,18 +145,9 @@ section Lattice
 
 variable {d : ℕ}
 
-
-
-
-
-
-
-
-
-
-
-
-theorem frf_mean_reveal_crossTree_le_connBox {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma frf_mean_reveal_crossTree_le_connBox {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
     (hadj : ∀ e, (hypercubicLattice d).Adj (endU e) (endV e))
@@ -284,28 +174,9 @@ theorem frf_mean_reveal_crossTree_le_connBox {μ : ConfigSpace E → ℝ} (hμ0 
 
 end Lattice
 
+/-! ## C. Covariance lower bounds -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem frf_var_le_avg_treeReveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma frf_var_le_avg_treeReveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hTf : ∀ k, (Tf k).evalR = f)
@@ -315,27 +186,23 @@ theorem frf_var_le_avg_treeReveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos
   have hκpos : (0 : ℝ) < (Fintype.card κ : ℝ) := by exact_mod_cast Fintype.card_pos
   have hcovnn : ∀ e, 0 ≤ Lindeberg.cov μ f (Lindeberg.coord e) :=
     fun e => cov_coord_nonneg hpos hμ1 hFKG hf e
-  
   have hbound : ∀ k, Lindeberg.var μ f
       ≤ ∑ e, revealmentMu μ (Tf k) e * Lindeberg.cov μ f (Lindeberg.coord e) := by
     intro k
     have h := tree_osss hpos hμ1 (Tf k) (by rw [hTf k]; exact hStep k)
     rw [hTf k] at h
     exact h
-  
   have havg : (Fintype.card κ : ℝ) * Lindeberg.var μ f
       ≤ ∑ k, ∑ e, revealmentMu μ (Tf k) e * Lindeberg.cov μ f (Lindeberg.coord e) := by
     have hsum : ∑ _k : κ, Lindeberg.var μ f
         ≤ ∑ k, ∑ e, revealmentMu μ (Tf k) e * Lindeberg.cov μ f (Lindeberg.coord e) :=
       Finset.sum_le_sum (fun k _ => hbound k)
     rwa [Finset.sum_const, Finset.card_univ, nsmul_eq_mul] at hsum
-  
   have hswap : ∑ k, ∑ e, revealmentMu μ (Tf k) e * Lindeberg.cov μ f (Lindeberg.coord e)
       = ∑ e, (∑ k, revealmentMu μ (Tf k) e) * Lindeberg.cov μ f (Lindeberg.coord e) := by
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
     intro e _; rw [Finset.sum_mul]
-  
   have hbnd : ∑ e, (∑ k, revealmentMu μ (Tf k) e) * Lindeberg.cov μ f (Lindeberg.coord e)
       ≤ ∑ e, ((Fintype.card κ : ℝ) * D) * Lindeberg.cov μ f (Lindeberg.coord e) := by
     apply Finset.sum_le_sum
@@ -344,7 +211,6 @@ theorem frf_var_le_avg_treeReveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos
     have := hD e
     rw [one_div, inv_mul_le_iff₀ hκpos] at this
     linarith [this]
-  
   have hcomb : (Fintype.card κ : ℝ) * Lindeberg.var μ f
       ≤ ((Fintype.card κ : ℝ) * D) * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := by
     calc (Fintype.card κ : ℝ) * Lindeberg.var μ f
@@ -360,11 +226,7 @@ theorem frf_var_le_avg_treeReveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos
       _ = (Fintype.card κ : ℝ) * (D * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e)) := by ring
   exact le_of_mul_le_mul_left h2 hκpos
 
-
-
-
-
-theorem frf_avg_treeReveal_le_of_perScale {μ : ConfigSpace E → ℝ}
+lemma frf_avg_treeReveal_le_of_perScale {μ : ConfigSpace E → ℝ}
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree E)
     (R : κ → E → ℝ) (D : ℝ)
     (hreach : ∀ k e, revealmentMu μ (Tf k) e ≤ R k e)
@@ -377,34 +239,11 @@ theorem frf_avg_treeReveal_le_of_perScale {μ : ConfigSpace E → ℝ}
       ≤ ∑ k, R k e := Finset.sum_le_sum (fun k _ => hreach k e)
     _ ≤ (Fintype.card κ : ℝ) * D := hsum e
 
-
-
-
-
-
-
-
-
-
 section FKResidue
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem frf_fk_q2_cov_lower_bound_of_adaptiveFamily
+lemma frf_fk_q2_cov_lower_bound_of_adaptiveFamily
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree (Sym2 W))
     {f : ConfigSpace (Sym2 W) → ℝ} (hf : Monotone f)
@@ -433,16 +272,7 @@ theorem frf_fk_q2_cov_lower_bound_of_adaptiveFamily
 
 end FKResidue
 
-
-
-
-
-
-
-
-
-
-theorem frf_revealmentMu_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
+lemma frf_revealmentMu_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E) (e : E) :
     revealmentMu μ T e ≤ 1 := by
   unfold revealmentMu Lindeberg.mean
@@ -454,9 +284,7 @@ theorem frf_revealmentMu_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 �
         split <;> norm_num
     _ = 1 := by simp only [one_mul]; exact hμ1
 
-
-
-theorem frf_avg_treeReveal_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
+lemma frf_avg_treeReveal_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0 ≤ μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree E)
     (e : E) :
     (1 / (Fintype.card κ : ℝ)) * ∑ k, revealmentMu μ (Tf k) e ≤ 1 := by
@@ -467,13 +295,9 @@ theorem frf_avg_treeReveal_le_one {μ : ConfigSpace E → ℝ} (hμ0 : ∀ ω, 0
         Finset.sum_le_sum (fun k _ => frf_revealmentMu_le_one hμ0 hμ1 (Tf k) e)
     _ = (Fintype.card κ : ℝ) := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
-
-
-
-
-
-
-theorem frf_fk_q2_cov_lower_bound_adaptive_poincare {W : Type*} [Fintype W] [DecidableEq W]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+lemma frf_fk_q2_cov_lower_bound_adaptive_poincare {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {κ : Type*} [Fintype κ] [Nonempty κ] (Tf : κ → DecisionTree (Sym2 W))
     {f : ConfigSpace (Sym2 W) → ℝ} (hf : Monotone f)

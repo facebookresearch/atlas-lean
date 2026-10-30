@@ -6,37 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.MaxInfluenceHalf
 public import CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfBKKKL
 public import CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLImplications
 public import CSLibExt.Complexity.BooleanFunctions.KKL.FSRhoOptimise
+
+/-!
+# Maximal influence for biased product measures
+
+KKL-type lower bounds on the maximal influence under the `p`-biased product measure, with an
+explicit correction term and conditional sharp forms.
+
+## i. Overview
+
+`maxInfluence_pbiased_corrected` is unconditional; its constant involves the correction
+`pBiasedCorrection p ≤ 1/16`. The sharp forms are conditional: `maxInfluence_pbiased_of_absorbed`
+assumes the correction is absorbed (`hcorr`), `maxInfluence_pbiased_largeInfl` assumes a large
+maximal influence, `maxInfluence_pbiased_of_hypercontractive` assumes `p`-biased hypercontractivity,
+and `maxInfluence_qOne_compactWindow_of_bkkkl` assumes it on a window around `1/2`.
+
+## ii. Key results
+
+- `maxInfluence_pbiased_corrected`: corrected KKL bound (unconditional).
+- `maxInfluence_pbiased_of_hypercontractive`: sharp bound, conditional on hypercontractivity.
+- `maxInfluence_qOne_compactWindow_of_bkkkl`: bound on `[ε, 1 - ε]`, conditional on `p`-biased
+  hypercontractivity at `1 - ε/2`.
+
+## iii. Table of contents
+
+- A. Log-gain to maximal influence
+- B. Corrected bound
+- C. Conditional sharp bounds
+
+## iv. References
+
+* J. Kahn, G. Kalai, N. Linial, *The influence of variables on Boolean functions*, FOCS 1988.
+* M. Talagrand, *On Russo's approximate zero-one law*, Ann. Probab. 22 (1994).
+-/
 
 @[expose] public section
 
@@ -49,13 +57,9 @@ open StatMech ConfigSpace Probability OSSS TwoDim
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Log-gain to maximal influence -/
 
-
-
-
-
-
-theorem maxInfl_ge_scaled_var_mul_log_card_of_logGain [Nonempty E]
+lemma maxInfl_ge_scaled_var_mul_log_card_of_logGain [Nonempty E]
     {p c : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hc0 : 0 ≤ c) (hc2 : c ≤ 2)
     (φ : ConfigSpace E → Bool)
     (hgain : c * OSSS.var (OSSS.bernoulliWeight p)
@@ -164,35 +168,23 @@ theorem maxInfl_ge_scaled_var_mul_log_card_of_logGain [Nonempty E]
       have hmain : (c / 2) * V * Real.log n ≤ n * δ := hVlog.trans hKKL
       exact (div_le_iff₀ hn).2 (by simpa [mul_comm] using hmain)
 
+/-! ## B. Corrected bound -/
 
-
-
+/-- The correction term `(1 - 4 p (1 - p)) σ_p ²` in the `p`-biased KKL bound. -/
 noncomputable def pBiasedCorrection (p : ℝ) : ℝ :=
   (1 - 4 * p * (1 - p)) * (Probability.ptn_sigma p) ^ 2
 
-
-theorem pBiasedCorrection_nonneg {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+lemma pBiasedCorrection_nonneg {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     0 ≤ pBiasedCorrection p := by
   rw [pBiasedCorrection, Probability.ptn_sigma_sq hp0 hp1]
   exact mul_nonneg (by nlinarith [sq_nonneg (1 - 2 * p)]) (by nlinarith)
 
-
-
-theorem pBiasedCorrection_le_one_sixteenth {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+lemma pBiasedCorrection_le_one_sixteenth {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     pBiasedCorrection p ≤ 1 / 16 := by
   rw [pBiasedCorrection, Probability.ptn_sigma_sq hp0 hp1]
   nlinarith [sq_nonneg (p * (1 - p) - 1 / 8)]
 
-
-
-
-
-
-
-
-
-
-theorem maxInfl_pbiased_corrected [Nonempty E]
+lemma maxInfl_pbiased_corrected [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace E → Bool) :
     OSSS.var (OSSS.bernoulliWeight p)
           (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -330,10 +322,7 @@ theorem maxInfl_pbiased_corrected [Nonempty E]
         _ ≤ (n * δ) / n := div_le_div_of_nonneg_right hmain hn0
         _ = δ := by field_simp [hn.ne']
 
-
-
-
-
+/-- Corrected KKL bound (unconditional). -/
 theorem maxInfluence_pbiased_corrected [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (A : Set (ConfigSpace E)) :
     ∃ e : E,
@@ -351,10 +340,7 @@ theorem maxInfluence_pbiased_corrected [Nonempty E]
   rw [TwoDim.kklw_influence_eq_infl, he]
   exact hmax
 
-
-
-
-theorem maxInfluence_qOne_compactWindow [Nonempty E]
+lemma maxInfluence_qOne_compactWindow [Nonempty E]
     {ε p : ℝ} (hε0 : 0 < ε) (hp : p ∈ Set.Icc ε (1 - ε))
     (A : Set (ConfigSpace E)) :
     ∃ e : E,
@@ -366,11 +352,9 @@ theorem maxInfluence_qOne_compactWindow [Nonempty E]
   have hp1 : p < 1 := by linarith [hp.2, hε0]
   exact maxInfluence_pbiased_corrected hp0 hp1 A
 
+/-! ## C. Conditional sharp bounds -/
 
-
-
-
-theorem maxInfluence_pbiased_of_absorbed [Nonempty E]
+lemma maxInfluence_pbiased_of_absorbed [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (A : Set (ConfigSpace E))
     (hcorr : 2 * (1 - 4 * p * (1 - p)) * (Probability.ptn_sigma p) ^ 2
         * Real.log (1 / Probability.maxInfl (OSSS.bernoulliWeight p)
@@ -396,9 +380,7 @@ theorem maxInfluence_pbiased_of_absorbed [Nonempty E]
   rw [TwoDim.kklw_influence_eq_infl, he]
   simpa using hmax
 
-
-
-theorem maxInfluence_pbiased_largeInfl
+lemma maxInfluence_pbiased_largeInfl
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (A : Set (ConfigSpace E))
     (hlarge : Real.exp (-(1 / (2 * (p * (1 - p)))))
@@ -424,10 +406,7 @@ theorem maxInfluence_pbiased_largeInfl
   rw [TwoDim.kklw_influence_eq_infl, he]
   simpa using hmax
 
-
-
-
-theorem maxInfluence_pbiased_of_hypercontractive
+lemma maxInfluence_pbiased_of_hypercontractive
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (H : Probability.KKLHypercontractive p 2) (A : Set (ConfigSpace E)) :
@@ -452,16 +431,7 @@ theorem maxInfluence_pbiased_of_hypercontractive
   rw [TwoDim.kklw_influence_eq_infl, he]
   simpa using hmax
 
-
-
-
-
-
-
-
-
-
-theorem maxInfluence_qOne_compactWindow_of_bkkkl
+lemma maxInfluence_qOne_compactWindow_of_bkkkl
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     {ε p : ℝ} (hε0 : 0 < ε) (hp : p ∈ Set.Icc ε (1 - ε))
     (Hpb : Probability.kpb_PBiasedHC (1 - ε / 2))

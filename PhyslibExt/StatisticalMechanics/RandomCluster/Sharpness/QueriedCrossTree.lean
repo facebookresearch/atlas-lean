@@ -6,84 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PrefixCoversCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.SubcriticalDecayDischarged
+
+/-!
+# Covariance lower bound for the crossing tree of a product measure
+
+The covariance sum of the crossing indicator under a product measure is bounded below via the
+revealment of the crossing exploration tree.
+
+## i. Overview
+
+`covSum_ge_crossTree` combines the decision-tree OSSS inequality for product weights with the
+revealment bound of queried edges. It holds under the geometric embedding hypotheses only.
+
+## ii. Key results
+
+- `covSum_ge_crossTree`: covariance lower bound for the crossing tree.
+
+## iii. Table of contents
+
+- A. Covariance lower bound
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.unusedSectionVars false
-set_option linter.style.longLine false
 
 namespace StatMech
 
@@ -100,143 +57,18 @@ open StatMech.OSSS.PrefixCoversClose
 open StatMech.OSSS.CovLowerBound
 open StatMech.OSSS.SharpnessFK
 open StatMech.Lattice
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {V : Type*} [DecidableEq V]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem incidentCluster_of_queried_crossTree (endU endV : E → V) (o : V) (B C : Set V)
-    (l : List E) (disc₀ : Finset V) (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (ω : ConfigSpace E) (i : E)
-    (hi : i ∈ (crossTree endU endV o C l disc₀).queried ω) :
-    IncidentCluster endU endV ω B i :=
-  queried_crossTree_imp endU endV o B C l disc₀ hdisc₀ ω i hi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem reveal_crossTree_le_incidentCluster {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
-    (endU endV : E → V) (o : V) (B C : Set V) (l : List E) (disc₀ : Finset V)
-    (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (i : E) :
-    reveal ν (crossTree endU endV o C l disc₀) i
-      ≤ expect ν (fun ω => if ConnOpenSet endU endV ω (endU i) B then (1 : ℝ) else 0)
-        + expect ν (fun ω => if ConnOpenSet endU endV ω (endV i) B then (1 : ℝ) else 0) := by
-  have h := revealment_le_of_queried_imp_or hν (crossTree endU endV o C l disc₀) i
-    (fun ω => ConnOpenSet endU endV ω (endU i) B)
-    (fun ω => ConnOpenSet endU endV ω (endV i) B)
-    (fun ω hq => incidentCluster_of_queried_crossTree endU endV o B C l disc₀ hdisc₀ ω i hq)
-  rwa [Revealment.revealment] at h
-
-
-
-
-
-
-
 
 section Lattice
 
 variable {d : ℕ}
 
+/-! ## A. Covariance lower bound -/
 
-
-
-
-
-
-
-
-
-
-theorem reveal_crossTree_le_connBox {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
-    {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
-    {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
-    (hadj : ∀ e, (hypercubicLattice d).Adj (endU e) (endV e))
-    (o : Site d) (C : Set (Site d)) (k : ℕ) (l : List E) (disc₀ : Finset (Site d))
-    (hdisc₀ : ∀ x ∈ disc₀, x ∈ vertexBoundary d k) (i : E) :
-    reveal ν (crossTree endU endV o C l disc₀) i
-      ≤ expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU i) (vertexBoundary d k) then (1 : ℝ) else 0)
-        + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV i) (vertexBoundary d k) then (1 : ℝ) else 0) := by
-  refine le_trans
-    (reveal_crossTree_le_incidentCluster hν endU endV o (vertexBoundary d k) C l disc₀ hdisc₀ i) ?_
-  apply add_le_add
-  · exact expect_indicator_mono hν _ _
-      (fun ω hP => connOpenSet_imp_connectedToSet hinj hcoh hadj hP)
-  · exact expect_indicator_mono hν _ _
-      (fun ω hP => connOpenSet_imp_connectedToSet hinj hcoh hadj hP)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem covSum_ge_crossTree {n : ℕ} (hn : 1 ≤ n)
+open Classical in
+lemma covSum_ge_crossTree {n : ℕ} (hn : 1 ≤ n)
     {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
@@ -251,24 +83,24 @@ theorem covSum_ge_crossTree {n : ℕ} (hn : 1 ≤ n)
     (D : ℝ) (hDnn : 0 ≤ D)
     (hD : ∀ e,
       (∑ k ∈ Finset.Icc 1 n,
-        (expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary d k) then (1 : ℝ) else 0)
-          + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k) then (1 : ℝ) else 0))) ≤ D) :
+        (expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary d k) then
+            (1 : ℝ) else 0)
+          + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k)
+              then (1 : ℝ) else 0))) ≤ D) :
     (n : ℝ) * c₀
         * (expect ν ((crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 : ℝ)))
-            * (1 - expect ν ((crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 : ℝ)))))
-      ≤ D * ∑ e, cov ν (coordI e) ((crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 : ℝ))) := by
+            * (1 - expect ν ((crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 :
+                ℝ)))))
+      ≤ D * ∑ e, cov ν (coordI e) ((crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1
+          : ℝ))) := by
   classical
-  
-  haveI hne : Nonempty (↥(Finset.Icc 1 n)) :=
+  have hne : Nonempty (↥(Finset.Icc 1 n)) :=
     ⟨⟨1, by rw [Finset.mem_Icc]; exact ⟨le_refl 1, hn⟩⟩⟩
   set A : Set (ConfigSpace E) := crossEvent edge o (vertexBoundary d n) with hA0
-  
   have hAinc : IsIncreasing A := by
     rw [hA0]; unfold crossEvent; exact connectedToSet_increasing edge o (vertexBoundary d n)
-  
   set T : ↥(Finset.Icc 1 n) → DecisionTree E :=
     fun k => crossTree endU endV o (vertexBoundary d n) l (disc₀ (k : ℕ)) with hTdef
-  
   have hT : ∀ k, (T k).evalR = A.indicator (fun _ => (1 : ℝ)) := by
     intro k
     funext ω
@@ -281,28 +113,28 @@ theorem covSum_ge_crossTree {n : ℕ} (hn : 1 ≤ n)
     rw [hTdef]; rw [heval]
     by_cases hconn : ConnectedToSet d (liftCfg edge ω) o (vertexBoundary d n)
     · have hmem : ω ∈ A := by rw [hA0]; exact hconn
-      rw [if_pos hconn, Set.indicator_of_mem hmem]
+      rw [ite_eq_left hconn, Set.indicator_of_mem hmem]
     · have hmem : ω ∉ A := by rw [hA0]; exact hconn
-      rw [if_neg hconn, Set.indicator_of_notMem hmem]
-  
-  
+      rw [ite_eq_right hconn, Set.indicator_of_notMem hmem]
   set R : ↥(Finset.Icc 1 n) → E → ℝ :=
-    fun k e => expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary d (k : ℕ)) then (1 : ℝ) else 0)
-        + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d (k : ℕ)) then (1 : ℝ) else 0) with hRdef
+    fun k e => expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary d
+        (k : ℕ)) then (1 : ℝ) else 0)
+        + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d (k :
+            ℕ)) then (1 : ℝ) else 0) with hRdef
   have hR : ∀ k e, reveal ν (T k) e ≤ R k e := by
     intro k e
     rw [hTdef, hRdef]
-    exact reveal_crossTree_le_connBox (E := E) (d := d) hν hinj hcoh hadj o
+    exact StatMech.OSSS.reveal_crossTree_le_connected (E := E) (d := d) hν hinj hcoh hadj o
       (vertexBoundary d n) (k : ℕ) l (disc₀ (k : ℕ)) (hdisc₀sub (k : ℕ)) e
-  
   have hDsum : ∀ e, (∑ k, R k e) ≤ D := by
     intro e
     rw [hRdef,
       Finset.sum_coe_sort (Finset.Icc 1 n)
-        (fun k => expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary d k) then (1 : ℝ) else 0)
-            + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k) then (1 : ℝ) else 0))]
+        (fun k => expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endU e) (vertexBoundary
+            d k) then (1 : ℝ) else 0)
+            + expect ν (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k)
+                then (1 : ℝ) else 0))]
     exact hD e
-  
   have hcard : (Fintype.card (↥(Finset.Icc 1 n)) : ℝ) = n := by
     rw [Fintype.card_coe, Nat.card_Icc]
     have hsub : n + 1 - 1 = n := by omega

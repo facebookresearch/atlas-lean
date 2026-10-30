@@ -6,110 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveTau
+
+/-!
+# Adaptive OSSS from a step covariance bound
+
+The adaptive coupling of two configurations, the stopping time of the decision procedure, the
+truncation telescope, and the OSSS inequality under the step covariance bound `AdaptStepCovBound`.
+
+## i. Overview
+
+Coordinates are revealed in the order `σ`. `adaptWt` mixes two independent samples `U` and `V`, and
+`stopVal` is the first step at which `f` is determined. Telescoping the truncated indicators bounds
+the variance by the sum of step covariances. Under `AdaptStepCovBound` this gives `Var f ≤ ∑
+revealAdapt e · Cov(f, ω_e)`. The headlines `tree_osss_sharp_unconditional` and
+`fk_q2_osss_sharp_unconditional` are CONDITIONAL on `hStep : AdaptStepCovBound`, despite their names
+(rename proposed). This file is one step of the OSSS chain for monotonic measures:
+`AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration` (`AdaptCondBBB` ⇒
+`AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
+`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
+unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `var_le_trunc_telescope`: variance bounded by the truncation telescope.
+- `tree_osss_sharp_unconditional`: OSSS, conditional on `hStep : AdaptStepCovBound μ σ f`.
+
+## iii. Table of contents
+
+- A. Adaptive coupling and stopping
+- B. Truncation telescope
+- C. Revealment and the step bound
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -122,24 +65,15 @@ open StatMech.Probability OSSS.LindebergTree OSSS.AdaptiveTau
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Adaptive coupling and stopping -/
 
-
-
-
-
-
-
-
-
+/-- The vector equal to `U` on coordinates `< m` and to `V` elsewhere. -/
 def mixUV {n : ℕ} (U V : Fin n → ℝ) (m : ℕ) : Fin n → ℝ :=
   fun i => if (i : ℕ) < m then U i else V i
 
-
-
+/-- The adaptive mixture at steps `t ≤ m`: `V` before `t`, `U` on `[t, m)`, and `V` after `m`. -/
 def adaptWt {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) : Fin n → ℝ :=
   fun i => if (i : ℕ) < t then V i else if (i : ℕ) < m then U i else V i
-
-
 
 lemma adaptWt_eq_Wt_mix {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) :
     adaptWt U V m t = Wt (mixUV U V m) V t := by
@@ -149,16 +83,13 @@ lemma adaptWt_eq_Wt_mix {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) :
   · simp [ht]
   · simp [ht]
 
-
 lemma adaptWt_zero {n : ℕ} (U V : Fin n → ℝ) (m : ℕ) :
     adaptWt U V m 0 = mixUV U V m := by
   funext i; unfold adaptWt mixUV; simp
 
-
 lemma adaptWt_card {n : ℕ} (U V : Fin n → ℝ) (m : ℕ) :
     adaptWt U V m n = V := by
   funext i; unfold adaptWt; simp [i.2]
-
 
 lemma adaptWt_ge_stop {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) (htm : m ≤ t) :
     adaptWt U V m t = V := by
@@ -168,7 +99,6 @@ lemma adaptWt_ge_stop {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) (htm : m ≤ t
   · simp [ht]
   · have : ¬ (i : ℕ) < m := by omega
     simp [ht, this]
-
 
 lemma adaptWt_agree_off {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) (ht : 1 ≤ t) :
     ∀ i : Fin n, (i : ℕ) ≠ t - 1 → adaptWt U V m t i = adaptWt U V m (t-1) i := by
@@ -180,33 +110,24 @@ lemma adaptWt_agree_off {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) (ht : 1 ≤ 
   · have h' : ¬ (i : ℕ) < t - 1 := by omega
     simp [h, h']
 
-
 lemma adaptWt_at_pos {n : ℕ} (U V : Fin n → ℝ) (m t : ℕ) (ht : 1 ≤ t) (htm : t ≤ m)
     (htn : t - 1 < n) :
     adaptWt U V m t ⟨t-1, htn⟩ = V ⟨t-1, htn⟩ ∧ adaptWt U V m (t-1) ⟨t-1, htn⟩ = U ⟨t-1, htn⟩ := by
   unfold adaptWt
   refine ⟨?_, ?_⟩
-  · have h : (⟨t-1, htn⟩ : Fin n).val < t := by show t - 1 < t; omega
+  · have h : (⟨t-1, htn⟩ : Fin n).val < t := by change t - 1 < t; omega
     simp [h]
-  · have h1 : ¬ (⟨t-1, htn⟩ : Fin n).val < t - 1 := by show ¬ t - 1 < t - 1; exact lt_irrefl _
-    have h2 : (⟨t-1, htn⟩ : Fin n).val < m := by show t - 1 < m; omega
-    simp only [h1, if_false, h2, if_true]
+  · have h1 : ¬ (⟨t-1, htn⟩ : Fin n).val < t - 1 := by change ¬ t - 1 < t - 1; exact lt_irrefl _
+    have h2 : (⟨t-1, htn⟩ : Fin n).val < m := by change t - 1 < m; omega
+    simp only [h1, ite_false, h2, ite_true]
 
-
-
-
-
-
-
-
-
-
-
+/-- The function `f` is determined by the first `t` coordinates of `X` in the order `σ`. -/
 def detAtC {n : ℕ} (σ : Fin n → E) (f : ConfigSpace E → ℝ) (X : ConfigSpace E) (t : ℕ) :
     Prop :=
   ∀ w : ConfigSpace E, (∀ e ∈ prefixSet σ t, w e = X e) → f w = f X
 
-
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
 lemma detAtC_card {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) (X : ConfigSpace E) :
     detAtC (σ : Fin n → E) f X n := by
   intro w hw
@@ -214,50 +135,34 @@ lemma detAtC_card {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) (X : 
     intro e; exact hw e (by rw [prefixSet_card σ]; exact Finset.mem_univ e)
   rw [funext hall]
 
-
-
+/-- Determinacy at step `t` is decidable. -/
 noncomputable instance detAtC_decPred {n : ℕ} (σ : Fin n → E) (f : ConfigSpace E → ℝ)
     (X : ConfigSpace E) : DecidablePred (detAtC σ f X) :=
   fun t => Classical.propDecidable (detAtC σ f X t)
 
-
-
+/-- The first step at which `f` is determined on the configuration `X`. -/
 noncomputable def stopValC {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (X : ConfigSpace E) : ℕ :=
   Nat.find (⟨n, detAtC_card σ f X⟩ : ∃ t, detAtC (σ : Fin n → E) f X t)
 
-
-
-
+/-- The stopping step of the revealment procedure on the coupled sample `U`. -/
 noncomputable def stopVal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) : ℕ :=
   stopValC σ f (codeMap μ (σ : Fin n → E) U)
-
 
 lemma stopVal_eq_stopValC (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) :
     stopVal μ σ f U = stopValC σ f (codeMap μ (σ : Fin n → E) U) := rfl
 
-
 lemma stopVal_le (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (U : Fin n → ℝ) : stopVal μ σ f U ≤ n :=
   Nat.find_le (detAtC_card σ f (codeMap μ (σ : Fin n → E) U))
-
-
 
 lemma stopVal_determines (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) :
     detAtC (σ : Fin n → E) f (codeMap μ (σ : Fin n → E) U) (stopVal μ σ f U) :=
   Nat.find_spec (⟨n, detAtC_card σ f (codeMap μ (σ : Fin n → E) U)⟩ :
     ∃ t, detAtC (σ : Fin n → E) f (codeMap μ (σ : Fin n → E) U) t)
-
-
-
-
-
-
-
-
 
 lemma codeMap_agree_on_prefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (w w' : Fin n → ℝ) (k : ℕ)
@@ -267,7 +172,6 @@ lemma codeMap_agree_on_prefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n
   intro e he
   rw [mem_prefixSet_iff] at he
   obtain ⟨i, hik, rfl⟩ := he
-  
   have hstab : ∀ v : Fin n → ℝ,
       codeMap μ (σ : Fin n → E) v ((σ : Fin n → E) i)
         = codePrefix μ (σ : Fin n → E) v (i + 1) ((σ : Fin n → E) i) := by
@@ -277,56 +181,29 @@ lemma codeMap_agree_on_prefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n
       ((σ : Fin n → E) i)
       (by rw [mem_prefixSet_iff]; exact ⟨i, Nat.lt_succ_self _, rfl⟩)
   rw [hstab w, hstab w']
-  
   have hi1k : i + 1 ≤ k := by omega
   rw [codePrefix_congr_of_agree μ (σ : Fin n → E) w w' (i + 1) (by omega)
     (fun j hj => hagree j (by omega))]
 
-
-
-
-
-
-
-
-
-
-
-
-theorem f_adapt_zero_eq {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
+lemma f_adapt_zero_eq {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (U V : Fin n → ℝ) :
     f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) 0))
       = f (codeMap μ (σ : Fin n → E) U) := by
   set m := stopVal μ σ f U with hm
   rw [adaptWt_zero]
-  
   have hagree : ∀ i : Fin n, (i : ℕ) < m → (mixUV U V m) i = U i := by
     intro i hi; unfold mixUV; simp [hi]
-  
   have hpref : ∀ e ∈ prefixSet (σ : Fin n → E) m,
       codeMap μ (σ : Fin n → E) (mixUV U V m) e = codeMap μ (σ : Fin n → E) U e :=
     codeMap_agree_on_prefix μ σ (mixUV U V m) U m hagree
-  
   exact stopVal_determines μ σ f U (codeMap μ (σ : Fin n → E) (mixUV U V m)) hpref
 
-
-
-
-theorem adapt_step_eq_of_gt_stop {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
+lemma adapt_step_eq_of_gt_stop {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (U V : Fin n → ℝ) (t : ℕ) (ht : stopVal μ σ f U < t) :
     codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) t)
       = codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) (t - 1)) := by
   set m := stopVal μ σ f U with hm
   rw [adaptWt_ge_stop U V m t (by omega), adaptWt_ge_stop U V m (t - 1) (by omega)]
-
-
-
-
-
-
-
-
-
 
 lemma measurable_stopVal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) :
@@ -336,17 +213,13 @@ lemma measurable_stopVal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ 
   rw [this]
   exact (measurable_of_countable _).comp (measurable_codeMap μ σ)
 
-
-
 lemma measurable_mixUV {n : ℕ} (m : ℕ) :
     Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) => mixUV p.1 p.2 m) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i; unfold mixUV
   by_cases h : (i : ℕ) < m
-  · simp only [h, if_true]; exact (measurable_pi_apply i).comp measurable_fst
-  · simp only [h, if_false]; exact (measurable_pi_apply i).comp measurable_snd
-
-
+  · simp only [h, ite_true]; exact (measurable_pi_apply i).comp measurable_fst
+  · simp only [h, ite_false]; exact (measurable_pi_apply i).comp measurable_snd
 
 lemma measurable_adaptWt_fixed {n : ℕ} (m s : ℕ) :
     Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) => adaptWt p.1 p.2 m s) := by
@@ -354,57 +227,34 @@ lemma measurable_adaptWt_fixed {n : ℕ} (m s : ℕ) :
       = (fun p => Wt (mixUV p.1 p.2 m) p.2 s) := by
     funext p; rw [adaptWt_eq_Wt_mix]
   rw [hrw]
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i; unfold Wt
   by_cases h : (i : ℕ) < s
-  · simp only [h, if_true]; exact (measurable_pi_apply i).comp measurable_snd
-  · simp only [h, if_false]
+  · simp only [h, ite_true]; exact (measurable_pi_apply i).comp measurable_snd
+  · simp only [h, ite_false]
     exact (measurable_pi_apply i).comp (measurable_mixUV m)
-
-
-
 
 lemma measurable_g_adaptWt (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (g : ConfigSpace E → ℝ) (s : ℕ) :
     Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
         g (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s))) := by
-  
   have hstop : Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) => stopVal μ σ f p.1) :=
     (measurable_stopVal μ σ f).comp measurable_fst
-  
-  
   have key : ∀ m : ℕ, Measurable (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
       g (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 m s))) :=
     fun m => (measurable_g_codeMap μ σ g).comp (measurable_adaptWt_fixed m s)
-  
   have hglue : Measurable (fun mp : ℕ × ((Fin n → ℝ) × (Fin n → ℝ)) =>
       g (codeMap μ (σ : Fin n → E) (adaptWt mp.2.1 mp.2.2 mp.1 s))) :=
     measurable_from_prod_countable_right key
   exact hglue.comp (hstop.prodMk measurable_id)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem var_le_adapt_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma var_le_adapt_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f
       ≤ (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) 0))
             - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) n))|
             ∂((Vcube n).prod (Vcube n)) := by
-  
   have hpt : (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
         |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) 0))
           - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) n))|)
@@ -415,24 +265,17 @@ theorem var_le_adapt_first_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
   rw [hpt]
   exact var_le_grandCoupling_first_step hpos hμ1 σ hf0 hf1
 
+/-! ## B. Truncation telescope -/
 
-
-
-
-
-
-
-
-
+/-- The indicator that the procedure has not stopped before step `t`, times the truncated increment
+  of `f`. -/
 noncomputable def truncInd (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (t : ℕ) : ℝ :=
   if t ≤ stopVal μ σ f U then (1 : ℝ) else 0
 
-
 lemma truncInd_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (t : ℕ) : |truncInd μ σ f U t| ≤ 1 := by
   unfold truncInd; split <;> norm_num
-
 
 lemma measurable_truncInd (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) :
@@ -440,10 +283,6 @@ lemma measurable_truncInd (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃
   unfold truncInd
   exact Measurable.ite (measurableSet_le measurable_const (measurable_stopVal μ σ f))
     measurable_const measurable_const
-
-
-
-
 
 lemma abs_adapt_step_eq_mul_truncInd {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (U V : Fin n → ℝ) (t : ℕ) :
@@ -454,15 +293,12 @@ lemma abs_adapt_step_eq_mul_truncInd {μ : ConfigSpace E → ℝ} {n : ℕ} (σ 
         * truncInd μ σ f U (t + 1) := by
   unfold truncInd
   by_cases ht : t + 1 ≤ stopVal μ σ f U
-  · rw [if_pos ht, mul_one]
-  · 
-    rw [if_neg ht, mul_zero]
+  · rw [ite_eq_left ht, mul_one]
+  · rw [ite_eq_right ht, mul_zero]
     have hgt : stopVal μ σ f U < t + 1 := by omega
     have heq := adapt_step_eq_of_gt_stop σ U V (t + 1) hgt
     simp only [Nat.add_sub_cancel] at heq
     rw [heq, sub_self, abs_zero]
-
-
 
 lemma integrable_abs_adapt_step (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (s₁ s₂ : ℕ) :
@@ -479,9 +315,10 @@ lemma integrable_abs_adapt_step (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin
           - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s₂))|
       ≤ |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s₁))|
         + |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s₂))| := abs_sub _ _
-    _ ≤ 2*Cf := by linarith [hfC (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s₁)),
-                              hfC (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s₂))]
-
+    _ ≤ 2*Cf := by linarith [hfC (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1)
+        s₁)),
+                              hfC (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1)
+                                  s₂))]
 
 lemma integrable_abs_adapt_step_trunc (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (t : ℕ) :
@@ -490,7 +327,6 @@ lemma integrable_abs_adapt_step_trunc (μ : ConfigSpace E → ℝ) {n : ℕ} (σ
           - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) t))|
         * truncInd μ σ f p.1 (t + 1))
       ((Vcube n).prod (Vcube n)) := by
-  
   have hpt : (fun p : (Fin n → ℝ) × (Fin n → ℝ) =>
         |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) (t+1)))
           - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) t))|
@@ -501,16 +337,7 @@ lemma integrable_abs_adapt_step_trunc (μ : ConfigSpace E → ℝ) {n : ℕ} (σ
   rw [hpt]
   exact integrable_abs_adapt_step μ σ hfC (t+1) t
 
-
-
-
-
-
-
-
-
-
-theorem trunc_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
+lemma trunc_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) :
     (∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) 0))
             - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) n))|
@@ -525,10 +352,10 @@ theorem trunc_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E
   apply integral_mono (integrable_abs_adapt_step μ σ hfC 0 n)
   · apply integrable_finsetSum; intro t _; exact integrable_abs_adapt_step_trunc μ σ hfC t
   · intro p
-    set F : ℕ → ℝ := fun s => f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s)) with hF
-    show |F 0 - F n| ≤ ∑ t ∈ Finset.range n,
+    set F : ℕ → ℝ := fun s => f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) s))
+        with hF
+    change |F 0 - F n| ≤ ∑ t ∈ Finset.range n,
         |F (t+1) - F t| * truncInd μ σ f p.1 (t + 1)
-    
     have hcollapse : ∀ t, |F (t+1) - F t| * truncInd μ σ f p.1 (t + 1) = |F (t+1) - F t| := by
       intro t; rw [← abs_adapt_step_eq_mul_truncInd σ p.1 p.2 t]
     simp_rw [hcollapse]
@@ -538,31 +365,7 @@ theorem trunc_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n ≃ E
     refine (Finset.abs_sum_le_sum_abs _ _).trans (le_of_eq ?_)
     apply Finset.sum_congr rfl; intro t _; rw [abs_sub_comm]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem var_le_trunc_telescope {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma var_le_trunc_telescope {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f
@@ -577,24 +380,13 @@ theorem var_le_trunc_telescope {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < 
   refine (var_le_adapt_first_step hpos hμ1 σ hf0 hf1).trans ?_
   exact mul_le_mul_of_nonneg_left (trunc_telescope σ hfC) (by norm_num : (0:ℝ) ≤ 1/2)
 
+/-! ## C. Revealment and the step bound -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The revealment of coordinate `e`: the probability that the adaptive procedure reveals `e` before
+  stopping. -/
 noncomputable def revealAdapt (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (e : E) : ℝ :=
   ∫ p, truncInd μ σ f p.1 ((σ.symm e : ℕ) + 1) ∂((Vcube n).prod (Vcube n))
-
-
 
 lemma integrable_truncInd (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) :
@@ -604,30 +396,8 @@ lemma integrable_truncInd (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃
     ((measurable_truncInd μ σ f t).comp measurable_fst) (C := 1)
     (fun p => truncInd_le_one μ σ f p.1 t)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The step covariance bound: each step of the truncation telescope is bounded by the revealment-
+  weighted covariance. -/
 def AdaptStepCovBound (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) : Prop :=
   ∀ (t : ℕ) (htn : t < n),
@@ -637,21 +407,6 @@ def AdaptStepCovBound (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
       ≤ 2 * (Lindeberg.cov μ f (Lindeberg.coord ((σ : Fin n → E) ⟨t, htn⟩))
           * ∫ p, truncInd μ σ f p.1 (t + 1) ∂((Vcube n).prod (Vcube n)))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 lemma integral_truncInd_eq_reveal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (i : Fin n) :
     (∫ p, truncInd μ σ f p.1 ((i : ℕ) + 1) ∂((Vcube n).prod (Vcube n)))
@@ -659,27 +414,13 @@ lemma integral_truncInd_eq_reveal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : F
   unfold revealAdapt
   rw [Equiv.symm_apply_apply]
 
-
-
-
-
-
-
-
-
-
-
-
-theorem tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) (hStep : AdaptStepCovBound μ σ f) :
     Lindeberg.var μ f
       ≤ ∑ e, revealAdapt μ σ f e * Lindeberg.cov μ f (Lindeberg.coord e) := by
-  
   refine (var_le_trunc_telescope hpos hμ1 σ hf0 hf1).trans ?_
-  
   rw [Finset.mul_sum]
-  
   have hstepbnd : ∀ i : Fin n,
       (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) ((i:ℕ)+1)))
               - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) (i:ℕ)))|
@@ -691,8 +432,8 @@ theorem tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ �
     have hi : (⟨(i:ℕ), i.2⟩ : Fin n) = i := Fin.ext rfl
     rw [hi] at hb
     rw [integral_truncInd_eq_reveal μ σ f i] at hb
-    
-    have : (1/2 : ℝ) * (∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) ((i:ℕ)+1)))
+    have : (1/2 : ℝ) * (∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1)
+        ((i:ℕ)+1)))
               - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) (i:ℕ)))|
               * truncInd μ σ f p.1 ((i:ℕ) + 1) ∂((Vcube n).prod (Vcube n)))
         ≤ (1/2) * (2 * (Lindeberg.cov μ f (Lindeberg.coord ((σ : Fin n → E) i))
@@ -710,7 +451,8 @@ theorem tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ �
                 - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) t))|
                 * truncInd μ σ f p.1 (t + 1) ∂((Vcube n).prod (Vcube n))
       = ∑ i : Fin n,
-          (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) ((i:ℕ)+1)))
+          (1/2) * ∫ p, |f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1)
+              ((i:ℕ)+1)))
                   - f (codeMap μ (σ : Fin n → E) (adaptWt p.1 p.2 (stopVal μ σ f p.1) (i:ℕ)))|
                   * truncInd μ σ f p.1 ((i:ℕ) + 1) ∂((Vcube n).prod (Vcube n)) := by
         rw [Finset.sum_range (fun t =>
@@ -723,30 +465,11 @@ theorem tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ �
     _ = ∑ e, revealAdapt μ σ f e * Lindeberg.cov μ f (Lindeberg.coord e) :=
         Equiv.sum_comp σ (fun e => revealAdapt μ σ f e * Lindeberg.cov μ f (Lindeberg.coord e))
 
-
-
-
-
-
-
-
-
-
 section FK
 
 open StatMech.OSSS.MonotonicFK
 
-
-
-
-
-
-
-
-
-
-
-theorem fk_q2_osss_sharp_unconditional {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_q2_osss_sharp_unconditional {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) {f : ConfigSpace (Sym2 V) → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)

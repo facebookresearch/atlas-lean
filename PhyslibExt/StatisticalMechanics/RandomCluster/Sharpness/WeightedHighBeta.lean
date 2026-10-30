@@ -6,19 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedThreshold
 public import PhyslibExt.CondensedMatter.IsingModel.FKRepresentation.PcUpperAllDimensions
+
+/-!
+# Percolation of weighted phases at large β
+
+Monotonicity of weighted measures in the parameters, comparison with the homogeneous random-cluster
+model, and existence of a high-β witness for `d ≥ 2`.
+
+## i. Overview
+
+Larger edge parameters give stochastically larger measures (`bcProbW_mono_params`). With `J ≥ J_min`
+the homogeneous `θ(p)` at `p = 1 - exp(-β J_min)` bounds the weighted infinite-volume `θ` from below
+(`fkTheta_le_weightedPhaseInfiniteTheta`). Since the homogeneous model percolates for large `p` when
+`d ≥ 2`, a high-β witness exists (`exists_weightedSelectedPhaseHighBetaWitness_of_two_le`),
+unconditionally for `q ≥ 1` and `J ≥ J_min > 0`. The `Weighted*` files extend the OSSS sharpness
+argument to random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map
+`phase : Site d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how
+translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `fkTheta_le_weightedPhaseInfiniteTheta`: comparison with the homogeneous model.
+- `exists_weightedSelectedPhaseHighBetaWitness_of_two_le`: a high-β witness exists for `d ≥ 2`
+  (unconditional).
+
+## iii. Table of contents
+
+- A. Monotonicity in the parameters
+- B. Comparison and high β
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -29,9 +58,9 @@ open MeasureTheory
 namespace StatMech
 namespace FK
 
+/-! ## A. Monotonicity in the parameters -/
 
-
-theorem edgeProductW_cross_params
+lemma edgeProductW_cross_params
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {pf1 pf2 : Sym2 V -> Real}
@@ -57,7 +86,7 @@ theorem edgeProductW_cross_params
     all_goals simp
     all_goals nlinarith [hle e]
 
-theorem bcWeightW_cross_params
+lemma bcWeightW_cross_params
     {V : Type*} [Fintype V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf1 pf2 : Sym2 V -> Real}
@@ -98,7 +127,7 @@ theorem bcWeightW_cross_params
           (edgeProductW G pf2 (a ⊔ b) * q ^ numClustersBC G C (a ⊔ b)) := by
       ring
 
-theorem bcProbW_mono_params
+lemma bcProbW_mono_params
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf1 pf2 : Sym2 V -> Real}
@@ -130,7 +159,7 @@ theorem bcProbW_mono_params
       bcProbW_sum_eq_one G C hpf2 hpf2' hq0]
   · exact hcross
 
-theorem bcProbW_const
+lemma bcProbW_const
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     (p q : Real) (omega : ConfigSpace (Sym2 V)) :
@@ -138,7 +167,9 @@ theorem bcProbW_const
   classical
   congr 1
 
-theorem wiredFinite_shell_le_weightedPhaseFinite
+/-! ## B. Comparison and high β -/
+
+lemma wiredFinite_shell_le_weightedPhaseFinite
     (d k R : Nat) (hkR : k <= R) {P : Type*}
     (phaseJ : P -> Sym2 (Lattice.Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e)
@@ -204,7 +235,7 @@ theorem wiredFinite_shell_le_weightedPhaseFinite
       exact OSSS.FKSharpnessWeightedCoherentLimit.weightedPhaseFiniteMeasure_shell_eq
         d hkR phaseJ a hJ q beta (zero_lt_one.trans_le hq) hbeta
 
-theorem fkTheta_le_weightedPhaseInfiniteTheta
+lemma fkTheta_le_weightedPhaseInfiniteTheta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Lattice.Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e)
@@ -281,12 +312,12 @@ end FK
 namespace OSSS
 namespace FKSharpnessWeightedHighBeta
 
-open Lattice FK
+open StatMech.Lattice FK
 open FKSharpnessWeightedPeriodic
 open FKSharpnessWeightedInfiniteVolume
 open FKSharpnessWeightedThreshold
 
-theorem phaseCoupling_lower
+lemma phaseCoupling_lower
     {d : Nat} {P : Type*}
     {J : Sym2 (Site d) -> Real} {phase : Site d -> P}
     {phaseJ : P -> Sym2 (Site d) -> Real}
@@ -299,9 +330,7 @@ theorem phaseCoupling_lower
   rw [← hcov x e]
   exact hJlo _
 
-
-
-theorem exists_weightedSelectedPhaseSum_pos_of_two_le
+lemma exists_weightedSelectedPhaseSum_pos_of_two_le
     (d : Nat) (hd : 2 <= d) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin : Real) (hJmin : 0 < Jmin)
@@ -345,7 +374,7 @@ theorem exists_weightedSelectedPhaseSum_pos_of_two_le
         (zero_lt_one.trans_le hq) a betaStar := by
     intro a
     unfold weightedPhaseThetaProfile
-    rw [dif_pos hbetaStar]
+    rw [dite_eq_left hbetaStar]
     exact htheta.trans_le (FK.fkTheta_le_weightedPhaseInfiniteTheta
       d phaseJ a (hpPhase a) Jmin (hloPhase a)
         q betaStar p hq hbetaStar hp hp1 hparam.ge)
@@ -353,8 +382,7 @@ theorem exists_weightedSelectedPhaseSum_pos_of_two_le
   unfold weightedSelectedPhaseSum
   exact Finset.sum_pos (fun a ha => hphase a) Finset.univ_nonempty
 
-
-
+/-- A high-β witness exists for `d ≥ 2` (unconditional). -/
 theorem exists_weightedSelectedPhaseHighBetaWitness_of_two_le
     (d : Nat) (hd : 2 <= d) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)

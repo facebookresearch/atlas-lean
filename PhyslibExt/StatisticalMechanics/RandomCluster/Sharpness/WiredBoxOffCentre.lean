@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.CenteredFirstHit
@@ -18,27 +13,63 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxLo
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreDomination
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TranslationInvarianceFromHomogeneity
 
+/-!
+# Off-centre connections in the wired box
+
+Off-centre connection probabilities in the doubled wired box are bounded by centered crossing
+probabilities; this removes the comparison hypothesis and gives the sharp differential inequality.
+
+## i. Overview
+
+Translated and centered shell events have the same mass (`transShellEvent_mass_eq_centered`). The
+domain Markov property dominates the translated shell inside the doubled box
+(`transShellEvent_domain_dominated`). Hence `wiredOuterInnerConn ≤ wiredOuterInnerTheta`
+(`wiredOuterInner_strictTranslationComparison`), and the denominator is at most `8 Σ`
+(`wiredOuterInnerDenom_le_eight_sig`). The headline `wired_outer_inner_differential_uniform_box`,
+`exp(-β₀)^{2d} θ / (8 Σ / n) ≤ θ'`, is unconditional for `q ≥ 1`, `0 < β ≤ β₀`.
+
+## ii. Key results
+
+- `wiredOuterInner_strictTranslationComparison`: off-centre ≤ centered (unconditional).
+- `wired_outer_inner_differential_uniform_box`: the sharp differential inequality (unconditional).
+
+## iii. Table of contents
+
+- A. Shell events
+- B. Inner and outer crossings
+- C. Translation comparison
+- D. Sharp differential inequalities
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace StatMech
 namespace OSSS
 namespace WiredBoxOffCentre
 
-open Lattice IsingFK RevealmentConstruction TreeComplete RevealmentTranslation CenteredFirstHit
+open StatMech.Lattice IsingFK RevealmentConstruction TreeComplete
+open RevealmentTranslation CenteredFirstHit
 open FK
 open WiredBoxLocalized
 
-theorem centeredRadius_zero {d : Nat} (y : Site d) :
+/-! ## A. Shell events -/
+
+lemma centeredRadius_zero {d : Nat} (y : Site d) :
     centeredRadius 0 y = siteRadius y := by
   unfold centeredRadius
   congr 1
   funext i
   simp
 
-
-
+/-- The inclusion of the open subgraph inside the centered box of radius `m` into the open subgraph
+  of the box of radius `R`. -/
 noncomputable def zeroWithinToBoxHom (d m R : Nat) (hmR : m <= R)
     (omega : ConfigSpace (Sym2 (Site d))) :
     openSubgraphInduce d omega (centeredClosedBox (0 : Site d) m) →g
@@ -52,12 +83,12 @@ noncomputable def zeroWithinToBoxHom (d m R : Nat) (hmR : m <= R)
     apply boxGraph_open_of_openSubgraph R omega
     exact hyz
 
-@[simp] theorem zeroWithinToBoxHom_val (d m R : Nat) (hmR : m <= R)
+@[simp] lemma zeroWithinToBoxHom_val (d m R : Nat) (hmR : m <= R)
     (omega : ConfigSpace (Sym2 (Site d)))
     (y : centeredClosedBox (0 : Site d) m) :
     ((zeroWithinToBoxHom d m R hmR omega y : boxVerts d R) : Site d) = y := rfl
 
-@[simp] theorem zeroWithinToBoxHom_origin (d m R : Nat) (hmR : m <= R)
+@[simp] lemma zeroWithinToBoxHom_origin (d m R : Nat) (hmR : m <= R)
     (omega : ConfigSpace (Sym2 (Site d))) :
     zeroWithinToBoxHom d m R hmR omega
         ⟨(0 : Site d), center_mem_centeredClosedBox 0 m⟩ =
@@ -65,14 +96,14 @@ noncomputable def zeroWithinToBoxHom (d m R : Nat) (hmR : m <= R)
   apply Subtype.ext
   rfl
 
-
+/-- The center `x` of the translated box, as a vertex of it. -/
 def transBoxCenter (d R : Nat) (x : Site d) : fvs_transBoxVerts d R x :=
   ⟨x, by
-    show (x - x) ∈ box d R
+    change (x - x) ∈ box d R
     simp⟩
 
-
-
+/-- The event that the center of the translated box of radius `2k` around `x` reaches distance
+  `k`. -/
 def transShellEvent (d k : Nat) (x : Site d) :
     Set (ConfigSpace (Sym2 (fvs_transBoxVerts d (2 * k) x))) :=
   {rho | ∃ y : fvs_transBoxVerts d (2 * k) x,
@@ -80,7 +111,7 @@ def transShellEvent (d k : Nat) (x : Site d) :
     (openSub (fvs_transBoxGraph d (2 * k) x) rho).Reachable
       (transBoxCenter d (2 * k) x) y}
 
-
+/-- The event that the origin of the box of radius `2k` reaches distance `k`. -/
 def centeredShellEvent (d k : Nat) :
     Set (ConfigSpace (Sym2 (boxVerts d (2 * k)))) :=
   {rho | ∃ y : boxVerts d (2 * k),
@@ -88,21 +119,19 @@ def centeredShellEvent (d k : Nat) :
     (openSub (boxGraph d (2 * k)) rho).Reachable
       (IsingFK.boxOrigin d (2 * k)) y}
 
-theorem transShellEvent_increasing (d k : Nat) (x : Site d) :
+lemma transShellEvent_increasing (d k : Nat) (x : Site d) :
     IsIncreasing (transShellEvent d k x) := by
   intro rho eta hle hrho
   obtain ⟨y, hy, hreach⟩ := hrho
   exact ⟨y, hy, hreach.mono (openSub_mono _ hle)⟩
 
-theorem centeredShellEvent_increasing (d k : Nat) :
+lemma centeredShellEvent_increasing (d k : Nat) :
     IsIncreasing (centeredShellEvent d k) := by
   intro rho eta hle hrho
   obtain ⟨y, hy, hreach⟩ := hrho
   exact ⟨y, hy, hreach.mono (openSub_mono _ hle)⟩
 
-
-
-theorem centeredShellEvent_eq_connToBdryEventLE (d k : Nat) (hk1 : 1 <= k) :
+lemma centeredShellEvent_eq_connToBdryEventLE (d k : Nat) (hk1 : 1 <= k) :
     centeredShellEvent d k = connToBdryEventLE d (n_le_two_mul k) := by
   ext rho
   let omega : ConfigSpace (Sym2 (Site d)) := extendEdge d (2 * k) rho
@@ -161,9 +190,7 @@ theorem centeredShellEvent_eq_connToBdryEventLE (d k : Nat) (hk1 : 1 <= k) :
       rwa [centeredRadius_zero] at hz
     · simpa [houter, hom] using hreachOuter
 
-
-
-theorem openSub_boxRestrict_liftActive_eq (d R : Nat)
+lemma openSub_boxRestrict_liftActive_eq (d R : Nat)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     openSub (boxGraph d R)
         (boxRestrict d R
@@ -202,9 +229,8 @@ theorem openSub_boxRestrict_liftActive_eq (d R : Nat)
     rw [← hedge, hlift]
     exact hopen
 
-
-
-theorem activeCrossInd_eq_connToBdry_indicator
+open Classical in
+lemma activeCrossInd_eq_connToBdry_indicator
     (d R : Nat) (hR : 1 <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     AdaptiveCovLowerGeom.crossIndG
@@ -264,13 +290,10 @@ theorem activeCrossInd_eq_connToBdry_indicator
     (if ConnToBdry (boxGraph d R) (boxBoundary d R) rho
       (IsingFK.boxOrigin d R) then 1 else 0)
   by_cases h : ConnectedToSet d omega 0 (vertexBoundary d R)
-  · rw [if_pos h, if_pos (hevent.mp h)]
-  · rw [if_neg h, if_neg (fun hc => h (hevent.mpr hc))]
+  · rw [ite_eq_left h, ite_eq_left (hevent.mp h)]
+  · rw [ite_eq_right h, ite_eq_right (fun hc => h (hevent.mpr hc))]
 
-
-
-
-theorem restrictActive_boxRestrictLE (d : Nat) {r R : Nat} (hrR : r <= R)
+lemma restrictActive_boxRestrictLE (d : Nat) {r R : Nat} (hrR : r <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     restrictConfig (WiredBoxLocalized.boxActiveEdgeLE d hrR)
         (restrictActive (boxGraph d R) rho) =
@@ -278,7 +301,7 @@ theorem restrictActive_boxRestrictLE (d : Nat) {r R : Nat} (hrR : r <= R)
   funext e
   rfl
 
-theorem innerCrossInd_restrictActive_eq_centeredShell_indicator
+lemma innerCrossInd_restrictActive_eq_centeredShell_indicator
     (d k : Nat) (hk1 : 1 <= k)
     (rho : ConfigSpace (Sym2 (boxVerts d (2 * k)))) :
     WiredBoxLocalized.innerCrossInd d k
@@ -291,9 +314,7 @@ theorem innerCrossInd_restrictActive_eq_centeredShell_indicator
   rw [centeredShellEvent_eq_connToBdryEventLE d k hk1]
   rfl
 
-
-
-theorem wiredOuterInnerTheta_eq_centeredShellMass
+lemma wiredOuterInnerTheta_eq_centeredShellMass
     (d k : Nat) (hk1 : 1 <= k) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     WiredBoxLocalized.wiredOuterInnerTheta d q beta k =
@@ -302,7 +323,7 @@ theorem wiredOuterInnerTheta_eq_centeredShellMass
           wiredFkProb (boxGraph d (2 * k)) (boxBoundary d (2 * k))
             (1 - Real.exp (-beta)) q rho := by
   have hk0 : k ≠ 0 := by omega
-  rw [WiredBoxLocalized.wiredOuterInnerTheta, if_neg hk0]
+  rw [WiredBoxLocalized.wiredOuterInnerTheta, ite_eq_right hk0]
   let p := 1 - Real.exp (-beta)
   have hp : 0 < p := by
     unfold p
@@ -328,16 +349,16 @@ theorem wiredOuterInnerTheta_eq_centeredShellMass
   intro rho _
   rw [innerCrossInd_restrictActive_eq_centeredShell_indicator d k hk1 rho]
 
-theorem boxActiveEdgeLE_ambient (d : Nat) {r R : Nat} (hrR : r <= R)
+/-! ## B. Inner and outer crossings -/
+
+lemma boxActiveEdgeLE_ambient (d : Nat) {r R : Nat} (hrR : r <= R)
     (e : (boxGraph d r).edgeSet) :
     WiredBoxDifferential.boxActiveEdge d R
         (WiredBoxLocalized.boxActiveEdgeLE d hrR e) =
       WiredBoxDifferential.boxActiveEdge d r e := by
   exact edgeIncl_innerEdgeLE d hrR e.1
 
-
-
-theorem openSubgraph_liftInner_le_extendOuter
+lemma openSubgraph_liftInner_le_extendOuter
     (d : Nat) {r R : Nat} (hrR : r <= R)
     (rho : ConfigSpace (Sym2 (boxVerts d R))) :
     openSubgraph d
@@ -368,9 +389,7 @@ theorem openSubgraph_liftInner_le_extendOuter
   rw [← hedge, extendEdge_eq_of_range]
   exact hrho
 
-
-
-theorem openSubgraph_liftInner_le_liftOuter
+lemma openSubgraph_liftInner_le_liftOuter
     (d : Nat) {r R : Nat} (hrR : r <= R)
     (omega : ConfigSpace (boxGraph d R).edgeSet) :
     openSubgraph d
@@ -400,9 +419,8 @@ theorem openSubgraph_liftInner_le_liftOuter
     (WiredBoxDifferential.boxActiveEdge_injective d R)]
   exact hopen
 
-
-
-theorem innerCrossInd_le_fullOuterCrossInd
+open Classical in
+lemma innerCrossInd_le_fullOuterCrossInd
     (d n : Nat) (omega : ConfigSpace (boxGraph d (2 * n)).edgeSet) :
     WiredBoxLocalized.innerCrossInd d n omega <=
       AdaptiveCovLowerGeom.crossIndG
@@ -420,7 +438,7 @@ theorem innerCrossInd_le_fullOuterCrossInd
           (WiredBoxLocalized.n_le_two_mul n)) omega ∈
         crossEvent (WiredBoxDifferential.boxActiveEdge d n) 0
           (vertexBoundary d n) := hi
-    rw [if_pos hi', if_pos]
+    rw [ite_eq_left hi', ite_eq_left]
     obtain ⟨b, hb, hconn⟩ := hi
     exact ⟨b, hb, hconn.mono (openSubgraph_liftInner_le_liftOuter d
       (WiredBoxLocalized.n_le_two_mul n) omega)⟩
@@ -429,11 +447,13 @@ theorem innerCrossInd_le_fullOuterCrossInd
           (WiredBoxLocalized.n_le_two_mul n)) omega ∉
         crossEvent (WiredBoxDifferential.boxActiveEdge d n) 0
           (vertexBoundary d n) := hi
-    rw [if_neg hi']
+    rw [ite_eq_right hi']
     split <;> norm_num
 
+/-! ## C. Translation comparison -/
 
-
+/-- The map from the centered open subgraph inside the doubled box to the translated box around
+  `x`. -/
 noncomputable def centeredWithinToTransHom
     (d n k : Nat) (x : Site d)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d (2 * n))
@@ -442,7 +462,7 @@ noncomputable def centeredWithinToTransHom
       openSub (fvs_transBoxGraph d (2 * k) x)
         (ocd_innerRestrict (flc_incl hsub) rho) where
   toFun := fun y => ⟨(y : Site d), by
-    show ((y : Site d) - x) ∈ box d (2 * k)
+    change ((y : Site d) - x) ∈ box d (2 * k)
     rw [mem_box_iff_siteRadius_le]
     change centeredRadius x (y : Site d) <= 2 * k
     exact y.2.trans (by omega)⟩
@@ -455,12 +475,12 @@ noncomputable def centeredWithinToTransHom
       exact hyz.1, ?_⟩
     let be : Sym2 (boxVerts d (2 * n)) :=
       Sym2.map (flc_incl hsub) s(⟨(y : Site d), by
-        show ((y : Site d) - x) ∈ box d (2 * k)
+        change ((y : Site d) - x) ∈ box d (2 * k)
         rw [mem_box_iff_siteRadius_le]
         change centeredRadius x (y : Site d) <= 2 * k
         exact y.2.trans (by omega)⟩,
         ⟨(z : Site d), by
-          show ((z : Site d) - x) ∈ box d (2 * k)
+          change ((z : Site d) - x) ∈ box d (2 * k)
           rw [mem_box_iff_siteRadius_le]
           change centeredRadius x (z : Site d) <= 2 * k
           exact z.2.trans (by omega)⟩)
@@ -472,7 +492,7 @@ noncomputable def centeredWithinToTransHom
     rw [← hbe, extendEdge_eq_of_range] at hopen
     exact hopen
 
-@[simp] theorem centeredWithinToTransHom_val
+@[simp] lemma centeredWithinToTransHom_val
     (d n k : Nat) (x : Site d)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d (2 * n))
     (rho : ConfigSpace (Sym2 (boxVerts d (2 * n))))
@@ -480,7 +500,7 @@ noncomputable def centeredWithinToTransHom
     ((centeredWithinToTransHom d n k x hsub rho y :
       fvs_transBoxVerts d (2 * k) x) : Site d) = y := rfl
 
-@[simp] theorem centeredWithinToTransHom_center
+@[simp] lemma centeredWithinToTransHom_center
     (d n k : Nat) (x : Site d)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d (2 * n))
     (rho : ConfigSpace (Sym2 (boxVerts d (2 * n)))) :
@@ -490,8 +510,7 @@ noncomputable def centeredWithinToTransHom
   apply Subtype.ext
   rfl
 
-
-theorem outerInnerConn_subset_transShell
+lemma outerInnerConn_subset_transShell
     (d n k : Nat) (x : Site d)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d (2 * n))
     (rho : ConfigSpace (Sym2 (boxVerts d (2 * n))))
@@ -524,12 +543,10 @@ theorem outerInnerConn_subset_transShell
     exact hz
   · simpa [hom, omegaOuter] using hreach
 
-
-
-
-theorem wiredOuterInnerConn_le_theta_strict_of_domain
-    (d n k : Nat) (x : Site d) (hx : x ∈ box d n)
-    (hk1 : 1 <= k) (hkn : 2 * k < n)
+open Classical in
+lemma wiredOuterInnerConn_le_theta_strict_of_domain
+    (d n k : Nat) (x : Site d) (_hx : x ∈ box d n)
+    (_hk1 : 1 <= k) (_hkn : 2 * k < n)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d (2 * n))
     (hdom :
@@ -590,15 +607,15 @@ theorem wiredOuterInnerConn_le_theta_strict_of_domain
                 (WiredBoxLocalized.n_le_two_mul n))
               (restrictActive (boxGraph d (2 * n)) rho)))
           x (centeredBoundary x k)
-      · rw [if_pos hc, Set.indicator_of_mem]
+      · rw [ite_eq_left hc, Set.indicator_of_mem]
         exact outerInnerConn_subset_transShell d n k x hsub rho hc
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         exact Set.indicator_nonneg (fun _ => by norm_num) _
     · exact wiredFkProb_nonneg (boxGraph d (2 * n))
         (boxBoundary d (2 * n)) hp hp1 hq0 rho
   simpa [p] using hEventLe.trans hdom
 
-theorem centeredRadius_transEquiv (d R : Nat) (x : Site d)
+lemma centeredRadius_transEquiv (d R : Nat) (x : Site d)
     (y : boxVerts d R) :
     centeredRadius x (fvs_transEquiv d R x y : Site d) =
       siteRadius (y : Site d) := by
@@ -608,15 +625,13 @@ theorem centeredRadius_transEquiv (d R : Nat) (x : Site d)
   funext i
   simp [Pi.add_apply]
 
-@[simp] theorem transEquiv_boxOrigin (d R : Nat) (x : Site d) :
+@[simp] lemma transEquiv_boxOrigin (d R : Nat) (x : Site d) :
     fvs_transEquiv d R x (IsingFK.boxOrigin d R) = transBoxCenter d R x := by
   apply Subtype.ext
   funext i
   simp [transBoxCenter, IsingFK.boxOrigin, Percolation.origin]
 
-
-
-theorem reCfgIso_preimage_centeredShellEvent (d k : Nat) (x : Site d) :
+lemma reCfgIso_preimage_centeredShellEvent (d k : Nat) (x : Site d) :
     reCfgIso (fvs_transEquiv d (2 * k) x) ⁻¹' centeredShellEvent d k =
       transShellEvent d k x := by
   ext rho
@@ -648,8 +663,7 @@ theorem reCfgIso_preimage_centeredShellEvent (d k : Nat) (x : Site d) :
       rw [transEquiv_boxOrigin]
       simpa [y0] using hreach
 
-
-theorem transShellEvent_mass_eq_centered
+lemma transShellEvent_mass_eq_centered
     (d k : Nat) (x : Site d) (p q : Real) :
     (∑ rho,
       (transShellEvent d k x).indicator (fun _ => (1 : Real)) rho *
@@ -672,10 +686,7 @@ theorem transShellEvent_mass_eq_centered
     (centeredShellEvent d k)
   rwa [reCfgIso_preimage_centeredShellEvent] at htransport
 
-
-
-
-theorem transShellEvent_domain_dominated
+lemma transShellEvent_domain_dominated
     (d n k : Nat) (x : Site d) (hx : x ∈ box d n)
     (hk1 : 1 <= k) (hkn : 2 * k < n)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
@@ -730,9 +741,7 @@ theorem transShellEvent_domain_dominated
   rw [transShellEvent_mass_eq_centered d k x p q] at hdom
   simpa [hsub] using hdom
 
-
-
-theorem wiredOuterInnerConn_le_theta_strict
+lemma wiredOuterInnerConn_le_theta_strict
     (d n k : Nat) (x : Site d) (hx : x ∈ box d n)
     (hk1 : 1 <= k) (hkn : 2 * k < n)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
@@ -777,9 +786,9 @@ theorem wiredOuterInnerConn_le_theta_strict
   exact wiredOuterInnerConn_le_theta_strict_of_domain
     d n k x hx hk1 hkn q beta hq hbeta hsub (by simpa [p] using hdomTheta)
 
-theorem wiredOuterInner_strictTranslationComparison
+lemma wiredOuterInner_strictTranslationComparison
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
-    forall x, x ∈ WiredBoxDifferential.osssBoxFinset d n -> forall k,
+    forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) -> 2 * k < n ->
       WiredBoxLocalized.wiredOuterInnerConn d n q beta x k <=
         WiredBoxLocalized.wiredOuterInnerTheta d q beta k := by
@@ -791,8 +800,7 @@ theorem wiredOuterInner_strictTranslationComparison
   · exact hq
   · exact hbeta
 
-
-theorem wiredOuterInnerDenom_le_eight_sig
+lemma wiredOuterInnerDenom_le_eight_sig
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     WiredBoxLocalized.wiredOuterInnerDenom d n q beta <=
       8 * WiredBoxLocalized.wiredOuterInnerSig d n q beta / (n : Real) := by
@@ -800,8 +808,10 @@ theorem wiredOuterInnerDenom_le_eight_sig
     d n q beta hq hbeta
       (wiredOuterInner_strictTranslationComparison d n q beta hq hbeta)
 
+/-! ## D. Sharp differential inequalities -/
 
-theorem wired_outer_inner_hcov_sharp
+open Classical in
+lemma wired_outer_inner_hcov_sharp
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     Lindeberg.mean
@@ -867,10 +877,7 @@ theorem wired_outer_inner_hcov_sharp
     d n hn q beta hq hbeta
   exact hfrac.trans (by simpa [mu, theta] using hbase)
 
-
-
-
-theorem wired_outer_inner_differential_sharp
+lemma wired_outer_inner_differential_sharp
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     exists cR : Real, 0 < cR ∧
@@ -890,7 +897,7 @@ theorem wired_outer_inner_differential_sharp
         (WiredBoxDifferential.wiredBoxBoundaryGraph d (2 * n))
         (betaParams (fun _ => 1) b) q
         (WiredBoxLocalized.innerCrossInd d n)) beta := by
-  letI : Nonempty (boxGraph d (2 * n)).edgeSet :=
+  let : Nonempty (boxGraph d (2 * n)).edgeSet :=
     WiredBoxDifferential.boxGraph_edgeSet_nonempty d (2 * n) hd (by omega)
   let G := boxGraph d (2 * n)
   let C := WiredBoxDifferential.wiredBoxBoundaryGraph d (2 * n)
@@ -940,10 +947,7 @@ theorem wired_outer_inner_differential_sharp
   have hmain := (mul_le_mul_of_nonneg_left hcov hcR.le).trans hRusso
   simpa [G, C, J, mu, f] using hmain
 
-
-
-
-theorem wired_outer_inner_differential_sharp_uniform
+lemma wired_outer_inner_differential_sharp_uniform
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     Lindeberg.mean
@@ -1021,11 +1025,8 @@ theorem wired_outer_inner_differential_sharp_uniform
     simpa [mu, ActiveBoundaryDifferential.cov_activeBC_eq] using hRusso)
   simpa [G, C, J, mu, f] using hmain
 
-
-
-
-theorem wired_outer_inner_one_sub_lower
-    (d n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
+lemma wired_outer_inner_one_sub_lower
+    (d n : Nat) (_hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :
     (ActiveEdgeDifferential.incidentEdges
         (WiredBoxDifferential.boxActiveEndU d (2 * n))
@@ -1048,7 +1049,7 @@ theorem wired_outer_inner_one_sub_lower
     (activeBCProb_pos G C (betaParams_pos hJ hbeta)
       (betaParams_lt_one J beta) hq0 omega).le
   have hoB : (0 : Site d) ∉ vertexBoundary d n := by
-    simpa using WiredBoxDifferential.origin_not_mem_osssBoundaryFinset d n
+    simp
   have hfull := ActiveBoundaryDifferential.activeBC_cross_one_sub_lower
     G C J hJ q beta beta0 hq hbeta hbeta0
     (WiredBoxDifferential.boxActiveEdge_eq_endpoints d (2 * n))
@@ -1069,9 +1070,7 @@ theorem wired_outer_inner_one_sub_lower
     exact innerCrossInd_le_fullOuterCrossInd d n omega
   simpa [G, C, J, mu] using hfull'.trans (by linarith)
 
-
-
-theorem wiredOuterIncident_card_le (d R : Nat) :
+lemma wiredOuterIncident_card_le (d R : Nat) :
     (ActiveEdgeDifferential.incidentEdges
         (WiredBoxDifferential.boxActiveEndU d R)
         (WiredBoxDifferential.boxActiveEndV d R) 0).card <= 2 * d := by
@@ -1104,8 +1103,7 @@ theorem wiredOuterIncident_card_le (d R : Nat) :
       SimpleGraph.card_incidenceFinset_eq_degree _ _
     _ <= 2 * d := degree_le d 0
 
-
-theorem wiredOuterIncident_prod_lower
+lemma wiredOuterIncident_prod_lower
     (d R : Nat) (beta0 : Real) (hbeta0 : 0 <= beta0) :
     Real.exp (-beta0) ^ (2 * d) <=
       (ActiveEdgeDifferential.incidentEdges
@@ -1118,10 +1116,8 @@ theorem wiredOuterIncident_prod_lower
   have hpow := pow_le_pow_of_le_one ha0 ha1 (wiredOuterIncident_card_le d R)
   simpa [Finset.prod_const] using hpow
 
-
-
-
-theorem wired_outer_inner_differential_inequality
+open Classical in
+lemma wired_outer_inner_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (q beta beta0 : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (hbeta0 : beta <= beta0) :
@@ -1186,10 +1182,8 @@ theorem wired_outer_inner_differential_inequality
     htheta hD hkappa hcR hgap hlog'
   exact ⟨cR * kappa, hc, by simpa [theta, D, mu] using hmain⟩
 
-
-
-
-theorem wired_outer_inner_differential_uniform
+open Classical in
+lemma wired_outer_inner_differential_uniform
     (d n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :
     (ActiveEdgeDifferential.incidentEdges
@@ -1256,9 +1250,8 @@ theorem wired_outer_inner_differential_uniform
     htheta hD hkappa (show (0 : Real) < 1 by norm_num) hgap hlog'
   simpa [theta, D, kappa, mu] using hmain
 
-
-
-
+open Classical in
+/-- The sharp differential inequality (unconditional). -/
 theorem wired_outer_inner_differential_uniform_box
     (d n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :

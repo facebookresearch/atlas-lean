@@ -6,27 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import MathlibExt.Probability.Percolation.Universality.RSWStrip
+
+/-!
+# The square-root trick for finite unions
+
+The FKG square-root trick: for a positively associated measure and `m` increasing events of equal
+probability, a small union complement forces each complement to be small.
+
+## i. Overview
+
+If the complements of `m` increasing events are positively correlated (FKG), the probability of the
+complement of their union is at least the product of the individual complements. With equal
+probabilities this gives `P(A_iᶜ) ≤ P((⋃ A)ᶜ) ^ (1 / m)` and a polynomial deficit bound. All results
+are conditional only on positive association `hpa` and the equal-probability hypothesis.
+
+## ii. Key results
+
+- `finite_symmetric_sqrt_trick`: the square-root trick.
+- `finite_symmetric_polynomial_deficit`: the polynomial deficit form.
+
+## iii. Table of contents
+
+- A. The square-root trick
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -39,10 +50,9 @@ namespace BeffaraDC
 
 open StatMech.Universality
 
+/-! ## A. The square-root trick -/
 
-
-
-theorem finite_complUnion_fkg_bound {ι E : Type*}
+lemma finite_complUnion_fkg_bound {ι E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
     (A : ι → Set (ConfigSpace E))
@@ -78,10 +88,7 @@ theorem finite_complUnion_fkg_bound {ι E : Type*}
           ext ω
           simp
 
-
-
-
-
+/-- The square-root trick. -/
 theorem finite_symmetric_sqrt_trick {ι E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
@@ -122,10 +129,7 @@ theorem finite_symmetric_sqrt_trick {ι E : Type*}
   rw [hreduce] at hmono
   linarith
 
-
-
-
-theorem finite_symmetric_deficit {ι E : Type*}
+lemma finite_symmetric_deficit {ι E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
     (A : ι → Set (ConfigSpace E)) {i₀ : ι} (hi₀ : i₀ ∈ s)
@@ -143,11 +147,7 @@ theorem finite_symmetric_deficit {ι E : Type*}
   have hsqrt := finite_symmetric_sqrt_trick μ hpa s A hi₀ hA hAm hsym
   linarith
 
-
-
-
-
-theorem finite_symmetric_polynomial_deficit {ι E : Type*}
+lemma finite_symmetric_polynomial_deficit {ι E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
     (A : ι → Set (ConfigSpace E)) {i₀ : ι} (hi₀ : i₀ ∈ s)

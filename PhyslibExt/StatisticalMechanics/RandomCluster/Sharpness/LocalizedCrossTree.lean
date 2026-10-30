@@ -6,18 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.DecisionTreeReindex
@@ -25,6 +13,34 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveFa
 public import CSLibExt.Complexity.BooleanFunctions.RevealmentCrossBox
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ReachBoxCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentTranslation
+
+/-!
+# Localized crossing trees on reindexed edge sets
+
+Revealment sums and covariance lower bounds for crossing explorations whose edges are a reindexed
+subset `iota : I → E` embedded in `ℤ^d`.
+
+## i. Overview
+
+`localizedBoxReveal` is the revealment of the boundary exploration restricted to the edges indexed
+by `I`. `revealment_sum_bound_lattice_map` bounds the averaged revealment, and
+`hcov_reindexed_crossTree_mass` is the covariance lower bound for FKG measures. Both hold under the
+geometric embedding hypotheses only.
+
+## ii. Key results
+
+- `hcov_reindexed_crossTree_mass`: covariance lower bound for reindexed crossing trees.
+
+## iii. Table of contents
+
+- A. Localized revealment
+- B. Covariance lower bound
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -37,14 +53,16 @@ namespace LocalizedCrossTree
 open DecisionTree LindebergTree Lindeberg
 open RevealmentConstruction FamilyEqzzzResolution ReachBoxCrossing
 open RevealmentTranslation
-open Lattice
-open scoped Classical
+open StatMech.Lattice
 
 variable {I E : Type*} [Fintype I] [DecidableEq I] [Fintype E] [DecidableEq E]
 variable {d : Nat}
 
+/-! ## A. Localized revealment -/
 
-
+open Classical in
+/-- The revealment of edge `e` by the boundary exploration restricted to the edges `iota i`, started
+  from the box of radius `k`. -/
 noncomputable def localizedBoxReveal (mu : ConfigSpace E -> Real) (iota : I -> E)
     (edge : I -> Sym2 (Site d)) (endU endV : I -> Site d)
     (k : Nat) (i : I) : Real :=
@@ -55,10 +73,9 @@ noncomputable def localizedBoxReveal (mu : ConfigSpace E -> Real) (iota : I -> E
       (liftCfg edge (restrictConfig iota omega)) (endV i) (vertexBoundary d k)
     then (1 : Real) else 0)
 
-
-
-
-theorem revealment_sum_bound_lattice_map {n : Nat}
+open Classical in
+omit [DecidableEq I] in
+lemma revealment_sum_bound_lattice_map {n : Nat}
     (mu : ConfigSpace E -> Real) (hmu0 : forall omega, 0 <= mu omega)
     (cfg : ConfigSpace E -> ConfigSpace I) (edge : I -> Sym2 (Site d))
     (Lambda : Finset (Site d)) (hne : Lambda.Nonempty)
@@ -114,17 +131,16 @@ theorem revealment_sum_bound_lattice_map {n : Nat}
     intro omega homega
     exact connectedToSet_originBoundary_imp_centered homega
 
+/-! ## B. Covariance lower bound -/
 
-
-
-theorem hcov_reindexed_crossTree_mass
+lemma hcov_reindexed_crossTree_mass
     (mu : ConfigSpace E -> Real) (hpos : forall omega, 0 < mu omega)
     (hmu1 : ∑ omega, mu omega = 1) (hFKG : FKGLatticeCondition mu)
     (iota : I -> E) (hiota : Function.Injective iota)
     {edge : I -> Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : I -> Site d} (hcoh : forall i, edge i = s(endU i, endV i))
     (hadj : forall i, (hypercubicLattice d).Adj (endU i) (endV i))
-    (o : Site d) (l : List I) (hl : forall i, i ∈ l)
+    (o : Site d) (l : List I) (_hl : forall i, i ∈ l)
     (disc0 : Nat -> Finset (Site d))
     (hdisc0sub : ∀ k x, x ∈ disc0 k → x ∈ vertexBoundary d k)
     (n : Nat) (hn : 1 <= n)
@@ -141,7 +157,7 @@ theorem hcov_reindexed_crossTree_mass
     Lindeberg.mean mu f * (1 - Lindeberg.mean mu f) / D <=
       ∑ e, Lindeberg.cov mu f (Lindeberg.coord e) := by
   classical
-  haveI : Nonempty (↑(Finset.Icc 1 n)) :=
+  have : Nonempty (↑(Finset.Icc 1 n)) :=
     ⟨⟨1, Finset.mem_Icc.mpr ⟨le_rfl, hn⟩⟩⟩
   let Tinner : ↑(Finset.Icc 1 n) -> DecisionTree I := fun k =>
     crossTree endU endV o (vertexBoundary d n) l (disc0 (k : Nat))
@@ -194,7 +210,7 @@ theorem hcov_reindexed_crossTree_mass
         apply Finset.sum_eq_zero
         intro omega _
         change (if e ∈ (T k).queried omega then (1 : Real) else 0) * mu omega = 0
-        rw [if_neg]
+        rw [ite_eq_right]
         · ring
         · exact not_mem_queried_reindex_of_not_range iota (Tinner k) omega e he
       simp_rw [hz]

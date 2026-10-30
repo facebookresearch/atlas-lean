@@ -6,89 +6,49 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailSelMP
+
+/-!
+# Recovery maps for the tail selection
+
+Restricted sums from a recovery map that inverts the tail selection on each piece, and the case `s =
+t`.
+
+## i. Overview
+
+`tsc_restrictedSum_of_recover` derives the restricted-sum identity from a measurable recovery map.
+The stopping value is stable under changes after it (`tsc_stopValC_stable`). This gives the
+measure-preserving property at `s = t` (`tsc_tailSelMP_at_s_eq_t`), unconditionally. The
+tail-selection files (`TailSelMP`, `TailSelMPRecovery`, `TailSelMPSplice`, `OptionalStopping`) prove
+that the stopped tail selection is measure preserving, which `TailCondLawConstant` turns into the
+tail conditional law. This file is one step of the OSSS chain for monotonic measures:
+`AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration` (`AdaptCondBBB` ⇒
+`AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
+`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
+unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `tsc_tailSelMP_at_s_eq_t`: the tail selection is measure preserving at `s = t`.
+
+## iii. Table of contents
+
+- A. Recovery maps
+- B. The case s = t
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
-set_option maxHeartbeats 2000000
 
 namespace StatMech
 
@@ -101,24 +61,9 @@ open StatMech.Probability OSSS.AdaptiveTau OSSS.AdaptMConditional
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Recovery maps -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+lemma tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     {S : ℕ → Set α} {Φ : ℕ → α → β} {R : β → ℕ}
     (hSmeas : ∀ k, MeasurableSet (S k)) (hSdisj : Pairwise (Function.onFun Disjoint S))
@@ -128,12 +73,10 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
     (Measure.sum (fun k => Measure.map (Φ k) (μ.restrict (S k)))) = ν := by
   ext T hT
   rw [Measure.sum_apply _ hT]
-  
   have hsummand : ∀ (T : Set β), MeasurableSet T → ∀ k,
       Measure.map (Φ k) (μ.restrict (S k)) T = μ (S k ∩ Φ k ⁻¹' T) := by
     intro T hT k
     rw [Measure.map_apply (hΦmeas k) hT, Measure.restrict_apply ((hΦmeas k) hT), Set.inter_comm]
-  
   have hub : ∀ (T : Set β), MeasurableSet T → ∀ k,
       μ (S k ∩ Φ k ⁻¹' T) ≤ ν (R ⁻¹' {k} ∩ T) := by
     intro T hT k
@@ -143,7 +86,6 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
       _ = ν (R ⁻¹' {k} ∩ T) := by
             rw [← (hMP k).measure_preimage
               ((hRmeas (measurableSet_singleton k)).inter hT).nullMeasurableSet]
-  
   have hRpart : (⋃ k, R ⁻¹' {k}) = Set.univ := by
     ext y
     simp only [Set.mem_iUnion, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_univ, iff_true]
@@ -161,11 +103,9 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
       (fun k => (hRmeas (measurableSet_singleton k)).inter hT)]
     congr 1
     rw [← Set.iUnion_inter, hRpart, Set.univ_inter]
-  
   simp_rw [hsummand T hT]
   set a : ℕ → ℝ≥0∞ := fun k => μ (S k ∩ Φ k ⁻¹' T) with ha
   set b : ℕ → ℝ≥0∞ := fun k => μ (S k ∩ Φ k ⁻¹' Tᶜ) with hb
-  
   have hab : ∀ k, a k + b k = μ (S k) := by
     intro k
     rw [ha, hb, ← measure_union]
@@ -176,7 +116,6 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
       have hd : Disjoint T Tᶜ := disjoint_compl_right
       exact hd.preimage (Φ k)
     · exact (hSmeas k).inter ((hΦmeas k) hT.compl)
-  
   have hsumab : (∑' k, a k) + (∑' k, b k) = ν Set.univ := by
     rw [← ENNReal.tsum_add, show (fun k => a k + b k) = (fun k => μ (S k)) from funext hab,
       ← measure_iUnion hSdisj hSmeas, hScover, measure_univ, measure_univ]
@@ -187,7 +126,6 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
   have hnu : ν Set.univ = ν T + ν Tᶜ := by
     rw [← measure_union disjoint_compl_right hT.compl, Set.union_compl_self]
   rw [hnu] at hsumab
-  
   by_contra hne
   have hlt : (∑' k, a k) < ν T := lt_of_le_of_ne hsuma_le hne
   have hsumb_fin : (∑' k, b k) ≠ ⊤ := ne_top_of_le_ne_top (measure_lt_top ν Tᶜ).ne hsumb_le
@@ -196,13 +134,7 @@ theorem tsc_restrictedSum_of_recover {α β : Type*} [MeasurableSpace α] [Measu
   rw [hsumab] at hcontra
   exact lt_irrefl _ hcontra
 
-
-
-
-
-
-
-
+omit [Fintype E] in
 lemma tsc_prefixSet_mono {n : ℕ} (σ : Fin n → E) {j k : ℕ} (hjk : j ≤ k) :
     prefixSet σ j ⊆ prefixSet σ k := by
   intro e he
@@ -210,10 +142,7 @@ lemma tsc_prefixSet_mono {n : ℕ} (σ : Fin n → E) {j k : ℕ} (hjk : j ≤ k
   obtain ⟨s, hs, rfl⟩ := he
   exact ⟨s, by omega, rfl⟩
 
-
-
-
-
+omit [Fintype E] in
 lemma tsc_detAtC_transport {n : ℕ} (σ : Fin n → E) (f : ConfigSpace E → ℝ)
     (X X' : ConfigSpace E) (k : ℕ) (hagree : ∀ e ∈ prefixSet σ k, X e = X' e)
     (j : ℕ) (hjk : j ≤ k) (hdet : detAtC σ f X j) : detAtC σ f X' j := by
@@ -224,18 +153,11 @@ lemma tsc_detAtC_transport {n : ℕ} (σ : Fin n → E) (f : ConfigSpace E → �
   have hwX : ∀ e ∈ prefixSet σ j, w e = X e := fun e he => by rw [hw e he, ← hagj e he]
   rw [hdet w hwX, ← hfXX']
 
-
 lemma tsc_stopValC_determinesC {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (X : ConfigSpace E) : detAtC (σ : Fin n → E) f X (stopValC σ f X) :=
   Nat.find_spec (⟨n, detAtC_card σ f X⟩ : ∃ t, detAtC (σ : Fin n → E) f X t)
 
-
-
-
-
-
-
-theorem tsc_stopValC_stable {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
+lemma tsc_stopValC_stable {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (X X' : ConfigSpace E) (k : ℕ)
     (hagree : ∀ e ∈ prefixSet (σ : Fin n → E) k, X e = X' e)
     (hk : stopValC σ f X = k) : stopValC σ f X' = k := by
@@ -254,15 +176,11 @@ theorem tsc_stopValC_stable {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → 
   have : k ≤ j := hk ▸ Nat.find_le hdetXj
   omega
 
-
-
-
 lemma tsc_acp_join_head {n : ℕ} (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (B : {i : Fin n // ¬ (i : ℕ) < t} → ℝ) (i : Fin n) (hi : (i : ℕ) < t) :
     acp_join t A B i = A ⟨i, hi⟩ := by
   unfold acp_join ubfSplit
   rw [MeasurableEquiv.piEquivPiSubtypeProd_symm_apply]; simp [hi]
-
 
 lemma tsc_acp_join_tail {n : ℕ} (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (B : {i : Fin n // ¬ (i : ℕ) < t} → ℝ) (i : Fin n) (hi : ¬ (i : ℕ) < t) :
@@ -270,63 +188,49 @@ lemma tsc_acp_join_tail {n : ℕ} (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} �
   unfold acp_join ubfSplit
   rw [MeasurableEquiv.piEquivPiSubtypeProd_symm_apply]; simp [hi]
 
-
-
-
-
+/-- The recovery map inverting the tail selection on the piece where the stopping value is `k`. -/
 noncomputable def tsc_recover (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (W : Fin n → ℝ) : ℕ :=
   stopVal μ σ f (acp_join t A ((ubfSplit n t W).2))
 
-
 lemma tsc_recover_meas (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     Measurable (tsc_recover μ σ f t A) := by
   have hjoin : Measurable (fun W : Fin n → ℝ => acp_join t A ((ubfSplit n t W).2)) := by
-    show Measurable (fun W : Fin n → ℝ => (ubfSplit n t).symm (A, (ubfSplit n t W).2))
+    change Measurable (fun W : Fin n → ℝ => (ubfSplit n t).symm (A, (ubfSplit n t W).2))
     exact (ubfSplit n t).symm.measurable.comp (measurable_const.prodMk
       (measurable_snd.comp (ubfSplit n t).measurable))
   exact (measurable_stopVal μ σ f).comp hjoin
 
+/-! ## B. The case s = t -/
 
-
-
-
-
-
-
-theorem tsc_recover_eq_of_piece (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
+lemma tsc_recover_eq_of_piece (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t k : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (p : ({i : Fin n // ¬ (i : ℕ) < t} → ℝ) × (Fin n → ℝ))
     (hp : stopVal μ σ f (acp_join t A p.1) = k) :
     tsc_recover μ σ f t A (osp_tailSelFixed t t k A p) = k := by
   obtain ⟨B, V⟩ := p
-  
   have hagree_in : ∀ i : Fin n, (i : ℕ) < k →
       acp_join t A ((ubfSplit n t (osp_tailSelFixed t t k A (B, V))).2) i = acp_join t A B i := by
     intro i hik
     by_cases hi : (i : ℕ) < t
     · rw [tsc_acp_join_head t A _ i hi, tsc_acp_join_head t A B i hi]
     · rw [tsc_acp_join_tail t A _ i hi, tsc_acp_join_tail t A B i hi, ubfSplit_apply_snd]
-      show adaptWt (acp_join t A B) V k t i = B ⟨i, hi⟩
+      change adaptWt (acp_join t A B) V k t i = B ⟨i, hi⟩
       unfold adaptWt
-      simp only [hi, if_false, hik, if_true]
+      simp only [hi, ite_false, hik, ite_true]
       exact tsc_acp_join_tail t A B i hi
-  
   have hcode : ∀ e ∈ prefixSet (σ : Fin n → E) k,
       codeMap μ (σ : Fin n → E) (acp_join t A B) e
         = codeMap μ (σ : Fin n → E)
             (acp_join t A ((ubfSplit n t (osp_tailSelFixed t t k A (B, V))).2)) e :=
     fun e he => (codeMap_agree_on_prefix μ σ _ (acp_join t A B) k hagree_in e he).symm
-  show stopValC σ f
+  change stopValC σ f
       (codeMap μ (σ : Fin n → E)
         (acp_join t A ((ubfSplit n t (osp_tailSelFixed t t k A (B, V))).2))) = k
   exact tsc_stopValC_stable σ f (codeMap μ (σ : Fin n → E) (acp_join t A B)) _ k hcode
     (by rw [← stopVal_eq_stopValC]; exact hp)
-
-
-
 
 lemma tsc_piece_subset_recover (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) (k : ℕ) :
@@ -336,22 +240,10 @@ lemma tsc_piece_subset_recover (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin 
   simp only [Set.mem_preimage, Set.mem_singleton_iff]
   exact tsc_recover_eq_of_piece μ σ f t k A p hp
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tsc_restrictedSum_at_s_eq_t (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
+lemma tsc_restrictedSum_at_s_eq_t (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     tsm_TailSelMP_restrictedSum μ σ f t t A := by
-  show (Measure.sum (fun k => Measure.map (osp_tailSelFixed t t k A)
+  change (Measure.sum (fun k => Measure.map (osp_tailSelFixed t t k A)
       (((ubfTail n t).prod (Vcube n)).restrict (tsm_switchPiece μ σ f t A k)))) = Vcube n
   exact tsc_restrictedSum_of_recover
     (S := tsm_switchPiece μ σ f t A)
@@ -363,15 +255,7 @@ theorem tsc_restrictedSum_at_s_eq_t (μ : ConfigSpace E → ℝ) {n : ℕ} (σ :
     (fun k => osp_tailSelFixed_mp t t k (le_refl t) A)
     (tsc_piece_subset_recover μ σ f t A)
 
-
-
-
-
-
-
-
-
-theorem tsc_tailSelMP_at_s_eq_t (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
+lemma tsc_tailSelMP_at_s_eq_t (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     atl_TailSelMP μ σ f t t A :=
   tsm_tailSelMP_of_restrictedSum μ σ f t t A (tsc_restrictedSum_at_s_eq_t μ σ f t A)

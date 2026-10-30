@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangBKData
@@ -18,6 +13,44 @@ public import MathlibExt.Probability.Percolation.Universality.FrameChangeIso
 public import MathlibExt.Probability.Percolation.Universality.CrossingReflection
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.RSWLowestCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.KestenBXP
+
+/-!
+# Zhang's argument at a fixed central box
+
+Arm events from a fixed central box to the sides of large squares, their probability bounds by
+symmetry, and the contradiction with a matched-crossing bound of `1/2`.
+
+## i. Overview
+
+Assume the infinite cluster exists at `p = 1/2`. Four arm events (left, right, top, bottom) from the
+box of radius `k` all have probability at least `zfk_armLower k`, which tends to `1`. If the matched
+rectangle is crossed horizontally with probability at most `1/2`, the four arms, uniqueness and
+planarity give a contradiction. `zfk_percolationProbability_zero_of_matched_half` is conditional on
+positive association `hpa` and the bound `hhalf`.
+`zfk_criticalProbability_eq_half_of_faithful_exclusive` is conditional on `hpa`, the exclusivity
+`hexcl` and measurability. `ZhangHarris` removes `hpa`, and `ZhangFaithfulExclusive` proves `hexcl`.
+
+## ii. Key results
+
+- `zfk_matched_half_of_faithful_exclusive`: exclusivity gives the matched bound `≤ 1/2`.
+- `zfk_percolationProbability_zero_of_matched_half`: `θ(1/2) = 0`, conditional on `hpa` and `hhalf`.
+- `zfk_criticalProbability_eq_half_of_faithful_exclusive`: `p_c = 1/2`, conditional on `hpa`,
+  `hexcl` and measurability.
+
+## iii. Table of contents
+
+- A. Symmetries
+- B. Squares and arms
+- C. Arm probabilities
+- D. Matched crossings and the contradiction
+
+## iv. References
+
+* H. Kesten, *The critical probability of bond percolation on the square lattice equals 1/2*, Comm.
+  Math. Phys. 74 (1980).
+* Y. Zhang's argument, as presented in G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section
+  11.3; and H. Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes (2018).
+-/
 
 @[expose] public section
 
@@ -29,8 +62,10 @@ namespace StatMech.TwoDim
 open StatMech.Lattice StatMech.Universality StatMech.Percolation
 open StatMech.RSW.Box
 
+/-! ## A. Symmetries -/
 
-
+/-- Rotation by a quarter turn as an isomorphism of open subgraphs induced on the box of radius
+  `N`. -/
 noncomputable def zfk_rotBoxIso
     (omega : ConfigSpace (Sym2 (Site 2))) (N : ℕ) :
     openSubgraphInduce 2 (kdi_rotConfig omega) (box 2 N) ≃g
@@ -49,7 +84,7 @@ noncomputable def zfk_rotBoxIso
     simp only [openSubgraphInduce_adj]
     exact (zbd_rotOpenIso omega).map_rel_iff
 
-theorem zfk_rot_connectedWithin_box_iff
+lemma zfk_rot_connectedWithin_box_iff
     (omega : ConfigSpace (Sym2 (Site 2))) (N : ℕ) (x y : box 2 N) :
     ConnectedWithin 2 (kdi_rotConfig omega) (box 2 N) x y ↔
       ConnectedWithin 2 omega (box 2 N)
@@ -57,13 +92,14 @@ theorem zfk_rot_connectedWithin_box_iff
         ⟨rot90Inv y, rot90Inv_mem_box N y.2⟩ := by
   exact (zfk_rotBoxIso omega N).reachable_iff.symm
 
+/-- Translation by `t` as an isomorphism of open subgraphs. -/
 noncomputable def zfk_translateOpenIso (t : Site 2)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraph 2 (translateConfig t omega) ≃g openSubgraph 2 omega where
   toEquiv := Equiv.addRight t
   map_rel_iff' := fun {x y} => (cti_isOpenEdge_translate t omega x y).symm
 
-theorem zfk_translate_clusterInfinite_iff (t : Site 2)
+lemma zfk_translate_clusterInfinite_iff (t : Site 2)
     (omega : ConfigSpace (Sym2 (Site 2))) (x : Site 2) :
     (cluster 2 (translateConfig t omega) x).Infinite ↔
       (cluster 2 omega (x + t)).Infinite := by
@@ -85,7 +121,7 @@ theorem zfk_translate_clusterInfinite_iff (t : Site 2)
   rw [← himage]
   exact (Set.infinite_image_iff e.injective.injOn).symm
 
-theorem zfk_connectedWithin_translate_iff
+lemma zfk_connectedWithin_translate_iff
     (a b c d : ℤ) (t : Site 2) (omega : ConfigSpace (Sym2 (Site 2)))
     (x y : Site 2) (hx : x ∈ rect a b c d) (hy : y ∈ rect a b c d) :
     ConnectedWithin 2 (translateConfig t omega) (rect a b c d)
@@ -99,31 +135,34 @@ theorem zfk_connectedWithin_translate_iff
     exact h.map (cti_inducedHom a b c d t omega)
   · intro h
     have hm := h.map (cti_inducedHomInv a b c d t omega)
-    show (openSubgraphInduce _ _ _).Reachable _ _
+    change (openSubgraphInduce _ _ _).Reachable _ _
     convert hm using 1 <;> apply Subtype.ext <;> simp [cti_inducedHomInv]
 
+/-! ## B. Squares and arms -/
 
+/-- The central box of radius `k` shifted one step to the right. -/
 def zfk_rightCentralBox (k : ℕ) : Set (Site 2) :=
   {x | x - ![1, 0] ∈ box 2 k}
 
-
+/-- The square `[-N, N]²`. -/
 def zfk_leftSquare (N : ℕ) : Set (Site 2) :=
   rect (-(N : ℤ)) N (-(N : ℤ)) N
 
-
+/-- The square `[-N + 1, N + 1] × [-N, N]`. -/
 def zfk_rightSquare (N : ℕ) : Set (Site 2) :=
   rect (-(N : ℤ) + 1) (N + 1) (-(N : ℤ)) N
 
-theorem zfk_shift_mem_rightSquare_iff (N : ℕ) (x : Site 2) :
+lemma zfk_shift_mem_rightSquare_iff (N : ℕ) (x : Site 2) :
     x ∈ zfk_leftSquare N ↔ x + (![1, 0] : Site 2) ∈ zfk_rightSquare N := by
   have hR : rect (-(N : ℤ) + (![1, 0] : Site 2) 0)
         ((N : ℤ) + (![1, 0] : Site 2) 0)
         (-(N : ℤ) + (![1, 0] : Site 2) 1)
         ((N : ℤ) + (![1, 0] : Site 2) 1) = zfk_rightSquare N := by
-    congr 1 <;> norm_num [zfk_rightSquare]
+    congr 1; norm_num [zfk_rightSquare]
   rw [zfk_leftSquare, ← hR]
   exact cti_mem_rect_translate (-(N : ℤ)) N (-(N : ℤ)) N ![1, 0] x
 
+/-- Translation by one step to the right as a homomorphism of induced open subgraphs. -/
 noncomputable def zfk_shiftRightHom (N : ℕ)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraphInduce 2 (translateConfig (![1, 0] : Site 2) omega)
@@ -136,6 +175,7 @@ noncomputable def zfk_shiftRightHom (N : ℕ)
     rw [openSubgraphInduce_adj, openSubgraph_adj] at hxy ⊢
     exact (cti_isOpenEdge_translate (![1, 0] : Site 2) omega x y).mp hxy
 
+/-- The inverse of the right shift, as a homomorphism of induced open subgraphs. -/
 noncomputable def zfk_shiftRightHomInv (N : ℕ)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraphInduce 2 omega (zfk_rightSquare N) →g
@@ -152,7 +192,7 @@ noncomputable def zfk_shiftRightHomInv (N : ℕ)
     simp only [sub_add_cancel]
     exact hxy
 
-theorem zfk_connectedWithin_shiftRight_iff
+lemma zfk_connectedWithin_shiftRight_iff
     (omega : ConfigSpace (Sym2 (Site 2))) (N : ℕ) (x y : Site 2)
     (hx : x ∈ zfk_leftSquare N) (hy : y ∈ zfk_leftSquare N) :
     ConnectedWithin 2 (translateConfig (![1, 0] : Site 2) omega)
@@ -165,17 +205,19 @@ theorem zfk_connectedWithin_shiftRight_iff
     exact h.map (zfk_shiftRightHom N omega)
   · intro h
     have hm := h.map (zfk_shiftRightHomInv N omega)
-    show (openSubgraphInduce _ _ _).Reachable _ _
-    convert hm using 1 <;> apply Subtype.ext <;> simp [zfk_shiftRightHomInv] <;>
+    change (openSubgraphInduce _ _ _).Reachable _ _
+    convert hm using 1 <;> apply Subtype.ext <;>
+      simp only [zfk_shiftRightHomInv, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.sub_cons,
+        sub_zero, Matrix.empty_sub_empty, Matrix.add_cons, add_zero, Matrix.empty_add_empty,
+        RelHom.coeFn_mk, Matrix.head_cons, add_sub_cancel_right, Matrix.tail_cons] <;>
       apply funext <;> intro i <;> fin_cases i <;> rfl
 
-
-
+/-- The matched rectangle `[-N, N + 1] × [-N, N]`. -/
 def zfk_matchedRect (N : ℕ) : Set (Site 2) :=
   rect (-(N : ℤ)) (N + 1) (-(N : ℤ)) N
 
-
-
+/-- The site `x` is joined inside the left square to its left side and lies in an infinite
+  cluster. -/
 def zfk_LeftArmFrom (omega : ConfigSpace (Sym2 (Site 2))) (x : Site 2) (N : ℕ) : Prop :=
   ∃ (hx : x ∈ zfk_leftSquare N)
       (a : StatMech.RSW.Box.leftSide
@@ -183,8 +225,8 @@ def zfk_LeftArmFrom (omega : ConfigSpace (Sym2 (Site 2))) (x : Site 2) (N : ℕ)
     ConnectedWithin 2 omega (zfk_leftSquare N)
       ⟨(a : Site 2), StatMech.RSW.Box.leftSide_subset a.2⟩ ⟨x, hx⟩
 
-
-
+/-- The site `y` is joined inside the right square to its right side and lies in an infinite
+  cluster. -/
 def zfk_RightArmFrom (omega : ConfigSpace (Sym2 (Site 2))) (y : Site 2) (N : ℕ) : Prop :=
   ∃ (hy : y ∈ zfk_rightSquare N)
       (b : StatMech.RSW.Box.rightSide
@@ -192,22 +234,26 @@ def zfk_RightArmFrom (omega : ConfigSpace (Sym2 (Site 2))) (y : Site 2) (N : ℕ
     ConnectedWithin 2 omega (zfk_rightSquare N)
       ⟨y, hy⟩ ⟨(b : Site 2), StatMech.RSW.Box.rightSide_subset b.2⟩
 
-
-
+/-- A left arm from the central box and a right arm from the shifted central box both occur. -/
 def zfk_ArmPairEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k, ∃ y ∈ zfk_rightCentralBox k,
     (cluster 2 omega x).Infinite ∧ (cluster 2 omega y).Infinite ∧
       zfk_LeftArmFrom omega x N ∧ zfk_RightArmFrom omega y N}
 
+/-- Some site of the central box is in an infinite cluster and reaches the left side of the left
+  square. -/
 def zfk_LeftArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k,
     (cluster 2 omega x).Infinite ∧ zfk_LeftArmFrom omega x N}
 
+/-- Some site of the shifted central box is in an infinite cluster and reaches the right side of the
+  right square. -/
 def zfk_RightArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ y ∈ zfk_rightCentralBox k,
     (cluster 2 omega y).Infinite ∧ zfk_RightArmFrom omega y N}
 
-
+/-- Some site of the central box is in an infinite cluster and reaches the top side inside the
+  square. -/
 def zfk_TopArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k, (cluster 2 omega x).Infinite ∧
     ∃ (hx : x ∈ zfk_leftSquare N)
@@ -216,6 +262,8 @@ def zfk_TopArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
       ConnectedWithin 2 omega (zfk_leftSquare N)
         ⟨(a : Site 2), StatMech.RSW.Box.topSide_subset a.2⟩ ⟨x, hx⟩}
 
+/-- Some site of the central box is in an infinite cluster and reaches the right side inside the
+  square. -/
 def zfk_CenteredRightArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k, (cluster 2 omega x).Infinite ∧
     ∃ (hx : x ∈ zfk_leftSquare N)
@@ -224,6 +272,8 @@ def zfk_CenteredRightArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
       ConnectedWithin 2 omega (zfk_leftSquare N)
         ⟨(a : Site 2), StatMech.RSW.Box.rightSide_subset a.2⟩ ⟨x, hx⟩}
 
+/-- Some site of the central box is in an infinite cluster and reaches the bottom side inside the
+  square. -/
 def zfk_BottomArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k, (cluster 2 omega x).Infinite ∧
     ∃ (hx : x ∈ zfk_leftSquare N)
@@ -232,21 +282,21 @@ def zfk_BottomArmEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
       ConnectedWithin 2 omega (zfk_leftSquare N)
         ⟨(a : Site 2), StatMech.RSW.Box.bottomSide_subset a.2⟩ ⟨x, hx⟩}
 
-theorem zfk_rotInv_mem_leftSquare (N : ℕ) {x : Site 2}
+lemma zfk_rotInv_mem_leftSquare (N : ℕ) {x : Site 2}
     (hx : x ∈ zfk_leftSquare N) : rot90Inv x ∈ zfk_leftSquare N := by
   have hxB : x ∈ box 2 N := by
     exact (zbd_mem_box_iff_rect N x).mpr (by simpa [zfk_leftSquare] using hx)
   have hrB := rot90Inv_mem_box N hxB
   simpa [zfk_leftSquare] using (zbd_mem_box_iff_rect N (rot90Inv x)).mp hrB
 
-theorem zfk_rotFun_mem_leftSquare (N : ℕ) {x : Site 2}
+lemma zfk_rotFun_mem_leftSquare (N : ℕ) {x : Site 2}
     (hx : x ∈ zfk_leftSquare N) : rot90Fun x ∈ zfk_leftSquare N := by
   have hxB : x ∈ box 2 N := by
     exact (zbd_mem_box_iff_rect N x).mpr (by simpa [zfk_leftSquare] using hx)
   have hrB := rot90Fun_mem_box N hxB
   simpa [zfk_leftSquare] using (zbd_mem_box_iff_rect N (rot90Fun x)).mp hrB
 
-theorem zfk_rotInv_leftSide_mem_topSide (N : ℕ)
+lemma zfk_rotInv_leftSide_mem_topSide (N : ℕ)
     (a : StatMech.RSW.Box.leftSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Inv a ∈ StatMech.RSW.Box.topSide
@@ -257,7 +307,7 @@ theorem zfk_rotInv_leftSide_mem_topSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Inv, ha]
 
-theorem zfk_rotFun_topSide_mem_leftSide (N : ℕ)
+lemma zfk_rotFun_topSide_mem_leftSide (N : ℕ)
     (a : StatMech.RSW.Box.topSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Fun a ∈ StatMech.RSW.Box.leftSide
@@ -268,7 +318,7 @@ theorem zfk_rotFun_topSide_mem_leftSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Fun, ha]
 
-theorem zfk_rotInv_topSide_mem_rightSide (N : ℕ)
+lemma zfk_rotInv_topSide_mem_rightSide (N : ℕ)
     (a : StatMech.RSW.Box.topSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Inv a ∈ StatMech.RSW.Box.rightSide
@@ -279,7 +329,7 @@ theorem zfk_rotInv_topSide_mem_rightSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Inv, ha]
 
-theorem zfk_rotFun_rightSide_mem_topSide (N : ℕ)
+lemma zfk_rotFun_rightSide_mem_topSide (N : ℕ)
     (a : StatMech.RSW.Box.rightSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Fun a ∈ StatMech.RSW.Box.topSide
@@ -290,7 +340,7 @@ theorem zfk_rotFun_rightSide_mem_topSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Fun, ha]
 
-theorem zfk_rotInv_rightSide_mem_bottomSide (N : ℕ)
+lemma zfk_rotInv_rightSide_mem_bottomSide (N : ℕ)
     (a : StatMech.RSW.Box.rightSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Inv a ∈ StatMech.RSW.Box.bottomSide
@@ -301,7 +351,7 @@ theorem zfk_rotInv_rightSide_mem_bottomSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Inv, ha]
 
-theorem zfk_rotFun_bottomSide_mem_rightSide (N : ℕ)
+lemma zfk_rotFun_bottomSide_mem_rightSide (N : ℕ)
     (a : StatMech.RSW.Box.bottomSide
       (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :
     rot90Fun a ∈ StatMech.RSW.Box.rightSide
@@ -312,7 +362,7 @@ theorem zfk_rotFun_bottomSide_mem_rightSide (N : ℕ)
   have ha := a.2.2
   simp [rot90Fun, ha]
 
-theorem zfk_rot_connectedWithin_leftSquare_iff
+lemma zfk_rot_connectedWithin_leftSquare_iff
     (omega : ConfigSpace (Sym2 (Site 2))) (N : ℕ)
     {x y : Site 2} (hx : x ∈ zfk_leftSquare N) (hy : y ∈ zfk_leftSquare N) :
     ConnectedWithin 2 (kdi_rotConfig omega) (zfk_leftSquare N) ⟨x, hx⟩ ⟨y, hy⟩ ↔
@@ -339,7 +389,7 @@ theorem zfk_rot_connectedWithin_leftSquare_iff
     exact StatMech.Lattice.connectedWithin_mono_set
       (kdi_rotConfig omega) hfrom hr
 
-theorem zfk_rot_leftArmEvent_eq_top (k N : ℕ) :
+lemma zfk_rot_leftArmEvent_eq_top (k N : ℕ) :
     zrs_rot (zfk_LeftArmEvent k N) = zfk_TopArmEvent k N := by
   ext omega
   change kdi_rotConfig omega ∈ zfk_LeftArmEvent k N ↔ _
@@ -375,7 +425,7 @@ theorem zfk_rot_leftArmEvent_eq_top (k N : ℕ) :
       · exact hia
       · exact hix
 
-theorem zfk_rot_topArmEvent_eq_right (k N : ℕ) :
+lemma zfk_rot_topArmEvent_eq_right (k N : ℕ) :
     zrs_rot (zfk_TopArmEvent k N) = zfk_CenteredRightArmEvent k N := by
   ext omega
   change kdi_rotConfig omega ∈ zfk_TopArmEvent k N ↔ _
@@ -410,7 +460,7 @@ theorem zfk_rot_topArmEvent_eq_right (k N : ℕ) :
       · exact hia
       · exact hix
 
-theorem zfk_rot_rightArmEvent_eq_bottom (k N : ℕ) :
+lemma zfk_rot_rightArmEvent_eq_bottom (k N : ℕ) :
     zrs_rot (zfk_CenteredRightArmEvent k N) = zfk_BottomArmEvent k N := by
   ext omega
   change kdi_rotConfig omega ∈ zfk_CenteredRightArmEvent k N ↔ _
@@ -445,9 +495,7 @@ theorem zfk_rot_rightArmEvent_eq_bottom (k N : ℕ) :
       · exact hia
       · exact hix
 
-
-
-theorem zfk_boxHitsInfinite_subset_armUnion (k N : ℕ) (hkN : k ≤ N) :
+lemma zfk_boxHitsInfinite_subset_armUnion (k N : ℕ) (hkN : k ≤ N) :
     zbd_boxHitsInfinite k ⊆
       zrs_sideFamily (zfk_LeftArmEvent k N) 0 ∪
         zrs_sideFamily (zfk_LeftArmEvent k N) 1 ∪
@@ -476,7 +524,7 @@ theorem zfk_boxHitsInfinite_subset_armUnion (k N : ℕ) (hkN : k ≤ N) :
     simpa [zfk_leftSquare] using (zbd_mem_box_iff_rect N (w.getVert m)).mp hmBox
   have hprefixSupp : ∀ z ∈ (w.take m).support, z ∈ box 2 N := by
     intro z hz
-    rw [SimpleGraph.Walk.take_support_eq_support_take_succ] at hz
+    rw [SimpleGraph.Walk.support_take] at hz
     obtain ⟨r, hrlt, hrz⟩ := List.mem_iff_getElem.mp hz
     rw [List.length_take] at hrlt
     have hrle : r ≤ m := by omega
@@ -552,7 +600,7 @@ theorem zfk_boxHitsInfinite_subset_armUnion (k N : ℕ) (hkN : k ≤ N) :
         by simpa [zfk_leftSquare] using (zbd_mem_box_iff_rect N x).mp hxN,
         ⟨w.getVert m, hmRect, by rw [hneg, hmEq]⟩, hxmRect.symm⟩
 
-theorem zfk_armPair_eq_inter (k N : ℕ) :
+lemma zfk_armPair_eq_inter (k N : ℕ) :
     zfk_ArmPairEvent k N = zfk_LeftArmEvent k N ∩ zfk_RightArmEvent k N := by
   ext omega
   constructor
@@ -561,21 +609,21 @@ theorem zfk_armPair_eq_inter (k N : ℕ) :
   · rintro ⟨⟨x, hx, hxInf, hxArm⟩, ⟨y, hy, hyInf, hyArm⟩⟩
     exact ⟨x, hx, y, hy, hxInf, hyInf, hxArm, hyArm⟩
 
-theorem zfk_LeftArmEvent_isIncreasing (k N : ℕ) :
+lemma zfk_LeftArmEvent_isIncreasing (k N : ℕ) :
     IsIncreasing (zfk_LeftArmEvent k N) := by
   intro omega omega' hle
   rintro ⟨x, hx, hxInf, hxS, a, hax⟩
   refine ⟨x, hx, hxInf.mono (cluster_mono hle x), hxS, a, ?_⟩
   exact StatMech.TwoDim.connectedWithin_mono hle hax
 
-theorem zfk_RightArmEvent_isIncreasing (k N : ℕ) :
+lemma zfk_RightArmEvent_isIncreasing (k N : ℕ) :
     IsIncreasing (zfk_RightArmEvent k N) := by
   intro omega omega' hle
   rintro ⟨y, hy, hyInf, hyS, b, hyb⟩
   refine ⟨y, hy, hyInf.mono (cluster_mono hle y), hyS, b, ?_⟩
   exact StatMech.TwoDim.connectedWithin_mono hle hyb
 
-theorem zfk_LeftArmEvent_measurableSet (k N : ℕ) :
+lemma zfk_LeftArmEvent_measurableSet (k N : ℕ) :
     MeasurableSet (zfk_LeftArmEvent k N) := by
   have heq : zfk_LeftArmEvent k N =
       ⋃ x : Site 2, ⋃ (_hx : x ∈ box 2 k),
@@ -610,7 +658,7 @@ theorem zfk_LeftArmEvent_measurableSet (k N : ℕ) :
   exact zbd_measurableSet_connectedWithin (zfk_leftSquare N)
     ⟨(a : Site 2), StatMech.RSW.Box.leftSide_subset a.2⟩ ⟨x, hxS⟩
 
-theorem zfk_RightArmEvent_measurableSet (k N : ℕ) :
+lemma zfk_RightArmEvent_measurableSet (k N : ℕ) :
     MeasurableSet (zfk_RightArmEvent k N) := by
   have heq : zfk_RightArmEvent k N =
       ⋃ y : Site 2, ⋃ (_hy : y ∈ zfk_rightCentralBox k),
@@ -646,26 +694,26 @@ theorem zfk_RightArmEvent_measurableSet (k N : ℕ) :
   exact zbd_measurableSet_connectedWithin (zfk_rightSquare N) ⟨y, hyS⟩
     ⟨(b : Site 2), StatMech.RSW.Box.rightSide_subset b.2⟩
 
-
+/-- A left and a right arm whose infinite clusters are joined inside the matched rectangle. -/
 def zfk_MergedArmPairEvent (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {omega | ∃ x ∈ box 2 k, ∃ y ∈ zfk_rightCentralBox k,
     (cluster 2 omega x).Infinite ∧ (cluster 2 omega y).Infinite ∧
       zfk_LeftArmFrom omega x N ∧ zfk_RightArmFrom omega y N ∧
         omega ∈ zbd_connectedWithinBox x y N}
 
-theorem zfk_leftSquare_subset_matched (N : ℕ) :
+lemma zfk_leftSquare_subset_matched (N : ℕ) :
     zfk_leftSquare N ⊆ zfk_matchedRect N := by
   intro z hz
   simp only [zfk_leftSquare, zfk_matchedRect, mem_rect] at hz ⊢
   omega
 
-theorem zfk_rightSquare_subset_matched (N : ℕ) :
+lemma zfk_rightSquare_subset_matched (N : ℕ) :
     zfk_rightSquare N ⊆ zfk_matchedRect N := by
   intro z hz
   simp only [zfk_rightSquare, zfk_matchedRect, mem_rect] at hz ⊢
   omega
 
-theorem zfk_box_subset_matched (N : ℕ) :
+lemma zfk_box_subset_matched (N : ℕ) :
     box 2 N ⊆ zfk_matchedRect N := by
   intro z hz
   rw [zfk_matchedRect, mem_rect]
@@ -673,9 +721,7 @@ theorem zfk_box_subset_matched (N : ℕ) :
   rw [mem_rect] at hz'
   omega
 
-
-
-theorem zfk_mergedArmPair_subset_horizontalCrossing (k N : ℕ) :
+lemma zfk_mergedArmPair_subset_horizontalCrossing (k N : ℕ) :
     zfk_MergedArmPairEvent k N ⊆
       StatMech.RSW.Box.horizontalCrossingEvent (-(N : ℤ)) ((N : ℤ) + 1)
         (-(N : ℤ)) (N : ℤ) := by
@@ -712,27 +758,24 @@ theorem zfk_mergedArmPair_subset_horizontalCrossing (k N : ℕ) :
   refine ⟨a', b', ?_⟩
   exact hax'.trans (hxy'.trans hyb')
 
-
-
-
-
+/-- Both `x` and `y` are in infinite clusters but are not joined inside the matched rectangle. -/
 def zfk_pairError (x y : Site 2) (N : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   ({omega | (cluster 2 omega x).Infinite} ∩
     {omega | (cluster 2 omega y).Infinite}) \ zbd_connectedWithinBox x y N
 
-theorem zfk_pairError_measurableSet (x y : Site 2) (N : ℕ) :
+lemma zfk_pairError_measurableSet (x y : Site 2) (N : ℕ) :
     MeasurableSet (zfk_pairError x y N) :=
   ((measurableSet_clusterInfinite x).inter
     (measurableSet_clusterInfinite y)).diff
       (zbd_connectedWithinBox_measurableSet x y N)
 
-theorem zfk_pairError_antitone (x y : Site 2) :
+lemma zfk_pairError_antitone (x y : Site 2) :
     Antitone (zfk_pairError x y) := by
   intro n m hnm omega herror
   exact ⟨herror.1, fun hm => herror.2 (zbd_connectedWithinBox_mono x y hnm hm)⟩
 
-theorem zfk_iInter_pairError_subset_atLeastTwo (x y : Site 2) :
+lemma zfk_iInter_pairError_subset_atLeastTwo (x y : Site 2) :
     (⋂ N, zfk_pairError x y N) ⊆ atLeastTwoInfinite 2 := by
   intro omega herror
   have hzero := Set.mem_iInter.mp herror 0
@@ -753,13 +796,12 @@ theorem zfk_iInter_pairError_subset_atLeastTwo (x y : Site 2) :
     ⟨_, hcx, _, hcy, hcne⟩
   have hone : (1 : ℕ∞) < (infiniteClusters 2 omega).encard :=
     Set.one_lt_encard_iff_nontrivial.mpr hnt
-  show 2 ≤ numInfiniteClusters 2 omega
+  change 2 ≤ numInfiniteClusters 2 omega
   rw [numInfiniteClusters, ← one_add_one_eq_two,
     ENat.add_one_le_iff ENat.one_ne_top]
   exact hone
 
-
-theorem zfk_pairError_tendsto_zero (x y : Site 2) :
+lemma zfk_pairError_tendsto_zero (x y : Site 2) :
     Tendsto (fun N => halfMeasure.real (zfk_pairError x y N)) atTop (nhds 0) := by
   have hlim : Tendsto (fun N : ℕ => halfMeasure (zfk_pairError x y N)) atTop
       (nhds (halfMeasure (⋂ N, zfk_pairError x y N))) :=
@@ -774,8 +816,7 @@ theorem zfk_pairError_tendsto_zero (x y : Site 2) :
   rw [hinter] at hlim
   exact (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ∞)).comp hlim
 
-
-theorem zfk_rightCentralBox_finite (k : ℕ) :
+lemma zfk_rightCentralBox_finite (k : ℕ) :
     (zfk_rightCentralBox k).Finite := by
   have hinj : Function.Injective (fun x : Site 2 => x - ![1, 0]) := by
     intro x y hxy
@@ -785,27 +826,28 @@ theorem zfk_rightCentralBox_finite (k : ℕ) :
     omega
   exact Set.Finite.preimage hinj.injOn (box_finite 2 k)
 
+/-- The central box of radius `k`, as a `Finset`. -/
 noncomputable def zfk_leftCentralFinset (k : ℕ) : Finset (Site 2) :=
   (box_finite 2 k).toFinset
 
+/-- The shifted central box, as a `Finset`. -/
 noncomputable def zfk_rightCentralFinset (k : ℕ) : Finset (Site 2) :=
   (zfk_rightCentralBox_finite k).toFinset
 
-@[simp] theorem zfk_mem_leftCentralFinset {k : ℕ} {x : Site 2} :
+@[simp] lemma zfk_mem_leftCentralFinset {k : ℕ} {x : Site 2} :
     x ∈ zfk_leftCentralFinset k ↔ x ∈ box 2 k := by
   rw [zfk_leftCentralFinset, Set.Finite.mem_toFinset]
 
-@[simp] theorem zfk_mem_rightCentralFinset {k : ℕ} {x : Site 2} :
+@[simp] lemma zfk_mem_rightCentralFinset {k : ℕ} {x : Site 2} :
     x ∈ zfk_rightCentralFinset k ↔ x ∈ zfk_rightCentralBox k := by
   rw [zfk_rightCentralFinset, Set.Finite.mem_toFinset]
 
-
-
+/-- The union of the pair errors over the two central boxes. -/
 def zfk_pairErrorUnion (k N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ x ∈ zfk_leftCentralFinset k, ⋃ y ∈ zfk_rightCentralFinset k,
     zfk_pairError x y N
 
-theorem zfk_armPair_diff_merged_subset_errorUnion (k N : ℕ) :
+lemma zfk_armPair_diff_merged_subset_errorUnion (k N : ℕ) :
     zfk_ArmPairEvent k N \ zfk_MergedArmPairEvent k N ⊆
       zfk_pairErrorUnion k N := by
   intro omega h
@@ -820,9 +862,7 @@ theorem zfk_armPair_diff_merged_subset_errorUnion (k N : ℕ) :
   · simpa using hyK
   · exact ⟨⟨hxInf, hyInf⟩, hnotConn⟩
 
-
-
-theorem zfk_pairErrorUnion_tendsto_zero (k : ℕ) :
+lemma zfk_pairErrorUnion_tendsto_zero (k : ℕ) :
     Tendsto (fun N => halfMeasure.real (zfk_pairErrorUnion k N))
       atTop (nhds 0) := by
   let F : ℕ → ℝ := fun N =>
@@ -830,9 +870,9 @@ theorem zfk_pairErrorUnion_tendsto_zero (k : ℕ) :
       halfMeasure.real (zfk_pairError x y N)
   have hF : Tendsto F atTop (nhds 0) := by
     dsimp [F]
-    convert tendsto_finset_sum (zfk_leftCentralFinset k) (fun x _ =>
-      tendsto_finset_sum (zfk_rightCentralFinset k) (fun y _ =>
-        zfk_pairError_tendsto_zero x y)) using 1 <;> simp
+    convert tendsto_finsetSum (zfk_leftCentralFinset k) (fun x _ =>
+      tendsto_finsetSum (zfk_rightCentralFinset k) (fun y _ =>
+        zfk_pairError_tendsto_zero x y)) using 1; simp
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hF
   · intro N
     exact measureReal_nonneg
@@ -840,9 +880,7 @@ theorem zfk_pairErrorUnion_tendsto_zero (k : ℕ) :
     exact le_trans (measureReal_biUnion_finset_le _ _)
       (Finset.sum_le_sum fun x _ => measureReal_biUnion_finset_le _ _)
 
-
-
-theorem zfk_armPair_subset_crossing_union_error (k N : ℕ) :
+lemma zfk_armPair_subset_crossing_union_error (k N : ℕ) :
     zfk_ArmPairEvent k N ⊆
       StatMech.RSW.Box.horizontalCrossingEvent
           (-(N : ℤ)) ((N : ℤ) + 1) (-(N : ℤ)) (N : ℤ) ∪
@@ -852,7 +890,7 @@ theorem zfk_armPair_subset_crossing_union_error (k N : ℕ) :
   · exact Or.inl (zfk_mergedArmPair_subset_horizontalCrossing k N hmerge)
   · exact Or.inr (zfk_armPair_diff_merged_subset_errorUnion k N ⟨harms, hmerge⟩)
 
-theorem zfk_armPair_probability_le_crossing_add_error (k N : ℕ) :
+lemma zfk_armPair_probability_le_crossing_add_error (k N : ℕ) :
     halfMeasure.real (zfk_ArmPairEvent k N) ≤
       halfMeasure.real
           (StatMech.RSW.Box.horizontalCrossingEvent
@@ -868,9 +906,7 @@ theorem zfk_armPair_probability_le_crossing_add_error (k N : ℕ) :
         (measure_ne_top _ _)
     _ ≤ _ := measureReal_union_le _ _
 
-
-
-theorem zfk_armPair_fkg
+lemma zfk_armPair_fkg
     (hpa : PositivelyAssociated halfMeasure) (k N : ℕ) :
     halfMeasure.real (zfk_LeftArmEvent k N) *
         halfMeasure.real (zfk_RightArmEvent k N) ≤
@@ -879,11 +915,7 @@ theorem zfk_armPair_fkg
   exact hpa _ _ (zfk_LeftArmEvent_isIncreasing k N)
     (zfk_RightArmEvent_isIncreasing k N)
 
-
-
-
-
-theorem zfk_fixedK_contradiction
+lemma zfk_fixedK_contradiction
     (hpa : PositivelyAssociated halfMeasure)
     (q : ℕ → ℝ) (hq : Tendsto q atTop (nhds 1))
     (hqnonneg : ∀ k, 0 ≤ q k)
@@ -932,12 +964,13 @@ theorem zfk_fixedK_contradiction
       (Filter.Eventually.of_forall hk)
   norm_num at hbad
 
+/-! ## C. Arm probabilities -/
 
-
+/-- The lower bound `1 - (1 - P(box hits ∞)) ^ (1/4)` for each arm event. -/
 noncomputable def zfk_armLower (k : ℕ) : ℝ :=
   1 - (1 - halfMeasure.real (zbd_boxHitsInfinite k)) ^ ((1 : ℝ) / 4)
 
-theorem zfk_armLower_nonneg (k : ℕ) : 0 ≤ zfk_armLower k := by
+lemma zfk_armLower_nonneg (k : ℕ) : 0 ≤ zfk_armLower k := by
   have hbase0 : 0 ≤ 1 - halfMeasure.real (zbd_boxHitsInfinite k) := by
     linarith [measureReal_le_one (μ := halfMeasure)
       (s := zbd_boxHitsInfinite k)]
@@ -948,14 +981,12 @@ theorem zfk_armLower_nonneg (k : ℕ) : 0 ≤ zfk_armLower k := by
   unfold zfk_armLower
   linarith
 
-theorem zfk_armLower_tendsto_one
+lemma zfk_armLower_tendsto_one
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     Tendsto zfk_armLower atTop (nhds 1) := by
   exact zhg_oneSubRpow_tendsto_one (zbd_boxHitsInfinite_tendsto_one hpos)
 
-
-
-theorem zfk_armLower_le_left
+lemma zfk_armLower_le_left
     (hpa : PositivelyAssociated halfMeasure) (k N : ℕ) (hkN : k ≤ N) :
     zfk_armLower k ≤ halfMeasure.real (zfk_LeftArmEvent k N) := by
   let S := zrs_sideFamily (zfk_LeftArmEvent k N)
@@ -990,26 +1021,24 @@ theorem zfk_armLower_le_left
       ((1 : ℝ) / 4) ≤ halfMeasure.real (S 0) := by linarith
   simpa [zfk_armLower, S] using hfinal
 
-theorem zfk_centeredRight_eq_rot2 (k N : ℕ) :
+lemma zfk_centeredRight_eq_rot2 (k N : ℕ) :
     zfk_CenteredRightArmEvent k N =
       zrs_rot (zrs_rot (zfk_LeftArmEvent k N)) := by
   rw [zfk_rot_leftArmEvent_eq_top, zfk_rot_topArmEvent_eq_right]
 
-theorem zfk_CenteredRightArmEvent_measurableSet (k N : ℕ) :
+lemma zfk_CenteredRightArmEvent_measurableSet (k N : ℕ) :
     MeasurableSet (zfk_CenteredRightArmEvent k N) := by
   rw [zfk_centeredRight_eq_rot2]
   exact zrs_rotPreimage_measurableSet
     (zrs_rotPreimage_measurableSet (zfk_LeftArmEvent_measurableSet k N))
 
-theorem zfk_centeredRight_prob_eq_left (k N : ℕ) :
+lemma zfk_centeredRight_prob_eq_left (k N : ℕ) :
     halfMeasure.real (zfk_CenteredRightArmEvent k N) =
       halfMeasure.real (zfk_LeftArmEvent k N) := by
   rw [zfk_centeredRight_eq_rot2]
   exact zrs_side_symmetry (zfk_LeftArmEvent_measurableSet k N) 1
 
-
-
-theorem zfk_rightArmEvent_eq_translate_preimage (k N : ℕ) :
+lemma zfk_rightArmEvent_eq_translate_preimage (k N : ℕ) :
     zfk_RightArmEvent k N =
       translateConfig (![1, 0] : Site 2) ⁻¹' zfk_CenteredRightArmEvent k N := by
   ext omega
@@ -1076,7 +1105,7 @@ theorem zfk_rightArmEvent_eq_translate_preimage (k N : ℕ) :
           (StatMech.RSW.Box.rightSide_subset a.2) hxS).mp hax
       exact hmap.symm
 
-theorem zfk_right_prob_eq_left (k N : ℕ) :
+lemma zfk_right_prob_eq_left (k N : ℕ) :
     halfMeasure.real (zfk_RightArmEvent k N) =
       halfMeasure.real (zfk_LeftArmEvent k N) := by
   rw [zfk_rightArmEvent_eq_translate_preimage]
@@ -1089,32 +1118,31 @@ theorem zfk_right_prob_eq_left (k N : ℕ) :
     _ = halfMeasure.real (zfk_LeftArmEvent k N) :=
       zfk_centeredRight_prob_eq_left k N
 
-theorem zfk_armLower_le_right
+lemma zfk_armLower_le_right
     (hpa : PositivelyAssociated halfMeasure) (k N : ℕ) (hkN : k ≤ N) :
     zfk_armLower k ≤ halfMeasure.real (zfk_RightArmEvent k N) := by
   rw [zfk_right_prob_eq_left]
   exact zfk_armLower_le_left hpa k N hkN
 
+/-! ## D. Matched crossings and the contradiction -/
 
-
-
+/-- The vertical crossing event of the face rectangle matched to the rectangle `[-N, N + 1] × [-N,
+  N]`. -/
 def zfk_FaceVerticalEvent (N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   StatMech.RSW.Box.verticalCrossingEvent
     (-(N : ℤ)) (N : ℤ) (-(N : ℤ) - 1) (N : ℤ)
 
+/-- The face-dual vertical crossing event of the matched rectangle. -/
 def zfk_FaithfulDualVerticalEvent (N : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   fci_faceDualConfig ⁻¹' zfk_FaceVerticalEvent N
 
-theorem zfk_FaithfulDualVerticalEvent_measurableSet (N : ℕ) :
+lemma zfk_FaithfulDualVerticalEvent_measurableSet (N : ℕ) :
     MeasurableSet (zfk_FaithfulDualVerticalEvent N) := by
-  exact (rlc_verticalCrossingEvent_measurableSet _ _ _ _).preimage
+  exact (StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _).preimage
     fci_faceDualConfig_measurePreserving.measurable
 
-
-
-
-theorem zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
+lemma zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
     halfMeasure.real (zfk_FaithfulDualVerticalEvent N) =
       halfMeasure.real
         (StatMech.RSW.Box.horizontalCrossingEvent
@@ -1122,12 +1150,12 @@ theorem zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
   have hmeasSwap : MeasurableSet
       (StatMech.RSW.Box.horizontalCrossingEvent
         (-(N : ℤ) - 1) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :=
-    rlc_horizontalCrossingEvent_measurableSet _ _ _ _
+    StatMech.Universality.measurableSet_horizontalCrossingEvent _ _ _ _
   calc
     halfMeasure.real (zfk_FaithfulDualVerticalEvent N) =
         halfMeasure.real (zfk_FaceVerticalEvent N) := by
       exact fci_faceDualConfig_measurePreserving.measureReal_preimage
-        (rlc_verticalCrossingEvent_measurableSet _ _ _ _).nullMeasurableSet
+        (StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _).nullMeasurableSet
     _ = halfMeasure.real
         (StatMech.RSW.Box.horizontalCrossingEvent
           (-(N : ℤ) - 1) (N : ℤ) (-(N : ℤ)) (N : ℤ)) := by
@@ -1141,16 +1169,15 @@ theorem zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
         (-(N : ℤ) - 1) (N : ℤ) (-(N : ℤ)) (N : ℤ)
         (![1, 0] : Site 2) hmeasSwap
 
-
-
-
+/-- The horizontal crossing of the matched rectangle and its face-dual vertical crossing are
+  disjoint. -/
 def zfk_FaithfulMatchedExclusive (N : ℕ) : Prop :=
   Disjoint
     (StatMech.RSW.Box.horizontalCrossingEvent
       (-(N : ℤ)) ((N : ℤ) + 1) (-(N : ℤ)) (N : ℤ))
     (zfk_FaithfulDualVerticalEvent N)
 
-theorem zfk_matched_half_of_faithful_exclusive (N : ℕ)
+lemma zfk_matched_half_of_faithful_exclusive (N : ℕ)
     (hexcl : zfk_FaithfulMatchedExclusive N) :
     halfMeasure.real
       (StatMech.RSW.Box.horizontalCrossingEvent
@@ -1163,10 +1190,7 @@ theorem zfk_matched_half_of_faithful_exclusive (N : ℕ)
     zfk_faithfulDualVertical_prob_eq_matched] at hu
   linarith
 
-
-
-
-theorem zfk_thetaReal_zero_of_matched_half
+lemma zfk_thetaReal_zero_of_matched_half
     (hpa : PositivelyAssociated halfMeasure)
     (hhalf : ∀ N : ℕ,
       halfMeasure.real
@@ -1181,8 +1205,7 @@ theorem zfk_thetaReal_zero_of_matched_half
     (fun k N hkN => zfk_armLower_le_left hpa k N (by omega))
     (fun k N hkN => zfk_armLower_le_right hpa k N (by omega)) hhalf
 
-
-theorem zfk_percolationProbability_zero_of_matched_half
+lemma zfk_percolationProbability_zero_of_matched_half
     (hpa : PositivelyAssociated halfMeasure)
     (hhalf : ∀ N : ℕ,
       halfMeasure.real
@@ -1197,17 +1220,14 @@ theorem zfk_percolationProbability_zero_of_matched_half
     ne_top_of_le_ne_top (by simp) hle
   exact (ENNReal.toReal_eq_zero_iff _).mp hr |>.resolve_right hfin
 
-theorem zfk_percolationProbability_zero_of_faithful_exclusive
+lemma zfk_percolationProbability_zero_of_faithful_exclusive
     (hpa : PositivelyAssociated halfMeasure)
     (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N) :
     Universality.percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
   zfk_percolationProbability_zero_of_matched_half hpa
     (fun N => zfk_matched_half_of_faithful_exclusive N (hexcl N))
 
-
-
-
-theorem zfk_criticalProbability_eq_half_of_faithful_exclusive
+lemma zfk_criticalProbability_eq_half_of_faithful_exclusive
     (hpa : PositivelyAssociated halfMeasure)
     (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N)
     (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →

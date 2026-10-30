@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LocalizedCrossTree
@@ -19,19 +14,52 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredDomChain
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreSandwich
 public import MathlibExt.Probability.OSSS.WiredDenominatorArithmetic
 
+/-!
+# Localized crossings in the doubled wired box
+
+The inner crossing of the box of radius `n` inside the wired box of radius `2n`, outer-inner
+connection functions, and the covariance and differential bounds they satisfy.
+
+## i. Overview
+
+`innerCrossInd` is the indicator that the origin reaches the boundary of the box of radius `n`, read
+in the box of radius `2n`. `wiredOuterInnerConn d n q β x k` is the probability that `x` reaches
+distance `k`, and `wiredOuterInnerTheta` / `wiredOuterInnerSig` are the centered versions.
+`wired_outer_inner_hcov_sharp_of_comparison` and its differential versions are conditional on the
+comparison `hcomp`: off-centre connection ≤ centered `θ`. `WiredBoxOffCentre` proves `hcomp`.
+
+## ii. Key results
+
+- `wired_outer_inner_hcov`: covariance lower bound in terms of the denominator `D`.
+- `wired_outer_inner_hcov_sharp_of_comparison`: sharp covariance bound, conditional on `hcomp`.
+
+## iii. Table of contents
+
+- A. Inner crossings
+- B. Outer-inner connection functions
+- C. Covariance and differential bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace StatMech
 namespace OSSS
 namespace WiredBoxLocalized
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open LocalizedCrossTree WiredBoxDifferential
 open FK DecisionTree RevealmentTranslation
 
+/-! ## A. Inner crossings -/
 
+/-- The inclusion of the edges of the box of radius `n` into those of radius `m ≥ n`. -/
 def boxActiveEdgeLE (d : Nat) {n m : Nat} (h : n <= m) :
     (boxGraph d n).edgeSet -> (boxGraph d m).edgeSet := fun e =>
   ⟨innerEdgeLE d h e.1, by
@@ -41,7 +69,7 @@ def boxActiveEdgeLE (d : Nat) {n m : Nat} (h : n <= m) :
     have hout := ocs_innerEdgeLE_mem_edgeFinset d h e.1 he
     rwa [SimpleGraph.mem_edgeFinset] at hout⟩
 
-theorem boxActiveEdgeLE_injective (d : Nat) {n m : Nat} (h : n <= m) :
+lemma boxActiveEdgeLE_injective (d : Nat) {n m : Nat} (h : n <= m) :
     Function.Injective (boxActiveEdgeLE d h) := by
   intro e f hef
   apply Subtype.ext
@@ -53,32 +81,36 @@ theorem boxActiveEdgeLE_injective (d : Nat) {n m : Nat} (h : n <= m) :
     exact congrArg (fun z : boxVerts d m => (z : Site d)) hxy
   exact (Sym2.map.injective hvinj) hv
 
-theorem n_le_two_mul (n : Nat) : n <= 2 * n := by omega
+lemma n_le_two_mul (n : Nat) : n <= 2 * n := by omega
 
-
-
+/-- The indicator that the origin reaches the boundary of the box of radius `n`, as a function of
+  the configuration of the box of radius `2n`. -/
 noncomputable def innerCrossInd (d n : Nat) :
     ConfigSpace (boxGraph d (2 * n)).edgeSet -> Real := fun omega =>
   crossIndG (boxActiveEdge d n) 0 n
     (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega)
 
-theorem innerCrossInd_monotone (d n : Nat) : Monotone (innerCrossInd d n) := by
+lemma innerCrossInd_monotone (d n : Nat) : Monotone (innerCrossInd d n) := by
   intro omega eta hle
   apply (connectedToSet_increasing (boxActiveEdge d n) 0
     (vertexBoundary d n)).indicator_monotone
   intro e
   exact hle (boxActiveEdgeLE d (n_le_two_mul n) e)
 
-theorem innerCrossInd_idem (d n : Nat)
+open Classical in
+lemma innerCrossInd_idem (d n : Nat)
     (omega : ConfigSpace (boxGraph d (2 * n)).edgeSet) :
     innerCrossInd d n omega * innerCrossInd d n omega = innerCrossInd d n omega := by
   unfold innerCrossInd crossIndG
   rw [Set.indicator_apply]
   split_ifs <;> norm_num
 
+/-! ## B. Outer-inner connection functions -/
 
+open Classical in
+/-- The OSSS denominator for the inner crossing in the doubled box. -/
 noncomputable def wiredOuterInnerDenom (d n : Nat) (q beta : Real) : Real :=
-  4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
     (fun x => ∑ j ∈ Finset.range n,
       Lindeberg.mean
         (FK.activeBCProb (boxGraph d (2 * n))
@@ -89,8 +121,9 @@ noncomputable def wiredOuterInnerDenom (d n : Nat) (q beta : Real) : Real :=
             (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega))
           x (centeredBoundary x j) then (1 : Real) else 0)) / (n : Real)
 
-
-
+open Classical in
+/-- The probability in the doubled wired box that `x` is connected to the boundary of the box of
+  radius `j` around it. -/
 noncomputable def wiredOuterInnerConn (d n : Nat) (q beta : Real)
     (x : Site d) (j : Nat) : Real :=
   Lindeberg.mean
@@ -102,8 +135,7 @@ noncomputable def wiredOuterInnerConn (d n : Nat) (q beta : Real)
         (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega))
       x (centeredBoundary x j) then (1 : Real) else 0)
 
-
-
+/-- The centered crossing probability at radius `k` (equal to `1` at `k = 0`). -/
 noncomputable def wiredOuterInnerTheta (d : Nat) (q beta : Real) (k : Nat) : Real :=
   if k = 0 then 1 else
     Lindeberg.mean
@@ -112,10 +144,12 @@ noncomputable def wiredOuterInnerTheta (d : Nat) (q beta : Real) (k : Nat) : Rea
         (FK.betaParams (fun _ => 1) beta) q)
       (innerCrossInd d k)
 
+/-- The sum over radii `k < n` of the centered crossing probabilities. -/
 noncomputable def wiredOuterInnerSig (d n : Nat) (q beta : Real) : Real :=
   ∑ k ∈ Finset.range n, wiredOuterInnerTheta d q beta k
 
-theorem wiredOuterInnerConn_nonneg
+open Classical in
+lemma wiredOuterInnerConn_nonneg
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) (j : Nat) :
     0 <= wiredOuterInnerConn d n q beta x j := by
@@ -125,7 +159,8 @@ theorem wiredOuterInnerConn_nonneg
     (FK.betaParams_pos (fun _ => by norm_num) hbeta)
     (FK.betaParams_lt_one (fun _ => 1) beta) (zero_lt_one.trans_le hq) omega).le
 
-theorem wiredOuterInnerConn_le_one
+open Classical in
+lemma wiredOuterInnerConn_le_one
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) (j : Nat) :
     wiredOuterInnerConn d n q beta x j <= 1 := by
@@ -154,12 +189,13 @@ theorem wiredOuterInnerConn_le_one
       split <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hsum 1
 
-theorem wiredOuterInnerTheta_nonneg
+open Classical in
+lemma wiredOuterInnerTheta_nonneg
     (d : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) (k : Nat) :
     0 <= wiredOuterInnerTheta d q beta k := by
   by_cases hk : k = 0
   · simp [wiredOuterInnerTheta, hk]
-  rw [wiredOuterInnerTheta, if_neg hk]
+  rw [wiredOuterInnerTheta, ite_eq_right hk]
   unfold innerCrossInd crossIndG Lindeberg.mean
   apply Finset.sum_nonneg
   intro omega _
@@ -173,7 +209,8 @@ theorem wiredOuterInnerTheta_nonneg
       (FK.betaParams_pos (fun _ => by norm_num) hbeta)
       (FK.betaParams_lt_one (fun _ => 1) beta) (zero_lt_one.trans_le hq) omega).le
 
-theorem wiredOuterInnerConn_antitone
+open Classical in
+lemma wiredOuterInnerConn_antitone
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) : Antitone (wiredOuterInnerConn d n q beta x) := by
   intro j k hjk
@@ -189,7 +226,8 @@ theorem wiredOuterInnerConn_antitone
     obtain ⟨z, hz, hxz⟩ := openWalk_hits_centeredBoundary w (hjk.trans_eq hy.symm)
     exact ⟨z, hz, hxz⟩
 
-theorem wiredOuterInnerConn_zero
+open Classical in
+lemma wiredOuterInnerConn_zero
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) : wiredOuterInnerConn d n q beta x 0 = 1 := by
   let mu := FK.activeBCProb (boxGraph d (2 * n))
@@ -205,26 +243,26 @@ theorem wiredOuterInnerConn_zero
           (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega))
         x (centeredBoundary x 0) then (1 : Real) else 0) = fun _ => 1 := by
     funext omega
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨x, centeredRadius_self x, connected_refl _ _⟩
   unfold wiredOuterInnerConn
   rw [hall]
   exact Lindeberg.mean_const mu hsum 1
 
-theorem wiredOuterInnerTheta_zero
-    (d : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
+lemma wiredOuterInnerTheta_zero
+    (d : Nat) (q beta : Real) (_hq : 1 <= q) (_hbeta : 0 < beta) :
     wiredOuterInnerTheta d q beta 0 = 1 := by
   simp [wiredOuterInnerTheta]
 
+/-! ## C. Covariance and differential bounds -/
 
-
-theorem wiredOuterInner_sup_le_two_sig_of_comparison
+lemma wiredOuterInner_sup_le_two_sig_of_comparison
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
-    (hcomp : forall x, x ∈ osssBoxFinset d n -> forall k,
+    (hcomp : forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) ->
       wiredOuterInnerConn d n q beta x k <=
         wiredOuterInnerTheta d q beta k) :
-    (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+    (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
         (fun x => ∑ j ∈ Finset.range n,
           wiredOuterInnerConn d n q beta x j) <=
       2 * wiredOuterInnerSig d n q beta := by
@@ -239,16 +277,13 @@ theorem wiredOuterInner_sup_le_two_sig_of_comparison
       wiredOuterInnerTheta_zero d q beta hq hbeta])
     (hcomp x hx)
 
-
-
-
-theorem wiredOuterInner_sup_le_two_sig_of_strict_comparison
+lemma wiredOuterInner_sup_le_two_sig_of_strict_comparison
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
-    (hcomp : forall x, x ∈ osssBoxFinset d n -> forall k,
+    (hcomp : forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) -> 2 * k < n ->
       wiredOuterInnerConn d n q beta x k <=
         wiredOuterInnerTheta d q beta k) :
-    (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+    (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
         (fun x => ∑ j ∈ Finset.range n,
           wiredOuterInnerConn d n q beta x j) <=
       2 * wiredOuterInnerSig d n q beta := by
@@ -266,9 +301,9 @@ theorem wiredOuterInner_sup_le_two_sig_of_strict_comparison
       rw [wiredOuterInnerTheta_zero d q beta hq hbeta]
       exact wiredOuterInnerConn_le_one d n q beta hq hbeta x k)
 
-theorem wiredOuterInnerDenom_le_eight_sig_of_comparison
+lemma wiredOuterInnerDenom_le_eight_sig_of_comparison
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
-    (hcomp : forall x, x ∈ osssBoxFinset d n -> forall k,
+    (hcomp : forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) ->
       wiredOuterInnerConn d n q beta x k <=
         wiredOuterInnerTheta d q beta k) :
@@ -277,11 +312,11 @@ theorem wiredOuterInnerDenom_le_eight_sig_of_comparison
   have hsup := wiredOuterInner_sup_le_two_sig_of_comparison
     d n q beta hq hbeta hcomp
   unfold wiredOuterInnerDenom
-  change 4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  change 4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
       (fun x => ∑ j ∈ Finset.range n,
         wiredOuterInnerConn d n q beta x j) / (n : Real) <= _
   calc
-    4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+    4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
           (fun x => ∑ j ∈ Finset.range n,
             wiredOuterInnerConn d n q beta x j) / (n : Real)
         <= 4 * (2 * wiredOuterInnerSig d n q beta) / (n : Real) := by
@@ -289,9 +324,9 @@ theorem wiredOuterInnerDenom_le_eight_sig_of_comparison
             (mul_le_mul_of_nonneg_left hsup (by norm_num)) (Nat.cast_nonneg n)
     _ = 8 * wiredOuterInnerSig d n q beta / (n : Real) := by ring
 
-theorem wiredOuterInnerDenom_le_eight_sig_of_strict_comparison
+lemma wiredOuterInnerDenom_le_eight_sig_of_strict_comparison
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
-    (hcomp : forall x, x ∈ osssBoxFinset d n -> forall k,
+    (hcomp : forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) -> 2 * k < n ->
       wiredOuterInnerConn d n q beta x k <=
         wiredOuterInnerTheta d q beta k) :
@@ -300,11 +335,11 @@ theorem wiredOuterInnerDenom_le_eight_sig_of_strict_comparison
   have hsup := wiredOuterInner_sup_le_two_sig_of_strict_comparison
     d n q beta hq hbeta hcomp
   unfold wiredOuterInnerDenom
-  change 4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  change 4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
       (fun x => ∑ j ∈ Finset.range n,
         wiredOuterInnerConn d n q beta x j) / (n : Real) <= _
   calc
-    4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+    4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
           (fun x => ∑ j ∈ Finset.range n,
             wiredOuterInnerConn d n q beta x j) / (n : Real)
         <= 4 * (2 * wiredOuterInnerSig d n q beta) / (n : Real) := by
@@ -312,11 +347,11 @@ theorem wiredOuterInnerDenom_le_eight_sig_of_strict_comparison
             (mul_le_mul_of_nonneg_left hsup (by norm_num)) (Nat.cast_nonneg n)
     _ = 8 * wiredOuterInnerSig d n q beta / (n : Real) := by ring
 
-theorem wiredOuterInnerDenom_pos
+lemma wiredOuterInnerDenom_pos
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     0 < wiredOuterInnerDenom d n q beta := by
-  let M := (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  let M := (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
     (fun x => ∑ j ∈ Finset.range n,
       wiredOuterInnerConn d n q beta x j)
   have hsum : 1 <= ∑ j ∈ Finset.range n,
@@ -337,7 +372,7 @@ theorem wiredOuterInnerDenom_pos
   change 0 < 4 * M / (n : Real)
   positivity
 
-theorem wiredOuterInnerSig_pos
+lemma wiredOuterInnerSig_pos
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     0 < wiredOuterInnerSig d n q beta := by
@@ -350,10 +385,7 @@ theorem wiredOuterInnerSig_pos
   unfold wiredOuterInnerSig
   linarith
 
-
-
-
-theorem wired_outer_inner_hcov
+lemma wired_outer_inner_hcov
     (d n : Nat) (hn : 1 <= n) (q beta D : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hD : 0 < D)
     (hsum : forall i : (boxGraph d n).edgeSet,
@@ -414,7 +446,8 @@ theorem wired_outer_inner_hcov
       l hl (disc0 (k : Nat)) (hdisc0sup (k : Nat)) (hoB (k : Nat))
       (restrictConfig iota omega)
     rw [heval]
-    simp only [innerCrossInd, iota, crossIndG, crossEvent, Set.indicator, Set.mem_setOf_eq]
+    simp only [innerCrossInd, iota, crossIndG, crossEvent, Set.indicator, Set.mem_ofPred_eq]
+    congr 1
   have hJ : forall e : Sym2 (boxVerts d (2 * n)),
       0 < (fun _ => (1 : Real)) e := fun _ => by norm_num
   have hq0 : 0 < q := zero_lt_one.trans_le hq
@@ -433,9 +466,7 @@ theorem wired_outer_inner_hcov
     (by simpa [mu, iota] using hsum)
   simpa [mu] using hmain
 
-
-
-theorem wired_outer_inner_hcov_geom
+lemma wired_outer_inner_hcov_geom
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     Lindeberg.mean
@@ -458,7 +489,7 @@ theorem wired_outer_inner_hcov_geom
     (wiredBoxBoundaryGraph d (2 * n))
     (FK.betaParams (fun _ => 1) beta) q
   let iota := boxActiveEdgeLE d (n_le_two_mul n)
-  let Lambda := osssBoxFinset d n
+  let Lambda := StatMech.Percolation.boxFinset d n
   let conn : Site d -> Nat -> Real := fun x j =>
     Lindeberg.mean mu (fun omega => if ConnectedToSet d
       (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) x
@@ -484,7 +515,7 @@ theorem wired_outer_inner_hcov_geom
             (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) 0
             (centeredBoundary 0 0) then (1 : Real) else 0) = fun _ => 1 := by
         funext omega
-        rw [if_pos]
+        rw [ite_eq_left]
         exact ⟨0, centeredRadius_self 0, connected_refl _ _⟩
       change Lindeberg.mean mu (fun omega => if ConnectedToSet d
         (liftCfg (boxActiveEdge d n) (restrictConfig iota omega)) 0
@@ -552,12 +583,11 @@ theorem wired_outer_inner_hcov_geom
     (by simpa [mu, iota] using hsum)
   simpa [wiredOuterInnerDenom, mu, iota, Lambda, conn, M, D] using hmain
 
-
-
-theorem wired_outer_inner_hcov_sharp_of_comparison
+open Classical in
+lemma wired_outer_inner_hcov_sharp_of_comparison
     (d n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta)
-    (hcomp : forall x, x ∈ osssBoxFinset d n -> forall k,
+    (hcomp : forall x, x ∈ StatMech.Percolation.boxFinset d n -> forall k,
       k ∈ Finset.Icc 1 (n / 2) ->
       wiredOuterInnerConn d n q beta x k <=
         wiredOuterInnerTheta d q beta k) :
@@ -621,10 +651,7 @@ theorem wired_outer_inner_hcov_sharp_of_comparison
   have hbase := wired_outer_inner_hcov_geom d n hn q beta hq hbeta
   exact hfrac.trans (by simpa [mu, theta] using hbase)
 
-
-
-
-theorem wired_outer_inner_differential_logistic
+lemma wired_outer_inner_differential_logistic
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n) (q beta D : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hD : 0 < D)
     (hsum : forall i : (boxGraph d n).edgeSet,
@@ -649,7 +676,7 @@ theorem wired_outer_inner_differential_logistic
       deriv (fun b => FK.activeBCMean (boxGraph d (2 * n))
         (wiredBoxBoundaryGraph d (2 * n))
         (FK.betaParams (fun _ => 1) b) q (innerCrossInd d n)) beta := by
-  letI : Nonempty (boxGraph d (2 * n)).edgeSet :=
+  let : Nonempty (boxGraph d (2 * n)).edgeSet :=
     boxGraph_edgeSet_nonempty d (2 * n) hd (by omega)
   let G := boxGraph d (2 * n)
   let C := wiredBoxBoundaryGraph d (2 * n)

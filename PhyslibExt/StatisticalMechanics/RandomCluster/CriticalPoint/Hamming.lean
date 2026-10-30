@@ -6,53 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.Configuration.ConfigSpace
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
+
+/-!
+# Hamming distance to an event
+
+The Hamming distance from a configuration to a set of configurations, and its basic properties.
+
+## i. Overview
+
+`hammingToSet A ω` is the least number of coordinates in which `ω` differs from an element of `A`.
+It vanishes exactly on `A` (for nonempty `A`), satisfies the triangle inequality, and is antitone
+for increasing `A`. All results are unconditional.
+
+## ii. Key results
+
+- `hammingToSet_eq_zero_iff`: distance zero iff `ω ∈ A`.
+- `hammingToSet_antitone`: monotonicity for increasing events.
+
+## iii. Table of contents
+
+- A. Hamming distance to a set
+
+## iv. References
+
+* M. Talagrand, *On Russo's approximate zero-one law*, Ann. Probab. 22 (1994).
+-/
 
 @[expose] public section
 
@@ -64,40 +46,26 @@ open ConfigSpace
 
 variable {E : Type*} [Fintype E]
 
+/-! ## A. Hamming distance to a set -/
 
-
-
-
-
-
-
+/-- The Hamming distance from `ω` to the set `A`: the infimum of `hammingDist ω η` over `η ∈ A`. -/
 noncomputable def hammingToSet (A : Set (ConfigSpace E)) (ω : ConfigSpace E) : ℕ :=
   sInf (hammingDist ω '' A)
-
-
 
 lemma hammingToSet_le (A : Set (ConfigSpace E)) {a : ConfigSpace E} (ha : a ∈ A)
     (ω : ConfigSpace E) : hammingToSet A ω ≤ hammingDist ω a :=
   Nat.sInf_le ⟨a, ha, rfl⟩
-
-
-
-
 
 lemma exists_realizer (A : Set (ConfigSpace E)) (hne : A.Nonempty) (ω : ConfigSpace E) :
     ∃ a ∈ A, hammingDist ω a = hammingToSet A ω := by
   obtain ⟨a, haA, ha⟩ := Nat.sInf_mem (hne.image (hammingDist ω))
   exact ⟨a, haA, ha⟩
 
-
 lemma hammingToSet_eq_zero_of_mem (A : Set (ConfigSpace E)) {ω : ConfigSpace E}
     (h : ω ∈ A) : hammingToSet A ω = 0 :=
   Nat.le_zero.mp (Nat.sInf_le ⟨ω, h, hammingDist_self ω⟩)
 
-
-
-
-theorem hammingToSet_eq_zero_iff (A : Set (ConfigSpace E)) (hne : A.Nonempty)
+lemma hammingToSet_eq_zero_iff (A : Set (ConfigSpace E)) (hne : A.Nonempty)
     (ω : ConfigSpace E) : hammingToSet A ω = 0 ↔ ω ∈ A := by
   constructor
   · intro h
@@ -107,12 +75,7 @@ theorem hammingToSet_eq_zero_iff (A : Set (ConfigSpace E)) (hne : A.Nonempty)
     exact haA
   · exact hammingToSet_eq_zero_of_mem A
 
-
-
-
-
-
-theorem hammingToSet_le_add (A : Set (ConfigSpace E)) (hne : A.Nonempty)
+lemma hammingToSet_le_add (A : Set (ConfigSpace E)) (hne : A.Nonempty)
     (ω ω' : ConfigSpace E) :
     hammingToSet A ω ≤ hammingDist ω ω' + hammingToSet A ω' := by
   obtain ⟨a, haA, ha⟩ := exists_realizer A hne ω'
@@ -121,37 +84,21 @@ theorem hammingToSet_le_add (A : Set (ConfigSpace E)) (hne : A.Nonempty)
     _ ≤ hammingDist ω ω' + hammingDist ω' a := hammingDist_triangle ω ω' a
     _ = hammingDist ω ω' + hammingToSet A ω' := by rw [ha]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem hammingToSet_antitone (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
+lemma hammingToSet_antitone (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
     {ω ω' : ConfigSpace E} (hle : ω ≤ ω') :
     hammingToSet A ω' ≤ hammingToSet A ω := by
   rcases A.eq_empty_or_nonempty with rfl | hne
   · simp [hammingToSet]
   · obtain ⟨a, haA, ha⟩ := exists_realizer A hne ω
-    
     set a' : ConfigSpace E := fun e => a e || ω' e with ha'
     have ha'A : a' ∈ A := hA (fun e => le_sup_left) haA
-    
     have hbound : hammingDist ω' a' ≤ hammingDist ω a := by
       apply Finset.card_le_card
       intro e he
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, ha'] at he ⊢
       have hpt : ω e ≤ ω' e := hle e
       rcases hbo : ω' e with _ | _
-      · 
-        simp only [hbo, Bool.or_false] at he
+      · simp only [hbo, Bool.or_false] at he
         have hae : a e = true := by
           cases h : a e with
           | false => simp [h] at he
@@ -162,8 +109,7 @@ theorem hammingToSet_antitone (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
           | false => rfl
           | true => rw [h] at hpt; exact absurd hpt (by decide)
         rw [hwe, hae]; decide
-      · 
-        simp [hbo] at he
+      · simp [hbo] at he
     calc hammingToSet A ω'
         ≤ hammingDist ω' a' := hammingToSet_le A ha'A ω'
       _ ≤ hammingDist ω a := hbound

@@ -6,16 +6,49 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangFixedK
 public import MathlibExt.Probability.Percolation.DifferentialInequality
+
+/-!
+# Zhang's argument with Harris' inequality
+
+Approximations of the arm events by finitely supported events, so that Harris' inequality applies
+and the positive-association hypothesis of `ZhangFixedK` can be dropped.
+
+## i. Overview
+
+The arm events depend on infinitely many edges. They are approximated by events supported in finite
+boxes (`zih_LeftArmApprox` and the other sides), decreasing to the arm events. Harris' inequality
+for finitely supported increasing events and the square-root trick then give
+`zih_armLower_le_left/right`. `zih_fixedK_contradiction` derives `False` from `θ(1/2) > 0` and the
+matched bound `hhalf`. `zih_criticalProbability_eq_half_of_faithful_exclusive` is conditional on the
+exclusivity `hexcl` (proved in `ZhangFaithfulExclusive`) and measurability.
+
+## ii. Key results
+
+- `zih_sqrt_trick_left`: the square-root trick for the four arm approximations.
+- `zih_percolationProbability_zero_of_matched_half`: `θ(1/2) = 0`, conditional on `hhalf` only.
+- `zih_criticalProbability_eq_half_of_faithful_exclusive`: `p_c = 1/2`, conditional on `hexcl` and
+  measurability.
+
+## iii. Table of contents
+
+- A. Finite approximations
+- B. Supports and rotations
+- C. Harris and the contradiction
+
+## iv. References
+
+* H. Kesten, *The critical probability of bond percolation on the square lattice equals 1/2*, Comm.
+  Math. Phys. 74 (1980).
+* Y. Zhang's argument, as presented in G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section
+  11.3; and H. Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes (2018).
+* T. E. Harris, *A lower bound for the critical probability in a certain percolation process*, Proc.
+  Cambridge Philos. Soc. 56 (1960).
+-/
 
 @[expose] public section
 
@@ -27,19 +60,25 @@ namespace StatMech.TwoDim
 open StatMech.Lattice StatMech.Percolation StatMech.Universality
 open StatMech.RSW.Box
 
+/-! ## A. Finite approximations -/
+
+/-- The shift moving `x` to the origin, as an element of the translation group. -/
 def zih_centerShift (x : Site 2) : Multiplicative (Site 2) :=
   Multiplicative.ofAdd (-x)
 
+/-- The event that the cluster of `x` reaches distance `m`: the shifted crossing event of the box of
+  radius `m`. -/
 def zih_clusterApprox (x : Site 2) (m : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   (ConfigSpace.shift (zih_centerShift x)) ⁻¹' crossingEvent 2 (m + 1)
 
+/-- The edges determining `zih_clusterApprox x m`. -/
 noncomputable def zih_clusterSupport (x : Site 2) (m : ℕ) :
     Finset (Sym2 (Site 2)) :=
   (boxEdgeFinset 2 (m + 1)).image
     (fun e => (zih_centerShift x)⁻¹ • e)
 
-theorem zih_clusterApprox_dependsOn (x : Site 2) (m : ℕ) :
+lemma zih_clusterApprox_dependsOn (x : Site 2) (m : ℕ) :
     StatMech.DependsOn (zih_clusterApprox x m) (zih_clusterSupport x m) := by
   rw [zih_clusterApprox, crossingEvent_eq_boxCrossingEvent (m + 1) (by omega)]
   have hbase : StatMech.DependsOn (Percolation.boxCrossingEvent 2 (m + 1))
@@ -54,23 +93,23 @@ theorem zih_clusterApprox_dependsOn (x : Site 2) (m : ℕ) :
   rw [Finset.mem_coe, zih_clusterSupport, Finset.mem_image]
   exact ⟨e, by simpa using he, rfl⟩
 
-theorem zih_clusterApprox_isIncreasing (x : Site 2) (m : ℕ) :
+lemma zih_clusterApprox_isIncreasing (x : Site 2) (m : ℕ) :
     IsIncreasing (zih_clusterApprox x m) := by
   rw [zih_clusterApprox, crossingEvent_eq_boxCrossingEvent (m + 1) (by omega)]
   intro omega omega' hle hmem
   exact Percolation.boxCrossingEvent_isIncreasing (m + 1) (fun e => hle _) hmem
 
-theorem zih_clusterApprox_measurableSet (x : Site 2) (m : ℕ) :
+lemma zih_clusterApprox_measurableSet (x : Site 2) (m : ℕ) :
     MeasurableSet (zih_clusterApprox x m) := by
   unfold zih_clusterApprox
   exact (measurableSet_crossingEvent (d := 2) (m + 1)).preimage
     (ConfigSpace.measurable_shift (zih_centerShift x))
 
-theorem zih_clusterApprox_antitone (x : Site 2) : Antitone (zih_clusterApprox x) := by
+lemma zih_clusterApprox_antitone (x : Site 2) : Antitone (zih_clusterApprox x) := by
   intro m n hmn omega hmem
   exact crossingEvent_antitone (m + 1) (n + 1) (by omega) hmem
 
-theorem zih_cluster_shift_infinite_iff (omega : ConfigSpace (Sym2 (Site 2)))
+lemma zih_cluster_shift_infinite_iff (omega : ConfigSpace (Sym2 (Site 2)))
     (x : Site 2) :
     (cluster 2 (ConfigSpace.shift (zih_centerShift x) omega) (origin 2)).Infinite ↔
       (cluster 2 omega x).Infinite := by
@@ -82,21 +121,23 @@ theorem zih_cluster_shift_infinite_iff (omega : ConfigSpace (Sym2 (Site 2)))
     ((MulAction.injective (zih_centerShift x) : Function.Injective
       (fun y : Site 2 => zih_centerShift x • y)).injOn)
 
-theorem zih_clusterInfinite_eq_iInter (x : Site 2) :
+lemma zih_clusterInfinite_eq_iInter (x : Site 2) :
     {omega : ConfigSpace (Sym2 (Site 2)) | (cluster 2 omega x).Infinite} =
       ⋂ m : ℕ, zih_clusterApprox x m := by
   ext omega
-  rw [Set.mem_setOf_eq, ← zih_cluster_shift_infinite_iff omega x,
+  rw [Set.mem_ofPred_eq, ← zih_cluster_shift_infinite_iff omega x,
     ← Percolation.mem_percolationEvent, Percolation.percolationEvent_eq_iInter]
   simp only [zih_clusterApprox, Set.mem_iInter, Set.mem_preimage]
 
+/-- The left square `[-N, N]²`, as a `Finset`. -/
 noncomputable def zih_leftSquareFinset (N : ℕ) : Finset (Site 2) :=
   (rect_finite (-(N : ℤ)) (N : ℤ) (-(N : ℤ)) (N : ℤ)).toFinset
 
+/-- The edges inside the left square. -/
 noncomputable def zih_leftSquareEdges (N : ℕ) : Finset (Sym2 (Site 2)) :=
   edgesWithinFinset (zih_leftSquareFinset N)
 
-theorem zih_leftArmFrom_dependsOn (x : Site 2) (N : ℕ) :
+lemma zih_leftArmFrom_dependsOn (x : Site 2) (N : ℕ) :
     StatMech.DependsOn {omega | zfk_LeftArmFrom omega x N}
       (zih_leftSquareEdges N) := by
   intro omega omega' hagree
@@ -115,18 +156,21 @@ theorem zih_leftArmFrom_dependsOn (x : Site 2) (N : ℕ) :
     simp only [openSubgraphInduce_adj, openSubgraph_adj]
     rw [hcoord a b a.2 b.2]
   unfold zfk_LeftArmFrom ConnectedWithin
-  simp only [Set.mem_setOf_eq, hG]
+  simp only [Set.mem_ofPred_eq, hG]
 
+/-- The finite approximation of the left arm event: a central site reaches distance `m` and the left
+  side of the square. -/
 def zih_LeftArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ x : zfk_leftCentralFinset k,
     zih_clusterApprox (x : Site 2) m ∩ {omega | zfk_LeftArmFrom omega x N}
 
+/-- The edges determining the left arm approximation. -/
 noncomputable def zih_leftApproxSupport (k N m : ℕ) :
     Finset (Sym2 (Site 2)) :=
   zih_leftSquareEdges N ∪
     (zfk_leftCentralFinset k).biUnion (fun x => zih_clusterSupport x m)
 
-theorem zih_LeftArmApprox_dependsOn (k N m : ℕ) :
+lemma zih_LeftArmApprox_dependsOn (k N m : ℕ) :
     StatMech.DependsOn (zih_LeftArmApprox k N m)
       (zih_leftApproxSupport k N m) := by
   apply ih_dependsOn_iUnion
@@ -141,34 +185,34 @@ theorem zih_LeftArmApprox_dependsOn (k N m : ℕ) :
     rw [Finset.mem_coe, zih_leftApproxSupport, Finset.mem_union]
     exact Or.inl he
 
-theorem zih_LeftArmApprox_isIncreasing (k N m : ℕ) :
+lemma zih_LeftArmApprox_isIncreasing (k N m : ℕ) :
     IsIncreasing (zih_LeftArmApprox k N m) := by
   intro omega omega' hle
-  simp only [zih_LeftArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [zih_LeftArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
   rintro ⟨x, hx, harm⟩
   rcases harm with ⟨hxS, a, hax⟩
   exact ⟨x, zih_clusterApprox_isIncreasing x m hle hx, hxS, a,
     StatMech.TwoDim.connectedWithin_mono hle hax⟩
 
-theorem zih_LeftArmApprox_measurableSet (k N m : ℕ) :
+lemma zih_LeftArmApprox_measurableSet (k N m : ℕ) :
     MeasurableSet (zih_LeftArmApprox k N m) := by
   exact measurableSet_of_dependsOn
     (ih_indicator_dependsOn_of_event (zih_LeftArmApprox_dependsOn k N m))
 
-theorem zih_LeftArmApprox_antitone (k N : ℕ) :
+lemma zih_LeftArmApprox_antitone (k N : ℕ) :
     Antitone (zih_LeftArmApprox k N) := by
   intro m n hmn omega
-  simp only [zih_LeftArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [zih_LeftArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
   rintro ⟨x, hx, harm⟩
   exact ⟨x, zih_clusterApprox_antitone x hmn hx, harm⟩
 
-theorem zih_LeftArmEvent_eq_iInter (k N : ℕ) :
+lemma zih_LeftArmEvent_eq_iInter (k N : ℕ) :
     zfk_LeftArmEvent k N = ⋂ m : ℕ, zih_LeftArmApprox k N m := by
   change zfk_LeftArmEvent k N = ⋂ m : ℕ, ⋃ x : zfk_leftCentralFinset k,
     zih_clusterApprox (x : Site 2) m ∩ {omega | zfk_LeftArmFrom omega x N}
   rw [iInter_iUnion_of_antitone]
   · ext omega
-    simp only [zfk_LeftArmEvent, Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_iInter,
+    simp only [zfk_LeftArmEvent, Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_iInter,
       Set.mem_inter_iff]
     constructor
     · rintro ⟨x, hxK, hxInf, harm⟩
@@ -189,13 +233,15 @@ theorem zih_LeftArmEvent_eq_iInter (k N : ℕ) :
     exact fun m n hmn => inter_subset_inter (zih_clusterApprox_antitone x hmn)
       Subset.rfl
 
+/-- The right square, as a `Finset`. -/
 noncomputable def zih_rightSquareFinset (N : ℕ) : Finset (Site 2) :=
   (rect_finite (-(N : ℤ) + 1) ((N : ℤ) + 1) (-(N : ℤ)) (N : ℤ)).toFinset
 
+/-- The edges inside the right square. -/
 noncomputable def zih_rightSquareEdges (N : ℕ) : Finset (Sym2 (Site 2)) :=
   edgesWithinFinset (zih_rightSquareFinset N)
 
-theorem zih_rightArmFrom_dependsOn (y : Site 2) (N : ℕ) :
+lemma zih_rightArmFrom_dependsOn (y : Site 2) (N : ℕ) :
     StatMech.DependsOn {omega | zfk_RightArmFrom omega y N}
       (zih_rightSquareEdges N) := by
   intro omega omega' hagree
@@ -214,18 +260,20 @@ theorem zih_rightArmFrom_dependsOn (y : Site 2) (N : ℕ) :
     simp only [openSubgraphInduce_adj, openSubgraph_adj]
     rw [hcoord a b a.2 b.2]
   unfold zfk_RightArmFrom ConnectedWithin
-  simp only [Set.mem_setOf_eq, hG]
+  simp only [Set.mem_ofPred_eq, hG]
 
+/-- The finite approximation of the right arm event. -/
 def zih_RightArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ y : zfk_rightCentralFinset k,
     zih_clusterApprox (y : Site 2) m ∩ {omega | zfk_RightArmFrom omega y N}
 
+/-- The edges determining the right arm approximation. -/
 noncomputable def zih_rightApproxSupport (k N m : ℕ) :
     Finset (Sym2 (Site 2)) :=
   zih_rightSquareEdges N ∪
     (zfk_rightCentralFinset k).biUnion (fun y => zih_clusterSupport y m)
 
-theorem zih_RightArmApprox_dependsOn (k N m : ℕ) :
+lemma zih_RightArmApprox_dependsOn (k N m : ℕ) :
     StatMech.DependsOn (zih_RightArmApprox k N m)
       (zih_rightApproxSupport k N m) := by
   apply ih_dependsOn_iUnion
@@ -240,34 +288,34 @@ theorem zih_RightArmApprox_dependsOn (k N m : ℕ) :
     rw [Finset.mem_coe, zih_rightApproxSupport, Finset.mem_union]
     exact Or.inl he
 
-theorem zih_RightArmApprox_isIncreasing (k N m : ℕ) :
+lemma zih_RightArmApprox_isIncreasing (k N m : ℕ) :
     IsIncreasing (zih_RightArmApprox k N m) := by
   intro omega omega' hle
-  simp only [zih_RightArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [zih_RightArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
   rintro ⟨y, hy, harm⟩
   rcases harm with ⟨hyS, b, hyb⟩
   exact ⟨y, zih_clusterApprox_isIncreasing y m hle hy, hyS, b,
     StatMech.TwoDim.connectedWithin_mono hle hyb⟩
 
-theorem zih_RightArmApprox_measurableSet (k N m : ℕ) :
+lemma zih_RightArmApprox_measurableSet (k N m : ℕ) :
     MeasurableSet (zih_RightArmApprox k N m) :=
   measurableSet_of_dependsOn
     (ih_indicator_dependsOn_of_event (zih_RightArmApprox_dependsOn k N m))
 
-theorem zih_RightArmApprox_antitone (k N : ℕ) :
+lemma zih_RightArmApprox_antitone (k N : ℕ) :
     Antitone (zih_RightArmApprox k N) := by
   intro m n hmn omega
-  simp only [zih_RightArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [zih_RightArmApprox, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
   rintro ⟨y, hy, harm⟩
   exact ⟨y, zih_clusterApprox_antitone y hmn hy, harm⟩
 
-theorem zih_RightArmEvent_eq_iInter (k N : ℕ) :
+lemma zih_RightArmEvent_eq_iInter (k N : ℕ) :
     zfk_RightArmEvent k N = ⋂ m : ℕ, zih_RightArmApprox k N m := by
   change zfk_RightArmEvent k N = ⋂ m : ℕ, ⋃ y : zfk_rightCentralFinset k,
     zih_clusterApprox (y : Site 2) m ∩ {omega | zfk_RightArmFrom omega y N}
   rw [iInter_iUnion_of_antitone]
   · ext omega
-    simp only [zfk_RightArmEvent, Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_iInter,
+    simp only [zfk_RightArmEvent, Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_iInter,
       Set.mem_inter_iff]
     constructor
     · rintro ⟨y, hyK, hyInf, harm⟩
@@ -289,7 +337,7 @@ theorem zih_RightArmEvent_eq_iInter (k N : ℕ) :
     exact fun m n hmn => inter_subset_inter (zih_clusterApprox_antitone y hmn)
       Subset.rfl
 
-theorem zih_armPair_fkg (k N : ℕ) :
+lemma zih_armPair_fkg (k N : ℕ) :
     halfMeasure.real (zfk_LeftArmEvent k N) *
         halfMeasure.real (zfk_RightArmEvent k N) ≤
       halfMeasure.real (zfk_ArmPairEvent k N) := by
@@ -319,20 +367,24 @@ theorem zih_armPair_fkg (k N : ℕ) :
     ← zfk_armPair_eq_inter] at hlim
   exact hlim
 
+/-! ## B. Supports and rotations -/
+
+/-- The image of an edge set under the quarter turn. -/
 noncomputable def zih_rotSupport (F : Finset (Sym2 (Site 2))) :
     Finset (Sym2 (Site 2)) := F.image StatMech.Lattice.crossEdge.symm
 
-theorem zih_rot_dependsOn {A : Set (ConfigSpace (Sym2 (Site 2)))}
+lemma zih_rot_dependsOn {A : Set (ConfigSpace (Sym2 (Site 2)))}
     {F : Finset (Sym2 (Site 2))} (hA : StatMech.DependsOn A F) :
     StatMech.DependsOn (zrs_rot A) (zih_rotSupport F) := by
   intro omega omega' hagree
   apply hA
   intro e he
-  simp only [zrs_rot, Set.mem_preimage, zrs_rotConfig_apply]
+  simp only [zrs_rotConfig_apply]
   apply hagree
   rw [Finset.mem_coe, zih_rotSupport, Finset.mem_image]
   exact ⟨e, by simpa using he, rfl⟩
 
+/-- The support of the arm approximation for side `i` (left, top, right, bottom), via rotations. -/
 noncomputable def zih_sideSupport (F : Finset (Sym2 (Site 2))) (i : Fin 4) :
     Finset (Sym2 (Site 2)) :=
   match i with
@@ -341,7 +393,7 @@ noncomputable def zih_sideSupport (F : Finset (Sym2 (Site 2))) (i : Fin 4) :
   | 2 => zih_rotSupport F
   | 3 => zih_rotSupport (zih_rotSupport (zih_rotSupport F))
 
-theorem zih_sideFamily_dependsOn {A : Set (ConfigSpace (Sym2 (Site 2)))}
+lemma zih_sideFamily_dependsOn {A : Set (ConfigSpace (Sym2 (Site 2)))}
     {F : Finset (Sym2 (Site 2))} (hA : StatMech.DependsOn A F) (i : Fin 4) :
     StatMech.DependsOn (zrs_sideFamily A i) (zih_sideSupport F i) := by
   fin_cases i
@@ -350,11 +402,11 @@ theorem zih_sideFamily_dependsOn {A : Set (ConfigSpace (Sym2 (Site 2)))}
   · exact zih_rot_dependsOn hA
   · exact zih_rot_dependsOn (zih_rot_dependsOn (zih_rot_dependsOn hA))
 
-theorem zih_complUnion_bound_of_finite_dependsOn
+lemma zih_complUnion_bound_of_finite_dependsOn
     {A B : Set (ConfigSpace (Sym2 (Site 2)))} (F : Finset (Sym2 (Site 2)))
     (hAdep : StatMech.DependsOn A F) (hBdep : StatMech.DependsOn B F)
     (hAinc : IsIncreasing A) (hBinc : IsIncreasing B)
-    (hAm : MeasurableSet A) (hBm : MeasurableSet B) :
+    (_hAm : MeasurableSet A) (hBm : MeasurableSet B) :
     (1 - halfMeasure.real A) * (1 - halfMeasure.real B) ≤
       1 - halfMeasure.real (A ∪ B) := by
   have hfkg := ih_harris_of_finite_dependsOn half_le_one F
@@ -365,7 +417,9 @@ theorem zih_complUnion_bound_of_finite_dependsOn
     measureReal_union_add_inter hBm
   nlinarith
 
-theorem zih_complUnion_four_of_finite_dependsOn
+/-! ## C. Harris and the contradiction -/
+
+lemma zih_complUnion_four_of_finite_dependsOn
     {A B C D : Set (ConfigSpace (Sym2 (Site 2)))} (F : Finset (Sym2 (Site 2)))
     (hAdep : StatMech.DependsOn A F) (hBdep : StatMech.DependsOn B F)
     (hCdep : StatMech.DependsOn C F) (hDdep : StatMech.DependsOn D F)
@@ -401,7 +455,7 @@ theorem zih_complUnion_four_of_finite_dependsOn
         (1 - halfMeasure.real D) := mul_le_mul_of_nonneg_right h2 nD
     _ ≤ _ := h3
 
-theorem zih_sideApprox_antitone (k N : ℕ) (i : Fin 4) :
+lemma zih_sideApprox_antitone (k N : ℕ) (i : Fin 4) :
     Antitone (fun m => zrs_sideFamily (zih_LeftArmApprox k N m) i) := by
   intro m n hmn
   have hbase := zih_LeftArmApprox_antitone k N hmn
@@ -411,14 +465,14 @@ theorem zih_sideApprox_antitone (k N : ℕ) (i : Fin 4) :
   · exact Set.preimage_mono hbase
   · exact Set.preimage_mono (Set.preimage_mono (Set.preimage_mono hbase))
 
-theorem zih_sideApprox_iInter (k N : ℕ) (i : Fin 4) :
+lemma zih_sideApprox_iInter (k N : ℕ) (i : Fin 4) :
     (⋂ m, zrs_sideFamily (zih_LeftArmApprox k N m) i) =
       zrs_sideFamily (zfk_LeftArmEvent k N) i := by
   rw [zih_LeftArmEvent_eq_iInter]
   fin_cases i <;> ext omega <;>
     simp [zrs_sideFamily, zrs_rot]
 
-theorem zih_complUnion_four_left (k N : ℕ) :
+lemma zih_complUnion_four_left (k N : ℕ) :
     let S := fun i : Fin 4 => zrs_sideFamily (zfk_LeftArmEvent k N) i
     (1 - halfMeasure.real (S 0)) * (1 - halfMeasure.real (S 1)) *
         (1 - halfMeasure.real (S 2)) * (1 - halfMeasure.real (S 3)) ≤
@@ -509,7 +563,7 @@ theorem zih_complUnion_four_left (k N : ℕ) :
       · exact ⟨3, h3⟩
   rwa [hTU] at hlim
 
-theorem zih_sqrt_trick_left (k N : ℕ) :
+lemma zih_sqrt_trick_left (k N : ℕ) :
     let S := fun i : Fin 4 => zrs_sideFamily (zfk_LeftArmEvent k N) i
     1 - (1 - halfMeasure.real (S 0 ∪ S 1 ∪ S 2 ∪ S 3)) ^
         ((1 : ℝ) / 4) ≤ halfMeasure.real (S 0) := by
@@ -540,7 +594,7 @@ theorem zih_sqrt_trick_left (k N : ℕ) :
     rwa [hreduce] at hmono
   linarith
 
-theorem zih_armLower_le_left (k N : ℕ) (hkN : k ≤ N) :
+lemma zih_armLower_le_left (k N : ℕ) (hkN : k ≤ N) :
     zfk_armLower k ≤ halfMeasure.real (zfk_LeftArmEvent k N) := by
   let S : Fin 4 → Set (ConfigSpace (Sym2 (Site 2))) :=
     fun i => zrs_sideFamily (zfk_LeftArmEvent k N) i
@@ -564,12 +618,12 @@ theorem zih_armLower_le_left (k N : ℕ) (hkN : k ≤ N) :
       ((1 : ℝ) / 4) ≤ halfMeasure.real (S 0) := by linarith
   simpa [zfk_armLower, S] using hfinal
 
-theorem zih_armLower_le_right (k N : ℕ) (hkN : k ≤ N) :
+lemma zih_armLower_le_right (k N : ℕ) (hkN : k ≤ N) :
     zfk_armLower k ≤ halfMeasure.real (zfk_RightArmEvent k N) := by
   rw [zfk_right_prob_eq_left]
   exact zih_armLower_le_left k N hkN
 
-theorem zih_fixedK_contradiction
+lemma zih_fixedK_contradiction
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2))
     (hhalf : ∀ N : ℕ,
       halfMeasure.real (StatMech.RSW.Box.horizontalCrossingEvent
@@ -611,7 +665,7 @@ theorem zih_fixedK_contradiction
       (Filter.Eventually.of_forall hk)
   norm_num at hbad
 
-theorem zih_thetaReal_zero_of_matched_half
+lemma zih_thetaReal_zero_of_matched_half
     (hhalf : ∀ N : ℕ,
       halfMeasure.real (StatMech.RSW.Box.horizontalCrossingEvent
         (-(N : ℤ)) ((N : ℤ) + 1) (-(N : ℤ)) (N : ℤ)) ≤ (1 : ℝ) / 2) :
@@ -620,7 +674,7 @@ theorem zih_thetaReal_zero_of_matched_half
   exact zih_fixedK_contradiction
     (lt_of_le_of_ne measureReal_nonneg (Ne.symm hne)) hhalf
 
-theorem zih_percolationProbability_zero_of_matched_half
+lemma zih_percolationProbability_zero_of_matched_half
     (hhalf : ∀ N : ℕ,
       halfMeasure.real (StatMech.RSW.Box.horizontalCrossingEvent
         (-(N : ℤ)) ((N : ℤ) + 1) (-(N : ℤ)) (N : ℤ)) ≤ (1 : ℝ) / 2) :
@@ -632,13 +686,13 @@ theorem zih_percolationProbability_zero_of_matched_half
   exact (ENNReal.toReal_eq_zero_iff _).mp hr |>.resolve_right
     (ne_top_of_le_ne_top (by simp) hle)
 
-theorem zih_percolationProbability_zero_of_faithful_exclusive
+lemma zih_percolationProbability_zero_of_faithful_exclusive
     (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N) :
     Universality.percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
   zih_percolationProbability_zero_of_matched_half
     (fun N => zfk_matched_half_of_faithful_exclusive N (hexcl N))
 
-theorem zih_criticalProbability_eq_half_of_faithful_exclusive
+lemma zih_criticalProbability_eq_half_of_faithful_exclusive
     (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N)
     (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →
       MeasurableSet (StatMech.RSW.Box.horizontalCrossingEvent 0 a 0 b))
@@ -652,6 +706,5 @@ theorem zih_criticalProbability_eq_half_of_faithful_exclusive
   have hle := kbw_criticalProbability_le_half_square_faithful
     hmeasGenH hmeasFace hmeasThin
   linarith
-
 
 end StatMech.TwoDim

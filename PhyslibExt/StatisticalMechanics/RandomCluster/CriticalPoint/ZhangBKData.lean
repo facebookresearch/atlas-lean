@@ -6,16 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.Percolation.TwoDimensional.ZhangRotSymmetry
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BranchSideClosure
 public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
+
+/-!
+# Geometric data for Zhang's argument
+
+Events and limits used in Zhang's proof that there is no infinite cluster at `p = 1/2`: boxes
+hitting the infinite cluster, connections inside boxes, side events and the two-scale merge.
+
+## i. Overview
+
+Assuming an infinite cluster exists at `p = 1/2`, it is unique (Burton–Keane:
+`zbd_atLeastTwo_halfMeasure_zero`), and the box of radius `n` hits it with probability tending to
+`1`. By the square-root trick each side of the box is connected to infinity with probability close
+to `1`. The two-scale merge/error events show that two such arms merge inside a larger box except on
+a vanishing error event. All results are unconditional; the existence of an infinite cluster enters
+only as a hypothesis of later lemmas.
+
+## ii. Key results
+
+- `zbd_boxHitsInfinite_tendsto_one`: the box hits the infinite cluster with probability `→ 1`.
+- `zbd_twoScaleError_tendsto_zero`: the two-scale merge error vanishes.
+- `zbd_centeredMerge_subset_horizontalCrossing`: merged side arms give a horizontal crossing.
+
+## iii. Table of contents
+
+- A. Boxes hitting the infinite cluster
+- B. Connections within boxes
+- C. Two-scale merge
+- D. Centered sides and rotations
+
+## iv. References
+
+* Y. Zhang's argument, as presented in G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section
+  11.3; and H. Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes (2018).
+* R. M. Burton, M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+-/
 
 @[expose] public section
 
@@ -26,27 +56,28 @@ namespace StatMech.TwoDim
 
 open StatMech.Lattice StatMech.Universality StatMech.Percolation StatMech.Walls
 
-
-theorem zbd_atLeastTwo_halfMeasure_zero :
+lemma zbd_atLeastTwo_halfMeasure_zero :
     halfMeasure (atLeastTwoInfinite 2) = 0 := by
   simpa [halfMeasure] using
     (bins_bk_unconditional (2⁻¹ : ℝ≥0) half_le_one (by norm_num) (by norm_num)).2.1
 
+/-! ## A. Boxes hitting the infinite cluster -/
 
+/-- The event that some site of the box of radius `n` is in an infinite cluster. -/
 def zbd_boxHitsInfinite (n : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | ∃ x : Site 2, x ∈ box 2 n ∧ (cluster 2 ω x).Infinite}
 
-theorem zbd_boxHitsInfinite_isIncreasing (n : ℕ) : IsIncreasing (zbd_boxHitsInfinite n) := by
+lemma zbd_boxHitsInfinite_isIncreasing (n : ℕ) : IsIncreasing (zbd_boxHitsInfinite n) := by
   intro ω ω' hle
   rintro ⟨x, hx, hinf⟩
   exact ⟨x, hx, hinf.mono (cluster_mono hle x)⟩
 
-theorem zbd_boxHitsInfinite_measurableSet (n : ℕ) :
+lemma zbd_boxHitsInfinite_measurableSet (n : ℕ) :
     MeasurableSet (zbd_boxHitsInfinite n) := by
   have heq : zbd_boxHitsInfinite n = ⋃ x : Site 2,
       if x ∈ box 2 n then {ω | (cluster 2 ω x).Infinite} else ∅ := by
     ext ω
-    simp only [zbd_boxHitsInfinite, Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [zbd_boxHitsInfinite, Set.mem_ofPred_eq, Set.mem_iUnion]
     constructor
     · rintro ⟨x, hx, hinf⟩
       exact ⟨x, by simp [hx, hinf]⟩
@@ -61,7 +92,7 @@ theorem zbd_boxHitsInfinite_measurableSet (n : ℕ) :
   · simpa [hx] using (measurableSet_clusterInfinite (d := 2) x)
   · simp [hx]
 
-theorem zbd_boxHitsInfinite_mono : Monotone zbd_boxHitsInfinite := by
+lemma zbd_boxHitsInfinite_mono : Monotone zbd_boxHitsInfinite := by
   intro n m hnm ω
   rintro ⟨x, hx, hinf⟩
   refine ⟨x, ?_, hinf⟩
@@ -69,12 +100,11 @@ theorem zbd_boxHitsInfinite_mono : Monotone zbd_boxHitsInfinite := by
   intro i
   exact le_trans (hx i) hnm
 
-
-theorem zbd_iUnion_boxHitsInfinite :
+lemma zbd_iUnion_boxHitsInfinite :
     (⋃ n, zbd_boxHitsInfinite n) =
       {ω : ConfigSpace (Sym2 (Site 2)) | ∃ x : Site 2, (cluster 2 ω x).Infinite} := by
   ext ω
-  simp only [Set.mem_iUnion, zbd_boxHitsInfinite, Set.mem_setOf_eq]
+  simp only [Set.mem_iUnion, zbd_boxHitsInfinite, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨n, x, _hx, hinf⟩
     exact ⟨x, hinf⟩
@@ -83,9 +113,7 @@ theorem zbd_iUnion_boxHitsInfinite :
     obtain ⟨n, hx⟩ := Set.mem_iUnion.mp hxall
     exact ⟨n, x, hx, hinf⟩
 
-
-
-theorem zbd_existsInfinite_halfMeasure_one
+lemma zbd_existsInfinite_halfMeasure_one
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     halfMeasure {ω : ConfigSpace (Sym2 (Site 2)) | ∃ x : Site 2,
       (cluster 2 ω x).Infinite} = 1 := by
@@ -99,7 +127,7 @@ theorem zbd_existsInfinite_halfMeasure_one
       have hempty : infiniteClusters 2 ω = ∅ := by
         apply (Set.encard_eq_zero.mp ?_)
         simpa [numInfiniteClusters] using hcount
-      simpa [hempty] using hmem
+      simp [hempty] at hmem
     have hnull : halfMeasure (Universality.percolationEvent 2) = 0 := by
       apply measure_mono_null hsub
       exact (prob_compl_eq_zero_iff (measurable_numInfiniteClusters
@@ -117,9 +145,7 @@ theorem zbd_existsInfinite_halfMeasure_one
       exact ⟨hC.2.choose, hC.2.choose_spec ▸ hC.1⟩
     exact le_antisymm prob_le_one (hone ▸ measure_mono hsub)
 
-
-
-theorem zbd_boxHit_rotated_union_tendsto
+lemma zbd_boxHit_rotated_union_tendsto
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     Tendsto (fun n =>
       halfMeasure.real (zrs_sideFamily (zbd_boxHitsInfinite n) 0
@@ -138,17 +164,7 @@ theorem zbd_boxHit_rotated_union_tendsto
   · intro n
     exact measureReal_le_one
 
-
-
-
-
-
-
-
-
-
-
-theorem zbd_connectedWithin_box_of_connected {d : ℕ}
+lemma zbd_connectedWithin_box_of_connected {d : ℕ}
     (omega : ConfigSpace (Sym2 (Site d))) {x y : Site d}
     (hxy : Connected d omega x y) :
     ∃ n, ∃ (hx : x ∈ box d n) (hy : y ∈ box d n),
@@ -160,21 +176,20 @@ theorem zbd_connectedWithin_box_of_connected {d : ℕ}
   have hy : y ∈ box d n := hn w.end_mem_support
   exact ⟨n, hx, hy, ⟨w.induce (box d n) hn⟩⟩
 
+/-! ## B. Connections within boxes -/
 
-
+/-- The event that `x` and `y` are joined by an open path inside the box of radius `n`. -/
 def zbd_connectedWithinBox {d : ℕ} (x y : Site d) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   {omega | ∃ (hx : x ∈ box d n) (hy : y ∈ box d n),
     ConnectedWithin d omega (box d n) ⟨x, hx⟩ ⟨y, hy⟩}
 
-
-theorem zbd_connectedWithinBox_subset_connected {d : ℕ} (x y : Site d) (n : ℕ) :
+lemma zbd_connectedWithinBox_subset_connected {d : ℕ} (x y : Site d) (n : ℕ) :
     zbd_connectedWithinBox x y n ⊆ {omega | Connected d omega x y} := by
   rintro omega ⟨_hx, _hy, hxy⟩
   exact hxy.connected
 
-
-theorem zbd_iUnion_connectedWithinBox {d : ℕ} (x y : Site d) :
+lemma zbd_iUnion_connectedWithinBox {d : ℕ} (x y : Site d) :
     (⋃ n, zbd_connectedWithinBox x y n) = {omega | Connected d omega x y} := by
   apply Set.Subset.antisymm
   · exact Set.iUnion_subset fun n => zbd_connectedWithinBox_subset_connected x y n
@@ -182,8 +197,7 @@ theorem zbd_iUnion_connectedWithinBox {d : ℕ} (x y : Site d) :
     obtain ⟨n, hx, hy, hwithin⟩ := zbd_connectedWithin_box_of_connected omega hxy
     exact Set.mem_iUnion.mpr ⟨n, hx, hy, hwithin⟩
 
-
-theorem zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S) :
+lemma zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S) :
     MeasurableSet {omega : ConfigSpace (Sym2 (Site d)) |
       ConnectedWithin d omega S x y} := by
   classical
@@ -192,12 +206,10 @@ theorem zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S)
         List.IsChain (openSubgraphInduce d omega S).Adj l} := by
     intro l
     induction l with
-    | nil => simpa using (MeasurableSet.univ : MeasurableSet
-        (Set.univ : Set (ConfigSpace (Sym2 (Site d)))))
+    | nil => simp
     | cons a l ih =>
         cases l with
-        | nil => simpa using (MeasurableSet.univ : MeasurableSet
-            (Set.univ : Set (ConfigSpace (Sym2 (Site d)))))
+        | nil => simp
         | cons b l' =>
             have heq :
                 {omega : ConfigSpace (Sym2 (Site d)) |
@@ -205,7 +217,7 @@ theorem zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S)
                   = {omega | (openSubgraph d omega).Adj (a : Site d) (b : Site d)} ∩
                     {omega | List.IsChain (openSubgraphInduce d omega S).Adj (b :: l')} := by
               ext omega
-              simp only [Set.mem_setOf_eq, Set.mem_inter_iff, List.isChain_cons_cons,
+              simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, List.isChain_cons_cons,
                 openSubgraphInduce_adj]
             rw [heq]
             exact (measurableSet_openAdj (a : Site d) (b : Site d)).inter ih
@@ -215,7 +227,7 @@ theorem zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S)
           ({omega | List.IsChain (openSubgraphInduce d omega S).Adj (x :: l)} ∩
             if (x :: l).getLast (List.cons_ne_nil _ _) = y then Set.univ else ∅) := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     unfold ConnectedWithin
     rw [SimpleGraph.reachable_iff_reflTransGen]
     constructor
@@ -235,7 +247,7 @@ theorem zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S)
   · exact MeasurableSet.univ
   · exact MeasurableSet.empty
 
-theorem zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) :
+lemma zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) :
     MeasurableSet (zbd_connectedWithinBox x y n) := by
   classical
   by_cases hx : x ∈ box d n
@@ -243,7 +255,7 @@ theorem zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) 
     · have heq : zbd_connectedWithinBox x y n =
           {omega | ConnectedWithin d omega (box d n) ⟨x, hx⟩ ⟨y, hy⟩} := by
         ext omega
-        simp only [zbd_connectedWithinBox, Set.mem_setOf_eq]
+        simp only [zbd_connectedWithinBox, Set.mem_ofPred_eq]
         constructor
         · rintro ⟨hx', hy', h⟩
           simpa using h
@@ -262,12 +274,12 @@ theorem zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) 
     rw [this]
     exact MeasurableSet.empty
 
-
+/-- The event that some site of `S` is in an infinite cluster. -/
 def zbd_sideHasInfinite {d : ℕ} (S : Set (Site d)) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   {omega | ∃ x ∈ S, (cluster d omega x).Infinite}
 
-theorem zbd_sideHasInfinite_measurableSet {d : ℕ} (S : Set (Site d)) :
+lemma zbd_sideHasInfinite_measurableSet {d : ℕ} (S : Set (Site d)) :
     MeasurableSet (zbd_sideHasInfinite S) := by
   have heq : zbd_sideHasInfinite S =
       ⋃ x : Site d, ⋃ (_hx : x ∈ S), {omega | (cluster d omega x).Infinite} := by
@@ -280,26 +292,29 @@ theorem zbd_sideHasInfinite_measurableSet {d : ℕ} (S : Set (Site d)) :
   intro hx
   exact measurableSet_clusterInfinite x
 
-theorem zbd_sideHasInfinite_isIncreasing {d : ℕ} (S : Set (Site d)) :
+lemma zbd_sideHasInfinite_isIncreasing {d : ℕ} (S : Set (Site d)) :
     IsIncreasing (zbd_sideHasInfinite S) := by
   intro omega omega' hle
   rintro ⟨x, hxS, hxinf⟩
   exact ⟨x, hxS, hxinf.mono (cluster_mono hle x)⟩
 
+/-! ## C. Two-scale merge -/
 
+/-- The event that infinite clusters from `L` and from `R` are joined inside the box of radius
+  `n`. -/
 def zbd_twoScaleMerge {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   {omega | ∃ x ∈ L, ∃ y ∈ R,
     (cluster d omega x).Infinite ∧ (cluster d omega y).Infinite ∧
       omega ∈ zbd_connectedWithinBox x y n}
 
-
-
+/-- The event that both `L` and `R` touch infinite clusters but these are not joined inside the box
+  of radius `n`. -/
 def zbd_twoScaleError {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   (zbd_sideHasInfinite L ∩ zbd_sideHasInfinite R) \ zbd_twoScaleMerge L R n
 
-theorem zbd_twoScaleMerge_measurableSet {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
+lemma zbd_twoScaleMerge_measurableSet {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
     MeasurableSet (zbd_twoScaleMerge L R n) := by
   have heq : zbd_twoScaleMerge L R n = ⋃ x : Site d, ⋃ (_hx : x ∈ L),
       ⋃ y : Site d, ⋃ (_hy : y ∈ R),
@@ -328,13 +343,13 @@ theorem zbd_twoScaleMerge_measurableSet {d : ℕ} (L R : Set (Site d)) (n : ℕ)
   exact ((measurableSet_clusterInfinite x).inter
     (measurableSet_clusterInfinite y)).inter (zbd_connectedWithinBox_measurableSet x y n)
 
-theorem zbd_twoScaleError_measurableSet {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
+lemma zbd_twoScaleError_measurableSet {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
     MeasurableSet (zbd_twoScaleError L R n) :=
   ((zbd_sideHasInfinite_measurableSet L).inter
     (zbd_sideHasInfinite_measurableSet R)).diff
       (zbd_twoScaleMerge_measurableSet L R n)
 
-theorem zbd_connectedWithinBox_mono {d : ℕ} (x y : Site d) :
+lemma zbd_connectedWithinBox_mono {d : ℕ} (x y : Site d) :
     Monotone (zbd_connectedWithinBox x y) := by
   intro n m hnm omega
   rintro ⟨hx, hy, hxy⟩
@@ -345,20 +360,18 @@ theorem zbd_connectedWithinBox_mono {d : ℕ} (x y : Site d) :
   exact ⟨hbox hx, hbox hy,
     StatMech.Lattice.connectedWithin_mono_set omega hbox hxy⟩
 
-theorem zbd_twoScaleMerge_mono {d : ℕ} (L R : Set (Site d)) :
+lemma zbd_twoScaleMerge_mono {d : ℕ} (L R : Set (Site d)) :
     Monotone (zbd_twoScaleMerge L R) := by
   intro n m hnm omega
   rintro ⟨x, hx, y, hy, hxinf, hyinf, hconn⟩
   exact ⟨x, hx, y, hy, hxinf, hyinf, zbd_connectedWithinBox_mono x y hnm hconn⟩
 
-theorem zbd_twoScaleError_antitone {d : ℕ} (L R : Set (Site d)) :
+lemma zbd_twoScaleError_antitone {d : ℕ} (L R : Set (Site d)) :
     Antitone (zbd_twoScaleError L R) := by
   intro n m hnm omega herror
   exact ⟨herror.1, fun hm => herror.2 (zbd_twoScaleMerge_mono L R hnm hm)⟩
 
-
-
-theorem zbd_iInter_twoScaleError_subset_atLeastTwo {d : ℕ} (L R : Set (Site d)) :
+lemma zbd_iInter_twoScaleError_subset_atLeastTwo {d : ℕ} (L R : Set (Site d)) :
     (⋂ n, zbd_twoScaleError L R n) ⊆ atLeastTwoInfinite d := by
   intro omega herror
   have hcap := (Set.mem_iInter.mp herror 0).1
@@ -378,14 +391,12 @@ theorem zbd_iInter_twoScaleError_subset_atLeastTwo {d : ℕ} (L R : Set (Site d)
   have hnt : (infiniteClusters d omega).Nontrivial := ⟨_, hcx, _, hcy, hcne⟩
   have hone : (1 : ℕ∞) < (infiniteClusters d omega).encard :=
     Set.one_lt_encard_iff_nontrivial.mpr hnt
-  show 2 ≤ numInfiniteClusters d omega
+  change 2 ≤ numInfiniteClusters d omega
   rw [numInfiniteClusters, ← one_add_one_eq_two,
     ENat.add_one_le_iff ENat.one_ne_top]
   exact hone
 
-
-
-theorem zbd_twoScaleError_tendsto_zero (L R : Set (Site 2)) :
+lemma zbd_twoScaleError_tendsto_zero (L R : Set (Site 2)) :
     Tendsto (fun n => halfMeasure.real (zbd_twoScaleError L R n)) atTop (nhds 0) := by
   have hlim : Tendsto (fun n : ℕ => halfMeasure (zbd_twoScaleError L R n)) atTop
       (nhds (halfMeasure (⋂ n, zbd_twoScaleError L R n))) := tendsto_measure_iInter_atTop
@@ -399,10 +410,7 @@ theorem zbd_twoScaleError_tendsto_zero (L R : Set (Site 2)) :
   rw [hinter] at hlim
   exact (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ∞)).comp hlim
 
-
-
-
-theorem zbd_exists_diagonal_outerRadius
+lemma zbd_exists_diagonal_outerRadius
     (L R : ℕ → Set (Site 2)) :
     ∃ M : ℕ → ℕ, (∀ n, n + 1 ≤ M n) ∧
       Tendsto (fun n => halfMeasure.real (zbd_twoScaleError (L n) (R n) (M n)))
@@ -426,8 +434,7 @@ theorem zbd_exists_diagonal_outerRadius
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hupper
     (fun n => measureReal_nonneg) (fun n => (hMsmall n).le)
 
-
-theorem zbd_twoScale_merge_cover {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
+lemma zbd_twoScale_merge_cover {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
     zbd_sideHasInfinite L ∩ zbd_sideHasInfinite R ⊆
       zbd_twoScaleMerge L R n ∪ zbd_twoScaleError L R n := by
   intro omega hcap
@@ -435,10 +442,7 @@ theorem zbd_twoScale_merge_cover {d : ℕ} (L R : Set (Site d)) (n : ℕ) :
   · exact Or.inl hmerge
   · exact Or.inr ⟨hcap, hmerge⟩
 
-
-
-
-theorem zbd_walk_first_hit_fn {omega : ConfigSpace (Sym2 (Site 2))} {x y : Site 2}
+lemma zbd_walk_first_hit_fn {omega : ConfigSpace (Sym2 (Site 2))} {x y : Site 2}
     (p : (openSubgraph 2 omega).Walk x y) (f : Site 2 → ℤ) (t : ℤ)
     (hstep : ∀ {u v}, (hypercubicLattice 2).Adj u v → (f u - f v).natAbs ≤ 1)
     (hx : f x < t) (hy : t ≤ f y) :
@@ -475,9 +479,7 @@ theorem zbd_walk_first_hit_fn {omega : ConfigSpace (Sym2 (Site 2))} {x y : Site 
   intro m hm
   exact hbelow m (by omega)
 
-
-
-theorem zbd_connectedWithin_restrict_fn {omega : ConfigSpace (Sym2 (Site 2))}
+lemma zbd_connectedWithin_restrict_fn {omega : ConfigSpace (Sym2 (Site 2))}
     {S T : Set (Site 2)} {x y : Site 2} (hxS : x ∈ S) (hyS : y ∈ S)
     (h : ConnectedWithin 2 omega S ⟨x, hxS⟩ ⟨y, hyS⟩)
     (f : Site 2 → ℤ) (t : ℤ)
@@ -510,7 +512,7 @@ theorem zbd_connectedWithin_restrict_fn {omega : ConfigSpace (Sym2 (Site 2))}
     · exact le_of_eq hju
   have hqsupp : ∀ z ∈ q.support, z ∈ T := by
     intro z hz
-    rw [SimpleGraph.Walk.take_support_eq_support_take_succ] at hz
+    rw [SimpleGraph.Walk.support_take] at hz
     have hzp : z ∈ p.support := List.mem_of_mem_take hz
     have hzS : z ∈ S := hpsupp z hzp
     obtain ⟨m, hmlt, hmz⟩ := List.mem_iff_getElem.mp hz
@@ -527,21 +529,25 @@ theorem zbd_connectedWithin_restrict_fn {omega : ConfigSpace (Sym2 (Site 2))}
   have huT : u ∈ T := hqsupp u q.end_mem_support
   exact ⟨u, huS, hju, huT, hxT, ⟨q.induce T hqsupp⟩⟩
 
+/-! ## D. Centered sides and rotations -/
 
+/-- The left side of the centered box of radius `n`. -/
 def zbd_centeredLeftSide (n : ℕ) : Set (Site 2) :=
   {x | x ∈ box 2 n ∧ x 0 = -(n : ℤ)}
 
+/-- The right side of the centered box of radius `n`. -/
 def zbd_centeredRightSide (n : ℕ) : Set (Site 2) :=
   {x | x ∈ box 2 n ∧ x 0 = (n : ℤ)}
 
+/-- The bottom side of the centered box of radius `n`. -/
 def zbd_centeredBottomSide (n : ℕ) : Set (Site 2) :=
   {x | x ∈ box 2 n ∧ x 1 = -(n : ℤ)}
 
+/-- The top side of the centered box of radius `n`. -/
 def zbd_centeredTopSide (n : ℕ) : Set (Site 2) :=
   {x | x ∈ box 2 n ∧ x 1 = (n : ℤ)}
 
-
-
+/-- Rotation by a quarter turn as an isomorphism of open subgraphs. -/
 noncomputable def zbd_rotOpenIso (omega : ConfigSpace (Sym2 (Site 2))) :
     openSubgraph 2 (kdi_rotConfig omega) ≃g openSubgraph 2 omega where
   toEquiv := rot90Equiv.symm
@@ -557,12 +563,12 @@ noncomputable def zbd_rotOpenIso (omega : ConfigSpace (Sym2 (Site 2))) :
       simpa [zrs_rotConfig_apply, StatMech.Lattice.crossEdge, StatMech.Lattice.sym2Congr] using
         hopen
 
-theorem zbd_rot_connected_iff (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2) :
+lemma zbd_rot_connected_iff (omega : ConfigSpace (Sym2 (Site 2))) (x y : Site 2) :
     Connected 2 (kdi_rotConfig omega) x y ↔
       Connected 2 omega (rot90Inv x) (rot90Inv y) := by
   exact (zbd_rotOpenIso omega).reachable_iff.symm
 
-theorem zbd_rot_clusterInfinite_iff
+lemma zbd_rot_clusterInfinite_iff
     (omega : ConfigSpace (Sym2 (Site 2))) (x : Site 2) :
     (cluster 2 (kdi_rotConfig omega) x).Infinite ↔
       (cluster 2 omega (rot90Inv x)).Infinite := by
@@ -585,22 +591,20 @@ theorem zbd_rot_clusterInfinite_iff
   rw [← himage]
   exact (Set.infinite_image_iff e.injective.injOn).symm
 
-theorem zbd_rotInv_sq (x : Site 2) : rot90Inv (rot90Inv x) = -x := by
+lemma zbd_rotInv_sq (x : Site 2) : rot90Inv (rot90Inv x) = -x := by
   funext i
   fin_cases i <;> simp [rot90Inv]
 
-theorem zbd_rotFun_sq (x : Site 2) : rot90Fun (rot90Fun x) = -x := by
+lemma zbd_rotFun_sq (x : Site 2) : rot90Fun (rot90Fun x) = -x := by
   funext i
   fin_cases i <;> simp [rot90Fun]
 
-theorem zbd_neg_mem_box (n : ℕ) {x : Site 2} (h : x ∈ box 2 n) : -x ∈ box 2 n := by
+lemma zbd_neg_mem_box (n : ℕ) {x : Site 2} (h : x ∈ box 2 n) : -x ∈ box 2 n := by
   rw [mem_box] at h ⊢
   intro i
   simpa using h i
 
-
-
-theorem zbd_centered_opposite_rotation (n : ℕ) :
+lemma zbd_centered_opposite_rotation (n : ℕ) :
     zrs_sideFamily (zbd_sideHasInfinite (zbd_centeredLeftSide n)) 1 =
       zbd_sideHasInfinite (zbd_centeredRightSide n) := by
   ext omega
@@ -629,17 +633,17 @@ theorem zbd_centered_opposite_rotation (n : ℕ) :
       rw [hix]
       exact hinf
 
-theorem zbd_rotInv_cube (x : Site 2) :
+lemma zbd_rotInv_cube (x : Site 2) :
     rot90Inv (rot90Inv (rot90Inv x)) = rot90Fun x := by
   funext i
   fin_cases i <;> simp [rot90Inv, rot90Fun]
 
-theorem zbd_rotFun_cube (x : Site 2) :
+lemma zbd_rotFun_cube (x : Site 2) :
     rot90Fun (rot90Fun (rot90Fun x)) = rot90Inv x := by
   funext i
   fin_cases i <;> simp [rot90Inv, rot90Fun]
 
-theorem zbd_centered_top_rotation (n : ℕ) :
+lemma zbd_centered_top_rotation (n : ℕ) :
     zrs_sideFamily (zbd_sideHasInfinite (zbd_centeredLeftSide n)) 2 =
       zbd_sideHasInfinite (zbd_centeredTopSide n) := by
   ext omega
@@ -656,7 +660,7 @@ theorem zbd_centered_top_rotation (n : ℕ) :
       rw [hiy]
       exact hinf
 
-theorem zbd_centered_bottom_rotation (n : ℕ) :
+lemma zbd_centered_bottom_rotation (n : ℕ) :
     zrs_sideFamily (zbd_sideHasInfinite (zbd_centeredLeftSide n)) 3 =
       zbd_sideHasInfinite (zbd_centeredBottomSide n) := by
   ext omega
@@ -687,7 +691,7 @@ theorem zbd_centered_bottom_rotation (n : ℕ) :
       rw [hix]
       exact hinf
 
-theorem zbd_boundaryInfinite_mem_sideUnion (n : ℕ)
+lemma zbd_boundaryInfinite_mem_sideUnion (n : ℕ)
     {omega : ConfigSpace (Sym2 (Site 2))} {z : Site 2}
     (hzbox : z ∈ box 2 n) (hzinf : (cluster 2 omega z).Infinite)
     (hbd : ∃ i : Fin 2, (z i).natAbs = n) :
@@ -713,9 +717,7 @@ theorem zbd_boundaryInfinite_mem_sideUnion (n : ℕ)
       change z 1 = -((z 1).natAbs : ℤ) at hneg
       exact Or.inr ⟨z, ⟨hzbox, by rw [hneg, hi]⟩, hzinf⟩
 
-
-
-theorem zbd_boxHitsInfinite_subset_centeredSideUnion (n : ℕ) :
+lemma zbd_boxHitsInfinite_subset_centeredSideUnion (n : ℕ) :
     zbd_boxHitsInfinite n ⊆
       zbd_sideHasInfinite (zbd_centeredLeftSide n) ∪
       zbd_sideHasInfinite (zbd_centeredRightSide n) ∪
@@ -769,16 +771,14 @@ theorem zbd_boxHitsInfinite_subset_centeredSideUnion (n : ℕ) :
     exact hxinf
   exact zbd_boundaryInfinite_mem_sideUnion n hkbox hzinf ⟨i, hpredEq⟩
 
-theorem zbd_boxHitsInfinite_tendsto_one
+lemma zbd_boxHitsInfinite_tendsto_one
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     Tendsto (fun n => halfMeasure.real (zbd_boxHitsInfinite n)) atTop (nhds 1) := by
   have hmeasure := tendsto_measure_iUnion_atTop (μ := halfMeasure) zbd_boxHitsInfinite_mono
   rw [zbd_iUnion_boxHitsInfinite, zbd_existsInfinite_halfMeasure_one hpos] at hmeasure
   exact (ENNReal.tendsto_toReal (by norm_num : (1 : ℝ≥0∞) ≠ ∞)).comp hmeasure
 
-
-
-theorem zbd_centeredSide_union_tendsto
+lemma zbd_centeredSide_union_tendsto
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     Tendsto (fun n =>
       halfMeasure.real
@@ -797,14 +797,14 @@ theorem zbd_centeredSide_union_tendsto
   · intro n
     exact measureReal_le_one
 
-theorem zbd_natAbs_le_iff (x : ℤ) (n : ℕ) :
+lemma zbd_natAbs_le_iff (x : ℤ) (n : ℕ) :
     x.natAbs ≤ n ↔ -(n : ℤ) ≤ x ∧ x ≤ n := by
   rw [show x.natAbs ≤ n ↔ |x| ≤ (n : ℤ) from by
     rw [Int.abs_eq_natAbs]
     exact Int.ofNat_le.symm]
   exact abs_le
 
-theorem zbd_mem_box_iff_rect (n : ℕ) (x : Site 2) :
+lemma zbd_mem_box_iff_rect (n : ℕ) (x : Site 2) :
     x ∈ box 2 n ↔ x ∈ StatMech.RSW.Box.rect (-(n : ℤ)) n (-(n : ℤ)) n := by
   rw [mem_box, StatMech.RSW.Box.mem_rect]
   constructor
@@ -817,9 +817,7 @@ theorem zbd_mem_box_iff_rect (n : ℕ) (x : Site 2) :
     · exact (zbd_natAbs_le_iff (x 0) n).mpr ⟨h0l, h0r⟩
     · exact (zbd_natAbs_le_iff (x 1) n).mpr ⟨h1l, h1r⟩
 
-
-
-theorem zbd_horizontalCrossing_of_centeredSide_connection
+lemma zbd_horizontalCrossing_of_centeredSide_connection
     (n M : ℕ) (hn : 0 < n) (hnM : n ≤ M)
     {omega : ConfigSpace (Sym2 (Site 2))}
     {x y : Site 2} (hx : x ∈ zbd_centeredLeftSide n)
@@ -844,8 +842,8 @@ theorem zbd_horizontalCrossing_of_centeredSide_connection
   obtain ⟨v, hvT1, hv0, hvT, huT, huv⟩ :=
     zbd_connectedWithin_restrict_fn (S := T1) (T := T) huT1 hxT1 hxu.symm
       (fun z => -z 0) (n : ℤ) hnegStep
-      (by change -u 0 < (n : ℤ); rw [hu0]; omega)
-      (by change (n : ℤ) ≤ -x 0; rw [hx.2]; omega)
+      (by rw [hu0]; omega)
+      (by rw [hx.2]; omega)
       (fun z hz hza => by
         have hzbox : z ∈ box 2 M := hz.1
         have hzrect := (zbd_mem_box_iff_rect M z).mp hzbox
@@ -859,9 +857,7 @@ theorem zbd_horizontalCrossing_of_centeredSide_connection
   · exact ⟨huT, hu0⟩
   · simpa [T] using huv.symm
 
-
-
-theorem zbd_centeredMerge_subset_horizontalCrossing
+lemma zbd_centeredMerge_subset_horizontalCrossing
     (n M : ℕ) (hn : 0 < n) (hnM : n ≤ M) :
     zbd_twoScaleMerge (zbd_centeredLeftSide n) (zbd_centeredRightSide n) M ⊆
       StatMech.RSW.Box.horizontalCrossingEvent (-(n : ℤ)) n (-(M : ℤ)) M := by
@@ -870,11 +866,8 @@ theorem zbd_centeredMerge_subset_horizontalCrossing
   apply zbd_horizontalCrossing_of_centeredSide_connection n M hn hnM hx hy
   simpa using hwithin
 
-
-
-
-
-
+/-- The geometric data for Zhang's argument built from side events and the two-scale merge
+  bounds. -/
 def zbd_geometricData_of_twoScale
     {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (L R : ℕ → Set (Site 2)) (M : ℕ → ℕ)

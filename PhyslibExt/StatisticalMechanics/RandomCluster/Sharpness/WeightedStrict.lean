@@ -6,61 +6,90 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseCommonCritical
 
+/-!
+# Strict denominators and phase profiles
+
+The strict OSSS denominator for weighted boxes, the phase profile `θ_a(n)`, and its envelope, with
+their limits.
+
+## i. Overview
+
+`weightedPhaseProfile` is the crossing probability of radius `n` for phase `a`, and
+`weightedPhaseEnvelopeSig` sums the envelope over radii. Under phase covariance the strict
+denominator is bounded by the envelope sum (`weightedStrictDenom_le_phaseEnvelopeSig`). The profiles
+converge to the infinite-volume `θ`. Unconditional. The `Weighted*` files extend the OSSS sharpness
+argument to random-cluster models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map
+`phase : Site d → P` to a finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how
+translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedStrictDenom_le_phaseEnvelopeSig`: strict denominator ≤ envelope sum.
+- `weightedPhaseProfile_tendsto_infiniteTheta`: profiles converge to `θ`.
+
+## iii. Table of contents
+
+- A. Denominators and profiles
+- B. Bounds and limits
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedStrict
 
-open Lattice FK RevealmentConstruction RevealmentTranslation
+open StatMech.Lattice FK RevealmentConstruction RevealmentTranslation
 open WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open AdaptiveCovLowerGeom
 open FKSharpnessWeighted FKSharpnessWeightedPeriodic
 open FKSharpnessWeightedPeriodicRepair
 open FKSharpnessWeightedInfiniteVolume FKSharpnessWeightedCoherentLimit
 
+/-! ## A. Denominators and profiles -/
 
+/-- The strict OSSS denominator: four times the maximum over box sites of the summed outer-inner
+  connection probabilities. -/
 noncomputable def weightedStrictDenom
     (d n : Nat) (J : Sym2 (Site d) -> Real) (q beta : Real) : Real :=
-  4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
     (fun x => ∑ j ∈ Finset.range n,
       weightedOuterInnerConn d n J q beta x j) / (n : Real)
 
-
-
-
-
+/-- The crossing probability of the box of radius `n` for phase `a` (equal to `1` at `n = 0`). -/
 noncomputable def weightedPhaseProfile
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (q beta : Real) (k : Nat) : Real :=
   if k = 0 then 1 else weightedPhaseWiredTheta d phaseJ a q beta k
 
-
+/-- The sum over radii `k < n` of the maximum over phases of the profile. -/
 noncomputable def weightedPhaseEnvelopeSig
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real) (q beta : Real) : Real :=
   ∑ k ∈ Finset.range n,
     phaseEnvelope (fun a => weightedPhaseProfile d phaseJ a q beta) k
 
-theorem weightedOuterInnerConn_nonneg
+/-! ## B. Bounds and limits -/
+
+open Classical in
+lemma weightedOuterInnerConn_nonneg
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) (j : Nat) :
@@ -71,7 +100,8 @@ theorem weightedOuterInnerConn_nonneg
     (betaParams_pos (fun e => hJ (Sym2.map Subtype.val e)) hbeta)
     (betaParams_lt_one _ beta) (zero_lt_one.trans_le hq) omega).le
 
-theorem weightedOuterInnerConn_le_one
+open Classical in
+lemma weightedOuterInnerConn_le_one
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) (j : Nat) :
@@ -101,7 +131,8 @@ theorem weightedOuterInnerConn_le_one
       split <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hsum 1
 
-theorem weightedOuterInnerConn_antitone
+open Classical in
+lemma weightedOuterInnerConn_antitone
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) : Antitone (weightedOuterInnerConn d n J q beta x) := by
@@ -119,7 +150,8 @@ theorem weightedOuterInnerConn_antitone
       openWalk_hits_centeredBoundary w (hjk.trans_eq hy.symm)
     exact ⟨z, hz, hxz⟩
 
-theorem weightedOuterInnerConn_zero
+open Classical in
+lemma weightedOuterInnerConn_zero
     (d n : Nat) (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (x : Site d) : weightedOuterInnerConn d n J q beta x 0 = 1 := by
@@ -136,31 +168,30 @@ theorem weightedOuterInnerConn_zero
           (restrictConfig (boxActiveEdgeLE d (n_le_two_mul n)) omega))
         x (centeredBoundary x 0) then (1 : Real) else 0) = fun _ => 1 := by
     funext omega
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨x, centeredRadius_self x, connected_refl _ _⟩
   unfold weightedOuterInnerConn
   rw [hall]
   exact Lindeberg.mean_const mu hsum 1
 
-theorem weightedPhaseProfile_nonneg
+lemma weightedPhaseProfile_nonneg
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (hJ : forall a e, 0 < phaseJ a e)
     (a : P) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) (k : Nat) :
     0 <= weightedPhaseProfile d phaseJ a q beta k := by
   by_cases hk : k = 0
   · simp [weightedPhaseProfile, hk]
-  · simp only [weightedPhaseProfile, if_neg hk]
+  · simp only [weightedPhaseProfile, ite_eq_right hk]
     exact weightedPhaseWiredTheta_nonneg d phaseJ hJ a q beta
       (zero_lt_one.trans_le hq) hbeta k
 
-@[simp] theorem weightedPhaseProfile_zero
+@[simp] lemma weightedPhaseProfile_zero
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P) (q beta : Real) :
     weightedPhaseProfile d phaseJ a q beta 0 = 1 := by
   simp [weightedPhaseProfile]
 
-
-theorem weightedPhaseProfile_tendsto_infiniteTheta
+lemma weightedPhaseProfile_tendsto_infiniteTheta
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e)
@@ -174,9 +205,7 @@ theorem weightedPhaseProfile_tendsto_infiniteTheta
   filter_upwards [Filter.eventually_ge_atTop 1] with k hk
   simp [weightedPhaseProfile, Nat.ne_of_gt hk]
 
-
-
-theorem weightedPhaseProfileEnvelope_tendsto
+lemma weightedPhaseProfileEnvelope_tendsto
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -191,12 +220,12 @@ theorem weightedPhaseProfileEnvelope_tendsto
     weightedPhaseProfile_tendsto_infiniteTheta
       d phaseJ a (hJ a) q beta hq hbeta
 
-theorem weightedStrictDenom_pos
+lemma weightedStrictDenom_pos
     (d n : Nat) (hn : 1 <= n)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     0 < weightedStrictDenom d n J q beta := by
-  let M := (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+  let M := (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
     (fun x => ∑ j ∈ Finset.range n,
       weightedOuterInnerConn d n J q beta x j)
   have hsum : 1 <= ∑ j ∈ Finset.range n,
@@ -214,10 +243,7 @@ theorem weightedStrictDenom_pos
   unfold weightedStrictDenom
   positivity
 
-
-
-
-theorem weightedStrictDenom_le_phaseEnvelopeSig
+lemma weightedStrictDenom_le_phaseEnvelopeSig
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (phase : Site d -> P) (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -247,7 +273,7 @@ theorem weightedStrictDenom_le_phaseEnvelopeSig
   have hoff := weightedPhaseOffCentreStrict_of_covariant
     d n J hJ phase phaseJ hcov q beta hq hbeta
   have hsup :
-      (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+      (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
           (fun x => ∑ j ∈ Finset.range n,
             weightedOuterInnerConn d n J q beta x j) <=
         2 * weightedPhaseEnvelopeSig d n phaseJ q beta := by
@@ -277,7 +303,7 @@ theorem weightedStrictDenom_le_phaseEnvelopeSig
         exact weightedOuterInnerConn_le_one d n J hJ q beta hq hbeta x k)
   unfold weightedStrictDenom weightedPhaseEnvelopeSig
   calc
-    4 * (osssBoxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
+    4 * (StatMech.Percolation.boxFinset d n).sup' ⟨0, origin_mem_osssBoxFinset d n⟩
           (fun x => ∑ j ∈ Finset.range n,
             weightedOuterInnerConn d n J q beta x j) / (n : Real)
         <= 4 * (2 * ∑ k ∈ Finset.range n,
@@ -294,4 +320,3 @@ theorem weightedStrictDenom_le_phaseEnvelopeSig
 end FKSharpnessWeightedStrict
 end OSSS
 end StatMech
-

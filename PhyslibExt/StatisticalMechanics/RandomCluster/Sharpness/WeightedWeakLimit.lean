@@ -6,40 +6,66 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedSelectedLaws
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQTranslation
 
+/-!
+# Weak limits of weighted phase measures
+
+Convergence of multi-edge open events under the finite wired measures and weak convergence to the
+selected infinite-volume law.
+
+## i. Overview
+
+Multi-open events are clopen. Their finite-volume probabilities are monotone in the box
+(`weightedPhaseFiniteMeasure_multiOpen_mono`) and converge
+(`weightedPhaseFiniteMeasure_multiOpen_tendsto`); edges outside the lattice are almost surely
+closed. Hence the finite measures converge weakly to the selected law
+(`weightedPhaseFiniteMeasure_tendsto_selected`), unconditionally for `q ≥ 1`. The `Weighted*` files
+extend the OSSS sharpness argument to random-cluster models with inhomogeneous, periodic couplings
+`J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite set of phases, with `PhaseCovariant J
+phase phaseJ`, describes how translates of the box see the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhaseFiniteMeasure_tendsto_selected`: weak convergence to the selected law.
+
+## iii. Table of contents
+
+- A. Multi-open events
+- B. Weak convergence
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open MeasureTheory Set Filter Topology
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedWeakLimit
 
-open Lattice FK Percolation
+open StatMech.Lattice FK Percolation
 open RevealmentConstruction WiredBoxDifferential WiredBoxLocalized WiredBoxOffCentre
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedInfiniteVolume
 open FKSharpnessWeightedCoherentLimit FKSharpnessWeightedSelectedLaws
 
 variable {d : Nat}
 
+/-! ## A. Multi-open events -/
 
-theorem cdc_multiOpenEvent_isClopen (s : Finset (Sym2 (Site d))) :
+lemma cdc_multiOpenEvent_isClopen (s : Finset (Sym2 (Site d))) :
     IsClopen (cdc_multiOpenEvent s) := by
   have heq : cdc_multiOpenEvent s = cylinder s
       {eta : s -> Bool | forall e, eta e = true} := by
@@ -48,8 +74,7 @@ theorem cdc_multiOpenEvent_isClopen (s : Finset (Sym2 (Site d))) :
   rw [heq]
   exact isClopen_cylinderEvent s _
 
-
-theorem edgeIncl_mem_lattice_edgeSet
+lemma edgeIncl_mem_lattice_edgeSet
     (N : Nat) (e : Sym2 (boxVerts d N))
     (he : e ∈ (boxGraph d N).edgeFinset) :
     edgeIncl d N e ∈ (hypercubicLattice d).edgeSet := by
@@ -57,9 +82,7 @@ theorem edgeIncl_mem_lattice_edgeSet
   induction e using Sym2.ind with
   | _ x y => exact he
 
-
-
-theorem box_edges_of_image_lattice_edges
+lemma box_edges_of_image_lattice_edges
     (N : Nat) (t : Finset (Sym2 (boxVerts d N)))
     (ht : forall e, e ∈ t.image (edgeIncl d N) ->
       e ∈ (hypercubicLattice d).edgeSet) :
@@ -70,9 +93,7 @@ theorem box_edges_of_image_lattice_edges
   induction e using Sym2.ind with
   | _ x y => exact hamb
 
-
-
-theorem liftActive_mem_multiOpen_iff
+lemma liftActive_mem_multiOpen_iff
     (d N R : Nat) (hNR : N <= R)
     (t : Finset (Sym2 (boxVerts d N)))
     (ht : t ⊆ (boxGraph d N).edgeFinset)
@@ -82,7 +103,7 @@ theorem liftActive_mem_multiOpen_iff
       ocd_innerRestrict (flc_incl (box_mono d hNR)) rho ∈
         cdc_boxMultiOpenEvent N t := by
   rw [cdc_multiOpenEvent_image_eq_boxRestrict]
-  simp only [Set.mem_preimage, cdc_boxMultiOpenEvent, Set.mem_setOf_eq]
+  simp only [Set.mem_preimage, cdc_boxMultiOpenEvent, Set.mem_ofPred_eq]
   have hrestrict :
       ocd_innerRestrict (flc_incl (box_mono d hNR)) rho =
         boxRestrictLE d hNR rho := by
@@ -99,9 +120,7 @@ theorem liftActive_mem_multiOpen_iff
     rw [boxRestrict_liftActive_eq_on_inner_edges d hNR rho e (ht he)]
     exact hh
 
-
-
-theorem weightedPhaseFiniteMeasure_multiOpen_eq
+lemma weightedPhaseFiniteMeasure_multiOpen_eq
     (d N R : Nat) (hNR : N <= R) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -140,9 +159,7 @@ theorem weightedPhaseFiniteMeasure_multiOpen_eq
   · exact betaParams_lt_one _ beta
   · exact hq
 
-
-
-theorem weightedPhaseFiniteMeasure_multiOpen_mono
+lemma weightedPhaseFiniteMeasure_multiOpen_mono
     (d N r R : Nat) (hN : 1 <= N) (hNr : N <= r) (hrR : r < R)
     {P : Type*} (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -188,9 +205,7 @@ theorem weightedPhaseFiniteMeasure_multiOpen_mono
   exact weighted_boxEvent_domain_dominated d r R (hN.trans hNr) hrR
     (phaseJ a) hJ beta q hbeta hq hA
 
-
-
-theorem weightedPhaseFiniteMeasure_multiOpen_tendsto
+lemma weightedPhaseFiniteMeasure_multiOpen_tendsto
     (d N : Nat) (hN : 1 <= N) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -246,9 +261,9 @@ theorem weightedPhaseFiniteMeasure_multiOpen_tendsto
   rw [hcomm]
   exact hshift
 
+/-! ## B. Weak convergence -/
 
-
-theorem weightedPhaseFiniteMeasure_nonLattice_multiOpen_zero
+lemma weightedPhaseFiniteMeasure_nonLattice_multiOpen_zero
     (d n : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -274,9 +289,7 @@ theorem weightedPhaseFiniteMeasure_nonLattice_multiOpen_zero
       exact he (hf ▸ hfedge)
   · simp at heopen
 
-
-
-theorem weightedPhaseInfiniteVolume_nonLattice_multiOpen_zero
+lemma weightedPhaseInfiniteVolume_nonLattice_multiOpen_zero
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -297,9 +310,7 @@ theorem weightedPhaseInfiniteVolume_nonLattice_multiOpen_zero
             d (phi k) phaseJ a hJ q beta hq hbeta T e heT he |>.symm
   exact tendsto_nhds_unique hport hzero
 
-
-
-theorem lattice_finset_in_positive_box
+lemma lattice_finset_in_positive_box
     (T : Finset (Sym2 (Site d)))
     (hT : forall e, e ∈ T -> e ∈ (hypercubicLattice d).edgeSet) :
     exists N : Nat, 1 <= N ∧
@@ -318,9 +329,7 @@ theorem lattice_finset_in_positive_box
       hT e (by rw [hrep]; exact he)
   exact ⟨N, le_max_left 1 M, tN, htN, hrep⟩
 
-
-
-
+/-- Weak convergence to the selected law. -/
 theorem weightedPhaseFiniteMeasure_tendsto_selected
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
@@ -360,8 +369,6 @@ theorem weightedPhaseFiniteMeasure_tendsto_selected
       dsimp [y]
       exact measure_ne_top munu _
     exact (ENNReal.toReal_eq_toReal_iff' hx hy).mp hreal
-  change (xi : Measure _).real (cdc_multiOpenEvent T) =
-    (nu : Measure _).real (cdc_multiOpenEvent T)
   by_cases hT : forall e, e ∈ T -> e ∈ (hypercubicLattice d).edgeSet
   · obtain ⟨N, hN, t, ht, hrep⟩ :=
       lattice_finset_in_positive_box (d := d) T hT
@@ -394,9 +401,7 @@ theorem weightedPhaseFiniteMeasure_tendsto_selected
       simpa [nu] using hselected]
     exact tendsto_nhds_unique hport hzero
 
-
-
-theorem weightedPhaseFiniteMeasure_weakLimit_unique
+lemma weightedPhaseFiniteMeasure_weakLimit_unique
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)

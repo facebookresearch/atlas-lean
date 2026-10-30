@@ -6,105 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -130,6 +31,46 @@ public import MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingA
 public import MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingRightCoast
 public import MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingRightCoastAll
 
+/-!
+# Face-dual vertical crossings from the left fill of a box
+
+Without an open horizontal crossing of the square `[0, n]²`, the boundary of the left-reachable
+region carries a face-dual vertical crossing; consequently the square crossing probability at `p =
+1/2` is at least `1/2`.
+
+## i. Overview
+
+The right complement of the left-reachable set is closed under adjacency inside the box, and every
+right-coast face has an interface side. The left fill `crr_leftFill` is connected, and the
+left/right face graph `crr_LRFaceGraph` has even degree at interior faces; a cut-set argument in the
+face graph of the box (`crr_boxPlanar`) connects any two interface sides through the interior
+(`crr_interior_LRFaceGraph_reachable`). This proves the frame-arc order `crr_leftFillFrameArcOrder`
+unconditionally, hence a face-dual vertical crossing. The headline `crr_square_half` is
+unconditional apart from measurability of the crossing events. `crr_square_half_of_frameArcOrder` is
+the older form that took the frame-arc order as a hypothesis.
+
+## ii. Key results
+
+- `crr_leftFillFrameArcOrder`, `crr_interfaceCoastConnected`: the combinatorial input, proved for
+  every configuration without horizontal crossing.
+- `crr_faceDualVCrossing_of_leftFillInteriorArc`: a face-dual vertical crossing exists.
+- `crr_square_half`: `1/2 ≤ P(horizontal crossing of [0, n]²)` at `p = 1/2` (measurability
+  hypotheses only).
+
+## iii. Table of contents
+
+- A. Interface sides of the right coast
+- B. The left fill
+- C. The box face graph and its cut
+- D. Frame-arc order and face-dual crossings
+- E. The square crossing at p = 1/2
+
+## iv. References
+
+* H. Kesten, *The critical probability of bond percolation on the square lattice equals 1/2*, Comm.
+  Math. Phys. 74 (1980).
+-/
+
 @[expose] public section
 
 open Set SimpleGraph MeasureTheory ProbabilityTheory
@@ -141,14 +82,9 @@ namespace StatMech
 
 namespace Universality
 
+/-! ## A. Interface sides of the right coast -/
 
-
-
-
-
-
-
-theorem crr_rightComplement_closed (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {c c' : Site 2}
+lemma crr_rightComplement_closed (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {c c' : Site 2}
     (hc : c ∈ bac_rightComplement ω n) (hadj : (hypercubicLattice 2).Adj c c')
     (hc'box : c' ∈ rect 0 n 0 n) (hc'L : c' ∉ bcd_leftReach ω n) :
     c' ∈ bac_rightComplement ω n := by
@@ -159,12 +95,7 @@ theorem crr_rightComplement_closed (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) 
     simp only [SimpleGraph.induce_adj]; exact hadj.symm
   exact (hstep.reachable).trans hreach
 
-
-
-
-
-
-theorem crr_horizInterface_flank0_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {x y : ℤ}
+lemma crr_horizInterface_flank0_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {x y : ℤ}
     (hbd : bdEdge (bcd_leftReach ω n) s(![x, y], ![x + 1, y]))
     (hqR : (![x + 1, y] : Site 2) ∈ bac_rightComplement ω n)
     (hp : (![x, y] : Site 2) ∈ rect 0 n 0 n) (hq : (![x + 1, y] : Site 2) ∈ rect 0 n 0 n) :
@@ -172,11 +103,7 @@ theorem crr_horizInterface_flank0_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n
   refine ⟨⟨![x, y - 1], rcm_horizEdge_faces_pmdAdj ω n hbd hp hq⟩, ![x + 1, y], hqR, ?_⟩
   right; left; simp
 
-
-
-
-
-theorem crr_horizInterface_flank1_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {x y : ℤ}
+lemma crr_horizInterface_flank1_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {x y : ℤ}
     (hbd : bdEdge (bcd_leftReach ω n) s(![x, y], ![x + 1, y]))
     (hqR : (![x + 1, y] : Site 2) ∈ bac_rightComplement ω n)
     (hp : (![x, y] : Site 2) ∈ rect 0 n 0 n) (hq : (![x + 1, y] : Site 2) ∈ rect 0 n 0 n) :
@@ -184,12 +111,7 @@ theorem crr_horizInterface_flank1_isRCoast (ω : ConfigSpace (Sym2 (Site 2))) (n
   refine ⟨⟨![x, y], (rcm_horizEdge_faces_pmdAdj ω n hbd hp hq).symm⟩, ![x + 1, y], hqR, ?_⟩
   right; right; right; simp
 
-
-
-
-
-
-theorem crr_face_nbr_cases (a b : ℤ) (g : Site 2) (hadj : (hypercubicLattice 2).Adj ![a, b] g) :
+lemma crr_face_nbr_cases (a b : ℤ) (g : Site 2) (hadj : (hypercubicLattice 2).Adj ![a, b] g) :
     g = ![a + 1, b] ∨ g = ![a - 1, b] ∨ g = ![a, b + 1] ∨ g = ![a, b - 1] := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at hadj
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hadj
@@ -206,18 +128,13 @@ theorem crr_face_nbr_cases (a b : ℤ) (g : Site 2) (hadj : (hypercubicLattice 2
     · right; right; right; rw [hg, show g 1 = b - 1 by omega, ha]
     · right; right; left; rw [hg, show g 1 = b + 1 by omega, ha]
 
-
-
-
-
-theorem crr_face_barrier_side (ω : ConfigSpace (Sym2 (Site 2))) (n a b : ℤ)
+lemma crr_face_barrier_side (ω : ConfigSpace (Sym2 (Site 2))) (n a b : ℤ)
     (h : ∃ g : Site 2, (pmd_boxFaceBarrier ω n).Adj ![a, b] g) :
     ∃ u v : Site 2,
       ((u = ![a, b] ∧ v = ![a + 1, b]) ∨ (u = ![a, b + 1] ∧ v = ![a + 1, b + 1]) ∨
         (u = ![a, b] ∧ v = ![a, b + 1]) ∨ (u = ![a + 1, b] ∧ v = ![a + 1, b + 1])) ∧
       bdEdge (bcd_leftReach ω n) s(u, v) ∧ u ∈ rect 0 n 0 n ∧ v ∈ rect 0 n 0 n := by
   obtain ⟨g, hadj, p, q, hpq, hbd, hp, hq⟩ := h
-  
   have finish : ∀ u v : Site 2, sharedPrimalEdge ![a, b] g = s(u, v) →
       bdEdge (bcd_leftReach ω n) s(u, v) ∧ u ∈ rect 0 n 0 n ∧ v ∈ rect 0 n 0 n := by
     intro u v hs
@@ -236,12 +153,7 @@ theorem crr_face_barrier_side (ω : ConfigSpace (Sym2 (Site 2))) (n a b : ℤ)
   · refine ⟨![a, b], ![a + 1, b], by tauto, finish _ _ ?_⟩
     rw [sharedPrimalEdge_bottom]; rfl
 
-
-
-
-
-
-theorem crr_nbr_of_rCorner (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {c c' : Site 2}
+lemma crr_nbr_of_rCorner (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {c c' : Site 2}
     (hc : c ∈ bac_rightComplement ω n) (hadj : (hypercubicLattice 2).Adj c c')
     (hc'box : c' ∈ rect 0 n 0 n) :
     c' ∈ bcd_leftReach ω n ∨ c' ∈ bac_rightComplement ω n := by
@@ -249,21 +161,15 @@ theorem crr_nbr_of_rCorner (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {c c' : 
   · exact Or.inl hL
   · exact Or.inr (crr_rightComplement_closed ω n hc hadj hc'box hL)
 
-
-
-
-
+/-- Face `f` has an interface side: it is adjacent to a left-reachable site and a right-complement
+  site that share an edge with it. -/
 def crr_HasInterfaceSide (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) (f : Site 2) : Prop :=
   ∃ pL pR : Site 2, pL ∈ bcd_leftReach ω n ∧ pR ∈ bac_rightComplement ω n ∧
     (hypercubicLattice 2).Adj pL pR ∧ pL ∈ rect 0 n 0 n ∧ pR ∈ rect 0 n 0 n ∧
     (pL = ![f 0, f 1] ∨ pL = ![f 0 + 1, f 1] ∨ pL = ![f 0, f 1 + 1] ∨ pL = ![f 0 + 1, f 1 + 1]) ∧
     (pR = ![f 0, f 1] ∨ pR = ![f 0 + 1, f 1] ∨ pR = ![f 0, f 1 + 1] ∨ pR = ![f 0 + 1, f 1 + 1])
 
-
-
-
-
-theorem crr_corner_adj_or_diag {a b : ℤ} {p q : Site 2}
+lemma crr_corner_adj_or_diag {a b : ℤ} {p q : Site 2}
     (hp : p = ![a, b] ∨ p = ![a + 1, b] ∨ p = ![a, b + 1] ∨ p = ![a + 1, b + 1])
     (hq : q = ![a, b] ∨ q = ![a + 1, b] ∨ q = ![a, b + 1] ∨ q = ![a + 1, b + 1])
     (hne : p ≠ q) :
@@ -276,32 +182,17 @@ theorem crr_corner_adj_or_diag {a b : ℤ} {p q : Site 2}
       | (left; omega)
       | (right; refine ⟨?_, ?_⟩ <;> omega)
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     {f : Site 2} (hf : bac_IsRCoastFace ω n f) :
     crr_HasInterfaceSide ω n f := by
   obtain ⟨hbarr, c, hcR, hcCorner⟩ := hf
-  
   set a := f 0 with ha
   set b := f 1 with hb
-  
   obtain ⟨u, v, hsides, hbd, hu, hv⟩ := crr_face_barrier_side ω n a b (by
     obtain ⟨g, hg⟩ := hbarr
     refine ⟨g, ?_⟩
     have : (![a, b] : Site 2) = f := by funext i; fin_cases i <;> simp [ha, hb]
     rwa [this])
-  
   have huv_adj : (hypercubicLattice 2).Adj u v := by
     rcases hsides with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
       simp [hypercubicLattice_adj, Fin.sum_univ_two]
@@ -309,13 +200,9 @@ theorem crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n 
     rcases hsides with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> tauto
   have hvCorner : v = ![a, b] ∨ v = ![a + 1, b] ∨ v = ![a, b + 1] ∨ v = ![a + 1, b + 1] := by
     rcases hsides with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> tauto
-  
   rw [bdEdge_mk] at hbd
-  
   have hcCorner' : c = ![a, b] ∨ c = ![a + 1, b] ∨ c = ![a, b + 1] ∨ c = ![a + 1, b + 1] := by
     simpa [ha, hb] using hcCorner
-  
-  
   have mk : ∀ pL pR : Site 2, pL ∈ bcd_leftReach ω n → pR ∈ bac_rightComplement ω n →
       (hypercubicLattice 2).Adj pL pR → pL ∈ rect 0 n 0 n → pR ∈ rect 0 n 0 n →
       (pL = ![a, b] ∨ pL = ![a + 1, b] ∨ pL = ![a, b + 1] ∨ pL = ![a + 1, b + 1]) →
@@ -323,22 +210,16 @@ theorem crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n 
       crr_HasInterfaceSide ω n f := by
     intro pL pR h1 h2 h3 h4 h5 h6 h7
     exact ⟨pL, pR, h1, h2, h3, h4, h5, by simpa [ha, hb] using h6, by simpa [ha, hb] using h7⟩
-  
   by_cases huL : u ∈ bcd_leftReach ω n
-  · 
-    have hvnL : v ∉ bcd_leftReach ω n := hbd.mp huL
+  · have hvnL : v ∉ bcd_leftReach ω n := hbd.mp huL
     by_cases hvR : v ∈ bac_rightComplement ω n
-    · 
-      exact mk u v huL hvR huv_adj hu hv huCorner hvCorner
-    · 
-      have hcv : c ≠ v := fun h => hvR (h ▸ hcR)
+    · exact mk u v huL hvR huv_adj hu hv huCorner hvCorner
+    · have hcv : c ≠ v := fun h => hvR (h ▸ hcR)
       have hnotadj : ¬ (hypercubicLattice 2).Adj c v := fun hadj =>
         hvR (crr_rightComplement_closed ω n hcR hadj hv hvnL)
-      
       rcases crr_corner_adj_or_diag hcCorner' hvCorner hcv with hadj | hdiag
       · exact absurd hadj hnotadj
-      · 
-        have hcu_adj : (hypercubicLattice 2).Adj c u := by
+      · have hcu_adj : (hypercubicLattice 2).Adj c u := by
           rw [hypercubicLattice_adj, Fin.sum_univ_two] at huv_adj ⊢
           obtain ⟨hd0, hd1⟩ := hdiag
           rcases huCorner with rfl | rfl | rfl | rfl <;>
@@ -347,8 +228,7 @@ theorem crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n 
             simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at huv_adj hd0 hd1 ⊢ <;> omega
         have hcbox : c ∈ rect 0 n 0 n := (bac_rightComplement_subset_boxMinusL ω n hcR).1
         exact mk u c huL hcR hcu_adj.symm hu hcbox huCorner hcCorner'
-  · 
-    have hvL : v ∈ bcd_leftReach ω n := by
+  · have hvL : v ∈ bcd_leftReach ω n := by
       by_cases hvL : v ∈ bcd_leftReach ω n
       · exact hvL
       · exact absurd (hbd.mpr hvL) huL
@@ -370,30 +250,21 @@ theorem crr_rCoastFace_has_interface_side (ω : ConfigSpace (Sym2 (Site 2))) (n 
         have hcbox : c ∈ rect 0 n 0 n := (bac_rightComplement_subset_boxMinusL ω n hcR).1
         exact mk v c hvL hcR hcv_adj.symm hv hcbox hvCorner hcCorner'
 
-
-
-
-
-
-theorem crr_hasInterfaceSide_pmdVertex (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f : Site 2}
+lemma crr_hasInterfaceSide_pmdVertex (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f : Site 2}
     (h : crr_HasInterfaceSide ω n f) : ∃ g : Site 2, (pmd_boxFaceBarrier ω n).Adj f g := by
   obtain ⟨pL, pR, hpL, hpR, hadj, hpLbox, hpRbox, hpLc, hpRc⟩ := h
   have hbd : bdEdge (bcd_leftReach ω n) s(pL, pR) :=
     rcm_LR_edge_bdEdge ω n hpL hpR
-  
   set a := f 0 with ha
   set b := f 1 with hb
   have hfe : f = ![a, b] := by funext i; fin_cases i <;> simp [ha, hb]
-  
   rcases hpLc with rfl | rfl | rfl | rfl <;> rcases hpRc with rfl | rfl | rfl | rfl <;>
     first
       | (exfalso; revert hadj; rw [hypercubicLattice_adj, Fin.sum_univ_two];
          simp only [Matrix.cons_val_zero, Matrix.cons_val_one]; omega)
-      
       | (rw [hfe]; exact ⟨![a, b - 1], rcm_horizEdge_faces_pmdAdj ω n hbd hpLbox hpRbox⟩)
       | (rw [hfe]; exact ⟨![a, b - 1],
           (rcm_horizEdge_faces_pmdAdj ω n (by rwa [Sym2.eq_swap] at hbd) hpRbox hpLbox)⟩)
-      
       | (rw [hfe]; refine ⟨![a, b + 1], ?_⟩;
          have := rcm_horizEdge_faces_pmdAdj ω n (x := a) (y := b + 1) hbd hpLbox hpRbox;
          simpa using this.symm)
@@ -401,11 +272,9 @@ theorem crr_hasInterfaceSide_pmdVertex (ω : ConfigSpace (Sym2 (Site 2))) (n : �
          have := rcm_horizEdge_faces_pmdAdj ω n (x := a) (y := b + 1)
            (by rwa [Sym2.eq_swap] at hbd) hpRbox hpLbox;
          simpa using this.symm)
-      
       | (rw [hfe]; exact ⟨![a - 1, b], rcm_vertEdge_faces_pmdAdj ω n hbd hpLbox hpRbox⟩)
       | (rw [hfe]; exact ⟨![a - 1, b],
           rcm_vertEdge_faces_pmdAdj ω n (by rwa [Sym2.eq_swap] at hbd) hpRbox hpLbox⟩)
-      
       | (rw [hfe]; refine ⟨![a + 1, b], ?_⟩;
          have := rcm_vertEdge_faces_pmdAdj ω n (x := a + 1) (y := b) hbd hpLbox hpRbox;
          simpa using this.symm)
@@ -414,11 +283,7 @@ theorem crr_hasInterfaceSide_pmdVertex (ω : ConfigSpace (Sym2 (Site 2))) (n : �
            (by rwa [Sym2.eq_swap] at hbd) hpRbox hpLbox;
          simpa using this.symm)
 
-
-
-
-
-
+/-- Face `f` has an interface side whose right endpoint is the given right-complement site `q`. -/
 def crr_InterfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) (f q : Site 2) : Prop :=
   q ∈ bac_rightComplement ω n ∧
     ∃ pL : Site 2, pL ∈ bcd_leftReach ω n ∧
@@ -426,36 +291,18 @@ def crr_InterfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) (f q : Si
       (pL = ![f 0, f 1] ∨ pL = ![f 0 + 1, f 1] ∨ pL = ![f 0, f 1 + 1] ∨ pL = ![f 0 + 1, f 1 + 1]) ∧
       (q = ![f 0, f 1] ∨ q = ![f 0 + 1, f 1] ∨ q = ![f 0, f 1 + 1] ∨ q = ![f 0 + 1, f 1 + 1])
 
-
-
-theorem crr_hasInterfaceSide_of_with (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f q : Site 2}
+lemma crr_hasInterfaceSide_of_with (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f q : Site 2}
     (h : crr_InterfaceSideWith ω n f q) : crr_HasInterfaceSide ω n f := by
   obtain ⟨hqR, pL, hpL, hadj, hpLbox, hqbox, hpLc, hqc⟩ := h
   exact ⟨pL, q, hpL, hqR, hadj, hpLbox, hqbox, hpLc, hqc⟩
 
-
-
-
-theorem crr_rCoastFace_interfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f : Site 2}
+lemma crr_rCoastFace_interfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f : Site 2}
     (hf : bac_IsRCoastFace ω n f) : ∃ q : Site 2, crr_InterfaceSideWith ω n f q := by
   obtain ⟨pL, pR, hpL, hpR, hadj, hpLbox, hpRbox, hpLc, hpRc⟩ :=
     crr_rCoastFace_has_interface_side ω n hf
   exact ⟨pR, hpR, pL, hpL, hadj, hpLbox, hpRbox, hpLc, hpRc⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Any two interface faces of the right coast are joined in the right-coast face graph. -/
 def crr_InterfaceCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : Prop :=
   ∀ (f₁ f₂ q₁ q₂ : Site 2),
     crr_InterfaceSideWith ω n f₁ q₁ → crr_InterfaceSideWith ω n f₂ q₂ →
@@ -463,12 +310,7 @@ def crr_InterfaceCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : P
       ((hypercubicLattice 2).induce (bac_boxMinusL ω n)).Reachable ⟨q₁, h1⟩ ⟨q₂, h2⟩ →
       (pmd_boxFaceBarrier ω n).Reachable f₁ f₂
 
-
-
-
-
-
-theorem crr_frontierFace_interfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_frontierFace_interfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n) {c₀ : ℤ}
     (hc₀ : mbc_IsRightFrontier ω n c₀ 0) :
     crr_InterfaceSideWith ω n ![c₀, 0] ![c₀ + 1, 0] := by
@@ -482,87 +324,48 @@ theorem crr_frontierFace_interfaceSideWith (ω : ConfigSpace (Sym2 (Site 2))) (n
   · left; simp
   · right; left; simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem crr_rCoastConnected_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_rCoastConnected_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : crr_InterfaceCoastConnected ω n) : bac_RCoastConnected ω n := by
   intro c₀ hc₀ f hf
-  
   have hfront : crr_InterfaceSideWith ω n ![c₀, 0] ![c₀ + 1, 0] :=
     crr_frontierFace_interfaceSideWith ω n hn hnoH hc₀
-  
   obtain ⟨qf, hqf⟩ := crr_rCoastFace_interfaceSideWith ω n hf
-  
   have hqfR : qf ∈ bac_rightComplement ω n := hqf.1
   have hgapR : (![c₀ + 1, 0] : Site 2) ∈ bac_rightComplement ω n := hfront.1
-  
   obtain ⟨hqfc, hgapc, hreach⟩ :=
     rcm_rightComplement_connected_pair ω n hnoH hqfR hgapR
-  
   exact hres f ![c₀, 0] qf ![c₀ + 1, 0] hqf hfront hqfc hgapc hreach
 
-
-
-
-
-theorem crr_frontierArcReaches_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_frontierArcReaches_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : crr_InterfaceCoastConnected ω n) : crc2_FrontierArcReaches ω n :=
   bac_frontierArcReaches_of_rCoastConnected ω n hn hnoH
     (crr_rCoastConnected_of_residue ω n hn hnoH hres)
 
-
-
-theorem crr_faceDualVCrossing_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_faceDualVCrossing_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : crr_InterfaceCoastConnected ω n) : pmd_FaceDualVCrossing ω n :=
   bac_faceDualVCrossing_of_rCoastConnected ω n hn hnoH
     (crr_rCoastConnected_of_residue ω n hn hnoH hres)
 
-
-
-theorem crr_reachesBottom_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_reachesBottom_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : crr_InterfaceCoastConnected ω n) : ccc_FrontierReachesBottom ω n :=
   bac_reachesBottom_of_rCoastConnected ω n hn hnoH
     (crr_rCoastConnected_of_residue ω n hn hnoH hres)
 
-
-
-
-theorem crr_exhaustivity_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_exhaustivity_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : crr_InterfaceCoastConnected ω n) :
     HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
   Or.inr (crr_faceDualVCrossing_of_residue ω n hn hnoH hres)
 
-
-
-
-
-
-
-
-
-
-theorem crr_residue_of_rCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
+lemma crr_residue_of_rCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hres : bac_RCoastConnected ω n) : crr_InterfaceCoastConnected ω n := by
   obtain ⟨c₀, hc₀⟩ := mbc_exists_rightFrontier ω n hn hnoH (le_refl 0) hn
   intro f₁ f₂ q₁ q₂ h1 h2 _ _ _
-  
   have hr1 : bac_IsRCoastFace ω n f₁ := by
     refine ⟨crr_hasInterfaceSide_pmdVertex ω n (crr_hasInterfaceSide_of_with ω n h1), q₁, h1.1, ?_⟩
     obtain ⟨_, _, _, _, _, _, hqc⟩ := h1; tauto
@@ -571,15 +374,8 @@ theorem crr_residue_of_rCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : �
     obtain ⟨_, _, _, _, _, _, hqc⟩ := h2; tauto
   exact (hres c₀ hc₀ f₁ hr1).trans (hres c₀ hc₀ f₂ hr2).symm
 
-
-
-
-
-
-
-theorem crr_wall_interfaceCoastConnected : crr_InterfaceCoastConnected bcc_wallCfg 2 := by
+lemma crr_wall_interfaceCoastConnected : crr_InterfaceCoastConnected bcc_wallCfg 2 := by
   intro f₁ f₂ q₁ q₂ h1 h2 _ _ _
-  
   have hr1 : ∃ g : Site 2, (pmd_boxFaceBarrier bcc_wallCfg 2).Adj f₁ g :=
     crr_hasInterfaceSide_pmdVertex bcc_wallCfg 2 (crr_hasInterfaceSide_of_with bcc_wallCfg 2 h1)
   have hr2 : ∃ g : Site 2, (pmd_boxFaceBarrier bcc_wallCfg 2).Adj f₂ g :=
@@ -594,44 +390,13 @@ theorem crr_wall_interfaceCoastConnected : crr_InterfaceCoastConnected bcc_wallC
   exact (bac_wall_col0_reaches_origin (by tauto)).trans
     (bac_wall_col0_reaches_origin (by tauto)).symm
 
+/-! ## B. The left fill -/
 
-
-
-
-theorem crr_wall_frontierArcReaches : crc2_FrontierArcReaches bcc_wallCfg 2 :=
-  crr_frontierArcReaches_of_residue bcc_wallCfg 2 (by norm_num) bcc_noH_wall
-    crr_wall_interfaceCoastConnected
-
-
-theorem crr_wall_rCoastConnected : bac_RCoastConnected bcc_wallCfg 2 :=
-  crr_rCoastConnected_of_residue bcc_wallCfg 2 (by norm_num) bcc_noH_wall
-    crr_wall_interfaceCoastConnected
-
-
-theorem crr_wall_faceDualVCrossing : pmd_FaceDualVCrossing bcc_wallCfg 2 :=
-  crr_faceDualVCrossing_of_residue bcc_wallCfg 2 (by norm_num) bcc_noH_wall
-    crr_wall_interfaceCoastConnected
-
-
-
-theorem crr_wall_noH : ¬ HorizontalCrossing bcc_wallCfg 0 2 0 2 :=
-  bcc_noH_wall
-
-
-
-
-
-
-
-
-
-
+/-- The left fill of the box: the sites of `[0, n]²` not in the right complement. -/
 def crr_leftFill (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) : Set (Site 2) :=
   rect 0 n 0 n \ bac_rightComplement omega n
 
-
-
-theorem crr_leftReach_openWalk_lift (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
+lemma crr_leftReach_openWalk_lift (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     {u v : rect 0 n 0 n} (hu : (u : Site 2) ∈ bcd_leftReach omega n)
     (w : (openSubgraphInduce 2 omega (rect 0 n 0 n)).Walk u v) :
     ∃ hv : (v : Site 2) ∈ bcd_leftReach omega n,
@@ -649,8 +414,7 @@ theorem crr_leftReach_openWalk_lift (omega : ConfigSpace (Sym2 (Site 2))) (n : I
         exact openSubgraph_le omega habOpen
       exact ⟨hc, habL.reachable.trans hbc⟩
 
-
-theorem crr_leftWall_reaches_zero (omega : ConfigSpace (Sym2 (Site 2))) (n r : Int)
+lemma crr_leftWall_reaches_zero (omega : ConfigSpace (Sym2 (Site 2))) (n r : Int)
     (hr0 : 0 ≤ r) (hrn : r ≤ n) :
     ∃ (hr : (![0, r] : Site 2) ∈ bcd_leftReach omega n)
       (h0 : (![0, 0] : Site 2) ∈ bcd_leftReach omega n),
@@ -663,7 +427,7 @@ theorem crr_leftWall_reaches_zero (omega : ConfigSpace (Sym2 (Site 2))) (n r : I
     apply dcw_leftSide_in_L omega n
     refine ⟨?_, by simp⟩
     rw [mem_rect]
-    exact ⟨by simp [hn], by simp [hn], by simpa using ht0, by simpa using htn⟩
+    exact ⟨by simp, by simp [hn], by simpa using ht0, by simpa using htn⟩
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le hr0
   have hseg : ∀ k : Nat, k ≤ m →
       Function.update (![0, 0] : Site 2) 1 ((![0, 0] : Site 2) 1 + (k : Int))
@@ -704,9 +468,7 @@ theorem crr_leftWall_reaches_zero (omega : ConfigSpace (Sym2 (Site 2))) (n r : I
   rw [hsub0, hsubm]
   exact hreach.symm
 
-
-
-theorem crr_leftReach_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
+lemma crr_leftReach_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     {u v : Site 2} (hu : u ∈ bcd_leftReach omega n) (hv : v ∈ bcd_leftReach omega n) :
     ((hypercubicLattice 2).induce (bcd_leftReach omega n)).Reachable ⟨u, hu⟩ ⟨v, hv⟩ := by
   obtain ⟨_hubox, xu, hxu, hubox, hxuReach⟩ := hu
@@ -744,8 +506,7 @@ theorem crr_leftReach_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : 
   have hmid := hxuToU.symm.trans (hxuTo0'.trans (hxvTo0'.symm.trans hxvToV))
   exact hmid
 
-
-theorem crr_leftWall_reaches_boxVertex (n : Int) {u : Site 2}
+lemma crr_leftWall_reaches_boxVertex (n : Int) {u : Site 2}
     (hu : u ∈ rect 0 n 0 n) :
     ∃ hl : (![0, u 1] : Site 2) ∈ rect 0 n 0 n,
       ((hypercubicLattice 2).induce (rect 0 n 0 n)).Reachable
@@ -794,9 +555,7 @@ theorem crr_leftWall_reaches_boxVertex (n : Int) {u : Site 2}
   rw [hsub0, hsubm]
   exact hreach
 
-
-
-theorem crr_walk_exit_set_in_box (A B : Set (Site 2)) {x y : Site 2}
+lemma crr_walk_exit_set_in_box (A B : Set (Site 2)) {x y : Site 2}
     (w : (hypercubicLattice 2).Walk x y)
     (hw : ∀ z ∈ w.support, z ∈ B) (hx : x ∈ A) (hy : y ∉ A) :
     ∃ a b : Site 2, (hypercubicLattice 2).Adj a b ∧ a ∈ A ∧ b ∉ A ∧ a ∈ B ∧ b ∈ B := by
@@ -807,8 +566,7 @@ theorem crr_walk_exit_set_in_box (A B : Set (Site 2)) {x y : Site 2}
       · exact ih (fun z hz => hw z (by simp [hz])) hb hy
       · exact ⟨a, b, hab, hx, hb, hw a (by simp), hw b (by simp)⟩
 
-
-theorem crr_rightComplement_of_boxMinusL_reachable
+lemma crr_rightComplement_of_boxMinusL_reachable
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {u v : Site 2}
     (hu : u ∈ bac_boxMinusL omega n) (hv : v ∈ bac_boxMinusL omega n)
     (huv : ((hypercubicLattice 2).induce (bac_boxMinusL omega n)).Reachable
@@ -817,8 +575,7 @@ theorem crr_rightComplement_of_boxMinusL_reachable
   obtain ⟨_hvc, y, hyR, hyc, hvy⟩ := hvR
   exact ⟨hu, y, hyR, hyc, huv.trans hvy⟩
 
-
-theorem crr_leftFill_reaches_leftReach
+lemma crr_leftFill_reaches_leftReach
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {u : Site 2}
     (hu : u ∈ crr_leftFill omega n) :
     ∃ z : Site 2, ∃ hzL : z ∈ bcd_leftReach omega n,
@@ -885,8 +642,7 @@ theorem crr_leftFill_reaches_leftReach
       ⟨a, haFill⟩ ⟨b, hbFill⟩ := hab
   exact ⟨b, hbL, huaFill.trans habFill.reachable⟩
 
-
-theorem crr_leftFill_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
+lemma crr_leftFill_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     {u v : Site 2} (hu : u ∈ crr_leftFill omega n) (hv : v ∈ crr_leftFill omega n) :
     ((hypercubicLattice 2).induce (crr_leftFill omega n)).Reachable ⟨u, hu⟩ ⟨v, hv⟩ := by
   obtain ⟨zu, hzuL, huz⟩ := crr_leftFill_reaches_leftReach omega n hu
@@ -915,8 +671,7 @@ theorem crr_leftFill_connected_pair (omega : ConfigSpace (Sym2 (Site 2))) (n : I
     pFill hpFill hzuFill hzvFill
   exact huz.trans (hmiddle.trans hvz.symm)
 
-
-theorem crr_rightComplement_connected_induced
+lemma crr_rightComplement_connected_induced
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) {u v : Site 2}
     (hu : u ∈ bac_rightComplement omega n) (hv : v ∈ bac_rightComplement omega n) :
@@ -936,7 +691,9 @@ theorem crr_rightComplement_connected_induced
   exact walk_induce_reachable (hypercubicLattice 2) (bac_rightComplement omega n)
     pLat hpR hu hv
 
+/-! ## C. The box face graph and its cut -/
 
+/-- The square `[0, n]²` with all its lattice edges, as a planar subgraph of `ℤ²`. -/
 @[reducible] noncomputable def crr_boxPlanar (n : Int) : PlanarZ2Subgraph where
   V := rect 0 n 0 n
   finV := (rect_finite 0 n 0 n).to_subtype
@@ -945,18 +702,18 @@ theorem crr_rightComplement_connected_induced
   emb := ⟨fun v => v.1, Subtype.val_injective⟩
   isSub := fun _ _ h => h
 
+/-- The box has finitely many edges. -/
 noncomputable instance crr_boxEdgeFinite (n : Int) :
     Finite (Ising.kwg_Edge (crr_boxPlanar n)) :=
   Ising.kwg_edgeFinite (crr_boxPlanar n)
 
-
+/-- The colouring of box sites by membership in the right complement. -/
 noncomputable def crr_boxRColour (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     (crr_boxPlanar n).V → Bool := by
   classical
   exact fun v => decide (v.1 ∈ bac_rightComplement omega n)
 
-
-theorem crr_boxRColour_sidesConnected
+lemma crr_boxRColour_sidesConnected
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) :
     Ising.kwg_ColourSidesConnected (crr_boxPlanar n).G (crr_boxRColour omega n) := by
@@ -981,7 +738,7 @@ theorem crr_boxRColour_sidesConnected
           intro a b hab
           exact hab }
       have hm := hxy.map phi
-      convert hm using 1 <;> rfl
+      convert hm using 1
   | true =>
       have hxR : x.1.1 ∈ bac_rightComplement omega n := by
         simpa [crr_boxRColour] using x.2
@@ -998,10 +755,9 @@ theorem crr_boxRColour_sidesConnected
           intro a b hab
           exact hab }
       have hm := hxy.map phi
-      convert hm using 1 <;> rfl
+      convert hm using 1
 
-
-theorem crr_boxR_dualEven_subset_eq
+lemma crr_boxR_dualEven_subset_eq
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n)
     (F : Finset (Ising.kwg_Edge (crr_boxPlanar n)))
@@ -1014,8 +770,8 @@ theorem crr_boxR_dualEven_subset_eq
   Ising.kwg_dualEven_subset_bond_eq (crr_boxPlanar n) (crr_boxRColour omega n)
     (crr_boxRColour_sidesConnected omega n hnoH) F hsub hne heven
 
-
-
+/-- The face graph whose edges join faces sharing a primal edge between a left-reachable and a
+  right-complement site. -/
 def crr_LRFaceGraph (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     SimpleGraph (Site 2) where
   Adj f g := (faceBoundaryGraph (bac_rightComplement omega n)).Adj f g ∧
@@ -1029,6 +785,7 @@ def crr_LRFaceGraph (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
       _ = s(p, q) := hpq
   loopless := ⟨fun f h => (hypercubicLattice 2).irrefl h.1.1⟩
 
+/-- The left/right face graph is locally finite. -/
 noncomputable instance crr_LRFaceGraph_locallyFinite
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     SimpleGraph.LocallyFinite (crr_LRFaceGraph omega n) := fun f => by
@@ -1037,8 +794,7 @@ noncomputable instance crr_LRFaceGraph_locallyFinite
   exact Fintype.ofInjective toLat (fun _ _ h => Subtype.ext
     (congrArg (fun z : (hypercubicLattice 2).neighborSet f => (z : Site 2)) h))
 
-
-theorem crr_faceAdj_isBoxInterior_of_mem_interior {n : Int} {f g : Site 2}
+lemma crr_faceAdj_isBoxInterior_of_mem_interior {n : Int} {f g : Site 2}
     (hf : f ∈ rect 0 (n - 1) 0 (n - 1))
     (hfg : (hypercubicLattice 2).Adj f g) : crc2_IsBoxInteriorEdge n f g := by
   let a := f 0
@@ -1090,8 +846,7 @@ theorem crr_faceAdj_isBoxInterior_of_mem_interior {n : Int} {f g : Site 2}
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
       omega
 
-
-theorem crr_LRFaceGraph_degree_eq_faceBoundary_degree
+lemma crr_LRFaceGraph_degree_eq_faceBoundary_degree
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f : Site 2}
     (hf : f ∈ rect 0 (n - 1) 0 (n - 1)) :
     (crr_LRFaceGraph omega n).degree f =
@@ -1107,17 +862,14 @@ theorem crr_LRFaceGraph_degree_eq_faceBoundary_degree
   · intro h
     exact ⟨h, crr_faceAdj_isBoxInterior_of_mem_interior hf h.1⟩
 
-
-theorem crr_LRFaceGraph_degree_even_of_interior
+lemma crr_LRFaceGraph_degree_even_of_interior
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f : Site 2}
     (hf : f ∈ rect 0 (n - 1) 0 (n - 1)) :
     Even ((crr_LRFaceGraph omega n).degree f) := by
   rw [crr_LRFaceGraph_degree_eq_faceBoundary_degree omega n hf]
   exact degree_faceBoundaryGraph_even (bac_rightComplement omega n) f
 
-
-
-theorem crr_LRFaceGraph_adj_of_shared
+lemma crr_LRFaceGraph_adj_of_shared
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f g p q : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g)
     (hshared : sharedPrimalEdge f g = s(p, q))
@@ -1131,8 +883,7 @@ theorem crr_LRFaceGraph_adj_of_shared
     (bac_rightComplement_subset_boxMinusL omega n hpR).2 hpL
   simp [hpR, hqR]
 
-
-theorem crr_interfaceSideWith_LRNeighbor
+lemma crr_interfaceSideWith_LRNeighbor
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f q : Site 2}
     (h : crr_InterfaceSideWith omega n f q) :
     ∃ g : Site 2, (crr_LRFaceGraph omega n).Adj f g := by
@@ -1172,14 +923,8 @@ theorem crr_interfaceSideWith_LRNeighbor
           hpL hqR hpLbox hqbox⟩ <;>
           simp [hypercubicLattice_adj, Fin.sum_univ_two, sharedPrimalEdge_right,
             faceCorner10, faceCorner11])
-      | (rw [hfe]; refine ⟨![a + 1, b], crr_LRFaceGraph_adj_of_shared omega n ?_ ?_
-          hpL hqR hpLbox hqbox⟩ <;>
-          simp [hypercubicLattice_adj, Fin.sum_univ_two, sharedPrimalEdge_right,
-            faceCorner10, faceCorner11, Sym2.eq_swap])
 
-
-
-theorem crr_cutEdge_flanks_LRAdj
+lemma crr_cutEdge_flanks_LRAdj
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (e : Ising.kwg_Edge (crr_boxPlanar n))
     (he : e ∈ Ising.kwg_cutSet (Ising.kwg_primalEnds (crr_boxPlanar n))
@@ -1226,7 +971,7 @@ theorem crr_cutEdge_flanks_LRAdj
           · exact absurd hxR' hxR
         exact crr_LRFaceGraph_adj_of_shared omega n hflank hshared hxL hyR x.2 y.2
 
-
+/-- The cut edges of the box flanking the left/right face-graph component of `f`. -/
 noncomputable def crr_LRComponentEdges
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) (f : Site 2) :
     Finset (Ising.kwg_Edge (crr_boxPlanar n)) := by
@@ -1236,7 +981,7 @@ noncomputable def crr_LRComponentEdges
       (crr_LRFaceGraph omega n).Reachable f
         (Ising.kwg_flankLeft (crr_boxPlanar n) e)
 
-theorem crr_mem_LRComponentEdges_iff
+lemma crr_mem_LRComponentEdges_iff
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) (f : Site 2)
     (e : Ising.kwg_Edge (crr_boxPlanar n)) :
     e ∈ crr_LRComponentEdges omega n f ↔
@@ -1247,8 +992,7 @@ theorem crr_mem_LRComponentEdges_iff
   classical
   simp [crr_LRComponentEdges]
 
-
-theorem crr_boxImage_edge_endpoint_mem {n : Int} {e : Sym2 (Site 2)}
+lemma crr_boxImage_edge_endpoint_mem {n : Int} {e : Sym2 (Site 2)}
     (he : e ∈ (imageGraph (crr_boxPlanar n)).edgeSet) {z : Site 2} (hz : z ∈ e) :
     z ∈ rect 0 n 0 n := by
   induction e using Sym2.inductionOn with
@@ -1264,9 +1008,7 @@ theorem crr_boxImage_edge_endpoint_mem {n : Int} {e : Sym2 (Site 2)}
       · rw [← hyq]
         exact y.2
 
-
-
-theorem crr_face_interior_or_frame {n : Int} {f g : Site 2}
+lemma crr_face_interior_or_frame {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (h : crc2_IsBoxInteriorEdge n f g) :
     f ∈ rect 0 (n - 1) 0 (n - 1) ∨
       f 0 = -1 ∨ f 0 = n ∨ f 1 = -1 ∨ f 1 = n := by
@@ -1312,8 +1054,7 @@ theorem crr_face_interior_or_frame {n : Int} {f g : Site 2}
     simp only [faceCorner00, faceCorner10, Matrix.cons_val_zero, Matrix.cons_val_one] at he
     omega
 
-
-theorem crr_boxEdge_one_flank_interior {n : Int} {f g : Site 2}
+lemma crr_boxEdge_one_flank_interior {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (h : crc2_IsBoxInteriorEdge n f g) :
     f ∈ rect 0 (n - 1) 0 (n - 1) ∨ g ∈ rect 0 (n - 1) 0 (n - 1) := by
   obtain ⟨p, q, hpq, hp, hq⟩ := h
@@ -1358,7 +1099,7 @@ theorem crr_boxEdge_one_flank_interior {n : Int} {f g : Site 2}
     simp only [faceCorner00, faceCorner10, Matrix.cons_val_zero, Matrix.cons_val_one] at he
     omega
 
-theorem crr_whb_box_adj_leftLine {n : Int} {f g : Site 2}
+lemma crr_whb_box_adj_leftLine {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (hf : f 0 = -1) (hg : g 0 = -1) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).Adj f g := by
   refine ⟨hfg, ?_⟩
@@ -1382,7 +1123,7 @@ theorem crr_whb_box_adj_leftLine {n : Int} {f g : Site 2}
     simp only [faceCorner00, Matrix.cons_val_zero] at hz
     omega
 
-theorem crr_whb_box_adj_rightLine {n : Int} {f g : Site 2}
+lemma crr_whb_box_adj_rightLine {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (hf : f 0 = n) (hg : g 0 = n) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).Adj f g := by
   refine ⟨hfg, ?_⟩
@@ -1406,7 +1147,7 @@ theorem crr_whb_box_adj_rightLine {n : Int} {f g : Site 2}
     simp only [faceCorner10, Matrix.cons_val_zero] at hz
     omega
 
-theorem crr_whb_box_adj_bottomLine {n : Int} {f g : Site 2}
+lemma crr_whb_box_adj_bottomLine {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (hf : f 1 = -1) (hg : g 1 = -1) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).Adj f g := by
   refine ⟨hfg, ?_⟩
@@ -1431,7 +1172,7 @@ theorem crr_whb_box_adj_bottomLine {n : Int} {f g : Site 2}
   · simp only [Matrix.cons_val_one, Matrix.cons_val_fin_one] at hg; omega
   · simp only [Matrix.cons_val_one, Matrix.cons_val_fin_one] at hg; omega
 
-theorem crr_whb_box_adj_topLine {n : Int} {f g : Site 2}
+lemma crr_whb_box_adj_topLine {n : Int} {f g : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g) (hf : f 1 = n) (hg : g 1 = n) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).Adj f g := by
   refine ⟨hfg, ?_⟩
@@ -1456,8 +1197,7 @@ theorem crr_whb_box_adj_topLine {n : Int} {f g : Site 2}
   · simp only [Matrix.cons_val_one, Matrix.cons_val_fin_one] at hg; omega
   · simp only [Matrix.cons_val_one, Matrix.cons_val_fin_one] at hg; omega
 
-
-theorem crr_frame_reachable_outerBeacon (n : Int) {f : Site 2}
+lemma crr_frame_reachable_outerBeacon (n : Int) {f : Site 2}
     (hf : f 0 = -1 ∨ f 0 = n ∨ f 1 = -1 ∨ f 1 = n) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).Reachable f ![-1, -1] := by
   classical
@@ -1532,8 +1272,7 @@ theorem crr_frame_reachable_outerBeacon (n : Int) {f : Site 2}
     rw [hfeq]
     exact (topRun _ _).trans (leftRun _ _)
 
-
-theorem crr_sharedEdge_mem_boxImage {n : Int} {f g p q : Site 2}
+lemma crr_sharedEdge_mem_boxImage {n : Int} {f g p q : Site 2}
     (hfg : (hypercubicLattice 2).Adj f g)
     (hshared : sharedPrimalEdge f g = s(p, q))
     (hp : p ∈ rect 0 n 0 n) (hq : q ∈ rect 0 n 0 n) :
@@ -1546,16 +1285,14 @@ theorem crr_sharedEdge_mem_boxImage {n : Int} {f g p q : Site 2}
   · exact ⟨⟨p', hp⟩, ⟨q', hq⟩, hpqAdj, rfl, rfl⟩
   · exact ⟨⟨p', hq⟩, ⟨q', hp⟩, hpqAdj, rfl, rfl⟩
 
-
-theorem crr_whb_box_interior_isolated {n : Int} {f g : Site 2}
+lemma crr_whb_box_interior_isolated {n : Int} {f g : Site 2}
     (hf : f ∈ rect 0 (n - 1) 0 (n - 1)) :
     ¬ (whb_faceRegion (imageGraph (crr_boxPlanar n))).Adj f g := by
   rintro ⟨hfg, hnot⟩
   obtain ⟨p, q, hpq, hp, hq⟩ := crr_faceAdj_isBoxInterior_of_mem_interior hf hfg
   exact hnot (crr_sharedEdge_mem_boxImage hfg hpq hp hq)
 
-
-theorem crr_whb_box_component_singleton {n : Int} {f g : Site 2}
+lemma crr_whb_box_component_singleton {n : Int} {f g : Site 2}
     (hf : f ∈ rect 0 (n - 1) 0 (n - 1))
     (hcomp : (whb_faceRegion (imageGraph (crr_boxPlanar n))).connectedComponentMk f =
       (whb_faceRegion (imageGraph (crr_boxPlanar n))).connectedComponentMk g) :
@@ -1566,9 +1303,7 @@ theorem crr_whb_box_component_singleton {n : Int} {f g : Site 2}
   | nil => rfl
   | cons hadj _ => exact (crr_whb_box_interior_isolated hf hadj).elim
 
-
-
-theorem crr_nonOuter_flank_interior {n : Int}
+lemma crr_nonOuter_flank_interior {n : Int}
     (e : Ising.kwg_Edge (crr_boxPlanar n)) {f : Site 2}
     (hf : f = Ising.kwg_flankLeft (crr_boxPlanar n) e ∨
       f = Ising.kwg_flankRight (crr_boxPlanar n) e)
@@ -1607,9 +1342,7 @@ theorem crr_nonOuter_flank_interior {n : Int}
     · exact (houter (ConnectedComponent.sound
         (crr_frame_reachable_outerBeacon n hframe))).elim
 
-
-
-theorem crr_LRAdj_exists_cutEdge_incident
+lemma crr_LRAdj_exists_cutEdge_incident
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f g : Site 2}
     (hfint : f ∈ rect 0 (n - 1) 0 (n - 1))
     (hfg : (crr_LRFaceGraph omega n).Adj f g) :
@@ -1666,7 +1399,7 @@ theorem crr_LRAdj_exists_cutEdge_incident
     rw [hL, hR]
     exact (Ising.kwg_incidentMod2_mk _ _ _).2 (Or.inr ⟨rfl, hcomp_ne.symm⟩)
 
-theorem crr_LRAdj_has_interior_endpoint {omega : ConfigSpace (Sym2 (Site 2))} {n : Int}
+lemma crr_LRAdj_has_interior_endpoint {omega : ConfigSpace (Sym2 (Site 2))} {n : Int}
     {f g : Site 2} (hfg : (crr_LRFaceGraph omega n).Adj f g) :
     f ∈ rect 0 (n - 1) 0 (n - 1) ∨ g ∈ rect 0 (n - 1) 0 (n - 1) := by
   obtain ⟨p, q, hpq, hp, hq⟩ := hfg.2
@@ -1711,23 +1444,23 @@ theorem crr_LRAdj_has_interior_endpoint {omega : ConfigSpace (Sym2 (Site 2))} {n
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     omega
 
-
+/-- The cut set in the box between the right complement and its complement. -/
 noncomputable def crr_boxRCut
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     Finset (Ising.kwg_Edge (crr_boxPlanar n)) :=
   Ising.kwg_cutSet (Ising.kwg_primalEnds (crr_boxPlanar n)) (crr_boxRColour omega n)
 
-
+/-- A representative site of a face of the box face graph. -/
 noncomputable def crr_boxFaceRep (n : Int) (C : Ising.kwg_Face (crr_boxPlanar n)) : Site 2 :=
   C.nonempty_supp.some
 
-theorem crr_boxFaceRep_component (n : Int) (C : Ising.kwg_Face (crr_boxPlanar n)) :
+lemma crr_boxFaceRep_component (n : Int) (C : Ising.kwg_Face (crr_boxPlanar n)) :
     (whb_faceRegion (imageGraph (crr_boxPlanar n))).connectedComponentMk
       (crr_boxFaceRep n C) = C :=
   (ConnectedComponent.mem_supp_iff C _).mp C.nonempty_supp.some_mem
 
-
-
+/-- The graph homomorphism from the face-support graph of the cut (outer face removed) into the
+  left/right face graph. -/
 noncomputable def crr_cutFaceHom
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     Ising.kwg_deleteVertexGraph
@@ -1787,8 +1520,7 @@ noncomputable def crr_cutFaceHom
         rw [crr_boxFaceRep_component, hRC]
       simpa [hrepL, hrepR] using hflank.symm
 
-
-theorem crr_interfaceSide_reaches_interior
+lemma crr_interfaceSide_reaches_interior
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f q : Site 2}
     (h : crr_InterfaceSideWith omega n f q) :
     ∃ f' : Site 2, f' ∈ rect 0 (n - 1) 0 (n - 1) ∧
@@ -1799,8 +1531,7 @@ theorem crr_interfaceSide_reaches_interior
   · exact ⟨f, hf, SimpleGraph.Reachable.refl _, g, hfg⟩
   · exact ⟨g, hg, hfg.reachable, f, hfg.symm⟩
 
-
-theorem crr_interior_LRFaceGraph_reachable
+lemma crr_interior_LRFaceGraph_reachable
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n)
     {f₁ f₂ : Site 2}
@@ -1855,17 +1586,11 @@ theorem crr_interior_LRFaceGraph_reachable
     exact (crr_boxFaceRep_component n C₂).symm
   simpa [crr_cutFaceHom, P, B, Rg, O, C₁, C₂, hrep₁, hrep₂] using hmapped
 
-
-theorem crr_leftFill_finite (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) :
+lemma crr_leftFill_finite (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) :
     (crr_leftFill ω n).Finite :=
-  (rect_finite 0 n 0 n).subset diff_subset
+  (rect_finite 0 n 0 n).subset sdiff_subset
 
-
-
-
-
-
-theorem crr_leftFill_bdEdge_is_leftReach_bdEdge
+lemma crr_leftFill_bdEdge_is_leftReach_bdEdge
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {p q : Site 2}
     (hadj : (hypercubicLattice 2).Adj p q)
     (hpbox : p ∈ rect 0 n 0 n) (hqbox : q ∈ rect 0 n 0 n)
@@ -1896,9 +1621,7 @@ theorem crr_leftFill_bdEdge_is_leftReach_bdEdge
     have hqL : q ∉ bcd_leftReach ω n := (bac_rightComplement_subset_boxMinusL ω n hqR).2
     simp [hpL, hqL]
 
-
-
-theorem crr_leftFill_faceBoundary_inBox_pmd
+lemma crr_leftFill_faceBoundary_inBox_pmd
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f g p q : Site 2}
     (hfg : (faceBoundaryGraph (crr_leftFill ω n)).Adj f g)
     (hshared : sharedPrimalEdge f g = s(p, q))
@@ -1916,8 +1639,7 @@ theorem crr_leftFill_faceBoundary_inBox_pmd
     rw [Sym2.eq_swap, ← hpq']
     exact hfg.2
 
-
-theorem crr_LRFaceGraph_adj_leftFill
+lemma crr_LRFaceGraph_adj_leftFill
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) {f g : Site 2}
     (h : (crr_LRFaceGraph omega n).Adj f g) :
     (faceBoundaryGraph (crr_leftFill omega n)).Adj f g := by
@@ -1925,11 +1647,10 @@ theorem crr_LRFaceGraph_adj_leftFill
   refine ⟨h.1.1, ?_⟩
   have hR := h.1.2
   rw [hpq, bdEdge_mk] at hR ⊢
-  simp only [crr_leftFill, Set.mem_diff, hp, hq, true_and]
+  simp only [crr_leftFill, Set.mem_sdiff, hp, hq, true_and]
   tauto
 
-
-theorem crr_LRFaceGraph_le_pmd
+lemma crr_LRFaceGraph_le_pmd
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
     crr_LRFaceGraph omega n ≤ pmd_boxFaceBarrier omega n := by
   intro f g h
@@ -1937,10 +1658,7 @@ theorem crr_LRFaceGraph_le_pmd
   exact crr_leftFill_faceBoundary_inBox_pmd omega n
     (crr_LRFaceGraph_adj_leftFill omega n h) hpq hp hq
 
-
-
-
-theorem crr_leftFill_walk_lift (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {u v : Site 2}
+lemma crr_leftFill_walk_lift (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {u v : Site 2}
     (w : (faceBoundaryGraph (crr_leftFill ω n)).Walk u v)
     (hint : ∀ f g : Site 2, s(f, g) ∈ w.edges → crc2_IsBoxInteriorEdge n f g) :
     (pmd_boxFaceBarrier ω n).Reachable u v := by
@@ -1951,12 +1669,7 @@ theorem crr_leftFill_walk_lift (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {u v
   obtain ⟨p, q, hpq, hp, hq⟩ := hint f g hfg
   exact crr_leftFill_faceBoundary_inBox_pmd ω n (w.adj_of_mem_edges hfg) hpq hp hq
 
-
-
-
-
-
-theorem crr_closedBoundary_select_complementaryArc
+lemma crr_closedBoundary_select_complementaryArc
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) {f₁ f₂ : Site 2}
     (c : (faceBoundaryGraph (crr_leftFill ω n)).Walk f₁ f₁)
     (hf₂ : f₂ ∈ c.support)
@@ -1974,12 +1687,10 @@ theorem crr_closedBoundary_select_complementaryArc
     apply hdrop f g
     simpa [SimpleGraph.Walk.edges_reverse] using hfg
 
+/-! ## D. Frame-arc order and face-dual crossings -/
 
-
-
-
-
-
+/-- The frame-arc order: any two interface faces are joined inside the left/right face graph through
+  faces whose arcs are ordered along the frame. -/
 def crr_LeftFillFrameArcOrder (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : Prop :=
   ∀ (f₁ f₂ q₁ q₂ : Site 2),
     crr_InterfaceSideWith ω n f₁ q₁ → crr_InterfaceSideWith ω n f₂ q₂ →
@@ -1992,12 +1703,8 @@ def crr_LeftFillFrameArcOrder (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : Pro
           (∀ f g : Site 2, s(f, g) ∈ (c.dropUntil f₂ hf₂).edges →
             crc2_IsBoxInteriorEdge n f g)
 
-
-
-
-
-
-
+/-- The interior-arc property: any two interface faces are joined by a path in the left/right face
+  graph through interior faces. -/
 def crr_LeftFillInteriorArc (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : Prop :=
   ∀ (f₁ f₂ q₁ q₂ : Site 2),
     crr_InterfaceSideWith ω n f₁ q₁ → crr_InterfaceSideWith ω n f₂ q₂ →
@@ -2006,33 +1713,27 @@ def crr_LeftFillInteriorArc (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) : Prop 
       ∃ w : (faceBoundaryGraph (crr_leftFill ω n)).Walk f₁ f₂,
         ∀ f g : Site 2, s(f, g) ∈ w.edges → crc2_IsBoxInteriorEdge n f g
 
-
-theorem crr_leftFillInteriorArc_of_frameArcOrder
+lemma crr_leftFillInteriorArc_of_frameArcOrder
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (horder : crr_LeftFillFrameArcOrder ω n) : crr_LeftFillInteriorArc ω n := by
   intro f₁ f₂ q₁ q₂ hf₁ hf₂ h1 h2 hreach
   obtain ⟨c, hf₂c, hside⟩ := horder f₁ f₂ q₁ q₂ hf₁ hf₂ h1 h2 hreach
   exact crr_closedBoundary_select_complementaryArc ω n c hf₂c hside
 
-
-
-
-theorem crr_interfaceCoastConnected_of_leftFillInteriorArc
+lemma crr_interfaceCoastConnected_of_leftFillInteriorArc
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (harc : crr_LeftFillInteriorArc ω n) : crr_InterfaceCoastConnected ω n := by
   intro f₁ f₂ q₁ q₂ hf₁ hf₂ h1 h2 hreach
   obtain ⟨w, hw⟩ := harc f₁ f₂ q₁ q₂ hf₁ hf₂ h1 h2 hreach
   exact crr_leftFill_walk_lift ω n w hw
 
-
-theorem crr_interfaceCoastConnected_of_frameArcOrder
+lemma crr_interfaceCoastConnected_of_frameArcOrder
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (horder : crr_LeftFillFrameArcOrder ω n) : crr_InterfaceCoastConnected ω n :=
   crr_interfaceCoastConnected_of_leftFillInteriorArc ω n
     (crr_leftFillInteriorArc_of_frameArcOrder ω n horder)
 
-
-theorem crr_leftFillInteriorArc
+lemma crr_leftFillInteriorArc
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) :
     crr_LeftFillInteriorArc omega n := by
@@ -2052,9 +1753,7 @@ theorem crr_leftFillInteriorArc
   have hfg' : s(f, g) ∈ w.edges := by simpa [wf] using hfg
   exact (w.adj_of_mem_edges hfg').2
 
-
-
-
+/-- The combinatorial input, proved for every configuration without horizontal crossing. -/
 theorem crr_leftFillFrameArcOrder
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) :
@@ -2064,15 +1763,14 @@ theorem crr_leftFillFrameArcOrder
     f₁ f₂ q₁ q₂ hf₁ hf₂ h1 h2 hreach
   let c : (faceBoundaryGraph (crr_leftFill omega n)).Walk f₁ f₁ := w.append w.reverse
   have hf₂c : f₂ ∈ c.support :=
-    w.subset_support_append_left w.reverse w.end_mem_support
+    w.support_subset_support_append_left w.reverse w.end_mem_support
   refine ⟨c, hf₂c, Or.inl ?_⟩
   intro f g hfg
   apply hw f g
-  have hfgc : s(f, g) ∈ c.edges := c.edges_takeUntil_subset hf₂c hfg
+  have hfgc : s(f, g) ∈ c.edges := c.edges_takeUntil_subset_edges hf₂c hfg
   simpa [c, SimpleGraph.Walk.edges_append, SimpleGraph.Walk.edges_reverse] using hfgc
 
-
-theorem crr_interfaceCoastConnected
+lemma crr_interfaceCoastConnected
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) :
     crr_InterfaceCoastConnected omega n := by
@@ -2082,8 +1780,7 @@ theorem crr_interfaceCoastConnected
   have huv := crr_interior_LRFaceGraph_reachable omega n hnoH hu₁ hu₂ hinc₁ hinc₂
   exact hfu₁.trans (huv.trans hfu₂.symm) |>.mono (crr_LRFaceGraph_le_pmd omega n)
 
-
-theorem crr_barrierConnectsRows_of_leftFillInteriorArc
+lemma crr_barrierConnectsRows_of_leftFillInteriorArc
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (harc : crr_LeftFillInteriorArc ω n) : pmd_BarrierConnectsRows ω n :=
@@ -2091,9 +1788,7 @@ theorem crr_barrierConnectsRows_of_leftFillInteriorArc
     (crr_reachesBottom_of_residue ω n hn hnoH
       (crr_interfaceCoastConnected_of_leftFillInteriorArc ω n harc))
 
-
-
-theorem crr_barrierConnectsRows
+lemma crr_barrierConnectsRows
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n) :
     pmd_BarrierConnectsRows ω n :=
@@ -2101,11 +1796,7 @@ theorem crr_barrierConnectsRows
     (crr_reachesBottom_of_residue ω n hn hnoH
       (crr_interfaceCoastConnected ω n hnoH))
 
-
-
-
-
-theorem crr_barrierFace_mem_faceRect
+lemma crr_barrierFace_mem_faceRect
     (ω : ConfigSpace (Sym2 (Site 2))) (n a b : ℤ)
     (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (h : ∃ g : Site 2, (pmd_boxFaceBarrier ω n).Adj ![a, b] g) :
@@ -2151,9 +1842,7 @@ theorem crr_barrierFace_mem_faceRect
       exact (hbd.mp huL) hvL
     omega
 
-
-
-theorem crr_verticalCrossing_of_barrierConnectsRows
+lemma crr_verticalCrossing_of_barrierConnectsRows
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (hrows : pmd_BarrierConnectsRows ω n) :
@@ -2205,8 +1894,7 @@ theorem crr_verticalCrossing_of_barrierConnectsRows
   exact walk_induce_reachable (openSubgraph 2 (fci_faceDualConfig ω))
     (rect 0 (n - 1) (-1) n) wopen hsupport hbot htop
 
-
-theorem crr_horizontalCrossing_faceBand_subset (n : ℤ) (hn : 0 < n) :
+lemma crr_horizontalCrossing_faceBand_subset (n : ℤ) (_hn : 0 < n) :
     horizontalCrossingEvent 0 (n + 1) 0 (n - 1) ⊆
       horizontalCrossingEvent 0 (n + 1) 0 n := by
   intro eta heta
@@ -2220,24 +1908,24 @@ theorem crr_horizontalCrossing_faceBand_subset (n : ℤ) (hn : 0 < n) :
   refine ⟨⟨x, hx, x.2.2⟩, ⟨y, hy, y.2.2⟩, ?_⟩
   exact StatMech.Lattice.connectedWithin_mono_set eta hsub hxy
 
+/-! ## E. The square crossing at p = 1/2 -/
 
+/-- The vertical crossing event of the face rectangle `[0, n - 1] × [-1, n]`. -/
 def crr_FaceRectVerticalEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   verticalCrossingEvent 0 (n - 1) (-1) n
 
-
+/-- The preimage of the face-rectangle vertical crossing event under the face-dual configuration
+  map. -/
 def crr_FaceDualRectEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   fci_faceDualConfig ⁻¹' crr_FaceRectVerticalEvent n
 
-
-theorem crr_faceDualRect_half_law (n : ℤ)
+lemma crr_faceDualRect_half_law (n : ℤ)
     (hmeas : MeasurableSet (crr_FaceRectVerticalEvent n)) :
     halfMeasure.real (crr_FaceDualRectEvent n) =
       halfMeasure.real (crr_FaceRectVerticalEvent n) := by
   exact fci_faceDualConfig_measurePreserving.measureReal_preimage hmeas.nullMeasurableSet
 
-
-
-theorem crr_faceRectVertical_real_le_square (n : ℤ) (hn : 0 < n)
+lemma crr_faceRectVertical_real_le_square (n : ℤ) (hn : 0 < n)
     (hmeasThin : MeasurableSet (horizontalCrossingEvent (-1) n 0 (n - 1))) :
     halfMeasure.real (crr_FaceRectVerticalEvent n) ≤
       halfMeasure.real (horizontalCrossingEvent 0 n 0 n) := by
@@ -2254,8 +1942,7 @@ theorem crr_faceRectVertical_real_le_square (n : ℤ) (hn : 0 < n)
     _ ≤ halfMeasure.real (horizontalCrossingEvent 0 n 0 n) :=
       bxa_horizontalCrossing_real_mono_width hn (by omega)
 
-
-theorem crr_square_compl_subset_faceDualRect (n : ℤ) (hn : 0 ≤ n)
+lemma crr_square_compl_subset_faceDualRect (n : ℤ) (hn : 0 ≤ n)
     (horder : ∀ ω : ConfigSpace (Sym2 (Site 2)), crr_LeftFillFrameArcOrder ω n) :
     (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ crr_FaceDualRectEvent n := by
   intro ω hnoH
@@ -2263,17 +1950,13 @@ theorem crr_square_compl_subset_faceDualRect (n : ℤ) (hn : 0 ≤ n)
   exact crr_barrierConnectsRows_of_leftFillInteriorArc ω n hn hnoH
     (crr_leftFillInteriorArc_of_frameArcOrder ω n (horder ω))
 
-
-
-theorem crr_square_compl_subset_faceDualRect_unconditional (n : ℤ) (hn : 0 ≤ n) :
+lemma crr_square_compl_subset_faceDualRect_unconditional (n : ℤ) (hn : 0 ≤ n) :
     (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ crr_FaceDualRectEvent n := by
   intro ω hnoH
   exact crr_verticalCrossing_of_barrierConnectsRows ω n hnoH
     (crr_barrierConnectsRows ω n hn hnoH)
 
-
-
-theorem crr_square_half_of_frameArcOrder (n : ℤ) (hn : 0 < n)
+lemma crr_square_half_of_frameArcOrder (n : ℤ) (hn : 0 < n)
     (horder : ∀ ω : ConfigSpace (Sym2 (Site 2)), crr_LeftFillFrameArcOrder ω n)
     (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
     (hmeasFace : MeasurableSet (crr_FaceRectVerticalEvent n))
@@ -2287,8 +1970,7 @@ theorem crr_square_half_of_frameArcOrder (n : ℤ) (hn : 0 < n)
   have hcomp := crr_faceRectVertical_real_le_square n hn hmeasThin
   linarith
 
-
-
+/-- `1/2 ≤ P(horizontal crossing of [0, n]²)` at `p = 1/2` (measurability hypotheses only). -/
 theorem crr_square_half (n : ℤ) (hn : 0 < n)
     (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
     (hmeasFace : MeasurableSet (crr_FaceRectVerticalEvent n))
@@ -2302,20 +1984,16 @@ theorem crr_square_half (n : ℤ) (hn : 0 < n)
   have hcomp := crr_faceRectVertical_real_le_square n hn hmeasThin
   linarith
 
-
-
-
+/-- The event that a bottom face and a top face of the face rectangle are connected. -/
 def crr_FaceConnectionEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {eta | ∃ (a₀ a₁ : ℤ), 0 ≤ a₀ ∧ a₀ ≤ n - 1 ∧ 0 ≤ a₁ ∧ a₁ ≤ n - 1 ∧
     (openSubgraph 2 eta).Reachable ![a₀, -1] ![a₁, n]}
 
-
+/-- The event that the box has a face-dual vertical crossing. -/
 def crr_FaceDualConnectionEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | pmd_FaceDualVCrossing ω n}
 
-
-
-theorem crr_faceDualConnectionEvent_eq_preimage (n : ℤ) :
+lemma crr_faceDualConnectionEvent_eq_preimage (n : ℤ) :
     crr_FaceDualConnectionEvent n =
       fci_faceDualConfig ⁻¹' crr_FaceConnectionEvent n := by
   ext ω
@@ -2325,9 +2003,7 @@ theorem crr_faceDualConnectionEvent_eq_preimage (n : ℤ) :
   unfold pmd_FaceDualVCrossing
   rw [fci_faceOpenDual_eq_openSubgraph]
 
-
-
-theorem crr_faceDualConnection_half_law (n : ℤ)
+lemma crr_faceDualConnection_half_law (n : ℤ)
     (hmeas : MeasurableSet (crr_FaceConnectionEvent n)) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) (2⁻¹ : ℝ≥0) half_le_one)
         (crr_FaceDualConnectionEvent n) =
@@ -2336,20 +2012,14 @@ theorem crr_faceDualConnection_half_law (n : ℤ)
   rw [crr_faceDualConnectionEvent_eq_preimage]
   exact fci_faceDualConfig_measurePreserving.measure_preimage hmeas.nullMeasurableSet
 
-
-
-theorem crr_square_compl_subset_faceDualConnection (n : ℤ) (hn : 0 ≤ n)
+lemma crr_square_compl_subset_faceDualConnection (n : ℤ) (hn : 0 ≤ n)
     (horder : ∀ ω : ConfigSpace (Sym2 (Site 2)), crr_LeftFillFrameArcOrder ω n) :
     (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ crr_FaceDualConnectionEvent n := by
   intro ω hnoH
   exact crr_faceDualVCrossing_of_residue ω n hn hnoH
     (crr_interfaceCoastConnected_of_frameArcOrder ω n (horder ω))
 
-
-
-
-
-theorem crr_square_half_of_frameArcOrder_and_faceComparison (n : ℤ) (hn : 0 ≤ n)
+lemma crr_square_half_of_frameArcOrder_and_faceComparison (n : ℤ) (hn : 0 ≤ n)
     (horder : ∀ ω : ConfigSpace (Sym2 (Site 2)), crr_LeftFillFrameArcOrder ω n)
     (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
     (hmeasFace : MeasurableSet (crr_FaceConnectionEvent n))
@@ -2372,21 +2042,14 @@ theorem crr_square_half_of_frameArcOrder_and_faceComparison (n : ℤ) (hn : 0 �
   dsimp [μ] at hmono
   linarith
 
-
-theorem crr_faceDualVCrossing_of_leftFillInteriorArc
+lemma crr_faceDualVCrossing_of_leftFillInteriorArc
     (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
     (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
     (harc : crr_LeftFillInteriorArc ω n) : pmd_FaceDualVCrossing ω n :=
   crr_faceDualVCrossing_of_residue ω n hn hnoH
     (crr_interfaceCoastConnected_of_leftFillInteriorArc ω n harc)
 
-
-
-
-
-
-
-theorem crr_wall_frameFace_not_pmd_support :
+lemma crr_wall_frameFace_not_pmd_support :
     (![2, 0] : Site 2) ∉ (pmd_boxFaceBarrier bcc_wallCfg 2).support := by
   intro h
   rw [SimpleGraph.mem_support] at h
@@ -2394,9 +2057,7 @@ theorem crr_wall_frameFace_not_pmd_support :
   have hcol := bac_wall_barrierFace_col0 hg
   norm_num at hcol
 
-
-
-theorem crr_wall_frameEdge_not_pmd_reachable :
+lemma crr_wall_frameEdge_not_pmd_reachable :
     ¬ (pmd_boxFaceBarrier bcc_wallCfg 2).Reachable ![2, 0] ![2, -1] := by
   rintro ⟨w⟩
   have hne : (![2, 0] : Site 2) ≠ ![2, -1] := by

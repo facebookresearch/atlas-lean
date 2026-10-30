@@ -6,119 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LindebergTree
+
+/-!
+# Step covariance bounds along decision trees
+
+Fresh-coordinate indicators, the step covariance residue, the two-copy step bound `StepCovBoundTwo`,
+the decision-tree OSSS inequality from residues, and a counterexample to the one-copy step bound.
+
+## i. Overview
+
+`StepCovResidue μ T f t e` is the residual condition at step `t` and coordinate `e`.
+`tree_osss_sharp` is conditional on it for all `t`, `e` (`hres`). `stepCovBoundTwo_of_cplFKG`
+derives `StepCovBoundTwo` from a coupled FKG hypothesis. The one-copy bound is false in general:
+`stepCovBound_no_factor_false` is a Lean-checked refutation of `LindebergTree.StepCovBound muU Tw
+fAvg` for the uniform measure on two bits. The unconditional decision-tree inequality is
+`AdaptiveCausalOSSS.adaptive_tree_osss`.
+
+## ii. Key results
+
+- `tree_osss_sharp`: decision-tree OSSS, conditional on `StepCovResidue`.
+- `stepCovBound_no_factor_false`: refutation of the one-copy step bound.
+
+## iii. Table of contents
+
+- A. Fresh coordinates and prefix sets
+- B. Step covariance residues and bounds
+- C. Counterexample
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open Finset
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -131,42 +59,24 @@ open OSSS.DecisionTree
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+omit [DecidableEq E] [Fintype E] in
 lemma abs_coord_sub_eq (e : E) (ω : ConfigSpace E) {N : ℝ} (hN0 : 0 ≤ N) (hN1 : N ≤ 1) :
     |coord e ω - N| = coord e ω + N - 2 * coord e ω * N := by
   unfold coord
   by_cases hb : ω e
-  · simp only [hb, if_true]
+  · simp only [hb, ite_true]
     rw [abs_of_nonneg (by linarith)]; ring
-  · simp only [hb, Bool.false_eq_true, if_false]
+  · simp only [hb, Bool.false_eq_true, ite_false]
     rw [abs_of_nonpos (by linarith)]; ring
-
-
-
-
 
 lemma mean_Fmeas_mul_abs_coord_sub {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (e : E) {g : ConfigSpace E → ℝ} (hg : Fmeas F g) :
     mean μ (fun ω => g ω * |coord e ω - cExp μ F (coord e) ω|)
       = 2 * mean μ (fun ω => g ω * (cExp μ F (coord e) ω * (1 - cExp μ F (coord e) ω))) := by
   set N := cExp μ F (coord e) with hNdef
-  
   have hN0 : ∀ ω, 0 ≤ N ω := fun ω => cExp_nonneg hpos F (coord_nonneg e) ω
   have hN1 : ∀ ω, N ω ≤ 1 := fun ω =>
     cExp_le_one hpos F (fun ω => by unfold coord; split <;> norm_num) ω
-  
   have hexp : mean μ (fun ω => g ω * |coord e ω - N ω|)
       = mean μ (fun ω => g ω * coord e ω) + mean μ (fun ω => g ω * N ω)
         - 2 * mean μ (fun ω => g ω * coord e ω * N ω) := by
@@ -177,20 +87,19 @@ lemma mean_Fmeas_mul_abs_coord_sub {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 
     simp only []
     rw [abs_coord_sub_eq e ω (hN0 ω) (hN1 ω)]; ring
   rw [hexp]
-  
   have hpull1 : mean μ (fun ω => g ω * coord e ω) = mean μ (fun ω => g ω * N ω) := by
     have hp := cExp_pullout hpos F (coord e) g hg
     unfold mean
     rw [show (fun ω => g ω * coord e ω) = (fun ω => coord e ω * g ω) from by funext ω; ring]
-    rw [show (∑ ω, (fun ω => coord e ω * g ω) ω * μ ω) = ∑ ω, (coord e ω * g ω) * μ ω from rfl, ← hp]
+    rw [show (∑ ω, (fun ω => coord e ω * g ω) ω * μ ω) = ∑ ω, (coord e ω * g ω) * μ ω from rfl, ←
+        hp]
     rw [hNdef]
     exact Finset.sum_congr rfl (fun ω _ => by ring)
-  
   have hgN_Fmeas : Fmeas F (fun ω => g ω * N ω) := by
     intro η η' h
     have h1 := hg η η' h
     have h2 : N η = N η' := (cExp_Fmeas μ F (coord e)) η η' h
-    show g η * N η = g η' * N η'; rw [h1, h2]
+    change g η * N η = g η' * N η'; rw [h1, h2]
   have hpull2 : mean μ (fun ω => g ω * coord e ω * N ω) = mean μ (fun ω => g ω * N ω * N ω) := by
     have hp := cExp_pullout hpos F (coord e) (fun ω => g ω * N ω) hgN_Fmeas
     unfold mean
@@ -201,29 +110,12 @@ lemma mean_Fmeas_mul_abs_coord_sub {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 
     rw [hNdef]
     exact Finset.sum_congr rfl (fun ω _ => by ring)
   rw [hpull1, hpull2]
-  
   unfold mean
   rw [← Finset.sum_add_distrib, Finset.mul_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro ω _
   simp only []
   ring
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 lemma abs_step_eq_delta_mul {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hFKG : FKGLatticeCondition μ) (F : Finset E) (e : E) (he : e ∉ F)
@@ -233,14 +125,6 @@ lemma abs_step_eq_delta_mul {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
   rw [step_factor hpos F e he f ω, abs_mul,
       abs_of_nonneg (delta_nonneg hpos hFKG F e hf hf0 ω)]
 
-
-
-
-
-
-
-
-
 lemma stepAbs_eq_two_mul {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hFKG : FKGLatticeCondition μ) (F : Finset E) (e : E) (he : e ∉ F)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f)
@@ -248,30 +132,19 @@ lemma stepAbs_eq_two_mul {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     mean μ (fun ω => g ω * |cExp μ (insert e F) f ω - cExp μ F f ω|)
       = 2 * mean μ (fun ω => (g ω * delta μ F e f ω)
             * (cExp μ F (coord e) ω * (1 - cExp μ F (coord e) ω))) := by
-  
   have hrw : (fun ω => g ω * |cExp μ (insert e F) f ω - cExp μ F f ω|)
       = (fun ω => (fun ω => g ω * delta μ F e f ω) ω * |coord e ω - cExp μ F (coord e) ω|) := by
     funext ω
     rw [abs_step_eq_delta_mul hpos hFKG F e he hf hf0 ω]; ring
   rw [hrw]
-  
   have hgδ : Fmeas F (fun ω => g ω * delta μ F e f ω) := by
     intro η η' h
     have h1 := hg η η' h
     have h2 := (delta_Fmeas μ F e he f) η η' h
-    show g η * delta μ F e f η = g η' * delta μ F e f η'; rw [h1, h2]
+    change g η * delta μ F e f η = g η' * delta μ F e f η'; rw [h1, h2]
   exact mean_Fmeas_mul_abs_coord_sub hpos F e hgδ
 
-
-
-
-
-
-
-
-
-
-
+omit [Fintype E] in
 lemma pathPrefix_eq_of_agree (T : DecisionTree E) (ω ω' : ConfigSpace E) (t : ℕ)
     (h : Agree (pathPrefix T ω t) ω ω') :
     pathPrefix T ω' t = pathPrefix T ω t := by
@@ -288,15 +161,10 @@ lemma pathPrefix_eq_of_agree (T : DecisionTree E) (ω ω' : ConfigSpace E) (t : 
         intro x hx; exact h x (Finset.mem_insert_of_mem hx)
       congr 1
       by_cases hb : ω eN
-      · simp only [hb, if_true] at hbr ⊢; exact IHl ω' k hbr
-      · simp only [hb, Bool.false_eq_true, if_false] at hbr ⊢; exact IHr ω' k hbr
+      · simp only [hb, ite_true] at hbr ⊢; exact IHl ω' k hbr
+      · simp only [hb, Bool.false_eq_true, ite_false] at hbr ⊢; exact IHr ω' k hbr
 
-
-
-
-
-
-
+omit [Fintype E] in
 lemma pathPrefix_succ_eq_of_agree (T : DecisionTree E) (ω ω' : ConfigSpace E) (t : ℕ)
     (h : Agree (pathPrefix T ω t) ω ω') :
     pathPrefix T ω' (t + 1) = pathPrefix T ω (t + 1) := by
@@ -314,39 +182,32 @@ lemma pathPrefix_succ_eq_of_agree (T : DecisionTree E) (ω ω' : ConfigSpace E) 
         intro x hx; exact h x (Finset.mem_insert_of_mem hx)
       congr 1
       by_cases hb : ω eN
-      · simp only [hb, if_true] at hbr ⊢; exact IHl ω' k hbr
-      · simp only [hb, Bool.false_eq_true, if_false] at hbr ⊢; exact IHr ω' k hbr
+      · simp only [hb, ite_true] at hbr ⊢; exact IHl ω' k hbr
+      · simp only [hb, Bool.false_eq_true, ite_false] at hbr ⊢; exact IHr ω' k hbr
 
-
-
+omit [Fintype E] in
 lemma pathPrefix_eq_Fmeas (T : DecisionTree E) (F : Finset E) (t : ℕ) :
     Fmeas F (fun ω => if pathPrefix T ω t = F then (1 : ℝ) else 0) := by
   intro η η' h
-  show (if pathPrefix T η t = F then (1 : ℝ) else 0)
+  change (if pathPrefix T η t = F then (1 : ℝ) else 0)
       = (if pathPrefix T η' t = F then (1 : ℝ) else 0)
   by_cases hη : pathPrefix T η t = F
-  · 
-    have hag : Agree (pathPrefix T η t) η η' := by
+  · have hag : Agree (pathPrefix T η t) η η' := by
       intro x hx; rw [hη] at hx; exact (h x hx).symm
     have heq : pathPrefix T η' t = pathPrefix T η t := pathPrefix_eq_of_agree T η η' t hag
-    rw [if_pos hη, if_pos (by rw [heq, hη])]
-  · 
-    have hη' : pathPrefix T η' t ≠ F := by
+    rw [ite_eq_left hη, ite_eq_left (by rw [heq, hη])]
+  · have hη' : pathPrefix T η' t ≠ F := by
       intro hcontra
       apply hη
       have hag : Agree (pathPrefix T η' t) η' η := by
         intro x hx; rw [hcontra] at hx; exact h x hx
       rw [pathPrefix_eq_of_agree T η' η t hag, hcontra]
-    rw [if_neg hη, if_neg hη']
+    rw [ite_eq_right hη, ite_eq_right hη']
 
-
-
-
+omit [Fintype E] in
 lemma freshPref_Fmeas (T : DecisionTree E) (F : Finset E) (e : E) (t : ℕ) :
     Fmeas F (fun ω =>
       if pathPrefix T ω t = F ∧ pathPrefix T ω (t + 1) = insert e F then (1 : ℝ) else 0) := by
-  
-  
   have key : ∀ (a b : ConfigSpace E),
       (∀ x ∈ F, a x = b x) →
       pathPrefix T a t = F → pathPrefix T a (t + 1) = insert e F →
@@ -358,44 +219,27 @@ lemma freshPref_Fmeas (T : DecisionTree E) (F : Finset E) (e : E) (t : ℕ) :
     · rw [pathPrefix_eq_of_agree T a b t hag, hat]
     · rw [pathPrefix_succ_eq_of_agree T a b t hag, hat1]
   intro η η' h
-  show (if pathPrefix T η t = F ∧ pathPrefix T η (t + 1) = insert e F then (1 : ℝ) else 0)
+  change (if pathPrefix T η t = F ∧ pathPrefix T η (t + 1) = insert e F then (1 : ℝ) else 0)
       = (if pathPrefix T η' t = F ∧ pathPrefix T η' (t + 1) = insert e F then (1 : ℝ) else 0)
   by_cases hη : pathPrefix T η t = F ∧ pathPrefix T η (t + 1) = insert e F
   · obtain ⟨hηt, hηt1⟩ := hη
-    rw [if_pos ⟨hηt, hηt1⟩, if_pos (key η η' h hηt hηt1)]
+    rw [ite_eq_left ⟨hηt, hηt1⟩, ite_eq_left (key η η' h hηt hηt1)]
   · have hη' : ¬ (pathPrefix T η' t = F ∧ pathPrefix T η' (t + 1) = insert e F) := by
       rintro ⟨hη't, hη't1⟩
       exact hη (key η' η (fun x hx => (h x hx).symm) hη't hη't1)
-    rw [if_neg hη, if_neg hη']
+    rw [ite_eq_right hη, ite_eq_right hη']
 
+/-! ## A. Fresh coordinates and prefix sets -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The indicator that `e` is queried at step `t + 1` along the path of `ω` and the path prefix is
+  `F`. -/
 noncomputable def freshPI (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E)
     (F : Finset E) : ℝ :=
   if pathPrefix T ω t = F ∧ pathPrefix T ω (t + 1) = insert e F then (1 : ℝ) else 0
 
-
+/-- The coordinate sets not containing `e`: the possible prefixes before `e` is queried. -/
 noncomputable def prefSet (e : E) : Finset (Finset E) :=
   Finset.univ.filter (fun F => e ∉ F)
-
-
-
-
 
 lemma abs_step_freshAt_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (e : E) (ω : ConfigSpace E) :
@@ -404,26 +248,23 @@ lemma abs_step_freshAt_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionT
           |cExp μ (insert e F) f ω - cExp μ F f ω| * freshPI T ω t e F := by
   set P := pathPrefix T ω t with hP
   by_cases hPe : e ∈ P
-  · 
-    have hfresh0 : freshAt T ω t e = 0 := by
-      unfold freshAt; rw [if_neg (by rintro ⟨_, h2⟩; rw [← hP] at h2; exact h2 hPe)]
+  · have hfresh0 : freshAt T ω t e = 0 := by
+      unfold freshAt; rw [ite_eq_right (by rintro ⟨_, h2⟩; rw [← hP] at h2; exact h2 hPe)]
     rw [hfresh0, mul_zero]
     symm
     apply Finset.sum_eq_zero
     intro F hF
     rw [prefSet, Finset.mem_filter] at hF
-    
     unfold freshPI
-    rw [if_neg (by rintro ⟨h1, _⟩; rw [hP, h1] at hPe; exact hF.2 hPe)]
+    rw [ite_eq_right (by rintro ⟨h1, _⟩; rw [hP, h1] at hPe; exact hF.2 hPe)]
     simp
-  · 
-    have hPmem : P ∈ prefSet e := by rw [prefSet, Finset.mem_filter]; exact ⟨Finset.mem_univ P, hPe⟩
+  · have hPmem : P ∈ prefSet e := by rw [prefSet, Finset.mem_filter]; exact ⟨Finset.mem_univ P, hPe⟩
     rw [Finset.sum_eq_single_of_mem P hPmem]
     · unfold freshAt freshPI adaptM
       rw [← hP]
       by_cases hgrow : pathPrefix T ω (t + 1) = insert e P
       · have he_in : e ∈ pathPrefix T ω (t + 1) := by rw [hgrow]; exact Finset.mem_insert_self e P
-        rw [if_pos ⟨he_in, hPe⟩, if_pos ⟨rfl, hgrow⟩, hgrow]
+        rw [ite_eq_left ⟨he_in, hPe⟩, ite_eq_left ⟨rfl, hgrow⟩, hgrow]
       · have hfresh0 : ¬ (e ∈ pathPrefix T ω (t + 1) ∧ e ∉ P) := by
           rintro ⟨hin, hnin⟩
           rcases pathPrefix_succ_eq_or_insert T ω t with heq | ⟨a, hanew, ha⟩
@@ -433,25 +274,20 @@ lemma abs_step_freshAt_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionT
             rcases Finset.mem_insert.mp hin with rfl | hmem
             · exact hgrow (by rw [ha])
             · exact hnin hmem
-        rw [if_neg hfresh0, if_neg (by rintro ⟨_, h2⟩; exact hgrow h2)]
+        rw [ite_eq_right hfresh0, ite_eq_right (by rintro ⟨_, h2⟩; exact hgrow h2)]
         simp
-    · 
-      intro F _ hFne
+    · intro F _ hFne
       unfold freshPI
-      rw [if_neg (by rintro ⟨h1, _⟩; exact hFne (by rw [← h1, ← hP]))]
+      rw [ite_eq_right (by rintro ⟨h1, _⟩; exact hFne (by rw [← h1, ← hP]))]
       simp
 
-
-
+omit [Fintype E] in
 lemma freshPI_Fmeas (T : DecisionTree E) (t : ℕ) (e : E) (F : Finset E) :
     Fmeas F (fun ω => freshPI T ω t e F) := freshPref_Fmeas T F e t
 
-
+omit [Fintype E] in
 lemma freshPI_nonneg (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E) (F : Finset E) :
     0 ≤ freshPI T ω t e F := by unfold freshPI; split <;> norm_num
-
-
-
 
 lemma mean_step_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (e : E) :
@@ -466,19 +302,7 @@ lemma mean_step_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
   simp only []
   rw [abs_step_freshAt_eq_sum_prefix T f t e ω, Finset.sum_mul]
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem mean_step_freshAt_eq {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma mean_step_freshAt_eq {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hFKG : FKGLatticeCondition μ) (T : DecisionTree E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (t : ℕ) (e : E) :
     mean μ (fun ω => |adaptM μ T f (t + 1) ω - adaptM μ T f t ω| * freshAt T ω t e)
@@ -495,30 +319,26 @@ theorem mean_step_freshAt_eq {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ
   rw [hcomm]
   exact stepAbs_eq_two_mul hpos hFKG F e hF.2 hf hf0 (freshPI_Fmeas T t e F)
 
-
-
 lemma freshAt_eq_sum_prefix (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E) :
     freshAt T ω t e = ∑ F ∈ prefSet e, freshPI T ω t e F := by
-  
-  
   set P := pathPrefix T ω t with hP
   by_cases hPe : e ∈ P
   · have hfresh0 : freshAt T ω t e = 0 := by
-      unfold freshAt; rw [if_neg (by rintro ⟨_, h2⟩; rw [← hP] at h2; exact h2 hPe)]
+      unfold freshAt; rw [ite_eq_right (by rintro ⟨_, h2⟩; rw [← hP] at h2; exact h2 hPe)]
     rw [hfresh0]
     symm
     apply Finset.sum_eq_zero
     intro F hF
     rw [prefSet, Finset.mem_filter] at hF
     unfold freshPI
-    rw [if_neg (by rintro ⟨h1, _⟩; rw [hP, h1] at hPe; exact hF.2 hPe)]
+    rw [ite_eq_right (by rintro ⟨h1, _⟩; rw [hP, h1] at hPe; exact hF.2 hPe)]
   · have hPmem : P ∈ prefSet e := by rw [prefSet, Finset.mem_filter]; exact ⟨Finset.mem_univ P, hPe⟩
     rw [Finset.sum_eq_single_of_mem P hPmem]
     · unfold freshAt freshPI
       rw [← hP]
       by_cases hgrow : pathPrefix T ω (t + 1) = insert e P
       · have he_in : e ∈ pathPrefix T ω (t + 1) := by rw [hgrow]; exact Finset.mem_insert_self e P
-        rw [if_pos ⟨he_in, hPe⟩, if_pos ⟨rfl, hgrow⟩]
+        rw [ite_eq_left ⟨he_in, hPe⟩, ite_eq_left ⟨rfl, hgrow⟩]
       · have hfresh0 : ¬ (e ∈ pathPrefix T ω (t + 1) ∧ e ∉ P) := by
           rintro ⟨hin, hnin⟩
           rcases pathPrefix_succ_eq_or_insert T ω t with heq | ⟨a, hanew, ha⟩
@@ -528,12 +348,10 @@ lemma freshAt_eq_sum_prefix (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) 
             rcases Finset.mem_insert.mp hin with rfl | hmem
             · exact hgrow (by rw [ha])
             · exact hnin hmem
-        rw [if_neg hfresh0, if_neg (by rintro ⟨_, h2⟩; exact hgrow h2)]
+        rw [ite_eq_right hfresh0, ite_eq_right (by rintro ⟨_, h2⟩; exact hgrow h2)]
     · intro F _ hFne
       unfold freshPI
-      rw [if_neg (by rintro ⟨h1, _⟩; exact hFne (by rw [← h1, ← hP]))]
-
-
+      rw [ite_eq_right (by rintro ⟨h1, _⟩; exact hFne (by rw [← h1, ← hP]))]
 
 lemma mean_freshAt_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionTree E) (t : ℕ) (e : E) :
     mean μ (fun ω => freshAt T ω t e) = ∑ F ∈ prefSet e, mean μ (fun ω => freshPI T ω t e F) := by
@@ -544,33 +362,9 @@ lemma mean_freshAt_eq_sum_prefix {μ : ConfigSpace E → ℝ} (T : DecisionTree 
   simp only []
   rw [freshAt_eq_sum_prefix T ω t e, Finset.sum_mul]
 
+/-! ## B. Step covariance residues and bounds -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The step covariance residue condition at step `t` and coordinate `e`. -/
 def StepCovResidue (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (f : ConfigSpace E → ℝ)
     (t : ℕ) (e : E) : Prop :=
   ∀ F ∈ prefSet e,
@@ -578,23 +372,14 @@ def StepCovResidue (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (f : Config
         * (cExp μ F (coord e) ω * (1 - cExp μ F (coord e) ω)))
       ≤ Lindeberg.cov μ f (coord e) * mean μ (fun ω => freshPI T ω t e F)
 
-
-
-
-
-
-
-
+/-- The two-copy step covariance bound: each martingale step is bounded by a covariance computed in
+  two independent copies. -/
 def StepCovBoundTwo (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (f : ConfigSpace E → ℝ) : Prop :=
   ∀ (t : ℕ) (e : E),
     mean μ (fun ω => |adaptM μ T f (t + 1) ω - adaptM μ T f t ω| * freshAt T ω t e)
       ≤ 2 * (Lindeberg.cov μ f (coord e) * mean μ (fun ω => freshAt T ω t e))
 
-
-
-
-
-theorem stepCovBoundTwo_of_cplFKG {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma stepCovBoundTwo_of_cplFKG {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hFKG : FKGLatticeCondition μ) (T : DecisionTree E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f)
     (hres : ∀ t e, StepCovResidue μ T f t e) :
@@ -610,20 +395,7 @@ theorem stepCovBoundTwo_of_cplFKG {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0
     _ = Lindeberg.cov μ f (coord e) * ∑ F ∈ prefSet e, mean μ (fun ω => freshPI T ω t e F) := by
         rw [Finset.mul_sum]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem var_le_half_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma var_le_half_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     {f : ConfigSpace E → ℝ} (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f ≤ (1 / 2) * meanAbs μ (fun ω => f ω - mean μ f) := by
   have hmean0 : 0 ≤ mean μ f :=
@@ -634,7 +406,6 @@ theorem var_le_half_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
             mul_le_mul_of_nonneg_right (hf1 ω) (hpos ω).le)
       _ = 1 := by simp_rw [one_mul]; exact hμ1
   set m := mean μ f with hm
-  
   have hvareq : Lindeberg.var μ f = ∑ ω, (f ω - m) ^ 2 * μ ω := by
     have hexpand : ∑ ω, (f ω - m) ^ 2 * μ ω
         = (∑ ω, (f ω * f ω) * μ ω) - 2 * m * (∑ ω, f ω * μ ω) + m ^ 2 * (∑ ω, μ ω) := by
@@ -645,22 +416,17 @@ theorem var_le_half_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
     unfold Lindeberg.var Lindeberg.cov Lindeberg.mean
     rw [show (∑ x, (fun ω => f ω * f ω) x * μ x) = ∑ ω, (f ω * f ω) * μ ω from rfl, hms]; ring
   rw [hvareq]
-  
   have hbal : ∑ ω, (f ω - m) * μ ω = 0 := by
     rw [show (fun ω => (f ω - m) * μ ω) = (fun ω => f ω * μ ω - m * μ ω) from by funext ω; ring]
     rw [Finset.sum_sub_distrib, ← Finset.mul_sum, hμ1, mul_one]
     have : (∑ ω, f ω * μ ω) = m := rfl
     rw [this]; ring
-  
-  
-  
   have hkey : ∀ ω, (f ω - m) ^ 2 * μ ω
       ≤ (1 / 2) * (|f ω - m| * μ ω) + (1 / 2) * ((f ω - m) * (1 - 2 * m) * μ ω) := by
     intro ω
     have hμω := (hpos ω).le
     have hf0ω : (0:ℝ) ≤ f ω := hf0 ω
     have hf1ω : f ω ≤ 1 := hf1 ω
-    
     have hpt : (f ω - m) ^ 2 ≤ (1 / 2) * |f ω - m| + (1 / 2) * ((f ω - m) * (1 - 2 * m)) := by
       by_cases hsign : m ≤ f ω
       · rw [abs_of_nonneg (by linarith)]
@@ -685,19 +451,6 @@ theorem var_le_half_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
     _ = (1 / 2) * meanAbs μ (fun ω => f ω - m) := by
         rw [hbal, mul_zero, add_zero]; unfold meanAbs; rfl
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 lemma var_le_half_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) :
     Lindeberg.var μ (T.evalR)
@@ -707,7 +460,6 @@ lemma var_le_half_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ �
     (f := T.evalR) (fun ω => T.evalR_nonneg ω) (fun ω => T.evalR_le_one ω)
   refine hstep1.trans ?_
   apply mul_le_mul_of_nonneg_left _ (by norm_num : (0:ℝ) ≤ 1 / 2)
-  
   have hrw : meanAbs μ (fun ω => T.evalR ω - mean μ (T.evalR))
       = meanAbs μ (fun ω => ∑ t ∈ Finset.range (treeDepth T),
             (adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω)) := by
@@ -720,36 +472,22 @@ lemma var_le_half_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ �
   exact meanAbs_sum_le hpos (Finset.range (treeDepth T))
     (fun t ω => adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω)
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) (T : DecisionTree E) (hfmono : Monotone (T.evalR))
     (hres : ∀ t e, StepCovResidue μ T (T.evalR) t e) :
     Lindeberg.var μ (T.evalR)
       ≤ ∑ e, revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (coord e) := by
   have hStep : StepCovBoundTwo μ T (T.evalR) :=
     stepCovBoundTwo_of_cplFKG hpos hFKG T hfmono (fun ω => T.evalR_nonneg ω) hres
-  
   have h1 := var_le_half_sum_step hpos hμ1 T
   rw [sum_step_eq_sum_edge T (T.evalR)] at h1
   refine h1.trans ?_
-  
   rw [Finset.mul_sum]
   apply Finset.sum_le_sum
   intro e _
-  
   calc (1 / 2) * ∑ t ∈ Finset.range (treeDepth T),
-        mean μ (fun ω => |adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω| * freshAt T ω t e)
+        mean μ (fun ω => |adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω| * freshAt T ω
+            t e)
       ≤ (1 / 2) * ∑ t ∈ Finset.range (treeDepth T),
           2 * (Lindeberg.cov μ (T.evalR) (coord e) * mean μ (fun ω => freshAt T ω t e)) := by
         apply mul_le_mul_of_nonneg_left _ (by norm_num : (0:ℝ) ≤ 1 / 2)
@@ -760,25 +498,7 @@ theorem tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) 
     _ = revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (coord e) := by
         rw [revealmentMu_eq_sum]; ring
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Counterexample
-
 
 lemma sum_boolfun (g : (Bool → Bool) → ℝ) :
     (∑ ω : (Bool → Bool), g ω) =
@@ -791,13 +511,16 @@ lemma sum_boolfun (g : (Bool → Bool) → ℝ) :
       Finset.sum_insert (by decide), Finset.sum_singleton]
   ring
 
+/-! ## C. Counterexample -/
 
+/-- The uniform measure on configurations of two bits. -/
 noncomputable def muU : ConfigSpace Bool → ℝ := fun _ => 1 / 4
 
+/-- The decision tree that queries the bit `false` and stops. -/
+def Tw : DecisionTree Bool := DecisionTree.node false (DecisionTree.leaf true) (DecisionTree.leaf
+    false)
 
-def Tw : DecisionTree Bool := DecisionTree.node false (DecisionTree.leaf true) (DecisionTree.leaf false)
-
-
+/-- The average of the two bit coordinates. -/
 noncomputable def fAvg : ConfigSpace Bool → ℝ := fun ω =>
   (if ω false then (1:ℝ) else 0) * (1 / 2) + (if ω true then (1:ℝ) else 0) * (1 / 2)
 
@@ -827,28 +550,23 @@ lemma cExp_true : cExp muU {false} fAvg (fun _ => true) = 3 / 4 := by
   rw [cExp_eq_cSum_div, condNorm_true]
   unfold cSum muU fAvg Agree; rw [sum_boolfun]; norm_num [Finset.mem_singleton]
 
-
 lemma pathPrefix_Tw_one (ω : ConfigSpace Bool) : pathPrefix Tw ω 1 = {false} := by
   unfold Tw; rw [pathPrefix_node_succ, pathPrefix_zero]; simp
 
-
 lemma freshAt_Tw_zero (ω : ConfigSpace Bool) : freshAt Tw ω 0 false = 1 := by
   unfold freshAt; rw [pathPrefix_zero, pathPrefix_Tw_one]; simp
-
 
 lemma cExp_false_branch (ω : ConfigSpace Bool) :
     cExp muU {false} fAvg ω = if ω false then (3:ℝ)/4 else 1/4 := by
   have hfm := cExp_Fmeas muU {false} fAvg
   by_cases hb : ω false
-  · rw [if_pos hb]
+  · rw [ite_eq_left hb]
     rw [← cExp_true]; apply hfm
     intro x hx; rw [Finset.mem_singleton] at hx; subst hx; rw [hb]
-  · rw [if_neg hb]
+  · rw [ite_eq_right hb]
     rw [← cExp_false]; apply hfm
     intro x hx; rw [Finset.mem_singleton] at hx; subst hx
     simp only [Bool.not_eq_true] at hb; rw [hb]
-
-
 
 lemma mean_step_witness :
     mean muU (fun ω => |adaptM muU Tw fAvg (0 + 1) ω - adaptM muU Tw fAvg 0 ω|
@@ -862,8 +580,8 @@ lemma mean_step_witness :
     intro ω
     rw [hadapt0, hadapt1, freshAt_Tw_zero, mul_one]
     by_cases hb : ω false
-    · rw [if_pos hb]; rw [show (3:ℝ)/4 - 1/2 = 1/4 from by norm_num, abs_of_pos (by norm_num)]
-    · rw [if_neg hb]; rw [show (1:ℝ)/4 - 1/2 = -(1/4) from by norm_num, abs_neg,
+    · rw [ite_eq_left hb]; rw [show (3:ℝ)/4 - 1/2 = 1/4 from by norm_num, abs_of_pos (by norm_num)]
+    · rw [ite_eq_right hb]; rw [show (1:ℝ)/4 - 1/2 = -(1/4) from by norm_num, abs_neg,
         abs_of_pos (by norm_num)]
   unfold mean
   rw [show (fun ω => (fun ω => |adaptM muU Tw fAvg (0 + 1) ω - adaptM muU Tw fAvg 0 ω|
@@ -871,15 +589,12 @@ lemma mean_step_witness :
         funext ω; simp only []; rw [hpt ω]]
   rw [← Finset.mul_sum, muU_sum_one, mul_one]
 
-
-
-
+/-- Refutation of the one-copy step bound. -/
 theorem stepCovBound_no_factor_false :
     ¬ LindebergTree.StepCovBound muU Tw fAvg := by
   intro hSCB
   have h := hSCB 0 false
   rw [mean_step_witness] at h
-  
   have hrhs : Lindeberg.cov muU fAvg (coord false)
       * mean muU (fun ω => freshAt Tw ω 0 false) = 1 / 8 := by
     rw [cov_fAvg]

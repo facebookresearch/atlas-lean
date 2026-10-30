@@ -6,73 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import MathlibExt.Probability.Percolation.TreePercolation
+
+/-!
+# Moments of cluster distributions with geometric tails
+
+Moments `∑ n ^ d · dist n` of a tail distribution, their finiteness under a geometric tail, and the
+subcritical branching-process comparison.
+
+## i. Overview
+
+A `ClusterSizeDomination` packages a nonnegative tail with a geometric bound `C r ^ n`, `r < 1`;
+then every moment is finite. The file also records the subcritical Galton–Watson facts (`b p < 1`)
+used for tree comparisons. All results are unconditional.
+
+## ii. Key results
+
+- `clusterMoment_le_of_geometricTail`: moment bound from a geometric tail.
+- `ClusterSizeDomination.allMoments_lt_top`: all moments are finite.
+- `subcritical_expMomentRadius`: a subcritical tree generating function has radius larger than `1`.
+
+## iii. Table of contents
+
+- A. Moments
+- B. Cluster-size domination
+- C. Subcritical trees
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
@@ -83,26 +49,13 @@ namespace StatMech
 
 namespace BeffaraDC
 
+/-! ## A. Moments -/
 
-
-
-
-
-
+/-- The `d`-th moment `∑' n, n ^ d * dist n` of a tail sequence `dist`. -/
 noncomputable def clusterMoment (dist : ℕ → ℝ) (d : ℕ) : ℝ :=
   ∑' n : ℕ, (n : ℝ) ^ d * dist n
 
-
-
-
-
-
-
-
-
-
-
-theorem summable_pow_mul_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
+lemma summable_pow_mul_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
     (hr0 : 0 ≤ r) (hr1 : r < 1) (hnn : ∀ n, 0 ≤ dist n) (htail : ∀ n, dist n ≤ C * r ^ n)
     (d : ℕ) : Summable (fun n : ℕ => (n : ℝ) ^ d * dist n) := by
   have hgeo : Summable (fun n : ℕ => (n : ℝ) ^ d * (C * r ^ n)) := by
@@ -113,23 +66,11 @@ theorem summable_pow_mul_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
   · exact mul_nonneg (by positivity) (hnn n)
   · exact mul_le_mul_of_nonneg_left (htail n) (by positivity)
 
-
-
-theorem clusterMoment_summand_summable {dist : ℕ → ℝ} {C r : ℝ}
-    (hr0 : 0 ≤ r) (hr1 : r < 1) (hnn : ∀ n, 0 ≤ dist n) (htail : ∀ n, dist n ≤ C * r ^ n)
-    (d : ℕ) : Summable (fun n : ℕ => (n : ℝ) ^ d * dist n) :=
-  summable_pow_mul_of_geometricTail hr0 hr1 hnn htail d
-
-
-theorem clusterMoment_nonneg {dist : ℕ → ℝ} (hnn : ∀ n, 0 ≤ dist n) (d : ℕ) :
+lemma clusterMoment_nonneg {dist : ℕ → ℝ} (hnn : ∀ n, 0 ≤ dist n) (d : ℕ) :
     0 ≤ clusterMoment dist d :=
   tsum_nonneg (fun n => mul_nonneg (by positivity) (hnn n))
 
-
-
-
-
-theorem clusterMoment_le_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
+lemma clusterMoment_le_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
     (hr0 : 0 ≤ r) (hr1 : r < 1) (hnn : ∀ n, 0 ≤ dist n) (htail : ∀ n, dist n ≤ C * r ^ n)
     (d : ℕ) :
     clusterMoment dist d ≤ ∑' n : ℕ, (n : ℝ) ^ d * (C * r ^ n) := by
@@ -141,90 +82,48 @@ theorem clusterMoment_le_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
     (summable_pow_mul_of_geometricTail hr0 hr1 hnn htail d) hgeo (fun n => ?_)
   exact mul_le_mul_of_nonneg_left (htail n) (by positivity)
 
+/-! ## B. Cluster-size domination -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A nonnegative tail sequence together with a geometric bound `dist n ≤ const * rate ^ n` with `0
+  ≤ rate < 1`. -/
 structure ClusterSizeDomination where
-  
+
   dist : ℕ → ℝ
-  
+
   const : ℝ
-  
+
   rate : ℝ
-  
+
   nonneg : ∀ n, 0 ≤ dist n
-  
+
   rate_nonneg : 0 ≤ rate
-  
+
   rate_lt_one : rate < 1
-  
+
   geometricTail : ∀ n, dist n ≤ const * rate ^ n
 
 namespace ClusterSizeDomination
 
 variable (D : ClusterSizeDomination)
 
-
-
-theorem summand_summable (d : ℕ) :
+lemma summand_summable (d : ℕ) :
     Summable (fun n : ℕ => (n : ℝ) ^ d * D.dist n) :=
   summable_pow_mul_of_geometricTail D.rate_nonneg D.rate_lt_one D.nonneg D.geometricTail d
 
-
-
-
-
-
-theorem allMoments_lt_top (d : ℕ) :
+lemma allMoments_lt_top (d : ℕ) :
     clusterMoment D.dist d ≤ ∑' n : ℕ, (n : ℝ) ^ d * (D.const * D.rate ^ n) :=
   clusterMoment_le_of_geometricTail D.rate_nonneg D.rate_lt_one D.nonneg D.geometricTail d
 
-
-theorem moment_nonneg (d : ℕ) : 0 ≤ clusterMoment D.dist d :=
+lemma moment_nonneg (d : ℕ) : 0 ≤ clusterMoment D.dist d :=
   clusterMoment_nonneg D.nonneg d
 
 end ClusterSizeDomination
 
-
-
-
-
-
-
-
 open StatMech.Percolation
 
+/-! ## C. Subcritical trees -/
 
-
-
-
-
-
-
-
-
-
-theorem subcritical_expMomentRadius (b : ℕ) {p : ℝ} (hmean : (b : ℝ) * p < 1) :
+lemma subcritical_expMomentRadius (b : ℕ) {p : ℝ} (hmean : (b : ℝ) * p < 1) :
     ∃ s, 1 < s ∧ treeGF b p s < s := by
   set g : ℝ → ℝ := fun s => treeGF b p s - s with hg
   have hg1 : g 1 = 0 := by simp [hg]
@@ -240,7 +139,7 @@ theorem subcritical_expMomentRadius (b : ℕ) {p : ℝ} (hmean : (b : ℝ) * p <
     refine nhdsWithin_mono _ (fun x hx => ?_)
     simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; exact ne_of_gt hx
   have hev2 : ∀ᶠ y in nhdsWithin 1 (Ioi (1 : ℝ)), slope g 1 y < 0 := hev.filter_mono hsub
-  haveI : (nhdsWithin (1 : ℝ) (Ioi 1)).NeBot := nhdsGT_neBot 1
+  have : (nhdsWithin (1 : ℝ) (Ioi 1)).NeBot := nhdsGT_neBot 1
   obtain ⟨y, hyslope, hymem⟩ := (hev2.and self_mem_nhdsWithin).exists
   have hy1 : (1 : ℝ) < y := hymem
   refine ⟨y, hy1, ?_⟩
@@ -254,43 +153,23 @@ theorem subcritical_expMomentRadius (b : ℕ) {p : ℝ} (hmean : (b : ℝ) * p <
   have hgyeq : g y = treeGF b p y - y := rfl
   rw [hgyeq] at hgy; linarith
 
-
-
-theorem subcritical_expMomentRadius_of_treeMean (b : ℕ) {p : ℝ}
+lemma subcritical_expMomentRadius_of_treeMean (b : ℕ) {p : ℝ}
     (hmean : treeMean b p < 1) : ∃ s, 1 < s ∧ treeGF b p s < s := by
   rw [treeMean] at hmean
   exact subcritical_expMomentRadius b hmean
 
-
-
-
-
-
-
-theorem subcritical_expectedProgeny (b : ℕ) {p : ℝ} (hp0 : 0 ≤ p)
+lemma subcritical_expectedProgeny (b : ℕ) {p : ℝ} (hp0 : 0 ≤ p)
     (hmean : (b : ℝ) * p < 1) :
     ∑' k : ℕ, ((b : ℝ) * p) ^ k = (1 - (b : ℝ) * p)⁻¹ :=
   tsum_geometric_of_lt_one (by positivity) hmean
 
-
-theorem subcritical_expectedProgeny_pos (b : ℕ) {p : ℝ}
+lemma subcritical_expectedProgeny_pos (b : ℕ) {p : ℝ}
     (hmean : (b : ℝ) * p < 1) : 0 < (1 - (b : ℝ) * p)⁻¹ := by
   have : 0 < 1 - (b : ℝ) * p := by linarith
   positivity
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The cluster-size domination data built from a nonnegative sequence with a geometric tail
+  bound. -/
 def clusterSizeDomination_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
     (hnn : ∀ n, 0 ≤ dist n) (hr0 : 0 ≤ r) (hr1 : r < 1)
     (htail : ∀ n, dist n ≤ C * r ^ n) : ClusterSizeDomination where
@@ -302,13 +181,7 @@ def clusterSizeDomination_of_geometricTail {dist : ℕ → ℝ} {C r : ℝ}
   rate_lt_one := hr1
   geometricTail := htail
 
-
-
-
-
-
-
-theorem clusterMoment_lt_top_of_subcriticalDomination {dist : ℕ → ℝ} {C r : ℝ}
+lemma clusterMoment_lt_top_of_subcriticalDomination {dist : ℕ → ℝ} {C r : ℝ}
     (hnn : ∀ n, 0 ≤ dist n) (hr0 : 0 ≤ r) (hr1 : r < 1)
     (htail : ∀ n, dist n ≤ C * r ^ n) (d : ℕ) :
     clusterMoment dist d ≤ ∑' n : ℕ, (n : ℝ) ^ d * (C * r ^ n) :=

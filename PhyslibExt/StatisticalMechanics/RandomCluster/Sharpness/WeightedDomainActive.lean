@@ -6,22 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedDomain
 
+/-!
+# Inner-box domination for active-edge measures
+
+The free and wired domination of inner marginals, transferred from all-pairs configurations to
+configurations of the active edges.
+
+## i. Overview
+
+`ocd_innerRestrictActive` restricts an outer active configuration to the inner graph. The free and
+wired bounds of `WeightedDomain` then hold for the active boundary-conditioned means. Unconditional.
+
+## ii. Key results
+
+- `ocd_wired_inner_dominated_activeBCMean`: wired domination of active inner means.
+
+## iii. Table of contents
+
+- A. Active inner restriction
+
+## iv. References
+
+* G. R. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Finset Set SimpleGraph
 
@@ -35,8 +48,9 @@ variable (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
 variable (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
 variable (iota : Vin -> Vout)
 
+/-! ## A. Active inner restriction -/
 
-
+/-- The restriction of an outer active-edge configuration to the active edges of the inner graph. -/
 def ocd_innerRestrictActive
     (hadjm : ocd_AdjMatch Gin Gout iota)
     (rho : ConfigSpace Gout.edgeSet) : ConfigSpace Gin.edgeSet :=
@@ -46,16 +60,15 @@ def ocd_innerRestrictActive
     rw [ocd_innerEdge_mk, SimpleGraph.mem_edgeSet, ← hadjm]
     exact he⟩
 
-@[simp] theorem ocd_innerRestrictActive_restrictActive
+omit [DecidableRel Gin.Adj] [DecidableRel Gout.Adj] in
+@[simp] lemma ocd_innerRestrictActive_restrictActive
     (hadjm : ocd_AdjMatch Gin Gout iota)
     (rho : ConfigSpace (Sym2 Vout)) :
     ocd_innerRestrictActive Gin Gout iota hadjm (restrictActive Gout rho) =
       restrictActive Gin (ocd_innerRestrict iota rho) := by
   rfl
 
-
-
-theorem ocd_free_inner_dominated_activeBCMean
+lemma ocd_free_inner_dominated_activeBCMean
     (bdryOut : Vout -> Prop) [DecidablePred bdryOut]
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
@@ -84,9 +97,7 @@ theorem ocd_free_inner_dominated_activeBCMean
       hpfIn hpfIn1 (zero_lt_one.trans_le hq)]
   exact hdom
 
-
-
-theorem ocd_wired_inner_dominated_activeBCMean
+lemma ocd_wired_inner_dominated_activeBCMean
     (bdryOut : Vout -> Prop) [DecidablePred bdryOut]
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)

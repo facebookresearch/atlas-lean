@@ -6,77 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.Filling
+
+/-!
+# Almost-sure law of large numbers for one-dimensional animals
+
+The almost-sure law of large numbers, via Kingman's subadditive ergodic theorem, for the maximal
+prefix sum of an i.i.d. environment on `ℤ`.
+
+## i. Overview
+
+For i.i.d. integrable weights `ω : ℤ → ℝ` with law `ρ`, `animalValue ω n` is the largest prefix sum
+`∑ i < a, ω i` over `a ≤ n`. It is a subadditive cocycle for the shift, so Kingman's theorem gives
+almost-sure convergence of `animalValue ω n / n` to an integrable, shift-invariant limit
+`animalLimit ρ`, whose integral is identified with the Fekete constant. All results are
+unconditional given integrability of `ρ`.
+
+## ii. Key results
+
+- `shiftEnv_measurePreserving`: the shift preserves the product measure.
+- `animalValue_lln_ae`: almost-sure convergence of `animalValue ω n / n`.
+- `integral_animalLimit_eq_gamma`: the integral of the limit is the subadditive constant.
+
+## iii. Table of contents
+
+- A. The shift on environments
+- B. Prefix-maximum animals
+- C. Kingman limit
+
+## iv. References
+
+* J. F. C. Kingman, *The ergodic theory of subadditive stochastic processes*, J. Roy. Statist. Soc.
+  B 30 (1968).
+-/
 
 @[expose] public section
 
@@ -87,21 +52,17 @@ namespace StatMech
 
 namespace BeffaraDC
 
+/-! ## A. The shift on environments -/
 
-
-
-
+/-- The left shift of an environment on `ℤ`: `(shiftEnv ω) z = ω (z + 1)`. -/
 def shiftEnv (ω : ℤ → ℝ) : ℤ → ℝ := fun z => ω (z + 1)
 
-
-theorem shiftEnv_iterate (ω : ℤ → ℝ) (m : ℕ) (i : ℤ) : (shiftEnv^[m] ω) i = ω (i + m) := by
+lemma shiftEnv_iterate (ω : ℤ → ℝ) (m : ℕ) (i : ℤ) : (shiftEnv^[m] ω) i = ω (i + m) := by
   induction m generalizing i with
   | zero => simp
   | succ k ih => rw [Function.iterate_succ_apply', shiftEnv, ih]; push_cast; ring_nf
 
-
-
-theorem shiftEnv_eq_piCongrLeft :
+lemma shiftEnv_eq_piCongrLeft :
     shiftEnv = ⇑(Equiv.piCongrLeft (fun _ : ℤ => ℝ) (Equiv.addRight (-1 : ℤ))) := by
   funext ω b
   rw [show b = (Equiv.addRight (-1 : ℤ)) ((Equiv.addRight (-1 : ℤ)).symm b) from
@@ -109,11 +70,7 @@ theorem shiftEnv_eq_piCongrLeft :
       Equiv.piCongrLeft_apply_apply]
   simp only [shiftEnv, Equiv.coe_addRight]; ring_nf
 
-
-
-
-
-theorem shiftEnv_measurePreserving (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
+lemma shiftEnv_measurePreserving (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     MeasurePreserving shiftEnv (Measure.infinitePi (fun _ : ℤ => ρ))
       (Measure.infinitePi (fun _ : ℤ => ρ)) := by
   have hmeas : Measurable shiftEnv := by
@@ -125,42 +82,29 @@ theorem shiftEnv_measurePreserving (ρ : Measure ℝ) [IsProbabilityMeasure ρ] 
   convert h using 2
   exact (MeasurableEquiv.coe_piCongrLeft _).symm
 
+/-! ## B. Prefix-maximum animals -/
 
-
-
-
-
-
+/-- The maximal prefix sum `∑ i < a, ω i` over `a ≤ n`: the weight of the best one-dimensional
+  animal of length at most `n` started at `0`. -/
 noncomputable def animalValue (ω : ℤ → ℝ) (n : ℕ) : ℝ :=
   (range (n + 1)).sup' (by simp) (fun a => ∑ i ∈ range a, ω (i : ℤ))
 
-
-theorem prefix_le_animalValue {ω : ℤ → ℝ} (n : ℕ) {a : ℕ} (ha : a ≤ n) :
+lemma prefix_le_animalValue {ω : ℤ → ℝ} (n : ℕ) {a : ℕ} (ha : a ≤ n) :
     (∑ i ∈ range a, ω (i : ℤ)) ≤ animalValue ω n :=
   Finset.le_sup' (fun a => ∑ i ∈ range a, ω (i : ℤ)) (Finset.mem_range.mpr (by omega))
 
-
-
-theorem animalValue_le_iff {ω : ℤ → ℝ} {n : ℕ} {c : ℝ} :
+lemma animalValue_le_iff {ω : ℤ → ℝ} {n : ℕ} {c : ℝ} :
     animalValue ω n ≤ c ↔ ∀ a ≤ n, (∑ i ∈ range a, ω (i : ℤ)) ≤ c := by
   unfold animalValue
   rw [Finset.sup'_le_iff]
   exact ⟨fun h a ha => h a (Finset.mem_range.mpr (by omega)),
     fun h a ha => h a (Nat.lt_succ_iff.mp (Finset.mem_range.mp ha))⟩
 
-
-
-theorem animalValue_nonneg (ω : ℤ → ℝ) (n : ℕ) : 0 ≤ animalValue ω n := by
+lemma animalValue_nonneg (ω : ℤ → ℝ) (n : ℕ) : 0 ≤ animalValue ω n := by
   have := prefix_le_animalValue (ω := ω) n (a := 0) (Nat.zero_le n)
   simpa using this
 
-
-
-
-
-
-
-theorem animalValue_subadditive (ω : ℤ → ℝ) (m n : ℕ) :
+lemma animalValue_subadditive (ω : ℤ → ℝ) (m n : ℕ) :
     animalValue ω (m + n) ≤ animalValue ω m + animalValue (shiftEnv^[m] ω) n := by
   rw [animalValue_le_iff]
   intro a ha
@@ -182,9 +126,7 @@ theorem animalValue_subadditive (ω : ℤ → ℝ) (m n : ℕ) :
       rw [heq]; exact prefix_le_animalValue n hk
     linarith
 
-
-
-theorem animalValue_le_posSum (ω : ℤ → ℝ) (n : ℕ) :
+lemma animalValue_le_posSum (ω : ℤ → ℝ) (n : ℕ) :
     animalValue ω n ≤ ∑ i ∈ range n, (ω (i : ℤ))⁺ := by
   rw [animalValue_le_iff]
   intro a ha
@@ -194,11 +136,7 @@ theorem animalValue_le_posSum (ω : ℤ → ℝ) (n : ℕ) :
         apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.range_mono ha)
         intro i _ _; positivity
 
-
-
-
-
-theorem measurable_animalValue (n : ℕ) : Measurable (fun ω : ℤ → ℝ => animalValue ω n) := by
+lemma measurable_animalValue (n : ℕ) : Measurable (fun ω : ℤ → ℝ => animalValue ω n) := by
   have hrw : (fun ω : ℤ → ℝ => animalValue ω n)
       = (range (n + 1)).sup' (by simp) (fun a => fun ω : ℤ → ℝ => ∑ i ∈ range a, ω (i : ℤ)) := by
     funext ω; rw [animalValue, Finset.sup'_apply]
@@ -208,18 +146,13 @@ theorem measurable_animalValue (n : ℕ) : Measurable (fun ω : ℤ → ℝ => a
 
 variable {ρ : Measure ℝ}
 
-
-
-theorem integrable_coord [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (i : ℤ) :
+lemma integrable_coord [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (i : ℤ) :
     Integrable (fun ω : ℤ → ℝ => ω i) (Measure.infinitePi (fun _ : ℤ => ρ)) := by
   have hmp := measurePreserving_eval_infinitePi (fun _ : ℤ => ρ) i
   have := (hmp.integrable_comp (g := (id : ℝ → ℝ)) hρ.aestronglyMeasurable).mpr hρ
   simpa using this
 
-
-
-
-theorem integrable_animalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (n : ℕ) :
+lemma integrable_animalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (n : ℕ) :
     Integrable (fun ω : ℤ → ℝ => animalValue ω n) (Measure.infinitePi (fun _ : ℤ => ρ)) := by
   set μ := Measure.infinitePi (fun _ : ℤ => ρ) with hμ
   have hdom : Integrable (fun ω : ℤ → ℝ => ∑ i ∈ range n, (ω (i : ℤ))⁺) μ := by
@@ -230,68 +163,41 @@ theorem integrable_animalValue [IsProbabilityMeasure ρ] (hρ : Integrable (id :
   rw [Real.norm_eq_abs, abs_of_nonneg (animalValue_nonneg ω n)]
   exact animalValue_le_posSum ω n
 
+/-! ## C. Kingman limit -/
 
-
-
-
-
-
-
-theorem animalCocycle [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma animalCocycle [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     SubadditiveCocycle shiftEnv (Measure.infinitePi (fun _ : ℤ => ρ))
       (fun n ω => animalValue ω n) where
   measurePreserving := shiftEnv_measurePreserving ρ
   integrable := integrable_animalValue hρ
   subadditive := fun m n => Filter.Eventually.of_forall (fun ω => animalValue_subadditive ω m n)
 
-
-theorem animalValue_nonneg_ae [IsProbabilityMeasure ρ] (n : ℕ) :
+lemma animalValue_nonneg_ae [IsProbabilityMeasure ρ] (n : ℕ) :
     0 ≤ᵐ[Measure.infinitePi (fun _ : ℤ => ρ)] (fun ω => animalValue ω n) :=
   Filter.Eventually.of_forall (fun ω => animalValue_nonneg ω n)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Almost-sure convergence of `animalValue ω n / n`. -/
 theorem animalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       Tendsto (fun n => animalValue ω n / n) atTop
         (𝓝 (kingmanLimit shiftEnv (fun n ω => animalValue ω n) ω)) :=
   tendsto_div_kingmanLimit_ae_of_nonneg (animalCocycle hρ) (fun n => animalValue_nonneg_ae n)
 
-
-
-
-
-
+/-- The almost-sure limit of `animalValue ω n / n`, given by Kingman's subadditive ergodic
+  theorem. -/
 @[nolint unusedArguments]
 noncomputable def animalLimit (_ρ : Measure ℝ) : (ℤ → ℝ) → ℝ :=
   kingmanLimit shiftEnv (fun n ω => animalValue ω n)
 
-
-
-theorem animalLimit_integrable [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma animalLimit_integrable [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     Integrable (animalLimit ρ) (Measure.infinitePi (fun _ : ℤ => ρ)) :=
   integrable_kingmanLimit (animalCocycle hρ) (fun n => animalValue_nonneg_ae n)
 
-
-theorem animalLimit_nonneg_ae [IsProbabilityMeasure ρ] :
+lemma animalLimit_nonneg_ae [IsProbabilityMeasure ρ] :
     0 ≤ᵐ[Measure.infinitePi (fun _ : ℤ => ρ)] animalLimit ρ :=
   kingmanLimit_nonneg_ae (T := shiftEnv) (fun n => animalValue_nonneg_ae n)
 
-
-
-
-theorem animalLimit_shift_invariant_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma animalLimit_shift_invariant_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       animalLimit ρ (shiftEnv ω) = animalLimit ρ ω := by
   have hcoc := animalCocycle hρ
@@ -302,18 +208,12 @@ theorem animalLimit_shift_invariant_ae [IsProbabilityMeasure ρ] (hρ : Integrab
       lt_of_lt_of_le EReal.bot_lt_zero hω)
     (animalLimit_integrable hρ)
 
-
-
-theorem integral_animalLimit_le [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma integral_animalLimit_le [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     (∫ ω, animalLimit ρ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)))
       ≤ SubadditiveCocycle.gamma (animalCocycle hρ) :=
   integral_kingmanLimit_le_gamma (animalCocycle hρ) (fun n => animalValue_nonneg_ae n)
 
-
-
-
-
-
+/-- The integral of the limit is the subadditive constant. -/
 theorem integral_animalLimit_eq_gamma [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     (∫ ω, animalLimit ρ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)))
       = SubadditiveCocycle.gamma (animalCocycle hρ) := by
@@ -321,7 +221,6 @@ theorem integral_animalLimit_eq_gamma [IsProbabilityMeasure ρ] (hρ : Integrabl
   have hnn : ∀ n, 0 ≤ᵐ[Measure.infinitePi (fun _ : ℤ => ρ)] (fun ω => animalValue ω n) :=
     fun n => animalValue_nonneg_ae n
   refine le_antisymm (integral_animalLimit_le hρ) ?_
-  
   have hgamma_le : hcoc.gamma ≤ ∫ ω, gLow shiftEnv (fun n ω => animalValue ω n) ω
       ∂(Measure.infinitePi (fun _ : ℤ => ρ)) :=
     gamma_le_integral_gLow hcoc hnn
@@ -336,18 +235,7 @@ theorem integral_animalLimit_eq_gamma [IsProbabilityMeasure ρ] (hρ : Integrabl
     simp only [animalLimit, kingmanLimit, gLow, hle]
   linarith [hgamma_le, heq.le, heq.ge]
 
-
-
-
-
-
-
-
-
-
-
-
-theorem animalValue_eq_directed_window (ω : ℤ → ℝ) (n : ℕ) :
+lemma animalValue_eq_directed_window (ω : ℤ → ℝ) (n : ℕ) :
     animalValue ω n
       = (range (n + 1)).sup' (by simp) (fun a => ∑ i ∈ range a, ω (i : ℤ)) := rfl
 

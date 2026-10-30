@@ -6,78 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.UBlockFactor
+
+/-!
+# The tail conditional law
+
+Truncated heads, joins of coordinate vectors and the tail conditional law hypothesis
+`acp_TailCondLaw` for the adaptive OSSS argument.
+
+## i. Overview
+
+`acp_TailCondLaw μ σ f` says that, conditionally on the first `t` revealed coordinates, the law of
+the remaining coordinates seen by the truncated function is the same in both copies of the coupling.
+It is a hypothesis predicate here; it is proved for monotonic measures in `TailCondLawConstant` and
+`CrossMonotone`. This file is one step of the OSSS chain for monotonic measures: `AdaptMConditional`
+(OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration` (`AdaptCondBBB` ⇒ `AdaptStepCovBound`) ←
+`AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ← `TailCondLawConstant` / `CrossMonotone`
+(`acp_TailCondLaw` for monotonic measures), assembled unconditionally in
+`MonotoneOSSSAssembly.osss_monotone_sharp`.
+
+## ii. Key results
+
+- `acp_TailCondLaw`: the tail conditional law predicate.
+
+## iii. Table of contents
+
+- A. Truncation and joins
+- B. Tail conditional law
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -90,16 +59,7 @@ open StatMech.Probability OSSS.AdaptiveTau OSSS.AdaptMConditional
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-
-
-
-
-
-
-
-
-
-
+omit [Fintype E] in
 lemma acp_detAtC_congr_of_codeMap_agree {n : ℕ} (σ : Fin n → E) (f : ConfigSpace E → ℝ)
     (X X' : ConfigSpace E) (m : ℕ)
     (hpref : ∀ e ∈ prefixSet σ m, X e = X' e) :
@@ -118,8 +78,6 @@ lemma acp_detAtC_congr_of_codeMap_agree {n : ℕ} (σ : Fin n → E) (f : Config
     have hwX' : ∀ e ∈ prefixSet σ m, w e = X' e := fun e he => by rw [hw e he, hpref e he]
     rw [hdet w hwX']; exact hfX'X
 
-
-
 lemma acp_stopVal_gt_congr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U U' : Fin n → ℝ) (t : ℕ)
     (hagree : ∀ i : Fin n, (i : ℕ) < t → U i = U' i) :
@@ -136,29 +94,25 @@ lemma acp_stopVal_gt_congr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n �
     refine (acp_detAtC_congr_of_codeMap_agree (σ : Fin n → E) f _ _ m ?_).mpr hdet
     exact codeMap_agree_on_prefix μ σ U' U m (fun i hi => (hagree i (by omega)).symm)
 
+/-! ## A. Truncation and joins -/
 
-
-
+/-- The truncated function after fixing the first `t` coordinates (in the order `σ`) to the values
+  `A`. -/
 noncomputable def acp_truncHead (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) : ℝ :=
   truncInd μ σ f ((ubfSplit n t).symm (A, fun _ => 0)) (t + 1)
-
-
-
 
 lemma acp_truncInd_factors (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (U : Fin n → ℝ) :
     truncInd μ σ f U (t + 1) = acp_truncHead μ σ f t (((ubfSplit n t) U).1) := by
   unfold acp_truncHead truncInd
-  
   have hagree : ∀ i : Fin n, (i : ℕ) < t →
       U i = ((ubfSplit n t).symm ((((ubfSplit n t) U).1), fun _ => 0)) i := by
     intro i hi
-    show U i = (if h : (i : ℕ) < t then ((ubfSplit n t) U).1 ⟨i, h⟩
+    change U i = (if h : (i : ℕ) < t then ((ubfSplit n t) U).1 ⟨i, h⟩
                 else (fun _ : {j : Fin n // ¬ (j : ℕ) < t} => (0:ℝ)) ⟨i, h⟩)
-    rw [dif_pos hi]; rfl
+    rw [dite_eq_left hi]; rfl
   exact if_congr (acp_stopVal_gt_congr μ σ f U _ t hagree) rfl rfl
-
 
 lemma acp_measurable_truncHead (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) :
@@ -167,20 +121,9 @@ lemma acp_measurable_truncHead (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin 
   refine (measurable_truncInd μ σ f (t + 1)).comp ?_
   exact (ubfSplit n t).symm.measurable.comp (measurable_id.prodMk measurable_const)
 
-
 lemma acp_truncHead_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ) :
     |acp_truncHead μ σ f t A| ≤ 1 := truncInd_le_one μ σ f _ (t + 1)
-
-
-
-
-
-
-
-
-
-
 
 lemma acp_measurable_fiberDiag (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (e : E) (s : ℕ) :
@@ -191,15 +134,16 @@ lemma acp_measurable_fiberDiag (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin 
     (measurable_g_adaptWt μ σ f f s).mul (measurable_g_adaptWt μ σ f (Lindeberg.coord e) s)
   exact hjoint.stronglyMeasurable.integral_prod_right'.measurable
 
-
 lemma acp_fiberDiag_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (e : E) (s : ℕ) (U : Fin n → ℝ) :
     |fiberDiag μ σ f e s U| ≤ 1 := by
   unfold fiberDiag
   calc |∫ V, f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))
-          * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube n)|
+          * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube
+              n)|
       ≤ ∫ V, |f (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))
-          * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))| ∂(Vcube n) :=
+          * Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))|
+              ∂(Vcube n) :=
         abs_integral_le_integral_abs
     _ ≤ ∫ V, (1 : ℝ) ∂(Vcube n) := by
         refine integral_mono ?_ (integrable_const 1) (fun V => ?_)
@@ -207,7 +151,6 @@ lemma acp_fiberDiag_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n �
         · rw [abs_mul, ← one_mul (1:ℝ)]
           exact mul_le_mul (hfC _) (GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) (by norm_num)
     _ = 1 := by simp
-
 
 lemma acp_measurable_fiberCross_marg_f (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (s : ℕ) :
@@ -218,16 +161,16 @@ lemma acp_measurable_fiberCross_marg_f (μ : ConfigSpace E → ℝ) {n : ℕ} (�
 lemma acp_measurable_fiberCross_marg_c (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (e : E) (s : ℕ) :
     Measurable (fun U : Fin n → ℝ =>
-      ∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube n)) :=
-  (measurable_g_adaptWt μ σ f (Lindeberg.coord e) s).stronglyMeasurable.integral_prod_right'.measurable
-
+      ∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube
+          n)) :=
+  (measurable_g_adaptWt μ σ f (Lindeberg.coord e)
+      s).stronglyMeasurable.integral_prod_right'.measurable
 
 lemma acp_measurable_fiberCross (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (e : E) (s₁ s₂ : ℕ) :
     Measurable (fun U : Fin n → ℝ => fiberCross μ σ f e s₁ s₂ U) := by
   unfold fiberCross
   exact (acp_measurable_fiberCross_marg_f μ σ s₁).mul (acp_measurable_fiberCross_marg_c μ σ e s₂)
-
 
 lemma acp_fiberCross_marg_f_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (s : ℕ) (U : Fin n → ℝ) :
@@ -242,12 +185,14 @@ lemma acp_fiberCross_marg_f_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : 
           (integrable_const 1) (fun V => hfC _)
     _ = 1 := by simp
 
-
 lemma acp_fiberCross_marg_c_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (e : E) (s : ℕ) (U : Fin n → ℝ) :
-    |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube n)| ≤ 1 := by
-  calc |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube n)|
-      ≤ ∫ V, |Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))| ∂(Vcube n) :=
+    |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s)) ∂(Vcube
+        n)| ≤ 1 := by
+  calc |∫ V, Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))
+      ∂(Vcube n)|
+      ≤ ∫ V, |Lindeberg.coord e (codeMap μ (σ : Fin n → E) (adaptWt U V (stopVal μ σ f U) s))|
+          ∂(Vcube n) :=
         abs_integral_le_integral_abs
     _ ≤ ∫ V, (1 : ℝ) ∂(Vcube n) :=
         integral_mono (ContinuousFKG.integrable_of_bdd _
@@ -255,7 +200,6 @@ lemma acp_fiberCross_marg_c_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : 
           (fun V => by rw [abs_abs]; exact GrandCoupling.abs_coord_le_one e _))
           (integrable_const 1) (fun V => GrandCoupling.abs_coord_le_one e _)
     _ = 1 := by simp
-
 
 lemma acp_fiberCross_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hfC : ∀ ω, |f ω| ≤ 1) (e : E) (s₁ s₂ : ℕ) (U : Fin n → ℝ) :
@@ -265,34 +209,15 @@ lemma acp_fiberCross_le_one (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n �
   exact mul_le_mul (acp_fiberCross_marg_f_le_one μ σ hfC s₁ U)
     (acp_fiberCross_marg_c_le_one μ σ e s₂ U) (abs_nonneg _) (by norm_num)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Join a vector of the first `t` coordinates with a vector of the remaining ones. -/
 noncomputable def acp_join {n : ℕ} (t : ℕ) (A : {i : Fin n // (i : ℕ) < t} → ℝ)
     (B : {i : Fin n // ¬ (i : ℕ) < t} → ℝ) : Fin n → ℝ :=
   (ubfSplit n t).symm (A, B)
 
+/-! ## B. Tail conditional law -/
 
-
-
-
-
-
-
-
-
-
+/-- The tail conditional law: for every step `t`, the conditional law of the tail coordinates seen
+  by the truncated function does not depend on the copy. -/
 def acp_TailCondLaw (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) :
     Prop :=
   ∀ (t : ℕ) (htn : t < n) (A : {i : Fin n // (i : ℕ) < t} → ℝ),

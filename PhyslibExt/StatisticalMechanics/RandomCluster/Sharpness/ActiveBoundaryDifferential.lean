@@ -6,26 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEdges
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ActiveEdgeDifferential
 
+/-!
+# Differential inequality for the boundary-conditioned active random-cluster model
+
+The OSSS-based differential inequality `θ' ≥ c θ (1 - θ)`-type bound for crossing probabilities of
+the random-cluster model on active edges with a boundary condition `C`.
+
+## i. Overview
+
+The cross term `1 - θ` is bounded below via finite energy (`activeBC_cross_one_sub_lower`), and the
+OSSS inequality with an exploration of the boundary turns covariances into the derivative.
+`activeBC_fk_differential_inequality` is conditional on its explicit geometric hypotheses (an
+injective embedding of the edges into `ℤ^d`, a discrete boundary family, and containment of all
+edges in a box). No probabilistic input is assumed.
+
+## ii. Key results
+
+- `activeBC_fk_differential_logistic`: logistic differential inequality for the boundary-conditioned
+  model.
+- `activeBC_fk_differential_inequality`: the OSSS differential inequality, given the geometric
+  embedding hypotheses.
+
+## iii. Table of contents
+
+- A. Differential inequality with boundary conditions
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace ActiveBoundaryDifferential
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open RevealmentTranslation LindebergTree
 open ActiveEdgeDifferential
 
@@ -41,8 +67,9 @@ lemma cov_activeBC_eq (G : SimpleGraph V) [DecidableRel G.Adj]
   unfold Lindeberg.cov FK.activeBCCov Lindeberg.mean FK.activeBCMean
   rfl
 
+/-! ## A. Differential inequality with boundary conditions -/
 
-theorem activeBC_cross_one_sub_lower
+lemma activeBC_cross_one_sub_lower
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V -> Real) (hJ : forall e, 0 < J e)
@@ -104,9 +131,8 @@ theorem activeBC_cross_one_sub_lower
       congr 1
       exact Finset.sum_congr rfl fun omega _ => by ring
 
-
-
-theorem activeBC_fk_differential_logistic
+open Classical in
+lemma activeBC_fk_differential_logistic
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V -> Real) (hJ : forall e, 0 < J e)
@@ -180,8 +206,8 @@ theorem activeBC_fk_differential_logistic
   refine ⟨cR, hcR, ?_⟩
   exact (mul_le_mul_of_nonneg_left hcov hcR.le).trans hRusso
 
-
-
+open Classical in
+/-- The OSSS differential inequality, given the geometric embedding hypotheses. -/
 theorem activeBC_fk_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (C : SimpleGraph V) [DecidableRel C.Adj]

@@ -6,93 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentBoundAssembly
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentBoxCrossing
 public import MathlibExt.Probability.OSSS.RevealmentSum
 
+/-!
+# Covariance lower bounds from averaged revealments
+
+Averaging the OSSS inequality over a family of revealment orders bounds the variance by the average
+revealment times the covariance sum; with per-scale revealment bounds this gives the covariance
+lower bound for the `q = 2` random-cluster model.
+
+## i. Overview
+
+`var_le_avg_reveal_mul_sum_cov` averages `osss_monotone_sharp` over a family `σf`. With per-scale
+revealment bounds (`avg_reveal_le_of_perScale`) this gives
+`fk_os_cov_lower_bound_from_perScaleReveal` and the `q = 2` case
+`fk_q2_cov_lower_bound_from_perScaleReveal`, conditional on the revealment bounds `hreach` and
+`hsum`. A single order cannot do better than revealment `1` on its first edge:
+`revealAdapt_first_eq_one`, and `revealAdapt_eq_one_witness` gives an explicit example.
+
+## ii. Key results
+
+- `var_le_avg_reveal_mul_sum_cov`: `Var f ≤ (average revealment) ∑ Cov` (unconditional).
+- `fk_q2_cov_lower_bound_from_perScaleReveal`: `θ(1 - θ) / D ≤ ∑ Cov`, conditional on per-scale
+  revealment bounds.
+
+## iii. Table of contents
+
+- A. Averaged OSSS
+- B. First-edge revealment
+- C. Random-cluster lower bounds
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -107,29 +67,9 @@ open StatMech.OSSS.RevealmentBoxCrossing
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Averaged OSSS -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- `Var f ≤ (average revealment) ∑ Cov` (unconditional). -/
 theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
@@ -141,24 +81,20 @@ theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ �
     exact_mod_cast Fintype.card_pos
   have hcovnn : ∀ e, 0 ≤ Lindeberg.cov μ f (Lindeberg.coord e) :=
     fun e => LindebergTree.cov_coord_nonneg hpos hμ1 hFKG hf e
-  
   have hbound : ∀ k, Lindeberg.var μ f
       ≤ ∑ e, revealAdapt μ (σf k) f e * Lindeberg.cov μ f (Lindeberg.coord e) :=
     fun k => osss_monotone_sharp hpos hμ1 hmono (σf k) hf hf0 hf1
-  
   have havg : (Fintype.card κ : ℝ) * Lindeberg.var μ f
       ≤ ∑ k, ∑ e, revealAdapt μ (σf k) f e * Lindeberg.cov μ f (Lindeberg.coord e) := by
     have hsum : ∑ _k : κ, Lindeberg.var μ f
         ≤ ∑ k, ∑ e, revealAdapt μ (σf k) f e * Lindeberg.cov μ f (Lindeberg.coord e) :=
       Finset.sum_le_sum (fun k _ => hbound k)
     rwa [Finset.sum_const, Finset.card_univ, nsmul_eq_mul] at hsum
-  
   have hswap : ∑ k, ∑ e, revealAdapt μ (σf k) f e * Lindeberg.cov μ f (Lindeberg.coord e)
       = ∑ e, (∑ k, revealAdapt μ (σf k) f e) * Lindeberg.cov μ f (Lindeberg.coord e) := by
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
     intro e _; rw [Finset.sum_mul]
-  
   have hbnd : ∑ e, (∑ k, revealAdapt μ (σf k) f e) * Lindeberg.cov μ f (Lindeberg.coord e)
       ≤ ∑ e, ((Fintype.card κ : ℝ) * D) * Lindeberg.cov μ f (Lindeberg.coord e) := by
     apply Finset.sum_le_sum
@@ -167,7 +103,6 @@ theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ �
     have := hD e
     rw [one_div, inv_mul_le_iff₀ hκpos] at this
     linarith [this]
-  
   have hcomb : (Fintype.card κ : ℝ) * Lindeberg.var μ f
       ≤ ((Fintype.card κ : ℝ) * D) * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := by
     calc (Fintype.card κ : ℝ) * Lindeberg.var μ f
@@ -176,7 +111,6 @@ theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ �
       _ ≤ ∑ e, ((Fintype.card κ : ℝ) * D) * Lindeberg.cov μ f (Lindeberg.coord e) := hbnd
       _ = ((Fintype.card κ : ℝ) * D) * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := by
             rw [Finset.mul_sum]
-  
   have hfinal : Lindeberg.var μ f ≤ D * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := by
     have h2 : (Fintype.card κ : ℝ) * Lindeberg.var μ f
         ≤ (Fintype.card κ : ℝ) * (D * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e)) := by
@@ -186,27 +120,7 @@ theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ �
     exact le_of_mul_le_mul_left h2 hκpos
   exact hfinal
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_os_cov_lower_bound_avg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma fk_os_cov_lower_bound_avg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
@@ -224,23 +138,7 @@ theorem fk_os_cov_lower_bound_avg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0
       ≤ D * ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := hmain
     _ = (∑ e, Lindeberg.cov μ f (Lindeberg.coord e)) * D := by ring
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem avg_reveal_le_of_perScale {μ : ConfigSpace E → ℝ}
+lemma avg_reveal_le_of_perScale {μ : ConfigSpace E → ℝ}
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
     (f : ConfigSpace E → ℝ) (R : κ → E → ℝ) (D : ℝ)
     (hreach : ∀ k e, revealAdapt μ (σf k) f e ≤ R k e)
@@ -253,22 +151,7 @@ theorem avg_reveal_le_of_perScale {μ : ConfigSpace E → ℝ}
       ≤ ∑ k, R k e := Finset.sum_le_sum (fun k _ => hreach k e)
     _ ≤ (Fintype.card κ : ℝ) * D := hsum e
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_os_cov_lower_bound_from_perScaleReveal {μ : ConfigSpace E → ℝ}
+lemma fk_os_cov_lower_bound_from_perScaleReveal {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ)
     (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
@@ -282,25 +165,9 @@ theorem fk_os_cov_lower_bound_from_perScaleReveal {μ : ConfigSpace E → ℝ}
   fk_os_cov_lower_bound_avg hpos hμ1 hFKG hmono σf hf hf0 hf1 hidem D hDpos
     (avg_reveal_le_of_perScale σf f R D hreach hsum)
 
+/-! ## B. First-edge revealment -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem revealAdapt_first_eq_one {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma revealAdapt_first_eq_one {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) (e : E)
     (he : (σ.symm e : ℕ) = 0) (hnc : ∀ X, ¬ ∀ w, f w = f X) :
     revealAdapt μ σ f e = 1 := by
@@ -312,24 +179,14 @@ theorem revealAdapt_first_eq_one {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 
   have hcalc : ∀ X, reachInd σ f 0 X = 1 := by
     intro X
     unfold reachInd
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hdet
     exact hnc X (fun w => hdet w (by rw [hpref]; intro a ha; simp at ha))
   calc ∑ X, reachInd σ f 0 X * μ X = ∑ X, (1 : ℝ) * μ X := by
         apply Finset.sum_congr rfl; intro X _; rw [hcalc X]
     _ = 1 := by simp only [one_mul]; exact hμ1
 
-
-
-
-
-
-
-
-
-
-
-theorem revealAdapt_single_no_over_n {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma revealAdapt_single_no_over_n {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) (e : E)
     (he : (σ.symm e : ℕ) = 0) (hnc : ∀ X, ¬ ∀ w, f w = f X)
     {c : ℝ} (hc : c < 1) :
@@ -338,14 +195,7 @@ theorem revealAdapt_single_no_over_n {μ : ConfigSpace E → ℝ} (hpos : ∀ ω
   intro h
   exact absurd (lt_of_le_of_lt h hc) (by norm_num)
 
-
-
-
-
-
-
-
-theorem revealAdapt_eq_one_witness :
+lemma revealAdapt_eq_one_witness :
     revealAdapt (fun _ : ConfigSpace (Fin 2) => 1 / (Fintype.card (ConfigSpace (Fin 2)) : ℝ))
       (Equiv.refl (Fin 2)) (Lindeberg.coord (0 : Fin 2)) (0 : Fin 2) = 1 := by
   have hcard : (0 : ℝ) < (Fintype.card (ConfigSpace (Fin 2)) : ℝ) := by
@@ -357,23 +207,14 @@ theorem revealAdapt_eq_one_witness :
     have h1 := hall (fun _ => true)
     have h0 := hall (fun _ => false)
     unfold Lindeberg.coord at h1 h0
-    rw [if_pos rfl] at h1
-    rw [if_neg (by decide)] at h0
-    
+    rw [ite_eq_left rfl] at h1
+    rw [ite_eq_right (by decide)] at h0
     rw [← h0] at h1
     exact absurd h1 (by norm_num)
 
+/-! ## C. Random-cluster lower bounds -/
 
-
-
-
-
-
-
-
-
-
-theorem avg_reveal_le_one {μ : ConfigSpace E → ℝ}
+lemma avg_reveal_le_one {μ : ConfigSpace E → ℝ}
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
     (f : ConfigSpace E → ℝ) (e : E) :
     (1 / (Fintype.card κ : ℝ)) * ∑ k, revealAdapt μ (σf k) f e ≤ 1 := by
@@ -384,16 +225,9 @@ theorem avg_reveal_le_one {μ : ConfigSpace E → ℝ}
         Finset.sum_le_sum (fun k _ => RevealmentBoundAssembly.revealAdapt_le_one μ (σf k) f e)
     _ = (Fintype.card κ : ℝ) := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
-
-
-
-
-
-
-
-
-
-theorem fk_os_cov_lower_bound_avg_poincare {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedFintypeInType false in
+lemma fk_os_cov_lower_bound_avg_poincare {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
@@ -404,36 +238,11 @@ theorem fk_os_cov_lower_bound_avg_poincare {μ : ConfigSpace E → ℝ} (hpos : 
     1 (by norm_num) (fun e => avg_reveal_le_one σf f e)
   simpa using h
 
-
-
-
-
-
-
-
-
 section FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_q2_cov_lower_bound_from_perScaleReveal
+lemma fk_q2_cov_lower_bound_from_perScaleReveal
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ Sym2 V))
     {f : ConfigSpace (Sym2 V) → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)

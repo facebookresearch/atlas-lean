@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ActiveBoundaryDifferential
@@ -18,42 +13,74 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteVolume
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEquiv
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.SegmentConn
 
+/-!
+# Differential inequality for the wired box
+
+The box graph with its edges embedded in `ℤ^d`, the wired boundary condition, and the OSSS
+differential inequality for the probability that the origin is connected to the boundary.
+
+## i. Overview
+
+`boxActiveEdge` embeds the edges of the box of radius `n` into `ℤ^d`, and `wiredBoxBoundaryGraph`
+wires its boundary. The active boundary-conditioned crossing probability equals the full wired one
+(`activeBox_crossProb_eq_wiredFull`), and so does its derivative.
+`wired_box_differential_inequality` gives `c θ / D ≤ θ'`, unconditional for `q ≥ 1`, `0 < β ≤ β₀`.
+
+## ii. Key results
+
+- `activeBox_crossProb_eq_wiredFull`: active and full wired crossing probabilities agree.
+- `wired_box_differential_inequality`: the OSSS differential inequality for the wired box
+  (unconditional).
+
+## iii. Table of contents
+
+- A. The embedded box graph
+- B. Wired boundary condition
+- C. Differential inequality
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
 namespace StatMech
 namespace OSSS
 namespace WiredBoxDifferential
 
-open Lattice RevealmentConstruction AdaptiveCovLowerGeom
+open StatMech.Lattice RevealmentConstruction AdaptiveCovLowerGeom
 open ActiveBoundaryDifferential
 open FK RevealmentTranslation
 
+/-! ## A. The embedded box graph -/
 
+/-- The embedding of an edge of the box graph into the edges of `ℤ^d`. -/
 def boxActiveEdge (d n : Nat) :
     (boxGraph d n).edgeSet -> Sym2 (Site d) :=
   fun e => edgeIncl d n e.1
 
-
-
+/-- The first endpoint of a box edge, as a site of `ℤ^d`. -/
 noncomputable def boxActiveEndU (d n : Nat) :
     (boxGraph d n).edgeSet -> Site d :=
   fun e => (e.1.out.1 : boxVerts d n)
 
-
+/-- The second endpoint of a box edge, as a site of `ℤ^d`. -/
 noncomputable def boxActiveEndV (d n : Nat) :
     (boxGraph d n).edgeSet -> Site d :=
   fun e => (e.1.out.2 : boxVerts d n)
 
-theorem boxActiveEdge_injective (d n : Nat) :
+lemma boxActiveEdge_injective (d n : Nat) :
     Function.Injective (boxActiveEdge d n) := by
   intro e f h
   apply Subtype.ext
   exact edgeIncl_injective d n h
 
-theorem boxActiveEdge_eq_endpoints (d n : Nat)
+lemma boxActiveEdge_eq_endpoints (d n : Nat)
     (e : (boxGraph d n).edgeSet) :
     boxActiveEdge d n e = s(boxActiveEndU d n e, boxActiveEndV d n e) := by
   change edgeIncl d n e.1 =
@@ -66,7 +93,7 @@ theorem boxActiveEdge_eq_endpoints (d n : Nat)
         ((e.1.out.2 : boxVerts d n) : Site d)) := by
       rw [edgeIncl, Sym2.map_mk]
 
-theorem boxActiveEnd_adj (d n : Nat) (e : (boxGraph d n).edgeSet) :
+lemma boxActiveEnd_adj (d n : Nat) (e : (boxGraph d n).edgeSet) :
     (hypercubicLattice d).Adj (boxActiveEndU d n e) (boxActiveEndV d n e) := by
   have he : (boxGraph d n).Adj e.1.out.1 e.1.out.2 := by
     rw [← SimpleGraph.mem_edgeSet]
@@ -75,53 +102,53 @@ theorem boxActiveEnd_adj (d n : Nat) (e : (boxGraph d n).edgeSet) :
     exact e.2
   exact he
 
+@[simp] lemma mem_osssBoxFinset {d n : Nat} {x : Site d} :
+    x ∈ StatMech.Percolation.boxFinset d n <-> x ∈ box d n := by
+  rw [StatMech.Percolation.boxFinset, Set.Finite.mem_toFinset]
 
-noncomputable def osssBoxFinset (d n : Nat) : Finset (Site d) :=
-  (box_finite d n).toFinset
-
-@[simp] theorem mem_osssBoxFinset {d n : Nat} {x : Site d} :
-    x ∈ osssBoxFinset d n <-> x ∈ box d n := by
-  rw [osssBoxFinset, Set.Finite.mem_toFinset]
-
-
+/-- The vertex boundary of the box of radius `n`, as a `Finset`. -/
 noncomputable def osssBoundaryFinset (d n : Nat) : Finset (Site d) :=
   (vertexBoundary_finite d n).toFinset
 
-@[simp] theorem mem_osssBoundaryFinset {d n : Nat} {x : Site d} :
+@[simp] lemma mem_osssBoundaryFinset {d n : Nat} {x : Site d} :
     x ∈ osssBoundaryFinset d n <-> x ∈ vertexBoundary d n := by
   rw [osssBoundaryFinset, Set.Finite.mem_toFinset]
 
-theorem origin_mem_osssBoxFinset (d n : Nat) :
-    (0 : Site d) ∈ osssBoxFinset d n := by
+lemma origin_mem_osssBoxFinset (d n : Nat) :
+    (0 : Site d) ∈ StatMech.Percolation.boxFinset d n := by
   rw [mem_osssBoxFinset]
   intro i
   simp
 
-theorem origin_not_mem_osssBoundaryFinset (d k : Nat) :
+lemma origin_not_mem_osssBoundaryFinset (d k : Nat) :
     (0 : Site d) ∉ osssBoundaryFinset d k := by
   rw [mem_osssBoundaryFinset]
   intro h
   exact h.2 (by intro i; simp)
 
-theorem boxActiveEndU_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
-    boxActiveEndU d n e ∈ osssBoxFinset d n := by
+lemma boxActiveEndU_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
+    boxActiveEndU d n e ∈ StatMech.Percolation.boxFinset d n := by
   rw [mem_osssBoxFinset]
   exact e.1.out.1.property
 
-theorem boxActiveEndV_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
-    boxActiveEndV d n e ∈ osssBoxFinset d n := by
+lemma boxActiveEndV_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
+    boxActiveEndV d n e ∈ StatMech.Percolation.boxFinset d n := by
   rw [mem_osssBoxFinset]
   exact e.1.out.2.property
 
+/-! ## B. Wired boundary condition -/
 
+/-- The boundary clique on the box vertices: all boundary vertices are joined (wired boundary
+  condition). -/
 noncomputable def wiredBoxBoundaryGraph (d n : Nat) :
     SimpleGraph (boxVerts d n) :=
   Lattice.boundaryCliqueGraph (boxBoundary d n)
 
+/-- Adjacency in the wired boundary graph is decidable. -/
 noncomputable instance instDecidableRelWiredBoxBoundaryGraph (d n : Nat) :
     DecidableRel (wiredBoxBoundaryGraph d n).Adj := Classical.decRel _
 
-
+/-- The unnormalized wired mass of configurations in which the origin reaches the boundary. -/
 noncomputable def wiredFullCrossMass (d n : Nat) (q beta : Real) : Real :=
   ∑ omega : ConfigSpace (Sym2 (boxVerts d n)),
     (FK.restrictActive (boxGraph d n) ⁻¹'
@@ -130,7 +157,7 @@ noncomputable def wiredFullCrossMass (d n : Nat) (q beta : Real) : Real :=
       wiredFkProb (boxGraph d n) (boxBoundary d n)
         (1 - Real.exp (-beta)) q omega
 
-theorem activeBox_crossProb_eq_wiredFull
+lemma activeBox_crossProb_eq_wiredFull
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     FK.activeBCProbOf (boxGraph d n) (wiredBoxBoundaryGraph d n)
         (FK.betaParams (fun _ => 1) beta) q
@@ -154,7 +181,7 @@ theorem activeBox_crossProb_eq_wiredFull
       (boxBoundary d n) hp hp1 hq0
       (crossEvent (boxActiveEdge d n) 0 (vertexBoundary d n))
 
-theorem activeBox_cross_deriv_eq_wiredFull
+lemma activeBox_cross_deriv_eq_wiredFull
     (d n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     deriv (fun b => FK.activeBCProbOf (boxGraph d n)
         (wiredBoxBoundaryGraph d n) (FK.betaParams (fun _ => 1) b) q
@@ -169,7 +196,9 @@ theorem activeBox_cross_deriv_eq_wiredFull
     exact activeBox_crossProb_eq_wiredFull d n q b hq hb
   exact heq.deriv_eq
 
-theorem boxGraph_edgeSet_nonempty (d n : Nat) (hd : 1 <= d) (hn : 1 <= n) :
+/-! ## C. Differential inequality -/
+
+lemma boxGraph_edgeSet_nonempty (d n : Nat) (hd : 1 <= d) (hn : 1 <= n) :
     Nonempty (boxGraph d n).edgeSet := by
   let j : Fin d := ⟨0, hd⟩
   let x0 : Site d := 0
@@ -191,14 +220,17 @@ theorem boxGraph_edgeSet_nonempty (d n : Nat) (hd : 1 <= d) (hn : 1 <= n) :
   have hstep := Lattice.adj_update_succ x0 j 0
   simpa [x1, x0] using hstep
 
+/-- The wired probability that the origin is connected to the boundary of the box. -/
 noncomputable def wiredActiveTheta (d n : Nat) (q beta : Real) : Real :=
   Lindeberg.mean
     (FK.activeBCProb (boxGraph d n) (wiredBoxBoundaryGraph d n)
       (FK.betaParams (fun _ => 1) beta) q)
     (crossIndG (boxActiveEdge d n) 0 n)
 
+open Classical in
+/-- The OSSS denominator: four times the maximal summed connection probability from a box site. -/
 noncomputable def wiredActiveDenom (d n : Nat) (q beta : Real) : Real :=
-  4 * (osssBoxFinset d n).sup' (by
+  4 * (StatMech.Percolation.boxFinset d n).sup' (by
       exact ⟨0, origin_mem_osssBoxFinset d n⟩)
     (fun x => ∑ j ∈ Finset.range n,
       Lindeberg.mean
@@ -208,8 +240,8 @@ noncomputable def wiredActiveDenom (d n : Nat) (q beta : Real) : Real :=
           (liftCfg (boxActiveEdge d n) omega) x (centeredBoundary x j)
           then (1 : Real) else 0)) / (n : Real)
 
-
-
+open Classical in
+/-- The OSSS differential inequality for the wired box (unconditional). -/
 theorem wired_box_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (q beta beta0 : Real) (hq : 1 <= q) (hbeta : 0 < beta)
@@ -219,7 +251,7 @@ theorem wired_box_differential_inequality
           (FK.activeBCProb (boxGraph d n) (wiredBoxBoundaryGraph d n)
             (FK.betaParams (fun _ => 1) beta) q)
           (crossIndG (boxActiveEdge d n) 0 n) /
-        (4 * (osssBoxFinset d n).sup' (by
+        (4 * (StatMech.Percolation.boxFinset d n).sup' (by
             exact ⟨0, origin_mem_osssBoxFinset d n⟩)
           (fun x => ∑ j ∈ Finset.range n,
             Lindeberg.mean
@@ -231,8 +263,8 @@ theorem wired_box_differential_inequality
       deriv (fun b => FK.activeBCProbOf (boxGraph d n)
         (wiredBoxBoundaryGraph d n) (FK.betaParams (fun _ => 1) b) q
         (crossEvent (boxActiveEdge d n) 0 (vertexBoundary d n))) beta := by
-  letI : Nonempty (boxGraph d n).edgeSet := boxGraph_edgeSet_nonempty d n hd hn
-  let Lambda := osssBoxFinset d n
+  let : Nonempty (boxGraph d n).edgeSet := boxGraph_edgeSet_nonempty d n hd hn
+  let Lambda := StatMech.Percolation.boxFinset d n
   have hne : Lambda.Nonempty := ⟨0, origin_mem_osssBoxFinset d n⟩
   let disc0 : Nat -> Finset (Site d) := osssBoundaryFinset d
   let C := wiredBoxBoundaryGraph d n
@@ -269,9 +301,7 @@ theorem wired_box_differential_inequality
     disc0 hdisc0sub hdisc0sup hoB ho n hn Lambda hne hLu hLv hUbox hVbox
   simpa [C, J, Lambda, disc0] using hmain
 
-
-
-theorem wired_box_differential_inequality_full
+lemma wired_box_differential_inequality_full
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (q beta beta0 : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (hbeta0 : beta <= beta0) :

@@ -6,98 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PrefixCoversCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentCovLowerBound
+
+/-!
+# Per-scale revealment and the frontier-connection hypothesis
+
+Bounds on revealment by connection probabilities to the frontier at each scale, the family
+frontier-connection hypothesis, and explicit refutations of the first-edge frontier connection.
+
+## i. Overview
+
+`FrontierConn σ f endU endV B e` (from `ReachBoxCrossing`) says that whenever `f` is undetermined
+before `e` is revealed, an endpoint of `e` is connected to `B`. For the first edge of the order it
+is refutable (`psr_frontierConn_first_refutable`), and `psr_frontierConn_first_false_concrete` is a
+Lean-checked refutation on a 4-vertex example. `psr_perScale_of_familyFrontierConn` derives
+per-scale revealment bounds from `psr_FamilyFrontierConn`, so it is conditional on that hypothesis;
+`FrontierFamilyRevealment.frf_familyFrontierConn_false` refutes the hypothesis in the relevant
+cases. Part of the revealment bounds for the OSSS covariance lower bound: the revealment of an edge
+is bounded by the probability that it is connected to the frontier of the exploration.
+
+## ii. Key results
+
+- `psr_revealAdapt_le_connBox_frontier`: revealment ≤ connection to the box boundary, given
+  `FrontierConn`.
+- `psr_frontierConn_first_false_concrete`: refutation of the first-edge frontier connection.
+
+## iii. Table of contents
+
+- A. First-edge frontier connection
+- B. Revealment bounds
+- C. Family frontier connection
+- D. Concrete witness
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.unusedSectionVars false
-set_option linter.style.longLine false
 
 namespace StatMech
 
@@ -116,24 +70,14 @@ open StatMech.OSSS.PrefixCoversClose
 open StatMech.OSSS.FKRevealmentClose
 open StatMech.OSSS.MonotonicFK
 open StatMech.Lattice
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {V : Type*} [DecidableEq V]
 
+/-! ## A. First-edge frontier connection -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_frontierConn_first_iff {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
+omit [DecidableEq V] [Fintype E] in
+lemma psr_frontierConn_first_iff {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (endU endV : E → V) (B : Set V) {e₀ : E} (he₀ : (σ.symm e₀ : ℕ) = 0) :
     FrontierConn σ f endU endV B e₀ ↔
       ∀ X : ConfigSpace E, (∃ w, f w ≠ f X) →
@@ -152,12 +96,8 @@ theorem psr_frontierConn_first_iff {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace
     push Not at hcon
     exact hnotdet (fun w _ => hcon w)
 
-
-
-
-
-
-theorem psr_frontierConn_first_refutable {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
+omit [DecidableEq V] [Fintype E] in
+lemma psr_frontierConn_first_refutable {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ)
     (endU endV : E → V) (B : Set V) {e₀ : E} (he₀ : (σ.symm e₀ : ℕ) = 0)
     (X : ConfigSpace E) (hnc : ∃ w, f w ≠ f X)
     (hnotU : ¬ ConnOpenSet endU endV X (endU e₀) B)
@@ -169,34 +109,8 @@ theorem psr_frontierConn_first_refutable {n : ℕ} (σ : Fin n ≃ E) (f : Confi
   · exact hnotU hU
   · exact hnotV hV
 
-
-
-
-
-
-
-theorem psr_revealAdapt_first_gt {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
-    (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) {e₀ : E}
-    (he₀ : (σ.symm e₀ : ℕ) = 0) (hnc : ∀ X, ¬ ∀ w, f w = f X) {c : ℝ} (hc : c < 1) :
-    ¬ revealAdapt μ σ f e₀ ≤ c :=
-  FKRevealmentClose.revealAdapt_single_no_over_n hpos hμ1 σ f e₀ he₀ hnc hc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_frontierConn_first_refutable_witness {n : ℕ} (σ : Fin n ≃ E)
+omit [DecidableEq V] [Fintype E] in
+lemma psr_frontierConn_first_refutable_witness {n : ℕ} (σ : Fin n ≃ E)
     (endU endV : E → V) (B C : Set V) {e₀ : E} (he₀ : (σ.symm e₀ : ℕ) = 0)
     (X w : ConfigSpace E)
     (hX0 : ¬ ∃ x ∈ C, ConnOpenSet endU endV X x B)
@@ -207,40 +121,19 @@ theorem psr_frontierConn_first_refutable_witness {n : ℕ} (σ : Fin n ≃ E)
   refine psr_frontierConn_first_refutable σ _ endU endV B he₀ X ?_ hnotU hnotV
   refine ⟨w, ?_⟩
   unfold indicatorConn
-  rw [if_pos hw1, if_neg hX0]
+  rw [ite_eq_left hw1, ite_eq_right hX0]
   norm_num
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 section Lattice
 
 variable {d : ℕ}
 
+/-! ## B. Revealment bounds -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_revealAdapt_le_connBox_of_pos {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+open Classical in
+lemma psr_revealAdapt_le_connBox_of_pos {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {nE : ℕ} (σ : Fin nE ≃ E)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
@@ -273,19 +166,8 @@ theorem psr_revealAdapt_le_connBox_of_pos {μ : ConfigSpace E → ℝ} (hpos : �
     (indicatorConn endU endV (vertexBoundary d k) (vertexBoundary d n))
     hinj hcoh hadj k e hfront
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_revealAdapt_le_connBox_frontier {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+open Classical in
+lemma psr_revealAdapt_le_connBox_frontier {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
@@ -318,29 +200,9 @@ theorem psr_revealAdapt_le_connBox_frontier {μ : ConfigSpace E → ℝ} (hpos :
 
 end Lattice
 
+/-! ## C. Family frontier connection -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The frontier-connection property for every order `σf k` of a family, with frontier `B k`. -/
 def psr_FamilyFrontierConn {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
     (f : ConfigSpace E → ℝ) (endU endV : E → V) (B : κ → Set V) : Prop :=
   ∀ (k : κ) (e : E), FrontierConn (σf k) f endU endV (B k) e
@@ -349,12 +211,9 @@ section LatticeResidue
 
 variable {d : ℕ}
 
-
-
-
-
-
-theorem psr_perScale_of_familyFrontierConn {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma psr_perScale_of_familyFrontierConn {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
     (f : ConfigSpace E → ℝ)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
@@ -379,97 +238,34 @@ theorem psr_perScale_of_familyFrontierConn {μ : ConfigSpace E → ℝ} (hpos : 
 
 end LatticeResidue
 
-
-
-
-
-
-
-
-
-
 section FKResidue
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_fk_q2_cov_lower_bound_of_perScale
-    (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
-    {κ : Type*} [Fintype κ] [Nonempty κ] {nE : ℕ} (σf : κ → (Fin nE ≃ Sym2 W))
-    {f : ConfigSpace (Sym2 W) → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
-    (hidem : ∀ ω, f ω * f ω = f ω)
-    (R : κ → Sym2 W → ℝ) (D : ℝ) (hDpos : 0 < D)
-    (hreach : ∀ k e, revealAdapt (fkMass G p 2) (σf k) f e ≤ R k e)
-    (hsum : ∀ e, (∑ k, R k e) ≤ (Fintype.card κ : ℝ) * D) :
-    Lindeberg.mean (fkMass G p 2) f * (1 - Lindeberg.mean (fkMass G p 2) f) / D
-      ≤ ∑ e, Lindeberg.cov (fkMass G p 2) f (Lindeberg.coord e) :=
-  FKRevealmentClose.fk_q2_cov_lower_bound_from_perScaleReveal G hp hp1 σf hf hf0 hf1 hidem
-    R D hDpos hreach hsum
-
 end FKResidue
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_familyFrontierConn_univ {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
+omit [DecidableEq V] [Fintype E] in
+lemma psr_familyFrontierConn_univ {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
     (f : ConfigSpace E → ℝ) (endU endV : E → V) :
     psr_FamilyFrontierConn σf f endU endV (fun _ => (Set.univ : Set V)) :=
   fun k e => frontierConn_univ (σf k) f endU endV e
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem psr_reachOpen_allClosed {endU endV : E → V} {x y : V}
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
+lemma psr_reachOpen_allClosed {endU endV : E → V} {x y : V}
     (h : ReachOpen endU endV (fun _ => false) x y) : x = y := by
   induction h with
   | refl x => rfl
   | step e hopen _ _ _ => simp at hopen
 
+/-! ## D. Concrete witness -/
 
+/-- First endpoints of the three edges of the 4-vertex witness graph. -/
 def psr_witnessEndU : Fin 3 → Fin 4 := ![1, 0, 2]
 
-
+/-- Second endpoints of the three edges of the 4-vertex witness graph. -/
 def psr_witnessEndV : Fin 3 → Fin 4 := ![2, 1, 3]
 
-
-
-
-
-
-
+/-- Refutation of the first-edge frontier connection. -/
 theorem psr_frontierConn_first_false_concrete (σ : Fin 3 ≃ Fin 3) (he₀ : (σ.symm 0 : ℕ) = 0) :
     ¬ FrontierConn σ
         (indicatorConn psr_witnessEndU psr_witnessEndV ({0} : Set (Fin 4)) ({3} : Set (Fin 4)))

@@ -6,22 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.RevealmentConstruction
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PathVisitsRow
 public import MathlibExt.Probability.OSSS.RevealmentSum
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ReachBoxCrossing
+
+/-!
+# Centered boxes and translated revealment
+
+The sup-norm radius, centered boxes and boundaries, and the averaged revealment bound for crossing
+explorations in `ℤ^d`.
+
+## i. Overview
+
+`centeredRadius u x` is the sup-norm distance from `u` to `x`. A connection from `u` to the boundary
+of a box around the origin gives a connection to a centered boundary around `u`
+(`connectedToSet_originBoundary_imp_centered`). Averaging over the starting radius bounds the
+revealment sum by connection probabilities (`revealment_sum_bound_lattice`). These results need only
+the geometric embedding hypotheses.
+
+## ii. Key results
+
+- `revealment_sum_bound_lattice`: averaged revealment ≤ connection probabilities to centered
+  boundaries.
+
+## iii. Table of contents
+
+- A. Radii and centered boundaries
+- B. Revealment sums
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -31,19 +51,20 @@ namespace StatMech
 namespace OSSS
 namespace RevealmentTranslation
 
-open Lattice
+open StatMech.Lattice
 open RevealmentConstruction
 
+/-! ## A. Radii and centered boundaries -/
 
+/-- The sup-norm radius `max_i |x i|` of a site. -/
 def siteRadius {d : ℕ} (x : Site d) : ℕ :=
   Finset.univ.sup (fun i => (x i).natAbs)
 
-
+/-- The sup-norm distance from `u` to `x`. -/
 def centeredRadius {d : ℕ} (u x : Site d) : ℕ :=
   siteRadius (fun i => x i - u i)
 
-
-
+/-- The sites at sup-norm distance exactly `n` from `u`. -/
 def centeredBoundary {d : ℕ} (u : Site d) (n : ℕ) : Set (Site d) :=
   {x | centeredRadius u x = n}
 
@@ -109,8 +130,6 @@ lemma centeredRadius_step_le {d : ℕ} (u x y : Site d)
     _ ≤ 1 + centeredRadius u x := Nat.add_le_add hstep hx
     _ = centeredRadius u x + 1 := Nat.add_comm _ _
 
-
-
 lemma nat_discrete_ivt (f : ℕ → ℕ) :
     ∀ n, f 0 = 0 → (∀ i, i < n → f (i + 1) ≤ f i + 1) →
       ∀ m, m ≤ f n → ∃ i ≤ n, f i = m := by
@@ -144,9 +163,7 @@ lemma openWalk_hits_centeredBoundary {d : ℕ}
   refine ⟨w.getVert i, ?_, (w.take i).reachable⟩
   exact hfi
 
-
-
-theorem connectedToSet_originBoundary_imp_centered_of_le {d k m : ℕ}
+lemma connectedToSet_originBoundary_imp_centered_of_le {d k m : ℕ}
     {ω : ConfigSpace (Sym2 (Site d))} {u : Site d}
     (hm : m ≤ ((k : ℤ) - (siteRadius u : ℤ)).natAbs) :
     ConnectedToSet d ω u (vertexBoundary d k) →
@@ -169,8 +186,7 @@ theorem connectedToSet_originBoundary_imp_centered_of_le {d k m : ℕ}
   obtain ⟨z, hz, huz⟩ := openWalk_hits_centeredBoundary w (hm.trans hdist)
   exact ⟨z, hz, huz⟩
 
-
-theorem connectedToSet_originBoundary_imp_centered {d k : ℕ}
+lemma connectedToSet_originBoundary_imp_centered {d k : ℕ}
     {ω : ConfigSpace (Sym2 (Site d))} {u : Site d} :
     ConnectedToSet d ω u (vertexBoundary d k) →
       ConnectedToSet d ω u
@@ -195,9 +211,9 @@ lemma mean_indicator_nonneg {E : Type*} [Fintype E] [DecidableEq E]
   intro ω _
   by_cases h : P ω <;> simp [h, hμ0 ω]
 
+/-! ## B. Revealment sums -/
 
-
-theorem revealment_sum_bound_lattice
+lemma revealment_sum_bound_lattice
     {E : Type*} [Fintype E] [DecidableEq E] {d n : ℕ}
     (μ : ConfigSpace E → ℝ) (hμ0 : ∀ ω, 0 ≤ μ ω)
     (edge : E → Sym2 (Site d)) (Λ : Finset (Site d)) (hne : Λ.Nonempty)

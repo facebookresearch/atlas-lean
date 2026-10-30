@@ -6,28 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPeriodic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonoBC
 
+/-!
+# Boundary-conditioned random-cluster measures with edge-dependent parameters
+
+The random-cluster measure on a finite graph with a boundary graph `C` and edge-dependent parameters
+`pf`, its monotonicity in `C`, conditional measures, and domain-Markov domination of inner boxes.
+
+## i. Overview
+
+`bcProbW G C pf q` is the random-cluster measure whose clusters are counted in `G ⊔ C`. It is
+stochastically increasing in `C` (`bcProbW_mono_bc`), and so are its conditionals given the edges
+outside `F` (`condBcProbW_mono_bc`). Embedding an inner graph into an outer one (`ocd_AdjMatch`),
+the outer measure decomposes over outer configurations. Its inner marginal lies between the free and
+wired inner measures (`ocd_free_inner_dominated_bcProbW`, `ocd_wired_inner_dominated_bcProbW`). All
+results are unconditional under `0 < pf < 1` and `q ≥ 1`.
+
+## ii. Key results
+
+- `bcProbW_mono_bc`: monotonicity in the boundary graph.
+- `ocd_wired_inner_dominated_bcProbW`: inner marginals are dominated by the wired inner measure.
+- `weighted_transShellEvent_domain_dominated`: domination of translated shell events.
+
+## iii. Table of contents
+
+- A. Weighted boundary-conditioned measures
+- B. Conditional measures
+- C. Active-edge factorization
+- D. Inner and outer graphs
+- E. Domination
+
+## iv. References
+
+* G. R. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
 
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 namespace FK
@@ -36,47 +58,52 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
+/-! ## A. Weighted boundary-conditioned measures -/
 
+/-- The random-cluster weight with edge-dependent parameters `pf` and boundary graph `C`: the edge
+  product times `q` to the number of clusters of the open graph joined with `C`. -/
 noncomputable def bcWeightW (pf : Sym2 V -> Real) (q : Real)
     (omega : ConfigSpace (Sym2 V)) : Real :=
   edgeProductW G pf omega * q ^ numClustersBC G C omega
 
-
+/-- The partition function of the weighted boundary-conditioned measure. -/
 noncomputable def bcZW (pf : Sym2 V -> Real) (q : Real) : Real :=
   ∑ omega, bcWeightW G C pf q omega
 
-
+/-- The weighted boundary-conditioned random-cluster probability of a configuration. -/
 noncomputable def bcProbW (pf : Sym2 V -> Real) (q : Real)
     (omega : ConfigSpace (Sym2 V)) : Real :=
   bcWeightW G C pf q omega / bcZW G C pf q
 
-theorem bcWeightW_pos {pf : Sym2 V -> Real}
+omit [DecidableEq V] in
+lemma bcWeightW_pos {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (omega : ConfigSpace (Sym2 V)) :
     0 < bcWeightW G C pf q omega := by
   exact mul_pos (edgeProductW_pos G hpf hpf1 omega) (pow_pos hq _)
 
-theorem bcWeightW_nonneg {pf : Sym2 V -> Real}
+omit [DecidableEq V] in
+lemma bcWeightW_nonneg {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (omega : ConfigSpace (Sym2 V)) :
     0 <= bcWeightW G C pf q omega :=
   (bcWeightW_pos G C hpf hpf1 hq omega).le
 
-theorem bcZW_pos {pf : Sym2 V -> Real}
+lemma bcZW_pos {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) : 0 < bcZW G C pf q := by
   unfold bcZW
   exact Finset.sum_pos (fun omega _ => bcWeightW_pos G C hpf hpf1 hq omega)
     Finset.univ_nonempty
 
-theorem bcProbW_nonneg {pf : Sym2 V -> Real}
+lemma bcProbW_nonneg {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (omega : ConfigSpace (Sym2 V)) :
     0 <= bcProbW G C pf q omega := by
   exact div_nonneg (bcWeightW_nonneg G C hpf hpf1 hq omega)
     (bcZW_pos G C hpf hpf1 hq).le
 
-theorem bcProbW_sum_eq_one {pf : Sym2 V -> Real}
+lemma bcProbW_sum_eq_one {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) :
     ∑ omega, bcProbW G C pf q omega = 1 := by
@@ -84,9 +111,9 @@ theorem bcProbW_sum_eq_one {pf : Sym2 V -> Real}
   rw [← Finset.sum_div]
   exact div_self (bcZW_pos G C hpf hpf1 hq).ne'
 
-
-
-theorem bcWeightW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+open Classical in
+omit [DecidableEq V] in
+lemma bcWeightW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (a b : ConfigSpace (Sym2 V)) :
@@ -122,7 +149,7 @@ theorem bcWeightW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
         (edgeProductW G pf (a ⊔ b) *
           q ^ numClustersBC G C' (a ⊔ b)) := by ring
 
-theorem bcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+lemma bcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (a b : ConfigSpace (Sym2 V)) :
@@ -136,8 +163,7 @@ theorem bcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     div_le_div_iff_of_pos_right (mul_pos hZ hZ')]
   exact bcWeightW_cross_bc G C C' hCC' hpf hpf1 hq a b
 
-
-theorem bcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+lemma bcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q)
@@ -154,15 +180,14 @@ theorem bcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
       bcProbW_sum_eq_one G C' hpf hpf1 hq0]
   · exact fun a b => bcProbW_cross_bc G C C' hCC' hpf hpf1 hq a b
 
+/-! ## B. Conditional measures -/
 
-
-
-
+/-- The partition function of configurations agreeing with `psi` off `F`. -/
 noncomputable def inducedBcZW (pf : Sym2 V -> Real) (q : Real)
     (F : Finset (Sym2 V)) (psi : ConfigSpace (Sym2 V)) : Real :=
   ∑ rho ∈ condFibre F psi, bcWeightW G C pf q rho
 
-theorem inducedBcZW_pos {pf : Sym2 V -> Real}
+lemma inducedBcZW_pos {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (F : Finset (Sym2 V))
     (psi : ConfigSpace (Sym2 V)) : 0 < inducedBcZW G C pf q F psi := by
@@ -170,15 +195,14 @@ theorem inducedBcZW_pos {pf : Sym2 V -> Real}
   exact Finset.sum_pos (fun rho _ => bcWeightW_pos G C hpf hpf1 hq rho)
     ⟨psi, self_mem_condFibre F psi⟩
 
-
-
+/-- The weighted boundary-conditioned probability conditioned on agreeing with `psi` off `F`. -/
 noncomputable def condBcProbW (pf : Sym2 V -> Real) (q : Real)
     (F : Finset (Sym2 V)) (psi omega : ConfigSpace (Sym2 V)) : Real :=
   if AgreesOff F psi omega then
     bcWeightW G C pf q omega / inducedBcZW G C pf q F psi
   else 0
 
-theorem condBcProbW_nonneg {pf : Sym2 V -> Real}
+lemma condBcProbW_nonneg {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (F : Finset (Sym2 V))
     (psi : ConfigSpace (Sym2 V)) :
@@ -190,7 +214,7 @@ theorem condBcProbW_nonneg {pf : Sym2 V -> Real}
       (inducedBcZW_pos G C hpf hpf1 hq F psi).le
   · rfl
 
-theorem condBcProbW_sum_eq_one {pf : Sym2 V -> Real}
+lemma condBcProbW_sum_eq_one {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (F : Finset (Sym2 V))
     (psi : ConfigSpace (Sym2 V)) :
@@ -199,7 +223,7 @@ theorem condBcProbW_sum_eq_one {pf : Sym2 V -> Real}
   rw [Finset.sum_ite, Finset.sum_const_zero, add_zero, ← Finset.sum_div]
   exact div_self (inducedBcZW_pos G C hpf hpf1 hq F psi).ne'
 
-theorem condBcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+lemma condBcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (F : Finset (Sym2 V))
@@ -216,20 +240,18 @@ theorem condBcProbW_cross_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
   unfold condBcProbW
   by_cases ha : AgreesOff F psi a
   · by_cases hb : AgreesOff F psi b
-    · rw [if_pos ha, if_pos hb, if_pos (agreesOff_inf ha hb),
-        if_pos (agreesOff_sup ha hb), div_mul_div_comm, div_mul_div_comm,
+    · rw [ite_eq_left ha, ite_eq_left hb, ite_eq_left (agreesOff_inf ha hb),
+        ite_eq_left (agreesOff_sup ha hb), div_mul_div_comm, div_mul_div_comm,
         div_le_div_iff_of_pos_right
           (mul_pos (inducedBcZW_pos G C hpf hpf1 hq0 F psi)
             (inducedBcZW_pos G C' hpf hpf1 hq0 F psi))]
       exact bcWeightW_cross_bc G C C' hCC' hpf hpf1 hq a b
-    · rw [if_neg hb, mul_zero]
+    · rw [ite_eq_right hb, mul_zero]
       simpa only [condBcProbW] using hright
-  · rw [if_neg ha, zero_mul]
+  · rw [ite_eq_right ha, zero_mul]
     simpa only [condBcProbW] using hright
 
-
-
-theorem condBcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+lemma condBcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (F : Finset (Sym2 V))
@@ -248,9 +270,7 @@ theorem condBcProbW_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
   · exact fun a b =>
       condBcProbW_cross_bc G C C' hCC' hpf hpf1 hq F psi a b
 
-
-
-theorem activeBCProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
+lemma activeBCProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : C <= C') {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q)
@@ -319,9 +339,11 @@ theorem activeBCProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj]
       div_le_div_iff_of_pos_right (mul_pos hZ hZ')]
     exact hweight
 
+/-! ## C. Active-edge factorization -/
 
-
-theorem bcWeightW_eq_of_edges (pf : Sym2 V -> Real) (q : Real)
+open Classical in
+omit [DecidableEq V] in
+lemma bcWeightW_eq_of_edges (pf : Sym2 V -> Real) (q : Real)
     (omega eta : ConfigSpace (Sym2 V))
     (h : forall e, e ∈ G.edgeFinset -> omega e = eta e) :
     bcWeightW G C pf q omega = bcWeightW G C pf q eta := by
@@ -331,7 +353,9 @@ theorem bcWeightW_eq_of_edges (pf : Sym2 V -> Real) (q : Real)
   unfold edgeProductW
   exact Finset.prod_congr rfl (fun e he => by rw [h e he])
 
-theorem bcWeightW_activeSplitEquiv_symm (pf : Sym2 V -> Real) (q : Real)
+open Classical in
+omit [DecidableEq V] in
+lemma bcWeightW_activeSplitEquiv_symm (pf : Sym2 V -> Real) (q : Real)
     (eta : ConfigSpace G.edgeSet)
     (xi : ConfigSpace {e : Sym2 V // e ∉ G.edgeSet}) :
     bcWeightW G C pf q ((activeSplitEquiv G).symm (eta, xi)) =
@@ -344,7 +368,7 @@ theorem bcWeightW_activeSplitEquiv_symm (pf : Sym2 V -> Real) (q : Real)
     simp [activeSplitEquiv, Equiv.piEquivPiSubtypeProd_symm_apply, heSet]]
   exact (extendActive_apply G eta ⟨e, heSet⟩).symm
 
-theorem activeBCZW_factorization (pf : Sym2 V -> Real) (q : Real) :
+lemma activeBCZW_factorization (pf : Sym2 V -> Real) (q : Real) :
     bcZW G C pf q = 2 ^ ecz_NE G * activeBCZ G C pf q := by
   rw [bcZW, ← Equiv.sum_comp (activeSplitEquiv G).symm
     (fun omega => bcWeightW G C pf q omega), Fintype.sum_prod_type]
@@ -362,7 +386,7 @@ theorem activeBCZW_factorization (pf : Sym2 V -> Real) (q : Real) :
   rw [Finset.sum_congr rfl (fun eta _ => key eta), ← Finset.mul_sum]
   rfl
 
-theorem activeBCNumerW_factorization (pf : Sym2 V -> Real) (q : Real)
+lemma activeBCNumerW_factorization (pf : Sym2 V -> Real) (q : Real)
     (f : ConfigSpace G.edgeSet -> Real) :
     (∑ omega : ConfigSpace (Sym2 V),
       f (restrictActive G omega) * bcWeightW G C pf q omega) =
@@ -386,8 +410,7 @@ theorem activeBCNumerW_factorization (pf : Sym2 V -> Real) (q : Real)
   rw [Finset.sum_congr rfl (fun eta _ => key eta), ← Finset.mul_sum]
   rfl
 
-
-theorem activeBCMean_eq_bcProbW_lift {pf : Sym2 V -> Real}
+lemma activeBCMean_eq_bcProbW_lift {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 0 < q) (f : ConfigSpace G.edgeSet -> Real) :
     activeBCMean G C pf q f =
@@ -408,8 +431,6 @@ theorem activeBCMean_eq_bcProbW_lift {pf : Sym2 V -> Real}
     activeBCZW_factorization G C]
   field_simp
 
-
-
 variable {Vin Vout : Type*} [Fintype Vin] [Fintype Vout]
 variable [DecidableEq Vin] [DecidableEq Vout]
 variable (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
@@ -417,20 +438,22 @@ variable (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
 variable (iota : Vin -> Vout)
 variable (bdryOut : Vout -> Prop) [DecidablePred bdryOut]
 
+/-! ## D. Inner and outer graphs -/
 
-
+/-- The inner parameters agree with the outer parameters along the embedding. -/
 def ocd_ParamCompatible (pfIn : Sym2 Vin -> Real)
     (pfOut : Sym2 Vout -> Real) : Prop :=
   forall e, pfIn e = pfOut (ocd_innerEdge iota e)
 
-
+/-- The edge-product factor of the outer configuration `psi` on edges outside the inner graph. -/
 noncomputable def ocd_psiEdgeFactorW (pfOut : Sym2 Vout -> Real)
     (psi : ConfigSpace (Sym2 Vout)) : Real :=
   ∏ e ∈ Gout.edgeFinset.filter
       (fun e => e ∉ Set.range (ocd_innerEdge iota)),
     if psi e then pfOut e else 1 - pfOut e
 
-theorem ocd_psiEdgeFactorW_pos {pfOut : Sym2 Vout -> Real}
+omit [DecidableEq Vin] in
+lemma ocd_psiEdgeFactorW_pos {pfOut : Sym2 Vout -> Real}
     (hpf : forall e, 0 < pfOut e) (hpf1 : forall e, pfOut e < 1)
     (psi : ConfigSpace (Sym2 Vout)) :
     0 < ocd_psiEdgeFactorW Gout iota pfOut psi := by
@@ -441,9 +464,8 @@ theorem ocd_psiEdgeFactorW_pos {pfOut : Sym2 Vout -> Real}
   · exact hpf e
   · linarith [hpf1 e]
 
-
-
-theorem ocd_edgeProductW_psiExt (hiota : Function.Injective iota)
+omit [DecidableEq Vin] in
+lemma ocd_edgeProductW_psiExt (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
     (hparam : ocd_ParamCompatible iota pfIn pfOut)
@@ -465,21 +487,20 @@ theorem ocd_edgeProductW_psiExt (hiota : Function.Injective iota)
     rw [Finset.mem_filter] at he
     rw [ocd_psiExt_eq_psi_of_not_range psi omega he.2]
 
-
+/-- The weight shift contributed by the outer configuration `psi`. -/
 noncomputable def ocd_psiShiftW (pfOut : Sym2 Vout -> Real)
     (psi : ConfigSpace (Sym2 Vout)) (q : Real) : Real :=
   ocd_psiEdgeFactorW Gout iota pfOut psi *
     q ^ ocd_outsideShift Gout iota bdryOut psi
 
-theorem ocd_psiShiftW_pos {pfOut : Sym2 Vout -> Real}
+lemma ocd_psiShiftW_pos {pfOut : Sym2 Vout -> Real}
     (hpf : forall e, 0 < pfOut e) (hpf1 : forall e, pfOut e < 1)
     {q : Real} (hq : 0 < q) (psi : ConfigSpace (Sym2 Vout)) :
     0 < ocd_psiShiftW Gout iota bdryOut pfOut psi q := by
   exact mul_pos (ocd_psiEdgeFactorW_pos Gout iota hpf hpf1 psi)
     (pow_pos hq _)
 
-
-theorem ocd_bcWeightW_psiExt (hiota : Function.Injective iota)
+lemma ocd_bcWeightW_psiExt (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
     (hparam : ocd_ParamCompatible iota pfIn pfOut)
@@ -494,9 +515,7 @@ theorem ocd_bcWeightW_psiExt (hiota : Function.Injective iota)
     bcWeightW, ocd_psiShiftW, pow_add]
   ring
 
-
-
-theorem ocd_inducedBcZW_psi (hiota : Function.Injective iota)
+lemma ocd_inducedBcZW_psi (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
     (hparam : ocd_ParamCompatible iota pfIn pfOut)
@@ -515,8 +534,7 @@ theorem ocd_inducedBcZW_psi (hiota : Function.Injective iota)
     (fun omega _ => ocd_bcWeightW_psiExt Gin Gout iota bdryOut
       hiota hadjm hparam psi omega q)
 
-
-theorem ocd_condBcProbW_psiExt_eq_bcProbW
+lemma ocd_condBcProbW_psiExt_eq_bcProbW
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
@@ -528,15 +546,14 @@ theorem ocd_condBcProbW_psiExt_eq_bcProbW
         (ocd_innerEdgeFinset (Vin := Vin) iota) psi
         (ocd_psiExt iota psi omega) =
       bcProbW Gin (ocd_inducedWiring Gout iota bdryOut psi) pfIn q omega := by
-  rw [condBcProbW, if_pos (ocd_agreesOff_psiExt psi omega),
+  rw [condBcProbW, ite_eq_left (ocd_agreesOff_psiExt psi omega),
     ocd_bcWeightW_psiExt Gin Gout iota bdryOut hiota hadjm hparam,
     ocd_inducedBcZW_psi Gin Gout iota bdryOut hiota hadjm hparam,
     bcProbW,
     mul_div_mul_right _ _
       (ocd_psiShiftW_pos Gout iota bdryOut hpfOut hpfOut1 hq psi).ne']
 
-
-theorem ocd_condBcProbW_psiExt_sum_eq_inducedBox
+lemma ocd_condBcProbW_psiExt_sum_eq_inducedBox
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
@@ -561,7 +578,7 @@ theorem ocd_condBcProbW_psiExt_sum_eq_inducedBox
     intro rho hrho
     rw [mem_condFibre] at hrho
     unfold condBcProbW
-    rw [if_neg hrho, mul_zero]
+    rw [ite_eq_right hrho, mul_zero]
   rw [← Finset.sum_subset
     (Finset.subset_univ
       (condFibre (ocd_innerEdgeFinset (Vin := Vin) iota) psi))
@@ -581,8 +598,7 @@ theorem ocd_condBcProbW_psiExt_sum_eq_inducedBox
   · rw [Set.indicator_of_notMem hB,
       Set.indicator_of_notMem (fun h => hB (Set.mem_preimage.mp h))]
 
-
-theorem ocd_condBcProbW_psiExt_dominated
+lemma ocd_condBcProbW_psiExt_dominated
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     (bdryIn : Vin -> Prop) [DecidablePred bdryIn]
@@ -612,9 +628,7 @@ theorem ocd_condBcProbW_psiExt_dominated
     (ocd_inducedWiring Gout iota bdryOut psi)
     (Lattice.boundaryCliqueGraph bdryIn) hwire hpfIn hpfIn1 hq hA
 
-
-
-theorem ocd_free_le_condBcProbW_innerRestrict
+lemma ocd_free_le_condBcProbW_innerRestrict
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
@@ -643,9 +657,9 @@ theorem ocd_free_le_condBcProbW_innerRestrict
       ocd_inducedWiring Gout iota bdryOut psi)
     hpfIn hpfIn1 hq hA
 
+/-! ## E. Domination -/
 
-
-theorem bcProbW_eq_fibreMass_mul_condBcProbW
+lemma bcProbW_eq_fibreMass_mul_condBcProbW
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
     (hpf1 : forall e, pf e < 1) {q : Real} (hq : 0 < q)
     (F : Finset (Sym2 V)) (omega : ConfigSpace (Sym2 V)) :
@@ -653,7 +667,7 @@ theorem bcProbW_eq_fibreMass_mul_condBcProbW
       (∑ rho ∈ condFibre F omega, bcProbW G C pf q rho) *
         condBcProbW G C pf q F omega omega := by
   unfold condBcProbW
-  rw [if_pos (agreesOff_self F omega)]
+  rw [ite_eq_left (agreesOff_self F omega)]
   unfold bcProbW inducedBcZW bcZW
   have hZ : 0 < ∑ eta, bcWeightW G C pf q eta :=
     bcZW_pos G C hpf hpf1 hq
@@ -668,8 +682,8 @@ theorem bcProbW_eq_fibreMass_mul_condBcProbW
         (∑ eta, bcWeightW G C pf q eta) by rw [Finset.sum_div]]
   field_simp
 
-
-theorem ocd_bcProbW_decompose (hiota : Function.Injective iota)
+omit [DecidableEq Vin] in
+lemma ocd_bcProbW_decompose (hiota : Function.Injective iota)
     {pfOut : Sym2 Vout -> Real}
     (hpfOut : forall e, 0 < pfOut e)
     (hpfOut1 : forall e, pfOut e < 1) {q : Real} (hq : 0 < q)
@@ -706,7 +720,7 @@ theorem ocd_bcProbW_decompose (hiota : Function.Injective iota)
     intro rho hrho hnot
     rw [mem_condFibre] at hnot
     unfold condBcProbW
-    rw [if_neg hnot, mul_zero]
+    rw [ite_eq_right hnot, mul_zero]
   rw [hsupp, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro rho hrho
@@ -720,16 +734,16 @@ theorem ocd_bcProbW_decompose (hiota : Function.Injective iota)
       condBcProbW Gout (Lattice.boundaryCliqueGraph bdryOut)
         pfOut q F psi rho := by
     unfold condBcProbW inducedBcZW
-    rw [if_pos (agreesOff_self F rho), if_pos hrho, hfibre]
+    rw [ite_eq_left (agreesOff_self F rho), ite_eq_left hrho, hfibre]
   have hfac := bcProbW_eq_fibreMass_mul_condBcProbW Gout
     (Lattice.boundaryCliqueGraph bdryOut) hpfOut hpfOut1 hq F rho
   rw [hfibre, hcond] at hfac
   rw [hfac]
   ring
 
-
-
-theorem ocd_sum_fibreMassW_eq_one
+open Classical in
+omit [DecidableEq Vin] in
+lemma ocd_sum_fibreMassW_eq_one
     (hiota : Function.Injective iota)
     {pfOut : Sym2 Vout -> Real}
     (hpfOut : forall e, 0 < pfOut e)
@@ -761,10 +775,7 @@ theorem ocd_sum_fibreMassW_eq_one
   exact bcProbW_sum_eq_one Gout
     (Lattice.boundaryCliqueGraph bdryOut) hpfOut hpfOut1 hq
 
-
-
-
-theorem ocd_free_inner_dominated_bcProbW
+lemma ocd_free_inner_dominated_bcProbW
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {pfIn : Sym2 Vin -> Real} {pfOut : Sym2 Vout -> Real}
@@ -820,8 +831,7 @@ theorem ocd_free_inner_dominated_bcProbW
           bcProbW_nonneg Gout (Lattice.boundaryCliqueGraph bdryOut)
             hpfOut hpfOut1 (zero_lt_one.trans_le hq) sigma)
 
-
-theorem ocd_wired_inner_dominated_bcProbW
+lemma ocd_wired_inner_dominated_bcProbW
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     (bdryIn : Vin -> Prop) [DecidablePred bdryIn]
@@ -892,8 +902,7 @@ theorem ocd_wired_inner_dominated_bcProbW
           (Lattice.boundaryCliqueGraph bdryOut) hpfOut hpfOut1
             (zero_lt_one.trans_le hq), one_mul]
 
-
-theorem ocd_latticeWired_inner_dominatedW
+lemma ocd_latticeWired_inner_dominatedW
     {d : Nat} {Sin Sout : Set (Lattice.Site d)}
     [Fintype Sin] [Fintype Sout]
     (iota : {y : Lattice.Site d // y ∈ Sin} ->
@@ -943,14 +952,10 @@ namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedDomain
 
-open Lattice FK
+open StatMech.Lattice FK
 open WiredBoxOffCentre FKSharpnessWeightedPeriodic
 
-
-
-
-
-theorem weighted_transShellEvent_domain_dominated
+lemma weighted_transShellEvent_domain_dominated
     (d R k : Nat) (x : Site d)
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (hsub : fvs_transBox d (2 * k) x ⊆ box d R)

@@ -6,15 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCovLowerPoincare
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentTranslation
+
+/-!
+# Covariance lower bound for box crossings, general measures
+
+The covariance lower bound `θ(1 - θ) / (4 max revealment) ≤ ∑ Cov` for the crossing indicator of a
+box, for an FKG measure on an edge set embedded in `ℤ^d`.
+
+## i. Overview
+
+`crossIndG` is the crossing indicator from the site `o` to the boundary of the box of radius `n`,
+and `boxRevealG` is the revealment of an edge by the boundary exploration started at distance `k`.
+Averaging the OSSS inequality over the starting radius gives `hcov_lattice_mass` and its
+random-cluster case `fk_q2_hcov_lattice`. These hold under the FKG lattice condition and the
+geometric embedding hypotheses only.
+
+## ii. Key results
+
+- `hcov_lattice_mass`: covariance lower bound for FKG measures.
+- `fk_q2_hcov_lattice`: the `q = 2` random-cluster case.
+
+## iii. Table of contents
+
+- A. Crossing indicators and revealment
+- B. Covariance lower bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
@@ -25,21 +50,25 @@ namespace StatMech
 namespace OSSS
 namespace AdaptiveCovLowerGeom
 
-open Lattice Monotonic RevealmentConstruction AdaptiveCovLowerClose
+open StatMech.Lattice Monotonic RevealmentConstruction AdaptiveCovLowerClose
 open RevealmentTranslation
 open MonotonicFK
 open LindebergTree FamilyEqzzzResolution FrontierFamilyClose DecisionTree
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {d : ℕ}
 
+/-! ## A. Crossing indicators and revealment -/
 
+/-- The indicator that `o` is connected to the vertex boundary of the box of radius `n`, for edges
+  embedded by `edge`. -/
 noncomputable def crossIndG (edge : E → Sym2 (Site d)) (o : Site d) (n : ℕ) :
     ConfigSpace E → ℝ :=
   (crossEvent edge o (vertexBoundary d n)).indicator (fun _ => (1 : ℝ))
 
-
+open Classical in
+/-- The revealment of edge `e` by the exploration of the crossing event from the boundary of the box
+  of radius `k`. -/
 noncomputable def boxRevealG (μ : ConfigSpace E → ℝ)
     (edge : E → Sym2 (Site d)) (endU endV : E → Site d)
     (k : ℕ) (e : E) : ℝ :=
@@ -50,9 +79,9 @@ noncomputable def boxRevealG (μ : ConfigSpace E → ℝ)
       (fun ω => if ConnectedToSet d (liftCfg edge ω) (endV e) (vertexBoundary d k)
                 then (1 : ℝ) else 0)
 
+/-! ## B. Covariance lower bounds -/
 
-
-theorem hcov_crossTree_mass
+lemma hcov_crossTree_mass
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
@@ -72,7 +101,7 @@ theorem hcov_crossTree_mass
         (1 - Lindeberg.mean μ (crossIndG edge o n)) / D ≤
       ∑ e, Lindeberg.cov μ (crossIndG edge o n) (Lindeberg.coord e) := by
   classical
-  haveI : Nonempty (↥(Finset.Icc 1 n)) :=
+  have : Nonempty (↥(Finset.Icc 1 n)) :=
     ⟨⟨1, Finset.mem_Icc.mpr ⟨le_rfl, hn⟩⟩⟩
   let f : ConfigSpace E → ℝ := crossIndG edge o n
   let T : ↥(Finset.Icc 1 n) → DecisionTree E := fun k =>
@@ -98,9 +127,9 @@ theorem hcov_crossTree_mass
     rw [heval]
     by_cases hc : ConnectedToSet d (liftCfg edge ω) o (vertexBoundary d n)
     · have hm : ω ∈ crossEvent edge o (vertexBoundary d n) := hc
-      rw [if_pos hc, Set.indicator_of_mem hm]
+      rw [ite_eq_left hc, Set.indicator_of_mem hm]
     · have hm : ω ∉ crossEvent edge o (vertexBoundary d n) := hc
-      rw [if_neg hc, Set.indicator_of_notMem hm]
+      rw [ite_eq_right hc, Set.indicator_of_notMem hm]
   have hreach : ∀ k e, revealmentMu μ (T k) e ≤ R k e := by
     intro k e
     unfold T R boxRevealG
@@ -116,10 +145,8 @@ theorem hcov_crossTree_mass
   rw [div_le_iff₀ hD]
   simpa [f, mul_comm] using hmain
 
-
-
-
-theorem hcov_lattice_mass
+open Classical in
+lemma hcov_lattice_mass
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
@@ -156,7 +183,7 @@ theorem hcov_lattice_mass
           if ConnectedToSet d (liftCfg edge ω) x (centeredBoundary x 0)
           then (1 : ℝ) else 0) = fun _ => 1 := by
         funext ω
-        rw [if_pos]
+        rw [ite_eq_left]
         exact ⟨x, centeredRadius_self x, connected_refl _ _⟩
       change Lindeberg.mean μ (fun ω =>
         if ConnectedToSet d (liftCfg edge ω) x (centeredBoundary x 0)
@@ -205,8 +232,8 @@ theorem hcov_lattice_mass
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
-
-
+open Classical in
+/-- The `q = 2` random-cluster case. -/
 theorem fk_q2_hcov_lattice
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
@@ -246,7 +273,7 @@ theorem fk_q2_hcov_lattice
           if ConnectedToSet d (liftCfg edge ω) x (centeredBoundary x 0)
           then (1 : ℝ) else 0) = fun _ => 1 := by
         funext ω
-        rw [if_pos]
+        rw [ite_eq_left]
         exact ⟨x, centeredRadius_self x, connected_refl _ _⟩
       change Lindeberg.mean μ (fun ω =>
         if ConnectedToSet d (liftCfg edge ω) x (centeredBoundary x 0)

@@ -6,78 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Coding
@@ -85,62 +13,68 @@ public import CSLibExt.Complexity.BooleanFunctions.CovLowerBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
 
+/-!
+# Random-cluster mass function and the monotonic OSSS bound
+
+The random-cluster probability mass `fkMass`, its monotonicity for `q ≥ 1`, generic means and
+covariances, and the bound predicate `MonotonicOSSSBound` with its transfer to random-cluster
+covariances.
+
+## i. Overview
+
+`fkMass G p q` is the random-cluster measure as a function on configurations; the coding map has
+fibres of mass `fkMass` (`fk_volume_codeFibre`), and `fkMass_isMonotonic` holds for `q ≥ 1`.
+`MonotonicOSSSBound μ s f N c₀ D` is the inequality `N c₀ Var f ≤ D ∑_{e ∈ s} Cov(ω_e, f)`.
+`monotonicOSSS_to_fkCov` transfers it to `fkCov`, given the bound as a hypothesis.
+`monotonicOSSSBound_of_product` derives it for product measures from a family of decision trees,
+given revealment bounds.
+
+## ii. Key results
+
+- `fkMass_isMonotonic`: the random-cluster mass is monotonic for `q ≥ 1` (unconditional).
+- `monotonicOSSS_to_fkCov`: transfer of the bound to random-cluster covariances, conditional on
+  `hMonOSSS`.
+
+## iii. Table of contents
+
+- A. The random-cluster mass
+- B. Generic means and covariances
+- C. The monotonic OSSS bound
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open Finset MeasureTheory Set
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
 namespace OSSS
 
-
-
 namespace MonotonicFK
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. The random-cluster mass -/
 
-
-
+/-- The random-cluster probability `FK.fkProb G p q ω`, as a function of the configuration. -/
 noncomputable def fkMass (p q : ℝ) : ConfigSpace (Sym2 V) → ℝ := fun ω => FK.fkProb G p q ω
-
-
 
 lemma fkMass_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (ω : ConfigSpace (Sym2 V)) :
     0 < fkMass G p q ω := FK.fkProb_pos G hp hp1 hq ω
 
-
-
 lemma fkMass_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ ω : ConfigSpace (Sym2 V), fkMass G p q ω = 1 := FK.fkProb_sum_eq_one G hp hp1 hq
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_codeProb_eq_mass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
+lemma fk_codeProb_eq_mass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) (x : ConfigSpace (Sym2 V)) :
     (∏ t : Fin n, Coding.condProbBit (fkMass G p q)
         (Coding.prefixSet (σ : Fin n → Sym2 V) (t : ℕ)) x
@@ -149,34 +83,13 @@ theorem fk_codeProb_eq_mass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
   Coding.codeProb_eq_mass (fkMass G p q) (fkMass_pos G hp hp1 hq)
     (fkMass_sum_eq_one G hp hp1 hq) σ x
 
-
-
-
-
-
-
-
-
-
-
-theorem fk_volume_codeFibre {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
+lemma fk_volume_codeFibre {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) (x : ConfigSpace (Sym2 V)) :
     (volume (Coding.codeFibre (fkMass G p q) σ x)).toReal = fkMass G p q x :=
   Coding.volume_codeFibre (fkMass G p q) (fkMass_pos G hp hp1 hq)
     (fkMass_sum_eq_one G hp hp1 hq) σ x
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The random-cluster mass is monotonic for `q ≥ 1` (unconditional). -/
 theorem fkMass_isMonotonic {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Monotonic.IsMonotonicMeasure (fkMass G p q) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
@@ -186,36 +99,23 @@ theorem fkMass_isMonotonic {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
 
 end MonotonicFK
 
-
-
-
-
-
-
-
-
-
 namespace MonotonicMeasure
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## B. Generic means and covariances -/
 
-
-
+/-- The expectation of `g` under the weight `μ`. -/
 noncomputable def genMean (μ : ConfigSpace E → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   ∑ ω, g ω * μ ω
 
-
+/-- The covariance of `f` and `g` under the weight `μ`. -/
 noncomputable def genCov (μ : ConfigSpace E → ℝ) (f g : ConfigSpace E → ℝ) : ℝ :=
   genMean μ (fun ω => f ω * g ω) - genMean μ f * genMean μ g
 
-
+/-- The variance of `g` under the weight `μ`. -/
 noncomputable def genVar (μ : ConfigSpace E → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   genCov μ g g
-
-
-
-noncomputable def genCoord (e : E) : ConfigSpace E → ℝ := fun ω => if ω e then (1 : ℝ) else 0
 
 end MonotonicMeasure
 
@@ -225,24 +125,20 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 open MonotonicMeasure
 
-
 lemma genMean_fkMass (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) :
     genMean (fkMass G p q) g = FK.fkMean G p q g := by
   unfold genMean fkMass FK.fkMean
   rfl
-
 
 lemma genCov_fkMass (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) :
     genCov (fkMass G p q) f g = FK.fkCov G p q f g := by
   unfold genCov FK.fkCov
   rw [genMean_fkMass, genMean_fkMass, genMean_fkMass]
 
-
-
-lemma genCoord_eq_coord (e : Sym2 V) : (genCoord e : ConfigSpace (Sym2 V) → ℝ) = FK.coord e := by
-  funext ω; unfold genCoord FK.coord; rfl
-
-
+omit [DecidableEq V] [Fintype V] in
+lemma genCoord_eq_coord (e : Sym2 V) : (StatMech.OSSS.CovLowerBound.coordI e : ConfigSpace (Sym2 V)
+    → ℝ) = FK.coord e := by
+  funext ω; unfold StatMech.OSSS.CovLowerBound.coordI FK.coord; rfl
 
 lemma genVar_fkMass_indicator (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) :
     genVar (fkMass G p q) (A.indicator (fun _ => (1 : ℝ)))
@@ -250,15 +146,11 @@ lemma genVar_fkMass_indicator (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) :
   unfold genVar
   rw [genCov_fkMass]
 
-
-
-
 lemma fkVar_indicator (p q : ℝ)
     (A : Set (ConfigSpace (Sym2 V))) :
     genVar (fkMass G p q) (A.indicator (fun _ => (1 : ℝ)))
       = FK.fkProbOf G p q A * (1 - FK.fkProbOf G p q A) := by
   rw [genVar_fkMass_indicator]
-  
   have hidem : (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * A.indicator (fun _ => (1 : ℝ)) ω)
       = A.indicator (fun _ => (1 : ℝ)) := by
     classical
@@ -267,8 +159,7 @@ lemma fkVar_indicator (p q : ℝ)
     split_ifs <;> norm_num
   unfold FK.fkCov
   rw [hidem]
-  
-  show FK.fkMean G p q (A.indicator (fun _ => (1 : ℝ)))
+  change FK.fkMean G p q (A.indicator (fun _ => (1 : ℝ)))
       - FK.fkMean G p q (A.indicator (fun _ => (1 : ℝ)))
         * FK.fkMean G p q (A.indicator (fun _ => (1 : ℝ)))
     = FK.fkProbOf G p q A * (1 - FK.fkProbOf G p q A)
@@ -277,41 +168,16 @@ lemma fkVar_indicator (p q : ℝ)
 
 end MonotonicFK
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace MonotonicMeasure
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## C. The monotonic OSSS bound -/
 
-
-
-
-
-
-
-
-
-
+/-- The OSSS-type bound `N c₀ Var f ≤ D ∑_{e ∈ s} Cov(ω_e, f)`. -/
 def MonotonicOSSSBound (μ : ConfigSpace E → ℝ) (s : Finset E)
     (f : ConfigSpace E → ℝ) (N : ℕ) (c₀ D : ℝ) : Prop :=
-  (N : ℝ) * c₀ * genVar μ f ≤ D * ∑ e ∈ s, genCov μ (genCoord e) f
+  (N : ℝ) * c₀ * genVar μ f ≤ D * ∑ e ∈ s, genCov μ (StatMech.OSSS.CovLowerBound.coordI e) f
 
 end MonotonicMeasure
 
@@ -321,24 +187,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 open MonotonicMeasure
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem monotonicOSSS_to_fkCov (p : ℝ)
+lemma monotonicOSSS_to_fkCov (p : ℝ)
     (A : Set (ConfigSpace (Sym2 V))) (N : ℕ) (c₀ D : ℝ)
     (hMonOSSS : MonotonicOSSSBound (fkMass G p 2) G.edgeFinset
       (A.indicator (fun _ => (1 : ℝ))) N c₀ D) :
@@ -347,14 +196,11 @@ theorem monotonicOSSS_to_fkCov (p : ℝ)
       ≤ D * ∑ e ∈ G.edgeFinset,
           FK.fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
   unfold MonotonicOSSSBound at hMonOSSS
-  
   rw [fkVar_indicator G p 2 A] at hMonOSSS
-  
   refine hMonOSSS.trans_eq ?_
   congr 1
   apply Finset.sum_congr rfl
   intro e _
-  
   rw [genCov_fkMass, genCoord_eq_coord]
   unfold FK.fkCov
   rw [show (fun ω => FK.coord e ω * A.indicator (fun _ => (1 : ℝ)) ω)
@@ -363,18 +209,6 @@ theorem monotonicOSSS_to_fkCov (p : ℝ)
 
 end MonotonicFK
 
-
-
-
-
-
-
-
-
-
-
-
-
 namespace MonotonicMeasure
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
@@ -382,37 +216,21 @@ variable {ν : E → Bool → ℝ}
 
 open StatMech.OSSS StatMech.OSSS.CovLowerBound
 
-
-
 lemma genMean_weight (g : ConfigSpace E → ℝ) :
     genMean (weight ν) g = expect ν g := by
   unfold genMean expect
   exact Finset.sum_congr rfl (fun ω _ => by rw [mul_comm])
-
 
 lemma genCov_weight (f g : ConfigSpace E → ℝ) :
     genCov (weight ν) f g = cov ν f g := by
   unfold genCov cov
   rw [genMean_weight, genMean_weight, genMean_weight]
 
-
 lemma genVar_weight (g : ConfigSpace E → ℝ) :
     genVar (weight ν) g = var ν g := by
   unfold genVar var; rw [genCov_weight]
 
-
-
-lemma genCoord_eq_coordI (e : E) : (genCoord e : ConfigSpace E → ℝ) = coordI e := by
-  funext ω; unfold genCoord coordI; rfl
-
-
-
-
-
-
-
-
-theorem monotonicOSSSBound_of_product {κ : Type*} [Fintype κ] [Nonempty κ]
+lemma monotonicOSSSBound_of_product {κ : Type*} [Fintype κ] [Nonempty κ]
     (hν : IsProbWeight ν) {A : Set (ConfigSpace E)} (hA : IsIncreasing A)
     {f : ConfigSpace E → ℝ} (hf : f = A.indicator (fun _ => (1 : ℝ)))
     (T : κ → DecisionTree E) (hT : ∀ k, (T k).evalR = f)
@@ -427,11 +245,10 @@ theorem monotonicOSSSBound_of_product {κ : Type*} [Fintype κ] [Nonempty κ]
   congr 1
   apply Finset.sum_congr rfl
   intro e _
-  rw [genCov_weight, genCoord_eq_coordI, cov_comm]
+  rw [genCov_weight, cov_comm]
 
 end MonotonicMeasure
 
 end OSSS
 
 end StatMech
-

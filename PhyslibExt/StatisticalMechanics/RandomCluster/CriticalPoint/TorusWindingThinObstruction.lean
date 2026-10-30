@@ -6,25 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusCover
+
+/-!
+# A vertical winding without a thin crossing on the 8-torus
+
+An explicit configuration on the `8 × 8` torus that winds vertically but has no thin long-rectangle
+crossing, refuting the thin-cover hypothesis at `(α, n) = (2, 1)`.
+
+## i. Overview
+
+`windingThinCounterexampleConfig` opens a diagonal staircase and one row. It winds vertically
+(`windingThinCounterexample_winds`), but every thin rectangle misses a cut row
+(`windingThinCounterexample_exists_missing`), so it has no thin crossing.
+`not_bdcTorusVerticalWindingThinCover_two_one` is a Lean-checked refutation of
+`BdcTorusVerticalWindingThinCover 2 1`.
+
+## ii. Key results
+
+- `windingThinCounterexample_winding_not_thin`: winding but no thin crossing.
+- `not_bdcTorusVerticalWindingThinCover_two_one`: refutation of the thin cover at `(2, 1)`.
+
+## iii. Table of contents
+
+- A. The configuration
+- B. Winding
+- C. No thin crossing
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -43,17 +58,17 @@ local instance windingThinCounterexample_periodFact :
 local instance windingThinCounterexample_eightFact : Fact (2 < (8 : ℕ)) :=
   ⟨by norm_num⟩
 
+/-! ## A. The configuration -/
 
-
-
-
+/-- An explicit configuration on the 8-torus: a diagonal staircase plus row eight, which winds
+  vertically. -/
 noncomputable def windingThinCounterexampleConfig : TorusAmbientConfig 8 :=
   fun e =>
     match (torusEdgeCodeEquiv 8).symm e with
     | ((x, y), TorusEdgeOrientation.horizontal) => decide (y = 0 ∨ x = y)
     | ((x, y), TorusEdgeOrientation.vertical) => decide (x = y + 1)
 
-@[simp] theorem windingThinCounterexampleConfig_horizontal (x y : ZMod 8) :
+@[simp] lemma windingThinCounterexampleConfig_horizontal (x y : ZMod 8) :
     windingThinCounterexampleConfig (torusHorizontalEdge 8 x y) =
       decide (y = 0 ∨ x = y) := by
   have hcode : (torusEdgeCodeEquiv 8).symm
@@ -63,7 +78,7 @@ noncomputable def windingThinCounterexampleConfig : TorusAmbientConfig 8 :=
     simp [torusEdgeCodeEquiv_apply, torusEdgeOfCode]
   rw [windingThinCounterexampleConfig, hcode]
 
-@[simp] theorem windingThinCounterexampleConfig_vertical (x y : ZMod 8) :
+@[simp] lemma windingThinCounterexampleConfig_vertical (x y : ZMod 8) :
     windingThinCounterexampleConfig (torusVerticalEdge 8 x y) =
       decide (x = y + 1) := by
   have hcode : (torusEdgeCodeEquiv 8).symm
@@ -73,8 +88,7 @@ noncomputable def windingThinCounterexampleConfig : TorusAmbientConfig 8 :=
     simp [torusEdgeCodeEquiv_apply, torusEdgeOfCode]
   rw [windingThinCounterexampleConfig, hcode]
 
-
-theorem windingThinCounterexample_diagHorizontal (t : ℤ) :
+lemma windingThinCounterexample_diagHorizontal (t : ℤ) :
     IsOpenEdge 2 (torusPlanarPullback 8 windingThinCounterexampleConfig)
       ![t, t] ![t + 1, t] := by
   refine ⟨hadj_step t t, ?_⟩
@@ -82,8 +96,7 @@ theorem windingThinCounterexample_diagHorizontal (t : ℤ) :
     windingThinCounterexampleConfig_horizontal]
   simp
 
-
-theorem windingThinCounterexample_diagVertical (t : ℤ) :
+lemma windingThinCounterexample_diagVertical (t : ℤ) :
     IsOpenEdge 2 (torusPlanarPullback 8 windingThinCounterexampleConfig)
       ![t + 1, t] ![t + 1, t + 1] := by
   refine ⟨vadj_step (t + 1) t, ?_⟩
@@ -91,9 +104,7 @@ theorem windingThinCounterexample_diagVertical (t : ℤ) :
     windingThinCounterexampleConfig_vertical]
   simp
 
-
-
-theorem windingThinCounterexample_rowEight (t : ℤ) :
+lemma windingThinCounterexample_rowEight (t : ℤ) :
     IsOpenEdge 2 (torusPlanarPullback 8 windingThinCounterexampleConfig)
       ![t, 8] ![t + 1, 8] := by
   refine ⟨hadj_step t 8, ?_⟩
@@ -103,9 +114,9 @@ theorem windingThinCounterexample_rowEight (t : ℤ) :
   left
   decide
 
+/-! ## B. Winding -/
 
-
-theorem windingThinCounterexample_winds :
+lemma windingThinCounterexample_winds :
     bdcTorusVerticalWinding 8 windingThinCounterexampleConfig := by
   let omega := torusPlanarPullback 8 windingThinCounterexampleConfig
   have hd0 : Connected 2 omega ![0, 0] ![1, 1] :=
@@ -148,19 +159,16 @@ theorem windingThinCounterexample_winds :
   ext i
   fin_cases i <;> norm_num
 
+/-! ## C. No thin crossing -/
 
-
-
-theorem windingThinCounterexample_vertical_iff (x y : ℤ) :
+lemma windingThinCounterexample_vertical_iff (x y : ℤ) :
     torusPlanarPullback 8 windingThinCounterexampleConfig
         s(![x, y], ![x, y + 1]) = true ↔
       (x : ZMod 8) = (y : ZMod 8) + 1 := by
   rw [torusPlanarPullback_vertical,
     windingThinCounterexampleConfig_vertical, decide_eq_true_eq]
 
-
-
-theorem windingThinCounterexample_cut_step
+lemma windingThinCounterexample_cut_step
     {a c h : ℤ} {p q : Site 2}
     (hp : p ∈ rect a (a + 2) c (c + 4))
     (hq : q ∈ rect a (a + 2) c (c + 4))
@@ -189,8 +197,7 @@ theorem windingThinCounterexample_cut_step
     simpa using hopen
   exact (hmiss (p 0) hp.1 hp.2.1) hrung
 
-
-theorem windingThinCounterexample_cut_walk
+lemma windingThinCounterexample_cut_walk
     {a c h : ℤ}
     (hmiss : ∀ x : ℤ, a ≤ x → x ≤ a + 2 →
       (x : ZMod 8) ≠ (h : ZMod 8) + 1)
@@ -206,8 +213,7 @@ theorem windingThinCounterexample_cut_walk
       rw [openSubgraphInduce_adj, openSubgraph_adj] at huv
       exact ih (windingThinCounterexample_cut_step u.2 v.2 huv.1 huv.2 hp hmiss)
 
-
-theorem windingThinCounterexample_no_vertical_of_missing
+lemma windingThinCounterexample_no_vertical_of_missing
     {a c h : ℤ} (hch : c ≤ h) (hhc : h < c + 4)
     (hmiss : ∀ x : ℤ, a ≤ x → x ≤ a + 2 →
       (x : ZMod 8) ≠ (h : ZMod 8) + 1) :
@@ -222,11 +228,7 @@ theorem windingThinCounterexample_no_vertical_of_missing
   rw [hq1] at hbound
   omega
 
-
-
-
-
-theorem windingThinCounterexample_exists_missing
+lemma windingThinCounterexample_exists_missing
     (a c : ℤ) (ha0 : 0 ≤ a) (ha7 : a ≤ 7) (hc : c = 0 ∨ c = 4) :
     ∃ h : ℤ, c ≤ h ∧ h < c + 4 ∧
       ∀ x : ℤ, a ≤ x → x ≤ a + 2 →
@@ -267,9 +269,7 @@ theorem windingThinCounterexample_exists_missing
     · refine ⟨4, by norm_num, by norm_num, ?_⟩
       intro x hx0 hx2; interval_cases x <;> decide
 
-
-
-theorem windingThinCounterexample_not_thin :
+lemma windingThinCounterexample_not_thin :
     ¬ bdcTorusThinCrossing 8 2 1 windingThinCounterexampleConfig := by
   rintro ⟨k, hk⟩
   let a : ℤ := bdcLongRectangleXOffset 1 k
@@ -286,15 +286,12 @@ theorem windingThinCounterexample_not_thin :
   apply windingThinCounterexample_no_vertical_of_missing hch hhc hmiss
   simpa [a, c] using hk
 
-
-
-theorem windingThinCounterexample_winding_not_thin :
+lemma windingThinCounterexample_winding_not_thin :
     bdcTorusVerticalWinding 8 windingThinCounterexampleConfig ∧
       ¬ bdcTorusThinCrossing 8 2 1 windingThinCounterexampleConfig :=
   ⟨windingThinCounterexample_winds, windingThinCounterexample_not_thin⟩
 
-
-
+/-- Refutation of the thin cover at `(2, 1)`. -/
 theorem not_bdcTorusVerticalWindingThinCover_two_one :
     ¬ BdcTorusVerticalWindingThinCover 2 1 := by
   intro h

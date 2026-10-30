@@ -6,21 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCounterexample
+public import
+    PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCounterexample
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LeftFillInteriorArc
 public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
+
+/-!
+# Square crossings on the torus from planar duality
+
+Pulling torus configurations back to periodic planar ones, a missing horizontal crossing of a square
+forces a rotated dual horizontal crossing; this gives the unconditional bound `1 / (1 + q)` at the
+self-dual point.
+
+## i. Overview
+
+`torusPlanarPullback` lifts a torus configuration to a periodic configuration of `ℤ²`. Planar
+crossings of `[0, n]²` with `n < L` project to torus crossings. The face-dual crossing of
+`LeftFillInteriorArc` projects to a rotated horizontal crossing of the torus dual
+(`torus_concreteSquareCrossing_dual_cover`). With `TorusSquareCrossingCounterexample` this gives
+`torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional` (`q ≥ 1`), with no further
+hypothesis.
+
+## ii. Key results
+
+- `torus_concreteSquareCrossing_dual_cover`: the one-sided duality cover.
+- `torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional`: `1 / (1 + q) ≤ P(horizontal
+  crossing)` at `p_sd(q)` (unconditional).
+
+## iii. Table of contents
+
+- A. Planar pullback
+- B. Primal crossings
+- C. Face-dual crossings
+- D. The square-crossing bound
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -33,21 +59,22 @@ open StatMech.Onsager
 open StatMech.RSW.Box
 open StatMech.Universality
 
+/-! ## A. Planar pullback -/
 
+/-- The reduction of a lattice site modulo `L`. -/
 def torusReduceSite (L : ℕ) (x : Site 2) : ZMod L × ZMod L :=
   ((x 0 : ZMod L), (x 1 : ZMod L))
 
-@[simp] theorem torusReduceSite_mk (L : ℕ) (a b : ℤ) :
+@[simp] lemma torusReduceSite_mk (L : ℕ) (a b : ℤ) :
     torusReduceSite L ![a, b] = ((a : ZMod L), (b : ZMod L)) := by
   rfl
 
-
+/-- The periodic planar configuration obtained from a torus configuration. -/
 noncomputable def torusPlanarPullback (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) : ConfigSpace (Sym2 (Site 2)) :=
   fun e => torusAmbientConfigExtend L omega (Sym2.map (torusReduceSite L) e)
 
-
-theorem torusReduceSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
+lemma torusReduceSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
     (hxy : (hypercubicLattice 2).Adj x y) :
     (onsTorusGraph L).Adj (torusReduceSite L x) (torusReduceSite L y) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two] at hxy
@@ -83,7 +110,10 @@ theorem torusReduceSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
       push_cast at this
       linear_combination this
 
+/-! ## B. Primal crossings -/
 
+/-- The reduction map as a homomorphism from the open subgraph of the pullback to the torus open
+  subgraph. -/
 noncomputable def torusPlanarPrimalHom (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     openSubgraph 2 (torusPlanarPullback L omega) →g
@@ -95,14 +125,12 @@ noncomputable def torusPlanarPrimalHom (L : ℕ) [Fact (2 < L)]
     refine ⟨torusReduceSite_adj L hxy.1, ?_⟩
     simpa [torusPlanarPullback] using hxy.2
 
-
-
-theorem torusReduceSite_val_of_mem_rect (L n : ℕ) (hnL : n < L)
+lemma torusReduceSite_val_of_mem_rect (L n : ℕ) (hnL : n < L)
     {x : Site 2} (hx : x ∈ rect 0 (n : ℤ) 0 (n : ℤ)) :
     (torusReduceSite L x).1.val = Int.toNat (x 0) ∧
       (torusReduceSite L x).2.val = Int.toNat (x 1) := by
   rw [mem_rect] at hx
-  letI : NeZero L := ⟨by omega⟩
+  let : NeZero L := ⟨by omega⟩
   have hL : (0 : ℤ) < L := by omega
   constructor
   · change (x 0 : ZMod L).val = Int.toNat (x 0)
@@ -120,7 +148,7 @@ theorem torusReduceSite_val_of_mem_rect (L n : ℕ) (hnL : n < L)
       _ = x 1 := Int.emod_eq_of_lt hx.2.2.1 hxL
       _ = (Int.toNat (x 1) : ℤ) := (Int.toNat_of_nonneg hx.2.2.1).symm
 
-theorem torusReduceSite_mem_square (L n : ℕ) (hnL : n < L)
+lemma torusReduceSite_mem_square (L n : ℕ) (hnL : n < L)
     {x : Site 2} (hx : x ∈ rect 0 (n : ℤ) 0 (n : ℤ)) :
     torusReduceSite L x ∈ torusSquareVertexSet L n := by
   obtain ⟨h0, h1⟩ := torusReduceSite_val_of_mem_rect L n hnL hx
@@ -130,8 +158,8 @@ theorem torusReduceSite_mem_square (L n : ℕ) (hnL : n < L)
   rw [mem_rect] at hx
   omega
 
-
-
+/-- The reduction map restricted to the square `[0, n]²`, as a homomorphism of induced open
+  subgraphs. -/
 noncomputable def torusPlanarSquarePrimalHom (L n : ℕ) [Fact (2 < L)]
     (hnL : n < L) (omega : TorusAmbientConfig L) :
     (openSubgraph 2 (torusPlanarPullback L omega)).induce
@@ -143,9 +171,7 @@ noncomputable def torusPlanarSquarePrimalHom (L n : ℕ) [Fact (2 < L)]
     intro x y hxy
     exact (torusPlanarPrimalHom L omega).map_rel hxy
 
-
-
-theorem torusPlanarHorizontalCrossing_imp_torus
+lemma torusPlanarHorizontalCrossing_imp_torus
     (L n : ℕ) [Fact (2 < L)] (hnL : n < L)
     (omega : TorusAmbientConfig L)
     (h : HorizontalCrossing (torusPlanarPullback L omega)
@@ -165,7 +191,7 @@ theorem torusPlanarHorizontalCrossing_imp_torus
     simp
   · exact hxy.map (torusPlanarSquarePrimalHom L n hnL omega)
 
-theorem torus_not_horizontal_imp_planar_not_horizontal
+lemma torus_not_horizontal_imp_planar_not_horizontal
     (L n : ℕ) [Fact (2 < L)] (hnL : n < L)
     (omega : TorusAmbientConfig L)
     (h : ¬ torusSquareHorizontalCrossing L n omega) :
@@ -173,19 +199,17 @@ theorem torus_not_horizontal_imp_planar_not_horizontal
       0 (n : ℤ) 0 (n : ℤ) :=
   fun hp => h (torusPlanarHorizontalCrossing_imp_torus L n hnL omega hp)
 
+/-! ## C. Face-dual crossings -/
 
-
-
-
-
+/-- The reduction modulo `L` followed by the coordinate swap. -/
 def torusReduceSwapSite (L : ℕ) (x : Site 2) : ZMod L × ZMod L :=
   ((x 1 : ZMod L), (x 0 : ZMod L))
 
-@[simp] theorem torusReduceSwapSite_mk (L : ℕ) (a b : ℤ) :
+@[simp] lemma torusReduceSwapSite_mk (L : ℕ) (a b : ℤ) :
     torusReduceSwapSite L ![a, b] = ((b : ZMod L), (a : ZMod L)) := by
   rfl
 
-theorem torusReduceSwapSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
+lemma torusReduceSwapSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
     (hxy : (hypercubicLattice 2).Adj x y) :
     (onsTorusGraph L).Adj (torusReduceSwapSite L x)
       (torusReduceSwapSite L y) := by
@@ -193,7 +217,7 @@ theorem torusReduceSwapSite_adj (L : ℕ) [Fact (2 < L)] {x y : Site 2}
     (onsTorusGraph_adj_coordSwap L (torusReduceSite L x)
       (torusReduceSite L y)).2 (torusReduceSite_adj L hxy)
 
-theorem torusPlanarPullback_horizontal (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPullback_horizontal (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) (a b : ℤ) :
     torusPlanarPullback L omega s(![a, b], ![a + 1, b]) =
       omega (torusHorizontalEdge L (a : ZMod L) (b : ZMod L)) := by
@@ -203,9 +227,9 @@ theorem torusPlanarPullback_horizontal (L : ℕ) [Fact (2 < L)]
       (torusHorizontalEdge L (a : ZMod L) (b : ZMod L) :
         Sym2 (ZMod L × ZMod L)) := by
     simp [torusReduceSite, torusHorizontalEdge_val]
-  rw [he, torusAmbientConfigExtend, dif_pos (torusHorizontalEdge L _ _).2]
+  rw [he, torusAmbientConfigExtend, dite_eq_left (torusHorizontalEdge L _ _).2]
 
-theorem torusPlanarPullback_vertical (L : ℕ) [Fact (2 < L)]
+lemma torusPlanarPullback_vertical (L : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) (a b : ℤ) :
     torusPlanarPullback L omega s(![a, b], ![a, b + 1]) =
       omega (torusVerticalEdge L (a : ZMod L) (b : ZMod L)) := by
@@ -215,9 +239,9 @@ theorem torusPlanarPullback_vertical (L : ℕ) [Fact (2 < L)]
       (torusVerticalEdge L (a : ZMod L) (b : ZMod L) :
         Sym2 (ZMod L × ZMod L)) := by
     simp [torusReduceSite, torusVerticalEdge_val]
-  rw [he, torusAmbientConfigExtend, dif_pos (torusVerticalEdge L _ _).2]
+  rw [he, torusAmbientConfigExtend, dite_eq_left (torusVerticalEdge L _ _).2]
 
-theorem torusAmbientSwapEdgeEquiv_symm_horizontal
+lemma torusAmbientSwapEdgeEquiv_symm_horizontal
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusAmbientSwapEdgeEquiv L).symm (torusHorizontalEdge L x y) =
       torusVerticalEdge L y x := by
@@ -225,7 +249,7 @@ theorem torusAmbientSwapEdgeEquiv_symm_horizontal
   simp [torusAmbientSwapEdgeEquiv, torusHorizontalEdge_val,
     torusVerticalEdge_val, torusCoordSwap]
 
-theorem torusAmbientSwapEdgeEquiv_symm_vertical
+lemma torusAmbientSwapEdgeEquiv_symm_vertical
     (L : ℕ) [Fact (2 < L)] (x y : ZMod L) :
     (torusAmbientSwapEdgeEquiv L).symm (torusVerticalEdge L x y) =
       torusHorizontalEdge L y x := by
@@ -233,7 +257,7 @@ theorem torusAmbientSwapEdgeEquiv_symm_vertical
   simp [torusAmbientSwapEdgeEquiv, torusHorizontalEdge_val,
     torusVerticalEdge_val, torusCoordSwap]
 
-@[simp] theorem torusAmbientSwapCellDual_horizontal
+@[simp] lemma torusAmbientSwapCellDual_horizontal
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L) (x y : ZMod L) :
     torusAmbientSwapConfig L (torusCellDualAmbientConfig L omega)
         (torusHorizontalEdge L x y) =
@@ -241,7 +265,7 @@ theorem torusAmbientSwapEdgeEquiv_symm_vertical
   rw [torusAmbientSwapConfig, torusAmbientSwapEdgeEquiv_symm_horizontal,
     torusCellDualAmbientConfig, torusCellCrossing_symm_vertical]
 
-@[simp] theorem torusAmbientSwapCellDual_vertical
+@[simp] lemma torusAmbientSwapCellDual_vertical
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L) (x y : ZMod L) :
     torusAmbientSwapConfig L (torusCellDualAmbientConfig L omega)
         (torusVerticalEdge L x y) =
@@ -249,8 +273,8 @@ theorem torusAmbientSwapEdgeEquiv_symm_vertical
   rw [torusAmbientSwapConfig, torusAmbientSwapEdgeEquiv_symm_vertical,
     torusCellDualAmbientConfig, torusCellCrossing_symm_horizontal]
 
-
-
+/-- The map from the face-dual open subgraph of the pullback to the swapped torus dual open
+  subgraph. -/
 noncomputable def torusPlanarFaceDualHom
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L) :
     openSubgraph 2 (fci_faceDualConfig (torusPlanarPullback L omega)) →g
@@ -282,7 +306,7 @@ noncomputable def torusPlanarFaceDualHom
             Sym2 (ZMod L × ZMod L)) := by
         simp [torusReduceSwapSite, torusVerticalEdge_val]
       rw [he, torusAmbientConfigExtend,
-        dif_pos (torusVerticalEdge L _ _).2,
+        dite_eq_left (torusVerticalEdge L _ _).2,
         torusAmbientSwapCellDual_vertical]
       simpa using hclosed
     · have hopen := hfg.2
@@ -300,7 +324,7 @@ noncomputable def torusPlanarFaceDualHom
         rw [torusVerticalEdge_orientation_independent]
         simp [torusReduceSwapSite]
       rw [he, torusAmbientConfigExtend,
-        dif_pos (torusVerticalEdge L _ _).2,
+        dite_eq_left (torusVerticalEdge L _ _).2,
         torusAmbientSwapCellDual_vertical]
       simpa using hclosed
     · have hopen := hfg.2
@@ -318,7 +342,7 @@ noncomputable def torusPlanarFaceDualHom
             ((f 0 : ℤ) : ZMod L) : Sym2 (ZMod L × ZMod L)) := by
         simp [torusReduceSwapSite, torusHorizontalEdge_val]
       rw [he, torusAmbientConfigExtend,
-        dif_pos (torusHorizontalEdge L _ _).2,
+        dite_eq_left (torusHorizontalEdge L _ _).2,
         torusAmbientSwapCellDual_horizontal]
       simpa using hclosed
     · have hopen := hfg.2
@@ -337,14 +361,11 @@ noncomputable def torusPlanarFaceDualHom
         rw [torusHorizontalEdge_orientation_independent]
         simp [torusReduceSwapSite]
       rw [he, torusAmbientConfigExtend,
-        dif_pos (torusHorizontalEdge L _ _).2,
+        dite_eq_left (torusHorizontalEdge L _ _).2,
         torusAmbientSwapCellDual_horizontal]
       simpa using hclosed
 
-
-
-
-theorem torus_walk_first_hit_down
+lemma torus_walk_first_hit_down
     {eta : ConfigSpace (Sym2 (Site 2))} {x y : Site 2}
     (p : (openSubgraph 2 eta).Walk x y) (i : Fin 2) (t : ℤ)
     (hx : t < x i) (hy : y i ≤ t) :
@@ -388,11 +409,7 @@ theorem torus_walk_first_hit_down
   rw [hk]
   exact le_antisymm hjP' hge'
 
-
-
-
-
-theorem torus_faceBand_verticalCrossing_to_square
+lemma torus_faceBand_verticalCrossing_to_square
     {eta : ConfigSpace (Sym2 (Site 2))} {n : ℤ} (hn : 0 < n)
     (h : VerticalCrossing eta 0 (n - 1) (-1) n) :
     VerticalCrossing eta 0 n 0 n := by
@@ -419,7 +436,7 @@ theorem torus_faceBand_verticalCrossing_to_square
   let q : (openSubgraph 2 eta).Walk (yt : Site 2) u := p.take j
   have hqsupp : ∀ z ∈ q.support, z ∈ rect 0 n 0 n := by
     intro z hz
-    rw [SimpleGraph.Walk.take_support_eq_support_take_succ] at hz
+    rw [SimpleGraph.Walk.support_take] at hz
     have hzp : z ∈ p.support := List.mem_of_mem_take hz
     have hzS := hpsupp z hzp
     obtain ⟨m, hmlt, hmz⟩ := List.mem_iff_getElem.mp hz
@@ -445,14 +462,13 @@ theorem torus_faceBand_verticalCrossing_to_square
     intro z hz
     exact hqsupp z (by simpa using hz)))⟩
 
-
-
-theorem torusReduceSwapSite_mem_square (L n : ℕ) (hnL : n < L)
+lemma torusReduceSwapSite_mem_square (L n : ℕ) (hnL : n < L)
     {x : Site 2} (hx : x ∈ rect 0 (n : ℤ) 0 (n : ℤ)) :
     torusReduceSwapSite L x ∈ torusSquareVertexSet L n := by
   have h := torusReduceSite_mem_square L n hnL hx
   exact ⟨h.2, h.1⟩
 
+/-- The face-dual homomorphism restricted to the square. -/
 noncomputable def torusPlanarSquareFaceDualHom
     (L n : ℕ) [Fact (2 < L)] (hnL : n < L)
     (omega : TorusAmbientConfig L) :
@@ -470,9 +486,7 @@ noncomputable def torusPlanarSquareFaceDualHom
     intro x y hxy
     exact (torusPlanarFaceDualHom L omega).map_rel hxy
 
-
-
-theorem torusPlanarFaceVerticalCrossing_imp_rotatedTorusHorizontal
+lemma torusPlanarFaceVerticalCrossing_imp_rotatedTorusHorizontal
     (L n : ℕ) [Fact (2 < L)] (hnL : n < L)
     (omega : TorusAmbientConfig L)
     (h : VerticalCrossing
@@ -503,12 +517,9 @@ theorem torusPlanarFaceVerticalCrossing_imp_rotatedTorusHorizontal
     simp
   · exact hconn.map (torusPlanarSquareFaceDualHom L n hnL omega)
 
+/-! ## D. The square-crossing bound -/
 
-
-
-
-
-theorem torus_concreteSquareCrossing_dual_cover
+lemma torus_concreteSquareCrossing_dual_cover
     (L : ℕ) [Fact (2 < L)] (n : ℕ) (hn : 1 ≤ n) (hnL : n < L)
     (omega : TorusAmbientConfig L)
     (hno : ¬ torusSquareHorizontalCrossing L n omega) :
@@ -528,8 +539,7 @@ theorem torus_concreteSquareCrossing_dual_cover
   exact torusPlanarFaceVerticalCrossing_imp_rotatedTorusHorizontal
     L n hnL omega hsquare
 
-
-
+/-- `1 / (1 + q) ≤ P(horizontal crossing)` at `p_sd(q)` (unconditional). -/
 theorem torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional
     (L : ℕ) [Fact (2 < L)] (n : ℕ) (hn : 1 ≤ n) (hnL : n < L)
     {q : ℝ} (hq1 : 1 ≤ q) :

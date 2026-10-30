@@ -6,28 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLEvents
+
+/-!
+# Maximal influence at p = 1/2
+
+The Kahn–Kalai–Linial lower bound on the maximal influence of an event under the uniform measure on
+`{0, 1}^E`.
+
+## i. Overview
+
+From the variance gap at `p = 1/2`, some coordinate has influence at least `P(A)(1 - P(A)) log |E| /
+|E|`. The headline `maxInfluence_half` is unconditional.
+
+## ii. Key results
+
+- `maxInfluence_half`: KKL lower bound at `p = 1/2` (unconditional).
+- `exists_influence_pos_half_of_nontrivial`: a nontrivial event has a coordinate of positive
+  influence.
+
+## iii. Table of contents
+
+- A. KKL at p = 1/2
+
+## iv. References
+
+* J. Kahn, G. Kalai, N. Linial, *The influence of variables on Boolean functions*, FOCS 1988.
+-/
 
 @[expose] public section
 
@@ -40,17 +48,9 @@ open StatMech ConfigSpace Probability OSSS TwoDim
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. KKL at p = 1/2 -/
 
-
-
-
-
-
-
-
-
-
-theorem maxInfl_half_ge_var_mul_log_card_div_card [Nonempty E]
+lemma maxInfl_half_ge_var_mul_log_card_div_card [Nonempty E]
     (φ : ConfigSpace E → Bool) :
     OSSS.var (OSSS.bernoulliWeight (1 / 2 : ℝ))
           (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -151,16 +151,7 @@ theorem maxInfl_half_ge_var_mul_log_card_div_card [Nonempty E]
       have hmain : V * Real.log n ≤ n * δ := hVlog.trans hKKL
       exact (div_le_iff₀ hn).2 (by simpa [mul_comm] using hmain)
 
-
-
-
-
-
-
-
-
-
-
+/-- KKL lower bound at `p = 1/2` (unconditional). -/
 theorem maxInfluence_half [Nonempty E]
     (A : Set (ConfigSpace E)) :
     ∃ e : E,
@@ -177,10 +168,7 @@ theorem maxInfluence_half [Nonempty E]
   rw [TwoDim.kklw_influence_eq_infl, he]
   exact hmax
 
-
-
-
-theorem exists_influence_pos_half_of_nontrivial [Nonempty E]
+lemma exists_influence_pos_half_of_nontrivial [Nonempty E]
     (A : Set (ConfigSpace E)) (hcard : 2 ≤ Fintype.card E)
     (hprob0 : 0 < StatMech.prob (1 / 2 : ℝ) A)
     (hprob1 : StatMech.prob (1 / 2 : ℝ) A < 1) :
@@ -195,9 +183,7 @@ theorem exists_influence_pos_half_of_nontrivial [Nonempty E]
     mul_pos hprob0 (sub_pos.mpr hprob1)
   exact div_pos (mul_pos hvar (Real.log_pos hcard1)) hcard0
 
-
-
-theorem maxInfluence_half_of_increasing [Nonempty E]
+lemma maxInfluence_half_of_increasing [Nonempty E]
     (A : Set (ConfigSpace E)) (_hA : IsIncreasing A) :
     ∃ e : E,
       StatMech.prob (1 / 2 : ℝ) A * (1 - StatMech.prob (1 / 2 : ℝ) A)

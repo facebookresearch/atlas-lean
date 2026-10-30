@@ -6,88 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Lindeberg
+
+/-!
+# The OSSS inequality along a decision tree via martingale increments
+
+Path prefixes, depth and revealment of a decision tree, the adaptive martingale along the tree, and
+the OSSS inequality under the step covariance bound `StepCovBound`.
+
+## i. Overview
+
+`adaptM` is the conditional expectation of `f` given the first `t` queried coordinates along the
+path of `ω`. The variance telescopes along the tree. Under `hStep : StepCovBound μ T f` each step is
+bounded by fresh-coordinate covariances, giving `tree_osss`. `tree_osss_revealment_le` and
+`monotonicOSSSBound_tree` are conditional on `hStep` and a revealment bound `D`.
+`AdaptiveCausalOSSS.adaptive_tree_osss` removes `hStep` for monotonic measures.
+
+## ii. Key results
+
+- `tree_osss`: `Var f ≤ ∑ revealment(e) Cov(f, ω_e)`, conditional on `StepCovBound`.
+- `tree_osss_revealment_le`: `Var f ≤ D ∑ Cov`, conditional on `StepCovBound` and `revealment ≤ D`.
+
+## iii. Table of contents
+
+- A. Decision-tree paths and revealment
+- B. OSSS along the tree
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
 
 @[expose] public section
 
 open scoped BigOperators
 open Finset
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -103,23 +62,9 @@ section Path
 
 variable {E : Type*} [DecidableEq E]
 
+/-! ## A. Decision-tree paths and revealment -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The first `t` coordinates queried by the decision tree along the path of `ω`. -/
 def pathPrefix : DecisionTree E → ConfigSpace E → ℕ → Finset E
   | leaf _,       _, _       => ∅
   | node _ _ _,   _, 0       => ∅
@@ -135,8 +80,7 @@ lemma pathPrefix_node_succ (e : E) (t f : DecisionTree E) (ω : ConfigSpace E) (
     pathPrefix (node e t f) ω (k + 1)
       = insert e (pathPrefix (if ω e then t else f) ω k) := rfl
 
-
-
+/-- The depth of a decision tree. -/
 def treeDepth : DecisionTree E → ℕ
   | leaf _ => 0
   | node _ t f => max (treeDepth t) (treeDepth f) + 1
@@ -147,7 +91,6 @@ lemma queried_leaf (b : Bool) (ω : ConfigSpace E) :
 lemma queried_node (e : E) (l r : DecisionTree E) (ω : ConfigSpace E) :
     DecisionTree.queried (node e l r) ω
       = insert e (if ω e then l.queried ω else r.queried ω) := rfl
-
 
 lemma pathPrefix_subset_queried (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) :
     pathPrefix T ω t ⊆ T.queried ω := by
@@ -160,9 +103,8 @@ lemma pathPrefix_subset_queried (T : DecisionTree E) (ω : ConfigSpace E) (t : �
       rw [pathPrefix_node_succ, queried_node]
       apply Finset.insert_subset_insert
       by_cases he : ω e
-      · simp only [he, if_true]; exact IHl k
-      · simp only [he, Bool.false_eq_true, if_false]; exact IHr k
-
+      · simp only [he, ite_true]; exact IHl k
+      · simp only [he, Bool.false_eq_true, ite_false]; exact IHr k
 
 lemma pathPrefix_mono (T : DecisionTree E) (ω : ConfigSpace E) {s t : ℕ} (hst : s ≤ t) :
     pathPrefix T ω s ⊆ pathPrefix T ω t := by
@@ -178,10 +120,8 @@ lemma pathPrefix_mono (T : DecisionTree E) (ω : ConfigSpace E) {s t : ℕ} (hst
         rw [pathPrefix_node_succ, pathPrefix_node_succ]
         apply Finset.insert_subset_insert
         by_cases he : ω e
-        · simp only [he, if_true]; exact IHl (by omega)
-        · simp only [he, Bool.false_eq_true, if_false]; exact IHr (by omega)
-
-
+        · simp only [he, ite_true]; exact IHl (by omega)
+        · simp only [he, Bool.false_eq_true, ite_false]; exact IHr (by omega)
 
 lemma pathPrefix_ge_depth (T : DecisionTree E) (ω : ConfigSpace E) {s : ℕ}
     (hs : treeDepth T ≤ s) :
@@ -194,11 +134,10 @@ lemma pathPrefix_ge_depth (T : DecisionTree E) (ω : ConfigSpace E) {s : ℕ}
     rw [pathPrefix_node_succ, queried_node]
     congr 1
     by_cases he : ω e
-    · simp only [he, if_true]
+    · simp only [he, ite_true]
       exact IHl ω (by omega)
-    · simp only [he, Bool.false_eq_true, if_false]
+    · simp only [he, Bool.false_eq_true, ite_false]
       exact IHr ω (by omega)
-
 
 lemma pathPrefix_depth_eq_queried (T : DecisionTree E) (ω : ConfigSpace E) :
     pathPrefix T ω (treeDepth T) = T.queried ω :=
@@ -206,33 +145,15 @@ lemma pathPrefix_depth_eq_queried (T : DecisionTree E) (ω : ConfigSpace E) :
 
 end Path
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 section Analytic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-
-
+/-- The conditional expectation of `f` given the first `t` coordinates queried along the path of
+  `ω`. -/
 noncomputable def adaptM (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (ω : ConfigSpace E) : ℝ :=
   cExp μ (pathPrefix T ω t) f ω
-
 
 lemma adaptM_zero {μ : ConfigSpace E → ℝ} (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (ω : ConfigSpace E) :
@@ -241,36 +162,33 @@ lemma adaptM_zero {μ : ConfigSpace E → ℝ} (hμ1 : ∑ ω, μ ω = 1) (T : D
   rw [pathPrefix_zero]
   exact cExp_empty hμ1 f ω
 
-
-
-
-
 lemma cExp_queried_evalR {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (ω : ConfigSpace E) :
     cExp μ (T.queried ω) (T.evalR) ω = T.evalR ω := by
   unfold cExp condMass
   have hZ : 0 < condNorm μ (T.queried ω) ω := condNorm_pos hpos _ _
-  
   have hval : ∀ ω', Agree (T.queried ω) ω ω' →
       T.evalR ω' = T.evalR ω := by
     intro ω' hag
     unfold DecisionTree.evalR
     rw [Coding.eval_eq_of_agree_on_queried T ω ω' (fun e he => hag e he)]
-  calc ∑ ω', T.evalR ω' * ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried ω) ω)
-      = ∑ ω', T.evalR ω * ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried ω) ω) := by
+  calc ∑ ω', T.evalR ω' * ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried
+      ω) ω)
+      = ∑ ω', T.evalR ω * ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried
+          ω) ω) := by
         apply Finset.sum_congr rfl
         intro ω' _
         by_cases hag : Agree (T.queried ω) ω ω'
-        · rw [if_pos hag, hval ω' hag]
-        · rw [if_neg hag]; simp
-    _ = T.evalR ω * ∑ ω', ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried ω) ω) := by
+        · rw [ite_eq_left hag, hval ω' hag]
+        · rw [ite_eq_right hag]; simp
+    _ = T.evalR ω * ∑ ω', ((if Agree (T.queried ω) ω ω' then μ ω' else 0) / condNorm μ (T.queried
+        ω) ω) := by
         rw [Finset.mul_sum]
     _ = T.evalR ω := by
         rw [← Finset.sum_div]
-        have : (∑ ω', if Agree (T.queried ω) ω ω' then μ ω' else 0) = condNorm μ (T.queried ω) ω := rfl
+        have : (∑ ω', if Agree (T.queried ω) ω ω' then μ ω' else 0) = condNorm μ (T.queried ω) ω :=
+            rfl
         rw [this, div_self hZ.ne', mul_one]
-
-
 
 lemma adaptM_depth {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (T : DecisionTree E)
     (ω : ConfigSpace E) :
@@ -278,9 +196,6 @@ lemma adaptM_depth {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (T : 
   unfold adaptM
   rw [pathPrefix_depth_eq_queried]
   exact cExp_queried_evalR hpos T ω
-
-
-
 
 lemma evalR_sub_mean_eq_sum {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E) (ω : ConfigSpace E) :
@@ -290,16 +205,13 @@ lemma evalR_sub_mean_eq_sum {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
   rw [Finset.sum_range_sub (fun t => adaptM μ T (T.evalR) t ω) (treeDepth T)]
   rw [adaptM_depth hpos T ω, adaptM_zero hμ1 T (T.evalR) ω]
 
-
+/-- The expectation of `|g|` under `μ`. -/
 noncomputable def meanAbs (μ : ConfigSpace E → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   ∑ ω, |g ω| * μ ω
-
 
 lemma meanAbs_nonneg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (g : ConfigSpace E → ℝ) :
     0 ≤ meanAbs μ g :=
   Finset.sum_nonneg (fun ω _ => mul_nonneg (abs_nonneg _) (hpos ω).le)
-
-
 
 lemma var_le_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     {f : ConfigSpace E → ℝ} (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
@@ -312,7 +224,6 @@ lemma var_le_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (h�
           apply Finset.sum_le_sum; intro ω _
           exact mul_le_mul_of_nonneg_right (hf1 ω) (hpos ω).le
       _ = 1 := by simp_rw [one_mul]; exact hμ1
-  
   set m := mean μ f with hm
   have hvareq : Lindeberg.var μ f = ∑ ω, (f ω - m) ^ 2 * μ ω := by
     have hexpand : ∑ ω, (f ω - m) ^ 2 * μ ω
@@ -330,7 +241,6 @@ lemma var_le_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (h�
   apply Finset.sum_le_sum
   intro ω _
   apply mul_le_mul_of_nonneg_right _ (hpos ω).le
-  
   have hf0ω : (0 : ℝ) ≤ f ω := hf0 ω
   have hf1ω : f ω ≤ 1 := hf1 ω
   have hbound : |f ω - m| ≤ 1 := by
@@ -339,7 +249,6 @@ lemma var_le_meanAbs {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (h�
     _ = |f ω - m| * |f ω - m| := by ring
     _ ≤ |f ω - m| * 1 := mul_le_mul_of_nonneg_left hbound (abs_nonneg _)
     _ = |f ω - m| := by ring
-
 
 lemma meanAbs_sum_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (s : Finset ℕ)
     (g : ℕ → ConfigSpace E → ℝ) :
@@ -355,9 +264,6 @@ lemma meanAbs_sum_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (s 
   apply mul_le_mul_of_nonneg_right _ (hpos ω).le
   exact Finset.abs_sum_le_sum_abs (fun t => g t ω) s
 
-
-
-
 lemma var_le_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) :
     Lindeberg.var μ (T.evalR)
@@ -366,7 +272,6 @@ lemma var_le_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (h
   have hstep1 := var_le_meanAbs (μ := μ) hpos hμ1
     (f := T.evalR) (fun ω => T.evalR_nonneg ω) (fun ω => T.evalR_le_one ω)
   refine hstep1.trans ?_
-  
   have hrw : meanAbs μ (fun ω => T.evalR ω - mean μ (T.evalR))
       = meanAbs μ (fun ω => ∑ t ∈ Finset.range (treeDepth T),
             (adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω)) := by
@@ -379,26 +284,15 @@ lemma var_le_sum_step {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (h
   exact meanAbs_sum_le hpos (Finset.range (treeDepth T))
     (fun t ω => adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω)
 
-
-
-
-
-
-
-
-
-
+/-- The indicator that `e` is the coordinate queried at step `t + 1` along the path of `ω`. -/
 noncomputable def freshAt (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E) : ℝ :=
   if e ∈ pathPrefix T ω (t + 1) ∧ e ∉ pathPrefix T ω t then (1 : ℝ) else 0
 
-
-
+/-- The revealment of `e`: the `μ`-probability that the decision tree queries `e`. -/
 noncomputable def revealmentMu (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (e : E) : ℝ :=
   mean μ (fun ω => if e ∈ T.queried ω then (1 : ℝ) else 0)
 
-
-
-
+omit [Fintype E] in
 lemma freshAt_eq_diff (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E) :
     freshAt T ω t e
       = (if e ∈ pathPrefix T ω (t + 1) then (1 : ℝ) else 0)
@@ -406,15 +300,13 @@ lemma freshAt_eq_diff (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) (e : E
   unfold freshAt
   by_cases h1 : e ∈ pathPrefix T ω (t + 1)
   · by_cases h0 : e ∈ pathPrefix T ω t
-    · rw [if_neg (by tauto), if_pos h1, if_pos h0]; ring
-    · rw [if_pos ⟨h1, h0⟩, if_pos h1, if_neg h0]; ring
+    · rw [ite_eq_right (by tauto), ite_eq_left h1, ite_eq_left h0]; ring
+    · rw [ite_eq_left ⟨h1, h0⟩, ite_eq_left h1, ite_eq_right h0]; ring
   · have h0 : e ∉ pathPrefix T ω t := fun hmem =>
       h1 (pathPrefix_mono T ω (Nat.le_succ t) hmem)
-    rw [if_neg (by tauto), if_neg h1, if_neg h0]; ring
+    rw [ite_eq_right (by tauto), ite_eq_right h1, ite_eq_right h0]; ring
 
-
-
-
+omit [Fintype E] in
 lemma sum_freshAt_eq_queried (T : DecisionTree E) (ω : ConfigSpace E) (e : E) :
     ∑ t ∈ Finset.range (treeDepth T), freshAt T ω t e
       = if e ∈ T.queried ω then (1 : ℝ) else 0 := by
@@ -423,8 +315,7 @@ lemma sum_freshAt_eq_queried (T : DecisionTree E) (ω : ConfigSpace E) (e : E) :
   rw [pathPrefix_depth_eq_queried, pathPrefix_zero]
   simp
 
-
-
+omit [Fintype E] in
 lemma pathPrefix_succ_eq_or_insert (T : DecisionTree E) (ω : ConfigSpace E) (t : ℕ) :
     pathPrefix T ω (t + 1) = pathPrefix T ω t ∨
       ∃ a, a ∉ pathPrefix T ω t ∧ pathPrefix T ω (t + 1) = insert a (pathPrefix T ω t) := by
@@ -444,29 +335,24 @@ lemma pathPrefix_succ_eq_or_insert (T : DecisionTree E) (ω : ConfigSpace E) (t 
       have IH : pathPrefix br ω (k + 1) = pathPrefix br ω k ∨
           ∃ a, a ∉ pathPrefix br ω k ∧ pathPrefix br ω (k + 1) = insert a (pathPrefix br ω k) := by
         by_cases he : ω eN
-        · simp only [hbr, he, if_true]; exact IHl ω k
-        · simp only [hbr, he, Bool.false_eq_true, if_false]; exact IHr ω k
+        · simp only [hbr, he, ite_true]; exact IHl ω k
+        · simp only [hbr, he, Bool.false_eq_true, ite_false]; exact IHr ω k
       rcases IH with heq | ⟨a, hanew, ha⟩
       · left; rw [heq]
       · rw [ha]
         by_cases haeN : a = eN
         · subst haeN; left; rw [Finset.insert_comm, Finset.insert_idem]
         · by_cases heNmem : eN ∈ pathPrefix br ω k
-          · 
-            right; refine ⟨a, ?_, ?_⟩
+          · right; refine ⟨a, ?_, ?_⟩
             · rw [Finset.mem_insert]; rintro (rfl | hmem)
               · exact haeN rfl
               · exact hanew hmem
             · rw [Finset.insert_comm]
-          · 
-            
-            right; refine ⟨a, ?_, ?_⟩
+          · right; refine ⟨a, ?_, ?_⟩
             · rw [Finset.mem_insert]; rintro (rfl | hmem)
               · exact haeN rfl
               · exact hanew hmem
             · rw [Finset.insert_comm]
-
-
 
 lemma adaptM_step_eq_of_prefix_eq {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (ω : ConfigSpace E)
@@ -474,22 +360,15 @@ lemma adaptM_step_eq_of_prefix_eq {μ : ConfigSpace E → ℝ} (T : DecisionTree
     adaptM μ T f (t + 1) ω = adaptM μ T f t ω := by
   unfold adaptM; rw [h]
 
-
-
-
-
 lemma abs_step_eq_sum_freshAt {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) (t : ℕ) (ω : ConfigSpace E) :
     |adaptM μ T f (t + 1) ω - adaptM μ T f t ω|
       = ∑ e, |adaptM μ T f (t + 1) ω - adaptM μ T f t ω| * freshAt T ω t e := by
   by_cases hgrow : pathPrefix T ω (t + 1) = pathPrefix T ω t
-  · 
-    rw [adaptM_step_eq_of_prefix_eq T f t ω hgrow]
+  · rw [adaptM_step_eq_of_prefix_eq T f t ω hgrow]
     simp only [sub_self, abs_zero, zero_mul, Finset.sum_const_zero]
-  · 
-    have hsub : pathPrefix T ω t ⊆ pathPrefix T ω (t + 1) :=
+  · have hsub : pathPrefix T ω t ⊆ pathPrefix T ω (t + 1) :=
       pathPrefix_mono T ω (Nat.le_succ t)
-    
     have hsumfresh : (∑ e, freshAt T ω t e)
         = ((pathPrefix T ω (t + 1) \ pathPrefix T ω t).card : ℝ) := by
       unfold freshAt
@@ -502,8 +381,8 @@ lemma abs_step_eq_sum_freshAt {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
       · intro a _ b _ hab; exact hab
       · intro e he
         rw [Finset.mem_sdiff] at he
-        exact ⟨e, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨he.1, he.2⟩, rfl⟩
-    
+        exact ⟨e, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨he.1, he.2⟩,
+            rfl⟩
     have hcard1 : (pathPrefix T ω (t + 1) \ pathPrefix T ω t).card = 1 := by
       rcases pathPrefix_succ_eq_or_insert T ω t with heq | ⟨a, hanew, ha⟩
       · exact absurd heq hgrow
@@ -512,42 +391,12 @@ lemma abs_step_eq_sum_freshAt {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     rw [← Finset.mul_sum, hsumfresh]
     simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The step covariance bound: each martingale step along the tree is bounded by the covariance of
+  `f` with the freshly queried coordinate. -/
 def StepCovBound (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (f : ConfigSpace E → ℝ) : Prop :=
   ∀ (t : ℕ) (e : E),
     mean μ (fun ω => |adaptM μ T f (t + 1) ω - adaptM μ T f t ω| * freshAt T ω t e)
       ≤ Lindeberg.cov μ f (coord e) * mean μ (fun ω => freshAt T ω t e)
-
-
 
 lemma sum_step_eq_sum_edge {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
     (f : ConfigSpace E → ℝ) :
@@ -558,14 +407,11 @@ lemma sum_step_eq_sum_edge {μ : ConfigSpace E → ℝ} (T : DecisionTree E)
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro t _
-  
   unfold meanAbs mean
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro ω _
   rw [abs_step_eq_sum_freshAt T f t ω, Finset.sum_mul]
-
-
 
 lemma revealmentMu_eq_sum {μ : ConfigSpace E → ℝ} (T : DecisionTree E) (e : E) :
     revealmentMu μ T e
@@ -576,17 +422,14 @@ lemma revealmentMu_eq_sum {μ : ConfigSpace E → ℝ} (T : DecisionTree E) (e :
   intro ω _
   rw [← Finset.sum_mul, sum_freshAt_eq_queried T ω e]
 
-
 lemma mean_freshAt_nonneg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (t : ℕ) (e : E) :
     0 ≤ mean μ (fun ω => freshAt T ω t e) := by
   unfold mean
   apply Finset.sum_nonneg; intro ω _
   refine mul_nonneg ?_ (hpos ω).le
-  show 0 ≤ freshAt T ω t e
+  change 0 ≤ freshAt T ω t e
   unfold freshAt; split <;> norm_num
-
-
 
 lemma cov_coord_nonneg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {f : ConfigSpace E → ℝ} (hf : Monotone f) (e : E) :
@@ -595,39 +438,20 @@ lemma cov_coord_nonneg {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (
   unfold Lindeberg.cov
   linarith [hfkg]
 
+/-! ## B. OSSS along the tree -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) (hStep : StepCovBound μ T (T.evalR)) :
     Lindeberg.var μ (T.evalR)
       ≤ ∑ e, revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (coord e) := by
-  
   have h1 := var_le_sum_step hpos hμ1 T
   rw [sum_step_eq_sum_edge T (T.evalR)] at h1
   refine h1.trans ?_
-  
   apply Finset.sum_le_sum
   intro e _
-  
   calc ∑ t ∈ Finset.range (treeDepth T),
-        mean μ (fun ω => |adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω| * freshAt T ω t e)
+        mean μ (fun ω => |adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω| * freshAt T ω
+            t e)
       ≤ ∑ t ∈ Finset.range (treeDepth T),
           Lindeberg.cov μ (T.evalR) (coord e) * mean μ (fun ω => freshAt T ω t e) :=
         Finset.sum_le_sum (fun t _ => hStep t e)
@@ -636,15 +460,7 @@ theorem tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 
     _ = revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (coord e) := by
         rw [revealmentMu_eq_sum]; ring
 
-
-
-
-
-
-
-
-
-theorem tree_osss_revealment_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma tree_osss_revealment_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (T : DecisionTree E)
     (hfmono : Monotone (T.evalR)) (hStep : StepCovBound μ T (T.evalR))
     (D : ℝ) (hD : ∀ e, revealmentMu μ T e ≤ D) :
@@ -657,16 +473,7 @@ theorem tree_osss_revealment_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
     cov_coord_nonneg hpos hμ1 hFKG hfmono e
   exact mul_le_mul_of_nonneg_right (hD e) hcov
 
-
-
-
-
-
-
-
-
-
-theorem monotonicOSSSBound_tree {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma monotonicOSSSBound_tree {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (T : DecisionTree E)
     (hfmono : Monotone (T.evalR)) (hStep : StepCovBound μ T (T.evalR))
     (D : ℝ) (hD : ∀ e, revealmentMu μ T e ≤ D) :
@@ -679,7 +486,6 @@ theorem monotonicOSSSBound_tree {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
   apply Finset.sum_congr rfl
   intro e _
   congr 1
-  
   rw [← Lindeberg.cov_eq_genCov, ← Lindeberg.coord_eq_genCoord]
   unfold Lindeberg.cov Lindeberg.mean
   rw [show (fun ω => T.evalR ω * coord e ω) = (fun ω => coord e ω * T.evalR ω) from by
@@ -688,24 +494,11 @@ theorem monotonicOSSSBound_tree {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
 
 end Analytic
 
-
-
-
-
-
-
-
-
-
 section FK
 
 open MonotonicFK OSSS.MonotonicMeasure
 
-
-
-
-
-theorem fk_tree_osss {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_tree_osss {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (T : DecisionTree (Sym2 V))
     (hStep : StepCovBound (fkMass G p q) T (T.evalR)) :
@@ -716,14 +509,7 @@ theorem fk_tree_osss {V : Type*} [Fintype V] [DecidableEq V]
   exact tree_osss (fun ω => fkMass_pos G hp hp1 hq0 ω)
     (fkMass_sum_eq_one G hp hp1 hq0) T hStep
 
-
-
-
-
-
-
-
-theorem fk_monotonicOSSSBound_tree {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_monotonicOSSSBound_tree {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (T : DecisionTree (Sym2 V))
     (hfmono : Monotone (T.evalR)) (hStep : StepCovBound (fkMass G p q) T (T.evalR))

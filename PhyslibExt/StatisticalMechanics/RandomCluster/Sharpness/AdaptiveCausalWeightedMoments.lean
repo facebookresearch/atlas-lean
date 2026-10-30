@@ -6,14 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalRootFlip
+
+/-!
+# Coordinate-weighted marginals of flipped cross triples
+
+Marginals of flipped cross-triple probabilities weighted by a coordinate, and their structured
+orientations.
+
+## i. Overview
+
+Coordinate-weighted analogues of the marginal identities of `AdaptiveCausalMoments`, used to
+evaluate the cross-flip moment. Unconditional. Part of the causal-kernel proof of the decision-tree
+OSSS inequality for monotonic measures (`AdaptiveCausalKernel` →
+`AdaptiveCausalOSSS.adaptive_tree_osss`).
+
+## ii. Key results
+
+- `sum_coord_mul_flipCrossTripleProb_right_extendDecisionTreeTriple`: weighted right marginal.
+- `flipCrossTripleProb_structured_orientations`: orientation identity.
+
+## iii. Table of contents
+
+- A. Weighted marginals
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
@@ -25,9 +48,9 @@ open Coding Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Weighted marginals -/
 
-
-theorem flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
+lemma flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (F : Finset E) (driver left rightSeed : ConfigSpace E) (z : E)
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -44,7 +67,7 @@ theorem flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -59,7 +82,7 @@ theorem flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipCrossTripleProb, if_true, flipBaseProb]
+              simp only [flipCrossTripleProb, ite_true, flipBaseProb]
               simpa using
                 baseSum_coord_mul_crossTripleProb_right_rootFlip_eq_cExp_mul_condMass
                   mu hpos F driver left rightSeed q hqR
@@ -125,7 +148,7 @@ theorem flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
                       condProbClosed mu F rightSeed q :=
                     condProbClosed_congr mu F right rightSeed q
                       (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipCrossTripleProb, hr, hbit]
                   simp [crossTripleWeight, hzq, mul_add, mul_assoc]
                   ring
@@ -161,20 +184,18 @@ theorem flipCrossTripleProb_right_coord_marginal_extendDecisionTreeTriple
                 (Lindeberg.coord z) rightSeed
               rw [hcoordMean] at hcExp
               simp only [setOpen, setClosed] at hcExp
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               by_cases hlq : left q <;>
                 simp only [hlq, Bool.false_eq_true, ↓reduceIte] at hchain ⊢ <;>
                 rw [hchain, hcExp] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver rightSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver rightSeed t known R hR
 
-
-
-theorem flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
+lemma flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (F : Finset E) (driver leftSeed right : ConfigSpace E) (z : E)
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -191,7 +212,7 @@ theorem flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -206,7 +227,7 @@ theorem flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipCrossTripleProb, if_true, flipBaseProb]
+              simp only [flipCrossTripleProb, ite_true, flipBaseProb]
               simpa using
                 baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
                   mu hpos F driver right leftSeed q hqR
@@ -272,7 +293,7 @@ theorem flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
                       condProbClosed mu F leftSeed q :=
                     condProbClosed_congr mu F left leftSeed q
                       (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipCrossTripleProb, hl, hbit]
                   simp [crossTripleWeight, hzq, mul_add, mul_assoc]
                   ring
@@ -303,18 +324,18 @@ theorem flipCrossTripleProb_left_coord_marginal_extendDecisionTreeTriple
                 (Lindeberg.coord z) leftSeed
               rw [hcoordMean] at hcExp
               simp only [setOpen, setClosed] at hcExp
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               by_cases hrq : right q <;>
                 simp only [hrq, Bool.false_eq_true, ↓reduceIte] at hchain ⊢ <;>
                 rw [hchain, hcExp] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver leftSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver leftSeed t known R hR
 
-theorem sum_coord_mul_flipCrossTripleProb_right_extendDecisionTreeTriple
+lemma sum_coord_mul_flipCrossTripleProb_right_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver left rightSeed : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :
@@ -329,7 +350,7 @@ theorem sum_coord_mul_flipCrossTripleProb_right_extendDecisionTreeTriple
   rw [Lindeberg.cExp_empty hmu (Lindeberg.coord z) rightSeed] at h
   simpa [baseSum, Agree, condMass, condNorm_empty, hmu] using h
 
-theorem sum_coord_mul_flipCrossTripleProb_left_extendDecisionTreeTriple
+lemma sum_coord_mul_flipCrossTripleProb_left_extendDecisionTreeTriple
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (driver leftSeed right : ConfigSpace E)
     (z : E) (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) :
@@ -344,9 +365,7 @@ theorem sum_coord_mul_flipCrossTripleProb_left_extendDecisionTreeTriple
   rw [Lindeberg.cExp_empty hmu (Lindeberg.coord z) leftSeed] at h
   simpa [baseSum, Agree, condMass, condNorm_empty, hmu] using h
 
-
-
-theorem flipCrossTripleProb_structured_orientations
+lemma flipCrossTripleProb_structured_orientations
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (hmu : ∑ omega, mu omega = 1) (T : DecisionTree E)
     (seed : ConfigSpace E) (t : ℕ) (z : E) :

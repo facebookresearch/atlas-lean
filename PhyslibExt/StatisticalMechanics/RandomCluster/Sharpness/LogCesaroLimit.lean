@@ -6,15 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.OSSS.Integration
@@ -23,12 +14,41 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredDomChain
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Harmonic.Bounds
 
+/-!
+# Logarithmic Cesàro limits and the mean-field lower bound
+
+Logarithmic Cesàro averages of convergent sequences, their use for the wired box crossing, and the
+mean-field lower bound at the threshold derived from limsup estimates.
+
+## i. Overview
+
+`logCesaro u n = (1 / log n) ∑ u i / i` converges to the limit of `u` (`logCesaro_tendsto`), via
+`harmonicReal n / log n → 1`. For the threshold set of a monotone family of sums, the limsup
+estimates give the mean-field lower bounds `meanField_lower_of_threshold_rate` and
+`meanField_lower_at_threshold`. These real-analysis lemmas are conditional on their monotonicity and
+limit hypotheses. `wiredBox_logCesaro_tendsto` is unconditional.
+
+## ii. Key results
+
+- `logCesaro_tendsto`: logarithmic Cesàro averages preserve limits.
+- `meanField_lower_at_threshold`: mean-field lower bound above the threshold.
+
+## iii. Table of contents
+
+- A. Harmonic numbers and logarithmic Cesàro averages
+- B. Thresholds and mean-field bounds
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open Filter Topology Real Finset
 
-set_option linter.style.longLine false
 
 namespace StatMech
 namespace OSSS
@@ -36,7 +56,9 @@ namespace LogCesaroLimit
 
 open BetaThresholdBound
 
+/-! ## A. Harmonic numbers and logarithmic Cesàro averages -/
 
+/-- The harmonic number `∑_{i=1}^{n} 1 / i` as a real number. -/
 noncomputable def harmonicReal (n : ℕ) : ℝ :=
   ∑ i ∈ Finset.Ico 1 (n + 1), 1 / (i : ℝ)
 
@@ -50,8 +72,7 @@ lemma harmonicReal_eq (n : ℕ) : harmonicReal n = (harmonic n : ℝ) := by
   · intro i _
     rw [one_div]
 
-
-theorem harmonicReal_div_log_tendsto_one :
+lemma harmonicReal_div_log_tendsto_one :
     Tendsto (fun n => harmonicReal n / Real.log (n : ℝ)) atTop (nhds 1) := by
   have hdiff : Tendsto (fun n : ℕ => harmonicReal n - Real.log (n : ℝ)) atTop
       (nhds Real.eulerMascheroniConstant) := by
@@ -72,11 +93,11 @@ theorem harmonicReal_div_log_tendsto_one :
   field_simp
   ring
 
-
+/-- The logarithmic Cesàro average `(1 / log n) ∑_{i=1}^{n} u i / i`. -/
 noncomputable def logCesaro (u : ℕ → ℝ) (n : ℕ) : ℝ :=
   (1 / Real.log (n : ℝ)) * ∑ i ∈ Finset.Ico 1 (n + 1), u i / (i : ℝ)
 
-private theorem weighted_error_tendsto_zero {u : ℕ → ℝ}
+private lemma weighted_error_tendsto_zero {u : ℕ → ℝ}
     (hu : Tendsto u atTop (nhds 0)) :
     Tendsto (fun n => logCesaro u n) atTop (nhds 0) := by
   rw [Metric.tendsto_atTop]
@@ -182,7 +203,7 @@ private theorem weighted_error_tendsto_zero {u : ℕ → ℝ}
       exact add_lt_add hheadn htailFinal
     _ = ε := by ring
 
-
+/-- Logarithmic Cesàro averages preserve limits. -/
 theorem logCesaro_tendsto {u : ℕ → ℝ} {l : ℝ} (hu : Tendsto u atTop (nhds l)) :
     Tendsto (fun n => logCesaro u n) atTop (nhds l) := by
   have herr : Tendsto (fun n => u n - l) atTop (nhds 0) := by
@@ -217,15 +238,12 @@ theorem logCesaro_tendsto {u : ℕ → ℝ} {l : ℝ} (hu : Tendsto u atTop (nhd
     simpa using hzero.add hnorm
   exact hadd.congr' (hdecomp.mono fun _ h => h.symm)
 
-
-theorem meanLogTerm_tendsto {fseq : ℕ → ℝ → ℝ} {x l : ℝ}
+lemma meanLogTerm_tendsto {fseq : ℕ → ℝ → ℝ} {x l : ℝ}
     (h : Tendsto (fun n => fseq n x) atTop (nhds l)) :
     Tendsto (fun n => Integration.meanLogTerm fseq n x) atTop (nhds l) := by
   simpa only [Integration.meanLogTerm, logCesaro] using logCesaro_tendsto h
 
-
-
-theorem logRatio_partialSum_tendsto_one {u : ℕ → ℝ} {l : ℝ}
+lemma logRatio_partialSum_tendsto_one {u : ℕ → ℝ} {l : ℝ}
     (hu : Tendsto u atTop (nhds l)) (hl : 0 < l) :
     Tendsto
       (BetaThresholdBound.logRatio
@@ -262,21 +280,16 @@ theorem logRatio_partialSum_tendsto_one {u : ℕ → ℝ} {l : ℝ}
   rw [hS, Real.log_mul hn0 havgn.ne']
   field_simp
 
-
-
-theorem wiredBox_logCesaro_tendsto {d : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
+lemma wiredBox_logCesaro_tendsto {d : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Tendsto
       (fun n => logCesaro
         (fun k => IsingFK.boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) k) n)
       atTop (nhds (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))) :=
   logCesaro_tendsto (FK.boxBoundaryConnProfile_tendsto hp hp1)
 
+/-! ## B. Thresholds and mean-field bounds -/
 
-
-
-
-
-theorem thresholdSet_upward {Sgf : ℝ → ℕ → ℝ}
+lemma thresholdSet_upward {Sgf : ℝ → ℕ → ℝ}
     (hmono : ∀ {a b : ℝ}, a ≤ b → ∀ n, Sgf a n ≤ Sgf b n)
     (hpos : ∀ b n, 2 ≤ n → 0 < Sgf b n)
     (hcob : ∀ b, IsCoboundedUnder (· ≤ ·) atTop (logRatio (Sgf b)))
@@ -292,10 +305,7 @@ theorem thresholdSet_upward {Sgf : ℝ → ℕ → ℝ}
       (Real.log_le_log (hpos a n hn) (hmono hab n))
   exact ha.trans (limsup_le_limsup hev (hcob a) (hbdd b))
 
-
-
-
-theorem one_le_limsup_of_beta1_lt {Sgf : ℝ → ℕ → ℝ}
+lemma one_le_limsup_of_beta1_lt {Sgf : ℝ → ℕ → ℝ}
     (hne : (thresholdSet Sgf).Nonempty)
     (hmono : ∀ {a b : ℝ}, a ≤ b → ∀ n, Sgf a n ≤ Sgf b n)
     (hpos : ∀ b n, 2 ≤ n → 0 < Sgf b n)
@@ -307,10 +317,7 @@ theorem one_le_limsup_of_beta1_lt {Sgf : ℝ → ℕ → ℝ}
   obtain ⟨a, ha, hab⟩ := exists_lt_of_csInf_lt hne hb
   exact thresholdSet_upward hmono hpos hcob hbdd hab.le ha
 
-
-
-
-theorem thresholdRate_limit_data {Sgf : ℝ → ℕ → ℝ}
+lemma thresholdRate_limit_data {Sgf : ℝ → ℕ → ℝ}
     (hne : (thresholdSet Sgf).Nonempty)
     (hmono : ∀ {a b : ℝ}, a ≤ b → ∀ n, Sgf a n ≤ Sgf b n)
     (hpos : ∀ b n, 2 ≤ n → 0 < Sgf b n)
@@ -321,12 +328,7 @@ theorem thresholdRate_limit_data {Sgf : ℝ → ℕ → ℝ}
   let m := limsup (logRatio (Sgf b)) atTop
   exact ⟨fun _ => m, m, tendsto_const_nhds, one_le_limsup_of_beta1_lt hne hmono hpos hcob hbdd hb⟩
 
-
-
-
-
-
-theorem meanField_lower_of_limsup {T : ℕ → ℝ → ℝ} {rate error : ℕ → ℝ}
+lemma meanField_lower_of_limsup {T : ℕ → ℝ → ℝ} {rate error : ℕ → ℝ}
     {β' β fβ fβ' : ℝ} (hββ : β' ≤ β)
     (hTβ : Tendsto (fun n => T n β) atTop (nhds fβ))
     (hTβ' : Tendsto (fun n => T n β') atTop (nhds fβ'))
@@ -346,13 +348,7 @@ theorem meanField_lower_of_limsup {T : ℕ → ℝ → ℝ} {rate error : ℕ �
     β' β fβ fβ' (limsup rate atTop) hββ hm1
     (hTβ.comp hs) (hTβ'.comp hs) hmseq (hs.eventually hbound)
 
-
-
-
-
-
-
-theorem meanField_lower_of_threshold_rate
+lemma meanField_lower_of_threshold_rate
     (fseq fpseq : ℕ → ℝ → ℝ) (Sig : ℕ → ℝ → ℝ)
     (β' β fβ fβ' C : ℝ) (hββ : β' ≤ β)
     (hf : ∀ i x, x ∈ Set.Icc β' β →
@@ -399,10 +395,7 @@ theorem meanField_lower_of_threshold_rate
     _ ≤ (Real.log (Sig (n + 1) x) - Real.log (Sig 1 x)) / Real.log (n : ℝ) :=
       (div_le_div_iff_of_pos_right hlogn).2 (by linarith)
 
-
-
-
-theorem meanField_lower_at_threshold {f : ℝ → ℝ} {β₁ β : ℝ} (hβ : β₁ < β)
+lemma meanField_lower_at_threshold {f : ℝ → ℝ} {β₁ β : ℝ} (hβ : β₁ < β)
     (hfnn : ∀ β', β₁ < β' → β' < β → 0 ≤ f β')
     (hinterior : ∀ β', β₁ < β' → β' < β →
       β - β' ≤ f β - f β') :

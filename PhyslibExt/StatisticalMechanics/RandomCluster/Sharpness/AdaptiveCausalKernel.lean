@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCodingLaw
@@ -19,14 +14,57 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptDisin
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PredictableTreeQuery
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
+/-!
+# Causal coupling kernels for decision trees
+
+Causal orders that reveal coordinates adaptively, the coupled samples they generate from uniform
+labels, the paired and triple couplings, and the fiber inequalities that drive the decision-tree
+OSSS inequality for monotonic measures.
+
+## i. Overview
+
+A `CausalOrder R` reveals the coordinates of `R` one at a time; at each node a flag decides whether
+the coordinate is resampled independently or shared. Feeding uniform labels through the conditional
+quantile map gives a coupled pair (base, target) or triple (base, left, right) of configurations
+(`pairedCausalOutputs`, `tripleCausalOutputs`). Their laws are computed exactly as products over the
+realized schedule (`jointProb`, `tripleJointProb`, `crossTripleJointProb`). For a monotonic measure
+and monotone observables, FKG on each fiber gives `causal_fkg_cross_fiber` and
+`tripleCube_product_le_pairedCube_product`, and the decision-tree step bound
+`decisionTree_branch_adapt_step_fiber_le`. All results are unconditional given positivity and
+monotonicity of the measure.
+
+## ii. Key results
+
+- `tripleCube_causal_integral_eq_crossTripleJointProb`: exact law of the triple coupling.
+- `causal_fkg_cross_fiber`: FKG for the causal coupling on a fiber.
+- `tripleCube_product_le_pairedCube_product`: the triple coupling is dominated by the paired one for
+  monotone observables.
+- `decisionTree_branch_adapt_step_fiber_le`: the adaptive step bound along a decision tree.
+
+## iii. Table of contents
+
+- A. Causal orders and realized lists
+- B. Paired causal outputs
+- C. Triple orders
+- D. Orders from decision trees
+- E. Coupling weights
+- F. Triple causal outputs
+- G. Probabilities of realized schedules
+- H. Energies and fiber steps
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
-set_option linter.unusedVariables false
 
 namespace StatMech
 namespace OSSS
@@ -36,60 +74,59 @@ open Coding Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-! ## A. Causal orders and realized lists -/
 
-
-
-
+/-- An adaptive revealment order on the coordinates `R`: at each node a coordinate `e ∈ R`, a flag
+  saying whether it is resampled independently, and the remaining order chosen as a function of
+  the revealed value. -/
 inductive CausalOrder : Finset E → Type _
   | done : CausalOrder ∅
   | node {R : Finset E} (e : E) (he : e ∈ R)
       (independent : Bool) (closed opened : CausalOrder (R.erase e)) : CausalOrder R
 
-
-
-
+/-- The coordinates revealed by a causal order on the configuration `ω`, in order. -/
 def realizedList : {R : Finset E} → CausalOrder R → ConfigSpace E → List E
   | _, .done, _ => []
   | _, .node e _ _ closed opened, base =>
       if base e then e :: realizedList opened base
       else e :: realizedList closed base
 
-
+omit [Fintype E] in
 lemma realizedList_toFinset {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : (realizedList S base).toFinset = R := by
   induction S with
   | done => rfl
   | @node R e he independent closed opened ihc iho =>
       by_cases hb : base e
-      · simp only [realizedList, hb, if_true, List.toFinset_cons]
+      · simp only [realizedList, hb, ite_true, List.toFinset_cons]
         rw [iho, Finset.insert_erase he]
-      · simp only [realizedList, hb, Bool.false_eq_true, if_false, List.toFinset_cons]
+      · simp only [realizedList, hb, Bool.false_eq_true, ite_false, List.toFinset_cons]
         rw [ihc, Finset.insert_erase he]
 
-
+omit [Fintype E] in
 lemma realizedList_nodup {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : (realizedList S base).Nodup := by
   induction S with
   | done => simp [realizedList]
   | @node R e he independent closed opened ihc iho =>
       by_cases hb : base e
-      · simp only [realizedList, hb, if_true, List.nodup_cons]
+      · simp only [realizedList, hb, ite_true, List.nodup_cons]
         refine ⟨?_, iho⟩
         rw [← List.mem_toFinset, realizedList_toFinset]
         simp
-      · simp only [realizedList, hb, Bool.false_eq_true, if_false, List.nodup_cons]
+      · simp only [realizedList, hb, Bool.false_eq_true, ite_false, List.nodup_cons]
         refine ⟨?_, ihc⟩
         rw [← List.mem_toFinset, realizedList_toFinset]
         simp
 
+omit [Fintype E] in
 lemma realizedList_length {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : (realizedList S base).length = R.card := by
   rw [← List.toFinset_card_of_nodup (realizedList_nodup S base),
     realizedList_toFinset]
 
-
-
-
+/-- The bijection between positions `Fin |E|` and coordinates given by the realized list of a full
+  causal order. -/
 noncomputable def realizedEquiv
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E) :
     Fin (Fintype.card E) ≃ E := by
@@ -112,8 +149,6 @@ lemma realizedEquiv_symm_val
     ((realizedEquiv S base).symm e : ℕ) = (realizedList S base).idxOf e := by
   unfold realizedEquiv
   simp [List.Nodup.getEquivOfForallMemList]
-
-
 
 lemma prefixSet_realizedEquiv (S : CausalOrder (Finset.univ : Finset E))
     (base : ConfigSpace E) (e : E) :
@@ -146,9 +181,7 @@ lemma thr_realizedEquiv (μ : ConfigSpace E → ℝ)
   unfold thr
   rw [prefixSet_realizedEquiv, Equiv.apply_symm_apply]
 
-
-
-
+/-- Whether coordinate `e` is resampled independently in the causal order run on `ω`. -/
 def independentAt : {R : Finset E} → CausalOrder R →
     ConfigSpace E → E → Bool
   | _, .done, _, _ => false
@@ -157,17 +190,16 @@ def independentAt : {R : Finset E} → CausalOrder R →
       else if base e then independentAt opened base z
       else independentAt closed base z
 
-
-
-
+/-- The labels driving the target sample: `V` at independently resampled coordinates and `U`
+  elsewhere, along the realized order. -/
 noncomputable def causalMixLabels
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (U V : Fin (Fintype.card E) → ℝ) : Fin (Fintype.card E) → ℝ :=
   fun i => if independentAt S base (realizedEquiv S base i) then V i else U i
 
+/-! ## B. Paired causal outputs -/
 
-
-
+/-- The probability atom of the coupled pair `(base, target)` for a frozen causal order. -/
 noncomputable def frozenCodeAtom (mu : ConfigSpace E → ℝ)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) :
@@ -179,7 +211,7 @@ noncomputable def frozenCodeAtom (mu : ConfigSpace E → ℝ)
          codeMap mu (sigma : Fin (Fintype.card E) → E)
            (causalMixLabels S base U V) = target}
 
-
+/-- The raw (unnormalized) weight of the coupled pair `(base, target)` for a frozen causal order. -/
 noncomputable def frozenRawPair (mu : ConfigSpace E → ℝ)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) (i : Fin (Fintype.card E)) : Set (ℝ × ℝ) :=
@@ -190,11 +222,7 @@ noncomputable def frozenRawPair (mu : ConfigSpace E → ℝ)
     (sigma : Fin (Fintype.card E) → E) target i
   if independentAt S base (sigma i) then A ×ˢ B else (A ∩ B) ×ˢ Set.univ
 
-
-
-
-
-theorem frozenCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
+lemma frozenCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) :
     frozenCodeAtom mu S base target =
@@ -220,7 +248,7 @@ theorem frozenCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
       (StatMech.OSSS.GrandCoupling.codeMap_fibre_eq_rawbox mu sigma target)
       (causalMixLabels S base (fun i => (z i).1) (fun i => (z i).2))
     simpa [Set.mem_pi] using h
-  simp only [frozenCodeAtom, Set.mem_setOf_eq]
+  simp only [frozenCodeAtom, Set.mem_ofPred_eq]
   change
     (codeMap mu (sigma : Fin (Fintype.card E) → E) (fun i => (z i).1) = base ∧
       codeMap mu (sigma : Fin (Fintype.card E) → E)
@@ -242,32 +270,28 @@ theorem frozenCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
       specialize h i
       simp only [frozenRawPair, hsigma] at h
       by_cases hi : independentAt S base (sigma i)
-      · simp only [hi, if_true, Set.mem_prod] at h
+      · simp only [hi, ite_true, Set.mem_prod] at h
         exact h.1
-      · simp only [hi, Bool.false_eq_true, if_false, Set.mem_prod, Set.mem_inter_iff,
+      · simp only [hi, Bool.false_eq_true, ite_false, Set.mem_prod, Set.mem_inter_iff,
           Set.mem_univ, and_true] at h
         exact h.1
     · intro i
       specialize h i
       simp only [frozenRawPair, hsigma] at h
       by_cases hi : independentAt S base (sigma i)
-      · simp only [hi, if_true, Set.mem_prod] at h
+      · simp only [hi, ite_true, Set.mem_prod] at h
         simpa [causalMixLabels, hsigma, hi] using h.2
-      · simp only [hi, Bool.false_eq_true, if_false, Set.mem_prod, Set.mem_inter_iff,
+      · simp only [hi, Bool.false_eq_true, ite_false, Set.mem_prod, Set.mem_inter_iff,
           Set.mem_univ, and_true] at h
         simpa [causalMixLabels, hsigma, hi] using h.2
 
-
-
-
+/-- The uniform measure on pairs of labels in `[0, 1]²` for each coordinate. -/
 noncomputable def pairedCube (n : ℕ) : Measure (Fin n → (ℝ × ℝ)) :=
   Measure.pi fun _ =>
     (volume.restrict (Set.Icc (0 : ℝ) 1)).prod
       (volume.restrict (Set.Icc (0 : ℝ) 1))
 
-
-
-theorem pairedCube_measurePreserving (n : ℕ) :
+lemma pairedCube_measurePreserving (n : ℕ) :
     MeasurePreserving
       (MeasurableEquiv.arrowProdEquivProdArrow ℝ ℝ (Fin n))
       (pairedCube n) ((GrandCoupling.Vcube n).prod (GrandCoupling.Vcube n)) := by
@@ -276,7 +300,7 @@ theorem pairedCube_measurePreserving (n : ℕ) :
       (fun _ => volume.restrict (Set.Icc (0 : ℝ) 1))
       (fun _ => volume.restrict (Set.Icc (0 : ℝ) 1)))
 
-theorem pairedCube_integral_equiv (n : ℕ)
+lemma pairedCube_integral_equiv (n : ℕ)
     (g : (Fin n → ℝ) × (Fin n → ℝ) → ℝ) :
     (∫ z, g (MeasurableEquiv.arrowProdEquivProdArrow ℝ ℝ (Fin n) z)
         ∂(pairedCube n)) =
@@ -284,10 +308,7 @@ theorem pairedCube_integral_equiv (n : ℕ)
   exact (pairedCube_measurePreserving n).integral_comp
     (MeasurableEquiv.arrowProdEquivProdArrow ℝ ℝ (Fin n)).measurableEmbedding g
 
-
-
-
-theorem pairedCube_frozenCodeAtom (mu : ConfigSpace E → ℝ)
+lemma pairedCube_frozenCodeAtom (mu : ConfigSpace E → ℝ)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) :
     pairedCube (Fintype.card E) (frozenCodeAtom mu S base target) =
@@ -297,39 +318,46 @@ theorem pairedCube_frozenCodeAtom (mu : ConfigSpace E → ℝ)
             (frozenRawPair mu S base target i) := by
   rw [frozenCodeAtom_eq_rawPairBox, pairedCube, Measure.pi_pi]
 
+/-! ## C. Triple orders -/
+
+/-- The mode of a coordinate in the triple coupling: revealed before, at, or after the flip step. -/
 inductive TripleMode where
   | before
   | flip
   | after
   deriving DecidableEq
 
-
+/-- An adaptive revealment order for the triple coupling, carrying a mode at each node. -/
 inductive TripleOrder : Finset E → Type _
   | done : TripleOrder ∅
   | node {R : Finset E} (e : E) (he : e ∈ R) (mode : TripleMode)
       (closed opened : TripleOrder (R.erase e)) : TripleOrder R
 
+/-- Whether the left sample resamples a coordinate of this mode independently. -/
 def TripleMode.leftIndependent : TripleMode → Bool
   | .before => true
   | .flip => false
   | .after => false
 
+/-- Whether the right sample resamples a coordinate of this mode independently. -/
 def TripleMode.rightIndependent : TripleMode → Bool
   | .before => true
   | .flip => true
   | .after => false
 
+/-- The causal order seen by the left sample of a triple order. -/
 def TripleOrder.leftOrder : {R : Finset E} → TripleOrder R → CausalOrder R
   | _, .done => .done
   | _, .node e he mode closed opened =>
       .node e he mode.leftIndependent closed.leftOrder opened.leftOrder
 
+/-- The causal order seen by the right sample of a triple order. -/
 def TripleOrder.rightOrder : {R : Finset E} → TripleOrder R → CausalOrder R
   | _, .done => .done
   | _, .node e he mode closed opened =>
       .node e he mode.rightIndependent closed.rightOrder opened.rightOrder
 
-
+/-- The mode of coordinate `e` in the triple order run on `ω`. -/
 def tripleModeAt : {R : Finset E} → TripleOrder R →
     ConfigSpace E → E → TripleMode
   | _, .done, _, _ => .after
@@ -338,6 +366,7 @@ def tripleModeAt : {R : Finset E} → TripleOrder R →
       else if base e then tripleModeAt opened base z
       else tripleModeAt closed base z
 
+omit [Fintype E] in
 lemma realizedList_leftOrder_eq_rightOrder {R : Finset E} (S : TripleOrder R)
     (base : ConfigSpace E) :
     realizedList S.leftOrder base = realizedList S.rightOrder base := by
@@ -360,6 +389,7 @@ lemma realizedEquiv_leftOrder_eq_rightOrder
   rw [← realizedEquiv_symm_val]
   simp
 
+omit [Fintype E] in
 lemma independentAt_leftOrder {R : Finset E} (S : TripleOrder R)
     (base : ConfigSpace E) (z : E) :
     independentAt S.leftOrder base z = (tripleModeAt S base z).leftIndependent := by
@@ -369,9 +399,10 @@ lemma independentAt_leftOrder {R : Finset E} (S : TripleOrder R)
       simp only [TripleOrder.leftOrder, independentAt, tripleModeAt]
       by_cases hze : z = e
       · simp [hze]
-      · simp only [hze, if_false]
+      · simp only [hze, ite_false]
         split <;> assumption
 
+omit [Fintype E] in
 lemma independentAt_rightOrder {R : Finset E} (S : TripleOrder R)
     (base : ConfigSpace E) (z : E) :
     independentAt S.rightOrder base z = (tripleModeAt S base z).rightIndependent := by
@@ -381,7 +412,7 @@ lemma independentAt_rightOrder {R : Finset E} (S : TripleOrder R)
       simp only [TripleOrder.rightOrder, independentAt, tripleModeAt]
       by_cases hze : z = e
       · simp [hze]
-      · simp only [hze, if_false]
+      · simp only [hze, ite_false]
         split <;> assumption
 
 lemma causalMixLabels_leftOrder_apply
@@ -408,7 +439,6 @@ lemma causalMixLabels_rightOrder_apply
   rw [independentAt_rightOrder]
   cases tripleModeAt S base (realizedEquiv S.rightOrder base i) <;> rfl
 
-
 lemma causalMixLabels_left_eq_right_of_mode_ne_flip
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (U V : Fin (Fintype.card E) → ℝ) (i : Fin (Fintype.card E))
@@ -419,8 +449,6 @@ lemma causalMixLabels_left_eq_right_of_mode_ne_flip
   rw [← realizedEquiv_leftOrder_eq_rightOrder S base]
   cases hm : tripleModeAt S base (realizedEquiv S.leftOrder base i) <;>
     simp_all
-
-
 
 lemma causalMixLabels_leftOrder_eq_rightOrder_of_no_flip
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
@@ -436,31 +464,26 @@ lemma measurable_causalMixLabels_right
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (U : Fin (Fintype.card E) → ℝ) :
     Measurable (fun V => causalMixLabels S base U V) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i
   unfold causalMixLabels
   by_cases h : independentAt S base (realizedEquiv S base i)
   · simpa [h] using
       (measurable_pi_apply i : Measurable (fun V : Fin (Fintype.card E) → ℝ => V i))
-  · simpa [h] using
-      (measurable_const : Measurable (fun _ : Fin (Fintype.card E) → ℝ => U i))
-
-
+  · simp [h]
 
 lemma measurable_causalMixLabels_prod
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E) :
     Measurable (fun p : (Fin (Fintype.card E) → ℝ) ×
         (Fin (Fintype.card E) → ℝ) => causalMixLabels S base p.1 p.2) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro i
   unfold causalMixLabels
   by_cases h : independentAt S base (realizedEquiv S base i)
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact (measurable_pi_apply i).comp measurable_snd
-  · simp only [h, if_false]
+  · simp only [h]
     exact (measurable_pi_apply i).comp measurable_fst
-
-
 
 lemma causalMixLabels_mono_right
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
@@ -473,16 +496,15 @@ lemma causalMixLabels_mono_right
   · simpa [h] using hVV i
   · simp [h]
 
-
-
+/-- The probability atom of the coupled triple for a frozen triple order. -/
 noncomputable def frozenTripleCodeAtom (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) : Set (Fin (Fintype.card E) → (ℝ × ℝ)) :=
   frozenCodeAtom mu S.leftOrder base left ∩
     frozenCodeAtom mu S.rightOrder base right
 
-
-
+/-- The coupled base, left and right configurations obtained from paired labels, with left and right
+  sharing labels. -/
 noncomputable def pairedCausalOutputs (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E) :
     (Fin (Fintype.card E) → (ℝ × ℝ)) →
@@ -506,12 +528,12 @@ lemma measurable_pairedCausalOutputs (mu : ConfigSpace E → ℝ)
   have hsplit : Measurable split := by
     have hU : Measurable (fun z : Fin (Fintype.card E) → (ℝ × ℝ) =>
         fun i => (z i).1) := by
-      apply measurable_pi_lambda
+      apply Measurable.of_eval
       intro i
       exact measurable_fst.comp (measurable_pi_apply i)
     have hV : Measurable (fun z : Fin (Fintype.card E) → (ℝ × ℝ) =>
         fun i => (z i).2) := by
-      apply measurable_pi_lambda
+      apply Measurable.of_eval
       intro i
       exact measurable_snd.comp (measurable_pi_apply i)
     exact hU.prodMk hV
@@ -538,24 +560,25 @@ lemma measurable_pairedCausalOutputs (mu : ConfigSpace E → ℝ)
       (causalMixLabels S.rightOrder base p.1 p.2))) ∘ split)
   exact (hbase.prodMk (hleft.prodMk hright)).comp hsplit
 
-theorem pairedCausalOutputs_fibre (mu : ConfigSpace E → ℝ)
+lemma pairedCausalOutputs_fibre (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     {z | pairedCausalOutputs mu S base z = (base, left, right)} =
       frozenTripleCodeAtom mu S base left right := by
   ext z
   simp only [pairedCausalOutputs, frozenTripleCodeAtom, frozenCodeAtom,
-    Set.mem_setOf_eq, Set.mem_inter_iff, Prod.mk.injEq]
+    Set.mem_ofPred_eq, Set.mem_inter_iff, Prod.mk.injEq]
   rw [realizedEquiv_leftOrder_eq_rightOrder S base]
   tauto
 
+/-- The raw weight of a coupled triple in the paired construction. -/
 noncomputable def frozenTripleRawPair (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) (i : Fin (Fintype.card E)) : Set (ℝ × ℝ) :=
   frozenRawPair mu S.leftOrder base left i ∩
     frozenRawPair mu S.rightOrder base right i
 
-theorem frozenTripleCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
+lemma frozenTripleCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     frozenTripleCodeAtom mu S base left right =
@@ -572,7 +595,7 @@ theorem frozenTripleCodeAtom_eq_rawPairBox (mu : ConfigSpace E → ℝ)
   · intro h
     exact ⟨fun i => (h i).1, fun i => (h i).2⟩
 
-theorem pairedCube_frozenTripleCodeAtom (mu : ConfigSpace E → ℝ)
+lemma pairedCube_frozenTripleCodeAtom (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     pairedCube (Fintype.card E) (frozenTripleCodeAtom mu S base left right) =
@@ -582,7 +605,9 @@ theorem pairedCube_frozenTripleCodeAtom (mu : ConfigSpace E → ℝ)
             (frozenTripleRawPair mu S base left right i) := by
   rw [frozenTripleCodeAtom_eq_rawPairBox, pairedCube, Measure.pi_pi]
 
+/-! ## D. Orders from decision trees -/
 
+/-- The non-adaptive causal order that reveals the coordinates of a duplicate-free list in order. -/
 def fixedListOrder : (l : List E) → l.Nodup → CausalOrder l.toFinset
   | [], _ => .done
   | e :: l, h => by
@@ -596,18 +621,19 @@ def fixedListOrder : (l : List E) → l.Nodup → CausalOrder l.toFinset
         herase.symm ▸ fixedListOrder l ht
       exact CausalOrder.node e hem true child child
 
-
+/-- The non-adaptive causal order revealing a `Finset` in the order of `Finset.toList`. -/
 noncomputable def fixedOrder (R : Finset E) : CausalOrder R :=
   R.toList_toFinset ▸ fixedListOrder R.toList R.nodup_toList
 
+/-- The triple order with every coordinate in mode `before`, built from a causal order. -/
 def TripleOrder.beforeOfCausal : {R : Finset E} → CausalOrder R → TripleOrder R
   | _, .done => .done
   | _, .node e he _ closed opened =>
       .node e he .before (TripleOrder.beforeOfCausal closed)
         (TripleOrder.beforeOfCausal opened)
 
-
-
+/-- The triple order following a decision tree, flipping at the given step (if any), and extended to
+  the unqueried coordinates. -/
 noncomputable def extendDecisionTreeTriple :
     Option ℕ → DecisionTree E → ConfigSpace E → (R : Finset E) → TripleOrder R
   | _, .leaf _, _, R => TripleOrder.beforeOfCausal (fixedOrder R)
@@ -626,6 +652,7 @@ noncomputable def extendDecisionTreeTriple :
       else if known e then extendDecisionTreeTriple phase opened known R
       else extendDecisionTreeTriple phase closed known R
 
+omit [Fintype E] in
 lemma tripleModeAt_beforeOfCausal_ne_flip {R : Finset E}
     (S : CausalOrder R) (base : ConfigSpace E) (z : E) :
     tripleModeAt (TripleOrder.beforeOfCausal S) base z ≠ .flip := by
@@ -635,9 +662,10 @@ lemma tripleModeAt_beforeOfCausal_ne_flip {R : Finset E}
       simp only [TripleOrder.beforeOfCausal, tripleModeAt]
       by_cases hze : z = e
       · simp [hze]
-      · simp only [hze, if_false]
+      · simp only [hze, ite_false]
         split <;> assumption
 
+omit [Fintype E] in
 lemma tripleModeAt_extendDecisionTreeTriple_none_ne_flip
     (T : DecisionTree E) (known base : ConfigSpace E) (R : Finset E) (z : E) :
     tripleModeAt (extendDecisionTreeTriple none T known R) base z ≠ .flip := by
@@ -647,23 +675,24 @@ lemma tripleModeAt_extendDecisionTreeTriple_none_ne_flip
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeTriple]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos, tripleModeAt]
+      · simp only [he, dite_eq_left, tripleModeAt]
         by_cases hze : z = e
         · simp [hze]
-        · simp only [hze, if_false]
+        · simp only [hze, ite_false]
           by_cases hb : base e
-          · simp only [hb, if_true]
+          · simp only [hb, ite_true]
             exact iho (Function.update known e true) (R.erase e)
-          · simp only [hb, Bool.false_eq_true, if_false]
+          · simp only [hb, Bool.false_eq_true, ite_false]
             exact ihc (Function.update known e false) (R.erase e)
-      · simp only [he, dif_neg]
+      · simp only [he]
         by_cases hb : known e
-        · simp only [hb, if_true]
+        · simp only [hb, ite_true]
           exact iho known R
-        · simp only [hb, Bool.false_eq_true, if_false]
+        · simp only [hb, Bool.false_eq_true, ite_false]
           exact ihc known R
 
-theorem tripleModeAt_extendDecisionTreeTriple_flip_unique
+omit [Fintype E] in
+lemma tripleModeAt_extendDecisionTreeTriple_flip_unique
     (t : ℕ) (T : DecisionTree E) (known base : ConfigSpace E)
     (R : Finset E) (x y : E)
     (hx : tripleModeAt (extendDecisionTreeTriple (some t) T known R) base x = .flip)
@@ -675,7 +704,7 @@ theorem tripleModeAt_extendDecisionTreeTriple_flip_unique
         (tripleModeAt_beforeOfCausal_ne_flip (fixedOrder R) base x hx)
   | node q opened closed iho ihc =>
       by_cases hqR : q ∈ R
-      · rw [extendDecisionTreeTriple, dif_pos hqR] at hx hy
+      · rw [extendDecisionTreeTriple, dite_eq_left hqR] at hx hy
         cases t with
         | zero =>
             have eq_q (z : E)
@@ -687,12 +716,12 @@ theorem tripleModeAt_extendDecisionTreeTriple_flip_unique
                       (Function.update known q true) (R.erase q))) base z = .flip) :
                 z = q := by
               by_contra hn
-              simp only [tripleModeAt, hn, if_false] at hz
+              simp only [tripleModeAt, hn, ite_false] at hz
               by_cases hb : base q
-              · simp only [hb, if_true] at hz
+              · simp only [hb, ite_true] at hz
                 exact tripleModeAt_extendDecisionTreeTriple_none_ne_flip
                   opened (Function.update known q true) base (R.erase q) z hz
-              · simp only [hb, Bool.false_eq_true, if_false] at hz
+              · simp only [hb, Bool.false_eq_true, ite_false] at hz
                 exact tripleModeAt_extendDecisionTreeTriple_none_ne_flip
                   closed (Function.update known q false) base (R.erase q) z hz
             exact (eq_q x hx).trans (eq_q y hy).symm
@@ -705,20 +734,20 @@ theorem tripleModeAt_extendDecisionTreeTriple_flip_unique
               intro h
               subst y
               simp [tripleModeAt] at hy
-            simp only [tripleModeAt, hxn, hyn, if_false] at hx hy
+            simp only [tripleModeAt, hxn, hyn, ite_false] at hx hy
             by_cases hb : base q
-            · simp only [hb, if_true] at hx hy
+            · simp only [hb, ite_true] at hx hy
               exact iho t (Function.update known q true) (R.erase q) hx hy
-            · simp only [hb, Bool.false_eq_true, if_false] at hx hy
+            · simp only [hb, Bool.false_eq_true, ite_false] at hx hy
               exact ihc t (Function.update known q false) (R.erase q) hx hy
-      · rw [extendDecisionTreeTriple, dif_neg hqR] at hx hy
+      · rw [extendDecisionTreeTriple, dite_eq_right hqR] at hx hy
         by_cases hb : known q
-        · simp only [hb, if_true] at hx hy
+        · simp only [hb, ite_true] at hx hy
           exact iho t known R hx hy
-        · simp only [hb, Bool.false_eq_true, if_false] at hx hy
+        · simp only [hb, Bool.false_eq_true, ite_false] at hx hy
           exact ihc t known R hx hy
 
-theorem causal_abs_eq_four_terms { μ : ConfigSpace E → ℝ }
+lemma causal_abs_eq_four_terms {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hmono : IsMonotonicMeasure μ)
     {f : ConfigSpace E → ℝ} (hf : Monotone f)
     (t : ℕ) (T : DecisionTree E) (base : ConfigSpace E)
@@ -804,9 +833,8 @@ theorem causal_abs_eq_four_terms { μ : ConfigSpace E → ℝ }
     (GrandCouplingAssembly.coord_eq01 e Yr)
     (GrandCouplingAssembly.coord_eq01 e Yl) hcmp (fun h => by rw [hdet h])
 
-
-
-
+/-- The causal order that follows a decision tree on the base configuration and then reveals the
+  remaining coordinates. -/
 noncomputable def extendDecisionTree :
     DecisionTree E → ConfigSpace E → (R : Finset E) → CausalOrder R
   | .leaf _, _, R => fixedOrder R
@@ -818,13 +846,13 @@ noncomputable def extendDecisionTree :
       else if known e then extendDecisionTree opened known R
       else extendDecisionTree closed known R
 
-
+/-- The same causal order with every coordinate resampled independently. -/
 def allIndependent : {R : Finset E} → CausalOrder R → CausalOrder R
   | _, .done => .done
   | _, .node e he _ closed opened =>
       .node e he true (allIndependent closed) (allIndependent opened)
 
-
+omit [Fintype E] in
 @[simp] lemma TripleOrder.leftOrder_beforeOfCausal {R : Finset E}
     (S : CausalOrder R) : (TripleOrder.beforeOfCausal S).leftOrder = allIndependent S := by
   induction S with
@@ -834,6 +862,7 @@ def allIndependent : {R : Finset E} → CausalOrder R → CausalOrder R
         TripleMode.leftIndependent, allIndependent]
       rw [ihc, iho]
 
+omit [Fintype E] in
 @[simp] lemma TripleOrder.rightOrder_beforeOfCausal {R : Finset E}
     (S : CausalOrder R) : (TripleOrder.beforeOfCausal S).rightOrder = allIndependent S := by
   induction S with
@@ -843,9 +872,7 @@ def allIndependent : {R : Finset E} → CausalOrder R → CausalOrder R
         TripleMode.rightIndependent, allIndependent]
       rw [ihc, iho]
 
-
-
-
+/-- The coordinates shared (not resampled) by the causal order run on `ω`. -/
 def sharedEdges : {R : Finset E} → CausalOrder R → ConfigSpace E → Finset E
   | _, .done, _ => ∅
   | _, .node e _ independent closed opened, base =>
@@ -854,19 +881,22 @@ def sharedEdges : {R : Finset E} → CausalOrder R → ConfigSpace E → Finset 
       else
         if independent then sharedEdges closed base else insert e (sharedEdges closed base)
 
+omit [Fintype E] in
 @[simp] lemma sharedEdges_allIndependent {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : sharedEdges (allIndependent S) base = ∅ := by
   induction S with
   | done => rfl
   | node e he independent closed opened ihc iho =>
-      simp only [allIndependent, sharedEdges, if_true]
+      simp only [allIndependent, sharedEdges, ite_true]
       split <;> assumption
 
+omit [Fintype E] in
 lemma allIndependent_cast {R S : Finset E} (h : R = S) (C : CausalOrder R) :
     allIndependent (h ▸ C) = h ▸ allIndependent C := by
   subst S
   rfl
 
+omit [Fintype E] in
 @[simp] lemma allIndependent_fixedListOrder (l : List E) (h : l.Nodup) :
     allIndependent (fixedListOrder l h) = fixedListOrder l h := by
   induction l with
@@ -878,29 +908,33 @@ lemma allIndependent_cast {R S : Finset E} (h : R = S) (C : CausalOrder R) :
         rw [allIndependent_cast]
         simpa using ih (List.nodup_cons.mp h).2
 
+omit [Fintype E] in
 @[simp] lemma allIndependent_fixedOrder (R : Finset E) :
     allIndependent (fixedOrder R) = fixedOrder R := by
   unfold fixedOrder
   rw [allIndependent_cast, allIndependent_fixedListOrder]
 
+omit [Fintype E] in
 lemma sharedEdges_cast {R S : Finset E} (h : R = S) (C : CausalOrder R)
     (base : ConfigSpace E) : sharedEdges (h ▸ C) base = sharedEdges C base := by
   subst S
   rfl
 
+omit [Fintype E] in
 lemma sharedEdges_fixedListOrder (l : List E) (h : l.Nodup) (base : ConfigSpace E) :
     sharedEdges (fixedListOrder l h) base = ∅ := by
   induction l with
   | nil => simp [fixedListOrder, sharedEdges]
   | cons e l ih =>
       rw [fixedListOrder]
-      simp only [sharedEdges, if_true]
+      simp only [sharedEdges, ite_true]
       split
       · rw [sharedEdges_cast]
         exact ih _
       · rw [sharedEdges_cast]
         exact ih _
 
+omit [Fintype E] in
 @[simp] lemma sharedEdges_fixedOrder (R : Finset E) (base : ConfigSpace E) :
     sharedEdges (fixedOrder R) base = ∅ := by
   let C := fixedListOrder R.toList R.nodup_toList
@@ -911,11 +945,8 @@ lemma sharedEdges_fixedListOrder (l : List E) (h : l.Nodup) (base : ConfigSpace 
   rw [hfixed, sharedEdges_cast h C base]
   exact sharedEdges_fixedListOrder R.toList R.nodup_toList base
 
-
-
-
-
-theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : ConfigSpace E)
+omit [Fintype E] in
+lemma sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : ConfigSpace E)
     (R : Finset E) (hknown : ∀ z, z ∉ R → known z = base z) :
     sharedEdges (extendDecisionTree T known R) base = T.queried base ∩ R := by
   induction T generalizing known R with
@@ -923,9 +954,9 @@ theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : Config
   | node e opened closed iho ihc =>
       rw [extendDecisionTree]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         by_cases hb : base e
-        · simp only [sharedEdges, hb, if_true, Bool.false_eq_true, if_false,
+        · simp only [sharedEdges, hb, ite_true, Bool.false_eq_true, ite_false,
             DecisionTree.queried]
           have hk : ∀ z, z ∉ R.erase e →
               Function.update known e true z = base z := by
@@ -950,7 +981,7 @@ theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : Config
               · exact Or.inl hze
               · exact Or.inr ⟨hz, hze, hzR⟩
         · have hb' : base e = false := Bool.eq_false_of_not_eq_true hb
-          simp only [sharedEdges, hb, Bool.false_eq_true, if_false,
+          simp only [sharedEdges, hb, Bool.false_eq_true, ite_false,
             DecisionTree.queried]
           have hk : ∀ z, z ∉ R.erase e →
               Function.update known e false z = base z := by
@@ -974,10 +1005,10 @@ theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : Config
             · by_cases hze : z = e
               · exact Or.inl hze
               · exact Or.inr ⟨hz, hze, hzR⟩
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         have hkb : known e = base e := hknown e he
         by_cases hb : base e
-        · simp only [hkb, hb, if_true, DecisionTree.queried]
+        · simp only [hkb, hb, ite_true, DecisionTree.queried]
           rw [iho known R hknown]
           ext z
           simp only [Finset.mem_inter, Finset.mem_insert]
@@ -988,7 +1019,7 @@ theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : Config
             · subst z
               exact (he hzR).elim
             · exact ⟨hz, hzR⟩
-        · simp only [hkb, hb, Bool.false_eq_true, if_false, DecisionTree.queried]
+        · simp only [hkb, hb, Bool.false_eq_true, ite_false, DecisionTree.queried]
           rw [ihc known R hknown]
           ext z
           simp only [Finset.mem_inter, Finset.mem_insert]
@@ -1000,17 +1031,14 @@ theorem sharedEdges_extendDecisionTree (T : DecisionTree E) (known base : Config
               exact (he hzR).elim
             · exact ⟨hz, hzR⟩
 
-theorem sharedEdges_extendDecisionTree_univ (T : DecisionTree E)
+lemma sharedEdges_extendDecisionTree_univ (T : DecisionTree E)
     (base : ConfigSpace E) :
     sharedEdges (extendDecisionTree T base (Finset.univ : Finset E)) base =
       T.queried base := by
   rw [sharedEdges_extendDecisionTree T base base Finset.univ (by simp)]
   simp
 
-
-
-
-theorem mean_mem_sharedEdges_extendDecisionTree (μ : ConfigSpace E → ℝ)
+lemma mean_mem_sharedEdges_extendDecisionTree (μ : ConfigSpace E → ℝ)
     (T : DecisionTree E) (e : E) :
     Lindeberg.mean μ (fun base =>
       if e ∈ sharedEdges
@@ -1024,10 +1052,7 @@ theorem mean_mem_sharedEdges_extendDecisionTree (μ : ConfigSpace E → ℝ)
       μ base = (if e ∈ T.queried base then (1 : ℝ) else 0) * μ base
   rw [sharedEdges_extendDecisionTree_univ]
 
-
-
-
-
+/-- The causal order following a decision tree that resamples independently from step `t` on. -/
 noncomputable def extendDecisionTreeAt :
     ℕ → DecisionTree E → ConfigSpace E → (R : Finset E) → CausalOrder R
   | _, .leaf _, _, R => fixedOrder R
@@ -1041,7 +1066,8 @@ noncomputable def extendDecisionTreeAt :
       else if known e then extendDecisionTreeAt t opened known R
       else extendDecisionTreeAt t closed known R
 
-theorem extendDecisionTreeTriple_none_leftOrder (T : DecisionTree E)
+omit [Fintype E] in
+lemma extendDecisionTreeTriple_none_leftOrder (T : DecisionTree E)
     (known : ConfigSpace E) (R : Finset E) :
     (extendDecisionTreeTriple none T known R).leftOrder =
       extendDecisionTreeAt 0 T known R := by
@@ -1054,7 +1080,8 @@ theorem extendDecisionTreeTriple_none_leftOrder (T : DecisionTree E)
       · simp [he]
         split <;> simp_all
 
-theorem extendDecisionTreeTriple_none_rightOrder (T : DecisionTree E)
+omit [Fintype E] in
+lemma extendDecisionTreeTriple_none_rightOrder (T : DecisionTree E)
     (known : ConfigSpace E) (R : Finset E) :
     (extendDecisionTreeTriple none T known R).rightOrder =
       extendDecisionTreeAt 0 T known R := by
@@ -1067,6 +1094,7 @@ theorem extendDecisionTreeTriple_none_rightOrder (T : DecisionTree E)
       · simp [he]
         split <;> simp_all
 
+omit [Fintype E] in
 lemma card_insert_inter_sub_one (P R : Finset E) (q : E) (hq : q ∈ R) :
     (insert q P ∩ R).card - 1 = (P ∩ R.erase q).card := by
   have hset : insert q P ∩ R = insert q (P ∩ R.erase q) := by
@@ -1079,11 +1107,8 @@ lemma card_insert_inter_sub_one (P R : Finset E) (q : E) (hq : q ∈ R) :
   · simp
   · simp
 
-
-
-
-
-theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
+omit [Fintype E] in
+lemma tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
     (T : DecisionTree E) (base known : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = base z) (t : ℕ) (e : E)
     (hq : PredictableTreeQuery.pathQuery T base t = some e)
@@ -1145,15 +1170,15 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
               (extendDecisionTreeTriple (some ((insert q P ∩ R).card))
                 (.node q opened closed) known R) base e = .flip
             rw [hphase]
-            simp only [extendDecisionTreeTriple, hqR, dif_pos, tripleModeAt, heq, if_false]
+            simp only [extendDecisionTreeTriple, hqR, dite_eq_left, tripleModeAt, heq, ite_false]
             by_cases hb : base q
-            · simp only [hb, if_true]
+            · simp only [hb, ite_true]
               have hi := iho (Function.update known q true) (R.erase q)
                 (hknown' true (by simp [hb])) t
                 (by simpa [B, hb] using hqB)
                 (by simpa [B, hb] using hefreshB) heErase
               simpa [k, P, B, hb] using hi
-            · simp only [hb, Bool.false_eq_true, if_false]
+            · simp only [hb, Bool.false_eq_true, ite_false]
               have hi := ihc (Function.update known q false) (R.erase q)
                 (hknown' false (by simp [hb])) t
                 (by simpa [B, hb] using hqB)
@@ -1173,19 +1198,20 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
                 exact ⟨Or.inr hz, hzR⟩
             have hknownq : known q = base q := hknown q hqR
             rw [hprefix, hphase]
-            rw [extendDecisionTreeTriple, dif_neg hqR]
+            rw [extendDecisionTreeTriple, dite_eq_right hqR]
             rw [hknownq]
             by_cases hb : base q
-            · simp only [hb, if_true]
+            · simp only [hb, ite_true]
               simpa [B, hb] using iho known R hknown t
                 (by simpa [B, hb] using hqB)
                 (by simpa [B, hb] using hefreshB) heR
-            · simp only [hb, Bool.false_eq_true, if_false]
+            · simp only [hb, Bool.false_eq_true, ite_false]
               simpa [B, hb] using ihc known R hknown t
                 (by simpa [B, hb] using hqB)
                 (by simpa [B, hb] using hefreshB) heR
 
-@[simp] theorem extendDecisionTreeTriple_leftOrder
+omit [Fintype E] in
+@[simp] lemma extendDecisionTreeTriple_leftOrder
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E) :
     (extendDecisionTreeTriple (some t) T known R).leftOrder =
       extendDecisionTreeAt t T known R := by
@@ -1194,7 +1220,7 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeTriple, extendDecisionTreeAt]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos]
+      · simp only [he, dite_eq_left]
         cases t with
         | zero =>
             simp [TripleOrder.leftOrder, TripleMode.leftIndependent,
@@ -1205,7 +1231,8 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
         · simp [he, hb, iho]
         · simp [he, hb, ihc]
 
-@[simp] theorem extendDecisionTreeTriple_rightOrder
+omit [Fintype E] in
+@[simp] lemma extendDecisionTreeTriple_rightOrder
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E) :
     (extendDecisionTreeTriple (some t) T known R).rightOrder =
       extendDecisionTreeAt (t + 1) T known R := by
@@ -1214,7 +1241,7 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeTriple, extendDecisionTreeAt]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos]
+      · simp only [he, dite_eq_left]
         cases t with
         | zero =>
             simp [TripleOrder.rightOrder, TripleMode.rightIndependent,
@@ -1225,10 +1252,8 @@ theorem tripleModeAt_extendDecisionTreeTriple_eq_flip_of_fresh
         · simp [he, hb, iho]
         · simp [he, hb, ihc]
 
-
-
-
-theorem extendDecisionTreeTriple_known_congr (phase : Option ℕ)
+omit [Fintype E] in
+lemma extendDecisionTreeTriple_known_congr (phase : Option ℕ)
     (T : DecisionTree E) (known known' : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = known' z) :
     extendDecisionTreeTriple phase T known R =
@@ -1238,7 +1263,7 @@ theorem extendDecisionTreeTriple_known_congr (phase : Option ℕ)
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeTriple]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos]
+      · simp only [he, dite_eq_left]
         have hup (b : Bool) : ∀ z, z ∉ R.erase e →
             Function.update known e b z = Function.update known' e b z := by
           intro z hz
@@ -1262,23 +1287,23 @@ theorem extendDecisionTreeTriple_known_congr (phase : Option ℕ)
                 simp only
                 rw [ihc (some t) _ _ _ (hup false),
                   iho (some t) _ _ _ (hup true)]
-      · simp only [he, dif_neg]
+      · simp only [he]
         have heq : known e = known' e := hknown e he
         by_cases hb : known e
         · have hb' : known' e := by simpa [heq] using hb
-          simp only [hb, hb', if_true]
+          simp only [hb, hb', ite_true]
           exact iho phase known known' R hknown
         · have hb' : ¬ known' e := by simpa [heq] using hb
-          simp only [hb, hb', Bool.false_eq_true, if_false]
+          simp only [hb, hb', Bool.false_eq_true, ite_false]
           exact ihc phase known known' R hknown
 
-@[simp] theorem extendDecisionTreeTriple_univ_seed_congr (phase : Option ℕ)
+@[simp] lemma extendDecisionTreeTriple_univ_seed_congr (phase : Option ℕ)
     (T : DecisionTree E) (known known' : ConfigSpace E) :
     extendDecisionTreeTriple phase T known (Finset.univ : Finset E) =
       extendDecisionTreeTriple phase T known' Finset.univ :=
   extendDecisionTreeTriple_known_congr phase T known known' Finset.univ (by simp)
 
-@[simp] theorem extendDecisionTreeAt_univ_seed_congr (t : ℕ)
+@[simp] lemma extendDecisionTreeAt_univ_seed_congr (t : ℕ)
     (T : DecisionTree E) (known known' : ConfigSpace E) :
     extendDecisionTreeAt t T known (Finset.univ : Finset E) =
       extendDecisionTreeAt t T known' Finset.univ := by
@@ -1286,7 +1311,8 @@ theorem extendDecisionTreeTriple_known_congr (phase : Option ℕ)
     ← extendDecisionTreeTriple_leftOrder t T known' Finset.univ]
   rw [extendDecisionTreeTriple_univ_seed_congr]
 
-@[simp] theorem extendDecisionTreeAt_zero (T : DecisionTree E)
+omit [Fintype E] in
+@[simp] lemma extendDecisionTreeAt_zero (T : DecisionTree E)
     (known : ConfigSpace E) (R : Finset E) :
     extendDecisionTreeAt 0 T known R = extendDecisionTree T known R := by
   induction T generalizing known R with
@@ -1298,7 +1324,8 @@ theorem extendDecisionTreeTriple_known_congr (phase : Option ℕ)
       · simp [he]
         split <;> simp_all
 
-theorem extendDecisionTreeAt_eq_allIndependent_of_card_le (t : ℕ)
+omit [Fintype E] in
+lemma extendDecisionTreeAt_eq_allIndependent_of_card_le (t : ℕ)
     (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
     (hcard : R.card ≤ t) :
     extendDecisionTreeAt t T known R =
@@ -1308,7 +1335,7 @@ theorem extendDecisionTreeAt_eq_allIndependent_of_card_le (t : ℕ)
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeAt, extendDecisionTree]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos, allIndependent]
+      · simp only [he, dite_eq_left, allIndependent]
         have ht : 0 < t := by
           have hRpos : 0 < R.card := Finset.card_pos.mpr ⟨e, he⟩
           omega
@@ -1318,23 +1345,22 @@ theorem extendDecisionTreeAt_eq_allIndependent_of_card_le (t : ℕ)
         simp only [ht, decide_true]
         rw [ihc (t - 1) (Function.update known e false) (R.erase e) hchild]
         rw [iho (t - 1) (Function.update known e true) (R.erase e) hchild]
-      · simp only [he, dif_neg]
+      · simp only [he]
         by_cases hb : known e
-        · simp only [hb, if_true]
+        · simp only [hb, ite_true]
           exact iho t known R hcard
-        · simp only [hb, Bool.false_eq_true, if_false]
+        · simp only [hb, Bool.false_eq_true, ite_false]
           exact ihc t known R hcard
 
-@[simp] theorem extendDecisionTreeAt_card_univ_eq_allIndependent
+@[simp] lemma extendDecisionTreeAt_card_univ_eq_allIndependent
     (T : DecisionTree E) (known : ConfigSpace E) :
     extendDecisionTreeAt (Fintype.card E) T known (Finset.univ : Finset E) =
       allIndependent (extendDecisionTree T known Finset.univ) := by
   apply extendDecisionTreeAt_eq_allIndependent_of_card_le
   simp
 
-
-
-theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
+omit [Fintype E] in
+lemma sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
     (T : DecisionTree E) (known base : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = base z) (hcard : R.card ≤ t) :
     sharedEdges (extendDecisionTreeAt t T known R) base = ∅ := by
@@ -1343,7 +1369,7 @@ theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
   | node e opened closed iho ihc =>
       rw [extendDecisionTreeAt]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         have ht : 0 < t := by
           have hRpos : 0 < R.card := Finset.card_pos.mpr ⟨e, he⟩
           omega
@@ -1351,7 +1377,7 @@ theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
           rw [Finset.card_erase_of_mem he]
           omega
         by_cases hb : base e
-        · simp only [sharedEdges, hb, if_true, ht, decide_true]
+        · simp only [sharedEdges, hb, ite_true, ht, decide_true]
           have hk : ∀ z, z ∉ R.erase e →
               Function.update known e true z = base z := by
             intro z hz
@@ -1364,7 +1390,7 @@ theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
               exact hz (Finset.mem_erase.mpr ⟨hze, hzR⟩)
           exact iho (t - 1) (Function.update known e true) (R.erase e) hk hchild
         · have hb' : base e = false := Bool.eq_false_of_not_eq_true hb
-          simp only [sharedEdges, hb, Bool.false_eq_true, if_false, ht, decide_true]
+          simp only [sharedEdges, hb, Bool.false_eq_true, ite_false, ht, decide_true]
           have hk : ∀ z, z ∉ R.erase e →
               Function.update known e false z = base z := by
             intro z hz
@@ -1376,15 +1402,15 @@ theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
               intro hzR
               exact hz (Finset.mem_erase.mpr ⟨hze, hzR⟩)
           exact ihc (t - 1) (Function.update known e false) (R.erase e) hk hchild
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         have hkb : known e = base e := hknown e he
         by_cases hb : base e
-        · simp only [hkb, hb, if_true]
+        · simp only [hkb, hb, ite_true]
           exact iho t known R hknown hcard
-        · simp only [hkb, hb, Bool.false_eq_true, if_false]
+        · simp only [hkb, hb, Bool.false_eq_true, ite_false]
           exact ihc t known R hknown hcard
 
-@[simp] theorem sharedEdges_extendDecisionTreeAt_card_univ (T : DecisionTree E)
+@[simp] lemma sharedEdges_extendDecisionTreeAt_card_univ (T : DecisionTree E)
     (known base : ConfigSpace E) :
     sharedEdges (extendDecisionTreeAt (Fintype.card E) T known
       (Finset.univ : Finset E)) base = ∅ := by
@@ -1392,9 +1418,8 @@ theorem sharedEdges_extendDecisionTreeAt_eq_empty_of_card_le (t : ℕ)
   · simp
   · simp
 
-
-
-theorem sharedEdges_extendDecisionTreeAt_succ_subset (t : ℕ)
+omit [Fintype E] in
+lemma sharedEdges_extendDecisionTreeAt_succ_subset (t : ℕ)
     (T : DecisionTree E) (known base : ConfigSpace E) (R : Finset E)
     (hknown : ∀ z, z ∉ R → known z = base z) :
     sharedEdges (extendDecisionTreeAt (t + 1) T known R) base ⊆
@@ -1404,7 +1429,7 @@ theorem sharedEdges_extendDecisionTreeAt_succ_subset (t : ℕ)
   | node e opened closed iho ihc =>
       simp only [extendDecisionTreeAt]
       by_cases he : e ∈ R
-      · simp only [he, dif_pos]
+      · simp only [he, dite_eq_left]
         by_cases hb : base e
         · have hk : ∀ z, z ∉ R.erase e →
               Function.update known e true z = base z := by
@@ -1437,21 +1462,21 @@ theorem sharedEdges_extendDecisionTreeAt_succ_subset (t : ℕ)
           | succ t =>
               simpa [sharedEdges, hb, Nat.add_assoc] using
                 ihc t (Function.update known e false) (R.erase e) hk
-      · simp only [he, dif_neg]
+      · simp only [he]
         have hkb : known e = base e := hknown e he
         by_cases hb : base e
-        · simp only [hkb, hb, if_true]
+        · simp only [hkb, hb, ite_true]
           exact iho t known R hknown
-        · simp only [hkb, hb, Bool.false_eq_true, if_false]
+        · simp only [hkb, hb, Bool.false_eq_true, ite_false]
           exact ihc t known R hknown
 
+/-- The indicator that coordinate `e` is shared at step `t` of the decision-tree order. -/
 noncomputable def sharedAtIndicator (T : DecisionTree E) (base : ConfigSpace E)
     (t : ℕ) (e : E) : ℝ :=
   if e ∈ sharedEdges
       (extendDecisionTreeAt t T base (Finset.univ : Finset E)) base then 1 else 0
 
-
-
+/-- The indicator that coordinate `e` is shared at step `t` but not at step `t + 1`. -/
 noncomputable def sharedStepIndicator (T : DecisionTree E) (base : ConfigSpace E)
     (t : ℕ) (e : E) : ℝ :=
   sharedAtIndicator T base t e - sharedAtIndicator T base (t + 1) e
@@ -1469,9 +1494,7 @@ lemma sharedStepIndicator_nonneg (T : DecisionTree E)
   · simp [hnext]
     split <;> norm_num
 
-
-
-theorem sum_sharedStepIndicator_eq_queried (T : DecisionTree E)
+lemma sum_sharedStepIndicator_eq_queried (T : DecisionTree E)
     (base : ConfigSpace E) (e : E) :
     ∑ t ∈ Finset.range (Fintype.card E), sharedStepIndicator T base t e =
       if e ∈ T.queried base then 1 else 0 := by
@@ -1483,8 +1506,7 @@ theorem sum_sharedStepIndicator_eq_queried (T : DecisionTree E)
   rw [sharedEdges_extendDecisionTreeAt_card_univ]
   simp
 
-
-theorem sum_mean_sharedStepIndicator_eq_revealmentMu
+lemma sum_mean_sharedStepIndicator_eq_revealmentMu
     (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (e : E) :
     ∑ t ∈ Finset.range (Fintype.card E),
         Lindeberg.mean μ (fun base => sharedStepIndicator T base t e) =
@@ -1496,6 +1518,7 @@ theorem sum_mean_sharedStepIndicator_eq_revealmentMu
   rw [← Finset.sum_mul]
   rw [sum_sharedStepIndicator_eq_queried]
 
+omit [Fintype E] in
 lemma sharedEdges_subset {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : sharedEdges S base ⊆ R := by
   induction S with
@@ -1509,6 +1532,7 @@ lemma sharedEdges_subset {R : Finset E} (S : CausalOrder R)
       · simp [sharedEdges, hb, ha, Finset.insert_subset_iff, hq,
           ihc.trans (Finset.erase_subset q R)]
 
+omit [Fintype E] in
 lemma mem_sharedEdges_iff_independentAt_false {R : Finset E}
     (S : CausalOrder R) (base : ConfigSpace E) (e : E) (he : e ∈ R) :
     e ∈ sharedEdges S base ↔ independentAt S base e = false := by
@@ -1532,14 +1556,13 @@ lemma mem_sharedEdges_iff_independentAt_false {R : Finset E}
         · by_cases ha : active <;>
             simp [sharedEdges, independentAt, heq, hb, ha, ihc heErase]
 
+/-- The indicator that coordinate `e` is the flip coordinate of the triple order. -/
 noncomputable def tripleFlipIndicator
     (S : TripleOrder (Finset.univ : Finset E))
     (base : ConfigSpace E) (e : E) : ℝ :=
   if tripleModeAt S base e = .flip then 1 else 0
 
-
-
-theorem sharedStepIndicator_eq_tripleFlipIndicator
+lemma sharedStepIndicator_eq_tripleFlipIndicator
     (T : DecisionTree E) (base : ConfigSpace E) (t : ℕ) (e : E) :
     sharedStepIndicator T base t e =
       tripleFlipIndicator
@@ -1557,8 +1580,10 @@ theorem sharedStepIndicator_eq_tripleFlipIndicator
   cases tripleModeAt S base e <;>
     simp [TripleMode.leftIndependent, TripleMode.rightIndependent]
 
+/-! ## E. Coupling weights -/
 
-
+/-- The probability that two uniform labels thresholded at `a` and `q` produce the bits `base` and
+  `target` when the labels coincide. -/
 def overlapWeight (a q : ℝ) (base target : Bool) : ℝ :=
   match base, target with
   | false, false => min a q
@@ -1566,9 +1591,8 @@ def overlapWeight (a q : ℝ) (base target : Bool) : ℝ :=
   | false, true => max (a - q) 0
   | true, true => 1 - max a q
 
+/-- The probability `q` of `false` and `1 - q` of `true` for a label thresholded at `q`. -/
 def bitWeight (q : ℝ) (b : Bool) : ℝ := if b then 1 - q else q
-
-
 
 lemma rawInterval_toReal_eq_bitWeight (mu : ConfigSpace E → ℝ)
     (hpos : ∀ omega, 0 < mu omega) {n : ℕ} (sigma : Fin n → E)
@@ -1578,17 +1602,17 @@ lemma rawInterval_toReal_eq_bitWeight (mu : ConfigSpace E → ℝ)
         bitWeight (thr mu sigma x i) (x (sigma i)) := by
   rw [GrandCoupling.vcube_rawInterval mu hpos sigma x i]
   by_cases hb : x (sigma i)
-  · simp only [hb, if_true, bitWeight]
+  · simp only [hb, ite_true, bitWeight]
     have hsum := condProbBit_true_add_false mu
       (prefixSet sigma (i : ℕ)) x (sigma i)
       (condNorm_pos hpos _ _).ne'
     change condProbBit mu (prefixSet sigma (i : ℕ)) x (sigma i) true =
       1 - condProbBit mu (prefixSet sigma (i : ℕ)) x (sigma i) false
     linarith
-  · simp only [hb, Bool.false_eq_true, if_false, bitWeight]
+  · simp only [hb, Bool.false_eq_true, ite_false, bitWeight]
     rfl
 
-
+/-- The product weight of two independent thresholded bits. -/
 def independentWeight (a q : ℝ) (base target : Bool) : ℝ :=
   bitWeight a base * bitWeight q target
 
@@ -1601,10 +1625,11 @@ lemma independentWeight_sum_base (a q : ℝ) (target : Bool) :
   unfold independentWeight
   rw [← add_mul, bitWeight_false_add_true, one_mul]
 
-
+/-- The weight of a bit pair: independent or overlapping according to the flag. -/
 def splitWeight (independent : Bool) (a q : ℝ) (base target : Bool) : ℝ :=
   if independent then independentWeight a q base target else overlapWeight a q base target
 
+/-- The labels in `[0, 1)` producing the bit `b` at threshold `q`. -/
 def thresholdInterval (q : ℝ) (b : Bool) : Set ℝ :=
   if b then Set.Ico q 1 else Set.Ico 0 q
 
@@ -1612,10 +1637,8 @@ lemma volume_thresholdInterval (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (b : Bo
     (volume (thresholdInterval q b)).toReal = bitWeight q b := by
   cases b <;> simp [thresholdInterval, bitWeight, Real.volume_Ico, hq0, hq1]
 
-
-
 lemma volume_inter_threshold_false_add_true (A : Set ℝ) (hA : MeasurableSet A)
-    (hAcube : A ⊆ Set.Ico (0 : ℝ) 1) (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
+    (hAcube : A ⊆ Set.Ico (0 : ℝ) 1) (q : ℝ) (_hq0 : 0 ≤ q) (_hq1 : q ≤ 1) :
     (volume (A ∩ thresholdInterval q false)).toReal +
       (volume (A ∩ thresholdInterval q true)).toReal = (volume A).toReal := by
   have hd : Disjoint (A ∩ thresholdInterval q false) (A ∩ thresholdInterval q true) := by
@@ -1646,20 +1669,18 @@ lemma volume_inter_threshold_false_add_true (A : Set ℝ) (hA : MeasurableSet A)
     ne_of_lt (lt_of_le_of_lt (measure_mono Set.inter_subset_left) hAfin)
   rw [← ENNReal.toReal_add h0 h1, ← hm]
 
-
-
 lemma volume_thresholdInterval_inter (a q : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (base target : Bool) :
     (volume (thresholdInterval a base ∩ thresholdInterval q target)).toReal =
       overlapWeight a q base target := by
   cases base <;> cases target <;>
-    simp only [thresholdInterval, Bool.false_eq_true, if_false, if_true,
+    simp only [thresholdInterval, Bool.false_eq_true, ite_false, ite_true,
       Set.Ico_inter_Ico, Real.volume_Ico]
   · rw [max_self, min_def, overlapWeight]
     by_cases h : a ≤ q
-    · rw [if_pos h, sub_zero, ENNReal.toReal_ofReal ha0, min_eq_left h]
+    · rw [ite_eq_left h, sub_zero, ENNReal.toReal_ofReal ha0, min_eq_left h]
     · have hqa : q ≤ a := le_of_not_ge h
-      rw [if_neg h, sub_zero, ENNReal.toReal_ofReal hq0, min_eq_right hqa]
+      rw [ite_eq_right h, sub_zero, ENNReal.toReal_ofReal hq0, min_eq_right hqa]
   · rw [max_eq_right hq0, min_eq_left ha1, overlapWeight]
     by_cases h : a ≤ q
     · rw [ENNReal.ofReal_of_nonpos (sub_nonpos.mpr h), ENNReal.toReal_zero,
@@ -1677,8 +1698,6 @@ lemma volume_thresholdInterval_inter (a q : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     · rw [max_eq_right h, ENNReal.toReal_ofReal (sub_nonneg.mpr hq1)]
     · have hqa : q ≤ a := le_of_not_ge h
       rw [max_eq_left hqa, ENNReal.toReal_ofReal (sub_nonneg.mpr ha1)]
-
-
 
 lemma rawInterval_inter_toReal_eq_overlapWeight (mu : ConfigSpace E → ℝ)
     (hpos : ∀ omega, 0 < mu omega) {n : ℕ} (sigma : Fin n → E)
@@ -1702,7 +1721,7 @@ lemma rawInterval_inter_toReal_eq_overlapWeight (mu : ConfigSpace E → ℝ)
     filter_upwards [(Set.countable_singleton (1 : ℝ)).ae_notMem volume] with z hz
     have hz1 : z ≠ 1 := by simpa using hz
     cases hb : base (sigma i) <;> cases ht : target (sigma i) <;>
-      simp only [GrandCoupling.rawInterval, hb, ht, Bool.false_eq_true, if_false, if_true,
+      simp only [GrandCoupling.rawInterval, hb, ht, Bool.false_eq_true, ite_false, ite_true,
         thresholdInterval, Set.mem_inter_iff, Set.mem_Iio, Set.mem_Ici, Set.mem_Icc,
         Set.mem_Ico]
     all_goals
@@ -1751,7 +1770,7 @@ lemma rawInterval_tripleInter_toReal_eq_tripleOverlapWeight
     cases hb : base (sigma i) <;> cases hl : left (sigma i) <;>
       cases hh : right (sigma i) <;>
       simp only [GrandCoupling.rawInterval, hb, hl, hh, Bool.false_eq_true,
-        if_false, if_true, thresholdInterval, Set.mem_inter_iff, Set.mem_Iio,
+        ite_false, ite_true, thresholdInterval, Set.mem_inter_iff, Set.mem_Iio,
         Set.mem_Ici, Set.mem_Icc, Set.mem_Ico]
     all_goals
       apply propext
@@ -1774,8 +1793,6 @@ lemma rawInterval_tripleInter_toReal_eq_tripleOverlapWeight
       thresholdInterval (thr mu sigma right i) (right (sigma i))) at hm
   rw [hm]
 
-
-
 lemma frozenRawPair_toReal_eq_splitWeight (mu : ConfigSpace E → ℝ)
     (hpos : ∀ omega, 0 < mu omega)
     (S : CausalOrder (Finset.univ : Finset E))
@@ -1792,17 +1809,15 @@ lemma frozenRawPair_toReal_eq_splitWeight (mu : ConfigSpace E → ℝ)
   unfold frozenRawPair
   simp only [hsigma]
   by_cases hi : independentAt S base (sigma i)
-  · rw [if_pos hi, Measure.prod_prod, ENNReal.toReal_mul,
+  · rw [ite_eq_left hi, Measure.prod_prod, ENNReal.toReal_mul,
       rawInterval_toReal_eq_bitWeight mu hpos,
       rawInterval_toReal_eq_bitWeight mu hpos]
     simp [splitWeight, independentWeight, hi]
-  · rw [if_neg hi, Measure.prod_prod, ENNReal.toReal_mul,
+  · rw [ite_eq_right hi, Measure.prod_prod, ENNReal.toReal_mul,
       rawInterval_inter_toReal_eq_overlapWeight mu hpos]
     simp [splitWeight, hi]
 
-
-
-theorem pairedCube_frozenCodeAtom_toReal_eq_prod_splitWeight
+lemma pairedCube_frozenCodeAtom_toReal_eq_prod_splitWeight
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) :
@@ -1822,7 +1837,7 @@ lemma overlapWeight_sum_base (a q : ℝ) (target : Bool) :
       if target then 1 - q else q := by
   cases target with
   | false =>
-      simp only [overlapWeight, Bool.false_eq_true, if_false]
+      simp only [overlapWeight, Bool.false_eq_true, ite_false]
       by_cases h : a ≤ q
       · rw [min_eq_left h, max_eq_left (sub_nonneg.mpr h)]
         ring
@@ -1830,7 +1845,7 @@ lemma overlapWeight_sum_base (a q : ℝ) (target : Bool) :
         rw [min_eq_right hqa, max_eq_right (sub_nonpos.mpr hqa)]
         ring
   | true =>
-      simp only [overlapWeight, if_true]
+      simp only [overlapWeight, ite_true]
       by_cases h : a ≤ q
       · rw [max_eq_right (sub_nonpos.mpr h), max_eq_right h]
         ring
@@ -1847,20 +1862,23 @@ lemma splitWeight_sum_base (independent : Bool) (a q : ℝ) (target : Bool) :
       bitWeight q target := by
   cases independent with
   | false =>
-      simp only [splitWeight, Bool.false_eq_true, if_false]
+      simp only [splitWeight, Bool.false_eq_true, ite_false]
       rw [overlapWeight_sum_base]
       cases target <;> simp [bitWeight]
   | true =>
-      simp only [splitWeight, if_true]
+      simp only [splitWeight, ite_true]
       exact independentWeight_sum_base a q target
 
 lemma overlapWeight_comm (a q : ℝ) (b c : Bool) :
     overlapWeight a q b c = overlapWeight q a c b := by
   cases b <;> cases c <;> simp [overlapWeight, min_comm, max_comm]
 
+/-- The probability that one shared label produces the three bits `b`, `y`, `z` at thresholds `a`,
+  `q`, `r`. -/
 noncomputable def tripleOverlapWeight (a q r : ℝ) (b y z : Bool) : ℝ :=
   (volume (thresholdInterval a b ∩ thresholdInterval q y ∩ thresholdInterval r z)).toReal
 
+/-- The weight of a bit triple in the triple coupling, by mode. -/
 noncomputable def tripleWeight (mode : TripleMode) (a q r : ℝ) (b y z : Bool) : ℝ :=
   match mode with
   | .before => bitWeight a b * overlapWeight q r y z
@@ -1888,15 +1906,15 @@ lemma frozenTripleRawPair_toReal_eq_tripleWeight
   simp only [hsigma, independentAt_leftOrder, independentAt_rightOrder]
   cases hm : tripleModeAt S base (sigma i) with
   | before =>
-      simp only [hm, TripleMode.leftIndependent, TripleMode.rightIndependent,
-        if_true, Set.prod_inter_prod, Set.inter_self, tripleWeight]
+      simp only [TripleMode.leftIndependent, TripleMode.rightIndependent,
+        ite_true, Set.prod_inter_prod, Set.inter_self, tripleWeight]
       rw [Measure.prod_prod, ENNReal.toReal_mul,
         rawInterval_toReal_eq_bitWeight mu hpos,
         rawInterval_inter_toReal_eq_overlapWeight mu hpos]
   | flip =>
-      simp only [hm, TripleMode.leftIndependent, TripleMode.rightIndependent,
-        Bool.false_eq_true, if_false, if_true, Set.prod_inter_prod,
-        Set.inter_univ, Set.inter_assoc, tripleWeight]
+      simp only [TripleMode.leftIndependent, TripleMode.rightIndependent,
+        Bool.false_eq_true, ite_false, ite_true, Set.prod_inter_prod,
+        Set.inter_assoc, tripleWeight]
       have hset : GrandCoupling.rawInterval mu (sigma : Fin (Fintype.card E) → E) base i ∩
           (GrandCoupling.rawInterval mu (sigma : Fin (Fintype.card E) → E) left i ∩
             GrandCoupling.rawInterval mu (sigma : Fin (Fintype.card E) → E) base i) =
@@ -1910,8 +1928,8 @@ lemma frozenTripleRawPair_toReal_eq_tripleWeight
         rawInterval_inter_toReal_eq_overlapWeight mu hpos,
         rawInterval_toReal_eq_bitWeight mu hpos]
   | after =>
-      simp only [hm, TripleMode.leftIndependent, TripleMode.rightIndependent,
-        Bool.false_eq_true, if_false, Set.prod_inter_prod, Set.inter_univ,
+      simp only [TripleMode.leftIndependent, TripleMode.rightIndependent,
+        Bool.false_eq_true, ite_false, Set.prod_inter_prod, Set.inter_univ,
         tripleWeight, tripleOverlapWeight]
       have hset :
           (GrandCoupling.rawInterval mu (sigma : Fin (Fintype.card E) → E) base i ∩
@@ -1929,7 +1947,7 @@ lemma frozenTripleRawPair_toReal_eq_tripleWeight
         rawInterval_tripleInter_toReal_eq_tripleOverlapWeight mu hpos]
       simp
 
-theorem pairedCube_frozenTripleCodeAtom_toReal_eq_prod_tripleWeight
+lemma pairedCube_frozenTripleCodeAtom_toReal_eq_prod_tripleWeight
     (mu : ConfigSpace E → ℝ) (hpos : ∀ omega, 0 < mu omega)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
@@ -1951,9 +1969,9 @@ lemma thresholdInterval_subset_Ico (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (b 
     thresholdInterval q b ⊆ Set.Ico (0 : ℝ) 1 := by
   intro x hx
   cases b
-  · simp only [thresholdInterval, Bool.false_eq_true, if_false, Set.mem_Ico] at hx ⊢
+  · simp only [thresholdInterval, Bool.false_eq_true, ite_false, Set.mem_Ico] at hx ⊢
     exact ⟨hx.1, lt_of_lt_of_le hx.2 hq1⟩
-  · simp only [thresholdInterval, if_true, Set.mem_Ico] at hx ⊢
+  · simp only [thresholdInterval, ite_true, Set.mem_Ico] at hx ⊢
     exact ⟨le_trans hq0 hx.1, hx.2⟩
 
 lemma tripleOverlapWeight_sum_third (a q r : ℝ)
@@ -1997,17 +2015,17 @@ lemma tripleWeight_sum_third (mode : TripleMode) (a q r : ℝ)
       splitWeight mode.leftIndependent a q b y := by
   cases mode with
   | before =>
-      simp only [tripleWeight, TripleMode.leftIndependent, splitWeight, if_true]
+      simp only [tripleWeight, TripleMode.leftIndependent, splitWeight, ite_true]
       rw [← mul_add, overlapWeight_comm q r y false, overlapWeight_comm q r y true,
         overlapWeight_sum_base, bitWeight]
       rfl
   | flip =>
       simp only [tripleWeight, TripleMode.leftIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       rw [← mul_add, bitWeight_false_add_true, mul_one]
   | after =>
       simp only [tripleWeight, TripleMode.leftIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       exact tripleOverlapWeight_sum_third a q r ha0 ha1 hq0 hq1 hr0 hr1 b y
 
 lemma tripleWeight_sum_second (mode : TripleMode) (a q r : ℝ)
@@ -2017,24 +2035,21 @@ lemma tripleWeight_sum_second (mode : TripleMode) (a q r : ℝ)
       splitWeight mode.rightIndependent a r b z := by
   cases mode with
   | before =>
-      simp only [tripleWeight, TripleMode.rightIndependent, splitWeight, if_true]
+      simp only [tripleWeight, TripleMode.rightIndependent, splitWeight, ite_true]
       rw [← mul_add, overlapWeight_sum_base]
       unfold independentWeight
       rfl
   | flip =>
-      simp only [tripleWeight, TripleMode.rightIndependent, splitWeight, if_true]
+      simp only [tripleWeight, TripleMode.rightIndependent, splitWeight, ite_true]
       rw [← add_mul, overlapWeight_comm a q b false, overlapWeight_comm a q b true,
         overlapWeight_sum_base]
       rfl
   | after =>
       simp only [tripleWeight, TripleMode.rightIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       exact tripleOverlapWeight_sum_second a q r ha0 ha1 hq0 hq1 hr0 hr1 b z
 
-
-
-
-
+/-- The weight of a bit triple in the cross coupling, by mode. -/
 noncomputable def crossTripleWeight (mode : TripleMode) (a q r : ℝ)
     (b y z : Bool) : ℝ :=
   match mode with
@@ -2042,9 +2057,9 @@ noncomputable def crossTripleWeight (mode : TripleMode) (a q r : ℝ)
   | .flip => overlapWeight a q b y * bitWeight r z
   | .after => tripleOverlapWeight a q r b y z
 
+/-! ## F. Triple causal outputs -/
 
-
-
+/-- The probability atom of the cross triple for a frozen triple order. -/
 noncomputable def frozenCrossCodeAtom (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
@@ -2059,8 +2074,7 @@ noncomputable def frozenCrossCodeAtom (μ : ConfigSpace E → ℝ)
          codeMap μ (σ : Fin (Fintype.card E) → E)
            (causalMixLabels S.rightOrder base U V') = right}
 
-
-
+/-- The coupled base, left and right configurations obtained from triple labels. -/
 noncomputable def tripleCausalOutputs (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E) :
     (Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ)) →
@@ -2081,17 +2095,17 @@ lemma measurable_tripleCausalOutputs (μ : ConfigSpace E → ℝ)
   let σ := realizedEquiv S.leftOrder base
   have hU : Measurable (fun z : Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ) =>
       fun i => (z i).1.1) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     exact measurable_fst.comp (measurable_fst.comp (measurable_pi_apply i))
   have hV : Measurable (fun z : Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ) =>
       fun i => (z i).1.2) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     exact measurable_snd.comp (measurable_fst.comp (measurable_pi_apply i))
   have hV' : Measurable (fun z : Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ) =>
       fun i => (z i).2) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     exact measurable_snd.comp (measurable_pi_apply i)
   have hmix (C : CausalOrder (Finset.univ : Finset E))
@@ -2114,7 +2128,7 @@ lemma measurable_tripleCausalOutputs (μ : ConfigSpace E → ℝ)
       (fun z : Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ) => fun i =>
         if independentAt S.leftOrder base (realizedEquiv S.leftOrder base i)
           then (z i).1.2 else (z i).1.1) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     split
     · exact measurable_snd.comp (measurable_fst.comp (measurable_pi_apply i))
@@ -2123,7 +2137,7 @@ lemma measurable_tripleCausalOutputs (μ : ConfigSpace E → ℝ)
       (fun z : Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ) => fun i =>
         if independentAt S.rightOrder base (realizedEquiv S.rightOrder base i)
           then (z i).2 else (z i).1.1) := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     split
     · exact measurable_snd.comp (measurable_pi_apply i)
@@ -2131,14 +2145,15 @@ lemma measurable_tripleCausalOutputs (μ : ConfigSpace E → ℝ)
   exact ((GrandCoupling.measurable_codeMap μ σ).comp hU).prodMk
     ((hmix S.leftOrder hleftLabels).prodMk (hmix' S.rightOrder hrightLabels))
 
-theorem tripleCausalOutputs_fibre (μ : ConfigSpace E → ℝ)
+lemma tripleCausalOutputs_fibre (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     {z | tripleCausalOutputs μ S base z = (base, left, right)} =
       frozenCrossCodeAtom μ S base left right := by
   ext z
-  simp only [tripleCausalOutputs, frozenCrossCodeAtom, Set.mem_setOf_eq, Prod.mk.injEq]
+  simp only [tripleCausalOutputs, frozenCrossCodeAtom, Set.mem_ofPred_eq, Prod.mk.injEq]
 
+/-- The raw weight of a cross triple. -/
 noncomputable def crossRawTriple (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) (i : Fin (Fintype.card E)) :
@@ -2152,7 +2167,7 @@ noncomputable def crossRawTriple (μ : ConfigSpace E → ℝ)
   | .flip => ((A ∩ B) ×ˢ Set.univ) ×ˢ C
   | .after => ((A ∩ B ∩ C) ×ˢ Set.univ) ×ˢ Set.univ
 
-theorem frozenCrossCodeAtom_eq_rawTripleBox (μ : ConfigSpace E → ℝ)
+lemma frozenCrossCodeAtom_eq_rawTripleBox (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     frozenCrossCodeAtom μ S base left right =
@@ -2191,7 +2206,7 @@ theorem frozenCrossCodeAtom_eq_rawTripleBox (μ : ConfigSpace E → ℝ)
       (GrandCoupling.codeMap_fibre_eq_rawbox μ σ right)
       (causalMixLabels S.rightOrder base (fun i => (z i).1.1) (fun i => (z i).2))
     simpa [Set.mem_pi] using h
-  simp only [frozenCrossCodeAtom, Set.mem_setOf_eq]
+  simp only [frozenCrossCodeAtom, Set.mem_ofPred_eq]
   change
     (codeMap μ (σ : Fin (Fintype.card E) → E) (fun i => (z i).1.1) = base ∧
       codeMap μ (σ : Fin (Fintype.card E) → E)
@@ -2259,12 +2274,13 @@ theorem frozenCrossCodeAtom_eq_rawTripleBox (μ : ConfigSpace E → ℝ)
         simpa [causalMixLabels, hσ, independentAt_rightOrder, hm,
           TripleMode.rightIndependent, hσr] using h.2
 
-
+/-- The uniform measure on label triples for each coordinate. -/
 noncomputable def tripleCube (n : ℕ) : Measure (Fin n → ((ℝ × ℝ) × ℝ)) :=
   Measure.pi fun _ =>
     let ν := volume.restrict (Set.Icc (0 : ℝ) 1)
     (ν.prod ν).prod ν
 
+/-- The measurable rearrangement of label triples into three label vectors. -/
 noncomputable def tripleCubeEquiv (n : ℕ) :
     (Fin n → ((ℝ × ℝ) × ℝ)) ≃ᵐ
       (((Fin n → ℝ) × (Fin n → ℝ)) × (Fin n → ℝ)) :=
@@ -2273,9 +2289,7 @@ noncomputable def tripleCubeEquiv (n : ℕ) :
       (MeasurableEquiv.arrowProdEquivProdArrow ℝ ℝ (Fin n))
       (MeasurableEquiv.refl (Fin n → ℝ)))
 
-
-
-theorem tripleCube_measurePreserving (n : ℕ) :
+lemma tripleCube_measurePreserving (n : ℕ) :
     MeasurePreserving
       (fun z : Fin n → ((ℝ × ℝ) × ℝ) =>
         ((fun i => (z i).1.1, fun i => (z i).1.2), fun i => (z i).2))
@@ -2293,13 +2307,13 @@ theorem tripleCube_measurePreserving (n : ℕ) :
   have hprod := hinner.prod hid
   exact hprod.comp houter
 
-theorem tripleCubeEquiv_measurePreserving (n : ℕ) :
+lemma tripleCubeEquiv_measurePreserving (n : ℕ) :
     MeasurePreserving (tripleCubeEquiv n) (tripleCube n)
       (((GrandCoupling.Vcube n).prod (GrandCoupling.Vcube n)).prod
         (GrandCoupling.Vcube n)) := by
   exact tripleCube_measurePreserving n
 
-theorem tripleCube_integral_equiv (n : ℕ)
+lemma tripleCube_integral_equiv (n : ℕ)
     (g : (((Fin n → ℝ) × (Fin n → ℝ)) × (Fin n → ℝ)) → ℝ) :
     (∫ z, g (tripleCubeEquiv n z) ∂(tripleCube n)) =
       ∫ p, g p ∂(((GrandCoupling.Vcube n).prod (GrandCoupling.Vcube n)).prod
@@ -2307,7 +2321,7 @@ theorem tripleCube_integral_equiv (n : ℕ)
   exact (tripleCubeEquiv_measurePreserving n).integral_comp
     (tripleCubeEquiv n).measurableEmbedding g
 
-theorem tripleCube_frozenCrossCodeAtom (μ : ConfigSpace E → ℝ)
+lemma tripleCube_frozenCrossCodeAtom (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     tripleCube (Fintype.card E) (frozenCrossCodeAtom μ S base left right) =
@@ -2316,18 +2330,20 @@ theorem tripleCube_frozenCrossCodeAtom (μ : ConfigSpace E → ℝ)
         (ν.prod ν).prod ν (crossRawTriple μ S base left right i) := by
   rw [frozenCrossCodeAtom_eq_rawTripleBox, tripleCube, Measure.pi_pi]
 
+/-- The uniform measure on label triples, with the paired labels first. -/
 noncomputable def tripleLabelCube (n : ℕ) : Measure (Fin n → ((ℝ × ℝ) × ℝ)) :=
   Measure.pi fun _ =>
     ((volume.restrict (Set.Icc (0 : ℝ) 1)).prod
       (volume.restrict (Set.Icc (0 : ℝ) 1))).prod
         (volume.restrict (Set.Icc (0 : ℝ) 1))
 
+/-- The raw atom of the cross triple for a frozen triple order. -/
 noncomputable def frozenCrossRawAtom (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) : Set (Fin (Fintype.card E) → ((ℝ × ℝ) × ℝ)) :=
   Set.univ.pi (crossRawTriple μ S base left right)
 
-theorem tripleLabelCube_frozenCrossRawAtom (μ : ConfigSpace E → ℝ)
+lemma tripleLabelCube_frozenCrossRawAtom (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     tripleLabelCube (Fintype.card E) (frozenCrossRawAtom μ S base left right) =
@@ -2358,19 +2374,19 @@ lemma crossRawTriple_toReal_eq_crossTripleWeight
   simp only [hsigma]
   cases hm : tripleModeAt S base (σ i) with
   | before =>
-      simp only [hm, crossTripleWeight]
+      simp only [crossTripleWeight]
       rw [Measure.prod_prod, Measure.prod_prod, ENNReal.toReal_mul,
         ENNReal.toReal_mul, rawInterval_toReal_eq_bitWeight μ hpos,
         rawInterval_toReal_eq_bitWeight μ hpos,
         rawInterval_toReal_eq_bitWeight μ hpos]
   | flip =>
-      simp only [hm, crossTripleWeight]
+      simp only [crossTripleWeight]
       rw [Measure.prod_prod, Measure.prod_prod, ENNReal.toReal_mul,
         ENNReal.toReal_mul, rawInterval_inter_toReal_eq_overlapWeight μ hpos,
         rawInterval_toReal_eq_bitWeight μ hpos]
       simp
   | after =>
-      simp only [hm, crossTripleWeight, tripleOverlapWeight]
+      simp only [crossTripleWeight, tripleOverlapWeight]
       rw [Measure.prod_prod, Measure.prod_prod, ENNReal.toReal_mul,
         ENNReal.toReal_mul,
         rawInterval_tripleInter_toReal_eq_tripleOverlapWeight μ hpos]
@@ -2390,16 +2406,16 @@ lemma crossTripleWeight_sum_third (mode : TripleMode) (a q r : ℝ)
       splitWeight mode.leftIndependent a q b y := by
   cases mode with
   | before =>
-      simp only [crossTripleWeight, TripleMode.leftIndependent, splitWeight, if_true]
+      simp only [crossTripleWeight, TripleMode.leftIndependent, splitWeight, ite_true]
       rw [← mul_add, bitWeight_false_add_true, mul_one]
       rfl
   | flip =>
       simp only [crossTripleWeight, TripleMode.leftIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       rw [← mul_add, bitWeight_false_add_true, mul_one]
   | after =>
       simp only [crossTripleWeight, TripleMode.leftIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       exact tripleOverlapWeight_sum_third a q r ha0 ha1 hq0 hq1 hr0 hr1 b y
 
 lemma crossTripleWeight_sum_second (mode : TripleMode) (a q r : ℝ)
@@ -2410,26 +2426,29 @@ lemma crossTripleWeight_sum_second (mode : TripleMode) (a q r : ℝ)
       splitWeight mode.rightIndependent a r b z := by
   cases mode with
   | before =>
-      simp only [crossTripleWeight, TripleMode.rightIndependent, splitWeight, if_true]
+      simp only [crossTripleWeight, TripleMode.rightIndependent, splitWeight, ite_true]
       rw [show bitWeight a b * bitWeight q false * bitWeight r z +
           bitWeight a b * bitWeight q true * bitWeight r z =
         bitWeight a b * (bitWeight q false + bitWeight q true) * bitWeight r z by ring]
       rw [bitWeight_false_add_true, mul_one]
       rfl
   | flip =>
-      simp only [crossTripleWeight, TripleMode.rightIndependent, splitWeight, if_true]
+      simp only [crossTripleWeight, TripleMode.rightIndependent, splitWeight, ite_true]
       rw [← add_mul, overlapWeight_sum_target]
       rfl
   | after =>
       simp only [crossTripleWeight, TripleMode.rightIndependent, Bool.false_eq_true,
-        splitWeight, if_false]
+        splitWeight, ite_false]
       exact tripleOverlapWeight_sum_second a q r ha0 ha1 hq0 hq1 hr0 hr1 b z
 
+/-! ## G. Probabilities of realized schedules -/
 
+/-- The probability of the triple `(base, left, right)` under the triple coupling, conditioned on
+  `F`. -/
 noncomputable def tripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) : {R : Finset E} → TripleOrder R → ℝ
   | _, .done => 1
-  | _, .node e he mode closed opened =>
+  | _, .node e _he mode closed opened =>
       let a := condProbClosed μ F base e
       let q := condProbClosed μ F left e
       let r := condProbClosed μ F right e
@@ -2438,10 +2457,11 @@ noncomputable def tripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         + tripleWeight mode a q r true (left e) (right e) *
           tripleProb μ (insert e F) (Function.update base e true) left right opened
 
+/-- The joint probability of a triple under the triple coupling along a triple order. -/
 noncomputable def tripleJointProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) : {R : Finset E} → TripleOrder R → ℝ
   | _, .done => 1
-  | _, .node e he mode closed opened =>
+  | _, .node e _he mode closed opened =>
       let a := condProbClosed μ F base e
       let q := condProbClosed μ F left e
       let r := condProbClosed μ F right e
@@ -2452,6 +2472,7 @@ noncomputable def tripleJointProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         tripleWeight mode a q r false (left e) (right e) *
           tripleJointProb μ (insert e F) base left right closed
 
+/-- The realized schedule of coordinates and modes of a triple order run on `ω`. -/
 def tripleRealizedSchedule : {R : Finset E} → TripleOrder R →
     ConfigSpace E → List (E × TripleMode)
   | _, .done, _ => []
@@ -2459,6 +2480,7 @@ def tripleRealizedSchedule : {R : Finset E} → TripleOrder R →
       (e, mode) :: if base e then tripleRealizedSchedule opened base
         else tripleRealizedSchedule closed base
 
+omit [Fintype E] in
 @[simp] lemma tripleRealizedSchedule_map_fst {R : Finset E} (S : TripleOrder R)
     (base : ConfigSpace E) :
     (tripleRealizedSchedule S base).map Prod.fst = realizedList S.leftOrder base := by
@@ -2468,6 +2490,7 @@ def tripleRealizedSchedule : {R : Finset E} → TripleOrder R →
       simp only [tripleRealizedSchedule, TripleOrder.leftOrder, realizedList, List.map_cons]
       split <;> simp_all
 
+omit [Fintype E] in
 lemma tripleRealizedSchedule_mode {R : Finset E} (S : TripleOrder R)
     (base : ConfigSpace E) (p : E × TripleMode) (hp : p ∈ tripleRealizedSchedule S base) :
     p.2 = tripleModeAt S base p.1 := by
@@ -2475,7 +2498,7 @@ lemma tripleRealizedSchedule_mode {R : Finset E} (S : TripleOrder R)
   | done => simp [tripleRealizedSchedule] at hp
   | @node R e he mode closed opened ihc iho =>
       by_cases hb : base e
-      · simp only [tripleRealizedSchedule, hb, if_true, List.mem_cons] at hp
+      · simp only [tripleRealizedSchedule, hb, ite_true, List.mem_cons] at hp
         rcases hp with rfl | hp
         · simp [tripleModeAt]
         · have hz : p.1 ∈ realizedList opened.leftOrder base := by
@@ -2484,9 +2507,9 @@ lemma tripleRealizedSchedule_mode {R : Finset E} (S : TripleOrder R)
           have hne : p.1 ≠ e := by
             rw [← List.mem_toFinset, realizedList_toFinset] at hz
             exact (Finset.mem_erase.mp hz).1
-          simp only [tripleModeAt, hne, if_false, hb, if_true]
+          simp only [tripleModeAt, hne, ite_false, hb, ite_true]
           exact iho hp
-      · simp only [tripleRealizedSchedule, hb, Bool.false_eq_true, if_false,
+      · simp only [tripleRealizedSchedule, hb, Bool.false_eq_true, ite_false,
           List.mem_cons] at hp
         rcases hp with rfl | hp
         · simp [tripleModeAt]
@@ -2496,7 +2519,7 @@ lemma tripleRealizedSchedule_mode {R : Finset E} (S : TripleOrder R)
           have hne : p.1 ≠ e := by
             rw [← List.mem_toFinset, realizedList_toFinset] at hz
             exact (Finset.mem_erase.mp hz).1
-          simp only [tripleModeAt, hne, if_false, hb, Bool.false_eq_true]
+          simp only [tripleModeAt, hne, ite_false, hb, Bool.false_eq_true]
           exact ihc hp
 
 lemma idxOf_fst_tripleRealizedSchedule
@@ -2513,11 +2536,12 @@ lemma idxOf_fst_tripleRealizedSchedule
   have hidx := List.get_idxOf hmap
     (⟨l.idxOf p, by simpa using hip⟩ : Fin (l.map Prod.fst).length)
   simp only [List.get_eq_getElem, List.getElem_map] at hidx
-  rw [show l[l.idxOf p] = p from by simpa [List.get_eq_getElem] using hget] at hidx
+  rw [show l[l.idxOf p] = p from by simp] at hidx
   rw [show l.map Prod.fst = realizedList S.leftOrder base from
     tripleRealizedSchedule_map_fst S base] at hidx
   exact hidx
 
+/-- The product of triple weights along a realized schedule. -/
 noncomputable def tripleScheduleProduct (μ : ConfigSpace E → ℝ) :
     Finset E → ConfigSpace E → ConfigSpace E → ConfigSpace E →
       List (E × TripleMode) → ℝ
@@ -2528,6 +2552,7 @@ noncomputable def tripleScheduleProduct (μ : ConfigSpace E → ℝ) :
           (base e) (left e) (right e) *
         tripleScheduleProduct μ (insert e F) base left right tail
 
+/-- The product of triple weights along a fixed schedule. -/
 noncomputable def staticTripleScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E)
     (schedule : List (E × TripleMode)) : ℝ :=
@@ -2537,7 +2562,7 @@ noncomputable def staticTripleScheduleProduct (μ : ConfigSpace E → ℝ)
       (condProbClosed μ before left p.1) (condProbClosed μ before right p.1)
       (base p.1) (left p.1) (right p.1)).prod
 
-theorem tripleScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
+lemma tripleScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E)
     (schedule : List (E × TripleMode)) (hnd : (schedule.map Prod.fst).Nodup) :
     tripleScheduleProduct μ F base left right schedule =
@@ -2567,7 +2592,7 @@ theorem tripleScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
       simp only [List.take_succ_cons, List.map_cons, List.toFinset_cons,
         Finset.union_insert, Finset.insert_union]
 
-theorem tripleJointProb_eq_tripleScheduleProduct (μ : ConfigSpace E → ℝ)
+lemma tripleJointProb_eq_tripleScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) :
     tripleJointProb μ F base left right S =
@@ -2577,20 +2602,20 @@ theorem tripleJointProb_eq_tripleScheduleProduct (μ : ConfigSpace E → ℝ)
   | @node R e he mode closed opened ihc iho =>
       rw [tripleJointProb, tripleRealizedSchedule, tripleScheduleProduct]
       by_cases hb : base e
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         exact congrArg
           (fun z => tripleWeight mode (condProbClosed μ F base e)
             (condProbClosed μ F left e) (condProbClosed μ F right e)
             true (left e) (right e) * z)
           (iho (insert e F) base)
-      · simp only [hb, Bool.false_eq_true, if_false]
+      · simp only [hb, Bool.false_eq_true, ite_false]
         exact congrArg
           (fun z => tripleWeight mode (condProbClosed μ F base e)
             (condProbClosed μ F left e) (condProbClosed μ F right e)
             false (left e) (right e) * z)
           (ihc (insert e F) base)
 
-theorem staticTripleScheduleProduct_eq_prod_realized
+lemma staticTripleScheduleProduct_eq_prod_realized
     (μ : ConfigSpace E → ℝ) (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     staticTripleScheduleProduct μ ∅ base left right (tripleRealizedSchedule S base) =
@@ -2642,7 +2667,7 @@ theorem staticTripleScheduleProduct_eq_prod_realized
   intro i _
   simp [g, sigma]
 
-
+/-- The probability of a triple under the cross coupling, conditioned on `F`. -/
 noncomputable def crossTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) : {R : Finset E} → TripleOrder R → ℝ
   | _, .done => 1
@@ -2655,6 +2680,7 @@ noncomputable def crossTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         + crossTripleWeight mode a q r true (left e) (right e) *
           crossTripleProb μ (insert e F) (Function.update base e true) left right opened
 
+/-- The joint probability of a triple under the cross coupling along a triple order. -/
 noncomputable def crossTripleJointProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) : {R : Finset E} → TripleOrder R → ℝ
   | _, .done => 1
@@ -2669,9 +2695,7 @@ noncomputable def crossTripleJointProb (μ : ConfigSpace E → ℝ) (F : Finset 
         crossTripleWeight mode a q r false (left e) (right e) *
           crossTripleJointProb μ (insert e F) base left right closed
 
-
-
-
+/-- The triple probability with coordinate `z` flipped in the target. -/
 noncomputable def flipTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) (z : E) :
     {R : Finset E} → TripleOrder R → ℝ
@@ -2692,7 +2716,7 @@ noncomputable def flipTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
             flipTripleProb μ (insert e F) (Function.update base e true)
               left right z opened
 
-
+/-- The cross triple probability with coordinate `z` flipped in the target. -/
 noncomputable def flipCrossTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base left right : ConfigSpace E) (z : E) :
     {R : Finset E} → TripleOrder R → ℝ
@@ -2713,8 +2737,7 @@ noncomputable def flipCrossTripleProb (μ : ConfigSpace E → ℝ) (F : Finset E
             flipCrossTripleProb μ (insert e F) (Function.update base e true)
               left right z opened
 
-
-
+/-- The base probability with coordinate `z` flipped. -/
 noncomputable def flipBaseProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base : ConfigSpace E) (z : E) : {R : Finset E} → TripleOrder R → ℝ
   | _, .done => 0
@@ -2766,7 +2789,7 @@ noncomputable def flipBaseProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         simp [flipBaseProb, TripleOrder.beforeOfCausal]
       · simp [flipBaseProb, TripleOrder.beforeOfCausal, hze, ihc, iho]
 
-@[simp] theorem flipTripleProb_extendDecisionTreeTriple_none
+@[simp] lemma flipTripleProb_extendDecisionTreeTriple_none
     (μ : ConfigSpace E → ℝ) (F : Finset E) (T : DecisionTree E)
     (known base left right : ConfigSpace E) (R : Finset E) (z : E) :
     flipTripleProb μ F base left right z
@@ -2776,17 +2799,17 @@ noncomputable def flipBaseProb (μ : ConfigSpace E → ℝ) (F : Finset E)
   | node e opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         by_cases hze : z = e
         · subst z
           simp [flipTripleProb]
         · simp [flipTripleProb, hze, ihc, iho]
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         by_cases hb : known e
         · simp [hb, iho]
         · simp [hb, ihc]
 
-@[simp] theorem flipCrossTripleProb_extendDecisionTreeTriple_none
+@[simp] lemma flipCrossTripleProb_extendDecisionTreeTriple_none
     (μ : ConfigSpace E → ℝ) (F : Finset E) (T : DecisionTree E)
     (known base left right : ConfigSpace E) (R : Finset E) (z : E) :
     flipCrossTripleProb μ F base left right z
@@ -2796,17 +2819,17 @@ noncomputable def flipBaseProb (μ : ConfigSpace E → ℝ) (F : Finset E)
   | node e opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         by_cases hze : z = e
         · subst z
           simp [flipCrossTripleProb]
         · simp [flipCrossTripleProb, hze, ihc, iho]
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         by_cases hb : known e
         · simp [hb, iho]
         · simp [hb, ihc]
 
-@[simp] theorem flipBaseProb_extendDecisionTreeTriple_none
+@[simp] lemma flipBaseProb_extendDecisionTreeTriple_none
     (μ : ConfigSpace E → ℝ) (F : Finset E) (T : DecisionTree E)
     (known base : ConfigSpace E) (R : Finset E) (z : E) :
     flipBaseProb μ F base z (extendDecisionTreeTriple none T known R) = 0 := by
@@ -2815,16 +2838,17 @@ noncomputable def flipBaseProb (μ : ConfigSpace E → ℝ) (F : Finset E)
   | node e opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases he : e ∈ R
-      · rw [dif_pos he]
+      · rw [dite_eq_left he]
         by_cases hze : z = e
         · subst z
           simp [flipBaseProb]
         · simp [flipBaseProb, hze, ihc, iho]
-      · rw [dif_neg he]
+      · rw [dite_eq_right he]
         by_cases hb : known e
         · simp [hb, iho]
         · simp [hb, ihc]
 
+/-- The product of cross weights along a realized schedule. -/
 noncomputable def crossScheduleProduct (μ : ConfigSpace E → ℝ) :
     Finset E → ConfigSpace E → ConfigSpace E → ConfigSpace E →
       List (E × TripleMode) → ℝ
@@ -2835,6 +2859,7 @@ noncomputable def crossScheduleProduct (μ : ConfigSpace E → ℝ) :
           (base e) (left e) (right e) *
         crossScheduleProduct μ (insert e F) base left right tail
 
+/-- The product of cross weights along a fixed schedule. -/
 noncomputable def staticCrossScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E)
     (schedule : List (E × TripleMode)) : ℝ :=
@@ -2844,7 +2869,7 @@ noncomputable def staticCrossScheduleProduct (μ : ConfigSpace E → ℝ)
       (condProbClosed μ before left p.1) (condProbClosed μ before right p.1)
       (base p.1) (left p.1) (right p.1)).prod
 
-theorem crossScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
+lemma crossScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E)
     (schedule : List (E × TripleMode)) (hnd : (schedule.map Prod.fst).Nodup) :
     crossScheduleProduct μ F base left right schedule =
@@ -2874,7 +2899,7 @@ theorem crossScheduleProduct_eq_static (μ : ConfigSpace E → ℝ)
       simp only [List.take_succ_cons, List.map_cons, List.toFinset_cons,
         Finset.union_insert, Finset.insert_union]
 
-theorem crossTripleJointProb_eq_crossScheduleProduct (μ : ConfigSpace E → ℝ)
+lemma crossTripleJointProb_eq_crossScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base left right : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) :
     crossTripleJointProb μ F base left right S =
@@ -2884,20 +2909,20 @@ theorem crossTripleJointProb_eq_crossScheduleProduct (μ : ConfigSpace E → ℝ
   | @node R e he mode closed opened ihc iho =>
       rw [crossTripleJointProb, tripleRealizedSchedule, crossScheduleProduct]
       by_cases hb : base e
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         exact congrArg
           (fun z => crossTripleWeight mode (condProbClosed μ F base e)
             (condProbClosed μ F left e) (condProbClosed μ F right e)
             true (left e) (right e) * z)
           (iho (insert e F) base)
-      · simp only [hb, Bool.false_eq_true, if_false]
+      · simp only [hb, Bool.false_eq_true, ite_false]
         exact congrArg
           (fun z => crossTripleWeight mode (condProbClosed μ F base e)
             (condProbClosed μ F left e) (condProbClosed μ F right e)
             false (left e) (right e) * z)
           (ihc (insert e F) base)
 
-theorem staticCrossScheduleProduct_eq_prod_realized
+lemma staticCrossScheduleProduct_eq_prod_realized
     (μ : ConfigSpace E → ℝ) (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
     staticCrossScheduleProduct μ ∅ base left right (tripleRealizedSchedule S base) =
@@ -2949,7 +2974,7 @@ theorem staticCrossScheduleProduct_eq_prod_realized
   intro i _
   simp [g, sigma]
 
-theorem tripleLabelCube_frozenCrossRawAtom_toReal_eq_crossTripleJointProb
+lemma tripleLabelCube_frozenCrossRawAtom_toReal_eq_crossTripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
@@ -2981,8 +3006,7 @@ theorem tripleLabelCube_frozenCrossRawAtom_toReal_eq_crossTripleJointProb
       exact realizedList_nodup S.leftOrder base)]
   exact (crossTripleJointProb_eq_crossScheduleProduct μ ∅ base left right S).symm
 
-
-theorem tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb
+lemma tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
@@ -2993,10 +3017,7 @@ theorem tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb
   exact tripleLabelCube_frozenCrossRawAtom_toReal_eq_crossTripleJointProb
     μ hpos S base left right
 
-
-
-
-
+/-- The conditional probability of the target given the base along a causal order. -/
 noncomputable def targetProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base target : ConfigSpace E) : {R : Finset E} → CausalOrder R → ℝ
   | _, .done => 1
@@ -3008,7 +3029,7 @@ noncomputable def targetProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         + splitWeight active a q true (target e) *
           targetProb μ (insert e F) (Function.update base e true) target opened
 
-
+/-- The joint probability of `(base, target)` along a causal order. -/
 noncomputable def jointProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base target : ConfigSpace E) : {R : Finset E} → CausalOrder R → ℝ
   | _, .done => 1
@@ -3022,8 +3043,7 @@ noncomputable def jointProb (μ : ConfigSpace E → ℝ) (F : Finset E)
         splitWeight independent a q false (target e) *
           jointProb μ (insert e F) base target closed
 
-
-
+/-- The probability that the target follows the driver configuration along the causal order. -/
 noncomputable def pathProb (μ : ConfigSpace E → ℝ) (F : Finset E)
     (driver target : ConfigSpace E) : {R : Finset E} → CausalOrder R → ℝ
   | _, .done => 1
@@ -3033,9 +3053,7 @@ noncomputable def pathProb (μ : ConfigSpace E → ℝ) (F : Finset E)
           pathProb μ (insert e F) driver target opened
         else pathProb μ (insert e F) driver target closed
 
-
-
-theorem jointProb_allIndependent_eq_mul_pathProb (μ : ConfigSpace E → ℝ)
+lemma jointProb_allIndependent_eq_mul_pathProb (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base target : ConfigSpace E) {R : Finset E}
     (S : CausalOrder R) :
     jointProb μ F base target (allIndependent S) =
@@ -3046,17 +3064,17 @@ theorem jointProb_allIndependent_eq_mul_pathProb (μ : ConfigSpace E → ℝ)
       ring
   | node e he independent closed opened ihc iho =>
       by_cases hb : base e
-      · simp only [allIndependent, jointProb, pathProb, hb, if_true,
+      · simp only [allIndependent, jointProb, pathProb, hb, ite_true,
           splitWeight, independentWeight]
         rw [iho]
         ring
       · simp only [allIndependent, jointProb, pathProb, hb,
-          Bool.false_eq_true, if_false, splitWeight, independentWeight]
+          Bool.false_eq_true, ite_false, splitWeight, independentWeight]
         rw [ihc]
-        simp only [if_true]
+        simp only [ite_true]
         ring
 
-
+/-- The realized schedule of coordinates and independence flags of a causal order run on `ω`. -/
 def realizedSchedule : {R : Finset E} → CausalOrder R →
     ConfigSpace E → List (E × Bool)
   | _, .done, _ => []
@@ -3064,6 +3082,7 @@ def realizedSchedule : {R : Finset E} → CausalOrder R →
       (e, independent) :: if base e then realizedSchedule opened base
         else realizedSchedule closed base
 
+omit [Fintype E] in
 @[simp] lemma realizedSchedule_map_fst {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) :
     (realizedSchedule S base).map Prod.fst = realizedList S base := by
@@ -3073,11 +3092,13 @@ def realizedSchedule : {R : Finset E} → CausalOrder R →
       simp only [realizedSchedule, List.map_cons, realizedList]
       split <;> simp_all
 
+omit [Fintype E] in
 lemma realizedSchedule_length {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) : (realizedSchedule S base).length = R.card := by
   rw [← realizedList_length S base, ← realizedSchedule_map_fst S base,
     List.length_map]
 
+omit [Fintype E] in
 lemma realizedSchedule_mode {R : Finset E} (S : CausalOrder R)
     (base : ConfigSpace E) (p : E × Bool) (hp : p ∈ realizedSchedule S base) :
     p.2 = independentAt S base p.1 := by
@@ -3085,7 +3106,7 @@ lemma realizedSchedule_mode {R : Finset E} (S : CausalOrder R)
   | done => simp [realizedSchedule] at hp
   | @node R e he independent closed opened ihc iho =>
       by_cases hb : base e
-      · simp only [realizedSchedule, hb, if_true, List.mem_cons] at hp
+      · simp only [realizedSchedule, hb, ite_true, List.mem_cons] at hp
         rcases hp with rfl | hp
         · simp [independentAt]
         · have hz : p.1 ∈ realizedList opened base := by
@@ -3094,9 +3115,9 @@ lemma realizedSchedule_mode {R : Finset E} (S : CausalOrder R)
           have hne : p.1 ≠ e := by
             rw [← List.mem_toFinset, realizedList_toFinset] at hz
             exact (Finset.mem_erase.mp hz).1
-          simp only [independentAt, hne, if_false, hb, if_true]
+          simp only [independentAt, hne, ite_false, hb, ite_true]
           exact iho hp
-      · simp only [realizedSchedule, hb, Bool.false_eq_true, if_false, List.mem_cons] at hp
+      · simp only [realizedSchedule, hb, Bool.false_eq_true, ite_false, List.mem_cons] at hp
         rcases hp with rfl | hp
         · simp [independentAt]
         · have hz : p.1 ∈ realizedList closed base := by
@@ -3105,7 +3126,7 @@ lemma realizedSchedule_mode {R : Finset E} (S : CausalOrder R)
           have hne : p.1 ≠ e := by
             rw [← List.mem_toFinset, realizedList_toFinset] at hz
             exact (Finset.mem_erase.mp hz).1
-          simp only [independentAt, hne, if_false, hb, Bool.false_eq_true]
+          simp only [independentAt, hne, ite_false, hb, Bool.false_eq_true]
           exact ihc hp
 
 lemma idxOf_fst_realizedSchedule (S : CausalOrder (Finset.univ : Finset E))
@@ -3120,11 +3141,11 @@ lemma idxOf_fst_realizedSchedule (S : CausalOrder (Finset.univ : Finset E))
   have hidx := List.get_idxOf hmap
     (⟨l.idxOf p, by simpa using hip⟩ : Fin (l.map Prod.fst).length)
   simp only [List.get_eq_getElem, List.getElem_map] at hidx
-  rw [show l[l.idxOf p] = p from by simpa [List.get_eq_getElem] using hget] at hidx
+  rw [show l[l.idxOf p] = p from by simp] at hidx
   rw [show l.map Prod.fst = realizedList S base from realizedSchedule_map_fst S base] at hidx
   exact hidx
 
-
+/-- The product of split weights along a realized schedule. -/
 noncomputable def scheduleProduct (μ : ConfigSpace E → ℝ) :
     Finset E → ConfigSpace E → ConfigSpace E → List (E × Bool) → ℝ
   | _, _, _, [] => 1
@@ -3133,9 +3154,7 @@ noncomputable def scheduleProduct (μ : ConfigSpace E → ℝ) :
           (condProbClosed μ F target e) (base e) (target e) *
         scheduleProduct μ (insert e F) base target tail
 
-
-
-
+/-- The product of split weights along a fixed schedule. -/
 noncomputable def staticScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base target : ConfigSpace E) (schedule : List (E × Bool)) : ℝ :=
   (schedule.map fun p =>
@@ -3143,9 +3162,7 @@ noncomputable def staticScheduleProduct (μ : ConfigSpace E → ℝ)
     splitWeight p.2 (condProbClosed μ before base p.1)
       (condProbClosed μ before target p.1) (base p.1) (target p.1)).prod
 
-
-
-theorem scheduleProduct_eq_staticScheduleProduct (μ : ConfigSpace E → ℝ)
+lemma scheduleProduct_eq_staticScheduleProduct (μ : ConfigSpace E → ℝ)
     (F : Finset E) (base target : ConfigSpace E) (schedule : List (E × Bool))
     (hnd : (schedule.map Prod.fst).Nodup) :
     scheduleProduct μ F base target schedule =
@@ -3180,7 +3197,7 @@ theorem scheduleProduct_eq_staticScheduleProduct (μ : ConfigSpace E → ℝ)
       simp only [List.take_succ_cons, List.map_cons, List.toFinset_cons,
         Finset.union_insert, Finset.insert_union]
 
-theorem staticScheduleProduct_eq_prod_realized (μ : ConfigSpace E → ℝ)
+lemma staticScheduleProduct_eq_prod_realized (μ : ConfigSpace E → ℝ)
     (S : CausalOrder (Finset.univ : Finset E)) (base target : ConfigSpace E) :
     staticScheduleProduct μ ∅ base target (realizedSchedule S base) =
       ∏ i : Fin (Fintype.card E),
@@ -3209,14 +3226,6 @@ theorem staticScheduleProduct_eq_prod_realized (μ : ConfigSpace E → ℝ)
     rw [List.map_take]
     rw [show schedule.map Prod.fst = realizedList S base from
       realizedSchedule_map_fst S base]
-    change
-      splitWeight (independentAt S base p.1)
-          (condProbClosed μ
-            ((realizedList S base).take ((realizedList S base).idxOf p.1)).toFinset
-            base p.1)
-          (condProbClosed μ
-            ((realizedList S base).take ((realizedList S base).idxOf p.1)).toFinset
-            target p.1) (base p.1) (target p.1) = g p.1
     rw [← thr_realizedEquiv μ S base base p.1]
     rw [← thr_realizedEquiv μ S base target p.1]
   unfold staticScheduleProduct
@@ -3233,9 +3242,7 @@ theorem staticScheduleProduct_eq_prod_realized (μ : ConfigSpace E → ℝ)
   intro i _
   simp [g, σ]
 
-
-
-theorem jointProb_eq_scheduleProduct (μ : ConfigSpace E → ℝ) (F : Finset E)
+lemma jointProb_eq_scheduleProduct (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base target : ConfigSpace E) {R : Finset E} (S : CausalOrder R) :
     jointProb μ F base target S =
       scheduleProduct μ F base target (realizedSchedule S base) := by
@@ -3244,20 +3251,18 @@ theorem jointProb_eq_scheduleProduct (μ : ConfigSpace E → ℝ) (F : Finset E)
   | @node R e he independent closed opened ihc iho =>
       rw [jointProb, realizedSchedule, scheduleProduct]
       by_cases hb : base e
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         exact congrArg
           (fun z => splitWeight independent (condProbClosed μ F base e)
             (condProbClosed μ F target e) true (target e) * z)
           (iho (insert e F) base)
-      · simp only [hb, Bool.false_eq_true, if_false]
+      · simp only [hb, Bool.false_eq_true, ite_false]
         exact congrArg
           (fun z => splitWeight independent (condProbClosed μ F base e)
             (condProbClosed μ F target e) false (target e) * z)
           (ihc (insert e F) base)
 
-
-
-theorem pairedCube_frozenCodeAtom_toReal_eq_jointProb
+lemma pairedCube_frozenCodeAtom_toReal_eq_jointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : CausalOrder (Finset.univ : Finset E))
     (base target : ConfigSpace E) :
@@ -3271,8 +3276,7 @@ theorem pairedCube_frozenCodeAtom_toReal_eq_jointProb
       exact realizedList_nodup S base)]
   exact (jointProb_eq_scheduleProduct μ ∅ base target S).symm
 
-
-theorem pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb
+lemma pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E))
     (base left right : ConfigSpace E) :
@@ -3288,10 +3292,14 @@ theorem pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb
       exact realizedList_nodup S.leftOrder base)]
   exact (tripleJointProb_eq_tripleScheduleProduct μ ∅ base left right S).symm
 
+/-! ## H. Energies and fiber steps -/
+
+/-- The sum of `H` over base configurations agreeing with `seed` on `F`. -/
 noncomputable def baseSum (F : Finset E) (seed : ConfigSpace E)
     (H : ConfigSpace E → ℝ) : ℝ :=
   ∑ base, if Agree F seed base then H base else 0
 
+/-- The conditional expectation of `g` given agreement with `seed` on `F`. -/
 noncomputable def condObservable (μ : ConfigSpace E → ℝ) (F : Finset E)
     (seed : ConfigSpace E) (g : ConfigSpace E → ℝ) : ℝ :=
   baseSum F seed (fun target => g target * condMass μ F target target)
@@ -3352,20 +3360,19 @@ lemma baseSum_condMass_self_eq_one (μ : ConfigSpace E → ℝ)
     apply Finset.sum_congr rfl
     intro base _
     by_cases hA : Agree F seed base
-    · rw [if_pos hA]
+    · rw [ite_eq_left hA]
       unfold condMass
       change ((if Agree F base base then μ base else 0) / condNorm μ F base) =
         (if Agree F seed base then μ base else 0) / condNorm μ F seed
-      rw [if_pos (agree_self F base), if_pos hA]
+      rw [ite_eq_left (agree_self F base), ite_eq_left hA]
       rw [condNorm_congr μ F seed base (fun e he => (hA e he).symm)]
-    · rw [if_neg hA]
+    · rw [ite_eq_right hA]
       unfold condMass
-      change 0 = (if Agree F seed base then μ base else 0) / condNorm μ F seed
-      rw [if_neg hA]
+      rw [ite_eq_right hA]
       simp
   rw [heq, condMass_sum F seed (condNorm_pos hpos F seed).ne']
 
-theorem baseSum_tripleJointProb_eq_tripleProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_tripleJointProb_eq_tripleProb (μ : ConfigSpace E → ℝ)
     (F : Finset E) (seed left right : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
     baseSum F seed (fun base => tripleJointProb μ F base left right S) =
@@ -3432,18 +3439,16 @@ theorem baseSum_tripleJointProb_eq_tripleProb (μ : ConfigSpace E → ℝ)
             exact h
           have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
             condProbClosed_congr μ F base seed e (fun z hz => hag z hz)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [tripleJointProb, hbit, hq]
           cases b <;> rfl
         · simp [hA]
       rw [hbranch false, hbranch true]
-      simp only [Bool.false_eq_true, if_false, if_true]
+      simp only [Bool.false_eq_true, ite_false, ite_true]
       rw [ihc (insert e F) (Function.update seed e false) hchild]
       rw [iho (insert e F) (Function.update seed e true) hchild]
 
-
-
-theorem baseSum_flip_tripleJointProb_eq_flipTripleProb
+lemma baseSum_flip_tripleJointProb_eq_flipTripleProb
     (μ : ConfigSpace E → ℝ) (F : Finset E)
     (seed left right : ConfigSpace E) (z : E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -3468,12 +3473,12 @@ theorem baseSum_flip_tripleJointProb_eq_flipTripleProb
       · subst z
         by_cases hm : mode = .flip
         · subst mode
-          simp only [tripleModeAt, if_pos rfl, if_true, one_mul]
+          simp only [tripleModeAt, ite_true, one_mul]
           rw [baseSum_tripleJointProb_eq_tripleProb μ F seed left right
             (.node e he .flip closed opened) hR]
           simp [flipTripleProb]
         · have hm' : mode ≠ TripleMode.flip := hm
-          simp only [tripleModeAt, if_pos rfl, hm', if_false, zero_mul]
+          simp only [tripleModeAt]
           simp [baseSum, flipTripleProb, hm']
       · rw [baseSum_split F seed (fun base =>
           (if tripleModeAt (.node e he mode closed opened) base z = .flip
@@ -3512,21 +3517,21 @@ theorem baseSum_flip_tripleJointProb_eq_flipTripleProb
               exact h
             have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
               condProbClosed_congr μ F base seed e (fun x hx => hag x hx)
-            simp only [hA, if_true]
+            simp only [hA, ite_true]
             rw [tripleJointProb, hbit, hq]
             cases b
             · by_cases hm : tripleModeAt closed base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm]
             · by_cases hm : tripleModeAt opened base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm]
           · simp [hA]
         rw [hbranch false, hbranch true]
-        simp only [Bool.false_eq_true, if_false, if_true]
+        simp only [Bool.false_eq_true, ite_false, ite_true]
         rw [ihc (insert e F) (Function.update seed e false) hchild]
         rw [iho (insert e F) (Function.update seed e true) hchild]
         simp [flipTripleProb, hze]
 
-theorem baseSum_crossTripleJointProb_eq_crossTripleProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_crossTripleJointProb_eq_crossTripleProb (μ : ConfigSpace E → ℝ)
     (F : Finset E) (seed left right : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
     baseSum F seed (fun base => crossTripleJointProb μ F base left right S) =
@@ -3593,19 +3598,16 @@ theorem baseSum_crossTripleJointProb_eq_crossTripleProb (μ : ConfigSpace E → 
             exact h
           have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
             condProbClosed_congr μ F base seed e (fun z hz => hag z hz)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [crossTripleJointProb, hbit, hq]
           cases b <;> rfl
         · simp [hA]
       rw [hbranch false, hbranch true]
-      simp only [Bool.false_eq_true, if_false, if_true]
+      simp only [Bool.false_eq_true, ite_false, ite_true]
       rw [ihc (insert e F) (Function.update seed e false) hchild]
       rw [iho (insert e F) (Function.update seed e true) hchild]
 
-
-
-
-theorem baseSum_flip_crossTripleJointProb_eq_flipCrossTripleProb
+lemma baseSum_flip_crossTripleJointProb_eq_flipCrossTripleProb
     (μ : ConfigSpace E → ℝ) (F : Finset E)
     (seed left right : ConfigSpace E) (z : E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -3630,12 +3632,12 @@ theorem baseSum_flip_crossTripleJointProb_eq_flipCrossTripleProb
       · subst z
         by_cases hm : mode = .flip
         · subst mode
-          simp only [tripleModeAt, if_pos rfl, if_true, one_mul]
+          simp only [tripleModeAt, ite_true, one_mul]
           rw [baseSum_crossTripleJointProb_eq_crossTripleProb μ F seed left right
             (.node e he .flip closed opened) hR]
           simp [flipCrossTripleProb]
         · have hm' : mode ≠ TripleMode.flip := hm
-          simp only [tripleModeAt, if_pos rfl, hm', if_false, zero_mul]
+          simp only [tripleModeAt]
           simp [baseSum, flipCrossTripleProb, hm']
       · rw [baseSum_split F seed (fun base =>
           (if tripleModeAt (.node e he mode closed opened) base z = .flip
@@ -3674,21 +3676,21 @@ theorem baseSum_flip_crossTripleJointProb_eq_flipCrossTripleProb
               exact h
             have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
               condProbClosed_congr μ F base seed e (fun x hx => hag x hx)
-            simp only [hA, if_true]
+            simp only [hA, ite_true]
             rw [crossTripleJointProb, hbit, hq]
             cases b
             · by_cases hm : tripleModeAt closed base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm]
             · by_cases hm : tripleModeAt opened base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm]
           · simp [hA]
         rw [hbranch false, hbranch true]
-        simp only [Bool.false_eq_true, if_false, if_true]
+        simp only [Bool.false_eq_true, ite_false, ite_true]
         rw [ihc (insert e F) (Function.update seed e false) hchild]
         rw [iho (insert e F) (Function.update seed e true) hchild]
         simp [flipCrossTripleProb, hze]
 
-theorem sum_tripleJointProb_empty_eq_tripleProb (μ : ConfigSpace E → ℝ)
+lemma sum_tripleJointProb_empty_eq_tripleProb (μ : ConfigSpace E → ℝ)
     (seed left right : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
     ∑ base, tripleJointProb μ ∅ base left right S =
@@ -3696,7 +3698,7 @@ theorem sum_tripleJointProb_empty_eq_tripleProb (μ : ConfigSpace E → ℝ)
   have h := baseSum_tripleJointProb_eq_tripleProb μ ∅ seed left right S (by simp)
   simpa [baseSum, Agree] using h
 
-theorem sum_pairedCube_frozenTripleCodeAtom_eq_tripleProb
+lemma sum_pairedCube_frozenTripleCodeAtom_eq_tripleProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (seed left right : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -3706,8 +3708,7 @@ theorem sum_pairedCube_frozenTripleCodeAtom_eq_tripleProb
   simp_rw [pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb μ hpos]
   exact sum_tripleJointProb_empty_eq_tripleProb μ seed left right S
 
-
-theorem sum_crossTripleJointProb_empty_eq_crossTripleProb (μ : ConfigSpace E → ℝ)
+lemma sum_crossTripleJointProb_empty_eq_crossTripleProb (μ : ConfigSpace E → ℝ)
     (seed left right : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
     ∑ base, crossTripleJointProb μ ∅ base left right S =
@@ -3716,7 +3717,7 @@ theorem sum_crossTripleJointProb_empty_eq_crossTripleProb (μ : ConfigSpace E �
     μ ∅ seed left right S (by simp)
   simpa [baseSum, Agree] using h
 
-theorem sum_tripleCube_frozenCrossCodeAtom_eq_crossTripleProb
+lemma sum_tripleCube_frozenCrossCodeAtom_eq_crossTripleProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (seed left right : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -3726,8 +3727,7 @@ theorem sum_tripleCube_frozenCrossCodeAtom_eq_crossTripleProb
   simp_rw [tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb μ hpos]
   exact sum_crossTripleJointProb_empty_eq_crossTripleProb μ seed left right S
 
-
-theorem sum_frozenTripleCodeAtom_observable_eq_tripleProb
+lemma sum_frozenTripleCodeAtom_observable_eq_tripleProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (seed : ConfigSpace E) (S : TripleOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
@@ -3744,8 +3744,7 @@ theorem sum_frozenTripleCodeAtom_observable_eq_tripleProb
   rw [← Finset.mul_sum]
   rw [sum_pairedCube_frozenTripleCodeAtom_eq_tripleProb μ hpos seed left right S]
 
-
-theorem sum_frozenCrossCodeAtom_observable_eq_crossTripleProb
+lemma sum_frozenCrossCodeAtom_observable_eq_crossTripleProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (seed : ConfigSpace E) (S : TripleOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
@@ -3762,8 +3761,7 @@ theorem sum_frozenCrossCodeAtom_observable_eq_crossTripleProb
   rw [← Finset.mul_sum]
   rw [sum_tripleCube_frozenCrossCodeAtom_eq_crossTripleProb μ hpos seed left right S]
 
-
-theorem sum_frozenTripleCodeAtom_weighted_eq_tripleJointProb
+lemma sum_frozenTripleCodeAtom_weighted_eq_tripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ConfigSpace E → ConfigSpace E → ℝ) :
@@ -3774,8 +3772,7 @@ theorem sum_frozenTripleCodeAtom_weighted_eq_tripleJointProb
         tripleJointProb μ ∅ base left right S := by
   simp_rw [pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb μ hpos]
 
-
-theorem sum_frozenCrossCodeAtom_weighted_eq_crossTripleJointProb
+lemma sum_frozenCrossCodeAtom_weighted_eq_crossTripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ConfigSpace E → ConfigSpace E → ℝ) :
@@ -3786,7 +3783,7 @@ theorem sum_frozenCrossCodeAtom_weighted_eq_crossTripleJointProb
         crossTripleJointProb μ ∅ base left right S := by
   simp_rw [tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb μ hpos]
 
-theorem baseSum_jointProb_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_jointProb_eq_targetProb (μ : ConfigSpace E → ℝ)
     (F : Finset E) (seed target : ConfigSpace E) {R : Finset E}
     (S : CausalOrder R) (hR : R = Finset.univ \ F) :
     baseSum F seed (fun base => jointProb μ F base target S) =
@@ -3852,23 +3849,23 @@ theorem baseSum_jointProb_eq_targetProb (μ : ConfigSpace E → ℝ)
             exact h
           have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
             condProbClosed_congr μ F base seed e (fun z hz => hag z hz)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [jointProb, hbit, hq]
           cases b <;> rfl
         · simp [hA]
       rw [hbranch false, hbranch true]
-      simp only [Bool.false_eq_true, if_false, if_true]
+      simp only [Bool.false_eq_true, ite_false, ite_true]
       rw [ihc (insert e F) (Function.update seed e false) hchild]
       rw [iho (insert e F) (Function.update seed e true) hchild]
 
-theorem sum_jointProb_empty_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma sum_jointProb_empty_eq_targetProb (μ : ConfigSpace E → ℝ)
     (seed target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
     ∑ base, jointProb μ ∅ base target S = targetProb μ ∅ seed target S := by
   have h := baseSum_jointProb_eq_targetProb μ ∅ seed target S (by simp)
   simpa [baseSum, Agree] using h
 
-theorem baseSum_tripleJointProb_right_eq_jointProb
+lemma baseSum_tripleJointProb_right_eq_jointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (base left seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -3937,7 +3934,7 @@ theorem baseSum_tripleJointProb_right_eq_jointProb
           have hr : condProbClosed μ F right e = r := by
             change condProbClosed μ F right e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F right seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [tripleJointProb, hr, hbit]
           cases hb : base e <;> rfl
         · simp [hA]
@@ -3953,22 +3950,22 @@ theorem baseSum_tripleJointProb_right_eq_jointProb
       have hq := hbnd left
       have hr := hbnd seed
       by_cases hb : base e
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         rw [iho (insert e F) (Function.update seed e false) hchild]
         rw [iho (insert e F) (Function.update seed e true) hchild]
-        simp only [TripleOrder.leftOrder, jointProb, hb, if_true]
+        simp only [TripleOrder.leftOrder, jointProb, hb, ite_true]
         rw [← add_mul]
         rw [tripleWeight_sum_third mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
           true (left e)]
-      · simp only [hb, Bool.false_eq_true, if_false]
+      · simp only [hb, Bool.false_eq_true, ite_false]
         rw [ihc (insert e F) (Function.update seed e false) hchild]
         rw [ihc (insert e F) (Function.update seed e true) hchild]
-        simp only [TripleOrder.leftOrder, jointProb, hb, Bool.false_eq_true, if_false]
+        simp only [TripleOrder.leftOrder, jointProb, hb, Bool.false_eq_true, ite_false]
         rw [← add_mul]
         rw [tripleWeight_sum_third mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
           false (left e)]
 
-theorem baseSum_tripleJointProb_left_eq_jointProb
+lemma baseSum_tripleJointProb_left_eq_jointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (base right seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4037,7 +4034,7 @@ theorem baseSum_tripleJointProb_left_eq_jointProb
           have hq : condProbClosed μ F left e = q := by
             change condProbClosed μ F left e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F left seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [tripleJointProb, hq, hbit]
           cases hb : base e <;> rfl
         · simp [hA]
@@ -4053,22 +4050,22 @@ theorem baseSum_tripleJointProb_left_eq_jointProb
       have hq := hbnd seed
       have hr := hbnd right
       by_cases hb : base e
-      · simp only [hb, if_true]
+      · simp only [hb, ite_true]
         rw [iho (insert e F) (Function.update seed e false) hchild]
         rw [iho (insert e F) (Function.update seed e true) hchild]
-        simp only [TripleOrder.rightOrder, jointProb, hb, if_true]
+        simp only [TripleOrder.rightOrder, jointProb, hb, ite_true]
         rw [← add_mul]
         rw [tripleWeight_sum_second mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
           true (right e)]
-      · simp only [hb, Bool.false_eq_true, if_false]
+      · simp only [hb, Bool.false_eq_true, ite_false]
         rw [ihc (insert e F) (Function.update seed e false) hchild]
         rw [ihc (insert e F) (Function.update seed e true) hchild]
-        simp only [TripleOrder.rightOrder, jointProb, hb, Bool.false_eq_true, if_false]
+        simp only [TripleOrder.rightOrder, jointProb, hb, Bool.false_eq_true, ite_false]
         rw [← add_mul]
         rw [tripleWeight_sum_second mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
           false (right e)]
 
-theorem sum_tripleJointProb_right_eq_jointProb
+lemma sum_tripleJointProb_right_eq_jointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (base left seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -4078,7 +4075,7 @@ theorem sum_tripleJointProb_right_eq_jointProb
     μ hpos ∅ base left seed S (by simp)
   simpa [baseSum, Agree] using h
 
-theorem sum_tripleJointProb_left_eq_jointProb
+lemma sum_tripleJointProb_left_eq_jointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (base right seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -4088,7 +4085,7 @@ theorem sum_tripleJointProb_left_eq_jointProb
     μ hpos ∅ base right seed S (by simp)
   simpa [baseSum, Agree] using h
 
-theorem baseSum_tripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_tripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E)
     (base left seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4162,7 +4159,7 @@ theorem baseSum_tripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
           have hr : condProbClosed μ F right e = r := by
             change condProbClosed μ F right e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F right seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [tripleProb, hr, hbit]
         · simp [hA]
       rw [hbranch false, hbranch true]
@@ -4206,7 +4203,7 @@ theorem baseSum_tripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
           rw [tripleWeight_sum_third mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
             true (left e)]
 
-theorem baseSum_tripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_tripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E)
     (base right seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4281,7 +4278,7 @@ theorem baseSum_tripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
           have hq : condProbClosed μ F left e = q := by
             change condProbClosed μ F left e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F left seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [tripleProb, hq, hbit]
         · simp [hA]
       rw [hbranch false, hbranch true]
@@ -4326,7 +4323,7 @@ theorem baseSum_tripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
             hr.1 hr.2 true (right e)
           rw [h0, h1]
 
-theorem baseSum_crossTripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_crossTripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E)
     (base left seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4400,7 +4397,7 @@ theorem baseSum_crossTripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
           have hr : condProbClosed μ F right e = r := by
             change condProbClosed μ F right e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F right seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [crossTripleProb, hr, hbit]
         · simp [hA]
       rw [hbranch false, hbranch true]
@@ -4444,7 +4441,7 @@ theorem baseSum_crossTripleProb_right_eq_targetProb (μ : ConfigSpace E → ℝ)
           rw [crossTripleWeight_sum_third mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
             true (left e)]
 
-theorem baseSum_crossTripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma baseSum_crossTripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E)
     (base right seed : ConfigSpace E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4519,7 +4516,7 @@ theorem baseSum_crossTripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
           have hq : condProbClosed μ F left e = q := by
             change condProbClosed μ F left e = condProbClosed μ F seed e
             exact condProbClosed_congr μ F left seed e (fun x hx => hag x hx)
-          simp only [hA, if_true]
+          simp only [hA, ite_true]
           rw [crossTripleProb, hq, hbit]
         · simp [hA]
       rw [hbranch false, hbranch true]
@@ -4563,11 +4560,7 @@ theorem baseSum_crossTripleProb_left_eq_targetProb (μ : ConfigSpace E → ℝ)
           rw [crossTripleWeight_sum_second mode a q r ha.1 ha.2 hq.1 hq.2 hr.1 hr.2
             true (right e)]
 
-
-
-
-
-theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
+lemma jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
     (F R : Finset E) (known base target : ConfigSpace E)
     (hR : R = Finset.univ \ F)
     (hknown : ∀ e, e ∉ R → known e = base e)
@@ -4579,7 +4572,7 @@ theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
   | node e opened closed iho ihc =>
       rw [extendDecisionTreeAt] at hnz
       by_cases heR : e ∈ R
-      · rw [dif_pos heR] at hnz
+      · rw [dite_eq_left heR] at hnz
         have heF : e ∉ F := by
           intro heF
           have hmem : e ∈ Finset.univ \ F := by rw [← hR]; exact heR
@@ -4593,8 +4586,8 @@ theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
             true_and, Finset.mem_insert]
           tauto
         by_cases hb : base e
-        · simp only [hb, if_true, Nat.lt_irrefl, decide_false, jointProb,
-            splitWeight, Bool.false_eq_true, if_false] at hnz
+        · simp only [hb, ite_true, Nat.lt_irrefl, decide_false, jointProb,
+            splitWeight, Bool.false_eq_true, ite_false] at hnz
           have hbit : target e = true := by
             by_contra ht
             have ht' : target e = false := Bool.eq_false_of_not_eq_true ht
@@ -4616,11 +4609,11 @@ theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
             rcases Finset.mem_insert.mp hz with rfl | hz
             · simpa [hb] using hbit.symm
             · exact hagree z hz
-          simp only [DecisionTree.eval, hb, hbit, if_true]
+          simp only [DecisionTree.eval, hb, hbit, ite_true]
           exact iho (insert e F) (R.erase e) (Function.update known e true)
             hR' hk' ha' htail
         · have hb' : base e = false := Bool.eq_false_of_not_eq_true hb
-          simp only [hb, Bool.false_eq_true, if_false, Nat.lt_irrefl, decide_false,
+          simp only [hb, Bool.false_eq_true, ite_false, Nat.lt_irrefl, decide_false,
             jointProb, splitWeight] at hnz
           have hbit : target e = false := by
             by_contra ht
@@ -4643,10 +4636,10 @@ theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
             rcases Finset.mem_insert.mp hz with rfl | hz
             · simpa [hb'] using hbit.symm
             · exact hagree z hz
-          simp only [DecisionTree.eval, hb, hbit, Bool.false_eq_true, if_false]
+          simp only [DecisionTree.eval, hb, hbit, Bool.false_eq_true, ite_false]
           exact ihc (insert e F) (R.erase e) (Function.update known e false)
             hR' hk' ha' htail
-      · rw [dif_neg heR] at hnz
+      · rw [dite_eq_right heR] at hnz
         have heF : e ∈ F := by
           by_contra heF
           have hmem : e ∈ Finset.univ \ F :=
@@ -4656,14 +4649,14 @@ theorem jointProb_zero_support (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
         have hkb : known e = base e := hknown e heR
         have htb : target e = base e := hagree e heF
         by_cases hb : base e
-        · simp only [hkb, hb, if_true] at hnz
-          simp only [DecisionTree.eval, hb, htb, if_true]
+        · simp only [hkb, hb, ite_true] at hnz
+          simp only [DecisionTree.eval, hb, htb, ite_true]
           exact iho F R known hR hknown hagree hnz
-        · simp only [hkb, hb, Bool.false_eq_true, if_false] at hnz
-          simp only [DecisionTree.eval, hb, htb, Bool.false_eq_true, if_false]
+        · simp only [hkb, hb, Bool.false_eq_true, ite_false] at hnz
+          simp only [DecisionTree.eval, hb, htb, Bool.false_eq_true, ite_false]
           exact ihc F R known hR hknown hagree hnz
 
-theorem jointProb_zero_support_univ (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
+lemma jointProb_zero_support_univ (μ : ConfigSpace E → ℝ) (T : DecisionTree E)
     (base target : ConfigSpace E)
     (hnz : jointProb μ ∅ base target
       (extendDecisionTreeAt 0 T base (Finset.univ : Finset E)) ≠ 0) :
@@ -4671,11 +4664,7 @@ theorem jointProb_zero_support_univ (μ : ConfigSpace E → ℝ) (T : DecisionTr
   jointProb_zero_support μ T ∅ Finset.univ base base target
     (by simp) (by simp) (by simp [Agree]) hnz
 
-
-
-
-
-
+/-- The integral of an observable of the target along a causal order. -/
 noncomputable def targetIntegral (μ : ConfigSpace E → ℝ) (F : Finset E)
     (base target : ConfigSpace E) : {R : Finset E} → CausalOrder R → ℝ
   | _, .done => 1
@@ -4695,8 +4684,7 @@ noncomputable def targetIntegral (μ : ConfigSpace E → ℝ) (F : Finset E)
           (volume (thresholdInterval a true ∩ thresholdInterval q (target e))).toReal) *
           targetIntegral μ (insert e F) (Function.update base e true) target opened
 
-
-theorem targetIntegral_eq_targetProb (μ : ConfigSpace E → ℝ)
+lemma targetIntegral_eq_targetProb (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E) (base target : ConfigSpace E)
     {R : Finset E} (S : CausalOrder R) :
     targetIntegral μ F base target S = targetProb μ F base target S := by
@@ -4717,20 +4705,17 @@ theorem targetIntegral_eq_targetProb (μ : ConfigSpace E → ℝ)
           condProbBit_le_one (fun ω => (hpos ω).le) F target e false
           (condNorm_pos hpos F target)⟩
       by_cases hactive : active
-      · simp only [hactive, if_true, splitWeight, independentWeight]
+      · simp only [hactive, ite_true, splitWeight, independentWeight]
         rw [volume_thresholdInterval _ ha.1 ha.2 false]
         rw [volume_thresholdInterval _ ha.1 ha.2 true]
         rw [volume_thresholdInterval _ hq.1 hq.2 (target e)]
         rw [ihc, iho]
-      · simp only [hactive, Bool.false_eq_true, if_false, splitWeight]
+      · simp only [hactive, Bool.false_eq_true, ite_false, splitWeight]
         rw [volume_thresholdInterval_inter _ _ ha.1 ha.2 hq.1 hq.2 false (target e)]
         rw [volume_thresholdInterval_inter _ _ ha.1 ha.2 hq.1 hq.2 true (target e)]
         rw [ihc, iho]
 
-
-
-
-theorem sum_pairedCube_frozenCodeAtom_eq_targetIntegral
+lemma sum_pairedCube_frozenCodeAtom_eq_targetIntegral
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (seed target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
@@ -4743,14 +4728,13 @@ theorem sum_pairedCube_frozenCodeAtom_eq_targetIntegral
   unfold baseSum
   simp [Agree]
 
-
 lemma condMass_chain_step (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
-    (F : Finset E) (target : ConfigSpace E) (e : E) (he : e ∉ F) :
+    (F : Finset E) (target : ConfigSpace E) (e : E) (_he : e ∉ F) :
     condMass μ F target target =
       condProbBit μ F target e (target e) *
         condMass μ (insert e F) target target := by
   unfold condMass
-  rw [if_pos (agree_self F target), if_pos (agree_self (insert e F) target)]
+  rw [ite_eq_left (agree_self F target), ite_eq_left (agree_self (insert e F) target)]
   rw [condProbBit_eq_ratio]
   have hF := (condNorm_pos hpos F target).ne'
   have hI := (condNorm_pos hpos (insert e F) target).ne'
@@ -4762,15 +4746,15 @@ lemma condProbBit_eq_closed_or_one_sub (μ : ConfigSpace E → ℝ)
       if target e then 1 - condProbClosed μ F target e
       else condProbClosed μ F target e := by
   by_cases hb : target e
-  · simp only [hb, if_true]
+  · simp only [hb, ite_true]
     have hsum := condProbBit_true_add_false μ F target e
       (condNorm_pos hpos F target).ne'
     unfold condProbClosed
     linarith
-  · simp only [hb, Bool.false_eq_true, if_false]
+  · simp only [hb, Bool.false_eq_true, ite_false]
     rfl
 
-theorem condObservable_split (μ : ConfigSpace E → ℝ)
+lemma condObservable_split (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (F : Finset E) (seed : ConfigSpace E)
     (g : ConfigSpace E → ℝ) (e : E) (he : e ∉ F) :
     condObservable μ F seed g =
@@ -4804,14 +4788,14 @@ theorem condObservable_split (μ : ConfigSpace E → ℝ)
         exact h
       have hq : condProbClosed μ F target e = condProbClosed μ F seed e :=
         condProbClosed_congr μ F target seed e (fun x hx => hag x hx)
-      simp only [hA, if_true]
+      simp only [hA, ite_true]
       rw [condMass_chain_step μ hpos F target e he]
       rw [condProbBit_eq_closed_or_one_sub μ hpos F target e, hbit, hq]
       cases b <;> simp [bitWeight] <;> ring
     · simp [hA]
   rw [hbranch false, hbranch true]
 
-theorem condObservable_empty_eq_mean (μ : ConfigSpace E → ℝ)
+lemma condObservable_empty_eq_mean (μ : ConfigSpace E → ℝ)
     (hμ1 : ∑ ω, μ ω = 1) (g : ConfigSpace E → ℝ)
     (seed : ConfigSpace E) :
     condObservable μ ∅ seed g = Lindeberg.mean μ g := by
@@ -4820,7 +4804,7 @@ theorem condObservable_empty_eq_mean (μ : ConfigSpace E → ℝ)
   intro target _
   simp [Agree, condNorm_empty, hμ1]
 
-theorem baseSum_flip_condMass_eq_flipBaseProb
+lemma baseSum_flip_condMass_eq_flipBaseProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (seed : ConfigSpace E) (z : E) {R : Finset E}
     (S : TripleOrder R) (hR : R = Finset.univ \ F) :
@@ -4844,11 +4828,11 @@ theorem baseSum_flip_condMass_eq_flipBaseProb
       · subst z
         by_cases hm : mode = .flip
         · subst mode
-          simp only [tripleModeAt, if_pos rfl, if_true, one_mul]
+          simp only [tripleModeAt, ite_true, one_mul]
           rw [baseSum_condMass_self_eq_one μ hpos F seed]
           simp [flipBaseProb]
         · have hm' : mode ≠ TripleMode.flip := hm
-          simp only [tripleModeAt, if_pos rfl, hm', if_false, zero_mul]
+          simp only [tripleModeAt]
           simp [baseSum, flipBaseProb, hm']
       · rw [baseSum_split F seed (fun base =>
           (if tripleModeAt (.node e he mode closed opened) base z = .flip
@@ -4880,22 +4864,22 @@ theorem baseSum_flip_condMass_eq_flipBaseProb
               exact h
             have hq : condProbClosed μ F base e = condProbClosed μ F seed e :=
               condProbClosed_congr μ F base seed e (fun x hx => hag x hx)
-            simp only [hA, if_true]
+            simp only [hA, ite_true]
             rw [condMass_chain_step μ hpos F base e heF]
             rw [condProbBit_eq_closed_or_one_sub μ hpos F base e, hbit, hq]
             cases b
             · by_cases hm : tripleModeAt closed base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, bitWeight, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm, bitWeight]
             · by_cases hm : tripleModeAt opened base z = .flip <;>
-                simp [tripleModeAt, hze, hbit, hm, bitWeight, mul_assoc]
+                simp [tripleModeAt, hze, hbit, hm, bitWeight]
           · simp [hA]
         rw [hbranch false, hbranch true]
-        simp only [Bool.false_eq_true, if_false, if_true]
+        simp only [Bool.false_eq_true, ite_false, ite_true]
         rw [ihc (insert e F) (Function.update seed e false) hchild]
         rw [iho (insert e F) (Function.update seed e true) hchild]
         simp [flipBaseProb, hze]
 
-theorem flipBaseProb_empty_eq_mean_flip
+lemma flipBaseProb_empty_eq_mean_flip
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (seed : ConfigSpace E) (z : E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -4908,7 +4892,7 @@ theorem flipBaseProb_empty_eq_mean_flip
   intro base _
   simp [Agree, condNorm_empty, hμ1]
 
-theorem flipBaseProb_extendDecisionTreeTriple_eq_mean_sharedStep
+lemma flipBaseProb_extendDecisionTreeTriple_eq_mean_sharedStep
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E)
     (seed : ConfigSpace E) (t : ℕ) (z : E) :
@@ -4926,7 +4910,7 @@ theorem flipBaseProb_extendDecisionTreeTriple_eq_mean_sharedStep
   unfold tripleFlipIndicator
   rw [extendDecisionTreeTriple_univ_seed_congr (some t) T base seed]
 
-theorem targetProb_eq_condMass_core (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma targetProb_eq_condMass_core (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (base target : ConfigSpace E) {R : Finset E}
     (S : CausalOrder R) (hR : R = Finset.univ \ F) :
     targetProb μ F base target S = condMass μ F target target := by
@@ -4942,7 +4926,7 @@ theorem targetProb_eq_condMass_core (μ : ConfigSpace E → ℝ) (hpos : ∀ ω,
         simp at this
       subst F
       unfold targetProb condMass
-      rw [if_pos (agree_self Finset.univ target), condNorm_univ]
+      rw [ite_eq_left (agree_self Finset.univ target), condNorm_univ]
       field_simp [(hpos target).ne']
   | @node R e he active closed opened ihc iho =>
       have heF : e ∉ F := by
@@ -4963,10 +4947,7 @@ theorem targetProb_eq_condMass_core (μ : ConfigSpace E → ℝ) (hpos : ∀ ω,
       rw [← condProbBit_eq_closed_or_one_sub μ hpos F target e]
       exact (condMass_chain_step μ hpos F target e heF).symm
 
-
-
-
-theorem flipTripleProb_right_marginal_extendDecisionTreeTriple
+lemma flipTripleProb_right_marginal_extendDecisionTreeTriple
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (driver left rightSeed : ConfigSpace E) (z : E)
     (t : ℕ) (T : DecisionTree E) (known : ConfigSpace E) (R : Finset E)
@@ -4982,7 +4963,7 @@ theorem flipTripleProb_right_marginal_extendDecisionTreeTriple
   | node q opened closed iho ihc =>
       rw [extendDecisionTreeTriple]
       by_cases hqR : q ∈ R
-      · rw [dif_pos hqR]
+      · rw [dite_eq_left hqR]
         have hqF : q ∉ F := by
           intro hqF
           have : q ∈ Finset.univ \ F := by rw [← hR]; exact hqR
@@ -4997,7 +4978,7 @@ theorem flipTripleProb_right_marginal_extendDecisionTreeTriple
         | zero =>
             by_cases hzq : z = q
             · subst z
-              simp only [flipTripleProb, if_pos rfl, if_true, flipBaseProb, one_mul]
+              simp only [flipTripleProb, ite_true, flipBaseProb]
               rw [baseSum_tripleProb_right_eq_targetProb μ hpos F driver left rightSeed
                 (.node q hqR .flip
                   (extendDecisionTreeTriple none closed
@@ -5059,9 +5040,9 @@ theorem flipTripleProb_right_marginal_extendDecisionTreeTriple
                   have hr : condProbClosed μ F right q =
                       condProbClosed μ F rightSeed q :=
                     condProbClosed_congr μ F right rightSeed q (fun x hx => hag x hx)
-                  simp only [hA, if_true]
+                  simp only [hA, ite_true]
                   rw [flipTripleProb, hr, hbit]
-                  simp [tripleWeight, hzq, mul_add, mul_assoc]
+                  simp [tripleWeight, hzq, mul_assoc]
                   ring
                 · simp [hA]
               rw [hbranch false, hbranch true]
@@ -5079,22 +5060,20 @@ theorem flipTripleProb_right_marginal_extendDecisionTreeTriple
                 (R.erase q) hchild]
               have hchain := condMass_chain_step μ hpos F left q hqF
               rw [condProbBit_eq_closed_or_one_sub μ hpos F left q] at hchain
-              simp only [flipBaseProb, hzq, if_false, bitWeight]
+              simp only [flipBaseProb, hzq, ite_false, bitWeight]
               rw [← add_mul]
               rw [overlapWeight_sum_target]
-              by_cases hlq : left q <;> simp [hlq, bitWeight] at hchain ⊢ <;>
+              by_cases hlq : left q <;>
+                simp only [hlq, ↓reduceIte, bitWeight, Bool.false_eq_true] at hchain ⊢ <;>
                 rw [hchain] <;> ring
-      · rw [dif_neg hqR]
+      · rw [dite_eq_right hqR]
         by_cases hkq : known q
-        · simp only [hkq, if_true]
+        · simp only [hkq, ite_true]
           exact iho F driver rightSeed t known R hR
-        · simp only [hkq, Bool.false_eq_true, if_false]
+        · simp only [hkq, Bool.false_eq_true, ite_false]
           exact ihc F driver rightSeed t known R hR
 
-
-
-
-theorem pathProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma pathProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (F : Finset E) (driver target : ConfigSpace E) {R : Finset E}
     (S : CausalOrder R) (hR : R = Finset.univ \ F) :
     pathProb μ F driver target S = condMass μ F target target := by
@@ -5110,7 +5089,7 @@ theorem pathProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
         simp at this
       subst F
       unfold pathProb condMass
-      rw [if_pos (agree_self Finset.univ target), condNorm_univ]
+      rw [ite_eq_left (agree_self Finset.univ target), condNorm_univ]
       field_simp [(hpos target).ne']
   | @node R e he independent closed opened ihc iho =>
       have heF : e ∉ F := by
@@ -5129,9 +5108,9 @@ theorem pathProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
             else pathProb μ (insert e F) driver target closed) =
             condMass μ (insert e F) target target := by
         by_cases hb : driver e
-        · simp only [hb, if_true]
+        · simp only [hb, ite_true]
           exact iho (insert e F) hchild
-        · simp only [hb, Bool.false_eq_true, if_false]
+        · simp only [hb, Bool.false_eq_true, ite_false]
           exact ihc (insert e F) hchild
       rw [pathProb, hrec]
       have hw : bitWeight (condProbClosed μ F target e) (target e) =
@@ -5141,17 +5120,16 @@ theorem pathProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ
       rw [hw]
       exact (condMass_chain_step μ hpos F target e heF).symm
 
-theorem pathProb_empty_eq_mass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma pathProb_empty_eq_mass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (driver target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
     pathProb μ ∅ driver target S = μ target := by
   rw [pathProb_eq_condMass μ hpos ∅ driver target S (by simp)]
   unfold condMass
-  rw [if_pos (agree_self ∅ target), condNorm_empty, hμ1]
+  rw [ite_eq_left (agree_self ∅ target), condNorm_empty, hμ1]
   ring
 
-
-theorem jointProb_allIndependent_empty_eq_mul_mass
+lemma jointProb_allIndependent_empty_eq_mul_mass
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (base target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
@@ -5159,7 +5137,7 @@ theorem jointProb_allIndependent_empty_eq_mul_mass
   rw [jointProb_allIndependent_eq_mul_pathProb]
   rw [pathProb_empty_eq_mass μ hpos hμ1, pathProb_empty_eq_mass μ hpos hμ1]
 
-theorem jointProb_extendDecisionTreeAt_card_eq_mul_mass
+lemma jointProb_extendDecisionTreeAt_card_eq_mul_mass
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E)
     (base target : ConfigSpace E) :
@@ -5169,14 +5147,15 @@ theorem jointProb_extendDecisionTreeAt_card_eq_mul_mass
   rw [extendDecisionTreeAt_card_univ_eq_allIndependent]
   exact jointProb_allIndependent_empty_eq_mul_mass μ hpos hμ1 base target _
 
-
+/-- The pair energy at step `t`: the sum over coupled pairs of the squared increment of the decision
+  tree's value. -/
 noncomputable def causalPairEnergy (μ : ConfigSpace E → ℝ)
     (T : DecisionTree E) (t : ℕ) : ℝ :=
   ∑ base, ∑ target, (T.evalR base - T.evalR target) ^ 2 *
     jointProb μ ∅ base target
       (extendDecisionTreeAt t T base (Finset.univ : Finset E))
 
-theorem causalPairEnergy_zero (μ : ConfigSpace E → ℝ) (T : DecisionTree E) :
+lemma causalPairEnergy_zero (μ : ConfigSpace E → ℝ) (T : DecisionTree E) :
     causalPairEnergy μ T 0 = 0 := by
   unfold causalPairEnergy
   apply Finset.sum_eq_zero
@@ -5194,7 +5173,7 @@ theorem causalPairEnergy_zero (μ : ConfigSpace E → ℝ) (T : DecisionTree E) 
     unfold DecisionTree.evalR
     rw [heval, sub_self, zero_pow (by norm_num), zero_mul]
 
-theorem causalPairEnergy_card_eq_two_var
+lemma causalPairEnergy_card_eq_two_var
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E) :
     causalPairEnergy μ T (Fintype.card E) = 2 * Lindeberg.var μ T.evalR := by
@@ -5214,9 +5193,7 @@ theorem causalPairEnergy_card_eq_two_var
   rw [Lindeberg.var_eq_double_sum μ hμ1 T.evalR]
   ring
 
-
-
-theorem causalPairEnergy_succ_sub (μ : ConfigSpace E → ℝ)
+lemma causalPairEnergy_succ_sub (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (T : DecisionTree E) (t : ℕ) :
     causalPairEnergy μ T (t + 1) - causalPairEnergy μ T t =
       ∑ base, ∑ left, ∑ right,
@@ -5265,6 +5242,7 @@ theorem causalPairEnergy_succ_sub (μ : ConfigSpace E → ℝ)
   intro right _
   ring
 
+omit [DecidableEq E] [Fintype E] in
 lemma evalR_sqdiff_sub_sqdiff_le_abs (T : DecisionTree E)
     (base left right : ConfigSpace E) :
     (T.evalR base - T.evalR right) ^ 2 -
@@ -5282,7 +5260,7 @@ lemma tripleJointProb_nonneg (μ : ConfigSpace E → ℝ)
     μ hpos S base left right]
   exact ENNReal.toReal_nonneg
 
-theorem causalPairEnergy_succ_sub_le_abs
+lemma causalPairEnergy_succ_sub_le_abs
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (t : ℕ) :
     causalPairEnergy μ T (t + 1) - causalPairEnergy μ T t ≤
@@ -5300,15 +5278,14 @@ theorem causalPairEnergy_succ_sub_le_abs
     (evalR_sqdiff_sub_sqdiff_le_abs T base left right)
     (tripleJointProb_nonneg μ hpos _ base left right)
 
+/-- The absolute jump at step `t` summed over coupled triples. -/
 noncomputable def causalAbsJump (μ : ConfigSpace E → ℝ)
     (T : DecisionTree E) (t : ℕ) : ℝ :=
   ∑ base, ∑ left, ∑ right, |T.evalR right - T.evalR left| *
     tripleJointProb μ ∅ base left right
       (extendDecisionTreeTriple (some t) T base (Finset.univ : Finset E))
 
-
-
-theorem tree_osss_of_causal_step_bound
+lemma tree_osss_of_causal_step_bound
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E)
     (hStep : ∀ t < Fintype.card E,
@@ -5349,9 +5326,7 @@ theorem tree_osss_of_causal_step_bound
   rw [hleft, hright] at hsum
   linarith
 
-
-
-theorem tripleJoint_left_energy_eq_causalPairEnergy
+lemma tripleJoint_left_energy_eq_causalPairEnergy
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (t : ℕ) (seed : ConfigSpace E) :
     let S := extendDecisionTreeTriple (some t) T seed
@@ -5380,9 +5355,7 @@ theorem tripleJoint_left_energy_eq_causalPairEnergy
   rw [extendDecisionTreeTriple_leftOrder]
   rw [extendDecisionTreeAt_univ_seed_congr t T seed base]
 
-
-
-theorem tripleJoint_right_energy_eq_causalPairEnergy
+lemma tripleJoint_right_energy_eq_causalPairEnergy
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (t : ℕ) (seed : ConfigSpace E) :
     let S := extendDecisionTreeTriple (some t) T seed
@@ -5412,6 +5385,7 @@ theorem tripleJoint_right_energy_eq_causalPairEnergy
   rw [extendDecisionTreeTriple_rightOrder]
   rw [extendDecisionTreeAt_univ_seed_congr (t + 1) T seed base]
 
+/-- The triple jump at step `t` for configurations agreeing with `seed`. -/
 noncomputable def causalTripleJump (μ : ConfigSpace E → ℝ)
     (T : DecisionTree E) (t : ℕ) (seed : ConfigSpace E) : ℝ :=
   let S := extendDecisionTreeTriple (some t) T seed
@@ -5419,28 +5393,16 @@ noncomputable def causalTripleJump (μ : ConfigSpace E → ℝ)
   ∑ base, ∑ left, ∑ right,
     |T.evalR right - T.evalR left| * tripleJointProb μ ∅ base left right S
 
-lemma evalR_pair_energy_diff_le_abs (T : DecisionTree E)
-    (base left right : ConfigSpace E) :
-    (T.evalR base - T.evalR right) ^ 2 -
-        (T.evalR base - T.evalR left) ^ 2 ≤
-      |T.evalR right - T.evalR left| := by
-  unfold DecisionTree.evalR
-  cases hb : T.eval base <;> cases hl : T.eval left <;>
-    cases hr : T.eval right <;> simp [hb, hl, hr] <;> norm_num
-
-
-
-
+omit [DecidableEq E] [Fintype E] in
 lemma abs_evalR_sub_eq_disagreement (T : DecisionTree E)
     (left right : ConfigSpace E) :
     |T.evalR right - T.evalR left| =
       T.evalR right + T.evalR left - 2 * T.evalR right * T.evalR left := by
   unfold DecisionTree.evalR
   cases hl : T.eval left <;> cases hr : T.eval right <;>
-    simp [hl, hr] <;> norm_num
+    simp; norm_num
 
-
-theorem causalTripleJump_eq_disagreement
+lemma causalTripleJump_eq_disagreement
     (μ : ConfigSpace E → ℝ) (T : DecisionTree E) (t : ℕ)
     (seed : ConfigSpace E) :
     causalTripleJump μ T t seed =
@@ -5453,9 +5415,7 @@ theorem causalTripleJump_eq_disagreement
   unfold causalTripleJump
   simp_rw [abs_evalR_sub_eq_disagreement]
 
-
-
-theorem causalPairEnergy_sub_le_causalTripleJump
+lemma causalPairEnergy_sub_le_causalTripleJump
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (T : DecisionTree E) (t : ℕ) (seed : ConfigSpace E) :
     causalPairEnergy μ T (t + 1) - causalPairEnergy μ T t ≤
@@ -5475,12 +5435,10 @@ theorem causalPairEnergy_sub_le_causalTripleJump
   intro right _
   rw [← sub_mul]
   exact mul_le_mul_of_nonneg_right
-    (evalR_pair_energy_diff_le_abs T base left right)
+    (StatMech.OSSS.AdaptiveCausalKernel.evalR_sqdiff_sub_sqdiff_le_abs T base left right)
     (tripleJointProb_nonneg μ hpos _ base left right)
 
-
-
-theorem two_var_le_sum_causalTripleJump
+lemma two_var_le_sum_causalTripleJump
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E) (seed : ConfigSpace E) :
     2 * Lindeberg.var μ T.evalR ≤
@@ -5495,10 +5453,7 @@ theorem two_var_le_sum_causalTripleJump
   rw [causalPairEnergy_zero, causalPairEnergy_card_eq_two_var μ hpos hμ1] at hsum
   simpa using hsum
 
-
-
-
-theorem adaptive_tree_osss_of_causalTripleJump_le
+lemma adaptive_tree_osss_of_causalTripleJump_le
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (T : DecisionTree E) (seed : ConfigSpace E)
     (hjump : ∀ t < Fintype.card E,
@@ -5532,60 +5487,19 @@ theorem adaptive_tree_osss_of_causalTripleJump_le
   rw [hreorder] at hmain
   linarith
 
-
-
-
-
-theorem targetProb_eq_condMass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
-    (F : Finset E) (base target : ConfigSpace E) {R : Finset E}
-    (S : CausalOrder R) (hR : R = Finset.univ \ F) :
-    targetProb μ F base target S = condMass μ F target target := by
-  induction S generalizing F base with
-  | done =>
-      have hFu : F = Finset.univ := by
-        apply Finset.eq_univ_iff_forall.mpr
-        intro e
-        by_contra he
-        have : e ∈ (∅ : Finset E) := by
-          rw [hR]
-          exact Finset.mem_sdiff.mpr ⟨Finset.mem_univ e, he⟩
-        simp at this
-      subst F
-      unfold targetProb condMass
-      rw [if_pos (agree_self Finset.univ target), condNorm_univ]
-      field_simp [(hpos target).ne']
-  | @node R e he active closed opened ihc iho =>
-      have heF : e ∉ F := by
-        intro heMem
-        have : e ∈ Finset.univ \ F := by rw [← hR]; exact he
-        exact (Finset.mem_sdiff.mp this).2 heMem
-      have hchild : R.erase e = Finset.univ \ insert e F := by
-        rw [hR]
-        ext z
-        simp only [Finset.mem_erase, Finset.mem_sdiff, Finset.mem_univ,
-          true_and, Finset.mem_insert]
-        tauto
-      rw [targetProb]
-      rw [ihc (insert e F) (Function.update base e false) hchild]
-      rw [iho (insert e F) (Function.update base e true) hchild]
-      rw [← add_mul, splitWeight_sum_base]
-      unfold bitWeight
-      rw [← condProbBit_eq_closed_or_one_sub μ hpos F target e]
-      exact (condMass_chain_step μ hpos F target e heF).symm
-
-
-theorem targetProb_empty_eq_mass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma targetProb_empty_eq_mass (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (base target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
     targetProb μ ∅ base target S = μ target := by
-  rw [targetProb_eq_condMass μ hpos ∅ base target S (by simp)]
+  rw [StatMech.OSSS.AdaptiveCausalKernel.targetProb_eq_condMass_core μ hpos ∅ base target S
+    (by simp)]
   unfold condMass
-  rw [if_pos]
+  rw [ite_eq_left]
   · rw [condNorm_empty, hμ1]
     ring
   · exact agree_self ∅ target
 
-theorem sum_tripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_tripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base left seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -5594,7 +5508,7 @@ theorem sum_tripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
   rw [targetProb_empty_eq_mass μ hpos hμ1 base left S.leftOrder] at h
   simpa [baseSum, Agree] using h
 
-theorem sum_tripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_tripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base right seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -5603,7 +5517,7 @@ theorem sum_tripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
   rw [targetProb_empty_eq_mass μ hpos hμ1 base right S.rightOrder] at h
   simpa [baseSum, Agree] using h
 
-theorem sum_crossTripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_crossTripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base left seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -5612,7 +5526,7 @@ theorem sum_crossTripleProb_right_empty_eq_mass (μ : ConfigSpace E → ℝ)
   rw [targetProb_empty_eq_mass μ hpos hμ1 base left S.leftOrder] at h
   simpa [baseSum, Agree] using h
 
-theorem sum_crossTripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_crossTripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base right seed : ConfigSpace E)
     (S : TripleOrder (Finset.univ : Finset E)) :
@@ -5621,7 +5535,7 @@ theorem sum_crossTripleProb_left_empty_eq_mass (μ : ConfigSpace E → ℝ)
   rw [targetProb_empty_eq_mass μ hpos hμ1 base right S.rightOrder] at h
   simpa [baseSum, Agree] using h
 
-theorem sum_jointProb_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_jointProb_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (seed target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
@@ -5629,7 +5543,7 @@ theorem sum_jointProb_empty_eq_mass (μ : ConfigSpace E → ℝ)
   rw [sum_jointProb_empty_eq_targetProb μ seed target S]
   exact targetProb_empty_eq_mass μ hpos hμ1 seed target S
 
-theorem sum_frozenCodeAtom_mass_eq_mass (μ : ConfigSpace E → ℝ)
+lemma sum_frozenCodeAtom_mass_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (seed target : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) :
@@ -5638,7 +5552,7 @@ theorem sum_frozenCodeAtom_mass_eq_mass (μ : ConfigSpace E → ℝ)
   simp_rw [pairedCube_frozenCodeAtom_toReal_eq_jointProb μ hpos]
   exact sum_jointProb_empty_eq_mass μ hpos hμ1 seed target S
 
-theorem sum_frozenCodeAtom_observable_eq_mean (μ : ConfigSpace E → ℝ)
+lemma sum_frozenCodeAtom_observable_eq_mean (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (seed : ConfigSpace E) (S : CausalOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ℝ) :
@@ -5651,8 +5565,7 @@ theorem sum_frozenCodeAtom_observable_eq_mean (μ : ConfigSpace E → ℝ)
   rw [← Finset.mul_sum]
   rw [sum_frozenCodeAtom_mass_eq_mass μ hpos hμ1 seed target S]
 
-
-theorem sum_targetProb_eq_mean (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
+lemma sum_targetProb_eq_mean (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (base : ConfigSpace E)
     (S : CausalOrder (Finset.univ : Finset E)) (g : ConfigSpace E → ℝ) :
     ∑ target, g target * targetProb μ ∅ base target S =
@@ -5660,16 +5573,14 @@ theorem sum_targetProb_eq_mean (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < 
   simp_rw [targetProb_empty_eq_mass μ hpos hμ1 base]
   rfl
 
-
-theorem targetIntegral_empty_eq_mass (μ : ConfigSpace E → ℝ)
+lemma targetIntegral_empty_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base target : ConfigSpace E) (S : CausalOrder (Finset.univ : Finset E)) :
     targetIntegral μ ∅ base target S = μ target := by
   rw [targetIntegral_eq_targetProb μ hpos]
   exact targetProb_empty_eq_mass μ hpos hμ1 base target S
 
-
-theorem sum_diag_targetIntegral_eq_mean (μ : ConfigSpace E → ℝ)
+lemma sum_diag_targetIntegral_eq_mean (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (base : ConfigSpace E) (S : CausalOrder (Finset.univ : Finset E))
     (g : ConfigSpace E → ℝ) :
@@ -5678,56 +5589,48 @@ theorem sum_diag_targetIntegral_eq_mean (μ : ConfigSpace E → ℝ)
   simp_rw [targetIntegral_empty_eq_mass μ hpos hμ1 base]
   rfl
 
-
-
-theorem decisionTree_mixed_targetIntegral_eq_mass (μ : ConfigSpace E → ℝ)
+lemma decisionTree_mixed_targetIntegral_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) (base target : ConfigSpace E) :
     targetIntegral μ ∅ base target
       (extendDecisionTree T base (Finset.univ : Finset E)) = μ target :=
   targetIntegral_empty_eq_mass μ hpos hμ1 base target _
 
-
-theorem decisionTree_mixed_diag_eq_mean (μ : ConfigSpace E → ℝ)
+lemma decisionTree_mixed_diag_eq_mean (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) (base : ConfigSpace E) (g : ConfigSpace E → ℝ) :
     ∑ target, g target * targetIntegral μ ∅ base target
       (extendDecisionTree T base (Finset.univ : Finset E)) = Lindeberg.mean μ g :=
   sum_diag_targetIntegral_eq_mean μ hpos hμ1 base _ g
 
-
-theorem decisionTreeAt_mixed_targetIntegral_eq_mass (μ : ConfigSpace E → ℝ)
+lemma decisionTreeAt_mixed_targetIntegral_eq_mass (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (t : ℕ) (T : DecisionTree E) (base target : ConfigSpace E) :
     targetIntegral μ ∅ base target
       (extendDecisionTreeAt t T base (Finset.univ : Finset E)) = μ target :=
   targetIntegral_empty_eq_mass μ hpos hμ1 base target _
 
-
-theorem decisionTreeAt_mixed_diag_eq_mean (μ : ConfigSpace E → ℝ)
+lemma decisionTreeAt_mixed_diag_eq_mean (μ : ConfigSpace E → ℝ)
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (t : ℕ) (T : DecisionTree E) (base : ConfigSpace E) (g : ConfigSpace E → ℝ) :
     ∑ target, g target * targetIntegral μ ∅ base target
       (extendDecisionTreeAt t T base (Finset.univ : Finset E)) = Lindeberg.mean μ g :=
   sum_diag_targetIntegral_eq_mean μ hpos hμ1 base _ g
 
-
-
+/-- The absolute step increment of `f` on the fiber of the labels `U`. -/
 noncomputable def fiberAbsStep (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (t : ℕ) : ℝ :=
   ∫ V, |f (codeMap μ (σ : Fin n → E) (GrandCoupling.Wt U V t))
       - f (codeMap μ (σ : Fin n → E) (GrandCoupling.Wt U V (t - 1)))|
     ∂(GrandCoupling.Vcube n)
 
+/-- The fiber average of the observable `g` given the labels `U`. -/
 noncomputable def fiberObservable (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     (g : ConfigSpace E → ℝ) (U : Fin n → ℝ) (s : ℕ) : ℝ :=
   ∫ V, g (codeMap μ (σ : Fin n → E) (GrandCoupling.Wt U V s))
     ∂(GrandCoupling.Vcube n)
 
-
-
-
-theorem integral_eq_sum_fibre {α β : Type*} [MeasurableSpace α]
+lemma integral_eq_sum_fibre {α β : Type*} [MeasurableSpace α]
     [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β]
     (ν : Measure α) [IsFiniteMeasure ν] (φ : α → β) (hφ : Measurable φ)
     (g : β → ℝ) :
@@ -5743,7 +5646,7 @@ theorem integral_eq_sum_fibre {α β : Type*} [MeasurableSpace α]
     · intro y _ hy
       rw [Set.indicator_of_notMem]
       · ring
-      · simpa only [Set.mem_setOf_eq] using Ne.symm hy
+      · simpa only [Set.mem_ofPred_eq] using Ne.symm hy
     · simp
   rw [hpoint, integral_finsetSum]
   · apply Finset.sum_congr rfl
@@ -5755,10 +5658,7 @@ theorem integral_eq_sum_fibre {α β : Type*} [MeasurableSpace α]
     exact Integrable.const_mul
       (Integrable.indicator (integrable_const (1 : ℝ)) (hms y)) _
 
-
-
-
-theorem pairedCube_causal_integral_eq_atom_sum (mu : ConfigSpace E → ℝ)
+lemma pairedCube_causal_integral_eq_atom_sum (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
     (∫ z, (if (pairedCausalOutputs mu S base z).1 = base then
@@ -5768,14 +5668,14 @@ theorem pairedCube_causal_integral_eq_atom_sum (mu : ConfigSpace E → ℝ)
       ∑ left, ∑ right, g left right *
         (pairedCube (Fintype.card E)
           (frozenTripleCodeAtom mu S base left right)).toReal := by
-  letI : IsFiniteMeasure (pairedCube (Fintype.card E)) :=
+  let : IsFiniteMeasure (pairedCube (Fintype.card E)) :=
     ⟨by rw [pairedCube, Measure.pi_univ]; simp⟩
   rw [integral_eq_sum_fibre (pairedCube (Fintype.card E))
     (pairedCausalOutputs mu S base) (measurable_pairedCausalOutputs mu S base)
     (fun y => if y.1 = base then g y.2.1 y.2.2 else 0)]
   rw [Fintype.sum_prod_type]
   rw [Finset.sum_eq_single base]
-  · simp only [if_pos]
+  · simp only [ite_eq_left]
     rw [Fintype.sum_prod_type]
     apply Finset.sum_congr rfl
     intro left _
@@ -5786,8 +5686,7 @@ theorem pairedCube_causal_integral_eq_atom_sum (mu : ConfigSpace E → ℝ)
     simp [hne]
   · simp
 
-
-theorem pairedCube_causal_integral_eq_tripleJointProb
+lemma pairedCube_causal_integral_eq_tripleJointProb
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
@@ -5800,9 +5699,7 @@ theorem pairedCube_causal_integral_eq_tripleJointProb
   rw [pairedCube_causal_integral_eq_atom_sum]
   simp_rw [pairedCube_frozenTripleCodeAtom_toReal_eq_tripleJointProb mu hpos]
 
-
-
-theorem tripleCube_causal_integral_eq_atom_sum (μ : ConfigSpace E → ℝ)
+lemma tripleCube_causal_integral_eq_atom_sum (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
     (∫ z, (if (tripleCausalOutputs μ S base z).1 = base then
@@ -5812,14 +5709,14 @@ theorem tripleCube_causal_integral_eq_atom_sum (μ : ConfigSpace E → ℝ)
       ∑ left, ∑ right, g left right *
         (tripleCube (Fintype.card E)
           (frozenCrossCodeAtom μ S base left right)).toReal := by
-  letI : IsFiniteMeasure (tripleCube (Fintype.card E)) :=
+  let : IsFiniteMeasure (tripleCube (Fintype.card E)) :=
     ⟨by rw [tripleCube, Measure.pi_univ]; simp⟩
   rw [integral_eq_sum_fibre (tripleCube (Fintype.card E))
     (tripleCausalOutputs μ S base) (measurable_tripleCausalOutputs μ S base)
     (fun y => if y.1 = base then g y.2.1 y.2.2 else 0)]
   rw [Fintype.sum_prod_type]
   rw [Finset.sum_eq_single base]
-  · simp only [if_pos]
+  · simp only [ite_eq_left]
     rw [Fintype.sum_prod_type]
     apply Finset.sum_congr rfl
     intro left _
@@ -5830,8 +5727,7 @@ theorem tripleCube_causal_integral_eq_atom_sum (μ : ConfigSpace E → ℝ)
     simp [hne]
   · simp
 
-
-theorem tripleCube_causal_integral_eq_crossTripleJointProb
+lemma tripleCube_causal_integral_eq_crossTripleJointProb
     (μ : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < μ ω)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
@@ -5844,8 +5740,7 @@ theorem tripleCube_causal_integral_eq_crossTripleJointProb
   rw [tripleCube_causal_integral_eq_atom_sum]
   simp_rw [tripleCube_frozenCrossCodeAtom_toReal_eq_crossTripleJointProb μ hpos]
 
-
-theorem pairedCube_causal_integral_pullback (mu : ConfigSpace E → ℝ)
+lemma pairedCube_causal_integral_pullback (mu : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
     (∫ z, (if (pairedCausalOutputs mu S base z).1 = base then
@@ -5874,8 +5769,7 @@ theorem pairedCube_causal_integral_pullback (mu : ConfigSpace E → ℝ)
             (causalMixLabels S.rightOrder base p.1 p.2)) else 0)]
   rfl
 
-
-theorem tripleCube_causal_integral_pullback (μ : ConfigSpace E → ℝ)
+lemma tripleCube_causal_integral_pullback (μ : ConfigSpace E → ℝ)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (g : ConfigSpace E → ConfigSpace E → ℝ) :
     (∫ z, (if (tripleCausalOutputs μ S base z).1 = base then
@@ -5907,9 +5801,7 @@ theorem tripleCube_causal_integral_pullback (μ : ConfigSpace E → ℝ)
       ∂(tripleCube (Fintype.card E))) = _
   exact tripleCube_integral_equiv (Fintype.card E) G
 
-
-
-theorem tripleCube_conditional_product {n : ℕ}
+lemma tripleCube_conditional_product {n : ℕ}
     (A : (Fin n → ℝ) → ℝ)
     (F G : (Fin n → ℝ) → (Fin n → ℝ) → ℝ)
     (hAm : Measurable A) (hFm : Measurable (Function.uncurry F))
@@ -5968,9 +5860,7 @@ theorem tripleCube_conditional_product {n : ℕ}
   rw [integral_const_mul]
   ring
 
-
-
-theorem tripleCube_product_le_pairedCube_product {mu : ConfigSpace E → ℝ}
+lemma tripleCube_product_le_pairedCube_product {mu : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < mu ω) (hmono : IsMonotonicMeasure mu)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) {Cf : ℝ}
@@ -6063,9 +5953,7 @@ theorem tripleCube_product_le_pairedCube_product {mu : ConfigSpace E → ℝ}
   have hfinal := hnorm.trans_le hcond'
   simpa only [A, F, G, n, σ, ite_mul, one_mul, zero_mul] using hfinal
 
-
-
-theorem no_flip_causal_atom_eq_zero
+lemma no_flip_causal_atom_eq_zero
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (S : TripleOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     (hno : ∀ e, tripleModeAt S base e ≠ .flip)
@@ -6092,8 +5980,7 @@ theorem no_flip_causal_atom_eq_zero
   rw [hlabels]
   simp
 
-
-theorem decisionTree_flip_atom_step_le
+lemma decisionTree_flip_atom_step_le
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmono : IsMonotonicMeasure mu) (T : DecisionTree E) (t : ℕ)
     (hf : Monotone T.evalR) (base : ConfigSpace E) (e : E)
@@ -6162,7 +6049,7 @@ theorem decisionTree_flip_atom_step_le
     apply Filter.Eventually.of_forall
     intro z
     by_cases hb : (pairedCausalOutputs mu S base z).1 = base
-    · simp only [hb, if_true]
+    · simp only [hb, ite_true]
       exact causal_abs_eq_four_terms hpos hmono hf
         t T base (fun i => (z i).1) (fun i => (z i).2) e he
     · simp [hb]
@@ -6203,8 +6090,7 @@ theorem decisionTree_flip_atom_step_le
     exact add_le_add hc₁ hc₂
   linarith
 
-
-theorem causal_fkg_cross_fiber {mu : ConfigSpace E → ℝ}
+lemma causal_fkg_cross_fiber {mu : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < mu ω) (hmono : IsMonotonicMeasure mu)
     (S₁ S₂ : CausalOrder (Finset.univ : Finset E))
     (base : ConfigSpace E) (σ : Fin (Fintype.card E) ≃ E)
@@ -6242,8 +6128,7 @@ theorem causal_fkg_cross_fiber {mu : ConfigSpace E → ℝ}
     exact Lindeberg.coord_mono e (GrandCoupling.codeMap_mono_u hpos hmono _
       (causalMixLabels_mono_right S₂ base Ufix hVV))
 
-
-theorem causal_abs_integral_fiber_le {mu : ConfigSpace E → ℝ}
+lemma causal_abs_integral_fiber_le {mu : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < mu ω) (hmono : IsMonotonicMeasure mu)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) {Cf : ℝ}
     (hfC : ∀ ω, |f ω| ≤ Cf) (t : ℕ) (T : DecisionTree E)
@@ -6336,10 +6221,7 @@ theorem causal_abs_integral_fiber_le {mu : ConfigSpace E → ℝ}
   dsimp only [Yl, Yr] at hcross₁ hcross₂ ⊢
   linarith
 
-
-
-
-theorem realized_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma realized_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ)
     (S : CausalOrder (Finset.univ : Finset E)) (base : ConfigSpace E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) {Cf : ℝ}
@@ -6366,21 +6248,20 @@ theorem realized_step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < 
   unfold fiberAbsStep fiberObservable
   exact AdaptiveTau.step_fiber_le hpos hmono (realizedEquiv S base) hf hfC t ht htn U
 
+/-- The absolute adaptive step increment of `f` on the fiber of `U`. -/
 noncomputable def fiberAdaptAbsStep (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : Fin n ≃ E) (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (m t : ℕ) : ℝ :=
   ∫ V, |f (codeMap μ (σ : Fin n → E) (AdaptMConditional.adaptWt U V m t))
       - f (codeMap μ (σ : Fin n → E)
           (AdaptMConditional.adaptWt U V m (t - 1)))| ∂(GrandCoupling.Vcube n)
 
+/-- The fiber average of `g` under the adaptive mixture. -/
 noncomputable def fiberAdaptObservable (μ : ConfigSpace E → ℝ) {n : ℕ}
     (σ : Fin n ≃ E) (g : ConfigSpace E → ℝ) (U : Fin n → ℝ) (m s : ℕ) : ℝ :=
   ∫ V, g (codeMap μ (σ : Fin n → E) (AdaptMConditional.adaptWt U V m s))
     ∂(GrandCoupling.Vcube n)
 
-
-
-
-theorem decisionTree_branch_adapt_step_fiber_le {μ : ConfigSpace E → ℝ}
+lemma decisionTree_branch_adapt_step_fiber_le {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hmono : IsMonotonicMeasure μ) (T : DecisionTree E)
     (base : ConfigSpace E) {f : ConfigSpace E → ℝ} (hf : Monotone f) {Cf : ℝ}
     (hfC : ∀ ω, |f ω| ≤ Cf) (t : ℕ) (ht : 1 ≤ t)

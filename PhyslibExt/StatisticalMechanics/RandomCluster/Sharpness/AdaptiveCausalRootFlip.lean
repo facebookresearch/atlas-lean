@@ -6,14 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalMoments
+
+/-!
+# Root-flip identities for weighted cross triples
+
+Weighted sums of cross-triple probabilities with a coordinate factor, after flipping the root,
+expressed through conditional expectations and conditional masses.
+
+## i. Overview
+
+Technical identities: `baseSum` of a coordinate times a cross-triple probability with the root
+flipped equals a conditional expectation times a conditional mass. Unconditional. Part of the
+causal-kernel proof of the decision-tree OSSS inequality for monotonic measures
+(`AdaptiveCausalKernel` → `AdaptiveCausalOSSS.adaptive_tree_osss`).
+
+## ii. Key results
+
+- `baseSum_coord_mul_crossTripleProb_right_rootFlip_eq_cExp_mul_condMass`: right root-flip identity.
+- `baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass`: left root-flip identity.
+
+## iii. Table of contents
+
+- A. Root-flip identities
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+-/
 
 @[expose] public section
 
@@ -39,10 +62,9 @@ lemma cExp_coord_eq_condProbBit_true (mu : ConfigSpace E → ℝ)
   · simp [hq]
   · simp [hq]
 
+/-! ## A. Root-flip identities -/
 
-
-
-theorem baseSum_coord_mul_crossTripleProb_right_rootFlip
+lemma baseSum_coord_mul_crossTripleProb_right_rootFlip
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (F : Finset E) (base left seed : ConfigSpace E) {R : Finset E}
     (q : E) (hq : q ∈ R) (closed opened : TripleOrder (R.erase q))
@@ -103,13 +125,13 @@ theorem baseSum_coord_mul_crossTripleProb_right_rootFlip
       have hr : condProbClosed mu F right q = r := by
         change condProbClosed mu F right q = condProbClosed mu F seed q
         exact condProbClosed_congr mu F right seed q (fun x hx => hag x hx)
-      simp only [hA, if_true]
+      simp only [hA, ite_true]
       rw [crossTripleProb, hr, hbit]
       simp [Lindeberg.coord, hbit]
       ring
     · simp [hA]
   rw [hbranch false, hbranch true]
-  simp only [Bool.false_eq_true, if_false, zero_mul, zero_add, if_true, one_mul]
+  simp only [Bool.false_eq_true, ite_false, zero_mul, zero_add, ite_true, one_mul]
   rw [baseSum_crossTripleProb_right_eq_targetProb mu hpos
     (insert q F) (Function.update base q false) left
     (Function.update seed q true) closed hchild]
@@ -120,17 +142,15 @@ theorem baseSum_coord_mul_crossTripleProb_right_rootFlip
     have hsum := condProbBit_true_add_false mu F seed q
       (condNorm_pos hpos F seed).ne'
     unfold r condProbClosed bitWeight
-    simp only [if_true]
+    simp only [ite_true]
     linarith
   rw [TripleOrder.leftOrder, targetProb]
   simp only [crossTripleWeight, splitWeight, TripleMode.leftIndependent,
-    Bool.false_eq_true, if_false]
+    Bool.false_eq_true, ite_false]
   rw [hopen]
   ring
 
-
-
-theorem baseSum_coord_mul_crossTripleProb_right_rootFlip_eq_cExp_mul_condMass
+lemma baseSum_coord_mul_crossTripleProb_right_rootFlip_eq_cExp_mul_condMass
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (F : Finset E) (driver left rightSeed : ConfigSpace E) {R : Finset E}
     (q : E) (hq : q ∈ R) (closed opened : TripleOrder (R.erase q))
@@ -147,10 +167,7 @@ theorem baseSum_coord_mul_crossTripleProb_right_rootFlip_eq_cExp_mul_condMass
   · rw [cExp_coord_eq_condProbBit_true]
   · exact hR
 
-
-
-
-theorem baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
+lemma baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (F : Finset E) (driver right leftSeed : ConfigSpace E) {R : Finset E}
     (q : E) (hq : q ∈ R) (closed opened : TripleOrder (R.erase q))
@@ -210,13 +227,13 @@ theorem baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
       have hp : condProbClosed mu F left q = p := by
         change condProbClosed mu F left q = condProbClosed mu F leftSeed q
         exact condProbClosed_congr mu F left leftSeed q (fun x hx => hag x hx)
-      simp only [hA, if_true]
+      simp only [hA, ite_true]
       rw [crossTripleProb, hp, hbit]
       simp [Lindeberg.coord, hbit]
       ring
     · simp [hA]
   rw [hbranch false, hbranch true]
-  simp only [Bool.false_eq_true, if_false, zero_mul, zero_add, if_true, one_mul]
+  simp only [Bool.false_eq_true, ite_false, zero_mul, zero_add, ite_true, one_mul]
   rw [baseSum_crossTripleProb_left_eq_targetProb mu hpos
     (insert q F) (Function.update driver q false) right
     (Function.update leftSeed q true) closed hchild]
@@ -231,7 +248,7 @@ theorem baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
     have hsum := condProbBit_true_add_false mu F leftSeed q
       (condNorm_pos hpos F leftSeed).ne'
     unfold p condProbClosed bitWeight
-    simp only [if_true]
+    simp only [ite_true]
     linarith
   have hchain := condMass_chain_step mu hpos F right q hqF
   rw [condProbBit_eq_closed_or_one_sub mu hpos F right q] at hchain
@@ -245,7 +262,7 @@ theorem baseSum_coord_mul_crossTripleProb_left_rootFlip_eq_cExp_mul_condMass
         (overlapWeight a p false true + overlapWeight a p true true) *
           bitWeight r (right q) * condMass mu (insert q F) right right by ring]
   rw [overlapWeight_sum_base]
-  simp only [if_true]
+  simp only [ite_true]
   rw [show 1 - p = bitWeight p true by simp [bitWeight]]
   rw [hchain]
   unfold r

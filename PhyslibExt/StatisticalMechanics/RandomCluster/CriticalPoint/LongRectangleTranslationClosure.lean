@@ -6,27 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusPushforward
+public import
+    PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusPushforward
+
+/-!
+# Translation closure of thin crossings and a counterexample
+
+The translation closure of the thin-crossing event on the torus, its description by a finite
+expanded union, and an explicit configuration on the 8-torus showing that the closure is not covered
+by coarse thin crossings.
+
+## i. Overview
+
+Closing the thin-crossing event under torus translations gives an event described by `L² · 2α³`
+translated long rectangles. `not_translationClosure_coarseCover_two_one` is a Lean-checked
+refutation: for `L = 8`, `α = 2`, `n = 1` the translation-closure event does NOT satisfy
+`BdcTorusWindingToThinCover`, via the explicit configuration
+`thinTranslationClosureCounterexampleConfig`. Covers of that shape are therefore unavailable without
+changing the geometry.
+
+## ii. Key results
+
+- `bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_finiteExpanded`: finite description of
+  the closure.
+- `not_translationClosure_coarseCover_two_one`: refutation of the coarse cover at `(8, 2, 1)`.
+
+## iii. Table of contents
+
+- A. Translation closure
+- B. Expanded unions
+- C. Counterexample on the 8-torus
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -38,10 +55,9 @@ open StatMech.Lattice
 open StatMech.RSW.Box
 open StatMech.Universality
 
+/-! ## A. Translation closure -/
 
-
-
-theorem translateConfig_add (t s : Site 2)
+lemma translateConfig_add (t s : Site 2)
     (omega : ConfigSpace (Sym2 (Site 2))) :
     translateConfig t (translateConfig s omega) =
       translateConfig (t + s) omega := by
@@ -54,8 +70,7 @@ theorem translateConfig_add (t s : Site 2)
   ext i
   simp [add_assoc]
 
-
-theorem torusAmbientTranslateConfig_add
+lemma torusAmbientTranslateConfig_add
     (L : ℕ) [Fact (2 < L)] (t s : Site 2)
     (omega : TorusAmbientConfig L) :
     torusAmbientTranslateConfig L t
@@ -65,16 +80,13 @@ theorem torusAmbientTranslateConfig_add
   rw [torusPlanarPullback_translate, torusPlanarPullback_translate,
     torusPlanarPullback_translate, translateConfig_add]
 
-
-@[simp] theorem torusAmbientTranslateConfig_zero
+@[simp] lemma torusAmbientTranslateConfig_zero
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L) :
     torusAmbientTranslateConfig L 0 omega = omega := by
   apply torusPlanarPullback_injective L
   rw [torusPlanarPullback_translate, translateConfig_zero]
 
-
-
-
+/-- Some torus translate of the configuration has a thin crossing. -/
 def bdcTorusThinCrossingTranslationClosure
     (L alpha n : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) : Prop :=
@@ -82,9 +94,7 @@ def bdcTorusThinCrossingTranslationClosure
     bdcTorusThinCrossing L alpha n
       (torusAmbientTranslateConfig L t omega)
 
-
-
-theorem bdcTorusThinCrossing_subset_translationClosure
+lemma bdcTorusThinCrossing_subset_translationClosure
     (L alpha n : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L)
     (h : bdcTorusThinCrossing L alpha n omega) :
@@ -92,9 +102,7 @@ theorem bdcTorusThinCrossing_subset_translationClosure
   refine ⟨0, ?_⟩
   simpa using h
 
-
-
-theorem bdcTorusThinCrossingTranslationClosure_translate_iff
+lemma bdcTorusThinCrossingTranslationClosure_translate_iff
     (L alpha n : ℕ) [Fact (2 < L)]
     (s : Site 2) (omega : TorusAmbientConfig L) :
     bdcTorusThinCrossingTranslationClosure L alpha n
@@ -113,14 +121,13 @@ theorem bdcTorusThinCrossingTranslationClosure_translate_iff
     ext i
     simp
 
-
+/-- The set of torus configurations in the translation closure of the thin-crossing event. -/
 def bdcTorusThinCrossingTranslationClosureEvent
     (L alpha n : ℕ) [Fact (2 < L)] :
     Set (TorusAmbientConfig L) :=
   {omega | bdcTorusThinCrossingTranslationClosure L alpha n omega}
 
-
-theorem bdcTorusThinCrossingTranslationClosureEvent_preimage
+lemma bdcTorusThinCrossingTranslationClosureEvent_preimage
     (L alpha n : ℕ) [Fact (2 < L)] (s : Site 2) :
     torusAmbientTranslateConfig L s ⁻¹'
         bdcTorusThinCrossingTranslationClosureEvent L alpha n =
@@ -129,13 +136,11 @@ theorem bdcTorusThinCrossingTranslationClosureEvent_preimage
   exact bdcTorusThinCrossingTranslationClosure_translate_iff
     L alpha n s omega
 
-
-
-
+/-- The canonical lattice representative of a torus site. -/
 def bdcTorusCanonicalShift {L : ℕ} (u : ZMod L × ZMod L) : Site 2 :=
   ![(u.1.val : ℤ), (u.2.val : ℤ)]
 
-@[simp] theorem torusReduceSite_bdcTorusCanonicalShift
+@[simp] lemma torusReduceSite_bdcTorusCanonicalShift
     (L : ℕ) [NeZero L] (u : ZMod L × ZMod L) :
     torusReduceSite L (bdcTorusCanonicalShift u) = u := by
   apply Prod.ext
@@ -144,9 +149,7 @@ def bdcTorusCanonicalShift {L : ℕ} (u : ZMod L × ZMod L) : Site 2 :=
   · change (((u.2.val : ℕ) : ℤ) : ZMod L) = u.2
     rw [Int.cast_natCast, ZMod.natCast_zmod_val]
 
-
-
-theorem torusAmbientTranslateConfig_eq_canonical
+lemma torusAmbientTranslateConfig_eq_canonical
     (L : ℕ) [Fact (2 < L)] (t : Site 2)
     (omega : TorusAmbientConfig L) :
     torusAmbientTranslateConfig L t omega =
@@ -164,12 +167,13 @@ theorem torusAmbientTranslateConfig_eq_canonical
   apply Prod.ext <;>
     simp [torusSiteTranslateEquiv, bdcTorusCanonicalShift, torusReduceSite]
 
+/-! ## B. Expanded unions -/
 
-
+/-- Indices of torus-translated long rectangles: a torus shift and a rectangle index. -/
 abbrev BdcLongRectangleTorusTranslationIndex (L alpha : ℕ) :=
   (ZMod L × ZMod L) × BdcLongRectangleIndex alpha
 
-
+/-- The vertical crossing event of a torus-translated long rectangle. -/
 def bdcLongRectangleTorusTranslatedEvent
     (L alpha n : ℕ)
     (j : BdcLongRectangleTorusTranslationIndex L alpha) :
@@ -177,44 +181,38 @@ def bdcLongRectangleTorusTranslatedEvent
   translateConfig (bdcTorusCanonicalShift j.1) ⁻¹'
     bdcLongRectangleEvent alpha n j.2
 
-
-
+/-- The union of all torus-translated long-rectangle crossing events. -/
 def bdcLongRectangleTorusTranslationExpandedUnion
     (L alpha n : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ j : BdcLongRectangleTorusTranslationIndex L alpha,
     bdcLongRectangleTorusTranslatedEvent L alpha n j
 
-
-
-
-theorem bdcLongRectangleTorusTranslationIndex_card
+lemma bdcLongRectangleTorusTranslationIndex_card
     (L alpha : ℕ) [NeZero L] :
     Fintype.card (BdcLongRectangleTorusTranslationIndex L alpha) =
       L ^ 2 * (2 * alpha ^ 3) := by
   simp [BdcLongRectangleIndex]
   ring
 
-
+/-- All torus-translation indices, as a `Finset`. -/
 def bdcLongRectangleTorusTranslationIndices
     (L alpha : ℕ) [NeZero L] :
     Finset (BdcLongRectangleTorusTranslationIndex L alpha) :=
   Finset.univ
 
-theorem bdcLongRectangleTorusTranslationIndices_card
+lemma bdcLongRectangleTorusTranslationIndices_card
     (L alpha : ℕ) [NeZero L] :
     (bdcLongRectangleTorusTranslationIndices L alpha).card =
       L ^ 2 * (2 * alpha ^ 3) := by
   simpa [bdcLongRectangleTorusTranslationIndices] using
     bdcLongRectangleTorusTranslationIndex_card L alpha
 
-
-theorem monotone_translateConfig (t : Site 2) :
+lemma monotone_translateConfig (t : Site 2) :
     Monotone (translateConfig t) := by
   intro omega eta homega e
   exact homega _
 
-
-theorem bdcLongRectangleTorusTranslatedEvent_isIncreasing
+lemma bdcLongRectangleTorusTranslatedEvent_isIncreasing
     (L alpha n : ℕ)
     (j : BdcLongRectangleTorusTranslationIndex L alpha) :
     IsIncreasing (bdcLongRectangleTorusTranslatedEvent L alpha n j) := by
@@ -223,17 +221,14 @@ theorem bdcLongRectangleTorusTranslatedEvent_isIncreasing
     (monotone_translateConfig (bdcTorusCanonicalShift j.1) homegaeta)
     homega
 
-
-theorem bdcLongRectangleTorusTranslatedEvent_measurableSet
+lemma bdcLongRectangleTorusTranslatedEvent_measurableSet
     (L alpha n : ℕ)
     (j : BdcLongRectangleTorusTranslationIndex L alpha) :
     MeasurableSet (bdcLongRectangleTorusTranslatedEvent L alpha n j) := by
   exact (bdcLongRectangleEvent_measurableSet alpha n j.2).preimage
     (cti_measurable_translateConfig (bdcTorusCanonicalShift j.1))
 
-
-
-theorem bdcLongRectangleTorusTranslatedEvent_probability_eq
+lemma bdcLongRectangleTorusTranslatedEvent_probability_eq
     (mu : Measure (ConfigSpace (Sym2 (Site 2))))
     (hshift : ∀ t : Site 2, MeasurePreserving (translateConfig t) mu mu)
     (L alpha n : ℕ)
@@ -248,8 +243,7 @@ theorem bdcLongRectangleTorusTranslatedEvent_probability_eq
     _ = mu.real (bdcLongRectangleBaseEvent alpha n) :=
       bdcLongRectangleEvent_probability_eq mu hshift alpha n j.2
 
-
-theorem bdcLongRectangleTorusTranslationExpandedUnion_eq_finset
+lemma bdcLongRectangleTorusTranslationExpandedUnion_eq_finset
     (L alpha n : ℕ) [NeZero L] :
     bdcLongRectangleTorusTranslationExpandedUnion L alpha n =
       ⋃ j ∈ bdcLongRectangleTorusTranslationIndices L alpha,
@@ -258,19 +252,19 @@ theorem bdcLongRectangleTorusTranslationExpandedUnion_eq_finset
   simp [bdcLongRectangleTorusTranslationExpandedUnion,
     bdcLongRectangleTorusTranslationIndices]
 
-
+/-- The index of the untranslated rectangle with zero shift. -/
 def bdcLongRectangleTorusTranslationOriginIndex
     (L alpha : ℕ) (ha : 0 < alpha) :
     BdcLongRectangleTorusTranslationIndex L alpha :=
   ((0, 0), bdcLongRectangleOriginIndex alpha ha)
 
-@[simp] theorem bdcLongRectangleTorusTranslationOriginIndex_mem
+@[simp] lemma bdcLongRectangleTorusTranslationOriginIndex_mem
     (L alpha : ℕ) [NeZero L] (ha : 0 < alpha) :
     bdcLongRectangleTorusTranslationOriginIndex L alpha ha ∈
       bdcLongRectangleTorusTranslationIndices L alpha := by
   simp [bdcLongRectangleTorusTranslationIndices]
 
-@[simp] theorem bdcLongRectangleTorusTranslationOriginIndex_event
+@[simp] lemma bdcLongRectangleTorusTranslationOriginIndex_event
     (L alpha n : ℕ) (ha : 0 < alpha) :
     bdcLongRectangleTorusTranslatedEvent L alpha n
         (bdcLongRectangleTorusTranslationOriginIndex L alpha ha) =
@@ -290,18 +284,13 @@ def bdcLongRectangleTorusTranslationOriginIndex
     omega ∈ bdcLongRectangleBaseEvent alpha n
   rw [translateConfig_zero]
 
-
-
-
+/-- The union over all lattice translations of the long-rectangle crossing events. -/
 def bdcLongRectangleTranslationExpandedUnion (alpha n : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ t : Site 2,
     translateConfig t ⁻¹' bdcLongRectangleUnion alpha n
 
-
-
-
-theorem bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_expanded
+lemma bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_expanded
     (L alpha n : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     bdcTorusThinCrossingTranslationClosure L alpha n omega ↔
@@ -319,8 +308,7 @@ theorem bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_expanded
       torusPlanarPullback_translate]
     exact ht
 
-
-theorem bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_finiteExpanded
+lemma bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_finiteExpanded
     (L alpha n : ℕ) [Fact (2 < L)]
     (omega : TorusAmbientConfig L) :
     bdcTorusThinCrossingTranslationClosure L alpha n omega ↔
@@ -350,13 +338,13 @@ theorem bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_finiteExpanded
     rw [torusPlanarPullback_translate]
     exact hj
 
-
-
 local instance thinTranslationClosureCounterexample_eightFact :
     Fact (2 < (8 : ℕ)) := ⟨by norm_num⟩
 
+/-! ## C. Counterexample on the 8-torus -/
 
-
+/-- An explicit configuration on the 8-torus in the translation closure but without a coarse thin
+  crossing. -/
 noncomputable def thinTranslationClosureCounterexampleConfig :
     TorusAmbientConfig 8 :=
   fun e =>
@@ -365,7 +353,7 @@ noncomputable def thinTranslationClosureCounterexampleConfig :
     | ((x, y), TorusEdgeOrientation.vertical) =>
         decide (x = 0 ∧ (y = 1 ∨ y = 2 ∨ y = 3 ∨ y = 4))
 
-@[simp] theorem thinTranslationClosureCounterexampleConfig_horizontal
+@[simp] lemma thinTranslationClosureCounterexampleConfig_horizontal
     (x y : ZMod 8) :
     thinTranslationClosureCounterexampleConfig
         (torusHorizontalEdge 8 x y) = false := by
@@ -376,7 +364,7 @@ noncomputable def thinTranslationClosureCounterexampleConfig :
     simp [torusEdgeCodeEquiv_apply, torusEdgeOfCode]
   rw [thinTranslationClosureCounterexampleConfig, hcode]
 
-@[simp] theorem thinTranslationClosureCounterexampleConfig_vertical
+@[simp] lemma thinTranslationClosureCounterexampleConfig_vertical
     (x y : ZMod 8) :
     thinTranslationClosureCounterexampleConfig
         (torusVerticalEdge 8 x y) =
@@ -388,9 +376,7 @@ noncomputable def thinTranslationClosureCounterexampleConfig :
     simp [torusEdgeCodeEquiv_apply, torusEdgeOfCode]
   rw [thinTranslationClosureCounterexampleConfig, hcode]
 
-
-
-theorem thinTranslationClosureCounterexample_translated_open
+lemma thinTranslationClosureCounterexample_translated_open
     (y : ℤ) (hy0 : 0 ≤ y) (hy3 : y ≤ 3) :
     IsOpenEdge 2
       (torusPlanarPullback 8
@@ -413,9 +399,7 @@ theorem thinTranslationClosureCounterexample_translated_open
     · interval_cases y <;> norm_num
   simpa using hopen
 
-
-
-theorem thinTranslationClosureCounterexample_translated_crossing :
+lemma thinTranslationClosureCounterexample_translated_crossing :
     VerticalCrossing
       (torusPlanarPullback 8
         (torusAmbientTranslateConfig 8 ![0, 1]
@@ -461,9 +445,7 @@ theorem thinTranslationClosureCounterexample_translated_crossing :
       (h23.reachable.trans h34.reachable))
   simpa [omega, v0, v4] using hconn
 
-
-
-theorem thinTranslationClosureCounterexample_mem_closure :
+lemma thinTranslationClosureCounterexample_mem_closure :
     bdcTorusThinCrossingTranslationClosure 8 2 1
       thinTranslationClosureCounterexampleConfig := by
   refine ⟨![0, 1], ?_⟩
@@ -472,9 +454,7 @@ theorem thinTranslationClosureCounterexample_mem_closure :
     bdcLongRectangleOriginIndex] using
     thinTranslationClosureCounterexample_translated_crossing
 
-
-
-theorem thinTranslationClosureCounterexample_vertical_iff (x y : ℤ) :
+lemma thinTranslationClosureCounterexample_vertical_iff (x y : ℤ) :
     torusPlanarPullback 8 thinTranslationClosureCounterexampleConfig
         s(![x, y], ![x, y + 1]) = true ↔
       (x : ZMod 8) = 0 ∧
@@ -484,9 +464,7 @@ theorem thinTranslationClosureCounterexample_vertical_iff (x y : ℤ) :
     thinTranslationClosureCounterexampleConfig_vertical,
     decide_eq_true_eq]
 
-
-
-theorem thinTranslationClosureCounterexample_cut_step
+lemma thinTranslationClosureCounterexample_cut_step
     {a c h : ℤ} {p q : Site 2}
     (hp : p ∈ rect a (a + 2) c (c + 4))
     (hq : q ∈ rect a (a + 2) c (c + 4))
@@ -515,8 +493,7 @@ theorem thinTranslationClosureCounterexample_cut_step
   rw [hpe, hqe] at hopen
   simpa using hopen
 
-
-theorem thinTranslationClosureCounterexample_cut_walk
+lemma thinTranslationClosureCounterexample_cut_walk
     {a c h : ℤ}
     (hclosed : ∀ x : ℤ,
       torusPlanarPullback 8 thinTranslationClosureCounterexampleConfig
@@ -534,9 +511,7 @@ theorem thinTranslationClosureCounterexample_cut_walk
       exact ih (thinTranslationClosureCounterexample_cut_step
         u.2 v.2 huv.1 huv.2 hp hclosed)
 
-
-
-theorem thinTranslationClosureCounterexample_no_vertical_of_cut
+lemma thinTranslationClosureCounterexample_no_vertical_of_cut
     {a c h : ℤ} (hch : c ≤ h) (hhc : h < c + 4)
     (hclosed : ∀ x : ℤ,
       torusPlanarPullback 8 thinTranslationClosureCounterexampleConfig
@@ -552,8 +527,7 @@ theorem thinTranslationClosureCounterexample_no_vertical_of_cut
   rw [hq1] at hbound
   omega
 
-
-theorem thinTranslationClosureCounterexample_cut_zero (x : ℤ) :
+lemma thinTranslationClosureCounterexample_cut_zero (x : ℤ) :
     torusPlanarPullback 8 thinTranslationClosureCounterexampleConfig
       s(![x, 0], ![x, 1]) ≠ true := by
   intro hopen
@@ -564,8 +538,7 @@ theorem thinTranslationClosureCounterexample_cut_zero (x : ℤ) :
   · exact (by decide : (0 : ZMod 8) ≠ 3) h
   · exact (by decide : (0 : ZMod 8) ≠ 4) h
 
-
-theorem thinTranslationClosureCounterexample_cut_five (x : ℤ) :
+lemma thinTranslationClosureCounterexample_cut_five (x : ℤ) :
     torusPlanarPullback 8 thinTranslationClosureCounterexampleConfig
       s(![x, 5], ![x, 6]) ≠ true := by
   intro hopen
@@ -576,9 +549,7 @@ theorem thinTranslationClosureCounterexample_cut_five (x : ℤ) :
   · exact (by decide : (5 : ZMod 8) ≠ 3) h
   · exact (by decide : (5 : ZMod 8) ≠ 4) h
 
-
-
-theorem thinTranslationClosureCounterexample_not_coarse :
+lemma thinTranslationClosureCounterexample_not_coarse :
     ¬ bdcTorusThinCrossing 8 2 1
       thinTranslationClosureCounterexampleConfig := by
   rintro ⟨k, hk⟩
@@ -604,10 +575,7 @@ theorem thinTranslationClosureCounterexample_not_coarse :
       thinTranslationClosureCounterexample_cut_five
     simpa [a] using hk
 
-
-
-
-theorem thinTranslationClosureCounterexample_closure_not_coarse :
+lemma thinTranslationClosureCounterexample_closure_not_coarse :
     bdcTorusThinCrossingTranslationClosure 8 2 1
         thinTranslationClosureCounterexampleConfig ∧
       ¬ bdcTorusThinCrossing 8 2 1
@@ -615,8 +583,7 @@ theorem thinTranslationClosureCounterexample_closure_not_coarse :
   ⟨thinTranslationClosureCounterexample_mem_closure,
     thinTranslationClosureCounterexample_not_coarse⟩
 
-
-
+/-- Refutation of the coarse cover at `(8, 2, 1)`. -/
 theorem not_translationClosure_coarseCover_two_one :
     ¬ BdcTorusWindingToThinCover 8 2 1
       (bdcTorusThinCrossingTranslationClosureEvent 8 2 1) := by

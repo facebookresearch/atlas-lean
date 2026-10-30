@@ -6,32 +6,59 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedWeakLimit
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseTransport
 
+/-!
+# All phases of a periodic coupling share one critical point
+
+Translation of the selected infinite-volume laws between phases, positivity transport, and the
+common critical point of all phases for `q ≥ 1`.
+
+## i. Overview
+
+Translated box masses converge to the phase masses (`weightedTransBoxMass_tendsto`), so the selected
+laws of the phases are translates of each other (`covariantWeightedSelectedPhaseTranslation`). With
+finite energy this transports positivity of `θ` between phases. The headline
+`covariant_weighted_phase_common_critical`, `sup {β | max_b θ_b(β) = 0} = sup {β | θ_a(β) = 0}`, is
+unconditional for `q ≥ 1`, `J > 0`, a surjective phase map and a phase-covariant coupling. The
+`Weighted*` files extend the OSSS sharpness argument to random-cluster models with inhomogeneous,
+periodic couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a finite set of phases, with
+`PhaseCovariant J phase phaseJ`, describes how translates of the box see the couplings. The final
+results are `WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share
+one critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `covariantWeightedPhasePositivityTransport`: positivity transports between phases (unconditional).
+- `covariant_weighted_phase_common_critical`: all phases have the same critical point
+  (unconditional).
+
+## iii. Table of contents
+
+- A. Translated box masses
+- B. Selected laws and the common critical point
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open MeasureTheory Set Filter Topology
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedPhaseClose
 
-open Lattice FK Percolation
+open StatMech.Lattice FK Percolation
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedInfiniteVolume
 open FKSharpnessWeightedCoherentLimit FKSharpnessWeightedSelectedLaws
 open FKSharpnessWeightedWeakLimit FKSharpnessWeightedPhaseTransport
@@ -39,8 +66,10 @@ open FKSharpnessWeightedDomain FKSharpnessWeightedPeriodicRepair
 
 variable {d : Nat}
 
+/-! ## A. Translated box masses -/
 
-
+/-- The finite-volume mass of a set of open edges `t` in the box of radius `N` around `v`, for the
+  couplings `K`. -/
 noncomputable def weightedTransBoxMass
     (K : Sym2 (Site d) -> Real) (v : Site d) (N : Nat)
     (t : Finset (Sym2 (boxVerts d N))) (q beta : Real)
@@ -51,9 +80,7 @@ noncomputable def weightedTransBoxMass
       (betaParams (transBoxCoupling K m v) beta) q)
     (flc_transEdges v N t m hNm)
 
-
-
-theorem weightedPhaseFiniteMeasure_relabel
+lemma weightedPhaseFiniteMeasure_relabel
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -78,7 +105,7 @@ theorem weightedPhaseFiniteMeasure_relabel
           cdc_boxMultiOpenEvent N t = event := by
     ext omega
     simp only [event, Set.mem_preimage, cdc_boxMultiOpenEvent,
-      med_genericMultiOpenEvent, Set.mem_setOf_eq, Finset.mem_image,
+      med_genericMultiOpenEvent, Set.mem_ofPred_eq, Finset.mem_image,
       forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     constructor
     · intro h e he
@@ -130,8 +157,7 @@ theorem weightedPhaseFiniteMeasure_relabel
   rw [med_reCfgIso_preimage sigma (t.image (innerEdgeLE d hNm))] at hmass
   exact hmass.symm
 
-
-theorem weightedPhaseFiniteMeasure_eq_med
+lemma weightedPhaseFiniteMeasure_eq_med
     (d N R : Nat) (hNR : N <= R) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)
@@ -164,9 +190,7 @@ theorem weightedPhaseFiniteMeasure_eq_med
       ocd_innerRestrict, ocd_innerEdge, flc_incl, innerEdgeLE,
       boxVertInclLE, show flc_incl (box_mono d hNR) = boxVertInclLE d hNR from rfl] using hm
 
-
-
-theorem weightedTransBoxMass_lower
+lemma weightedTransBoxMass_lower
     (K : Sym2 (Site d) -> Real) (hK : forall e, 0 < K e)
     (v : Site d) (N : Nat) (t : Finset (Sym2 (boxVerts d N)))
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
@@ -209,15 +233,13 @@ theorem weightedTransBoxMass_lower
         ((flc_transEdges v N t m hNm).image (ocd_innerEdge iota)) := by
     ext omega
     simp only [A, Set.mem_preimage, med_genericMultiOpenEvent,
-      Set.mem_setOf_eq, Finset.mem_image, forall_exists_index, and_imp,
+      Set.mem_ofPred_eq, Finset.mem_image, forall_exists_index, and_imp,
       forall_apply_eq_imp_iff₂]
     rfl
   rw [hpre] at hdom
   exact hdom
 
-
-
-theorem weightedTransBoxMass_upper
+lemma weightedTransBoxMass_upper
     (K : Sym2 (Site d) -> Real) (hK : forall e, 0 < K e)
     (v : Site d) (N : Nat) (t : Finset (Sym2 (boxVerts d N)))
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)
@@ -266,13 +288,13 @@ theorem weightedTransBoxMass_upper
     rw [← hkey]
     ext omega
     simp only [A, Set.mem_preimage, med_genericMultiOpenEvent,
-      Set.mem_setOf_eq, Finset.mem_image, forall_exists_index, and_imp,
+      Set.mem_ofPred_eq, Finset.mem_image, forall_exists_index, and_imp,
       forall_apply_eq_imp_iff₂]
     rfl
   rw [hpre] at hdom
   exact hdom
 
-theorem translateAmbientEdge_mem_lattice_edgeSet
+lemma translateAmbientEdge_mem_lattice_edgeSet
     (v : Site d) (e : Sym2 (Site d))
     (he : e ∈ (hypercubicLattice d).edgeSet) :
     translateAmbientEdge v e ∈ (hypercubicLattice d).edgeSet := by
@@ -282,7 +304,7 @@ theorem translateAmbientEdge_mem_lattice_edgeSet
       change NearestNeighbour d x y at he
       simpa [NearestNeighbour] using he
 
-theorem ofAdd_smul_edge_eq_translateAmbientEdge
+lemma ofAdd_smul_edge_eq_translateAmbientEdge
     (v : Site d) (e : Sym2 (Site d)) :
     (Multiplicative.ofAdd v) • e = translateAmbientEdge v e := by
   induction e using Sym2.ind with
@@ -290,9 +312,7 @@ theorem ofAdd_smul_edge_eq_translateAmbientEdge
       change s(v + x, v + y) = s(x + v, y + v)
       rw [add_comm v x, add_comm v y]
 
-
-
-theorem weightedTransBoxMass_tendsto
+lemma weightedTransBoxMass_tendsto
     {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e)
@@ -332,7 +352,7 @@ theorem weightedTransBoxMass_tendsto
           (cdc_multiOpenEvent (tb.image (edgeIncl d N'))))) :=
     hmass.comp (tendsto_atTop_mono
       (fun k => by
-        show k <= M + k + flc_vrad v + 1
+        change k <= M + k + flc_vrad v + 1
         omega) tendsto_id)
   have hhi : Tendsto (fun k => mass (N' + k)) atTop
       (nhds (((weightedPhaseInfiniteVolume d phaseJ a hJ q beta
@@ -403,9 +423,9 @@ theorem weightedTransBoxMass_tendsto
     rw [hmed] at hupper
     simpa [m, aa] using hupper
 
+/-! ## B. Selected laws and the common critical point -/
 
-
-theorem covariantWeightedSelectedPhaseTranslation
+lemma covariantWeightedSelectedPhaseTranslation
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -426,9 +446,9 @@ theorem covariantWeightedSelectedPhaseTranslation
       q beta (zero_lt_one.trans_le hq) hbeta
   let g : Multiplicative (Site d) := Multiplicative.ofAdd (x - y)
   change muy = mux.map (ConfigSpace.shift g)
-  haveI : IsProbabilityMeasure muy := by dsimp [muy]; infer_instance
-  haveI : IsProbabilityMeasure mux := by dsimp [mux]; infer_instance
-  haveI : IsProbabilityMeasure (mux.map (ConfigSpace.shift g)) :=
+  have : IsProbabilityMeasure muy := by dsimp [muy]; infer_instance
+  have : IsProbabilityMeasure mux := by dsimp [mux]; infer_instance
+  have : IsProbabilityMeasure (mux.map (ConfigSpace.shift g)) :=
     (Measure.isProbabilityMeasure_map_iff
       (ConfigSpace.measurable_shift g).aemeasurable).mpr inferInstance
   apply fkgqt_measure_eq_of_multiOpen_eq
@@ -473,7 +493,7 @@ theorem covariantWeightedSelectedPhaseTranslation
         atTop (nhds (muy.real (cdc_multiOpenEvent T))) := by
       rw [hrep]
       exact hyfull.comp (tendsto_atTop_mono
-        (fun k => by show k <= M + k; omega) tendsto_id)
+        (fun k => by change k <= M + k; omega) tendsto_id)
     have hrelabel : forall k,
         ((weightedPhaseFiniteMeasure d (M + k) phaseJ
           (phase y) (hp (phase y)) q beta (zero_lt_one.trans_le hq)
@@ -515,8 +535,7 @@ theorem covariantWeightedSelectedPhaseTranslation
       (zero_lt_one.trans_le hq) hbeta Tv ev hevTv hev
     simpa [mux, muy] using hy0.trans hx0.symm
 
-
-theorem covariantWeightedSelectedPhaseLaws
+lemma covariantWeightedSelectedPhaseLaws
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -532,9 +551,7 @@ theorem covariantWeightedSelectedPhaseLaws
     weightedSelectedPhaseFiniteEnergy d phaseJ
       (hcov.phaseCoupling_pos hsurj hJ) q hq⟩
 
-
-
-theorem covariantWeightedPhasePositivityTransport
+lemma covariantWeightedPhasePositivityTransport
     {P : Type*}
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -548,8 +565,7 @@ theorem covariantWeightedPhasePositivityTransport
     (covariantWeightedSelectedPhaseLaws
       J phase phaseJ hJ hsurj hcov q hq)
 
-
-
+/-- All phases have the same critical point (unconditional). -/
 theorem covariant_weighted_phase_common_critical
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)

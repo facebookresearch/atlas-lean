@@ -6,14 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentTranslation
+
+/-!
+# First hits of centered boxes
+
+A path from the center of a box to its boundary has a first hitting point, reached by a path inside
+the closed box.
+
+## i. Overview
+
+`centeredClosedBox u m` is the set of sites at radius at most `m` from `u`. Truncating at the first
+boundary hit gives a connection inside the closed box. Unconditional.
+
+## ii. Key results
+
+- `connectedToSet_centered_has_within`: a connection to the boundary can be taken inside the box.
+
+## iii. Table of contents
+
+- A. Centered boxes and first hits
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
@@ -21,19 +40,19 @@ namespace StatMech
 namespace OSSS
 namespace CenteredFirstHit
 
-open Lattice RevealmentConstruction RevealmentTranslation
+open StatMech.Lattice RevealmentConstruction RevealmentTranslation
 
+/-! ## A. Centered boxes and first hits -/
 
+/-- The closed box of radius `m` centered at `u`. -/
 def centeredClosedBox {d : Nat} (u : Site d) (m : Nat) : Set (Site d) :=
   {x | centeredRadius u x <= m}
 
-theorem center_mem_centeredClosedBox {d : Nat} (u : Site d) (m : Nat) :
+lemma center_mem_centeredClosedBox {d : Nat} (u : Site d) (m : Nat) :
     u ∈ centeredClosedBox u m := by
   simp [centeredClosedBox, centeredRadius_self]
 
-
-
-theorem connected_centeredBoundary_has_within
+lemma connected_centeredBoundary_has_within
     {d m : Nat} {omega : ConfigSpace (Sym2 (Site d))} {u z : Site d}
     (hz : z ∈ centeredBoundary u m) (hconn : Connected d omega u z) :
     ∃ z' : centeredClosedBox u m,
@@ -86,8 +105,7 @@ theorem connected_centeredBoundary_has_within
         · right
           exact ⟨lt_of_le_of_ne hb_le hb, bi, rfl, hreach'⟩
 
-
-theorem connectedToSet_centered_has_within
+lemma connectedToSet_centered_has_within
     {d m : Nat} {omega : ConfigSpace (Sym2 (Site d))} {u : Site d}
     (hconn : ConnectedToSet d omega u (centeredBoundary u m)) :
     ∃ z : centeredClosedBox u m,

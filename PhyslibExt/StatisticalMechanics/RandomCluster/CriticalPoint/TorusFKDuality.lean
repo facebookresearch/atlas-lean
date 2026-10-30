@@ -6,20 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Duality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusGeometricEuler
+
+/-!
+# Random-cluster duality on the torus via the quarter turn
+
+The torus dual configuration defined with the quarter turn, the primal/dual weights, and the signed
+weight duality with a defect factor.
+
+## i. Overview
+
+`torusDualConfig` opens the quarter-turn image of an edge when the edge is closed. Clusters of the
+dual are faces, and the signed Euler relation gives `torus_weight_duality_signed`: primal weight at
+`p` equals dual weight at the dual parameter times `q ^ defect`. The `q`-sandwich
+`torus_weight_q_sandwich` and `torus_normalized_event_comparison` are conditional on
+`TorusDefectClassified L`. `TorusCellFKDuality` is a parallel development using the cell crossing;
+there the classification is proved.
+
+## ii. Key results
+
+- `torus_weight_duality_signed`: signed weight duality (unconditional).
+- `torus_normalized_event_comparison`: primal and dual event probabilities agree up to `q`,
+  conditional on `TorusDefectClassified L`.
+
+## iii. Table of contents
+
+- A. Dual configuration
+- B. Weights
+- C. Signed duality and comparison
+
+## iv. References
+
+* V. Beffara, H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster model is
+  critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012).
+-/
 
 @[expose] public section
 
@@ -29,14 +52,16 @@ namespace StatMech.BeffaraDC
 
 open StatMech.Onsager
 
+/-! ## A. Dual configuration -/
 
-
+/-- The quarter-turn dual configuration: the image of an edge is open exactly when the edge is
+  closed. -/
 def torusDualConfig (L : ℕ)
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     ConfigSpace (Sym2 (ZMod L × ZMod L)) :=
   fun e => !(ω (Sym2.map (torusQuarterTurn L) e))
 
-
+/-- The quarter turn acting on edges of the torus. -/
 def torusQuarterTurnEdge (L : ℕ) :
     Sym2 (ZMod L × ZMod L) ≃ Sym2 (ZMod L × ZMod L) where
   toFun := Sym2.map (torusQuarterTurn L)
@@ -62,8 +87,7 @@ def torusQuarterTurnEdge (L : ℕ) :
         exact (torusQuarterTurn L).apply_symm_apply x
       _ = e := congrFun Sym2.map_id e
 
-
-theorem torusQuarterTurnEdge_mem_edgeFinset (L : ℕ) [Fact (2 < L)]
+lemma torusQuarterTurnEdge_mem_edgeFinset (L : ℕ) [Fact (2 < L)]
     (e : Sym2 (ZMod L × ZMod L)) :
     e ∈ (onsTorusGraph L).edgeFinset ↔
       torusQuarterTurnEdge L e ∈ (onsTorusGraph L).edgeFinset := by
@@ -73,9 +97,7 @@ theorem torusQuarterTurnEdge_mem_edgeFinset (L : ℕ) [Fact (2 < L)]
         Equiv.coe_fn_mk, Sym2.map_mk]
       exact (torusQuarterTurn_adj_iff L x y).symm
 
-
-
-theorem torus_dual_openCount (L : ℕ) [Fact (2 < L)]
+lemma torus_dual_openCount (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.openCount (onsTorusGraph L) (torusDualConfig L ω) =
       (onsTorusGraph L).edgeFinset.card - FK.openCount (onsTorusGraph L) ω := by
@@ -115,8 +137,7 @@ theorem torus_dual_openCount (L : ℕ) [Fact (2 < L)]
   rw [hnot] at hc
   omega
 
-
-theorem torus_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
+lemma torus_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.openSub (onsTorusGraph L) (torusDualConfig L ω) =
       torusDualCutGraph L (FK.openSub (onsTorusGraph L) ω) := by
@@ -125,8 +146,7 @@ theorem torus_openSub_dualConfig (L : ℕ) [Fact (2 < L)]
   rw [torusQuarterTurn_adj_iff]
   by_cases h : (onsTorusGraph L).Adj f g <;> simp [h]
 
-
-theorem torus_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
+lemma torus_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     FK.numClusters (onsTorusGraph L) (torusDualConfig L ω) =
       torusGeometricFaceCount L (FK.openSub (onsTorusGraph L) ω) := by
@@ -135,23 +155,24 @@ theorem torus_numClusters_dualConfig (L : ℕ) [Fact (2 < L)]
   exact congrArg (fun G : SimpleGraph (ZMod L × ZMod L) =>
     Nat.card G.ConnectedComponent) (torus_openSub_dualConfig L ω)
 
+/-! ## B. Weights -/
 
-
+/-- The primal random-cluster weight of a spanning subgraph of the torus. -/
 noncomputable def torusPrimalWeight (L : ℕ) [Fact (2 < L)] (p q : ℝ)
     (K : SimpleGraph (ZMod L × ZMod L)) : ℝ :=
   edgeProductCount p (onsTorusGraph L).edgeFinset.card K.edgeSet.ncard *
     q ^ Nat.card K.ConnectedComponent
 
-
-
+/-- The dual random-cluster weight of a spanning subgraph of the torus at the dual parameter. -/
 noncomputable def torusDualWeight (L : ℕ) [Fact (2 < L)] (p q : ℝ)
     (K : SimpleGraph (ZMod L × ZMod L)) : ℝ :=
   edgeProductCount p (onsTorusGraph L).edgeFinset.card
       ((onsTorusGraph L).edgeFinset.card - K.edgeSet.ncard) *
     q ^ torusGeometricFaceCount L K
 
-
-theorem torus_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
+-- The unused instance binder is part of the signature; removing it changes the statement.
+set_option linter.unusedDecidableInType false in
+lemma torus_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ω : ConfigSpace (Sym2 V)) :
     (FK.openSub G ω).edgeSet.ncard = FK.openCount G ω := by
@@ -165,8 +186,7 @@ theorem torus_openSub_edge_ncard {V : Type*} [Fintype V] [DecidableEq V]
       simp only [Set.mem_toFinset, SimpleGraph.mem_edgeSet, FK.openSub_adj,
         Finset.mem_filter, SimpleGraph.mem_edgeFinset]
 
-
-theorem torus_primalWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
+lemma torus_primalWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     torusPrimalWeight L p q (FK.openSub (onsTorusGraph L) ω) =
       FK.fkWeight (onsTorusGraph L) p q ω := by
@@ -175,9 +195,7 @@ theorem torus_primalWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
   unfold FK.numClusters
   rw [Nat.card_eq_fintype_card]
 
-
-
-theorem torus_dualWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
+lemma torus_dualWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     torusDualWeight L p q (FK.openSub (onsTorusGraph L) ω) =
       FK.fkWeight (onsTorusGraph L) p q (torusDualConfig L ω) := by
@@ -185,7 +203,7 @@ theorem torus_dualWeight_openSub (L : ℕ) [Fact (2 < L)] (p q : ℝ)
   rw [torus_openSub_edge_ncard, ← torus_dual_openCount,
     ← dlt_edgeProduct_eq_count, torus_numClusters_dualConfig]
 
-theorem torusPrimalWeight_pos (L : ℕ) [Fact (2 < L)]
+lemma torusPrimalWeight_pos (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < torusPrimalWeight L p q K := by
@@ -193,7 +211,7 @@ theorem torusPrimalWeight_pos (L : ℕ) [Fact (2 < L)]
   have h1p : 0 < 1 - p := by linarith
   positivity
 
-theorem torusDualWeight_pos (L : ℕ) [Fact (2 < L)]
+lemma torusDualWeight_pos (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < torusDualWeight L p q K := by
@@ -201,19 +219,16 @@ theorem torusDualWeight_pos (L : ℕ) [Fact (2 < L)]
   have h1p : 0 < 1 - p := by linarith
   positivity
 
-
-
-theorem torus_subgraph_edgeCount_le (L : ℕ) [Fact (2 < L)]
+lemma torus_subgraph_edgeCount_le (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L) :
     K.edgeSet.ncard ≤ (onsTorusGraph L).edgeFinset.card := by
   have hset : K.edgeSet ⊆ (onsTorusGraph L).edgeSet := SimpleGraph.edgeSet_mono hK
   have hn := Set.ncard_le_ncard hset (Set.toFinite (onsTorusGraph L).edgeSet)
   simpa only [SimpleGraph.edgeFinset, Set.ncard_eq_toFinset_card'] using hn
 
+/-! ## C. Signed duality and comparison -/
 
-
-
-theorem torus_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
+lemma torus_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) :
     ((K.edgeSet.ncard + Nat.card K.ConnectedComponent + 1 : ℕ) : ℤ) =
       ((Nat.card (ZMod L × ZMod L) + torusGeometricFaceCount L K : ℕ) : ℤ) +
@@ -222,12 +237,7 @@ theorem torus_clusterEuler_signed (L : ℕ) [Fact (2 < L)]
   push_cast at h ⊢
   linarith
 
-
-
-
-
-
-theorem torus_weight_duality_signed (L : ℕ) [Fact (2 < L)]
+lemma torus_weight_duality_signed (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     torusPrimalWeight L p q K * q ^ ((onsTorusGraph L).edgeFinset.card + 1) =
@@ -273,9 +283,7 @@ theorem torus_weight_duality_signed (L : ℕ) [Fact (2 < L)]
       rw [pow_add]
       ring
 
-
-
-theorem torus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
+lemma torus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkWeight (onsTorusGraph L) p q ω *
@@ -290,9 +298,7 @@ theorem torus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
   exact torus_weight_duality_signed L (FK.openSub (onsTorusGraph L) ω)
     (FK.openSub_le (onsTorusGraph L) ω) hp hp1 hq
 
-
-
-theorem torus_weight_duality_of_defect (L : ℕ) [Fact (2 < L)]
+lemma torus_weight_duality_of_defect (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (δ : ℕ)
     (hδ : torusGeometricDefect L K = δ) :
@@ -302,16 +308,13 @@ theorem torus_weight_duality_of_defect (L : ℕ) [Fact (2 < L)]
         torusDualWeight L (dualParam p q) q K * q ^ δ := by
   rw [torus_weight_duality_signed L K hK hp hp1 hq, hδ, zpow_natCast]
 
-
+/-- Every spanning subgraph of the torus has geometric defect `0`, `1` or `2`. -/
 def TorusDefectClassified (L : ℕ) [Fact (2 < L)] : Prop :=
   ∀ K : SimpleGraph (ZMod L × ZMod L), K ≤ onsTorusGraph L →
     torusGeometricDefect L K = 0 ∨ torusGeometricDefect L K = 1 ∨
       torusGeometricDefect L K = 2
 
-
-
-
-theorem torus_weight_q_sandwich (L : ℕ) [Fact (2 < L)]
+lemma torus_weight_q_sandwich (L : ℕ) [Fact (2 < L)]
     (hclass : TorusDefectClassified L)
     (K : SimpleGraph (ZMod L × ZMod L)) (hK : K ≤ onsTorusGraph L)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q) :
@@ -383,11 +386,7 @@ theorem torus_weight_q_sandwich (L : ℕ) [Fact (2 < L)]
     · rw [heq']
       nlinarith
 
-
-
-
-
-theorem torus_normalized_event_comparison (L : ℕ) [Fact (2 < L)]
+lemma torus_normalized_event_comparison (L : ℕ) [Fact (2 < L)]
     (hclass : TorusDefectClassified L) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q)
     (A : Finset (ConfigSpace (Sym2 (ZMod L × ZMod L)))) :

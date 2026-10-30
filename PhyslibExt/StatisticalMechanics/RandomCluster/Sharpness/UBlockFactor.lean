@@ -6,64 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptDisintegration
+
+/-!
+# Block factorization of the uniform cube
+
+The uniform measure on `[0, 1]^n` is the product of its head (coordinates `< t`) and tail parts, and
+integrals of product functions factor accordingly.
+
+## i. Overview
+
+`ubfSplit` is the measurable split of `Fin n → ℝ` into head and tail; it maps the cube to `ubfHead ×
+ubfTail` (`ubf_pi_block_split`). Integrals of functions of the head times functions of the tail
+factor (`ubf_integral_factor`). Unconditional.
+
+## ii. Key results
+
+- `ubf_pi_block_split`: the cube splits as head × tail.
+- `ubf_integral_factor`: integrals factor.
+
+## iii. Table of contents
+
+- A. Head and tail measures
+- B. Factorization
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -73,88 +51,50 @@ namespace AdaptDisintegration
 
 open StatMech.Probability
 
+/-! ## A. Head and tail measures -/
 
-
-
-
-
-
-
-
-
+/-- The uniform measure on the head coordinates `< t`. -/
 noncomputable def ubfHead (n t : ℕ) : Measure ({i : Fin n // (i : ℕ) < t} → ℝ) :=
   Measure.pi (fun _ => unitMeasure)
 
-
-
+/-- The uniform measure on the tail coordinates `≥ t`. -/
 noncomputable def ubfTail (n t : ℕ) : Measure ({i : Fin n // ¬ (i : ℕ) < t} → ℝ) :=
   Measure.pi (fun _ => unitMeasure)
 
+/-- The uniform head measure is a probability measure. -/
 instance (n t : ℕ) : IsProbabilityMeasure (ubfHead n t) := by
   unfold ubfHead; infer_instance
 
+/-- The uniform tail measure is a probability measure. -/
 instance (n t : ℕ) : IsProbabilityMeasure (ubfTail n t) := by
   unfold ubfTail; infer_instance
 
-
-
-
-
+/-- The measurable equivalence splitting a vector into head and tail coordinates. -/
 noncomputable def ubfSplit (n t : ℕ) :
     (Fin n → ℝ) ≃ᵐ
       (({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ)) :=
   MeasurableEquiv.piEquivPiSubtypeProd (fun _ : Fin n => ℝ) (fun i => (i : ℕ) < t)
 
-
 lemma ubfSplit_apply_fst (n t : ℕ) (U : Fin n → ℝ) (i : {i : Fin n // (i : ℕ) < t}) :
     ((ubfSplit n t) U).1 i = U (i : Fin n) := rfl
-
 
 lemma ubfSplit_apply_snd (n t : ℕ) (U : Fin n → ℝ) (i : {i : Fin n // ¬ (i : ℕ) < t}) :
     ((ubfSplit n t) U).2 i = U (i : Fin n) := rfl
 
+/-! ## B. Factorization -/
 
-
-
-
-
-
-
-
-
-
-
-theorem ubf_pi_block_split (n t : ℕ) :
+lemma ubf_pi_block_split (n t : ℕ) :
     MeasurePreserving (ubfSplit n t) (cube n) ((ubfHead n t).prod (ubfTail n t)) := by
-  show MeasurePreserving (ubfSplit n t) (Measure.pi (fun _ : Fin n => unitMeasure))
+  change MeasurePreserving (ubfSplit n t) (Measure.pi (fun _ : Fin n => unitMeasure))
     ((Measure.pi (fun _ : {i : Fin n // (i : ℕ) < t} => unitMeasure)).prod
       (Measure.pi (fun _ : {i : Fin n // ¬ (i : ℕ) < t} => unitMeasure)))
   exact measurePreserving_piEquivPiSubtypeProd (fun _ : Fin n => unitMeasure) (fun i => (i : ℕ) < t)
-
-
-
-
-
-
-
-
-
 
 lemma ubf_integrable_of_bdd {n : ℕ} {F : (Fin n → ℝ) → ℝ} (hF : Measurable F)
     {C : ℝ} (hC : ∀ U, |F U| ≤ C) : Integrable F (cube n) :=
   ContinuousFKG.integrable_of_bdd (cube n) hF hC
 
-
-
-
-
-
-
-
-
-
-
-theorem ubf_integral_factor (n t : ℕ)
+lemma ubf_integral_factor (n t : ℕ)
     {h₀ : ({i : Fin n // (i : ℕ) < t} → ℝ) → ℝ} (hh₀m : Measurable h₀)
     {Ch : ℝ} (hh₀C : ∀ A, |h₀ A| ≤ Ch)
     {F : (Fin n → ℝ) → ℝ} (hFm : Measurable F)
@@ -162,10 +102,8 @@ theorem ubf_integral_factor (n t : ℕ)
     (∫ U, h₀ (((ubfSplit n t) U).1) * F U ∂(cube n))
       = ∫ A, h₀ A * (∫ B, F ((ubfSplit n t).symm (A, B)) ∂(ubfTail n t)) ∂(ubfHead n t) := by
   have hCh0 : 0 ≤ Ch := le_trans (abs_nonneg _) (hh₀C (fun _ => 0))
-  
   set G : (({i : Fin n // (i : ℕ) < t} → ℝ) × ({i : Fin n // ¬ (i : ℕ) < t} → ℝ)) → ℝ :=
     fun p => h₀ p.1 * F ((ubfSplit n t).symm p) with hG
-  
   have hsymm_meas : Measurable (ubfSplit n t).symm := (ubfSplit n t).symm.measurable
   have hGm : Measurable G := (hh₀m.comp measurable_fst).mul (hFm.comp hsymm_meas)
   have hGC : ∀ p, |G p| ≤ Ch * CF := by
@@ -173,7 +111,6 @@ theorem ubf_integral_factor (n t : ℕ)
     exact mul_le_mul (hh₀C _) (hFC _) (abs_nonneg _) hCh0
   have hGint : Integrable G ((ubfHead n t).prod (ubfTail n t)) :=
     ContinuousFKG.integrable_of_bdd _ hGm hGC
-  
   have hmp := ubf_pi_block_split n t
   have hpull : (∫ U, h₀ (((ubfSplit n t) U).1) * F U ∂(cube n))
       = ∫ p, G p ∂((ubfHead n t).prod (ubfTail n t)) := by
@@ -182,24 +119,11 @@ theorem ubf_integral_factor (n t : ℕ)
     simp only [hG]
     rw [MeasurableEquiv.symm_apply_apply]
   rw [hpull, integral_prod G hGint]
-  
   apply integral_congr_ae; apply Filter.Eventually.of_forall; intro A
   simp only [hG]
   rw [integral_const_mul]
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem ubf_integral_factor_of_factors (n t : ℕ)
+lemma ubf_integral_factor_of_factors (n t : ℕ)
     {h : (Fin n → ℝ) → ℝ} {h₀ : ({i : Fin n // (i : ℕ) < t} → ℝ) → ℝ}
     (hfac : ∀ U, h U = h₀ (((ubfSplit n t) U).1))
     (hh₀m : Measurable h₀) {Ch : ℝ} (hh₀C : ∀ A, |h₀ A| ≤ Ch)

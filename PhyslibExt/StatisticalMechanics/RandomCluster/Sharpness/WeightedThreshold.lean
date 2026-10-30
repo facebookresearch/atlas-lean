@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedIntegration
@@ -18,9 +13,56 @@ public import MathlibExt.Probability.OSSS.BetaThresholdBound
 public import MathlibExt.Probability.OSSS.BetaCMatch
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LogCesaroLimit
 
+/-!
+# Sharp threshold for periodic random-cluster models
+
+Normalized phase sums, the threshold `β₁` they define, subcritical exponential decay below it, the
+mean-field bound above it, and the identification of `β₁` with the critical point of every phase.
+
+## i. Overview
+
+`weightedThresholdPhaseSum` is a normalized sum of phase crossing probabilities. Its differential
+inequality makes the threshold `β₁ = beta1 (Sig ...)` well defined
+(`weightedThresholdSet_nonempty_of_selectedPhaseSum_pos`). Below `β₁` crossing probabilities decay
+exponentially (`weightedPhasePhysical_subcritical_decay_of_threshold`, unconditional for bounded
+couplings). Above `β₁` the selected phase sum grows at least linearly
+(`weightedSelectedPhaseSum_meanField_lower`).
+`weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` identifies `β₁` with the critical
+point of every phase, conditional on a high-β witness `hhigh`; for `d ≥ 2` one exists by
+`WeightedHighBeta`. The `Weighted*` files extend the OSSS sharpness argument to random-cluster
+models with inhomogeneous, periodic couplings `J` on `ℤ^d`. A phase map `phase : Site d → P` to a
+finite set of phases, with `PhaseCovariant J phase phaseJ`, describes how translates of the box see
+the couplings. The final results are
+`WeightedPhaseCommonCritical.covariant_weighted_phase_common_critical` (all phases share one
+critical point) and
+`WeightedThreshold.weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness` (sharp threshold),
+together with subcritical exponential decay.
+
+## ii. Key results
+
+- `weightedPhasePhysical_subcritical_decay_of_threshold`: exponential decay below the threshold
+  (unconditional).
+- `weightedSelectedPhaseSum_meanField_lower`: mean-field lower bound above the threshold.
+- `weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness`: threshold = critical point,
+  conditional on `hhigh`.
+
+## iii. Table of contents
+
+- A. Phase sums and normalization
+- B. Differential inequality
+- C. Bounds and monotonicity
+- D. The threshold set
+- E. Decay, mean field and the critical point
+
+## iv. References
+
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set Filter Topology
 open MeasureTheory
 
@@ -28,23 +70,28 @@ namespace StatMech
 namespace OSSS
 namespace FKSharpnessWeightedThreshold
 
-open Lattice FK
+open StatMech.Lattice FK
 open FKSharpnessWeightedPeriodic FKSharpnessWeightedInfiniteVolume
 open FKSharpnessWeightedStrict FKSharpnessWeightedIntegration
 open FKSharpnessWeightedCoherentLimit
 open IntegrationSubcritical BetaThresholdBound
 open BetaCMatch LogCesaroLimit
 
+/-! ## A. Phase sums and normalization -/
+
+/-- The constant `J_min exp(-β₀ J_max)` (to a dimension-dependent power) in the weighted
+  differential inequality. -/
 noncomputable def weightedPhaseSharpConstant
     (d : Nat) (Jmin Jmax beta0 : Real) : Real :=
   Jmin * Real.exp (-(beta0 * Jmax)) ^ (2 * d) / 8
 
-theorem weightedPhaseSharpConstant_pos
+lemma weightedPhaseSharpConstant_pos
     (d : Nat) {Jmin Jmax beta0 : Real} (hJmin : 0 < Jmin) :
     0 < weightedPhaseSharpConstant d Jmin Jmax beta0 := by
   unfold weightedPhaseSharpConstant
   positivity
 
+/-- The phase sum divided by the sharp constant. -/
 noncomputable def weightedNormalizedPhaseSum
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -52,6 +99,7 @@ noncomputable def weightedNormalizedPhaseSum
   weightedPhaseSum d phaseJ q beta n /
     weightedPhaseSharpConstant d Jmin Jmax beta0
 
+/-- The `β`-derivative of the normalized phase sum. -/
 noncomputable def weightedNormalizedPhaseSumPrime
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -59,8 +107,7 @@ noncomputable def weightedNormalizedPhaseSumPrime
   deriv (fun b => weightedPhaseSum d phaseJ q b n) beta /
     weightedPhaseSharpConstant d Jmin Jmax beta0
 
-
-
+/-- The sum over phases of the infinite-volume percolation probabilities. -/
 noncomputable def weightedSelectedPhaseSum
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -68,7 +115,7 @@ noncomputable def weightedSelectedPhaseSum
     (beta : Real) : Real :=
   ∑ a : P, weightedPhaseThetaProfile d phaseJ hJ q hq a beta
 
-theorem weightedSelectedPhaseSum_nonneg
+lemma weightedSelectedPhaseSum_nonneg
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e) (q : Real) (hq : 0 < q)
@@ -78,9 +125,7 @@ theorem weightedSelectedPhaseSum_nonneg
   exact Finset.sum_nonneg fun a ha =>
     weightedPhaseThetaProfile_nonneg d phaseJ hJ q hq a beta
 
-
-
-theorem weightedPhaseSum_tendsto_selectedPhaseSum
+lemma weightedPhaseSum_tendsto_selectedPhaseSum
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -89,14 +134,12 @@ theorem weightedPhaseSum_tendsto_selectedPhaseSum
       (nhds (weightedSelectedPhaseSum d phaseJ hJ q
         (zero_lt_one.trans_le hq) beta)) := by
   unfold weightedPhaseSum weightedSelectedPhaseSum
-  simp only [weightedPhaseThetaProfile, dif_pos hbeta]
+  simp only [weightedPhaseThetaProfile, dite_eq_left hbeta]
   exact tendsto_finsetSum Finset.univ fun a ha =>
     weightedPhaseProfile_tendsto_infiniteTheta
       d phaseJ a (hJ a) q beta hq hbeta
 
-
-
-theorem weightedNormalizedPhaseSum_tendsto
+lemma weightedNormalizedPhaseSum_tendsto
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -110,9 +153,7 @@ theorem weightedNormalizedPhaseSum_tendsto
   exact (weightedPhaseSum_tendsto_selectedPhaseSum
     d phaseJ hJ q beta hq hbeta).div_const _
 
-
-
-theorem weightedNormalizedPhaseSum_meanLogTerm_tendsto
+lemma weightedNormalizedPhaseSum_meanLogTerm_tendsto
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -127,8 +168,9 @@ theorem weightedNormalizedPhaseSum_meanLogTerm_tendsto
   exact meanLogTerm_tendsto (weightedNormalizedPhaseSum_tendsto
     d phaseJ hJ Jmin Jmax q beta0 beta hq hbeta)
 
+/-! ## B. Differential inequality -/
 
-
+/-- The phase sum used to define the threshold: normalized for `β > 0` and zero otherwise. -/
 noncomputable def weightedThresholdPhaseSum
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -138,7 +180,7 @@ noncomputable def weightedThresholdPhaseSum
       weightedPhaseSharpConstant d Jmin Jmax beta0 else 0
   else weightedNormalizedPhaseSum d phaseJ Jmin Jmax q beta0 n beta
 
-theorem weightedThresholdPhaseSum_of_pos
+lemma weightedThresholdPhaseSum_of_pos
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (Jmin Jmax q beta0 beta : Real) (hbeta : 0 < beta) :
@@ -146,7 +188,7 @@ theorem weightedThresholdPhaseSum_of_pos
       weightedNormalizedPhaseSum d phaseJ Jmin Jmax q beta0 n beta := by
   simp [weightedThresholdPhaseSum, not_le.mpr hbeta]
 
-theorem weightedNormalizedPhaseSumSig_eq
+lemma weightedNormalizedPhaseSumSig_eq
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (Jmin Jmax q beta0 beta : Real) :
@@ -156,7 +198,7 @@ theorem weightedNormalizedPhaseSumSig_eq
   unfold Sig weightedNormalizedPhaseSum weightedPhaseSumSig
   rw [Finset.sum_div]
 
-theorem weightedPhaseSum_differentiableAt
+lemma weightedPhaseSum_differentiableAt
     (d n : Nat) (hn : 1 <= n) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -166,7 +208,7 @@ theorem weightedPhaseSum_differentiableAt
   exact DifferentiableAt.fun_sum fun a ha =>
     weightedPhaseProfile_differentiableAt d n hn phaseJ hJ a q beta hq hbeta
 
-theorem weightedNormalizedPhaseSum_hasDerivAt
+lemma weightedNormalizedPhaseSum_hasDerivAt
     (d n : Nat) (hn : 1 <= n) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -184,7 +226,7 @@ theorem weightedNormalizedPhaseSum_hasDerivAt
     simp [weightedNormalizedPhaseSum, div_eq_mul_inv, mul_comm]
   · simp [weightedNormalizedPhaseSumPrime, div_eq_mul_inv, mul_comm]
 
-theorem weightedNormalizedPhaseSum_differential
+lemma weightedNormalizedPhaseSum_differential
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -212,7 +254,9 @@ theorem weightedNormalizedPhaseSum_differential
   rw [Nat.mul_comm 2 d]
   field_simp
 
-theorem weightedPhaseProfile_le_one
+/-! ## C. Bounds and monotonicity -/
+
+lemma weightedPhaseProfile_le_one
     (d n : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -221,18 +265,18 @@ theorem weightedPhaseProfile_le_one
   by_cases hn0 : n = 0
   · simp [weightedPhaseProfile, hn0]
   have hn : 1 <= n := Nat.one_le_iff_ne_zero.mpr hn0
-  rw [weightedPhaseProfile, if_neg hn0,
+  rw [weightedPhaseProfile, ite_eq_right hn0,
     weightedPhaseWiredTheta_eq_finiteMeasure_double
       d n hn phaseJ a (hJ a) q beta hq hbeta]
   exact measureReal_le_one
 
-@[simp] theorem weightedPhaseSum_zero
+@[simp] lemma weightedPhaseSum_zero
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real) (q beta : Real) :
     weightedPhaseSum d phaseJ q beta 0 = Fintype.card P := by
   simp [weightedPhaseSum]
 
-theorem weightedPhaseSum_nonneg
+lemma weightedPhaseSum_nonneg
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -242,7 +286,7 @@ theorem weightedPhaseSum_nonneg
   exact Finset.sum_nonneg fun a ha =>
     weightedPhaseProfile_nonneg d phaseJ hJ a q beta hq hbeta n
 
-theorem weightedPhaseSum_le_card
+lemma weightedPhaseSum_le_card
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -255,7 +299,7 @@ theorem weightedPhaseSum_le_card
           weightedPhaseProfile_le_one d n phaseJ hJ a q beta hq hbeta
     _ = Fintype.card P := by simp
 
-theorem weightedPhaseSumSig_pos
+lemma weightedPhaseSumSig_pos
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -270,7 +314,7 @@ theorem weightedPhaseSumSig_pos
     (fun k hk => weightedPhaseSum_nonneg d k phaseJ hJ q beta hq hbeta)
     (Finset.mem_range.mpr hn))
 
-theorem weightedNormalizedPhaseSum_nonneg
+lemma weightedNormalizedPhaseSum_nonneg
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -280,7 +324,7 @@ theorem weightedNormalizedPhaseSum_nonneg
   exact div_nonneg (weightedPhaseSum_nonneg d n phaseJ hJ q beta hq hbeta)
     (weightedPhaseSharpConstant_pos d hJmin).le
 
-theorem weightedNormalizedPhaseSum_le_card_div
+lemma weightedNormalizedPhaseSum_le_card_div
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -293,7 +337,7 @@ theorem weightedNormalizedPhaseSum_le_card_div
     (weightedPhaseSum_le_card d n phaseJ hJ q beta hq hbeta)
     (weightedPhaseSharpConstant_pos d hJmin).le
 
-theorem weightedNormalizedPhaseSumPrime_nonneg
+lemma weightedNormalizedPhaseSumPrime_nonneg
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -324,7 +368,7 @@ theorem weightedNormalizedPhaseSumPrime_nonneg
   exact div_nonneg (hlhs.trans hraw)
     (weightedPhaseSharpConstant_pos d hJmin).le
 
-theorem weightedNormalizedPhaseSum_mono_beta
+lemma weightedNormalizedPhaseSum_mono_beta
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -363,7 +407,7 @@ theorem weightedNormalizedPhaseSum_mono_beta
           q z beta0 hq (hy.trans hz.1)
   exact hmono (left_mem_Icc.mpr hyx) (right_mem_Icc.mpr hyx) hyx
 
-theorem weightedThresholdPhaseSum_nonneg
+lemma weightedThresholdPhaseSum_nonneg
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -372,7 +416,7 @@ theorem weightedThresholdPhaseSum_nonneg
     0 <= weightedThresholdPhaseSum d phaseJ Jmin Jmax q beta0 n beta := by
   by_cases hbeta : beta <= 0
   · by_cases hn0 : n = 0
-    · rw [weightedThresholdPhaseSum, if_pos hbeta, if_pos hn0]
+    · rw [weightedThresholdPhaseSum, ite_eq_left hbeta, ite_eq_left hn0]
       exact div_nonneg (Nat.cast_nonneg _)
         (weightedPhaseSharpConstant_pos d hJmin).le
     · simp [weightedThresholdPhaseSum, hbeta, hn0]
@@ -381,7 +425,7 @@ theorem weightedThresholdPhaseSum_nonneg
     exact weightedNormalizedPhaseSum_nonneg d n phaseJ hJ
       Jmin Jmax q beta0 beta hJmin hq (lt_of_not_ge hbeta)
 
-theorem weightedThresholdPhaseSum_le_card_div
+lemma weightedThresholdPhaseSum_le_card_div
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -393,7 +437,7 @@ theorem weightedThresholdPhaseSum_le_card_div
   by_cases hbeta : beta <= 0
   · by_cases hn0 : n = 0
     · simp [weightedThresholdPhaseSum, hbeta, hn0]
-    · rw [weightedThresholdPhaseSum, if_pos hbeta, if_neg hn0]
+    · rw [weightedThresholdPhaseSum, ite_eq_left hbeta, ite_eq_right hn0]
       exact div_nonneg (Nat.cast_nonneg _) (weightedPhaseSharpConstant_pos
         d hJmin).le
   · rw [weightedThresholdPhaseSum_of_pos d n phaseJ
@@ -401,7 +445,7 @@ theorem weightedThresholdPhaseSum_le_card_div
     exact weightedNormalizedPhaseSum_le_card_div d n phaseJ hJ
       Jmin Jmax q beta0 beta hJmin hq (lt_of_not_ge hbeta)
 
-theorem weightedThresholdPhaseSum_mono_beta
+lemma weightedThresholdPhaseSum_mono_beta
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -421,8 +465,8 @@ theorem weightedThresholdPhaseSum_mono_beta
   · by_cases hn0 : n = 0
     · subst n
       simp [weightedThresholdPhaseSum, ha, hb, weightedNormalizedPhaseSum]
-    · rw [weightedThresholdPhaseSum, if_pos ha, if_neg hn0,
-        weightedThresholdPhaseSum, if_neg hb]
+    · rw [weightedThresholdPhaseSum, ite_eq_left ha, ite_eq_right hn0,
+        weightedThresholdPhaseSum, ite_eq_right hb]
       exact weightedNormalizedPhaseSum_nonneg d n phaseJ hp
         Jmin Jmax q beta0 b hJmin hq (lt_of_not_ge hb)
   · rw [weightedThresholdPhaseSum_of_pos d n phaseJ
@@ -433,7 +477,7 @@ theorem weightedThresholdPhaseSum_mono_beta
       d n J Jmin Jmax hJmin hJlo hJhi phase phaseJ hsurj hcov
         q beta0 a b hq (lt_of_not_ge ha) hab
 
-theorem weightedThresholdSig_mono_beta
+lemma weightedThresholdSig_mono_beta
     (d n : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -449,7 +493,7 @@ theorem weightedThresholdSig_mono_beta
     d k J Jmin Jmax hJmin hJlo hJhi phase phaseJ hsurj hcov
       q beta0 a b hq hab
 
-theorem weightedThresholdSig_pos
+lemma weightedThresholdSig_pos
     (d n : Nat) (hn : 1 <= n)
     {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -460,7 +504,7 @@ theorem weightedThresholdSig_pos
   have hzero : 0 < weightedThresholdPhaseSum
       d phaseJ Jmin Jmax q beta0 0 beta := by
     by_cases hbeta : beta <= 0
-    · rw [weightedThresholdPhaseSum, if_pos hbeta, if_pos rfl]
+    · rw [weightedThresholdPhaseSum, ite_eq_left hbeta, ite_eq_left rfl]
       exact div_pos (by exact_mod_cast Fintype.card_pos)
         (weightedPhaseSharpConstant_pos d hJmin)
     · rw [weightedThresholdPhaseSum_of_pos d 0 phaseJ
@@ -474,7 +518,7 @@ theorem weightedThresholdSig_pos
     (fun k hk => weightedThresholdPhaseSum_nonneg d k phaseJ hJ
       Jmin Jmax q beta0 beta hJmin hq) (Finset.mem_range.mpr hn))
 
-theorem weightedThresholdSig_le_linear
+lemma weightedThresholdSig_le_linear
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -495,7 +539,9 @@ theorem weightedThresholdSig_le_linear
       rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
       ring
 
-theorem weightedThresholdSet_nonneg
+/-! ## D. The threshold set -/
+
+lemma weightedThresholdSet_nonneg
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (Jmin Jmax q beta0 : Real) (hJmin : 0 < Jmin)
@@ -513,7 +559,7 @@ theorem weightedThresholdSet_nonneg
       Sig (weightedThresholdPhaseSum d phaseJ Jmin Jmax q beta0) n beta = c := by
     intro n hn
     unfold Sig weightedThresholdPhaseSum
-    simp only [if_pos (le_of_lt hbetaNeg)]
+    simp only [ite_eq_left (le_of_lt hbetaNeg)]
     rw [Finset.sum_eq_single 0]
     · simp [c]
     · intro k hk hk0
@@ -542,7 +588,7 @@ theorem weightedThresholdSet_nonneg
   rw [hlimsup] at hmem
   norm_num at hmem
 
-theorem weightedThresholdSet_bddBelow
+lemma weightedThresholdSet_bddBelow
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (Jmin Jmax q beta0 : Real) (hJmin : 0 < Jmin) :
@@ -551,7 +597,7 @@ theorem weightedThresholdSet_bddBelow
   exact ⟨0, fun beta hmem => weightedThresholdSet_nonneg
     d phaseJ Jmin Jmax q beta0 hJmin beta hmem⟩
 
-theorem weightedThresholdLogRatio_bddAbove
+lemma weightedThresholdLogRatio_bddAbove
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -577,7 +623,7 @@ theorem weightedThresholdLogRatio_bddAbove
       Jmin Jmax q beta0 beta hJmin hq).trans
         (mul_le_mul_of_nonneg_right hMC (Nat.cast_nonneg n))
 
-theorem weightedThresholdLogRatio_isCobounded
+lemma weightedThresholdLogRatio_isCobounded
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -619,9 +665,7 @@ theorem weightedThresholdLogRatio_isCobounded
   exact hcn.trans ((div_le_div_iff_of_pos_right hlogn).2
     (Real.log_le_log hc hsig))
 
-
-
-theorem weightedThresholdSet_mem_of_selectedPhaseSum_pos
+lemma weightedThresholdSet_mem_of_selectedPhaseSum_pos
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -652,7 +696,7 @@ theorem weightedThresholdSet_mem_of_selectedPhaseSum_pos
   unfold Sig
   rw [hratio.limsup_eq]
 
-theorem weightedThresholdSet_nonempty_of_selectedPhaseSum_pos
+lemma weightedThresholdSet_nonempty_of_selectedPhaseSum_pos
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -665,11 +709,7 @@ theorem weightedThresholdSet_nonempty_of_selectedPhaseSum_pos
   ⟨beta, weightedThresholdSet_mem_of_selectedPhaseSum_pos
     d phaseJ hJ Jmin Jmax q beta0 beta hJmin hq hbeta hTheta⟩
 
-
-
-
-
-
+/-- A witness that the selected phase sum is positive at some `β ≤ β₀`. -/
 def weightedSelectedPhaseHighBetaWitness
     (d : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
@@ -678,9 +718,7 @@ def weightedSelectedPhaseHighBetaWitness
   exists betaStar : Real, 0 < betaStar /\ betaStar < beta0 /\
     0 < weightedSelectedPhaseSum d phaseJ hJ q hq betaStar
 
-
-
-theorem weightedHighBetaWitness_threshold_member
+lemma weightedHighBetaWitness_threshold_member
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -696,8 +734,7 @@ theorem weightedHighBetaWitness_threshold_member
       d phaseJ hJ Jmin Jmax q beta0 betaStar
         hJmin hq hbetaStar hTheta⟩
 
-
-theorem weightedHighBetaWitness_threshold_nonempty
+lemma weightedHighBetaWitness_threshold_nonempty
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -711,9 +748,7 @@ theorem weightedHighBetaWitness_threshold_nonempty
       d phaseJ hJ Jmin Jmax q beta0 hJmin hq hhigh
   exact ⟨betaStar, hmem⟩
 
-
-
-theorem weightedHighBetaWitness_strict_cutoff
+lemma weightedHighBetaWitness_strict_cutoff
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)
@@ -734,7 +769,7 @@ theorem weightedHighBetaWitness_strict_cutoff
         d phaseJ Jmin Jmax q beta0 hJmin) hmem
   exact hle.trans_lt hstar0
 
-theorem weightedThresholdSig_of_pos
+lemma weightedThresholdSig_of_pos
     (d n : Nat) {P : Type*} [Fintype P]
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (Jmin Jmax q beta0 beta : Real) (hbeta : 0 < beta) :
@@ -746,9 +781,9 @@ theorem weightedThresholdSig_of_pos
   exact weightedThresholdPhaseSum_of_pos
     d k phaseJ Jmin Jmax q beta0 beta hbeta
 
+/-! ## E. Decay, mean field and the critical point -/
 
-
-theorem weightedSelectedPhaseSum_difference_lower
+lemma weightedSelectedPhaseSum_difference_lower
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -884,9 +919,7 @@ theorem weightedSelectedPhaseSum_difference_lower
     hbeta hf (IntegrationSubcritical.isc_Sig_succ f) hfnn hSpos hdiff
       hSmono hS1le hTbeta hTbeta' hcob hbdd hm1
 
-
-
-theorem weightedSelectedPhaseSum_meanField_lower
+lemma weightedSelectedPhaseSum_meanField_lower
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -929,9 +962,7 @@ theorem weightedSelectedPhaseSum_meanField_lower
           q beta0 x beta hq hne hx1 hxb.le hupper
   simpa [betaOne, c, hp, mul_comm] using (le_div_iff₀ hc).mp hnormalized
 
-
-
-theorem weightedSelectedPhaseSum_mono_pos
+lemma weightedSelectedPhaseSum_mono_pos
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -968,9 +999,7 @@ theorem weightedSelectedPhaseSum_mono_pos
           q beta0 a b hq ha hab
   exact (div_le_div_iff_of_pos_right hc).mp hle
 
-
-
-theorem weightedPhaseSum_subcritical_decay_of_threshold
+lemma weightedPhaseSum_subcritical_decay_of_threshold
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -1083,9 +1112,7 @@ theorem weightedPhaseSum_subcritical_decay_of_threshold
   rw [hrhs] at h
   exact (div_le_div_iff_of_pos_right hc).mp h
 
-
-
-
+/-- Exponential decay below the threshold (unconditional). -/
 theorem weightedPhasePhysical_subcritical_decay_of_threshold
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -1143,10 +1170,7 @@ theorem weightedPhasePhysical_subcritical_decay_of_threshold
       apply Real.exp_le_exp.mpr
       nlinarith
 
-
-
-
-theorem weightedSelectedPhaseSum_eq_zero_below_threshold
+lemma weightedSelectedPhaseSum_eq_zero_below_threshold
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -1195,11 +1219,7 @@ theorem weightedSelectedPhaseSum_eq_zero_below_threshold
   · unfold weightedSelectedPhaseSum weightedPhaseThetaProfile
     simp [hbeta]
 
-
-
-
-
-theorem weightedThreshold_eq_selectedPhaseCritical
+lemma weightedThreshold_eq_selectedPhaseCritical
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -1282,9 +1302,7 @@ theorem weightedThreshold_eq_selectedPhaseCritical
         d phaseJ hp q (zero_lt_one.trans_le hq) b beta)).mp hsumpos
     exact (htransport b a beta).mp hbpos
 
-
-
-theorem weightedThreshold_eq_selectedPhaseEnvelopeCritical
+lemma weightedThreshold_eq_selectedPhaseEnvelopeCritical
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -1312,9 +1330,7 @@ theorem weightedThreshold_eq_selectedPhaseEnvelopeCritical
       d J Jmin Jmax hJmin hJlo hJhi phase phaseJ hsurj hcov
         q beta0 hq hne hcut a)
 
-
-
-
+/-- Threshold = critical point, conditional on `hhigh`. -/
 theorem weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
@@ -1345,8 +1361,7 @@ theorem weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness
     d J Jmin Jmax hJmin hJlo hJhi phase phaseJ hsurj hcov
       q beta0 hq hne hcut a
 
-
-theorem weightedThreshold_eq_selectedPhaseEnvelopeCritical_of_highBetaWitness
+lemma weightedThreshold_eq_selectedPhaseEnvelopeCritical_of_highBetaWitness
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)

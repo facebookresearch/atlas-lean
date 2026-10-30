@@ -6,121 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.GrandCouplingAssembly
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.StepCov
 public import MathlibExt.Probability.CorrelationInequalities.ContinuousFKGAdapter
 
+/-!
+# Grand-coupling step bounds and OSSS for decision trees
+
+Fiber inequalities for the grand coupling of a monotonic measure and the decision-tree OSSS
+inequality under the two-copy step covariance bound.
+
+## i. Overview
+
+FKG on each fiber of the grand coupling (`grandCoupling_fkg_cross_fiber`) bounds the absolute steps
+of the telescope. `tree_osss` and `fk_q2_osss_sharp` are conditional on `hStep : StepCovBoundTwo μ T
+T.evalR`. `AdaptiveCausalOSSS.adaptive_tree_osss` proves the decision-tree inequality without this
+hypothesis for monotonic measures.
+
+## ii. Key results
+
+- `step_fiber_le`: step bound on a fiber.
+- `tree_osss`: decision-tree OSSS, conditional on `StepCovBoundTwo`.
+
+## iii. Table of contents
+
+- A. Fiber inequalities
+- B. Decision-tree OSSS
+
+## iv. References
+
+* R. O'Donnell, M. Saks, O. Schramm, R. Servedio, *Every decision tree has an influential variable*,
+  FOCS 2005.
+* H. Duminil-Copin, A. Raoufi, V. Tassion, *Sharp phase transition for the random-cluster and Potts
+  models via decision trees*, Ann. of Math. 189 (2019).
+-/
+
 @[expose] public section
 
 open scoped BigOperators ENNReal
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-set_option linter.unusedSectionVars false
 
 namespace StatMech
 
@@ -133,23 +60,7 @@ open StatMech.Probability OSSS.LindebergTree OSSS.StepCov OSSS.DecisionTree
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-
-
-
-
-
-
-
 lemma Vcube_eq_cube (n : ℕ) : Vcube n = cube n := rfl
-
-
-
-lemma measurable_f_codeMap_Wt_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
-    (f : ConfigSpace E → ℝ) (U : Fin n → ℝ) (s : ℕ) :
-    Measurable (fun V : Fin n → ℝ => f (codeMap μ (σ : Fin n → E) (Wt U V s))) :=
-  measurable_f_codeMap_Wt μ σ f U s
-
-
 
 lemma integrable_prod_obs_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (U : Fin n → ℝ)
@@ -163,24 +74,9 @@ lemma integrable_prod_obs_fiber (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin
   rw [abs_mul]
   exact mul_le_mul (hfC _) (GrandCoupling.abs_coord_le_one e _) (abs_nonneg _) hCf0
 
+/-! ## A. Fiber inequalities -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem grandCoupling_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma grandCoupling_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (s₁ s₂ : ℕ)
     (U : Fin n → ℝ) :
@@ -199,14 +95,10 @@ theorem grandCoupling_fkg_cross_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ �
   · intro Ufix V V' hVV
     exact hf ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₁) hVV))
   · intro Ufix V V' hVV
-    exact Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₂) hVV))
+    exact Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₂)
+        hVV))
 
-
-
-
-
-
-theorem osss_grand_coupling_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma osss_grand_coupling_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (t : ℕ)
     (U : Fin n → ℝ) :
@@ -221,21 +113,7 @@ theorem osss_grand_coupling_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0
   ⟨grandCoupling_fkg_cross_fiber hpos hmono σ hf hfC e (t - 1) t U,
    grandCoupling_fkg_cross_fiber hpos hmono σ hf hfC e t (t - 1) U⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem abs_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma abs_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf)
     (t : ℕ) (ht : 1 ≤ t) (htn : t - 1 < n) (U : Fin n → ℝ) :
@@ -280,28 +158,7 @@ theorem abs_step_integral_fiber {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 <
   rw [show (∫ V, (D1 + D2 - C1) V ∂(Vcube n)) = ∫ V, ((D1 + D2) - C1) V ∂(Vcube n) from rfl]
   rw [integral_sub' (hI1.add hI2) hIc1, integral_add' hI1 hI2]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf)
     (t : ℕ) (ht : 1 ≤ t) (htn : t - 1 < n) (U : Fin n → ℝ) :
@@ -321,11 +178,8 @@ theorem step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
                   (codeMap μ (σ : Fin n → E) (Wt U V (t-1))) ∂(Vcube n)) := by
   set e := (σ : Fin n → E) ⟨t-1, htn⟩ with he
   rw [abs_step_integral_fiber hpos hmono σ hf hfC t ht htn U]
-  
   obtain ⟨hcross1, hcross2⟩ := osss_grand_coupling_fiber hpos hmono σ hf hfC e t U
-  
   have hstep : (1:ℕ) ≤ t := ht
-  
   have key1 : (∫ V, f (codeMap μ (σ:Fin n→E) (Wt U V (t-1))) ∂(Vcube n))
       * (∫ V, Lindeberg.coord e (codeMap μ (σ:Fin n→E) (Wt U V t)) ∂(Vcube n))
       ≤ ∫ V, f (codeMap μ (σ:Fin n→E) (Wt U V (t-1)))
@@ -336,27 +190,7 @@ theorem step_fiber_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
             * Lindeberg.coord e (codeMap μ (σ:Fin n→E) (Wt U V (t-1))) ∂(Vcube n) := hcross2
   linarith [key1, key2]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem integral_U_diagonal_eq_bbb {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma integral_U_diagonal_eq_bbb {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ} {Cf : ℝ}
     (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (s : ℕ) :
     (∫ U, (∫ V, f (codeMap μ (σ : Fin n → E) (Wt U V s))
@@ -369,13 +203,7 @@ theorem integral_U_diagonal_eq_bbb {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 
   rw [← integral_prod _ hint]
   exact integral_g_codeMap_Wt μ hpos hμ1 σ (fun ω => f ω * Lindeberg.coord e ω) s
 
-
-
-
-
-
-
-theorem integral_U_cross_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma integral_U_cross_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) {Cf : ℝ} (hfC : ∀ ω, |f ω| ≤ Cf) (e : E) (s₁ s₂ : ℕ) :
     (∫ U, (∫ V, f (codeMap μ (σ : Fin n → E) (Wt U V s₁)) ∂(Vcube n))
@@ -395,55 +223,21 @@ theorem integral_U_cross_le {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
   · intro Ufix V V' hVV
     exact hf ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₁) hVV))
   · intro Ufix V V' hVV
-    exact Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₂) hVV))
+    exact Lindeberg.coord_mono e ((codeMap_mono_u hpos hmono (σ : Fin n → E)) ((Wt_mono_V Ufix s₂)
+        hVV))
 
+/-! ## B. Decision-tree OSSS -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (T : DecisionTree E) (hStep : StepCovBoundTwo μ T (T.evalR)) :
     Lindeberg.var μ (T.evalR)
       ≤ ∑ e, revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (Lindeberg.coord e) := by
-  
   have h1 := var_le_half_sum_step hpos hμ1 T
   rw [sum_step_eq_sum_edge T (T.evalR)] at h1
   refine h1.trans ?_
   rw [Finset.mul_sum]
   apply Finset.sum_le_sum
   intro e _
-  
   calc (1 / 2) * ∑ t ∈ Finset.range (treeDepth T),
         Lindeberg.mean μ (fun ω => |adaptM μ T (T.evalR) (t + 1) ω - adaptM μ T (T.evalR) t ω|
             * freshAt T ω t e)
@@ -458,29 +252,11 @@ theorem tree_osss {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 
     _ = revealmentMu μ T e * Lindeberg.cov μ (T.evalR) (Lindeberg.coord e) := by
         rw [revealmentMu_eq_sum]; ring
 
-
-
-
-
-
-
-
-
-
 section FK
 
 open StatMech.OSSS.MonotonicFK
 
-
-
-
-
-
-
-
-
-
-theorem fk_q2_osss_sharp {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_q2_osss_sharp {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (T : DecisionTree (Sym2 V)) (hStep : StepCovBoundTwo (fkMass G p 2) T (T.evalR)) :
     Lindeberg.var (fkMass G p 2) (T.evalR)
