@@ -23,8 +23,9 @@ import MathlibExt.Biology.PopulationGenetics.Coalescent.Kingman
 
 A **Λ-coalescent** (Pitman 1999; Sagitov 1999) is an exchangeable coalescent in which many
 blocks may merge at once. It is parametrized by a finite measure `Λ` on `[0, 1]`, which we take
-as a measure on `unitInterval`. While there are `b` blocks, each particular set of `k` of them
-(`2 ≤ k ≤ b`) merges into one block at rate
+as a measure on `unitInterval` (every definition below requires `[IsFiniteMeasure Λ]`). While
+there are `b` blocks, each particular set of `k` of them (`2 ≤ k ≤ b`) merges into one block at
+rate
 
 `λ_{b,k} = ∫ x ^ (k - 2) * (1 - x) ^ (b - k) Λ(dx)`
 
@@ -83,26 +84,32 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 
 variable (Λ : Measure I)
 
+/- Every definition requires `Λ` to be finite: for an infinite-mass measure the Bochner integrals
+below would take Lean's junk value `0` (for example, `Λ = ⊤` would get pair rate `0`). -/
+
 /-- **Pitman's merger rate** `λ_{b,k} = ∫ x ^ (k - 2) (1 - x) ^ (b - k) Λ(dx)`: while there are
 `b` blocks, the rate at which a given set of `k` of them merges into one block, for
 `2 ≤ k ≤ b` (Pitman 1999, Theorem 1; Sagitov 1999). Powers are natural-number powers, so
 `0 ^ 0 = 1`. Outside `2 ≤ k ≤ b` no such merger exists, and the rate is defined to be `0`. -/
-def mergerRate (b k : ℕ) : ℝ :=
+def mergerRate [IsFiniteMeasure Λ] (b k : ℕ) : ℝ :=
   if 2 ≤ k ∧ k ≤ b then ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ else 0
 
 /-- The **total merger rate** `λ_b = ∑_{k=2}^b (b.choose k) λ_{b,k}` while there are `b`
 blocks (Pitman 1999; Berestycki 2009, §3.1). -/
-def totalMergerRate (b : ℕ) : ℝ :=
+def totalMergerRate [IsFiniteMeasure Λ] (b : ℕ) : ℝ :=
   ∑ k ∈ Icc 2 b, (b.choose k : ℝ) * mergerRate Λ b k
 
 /-- The generator of the **block-counting process** of the Λ-coalescent on the states
 `0, …, n` (state `b` means `b` blocks): from `b` blocks the process jumps to `j < b` blocks at
 rate `(b.choose (b + 1 - j)) λ_{b, b + 1 - j}` (a `(b + 1 - j)`-merger), and the diagonal is
 `-λ_b`. States `0` and `1` are absorbing (state `0` is never reached from `b ≥ 1`). -/
-def blockCountingGenerator (n : ℕ) : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ := fun i j =>
+def blockCountingGenerator [IsFiniteMeasure Λ] (n : ℕ) :
+    Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ := fun i j =>
   if i = j then -totalMergerRate Λ i
   else if (j : ℕ) < i then ((i : ℕ).choose (i + 1 - j) : ℝ) * mergerRate Λ i (i + 1 - j)
   else 0
+
+variable [IsFiniteMeasure Λ]
 
 /-- The merger rate inside its domain. -/
 theorem mergerRate_of_le {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
@@ -160,7 +167,6 @@ theorem isRateMatrix_blockCountingGenerator (n : ℕ) :
     · intro k hk; simp only [mem_Icc] at hk; omega
     · intro m _; rfl
 
-variable [IsFiniteMeasure Λ]
 
 /-- The integrand `x ^ a (1 - x) ^ c` lies in `[0, 1]` on `[0, 1]`. -/
 private lemma pow_mul_one_sub_pow_mem (a c : ℕ) (x : I) :

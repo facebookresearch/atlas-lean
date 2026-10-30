@@ -96,15 +96,15 @@ example : mergerRate (Measure.dirac half) 2 2 = 1 := by
 /-! ### Boundary cases and the zero measure -/
 
 /-- Outside `2 ≤ k ≤ b` the rate is `0` (no junk value from natural subtraction). -/
-example (Λ : Measure I) (b : ℕ) : mergerRate Λ b 1 = 0 := by
+example (Λ : Measure I) [IsFiniteMeasure Λ] (b : ℕ) : mergerRate Λ b 1 = 0 := by
   simp [mergerRate]
 
 /-- A `3`-merger among `2` blocks does not exist: rate `0`. -/
-example (Λ : Measure I) : mergerRate Λ 2 3 = 0 := by
+example (Λ : Measure I) [IsFiniteMeasure Λ] : mergerRate Λ 2 3 = 0 := by
   simp [mergerRate]
 
 /-- One block: no mergers, total rate `0`. -/
-example (Λ : Measure I) : totalMergerRate Λ 1 = 0 := by
+example (Λ : Measure I) [IsFiniteMeasure Λ] : totalMergerRate Λ 1 = 0 := by
   simp [totalMergerRate]
 
 /-- The zero measure has all rates `0`. -/

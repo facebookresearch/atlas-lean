@@ -52,6 +52,6 @@ Source: Pitman (1999), Theorem 1; Hausdorff (1921). -/
 theorem_wanted exists_measure_of_consistent (r : ℕ → ℕ → ℝ)
     (hnonneg : ∀ b k, 2 ≤ k → k ≤ b → 0 ≤ r b k)
     (hcons : ∀ b k, 2 ≤ k → k ≤ b → r b k = r (b + 1) k + r (b + 1) (k + 1)) :
-    ∃ Λ : Measure I, IsFiniteMeasure Λ ∧ ∀ b k, 2 ≤ k → k ≤ b → r b k = mergerRate Λ b k
+    ∃ (Λ : Measure I) (_ : IsFiniteMeasure Λ), ∀ b k, 2 ≤ k → k ≤ b → r b k = mergerRate Λ b k
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescentWanted
