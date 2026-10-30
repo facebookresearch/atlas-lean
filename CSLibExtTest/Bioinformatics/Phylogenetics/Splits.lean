@@ -17,7 +17,8 @@ On four taxa `Fin 4`: compatible and incompatible splits, the four-gamete test a
 no perfect phylogeny; the two binary hierarchies `((1,2),3)` and `((1,3),2)` seen from taxon
 `0`, the trees they give, and their Robinson–Foulds distance `2 = 2 (4 - 3)` (the maximum is
 attained), also computed from another taxon; a triplet that one tree displays and the other does
-not, and a quartet. On three taxa: the discrete metric as a non-vacuity witness for
+not, compatible and incompatible rooted-triplet systems exercising BUILD, and a quartet. On three
+taxa: the discrete metric as a non-vacuity witness for
 `IsUltrametric`, its tree-metric and dated-tree witnesses, and one UPGMA step. Boundary cases:
 average linkage of an empty cluster (a junk `0`) and bootstrap support with no sites.
 -/
@@ -104,6 +105,49 @@ example : ({1, 2} : Finset (Fin 4)) ∈ splitSet T₁ 0 := by
 /-- `T₁` displays the triplet `12|3` seen from `0`, `T₂` does not. -/
 example : DisplaysTriplet H₁ ⟨1, 2, 3⟩ ∧ ¬ DisplaysTriplet H₂ ⟨1, 2, 3⟩ := by
   unfold DisplaysTriplet H₁ H₂; decide
+
+/-! ### BUILD -/
+
+/-- The compatible triplets `01|2` and `01|3` on four taxa. -/
+noncomputable def compatibleTriplets : Finset (Triplet (Fin 4)) :=
+  by classical exact { ⟨0, 1, 2⟩, ⟨0, 1, 3⟩ }
+
+/-- BUILD accepts the compatible system: every induced Aho graph has a cut. -/
+theorem build_accepts_compatibleTriplets :
+    ∃ H, IsBinaryHierarchy (Finset.univ : Finset (Fin 4)) H ∧
+      ∀ t ∈ compatibleTriplets, DisplaysTriplet H t := by
+  classical
+  apply (build_spec (by decide) compatibleTriplets (by
+    intro t ht
+    simp only [compatibleTriplets, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl <;> decide)).mpr
+  intro S' hS' hcard
+  fin_cases S' <;> simp_all [HasAhoCut, compatibleTriplets] <;> decide
+
+/-- The three conflicting triplets on the induced taxa `{0, 1, 2}`. -/
+noncomputable def incompatibleTriplets : Finset (Triplet (Fin 4)) :=
+  by classical exact { ⟨0, 1, 2⟩, ⟨0, 2, 1⟩, ⟨1, 2, 0⟩ }
+
+/-- The Aho graph induced on `{0, 1, 2}` is connected, so it has no cut. -/
+theorem incompatibleInducedSubset_has_no_Aho_cut :
+    ¬ HasAhoCut incompatibleTriplets ({0, 1, 2} : Finset (Fin 4)) := by
+  classical
+  simp only [HasAhoCut, incompatibleTriplets]
+  rintro ⟨K, hK, hKne, hKcne, hcut⟩
+  fin_cases K <;> simp_all [Finset.Nonempty]
+  simpa using hK (show (3 : Fin 4) ∈ ({3} : Finset (Fin 4)) by decide)
+
+/-- BUILD rejects the incompatible system because its nontrivial induced subsystem has no cut. -/
+theorem build_rejects_incompatibleTriplets :
+    ¬ ∃ H, IsBinaryHierarchy (Finset.univ : Finset (Fin 4)) H ∧
+      ∀ t ∈ incompatibleTriplets, DisplaysTriplet H t := by
+  classical
+  rw [build_spec (by decide) incompatibleTriplets]
+  · intro h
+    exact incompatibleInducedSubset_has_no_Aho_cut (h {0, 1, 2} (by decide) (by decide))
+  · intro t ht
+    simp only [incompatibleTriplets, Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl | rfl <;> decide
 
 /-- The quartet `12|30` is displayed by `T₁`. -/
 example : DisplaysQuartet T₁ 1 2 3 0 := by
