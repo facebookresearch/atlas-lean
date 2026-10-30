@@ -1,0 +1,63 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# `2`-groups with the minimal condition on centralizers (Kourovka Notebook Problem 11.103)
+
+Kourovka Notebook, Archive of Solved Problems, Problem 11.103 (John S. Wilson): is a `2`-group
+satisfying the minimum condition for centralizers necessarily locally finite?
+-/
+
+module
+
+public import Batteries.Util.ProofWanted
+public import Mathlib.GroupTheory.PGroup
+
+@[expose] public section
+
+namespace MathlibExt.GroupTheory.TwoGroupMinimalConditionCentralizersKourovka11Problem103Wanted
+
+/-!
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.103 (John S.
+Wilson). UnsolvedMath record UM-00700795 (`KOU-11.103`), dataset ulamai/UnsolvedMath v1.8.0.
+
+A `2`-group is a group all of whose elements have `2`-power order (`IsPGroup 2`). The minimum
+condition for centralizers forbids infinite strictly descending chains `C_G(X₀) > C_G(X₁) > ⋯` of
+centralizers of subsets.
+-/
+
+/-- `G` is locally finite: every finitely generated subgroup is finite. -/
+def IsLocallyFinite (G : Type*) [Group G] : Prop :=
+  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+
+/-- `G` satisfies the minimal condition on centralizers: there is no infinite strictly descending
+chain `C_G(X₀) > C_G(X₁) > ⋯` of centralizers of subsets of `G`. -/
+def MinimalConditionOnCentralizers (G : Type*) [Group G] : Prop :=
+  ¬ ∃ X : ℕ → Set G, ∀ i, Subgroup.centralizer (X (i + 1)) < Subgroup.centralizer (X i)
+
+/-- Kourovka 11.103 (John S. Wilson): every `2`-group satisfying the minimal condition on
+centralizers is locally finite. -/
+def twoGroupMinimalCentralizersLocallyFinite : Prop :=
+  ∀ (G : Type) [Group G], IsPGroup 2 G → MinimalConditionOnCentralizers G → IsLocallyFinite G
+
+/--
+Resolved true: Wagner proved that the Sylow `2`-subgroups of a periodic group with the minimal
+condition on centralizers are locally finite; a `2`-group is periodic and is its own Sylow
+`2`-subgroup. The Kourovka Archive answers 11.103 "Yes, it is". Source: E. I. Khukhro and V. D.
+Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
+arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.103 (John S. Wilson); resolution:
+F. O. Wagner, Nilpotency in groups with the minimal condition on centralizers, J. Algebra 217, no. 2
+(1999), 448-460, abstract: the Sylow 2-subgroups of a periodic group with the minimal condition on
+centralizers are locally finite and conjugate; Kourovka Archive, Problem 11.103,
+https://doi.org/10.1006/jabr.1998.7824.
+-/
+public theorem_wanted twoGroupMinimalCentralizersLocallyFinite_holds :
+    twoGroupMinimalCentralizersLocallyFinite
+
+end MathlibExt.GroupTheory.TwoGroupMinimalConditionCentralizersKourovka11Problem103Wanted
