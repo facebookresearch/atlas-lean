@@ -17,6 +17,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.Normed.Lp.DualC0
 
 /-!
 # Convolution of sequences on `ℤ`
@@ -74,11 +75,6 @@ converges (see `summable_intConv_term`). -/
 noncomputable def intConv (f g : ℤ → ℂ) (n : ℤ) : ℂ :=
   ∑' m, f m * g (n - m)
 
-/-- An `ℓ¹` sequence is summable in norm. -/
-theorem summable_norm_l1 (f : ℓ¹(ℤ, ℂ)) : Summable fun m => ‖(f : ℤ → ℂ) m‖ := by
-  have h := (lp.memℓp f).summable (show (0 : ℝ) < (1 : ℝ≥0∞).toReal by simp)
-  simpa using h
-
 /-- The `ℓ¹` norm is the sum of the coordinate norms. -/
 theorem tsum_norm_l1 (f : ℓ¹(ℤ, ℂ)) : ∑' m, ‖(f : ℤ → ℂ) m‖ = ‖f‖ := by
   have h : ‖f‖
@@ -92,7 +88,9 @@ summable. -/
 theorem summable_intConv_term {p : ℝ≥0∞} [Fact (1 ≤ p)] (f : ℓ¹(ℤ, ℂ))
     (g : ℓ^p(ℤ, ℂ)) (n : ℤ) :
     Summable fun m => (f : ℤ → ℂ) m * g (n - m) := by
-  refine Summable.of_norm_bounded ((summable_norm_l1 f).mul_right ‖g‖) (fun m => ?_)
+  refine Summable.of_norm_bounded
+    ((MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one f).mul_right ‖g‖)
+    (fun m => ?_)
   rw [norm_mul]
   exact mul_le_mul_of_nonneg_left
     (lp.norm_apply_le_norm ne_zero_of_fact g (n - m)) (norm_nonneg _)
@@ -140,7 +138,9 @@ theorem norm_shiftLp {p : ℝ≥0∞} [Fact (1 ≤ p)] (m : ℤ)
 theorem summable_l1Conv_term {p : ℝ≥0∞} [Fact (1 ≤ p)] (f : ℓ¹(ℤ, ℂ))
     (g : ℓ^p(ℤ, ℂ)) :
     Summable fun m => (f : ℤ → ℂ) m • shiftLp m g := by
-  refine Summable.of_norm_bounded ((summable_norm_l1 f).mul_right ‖g‖) (fun m => ?_)
+  refine Summable.of_norm_bounded
+    ((MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one f).mul_right ‖g‖)
+    (fun m => ?_)
   rw [norm_smul, norm_shiftLp]
 
 /-- Convolution of an `ℓ¹` sequence with an `ℓ^p` sequence, as an element of
@@ -168,7 +168,8 @@ theorem norm_l1Conv_le {p : ℝ≥0∞} [Fact (1 ≤ p)] (f : ℓ¹(ℤ, ℂ))
     (g : ℓ^p(ℤ, ℂ)) :
     ‖l1Conv f g‖ ≤ ‖f‖ * ‖g‖ := by
   have hsum : Summable fun m => ‖(f : ℤ → ℂ) m • shiftLp m g‖ := by
-    refine Summable.of_norm_bounded ((summable_norm_l1 f).mul_right ‖g‖)
+    refine Summable.of_norm_bounded
+      ((MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one f).mul_right ‖g‖)
       (fun m => ?_)
     rw [norm_smul, norm_shiftLp, Real.norm_eq_abs,
       abs_of_nonneg (mul_nonneg (norm_nonneg _) (norm_nonneg _))]
@@ -353,7 +354,8 @@ private theorem summable_double_norm (f g h : ℓ¹(ℤ, ℂ)) (n : ℤ) :
       (g := fun m => ‖(f : ℤ → ℂ) k‖ * ‖g‖ * ‖(h : ℤ → ℂ) (n - m)‖) ?_ (fun m => ?_)
     · have hh : Summable fun m => ‖(h : ℤ → ℂ) (n - m)‖ := by
         have h2 := ((Equiv.subLeft n).hasSum_iff (f := fun j => ‖(h : ℤ → ℂ) j‖)
-          (a := ∑' j, ‖(h : ℤ → ℂ) j‖)).mpr (summable_norm_l1 h).hasSum
+          (a := ∑' j, ‖(h : ℤ → ℂ) j‖)).mpr
+          (MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one h).hasSum
         simpa [Function.comp_def, Equiv.subLeft_apply] using h2.summable
       exact hh.mul_left _
     · rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
@@ -372,7 +374,8 @@ private theorem summable_double_norm (f g h : ℓ¹(ℤ, ℂ)) (n : ℤ) :
               have h2 : Summable fun m => ‖(h : ℤ → ℂ) (n - m)‖ := by
                 have h3 := ((Equiv.subLeft n).hasSum_iff
                   (f := fun j => ‖(h : ℤ → ℂ) j‖)
-                  (a := ∑' j, ‖(h : ℤ → ℂ) j‖)).mpr (summable_norm_l1 h).hasSum
+                  (a := ∑' j, ‖(h : ℤ → ℂ) j‖)).mpr
+                  (MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one h).hasSum
                 simpa [Function.comp_def, Equiv.subLeft_apply] using h3.summable
               exact h2.mul_left _
             exact hh
@@ -386,7 +389,8 @@ private theorem summable_double_norm (f g h : ℓ¹(ℤ, ℂ)) (n : ℤ) :
           rw [tsum_norm_sub_right h n, mul_assoc]
   rw [summable_prod_of_nonneg (fun p => by positivity)]
   refine ⟨fun k => hinner k, ?_⟩
-  refine Summable.of_norm_bounded ((summable_norm_l1 f).mul_right (‖g‖ * ‖h‖))
+  refine Summable.of_norm_bounded
+    ((MathlibExt.Analysis.Normed.Lp.DualC0.summable_norm_lp_one f).mul_right (‖g‖ * ‖h‖))
     (fun k => ?_)
   rw [Real.norm_eq_abs, abs_of_nonneg (tsum_nonneg fun m => by positivity)]
   exact hinner_le k
