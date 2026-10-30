@@ -99,6 +99,32 @@ example : ‖(lp.single 2 3 (2 : ℂ) : ℓ²(ℕ, ℂ))‖ ≤ 7 :=
 example : ‖(lp.single 2 0 (3 : ℝ) + lp.single 2 1 (4 : ℝ) : ℓ²(ℕ, ℝ))‖ ≤ 7 :=
   norm_le_of_memRellichBall (by norm_num) two_coord_mem
 
+section Characterization
+
+variable {𝕜 : Type*} [RCLike 𝕜]
+
+/-- The finite-sum truncation has exactly the original shifted-tail norm. -/
+example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
+    ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 =
+      ∑' n, ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 :=
+  norm_sub_rellichTrunc_sq_eq N
+
+/-- The finite-sum tail keeps the original weighted bound for every real radius. -/
+example {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellichBall x M) (N : ℕ) :
+    ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 ≤
+      M ^ 2 / rellichWeight N :=
+  norm_sub_rellichTrunc_sq_le hx N
+
+/-- The finite-sum truncation keeps the original span-membership statement. -/
+example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
+    (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i)) ∈
+      Submodule.span 𝕜
+        ((fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ''
+          (Finset.range N : Set ℕ)) :=
+  rellichTrunc_mem_rellichSpan N x
+
+end Characterization
+
 #print axioms isCompact_rellichBall
 
 #print axioms totallyBounded_rellichBall
