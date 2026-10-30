@@ -21,12 +21,9 @@ open MathlibExt.Analysis.Normed.Algebra.TrotterProductFormula
 # Tests for the Trotter product formula
 
 The scalar cases pin the statement and the commuting case pins exactness for
-positive `n`. The operator reading (apply the theorem to the Banach algebra
-`E →L[𝕜] E`) is not tested here: for `𝕜 = ℝ` or `ℂ` the `ℚ`-algebra instance
-on continuous linear maps must be supplied via
-`NormedAlgebra.restrictScalars`, whose scalar action differs syntactically
-from the ambient pointwise action, so an operator test would need an
-instance-equality argument rather than a direct application.
+positive `n`. The operator case uses noncommuting coordinate shifts on `ℂ × ℂ`
+and supplies the theorem's `ℚ`-algebra instance locally by restricting scalars
+from `ℂ`. Its convergence is stated explicitly in operator norm.
 -/
 
 /-- Trotter product formula for real scalars. -/
@@ -80,5 +77,45 @@ example (X Y : ℝ) (n : ℕ) :
 
 #print axioms MathlibExt.Analysis.Normed.Algebra.TrotterProductFormula.tendsto_trotter_product
 #print axioms MathlibExt.Analysis.Normed.Algebra.TrotterProductFormula.trotter_product_of_commute
+
+noncomputable section Operators
+
+private abbrev Operator := (ℂ × ℂ) →L[ℂ] (ℂ × ℂ)
+
+/-- The coordinate shift `(x, y) ↦ (y, 0)`. -/
+private def upperShift : Operator :=
+  (ContinuousLinearMap.inl ℂ ℂ ℂ).comp (ContinuousLinearMap.snd ℂ ℂ ℂ)
+
+/-- The coordinate shift `(x, y) ↦ (0, x)`. -/
+private def lowerShift : Operator :=
+  (ContinuousLinearMap.inr ℂ ℂ ℂ).comp (ContinuousLinearMap.fst ℂ ℂ ℂ)
+
+local instance : NormedAlgebra ℚ ((ℂ × ℂ) →L[ℂ] (ℂ × ℂ)) :=
+  NormedAlgebra.restrictScalars ℚ ℂ _
+
+-- Elaborate the approximants with the scalar action of the restricted algebra.
+local instance : SMul ℚ ((ℂ × ℂ) →L[ℂ] (ℂ × ℂ)) :=
+  (inferInstance : NormedAlgebra ℚ ((ℂ × ℂ) →L[ℂ] (ℂ × ℂ))).toSMul
+
+/-- The products differ on the vector `(1, 0)`, so these shifts do not commute. -/
+private theorem coordinateShifts_noncommute :
+    upperShift * lowerShift ≠ lowerShift * upperShift := by
+  intro h
+  have hfirst := congrArg (fun T : Operator => (T (1, 0)).1) h
+  simp [upperShift, lowerShift, mul_apply_eq_comp] at hfirst
+
+/-- The noncommuting shifts satisfy the Lie–Trotter formula in operator norm. -/
+private theorem tendsto_coordinateShifts_operatorNorm :
+    Tendsto (fun n : ℕ =>
+      ‖(NormedSpace.exp ((n : ℚ)⁻¹ • upperShift) *
+          NormedSpace.exp ((n : ℚ)⁻¹ • lowerShift)) ^ n -
+        NormedSpace.exp (upperShift + lowerShift)‖)
+      atTop (nhds (0 : ℝ)) :=
+  tendsto_iff_norm_sub_tendsto_zero.mp (tendsto_trotter_product upperShift lowerShift)
+
+#print axioms coordinateShifts_noncommute
+#print axioms tendsto_coordinateShifts_operatorNorm
+
+end Operators
 
 end MathlibExtTest.Analysis.Normed.Algebra.TrotterProductFormulaTests
