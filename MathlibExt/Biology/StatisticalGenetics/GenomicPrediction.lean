@@ -33,19 +33,21 @@ summary statistics, extensions of LD-score regression, and the trend test for as
   columns (`HasOrthogonalColumns`): there `s² = (1 - h²) / N` exactly, and the accuracy is
   `N h² / (N h² + M (1 - h²))`. The cited formula takes the residual variance to be `1`.
 * `transpose_mulVec_eq_gramDiag_mulVec`, `cojo_joint`, `conditionalEstimate_eq_summary`,
-  `conditionalEstimate_eq_residual`: **COJO** (Yang et al. 2012). With the marginal estimates
-  `β̂_j = x_jᵀ y / x_jᵀ x_j` and `D = diag(XᵀX)`, `Xᵀ y = D β̂`, so the joint least-squares
-  estimate is `(XᵀX)⁻¹ D β̂` and the conditional estimate of their equation (15) is
-  `(X₂ᵀX₂)⁻¹ D₂ β̂₂ - (X₂ᵀX₂)⁻¹ X₂ᵀX₁ (X₁ᵀX₁)⁻¹ D₁ β̂₁`, the least-squares fit of `X₂` to the
-  residual of the joint fit on `X₁`.
+  `conditionalEstimate_eq_residual`: **COJO algebraic formulas** (Yang et al. 2012). With the
+  marginal estimates `β̂_j = x_jᵀ y / x_jᵀ x_j` and `D = diag(XᵀX)`, `Xᵀ y = D β̂`, giving the
+  displayed joint and conditional formulas in terms of summary statistics. They have their
+  usual least-squares interpretation when the relevant Gram determinants are units. Without
+  that hypothesis Mathlib's nonsingular inverse is zero on a singular Gram matrix, so these
+  unconditional equalities can return junk values rather than least-squares fits.
 * `StratifiedModel.integral_chiSq_of_standardized`: **stratified LD-score regression**
   (Finucane et al. 2015): if `Var β_k = ∑_C τ_C [k ∈ C]`, then
   `𝔼[χ²_j] = N ∑_C τ_C ℓ(j, C) + σ²_e` for a standardized marker `j`;
   `StratifiedModel.integral_chiSq_single_causal`: one causal variant `c` gives
   `𝔼[χ²_m] = N τ r²_mc + σ²_e` (the LD-proxy noncentrality).
-* `CrossTraitModel.integral_z_mul_z`: **cross-trait LD-score regression** (Bulik-Sullivan et al.
-  2015b): the exact `𝔼[z₁ⱼ z₂ⱼ]` is `√(N₁ N₂) ρ_g / M` times the cross LD score plus the
-  sample-overlap term `ρ_e ∑_{i ∈ S₁ ∩ S₂} x_ij² / √(N₁ N₂)`.
+* `CrossTraitModel.integral_z_mul_z`: an exact **cross-trait scaled-score identity** motivated by
+  Bulik-Sullivan et al. 2015b. Its overlap term uses the residual cross-moment `ρ_e`; the model
+  does not identify this parameter with phenotypic correlation or require within-trait moments
+  that would make the scaled scores standardized z-scores.
 * `ArmitageTrend.trendStat_eq_total_mul_corrSq`: the **Cochran–Armitage trend statistic** is
   `N r²` (Armitage 1955); `ArmitageTrend.allelicStat_mul_hweVar`,
   `ArmitageTrend.allelicStat_eq_trendStat_iff`: the allelic test times `2 p q` is the trend
@@ -387,14 +389,15 @@ theorem cojo_joint_of_diagonal (X : Matrix (Fin n) ι ℝ) (y : Fin n → ℝ)
     exact (Finset.prod_ne_zero_iff.mpr fun j _ => hD j).isUnit
   rw [cojo_joint, hX, mulVec_mulVec, nonsing_inv_mul _ hdet, one_mulVec]
 
-/-- The conditional estimate of Yang et al. 2012, eq. (15):
-`(X₂ᵀX₂)⁻¹ X₂ᵀ y - (X₂ᵀX₂)⁻¹ X₂ᵀX₁ (X₁ᵀX₁)⁻¹ X₁ᵀ y`, the effects of the markers of block 2
-conditional on the joint fit of block 1. -/
+/-- The unconditional algebraic formula from Yang et al. 2012, eq. (15):
+`(X₂ᵀX₂)⁻¹ X₂ᵀ y - (X₂ᵀX₂)⁻¹ X₂ᵀX₁ (X₁ᵀX₁)⁻¹ X₁ᵀ y`. When both Gram determinants are units,
+this has the usual interpretation as the block-2 fit conditional on the block-1 fit. For a
+singular Gram matrix, Mathlib's nonsingular inverse is zero and the value can be a junk value. -/
 noncomputable def conditionalEstimate (X₁ : Matrix (Fin n) ι₁ ℝ) (X₂ : Matrix (Fin n) ι₂ ℝ)
     (y : Fin n → ℝ) : ι₂ → ℝ :=
   (X₂ᵀ * X₂)⁻¹ *ᵥ (X₂ᵀ *ᵥ y) - ((X₂ᵀ * X₂)⁻¹ * X₂ᵀ * X₁ * (X₁ᵀ * X₁)⁻¹) *ᵥ (X₁ᵀ *ᵥ y)
 
-/-- **COJO conditional estimate from summary statistics** (Yang et al. 2012, eq. (17)):
+/-- **COJO conditional algebraic formula from summary statistics** (Yang et al. 2012, eq. (17)):
 `b̂₂|b̂₁ = (X₂ᵀX₂)⁻¹ D₂ β̂₂ - (X₂ᵀX₂)⁻¹ X₂ᵀX₁ (X₁ᵀX₁)⁻¹ D₁ β̂₁`. -/
 theorem conditionalEstimate_eq_summary (X₁ : Matrix (Fin n) ι₁ ℝ) (X₂ : Matrix (Fin n) ι₂ ℝ)
     (y : Fin n → ℝ) :
@@ -404,9 +407,11 @@ theorem conditionalEstimate_eq_summary (X₁ : Matrix (Fin n) ι₁ ℝ) (X₂ :
   rw [conditionalEstimate, transpose_mulVec_eq_gramDiag_mulVec X₂,
     transpose_mulVec_eq_gramDiag_mulVec X₁]
 
-/-- The conditional estimate is the least-squares fit of `X₂` to the residual
-`y - X₁ b̂₁` of the joint fit `b̂₁ = (X₁ᵀX₁)⁻¹ X₁ᵀ y` on block 1. It is in general not the
-block-2 part of the joint fit on both blocks (they agree when `X₂ᵀX₁ = 0`). -/
+/-- Unconditionally, the conditional formula equals the nonsingular-inverse formula applied to
+the algebraic residual `y - X₁ ((X₁ᵀX₁)⁻¹ X₁ᵀ y)`. If both Gram determinants are units, these
+are the successive least-squares fits on blocks 1 and 2. With a singular Gram matrix they need
+not minimize residual error. This is in general not the block-2 part of the joint formula on
+both blocks (the formulas agree when `X₂ᵀX₁ = 0`). -/
 theorem conditionalEstimate_eq_residual (X₁ : Matrix (Fin n) ι₁ ℝ) (X₂ : Matrix (Fin n) ι₂ ℝ)
     (y : Fin n → ℝ) :
     conditionalEstimate X₁ X₂ y =
@@ -553,9 +558,10 @@ noncomputable def sampleCorr (X : Matrix (Fin n) (Fin M) ℝ) (S : Finset (Fin n
 second moments that enter `𝔼[z₁ z₂]`: a pool of `n` genotyped individuals with genotype matrix
 `X`, two GWAS samples `S₁`, `S₂` of the pool (possibly overlapping), effects `β₁`, `β₂` with
 `∫ β₁ k β₂ l = (ρ_g / M) [k = l]` (genetic covariance `ρ_g`), noises `ε₁`, `ε₂` with
-`∫ ε₁ i ε₂ i' = ρ_e [i = i']` (environmental covariance `ρ_e` within an individual), effects of
-each trait orthogonal to the noise of the other. Each trait separately is an LD-score model
-(`LDScore.Model`); those moments are not needed here. -/
+`∫ ε₁ i ε₂ i' = ρ_e [i = i']` (residual cross-moment `ρ_e` within an individual), effects of
+each trait orthogonal to the noise of the other. The structure intentionally does not impose
+within-trait moments or phenotype normalization, so it does not identify `ρ_e` with phenotypic
+correlation or establish that the scaled scores below are standardized z-scores. -/
 structure CrossTraitModel (μ : Measure Ω) (n M : ℕ) where
   /-- The sample of trait 1. -/
   S1 : Finset (Fin n)
@@ -595,12 +601,12 @@ namespace CrossTraitModel
 
 variable {μ : Measure Ω} (D : CrossTraitModel μ n M) (X : Matrix (Fin n) (Fin M) ℝ)
 
-/-- The `z`-score `z₁ j = √N₁ X_jᵀ y₁ / N₁` of marker `j` for trait 1, computed on `S₁` with
-`y₁ = X β₁ + ε₁`. -/
+/-- The scaled marginal score `z₁ j = √N₁ X_jᵀ y₁ / N₁` of marker `j` for trait 1, computed on
+`S₁` with `y₁ = X β₁ + ε₁`. The model does not assert the normalization needed for a z-score. -/
 noncomputable def z1 (j : Fin M) (ω : Ω) : ℝ :=
   √(D.S1.card : ℝ) * ((∑ i ∈ D.S1, X i j * (∑ k, X i k * D.beta1 k ω + D.eps1 i ω)) / D.S1.card)
 
-/-- The `z`-score `z₂ j` of marker `j` for trait 2, computed on `S₂`. -/
+/-- The analogous scaled marginal score `z₂ j` of marker `j` for trait 2, computed on `S₂`. -/
 noncomputable def z2 (j : Fin M) (ω : Ω) : ℝ :=
   √(D.S2.card : ℝ) * ((∑ i ∈ D.S2, X i j * (∑ k, X i k * D.beta2 k ω + D.eps2 i ω)) / D.S2.card)
 
@@ -687,11 +693,12 @@ theorem integral_z_mul_z (j : Fin M) :
   rw [e]
   field_simp
 
-/-- **Cross-trait LD-score regression** (Bulik-Sullivan et al. 2015b): if the two samples have
-the same LD with marker `j` and the overlap is standardized at `j`
+/-- **Equal-LD specialization of the residual cross-moment identity**: if the two samples have
+the same LD with marker `j` and the overlap marker is standardized at `j`
 (`∑_{i ∈ S₁ ∩ S₂} X i j ² = N_s`), then
-`𝔼[z₁ j z₂ j] = √(N₁ N₂) ρ_g ℓ_j / M + ρ_e N_s / √(N₁ N₂)`. The cited formula writes the overlap
-coefficient as the phenotypic correlation in the overlapping samples. -/
+`𝔼[z₁ j z₂ j] = √(N₁ N₂) ρ_g ℓ_j / M + ρ_e N_s / √(N₁ N₂)`. Here `ρ_e` is only the residual
+cross-moment specified by `CrossTraitModel`; this theorem does not state the Bulik-Sullivan
+phenotypic-correlation overlap formula or establish z-score normalization. -/
 theorem integral_z_mul_z_of_sameLD (j : Fin M)
     (hLD : ∀ k, sampleCorr X D.S1 j k = sampleCorr X D.S2 j k)
     (hs : ∑ i ∈ D.S1 ∩ D.S2, X i j ^ 2 = (D.S1 ∩ D.S2).card) :

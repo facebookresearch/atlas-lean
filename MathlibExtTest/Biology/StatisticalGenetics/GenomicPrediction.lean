@@ -290,4 +290,74 @@ the convention `x / 0 = 0`. -/
 example : trendStat ![1, 2, 3] 0 = 0 := by
   simp [trendStat]
 
+/-! ### Interpretation boundary checks -/
+
+/-- Two full-rank one-column blocks selecting separate observations. -/
+def X1full : Matrix (Fin 2) (Fin 1) ℝ := !![1; 0]
+/-- The second full-rank block. -/
+def X2full : Matrix (Fin 2) (Fin 1) ℝ := !![0; 1]
+/-- Response used for the full-rank conditional example. -/
+def yfull : Fin 2 → ℝ := ![2, 3]
+
+/-- Both Gram determinants are units, so the conditional formula has its least-squares
+interpretation and recovers the second response coordinate. -/
+example : IsUnit (X1fullᵀ * X1full).det ∧ IsUnit (X2fullᵀ * X2full).det ∧
+    conditionalEstimate X1full X2full yfull 0 = 3 := by
+  norm_num [conditionalEstimate, X1full, X2full, yfull, mulVec, dotProduct, mul_apply,
+    Matrix.det_fin_one, Matrix.nonsing_inv_apply, Fin.sum_univ_two]
+
+/-- A singular nonzero design with two identical columns. -/
+def Xsing : Matrix (Fin 2) (Fin 2) ℝ := !![1, 1; 0, 0]
+/-- Response lying in the column space of `Xsing`. -/
+def ysing : Fin 2 → ℝ := ![1, 0]
+
+/-- The singular Gram matrix makes the nonsingular inverse, hence the unconditional conditional
+formula with an empty first block, zero. -/
+example : (Xsingᵀ * Xsing).det = 0 ∧
+    conditionalEstimate (0 : Matrix (Fin 2) (Fin 0) ℝ) Xsing ysing = 0 := by
+  have hdet : (Xsingᵀ * Xsing).det = 0 := by
+    norm_num [Xsing, mul_apply, Matrix.det_fin_two, Fin.sum_univ_two]
+  refine ⟨hdet, ?_⟩
+  have hinv : (Xsingᵀ * Xsing)⁻¹ = 0 :=
+    Matrix.nonsing_inv_apply_not_isUnit _ (by simp [hdet])
+  unfold conditionalEstimate
+  rw [hinv]
+  simp
+
+/-- The zero junk value is not a least-squares fit: `[1, 0]` fits `ysing` exactly, while the
+unconditional singular formula does not even reproduce `ysing`. -/
+example : Xsing *ᵥ ![1, 0] = ysing ∧
+    Xsing *ᵥ conditionalEstimate (0 : Matrix (Fin 2) (Fin 0) ℝ) Xsing ysing ≠ ysing := by
+  have hdet : (Xsingᵀ * Xsing).det = 0 := by
+    norm_num [Xsing, mul_apply, Matrix.det_fin_two, Fin.sum_univ_two]
+  have hinv : (Xsingᵀ * Xsing)⁻¹ = 0 :=
+    Matrix.nonsing_inv_apply_not_isUnit _ (by simp [hdet])
+  have hz : conditionalEstimate (0 : Matrix (Fin 2) (Fin 0) ℝ) Xsing ysing = 0 := by
+    unfold conditionalEstimate
+    rw [hinv]
+    simp
+  rw [hz]
+  constructor
+  · funext i
+    fin_cases i <;> simp [Xsing, ysing, mulVec, dotProduct, Fin.sum_univ_two]
+  · intro h
+    have := congrFun h 0
+    norm_num [ysing] at this
+
+/-- Trait-1 phenotype of overlapping individual `0` in the concrete bivariate model. -/
+noncomputable def phenotype1At0 (ω : Fin 4) : ℝ :=
+  (∑ k, X21 0 k * T2.beta1 k ω) + T2.eps1 0 ω
+
+/-- Trait-2 phenotype of overlapping individual `0` in the concrete bivariate model. -/
+noncomputable def phenotype2At0 (ω : Fin 4) : ℝ :=
+  (∑ k, X21 0 k * T2.beta2 k ω) + T2.eps2 0 ω
+
+/-- The overlap parameter is a residual cross-moment, not the phenotypic cross-moment: the
+nonzero genetic contribution raises the latter from `1/4` to `1/2`. -/
+example : T2.rhoE = 1 / 4 ∧
+    (∫ ω, phenotype1At0 ω * phenotype2At0 ω ∂μ4) = 1 / 2 ∧
+      (∫ ω, phenotype1At0 ω * phenotype2At0 ω ∂μ4) ≠ T2.rhoE := by
+  simp [phenotype1At0, phenotype2At0, T2, X21, integral_μ4, had]
+  norm_num
+
 end MathlibExtTest.Biology.StatisticalGenetics.GenomicPrediction
