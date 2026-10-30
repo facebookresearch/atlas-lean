@@ -27,6 +27,10 @@ them mutates; otherwise they descend from two distinct parental copies, which ar
 probability `F`. A pair is identical only if neither copy mutates, so
 `F' = (1 - u)² (1/M + (1 - 1/M) F)` (`homozygosityStep`).
 
+The model needs two distinct gene copies, so its domain is `M ≥ 2` and `0 ≤ u ≤ 1`. The
+theorems assume only `M ≥ 1`: for `M = 1` the identities still hold algebraically but have no
+biological meaning.
+
 ## Main results
 
 * `homozygosityStep_eq_self_iff`: for `0 < u ≤ 1` the unique fixed point is
@@ -49,12 +53,15 @@ namespace MathlibExt.Biology.PopulationGenetics.InfiniteAlleles
 
 /-- One generation of drift and mutation in the infinite-alleles model with `M` gene copies and
 mutation probability `u` per copy: `F' = (1 - u)² (1/M + (1 - 1/M) F)`. The model domain is
-`1 ≤ M` and `0 ≤ u ≤ 1`; for `M = 0` the definition uses the junk value `1/0 = 0`. -/
+`2 ≤ M` (two distinct copies must exist) and `0 ≤ u ≤ 1`; the theorems below assume only
+`1 ≤ M`, and `M = 1` is an algebraic extension with no biological meaning. For `M = 0` the
+definition uses the junk value `1/0 = 0`. -/
 noncomputable def homozygosityStep (M : ℕ) (u F : ℝ) : ℝ :=
   (1 - u) ^ 2 * (1 / M + (1 - 1 / M) * F)
 
-/-- The equilibrium homozygosity `F* = (1 - u)² / (M - (M - 1)(1 - u)²)`. Its denominator is
-positive for `1 ≤ M` and `0 < u ≤ 1`, the domain of the theorems below. -/
+/-- The equilibrium homozygosity `F* = (1 - u)² / (M - (M - 1)(1 - u)²)`. Biologically meaningful
+for `2 ≤ M`; its denominator is positive for `1 ≤ M` and `0 < u ≤ 1`, the hypotheses of the
+theorems below (`M = 1` being an algebraic extension). -/
 noncomputable def eqHomozygosity (M : ℕ) (u : ℝ) : ℝ :=
   (1 - u) ^ 2 / (M - (M - 1) * (1 - u) ^ 2)
 

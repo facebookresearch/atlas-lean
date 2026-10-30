@@ -43,9 +43,14 @@ example : homozygosityStep 2 (1 / 2) 1 ≠ 1 := by
 example (M : ℕ) : eqHomozygosity M 1 = 0 := by
   simp [eqHomozygosity]
 
-/-- `M = 1`: the two sampled copies always share the parent, `F* = (1 - u)²`. -/
+/-- Outside the model (`M = 1`, one gene copy, so no pair of distinct copies): the formula is
+still defined and gives `F* = (1 - u)²`, an algebraic value with no biological meaning. -/
 example (u : ℝ) : eqHomozygosity 1 u = (1 - u) ^ 2 := by
   simp [eqHomozygosity]
+
+/-- Boundary of the model `M = 2` (one diploid individual): `F* = (1 - u)² / (2 - (1 - u)²)`. -/
+example (u : ℝ) : eqHomozygosity 2 u = (1 - u) ^ 2 / (2 - (1 - u) ^ 2) := by
+  norm_num [eqHomozygosity]
 
 /-! ### Convergence and the large-population limit -/
 
