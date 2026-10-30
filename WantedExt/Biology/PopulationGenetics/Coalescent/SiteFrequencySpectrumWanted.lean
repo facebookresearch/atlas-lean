@@ -90,7 +90,7 @@ theorem_wanted integral_sfs {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ
       randomJoining (n - 1) (List.replicate n 1) ps)
     (h_indep : Indep (MeasurableSpace.comap τ ⊤)
       (MeasurableSpace.comap (fun ω k => K.T k ω) MeasurableSpace.pi) μ)
-    {θ : ℝ} {ξ : ℕ → Ω → ℝ}
+    {θ : ℝ} {ξ : ℕ → Ω → ℝ} (hξ_int : ∀ i, Integrable (ξ i) μ)
     (hξ : ∀ i, μ[ξ i | MeasurableSpace.comap τ ⊤ ⊔
         MeasurableSpace.comap (fun ω k => K.T k ω) MeasurableSpace.pi] =ᵐ[μ]
       fun ω => θ / 2 * sfsLength n i (τ ω) (fun k => K.T k ω))
