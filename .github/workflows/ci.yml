@@ -28,6 +28,27 @@ jobs:
       - name: Run deterministic repository checks
         run: scripts/check.sh preflight
 
+      - name: Test v1 metadata inventory
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          work_dir="$(mktemp -d "${RUNNER_TEMP}/atlas-inventory.XXXXXX")"
+          trap 'rm -rf "$work_dir"' EXIT
+          python3 -m venv "$work_dir/venv"
+          "$work_dir/venv/bin/python" -m pip install --disable-pip-version-check \
+            -r scripts/requirements-inventory.txt
+          "$work_dir/venv/bin/python" -m unittest discover \
+            -s scripts -p test_inventory_v1.py -v
+          "$work_dir/venv/bin/python" scripts/inventory_v1.py \
+            --base HEAD --output "$work_dir/smoke"
+          test -s "$work_dir/smoke/inventory.jsonl"
+          test -s "$work_dir/smoke/manifest.json"
+          "$work_dir/venv/bin/python" -m unittest discover \
+            -s scripts -p test_algebra_notes_migration.py -v
+          "$work_dir/venv/bin/python" scripts/check_algebra_notes_migration.py \
+            --source-revision HEAD
+
   build:
     needs: preflight
     runs-on: ubuntu-24.04
