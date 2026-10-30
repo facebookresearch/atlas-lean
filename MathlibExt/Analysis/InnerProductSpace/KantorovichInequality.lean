@@ -330,11 +330,13 @@ theorem variance_eq_weighted_sum_sq (hT : T.IsSymmetric)
 /-- **Bhatia–Davis inequality** for a symmetric operator: the variance of `T`
 at a unit vector is at most `(M - μ) * (μ - m)`, where `μ` is the Rayleigh
 quotient. -/
-theorem bhatia_davis_inequality (hT : T.IsSymmetric) (hn : Module.finrank ℝ E = n)
+theorem bhatia_davis_inequality (hT : T.IsSymmetric)
     (x : E) (hx : ‖x‖ = 1)
     (hray : ∀ x, m * ‖x‖ ^ 2 ≤ ⟪x, T x⟫_ℝ ∧ ⟪x, T x⟫_ℝ ≤ M * ‖x‖ ^ 2) :
     ⟪x, T (T x)⟫_ℝ - ⟪x, T x⟫_ℝ ^ 2
       ≤ (M - ⟪x, T x⟫_ℝ) * (⟪x, T x⟫_ℝ - m) := by
+  let n := Module.finrank ℝ E
+  have hn : Module.finrank ℝ E = n := rfl
   rw [second_moment_eq_weighted_sum hT hn x, rayleigh_eq_weighted_sum hT hn x]
   apply weighted_bhatia_davis
   · intro i
@@ -346,10 +348,12 @@ theorem bhatia_davis_inequality (hT : T.IsSymmetric) (hn : Module.finrank ℝ E 
 
 /-- **Popoviciu's inequality** for a symmetric operator: the variance of `T`
 at a unit vector is at most `((M - m) / 2)²`. -/
-theorem popoviciu_inequality (hT : T.IsSymmetric) (hn : Module.finrank ℝ E = n)
+theorem popoviciu_inequality (hT : T.IsSymmetric)
     (x : E) (hx : ‖x‖ = 1)
     (hray : ∀ x, m * ‖x‖ ^ 2 ≤ ⟪x, T x⟫_ℝ ∧ ⟪x, T x⟫_ℝ ≤ M * ‖x‖ ^ 2) :
     ⟪x, T (T x)⟫_ℝ - ⟪x, T x⟫_ℝ ^ 2 ≤ ((M - m) / 2) ^ 2 := by
+  let n := Module.finrank ℝ E
+  have hn : Module.finrank ℝ E = n := rfl
   rw [second_moment_eq_weighted_sum hT hn x, rayleigh_eq_weighted_sum hT hn x]
   apply weighted_popoviciu
   · intro i
@@ -362,11 +366,13 @@ theorem popoviciu_inequality (hT : T.IsSymmetric) (hn : Module.finrank ℝ E = n
 /-- **Kantorovich's inequality** for a symmetric operator: for a unit vector
 `x`, the product of the Rayleigh quotient of `T` and the Rayleigh quotient
 of its two-sided inverse `S` is at most `(M + m)² / (4 * m * M)`. -/
-theorem kantorovich_inequality (hT : T.IsSymmetric) (hn : Module.finrank ℝ E = n)
+theorem kantorovich_inequality (hT : T.IsSymmetric)
     (x : E) (hx : ‖x‖ = 1)
     (hray : ∀ x, m * ‖x‖ ^ 2 ≤ ⟪x, T x⟫_ℝ ∧ ⟪x, T x⟫_ℝ ≤ M * ‖x‖ ^ 2)
     (hm : 0 < m) (hTS : ∀ x, T (S x) = x) (hST : ∀ x, S (T x) = x) :
     ⟪x, T x⟫_ℝ * ⟪x, S x⟫_ℝ ≤ (M + m) ^ 2 / (4 * m * M) := by
+  let n := Module.finrank ℝ E
+  have hn : Module.finrank ℝ E = n := rfl
   rw [rayleigh_eq_weighted_sum hT hn x,
     inv_rayleigh_eq_weighted_sum_div hT hn hm hray hTS hST x]
   apply weighted_kantorovich

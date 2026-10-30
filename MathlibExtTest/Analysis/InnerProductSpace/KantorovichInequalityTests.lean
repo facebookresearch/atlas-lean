@@ -86,6 +86,14 @@ private theorem scalar_popoviciu_equality :
   rw [Fin.sum_univ_two, Fin.sum_univ_two]
   norm_num
 
+/-- The scalar Popoviciu API applied to the same two-point weights. -/
+private theorem scalar_popoviciu_via_theorem :
+    (∑ i, (![1/2, 1/2] : Fin 2 → ℝ) i * ((![1, 4] : Fin 2 → ℝ) i) ^ 2)
+        - (∑ i, (![1/2, 1/2] : Fin 2 → ℝ) i * (![1, 4] : Fin 2 → ℝ) i) ^ 2
+      ≤ ((4 - 1) / 2) ^ 2 :=
+  weighted_popoviciu scalar_weights_nonneg scalar_weights_sum
+    scalar_eigenvalues_mem_Icc
+
 end ScalarTests
 
 section OneDimensionalTests
@@ -120,7 +128,7 @@ private theorem kantorovich_one_dim :
     intro x
     simp only [LinearMap.smul_apply, LinearMap.id_apply, smul_eq_mul]
     ring
-  have h := kantorovich_inequality hT (n := 1) (Module.finrank_self ℝ) (1 : ℝ)
+  have h := kantorovich_inequality hT (1 : ℝ)
     (by simp : ‖(1 : ℝ)‖ = 1) hray (by norm_num : (0 : ℝ) < 1) hTS hST
   exact h
 
@@ -253,10 +261,8 @@ private theorem kantorovich_diag_test :
     ⟪testVec, diagOp ![1, 4] testVec⟫_ℝ
         * ⟪testVec, diagOp ![1, 1 / 4] testVec⟫_ℝ
       ≤ (4 + 1) ^ 2 / (4 * 1 * 4) := by
-  have hfin : Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2 :=
-    finrank_euclideanSpace_fin
   have h := kantorovich_inequality (T := diagOp ![1, 4]) (S := diagOp ![1, 1 / 4])
-    (diag_symm ![1, 4]) (n := 2) hfin testVec testVec_norm diag_rayleigh_bounds
+    (diag_symm ![1, 4]) testVec testVec_norm diag_rayleigh_bounds
     (by norm_num : (0 : ℝ) < (1 : ℝ)) diag_inverse_left diag_inverse_right
   exact h
 
@@ -267,10 +273,16 @@ private theorem bhatia_davis_diag_test :
         - ⟪testVec, diagOp ![1, 4] testVec⟫_ℝ ^ 2
       ≤ (4 - ⟪testVec, diagOp ![1, 4] testVec⟫_ℝ)
         * (⟪testVec, diagOp ![1, 4] testVec⟫_ℝ - 1) := by
-  have hfin : Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2 :=
-    finrank_euclideanSpace_fin
   exact bhatia_davis_inequality (T := diagOp ![1, 4]) (diag_symm ![1, 4])
-    (n := 2) hfin testVec testVec_norm diag_rayleigh_bounds
+    testVec testVec_norm diag_rayleigh_bounds
+
+/-- The operator Popoviciu API at the same diagonal operator and unit vector. -/
+private theorem popoviciu_diag_test :
+    ⟪testVec, diagOp ![1, 4] (diagOp ![1, 4] testVec)⟫_ℝ
+        - ⟪testVec, diagOp ![1, 4] testVec⟫_ℝ ^ 2
+      ≤ ((4 - 1) / 2) ^ 2 := by
+  exact popoviciu_inequality (T := diagOp ![1, 4]) (diag_symm ![1, 4])
+    testVec testVec_norm diag_rayleigh_bounds
 
 /-- The variance at the test vector is exactly `9/4`. -/
 private theorem variance_diag_test :
