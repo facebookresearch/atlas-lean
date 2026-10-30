@@ -15,7 +15,7 @@ fail() {
 
 reset_fixture() {
   rm -rf "$TMP_ROOT/repo"
-  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,WantedExt,scripts,v1}
+  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,PhyslibExt,PhyslibExtTest,WantedExt,scripts,v1}
   cp "$REPO_ROOT/lakefile.toml" "$TMP_ROOT/repo/"
   cp "$REPO_ROOT/lake-manifest.json" "$TMP_ROOT/repo/"
   cp \
@@ -95,7 +95,7 @@ expect_failure "archived manifest dependency" 'build surface'
 
 reset_fixture
 replace_once \
-  'defaultTargets = ["MathlibExt", "CSLibExt", "WantedExt"]' \
+  'defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"]' \
   'defaultTargets = ["v1"]'
 expect_failure "archived default target" 'build surface'
 
@@ -177,6 +177,10 @@ reset_fixture
 ln -s "$TMP_ROOT/linked.lean" "$TMP_ROOT/repo/CSLibExtTest/Linked.lean"
 expect_failure "symlinked CSLibExtTest source" 'symlinked paths'
 
+reset_fixture
+ln -s "$TMP_ROOT/linked.lean" "$TMP_ROOT/repo/PhyslibExt/Linked.lean"
+expect_failure "symlinked PhyslibExt source" 'symlinked paths'
+
 FAKE_BIN="$TMP_ROOT/bin"
 FAKE_LAKE_LOG="$TMP_ROOT/lake.log"
 mkdir -p "$FAKE_BIN"
@@ -198,7 +202,7 @@ if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   cat "$TMP_ROOT/output.log" >&2
   fail "clean compiler diagnostics failed"
 fi
-grep -qx 'build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest' "$FAKE_LAKE_LOG" ||
+grep -qx 'build MathlibExt CSLibExt PhyslibExt WantedExt MathlibExtTest CSLibExtTest PhyslibExtTest' "$FAKE_LAKE_LOG" ||
   fail "compiler diagnostics built the wrong targets"
 [[ "$(wc -l <"$FAKE_LAKE_LOG")" -eq 1 ]] ||
   fail "compiler diagnostics invoked Lake more than once"
@@ -229,7 +233,7 @@ grep -q 'forbidden compiler diagnostic' "$TMP_ROOT/output.log" ||
   fail "native_decide diagnostic produced the wrong failure"
 
 reset_fixture
-for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt; do
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt; do
   printf '%s\n' 'def sentinel : Nat := 1' \
     >"$TMP_ROOT/repo/$library/Sentinel.lean"
 done
@@ -241,7 +245,8 @@ if ! PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_axioms.sh" \
 fi
 for module in \
   CSLibExt.Sentinel CSLibExtTest.Sentinel \
-  MathlibExt.Sentinel MathlibExtTest.Sentinel WantedExt.Sentinel; do
+  MathlibExt.Sentinel MathlibExtTest.Sentinel \
+  PhyslibExt.Sentinel PhyslibExtTest.Sentinel WantedExt.Sentinel; do
   grep -qx "import $module" "$FAKE_LEAN_INPUT" ||
     fail "axiom input omitted $module"
 done
