@@ -58,7 +58,7 @@ values.
 
 * `genotypicValue_eq`: `G i j = μ + α i + α j + δ i j`.
 * `sum_mul_avgEffect`, `sum_mul_domDev_right`, `sum_mul_domDev_left`: orthogonality.
-* `domVar_le_sum_sq`: least-squares characterization of the breeding value.
+* `domVar_le_sum_sq`: least-squares characterization of the additive fitted genotypic value.
 * `genVar_eq_addVar_add_domVar`: `V_G = V_A + V_D`.
 * `covParentOffspring_eq`, `covHalfSibs_eq`, `covFullSibs_eq`: covariances of relatives.
 * `addVar_biallelic`, `domVar_biallelic`: `V_A = 2pq(a + d(q - p))²` and `V_D = (2pqd)²` for

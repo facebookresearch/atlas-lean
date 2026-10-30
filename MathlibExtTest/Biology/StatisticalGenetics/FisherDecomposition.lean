@@ -82,7 +82,8 @@ example (q₁ a : ℝ) :
   ring
 
 /-- The least-squares property on the concrete locus: fitting `0 + 0 + 0` leaves a larger
-error (`∑ p p G² = 1`) than the breeding value (`V_D = 1/4`). -/
+error (`∑ p p G² = 1`) than the residual error (`V_D = 1/4`) of the optimal additive fitted
+genotypic value `μ + α i + α j`. -/
 example : domVar (biallelicFreq (1 / 2)) (biallelicValue 1 1) ≤
     ∑ i, ∑ j, biallelicFreq (1 / 2) i * biallelicFreq (1 / 2) j *
       (biallelicValue 1 1 i j - 0 - 0 - 0) ^ 2 :=
