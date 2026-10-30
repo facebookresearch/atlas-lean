@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Algebra.HopfAlgebra.Antipode
+import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
 
 @[expose] public section
 
@@ -48,3 +49,39 @@ example {R : Type u} [CommSemiring R] {H : Type v} [CommSemiring H] [Bialgebra R
     (∀ (T : Type v) [CommSemiring T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
       (WithConv.toConv (AlgHom.id R H)) ^ m = 1 :=
   Bialgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one m
+
+example {R : Type*} [CommSemiring R] {A : Type*} [Semiring A] [HopfAlgebra R A]
+    {L : Type*} [CommSemiring L] [Algebra R L]
+    (φ : WithConv (A →ₐ[R] L)) : IsUnit φ :=
+  HopfAlgebra.isUnit_withConv_algHom φ
+
+example {K : Type*} [CommSemiring K] {A : Type*} [Semiring A] [HopfAlgebra K A]
+    {L : Type*} [CommSemiring L] [Algebra K L] (ν : A →ₐ[K] L) :
+    ∃ ν' : A →ₐ[K] L,
+      ν'.toLinearMap = ν.toLinearMap ∘ₗ HopfAlgebraStruct.antipode (R := K) ∧
+      WithConv.toConv ν' * WithConv.toConv ν = 1 ∧
+      WithConv.toConv ν * WithConv.toConv ν' = 1 :=
+  HopfAlgebra.exists_comp_antipode_convMul_eq_one ν
+
+noncomputable section
+
+example :
+    IsUnit (WithConv.toConv
+      (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3))))) :=
+  HopfAlgebra.isUnit_withConv_algHom
+    (WithConv.toConv
+      (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3)))))
+
+example :
+    ∃ ν' : MonoidAlgebra ℕ (Equiv.Perm (Fin 3)) →ₐ[ℕ] ℕ,
+      ν'.toLinearMap =
+        (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3)))).toLinearMap ∘ₗ
+          HopfAlgebraStruct.antipode (R := ℕ) ∧
+      WithConv.toConv ν' *
+          WithConv.toConv
+            (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3)))) = 1 ∧
+      WithConv.toConv
+          (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3)))) *
+            WithConv.toConv ν' = 1 :=
+  HopfAlgebra.exists_comp_antipode_convMul_eq_one
+    (Bialgebra.counitAlgHom ℕ (MonoidAlgebra ℕ (Equiv.Perm (Fin 3))))

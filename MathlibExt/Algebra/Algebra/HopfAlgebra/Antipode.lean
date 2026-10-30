@@ -126,17 +126,24 @@ theorem HopfAlgebra.antipode_antipode {R : Type*} [CommSemiring R]
 
 namespace HopfAntipodeAux
 
-variable {R : Type*} [CommSemiring R] {A : Type*} [CommSemiring A] [HopfAlgebra R A]
+variable {R : Type*} [CommSemiring R] {A : Type*} [Semiring A] [HopfAlgebra R A]
 variable {L : Type*} [CommSemiring L] [Algebra R L]
 
+private noncomputable def comp_antipode (φ : A →ₐ[R] L) : A →ₐ[R] L :=
+  (φ.fromOpposite fun _ _ => Commute.all _ _).comp (HopfAlgebra.antipodeAlgHomOp R A)
+
+private theorem comp_antipode_apply (φ : A →ₐ[R] L) (a : A) :
+    comp_antipode φ a = φ (HopfAlgebra.antipode R a) := rfl
+
 private theorem convMul_comp_antipode_right (φ : A →ₐ[R] L) :
-    WithConv.toConv φ * WithConv.toConv (φ.comp (HopfAlgebra.antipodeAlgHom R A)) = 1 := by
+    WithConv.toConv φ * WithConv.toConv (comp_antipode φ) = 1 := by
   refine WithConv.ext (AlgHom.ext fun a => ?_)
   simp only [AlgHom.convMul_def, AlgHom.convOne_def, WithConv.ofConv_toConv,
     AlgHom.coe_comp, Function.comp_apply,
     Bialgebra.comulAlgHom_apply, Bialgebra.counitAlgHom_apply, Algebra.ofId_apply]
   rw [← (Coalgebra.Repr.arbitrary R a).eq]
-  simp only [map_sum, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lmul'_apply_tmul]
+  simp only [map_sum, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lmul'_apply_tmul,
+    comp_antipode_apply]
   calc ∑ i ∈ (Coalgebra.Repr.arbitrary R a).index,
           φ ((Coalgebra.Repr.arbitrary R a).left i) *
             φ (HopfAlgebra.antipode R ((Coalgebra.Repr.arbitrary R a).right i))
@@ -149,13 +156,14 @@ private theorem convMul_comp_antipode_right (φ : A →ₐ[R] L) :
     _ = algebraMap R L (Coalgebra.counit (R := R) a) := φ.commutes _
 
 private theorem convMul_comp_antipode_left (φ : A →ₐ[R] L) :
-    WithConv.toConv (φ.comp (HopfAlgebra.antipodeAlgHom R A)) * WithConv.toConv φ = 1 := by
+    WithConv.toConv (comp_antipode φ) * WithConv.toConv φ = 1 := by
   refine WithConv.ext (AlgHom.ext fun a => ?_)
   simp only [AlgHom.convMul_def, AlgHom.convOne_def, WithConv.ofConv_toConv,
     AlgHom.coe_comp, Function.comp_apply,
     Bialgebra.comulAlgHom_apply, Bialgebra.counitAlgHom_apply, Algebra.ofId_apply]
   rw [← (Coalgebra.Repr.arbitrary R a).eq]
-  simp only [map_sum, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lmul'_apply_tmul]
+  simp only [map_sum, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lmul'_apply_tmul,
+    comp_antipode_apply]
   calc ∑ i ∈ (Coalgebra.Repr.arbitrary R a).index,
           φ (HopfAlgebra.antipode R ((Coalgebra.Repr.arbitrary R a).left i)) *
             φ ((Coalgebra.Repr.arbitrary R a).right i)
@@ -169,12 +177,13 @@ private theorem convMul_comp_antipode_left (φ : A →ₐ[R] L) :
 
 end HopfAntipodeAux
 
-/-- Algebra homomorphisms out of a Hopf algebra are convolution units. -/
+/-- Algebra homomorphisms from a possibly noncommutative Hopf algebra to a commutative
+algebra are convolution units. -/
 theorem HopfAlgebra.isUnit_withConv_algHom {R : Type*} [CommSemiring R]
-    {A : Type*} [CommSemiring A] [HopfAlgebra R A]
+    {A : Type*} [Semiring A] [HopfAlgebra R A]
     {L : Type*} [CommSemiring L] [Algebra R L]
     (φ : WithConv (A →ₐ[R] L)) : IsUnit φ := by
-  refine ⟨⟨φ, WithConv.toConv ((WithConv.ofConv φ).comp (HopfAlgebra.antipodeAlgHom R A)), ?_, ?_⟩,
+  refine ⟨⟨φ, WithConv.toConv (HopfAntipodeAux.comp_antipode (WithConv.ofConv φ)), ?_, ?_⟩,
     rfl⟩
   · have h := HopfAntipodeAux.convMul_comp_antipode_right (R := R)
       (WithConv.ofConv φ)
@@ -182,16 +191,17 @@ theorem HopfAlgebra.isUnit_withConv_algHom {R : Type*} [CommSemiring R]
   · have h := HopfAntipodeAux.convMul_comp_antipode_left (R := R) (WithConv.ofConv φ)
     rwa [WithConv.toConv_ofConv] at h
 
-/-- Every algebra homomorphism out of a Hopf algebra has a convolution
+/-- Every algebra homomorphism from a possibly noncommutative Hopf algebra to a commutative
+algebra has a convolution
 inverse given by precomposition with the antipode. -/
 theorem HopfAlgebra.exists_comp_antipode_convMul_eq_one
-    {K : Type*} [CommSemiring K] {A : Type*} [CommSemiring A] [HopfAlgebra K A]
+    {K : Type*} [CommSemiring K] {A : Type*} [Semiring A] [HopfAlgebra K A]
     {L : Type*} [CommSemiring L] [Algebra K L] (ν : A →ₐ[K] L) :
     ∃ ν' : A →ₐ[K] L,
       ν'.toLinearMap = ν.toLinearMap ∘ₗ HopfAlgebraStruct.antipode (R := K) ∧
       WithConv.toConv ν' * WithConv.toConv ν = 1 ∧
       WithConv.toConv ν * WithConv.toConv ν' = 1 := by
-  refine ⟨ν.comp (HopfAlgebra.antipodeAlgHom K A), ?_, ?_, ?_⟩
+  refine ⟨HopfAntipodeAux.comp_antipode ν, ?_, ?_, ?_⟩
   · ext a; rfl
   · exact HopfAntipodeAux.convMul_comp_antipode_left ν
   · exact HopfAntipodeAux.convMul_comp_antipode_right ν
