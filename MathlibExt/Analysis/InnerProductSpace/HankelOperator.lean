@@ -18,6 +18,7 @@ import Mathlib.Analysis.Normed.Operator.Bilinear
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 import Mathlib.Topology.Algebra.InfiniteSum.Module
+import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -76,34 +77,6 @@ namespace MathlibExt.Analysis.InnerProductSpace.HankelOperator
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- Norm squared of an `ℓ²(ℕ, 𝕜)` vector is the sum of the squared coordinate
-norms. -/
-private theorem hankel_normSq_eq_tsum (f : ℓ²(ℕ, 𝕜)) :
-    ‖f‖ ^ 2 = ∑' i, ‖f i‖ ^ 2 := by
-  have h := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (E := fun _ : ℕ => 𝕜) f
-  rw [show ((2 : ℝ≥0∞).toReal) = (2 : ℝ) from by norm_num] at h
-  have h2 : ‖f‖ ^ (2 : ℝ) = ‖f‖ ^ 2 := by rw [Real.rpow_two]
-  rw [h2] at h
-  rw [h]
-  apply tsum_congr
-  intro i
-  rw [Real.rpow_two]
-
-/-- Summability of squared coordinate norms from `Memℓp`. -/
-private theorem hankel_summable_normSq_of_memℓp {f : ℕ → 𝕜} (hf : Memℓp f 2) :
-    Summable fun i => ‖f i‖ ^ 2 := by
-  have h := (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mp hf
-  simpa using h
-
-/-- `Memℓp` at `2` from summability of squared norms. -/
-private theorem hankel_memℓp_of_summable_normSq {f : ℕ → 𝕜}
-    (hf : Summable fun i => ‖f i‖ ^ 2) : Memℓp f 2 := by
-  apply (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mpr
-  simpa using hf
-
 /-- The `k`-th anti-diagonal slice function: reverse the first `k + 1`
 coordinates, kill the rest. -/
 def hankelSliceFun (k : ℕ) (x : ℕ → 𝕜) (i : ℕ) : 𝕜 :=
@@ -115,7 +88,7 @@ def hankelSliceFun (k : ℕ) (x : ℕ → 𝕜) (i : ℕ) : 𝕜 :=
 /-- The slice of an `ℓ²` sequence is in `ℓ²`. -/
 theorem hankel_memℓp_sliceFun {k : ℕ} {x : ℓ²(ℕ, 𝕜)} :
     Memℓp (hankelSliceFun k (x : ℕ → 𝕜)) 2 := by
-  apply hankel_memℓp_of_summable_normSq
+  apply HilbertSchmidt.memℓp_of_summable_norm_sq
   refine summable_of_ne_finset_zero (s := Finset.range (k + 1)) ?_
   intro i hi
   simp only [Finset.mem_range, not_lt] at hi
@@ -159,14 +132,14 @@ theorem hankel_tsum_normSq_slice_le {k : ℕ} (x : ℓ²(ℕ, 𝕜)) :
       have hik : ¬ i ≤ k := by omega
       simp [hankelSliceFun, hik]
   rw [hsum]
-  exact (hankel_summable_normSq_of_memℓp (lp.memℓp x)).sum_le_tsum
+  exact (HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x)).sum_le_tsum
     (Finset.range (k + 1)) (fun i _ => by positivity)
 
 /-- A slice does not increase norms. -/
 theorem norm_hankelSliceLinMap_apply_le (k : ℕ) (x : ℓ²(ℕ, 𝕜)) :
     ‖hankelSliceLinMap k x‖ ≤ ‖x‖ := by
   have hpow : ‖hankelSliceLinMap k x‖ ^ 2 ≤ ‖x‖ ^ 2 := by
-    rw [hankel_normSq_eq_tsum, hankel_normSq_eq_tsum]
+    rw [HilbertSchmidt.norm_sq_lp_eq_tsum, HilbertSchmidt.norm_sq_lp_eq_tsum]
     exact hankel_tsum_normSq_slice_le x
   exact le_of_sq_le_sq hpow (norm_nonneg _)
 
