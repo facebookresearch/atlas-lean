@@ -18,9 +18,16 @@ of_range_eq.lean`,
 of_isPullback_of_surjective.lean` and
 `P2M/Sol/S_AlgebraicGeometry_isClosedImmersion_and_surjective_and_isProper_
 of_isPullback_of_surjective.lean`
-(fermats-last-theorem):
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
@@ -87,30 +94,38 @@ theorem AlgebraicGeometry.IsOpenImmersion.of_isClosedImmersion_of_flat_comp_of_e
     (Etale.iff_flat_and_formallyUnramified.mp heti).2.2
   exact ⟨IsOpenImmersion.of_flat_of_mono i, het⟩
 
-namespace ThickeningTransferAux
-
-variable {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X}
-
-private theorem isClosedImmersion_of_isPullback [IsClosedImmersion i]
-    (hg : IsPullback g f₀ f i) : IsClosedImmersion g :=
+/-- Closed immersions transfer along pullback squares. -/
+theorem AlgebraicGeometry.IsClosedImmersion.of_isPullback
+    {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i) :
+    IsClosedImmersion g :=
   MorphismProperty.of_isPullback (P := @IsClosedImmersion) hg.flip inferInstance
 
-private theorem surjective_of_isPullback [Surjective i] (hg : IsPullback g f₀ f i) :
+/-- Surjectivity transfers along pullback squares. -/
+theorem AlgebraicGeometry.Surjective.of_isPullback
+    {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i) :
     Surjective g :=
   MorphismProperty.of_isPullback (P := @Surjective) hg.flip inferInstance
 
-variable [IsClosedImmersion i] [Surjective i]
-
-private theorem universallyClosed_of_isPullback (hg : IsPullback g f₀ f i)
+/-- Universal closedness transfers along a pullback square whose base map is
+a surjective closed immersion. -/
+theorem AlgebraicGeometry.UniversallyClosed.of_isPullback
+    {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
     [UniversallyClosed f₀] : UniversallyClosed f := by
-  have : Surjective g := surjective_of_isPullback i hg
+  have : Surjective g := Surjective.of_isPullback i hg
   have : UniversallyClosed (g ≫ f) := by rw [hg.w]; infer_instance
   exact UniversallyClosed.of_comp_surjective g f
 
-private theorem isSeparated_of_isPullback (hg : IsPullback g f₀ f i) [IsSeparated f₀] :
-    IsSeparated f := by
-  have : Surjective g := surjective_of_isPullback i hg
-  have : IsClosedImmersion g := isClosedImmersion_of_isPullback i hg
+/-- Separatedness transfers along a pullback square whose base map is a
+surjective closed immersion. -/
+theorem AlgebraicGeometry.IsSeparated.of_isPullback
+    {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
+    [IsSeparated f₀] : IsSeparated f := by
+  have : Surjective g := Surjective.of_isPullback i hg
+  have : IsClosedImmersion g := IsClosedImmersion.of_isPullback i hg
   have e₁ : f₀ ≫ i = g ≫ f := hg.w.symm
   let k : pullback (f₀ ≫ i) (f₀ ≫ i) ⟶ pullback f f :=
     pullback.map (f₀ ≫ i) (f₀ ≫ i) f f g g (𝟙 S) ((Category.comp_id _).trans e₁)
@@ -148,25 +163,12 @@ private theorem isSeparated_of_isPullback (hg : IsPullback g f₀ f i) [IsSepara
     exact hclosedcomp.isClosedEmbedding.isClosed_range
   exact ⟨IsClosedImmersion.of_isPreimmersion _ hclosed⟩
 
-private theorem isProper_of_isPullback (hg : IsPullback g f₀ f i) [IsProper f₀]
-    [LocallyOfFiniteType f] : IsProper f := by
-  have := isSeparated_of_isPullback i hg
-  have := universallyClosed_of_isPullback i hg
-  exact (isProper_iff f).mpr ⟨‹_›, ‹_›, ‹_›⟩
-
-end ThickeningTransferAux
-
-/-- Closed immersions, surjectivity, separatedness, universal closedness,
-and properness transfer along a pullback square whose base map is a
+/-- Properness transfers along a pullback square whose base map is a
 surjective closed immersion. -/
-theorem AlgebraicGeometry.isClosedImmersion_and_surjective_and_isProper_of_isPullback_of_surjective
+theorem AlgebraicGeometry.IsProper.of_isPullback
     {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
-    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i) :
-    IsClosedImmersion g ∧ Surjective g ∧ (IsSeparated f₀ → IsSeparated f) ∧
-      (UniversallyClosed f₀ → UniversallyClosed f) ∧
-      (IsProper f₀ → LocallyOfFiniteType f → IsProper f) :=
-  ⟨ThickeningTransferAux.isClosedImmersion_of_isPullback i hg,
-    ThickeningTransferAux.surjective_of_isPullback i hg,
-    fun _ => ThickeningTransferAux.isSeparated_of_isPullback i hg,
-    fun _ => ThickeningTransferAux.universallyClosed_of_isPullback i hg,
-    fun _ _ => ThickeningTransferAux.isProper_of_isPullback i hg⟩
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
+    [IsProper f₀] [LocallyOfFiniteType f] : IsProper f := by
+  have := IsSeparated.of_isPullback i hg
+  have := UniversallyClosed.of_isPullback i hg
+  exact (isProper_iff f).mpr ⟨‹_›, ‹_›, ‹_›⟩

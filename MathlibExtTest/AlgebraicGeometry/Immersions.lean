@@ -26,3 +26,28 @@ example {Z X Y : Scheme.{u}} (i : Z ⟶ X) (g : X ⟶ Y) [IsClosedImmersion i] [
     [Flat (i ≫ g)] [LocallyOfFinitePresentation (i ≫ g)] :
     IsOpenImmersion i ∧ Etale (i ≫ g) :=
   AlgebraicGeometry.IsOpenImmersion.of_isClosedImmersion_of_flat_comp_of_etale i g
+
+example {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i) :
+    IsClosedImmersion g :=
+  AlgebraicGeometry.IsClosedImmersion.of_isPullback i hg
+
+example {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i) :
+    Surjective g :=
+  AlgebraicGeometry.Surjective.of_isPullback i hg
+
+example {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
+    [UniversallyClosed f₀] : UniversallyClosed f :=
+  AlgebraicGeometry.UniversallyClosed.of_isPullback i hg
+
+example {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
+    [IsSeparated f₀] : IsSeparated f :=
+  AlgebraicGeometry.IsSeparated.of_isPullback i hg
+
+example {S S₀ X X₀ : Scheme.{u}} (i : S₀ ⟶ S) [IsClosedImmersion i] [Surjective i]
+    {f : X ⟶ S} {f₀ : X₀ ⟶ S₀} {g : X₀ ⟶ X} (hg : IsPullback g f₀ f i)
+    [IsProper f₀] [LocallyOfFiniteType f] : IsProper f :=
+  AlgebraicGeometry.IsProper.of_isPullback i hg
