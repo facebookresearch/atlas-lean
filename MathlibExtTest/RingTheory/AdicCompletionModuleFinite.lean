@@ -17,3 +17,9 @@ example {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪] [IsLocalRing 𝒪
     [Module.Finite 𝒪 T] [IsLocalRing T] [IsLocalHom (algebraMap 𝒪 T)] :
     IsAdicComplete (IsLocalRing.maximalIdeal T) T :=
   IsLocalRing.isAdicComplete_of_module_finite (𝒪 := 𝒪)
+
+/-- The local-hom instance is derived from module finiteness by the theorem. -/
+example {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪] [IsLocalRing 𝒪]
+    [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] {T : Type*} [CommRing T] [Algebra 𝒪 T]
+    [Module.Finite 𝒪 T] [IsLocalRing T] : IsAdicComplete (IsLocalRing.maximalIdeal T) T :=
+  IsLocalRing.isAdicComplete_of_module_finite (𝒪 := 𝒪)

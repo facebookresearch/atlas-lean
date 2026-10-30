@@ -171,8 +171,15 @@ private theorem exists_maximalIdeal_pow_le_map :
   exact exists_maximalIdeal_pow_le_of_isArtinianRing_quotient _
 
 private theorem isAdicComplete_maximalIdeal_of_module_finite [IsNoetherianRing 𝒪]
-    [IsAdicComplete (maximalIdeal 𝒪) 𝒪] [IsLocalHom (algebraMap 𝒪 T)] :
+    [IsAdicComplete (maximalIdeal 𝒪) 𝒪] :
     IsAdicComplete (maximalIdeal T) T := by
+  let _ : Algebra.IsIntegral 𝒪 T := Algebra.IsIntegral.of_finite 𝒪 T
+  let _ : IsLocalHom (algebraMap 𝒪 T) := by
+    apply ((IsLocalRing.local_hom_TFAE (algebraMap 𝒪 T)).out 5 1).mp
+    have hmax : ((maximalIdeal T).comap (algebraMap 𝒪 T)).IsMaximal :=
+      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap 𝒪 T)
+        (algebraMap_isIntegral_iff.mpr inferInstance) (maximalIdeal T)
+    exact ((maximal_ideal_unique 𝒪).unique (maximalIdeal.isMaximal 𝒪) hmax).symm
   haveI h1 : IsAdicComplete (maximalIdeal 𝒪) T := isAdicComplete_of_module_finite _
   haveI h2 : IsAdicComplete ((maximalIdeal 𝒪).map (algebraMap 𝒪 T)) T :=
     (IsAdicComplete.map_algebraMap_iff (maximalIdeal 𝒪) T).mpr h1
@@ -190,8 +197,7 @@ namespace IsLocalRing
 complete at its maximal ideal. -/
 theorem isAdicComplete_of_module_finite {𝒪 : Type u} {T : Type v} [CommRing 𝒪]
     [IsNoetherianRing 𝒪] [IsLocalRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
-    [CommRing T] [Algebra 𝒪 T] [Module.Finite 𝒪 T] [IsLocalRing T]
-    [IsLocalHom (algebraMap 𝒪 T)] :
+    [CommRing T] [Algebra 𝒪 T] [Module.Finite 𝒪 T] [IsLocalRing T] :
     IsAdicComplete (IsLocalRing.maximalIdeal T) T :=
   AdicCompleteModuleFiniteAux.isAdicComplete_maximalIdeal_of_module_finite (𝒪 := 𝒪) (T := T)
 
