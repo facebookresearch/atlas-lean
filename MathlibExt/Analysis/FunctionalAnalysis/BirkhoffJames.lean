@@ -9,11 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Basic
-public import Mathlib.Analysis.Normed.Group.Quotient
-public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.Normed.Module.HahnBanach
 public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
 public import MathlibExt.Analysis.Normed.Module.DualDistanceFormula
 
 @[expose] public section
