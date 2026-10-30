@@ -11,7 +11,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.Normed.Operator.Basic
-public import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
+import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
 
 import Mathlib.Analysis.Normed.Lp.lpSpace
 import Mathlib.Analysis.SpecificLimits.Basic
@@ -41,17 +41,17 @@ This is a companion to the bounded-operator / matrix material of
 not one of the 72 v1 targets. It is distinct from batch 65
 (`SchurTest.lean`), which proves Schur's test for *finite* matrices acting on
 Euclidean space (`Matrix m n 𝕜` with `Fintype` indices, finite sums only), and
-from batch 83 (`HilbertInequality.lean`), which proves a *weighted finite*
-Schur test for one specific kernel, the Hilbert kernel, with a constant
-depending on the weights. The infinite version here needs genuinely new limit
+from batch 83 (`HilbertInequality.lean`), whose `schurTest_finite` proves a
+generic *weighted finite* Schur test for nonnegative matrices, applied there
+to the Hilbert kernel. The infinite version here needs new limit
 arguments: summability of the row series, passage of the finite
 Cauchy–Schwarz inequality to the `tsum` limit, summability of the double
 series, and the `tsum` interchange. It is also distinct from batch 68
 (`HilbertSchmidt.lean`): the identity matrix satisfies Schur's test with
 `R = C = 1` but is not Hilbert–Schmidt (see the test file), so neither result
 implies the other. It is not in the pinned Mathlib: Mathlib has row-sum bounds
-for the `ℓ^∞` operator norm (`Matrix.linfty_opNorm_def`) and column-sum bounds
-for the `ℓ¹` operator norm, but no `ℓ²` Schur test, finite or infinite.
+for the `ℓ^∞` operator norm (`Matrix.linfty_opNorm_def`), but no `ℓ²`
+Schur test, finite or infinite.
 
 ## Main declarations
 
