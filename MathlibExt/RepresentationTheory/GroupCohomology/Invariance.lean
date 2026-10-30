@@ -46,9 +46,11 @@ open CategoryTheory groupCohomology Rep
 
 namespace groupCohomology
 
+universe u
+
 /-- Group cohomology is invariant under group isomorphism. -/
 theorem nonempty_linearEquiv_of_iso_res_mulEquiv
-    {k G H : Type} [CommRing k] [Group G] [Group H]
+    {k G H : Type u} [CommRing k] [Group G] [Group H]
     (e : G ≃* H) (A : Rep k G) (B : Rep k H) (φ : A ≅ Rep.res e.toMonoidHom B) (n : ℕ) :
     ∃ ψ : groupCohomology A n ≃ₗ[k] groupCohomology B n,
       ∀ x : groupCohomology B n,
