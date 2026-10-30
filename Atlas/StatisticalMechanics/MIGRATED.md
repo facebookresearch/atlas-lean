@@ -226,3 +226,28 @@ root build.
 | `Atlas/StatisticalMechanics/Code/Universality/VSeparatesFixed.lean` | `MathlibExt.Probability.Percolation.Universality.CrossingSeparation` |
 | `Atlas/StatisticalMechanics/Code/Walls/euceuler.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CellEulerCharacteristic` |
 | `Atlas/StatisticalMechanics/Code/Walls/wadangledefect.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.AngleDefect` |
+
+## CSLibExt
+
+| Source file | Module |
+| --- | --- |
+| `Atlas/StatisticalMechanics/Code/Inequalities/OSSS.lean` | `CSLibExt.Complexity.BooleanFunctions.OSSS` |
+| `Atlas/StatisticalMechanics/Code/OSSS/Poincare.lean` | `CSLibExt.Complexity.BooleanFunctions.Poincare` |
+| `Atlas/StatisticalMechanics/Code/Probability/BourgainPerCoord.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.BourgainPerCoord` |
+| `Atlas/StatisticalMechanics/Code/Probability/ConvexGapHC.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.ConvexGapHC` |
+| `Atlas/StatisticalMechanics/Code/Probability/DegreeTruncation.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.DegreeTruncation` |
+| `Atlas/StatisticalMechanics/Code/Probability/EntropySubadd.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.EntropySubadd` |
+| `Atlas/StatisticalMechanics/Code/Probability/FSMartingale.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.FSMartingale` |
+| `Atlas/StatisticalMechanics/Code/Probability/FSPerEdge.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.FSPerEdge` |
+| `Atlas/StatisticalMechanics/Code/Probability/FSRhoOptimise.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.FSRhoOptimise` |
+| `Atlas/StatisticalMechanics/Code/Probability/FullRangeHC.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FullRangeHC` |
+| `Atlas/StatisticalMechanics/Code/Probability/KKLInequality.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLInequality` |
+| `Atlas/StatisticalMechanics/Code/Probability/KKLLogOptimisation.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLLogOptimisation` |
+| `Atlas/StatisticalMechanics/Code/Probability/KKLLogSobolev.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLLogSobolev` |
+| `Atlas/StatisticalMechanics/Code/Probability/KKLfromHC.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLfromHC` |
+| `Atlas/StatisticalMechanics/Code/Probability/KKLpBiased.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLpBiased` |
+| `Atlas/StatisticalMechanics/Code/Probability/MaxElementDecomp.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.MaxElementDecomp` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedTensorize.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize` |
+| `Atlas/StatisticalMechanics/Code/Probability/RhoOptimiseClose2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform` |
+| `Atlas/StatisticalMechanics/Code/Probability/TwoPointHCqGt2.lean` | `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CappedExponentGap` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/KKLWire.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.KKLEvents` |
