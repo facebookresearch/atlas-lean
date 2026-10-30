@@ -29,7 +29,7 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Reduced
 /-!
 # Geometrically reduced schemes over perfect fields
 
-A reduced scheme locally of finite type over a perfect field is
+A reduced scheme over a perfect field is
 geometrically reduced: the statement is closed under isomorphism, so it
 reduces to affine schemes, where it is reducedness of tensor products over
 perfect fields.
@@ -50,13 +50,10 @@ private scoped instance isReduced_isClosedUnderIsomorphisms :
 
 private lemma isReduced_pullback_Spec {k : Type u} [Field k] [PerfectField k]
     {R : CommRingCat.{u}} (g : Spec R ⟶ Spec (CommRingCat.of k)) (hred : IsReduced (Spec R))
-    (hft : LocallyOfFiniteType g) (K : Type u) [Field K] [Algebra k K] :
+    (K : Type u) [Field K] [Algebra k K] :
     IsReduced (pullback g (Spec.map (CommRingCat.ofHom (algebraMap k K)))) := by
   obtain ⟨φ, rfl⟩ := Spec.map_surjective g
   algebraize [φ.hom]
-  have hft' : Algebra.FiniteType k R := by
-    rw [← RingHom.finiteType_algebraMap]
-    exact HasRingHomProperty.Spec_iff.mp hft
   have hred' : _root_.IsReduced R := (affine_isReduced_iff R).mp hred
   have hKR : _root_.IsReduced (K ⊗[k] R) :=
     Algebra.isReduced_tensorProduct_of_perfectField k R K
@@ -72,11 +69,11 @@ private lemma isReduced_pullback_Spec {k : Type u} [Field k] [PerfectField k]
 
 end GeometricallyReducedAux
 
-/-- A reduced scheme locally of finite type over a perfect field is
+/-- A reduced scheme over a perfect field is
 geometrically reduced. -/
 theorem AlgebraicGeometry.GeometricallyReduced.of_isReduced_of_perfectField
     {k : Type u} [Field k] [PerfectField k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (CommRingCat.of k)) [LocallyOfFiniteType f] [IsReduced X] :
+    (f : X ⟶ Spec (CommRingCat.of k)) [IsReduced X] :
     AlgebraicGeometry.GeometricallyReduced f := by
   refine ⟨(geometrically_iff_of_commRing_of_isClosedUnderIsomorphisms (P := IsReduced)).mpr ?_⟩
   intro K _ _
@@ -88,5 +85,4 @@ theorem AlgebraicGeometry.GeometricallyReduced.of_isReduced_of_perfectField
     (Spec.map (CommRingCat.ofHom (algebraMap k K))))
   have : IsOpenImmersion (X.affineCover.f i) := X.affineCover.map_prop i
   have hred : IsReduced (X.affineCover.X i) := isReduced_of_isOpenImmersion (X.affineCover.f i)
-  have hft : LocallyOfFiniteType (X.affineCover.f i ≫ f) := inferInstance
-  exact GeometricallyReducedAux.isReduced_pullback_Spec (X.affineCover.f i ≫ f) hred hft K
+  exact GeometricallyReducedAux.isReduced_pullback_Spec (X.affineCover.f i ≫ f) hred K

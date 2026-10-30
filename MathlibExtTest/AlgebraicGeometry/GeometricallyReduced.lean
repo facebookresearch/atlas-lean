@@ -25,6 +25,6 @@ example (k : Type u) [Field k] [PerfectField k] (A : Type v) [CommRing A] [Algeb
   Algebra.isReduced_tensorProduct_of_perfectField k A L
 
 example {k : Type u} [Field k] [PerfectField k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (CommRingCat.of k)) [LocallyOfFiniteType f] [IsReduced X] :
+    (f : X ⟶ Spec (CommRingCat.of k)) [IsReduced X] :
     AlgebraicGeometry.GeometricallyReduced f :=
   AlgebraicGeometry.GeometricallyReduced.of_isReduced_of_perfectField f
