@@ -13,6 +13,7 @@ public import MathlibExt.Biology.StatisticalGenetics.Breeder
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory MathlibExt.Biology.StatisticalGenetics.Breeder
+open scoped ENNReal
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.Breeder
 
@@ -49,6 +50,76 @@ example : W.response Set.univ = 0 := W.response_univ
 /-- The breeder's equation on the witness: `R = h² S`. -/
 example : W.response Set.univ = W.h2 * W.selectionDifferential Set.univ :=
   W.response_eq MeasurableSet.univ (by simp)
+
+/-! ### Selection that changes the mean
+
+Two equally frequent parental values `4` and `2` (population mean `3`), heritability `1/2`,
+offspring value `3 + (1/2) (P - 3)`. Selecting the parents with `P ≥ 3` gives `S = 4 - 3 = 1`
+and `R = 7/2 - 3 = 1/2 = h² S`; the values are computed directly from the conditional
+measure. -/
+
+/-- The uniform population on two individuals. -/
+noncomputable def μ2 : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac false)
+
+theorem μ2_singleton (b : Bool) : μ2 {b} = 2⁻¹ := by
+  cases b <;> simp [μ2]
+
+instance : IsProbabilityMeasure μ2 := ⟨by
+  simp [μ2]
+  rw [← two_mul, ENNReal.mul_inv_cancel (by norm_num) (by norm_num)]⟩
+
+theorem integral_μ2 (f : Bool → ℝ) : ∫ b, f b ∂μ2 = (f true + f false) / 2 := by
+  rw [integral_fintype Integrable.of_finite, Fintype.sum_bool]
+  simp [measureReal_def, μ2_singleton]
+  ring
+
+theorem integral_cond_true (f : Bool → ℝ) : ∫ b, f b ∂μ2[|{true}] = f true := by
+  rw [integral_fintype Integrable.of_finite, Fintype.sum_bool]
+  simp [measureReal_def, cond_apply (measurableSet_singleton _), μ2_singleton]
+
+/-- Parental values `4` and `2`. -/
+noncomputable def P2 : Bool → ℝ := fun b => if b then 4 else 2
+
+/-- The two-individual model. -/
+noncomputable def W2 : Model μ2 where
+  mean := 3
+  h2 := 1 / 2
+  parent := P2
+  offspring := fun ω => 3 + 1 / 2 * (P2 ω - 3)
+  measurable_parent := measurable_of_finite _
+  integrable_parent := Integrable.of_finite
+  integrable_offspring := Integrable.of_finite
+  integral_parent := by
+    rw [integral_μ2]
+    norm_num [P2]
+  condExp_offspring := by
+    refine Filter.EventuallyEq.of_eq ?_
+    refine condExp_of_stronglyMeasurable (measurable_of_finite P2).comap_le ?_
+      Integrable.of_finite
+    exact Measurable.stronglyMeasurable
+      ((measurable_const.add (measurable_const.mul (measurable_id.sub measurable_const))).comp
+        (comap_measurable P2))
+
+/-- Truncation at `3` selects exactly the individual with `P = 4`. -/
+theorem sel_eq : P2 ⁻¹' Set.Ici 3 = {true} := by
+  ext b
+  cases b <;> norm_num [P2]
+
+/-- `S = 1`, computed from the conditional measure. -/
+example : W2.selectionDifferential {true} = 1 := by
+  rw [Model.selectionDifferential, integral_cond_true]
+  norm_num [W2, P2]
+
+/-- `R = 1/2`, computed from the conditional measure. -/
+example : W2.response {true} = 1 / 2 := by
+  rw [Model.response, integral_cond_true]
+  norm_num [W2, P2]
+
+/-- The breeder's equation applied to this selection: `R = h² S` with `h² S = 1/2 · 1`. -/
+example : W2.response {true} = 1 / 2 * 1 := by
+  rw [W2.response_eq (s := {true}) (by rw [← sel_eq]; exact ⟨Set.Ici 3, measurableSet_Ici, rfl⟩)
+    (by simp [μ2_singleton]), Model.selectionDifferential, integral_cond_true]
+  norm_num [W2, P2]
 
 /-! ### Truncation selection in an arbitrary model -/
 

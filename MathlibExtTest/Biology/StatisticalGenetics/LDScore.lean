@@ -96,8 +96,9 @@ example : ∫ ω, D.chiSq X13 0 ω ∂μ4 = 1 := by
     Fin.sum_univ_three]
   norm_num
 
-/-- The general form without standardization: doubling the genotype column doubles its sum of
-squares. -/
+/-- The general form without standardization: scaling the whole genotype matrix by `2`
+multiplies the sum of squares of column `0` by `4` (from `1` to `4`), so the noise term is
+`(1 - h²) * 4 / N`. -/
 example : ∫ ω, D.chiSq (2 • X13) 0 ω ∂μ4 =
     1 * (3 / 4) / 3 * ldScore (2 • X13) 0 + (1 - 3 / 4) * 4 / 1 := by
   rw [D.integral_chiSq]
