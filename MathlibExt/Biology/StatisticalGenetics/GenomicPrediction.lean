@@ -40,10 +40,11 @@ summary statistics, extensions of LD-score regression, and the trend test for as
   that hypothesis Mathlib's nonsingular inverse is zero on a singular Gram matrix, so these
   unconditional equalities can return junk values rather than least-squares fits.
 * `StratifiedModel.integral_chiSq_of_standardized`: **stratified LD-score regression**
-  (Finucane et al. 2015): if `Var β_k = ∑_C τ_C [k ∈ C]`, then
-  `𝔼[χ²_j] = N ∑_C τ_C ℓ(j, C) + σ²_e` for a standardized marker `j`;
-  `StratifiedModel.integral_chiSq_single_causal`: one causal variant `c` gives
-  `𝔼[χ²_m] = N τ r²_mc + σ²_e` (the LD-proxy noncentrality).
+  (Finucane et al. 2015): for a standardized genotype matrix, if
+  `Var β_k = ∑_C τ_C [k ∈ C]`, then
+  `𝔼[χ²_j] = N ∑_C τ_C ℓ(j, C) + σ²_e` for each marker `j`;
+  `StratifiedModel.integral_chiSq_single_causal`: on the same standardized matrix, one causal
+  variant `c` gives `𝔼[χ²_m] = N τ r²_mc + σ²_e` (the LD-proxy noncentrality).
 * `CrossTraitModel.integral_z_mul_z`: an exact **cross-trait scaled-score identity** motivated by
   Bulik-Sullivan et al. 2015b. Its overlap term uses the residual cross-moment `ρ_e`; the model
   does not identify this parameter with phenotypic correlation or require within-trait moments
@@ -426,8 +427,9 @@ section Stratified
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {N M : ℕ}
 
-/-- The stratified LD score `ℓ(j, C) = ∑_{k ∈ C} r j k ²` of marker `j` with respect to the
-annotation category `C` (Finucane et al. 2015). -/
+/-- The stratified normalized-cross-product score
+`ℓ(j, C) = ∑_{k ∈ C} (X_jᵀ X_k / N)²`. For a standardized genotype matrix this is the stratified
+LD score of marker `j` with respect to annotation category `C` (Finucane et al. 2015). -/
 noncomputable def stratLDScore (X : Matrix (Fin N) (Fin M) ℝ) (C : Finset (Fin M)) (j : Fin M) :
     ℝ :=
   ∑ k ∈ C, ldCorr X j k ^ 2
@@ -524,19 +526,20 @@ theorem integral_chiSq (j : Fin M) :
   simp_rw [div_pow, ← Finset.sum_mul, ← Finset.sum_div]
   field_simp
 
-/-- **Stratified LD-score regression** (Finucane et al. 2015): for a marker column with sum of
-squares `N ≠ 0`, `𝔼[χ² j] = N ∑_c τ_c ℓ(j, cat c) + σ²_e`. -/
-theorem integral_chiSq_of_standardized (hN : N ≠ 0) (j : Fin M) (hj : ∑ i, X i j ^ 2 = N) :
+/-- **Stratified LD-score regression** (Finucane et al. 2015): for a standardized genotype
+matrix and `N ≠ 0`, `𝔼[χ² j] = N ∑_c τ_c ℓ(j, cat c) + σ²_e`. Full-matrix standardization makes
+every normalized cross product in `stratLDScore` a sample correlation. -/
+theorem integral_chiSq_of_standardized (hN : N ≠ 0) (j : Fin M) (hX : IsStandardized X) :
     ∫ ω, D.chiSq X j ω ∂μ = N * ∑ c, D.tau c * stratLDScore X (D.cat c) j + D.sigma2e := by
-  rw [D.integral_chiSq X j, hj, mul_div_cancel_right₀ _ (Nat.cast_ne_zero.mpr hN)]
+  rw [D.integral_chiSq X j, (hX j).2, mul_div_cancel_right₀ _ (Nat.cast_ne_zero.mpr hN)]
 
 /-- **One causal variant** (the LD-proxy noncentrality; Pritchard & Przeworski 2001): if the
-only category is the single causal marker `c` with variance `τ`, then for a marker `m` with sum
-of squares `N ≠ 0`, `𝔼[χ² m] = N τ r m c ² + σ²_e`. -/
+genotype matrix is standardized and the only category is the single causal marker `c` with
+variance `τ`, then for a marker `m` and `N ≠ 0`, `𝔼[χ² m] = N τ r m c ² + σ²_e`. -/
 theorem integral_chiSq_single_causal (D : StratifiedModel μ N M Unit) (c : Fin M)
-    (hcat : D.cat () = {c}) (hN : N ≠ 0) (j : Fin M) (hj : ∑ i, X i j ^ 2 = N) :
+    (hcat : D.cat () = {c}) (hN : N ≠ 0) (j : Fin M) (hX : IsStandardized X) :
     ∫ ω, D.chiSq X j ω ∂μ = N * D.tau () * ldCorr X j c ^ 2 + D.sigma2e := by
-  rw [D.integral_chiSq_of_standardized X hN j hj]
+  rw [D.integral_chiSq_of_standardized X hN j hX]
   simp [stratLDScore, hcat, mul_assoc]
 
 end StratifiedModel
@@ -621,9 +624,9 @@ private theorem sampleScore_eq (S : Finset (Fin n)) (β : Fin M → Ω → ℝ) 
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_mul, div_mul_eq_mul_div, Finset.sum_div]
 
-/-- **Cross-trait LD-score regression, exact form**: with `N₁ = |S₁|`, `N₂ = |S₂|`,
+/-- **Cross-trait scaled-score identity, exact form**: with `N₁ = |S₁|`, `N₂ = |S₂|`,
 `𝔼[z₁ j z₂ j] = √(N₁ N₂) (ρ_g / M) ∑_k r¹ j k r² j k + ρ_e (∑_{i ∈ S₁ ∩ S₂} X i j ²) / √(N₁ N₂)`,
-with the in-sample correlations `r¹`, `r²` (`sampleCorr`). -/
+with the in-sample normalized cross products `r¹`, `r²` (`sampleCorr`). -/
 theorem integral_z_mul_z (j : Fin M) :
     ∫ ω, D.z1 X j ω * D.z2 X j ω ∂μ =
       √((D.S1.card : ℝ) * D.S2.card) * (D.rhoG / M) *
@@ -693,8 +696,9 @@ theorem integral_z_mul_z (j : Fin M) :
   rw [e]
   field_simp
 
-/-- **Equal-LD specialization of the residual cross-moment identity**: if the two samples have
-the same LD with marker `j` and the overlap marker is standardized at `j`
+/-- **Equal normalized-cross-product specialization of the residual cross-moment identity**: if
+the two samples have the same normalized cross products with marker `j` and the overlap marker
+is standardized at `j`
 (`∑_{i ∈ S₁ ∩ S₂} X i j ² = N_s`), then
 `𝔼[z₁ j z₂ j] = √(N₁ N₂) ρ_g ℓ_j / M + ρ_e N_s / √(N₁ N₂)`. Here `ρ_e` is only the residual
 cross-moment specified by `CrossTraitModel`; this theorem does not state the Bulik-Sullivan

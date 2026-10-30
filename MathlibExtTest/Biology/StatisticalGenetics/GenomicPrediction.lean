@@ -24,7 +24,8 @@ Cochran–Armitage computations, including boundary cases.
 
 open MeasureTheory Matrix MathlibExt.Biology.StatisticalGenetics.GenomicPrediction
 open MathlibExt.Biology.StatisticalGenetics.LDScore
-open MathlibExtTest.Biology.StatisticalGenetics.LDScore (μ4 had integral_μ4 X2)
+open MathlibExtTest.Biology.StatisticalGenetics.LDScore
+  (μ4 had integral_μ4 X2 isStandardized_X2)
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.GenomicPrediction
 
@@ -165,7 +166,7 @@ noncomputable def S2 : StratifiedModel μ4 2 2 (Fin 2) where
 /-- `𝔼[χ²₀] = N (τ₀ ℓ(0, {0}) + τ₁ ℓ(0, {0, 1})) + σ²_e = 2 (3/4 · 1 + 1/4 · 2) + 1/4` for the
 standardized perfect-LD matrix `X2 = [[1, 1], [-1, -1]]`. -/
 example : ∫ ω, S2.chiSq X2 0 ω ∂μ4 = 11 / 4 := by
-  rw [S2.integral_chiSq_of_standardized X2 two_ne_zero 0 (by simp [X2, Fin.sum_univ_two]; norm_num)]
+  rw [S2.integral_chiSq_of_standardized X2 two_ne_zero 0 isStandardized_X2]
   simp [S2, stratLDScore, ldCorr, X2, Fin.sum_univ_two]
   norm_num
 
@@ -198,12 +199,11 @@ noncomputable def C1 : StratifiedModel μ4 2 2 Unit where
 /-- Marker `0` has no effect but is in perfect LD with the causal marker `1` (`X2`):
 `𝔼[χ²₀] = N τ r₀₁² + σ²_e = 2 · (1/4) · 1 + 1/4 = 3/4`. -/
 example : ∫ ω, C1.chiSq X2 0 ω ∂μ4 = 3 / 4 := by
-  rw [C1.integral_chiSq_single_causal X2 1 rfl two_ne_zero 0
-    (by simp [X2, Fin.sum_univ_two]; norm_num)]
+  rw [C1.integral_chiSq_single_causal X2 1 rfl two_ne_zero 0 isStandardized_X2]
   simp [C1, ldCorr, X2, Fin.sum_univ_two]
   norm_num
 
-/-! ### Cross-trait LD-score regression -/
+/-! ### Cross-trait scaled-score identity -/
 
 /-- A witness bivariate model: a pool of two individuals, sample `S₁ = {0}` for trait 1 and
 `S₂ = {0, 1}` for trait 2 (overlap `{0}`), one marker with shared effect `had 1`
@@ -359,5 +359,37 @@ example : T2.rhoE = 1 / 4 ∧
       (∫ ω, phenotype1At0 ω * phenotype2At0 ω ∂μ4) ≠ T2.rhoE := by
   simp [phenotype1At0, phenotype2At0, T2, X21, integral_μ4, had]
   norm_num
+
+/-! ### Stratified normalization boundary checks -/
+
+/-- The tested column is standardized but the second column has scale two. -/
+def Xnonstd : Matrix (Fin 2) (Fin 2) ℝ := !![1, 2; -1, -2]
+
+/-- The tested column has sum of squares `N`, but the full matrix is not standardized. -/
+example : (∑ i, Xnonstd i 0 ^ 2) = 2 ∧ ¬IsStandardized Xnonstd := by
+  constructor
+  · norm_num [Xnonstd, Fin.sum_univ_two]
+  · intro h
+    have hk := (h 1).2
+    norm_num [Xnonstd, Fin.sum_univ_two] at hk
+
+/-- The raw normalized cross product is `2` and its square is `4`, while normalization by both
+column norms gives squared correlation `1`. -/
+example : ldCorr Xnonstd 0 1 = 2 ∧ ldCorr Xnonstd 0 1 ^ 2 = 4 ∧
+    (∑ i, Xnonstd i 0 * Xnonstd i 1) ^ 2 /
+      ((∑ i, Xnonstd i 0 ^ 2) * ∑ i, Xnonstd i 1 ^ 2) = 1 := by
+  norm_num [ldCorr, Xnonstd, Fin.sum_univ_two]
+
+/-- The generic normalized-cross-product identity remains valid without standardization. -/
+example : ∫ ω, S2.chiSq Xnonstd 0 ω ∂μ4 =
+    2 * ∑ c, S2.tau c * stratLDScore Xnonstd (S2.cat c) 0 +
+      S2.sigma2e * (∑ i, Xnonstd i 0 ^ 2) / 2 := by
+  exact S2.integral_chiSq Xnonstd 0
+
+/-- For this unstandardized matrix the generic identity evaluates to `17/4`; no cited
+LD-correlation specialization is used. -/
+example : ∫ ω, S2.chiSq Xnonstd 0 ω ∂μ4 = 17 / 4 := by
+  rw [S2.integral_chiSq Xnonstd 0]
+  norm_num [S2, stratLDScore, ldCorr, Xnonstd, Fin.sum_univ_two]
 
 end MathlibExtTest.Biology.StatisticalGenetics.GenomicPrediction
