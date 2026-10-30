@@ -32,8 +32,8 @@ module
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.NumberTheory.RamificationInertia.Basic
-public import Mathlib.Analysis.PSeries
+import Mathlib.NumberTheory.RamificationInertia.Basic
+import Mathlib.Analysis.PSeries
 
 /-!
 # Summability of the Dedekind zeta terms
@@ -53,7 +53,7 @@ namespace NumberField
 
 /-- The ring of integers of a number field is infinite. Mathlib has no such
 instance. -/
-instance (F : Type) [Field F] [NumberField F] : Infinite (𝓞 F) :=
+instance (F : Type*) [Field F] [NumberField F] : Infinite (𝓞 F) :=
   Infinite.of_injective (algebraMap ℤ (𝓞 F)) (by
     intro a b h
     exact Int.cast_injective (by exact_mod_cast h))
@@ -61,7 +61,7 @@ instance (F : Type) [Field F] [NumberField F] : Infinite (𝓞 F) :=
 /-- For `σ > 1`, the Dedekind zeta terms `(N v) ^ (-σ)` are summable over
 the height-one primes of the ring of integers. -/
 theorem summable_heightOneSpectrum_absNorm_rpow_neg_of_one_lt
-    (F : Type) [Field F] [NumberField F] {σ : ℝ} (hσ : 1 < σ) :
+    (F : Type*) [Field F] [NumberField F] {σ : ℝ} (hσ : 1 < σ) :
     Summable fun v : HeightOneSpectrum (𝓞 F) => ((Ideal.absNorm v.asIdeal : ℕ) : ℝ) ^ (-σ) := by
   have hex : ∀ v : HeightOneSpectrum (𝓞 F), ∃ p n : ℕ, 0 < n ∧ ((p : ℕ) : 𝓞 F) ∈ v.asIdeal ∧
       p.Prime ∧ Ideal.absNorm v.asIdeal = p ^ n := fun v => by
