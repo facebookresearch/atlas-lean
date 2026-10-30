@@ -33,7 +33,8 @@ Klein's inequality is the first-order form of the same statement: for a
 convex differentiable `f` and self-adjoint `S, T`,
 `∑ i, (f μᵢ + f' μᵢ (dᵢ - μᵢ)) ≤ ∑ j, f λⱼ`, where `μ` are the
 eigenvalues of `S` and `dᵢ = ⟪bᵢ, T bᵢ⟫` is the diagonal of `T` in any
-orthonormal basis `b`. When `b` is an eigenbasis of `S`, the left side is
+orthonormal basis `b`. When `b` is an eigenbasis of `S` aligned with this
+eigenvalue order, the left side is
 `tr f(S) + tr (f'(S) (T - S))`, the classical form of Klein's inequality;
 in particular, for `f x = x log x` this is the nonnegativity of the
 quantum relative entropy (up to the trace terms).
@@ -52,8 +53,9 @@ convex differentiable functions.
 * `klein_inequality` : the first-order (tangent-line) form above.
 * `peierls_exp` : Peierls for `f = Real.exp`.
 * `klein_sq` : Klein for `f x = x ^ 2`.
-* `klein_entropy` : Klein for `f x = x * Real.log x`, for positive
-  definite `S` and positive semidefinite `T`.
+* `klein_entropy_tangent` : the entropy tangent bound in any orthonormal basis.
+* `klein_entropy` : the aligned quantum-relative-entropy form in the eigenbasis of `S`,
+  for positive definite `S` and positive semidefinite `T`.
 
 Companion to the Hilbert-space / spectral material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/HilbertSpace.lean` and
@@ -224,11 +226,10 @@ theorem eigenvalues_pos_of_forall_pos_inner {n : ℕ} (hn : Module.finrank ℂ E
   simp only [hnorm, one_pow, RCLike.ofReal_one, mul_one] at h
   exact h
 
-/-- Klein's inequality for `f x = x * Real.log x`: the quantum
-relative-entropy form. For positive definite `S` and positive
-semidefinite `T`, the tangent-line sum at the eigenvalues of `S` is at
-most the sum of `x log x` over the eigenvalues of `T`. -/
-theorem klein_entropy {n : ℕ} (hn : Module.finrank ℂ E = n)
+/-- The entropy tangent bound in an arbitrary orthonormal basis. Its diagonal entries
+need not align with the eigenvalues of `S`; `klein_entropy` supplies the aligned
+quantum-relative-entropy form. -/
+theorem klein_entropy_tangent {n : ℕ} (hn : Module.finrank ℂ E = n)
     {T S : E →ₗ[ℂ] E} (hT : T.IsSymmetric) (hS : S.IsSymmetric)
     (hTpos : ∀ x, 0 ≤ RCLike.re (inner (𝕜 := ℂ) x (T x)))
     (hSpos : ∀ x, x ≠ 0 → 0 < RCLike.re (inner (𝕜 := ℂ) x (S x)))
@@ -253,5 +254,19 @@ theorem klein_entropy {n : ℕ} (hn : Module.finrank ℂ E = n)
       = Real.log (hS.eigenvalues hn i) + 1 :=
     fun i => Real.deriv_mul_log (ne_of_gt (hμSpos i))
   simpa only [hderiv] using h
+
+/-- Klein's entropy inequality in the eigenbasis of `S`. The eigenvalue at index `i`
+is paired with its eigenvector, so this is the quantum-relative-entropy form up to
+the trace terms. In particular, its tangent correction vanishes when `T = S`. -/
+theorem klein_entropy {n : ℕ} (hn : Module.finrank ℂ E = n)
+    {T S : E →ₗ[ℂ] E} (hT : T.IsSymmetric) (hS : S.IsSymmetric)
+    (hTpos : ∀ x, 0 ≤ RCLike.re (inner (𝕜 := ℂ) x (T x)))
+    (hSpos : ∀ x, x ≠ 0 → 0 < RCLike.re (inner (𝕜 := ℂ) x (S x))) :
+    ∑ i, (hS.eigenvalues hn i * Real.log (hS.eigenvalues hn i) +
+        (Real.log (hS.eigenvalues hn i) + 1) *
+        (RCLike.re (inner (𝕜 := ℂ) (hS.eigenvectorBasis hn i)
+          (T (hS.eigenvectorBasis hn i))) - hS.eigenvalues hn i))
+      ≤ ∑ j, hT.eigenvalues hn j * Real.log (hT.eigenvalues hn j) :=
+  klein_entropy_tangent hn hT hS hTpos hSpos (hS.eigenvectorBasis hn)
 
 end MathlibExt.Analysis.InnerProductSpace.PeierlsKlein

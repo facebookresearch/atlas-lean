@@ -27,6 +27,9 @@ import Mathlib.Tactic.NormNum
   `T = 2 • 1`: `6 ≤ 8`.
 * Klein for `f x = x * Real.log x`, `S` diagonal `![3 / 4, 1 / 4]` and
   `T = (1 / 2) • 1`: the quantum relative-entropy form.
+* The swapped eigenbasis keeps a strict arbitrary-basis tangent gap when `T = S`.
+* The entropy API uses the correctly aligned eigenbasis in generic finite dimension.
+* For the reviewed diagonal operator, the public entropy API gives equality at `T = S`.
 * `#print axioms` for the main theorems: standard triple only.
 -/
 
@@ -376,22 +379,98 @@ theorem klein_entropy_diag :
       + ((1 / 4 : ℝ) * Real.log (1 / 4) + (Real.log (1 / 4) + 1) * (1 / 2 - 1 / 4))
       ≤ (1 / 2 : ℝ) * Real.log (1 / 2) + (1 / 2 : ℝ) * Real.log (1 / 2) := by
   have h := klein_entropy finrank_E2 (isSymmetric_smul_id (1 / 2)) isSymmetric_Sdiag
-    nonneg_smul_half_id pos_Sdiag (EuclideanSpace.basisFun (Fin 2) ℂ)
-  have hdiag : ∀ i, RCLike.re (inner (𝕜 := ℂ) (EuclideanSpace.basisFun (Fin 2) ℂ i)
+    nonneg_smul_half_id pos_Sdiag
+  have hdiag : ∀ i, RCLike.re (inner (𝕜 := ℂ) (isSymmetric_Sdiag.eigenvectorBasis finrank_E2 i)
       ((((1 / 2 : ℝ) : ℂ) • LinearMap.id : E2 →ₗ[ℂ] E2)
-        (EuclideanSpace.basisFun (Fin 2) ℂ i))) = 1 / 2 := by
+        (isSymmetric_Sdiag.eigenvectorBasis finrank_E2 i))) = 1 / 2 := by
     intro i
     simp only [LinearMap.smul_apply, LinearMap.id_apply, inner_smul_right,
       inner_self_eq_norm_sq_to_K,
-      (EuclideanSpace.basisFun (Fin 2) ℂ).orthonormal.norm_eq_one i]
+      (isSymmetric_Sdiag.eigenvectorBasis finrank_E2).orthonormal.norm_eq_one i]
     simp
   simpa only [Fin.sum_univ_two, eigenvalues_Sdiag, eigenvalues_smul_id (1 / 2), hdiag,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] using h
+
+/-- The reviewed basis reverses the two standard eigenvectors. -/
+def swappedBasis : OrthonormalBasis (Fin 2) ℂ E2 :=
+  (EuclideanSpace.basisFun (Fin 2) ℂ).reindex (Equiv.swap (0 : Fin 2) 1)
+
+/-- The diagonal is reversed, while the spectrum retains its decreasing order. -/
+theorem swapped_diag (i : Fin 2) :
+    RCLike.re (inner (𝕜 := ℂ) (swappedBasis i) (Sdiag (swappedBasis i))) =
+      if i = 0 then 1 / 4 else 3 / 4 := by
+  simp only [swappedBasis, OrthonormalBasis.reindex_apply]
+  rw [EuclideanSpace.basisFun_inner]
+  fin_cases i <;>
+    norm_num [Sdiag, toEuclideanLin_apply_coord, EuclideanSpace.basisFun_apply]
+
+/-- The arbitrary-basis tangent API keeps the reviewed strict gap for the swapped basis. -/
+example :
+    (∑ i, (isSymmetric_Sdiag.eigenvalues finrank_E2 i *
+      Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) +
+      (Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) + 1) *
+      (RCLike.re (inner (𝕜 := ℂ) (swappedBasis i) (Sdiag (swappedBasis i))) -
+        isSymmetric_Sdiag.eigenvalues finrank_E2 i))
+      ≤ ∑ j, isSymmetric_Sdiag.eigenvalues finrank_E2 j *
+        Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 j)) ∧
+    (∑ i, (isSymmetric_Sdiag.eigenvalues finrank_E2 i *
+      Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) +
+      (Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) + 1) *
+      (RCLike.re (inner (𝕜 := ℂ) (swappedBasis i) (Sdiag (swappedBasis i))) -
+        isSymmetric_Sdiag.eigenvalues finrank_E2 i))
+      < ∑ j, isSymmetric_Sdiag.eigenvalues finrank_E2 j *
+        Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 j)) := by
+  have nonneg : ∀ x : E2, 0 ≤ RCLike.re (inner (𝕜 := ℂ) x (Sdiag x)) := by
+    intro x
+    by_cases hx : x = 0
+    · simp [hx]
+    · exact (pos_Sdiag x hx).le
+  refine ⟨klein_entropy_tangent finrank_E2 isSymmetric_Sdiag isSymmetric_Sdiag
+    nonneg pos_Sdiag swappedBasis, ?_⟩
+  simp only [Fin.sum_univ_two, eigenvalues_Sdiag, swapped_diag, Matrix.cons_val_zero,
+    Matrix.cons_val_one]
+  norm_num at ⊢
+  have hlog : Real.log (1 / 4 : ℝ) < Real.log (3 / 4 : ℝ) :=
+    Real.log_lt_log (by norm_num) (by norm_num)
+  linarith
+
+/-- The aligned public entropy API has zero self-entropy gap for the reviewed operator. -/
+theorem klein_entropy_self :
+    ∑ i, (isSymmetric_Sdiag.eigenvalues finrank_E2 i *
+      Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) +
+      (Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 i) + 1) *
+      (RCLike.re (inner (𝕜 := ℂ) (isSymmetric_Sdiag.eigenvectorBasis finrank_E2 i)
+        (Sdiag (isSymmetric_Sdiag.eigenvectorBasis finrank_E2 i))) -
+        isSymmetric_Sdiag.eigenvalues finrank_E2 i)) =
+      ∑ j, isSymmetric_Sdiag.eigenvalues finrank_E2 j *
+        Real.log (isSymmetric_Sdiag.eigenvalues finrank_E2 j) := by
+  have nonneg : ∀ x : E2, 0 ≤ RCLike.re (inner (𝕜 := ℂ) x (Sdiag x)) := by
+    intro x
+    by_cases hx : x = 0
+    · simp [hx]
+    · exact (pos_Sdiag x hx).le
+  apply le_antisymm
+  · exact klein_entropy finrank_E2 isSymmetric_Sdiag isSymmetric_Sdiag nonneg pos_Sdiag
+  · simp
+
+/-- The public entropy API uses the aligned eigenbasis in every finite-dimensional space. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+    [FiniteDimensional ℂ E] {n : ℕ} (hn : Module.finrank ℂ E = n)
+    {T S : E →ₗ[ℂ] E} (hT : T.IsSymmetric) (hS : S.IsSymmetric)
+    (hTpos : ∀ x, 0 ≤ RCLike.re (inner (𝕜 := ℂ) x (T x)))
+    (hSpos : ∀ x, x ≠ 0 → 0 < RCLike.re (inner (𝕜 := ℂ) x (S x))) :
+    ∑ i, (hS.eigenvalues hn i * Real.log (hS.eigenvalues hn i) +
+      (Real.log (hS.eigenvalues hn i) + 1) *
+      (RCLike.re (inner (𝕜 := ℂ) (hS.eigenvectorBasis hn i)
+        (T (hS.eigenvectorBasis hn i))) - hS.eigenvalues hn i))
+      ≤ ∑ j, hT.eigenvalues hn j * Real.log (hT.eigenvalues hn j) :=
+  klein_entropy hn hT hS hTpos hSpos
 
 #print axioms peierls_inequality
 #print axioms klein_inequality
 #print axioms peierls_exp
 #print axioms klein_sq
 #print axioms klein_entropy
+#print axioms klein_entropy_tangent
 
 end MathlibExtTest.Analysis.InnerProductSpace.PeierlsKleinTests
