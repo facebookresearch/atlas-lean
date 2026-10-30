@@ -30,9 +30,11 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
-public import Mathlib.RingTheory.AdicCompletion.Noetherian
+public import Mathlib.RingTheory.AdicCompletion.Basic
+public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.RingTheory.MvPowerSeries.Trunc
 public import Mathlib.LinearAlgebra.SModEq.Basic
+import Mathlib.RingTheory.Ideal.BigOperators
 
 /-!
 # Adic completeness of multivariate power series
