@@ -9,9 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Convex.Extreme
-public import Mathlib.Analysis.Convex.Segment
+import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Topology.ContinuousMap.Compact
-public import Mathlib.Topology.UrysohnsLemma
+import Mathlib.Topology.UrysohnsLemma
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
