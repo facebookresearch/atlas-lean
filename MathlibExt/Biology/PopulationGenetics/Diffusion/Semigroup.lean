@@ -24,7 +24,7 @@ In the neutral Wright–Fisher model with `M` gene copies, the allele count of t
 is `Bin(M, x)` when the current allele frequency is `x`. Acting on continuous functions of the
 frequency, one generation is the Bernstein operator
 `(wfStep M f)(x) = ∑_i f(i/M) C(M, i) x^i (1 - x)^(M - i)` (the expectation of `f` at the next
-frequency; see `integral_binomial_eq_bernsteinApproximation` in `Diffusion.DiffusionLimit`),
+frequency, by `ProbabilityTheory.integral_binomial`; Mathlib's `bernsteinApproximation M f`),
 and `t` generations are `wfStep M ^ t`. Each `wfStep M` is a positive linear contraction of
 `C([0, 1], ℝ)` fixing `1`.
 
@@ -98,8 +98,8 @@ open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
 /-- One generation of the neutral Wright–Fisher chain with `M` gene copies, acting on continuous
 functions of the allele frequency: `(wfStep M f)(x) = ∑_k f(k/M) C(M, k) x^k (1 - x)^(M - k)`,
 which for `M ≥ 1` is the expected value of `f` at the next frequency `Bin(M, x) / M` (the `M`-th
-Bernstein operator; see `integral_binomial_eq_bernsteinApproximation` in
-`Diffusion.DiffusionLimit`). It is a linear
+Bernstein operator, Mathlib's `bernsteinApproximation`; the expectation is
+`ProbabilityTheory.integral_binomial`). It is a linear
 contraction. At `M = 0` it returns the constant `f 0` (Lean's `k / 0 = 0`; no population). -/
 noncomputable def wfStep (M : ℕ) : C(I, ℝ) →L[ℝ] C(I, ℝ) :=
   LinearMap.mkContinuous
