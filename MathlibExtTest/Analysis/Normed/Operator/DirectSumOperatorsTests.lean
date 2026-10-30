@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Analysis.InnerProductSpace.DirectSumOperators
+public import MathlibExt.Analysis.Normed.Operator.DirectSumOperators
 
 @[expose] public section
 
-namespace MathlibExtTest.Analysis.InnerProductSpace.DirectSumOperatorsTests
+namespace MathlibExtTest.Analysis.Normed.Operator.DirectSumOperatorsTests
 
 open ContinuousLinearMap Set
-open MathlibExt.Analysis.InnerProductSpace.DirectSumOperators
+open MathlibExt.Analysis.Normed.Operator.DirectSumOperators
 
 noncomputable section
 
@@ -93,7 +93,7 @@ example : ((1 : ℝ →L[ℝ] ℝ).prodMap (1 : ℝ →L[ℝ] ℝ)).range = ⊤ 
     rw [LinearMap.range_eq_top]
     intro y
     exact ⟨y, by simp⟩
-  rw [MathlibExt.Analysis.InnerProductSpace.DirectSumOperators.range_prodMap, h1,
+  rw [MathlibExt.Analysis.Normed.Operator.DirectSumOperators.range_prodMap, h1,
     Submodule.prod_top]
 
 /-- `diag(2, 3)` is compact, from compactness of its two summands. -/
@@ -171,4 +171,4 @@ end
 #print axioms isFredholm_prodMap_iff
 #print axioms index_prodMap
 
-end MathlibExtTest.Analysis.InnerProductSpace.DirectSumOperatorsTests
+end MathlibExtTest.Analysis.Normed.Operator.DirectSumOperatorsTests

@@ -24,7 +24,7 @@ open scoped LinearMap.FiniteRangeSetoid
 
 open ContinuousLinearMap Set
 
-namespace MathlibExt.Analysis.InnerProductSpace.DirectSumOperators
+namespace MathlibExt.Analysis.Normed.Operator.DirectSumOperators
 
 /-!
 # Direct sum operators
@@ -147,33 +147,6 @@ theorem range_prodMap (T : E →L[𝕜] E') (S : F →L[𝕜] F') :
     (T.prodMap S).range = T.range.prod S.range := by
   show LinearMap.range (T.prodMap S : (E × F) →ₗ[𝕜] (E' × F')) = _
   rw [ContinuousLinearMap.coe_prodMap, LinearMap.range_prodMap]
-
-/-- Bijectivity of a product map is componentwise. -/
-private theorem bijective_prodMap_iff {f : E → E'} {g : F → F'} :
-    Function.Bijective (Prod.map f g) ↔ Function.Bijective f ∧ Function.Bijective g := by
-  constructor
-  · intro h
-    constructor
-    · constructor
-      · intro x₁ x₂ h12
-        have hmap : Prod.map f g (x₁, (0 : F)) = Prod.map f g (x₂, (0 : F)) := by
-          simp only [Prod.map_apply, h12]
-        exact (Prod.mk.injEq ..).mp (h.1 hmap) |>.1
-      · intro y
-        obtain ⟨⟨x, _⟩, hx⟩ := h.2 (y, (0 : F'))
-        simp only [Prod.map_apply, Prod.mk.injEq] at hx
-        exact ⟨x, hx.1⟩
-    · constructor
-      · intro y₁ y₂ h12
-        have hmap : Prod.map f g ((0 : E), y₁) = Prod.map f g ((0 : E), y₂) := by
-          simp only [Prod.map_apply, h12]
-        exact (Prod.mk.injEq ..).mp (h.1 hmap) |>.2
-      · intro y
-        obtain ⟨⟨_, x⟩, hx⟩ := h.2 ((0 : E'), y)
-        simp only [Prod.map_apply, Prod.mk.injEq] at hx
-        exact ⟨x, hx.2⟩
-  · intro ⟨hf, hg⟩
-    exact hf.prodMap hg
 
 /-- A direct sum is a unit iff both summands are units. -/
 theorem isUnit_prodMap_iff (T : E →L[𝕜] E) (S : F →L[𝕜] F) :
@@ -446,4 +419,4 @@ theorem index_prodMap [CompleteSpace 𝕜] (T : E →L[𝕜] E') (S : F →L[�
   push_cast
   ring
 
-end MathlibExt.Analysis.InnerProductSpace.DirectSumOperators
+end MathlibExt.Analysis.Normed.Operator.DirectSumOperators
