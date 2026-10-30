@@ -45,9 +45,9 @@ forms are coercive, but is taken as a hypothesis here). Setting the
 consistency errors to zero recovers the Céa-type estimate for the
 unperturbed Galerkin method.
 
-This is a companion to the Galerkin material of
-`v1/Atlas/IntroductionToFunctionalAnalysis`. It is not one of the 72
-targets, and Strang's lemma is not in the pinned Mathlib or in base MathlibExt.
+It is not one of the 72 targets of
+`v1/Atlas/IntroductionToFunctionalAnalysis`, and Strang's lemma is not in
+the pinned Mathlib or in base MathlibExt.
 
 Reference: G. Strang, "Variational crimes in the finite element method"
 (1972); see also Brenner-Scott, *The Mathematical Theory of Finite Element
