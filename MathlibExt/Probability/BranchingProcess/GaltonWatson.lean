@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.InfinitelyDivisible
 public import MathlibExt.Probability.ProbabilityGeneratingFunction
 public import Mathlib.MeasureTheory.Group.Convolution
 public import Mathlib.MeasureTheory.Measure.GiryMonad
@@ -27,8 +28,9 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 A Galton–Watson process starts from one individual, and every individual of generation `n`
 independently leaves a random number of offspring with law `ν` (the offspring law, a
 probability measure on `ℕ`). We describe the process by the laws of its generation sizes:
-`law ν 0 = δ₁` and `law ν (n + 1) = (law ν n).bind (convPow ν)`, where `convPow ν z` is the
-`z`-fold convolution power of `ν` (the law of the total offspring of `z` individuals).
+`law ν 0 = δ₁` and `law ν (n + 1) = (law ν n).bind (Measure.convPow ν)`, where
+`Measure.convPow ν z` (from `MathlibExt.Probability.InfinitelyDivisible`) is the `z`-fold
+convolution power of `ν` (the law of the total offspring of `z` individuals).
 
 Write `f = pgf id ν` for the offspring generating function `f(s) = ∑ ν{k} s^k` and
 `m = ∫⁻ k, k ∂ν ∈ [0, ∞]` for the mean offspring number.
@@ -56,17 +58,12 @@ namespace MathlibExt.Probability.GaltonWatson
 
 variable (ν : Measure ℕ)
 
-/-- The `z`-fold additive convolution power of the offspring law `ν`: the law of the total
-number of offspring of `z` individuals reproducing independently. -/
-noncomputable def convPow : ℕ → Measure ℕ
-  | 0 => Measure.dirac 0
-  | z + 1 => ν ∗ convPow z
-
 /-- The law of the generation size `Z_n` of the Galton–Watson process with offspring law `ν`
-started from one individual: `Z_0 = 1` and, given `Z_n = z`, `Z_{n+1}` has law `ν^{∗z}`. -/
+started from one individual: `Z_0 = 1` and, given `Z_n = z`, `Z_{n+1}` has law `ν^{∗z}`
+(`Measure.convPow ν z`). -/
 noncomputable def law : ℕ → Measure ℕ
   | 0 => Measure.dirac 1
-  | n + 1 => (law n).bind (convPow ν)
+  | n + 1 => (law n).bind (Measure.convPow ν)
 
 /-- The mean offspring number `m = E ξ = ∑ k ν{k} ∈ [0, ∞]`. -/
 noncomputable def mean : ℝ≥0∞ :=
@@ -326,13 +323,6 @@ theorem iSup_iterate_pgf_zero_eq_one_iff [IsProbabilityMeasure ν]
 
 /-! ### Generation sizes -/
 
-/-- Convolution powers of a probability measure are probability measures. -/
-instance isProbabilityMeasure_convPow [IsProbabilityMeasure ν] (z : ℕ) :
-    IsProbabilityMeasure (convPow ν z) := by
-  induction z with
-  | zero => exact Measure.dirac.isProbabilityMeasure
-  | succ z ih => rw [convPow]; infer_instance
-
 /-- Each generation size has a probability law. -/
 instance isProbabilityMeasure_law [IsProbabilityMeasure ν] (n : ℕ) :
     IsProbabilityMeasure (law ν n) := by
@@ -341,7 +331,7 @@ instance isProbabilityMeasure_law [IsProbabilityMeasure ν] (n : ℕ) :
   | succ n ih =>
     rw [law]
     exact isProbabilityMeasure_bind measurable_from_nat.aemeasurable
-      (ae_of_all _ fun z => inferInstance)
+      (ae_of_all _ fun z => Measure.isProbabilityMeasure_convPow z)
 
 /-- The generating function as a lower integral, `∫⁻ k, s ^ k ∂μ` (proof device). -/
 private noncomputable def gen (μ : Measure ℕ) (s : ℝ) : ℝ≥0∞ :=
@@ -355,11 +345,11 @@ private lemma gen_conv {s : ℝ} (hs : 0 ≤ s) (μ ρ : Measure ℕ) [SFinite �
   rw [lintegral_mul_const _ measurable_from_nat]
   rfl
 
-private lemma gen_convPow {s : ℝ} (hs : 0 ≤ s) (z : ℕ) :
-    gen (convPow ν z) s = gen ν s ^ z := by
+private lemma gen_convPow [SFinite ν] {s : ℝ} (hs : 0 ≤ s) (z : ℕ) :
+    gen (Measure.convPow ν z) s = gen ν s ^ z := by
   induction z with
-  | zero => simp [gen, convPow]
-  | succ z ih => rw [convPow, gen_conv hs, ih, pow_succ, mul_comm]
+  | zero => simp [gen, Measure.convPow_zero]
+  | succ z ih => rw [Measure.convPow_succ, gen_conv hs, ih, pow_succ]
 
 private lemma gen_le (μ : Measure ℕ) {s : ℝ} (hs : s ∈ Icc (0 : ℝ) 1) :
     gen μ s ≤ μ univ :=
@@ -385,7 +375,7 @@ private lemma gen_law [IsProbabilityMeasure ν] (n : ℕ) {s : ℝ} (hs : s ∈ 
     have hf := pgf_mem ν hs
     rw [Function.iterate_succ_apply, ← ih hf, law, gen,
       Measure.lintegral_bind measurable_from_nat.aemeasurable measurable_from_nat.aemeasurable]
-    change ∫⁻ z, gen (convPow ν z) s ∂(law ν n) = _
+    change ∫⁻ z, gen (Measure.convPow ν z) s ∂(law ν n) = _
     simp_rw [gen_convPow ν hs.1, gen_eq_ofReal_pgf ν hs, ← ENNReal.ofReal_pow hf.1]
     rfl
 
@@ -404,14 +394,15 @@ theorem law_real_zero [IsProbabilityMeasure ν] (n : ℕ) :
   rfl
 
 private lemma lintegral_convPow [IsProbabilityMeasure ν] (z : ℕ) :
-    ∫⁻ k, (k : ℝ≥0∞) ∂(convPow ν z) = z * mean ν := by
+    ∫⁻ k, (k : ℝ≥0∞) ∂(Measure.convPow ν z) = z * mean ν := by
   induction z with
-  | zero => simp [convPow]
+  | zero => simp [Measure.convPow_zero]
   | succ z ih =>
-    rw [convPow, Measure.lintegral_conv measurable_from_nat]
+    haveI := Measure.isProbabilityMeasure_convPow (ν := ν) z
+    rw [Measure.convPow_succ, Measure.lintegral_conv measurable_from_nat]
     simp_rw [Nat.cast_add]
-    simp_rw [lintegral_add_left measurable_const, lintegral_const, measure_univ, mul_one, ih]
-    rw [lintegral_add_right _ measurable_const, lintegral_const, measure_univ, mul_one, mean]
+    simp_rw [lintegral_add_left measurable_const, lintegral_const, measure_univ, mul_one]
+    rw [lintegral_add_right _ measurable_const, lintegral_const, measure_univ, mul_one, ih, mean]
     push_cast
     ring
 

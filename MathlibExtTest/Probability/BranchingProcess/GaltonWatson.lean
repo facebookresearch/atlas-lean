@@ -22,8 +22,10 @@ namespace MathlibExtTest.Probability.BranchingProcess.GaltonWatson
 /-- The process starts from one individual. -/
 example (ν : Measure ℕ) : law ν 0 = Measure.dirac 1 := rfl
 
-/-- One individual's offspring total is the offspring law: `ν^{∗1} = ν ∗ δ₀`. -/
-example (ν : Measure ℕ) : convPow ν 1 = ν ∗ Measure.dirac 0 := rfl
+/-- One individual's offspring total is the offspring law: `ν^{∗1} = δ₀ ∗ ν = ν`. -/
+example (ν : Measure ℕ) : Measure.convPow ν 1 = Measure.dirac 0 ∗ ν := rfl
+example (ν : Measure ℕ) [IsProbabilityMeasure ν] : Measure.convPow ν 1 = ν :=
+  Measure.convPow_one
 
 /-- The generation laws are probability measures. -/
 example (ν : Measure ℕ) [IsProbabilityMeasure ν] : IsProbabilityMeasure (law ν 3) :=
