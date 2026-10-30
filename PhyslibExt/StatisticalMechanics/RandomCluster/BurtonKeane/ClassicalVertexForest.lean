@@ -6,75 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -83,16 +14,43 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestInsertionTolerance
 
+/-!
+# Classical vertex forests
+
+A subgraph in which deleting any vertex separates its neighbours is acyclic; classical forest data
+on coarse trifurcations give the global forest, the coarse count and uniqueness on `ℤ²`.
+
+## i. Overview
+
+`bkg_deleteVertex Amb t` removes the edges at `t`. If, in a subgraph `G` of `Amb`, deleting any
+vertex `t` separates its `G`-neighbours in `Amb`, then `G` is acyclic. A coarse trifurcation has
+three arms reaching the boundary in different classes. `bkg_ClassicalForestData ω L R` asks for a
+finite forest on coarse trifurcations and boundary sites with this separation property and boundary
+leaves. It gives the global forest, the coarse count and, for every planar configuration, uniqueness
+and `μ(N = ⊤) = 0` for Bernoulli percolation.
+
+## ii. Key results
+
+- `bkg_acyclic_of_singleVertexCut` : acyclicity from single-vertex cuts.
+- `bkg_coarseTcount_of_classical` : the coarse count from classical forest data.
+
+## iii. Table of contents
+
+- A. Deleting a vertex
+- B. Classical forest data
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-set_option linter.unusedDecidableInType false
-set_option linter.unusedVariables false
-set_option linter.unusedSectionVars false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -101,82 +59,48 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Deleting a vertex -/
 
-
-
-
-
-
-
-
+/-- The graph `Amb` with all edges at `t` removed. -/
 def bkg_deleteVertex {V : Type*} (Amb : SimpleGraph V) (t : V) : SimpleGraph V where
   Adj a b := Amb.Adj a b ∧ a ≠ t ∧ b ≠ t
   symm := ⟨fun a b ⟨h, ha, hb⟩ => ⟨h.symm, hb, ha⟩⟩
 
-@[simp] theorem bkg_deleteVertex_adj {V : Type*} (Amb : SimpleGraph V) (t a b : V) :
+@[simp] lemma bkg_deleteVertex_adj {V : Type*} (Amb : SimpleGraph V) (t a b : V) :
     (bkg_deleteVertex Amb t).Adj a b ↔ Amb.Adj a b ∧ a ≠ t ∧ b ≠ t := Iff.rfl
 
-
-theorem bkg_deleteVertex_adj_of_le {V : Type*} {Amb G : SimpleGraph V} (hle : G ≤ Amb)
+lemma bkg_deleteVertex_adj_of_le {V : Type*} {Amb G : SimpleGraph V} (hle : G ≤ Amb)
     {t a b : V} (hab : G.Adj a b) (ha : a ≠ t) (hb : b ≠ t) :
     (bkg_deleteVertex Amb t).Adj a b :=
   ⟨hle hab, ha, hb⟩
 
-
-
-
-
-theorem bkg_walkReach_free {V : Type*} {Amb G : SimpleGraph V} (hle : G ≤ Amb) (t : V) :
+lemma bkg_walkReach_free {V : Type*} {Amb G : SimpleGraph V} (hle : G ≤ Amb) (t : V) :
     ∀ a b (w : G.Walk a b), t ∉ w.support → (bkg_deleteVertex Amb t).Reachable a b :=
   bgf_walkReach G (fun t => bkg_deleteVertex Amb t) t
-    (fun a b hab hta htb => (bkg_deleteVertex_adj_of_le hle hab (Ne.symm hta) (Ne.symm htb)).reachable)
+    (fun _a _b hab hta htb => (bkg_deleteVertex_adj_of_le hle hab (Ne.symm hta) (Ne.symm
+        htb)).reachable)
 
-
-
-
-
-
-
-
-
-
-
-theorem bkg_acyclic_of_singleVertexCut {V : Type*} (Amb G : SimpleGraph V) (hle : G ≤ Amb)
+lemma bkg_acyclic_of_singleVertexCut {V : Type*} (Amb G : SimpleGraph V) (hle : G ≤ Amb)
     (H1 : ∀ t a b, G.Adj t a → G.Adj t b → a ≠ b →
       ¬ (bkg_deleteVertex Amb t).Reachable a b) :
     G.IsAcyclic :=
   bgf_acyclic_of_reachSep G (fun t => bkg_deleteVertex Amb t) H1
     (fun t a b w hnotin => bkg_walkReach_free hle t a b w hnotin)
 
-
-
-
-
-
-
-
-
-
-theorem bkg_reachable_eq_of_edgeless {V : Type*} {H : SimpleGraph V} (he : ∀ u v, ¬ H.Adj u v)
+lemma bkg_reachable_eq_of_edgeless {V : Type*} {H : SimpleGraph V} (he : ∀ u v, ¬ H.Adj u v)
     {a b : V} (h : H.Reachable a b) : a = b := by
   obtain ⟨p⟩ := h
   cases p with
   | nil => rfl
   | cons hadj _ => exact absurd hadj (he _ _)
 
-
-
-
-
-theorem bkg_step_witness : bc70_star4.IsAcyclic := by
+lemma bkg_step_witness : bc70_star4.IsAcyclic := by
   classical
   refine bkg_acyclic_of_singleVertexCut bc70_star4 bc70_star4 le_rfl ?_
   intro t a b hta htb hab
-  
   by_cases ht0 : t = 0
   · subst ht0
     intro hreach
-    
     have hedgeless : ∀ u v, ¬ (bkg_deleteVertex bc70_star4 0).Adj u v := by
       intro u v ⟨hadj, hu, hv⟩
       have : u = 0 ∨ v = 0 := by
@@ -186,32 +110,19 @@ theorem bkg_step_witness : bc70_star4.IsAcyclic := by
       · exact hu h
       · exact hv h
     exact hab (bkg_reachable_eq_of_edgeless hedgeless hreach)
-  · 
-    exfalso
+  · exfalso
     have hnb : ∀ z, bc70_star4.Adj t z → z = 0 := by
       intro z hz
       revert hz; simp only [bc70_star4, SimpleGraph.fromEdgeSet_adj]
-      intro ⟨hmem, _⟩; fin_cases t <;> first | (exact absurd rfl ht0) | (fin_cases z <;> revert hmem <;> decide)
+      intro ⟨hmem, _⟩
+      fin_cases t <;> first
+        | (exact absurd rfl ht0)
+        | (fin_cases z <;> revert hmem <;> decide)
     exact hab ((hnb a hta).trans (hnb b htb).symm)
 
+/-! ## B. Classical forest data -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkg_trif_three_arms (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R) (y : Site d)
+lemma bkg_trif_three_arms (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R) (y : Site d)
     (arm : Fin 3 → Site d)
     (harmbox : ∀ i, arm i ∈ box d R)
     (harminf : ∀ i, (cluster d (removeSites (bc61_boxAround d L y) ω) (arm i)).Infinite)
@@ -236,77 +147,38 @@ theorem bkg_trif_three_arms (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR :
   intro i j hij
   exact bar_armSep_of_rays ω L y (htipreach i) (htipreach j) (harmsep i j hij)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Classical forest datum for the box of radius `R` at scale `L`: a finite forest on a set of sites
+containing the coarse trifurcations, embedded in the open subgraph, in which deleting a coarse
+trifurcation separates its neighbours in the contracted lattice, with leaves on the boundary. -/
 def bkg_ClassicalForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj) (Amb : SimpleGraph (↑S : Type))
     (ιU : Site d → (↑S : Type)),
-    
     G ≤ Amb ∧
-    
     (∀ t a b, G.Adj t a → G.Adj t b → a ≠ b → ¬ (bkg_deleteVertex Amb t).Reachable a b) ∧
-    
     (∀ v, 1 ≤ G.degree v) ∧
-    
     (∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → 3 ≤ G.degree (ιU y)) ∧
-    
     (∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → ∀ z, z ∈ box d R →
       bc67_IsGnTrifurcation ω L z → ιU y = ιU z → y = z) ∧
-    
     (∀ v : (↑S : Type), G.degree v = 1 → (v : Site d) ∈ vertexBoundary d R)
 
-
-
-
-
-theorem bkg_globalForest_of_classical (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bkg_globalForest_of_classical (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bkg_ClassicalForestData ω L R) : bc69_Gn_globalForest ω L R := by
   obtain ⟨S, hSfin, hSne, G, hGdec, Amb, ιU, hle, H1, hmin, hdeg3, hιinj, hbdry⟩ := h
   exact ⟨S, hSfin, hSne, G, hGdec, ιU,
     bkg_acyclic_of_singleVertexCut Amb G hle H1, hmin, hdeg3, hιinj, hbdry⟩
 
-
-theorem bkg_coarseTcount_of_classical (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bkg_coarseTcount_of_classical (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bkg_ClassicalForestData ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc69_coarseTcount_le_boundary ω L R (bkg_globalForest_of_classical ω L R h)
 
-
-theorem bkg_bc69_of_classical (L R : ℕ)
+lemma bkg_bc69_of_classical (L R : ℕ)
     (hdata : ∀ ω : ConfigSpace (Sym2 (Site d)), bkg_ClassicalForestData ω L R) :
     ∀ ω : ConfigSpace (Sym2 (Site d)), bc69_Gn_globalForest ω L R :=
   fun ω => bkg_globalForest_of_classical ω L R (hdata ω)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkg_bk_uniqueness_of_classical (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bkg_bk_uniqueness_of_classical (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
         {ω | numInfiniteClusters 2 ω = 0} = 1 ∨
@@ -318,53 +190,19 @@ theorem bkg_bk_uniqueness_of_classical (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < 
   bkw_bk_uniqueness_of_forest p hp1 hp0
     (fun ω L R => bkg_globalForest_of_classical ω L R (hdata ω L R))
 
-
-theorem bkg_top_null_of_classical (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bkg_top_null_of_classical (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       {ω | numInfiniteClusters 2 ω = ⊤} = 0 :=
   bkw_top_null_of_forest p hp1 hp0
     (fun ω L R => bkg_globalForest_of_classical ω L R (hdata ω L R))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkg_status :
-    
+lemma bkg_status :
     (∀ {V : Type} (Amb G : SimpleGraph V), G ≤ Amb →
       (∀ t a b, G.Adj t a → G.Adj t b → a ≠ b → ¬ (bkg_deleteVertex Amb t).Reachable a b) →
       G.IsAcyclic) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bkg_ClassicalForestData ω L R → bc69_Gn_globalForest ω L R) ∧
-    
     (∀ (p : ℝ≥0) (hp1 : p ≤ 1), 0 < p →
       (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) := by

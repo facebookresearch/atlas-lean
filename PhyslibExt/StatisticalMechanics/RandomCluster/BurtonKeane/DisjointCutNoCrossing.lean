@@ -6,75 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterNoCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DistinctCutClusters
+
+/-!
+# Disjoint cut clusters
+
+Cut clusters are equal or disjoint, distinct cut clusters are disconnected and no open edge joins
+them; three distinct infinite clusters give three pairwise disjoint infinite cut clusters.
+
+## i. Overview
+
+Without the origin, two sites have disjoint clusters iff they are disconnected iff their clusters
+differ. No open edge joins distinct cut clusters. `bc8_NoCrossing ω x y` packages these
+equivalences, and it holds for all `x`, `y`. Every configuration of `threeMeetBox d n` has three
+pairwise disjoint infinite cut clusters with no crossing edges.
+
+## ii. Key results
+
+- `bc8_cut_ne_iff_disjoint` : distinct cut clusters are disjoint.
+- `bc8_threeArms_noCrossing` : three disjoint infinite cut clusters.
+
+## iii. Table of contents
+
+- A. Disjointness
+- B. No crossing
+- C. Three arms
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -88,21 +54,9 @@ namespace Walls
 
 variable {d : ℕ}
 
+/-! ## A. Disjointness -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc8_clusters_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
+lemma bc8_clusters_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (h : ¬ Connected d (removeSite 0 ω) x y) :
     Disjoint (cluster d (removeSite 0 ω) x) (cluster d (removeSite 0 ω) y) := by
   rw [Set.disjoint_left]
@@ -110,9 +64,7 @@ theorem bc8_clusters_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
   rw [mem_cluster] at hwx hwy
   exact h (hwx.trans hwy.symm)
 
-
-
-theorem bc8_connected_of_not_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
+lemma bc8_connected_of_not_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (h : ¬ Disjoint (cluster d (removeSite 0 ω) x) (cluster d (removeSite 0 ω) y)) :
     Connected d (removeSite 0 ω) x y := by
   rw [Set.not_disjoint_iff] at h
@@ -120,86 +72,53 @@ theorem bc8_connected_of_not_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : 
   rw [mem_cluster] at hwx hwy
   exact hwx.trans hwy.symm
 
-
-
-theorem bc8_cut_disjoint_iff_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
+lemma bc8_cut_disjoint_iff_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
     Disjoint (cluster d (removeSite 0 ω) x) (cluster d (removeSite 0 ω) y) ↔
       ¬ Connected d (removeSite 0 ω) x y :=
   ⟨fun hdisj hconn => (Set.disjoint_left.mp hdisj
       (self_mem_cluster _ x) (mem_cluster.mpr hconn.symm)),
    bc8_clusters_disjoint⟩
 
-
-
-
-theorem bc8_cut_ne_iff_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
+lemma bc8_cut_ne_iff_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
     cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y ↔
       ¬ Connected d (removeSite 0 ω) x y := by
   constructor
   · intro hne hconn
     exact hne (cluster_eq_of_connected hconn)
   · intro hdis heq
-    
     have hy : y ∈ cluster d (removeSite 0 ω) x := by
       rw [heq]; exact self_mem_cluster _ y
     exact hdis (mem_cluster.mp hy)
 
-
-
-theorem bc8_cut_ne_iff_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
+lemma bc8_cut_ne_iff_disjoint {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d} :
     cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y ↔
       Disjoint (cluster d (removeSite 0 ω) x) (cluster d (removeSite 0 ω) y) :=
   bc8_cut_ne_iff_disconnected.trans bc8_cut_disjoint_iff_disconnected.symm
 
-
-
-theorem bc8_disjoint_of_cut_ne {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
+lemma bc8_disjoint_of_cut_ne {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (hne : cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y) :
     Disjoint (cluster d (removeSite 0 ω) x) (cluster d (removeSite 0 ω) y) :=
   bc8_cut_ne_iff_disjoint.mp hne
 
+/-! ## B. No crossing -/
 
-
-
-
-
-
-
-
-
-
-
-theorem bc8_cut_no_crossing {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
+/-- Same statement as `bc7_cut_no_crossing`; kept because ThreeDistinctCutClusters uses it. -/
+lemma bc8_cut_no_crossing {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (hne : cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y) :
     ∀ ⦃u : Site d⦄, u ∈ cluster d (removeSite 0 ω) x →
       ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
         ¬ IsOpenEdge d (removeSite 0 ω) u v :=
   bc7_cut_no_crossing hne
 
-
-
-theorem bc8_cut_no_crossing_of_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
+lemma bc8_cut_no_crossing_of_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (h : ¬ Connected d (removeSite 0 ω) x y) :
     ∀ ⦃u : Site d⦄, u ∈ cluster d (removeSite 0 ω) x →
       ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
         ¬ IsOpenEdge d (removeSite 0 ω) u v :=
   bc8_cut_no_crossing (bc8_cut_ne_iff_disconnected.mpr h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The cut clusters of `x` and `y` differ iff `x` and `y` are disconnected iff the clusters are
+disjoint, and no open edge joins them when they differ. -/
 def bc8_NoCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) : Prop :=
   (cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y ↔
       ¬ Connected d (removeSite 0 ω) x y) ∧
@@ -210,32 +129,13 @@ def bc8_NoCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) : Prop :=
         ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
           ¬ IsOpenEdge d (removeSite 0 ω) u v)
 
-
-
-
-
-
-
-theorem bc8_noCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
+lemma bc8_noCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
     bc8_NoCrossing ω x y :=
   ⟨bc8_cut_ne_iff_disconnected, bc8_cut_disjoint_iff_disconnected, bc8_cut_no_crossing⟩
 
+/-! ## C. Three arms -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc8_threeArms_pairwiseDisjoint (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc8_threeArms_pairwiseDisjoint (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :
     ∃ x₁' x₂' x₃' : Site d,
       (cluster d (removeSite 0 ω) x₁').Infinite ∧
@@ -259,13 +159,7 @@ theorem bc8_threeArms_pairwiseDisjoint (n : ℕ) (ω : ConfigSpace (Sym2 (Site d
     bc8_disjoint_of_cut_ne hd12, bc8_disjoint_of_cut_ne hd13, bc8_disjoint_of_cut_ne hd23,
     bc8_cut_no_crossing hd12, bc8_cut_no_crossing hd13, bc8_cut_no_crossing hd23⟩
 
-
-
-
-
-
-
-theorem bc8_threeArms_noCrossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc8_threeArms_noCrossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :
     ∃ x₁' x₂' x₃' : Site d,
       (cluster d (removeSite 0 ω) x₁').Infinite ∧
@@ -276,11 +170,6 @@ theorem bc8_threeArms_noCrossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     bc8_threeArmClusters_distinct n ω hω
   exact ⟨x₁', x₂', x₃', hinf₁, hinf₂, hinf₃,
     bc8_noCrossing ω x₁' x₂', bc8_noCrossing ω x₁' x₃', bc8_noCrossing ω x₂' x₃'⟩
-
-
-
-
-
 
 end Walls
 

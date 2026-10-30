@@ -6,64 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorThreeAxes
+
+/-!
+# Axis corridors meet only at the origin
+
+Ray cells along distinct axes are distinct away from the origin, so corridors along distinct axes
+have disjoint edges and share only the origin.
+
+## i. Overview
+
+Cells `s e_i` and `t e_j` with `i ≠ j` coincide only at the origin. The vertices
+`bc2_corridorVerts j L` of a corridor lie on its ray, so corridors along distinct axes share at most
+the origin and have disjoint edge sets. The origin and the mouth belong to every nonempty corridor.
+In `d ≥ 2` two axes give distinct mouths.
+
+## ii. Key results
+
+- `bc2_corridorEdges_disjoint` : corridors along distinct axes have disjoint edges.
+
+## iii. Table of contents
+
+- A. Ray cells
+- B. Corridor vertices
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -76,34 +51,17 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Ray cells -/
 
-
-
-
-
-
-
-
-
-
-
-theorem bc2_rayCell_distinct_of_ne {i j : Fin d} (h : i ≠ j) {s t : ℤ} (hs : s ≠ 0) :
+lemma bc2_rayCell_distinct_of_ne {i j : Fin d} (h : i ≠ j) {s t : ℤ} (hs : s ≠ 0) :
     (hrHD_rayPt i s : Site d) ≠ hrHD_rayPt j t :=
   hrHD_rayPt_disjoint_of_ne h hs
 
-
-
-
-
-
-theorem bc2_rayCell_distinct_of_ne' {i j : Fin d} (h : i ≠ j) {s t : ℤ} (ht : t ≠ 0) :
+lemma bc2_rayCell_distinct_of_ne' {i j : Fin d} (h : i ≠ j) {s t : ℤ} (ht : t ≠ 0) :
     (hrHD_rayPt i s : Site d) ≠ hrHD_rayPt j t :=
   (hrHD_rayPt_disjoint_of_ne (Ne.symm h) ht).symm
 
-
-
-
-theorem bc2_rayCell_eq_iff_origin {i j : Fin d} (h : i ≠ j) (s t : ℤ) :
+lemma bc2_rayCell_eq_iff_origin {i j : Fin d} (h : i ≠ j) (s t : ℤ) :
     (hrHD_rayPt i s : Site d) = hrHD_rayPt j t ↔ (s = 0 ∧ t = 0) := by
   constructor
   · intro he
@@ -115,20 +73,13 @@ theorem bc2_rayCell_eq_iff_origin {i j : Fin d} (h : i ≠ j) (s t : ℤ) :
   · rintro ⟨rfl, rfl⟩
     simp
 
+/-! ## B. Corridor vertices -/
 
-
-
-
-
-
-
-
+/-- The endpoints of the edges of the corridor along `j` of length `L`. -/
 def bc2_corridorVerts (j : Fin d) (L : ℕ) : Set (Site d) :=
   {x | ∃ e ∈ hrHD_corridorEdges j L, x ∈ e}
 
-
-
-theorem bc2_corridorVerts_subset_corridorRay (j : Fin d) (L : ℕ) :
+lemma bc2_corridorVerts_subset_corridorRay (j : Fin d) (L : ℕ) :
     bc2_corridorVerts j L ⊆ corridorRay j := by
   rintro x ⟨e, he, hxe⟩
   rw [hrHD_corridorEdges, Finset.mem_image] at he
@@ -138,13 +89,7 @@ theorem bc2_corridorVerts_subset_corridorRay (j : Fin d) (L : ℕ) :
   · exact rayPt_mem_corridorRay j _
   · exact rayPt_mem_corridorRay j _
 
-
-
-
-
-
-
-theorem bc2_corridorVerts_inter_subset_origin {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
+lemma bc2_corridorVerts_inter_subset_origin {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
     bc2_corridorVerts i L ∩ bc2_corridorVerts j L' ⊆ {(0 : Site d)} := by
   rintro x ⟨hxi, hxj⟩
   have hmem : x ∈ corridorRay i ∩ corridorRay j :=
@@ -152,10 +97,7 @@ theorem bc2_corridorVerts_inter_subset_origin {i j : Fin d} (h : i ≠ j) (L L' 
      bc2_corridorVerts_subset_corridorRay j L' hxj⟩
   rwa [bkm_corridorRay_inter_eq_origin h] at hmem
 
-
-
-
-theorem bc2_origin_mem_corridorVerts_iff (j : Fin d) (L : ℕ) :
+lemma bc2_origin_mem_corridorVerts_iff (j : Fin d) (L : ℕ) :
     (0 : Site d) ∈ bc2_corridorVerts j L ↔ 0 < L := by
   constructor
   · rintro ⟨e, he, _⟩
@@ -168,21 +110,7 @@ theorem bc2_origin_mem_corridorVerts_iff (j : Fin d) (L : ℕ) :
     left
     simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc2_corridorEdges_disjoint {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
+lemma bc2_corridorEdges_disjoint {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
     Disjoint (hrHD_corridorEdges i L) (hrHD_corridorEdges j L') := by
   rw [Finset.disjoint_left]
   intro e hei hej
@@ -195,19 +123,7 @@ theorem bc2_corridorEdges_disjoint {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
   · exact hrHD_rayPt_disjoint_of_ne h hsnz h2.symm
   · exact hrHD_rayPt_disjoint_of_ne h hsnz h1.symm
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc2_ray_disjoint :
+lemma bc2_ray_disjoint :
     ∀ {i j : Fin d}, i ≠ j → ∀ L L' : ℕ,
       (∀ s t : ℤ, s ≠ 0 → (hrHD_rayPt i s : Site d) ≠ hrHD_rayPt j t) ∧
         Disjoint (hrHD_corridorEdges i L) (hrHD_corridorEdges j L') ∧
@@ -217,33 +133,19 @@ theorem bc2_ray_disjoint :
      bc2_corridorEdges_disjoint h L L',
      bc2_corridorVerts_inter_subset_origin h L L'⟩
 
-
-
-
-theorem bc2_forced_corridors_share_only_origin {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
+lemma bc2_forced_corridors_share_only_origin {i j : Fin d} (h : i ≠ j) (L L' : ℕ) :
     Disjoint (hrHD_corridorEdges i L) (hrHD_corridorEdges j L') ∧
       (∀ x : Site d, x ≠ 0 → ¬ (x ∈ bc2_corridorVerts i L ∧ x ∈ bc2_corridorVerts j L')) := by
   refine ⟨bc2_corridorEdges_disjoint h L L', fun x hx hmem => hx ?_⟩
   exact Set.mem_singleton_iff.mp (bc2_corridorVerts_inter_subset_origin h L L' hmem)
 
-
-
-
-
-
-
-
-
-theorem bc2_unit_cell_mem_corridorVerts (j : Fin d) {L : ℕ} (hL : 0 < L) :
+lemma bc2_unit_cell_mem_corridorVerts (j : Fin d) {L : ℕ} (hL : 0 < L) :
     (hrHD_rayPt j 1 : Site d) ∈ bc2_corridorVerts j L ∧ (hrHD_rayPt j 1 : Site d) ≠ 0 := by
   refine ⟨⟨s(hrHD_rayPt j (0 : ℤ), hrHD_rayPt j ((0 : ℤ) + 1)), hrHD_mem_corridorEdges hL, ?_⟩,
     by rw [Ne, hrHD_rayPt_eq_zero_iff]; exact one_ne_zero⟩
   rw [Sym2.mem_iff]; right; norm_num
 
-
-
-
-theorem bc2_ray_disjoint_nonvacuous (hd : 2 ≤ d) :
+lemma bc2_ray_disjoint_nonvacuous (hd : 2 ≤ d) :
     ∃ i j : Fin d, i ≠ j ∧
       (hrHD_rayPt i 1 : Site d) ≠ 0 ∧ (hrHD_rayPt j 1 : Site d) ≠ 0 ∧
       (hrHD_rayPt i 1 : Site d) ≠ hrHD_rayPt j 1 ∧

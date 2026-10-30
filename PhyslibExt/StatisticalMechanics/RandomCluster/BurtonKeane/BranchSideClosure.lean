@@ -6,17 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ShellInsertionTolerance
+
+/-!
+# Burton–Keane uniqueness on ℤ²
+
+For Bernoulli bond percolation on the square lattice with `0 < p < 1`, almost surely there is at
+most one infinite cluster.
+
+## i. Overview
+
+Three disjoint open paths from the origin to three sites of a shell, continued by three edges to
+infinite clusters outside the box, give the pattern of a trifurcation precursor. `bins_Branch`
+records one path with its exit edge, `bins_branchEdges` all their edges, and `bins_branchSide` the
+side of a branch. Closing every other edge touching the box (`bins_touchPattern`) separates the
+three sides, so the cylinder pattern and the external event produce a neighbour trifurcation
+precursor. A nine-shell event of positive probability gives the route package (`bins_route`) for
+every `p`, and `bins_bk` then gives uniqueness.
+
+**Fidelity.** The headline `bins_bk_unconditional` is proved with no further hypothesis. It counts
+fine (scale-zero coarse) trifurcations through `bfx_bk_of_route`, not the `IsTrifurcation` count,
+and depends only on the standard axioms.
+
+## ii. Key results
+
+- `bins_route` : the route package for every `p`.
+- `bins_bk_unconditional` : Burton–Keane uniqueness on `ℤ²` for `0 < p < 1`, unconditional.
+
+## iii. Table of contents
+
+- A. Paths and cylinders
+- B. Branches
+- C. Separated branch sides
+- D. Uniqueness
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section 8.2.
+-/
 
 @[expose] public section
 
@@ -28,15 +59,11 @@ open StatMech.Ising StatMech.IsingFK
 
 namespace StatMech.Walls
 
-set_option linter.style.longLine false
-set_option linter.unusedVariables false
-set_option linter.unusedSectionVars false
 set_option maxRecDepth 20000
 
+/-! ## A. Paths and cylinders -/
 
-
-
-theorem bins_connected_of_walk_edges_open {x y : Site 2}
+lemma bins_connected_of_walk_edges_open {x y : Site 2}
     (P : (hypercubicLattice 2).Walk x y) (omega : ConfigSpace (Sym2 (Site 2)))
     (hopen : forall e, e ∈ P.edges -> omega e = true) : Connected 2 omega x y := by
   induction P with
@@ -46,19 +73,14 @@ theorem bins_connected_of_walk_edges_open {x y : Site 2}
         (ih (fun e he => hopen e (by simp [he])))
       exact ⟨hxy, hopen s(x, y) (by simp)⟩
 
-
-theorem bins_cylinder_value {I : Finset (Sym2 (Site 2))}
+lemma bins_cylinder_value {I : Finset (Sym2 (Site 2))}
     {eta : ConfigSpace (Subtype fun e => e ∈ I)} {omega : ConfigSpace (Sym2 (Site 2))}
     (hcyl : omega ∈ cylinder I ({eta} : Set (ConfigSpace (Subtype fun e => e ∈ I))))
     (e : Sym2 (Site 2)) (he : e ∈ I) : omega e = eta ⟨e, he⟩ := by
   rw [MeasureTheory.mem_cylinder, Set.mem_singleton_iff] at hcyl
   exact congrFun hcyl ⟨e, he⟩
 
-
-
-
-
-theorem bins_corridors_of_same_side (n : ℕ) (hn : 1 ≤ n)
+lemma bins_corridors_of_same_side (n : ℕ) (hn : 1 ≤ n)
     (v1 v2 v3 : Site 2) (hv1 : v1 ∈ box 2 n) (hv2 : v2 ∈ box 2 n)
     (hv3 : v3 ∈ box 2 n) (h12 : v1 ≠ v2) (h13 : v1 ≠ v3) (h23 : v2 ≠ v3)
     (hside :
@@ -77,48 +99,48 @@ theorem bins_corridors_of_same_side (n : ℕ) (hn : 1 ≤ n)
     convert h using 1 <;> ext q <;> fin_cases q <;> simp_all
   · have h := bcor_corridors_same_right_of_distinct n hn (-v1 1) (-v2 1) (-v3 1)
       (by simpa using hv1 1) (by simpa using hv2 1) (by simpa using hv3 1)
-      (by intro h; apply h12; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h13; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h23; ext q <;> fin_cases q <;> simp_all)
+      (by intro h; apply h12; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h13; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h23; ext q; fin_cases q <;> simp_all)
     have hh := bcor_corridors_rot90_iterate 2 h
     convert hh using 1 <;> ext q <;> fin_cases q <;>
       simp [Function.iterate_succ_apply', rot90Fun_apply] <;> omega
   · have h := bcor_corridors_same_right_of_distinct n hn (-v1 0) (-v2 0) (-v3 0)
       (by simpa using hv1 0) (by simpa using hv2 0) (by simpa using hv3 0)
-      (by intro h; apply h12; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h13; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h23; ext q <;> fin_cases q <;> simp_all)
+      (by intro h; apply h12; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h13; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h23; ext q; fin_cases q <;> simp_all)
     have hh := bcor_corridors_rot90 h
     convert hh using 1 <;> ext q <;> fin_cases q <;> simp [rot90Fun_apply] <;> omega
   · have h := bcor_corridors_same_right_of_distinct n hn (v1 0) (v2 0) (v3 0)
       (hv1 0) (hv2 0) (hv3 0)
-      (by intro h; apply h12; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h13; ext q <;> fin_cases q <;> simp_all)
-      (by intro h; apply h23; ext q <;> fin_cases q <;> simp_all)
+      (by intro h; apply h12; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h13; ext q; fin_cases q <;> simp_all)
+      (by intro h; apply h23; ext q; fin_cases q <;> simp_all)
     have hh := bcor_corridors_rot90_iterate 3 h
     convert hh using 1 <;> ext q <;> fin_cases q <;>
       simp [Function.iterate_succ_apply', rot90Fun_apply] <;> omega
 
+/-! ## B. Branches -/
 
-
-
+/-- A branch: a lattice walk `P` from the origin to `v`, and an exit site `u` adjacent to `v`. -/
 structure bins_Branch where
   v : Site 2
   u : Site 2
   P : (hypercubicLattice 2).Walk ![0, 0] v
 
-
+/-- All edges of three branches: the walk edges and the exit edges. -/
 def bins_branchEdges (B : Fin 3 → bins_Branch) : Finset (Sym2 (Site 2)) :=
   (Finset.univ.biUnion fun i => (B i).P.edges.toFinset) ∪
     Finset.univ.image (fun i => s((B i).v, (B i).u))
 
-
-
+/-- The side of a branch in `rho`: its walk sites other than the origin, together with the cluster
+of
+its exit site. -/
 def bins_branchSide (rho : ConfigSpace (Sym2 (Site 2))) (B : bins_Branch) : Set (Site 2) :=
   ({z | z ∈ B.P.support ∧ z ≠ ![0, 0]} : Set (Site 2)) ∪ cluster 2 rho B.u
 
-
-theorem bins_walk_edge_mem_touch {n : ℕ} {x y : Site 2}
+lemma bins_walk_edge_mem_touch {n : ℕ} {x y : Site 2}
     (P : (hypercubicLattice 2).Walk x y)
     (hbox : ∀ z ∈ P.support, z ∈ box 2 n) :
     P.edges.toFinset ⊆ bondFinsetTouch 2 n := by
@@ -132,12 +154,11 @@ theorem bins_walk_edge_mem_touch {n : ℕ} {x y : Site 2}
       · rw [hbx_mem_bondFinsetTouch_iff]
         exact ⟨hxy, Or.inl (hbox x (by simp))⟩
       · apply ih
-        intro w hw
-        exact hbox w (by simp [hw])
-        exact he
+        · intro w hw
+          exact hbox w (by simp [hw])
+        · exact he
 
-
-theorem bins_extCluster_avoids_box (n : ℕ) (omega : ConfigSpace (Sym2 (Site 2)))
+lemma bins_extCluster_avoids_box (n : ℕ) (omega : ConfigSpace (Sym2 (Site 2)))
     (u : Site 2) (hu : u ∉ box 2 n) :
     Disjoint (cluster 2 (removeSite 0 (bpt2_closeI (bondFinsetTouch 2 n) omega)) u)
       (box 2 n) := by
@@ -154,14 +175,12 @@ theorem bins_extCluster_avoids_box (n : ℕ) (omega : ConfigSpace (Sym2 (Site 2)
   have huz : u = z := by simpa using humem
   exact hu (huz ▸ hzbox)
 
-
+/-- The pattern on edges touching the box: open exactly on the branch edges. -/
 def bins_touchPattern (n : ℕ) (B : Fin 3 → bins_Branch) :
     ConfigSpace (Subtype fun e => e ∈ bondFinsetTouch 2 n) :=
   fun e => decide (e.1 ∈ bins_branchEdges B)
 
-
-
-theorem bins_touchPattern_value {n : ℕ} {B : Fin 3 → bins_Branch}
+lemma bins_touchPattern_value {n : ℕ} {B : Fin 3 → bins_Branch}
     {omega : ConfigSpace (Sym2 (Site 2))}
     (hcyl : omega ∈ cylinder (bondFinsetTouch 2 n)
       ({bins_touchPattern n B} : Set
@@ -171,9 +190,9 @@ theorem bins_touchPattern_value {n : ℕ} {B : Fin 3 → bins_Branch}
   rw [bins_cylinder_value hcyl e he, bins_touchPattern]
   simp
 
+/-! ## C. Separated branch sides -/
 
-
-theorem bins_tail_connected_remove_start {x v : Site 2}
+lemma bins_tail_connected_remove_start {x v : Site 2}
     (P : (hypercubicLattice 2).Walk x v) (hp : P.IsPath) (hv : v ≠ x)
     (omega : ConfigSpace (Sym2 (Site 2)))
     (hopen : ∀ e ∈ P.edges, omega e = true) :
@@ -191,13 +210,11 @@ theorem bins_tail_connected_remove_start {x v : Site 2}
             rw [Walk.support_cons, List.nodup_cons] at hnodup
             exact hnodup.1 hxs
           unfold removeSite
-          rw [if_neg hex]
+          rw [ite_eq_right hex]
           exact hopen e (by simp [he]))
       simpa using hconn
 
-
-
-theorem bins_branch_connected {n : ℕ} {B : Fin 3 → bins_Branch}
+lemma bins_branch_connected {n : ℕ} {B : Fin 3 → bins_Branch}
     (i : Fin 3) (hp : (B i).P.IsPath) (hv : (B i).v ≠ ![0, 0])
     (hadj : (hypercubicLattice 2).Adj (B i).v (B i).u)
     (hu : (B i).u ≠ ![0, 0])
@@ -233,17 +250,15 @@ theorem bins_branch_connected {n : ℕ} {B : Fin 3 → bins_Branch}
       constructor
       · intro h; apply hv; simpa [bcor_origin_eq] using h.symm
       · intro h; apply hu; simpa [bcor_origin_eq] using h.symm
-    rw [if_neg h0]
+    rw [ite_eq_right h0]
     exact hattOpen
   exact htail.trans hatt.connected
 
-
-
-theorem bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
+lemma bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
     (hbox : ∀ i z, z ∈ (B i).P.support → z ∈ box 2 n)
     (hpathDisj : ∀ i j, i ≠ j → ∀ z,
       z ∈ (B i).P.support → z ∈ (B j).P.support → z = ![0, 0])
-    (hadj : ∀ i, (hypercubicLattice 2).Adj (B i).v (B i).u)
+    (_hadj : ∀ i, (hypercubicLattice 2).Adj (B i).v (B i).u)
     (huout : ∀ i, (B i).u ∉ box 2 n)
     {omega : ConfigSpace (Sym2 (Site 2))}
     (hcyl : omega ∈ cylinder (bondFinsetTouch 2 n)
@@ -266,14 +281,14 @@ theorem bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
     have hmem : (0 : Site 2) ∈ s((![0, 0] : Site 2), w) := by
       rw [bcor_origin_eq]
       simp
-    exact (by simpa [IsOpenEdge, removeSite, hmem] using hopen)
+    exact (by simp [IsOpenEdge, removeSite, hmem] at hopen)
   have hw0 : w ≠ ![0, 0] := by
     intro h
     subst w
     have hmem : (0 : Site 2) ∈ s(z, (![0, 0] : Site 2)) := by
       rw [bcor_origin_eq]
       simp
-    exact (by simpa [IsOpenEdge, removeSite, hmem] using hopen)
+    exact (by simp [IsOpenEdge, removeSite, hmem] at hopen)
   have hnot0 : (0 : Site 2) ∉ s(z, w) := by
     simp only [Sym2.mem_iff, not_or]
     constructor
@@ -282,7 +297,7 @@ theorem bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
   have hopenOmega : omega s(z, w) = true := by
     have hval := hopen.2
     unfold removeSite at hval
-    rw [if_neg hnot0] at hval
+    rw [ite_eq_right hnot0] at hval
     exact hval
   have hclusterDisj {a b : Fin 3} (hab : a ≠ b) :
       Disjoint (cluster 2 rho (B a).u) (cluster 2 rho (B b).u) := by
@@ -320,7 +335,8 @@ theorem bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
       obtain ⟨j, _, heq⟩ := hatt
       rw [Sym2.eq_iff] at heq
       rcases heq with ⟨hzv, hwu⟩ | ⟨hzu, hwv⟩
-      · have hzj : z ∈ (B j).P.support := by simpa [hzv] using (B j).P.getVert_mem_support (B j).P.length
+      · have hzj : z ∈ (B j).P.support := by simpa [hzv] using (B j).P.getVert_mem_support (B
+                                               j).P.length
         have hij : i = j := by
           by_contra hij
           exact hz0 (hpathDisj i j hij z (zpath_of_box hzbox) hzj)
@@ -360,13 +376,11 @@ theorem bins_branchSide_openClosed {n : ℕ} {B : Fin 3 → bins_Branch}
       unfold rho removeSite bpt2_closeI
       have hnotTouch : s(z, w) ∉ bondFinsetTouch 2 n := by
         rw [hbx_mem_bondFinsetTouch_iff]
-        simp [hopen.1, hzbox, hwbox]
-      rw [if_neg hnot0, if_neg hnotTouch]
+        simp [hzbox, hwbox]
+      rw [ite_eq_right hnot0, ite_eq_right hnotTouch]
       exact hopenOmega
 
-
-
-theorem bins_snd_data {x v : Site 2} (P : (hypercubicLattice 2).Walk x v)
+lemma bins_snd_data {x v : Site 2} (P : (hypercubicLattice 2).Walk x v)
     (hp : P.IsPath) (hv : v ≠ x) :
     (hypercubicLattice 2).Adj x P.snd ∧ P.snd ∈ P.support ∧ P.snd ≠ x := by
   cases P with
@@ -376,8 +390,7 @@ theorem bins_snd_data {x v : Site 2} (P : (hypercubicLattice 2).Walk x v)
       rw [hsnd]
       exact ⟨hxy, by simp, (hypercubicLattice 2).ne_of_adj hxy |>.symm⟩
 
-
-theorem bins_branchSide_disjoint {n : ℕ} {B : Fin 3 → bins_Branch}
+lemma bins_branchSide_disjoint {n : ℕ} {B : Fin 3 → bins_Branch}
     (hbox : ∀ i z, z ∈ (B i).P.support → z ∈ box 2 n)
     (hpathDisj : ∀ i j, i ≠ j → ∀ z,
       z ∈ (B i).P.support → z ∈ (B j).P.support → z = ![0, 0])
@@ -406,9 +419,7 @@ theorem bins_branchSide_disjoint {n : ℕ} {B : Fin 3 → bins_Branch}
       exact cluster_eq_of_connected ((mem_cluster.mp hqi).trans (mem_cluster.mp hqj).symm)
     exact (Set.disjoint_left.mp hd) hci hcj
 
-
-
-theorem bins_pattern_of_branches {n : ℕ} (B : Fin 3 → bins_Branch)
+lemma bins_pattern_of_branches {n : ℕ} (B : Fin 3 → bins_Branch)
     (hp : ∀ i, (B i).P.IsPath)
     (hv : ∀ i, (B i).v ≠ ![0, 0])
     (hbox : ∀ i z, z ∈ (B i).P.support → z ∈ box 2 n)
@@ -463,7 +474,7 @@ theorem bins_pattern_of_branches {n : ℕ} (B : Fin 3 → bins_Branch)
     simpa [bcor_origin_eq] using (hsnd 2).1
   have hconn (i : Fin 3) : Connected 2 (removeSite 0 omega) (B i).P.snd (B i).u :=
     bins_branch_connected i (hp i) (hv i) (hadj i)
-      (fun h => huout i (by simpa [h, mem_box])) hcyl (hbox i)
+      (fun h => huout i (by simp [h, mem_box])) hcyl (hbox i)
   have hle : rho ≤ removeSite 0 omega :=
     bpt2_removeSite_mono (bpt2_closeI_le (bondFinsetTouch 2 n) omega) 0
   have hinf (i : Fin 3) (hi : (cluster 2 rho (B i).u).Infinite) :
@@ -479,11 +490,9 @@ theorem bins_pattern_of_branches {n : ℕ} (B : Fin 3 → bins_Branch)
       bins_branchSide_openClosed hbox hpathDisj hadj huout hcyl hclusterNe 2⟩
   · exact ⟨hinf 0 hinf0, hinf 1 hinf1, hinf 2 hinf2⟩
 
+/-! ## D. Uniqueness -/
 
-
-
-
-theorem bins_routePackage_of_nineShell_measure
+lemma bins_routePackage_of_nineShell_measure
     (mu : Measure (ConfigSpace (Sym2 (Site 2)))) (m : ℕ)
     (v u : Fin 9 → Site 2)
     (hpos : 0 < mu (bins_NineShellEvent m v u)) :
@@ -556,8 +565,8 @@ theorem bins_routePackage_of_nineShell_measure
     · simpa [B] using huout j
     · simpa [B] using huout k
   have hBv : ∀ q, (B q).v ≠ ![0, 0] := by
-    intro q
-    fin_cases q <;> simp [B] <;> intro h
+    intro q h
+    fin_cases q <;> simp [B] at h
     all_goals
       have hs := hside
       simp only [h, Matrix.cons_val_zero, Matrix.cons_val_one] at hs
@@ -593,8 +602,7 @@ theorem bins_routePackage_of_nineShell_measure
   · exact hXpos
   · simpa [B] using hpattern
 
-
-theorem bins_routePackage_of_nineShell (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
+lemma bins_routePackage_of_nineShell (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
     (v u : Fin 9 → Site 2)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
       (bins_NineShellEvent m v u)) :
@@ -610,15 +618,14 @@ theorem bins_routePackage_of_nineShell (p : ℝ≥0) (hp1 : p ≤ 1) (m : ℕ)
   bins_routePackage_of_nineShell_measure
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1) m v u hpos
 
-
-
-theorem bins_route (p : ℝ≥0) (hp1 : p ≤ 1) : bins_Route p hp1 := by
+lemma bins_route (p : ℝ≥0) (hp1 : p ≤ 1) : bins_Route p hp1 := by
   intro n hpos
   obtain ⟨m, v, u, hNine⟩ := bins_exists_NineShellEvent_pos_of_threeMeetBox p hp1 n hpos
   exact bins_routePackage_of_nineShell p hp1 m v u hNine
 
-
-
+/-- **Burton–Keane uniqueness on `ℤ²`.** For Bernoulli bond percolation on the square lattice with
+`0 < p < 1`, almost surely there is no infinite cluster or exactly one, and `μ(N ≥ 2) = 0`. No
+further hypothesis is assumed. Burton and Keane, *Density and uniqueness in percolation* (1989). -/
 theorem bins_bk_unconditional (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (hplt : p < 1) :
     (bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1
         {omega | numInfiniteClusters 2 omega = 0} = 1 ∨

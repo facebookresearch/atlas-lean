@@ -6,84 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedHubContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
+
+/-!
+# Disjoint star forests
+
+A graph homomorphism to an acyclic graph that is injective on cycles shows acyclicity; leaves of the
+disjoint star lie inside the box, and separated arm graphs hold for `L ≥ 3`.
+
+## i. Overview
+
+If `f : G →g H` with `H` acyclic is injective on the support of every cycle of `G`, then `G` is
+acyclic. The leaves of the disjoint star are interior to the box of radius `R ≥ 2`, and the
+separated arm graph holds for `L ≥ 3`.
+
+## ii. Key results
+
+- `bfc_acyclic_of_walkInjHom` : acyclicity through a homomorphism injective on cycles.
+
+## iii. Table of contents
+
+- A. Acyclicity and stars
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -91,10 +44,6 @@ open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-set_option linter.unusedDecidableInType false
-set_option linter.unusedVariables false
-set_option linter.unusedSectionVars false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -103,24 +52,9 @@ variable {d : ℕ}
 
 open StatMech.Percolation
 
+/-! ## A. Acyclicity and stars -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfc_acyclic_of_walkInjHom {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
+lemma bfc_acyclic_of_walkInjHom {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
     (f : G →g H) (hH : H.IsAcyclic)
     (hinj : ∀ {v : V} (c : G.Walk v v), c.IsCycle →
       Set.InjOn f {x | x ∈ c.support}) :
@@ -157,46 +91,9 @@ theorem bfc_acyclic_of_walkInjHom {V W : Type*} {G : SimpleGraph V} {H : SimpleG
       exact hinjc (List.mem_of_mem_tail hx) (List.mem_of_mem_tail hy) hxy
   exact hH (c.map f) hcm
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfc_disjointStar_acyclic (β : Type) : (bc64_starForest β).IsAcyclic :=
-  bfc_acyclic_of_walkInjHom (bc64_sndHom β) bc64_starG_isTree.isAcyclic
-    (fun c _ => bc64_snd_injOn_support c)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfc_disjointStar_leaves_interior (hd : 1 ≤ d) {R : ℕ} (hR : 2 ≤ R) :
+lemma bfc_disjointStar_leaves_interior (hd : 1 ≤ d) {R : ℕ} (hR : 2 ≤ R) :
     bc112_leaf hd (0 : Site d) 1 ∉ vertexBoundary d R := by
-  rw [vertexBoundary, Set.mem_diff, not_and_or, not_not]
+  rw [vertexBoundary, Set.mem_sdiff, not_and_or, not_not]
   right
   rw [mem_box]
   intro i
@@ -208,81 +105,21 @@ theorem bfc_disjointStar_leaves_interior (hd : 1 ≤ d) {R : ℕ} (hR : 2 ≤ R)
   · rw [bc112_leaf_coord_ne hd (0 : Site d) 1 hi]
     simp
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfc_gap1_free (hd : 1 ≤ d) (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hL : 3 ≤ L) :
+lemma bfc_gap1_free (hd : 1 ≤ d) (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hL : 3 ≤ L) :
     bc112_SeparatedArmGraph ω L R :=
   bc112_separatedArmGraph_holds hd ω L R hL
 
-
-
-
-
-theorem bfc_bc69_nonvacuous (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
-    (hzne : z₀ ≠ z₁) (hno : ∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) :
-    bc69_Gn_globalForest ω L R :=
-  bc69_globalForest_of_noTrif ω L R hz₀ hz₁ hzne hno
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bfc_status (hd : 1 ≤ d) :
-    
+lemma bfc_status (hd : 1 ≤ d) :
     (∀ (β : Type), (bc64_starForest β).IsAcyclic) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 3 ≤ L → bc112_SeparatedArmGraph ω L R) ∧
-    
     (∀ {R : ℕ}, 2 ≤ R → bc112_leaf hd (0 : Site d) 1 ∉ vertexBoundary d R) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       (∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) → bc69_Gn_globalForest ω L R) := by
-  refine ⟨bfc_disjointStar_acyclic, ?_, ?_, ?_⟩
+  refine ⟨StatMech.Walls.bc64_starForest_acyclic, ?_, ?_, ?_⟩
   · intro ω L R hL; exact bfc_gap1_free hd ω L R hL
   · intro R hR; exact bfc_disjointStar_leaves_interior hd hR
-  · intro ω L R z₀ z₁ hz₀ hz₁ hzne hno; exact bfc_bc69_nonvacuous ω L R hz₀ hz₁ hzne hno
+  · intro ω L R z₀ z₁ hz₀ hz₁ hzne hno; exact StatMech.Walls.bc102_connectedForest_of_noTrif ω L R
+      hz₀ hz₁ hzne hno
 
 end StatMech.Walls

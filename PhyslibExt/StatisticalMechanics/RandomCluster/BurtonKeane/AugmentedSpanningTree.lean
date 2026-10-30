@@ -6,77 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.StarForestFiber
+
+/-!
+# Augmenting a forest by leaves
+
+Attaching pendant leaves to a forest keeps it acyclic and gives each attached vertex degree one;
+this builds genuine exploration forests and the genuine count.
+
+## i. Overview
+
+`bsk_augG H par` adds to `H` a pendant vertex for each leaf label `l`, joined to `par l`. If `H` is
+acyclic, so is the augmented graph, and each added vertex has degree one. With a tree on the coarse
+trifurcations this gives the genuine exploration `bfg_GenuineExploration`, the genuine forest and
+the genuine count. The connected-forest datum `bsk_ConnectedForestData` packages these hypotheses.
+
+## ii. Key results
+
+- `bsk_augG_acyclic` : augmenting by leaves keeps a forest acyclic.
+- `bsk_bk_count_of_connectedForest` : the genuine count from connected-forest data.
+
+## iii. Table of contents
+
+- A. The augmented graph
+- B. Genuine exploration
+- C. Connected-forest data
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -84,10 +47,6 @@ open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-set_option linter.unusedDecidableInType false
-set_option linter.unusedVariables false
-set_option linter.unusedSectionVars false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -96,19 +55,10 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. The augmented graph -/
 
-
-
-
-
-theorem bsk_exists_spanningTree {V : Type*} (G : SimpleGraph V) (h : G.Connected) :
-    ∃ T : SimpleGraph V, T ≤ G ∧ T.IsTree :=
-  h.exists_isTree_le
-
-
-
-
-theorem bsk_three_le_degree {W : Type*} [Fintype W] [DecidableEq W]
+set_option linter.unusedDecidableInType false in
+lemma bsk_three_le_degree {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj] {v a b c : W}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (ha : G.Adj v a) (hb : G.Adj v b) (hc : G.Adj v c) : 3 ≤ G.degree v := by
@@ -124,15 +74,7 @@ theorem bsk_three_le_degree {W : Type*} [Fintype W] [DecidableEq W]
     _ ≤ (G.neighborFinset v).card := Finset.card_le_card hsub
     _ = G.degree v := rfl
 
-
-
-
-
-
-
-
-
-
+/-- Adjacency of `H` augmented by a pendant vertex `l` attached to `par l`. -/
 def bsk_augRel {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V) :
     (V ⊕ Leaf) → (V ⊕ Leaf) → Prop
   | Sum.inl a, Sum.inl b => H.Adj a b
@@ -140,16 +82,15 @@ def bsk_augRel {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V) :
   | Sum.inr l, Sum.inl a => par l = a
   | Sum.inr _, Sum.inr _ => False
 
-
-
+/-- The graph `H` augmented by pendant leaves. -/
 def bsk_augG {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V) : SimpleGraph (V ⊕ Leaf) :=
   SimpleGraph.fromRel (bsk_augRel H par)
 
+/-- Adjacency in the augmented graph is decidable. -/
 noncomputable instance {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V) :
     DecidableRel (bsk_augG H par).Adj := Classical.decRel _
 
-
-theorem bsk_augG_adj_inl_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {a b : V} :
+lemma bsk_augG_adj_inl_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {a b : V} :
     (bsk_augG H par).Adj (Sum.inl a) (Sum.inl b) ↔ H.Adj a b := by
   unfold bsk_augG
   rw [SimpleGraph.fromRel_adj]
@@ -160,8 +101,7 @@ theorem bsk_augG_adj_inl_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf �
   · intro h
     exact ⟨fun hh => (H.ne_of_adj h) (Sum.inl_injective hh), Or.inl h⟩
 
-
-theorem bsk_augG_adj_inr_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf}
+lemma bsk_augG_adj_inr_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf}
     {a : V} : (bsk_augG H par).Adj (Sum.inr l) (Sum.inl a) ↔ par l = a := by
   unfold bsk_augG
   rw [SimpleGraph.fromRel_adj]
@@ -169,20 +109,17 @@ theorem bsk_augG_adj_inr_inl {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf �
   · rintro ⟨hne, h | h⟩ <;> exact h
   · intro h; exact ⟨by simp, Or.inl h⟩
 
-
-theorem bsk_augG_adj_inl_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf}
+lemma bsk_augG_adj_inl_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf}
     {a : V} : (bsk_augG H par).Adj (Sum.inl a) (Sum.inr l) ↔ par l = a := by
   rw [SimpleGraph.adj_comm]; exact bsk_augG_adj_inr_inl
 
-
-theorem bsk_augG_not_adj_inr_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V}
+lemma bsk_augG_not_adj_inr_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V}
     {l l' : Leaf} : ¬ (bsk_augG H par).Adj (Sum.inr l) (Sum.inr l') := by
   unfold bsk_augG
   rw [SimpleGraph.fromRel_adj]
   rintro ⟨hne, h | h⟩ <;> exact h
 
-
-theorem bsk_augG_neighborSet_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf} :
+lemma bsk_augG_neighborSet_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Leaf → V} {l : Leaf} :
     (bsk_augG H par).neighborSet (Sum.inr l) = {Sum.inl (par l)} := by
   ext y
   simp only [SimpleGraph.mem_neighborSet, Set.mem_singleton_iff]
@@ -195,16 +132,9 @@ theorem bsk_augG_neighborSet_inr {V Leaf : Type*} {H : SimpleGraph V} {par : Lea
     · intro h; exact absurd h bsk_augG_not_adj_inr_inr
     · intro h; exact absurd h (by simp)
 
-
-
-
-
-
-
-theorem bsk_augG_acyclic {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V)
+lemma bsk_augG_acyclic {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V)
     (hH : H.IsAcyclic) : (bsk_augG H par).IsAcyclic := by
   intro v c hc
-  
   have hsupp : ∀ x ∈ c.support, ∃ a : V, x = Sum.inl a := by
     intro x hx
     match x, hx with
@@ -221,12 +151,9 @@ theorem bsk_augG_acyclic {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V)
       have hle := Set.ncard_le_ncard hsub (Set.finite_singleton _)
       rw [h2, Set.ncard_singleton] at hle
       omega
-  
   set φ : (V ⊕ Leaf) → V := Sum.elim id par with hφ
   set G₀ : SimpleGraph (V ⊕ Leaf) := H.comap φ with hG0
-  
   let phiHom : G₀ →g H := SimpleGraph.Hom.comap φ H
-  
   have hedges : ∀ e ∈ c.edges, e ∈ G₀.edgeSet := by
     intro e he
     induction e using Sym2.ind with | _ x y =>
@@ -239,7 +166,6 @@ theorem bsk_augG_acyclic {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V)
     rw [bsk_augG_adj_inl_inl] at hxy
     rw [SimpleGraph.mem_edgeSet, hG0, SimpleGraph.comap_adj]
     simpa [hφ] using hxy
-  
   have key : ∀ (w : G₀.Walk v v), w.IsCycle →
       (∀ x ∈ w.support, ∃ a : V, x = Sum.inl a) → False := by
     intro w hw hws
@@ -278,14 +204,13 @@ theorem bsk_augG_acyclic {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V)
         intro x hx y hy hxy
         exact hinj (List.mem_of_mem_tail hx) (List.mem_of_mem_tail hy) hxy
     exact hH _ hcm
-  
   refine key (c.transfer G₀ hedges) (hc.transfer hedges) ?_
   intro x hx
   rw [SimpleGraph.Walk.support_transfer] at hx
   exact hsupp x hx
 
-
-theorem bsk_augG_leaf_deg_one {V Leaf : Type} [Fintype V] [DecidableEq V] [Fintype Leaf]
+set_option linter.unusedDecidableInType false in
+lemma bsk_augG_leaf_deg_one {V Leaf : Type} [Fintype V] [DecidableEq V] [Fintype Leaf]
     [DecidableEq Leaf] (H : SimpleGraph V) (par : Leaf → V) (l : Leaf) :
     (bsk_augG H par).degree (Sum.inr l) = 1 := by
   have hnf : (bsk_augG H par).neighborFinset (Sum.inr l) = {Sum.inl (par l)} := by
@@ -294,25 +219,11 @@ theorem bsk_augG_leaf_deg_one {V Leaf : Type} [Fintype V] [DecidableEq V] [Finty
       bsk_augG_neighborSet_inr, Set.mem_singleton_iff]
   rw [SimpleGraph.degree, hnf, Finset.card_singleton]
 
+/-! ## B. Genuine exploration -/
 
-
-
-
-
-
-
-
-
+set_option linter.unusedDecidableInType false in
 open Classical in
-
-
-
-
-
-
-
-
-theorem bsk_exploration_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bsk_exploration_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {V Leaf : Type} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype Leaf] [DecidableEq Leaf]
     (H : SimpleGraph V) (par : Leaf → V) (hH : H.IsAcyclic)
     (trifIdx : Site d → V) (compLeaf : Leaf → Set (Site d))
@@ -323,7 +234,6 @@ theorem bsk_exploration_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R
     (hcompD : ∀ l l' : Leaf, l ≠ l' → Disjoint (compLeaf l) (compLeaf l')) :
     bfg_GenuineExploration ω L R := by
   classical
-  
   have hdeg1_inr : ∀ v : V ⊕ Leaf, (bsk_augG H par).degree v = 1 → ∃ l : Leaf, v = Sum.inr l := by
     intro v hv
     cases v with
@@ -332,38 +242,25 @@ theorem bsk_exploration_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R
   refine bct_exploration_of_carrier ω L R (V ⊕ Leaf) (bsk_augG H par)
     (fun y => Sum.inl (trifIdx y)) (Sum.elim (fun _ => (∅ : Set (Site d))) compLeaf)
     (bsk_augG_acyclic H par hH) ?_ ?_ ?_ ?_ ?_
-  · 
-    intro v
+  · intro v
     cases v with
     | inl a => exact le_trans (by norm_num) (hall3 a)
     | inr l => rw [bsk_augG_leaf_deg_one]
-  · 
-    intro y _ _; exact hall3 (trifIdx y)
-  · 
-    intro y hybox hygen z hzbox hzgen hyz
+  · intro y _ _; exact hall3 (trifIdx y)
+  · intro y hybox hygen z hzbox hzgen hyz
     exact hinj y hybox hygen z hzbox hzgen (Sum.inl_injective hyz)
-  · 
-    intro v hv
+  · intro v hv
     obtain ⟨l, rfl⟩ := hdeg1_inr v hv
     exact hcompB l
-  · 
-    intro u hu v hv huv
+  · intro u hu v hv huv
     obtain ⟨lu, rfl⟩ := hdeg1_inr u hu
     obtain ⟨lv, rfl⟩ := hdeg1_inr v hv
     exact hcompD lu lv (fun h => huv (by rw [h]))
 
-
-
-
-
-
-
-
+set_option linter.unusedFintypeInType false in
+set_option linter.unusedDecidableInType false in
 open Classical in
-
-
-
-theorem bsk_exploration_of_armTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bsk_exploration_of_armTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {V Leaf : Type} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype Leaf] [DecidableEq Leaf]
     (H : SimpleGraph V) (par : Leaf → V) (hH : H.IsAcyclic)
     (trifIdx : Site d → V) (compLeaf : Leaf → Set (Site d))
@@ -381,8 +278,8 @@ theorem bsk_exploration_of_armTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ
   obtain ⟨x, y, z, hxy, hxz, hyz, hax, hay, haz⟩ := harm a
   exact bsk_three_le_degree (bsk_augG H par) hxy hxz hyz hax hay haz
 
-
-theorem bsk_genuineForest_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+set_option linter.unusedDecidableInType false in
+lemma bsk_genuineForest_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {V Leaf : Type} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype Leaf] [DecidableEq Leaf]
     (H : SimpleGraph V) (par : Leaf → V) (hH : H.IsAcyclic)
     (trifIdx : Site d → V) (compLeaf : Leaf → Set (Site d))
@@ -395,8 +292,8 @@ theorem bsk_genuineForest_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L
   bfg_genuineForest_of_exploration ω L R
     (bsk_exploration_of_augmentedTree ω L R H par hH trifIdx compLeaf hall3 hinj hcompB hcompD)
 
-
-theorem bsk_genuineTcount_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+set_option linter.unusedDecidableInType false in
+lemma bsk_genuineTcount_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {V Leaf : Type} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype Leaf] [DecidableEq Leaf]
     (H : SimpleGraph V) (par : Leaf → V) (hH : H.IsAcyclic)
     (trifIdx : Site d → V) (compLeaf : Leaf → Set (Site d))
@@ -409,19 +306,11 @@ theorem bsk_genuineTcount_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L
   bfg_genuineTcount_le_boundary ω L R
     (bsk_exploration_of_augmentedTree ω L R H par hH trifIdx compLeaf hall3 hinj hcompB hcompD)
 
+/-! ## C. Connected-forest data -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Connected-forest datum: a finite acyclic graph on the coarse trifurcations with leaf labels
+attached
+to boundary sites, giving the genuine exploration. -/
 def bsk_ConnectedForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (V Leaf : Type) (_ : Fintype V) (_ : DecidableEq V) (_ : Nonempty V) (_ : Fintype Leaf)
     (_ : DecidableEq Leaf) (H : SimpleGraph V) (par : Leaf → V) (trifIdx : Site d → V)
@@ -433,64 +322,30 @@ def bsk_ConnectedForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Pro
     (∀ l : Leaf, (compLeaf l ∩ vertexBoundary d R).Nonempty) ∧
     (∀ l l' : Leaf, l ≠ l' → Disjoint (compLeaf l) (compLeaf l'))
 
-
-
-theorem bsk_exploration_of_connectedForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bsk_exploration_of_connectedForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bsk_ConnectedForestData ω L R) : bfg_GenuineExploration ω L R := by
   obtain ⟨V, Leaf, _, _, _, _, _, H, par, trifIdx, compLeaf, hH, hall3, hinj, hcompB, hcompD⟩ := h
   exact bsk_exploration_of_augmentedTree ω L R H par hH trifIdx compLeaf hall3 hinj hcompB hcompD
 
-
-
-
-theorem bsk_bk_count_of_connectedForest (L R : ℕ)
+lemma bsk_bk_count_of_connectedForest (L R : ℕ)
     (hdata : ∀ ω : ConfigSpace (Sym2 (Site d)), bsk_ConnectedForestData ω L R) :
     ∀ ω : ConfigSpace (Sym2 (Site d)),
       (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R :=
-  fun ω => bfg_genuineTcount_le_boundary ω L R (bsk_exploration_of_connectedForestData ω L R (hdata ω))
+  fun ω => bfg_genuineTcount_le_boundary ω L R (bsk_exploration_of_connectedForestData ω L R (hdata
+      ω))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bsk_status :
-    
+lemma bsk_status :
     (∀ {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V), H.IsAcyclic →
       (bsk_augG H par).IsAcyclic) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), bsk_ConnectedForestData ω L R →
       bfg_GenuineExploration ω L R) ∧
-    
     (∀ {V : Type} (G : SimpleGraph V), G.Connected → ∃ T : SimpleGraph V, T ≤ G ∧ T.IsTree) ∧
-    
     (∀ (L R : ℕ), (∀ ω : ConfigSpace (Sym2 (Site d)), bsk_ConnectedForestData ω L R) →
       ∀ ω : ConfigSpace (Sym2 (Site d)),
         (btr_genuineTrifFinset ω L R).card ≤ boxSV_boundaryCard d R) :=
   ⟨fun H par hH => bsk_augG_acyclic H par hH,
    fun ω L R h => bsk_exploration_of_connectedForestData ω L R h,
-   fun G h => bsk_exists_spanningTree G h,
+   fun _ h => h.exists_isTree_le,
    fun L R hdata ω => bsk_bk_count_of_connectedForest L R hdata ω⟩
 
 end StatMech.Walls

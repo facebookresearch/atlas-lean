@@ -6,81 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutNeighbour
+
+/-!
+# Distinct cut clusters from three infinite clusters
+
+Three distinct infinite clusters meeting a box contain sites with three distinct infinite clusters
+after the origin is removed.
+
+## i. Overview
+
+Sites of distinct clusters have distinct cut clusters. Three distinct infinite clusters have sites
+with infinite, pairwise distinct cut clusters. `bc7_DistinctWitnessClusters d n` asks this for every
+configuration of `threeMeetBox d n`, and it holds for every `n`.
+
+## ii. Key results
+
+- `bc7_distinctWitnessClusters` : distinct cut witnesses for every box.
+
+## iii. Table of contents
+
+- A. Distinct cut clusters
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -94,33 +49,16 @@ namespace Walls
 
 variable {d : ℕ}
 
+/-! ## A. Distinct cut clusters -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc7_cutCluster_ne (ω : ConfigSpace (Sym2 (Site d))) {x₁ x₂ x₁' x₂' : Site d}
+lemma bc7_cutCluster_ne (ω : ConfigSpace (Sym2 (Site d))) {x₁ x₂ x₁' x₂' : Site d}
     (hx₁' : x₁' ∈ cluster d ω x₁) (hx₂' : x₂' ∈ cluster d ω x₂)
     (hne : cluster d ω x₁ ≠ cluster d ω x₂) :
     cluster d (removeSite 0 ω) x₁' ≠ cluster d (removeSite 0 ω) x₂' := by
   intro hcut
-  
   have hmem : x₂' ∈ cluster d (removeSite 0 ω) x₁' := by
     rw [hcut]; exact self_mem_cluster _ _
-  
   have hbase : x₂' ∈ cluster d ω x₁' := ctc2_cluster_removeSite_subset 0 x₁' ω hmem
-  
   have e1 : cluster d ω x₁ = cluster d ω x₁' :=
     cluster_eq_of_connected (mem_cluster.mp hx₁')
   have e2 : cluster d ω x₂ = cluster d ω x₂' :=
@@ -129,20 +67,7 @@ theorem bc7_cutCluster_ne (ω : ConfigSpace (Sym2 (Site d))) {x₁ x₂ x₁' x�
     cluster_eq_of_connected (mem_cluster.mp hbase)
   exact hne (e1.trans (e12.trans e2.symm))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc7_threeArms_cutInfinite_distinct (ω : ConfigSpace (Sym2 (Site d))) {x₁ x₂ x₃ : Site d}
+lemma bc7_threeArms_cutInfinite_distinct (ω : ConfigSpace (Sym2 (Site d))) {x₁ x₂ x₃ : Site d}
     (hi1 : (cluster d ω x₁).Infinite) (hi2 : (cluster d ω x₂).Infinite)
     (hi3 : (cluster d ω x₃).Infinite)
     (hd12 : cluster d ω x₁ ≠ cluster d ω x₂) (hd13 : cluster d ω x₁ ≠ cluster d ω x₃)
@@ -162,17 +87,9 @@ theorem bc7_threeArms_cutInfinite_distinct (ω : ConfigSpace (Sym2 (Site d))) {x
     bc7_cutCluster_ne ω hx₁' hx₃' hd13,
     bc7_cutCluster_ne ω hx₂' hx₃' hd23⟩
 
-
-
-
-
-
-
-
-
-
-
-
+/-- Every configuration of `threeMeetBox d n` has three sites of the box in distinct infinite
+clusters
+with sites whose cut clusters are infinite and pairwise distinct. -/
 def bc7_DistinctWitnessClusters (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ x₁ x₂ x₃ : Site d, x₁ ∈ box d n ∧ x₂ ∈ box d n ∧ x₃ ∈ box d n ∧
@@ -188,16 +105,7 @@ def bc7_DistinctWitnessClusters (d n : ℕ) : Prop :=
         cluster d (removeSite 0 ω) x₁' ≠ cluster d (removeSite 0 ω) x₃' ∧
         cluster d (removeSite 0 ω) x₂' ≠ cluster d (removeSite 0 ω) x₃'
 
-
-
-
-
-
-
-
-
-
-theorem bc7_distinctWitnessClusters (n : ℕ) : bc7_DistinctWitnessClusters d n := by
+lemma bc7_distinctWitnessClusters (n : ℕ) : bc7_DistinctWitnessClusters d n := by
   intro ω hω
   obtain ⟨x₁, x₂, x₃, hb1, hb2, hb3, hi1, hi2, hi3, hd12, hd13, hd23,
       x₁', x₂', x₃', hx₁', hx₂', hx₃', hinf₁, hinf₂, hinf₃⟩ :=

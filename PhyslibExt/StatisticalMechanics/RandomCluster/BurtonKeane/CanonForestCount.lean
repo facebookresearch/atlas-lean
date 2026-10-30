@@ -6,93 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -107,6 +20,40 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest
 
+/-!
+# A spanning forest of the next box
+
+The spanning forest of the open subgraph induced on the box of radius `n + 1` carries the arms of
+canonical trifurcations, which gives arm forest reaching and the count for canonical trifurcations
+with arms in the box.
+
+## i. Overview
+
+`cfc_T ω n` is the spanning forest of the open subgraph induced on `box d (n + 1)`, viewed in `ℤ^d`.
+It is acyclic, consists of open edges, and preserves reachability inside the box. Walks in
+`removeSite x ω` are walks in `ω` avoiding `x`, a walk leaving a set crosses its boundary, and an
+infinite arm of a trifurcation in the box crosses the vertex boundary. If every trifurcation of the
+box is canonical and its infinite arms start in the box, this gives arm forest reaching and
+`Tcount ≤ |∂Λₙ|`.
+
+## ii. Key results
+
+- `cfc_T_acyclic` : the spanning forest is acyclic.
+- `cfc_Tcount_le_boundary_of_canonical` : the count for canonical trifurcations with arms in the
+  box.
+
+## iii. Table of contents
+
+- A. The spanning forest
+- B. Arms in the forest
+- C. The count
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset
@@ -118,51 +65,46 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. The spanning forest -/
 
-
-
+/-- The box of radius `n` is a finite type. -/
 noncomputable instance cfc_boxFintype (d n : ℕ) : Fintype (↑(box d n) : Type) :=
   (box_finite d n).fintype
 
-
+/-- The inclusion of the box of radius `n + 1` into `ℤ^d`. -/
 noncomputable def cfc_emb (d n : ℕ) : (↑(box d (n + 1)) : Type) ↪ Site d :=
   ⟨Subtype.val, Subtype.val_injective⟩
 
-
+/-- The open subgraph induced on the box of radius `n + 1`. -/
 noncomputable def cfc_Gbox (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     SimpleGraph (↑(box d (n + 1)) : Type) :=
   (openSubgraph d ω).induce (box d (n + 1))
 
-
+/-- The spanning forest of `cfc_Gbox ω n`. -/
 noncomputable def cfc_F (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     SimpleGraph (↑(box d (n + 1)) : Type) :=
   osf_spanForest (cfc_Gbox ω n)
 
-
+/-- The spanning forest `cfc_F ω n` as a graph on `ℤ^d`. -/
 noncomputable def cfc_T (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : SimpleGraph (Site d) :=
   (cfc_F ω n).map (cfc_emb d n)
 
-
-theorem cfc_T_acyclic (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : (cfc_T ω n).IsAcyclic :=
+lemma cfc_T_acyclic (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : (cfc_T ω n).IsAcyclic :=
   spc_map_acyclic (osf_spanForest_acyclic (cfc_Gbox ω n)) _
 
-
-theorem cfc_T_open (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (u v : Site d)
+lemma cfc_T_open (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (u v : Site d)
     (h : (cfc_T ω n).Adj u v) : (openSubgraph d ω).Adj u v := by
   rw [cfc_T, SimpleGraph.map_adj] at h
   obtain ⟨p, q, hpq, rfl, rfl⟩ := h
   exact osf_spanForest_le (cfc_Gbox ω n) hpq
 
-
-theorem cfc_T_support (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (u v : Site d)
+lemma cfc_T_support (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (u v : Site d)
     (h : (cfc_T ω n).Adj u v) : u ∈ box d (n + 1) := by
   rw [cfc_T, SimpleGraph.map_adj] at h
   obtain ⟨p, q, hpq, rfl, rfl⟩ := h
   exact p.2
 
-
-
-theorem cfc_induce_reachable_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma cfc_induce_reachable_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     ∀ {a b : Site d} (w : (openSubgraph d ω).Walk a b),
       (∀ v ∈ w.support, v ∈ box d (n + 1)) →
       ∀ (ha : a ∈ box d (n + 1)) (hb : b ∈ box d (n + 1)),
@@ -178,9 +120,7 @@ theorem cfc_induce_reachable_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ
     have hadj' : (cfc_Gbox ω n).Adj ⟨u, hu⟩ ⟨v, hv⟩ := hadj
     exact hadj'.reachable.trans (ih hw'supp hv hc)
 
-
-
-theorem cfc_map_reachable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma cfc_map_reachable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {a b : (↑(box d (n + 1)) : Type)} (h : (cfc_F ω n).Reachable a b) :
     (cfc_T ω n).Reachable (a : Site d) (b : Site d) := by
   obtain ⟨w⟩ := h
@@ -191,9 +131,9 @@ theorem cfc_map_reachable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       rw [cfc_T, SimpleGraph.map_adj]; exact ⟨u, v, hadj, rfl, rfl⟩
     exact hadj'.reachable.trans ih
 
+/-! ## B. Arms in the forest -/
 
-
-theorem cfc_removeSite_walk_to_ambient (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
+lemma cfc_removeSite_walk_to_ambient (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     {a b : Site d} (w : (openSubgraph d (removeSite x ω)).Walk a b) :
     ∃ w' : (openSubgraph d ω).Walk a b, w'.support = w.support := by
   have hle : ∀ u v, (openSubgraph d (removeSite x ω)).Adj u v → (openSubgraph d ω).Adj u v := by
@@ -210,11 +150,7 @@ theorem cfc_removeSite_walk_to_ambient (ω : ConfigSpace (Sym2 (Site d))) (x : S
     _ = List.map id w.support := by rfl
     _ = w.support := List.map_id _
 
-
-
-
-
-theorem cfc_x_reaches_z (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma cfc_x_reaches_z (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x a z : Site d} (hxbox : x ∈ box d n)
     (hadjxa : (openSubgraph d ω).Adj x a)
     (w : (openSubgraph d (removeSite x ω)).Walk a z) (hwx : x ∉ w.support)
@@ -238,10 +174,7 @@ theorem cfc_x_reaches_z (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     osf_spanForest_reachable_of (cfc_Gbox ω n) hreach_box
   exact cfc_map_reachable ω n hreach_F
 
-
-
-
-theorem cfc_extract_arm {T : SimpleGraph (Site d)} {x z : Site d}
+lemma cfc_extract_arm {T : SimpleGraph (Site d)} {x z : Site d}
     (h : T.Reachable x z) (hxz : x ≠ z) :
     ∃ (c : Site d) (rest : T.Walk c z), T.Adj x c ∧ x ∉ rest.support := by
   obtain ⟨w⟩ := h
@@ -253,11 +186,7 @@ theorem cfc_extract_arm {T : SimpleGraph (Site d)} {x z : Site d}
     rw [SimpleGraph.Walk.isPath_def, SimpleGraph.Walk.support_cons, List.nodup_cons] at hpp
     exact hpp.1
 
-
-
-
-
-theorem cfc_per_arm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma cfc_per_arm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x a z : Site d} (hxbox : x ∈ box d n)
     (hadjxa : (openSubgraph d ω).Adj x a)
     (w : (openSubgraph d (removeSite x ω)).Walk a z) (hwx : x ∉ w.support)
@@ -271,11 +200,7 @@ theorem cfc_per_arm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
   refine ⟨c, hadjxc, ⟨rest, hrestx⟩, ?_⟩
   exact sfa_walk_avoid_connected ω (cfc_T ω n) (cfc_T_open ω n) rest hrestx
 
-
-
-
-
-theorem cfc_walk_crossing_confined {V : Type*} (G : SimpleGraph V) (p : V → Prop)
+lemma cfc_walk_crossing_confined {V : Type*} (G : SimpleGraph V) (p : V → Prop)
     {x y : V} (w : G.Walk x y) (hx0 : p x) (hy0 : ¬ p y) :
     ∃ a b, G.Adj a b ∧ p a ∧ ¬ p b ∧
         ∃ wxa : G.Walk x a, ∀ v ∈ wxa.support, p v := by
@@ -294,13 +219,7 @@ theorem cfc_walk_crossing_confined {V : Type*} (G : SimpleGraph V) (p : V → Pr
     · refine ⟨u, v, hadj, hx0, hv, Walk.nil, ?_⟩
       intro ww hw; rw [Walk.support_nil, List.mem_singleton] at hw; rw [hw]; exact hx0
 
-
-
-
-
-
-
-theorem cfc_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
+lemma cfc_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (x a : Site d) (hax : a ≠ x) (habox : a ∈ box d n)
     (hinf : (cluster d (removeSite x ω) a).Infinite) :
     ∃ z ∈ vertexBoundary d n,
@@ -316,18 +235,7 @@ theorem cfc_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (h
   refine ⟨b, tfc_boundary_cross_vertex n hn b c hb hc hblat, wab,
     arc_walk_avoids_x hax wab, hwab⟩
 
-
-
-
-
-
-
-
-
-
-
-
-theorem cfc_neighbour_outside_box_imp_boundary {n : ℕ} (hn : 1 ≤ n) {x c : Site d}
+lemma cfc_neighbour_outside_box_imp_boundary {n : ℕ} (hn : 1 ≤ n) {x c : Site d}
     (hx : x ∈ box d n) (hadj : (hypercubicLattice d).Adj x c) (hc : c ∉ box d n) :
     x ∉ box d (n - 1) := by
   rw [hypercubicLattice_adj] at hadj
@@ -344,18 +252,7 @@ theorem cfc_neighbour_outside_box_imp_boundary {n : ℕ} (hn : 1 ≤ n) {x c : S
   have := hx i
   omega
 
-
-
-
-
-
-
-
-
-
-
-
-theorem cfc_trif_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
+lemma cfc_trif_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     {x : Site d} (hxbox : x ∈ box d n)
     (c0 : Fin 3 → Site d)
     (hadj : ∀ i, (openSubgraph d ω).Adj x (c0 i))
@@ -388,12 +285,9 @@ theorem cfc_trif_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n
       Connected d (removeSite x ω) c (z i) := fun i =>
     cfc_per_arm ω n hxbox (hadj i) (w i) (hwx i) (hwbox1 i) (hzx i)
   choose c hadjxc htail hconn using hper
-  
   have hzc0 : ∀ i, Connected d (removeSite x ω) (c0 i) (z i) := fun i => ⟨w i⟩
-  
   have hcc0 : ∀ i, Connected d (removeSite x ω) (c i) (c0 i) := fun i =>
     (hconn i).trans (hzc0 i).symm
-  
   have hcutc : ¬ Connected d (removeSite x ω) (c 0) (c 1) ∧
       ¬ Connected d (removeSite x ω) (c 0) (c 2) ∧
       ¬ Connected d (removeSite x ω) (c 1) (c 2) := by
@@ -403,14 +297,9 @@ theorem cfc_trif_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n
     · intro h; exact hcut.2.2 ((hcc0 1).symm.trans (h.trans (hcc0 2)))
   exact ⟨c, z, hadjxc, hcutc, fun i => ⟨hzb i, htail i⟩⟩
 
+/-! ## C. The count -/
 
-
-
-
-
-
-
-theorem cfc_armForestReaching_of_canonical_armsInBox
+lemma cfc_armForestReaching_of_canonical_armsInBox
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -452,10 +341,7 @@ theorem cfc_armForestReaching_of_canonical_armsInBox
   · intro x hxbox htri
     exact ⟨hcadj x hxbox htri, hccut x hxbox htri, hcreach x hxbox htri⟩
 
-
-
-
-theorem cfc_Tcount_le_boundary_of_no_trif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma cfc_Tcount_le_boundary_of_no_trif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     Tcount d ω n ≤ boxSV_boundaryCard d n := by
   classical
@@ -468,19 +354,7 @@ theorem cfc_Tcount_le_boundary_of_no_trif (ω : ConfigSpace (Sym2 (Site d))) (n 
   rw [h0]
   exact Nat.zero_le _
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem cfc_Tcount_le_boundary_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
+lemma cfc_Tcount_le_boundary_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :

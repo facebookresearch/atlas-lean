@@ -6,76 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -94,6 +24,48 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateA
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoherentArmSelector
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel
 
+/-!
+# Tree selectors and divergent arm orders
+
+Tree selectors are single-cut branch separation; rooted and divergent arm orders give tree selectors
+and the trifurcation count.
+
+## i. Overview
+
+`fsp_TreeSelector ω n` is single-cut branch separation `daep2_SingleCutBranchSeparation`. An arm
+placement `fsp_ArmPlacement` puts `b x` and `b y` in arms at `x` that are disconnected without `x`.
+The rooted arm order `fsp_RootedArmOrder` asks for such placements and gives tree selectors.
+`fsp_armWitness ω x v` chooses the neighbour of `x` through which `v` is reached. The divergent arm
+order `fsp_DivergentArmOrder` asks the arm witnesses of connected trifurcations to lie in different
+arms and gives the rooted arm order. All give the count bound; they hold with no trifurcation, one,
+or two.
+
+The configuration-wide form of these conditions, for every configuration and every box of radius
+`n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration, which `tfc_not_forall_Tcount_le_boundary` refutes (`fsp_not_forall_treeSelector`,
+`fsp_not_forall_rootedArmOrder`, `fsp_not_forall_divergentArmOrder`). The Burton–Keane theorems that
+assumed them were removed as vacuous.
+
+## ii. Key results
+
+- `fsp_treeSelector_of_rootedArmOrder` : tree selectors from the rooted arm order.
+- `fsp_rootedArmOrder_of_divergentArmOrder` : the rooted order from the divergent order.
+
+## iii. Table of contents
+
+- A. Tree selectors
+- B. Arm placements and the rooted order
+- C. Arm witnesses
+- D. The divergent order
+- E. The count
+- F. Unsatisfiability of the configuration-wide conditions
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -107,44 +79,17 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Tree selectors -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem fsp_singleCut_sep_of_distinctWitness (ω : ConfigSpace (Sym2 (Site d)))
+lemma fsp_singleCut_sep_of_distinctWitness (ω : ConfigSpace (Sym2 (Site d)))
     {x a c bx by_ : Site d}
     (hdis : ¬ Connected d (removeSite x ω) a c)
     (hbx : bkfl_inArm ω x a bx) (hby : bkfl_inArm ω x c by_) :
     ¬ Connected d (removeSite x ω) bx by_ :=
   bkfl_arms_separate ω hdis hbx hby
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Tree selector: arm ends `b x` in the box with infinite clusters after removing `x`, such that
+removing `x` separates `b x` from `b y` for connected trifurcations `x ≠ y`. -/
 def fsp_TreeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -154,62 +99,29 @@ def fsp_TreeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
       x ≠ y → Connected d ω x y →
       ¬ Connected d (removeSite x ω) (b x) (b y))
 
-
-
-
-
-theorem fsp_treeSelector_iff_singleCut (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma fsp_treeSelector_iff_singleCut (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     fsp_TreeSelector ω n ↔ daep2_SingleCutBranchSeparation ω n := Iff.rfl
 
-
-theorem fsp_singleCut_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_singleCut_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : fsp_TreeSelector ω n) : daep2_SingleCutBranchSeparation ω n := h
 
+/-! ## B. Arm placements and the rooted order -/
 
-
-
-
-
-
-
-
-
-
-
-
+/-- `b x` and `b y` lie in arms at `x` through neighbours `a`, `c` that are disconnected after `x`
+is
+removed. -/
 def fsp_ArmPlacement (ω : ConfigSpace (Sym2 (Site d))) (b : Site d → Site d) (x y : Site d) :
     Prop :=
   ∃ a c : Site d, ¬ Connected d (removeSite x ω) a c ∧
     bkfl_inArm ω x a (b x) ∧ bkfl_inArm ω x c (b y)
 
-
-
-theorem fsp_singleCutSep_of_armPlacement (ω : ConfigSpace (Sym2 (Site d)))
+lemma fsp_singleCutSep_of_armPlacement (ω : ConfigSpace (Sym2 (Site d)))
     (b : Site d → Site d) {x y : Site d} (h : fsp_ArmPlacement ω b x y) :
     ¬ Connected d (removeSite x ω) (b x) (b y) := by
   obtain ⟨a, c, hdis, hbx, hby⟩ := h
   exact fsp_singleCut_sep_of_distinctWitness ω hdis hbx hby
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Rooted arm order: arm ends `b x` with arm placements for all connected trifurcations `x ≠ y`. -/
 def fsp_RootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -218,36 +130,20 @@ def fsp_RootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → fsp_ArmPlacement ω b x y)
 
-
-
-
-theorem fsp_treeSelector_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_treeSelector_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : fsp_RootedArmOrder ω n) : fsp_TreeSelector ω n := by
   obtain ⟨b, hdata, hplace⟩ := h
   refine ⟨b, hdata, ?_⟩
   intro x hxbox htri y hybox htriy hxy hconn
   exact fsp_singleCutSep_of_armPlacement ω b (hplace x hxbox htri y hybox htriy hxy hconn)
 
-
-theorem fsp_singleCut_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_singleCut_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : fsp_RootedArmOrder ω n) : daep2_SingleCutBranchSeparation ω n :=
   fsp_singleCut_of_treeSelector ω n (fsp_treeSelector_of_rootedArmOrder ω n h)
 
+/-! ## C. Arm witnesses -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fsp_inSomeArm_of_connected (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
+lemma fsp_inSomeArm_of_connected (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
     (hxv : Connected d ω x v) (hne : x ≠ v) :
     ∃ a, (openSubgraph d ω).Adj x a ∧ Connected d (removeSite x ω) a v := by
   obtain ⟨p, hp⟩ := hxv.exists_isPath
@@ -255,115 +151,63 @@ theorem fsp_inSomeArm_of_connected (ω : ConfigSpace (Sym2 (Site d))) {x v : Sit
   | nil => exact absurd rfl hne
   | @cons _ a _ hadj q =>
     refine ⟨a, hadj, ?_⟩
-    
     have hnodup := hp.support_nodup
     rw [Walk.support_cons] at hnodup
     have hxq : x ∉ q.support := (List.nodup_cons.mp hnodup).1
     exact pap_connected_removeSite_of_walk_avoid ω x q hxq
 
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
+/-- A neighbour of `x` through which `v` is reached after `x` is removed, when `x` and `v` are
+connected
+and distinct; otherwise `x`. -/
 noncomputable def fsp_armWitness (ω : ConfigSpace (Sym2 (Site d))) (x v : Site d) : Site d :=
   if h : Connected d ω x v ∧ x ≠ v then
     (fsp_inSomeArm_of_connected ω h.1 h.2).choose
   else x
 
-
-
-theorem fsp_armWitness_inArm (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
+lemma fsp_armWitness_inArm (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
     (hxv : Connected d ω x v) (hne : x ≠ v) :
     Connected d (removeSite x ω) (fsp_armWitness ω x v) v := by
   classical
-  rw [fsp_armWitness, dif_pos ⟨hxv, hne⟩]
+  rw [fsp_armWitness, dite_eq_left ⟨hxv, hne⟩]
   exact (fsp_inSomeArm_of_connected ω hxv hne).choose_spec.2
 
-
-theorem fsp_armWitness_adj (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
+lemma fsp_armWitness_adj (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
     (hxv : Connected d ω x v) (hne : x ≠ v) :
     (openSubgraph d ω).Adj x (fsp_armWitness ω x v) := by
   classical
-  rw [fsp_armWitness, dif_pos ⟨hxv, hne⟩]
+  rw [fsp_armWitness, dite_eq_left ⟨hxv, hne⟩]
   exact (fsp_inSomeArm_of_connected ω hxv hne).choose_spec.1
 
-
-
+/-- The arm witnesses of `u` and `v` at `x` are connected after `x` is removed. -/
 def fsp_sameArm (ω : ConfigSpace (Sym2 (Site d))) (x u v : Site d) : Prop :=
   Connected d (removeSite x ω) (fsp_armWitness ω x u) (fsp_armWitness ω x v)
 
-
-
-
-
-theorem fsp_sep_of_notSameArm (ω : ConfigSpace (Sym2 (Site d))) {x u v : Site d}
+lemma fsp_sep_of_notSameArm (ω : ConfigSpace (Sym2 (Site d))) {x u v : Site d}
     (hxu : Connected d ω x u) (hneu : x ≠ u)
     (hxv : Connected d ω x v) (hnev : x ≠ v)
     (hdiv : ¬ fsp_sameArm ω x u v) :
     ¬ Connected d (removeSite x ω) u v := by
   intro huv
-  
   exact hdiv ((fsp_armWitness_inArm ω hxu hneu).trans
     (huv.trans (fsp_armWitness_inArm ω hxv hnev).symm))
 
-
-
-
-
-
-
-
-
-
-
-
-theorem fsp_armPlacement_of_divergentWitness (ω : ConfigSpace (Sym2 (Site d)))
+lemma fsp_armPlacement_of_divergentWitness (ω : ConfigSpace (Sym2 (Site d)))
     (b : Site d → Site d) {x y a c : Site d}
     (hdis : ¬ Connected d (removeSite x ω) a c)
     (hbx : bkfl_inArm ω x a (b x)) (hby : bkfl_inArm ω x c (b y)) :
     fsp_ArmPlacement ω b x y := ⟨a, c, hdis, hbx, hby⟩
 
-
-
-theorem fsp_inArm_of_witness (ω : ConfigSpace (Sym2 (Site d))) {x a v : Site d}
+lemma fsp_inArm_of_witness (ω : ConfigSpace (Sym2 (Site d))) {x a v : Site d}
     (h : Connected d (removeSite x ω) a v) : bkfl_inArm ω x a v := h
 
-
-
-theorem fsp_inArm_self (ω : ConfigSpace (Sym2 (Site d))) (x a : Site d) :
+lemma fsp_inArm_self (ω : ConfigSpace (Sym2 (Site d))) (x a : Site d) :
     bkfl_inArm ω x a a := bkfl_inArm_self ω x a
 
+/-! ## D. The divergent order -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Divergent arm order: arm ends `b x ≠ x` such that for connected trifurcations `x ≠ y`, `b x` and
+`b y` are in different arms at `x`. -/
 def fsp_DivergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -372,12 +216,7 @@ def fsp_DivergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → ¬ fsp_sameArm ω x (b x) (b y))
 
-
-
-
-
-
-theorem fsp_armPlacement_of_divergence (ω : ConfigSpace (Sym2 (Site d)))
+lemma fsp_armPlacement_of_divergence (ω : ConfigSpace (Sym2 (Site d)))
     (b : Site d → Site d) {x y : Site d}
     (hbxx : b x ≠ x) (hbyx : x ≠ b y)
     (hxbx : Connected d ω x (b x)) (hxby : Connected d ω x (b y))
@@ -387,13 +226,7 @@ theorem fsp_armPlacement_of_divergence (ω : ConfigSpace (Sym2 (Site d)))
   · exact fsp_armWitness_inArm ω hxbx (Ne.symm hbxx)
   · exact fsp_armWitness_inArm ω hxby hbyx
 
-
-
-
-
-
-
-theorem fsp_rootedArmOrder_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_rootedArmOrder_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : fsp_DivergentArmOrder ω n) : fsp_RootedArmOrder ω n := by
   obtain ⟨b, hdata, hdiv⟩ := h
   refine ⟨b, ?_, ?_⟩
@@ -403,53 +236,27 @@ theorem fsp_rootedArmOrder_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d)
   · intro x hxbox htri y hybox htriy hxy hconn
     obtain ⟨_, hbxx, hxbx, _⟩ := hdata x hxbox htri
     obtain ⟨_, hbyy, hyby, _⟩ := hdata y hybox htriy
-    
     have hxby : Connected d ω x (b y) := hconn.trans hyby
-    
-    
-    
-    
     by_cases hcase : x = b y
-    · 
-      
-      
-      
-      
-      refine ⟨fsp_armWitness ω x (b x), fsp_armWitness ω x (b y),
+    · refine ⟨fsp_armWitness ω x (b x), fsp_armWitness ω x (b y),
         hdiv x hxbox htri y hybox htriy hxy hconn, ?_, ?_⟩
       · exact fsp_armWitness_inArm ω hxbx (Ne.symm hbxx)
-      · 
-        
-        have hwit : fsp_armWitness ω x (b y) = x := by
+      · have hwit : fsp_armWitness ω x (b y) = x := by
           rw [← hcase]; simp only [fsp_armWitness]
-          rw [dif_neg (by rintro ⟨_, hne⟩; exact hne rfl)]
-        show Connected d (removeSite x ω) (fsp_armWitness ω x (b y)) (b y)
+          rw [dite_eq_right (by rintro ⟨_, hne⟩; exact hne rfl)]
+        change Connected d (removeSite x ω) (fsp_armWitness ω x (b y)) (b y)
         rw [hwit, ← hcase]
     · exact fsp_armPlacement_of_divergence ω b hbxx hcase hxbx hxby
         (hdiv x hxbox htri y hybox htriy hxy hconn)
 
-
-
-
-
-
-
-
-
-
-theorem fsp_rootedArmOrder_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_rootedArmOrder_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     fsp_RootedArmOrder ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
 
-
-
-
-
-
-theorem fsp_rootedArmOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_rootedArmOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (habox : a ∈ box d n) (haconn : Connected d ω x₀ a)
     (hainf : (cluster d (removeSite x₀ ω) a).Infinite)
@@ -471,20 +278,7 @@ theorem fsp_rootedArmOrder_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n :
   · intro x hxbox htri y hybox htriy hxy _
     exact absurd ((huniq x hxbox htri).trans (huniq y hybox htriy).symm) hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fsp_rootedArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_rootedArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d)
     (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
@@ -510,13 +304,7 @@ theorem fsp_rootedArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : �
       · exact hplace_yx
       · exact absurd rfl hxy
 
-
-
-
-
-
-
-theorem fsp_divergentArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_divergentArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d)
     (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
@@ -542,105 +330,53 @@ theorem fsp_divergentArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n :
       · exact hdiv_yx
       · exact absurd rfl hxy
 
+/-! ## E. The count -/
 
-
-
-
-
-
-
-
-
-theorem fsp_Tcount_le_boundary_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_Tcount_le_boundary_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : fsp_TreeSelector ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   daep2_Tcount_le_boundary_of_singleCut ω n hn (fsp_singleCut_of_treeSelector ω n h)
 
-
-theorem fsp_Tcount_le_boundary_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_Tcount_le_boundary_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : fsp_RootedArmOrder ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   fsp_Tcount_le_boundary_of_treeSelector ω n hn (fsp_treeSelector_of_rootedArmOrder ω n h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fsp_burton_keane_bernoulli_of_treeSelector (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → fsp_TreeSelector ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  daep2_burton_keane_bernoulli_of_singleCut hd p hp1 hp0
-    (fun ω n hn => fsp_singleCut_of_treeSelector ω n (hres ω n hn))
-    htrif
-
-
-
-
-theorem fsp_burton_keane_bernoulli_of_rootedArmOrder (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → fsp_RootedArmOrder ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  fsp_burton_keane_bernoulli_of_treeSelector hd p hp1 hp0
-    (fun ω n hn => fsp_treeSelector_of_rootedArmOrder ω n (hres ω n hn))
-    htrif
-
-
-theorem fsp_Tcount_le_boundary_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma fsp_Tcount_le_boundary_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : fsp_DivergentArmOrder ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   fsp_Tcount_le_boundary_of_rootedArmOrder ω n hn
     (fsp_rootedArmOrder_of_divergentArmOrder ω n h)
 
+/-! ## F. Unsatisfiability of the configuration-wide conditions -/
 
+/-- `fsp_TreeSelector` for every configuration and every box of radius `n ≥ 1` is impossible when
+`d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+`tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma fsp_not_forall_treeSelector (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      fsp_TreeSelector ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    fsp_Tcount_le_boundary_of_treeSelector ω n hn (h ω n hn)
 
+/-- `fsp_RootedArmOrder` for every configuration and every box of radius `n ≥ 1` is impossible when
+`d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+`tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma fsp_not_forall_rootedArmOrder (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      fsp_RootedArmOrder ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    fsp_Tcount_le_boundary_of_rootedArmOrder ω n hn (h ω n hn)
 
-theorem fsp_burton_keane_bernoulli_of_divergentArmOrder (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → fsp_DivergentArmOrder ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  fsp_burton_keane_bernoulli_of_rootedArmOrder hd p hp1 hp0
-    (fun ω n hn => fsp_rootedArmOrder_of_divergentArmOrder ω n (hres ω n hn))
-    htrif
+/-- `fsp_DivergentArmOrder` for every configuration and every box of radius `n ≥ 1` is impossible
+when
+`d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+`tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma fsp_not_forall_divergentArmOrder (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      fsp_DivergentArmOrder ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    fsp_Tcount_le_boundary_of_divergentArmOrder ω n hn (h ω n hn)
 
 end Percolation
 

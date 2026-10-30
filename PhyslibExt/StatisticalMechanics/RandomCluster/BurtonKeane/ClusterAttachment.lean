@@ -6,74 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment
+
+/-!
+# Attachment by walks avoiding the origin
+
+An open walk avoiding the origin from a neighbour of the origin to a site survives removing the
+origin and forcing edges, which gives cluster attachment, Menger attachment and disjoint routing.
+
+## i. Overview
+
+An open walk whose support avoids the origin survives `removeSite 0`, also after forcing edges.
+`cla_AvoidingAttachment ω x` asks for a neighbour `a` of the origin in the cluster of `x` with such
+a walk to `x`, and an infinite cluster without the origin. It gives cluster attachment, and its box
+version `cla_BoxAvoidingAttachment` gives Menger attachment and disjoint routing. Neighbours with
+infinite clusters satisfy it.
+
+## ii. Key results
+
+- `cla_clusterAttachment_of_avoidingAttachment` : cluster attachment from avoiding attachment.
+- `cla_disjointRouting_of_boxAvoiding` : disjoint routing from the box version.
+
+## iii. Table of contents
+
+- A. Surviving walks
+- B. Avoiding attachment
+- C. The box version
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -87,22 +55,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Surviving walks -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem cla_walk_survival_force (ω : ConfigSpace (Sym2 (Site d))) (W : Finset (Sym2 (Site d)))
+lemma cla_walk_survival_force (ω : ConfigSpace (Sym2 (Site d))) (W : Finset (Sym2 (Site d)))
     {a x : Site d} (w : (openSubgraph d ω).Walk a x) (hw : (0 : Site d) ∉ w.support) :
     Connected d (removeSite 0 (forceOpenFinset W ω)) a x := by
   induction w with
@@ -119,30 +74,13 @@ theorem cla_walk_survival_force (ω : ConfigSpace (Sym2 (Site d))) (W : Finset (
       bka_isOpenEdge_survives ω W hopen h0e
     exact hsurv.connected.trans (ih h0rest)
 
-
-
-
-theorem cla_walk_survival (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
+lemma cla_walk_survival (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (w : (openSubgraph d ω).Walk a x) (hw : (0 : Site d) ∉ w.support) :
     Connected d (removeSite 0 ω) a x := by
   have h := cla_walk_survival_force ω ∅ w hw
   rwa [bka_forceOpenFinset_empty] at h
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem cla_clusterAttachment_of_avoidingWalk (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
+lemma cla_clusterAttachment_of_avoidingWalk (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (hadj : (hypercubicLattice d).Adj 0 a) (hmem : a ∈ cluster d ω x)
     (w : (openSubgraph d ω).Walk a x) (hw : (0 : Site d) ∉ w.support)
     (hri : (cluster d (removeSite 0 ω) x).Infinite) :
@@ -153,22 +91,11 @@ theorem cla_clusterAttachment_of_avoidingWalk (ω : ConfigSpace (Sym2 (Site d)))
   · intro e he; exact absurd he (Finset.notMem_empty e)
   · exact cla_walk_survival_force ω ∅ w hw
 
+/-! ## B. Avoiding attachment -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Some neighbour `a` of the origin in the cluster of `x` has an open walk to `x` avoiding the
+origin,
+and the cluster of `x` without the origin is infinite. -/
 def cla_AvoidingAttachment (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) : Prop :=
   ∃ (a : Site d) (w : (openSubgraph d ω).Walk a x),
     (hypercubicLattice d).Adj 0 a ∧
@@ -176,26 +103,12 @@ def cla_AvoidingAttachment (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) : Pro
     (0 : Site d) ∉ w.support ∧
     (cluster d (removeSite 0 ω) x).Infinite
 
-
-
-
-theorem cla_clusterAttachment_of_avoidingAttachment (ω : ConfigSpace (Sym2 (Site d)))
+lemma cla_clusterAttachment_of_avoidingAttachment (ω : ConfigSpace (Sym2 (Site d)))
     (x : Site d) (h : cla_AvoidingAttachment ω x) : bma_ClusterAttachment ω x := by
   obtain ⟨a, w, hadj, hmem, hw, hri⟩ := h
   exact cla_clusterAttachment_of_avoidingWalk ω hadj hmem w hw hri
 
-
-
-
-
-
-
-
-
-
-
-
-theorem cla_avoidingAttachment_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
+lemma cla_avoidingAttachment_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hadj : (hypercubicLattice d).Adj 0 x)
     (hri : (cluster d (removeSite 0 ω) x).Infinite) :
     cla_AvoidingAttachment ω x := by
@@ -203,29 +116,10 @@ theorem cla_avoidingAttachment_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (
   simp only [SimpleGraph.Walk.support_nil, List.mem_singleton]
   exact hadj.ne
 
+/-! ## C. The box version -/
 
-
-
-theorem cla_clusterAttachment_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (hadj : (hypercubicLattice d).Adj 0 x)
-    (hri : (cluster d (removeSite 0 ω) x).Infinite) :
-    bma_ClusterAttachment ω x :=
-  cla_clusterAttachment_of_avoidingAttachment ω x
-    (cla_avoidingAttachment_of_neighbour ω x hadj hri)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Box version: in every configuration of `threeMeetBox d n`, the sites of three distinct infinite
+clusters meeting the box have avoiding attachments. -/
 def cla_BoxAvoidingAttachment (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →
@@ -234,10 +128,7 @@ def cla_BoxAvoidingAttachment (d n : ℕ) : Prop :=
       cluster d ω x₂ ≠ cluster d ω x₃ →
       cla_AvoidingAttachment ω x₁ ∧ cla_AvoidingAttachment ω x₂ ∧ cla_AvoidingAttachment ω x₃
 
-
-
-
-theorem cla_boxClusterAttachment_of_boxAvoiding {n : ℕ}
+lemma cla_boxClusterAttachment_of_boxAvoiding {n : ℕ}
     (h : cla_BoxAvoidingAttachment d n) : bma_BoxClusterAttachment d n := by
   intro ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
   obtain ⟨ha1, ha2, ha3⟩ := h ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
@@ -245,32 +136,15 @@ theorem cla_boxClusterAttachment_of_boxAvoiding {n : ℕ}
     cla_clusterAttachment_of_avoidingAttachment ω x₂ ha2,
     cla_clusterAttachment_of_avoidingAttachment ω x₃ ha3⟩
 
-
-
-
-theorem cla_boxMengerAttachment_of_boxAvoiding {n : ℕ}
+lemma cla_boxMengerAttachment_of_boxAvoiding {n : ℕ}
     (h : cla_BoxAvoidingAttachment d n) : bmm_BoxMengerAttachment d n :=
   bma_boxMengerAttachment (cla_boxClusterAttachment_of_boxAvoiding h)
 
-
-
-
-
-theorem cla_disjointRouting_of_boxAvoiding {n : ℕ}
+lemma cla_disjointRouting_of_boxAvoiding {n : ℕ}
     (h : cla_BoxAvoidingAttachment d n) : hrHD_DisjointRouting d n :=
   bma_disjointRouting_of_clusterAttachment (cla_boxClusterAttachment_of_boxAvoiding h)
 
-
-
-
-
-
-
-
-
-
-
-theorem cla_three_avoidingAttachments_of_neighbours (ω : ConfigSpace (Sym2 (Site d)))
+lemma cla_three_avoidingAttachments_of_neighbours (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d)
     (hadj : (hypercubicLattice d).Adj 0 x₁ ∧ (hypercubicLattice d).Adj 0 x₂ ∧
       (hypercubicLattice d).Adj 0 x₃)

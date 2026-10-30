@@ -6,96 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -115,6 +25,38 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Coherent
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DivergentArmOrder
 
+/-!
+# Claws exclude the divergent arm order
+
+A claw of four connected trifurcations cannot carry a divergent arm order, so the divergent arm
+order for every configuration fails as soon as one configuration contains a claw.
+
+## i. Overview
+
+In `removeSites T ω` the sites of `T` are isolated, so infinite cut clusters avoid `T`. Arm ends in
+the same class at a trifurcation lie in the same arm. A three-colour argument (`stac_claw_unsat`)
+shows that the arm clauses of the divergent order cannot all hold on a claw, while the shadow of the
+clauses without the divergence condition is consistent. With the colouring `stac_colorOf` of sites
+by arm, a claw configuration `stac_ClawConfig` excludes `fsp_DivergentArmOrder`, so the divergent
+arm order for every configuration and box is false when some configuration contains a claw.
+
+## ii. Key results
+
+- `stac_not_divergentArmOrder_of_claw` : a claw excludes the divergent arm order.
+- `stac_uniform_divergentArmOrder_false` : the uniform divergent arm order fails when a claw exists.
+
+## iii. Table of contents
+
+- A. Removing a finite set
+- B. The colour argument
+- C. Claws
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -128,61 +70,38 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Removing a finite set -/
 
-
-
-
-
-
-
-
-
-theorem stac_removeSites_no_neighbor (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
+lemma stac_removeSites_no_neighbor (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
     {x w : Site d} (hxT : x ∈ T) : ¬ (openSubgraph d (removeSites T ω)).Adj x w := by
   intro hadj
   have : (removeSites T ω) s(x, w) = true := hadj.2
-  rw [removeSites, if_pos ⟨x, hxT, Sym2.mem_mk_left x _⟩] at this
+  rw [removeSites, ite_eq_left ⟨x, hxT, Sym2.mem_mk_left x _⟩] at this
   exact Bool.false_ne_true this
 
-
-
-theorem stac_removeSites_connected_eq (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
+lemma stac_removeSites_connected_eq (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
     {x v : Site d} (hxT : x ∈ T) (hconn : Connected d (removeSites T ω) x v) : v = x := by
   rcases hconn with ⟨w⟩
   cases w with
   | nil => rfl
   | cons hadj p => exact absurd hadj (stac_removeSites_no_neighbor T ω hxT)
 
-
-
-theorem stac_removeSites_cluster_singleton (T : Finset (Site d))
+lemma stac_removeSites_cluster_singleton (T : Finset (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) {x : Site d} (hxT : x ∈ T) :
     cluster d (removeSites T ω) x = {x} := by
   ext v
   simp only [mem_cluster, Set.mem_singleton_iff]
   exact ⟨fun h => stac_removeSites_connected_eq T ω hxT h, fun h => h ▸ connected_rfl⟩
 
-
-
-
-theorem stac_infiniteCluster_notMem (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
+lemma stac_infiniteCluster_notMem (T : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
     {w : Site d} (hinf : (cluster d (removeSites T ω) w).Infinite) : w ∉ T := by
   intro hwT
   rw [stac_removeSites_cluster_singleton T ω hwT] at hinf
   exact hinf (Set.finite_singleton w)
 
+/-! ## B. The colour argument -/
 
-
-
-
-
-
-
-
-
-
-
-theorem stac_sameArm_of_sameClass (ω : ConfigSpace (Sym2 (Site d))) {x₀ aj u v : Site d}
+lemma stac_sameArm_of_sameClass (ω : ConfigSpace (Sym2 (Site d))) {x₀ aj u v : Site d}
     (hxu : Connected d ω x₀ u) (hneu : x₀ ≠ u)
     (hxv : Connected d ω x₀ v) (hnev : x₀ ≠ v)
     (hu : Connected d (removeSite x₀ ω) aj u)
@@ -193,29 +112,7 @@ theorem stac_sameArm_of_sameClass (ω : ConfigSpace (Sym2 (Site d))) {x₀ aj u 
   have hwv := fsp_armWitness_inArm ω hxv hnev
   exact hwu.trans (hu.symm.trans (hv.trans hwv.symm))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem stac_claw_unsat
+lemma stac_claw_unsat
     (cx : Fin 3) (cy : Fin 3 → Fin 3)
     (ay : Fin 3 → Fin 3) (ayj : Fin 3 → Fin 3 → Fin 3)
     (Gay : ∀ i, ay i = 0 ↔ cy i ≠ i)
@@ -223,7 +120,6 @@ theorem stac_claw_unsat
     (Dx0 : ∀ i, cx ≠ cy i)
     (Dyiyj : ∀ i j, j ≠ i → ay i ≠ ayj i j) :
     False := by
-  
   have step1 : ∀ i j : Fin 3, j ≠ i → cy i = i ∨ cy j = i := by
     intro i j hji
     by_contra hcon
@@ -232,7 +128,6 @@ theorem stac_claw_unsat
     have h1 : ay i = 0 := (Gay i).mpr hi
     have h2 : ayj i j = 0 := (Gayj i j).mpr hj
     exact Dyiyj i j hji (by rw [h1, h2])
-  
   have step2 : ∀ a : Fin 3, cy a = a := by
     intro a
     by_contra ha
@@ -251,18 +146,9 @@ theorem stac_claw_unsat
     rcases step1 b c hbc with h | h
     · exact hb ((hcyb.symm.trans h).symm)
     · exact hb ((hcyc.symm.trans h).symm)
-  
   exact Dx0 cx (by rw [step2 cx])
 
-
-
-
-
-
-
-
-
-theorem stac_claw_shadow_consistent :
+lemma stac_claw_shadow_consistent :
     ∃ (cy : Fin 3 → Fin 3) (ay : Fin 3 → Fin 3) (ayj : Fin 3 → Fin 3 → Fin 3),
       (∀ i, ay i = 0 ↔ cy i ≠ i) ∧ (∀ i j, ayj i j = 0 ↔ cy j ≠ i) := by
   classical
@@ -272,39 +158,26 @@ theorem stac_claw_shadow_consistent :
     have hr : ¬ (id i ≠ i) := fun h => h rfl
     exact ⟨fun h => absurd h hl, fun h => absurd h hr⟩
   · intro i j
-    show (if j = i then (1 : Fin 3) else 0) = 0 ↔ id j ≠ i
+    change (if j = i then (1 : Fin 3) else 0) = 0 ↔ id j ≠ i
     by_cases hji : j = i
     · have hl : ¬ ((1 : Fin 3) = 0) := by decide
       have hr : ¬ (id j ≠ i) := by rw [id_eq, hji]; exact fun h => h rfl
-      rw [if_pos hji]
+      rw [ite_eq_left hji]
       exact ⟨fun h => absurd h hl, fun h => absurd h hr⟩
-    · rw [if_neg hji]
+    · rw [ite_eq_right hji]
       exact ⟨fun _ => fun h => hji h, fun _ => rfl⟩
 
-
-
-
-
-
-
-
-
+/-! ## C. Claws -/
 
 open Classical in
-
-
-
+/-- The colour of `w` at the claw centre `x₀`: the index of the arm `a i` connected to the arm
+witness
+of `w` after removing `x₀`, or `0` if none. -/
 noncomputable def stac_colorOf (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
     (a : Fin 3 → Site d) (w : Site d) : Fin 3 :=
   if h : ∃ i, Connected d (removeSite x₀ ω) (a i) (fsp_armWitness ω x₀ w) then h.choose else 0
 
-
-
-
-
-
-
-theorem stac_colorOf_faithful (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
+lemma stac_colorOf_faithful (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
     (a : Fin 3 → Site d)
     (hsep : ∀ i j, i ≠ j → ¬ Connected d (removeSite x₀ ω) (a i) (a j))
     (hcover : ∀ w, Connected d ω x₀ w → x₀ ≠ w →
@@ -314,7 +187,7 @@ theorem stac_colorOf_faithful (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
     stac_colorOf ω x₀ a u = stac_colorOf ω x₀ a v ↔ fsp_sameArm ω x₀ u v := by
   classical
   unfold stac_colorOf fsp_sameArm
-  rw [dif_pos (hcover u hu hneu), dif_pos (hcover v hv hnev)]
+  rw [dite_eq_left (hcover u hu hneu), dite_eq_left (hcover v hv hnev)]
   set i := (hcover u hu hneu).choose with hi
   set j := (hcover v hv hnev).choose with hj
   have hispec : Connected d (removeSite x₀ ω) (a i) (fsp_armWitness ω x₀ u) :=
@@ -329,112 +202,58 @@ theorem stac_colorOf_faithful (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
     by_contra hijne
     exact hsep i j hijne (hispec.trans (hsame.trans hjspec.symm))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- A claw in the box of radius `n`: a trifurcation `x₀` connected to three trifurcations `y i` in
+its
+three different arms, with arm labellings `lx` and `ly`. -/
 def stac_ClawConfig (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (x₀ : Site d) (y : Fin 3 → Site d) (lx : Site d → Fin 3) (ly : Fin 3 → Site d → Fin 3),
-    
     (x₀ ∈ box d n ∧ IsTrifurcation d ω x₀) ∧
-    
     (∀ i, y i ∈ box d n ∧ IsTrifurcation d ω (y i) ∧ x₀ ≠ y i ∧ Connected d ω x₀ (y i)) ∧
     Function.Injective y ∧
-    
     (∀ u v, Connected d ω x₀ u → x₀ ≠ u → Connected d ω x₀ v → x₀ ≠ v →
       (lx u = lx v ↔ fsp_sameArm ω x₀ u v)) ∧
-    
     (∀ i u v, Connected d ω (y i) u → y i ≠ u → Connected d ω (y i) v → y i ≠ v →
       (ly i u = ly i v ↔ fsp_sameArm ω (y i) u v)) ∧
-    
     (∀ i, lx (y i) = i) ∧
-    
     (∀ i w, Connected d ω x₀ w → x₀ ≠ w → Connected d ω (y i) w → y i ≠ w →
       (ly i w = 0 ↔ lx w ≠ i))
 
-
-
-
-
-
-
-
-
-
-
-
-theorem stac_not_divergentArmOrder_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stac_not_divergentArmOrder_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hclaw : stac_ClawConfig ω n) : ¬ fsp_DivergentArmOrder ω n := by
   classical
   obtain ⟨x₀, y, lx, ly, ⟨hx0box, htri0⟩, hydata, hyinj, hlxf, hlyf, hydown, hGstar⟩ := hclaw
   rintro ⟨b, hbdata, hdiv⟩
   set T := tfc_trifFinset ω n with hT
-  
   have hx0T : x₀ ∈ T := tfc_mem_trifFinset.mpr ⟨hx0box, htri0⟩
   have hyT : ∀ i, y i ∈ T := fun i =>
     tfc_mem_trifFinset.mpr ⟨(hydata i).1, (hydata i).2.1⟩
-  
   obtain ⟨_, hbx0ne, hbx0conn, hbx0inf⟩ := hbdata x₀ hx0box htri0
-  
   have hbx0notin : b x₀ ∉ T := stac_infiniteCluster_notMem T ω hbx0inf
   have hbynotin : ∀ i, b (y i) ∉ T := fun i =>
     stac_infiniteCluster_notMem T ω (hbdata (y i) (hydata i).1 (hydata i).2.1).2.2.2
-  
   have hne_bx0 : x₀ ≠ b x₀ := fun h => hbx0notin (h ▸ hx0T)
   have hne_x0_byi : ∀ i, x₀ ≠ b (y i) := fun i h => hbynotin i (h ▸ hx0T)
   have hne_yi_byj : ∀ i j, y i ≠ b (y j) := fun i j h => hbynotin j (h ▸ hyT i)
-  
   have hx0byi : ∀ i, Connected d ω x₀ (b (y i)) := fun i =>
     (hydata i).2.2.2.trans (hbdata (y i) (hydata i).1 (hydata i).2.1).2.2.1
   have hyi_byi : ∀ i, Connected d ω (y i) (b (y i)) := fun i =>
     (hbdata (y i) (hydata i).1 (hydata i).2.1).2.2.1
-  
   have hyi_byj : ∀ i j, Connected d ω (y i) (b (y j)) := fun i j =>
     ((hydata i).2.2.2.symm.trans (hx0byi j))
-  
   set cx : Fin 3 := lx (b x₀) with hcx
   set cy : Fin 3 → Fin 3 := fun i => lx (b (y i)) with hcy
   set ayv : Fin 3 → Fin 3 := fun i => ly i (b (y i)) with hayv
   set ayjv : Fin 3 → Fin 3 → Fin 3 := fun i j => ly i (b (y j)) with hayjv
-  
   have Gay : ∀ i, ayv i = 0 ↔ cy i ≠ i := fun i =>
     hGstar i (b (y i)) (hx0byi i) (hne_x0_byi i) (hyi_byi i) (hne_yi_byj i i)
-  
   have Gayj : ∀ i j, ayjv i j = 0 ↔ cy j ≠ i := fun i j =>
     hGstar i (b (y j)) (hx0byi j) (hne_x0_byi j) (hyi_byj i j) (hne_yi_byj i j)
-  
   have Dx0 : ∀ i, cx ≠ cy i := by
     intro i hcoll
     have hsame : fsp_sameArm ω x₀ (b x₀) (b (y i)) :=
       (hlxf (b x₀) (b (y i)) hbx0conn hne_bx0 (hx0byi i) (hne_x0_byi i)).mp hcoll
     exact hdiv x₀ hx0box htri0 (y i) (hydata i).1 (hydata i).2.1
       (hydata i).2.2.1 (hydata i).2.2.2 hsame
-  
   have Dyiyj : ∀ i j, j ≠ i → ayv i ≠ ayjv i j := by
     intro i j hji hcoll
     have hyij : y i ≠ y j := fun h => hji (hyinj h).symm
@@ -445,28 +264,11 @@ theorem stac_not_divergentArmOrder_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n
       hyij ((hydata i).2.2.2.symm.trans (hydata j).2.2.2) hsame
   exact stac_claw_unsat cx cy ayv ayjv Gay Gayj Dx0 Dyiyj
 
-
-
-
-
-
-
-
-
-
-
-
-theorem stac_claw_excludes_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma stac_claw_excludes_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hclaw : stac_ClawConfig ω n) (hdiv : fsp_DivergentArmOrder ω n) : False :=
   stac_not_divergentArmOrder_of_claw ω n hclaw hdiv
 
-
-
-
-
-
-
-theorem stac_uniform_divergentArmOrder_false
+lemma stac_uniform_divergentArmOrder_false
     (hex : ∃ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n ∧ stac_ClawConfig ω n) :
     ¬ (∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → fsp_DivergentArmOrder ω n) := by
   obtain ⟨ω, n, hn, hclaw⟩ := hex

@@ -6,102 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestNeighbourSpanningTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeForestData
+
+/-!
+# Collapsing a box to a super-vertex
+
+Collapsing the box around a coarse trifurcation to its centre gives a quotient graph in which the
+trifurcation has three separated neighbours; this gives the count for a single hub.
+
+## i. Overview
+
+`bc72_quotGraph G f` is the image of `G` under `f`, without loops. Collapsing the `L`-box around `y`
+(`bc72_collapseBox`) maps every site of the box to `y`. Connectivity passes to the quotient, and a
+quotient walk avoiding `y` gives a connection after removing the box. Arms of a coarse trifurcation
+become neighbours of `y`, separated after `y` is removed, so `y` has degree at least three in a
+spanning forest. This gives the forest neighbours and the count for a single hub; the multi-box
+version `bc72_MultiBoxForestOnQuot` is the forest neighbour condition.
+
+## ii. Key results
+
+- `bc72_quot_deg3_of_gnTrif` : degree three of a coarse trifurcation in the quotient.
+- `bc72_count_of_singleHub` : the count for a single hub.
+
+## iii. Table of contents
+
+- A. Quotient graphs
+- B. Collapsing a box
+- C. Coarse trifurcations in the quotient
+- D. Examples and the multi-box version
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -109,9 +51,6 @@ open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-set_option linter.unusedDecidableInType false
-set_option linter.unusedVariables false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -120,83 +59,55 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Quotient graphs -/
 
-
-
-
-
-
+/-- The image of `G` under `f`: distinct `u`, `v` are adjacent when they are images of adjacent
+vertices. -/
 def bc72_quotGraph {V B : Type*} (G : SimpleGraph V) (f : V → B) : SimpleGraph B where
   Adj u v := u ≠ v ∧ ∃ a b, f a = u ∧ f b = v ∧ G.Adj a b
   symm := ⟨by rintro u v ⟨hne, a, b, ha, hb, hab⟩; exact ⟨hne.symm, b, a, hb, ha, hab.symm⟩⟩
   loopless := ⟨by rintro u ⟨h, _⟩; exact h rfl⟩
 
-@[simp] theorem bc72_quotGraph_adj {V B : Type*} (G : SimpleGraph V) (f : V → B) (u v : B) :
+@[simp] lemma bc72_quotGraph_adj {V B : Type*} (G : SimpleGraph V) (f : V → B) (u v : B) :
     (bc72_quotGraph G f).Adj u v ↔ u ≠ v ∧ ∃ a b, f a = u ∧ f b = v ∧ G.Adj a b := Iff.rfl
 
+/-! ## B. Collapsing a box -/
 
-
-
-
-
+/-- Map every site of the `L`-box around `y` to `y` and fix the other sites. -/
 noncomputable def bc72_collapseBox (L : ℕ) (y : Site d) : Site d → Site d :=
   fun x => if x ∈ bc61_boxAround d L y then y else x
 
-theorem bc72_collapseBox_outside {L : ℕ} {y x : Site d} (hx : x ∉ bc61_boxAround d L y) :
-    bc72_collapseBox L y x = x := by unfold bc72_collapseBox; rw [if_neg hx]
+lemma bc72_collapseBox_outside {L : ℕ} {y x : Site d} (hx : x ∉ bc61_boxAround d L y) :
+    bc72_collapseBox L y x = x := by unfold bc72_collapseBox; rw [ite_eq_right hx]
 
-theorem bc72_collapseBox_inside {L : ℕ} {y x : Site d} (hx : x ∈ bc61_boxAround d L y) :
-    bc72_collapseBox L y x = y := by unfold bc72_collapseBox; rw [if_pos hx]
+lemma bc72_collapseBox_inside {L : ℕ} {y x : Site d} (hx : x ∈ bc61_boxAround d L y) :
+    bc72_collapseBox L y x = y := by unfold bc72_collapseBox; rw [ite_eq_left hx]
 
-
-theorem bc72_collapseBox_center (L : ℕ) (y : Site d) : bc72_collapseBox L y y = y :=
+lemma bc72_collapseBox_center (L : ℕ) (y : Site d) : bc72_collapseBox L y y = y :=
   bc72_collapseBox_inside (by rw [bc61_mem_boxAround]; simp)
 
-theorem bc72_y_mem_box (L : ℕ) (y : Site d) : y ∈ bc61_boxAround d L y := by
+lemma bc72_y_mem_box (L : ℕ) (y : Site d) : y ∈ bc61_boxAround d L y := by
   rw [bc61_mem_boxAround]; simp
 
-
-
-theorem bc72_collapse_ne_center {L : ℕ} {y p : Site d} (h : bc72_collapseBox L y p ≠ y) :
+lemma bc72_collapse_ne_center {L : ℕ} {y p : Site d} (h : bc72_collapseBox L y p ≠ y) :
     p ∉ bc61_boxAround d L y ∧ bc72_collapseBox L y p = p := by
   by_cases hp : p ∈ bc61_boxAround d L y
   · exact absurd (bc72_collapseBox_inside hp) h
   · exact ⟨hp, bc72_collapseBox_outside hp⟩
 
-
-
-
-theorem bc72_notMem_of_removeSites_open {T : Finset (Site d)} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_notMem_of_removeSites_open {T : Finset (Site d)} {ω : ConfigSpace (Sym2 (Site d))}
     {a b : Site d} (h : removeSites T ω s(a, b) = true) : a ∉ T ∧ b ∉ T := by
   unfold removeSites at h
   by_cases hc : ∃ t ∈ T, t ∈ (s(a, b) : Sym2 (Site d))
-  · rw [if_pos hc] at h; exact absurd h (by simp)
+  · rw [ite_eq_left hc] at h; exact absurd h (by simp)
   · refine ⟨fun ha => hc ⟨a, ha, by simp⟩, fun hb => hc ⟨b, hb, by simp⟩⟩
 
-
-theorem bc72_notMem_box_of_cut_adj {L : ℕ} {y a b : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_notMem_box_of_cut_adj {L : ℕ} {y a b : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hadj : (openSubgraph d (removeSites (bc61_boxAround d L y) ω)).Adj a b) :
     a ∉ bc61_boxAround d L y ∧ b ∉ bc61_boxAround d L y :=
   bc72_notMem_of_removeSites_open hadj.2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc72_quot_edge_to_removeSites {L : ℕ} {y u v : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_quot_edge_to_removeSites {L : ℕ} {y u v : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hadj : (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Adj u v)
     (huy : u ≠ y) (hvy : v ≠ y) :
     (openSubgraph d (removeSites (bc61_boxAround d L y) ω)).Adj u v := by
@@ -209,10 +120,7 @@ theorem bc72_quot_edge_to_removeSites {L : ℕ} {y u v : Site d} {ω : ConfigSpa
   obtain ⟨hlat, hopen⟩ := hpq
   exact ⟨hlat, by rw [bc61_removeBox_apply_of_notMem hpbox hqbox]; exact hopen⟩
 
-
-
-
-theorem bc72_quot_reachable_of_reachable {L : ℕ} {y a b : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_quot_reachable_of_reachable {L : ℕ} {y a b : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (h : Connected d ω a b) :
     (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Reachable
       (bc72_collapseBox L y a) (bc72_collapseBox L y b) := by
@@ -227,11 +135,7 @@ theorem bc72_quot_reachable_of_reachable {L : ℕ} {y a b : Site d} {ω : Config
           (bc72_collapseBox L y u) (bc72_collapseBox L y v) := ⟨hfe, u, v, rfl, rfl, hadj⟩
       exact hq.reachable.trans ih
 
-
-
-
-
-theorem bc72_removeSites_reachable_of_quot_avoid {L : ℕ} {y u v : Site d}
+lemma bc72_removeSites_reachable_of_quot_avoid {L : ℕ} {y u v : Site d}
     {ω : ConfigSpace (Sym2 (Site d))}
     (w : (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Walk u v)
     (hw : y ∉ w.support) :
@@ -245,11 +149,7 @@ theorem bc72_removeSites_reachable_of_quot_avoid {L : ℕ} {y u v : Site d}
     exact (Adj.reachable
       (bc72_quot_edge_to_removeSites hab (Ne.symm hay) (Ne.symm hby))).trans (ih hw')
 
-
-
-
-
-theorem bc72_removeSites_of_quotInduce {L : ℕ} {y a₁ a₂ : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_removeSites_of_quotInduce {L : ℕ} {y a₁ a₂ : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (ha₁ : a₁ ≠ y) (ha₂ : a₂ ≠ y)
     (h : ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce
       ({y}ᶜ : Set (Site d))).Reachable ⟨a₁, by simpa using ha₁⟩ ⟨a₂, by simpa using ha₂⟩) :
@@ -267,43 +167,22 @@ theorem bc72_removeSites_of_quotInduce {L : ℕ} {y a₁ a₂ : Site d} {ω : Co
     exact hc hcx
   exact bc72_removeSites_reachable_of_quot_avoid w' hsupp
 
+/-! ## C. Coarse trifurcations in the quotient -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc72_arm_adjacent_to_superVertex {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_arm_adjacent_to_superVertex {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hinc : bc67_GnIncident ω L y a) (hne : a ∉ bc61_boxAround d L y) :
     (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Adj y a := by
   obtain ⟨b, hbbox, hadj⟩ := hinc
   have hay : a ≠ y := fun h => hne (h ▸ bc72_y_mem_box L y)
   exact ⟨hay.symm, b, a, bc72_collapseBox_inside hbbox, bc72_collapseBox_outside hne, hadj⟩
 
-
-
-
-
-
-theorem bc72_arms_nonAdjacent {L : ℕ} {y a₁ a₂ : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_arms_nonAdjacent {L : ℕ} {y a₁ a₂ : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (ha₁ : a₁ ≠ y) (ha₂ : a₂ ≠ y)
     (hcut : ¬ (bc67_contractedLattice ω L y).Reachable a₁ a₂) :
     ¬ (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Adj a₁ a₂ := fun hadj =>
   hcut ((bc72_quot_edge_to_removeSites hadj ha₁ ha₂).reachable)
 
-
-
-
-
-theorem bc72_arm_outside_of_infinite {L : ℕ} {x a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_arm_outside_of_infinite {L : ℕ} {x a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hinf : (cluster d (removeSites (bc61_boxAround d L x) ω) a).Infinite) :
     a ∉ bc61_boxAround d L x := by
   intro habox
@@ -317,21 +196,7 @@ theorem bc72_arm_outside_of_infinite {L : ℕ} {x a : Site d} {ω : ConfigSpace 
   | @cons a' b c hab w =>
     exact absurd habox (bc72_notMem_of_removeSites_open hab.2).1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc72_rs_of_doubleInduce {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_rs_of_doubleInduce {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     {S : Set (Site d)} (hyS : y ∈ S)
     {a₁ a₂ : (↑S : Type)} (h1 : a₁ ≠ ⟨y, hyS⟩) (h2 : a₂ ≠ ⟨y, hyS⟩)
     (h : (((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).induce
@@ -352,20 +217,12 @@ theorem bc72_rs_of_doubleInduce {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (
   exact bc72_removeSites_reachable_of_quot_avoid w' hsupp
 
 open Classical in
-
-
-
-
-
-
-
-
-
-theorem bc72_quot_deg3_of_gnTrif {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
+lemma bc72_quot_deg3_of_gnTrif {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (h : bc67_IsGnTrifurcation ω L y) :
     ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (hyS : y ∈ S)
       (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).Adj),
-      3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).degree ⟨y, hyS⟩ := by
+      3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).degree ⟨y,
+          hyS⟩ := by
   classical
   obtain ⟨a₁, a₂, a₃, ⟨hi1, hi2, hi3⟩, ⟨hf1, hf2, hf3⟩, hc12, hc13, hc23⟩ := h
   set Q := bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y) with hQ
@@ -380,9 +237,9 @@ theorem bc72_quot_deg3_of_gnTrif {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 
   have hm1 : a₁ ∈ S := by simp [hSdef]
   have hm2 : a₂ ∈ S := by simp [hSdef]
   have hm3 : a₃ ∈ S := by simp [hSdef]
-  haveI hSfin : Fintype (↑S : Type) := by rw [hSdef]; exact Set.Finite.fintype (by simp)
+  have hSfin : Fintype (↑S : Type) := by rw [hSdef]; exact Set.Finite.fintype (by simp)
   set G := Q.induce S with hGdef
-  haveI hGdec : DecidableRel G.Adj := Classical.decRel _
+  have hGdec : DecidableRel G.Adj := Classical.decRel _
   have hGadj1 : G.Adj ⟨y, hyS⟩ ⟨a₁, hm1⟩ := bc72_arm_adjacent_to_superVertex hi1 ho1
   have hGadj2 : G.Adj ⟨y, hyS⟩ ⟨a₂, hm2⟩ := bc72_arm_adjacent_to_superVertex hi2 ho2
   have hGadj3 : G.Adj ⟨y, hyS⟩ ⟨a₃, hm3⟩ := bc72_arm_adjacent_to_superVertex hi3 ho3
@@ -402,26 +259,8 @@ theorem bc72_quot_deg3_of_gnTrif {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 
     exact hc23 (bc72_rs_of_doubleInduce hyS (a₁ := ⟨a₂, hm2⟩) (a₂ := ⟨a₃, hm3⟩)
       (fun hh => hy2 (congrArg Subtype.val hh)) (fun hh => hy3 (congrArg Subtype.val hh)) hr)
 
-
-
-
-
-
-
-
-
-
-
 open Classical in
-
-
-
-
-
-
-
-
-theorem bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {x : Site d} (a : Fin 3 → Site d)
     (hxbox : x ∈ box d R)
     (hsingle : ∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → y = x)
@@ -446,7 +285,7 @@ theorem bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) 
         | (exact absurd (hainj huv) (by decide))
   set S : Set (Site d) := Set.range lab with hSdef
   have hmem : ∀ i : Fin 4, lab i ∈ S := fun i => ⟨i, rfl⟩
-  haveI hSfin : Fintype (↑S : Type) := by rw [hSdef]; exact Set.fintypeRange lab
+  have hSfin : Fintype (↑S : Type) := by rw [hSdef]; exact Set.fintypeRange lab
   set e : Fin 4 ≃ (↑S : Type) :=
     Equiv.ofBijective (fun i => (⟨lab i, hmem i⟩ : (↑S : Type)))
       ⟨fun u v huv => hlabinj (Subtype.ext_iff.mp huv),
@@ -459,7 +298,7 @@ theorem bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) 
   have hGadj : ∀ u v : Fin 4, G.Adj (e u) (e v) ↔ bc70_star4.Adj u v := by
     intro u v; have := hisoG.map_adj_iff (v := u) (w := v); simpa [hisoApp] using this
   have hGac : G.IsAcyclic := (hisoG.symm.isAcyclic_iff).mpr bc70_star4_acyclic
-  haveI hGdec : DecidableRel G.Adj := Classical.decRel _
+  have hGdec : DecidableRel G.Adj := Classical.decRel _
   have hdeg : ∀ i : Fin 4, G.degree (e i) = bc70_star4.degree i := by
     intro i
     rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree]
@@ -474,8 +313,7 @@ theorem bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) 
     rw [hnbhd, Finset.card_image_of_injective _ e.injective]
   refine ⟨S, hSfin, ⟨e 0⟩, G, hGdec, (fun _ => e 0), hGac, ?_, ?_, ?_, ?_⟩
   · intro v; obtain ⟨i, rfl⟩ := hsurj v; rw [hdeg]; exact bc70_star4_deg_pos i
-  · 
-    intro y hybox htri
+  · intro y hybox htri
     have hyx : y = x := hsingle y hybox htri
     subst hyx
     refine ⟨e 1, e 2, e 3, (hGadj 0 1).mpr (by decide), (hGadj 0 2).mpr (by decide),
@@ -495,10 +333,7 @@ theorem bc72_GnForestNeighbours_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) 
     · simp only [hlab]; exact habdry 1
     · simp only [hlab]; exact habdry 2
 
-
-
-
-theorem bc72_count_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc72_count_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {x : Site d} (a : Fin 3 → Site d)
     (hxbox : x ∈ box d R)
     (hsingle : ∀ y, y ∈ box d R → bc67_IsGnTrifurcation ω L y → y = x)
@@ -510,32 +345,18 @@ theorem bc72_count_of_singleHub (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (hainj : Function.Injective a) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc71_count_of_forestNeighbours ω L R
-    (bc72_GnForestNeighbours_of_singleHub ω L R a hxbox hsingle habdry hincid haoutside hcut hxne hainj)
+    (bc72_GnForestNeighbours_of_singleHub ω L R a hxbox hsingle habdry hincid haoutside hcut hxne
+        hainj)
 
+/-! ## D. Examples and the multi-box version -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc72_upperLines_arm_adjacent {L : ℕ} (hL : 3 ≤ L) :
+lemma bc72_upperLines_arm_adjacent {L : ℕ} (hL : 3 ≤ L) :
     ∃ a : Site 2, (bc72_quotGraph (openSubgraph 2 bc60_upperLines)
         (bc72_collapseBox L (0 : Site 2))).Adj 0 a := by
   obtain ⟨a₁, a₂, a₃, ⟨hi1, _, _⟩, ⟨hf1, _, _⟩, _⟩ := bc67_upperLines_is_G_n_trifurcation hL
   exact ⟨a₁, bc72_arm_adjacent_to_superVertex hi1 (bc72_arm_outside_of_infinite hf1)⟩
 
-
-
-
-
-theorem bc72_upperLines_deg3 {L : ℕ} (hL : 3 ≤ L) :
+lemma bc72_upperLines_deg3 {L : ℕ} (hL : 3 ≤ L) :
     ∃ (S : Set (Site 2)) (_ : Fintype (↑S : Type)) (hyS : (0 : Site 2) ∈ S)
       (_ : DecidableRel ((bc72_quotGraph (openSubgraph 2 bc60_upperLines)
               (bc72_collapseBox L (0 : Site 2))).induce S).Adj),
@@ -543,66 +364,27 @@ theorem bc72_upperLines_deg3 {L : ℕ} (hL : 3 ≤ L) :
             (bc72_collapseBox L (0 : Site 2))).induce S).degree ⟨0, hyS⟩ :=
   bc72_quot_deg3_of_gnTrif (bc67_upperLines_is_G_n_trifurcation hL)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The multi-box forest condition on the quotient, defined as `bc71_GnForestNeighbours`. -/
 def bc72_MultiBoxForestOnQuot (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   bc71_GnForestNeighbours ω L R
 
-
-
-
-theorem bc72_forestNeighbours_of_multiBox (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc72_forestNeighbours_of_multiBox (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc72_MultiBoxForestOnQuot ω L R) : bc71_GnForestNeighbours ω L R := h
 
-
-
-theorem bc72_count_of_multiBox (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
+lemma bc72_count_of_multiBox (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc72_MultiBoxForestOnQuot ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc71_count_of_forestNeighbours ω L R h
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc72_status :
-    
+lemma bc72_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y a : Site d),
       bc67_GnIncident ω L y a → a ∉ bc61_boxAround d L y →
       (bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).Adj y a) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d), bc67_IsGnTrifurcation ω L y →
       ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (hyS : y ∈ S)
-        (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).Adj),
+        (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce
+            S).Adj),
         3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).degree ⟨y, hyS⟩) ∧
-    
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
       bc72_MultiBoxForestOnQuot ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) := by
   refine ⟨?_, ?_, ?_⟩

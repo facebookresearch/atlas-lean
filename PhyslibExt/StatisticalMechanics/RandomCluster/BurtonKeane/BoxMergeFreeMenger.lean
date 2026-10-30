@@ -6,85 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence
+
+/-!
+# Box Menger attachment
+
+Distinct clusters are disjoint and closed under open edges; Menger attachment of three clusters in
+every configuration of the box gives merge-free insertion, three clusters at the origin and disjoint
+routing.
+
+## i. Overview
+
+A cluster is closed under open edges, and distinct clusters are disjoint, so neighbours lying in
+them are distinct. `bmm_BoxMengerAttachment d n` asks, for every configuration of `threeMeetBox d n`
+and three distinct infinite clusters meeting the box, for three neighbours of the origin and a
+forced edge set attaching them to the clusters. It gives merge-free insertion, three clusters
+reaching the origin after forcing, and disjoint routing. Neighbour witnesses satisfy it.
+
+## ii. Key results
+
+- `bmm_disjointRouting_of_attachment` : disjoint routing from Menger attachment.
+
+## iii. Table of contents
+
+- A. Clusters as regions
+- B. Menger attachment
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -98,68 +53,32 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Clusters as regions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bmm_cluster_omegaClosed (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
+lemma bmm_cluster_omegaClosed (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     ∀ u v, u ∈ cluster d ω x → IsOpenEdge d ω u v → v ∈ cluster d ω x := by
   intro u v hu hedge
   rw [mem_cluster] at hu ⊢
   exact hu.trans hedge.connected
 
-
-
-
-
-theorem bmm_regions_disjoint (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
+/-- Same statement as `bcc_cluster_disjoint_of_ne`; kept because TrifurcationExistence2 uses it. -/
+lemma bmm_regions_disjoint (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
     (hxy : cluster d ω x ≠ cluster d ω y) :
     Disjoint (cluster d ω x) (cluster d ω y) :=
   bcc_cluster_disjoint_of_ne ω x y hxy
 
-
-
-
-
-theorem bmm_distinct_neighbours_of_disjoint_regions {a b : Site d} {R S : Set (Site d)}
+lemma bmm_distinct_neighbours_of_disjoint_regions {a b : Site d} {R S : Set (Site d)}
     (ha : a ∈ R) (hb : b ∈ S) (hdisj : Disjoint R S) : a ≠ b := by
   intro he
   have hmem : a ∈ R ∩ S := ⟨ha, he ▸ hb⟩
   rw [Set.disjoint_iff_inter_eq_empty.mp hdisj] at hmem
   exact absurd hmem (Set.notMem_empty _)
 
+/-! ## B. Menger attachment -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Box Menger attachment: in every configuration of `threeMeetBox d n`, three distinct infinite
+clusters meeting the box can be attached to three distinct neighbours of the origin by forcing a
+finite set of edges avoiding the origin, keeping them separated without the origin. -/
 def bmm_BoxMengerAttachment (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →
@@ -181,32 +100,7 @@ def bmm_BoxMengerAttachment (d n : ℕ) : Prop :=
           (cluster d (removeSite 0 ω) x₂).Infinite ∧
           (cluster d (removeSite 0 ω) x₃).Infinite)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bmm_boxMergeFreeInsertion_of_attachment {n : ℕ}
+lemma bmm_boxMergeFreeInsertion_of_attachment {n : ℕ}
     (h : bmm_BoxMengerAttachment d n) : tre_BoxMergeFreeInsertion d n := by
   intro ω hω
   obtain ⟨hI, x₁, x₂, x₃, hb1, hb2, hb3, hi1, hi2, hi3, hcd12, hcd13, hcd23⟩ := hω
@@ -214,11 +108,9 @@ theorem bmm_boxMergeFreeInsertion_of_attachment {n : ℕ}
     ⟨hc1, hc2, hc3⟩, ⟨hri1, hri2, hri3⟩⟩ :=
     h ω ⟨hI, x₁, x₂, x₃, hb1, hb2, hb3, hi1, hi2, hi3, hcd12, hcd13, hcd23⟩
       x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
-  
   have hd12 : Disjoint (cluster d ω x₁) (cluster d ω x₂) := bmm_regions_disjoint ω hcd12
   have hd13 : Disjoint (cluster d ω x₁) (cluster d ω x₃) := bmm_regions_disjoint ω hcd13
   have hd23 : Disjoint (cluster d ω x₂) (cluster d ω x₃) := bmm_regions_disjoint ω hcd23
-  
   have hne12 : a₁ ≠ a₂ := bmm_distinct_neighbours_of_disjoint_regions ha1 ha2 hd12
   have hne13 : a₁ ≠ a₃ := bmm_distinct_neighbours_of_disjoint_regions ha1 ha3 hd13
   have hne23 : a₂ ≠ a₃ := bmm_distinct_neighbours_of_disjoint_regions ha2 ha3 hd23
@@ -228,54 +120,17 @@ theorem bmm_boxMergeFreeInsertion_of_attachment {n : ℕ}
     ⟨bmm_cluster_omegaClosed ω x₁, bmm_cluster_omegaClosed ω x₂, bmm_cluster_omegaClosed ω x₃⟩,
     ⟨hg1, hg2, hg3⟩, ⟨hd12, hd13, hd23⟩⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bmm_threeClustersReachOrigin_of_attachment {n : ℕ}
+lemma bmm_threeClustersReachOrigin_of_attachment {n : ℕ}
     (h : bmm_BoxMengerAttachment d n) :
     ∀ ω ∈ threeMeetBox d n, ∃ W : Finset (Sym2 (Site d)),
       mco_ThreeClustersReachOrigin (forceOpenFinset W ω) :=
   tre_threeClustersReachOrigin_of_finiteEnergy (bmm_boxMergeFreeInsertion_of_attachment h)
 
-
-
-
-
-theorem bmm_disjointRouting_of_attachment {n : ℕ}
+lemma bmm_disjointRouting_of_attachment {n : ℕ}
     (h : bmm_BoxMengerAttachment d n) : hrHD_DisjointRouting d n :=
   tre_disjointRouting_of_finiteEnergy (bmm_boxMergeFreeInsertion_of_attachment h)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bmm_attachment_of_neighbour_witnesses (ω : ConfigSpace (Sym2 (Site d)))
+lemma bmm_attachment_of_neighbour_witnesses (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d)
     (hadj : (hypercubicLattice d).Adj 0 x₁ ∧ (hypercubicLattice d).Adj 0 x₂ ∧
       (hypercubicLattice d).Adj 0 x₃)

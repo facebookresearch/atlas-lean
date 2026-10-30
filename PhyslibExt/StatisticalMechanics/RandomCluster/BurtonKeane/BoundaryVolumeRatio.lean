@@ -6,51 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -60,6 +15,45 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKe
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
+
+/-!
+# Bernoulli percolation: finite energy, ergodicity and the boundary ratio
+
+Bernoulli bond percolation has finite energy for merges and is ergodic, and the boundary of a box is
+negligible relative to its volume.
+
+## i. Overview
+
+Cylinder events on disjoint finite sets are independent under a product measure, and changing
+finitely many factors to absolutely continuous ones gives an absolutely continuous product. Forcing
+finitely many edges open is absolutely continuous for `p > 0`, so Bernoulli percolation has finite
+energy for merges (`bkc_bernoulli_hasFiniteEnergyMerge`). Shifts act freely on sites and edges, so
+Bernoulli percolation is ergodic (`bkc_bernoulli_isErgodic`). The boundary of the box of radius `n`
+has at most `2d/n` times its volume, so the ratio tends to `0` (`bkc_boundary_vol_tendsto`).
+
+The counting form of Burton–Keane that combined these with a deterministic bound `Tcount ≤ |∂Λₙ|`
+for every configuration was removed as vacuous: that bound fails for `d ≥ 1`
+(`tfc_not_forall_Tcount_le_boundary`).
+
+## ii. Key results
+
+- `bkc_bernoulli_hasFiniteEnergyMerge` : finite energy for merges.
+- `bkc_bernoulli_isErgodic` : ergodicity of Bernoulli percolation.
+- `bkc_boundary_vol_tendsto` : the boundary-to-volume ratio tends to zero.
+
+## iii. Table of contents
+
+- A. Product measures
+- B. Finite energy
+- C. Ergodicity
+- D. The boundary ratio
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section 8.2.
+-/
 
 @[expose] public section
 
@@ -71,18 +65,11 @@ namespace StatMech
 
 namespace Percolation
 
-
-
-
-
-
-
 variable {ι : Type*} {X : ι → Type*} [∀ i, MeasurableSpace (X i)]
 
+/-! ## A. Product measures -/
 
-
-
-theorem bkc_infinitePi_disjoint_cylinder
+lemma bkc_infinitePi_disjoint_cylinder
     (μ : (i : ι) → Measure (X i)) [∀ i, IsProbabilityMeasure (μ i)]
     {s t : Finset ι} {S : Set (Π i : s, X i)} {T : Set (Π i : t, X i)}
     (hS : MeasurableSet S) (hT : MeasurableSet T) (hd : Disjoint s t) :
@@ -95,9 +82,7 @@ theorem bkc_infinitePi_disjoint_cylinder
       S T hS hT
 
 omit [∀ i, MeasurableSpace (X i)] in
-
-
-theorem bkc_projP_preimage_cylinder (p : ι → Prop) (s : Finset (Subtype p))
+lemma bkc_projP_preimage_cylinder (p : ι → Prop) (s : Finset (Subtype p))
     (S : Set (Π j : s, X ((j : Subtype p) : ι))) :
     (fun (ω : Π i, X i) (j' : Subtype p) => ω (j' : ι)) ⁻¹' (cylinder s S)
       = cylinder (s.map (Function.Embedding.subtype p))
@@ -106,11 +91,7 @@ theorem bkc_projP_preimage_cylinder (p : ι → Prop) (s : Finset (Subtype p))
                 by rw [Finset.mem_map]; exact ⟨(j : Subtype p), j.2, rfl⟩⟩) ⁻¹' S) := by
   ext ω; simp only [Set.mem_preimage, mem_cylinder]; rfl
 
-
-
-
-
-theorem bkc_infinitePi_map_piEquivPiSubtypeProd
+lemma bkc_infinitePi_map_piEquivPiSubtypeProd
     (μ : (i : ι) → Measure (X i)) [∀ i, IsProbabilityMeasure (μ i)]
     (p : ι → Prop) [DecidablePred p] :
     (Measure.infinitePi μ).map (MeasurableEquiv.piEquivPiSubtypeProd X p)
@@ -159,10 +140,7 @@ theorem bkc_infinitePi_map_piEquivPiSubtypeProd
     have hj : (j2 : ι) = j1 := hj2
     exact j2.2 (hj ▸ j1.2)
 
-
-
-
-theorem bkc_pi_absolutelyContinuous_fin :
+lemma bkc_pi_absolutelyContinuous_fin :
     ∀ (n : ℕ) {Y : Fin n → Type*} [∀ k, MeasurableSpace (Y k)]
       (ν μ : (k : Fin n) → Measure (Y k))
       [∀ k, IsProbabilityMeasure (μ k)] [∀ k, IsProbabilityMeasure (ν k)],
@@ -197,10 +175,7 @@ theorem bkc_pi_absolutelyContinuous_fin :
       (ih (fun j => ν (Fin.succAbove 0 j)) (fun j => μ (Fin.succAbove 0 j))
         (fun j => h _))).map e.symm.measurable
 
-
-
-
-theorem bkc_pi_absolutelyContinuous_fintype {κ : Type*} [Fintype κ] {Y : κ → Type*}
+lemma bkc_pi_absolutelyContinuous_fintype {κ : Type*} [Fintype κ] {Y : κ → Type*}
     [∀ k, MeasurableSpace (Y k)] (ν μ : (k : κ) → Measure (Y k))
     [∀ k, IsProbabilityMeasure (μ k)] [∀ k, IsProbabilityMeasure (ν k)]
     (h : ∀ k, ν k ≪ μ k) : Measure.pi ν ≪ Measure.pi μ := by
@@ -213,14 +188,7 @@ theorem bkc_pi_absolutelyContinuous_fintype {κ : Type*} [Fintype κ] {Y : κ �
   rw [← hmpμ.map_eq, ← hmpν.map_eq]
   exact hfin.map (MeasurableEquiv.piCongrLeft Y ee.symm).measurable
 
-
-
-
-
-
-
-
-theorem bkc_infinitePi_ac_of_finite_diff
+lemma bkc_infinitePi_ac_of_finite_diff
     (ν μ : (i : ι) → Measure (X i)) [∀ i, IsProbabilityMeasure (μ i)]
     [∀ i, IsProbabilityMeasure (ν i)]
     (F : Finset ι) (hdiff : ∀ i ∉ F, ν i = μ i) (hac : ∀ i, ν i ≪ μ i) :
@@ -251,30 +219,22 @@ theorem bkc_infinitePi_ac_of_finite_diff
         rw [Measure.map_map e.symm.measurable e.measurable, MeasurableEquiv.symm_comp_self,
           Measure.map_id]
 
-
-
-
-
-
-
-
 variable {d : ℕ}
 
+/-! ## B. Finite energy -/
 
+/-- The Bernoulli law pushed forward by forcing the edge `e` open when `e ∈ F` is a probability
+measure. -/
 instance bkc_isProbMeasure_factor (p : ℝ≥0) (hp : p ≤ 1) (e : Sym2 (Site d))
     (F : Finset (Sym2 (Site d))) :
     IsProbabilityMeasure ((bernoulliMeasure p hp).map (fun b => if e ∈ F then true else b)) :=
   inferInstance
 
-
-
-
-
-theorem bkc_factor_ac (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0 < p) (e : Sym2 (Site d))
+lemma bkc_factor_ac (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0 < p) (e : Sym2 (Site d))
     (F : Finset (Sym2 (Site d))) :
     (bernoulliMeasure p hp).map (fun b => if e ∈ F then true else b) ≪ bernoulliMeasure p hp := by
   by_cases h : e ∈ F
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     refine Measure.AbsolutelyContinuous.mk ?_
     intro s hs hs0
     rw [Measure.map_apply (by fun_prop) hs]
@@ -289,24 +249,13 @@ theorem bkc_factor_ac (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0 < p) (e : Sym2 (Site
     · have hpre : (fun _ : Bool => true) ⁻¹' s = ∅ := by
         ext x; simp only [Set.mem_preimage, Set.mem_empty_iff_false, iff_false]; exact ht
       rw [hpre]; simp
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     have he : (fun b : Bool => b) = id := rfl
     rw [he, Measure.map_id]
 
-
-
-
-
-
-
-
-
-
-
-theorem bkc_bernoulli_hasFiniteEnergyMerge (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0 < p) :
+lemma bkc_bernoulli_hasFiniteEnergyMerge (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0 < p) :
     HasFiniteEnergyMerge (d := d) (bernoulliProductMeasure (E := Sym2 (Site d)) p hp) := by
   intro F
-  
   have hmap : (fun (ω : ConfigSpace (Sym2 (Site d))) => forceOpenFinset F ω)
       = (fun (ω : ConfigSpace (Sym2 (Site d))) e =>
           (fun b => if e ∈ F then true else b) (ω e)) := by
@@ -319,26 +268,22 @@ theorem bkc_bernoulli_hasFiniteEnergyMerge (p : ℝ≥0) (hp : p ≤ 1) (hp0 : 0
     unfold bernoulliProductMeasure
     refine Measure.infinitePi_map_pi (μ := fun _ : Sym2 (Site d) => bernoulliMeasure p hp)
       (f := fun e (b : Bool) => if e ∈ F then true else b) (fun e => ?_)
-    by_cases h : e ∈ F <;> simp only [h, if_true, if_false]
+    by_cases h : e ∈ F <;> simp only [h, ite_true, ite_false]
     · exact measurable_const
     · exact measurable_id
   rw [hpush]
-  
   have hμ : bernoulliProductMeasure (E := Sym2 (Site d)) p hp
       = Measure.infinitePi (fun _ : Sym2 (Site d) => bernoulliMeasure p hp) := rfl
   rw [hμ]
   refine bkc_infinitePi_ac_of_finite_diff _ _ F (fun e he => ?_)
     (fun e => bkc_factor_ac p hp hp0 e F)
-  
-  simp only [he, if_false]
+  simp only [he, ite_false]
   have he2 : (fun b : Bool => b) = id := rfl
   rw [he2, Measure.map_id]
 
+/-! ## C. Ergodicity -/
 
-
-
-
-theorem bkc_smul_site_injective (a : Site d) :
+lemma bkc_smul_site_injective (a : Site d) :
     Function.Injective (fun g : Multiplicative (Site d) => g • a) := by
   intro g g' h
   apply Multiplicative.toAdd.injective
@@ -347,11 +292,7 @@ theorem bkc_smul_site_injective (a : Site d) :
   simp only [smul_site_apply] at this
   linarith
 
-
-
-
-
-theorem bkc_smul_sym2_injective (a : Sym2 (Site d)) :
+lemma bkc_smul_sym2_injective (a : Sym2 (Site d)) :
     Function.Injective (fun g : Multiplicative (Site d) => g • a) := by
   intro g g' h
   simp only at h
@@ -367,11 +308,7 @@ theorem bkc_smul_sym2_injective (a : Sym2 (Site d)) :
       simp only [smul_site_apply] at e1 e2
       linarith
 
-
-
-
-
-theorem bkc_bernoulli_isErgodic (hd : 1 ≤ d) (p : ℝ≥0) (hp : p ≤ 1) :
+lemma bkc_bernoulli_isErgodic (hd : 1 ≤ d) (p : ℝ≥0) (hp : p ≤ 1) :
     IsErgodic (G := Multiplicative (Site d))
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp) := by
   have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
@@ -379,19 +316,12 @@ theorem bkc_bernoulli_isErgodic (hd : 1 ≤ d) (p : ℝ≥0) (hp : p ≤ 1) :
   exact FK.bernoulli_isErgodic (E := Sym2 (Site d)) (G := Multiplicative (Site d))
     bkc_smul_sym2_injective p hp
 
+/-! ## D. The boundary ratio -/
 
-
-
-
-
-
-theorem bkc_boxFinsetBK_card_pos (d n : ℕ) : 0 < (boxFinsetBK d n).card := by
+lemma bkc_boxFinsetBK_card_pos (d n : ℕ) : 0 < (boxFinsetBK d n).card := by
   unfold boxFinsetBK; rw [← boxSV_boxF_eq_toFinset, boxSV_card_boxF]; positivity
 
-
-
-
-theorem bkc_boundary_vol_ratio_le (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) :
+lemma bkc_boundary_vol_ratio_le (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) :
     (boxSV_boundaryCard d n : ℝ) / ((boxFinsetBK d n).card : ℝ) ≤ (2 * d : ℝ) / n := by
   have hboxcard : ((boxFinsetBK d n).card : ℝ) = (2 * (n : ℝ) + 1) ^ d := by
     unfold boxFinsetBK; rw [← boxSV_boxF_eq_toFinset, boxSV_card_boxF]; push_cast; ring
@@ -425,62 +355,13 @@ theorem bkc_boundary_vol_ratio_le (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) :
         have hle : (n : ℝ) ≤ 2 * (n : ℝ) + 1 := by linarith [show (0 : ℝ) ≤ n by positivity]
         nlinarith [hP0, mul_le_mul_of_nonneg_left hle (by positivity : (0 : ℝ) ≤ 2 * d * P)]
 
-
-
-
-theorem bkc_boundary_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
+lemma bkc_boundary_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
     Tendsto (fun n => (boxSV_boundaryCard d n : ℝ) / ((boxFinsetBK d n).card : ℝ))
       atTop (𝓝 0) := by
   have hd0 : Tendsto (fun n : ℕ => (2 * d : ℝ) / n) atTop (𝓝 0) := by
     simpa using (tendsto_const_nhds (x := (2 * d : ℝ))).div_atTop tendsto_natCast_atTop_atTop
   apply squeeze_zero' (Eventually.of_forall (fun n => by positivity)) ?_ hd0
   filter_upwards [eventually_ge_atTop 1] with n hn using bkc_boundary_vol_ratio_le d n hd hn
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bkc_burton_keane_bernoulli (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ),
-      Tcount d ω n ≤ boxSV_boundaryCard d n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_full (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n)
-    hbound
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd)
-    htrif
 
 end Percolation
 

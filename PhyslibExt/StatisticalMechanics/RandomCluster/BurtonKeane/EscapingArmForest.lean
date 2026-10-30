@@ -6,68 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -84,6 +22,37 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DownArmForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalDownArm
 
+/-!
+# Escaping down-arm data
+
+Arms meeting other trifurcations are not trifurcation-free, so claws refute trifurcation-free data;
+escaping down-arm data, with rays that escape every box, replace them.
+
+## i. Overview
+
+If a branch at `x₀` meets another trifurcation, that branch is not free of trifurcations, so a claw
+admits no trifurcation-free down-arm data. `bc32_EscapingDownArmData ω n rank` instead asks each arm
+end to reach sites outside every box while avoiding the other trifurcations. Trifurcation-free data
+give it, and it gives global-cut down-arm data, the bundled forest and the count bound. It holds for
+a chain of three and a claw, and the ray configuration shows the escaping clause is satisfiable.
+
+## ii. Key results
+
+- `bc32_not_tfreeDownArmData_of_clawTrif` : claws refute trifurcation-free data.
+- `bc32_Tcount_le_boundary_of_escapingDownArmData` : the count from escaping data.
+
+## iii. Table of contents
+
+- A. Trifurcation-free arms
+- B. Escaping down-arm data
+- C. Examples
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -97,42 +66,16 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Trifurcation-free arms -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc32_not_tfree_of_branchTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_not_tfree_of_branchTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a aⱼ y : Site d} (hmeet : Connected d (removeSite x₀ ω) a aⱼ)
     (hyj : Connected d (removeSite x₀ ω) aⱼ y) (hyT : y ∈ tfc_trifFinset ω n) :
     ¬ (∀ z, Connected d (removeSite x₀ ω) a z → z ∉ tfc_trifFinset ω n) := by
   intro hTfree
   exact hTfree y (hmeet.trans hyj) hyT
 
-
-
-
-
-
-
-
-
-
-
-theorem bc32_no_tfreeArm_of_armTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_no_tfreeArm_of_armTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ a₁ a₂ a₃ : Site d} (y : Fin 3 → Site d)
     (htrifArm : ∀ i, y i ∈ tfc_trifFinset ω n ∧
       Connected d (removeSite x₀ ω) (![a₁, a₂, a₃] i) (y i))
@@ -145,19 +88,7 @@ theorem bc32_no_tfreeArm_of_armTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
   · exact bc32_not_tfree_of_branchTrif ω n h (htrifArm 1).2 (htrifArm 1).1
   · exact bc32_not_tfree_of_branchTrif ω n h (htrifArm 2).2 (htrifArm 2).1
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc32_not_tfreeDownArmData_of_clawTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_not_tfreeDownArmData_of_clawTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) {x₀ a₁ a₂ a₃ : Site d} (y : Fin 3 → Site d)
     (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (htrifArm : ∀ i, y i ∈ tfc_trifFinset ω n ∧
@@ -171,32 +102,12 @@ theorem bc32_not_tfreeDownArmData_of_clawTrif (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨_, hbconn, hbinf, hbTfree⟩ := hbdata x₀ hx0box htri0
   exact bc32_no_tfreeArm_of_armTrif ω n y htrifArm (hcover (b x₀) hbinf hbconn) hbTfree
 
+/-! ## B. Escaping down-arm data -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Escaping down-arm data along `rank`: arm ends `b x` that reach, after removing `x`, sites
+outside
+every box by connections avoiding the other trifurcations, with the ends of connected trifurcations
+separated by removing the higher one. -/
 def bc32_EscapingDownArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ b : Site d → Site d,
@@ -209,13 +120,7 @@ def bc32_EscapingDownArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       x ≠ y → Connected d ω x y → rank x < rank y →
       ¬ Connected d (removeSite y ω) (b y) (b x))
 
-
-
-
-
-
-
-theorem bc32_escapingRay_of_tfree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {x a : Site d}
+lemma bc32_escapingRay_of_tfree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {x a : Site d}
     (hinf : (cluster d (removeSite x ω) a).Infinite)
     (hTfree : ∀ z, Connected d (removeSite x ω) a z → z ∉ tfc_trifFinset ω n) :
     ∀ m : ℕ, ∃ z, z ∉ box d m ∧
@@ -226,16 +131,7 @@ theorem bc32_escapingRay_of_tfree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {
   obtain ⟨w⟩ := hzconn
   exact ⟨z, hz, w, fun v hv => hTfree v (bc31_support_connected ω w hv)⟩
 
-
-
-
-
-
-
-
-
-
-theorem bc32_escapingDownArmData_of_tfreeDownArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_escapingDownArmData_of_tfreeDownArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (h : bc31_TfreeDownArmData ω n rank) :
     bc32_EscapingDownArmData ω n rank := by
   obtain ⟨b, hbdata, hsplit⟩ := h
@@ -244,11 +140,7 @@ theorem bc32_escapingDownArmData_of_tfreeDownArmData (ω : ConfigSpace (Sym2 (Si
   obtain ⟨hbbox, hbconn, hbinf, hbTfree⟩ := hbdata x hxbox htri
   exact ⟨hbbox, hbconn, bc32_escapingRay_of_tfree ω n hbinf hbTfree⟩
 
-
-
-
-
-theorem bc32_globalCutDownArmData_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc32_globalCutDownArmData_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (rank : Site d → ℕ ×ₗ ℕ) (h : bc32_EscapingDownArmData ω n rank) :
     bc30_GlobalCutDownArmData ω n rank := by
   obtain ⟨b, hbdata, hsplit⟩ := h
@@ -258,9 +150,7 @@ theorem bc32_globalCutDownArmData_of_escapingDownArmData (ω : ConfigSpace (Sym2
   obtain ⟨hbbox, hbconn, hesc⟩ := hbdata x hxbox htri
   exact ⟨hbbox, hbconn, bc31_globalCut_infinite_of_escaping ω hesc⟩
 
-
-
-theorem bc32_bundledRootedDownArmForest_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc32_bundledRootedDownArmForest_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (rank : Site d → ℕ ×ₗ ℕ)
     (hinj : ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → rank x ≠ rank y)
@@ -269,8 +159,7 @@ theorem bc32_bundledRootedDownArmForest_of_escapingDownArmData (ω : ConfigSpace
   bc30_bundledRootedDownArmForest_of_data ω n rank hinj
     (bc32_globalCutDownArmData_of_escapingDownArmData ω n rank h)
 
-
-theorem bc32_Tcount_le_boundary_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc32_Tcount_le_boundary_of_escapingDownArmData (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (hn : 1 ≤ n) (rank : Site d → ℕ ×ₗ ℕ)
     (hinj : ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → rank x ≠ rank y)
@@ -279,27 +168,9 @@ theorem bc32_Tcount_le_boundary_of_escapingDownArmData (ω : ConfigSpace (Sym2 (
   bc30_Tcount_le_boundary_of_data ω n hn rank hinj
     (bc32_globalCutDownArmData_of_escapingDownArmData ω n rank h)
 
+/-! ## C. Examples -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc32_escapingDownArmData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_escapingDownArmData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ m g : Site d} (b : Site d → Site d)
     (hx0box : x₀ ∈ box d n) (hmbox : m ∈ box d n) (hgbox : g ∈ box d n)
     (hx0m : x₀ ≠ m) (hx0g : x₀ ≠ g) (hmg : m ≠ g)
@@ -356,25 +227,7 @@ theorem bc32_escapingDownArmData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))
       exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
     · exact absurd rfl hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc32_escapingDownArmData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc32_escapingDownArmData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d) (y : Fin 3 → Site d) (b : Site d → Site d)
     (hx0box : x₀ ∈ box d n)
     (hydata : ∀ i, y i ∈ box d n ∧ x₀ ≠ y i ∧ Connected d ω x₀ (y i))
@@ -398,13 +251,13 @@ theorem bc32_escapingDownArmData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
   set rank : Site d → ℕ ×ₗ ℕ := fun z =>
     if z = x₀ then toLex (0, 0)
     else if h : ∃ i, z = y i then toLex (1, (h.choose : ℕ)) else toLex (2, 0) with hrank
-  have hrx0 : rank x₀ = toLex (0, 0) := by simp only [hrank, if_pos rfl]
+  have hrx0 : rank x₀ = toLex (0, 0) := by simp only [hrank, ite_eq_left rfl]
   have hry : ∀ i, rank (y i) = toLex (1, (i : ℕ)) := by
     intro i
     have hne : y i ≠ x₀ := (hydata i).2.1.symm
     have hex : ∃ k, y i = y k := ⟨i, rfl⟩
     have hchoose : hex.choose = i := hyinj hex.choose_spec.symm
-    simp only [hrank, if_neg hne, dif_pos hex, hchoose]
+    simp only [hrank, ite_eq_right hne, dite_eq_left hex, hchoose]
   refine ⟨b, ?_, ?_⟩
   · intro x hxbox htri
     rcases hsingle x hxbox htri with rfl | ⟨i, rfl⟩
@@ -425,27 +278,7 @@ theorem bc32_escapingDownArmData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n :
           · exact h
         exact hssib i j hji
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc32_pos_edge_open (k : ℤ) (hk : 1 ≤ k) :
+lemma bc32_pos_edge_open (k : ℤ) (hk : 1 ≤ k) :
     (openSubgraph 2 (removeSite (arc_p (-2)) arc_rayConfig)).Adj (arc_p k) (arc_p (k+1)) := by
   refine ⟨arc_p_adj k, ?_⟩
   have hnm : arc_p (-2) ∉ (s(arc_p k, arc_p (k+1)) : Sym2 (Site 2)) := by
@@ -456,10 +289,7 @@ theorem bc32_pos_edge_open (k : ℤ) (hk : 1 ≤ k) :
   rw [removeSite_apply_of_notMem hnm]
   exact arc_ray_open k (by omega)
 
-
-
-
-theorem bc32_pos_walk (j : ℕ) :
+lemma bc32_pos_walk (j : ℕ) :
     ∃ w : (openSubgraph 2 (removeSite (arc_p (-2)) arc_rayConfig)).Walk
         (arc_p 1) (arc_p (1 + (j:ℤ))),
       ∀ v ∈ w.support, ∃ k : ℤ, 1 ≤ k ∧ v = arc_p k := by
@@ -483,23 +313,13 @@ theorem bc32_pos_walk (j : ℕ) :
     · simp only [List.mem_singleton] at hv
       exact ⟨1 + (i:ℤ) + 1, by omega, by rw [hv]⟩
 
-
-theorem bc32_arc_outside (j : ℕ) : arc_p (1 + (j:ℤ)) ∉ box 2 j := by
+lemma bc32_arc_outside (j : ℕ) : arc_p (1 + (j:ℤ)) ∉ box 2 j := by
   rw [mem_box, not_forall]; refine ⟨0, ?_⟩
   rw [not_le]; simp only [arc_p, Matrix.cons_val_zero]
   have : ((1 + (j:ℤ))).natAbs = 1 + j := by omega
   omega
 
-
-
-
-
-
-
-
-
-
-theorem bc32_escapingClause_nonvacuous :
+lemma bc32_escapingClause_nonvacuous :
     ∃ (ω : ConfigSpace (Sym2 (Site 2))) (x a : Site 2) (T : Finset (Site 2)),
       a ∉ T ∧ x ∈ T ∧
       (∀ m : ℕ, ∃ z, z ∉ box 2 m ∧

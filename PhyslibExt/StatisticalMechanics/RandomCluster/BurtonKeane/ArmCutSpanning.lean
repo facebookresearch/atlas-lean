@@ -6,43 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -58,6 +21,46 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestRooting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutAcyclic
 
+/-!
+# The arm-adjacency graph spans
+
+Cutting open walks at trifurcations shows that the arm-adjacency graph spans every cluster; the
+original cut geometry fails, and a fixed version gives arm realisation and the count.
+
+## i. Overview
+
+A walk avoiding a finite set `S` transfers to the configuration with `S` removed
+(`bc39_transferWalk`). Cutting an open walk between two connected trifurcations at the trifurcations
+it meets gives arm-adjacent steps, so `bc38_ArmAdjSpanning` holds for every configuration
+(`bc39_armAdjSpanning`). The cut geometry `bc38_ArmCutGeometry` fails whenever an arm-adjacent pair
+exists. The fixed form `bc39_ArmCutGeometryFixed` exempts the two endpoints and gives arm
+realisation and the trifurcation count bound.
+
+The configuration-wide form of this condition, for every configuration and every box of radius
+`n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration, which `tfc_not_forall_Tcount_le_boundary` refutes
+(`bc39_not_forall_cutGeometryFixed`). The Burton–Keane theorem that assumed it was removed as
+vacuous.
+
+## ii. Key results
+
+- `bc39_armAdjSpanning` : the arm-adjacency graph spans every cluster.
+- `bc39_armCutGeometry_false_of_armAdjacent` : the cut geometry fails for an arm-adjacent pair.
+- `bc39_Tcount_le_boundary_of_cutGeometryFixed` : the count bound from the fixed cut geometry.
+
+## iii. Table of contents
+
+- A. Transferring walks
+- B. Spanning
+- C. The fixed cut geometry
+- D. Unsatisfiability of the configuration-wide conditions
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -65,30 +68,20 @@ open scoped BigOperators ENNReal NNReal
 
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-
 namespace StatMech.Walls
 
 open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Transferring walks -/
 
-
-
-
-
-
-
-
-
-
-theorem bc39_openEdge_removeSites_of_notMem (S : Finset (Site d))
+lemma bc39_openEdge_removeSites_of_notMem (S : Finset (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) {u v : Site d} (hu : u ∉ S) (hv : v ∉ S)
     (h : (openSubgraph d ω).Adj u v) : (openSubgraph d (removeSites S ω)).Adj u v := by
   obtain ⟨hlat, hopen⟩ := h
   refine ⟨hlat, ?_⟩
-  rw [removeSites, if_neg]
+  rw [removeSites, ite_eq_right]
   · exact hopen
   · rintro ⟨t, htS, hte⟩
     rw [Sym2.mem_iff] at hte
@@ -96,9 +89,7 @@ theorem bc39_openEdge_removeSites_of_notMem (S : Finset (Site d))
     · exact hu htS
     · exact hv htS
 
-
-
-
+/-- An open walk avoiding `S` as a walk in the configuration with `S` removed. -/
 noncomputable def bc39_transferWalk (S : Finset (Site d)) (ω : ConfigSpace (Sym2 (Site d)))
     {a b : Site d} (p : (openSubgraph d ω).Walk a b) (hp : ∀ v ∈ p.support, v ∉ S) :
     (openSubgraph d (removeSites S ω)).Walk a b := by
@@ -113,29 +104,14 @@ noncomputable def bc39_transferWalk (S : Finset (Site d)) (ω : ConfigSpace (Sym
       rw [← SimpleGraph.mem_edgeSet]; exact p.edges_subset_edgeSet he
     exact bc39_openEdge_removeSites_of_notMem S ω (hp _ hu) (hp _ hv) hadj
 
-
-
-
-theorem bc39_connected_removeSites_of_walk_avoids (S : Finset (Site d))
+lemma bc39_connected_removeSites_of_walk_avoids (S : Finset (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) {a b : Site d} (p : (openSubgraph d ω).Walk a b)
     (hp : ∀ v ∈ p.support, v ∉ S) : Connected d (removeSites S ω) a b :=
   ⟨bc39_transferWalk S ω p hp⟩
 
+/-! ## B. Spanning -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc39_armAdj_edge_of_walk_avoids (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {a b : Site d}
+lemma bc39_armAdj_edge_of_walk_avoids (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {a b : Site d}
     (hab : a ≠ b) (p : (openSubgraph d ω).Walk a b)
     (hint : ∀ v ∈ p.support, v ∈ tfc_trifFinset ω n → v = a ∨ v = b) :
     bc37_ArmAdjacent ω n a b := by
@@ -149,13 +125,7 @@ theorem bc39_armAdj_edge_of_walk_avoids (ω : ConfigSpace (Sym2 (Site d))) (n : 
   · exact hva rfl
   · exact hvb rfl
 
-
-
-
-
-
-
-theorem bc39_reach_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma bc39_reach_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     ∀ (k : ℕ) {a b : Site d} (haT : a ∈ tfc_trifFinset ω n) (hbT : b ∈ tfc_trifFinset ω n)
       (p : (openSubgraph d ω).Walk a b), p.length ≤ k →
       (bc37_armAdjGraph ω n).Reachable ⟨a, haT⟩ ⟨b, hbT⟩ := by
@@ -168,12 +138,10 @@ theorem bc39_reach_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     · subst hab
       exact SimpleGraph.Reachable.refl _
     · by_cases hint : ∀ v ∈ p.support, v ∈ tfc_trifFinset ω n → v = a ∨ v = b
-      · 
-        have hadj : (bc37_armAdjGraph ω n).Adj ⟨a, haT⟩ ⟨b, hbT⟩ :=
+      · have hadj : (bc37_armAdjGraph ω n).Adj ⟨a, haT⟩ ⟨b, hbT⟩ :=
           bc39_armAdj_edge_of_walk_avoids ω n hab p hint
         exact hadj.reachable
-      · 
-        push Not at hint
+      · push Not at hint
         obtain ⟨c, hcsupp, hcT, hca, hcb⟩ := hint
         have hsum : (p.takeUntil c hcsupp).length + (p.dropUntil c hcsupp).length = p.length := by
           rw [← SimpleGraph.Walk.length_append, SimpleGraph.Walk.take_spec]
@@ -193,60 +161,25 @@ theorem bc39_reach_of_walk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
         have r2 := IH _ hdrop_len hcT hbT (p.dropUntil c hcsupp) (le_refl _)
         exact r1.trans r2
 
-
-
-
-
-
-theorem bc39_armAdjSpanning (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
+lemma bc39_armAdjSpanning (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     bc38_ArmAdjSpanning ω n := by
   classical
   intro a b hconn
   obtain ⟨p⟩ := hconn
   exact bc39_reach_of_walk ω n p.length a.2 b.2 p (le_refl _)
 
+/-! ## C. The fixed cut geometry -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc39_armCutGeometry_false_of_armAdjacent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_armCutGeometry_false_of_armAdjacent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {t s : Site d} (htbox : t ∈ box d n) (htri : IsTrifurcation d ω t)
     (hadj : bc37_ArmAdjacent ω n t s) : ¬ bc38_ArmCutGeometry ω n := by
   rintro ⟨b, _hdata, hclauses⟩
   obtain ⟨_hloc, hself, hfun⟩ := hclauses t s htbox htri hadj
   exact hself (hfun t hadj.1)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Fixed arm cut geometry: as `bc38_ArmCutGeometry`, but the two endpoints of each arm-adjacent
+pair
+are exempt from the separation clause. -/
 def bc39_ArmCutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -257,11 +190,7 @@ def bc39_ArmCutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop
       (¬ Connected d (removeSite t ω) (b t) s) ∧
       (∀ x, x ≠ s → x ≠ t → Connected d (removeSite t ω) (b x) s))
 
-
-
-
-
-theorem bc39_armRealisation_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_armRealisation_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc39_ArmCutGeometryFixed ω n) : bc38_ArmRealisation ω n := by
   obtain ⟨b, hdata, hclauses⟩ := hgeo
   intro rank par hroot
@@ -272,88 +201,28 @@ theorem bc39_armRealisation_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d)
   refine ⟨hloc, hself, fun hxne => hfun x hxne ?_⟩
   intro hxy'; subst hxy'; exact hxy rfl
 
-
-
-
-theorem bc39_parentFunneling_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_parentFunneling_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc39_ArmCutGeometryFixed ω n) : bc37_ParentFunneling ω n :=
   bc38_parentFunneling_of_residues ω n (bc39_armAdjSpanning ω n)
     (bc39_armRealisation_of_cutGeometryFixed ω n hgeo)
 
-
-theorem bc39_selfDownArm_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_selfDownArm_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc39_ArmCutGeometryFixed ω n) : bc36_SelfDownArm ω n :=
   bc37_selfDownArm_of_parentFunneling ω n (bc39_parentFunneling_of_cutGeometryFixed ω n hgeo)
 
-
-theorem bc39_Tcount_le_boundary_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_Tcount_le_boundary_of_cutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (hgeo : bc39_ArmCutGeometryFixed ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   bc36_Tcount_le_boundary_of_selfDownArm ω n hn (bc39_selfDownArm_of_cutGeometryFixed ω n hgeo)
 
-
-
-
-
-
-
-
-theorem bc39_burton_keane_bernoulli_of_cutGeometryFixed (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hgeo : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc39_ArmCutGeometryFixed ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc36_burton_keane_bernoulli_of_selfDownArm hd p hp1 hp0
-    (fun ω n hn => bc39_selfDownArm_of_cutGeometryFixed ω n (hgeo ω n hn)) htrif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc39_armCutGeometryFixed_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_armCutGeometryFixed_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     bc39_ArmCutGeometryFixed ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro t s htbox htri _; exact absurd htri (hno t htbox)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc39_cutGeometryFixed_shadow_consistent (parNode bpar bself : ℕ)
+lemma bc39_cutGeometryFixed_shadow_consistent (parNode bpar bself : ℕ)
     (hnode : parNode ≠ bself) (hbpar : bpar ≠ bself)
     (F : ℕ → Prop) (hF : ∀ w, F w → w ≠ bself) :
     ∃ up : ℕ → Prop,
@@ -364,13 +233,7 @@ theorem bc39_cutGeometryFixed_shadow_consistent (parNode bpar bself : ℕ)
   intro w hw
   exact ⟨hnode, hF w hw⟩
 
-
-
-
-
-
-
-theorem bc39_cutGeometryFixed_clauses_coexist (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc39_cutGeometryFixed_clauses_coexist (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (b : Site d → Site d) {t s : Site d} (_hadj : bc37_ArmAdjacent ω n t s)
     (hloc : ¬ Connected d (removeSite t ω) (b t) (b s))
     (hself : ¬ Connected d (removeSite t ω) (b t) s)
@@ -379,5 +242,16 @@ theorem bc39_cutGeometryFixed_clauses_coexist (ω : ConfigSpace (Sym2 (Site d)))
       (¬ Connected d (removeSite t ω) (b t) s) ∧
       (∀ x, x ≠ s → x ≠ t → Connected d (removeSite t ω) (b x) s) :=
   ⟨hloc, hself, hfun⟩
+
+/-! ## D. Unsatisfiability of the configuration-wide conditions -/
+
+/-- `bc39_ArmCutGeometryFixed` for every configuration and every box of radius `n ≥ 1` is impossible
+when `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+`tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma bc39_not_forall_cutGeometryFixed (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      bc39_ArmCutGeometryFixed ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    bc39_Tcount_le_boundary_of_cutGeometryFixed ω n hn (h ω n hn)
 
 end StatMech.Walls

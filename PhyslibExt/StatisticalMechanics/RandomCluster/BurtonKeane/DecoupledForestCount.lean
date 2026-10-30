@@ -10,29 +10,39 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
+/-!
+# Counts against the boundary of the next box
+
+Forests whose leaves lie on the boundary of the next box bound the trifurcation count by that
+boundary; canonical trifurcations always give such a forest.
+
+## i. Overview
+
+The conditions `dfc_BoxOpenForestSucc`, `dfc_ArmForestReachingSucc` and `dfc_SpanForestArmsSucc` are
+the box open forest, arm forest reaching and spanning-forest arms with leaves on the boundary of the
+box of radius `n + 1`. Each gives the next, and the box open forest bounds `Tcount d ω n` by
+`boxSV_boundaryCard d (n + 1)`. When every trifurcation of the box is canonical, arm forest reaching
+holds. The canonical versions hold for every configuration, so
+`ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1)` with no hypothesis
+(`dfc_canonTcount_le_boundary_succ`).
+
+## ii. Key results
+
+- `dfc_Tcount_le_boundary_succ_of_canonical` : the count when all trifurcations are canonical.
+- `dfc_canonTcount_le_boundary_succ` : the canonical count against the next boundary, unconditional.
+
+## iii. Table of contents
+
+- A. Forests for the next box
+- B. Canonical forests
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace StatMech.Percolation
 
@@ -41,15 +51,12 @@ open StatMech.Lattice StatMech.ConfigSpace
 
 variable {d : ℕ}
 
+/-! ## A. Forests for the next box -/
 
-
-
-
-
-
-
-
-
+/-- Box open forest with leaves on the boundary of the box of radius `n + 1`: a finite forest on
+sites,
+mapped injectively into the open subgraph, in which each trifurcation of the box of radius `n` has
+three neighbours in distinct arms. -/
 def dfc_BoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F : SimpleGraph (↑Vset : Type))
     (_ : DecidableRel F.Adj) (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),
@@ -65,10 +72,7 @@ def dfc_BoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
     (∀ v : (↑Vset : Type), F.degree v = 1 → (v : Site d) ∈ vertexBoundary d (n + 1))
 
 open Classical in
-
-
-
-theorem dfc_Tcount_le_boundary_succ_of_boxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_Tcount_le_boundary_succ_of_boxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : dfc_BoxOpenForestSucc ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
@@ -110,16 +114,7 @@ theorem dfc_Tcount_le_boundary_succ_of_boxOpenForestSucc (ω : ConfigSpace (Sym2
     _ ≤ (univ.filter (fun v => F.degree v = 1)).card := h2
     _ ≤ boxSV_boundaryCard d (n + 1) := h3
 
-
-
-
-
-
-
-
-
-
-
+/-- Arm forest reaching with leaves on the boundary of the box of radius `n + 1`. -/
 def dfc_ArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),
@@ -135,7 +130,7 @@ def dfc_ArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Pro
        ¬ Connected d (removeSite x ω) (c x 1) (c x 2)) ∧
       (∀ i, zr x i ∈ B ∧ ∃ w : T.Walk (c x i) (zr x i), x ∉ w.support))
 
-
+/-- Spanning-forest arms with leaves on the boundary of the box of radius `n + 1`. -/
 def dfc_SpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),
@@ -152,8 +147,7 @@ def dfc_SpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :
         ¬ Connected d (removeSite x ω) (m x 0) (m x 2) ∧
         ¬ Connected d (removeSite x ω) (m x 1) (m x 2))))
 
-
-theorem dfc_spanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_spanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : dfc_ArmForestReachingSucc ω n) : dfc_SpanForestArmsSucc ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, c, zr, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
@@ -180,10 +174,7 @@ theorem dfc_spanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2 (Sit
   · exact hc2surv
 
 open Classical in
-
-
-
-theorem dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : dfc_SpanForestArmsSucc ω n) : dfc_BoxOpenForestSucc ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, m, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
@@ -198,7 +189,7 @@ theorem dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)
   have hVne : Nonempty (↥Vset) := by
     obtain ⟨v, hv⟩ := hRne; exact ⟨⟨v, (hmemVset v).mpr hv⟩⟩
   set F₀ : SimpleGraph (↥Vset) := T.comap (fun (u : ↥Vset) => (u : Site d)) with hF₀
-  haveI hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
+  have hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
   have hF₀adj : ∀ u v : ↥Vset, F₀.Adj u v ↔ T.Adj (u : Site d) (v : Site d) := by
     intro u v; rw [hF₀, comap_adj]
   have hF₀ac : F₀.IsAcyclic :=
@@ -210,22 +201,19 @@ theorem dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)
   set bb : Site d → Fin 3 → ↥Vset := fun x i =>
     if hx : spc_OnBPath T B (m x i) then ⟨m x i, hlift _ hx⟩ else dflt with hbbdef
   refine ⟨Vset, hVne, F₀, hF₀dec, vx, bb, ?_, hF₀ac, ?_, ?_, ?_⟩
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hF₀adj] at huv; exact hTopen _ _ huv
-  · 
-    intro v
+  · intro v
     have hvR : spc_OnBPath T B (v : Site d) := (hmemVset (v : Site d)).mp v.2
     obtain ⟨w, hadjw, hwR⟩ := spc_survivor_has_neighbor T B (v : Site d) hvR
     exact spc_deg_ge_one F₀ v ⟨w, hlift w hwR⟩ (by rw [hF₀adj]; exact hadjw)
-  · 
-    intro x hxbox htri
+  · intro x hxbox htri
     obtain ⟨hxR, hmne, hmadj, hmsep⟩ := hData x hxbox htri
-    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dif_pos hxR]
+    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dite_eq_left hxR]
     refine ⟨hvxval, ?_, ?_⟩
     · intro i
       have hmi := hmadj i
-      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dif_pos hmi.2]
+      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dite_eq_left hmi.2]
       refine ⟨?_, ?_⟩
       · refine Adj.reachable ?_
         rw [hF₀adj, hvxval, hbbval]; exact hmi.1
@@ -234,12 +222,11 @@ theorem dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)
           congrArg (fun (u : ↥Vset) => (u : Site d)) hh
         rw [hbbval, hvxval] at hval
         exact (T.ne_of_adj hmi.1) hval.symm
-    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dif_pos (hmadj 0).2]
-      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dif_pos (hmadj 1).2]
-      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dif_pos (hmadj 2).2]
+    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dite_eq_left (hmadj 0).2]
+      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dite_eq_left (hmadj 1).2]
+      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dite_eq_left (hmadj 2).2]
       rw [h0, h1, h2]; exact hmsep
-  · 
-    intro v hv
+  · intro v hv
     have hvR : spc_OnBPath T B (v : Site d) := (hmemVset (v : Site d)).mp v.2
     by_cases hvB : (v : Site d) ∈ B
     · exact hBbd hvB
@@ -252,12 +239,7 @@ theorem dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)
           (by rw [hF₀adj]; exact ha1) (by rw [hF₀adj]; exact ha2)
       omega
 
-
-
-
-
-
-theorem dfc_armForestReachingSucc_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
+lemma dfc_armForestReachingSucc_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
     dfc_ArmForestReachingSucc ω n := by
@@ -297,15 +279,7 @@ theorem dfc_armForestReachingSucc_of_canonical (ω : ConfigSpace (Sym2 (Site d))
   · intro x hxbox htri
     exact ⟨hcadj x hxbox htri, hccut x hxbox htri, hcreach x hxbox htri⟩
 
-
-
-
-
-
-
-
-
-theorem dfc_Tcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_Tcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
     Tcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
@@ -323,27 +297,16 @@ theorem dfc_Tcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d
       exact fun htri => hexists ⟨x, hx, htri⟩
     rw [h0]; exact Nat.zero_le _
 
-
-
-
-theorem dfc_canonTcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_canonTcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) :=
   le_trans (ctc2_canonTcount_le_Tcount ω n)
     (dfc_Tcount_le_boundary_succ_of_canonical ω n hn hcanon)
 
+/-! ## B. Canonical forests -/
 
-
-
-
-
-
-
-
-
-
-
+/-- The box open forest for the next box, restricted to canonical trifurcations. -/
 def dfc_CanonBoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F : SimpleGraph (↑Vset : Type))
     (_ : DecidableRel F.Adj) (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),
@@ -359,8 +322,7 @@ def dfc_CanonBoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Pr
     (∀ v : (↑Vset : Type), F.degree v = 1 → (v : Site d) ∈ vertexBoundary d (n + 1))
 
 open Classical in
-
-theorem dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc
+lemma dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (h : dfc_CanonBoxOpenForestSucc ω n) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
@@ -407,7 +369,7 @@ theorem dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc
     _ ≤ (univ.filter (fun v => F.degree v = 1)).card := h2
     _ ≤ boxSV_boundaryCard d (n + 1) := h3
 
-
+/-- Arm forest reaching for the next box, restricted to canonical trifurcations. -/
 def dfc_CanonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),
@@ -423,7 +385,7 @@ def dfc_CanonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) 
        ¬ Connected d (removeSite x ω) (c x 1) (c x 2)) ∧
       (∀ i, zr x i ∈ B ∧ ∃ w : T.Walk (c x i) (zr x i), x ∉ w.support))
 
-
+/-- Spanning-forest arms for the next box, restricted to canonical trifurcations. -/
 def dfc_CanonSpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),
@@ -440,8 +402,7 @@ def dfc_CanonSpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : P
         ¬ Connected d (removeSite x ω) (m x 0) (m x 2) ∧
         ¬ Connected d (removeSite x ω) (m x 1) (m x 2))))
 
-
-theorem dfc_canonSpanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_canonSpanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : dfc_CanonArmForestReachingSucc ω n) : dfc_CanonSpanForestArmsSucc ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, c, zr, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
@@ -468,8 +429,7 @@ theorem dfc_canonSpanForestArmsSucc_of_armForestReaching (ω : ConfigSpace (Sym2
   · exact hc2surv
 
 open Classical in
-
-theorem dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : dfc_CanonSpanForestArmsSucc ω n) : dfc_CanonBoxOpenForestSucc ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, m, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
@@ -484,7 +444,7 @@ theorem dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Si
   have hVne : Nonempty (↥Vset) := by
     obtain ⟨v, hv⟩ := hRne; exact ⟨⟨v, (hmemVset v).mpr hv⟩⟩
   set F₀ : SimpleGraph (↥Vset) := T.comap (fun (u : ↥Vset) => (u : Site d)) with hF₀
-  haveI hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
+  have hF₀dec : DecidableRel F₀.Adj := fun a b => by rw [hF₀, comap_adj]; infer_instance
   have hF₀adj : ∀ u v : ↥Vset, F₀.Adj u v ↔ T.Adj (u : Site d) (v : Site d) := by
     intro u v; rw [hF₀, comap_adj]
   have hF₀ac : F₀.IsAcyclic :=
@@ -504,11 +464,11 @@ theorem dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Si
     exact spc_deg_ge_one F₀ v ⟨w, hlift w hwR⟩ (by rw [hF₀adj]; exact hadjw)
   · intro x hxbox htri
     obtain ⟨hxR, hmne, hmadj, hmsep⟩ := hData x hxbox htri
-    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dif_pos hxR]
+    have hvxval : (vx x : Site d) = x := by simp only [hvxdef, dite_eq_left hxR]
     refine ⟨hvxval, ?_, ?_⟩
     · intro i
       have hmi := hmadj i
-      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dif_pos hmi.2]
+      have hbbval : (bb x i : Site d) = m x i := by simp only [hbbdef, dite_eq_left hmi.2]
       refine ⟨?_, ?_⟩
       · refine Adj.reachable ?_
         rw [hF₀adj, hvxval, hbbval]; exact hmi.1
@@ -517,9 +477,9 @@ theorem dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Si
           congrArg (fun (u : ↥Vset) => (u : Site d)) hh
         rw [hbbval, hvxval] at hval
         exact (T.ne_of_adj hmi.1) hval.symm
-    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dif_pos (hmadj 0).2]
-      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dif_pos (hmadj 1).2]
-      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dif_pos (hmadj 2).2]
+    · have h0 : (bb x 0 : Site d) = m x 0 := by simp only [hbbdef, dite_eq_left (hmadj 0).2]
+      have h1 : (bb x 1 : Site d) = m x 1 := by simp only [hbbdef, dite_eq_left (hmadj 1).2]
+      have h2 : (bb x 2 : Site d) = m x 2 := by simp only [hbbdef, dite_eq_left (hmadj 2).2]
       rw [h0, h1, h2]; exact hmsep
   · intro v hv
     have hvR : spc_OnBPath T B (v : Site d) := (hmemVset (v : Site d)).mp v.2
@@ -534,11 +494,7 @@ theorem dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Si
           (by rw [hF₀adj]; exact ha1) (by rw [hF₀adj]; exact ha2)
       omega
 
-
-
-
-
-theorem dfc_canonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
+lemma dfc_canonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (hexists : ∃ x, x ∈ box d n ∧ IsCanonicalTrifurcation d ω x) :
     dfc_CanonArmForestReachingSucc ω n := by
   classical
@@ -590,13 +546,7 @@ theorem dfc_canonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : �
   · intro x hxbox htri
     exact ⟨hcadj x hxbox htri, hccut x hxbox htri, hcreach x hxbox htri⟩
 
-
-
-
-
-
-
-theorem dfc_canonTcount_le_boundary_succ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n) :
+lemma dfc_canonTcount_le_boundary_succ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
   by_cases hexists : ∃ x, x ∈ box d n ∧ IsCanonicalTrifurcation d ω x

@@ -6,73 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -80,15 +13,38 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HarmBoxC
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalStarForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
 
+/-!
+# Coarse precursors under Bernoulli percolation
+
+For Bernoulli percolation, a coarse precursor of positive probability gives a coarse trifurcation of
+positive probability, and the coarse route gives the coarse step and half of the count argument.
+
+## i. Overview
+
+Bernoulli percolation with `p > 0` has finite energy for merges, so a coarse precursor of positive
+probability gives a coarse trifurcation of positive probability, and the coarse route gives the
+coarse step. With an expectation bound of vanishing density this gives `μ(N = ⊤) = 0`.
+
+## ii. Key results
+
+- `bc109_coarseTrifExistence_pp` : the coarse step from the coarse route.
+
+## iii. Table of contents
+
+- A. Bernoulli percolation
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
-set_option linter.unusedDecidableInType false
-set_option linter.unusedVariables false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -97,20 +53,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Bernoulli percolation -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc109_precursor_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
+lemma bc109_precursor_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
     (a₁ a₂ a₃ b₁ b₂ b₃ : Site d)
     (hpos : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
       (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
@@ -120,18 +65,7 @@ theorem bc109_precursor_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
     (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) L a₁ a₂ a₃ b₁ b₂ b₃ hpos
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc109_coarseTrifExistence_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
+lemma bc109_coarseTrifExistence_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
     (hcoarseRoute : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
         {ω | numInfiniteClusters d ω = ⊤} →
       ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
@@ -142,22 +76,7 @@ theorem bc109_coarseTrifExistence_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
     (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) L hcoarseRoute
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc109_bk_count_half_pp (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
+lemma bc109_bk_count_half_pp (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d))
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)) (L : ℕ)
     (hGlobal : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc69_Gn_globalForest ω L R)
@@ -172,74 +91,19 @@ theorem bc109_bk_count_half_pp (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1) hd hinv
     (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) L hGlobal hcoarseRoute
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc109_precursor_witness_upperLines {L : ℕ} (hL : 3 ≤ L) :
-    bc60_upperLines ∈ bc62_CoarseTrifPrecursor 2 L
-      (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
-      (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3) :=
-  bc62_upperLines_mem_coarsePrecursor hL
-
-
-
-
-
-
-theorem bc109_precursor_forced_coarseTrif_upperLines {L : ℕ} (hL : 3 ≤ L) :
-    bc61_IsCoarseTrifurcation
-      (forceOpenFinset {s(bc57_pt (L : ℤ) 1, bc57_pt ((L : ℤ) + 1) 1),
-        s(bc57_pt (L : ℤ) 2, bc57_pt ((L : ℤ) + 1) 2),
-        s(bc57_pt (L : ℤ) 3, bc57_pt ((L : ℤ) + 1) 3)} bc60_upperLines) L 0 :=
-  bc62_upperLines_forced_coarseTrif hL
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc109_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
-    
+lemma bc109_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     (∀ (L : ℕ) (a₁ a₂ a₃ b₁ b₂ b₃ : Site d),
       0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
         (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃) →
       0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
         {ω | bc61_IsCoarseTrifurcation ω L 0}) ∧
-    
     (∀ (L : ℕ),
       (0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 {ω | numInfiniteClusters d ω = ⊤} →
         ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
           0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
             (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) →
       bc61_CoarseTrifExistence (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1) L) ∧
-    
-    (∀ (hinv : IsTranslationInvariant (G := Multiplicative (Site d))
+    (∀ (_hinv : IsTranslationInvariant (G := Multiplicative (Site d))
         (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)) (L : ℕ),
       (∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc69_Gn_globalForest ω L R) →
       (0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 {ω | numInfiniteClusters d ω = ⊤} →

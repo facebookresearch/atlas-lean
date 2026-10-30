@@ -6,82 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -94,6 +18,46 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Trifurca
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafSelection
+
+/-!
+# Boundary traces and arm injections
+
+The boundary trace of a connected family of trifurcations bounds forest leaf selection; forest leaf
+selection gives the boundary arm injection and the trifurcation count.
+
+## i. Overview
+
+`lhc_trace ω n x₀` is the set of boundary sites connected to `x₀`. When all trifurcations of the box
+are connected to `x₀`, forest leaf selection `str_ForestLeafSelection` gives
+`2 · Tcount + 1 ≤ |∂Λₙ|`. So a connected claw trace (`lhc_ConnectedClawTrace`), with fewer than
+`2 · Tcount` boundary sites, rules out forest leaf selection. Forest leaf selection gives the
+boundary arm injection `tfc_BoundaryArmInjection` and the count bound. A single trifurcation with a
+boundary arm gives the injection directly.
+
+The configuration-wide form of this condition, for every configuration and every box of radius
+`n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration, which `tfc_not_forall_Tcount_le_boundary` refutes
+(`lhc_not_forall_boundaryArmInjection`). The Burton–Keane theorem that assumed it was removed as
+vacuous.
+
+## ii. Key results
+
+- `lhc_twice_Tcount_succ_le_boundary` : `2 · Tcount + 1 ≤ |∂Λₙ|` from forest leaf selection.
+- `lhc_boundaryArmInjection_of_forestLeafSelection` : the boundary arm injection from forest leaf
+  selection.
+
+## iii. Table of contents
+
+- A. Boundary traces
+- B. Connected claw traces
+- C. Boundary arm injection
+- D. Unsatisfiability of the configuration-wide conditions
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -108,44 +72,29 @@ namespace Percolation
 
 variable {d : ℕ}
 
-
-
-
-
-
-
-
+/-! ## A. Boundary traces -/
 
 open Classical in
-
+/-- The boundary sites of the box of radius `n` connected to `x₀`. Same statement as
+`bk2_armEndFinset`;
+kept because replacing a definition changes the statements that mention it. -/
 noncomputable def lhc_trace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d) :
     Finset (Site d) :=
   (tfc_boundaryFinset d n).filter (fun z => Connected d ω x₀ z)
 
-theorem lhc_mem_trace {ω : ConfigSpace (Sym2 (Site d))} {n : ℕ} {x₀ z : Site d} :
+lemma lhc_mem_trace {ω : ConfigSpace (Sym2 (Site d))} {n : ℕ} {x₀ z : Site d} :
     z ∈ lhc_trace ω n x₀ ↔ z ∈ vertexBoundary d n ∧ Connected d ω x₀ z := by
   classical
   rw [lhc_trace, Finset.mem_filter, tfc_mem_boundaryFinset]
 
-
-theorem lhc_trace_card_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d) :
+lemma lhc_trace_card_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d) :
     (lhc_trace ω n x₀).card ≤ boxSV_boundaryCard d n := by
   classical
   rw [← tfc_boundaryFinset_card]
   exact Finset.card_le_card (Finset.filter_subset _ _)
 
-
-
-
-
-
-
-
 open Classical in
-
-
-
-theorem lhc_two_le_trace_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_two_le_trace_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d)
     (hconn : ∀ x, x ∈ box d n → IsTrifurcation d ω x → Connected d ω x₀ x)
     (h : str_ForestLeafSelection ω n) :
@@ -156,14 +105,12 @@ theorem lhc_two_le_trace_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d)
   set T := tfc_trifFinset ω n with hT
   set ι := {x // x ∈ T} × Fin 2 with hι
   set f : ι → Site d := fun q => ℓ q.1.1 q.2 with hf
-  
   have hfinj : Function.Injective f := by
     intro p q hpq
     have hp := tfc_mem_trifFinset.mp p.1.2
     have hq := tfc_mem_trifFinset.mp q.1.2
     obtain ⟨hxy, hjj⟩ := hℓinj p.1.1 hp.1 hp.2 q.1.1 hq.1 hq.2 p.2 q.2 hpq
     exact Prod.ext (Subtype.ext hxy) hjj
-  
   have hfmem : ∀ q : ι, f q ∈ lhc_trace ω n x₀ := by
     intro q
     have hq := tfc_mem_trifFinset.mp q.1.2
@@ -176,12 +123,7 @@ theorem lhc_two_le_trace_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d)
   rw [Finset.card_univ, hcardι] at hle
   omega
 
-
-
-
-
-
-theorem lhc_twice_Tcount_succ_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_twice_Tcount_succ_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : str_ForestLeafSelection ω n) :
     2 * Tcount d ω n + 1 ≤ boxSV_boundaryCard d n := by
   classical
@@ -224,30 +166,16 @@ theorem lhc_twice_Tcount_succ_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (n 
   rw [Finset.card_univ, hcardι] at hle
   omega
 
+/-! ## B. Connected claw traces -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- All trifurcations of the box are connected to some `x₀` whose boundary trace has fewer than
+`2 · Tcount` sites. -/
 def lhc_ConnectedClawTrace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ x₀ : Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → Connected d ω x₀ x) ∧
     (lhc_trace ω n x₀).card < 2 * Tcount d ω n
 
-
-
-
-theorem lhc_not_forestLeafSelection_of_clawTrace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_not_forestLeafSelection_of_clawTrace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hclaw : lhc_ConnectedClawTrace ω n) :
     ¬ str_ForestLeafSelection ω n := by
   rintro h
@@ -255,62 +183,23 @@ theorem lhc_not_forestLeafSelection_of_clawTrace (ω : ConfigSpace (Sym2 (Site d
   have hge := lhc_two_le_trace_of_forestLeafSelection ω n x₀ hconn h
   omega
 
-
-
-
-
-theorem lhc_clawTrace_excludes_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_clawTrace_excludes_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hclaw : lhc_ConnectedClawTrace ω n) (h : str_ForestLeafSelection ω n) : False :=
   lhc_not_forestLeafSelection_of_clawTrace ω n hclaw h
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lhc_clawTrace_card_consistent {T : ℕ} (hT : 3 ≤ T) :
+lemma lhc_clawTrace_card_consistent {T : ℕ} (hT : 3 ≤ T) :
     T + 2 ≤ T + 2 ∧ T + 2 < 2 * T :=
   ⟨le_refl _, by omega⟩
 
-
-
-
-
-
-
-theorem lhc_clawTrace_of_smallTrace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d)
+lemma lhc_clawTrace_of_smallTrace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d)
     (hconn : ∀ x, x ∈ box d n → IsTrifurcation d ω x → Connected d ω x₀ x)
     (hsmall : (lhc_trace ω n x₀).card < 2 * Tcount d ω n) :
     lhc_ConnectedClawTrace ω n :=
   ⟨x₀, hconn, hsmall⟩
 
+/-! ## C. Boundary arm injection -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lhc_boundaryArmInjection_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_boundaryArmInjection_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : str_ForestLeafSelection ω n) :
     tfc_BoundaryArmInjection ω n := by
   obtain ⟨r₀, ℓ, _hr₀, hℓbdry, _hℓconn, _hℓr₀, hℓinj⟩ := h
@@ -319,31 +208,18 @@ theorem lhc_boundaryArmInjection_of_forestLeafSelection (ω : ConfigSpace (Sym2 
   · intro x hxbox htri y hybox htriy hxy
     exact (hℓinj x hxbox htri y hybox htriy 0 0 hxy).1
 
-
-
-
-
-theorem lhc_Tcount_le_boundary_of_boundaryArmInjection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_Tcount_le_boundary_of_boundaryArmInjection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : tfc_BoundaryArmInjection ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   tfc_Tcount_le_boundary_of_residue ω n h
 
-
-
-
-
-
-theorem lhc_Tcount_le_boundary_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_Tcount_le_boundary_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : str_ForestLeafSelection ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   lhc_Tcount_le_boundary_of_boundaryArmInjection ω n
     (lhc_boundaryArmInjection_of_forestLeafSelection ω n h)
 
-
-
-
-
-theorem lhc_boundaryArmInjection_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma lhc_boundaryArmInjection_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {r a : Site d} (ha : a ∈ vertexBoundary d n)
     (hsingle : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = r) :
     tfc_BoundaryArmInjection ω n := by
@@ -351,48 +227,16 @@ theorem lhc_boundaryArmInjection_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))
   intro x hxbox htri y hybox htriy _
   exact (hsingle x hxbox htri).trans (hsingle y hybox htriy).symm
 
+/-! ## D. Unsatisfiability of the configuration-wide conditions -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem lhc_burton_keane_bernoulli_of_boundaryArmInjection (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → tfc_BoundaryArmInjection ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  tfc_burton_keane_uniqueness_full (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n)
-    (fun ω n hn => lhc_Tcount_le_boundary_of_boundaryArmInjection ω n (hres ω n hn))
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd)
-    htrif
+/-- `tfc_BoundaryArmInjection` for every configuration and every box of radius `n ≥ 1` is impossible
+when `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+`tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma lhc_not_forall_boundaryArmInjection (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      tfc_BoundaryArmInjection ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    lhc_Tcount_le_boundary_of_boundaryArmInjection ω n (h ω n hn)
 
 end Percolation
 

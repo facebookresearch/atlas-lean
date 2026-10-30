@@ -6,72 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -89,6 +23,38 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanForestArms
 
+/-!
+# Arm forests reaching the boundary
+
+A forest of open edges in which each trifurcation has three neighbours with paths to the boundary
+avoiding it gives spanning-forest arms and the trifurcation count.
+
+## i. Overview
+
+Walks in a subgraph `T` of the open subgraph that avoid `x` stay connected after `x` is removed, and
+two arm paths from neighbours of `x` glue into a path through `x`. `sfa_ArmForestReaching ω n` asks
+for a finite forest `T` of open edges and, for each trifurcation `x` of the box, three neighbours
+with `T`-paths to boundary sites avoiding `x`. It gives `spc_SpanForestArms` and
+`Tcount d ω n ≤ boxSV_boundaryCard d n`. It holds for a boundary edge with no trifurcation and for a
+single trifurcation with three arms.
+
+## ii. Key results
+
+- `sfa_spanForestArms_of_armForestReaching` : spanning-forest arms from arm forest reaching.
+- `sfa_Tcount_le_boundary_of_armForestReaching` : the count bound.
+
+## iii. Table of contents
+
+- A. Walks avoiding a site
+- B. Arm forest reaching
+- C. Examples
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -102,20 +68,13 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Walks avoiding a site -/
 
-
-
-
-
-
-
-theorem sfa_avoid_no_edge {V : Type*} {T : SimpleGraph V} {x a b : V} (w : T.Walk a b)
+lemma sfa_avoid_no_edge {V : Type*} {T : SimpleGraph V} {x a b : V} (w : T.Walk a b)
     (hx : x ∉ w.support) {e : Sym2 V} (he : e ∈ w.edges) : x ∉ e :=
   fun hxe => hx (w.mem_support_of_mem_edges he hxe)
 
-
-
-theorem sfa_avoid_walk {V : Type*} {T : SimpleGraph V} {x a b : V} (ha : a ≠ x) (hb : b ≠ x)
+lemma sfa_avoid_walk {V : Type*} {T : SimpleGraph V} {x a b : V} (ha : a ≠ x) (hb : b ≠ x)
     (h : (T.induce ({x}ᶜ : Set V)).Reachable ⟨a, by simpa using ha⟩ ⟨b, by simpa using hb⟩) :
     ∃ w : T.Walk a b, x ∉ w.support := by
   obtain ⟨w⟩ := h
@@ -129,12 +88,7 @@ theorem sfa_avoid_walk {V : Type*} {T : SimpleGraph V} {x a b : V} (ha : a ≠ x
   rw [Set.mem_compl_iff, Set.mem_singleton_iff] at hy
   exact hy hyx
 
-
-
-
-
-
-theorem sfa_glue_path {V : Type*} {T : SimpleGraph V} {x c0 c1 z0 z1 : V}
+lemma sfa_glue_path {V : Type*} {T : SimpleGraph V} {x c0 c1 z0 z1 : V}
     (hxc0 : T.Adj x c0) (hxc1 : T.Adj x c1)
     (w0 : T.Walk c0 z0) (hw0p : w0.IsPath) (hw0x : x ∉ w0.support)
     (w1 : T.Walk c1 z1) (hw1p : w1.IsPath) (hw1x : x ∉ w1.support)
@@ -162,16 +116,7 @@ theorem sfa_glue_path {V : Type*} {T : SimpleGraph V} {x c0 c1 z0 z1 : V}
     exact w0.start_mem_support
   · rw [hpsupp, List.mem_append, List.mem_cons]; right; right; exact w1.start_mem_support
 
-
-
-
-
-
-
-
-
-
-theorem sfa_walk_avoid_connected (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
+lemma sfa_walk_avoid_connected (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
     (hπ : ∀ u v, T.Adj u v → (openSubgraph d ω).Adj u v)
     {x a b : Site d} (w : T.Walk a b) (hwx : x ∉ w.support) :
     Connected d (removeSite x ω) a b := by
@@ -187,11 +132,7 @@ theorem sfa_walk_avoid_connected (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleG
     exact hwx hy
   exact slh_walk_avoid_transfer ww hsupp
 
-
-
-
-
-theorem sfa_armWalks_disjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
+lemma sfa_armWalks_disjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
     (hπ : ∀ u v, T.Adj u v → (openSubgraph d ω).Adj u v)
     {x c0 c1 z0 z1 : Site d}
     (w0 : T.Walk c0 z0) (hw0x : x ∉ w0.support)
@@ -209,41 +150,12 @@ theorem sfa_armWalks_disjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGrap
       (fun hx => hw1x (w1.support_takeUntil_subset_support hv1 hx))
   exact h0.trans h1.symm
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-! ## B. Arm forest reaching -/
 
 open Classical in
-
-
-
-
-
+/-- Arm forest reaching for the box of radius `n`: a finite forest `T` of open edges and, for each
+trifurcation `x` of the box, three neighbours of `x` joined by `T`-paths avoiding `x` to boundary
+sites, with the leaves of `T` on the boundary. -/
 def sfa_ArmForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),
@@ -259,18 +171,7 @@ def sfa_ArmForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
        ¬ Connected d (removeSite x ω) (c x 1) (c x 2)) ∧
       (∀ i, zr x i ∈ B ∧ ∃ w : T.Walk (c x i) (zr x i), x ∉ w.support))
 
-
-
-
-
-
-
-
-
-
-
-
-theorem sfa_onBPath_of_arms (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
+lemma sfa_onBPath_of_arms (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
     (hπ : ∀ u v, T.Adj u v → (openSubgraph d ω).Adj u v) (B : Set (Site d))
     {x ci cj zi zj : Site d}
     (hxci : T.Adj x ci) (hxcj : T.Adj x cj)
@@ -279,49 +180,37 @@ theorem sfa_onBPath_of_arms (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph 
     (hcut : ¬ Connected d (removeSite x ω) ci cj) :
     spc_OnBPath T B x ∧ spc_OnBPath T B ci ∧ spc_OnBPath T B cj := by
   classical
-  
   have hzne : zi ≠ zj := by
     intro h; subst h; apply hcut
     exact (sfa_walk_avoid_connected ω T hπ wi hwix).trans
       (sfa_walk_avoid_connected ω T hπ wj hwjx).symm
-  
   set pi : T.Walk ci zi := (wi.toPath : T.Walk ci zi) with hpi
   set pj : T.Walk cj zj := (wj.toPath : T.Walk cj zj) with hpj
-  have hpix : x ∉ pi.support := fun h => hwix (wi.support_toPath_subset h)
-  have hpjx : x ∉ pj.support := fun h => hwjx (wj.support_toPath_subset h)
+  have hpix : x ∉ pi.support := fun h => hwix (wi.support_toPath_subset_support h)
+  have hpjx : x ∉ pj.support := fun h => hwjx (wj.support_toPath_subset_support h)
   have hdisj : ∀ v, v ∈ pi.support → v ∈ pj.support → False := by
     have := sfa_armWalks_disjoint ω T hπ pi hpix pj hpjx hcut
     exact this
-  
   obtain ⟨p, hpp, hxp, hcip, hcjp⟩ :=
     sfa_glue_path hxci hxcj pi (wi.toPath).2 hpix pj (wj.toPath).2 hpjx hdisj
   refine ⟨⟨zi, zj, hzi, hzj, hzne, p, hpp, hxp⟩,
     ⟨zi, zj, hzi, hzj, hzne, p, hpp, hcip⟩,
     ⟨zi, zj, hzi, hzj, hzne, p, hpp, hcjp⟩⟩
 
-
-
-
-
-
-theorem sfa_spanForestArms_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma sfa_spanForestArms_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : sfa_ArmForestReaching ω n) : spc_SpanForestArms ω n := by
   classical
   obtain ⟨Vall, T, hTdec, B, c, zr, hTac, hTopen, hTsupp, hBbd, hRne, hData⟩ := h
   refine ⟨Vall, T, hTdec, B, c, hTac, hTopen, hTsupp, hBbd, hRne, ?_⟩
   intro x hxbox htri
   obtain ⟨hadj, hcut, hreach⟩ := hData x hxbox htri
-  
   obtain ⟨hcut01, hcut02, hcut12⟩ := hcut
-  
   have hne01 : c x 0 ≠ c x 1 := fun h => hcut01 (h ▸ connected_refl _ _)
   have hne02 : c x 0 ≠ c x 2 := fun h => hcut02 (h ▸ connected_refl _ _)
   have hne12 : c x 1 ≠ c x 2 := fun h => hcut12 (h ▸ connected_refl _ _)
-  
   obtain ⟨hz0, w0, hw0x⟩ := hreach 0
   obtain ⟨hz1, w1, hw1x⟩ := hreach 1
   obtain ⟨hz2, w2, hw2x⟩ := hreach 2
-  
   obtain ⟨hxsurv, hc0surv, hc1surv⟩ :=
     sfa_onBPath_of_arms ω T hTopen B (hadj 0) (hadj 1) w0 hw0x hz0 w1 hw1x hz1 hcut01
   obtain ⟨_, _, hc2surv⟩ :=
@@ -334,22 +223,14 @@ theorem sfa_spanForestArms_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d)
   · exact hc1surv
   · exact hc2surv
 
-
-
-
-theorem sfa_Tcount_le_boundary_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma sfa_Tcount_le_boundary_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : sfa_ArmForestReaching ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
   spc_Tcount_le_boundary_of_spanForestArms ω n (sfa_spanForestArms_of_armForestReaching ω n h)
 
-
-
-
-
-
+/-! ## C. Examples -/
 
 open Classical in
-
-theorem sfa_armForestReaching_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma sfa_armForestReaching_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {b₁ b₂ : Site d} (hb1 : b₁ ∈ vertexBoundary d n) (hb2 : b₂ ∈ vertexBoundary d n)
     (hbne : b₁ ≠ b₂) (hopen : (openSubgraph d ω).Adj b₁ b₂)
     (hnotrif : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
@@ -405,18 +286,8 @@ theorem sfa_armForestReaching_of_boundary_edge (ω : ConfigSpace (Sym2 (Site d))
     rcases hz with rfl | rfl <;> assumption
   · intro x hxbox htri; exact absurd htri (hnotrif x hxbox)
 
-
-
-
-
-
-
-
-
-
 open Classical in
-
-theorem sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x : Site d} (a : Fin 3 → Site d)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (hadj : ∀ i, (openSubgraph d ω).Adj x (a i))
@@ -458,7 +329,6 @@ theorem sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     rwa [show lab 0 = x from rfl, hlabsucc i] at this
   set B : Set (Site d) := {a 0, a 1, a 2} with hB
   have hai_in_B : ∀ i : Fin 3, a i ∈ B := by intro i; fin_cases i <;> simp [hB]
-  
   have hpath01 : ∃ p : T.Walk (a 0) (a 1), p.IsPath ∧ x ∈ p.support := by
     refine ⟨Walk.cons (hTxai 0).symm (Walk.cons (hTxai 1) Walk.nil), ?_, by simp⟩
     rw [SimpleGraph.Walk.isPath_def]
@@ -473,8 +343,7 @@ theorem sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       p01, hp01p, hxp01⟩
   refine ⟨{x, a 0, a 1, a 2}, T, by rw [hT]; infer_instance, B, fun _ => a, fun _ => a, hTac,
     ?_, ?_, ?_, ⟨x, honB_x⟩, ?_⟩
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hT, SimpleGraph.map_adj] at huv
     obtain ⟨p, q, hpq, rfl, rfl⟩ := huv
     rw [Flc2Witness.starG, fromRel_adj] at hpq
@@ -485,8 +354,7 @@ theorem sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
         | (exfalso; revert hor; simp only [Flc2Witness.starE]; decide)
         | exact hadj 0 | exact hadj 1 | exact hadj 2
         | exact (hadj 0).symm | exact (hadj 1).symm | exact (hadj 2).symm
-  · 
-    intro u v huv
+  · intro u v huv
     rw [hT, SimpleGraph.map_adj] at huv
     obtain ⟨p, q, hpq, rfl, rfl⟩ := huv
     fin_cases p <;>
@@ -494,15 +362,13 @@ theorem sfa_armForestReaching_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
         show (emb : Fin 4 → Site d) = lab from rfl] <;>
       first
         | (left; rfl) | (right; left; rfl) | (right; right; left; rfl) | (right; right; right; rfl)
-  · 
-    rw [hB]; intro z hz
+  · rw [hB]; intro z hz
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
     rcases hz with rfl | rfl | rfl
     · exact habdry 0
     · exact habdry 1
     · exact habdry 2
-  · 
-    intro y hybox htri
+  · intro y hybox htri
     have hyx : y = x := hsingle y hybox htri; subst hyx
     refine ⟨fun i => hTxai i, hsep, ?_⟩
     intro i

@@ -6,73 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -86,6 +19,40 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeFore
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanForestArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestReaching
 
+/-!
+# Arms of a trifurcation reach the boundary
+
+An infinite cluster of the configuration with a site removed reaches the boundary of any box
+containing its base; an infinite cluster in the configuration does not have to stay infinite once a
+site is removed.
+
+## i. Overview
+
+In `removeSite x ω` the site `x` is isolated, so walks from other sites avoid it. An infinite
+cluster of `removeSite x ω` through a site of the box reaches the vertex boundary. The residue
+`arc_TrifArmsRemoveSiteInfinite` asks every trifurcation for three open neighbours with infinite
+clusters after its removal; for a single trifurcation it gives arm forest reaching and the count.
+The ray configuration `arc_rayConfig` on `ℤ²` has a neighbour whose cluster is infinite but finite
+after removing the hub.
+
+## ii. Key results
+
+- `arc_infinite_cluster_reaches_boundary` : infinite arms reach the boundary.
+- `arc_ambientInfinite_not_removeSiteInfinite` : infinite in `ω` does not imply infinite after
+  removing a site.
+
+## iii. Table of contents
+
+- A. Arms reach the boundary
+- B. The residue
+- C. A ray example
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset
@@ -97,25 +64,16 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Arms reach the boundary -/
 
-
-
-
-
-
-
-
-theorem arc_x_isolated (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) (y : Site d) :
+lemma arc_x_isolated (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) (y : Site d) :
     ¬ (openSubgraph d (removeSite x ω)).Adj x y := by
   intro hadj
   obtain ⟨_, hopen⟩ := hadj
   rw [removeSite_apply_of_mem (by simp)] at hopen
   exact Bool.false_ne_true hopen
 
-
-
-
-theorem arc_walk_avoids_x {x a b : Site d} {ω : ConfigSpace (Sym2 (Site d))} (hax : a ≠ x)
+lemma arc_walk_avoids_x {x a b : Site d} {ω : ConfigSpace (Sym2 (Site d))} (hax : a ≠ x)
     (w : (openSubgraph d (removeSite x ω)).Walk a b) : x ∉ w.support := by
   induction w with
   | nil => simpa using (Ne.symm hax)
@@ -125,15 +83,7 @@ theorem arc_walk_avoids_x {x a b : Site d} {ω : ConfigSpace (Sym2 (Site d))} (h
     have hvx : v ≠ x := fun h => by subst h; exact arc_x_isolated v ω u huv.symm
     exact ih hvx
 
-
-
-
-
-
-
-
-
-theorem arc_infinite_cluster_reaches_boundary
+lemma arc_infinite_cluster_reaches_boundary
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n) (x a : Site d)
     (hax : a ≠ x) (habox : a ∈ box d n)
     (hinf : (cluster d (removeSite x ω) a).Infinite) :
@@ -149,10 +99,7 @@ theorem arc_infinite_cluster_reaches_boundary
   obtain ⟨wab⟩ := hr
   exact ⟨wab, arc_walk_avoids_x hax wab⟩
 
-
-
-
-theorem arc_connected_removeSite_reaches_boundary
+lemma arc_connected_removeSite_reaches_boundary
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n) (x a : Site d)
     (hax : a ≠ x) (habox : a ∈ box d n)
     (hinf : (cluster d (removeSite x ω) a).Infinite) :
@@ -160,23 +107,11 @@ theorem arc_connected_removeSite_reaches_boundary
   obtain ⟨z, hzb, w, _⟩ := arc_infinite_cluster_reaches_boundary ω n hn x a hax habox hinf
   exact ⟨z, hzb, ⟨w⟩⟩
 
+/-! ## B. The residue -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Every trifurcation of the box has three distinct open neighbours whose clusters are infinite
+after
+the trifurcation is removed. -/
 def arc_TrifArmsRemoveSiteInfinite (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x →
     ∃ c : Fin 3 → Site d,
@@ -187,22 +122,11 @@ def arc_TrifArmsRemoveSiteInfinite (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) 
        ¬ Connected d (removeSite x ω) (c 1) (c 2)) ∧
       (∀ i, (cluster d (removeSite x ω) (c i)).Infinite)
 
-
-
-
-
-
-
-
-
-
-
-theorem arc_neighbour_in_box_succ {x c : Site d} {n : ℕ} (hx : x ∈ box d n)
+lemma arc_neighbour_in_box_succ {x c : Site d} {n : ℕ} (hx : x ∈ box d n)
     (hadj : (hypercubicLattice d).Adj x c) : c ∈ box d (n + 1) := by
   rw [hypercubicLattice_adj] at hadj
   rw [mem_box] at hx ⊢
   intro i
-  
   have hcoord : (x i - c i).natAbs ≤ 1 := by
     have hle : (x i - c i).natAbs ≤ ∑ j, (x j - c j).natAbs :=
       Finset.single_le_sum (f := fun j => (x j - c j).natAbs)
@@ -211,12 +135,7 @@ theorem arc_neighbour_in_box_succ {x c : Site d} {n : ℕ} (hx : x ∈ box d n)
   have := hx i
   omega
 
-
-
-
-
-
-theorem arc_trif_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma arc_trif_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hres : arc_TrifArmsRemoveSiteInfinite ω n)
     (x : Site d) (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x) :
     ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
@@ -229,33 +148,13 @@ theorem arc_trif_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
         ∃ w : (openSubgraph d (removeSite x ω)).Walk (c i) (zr i), x ∉ w.support) := by
   classical
   obtain ⟨c, hadj, hne, hcut, hinf⟩ := hres x hxbox htri
-  
   have hcbox : ∀ i, c i ∈ box d (n + 1) := fun i =>
     arc_neighbour_in_box_succ hxbox (hadj i).1
-  
   choose zr hzrb hzrw using fun i =>
     arc_infinite_cluster_reaches_boundary ω (n + 1) (by omega) x (c i) (hne i) (hcbox i) (hinf i)
   exact ⟨c, zr, hadj, hne, hcut, fun i => ⟨hzrb i, hzrw i⟩⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem arc_armForestReaching_of_residue_single_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma arc_armForestReaching_of_residue_single_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x : Site d} (_hxbox : x ∈ box d n) (_htri : IsTrifurcation d ω x)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (c : Fin 3 → Site d)
@@ -269,8 +168,7 @@ theorem arc_armForestReaching_of_residue_single_boundary (ω : ConfigSpace (Sym2
     sfa_ArmForestReaching ω n :=
   sfa_armForestReaching_star ω n c hsingle hadj hbdry hne hinj hcut
 
-
-theorem arc_Tcount_le_boundary_of_residue_single_boundary (ω : ConfigSpace (Sym2 (Site d)))
+lemma arc_Tcount_le_boundary_of_residue_single_boundary (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) {x : Site d} (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (c : Fin 3 → Site d)
@@ -286,50 +184,34 @@ theorem arc_Tcount_le_boundary_of_residue_single_boundary (ω : ConfigSpace (Sym
     (arc_armForestReaching_of_residue_single_boundary ω n hxbox htri hsingle c hadj hne hcut
       hbdry hinj)
 
+/-! ## C. A ray example -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The site `(k, 0)` of `ℤ²`. -/
 def arc_p (k : ℤ) : Site 2 := ![k, 0]
 
-theorem arc_p_adj (k : ℤ) : (hypercubicLattice 2).Adj (arc_p k) (arc_p (k + 1)) := by
+lemma arc_p_adj (k : ℤ) : (hypercubicLattice 2).Adj (arc_p k) (arc_p (k + 1)) := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two]; simp [arc_p]
 
-theorem arc_p_inj : Function.Injective arc_p := by
+lemma arc_p_inj : Function.Injective arc_p := by
   intro a b h
   have : (arc_p a) 0 = (arc_p b) 0 := by rw [h]
   simpa [arc_p] using this
 
 open Classical in
-
+/-- The configuration on `ℤ²` whose open edges are those of the ray `(-1, 0), (0, 0), (1, 0), …`. -/
 noncomputable def arc_rayConfig : ConfigSpace (Sym2 (Site 2)) :=
   fun e => if (∃ k : ℤ, -1 ≤ k ∧ e = s(arc_p k, arc_p (k + 1))) then true else false
 
-theorem arc_ray_open (k : ℤ) (hk : -1 ≤ k) :
+lemma arc_ray_open (k : ℤ) (hk : -1 ≤ k) :
     arc_rayConfig s(arc_p k, arc_p (k + 1)) = true := by
   classical
-  rw [arc_rayConfig, if_pos]; exact ⟨k, hk, rfl⟩
+  rw [arc_rayConfig, ite_eq_left]; exact ⟨k, hk, rfl⟩
 
-theorem arc_ray_edge_connected (k : ℤ) (hk : -1 ≤ k) :
+lemma arc_ray_edge_connected (k : ℤ) (hk : -1 ≤ k) :
     Connected 2 arc_rayConfig (arc_p k) (arc_p (k + 1)) :=
   IsOpenEdge.connected ⟨arc_p_adj k, arc_ray_open k hk⟩
 
-
-theorem arc_ray_connected (m : ℤ) (hm : -1 ≤ m) :
+lemma arc_ray_connected (m : ℤ) (hm : -1 ≤ m) :
     Connected 2 arc_rayConfig (arc_p (-1)) (arc_p m) := by
   obtain ⟨j, rfl⟩ : ∃ j : ℕ, m = -1 + j := ⟨(m + 1).toNat, by omega⟩
   clear hm
@@ -343,7 +225,7 @@ theorem arc_ray_connected (m : ℤ) (hm : -1 ≤ m) :
     rw [hcast]
     exact (ih).trans step
 
-theorem arc_p_outside_box (n : ℕ) : arc_p (n + 1) ∉ box 2 n := by
+lemma arc_p_outside_box (n : ℕ) : arc_p (n + 1) ∉ box 2 n := by
   rw [mem_box]; rw [not_forall]
   refine ⟨0, ?_⟩
   rw [not_le]
@@ -352,14 +234,12 @@ theorem arc_p_outside_box (n : ℕ) : arc_p (n + 1) ∉ box 2 n := by
   have h2 : ((n : ℤ) + 1).natAbs = (n + 1 : ℕ) := by omega
   omega
 
-
-theorem arc_arm_ambient_infinite : (cluster 2 arc_rayConfig (arc_p (-1))).Infinite := by
+lemma arc_arm_ambient_infinite : (cluster 2 arc_rayConfig (arc_p (-1))).Infinite := by
   rw [cluster_infinite_iff]
   intro n
   exact ⟨arc_p (n + 1), arc_p_outside_box n, arc_ray_connected (n + 1) (by omega)⟩
 
-
-theorem arc_armNeighbour_isolated (y : Site 2) :
+lemma arc_armNeighbour_isolated (y : Site 2) :
     ¬ (openSubgraph 2 (removeSite (arc_p 0) arc_rayConfig)).Adj (arc_p (-1)) y := by
   classical
   intro hadj
@@ -382,8 +262,7 @@ theorem arc_armNeighbour_isolated (y : Site 2) :
         omega
     · exact Bool.false_ne_true hopen
 
-
-theorem arc_arm_removeSite_finite :
+lemma arc_arm_removeSite_finite :
     (cluster 2 (removeSite (arc_p 0) arc_rayConfig) (arc_p (-1))).Finite := by
   have hsub : cluster 2 (removeSite (arc_p 0) arc_rayConfig) (arc_p (-1)) ⊆ {arc_p (-1)} := by
     intro y hy
@@ -394,21 +273,14 @@ theorem arc_arm_removeSite_finite :
     | @cons _ b _ hadj _ => exact absurd hadj (arc_armNeighbour_isolated b)
   exact (Set.finite_singleton _).subset hsub
 
-
-theorem arc_arm_adj_x : (openSubgraph 2 arc_rayConfig).Adj (arc_p 0) (arc_p (-1)) := by
+lemma arc_arm_adj_x : (openSubgraph 2 arc_rayConfig).Adj (arc_p 0) (arc_p (-1)) := by
   have h : arc_rayConfig s(arc_p (-1), arc_p 0) = true := by
     have := arc_ray_open (-1) (by norm_num); simpa using this
   refine ⟨?_, ?_⟩
   · rw [hypercubicLattice_adj, Fin.sum_univ_two]; simp [arc_p]
   · rw [Sym2.eq_swap]; exact h
 
-
-
-
-
-
-
-theorem arc_ambientInfinite_not_removeSiteInfinite :
+lemma arc_ambientInfinite_not_removeSiteInfinite :
     ∃ (ω : ConfigSpace (Sym2 (Site 2))) (x a : Site 2),
       (openSubgraph 2 ω).Adj x a ∧
       Connected 2 ω x a ∧

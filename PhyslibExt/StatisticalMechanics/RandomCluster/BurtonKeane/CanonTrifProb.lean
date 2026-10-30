@@ -10,19 +10,38 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DecoupledForestCount
 
+/-!
+# Probability of a canonical trifurcation
+
+Canonical trifurcations are measurable and shift-covariant, so their probability is constant in
+space; the expected canonical count then forces probability zero when the count is bounded by a
+negligible boundary.
+
+## i. Overview
+
+The events `(cluster d (removeSite x ω) a).Infinite` and `IsCanonicalTrifurcation d ω x` are
+measurable, and shifts move canonical trifurcations. For a translation-invariant measure the
+probability of a canonical trifurcation at `x` equals that at `0`, and the expected canonical count
+in the box of radius `n` is `|Λₙ| · P(canonical trifurcation at 0)`. If the canonical count is
+bounded by `bdry n` with `bdry n / |Λₙ| → 0`, this probability is zero.
+
+## ii. Key results
+
+- `ctp_expected_canonTcount` : the expected canonical count.
+- `ctp_canonical_trifurcation_prob_eq_zero` : probability zero from a negligible bound.
+
+## iii. Table of contents
+
+- A. Measurability and shifts
+- B. The expected count
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace StatMech.Percolation
 
@@ -32,37 +51,19 @@ open scoped ENNReal
 
 variable {d : ℕ}
 
+/-! ## A. Measurability and shifts -/
 
-
-
-theorem ctp_measurableSet_openAdj (x a : Site d) :
-    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | (openSubgraph d ω).Adj x a} := by
-  classical
-  by_cases h : (hypercubicLattice d).Adj x a
-  · have heq : {ω : ConfigSpace (Sym2 (Site d)) | (openSubgraph d ω).Adj x a}
-        = (fun ω => ω s(x, a)) ⁻¹' {true} := by
-      ext ω
-      simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_singleton_iff, openSubgraph_adj]
-      exact ⟨fun hh => hh.2, fun hh => ⟨h, hh⟩⟩
-    rw [heq]
-    exact (measurable_pi_apply (s(x, a) : Sym2 (Site d))) (measurableSet_singleton true)
-  · have heq : {ω : ConfigSpace (Sym2 (Site d)) | (openSubgraph d ω).Adj x a} = ∅ := by
-      ext ω
-      simp only [Set.mem_setOf_eq, openSubgraph_adj, Set.mem_empty_iff_false, iff_false]
-      exact fun hh => h hh.1
-    rw [heq]; exact MeasurableSet.empty
-
-
-
-theorem ctp_measurableSet_removeSiteClusterInfinite (x a : Site d) :
+/-- Same statement as `measurableSet_clusterInfinite_removeSite`; kept because
+`CorridorCoverRouting` is
+not imported by all its users. -/
+lemma ctp_measurableSet_removeSiteClusterInfinite (x a : Site d) :
     MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite} := by
   have heq : {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite}
       = (fun ω => removeSite x ω) ⁻¹' {ω' | (cluster d ω' a).Infinite} := rfl
   rw [heq]
   exact (measurable_removeSite x) (measurableSet_clusterInfinite a)
 
-
-theorem ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
+lemma ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
     MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | IsCanonicalTrifurcation d ω x} := by
   classical
   have heq : {ω : ConfigSpace (Sym2 (Site d)) | IsCanonicalTrifurcation d ω x}
@@ -77,27 +78,26 @@ theorem ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
                 ∩ {ω | ¬ Connected d (removeSite x ω) a₁ a₃}
                 ∩ {ω | ¬ Connected d (removeSite x ω) a₂ a₃})) := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
     · rintro ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩
       refine ⟨a₁, a₂, a₃, ⟨⟨⟨?_, ⟨⟨hadj.1, hadj.2.1⟩, hadj.2.2⟩⟩,
         ⟨⟨hinf.1, hinf.2.1⟩, hinf.2.2⟩⟩, ⟨⟨hsep.1, hsep.2.1⟩, hsep.2.2⟩⟩⟩
-      rw [if_pos hne]; exact Set.mem_univ _
+      rw [ite_eq_left hne]; exact Set.mem_univ _
     · rintro ⟨a₁, a₂, a₃, ⟨⟨⟨hif, ⟨⟨hc1, hc2⟩, hc3⟩⟩, ⟨⟨hi1, hi2⟩, hi3⟩⟩, ⟨⟨hs1, hs2⟩, hs3⟩⟩⟩
       by_cases hh : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃
       · exact ⟨a₁, a₂, a₃, hh, ⟨hc1, hc2, hc3⟩, ⟨hi1, hi2, hi3⟩, ⟨hs1, hs2, hs3⟩⟩
-      · rw [if_neg hh] at hif; exact absurd hif (Set.notMem_empty _)
+      · rw [ite_eq_right hh] at hif; exact absurd hif (Set.notMem_empty _)
   rw [heq]
   refine MeasurableSet.iUnion fun a₁ => MeasurableSet.iUnion fun a₂ =>
     MeasurableSet.iUnion fun a₃ => ?_
-  apply MeasurableSet.inter
-  apply MeasurableSet.inter
-  apply MeasurableSet.inter
+  refine ((MeasurableSet.inter ?_ ?_).inter ?_).inter ?_
   · by_cases hh : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃
-    · rw [if_pos hh]; exact MeasurableSet.univ
-    · rw [if_neg hh]; exact MeasurableSet.empty
-  · exact ((ctp_measurableSet_openAdj x a₁).inter (ctp_measurableSet_openAdj x a₂)).inter
-      (ctp_measurableSet_openAdj x a₃)
+    · rw [ite_eq_left hh]; exact MeasurableSet.univ
+    · rw [ite_eq_right hh]; exact MeasurableSet.empty
+  · exact ((StatMech.Percolation.measurableSet_openAdj x a₁).inter
+      (StatMech.Percolation.measurableSet_openAdj x a₂)).inter
+      (StatMech.Percolation.measurableSet_openAdj x a₃)
   · exact ((ctp_measurableSet_removeSiteClusterInfinite x a₁).inter
       (ctp_measurableSet_removeSiteClusterInfinite x a₂)).inter
       (ctp_measurableSet_removeSiteClusterInfinite x a₃)
@@ -105,10 +105,7 @@ theorem ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
       ((measurableSet_connected_removeSite x a₁ a₃).compl)).inter
       ((measurableSet_connected_removeSite x a₂ a₃).compl)
 
-
-
-
-theorem ctp_isCanonicalTrifurcation_shift (g : Multiplicative (Site d))
+lemma ctp_isCanonicalTrifurcation_shift (g : Multiplicative (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     IsCanonicalTrifurcation d (shift g ω) (g • x) ↔ IsCanonicalTrifurcation d ω x := by
   constructor
@@ -168,28 +165,26 @@ theorem ctp_isCanonicalTrifurcation_shift (g : Multiplicative (Site d))
         fun hcon => hsep.2.1 ((connected_shift g (removeSite x ω) a₁ a₃).mp hcon),
         fun hcon => hsep.2.2 ((connected_shift g (removeSite x ω) a₂ a₃).mp hcon)⟩
 
-
-theorem ctp_canonicalTrifurcationProb_const (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma ctp_canonicalTrifurcationProb_const (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (x : Site d) :
     μ {ω | IsCanonicalTrifurcation d ω x} = μ {ω | IsCanonicalTrifurcation d ω 0} := by
   set g : Multiplicative (Site d) := Multiplicative.ofAdd x with hg
   have hgx : g • (0 : Site d) = x := by
-    show Multiplicative.toAdd g + (0 : Site d) = x
+    change Multiplicative.toAdd g + (0 : Site d) = x
     simp [hg]
   have hpre : (shift g : ConfigSpace (Sym2 (Site d)) → ConfigSpace (Sym2 (Site d))) ⁻¹'
       {ω | IsCanonicalTrifurcation d ω x} = {ω | IsCanonicalTrifurcation d ω 0} := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq]
     rw [← hgx, ctp_isCanonicalTrifurcation_shift g ω 0]
   calc μ {ω | IsCanonicalTrifurcation d ω x}
       = μ ((shift g) ⁻¹' {ω | IsCanonicalTrifurcation d ω x}) :=
         (hinv.measure_preimage g (ctp_measurableSet_isCanonicalTrifurcation x)).symm
     _ = μ {ω | IsCanonicalTrifurcation d ω 0} := by rw [hpre]
 
-
+/-! ## B. The expected count -/
 
 open Classical in
-
 lemma ctp_canonTcount_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     (ctc2_canonTcount d ω n : ℝ≥0∞) =
       ∑ x ∈ boxFinsetBK d n,
@@ -201,14 +196,12 @@ lemma ctp_canonTcount_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d))) (n : �
   apply Finset.sum_congr rfl
   intro x _
   by_cases h : IsCanonicalTrifurcation d ω x
-  · rw [if_pos h,
+  · rw [ite_eq_left h,
       Set.indicator_of_mem (show ω ∈ {ω' | IsCanonicalTrifurcation d ω' x} from h)]
-  · rw [if_neg h,
+  · rw [ite_eq_right h,
       Set.indicator_of_notMem (show ω ∉ {ω' | IsCanonicalTrifurcation d ω' x} from h)]
 
-
-
-theorem ctp_expected_canonTcount (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma ctp_expected_canonTcount (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (n : ℕ) :
     ∫⁻ ω, (ctc2_canonTcount d ω n : ℝ≥0∞) ∂μ
       = (boxFinsetBK d n).card • μ {ω | IsCanonicalTrifurcation d ω 0} := by
@@ -232,12 +225,7 @@ theorem ctp_expected_canonTcount (μ : Measure (ConfigSpace (Sym2 (Site d))))
     _ = (boxFinsetBK d n).card • μ {ω | IsCanonicalTrifurcation d ω 0} := by
         rw [Finset.sum_const]
 
-
-
-
-
-
-theorem ctp_canonical_trifurcation_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma ctp_canonical_trifurcation_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ]
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (hvol : ∀ n, 0 < (boxFinsetBK d n).card)

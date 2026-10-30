@@ -6,61 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -79,6 +24,32 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjection
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount
 
+/-!
+# Canonical counts from arm forests
+
+Arm forest reaching and box open forests bound the canonical trifurcation count by the boundary
+size.
+
+## i. Overview
+
+Canonical trifurcations have the arm data used by arm forest reaching. Arm forest reaching and the
+box open forest bound `ctc2_canonTcount` by `|∂Λₙ|`. A single canonical trifurcation satisfies the
+hypotheses.
+
+## ii. Key results
+
+- `ccf_canonTcount_le_boundary_of_armForestReaching` : the canonical count from arm forest reaching.
+
+## iii. Table of contents
+
+- A. Canonical counts
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -92,30 +63,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Canonical counts -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem ccf_armsRemoveSiteInfinite_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
-    arc_TrifArmsRemoveSiteInfinite ω n :=
-  ctc2_armsRemoveSiteInfinite_of_canonical ω n hcanon
-
-
-
-
-
-
-theorem ccf_canon_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma ccf_canon_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
     (x : Site d) (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x) :
     ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
@@ -126,111 +76,20 @@ theorem ccf_canon_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
        ¬ Connected d (removeSite x ω) (c 1) (c 2)) ∧
       (∀ i, zr i ∈ vertexBoundary d (n + 1) ∧
         ∃ w : (openSubgraph d (removeSite x ω)).Walk (c i) (zr i), x ∉ w.support) :=
-  arc_trif_arm_data ω n (ccf_armsRemoveSiteInfinite_of_canonical ω n hcanon) x hxbox htri
+  arc_trif_arm_data ω n (StatMech.Percolation.ctc2_armsRemoveSiteInfinite_of_canonical ω n hcanon)
+      x hxbox htri
 
-
-
-
-
-
-
-
-
-
-
-
-theorem ccf_canon_count_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : sfa_ArmForestReaching ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  sfa_Tcount_le_boundary_of_armForestReaching ω n h
-
-
-
-theorem ccf_canon_count_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bst_BoxOpenForest ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  fli_Tcount_le_boundary_of_boxOpenForest ω n h
-
-
-
-
-
-
-
-
-
-
-
-
-theorem ccf_canon_count_single (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x : Site d} (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x)
-    (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
-    (c : Fin 3 → Site d)
-    (hadj : ∀ i, (openSubgraph d ω).Adj x (c i))
-    (hne : ∀ i, c i ≠ x)
-    (hcut : ¬ Connected d (removeSite x ω) (c 0) (c 1) ∧
-            ¬ Connected d (removeSite x ω) (c 0) (c 2) ∧
-            ¬ Connected d (removeSite x ω) (c 1) (c 2))
-    (hbdry : ∀ i, c i ∈ vertexBoundary d n)
-    (hinj : Function.Injective c) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  arc_Tcount_le_boundary_of_residue_single_boundary ω n hxbox htri hsingle c hadj hne hcut
-    hbdry hinj
-
-
-
-
-
-
-theorem ccf_canon_count_subsingleton (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hsub : ∀ x y, x ∈ box d n → IsTrifurcation d ω x → y ∈ box d n →
-      IsTrifurcation d ω y → x = y) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  ctc2_count_of_subsingleton ω n hn hsub
-
-
-
-
-
-
-
-
-
-
-
-
-theorem ccf_canonTcount_le_boundary_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma ccf_canonTcount_le_boundary_of_armForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : sfa_ArmForestReaching ω n) : ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d n :=
-  le_trans (ctc2_canonTcount_le_Tcount ω n) (ccf_canon_count_of_armForestReaching ω n h)
+  le_trans (ctc2_canonTcount_le_Tcount ω n)
+      (StatMech.Percolation.sfa_Tcount_le_boundary_of_armForestReaching ω n h)
 
-
-
-theorem ccf_canonTcount_le_boundary_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma ccf_canonTcount_le_boundary_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : bst_BoxOpenForest ω n) : ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d n :=
-  le_trans (ctc2_canonTcount_le_Tcount ω n) (ccf_canon_count_of_boxOpenForest ω n h)
+  le_trans (ctc2_canonTcount_le_Tcount ω n)
+      (StatMech.Percolation.bst_Tcount_le_boundary_of_boxOpenForest ω n h)
 
-
-
-
-theorem ccf_canonTcount_le_boundary_subsingleton (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n)
-    (hsub : ∀ x y, x ∈ box d n → IsTrifurcation d ω x → y ∈ box d n →
-      IsTrifurcation d ω y → x = y) :
-    ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d n :=
-  ctc2_canonTcount_le_boundary_of_subsingleton ω n hn hsub
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem ccf_truthcheck_canon_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma ccf_truthcheck_canon_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x : Site d} (hxbox : x ∈ box d n) (htri : IsCanonicalTrifurcation d ω x)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (c : Fin 3 → Site d)
@@ -242,7 +101,8 @@ theorem ccf_truthcheck_canon_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hbdry : ∀ i, c i ∈ vertexBoundary d n)
     (hinj : Function.Injective c) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  ccf_canon_count_single ω n hxbox (ctc2_isTrifurcation_of_canonical htri) hsingle c hadj hne hcut
+  StatMech.Percolation.arc_Tcount_le_boundary_of_residue_single_boundary ω n hxbox
+      (ctc2_isTrifurcation_of_canonical htri) hsingle c hadj hne hcut
     hbdry hinj
 
 end Percolation

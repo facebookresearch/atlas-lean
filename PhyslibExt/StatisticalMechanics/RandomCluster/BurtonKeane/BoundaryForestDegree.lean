@@ -6,102 +6,61 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
+
+/-!
+# Forests rooted at a boundary set
+
+Joining each vertex to a neighbour closer to a boundary set gives an acyclic forest whose leaves lie
+on the boundary when every interior vertex has a child.
+
+## i. Overview
+
+`bc113_toB G B v` is the graph distance from `v` to the set `B`. If every vertex reaches `B`
+(`bc113_ReachesB`), every vertex outside `B` has a neighbour strictly closer (`bc113_parent`). The
+forest `bc113_bForest` of parent edges is a subgraph of `G`, is acyclic, and gives each vertex
+outside `B` degree at least one. If every interior vertex has a child (`bc113_HasChild`) its leaves
+lie in `B`, and if every boundary vertex has a child (`bc113_BoundaryHasChild`) the minimum degree
+is one. A vertex of maximal distance has no child, so a boundary-anchored forest need not exist (the
+triangle). Hubs with two children have degree at least three.
+
+## ii. Key results
+
+- `bc113_bForest_acyclic` : the parent forest is acyclic.
+- `bc113_boundaryAnchored_forest_exists` : a boundary-anchored forest under the child conditions.
+- `bc113_no_boundaryAnchored_on_triangle` : no boundary-anchored forest on the triangle.
+
+## iii. Table of contents
+
+- A. Distance to the boundary
+- B. The parent forest
+- C. Leaves and children
+- D. Examples
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
 open Set SimpleGraph Finset
 
-set_option linter.style.longLine false
-set_option linter.unusedVariables false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
 
-
-
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+/-! ## A. Distance to the boundary -/
 
-
-
-theorem bc113_exists_closer_neighbour (G : SimpleGraph V) {v b : V}
+omit [Fintype V] [DecidableEq V] in
+lemma bc113_exists_closer_neighbour (G : SimpleGraph V) {v b : V}
     (hr : G.Reachable v b) (hne : v ≠ b) :
     ∃ u, G.Adj v u ∧ G.dist u b < G.dist v b := by
-  
-  
   obtain ⟨p, hp⟩ := hr.symm.exists_walk_length_eq_dist
   have hpvb : p.length = G.dist v b := by rw [hp, @SimpleGraph.dist_comm _ G b v]
   have hdvpos : 0 < G.dist v b := by
@@ -115,15 +74,8 @@ theorem bc113_exists_closer_neighbour (G : SimpleGraph V) {v b : V}
   rw [SimpleGraph.Walk.length_dropLast, hpvb, @SimpleGraph.dist_comm _ G b p.penultimate] at hdl
   omega
 
-
-
-
-
-
-
-
-
-
+/-- The graph distance from `v` to the nearest vertex of `B` it reaches, or `0` if it reaches none.
+-/
 noncomputable def bc113_toB (G : SimpleGraph V) (B : V → Prop) (v : V) : ℕ := by
   classical
   exact if h : ∃ b, B b ∧ G.Reachable v b then
@@ -134,43 +86,37 @@ noncomputable def bc113_toB (G : SimpleGraph V) (B : V → Prop) (v : V) : ℕ :
       (fun b => G.dist v b)
   else 0
 
-
+/-- Every vertex reaches some vertex of `B`. -/
 def bc113_ReachesB (G : SimpleGraph V) (B : V → Prop) : Prop :=
   ∀ v, ∃ b, B b ∧ G.Reachable v b
 
-
-
-theorem bc113_toB_witness (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) (v : V) :
+lemma bc113_toB_witness (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) (v : V) :
     ∃ b, B b ∧ G.Reachable v b ∧ G.dist v b = bc113_toB G B v := by
   classical
   have hex : ∃ b, B b ∧ G.Reachable v b := hreach v
   have hne : (Finset.univ.filter (fun b => B b ∧ G.Reachable v b)).Nonempty := by
     obtain ⟨b, hb⟩ := hex
     exact ⟨b, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact hb⟩
-  
   obtain ⟨b, hbmem, hbeq⟩ := Finset.exists_mem_eq_inf' hne (fun b => G.dist v b)
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hbmem
   refine ⟨b, hbmem.1, hbmem.2, ?_⟩
-  simp only [bc113_toB, dif_pos hex]
+  simp only [bc113_toB, dite_eq_left hex]
   exact hbeq.symm
 
-
-theorem bc113_toB_le (G : SimpleGraph V) (B : V → Prop) {v b : V}
+lemma bc113_toB_le (G : SimpleGraph V) (B : V → Prop) {v b : V}
     (hb : B b) (hr : G.Reachable v b) : bc113_toB G B v ≤ G.dist v b := by
   classical
   have hex : ∃ b, B b ∧ G.Reachable v b := ⟨b, hb, hr⟩
-  simp only [bc113_toB, dif_pos hex]
+  simp only [bc113_toB, dite_eq_left hex]
   refine Finset.inf'_le _ ?_
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨hb, hr⟩
 
-
-theorem bc113_toB_eq_zero_of_mem (G : SimpleGraph V) (B : V → Prop) {v : V} (hv : B v) :
+lemma bc113_toB_eq_zero_of_mem (G : SimpleGraph V) (B : V → Prop) {v : V} (hv : B v) :
     bc113_toB G B v = 0 := by
   have := bc113_toB_le G B hv (SimpleGraph.Reachable.refl v)
   simpa using Nat.le_zero.mp (by simpa using this)
 
-
-theorem bc113_toB_pos_of_not_mem (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_toB_pos_of_not_mem (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {v : V} (hv : ¬ B v) : 0 < bc113_toB G B v := by
   classical
   rcases Nat.eq_zero_or_pos (bc113_toB G B v) with h0 | hpos
@@ -186,63 +132,51 @@ theorem bc113_toB_pos_of_not_mem (G : SimpleGraph V) (B : V → Prop) (hreach : 
     exact hv (this ▸ hb)
   · exact hpos
 
-
-
-
-
-theorem bc113_exists_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_exists_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {v : V} (hv : ¬ B v) :
     ∃ u, G.Adj v u ∧ bc113_toB G B u < bc113_toB G B v := by
   obtain ⟨b, hb, hr, hdeq⟩ := bc113_toB_witness G B hreach v
   have hvb : v ≠ b := fun h => hv (h ▸ hb)
   obtain ⟨u, hadj, hlt⟩ := bc113_exists_closer_neighbour G hr hvb
   refine ⟨u, hadj, ?_⟩
-  
   have hru : G.Reachable u b := (hadj.symm.reachable).trans hr
   calc bc113_toB G B u ≤ G.dist u b := bc113_toB_le G B hb hru
     _ < G.dist v b := hlt
     _ = bc113_toB G B v := hdeq
 
-
+/-! ## B. The parent forest -/
 
 open Classical in
-
-
+/-- A neighbour of `v` strictly closer to `B`, or `v` itself when `v ∈ B`. -/
 noncomputable def bc113_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     (v : V) : V := by
   classical
   exact if h : ¬ B v then (bc113_exists_parent G B hreach h).choose else v
 
-
-theorem bc113_parent_spec (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_parent_spec (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {v : V} (hv : ¬ B v) :
     G.Adj v (bc113_parent G B hreach v) ∧
       bc113_toB G B (bc113_parent G B hreach v) < bc113_toB G B v := by
   classical
-  simp only [bc113_parent, dif_pos hv]
+  simp only [bc113_parent, dite_eq_left hv]
   exact (bc113_exists_parent G B hreach hv).choose_spec
 
 open Classical in
-
-
-
+/-- The forest of edges from each vertex outside `B` to its parent. -/
 noncomputable def bc113_bForest (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
     SimpleGraph V := by
   classical
   exact SimpleGraph.fromEdgeSet
     {e : Sym2 V | ∃ v : V, ¬ B v ∧ e = s(v, bc113_parent G B hreach v)}
 
-
-
-theorem bc113_bForest_adj (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_adj (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {x y : V} :
     (bc113_bForest G B hreach).Adj x y ↔
       (∃ v, ¬ B v ∧ s(x, y) = s(v, bc113_parent G B hreach v)) ∧ x ≠ y := by
   classical
-  simp only [bc113_bForest, SimpleGraph.fromEdgeSet_adj, Set.mem_setOf_eq]
+  simp only [bc113_bForest, SimpleGraph.fromEdgeSet_adj, Set.mem_ofPred_eq]
 
-
-theorem bc113_bForest_le (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
+lemma bc113_bForest_le (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
     bc113_bForest G B hreach ≤ G := by
   classical
   intro x y hxy
@@ -253,9 +187,7 @@ theorem bc113_bForest_le (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_Re
   · exact (bc113_parent_spec G B hreach hvB).1
   · exact (bc113_parent_spec G B hreach hvB).1.symm
 
-
-
-theorem bc113_bForest_toB_ne (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_toB_ne (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {x y : V} (hxy : (bc113_bForest G B hreach).Adj x y) :
     bc113_toB G B x ≠ bc113_toB G B y := by
   classical
@@ -266,11 +198,7 @@ theorem bc113_bForest_toB_ne (G : SimpleGraph V) (B : V → Prop) (hreach : bc11
   · exact fun h => absurd h (by have := (bc113_parent_spec G B hreach hvB).2; omega)
   · exact fun h => absurd h.symm (by have := (bc113_parent_spec G B hreach hvB).2; omega)
 
-
-
-
-
-theorem bc113_bForest_down_is_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_down_is_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {x y : V} (hxy : (bc113_bForest G B hreach).Adj x y)
     (hlt : bc113_toB G B y < bc113_toB G B x) :
     ¬ B x ∧ y = bc113_parent G B hreach x := by
@@ -279,17 +207,12 @@ theorem bc113_bForest_down_is_parent (G : SimpleGraph V) (B : V → Prop) (hreac
   obtain ⟨⟨v, hvB, he⟩, hne⟩ := hxy
   rw [Sym2.eq_iff] at he
   rcases he with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · 
-    exact ⟨hvB, rfl⟩
-  · 
-    exfalso
+  · exact ⟨hvB, rfl⟩
+  · exfalso
     have := (bc113_parent_spec G B hreach hvB).2
     omega
 
-
-
-
-theorem bc113_bForest_down_unique (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_down_unique (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {x y₁ y₂ : V} (h₁ : (bc113_bForest G B hreach).Adj x y₁)
     (h₂ : (bc113_bForest G B hreach).Adj x y₂)
     (hlt₁ : bc113_toB G B y₁ < bc113_toB G B x) (hlt₂ : bc113_toB G B y₂ < bc113_toB G B x) :
@@ -298,62 +221,33 @@ theorem bc113_bForest_down_unique (G : SimpleGraph V) (B : V → Prop) (hreach :
   obtain ⟨_, he₂⟩ := bc113_bForest_down_is_parent G B hreach h₂ hlt₂
   rw [he₁, he₂]
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc113_bForest_adj_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_adj_parent (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     {v : V} (hv : ¬ B v) : (bc113_bForest G B hreach).Adj v (bc113_parent G B hreach v) := by
   classical
   rw [bc113_bForest_adj]
   refine ⟨⟨v, hv, rfl⟩, ?_⟩
-  
   have hlt := (bc113_parent_spec G B hreach hv).2
   exact fun h => (Nat.ne_of_lt hlt) (congrArg (bc113_toB G B) h.symm)
 
-
-theorem bc113_bForest_degree_pos_of_not_mem (G : SimpleGraph V) (B : V → Prop)
+lemma bc113_bForest_degree_pos_of_not_mem (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     {v : V} (hv : ¬ B v) : 1 ≤ (bc113_bForest G B hreach).degree v := by
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,
     (bc113_bForest G B hreach).degree_pos_iff_exists_adj]
   exact ⟨_, bc113_bForest_adj_parent G B hreach hv⟩
 
-
-
-
-
-
-theorem bc113_leaf_is_tip (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_leaf_is_tip (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     [DecidableRel (bc113_bForest G B hreach).Adj]
     {v : V} (hv : ¬ B v) (hdeg : (bc113_bForest G B hreach).degree v = 1) :
     ∀ u, (bc113_bForest G B hreach).Adj v u → u = bc113_parent G B hreach v := by
   classical
   intro u hu
-  
   rw [SimpleGraph.degree_eq_one_iff_existsUnique_adj] at hdeg
   obtain ⟨w, hw, huniq⟩ := hdeg
   have hpar := bc113_bForest_adj_parent G B hreach hv
   rw [huniq u hu, huniq _ hpar]
 
-
-
-
-
-
-
-
-
-
-
-theorem bc113_bForest_acyclic (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
+lemma bc113_bForest_acyclic (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
     (bc113_bForest G B hreach).IsAcyclic := by
   classical
   set F := bc113_bForest G B hreach with hF
@@ -396,36 +290,23 @@ theorem bc113_bForest_acyclic (G : SimpleGraph V) (B : V → Prop) (hreach : bc1
   have heq : d.snd = d.penultimate := hunique hadj_snd hadj_pen' hlt_snd hlt_pen
   exact hcd.snd_ne_penultimate heq
 
+/-! ## C. Leaves and children -/
 
-
-
-
-
-
-
-
-
-
-
-
+/-- Every vertex outside `B` has a neighbour in the parent forest farther from `B`. -/
 def bc113_HasChild (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) : Prop :=
   ∀ v, ¬ B v → ∃ w, (bc113_bForest G B hreach).Adj v w ∧ bc113_toB G B v < bc113_toB G B w
 
-
-
-theorem bc113_bForest_degree_ge_two_of_child (G : SimpleGraph V) (B : V → Prop)
+lemma bc113_bForest_degree_ge_two_of_child (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     {v w : V} (hv : ¬ B v) (hadjw : (bc113_bForest G B hreach).Adj v w)
     (hltw : bc113_toB G B v < bc113_toB G B w) :
     2 ≤ (bc113_bForest G B hreach).degree v := by
   classical
-  
   have hpar := bc113_bForest_adj_parent G B hreach hv
   have hparlt := (bc113_parent_spec G B hreach hv).2
   set p := bc113_parent G B hreach v with hp
   have hpw : p ≠ w := by
     intro h; rw [h] at hparlt; omega
-  
   have hsub : {p, w} ⊆ (bc113_bForest G B hreach).neighborFinset v := by
     intro z hz
     simp only [Finset.mem_insert, Finset.mem_singleton] at hz
@@ -437,11 +318,7 @@ theorem bc113_bForest_degree_ge_two_of_child (G : SimpleGraph V) (B : V → Prop
     _ ≤ ((bc113_bForest G B hreach).neighborFinset v).card := Finset.card_le_card hsub
     _ = (bc113_bForest G B hreach).degree v := SimpleGraph.card_neighborFinset_eq_degree _ _
 
-
-
-
-
-theorem bc113_bForest_leaves_on_boundary (G : SimpleGraph V) (B : V → Prop)
+lemma bc113_bForest_leaves_on_boundary (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     (hchild : bc113_HasChild G B hreach)
     {v : V} (hdeg : (bc113_bForest G B hreach).degree v = 1) : B v := by
@@ -450,21 +327,12 @@ theorem bc113_bForest_leaves_on_boundary (G : SimpleGraph V) (B : V → Prop)
   have h2 := bc113_bForest_degree_ge_two_of_child G B hreach hv hadjw hltw
   omega
 
-
-
-
-
-
-
-
-
-
-
-def bc113_BoundaryHasChild (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) : Prop :=
+/-- Every vertex of `B` has a neighbour in the parent forest. -/
+def bc113_BoundaryHasChild (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B) :
+    Prop :=
   ∀ b, B b → ∃ w, (bc113_bForest G B hreach).Adj b w
 
-
-theorem bc113_bForest_degree_pos_of_mem (G : SimpleGraph V) (B : V → Prop)
+lemma bc113_bForest_degree_pos_of_mem (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     (hbc : bc113_BoundaryHasChild G B hreach) {b : V} (hb : B b) :
     1 ≤ (bc113_bForest G B hreach).degree b := by
@@ -472,24 +340,14 @@ theorem bc113_bForest_degree_pos_of_mem (G : SimpleGraph V) (B : V → Prop)
     (bc113_bForest G B hreach).degree_pos_iff_exists_adj]
   exact hbc b hb
 
-
-
-theorem bc113_bForest_min_degree (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_bForest_min_degree (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     [DecidableRel (bc113_bForest G B hreach).Adj] (hbc : bc113_BoundaryHasChild G B hreach)
     (v : V) : 1 ≤ (bc113_bForest G B hreach).degree v := by
   by_cases hv : B v
   · exact bc113_bForest_degree_pos_of_mem G B hreach hbc hv
   · exact bc113_bForest_degree_pos_of_not_mem G B hreach hv
 
-
-
-
-
-
-
-
-
-theorem bc113_boundaryAnchored_forest_exists (G : SimpleGraph V) (B : V → Prop)
+lemma bc113_boundaryAnchored_forest_exists (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B)
     (hchild : bc113_HasChild G B hreach) (hbc : bc113_BoundaryHasChild G B hreach) :
     ∃ (F : SimpleGraph V) (_ : DecidableRel F.Adj),
@@ -501,49 +359,24 @@ theorem bc113_boundaryAnchored_forest_exists (G : SimpleGraph V) (B : V → Prop
   · intro v; exact bc113_bForest_min_degree G B hreach hbc v
   · intro v hdeg; exact bc113_bForest_leaves_on_boundary G B hreach hchild hdeg
 
+/-! ## D. Examples -/
 
-
-
-
-
-
-
-
-
-
-theorem bc113_maxPotential_has_no_child (G : SimpleGraph V) (B : V → Prop)
-    (hreach : bc113_ReachesB G B) {v : V} (hv : ¬ B v)
+lemma bc113_maxPotential_has_no_child (G : SimpleGraph V) (B : V → Prop)
+    (hreach : bc113_ReachesB G B) {v : V} (_hv : ¬ B v)
     (hmax : ∀ w, bc113_toB G B w ≤ bc113_toB G B v) :
     ¬ ∃ w, (bc113_bForest G B hreach).Adj v w ∧ bc113_toB G B v < bc113_toB G B w := by
   rintro ⟨w, _, hlt⟩
   exact absurd (hmax w) (by omega)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc113_no_boundaryAnchored_on_triangle :
+lemma bc113_no_boundaryAnchored_on_triangle :
     ¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
         F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
         (∀ v, F.degree v = 1 → v = 0) := by
   classical
   rintro ⟨F, hFdec, _hle, hac, hmin, hleaf⟩
-  
   have hdeg_le : ∀ v : Fin 3, F.degree v ≤ 2 := by
     intro v
     have hb : F.degree v ≤ (⊤ : SimpleGraph (Fin 3)).degree v := by
-      
       rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree]
       apply Finset.card_le_card
       intro w hw
@@ -555,10 +388,8 @@ theorem bc113_no_boundaryAnchored_on_triangle :
   have hne2 : F.degree 2 ≠ 1 := fun h => absurd (hleaf 2 h) (by decide)
   have hd1 : F.degree 1 = 2 := by have := hmin 1; have := hdeg_le 1; omega
   have hd2 : F.degree 2 = 2 := by have := hmin 2; have := hdeg_le 2; omega
-  
   have hadj12 : F.Adj 1 2 := by
     by_contra hn
-    
     have hsub : F.neighborFinset 1 ⊆ {0} := by
       intro w hw
       rw [SimpleGraph.mem_neighborFinset] at hw
@@ -593,30 +424,20 @@ theorem bc113_no_boundaryAnchored_on_triangle :
     have := Finset.card_le_card hsub
     rw [SimpleGraph.card_neighborFinset_eq_degree, hd2] at this
     simp at this
-  
   set w : F.Walk 0 0 := SimpleGraph.Walk.cons hadj10.symm
       (SimpleGraph.Walk.cons hadj12 (SimpleGraph.Walk.cons hadj20 SimpleGraph.Walk.nil)) with hw
   refine hac w ?_
   rw [SimpleGraph.Walk.isCycle_def]
   refine ⟨?_, ?_, ?_⟩
-  · 
-    rw [SimpleGraph.Walk.isTrail_def, hw]
+  · rw [SimpleGraph.Walk.isTrail_def, hw]
     simp only [SimpleGraph.Walk.edges_cons, SimpleGraph.Walk.edges_nil]
     decide
-  · 
-    rw [hw]; exact fun h => (SimpleGraph.Walk.not_nil_cons) (h ▸ SimpleGraph.Walk.nil_nil)
-  · 
-    rw [hw]
+  · rw [hw]; exact fun h => (SimpleGraph.Walk.not_nil_cons) (h ▸ SimpleGraph.Walk.nil_nil)
+  · rw [hw]
     simp only [SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil, List.tail_cons]
     decide
 
-
-
-
-
-
-
-theorem bc113_boundaryAnchored_nonvacuous :
+lemma bc113_boundaryAnchored_nonvacuous :
     ∃ (F : SimpleGraph (Fin 2)) (_ : DecidableRel F.Adj),
       F ≤ (⊤ : SimpleGraph (Fin 2)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
       (∀ v, F.degree v = 1 → (fun _ : Fin 2 => True) v) := by
@@ -624,8 +445,7 @@ theorem bc113_boundaryAnchored_nonvacuous :
   refine ⟨SimpleGraph.fromEdgeSet {s((0 : Fin 2), 1)}, inferInstance, ?_, ?_, ?_, ?_⟩
   · intro x y hxy; rw [SimpleGraph.top_adj]
     exact (SimpleGraph.fromEdgeSet {s((0 : Fin 2), 1)}).ne_of_adj hxy
-  · 
-    rw [SimpleGraph.isAcyclic_iff_forall_adj_isBridge]
+  · rw [SimpleGraph.isAcyclic_iff_forall_adj_isBridge]
     intro u v huv
     rw [SimpleGraph.fromEdgeSet_adj] at huv
     obtain ⟨hmem, hne⟩ := huv
@@ -636,7 +456,8 @@ theorem bc113_boundaryAnchored_nonvacuous :
     have hbot : ((SimpleGraph.fromEdgeSet {s((0 : Fin 2), 1)}).deleteEdges {s(u, v)}) = ⊥ := by
       ext p q
       rw [SimpleGraph.deleteEdges_adj]
-      simp only [SimpleGraph.fromEdgeSet_adj, Set.mem_singleton_iff, Sym2.eq_iff, SimpleGraph.bot_adj,
+      simp only [SimpleGraph.fromEdgeSet_adj, Set.mem_singleton_iff, Sym2.eq_iff,
+          SimpleGraph.bot_adj,
         iff_false, not_and]
       rintro ⟨hpq, hpqne⟩ hnpq
       apply hnpq
@@ -646,7 +467,6 @@ theorem bc113_boundaryAnchored_nonvacuous :
     exact hne (wlk.eq_of_length_eq_zero
       (by cases wlk with | nil => rfl | cons h _ => exact absurd h (by simp)))
   · intro v
-    
     rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,
       (SimpleGraph.fromEdgeSet {s((0 : Fin 2), 1)}).degree_pos_iff_exists_adj]
     fin_cases v
@@ -655,21 +475,7 @@ theorem bc113_boundaryAnchored_nonvacuous :
                    refine ⟨by simp, by decide⟩⟩
   · intro v _; trivial
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc113_hub_degree_ge_three (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
+lemma bc113_hub_degree_ge_three (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B)
     [DecidableRel (bc113_bForest G B hreach).Adj] {v w₁ w₂ : V} (hv : ¬ B v)
     (ha₁ : (bc113_bForest G B hreach).Adj v w₁) (ha₂ : (bc113_bForest G B hreach).Adj v w₂)
     (hlt₁ : bc113_toB G B v < bc113_toB G B w₁) (hlt₂ : bc113_toB G B v < bc113_toB G B w₂)
@@ -679,7 +485,6 @@ theorem bc113_hub_degree_ge_three (G : SimpleGraph V) (B : V → Prop) (hreach :
   have hpar := bc113_bForest_adj_parent G B hreach hv
   have hparlt := (bc113_parent_spec G B hreach hv).2
   set p := bc113_parent G B hreach v with hp
-  
   have hpw₁ : p ≠ w₁ := by intro h; rw [h] at hparlt; omega
   have hpw₂ : p ≠ w₂ := by intro h; rw [h] at hparlt; omega
   have hsub : {p, w₁, w₂} ⊆ (bc113_bForest G B hreach).neighborFinset v := by
@@ -697,57 +502,13 @@ theorem bc113_hub_degree_ge_three (G : SimpleGraph V) (B : V → Prop) (hreach :
     _ ≤ ((bc113_bForest G B hreach).neighborFinset v).card := Finset.card_le_card hsub
     _ = (bc113_bForest G B hreach).degree v := SimpleGraph.card_neighborFinset_eq_degree _ _
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc113_status :
-    
+lemma bc113_status :
     (∀ (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B),
       (bc113_bForest G B hreach) ≤ G ∧ (bc113_bForest G B hreach).IsAcyclic) ∧
-    
     (∀ (G : SimpleGraph V) (B : V → Prop) (hreach : bc113_ReachesB G B),
       bc113_HasChild G B hreach → bc113_BoundaryHasChild G B hreach →
       ∃ (F : SimpleGraph V) (_ : DecidableRel F.Adj),
         F ≤ G ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v)) ∧
-    
     (¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
         F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
         (∀ v, F.degree v = 1 → v = 0)) := by

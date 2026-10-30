@@ -6,45 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
+
+/-!
+# Fully open boxes
+
+A fully open box is internally connected; the upper-lines box at the origin is not fully open
+although it is a genuine trifurcation.
+
+## i. Overview
+
+`bff_BoxAllOpen ω n` says every edge of the box of radius `n` is open; then any two sites of the box
+are connected. In the upper-lines configuration the edge from `(0, 0)` to `(1, 0)` is closed, so no
+box is fully open, while the box at the origin is a genuine trifurcation for `L ≥ 3`.
+
+## ii. Key results
+
+- `bff_allOpen_box_connected` : fully open boxes are connected.
+- `bff_genuine_trif_with_non_allOpen_box` : a genuine trifurcation whose box is not fully open.
+
+## iii. Table of contents
+
+- A. Fully open boxes
+- B. The upper-lines configuration
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -53,21 +47,13 @@ open StatMech StatMech.Lattice StatMech.ConfigSpace StatMech.Percolation
 
 namespace StatMech.Walls
 
+/-! ## A. Fully open boxes -/
 
-
-
-
-
-
-
+/-- Every edge of the box of radius `n` is open. -/
 def bff_BoxAllOpen (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ) : Prop :=
   ∀ e ∈ boxEdges 2 n, ω e = true
 
-
-
-
-
-theorem bff_allOpen_box_connected {ω : ConfigSpace (Sym2 (Site 2))} {n : ℕ}
+lemma bff_allOpen_box_connected {ω : ConfigSpace (Sym2 (Site 2))} {n : ℕ}
     (h : bff_BoxAllOpen ω n) {x y : Site 2}
     (hx : x ∈ Lattice.box 2 n) (hy : y ∈ Lattice.box 2 n) :
     Lattice.Connected 2 ω x y := by
@@ -79,28 +65,21 @@ theorem bff_allOpen_box_connected {ω : ConfigSpace (Sym2 (Site 2))} {n : ℕ}
   have hconn := box_allOpen_connected (n := n) ω hx hy
   rwa [heq] at hconn
 
+/-! ## B. The upper-lines configuration -/
 
-
-
-
-
-
-
-theorem bff_upperLines_box_edge_mem {L : ℕ} (hL : 1 ≤ L) :
+lemma bff_upperLines_box_edge_mem {L : ℕ} (hL : 1 ≤ L) :
     s(bc57_pt 0 0, bc57_pt 1 0) ∈ boxEdges 2 L := by
   have hx0 : (bc57_pt 0 0 : Site 2) ∈ Lattice.box 2 L := by
-    simp only [Lattice.box, Set.mem_setOf_eq]
+    simp only [Lattice.box, Set.mem_ofPred_eq]
     intro i; fin_cases i <;> simp [bc57_pt]
   have hx1 : (bc57_pt 1 0 : Site 2) ∈ Lattice.box 2 L := by
-    simp only [Lattice.box, Set.mem_setOf_eq]
-    intro i; fin_cases i <;> simp [bc57_pt] <;> omega
+    simp only [Lattice.box, Set.mem_ofPred_eq]
+    intro i; fin_cases i <;> simp [bc57_pt]; omega
   have hadj : (hypercubicLattice 2).Adj (bc57_pt 0 0) (bc57_pt 1 0) := by
-    simpa using bc57_pt_adj (0 : ℤ) 0
+    simp
   exact mk_mem_boxEdges hx0 hx1 hadj
 
-
-
-theorem bff_upperLines_box_edge_closed :
+lemma bff_upperLines_box_edge_closed :
     bc60_upperLines s(bc57_pt 0 0, bc57_pt 1 0) = false := by
   rcases Bool.eq_false_or_eq_true (bc60_upperLines s(bc57_pt 0 0, bc57_pt 1 0)) with h | h
   · exfalso
@@ -109,27 +88,14 @@ theorem bff_upperLines_box_edge_closed :
     exact absurd h1 (by norm_num)
   · exact h
 
-
-
-theorem bff_upperLines_box_not_allOpen {L : ℕ} (hL : 1 ≤ L) :
+lemma bff_upperLines_box_not_allOpen {L : ℕ} (hL : 1 ≤ L) :
     ¬ bff_BoxAllOpen bc60_upperLines L := by
   intro hall
   have hopen := hall _ (bff_upperLines_box_edge_mem hL)
   rw [bff_upperLines_box_edge_closed] at hopen
   exact absurd hopen (by decide)
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bff_genuine_trif_with_non_allOpen_box {L : ℕ} (hL : 3 ≤ L) :
+lemma bff_genuine_trif_with_non_allOpen_box {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
       ¬ bff_BoxAllOpen bc60_upperLines L :=
   ⟨bc67_upperLines_is_G_n_trifurcation hL,

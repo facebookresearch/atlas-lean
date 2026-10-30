@@ -6,67 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -82,6 +21,42 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DownArmF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalDownArm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.EscapingArmForest
 
+/-!
+# Escaping arms from rays avoiding trifurcations
+
+Injective rays avoiding the trifurcations escape every box; trifurcation-avoiding ray data give
+escaping down-arm data, the bundled rooted forest and the trifurcation count.
+
+## i. Overview
+
+`bc33_rayWalk` turns a ray into walks from its start, and an injective ray in `ℤ^d` leaves every
+box. `bc33_TavoidingRayData ω n rank` asks for arm ends with open rays avoiding all trifurcations of
+the box after the trifurcation is removed, and for separation along `rank`. It gives escaping
+down-arm data, global-cut down-arm data, the bundled rooted down-arm forest and the count bound. It
+holds for a chain of three and for a claw, and a ray on `ℤ²` shows the ray clause is satisfiable.
+
+**Fidelity.** `bc33_burton_keane_bernoulli_of_TavoidingRayData` assumes the ray data for every
+configuration and box, which implies the configuration-wide trifurcation bound refuted by
+`tfc_not_forall_Tcount_le_boundary`; it is vacuous and kept only because a chain used by another
+lane depends on it.
+
+## ii. Key results
+
+- `bc33_escapingDownArmData_of_TavoidingRayData` : escaping down-arm data from avoiding rays.
+- `bc33_Tcount_le_boundary_of_TavoidingRayData` : the count bound.
+
+## iii. Table of contents
+
+- A. Rays escape boxes
+- B. Trifurcation-avoiding ray data
+- C. Examples
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -95,24 +70,15 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Rays escape boxes -/
 
-
-
-
-
-
-
-
-
-
+/-- The walk along the ray `r` from `r 0` to `r j`. -/
 noncomputable def bc33_rayWalk {V : Type*} (G : SimpleGraph V) (r : ℕ → V)
     (hadj : ∀ k, G.Adj (r k) (r (k + 1))) : ∀ j, G.Walk (r 0) (r j)
   | 0 => Walk.nil
   | (i+1) => (bc33_rayWalk G r hadj i).concat (hadj i)
 
-
-
-theorem bc33_rayWalk_support {V : Type*} (G : SimpleGraph V) (r : ℕ → V)
+lemma bc33_rayWalk_support {V : Type*} (G : SimpleGraph V) (r : ℕ → V)
     (hadj : ∀ k, G.Adj (r k) (r (k + 1))) (j : ℕ) :
     ∀ v ∈ (bc33_rayWalk G r hadj j).support, ∃ k ≤ j, v = r k := by
   induction j with
@@ -128,10 +94,7 @@ theorem bc33_rayWalk_support {V : Type*} (G : SimpleGraph V) (r : ℕ → V)
       exact ⟨k, by omega, rfl⟩
     · exact ⟨i+1, le_refl _, hv⟩
 
-
-
-
-theorem bc33_injRay_escapes_box (r : ℕ → Site d) (hinj : Function.Injective r) (m : ℕ) :
+lemma bc33_injRay_escapes_box (r : ℕ → Site d) (hinj : Function.Injective r) (m : ℕ) :
     ∃ j, r j ∉ box d m := by
   by_contra h
   simp only [not_exists, not_not] at h
@@ -139,24 +102,7 @@ theorem bc33_injRay_escapes_box (r : ℕ → Site d) (hinj : Function.Injective 
   have hrangefin : (Set.range r).Finite := (box_finite d m).subset hsub
   exact (Set.infinite_range_of_injective hinj) hrangefin
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc33_escapingWalks_of_TavoidingRay (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc33_escapingWalks_of_TavoidingRay (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x a : Site d} (r : ℕ → Site d) (hr0 : r 0 = a)
     (hinj : Function.Injective r)
     (hadj : ∀ k, (openSubgraph d (removeSite x ω)).Adj (r k) (r (k + 1)))
@@ -172,20 +118,11 @@ theorem bc33_escapingWalks_of_TavoidingRay (ω : ConfigSpace (Sym2 (Site d))) (n
   obtain ⟨k, _hk, rfl⟩ := bc33_rayWalk_support _ r hadj j v hv
   exact hT k
 
+/-! ## B. Trifurcation-avoiding ray data -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Trifurcation-avoiding ray data along `rank`: arm ends `b x` carrying injective open rays in
+`removeSite x ω` that avoid every trifurcation of the box, with the ends of connected trifurcations
+separated by removing the higher-ranked one. -/
 def bc33_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ b : Site d → Site d,
@@ -198,10 +135,7 @@ def bc33_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       x ≠ y → Connected d ω x y → rank x < rank y →
       ¬ Connected d (removeSite y ω) (b y) (b x))
 
-
-
-
-theorem bc33_escapingDownArmData_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc33_escapingDownArmData_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (h : bc33_TavoidingRayData ω n rank) :
     bc32_EscapingDownArmData ω n rank := by
   obtain ⟨b, hbdata, hsplit⟩ := h
@@ -210,18 +144,13 @@ theorem bc33_escapingDownArmData_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Si
   obtain ⟨hbbox, hbconn, r, hr0, hinj, hadj, hT⟩ := hbdata x hxbox htri
   exact ⟨hbbox, hbconn, bc33_escapingWalks_of_TavoidingRay ω n r hr0 hinj hadj hT⟩
 
-
-
-
-theorem bc33_globalCutDownArmData_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc33_globalCutDownArmData_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (h : bc33_TavoidingRayData ω n rank) :
     bc30_GlobalCutDownArmData ω n rank :=
   bc32_globalCutDownArmData_of_escapingDownArmData ω n rank
     (bc33_escapingDownArmData_of_TavoidingRayData ω n rank h)
 
-
-
-theorem bc33_bundledRootedDownArmForest_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc33_bundledRootedDownArmForest_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (rank : Site d → ℕ ×ₗ ℕ)
     (hinj : ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → rank x ≠ rank y)
@@ -230,8 +159,7 @@ theorem bc33_bundledRootedDownArmForest_of_TavoidingRayData (ω : ConfigSpace (S
   bc30_bundledRootedDownArmForest_of_data ω n rank hinj
     (bc33_globalCutDownArmData_of_TavoidingRayData ω n rank h)
 
-
-theorem bc33_Tcount_le_boundary_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc33_Tcount_le_boundary_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (hn : 1 ≤ n) (rank : Site d → ℕ ×ₗ ℕ)
     (hinj : ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
       x ≠ y → Connected d ω x y → rank x ≠ rank y)
@@ -240,17 +168,11 @@ theorem bc33_Tcount_le_boundary_of_TavoidingRayData (ω : ConfigSpace (Sym2 (Sit
   bc30_Tcount_le_boundary_of_data ω n hn rank hinj
     (bc33_globalCutDownArmData_of_TavoidingRayData ω n rank h)
 
-
-
-
-
-
-
-
-
-
-
-theorem bc33_burton_keane_bernoulli_of_TavoidingRayData (hd : 1 ≤ d) (p : ℝ≥0)
+/-- Burton–Keane uniqueness from trifurcation-avoiding ray data for every configuration and box. Its
+configuration-wide hypothesis implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration and box, which is false for `d ≥ 1` (`tfc_not_forall_Tcount_le_boundary`), so the
+statement is vacuous. -/
+lemma bc33_burton_keane_bernoulli_of_TavoidingRayData (hd : 1 ≤ d) (p : ℝ≥0)
     (hp1 : p ≤ 1) (hp0 : 0 < p)
     (rank : ConfigSpace (Sym2 (Site d)) → ℕ → Site d → ℕ ×ₗ ℕ)
     (hinj : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ),
@@ -273,27 +195,9 @@ theorem bc33_burton_keane_bernoulli_of_TavoidingRayData (hd : 1 ≤ d) (p : ℝ�
     (fun ω n hn => bc33_bundledRootedDownArmForest_of_TavoidingRayData ω n (rank ω n)
       (hinj ω n) (hres ω n hn)) htrif
 
+/-! ## C. Examples -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc33_TavoidingRayData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc33_TavoidingRayData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ m g : Site d} (b : Site d → Site d)
     (hx0box : x₀ ∈ box d n) (hmbox : m ∈ box d n) (hgbox : g ∈ box d n)
     (hx0m : x₀ ≠ m) (hx0g : x₀ ≠ g) (hmg : m ≠ g)
@@ -350,27 +254,7 @@ theorem bc33_TavoidingRayData_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (
       exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
     · exact absurd rfl hxy
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc33_TavoidingRayData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc33_TavoidingRayData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d) (y : Fin 3 → Site d) (b : Site d → Site d)
     (hx0box : x₀ ∈ box d n)
     (hydata : ∀ i, y i ∈ box d n ∧ x₀ ≠ y i ∧ Connected d ω x₀ (y i))
@@ -394,13 +278,13 @@ theorem bc33_TavoidingRayData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : �
   set rank : Site d → ℕ ×ₗ ℕ := fun z =>
     if z = x₀ then toLex (0, 0)
     else if h : ∃ i, z = y i then toLex (1, (h.choose : ℕ)) else toLex (2, 0) with hrank
-  have hrx0 : rank x₀ = toLex (0, 0) := by simp only [hrank, if_pos rfl]
+  have hrx0 : rank x₀ = toLex (0, 0) := by simp only [hrank, ite_eq_left rfl]
   have hry : ∀ i, rank (y i) = toLex (1, (i : ℕ)) := by
     intro i
     have hne : y i ≠ x₀ := (hydata i).2.1.symm
     have hex : ∃ k, y i = y k := ⟨i, rfl⟩
     have hchoose : hex.choose = i := hyinj hex.choose_spec.symm
-    simp only [hrank, if_neg hne, dif_pos hex, hchoose]
+    simp only [hrank, ite_eq_right hne, dite_eq_left hex, hchoose]
   refine ⟨b, ?_, ?_⟩
   · intro x hxbox htri
     rcases hsingle x hxbox htri with rfl | ⟨i, rfl⟩
@@ -421,24 +305,7 @@ theorem bc33_TavoidingRayData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : �
           · exact h
         exact hssib i j hji
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc33_arc_ray :
+lemma bc33_arc_ray :
     (fun k : ℕ => arc_p (1 + (k : ℤ))) 0 = arc_p 1 ∧
     Function.Injective (fun k : ℕ => arc_p (1 + (k : ℤ))) ∧
     (∀ k : ℕ, (openSubgraph 2 (removeSite (arc_p (-2)) arc_rayConfig)).Adj
@@ -454,16 +321,7 @@ theorem bc33_arc_ray :
     rw [hcast]
     exact bc32_pos_edge_open (1 + (k : ℤ)) (by omega)
 
-
-
-
-
-
-
-
-
-
-theorem bc33_TavoidingRay_nonvacuous :
+lemma bc33_TavoidingRay_nonvacuous :
     ∃ (ω : ConfigSpace (Sym2 (Site 2))) (x a : Site 2) (T : Finset (Site 2)),
       a ∉ T ∧ x ∈ T ∧
       ∃ r : ℕ → Site 2, r 0 = a ∧ Function.Injective r ∧

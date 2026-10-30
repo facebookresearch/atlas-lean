@@ -6,20 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AnchoredLeafTrifCount
+
+/-!
+# Counting cut hubs in a finite forest
+
+In a finite forest, the hubs whose deletion separates three boundary vertices are at most the
+boundary vertices; the same holds in any ambient graph through a spanning forest.
+
+## i. Overview
+
+If every hub `u` reaches three boundary vertices that are pairwise disconnected after deleting the
+edges at `u`, then in a finite acyclic graph the number of hubs is at most the number of boundary
+vertices (`finite_cutHub_count`). The proof peels a forest whose leaves are boundary vertices and
+whose hubs have degree at least three. Through a spanning forest of the finite part, the same holds
+in any ambient graph (`finite_cutHub_count_of_ambient`).
+
+## ii. Key results
+
+- `finite_cutHub_count` : the hub count in a finite forest.
+- `finite_cutHub_count_of_ambient` : the hub count in an ambient graph.
+
+## iii. Table of contents
+
+- A. The hub count
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- D. König, *Theorie der endlichen und unendlichen Graphen*, Leipzig (1936).
+-/
 
 @[expose] public section
 
@@ -29,8 +48,13 @@ namespace StatMech.FrontierA
 
 open StatMech.Walls StatMech.Percolation
 
+/-! ## A. The hub count -/
 
-
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+/-- **Cut-hub count.** In a finite acyclic graph, if each hub reaches three boundary vertices that
+become pairwise disconnected when the edges at the hub are deleted, there are at most as many hubs
+as boundary vertices. -/
 theorem finite_cutHub_count
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -47,7 +71,7 @@ theorem finite_cutHub_count
   rcases hubs.eq_empty_or_nonempty with hempty | hnonempty
   · simp [hempty]
   let P : V → Prop := fun v => v ∈ boundary ∨ v ∈ hubs
-  haveI : DecidablePred P := Classical.decPred _
+  have : DecidablePred P := Classical.decPred _
   obtain ⟨F, hFdec, hFle, hFac, hFleafP, hFpres⟩ :=
     bc121_boundaryAnchored_subforest G P hGac
   have hdeg3 : ∀ u ∈ hubs, 3 ≤ F.degree u := by
@@ -74,7 +98,7 @@ theorem finite_cutHub_count
     rw [← F.degree_pos_iff_mem_support]
     have := hdeg3 u0 hu0
     omega
-  letI : Nonempty F.support := ⟨⟨u0, hu0support⟩⟩
+  let : Nonempty F.support := ⟨⟨u0, hu0support⟩⟩
   let H : SimpleGraph F.support := F.induce F.support
   have hHac : H.IsAcyclic := hFac.induce _
   have hHmin : ∀ v, 1 ≤ H.degree v := by
@@ -91,7 +115,7 @@ theorem finite_cutHub_count
     intro u hu
     change (if hu' : u ∈ hubs then (⟨u, _⟩ : F.support)
       else ⟨u0, hu0support⟩).1 = u
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
   have hHubBranch : ∀ u ∈ hubs, hubMap u ∈
       (Finset.univ.filter fun v : F.support => 3 ≤ H.degree v) := by
     intro u hu
@@ -129,9 +153,11 @@ theorem finite_cutHub_count
       flc2_forest_internal_le_leaves H hHac hHmin
     _ ≤ boundary.card := hLeafCard
 
-
-
-theorem finite_cutHub_count_of_ambient
+set_option linter.unusedDecidableInType false in
+/-- The cut-hub count in an ambient graph: if each hub reaches three boundary vertices that become
+pairwise disconnected when its edges are deleted, there are at most as many hubs as boundary
+vertices. -/
+lemma finite_cutHub_count_of_ambient
     {V : Type*} [DecidableEq V]
     (A : SimpleGraph V) [DecidableRel A.Adj]
     (hubs boundary : Finset V)
@@ -210,7 +236,7 @@ theorem finite_cutHub_count_of_ambient
     intro i
     exact ⟨(p3 i).induce (↑carrier : Set V) (hp3mem i)⟩
   let T : SimpleGraph (↥carrier) := osf_spanForest G0
-  haveI : DecidableRel T.Adj := Classical.decRel _
+  have : DecidableRel T.Adj := Classical.decRel _
   let hubMap : ↥hubs → ↥carrier := fun i => ⟨i.1, hubMem i⟩
   let target1 : ↥hubs → ↥carrier := fun i => ⟨t1 i, t1Mem i⟩
   let target2 : ↥hubs → ↥carrier := fun i => ⟨t2 i, t2Mem i⟩

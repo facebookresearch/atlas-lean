@@ -11,28 +11,43 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
 
+/-!
+# Burton–Keane uniqueness from canonical trifurcations
+
+Canonical trifurcations have probability zero for every translation-invariant measure in `d ≥ 1`;
+with the canonical trifurcation step, ergodicity and finite energy give uniqueness of the infinite
+cluster.
+
+## i. Overview
+
+The boundary of the box of radius `n + 1` is negligible relative to the box of radius `n`. The
+canonical count `ctc2_canonTcount` is at most the boundary of the next box for every configuration,
+so the expected canonical count gives `P(canonical trifurcation at 0) = 0` for every
+translation-invariant measure (`cbk_canonical_trif_prob_eq_zero`). With the canonical trifurcation
+step `0 < μ(N = ⊤) → 0 < μ(canonical trifurcation at 0)`, `N ≠ ⊤` almost surely, and the merge
+argument gives the Burton–Keane conclusion (`cbk_canonical_uniqueness`).
+
+**Fidelity.** `cbk_canonical_uniqueness` is conditional on the canonical trifurcation step `htrif`;
+the probability-zero step and the counting are proved with no further hypothesis.
+
+## ii. Key results
+
+- `cbk_canonical_trif_prob_eq_zero` : canonical trifurcations have probability zero.
+- `cbk_canonical_uniqueness` : uniqueness from the canonical trifurcation step.
+
+## iii. Table of contents
+
+- A. The boundary of the next box
+- B. Uniqueness
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section 8.2.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 namespace StatMech.Percolation
 
@@ -42,10 +57,12 @@ open scoped ENNReal
 
 variable {d : ℕ}
 
+/-! ## A. The boundary of the next box -/
 
-
-
-theorem cbk_boundary_succ_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
+/-- Same statement as `bc54_boundary_succ_vol_tendsto`; kept because `CoarseBoundaryTrifCount` is
+not
+imported by all its users. -/
+lemma cbk_boundary_succ_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
     Tendsto (fun n => (boxSV_boundaryCard d (n + 1) : ℝ) / ((boxFinsetBK d n).card : ℝ))
       atTop (𝓝 0) := by
   have hub : Tendsto (fun n : ℕ => (2 * (d : ℝ) * 3 ^ d) / ((n : ℝ) + 1)) atTop (𝓝 0) := by
@@ -82,31 +99,16 @@ theorem cbk_boundary_succ_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
   rw [div_le_iff₀ hVnpos]
   exact hAle
 
+/-! ## B. Uniqueness -/
 
-
-
-
-
-
-theorem cbk_canonical_trif_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma cbk_canonical_trif_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) :
     μ {ω | IsCanonicalTrifurcation d ω 0} = 0 :=
   ctp_canonical_trifurcation_prob_eq_zero μ hinv (fun n => bkc_boxFinsetBK_card_pos d n)
     (cbk_boundary_succ_vol_tendsto d hd)
 
-
-
-
-
-
-
-
-
-
-
-
-theorem cbk_numInfiniteClusters_ne_top (μ : Measure (ConfigSpace (Sym2 (Site d))))
+lemma cbk_numInfiniteClusters_ne_top (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d)
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
     (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
@@ -127,14 +129,12 @@ theorem cbk_numInfiniteClusters_ne_top (μ : Measure (ConfigSpace (Sym2 (Site d)
   rw [hk] at htop0
   exact one_ne_zero htop0
 
-
-
-
-
-
-
-
-theorem cbk_canonical_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
+/-- **Burton–Keane uniqueness via canonical trifurcations.** For an ergodic measure with finite
+energy
+for merges in `d ≥ 1`, if infinitely many infinite clusters with positive probability give a
+canonical trifurcation at the origin with positive probability, then a.s. `N ∈ {0, 1}`. Burton and
+Keane, *Density and uniqueness in percolation* (1989). -/
+lemma cbk_canonical_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d)
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
     (hfe : HasFiniteEnergyMerge μ)
@@ -149,8 +149,8 @@ theorem cbk_canonical_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
     intro hktop
     have hsub : {ω | numInfiniteClusters d ω = k} ⊆ {ω | numInfiniteClusters d ω = k'}ᶜ := by
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, hω]
+      simp only [Set.mem_ofPred_eq] at hω
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, hω]
       intro h; exact hk'top (by rw [← h, hktop])
     have hmk' : MeasurableSet
         {ω : ConfigSpace (Sym2 (Site d)) | numInfiniteClusters d ω = k'} := by

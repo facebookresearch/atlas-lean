@@ -6,57 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -74,6 +23,47 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmFores
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutAcyclic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutSpanning
 
+/-!
+# Funnelling arm cut geometry
+
+The fixed arm cut geometry fails when the down-arm map is idempotent; a weakened version together
+with root-side comparability gives parent funnelling and the trifurcation count.
+
+## i. Overview
+
+The condition `bc39_ArmCutGeometryFixed` requires every arm end except `b t` to reach each
+arm-adjacent `s` after `t` is removed. This forces all sites to reach `s` and fails whenever the
+down-arm map is idempotent. The weaker condition `bc40_ArmCutGeometryFixed'` asks this only of ends
+whose trifurcation already reaches `s`. Together with root-side comparability
+(`bc40_RootSideComparable`) it gives arm realisation, parent funnelling and the count bound.
+Labelled chains on `Fin 6` and `Fin 3` show that the universal funnelling clause is inconsistent and
+the comparable version is consistent.
+
+The configuration-wide form of this condition, for every configuration and every box of radius
+`n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration, which `tfc_not_forall_Tcount_le_boundary` refutes
+(`bc40_not_forall_cutGeometryFixed'`). The Burton–Keane theorem that assumed it was removed as
+vacuous.
+
+## ii. Key results
+
+- `bc40_armCutGeometryFixed_false_of_idempotentDownArm` : the fixed cut geometry fails for an
+  idempotent down-arm.
+- `bc40_Tcount_le_boundary_of_cutGeometryFixed'` : the count bound from the weakened condition.
+
+## iii. Table of contents
+
+- A. The fixed cut geometry
+- B. The weakened cut geometry
+- C. Labelled chains
+- D. Unsatisfiability of the configuration-wide conditions
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -81,7 +71,6 @@ open scoped BigOperators ENNReal NNReal
 
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
-set_option linter.style.longLine false
 set_option maxRecDepth 4000
 
 namespace StatMech.Walls
@@ -90,19 +79,9 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. The fixed cut geometry -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_funnel_demands_all_sites_reach_s (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_funnel_demands_all_sites_reach_s (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc39_ArmCutGeometryFixed ω n)
     {t s : Site d} (htbox : t ∈ box d n) (htri : IsTrifurcation d ω t)
     (hadj : bc37_ArmAdjacent ω n t s) :
@@ -111,22 +90,7 @@ theorem bc40_funnel_demands_all_sites_reach_s (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨_hloc, _hself, hfun⟩ := hclauses t s htbox htri hadj
   exact ⟨b, hfun⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_armCutGeometryFixed_false_of_idempotentDownArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_armCutGeometryFixed_false_of_idempotentDownArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {t s : Site d} (htbox : t ∈ box d n) (htri : IsTrifurcation d ω t)
     (hadj : bc37_ArmAdjacent ω n t s)
     (hidem : ∀ b : Site d → Site d,
@@ -138,41 +102,15 @@ theorem bc40_armCutGeometryFixed_false_of_idempotentDownArm (ω : ConfigSpace (S
   rintro ⟨b, hdata, hclauses⟩
   obtain ⟨_hloc, hself, hfun⟩ := hclauses t s htbox htri hadj
   obtain ⟨hbbt, hbts, hbtt⟩ := hidem b hdata
-  
   have hreach : Connected d (removeSite t ω) (b (b t)) s := hfun (b t) hbts hbtt
   rw [hbbt] at hreach
   exact hself hreach
 
+/-! ## B. The weakened cut geometry -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Weakened arm cut geometry: arm ends `b x` with infinite clusters after removing `x`; after
+removing
+`t`, every end whose trifurcation still reaches an arm-adjacent `s` also reaches `s`. -/
 def bc40_ArmCutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -184,29 +122,16 @@ def bc40_ArmCutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Pro
       (∀ x, x ≠ t → Connected d (removeSite t ω) x s →
         Connected d (removeSite t ω) (b x) s))
 
-
-
-
-
-
-
-
+/-- Root-side comparability for `rank` and `par`: for connected trifurcations, the end of the lower
+one
+lies on the root side of the higher one. -/
 def bc40_RootSideComparable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
     x ≠ y → Connected d ω x y → rank x < rank y → x ≠ par y →
     Connected d (removeSite y ω) x (par y)
 
-
-
-
-
-
-
-
-
-
-theorem bc40_armRealisation_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_armRealisation_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hroot_side : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc40_RootSideComparable ω n rank par) :
@@ -218,16 +143,12 @@ theorem bc40_armRealisation_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d
   obtain ⟨hpadj, _hprank⟩ := hroot x hxbox htri y hybox htriy hxy hconn hlt
   obtain ⟨hloc, hself, hfun⟩ := hclauses y (par y) hybox htriy hpadj
   refine ⟨hloc, hself, fun hxne => ?_⟩
-  
-  
   have hxy' : x ≠ y := hxy
   have hrs : Connected d (removeSite y ω) x (par y) :=
     hroot_side rank par x hxbox htri y hybox htriy hxy hconn hlt hxne
   exact hfun x hxy' hrs
 
-
-
-theorem bc40_parentFunneling_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_parentFunneling_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hroot_side : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc40_RootSideComparable ω n rank par) :
@@ -235,8 +156,7 @@ theorem bc40_parentFunneling_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site 
   bc38_parentFunneling_of_residues ω n (bc39_armAdjSpanning ω n)
     (bc40_armRealisation_of_cutGeometryFixed' ω n hgeo hroot_side)
 
-
-theorem bc40_selfDownArm_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_selfDownArm_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hroot_side : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc40_RootSideComparable ω n rank par) :
@@ -244,8 +164,7 @@ theorem bc40_selfDownArm_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d)))
   bc37_selfDownArm_of_parentFunneling ω n
     (bc40_parentFunneling_of_cutGeometryFixed' ω n hgeo hroot_side)
 
-
-theorem bc40_Tcount_le_boundary_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_Tcount_le_boundary_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (hgeo : bc40_ArmCutGeometryFixed' ω n)
     (hroot_side : ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
       bc40_RootSideComparable ω n rank par) :
@@ -253,70 +172,24 @@ theorem bc40_Tcount_le_boundary_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Si
   bc36_Tcount_le_boundary_of_selfDownArm ω n hn
     (bc40_selfDownArm_of_cutGeometryFixed' ω n hgeo hroot_side)
 
-
-
-
-
-
-
-
-
-theorem bc40_burton_keane_bernoulli_of_cutGeometryFixed' (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hgeo : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc40_ArmCutGeometryFixed' ω n)
-    (hroot_side : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d), bc40_RootSideComparable ω n rank par)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc36_burton_keane_bernoulli_of_selfDownArm hd p hp1 hp0
-    (fun ω n hn => bc40_selfDownArm_of_cutGeometryFixed' ω n (hgeo ω n hn) (hroot_side ω n hn)) htrif
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_armCutGeometryFixed'_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_armCutGeometryFixed'_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     bc40_ArmCutGeometryFixed' ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro t s htbox htri _; exact absurd htri (hno t htbox)
 
-
-
-
-
-
-
-
-theorem bc40_armCutGeometryFixed'_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_armCutGeometryFixed'_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
     (hbx0 : b x₀ ∈ box d n ∧ Connected d ω x₀ (b x₀) ∧
       (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x₀)).Infinite)
     (hby0 : b y₀ ∈ box d n ∧ Connected d ω y₀ (b y₀) ∧
       (cluster d (removeSites (tfc_trifFinset ω n) ω) (b y₀)).Infinite)
-    
     (hloc_x : ∀ s, bc37_ArmAdjacent ω n x₀ s → ¬ Connected d (removeSite x₀ ω) (b x₀) (b s))
     (hself_x : ∀ s, bc37_ArmAdjacent ω n x₀ s → ¬ Connected d (removeSite x₀ ω) (b x₀) s)
     (hloc_y : ∀ s, bc37_ArmAdjacent ω n y₀ s → ¬ Connected d (removeSite y₀ ω) (b y₀) (b s))
     (hself_y : ∀ s, bc37_ArmAdjacent ω n y₀ s → ¬ Connected d (removeSite y₀ ω) (b y₀) s)
-    
     (hfun_x : ∀ s, bc37_ArmAdjacent ω n x₀ s → ∀ x, x ≠ x₀ →
       Connected d (removeSite x₀ ω) x s → Connected d (removeSite x₀ ω) (b x) s)
     (hfun_y : ∀ s, bc37_ArmAdjacent ω n y₀ s → ∀ x, x ≠ y₀ →
@@ -334,20 +207,7 @@ theorem bc40_armCutGeometryFixed'_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) 
     · exact ⟨hloc_y s hadj, hself_y s hadj, hfun_y s hadj⟩
 
 set_option linter.unusedVariables false in
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_armCutGeometryFixed'_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_armCutGeometryFixed'_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ m g : Site d} (b : Site d → Site d)
     (hx0m : x₀ ≠ m) (hx0g : x₀ ≠ g) (hmg : m ≠ g)
     (hthree : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = m ∨ x = g)
@@ -357,12 +217,10 @@ theorem bc40_armCutGeometryFixed'_of_threeChain (ω : ConfigSpace (Sym2 (Site d)
       (cluster d (removeSites (tfc_trifFinset ω n) ω) (b m)).Infinite)
     (hbg : b g ∈ box d n ∧ Connected d ω g (b g) ∧
       (cluster d (removeSites (tfc_trifFinset ω n) ω) (b g)).Infinite)
-    
     (hloc : ∀ t s, (t = x₀ ∨ t = m ∨ t = g) → bc37_ArmAdjacent ω n t s →
       ¬ Connected d (removeSite t ω) (b t) (b s))
     (hself : ∀ t s, (t = x₀ ∨ t = m ∨ t = g) → bc37_ArmAdjacent ω n t s →
       ¬ Connected d (removeSite t ω) (b t) s)
-    
     (hfun : ∀ t s, (t = x₀ ∨ t = m ∨ t = g) → bc37_ArmAdjacent ω n t s → ∀ x, x ≠ t →
       Connected d (removeSite t ω) x s → Connected d (removeSite t ω) (b x) s) :
     bc40_ArmCutGeometryFixed' ω n := by
@@ -377,51 +235,22 @@ theorem bc40_armCutGeometryFixed'_of_threeChain (ω : ConfigSpace (Sym2 (Site d)
     have ht3 : t = x₀ ∨ t = m ∨ t = g := hthree t htbox htri
     exact ⟨hloc t s ht3 hadj, hself t s ht3 hadj, hfun t s ht3 hadj⟩
 
+/-! ## C. Labelled chains -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Component labels for a three-trifurcation chain on `Fin 6` (trifurcations `0, 1, 2`, ends
+`3, 4, 5`). -/
 def bc40_chainLab (c v : Fin 6) : ℕ :=
-  if v = c then 100 + (c : ℕ)                     
+  if v = c then 100 + (c : ℕ)
   else if c = 0 then
-    (if v = 3 then 103 else 1)                    
+    (if v = 3 then 103 else 1)
   else if c = 1 then
-    (if v = 4 then 104                            
-     else if v = 0 ∨ v = 3 then 2                 
-     else 3)                                      
-  else 
-    (if v = 5 then 105 else 4)                    
+    (if v = 4 then 104
+     else if v = 0 ∨ v = 3 then 2
+     else 3)
+  else
+    (if v = 5 then 105 else 4)
 
-
-
-
-
-
-
-theorem bc40_chainShadow_universalFunnel_false :
+lemma bc40_chainShadow_universalFunnel_false :
     ¬ ∀ (b : Fin 6 → Fin 6),
         b = ![3, 4, 5, 3, 4, 5] →
         ∀ t s : Fin 6, (t = 0 ∧ s = 1) ∨ (t = 1 ∧ s = 0) ∨ (t = 1 ∧ s = 2) ∨ (t = 2 ∧ s = 1) →
@@ -431,7 +260,6 @@ theorem bc40_chainShadow_universalFunnel_false :
   have h40 : (4 : Fin 6) ≠ 0 := by decide
   have h41 : (4 : Fin 6) ≠ 1 := by decide
   have hkey := h ![3, 4, 5, 3, 4, 5] rfl 1 0 (Or.inr (Or.inl ⟨rfl, rfl⟩)) 4 h40 h41
-  
   have hb : (![3, 4, 5, 3, 4, 5] : Fin 6 → Fin 6) 4 = 4 := by
     simp [Matrix.cons_val, Fin.isValue]
   have hL1 : bc40_chainLab 1 4 = 104 := by simp [bc40_chainLab]
@@ -439,13 +267,7 @@ theorem bc40_chainShadow_universalFunnel_false :
   rw [hb, hL1, hL2] at hkey
   exact absurd hkey (by norm_num)
 
-
-
-
-
-
-
-theorem bc40_chainShadow_allTrifFunnel_false :
+lemma bc40_chainShadow_allTrifFunnel_false :
     ¬ ∀ (b : Fin 6 → Fin 6),
         b = ![3, 4, 5, 3, 4, 5] →
         ∀ t s : Fin 6, (t = 0 ∧ s = 1) ∨ (t = 1 ∧ s = 0) ∨ (t = 1 ∧ s = 2) ∨ (t = 2 ∧ s = 1) →
@@ -456,7 +278,6 @@ theorem bc40_chainShadow_allTrifFunnel_false :
   have h21 : (2 : Fin 6) ≠ 1 := by decide
   have hkey := h ![3, 4, 5, 3, 4, 5] rfl 1 0 (Or.inr (Or.inl ⟨rfl, rfl⟩)) 2
     (Or.inr (Or.inr rfl)) h20 h21
-  
   have hb : (![3, 4, 5, 3, 4, 5] : Fin 6 → Fin 6) 2 = 5 := by
     simp [Matrix.cons_val, Fin.isValue]
   have hL1 : bc40_chainLab 1 5 = 3 := by simp [bc40_chainLab]
@@ -464,20 +285,7 @@ theorem bc40_chainShadow_allTrifFunnel_false :
   rw [hb, hL1, hL2] at hkey
   exact absurd hkey (by norm_num)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_chainShadow_consistent :
+lemma bc40_chainShadow_consistent :
     ∃ (b : Fin 6 → Fin 6) (Rc : Fin 6 → Fin 6 → Fin 6 → Prop),
       (∀ c u v, Rc c u v ↔ bc40_chainLab c u = bc40_chainLab c v) ∧
       (∀ t s : Fin 6, (t = 0 ∧ s = 1) ∨ (t = 1 ∧ s = 0) ∨ (t = 1 ∧ s = 2) ∨ (t = 2 ∧ s = 1) →
@@ -488,39 +296,17 @@ theorem bc40_chainShadow_consistent :
     fun _ _ _ => Iff.rfl, ?_⟩
   decide
 
-
-
-
-
-
-
-
-
-theorem bc40_rootSideComparable_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma bc40_rootSideComparable_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     bc40_RootSideComparable ω n rank par := by
   intro x hxbox htri; exact absurd htri (hno x hxbox)
 
-
-
-
-
+/-- Component labels for a three-site chain on `Fin 3`. -/
 def bc40_chainSiteLab (c v : Fin 3) : ℕ :=
-  if v = c then 100 + (c : ℕ) else 0   
+  if v = c then 100 + (c : ℕ) else 0
 
-
-
-
-
-
-
-
-
-
-
-
-theorem bc40_rootSideComparable_chain_consistent :
+lemma bc40_rootSideComparable_chain_consistent :
     ∃ (rank : Fin 3 → ℕ) (par : Fin 3 → Fin 3) (R : Fin 3 → Fin 3 → Fin 3 → Prop),
       (∀ c u v, R c u v ↔ bc40_chainSiteLab c u = bc40_chainSiteLab c v) ∧
       rank 0 < rank 1 ∧ rank 1 < rank 2 ∧ par 1 = 0 ∧ par 2 = 1 ∧
@@ -532,5 +318,18 @@ theorem bc40_rootSideComparable_chain_consistent :
   · rfl
   · rfl
   · decide
+
+/-! ## D. Unsatisfiability of the configuration-wide conditions -/
+
+/-- `bc40_ArmCutGeometryFixed'` and `bc40_RootSideComparable` for every configuration and every box
+of
+radius `n ≥ 1` are impossible when `d ≥ 1`: this implies the configuration-wide bound
+`Tcount ≤ |∂Λₙ|`, which `tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma bc40_not_forall_cutGeometryFixed' (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      bc40_ArmCutGeometryFixed' ω n ∧
+        ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d), bc40_RootSideComparable ω n rank par :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    bc40_Tcount_le_boundary_of_cutGeometryFixed' ω n hn (h ω n hn).1 (h ω n hn).2
 
 end StatMech.Walls

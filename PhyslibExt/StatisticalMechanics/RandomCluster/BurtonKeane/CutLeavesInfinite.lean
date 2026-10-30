@@ -6,75 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -85,6 +16,33 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCu
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginNeighbourFinite
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteUnionPigeonhole
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutDistinctWitnesses
+
+/-!
+# Infinite clusters through the origin
+
+An infinite cluster containing the origin has an open neighbour of the origin whose cluster without
+the origin is infinite.
+
+## i. Overview
+
+The origin has at most `2d` open neighbours, and the cluster of the origin is the origin together
+with the cut clusters of these neighbours. If it is infinite, one of these cut clusters is infinite.
+This gives `bc3_OriginCutLeavesInfinite` for every configuration.
+
+## ii. Key results
+
+- `bc8_cutLeavesInfinite` : an infinite cut cluster at a neighbour of the origin.
+- `bc8_originCutLeavesInfinite` : the condition for every configuration.
+
+## iii. Table of contents
+
+- A. Neighbours of the origin
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
 
 @[expose] public section
 
@@ -98,103 +56,42 @@ namespace Walls
 
 variable {d : ℕ}
 
+/-! ## A. Neighbours of the origin -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc8_cutLeavesInfinite (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
+lemma bc8_cutLeavesInfinite (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
     (hinf : (cluster d ω x).Infinite) (h0mem : (0 : Site d) ∈ cluster d ω x) :
     ∃ n, (openSubgraph d ω).Adj 0 n ∧ (cluster d (removeSite 0 ω) n).Infinite := by
-  
   have hdiff : (cluster d ω x \ {(0 : Site d)}).Infinite :=
-    hinf.diff (Set.finite_singleton _)
-  
+    hinf.sdiff (Set.finite_singleton _)
   have hNfin : {n : Site d | (openSubgraph d ω).Adj 0 n}.Finite :=
     bc4_origin_openNeighbours_finite ω
-  
   have hUinf :
       (⋃ n ∈ {n : Site d | (openSubgraph d ω).Adj 0 n},
           cluster d (removeSite 0 ω) n).Infinite :=
     hdiff.mono (bc4c_punctured_cluster_subset_neighbour_cutClusters ω h0mem)
-  
   obtain ⟨n, hnN, hninf⟩ := bc4_finite_biUnion_infinite hNfin hUinf
   exact ⟨n, hnN, hninf⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem bc8_cutLeavesInfinite_inCluster (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
+lemma bc8_cutLeavesInfinite_inCluster (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
     (hinf : (cluster d ω x).Infinite) (h0mem : (0 : Site d) ∈ cluster d ω x) :
     ∃ n, (openSubgraph d ω).Adj 0 n ∧ n ∈ cluster d ω x ∧
       (cluster d (removeSite 0 ω) n).Infinite := by
   obtain ⟨n, hadj, hninf⟩ := bc8_cutLeavesInfinite ω hinf h0mem
   refine ⟨n, hadj, ?_, hninf⟩
-  
   rw [mem_cluster]
   exact (mem_cluster.mp h0mem).trans hadj.reachable
 
-
-
-
-theorem bc8_origin_openNeighbours_ncard_le (ω : ConfigSpace (Sym2 (Site d))) :
+lemma bc8_origin_openNeighbours_ncard_le (ω : ConfigSpace (Sym2 (Site d))) :
     {n : Site d | (openSubgraph d ω).Adj 0 n}.ncard ≤ 2 * d :=
   bc4_origin_openNeighbours_ncard_le ω
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem bc8_originCutLeavesInfinite (ω : ConfigSpace (Sym2 (Site d))) :
+lemma bc8_originCutLeavesInfinite (ω : ConfigSpace (Sym2 (Site d))) :
     bc3_OriginCutLeavesInfinite ω := by
   intro x hinf h0mem
   obtain ⟨n, _hadj, hmem, hninf⟩ := bc8_cutLeavesInfinite_inCluster ω hinf h0mem
   exact ⟨n, hmem, hninf⟩
 
-
-
-
-
-
-
-
-
-
-
-theorem bc8_cutLeavesInfinite_origin (ω : ConfigSpace (Sym2 (Site d)))
+lemma bc8_cutLeavesInfinite_origin (ω : ConfigSpace (Sym2 (Site d)))
     (hinf : (cluster d ω 0).Infinite) :
     ∃ n, (openSubgraph d ω).Adj 0 n ∧ (cluster d (removeSite 0 ω) n).Infinite :=
   bc8_cutLeavesInfinite ω hinf (self_mem_cluster ω 0)

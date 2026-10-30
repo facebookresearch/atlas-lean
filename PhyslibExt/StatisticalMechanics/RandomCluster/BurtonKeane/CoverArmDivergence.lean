@@ -6,74 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -101,6 +33,47 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedCo
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSpanningForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSingleCutSeparation
 
+/-!
+# Rooted arm divergence and the three-arm cover
+
+A claw obstructs rooted private arms, rooted arm divergence gives rooted single-cut separation, and
+with the three-arm cover it gives the rooted spanning forest and the trifurcation count.
+
+## i. Overview
+
+If a trifurcation `x₀` is connected to trifurcations in each of its three arms, every choice of arm
+end for `x₀` is reached by one of them, which obstructs rooted private arms (`rfp_ClawArmGeometry`).
+A path on `ℤ¹` shows the arm clauses are consistent. `rfp_RootedArmDivergence ω n` asks for arm ends
+and a rank such that for connected trifurcations the end of the lower one is cut off by removing the
+higher one. It gives rooted single-cut separation and, with the three-arm cover `fcc_ThreeArmCover`,
+the rooted spanning forest and the count bound. It holds with no trifurcation, two trifurcations, or
+a claw.
+
+The configuration-wide form of these conditions, for every configuration and every box of radius
+`n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
+configuration, which `tfc_not_forall_Tcount_le_boundary` refutes
+(`rfp_not_forall_coverArmDivergence`). The Burton–Keane theorems that assumed them were removed as
+vacuous.
+
+## ii. Key results
+
+- `rfp_not_rootedPrivateArm_of_clawArmGeometry` : a claw obstructs rooted private arms.
+- `rfp_Tcount_le_boundary_of_coverArmDivergence` : the count bound from the cover and divergence.
+
+## iii. Table of contents
+
+- A. The root arm obstruction
+- B. A path on ℤ¹
+- C. Claws
+- D. Rooted arm divergence
+- E. Unsatisfiability of the configuration-wide conditions
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989),
+  501–505.
+-/
+
 @[expose] public section
 
 open Set SimpleGraph Finset MeasureTheory
@@ -114,32 +87,9 @@ namespace Percolation
 
 variable {d : ℕ}
 
+/-! ## A. The root arm obstruction -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem rfp_root_arm_obstruction (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_root_arm_obstruction (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {b : Site d → Site d} {rank : Site d → ℕ ×ₗ ℕ} {x₀ z : Site d}
     (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hzbox : z ∈ box d n) (htriz : IsTrifurcation d ω z)
@@ -152,48 +102,29 @@ theorem rfp_root_arm_obstruction (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hcrossed : ¬ Connected d (removeSite z ω) (b x₀) x₀) :
     False := by
   rcases lt_trichotomy (rank x₀) (rank z) with hlt | heq | hgt
-  · 
-    obtain ⟨hfar, _hpriv⟩ := hpair x₀ hx0box htri0 z hzbox htriz hne hconn hlt
-    
+  · obtain ⟨hfar, _hpriv⟩ := hpair x₀ hx0box htri0 z hzbox htriz hne hconn hlt
     exact hcrossed hfar
   · exact hrank heq
-  · 
-    obtain ⟨_hfar, hpriv⟩ :=
+  · obtain ⟨_hfar, hpriv⟩ :=
       hpair z hzbox htriz x₀ hx0box htri0 hne.symm hconn.symm hgt
-    
     exact hpriv hbeyond
 
+/-! ## B. A path on ℤ¹ -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The site `0` of `ℤ¹`. -/
 noncomputable def rfp_p0 : Site 1 := fun _ => 0
 
+/-- The site `1` of `ℤ¹`. -/
 noncomputable def rfp_p1 : Site 1 := fun _ => 1
 
+/-- The site `2` of `ℤ¹`. -/
 noncomputable def rfp_p2 : Site 1 := fun _ => 2
 
-
+/-- The configuration on `ℤ¹` with open edges `0 — 1` and `1 — 2`. -/
 noncomputable def rfp_ωpath : ConfigSpace (Sym2 (Site 1)) :=
   fun e => decide (e = s(rfp_p0, rfp_p1) ∨ e = s(rfp_p1, rfp_p2))
 
-
-
-theorem rfp_consistency_beyond :
+lemma rfp_consistency_beyond :
     Connected 1 (removeSite rfp_p0 rfp_ωpath) rfp_p2 rfp_p1 := by
   refine SimpleGraph.Adj.reachable (G := openSubgraph 1 (removeSite rfp_p0 rfp_ωpath)) ?_
   refine ⟨?_, ?_⟩
@@ -209,8 +140,7 @@ theorem rfp_consistency_beyond :
     simp only [decide_eq_true_eq]
     right; rw [Sym2.eq_swap]
 
-
-theorem rfp_path_noEdge_after_p1 (a b : Site 1) :
+lemma rfp_path_noEdge_after_p1 (a b : Site 1) :
     ¬ (openSubgraph 1 (removeSite rfp_p1 rfp_ωpath)).Adj a b := by
   rintro ⟨_hadj, hopen⟩
   by_cases hp1 : rfp_p1 ∈ s(a, b)
@@ -222,59 +152,30 @@ theorem rfp_path_noEdge_after_p1 (a b : Site 1) :
     · exact hp1 (h ▸ Sym2.mem_mk_right rfp_p0 rfp_p1)
     · exact hp1 (h ▸ Sym2.mem_mk_left rfp_p1 rfp_p2)
 
-
-theorem rfp_path_conn_eq_after_p1 {a b : Site 1}
+lemma rfp_path_conn_eq_after_p1 {a b : Site 1}
     (h : Connected 1 (removeSite rfp_p1 rfp_ωpath) a b) : a = b := by
   obtain ⟨w⟩ := h
   cases w with
   | nil => rfl
   | cons hadj _ => exact absurd hadj (rfp_path_noEdge_after_p1 _ _)
 
-
-
-theorem rfp_consistency_crossed :
+lemma rfp_consistency_crossed :
     ¬ Connected 1 (removeSite rfp_p1 rfp_ωpath) rfp_p2 rfp_p0 := by
   intro h
   have heq := rfp_path_conn_eq_after_p1 h
   have := congrFun heq ⟨0, by norm_num⟩
   simp [rfp_p0, rfp_p2] at this
 
-
-
-
-
-
-theorem rfp_armGeometry_consistent :
+lemma rfp_armGeometry_consistent :
     ∃ (ω : ConfigSpace (Sym2 (Site 1))) (x₀ z w : Site 1),
       Connected 1 (removeSite x₀ ω) w z ∧ ¬ Connected 1 (removeSite z ω) w x₀ :=
   ⟨rfp_ωpath, rfp_p0, rfp_p1, rfp_p2, rfp_consistency_beyond, rfp_consistency_crossed⟩
 
+/-! ## C. Claws -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Claw arm geometry: some trifurcation `x₀` of the box such that every arm end for `x₀` is
+reached,
+after removing `x₀`, by a trifurcation connected to `x₀`. -/
 def rfp_ClawArmGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ x₀ : Site d, x₀ ∈ box d n ∧ IsTrifurcation d ω x₀ ∧
     ∀ b : Site d → Site d,
@@ -283,41 +184,19 @@ def rfp_ClawArmGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
         Connected d (removeSite x₀ ω) (b x₀) z ∧
         ¬ Connected d (removeSite z ω) (b x₀) x₀
 
-
-
-
-
-
-theorem rfp_not_rootedPrivateArm_of_clawArmGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_not_rootedPrivateArm_of_clawArmGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : rfp_ClawArmGeometry ω n) :
     ¬ fcc_RootedPrivateArm ω n := by
   rintro ⟨b, rank, hbdata, hrank, hpair⟩
   obtain ⟨x₀, hx0box, htri0, harm⟩ := hgeo
-  
   have hbx0inf : (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x₀)).Infinite :=
     (hbdata x₀ hx0box htri0).2.2
-  
   obtain ⟨z, hzbox, htriz, hne, hconn, hbeyond, hcrossed⟩ := harm b hbx0inf
-  
   have hrk : rank x₀ ≠ rank z := hrank x₀ hx0box htri0 z hzbox htriz hne hconn
   exact rfp_root_arm_obstruction ω n hx0box htri0 hzbox htriz hne hconn hrk hpair
     hbeyond hcrossed
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem rfp_clawArmGeometry_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_clawArmGeometry_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d) (y : Fin 3 → Site d)
     (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hydata : ∀ i, y i ∈ box d n ∧ IsTrifurcation d ω (y i) ∧ x₀ ≠ y i ∧
@@ -333,28 +212,12 @@ theorem rfp_clawArmGeometry_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
   exact ⟨y i, (hydata i).1, (hydata i).2.1, (hydata i).2.2.1, (hydata i).2.2.2,
     hbeyond, hcrossed⟩
 
+/-! ## D. Rooted arm divergence -/
 
-
-
-
-
-
-theorem rfp_rootedPrivateArm_refutable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hgeo : rfp_ClawArmGeometry ω n) :
-    ¬ fcc_RootedPrivateArm ω n :=
-  rfp_not_rootedPrivateArm_of_clawArmGeometry ω n hgeo
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Rooted arm divergence: arm ends `b x` with infinite clusters outside the trifurcation set and a
+rank
+separating connected trifurcations, such that removing the higher of two connected trifurcations
+cuts its end from the end of the lower one. -/
 def rfp_RootedArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -366,12 +229,7 @@ def rfp_RootedArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop 
       x ≠ y → Connected d ω x y → rank x < rank y →
       ¬ fsp_sameArm ω y (b x) (b y))
 
-
-
-
-
-
-theorem rfp_rootedSingleCutSeparation_of_armDivergence (ω : ConfigSpace (Sym2 (Site d)))
+lemma rfp_rootedSingleCutSeparation_of_armDivergence (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (h : rfp_RootedArmDivergence ω n) :
     fcc_RootedSingleCutSeparation ω n := by
   obtain ⟨b, rank, hbdata, hrank, hdiv⟩ := h
@@ -389,14 +247,7 @@ theorem rfp_rootedSingleCutSeparation_of_armDivergence (ω : ConfigSpace (Sym2 (
   exact fsp_sep_of_notSameArm ω hy_bx hne_y_bx hy_by hne_y_by
     (hdiv x hxbox htri y hybox htriy hxy hconn hlt)
 
-
-
-
-
-
-
-
-theorem rfp_rootedArmDivergence_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_rootedArmDivergence_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
     rfp_RootedArmDivergence ω n := by
   refine ⟨id, (fun _ => toLex (0, 0)), ?_, ?_, ?_⟩
@@ -404,10 +255,7 @@ theorem rfp_rootedArmDivergence_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n 
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
   · intro x hxbox htri; exact absurd htri (hno x hxbox)
 
-
-
-
-theorem rfp_rootedArmDivergence_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_rootedArmDivergence_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d) (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
     (hbx0 : b x₀ ∈ box d n ∧ Connected d ω x₀ (b x₀) ∧
@@ -426,9 +274,9 @@ theorem rfp_rootedArmDivergence_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n
     rcases htwo x hxbox htri with rfl | rfl
     · rcases htwo x' hx'box htri' with rfl | rfl
       · exact absurd rfl hxx'
-      · simp only [if_neg hx0y0, if_pos]; exact stt_lex_ne_fst (by norm_num)
+      · simp only [ite_eq_right hx0y0, ite_eq_left]; exact stt_lex_ne_fst (by norm_num)
     · rcases htwo x' hx'box htri' with rfl | rfl
-      · simp only [if_neg hx0y0, if_pos]; exact stt_lex_ne_fst (by norm_num)
+      · simp only [ite_eq_right hx0y0, ite_eq_left]; exact stt_lex_ne_fst (by norm_num)
       · exact absurd rfl hxx'
   · intro x hxbox htri x' hx'box htri' hxx' _ hlt
     rcases htwo x hxbox htri with rfl | rfl
@@ -436,16 +284,11 @@ theorem rfp_rootedArmDivergence_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n
       · exact absurd rfl hxx'
       · exact hdeep
     · rcases htwo x' hx'box htri' with rfl | rfl
-      · simp only [if_neg hx0y0, if_pos] at hlt
+      · simp only [ite_eq_right hx0y0, ite_eq_left] at hlt
         exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
       · exact absurd rfl hxx'
 
-
-
-
-
-
-theorem rfp_rootedArmDivergence_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_rootedArmDivergence_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (x₀ : Site d) (y : Fin 3 → Site d) (lx : Site d → Fin 3) (ly : Fin 3 → Site d → Fin 3)
     (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
     (hydata : ∀ i, y i ∈ box d n ∧ IsTrifurcation d ω (y i) ∧ x₀ ≠ y i ∧
@@ -464,13 +307,11 @@ theorem rfp_rootedArmDivergence_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : 
     {j₀ : Fin 3} (hcx : lx (b x₀) = j₀)
     (hcentral : ly j₀ (b x₀) ≠ ly j₀ (b (y j₀))) :
     rfp_RootedArmDivergence ω n := by
-  
   obtain ⟨b', rank, hbdata', hrank, hsep⟩ :=
     fcc_rootedSingleCutSeparation_of_claw ω n x₀ y lx ly hx0box htri0 hydata hyinj hlyf hGstar
       hsingle b hbdata hcy hcx hcentral
   refine ⟨b', rank, hbdata', hrank, ?_⟩
   intro x hxbox htri y' hy'box htriy' hxy hconn hlt
-  
   have hy'T : y' ∈ tfc_trifFinset ω n := tfc_mem_trifFinset.mpr ⟨hy'box, htriy'⟩
   have hbxnotin : b' x ∉ tfc_trifFinset ω n :=
     stac_infiniteCluster_notMem (tfc_trifFinset ω n) ω (hbdata' x hxbox htri).2.2
@@ -483,57 +324,29 @@ theorem rfp_rootedArmDivergence_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : 
   exact fcc_notSameArm_of_singleCut ω hy_bx hne_y_bx hy_by hne_y_by
     (hsep x hxbox htri y' hy'box htriy' hxy hconn hlt)
 
-
-
-
-
-
-
-
-
-theorem rfp_rootedSpanningForest_of_coverArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_rootedSpanningForest_of_coverArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hcov : fcc_ThreeArmCover ω n) (hdiv : rfp_RootedArmDivergence ω n) :
     stt_RootedSpanningForest ω n :=
   fcc_rootedSpanningForest_of_coverSep ω n hcov
     (rfp_rootedSingleCutSeparation_of_armDivergence ω n hdiv)
 
-
-theorem rfp_Tcount_le_boundary_of_coverArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
+lemma rfp_Tcount_le_boundary_of_coverArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (hcov : fcc_ThreeArmCover ω n) (hdiv : rfp_RootedArmDivergence ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   stt_Tcount_le_boundary_of_rootedSpanningForest ω n hn
     (rfp_rootedSpanningForest_of_coverArmDivergence ω n hcov hdiv)
 
+/-! ## E. Unsatisfiability of the configuration-wide conditions -/
 
-
-
-
-
-
-
-
-
-
-
-
-theorem rfp_burton_keane_bernoulli_of_coverArmDivergence (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hcov : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → fcc_ThreeArmCover ω n)
-    (hdiv : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → rfp_RootedArmDivergence ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  stt_burton_keane_bernoulli_of_rootedSpanningForest hd p hp1 hp0
-    (fun ω n hn => rfp_rootedSpanningForest_of_coverArmDivergence ω n (hcov ω n hn) (hdiv ω n hn))
-    htrif
+/-- `fcc_ThreeArmCover` and `rfp_RootedArmDivergence` for every configuration and every box of
+radius
+`n ≥ 1` are impossible when `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`,
+which `tfc_not_forall_Tcount_le_boundary` refutes. -/
+lemma rfp_not_forall_coverArmDivergence (hd : 1 ≤ d) :
+    ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
+      fcc_ThreeArmCover ω n ∧ rfp_RootedArmDivergence ω n :=
+  fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
+    rfp_Tcount_le_boundary_of_coverArmDivergence ω n hn (h ω n hn).1 (h ω n hn).2
 
 end Percolation
 
