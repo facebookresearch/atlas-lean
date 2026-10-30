@@ -26,7 +26,8 @@ example {R : Type u} [CommRing R] {S : Type v} [CommRing S] (I : Ideal R) (e : R
         algebraMap S (AdicCompletion (I.map e) S) (e r) :=
   AdicCompletion.exists_ringEquiv_map_of_ringEquiv I e
 
-example {R S : Type*} [CommRing R] [CommRing S] [IsLocalRing R] [IsLocalRing S]
+example {R : Type u} {S : Type v} [CommRing R] [CommRing S]
+    [IsLocalRing R] [IsLocalRing S]
     (e : R ≃+* S) :
     ∃ ê : AdicCompletion (IsLocalRing.maximalIdeal R) R ≃+*
         AdicCompletion (IsLocalRing.maximalIdeal S) S,

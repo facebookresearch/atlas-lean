@@ -203,7 +203,8 @@ theorem AdicCompletion.exists_ringEquiv_map_of_ringEquiv
 /-- A ring equivalence between local rings induces an equivalence of their
 maximal-ideal adic completions. -/
 theorem IsLocalRing.exists_ringEquiv_adicCompletion_maximalIdeal_comp_algebraMap_of_ringEquiv
-    {R S : Type*} [CommRing R] [CommRing S] [IsLocalRing R] [IsLocalRing S]
+    {R : Type u} {S : Type v} [CommRing R] [CommRing S]
+    [IsLocalRing R] [IsLocalRing S]
     (e : R ≃+* S) :
     ∃ ê : AdicCompletion (IsLocalRing.maximalIdeal R) R ≃+*
         AdicCompletion (IsLocalRing.maximalIdeal S) S,
