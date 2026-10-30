@@ -19,12 +19,19 @@ Bulik-Sullivan et al. (2015) model a quantitative phenotype measured on `N` indi
 
 * `X : Matrix (Fin N) (Fin M) ℝ` is the genotype matrix, whose columns are standardized
   (mean `0`, sum of squares `N`);
-* the per-marker effects `β k` are random with `𝔼[β k * β l] = (h² / M) * [k = l]`;
-* the environmental noise `ε i` satisfies `𝔼[ε i * ε i'] = (1 - h²) * [i = i']`;
-* effects and noise are uncorrelated, `𝔼[β k * ε i] = 0`.
+* the per-marker effects `β k` are random with raw second moments
+  `𝔼[β k * β l] = (h² / M) * [k = l]`;
+* the environmental noise `ε i` has raw second moments `𝔼[ε i * ε i'] = (1 - h²) * [i = i']`;
+* effects and noise are orthogonal in `L²`, `𝔼[β k * ε i] = 0`.
 
-The marginal least-squares estimate of the effect of marker `j` is `β̂ j = X_jᵀ y / N` and the
-association statistic is `χ² j = N * β̂ j ^ 2`. With the sample correlations
+These are raw (uncentered) second moments over an arbitrary measure; they are the covariance
+matrices, and orthogonality is uncorrelatedness, when the measure is a probability measure and
+effects and noise have mean zero, as in the cited model.
+
+The `N`-normalized score of marker `j` is `β̂ j = X_jᵀ y / N`; for a standardized column
+(`∑ i, X i j ^ 2 = N`) it is the marginal least-squares estimate of the effect of marker `j`,
+whose denominator is `∑ i, X i j ^ 2` in general. The association statistic is
+`χ² j = N * β̂ j ^ 2`. With the sample correlations
 `r j k = X_jᵀ X_k / N` and the LD score `ℓ j = ∑ k, r j k ^ 2`, the exact finite-sample
 expectation conditional on `X` (the expectation here is over `β` and `ε` with `X` fixed) is
 
@@ -32,8 +39,10 @@ expectation conditional on `X` (the expectation here is over `β` and `ε` with 
 
 The paper's regression equation (with no confounding) is the approximation
 `𝔼[χ² j] ≈ N h² ℓ j / M + 1`; the exact identity under the same model differs from it by the
-term `-h²` (the residual variance is `1 - h²`, not `1`), which is negligible when the
-per-marker heritability is small. We prove the exact identity.
+term `-h²` (the residual variance is `1 - h²`, not `1`), which is negligible only when the
+total heritability `h²` is small; it is not controlled by the per-marker heritability `h² / M`
+(for fixed `h²` the discrepancy stays `-h²` however large `M` is). We prove the exact
+identity.
 
 Only second moments enter the derivation, so only second-moment assumptions are made;
 independent effects and noise with mean zero satisfy them. The heritability is not assumed to
@@ -47,7 +56,7 @@ convention `x / 0 = 0`.
 * `Model`: the random-effects model, at the level of second moments.
 * `Model.h2_nonneg`, `Model.h2_le_one`: the model forces `0 ≤ h² ≤ 1`.
 * `Model.integral_chiSq`: `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²) * (∑ i, X i j ^ 2) / N` for
-  any genotype matrix.
+  any genotype matrix, with `β̂` the `N`-normalized score.
 * `Model.integral_chiSq_of_standardized`: for a column with `∑ i, X i j ^ 2 = N`,
   `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²)`.
 
@@ -79,14 +88,16 @@ noncomputable def ldScore (X : Matrix (Fin N) (Fin M) ℝ) (j : Fin M) : ℝ :=
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 
 /-- The random-effects model of LD-score regression (Bulik-Sullivan et al. 2015), stated at
-the level of second moments, for `N` individuals and `M` markers with heritability `h2`.
+the level of raw second moments, for `N` individuals and `M` markers with heritability `h2`.
 
-* `beta k` is the (random) effect of marker `k`, with `𝔼[β k * β l] = h2 / M * [k = l]`;
+* `beta k` is the (random) effect of marker `k`, with `∫ β k * β l = h2 / M * [k = l]`;
 * `eps i` is the environmental noise of individual `i`, with
-  `𝔼[ε i * ε i'] = (1 - h2) * [i = i']`;
-* effects and noise are uncorrelated.
+  `∫ ε i * ε i' = (1 - h2) * [i = i']`;
+* effects and noise are orthogonal in `L²`.
 
-The genotype matrix is not part of the model: all expectations are conditional on it. -/
+The measure is arbitrary and no means are assumed; for a probability measure and mean-zero
+effects and noise these are the covariance conditions of the cited model. The genotype matrix is
+not part of the model: all expectations are conditional on it. -/
 structure Model (μ : Measure Ω) (N M : ℕ) where
   /-- The SNP heritability `h²`. -/
   h2 : ℝ
@@ -98,11 +109,11 @@ structure Model (μ : Measure Ω) (N M : ℕ) where
   memLp_beta : ∀ k, MemLp (beta k) 2 μ
   /-- Noise terms are square integrable. -/
   memLp_eps : ∀ i, MemLp (eps i) 2 μ
-  /-- `Cov β = (h² / M) I`. -/
+  /-- Raw second moments of the effects: `∫ β βᵀ = (h² / M) I`. -/
   integral_beta_mul : ∀ k l, ∫ ω, beta k ω * beta l ω ∂μ = if k = l then h2 / M else 0
-  /-- `Cov ε = (1 - h²) I`. -/
+  /-- Raw second moments of the noise: `∫ ε εᵀ = (1 - h²) I`. -/
   integral_eps_mul : ∀ i i', ∫ ω, eps i ω * eps i' ω ∂μ = if i = i' then 1 - h2 else 0
-  /-- Effects and noise are uncorrelated. -/
+  /-- Effects and noise are orthogonal in `L²`: `∫ β εᵀ = 0`. -/
   integral_beta_mul_eps : ∀ k i, ∫ ω, beta k ω * eps i ω ∂μ = 0
 
 namespace Model
@@ -130,7 +141,9 @@ theorem h2_le_one (hN : 0 < N) : D.h2 ≤ 1 := by
 /-- The phenotype `y = X β + ε`. -/
 def pheno (i : Fin N) (ω : Ω) : ℝ := ∑ k, X i k * D.beta k ω + D.eps i ω
 
-/-- The marginal effect estimate `β̂ j = X_jᵀ y / N` of marker `j`. -/
+/-- The `N`-normalized score `β̂ j = X_jᵀ y / N` of marker `j`. For a standardized column
+(`∑ i, X i j ^ 2 = N`) it is the marginal least-squares estimate of the effect of marker `j`;
+in general that estimate has denominator `∑ i, X i j ^ 2` instead of `N`. -/
 noncomputable def betaHat (j : Fin M) (ω : Ω) : ℝ := (∑ i, X i j * D.pheno X i ω) / N
 
 /-- The association statistic `χ² j = N * β̂ j ^ 2` of marker `j`. -/
@@ -168,7 +181,8 @@ private theorem betaHat_eq_sum {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measu
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_mul, div_mul_eq_mul_div, Finset.sum_div]
 
-/-- The exact expectation of the association statistic for an arbitrary genotype matrix:
+/-- The exact expectation of the association statistic built from the `N`-normalized score,
+for an arbitrary genotype matrix:
 `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²) * (∑ i, X i j ^ 2) / N`. (For `N = 0` both sides are `0`
 by the convention `x / 0 = 0`.) -/
 theorem integral_chiSq (j : Fin M) :

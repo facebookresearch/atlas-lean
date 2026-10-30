@@ -24,15 +24,20 @@ is `R = 𝔼[O | selected] - μ`. The breeder's equation is the exact identity
 
   `R = h² S`.
 
-`𝔼[· | selected]` is the expectation under the conditional measure `μ[|s]`. The heritability
-of the biological model lies in `[0, 1]`, but the identity holds for every real slope `h²` and
-every real `μ` (it does not need `μ = 𝔼 P`). The selected group must have positive mass:
-otherwise `μ[|s] = 0` and both expectations are the junk value `0`.
+`𝔼[· | selected]` is the expectation under the conditional measure `μ[|s]`. The population is
+a probability measure and `mean` is the population mean of the parental value, `𝔼[P] = μ`
+(`Model.integral_parent`), so selecting the whole population gives `S = 0` and `R = 0`
+(`Model.selectionDifferential_univ`, `Model.response_univ`). The heritability of the biological
+model lies in `[0, 1]`, but the identity `R = h² S` holds for every real slope `h²`. The
+selected group must have positive mass: otherwise `μ[|s] = 0` and both expectations are the junk
+value `0`.
 
 ## Main results
 
 * `Model`: the linear parent–offspring model.
 * `Model.response_eq`: the breeder's equation `R = h² S`.
+* `Model.selectionDifferential_univ`, `Model.response_univ`: no selection, no differential and
+  no response.
 
 ## References
 
@@ -49,13 +54,13 @@ namespace MathlibExt.Biology.StatisticalGenetics.Breeder
 
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 
-/-- The linear parent–offspring model on a population described by a finite measure `μ`: the
-parental (mid-parent) value `parent` and the offspring value `offspring` are integrable, and the
-offspring value regresses linearly on the parental value,
-`𝔼[O | P] = mean + h2 * (P - mean)` (equivalently `O = mean + h2 (P - mean) + e` with
-`𝔼[e | P] = 0`). Here `mean` is the population mean and `h2` the heritability. -/
-structure Model (μ : Measure Ω) where
-  /-- The population mean `μ`. -/
+/-- The linear parent–offspring model on a population described by a probability measure `μ`:
+the parental (mid-parent) value `parent` and the offspring value `offspring` are integrable,
+`mean` is the population mean of the parental value, and the offspring value regresses linearly
+on the parental value, `𝔼[O | P] = mean + h2 * (P - mean)` (equivalently
+`O = mean + h2 (P - mean) + e` with `𝔼[e | P] = 0`). Here `h2` is the heritability. -/
+structure Model (μ : Measure Ω) [IsProbabilityMeasure μ] where
+  /-- The population mean `μ` of the parental value. -/
   mean : ℝ
   /-- The heritability `h²`: the slope of the offspring-on-parent regression. -/
   h2 : ℝ
@@ -69,13 +74,15 @@ structure Model (μ : Measure Ω) where
   integrable_parent : Integrable parent μ
   /-- The offspring value is integrable. -/
   integrable_offspring : Integrable offspring μ
+  /-- `mean` is the population mean of the parental value: `𝔼[P] = μ`. -/
+  integral_parent : ∫ ω, parent ω ∂μ = mean
   /-- Linear regression: `𝔼[O | P] = μ + h² (P - μ)`. -/
   condExp_offspring : μ[offspring | MeasurableSpace.comap parent inferInstance] =ᵐ[μ]
     fun ω => mean + h2 * (parent ω - mean)
 
 namespace Model
 
-variable {μ : Measure Ω} (M : Model μ)
+variable {μ : Measure Ω} [IsProbabilityMeasure μ] (M : Model μ)
 
 /-- The selection differential `S = 𝔼[P | selected] - μ` of the selected group `s`. -/
 noncomputable def selectionDifferential (s : Set Ω) : ℝ := ∫ ω, M.parent ω ∂μ[|s] - M.mean
@@ -87,7 +94,7 @@ noncomputable def response (s : Set Ω) : ℝ := ∫ ω, M.offspring ω ∂μ[|s
 /-- The breeder's equation (Lush 1937): if the selected group `s` is determined by the parental
 value (an event of `σ(P)`) and has positive mass, the response to selection is the heritability
 times the selection differential, `R = h² S`. -/
-theorem response_eq [IsFiniteMeasure μ] {s : Set Ω}
+theorem response_eq {s : Set Ω}
     (hs : MeasurableSet[MeasurableSpace.comap M.parent inferInstance] s) (hs0 : μ s ≠ 0) :
     M.response s = M.h2 * M.selectionDifferential s := by
   have hm : MeasurableSpace.comap M.parent inferInstance ≤ m := M.measurable_parent.comap_le
@@ -105,6 +112,14 @@ theorem response_eq [IsFiniteMeasure μ] {s : Set Ω}
   rw [hOs, integral_add (integrable_const _) (hsub.const_mul M.h2), integral_const,
     integral_const_mul, integral_sub hP (integrable_const _), integral_const]
   simp
+
+/-- Selecting the whole population gives no selection differential, `S = 0`. -/
+theorem selectionDifferential_univ : M.selectionDifferential Set.univ = 0 := by
+  rw [selectionDifferential, cond_univ, M.integral_parent, sub_self]
+
+/-- Selecting the whole population gives no response, `R = 0`. -/
+theorem response_univ : M.response Set.univ = 0 := by
+  rw [M.response_eq MeasurableSet.univ (by simp), selectionDifferential_univ, mul_zero]
 
 end Model
 
