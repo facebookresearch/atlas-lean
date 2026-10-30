@@ -34,7 +34,8 @@ The L2-normalized corollary
 `integral_sq_mul_norm_sq_mul_integral_sq_mul_norm_fourier_sq_ge`
 in namespace `MathlibExt.Analysis.Fourier.HeisenbergUncertaintyFourierWanted`
 gives `(∫ x² ‖f x‖²) * (∫ ξ² ‖𝓕 f ξ‖²) ≥ 1 / (16 * π²)` when `∫ ‖f x‖² = 1`.
-It preserves the MA-ProofBench target's declaration name and namespace.
+It keeps the name, namespace, and statement of the completed `WantedExt` target,
+a port of MA-ProofBench `ma_proofbench_l2_57`.
 
 The proof is the classical one: integration by parts gives
 `∫ (f x)² = -2 * ∫ x * f x * f' x`, and the pointwise AM–GM estimate
@@ -45,7 +46,7 @@ imaginary parts and combining with two-dimensional Cauchy–Schwarz; the
 Fourier form follows from Plancherel and the Fourier differentiation
 formula. The shifted form measures the position second moment about any
 center `a`. For positive L2 mass, the centered form uses the mean position.
-At zero L2 mass, it uses zero as the center by Lean's division by zero convention.
+Zero L2 mass occurs only for `f = 0`, where the center is `0 / 0 = 0` by Lean's convention.
 Only the position factor is centered; the derivative factor is unchanged.
 
 This is a companion to the Fourier-series and Hilbert-space material of
@@ -674,8 +675,8 @@ theorem heisenberg_uncertainty_shifted (f : 𝓢(ℝ, ℂ)) (a : ℝ) :
 
 /-- **Heisenberg's uncertainty principle** with the position factor centered: for
 `μ = (∫ y * ‖f y‖²) / (∫ ‖f x‖²)`, the position second moment about `μ` satisfies
-the same bound. For positive L2 mass, `μ` is the mean position. At zero L2 mass,
-Lean's division by zero convention gives `μ = 0`, including `f = 0` with `0 / 0 = 0`.
+the same bound. For positive L2 mass, `μ` is the mean position. Zero L2 mass occurs
+only for `f = 0`, where `μ = 0 / 0 = 0` by Lean's convention.
 Only the position factor is centered. -/
 theorem heisenberg_uncertainty_centered (f : 𝓢(ℝ, ℂ)) :
     (∫ x, ‖f x‖ ^ 2) ^ 2 ≤ 4
@@ -718,6 +719,11 @@ by Mathlib's `𝓕 (⇑ψ)`, with the same `∫ ψ(x) e^{-2πixξ} dx` normaliza
 retains the name, namespace, and statement of the completed target from
 `WantedExt/Analysis/Fourier/HeisenbergUncertaintyFourierWanted.lean` and is proved as a
 normalized corollary of `HeisenbergUncertainty.heisenberg_uncertainty_fourier`.
+Port changes: the source's top-level `ma_proofbench_l2_57` was renamed to
+`integral_sq_mul_norm_sq_mul_integral_sq_mul_norm_fourier_sq_ge` and placed in namespace
+`MathlibExt.Analysis.Fourier.HeisenbergUncertaintyFourierWanted`. The problem docstring
+was moved onto this declaration, its exercise sentence was reworded as a declarative
+corollary description, and a proof was supplied.
 -/
 
 open scoped FourierTransform

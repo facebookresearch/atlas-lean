@@ -18,9 +18,9 @@ import Mathlib.Tactic.Positivity
 /-!
 # Tests for Heisenberg's uncertainty principle
 
-* The integration-by-parts identity and all three forms of the inequality
-  on the zero function and on an arbitrary Schwartz function (application
-  tests).
+* The complex inequality on the zero function; the integration-by-parts
+  identity, real and Fourier inequalities, and shifted form on arbitrary
+  Schwartz functions (application tests).
 * A concrete nonzero test case: a smooth bump function, viewed as a real
   Schwartz function, has `(bumpSchwartzReal 0) = 1` and strictly positive
   `∫ (f x)²`, so Heisenberg's inequality for it is nontrivial; its
