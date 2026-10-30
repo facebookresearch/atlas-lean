@@ -171,7 +171,8 @@ theorem tendstoInDistribution_sqrt_mul_sampleMean :
       -fisherInformation volume pG 0 := by
     simp [deriv_score_pG, fisherInformation_pG]
   exact tendstoInDistribution_sqrt_mul_sub_maximumLikelihood (δ := 1) (M := fun _ => 0)
-    one_pos pG_pos (measurable_gaussianPDFReal 0 1) hasLaw_coord iIndepFun_coord
+    one_pos pG_pos (fun θ _ => measurable_gaussianPDFReal θ 1)
+    (fun θ _ => integral_gaussianPDFReal_eq_one θ one_ne_zero) hasLaw_coord iIndepFun_coord
     (fun x θ _ => differentiableAt_log_pG x θ) (fun x θ _ => by rw [score_pG_fun]; fun_prop)
     (fun x θ _ => by simp_rw [deriv_score_pG]; fun_prop) measurable_const
     (integrable_zero _ _ _) (fun x θ _ => by rw [deriv_deriv_score_pG, abs_zero])

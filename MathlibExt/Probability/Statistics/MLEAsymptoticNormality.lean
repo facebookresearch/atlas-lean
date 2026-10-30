@@ -458,8 +458,12 @@ theorem tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation
   exact tendstoInDistribution_of_tendstoInMeasure_sub (fun n ω => T n ω) Y hAJ hdiff hT_meas
 
 /-- **Asymptotic normality of maximum likelihood** (Cramér's conditions). Let `p θ` be positive
-densities with respect to `ν`, measurable at `θ₀`, and let `X 0, X 1, …` be i.i.d. with law
-`p θ₀ ν`. Assume that on the ball of radius `δ > 0` about `θ₀` the log-likelihood
+densities with respect to `ν`, and on the ball of radius `δ > 0` about `θ₀` let each `p θ` be
+measurable with `∫ p θ dν = 1`, so that the family is a statistical model there (as in
+`FisherInformation.cramerRao`). The proof uses measurability only at `θ₀` and does not use the
+normalization `_hp_int`: the limit theorem holds for roots of any criterion with these
+derivatives, and normalization is what makes those roots maximum-likelihood estimators.
+Let `X 0, X 1, …` be i.i.d. with law `p θ₀ ν`. Assume that on the same ball the log-likelihood
 `log p θ x` is differentiable in `θ` for every `x` (so that `score p θ x` is its true derivative
 there, not Lean's junk value `0` of `deriv` at a nondifferentiable point) and the score
 `∂_θ log p θ x` is twice differentiable in `θ` for every `x`, with `|∂³_θ log p θ x| ≤ M x`
@@ -475,7 +479,8 @@ Source: Cramér (1946), §33.3; Lehmann & Casella (1998), Theorem 6.3.10; van de
 Theorem 5.41. -/
 theorem tendstoInDistribution_sqrt_mul_sub_maximumLikelihood
     {ν : Measure 𝓧} {p : ℝ → 𝓧 → ℝ} {θ₀ δ : ℝ} (hδ : 0 < δ)
-    (hp_pos : ∀ θ x, 0 < p θ x) (hp_meas : Measurable (p θ₀))
+    (hp_pos : ∀ θ x, 0 < p θ x) (hp_meas : ∀ θ ∈ Metric.ball θ₀ δ, Measurable (p θ))
+    (_hp_int : ∀ θ ∈ Metric.ball θ₀ δ, ∫ x, p θ x ∂ν = 1)
     {X : ℕ → Ω → 𝓧} (hX_law : ∀ i, HasLaw (X i) (lawOf ν p θ₀) P) (hX_indep : iIndepFun X P)
     (hℓ_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => Real.log (p t x)) θ)
     (hs_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => score p t x) θ)
@@ -503,8 +508,8 @@ theorem tendstoInDistribution_sqrt_mul_sub_maximumLikelihood
     rw [e]; exact (hℓ_diff x θ₀ (Metric.mem_ball_self hδ)).exp
   have hvar : (∫ x, score p θ₀ x ^ 2 ∂lawOf ν p θ₀) /
       (∫ x, deriv (fun t => score p t x) θ₀ ∂lawOf ν p θ₀) ^ 2 = (fisherInformation ν p θ₀)⁻¹ := by
-    rw [integral_score_sq (hp_pos θ₀) hp_meas hp_diff, h_info, neg_sq, sq, div_mul_cancel_left₀
-      hI_pos.ne']
+    rw [integral_score_sq (hp_pos θ₀) (hp_meas θ₀ (Metric.mem_ball_self hδ)) hp_diff, h_info,
+      neg_sq, sq, div_mul_cancel_left₀ hI_pos.ne']
   refine tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation hX_law hX_indep hδ hs_diff
     hs'_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int
     (by rw [h_info]; exact neg_ne_zero.2 hI_pos.ne') hθ_meas hroot hcons ?_
