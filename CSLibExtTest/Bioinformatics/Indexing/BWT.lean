@@ -64,6 +64,12 @@ def naiveCount (t P : List Char) : ℕ :=
 -- `ana` occurs twice (overlapping), in rows `2` and `3`.
 #guard backwardSearch (bwt banana) "ana".toList = (2, 4)
 
+-- Backward search makes one recursive call per pattern letter: a 64-letter pattern finishes
+-- (two recursive calls per letter would take 2^64 steps).
+#guard
+  let t := List.replicate 64 'a'
+  (backwardSearch (bwt t) t).2 - (backwardSearch (bwt t) t).1 = 1
+
 -- The interval is exactly the set of rows whose rotation starts with the pattern.
 #guard ["ana", "a", "n", "", "x"].all fun p =>
   let P := p.toList

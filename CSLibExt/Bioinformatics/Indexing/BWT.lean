@@ -539,12 +539,15 @@ theorem invert_bwt {α : Type*} [LinearOrder α] (t : List α) : invert (bwt t) 
   simp
 
 /-- FM-index backward search: the half-open row interval `[sp, ep)` for a pattern, computed from
-the last column alone, processing the pattern from its last letter to its first. -/
+the last column alone, processing the pattern from its last letter to its first. The interval for
+the suffix and `C[c]` are each computed once per letter, so a pattern of length `m` makes `m`
+recursive calls. -/
 def backwardSearch {α : Type*} [LinearOrder α] (L : List (WithBot α)) : List α → ℕ × ℕ
   | [] => (0, L.length)
   | c :: P =>
-      (countLess L c + rank L c (backwardSearch L P).1,
-        countLess L c + rank L c (backwardSearch L P).2)
+      let r := backwardSearch L P
+      let base := countLess L c
+      (base + rank L c r.1, base + rank L c r.2)
 
 private theorem sortedRotations_getD_injective {α : Type*} [LinearOrder α]
     (t : List α) (r s : ℕ) (hr : r < t.length + 1) (hs : s < t.length + 1)
@@ -742,4 +745,3 @@ theorem backwardSearch_count {α : Type*} [LinearOrder α] (t P : List α) :
   exact hi.symm.trans (hc.trans he)
 
 end Cslib.Bioinformatics.Indexing.BWT
-
