@@ -31,6 +31,7 @@ import Mathlib.Tactic.Ring
 * In dimension one, `diagonal ![2]` and `diagonal ![3]` give `2 + 3 ≤ 5`.
 * Determinant monotonicity: `det (diagonal ![1, 3]) = 3 ≤ 12 =
   det (diagonal ![3, 4])`.
+* Determinant monotonicity also applies in dimension zero, where both determinants are `1`.
 -/
 
 @[expose] public section
@@ -239,7 +240,6 @@ theorem det_le_det_add_diag :
       ((Matrix.diagonal ![((2 : ℝ) : ℂ), ((1 : ℝ) : ℂ)] +
         Matrix.diagonal ![((1 : ℝ) : ℂ), ((3 : ℝ) : ℂ)]).det).re := by
   have h := Matrix.PosSemidef.det_le_det_add psd_diag_two_one psd_diag_one_three
-    (show 0 < 2 by norm_num)
   have hB : ((Matrix.diagonal ![((1 : ℝ) : ℂ), ((3 : ℝ) : ℂ)]).det).re = 3 := by
     rw [Matrix.det_diagonal, Fin.prod_univ_two]
     norm_num
@@ -255,5 +255,11 @@ theorem det_le_det_add_diag :
   rw [hB, hAB] at h
   rw [hB, hAB]
   exact h
+
+/-- Determinant monotonicity includes zero-dimensional positive semidefinite matrices. -/
+theorem det_le_det_add_zero_dim {A B : Matrix (Fin 0) (Fin 0) ℂ}
+    (hA : A.PosSemidef) (hB : B.PosSemidef) :
+    (B.det).re ≤ ((A + B).det).re := by
+  exact Matrix.PosSemidef.det_le_det_add hA hB
 
 end MathlibExtTest.LinearAlgebra.Matrix.MinkowskiDeterminantTests

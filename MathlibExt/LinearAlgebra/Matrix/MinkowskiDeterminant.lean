@@ -360,8 +360,12 @@ theorem PosSemidef.minkowski_det (hA : A.PosSemidef) (hB : B.PosSemidef)
 
 /-- **Monotonicity of the determinant on the positive semidefinite cone**:
 `det B ≤ det (A + B)` for `A` and `B` positive semidefinite. -/
-theorem PosSemidef.det_le_det_add (hA : A.PosSemidef) (hB : B.PosSemidef)
-    (hn : 0 < n) : (B.det).re ≤ ((A + B).det).re := by
+theorem PosSemidef.det_le_det_add (hA : A.PosSemidef) (hB : B.PosSemidef) :
+    (B.det).re ≤ ((A + B).det).re := by
+  by_cases hn : n = 0
+  · subst n
+    simp only [Matrix.det_fin_zero, le_refl]
+  have hn : 0 < n := Nat.pos_of_ne_zero hn
   have hp : 0 < ((n : ℝ)⁻¹) := inv_pos.mpr (Nat.cast_pos.mpr hn)
   have hle := hA.minkowski_det hB hn
   have hB' : 0 ≤ (B.det).re ^ ((n : ℝ)⁻¹) + (A.det).re ^ ((n : ℝ)⁻¹) := by
