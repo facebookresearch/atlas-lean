@@ -49,9 +49,12 @@ open MeasureTheory
 
 namespace ParamSmoothAux
 
+universe uM uP uE
+
 variable {X : Type*} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X]
   [SecondCountableTopology X] (μ : Measure X) [IsFiniteMeasureOnCompacts μ]
-  {M P : Type} [NormedAddCommGroup M] [NormedSpace ℝ M] [NormedAddCommGroup P] [NormedSpace ℝ P]
+  {M : Type uM} [NormedAddCommGroup M] [NormedSpace ℝ M]
+  {P : Type uP} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 private theorem exists_bound_of_hasCompactSupport {Y E : Type*} [TopologicalSpace Y]
     [NormedAddCommGroup E] {f : Y → E} (hf : Continuous f) (hfc : HasCompactSupport f) :
@@ -61,7 +64,8 @@ private theorem exists_bound_of_hasCompactSupport {Y E : Type*} [TopologicalSpac
 
 private theorem contDiff_integral_smul_comp (c : X → M) (hc : Continuous c) (w : X → ℝ)
     (hw : Continuous w) (hwc : HasCompactSupport w) (n : ℕ) :
-    ∀ {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] (Ψ : M × P → E),
+    ∀ {E : Type (max uP uE)} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+      (Ψ : M × P → E),
       ContDiff ℝ (⊤ : ℕ∞) Ψ → HasCompactSupport Ψ →
         ContDiff ℝ n (fun p : P => ∫ x, w x • Ψ (c x, p) ∂μ) := by
   induction n with
@@ -122,19 +126,34 @@ end ParamSmoothAux
 
 namespace MeasureTheory
 
+universe uX vM vP vE
+
 /-- The integral `p ↦ ∫ x, w x • Ψ (c x, p) ∂μ` of a smooth compactly
 supported function is smooth in the parameter `p`. -/
 theorem contDiff_integral_smul_comp_of_contDiff_of_hasCompactSupport
-    {X : Type*} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X]
+    {X : Type uX} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X]
     [SecondCountableTopology X]
     (μ : Measure X) [IsFiniteMeasureOnCompacts μ]
-    {M P E : Type} [NormedAddCommGroup M] [NormedSpace ℝ M] [NormedAddCommGroup P]
-    [NormedSpace ℝ P] [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {M : Type vM} [NormedAddCommGroup M] [NormedSpace ℝ M]
+    {P : Type vP} [NormedAddCommGroup P] [NormedSpace ℝ P]
+    {E : Type vE} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (c : X → M) (hc : Continuous c) (w : X → ℝ) (hw : Continuous w) (hwc : HasCompactSupport w)
     (Ψ : M × P → E) (hΨ : ContDiff ℝ (⊤ : ℕ∞) Ψ) (hΨc : HasCompactSupport Ψ) :
     ContDiff ℝ (⊤ : ℕ∞) (fun p : P => ∫ x, w x • Ψ (c x, p) ∂μ) := by
+  let e : ULift.{max vP vE, vE} E ≃L[ℝ] E := ContinuousLinearEquiv.ulift
+  let Ψ' : M × P → ULift.{max vP vE, vE} E := e.symm ∘ Ψ
+  have hΨ' : ContDiff ℝ (⊤ : ℕ∞) Ψ' := e.symm.contDiff.comp hΨ
+  have hΨ'c : HasCompactSupport Ψ' := by
+    simpa only [Ψ'] using hΨc.comp_left e.symm.map_zero
   rw [contDiff_infty]
   intro n
-  exact ParamSmoothAux.contDiff_integral_smul_comp μ c hc w hw hwc n Ψ hΨ hΨc
+  have hLift := ParamSmoothAux.contDiff_integral_smul_comp.{vM, vP, max vP vE, uX}
+    μ c hc w hw hwc n Ψ' hΨ' hΨ'c
+  have hDown := e.contDiff.comp hLift
+  convert hDown using 1
+  funext p
+  change (∫ x, w x • Ψ (c x, p) ∂μ) = e (∫ x, w x • Ψ' (c x, p) ∂μ)
+  rw [← e.integral_comp_comm]
+  simp [Ψ', e]
 
 end MeasureTheory
