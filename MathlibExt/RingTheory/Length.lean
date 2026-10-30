@@ -36,7 +36,7 @@ through the first isomorphism theorem and use monotonicity of length.
 @[expose] public section
 
 /-- If `ker f ≤ K`, the length of `M ⧸ K` is at most the length of `N`. -/
-theorem Module.length_quotient_le_of_ker_le {R M N : Type} [CommRing R]
+theorem Module.length_quotient_le_of_ker_le {R : Type*} {M : Type*} {N : Type*} [Ring R]
     [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N]
     (K : Submodule R M) (f : M →ₗ[R] N) (h : LinearMap.ker f ≤ K) :
     Module.length R (M ⧸ K) ≤ Module.length R N := by
