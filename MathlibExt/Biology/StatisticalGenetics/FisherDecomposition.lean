@@ -32,8 +32,9 @@ genotypic value is `G i j`, with `G i j = G j i` (the value of an unordered geno
   fit below;
 * `δ i j = G i j - μ - α i - α j` (`domDev`), the dominance deviation.
 
-Then `G i j = μ + α i + α j + δ i j`; the breeding value `μ + α i + α j` is the least-squares
-fit of the genotypic value by a function additive over the two genes
+Then `G i j = μ + α i + α j + δ i j`; the additive fitted genotypic value
+`μ + α i + α j` is the least-squares fit of the genotypic value by a function additive over
+the two genes
 (`domVar_le_sum_sq`), the dominance deviations are orthogonal to every additive function, and
 the genetic variance splits as
 
@@ -142,8 +143,8 @@ theorem sum_mul_domDev_left {p : A → ℝ} (hp : ∑ i, p i = 1) {G : A → A �
   exact sum_mul_domDev_right hp G j
 
 /-- **Least squares (Fisher 1918).** Among all fits `c + a i + a j` of the genotypic value by
-a function additive over the two genes, the breeding value `μ + α i + α j` minimizes the
-weighted squared error `∑ p i p j (G i j - c - a i - a j) ²`; its error is `V_D`. -/
+a function additive over the two genes, the additive fitted genotypic value `μ + α i + α j`
+minimizes the weighted squared error `∑ p i p j (G i j - c - a i - a j) ²`; its error is `V_D`. -/
 theorem domVar_le_sum_sq {p : A → ℝ} (hp0 : ∀ i, 0 ≤ p i) (hp : ∑ i, p i = 1)
     {G : A → A → ℝ} (hG : ∀ i j, G i j = G j i) (c : ℝ) (a : A → ℝ) :
     domVar p G ≤ ∑ i, ∑ j, p i * p j * (G i j - c - a i - a j) ^ 2 := by
