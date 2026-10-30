@@ -70,6 +70,15 @@ example : pDiff 3 1 0 = 3 / 4 * (1 - exp (-4)) := by rw [pDiff_eq]; norm_num
 example : jcDistance (pDiff (1 / 10) 5 2) = 1 / 2 := by rw [jcDistance_pDiff]; norm_num
 example : jcDistance 0 = 0 := by simp [jcDistance]
 
+-- Rate-matrix property for a nonnegative rate, and the domain of the distance.
+example : 0 ≤ jcRate 2 0 3 := jcRate_nonneg (by norm_num) (by decide)
+example (μ : ℝ) (k : Fin 4) : ∑ j, jcRate μ k j = 0 := sum_jcRate μ k
+example (i : Fin 4) : 0 ≤ pDiff 2 3 i ∧ pDiff 2 3 i < 3 / 4 :=
+  ⟨pDiff_nonneg (by norm_num) i, pDiff_lt_three_quarters 2 3 i⟩
+-- Boundary: at the saturation value `p = 3/4` (outside the domain) the true distance diverges,
+-- and the totalized logarithm returns the junk value `0`.
+example : jcDistance (3 / 4) = 0 := by norm_num [jcDistance]
+
 -- The matrix exponential: at `t = 0` it is the identity, and its rows sum to `1`.
 example : NormedSpace.exp ((0 : ℝ) • jcRateMatrix 1) 2 2 = 1 := by
   rw [← jcProb_eq_exp, jcProb_zero]; simp
