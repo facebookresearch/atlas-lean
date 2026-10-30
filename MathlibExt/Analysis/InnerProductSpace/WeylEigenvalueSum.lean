@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Matrix.Hermitian
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 
+import MathlibExt.Analysis.InnerProductSpace.CourantFischer
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -35,8 +36,8 @@ Both bounds are proved by the same dimension-counting argument: intersect
 the span of the head (resp. tail) of the eigenbasis of `T + S` with the
 spans of the tails (resp. heads) of the eigenbases of `T` and `S`. The three
 spans have finranks summing to `2n + 1`, so their intersection contains a
-nonzero vector, and the Rayleigh-quotient bounds on the three spans give
-the inequality.
+nonzero vector. The public head/tail span finrank and Rayleigh-form
+bounds in `CourantFischer.lean` then give the inequality.
 
 This is a companion to the self-adjoint spectral material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`
@@ -69,151 +70,10 @@ Horn–Johnson, *Matrix Analysis*, 2nd ed., Theorem 4.3.7.
 namespace MathlibExt.Analysis.InnerProductSpace.WeylEigenvalueSum
 
 open Finset Submodule
+open MathlibExt.Analysis.InnerProductSpace.CourantFischer
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
-
-/-- A vector in the span of a subfamily of an orthonormal basis can be
-written as a linear combination of that subfamily. -/
-private lemma repr_of_mem_span {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (s : Finset (Fin n)) (x : E)
-    (hx : x ∈ Submodule.span 𝕜 (Set.range (fun j : ↥s => b (j : Fin n)))) :
-    ∃ r : ↥s → 𝕜, x = ∑ j, r j • b (j : Fin n) := by
-  obtain ⟨c, hc⟩ := Finsupp.mem_span_range_iff_exists_finsupp.mp hx
-  refine ⟨c, ?_⟩
-  rw [← hc]
-  exact Finsupp.sum_fintype _ _ (fun j => zero_smul 𝕜 (b ↑j))
-
-/-- The finrank of the span of a subfamily of an orthonormal basis is the
-cardinality of the subfamily. -/
-private lemma finrank_span_basis {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (s : Finset (Fin n)) :
-    Module.finrank 𝕜
-        (Submodule.span 𝕜 (Set.range (fun j : ↥s => b (j : Fin n)))) = s.card := by
-  have hLI : LinearIndependent 𝕜 (fun j : ↥s => b (j : Fin n)) :=
-    b.orthonormal.linearIndependent.comp _ Subtype.val_injective
-  rw [finrank_span_eq_card hLI, Fintype.card_coe]
-
-/-- The quadratic form of an operator diagonal in an orthonormal basis,
-expanded in the coefficients of `x` over a subfamily of the basis. -/
-private lemma expand_inner {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (ev : Fin n → ℝ) (T : E →ₗ[𝕜] E)
-    (hTv : ∀ j, T (b j) = (ev j : 𝕜) • b j)
-    (s : Finset (Fin n)) (r : ↥s → 𝕜) (x : E)
-    (hx : x = ∑ j : ↥s, r j • b (j : Fin n)) :
-    inner 𝕜 (T x) x =
-      ∑ j : ↥s, (ev (j : Fin n) : 𝕜) * ((starRingEnd 𝕜) (r j) * r j) := by
-  have horth : ∀ j k : ↥s,
-      inner 𝕜 (b (j : Fin n)) (b (k : Fin n)) = if j = k then 1 else 0 := by
-    intro j k
-    have h := orthonormal_iff_ite.mp b.orthonormal (j : Fin n) (k : Fin n)
-    by_cases hjk : j = k
-    · subst hjk
-      simp only [ite_true] at h ⊢
-      exact h
-    · have hjk2 : (j : Fin n) ≠ k := fun hc => hjk (Subtype.ext hc)
-      rw [ite_eq_right hjk2] at h
-      rw [ite_eq_right hjk]
-      exact h
-  have hTx : T x = ∑ j : ↥s, (r j * (ev (j : Fin n) : 𝕜)) • b (j : Fin n) := by
-    conv_lhs => rw [hx]
-    rw [map_sum]
-    exact Finset.sum_congr rfl fun j _ => by
-      rw [map_smul, hTv (j : Fin n), ← mul_smul]
-  rw [hTx, hx, sum_inner]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [inner_sum, Finset.sum_eq_single j]
-  · rw [inner_smul_left, inner_smul_right, horth j j]
-    simp only [ite_true]
-    rw [map_mul, RCLike.conj_ofReal]
-    ring
-  · intro k _ hjk
-    have hjk' : j ≠ k := Ne.symm hjk
-    simp [inner_smul_left, inner_smul_right, horth j k, hjk']
-  · simp
-
-/-- The squared norm of a vector, expanded in the coefficients over a
-subfamily of an orthonormal basis. -/
-private lemma norm_sq_expand {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (s : Finset (Fin n)) (r : ↥s → 𝕜) (x : E)
-    (hx : x = ∑ j, r j • b (j : Fin n)) :
-    ‖x‖ ^ 2 = ∑ j : ↥s, RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-  have hTv : ∀ j, (LinearMap.id : E →ₗ[𝕜] E) (b j) = ((1 : ℝ) : 𝕜) • b j := by
-    intro j
-    rw [LinearMap.id_apply, RCLike.ofReal_one, one_smul]
-  have h1 := expand_inner b (fun _ => 1) _ hTv s r x hx
-  rw [LinearMap.id_apply] at h1
-  calc ‖x‖ ^ 2 = RCLike.re (inner 𝕜 x x) := norm_sq_eq_re_inner x
-    _ = ∑ j, RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-        rw [h1, map_sum]
-        refine Finset.sum_congr rfl fun j _ => ?_
-        simp [RCLike.mul_re]
-
-/-- Nonnegativity of the weight `re (conj w * w)` appearing in the expansion. -/
-private lemma weight_nonneg (w : 𝕜) :
-    0 ≤ RCLike.re ((starRingEnd 𝕜) w * w) := by
-  rw [← RCLike.inner_apply']
-  exact inner_self_nonneg
-
-/-- Lower Rayleigh bound on a span of eigenvectors whose eigenvalues are
-all at least `c`. -/
-private lemma re_inner_ge_of_mem_span {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (ev : Fin n → ℝ) (T : E →ₗ[𝕜] E)
-    (hTv : ∀ j, T (b j) = (ev j : 𝕜) • b j)
-    (s : Finset (Fin n)) (c : ℝ) (x : E)
-    (hx : x ∈ Submodule.span 𝕜 (Set.range (fun j : ↥s => b (j : Fin n))))
-    (hc : ∀ j ∈ s, c ≤ ev j) :
-    c * ‖x‖ ^ 2 ≤ RCLike.re (inner 𝕜 (T x) x) := by
-  obtain ⟨r, hr⟩ := repr_of_mem_span b s x hx
-  have hexp := expand_inner b ev T hTv s r x hr
-  have hnorm := norm_sq_expand b s r x hr
-  have h1 : c * ‖x‖ ^ 2 =
-      ∑ j : ↥s, c * RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-    rw [hnorm, Finset.mul_sum]
-  have h2 : RCLike.re (inner 𝕜 (T x) x) =
-      ∑ j : ↥s, RCLike.re ((ev (j : Fin n) : 𝕜) *
-        ((starRingEnd 𝕜) (r j) * r j)) := by
-    rw [hexp, map_sum]
-  rw [h1, h2]
-  refine Finset.sum_le_sum fun j _ => ?_
-  have hw := weight_nonneg (r j)
-  have hcj : c ≤ ev (j : Fin n) := hc _ j.property
-  have hterm : RCLike.re ((ev (j : Fin n) : 𝕜) *
-      ((starRingEnd 𝕜) (r j) * r j)) =
-      ev (j : Fin n) * RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-    simp [RCLike.mul_re, RCLike.ofReal_re]
-  rw [hterm]
-  exact mul_le_mul_of_nonneg_right hcj hw
-
-/-- Upper Rayleigh bound on a span of eigenvectors whose eigenvalues are
-all at most `C`. -/
-private lemma re_inner_le_of_mem_span {n : ℕ} (b : OrthonormalBasis (Fin n) 𝕜 E)
-    (ev : Fin n → ℝ) (T : E →ₗ[𝕜] E)
-    (hTv : ∀ j, T (b j) = (ev j : 𝕜) • b j)
-    (s : Finset (Fin n)) (C : ℝ) (x : E)
-    (hx : x ∈ Submodule.span 𝕜 (Set.range (fun j : ↥s => b (j : Fin n))))
-    (hC : ∀ j ∈ s, ev j ≤ C) :
-    RCLike.re (inner 𝕜 (T x) x) ≤ C * ‖x‖ ^ 2 := by
-  obtain ⟨r, hr⟩ := repr_of_mem_span b s x hx
-  have hexp := expand_inner b ev T hTv s r x hr
-  have hnorm := norm_sq_expand b s r x hr
-  have h1 : C * ‖x‖ ^ 2 =
-      ∑ j : ↥s, C * RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-    rw [hnorm, Finset.mul_sum]
-  have h2 : RCLike.re (inner 𝕜 (T x) x) =
-      ∑ j : ↥s, RCLike.re ((ev (j : Fin n) : 𝕜) *
-        ((starRingEnd 𝕜) (r j) * r j)) := by
-    rw [hexp, map_sum]
-  rw [h2, h1]
-  refine Finset.sum_le_sum fun j _ => ?_
-  have hw := weight_nonneg (r j)
-  have hCj : ev (j : Fin n) ≤ C := hC _ j.property
-  have hterm : RCLike.re ((ev (j : Fin n) : 𝕜) *
-      ((starRingEnd 𝕜) (r j) * r j)) =
-      ev (j : Fin n) * RCLike.re ((starRingEnd 𝕜) (r j) * r j) := by
-    simp [RCLike.mul_re, RCLike.ofReal_re]
-  rw [hterm]
-  exact mul_le_mul_of_nonneg_right hCj hw
 
 variable [FiniteDimensional 𝕜 E]
 
@@ -255,69 +115,31 @@ theorem weyl_eigenvalue_add_le {n : ℕ} {T S : E →ₗ[𝕜] E}
     {a b : ℕ} (ha : a < n) (hb : b < n) (hab : a + b < n) :
     (hT.add hS).eigenvalues hn ⟨a + b, hab⟩ ≤
       hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩ := by
-  -- Eigensystems of the three operators.
-  set bC := (hT.add hS).eigenvectorBasis hn with hbC
-  set bT := hT.eigenvectorBasis hn with hbT
-  set bS := hS.eigenvectorBasis hn with hbS
-  set evC := (hT.add hS).eigenvalues hn with hevC
-  set evT := hT.eigenvalues hn with hevT
-  set evS := hS.eigenvalues hn with hevS
-  have hTvC : ∀ j, (T + S) (bC j) = (evC j : 𝕜) • bC j :=
-    fun j => (hT.add hS).apply_eigenvectorBasis hn j
-  have hTvT : ∀ j, T (bT j) = (evT j : 𝕜) • bT j :=
-    fun j => hT.apply_eigenvectorBasis hn j
-  have hTvS : ∀ j, S (bS j) = (evS j : 𝕜) • bS j :=
-    fun j => hS.apply_eigenvectorBasis hn j
-  have hantiC : Antitone evC := (hT.add hS).eigenvalues_antitone hn
-  have hantiT : Antitone evT := hT.eigenvalues_antitone hn
-  have hantiS : Antitone evS := hS.eigenvalues_antitone hn
-  -- The three index sets: head of `T + S`, tails of `T` and `S`.
-  set sC : Finset (Fin n) := Finset.Iic ⟨a + b, hab⟩ with hsC
-  set sT : Finset (Fin n) := Finset.Ici ⟨a, ha⟩ with hsT
-  set sS : Finset (Fin n) := Finset.Ici ⟨b, hb⟩ with hsS
-  have hcardC : sC.card = a + b + 1 := by rw [hsC]; exact Fin.card_Iic _
-  have hcardT : sT.card = n - a := by rw [hsT]; exact Fin.card_Ici _
-  have hcardS : sS.card = n - b := by rw [hsS]; exact Fin.card_Ici _
   set SC : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sC => bC (j : Fin n))) with hSC
+    Submodule.span 𝕜 (Set.range (headFamily (hT.add hS) hn hab)) with hSC
   set ST : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sT => bT (j : Fin n))) with hST
+    Submodule.span 𝕜 (Set.range (tailFamily hT hn ha)) with hST
   set SS : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sS => bS (j : Fin n))) with hSS
+    Submodule.span 𝕜 (Set.range (tailFamily hS hn hb)) with hSS
   have hsum : Module.finrank 𝕜 SC + Module.finrank 𝕜 ST + Module.finrank 𝕜 SS
       = 2 * n + 1 := by
-    rw [hSC, hST, hSS, finrank_span_basis bC sC, finrank_span_basis bT sT,
-      finrank_span_basis bS sS, hcardC, hcardT, hcardS]
+    rw [hSC, hST, hSS, finrank_span_headFamily (hT.add hS) hn hab,
+      finrank_span_tailFamily hT hn ha, finrank_span_tailFamily hS hn hb]
     omega
   obtain ⟨x, hxn, hxC, hxT, hxS⟩ := exists_ne_zero_mem_inf_inf hn SC ST SS hsum
-  -- Rayleigh bounds on the three spans.
-  have hC : evC ⟨a + b, hab⟩ * ‖x‖ ^ 2 ≤ RCLike.re (inner 𝕜 ((T + S) x) x) := by
-    apply re_inner_ge_of_mem_span bC evC (T + S) hTvC sC _ x hxC
-    intro j hj
-    apply hantiC
-    rw [Finset.mem_Iic] at hj
-    exact hj
-  have hTle : RCLike.re (inner 𝕜 (T x) x) ≤ evT ⟨a, ha⟩ * ‖x‖ ^ 2 := by
-    apply re_inner_le_of_mem_span bT evT T hTvT sT _ x hxT
-    intro j hj
-    apply hantiT
-    rw [Finset.mem_Ici] at hj
-    exact hj
-  have hSle : RCLike.re (inner 𝕜 (S x) x) ≤ evS ⟨b, hb⟩ * ‖x‖ ^ 2 := by
-    apply re_inner_le_of_mem_span bS evS S hTvS sS _ x hxS
-    intro j hj
-    apply hantiS
-    rw [Finset.mem_Ici] at hj
-    exact hj
+  have hC := rayleighForm_ge_of_mem_head (hT.add hS) hn hab hxC
+  have hTle := rayleighForm_le_of_mem_tail hT hn ha hxT
+  have hSle := rayleighForm_le_of_mem_tail hS hn hb hxS
+  simp only [rayleighForm] at hC hTle hSle
   have hsplit : RCLike.re (inner 𝕜 ((T + S) x) x) =
       RCLike.re (inner 𝕜 (T x) x) + RCLike.re (inner 𝕜 (S x) x) := by
     rw [LinearMap.add_apply, inner_add_left, map_add]
   have hpos : (0 : ℝ) < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hxn) 2
-  have hchain : evC ⟨a + b, hab⟩ * ‖x‖ ^ 2 ≤
-      (evT ⟨a, ha⟩ + evS ⟨b, hb⟩) * ‖x‖ ^ 2 := by
+  have hchain : (hT.add hS).eigenvalues hn ⟨a + b, hab⟩ * ‖x‖ ^ 2 ≤
+      (hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩) * ‖x‖ ^ 2 := by
     rw [hsplit] at hC
-    have : (evT ⟨a, ha⟩ + evS ⟨b, hb⟩) * ‖x‖ ^ 2 =
-        evT ⟨a, ha⟩ * ‖x‖ ^ 2 + evS ⟨b, hb⟩ * ‖x‖ ^ 2 := by ring
+    have : (hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩) * ‖x‖ ^ 2 =
+        hT.eigenvalues hn ⟨a, ha⟩ * ‖x‖ ^ 2 + hS.eigenvalues hn ⟨b, hb⟩ * ‖x‖ ^ 2 := by ring
     rw [this]
     linarith
   exact le_of_mul_le_mul_right hchain hpos
@@ -329,74 +151,36 @@ theorem le_weyl_eigenvalue_add {n : ℕ} {T S : E →ₗ[𝕜] E}
     {a b : ℕ} (ha : a < n) (hb : b < n) (hab : n - 1 ≤ a + b) :
     hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩ ≤
       (hT.add hS).eigenvalues hn ⟨a + b - (n - 1), by omega⟩ := by
-  set bC := (hT.add hS).eigenvectorBasis hn with hbC
-  set bT := hT.eigenvectorBasis hn with hbT
-  set bS := hS.eigenvectorBasis hn with hbS
-  set evC := (hT.add hS).eigenvalues hn with hevC
-  set evT := hT.eigenvalues hn with hevT
-  set evS := hS.eigenvalues hn with hevS
-  have hTvC : ∀ j, (T + S) (bC j) = (evC j : 𝕜) • bC j :=
-    fun j => (hT.add hS).apply_eigenvectorBasis hn j
-  have hTvT : ∀ j, T (bT j) = (evT j : 𝕜) • bT j :=
-    fun j => hT.apply_eigenvectorBasis hn j
-  have hTvS : ∀ j, S (bS j) = (evS j : 𝕜) • bS j :=
-    fun j => hS.apply_eigenvectorBasis hn j
-  have hantiC : Antitone evC := (hT.add hS).eigenvalues_antitone hn
-  have hantiT : Antitone evT := hT.eigenvalues_antitone hn
-  have hantiS : Antitone evS := hS.eigenvalues_antitone hn
-  -- The three index sets: tail of `T + S`, heads of `T` and `S`.
   have hk : a + b - (n - 1) < n := by omega
-  set sC : Finset (Fin n) := Finset.Ici ⟨a + b - (n - 1), hk⟩ with hsC
-  set sT : Finset (Fin n) := Finset.Iic ⟨a, ha⟩ with hsT
-  set sS : Finset (Fin n) := Finset.Iic ⟨b, hb⟩ with hsS
-  have hcardC : sC.card = n - (a + b - (n - 1)) := by rw [hsC]; exact Fin.card_Ici _
-  have hcardT : sT.card = a + 1 := by rw [hsT]; exact Fin.card_Iic _
-  have hcardS : sS.card = b + 1 := by rw [hsS]; exact Fin.card_Iic _
   set SC : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sC => bC (j : Fin n))) with hSC
+    Submodule.span 𝕜 (Set.range (tailFamily (hT.add hS) hn hk)) with hSC
   set ST : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sT => bT (j : Fin n))) with hST
+    Submodule.span 𝕜 (Set.range (headFamily hT hn ha)) with hST
   set SS : Submodule 𝕜 E :=
-    Submodule.span 𝕜 (Set.range (fun j : ↥sS => bS (j : Fin n))) with hSS
+    Submodule.span 𝕜 (Set.range (headFamily hS hn hb)) with hSS
   have hsum : Module.finrank 𝕜 SC + Module.finrank 𝕜 ST + Module.finrank 𝕜 SS
       = 2 * n + 1 := by
-    rw [hSC, hST, hSS, finrank_span_basis bC sC, finrank_span_basis bT sT,
-      finrank_span_basis bS sS, hcardC, hcardT, hcardS]
+    rw [hSC, hST, hSS, finrank_span_tailFamily (hT.add hS) hn hk,
+      finrank_span_headFamily hT hn ha, finrank_span_headFamily hS hn hb]
     omega
   obtain ⟨x, hxn, hxC, hxT, hxS⟩ := exists_ne_zero_mem_inf_inf hn SC ST SS hsum
-  -- Rayleigh bounds on the three spans.
-  have hCle : RCLike.re (inner 𝕜 ((T + S) x) x) ≤
-      evC ⟨a + b - (n - 1), hk⟩ * ‖x‖ ^ 2 := by
-    apply re_inner_le_of_mem_span bC evC (T + S) hTvC sC _ x hxC
-    intro j hj
-    apply hantiC
-    rw [Finset.mem_Ici] at hj
-    exact hj
-  have hTge : evT ⟨a, ha⟩ * ‖x‖ ^ 2 ≤ RCLike.re (inner 𝕜 (T x) x) := by
-    apply re_inner_ge_of_mem_span bT evT T hTvT sT _ x hxT
-    intro j hj
-    apply hantiT
-    rw [Finset.mem_Iic] at hj
-    exact hj
-  have hSge : evS ⟨b, hb⟩ * ‖x‖ ^ 2 ≤ RCLike.re (inner 𝕜 (S x) x) := by
-    apply re_inner_ge_of_mem_span bS evS S hTvS sS _ x hxS
-    intro j hj
-    apply hantiS
-    rw [Finset.mem_Iic] at hj
-    exact hj
+  have hCle := rayleighForm_le_of_mem_tail (hT.add hS) hn hk hxC
+  have hTge := rayleighForm_ge_of_mem_head hT hn ha hxT
+  have hSge := rayleighForm_ge_of_mem_head hS hn hb hxS
+  simp only [rayleighForm] at hCle hTge hSge
   have hsplit : RCLike.re (inner 𝕜 ((T + S) x) x) =
       RCLike.re (inner 𝕜 (T x) x) + RCLike.re (inner 𝕜 (S x) x) := by
     rw [LinearMap.add_apply, inner_add_left, map_add]
   have hpos : (0 : ℝ) < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hxn) 2
-  have hchain : (evT ⟨a, ha⟩ + evS ⟨b, hb⟩) * ‖x‖ ^ 2 ≤
-      evC ⟨a + b - (n - 1), hk⟩ * ‖x‖ ^ 2 := by
+  have hchain : (hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩) * ‖x‖ ^ 2 ≤
+      (hT.add hS).eigenvalues hn ⟨a + b - (n - 1), hk⟩ * ‖x‖ ^ 2 := by
     rw [hsplit] at hCle
-    have hdist : (evT ⟨a, ha⟩ + evS ⟨b, hb⟩) * ‖x‖ ^ 2 =
-        evT ⟨a, ha⟩ * ‖x‖ ^ 2 + evS ⟨b, hb⟩ * ‖x‖ ^ 2 := by ring
+    have hdist : (hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩) * ‖x‖ ^ 2 =
+        hT.eigenvalues hn ⟨a, ha⟩ * ‖x‖ ^ 2 + hS.eigenvalues hn ⟨b, hb⟩ * ‖x‖ ^ 2 := by ring
     rw [hdist]
     linarith
-  have hgoal : (evT ⟨a, ha⟩ + evS ⟨b, hb⟩) * ‖x‖ ^ 2 ≤
-      evC ⟨a + b - (n - 1), by omega⟩ * ‖x‖ ^ 2 := hchain
+  have hgoal : (hT.eigenvalues hn ⟨a, ha⟩ + hS.eigenvalues hn ⟨b, hb⟩) * ‖x‖ ^ 2 ≤
+      (hT.add hS).eigenvalues hn ⟨a + b - (n - 1), by omega⟩ * ‖x‖ ^ 2 := hchain
   exact le_of_mul_le_mul_right hgoal hpos
 
 /-- Eigenvalues are unchanged when the operator is replaced by an equal
@@ -486,9 +270,7 @@ theorem _root_.Matrix.IsHermitian.eigenvalues₀_congr {n : ℕ}
   subst h
   rfl
 
-/-- The eigenvalues of a diagonal Hermitian matrix whose diagonal entries
-are already in decreasing order are exactly those entries. -/
-theorem isSelfAdjoint_ofReal_fun {𝕜 : Type*} [RCLike 𝕜] {n : ℕ}
+private theorem isSelfAdjoint_ofReal_fun {𝕜 : Type*} [RCLike 𝕜] {n : ℕ}
     (d : Fin n → ℝ) : IsSelfAdjoint (fun i => (d i : 𝕜)) := by
   funext i
   rw [Pi.star_apply, RCLike.star_def]
@@ -499,11 +281,16 @@ private lemma heq_apply {m n : ℕ} {f : Fin m → ℝ} {g : Fin n → ℝ} (h :
   subst hmn
   exact congrFun (eq_of_heq h) i
 
+/-- The eigenvalues of a diagonal Hermitian matrix whose diagonal entries
+are already in decreasing order are exactly those entries. -/
 theorem _root_.Matrix.IsHermitian.eigenvalues₀_diagonal_of_antitone {n : ℕ}
     {d : Fin n → ℝ} (hd : Antitone d) (i : Fin (Fintype.card (Fin n))) :
     _root_.Matrix.IsHermitian.eigenvalues₀
         (Matrix.isHermitian_diagonal_of_self_adjoint (fun i => (d i : 𝕜))
-          (isSelfAdjoint_ofReal_fun d)) i =
+          (by
+            funext j
+            rw [Pi.star_apply, RCLike.star_def]
+            exact RCLike.conj_ofReal _)) i =
       d ⟨i.val, by simpa using i.isLt⟩ := by
   classical
   set hD := Matrix.isHermitian_diagonal_of_self_adjoint (fun i => (d i : 𝕜))
