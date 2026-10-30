@@ -11,7 +11,6 @@ module
 public import Mathlib.Analysis.Calculus.Taylor
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -31,12 +30,13 @@ second derivative are uniformly bounded, the first derivative is uniformly bound
 `|f''| ≤ M₂` everywhere. This is the case `n = 2`, `k = 1` of the
 Landau–Kolmogorov inequalities. The proof is Taylor's theorem with Lagrange
 remainder at `x ± h`, subtracted to cancel the constant term, followed by
-optimizing in `h`. A one-sided variant (using only `x + h`) gives the weaker
-constant `4`. The complex-valued case follows by applying the real case to the
-real and imaginary parts, with constant `4`.
+optimizing in `h`. The complex-valued case follows by applying the real case to
+the real and imaginary parts, with constant `4`.
 
-This is a companion to the calculus / approximation material of
-`v1/Atlas/IntroductionToFunctionalAnalysis`; it is not one of the 72 v1 targets.
+The module also proves the completed `WantedExt` second-order target, a port of
+MA-ProofBench `ma_proofbench_l2_92`, preserving its name, namespace and statement.
+This result is not one of the 72 targets of
+`v1/Atlas/IntroductionToFunctionalAnalysis`.
 -/
 
 @[expose] public section
@@ -104,28 +104,6 @@ private lemma two_sided_bound {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) {M₀ M�
         have e2 := hM₀ (x - h)
         have e3 := hM₂ xiP
         have e4 := hM₂ xiM
-        nlinarith [mul_nonneg (show (0:ℝ) ≤ h ^ 2 / 2 by positivity) hM₂nn]
-
-/-- One-sided estimate: `h * |f' x| ≤ 2 * M₀ + (h² / 2) * M₂`. -/
-private lemma one_sided_bound {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) {M₀ M₂ : ℝ}
-    (hM₀ : ∀ x, |f x| ≤ M₀) (hM₂ : ∀ x, |deriv (deriv f) x| ≤ M₂)
-    (x : ℝ) {h : ℝ} (hh : 0 < h) : h * |deriv f x| ≤ 2 * M₀ + (h ^ 2 / 2) * M₂ := by
-  obtain ⟨ξ, -, hP⟩ := taylor_two hf x h (ne_of_gt hh)
-  have hcomb : h * deriv f x =
-      (f (x + h) - f x) - (h ^ 2 / 2) * deriv (deriv f) ξ := by linarith
-  have hM₂nn : 0 ≤ M₂ := le_trans (abs_nonneg _) (hM₂ x)
-  calc h * |deriv f x| = |h * deriv f x| := by
-        rw [abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ h)]
-    _ = |(f (x + h) - f x) - (h ^ 2 / 2) * deriv (deriv f) ξ| := by rw [hcomb]
-    _ ≤ |f (x + h) - f x| + |(h ^ 2 / 2) * deriv (deriv f) ξ| := abs_sub _ _
-    _ ≤ (|f (x + h)| + |f x|) + (h ^ 2 / 2) * |deriv (deriv f) ξ| := by
-        gcongr
-        · exact abs_sub _ _
-        · rw [abs_mul, abs_of_nonneg (by positivity)]
-    _ ≤ 2 * M₀ + (h ^ 2 / 2) * M₂ := by
-        have e1 := hM₀ (x + h)
-        have e2 := hM₀ x
-        have e3 := hM₂ ξ
         nlinarith [mul_nonneg (show (0:ℝ) ≤ h ^ 2 / 2 by positivity) hM₂nn]
 
 /-- If `a * h * |d| ≤ b * M₀` for every `h > 0` (with `a > 0`), then `d = 0`. -/
@@ -227,47 +205,6 @@ theorem landau_inequality_abs {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) {M₀ M�
   rw [← Real.sqrt_sq_eq_abs]
   exact Real.sqrt_le_sqrt h
 
-/-- One-sided Landau–Kolmogorov inequality (constant `4`): the same hypotheses give
-`(f' x)² ≤ 4 * M₀ * M₂`. This is the form obtained from the one-sided Taylor
-expansion; the two-sided argument sharpens the constant to `2`. -/
-theorem landau_inequality_one_sided {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) {M₀ M₂ : ℝ}
-    (hM₀ : ∀ x, |f x| ≤ M₀) (hM₂ : ∀ x, |deriv (deriv f) x| ≤ M₂) (x : ℝ) :
-    (deriv f x) ^ 2 ≤ 4 * M₀ * M₂ := by
-  have hM₀nn : 0 ≤ M₀ := le_trans (abs_nonneg _) (hM₀ x)
-  have hM₂nn : 0 ≤ M₂ := le_trans (abs_nonneg _) (hM₂ x)
-  rcases eq_or_lt_of_le hM₀nn with hM₀z | hM₀pos
-  · have hf0 : f = fun _ => 0 := by
-      funext y
-      have h := hM₀ y
-      rw [← hM₀z] at h
-      exact abs_eq_zero.mp (le_antisymm h (abs_nonneg _))
-    have hder0 : (deriv (fun _ : ℝ => (0:ℝ)) x) ^ 2 = 0 := by rw [deriv_const]; norm_num
-    rw [hf0, hder0]
-    positivity
-  rcases eq_or_lt_of_le hM₂nn with hM₂z | hM₂pos
-  · have key : ∀ h : ℝ, 0 < h → 1 * h * |deriv f x| ≤ 2 * M₀ := by
-      intro h hh
-      have hthis := one_sided_bound hf hM₀ hM₂ x hh
-      rw [← hM₂z] at hthis
-      simp only [mul_zero, add_zero] at hthis
-      calc 1 * h * |deriv f x| = h * |deriv f x| := by ring
-        _ ≤ 2 * M₀ := hthis
-    have hd0 : deriv f x = 0 :=
-      eq_zero_of_forall_mul_le (show (0:ℝ) < 1 by norm_num) key
-    rw [hd0]
-    norm_num
-    positivity
-  · have key : ∀ h : ℝ, 0 < h → 1 * h * |deriv f x| ≤ 2 * M₀ + (1 / 2) * h ^ 2 * M₂ := by
-      intro h hh
-      have := one_sided_bound hf hM₀ hM₂ x hh
-      calc 1 * h * |deriv f x| = h * |deriv f x| := by ring
-        _ ≤ 2 * M₀ + (h ^ 2 / 2) * M₂ := this
-        _ = 2 * M₀ + (1 / 2) * h ^ 2 * M₂ := by ring
-    have h := sq_le_of_key (d := deriv f x) (M₀ := M₀) (M₂ := M₂) (a := 1) (b := 2) (c := 1 / 2)
-      (by norm_num) (by norm_num) (by norm_num) hM₀pos hM₂pos key
-    have hfactor : (4 * 2 * (1 / 2 : ℝ) / (1:ℝ) ^ 2) * M₀ * M₂ = 4 * M₀ * M₂ := by ring
-    rwa [hfactor] at h
-
 /-- Derivative of a real linear functional applied to a differentiable function:
 `deriv (fun y => L (g y)) x = L (deriv g x)` for `L : ℂ →L[ℝ] ℝ`. -/
 private lemma deriv_clm_apply_const {g : ℝ → ℂ} {L : ℂ →L[ℝ] ℝ} {x : ℝ}
@@ -359,3 +296,90 @@ theorem landau_inequality_complex {f : ℝ → ℂ} (hf : ContDiff ℝ 2 f) {M�
   linarith
 
 end MetaMathlibExt
+
+/-
+# Landau's inequality M_1 ≤ 2√(M_0 M_2)
+
+Copyright (c) 2026 OpenBMB
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
+commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_92.lean`
+(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
+Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
+openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
+`theorem ma_proofbench_l2_92 … := by sorry` into the Batteries `theorem_wanted`
+`bddAbove_abs_deriv_and_iSup_le_two_mul_sqrt`; moved the informal problem statement docstring
+onto it and placed the declarations in namespace
+`MathlibExt.Analysis.Calculus.LandauKolmogorovSecondOrderWanted`; replaced `import Mathlib` by
+`public import Mathlib` under the module system.
+-/
+
+/-
+Additional modification for this completed port: the existing deferred declaration
+is now a proved corollary of `MetaMathlibExt.landau_inequality`. Its name,
+namespace, problem docstring, binders and statement are unchanged. The notice
+above records the original deferred port; this module supplies its imports in
+place of the former full Mathlib/ProofWanted imports and supplies the proof below.
+-/
+
+namespace MathlibExt.Analysis.Calculus.LandauKolmogorovSecondOrderWanted
+
+/-- For $f \in C^2(\mathbb{R})$, let $M_k = \sup_x |f^{(k)}(x)|$.
+Prove that $M_1 \le 2\sqrt{M_0 M_2}$.
+
+Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Real functions; Inequalities
+in real analysis), `benchmark/level2/ma_proofbench_l2_92.lean` at openbmb/ma-proofbench@31bab4c.
+-/
+public theorem bddAbove_abs_deriv_and_iSup_le_two_mul_sqrt
+    (f : ℝ → ℝ)
+    (hf : ContDiff ℝ 2 f)
+    (M : ℕ → ℝ)
+    (hM : M = fun k => ⨆ x : ℝ, |iteratedDeriv k f x|)
+    (hB0 : BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 0 f x|)))
+    (hB2 : BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 2 f x|))) :
+    BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 1 f x|)) ∧
+      M 1 ≤ 2 * Real.sqrt (M 0 * M 2) := by
+  subst M
+  let M₀ := ⨆ x : ℝ, |iteratedDeriv 0 f x|
+  let M₂ := ⨆ x : ℝ, |iteratedDeriv 2 f x|
+  have hM₀ : ∀ x : ℝ, |f x| ≤ M₀ := by
+    intro x
+    simpa only [M₀, iteratedDeriv_zero] using le_ciSup hB0 x
+  have htwo : iteratedDeriv 2 f = deriv (deriv f) := by
+    rw [show 2 = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_one]
+  have hM₂ : ∀ x : ℝ, |deriv (deriv f) x| ≤ M₂ := by
+    intro x
+    simpa only [M₂, htwo] using le_ciSup hB2 x
+  have hprod : 0 ≤ M₀ * M₂ :=
+    mul_nonneg ((abs_nonneg (f 0)).trans (hM₀ 0))
+      ((abs_nonneg (deriv (deriv f) 0)).trans (hM₂ 0))
+  have hbound : ∀ x : ℝ, |iteratedDeriv 1 f x| ≤ 2 * Real.sqrt (M₀ * M₂) := by
+    intro x
+    rw [iteratedDeriv_one]
+    have hsq := MetaMathlibExt.landau_inequality hf hM₀ hM₂ x
+    have hle : |deriv f x| ^ 2 ≤ (2 * Real.sqrt (M₀ * M₂)) ^ 2 := by
+      nlinarith [Real.sq_sqrt hprod, sq_abs (deriv f x)]
+    exact le_of_sq_le_sq hle (by positivity)
+  refine ⟨⟨2 * Real.sqrt (M₀ * M₂), ?_⟩, ciSup_le hbound⟩
+  rintro _ ⟨x, rfl⟩
+  exact hbound x
+
+end MathlibExt.Analysis.Calculus.LandauKolmogorovSecondOrderWanted

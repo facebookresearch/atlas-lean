@@ -21,8 +21,8 @@ import Mathlib.Tactic.NormNum
 Concrete checks: `sin` (main inequality and absolute form at `0`, where
 `(sin' 0)² = 1`), `cos` (at `π / 2`, where `(cos' (π/2))² = 1`), a constant
 function (the degenerate `M₂ = 0` branch), the zero function (the degenerate
-`M₀ = 0` branch), the one-sided constant-`4` form, and the complex-valued
-form (a constant function, and `x ↦ (sin x : ℂ)` at `0`).
+`M₀ = 0` branch), the completed second-order supremum target for `sin`, and
+the complex-valued form (a constant function, and `x ↦ (sin x : ℂ)` at `0`).
 -/
 
 @[expose] public section
@@ -111,14 +111,6 @@ private theorem landau_zero_fun :
   rw [hder] at h
   simp
 
-/-- One-sided form for `sin` at `0`: `(sin' 0)² = 1 ≤ 4 * 1 * 1`. -/
-private theorem landau_one_sided_sin_zero :
-    (deriv Real.sin 0) ^ 2 ≤ 4 * (1 : ℝ) * 1 := by
-  have h := landau_inequality_one_sided Real.contDiff_sin sin_bounds_M₀ sin_bounds_M₂ (0 : ℝ)
-  have hder : deriv Real.sin (0 : ℝ) = 1 := by rw [Real.deriv_sin]; simp
-  rw [hder] at h
-  norm_num at h ⊢
-
 /-- Complex constant function: `‖(1 : ℂ)'‖² = 0 ≤ 4 * 1 * 0`. -/
 private theorem landau_complex_const_one :
     ‖deriv (fun _ : ℝ => (1 : ℂ)) 3‖ ^ 2 ≤ 4 * (1 : ℝ) * 0 := by
@@ -175,5 +167,22 @@ private theorem landau_complex_sin_zero :
   rw [hder] at h
   rw [hder]
   exact h
+
+open MathlibExt.Analysis.Calculus.LandauKolmogorovSecondOrderWanted in
+/-- The completed deferred target bounds the derivative supremum for `sin`. -/
+private theorem landau_sin_sup :
+    BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 1 Real.sin x|)) ∧
+      (⨆ x : ℝ, |iteratedDeriv 1 Real.sin x|) ≤
+        2 * Real.sqrt ((⨆ x : ℝ, |iteratedDeriv 0 Real.sin x|) *
+          (⨆ x : ℝ, |iteratedDeriv 2 Real.sin x|)) := by
+  have hB0 : BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 0 Real.sin x|)) := by
+    refine ⟨1, ?_⟩
+    rintro _ ⟨x, rfl⟩
+    simpa only [iteratedDeriv_zero] using sin_bounds_M₀ x
+  have hB2 : BddAbove (Set.range (fun x : ℝ => |iteratedDeriv 2 Real.sin x|)) := by
+    refine ⟨1, ?_⟩
+    rintro _ ⟨x, rfl⟩
+    simpa only [iteratedDeriv_succ, iteratedDeriv_one, iteratedDeriv_zero] using sin_bounds_M₂ x
+  exact bddAbove_abs_deriv_and_iSup_le_two_mul_sqrt Real.sin Real.contDiff_sin _ rfl hB0 hB2
 
 end MetaMathlibExt.LandauKolmogorovTests
