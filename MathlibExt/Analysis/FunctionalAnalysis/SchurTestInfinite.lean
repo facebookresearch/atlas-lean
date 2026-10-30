@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.Normed.Operator.Basic
+public import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
 
 import Mathlib.Analysis.Normed.Lp.lpSpace
 import Mathlib.Analysis.SpecificLimits.Basic
@@ -68,36 +69,9 @@ for the `ℓ¹` operator norm, but no `ℓ²` Schur test, finite or infinite.
 namespace MathlibExt.Analysis.FunctionalAnalysis.SchurTestInfinite
 
 open Filter Topology Set
-open scoped _root_.lp ENNReal BigOperators InnerProductSpace InnerProduct
+open scoped _root_.lp ENNReal BigOperators _root_.InnerProductSpace _root_.InnerProduct
 
 variable {𝕜 : Type*} [RCLike 𝕜]
-
-/-- Norm squared of an `ℓ²(ℕ, 𝕜)` vector is the sum of the squared coordinate norms. -/
-theorem normSq_lp_eq_tsum (f : ℓ²(ℕ, 𝕜)) :
-    ‖f‖ ^ 2 = ∑' i, ‖f i‖ ^ 2 := by
-  have h := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (E := fun _ : ℕ => 𝕜) f
-  rw [show ((2 : ℝ≥0∞).toReal) = (2 : ℝ) from by norm_num] at h
-  have h2 : ‖f‖ ^ (2 : ℝ) = ‖f‖ ^ 2 := by rw [Real.rpow_two]
-  rw [h2] at h
-  rw [h]
-  apply tsum_congr
-  intro i
-  rw [Real.rpow_two]
-
-/-- Summability of squared coordinate norms from `Memℓp`. -/
-theorem summable_normSq_of_memℓp {f : ℕ → 𝕜} (hf : Memℓp f 2) :
-    Summable fun i => ‖f i‖ ^ 2 := by
-  have h := (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mp hf
-  simpa using h
-
-/-- `Memℓp` at `2` from summability of squared norms. -/
-theorem memℓp_of_summable_normSq {f : ℕ → 𝕜} (hf : Summable fun i => ‖f i‖ ^ 2) :
-    Memℓp f 2 := by
-  apply (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mpr
-  simpa using hf
 
 /-- A single entry of a Schur matrix is bounded by the row bound. -/
 theorem schurInf_single_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
@@ -168,7 +142,8 @@ theorem summable_schurInf_weighted {a : ℕ → ℕ → 𝕜} {R : ℝ}
     Summable fun j => ‖a i j‖ * ‖x j‖ ^ 2 := by
   refine Summable.of_nonneg_of_le (f := fun j => R * ‖x j‖ ^ 2) (fun j => by positivity) (fun j => ?_) ?_
   · exact mul_le_mul_of_nonneg_right (schurInf_single_le hrow hrow_le i j) (by positivity)
-  · exact (summable_normSq_of_memℓp x.2).mul_left R
+  · exact (MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+      x.2).mul_left R
 
 /-- A finite partial sum of the weighted series is bounded by `R * ‖x‖²`. -/
 theorem sum_range_schurInf_weighted_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
@@ -184,8 +159,11 @@ theorem sum_range_schurInf_weighted_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
           (fun j => mul_le_mul_of_nonneg_right (schurInf_single_le hrow hrow_le i j)
             (by positivity))
           (summable_schurInf_weighted hrow hrow_le x i)
-          ((summable_normSq_of_memℓp x.2).mul_left R)
-    _ = R * ‖x‖ ^ 2 := by rw [tsum_mul_left, normSq_lp_eq_tsum]
+          ((MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+            x.2).mul_left R)
+    _ = R * ‖x‖ ^ 2 := by
+        rw [tsum_mul_left,
+          MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.norm_sq_lp_eq_tsum]
 
 /-- Summability of the row series of absolute values. -/
 theorem summable_schurInf_norm {a : ℕ → ℕ → 𝕜} {R : ℝ}
@@ -286,11 +264,15 @@ theorem summable_schurInf_weighted_tsum {a : ℕ → ℕ → 𝕜} {R C : ℝ}
             _ ≤ C := hcol_le j
         have hsumm1 : Summable fun j => ‖x j‖ ^ 2 * (∑ i ∈ s, ‖a i j‖) :=
           Summable.of_nonneg_of_le (fun j => by positivity) (fun j => hle j)
-            ((summable_normSq_of_memℓp x.2).mul_right C)
+            ((MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+              x.2).mul_right C)
         have hsumm2 : Summable fun j => ‖x j‖ ^ 2 * C :=
-          (summable_normSq_of_memℓp x.2).mul_right C
+          (MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+            x.2).mul_right C
         exact Summable.tsum_le_tsum hle hsumm1 hsumm2
-    _ = C * ‖x‖ ^ 2 := by rw [tsum_mul_right, normSq_lp_eq_tsum, mul_comm]
+    _ = C * ‖x‖ ^ 2 := by
+        rw [tsum_mul_right,
+          MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.norm_sq_lp_eq_tsum, mul_comm]
 
 /-- The double weighted series is bounded by `C * ‖x‖²`, via the `tsum` interchange. -/
 theorem schurInf_tsum_weighted_le {a : ℕ → ℕ → 𝕜} {R C : ℝ}
@@ -324,11 +306,15 @@ theorem schurInf_tsum_weighted_le {a : ℕ → ℕ → 𝕜} {R C : ℝ}
           exact mul_le_mul_of_nonneg_left (hcol_le j) (by positivity)
         have hsumm1 : Summable fun j => ‖x j‖ ^ 2 * (∑' i, ‖a i j‖) := by
           refine Summable.of_nonneg_of_le (fun j => by positivity) (fun j => hle j) ?_
-          exact (summable_normSq_of_memℓp x.2).mul_right C
+          exact (MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+            x.2).mul_right C
         have hsumm2 : Summable fun j => ‖x j‖ ^ 2 * C :=
-          (summable_normSq_of_memℓp x.2).mul_right C
+          (MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+            x.2).mul_right C
         exact Summable.tsum_le_tsum hle hsumm1 hsumm2
-    _ = C * ‖x‖ ^ 2 := by rw [tsum_mul_right, normSq_lp_eq_tsum, mul_comm]
+    _ = C * ‖x‖ ^ 2 := by
+        rw [tsum_mul_right,
+          MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.norm_sq_lp_eq_tsum, mul_comm]
 
 /-- Summability of the squared coordinates of a Schur image. -/
 theorem summable_schurInf_coordSq {a : ℕ → ℕ → 𝕜} {R C : ℝ}
@@ -349,7 +335,8 @@ theorem memℓp_schurInfCoord {a : ℕ → ℕ → 𝕜} {R C : ℝ}
     (hcol : ∀ j, Summable fun i => ‖a i j‖)
     (hcol_le : ∀ j, ∑' i, ‖a i j‖ ≤ C) (x : ℓ²(ℕ, 𝕜)) :
     Memℓp (fun i => ∑' j, a i j * x j) 2 :=
-  memℓp_of_summable_normSq (summable_schurInf_coordSq hrow hrow_le hcol hcol_le x)
+  MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.memℓp_of_summable_norm_sq
+    (summable_schurInf_coordSq hrow hrow_le hcol hcol_le x)
 
 /-- The Schur operator of a matrix, as a linear map. -/
 noncomputable def schurInfLinMap (a : ℕ → ℕ → 𝕜) {R C : ℝ}
@@ -396,7 +383,8 @@ theorem norm_schurInfLinMap_le (a : ℕ → ℕ → 𝕜) {R C : ℝ}
   have hsq : ‖schurInfLinMap a hrow hrow_le hcol hcol_le x‖ ^ 2 ≤
       (R * C) * ‖x‖ ^ 2 := by
     calc ‖schurInfLinMap a hrow hrow_le hcol hcol_le x‖ ^ 2
-        = ∑' i, ‖∑' j, a i j * x j‖ ^ 2 := normSq_lp_eq_tsum _
+        = ∑' i, ‖∑' j, a i j * x j‖ ^ 2 :=
+          MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.norm_sq_lp_eq_tsum _
       _ ≤ ∑' i, R * (∑' j, ‖a i j‖ * ‖x j‖ ^ 2) :=
           Summable.tsum_le_tsum (fun i => schurInf_pointwise_sq_le hrow hrow_le x i)
             (summable_schurInf_coordSq hrow hrow_le hcol hcol_le x)
@@ -516,9 +504,12 @@ theorem sum_finset_schurInf_weighted_fst_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
     _ ≤ ∑ i ∈ S.image Prod.fst, ‖x i‖ ^ 2 * R :=
         Finset.sum_le_sum hfib
     _ ≤ ∑' i, ‖x i‖ ^ 2 * R :=
-        ((summable_normSq_of_memℓp x.2).mul_right R).sum_le_tsum _
+        ((MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.summable_norm_sq_of_memℓp
+          x.2).mul_right R).sum_le_tsum _
           (fun i _ => mul_nonneg (by positivity) hR)
-    _ = R * ‖x‖ ^ 2 := by rw [tsum_mul_right, normSq_lp_eq_tsum, mul_comm]
+    _ = R * ‖x‖ ^ 2 := by
+        rw [tsum_mul_right,
+          MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt.norm_sq_lp_eq_tsum, mul_comm]
 
 /-- A finite partial sum of the weighted series, grouped by the second index. -/
 theorem sum_finset_schurInf_weighted_snd_le {a : ℕ → ℕ → 𝕜} {C : ℝ}

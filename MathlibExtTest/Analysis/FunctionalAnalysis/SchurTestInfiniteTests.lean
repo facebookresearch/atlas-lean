@@ -19,7 +19,7 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Order
 namespace MathlibExt.Analysis.FunctionalAnalysis.SchurTestInfiniteTests
 
 open MathlibExt.Analysis.FunctionalAnalysis.SchurTestInfinite
-open scoped _root_.lp InnerProductSpace InnerProduct
+open scoped _root_.lp _root_.InnerProductSpace _root_.InnerProduct
 
 /-- The zero matrix satisfies Schur's test with `R = C = 0`, and its
 operator is zero. -/
