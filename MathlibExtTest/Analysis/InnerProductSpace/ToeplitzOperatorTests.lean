@@ -29,6 +29,7 @@ supported, hence absolutely summable) and the two-term symbol supported on
 open Set Filter Topology Metric
 open scoped _root_.lp _root_.InnerProduct _root_.InnerProductSpace ENNReal
 open MathlibExt.Analysis.InnerProductSpace.ToeplitzOperator
+open MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 
 namespace MathlibExtTest.Analysis.InnerProductSpace.ToeplitzOperatorTests
 
@@ -42,6 +43,20 @@ private theorem summable_norm_twoTerm : Summable fun k => ‖twoTerm k‖ := by
   intro k hk
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
   simp [twoTerm, hk.1, hk.2]
+
+/-- `T_{δ₁}` is the repository's canonical unilateral shift. -/
+example : toeplitzOperator (toeplitzDelta 1 (1 : ℂ))
+    (summable_norm_toeplitzDelta 1 1) = shiftCLM := by
+  rw [toeplitzOperator_delta_eq_smul_slice, one_smul,
+    toeplitzSlice_eq_shiftCLM_pow_or_backwardCLM_pow]
+  norm_num
+
+/-- `T_{δ₋₁}` is the repository's canonical backward shift. -/
+example : toeplitzOperator (toeplitzDelta (-1) (1 : ℂ))
+    (summable_norm_toeplitzDelta (-1) 1) = backwardCLM := by
+  rw [toeplitzOperator_delta_eq_smul_slice, one_smul,
+    toeplitzSlice_eq_shiftCLM_pow_or_backwardCLM_pow]
+  norm_num
 
 /-- `T_{δ₀}` fixes `e₀`. -/
 example : toeplitzOperator (toeplitzDelta 0 (1 : ℂ)) (summable_norm_toeplitzDelta 0 1)

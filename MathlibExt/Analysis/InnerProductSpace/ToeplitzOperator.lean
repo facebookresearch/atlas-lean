@@ -12,12 +12,14 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
+public import MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 
 import Mathlib.Analysis.Normed.Lp.lpSpace
 import Mathlib.Analysis.Normed.Operator.Bilinear
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 import Mathlib.Topology.Algebra.InfiniteSum.Module
+import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -272,6 +274,35 @@ noncomputable def toeplitzSlice (k : ℤ) : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(�
 /-- Pointwise action of the slice operator. -/
 theorem toeplitzSlice_apply (k : ℤ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     toeplitzSlice k x i = toeplitzSliceFun k (x : ℕ → 𝕜) i := rfl
+
+/-- Every nonnegative Toeplitz slice is the corresponding power of the
+canonical unilateral shift, and every negative slice is the corresponding
+power of the canonical backward shift. -/
+theorem toeplitzSlice_eq_shiftCLM_pow_or_backwardCLM_pow (k : ℤ) :
+    toeplitzSlice (𝕜 := 𝕜) k = if 0 ≤ k then
+      LpShiftOperator.shiftCLM ^ k.toNat
+    else LpShiftOperator.backwardCLM ^ (-k).toNat := by
+  apply ContinuousLinearMap.ext
+  intro x
+  apply lp.ext
+  funext i
+  rw [toeplitzSlice_apply]
+  by_cases hk : 0 ≤ k
+  · rw [ite_eq_left hk, ShiftFredholmIndex.shiftCLM_pow_apply, toeplitzSliceFun_apply]
+    have hcast : (k.toNat : ℤ) = k := Int.toNat_of_nonneg hk
+    by_cases hi : i < k.toNat
+    · rw [ite_eq_left hi, ite_eq_right]
+      rw [← hcast]
+      exact_mod_cast (not_le.mpr hi)
+    · rw [ite_eq_right hi, ite_eq_left]
+      · have heq : (((i : ℤ) - k).toNat) = i - k.toNat := by
+          rw [← hcast]
+          exact Int.toNat_sub i k.toNat
+        rw [heq]
+      · rw [← hcast]
+        exact_mod_cast (Nat.le_of_not_gt hi)
+  · rw [ite_eq_right hk, ShiftFredholmIndex.backwardCLM_pow_apply]
+    exact toeplitzSliceFun_of_nonpos (le_of_lt (not_le.mp hk)) _ _
 
 /-- The operator norm of a slice is at most `1`. -/
 theorem norm_toeplitzSlice_le (k : ℤ) : ‖toeplitzSlice (𝕜 := 𝕜) k‖ ≤ 1 :=
@@ -718,6 +749,19 @@ theorem summable_norm_toeplitzDelta (m : ℤ) (c : 𝕜) :
   intro k hk
   simp only [Finset.mem_singleton] at hk
   simp [toeplitzDelta, hk]
+
+/-- A Toeplitz operator with a delta symbol is the corresponding scalar
+multiple of its diagonal slice. -/
+theorem toeplitzOperator_delta_eq_smul_slice (m : ℤ) (c : 𝕜) :
+    toeplitzOperator (toeplitzDelta m c) (summable_norm_toeplitzDelta m c) =
+      c • toeplitzSlice (𝕜 := 𝕜) m := by
+  show (∑' k, toeplitzDelta m c k • toeplitzSlice (𝕜 := 𝕜) k) =
+    c • toeplitzSlice (𝕜 := 𝕜) m
+  rw [tsum_eq_single m]
+  · simp [toeplitzDelta]
+  · intro k hk
+    rw [toeplitzDelta, ite_eq_right hk]
+    exact zero_smul 𝕜 (toeplitzSlice (𝕜 := 𝕜) k)
 
 /-- The `ℓ¹` norm of a delta symbol is `‖c‖`. -/
 theorem tsum_norm_toeplitzDelta (m : ℤ) (c : 𝕜) :
