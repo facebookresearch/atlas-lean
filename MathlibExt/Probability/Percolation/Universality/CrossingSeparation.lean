@@ -42,8 +42,9 @@ edge boundary inside the rectangle touches the cluster of `x_B`.
   `StatMech.Universality.rsw_strip_glue_of_crossingArcSides`: the product lower bound
   `μ(H_{[a, m']}) μ(V_{[m, m']}) μ(H_{[m, b]}) ≤ μ(H_{[a, b]})` for a positively associated
   probability measure, under these hypotheses for every configuration. The hypothesis
-  `CrossingArcSides` is discharged for all configurations in
-  `MathlibExt.Combinatorics.SimpleGraph.Lattice.ArcSides`.
+  `CrossingArcSides` is discharged for all configurations by
+  `StatMech.Lattice.jec_crossingArcSides` in
+  `MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure`.
 
 ## References
 

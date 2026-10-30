@@ -204,7 +204,7 @@ private theorem mass_down_dom [Finite E] (μ ν : Measure (ConfigSpace E))
     exact hD b a hab hb
   have hmeas : MeasurableSet ((↑D)ᶜ : Set (ConfigSpace E)) :=
     DiscreteMeasurableSpace.forall_measurableSet _
-  have hle := hdom _ hmeas hDc_inc
+  have hle := hdom.real _ hmeas hDc_inc
   have hsplit : ∀ (ρ : Measure (ConfigSpace E)) [IsProbabilityMeasure ρ],
       ρ.real ((↑D)ᶜ : Set (ConfigSpace E)) = 1 - ∑ ω ∈ D, mass ρ ω := by
     intro ρ _

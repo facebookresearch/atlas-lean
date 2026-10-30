@@ -17,7 +17,9 @@ Tests the definitions of `StatMech.Universality`: `criticalProbability_eq_pc` at
 increasing percolation event, `translateConfig` at `0` and the translated crossing events at `0`,
 and the measurable-event contract of `PositivelyAssociated`, proved for the Dirac mass at the
 all-open configuration (every nonempty increasing event contains it) and exercised on the
-infinite configuration space `ConfigSpace ℕ`. `BoxCrossingProperty` is only restated via
+infinite configuration space `ConfigSpace ℕ`. The normalized predicate accepts a Dirac measure
+scaled by `2`, while the rejected unnormalized inequality fails on `univ`. `BoxCrossingProperty`
+is only restated via
 `boxCrossingProperty_iff`: a witness needs crossings of all large rectangles.
 -/
 
@@ -50,6 +52,44 @@ theorem dirac_real_of_increasing {A : Set (ConfigSpace (Sym2 (Site 2)))} (hA : I
     (hne : A.Nonempty) : (Measure.dirac allOpen).real A = 1 := by
   simp [Measure.real, Measure.dirac_apply_of_mem (allOpen_mem hA hne)]
 
+/-- A finite scaling of the all-open Dirac measure. -/
+private noncomputable def scaledDirac : Measure (ConfigSpace (Sym2 (Site 2))) :=
+  (2 : NNReal) • Measure.dirac allOpen
+
+private instance : IsFiniteMeasure scaledDirac := by
+  unfold scaledDirac
+  infer_instance
+
+/-- The rejected unnormalized formulation, retained only to exhibit its scaling bug. -/
+private def UnnormalizedPositiveAssociation {E : Type*}
+    (μ : Measure (ConfigSpace E)) : Prop :=
+  ∀ A B : Set (ConfigSpace E), MeasurableSet A → MeasurableSet B →
+    IsIncreasing A → IsIncreasing B → μ.real A * μ.real B ≤ μ.real (A ∩ B)
+
+/-- The rejected predicate fails after scaling a Dirac probability by `2`. -/
+example : ¬ UnnormalizedPositiveAssociation scaledDirac := by
+  intro h
+  have hu := h Set.univ Set.univ MeasurableSet.univ MeasurableSet.univ
+    (fun _ _ _ _ => Set.mem_univ _) (fun _ _ _ _ => Set.mem_univ _)
+  norm_num [UnnormalizedPositiveAssociation, scaledDirac, Measure.real,
+    Measure.smul_apply] at hu
+
+/-- Total-mass normalization makes positive association invariant under this finite scaling. -/
+example : PositivelyAssociated scaledDirac := by
+  intro A B hAm hBm _hA _hB
+  simp only [scaledDirac, Measure.real, Measure.smul_apply,
+    Measure.dirac_apply' _ hAm, Measure.dirac_apply' _ hBm,
+    Measure.dirac_apply' _ (hAm.inter hBm), Measure.dirac_apply' _ MeasurableSet.univ]
+  by_cases hA : allOpen ∈ A <;> by_cases hB : allOpen ∈ B <;> simp [hA, hB]
+
+/-- On probability measures, the normalized definition is exactly the usual Harris--FKG
+inequality. -/
+example (μ : Measure (ConfigSpace ℕ)) [IsProbabilityMeasure μ] :
+    PositivelyAssociated μ ↔
+      ∀ A B : Set (ConfigSpace ℕ), MeasurableSet A → MeasurableSet B →
+        IsIncreasing A → IsIncreasing B → μ.real A * μ.real B ≤ μ.real (A ∩ B) :=
+  positivelyAssociated_iff_of_isProbabilityMeasure μ
+
 -- `PositivelyAssociated` holds for the Dirac mass at the all-open configuration.
 example : PositivelyAssociated (Measure.dirac allOpen) := by
   intro A B _hAm _hBm hA hB
@@ -76,15 +116,16 @@ theorem isIncreasing_natOpenAt (i : ℕ) : IsIncreasing (natOpenAt i) := by
   exact top_le_iff.mp hi
 
 -- A Harris inequality stated on measurable increasing events constructs positive association.
-example (μ : Measure (ConfigSpace ℕ))
+example (μ : Measure (ConfigSpace ℕ)) [IsProbabilityMeasure μ]
     (hHarris : ∀ A B : Set (ConfigSpace ℕ), MeasurableSet A → MeasurableSet B →
       IsIncreasing A → IsIncreasing B → μ.real A * μ.real B ≤ μ.real (A ∩ B)) :
     PositivelyAssociated μ :=
-  hHarris
+  (positivelyAssociated_iff_of_isProbabilityMeasure μ).mpr hHarris
 
 -- The measurable-event API is consumed on an infinite (not finite-vacuous) configuration space.
-example (μ : Measure (ConfigSpace ℕ)) (hpa : PositivelyAssociated μ) :
-    μ.real (natOpenAt 0) * μ.real (natOpenAt 0) ≤ μ.real (natOpenAt 0) :=
+example (μ : Measure (ConfigSpace ℕ)) [IsFiniteMeasure μ] (hpa : PositivelyAssociated μ) :
+    μ.real (natOpenAt 0) * μ.real (natOpenAt 0) ≤
+      μ.real (natOpenAt 0) * μ.real Set.univ :=
   hpa.sq_le_self (natOpenAt 0) (measurableSet_natOpenAt 0) (isIncreasing_natOpenAt 0)
 
 -- `BoxCrossingProperty` unfolds to a positive infimum of crossing probabilities.

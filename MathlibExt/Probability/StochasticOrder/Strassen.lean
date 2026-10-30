@@ -99,7 +99,6 @@ variable {μ ν : Measure (ConfigSpace E)}
 theorem. -/
 theorem stochasticallyDominated (h : MonotoneCoupling μ ν κ)
     [IsFiniteMeasure κ] : μ ≼ ν := by
-  have hνfin : IsFiniteMeasure ν := h.isFiniteMeasure_right
   intro A _ hAinc
   have hmA : MeasurableSet A := DiscreteMeasurableSpace.forall_measurableSet _
   have key : μ A ≤ ν A := by
@@ -113,9 +112,7 @@ theorem stochasticallyDominated (h : MonotoneCoupling μ ν κ)
         ≤ κ ((Prod.snd ⁻¹' A) ∪ (orderSet E)ᶜ) := measure_mono hsub
       _ ≤ κ (Prod.snd ⁻¹' A) + κ (orderSet E)ᶜ := measure_union_le _ _
       _ = κ (Prod.snd ⁻¹' A) := by rw [h.supported, add_zero]
-  unfold Measure.real
-  gcongr
-  exact measure_ne_top ν A
+  exact key
 
 end MonotoneCoupling
 
