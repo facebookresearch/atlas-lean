@@ -309,4 +309,9 @@ theorem fischer_eq_zero_block :
     exact (Matrix.PosDef.fromBlocks₁₁ _ _ posDef_diag_two).mpr hS
   exact (Matrix.fischer_det_fromBlocks_eq_iff posDef_diag_two posDef_diag_three hM).mpr rfl
 
+/-- The real-to-complex and Fin-index bridge supports arbitrary finite index types. -/
+example {ι : Type*} [Fintype ι] [DecidableEq ι] {S D : Matrix ι ι ℝ}
+    (hS : S.PosSemidef) (hSD : (D - S).PosSemidef) : S.det ≤ D.det :=
+  Matrix.det_le_det_of_posSemidef_le hS hSD
+
 end MathlibExtTest.LinearAlgebra.Matrix.FischerDeterminantTests

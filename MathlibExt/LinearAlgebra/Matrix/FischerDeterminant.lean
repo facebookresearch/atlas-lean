@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 public import Mathlib.Topology.Algebra.Group.Matrix
+import MathlibExt.LinearAlgebra.Matrix.MinkowskiDeterminant
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NoncommRing
@@ -43,16 +44,16 @@ and from Minkowski's determinant inequality
 Fischer's inequality is the block-matrix inequality, and its proof
 needs the Schur complement `D - Bᴴ * A⁻¹ * B` together with
 monotonicity of the determinant on the positive semidefinite cone,
-which is proved here directly (the complex form in
-`MinkowskiDeterminant.lean` is stated via real parts and a power
-`1 / n`, and is not reused).
+which is obtained from the unchanged complex monotonicity theorem
+`Matrix.PosSemidef.det_le_det_add` in `MinkowskiDeterminant.lean`
+by real-to-complex scalar extension and finite-index reindexing.
 
 The proof is the classical one: if `A` is positive definite, then
 `det M = det A * det (D - Bᴴ * A⁻¹ * B)` by the block determinant
 formula, the Schur complement is positive semidefinite, and
-`det (D - Bᴴ * A⁻¹ * B) ≤ det D` by determinant monotonicity, proved
-by conjugating with the inverse positive square root of `S` and
-bounding the eigenvalues of the resulting matrix below by `1`. The
+`det (D - Bᴴ * A⁻¹ * B) ≤ det D` by the reused determinant
+monotonicity theorem. The equality proof retains the square-root
+conjugation and eigenvalue argument needed to force `B = 0`. The
 general case follows by approximating `A` with the positive definite
 matrices `ε • 1 + A` and letting `ε → 0⁺`. The equality case is
 characterized as well: for `A` and `D` positive definite and `M`
@@ -75,7 +76,7 @@ that `M` is positive semidefinite is essential: for `A = D = 1` and
 namespace Matrix
 
 open Finset
-open scoped Topology MatrixOrder
+open scoped Topology MatrixOrder ComplexOrder
 
 /-- A product of reals, each at least `1`, is at least `1`. -/
 private lemma one_le_prod_of_one_le {ι : Type*} [DecidableEq ι] {f : ι → ℝ} {s : Finset ι}
@@ -156,70 +157,49 @@ theorem one_le_det_of_posSemidef_sub_one {n : Type*} [Fintype n] [DecidableEq n]
   exact one_le_prod_of_one_le fun i _ =>
     eigenvalues_ge_one_of_posSemidef_sub_one hW h i
 
+private theorem complexify_posSemidef {n : ℕ}
+    {M : Matrix (Fin n) (Fin n) ℝ} (hM : M.PosSemidef) :
+    (Complex.ofRealHom.mapMatrix M).PosSemidef := by
+  let T := CFC.sqrt M
+  let φ : Matrix (Fin n) (Fin n) ℝ →+* Matrix (Fin n) (Fin n) ℂ := Complex.ofRealHom.mapMatrix
+  have hTT : T * T = M := CFC.sqrt_mul_sqrt_self M (ha := hM.nonneg)
+  have hT : Tᴴ = T := by
+    rw [← Matrix.star_eq_conjTranspose]
+    exact IsSelfAdjoint.of_nonneg (CFC.sqrt_nonneg M)
+  have hφT : (φ T)ᴴ = φ T := by
+    change (T.map Complex.ofReal)ᴴ = T.map Complex.ofReal
+    rw [← Matrix.conjTranspose_map Complex.ofReal (fun x => by simp), hT]
+  have hgram : φ M = (φ T)ᴴ * φ T := by
+    rw [hφT, ← map_mul, hTT]
+  rw [hgram]
+  exact Matrix.posSemidef_conjTranspose_mul_self (φ T)
+
+
 /-- **Monotonicity of the determinant on the positive semidefinite
 cone**: if `S` and `D - S` are positive semidefinite, then
 `det S ≤ det D`. -/
 theorem det_le_det_of_posSemidef_le {n : Type*} [Fintype n] [DecidableEq n]
     {S D : Matrix n n ℝ} (hS : S.PosSemidef) (hSD : (D - S).PosSemidef) :
     S.det ≤ D.det := by
-  have hD : D.PosSemidef := by
-    have h := hS.add hSD
-    rwa [add_sub_cancel] at h
-  by_cases hSpos : S.PosDef
-  · -- Positive definite case: conjugate by the inverse square root of `S`.
-    set T := CFC.sqrt S with hTdef
-    have hT_herm : Tᴴ = T := by
-      rw [← Matrix.star_eq_conjTranspose]
-      exact IsSelfAdjoint.of_nonneg (CFC.sqrt_nonneg S)
-    have hTT : T * T = S := CFC.sqrt_mul_sqrt_self S (ha := hSpos.posSemidef.nonneg)
-    have hT_psd : T.PosSemidef := Matrix.nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg S)
-    have hTdet_unit : IsUnit T.det := by
-      have hSunit : IsUnit S.det := (Matrix.isUnit_iff_isUnit_det S).mp hSpos.isUnit
-      rw [← hTT, Matrix.det_mul] at hSunit
-      exact isUnit_of_mul_isUnit_left hSunit
-    have hTTinv : T * T⁻¹ = 1 := Matrix.mul_nonsing_inv T hTdet_unit
-    have hTinvT : T⁻¹ * T = 1 := Matrix.nonsing_inv_mul T hTdet_unit
-    have hTinv_herm : (T⁻¹)ᴴ = T⁻¹ := hT_psd.isHermitian.inv
-    set W := T⁻¹ * D * T⁻¹ with hWdef
-    have hW_herm : W.IsHermitian := by
-      show (T⁻¹ * D * T⁻¹)ᴴ = T⁻¹ * D * T⁻¹
-      rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hTinv_herm, hD.isHermitian,
-        Matrix.mul_assoc]
-    have hWm1 : (W - 1).PosSemidef := by
-      have hsub : W - 1 = T⁻¹ * (D - S) * T⁻¹ := by
-        rw [hWdef]
-        have hcan : T⁻¹ * S * T⁻¹ = 1 := by
-          rw [← hTT]
-          have hassoc : T⁻¹ * (T * T) * T⁻¹ = (T⁻¹ * T) * (T * T⁻¹) := by
-            noncomm_ring
-          rw [hassoc, hTinvT, hTTinv, mul_one]
-        calc T⁻¹ * D * T⁻¹ - 1 = T⁻¹ * D * T⁻¹ - T⁻¹ * S * T⁻¹ := by rw [hcan]
-          _ = T⁻¹ * (D - S) * T⁻¹ := by noncomm_ring
-      rw [hsub]
-      have h := hSD.conjTranspose_mul_mul_same T⁻¹
-      rwa [hTinv_herm] at h
-    have hdetW : 1 ≤ W.det := one_le_det_of_posSemidef_sub_one hW_herm hWm1
-    have hdetD : D.det = S.det * W.det := by
-      have hDW : D = T * W * T := by
-        rw [hWdef]
-        have hassoc : T * (T⁻¹ * D * T⁻¹) * T = (T * T⁻¹) * D * (T⁻¹ * T) := by
-          noncomm_ring
-        rw [hassoc, hTTinv, hTinvT, one_mul, mul_one]
-      calc D.det = (T * W * T).det := by rw [hDW]
-        _ = T.det * W.det * T.det := by
-          rw [Matrix.det_mul (T * W) T, Matrix.det_mul T W]
-        _ = T.det * T.det * W.det := by ring
-        _ = (T * T).det * W.det := by rw [Matrix.det_mul T T]
-        _ = S.det * W.det := by rw [hTT]
-    calc S.det = S.det * 1 := (mul_one S.det).symm
-      _ ≤ S.det * W.det := mul_le_mul_of_nonneg_left hdetW hSpos.det_pos.le
-      _ = D.det := hdetD.symm
-  · -- Singular case: `det S = 0 ≤ det D`.
-    have hdetS : S.det = 0 := by
-      by_contra hne
-      exact hSpos (hS.posDef_iff_det_ne_zero.mpr hne)
-    rw [hdetS]
-    exact hD.det_nonneg
+  let e : Fin (Fintype.card n) ≃ n := (Fintype.equivFin n).symm
+  let φ : Matrix (Fin (Fintype.card n)) (Fin (Fintype.card n)) ℝ →+*
+      Matrix (Fin (Fintype.card n)) (Fin (Fintype.card n)) ℂ := Complex.ofRealHom.mapMatrix
+  have hS' : (φ (S.submatrix e e)).PosSemidef := complexify_posSemidef (hS.submatrix e)
+  have hSD' : (φ ((D - S).submatrix e e)).PosSemidef :=
+    complexify_posSemidef (hSD.submatrix e)
+  have h := hSD'.det_le_det_add hS'
+  have hsum : φ ((D - S).submatrix e e) + φ (S.submatrix e e) = φ (D.submatrix e e) := by
+    rw [← map_add]
+    congr 1
+    ext i j
+    simp [Matrix.submatrix]
+  rw [hsum] at h
+  have hdet (M : Matrix n n ℝ) : (φ (M.submatrix e e)).det.re = M.det := by
+    rw [← Complex.ofRealHom.map_det]
+    change (M.submatrix e e).det = M.det
+    exact Matrix.det_submatrix_equiv_self e M
+  rwa [hdet, hdet] at h
+
 
 /-- **Fischer's inequality, positive definite case**: the block
 determinant formula plus determinant monotonicity. -/
