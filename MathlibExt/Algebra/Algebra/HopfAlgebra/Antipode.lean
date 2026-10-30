@@ -39,13 +39,13 @@ public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Convolution
 
 /-!
-# Antipode involution and convolution inverses in Hopf algebras
+# Antipode properties and a bialgebra convolution-power criterion
 
 The antipode of a commutative Hopf algebra is an involution and an algebra
 homomorphism; algebra homomorphisms out of a Hopf algebra are convolution
-units with inverse given by precomposition with the antipode; and a
-convolution power is trivial on all points iff it is trivial on the
-universal point.
+units with inverse given by precomposition with the antipode. For commutative
+bialgebras, a convolution power is trivial on all points iff it is trivial on
+the universal point.
 -/
 
 @[expose] public section
@@ -185,68 +185,22 @@ theorem HopfAlgebra.isUnit_withConv_algHom {R : Type*} [CommSemiring R]
 /-- Every algebra homomorphism out of a Hopf algebra has a convolution
 inverse given by precomposition with the antipode. -/
 theorem HopfAlgebra.exists_comp_antipode_convMul_eq_one
-    {K : Type*} [CommRing K] {A : Type*} [CommRing A] [HopfAlgebra K A]
-    {L : Type*} [CommRing L] [Algebra K L] (ν : A →ₐ[K] L) :
+    {K : Type*} [CommSemiring K] {A : Type*} [CommSemiring A] [HopfAlgebra K A]
+    {L : Type*} [CommSemiring L] [Algebra K L] (ν : A →ₐ[K] L) :
     ∃ ν' : A →ₐ[K] L,
       ν'.toLinearMap = ν.toLinearMap ∘ₗ HopfAlgebraStruct.antipode (R := K) ∧
       WithConv.toConv ν' * WithConv.toConv ν = 1 ∧
       WithConv.toConv ν * WithConv.toConv ν' = 1 := by
   refine ⟨ν.comp (HopfAlgebra.antipodeAlgHom K A), ?_, ?_, ?_⟩
   · ext a; rfl
-  · apply WithConv.ext
-    apply AlgHom.ext
-    intro a
-    change (WithConv.toConv (ν.comp (HopfAlgebra.antipodeAlgHom K A)) *
-      WithConv.toConv ν).ofConv a = (1 : WithConv (A →ₐ[K] L)).ofConv a
-    rw [AlgHom.convMul_apply, AlgHom.convOne_apply]
-    have key : (Algebra.TensorProduct.lift (ν.comp (HopfAlgebra.antipodeAlgHom K A))
-          ν (fun _ _ => Commute.all _ _)).toLinearMap =
-        ν.toLinearMap ∘ₗ LinearMap.mul' K A ∘ₗ
-          (HopfAlgebraStruct.antipode (R := K)).rTensor A := by
-      apply TensorProduct.ext'
-      intro x y
-      simp [Algebra.TensorProduct.lift_tmul, LinearMap.rTensor_tmul,
-        HopfAlgebra.antipodeAlgHom_apply]
-    have h := LinearMap.congr_fun key (Coalgebra.comul (R := K) a)
-    simp only [AlgHom.toLinearMap_apply, LinearMap.comp_apply] at h
-    change Algebra.TensorProduct.lift (ν.comp (HopfAlgebra.antipodeAlgHom K A))
-      ν _ (Coalgebra.comul (R := K) a) = _
-    rw [h, HopfAlgebra.mul_antipode_rTensor_comul_apply, AlgHom.commutes]
-  · apply WithConv.ext
-    apply AlgHom.ext
-    intro a
-    change (WithConv.toConv ν *
-      WithConv.toConv (ν.comp (HopfAlgebra.antipodeAlgHom K A))).ofConv a =
-      (1 : WithConv (A →ₐ[K] L)).ofConv a
-    rw [AlgHom.convMul_apply, AlgHom.convOne_apply]
-    have key : (Algebra.TensorProduct.lift ν (ν.comp (HopfAlgebra.antipodeAlgHom K A))
-          (fun _ _ => Commute.all _ _)).toLinearMap =
-        ν.toLinearMap ∘ₗ LinearMap.mul' K A ∘ₗ
-          (HopfAlgebraStruct.antipode (R := K)).lTensor A := by
-      apply TensorProduct.ext'
-      intro x y
-      simp [Algebra.TensorProduct.lift_tmul, LinearMap.lTensor_tmul,
-        HopfAlgebra.antipodeAlgHom_apply]
-    have h := LinearMap.congr_fun key (Coalgebra.comul (R := K) a)
-    simp only [AlgHom.toLinearMap_apply, LinearMap.comp_apply] at h
-    change Algebra.TensorProduct.lift ν (ν.comp (HopfAlgebra.antipodeAlgHom K A))
-      _ (Coalgebra.comul (R := K) a) = _
-    rw [h, HopfAlgebra.mul_antipode_lTensor_comul_apply, AlgHom.commutes]
+  · exact HopfAntipodeAux.convMul_comp_antipode_left ν
+  · exact HopfAntipodeAux.convMul_comp_antipode_right ν
 
-namespace HopfAntipodeAux
+namespace BialgebraAux
 
-variable {R : Type u} [CommRing R] {H : Type v} [CommRing H] [HopfAlgebra R H]
+variable {R : Type u} [CommSemiring R] {H : Type v} [CommSemiring H] [Bialgebra R H]
 
-private theorem lmul'_comp_map_comp {T : Type w} [CommRing T] [Algebra R T]
-    (g : H →ₐ[R] T) (a b : H →ₐ[R] H) :
-    (Algebra.TensorProduct.lmul' R).comp (Algebra.TensorProduct.map (g.comp a) (g.comp b)) =
-      g.comp ((Algebra.TensorProduct.lmul' R).comp (Algebra.TensorProduct.map a b)) := by
-  apply AlgHom.toLinearMap_injective
-  apply TensorProduct.ext'
-  intro x y
-  simp [Algebra.TensorProduct.lmul'_apply_tmul]
-
-private theorem toConv_comp_pow {T : Type w} [CommRing T] [Algebra R T]
+private theorem toConv_comp_pow {T : Type w} [CommSemiring T] [Algebra R T]
     (g : H →ₐ[R] T) (u : WithConv (H →ₐ[R] H)) (k : ℕ) :
     (WithConv.toConv (g.comp u.ofConv)) ^ k = WithConv.toConv (g.comp (u ^ k).ofConv) := by
   induction k with
@@ -259,22 +213,17 @@ private theorem toConv_comp_pow {T : Type w} [CommRing T] [Algebra R T]
       congr 1
       exact (AlgHom.ext fun r => (g.commutes r).symm)
   | succ k ih =>
-      rw [pow_succ, pow_succ, ih, AlgHom.convMul_def, AlgHom.convMul_def]
-      congr 1
-      change (Algebra.TensorProduct.lmul' R).comp
-          ((Algebra.TensorProduct.map (g.comp (u ^ k).ofConv) (g.comp u.ofConv)).comp
-            (Bialgebra.comulAlgHom R H)) =
-        g.comp ((Algebra.TensorProduct.lmul' R).comp
-          ((Algebra.TensorProduct.map (u ^ k).ofConv u.ofConv).comp (Bialgebra.comulAlgHom R H)))
-      rw [← AlgHom.comp_assoc, lmul'_comp_map_comp, AlgHom.comp_assoc, AlgHom.comp_assoc]
+      rw [pow_succ, pow_succ, ih]
+      simpa using congrArg WithConv.toConv
+        (AlgHom.comp_convMul_distrib g (u ^ k) u).symm
 
-end HopfAntipodeAux
+end BialgebraAux
 
 /-- A convolution power is trivial on all points iff it is trivial on the
 universal point. -/
-theorem HopfAlgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one
-    {R : Type u} [CommRing R] {H : Type v} [CommRing H] [HopfAlgebra R H] (m : ℕ) :
-    (∀ (T : Type v) [CommRing T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
+theorem Bialgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one
+    {R : Type u} [CommSemiring R] {H : Type v} [CommSemiring H] [Bialgebra R H] (m : ℕ) :
+    (∀ (T : Type v) [CommSemiring T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
       (WithConv.toConv (AlgHom.id R H)) ^ m = 1 := by
   constructor
   · intro h
@@ -283,7 +232,19 @@ theorem HopfAlgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one
     have hf : f = WithConv.toConv (f.ofConv.comp (WithConv.toConv (AlgHom.id R H)).ofConv) := by
       change f = WithConv.toConv (f.ofConv.comp (AlgHom.id R H))
       rw [AlgHom.comp_id]
-    rw [hf, HopfAntipodeAux.toConv_comp_pow, hid]
-    have h0 := HopfAntipodeAux.toConv_comp_pow f.ofConv (WithConv.toConv (AlgHom.id R H)) 0
+    rw [hf, BialgebraAux.toConv_comp_pow, hid]
+    have h0 := BialgebraAux.toConv_comp_pow f.ofConv (WithConv.toConv (AlgHom.id R H)) 0
     rw [pow_zero, pow_zero] at h0
     exact h0.symm
+
+/-- A compatibility corollary for the convolution-power criterion on Hopf algebras. -/
+theorem HopfAlgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one
+    {R : Type u} [CommRing R] {H : Type v} [CommRing H] [HopfAlgebra R H] (m : ℕ) :
+    (∀ (T : Type v) [CommRing T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
+      (WithConv.toConv (AlgHom.id R H)) ^ m = 1 := by
+  constructor
+  · intro h
+    exact h H (WithConv.toConv (AlgHom.id R H))
+  · intro hid T _ _ f
+    exact (Bialgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one
+      (R := R) (H := H) m).2 hid T f

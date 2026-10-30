@@ -35,3 +35,16 @@ example {R : Type u} [CommRing R] {H : Type v} [CommRing H] [HopfAlgebra R H] (m
     (∀ (T : Type v) [CommRing T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
       (WithConv.toConv (AlgHom.id R H)) ^ m = 1 :=
   HopfAlgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one m
+
+example {K : Type*} [CommSemiring K] {A : Type*} [CommSemiring A] [HopfAlgebra K A]
+    {L : Type*} [CommSemiring L] [Algebra K L] (ν : A →ₐ[K] L) :
+    ∃ ν' : A →ₐ[K] L,
+      ν'.toLinearMap = ν.toLinearMap ∘ₗ HopfAlgebraStruct.antipode (R := K) ∧
+      WithConv.toConv ν' * WithConv.toConv ν = 1 ∧
+      WithConv.toConv ν * WithConv.toConv ν' = 1 :=
+  HopfAlgebra.exists_comp_antipode_convMul_eq_one ν
+
+example {R : Type u} [CommSemiring R] {H : Type v} [CommSemiring H] [Bialgebra R H] (m : ℕ) :
+    (∀ (T : Type v) [CommSemiring T] [Algebra R T] (f : WithConv (H →ₐ[R] T)), f ^ m = 1) ↔
+      (WithConv.toConv (AlgHom.id R H)) ^ m = 1 :=
+  Bialgebra.forall_withConv_pow_eq_one_iff_toConv_id_pow_eq_one m
