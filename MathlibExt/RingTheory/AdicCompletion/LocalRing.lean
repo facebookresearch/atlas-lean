@@ -9,10 +9,13 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Definitions/Def_AdicCompletionLocalRing.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+`Definitions/Def_AdicCompletionLocalRing.lean`,
+`Theorems/Thm_IsLocalRing_faithfullyFlat_adicCompletion_maximalIdeal.lean`,
+`P2M/Sol/S_IsLocalRing_faithfullyFlat_adicCompletion_maximalIdeal.lean`,
+`Theorems/Thm_IsLocalRing_comap_map_adicCompletion_eq.lean` and
+`P2M/Sol/S_IsLocalRing_comap_map_adicCompletion_eq.lean`
+in https://github.com/anthropics/fermats-last-theorem
+at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -33,6 +36,9 @@ module
 public import Mathlib.RingTheory.AdicCompletion.Algebra
 public import Mathlib.RingTheory.AdicCompletion.Completeness
 public import Mathlib.RingTheory.AdicCompletion.LocalRing
+public import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
+public import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
+public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.Noetherian.Defs
@@ -52,6 +58,38 @@ completion by powers of its maximal ideal agree with those of the ring.
 @[expose] public section
 
 open IsLocalRing
+
+/-- The adic completion of a Noetherian local ring at its maximal ideal is
+faithfully flat. -/
+theorem IsLocalRing.faithfullyFlat_adicCompletion_maximalIdeal
+    (R : Type*) [CommRing R] [IsNoetherianRing R] [IsLocalRing R] :
+    Module.FaithfullyFlat R (AdicCompletion (maximalIdeal R) R) := by
+  rw [Module.FaithfullyFlat.iff_flat_and_proper_ideal]
+  refine ⟨inferInstance, fun I hI htop => ?_⟩
+  have hle : (I • ⊤ : Submodule R (AdicCompletion (maximalIdeal R) R)) ≤
+      (maximalIdeal R) ^ 1 • ⊤ := by
+    rw [pow_one]; exact Submodule.smul_mono_left (IsLocalRing.le_maximalIdeal hI)
+  rw [htop, top_le_iff, AdicCompletion.pow_smul_top_eq_ker_eval (IsNoetherian.noetherian _)] at hle
+  have hsurj := AdicCompletion.eval_surjective (maximalIdeal R) R 1
+  have hne : ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R) ≠ ⊤ := by
+    rw [pow_one, smul_eq_mul, Ideal.mul_top]; exact (maximalIdeal.isMaximal R).ne_top
+  have : Nontrivial (R ⧸ ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R)) :=
+    Submodule.Quotient.nontrivial_iff.mpr hne
+  obtain ⟨q, hq⟩ := exists_ne (0 : R ⧸ ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R))
+  obtain ⟨x, rfl⟩ := hsurj q
+  have hx : x ∈ LinearMap.ker (AdicCompletion.eval (maximalIdeal R) R 1) :=
+    hle ▸ Submodule.mem_top
+  exact hq (LinearMap.mem_ker.mp hx)
+
+/-- Ideals contract back to themselves along the adic completion map of a
+Noetherian local ring. -/
+theorem IsLocalRing.comap_map_adicCompletion_eq
+    {R : Type*} [CommRing R] [IsNoetherianRing R] [IsLocalRing R] (I : Ideal R) :
+    (I.map (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R))).comap
+      (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R)) = I := by
+  have : Module.FaithfullyFlat R (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
+    IsLocalRing.faithfullyFlat_adicCompletion_maximalIdeal R
+  exact Ideal.comap_map_eq_self_of_faithfullyFlat I
 
 namespace AdicCompletion
 
@@ -88,9 +126,11 @@ theorem exists_eq_algebraMap_add (hI : I.FG) (n : ℕ) (x : AdicCompletion I A) 
 
 theorem isUnit_one_add_of_mem_map (hI : I.FG) {x : AdicCompletion I A}
     (hx : x ∈ I.map (algebraMap A (AdicCompletion I A))) : IsUnit (1 + x) := by
-  haveI : IsAdicComplete (I.map (algebraMap A (AdicCompletion I A))) (AdicCompletion I A) :=
+  have hcomplete :
+      IsAdicComplete (I.map (algebraMap A (AdicCompletion I A))) (AdicCompletion I A) :=
     (IsAdicComplete.map_algebraMap_iff I (AdicCompletion I A)).mpr (isAdicComplete hI)
-  have h := Ideal.mem_jacobson_bot.mp (IsAdicComplete.le_jacobson_bot _ hx) 1
+  have hle := @IsAdicComplete.le_jacobson_bot _ _ _ hcomplete
+  have h := Ideal.mem_jacobson_bot.mp (hle hx) 1
   rwa [mul_one, add_comm] at h
 
 theorem isUnit_add_of_mem_map (hI : I.FG) {u x : AdicCompletion I A} (hu : IsUnit u)
