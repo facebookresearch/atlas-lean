@@ -36,7 +36,7 @@ surjective, and locality descends along surjective ring homomorphisms.
 /-- A quotient of a local ring by a proper ideal is local. Mathlib uses this
 fact inline (via `IsLocalRing.of_surjective'`), but does not package it as a
 standalone lemma. -/
-theorem IsLocalRing.quotient_of_ne_top {A : Type} [CommRing A] [IsLocalRing A]
+theorem IsLocalRing.quotient_of_ne_top {A : Type*} [CommRing A] [IsLocalRing A]
     (I : Ideal A) (hI : I ≠ ⊤) : IsLocalRing (A ⧸ I) :=
   haveI := Ideal.Quotient.nontrivial_iff.mpr hI
   IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
