@@ -23,8 +23,9 @@ site and the switch probabilities by `norm_num`. Executed fixtures: on a 3-haplo
 a 4-site target, the `O(K)` recursion, its tabulation and the generic forward algorithm agree
 with the brute-force likelihood over all `3 ^ 4` copying paths, for several `(ρ, ε)`, including
 the boundary cases `ρ = 0` (no switching) and `ρ = 1` (a fresh uniform haplotype at every
-site). A junk-value probe documents a negative weight outside the domain (`ρ = 2`). Each run
-throws on a disagreement.
+site). Junk-value probes document a negative weight outside the domain (`ρ = 2`), the exact
+threshold `ρ = K / (K - 1)`, and that the emissions are normalized only over the target allele.
+Each run throws on a disagreement.
 -/
 
 namespace Cslib.Bioinformatics.PopulationStructure.LiStephens
@@ -50,6 +51,18 @@ example : trans (1 / 10 : ℚ) (0 : Fin 3) 1 = 1 / 30 := by
 -- negative weight `1 - 2 + 2/3`, although the rows still sum to `1`.
 example : trans (2 : ℚ) (0 : Fin 3) 0 = -1 / 3 := by
   simp [trans]; norm_num
+
+-- For `K = 3` the staying weight is negative only beyond `ρ = K / (K - 1) = 3/2`: at
+-- `ρ = 11/10` the row is still stochastic, and at `ρ = 3/2` the staying weight is `0`.
+example : trans (11 / 10 : ℚ) (0 : Fin 3) 0 = 4 / 15 := by
+  simp [trans]; norm_num
+example : trans (3 / 2 : ℚ) (0 : Fin 3) 0 = 0 := by
+  simp [trans]; norm_num
+
+-- The emissions are conditional on the panel column: over the whole observation type
+-- `(Fin 1 → Bool) × Bool` they sum to `2`, not `1`.
+example : ∑ o : (Fin 1 → Bool) × Bool, emit (1 / 100 : ℚ) 0 o = 2 := by
+  decide +kernel
 
 /-! ## Executed fixtures -/
 

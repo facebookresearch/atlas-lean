@@ -29,14 +29,19 @@ first site is uniform.
 The model is an instance of the generic hidden Markov model `HMM` of
 `CSLibExt.MachineLearning.Sequence.HiddenMarkov` (`hmm`). Its emissions depend on the site
 through the reference panel, so the observation at a site is the panel column together with the
-target allele (`obs`): `(fun k => H k t, x t)`.
+target allele (`obs`): `(fun k => H k t, x t)`. The panel is a fixed covariate, not a random
+observation: the emissions are a distribution over the target allele for a given column, so
+`hmm` is the model of the target haplotype conditional on the panel, and is not normalized over
+its whole observation type `Obs K A` (for `K = 1` the emissions summed over all
+`(Fin 1 → Bool) × Bool` give `2`).
 
 ## Main results
 
 * `trans_row_sum`, `init_sum`, `emit_sum_bool`: the transition rows and the initial law sum to
-  `1`, and with biallelic sites (`A = Bool`) so do the emissions. For `R = ℝ`, `K ≥ 1` and
-  `ρ, ε ∈ [0, 1]` all weights are also nonnegative, so `hmm` is a probability model and
-  `likelihood` is the probability of the target haplotype.
+  `1`, and with biallelic sites (`A = Bool`) the emissions sum to `1` over the target allele
+  for each fixed panel column. For `R = ℝ`, `K ≥ 1` and `ρ, ε ∈ [0, 1]` all weights are also
+  nonnegative, so `likelihood` is the conditional probability of the target haplotype given the
+  panel (the normalization of that conditional law over target sequences is not proved here).
 * `fastForward_eq_forward`: **the standard `O(K)` forward recursion**
   `α_{t+1}(k) = e_k(t+1) ((1 - ρ) α_t(k) + ρ (∑ j, α_t(j)) / K)` computes the generic forward
   variables of `hmm`; `likelihood_eq_sum_fastForward`: their sum is the likelihood.
@@ -48,16 +53,22 @@ target allele (`obs`): `(fun k => H k t, x t)`.
 The cost is the number of field operations. The generic forward step does `O(K²)` operations
 (a sum over predecessors for each of the `K` states). Because every switch lands on a uniformly
 random haplotype, the sum over predecessors collapses to `(1 - ρ) α_t(k) + ρ S / K` with the
-single total `S = ∑ j, α_t(j)`, so `fastStep` does `O(K)` operations per site: one sum of `K`
-terms and `O(1)` operations for each state. `fastForwardTab` passes each site's table to the
-next, so `t + 1` sites cost `O(t K)` in total.
+single total `S = ∑ j, α_t(j)`. `fastStepTab` computes `S` once and then `O(1)` operations for
+each state, so a site costs `O(K)`; `fastForwardTab` passes each site's table to the next, so
+`t + 1` sites cost `O(t K)` in total. `fastStep` and `fastForward` are the pointwise
+specification of the same recursion and make no cost claim: `fastStep` evaluates the sum
+`∑ j, v j` anew for each output state (`O(K²)` for all `K` states), and the untabulated
+`fastForward` re-evaluates earlier sites inside that sum.
 
 ## Parameter domain
 
 The model's parameters are probabilities, `0 ≤ ρ ≤ 1` and `0 ≤ ε ≤ 1`, with `K ≥ 1`. The
 recursion identities (`fastForward_eq_forward` and the tabulated versions) are algebraic and
-hold for all `ρ ε` in any field, without these assumptions; outside the domain the weights are
-not probabilities (for `ρ > 1` the weight of staying on the same haplotype is negative).
+hold for all `ρ ε` in any field, without these assumptions; outside the domain the weights may
+cease to be probabilities. The rows always sum to `1`; the switching weight `ρ / K` is negative
+exactly when `ρ < 0`, and the staying weight `1 - ρ + ρ / K` is negative exactly when
+`ρ > K / (K - 1)` for `K ≥ 2` (for `K = 1` it is always `1`). For example, `K = 3` and `ρ = 2`
+give staying weight `-1/3`, while `ρ = 11/10` still gives a stochastic row.
 
 ## Scope
 
@@ -119,17 +130,22 @@ theorem init_sum (hK : (K : R) ≠ 0) (ρ ε : R) :
   simp only [hmm, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   field_simp
 
-/-- With biallelic sites, the two emission probabilities at a site sum to `1`. -/
+/-- With biallelic sites, the two emission probabilities at a site sum to `1` over the target
+allele, for each fixed panel column `col` (the emissions are conditional on the panel). -/
 theorem emit_sum_bool (ε : R) (k : Fin K) (col : Fin K → Bool) :
     ∑ a : Bool, emit ε k (col, a) = 1 := by
   cases h : col k <;> simp [emit, h]
 
-/-- One step of the `O(K)` forward recursion on the previous site's forward variables `v`:
-`e_k ((1 - ρ) v k + ρ (∑ j, v j) / K)`. -/
+/-- One step of the collapsed forward recursion on the previous site's forward variables `v`,
+at output state `k`: `e_k ((1 - ρ) v k + ρ (∑ j, v j) / K)`. This is the pointwise
+specification; each call evaluates the length-`K` sum, so use `fastStepTab` for the `O(K)`
+per-site step. -/
 def fastStep (ρ ε : R) (o : Obs K A) (v : Fin K → R) (k : Fin K) : R :=
   emit ε k o * ((1 - ρ) * v k + ρ * (∑ j, v j) / K)
 
-/-- The forward variables computed by the `O(K)` recursion. -/
+/-- The forward variables of the collapsed recursion, as a function of site and state. This is
+the untabulated specification (it re-evaluates earlier sites inside each sum); `fastForwardTab`
+is the `O(t K)` implementation. -/
 def fastForward (ρ ε : R) (y : ℕ → Obs K A) : ℕ → Fin K → R
   | 0, k => 1 / K * emit ε k (y 0)
   | t + 1, k => fastStep ρ ε (y (t + 1)) (fastForward ρ ε y t) k
@@ -141,7 +157,7 @@ theorem sum_mul_trans (ρ : R) (v : Fin K → R) (k : Fin K) :
     Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.sum_mul]
   ring
 
-/-- **The `O(K)` forward recursion computes the forward variables** of the Li–Stephens HMM. -/
+/-- **The collapsed forward recursion computes the forward variables** of the Li–Stephens HMM. -/
 theorem fastForward_eq_forward (ρ ε : R) (y : ℕ → Obs K A) :
     ∀ (t : ℕ) (k : Fin K), fastForward ρ ε y t k = forward (hmm K ρ ε) y t k
   | 0, k => rfl
@@ -153,7 +169,8 @@ theorem fastForward_eq_forward (ρ ε : R) (y : ℕ → Obs K A) :
       simp only [hmm]
       ring
 
-/-- **The likelihood of the target haplotype** is the sum of the `O(K)` forward variables. -/
+/-- **The likelihood of the target haplotype** (given the panel) is the sum of the collapsed
+forward variables. -/
 theorem likelihood_eq_sum_fastForward (ρ ε : R) (y : ℕ → Obs K A) (t : ℕ) :
     likelihood (hmm K ρ ε) y t = ∑ k, fastForward ρ ε y t k := by
   rw [likelihood_eq_sum_forward]
