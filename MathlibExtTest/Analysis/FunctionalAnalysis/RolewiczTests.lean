@@ -26,6 +26,9 @@ import Mathlib.Tactic.Ring
 * Pointwise actions of powers of the shifts, the `Bⁿ Fⁿ = 1` identity,
   and the norm of a power of the forward shift.
 * `#print axioms` for the `2 • B` instance: standard triple only.
+* The original concrete approximation proofs remain in private fixtures.
+* The full exact criterion is recovered from the generalized API with `n_k = id`.
+* An even subsequence and nonzero geometric inverse errors exercise approximate data.
 -/
 
 open Set Filter Topology Metric
@@ -329,3 +332,142 @@ example {𝕜 : Type*} [RCLike 𝕜] :
 example {𝕜 : Type*} [RCLike 𝕜] :
     Dense (Set.range (ratApproxSeq (𝕜 := 𝕜))) :=
   dense_range_ratApproxSeq
+
+namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests.Round2Contracts
+
+variable {𝕜 E : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] [BaireSpace E] [Nonempty E]
+
+/-- The central API accepts cofinal subsequences and approximate inverse data. -/
+private theorem generalized_criterion_contract (T : E →L[𝕜] E)
+    (n_k : ℕ → ℕ) (hn_k : Tendsto n_k atTop atTop)
+    (D X₀ Y₀ : Set E) (hDcount : D.Countable) (hDdense : Dense D)
+    (hX₀ : Dense X₀) (hY₀ : Dense Y₀) (S : ℕ → E → E)
+    (hT : ∀ x ∈ X₀, Tendsto (fun k => (T ^ n_k k) x) atTop (𝓝 0))
+    (hS : ∀ y ∈ Y₀, Tendsto (fun k => S k y) atTop (𝓝 0))
+    (hTS : ∀ y ∈ Y₀, Tendsto (fun k => (T ^ n_k k) (S k y)) atTop (𝓝 y)) :
+    IsHypercyclic T :=
+  isHypercyclic_of_criterion T n_k hn_k D X₀ Y₀ hDcount hDdense hX₀ hY₀ S hT hS hTS
+
+/-- The complete old exact/full-iterate criterion is recovered as a specialization. -/
+private theorem exact_full_iterate_criterion_contract (T : E →L[𝕜] E)
+    (D X₀ Y₀ : Set E) (hDcount : D.Countable) (hDdense : Dense D)
+    (hX₀ : Dense X₀) (hY₀ : Dense Y₀) (S : ℕ → E → E)
+    (hT : ∀ x ∈ X₀, Tendsto (fun n => (T ^ n) x) atTop (𝓝 0))
+    (hS : ∀ y ∈ Y₀, Tendsto (fun n => S n y) atTop (𝓝 0))
+    (hTS : ∀ n, ∀ y ∈ Y₀, (T ^ n) (S n y) = y) :
+    IsHypercyclic T := by
+  refine isHypercyclic_of_criterion T id tendsto_id D X₀ Y₀
+    hDcount hDdense hX₀ hY₀ S hT hS ?_
+  intro y hy
+  change Tendsto (fun n => (T ^ n) (S n y)) atTop (𝓝 y)
+  have hconstant : (fun n => (T ^ n) (S n y)) = fun _ => y := by
+    funext n
+    exact hTS n y hy
+  rw [hconstant]
+  exact tendsto_const_nhds
+
+end MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests.Round2Contracts
+
+namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests.ApproximateInverseContracts
+
+private theorem even_iterations_tendsto :
+    Tendsto (fun k : ℕ => 2 * k) atTop atTop := by
+  refine Filter.tendsto_atTop.mpr fun N => ?_
+  exact eventually_atTop.mpr ⟨N, fun k hk => by omega⟩
+
+private theorem geometric_error_tendsto :
+    Tendsto (fun k : ℕ => (1 / 2 : ℂ) ^ k) atTop (𝓝 0) := by
+  apply tendsto_pow_atTop_nhds_zero_of_norm_lt_one
+  rw [Complex.norm_div, norm_one, Complex.norm_two]
+  norm_num
+
+private noncomputable def approximateInverse (k : ℕ) (y : ℓ²(ℕ, ℂ)) : ℓ²(ℕ, ℂ) :=
+  ((2 : ℂ) ^ (2 * k))⁻¹ • (LpShiftOperator.shiftCLM (𝕜 := ℂ) ^ (2 * k))
+    (y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ))
+
+private theorem approximateInverse_image (k : ℕ) (y : ℓ²(ℕ, ℂ)) :
+    (((2 : ℂ) • LpShiftOperator.backwardCLM) ^ (2 * k)) (approximateInverse k y) =
+      y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ) := by
+  unfold approximateInverse
+  rw [smul_backwardShiftCLM_pow_apply, map_smul]
+  have hBS : (LpShiftOperator.backwardCLM (𝕜 := ℂ) ^ (2 * k))
+      ((LpShiftOperator.shiftCLM (𝕜 := ℂ) ^ (2 * k))
+        (y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ))) =
+      y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ) := by
+    simpa only [ContinuousLinearMap.comp_apply, one_apply_eq_self] using
+      DFunLike.congr_fun
+        (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow (𝕜 := ℂ) (2 * k))
+        (y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ))
+  rw [hBS, smul_smul, mul_inv_cancel₀ (pow_ne_zero (2 * k) (by norm_num)), one_smul]
+
+private theorem perturbed_target_tendsto (y : ℓ²(ℕ, ℂ)) :
+    Tendsto (fun k : ℕ => y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ))
+      atTop (𝓝 y) := by
+  simpa using tendsto_const_nhds.add
+    (geometric_error_tendsto.smul_const (lp.single 2 0 (1 : ℂ) : ℓ²(ℕ, ℂ)))
+
+private theorem approximateInverse_tendsto (y : ℓ²(ℕ, ℂ)) :
+    Tendsto (fun k => approximateInverse k y) atTop (𝓝 0) := by
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  have hnorm (k : ℕ) : ‖approximateInverse k y‖ =
+      ((2 : ℝ)⁻¹) ^ (2 * k) *
+        ‖y + (1 / 2 : ℂ) ^ k • lp.single 2 0 (1 : ℂ)‖ := by
+    unfold approximateInverse
+    rw [norm_smul, norm_inv, norm_pow, Complex.norm_two, inv_pow,
+      norm_forwardShiftCLM_pow_apply]
+  simp_rw [hnorm]
+  have hbase : Tendsto (fun n : ℕ => ((2 : ℝ)⁻¹) ^ n) atTop (𝓝 0) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  simpa using (hbase.comp even_iterations_tendsto).mul (perturbed_target_tendsto y).norm
+
+private theorem scaled_even_orbit_tendsto {x : ℓ²(ℕ, ℂ)}
+    (hx : x ∈ Submodule.span ℂ (Set.range fun i => lp.single 2 i (1 : ℂ))) :
+    Tendsto (fun k => (((2 : ℂ) • LpShiftOperator.backwardCLM) ^ (2 * k)) x)
+      atTop (𝓝 0) := by
+  obtain ⟨N, hN⟩ := exists_forall_eq_zero_of_mem_span_single hx
+  refine tendsto_atTop_of_eventually_const (i₀ := N) fun k hk => ?_
+  have hzero : (LpShiftOperator.backwardCLM ^ (2 * k)) x = 0 := by
+    apply lp.ext
+    funext i
+    rw [ShiftFredholmIndex.backwardCLM_pow_apply]
+    exact hN (i + 2 * k) (by omega)
+  rw [smul_backwardShiftCLM_pow_apply, hzero, smul_zero]
+
+/-- The generalized criterion consumes a proper subsequence and approximate inverses. -/
+private theorem rolewicz_even_approximate :
+    IsHypercyclic ((2 : ℂ) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
+  let : TopologicalSpace.SeparableSpace (ℓ²(ℕ, ℂ)) :=
+    SeparableHilbertBasis.separableSpace_of_countable_hilbertBasis
+      (default : HilbertBasis ℕ ℂ ℓ²(ℕ, ℂ))
+  obtain ⟨D, hDcount, hDdense⟩ := TopologicalSpace.exists_countable_dense (ℓ²(ℕ, ℂ))
+  refine isHypercyclic_of_criterion _ (fun k => 2 * k) even_iterations_tendsto D
+    (↑(Submodule.span ℂ
+      (Set.range fun i => (lp.single 2 i (1 : ℂ) : ℓ²(ℕ, ℂ)))) : Set (ℓ²(ℕ, ℂ)))
+    (↑(Submodule.span ℂ
+      (Set.range fun i => (lp.single 2 i (1 : ℂ) : ℓ²(ℕ, ℂ)))) : Set (ℓ²(ℕ, ℂ)))
+    hDcount hDdense (dense_span_single (𝕜 := ℂ)) (dense_span_single (𝕜 := ℂ))
+    approximateInverse ?_ ?_ ?_
+  · intro x hx
+    exact scaled_even_orbit_tendsto hx
+  · intro y _
+    exact approximateInverse_tendsto y
+  · intro y _
+    simpa only [approximateInverse_image] using perturbed_target_tendsto y
+
+example : ∀ k : ℕ, 2 * k ≠ 1 := by
+  intro k
+  omega
+
+/-- At every selected iterate the inverse error at zero is nonzero. -/
+example (k : ℕ) :
+    (((2 : ℂ) • LpShiftOperator.backwardCLM) ^ (2 * k)) (approximateInverse k 0) ≠ 0 := by
+  rw [approximateInverse_image, zero_add]
+  intro h
+  have hzero := congrArg (fun z : ℓ²(ℕ, ℂ) => z 0) h
+  simp [lp.coeFn_smul, lp.single_apply] at hzero
+
+#print axioms rolewicz_even_approximate
+#print axioms MathlibExt.Analysis.FunctionalAnalysis.Hypercyclicity.isHypercyclic_of_criterion
+
+end MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests.ApproximateInverseContracts

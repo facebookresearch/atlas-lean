@@ -39,6 +39,8 @@ the hypercyclicity criterion from `Hypercyclicity.lean`, applied with
 supported sequences) and `S n y = (μ ^ n)⁻¹ • Fⁿ y`, where `F` is the
 forward shift: `Bⁿ` kills finitely supported vectors eventually,
 `(‖μ‖⁻¹) ^ n → 0` since `‖μ‖ > 1`, and `Bⁿ Fⁿ = 1`.
+The generalized criterion is used with `n_k = id`; the exact inverse
+identity supplies its required convergence to `y`.
 
 The countable dense set required by the criterion comes from
 `SeparableHilbertBasis.separableSpace_of_countable_hilbertBasis`, applied to
@@ -203,7 +205,7 @@ theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
       SeparableHilbertBasis.separableSpace_of_countable_hilbertBasis
         (default : HilbertBasis ℕ 𝕜 ℓ²(ℕ, 𝕜))
     obtain ⟨D, hDcount, hDdense⟩ := TopologicalSpace.exists_countable_dense (ℓ²(ℕ, 𝕜))
-    refine isHypercyclic_of_criterion _ D
+    refine isHypercyclic_of_criterion _ id tendsto_id D
       (↑(Submodule.span 𝕜
         (Set.range fun i => (lp.single 2 i (1 : 𝕜) : ℓ²(ℕ, 𝕜)))) : Set (ℓ²(ℕ, 𝕜)))
       (↑(Submodule.span 𝕜
@@ -212,6 +214,7 @@ theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
       dense_span_single dense_span_single
       (fun n y => (μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) ?_ ?_ ?_
     · intro x hx
+      change Tendsto (fun n => ((μ • LpShiftOperator.backwardCLM) ^ n) x) atTop (𝓝 0)
       have hx' : x ∈ Submodule.span 𝕜 (Set.range fun i => lp.single 2 i (1 : 𝕜)) := hx
       obtain ⟨N, hN⟩ := exists_forall_eq_zero_of_mem_span_single hx'
       refine tendsto_atTop_of_eventually_const (i₀ := N) fun n hn => ?_
@@ -239,15 +242,24 @@ theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
       have h := hN n hn
       rw [dist_zero_right, Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)] at h
       rwa [dist_zero_right]
-    · intro n y _
-      change ((μ • LpShiftOperator.backwardCLM) ^ n)
-        ((μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) = y
-      have hBS : (LpShiftOperator.backwardCLM (𝕜 := 𝕜) ^ n)
-          ((LpShiftOperator.shiftCLM (𝕜 := 𝕜) ^ n) y) = y := by
-        simpa only [ContinuousLinearMap.comp_apply, one_apply_eq_self] using
-          DFunLike.congr_fun (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow n) y
-      rw [smul_backwardShiftCLM_pow_apply, map_smul,
-        hBS, smul_smul,
-        mul_inv_cancel₀ (pow_ne_zero n hμ0), one_smul]
+    · intro y _
+      have hconstant :
+          (fun n => ((μ • LpShiftOperator.backwardCLM) ^ n)
+            ((μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y)) = fun _ => y := by
+        funext n
+        change ((μ • LpShiftOperator.backwardCLM) ^ n)
+          ((μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) = y
+        have hBS : (LpShiftOperator.backwardCLM (𝕜 := 𝕜) ^ n)
+            ((LpShiftOperator.shiftCLM (𝕜 := 𝕜) ^ n) y) = y := by
+          simpa only [ContinuousLinearMap.comp_apply, one_apply_eq_self] using
+            DFunLike.congr_fun (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow n) y
+        rw [smul_backwardShiftCLM_pow_apply, map_smul,
+          hBS, smul_smul,
+          mul_inv_cancel₀ (pow_ne_zero n hμ0), one_smul]
+      change Tendsto
+        (fun n => ((μ • LpShiftOperator.backwardCLM) ^ n)
+          ((μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y)) atTop (𝓝 y)
+      rw [hconstant]
+      exact tendsto_const_nhds
 
 end MathlibExt.Analysis.FunctionalAnalysis.Rolewicz

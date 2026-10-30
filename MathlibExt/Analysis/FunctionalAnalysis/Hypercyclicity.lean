@@ -26,14 +26,13 @@ linear-dynamics counterpart of the Baire-category material in
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/BaireCategory.lean`: the
 classical way to produce a hypercyclic vector is the *hypercyclicity
 criterion* below, whose proof is a Baire argument. Given a countable
-dense set `D`, dense sets `X₀, Y₀ ⊆ E`, and maps `S n : E → E` with
-`Tⁿ x → 0` on `X₀`, `S n y → 0` on `Y₀`, and `Tⁿ (S n y) = y` on `Y₀`,
-every ball centered at a point of `D` with rational radius is met by
-some orbit, so a Baire intersection over the countably many such balls
-gives a vector whose orbit meets every one of them, hence is dense.
-The criterion is stated with an explicit countable dense set `D`
-rather than a second-countability hypothesis, since second countability
-is not inferred for `ℓ²` spaces in the pinned Mathlib.
+dense set `D`, dense sets `X₀, Y₀ ⊆ E`, a sequence `n_k → ∞`, and maps
+`S k : E → E`, assume `T^(n_k) x → 0` on `X₀`, `S k y → 0` on `Y₀`, and
+`T^(n_k) (S k y) → y` on `Y₀`. Every rational ball centered at `D` is met
+by an orbit after every time threshold. The countable Baire intersection
+of these open dense sets gives a vector with a dense orbit.
+The explicit countable dense set can be supplied by
+`TopologicalSpace.exists_countable_dense` on a separable space.
 
 This is a companion to the Baire-category, bounded-operator, and
 Hilbert-space material of
@@ -66,29 +65,31 @@ orbit under iteration of `T`. -/
 def IsHypercyclic (T : E →L[𝕜] E) : Prop :=
   ∃ x, Dense (Set.range fun n => (T ^ n) x)
 
-/-- The *hypercyclicity criterion*: if `D` is a countable dense set,
-`X₀` and `Y₀` are dense sets, and there are maps `S n` with `Tⁿ x → 0`
-for `x ∈ X₀`, `S n y → 0` and `Tⁿ (S n y) = y` for `y ∈ Y₀`, then `T`
-is hypercyclic. The proof is a Baire argument: for each ball centered
-at a point of `D` with positive rational radius, the union over `n` of
-the preimages `(Tⁿ)⁻¹'` of the ball is open and dense, so their
-countable intersection is dense, and any vector in it has an orbit
-meeting every such ball, hence is dense. -/
+/-- The *hypercyclicity criterion*: along a sequence `n_k → ∞`, suppose
+`T^(n_k) x → 0` on the dense set `X₀`, `S k y → 0` on the dense set `Y₀`,
+and `T^(n_k) (S k y) → y` on `Y₀`. Then `T` is hypercyclic.
+The Baire proof combines all three eventual estimates and uses cofinality
+to meet each rational ball after every prescribed time threshold.
+This includes the full-iterate, exact-inverse special case by taking
+`n_k = id` and converting the exact identities to constant convergence. -/
 theorem isHypercyclic_of_criterion [BaireSpace E] [Nonempty E] (T : E →L[𝕜] E)
+    (n_k : ℕ → ℕ) (hn_k : Tendsto n_k atTop atTop)
     (D X₀ Y₀ : Set E) (hDcount : D.Countable) (hDdense : Dense D)
     (hX₀ : Dense X₀) (hY₀ : Dense Y₀) (S : ℕ → E → E)
-    (hT : ∀ x ∈ X₀, Tendsto (fun n => (T ^ n) x) atTop (𝓝 0))
-    (hS : ∀ y ∈ Y₀, Tendsto (fun n => S n y) atTop (𝓝 0))
-    (hTS : ∀ n, ∀ y ∈ Y₀, (T ^ n) (S n y) = y) :
+    (hT : ∀ x ∈ X₀, Tendsto (fun k => (T ^ n_k k) x) atTop (𝓝 0))
+    (hS : ∀ y ∈ Y₀, Tendsto (fun k => S k y) atTop (𝓝 0))
+    (hTS : ∀ y ∈ Y₀, Tendsto (fun k => (T ^ n_k k) (S k y)) atTop (𝓝 y)) :
     IsHypercyclic T := by
   have hCount : Countable D := hDcount
-  -- Index the rational balls centered at points of `D`.
-  let O : { p : D × ℚ // 0 < p.2 } → Set E :=
-    fun p => ⋃ n : ℕ, (T ^ n) ⁻¹' Metric.ball (p.1.1 : E) (p.1.2 : ℝ)
-  have hOopen : ∀ p : { p : D × ℚ // 0 < p.2 }, IsOpen (O p) := fun p =>
-    isOpen_iUnion fun n => ((T ^ n).continuous).isOpen_preimage _ Metric.isOpen_ball
-  have hOdense : ∀ p : { p : D × ℚ // 0 < p.2 }, Dense (O p) := by
-    intro p
+  -- Index rational balls and the time after which the orbit must meet them.
+  let O : ({ p : D × ℚ // 0 < p.2 } × ℕ) → Set E :=
+    fun p => ⋃ n : ℕ, ⋃ (_ : p.2 ≤ n),
+      (T ^ n) ⁻¹' Metric.ball (p.1.1.1 : E) (p.1.1.2 : ℝ)
+  have hOopen : ∀ p : { p : D × ℚ // 0 < p.2 } × ℕ, IsOpen (O p) := fun p =>
+    isOpen_iUnion fun n => isOpen_iUnion fun _ =>
+      ((T ^ n).continuous).isOpen_preimage _ Metric.isOpen_ball
+  have hOdense : ∀ p : { p : D × ℚ // 0 < p.2 } × ℕ, Dense (O p) := by
+    rintro ⟨p, N⟩
     have hqpos : (0 : ℝ) < (p.1.2 : ℝ) := by exact_mod_cast p.2
     have hballne : (Metric.ball (p.1.1 : E) (p.1.2 : ℝ)).Nonempty :=
       ⟨p.1.1, Metric.mem_ball_self hqpos⟩
@@ -105,27 +106,34 @@ theorem isHypercyclic_of_criterion [BaireSpace E] [Nonempty E] (T : E →L[𝕜]
       refine eventually_atTop.mpr ⟨N, fun n hn => ?_⟩
       have h := hN n hn
       rwa [dist_zero_right] at h
-    have ev2 : ∀ᶠ n in atTop, ‖(T ^ n) x₀‖ < δ := by
-      obtain ⟨N, hN⟩ := (Metric.tendsto_atTop.mp (hT x₀ hx₀X)) δ hδ
-      refine eventually_atTop.mpr ⟨N, fun n hn => ?_⟩
-      have h := hN n hn
+    have ev2 : ∀ᶠ k in atTop, ‖(T ^ n_k k) x₀‖ < δ / 2 := by
+      obtain ⟨K, hK⟩ := (Metric.tendsto_atTop.mp (hT x₀ hx₀X)) (δ / 2) (half_pos hδ)
+      refine eventually_atTop.mpr ⟨K, fun k hk => ?_⟩
+      have h := hK k hk
       rwa [dist_zero_right] at h
-    obtain ⟨n, hn1, hn2⟩ := (ev1.and ev2).exists
-    refine ⟨x₀ + S n y₀, ?_, ?_⟩
-    · -- `x₀ + S n y₀` stays in `V` because `S n y₀` is small.
+    have ev3 : ∀ᶠ k in atTop, ‖(T ^ n_k k) (S k y₀) - y₀‖ < δ / 2 := by
+      obtain ⟨K, hK⟩ := (Metric.tendsto_atTop.mp (hTS y₀ hy₀Y)) (δ / 2) (half_pos hδ)
+      refine eventually_atTop.mpr ⟨K, fun k hk => ?_⟩
+      have h := hK k hk
+      rwa [dist_eq_norm] at h
+    have ev4 : ∀ᶠ k in atTop, N ≤ n_k k := hn_k.eventually_ge_atTop N
+    obtain ⟨k, hk1, hk2, hk3, hk4⟩ := (ev1.and (ev2.and (ev3.and ev4))).exists
+    refine ⟨x₀ + S k y₀, ?_, ?_⟩
+    · -- The small right-inverse vector keeps the starting point in `V`.
       apply hballV
       rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left]
-      exact hn1
-    · -- The orbit of `x₀ + S n y₀` meets the ball at step `n`.
-      refine Set.mem_iUnion.mpr ⟨n, ?_⟩
-      have hcomp : (T ^ n) (x₀ + S n y₀) = (T ^ n) x₀ + y₀ := by
-        rw [map_add, hTS n y₀ hy₀Y]
-      rw [Set.mem_preimage, hcomp]
+      exact hk1
+    · -- The two output errors place the orbit in the ball after time `N`.
+      refine Set.mem_iUnion.mpr ⟨n_k k, Set.mem_iUnion.mpr ⟨hk4, ?_⟩⟩
+      rw [Set.mem_preimage]
       apply hballU
-      rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_right]
-      exact hn2
+      rw [Metric.mem_ball, dist_eq_norm, map_add, add_sub_assoc]
+      calc ‖(T ^ n_k k) x₀ + ((T ^ n_k k) (S k y₀) - y₀)‖
+          ≤ ‖(T ^ n_k k) x₀‖ + ‖(T ^ n_k k) (S k y₀) - y₀‖ := norm_add_le _ _
+        _ < δ / 2 + δ / 2 := add_lt_add hk2 hk3
+        _ = δ := add_halves δ
   -- By Baire, the intersection of all the `O p` is dense, hence nonempty.
-  have hDense : Dense (⋂ p : { p : D × ℚ // 0 < p.2 }, O p) :=
+  have hDense : Dense (⋂ p : { p : D × ℚ // 0 < p.2 } × ℕ, O p) :=
     dense_iInter_of_isOpen hOopen hOdense
   obtain ⟨x, hx⟩ := hDense.nonempty
   refine ⟨x, ?_⟩
@@ -140,8 +148,9 @@ theorem isHypercyclic_of_criterion [BaireSpace E] [Nonempty E] (T : E →L[𝕜]
   have hqpos : (0 : ℚ) < q := by
     have h : (0 : ℝ) < (q : ℝ) := lt_of_le_of_lt dist_nonneg hq1
     exact_mod_cast h
-  have hxO : x ∈ O ⟨⟨⟨d, hdD⟩, q⟩, hqpos⟩ := Set.mem_iInter.mp hx _
+  have hxO : x ∈ O (⟨⟨⟨d, hdD⟩, q⟩, hqpos⟩, 0) := Set.mem_iInter.mp hx _
   obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hxO
+  obtain ⟨_, hn⟩ := Set.mem_iUnion.mp hn
   refine ⟨(T ^ n) x, ?_, ⟨n, rfl⟩⟩
   apply hballU
   have hyball : (T ^ n) x ∈ Metric.ball (d : E) (q : ℝ) := Set.mem_preimage.mp hn
