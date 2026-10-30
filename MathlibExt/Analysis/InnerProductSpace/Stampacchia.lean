@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Projection.Minimal
+public import MathlibExt.Analysis.InnerProductSpace.ConvexProjection
 public import Mathlib.Analysis.InnerProductSpace.Dual
 public import Mathlib.Topology.MetricSpace.Contracting
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
@@ -16,6 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 @[expose] public section
 
 open scoped InnerProductSpace
+
+open MathlibExt.Analysis.InnerProductSpace.ConvexProjection
 
 namespace MathlibExt.Analysis.InnerProductSpace.Stampacchia
 
@@ -40,10 +42,9 @@ This is a companion to the v1 book's Hilbert-space material
 (`v1/Atlas/IntroductionToFunctionalAnalysis/code/HilbertSpace.lean`): the book
 proves the projection onto a closed subspace, which is already in Mathlib as
 `orthogonalProjectionOnto`. Stampacchia's theorem itself is not one of the
-72 v1 targets and is not in Mathlib. The nearest-point projection onto a
-convex set is reproved here only in the minimal private form this proof
-needs (existence, the variational characterization, nonexpansiveness);
-it is not the public convex-projection API of an earlier batch.
+72 v1 targets and is not in Mathlib. The nearest-point projection and its
+variational characterization and nonexpansiveness are reused from
+`MathlibExt.Analysis.InnerProductSpace.ConvexProjection`.
 
 Source: G. Stampacchia, *Formes bilinéaires coercitives sur les ensembles
 convexes*, C. R. Acad. Sci. Paris 258 (1964), 4413–4416. See also H. Brezis,
@@ -62,80 +63,11 @@ Main results:
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- Nearest point in a nonempty complete convex set, chosen once and for all.
-Private: only the properties below are used, and only for Stampacchia's
-theorem. -/
-private noncomputable def stampacchiaProj {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) (x : E) : E :=
-  Classical.choose (exists_norm_eq_iInf_of_complete_convex hKne hKcomp hKconv x)
-
-/-- The nearest point lies in `K`. -/
-private theorem stampacchiaProj_mem {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) (x : E) :
-    stampacchiaProj hKne hKcomp hKconv x ∈ K :=
-  (Classical.choose_spec (exists_norm_eq_iInf_of_complete_convex hKne hKcomp hKconv x)).1
-
-/-- The nearest point attains the infimum distance. -/
-private theorem stampacchiaProj_norm_eq {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) (x : E) :
-    ‖x - stampacchiaProj hKne hKcomp hKconv x‖ = ⨅ w : K, ‖x - w‖ :=
-  (Classical.choose_spec (exists_norm_eq_iInf_of_complete_convex hKne hKcomp hKconv x)).2
-
-/-- Variational characterization of the nearest point. -/
-private theorem stampacchiaProj_variational {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) {x : E} {w : E} (hw : w ∈ K) :
-    ⟪x - stampacchiaProj hKne hKcomp hKconv x,
-      w - stampacchiaProj hKne hKcomp hKconv x⟫_ℝ ≤ 0 :=
-  (norm_eq_iInf_iff_real_inner_le_zero hKconv
-    (stampacchiaProj_mem hKne hKcomp hKconv x)).mp
-    (stampacchiaProj_norm_eq hKne hKcomp hKconv x) w hw
-
-/-- The nearest-point projection is nonexpansive. -/
-private theorem norm_stampacchiaProj_sub_le {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) (x y : E) :
-    ‖stampacchiaProj hKne hKcomp hKconv x - stampacchiaProj hKne hKcomp hKconv y‖
-      ≤ ‖x - y‖ := by
-  set px := stampacchiaProj hKne hKcomp hKconv x with hpx
-  set py := stampacchiaProj hKne hKcomp hKconv y with hpy
-  have hpxK : px ∈ K := stampacchiaProj_mem hKne hKcomp hKconv x
-  have hpyK : py ∈ K := stampacchiaProj_mem hKne hKcomp hKconv y
-  have h1 := stampacchiaProj_variational hKne hKcomp hKconv (x := x) (w := py) hpyK
-  have h2 := stampacchiaProj_variational hKne hKcomp hKconv (x := y) (w := px) hpxK
-  have hge1 : 0 ≤ ⟪x - px, px - py⟫_ℝ := by
-    have h := h1
-    rw [show py - px = -(px - py) by abel, inner_neg_right] at h
-    linarith
-  have hge2 : 0 ≤ ⟪y - py, py - px⟫_ℝ := by
-    have h := h2
-    rw [show px - py = -(py - px) by abel, inner_neg_right] at h
-    linarith
-  have hident : ⟪x - y, px - py⟫_ℝ
-      = ‖px - py‖ ^ 2 + ⟪x - px, px - py⟫_ℝ + ⟪y - py, py - px⟫_ℝ := by
-    have e : x - y = (x - px) + (px - py) + (py - y) := by abel
-    rw [e, inner_add_left, inner_add_left, real_inner_self_eq_norm_sq]
-    have hneg : ⟪py - y, px - py⟫_ℝ = ⟪y - py, py - px⟫_ℝ := by
-      rw [show py - y = -(y - py) by abel, show px - py = -(py - px) by abel,
-        inner_neg_left, inner_neg_right, neg_neg]
-    rw [hneg]
-    ring
-  have key : ‖px - py‖ ^ 2 ≤ ⟪x - y, px - py⟫_ℝ := by linarith
-  have hcs := real_inner_le_norm (x - y) (px - py)
-  by_cases hd : ‖px - py‖ = 0
-  · rw [hd]
-    exact norm_nonneg _
-  · have hpos : 0 < ‖px - py‖ :=
-      lt_of_le_of_ne (norm_nonneg _) (Ne.symm hd)
-    have hle : ‖px - py‖ * ‖px - py‖ ≤ ‖x - y‖ * ‖px - py‖ := by
-      rw [← sq]
-      exact key.trans hcs
-    exact le_of_mul_le_mul_right hle hpos
-
 /-- The contraction map whose fixed points are the variational-inequality
 solutions: `Φ x = P_K (x - ρ • (A x - f))`. -/
-private noncomputable def stampacchiaPhi {K : Set E} (hKne : K.Nonempty)
-    (hKcomp : IsComplete K) (hKconv : Convex ℝ K) (A : E →L[ℝ] E) (ρ : ℝ) (f : E)
+private noncomputable def stampacchiaPhi (K : Set E) (A : E →L[ℝ] E) (ρ : ℝ) (f : E)
     (x : E) : E :=
-  stampacchiaProj hKne hKcomp hKconv (x - ρ • (A x - f))
+  convexProjection K (x - ρ • (A x - f))
 
 /-- On the whole space, a variational-inequality solution satisfies `A u = f`. -/
 theorem stampacchia_eq_of_univ (A : E →L[ℝ] E) (f : E) (u : E)
@@ -219,13 +151,15 @@ theorem exists_unique_stampacchia {K : Set E} (hKne : K.Nonempty)
       rwa [Real.sqrt_one] at h
     -- `Φ` is a contraction of constant `q`.
     have hΦlip : LipschitzWith ⟨q, hq0⟩
-        (stampacchiaPhi hKne hKcomp hKconv A ρ f) :=
+        (stampacchiaPhi K A ρ f) :=
       LipschitzWith.of_dist_le_mul (fun x y => by
         rw [dist_eq_norm, dist_eq_norm]
-        have h1 : ‖stampacchiaPhi hKne hKcomp hKconv A ρ f x
-            - stampacchiaPhi hKne hKcomp hKconv A ρ f y‖
-            ≤ ‖(x - ρ • (A x - f)) - (y - ρ • (A y - f))‖ :=
-          norm_stampacchiaProj_sub_le hKne hKcomp hKconv _ _
+        have h1 : ‖stampacchiaPhi K A ρ f x
+            - stampacchiaPhi K A ρ f y‖
+            ≤ ‖(x - ρ • (A x - f)) - (y - ρ • (A y - f))‖ := by
+          have h := (lipschitzWith_convexProjection hKne hKcomp hKconv).dist_le_mul
+            (x - ρ • (A x - f)) (y - ρ • (A y - f))
+          simpa only [stampacchiaPhi, dist_eq_norm, NNReal.coe_one, one_mul] using h
         have hdiff : (x - ρ • (A x - f)) - (y - ρ • (A y - f))
             = (x - y) - ρ • A (x - y) := by
           rw [map_sub]
@@ -261,18 +195,17 @@ theorem exists_unique_stampacchia {K : Set E} (hKne : K.Nonempty)
             abs_of_nonneg (mul_nonneg hq0 (norm_nonneg _))] at h
         exact h1.trans h2)
     have hcon : ContractingWith ⟨q, hq0⟩
-        (stampacchiaPhi hKne hKcomp hKconv A ρ f) :=
+        (stampacchiaPhi K A ρ f) :=
       ⟨by exact_mod_cast hq1, hΦlip⟩
     obtain ⟨u₀, hu₀⟩ := hKne
     obtain ⟨u, hufix, -, -⟩ := hcon.exists_fixedPoint u₀ (edist_ne_top _ _)
-    have hproj_eq : stampacchiaProj hKne0 hKcomp hKconv (u - ρ • (A u - f)) = u :=
+    have hproj_eq : convexProjection K (u - ρ • (A u - f)) = u :=
       hufix
     have huK : u ∈ K :=
-      hproj_eq ▸ stampacchiaProj_mem hKne0 hKcomp hKconv (u - ρ • (A u - f))
+      hproj_eq ▸ convexProjection_mem hKne0 hKcomp hKconv (u - ρ • (A u - f))
     have hVI : ∀ v ∈ K, 0 ≤ ⟪A u - f, v - u⟫_ℝ := by
       intro v hv
-      have hvar := stampacchiaProj_variational hKne0 hKcomp hKconv (x := u - ρ • (A u - f))
-        (w := v) hv
+      have hvar := convexProjection_variational hKne0 hKcomp hKconv (u - ρ • (A u - f)) v hv
       rw [hproj_eq] at hvar
       have hsimpl : (u - ρ • (A u - f)) - u = -(ρ • (A u - f)) := by module
       rw [hsimpl, inner_neg_left, inner_smul_left] at hvar
