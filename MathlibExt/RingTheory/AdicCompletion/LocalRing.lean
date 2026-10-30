@@ -47,7 +47,7 @@ public import Mathlib.RingTheory.Noetherian.Defs
 # Kernels of evaluation maps out of adic completions
 
 For a finitely generated ideal `I`, the kernel of the evaluation map
-`evalₐ I n : AdicCompletion I A →ₐ[R] A ⧸ I ^ n` is the image of `I ^ n`,
+`evalₐ I n : AdicCompletion I A →ₐ[A] A ⧸ I ^ n` is the image of `I ^ n`,
 every element of the completion is a constant plus an element of that
 kernel, and adding an element of the image of `I` to a unit keeps it a
 unit. For a Noetherian local ring, the powers of the maximal ideal of the
@@ -212,17 +212,13 @@ variable {k : Type*} [CommRing k] [Algebra k A] {B : Type*} [CommRing B] [IsLoca
   [Algebra k B]
 variable (Φ : AdicCompletion (maximalIdeal A) A ≃ₐ[k] B)
 
-omit [IsNoetherianRing A] [IsLocalRing B] in
-theorem isUnit_algEquiv_iff (x : AdicCompletion (maximalIdeal A) A) :
-    IsUnit (Φ x) ↔ IsUnit x :=
-  ⟨fun h => by simpa using h.map Φ.symm, fun h => h.map Φ⟩
-
 theorem comap_maximalIdeal_algEquiv :
     (maximalIdeal B).comap (Φ : AdicCompletion (maximalIdeal A) A →+* B)
       = maximalIdeal (AdicCompletion (maximalIdeal A) A) := by
   ext x
   change Φ x ∈ maximalIdeal B ↔ x ∈ maximalIdeal _
-  rw [mem_maximalIdeal, mem_maximalIdeal, mem_nonunits_iff, mem_nonunits_iff, isUnit_algEquiv_iff]
+  rw [mem_maximalIdeal, mem_maximalIdeal, mem_nonunits_iff, mem_nonunits_iff]
+  exact not_congr (isUnit_map_iff Φ.toAlgHom x)
 
 theorem map_maximalIdeal_algEquiv :
     (maximalIdeal (AdicCompletion (maximalIdeal A) A)).map
