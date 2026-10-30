@@ -26,9 +26,12 @@ probability `F`, otherwise. This gives the recursion (time in generations)
 
   `F' = (1 - m) ^ 2 * (1 / M + (1 - 1 / M) * F)` (`islandStep`).
 
-For `M ≥ 1` and `0 ≤ m ≤ 1` (the domain of the model; the definitions are total and carry no
-meaning outside it) the recursion is a contraction with factor `(1 - m) ^ 2 (1 - 1 / M) < 1`,
-and its unique fixed point is
+The domain of the model is `M ≥ 2` (two distinct gene copies must exist; `M = 2N` with
+`N ≥ 1`) and `0 ≤ m ≤ 1`. The theorems below assume only `M ≥ 1`: the case `M = 1` is an
+algebraic extension with no biological meaning (a deme of one gene copy has no pair to
+sample), and the definitions are total and carry no meaning for `M = 0` or `m ∉ [0, 1]`. For
+`M ≥ 1` and `0 ≤ m ≤ 1` the recursion is a contraction with factor
+`(1 - m) ^ 2 (1 - 1 / M) < 1`, and its unique fixed point is
 
   `F* = (1 - m) ^ 2 / (M - (M - 1) (1 - m) ^ 2)` (`islandEquilibrium`).
 
@@ -62,14 +65,16 @@ namespace MathlibExt.Biology.PopulationGenetics.IslandModel
 
 /-- One generation of Wright's island-model identity-by-descent recursion for a deme of `M`
 gene copies (`M = 2N` for `N` diploids) receiving a fraction `m` of migrants from an infinite
-pool: `F' = (1 - m) ^ 2 * (1 / M + (1 - 1 / M) * F)`. Meaningful for `M ≥ 1` and
-`0 ≤ m ≤ 1` (at `M = 0` Lean's `1 / 0 = 0` gives a junk value). -/
+pool: `F' = (1 - m) ^ 2 * (1 / M + (1 - 1 / M) * F)`. Biologically meaningful for `M ≥ 2`
+and `0 ≤ m ≤ 1`; `M = 1` is an algebraic extension (no pair of distinct copies exists), and at
+`M = 0` Lean's `1 / 0 = 0` gives a junk value. -/
 noncomputable def islandStep (M : ℕ) (m F : ℝ) : ℝ :=
   (1 - m) ^ 2 * (1 / M + (1 - 1 / M) * F)
 
 /-- The equilibrium identity-by-descent probability (Wright's `F_ST`) of the island model:
-`F* = (1 - m) ^ 2 / (M - (M - 1) (1 - m) ^ 2)`. Meaningful for `M ≥ 1` and `0 ≤ m ≤ 1`, where
-the denominator is positive (`islandEquilibrium_denom_pos`). -/
+`F* = (1 - m) ^ 2 / (M - (M - 1) (1 - m) ^ 2)`. Biologically meaningful for `M ≥ 2` and
+`0 ≤ m ≤ 1`; the denominator is positive already for `M ≥ 1` (`islandEquilibrium_denom_pos`),
+where `M = 1` is an algebraic extension. -/
 noncomputable def islandEquilibrium (M : ℕ) (m : ℝ) : ℝ :=
   (1 - m) ^ 2 / (M - (M - 1) * (1 - m) ^ 2)
 
