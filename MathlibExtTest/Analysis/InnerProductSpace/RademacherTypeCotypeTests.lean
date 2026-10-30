@@ -15,7 +15,7 @@ public import MathlibExt.Analysis.InnerProductSpace.RademacherTypeCotype
 
 * Concrete second-moment computations: real scalars `![3, 4]` (sum `100`),
   complex scalars `![1, 2]` (sum `20`), the empty family (`0`).
-* The orthonormal case `![1, I]` in `ℂ`: the average squared Rademacher
+* The unit vector family `![1, I]` in `ℂ`: the average squared Rademacher
   sum equals `2`.
 * The average-norm bound on `![3, 4]` in `ℝ`: the average Rademacher norm
   is at most `5`.
@@ -46,7 +46,7 @@ example : ∑ ε : Fin 0 → Bool, ‖∑ i, rademacherSign ℝ ε i •
   rw [sum_rademacher_sq_norm_eq]
   simp
 
-/-- Orthonormal pair `![1, I]` in `ℂ`: the average squared Rademacher
+/-- Unit vector pair `![1, I]` in `ℂ`: the average squared Rademacher
 sum equals `2`. -/
 example : ((2 : ℝ) ^ 2) ⁻¹ * ∑ ε : Fin 2 → Bool, ‖∑ i, rademacherSign ℂ ε i •
       (![1, Complex.I] : Fin 2 → ℂ) i‖ ^ 2 = 2 := by

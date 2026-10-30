@@ -30,8 +30,9 @@ For vectors `x₀, …, xₙ₋₁` in a Hilbert space (real or complex), the
 average of `‖∑ᵢ εᵢ xᵢ‖²` over all sign choices `ε ∈ {±1}ⁿ` is exactly
 `∑ᵢ ‖xᵢ‖²`: cross terms cancel pairwise. In the language of Banach-space
 geometry this says every Hilbert space has Rademacher type 2 and cotype 2,
-both with the sharp constant `1`. The proof is by induction on `n`, using
-the parallelogram law to combine the two values of the last sign.
+both with constant `1`, which is sharp when the space is nontrivial. The
+proof is by induction on `n`, using the parallelogram law to combine the
+two values of the last sign.
 
 Companion to the Hilbert-space material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/HilbertSpace.lean`.
