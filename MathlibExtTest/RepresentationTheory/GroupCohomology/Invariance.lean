@@ -37,8 +37,9 @@ example {k G : Type u} [CommRing k] [Group G] (A : Rep k G) (n : ℕ) :
   exact ⟨ψ⟩
 
 /-- The invariance theorem applies to genuine higher-universe representations. -/
-example (A : Rep (ULift ℚ) (ULift (Multiplicative ℤ))) (n : ℕ) :
-    Nonempty (groupCohomology A n ≃ₗ[ULift ℚ] groupCohomology A n) := by
+example
+    (A : Rep.{1, 1, 1} (ULift.{1} ℚ) (ULift.{1} (Multiplicative ℤ))) (n : ℕ) :
+    Nonempty (groupCohomology A n ≃ₗ[ULift.{1} ℚ] groupCohomology A n) := by
   obtain ⟨ψ, -⟩ := groupCohomology.nonempty_linearEquiv_of_iso_res_mulEquiv
-    (MulEquiv.refl (ULift (Multiplicative ℤ))) A A (Iso.refl _) n
+    (MulEquiv.refl (ULift.{1} (Multiplicative ℤ))) A A (Iso.refl _) n
   exact ⟨ψ⟩
