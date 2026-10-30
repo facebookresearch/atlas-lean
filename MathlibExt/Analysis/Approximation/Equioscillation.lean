@@ -23,7 +23,8 @@ public import Mathlib.Tactic.Ring
 
 Let `f` be a real-valued function on an interval `[a, b]` and let `p` be a real
 polynomial of degree at most `n`. If the error `f - p` equioscillates at `n + 2`
-points of `[a, b]`, i.e. there are `x₀ < x₁ < ⋯ < xₙ₊₁` in `[a, b]` and a sign
+points of `[a, b]`: the error satisfies `|f y - p.eval y| ≤ E` throughout
+`[a, b]`, and there are `x₀ < x₁ < ⋯ < xₙ₊₁` in `[a, b]` and a sign
 `σ = ±1` with `f (xᵢ) - p (xᵢ) = σ * (-1) ^ i * E` for all `i`, then `p` is the
 *unique* best uniform approximation to `f` among polynomials of degree at most
 `n` on `[a, b]`: no such polynomial has uniform error `< E` on `[a, b]`, and any
@@ -55,14 +56,16 @@ open Polynomial
 
 /-- A polynomial `p` of degree at most `n` equioscillates against `f` on `[a, b]`
 with amplitude `E` and sign `σ = ±1` at the `n + 2` points `x 0 < ⋯ < x (n+1)`,
-if `f (x i) - p (x i) = σ * (-1) ^ i * E` for every `i ≤ n + 1`. -/
+if `f (x i) - p (x i) = σ * (-1) ^ i * E` for every `i ≤ n + 1`, and
+`|f y - p.eval y| ≤ E` for every `y ∈ [a, b]`. -/
 def Equioscillates (f : ℝ → ℝ) (a b : ℝ) (n : ℕ) (p : ℝ[X]) (E σ : ℝ) (x : ℕ → ℝ) :
     Prop :=
   (σ = 1 ∨ σ = -1) ∧
   p.natDegree ≤ n ∧
   StrictMonoOn x (Set.Icc 0 (n + 1)) ∧
   (∀ i ∈ Set.Icc 0 (n + 1), x i ∈ Set.Icc a b) ∧
-  (∀ i ∈ Set.Icc 0 (n + 1), f (x i) - p.eval (x i) = σ * (-1 : ℝ) ^ i * E)
+  (∀ i ∈ Set.Icc 0 (n + 1), f (x i) - p.eval (x i) = σ * (-1 : ℝ) ^ i * E) ∧
+  (∀ y ∈ Set.Icc a b, |f y - p.eval y| ≤ E)
 
 /-- **Alternation lemma.** If the values of a real polynomial `r` of degree at
 most `n` at `n + 2` strictly increasing points alternate in sign, in the sense
@@ -306,7 +309,7 @@ polynomials of degree at most `n`. -/
 theorem eq_of_equioscillates {f : ℝ → ℝ} {a b : ℝ} {n : ℕ} {p : ℝ[X]} {E σ : ℝ}
     {x : ℕ → ℝ} (heq : Equioscillates f a b n p E σ x) {q : ℝ[X]}
     (hq : q.natDegree ≤ n) (herr : ∀ y ∈ Set.Icc a b, |f y - q.eval y| ≤ E) : q = p := by
-  obtain ⟨hσ, hp, hx, hxI, halt⟩ := heq
+  obtain ⟨hσ, hp, hx, hxI, halt, _⟩ := heq
   have hdeg : (C σ * (p - q)).natDegree ≤ n := by
     calc (C σ * (p - q)).natDegree
         ≤ (C σ).natDegree + (p - q).natDegree := natDegree_mul_le
@@ -355,7 +358,7 @@ theorem not_lt_of_equioscillates {f : ℝ → ℝ} {a b : ℝ} {n : ℕ} {p : �
     (hq : q.natDegree ≤ n) : ¬ ∀ y ∈ Set.Icc a b, |f y - q.eval y| < E := by
   have hσ := heq.1
   have hxI := heq.2.2.2.1
-  have halt := heq.2.2.2.2
+  have halt := heq.2.2.2.2.1
   intro herr
   have hqp : q = p :=
     eq_of_equioscillates heq hq (fun y hy => (herr y hy).le)
