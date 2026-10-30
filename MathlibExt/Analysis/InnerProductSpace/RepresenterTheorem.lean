@@ -115,7 +115,7 @@ theorem exists_mem_span_values_eq_norm_le {ι : Type*} [Fintype ι]
 /-- **Representer theorem.** Any minimizer of a ridge-regularized problem
 `F (fun i => L i g) + Λ * ‖g‖ ^ 2` with `Λ > 0` lies in the span of the
 Riesz representers of the functionals `L i`. -/
-theorem exists_mem_span_of_isMinOn {ι : Type*} [Fintype ι]
+theorem mem_span_of_isMinOn {ι : Type*} [Fintype ι]
     (L : ι → (H →L[ℝ] ℝ)) (F : (ι → ℝ) → ℝ) {Λ : ℝ} (hΛ : 0 < Λ) {f : H}
     (hf : IsMinOn (fun g : H => F (fun i => L i g) + Λ * ‖g‖ ^ 2) Set.univ f) :
     f ∈ Submodule.span ℝ (Set.range fun i => (InnerProductSpace.toDual ℝ H).symm (L i)) := by

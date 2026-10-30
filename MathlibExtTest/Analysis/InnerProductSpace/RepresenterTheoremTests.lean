@@ -127,7 +127,7 @@ example : ∃ t : ℝ, ((1 / 2 : ℝ) • e₀) = t • e₀ ∧ t = 1 / 2 := by
       ((L2 0 g - 1) ^ 2 + 1 * ‖g‖ ^ 2)
     rw [hLg, hLf, norm_sq_eq g, norm_sq_eq ((1 / 2 : ℝ) • e₀), hf0, hf1]
     nlinarith [sq_nonneg (g 0 - 1 / 2), sq_nonneg (g 1)]
-  have hmem := exists_mem_span_of_isMinOn L2 (fun v : Fin 1 → ℝ => (v 0 - 1) ^ 2)
+  have hmem := mem_span_of_isMinOn L2 (fun v : Fin 1 → ℝ => (v 0 - 1) ^ 2)
     (Λ := 1) (by norm_num) hmin
   rw [representers_eq, Set.range_const] at hmem
   obtain ⟨t, ht⟩ := Submodule.mem_span_singleton.mp hmem
