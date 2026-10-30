@@ -19,7 +19,7 @@ import Mathlib.Tactic.Positivity
 Samples of two genes: the two allelic partitions `{2}` and `{1, 1}` have probabilities
 `1 / (θ + 1)` and `θ / (θ + 1)`, which sum to one; the expected number of alleles is
 `1 + θ / (θ + 1)`; the empty sample (`n = 0`); the junk value at `θ = 0`, outside the
-domain; and the first steps of Hoppe's urn.
+domain; the first steps of Hoppe's urn; and nonnegativity of both laws.
 -/
 
 @[expose] public section
@@ -95,5 +95,15 @@ example (θ : ℝ) :
 example (θ : ℝ) (hθ : 0 < θ) :
     ∑ π' : Nat.Partition 3, hoppeStep θ twoAlleles π' = 1 :=
   sum_hoppeStep hθ twoAlleles
+
+/-- The Ewens weights are a probability distribution on the partitions of four genes:
+nonnegative (`ewensProb_nonneg`) and summing to one (`sum_ewensProb`). -/
+example (θ : ℝ) (hθ : 0 < θ) :
+    (∀ π : Nat.Partition 4, 0 ≤ ewensProb θ π) ∧ ∑ π : Nat.Partition 4, ewensProb θ π = 1 :=
+  ⟨fun π => ewensProb_nonneg hθ π, sum_ewensProb θ hθ 4⟩
+
+/-- The Hoppe-urn law is nonnegative (`hoppeLaw_nonneg`). -/
+example (θ : ℝ) (hθ : 0 < θ) (π : Nat.Partition 3) : 0 ≤ hoppeLaw θ 3 π :=
+  hoppeLaw_nonneg hθ π
 
 end MathlibExtTest.Biology.PopulationGenetics.Ewens

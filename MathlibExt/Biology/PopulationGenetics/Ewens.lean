@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
@@ -43,12 +44,13 @@ the rising factorial vanishes and `ewensProb` returns Lean's junk value `0`.
 ## Main results
 
 * `ewensProb`: the Ewens sampling formula.
-* `sum_ewensProb`: it is a probability distribution on the partitions of `n`.
+* `ewensProb_nonneg`, `sum_ewensProb`: it is a probability distribution on the partitions of
+  `n` (nonnegative weights summing to one).
 * `sum_ewensProb_mul_card_parts`: the expected number of alleles is `∑_{i < n} θ / (θ + i)`.
 * `hoppeStep`, `hoppeStep_nonneg`, `sum_hoppeStep`: the Hoppe-urn transition on allelic
   partitions is a stochastic matrix.
-* `hoppeLaw`, `hoppeLaw_eq_ewensProb`: the law of the Hoppe urn after `n` draws is the Ewens
-  sampling formula.
+* `hoppeLaw`, `hoppeLaw_eq_ewensProb`, `hoppeLaw_nonneg`: the law of the Hoppe urn after `n`
+  draws is the Ewens sampling formula.
 
 ## References
 
@@ -270,6 +272,15 @@ theorem sum_ewensProb (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
   have hs := (weighted_totals θ hθ n).1
   simp only [weightedSum, mul_one] at hs
   rw [hs, div_self hpos]
+
+/-- The Ewens sampling formula is nonnegative for `θ > 0`; with `sum_ewensProb` it is a
+probability distribution on the partitions of `n`. -/
+theorem ewensProb_nonneg {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (π : n.Partition) :
+    0 ≤ ewensProb θ π := by
+  unfold ewensProb
+  have hpos := ascPochhammer_pos n θ hθ
+  refine mul_nonneg (div_nonneg (Nat.cast_nonneg _) hpos.le) (prod_nonneg fun j _ => ?_)
+  exact div_nonneg (pow_nonneg (div_nonneg hθ.le (Nat.cast_nonneg _)) _) (Nat.cast_nonneg _)
 
 /-- **Expected number of alleles** in a sample of `n` genes under the Ewens sampling formula:
 `E[K_n] = ∑_{i < n} θ / (θ + i)` (Ewens 1972). -/
@@ -574,5 +585,11 @@ theorem hoppeLaw_eq_ewensProb {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (π : n.Partit
     have hp : (ascPochhammer ℝ n).eval θ ≠ 0 := (ascPochhammer_pos n θ hθ).ne'
     have hd : θ + (n : ℝ) ≠ 0 := by positivity
     field_simp
+
+/-- The law of Hoppe's urn after `n` draws is nonnegative for `θ > 0`. -/
+theorem hoppeLaw_nonneg {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (π : n.Partition) :
+    0 ≤ hoppeLaw θ n π := by
+  rw [hoppeLaw_eq_ewensProb hθ]
+  exact ewensProb_nonneg hθ π
 
 end MathlibExt.Biology.PopulationGenetics.Ewens
