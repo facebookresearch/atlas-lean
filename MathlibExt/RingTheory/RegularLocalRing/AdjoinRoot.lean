@@ -30,11 +30,11 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.RingTheory.KrullDimension.Basic
+import MathlibExt.RingTheory.Ideal.IntegralKrullDim
+import Mathlib.Algebra.Module.SpanRank
+
 public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.RingTheory.Ideal.GoingUp
 public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.Algebra.Module.SpanRank
 
 /-!
 # Adjoining a root of an Eisenstein-like polynomial preserves regularity
@@ -50,85 +50,6 @@ Krull dimension.
 open IsLocalRing Polynomial
 
 namespace AdjoinRootRegularAux
-
-open Order
-
-section KrullDim
-
-variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra.IsIntegral A B]
-
-private def contr (Q : PrimeSpectrum B) : PrimeSpectrum A :=
-  ⟨Q.asIdeal.under A, inferInstance⟩
-
-omit [Algebra.IsIntegral A B] in
-private lemma contr_asIdeal (Q : PrimeSpectrum B) :
-    (contr (A := A) Q).asIdeal = Q.asIdeal.under A := rfl
-
-private lemma contr_strictMono : StrictMono (contr (A := A) (B := B)) := by
-  intro P Q hPQ
-  rw [← PrimeSpectrum.asIdeal_lt_asIdeal] at hPQ ⊢
-  rw [contr_asIdeal, contr_asIdeal]
-  exact Ideal.IsIntegral.under_lt_under hPQ
-
-private lemma ringKrullDim_le_of_isIntegral : ringKrullDim B ≤ ringKrullDim A :=
-  Order.krullDim_le_of_strictMono _ contr_strictMono
-
-private lemma exists_ltSeries_contr (hinj : Function.Injective (algebraMap A B)) :
-    ∀ (n : ℕ) (p : LTSeries (PrimeSpectrum A)), p.length = n →
-      ∃ q : LTSeries (PrimeSpectrum B), q.length = n ∧ contr q.last = p.last := by
-  intro n
-  induction n with
-  | zero =>
-      intro p hp
-      haveI := p.last.isPrime
-      have hbot : (⊥ : Ideal B).under A ≤ p.last.asIdeal := by
-        change (⊥ : Ideal B).comap (algebraMap A B) ≤ p.last.asIdeal
-        rw [Ideal.comap_bot_of_injective _ hinj]
-        exact bot_le
-      obtain ⟨Q, -, hQ, hQc⟩ :=
-        Ideal.exists_ideal_over_prime_of_isIntegral p.last.asIdeal (⊥ : Ideal B) hbot
-      refine ⟨RelSeries.singleton _ ⟨Q, hQ⟩, rfl, ?_⟩
-      exact PrimeSpectrum.ext hQc
-  | succ n ih =>
-      intro p hp
-      have hne : p.length ≠ 0 := by omega
-      obtain ⟨q', hq'len, hq'last⟩ :=
-        ih p.eraseLast (by rw [RelSeries.eraseLast_length]; omega)
-      have hlt : p.eraseLast.last < p.last := p.eraseLast_last_rel_last hne
-      haveI := p.last.isPrime
-      haveI := q'.last.isPrime
-      have hle : q'.last.asIdeal.under A ≤ p.last.asIdeal := by
-        rw [← contr_asIdeal, hq'last]
-        exact le_of_lt ((PrimeSpectrum.asIdeal_lt_asIdeal _ _).mpr hlt)
-      obtain ⟨Q, hQge, hQ, hQc⟩ :=
-        Ideal.exists_ideal_over_prime_of_isIntegral_of_isPrime p.last.asIdeal q'.last.asIdeal hle
-      have hlt' : q'.last < ⟨Q, hQ⟩ := by
-        rw [← PrimeSpectrum.asIdeal_lt_asIdeal]
-        refine lt_of_le_of_ne hQge ?_
-        intro heq
-        have : contr (A := A) q'.last = p.last :=
-          PrimeSpectrum.ext (by rw [contr_asIdeal, heq, hQc])
-        rw [hq'last] at this
-        exact (ne_of_lt hlt) this
-      refine ⟨q'.snoc ⟨Q, hQ⟩ hlt', by simp [hq'len], ?_⟩
-      rw [RelSeries.last_snoc]
-      exact PrimeSpectrum.ext hQc
-
-private lemma ringKrullDim_ge_of_isIntegral_of_injective
-    (hinj : Function.Injective (algebraMap A B)) :
-    ringKrullDim A ≤ ringKrullDim B := by
-  unfold ringKrullDim Order.krullDim
-  refine iSup_le fun p => ?_
-  obtain ⟨q, hq, -⟩ := exists_ltSeries_contr hinj p.length p rfl
-  rw [← hq]
-  exact le_iSup (fun q : LTSeries (PrimeSpectrum B) => (q.length : WithBot ℕ∞)) q
-
-private lemma ringKrullDim_eq_of_isIntegral_of_injective
-    (hinj : Function.Injective (algebraMap A B)) :
-    ringKrullDim B = ringKrullDim A :=
-  le_antisymm ringKrullDim_le_of_isIntegral (ringKrullDim_ge_of_isIntegral_of_injective hinj)
-
-end KrullDim
 
 section AdjoinRootLemmas
 
@@ -206,11 +127,11 @@ theorem IsRegularLocalRing.adjoinRoot_of_monic_of_coeff_mem_maximalIdeal_of_coef
     (h0 : g.coeff 0 ∉ maximalIdeal S ^ 2) :
     IsRegularLocalRing (AdjoinRoot g) ∧ ringKrullDim (AdjoinRoot g) = ringKrullDim S := by
   classical
-  haveI : Module.Finite S (AdjoinRoot g) := hg.finite_adjoinRoot
-  haveI : Algebra.IsIntegral S (AdjoinRoot g) := Algebra.IsIntegral.of_finite S (AdjoinRoot g)
+  have : Module.Finite S (AdjoinRoot g) := hg.finite_adjoinRoot
+  have : Algebra.IsIntegral S (AdjoinRoot g) := Algebra.IsIntegral.of_finite S (AdjoinRoot g)
   have hinj : Function.Injective (algebraMap S (AdjoinRoot g)) :=
     algebraMap_injective_of_monic g hg hn
-  haveI : Nontrivial (AdjoinRoot g) := hinj.nontrivial
+  have : Nontrivial (AdjoinRoot g) := hinj.nontrivial
 
   set x : AdjoinRoot g := AdjoinRoot.root g with hx
   set φ : S →+* AdjoinRoot g := algebraMap S (AdjoinRoot g) with hφ
@@ -245,13 +166,13 @@ theorem IsRegularLocalRing.adjoinRoot_of_monic_of_coeff_mem_maximalIdeal_of_coef
       simpa using this
     rw [J.eq_top_of_isUnit_mem hcJ (hcunit.map φ)]
     trivial
-  haveI hloc : IsLocalRing (AdjoinRoot g) :=
+  have hloc : IsLocalRing (AdjoinRoot g) :=
     IsLocalRing.of_unique_max_ideal
       ⟨M, hMmax, fun Q hQ => (hMmax.eq_of_le hQ.ne_top (hMle Q hQ)).symm⟩
   have hmaxT : maximalIdeal (AdjoinRoot g) = M := (IsLocalRing.eq_maximalIdeal hMmax).symm
 
   have hdim : ringKrullDim (AdjoinRoot g) = ringKrullDim S :=
-    ringKrullDim_eq_of_isIntegral_of_injective hinj
+    ringKrullDim_eq_of_integral_of_injective hinj
 
   obtain ⟨s, hscard, hsspan⟩ :=
     Submodule.FG.exists_span_finset_card_eq_spanFinrank (IsNoetherian.noetherian (maximalIdeal S))
