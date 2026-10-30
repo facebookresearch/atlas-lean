@@ -14,11 +14,11 @@ public import Mathlib.Probability.StrongLaw
 public import Mathlib.Probability.Moments.Variance
 
 /-!
-# Tests for asymptotic normality of maximum likelihood
+# Tests for asymptotic normality of consistent roots of the likelihood equation
 
 * Non-vacuity: the Gaussian location family `p θ = N(θ, 1)` (density with respect to Lebesgue
   measure) at `θ₀ = 0` satisfies every hypothesis of
-  `tendstoInDistribution_sqrt_mul_sub_maximumLikelihood`, with score `x - θ`, Fisher information
+  `tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation`, with score `x - θ`, Fisher information
   `1`, envelope `M = 0`, and the sample mean as the exact root of the likelihood equation, on
   the i.i.d. product space `ℕ → ℝ`. The theorem gives `√n · X̄ₙ → N(0, 1)`.
 * The general convergence lemmas on concrete inputs.
@@ -148,7 +148,7 @@ theorem tendstoInMeasure_sampleMean :
     rw [h0] at h
     exact h
 
-/-- **Non-vacuity of `tendstoInDistribution_sqrt_mul_sub_maximumLikelihood`**: for the Gaussian
+/-- **Non-vacuity of `tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation`**: for the Gaussian
 location family every hypothesis holds, and the theorem yields `√n · X̄ₙ → N(0, 1)`. -/
 theorem tendstoInDistribution_sqrt_mul_sampleMean :
     TendstoInDistribution (fun (n : ℕ) ω => √n * (sampleMean n ω - 0)) atTop id
@@ -170,7 +170,7 @@ theorem tendstoInDistribution_sqrt_mul_sampleMean :
   have hinfo : ∫ x, deriv (fun t => score pG t x) 0 ∂lawOf volume pG 0 =
       -fisherInformation volume pG 0 := by
     simp [deriv_score_pG, fisherInformation_pG]
-  exact tendstoInDistribution_sqrt_mul_sub_maximumLikelihood (δ := 1) (M := fun _ => 0)
+  exact tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation (δ := 1) (M := fun _ => 0)
     one_pos pG_pos (fun θ _ => measurable_gaussianPDFReal θ 1)
     (fun θ _ => integral_gaussianPDFReal_eq_one θ one_ne_zero) hasLaw_coord iIndepFun_coord
     (fun x θ _ => differentiableAt_log_pG x θ) (fun x θ _ => by rw [score_pG_fun]; fun_prop)

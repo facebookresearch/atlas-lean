@@ -16,7 +16,7 @@ import Mathlib.Probability.CentralLimitTheorem
 import Mathlib.Probability.StrongLaw
 
 /-!
-# Asymptotic normality of the maximum-likelihood estimator
+# Asymptotic normality of consistent roots of the likelihood equation
 
 Let `X 0, X 1, …` be i.i.d. observations and let `ψ θ x` be an estimating function with
 `E ψ θ₀ (X 0) = 0`. Under Cramér's regularity conditions (two derivatives of `ψ` in `θ` on a
@@ -24,8 +24,12 @@ neighborhood of `θ₀`, the second one bounded by an integrable envelope `M`), 
 sequence `θhat n` of roots of the estimating equation `∑_{i<n} ψ θ (X i) = 0` satisfies
 `√n (θhat n - θ₀) → N(0, E ψ² / (E ∂_θ ψ)²)` in distribution. Taking `ψ` to be the score
 `∂_θ log p θ x` of a positive density family `p` and using the Bartlett identities
-`E ψ = 0`, `E ∂_θ ψ = -I(θ₀)` gives the asymptotic normality of maximum likelihood:
-`√n (θhat n - θ₀) → N(0, 1 / I(θ₀))`.
+`E ψ = 0`, `E ∂_θ ψ = -I(θ₀)` gives Cramér's theorem for consistent roots of the likelihood
+equation: `√n (θhat n - θ₀) → N(0, 1 / I(θ₀))`. This is the classical asymptotic normality of
+maximum likelihood, but a root of the likelihood equation need not maximize the likelihood;
+applying the theorem to a maximum-likelihood estimator needs a separate argument that the
+estimator is consistent and solves the likelihood equation with probability tending to one
+(for example, an interior maximum of a differentiable likelihood).
 
 The proof Taylor-expands the estimating equation around `θ₀`, applies the central limit
 theorem to `n^{-1/2} ∑ ψ θ₀ (X i)`, the strong law to `n⁻¹ ∑ ∂_θ ψ θ₀ (X i)` and to
@@ -45,7 +49,7 @@ theorem to `n^{-1/2} ∑ ψ θ₀ (X i)`, the strong law to `n⁻¹ ∑ ∂_θ �
   `n^{-1/2} ∑_{i<n} ∂_θ log p θ₀ (X i) → N(0, I(θ₀))`.
 * `tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation`: asymptotic normality of a
   consistent root of an estimating equation (one-dimensional Z-estimator).
-* `tendstoInDistribution_sqrt_mul_sub_maximumLikelihood`: asymptotic normality of a
+* `tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation`: asymptotic normality of a
   consistent root of the likelihood equation, with limit variance `1 / I(θ₀)`.
 
 ## References
@@ -457,12 +461,13 @@ theorem tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation
     simp [Function.comp, mul_div_cancel_left₀ _ hJ0]
   exact tendstoInDistribution_of_tendstoInMeasure_sub (fun n ω => T n ω) Y hAJ hdiff hT_meas
 
-/-- **Asymptotic normality of maximum likelihood** (Cramér's conditions). Let `p θ` be positive
+/-- **Asymptotic normality of consistent roots of the likelihood equation** (Cramér's
+conditions). Let `p θ` be positive
 densities with respect to `ν`, and on the ball of radius `δ > 0` about `θ₀` let each `p θ` be
 measurable with `∫ p θ dν = 1`, so that the family is a statistical model there (as in
 `FisherInformation.cramerRao`). The proof uses measurability only at `θ₀` and does not use the
 normalization `_hp_int`: the limit theorem holds for roots of any criterion with these
-derivatives, and normalization is what makes those roots maximum-likelihood estimators.
+derivatives.
 Let `X 0, X 1, …` be i.i.d. with law `p θ₀ ν`. Assume that on the same ball the log-likelihood
 `log p θ x` is differentiable in `θ` for every `x` (so that `score p θ x` is its true derivative
 there, not Lean's junk value `0` of `deriv` at a nondifferentiable point) and the score
@@ -473,11 +478,14 @@ mean zero; that `∂²_θ log p θ₀` is measurable and integrable with `E ∂�
 differentiating `∫ p θ dν = 1` twice under the integral sign gives; they are assumed directly.
 Let `θhat n` be estimators that solve the likelihood equation `∑_{i<n} ∂_θ log p θ (X i) = 0`
 with probability tending to one and converge to `θ₀` in probability. Then
-`√n (θhat n - θ₀) → N(0, 1 / I(θ₀))` in distribution.
+`√n (θhat n - θ₀) → N(0, 1 / I(θ₀))` in distribution. The roots need not maximize the
+likelihood; for a maximum-likelihood estimator, consistency and the likelihood equation must
+be established separately (for example, from an interior maximum of a differentiable
+likelihood).
 
 Source: Cramér (1946), §33.3; Lehmann & Casella (1998), Theorem 6.3.10; van der Vaart (1998),
 Theorem 5.41. -/
-theorem tendstoInDistribution_sqrt_mul_sub_maximumLikelihood
+theorem tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation
     {ν : Measure 𝓧} {p : ℝ → 𝓧 → ℝ} {θ₀ δ : ℝ} (hδ : 0 < δ)
     (hp_pos : ∀ θ x, 0 < p θ x) (hp_meas : ∀ θ ∈ Metric.ball θ₀ δ, Measurable (p θ))
     (_hp_int : ∀ θ ∈ Metric.ball θ₀ δ, ∫ x, p θ x ∂ν = 1)
