@@ -30,11 +30,22 @@ example : ldScore X2 0 = 2 := by
   simp [ldScore, ldCorr, X2, Fin.sum_univ_two]
   norm_num
 
-/-- Two individuals, two markers in linkage equilibrium (orthogonal columns): `ℓ = 1`. -/
-def X2' : Matrix (Fin 2) (Fin 2) ℝ := !![1, 1; 1, -1]
+/-- Four individuals, two standardized markers in linkage equilibrium: columns
+`(1, 1, -1, -1)` and `(1, -1, 1, -1)`, each with mean `0` and sum of squares `N = 4`, and
+orthogonal. -/
+def X4 : Matrix (Fin 4) (Fin 2) ℝ := !![1, 1; 1, -1; -1, 1; -1, -1]
 
-example : ldScore X2' 1 = 1 := by
-  simp [ldScore, ldCorr, X2', Fin.sum_univ_two]
+/-- Both columns are standardized: mean `0` and sum of squares `4`. -/
+example (j : Fin 2) : ∑ i, X4 i j = 0 ∧ ∑ i, X4 i j ^ 2 = 4 := by
+  fin_cases j <;> simp [X4, Fin.sum_univ_four] <;> norm_num
+
+/-- The two markers are uncorrelated, `r₀₁ = 0`, so `ℓ = r₁₁² = 1`. -/
+example : ldCorr X4 0 1 = 0 := by
+  simp [ldCorr, X4, Fin.sum_univ_four]
+
+example : ldScore X4 1 = 1 := by
+  simp [ldScore, ldCorr, X4, Fin.sum_univ_four, Fin.sum_univ_two]
+  norm_num
 
 /-! ### A non-vacuous model
 
