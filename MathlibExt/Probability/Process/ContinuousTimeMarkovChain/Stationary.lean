@@ -23,12 +23,14 @@ transition function `P t = exp (t • Q)`:
 * `π Q = 0` if and only if `π P t = π` for every `t` (Norris 1997, §3.5, for finite state
   spaces);
 * detailed balance implies invariance, and it propagates to the transition function:
-  `π i P t i j = π j P t j i` for every `t`; for a probability vector `π` this is the matrix
-  form of the time-reversibility of the chain started from `π` (Norris 1997, §3.7). No
-  path-space process is constructed here.
+  `π i P t i j = π j P t j i` for every `t` (Norris 1997, §3.7).
 
-These statements are about arbitrary real vectors `π`; stationary *distributions* are the
-nonnegative ones summing to `1`.
+These statements are algebraic equations about arbitrary real vectors `π`; `π = 0`, for
+instance, is in detailed balance with every matrix. Only when `π` is a probability vector
+(nonnegative, summing to `1`) and `Q` is a rate matrix, so that `P t` is stochastic, are the
+propagated equations the matrix form of the time-reversibility of the chain started from `π`;
+stationary *distributions* are likewise the invariant probability vectors. No path-space
+process is constructed here.
 
 ## Main definitions
 
@@ -39,7 +41,7 @@ nonnegative ones summing to `1`.
 * `vecMul_eq_zero_iff_forall_vecMul_ctmcTransition`: `π ᵥ* Q = 0 ↔ ∀ t, π ᵥ* P t = π`.
 * `IsDetailedBalance.vecMul_eq_zero`: detailed balance and zero row sums imply `π ᵥ* Q = 0`.
 * `IsDetailedBalance.ctmcTransition`: detailed balance for `Q` implies detailed balance for
-  every `P t` (reversibility).
+  every `P t` (for a probability vector `π` and a rate matrix `Q`, reversibility).
 * `IsDetailedBalance.vecMul_ctmcTransition`: hence `π ᵥ* P t = π`.
 
 ## References
@@ -56,8 +58,9 @@ namespace ProbabilityTheory
 variable {ι : Type*} [Fintype ι]
 
 /-- The row vector `π` is in **detailed balance** with the matrix `Q`:
-`π i * Q i j = π j * Q j i` for all `i j` (Norris 1997, §3.7). Applied to a transition matrix
-this is the reversibility of the chain started from `π`. -/
+`π i * Q i j = π j * Q j i` for all `i j` (Norris 1997, §3.7). This is only the algebraic
+equation: it holds for `π = 0` and every `Q`. For a probability vector `π` and a stochastic
+matrix it is the reversibility of the chain started from `π`. -/
 def IsDetailedBalance (π : ι → ℝ) (Q : Matrix ι ι ℝ) : Prop :=
   ∀ i j, π i * Q i j = π j * Q j i
 
@@ -99,8 +102,9 @@ theorem vecMul_eq_zero (h : IsDetailedBalance π Q) (hQ : ∀ i, ∑ j, Q i j = 
   calc ∑ i, π i * Q i j = ∑ i, π j * Q j i := sum_congr rfl fun i _ => h i j
     _ = 0 := by rw [← mul_sum, hQ j, mul_zero]
 
-/-- **Reversibility**: detailed balance for `Q` implies detailed balance for every `P t`,
-`π i P t i j = π j P t j i` (Norris 1997, §3.7). -/
+/-- **Detailed balance propagates to the transition function**: detailed balance for `Q`
+implies `π i P t i j = π j P t j i` for every `t` (Norris 1997, §3.7). For a probability
+vector `π` and a rate matrix `Q` this is the reversibility of the chain started from `π`. -/
 theorem ctmcTransition [DecidableEq ι] (h : IsDetailedBalance π Q) (t : ℝ) :
     IsDetailedBalance π (ctmcTransition Q t) := by
   have hs : SemiconjBy (diagonal π) (t • Q) (t • Qᵀ) := by
