@@ -46,7 +46,12 @@ example : ∑ i, πex i = 1 := by norm_num [πex, Fin.sum_univ_four]
 -- Non-vacuity witness: the GTR matrix is a rate matrix with stationary distribution `πex`,
 -- in detailed balance, at every time.
 example : IsRateMatrix (gtrRate πex sex) :=
-  isRateMatrix_gtrRate πex_nonneg fun i j => by simp only [sex, of_apply]; positivity
+  isRateMatrix_gtrRate πex_nonneg fun i j _ => by simp only [sex, of_apply]; positivity
+
+-- The diagonal exchangeabilities are not used: with `s i i = -1` and `s i j = 1` off the
+-- diagonal, the GTR matrix is still a rate matrix.
+example : IsRateMatrix (gtrRate πex (Matrix.of fun i j : Fin 4 => if i = j then -1 else 1)) :=
+  isRateMatrix_gtrRate πex_nonneg fun i j hij => by simp [hij]
 example : IsDetailedBalance πex (gtrRate πex sex) := isDetailedBalance_gtrRate πex sex_symm
 example (t : ℝ) : πex ᵥ* ctmcTransition (gtrRate πex sex) t = πex :=
   vecMul_ctmcTransition_gtrRate πex sex_symm t
@@ -55,7 +60,7 @@ example (t : ℝ) (i j : Fin 4) :
       πex j * ctmcTransition (gtrRate πex sex) t j i :=
   isDetailedBalance_ctmcTransition_gtrRate πex sex_symm t i j
 example {t : ℝ} (ht : 0 ≤ t) (i j : Fin 4) : 0 ≤ ctmcTransition (gtrRate πex sex) t i j :=
-  (isRateMatrix_gtrRate πex_nonneg fun i j => by
+  (isRateMatrix_gtrRate πex_nonneg fun i j _ => by
     simp only [sex, of_apply]; positivity).ctmcTransition_nonneg ht i j
 
 -- HKY85 with `κ = 2`: a transition `A → G`, a transversion `A → C`, and the diagonal at `A`.

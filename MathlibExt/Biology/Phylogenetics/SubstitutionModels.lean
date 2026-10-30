@@ -96,12 +96,12 @@ theorem sum_gtrRate (π : ι → ℝ) (s : Matrix ι ι ℝ) (i : ι) : ∑ j, g
   rw [← add_sum_erase _ _ (mem_univ i), h]
   simp [gtrRate]
 
-/-- With nonnegative base frequencies and exchangeabilities, the GTR matrix is a rate
-matrix. -/
+/-- With nonnegative base frequencies and nonnegative off-diagonal exchangeabilities, the GTR
+matrix is a rate matrix (the diagonal `s i i` is not used by `gtrRate`). -/
 theorem isRateMatrix_gtrRate {π : ι → ℝ} {s : Matrix ι ι ℝ} (hπ : ∀ i, 0 ≤ π i)
-    (hs : ∀ i j, 0 ≤ s i j) : IsRateMatrix (gtrRate π s) := by
+    (hs : ∀ i j, i ≠ j → 0 ≤ s i j) : IsRateMatrix (gtrRate π s) := by
   refine ⟨fun i j hij => ?_, sum_gtrRate π s⟩
-  simpa [gtrRate, hij] using mul_nonneg (hs i j) (hπ j)
+  simpa [gtrRate, hij] using mul_nonneg (hs i j hij) (hπ j)
 
 /-- **GTR is reversible**: with symmetric exchangeabilities, the GTR matrix is in detailed
 balance with its base frequencies, `π i Q i j = π j Q j i` (Tavaré 1986). -/
@@ -158,13 +158,13 @@ noncomputable def k80Rate (κ : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
 /-- With nonnegative base frequencies and `κ ≥ 0`, the HKY85 matrix is a rate matrix. -/
 theorem isRateMatrix_hkyRate {π : Fin 4 → ℝ} {κ : ℝ} (hπ : ∀ i, 0 ≤ π i) (hκ : 0 ≤ κ) :
     IsRateMatrix (hkyRate π κ) := by
-  refine isRateMatrix_gtrRate hπ fun i j => ?_
+  refine isRateMatrix_gtrRate hπ fun i j _ => ?_
   simp only [hkyExchangeability, of_apply]
   split_ifs <;> linarith
 
 /-- With nonnegative base frequencies, the F81 matrix is a rate matrix. -/
 theorem isRateMatrix_f81Rate {π : Fin 4 → ℝ} (hπ : ∀ i, 0 ≤ π i) : IsRateMatrix (f81Rate π) :=
-  isRateMatrix_gtrRate hπ fun _ _ => zero_le_one
+  isRateMatrix_gtrRate hπ fun _ _ _ => zero_le_one
 
 /-- With `κ ≥ 0`, the K80 matrix is a rate matrix. -/
 theorem isRateMatrix_k80Rate {κ : ℝ} (hκ : 0 ≤ κ) : IsRateMatrix (k80Rate κ) :=
