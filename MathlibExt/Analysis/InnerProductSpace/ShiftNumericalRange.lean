@@ -9,9 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.InnerProductSpace.ToeplitzHausdorff
-public import Mathlib.Analysis.InnerProductSpace.l2Space
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
-public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 import Mathlib.Analysis.Normed.Lp.lpSpace
@@ -51,20 +49,18 @@ and the same vector with `conj w` gives `⟪B y, y⟫ = w`.
 This is a companion to the Hilbert-space / spectral material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/HilbertSpace.lean` and
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`.
-It is not one of the 72 v1 targets, and it is not in the pinned Mathlib
-or in base MathlibExt: base MathlibExt has the numerical range as a set
-and its convexity (Toeplitz–Hausdorff), but no shift operator and no
-computation of a numerical range for a concrete operator. The shift
-operators are defined here from scratch, in this file's own namespace,
-since base MathlibExt has no shift operator (other batches define their
-own shifts on their own branches for the same reason). Classical
+It is not one of the 72 v1 targets. The numerical range and its convexity
+come from `ToeplitzHausdorff`, while the shift operators come from
+`LpShiftOperator`. We specialize its canonical `shiftCLM` and `backwardCLM`
+to complex scalars, so these results apply to the operators used by the
+shift spectrum API. Classical
 reference: P. R. Halmos, *A Hilbert Space Problem Book*, 2nd edition,
 Problem 129 (the numerical range of the shift is the open unit disc).
 
 ## Main declarations
 
-* `fwdShiftCLM` / `bwdShiftCLM` : the forward and backward shifts as
-  bounded operators on `ℓ²(ℕ, ℂ)`.
+* `LpShiftOperator.shiftCLM` / `LpShiftOperator.backwardCLM` : the
+  canonical forward and backward shifts on `ℓ²(ℕ, ℂ)` used below.
 * `quadForm_fwdShift_eq_tsum` / `quadForm_bwdShift_eq_tsum` : the
   quadratic forms as series over consecutive coordinates.
 * `sum_norm_mul_succ_lt_one` : the AM–GM strict bound
@@ -81,168 +77,33 @@ namespace MathlibExt.Analysis.InnerProductSpace.ShiftNumericalRange
 open Filter Topology Set
 open scoped _root_.lp _root_.InnerProduct _root_.InnerProductSpace ENNReal
 
-/-- The forward-shift function on sequences: insert `0` at `0` and shift up by one. -/
-def fwdShiftFun (x : ℕ → ℂ) : ℕ → ℂ
-  | 0 => 0
-  | n + 1 => x n
-
-/-- The backward-shift function on sequences: drop coordinate `0` and shift down by one. -/
-def bwdShiftFun (x : ℕ → ℂ) (i : ℕ) : ℂ := x (i + 1)
-
-@[simp] theorem fwdShiftFun_zero (x : ℕ → ℂ) : fwdShiftFun x 0 = 0 := rfl
-
-@[simp] theorem fwdShiftFun_succ (x : ℕ → ℂ) (n : ℕ) : fwdShiftFun x (n + 1) = x n := rfl
-
-@[simp] theorem bwdShiftFun_apply (x : ℕ → ℂ) (i : ℕ) : bwdShiftFun x i = x (i + 1) :=
-  rfl
-
-/-- The shifted sequence of an `ℓ²` sequence is in `ℓ²`. -/
-theorem memℓp_fwdShiftFun {x : ℓ²(ℕ, ℂ)} : Memℓp (fwdShiftFun (x : ℕ → ℂ)) 2 := by
-  apply memℓp_gen
-  have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
-  have h' : Summable (fun n => ‖fwdShiftFun (x : ℕ → ℂ) (n + 1)‖ ^ (2 : ℝ≥0∞).toReal) := by
-    simpa only [fwdShiftFun_succ] using h
-  exact (summable_nat_add_iff 1).mp h'
-
-/-- The backward-shifted sequence of an `ℓ²` sequence is in `ℓ²`. -/
-theorem memℓp_bwdShiftFun {x : ℓ²(ℕ, ℂ)} : Memℓp (bwdShiftFun (x : ℕ → ℂ)) 2 := by
-  apply memℓp_gen
-  have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
-  have h' : Summable (fun n => ‖bwdShiftFun (x : ℕ → ℂ) n‖ ^ (2 : ℝ≥0∞).toReal) := by
-    simpa only [bwdShiftFun_apply] using (summable_nat_add_iff 1).mpr h
-  exact h'
-
-/-- The forward shift as a linear map. -/
-noncomputable def fwdShiftLinMap : ℓ²(ℕ, ℂ) →ₗ[ℂ] ℓ²(ℕ, ℂ) where
-  toFun x := ⟨fwdShiftFun (x : ℕ → ℂ), memℓp_fwdShiftFun⟩
-  map_add' x y := by
-    apply lp.ext
-    funext i
-    cases i with
-    | zero =>
-        simp only [lp.coeFn_add, fwdShiftFun_zero, Pi.add_apply, add_zero]
-    | succ n => simp only [lp.coeFn_add, fwdShiftFun_succ, Pi.add_apply]
-  map_smul' c x := by
-    apply lp.ext
-    funext i
-    cases i with
-    | zero =>
-        simp only [lp.coeFn_smul, fwdShiftFun_zero, Pi.smul_apply, smul_zero]
-    | succ n =>
-        simp only [lp.coeFn_smul, fwdShiftFun_succ, Pi.smul_apply, smul_eq_mul,
-          RingHom.id_apply]
-
-/-- The backward shift as a linear map. -/
-noncomputable def bwdShiftLinMap : ℓ²(ℕ, ℂ) →ₗ[ℂ] ℓ²(ℕ, ℂ) where
-  toFun x := ⟨bwdShiftFun (x : ℕ → ℂ), memℓp_bwdShiftFun⟩
-  map_add' x y := by
-    apply lp.ext
-    funext i
-    simp only [lp.coeFn_add, bwdShiftFun_apply, Pi.add_apply]
-  map_smul' c x := by
-    apply lp.ext
-    funext i
-    simp only [lp.coeFn_smul, bwdShiftFun_apply, Pi.smul_apply, smul_eq_mul,
-      RingHom.id_apply]
-
-/-- Pointwise action of the forward-shift linear map. -/
-theorem fwdShiftLinMap_apply (x : ℓ²(ℕ, ℂ)) (i : ℕ) :
-    fwdShiftLinMap x i = fwdShiftFun (x : ℕ → ℂ) i :=
-  rfl
-
-/-- Pointwise action of the backward-shift linear map. -/
-theorem bwdShiftLinMap_apply (x : ℓ²(ℕ, ℂ)) (i : ℕ) :
-    bwdShiftLinMap x i = bwdShiftFun (x : ℕ → ℂ) i :=
-  rfl
-
-/-- The squared norms of a shifted sequence sum to the squared norms of
-the original sequence. -/
-theorem tsum_fwdShiftFun_norm (x : ℓ²(ℕ, ℂ)) :
-    ∑' i, ‖fwdShiftFun (x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal =
-      ∑' i, ‖(x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal := by
-  have hs : Summable (fun i => ‖fwdShiftFun (x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal) :=
-    memℓp_fwdShiftFun.summable (by simp)
-  rw [hs.tsum_eq_zero_add]
-  simp only [fwdShiftFun_zero, fwdShiftFun_succ, norm_zero,
-    Real.zero_rpow (by simp : (2 : ℝ≥0∞).toReal ≠ 0), zero_add]
-
-/-- The squared norms of a backward-shifted sequence sum to at most the
-squared norms of the original sequence: they are a tail sum. -/
-theorem tsum_bwdShiftFun_norm_le (x : ℓ²(ℕ, ℂ)) :
-    ∑' i, ‖bwdShiftFun (x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal ≤
-      ∑' i, ‖(x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal := by
-  have hs : Summable (fun i => ‖(x : ℕ → ℂ) i‖ ^ (2 : ℝ≥0∞).toReal) :=
-    (lp.memℓp x).summable (by simp)
-  rw [hs.tsum_eq_zero_add]
-  simp only [bwdShiftFun_apply]
-  exact le_add_of_nonneg_left (Real.rpow_nonneg (norm_nonneg _) _)
-
-/-- The forward shift preserves norms. -/
-theorem norm_fwdShiftLinMap_apply (x : ℓ²(ℕ, ℂ)) : ‖fwdShiftLinMap x‖ = ‖x‖ := by
-  have hpow : ‖fwdShiftLinMap x‖ ^ (2 : ℝ≥0∞).toReal = ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
-    rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (fwdShiftLinMap x),
-      lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) x]
-    exact tsum_fwdShiftFun_norm x
-  have hexp : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
-  rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hpow
-
-/-- The backward shift does not increase norms. -/
-theorem norm_bwdShiftLinMap_apply_le (x : ℓ²(ℕ, ℂ)) : ‖bwdShiftLinMap x‖ ≤ ‖x‖ := by
-  have hpow : ‖bwdShiftLinMap x‖ ^ (2 : ℝ≥0∞).toReal ≤ ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
-    rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (bwdShiftLinMap x),
-      lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) x]
-    exact tsum_bwdShiftFun_norm_le x
-  have hexp : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
-  rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
-  exact le_of_sq_le_sq hpow (norm_nonneg _)
-
-/-- The unilateral (forward) shift as a bounded operator on `ℓ²(ℕ, ℂ)`. -/
-noncomputable def fwdShiftCLM : ℓ²(ℕ, ℂ) →L[ℂ] ℓ²(ℕ, ℂ) :=
-  fwdShiftLinMap.mkContinuous 1 (fun x => by
-    rw [one_mul]
-    exact le_of_eq (norm_fwdShiftLinMap_apply x))
-
-/-- The backward shift as a bounded operator on `ℓ²(ℕ, ℂ)`. -/
-noncomputable def bwdShiftCLM : ℓ²(ℕ, ℂ) →L[ℂ] ℓ²(ℕ, ℂ) :=
-  bwdShiftLinMap.mkContinuous 1 (fun x => by
-    rw [one_mul]
-    exact norm_bwdShiftLinMap_apply_le x)
-
-/-- Pointwise action of the unilateral shift. -/
-theorem fwdShiftCLM_apply (x : ℓ²(ℕ, ℂ)) (i : ℕ) :
-    fwdShiftCLM x i = fwdShiftFun (x : ℕ → ℂ) i :=
-  rfl
-
-/-- Pointwise action of the backward shift. -/
-theorem bwdShiftCLM_apply (x : ℓ²(ℕ, ℂ)) (i : ℕ) :
-    bwdShiftCLM x i = bwdShiftFun (x : ℕ → ℂ) i :=
-  rfl
-
 /-- The quadratic form of the forward shift as a series over consecutive
 coordinates: `⟪S x, x⟫ = ∑' n, conj (x n) * x (n + 1)`. -/
 theorem quadForm_fwdShift_eq_tsum (x : ℓ²(ℕ, ℂ)) :
-    ⟪fwdShiftCLM x, x⟫_ℂ = ∑' n, (starRingEnd ℂ) (x n) * x (n + 1) := by
+    ⟪LpShiftOperator.shiftCLM x, x⟫_ℂ = ∑' n, (starRingEnd ℂ) (x n) * x (n + 1) := by
   rw [lp.inner_eq_tsum]
-  have hs : Summable (fun i => ⟪(fwdShiftCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
-    lp.summable_inner (fwdShiftCLM x) x
+  have hs : Summable (fun i => ⟪(LpShiftOperator.shiftCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
+    lp.summable_inner (LpShiftOperator.shiftCLM x) x
   rw [hs.tsum_eq_zero_add]
-  simp only [fwdShiftCLM_apply, fwdShiftFun_zero, fwdShiftFun_succ, RCLike.inner_apply',
+  simp only [LpShiftOperator.shiftCLM_apply, LpShiftOperator.shiftFun_zero,
+    LpShiftOperator.shiftFun_succ, RCLike.inner_apply',
     map_zero, zero_mul, zero_add]
 
 /-- The quadratic form of the backward shift as a series over consecutive
 coordinates: `⟪B x, x⟫ = ∑' n, conj (x (n + 1)) * x n`. -/
 theorem quadForm_bwdShift_eq_tsum (x : ℓ²(ℕ, ℂ)) :
-    ⟪bwdShiftCLM x, x⟫_ℂ = ∑' n, (starRingEnd ℂ) (x (n + 1)) * x n := by
+    ⟪LpShiftOperator.backwardCLM x, x⟫_ℂ = ∑' n, (starRingEnd ℂ) (x (n + 1)) * x n := by
   have hf : Summable (fun n => (starRingEnd ℂ) (x (n + 1)) * x n) := by
-    have h : Summable (fun i => ⟪(bwdShiftCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
-      lp.summable_inner (bwdShiftCLM x) x
-    simpa only [bwdShiftCLM_apply, bwdShiftFun_apply, RCLike.inner_apply'] using h
+    have h : Summable (fun i => ⟪(LpShiftOperator.backwardCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
+      lp.summable_inner (LpShiftOperator.backwardCLM x) x
+    simpa only [LpShiftOperator.backwardCLM_apply, LpShiftOperator.backwardFun_apply,
+      RCLike.inner_apply'] using h
   rw [lp.inner_eq_tsum]
-  have hs : Summable (fun i => ⟪(bwdShiftCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
-    lp.summable_inner (bwdShiftCLM x) x
+  have hs : Summable (fun i => ⟪(LpShiftOperator.backwardCLM x : ℕ → ℂ) i, (x : ℕ → ℂ) i⟫_ℂ) :=
+    lp.summable_inner (LpShiftOperator.backwardCLM x) x
   rw [hs.tsum_eq_zero_add, hf.tsum_eq_zero_add]
-  simp only [bwdShiftCLM_apply, bwdShiftFun_apply, RCLike.inner_apply', Nat.zero_add]
+  simp only [LpShiftOperator.backwardCLM_apply, LpShiftOperator.backwardFun_apply,
+    RCLike.inner_apply', Nat.zero_add]
 
 /-- The squared coordinate norms of an `ℓ²` sequence are summable. -/
 private theorem summable_sq_norm (x : ℓ²(ℕ, ℂ)) :
@@ -407,7 +268,7 @@ theorem norm_geom {u : ℂ} (hu : ‖u‖ < 1) : ‖geom u‖ = 1 := by
 /-- The quadratic form of the forward shift at the geometric vector
 attached to `u` is `u` itself. -/
 theorem quadForm_fwd_geom {u : ℂ} (hu : ‖u‖ < 1) :
-    ⟪fwdShiftCLM (geom u), geom u⟫_ℂ = u := by
+    ⟪LpShiftOperator.shiftCLM (geom u), geom u⟫_ℂ = u := by
   rw [quadForm_fwdShift_eq_tsum]
   have hpos : (0 : ℝ) < 1 - ‖u‖ ^ 2 := by
     have h2 : ‖u‖ ^ 2 < 1 := by
@@ -450,7 +311,7 @@ theorem quadForm_fwd_geom {u : ℂ} (hu : ‖u‖ < 1) :
 /-- The quadratic form of the backward shift at the geometric vector
 attached to `u` is `conj u`. -/
 theorem quadForm_bwd_geom {u : ℂ} (hu : ‖u‖ < 1) :
-    ⟪bwdShiftCLM (geom u), geom u⟫_ℂ = (starRingEnd ℂ) u := by
+    ⟪LpShiftOperator.backwardCLM (geom u), geom u⟫_ℂ = (starRingEnd ℂ) u := by
   rw [quadForm_bwdShift_eq_tsum]
   have hpos : (0 : ℝ) < 1 - ‖u‖ ^ 2 := by
     have h2 : ‖u‖ ^ 2 < 1 := by
@@ -494,13 +355,13 @@ theorem quadForm_bwd_geom {u : ℂ} (hu : ‖u‖ < 1) :
 /-- Every `u` with `‖u‖ < 1` lies in the numerical range of the forward
 shift, witnessed by the geometric vector attached to `u`. -/
 theorem mem_numericalRange_fwdShift_of_norm_lt_one {u : ℂ} (hu : ‖u‖ < 1) :
-    u ∈ ToeplitzHausdorffWanted.numericalRange fwdShiftCLM :=
+    u ∈ ToeplitzHausdorffWanted.numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) :=
   ⟨geom u, norm_geom hu, quadForm_fwd_geom hu⟩
 
 /-- Every `w` with `‖w‖ < 1` lies in the numerical range of the backward
 shift, witnessed by the geometric vector attached to `conj w`. -/
 theorem mem_numericalRange_bwdShift_of_norm_lt_one {w : ℂ} (hw : ‖w‖ < 1) :
-    w ∈ ToeplitzHausdorffWanted.numericalRange bwdShiftCLM := by
+    w ∈ ToeplitzHausdorffWanted.numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   have hconj : ‖(starRingEnd ℂ) w‖ < 1 := by
     rwa [RCLike.norm_conj]
   refine ⟨geom ((starRingEnd ℂ) w), norm_geom hconj, ?_⟩
@@ -510,7 +371,7 @@ theorem mem_numericalRange_bwdShift_of_norm_lt_one {w : ℂ} (hw : ‖w‖ < 1) 
 /-- Every point of the numerical range of the forward shift has norm
 strictly less than `1`, by the AM–GM strict bound. -/
 theorem norm_lt_one_of_mem_numericalRange_fwdShift {w : ℂ}
-    (hw : w ∈ ToeplitzHausdorffWanted.numericalRange fwdShiftCLM) :
+    (hw : w ∈ ToeplitzHausdorffWanted.numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ))) :
     ‖w‖ < 1 := by
   rw [ToeplitzHausdorffWanted.mem_numericalRange_iff] at hw
   obtain ⟨x, hx, rfl⟩ := hw
@@ -526,7 +387,7 @@ theorem norm_lt_one_of_mem_numericalRange_fwdShift {w : ℂ}
 /-- Every point of the numerical range of the backward shift has norm
 strictly less than `1`, by the AM–GM strict bound. -/
 theorem norm_lt_one_of_mem_numericalRange_bwdShift {w : ℂ}
-    (hw : w ∈ ToeplitzHausdorffWanted.numericalRange bwdShiftCLM) :
+    (hw : w ∈ ToeplitzHausdorffWanted.numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ))) :
     ‖w‖ < 1 := by
   rw [ToeplitzHausdorffWanted.mem_numericalRange_iff] at hw
   obtain ⟨x, hx, rfl⟩ := hw
@@ -544,7 +405,8 @@ theorem norm_lt_one_of_mem_numericalRange_bwdShift {w : ℂ}
 /-- The numerical range of the unilateral shift on `ℓ²(ℕ, ℂ)` is the
 open unit disc. -/
 theorem numericalRange_fwdShiftCLM :
-    ToeplitzHausdorffWanted.numericalRange fwdShiftCLM = Metric.ball (0 : ℂ) 1 := by
+    ToeplitzHausdorffWanted.numericalRange
+      (LpShiftOperator.shiftCLM (𝕜 := ℂ)) = Metric.ball (0 : ℂ) 1 := by
   ext w
   constructor
   · intro hw
@@ -557,7 +419,8 @@ theorem numericalRange_fwdShiftCLM :
 /-- The numerical range of the backward shift on `ℓ²(ℕ, ℂ)` is the
 open unit disc. -/
 theorem numericalRange_bwdShiftCLM :
-    ToeplitzHausdorffWanted.numericalRange bwdShiftCLM = Metric.ball (0 : ℂ) 1 := by
+    ToeplitzHausdorffWanted.numericalRange
+      (LpShiftOperator.backwardCLM (𝕜 := ℂ)) = Metric.ball (0 : ℂ) 1 := by
   ext w
   constructor
   · intro hw

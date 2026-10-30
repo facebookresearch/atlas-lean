@@ -14,11 +14,14 @@ public import MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 /-!
 # Tests for the numerical range of the unilateral shift
 
-* The numerical ranges of the forward and backward shifts are the open
-  unit disc: they contain `0`, `1 / 2`, `-1 / 2`, `I / 2`, but not `1`,
-  `-1`, or `2`.
-* The geometric vector for `u = 1 / 2` is a unit vector whose forward-shift
-  quadratic form is `1 / 2` and whose backward-shift quadratic form is `1 / 2`.
+* The numerical ranges of the canonical forward and backward shifts are
+  the open unit disc: they contain `0`, `1 / 2`, `-1 / 2`, `I / 2`, but not
+  `1`, `-1`, `2`, or `I`.
+* The geometric vectors at `1 / 2` and `I / 2` check the quadratic forms
+  and the backward shift's conjugation convention. At zero the vector is
+  unit, and outside the disc it is zero.
+* Coordinate unit vectors, including those with coordinate zero equal to
+  zero, satisfy the strict AM–GM bound.
 -/
 
 open Set Filter Topology Metric
@@ -35,86 +38,86 @@ private theorem norm_half_lt_one : ‖(1 / 2 : ℂ)‖ < 1 := by
   norm_num
 
 /-- `0` is in the numerical range of the forward shift. -/
-example : (0 : ℂ) ∈ numericalRange fwdShiftCLM := by
+example : (0 : ℂ) ∈ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM]
   exact Metric.mem_ball_self (by norm_num : (0 : ℝ) < 1)
 
 /-- `1 / 2` is in the numerical range of the forward shift. -/
-example : (1 / 2 : ℂ) ∈ numericalRange fwdShiftCLM := by
+example : (1 / 2 : ℂ) ∈ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   exact norm_half_lt_one
 
 /-- `-1 / 2` is in the numerical range of the forward shift. -/
-example : (-1 / 2 : ℂ) ∈ numericalRange fwdShiftCLM := by
+example : (-1 / 2 : ℂ) ∈ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   rw [Complex.norm_div, norm_neg, norm_one, Complex.norm_two]
   norm_num
 
 /-- `I / 2` is in the numerical range of the forward shift. -/
-example : (Complex.I / 2 : ℂ) ∈ numericalRange fwdShiftCLM := by
+example : (Complex.I / 2 : ℂ) ∈ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   rw [Complex.norm_div, Complex.norm_I, Complex.norm_two]
   norm_num
 
 /-- `1` is not in the numerical range of the forward shift: the range is
 open, while `1` is on the boundary. -/
-example : (1 : ℂ) ∉ numericalRange fwdShiftCLM := by
+example : (1 : ℂ) ∉ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- `-1` is not in the numerical range of the forward shift. -/
-example : (-1 : ℂ) ∉ numericalRange fwdShiftCLM := by
+example : (-1 : ℂ) ∉ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- `2` is not in the numerical range of the forward shift. -/
-example : (2 : ℂ) ∉ numericalRange fwdShiftCLM := by
+example : (2 : ℂ) ∉ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- `1 / 2` is in the numerical range of the backward shift. -/
-example : (1 / 2 : ℂ) ∈ numericalRange bwdShiftCLM := by
+example : (1 / 2 : ℂ) ∈ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   exact norm_half_lt_one
 
 /-- `0` is in the numerical range of the backward shift. -/
-example : (0 : ℂ) ∈ numericalRange bwdShiftCLM := by
+example : (0 : ℂ) ∈ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM]
   exact Metric.mem_ball_self (by norm_num : (0 : ℝ) < 1)
 
 /-- `-1 / 2` is in the numerical range of the backward shift. -/
-example : (-1 / 2 : ℂ) ∈ numericalRange bwdShiftCLM := by
+example : (-1 / 2 : ℂ) ∈ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   rw [Complex.norm_div, norm_neg, norm_one, Complex.norm_two]
   norm_num
 
 /-- `I / 2` is in the numerical range of the backward shift. -/
-example : (Complex.I / 2 : ℂ) ∈ numericalRange bwdShiftCLM := by
+example : (Complex.I / 2 : ℂ) ∈ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   rw [Complex.norm_div, Complex.norm_I, Complex.norm_two]
   norm_num
 
 /-- `1` is not in the numerical range of the backward shift. -/
-example : (1 : ℂ) ∉ numericalRange bwdShiftCLM := by
+example : (1 : ℂ) ∉ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- `-1` is not in the numerical range of the backward shift. -/
-example : (-1 : ℂ) ∉ numericalRange bwdShiftCLM := by
+example : (-1 : ℂ) ∉ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- `2` is not in the numerical range of the backward shift. -/
-example : (2 : ℂ) ∉ numericalRange bwdShiftCLM := by
+example : (2 : ℂ) ∉ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right]
   simp
 
 /-- The nonreal boundary point `I` is excluded for both shifts. -/
-example : (Complex.I : ℂ) ∉ numericalRange fwdShiftCLM := by
+example : (Complex.I : ℂ) ∉ numericalRange (LpShiftOperator.shiftCLM (𝕜 := ℂ)) := by
   rw [numericalRange_fwdShiftCLM, Metric.mem_ball, dist_zero_right, Complex.norm_I]
   norm_num
 
-example : (Complex.I : ℂ) ∉ numericalRange bwdShiftCLM := by
+example : (Complex.I : ℂ) ∉ numericalRange (LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [numericalRange_bwdShiftCLM, Metric.mem_ball, dist_zero_right, Complex.norm_I]
   norm_num
 
@@ -146,12 +149,12 @@ example : geom (2 : ℂ) = 0 := by
 
 /-- The forward-shift quadratic form at the geometric vector for `1 / 2`
 is `1 / 2`. -/
-example : ⟪fwdShiftCLM (geom (1 / 2 : ℂ)), geom (1 / 2 : ℂ)⟫_ℂ = (1 / 2 : ℂ) :=
+example : ⟪LpShiftOperator.shiftCLM (geom (1 / 2 : ℂ)), geom (1 / 2 : ℂ)⟫_ℂ = (1 / 2 : ℂ) :=
   quadForm_fwd_geom norm_half_lt_one
 
 /-- The backward-shift quadratic form at the geometric vector for the real
 scalar `1 / 2` is `1 / 2` (conjugation fixes real scalars). -/
-example : ⟪bwdShiftCLM (geom (((1 / 2 : ℝ) : ℂ))), geom (((1 / 2 : ℝ) : ℂ))⟫_ℂ
+example : ⟪LpShiftOperator.backwardCLM (geom (((1 / 2 : ℝ) : ℂ))), geom (((1 / 2 : ℝ) : ℂ))⟫_ℂ
     = ((1 / 2 : ℝ) : ℂ) := by
   have hnorm : ‖(((1 / 2 : ℝ) : ℂ))‖ < 1 := by
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by norm_num)]
@@ -176,8 +179,7 @@ example : ⟪LpShiftOperator.backwardCLM (geom (Complex.I / 2)), geom (Complex.I
   have hnorm : ‖(Complex.I / 2 : ℂ)‖ < 1 := by
     rw [Complex.norm_div, Complex.norm_I, Complex.norm_two]
     norm_num
-  have hbackward : LpShiftOperator.backwardCLM (𝕜 := ℂ) = bwdShiftCLM := rfl
-  rw [hbackward, quadForm_bwd_geom hnorm]
+  rw [quadForm_bwd_geom hnorm]
   simp [map_ofNat]
 
 /-- The numerical range of the backward shift is the open unit disc. -/
