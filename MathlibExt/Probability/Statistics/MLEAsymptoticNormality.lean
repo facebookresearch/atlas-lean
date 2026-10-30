@@ -459,15 +459,17 @@ theorem tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation
 
 /-- **Asymptotic normality of maximum likelihood** (Cramér's conditions). Let `p θ` be positive
 densities with respect to `ν`, measurable at `θ₀`, and let `X 0, X 1, …` be i.i.d. with law
-`p θ₀ ν`. Assume that `log p θ x` is differentiable in `θ` at `θ₀`, and that on the ball of
-radius `δ > 0` about `θ₀` the score `∂_θ log p θ x` is twice differentiable in `θ` for every
-`x`, with `|∂³_θ log p θ x| ≤ M x` for an integrable `M`; that the score `∂_θ log p θ₀` is
-measurable and square integrable with mean zero; that `∂²_θ log p θ₀` is measurable and
-integrable with `E ∂²_θ log p θ₀ = -I(θ₀)` (the information identity); and that `0 < I(θ₀)`.
-The two moment identities are what differentiating `∫ p θ dν = 1` twice under the integral
-sign gives; they are assumed directly. Let `θhat n` be estimators that solve the likelihood equation
-`∑_{i<n} ∂_θ log p θ (X i) = 0` with probability tending to one and converge to `θ₀` in
-probability. Then `√n (θhat n - θ₀) → N(0, 1 / I(θ₀))` in distribution.
+`p θ₀ ν`. Assume that on the ball of radius `δ > 0` about `θ₀` the log-likelihood
+`log p θ x` is differentiable in `θ` for every `x` (so that `score p θ x` is its true derivative
+there, not Lean's junk value `0` of `deriv` at a nondifferentiable point) and the score
+`∂_θ log p θ x` is twice differentiable in `θ` for every `x`, with `|∂³_θ log p θ x| ≤ M x`
+for an integrable `M`; that the score `∂_θ log p θ₀` is measurable and square integrable with
+mean zero; that `∂²_θ log p θ₀` is measurable and integrable with `E ∂²_θ log p θ₀ = -I(θ₀)`
+(the information identity); and that `0 < I(θ₀)`. The two moment identities are what
+differentiating `∫ p θ dν = 1` twice under the integral sign gives; they are assumed directly.
+Let `θhat n` be estimators that solve the likelihood equation `∑_{i<n} ∂_θ log p θ (X i) = 0`
+with probability tending to one and converge to `θ₀` in probability. Then
+`√n (θhat n - θ₀) → N(0, 1 / I(θ₀))` in distribution.
 
 Source: Cramér (1946), §33.3; Lehmann & Casella (1998), Theorem 6.3.10; van der Vaart (1998),
 Theorem 5.41. -/
@@ -475,7 +477,7 @@ theorem tendstoInDistribution_sqrt_mul_sub_maximumLikelihood
     {ν : Measure 𝓧} {p : ℝ → 𝓧 → ℝ} {θ₀ δ : ℝ} (hδ : 0 < δ)
     (hp_pos : ∀ θ x, 0 < p θ x) (hp_meas : Measurable (p θ₀))
     {X : ℕ → Ω → 𝓧} (hX_law : ∀ i, HasLaw (X i) (lawOf ν p θ₀) P) (hX_indep : iIndepFun X P)
-    (hℓ_diff : ∀ x, DifferentiableAt ℝ (fun t => Real.log (p t x)) θ₀)
+    (hℓ_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => Real.log (p t x)) θ)
     (hs_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => score p t x) θ)
     (hs'_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ,
       DifferentiableAt ℝ (fun t => deriv (fun s => score p s x) t) θ)
@@ -498,7 +500,7 @@ theorem tendstoInDistribution_sqrt_mul_sub_maximumLikelihood
   have hp_diff : ∀ x, DifferentiableAt ℝ (fun t => p t x) θ₀ := fun x => by
     have e : (fun t => p t x) = fun t => Real.exp (Real.log (p t x)) := by
       funext t; rw [Real.exp_log (hp_pos t x)]
-    rw [e]; exact (hℓ_diff x).exp
+    rw [e]; exact (hℓ_diff x θ₀ (Metric.mem_ball_self hδ)).exp
   have hvar : (∫ x, score p θ₀ x ^ 2 ∂lawOf ν p θ₀) /
       (∫ x, deriv (fun t => score p t x) θ₀ ∂lawOf ν p θ₀) ^ 2 = (fisherInformation ν p θ₀)⁻¹ := by
     rw [integral_score_sq (hp_pos θ₀) hp_meas hp_diff, h_info, neg_sq, sq, div_mul_cancel_left₀

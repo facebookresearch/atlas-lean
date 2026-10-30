@@ -172,7 +172,7 @@ theorem tendstoInDistribution_sqrt_mul_sampleMean :
     simp [deriv_score_pG, fisherInformation_pG]
   exact tendstoInDistribution_sqrt_mul_sub_maximumLikelihood (δ := 1) (M := fun _ => 0)
     one_pos pG_pos (measurable_gaussianPDFReal 0 1) hasLaw_coord iIndepFun_coord
-    (fun x => differentiableAt_log_pG x 0) (fun x θ _ => by rw [score_pG_fun]; fun_prop)
+    (fun x θ _ => differentiableAt_log_pG x θ) (fun x θ _ => by rw [score_pG_fun]; fun_prop)
     (fun x θ _ => by simp_rw [deriv_score_pG]; fun_prop) measurable_const
     (integrable_zero _ _ _) (fun x θ _ => by rw [deriv_deriv_score_pG, abs_zero])
     (by rw [show score pG 0 = fun x => x - 0 from funext fun x => score_pG 0 x]; fun_prop)
