@@ -91,6 +91,74 @@ example : firstCousins.kinshipInbreeding 8 = 1 / 16 := by
 example : fullSibs.inbreeding 4 = 1 / 4 := by
   rw [Pedigree.inbreeding_eq_kinshipInbreeding, fullSibs_kinshipInbreeding]
 
+/-! ### Wright's path formula -/
+
+/-- The full-sib pedigree has no selfing, as required by Wright's path formula. -/
+theorem fullSibs_noSelfing : fullSibs.NoSelfing := by
+  intro i g h
+  change ![none, none, some ![0, 1], some ![0, 1], some ![2, 3]] i = some g at h
+  fin_cases i <;> simp at h
+  all_goals subst g
+  all_goals decide
+
+private theorem fullSibs_ancPaths_zero :
+    fullSibs.ancPaths 0 = {([0] : List (Fin 5))} := by
+  ext q
+  rw [Finset.mem_singleton, fullSibs.mem_ancPaths_of_parents_eq_none (i := 0) rfl]
+
+private theorem fullSibs_ancPaths_one :
+    fullSibs.ancPaths 1 = {([1] : List (Fin 5))} := by
+  ext q
+  rw [Finset.mem_singleton, fullSibs.mem_ancPaths_of_parents_eq_none (i := 1) rfl]
+
+private theorem fullSibs_ancPaths_two :
+    fullSibs.ancPaths 2 = {([2] : List (Fin 5)), [2, 0], [2, 1]} := by
+  ext p
+  simp only [Finset.mem_insert, Finset.mem_singleton,
+    fullSibs.mem_ancPaths_of_parents_eq_some (i := 2) (g := ![0, 1]) rfl, Fin.exists_fin_two,
+    Matrix.cons_val_zero, Matrix.cons_val_one, fullSibs_ancPaths_zero, fullSibs_ancPaths_one,
+    exists_eq_left]
+
+private theorem fullSibs_ancPaths_three :
+    fullSibs.ancPaths 3 = {([3] : List (Fin 5)), [3, 0], [3, 1]} := by
+  ext p
+  simp only [Finset.mem_insert, Finset.mem_singleton,
+    fullSibs.mem_ancPaths_of_parents_eq_some (i := 3) (g := ![0, 1]) rfl, Fin.exists_fin_two,
+    Matrix.cons_val_zero, Matrix.cons_val_one, fullSibs_ancPaths_zero, fullSibs_ancPaths_one,
+    exists_eq_left]
+
+/-- The only ancestral path from sibling `2` to founder `0` has the expected direction. -/
+example : fullSibs.pathsTo 2 0 = {([2, 0] : List (Fin 5))} := by
+  ext p
+  simp only [Pedigree.pathsTo, fullSibs_ancPaths_two, Finset.mem_filter, Finset.mem_insert,
+    Finset.mem_singleton]
+  constructor
+  · rintro ⟨hp, hlast⟩
+    rcases hp with rfl | rfl | rfl
+    · norm_num at hlast
+    · rfl
+    · norm_num at hlast
+  · rintro rfl
+    norm_num
+
+/-- Wright's path sum for the full siblings is `1/4`: founders `0` and `1` each contribute
+`(1/2)^(2 + 2 - 1) = 1/8`. -/
+example : fullSibs.kinship 2 3 = 1 / 4 := by
+  rw [fullSibs.kinship_eq_sum_paths fullSibs_noSelfing]
+  simp only [Pedigree.pathsTo, fullSibs_ancPaths_two, fullSibs_ancPaths_three]
+  norm_num [Fin.sum_univ_succ, Finset.sum_filter, Finset.sum_insert, fullSibs,
+    Pedigree.kinshipInbreeding, Pedigree.kinship]
+
+/-- The inbreeding form of Wright's path formula gives the same `1/4` for the siblings'
+offspring. -/
+example : fullSibs.inbreeding 4 = 1 / 4 := by
+  rw [fullSibs.inbreeding_eq_sum_paths fullSibs_noSelfing (g := ![2, 3]) rfl]
+  simp_rw [Pedigree.inbreeding_eq_kinshipInbreeding]
+  simp only [Pedigree.pathsTo, Matrix.cons_val_zero, Matrix.cons_val_one,
+    fullSibs_ancPaths_two, fullSibs_ancPaths_three]
+  norm_num [Fin.sum_univ_succ, Finset.sum_filter, Finset.sum_insert, fullSibs,
+    Pedigree.kinshipInbreeding, Pedigree.kinship]
+
 /-- A pedigree with selfing: `3` is a child of `1` and `1`. -/
 def selfing : Pedigree 4 where
   parents := ![none, none, some ![0, 1], some ![1, 1]]

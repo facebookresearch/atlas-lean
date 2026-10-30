@@ -37,11 +37,14 @@ expectation of `u` given `y` when `b` is known (`condDistrib_mixedModel`,
 `û` among all linear unbiased predictors is not formalized here.
 
 **LDpred-inf.** For `M` markers with LD matrix `R` and `N` individuals, the marginal estimates
-`β̂_j = X_jᵀ y / N` of `y = X β + ε` have mean `R β` (`integral_marginalEffect`) and covariance
-`σ² R / N` (`integral_marginalEffect_sub_mul`), with `R = Xᵀ X / N` (`LDScore.ldCorr`). Under
-the infinitesimal prior `β ~ N(0, h² / M · I)` and the likelihood `β̂ | β ~ N(R β, R / N)` of
-Zhu and Stephens (2017), the posterior mean is `(R + M / (N h²) · I)⁻¹ β̂`
-(`condDistrib_ldpredInf`), the LDpred-inf estimator of Vilhjálmsson et al. (2015).
+`β̂_j = X_jᵀ y / N` of `y = X β + ε` have mean `R β` under mean-zero noise
+(`integral_marginalEffect`). Given raw noise second moments `𝔼[ε_i ε_i'] = σ² [i = i']`, their
+raw residual-product second moment is `σ² R / N` (`integral_marginalEffect_sub_mul`), with
+`R = Xᵀ X / N` (`LDScore.ldCorr`); it is a covariance when the noise is mean-zero. Under the
+infinitesimal prior `β ~ N(0, h² / M · I)` and the Gaussian likelihood
+`β̂ | β ~ N(R β, R / N)` of Zhu and Stephens (2017), the posterior mean is
+`(R + M / (N h²) · I)⁻¹ β̂` (`condDistrib_ldpredInf`), the LDpred-inf estimator of Vilhjálmsson
+et al. (2015).
 
 ## Main results
 
@@ -49,8 +52,8 @@ Zhu and Stephens (2017), the posterior mean is `(R + M / (N h²) · I)⁻¹ β̂
   GLS estimate and `û = G Zᵀ V⁻¹ (y - X b̂)`.
 * `condDistrib_mixedModel`, `condExp_mixedModel`: in the Gaussian model, given `y`,
   `u ~ N(G Zᵀ V⁻¹ (y - X b), G - G Zᵀ V⁻¹ Z G)` and `𝔼[u | y] = G Zᵀ V⁻¹ (y - X b)`.
-* `marginalEffect`, `integral_marginalEffect`, `integral_marginalEffect_sub_mul`: the
-  first two moments of the marginal association estimates given `β`.
+* `marginalEffect`, `integral_marginalEffect`, `integral_marginalEffect_sub_mul`: the mean under
+  mean-zero noise and the raw residual-product second moment of the marginal estimates.
 * `condDistrib_ldpredInf`: the LDpred-inf posterior.
 
 ## References
@@ -432,13 +435,18 @@ theorem integral_marginalEffect (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M →
   simp [integral_const_mul, hmean]
 
 omit [IsProbabilityMeasure P] in
-/-- **The covariance of the marginal estimates** (Zhu and Stephens 2017): if the noise is
-uncorrelated with variance `σ²` (`𝔼[ε_i ε_i'] = σ² [i = i']`), then
-`𝔼[(β̂_j - (R β)_j)(β̂_k - (R β)_k)] = σ² / N · R_jk`. With a standardized phenotype and small
-heritability (`σ² ≈ 1`) this is the likelihood `β̂ | β ~ N(R β, R / N)` used by LDpred. -/
+/-- **The raw residual-product second moment of the marginal estimates** (Zhu and Stephens
+2017): if `𝔼[ε_i ε_i'] = σ² [i = i']`, then
+`𝔼[(β̂_j - (R β)_j)(β̂_k - (R β)_k)] = σ² / N · R_jk`.
+
+This theorem deliberately assumes neither that `P` is a probability measure nor that the noise
+has mean zero, so its conclusion is not by itself a covariance or a Gaussian likelihood. With a
+probability measure and mean-zero noise, `integral_marginalEffect` identifies `R β` as the mean,
+and this raw second moment is the corresponding covariance. -/
 theorem integral_marginalEffect_sub_mul (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M → ℝ)
     {ε : Fin N → Ω → ℝ} {σ2 : ℝ} (hε : ∀ i i', Integrable (fun ω => ε i ω * ε i' ω) P)
-    (hcov : ∀ i i', ∫ ω, ε i ω * ε i' ω ∂P = if i = i' then σ2 else 0) (j k : Fin M) :
+    (hsecondMoment : ∀ i i', ∫ ω, ε i ω * ε i' ω ∂P = if i = i' then σ2 else 0)
+    (j k : Fin M) :
     ∫ ω, (marginalEffect X β ε j ω - ∑ l, ldCorr X j l * β l) *
         (marginalEffect X β ε k ω - ∑ l, ldCorr X k l * β l) ∂P = σ2 / N * ldCorr X j k := by
   simp only [marginalEffect_eq, add_sub_cancel_left]
@@ -451,7 +459,8 @@ theorem integral_marginalEffect_sub_mul (X : Matrix (Fin N) (Fin M) ℝ) (β : F
     ring
   rw [h, integral_div, integral_finsetSum _ fun i _ =>
     integrable_finsetSum _ fun i' _ => (hε i i').const_mul _]
-  simp_rw [integral_finsetSum _ fun i' _ => (hε _ i').const_mul _, integral_const_mul, hcov]
+  simp_rw [integral_finsetSum _ fun i' _ => (hε _ i').const_mul _, integral_const_mul,
+    hsecondMoment]
   simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, ldCorr]
   rcases Nat.eq_zero_or_pos N with hN | hN
   · subst hN; simp
