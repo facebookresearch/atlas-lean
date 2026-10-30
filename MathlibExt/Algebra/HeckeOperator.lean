@@ -90,7 +90,7 @@ instance [Monoid R] [MulAction R A] [SMulCommClass G R A] :
     push_cast
     simp [mul_smul]
 
-instance module [Ring R] [Module R A] [SMulCommClass G R A] : Module R (fixedPoints G A) where
+instance module [Semiring R] [Module R A] [SMulCommClass G R A] : Module R (fixedPoints G A) where
   one_smul a := one_smul _ _
   mul_smul r s a := mul_smul _ _ _
   smul_zero a := by
@@ -176,7 +176,7 @@ noncomputable def HeckeOperator_addMonoidHom : fixedPoints V A →+ fixedPoints 
     simp only [HeckeOperator_toFun, FixedPoints.coe_add, smul_add,
       finsum_mem_add_distrib (h.image Quotient.out)]
 
-variable {R : Type*} [Ring R] [Module R A] [SMulCommClass G R A]
+variable {R : Type*} [Semiring R] [Module R A] [SMulCommClass G R A]
 
 variable (g U V) in
 /-- The Hecke operator `T(g)` as a linear map on fixed points. -/
