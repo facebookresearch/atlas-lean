@@ -48,7 +48,8 @@ with probability `noCoalProb M k = ∏_{i<k} (1 - i/M) = M^{(k)}/M^k` (falling f
 * `KingmanTimes.integral_tmrca`: `E[T_MRCA] = 2 (1 - 1/n)`.
 * `KingmanTimes.variance_tmrca`: `Var[T_MRCA] = ∑_{k=2}^n ((k.choose 2)⁻¹)²`.
 * `KingmanTimes.integral_totalLength`: `E[L] = 2 H_{n-1}`.
-* `KingmanTimes.integral_segSites`, `KingmanTimes.watterson_unbiased`: Watterson (1975).
+* `KingmanTimes.integral_segSites`, `KingmanTimes.watterson_unbiased`: Watterson (1975), for
+  an integrable number of segregating sites; `KingmanTimes.integrable_watterson`.
 * `KingmanTimes.ofPi`: a concrete model (product of exponential laws), so the structure is
   inhabited for every `n`.
 * `noCoalProb_eq_descFactorial_div`, `tendsto_coalescence_rate`,
@@ -182,23 +183,30 @@ theorem variance_tmrca :
 variable {m : MeasurableSpace Ω} {S : Ω → ℝ} {θ : ℝ}
 
 /-- Infinite-sites mutation at rate `θ/2` per lineage per unit time: if the number of
-segregating sites `S` has conditional mean `(θ/2) L` given the genealogy σ-algebra `m`, then
-`E S = θ H_{n-1}`. -/
-theorem integral_segSites (hm : m ≤ mΩ) [SigmaFinite (μ.trim hm)]
+segregating sites `S` is integrable and has conditional mean `(θ/2) L` given the genealogy
+σ-algebra `m`, then `E S = θ H_{n-1}`. (Integrability matters: Mathlib's conditional
+expectation of a non-integrable function is `0`.) -/
+theorem integral_segSites (hm : m ≤ mΩ) [SigmaFinite (μ.trim hm)] (hSi : Integrable S μ)
     (hS : μ[S | m] =ᵐ[μ] fun ω => θ / 2 * K.totalLength ω) :
     μ[S] = θ * (harmonic (n - 1) : ℝ) := by
-  rw [← integral_condExp hm, integral_congr_ae hS, integral_const_mul,
-    K.integral_totalLength]
+  have h := setIntegral_condExp hm hSi (MeasurableSet.univ : MeasurableSet[m] Set.univ)
+  simp only [Measure.restrict_univ] at h
+  rw [← h, integral_congr_ae hS, integral_const_mul, K.integral_totalLength]
   ring
+
+/-- Watterson's estimator `S / H_{n-1}` is integrable when `S` is. -/
+theorem integrable_watterson (hSi : Integrable S μ) :
+    Integrable (fun ω => S ω / (harmonic (n - 1) : ℝ)) μ :=
+  hSi.div_const _
 
 /-- **Watterson's estimator is unbiased**: `E[S / H_{n-1}] = θ` for a sample of size
 `n ≥ 2`. -/
-theorem watterson_unbiased (hm : m ≤ mΩ) [SigmaFinite (μ.trim hm)]
+theorem watterson_unbiased (hm : m ≤ mΩ) [SigmaFinite (μ.trim hm)] (hSi : Integrable S μ)
     (hS : μ[S | m] =ᵐ[μ] fun ω => θ / 2 * K.totalLength ω) (hn : 2 ≤ n) :
     μ[fun ω => S ω / (harmonic (n - 1) : ℝ)] = θ := by
   have hH : (harmonic (n - 1) : ℝ) ≠ 0 := by
     exact_mod_cast (harmonic_pos (by omega)).ne'
-  rw [integral_div, K.integral_segSites hm hS]
+  rw [integral_div, K.integral_segSites hm hSi hS]
   field_simp
 
 end KingmanTimes
