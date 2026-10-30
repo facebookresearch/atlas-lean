@@ -28,8 +28,8 @@ box-crossing property `BoxCrossingProperty μ ρ`: crossing probabilities of all
 * `StatMech.Universality.originCluster`, `StatMech.Universality.percolationEvent`,
   `StatMech.Universality.percolationProbability`, `StatMech.Universality.criticalProbability`:
   the cluster of the origin, `{0 ↔ ∞}`, `θ(p)` as an `ℝ≥0∞`, and `p_c` as a real number.
-* `StatMech.Universality.PositivelyAssociated`: `μ(A) μ(B) ≤ μ(A ∩ B)` for measurable increasing
-  events `A`, `B`.
+* `StatMech.Universality.PositivelyAssociated`:
+  `μ(A) μ(B) ≤ μ(A ∩ B) μ(univ)` for measurable increasing events under a finite measure.
 * `StatMech.Universality.translateConfig` and the translated crossing events.
 * `StatMech.Universality.boxCrossingInf`, `StatMech.Universality.BoxCrossingProperty`.
 
@@ -139,25 +139,46 @@ theorem criticalProbability_eq_pc : criticalProbability d = (Percolation.pc d : 
         (Percolation.percolationEvent d) ≠ ⊤ := measure_ne_top _ _
     exact (measureReal_eq_zero_iff hfin).mp h
 
-/-- A measure on configurations is positively associated (satisfies the Harris–FKG inequality)
-if `μ(A) μ(B) ≤ μ(A ∩ B)` for all measurable increasing events `A`, `B`. -/
-def PositivelyAssociated {E : Type*} (μ : Measure (ConfigSpace E)) : Prop :=
+/-- A finite measure on configurations is positively associated if
+`μ(A) μ(B) ≤ μ(A ∩ B) μ(univ)` for all measurable increasing events `A`, `B`. The total-mass
+factor makes the Harris--FKG inequality invariant under finite scaling. -/
+def PositivelyAssociated {E : Type*} (μ : Measure (ConfigSpace E))
+    [IsFiniteMeasure μ] : Prop :=
   ∀ A B : Set (ConfigSpace E), MeasurableSet A → MeasurableSet B →
     IsIncreasing A → IsIncreasing B →
-    μ.real A * μ.real B ≤ μ.real (A ∩ B)
+    μ.real A * μ.real B ≤ μ.real (A ∩ B) * μ.real Set.univ
+
+/-- For a probability measure, normalized positive association is the usual Harris--FKG
+inequality. -/
+theorem positivelyAssociated_iff_of_isProbabilityMeasure {E : Type*}
+    (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ] :
+    PositivelyAssociated μ ↔
+      ∀ A B : Set (ConfigSpace E), MeasurableSet A → MeasurableSet B →
+        IsIncreasing A → IsIncreasing B → μ.real A * μ.real B ≤ μ.real (A ∩ B) := by
+  simp only [PositivelyAssociated, probReal_univ, mul_one]
+
+/-- The usual unnormalized Harris--FKG inequality for a positively associated probability
+measure. -/
+theorem PositivelyAssociated.probability {E : Type*} {μ : Measure (ConfigSpace E)}
+    [IsProbabilityMeasure μ] (h : PositivelyAssociated μ)
+    (A B : Set (ConfigSpace E)) (hAm : MeasurableSet A) (hBm : MeasurableSet B)
+    (hA : IsIncreasing A) (hB : IsIncreasing B) :
+    μ.real A * μ.real B ≤ μ.real (A ∩ B) :=
+  (positivelyAssociated_iff_of_isProbabilityMeasure μ).mp h A B hAm hBm hA hB
 
 theorem PositivelyAssociated.symm {E : Type*} {μ : Measure (ConfigSpace E)}
-    (h : PositivelyAssociated μ) (A B : Set (ConfigSpace E))
+    [IsFiniteMeasure μ] (h : PositivelyAssociated μ) (A B : Set (ConfigSpace E))
     (hAm : MeasurableSet A) (hBm : MeasurableSet B)
     (hA : IsIncreasing A) (hB : IsIncreasing B) :
-    μ.real B * μ.real A ≤ μ.real (B ∩ A) := by
+    μ.real B * μ.real A ≤ μ.real (B ∩ A) * μ.real Set.univ := by
   rw [mul_comm, Set.inter_comm]
   exact h A B hAm hBm hA hB
 
 theorem PositivelyAssociated.sq_le_self {E : Type*} {μ : Measure (ConfigSpace E)}
-    (h : PositivelyAssociated μ) (A : Set (ConfigSpace E)) (hAm : MeasurableSet A)
+    [IsFiniteMeasure μ] (h : PositivelyAssociated μ)
+    (A : Set (ConfigSpace E)) (hAm : MeasurableSet A)
     (hA : IsIncreasing A) :
-    μ.real A * μ.real A ≤ μ.real A := by
+    μ.real A * μ.real A ≤ μ.real A * μ.real Set.univ := by
   have key := h A A hAm hAm hA hA
   rwa [Set.inter_self] at key
 

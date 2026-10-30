@@ -61,7 +61,7 @@ theorem PositivelyAssociated.decreasing {E : Type*} (μ : Measure (ConfigSpace E
     {A B : Set (ConfigSpace E)} (hA : IsDecreasing A) (hB : IsDecreasing B)
     (hAm : MeasurableSet A) (hBm : MeasurableSet B) :
     μ.real A * μ.real B ≤ μ.real (A ∩ B) := by
-  have hfkg := hpa Aᶜ Bᶜ hAm.compl hBm.compl hA.compl hB.compl
+  have hfkg := hpa.probability Aᶜ Bᶜ hAm.compl hBm.compl hA.compl hB.compl
   have hca : μ.real Aᶜ = 1 - μ.real A := by rw [measureReal_compl hAm, probReal_univ]
   have hcb : μ.real Bᶜ = 1 - μ.real B := by rw [measureReal_compl hBm, probReal_univ]
   have hcum : μ.real (Aᶜ ∩ Bᶜ) = 1 - μ.real (A ∪ B) := by
@@ -194,9 +194,10 @@ theorem rsw_strip_glue (μ : Measure (ConfigSpace (Sym2 (Site 2))))
   have hCm : MeasurableSet C := measurableSet_rightHalfCrossingEvent m b c d q hqR
   have hsub : A ∩ B ∩ C ⊆ horizontalCrossingEvent a b c d :=
     hvHalf_glue_subset ham hmm' hm'b hpO hqO hpL hqR
-  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hAm hBm hA hB
+  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) :=
+    hpa.probability A B hAm hBm hA hB
   have h2 : μ.real (A ∩ B) * μ.real C ≤ μ.real (A ∩ B ∩ C) :=
-    hpa (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
+    hpa.probability (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
   have hnn : (0 : ℝ) ≤ μ.real C := measureReal_nonneg
   calc μ.real A * μ.real B * μ.real C
       ≤ μ.real (A ∩ B) * μ.real C := mul_le_mul_of_nonneg_right h1 hnn
@@ -230,9 +231,10 @@ theorem rsw_strip_glue_of_intersection (μ : Measure (ConfigSpace (Sym2 (Site 2)
   have hsub : A ∩ B ∩ C ⊆ horizontalCrossingEvent a b c d := by
     rintro ω ⟨⟨hAω, hBω⟩, hCω⟩
     exact hint ω hAω hBω hCω
-  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) := hpa A B hAm hBm hA hB
+  have h1 : μ.real A * μ.real B ≤ μ.real (A ∩ B) :=
+    hpa.probability A B hAm hBm hA hB
   have h2 : μ.real (A ∩ B) * μ.real C ≤ μ.real (A ∩ B ∩ C) :=
-    hpa (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
+    hpa.probability (A ∩ B) C (hAm.inter hBm) hCm (hA.inter hB) hC
   have hnn : (0 : ℝ) ≤ μ.real C := measureReal_nonneg
   calc μ.real A * μ.real B * μ.real C
       ≤ μ.real (A ∩ B) * μ.real C := mul_le_mul_of_nonneg_right h1 hnn

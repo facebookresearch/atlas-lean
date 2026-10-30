@@ -71,18 +71,26 @@ omit [Countable E] in
 theorem monotone_real_of_chain
     {μ : ℕ → Measure (ConfigSpace E)}
     (hchain : ∀ n, μ n ≼ μ (n + 1))
+    (hfinite : ∀ n, IsFiniteMeasure (μ n))
     {A : Set (ConfigSpace E)} (hAmeas : MeasurableSet A) (hAinc : IsIncreasing A) :
-    Monotone (fun n => (μ n).real A) :=
-  monotone_nat_of_le_succ fun n => hchain n A hAmeas hAinc
+    Monotone (fun n => (μ n).real A) := by
+  apply monotone_nat_of_le_succ
+  intro n
+  let _ := hfinite (n + 1)
+  exact (hchain n).real A hAmeas hAinc
 
 omit [Countable E] in
 /-- Along a chain `⋯ ≼ μ₁ ≼ μ₀`, the probability of an increasing event is antitone. -/
 theorem antitone_real_of_chain
     {μ : ℕ → Measure (ConfigSpace E)}
     (hchain : ∀ n, μ (n + 1) ≼ μ n)
+    (hfinite : ∀ n, IsFiniteMeasure (μ n))
     {A : Set (ConfigSpace E)} (hAmeas : MeasurableSet A) (hAinc : IsIncreasing A) :
-    Antitone (fun n => (μ n).real A) :=
-  antitone_nat_of_succ_le fun n => hchain n A hAmeas hAinc
+    Antitone (fun n => (μ n).real A) := by
+  apply antitone_nat_of_succ_le
+  intro n
+  let _ := hfinite n
+  exact (hchain n).real A hAmeas hAinc
 
 /-- The weak limit of an increasing chain gives each increasing clopen event at least the
 probability any term of the chain gives it. -/
@@ -92,7 +100,8 @@ theorem WeakConvergesTo.le_real_of_monotone_isIncreasing
     (hchain : ∀ n, (μ n : Measure (ConfigSpace E)) ≼ (μ (n + 1) : Measure (ConfigSpace E)))
     {A : Set (ConfigSpace E)} (hAclopen : IsClopen A) (hAinc : IsIncreasing A) (n : ℕ) :
     (μ n : Measure (ConfigSpace E)).real A ≤ (ν : Measure (ConfigSpace E)).real A :=
-  (monotone_real_of_chain hchain (hAclopen.isOpen.measurableSet) hAinc).ge_of_tendsto
+  (monotone_real_of_chain hchain (fun _ => inferInstance)
+      (hAclopen.isOpen.measurableSet) hAinc).ge_of_tendsto
     (h.tendsto_real_of_isClopen hAclopen) n
 
 /-- The weak limit of a decreasing chain gives each increasing clopen event at most the
@@ -103,7 +112,8 @@ theorem WeakConvergesTo.ge_real_of_antitone_isIncreasing
     (hchain : ∀ n, (μ (n + 1) : Measure (ConfigSpace E)) ≼ (μ n : Measure (ConfigSpace E)))
     {A : Set (ConfigSpace E)} (hAclopen : IsClopen A) (hAinc : IsIncreasing A) (n : ℕ) :
     (ν : Measure (ConfigSpace E)).real A ≤ (μ n : Measure (ConfigSpace E)).real A :=
-  (antitone_real_of_chain hchain (hAclopen.isOpen.measurableSet) hAinc).le_of_tendsto
+  (antitone_real_of_chain hchain (fun _ => inferInstance)
+      (hAclopen.isOpen.measurableSet) hAinc).le_of_tendsto
     (h.tendsto_real_of_isClopen hAclopen) n
 
 /-- A lower bound on the probabilities of a clopen event along a weakly convergent sequence passes
@@ -140,19 +150,19 @@ theorem dominated_weakLimit_of_forall_dominated
     {A : Set (ConfigSpace E)} (hAclopen : IsClopen A) (hAinc : IsIncreasing A) :
     ρ.real A ≤ (ν : Measure (ConfigSpace E)).real A :=
   le_real_of_weakLimit h hAclopen hAinc
-    (fun n => hdom n A (hAclopen.isOpen.measurableSet) hAinc)
+    (fun n => (hdom n).real A (hAclopen.isOpen.measurableSet) hAinc)
 
 /-- If `μₙ ≼ ρ` for all `n` and `μₙ → ν` weakly, then `ν(A) ≤ ρ(A)` for every increasing clopen
 event `A`. -/
 theorem weakLimit_dominated_of_forall_dominated
     {μ : ℕ → ProbabilityMeasure (ConfigSpace E)} {ν : ProbabilityMeasure (ConfigSpace E)}
-    {ρ : Measure (ConfigSpace E)}
+    {ρ : Measure (ConfigSpace E)} [IsFiniteMeasure ρ]
     (h : WeakConvergesTo μ ν)
     (hdom : ∀ n, (μ n : Measure (ConfigSpace E)) ≼ ρ)
     {A : Set (ConfigSpace E)} (hAclopen : IsClopen A) (hAinc : IsIncreasing A) :
     (ν : Measure (ConfigSpace E)).real A ≤ ρ.real A :=
   real_le_of_weakLimit h hAclopen
-    (fun n => hdom n A (hAclopen.isOpen.measurableSet) hAinc)
+    (fun n => (hdom n).real A (hAclopen.isOpen.measurableSet) hAinc)
 
 omit [Countable E] in
 /-- Two probability measures on `ConfigSpace E` that agree on clopen sets are equal: the clopen
@@ -220,7 +230,8 @@ theorem tendsto_NNReal_of_monotone_isIncreasing
     apply monotone_nat_of_le_succ
     intro n
     have hreal : (μ n : Measure (ConfigSpace E)).real A
-        ≤ (μ (n + 1) : Measure (ConfigSpace E)).real A := hchain n A hAmeas hAinc
+        ≤ (μ (n + 1) : Measure (ConfigSpace E)).real A :=
+      (hchain n).real A hAmeas hAinc
     rw [MeasureTheory.ProbabilityMeasure.measureReal_eq_coe_coeFn,
       MeasureTheory.ProbabilityMeasure.measureReal_eq_coe_coeFn] at hreal
     exact_mod_cast hreal

@@ -56,7 +56,7 @@ example : ∃ c : OrderPairs Bool → ℝ, (∀ q, 0 ≤ c q) ∧
 theorem dirac_bot_dominated :
     StochasticallyDominated (Measure.dirac (⊥ : ConfigSpace (Fin 2))) (Measure.dirac ⊤) := by
   intro A hA hinc
-  simp only [measureReal_def, Measure.dirac_apply' _ hA]
+  simp only [Measure.dirac_apply' _ hA]
   by_cases h : (⊥ : ConfigSpace (Fin 2)) ∈ A
   · simp [h, hinc bot_le h]
   · simp [h]
