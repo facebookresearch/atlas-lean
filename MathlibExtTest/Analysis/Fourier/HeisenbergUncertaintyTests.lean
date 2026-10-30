@@ -25,6 +25,8 @@ import Mathlib.Tactic.Positivity
   Schwartz function, has `(bumpSchwartzReal 0) = 1` and strictly positive
   `∫ (f x)²`, so Heisenberg's inequality for it is nontrivial; its
   complexification satisfies the Fourier form and the form with position centered.
+* The normalized Fourier corollary under its existing name and namespace,
+  applied to an arbitrary Schwartz function of L2 mass one.
 * `#print axioms` for `heisenberg_uncertainty_complex`: standard triple only.
 -/
 

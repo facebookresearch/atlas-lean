@@ -30,6 +30,12 @@ used by Mathlib, the Fourier second moment about zero is `∫ ξ² ‖𝓕 f ξ�
 and the inequality becomes
 `(∫ ‖f x‖²)² ≤ 16 * π² * (∫ x² ‖f x‖²) * (∫ ξ² ‖𝓕 f ξ‖²)`.
 
+The L2-normalized corollary
+`integral_sq_mul_norm_sq_mul_integral_sq_mul_norm_fourier_sq_ge`
+in namespace `MathlibExt.Analysis.Fourier.HeisenbergUncertaintyFourierWanted`
+gives `(∫ x² ‖f x‖²) * (∫ ξ² ‖𝓕 f ξ‖²) ≥ 1 / (16 * π²)` when `∫ ‖f x‖² = 1`.
+It preserves the MA-ProofBench target's declaration name and namespace.
+
 The proof is the classical one: integration by parts gives
 `∫ (f x)² = -2 * ∫ x * f x * f' x`, and the pointwise AM–GM estimate
 `2 * |x * f x * f' x| ≤ ε * x² * (f x)² + (f' x)² / ε` for every `ε > 0`,
@@ -38,8 +44,9 @@ The complex case follows by applying the real case to the real and
 imaginary parts and combining with two-dimensional Cauchy–Schwarz; the
 Fourier form follows from Plancherel and the Fourier differentiation
 formula. The shifted form measures the position second moment about any
-center `a`, in particular about the mean position. Only the position factor
-is centered; the derivative factor is unchanged.
+center `a`. For positive L2 mass, the centered form uses the mean position.
+At zero L2 mass, it uses zero as the center by Lean's division by zero convention.
+Only the position factor is centered; the derivative factor is unchanged.
 
 This is a companion to the Fourier-series and Hilbert-space material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/` (Fejér, Bessel, Parseval);
@@ -665,9 +672,11 @@ theorem heisenberg_uncertainty_shifted (f : 𝓢(ℝ, ℂ)) (a : ℝ) :
   rw [hA, hX, hD] at h
   exact h
 
-/-- **Heisenberg's uncertainty principle** with the position factor centered: with
-`μ = (∫ y * ‖f y‖²) / (∫ ‖f x‖²)` the mean position, the position second moment
-about the mean satisfies the same bound. Only the position factor is centered. -/
+/-- **Heisenberg's uncertainty principle** with the position factor centered: for
+`μ = (∫ y * ‖f y‖²) / (∫ ‖f x‖²)`, the position second moment about `μ` satisfies
+the same bound. For positive L2 mass, `μ` is the mean position. At zero L2 mass,
+Lean's division by zero convention gives `μ = 0`, including `f = 0` with `0 / 0 = 0`.
+Only the position factor is centered. -/
 theorem heisenberg_uncertainty_centered (f : 𝓢(ℝ, ℂ)) :
     (∫ x, ‖f x‖ ^ 2) ^ 2 ≤ 4
       * (∫ x, (x - (∫ y, y * ‖f y‖ ^ 2) / (∫ z, ‖f z‖ ^ 2)) ^ 2 * ‖f x‖ ^ 2)
@@ -729,7 +738,7 @@ Denote by $\hat{\psi}(\xi)$ the Fourier transform of $\psi(x)$ defined by
 \[
 \hat{\psi}(\xi)=\int_{-\infty}^{\infty}\psi(x)e^{-2\pi i x\xi}\,dx.
 \]
-Prove the Fourier-transform version of the Heisenberg uncertainty principle
+The normalized Fourier Heisenberg corollary then gives
 \[
 \left(\int_{-\infty}^{\infty} x^2|\psi(x)|^2\,dx\right)
 \left(\int_{-\infty}^{\infty} \xi^2|\hat{\psi}(\xi)|^2\,d\xi\right)
