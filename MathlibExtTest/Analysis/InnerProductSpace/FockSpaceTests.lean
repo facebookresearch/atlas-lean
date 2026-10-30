@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Analysis.InnerProductSpace.FockSpace
 
+import MathlibExt.Analysis.InnerProductSpace.HardySpace
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -137,6 +138,20 @@ example (a : ℓ²(ℕ, ℂ)) :
 /-- The named normalized monomials support standard family consequences. -/
 theorem linearIndependent_fockMonomial : LinearIndependent ℂ fockMonomial :=
   orthonormal_fockMonomial.linearIndependent
+
+section CanonicalCoefficientRegression
+
+open MathlibExt.Analysis.InnerProductSpace.HardySpace
+
+/-- Explicitly importing Hardy leaves one coefficient bound when both namespaces are open. -/
+example (a : ℓ²(ℕ, ℂ)) (n : ℕ) : ‖a n‖ ≤ ‖a‖ :=
+  abs_coeff_le_norm a n
+
+end CanonicalCoefficientRegression
+
+/-- Coefficients are extracted through the named normalized Fock monomials. -/
+example (a : ℓ²(ℕ, ℂ)) (n : ℕ) : a n = ⟪fockMonomial n, a⟫ :=
+  fockCoeff_eq_inner a n
 
 #print axioms MathlibExt.Analysis.InnerProductSpace.FockSpace.norm_fockKernel
 #print axioms MathlibExt.Analysis.InnerProductSpace.FockSpace.inner_fockKernel_fockKernel

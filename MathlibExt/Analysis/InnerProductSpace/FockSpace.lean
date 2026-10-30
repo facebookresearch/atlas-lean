@@ -75,7 +75,9 @@ space and no Bargmann kernel) or in base MathlibExt. See e.g. Conway,
 * `fockCoherent z` : the normalized kernel (coherent state).
 * `norm_inner_fockCoherent_fockCoherent` :
   `‖⟪ĉ_z, ĉ_w⟫‖ = Real.exp (-‖z - w‖² / 2)` (Gaussian overlap).
-* `abs_coeff_le_norm` : `‖a n‖ ≤ ‖a‖` for Taylor coefficients.
+* `fockMonomial` : the named normalized monomial family.
+* `orthonormal_fockMonomial` : the standard orthonormal-family property.
+* `fockCoeff_eq_inner` : coefficient extraction using the named monomials.
 -/
 
 @[expose] public section
@@ -186,7 +188,7 @@ theorem fockEvalCLM_apply (z : ℂ) (a : ℓ²(ℕ, ℂ)) :
 /-- The operator norm of point evaluation is `Real.exp (‖z‖² / 2)`. -/
 theorem norm_fockEvalCLM (z : ℂ) :
     ‖fockEvalCLM z‖ = Real.exp (‖z‖ ^ 2 / 2) := by
-  show ‖innerSL ℂ (fockKernel z)‖ = Real.exp (‖z‖ ^ 2 / 2)
+  change ‖innerSL ℂ (fockKernel z)‖ = Real.exp (‖z‖ ^ 2 / 2)
   rw [innerSL_apply_norm, norm_fockKernel]
 
 /-- The pointwise bound for Fock-space functions:
@@ -251,20 +253,6 @@ theorem fockEval_fockKernel (z : ℂ) :
   rw [inner_fockKernel_fockKernel, Complex.ofReal_exp, Complex.mul_conj,
     Complex.normSq_eq_norm_sq]
 
-/-- Taylor coefficients of a Fock-space function are bounded by its norm:
-a single squared coefficient is at most the sum of all of them. -/
-theorem abs_coeff_le_norm (a : ℓ²(ℕ, ℂ)) (n : ℕ) : ‖a n‖ ≤ ‖a‖ := by
-  have hs : Summable (fun i => ‖a i‖ ^ (2 : ℝ≥0∞).toReal) :=
-    (lp.memℓp a).summable (by simp)
-  have hle : ‖a n‖ ^ (2 : ℝ≥0∞).toReal ≤ ∑' i, ‖a i‖ ^ (2 : ℝ≥0∞).toReal := by
-    have h := Summable.sum_le_tsum (s := {n})
-      (f := fun i => ‖a i‖ ^ (2 : ℝ≥0∞).toReal) (fun i _ => by positivity) hs
-    rwa [Finset.sum_singleton] at h
-  rw [← lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)] at hle
-  have h2 : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
-  rw [h2, Real.rpow_two, Real.rpow_two] at hle
-  exact le_of_sq_le_sq hle (norm_nonneg _)
-
 /-- The normalized monomial `eₙ(z) = zⁿ / √(n!)`, represented by the `n`th
 standard basis vector in the Taylor-coefficient model of Fock space. -/
 @[reducible] noncomputable def fockMonomial (n : ℕ) : ℓ²(ℕ, ℂ) :=
@@ -287,7 +275,7 @@ theorem orthonormal_fockMonomial : Orthonormal ℂ fockMonomial :=
 
 /-- The coefficient of `a` at `n` is the inner product with `eₙ`. -/
 theorem fockCoeff_eq_inner (a : ℓ²(ℕ, ℂ)) (n : ℕ) :
-    a n = ⟪lp.single 2 n (1 : ℂ), a⟫ := by
+    a n = ⟪fockMonomial n, a⟫ := by
   rw [lp.inner_single_left, RCLike.inner_apply']
   simp
 
