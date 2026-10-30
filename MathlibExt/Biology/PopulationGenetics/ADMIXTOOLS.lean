@@ -37,8 +37,9 @@ Sign conventions. Patterson et al. (2012) define `D(W, X; Y, Z)` with numerator
 and Durand et al. (2011) write `D = (ABBA - BABA) / (ABBA + BABA)`, positive when `P2` and `P3`
 share more derived alleles. When `O` is fixed for the ancestral allele, the two numerators differ
 only in sign. For a polymorphic outgroup, the unpolarized patterns additionally fold the
-complementary allele orientations, so the numerators need not be sign reversals. Both numerators
-vanish in expectation on the tree `((P1, P2), P3), O`.
+complementary allele orientations, so the numerators need not be sign reversals. On the tree
+`((P1, P2), P3), O`, the unpolarized numerator vanishes in expectation by the `f4` result below;
+no corresponding polarized tree claim is made.
 
 ## Main results
 
@@ -618,10 +619,10 @@ open MathlibExt.Biology.PopulationGenetics.ADMIXTOOLS
 variable {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
   (M : DriftModel μ E P)
 
-/-- **The D-statistic vanishes on a tree.** In the drift model, if no edge lies on both the
-`P1–P2` and the `P3–O` path (as on the tree `((P1, P2), P3), O`), then the expected numbers of
-`ABBA` and `BABA` sites are equal, so the numerator of `D` has expectation `0` in either sign
-convention. The integrability hypotheses make both expectations meaningful. -/
+/-- **The unpolarized D-statistic numerator vanishes on a tree.** In the drift model, if no edge
+lies on both the `P1–P2` and the `P3–O` path (as on the tree `((P1, P2), P3), O`), then the
+expected unpolarized `ABBA` and `BABA` counts are equal. Thus `BABA - ABBA` and its sign reversal
+have expectation `0`. The integrability hypotheses make both expectations meaningful. -/
 theorem integral_sampleExpect_abba_eq_baba {P1 P2 P3 O : P}
     (h : ∀ e, (M.weight P1 e - M.weight P2 e) * (M.weight P3 e - M.weight O e) = 0)
     (habba : Integrable

@@ -90,7 +90,7 @@ example : f4 (Measure.dirac ()) pDirac 4 0 2 3 =
     (fun ω => by simp [pDirac, Fin.sum_univ_two]; norm_num)
   simpa [Fin.sum_univ_two] using h
 
-/-! ### The D-statistic on a tree: the hypotheses are satisfiable -/
+/-! ### The unpolarized D-statistic numerator on a tree: the hypotheses are satisfiable -/
 
 /-- A one-edge drift model on a Dirac measure: `P1` and `P2` (populations `0`, `1`) share an
 edge with increment `1/4` below the root (frequency `1/2`); `P3` and `O` (populations `2`, `3`)
