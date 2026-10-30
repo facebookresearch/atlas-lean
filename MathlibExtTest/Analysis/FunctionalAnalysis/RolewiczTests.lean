@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.FunctionalAnalysis.Rolewicz
+public import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 
 /-!
 # Tests for Rolewicz's theorem
@@ -25,6 +26,7 @@ open Set Filter Topology Metric
 open scoped _root_.lp ENNReal
 open MathlibExt.Analysis.FunctionalAnalysis.Hypercyclicity
 open MathlibExt.Analysis.FunctionalAnalysis.Rolewicz
+open MathlibExt.Analysis.InnerProductSpace
 
 namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests
 
@@ -90,5 +92,26 @@ example : ratApproxScalar (𝕜 := ℂ) (1 / 2, 1 / 3) ∈
   ⟨(1 / 2, 1 / 3), rfl⟩
 
 #print axioms rolewicz_two_complex
+
+/-- A nonreal scalar of norm two makes the canonical backward shift hypercyclic. -/
+example : IsHypercyclic ((2 * Complex.I : ℂ) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
+  have hB : LpShiftOperator.backwardCLM (𝕜 := ℂ) = backwardShiftCLM (𝕜 := ℂ) := rfl
+  rw [hB, isHypercyclic_smul_backwardShiftCLM_iff, norm_mul,
+    Complex.norm_two, Complex.norm_I, mul_one]
+  norm_num
+
+/-- Reversing the shift composition loses the first basis vector. -/
+example : (LpShiftOperator.shiftCLM (𝕜 := ℂ) ∘L LpShiftOperator.backwardCLM)
+    (lp.single 2 0 (1 : ℂ)) = 0 := by
+  ext i
+  cases i <;> simp [ContinuousLinearMap.comp_apply, LpShiftOperator.shiftCLM_apply,
+    LpShiftOperator.backwardCLM_apply, lp.single_apply]
+
+/-- Scalar powers and canonical backward powers have the correct coordinate action. -/
+example (μ : ℂ) (n : ℕ) (x : ℓ²(ℕ, ℂ)) :
+    (((μ • LpShiftOperator.backwardCLM (𝕜 := ℂ)) ^ n) x) 0 = μ ^ n * x n := by
+  have hB : LpShiftOperator.backwardCLM (𝕜 := ℂ) = backwardShiftCLM (𝕜 := ℂ) := rfl
+  rw [hB, smul_backwardShiftCLM_pow_apply, lp.coeFn_smul, Pi.smul_apply,
+    backwardShiftCLM_pow_apply, Nat.zero_add, smul_eq_mul]
 
 end MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests
