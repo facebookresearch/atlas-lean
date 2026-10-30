@@ -109,6 +109,17 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : rellichTrunc N x = lpTrunc 2 N x :=
   rfl
 
+/-- Canonical truncations preserve the norm bound on every Rellich ball. -/
+example {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hM : 0 ≤ M) (hx : memRellichBall x M) (N : ℕ) :
+    ‖lpTrunc 2 N x‖ ≤ M :=
+  (norm_lpTrunc_le N x).trans (norm_le_of_memRellichBall hM hx)
+
+/-- Every real radius satisfies both hypotheses of the canonical compactness criterion. -/
+example (M : ℝ) : Bornology.IsBounded (rellichBall (𝕜 := 𝕜) M) ∧
+    UniformTailVanishing 2 (rellichBall (𝕜 := 𝕜) M) :=
+  (totallyBounded_iff_bounded_and_uniformTailVanishing (p := 2) (by norm_num)).mp
+    (totallyBounded_rellichBall M)
+
 /-- The finite-sum truncation has exactly the original shifted-tail norm. -/
 example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
     ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 =
