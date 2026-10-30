@@ -35,8 +35,10 @@ whether it carries the derived allele (`x : Fin 4 → Bool`). The unpolarized si
 Sign conventions. Patterson et al. (2012) define `D(W, X; Y, Z)` with numerator
 `(w - x) (y - z)`, i.e. `BABA - ABBA` for `(W, X, Y, Z) = (P1, P2, P3, O)`; Green et al. (2010)
 and Durand et al. (2011) write `D = (ABBA - BABA) / (ABBA + BABA)`, positive when `P2` and `P3`
-share more derived alleles. The two differ only in sign; both numerators vanish in expectation
-on the tree `((P1, P2), P3), O`.
+share more derived alleles. When `O` is fixed for the ancestral allele, the two numerators differ
+only in sign. For a polymorphic outgroup, the unpolarized patterns additionally fold the
+complementary allele orientations, so the numerators need not be sign reversals. Both numerators
+vanish in expectation on the tree `((P1, P2), P3), O`.
 
 ## Main results
 

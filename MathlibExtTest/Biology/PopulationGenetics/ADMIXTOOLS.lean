@@ -164,8 +164,8 @@ example : hudsonFst Finset.univ ![1, 0] ![0, 1] = 1 := by
   norm_num [hudsonFst, hudsonDen, Fin.sum_univ_two]
 
 /-- Domain edge: if both populations are fixed for the same allele at every site the
-denominator vanishes and Lean returns the junk value `0`; `hudsonFst_mem_Icc` assumes a positive
-denominator. -/
+denominator vanishes and Lean's totalized division returns `0`; `hudsonFst_mem_Icc` includes this
+case without a positive-denominator hypothesis. -/
 example : hudsonFst Finset.univ ![1, 1] ![1, 1] = 0 := by
   norm_num [hudsonFst, hudsonDen, Fin.sum_univ_two]
 
