@@ -591,10 +591,11 @@ private theorem finite_metabolites {N : Matrix M R ℝ} {f : R → (M → ℝ) �
   have : FiniteDimensional ℝ (M → ℝ) := FiniteDimensional.of_injective L hL
   exact (Pi.linearIndependent_single_one M ℝ).finite
 
-/-- **Concentration summation theorem** (Heinrich & Rapoport 1974):
-`∑_i C^{s_m}_{e_i} = 0`. -/
+/-- **Concentration summation theorem** (Heinrich & Rapoport 1974): for a positive
+steady-state concentration `s_m`, `∑_i C^{s_m}_{e_i} = 0`. The positivity hypothesis is the
+domain on which the scaled concentration control coefficients have their biological meaning. -/
 theorem sum_concControl {N : Matrix M R ℝ} {f : R → (M → ℝ) → ℝ} {σ : (R → ℝ) → M → ℝ}
-    {e₀ : R → ℝ} (h : IsRegularSteadyState N f σ e₀) (m : M) :
+    {e₀ : R → ℝ} (h : IsRegularSteadyState N f σ e₀) (m : M) (_hm : 0 < σ e₀ m) :
     ∑ i, concControl σ e₀ m i = 0 := by
   have := finite_metabolites h
   have := Fintype.ofFinite M

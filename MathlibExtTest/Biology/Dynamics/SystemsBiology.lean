@@ -134,13 +134,64 @@ theorem isRegularSteadyState_path : IsRegularSteadyState nPath fPath σPath (fun
     fin_cases i
     simpa using this
 
+/-- **Zero-concentration boundary witness:** the same pathway is a regular steady state at
+enzyme levels `(0, 1)`, where its steady-state concentration is zero. -/
+theorem isRegularSteadyState_path_zero : IsRegularSteadyState nPath fPath σPath ![0, 1] where
+  differentiableAt_steady := by
+    refine differentiableAt_pi.2 fun i => ?_
+    have he : (fun e : Fin 2 → ℝ => σPath e i) = fun e => e 0 * (e 1)⁻¹ := by
+      funext e; simp [σPath, div_eq_mul_inv]
+    simp only [he]
+    exact DifferentiableAt.mul (hasFDerivAt_apply (0 : Fin 2) _).differentiableAt
+      (DifferentiableAt.inv (hasFDerivAt_apply (1 : Fin 2) _).differentiableAt (by simp))
+  differentiableAt_rate i := by
+    fin_cases i
+    · simp [fPath]
+    · exact (hasFDerivAt_apply (0 : Fin 1) _).differentiableAt
+  steady := by
+    filter_upwards [(continuous_apply (1 : Fin 2)).continuousAt.eventually_ne
+      (by simp : (![0, 1] : Fin 2 → ℝ) 1 ≠ 0)] with e he
+    funext k
+    fin_cases k
+    simp [nPath, flux, fPath, σPath, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    field_simp
+    ring
+  regular δ δ' h := by
+    have := congrFun h 0
+    simp [nPath, Matrix.mulVec, dotProduct, Fin.sum_univ_two, fderiv_fPath_zero,
+      fderiv_fPath_one] at this
+    funext i
+    fin_cases i
+    simpa using this
+
+/-- At the zero-concentration regular state, Lean's totalized division makes every raw
+`concControl` value, and hence their sum, zero. This is algebraic behavior outside the
+biological coefficient domain. -/
+example : σPath ![0, 1] 0 = 0 ∧
+    (∀ i, concControl σPath ![0, 1] 0 i = 0) ∧
+    ∑ i, concControl σPath ![0, 1] 0 i = 0 := by
+  constructor
+  · simp [σPath]
+  constructor
+  · intro i
+    simp [concControl, σPath]
+  · simp [concControl, σPath]
+
 /-- The flux control coefficients of the output flux sum to `1`. -/
 example : ∑ i, fluxControl fPath σPath (fun _ => 1) 1 i = 1 :=
   sum_fluxControl isRegularSteadyState_path (by simp [steadyFlux, flux, fPath, σPath])
 
-/-- The concentration control coefficients sum to `0`. -/
+/-- At the positive concentration `1`, the concentration control coefficients sum to `0`. -/
 example : ∑ i, concControl σPath (fun _ => 1) 0 i = 0 :=
-  sum_concControl isRegularSteadyState_path 0
+  sum_concControl isRegularSteadyState_path 0 (by simp [σPath])
+
+/-- A generic client of the source-labelled theorem must supply the positive-concentration
+domain premise. -/
+example {M R : Type*} [Fintype R] [DecidableEq R]
+    {N : Matrix M R ℝ} {f : R → (M → ℝ) → ℝ} {σ : (R → ℝ) → M → ℝ} {e₀ : R → ℝ}
+    (h : IsRegularSteadyState N f σ e₀) (m : M) (hm : 0 < σ e₀ m) :
+    ∑ i, concControl σ e₀ m i = 0 :=
+  sum_concControl h m hm
 
 /-- The connectivity theorem for the pathway. -/
 example : ∑ i, fluxControl fPath σPath (fun _ => 1) 0 i *
