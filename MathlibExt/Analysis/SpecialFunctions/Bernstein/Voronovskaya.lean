@@ -32,8 +32,7 @@ this file adds the first moment (`j = 1`, which vanishes) and the exact fourth m
 `x (1 - x) (1 + 3 (n - 2) x (1 - x)) / n ^ 3`, which is `O(1 / n ^ 2)` uniformly in `x`.
 
 In population genetics the same statement is the generator half of the diffusion approximation
-of the neutral Wright–Fisher model; see
-`MathlibExt.Biology.PopulationGenetics.Diffusion.DiffusionLimit`.
+of the neutral Wright–Fisher model.
 
 ## Main results
 
