@@ -9,11 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Normed.Lp.Compactness
-public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Analysis.RCLike.Lemmas
 public import Mathlib.Topology.MetricSpace.Bounded
-public import Mathlib.Topology.MetricSpace.ProperSpace
 public import Mathlib.Topology.Sequences
 import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith
@@ -24,15 +22,17 @@ import Mathlib.Tactic.Ring
 @[expose] public section
 
 /-!
-# Rellich–Kondrachov compactness in Fourier coordinates
+# A weighted sequence model of Rellich–Kondrachov compactness
 
-The **Rellich–Kondrachov theorem** says that the embedding of the Sobolev
-space `H¹` into `L²` is compact: a bounded set of functions with bounded
-derivatives is relatively compact in `L²`. In Fourier coordinates this is
-the statement that a ball of the weighted `ℓ²` space with weights
-`1 + n ^ 2` is relatively compact in `ℓ²`: the weight forces the tails of
-the sequences to be uniformly small, and a truncation to the first `N`
-coordinates lives in a finite-dimensional space.
+For suitable bounded domains `Ω`, the classical **Rellich–Kondrachov
+theorem** gives compactness of the Sobolev embedding `H¹(Ω) ↪ L²(Ω)`;
+the bounded domain and boundary regularity hypotheses matter.
+
+Here we prove a specific one dimensional weighted sequence space analogue
+in `ℓ²(ℕ, 𝕜)`, with weights `1 + n ^ 2`. The weight forces uniformly small
+tails, and the canonical `ℓ^p` compactness criterion applies to the norm
+bound and the tail estimate. The formalized objects are scalar sequences
+indexed by `ℕ`; Sobolev spaces on domains provide the classical motivation.
 
 Concretely, for `𝕜 = ℝ` or `ℂ`, we show that the set
 
@@ -43,8 +43,8 @@ rellichBall M = {x : ℓ²(ℕ, 𝕜) | ∀ F : Finset ℕ, ∑ n ∈ F, (1 + n 
 is totally bounded, closed, compact, and sequentially compact in `ℓ²(ℕ, 𝕜)`.
 The finite-sum form of the defining bound is used instead of a `tsum`
 bound, so no summability hypothesis is needed in the definition (for
-nonnegative terms the two forms are equivalent). The truncation argument
-is the content of `norm_sub_lpTrunc_sq_le`.
+nonnegative terms the two forms are equivalent). The canonical truncation
+`lpTrunc 2` satisfies the weighted tail estimate `norm_sub_lpTrunc_sq_le`.
 
 Companion to the `L^p`-space and compact-operator material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/LpSpaces.lean` and
@@ -152,10 +152,6 @@ theorem memRellichBall_of_support {x : ℓ²(ℕ, 𝕜)} {S : Finset ℕ} {M : �
           fun n _ _ => mul_nonneg (rellichWeight_nonneg n) (sq_nonneg _)
     _ ≤ M ^ 2 := h
 
-/-- The truncation of `x` to its first `N` coordinates. -/
-noncomputable def rellichTrunc (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : ℓ²(ℕ, 𝕜) :=
-  lpTrunc 2 N x
-
 /-- The tail norm identity: the distance from `x` to its truncation is the
 `ℓ²` norm of the tail. -/
 theorem norm_sub_lpTrunc_sq_eq {x : ℓ²(ℕ, 𝕜)} (N : ℕ) :
@@ -200,14 +196,6 @@ theorem norm_sub_lpTrunc_sq_le {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellich
     linarith
   exact hle1.trans hle2
 
-/-- The span of the first `N` standard basis vectors of `ℓ²(ℕ, 𝕜)`. -/
-noncomputable def rellichSpan (N : ℕ) : Submodule 𝕜 (ℓ²(ℕ, 𝕜)) :=
-  Submodule.span 𝕜 (Set.image (fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ↑(Finset.range N))
-
-instance (N : ℕ) : FiniteDimensional 𝕜 (rellichSpan (𝕜 := 𝕜) N) :=
-  FiniteDimensional.span_of_finite 𝕜
-    ((Finset.range N).finite_toSet.image (fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)))
-
 /-- Canonical truncations land in the span of the first `N` basis vectors. -/
 theorem lpTrunc_mem_span (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
     lpTrunc 2 N x ∈ Submodule.span 𝕜
@@ -225,85 +213,34 @@ theorem rellichBall_abs (M : ℝ) :
   ext x
   simp only [rellichBall, Set.mem_ofPred_eq, memRellichBall, sq_abs]
 
+/-- The weighted tail bound is smaller than any positive squared tolerance. -/
+private theorem exists_tail_bound_lt (M : ℝ) {ε : ℝ} (hε : 0 < ε) :
+    ∃ N : ℕ, M ^ 2 / rellichWeight N < ε ^ 2 := by
+  obtain ⟨N, hN⟩ := exists_nat_gt (|M| / ε)
+  have hN' : |M| < (N : ℝ) * ε := (div_lt_iff₀ hε).mp hN
+  have hsq : M ^ 2 < ((N : ℝ) * ε) ^ 2 := by
+    apply sq_lt_sq.mpr
+    simpa only [abs_of_nonneg (mul_nonneg (Nat.cast_nonneg N) hε.le)] using hN'
+  refine ⟨N, ?_⟩
+  rw [div_lt_iff₀ (rellichWeight_pos N)]
+  unfold rellichWeight
+  nlinarith [sq_nonneg ε]
+
 /-- **Rellich–Kondrachov, total boundedness form.** The Rellich ball is
 totally bounded in `ℓ²(ℕ, 𝕜)`. -/
 theorem totallyBounded_rellichBall (M : ℝ) :
     TotallyBounded (rellichBall (𝕜 := 𝕜) M) := by
   rw [rellichBall_abs]
-  rw [Metric.totallyBounded_iff]
-  intro ε hε
-  -- Choose `N` so large that the tail estimate beats `ε / 2`.
-  obtain ⟨N, hN⟩ : ∃ N : ℕ, |M| ^ 2 / rellichWeight N < (ε / 2) ^ 2 := by
-    obtain ⟨N, hN⟩ := exists_nat_gt ((|M| ^ 2 + 1) / (ε / 2) ^ 2)
-    refine ⟨N, ?_⟩
-    have hε2 : (0 : ℝ) < (ε / 2) ^ 2 := by positivity
-    have hN1 : (1 : ℝ) ≤ (N : ℝ) := by
-      have hpos : (0 : ℝ) < (|M| ^ 2 + 1) / (ε / 2) ^ 2 := by positivity
-      have hNpos : (0 : ℝ) < (N : ℝ) := lt_trans hpos hN
-      exact_mod_cast Nat.one_le_iff_ne_zero.mpr (by exact_mod_cast ne_of_gt hNpos)
-    have hNw : (|M| ^ 2 + 1) / (ε / 2) ^ 2 < rellichWeight N := by
-      have h2 : (N : ℝ) ≤ (N : ℝ) ^ 2 := by nlinarith
-      calc (|M| ^ 2 + 1) / (ε / 2) ^ 2 < (N : ℝ) := hN
-        _ ≤ (N : ℝ) ^ 2 := h2
-        _ ≤ rellichWeight N := by
-          unfold rellichWeight
-          have hsq : (0 : ℝ) ≤ (N : ℝ) ^ 2 := sq_nonneg _
-          linarith
-    calc |M| ^ 2 / rellichWeight N
-        ≤ (|M| ^ 2 + 1) / rellichWeight N :=
-          div_le_div_of_nonneg_right (by linarith) (rellichWeight_nonneg N)
-      _ < (|M| ^ 2 + 1) / ((|M| ^ 2 + 1) / (ε / 2) ^ 2) :=
-          div_lt_div_of_pos_left (by positivity) (by positivity) hNw
-      _ = (ε / 2) ^ 2 := by field_simp
-  -- The truncated set is compact: it sits in the `|M|`-ball of the
-  -- finite-dimensional span of the first `N` basis vectors.
-  have hproperK : ProperSpace 𝕜 := FiniteDimensional.proper_real 𝕜
-  have hlc : LocallyCompactSpace 𝕜 := by infer_instance
-  have hproperS : ProperSpace (rellichSpan (𝕜 := 𝕜) N) :=
-    FiniteDimensional.proper 𝕜 (rellichSpan (𝕜 := 𝕜) N)
-  set K : Set (ℓ²(ℕ, 𝕜)) :=
-    ((↑) : rellichSpan (𝕜 := 𝕜) N → ℓ²(ℕ, 𝕜)) ''
-      Metric.closedBall (0 : rellichSpan (𝕜 := 𝕜) N) |M| with hK
-  have hKcompact : IsCompact K :=
-    (isCompact_closedBall (0 : rellichSpan (𝕜 := 𝕜) N) |M|).image continuous_subtype_val
-  obtain ⟨t, htfin, hcover⟩ :=
-    Metric.totallyBounded_iff.mp hKcompact.totallyBounded (ε / 2) (by linarith)
-  refine ⟨t, htfin, fun x hx => ?_⟩
-  have hx' : memRellichBall x |M| := hx
-  -- The truncation of `x` lies in `K`.
-  have htruncNorm : ‖rellichTrunc N x‖ ≤ |M| := by
-    have h1 : ‖rellichTrunc N x‖ ≤ ‖x‖ := by
-      have hsq : ‖rellichTrunc N x‖ ^ 2 ≤ ‖x‖ ^ 2 := by
-        have hsum : ‖rellichTrunc N x‖ ^ 2 =
-            ∑ i ∈ Finset.range N, ‖(x : ℕ → 𝕜) i‖ ^ 2 := by
-          have hp : (0 : ℝ) < (2 : ℝ≥0∞).toReal := by norm_num
-          have h := lp.norm_sum_single hp (fun i => (x : ℕ → 𝕜) i) (Finset.range N)
-          simpa only [toReal_two, Real.rpow_two, rellichTrunc, lpTrunc, lpLift] using h
-        rw [hsum, norm_sq_eq_tsum]
-        exact (summable_norm_sq x).sum_le_tsum _ (fun i _ => sq_nonneg _)
-      calc ‖rellichTrunc N x‖ = Real.sqrt (‖rellichTrunc N x‖ ^ 2) :=
-            (Real.sqrt_sq (norm_nonneg _)).symm
-        _ ≤ Real.sqrt (‖x‖ ^ 2) := Real.sqrt_le_sqrt hsq
-        _ = ‖x‖ := Real.sqrt_sq (norm_nonneg _)
-    exact h1.trans (norm_le_of_memRellichBall (abs_nonneg _) hx')
-  have htruncK : rellichTrunc N x ∈ K := by
-    refine ⟨⟨rellichTrunc N x, lpTrunc_mem_span N x⟩, ?_, rfl⟩
-    rw [Metric.mem_closedBall, dist_eq_norm, sub_zero]
-    exact htruncNorm
-  obtain ⟨y, hyt, hy⟩ := Set.mem_iUnion₂.mp (hcover htruncK)
-  have hdist1 : dist x (rellichTrunc N x) < ε / 2 := by
-    rw [dist_eq_norm]
-    have htail := norm_sub_lpTrunc_sq_le hx' N
-    have hlt : ‖x - rellichTrunc N x‖ ^ 2 < (ε / 2) ^ 2 := lt_of_le_of_lt htail hN
+  refine (totallyBounded_iff_bounded_and_uniformTailVanishing (p := 2) (by norm_num)).mpr
+    ⟨?_, ?_⟩
+  · exact isBounded_iff_forall_norm_le.mpr ⟨|M|, fun x hx =>
+      norm_le_of_memRellichBall (abs_nonneg _) hx⟩
+  · intro ε hε
+    obtain ⟨N, hN⟩ := exists_tail_bound_lt |M| hε
+    refine ⟨N, fun x hx => ?_⟩
+    have hlt := lt_of_le_of_lt (norm_sub_lpTrunc_sq_le hx N) hN
     have habs := sq_lt_sq.mp hlt
-    rwa [abs_of_nonneg (norm_nonneg _), abs_of_pos (by linarith : (0 : ℝ) < ε / 2)] at habs
-  have hdist2 : dist (rellichTrunc N x) y < ε / 2 := Metric.mem_ball.mp hy
-  refine Set.mem_iUnion₂.mpr ⟨y, hyt, ?_⟩
-  rw [Metric.mem_ball]
-  calc dist x y ≤ dist x (rellichTrunc N x) + dist (rellichTrunc N x) y :=
-        dist_triangle _ _ _
-    _ < ε / 2 + ε / 2 := add_lt_add hdist1 hdist2
-    _ = ε := add_halves ε
+    rwa [abs_of_nonneg (norm_nonneg _), abs_of_pos hε] at habs
 
 /-- **Rellich–Kondrachov, closedness form.** The Rellich ball is closed. -/
 theorem isClosed_rellichBall (M : ℝ) : IsClosed (rellichBall (𝕜 := 𝕜) M) := by

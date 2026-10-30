@@ -12,7 +12,7 @@ public import MathlibExt.Analysis.Normed.Lp.RellichKondrachov
 public import MathlibExt.Analysis.Normed.Lp.Compactness
 
 /-!
-# Tests for Rellich–Kondrachov compactness in Fourier coordinates
+# Tests for the weighted Rellich sequence model
 
 * The unit vector `e₀` lies in `rellichBall 1` over `ℝ`, and `2 • e₃`
   lies in `rellichBall 7` over `ℂ` (weighted sum `10 * 4 = 40 ≤ 49`).
@@ -20,6 +20,8 @@ public import MathlibExt.Analysis.Normed.Lp.Compactness
   over `ℝ` (weighted sum `9 + 2 * 16 = 41 ≤ 49`).
 * The norm bound and the tail estimate on `e₀`.
 * Total boundedness, compactness, and the sequential form on concrete balls.
+* Original finite-sum tail/span contracts and canonical truncation equivalence.
+* Canonical truncation norm bounds and compactness-criterion hypotheses.
 * `#print axioms` for the main theorems: standard triple only.
 -/
 
@@ -76,9 +78,9 @@ example : ‖(lp.single 2 0 (1 : ℝ) : ℓ²(ℕ, ℝ))‖ ≤ 1 :=
 /-- Tail estimate on `e₀` with `N = 1`: the truncation already equals `e₀`,
 so the left side is `0 ≤ 1 / 2`. -/
 example : ‖(lp.single 2 0 (1 : ℝ) : ℓ²(ℕ, ℝ)) -
-    rellichTrunc 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2 ≤ 1 / 2 := by
+    lpTrunc 2 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2 ≤ 1 / 2 := by
   calc ‖(lp.single 2 0 (1 : ℝ) : ℓ²(ℕ, ℝ)) -
-        rellichTrunc 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2
+        lpTrunc 2 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2
       ≤ (1 : ℝ) ^ 2 / rellichWeight 1 := norm_sub_lpTrunc_sq_le single_zero_mem 1
     _ = 1 / 2 := by simp [rellichWeight]; norm_num
 
@@ -105,8 +107,9 @@ section Characterization
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The original truncation is definitionally the canonical truncation at `p = 2`. -/
-example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : rellichTrunc N x = lpTrunc 2 N x :=
+/-- The original finite sum is definitionally the canonical truncation at `p = 2`. -/
+example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
+    (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i)) = lpTrunc 2 N x :=
   rfl
 
 /-- Canonical truncations preserve the norm bound on every Rellich ball. -/
