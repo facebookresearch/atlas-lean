@@ -10,6 +10,8 @@ module
 
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.LinearAlgebra.Matrix.Defs
+import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Tactic.Positivity
 
 /-!
 # LD-score regression: the expected association statistic
@@ -57,7 +59,9 @@ convention `x / 0 = 0`.
 * `Model.h2_nonneg`, `Model.h2_le_one`: the model forces `0 ≤ h² ≤ 1`.
 * `Model.integral_chiSq`: `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²) * (∑ i, X i j ^ 2) / N` for
   any genotype matrix, with `β̂` the `N`-normalized score.
-* `Model.integral_chiSq_of_standardized`: for a column with `∑ i, X i j ^ 2 = N`,
+* `IsStandardized`: every marker column has mean `0` and sum of squares `N`; then `ldCorr` is
+  the sample correlation (`IsStandardized.ldCorr_self`, `IsStandardized.ldCorr_sq_le_one`).
+* `Model.integral_chiSq_of_standardized`: for a standardized genotype matrix,
   `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²)`.
 
 ## References
@@ -76,14 +80,40 @@ namespace MathlibExt.Biology.StatisticalGenetics.LDScore
 
 variable {N M : ℕ}
 
-/-- Sample correlation `r j k = X_jᵀ X_k / N` between markers `j` and `k` (for standardized
-columns of the genotype matrix `X`). -/
+/-- The normalized cross product `r j k = X_jᵀ X_k / N` of markers `j` and `k`. For a
+standardized genotype matrix (`IsStandardized`) it is the sample correlation of the two
+markers; for other matrices it is only a scale-dependent dot product. -/
 noncomputable def ldCorr (X : Matrix (Fin N) (Fin M) ℝ) (j k : Fin M) : ℝ :=
   (∑ i, X i j * X i k) / N
 
-/-- The LD score `ℓ j = ∑ k, r j k ^ 2` of marker `j`. -/
+/-- The LD score `ℓ j = ∑ k, r j k ^ 2` of marker `j` (an LD score in the sense of the cited
+paper for a standardized genotype matrix). -/
 noncomputable def ldScore (X : Matrix (Fin N) (Fin M) ℝ) (j : Fin M) : ℝ :=
   ∑ k, ldCorr X j k ^ 2
+
+/-- The genotype matrix is standardized: every marker column has mean `0` and sum of squares
+`N` (unit sample variance). -/
+def IsStandardized (X : Matrix (Fin N) (Fin M) ℝ) : Prop :=
+  ∀ k, ∑ i, X i k = 0 ∧ ∑ i, X i k ^ 2 = N
+
+/-- For a standardized matrix each marker has correlation `1` with itself. -/
+theorem IsStandardized.ldCorr_self {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X)
+    (hN : N ≠ 0) (k : Fin M) : ldCorr X k k = 1 := by
+  have h := (hX k).2
+  simp only [pow_two] at h
+  rw [ldCorr, h, div_self (Nat.cast_ne_zero.mpr hN)]
+
+/-- For a standardized matrix the correlations lie in `[-1, 1]` (Cauchy–Schwarz). -/
+theorem IsStandardized.ldCorr_sq_le_one {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X)
+    (j k : Fin M) : ldCorr X j k ^ 2 ≤ 1 := by
+  rcases Nat.eq_zero_or_pos N with hN | hN
+  · subst hN
+    simp [ldCorr]
+  have hN' : (0 : ℝ) < N := Nat.cast_pos.mpr hN
+  have hcs := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ (fun i => X i j) (fun i => X i k)
+  rw [(hX j).2, (hX k).2] at hcs
+  rw [ldCorr, div_pow, div_le_one (by positivity)]
+  nlinarith
 
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 
@@ -219,14 +249,14 @@ theorem integral_chiSq (j : Fin M) :
   have hNr : (N : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hN
   field_simp
 
-/-- LD-score regression (Bulik-Sullivan et al. 2015): for a standardized marker `j`
-(`∑ i, X i j ^ 2 = N`) and `N ≠ 0`, `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²)`. The expected
-association statistic is affine in the LD score, with slope `N h² / M` and intercept
-`1 - h²`. -/
-theorem integral_chiSq_of_standardized (hN : N ≠ 0) (j : Fin M)
-    (hX : ∑ i, X i j ^ 2 = N) :
+/-- LD-score regression (Bulik-Sullivan et al. 2015): for a standardized genotype matrix
+(`IsStandardized`, so that `ldCorr` is the sample correlation and `ldScore` the LD score) and
+`N ≠ 0`, `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²)`. The expected association statistic is affine in
+the LD score, with slope `N h² / M` and intercept `1 - h²`. The proof uses only that column `j`
+has sum of squares `N`; the rest of the standardization is what makes `ℓ j` an LD score. -/
+theorem integral_chiSq_of_standardized (hN : N ≠ 0) (j : Fin M) (hX : IsStandardized X) :
     ∫ ω, D.chiSq X j ω ∂μ = N * D.h2 / M * ldScore X j + (1 - D.h2) := by
-  rw [D.integral_chiSq X j, hX, mul_div_cancel_right₀ _ (Nat.cast_ne_zero.mpr hN)]
+  rw [D.integral_chiSq X j, (hX j).2, mul_div_cancel_right₀ _ (Nat.cast_ne_zero.mpr hN)]
 
 end Model
 
