@@ -19,6 +19,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Tests for Moreau decomposition for closed convex cones
 
+The tests use the canonical `convexProjection` map together with the
+cone-specific Moreau API.
+
 * The nonnegative orthant in `ℝ²` is a closed convex cone, and its
   projection is coordinatewise `max (·) 0`.
 * The polar cone of the orthant is the nonpositive orthant.
@@ -39,6 +42,7 @@ namespace MathlibExtTest.Analysis.Convex.MoreauDecompositionTests
 open Set Filter Topology
 open scoped InnerProductSpace
 open MathlibExt.Analysis.Convex.MoreauDecomposition
+open MathlibExt.Analysis.InnerProductSpace.ConvexProjection
 
 /-- The nonnegative orthant in `ℝ²`. -/
 def orthant : Set (EuclideanSpace ℝ (Fin 2)) := {x | 0 ≤ x 0 ∧ 0 ≤ x 1}
@@ -76,10 +80,10 @@ theorem isClosedConvexCone_orthant : IsClosedConvexCone orthant where
       exact mul_nonneg hc hx.2
 
 /-- Projection onto the nonnegative orthant is coordinatewise `max (·) 0`. -/
-theorem coneProjection_orthant (x : EuclideanSpace ℝ (Fin 2)) :
-    coneProjection orthant isClosedConvexCone_orthant x =
+theorem convexProjection_orthant (x : EuclideanSpace ℝ (Fin 2)) :
+    convexProjection orthant x =
       WithLp.toLp 2 fun i => max (x i) 0 := by
-  apply coneProjection_eq_of_forall_inner_le_zero isClosedConvexCone_orthant
+  apply convexProjection_eq_of_forall_inner_le_zero isClosedConvexCone_orthant
   · refine ⟨?_, ?_⟩ <;> exact le_max_right _ _
   · intro y hy
     rw [PiLp.inner_apply, Fin.sum_univ_two]
@@ -117,19 +121,19 @@ theorem polarCone_orthant :
       (mul_nonpos_of_nonneg_of_nonpos hx.2 hy.2)
 
 /-- Moreau decomposition at `(-1, 2)`: the orthant projection is `(0, 2)`. -/
-example : coneProjection orthant isClosedConvexCone_orthant
+example : convexProjection orthant
     (WithLp.toLp 2 ![-1, 2] : EuclideanSpace ℝ (Fin 2)) =
       WithLp.toLp 2 ![0, 2] := by
-  rw [coneProjection_orthant]
+  rw [convexProjection_orthant]
   apply PiLp.ext
   intro i
   fin_cases i <;> norm_num
 
 /-- Moreau decomposition at `(-1, 2)`: the polar projection is `(-1, 0)`. -/
-example : coneProjection (polarCone orthant) isClosedConvexCone_polarCone
+example : convexProjection (polarCone orthant)
     (WithLp.toLp 2 ![-1, 2] : EuclideanSpace ℝ (Fin 2)) =
       WithLp.toLp 2 ![-1, 0] := by
-  rw [coneProjection_polarCone isClosedConvexCone_orthant, coneProjection_orthant]
+  rw [convexProjection_polarCone isClosedConvexCone_orthant, convexProjection_orthant]
   apply PiLp.ext
   intro i
   fin_cases i <;> norm_num [PiLp.sub_apply]
@@ -146,8 +150,9 @@ theorem isClosedConvexCone_univ {E : Type*} [NormedAddCommGroup E] [InnerProduct
 
 /-- Projection onto the whole space is the identity. -/
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E] (x : E) :
-    coneProjection Set.univ isClosedConvexCone_univ x = x :=
-  coneProjection_eq_self_of_mem _ (Set.mem_univ x)
+    convexProjection Set.univ x = x :=
+  convexProjection_eq_self_of_mem isClosedConvexCone_univ.nonempty
+    isClosedConvexCone_univ.isComplete isClosedConvexCone_univ.convex (Set.mem_univ x)
 
 /-- The singleton `{0}` is a closed convex cone. -/
 theorem isClosedConvexCone_singleton_zero {E : Type*} [NormedAddCommGroup E]
@@ -163,8 +168,8 @@ theorem isClosedConvexCone_singleton_zero {E : Type*} [NormedAddCommGroup E]
 
 /-- Projection onto `{0}` is `0`. -/
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E] (x : E) :
-    coneProjection ({0} : Set E) isClosedConvexCone_singleton_zero x = 0 := by
-  apply coneProjection_eq_of_forall_inner_le_zero isClosedConvexCone_singleton_zero
+    convexProjection ({0} : Set E) x = 0 := by
+  apply convexProjection_eq_of_forall_inner_le_zero isClosedConvexCone_singleton_zero
     (Set.mem_singleton 0)
   · intro y hy
     rw [Set.mem_singleton_iff] at hy
@@ -172,10 +177,10 @@ example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSp
     simp
   · simp
 
-#print axioms coneProjection_orthant
+#print axioms convexProjection_orthant
 #print axioms polarCone_orthant
 #print axioms moreau_decomposition
 #print axioms polarCone_polarCone
-#print axioms norm_coneProjection_sub_le
+#print axioms lipschitzWith_convexProjection
 
 end MathlibExtTest.Analysis.Convex.MoreauDecompositionTests
