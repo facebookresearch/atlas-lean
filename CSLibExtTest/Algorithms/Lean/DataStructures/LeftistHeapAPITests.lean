@@ -28,6 +28,16 @@ namespace Cslib.Algorithms.Lean.LeftistHeapAPITests
 
 open LHeap
 
+-- `singleton` and its structural properties do not require an order on the carrier.
+inductive Unordered where
+| left
+| right
+
+example (xs : List Unordered) :
+    sumMSet (xs.map singleton) = (xs : Multiset Unordered) ∧
+    LTreeList (xs.map singleton) :=
+  ⟨sumMSet_map_singleton xs, ltreeList_map_singleton xs⟩
+
 variable {α : Type} [LinearOrder α]
 
 -- Check the complete frozen graded statement, not merely selected projections.

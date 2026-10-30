@@ -11,8 +11,8 @@ module
 public import Mathlib.Data.Nat.Log
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Tactic.Ring
-public import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring
+import Lean.Elab.Tactic.Omega
 
 /-!
 # Bottom-up heap construction costs

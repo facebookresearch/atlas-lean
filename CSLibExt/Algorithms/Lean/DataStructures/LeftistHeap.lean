@@ -201,7 +201,7 @@ def merge_all2 [LinearOrder α] (ts : List (LHeap α)) : LHeap α :=
   merge_all2Aux ts.length ts
 
 /-- Singleton heap: stored rank 1 = rank E + 1, leftist -/
-def singleton [LinearOrder α] (x : α) : LHeap α :=
+def singleton (x : α) : LHeap α :=
   .N 1 x .E .E
 
 /-- lheap_list2: convert list to leftist heap via merge_all2 (tail-recursive adj).
@@ -780,29 +780,29 @@ theorem T_merge_adj2_eq [LinearOrder α] (acc ts : List (LHeap α)) :
     rw [T_merge_adj2_eq (t1.merge t2 :: acc) ts']
 
 -- singleton lemmas
-theorem mset_singleton [LinearOrder α] (x : α) : mset_tree (singleton (α:=α) x) = {x} := by
+theorem mset_singleton (x : α) : mset_tree (singleton (α:=α) x) = {x} := by
   simp [singleton, mset_tree]
 
-theorem heap_singleton [LinearOrder α] (x : α) : heap (singleton (α:=α) x) := by
+theorem heap_singleton [LE α] (x : α) : heap (singleton (α:=α) x) := by
   simp [singleton, heap, all_le]
 
-theorem ltree_singleton [LinearOrder α] (x : α) : ltree (singleton (α:=α) x) := by
+theorem ltree_singleton (x : α) : ltree (singleton (α:=α) x) := by
   simp [singleton, ltree, rank]
 
-theorem sumMSet_map_singleton [LinearOrder α] (xs : List α) :
+theorem sumMSet_map_singleton (xs : List α) :
   sumMSet (xs.map singleton) = (xs : Multiset α) := by
   induction xs with
   | nil => simp [sumMSet]
   | cons x xs ih =>
     simp [sumMSet, mset_singleton, ih]
 
-theorem heapList_map_singleton [LinearOrder α] (xs : List α) : HeapList (xs.map singleton) := by
+theorem heapList_map_singleton [LE α] (xs : List α) : HeapList (xs.map singleton) := by
   intro t ht
   rw [List.mem_map] at ht
   obtain ⟨x, hx, rfl⟩ := ht
   exact heap_singleton x
 
-theorem ltreeList_map_singleton [LinearOrder α] (xs : List α) : LTreeList (xs.map singleton) := by
+theorem ltreeList_map_singleton (xs : List α) : LTreeList (xs.map singleton) := by
   intro t ht
   rw [List.mem_map] at ht
   obtain ⟨x, hx, rfl⟩ := ht
