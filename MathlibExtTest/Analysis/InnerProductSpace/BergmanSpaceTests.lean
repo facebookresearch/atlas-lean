@@ -136,7 +136,7 @@ example : (lp.single 2 3 (2 : ℂ) : ℓ²(ℕ, ℂ)) 3 =
     ⟪(lp.single 2 3 (1 : ℂ) : ℓ²(ℕ, ℂ)), (lp.single 2 3 (2 : ℂ) : ℓ²(ℕ, ℂ))⟫ :=
   bergmanCoeff_eq_inner _ _
 
-/-- The Taylor series of an `A²` function converges absolutely at `1/2`. -/
+/-- The Taylor series of an `A²` function converges at `1/2`. -/
 example (a : ℓ²(ℕ, ℂ)) :
     Summable (fun n => a n * (Real.sqrt ((n : ℝ) + 1) : ℂ) * (((1 / 2 : ℝ) : ℂ)) ^ n) :=
   summable_bergmanEval_terms ((1 / 2 : ℝ) : ℂ) half_mem_disc a

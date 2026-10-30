@@ -211,7 +211,7 @@ theorem bergmanEval_eq_tsum (z : ℂ) (hz : ‖z‖ < 1) (a : ℓ²(ℕ, ℂ)) :
     Complex.conj_ofReal]
   ring
 
-/-- The Taylor series of an `A²` function converges absolutely at every
+/-- The Taylor series of an `A²` function converges at every
 point of the disc. -/
 theorem summable_bergmanEval_terms (z : ℂ) (hz : ‖z‖ < 1) (a : ℓ²(ℕ, ℂ)) :
     Summable (fun n => a n * (Real.sqrt ((n : ℝ) + 1) : ℂ) * z ^ n) := by
