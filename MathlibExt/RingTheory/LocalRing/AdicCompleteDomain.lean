@@ -148,10 +148,12 @@ end AdicCompleteDomainAux
 
 namespace IsLocalRing
 
+universe u
+
 /-- A finite algebra over an adically complete Noetherian local ring that is
 a domain is itself local. -/
 theorem of_isDomain_of_module_finite_of_isAdicComplete
-    {R S : Type} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
+    {R S : Type u} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
     [CommRing S] [IsDomain S] [Algebra R S] [Module.Finite R S] : IsLocalRing S := by
   by_contra hS
