@@ -25,9 +25,10 @@ with that law.
 * `ProbabilityTheory.integral_mul_sub_one_map_cast_binomial`: `E[X (X - 1)] = n (n - 1) p²`.
 * `ProbabilityTheory.integral_sq_map_cast_binomial`: `E[X²] = n p (1 - p) + (n p)²`.
 * `ProbabilityTheory.variance_id_map_cast_binomial`: `Var X = n p (1 - p)`.
-* `ProbabilityTheory.integral_sq_of_hasLaw_binomial`,
-  `ProbabilityTheory.variance_of_hasLaw_binomial`: the same for a random variable with law
-  `Bin(ℝ, n, p)`.
+* `ProbabilityTheory.integral_mul_sub_one_of_hasLaw_binomial`,
+  `ProbabilityTheory.integral_sq_of_hasLaw_binomial`,
+  `ProbabilityTheory.variance_of_hasLaw_binomial`: the same three formulas for a random variable
+  with law `Bin(ℝ, n, p)`.
 
 ## References
 
@@ -80,10 +81,6 @@ theorem integral_mul_sub_one_map_cast_binomial :
     rw [sum_congr rfl hterm, ← mul_sum, ← add_pow]
     simp
 
-/-- **Mean of the binomial law** on `ℝ`: `E[X] = p n`. -/
-theorem integral_id_map_cast_binomial : ∫ x, x ∂Bin(ℝ, n, p) = (p : ℝ) * n :=
-  integral_of_hasLaw_binomial HasLaw.id
-
 /-- **Second moment of the binomial law**: `E[X²] = n p (1 - p) + (n p)²`. -/
 theorem integral_sq_map_cast_binomial :
     ∫ x, x ^ 2 ∂Bin(ℝ, n, p) = (n : ℝ) * p * (1 - (p : ℝ)) + ((n : ℝ) * p) ^ 2 := by
@@ -91,7 +88,8 @@ theorem integral_sq_map_cast_binomial :
     funext x
     ring
   rw [h, integral_add (integrable_map_cast_binomial _) (integrable_map_cast_binomial _),
-    integral_mul_sub_one_map_cast_binomial, integral_id_map_cast_binomial]
+    integral_mul_sub_one_map_cast_binomial, (integral_of_hasLaw_binomial HasLaw.id :
+      ∫ x, x ∂Bin(ℝ, n, p) = (p : ℝ) * n)]
   ring
 
 /-- **Variance of the binomial law**: `Var X = n p (1 - p)`. -/
@@ -102,8 +100,17 @@ theorem variance_id_map_cast_binomial :
       (by simpa using integrable_map_cast_binomial (fun x : ℝ => x ^ 2))
   rw [variance_eq_sub hmem]
   simp only [id_eq, Pi.pow_apply]
-  rw [integral_sq_map_cast_binomial, integral_id_map_cast_binomial]
+  rw [integral_sq_map_cast_binomial, (integral_of_hasLaw_binomial HasLaw.id :
+      ∫ x, x ∂Bin(ℝ, n, p) = (p : ℝ) * n)]
   ring
+
+/-- **Second factorial moment of a binomial random variable**: if `X` has law `Bin(ℝ, n, p)`
+then `E[X (X - 1)] = n (n - 1) p²`. -/
+theorem integral_mul_sub_one_of_hasLaw_binomial (hX : HasLaw X Bin(ℝ, n, p) P) :
+    P[fun ω => X ω * (X ω - 1)] = (n : ℝ) * ((n : ℝ) - 1) * (p : ℝ) ^ 2 := by
+  have h := hX.integral_comp (f := fun x : ℝ => x * (x - 1)) (by fun_prop)
+  rw [← integral_mul_sub_one_map_cast_binomial, ← h]
+  rfl
 
 /-- **Second moment of a binomial random variable**: if `X` has law `Bin(ℝ, n, p)` then
 `E[X²] = n p (1 - p) + (n p)²`. -/

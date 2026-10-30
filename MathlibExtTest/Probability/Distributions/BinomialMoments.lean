@@ -15,7 +15,7 @@ public import MathlibExt.Probability.Distributions.BinomialMoments
 
 Boundary cases `n = 0` (point mass at `0`) and `n = 1` (Bernoulli: variance `p (1 - p)`),
 the degenerate parameters `p = 0` and `p = 1` (zero variance), and a fair coin tossed four
-times (variance `1`, second moment `5`).
+times (variance `1`, second moment `5`, second factorial moment `3`).
 -/
 
 @[expose] public section
@@ -44,6 +44,13 @@ example {Ω : Type*} {m : MeasurableSpace Ω} {P : Measure Ω} {X : Ω → ℝ}
     (hX : HasLaw X Bin(ℝ, 4, ⟨1 / 2, by norm_num, by norm_num⟩) P) :
     Var[X; P] = 1 ∧ P[X ^ 2] = 5 := by
   rw [variance_of_hasLaw_binomial hX, integral_sq_of_hasLaw_binomial hX]
+  norm_num
+
+/-- A fair coin tossed four times: `E[X (X - 1)] = 4 · 3 · (1/2)² = 3`. -/
+example {Ω : Type*} {m : MeasurableSpace Ω} {P : Measure Ω} {X : Ω → ℝ}
+    (hX : HasLaw X Bin(ℝ, 4, ⟨1 / 2, by norm_num, by norm_num⟩) P) :
+    P[fun ω => X ω * (X ω - 1)] = 3 := by
+  rw [integral_mul_sub_one_of_hasLaw_binomial hX]
   norm_num
 
 /-- Second factorial moment for `n = 2`: `E[X (X - 1)] = 2 p²`. -/
