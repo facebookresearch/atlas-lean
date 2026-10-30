@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FinitePatternEnergy
@@ -18,6 +13,54 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
 public import PhyslibExt.StatisticalMechanics.RandomCluster.DensityFiniteToInfinite
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicOfMixing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
+
+/-!
+# Finite energy of the infinite-volume random-cluster measures
+
+The free and wired infinite-volume random-cluster measures on `ℤ^d` (`1 ≤ q`) have finite energy:
+forcing finitely many edges open or closed maps them to absolutely continuous measures, which gives
+the finite-energy merging property used in the Burton–Keane argument.
+
+## i. Overview
+
+In finite volume, forcing one edge open changes the random-cluster weight by a factor bounded
+below by the finite-energy constant `cFE p q > 0`, so
+`cFE p q · φ(ω^e ∈ S) ≤ φ(S)` for every event `S` of a box. This passes to the infinite-volume
+limits on cylinder events, then to finite patterns of open and closed edges by induction, and,
+by a monotone class argument, to every measurable event. A uniform bound
+`c · μ(f⁻¹ A) ≤ μ(A)` with `c > 0` gives `μ.map f ≪ μ`, so opening or closing finitely many edges
+preserves null sets, which is finite-energy merging. `wiredInfiniteVolume_hasFiniteEnergyMerge`
+and `freeInfiniteVolume_hasFiniteEnergyMerge` are proved unconditionally (only `0 < p < 1`,
+`1 ≤ q`).
+
+## ii. Key results
+
+- `pattern_bound_of_cylinders` : a bound `c · μ(f⁻¹ C) ≤ μ(C)` on cylinders extends to all
+  measurable events.
+- `map_absolutelyContinuous_of_real_preimage_bound` : such a bound with `c > 0` gives
+  `μ.map f ≪ μ`.
+- `wiredInfinite_setPattern_absolutelyContinuous`, `freeInfinite_setPattern_absolutelyContinuous`
+  : forcing a finite pattern preserves null sets.
+- `wiredInfiniteVolume_hasFiniteEnergyMerge`, `freeInfiniteVolume_hasFiniteEnergyMerge` : the
+  infinite-volume measures have finite-energy merging.
+
+## iii. Table of contents
+
+- A. Box restrictions and edge modifications
+- B. Single-edge bounds in finite volume
+- C. Cylinder bounds in infinite volume
+- D. Lifting patterns between boxes
+- E. Bounds on full cylinders
+- F. From cylinders to measurable events
+- G. Absolute continuity of edge modifications
+- H. Finite-energy merging
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121
+  (1989).
+-/
 
 @[expose] public section
 
@@ -31,9 +74,10 @@ open StatMech.Lattice ConfigSpace
 
 variable {d : ℕ}
 
+/-! ## A. Box restrictions and edge modifications -/
 
-
-theorem boxRestrictLE_setOpen {N m : ℕ} (hNm : N ≤ m)
+/-- Restricting to a smaller box commutes with forcing an inner edge open. -/
+lemma boxRestrictLE_setOpen {N m : ℕ} (hNm : N ≤ m)
     (eb : Sym2 (boxVerts d N)) (omega : ConfigSpace (Sym2 (boxVerts d m))) :
     boxRestrictLE d hNm (setOpen (innerEdgeLE d hNm eb) omega) =
       setOpen eb (boxRestrictLE d hNm omega) := by
@@ -46,8 +90,8 @@ theorem boxRestrictLE_setOpen {N m : ℕ} (hNm : N ≤ m)
     rw [boxRestrictLE, setOpen_of_ne himg, setOpen_of_ne hx]
     rfl
 
-
-theorem boxRestrict_setOpen (N : ℕ) (eb : Sym2 (boxVerts d N))
+/-- Restricting to a box commutes with forcing a box edge open. -/
+lemma boxRestrict_setOpen (N : ℕ) (eb : Sym2 (boxVerts d N))
     (omega : ConfigSpace (Sym2 (Site d))) :
     boxRestrict d N (setOpen (edgeIncl d N eb) omega) =
       setOpen eb (boxRestrict d N omega) := by
@@ -60,8 +104,8 @@ theorem boxRestrict_setOpen (N : ℕ) (eb : Sym2 (boxVerts d N))
     rw [boxRestrict, setOpen_of_ne himg, setOpen_of_ne hx]
     rfl
 
-
-theorem boxRestrictLE_setClosed {N m : ℕ} (hNm : N ≤ m)
+/-- Restricting to a smaller box commutes with forcing an inner edge closed. -/
+lemma boxRestrictLE_setClosed {N m : ℕ} (hNm : N ≤ m)
     (eb : Sym2 (boxVerts d N)) (omega : ConfigSpace (Sym2 (boxVerts d m))) :
     boxRestrictLE d hNm (setClosed (innerEdgeLE d hNm eb) omega) =
       setClosed eb (boxRestrictLE d hNm omega) := by
@@ -74,8 +118,8 @@ theorem boxRestrictLE_setClosed {N m : ℕ} (hNm : N ≤ m)
     rw [boxRestrictLE, setClosed_of_ne himg, setClosed_of_ne hx]
     rfl
 
-
-theorem boxRestrict_setClosed (N : ℕ) (eb : Sym2 (boxVerts d N))
+/-- Restricting to a box commutes with forcing a box edge closed. -/
+lemma boxRestrict_setClosed (N : ℕ) (eb : Sym2 (boxVerts d N))
     (omega : ConfigSpace (Sym2 (Site d))) :
     boxRestrict d N (setClosed (edgeIncl d N eb) omega) =
       setClosed eb (boxRestrict d N omega) := by
@@ -88,9 +132,11 @@ theorem boxRestrict_setClosed (N : ℕ) (eb : Sym2 (boxVerts d N))
     rw [boxRestrict, setClosed_of_ne himg, setClosed_of_ne hx]
     rfl
 
+/-! ## B. Single-edge bounds in finite volume -/
 
-
-theorem wiredFinite_singleOpen_preimage_bound
+/-- Finite energy for opening one edge under the wired finite-volume measure:
+`cFE p q · φ(ω^e ∈ S) ≤ φ(S)`. -/
+lemma wiredFinite_singleOpen_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -137,8 +183,8 @@ theorem wiredFinite_singleOpen_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_clique_eq_wiredFkProb] using hbound
 
-
-theorem freeFinite_singleOpen_preimage_bound
+/-- Finite energy for opening one edge under the free finite-volume measure. -/
+lemma freeFinite_singleOpen_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -179,8 +225,8 @@ theorem freeFinite_singleOpen_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_bot_eq_fkProb] using hbound
 
-
-theorem wiredFinite_singleClosed_preimage_bound
+/-- Finite energy for closing one edge under the wired finite-volume measure. -/
+lemma wiredFinite_singleClosed_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -223,8 +269,8 @@ theorem wiredFinite_singleClosed_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_clique_eq_wiredFkProb] using hbound
 
-
-theorem freeFinite_singleClosed_preimage_bound
+/-- Finite energy for closing one edge under the free finite-volume measure. -/
+lemma freeFinite_singleClosed_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -265,11 +311,11 @@ theorem freeFinite_singleClosed_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_bot_eq_fkProb] using hbound
 
+/-! ## C. Cylinder bounds in infinite volume -/
 
-
-
-
-theorem wiredInfinite_singleOpen_cylinder_bound
+/-- Finite energy for opening one box edge under the wired infinite-volume measure, on box
+events. -/
+lemma wiredInfinite_singleOpen_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -290,9 +336,9 @@ theorem wiredInfinite_singleOpen_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact wiredFinite_singleOpen_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-
-
-theorem freeInfinite_singleOpen_cylinder_bound
+/-- Finite energy for opening one box edge under the free infinite-volume measure, on box
+events. -/
+lemma freeInfinite_singleOpen_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -313,8 +359,9 @@ theorem freeInfinite_singleOpen_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact freeFinite_singleOpen_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-
-theorem wiredInfinite_singleClosed_cylinder_bound
+/-- Finite energy for closing one box edge under the wired infinite-volume measure, on box
+events. -/
+lemma wiredInfinite_singleClosed_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -334,8 +381,9 @@ theorem wiredInfinite_singleClosed_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact wiredFinite_singleClosed_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-
-theorem freeInfinite_singleClosed_cylinder_bound
+/-- Finite energy for closing one box edge under the free infinite-volume measure, on box
+events. -/
+lemma freeInfinite_singleClosed_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -355,10 +403,8 @@ theorem freeInfinite_singleClosed_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact freeFinite_singleClosed_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-
-
-
-theorem setPattern_insert_eq
+/-- Forcing a pattern on `insert e I` is forcing it on `I` and then forcing edge `e`. -/
+lemma setPattern_insert_eq
     {V : Type*} [DecidableEq V] {I : Finset (Sym2 V)} {e : Sym2 V}
     (he : e ∉ I) (eta : ConfigSpace ↥(insert e I))
     (psi : ConfigSpace (Sym2 V)) :
@@ -370,7 +416,7 @@ theorem setPattern_insert_eq
   dsimp only
   funext x
   by_cases heta : eta ⟨e, Finset.mem_insert_self e I⟩ = true
-  · simp only [heta, if_true]
+  · simp only [heta, ite_true]
     by_cases hxe : x = e
     · subst x
       simp [setPattern, he, heta]
@@ -381,7 +427,7 @@ theorem setPattern_insert_eq
         simp [setPattern, hxI, hxe]
   · have heta0 : eta ⟨e, Finset.mem_insert_self e I⟩ = false :=
       Bool.eq_false_of_not_eq_true heta
-    simp only [heta0, Bool.false_eq_true, if_false]
+    simp only [heta0, Bool.false_eq_true, ite_false]
     by_cases hxe : x = e
     · subst x
       simp [setPattern, he, heta0]
@@ -391,9 +437,9 @@ theorem setPattern_insert_eq
       · rw [setClosed_of_ne hxe]
         simp [setPattern, hxI, hxe]
 
-
-
-theorem wiredInfinite_pattern_cylinder_bound
+/-- Finite energy for forcing a pattern on `I` under the wired infinite-volume measure, with
+constant `cFE p q ^ |I|`. -/
+lemma wiredInfinite_pattern_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -419,7 +465,7 @@ theorem wiredInfinite_pattern_cylinder_bound
       · have hpre : setPattern (insert e I) eta ⁻¹' S =
             setPattern I etaI ⁻¹' (setOpen e ⁻¹' S) := by
           ext psi
-          simp only [Set.mem_preimage, hdecomp psi, heta, if_true, etaI]
+          simp only [Set.mem_preimage, hdecomp psi, heta, ite_true, etaI]
         rw [hpre]
         have hih := ih etaI (setOpen e ⁻¹' S)
         have hone := wiredInfinite_singleOpen_cylinder_bound N hp hp1 hq e S
@@ -442,7 +488,7 @@ theorem wiredInfinite_pattern_cylinder_bound
             setPattern I etaI ⁻¹' (setClosed e ⁻¹' S) := by
           ext psi
           simp only [Set.mem_preimage, hdecomp psi, heta0, Bool.false_eq_true,
-            if_false, etaI]
+            ite_false, etaI]
         rw [hpre]
         have hih := ih etaI (setClosed e ⁻¹' S)
         have hclosed := wiredInfinite_singleClosed_cylinder_bound N hp hp1 hq e S
@@ -460,9 +506,9 @@ theorem wiredInfinite_pattern_cylinder_bound
             mul_le_mul_of_nonneg_left hih hc
           _ ≤ _ := hclosed
 
-
-
-theorem freeInfinite_pattern_cylinder_bound
+/-- Finite energy for forcing a pattern on `I` under the free infinite-volume measure, with
+constant `cFE p q ^ |I|`. -/
+lemma freeInfinite_pattern_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -488,7 +534,7 @@ theorem freeInfinite_pattern_cylinder_bound
       · have hpre : setPattern (insert e I) eta ⁻¹' S =
             setPattern I etaI ⁻¹' (setOpen e ⁻¹' S) := by
           ext psi
-          simp only [Set.mem_preimage, hdecomp psi, heta, if_true, etaI]
+          simp only [Set.mem_preimage, hdecomp psi, heta, ite_true, etaI]
         rw [hpre]
         have hih := ih etaI (setOpen e ⁻¹' S)
         have hone := freeInfinite_singleOpen_cylinder_bound N hp hp1 hq e S
@@ -511,7 +557,7 @@ theorem freeInfinite_pattern_cylinder_bound
             setPattern I etaI ⁻¹' (setClosed e ⁻¹' S) := by
           ext psi
           simp only [Set.mem_preimage, hdecomp psi, heta0, Bool.false_eq_true,
-            if_false, etaI]
+            ite_false, etaI]
         rw [hpre]
         have hih := ih etaI (setClosed e ⁻¹' S)
         have hclosed := freeInfinite_singleClosed_cylinder_bound N hp hp1 hq e S
@@ -529,28 +575,29 @@ theorem freeInfinite_pattern_cylinder_bound
             mul_le_mul_of_nonneg_left hih hc
           _ ≤ _ := hclosed
 
+/-! ## D. Lifting patterns between boxes -/
 
-
-
+/-- The embedding of the edges of a smaller box into the edges of a larger box. -/
 noncomputable def innerEdgeLEEmbedding (d : ℕ) {N M : ℕ} (hNM : N ≤ M) :
     Sym2 (boxVerts d N) ↪ Sym2 (boxVerts d M) where
   toFun := innerEdgeLE d hNM
   inj' := dfi_innerEdgeLE_injective d hNM
 
-
+/-- The image in a larger box of a finite edge set of a smaller box. -/
 noncomputable def liftPatternFinset (d : ℕ) {N M : ℕ} (hNM : N ≤ M)
     (I : Finset (Sym2 (boxVerts d N))) : Finset (Sym2 (boxVerts d M)) :=
   I.map (innerEdgeLEEmbedding d hNM)
 
-
+/-- The pattern on the lifted edge set induced by a pattern on the original edge set. -/
 noncomputable def liftPatternConfig (d : ℕ) {N M : ℕ} (hNM : N ≤ M)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I) :
     ConfigSpace ↥(liftPatternFinset d hNM I) := fun x =>
   eta ⟨Classical.choose (Finset.mem_map.mp x.2),
     (Classical.choose_spec (Finset.mem_map.mp x.2)).1⟩
 
+/-- The lifted pattern takes the original value on the image of each edge. -/
 @[simp]
-theorem liftPatternConfig_apply (d : ℕ) {N M : ℕ} (hNM : N ≤ M)
+lemma liftPatternConfig_apply (d : ℕ) {N M : ℕ} (hNM : N ≤ M)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
     (e : Sym2 (boxVerts d N)) (he : e ∈ I) :
     liftPatternConfig d hNM I eta
@@ -566,8 +613,8 @@ theorem liftPatternConfig_apply (d : ℕ) {N M : ℕ} (hNM : N ≤ M)
   apply congrArg eta
   exact Subtype.ext haeq
 
-
-theorem boxRestrictLE_setPattern {N M : ℕ} (hNM : N ≤ M)
+/-- Restricting to a smaller box commutes with forcing a lifted pattern. -/
+lemma boxRestrictLE_setPattern {N M : ℕ} (hNM : N ≤ M)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
     (omega : ConfigSpace (Sym2 (boxVerts d M))) :
     boxRestrictLE d hNM
@@ -589,9 +636,9 @@ theorem boxRestrictLE_setPattern {N M : ℕ} (hNM : N ≤ M)
       setPattern_of_not_mem eta he]
     rfl
 
-
-
-theorem wiredInfinite_innerPattern_outerCylinder_bound
+/-- Finite energy under the wired measure for a pattern on an inner box, on events of an
+outer box. -/
+lemma wiredInfinite_innerPattern_outerCylinder_bound
     (N M : ℕ) (hNM : N ≤ M) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
@@ -606,8 +653,9 @@ theorem wiredInfinite_innerPattern_outerCylinder_bound
     (liftPatternFinset d hNM I) (liftPatternConfig d hNM I eta) S
   simpa [liftPatternFinset, Finset.card_map] using h
 
-
-theorem freeInfinite_innerPattern_outerCylinder_bound
+/-- Finite energy under the free measure for a pattern on an inner box, on events of an outer
+box. -/
+lemma freeInfinite_innerPattern_outerCylinder_bound
     (N M : ℕ) (hNM : N ≤ M) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
@@ -622,11 +670,8 @@ theorem freeInfinite_innerPattern_outerCylinder_bound
     (liftPatternFinset d hNM I) (liftPatternConfig d hNM I eta) S
   simpa [liftPatternFinset, Finset.card_map] using h
 
-
-
-
-
-theorem cylinder_eq_boxRestrict_preimage_extend
+/-- A cylinder on edges inside a box is the pull-back of its box version. -/
+lemma cylinder_eq_boxRestrict_preimage_extend
     (N : ℕ) (s : Finset (Sym2 (Site d)))
     (S : Set (ConfigSpace ↥s))
     (hs : ∀ e ∈ s, e ∈ Set.range (edgeIncl d N)) :
@@ -641,8 +686,11 @@ theorem cylinder_eq_boxRestrict_preimage_extend
     rfl
   rw [hrestr]
 
+/-! ## E. Bounds on full cylinders -/
 
-theorem wiredInfinite_singleOpen_fullCylinder_bound
+/-- Finite energy for opening any edge under the wired infinite-volume measure, on all
+measurable cylinders. -/
+lemma wiredInfinite_singleOpen_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
     (hC : C ∈ measurableCylinders (fun _ : Sym2 (Site d) => Bool)) :
@@ -678,8 +726,9 @@ theorem wiredInfinite_singleOpen_fullCylinder_bound
   rw [hpre, hCeq]
   exact wiredInfinite_singleOpen_cylinder_bound N hp hp1 hq eb T
 
-
-theorem freeInfinite_singleOpen_fullCylinder_bound
+/-- Finite energy for opening any edge under the free infinite-volume measure, on all
+measurable cylinders. -/
+lemma freeInfinite_singleOpen_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
     (hC : C ∈ measurableCylinders (fun _ : Sym2 (Site d) => Bool)) :
@@ -715,8 +764,9 @@ theorem freeInfinite_singleOpen_fullCylinder_bound
   rw [hpre, hCeq]
   exact freeInfinite_singleOpen_cylinder_bound N hp hp1 hq eb T
 
-
-theorem wiredInfinite_singleClosed_fullCylinder_bound
+/-- Finite energy for closing any edge under the wired infinite-volume measure, on all
+measurable cylinders. -/
+lemma wiredInfinite_singleClosed_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
     (hC : C ∈ measurableCylinders (fun _ : Sym2 (Site d) => Bool)) :
@@ -752,8 +802,9 @@ theorem wiredInfinite_singleClosed_fullCylinder_bound
   rw [hpre, hCeq]
   exact wiredInfinite_singleClosed_cylinder_bound N hp hp1 hq eb T
 
-
-theorem freeInfinite_singleClosed_fullCylinder_bound
+/-- Finite energy for closing any edge under the free infinite-volume measure, on all
+measurable cylinders. -/
+lemma freeInfinite_singleClosed_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
     (hC : C ∈ measurableCylinders (fun _ : Sym2 (Site d) => Bool)) :
@@ -789,12 +840,10 @@ theorem freeInfinite_singleClosed_fullCylinder_bound
   rw [hpre, hCeq]
   exact freeInfinite_singleClosed_cylinder_bound N hp hp1 hq eb T
 
+/-! ## F. From cylinders to measurable events -/
 
-
-
-
-
-theorem pattern_bound_of_cylinders
+/-- A bound `c · μ(f⁻¹ C) ≤ μ(C)` on all measurable cylinders extends to all measurable events. -/
+lemma pattern_bound_of_cylinders
     {E : Type*} [Countable E]
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (f : ConfigSpace E → ConfigSpace E) (hf : Measurable f)
@@ -849,10 +898,10 @@ theorem pattern_bound_of_cylinders
   dsimp [delta] at hmuLower hmuUpper hnuLower hnuUpper
   nlinarith [div_mul_cancel₀ eps (ne_of_gt hc1)]
 
-
-theorem measurable_setOpen {E : Type*} [DecidableEq E] (e : E) :
+/-- Forcing an edge open is measurable. -/
+lemma measurable_setOpen {E : Type*} [DecidableEq E] (e : E) :
     Measurable (setOpen e : ConfigSpace E → ConfigSpace E) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro x
   by_cases hx : x = e
   · subst x
@@ -862,10 +911,10 @@ theorem measurable_setOpen {E : Type*} [DecidableEq E] (e : E) :
       rw [setOpen_of_ne hx]]
     exact measurable_pi_apply x
 
-
-theorem measurable_setClosed {E : Type*} [DecidableEq E] (e : E) :
+/-- Forcing an edge closed is measurable. -/
+lemma measurable_setClosed {E : Type*} [DecidableEq E] (e : E) :
     Measurable (setClosed e : ConfigSpace E → ConfigSpace E) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro x
   by_cases hx : x = e
   · subst x
@@ -875,12 +924,12 @@ theorem measurable_setClosed {E : Type*} [DecidableEq E] (e : E) :
       rw [setClosed_of_ne hx]]
     exact measurable_pi_apply x
 
-
-theorem measurable_setPattern {V : Type*} [DecidableEq V]
+/-- Forcing a finite pattern is measurable. -/
+lemma measurable_setPattern {V : Type*} [DecidableEq V]
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) :
     Measurable (setPattern I eta :
       ConfigSpace (Sym2 V) → ConfigSpace (Sym2 V)) := by
-  apply measurable_pi_lambda
+  apply Measurable.of_eval
   intro e
   by_cases he : e ∈ I
   · rw [show (fun omega => setPattern I eta omega e) =
@@ -893,9 +942,8 @@ theorem measurable_setPattern {V : Type*} [DecidableEq V]
       exact setPattern_of_not_mem eta he omega]
     exact measurable_pi_apply e
 
-
-
-theorem map_absolutelyContinuous_of_real_preimage_bound
+/-- A bound `c · μ(f⁻¹ A) ≤ μ(A)` with `c > 0` on measurable events gives `μ.map f ≪ μ`. -/
+lemma map_absolutelyContinuous_of_real_preimage_bound
     {E : Type*} [MeasurableSpace E]
     (mu : Measure E) [IsFiniteMeasure mu]
     (f : E → E) (hf : Measurable f) (c : ℝ) (hc : 0 < c)
@@ -925,9 +973,10 @@ theorem map_absolutelyContinuous_of_real_preimage_bound
       _ = 0 := hpre
   · exact bot_le
 
+/-! ## G. Absolute continuity of edge modifications -/
 
-
-theorem wiredInfinite_setOpen_absolutelyContinuous
+/-- Forcing an edge open preserves null sets of the wired infinite-volume measure. -/
+lemma wiredInfinite_setOpen_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map (setOpen e) ≪
@@ -941,9 +990,8 @@ theorem wiredInfinite_setOpen_absolutelyContinuous
     (setOpen e) (measurable_setOpen e) (cFE p q) (cFE_pos hp hp1 hq).le
     (wiredInfinite_singleOpen_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
-theorem freeInfinite_setOpen_absolutelyContinuous
+/-- Forcing an edge open preserves null sets of the free infinite-volume measure. -/
+lemma freeInfinite_setOpen_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map (setOpen e) ≪
@@ -957,9 +1005,8 @@ theorem freeInfinite_setOpen_absolutelyContinuous
     (setOpen e) (measurable_setOpen e) (cFE p q) (cFE_pos hp hp1 hq).le
     (freeInfinite_singleOpen_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
-theorem wiredInfinite_setClosed_absolutelyContinuous
+/-- Forcing an edge closed preserves null sets of the wired infinite-volume measure. -/
+lemma wiredInfinite_setClosed_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map (setClosed e) ≪
@@ -973,9 +1020,8 @@ theorem wiredInfinite_setClosed_absolutelyContinuous
     (setClosed e) (measurable_setClosed e) (cFE p q) (cFE_pos hp hp1 hq).le
     (wiredInfinite_singleClosed_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
-theorem freeInfinite_setClosed_absolutelyContinuous
+/-- Forcing an edge closed preserves null sets of the free infinite-volume measure. -/
+lemma freeInfinite_setClosed_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map (setClosed e) ≪
@@ -989,11 +1035,9 @@ theorem freeInfinite_setClosed_absolutelyContinuous
     (setClosed e) (measurable_setClosed e) (cFE p q) (cFE_pos hp hp1 hq).le
     (freeInfinite_singleClosed_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
-
-
-theorem setPattern_absolutelyContinuous_of_single
+/-- If forcing any single edge open or closed preserves null sets, so does forcing any finite
+pattern. -/
+lemma setPattern_absolutelyContinuous_of_single
     {V : Type*} [DecidableEq V]
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hopen : ∀ e : Sym2 V, mu.map (setOpen e) ≪ mu)
@@ -1035,9 +1079,8 @@ theorem setPattern_absolutelyContinuous_of_single
           (measurable_setPattern I etaI)] at htrans
         rwa [hfun]
 
-
-
-theorem wiredInfinite_setPattern_absolutelyContinuous
+/-- Forcing a finite pattern preserves null sets of the wired infinite-volume measure. -/
+lemma wiredInfinite_setPattern_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (Site d))) (eta : ConfigSpace ↥I) :
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map
@@ -1049,9 +1092,8 @@ theorem wiredInfinite_setPattern_absolutelyContinuous
     (fun e => wiredInfinite_setClosed_absolutelyContinuous (d := d) hp hp1 hq e)
     I eta
 
-
-
-theorem freeInfinite_setPattern_absolutelyContinuous
+/-- Forcing a finite pattern preserves null sets of the free infinite-volume measure. -/
+lemma freeInfinite_setPattern_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (Site d))) (eta : ConfigSpace ↥I) :
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _).map
@@ -1063,11 +1105,10 @@ theorem freeInfinite_setPattern_absolutelyContinuous
     (fun e => freeInfinite_setClosed_absolutelyContinuous (d := d) hp hp1 hq e)
     I eta
 
+/-! ## H. Finite-energy merging -/
 
-
-
-
-theorem forceOpenFinset_insert (e : Sym2 (Site d)) (F : Finset (Sym2 (Site d))) :
+/-- Forcing `insert e F` open is forcing `F` open and then `e`. -/
+lemma forceOpenFinset_insert (e : Sym2 (Site d)) (F : Finset (Sym2 (Site d))) :
     StatMech.Percolation.forceOpenFinset (insert e F) =
       setOpen e ∘ StatMech.Percolation.forceOpenFinset F := by
   funext omega x
@@ -1080,9 +1121,8 @@ theorem forceOpenFinset_insert (e : Sym2 (Site d)) (F : Finset (Sym2 (Site d))) 
     by_cases hxF : x ∈ F <;>
       simp [StatMech.Percolation.forceOpenFinset, hxe, hxF]
 
-
-
-theorem hasFiniteEnergyMerge_of_singleOpen
+/-- If forcing any single edge open preserves null sets, the measure has finite-energy merging. -/
+lemma hasFiniteEnergyMerge_of_singleOpen
     (mu : Measure (ConfigSpace (Sym2 (Site d))))
     (hone : ∀ e : Sym2 (Site d), mu.map (setOpen e) ≪ mu) :
     StatMech.Percolation.HasFiniteEnergyMerge mu := by
@@ -1101,7 +1141,7 @@ theorem hasFiniteEnergyMerge_of_singleOpen
         (StatMech.Percolation.measurable_forceOpenFinset F)] at htrans
       rwa [← forceOpenFinset_insert e F] at htrans
 
-
+/-- For `q ≥ 1`, the wired infinite-volume random-cluster measure has finite-energy merging. -/
 theorem wiredInfiniteVolume_hasFiniteEnergyMerge
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     StatMech.Percolation.HasFiniteEnergyMerge (d := d)
@@ -1112,7 +1152,7 @@ theorem wiredInfiniteVolume_hasFiniteEnergyMerge
   exact hasFiniteEnergyMerge_of_singleOpen mu
     (fun e => wiredInfinite_setOpen_absolutelyContinuous (d := d) hp hp1 hq e)
 
-
+/-- For `q ≥ 1`, the free infinite-volume random-cluster measure has finite-energy merging. -/
 theorem freeInfiniteVolume_hasFiniteEnergyMerge
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     StatMech.Percolation.HasFiniteEnergyMerge (d := d)
@@ -1122,7 +1162,6 @@ theorem freeInfiniteVolume_hasFiniteEnergyMerge
   change StatMech.Percolation.HasFiniteEnergyMerge (d := d) mu
   exact hasFiniteEnergyMerge_of_singleOpen mu
     (fun e => freeInfinite_setOpen_absolutelyContinuous (d := d) hp hp1 hq e)
-
 
 end FK
 end StatMech

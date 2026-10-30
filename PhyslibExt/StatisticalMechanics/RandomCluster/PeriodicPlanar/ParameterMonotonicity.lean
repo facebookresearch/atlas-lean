@@ -6,15 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CriticalAssembly
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonotoneInPBoundaryCondition
+
+/-!
+# Monotonicity in `p` of buffered wired measures
+
+Increasing cylinder events have probability nondecreasing in `p` under the buffered wired
+random-cluster measures, in finite and in infinite volume; under a cylinder approximation of the
+percolation event this makes `θ(p, q)` monotone and yields critical-point duality.
+
+## i. Overview
+
+For `q ≥ 1` the finite-volume wired measure is stochastically increasing in `p` (Holley's
+inequality), so increasing cylinder events have nondecreasing probability; this passes to the
+infinite-volume limit through convergence of cylinder probabilities. If the percolation
+probability is a limit of probabilities of increasing cylinders (the cylinder approximation),
+it is monotone in `p`, which feeds the critical relation of `CriticalAssembly`.
+The cylinder monotonicity results are unconditional (only `0 < p₁ ≤ p₂ < 1`, `1 ≤ q`). The
+headline `PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence` is
+conditional: it assumes `HasPercolationCylinderApproximation` for the primal and dual graphs,
+`DualSubcriticalCoverage` and `DualNoCoexistence`, besides `pc, pc* ∈ (0, 1)` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.wiredBufferedInfiniteVolume_real_cylinder_monotone_in_p` : increasing cylinders
+  are monotone in `p` under the infinite-volume wired measure.
+- `PeriodicGraph.wiredPercolationProbability_monotoneOn_of_cylinderApproximation` : a cylinder
+  approximation makes `θ(p, q)` monotone on `(0, 1)`.
+- `PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence` : the critical
+  relation from cylinder approximations, coverage and no-coexistence.
+
+## iii. Table of contents
+
+- A. Monotonicity of cylinder probabilities
+- B. Monotonicity of the percolation probability
+- C. The critical relation
+
+## iv. References
+
+- R. Holley, *Remarks on the FKG inequalities*, Comm. Math. Phys. 36 (1974).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.21.
+-/
 
 @[expose] public section
 
@@ -28,9 +63,9 @@ section Countable
 
 variable [Countable V]
 
+/-! ## A. Monotonicity of cylinder probabilities -/
 
-
-theorem PeriodicGraph.wiredBufferedMeasure_real_cylinder_monotone_in_p
+lemma PeriodicGraph.wiredBufferedMeasure_real_cylinder_monotone_in_p
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     {p1 p2 q : Real} (hp1 : 0 < p1) (hp1' : p1 < 1)
     (hp2 : 0 < p2) (hp2' : p2 < 1) (hp12 : p1 <= p2) (hq : 1 <= q)
@@ -52,8 +87,8 @@ theorem PeriodicGraph.wiredBufferedMeasure_real_cylinder_monotone_in_p
       (StatMech.Lattice.boundaryCliqueGraph (P.bufferedBoundary m))
       hp1 hp1' hp2 hp2' hp12 hq hA)
 
-
-
+/-- For `q ≥ 1`, an increasing cylinder event has probability nondecreasing in `p` under the
+buffered wired infinite-volume measure. -/
 theorem PeriodicGraph.wiredBufferedInfiniteVolume_real_cylinder_monotone_in_p
     (P : PeriodicGraph V) (N : Nat)
     {p1 p2 q : Real} (hp1 : 0 < p1) (hp1' : p1 < 1)
@@ -71,8 +106,10 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_real_cylinder_monotone_in_p
   exact P.wiredBufferedMeasure_real_cylinder_monotone_in_p hNm
     hp1 hp1' hp2 hp2' hp12 hq hS
 
+/-! ## B. Monotonicity of the percolation probability -/
 
-
+/-- Cylinder approximation of percolation: there are increasing cylinder events whose probabilities
+under the buffered wired infinite-volume measure converge to `θ(p, q)` for every `p ∈ (0, 1)`. -/
 def PeriodicGraph.HasPercolationCylinderApproximation
     (P : PeriodicGraph V) (q : Real) : Prop :=
   exists A : forall n : Nat,
@@ -87,9 +124,9 @@ def PeriodicGraph.HasPercolationCylinderApproximation
               (P.bufferedCylinder n (A n)))
           atTop (nhds (P.wiredPercolationProbability p q))
 
-
-
-theorem PeriodicGraph.wiredPercolationProbability_monotoneOn_of_cylinderApproximation
+/-- Under a cylinder approximation, the wired percolation probability is monotone in `p` on
+`(0, 1)`. -/
+lemma PeriodicGraph.wiredPercolationProbability_monotoneOn_of_cylinderApproximation
     (P : PeriodicGraph V) {q : Real} (hq : 1 <= q)
     (happrox : P.HasPercolationCylinderApproximation q) :
     MonotoneOn (fun p => P.wiredPercolationProbability p q)
@@ -104,8 +141,11 @@ theorem PeriodicGraph.wiredPercolationProbability_monotoneOn_of_cylinderApproxim
 
 end Countable
 
+/-! ## C. The critical relation -/
 
-
+/-- Conditional critical-point duality: cylinder approximations for the primal and dual graphs, dual
+subcritical coverage and no-coexistence give `pc* = (pc)*` and
+`pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
 theorem PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)

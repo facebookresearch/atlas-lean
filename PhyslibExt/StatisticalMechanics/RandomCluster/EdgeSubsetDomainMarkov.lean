@@ -5,27 +5,58 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEquiv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov
 
+/-!
+# Domain Markov property for edge subgraphs
+
+Conditioned on the states of all edges outside a subgraph `K ≤ H`, the random-cluster measure on `H`
+with boundary wiring `B` restricted to `K` is the random-cluster measure on `K` whose boundary
+wiring is induced by the open exterior edges.
+
+## i. Overview
+
+Freeze a configuration `ψ` outside `K`. The open exterior edges together with `B` form the graph
+`edgeSubsetFrozenExteriorGraph`; joining every pair of vertices it connects gives the induced wiring
+`edgeSubsetInducedWiring`. Configurations of the fibre over `ψ` correspond to configurations of `K`,
+the cluster count of a fibre configuration equals the cluster count on `K` with the induced wiring,
+and the Bernoulli product splits into a fixed exterior factor times the product over `K`. The
+exterior factor cancels in the conditional probability, which yields the domain Markov property of
+the random-cluster model. The key results are proved unconditionally (only `0 < p < 1`, and `0 < q`
+for the event form).
+
+## ii. Key results
+
+- `numClustersBC_edgeSubsetFibre_eq_induced` : cluster counts on a fibre equal cluster counts on `K`
+  with the induced wiring.
+- `edgeSubsetFibre_condBcProb_eq_activeBCProb` : the conditional law on a fibre is the
+  random-cluster law on `K` with the induced wiring.
+- `edgeSubsetFibreCondEventMass_eq_bcEventMass` : the same statement for events of `K`.
+
+## iii. Table of contents
+
+- A. Frozen exterior and induced wiring
+- B. Fibre configurations
+- C. Cluster counts on a fibre
+- D. Weights and partition functions
+- E. Conditional laws
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Finset SimpleGraph
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -33,8 +64,10 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+/-! ## A. Frozen exterior and induced wiring -/
 
-
+/-- The graph of edges of `H` outside `K` that are open in `ψ`, together with the boundary wiring
+`B`. -/
 noncomputable def edgeSubsetFrozenExteriorGraph
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) : SimpleGraph V where
@@ -50,13 +83,15 @@ noncomputable def edgeSubsetFrozenExteriorGraph
     · exact (H.ne_of_adj hxx.1) rfl
     · exact (B.ne_of_adj hxx) rfl⟩
 
+/-- Adjacency in the frozen exterior graph is decidable (classically). -/
 noncomputable instance edgeSubsetFrozenExteriorGraphDecidableAdj
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) :
     DecidableRel (edgeSubsetFrozenExteriorGraph K H B psi).Adj :=
   Classical.decRel _
 
-
+/-- The induced boundary wiring: distinct vertices are adjacent when the frozen exterior graph
+connects them. -/
 noncomputable def edgeSubsetInducedWiring
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) : SimpleGraph V where
@@ -68,20 +103,23 @@ noncomputable def edgeSubsetInducedWiring
     exact ⟨hne.symm, hxy.symm⟩
   loopless := ⟨by rintro x ⟨hne, _⟩; exact hne rfl⟩
 
+/-- Adjacency in the induced wiring is decidable (classically). -/
 noncomputable instance edgeSubsetInducedWiringDecidableAdj
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) :
     DecidableRel (edgeSubsetInducedWiring K H B psi).Adj :=
   Classical.decRel _
 
+/-! ## B. Fibre configurations -/
 
+/-- The configuration equal to `η` on the edges of `K` and to `ψ` elsewhere. -/
 noncomputable def edgeSubsetFibreConfig (K : SimpleGraph V)
     [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) (eta : ConfigSpace K.edgeSet) :
     ConfigSpace (Sym2 V) := fun e =>
   if h : e ∈ K.edgeSet then eta ⟨e, h⟩ else psi e
 
-theorem edgeSubsetFibreConfig_agreesOff (K : SimpleGraph V)
+lemma edgeSubsetFibreConfig_agreesOff (K : SimpleGraph V)
     [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) (eta : ConfigSpace K.edgeSet) :
     AgreesOff K.edgeFinset psi (edgeSubsetFibreConfig K psi eta) := by
@@ -98,7 +136,7 @@ theorem edgeSubsetFibreConfig_agreesOff (K : SimpleGraph V)
   funext e
   simp [restrictActive, edgeSubsetFibreConfig, e.2]
 
-theorem edgeSubsetFibreConfig_restrictActive_eq (K : SimpleGraph V)
+lemma edgeSubsetFibreConfig_restrictActive_eq (K : SimpleGraph V)
     [DecidableRel K.Adj]
     (psi rho : ConfigSpace (Sym2 V))
     (hrho : AgreesOff K.edgeFinset psi rho) :
@@ -106,11 +144,11 @@ theorem edgeSubsetFibreConfig_restrictActive_eq (K : SimpleGraph V)
   funext e
   by_cases he : e ∈ K.edgeSet
   · simp [edgeSubsetFibreConfig, restrictActive, he]
-  · rw [edgeSubsetFibreConfig, dif_neg he]
+  · rw [edgeSubsetFibreConfig, dite_eq_right he]
     exact (hrho e (by
       simpa [SimpleGraph.mem_edgeFinset] using he)).symm
 
-
+/-- Configurations of `K` are in bijection with the configurations that agree with `ψ` off `K`. -/
 noncomputable def edgeSubsetFibreEquiv (K : SimpleGraph V)
     [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) :
@@ -126,9 +164,9 @@ noncomputable def edgeSubsetFibreEquiv (K : SimpleGraph V)
     exact edgeSubsetFibreConfig_restrictActive_eq K psi rho.1
       (mem_condFibre.mp rho.2)
 
+/-! ## C. Cluster counts on a fibre -/
 
-
-theorem openSub_edgeSubsetFibre_sup_frozen
+lemma openSub_edgeSubsetFibre_sup_frozen
     (K H B : SimpleGraph V) [DecidableRel K.Adj] (hKH : K ≤ H)
     (psi : ConfigSpace (Sym2 V)) (eta : ConfigSpace K.edgeSet) :
     openSub H (edgeSubsetFibreConfig K psi eta) ⊔ B =
@@ -158,7 +196,7 @@ theorem openSub_edgeSubsetFibre_sup_frozen
       have he : s(x, y) ∈ K.edgeSet := by
         rw [SimpleGraph.mem_edgeSet]
         exact hK
-      rw [edgeSubsetFibreConfig, dif_pos he]
+      rw [edgeSubsetFibreConfig, dite_eq_left he]
       rw [extendActive_apply K eta ⟨s(x, y), he⟩] at hopen
       exact hopen
     · left
@@ -167,7 +205,9 @@ theorem openSub_edgeSubsetFibre_sup_frozen
       simpa [edgeSubsetFibreConfig, he] using hExt.2.2
     · exact Or.inr hB
 
-private theorem reachable_of_adj_reachable
+/-- If every edge of `A` joins vertices connected in `L`, then reachability in `A` implies
+reachability in `L`. -/
+private lemma reachable_of_adj_reachable
     {W : Type*} {A L : SimpleGraph W}
     (hstep : ∀ {x y}, A.Adj x y → L.Reachable x y)
     {x y : W} (hxy : A.Reachable x y) : L.Reachable x y := by
@@ -176,7 +216,7 @@ private theorem reachable_of_adj_reachable
   | nil => exact .refl _
   | cons huv w ih => exact (hstep huv).trans ih
 
-theorem sup_edgeSubsetFrozen_reachable_iff_induced
+lemma sup_edgeSubsetFrozen_reachable_iff_induced
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V))
     (A : SimpleGraph V) (x y : V) :
@@ -197,6 +237,8 @@ theorem sup_edgeSubsetFrozen_reachable_iff_induced
         from Or.inl hA).reachable
     · exact hC.2.mono le_sup_right
 
+/-- Adding the frozen exterior graph or the induced wiring to `A` gives the same connected
+components. -/
 noncomputable def edgeSubsetExteriorComponentEquiv
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V))
@@ -224,7 +266,9 @@ noncomputable def edgeSubsetExteriorComponentEquiv
     exact (sup_edgeSubsetFrozen_reachable_iff_induced
       K H B psi A C.out D.out).mp hL
 
-theorem numClustersBC_edgeSubsetFibre_eq_induced
+/-- The number of clusters of a fibre configuration on `H` with wiring `B` equals the number of
+clusters of its `K`-part with the induced wiring. -/
+lemma numClustersBC_edgeSubsetFibre_eq_induced
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (hKH : K ≤ H) (psi : ConfigSpace (Sym2 V))
@@ -237,13 +281,15 @@ theorem numClustersBC_edgeSubsetFibre_eq_induced
   exact Nat.card_congr (edgeSubsetExteriorComponentEquiv K H B psi
     (openSub K (extendActive K eta)))
 
+/-! ## D. Weights and partition functions -/
 
+/-- The Bernoulli weight of the frozen edges of `H` outside `K`. -/
 noncomputable def edgeSubsetExteriorEdgeFactor
     (K H : SimpleGraph V) [DecidableRel K.Adj] [DecidableRel H.Adj]
     (psi : ConfigSpace (Sym2 V)) (p : Real) : Real :=
   ∏ e ∈ H.edgeFinset \ K.edgeFinset, if psi e then p else 1 - p
 
-theorem edgeProduct_edgeSubsetFibre
+lemma edgeProduct_edgeSubsetFibre
     (K H : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] (hKH : K ≤ H)
     (psi : ConfigSpace (Sym2 V)) (p : Real)
@@ -297,7 +343,7 @@ theorem edgeProduct_edgeSubsetFibre
   rw [hedges, Finset.prod_union hdisj, hinner, houter, hfactor]
   exact mul_comm _ _
 
-theorem bcWeight_edgeSubsetFibre_eq_induced
+lemma bcWeight_edgeSubsetFibre_eq_induced
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (hKH : K ≤ H) (psi : ConfigSpace (Sym2 V)) (p q : Real)
@@ -313,8 +359,9 @@ theorem bcWeight_edgeSubsetFibre_eq_induced
   ring
 
 set_option maxHeartbeats 800000 in
+-- The fibre sum unfolds large `Finset` sums over configurations.
 
-theorem edgeSubset_inducedBcZ_eq
+lemma edgeSubset_inducedBcZ_eq
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (hKH : K ≤ H) (psi : ConfigSpace (Sym2 V)) (p q : Real) :
@@ -342,8 +389,10 @@ theorem edgeSubset_inducedBcZ_eq
         ∑ eta, activeBCWeight K (edgeSubsetInducedWiring K H B psi)
           (fun _ => p) q eta := by rw [Finset.mul_sum]
 
+/-! ## E. Conditional laws -/
 
-
+/-- Domain Markov property: the conditional random-cluster law on the fibre over `ψ` is the
+random-cluster law on `K` with the induced wiring. -/
 theorem edgeSubsetFibre_condBcProb_eq_activeBCProb
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
@@ -355,7 +404,7 @@ theorem edgeSubsetFibre_condBcProb_eq_activeBCProb
       activeBCProb K (edgeSubsetInducedWiring K H B psi)
         (fun _ => p) q eta := by
   unfold condBcProb activeBCProb
-  rw [if_pos (edgeSubsetFibreConfig_agreesOff K psi eta)]
+  rw [ite_eq_left (edgeSubsetFibreConfig_agreesOff K psi eta)]
   rw [bcWeight_edgeSubsetFibre_eq_induced K H B hKH psi p q eta,
     edgeSubset_inducedBcZ_eq K H B hKH psi p q]
   exact mul_div_mul_left _ _ (by
@@ -366,7 +415,7 @@ theorem edgeSubsetFibre_condBcProb_eq_activeBCProb
     · exact hp.ne'
     · exact (sub_pos.mpr hp1).ne')
 
-
+/-- The conditional probability, given the exterior configuration `ψ`, of an event `A` of `K`. -/
 noncomputable def edgeSubsetFibreCondEventMass
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
@@ -376,7 +425,7 @@ noncomputable def edgeSubsetFibreCondEventMass
     condBcProb H B p q K.edgeFinset psi
       (edgeSubsetFibreConfig K psi eta)
 
-theorem edgeSubsetFibreCondEventMass_eq_activeBCProbOf
+lemma edgeSubsetFibreCondEventMass_eq_activeBCProbOf
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (hKH : K ≤ H) (psi : ConfigSpace (Sym2 V))
@@ -392,8 +441,8 @@ theorem edgeSubsetFibreCondEventMass_eq_activeBCProbOf
   rw [edgeSubsetFibre_condBcProb_eq_activeBCProb
     K H B hKH psi hp hp1 eta]
 
-
-
+/-- Domain Markov property for events: the conditional probability of an event of `K` given the
+exterior equals its probability under the random-cluster measure on `K` with the induced wiring. -/
 theorem edgeSubsetFibreCondEventMass_eq_bcEventMass
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
@@ -411,10 +460,9 @@ theorem edgeSubsetFibreCondEventMass_eq_bcEventMass
   rfl
 
 set_option maxHeartbeats 800000 in
+-- The fibre sum unfolds large `Finset` sums over configurations.
 
-
-
-theorem edgeSubsetFibreCondEventMass_eq_ambientSum
+lemma edgeSubsetFibreCondEventMass_eq_ambientSum
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (psi : ConfigSpace (Sym2 V)) (p q : Real)
@@ -436,7 +484,7 @@ theorem edgeSubsetFibreCondEventMass_eq_ambientSum
       rw [mem_condFibre] at hrho
       exact hrho
     unfold term condBcProb
-    rw [if_neg hnot, mul_zero]
+    rw [ite_eq_right hnot, mul_zero]
   symm
   calc
     (∑ rho, term rho) = ∑ rho ∈ S, term rho := hrestrict

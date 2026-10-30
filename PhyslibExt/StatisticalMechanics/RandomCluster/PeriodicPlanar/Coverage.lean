@@ -6,38 +6,78 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualPair
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.CriticalReduction
 public import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 
+/-!
+# Dual percolation from subcritical exponential decay
+
+Below the primal critical point, exponential decay of primal two-point connections forces the
+dual configuration of the free buffered infinite-volume measure to have an infinite cluster
+almost surely, provided the absence of dual infinite clusters is witnessed by long primal
+connections in polynomially many shells.
+
+## i. Overview
+
+Two-point connection events in buffered boxes are increasing, so for `q ≥ 1` their probability
+under the free infinite-volume measure is at most the wired two-point probability. A shell is a
+union of two-point events over pairs at graph distance at least `n`; with polynomially many pairs
+and exponential decay of the two-point function the shell probabilities are summable, and the
+Borel–Cantelli lemma gives that almost surely only finitely many shells occur. If planarity
+guarantees that every configuration without a dual infinite cluster lies in infinitely many
+shells, the dual infinite cluster has probability one.
+The headline `PeriodicPlanarDualPair.freeDualHasInfiniteCluster_of_exponentialDecay` is
+conditional: it takes `PolynomialConnectionShells D` (polynomial shell counts together with the
+planar input `planar_limsup`) and `SubcriticalTwoPointExponentialDecay P q pc`, besides
+`0 < p < pc`, `p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedInfiniteVolume_le_wired_cylinder` : free-below-wired comparison of
+  increasing cylinders in infinite volume.
+- `PeriodicPlanarDualPair.PolynomialConnectionShells` : polynomially many long-connection shells
+  witnessing the absence of a dual infinite cluster.
+- `PeriodicPlanarDualPair.freeDualHasInfiniteCluster_of_exponentialDecay` : exponential decay
+  below `pc` gives a dual infinite cluster almost surely.
+
+## iii. Table of contents
+
+- A. Two-point events and shells
+- B. Measurability of percolation events
+- C. Polynomial connection shells
+- D. Borel–Cantelli and dual percolation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Sections 5.2 and 6.2.
+-/
+
 @[expose] public section
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Two-point events and shells -/
 
-
-
+/-- The event that `x` and `y` are joined by an open path in the buffered box of radius `N`. -/
 def PeriodicGraph.bufferedTwoPointEvent (P : PeriodicGraph V) (N : ℕ)
     (x y : P.BufferedVertex N) :
     Set (ConfigSpace (Sym2 (P.BufferedVertex N))) :=
   {omega | (FK.openSub (P.bufferedGraph N) omega).Reachable x y}
 
-theorem PeriodicGraph.bufferedTwoPointEvent_isIncreasing
+lemma PeriodicGraph.bufferedTwoPointEvent_isIncreasing
     (P : PeriodicGraph V) (N : ℕ) (x y : P.BufferedVertex N) :
     IsIncreasing (P.bufferedTwoPointEvent N x y) := by
   intro omega eta home hreach
@@ -46,25 +86,24 @@ theorem PeriodicGraph.bufferedTwoPointEvent_isIncreasing
     refine ⟨huv.1, Bool.eq_true_of_true_le ?_⟩
     simpa [huv.2] using home s(u, v)
 
-
-
+/-- The shell of a finite set of pairs: some pair is joined by an open path inside the buffered box.
+-/
 def PeriodicGraph.bufferedPairShell (P : PeriodicGraph V) (N : ℕ)
     (pairs : Finset (P.BufferedVertex N × P.BufferedVertex N)) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ xy ∈ pairs, P.bufferedCylinder N
     (P.bufferedTwoPointEvent N xy.1 xy.2)
 
-theorem PeriodicGraph.bufferedTwoPointCylinder_subset_twoPointEvent
+lemma PeriodicGraph.bufferedTwoPointCylinder_subset_twoPointEvent
     (P : PeriodicGraph V) (N : ℕ) (x y : P.BufferedVertex N) :
     P.bufferedCylinder N (P.bufferedTwoPointEvent N x y) ⊆
       P.twoPointEvent x.1 y.1 := by
   intro omega homega
   exact P.bufferedReachable_full N omega homega
 
-
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_le_wired_cylinder
+/-- For `q ≥ 1`, an increasing cylinder event is no more likely under the free buffered
+infinite-volume measure than under the wired one. -/
+lemma PeriodicGraph.freeBufferedInfiniteVolume_le_wired_cylinder
     (P : PeriodicGraph V) (N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -91,9 +130,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_le_wired_cylinder
       hp hp1 hq hpre
   exact le_of_tendsto_of_tendsto hfree hwired heventually
 
-
-
-theorem PeriodicGraph.freeBufferedTwoPointCylinder_le_wiredTwoPoint
+lemma PeriodicGraph.freeBufferedTwoPointCylinder_le_wiredTwoPoint
     (P : PeriodicGraph V) (N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (x y : P.BufferedVertex N) :
@@ -114,13 +151,13 @@ theorem PeriodicGraph.freeBufferedTwoPointCylinder_le_wiredTwoPoint
         (P.bufferedTwoPointCylinder_subset_twoPointEvent N x y))
   have hrange : p ∈ Ioo (0 : ℝ) 1 ∧ 0 < q :=
     ⟨⟨hp, hp1⟩, zero_lt_one.trans_le hq⟩
-  rw [PeriodicGraph.wiredTwoPointProbability, dif_pos hrange]
+  rw [PeriodicGraph.wiredTwoPointProbability, dite_eq_left hrange]
   rw [← ENNReal.ofReal_toReal (measure_ne_top muf _)]
   exact ENNReal.ofReal_le_ofReal hreal
 
+/-! ## B. Measurability of percolation events -/
 
-
-theorem PeriodicGraph.measurableSet_cluster_infinite
+lemma PeriodicGraph.measurableSet_cluster_infinite
     (P : PeriodicGraph V) (x : V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       (P.cluster omega x).Infinite} := by
@@ -129,7 +166,7 @@ theorem PeriodicGraph.measurableSet_cluster_infinite
       ⋂ n : ℕ, ⋃ y : {y : V // y ∉ P.orbitBox n},
         P.twoPointEvent x y.1 := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_iUnion,
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_iUnion,
       PeriodicGraph.twoPointEvent, PeriodicGraph.cluster]
     constructor
     · intro hinf n
@@ -148,8 +185,7 @@ theorem PeriodicGraph.measurableSet_cluster_infinite
   exact MeasurableSet.iInter fun n => MeasurableSet.iUnion fun y =>
     P.measurableSet_twoPointEvent x y.1
 
-
-theorem PeriodicGraph.measurableSet_hasInfiniteCluster
+lemma PeriodicGraph.measurableSet_hasInfiniteCluster
     (P : PeriodicGraph V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       P.HasInfiniteCluster omega} := by
@@ -162,17 +198,13 @@ theorem PeriodicGraph.measurableSet_hasInfiniteCluster
   rw [heq]
   exact MeasurableSet.iUnion fun x => P.measurableSet_cluster_infinite x
 
+/-! ## C. Polynomial connection shells -/
+
 namespace PeriodicPlanarDualPair
 
-
-
-
-
-
-
-
-
-
+/-- Polynomial connection shells: for each `n`, at most `multiplicity · (n + 1) ^ degree` pairs at
+graph distance at least `n`, such that every configuration whose dual has no infinite cluster lies
+in infinitely many shells. -/
 structure PolynomialConnectionShells
     (D : PeriodicPlanarDualPair P Pdual) where
   level : ℕ → ℕ
@@ -189,7 +221,9 @@ structure PolynomialConnectionShells
 
 end PeriodicPlanarDualPair
 
-theorem PeriodicGraph.freeBufferedPairShell_le_wiredTwoPointSum
+/-! ## D. Borel–Cantelli and dual percolation -/
+
+lemma PeriodicGraph.freeBufferedPairShell_le_wiredTwoPointSum
     (P : PeriodicGraph V) (N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (pairs : Finset (P.BufferedVertex N × P.BufferedVertex N)) :
@@ -212,7 +246,8 @@ theorem PeriodicGraph.freeBufferedPairShell_le_wiredTwoPointSum
 
 namespace PeriodicPlanarDualPair
 
-private theorem summable_polynomial_exp_shell_bound
+/-- A polynomial times a decaying exponential is summable over `ℕ`. -/
+private lemma summable_polynomial_exp_shell_bound
     (k K : ℕ) {c C : ℝ} (hc : 0 < c) (hC : 0 < C) :
     Summable (fun n : ℕ => NNReal.mk
       ((K : ℝ) * C * ((n + 1 : ℕ) : ℝ) ^ k *
@@ -247,9 +282,7 @@ private theorem summable_polynomial_exp_shell_bound
   apply NNReal.summable_coe.mp
   simpa only [NNReal.coe_mk] using hreal
 
-
-
-theorem freeDualHasInfiniteCluster_of_shell_borelCantelli
+lemma freeDualHasInfiniteCluster_of_shell_borelCantelli
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (shell : ℕ → Set (ConfigSpace (Sym2 V)))
@@ -280,10 +313,7 @@ theorem freeDualHasInfiniteCluster_of_shell_borelCantelli
   change mu A = 1
   exact (prob_compl_eq_zero_iff hAmeas).mp hcompl
 
-
-
-
-theorem freeDualHasInfiniteCluster_of_summable_shell_bound
+lemma freeDualHasInfiniteCluster_of_summable_shell_bound
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (shell : ℕ → Set (ConfigSpace (Sym2 V)))
@@ -306,10 +336,9 @@ theorem freeDualHasInfiniteCluster_of_summable_shell_bound
     exact ENNReal.tsum_le_tsum hshell
   · exact hplanar
 
-
-
-
-
+/-- Conditional dual percolation below `pc`: given polynomial connection shells and exponential
+decay of two-point connections below `pc`, the dual of the free buffered infinite-volume
+configuration has an infinite cluster almost surely. -/
 theorem freeDualHasInfiniteCluster_of_exponentialDecay
     (D : PeriodicPlanarDualPair P Pdual)
     (H : PolynomialConnectionShells D) {p q pc : ℝ}

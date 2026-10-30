@@ -5,20 +5,50 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicOfUpperDecay
+
+/-!
+# Mixing on multi-edge events implies mixing on all cylinder events
+
+A measure on edge configurations that is mixing along a group action on the events "all edges of `T`
+are open" is mixing on every finite family of measurable cylinder events.
+
+## i. Overview
+
+The indicator of a cylinder event depending on a finite edge set is, by inclusion–exclusion, a
+finite linear combination of the indicators of multi-edge open events. The measure of `A ∩ g⁻¹ B`
+therefore expands into a double sum of the corresponding multi-edge cross terms, and pair mixing on
+multi-edge events controls every term with a common shift `g`. The headline is conditional on its
+single hypothesis `hmix : fmu_PairMixing mu` (mixing on multi-edge open events), which is the input
+the statement transfers; no other assumption is made.
+
+## ii. Key results
+
+- `fmu_genMixing_of_pairMixing` : pair mixing on multi-edge open events implies mixing on every
+  finite family of measurable cylinder events.
+- `fmu_real_inter_shift_eq_cross_sum` : the measure of `A ∩ g⁻¹ B` as a double sum of multi-edge
+  cross terms.
+
+## iii. Table of contents
+
+- A. Expansion into multi-edge events
+- B. From pair mixing to general mixing
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.3.
+-/
 
 @[expose] public section
 
 open MeasureTheory Set
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -27,8 +57,11 @@ open ConfigSpace
 variable {E G : Type*} [Group G] [MulAction G E]
 variable {mu : Measure (ConfigSpace E)}
 
+/-! ## A. Expansion into multi-edge events -/
 
-theorem fmu_real_inter_shift_eq_cross_sum [Countable E]
+/-- If `A` and `B` expand as linear combinations of multi-edge open indicators, then the measure of
+`A ∩ g⁻¹ B` is the corresponding double sum of multi-edge cross terms. -/
+lemma fmu_real_inter_shift_eq_cross_sum [Countable E]
     [IsProbabilityMeasure mu]
     (g : G) {A B : Set (ConfigSpace E)}
     (hA : MeasurableSet A) (hB : MeasurableSet B)
@@ -95,10 +128,12 @@ theorem fmu_real_inter_shift_eq_cross_sum [Countable E]
     intro U hU
     exact (fmu_integrable_moInd_mul_shift g T U).const_mul _
 
+/-! ## B. From pair mixing to general mixing -/
+
 set_option maxHeartbeats 2000000 in
-
-
-
+-- the expansion of every cylinder indicator into multi-edge terms is elaborated in one proof
+/-- If `mu` is mixing on multi-edge open events, it is mixing on every finite family of measurable
+cylinder events. -/
 theorem fmu_genMixing_of_pairMixing [Countable E]
     [IsProbabilityMeasure mu]
     (hmix : fmu_PairMixing (G := G) mu) :

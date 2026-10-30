@@ -5,43 +5,72 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessFromFreeEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Ergodicity
+
+/-!
+# Ordered measures with equal edge marginals coincide
+
+Two stochastically ordered probability measures on edge configurations that give every edge the same
+probability of being open are equal.
+
+## i. Overview
+
+In finite volume, stochastic domination gives a monotone coupling `P` of the two mass functions. The
+expected number of edges where the coupling's two coordinates differ equals the sum of the
+differences of the edge marginals, which is zero, so `P` is supported on the diagonal and the two
+masses agree. For measures on infinitely many edges this is applied to every finite-dimensional
+marginal (domination passes to cylinders), and the measures agree on the π-system of measurable
+cylinders. This is the standard step showing that the free and wired random-cluster measures
+coincide once their edge densities agree. Both results are proved unconditionally: stochastic
+domination and equal edge marginals are the hypotheses of the statements.
+
+## ii. Key results
+
+- `emi_mass_eq_of_edgeMarg_eq` : finite-volume version for mass functions with a monotone coupling.
+- `infiniteMeasure_eq_of_edgeMarg_eq` : `μ ≼ ν` and equal edge marginals imply `μ = ν`.
+
+## iii. Table of contents
+
+- A. Finite volume
+- B. Infinite volume
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
 
 @[expose] public section
 
 open MeasureTheory
 open scoped BigOperators StatMech
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
+
 namespace StatMech
 namespace FK
+
+/-! ## A. Finite volume -/
 
 section Finite
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
+/-- The number of edges open in the second coordinate minus the number open in the first, as a real
+number. -/
 private noncomputable def emi_gap (z : ConfigSpace E × ConfigSpace E) : ℝ :=
   ∑ e : E, ((if z.2 e then (1 : ℝ) else 0) - (if z.1 e then (1 : ℝ) else 0))
 
-private theorem emi_bool_gap_nonneg {b c : Bool} (h : b ≤ c) :
+private lemma emi_bool_gap_nonneg {b c : Bool} (h : b ≤ c) :
     (0 : ℝ) ≤ (if c then 1 else 0) - (if b then 1 else 0) := by
   cases b <;> cases c <;> norm_num at h ⊢
   exact (by decide : ¬(true ≤ false)) h
 
-private theorem emi_bool_gap_eq_one {b c : Bool} (h : b ≤ c) (hne : b ≠ c) :
+private lemma emi_bool_gap_eq_one {b c : Bool} (h : b ≤ c) (hne : b ≠ c) :
     (if c then (1 : ℝ) else 0) - (if b then (1 : ℝ) else 0) = 1 := by
   cases b <;> cases c
   · exact (hne rfl).elim
@@ -49,14 +78,14 @@ private theorem emi_bool_gap_eq_one {b c : Bool} (h : b ≤ c) (hne : b ≠ c) :
   · exact ((by decide : ¬(true ≤ false)) h).elim
   · exact (hne rfl).elim
 
-private theorem emi_gap_nonneg_of_le {z : ConfigSpace E × ConfigSpace E}
+private lemma emi_gap_nonneg_of_le {z : ConfigSpace E × ConfigSpace E}
     (hz : z.1 ≤ z.2) : 0 ≤ emi_gap z := by
   unfold emi_gap
   apply Finset.sum_nonneg
   intro e _
   exact emi_bool_gap_nonneg (hz e)
 
-private theorem emi_one_le_gap_of_le_ne {z : ConfigSpace E × ConfigSpace E}
+private lemma emi_one_le_gap_of_le_ne {z : ConfigSpace E × ConfigSpace E}
     (hz : z.1 ≤ z.2) (hne : z.1 ≠ z.2) : 1 ≤ emi_gap z := by
   have hex : ∃ e : E, z.1 e ≠ z.2 e := by
     by_contra h
@@ -75,8 +104,8 @@ private theorem emi_one_le_gap_of_le_ne {z : ConfigSpace E × ConfigSpace E}
     _ = ∑ i : E,
         ((if z.2 i then (1 : ℝ) else 0) - (if z.1 i then (1 : ℝ) else 0)) := rfl
 
-
-
+/-- Two mass functions on finite edge configurations with a monotone coupling and equal edge
+marginals are equal. -/
 theorem emi_mass_eq_of_edgeMarg_eq
     {P : ConfigSpace E × ConfigSpace E → ℝ} {μ ν : ConfigSpace E → ℝ}
     (hP : IsMonotoneCouplingFun P μ ν)
@@ -136,14 +165,14 @@ theorem emi_mass_eq_of_edgeMarg_eq
 
 end Finite
 
+/-! ## B. Infinite volume -/
+
 section Infinite
 
 variable {E : Type*} [DecidableEq E]
 
-
-
-
-
+/-- If `μ` is stochastically dominated by `ν` and every edge is open with the same probability under
+both, then `μ = ν`. -/
 theorem infiniteMeasure_eq_of_edgeMarg_eq
     (μ ν : Measure (ConfigSpace E)) [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (hdom : μ ≼ ν)

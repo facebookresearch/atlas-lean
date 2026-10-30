@@ -6,18 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
 
+/-!
+# Free random-cluster measures on nested graphs: decreasing events
+
+The free random-cluster measure on a larger graph gives a decreasing event of an embedded smaller
+graph at most the probability the free measure on the smaller graph gives it.
+
+## i. Overview
+
+For `q ≥ 1` the free random-cluster measure is stochastically increasing in the volume: if `Gin`
+embeds into `Gout` with matching adjacency, then the outer measure, restricted to the inner edges,
+dominates the inner measure on increasing events. Applying this to the complement of a decreasing
+event `A` and using that both measures have total mass one gives the reverse inequality for `A`.
+The headline `bdp_free_outer_dominated_inner_decreasing` is proved unconditionally (it takes only
+injectivity of the embedding, adjacency matching, and `0 < p < 1`, `1 ≤ q`).
+
+## ii. Key results
+
+- `bdp_free_outer_dominated_inner_decreasing` : for a decreasing event `A` of the inner graph,
+  `φ^free_Gout(ω|_Gin ∈ A) ≤ φ^free_Gin(A)`.
+
+## iii. Table of contents
+
+- A. Domination of decreasing events
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
 
 open Finset Set SimpleGraph
 
@@ -31,8 +53,10 @@ variable {Gin : SimpleGraph Vin} [DecidableRel Gin.Adj]
 variable {Gout : SimpleGraph Vout} [DecidableRel Gout.Adj]
 variable {iota : Vin → Vout}
 
+/-! ## A. Domination of decreasing events -/
 
-
+/-- For `q ≥ 1`, the free random-cluster measure on an outer graph gives the pull-back of a
+decreasing event of an embedded inner graph at most the inner free measure of that event. -/
 theorem bdp_free_outer_dominated_inner_decreasing
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)

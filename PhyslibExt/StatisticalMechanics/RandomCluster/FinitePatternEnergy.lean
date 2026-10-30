@@ -5,21 +5,58 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CycleRank
 
+/-!
+# Finite energy for edge patterns
+
+Forcing a prescribed pattern on a finite set `I` of edges costs at most a factor `cFE p q ^ |I|` in
+random-cluster probability, uniformly in the configuration outside `I`.
+
+## i. Overview
+
+Opening or closing one edge changes the cluster count by at most one, so for `q ≥ 1` each of the two
+states of a single edge has conditional probability at least `cFE p q = min (p / (p + q (1 - p))) (1
+- p)`. Setting the edges of `I` one at a time to the pattern `η` (`setPattern`) and inducting over
+`I` gives the lower bound `cFE p q ^ |I|` for the conditional probability of the pattern given the
+configuration off `I`, for the free and for wired boundary conditions. Decomposing the measure over
+the fibres of the edges off `I` turns this into bounds for events: `P(pattern ∩ B) ≥ cFE ^ |I| P(B)`
+when `B` depends only on edges off `I`, and `P(A) ≥ cFE ^ |I| P(setPattern I η ⁻¹' A)`. All key
+results are proved unconditionally (only `0 < p < 1` and `1 ≤ q`).
+
+## ii. Key results
+
+- `cFE_pow_le_condBcProb_pattern` : the conditional probability of a pattern given the exterior is
+  at least `cFE ^ |I|`.
+- `cFE_pow_mul_event_le_pattern_inter` : `cFE ^ |I| P(B) ≤ P(pattern ∩ B)` for the free measure.
+- `cFE_pow_mul_bcEvent_le_pattern_inter` : the same with boundary wiring `C`.
+- `cFE_pow_mul_bcPreimage_le_event` : `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤ P(A)`.
+
+## iii. Table of contents
+
+- A. Single-edge bounds
+- B. Setting a pattern on a finite edge set
+- C. Pattern bounds on partition functions
+- D. Pattern events
+- E. Conditional pattern bounds
+- F. Event bounds through fibre decomposition
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
 
 open MeasureTheory Finset
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 namespace FK
@@ -27,13 +64,11 @@ namespace FK
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-
-
 variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
+/-! ## A. Single-edge bounds -/
 
-
-theorem numClustersBC_setOpen_bounds (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) :
+lemma numClustersBC_setOpen_bounds (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) :
     numClustersBC G C (setOpen e omega) ≤ numClustersBC G C (setClosed e omega) ∧
       numClustersBC G C (setClosed e omega) ≤
         numClustersBC G C (setOpen e omega) + 1 := by
@@ -94,8 +129,7 @@ theorem numClustersBC_setOpen_bounds (e : Sym2 V) (omega : ConfigSpace (Sym2 V))
       rw [hopen]
     omega
 
-
-theorem bcWeight_lo {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma bcWeight_lo {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {e : Sym2 V} (he : e ∈ G.edgeFinset) (omega : ConfigSpace (Sym2 V)) :
     (1 - p) * bcWeight G C p q (setOpen e omega) ≤
       p * bcWeight G C p q (setClosed e omega) := by
@@ -110,8 +144,7 @@ theorem bcWeight_lo {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
   have hfac : (0 : ℝ) ≤ R * p * (1 - p) := by positivity
   nlinarith [mul_le_mul_of_nonneg_left hpow hfac]
 
-
-theorem bcWeight_hi {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma bcWeight_hi {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {e : Sym2 V} (he : e ∈ G.edgeFinset) (omega : ConfigSpace (Sym2 V)) :
     p * bcWeight G C p q (setClosed e omega) ≤
       q * (1 - p) * bcWeight G C p q (setOpen e omega) := by
@@ -127,8 +160,7 @@ theorem bcWeight_hi {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
   have hfac : (0 : ℝ) ≤ R * p * (1 - p) := by positivity
   nlinarith [mul_le_mul_of_nonneg_left hpow hfac]
 
-
-theorem bcWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma bcWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) :
     cFE p q * (bcWeight G C p q (setOpen e omega) +
         bcWeight G C p q (setClosed e omega)) ≤
@@ -170,8 +202,7 @@ theorem bcWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q
       (by positivity : 0 ≤ bcWeight G C p q (setOpen e omega) +
         bcWeight G C p q (setOpen e omega))]
 
-
-theorem bcWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma bcWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) :
     cFE p q * (bcWeight G C p q (setOpen e omega) +
         bcWeight G C p q (setClosed e omega)) ≤
@@ -218,8 +249,7 @@ theorem bcWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤
 
 variable {C}
 
-
-theorem fkWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma fkWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) :
     cFE p q * (fkWeight G p q (setOpen e omega) + fkWeight G p q (setClosed e omega)) ≤
       fkWeight G p q (setOpen e omega) := by
@@ -231,8 +261,9 @@ theorem fkWeight_setOpen_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q
   rw [condOpen_eq_weightRatio G hp hp1 hq0] at hfe
   rwa [le_div_iff₀ hsum] at hfe
 
+/-! ## B. Setting a pattern on a finite edge set -/
 
-
+/-- The configuration equal to the pattern `η` on the edges of `I` and to `ψ` elsewhere. -/
 noncomputable def setPattern (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
     (psi : ConfigSpace (Sym2 V)) : ConfigSpace (Sym2 V) :=
   fun e => if he : e ∈ I then eta ⟨e, he⟩ else psi e
@@ -244,19 +275,19 @@ omit [Fintype V] in
   simp [setPattern, he]
 
 omit [Fintype V] in
-theorem setPattern_of_not_mem {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
+lemma setPattern_of_not_mem {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
     {e : Sym2 V} (he : e ∉ I) (psi : ConfigSpace (Sym2 V)) :
     setPattern I eta psi e = psi e := by
   simp [setPattern, he]
 
 omit [Fintype V] in
-theorem setPattern_empty (eta : ConfigSpace ↥(∅ : Finset (Sym2 V)))
+lemma setPattern_empty (eta : ConfigSpace ↥(∅ : Finset (Sym2 V)))
     (psi : ConfigSpace (Sym2 V)) : setPattern ∅ eta psi = psi := by
   funext e
   simp [setPattern]
 
 omit [Fintype V] in
-theorem setPattern_setClosed {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
+lemma setPattern_setClosed {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
     {e : Sym2 V} (he : e ∉ I) (psi : ConfigSpace (Sym2 V)) :
     setPattern I eta (setClosed e psi) = setClosed e (setPattern I eta psi) := by
   funext x
@@ -271,7 +302,7 @@ theorem setPattern_setClosed {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
         setClosed_of_ne hxe, setPattern_of_not_mem eta hxI]
 
 omit [Fintype V] in
-theorem setPattern_setOpen {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
+lemma setPattern_setOpen {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
     {e : Sym2 V} (he : e ∉ I) (psi : ConfigSpace (Sym2 V)) :
     setPattern I eta (setOpen e psi) = setOpen e (setPattern I eta psi) := by
   funext x
@@ -285,12 +316,11 @@ theorem setPattern_setOpen {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
     · rw [setPattern_of_not_mem eta hxI, setOpen_of_ne hxe,
         setOpen_of_ne hxe, setPattern_of_not_mem eta hxI]
 
-
-
 variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
+/-! ## C. Pattern bounds on partition functions -/
 
-theorem inducedBcZ_insert (p q : ℝ) {e : Sym2 V} {I : Finset (Sym2 V)}
+lemma inducedBcZ_insert (p q : ℝ) {e : Sym2 V} {I : Finset (Sym2 V)}
     (he : e ∉ I) (psi : ConfigSpace (Sym2 V)) :
     inducedBcZ G C p q (insert e I) psi =
       inducedBcZ G C p q I (setClosed e psi) +
@@ -336,8 +366,7 @@ theorem inducedBcZ_insert (p q : ℝ) {e : Sym2 V} {I : Finset (Sym2 V)}
       · have h := hfree e he
         rwa [setOpen_self] at h
 
-
-theorem inducedBcZ_empty (p q : ℝ) (psi : ConfigSpace (Sym2 V)) :
+lemma inducedBcZ_empty (p q : ℝ) (psi : ConfigSpace (Sym2 V)) :
     inducedBcZ G C p q ∅ psi = bcWeight G C p q psi := by
   classical
   unfold inducedBcZ condFibre
@@ -354,9 +383,7 @@ theorem inducedBcZ_empty (p q : ℝ) (psi : ConfigSpace (Sym2 V)) :
   rw [hf]
   simp
 
-
-
-theorem cFE_pow_mul_inducedBcZ_le_setPattern
+lemma cFE_pow_mul_inducedBcZ_le_setPattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
     cFE p q ^ I.card * inducedBcZ G C p q I psi ≤
@@ -379,7 +406,7 @@ theorem cFE_pow_mul_inducedBcZ_le_setPattern
           if eta ⟨e, Finset.mem_insert_self e I⟩ then setOpen e rho else setClosed e rho := by
         funext x
         by_cases heta : eta ⟨e, Finset.mem_insert_self e I⟩ = true
-        · simp only [heta, if_true]
+        · simp only [heta, ite_true]
           by_cases hx : x = e
           · subst x
             simp [setPattern, rho, he, heta]
@@ -390,7 +417,7 @@ theorem cFE_pow_mul_inducedBcZ_le_setPattern
               simp [setPattern, rho, hxI, hx, etaI]
         · have heta0 : eta ⟨e, Finset.mem_insert_self e I⟩ = false :=
             Bool.eq_false_of_not_eq_true heta
-          simp only [heta0, Bool.false_eq_true, if_false]
+          simp only [heta0, Bool.false_eq_true, ite_false]
           by_cases hx : x = e
           · subst x
             simp [setPattern, rho, he, heta0]
@@ -442,9 +469,7 @@ theorem cFE_pow_mul_inducedBcZ_le_setPattern
 
 variable {C}
 
-
-
-theorem cFE_pow_mul_agreeWeightSum_le_setPattern
+lemma cFE_pow_mul_agreeWeightSum_le_setPattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
     cFE p q ^ I.card * agreeWeightSum G p q I psi ≤
@@ -467,7 +492,7 @@ theorem cFE_pow_mul_agreeWeightSum_le_setPattern
           if eta ⟨e, Finset.mem_insert_self e I⟩ then setOpen e rho else setClosed e rho := by
         funext x
         by_cases heta : eta ⟨e, Finset.mem_insert_self e I⟩ = true
-        · simp only [heta, if_true]
+        · simp only [heta, ite_true]
           by_cases hx : x = e
           · subst x
             simp [setPattern, rho, he, heta]
@@ -478,7 +503,7 @@ theorem cFE_pow_mul_agreeWeightSum_le_setPattern
               simp [setPattern, rho, hxI, hx, etaI]
         · have heta0 : eta ⟨e, Finset.mem_insert_self e I⟩ = false := by
             exact Bool.eq_false_of_not_eq_true heta
-          simp only [heta0, Bool.false_eq_true, if_false]
+          simp only [heta0, Bool.false_eq_true, ite_false]
           by_cases hx : x = e
           · subst x
             simp [setPattern, rho, he, heta0]
@@ -526,27 +551,27 @@ theorem cFE_pow_mul_agreeWeightSum_le_setPattern
             (if eta ⟨e, Finset.mem_insert_self e I⟩ then setOpen e rho else setClosed e rho) := by
           split <;> rfl
 
+/-! ## D. Pattern events -/
 
-
-
+/-- The event that the configuration restricted to `I` equals the pattern `η`. -/
 def patternEvent (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | I.restrict omega = eta}
 
 omit [Fintype V] in
-theorem setPattern_mem_patternEvent (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
+lemma setPattern_mem_patternEvent (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
     (psi : ConfigSpace (Sym2 V)) : setPattern I eta psi ∈ patternEvent I eta := by
   funext e
   simp [Finset.restrict, setPattern]
 
 omit [Fintype V] in
-theorem agreesOff_setPattern (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
+lemma agreesOff_setPattern (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
     (psi : ConfigSpace (Sym2 V)) : AgreesOff I psi (setPattern I eta psi) := by
   intro e he
   exact setPattern_of_not_mem eta he psi
 
 omit [Fintype V] in
-theorem eq_setPattern_of_agreesOff_of_mem_pattern
+lemma eq_setPattern_of_agreesOff_of_mem_pattern
     {I : Finset (Sym2 V)} {eta : ConfigSpace ↥I}
     {psi omega : ConfigSpace (Sym2 V)}
     (hoff : AgreesOff I psi omega) (hpat : omega ∈ patternEvent I eta) :
@@ -559,8 +584,7 @@ theorem eq_setPattern_of_agreesOff_of_mem_pattern
     exact hoff e he
 
 omit [Fintype V] in
-
-theorem setPattern_eq_self_of_mem_pattern
+lemma setPattern_eq_self_of_mem_pattern
     {I : Finset (Sym2 V)} {eta : ConfigSpace ↥I}
     {omega : ConfigSpace (Sym2 V)} (hpat : omega ∈ patternEvent I eta) :
     setPattern I eta omega = omega := by
@@ -568,9 +592,7 @@ theorem setPattern_eq_self_of_mem_pattern
   exact eq_setPattern_of_agreesOff_of_mem_pattern (agreesOff_self I omega) hpat
 
 omit [Fintype V] in
-
-
-theorem dependsOnOutside_preimage_setPattern
+lemma dependsOnOutside_preimage_setPattern
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
     (A : Set (ConfigSpace (Sym2 V))) :
     DependsOnOutside I (setPattern I eta ⁻¹' A) := by
@@ -584,9 +606,11 @@ theorem dependsOnOutside_preimage_setPattern
   simp only [Set.mem_preimage]
   rw [heq]
 
+/-! ## E. Conditional pattern bounds -/
 
-
-theorem cFE_pow_le_condBcProb_pattern
+/-- Finite energy for patterns with boundary wiring: given the configuration `ψ` off `I`, the
+pattern `η` on `I` has conditional probability at least `cFE p q ^ |I|`. -/
+lemma cFE_pow_le_condBcProb_pattern
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
@@ -615,18 +639,16 @@ theorem cFE_pow_le_condBcProb_pattern
               exact hne (eq_setPattern_of_agreesOff_of_mem_pattern hoff hpat)
             rw [Set.indicator_of_notMem hnpat, zero_mul]
           · unfold condBcProb
-            rw [if_neg hoff, mul_zero]
+            rw [ite_eq_right hoff, mul_zero]
         · simp
       _ = condBcProb G C p q I psi target := by rw [hind, one_mul]
   rw [hsingle]
   unfold condBcProb
-  rw [if_pos htOff, le_div_iff₀
+  rw [ite_eq_left htOff, le_div_iff₀
     (inducedBcZ_pos G C hp hp1 (zero_lt_one.trans_le hq) I psi)]
   simpa [target] using cFE_pow_mul_inducedBcZ_le_setPattern G C hp hp1 hq I eta psi
 
-
-
-theorem cFE_pow_mul_condFibreMass_le_pattern
+lemma cFE_pow_mul_condFibreMass_le_pattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
     cFE p q ^ I.card * (∑ omega ∈ condFibre I psi, fkProb G p q omega) ≤
@@ -646,9 +668,7 @@ theorem cFE_pow_mul_condFibreMass_le_pattern
   exact div_le_div_of_nonneg_right
     (cFE_pow_mul_agreeWeightSum_le_setPattern G hp hp1 hq I eta psi) hZ.le
 
-
-
-theorem cFE_pow_le_condFkProb_pattern
+lemma cFE_pow_le_condFkProb_pattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
     cFE p q ^ I.card ≤
@@ -689,11 +709,9 @@ theorem cFE_pow_le_condFkProb_pattern
   rw [le_div_iff₀ hmass]
   simpa [target] using cFE_pow_mul_condFibreMass_le_pattern G hp hp1 hq I eta psi
 
+/-! ## F. Event bounds through fibre decomposition -/
 
-
-
-
-theorem fkProb_eq_fibreMass_mul_condFkProb_general
+lemma fkProb_eq_fibreMass_mul_condFkProb_general
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (I : Finset (Sym2 V)) (omega : ConfigSpace (Sym2 V)) :
     fkProb G p q omega =
@@ -705,8 +723,7 @@ theorem fkProb_eq_fibreMass_mul_condFkProb_general
   unfold condFkProb
   field_simp
 
-
-theorem fkProb_fibre_decompose_general
+lemma fkProb_fibre_decompose_general
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (I : Finset (Sym2 V)) (B : Set (ConfigSpace (Sym2 V))) :
     (∑ omega, B.indicator (fun _ => (1 : ℝ)) omega * fkProb G p q omega) =
@@ -737,9 +754,7 @@ theorem fkProb_fibre_decompose_general
   rw [hfac, hcond]
   ring
 
-
-
-theorem condFkProb_sum_outside
+lemma condFkProb_sum_outside
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     {I : Finset (Sym2 V)} {B : Set (ConfigSpace (Sym2 V))}
     (hB : DependsOnOutside I B) (psi : ConfigSpace (Sym2 V)) :
@@ -761,8 +776,7 @@ theorem condFkProb_sum_outside
     _ = B.indicator (fun _ => (1 : ℝ)) psi := by
       rw [condFkProb_sum_eq_one G hp hp1 hq I psi, mul_one]
 
-
-theorem condFkProb_cross_outside
+lemma condFkProb_cross_outside
     {p q : ℝ} {I : Finset (Sym2 V)}
     {A B : Set (ConfigSpace (Sym2 V))} (hB : DependsOnOutside I B)
     (psi : ConfigSpace (Sym2 V)) :
@@ -779,9 +793,8 @@ theorem condFkProb_cross_outside
   by_cases hA : rho ∈ A <;> by_cases hBrho : rho ∈ B <;>
     simp [Set.indicator, hA, hBrho, hBeq, Set.mem_inter_iff]
 
-
-
-
+/-- Finite energy for the free measure: for an event `B` depending only on edges off `I`, `cFE ^
+|I| P(B) ≤ P(pattern η on I, B)`. -/
 theorem cFE_pow_mul_event_le_pattern_inter
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
@@ -807,9 +820,8 @@ theorem cFE_pow_mul_event_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-
-
-
+/-- Finite energy with boundary wiring `C`: for an event `B` depending only on edges off `I`,
+`cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
 theorem cFE_pow_mul_bcEvent_le_pattern_inter
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -838,10 +850,9 @@ theorem cFE_pow_mul_bcEvent_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-
-
-
-
+/-- Finite-energy modification bound: replacing the edges of `I` by the pattern `η` changes
+event probabilities by at most a factor `cFE ^ |I|`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤
+P(A)`. -/
 theorem cFE_pow_mul_bcPreimage_le_event
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

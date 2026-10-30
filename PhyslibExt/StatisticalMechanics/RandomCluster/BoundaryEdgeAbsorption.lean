@@ -6,25 +6,64 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKFiniteWiredWeights
 
+/-!
+# Absorbing edges into the wired boundary
+
+Edges of a larger graph `H` that join boundary vertices are absorbed by the wired boundary: the
+wired measure on `H` and on `G ≤ H` agree on events of `G`, and boundary connections pass to inner
+boxes.
+
+## i. Overview
+
+If `G ≤ H ≤ G ⊔ K_∂`, where `K_∂` is the clique on the boundary vertices, then every extra edge of
+`H` joins two boundary vertices, which the wired boundary condition already identifies. Splitting
+configurations on `E(H)` into their values on `E(G)` and on the added edges, the wired graph and
+hence the cluster count depend only on the `E(G)` part, and the added edges carry independent
+Bernoulli weights that sum to one. So the boundary-wired active partition function, numerators, and
+expectations of functions of `E(G)` coincide for `G` and `H`, and a root not on the boundary is
+connected to the boundary in `H` exactly when it is in `G`. A second part transfers the event "the
+root is connected to the outer boundary" from an outer box to an inner one along an
+adjacency-preserving embedding.
+
+All results are proved unconditionally; the only hypotheses are graph-structural: `G ≤ H`, `H ≤ G ⊔
+K_∂`, `0 < p < 1`, `0 < q`, and for the nested-box inclusion the embedding conditions `ocd_AdjMatch`
+(adjacency is preserved and reflected), that embedded vertices are not on the outer boundary, and
+that inner vertices adjacent to the outside lie on the inner boundary.
+
+## ii. Key results
+
+- `activeBCMean_eq_of_le_sup_boundaryClique` : for `G ≤ H ≤ G ⊔ K_∂`, wired expectations of
+  functions of `E(G)` agree on `G` and `H`.
+- `boundaryReachable_iff_of_le_sup_boundaryClique` : an interior root reaches the boundary in `H`
+  iff it does in `G`.
+- `outerRootBoundaryEvent_subset_innerRestrict` : a root connected to the outer boundary is
+  connected to the inner boundary in the restricted configuration.
+
+## iii. Table of contents
+
+- A. Splitting the edges of `H`
+- B. The wired graph is unchanged
+- C. Weights, partition functions, and expectations
+- D. Boundary connections
+- E. Nested boundaries
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.2.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Finset SimpleGraph
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -36,18 +75,22 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
   (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
   (boundary : V -> Prop) [DecidablePred boundary]
 
+/-! ## A. Splitting the edges of `H` -/
+
+/-- The inclusion of the edge set of `G` into the edge set of `H ≥ G`. -/
 def activeGraphEdgeIncl (hGH : G <= H) : G.edgeSet ↪ H.edgeSet where
   toFun e := ⟨e.1, SimpleGraph.edgeSet_mono hGH e.2⟩
   inj' _ _ h := Subtype.ext (congrArg (fun e : H.edgeSet => e.1) h)
 
-
+/-- Restrict a configuration on `E(H)` to `E(G)`. -/
 def activeGraphRestrict (hGH : G <= H)
     (eta : ConfigSpace H.edgeSet) : ConfigSpace G.edgeSet :=
   fun e => eta (activeGraphEdgeIncl G H hGH e)
 
-
+/-- The edges of `H` that are not edges of `G`. -/
 abbrev AddedEdge := {e : H.edgeSet // e.1 ∉ G.edgeSet}
 
+/-- The edges of `G` as the edges of `H` that lie in `E(G)`. -/
 def activeGraphInnerEdgeEquiv (hGH : G <= H) :
     G.edgeSet ≃ {e : H.edgeSet // e.1 ∈ G.edgeSet} where
   toFun e := ⟨activeGraphEdgeIncl G H hGH e, e.2⟩
@@ -55,14 +98,14 @@ def activeGraphInnerEdgeEquiv (hGH : G <= H) :
   left_inv _ := rfl
   right_inv _ := rfl
 
-
+/-- Split `E(H)` into `E(G)` and the added edges. -/
 def activeGraphEdgeSplitEquiv (hGH : G <= H) :
     H.edgeSet ≃ G.edgeSet ⊕ AddedEdge G H :=
   (((activeGraphInnerEdgeEquiv G H hGH).sumCongr
       (Equiv.refl (AddedEdge G H))).trans
     (Equiv.sumCompl (fun e : H.edgeSet => e.1 ∈ G.edgeSet))).symm
 
-
+/-- Split a configuration on `E(H)` into its values on `E(G)` and on the added edges. -/
 def activeGraphConfigSplitEquiv (hGH : G <= H) :
     ConfigSpace H.edgeSet ≃
       ConfigSpace G.edgeSet × ConfigSpace (AddedEdge G H) where
@@ -87,7 +130,7 @@ def activeGraphConfigSplitEquiv (hGH : G <= H) :
     · simp only [Equiv.apply_symm_apply]
     · simp only [Equiv.apply_symm_apply]
 
-@[simp] theorem activeGraphRestrict_configSplit_symm
+@[simp] lemma activeGraphRestrict_configSplit_symm
     (hGH : G <= H) (rho : ConfigSpace G.edgeSet)
     (xi : ConfigSpace (AddedEdge G H)) :
     activeGraphRestrict G H hGH
@@ -95,11 +138,13 @@ def activeGraphConfigSplitEquiv (hGH : G <= H) :
   funext e
   have hsplit : activeGraphEdgeSplitEquiv G H hGH (activeGraphEdgeIncl G H hGH e) =
       Sum.inl e := by
-    rw [Equiv.apply_eq_iff_eq_symm_apply]
+    rw [← Equiv.eq_symm_apply]
     rfl
   simp [activeGraphRestrict, activeGraphConfigSplitEquiv, hsplit]
 
-theorem openSub_extendActive_restrictActive_eq
+/-! ## B. The wired graph is unchanged -/
+
+lemma openSub_extendActive_restrictActive_eq
     (omega : ConfigSpace (Sym2 V)) :
     openSub G (extendActive G (restrictActive G omega)) = openSub G omega := by
   apply ecz_openSub_eq_of_edges G
@@ -109,9 +154,7 @@ theorem openSub_extendActive_restrictActive_eq
   simpa [restrictActive] using
     (extendActive_apply G (restrictActive G omega) ⟨e, heSet⟩)
 
-
-
-theorem wiredGraph_eq_of_le_sup_boundaryClique
+lemma wiredGraph_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (eta : ConfigSpace H.edgeSet) :
@@ -129,8 +172,8 @@ theorem wiredGraph_eq_of_le_sup_boundaryClique
           rwa [SimpleGraph.mem_edgeSet]
         have hHedge : s(x, y) ∈ H.edgeSet := by
           rwa [SimpleGraph.mem_edgeSet]
-        simp [extendActive, activeGraphRestrict, activeGraphEdgeIncl,
-          hGedge, hHedge] at hopen ⊢
+        simp only [extendActive, hHedge, ↓reduceDIte, hGedge, activeGraphRestrict,
+          activeGraphEdgeIncl] at hopen ⊢
         exact hopen
       · right
         rcases habsorb hH with hG' | hb
@@ -146,12 +189,12 @@ theorem wiredGraph_eq_of_le_sup_boundaryClique
       have hHedge : s(x, y) ∈ H.edgeSet := by
         rw [SimpleGraph.mem_edgeSet]
         exact hGH hG
-      simp [extendActive, activeGraphRestrict, activeGraphEdgeIncl,
-        hGedge, hHedge] at hopen ⊢
+      simp only [extendActive, hGedge, ↓reduceDIte, activeGraphRestrict, activeGraphEdgeIncl,
+        hHedge] at hopen ⊢
       exact hopen
     · exact Or.inr hb
 
-theorem numClustersWired_eq_of_le_sup_boundaryClique
+lemma numClustersWired_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (eta : ConfigSpace H.edgeSet) :
@@ -161,9 +204,9 @@ theorem numClustersWired_eq_of_le_sup_boundaryClique
   unfold numClustersWired
   rw [wiredGraph_eq_of_le_sup_boundaryClique G H boundary hGH habsorb eta]
 
+/-! ## C. Weights, partition functions, and expectations -/
 
-
-theorem edgeProductW_configSplit_symm
+lemma edgeProductW_configSplit_symm
     (hGH : G <= H) (p : Real)
     (rho : ConfigSpace G.edgeSet) (xi : ConfigSpace (AddedEdge G H)) :
     edgeProductW H (fun _ => p)
@@ -193,16 +236,14 @@ theorem edgeProductW_configSplit_symm
         intro e
         simp [activeGraphConfigSplitEquiv]
 
-theorem addedBernoulliWeight_sum (p : Real) :
+lemma addedBernoulliWeight_sum (p : Real) :
     (∑ xi : ConfigSpace (AddedEdge G H),
       (∏ e, if xi e then p else 1 - p)) = 1 := by
   rw [← Fintype.prod_sum (fun (_ : AddedEdge G H) (b : Bool) =>
     if b then p else 1 - p)]
   simp
 
-
-
-theorem activeBCWeight_configSplit_symm
+lemma activeBCWeight_configSplit_symm
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (p q : Real) (rho : ConfigSpace G.edgeSet)
@@ -218,9 +259,7 @@ theorem activeBCWeight_configSplit_symm
   rw [activeGraphRestrict_configSplit_symm]
   ring
 
-
-
-theorem activeBCZ_eq_of_le_sup_boundaryClique
+lemma activeBCZ_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (p q : Real) :
@@ -244,9 +283,7 @@ theorem activeBCZ_eq_of_le_sup_boundaryClique
         rw [Finset.sum_mul]
     _ = _ := by rw [addedBernoulliWeight_sum G H]; simp
 
-
-
-theorem activeBCNumer_eq_of_le_sup_boundaryClique
+lemma activeBCNumer_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (p q : Real) (f : ConfigSpace G.edgeSet -> Real) :
@@ -276,9 +313,8 @@ theorem activeBCNumer_eq_of_le_sup_boundaryClique
         ring
     _ = _ := by rw [addedBernoulliWeight_sum G H]; simp
 
-
-
-
+/-- If `G ≤ H ≤ G ⊔ K_∂`, the boundary-wired expectation of a function of `E(G)` is the same on `H`
+as on `G`. -/
 theorem activeBCMean_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
@@ -290,9 +326,9 @@ theorem activeBCMean_eq_of_le_sup_boundaryClique
     activeBCNumer_eq_of_le_sup_boundaryClique G H boundary hGH habsorb,
     activeBCZ_eq_of_le_sup_boundaryClique G H boundary hGH habsorb]
 
+/-! ## D. Boundary connections -/
 
-
-theorem exists_boundary_reachable_of_sup_boundaryClique
+lemma exists_boundary_reachable_of_sup_boundaryClique
     (A : SimpleGraph V) [DecidableRel A.Adj]
     {root : V} (hroot : ¬ boundary root) {y : V} (hy : boundary y)
     (hreach : (A ⊔ boundaryCliqueGraph boundary).Reachable root y) :
@@ -309,8 +345,7 @@ theorem exists_boundary_reachable_of_sup_boundaryClique
       · rw [boundaryCliqueGraph_adj] at hclique
         exact (hroot hclique.2.1).elim
 
-
-
+/-- If `G ≤ H ≤ G ⊔ K_∂`, an interior root is joined to the boundary in `H` iff it is in `G`. -/
 theorem boundaryReachable_iff_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
@@ -343,8 +378,8 @@ theorem boundaryReachable_iff_of_le_sup_boundaryClique
     have hHedge : s(x, z) ∈ H.edgeSet := by
       exact SimpleGraph.edgeSet_mono hGH hGedge
     have h := hxz.2
-    simp [extendActive, activeGraphRestrict, activeGraphEdgeIncl,
-      hGedge, hHedge] at h ⊢
+    simp only [extendActive, hGedge, ↓reduceDIte, activeGraphRestrict, activeGraphEdgeIncl, hHedge]
+      at h ⊢
     exact h
 
 section NestedBoundary
@@ -354,12 +389,14 @@ variable {Vin Vout : Type*} [DecidableEq Vin] [DecidableEq Vout]
   (incl : Vin → Vout)
   (bdryIn : Vin → Prop) (bdryOut : Vout → Prop)
 
+/-! ## E. Nested boundaries -/
 
+/-- The event that `root` is joined by an open path to a boundary vertex. -/
 def finiteRootBoundaryEvent {W : Type*} (K : SimpleGraph W)
     (bdry : W → Prop) (root : W) : Set (ConfigSpace (Sym2 W)) :=
   {omega | ∃ y, bdry y ∧ (openSub K omega).Reachable root y}
 
-theorem finiteRootBoundaryEvent_isIncreasing {W : Type*}
+lemma finiteRootBoundaryEvent_isIncreasing {W : Type*}
     (K : SimpleGraph W) (bdry : W → Prop) (root : W) :
     IsIncreasing (finiteRootBoundaryEvent K bdry root) := by
   intro omega eta home
@@ -370,6 +407,7 @@ theorem finiteRootBoundaryEvent_isIncreasing {W : Type*}
   refine ⟨hxz.1, Bool.eq_true_of_true_le ?_⟩
   simpa [hxz.2] using home s(x, z)
 
+/-- The probability of the event `A` under the finite wired random-cluster measure. -/
 noncomputable def finiteWiredEventMass {W : Type*} [Fintype W]
     [DecidableEq W] (K : SimpleGraph W) [DecidableRel K.Adj]
     (bdry : W → Prop) [DecidablePred bdry]
@@ -377,7 +415,7 @@ noncomputable def finiteWiredEventMass {W : Type*} [Fintype W]
   ∑ omega, A.indicator (fun _ => (1 : Real)) omega *
     wiredFkProb K bdry p q omega
 
-theorem finiteWiredEventMass_mono {W : Type*} [Fintype W]
+lemma finiteWiredEventMass_mono {W : Type*} [Fintype W]
     [DecidableEq W] (K : SimpleGraph W) [DecidableRel K.Adj]
     (bdry : W → Prop) [DecidablePred bdry]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -393,9 +431,7 @@ theorem finiteWiredEventMass_mono {W : Type*} [Fintype W]
   · simp [Set.indicator_of_mem hA, Set.indicator_of_mem (hAB hA)]
   · by_cases hB : omega ∈ B <;> simp [hA, hB]
 
-
-
-theorem ocd_boundaryReach_of_outerBoundaryReach
+lemma ocd_boundaryReach_of_outerBoundaryReach
     (hadj : ocd_AdjMatch Gin Gout incl)
     (hmargin : ∀ x, ¬ bdryOut (incl x))
     (hcross : ∀ x c, Gout.Adj (incl x) c →
@@ -428,7 +464,7 @@ theorem ocd_boundaryReach_of_outerBoundaryReach
               rw [openSub_adj] at hab ⊢
               refine ⟨(hadj x w).2 hab.1, ?_⟩
               have h := hab.2
-              simp [ocd_innerRestrict, ocd_innerEdge_mk] at h ⊢
+              simp only [ocd_innerRestrict] at h ⊢
               exact h
             obtain ⟨z, hz, hwz⟩ := ih w rfl hy'
             exact ⟨z, hz, habIn.reachable.trans hwz⟩
@@ -436,6 +472,8 @@ theorem ocd_boundaryReach_of_outerBoundaryReach
             exact ⟨x, hcross x b hab.1 hb, .refl x⟩
   exact go walk root rfl hy
 
+/-- Along an adjacency-preserving box embedding, a root joined to the outer boundary is joined to
+the inner boundary in the restricted configuration. -/
 theorem outerRootBoundaryEvent_subset_innerRestrict
     (hadj : ocd_AdjMatch Gin Gout incl)
     (hmargin : ∀ x, ¬ bdryOut (incl x))

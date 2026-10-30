@@ -6,31 +6,65 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalErgodicity
+
+/-!
+# Finite energy for the buffered infinite-volume FK measures
+
+For `0 < p < 1` and `q ≥ 1`, opening or closing any edge, or inserting any finite edge pattern,
+maps the buffered infinite-volume random-cluster measure to an absolutely continuous measure.
+
+## i. Overview
+
+In the finite-volume FK measure on a buffered box, the conditional probability that an edge is open
+or closed given all other edges is bounded below by a constant `cFE p q > 0`. This gives
+`cFE p q · μ(setOpen e ⁻¹' S) ≤ μ(S)` for cylinder events at every finite volume, the bound passes
+to the weak limits, and a monotone-class argument extends it to all measurable sets. Hence the maps
+`setOpen e`, `setClosed e`, and `setPattern I eta` push the measure to an absolutely continuous one,
+which is the finite-energy property used by Burton–Keane.
+`freeBufferedInfiniteVolume_hasFiniteEnergy`, `wiredBufferedInfiniteVolume_hasFiniteEnergy`, and
+`freeBufferedInfiniteVolume_setPattern_absolutelyContinuous` are proved unconditionally, with only
+`0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous` : inserting a finite
+  edge pattern maps the free limit to an absolutely continuous measure.
+- `PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy` : the free buffered infinite-volume FK
+  measure has finite energy.
+- `PeriodicGraph.wiredBufferedInfiniteVolume_hasFiniteEnergy` : the wired buffered infinite-volume
+  FK measure has finite energy.
+
+## iii. Table of contents
+
+- A. Restriction commutes with opening and closing edges
+- B. Single-edge bounds in finite volume
+- C. Single-edge bounds in infinite volume
+- D. Absolute continuity and finite energy
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
 open Filter MeasureTheory Set Topology
 open scoped ENNReal StatMech
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [Countable V] [DecidableEq V]
 
+/-! ## A. Restriction commutes with opening and closing edges -/
+
 omit [Countable V] in
-theorem PeriodicGraph.bufferedRestrictLE_setOpen
+lemma PeriodicGraph.bufferedRestrictLE_setOpen
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     (e : Sym2 (P.BufferedVertex N))
     (omega : ConfigSpace (Sym2 (P.BufferedVertex m))) :
@@ -50,7 +84,7 @@ theorem PeriodicGraph.bufferedRestrictLE_setOpen
     rw [setOpen_of_ne hx, setOpen_of_ne hmap]
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedRestrict_setOpen
+lemma PeriodicGraph.bufferedRestrict_setOpen
     (P : PeriodicGraph V) (N : Nat)
     (e : Sym2 (P.BufferedVertex N))
     (omega : ConfigSpace (Sym2 V)) :
@@ -68,7 +102,7 @@ theorem PeriodicGraph.bufferedRestrict_setOpen
     rw [setOpen_of_ne hx, setOpen_of_ne hmap]
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedRestrictLE_setClosed
+lemma PeriodicGraph.bufferedRestrictLE_setClosed
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     (e : Sym2 (P.BufferedVertex N))
     (omega : ConfigSpace (Sym2 (P.BufferedVertex m))) :
@@ -88,7 +122,7 @@ theorem PeriodicGraph.bufferedRestrictLE_setClosed
     rw [setClosed_of_ne hx, setClosed_of_ne hmap]
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedRestrict_setClosed
+lemma PeriodicGraph.bufferedRestrict_setClosed
     (P : PeriodicGraph V) (N : Nat)
     (e : Sym2 (P.BufferedVertex N))
     (omega : ConfigSpace (Sym2 V)) :
@@ -105,9 +139,9 @@ theorem PeriodicGraph.bufferedRestrict_setClosed
     unfold PeriodicGraph.bufferedRestrict
     rw [setClosed_of_ne hx, setClosed_of_ne hmap]
 
+/-! ## B. Single-edge bounds in finite volume -/
 
-
-theorem PeriodicGraph.freeBufferedMeasure_singleOpen_preimage_bound
+lemma PeriodicGraph.freeBufferedMeasure_singleOpen_preimage_bound
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -144,9 +178,7 @@ theorem PeriodicGraph.freeBufferedMeasure_singleOpen_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_bot_eq_fkProb] using hbound
 
-
-
-theorem PeriodicGraph.wiredBufferedMeasure_singleOpen_preimage_bound
+lemma PeriodicGraph.wiredBufferedMeasure_singleOpen_preimage_bound
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -184,9 +216,9 @@ theorem PeriodicGraph.wiredBufferedMeasure_singleOpen_preimage_bound
   simpa only [Finset.card_singleton, pow_one,
     bcProb_clique_eq_wiredFkProb] using hbound
 
+/-! ## C. Single-edge bounds in infinite volume -/
 
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_cylinder_bound
+lemma PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_cylinder_bound
     (P : PeriodicGraph V) (N : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -206,9 +238,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_cylinder_bound
   filter_upwards [eventually_ge_atTop N] with m hm
   exact P.freeBufferedMeasure_singleOpen_preimage_bound hm hp hp1 hq e S
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_cylinder_bound
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_cylinder_bound
     (P : PeriodicGraph V) (N : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -232,7 +262,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_cylinder_bound
   filter_upwards [eventually_ge_atTop N] with m hm
   exact P.wiredBufferedMeasure_singleOpen_preimage_bound hm hp hp1 hq e S
 
-theorem PeriodicGraph.freeBufferedMeasure_singleClosed_preimage_bound
+lemma PeriodicGraph.freeBufferedMeasure_singleClosed_preimage_bound
     (P : PeriodicGraph V) {N m : Nat} (hNm : N <= m)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -269,7 +299,7 @@ theorem PeriodicGraph.freeBufferedMeasure_singleClosed_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_bot_eq_fkProb] using hbound
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_cylinder_bound
+lemma PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_cylinder_bound
     (P : PeriodicGraph V) (N : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 (P.BufferedVertex N))
@@ -289,8 +319,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_cylinder_bound
   filter_upwards [eventually_ge_atTop N] with m hm
   exact P.freeBufferedMeasure_singleClosed_preimage_bound hm hp hp1 hq e S
 
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_fullCylinder_bound
+lemma PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_fullCylinder_bound
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 V) (C : Set (ConfigSpace (Sym2 V)))
@@ -321,9 +350,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_singleOpen_fullCylinder_bound
   rw [hpre, hCeq]
   exact P.freeBufferedInfiniteVolume_singleOpen_cylinder_bound N hp hp1 hq eb T
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_fullCylinder_bound
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_fullCylinder_bound
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 V) (C : Set (ConfigSpace (Sym2 V)))
@@ -356,7 +383,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_singleOpen_fullCylinder_bound
   exact P.wiredBufferedInfiniteVolume_singleOpen_cylinder_bound
     N hp hp1 hq eb T
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_fullCylinder_bound
+lemma PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_fullCylinder_bound
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (e : Sym2 V) (C : Set (ConfigSpace (Sym2 V)))
@@ -387,8 +414,9 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_singleClosed_fullCylinder_bound
   rw [hpre, hCeq]
   exact P.freeBufferedInfiniteVolume_singleClosed_cylinder_bound N hp hp1 hq eb T
 
+/-! ## D. Absolute continuity and finite energy -/
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_setOpen_absolutelyContinuous
+lemma PeriodicGraph.freeBufferedInfiniteVolume_setOpen_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) (e : Sym2 V) :
     (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) : Measure _).map
@@ -403,9 +431,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_setOpen_absolutelyContinuous
     (cFE p q) (cFE_pos hp hp1 hq).le
     (P.freeBufferedInfiniteVolume_singleOpen_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_setOpen_absolutelyContinuous
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_setOpen_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) (e : Sym2 V) :
     (P.wiredBufferedInfiniteVolume hp hp1
@@ -422,7 +448,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_setOpen_absolutelyContinuous
     (P.wiredBufferedInfiniteVolume_singleOpen_fullCylinder_bound
       hp hp1 hq e) A hA
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous
+lemma PeriodicGraph.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) (e : Sym2 V) :
     (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) : Measure _).map
@@ -437,8 +463,8 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous
     (cFE p q) (cFE_pos hp hp1 hq).le
     (P.freeBufferedInfiniteVolume_singleClosed_fullCylinder_bound hp hp1 hq e) A hA
 
-
-
+/-- Inserting a finite edge pattern maps the free buffered infinite-volume FK measure to an
+absolutely continuous measure. -/
 theorem PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -452,7 +478,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous
     (fun e => P.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous hp hp1 hq e)
     I eta
 
-theorem forceOpenFinset_insert (e : Sym2 V) (F : Finset (Sym2 V)) :
+lemma forceOpenFinset_insert (e : Sym2 V) (F : Finset (Sym2 V)) :
     forceOpenFinset (insert e F) = setOpen e ∘ forceOpenFinset F := by
   funext omega x
   by_cases hxe : x = e
@@ -464,9 +490,7 @@ theorem forceOpenFinset_insert (e : Sym2 V) (F : Finset (Sym2 V)) :
     simp only [forceOpenFinset, Finset.mem_insert]
     by_cases hxF : x ∈ F <;> simp [hxe, hxF]
 
-
-
-theorem hasFiniteEnergy_of_singleOpen
+lemma hasFiniteEnergy_of_singleOpen
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hone : ∀ e : Sym2 V, mu.map (setOpen e) ≪ mu) :
     HasFiniteEnergy mu := by
@@ -484,7 +508,7 @@ theorem hasFiniteEnergy_of_singleOpen
         (measurable_forceOpenFinset F)] at htrans
       rwa [← forceOpenFinset_insert e F] at htrans
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure has finite energy. -/
 theorem PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
@@ -497,7 +521,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy
   intro e
   exact P.freeBufferedInfiniteVolume_setOpen_absolutelyContinuous hp hp1 hq e
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the wired buffered infinite-volume FK measure has finite energy. -/
 theorem PeriodicGraph.wiredBufferedInfiniteVolume_hasFiniteEnergy
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :

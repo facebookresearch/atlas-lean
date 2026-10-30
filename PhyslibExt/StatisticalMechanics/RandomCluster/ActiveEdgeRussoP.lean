@@ -6,27 +6,62 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdges
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
 
+/-!
+# Russo formula in `p` for the active random-cluster measure
+
+For the active random-cluster measure with a common edge parameter `p`, the `p`-derivative of an
+event probability is `(p(1 - p))⁻¹ ∑_e Cov(𝟙_A, ω_e)`.
+
+## i. Overview
+
+The active weight of `ω` on `E(G)` is the random-cluster weight of its extension, so its
+`p`-derivative is the weight times the centered score `∑_e (ω_e - p) / (p(1 - p))`. Differentiating
+the numerator and partition function term by term and applying the quotient rule expresses the
+derivative of any expectation as a covariance with the score, which splits into a sum of covariances
+with the edge indicators. This is Russo's formula for the finite-volume random-cluster model.
+
+All results are proved unconditionally, under only `0 < p < 1` and `0 < q`.
+
+## ii. Key results
+
+- `hasDerivAt_activeMean_p` : the `p`-derivative of an active expectation is a sum of edge
+  covariances.
+- `hasDerivAt_activeProbOf_p` : Russo's formula for the `p`-derivative of an event probability.
+
+## iii. Table of contents
+
+- A. The centered score
+- B. Derivatives of weights, expectations, and event probabilities
+
+## iv. References
+
+- L. Russo, *On the critical percolation probabilities*, Z. Wahrsch. Verw. Gebiete 56 (1981).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.12.
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open Finset
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. The centered score -/
+
+/-- The centered score `∑_{e ∈ E(G)} (ω_e - p)` of an active configuration. -/
 noncomputable def activePScore (p : ℝ) (ω : ConfigSpace G.edgeSet) : ℝ :=
   ∑ e : G.edgeSet, (OSSS.Lindeberg.coord e ω - p)
 
@@ -43,7 +78,9 @@ lemma centeredScore_extendActive (p : ℝ) (ω : ConfigSpace G.edgeSet) :
   · intro e
     rw [SimpleGraph.mem_edgeFinset]
 
-theorem hasDerivAt_activeWeight_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+/-! ## B. Derivatives of weights, expectations, and event probabilities -/
+
+lemma hasDerivAt_activeWeight_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (q : ℝ) (ω : ConfigSpace G.edgeSet) :
     HasDerivAt (fun x => activeWeight G (fun _ => x) q ω)
       (activeWeight G (fun _ => p) q ω * activePScore G p ω / (p * (1 - p))) p := by
@@ -58,7 +95,7 @@ theorem hasDerivAt_activeWeight_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [← hw p, centeredScore_extendActive]
   ring
 
-theorem hasDerivAt_activeNumer_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma hasDerivAt_activeNumer_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (q : ℝ) (f : ConfigSpace G.edgeSet → ℝ) :
     HasDerivAt (fun x => activeNumer G (fun _ => x) q f)
       (activeNumer G (fun _ => p) q (fun ω => f ω * activePScore G p ω)
@@ -70,7 +107,7 @@ theorem hasDerivAt_activeNumer_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [Finset.sum_div]
   exact Finset.sum_congr rfl fun ω _ => by ring
 
-
+/-- The `p`-derivative of the active expectation of `f` is `(p(1 - p))⁻¹ ∑_e Cov(f, ω_e)`. -/
 theorem hasDerivAt_activeMean_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (f : ConfigSpace G.edgeSet → ℝ) :
     HasDerivAt (fun x => activeMean G (fun _ => x) q f)
@@ -104,7 +141,7 @@ theorem hasDerivAt_activeMean_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [activeMean_eq_div, activeMean_eq_div, activeMean_eq_div]
   field_simp
 
-
+/-- Russo's formula: the `p`-derivative of `P(A)` is `(p(1 - p))⁻¹ ∑_e Cov(𝟙_A, ω_e)`. -/
 theorem hasDerivAt_activeProbOf_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace G.edgeSet)) :
     HasDerivAt (fun x => activeProbOf G (fun _ => x) q A)

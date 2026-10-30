@@ -5,18 +5,41 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQInfiniteFKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TwoPointConnectivity
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangHarris
+
+/-!
+# Positive correlation of infinite clusters in the planar free FK measure
+
+For `q ≥ 1` the events "`x` lies in an infinite cluster" and "`y` lies in an infinite cluster" are
+positively correlated under the free infinite-volume random-cluster measure on `ℤ²`.
+
+## i. Overview
+
+Each event `{x ↔ ∞}` is the decreasing intersection of the increasing events "the cluster of `x`
+leaves the box of radius `n`", each of which depends on finitely many edges. The finite-volume FKG
+inequality for the free measure applies to every stage, and continuity of measure along decreasing
+intersections passes it to the limit.
+The headline `fkgq_freeInfiniteVolume_clusterInfinite_fkg` is proved unconditionally (only
+`0 < p < 1` and `1 ≤ q`).
+
+## ii. Key results
+
+- `fkgq_freeInfiniteVolume_clusterInfinite_fkg` : `P(x ↔ ∞) P(y ↔ ∞) ≤ P(x ↔ ∞, y ↔ ∞)` for the
+  free infinite-volume measure on `ℤ²`.
+
+## iii. Table of contents
+
+- A. FKG for infinite-cluster events
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
 
 @[expose] public section
 
@@ -26,9 +49,10 @@ namespace StatMech.FK
 
 open StatMech.Lattice
 
+/-! ## A. FKG for infinite-cluster events -/
 
-
-
+/-- Harris–FKG inequality for the infinite-cluster events of two sites under the free
+infinite-volume random-cluster measure on `ℤ²` with `q ≥ 1`. -/
 theorem fkgq_freeInfiniteVolume_clusterInfinite_fkg
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (x y : Site 2) :

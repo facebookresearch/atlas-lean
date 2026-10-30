@@ -6,38 +6,72 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneTail
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreePendantTree
 public import MathlibExt.Combinatorics.SimpleGraph.TreeExteriorAmalgam
 
+/-!
+# Building a trifurcation from three infinite clusters
+
+Three distinct infinite clusters can be turned into a trifurcation by resetting the edges near a
+finite connected set.
+
+## i. Overview
+
+Given three vertices in distinct infinite clusters, join them by a finite connected vertex set `K`.
+Each cluster leaves `K` along an infinite tail outside `K`. Inside the finite graph formed by `K`
+and the three exit points, a tree with three pendant leaves has a hub of degree three. Opening
+exactly the tree edges among the edges touching `K` and keeping the configuration outside `K`
+makes the hub a trifurcation: deleting it leaves three disjoint infinite open clusters. This is the
+local modification step of the Burton–Keane argument. Both key results are proved unconditionally.
+
+## ii. Key results
+
+- `PeriodicGraph.three_clusters_core_pattern_trifurcation` : for a connected finite set `K`
+  meeting three distinct infinite clusters, some pattern on the edges touching `K` creates a
+  trifurcation.
+- `PeriodicGraph.three_clusters_pattern_trifurcation` : on a connected periodic graph, three
+  distinct infinite clusters yield a finite edge set and a pattern on it creating a trifurcation.
+
+## iii. Table of contents
+
+- A. Edges touching a finite set and programmed patterns
+- B. The trifurcation pattern
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
 
 open MeasureTheory Set SimpleGraph Finset
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type} [Countable V] [DecidableEq V]
 
+/-! ## A. Edges touching a finite set and programmed patterns -/
+
+/-- The finite set of graph edges with at least one endpoint in `K`. -/
 noncomputable def PeriodicGraph.incidentEdgeFinset
     (P : PeriodicGraph V) (K : Finset V) : Finset (Sym2 V) := by
   letI : P.graph.LocallyFinite := P.locallyFinite
   exact K.biUnion fun x => (P.graph.neighborFinset x).image fun y => s(x, y)
 
-theorem PeriodicGraph.mem_incidentEdgeFinset_mk
+lemma PeriodicGraph.mem_incidentEdgeFinset_mk
     (P : PeriodicGraph V) (K : Finset V) (x y : V) :
     s(x, y) ∈ P.incidentEdgeFinset K ↔
       P.graph.Adj x y ∧ (x ∈ K ∨ y ∈ K) := by
   classical
-  letI : P.graph.LocallyFinite := P.locallyFinite
+  let : P.graph.LocallyFinite := P.locallyFinite
   simp only [PeriodicGraph.incidentEdgeFinset, Finset.mem_biUnion,
     Finset.mem_image, SimpleGraph.mem_neighborFinset]
   constructor
@@ -50,25 +84,30 @@ theorem PeriodicGraph.mem_incidentEdgeFinset_mk
     · exact ⟨x, hxK, y, hxy, rfl⟩
     · exact ⟨y, hyK, x, hxy.symm, by simp⟩
 
+/-- The image in `V` of the edges of a finite graph `T` under the vertex map `f`. -/
 noncomputable def programmedPeriodicTreeEdges {W : Type*} [Fintype W]
     (T : SimpleGraph W) [DecidableRel T.Adj] (f : W → V) :
     Finset (Sym2 V) := T.edgeFinset.image (Sym2.map f)
 
+/-- The pattern on the edge set `I` that opens exactly the edges lying in `O`. -/
 noncomputable def programmedPeriodicTreePattern (I O : Finset (Sym2 V)) :
     ConfigSpace ↥I := fun e => decide (e.1 ∈ O)
 
+/-- The open edges of `omega` with both endpoints outside `K`. -/
 def PeriodicGraph.exteriorOpenGraph (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (K : Finset V) : SimpleGraph V where
   Adj x y := (P.openSubgraph omega).Adj x y ∧ x ∉ K ∧ y ∉ K
   symm := ⟨by rintro x y ⟨h, hx, hy⟩; exact ⟨h.symm, hy, hx⟩⟩
   loopless := ⟨fun _ h => (P.openSubgraph omega).irrefl h.1⟩
 
-theorem PeriodicGraph.exteriorOpenGraph_le (P : PeriodicGraph V)
+lemma PeriodicGraph.exteriorOpenGraph_le (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (K : Finset V) :
     P.exteriorOpenGraph omega K ≤ P.openSubgraph omega := fun _ _ h => h.1
 
+/-! ## B. The trifurcation pattern -/
 
-
+/-- If a connected finite set `K` meets three distinct infinite clusters, some pattern on the
+edges touching `K` makes a vertex of `K` a trifurcation. -/
 theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (K : Finset V) (hKconn : (P.graph.induce (K : Set V)).Connected)
@@ -169,7 +208,7 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
       hstemAdj, hleafInj, hleafTerminal, hstemLeaf, _hTreach, hTcut⟩ :=
     StatMech.Percolation.three_pendant_vertices_have_tripod H hHconn terminal
       (by intro i j h; exact Sum.inr.inj h) htermdeg
-  letI : DecidableRel T.Adj := hTdec
+  let : DecidableRel T.Adj := hTdec
   let embed : C → V := fun z => embedW z.1
   have hembed : Function.Injective embed := hembedW.comp Subtype.val_injective
   choose sigma hsigma using hleafTerminal
@@ -191,11 +230,11 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     rw [P.mem_incidentEdgeFinset_mk]
     refine ⟨hHle (hTH a b hab), ?_⟩
     rcases ha : a.1 with qa | ia
-    · exact Or.inl (by simpa [embed, embedW, ha] using qa.2)
+    · exact Or.inl (by simp [embed, embedW, ha])
     · rcases hb : b.1 with qb | ib
-      · exact Or.inr (by simpa [embed, embedW, hb] using qb.2)
+      · exact Or.inr (by simp [embed, embedW, hb])
       · have hfalse := hTH a b hab
-        exact False.elim (by simpa [H, ha, hb] using hfalse)
+        exact False.elim (by simp [H, ha, hb] at hfalse)
   have htreeOpen : ∀ {a b : C}, T.Adj a b → U.Adj (embed a) (embed b) := by
     intro a b hab
     rw [P.openSubgraph_adj]
@@ -256,9 +295,9 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
               (stem 0).1 = Sum.inl q0 := hs0
               _ = Sum.inl q1 := congrArg Sum.inl (Subtype.ext (h0'.trans h1'.symm))
               _ = (stem 1).1 := hs1.symm)))
-      · exact False.elim (by simpa [H, hh, hs1] using h1)
-      · exact False.elim (by simpa [H, hh, hs0] using h0)
-      · exact False.elim (by simpa [H, hh, hs0] using h0)
+      · exact False.elim (by simp [H, hh, hs1] at h1)
+      · exact False.elim (by simp [H, hh, hs0] at h0)
+      · exact False.elim (by simp [H, hh, hs0] at h0)
   obtain ⟨hubCore, hhubCore⟩ := hhubCore
   have hhubK : embed hub ∈ K := by
     unfold embed
@@ -338,7 +377,7 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     · subst b; simp
     have hmem : embed hub ∉ s(a, b) := by
       simpa only [Sym2.mem_iff, not_or] using ⟨ha, hb⟩
-    simp [ha, hb, Ne.symm ha, Ne.symm hb, hmem]
+    simp [Ne.symm ha, Ne.symm hb, hmem]
   have hstemInf : ∀ i,
       (P.cluster (removeVertex (embed hub) omega') (embed (stem i))).Infinite := by
     intro i
@@ -346,7 +385,7 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     intro z hz
     rw [show P.cluster (removeVertex (embed hub) omega') (embed (stem i)) =
       {z | (P.openSubgraph (removeVertex (embed hub) omega')).Reachable
-        (embed (stem i)) z} from rfl, Set.mem_setOf_eq, hremove]
+        (embed (stem i)) z} from rfl, Set.mem_ofPred_eq, hremove]
     exact (hstemLeafCut i).trans ((htailE i z hz).mono hE_le_Ucut)
   refine ⟨eta, embed hub, embed (stem 0), embed (stem 1), embed (stem 2),
     htreeOpen (hstemAdj 0), htreeOpen (hstemAdj 1), htreeOpen (hstemAdj 2),
@@ -364,8 +403,8 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     exact hUsep 1 2 (by decide)
       ((hstemLeafCut 1).symm.trans (hr.trans (hstemLeafCut 2)))
 
-
-
+/-- On a connected periodic graph, three distinct infinite clusters yield a finite edge set and a
+pattern on it whose insertion creates a trifurcation. -/
 theorem PeriodicGraph.three_clusters_pattern_trifurcation
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (omega : ConfigSpace (Sym2 V)) (x : Fin 3 → V)

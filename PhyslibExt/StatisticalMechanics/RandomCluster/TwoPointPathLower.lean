@@ -5,27 +5,53 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FinitePatternEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TwoPoint
 
+/-!
+# A path lower bound for the random-cluster two-point function
+
+For `q ≥ 1`, the probability that `x` and `y` are connected is at least `c^ℓ`, where `ℓ` is the
+length of any walk from `x` to `y` and `c > 0` is the finite-energy constant.
+
+## i. Overview
+
+The random-cluster measure has finite energy: the probability that a prescribed set `I` of edges is
+open is at least `c^{|I|}`, with `c = cFE p q`. If all edges of a walk from `x` to `y` are open,
+then `x` and `y` are connected, and the walk uses at most `ℓ` distinct edges, so `c^ℓ` bounds the
+two-point function from below. The result is proved unconditionally, under `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `cFE_pow_walk_length_le_twoPoint` : `c^ℓ ≤ φ(x ↔ y)` for every walk of length `ℓ` from `x` to `y`.
+
+## iii. Table of contents
+
+- A. The path lower bound
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 3.4.
+-/
+
 @[expose] public section
 
-
-
 open SimpleGraph
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
 noncomputable section
 
+/-! ## A. The path lower bound -/
 
-
+/-- For `q ≥ 1` and any walk `w` from `x` to `y`, the two-point connection probability is at least
+`c^{length w}`, where `c` is the finite-energy constant. -/
 theorem cFE_pow_walk_length_le_twoPoint
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]

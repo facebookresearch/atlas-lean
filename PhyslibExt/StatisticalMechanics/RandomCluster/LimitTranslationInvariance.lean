@@ -5,90 +5,46 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MultiEdgeDecay
+
+/-!
+# Translation invariance of the infinite-volume limits from centred-box shift identities
+
+The `q = 2` free and wired infinite-volume random-cluster measures on `ℤᵈ` are translation
+invariant, provided the multi-edge open probabilities of every edge set and its translate agree in
+all large centred boxes.
+
+## i. Overview
+
+A finite edge set and its translate by `g` both fit in a common box `Λ_N`. The finite-volume measure
+on a translated box is the push-forward of the centred-box measure, so the placement identity for
+the infinite-volume limit reduces to an equality of multi-edge open probabilities in large centred
+boxes, the "centred shift decay" premise. Both headlines are conditional: they take as hypothesis
+`hdecay`, which asks that `plc_WiredCentredShiftDecay` (resp. `plc_FreeCentredShiftDecay`) hold for
+every translation `g` and every finite edge set. This premise is an exact equality in finite boxes
+and is not proved here. The trivial translation `g = 1` is handled unconditionally.
+
+## ii. Key results
+
+- `plc_wiredIV_isTranslationInvariant_of_decay` : the wired `q = 2` limit is translation invariant,
+  assuming the wired centred-shift identities `hdecay`.
+- `plc_freeIV_isTranslationInvariant_of_decay` : the free `q = 2` limit is translation invariant,
+  assuming the free centred-shift identities `hdecay`.
+- The placement identity for the identity translation is `med_wiredPlacement_one` /
+  `med_freePlacement_one` (`MultiEdgeDecay`).
+
+## iii. Table of contents
+
+- A. Common boxes and translated boxes
+- B. Centred-shift identities
+- C. Translation invariance of the limits
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
 
 @[expose] public section
 
@@ -109,29 +65,15 @@ open StatMech.IsingFK
 
 variable {d : ℕ}
 
+/-! ## A. Common boxes and translated boxes -/
 
-
-
-
-
-
-
-
-
-
-
-theorem plc_relift_image (N₀ N : ℕ) (h : N₀ ≤ N) (t₀ : Finset (Sym2 (boxVerts d N₀))) :
+lemma plc_relift_image (N₀ N : ℕ) (h : N₀ ≤ N) (t₀ : Finset (Sym2 (boxVerts d N₀))) :
     (t₀.image (innerEdgeLE d h)).image (edgeIncl d N) = t₀.image (edgeIncl d N₀) := by
   rw [Finset.image_image]
   refine Finset.image_congr fun eb _ => ?_
   exact edgeIncl_innerEdgeLE d h eb
 
-
-
-
-
-
-theorem plc_common_box (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))) :
+lemma plc_common_box (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))) :
     ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
       s = t.image (edgeIncl d N)
         ∧ s.image (fun e => g⁻¹ • e) = t'.image (edgeIncl d N) := by
@@ -144,21 +86,7 @@ theorem plc_common_box (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))
   · rw [hst₁, plc_relift_image N₁ (max N₁ N₂) (le_max_left N₁ N₂) t₁]
   · rw [hst₂, plc_relift_image N₂ (max N₁ N₂) (le_max_right N₁ N₂) t₂]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem plc_htrans_iff_centred_shift_wired (m : ℕ) (v : Site d) (N : ℕ) (hNm : N ≤ m)
+lemma plc_htrans_iff_centred_shift_wired (m : ℕ) (v : Site d) (N : ℕ) (hNm : N ≤ m)
     (t t' : Finset (Sym2 (boxVerts d N))) {p : ℝ} :
     (med_multiMassProb
           (wiredFkProb (fvs_transBoxGraph d m v) (fvs_transBoxBoundary d m v) p 2)
@@ -171,9 +99,7 @@ theorem plc_htrans_iff_centred_shift_wired (m : ℕ) (v : Site d) (N : ℕ) (hNm
               (t'.image (innerEdgeLE d hNm))) := by
   rw [← med_centred_eq_translated_wired m v (t.image (innerEdgeLE d hNm))]
 
-
-
-theorem plc_htrans_iff_centred_shift_free (m : ℕ) (v : Site d) (N : ℕ) (hNm : N ≤ m)
+lemma plc_htrans_iff_centred_shift_free (m : ℕ) (v : Site d) (N : ℕ) (hNm : N ≤ m)
     (t t' : Finset (Sym2 (boxVerts d N))) {p : ℝ} :
     (med_multiMassProb (fkProb (fvs_transBoxGraph d m v) p 2)
           ((t.image (innerEdgeLE d hNm)).image (Sym2.map (fvs_transEquiv d m v)))
@@ -182,19 +108,10 @@ theorem plc_htrans_iff_centred_shift_free (m : ℕ) (v : Site d) (N : ℕ) (hNm 
           = med_multiMassProb (fkProb (boxGraph d m) p 2) (t'.image (innerEdgeLE d hNm))) := by
   rw [← med_centred_eq_translated_free m v (t.image (innerEdgeLE d hNm))]
 
+/-! ## B. Centred-shift identities -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- For all large centred boxes `Λₘ`, the wired `q = 2` probabilities that all edges of `t` are
+open and that all edges of `t'` are open coincide. -/
 def plc_WiredCentredShiftDecay {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
     (t t' : Finset (Sym2 (boxVerts d N))) : Prop :=
   ∀ᶠ m in atTop, ∀ (hNm : N ≤ m),
@@ -203,25 +120,15 @@ def plc_WiredCentredShiftDecay {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
       = med_multiMassProb (wiredFkProb (boxGraph d m) (boxBoundary d m) p 2)
           (t'.image (innerEdgeLE d hNm))
 
-
-
+/-- For all large centred boxes `Λₘ`, the free `q = 2` probabilities that all edges of `t` are
+open and that all edges of `t'` are open coincide. -/
 def plc_FreeCentredShiftDecay {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
     (t t' : Finset (Sym2 (boxVerts d N))) : Prop :=
   ∀ᶠ m in atTop, ∀ (hNm : N ≤ m),
     med_multiMassProb (fkProb (boxGraph d m) p 2) (t.image (innerEdgeLE d hNm))
       = med_multiMassProb (fkProb (boxGraph d m) p 2) (t'.image (innerEdgeLE d hNm))
 
-
-
-
-
-
-
-
-
-
-
-theorem plc_wiredPlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_wiredPlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (g : Multiplicative (Site d))
     (hdecay : ∀ s : Finset (Sym2 (Site d)),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
@@ -236,9 +143,7 @@ theorem plc_wiredPlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [plc_htrans_iff_centred_shift_wired m (Multiplicative.toAdd g) N hNm t t']
   exact hm hNm
 
-
-
-theorem plc_freePlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_freePlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (g : Multiplicative (Site d))
     (hdecay : ∀ s : Finset (Sym2 (Site d)),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
@@ -253,31 +158,17 @@ theorem plc_freePlacement_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [plc_htrans_iff_centred_shift_free m (Multiplicative.toAdd g) N hNm t t']
   exact hm hNm
 
-
-
-
-
-
-
-
-
-
-theorem plc_wiredCentredShiftDecay_refl {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
+lemma plc_wiredCentredShiftDecay_refl {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) :
     plc_WiredCentredShiftDecay hp hp1 N t t :=
   Filter.Eventually.of_forall fun _ _ => rfl
 
-
-
-theorem plc_freeCentredShiftDecay_refl {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
+lemma plc_freeCentredShiftDecay_refl {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) :
     plc_FreeCentredShiftDecay hp hp1 N t t :=
   Filter.Eventually.of_forall fun _ _ => rfl
 
-
-
-
-theorem plc_wiredCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_wiredCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (s : Finset (Sym2 (Site d))) :
     ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
       s = t.image (edgeIncl d N)
@@ -290,9 +181,7 @@ theorem plc_wiredCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   refine Finset.image_congr fun e _ => ?_
   simp only [Function.comp_apply, inv_one, one_smul]
 
-
-
-theorem plc_freeCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_freeCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (s : Finset (Sym2 (Site d))) :
     ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
       s = t.image (edgeIncl d N)
@@ -305,33 +194,10 @@ theorem plc_freeCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   refine Finset.image_congr fun e _ => ?_
   simp only [Function.comp_apply, inv_one, one_smul]
 
+/-! ## C. Translation invariance of the limits -/
 
-
-
-theorem plc_wiredPlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
-    med_wiredPlacement hp hp1 (1 : Multiplicative (Site d)) :=
-  plc_wiredPlacement_of_decay hp hp1 (1 : Multiplicative (Site d))
-    (fun s => plc_wiredCentredShiftDecay_one hp hp1 s)
-
-
-
-theorem plc_freePlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
-    med_freePlacement hp hp1 (1 : Multiplicative (Site d)) :=
-  plc_freePlacement_of_decay hp hp1 (1 : Multiplicative (Site d))
-    (fun s => plc_freeCentredShiftDecay_one hp hp1 s)
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The wired `q = 2` infinite-volume measure is translation invariant, assuming that for every
+translation and every finite edge set the wired centred-shift identity `hdecay` holds. -/
 theorem plc_wiredIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hdecay : ∀ (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
@@ -344,8 +210,8 @@ theorem plc_wiredIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 
   med_wiredIV_isTranslationInvariant_of_placement hp hp1
     (fun g => plc_wiredPlacement_of_decay hp hp1 g (hdecay g))
 
-
-
+/-- The free `q = 2` infinite-volume measure is translation invariant, assuming that for every
+translation and every finite edge set the free centred-shift identity `hdecay` holds. -/
 theorem plc_freeIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hdecay : ∀ (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),

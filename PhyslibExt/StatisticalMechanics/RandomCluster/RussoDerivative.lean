@@ -5,55 +5,53 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 
+/-!
+# The derivative of random-cluster expectations in `p`
+
+The derivative in `p` of the random-cluster expectation of a function equals the sum over edges of
+its covariance with the edge states, divided by `p (1 - p)`.
+
+## i. Overview
+
+The FK weight is a polynomial in `p`; differentiating the edge product gives the centered open-edge
+count `∑ₑ (ω(e) - p) / (p (1 - p))` as a logarithmic derivative. Differentiating the quotient of the
+weighted sum by the partition function then expresses `d/dp φ_{p,q}[g]` as `(1 / (p (1 - p))) ∑ₑ
+Cov(g, ω(e))`, a Russo-type formula for the random-cluster model. Applied to indicators it gives the
+derivative of the probability of an event. All results are proved unconditionally, under `0 < p < 1`
+and `0 < q`.
+
+## ii. Key results
+
+- `hasDerivAt_fkMean` : `d/dp φ_{p,q}[g] = (∑ₑ Cov(g, ω(e))) / (p (1 - p))`.
+- `hasDerivAt_fkProbOf` : the same formula for the probability of an event.
+- `russo_bound` : the derivative of an event probability equals its covariance sum times
+  `1 / (p (1 - p))`, stated as a lower bound.
+
+## iii. Table of contents
+
+- A. Expectations, covariances, and edge coordinates
+- B. Derivatives of the weights
+- C. Linearity of expectations and covariances
+- D. The derivative formula
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.12.
+- L. Russo, *On the critical percolation probabilities*, Z. Wahrsch. Verw. Gebiete 56 (1981).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
@@ -63,51 +61,37 @@ open Finset ConfigSpace
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Expectations, covariances, and edge coordinates -/
 
-
-
-
+/-- The number of open edges of `ω` in `G`, as a real number. -/
 noncomputable def openEdgeCount (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∑ e ∈ G.edgeFinset, (if ω e then (1 : ℝ) else 0)
 
-
-
+/-- The expectation of `g` under the random-cluster measure `φ_{G,p,q}`. -/
 noncomputable def fkMean (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), g ω * fkProb G p q ω
 
-
-
+/-- The covariance of `f` and `g` under the random-cluster measure `φ_{G,p,q}`. -/
 noncomputable def fkCov (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   fkMean G p q (fun ω => f ω * g ω) - fkMean G p q f * fkMean G p q g
 
-
-
+/-- The state of edge `e` in `ω`: `1` if open, `0` if closed. -/
 noncomputable def coord (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   if ω e then (1 : ℝ) else 0
 
-
-
-
-
-
-
+/-! ## B. Derivatives of the weights -/
 
 omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
-
-
 lemma hasDerivAt_edgeFactor (ω : ConfigSpace (Sym2 V)) (e : Sym2 V) (p : ℝ) :
     HasDerivAt (fun p => if ω e then p else 1 - p) (if ω e then (1 : ℝ) else -1) p := by
   by_cases h : ω e
-  · simp only [h, if_true]; exact hasDerivAt_id p
+  · simp only [h, ite_true]; exact hasDerivAt_id p
   · simp only [h]
     simpa using (hasDerivAt_id p).const_sub (1 : ℝ)
 
-
-
+/-- The Bernoulli edge product over all edges of `G` except `e`. -/
 noncomputable def edgeProductOff (p : ℝ) (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∏ j ∈ G.edgeFinset.erase e, (if ω j then p else 1 - p)
-
-
 
 lemma hasDerivAt_edgeProduct (ω : ConfigSpace (Sym2 V)) (p : ℝ) :
     HasDerivAt (fun p => edgeProduct G p ω)
@@ -128,16 +112,11 @@ lemma hasDerivAt_edgeProduct (ω : ConfigSpace (Sym2 V)) (p : ℝ) :
   refine Finset.sum_congr rfl (fun e _ => ?_)
   rw [mul_comm]
 
-
-
 lemma edgeProduct_eq_off (p : ℝ) (e : Sym2 V) (ω : ConfigSpace (Sym2 V))
     (he : e ∈ G.edgeFinset) :
     edgeProduct G p ω = edgeProductOff G p e ω * (if ω e then p else 1 - p) := by
   unfold edgeProduct edgeProductOff
   rw [← Finset.prod_erase_mul G.edgeFinset _ he]
-
-
-
 
 lemma edgeProductOff_term (p : ℝ) (hp : 0 < p) (hp1 : p < 1) (e : Sym2 V)
     (ω : ConfigSpace (Sym2 V)) (he : e ∈ G.edgeFinset) :
@@ -149,22 +128,19 @@ lemma edgeProductOff_term (p : ℝ) (hp : 0 < p) (hp1 : p < 1) (e : Sym2 V)
   rw [edgeProduct_eq_off G p e ω he]
   unfold coord
   by_cases h : ω e = true
-  · rw [if_pos h, if_pos h, if_pos h]
+  · simp only [h, ↓reduceIte]
     field_simp
-  · rw [if_neg h, if_neg h, if_neg h]
+  · simp only [h, Bool.false_eq_true, ↓reduceIte]
     field_simp
     ring
 
 omit [DecidableEq V] in
-
 lemma sum_coord_sub (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
     ∑ e ∈ G.edgeFinset, (coord e ω - p)
       = openEdgeCount G ω - p * (G.edgeFinset.card : ℝ) := by
   rw [Finset.sum_sub_distrib]
   unfold openEdgeCount coord
   rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
-
-
 
 lemma hasDerivAt_edgeProduct_clean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (ω : ConfigSpace (Sym2 V)) :
@@ -175,9 +151,6 @@ lemma hasDerivAt_edgeProduct_clean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   refine Finset.sum_congr rfl (fun e he => ?_)
   rw [edgeProductOff_term G p hp hp1 e ω he]
 
-
-
-
 lemma hasDerivAt_fkWeight {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
     (ω : ConfigSpace (Sym2 V)) :
     HasDerivAt (fun p => fkWeight G p q ω)
@@ -187,25 +160,13 @@ lemma hasDerivAt_fkWeight {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
   unfold fkWeight
   ring
 
-
-
-
-
-
-
-
-
-
+/-- The unnormalized FK expectation `∑_ω g(ω) w(ω)`, where `w` is the FK weight. -/
 noncomputable def fkNumer (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), g ω * fkWeight G p q ω
-
 
 lemma fkNumer_one (p q : ℝ) : fkNumer G p q (fun _ => 1) = fkZ G p q := by
   unfold fkNumer fkZ
   exact Finset.sum_congr rfl (fun ω _ => by rw [one_mul])
-
-
-
 
 lemma hasDerivAt_fkNumer {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
     (g : ConfigSpace (Sym2 V) → ℝ) :
@@ -225,8 +186,7 @@ lemma hasDerivAt_fkNumer {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   rw [mul_div_assoc, mul_div_assoc]
 
-
-
+/-! ## C. Linearity of expectations and covariances -/
 
 lemma fkMean_eq_div (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) :
     fkMean G p q g = fkNumer G p q g / fkZ G p q := by
@@ -235,13 +195,11 @@ lemma fkMean_eq_div (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) :
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   rw [mul_div_assoc]
 
-
 lemma fkMean_add (p q : ℝ) (g h : ConfigSpace (Sym2 V) → ℝ) :
     fkMean G p q (fun ω => g ω + h ω) = fkMean G p q g + fkMean G p q h := by
   unfold fkMean
   rw [← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl (fun ω _ => by ring)
-
 
 lemma fkMean_sum (p q : ℝ) {ι : Type*} (s : Finset ι)
     (g : ι → ConfigSpace (Sym2 V) → ℝ) :
@@ -251,16 +209,14 @@ lemma fkMean_sum (p q : ℝ) {ι : Type*} (s : Finset ι)
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   rw [Finset.sum_mul]
 
-
 lemma fkMean_const (p q : ℝ) {c : ℝ}
     (hZ : fkZ G p q ≠ 0) : fkMean G p q (fun _ => c) = c := by
   unfold fkMean fkProb
   have hstep : ∀ ω : ConfigSpace (Sym2 V), c * (fkWeight G p q ω / fkZ G p q)
       = (c * fkWeight G p q ω) / fkZ G p q := fun ω => by rw [mul_div_assoc]
   rw [Finset.sum_congr rfl (fun ω _ => hstep ω), ← Finset.sum_div, ← Finset.mul_sum]
-  show (c * fkZ G p q) / fkZ G p q = c
+  change (c * fkZ G p q) / fkZ G p q = c
   rw [mul_div_assoc, div_self hZ, mul_one]
-
 
 lemma fkMean_const_mul (p q : ℝ) (c : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) :
     fkMean G p q (fun ω => c * g ω) = c * fkMean G p q g := by
@@ -268,7 +224,6 @@ lemma fkMean_const_mul (p q : ℝ) (c : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) 
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   ring
-
 
 lemma fkCov_add_right (p q : ℝ) (f g h : ConfigSpace (Sym2 V) → ℝ) :
     fkCov G p q f (fun ω => g ω + h ω)
@@ -278,7 +233,6 @@ lemma fkCov_add_right (p q : ℝ) (f g h : ConfigSpace (Sym2 V) → ℝ) :
     funext ω; ring
   rw [heq, fkMean_add, fkMean_add]
   ring
-
 
 lemma fkCov_sum_right (p q : ℝ) {ι : Type*} (s : Finset ι)
     (f : ConfigSpace (Sym2 V) → ℝ) (g : ι → ConfigSpace (Sym2 V) → ℝ) :
@@ -291,8 +245,6 @@ lemma fkCov_sum_right (p q : ℝ) {ι : Type*} (s : Finset ι)
       funext ω; rw [Finset.mul_sum]
     rw [heq, fkMean_sum G p q s (fun i ω => f ω * g i ω)]
   rw [hprod, fkMean_sum G p q s g, Finset.mul_sum, ← Finset.sum_sub_distrib]
-
-
 
 lemma fkCov_sub_const (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) {c : ℝ}
     (hZ : fkZ G p q ≠ 0) :
@@ -309,14 +261,6 @@ lemma fkCov_sub_const (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) {c : ℝ}
     rw [heq, fkMean_add, fkMean_const G p q hZ]; ring
   rw [hprod, hgc]; ring
 
-
-
-
-
-
-
-
-
 lemma fkCov_centeredCount (p q : ℝ) (hZ : fkZ G p q ≠ 0)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     fkCov G p q g (fun ω => ∑ e ∈ G.edgeFinset, (coord e ω - p))
@@ -325,23 +269,10 @@ lemma fkCov_centeredCount (p q : ℝ) (hZ : fkZ G p q ≠ 0)
   refine Finset.sum_congr rfl (fun e _ => ?_)
   exact fkCov_sub_const G p q g (coord e) hZ
 
+/-! ## D. The derivative formula -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Russo-type formula: for `0 < p < 1` and `0 < q`, the derivative in `p` of `φ_{p,q}[g]` is
+`(∑ₑ Cov(g, ω(e))) / (p (1 - p))`. -/
 theorem hasDerivAt_fkMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun p => fkMean G p q g)
@@ -393,40 +324,24 @@ theorem hasDerivAt_fkMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0
     field_simp
   
   rw [← fkCov_centeredCount G p q hZne g]
-  show (fkNumer G p q (fun ω => g ω * C ω) / (p * (1 - p)) * fkZ G p q
+  change (fkNumer G p q (fun ω => g ω * C ω) / (p * (1 - p)) * fkZ G p q
         - fkNumer G p q g * (fkNumer G p q C / (p * (1 - p)))) / fkZ G p q ^ 2
       = fkCov G p q g C / (p * (1 - p))
   rw [hcov]
   field_simp
 
-
-
-
-theorem deriv_fkMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
+lemma deriv_fkMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     deriv (fun p => fkMean G p q g) p
       = (∑ e ∈ G.edgeFinset, fkCov G p q g (coord e)) / (p * (1 - p)) :=
   (hasDerivAt_fkMean G hp hp1 hq g).deriv
 
-
-
-
-
-
-
-
-
-
-
+/-- The random-cluster probability of the event `A`. -/
 noncomputable def fkProbOf (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) : ℝ :=
   fkMean G p q (A.indicator (fun _ => (1 : ℝ)))
 
-
-
-
-
-
-
+/-- For `0 < p < 1` and `0 < q`, the derivative in `p` of `φ_{p,q}(A)` is
+`(∑ₑ Cov(1_A, ω(e))) / (p (1 - p))`. -/
 theorem hasDerivAt_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun p => fkProbOf G p q A)
@@ -434,38 +349,22 @@ theorem hasDerivAt_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq :
         / (p * (1 - p))) p :=
   hasDerivAt_fkMean G hp hp1 hq _
 
-
-theorem deriv_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
+lemma deriv_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V))) :
     deriv (fun p => fkProbOf G p q A) p
       = (∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coord e))
         / (p * (1 - p)) :=
   (hasDerivAt_fkProbOf G hp hp1 hq A).deriv
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- The prefactor `1 / (p (1 - p))` in the Russo-type formula. -/
 noncomputable def russoPrefactor (p : ℝ) : ℝ := 1 / (p * (1 - p))
-
 
 lemma russoPrefactor_pos {p : ℝ} (hp : 0 < p) (hp1 : p < 1) : 0 < russoPrefactor p :=
   one_div_pos.2 (mul_pos hp (by linarith))
 
-
-
-
-
-
-theorem russo_bound {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
+/-- The derivative of `φ_{p,q}(A)` is at least `1 / (p (1 - p))` times the covariance sum (in
+fact equal). -/
+lemma russo_bound {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V))) :
     russoPrefactor p * (∑ e ∈ G.edgeFinset,
         fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coord e))

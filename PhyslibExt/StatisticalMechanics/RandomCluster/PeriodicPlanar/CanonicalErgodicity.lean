@@ -6,40 +6,74 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalTranslation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTailTriviality
+
+/-!
+# Ergodicity of the free buffered infinite-volume FK measure
+
+For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume random-cluster measure on a periodic
+planar graph has a trivial tail and is ergodic under lattice translations.
+
+## i. Overview
+
+The infinite-volume measure is the increasing limit of free finite-volume FK measures on buffered
+boxes. Domain-Markov monotonicity and the FKG inequality give, for every increasing clopen event `A`
+and tail event `s`, the product bound `μ A · μ s ≤ μ (A ∩ s)`. Hence `μ` is stochastically dominated
+by its conditioning on any non-null tail event, and the same holds for the complement, which forces
+every tail event to have probability `0` or `1`. Since a plane embedding lets translations move any
+finite edge set out of every window, translation-invariant events are tail events up to null sets,
+so the measure is ergodic. `freeBufferedInfiniteVolume_tail_trivial` and
+`freeBufferedInfiniteVolume_isErgodic` are proved unconditionally, with only `0 < p < 1` and
+`1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.IsErgodic` : translation invariance plus the zero-one law for invariant events.
+- `PeriodicGraph.freeBufferedInfiniteVolume_tail_trivial` : every buffered tail event has
+  probability `0` or `1`.
+- `PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_isErgodic` : the free buffered
+  infinite-volume FK measure is ergodic.
+
+## iii. Table of contents
+
+- A. Buffered edge windows and tail events
+- B. Product bounds for increasing and exterior events
+- C. Tail triviality
+- D. Ergodicity
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Set Filter Topology
 open scoped BigOperators ENNReal StatMech symmDiff
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
+
 namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [Countable V] [DecidableEq V]
 
+/-! ## A. Buffered edge windows and tail events -/
 
+/-- The edges of the buffered box of index `N`, viewed as edges of the infinite graph. -/
 def PeriodicGraph.bufferedEdgeWindow (P : PeriodicGraph V) (N : ℕ) :
     Set (Sym2 V) :=
   Set.range (P.edgeIncl (P.bufferedRadius N))
 
-theorem PeriodicGraph.bufferedEdgeWindow_mono (P : PeriodicGraph V) :
+lemma PeriodicGraph.bufferedEdgeWindow_mono (P : PeriodicGraph V) :
     Monotone P.bufferedEdgeWindow := by
   intro N M hNM e he
   obtain ⟨eN, rfl⟩ := he
@@ -49,13 +83,14 @@ theorem PeriodicGraph.bufferedEdgeWindow_mono (P : PeriodicGraph V) :
       let yM : P.BufferedVertex M := P.bufferedVertexInclLE hNM y
       exact ⟨s(xM, yM), rfl⟩
 
-
+/-- A tail event for the exhaustion by buffered edge windows: measurable with respect to the edges
+outside every window. -/
 abbrev PeriodicGraph.IsBufferedTailEvent (P : PeriodicGraph V)
     (s : Set (ConfigSpace (Sym2 V))) : Prop :=
   AtiTailEvent P.bufferedEdgeWindow s
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedAdjMatchLE (P : PeriodicGraph V)
+lemma PeriodicGraph.bufferedAdjMatchLE (P : PeriodicGraph V)
     {N M : ℕ} (hNM : N ≤ M) :
     ocd_AdjMatch (P.bufferedGraph N) (P.bufferedGraph M)
       (P.bufferedVertexInclLE hNM) := by
@@ -63,13 +98,13 @@ theorem PeriodicGraph.bufferedAdjMatchLE (P : PeriodicGraph V)
   rfl
 
 omit [Countable V] in
-theorem PeriodicGraph.edgeIncl_mem_bufferedEdgeWindow (P : PeriodicGraph V)
+lemma PeriodicGraph.edgeIncl_mem_bufferedEdgeWindow (P : PeriodicGraph V)
     (N : ℕ) (e : Sym2 (P.BufferedVertex N)) :
     P.edgeIncl (P.bufferedRadius N) e ∈ P.bufferedEdgeWindow N :=
   ⟨e, rfl⟩
 
 omit [Countable V] in
-theorem PeriodicGraph.edgeIncl_range_mono (P : PeriodicGraph V)
+lemma PeriodicGraph.edgeIncl_range_mono (P : PeriodicGraph V)
     {N M : ℕ} (hNM : N ≤ M) {e : Sym2 V}
     (he : e ∈ Set.range (P.edgeIncl (P.bufferedRadius N))) :
     e ∈ Set.range (P.edgeIncl (P.bufferedRadius M)) := by
@@ -80,9 +115,7 @@ theorem PeriodicGraph.edgeIncl_range_mono (P : PeriodicGraph V)
       let yM : P.BufferedVertex M := P.bufferedVertexInclLE hNM y
       exact ⟨s(xM, yM), rfl⟩
 
-
-
-theorem PeriodicGraph.isClopen_eq_bufferedCylinder
+lemma PeriodicGraph.isClopen_eq_bufferedCylinder
     (P : PeriodicGraph V) (A : Set (ConfigSpace (Sym2 V))) (hA : IsClopen A) :
     ∃ (N : ℕ) (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))),
       A = P.bufferedCylinder N S ∧
@@ -98,16 +131,14 @@ theorem PeriodicGraph.isClopen_eq_bufferedCylinder
     apply hF
     intro e he
     obtain ⟨eN, heN⟩ := hN e he
-    change P.extendEdge (P.bufferedRadius N)
-      (P.bufferedRestrict N omega) e = omega e
     rw [← heN, P.extendEdge_edgeIncl]
     rfl
   · intro hinc omega eta home hmem
     exact hinc (P.monotone_extendEdge (P.bufferedRadius N) home) hmem
 
+/-! ## B. Product bounds for increasing and exterior events -/
 
-
-theorem PeriodicGraph.freeBufferedMeasure_inner_mul_exterior_le
+lemma PeriodicGraph.freeBufferedMeasure_inner_mul_exterior_le
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -197,9 +228,7 @@ theorem PeriodicGraph.freeBufferedMeasure_inner_mul_exterior_le
   simp only [Aout, bcProb_bot_eq_fkProb] at hfinite ⊢
   exact hfinite
 
-
-
-theorem PeriodicGraph.freeBufferedFinite_inner_mul_exteriorCylinder_le
+lemma PeriodicGraph.freeBufferedFinite_inner_mul_exteriorCylinder_le
     (P : PeriodicGraph V) (N : ℕ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -250,9 +279,7 @@ theorem PeriodicGraph.freeBufferedFinite_inner_mul_exteriorCylinder_le
     exact P.edgeIncl_range_mono (Nat.le_max_right N M0 |>.trans hm) (hM0 e he)
   exact le_of_tendsto_of_tendsto hleft hright heventually
 
-
-
-theorem PeriodicGraph.freeBufferedFinite_inner_mul_exterior_le
+lemma PeriodicGraph.freeBufferedFinite_inner_mul_exterior_le
     (P : PeriodicGraph V) (N : ℕ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -316,9 +343,9 @@ theorem PeriodicGraph.freeBufferedFinite_inner_mul_exterior_le
   dsimp [delta] at hBlow hBup hIlow hIup
   nlinarith
 
+/-! ## C. Tail triviality -/
 
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_tail_clopen_product_le
+lemma PeriodicGraph.freeBufferedInfiniteVolume_tail_clopen_product_le
     (P : PeriodicGraph V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A s : Set (ConfigSpace (Sym2 V))}
@@ -360,9 +387,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_tail_clopen_product_le
   exact le_of_tendsto hprod
     (Filter.eventually_atTop.mpr ⟨K, fun N hKN => hbound N hKN⟩)
 
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_le_cond_tail_clopen
+lemma PeriodicGraph.freeBufferedInfiniteVolume_le_cond_tail_clopen
     (P : PeriodicGraph V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {s : Set (ConfigSpace (Sym2 V))}
@@ -393,7 +418,8 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_le_cond_tail_clopen
   rw [inv_mul_eq_div]
   exact (le_div_iff₀ hs_pos).mpr hprod
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, every buffered tail event has probability `0` or `1` under the
+free buffered infinite-volume FK measure. -/
 theorem PeriodicGraph.freeBufferedInfiniteVolume_tail_trivial
     (P : PeriodicGraph V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -412,8 +438,8 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_tail_trivial
     rw [hsc0, add_zero] at hadd
     rw [measure_univ] at hadd
     simpa only [mu] using hadd
-  haveI hp1s : IsProbabilityMeasure (mu[|s]) := cond_isProbabilityMeasure hs0
-  haveI hp2s : IsProbabilityMeasure (mu[|sᶜ]) := cond_isProbabilityMeasure hsc0
+  have hp1s : IsProbabilityMeasure (mu[|s]) := cond_isProbabilityMeasure hs0
+  have hp2s : IsProbabilityMeasure (mu[|sᶜ]) := cond_isProbabilityMeasure hsc0
   have hdom1 := P.freeBufferedInfiniteVolume_le_cond_tail_clopen
     hp hp1 hq hs hs0
   have hdom2 := P.freeBufferedInfiniteVolume_le_cond_tail_clopen
@@ -435,7 +461,10 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_tail_trivial
   rw [heq.1] at hself
   simpa only [mu] using hself
 
+/-! ## D. Ergodicity -/
 
+/-- A measure is ergodic for the lattice translations: it is translation invariant and every
+measurable translation-invariant event has measure `0` or `1`. -/
 def PeriodicGraph.IsErgodic (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) : Prop :=
   P.IsTranslationInvariant mu ∧
@@ -444,7 +473,7 @@ def PeriodicGraph.IsErgodic (P : PeriodicGraph V)
         mu s = 0 ∨ mu s = 1
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedEdgeWindow_endpoint
+lemma PeriodicGraph.bufferedEdgeWindow_endpoint
     (P : PeriodicGraph V) {N : ℕ} {e : Sym2 V}
     (he : e ∈ P.bufferedEdgeWindow N) {x : V} (hx : x ∈ e) :
     x ∈ P.orbitBox (P.bufferedRadius N) := by
@@ -456,14 +485,14 @@ theorem PeriodicGraph.bufferedEdgeWindow_endpoint
       · exact v.2
 
 omit [Countable V] in
-theorem PeriodicGraph.mem_edgeVertexFinset_of_mem
-    (P : PeriodicGraph V) {F : Finset (Sym2 V)} {e : Sym2 V}
+lemma PeriodicGraph.mem_edgeVertexFinset_of_mem
+    (_P : PeriodicGraph V) {F : Finset (Sym2 V)} {e : Sym2 V}
     (he : e ∈ F) {x : V} (hx : x ∈ e) :
     x ∈ PeriodicGraph.edgeVertexFinset F := by
   rw [PeriodicGraph.edgeVertexFinset, Finset.mem_biUnion]
   exact ⟨e, he, by simpa using hx⟩
 
-private theorem exists_finset_abs_bound
+private lemma exists_finset_abs_bound
     (S : Finset V) (f : V → ℝ) :
     ∃ R : ℝ, 0 ≤ R ∧ ∀ x ∈ S, |f x| ≤ R := by
   classical
@@ -471,9 +500,7 @@ private theorem exists_finset_abs_bound
   intro x hx
   exact Finset.single_le_sum (fun y _ => abs_nonneg (f y)) hx
 
-
-
-theorem PeriodicPlaneEmbedding.bufferedEdgeWindow_escape
+lemma PeriodicPlaneEmbedding.bufferedEdgeWindow_escape
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (F : Finset (Sym2 V)) (k : ℕ) :
     letI : SMul (Multiplicative (Site 2)) (Sym2 V) :=
@@ -482,7 +509,7 @@ theorem PeriodicPlaneEmbedding.bufferedEdgeWindow_escape
       (↑(F.image (fun e => g⁻¹ • e)) : Set (Sym2 V)) ⊆
         (P.bufferedEdgeWindow k)ᶜ := by
   classical
-  letI : SMul (Multiplicative (Site 2)) (Sym2 V) :=
+  let : SMul (Multiplicative (Site 2)) (Sym2 V) :=
     ⟨fun g e => Sym2.map (P.shift g.toAdd) e⟩
   let VF := PeriodicGraph.edgeVertexFinset F
   let VK := P.orbitBox (P.bufferedRadius k)
@@ -526,8 +553,8 @@ theorem PeriodicPlaneEmbedding.bufferedEdgeWindow_escape
       have hLreal : RF + RK < (L : ℝ) := by exact_mod_cast hL
       linarith
 
-
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure on a periodic planar
+graph is ergodic under lattice translations. -/
 theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_isErgodic
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -538,9 +565,9 @@ theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_isErgodic
   have hTI := P.freeBufferedInfiniteVolume_isTranslationInvariant hp hp1 hq
   refine ⟨hTI, ?_⟩
   intro s hs hinv
-  letI : SMul (Multiplicative (Site 2)) (Sym2 V) :=
+  let : SMul (Multiplicative (Site 2)) (Sym2 V) :=
     ⟨fun g e => Sym2.map (P.shift g.toAdd) e⟩
-  letI : SemigroupAction (Multiplicative (Site 2)) (Sym2 V) := ⟨by
+  let : SemigroupAction (Multiplicative (Site 2)) (Sym2 V) := ⟨by
     intro g h e
     change Sym2.map (P.shift (g * h).toAdd) e =
       Sym2.map (P.shift g.toAdd) (Sym2.map (P.shift h.toAdd) e)
@@ -552,7 +579,7 @@ theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_isErgodic
         · exact (by simpa [add_comm] using P.shift_add h.toAdd g.toAdd x)
         · exact (by simpa [add_comm] using P.shift_add h.toAdd g.toAdd y)
     ⟩
-  letI : MulAction (Multiplicative (Site 2)) (Sym2 V) := ⟨by
+  let : MulAction (Multiplicative (Site 2)) (Sym2 V) := ⟨by
     intro e
     change Sym2.map (P.shift (1 : Multiplicative (Site 2)).toAdd) e = e
     induction e using Sym2.inductionOn with

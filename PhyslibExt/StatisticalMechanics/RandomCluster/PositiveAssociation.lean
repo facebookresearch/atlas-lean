@@ -5,64 +5,50 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.HolleyFKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 
+/-!
+# Positive association of the random-cluster measure
+
+For `q ≥ 1` the finite-volume random-cluster measure satisfies the FKG lattice condition, so
+increasing functions and increasing events are positively correlated.
+
+## i. Overview
+
+The FK weight `p^{o(ω)} (1 - p)^{c(ω)} q^{k(ω)}`, viewed as a nonnegative weight, satisfies the FKG
+lattice condition for `q ≥ 1` because the cluster count is supermodular. The FKG inequality for
+lattice-condition weights on a finite distributive lattice then gives positive association for
+increasing functions, and for increasing events by taking indicators. All results are proved
+unconditionally, under `0 < p < 1` and `1 ≤ q`. The positive-association statements themselves are
+`fkProb_positively_associated` and `fkProb_positively_associated_events` in `FKG`.
+
+## ii. Key results
+
+- `fk_fkgCondition` : the nonnegative FK weight satisfies the FKG lattice condition.
+
+## iii. Table of contents
+
+- A. The FK weight as a lattice-condition weight
+
+## iv. References
+
+- C. M. Fortuin, P. W. Kasteleyn, and J. Ginibre, *Correlation inequalities on some partially
+  ordered sets*, Comm. Math. Phys. 22 (1971).
+- R. Holley, *Remarks on the FKG inequalities*, Comm. Math. Phys. 36 (1974).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.8.
+-/
+
 @[expose] public section
 
 open scoped BigOperators NNReal
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
@@ -70,38 +56,20 @@ namespace FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. The FK weight as a lattice-condition weight -/
 
-
-
-
-
-
-
-
-
-
+/-- The FK weight `p^{o(ω)} (1 - p)^{c(ω)} q^{k(ω)}` as a nonnegative real number. -/
 noncomputable def fkWeightNN (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) : ℝ≥0 :=
   ⟨fkWeight G p q ω, fkWeight_nonneg G hp hp1 hq ω⟩
 
 @[simp]
-theorem fkWeightNN_coe {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
+lemma fkWeightNN_coe {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) :
     (fkWeightNN G p q hp hp1 hq ω : ℝ) = fkWeight G p q ω := rfl
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_fkgCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
+/-- For `q ≥ 1` the nonnegative FK weight satisfies the FKG lattice condition. -/
+lemma fk_fkgCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Probability.FKGCondition (fkWeightNN G p q hp hp1 (lt_of_lt_of_le zero_lt_one hq)) := by
   intro a b
   rw [← NNReal.coe_le_coe]
@@ -111,18 +79,7 @@ theorem fk_fkgCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
         fkWeight_logSupermodular G hp hp1 hq a b
     _ = fkWeight G p q (a ⊓ b) * fkWeight G p q (a ⊔ b) := by ring
 
-
-
-
-
-
-
-
-
-
-
-
-theorem fkProb_fkgLattice {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma fkProb_fkgLattice {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
     fkProb G p q a * fkProb G p q b ≤ fkProb G p q (a ⊓ b) * fkProb G p q (a ⊔ b) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
@@ -135,46 +92,6 @@ theorem fkProb_fkgLattice {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
   simp only [fkProb]
   rw [div_mul_div_comm, div_mul_div_comm]
   exact (div_le_div_iff_of_pos_right (mul_pos hZpos hZpos)).mpr hcond
-
-
-
-
-
-
-
-
-
-
-
-theorem fk_positively_associated {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    {f g : ConfigSpace (Sym2 V) → ℝ} (hf : Monotone f) (hg : Monotone g) :
-    (∑ ω, fkProb G p q ω * f ω) * (∑ ω, fkProb G p q ω * g ω)
-      ≤ ∑ ω, fkProb G p q ω * (f ω * g ω) := by
-  have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
-  exact Probability.fkg_inequality
-    (fun ω => fkProb_nonneg G hp hp1 hq0 ω)
-    (fkProb_sum_eq_one G hp hp1 hq0)
-    (fkProb_fkgLattice G hp hp1 hq) hf hg
-
-
-
-
-
-
-
-
-theorem fk_positively_associated_events {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    {A B : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) (hB : IsIncreasing B) :
-    (∑ ω, fkProb G p q ω * A.indicator (fun _ => (1 : ℝ)) ω)
-        * (∑ ω, fkProb G p q ω * B.indicator (fun _ => (1 : ℝ)) ω)
-      ≤ ∑ ω, fkProb G p q ω * (A ∩ B).indicator (fun _ => (1 : ℝ)) ω := by
-  have hAB : (A ∩ B).indicator (fun _ => (1 : ℝ))
-      = fun ω => A.indicator (fun _ => (1 : ℝ)) ω * B.indicator (fun _ => (1 : ℝ)) ω := by
-    funext ω
-    by_cases ha : ω ∈ A <;> by_cases hb : ω ∈ B <;>
-      simp [Set.indicator, ha, hb, Set.mem_inter_iff]
-  rw [hAB]
-  exact fk_positively_associated G hp hp1 hq hA.indicator_monotone hB.indicator_monotone
 
 end FK
 

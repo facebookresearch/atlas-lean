@@ -6,38 +6,75 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.PercolationApproximation
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 
+/-!
+# Periodic planar dual pairs
+
+Plane embeddings of periodic graphs, pairs of mutually dual periodic planar graphs, and the
+translation of dual percolation into percolation of the dual configuration under the primal
+free measure.
+
+## i. Overview
+
+A periodic plane embedding draws vertices as points of `ℂ` and edges as injective arcs, compatibly
+with a lattice of periods, so that distinct edges meet only at common endpoints. A periodic
+planar dual pair consists of two such embeddings with an edge bijection `e ↦ e†` under which each
+primal edge crosses exactly its dual edge. The structure also records, as the fields
+`free_wired_infiniteVolume_dual_law` and `wired_free_infiniteVolume_dual_law`, that the wired
+(free) dual buffered infinite-volume measure at `p*` is the image of the free (wired) primal one
+at `p` under configuration duality (`ThermodynamicDuality` derives such laws from finite-volume
+exchange). Through these laws, wired dual percolation at `p*` is free-primal percolation of the
+dual configuration at `p`, which rewrites the coverage and no-coexistence inputs of the critical
+relation.
+The headline `PeriodicPlanarDualPair.dualCritical_relation_of_commonCoupling` is conditional: it
+assumes a dual pair `D` (including the two dual-law fields above), coverage (free dual percolation
+for every `p < pc`) and no-coexistence of wired primal and free dual percolation, besides
+`pc, pc* ∈ (0, 1)` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding` : a periodic embedding of a periodic graph in the plane.
+- `PeriodicPlanarDualPair` : a pair of mutually dual periodic planar graphs with dual laws.
+- `PeriodicPlanarDualPair.swap` : the roles of primal and dual exchanged.
+- `PeriodicPlanarDualPair.wiredPercolationProbability_dualParam` : wired dual percolation at `p*`
+  equals free percolation of the dual configuration at `p`.
+- `PeriodicPlanarDualPair.dualCritical_relation_of_commonCoupling` : the critical relation from
+  coverage and no-coexistence for a dual pair.
+
+## iii. Table of contents
+
+- A. Plane embeddings and dual pairs
+- B. Swapping primal and dual
+- C. Auxiliary counting and measure facts
+- D. Dual percolation
+- E. The critical relation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Sections 6.1 and 6.2.
+-/
+
 @[expose] public section
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
+/-! ## A. Plane embeddings and dual pairs -/
 
-
-
-
-
-
+/-- A periodic plane embedding: vertices as points of `ℂ`, translations acting by an injective
+lattice of periods, and edges as injective arcs that meet only at common endpoints, with only
+finitely many arcs meeting any compact set. -/
 structure PeriodicPlaneEmbedding (P : PeriodicGraph V) where
   vertex : V ↪ ℂ
   period : Site 2 →+ ℂ
@@ -67,12 +104,9 @@ structure PeriodicPlaneEmbedding (P : PeriodicGraph V) where
     {xy : V × V | ∃ hxy : P.graph.Adj xy.1 xy.2,
       (Set.range (edgeArc hxy) ∩ K).Nonempty}.Finite
 
-
-
-
-
-
-
+/-- A periodic planar dual pair: plane embeddings of a periodic graph and of its dual in the same
+coordinates, an edge bijection under which each primal edge crosses exactly its dual edge, and the
+free/wired infinite-volume dual laws at `p*`. -/
 structure PeriodicPlanarDualPair
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W) where
@@ -120,9 +154,9 @@ namespace PeriodicPlanarDualPair
 variable [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## B. Swapping primal and dual -/
 
-
-theorem period_eq
+lemma period_eq
     (D : PeriodicPlanarDualPair P Pdual) :
     D.primalEmbedding.period = D.dualEmbedding.period := by
   apply AddMonoidHom.ext
@@ -134,10 +168,7 @@ theorem period_eq
   rw [← D.coordinates_eq] at h
   exact h.symm
 
-
-
-
-
+/-- The dual pair with the roles of the primal and dual graphs exchanged. -/
 noncomputable def swap
     (D : PeriodicPlanarDualPair P Pdual) :
     PeriodicPlanarDualPair Pdual P where
@@ -181,7 +212,7 @@ noncomputable def swap
     apply ProbabilityMeasure.toMeasure_injective
     change _ = Measure.map _ _
     rw [h', ProbabilityMeasure.toMeasure_map, Measure.map_map]
-    · simpa [dualConfigEquiv_symm]
+    · simp [dualConfigEquiv_symm]
     · exact (continuous_dualConfigEquiv D.edgeDual.symm).measurable
     · exact (continuous_dualConfigEquiv D.edgeDual).measurable
   wired_free_infiniteVolume_dual_law := by
@@ -199,21 +230,21 @@ noncomputable def swap
     apply ProbabilityMeasure.toMeasure_injective
     change _ = Measure.map _ _
     rw [h', ProbabilityMeasure.toMeasure_map, Measure.map_map]
-    · simpa [dualConfigEquiv_symm]
+    · simp [dualConfigEquiv_symm]
     · exact (continuous_dualConfigEquiv D.edgeDual.symm).measurable
     · exact (continuous_dualConfigEquiv D.edgeDual).measurable
 
-@[simp] theorem swap_primalEmbedding
+@[simp] lemma swap_primalEmbedding
     (D : PeriodicPlanarDualPair P Pdual) :
     D.swap.primalEmbedding = D.dualEmbedding := rfl
 
-@[simp] theorem swap_dualEmbedding
+@[simp] lemma swap_dualEmbedding
     (D : PeriodicPlanarDualPair P Pdual) :
     D.swap.dualEmbedding = D.primalEmbedding := rfl
 
+/-! ## C. Auxiliary counting and measure facts -/
 
-
-theorem PeriodicPlaneEmbedding.shift_ne_of_ne
+lemma PeriodicPlaneEmbedding.shift_ne_of_ne
     (E : PeriodicPlaneEmbedding P) {z : Site 2} (hz : z ≠ 0) (x : V) :
     P.shift z x ≠ x := by
   intro hfix
@@ -225,9 +256,7 @@ theorem PeriodicPlaneEmbedding.shift_ne_of_ne
     exact add_left_cancel hcancel
   exact hz (E.period_injective (hperiod.trans E.period.map_zero.symm))
 
-
-
-theorem PeriodicGraph.orbitBox_card_le_quadratic
+lemma PeriodicGraph.orbitBox_card_le_quadratic
     (P : PeriodicGraph V) (n : ℕ) :
     (P.orbitBox n).card ≤ (2 * n + 1) ^ 2 * P.fundamentalDomain.card := by
   rw [PeriodicGraph.orbitBox]
@@ -239,9 +268,7 @@ theorem PeriodicGraph.orbitBox_card_le_quadratic
     _ = (2 * n + 1) ^ 2 * P.fundamentalDomain.card := by
       rw [Finset.card_product, ← boxSV_boxF_eq_toFinset, boxSV_card_boxF]
 
-
-
-theorem probabilityMeasure_eq_of_finiteCylinder_real_eq
+lemma probabilityMeasure_eq_of_finiteCylinder_real_eq
     {E : Type*} [Countable E]
     (mu nu : ProbabilityMeasure (ConfigSpace E))
     (h : ∀ (s : Finset E) (S : Set (∀ _i : s, Bool)),
@@ -261,41 +288,15 @@ theorem probabilityMeasure_eq_of_finiteCylinder_real_eq
       (measure_ne_top (nu : Measure (ConfigSpace E)) (cylinder s S))).mp hreal
   · rw [measure_univ, measure_univ]
 
+/-! ## D. Dual percolation -/
 
-theorem free_wired_infiniteVolume_dual
-    (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
-    (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
-    Pdual.wiredBufferedInfiniteVolume
-        (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).1
-        (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).2
-        (zero_lt_one.trans_le hq) =
-      (P.freeBufferedInfiniteVolume hp hp1
-        (zero_lt_one.trans_le hq)).map
-        (dualConfigEquiv D.edgeDual) :=
-  D.free_wired_infiniteVolume_dual_law hp hp1 hq
-
-
-theorem wired_free_infiniteVolume_dual
-    (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
-    (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
-    Pdual.freeBufferedInfiniteVolume
-        (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).1
-        (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).2
-        (zero_lt_one.trans_le hq) =
-      (P.wiredBufferedInfiniteVolume hp hp1
-        (zero_lt_one.trans_le hq)).map
-        (dualConfigEquiv D.edgeDual) :=
-  D.wired_free_infiniteVolume_dual_law hp hp1 hq
-
-
-theorem percolationEvent_measurableSet (P : PeriodicGraph V) :
+lemma percolationEvent_measurableSet (P : PeriodicGraph V) :
     MeasurableSet P.percolationEvent := by
   rw [← P.iInter_bufferedRootBoundaryCylinder]
   exact MeasurableSet.iInter fun n =>
     P.bufferedCylinder_measurableSet n (P.bufferedRootBoundaryEvent n)
 
-
-theorem wiredDual_percolationEvent
+lemma wiredDual_percolationEvent
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ((Pdual.wiredBufferedInfiniteVolume
@@ -314,12 +315,11 @@ theorem wiredDual_percolationEvent
       (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).1
       (dualParam_mem_Ioo hp hp1 (zero_lt_one.trans_le hq)).2
       (zero_lt_one.trans_le hq))
-    (D.free_wired_infiniteVolume_dual hp hp1 hq)
+    (D.free_wired_infiniteVolume_dual_law hp hp1 hq)
     (percolationEvent_measurableSet Pdual)
 
-
-
-
+/-- The probability under the free primal buffered infinite-volume measure that the dual
+configuration percolates at the dual root, and `0` outside `0 < p < 1`, `0 < q`. -/
 noncomputable def freeDualPercolationProbability
     (D : PeriodicPlanarDualPair P Pdual) (p q : ℝ) : ℝ :=
   if h : p ∈ Ioo (0 : ℝ) 1 ∧ 0 < q then
@@ -329,15 +329,15 @@ noncomputable def freeDualPercolationProbability
       ((dualConfigEquiv D.edgeDual) ⁻¹' Pdual.percolationEvent)
   else 0
 
-
-
+/-- The dual configuration percolates with positive probability under the free primal measure at
+`(p, q)`. -/
 def FreeDualPercolates
     (D : PeriodicPlanarDualPair P Pdual) (p q : ℝ) : Prop :=
   0 < D.freeDualPercolationProbability p q
 
-
-
-theorem wiredPercolationProbability_dualParam
+/-- The wired dual percolation probability at `p*` equals the free dual percolation probability at
+`p`. -/
+lemma wiredPercolationProbability_dualParam
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Pdual.wiredPercolationProbability (dualParam p q) q =
@@ -346,11 +346,10 @@ theorem wiredPercolationProbability_dualParam
   have hpDual := dualParam_mem_Ioo hp hp1 hq0
   unfold PeriodicGraph.wiredPercolationProbability
     freeDualPercolationProbability
-  rw [dif_pos ⟨hpDual, hq0⟩, dif_pos ⟨⟨hp, hp1⟩, hq0⟩]
+  rw [dite_eq_left ⟨hpDual, hq0⟩, dite_eq_left ⟨⟨hp, hp1⟩, hq0⟩]
   exact congrArg ENNReal.toReal (D.wiredDual_percolationEvent hp hp1 hq)
 
-
-theorem wiredPercolates_dualParam_iff
+lemma wiredPercolates_dualParam_iff
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Pdual.wiredPercolates (dualParam p q) q ↔
@@ -358,10 +357,7 @@ theorem wiredPercolates_dualParam_iff
   unfold PeriodicGraph.wiredPercolates FreeDualPercolates
   rw [D.wiredPercolationProbability_dualParam hp hp1 hq]
 
-
-
-
-theorem dualSubcriticalCoverage_iff_freeDual
+lemma dualSubcriticalCoverage_iff_freeDual
     (D : PeriodicPlanarDualPair P Pdual) {pc q : ℝ} (hq : 1 ≤ q) :
     DualSubcriticalCoverage
         (fun r => Pdual.wiredPercolates r q) pc q ↔
@@ -374,9 +370,7 @@ theorem dualSubcriticalCoverage_iff_freeDual
     exact (D.wiredPercolates_dualParam_iff hp.1 hp.2 hq).mpr
       (h p hp hpc)
 
-
-
-theorem dualNoCoexistence_iff_freeDual
+lemma dualNoCoexistence_iff_freeDual
     (D : PeriodicPlanarDualPair P Pdual) {q : ℝ} (hq : 1 ≤ q) :
     DualNoCoexistence
         (fun p => P.wiredPercolates p q)
@@ -389,8 +383,11 @@ theorem dualNoCoexistence_iff_freeDual
   · intro h p hp
     simpa only [D.wiredPercolates_dualParam_iff hp.1 hp.2 hq] using h p hp
 
+/-! ## E. The critical relation -/
 
-
+/-- Conditional critical-point duality for a dual pair: free dual percolation below `pc` and
+no-coexistence of wired primal and free dual percolation give `pc* = (pc)*` and
+`pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
 theorem dualCritical_relation_of_commonCoupling
     (D : PeriodicPlanarDualPair P Pdual) {q : ℝ}
     (hpc : P.criticalPoint q ∈ Ioo (0 : ℝ) 1)

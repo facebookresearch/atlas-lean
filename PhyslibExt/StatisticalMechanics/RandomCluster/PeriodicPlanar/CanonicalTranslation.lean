@@ -6,59 +6,97 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQTranslation
 
+/-!
+# Translation invariance of the free buffered infinite-volume FK measure
+
+For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume random-cluster measure on a periodic
+graph is invariant under lattice translations.
+
+## i. Overview
+
+The probability that all edges of a finite set are open determines a measure on configurations.
+For the free FK measure on a buffered box, this probability equals the corresponding one on the
+translated box. Since the free measure is monotone in the volume for `q ≥ 1`, the translated box is
+sandwiched between centered boxes, and both sequences of all-open probabilities converge to the
+same infinite-volume limit. Hence the free limit gives the same mass to an all-open event and to its
+translate, and agreement on these events, which form a π-system generating the σ-algebra, gives
+translation invariance. `freeBufferedInfiniteVolume_isTranslationInvariant` is proved
+unconditionally, with only `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedInfiniteVolume_multiOpen_shift` : the free limit gives the same mass to
+  an all-open event and to its translate.
+- `PeriodicGraph.freeBufferedInfiniteVolume_isTranslationInvariant` : the free buffered
+  infinite-volume FK measure is translation invariant.
+
+## iii. Table of contents
+
+- A. Translated buffered boxes
+- B. Comparing all-open probabilities across boxes
+- C. Limits of all-open probabilities
+- D. Translation invariance
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 open scoped BigOperators
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
 
+/-! ## A. Translated buffered boxes -/
+
+/-- The vertices of the buffered box of index `n` translated by `z`. -/
 noncomputable def PeriodicGraph.shiftedBufferedVertices
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) : Finset V :=
   (P.orbitBox (P.bufferedRadius n)).image (P.shift z)
 
+/-- The vertices of the translated buffered box, as a subtype. -/
 abbrev PeriodicGraph.ShiftedBufferedVertex
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :=
   {v : V // v ∈ P.shiftedBufferedVertices z n}
 
+/-- The translated buffered box is finite. -/
 noncomputable instance PeriodicGraph.instFintypeShiftedBufferedVertex
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     Fintype (P.ShiftedBufferedVertex z n) :=
   Fintype.ofFinset (P.shiftedBufferedVertices z n) (fun _ => Iff.rfl)
 
+/-- Decidable equality of vertices of the translated buffered box. -/
 instance PeriodicGraph.instDecidableEqShiftedBufferedVertex
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     DecidableEq (P.ShiftedBufferedVertex z n) := Subtype.instDecidableEq
 
+/-- The graph induced on the translated buffered box. -/
 noncomputable def PeriodicGraph.shiftedBufferedGraph
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     SimpleGraph (P.ShiftedBufferedVertex z n) :=
   P.graph.comap Subtype.val
 
+/-- Classical decidability of adjacency in the translated buffered box. -/
 noncomputable instance PeriodicGraph.instDecidableRelShiftedBufferedGraph
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     DecidableRel (P.shiftedBufferedGraph z n).Adj := Classical.decRel _
 
+/-- Translation by `z` as a bijection from the buffered box to the translated buffered box. -/
 noncomputable def PeriodicGraph.shiftBufferedEquiv
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     P.BufferedVertex n ≃ P.ShiftedBufferedVertex z n where
@@ -70,12 +108,12 @@ noncomputable def PeriodicGraph.shiftBufferedEquiv
   left_inv x := Subtype.ext (P.shift_neg_shift z x.1)
   right_inv x := Subtype.ext (P.shift_shift_neg z x.1)
 
-@[simp] theorem PeriodicGraph.shiftBufferedEquiv_val
+@[simp] lemma PeriodicGraph.shiftBufferedEquiv_val
     (P : PeriodicGraph V) (z : Site 2) (n : Nat)
     (x : P.BufferedVertex n) :
     (P.shiftBufferedEquiv z n x : V) = P.shift z x.1 := rfl
 
-theorem PeriodicGraph.shiftBufferedEquiv_adj
+lemma PeriodicGraph.shiftBufferedEquiv_adj
     (P : PeriodicGraph V) (z : Site 2) (n : Nat)
     (x y : P.BufferedVertex n) :
     (P.bufferedGraph n).Adj x y ↔
@@ -83,7 +121,7 @@ theorem PeriodicGraph.shiftBufferedEquiv_adj
         (P.shiftBufferedEquiv z n x) (P.shiftBufferedEquiv z n y) := by
   exact (P.shift_adj z x.1 y.1).symm
 
-theorem PeriodicGraph.shift_orbitBox_subset_orbitBox
+lemma PeriodicGraph.shift_orbitBox_subset_orbitBox
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     P.shift z '' (P.orbitBox n : Set V) ⊆
       (P.orbitBox (n + flc_vrad z) : Set V) := by
@@ -101,7 +139,7 @@ theorem PeriodicGraph.shift_orbitBox_subset_orbitBox
         Nat.add_le_add (hw i) (flc_vrad_le z i)
   · exact P.shift_add w z u
 
-theorem PeriodicGraph.orbitBox_subset_shift_orbitBox
+lemma PeriodicGraph.orbitBox_subset_shift_orbitBox
     (P : PeriodicGraph V) (z : Site 2) {a n : Nat}
     (h : a + flc_vrad z ≤ n) :
     (P.orbitBox a : Set V) ⊆ P.shift z '' (P.orbitBox n : Set V) := by
@@ -118,7 +156,7 @@ theorem PeriodicGraph.orbitBox_subset_shift_orbitBox
     ext i
     simp
 
-theorem PeriodicGraph.bufferedRadius_add_le
+lemma PeriodicGraph.bufferedRadius_add_le
     (P : PeriodicGraph V) (n c : Nat) :
     P.bufferedRadius n + c ≤ P.bufferedRadius (n + c) := by
   induction c with
@@ -129,7 +167,7 @@ theorem PeriodicGraph.bufferedRadius_add_le
         (Nat.succ_le_of_lt
           (P.bufferedRadius_strictMono (Nat.lt_succ_self (n + c))))
 
-theorem PeriodicGraph.shiftedBuffered_subset_buffered
+lemma PeriodicGraph.shiftedBuffered_subset_buffered
     (P : PeriodicGraph V) (z : Site 2) (n : Nat) :
     (P.shiftedBufferedVertices z n : Set V) ⊆
       (P.orbitBox (P.bufferedRadius (n + flc_vrad z)) : Set V) := by
@@ -139,7 +177,7 @@ theorem PeriodicGraph.shiftedBuffered_subset_buffered
     (P.bufferedRadius_add_le n (flc_vrad z))
     (P.shift_orbitBox_subset_orbitBox z (P.bufferedRadius n) hx)
 
-theorem PeriodicGraph.buffered_subset_shiftedBuffered
+lemma PeriodicGraph.buffered_subset_shiftedBuffered
     (P : PeriodicGraph V) (z : Site 2) {a n : Nat}
     (h : a + flc_vrad z ≤ n) :
     (P.orbitBox (P.bufferedRadius a) : Set V) ⊆
@@ -151,6 +189,8 @@ theorem PeriodicGraph.buffered_subset_shiftedBuffered
   exact (P.bufferedRadius_add_le a (flc_vrad z)).trans
     ((P.bufferedRadius_strictMono.le_iff_le).2 h)
 
+/-- The inclusion of the translated box of index `n` into a buffered box of index `m`
+containing it. -/
 noncomputable def PeriodicGraph.shiftedToBufferedIncl
     (P : PeriodicGraph V) (z : Site 2) (n m : Nat)
     (hsub : (P.shiftedBufferedVertices z n : Set V) ⊆
@@ -158,6 +198,8 @@ noncomputable def PeriodicGraph.shiftedToBufferedIncl
     P.ShiftedBufferedVertex z n → P.BufferedVertex m :=
   fun x => ⟨x.1, hsub x.2⟩
 
+/-- The inclusion of the buffered box of index `n` into a translated box of index `m`
+containing it. -/
 noncomputable def PeriodicGraph.bufferedToShiftedIncl
     (P : PeriodicGraph V) (z : Site 2) (n m : Nat)
     (hsub : (P.orbitBox (P.bufferedRadius n) : Set V) ⊆
@@ -165,7 +207,9 @@ noncomputable def PeriodicGraph.bufferedToShiftedIncl
     P.BufferedVertex n → P.ShiftedBufferedVertex z m :=
   fun x => ⟨x.1, hsub x.2⟩
 
-theorem PeriodicGraph.freeBufferedMeasure_real_multiOpen
+/-! ## B. Comparing all-open probabilities across boxes -/
+
+lemma PeriodicGraph.freeBufferedMeasure_real_multiOpen
     (P : PeriodicGraph V) (n : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (t : Finset (Sym2 (P.BufferedVertex n))) :
@@ -176,7 +220,7 @@ theorem PeriodicGraph.freeBufferedMeasure_real_multiOpen
   have hevent : fmu_multiOpen (t.image (P.edgeIncl (P.bufferedRadius n))) =
       P.bufferedCylinder n (med_genericMultiOpenEvent t) := by
     ext omega
-    simp only [fmu_multiOpen, Set.mem_setOf_eq, Finset.forall_mem_image,
+    simp only [fmu_multiOpen, Set.mem_ofPred_eq, Finset.forall_mem_image,
       PeriodicGraph.bufferedCylinder, Set.mem_preimage,
       med_genericMultiOpenEvent, PeriodicGraph.bufferedRestrict]
   rw [hevent, P.freeBufferedMeasure_real_cylinder (le_refl n) hp hp1 hq]
@@ -192,7 +236,7 @@ theorem PeriodicGraph.freeBufferedMeasure_real_multiOpen
       med_genericMultiOpenEvent t then 1 else 0) * _ = _
   rw [hrefl]
 
-theorem PeriodicGraph.centered_eq_shifted_free_multiMass
+lemma PeriodicGraph.centered_eq_shifted_free_multiMass
     (P : PeriodicGraph V) (z : Site 2) (n : Nat)
     (t : Finset (Sym2 (P.BufferedVertex n))) (p q : Real) :
     med_multiMassProb (fkProb (P.bufferedGraph n) p q) t =
@@ -209,7 +253,7 @@ theorem PeriodicGraph.centered_eq_shifted_free_multiMass
   refine Finset.sum_congr rfl fun omega _ => ?_
   rw [med_reCfgIso_preimage (P.shiftBufferedEquiv z n) t]
 
-theorem PeriodicGraph.shifted_free_multiMass_le_buffered
+lemma PeriodicGraph.shifted_free_multiMass_le_buffered
     (P : PeriodicGraph V) (z : Site 2) (n m : Nat)
     (hsub : (P.shiftedBufferedVertices z n : Set V) ⊆
       (P.orbitBox (P.bufferedRadius m) : Set V))
@@ -230,7 +274,7 @@ theorem PeriodicGraph.shifted_free_multiMass_le_buffered
   rw [ocd_innerRestrict_preimage_multiOpenEvent hinj t] at hdom
   exact hdom
 
-theorem PeriodicGraph.buffered_free_multiMass_le_shifted
+lemma PeriodicGraph.buffered_free_multiMass_le_shifted
     (P : PeriodicGraph V) (z : Site 2) (n m : Nat)
     (hsub : (P.orbitBox (P.bufferedRadius n) : Set V) ⊆
       (P.shiftedBufferedVertices z m : Set V))
@@ -251,6 +295,8 @@ theorem PeriodicGraph.buffered_free_multiMass_le_shifted
   rw [ocd_innerRestrict_preimage_multiOpenEvent hinj t] at hdom
   exact hdom
 
+/-- The free FK probability, in the translated box of index `m`, that the translates of the edges
+of `t` are all open. -/
 noncomputable def PeriodicGraph.shiftedFreeMultiMass
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
@@ -259,7 +305,7 @@ noncomputable def PeriodicGraph.shiftedFreeMultiMass
     ((t.image (Sym2.map (P.bufferedVertexInclLE hNm))).image
       (Sym2.map (P.shiftBufferedEquiv z m)))
 
-theorem PeriodicGraph.shiftedFreeMultiMass_eq_centered
+lemma PeriodicGraph.shiftedFreeMultiMass_eq_centered
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -283,7 +329,7 @@ theorem PeriodicGraph.shiftedFreeMultiMass_eq_centered
   unfold PeriodicGraph.shiftedFreeMultiMass
   exact hiso.symm
 
-theorem PeriodicGraph.shiftedFreeMultiMass_le_centered_shift
+lemma PeriodicGraph.shiftedFreeMultiMass_le_centered_shift
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -308,7 +354,7 @@ theorem PeriodicGraph.shiftedFreeMultiMass_le_centered_shift
   induction e using Sym2.inductionOn with
   | _ x y => rfl
 
-theorem PeriodicGraph.centered_shift_le_shiftedFreeMultiMass
+lemma PeriodicGraph.centered_shift_le_shiftedFreeMultiMass
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -356,12 +402,14 @@ theorem PeriodicGraph.centered_shift_le_shiftedFreeMultiMass
   unfold PeriodicGraph.shiftedFreeMultiMass
   rw [hedge]
 
-theorem isClopen_fmu_multiOpen (T : Finset (Sym2 V)) :
+/-! ## C. Limits of all-open probabilities -/
+
+lemma isClopen_fmu_multiOpen (T : Finset (Sym2 V)) :
     IsClopen (fmu_multiOpen T) := by
   have heq : fmu_multiOpen T = cylinder T
       {eta : ∀ _e : T, Bool | ∀ e : T, eta e = true} := by
     ext omega
-    simp only [fmu_multiOpen, Set.mem_setOf_eq, cylinder, Set.mem_preimage]
+    simp only [fmu_multiOpen, Set.mem_ofPred_eq, cylinder, Set.mem_preimage]
     constructor
     · intro h e
       exact h e.1 e.2
@@ -370,13 +418,15 @@ theorem isClopen_fmu_multiOpen (T : Finset (Sym2 V)) :
   rw [heq]
   exact isClopen_cylinderEvent T _
 
+/-- A lift of a finite set of edges lying in the buffered window `N` to edges of the buffered
+box. -/
 noncomputable def PeriodicGraph.bufferedEdgeLift
     (P : PeriodicGraph V) (N : Nat) (T : Finset (Sym2 V))
     (hT : ∀ e ∈ T, e ∈ Set.range (P.edgeIncl (P.bufferedRadius N))) :
     Finset (Sym2 (P.BufferedVertex N)) :=
   T.attach.image fun e => (hT e.1 e.2).choose
 
-theorem PeriodicGraph.bufferedEdgeLift_image
+lemma PeriodicGraph.bufferedEdgeLift_image
     (P : PeriodicGraph V) (N : Nat) (T : Finset (Sym2 V))
     (hT : ∀ e ∈ T, e ∈ Set.range (P.edgeIncl (P.bufferedRadius N))) :
     (P.bufferedEdgeLift N T hT).image
@@ -395,7 +445,7 @@ theorem PeriodicGraph.bufferedEdgeLift_image
     apply Finset.mem_image.2
     exact ⟨⟨e, he⟩, Finset.mem_attach _ _, rfl⟩
 
-theorem PeriodicGraph.shiftedFreeMultiMass_tendsto_centered
+lemma PeriodicGraph.shiftedFreeMultiMass_tendsto_centered
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -414,7 +464,7 @@ theorem PeriodicGraph.shiftedFreeMultiMass_tendsto_centered
     P.shiftedFreeMultiMass_eq_centered z N t hp hp1 hq
       (N + k) (Nat.le_add_right N k)
 
-theorem PeriodicGraph.shiftedFreeMultiMass_tendsto_shifted
+lemma PeriodicGraph.shiftedFreeMultiMass_tendsto_shifted
     (P : PeriodicGraph V) (z : Site 2) (N : Nat)
     (t : Finset (Sym2 (P.BufferedVertex N)))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -482,9 +532,11 @@ theorem PeriodicGraph.shiftedFreeMultiMass_tendsto_shifted
     simpa only [T, c] using P.shiftedFreeMultiMass_le_centered_shift
       z N t hp hp1 hq (N + k) (Nat.le_add_right N k)
 
+/-! ## D. Translation invariance -/
 
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_multiOpen_shift
+/-- The free limit gives the same mass to the event that all edges of `T` are open and to its
+translate by `z`. -/
+lemma PeriodicGraph.freeBufferedInfiniteVolume_multiOpen_shift
     (P : PeriodicGraph V) (z : Site 2) (T : Finset (Sym2 V))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
@@ -503,16 +555,16 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_multiOpen_shift
   exact (ENNReal.toReal_eq_toReal_iff'
     (measure_ne_top _ _) (measure_ne_top _ _)).mp hreal
 
-theorem PeriodicGraph.configTranslate_preimage_fmu_multiOpen
+lemma PeriodicGraph.configTranslate_preimage_fmu_multiOpen
     (P : PeriodicGraph V) (z : Site 2) (T : Finset (Sym2 V)) :
     P.configTranslate z ⁻¹' fmu_multiOpen T =
       fmu_multiOpen (T.image (Sym2.map (P.shift (-z)))) := by
   ext omega
-  simp only [Set.mem_preimage, fmu_multiOpen, Set.mem_setOf_eq,
+  simp only [Set.mem_preimage, fmu_multiOpen, Set.mem_ofPred_eq,
     PeriodicGraph.configTranslate, Finset.forall_mem_image]
 
-
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure is invariant under
+lattice translations. -/
 theorem PeriodicGraph.freeBufferedInfiniteVolume_isTranslationInvariant
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -522,10 +574,10 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_isTranslationInvariant
   intro z
   let mu : Measure (ConfigSpace (Sym2 V)) :=
     P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-  haveI : IsProbabilityMeasure mu := by
+  have : IsProbabilityMeasure mu := by
     dsimp only [mu]
     infer_instance
-  haveI : IsProbabilityMeasure (Measure.map (P.configTranslate z) mu) :=
+  have : IsProbabilityMeasure (Measure.map (P.configTranslate z) mu) :=
     inferInstance
   refine MeasurePreserving.mk (P.measurable_configTranslate z) ?_
   apply fkgqt_measure_eq_of_multiOpen_eq

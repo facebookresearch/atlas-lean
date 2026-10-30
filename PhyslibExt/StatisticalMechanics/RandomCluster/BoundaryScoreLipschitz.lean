@@ -6,29 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
 public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgeMarginal
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Tilt
 
+/-!
+# Hamming-Lipschitz bound for the boundary-conditioned score
+
+The score `o(ω) + 2 k_C(ω)` (open edges plus twice the boundary-conditioned cluster count) changes
+by at most the Hamming distance between configurations.
+
+## i. Overview
+
+Opening the edges where `ω` is open and `η` is closed adds them to the open count and lowers the
+cluster count by at most their number, and the open count changes exactly by the two directed
+difference sets. Together these bound `o(ω) + 2 k_C(ω)` by `o(η) + 2 k_C(η)` plus the Hamming
+distance. Comparing two boundary wirings `C` and `D` with a cluster-count gap of at most `M` adds
+`2M` to the bound. Such Lipschitz bounds control the ratio of random-cluster weights of nearby
+configurations (finite-energy estimates).
+
+`bcScore_le_add_configHammingCount` is proved unconditionally. The two-wiring variant takes the
+explicit numeric premise `hgap : k_C(η) ≤ k_D(η) + M`.
+
+## ii. Key results
+
+- `bcScore_le_add_configHammingCount` : `o(ω) + 2 k_C(ω) ≤ o(η) + 2 k_C(η) + d_H(ω, η)`.
+- `bcScore_le_add_configHammingCount_add_boundaryGap` : the same bound across two boundary wirings,
+  with an extra `2M`.
+
+## iii. Table of contents
+
+- A. Hamming distance and open counts
+- B. Cluster counts and the score bound
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 3.4.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-
-
-
-
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -37,12 +59,13 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V]
   (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Hamming distance and open counts -/
 
+/-- The Hamming distance between two configurations on the edges of `G`. -/
 def configHammingCount (omega eta : ConfigSpace (Sym2 V)) : Nat :=
   (diffSet G omega eta).card + (diffSet G eta omega).card
 
-
-theorem openCount_add_diffSet_card
+lemma openCount_add_diffSet_card
     (omega eta : ConfigSpace (Sym2 V)) :
     openCount G omega + (diffSet G omega eta).card =
       openCount G eta + (diffSet G eta omega).card := by
@@ -61,10 +84,10 @@ theorem openCount_add_diffSet_card
   rw [sup_comm] at hForward'
   exact hForward'.symm.trans hReverse'
 
+/-! ## B. Cluster counts and the score bound -/
+
 omit [DecidableEq V] in
-
-
-theorem numClustersBC_le_add_target_diffSet
+lemma numClustersBC_le_add_target_diffSet
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (omega eta : ConfigSpace (Sym2 V)) :
     numClustersBC G C omega <=
@@ -88,8 +111,7 @@ theorem numClustersBC_le_add_target_diffSet
       · right
         rw [SimpleGraph.fromEdgeSet_adj]
         constructor
-        · change s(x, y) ∈ (S : Set (Sym2 V))
-          simp only [S, diffSet, Finset.mem_coe, Finset.mem_filter,
+        · simp only [S, diffSet, Finset.mem_coe, Finset.mem_filter,
             SimpleGraph.mem_edgeFinset]
           exact ⟨hOpen.1, by simpa using hSource, hOpen.2⟩
         · exact hOpen.1.ne
@@ -104,8 +126,8 @@ theorem numClustersBC_le_add_target_diffSet
   dsimp only [A, B, S] at hAdd hComponents
   omega
 
-
-
+/-- The score `o(ω) + 2 k_C(ω)` is at most `o(η) + 2 k_C(η)` plus the Hamming distance from `ω` to
+`η`. -/
 theorem bcScore_le_add_configHammingCount
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (omega eta : ConfigSpace (Sym2 V)) :
@@ -117,9 +139,8 @@ theorem bcScore_le_add_configHammingCount
   unfold configHammingCount
   omega
 
-
-
-theorem bcScore_le_add_configHammingCount_add_boundaryGap
+/-- If `k_C(η) ≤ k_D(η) + M`, then `o(ω) + 2 k_C(ω) ≤ o(η) + 2 k_D(η) + d_H(ω, η) + 2M`. -/
+lemma bcScore_le_add_configHammingCount_add_boundaryGap
     (C D : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel D.Adj]
     (M : Nat) (omega eta : ConfigSpace (Sym2 V))
     (hgap : numClustersBC G C eta <= numClustersBC G D eta + M) :

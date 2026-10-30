@@ -5,45 +5,81 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRExtreme
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
 public import Mathlib.Topology.Bases
-public import Mathlib.Topology.Separation.Profinite
+public import Mathlib.Topology.Separation.Regular
+
+/-!
+# The FKG inequality for measurable increasing events from clopen ones
+
+On the configuration space `{0, 1}^E` of a countable edge set, a probability measure that satisfies
+the FKG (Harris) inequality for clopen increasing events satisfies it for all measurable increasing
+events.
+
+## i. Overview
+
+A clopen set depends on finitely many edges, and its finite upward hull is a clopen increasing set.
+Separating a closed increasing set from a point outside it by such hulls writes it as a decreasing
+intersection of clopen increasing sets, so the FKG inequality passes to closed increasing events by
+continuity of measure. A measurable increasing event is approximated from inside by compact sets,
+whose upward closures are closed, increasing, and still inside the event; this gives the measurable
+case. Both headlines are conditional on the single hypothesis `hclopen`, the FKG inequality for
+clopen increasing events, which is the input the closure argument extends; they take no other
+assumption.
+
+## ii. Key results
+
+- `fkg_isClosed_of_isClopen` : FKG for clopen increasing events implies FKG for closed increasing
+  events.
+- `fkg_measurable_of_isClopen` : FKG for clopen increasing events implies FKG for measurable
+  increasing events.
+- `exists_antitone_isClopen_isIncreasing_iInter_eq` : a closed increasing set is a decreasing
+  intersection of clopen increasing sets.
+
+## iii. Table of contents
+
+- A. Finite upward hulls
+- B. Closed increasing sets as intersections of clopen ones
+- C. Upward closures of compact sets
+- D. FKG for closed and measurable increasing events
+
+## iv. References
+
+- T. E. Harris, *A lower bound for the critical probability in a certain percolation process*,
+  Proc. Cambridge Philos. Soc. 56 (1960).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
-
-
-
-
-
-
-
-
 open Filter MeasureTheory Set Topology
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
 variable {E : Type*} [DecidableEq E] [Countable E]
 
-theorem isClopen_of_dependsOn_finset
+/-! ## A. Finite upward hulls -/
+
+lemma isClopen_of_dependsOn_finset
     (A : Set (ConfigSpace E)) (F : Finset E)
     (hA : DependsOn A (F : Set E)) : IsClopen A := by
   rw [ih_eq_cylinder_of_dependsOn F hA]
   exact isClopen_cylinderEvent F _
 
-
+/-- The upward hull of `A` in the coordinates of `F`: configurations that dominate, on `F`, some
+configuration of `A`. -/
 def finiteUpwardHull (F : Finset E) (A : Set (ConfigSpace E)) :
     Set (ConfigSpace E) :=
   {eta | ∃ omega ∈ A, ∀ e ∈ F, omega e ≤ eta e}
 
-theorem finiteUpwardHull_dependsOn
+lemma finiteUpwardHull_dependsOn
     (F : Finset E) (A : Set (ConfigSpace E)) :
     DependsOn (finiteUpwardHull F A) (F : Set E) := by
   intro eta theta hagree
@@ -57,36 +93,36 @@ theorem finiteUpwardHull_dependsOn
       rw [← hagree e he]
       exact hle e he⟩
 
-theorem finiteUpwardHull_isClopen
+lemma finiteUpwardHull_isClopen
     (F : Finset E) (A : Set (ConfigSpace E)) :
     IsClopen (finiteUpwardHull F A) :=
   isClopen_of_dependsOn_finset _ F (finiteUpwardHull_dependsOn F A)
 
-theorem finiteUpwardHull_isIncreasing
+lemma finiteUpwardHull_isIncreasing
     (F : Finset E) (A : Set (ConfigSpace E)) :
     IsIncreasing (finiteUpwardHull F A) := by
   intro eta theta heta hmem
   obtain ⟨omega, homega, hle⟩ := hmem
   exact ⟨omega, homega, fun e he => (hle e he).trans (heta e)⟩
 
-theorem subset_finiteUpwardHull
+lemma subset_finiteUpwardHull
     (F : Finset E) (A : Set (ConfigSpace E)) :
     A ⊆ finiteUpwardHull F A := by
   intro omega homega
   exact ⟨omega, homega, fun _ _ => le_rfl⟩
 
-theorem isClosed_Iic_config (x : ConfigSpace E) :
+lemma isClosed_Iic_config (x : ConfigSpace E) :
     IsClosed (Set.Iic x) := by
   have heq : Set.Iic x = ⋂ e : E, (fun omega : ConfigSpace E => omega e) ⁻¹'
       {b : Bool | b ≤ x e} := by
     ext omega
     simp only [Set.mem_Iic, Set.mem_iInter, Set.mem_preimage,
-      Set.mem_setOf_eq, Pi.le_def]
+      Set.mem_ofPred_eq, Pi.le_def]
   rw [heq]
   exact isClosed_iInter fun e =>
     (isClosed_discrete {b : Bool | b ≤ x e}).preimage (continuous_apply e)
 
-theorem finiteUpwardHull_not_mem_of_disjoint_Iic
+lemma finiteUpwardHull_not_mem_of_disjoint_Iic
     (F : Finset E) (A : Set (ConfigSpace E)) (x : ConfigSpace E)
     (hA : DependsOn A (F : Set E))
     (hdisjoint : Disjoint A (Set.Iic x)) :
@@ -96,19 +132,19 @@ theorem finiteUpwardHull_not_mem_of_disjoint_Iic
   have hagree : agreeOn (F : Set E) omega rho := by
     intro e he
     have heF : e ∈ F := he
-    simp only [rho, if_pos heF]
+    simp only [rho, heF, ↓reduceIte]
   have hrhoA : rho ∈ A := (hA omega rho hagree).mp homega
   have hrhole : rho ≤ x := by
     intro e
     by_cases he : e ∈ F
-    · simpa only [rho, if_pos he] using hle e he
-    · simp only [rho, if_neg he]
+    · simpa only [rho, he, ↓reduceIte] using hle e he
+    · simp only [rho, he, ↓reduceIte]
       exact Bool.false_le _
   exact Set.disjoint_left.1 hdisjoint hrhoA hrhole
 
+/-! ## B. Closed increasing sets as intersections of clopen ones -/
 
-
-theorem exists_increasing_isClopen_superset_not_mem
+lemma exists_increasing_isClopen_superset_not_mem
     (C : Set (ConfigSpace E)) (hCclosed : IsClosed C)
     (hCinc : IsIncreasing C) {x : ConfigSpace E} (hx : x ∉ C) :
     ∃ H : Set (ConfigSpace E), IsClopen H ∧ IsIncreasing H ∧
@@ -126,9 +162,9 @@ theorem exists_increasing_isClopen_superset_not_mem
   apply finiteUpwardHull_not_mem_of_disjoint_Iic F U x hF
   exact Set.disjoint_left.2 fun omega homega hle => hUsub homega hle
 
-
-
-theorem exists_antitone_isClopen_isIncreasing_iInter_eq
+/-- A closed increasing set is the intersection of a decreasing sequence of clopen increasing
+sets. -/
+lemma exists_antitone_isClopen_isIncreasing_iInter_eq
     (C : Set (ConfigSpace E)) (hCclosed : IsClosed C)
     (hCinc : IsIncreasing C) :
     ∃ A : Nat → Set (ConfigSpace E), Antitone A ∧
@@ -196,42 +232,43 @@ theorem exists_antitone_isClopen_isIncreasing_iInter_eq
       intro i
       exact hCH (f i).1 homega
 
+/-! ## C. Upward closures of compact sets -/
 
-
+/-- The upward closure of `K`: configurations that dominate some configuration of `K`. -/
 def configUpwardClosure (K : Set (ConfigSpace E)) : Set (ConfigSpace E) :=
   {eta | ∃ omega ∈ K, omega ≤ eta}
 
-theorem configUpwardClosure_isIncreasing (K : Set (ConfigSpace E)) :
+lemma configUpwardClosure_isIncreasing (K : Set (ConfigSpace E)) :
     IsIncreasing (configUpwardClosure K) := by
   intro eta theta hle
   rintro ⟨omega, homega, homegaeta⟩
   exact ⟨omega, homega, homegaeta.trans hle⟩
 
-theorem subset_configUpwardClosure (K : Set (ConfigSpace E)) :
+lemma subset_configUpwardClosure (K : Set (ConfigSpace E)) :
     K ⊆ configUpwardClosure K := by
   intro omega homega
   exact ⟨omega, homega, le_rfl⟩
 
-theorem configUpwardClosure_subset_of_isIncreasing
+lemma configUpwardClosure_subset_of_isIncreasing
     {K A : Set (ConfigSpace E)} (hKA : K ⊆ A) (hA : IsIncreasing A) :
     configUpwardClosure K ⊆ A := by
   rintro eta ⟨omega, homega, hle⟩
   exact hA hle (hKA homega)
 
-theorem configOrder_isClosed :
+lemma configOrder_isClosed :
     IsClosed {z : ConfigSpace E × ConfigSpace E | z.1 ≤ z.2} := by
   have heq : {z : ConfigSpace E × ConfigSpace E | z.1 ≤ z.2} =
       ⋂ e : E, (fun z : ConfigSpace E × ConfigSpace E =>
         (z.1 e, z.2 e)) ⁻¹' {b : Bool × Bool | b.1 ≤ b.2} := by
     ext z
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Pi.le_def]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage, Pi.le_def]
   rw [heq]
   exact isClosed_iInter fun e =>
     (isClosed_discrete {b : Bool × Bool | b.1 ≤ b.2}).preimage
       (((continuous_apply e).comp continuous_fst).prodMk
         ((continuous_apply e).comp continuous_snd))
 
-theorem configUpwardClosure_isCompact
+lemma configUpwardClosure_isCompact
     {K : Set (ConfigSpace E)} (hK : IsCompact K) :
     IsCompact (configUpwardClosure K) := by
   let R : Set (ConfigSpace E × ConfigSpace E) :=
@@ -248,12 +285,15 @@ theorem configUpwardClosure_isCompact
   rw [himage]
   exact hR.image continuous_snd
 
-theorem configUpwardClosure_isClosed
+lemma configUpwardClosure_isClosed
     {K : Set (ConfigSpace E)} (hK : IsCompact K) :
     IsClosed (configUpwardClosure K) :=
   (configUpwardClosure_isCompact hK).isClosed
 
+/-! ## D. FKG for closed and measurable increasing events -/
 
+/-- If a probability measure satisfies the FKG inequality for clopen increasing events, it
+satisfies it for closed increasing events. -/
 theorem fkg_isClosed_of_isClopen
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (hclopen : ∀ C D : Set (ConfigSpace E),
@@ -273,7 +313,7 @@ theorem fkg_isClosed_of_isClopen
     (fun n => hclopen (A n) (B n) (hAcl n) (hBcl n) (hAinc n) (hBinc n))
   rwa [hAeq, hBeq] at hfkg
 
-theorem exists_compact_subset_measureReal_lt_add
+lemma exists_compact_subset_measureReal_lt_add
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     {A : Set (ConfigSpace E)} (hA : MeasurableSet A)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -293,8 +333,8 @@ theorem exists_compact_subset_measureReal_lt_add
     ENNReal.toReal_ofReal hepsilon.le] at hreal
   simpa only [measureReal_def] using hreal
 
-
-
+/-- If a probability measure satisfies the FKG inequality for clopen increasing events, it
+satisfies it for all measurable increasing events. -/
 theorem fkg_measurable_of_isClopen
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (hclopen : ∀ C D : Set (ConfigSpace E),

@@ -6,26 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ClusterExplorationFreeBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov
 
+/-!
+# Projection onto the explored clusters of a set of roots
+
+Closing every edge between two vertices not reached from the roots gives a projection that keeps the
+root clusters, is idempotent, and whose fibres are conditioning fibres off the unexplored edges.
+
+## i. Overview
+
+The explored vertices are those joined to some root by an open path, and the inside edges are the
+edges with both endpoints unexplored. The adaptive projection closes all inside edges. It is below
+the original configuration, keeps every open edge at an explored vertex, and hence preserves the
+explored set, the root clusters, and the inside edge set; in particular it is idempotent. Two
+configurations that agree off the inside edges of one of them have the same root clusters and the
+same inside edges. So the set of configurations with a given projection `ψ` is exactly the fibre of
+configurations agreeing with `ψ` off its inside edges, which is the stopping-set property behind
+cluster exploration and domain Markov arguments.
+
+All results are proved unconditionally; `clusterAdaptiveProjection_filter_eq_condFibre` assumes only
+that `ψ` is itself a projection (`clusterAdaptiveProjection G roots ψ = ψ`).
+
+## ii. Key results
+
+- `clusterAdaptiveProjection_idem` : the adaptive projection is idempotent.
+- `clusterAdaptiveInsideEdges_eq_of_agreesOff` : agreeing off the inside edges preserves the inside
+  edges.
+- `clusterAdaptiveProjection_filter_eq_condFibre` : the fibre of the projection over `ψ` is the
+  conditioning fibre of `ψ`.
+
+## iii. Table of contents
+
+- A. Inside edges and the projection
+- B. The projection preserves the explored clusters
+- C. Agreement off the inside edges
+- D. Fibres of the projection
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.2.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-
 open SimpleGraph
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -34,12 +66,14 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Inside edges and the projection -/
 
+/-- The edges whose two endpoints are both unexplored from `roots` in `ρ`. -/
 def clusterAdaptiveInsideEdges (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) : Finset (Sym2 V) :=
   clusterUnexploredPairEdges G rho roots
 
-theorem mem_clusterAdaptiveInsideEdges_iff (roots : Finset V)
+lemma mem_clusterAdaptiveInsideEdges_iff (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) (e : Sym2 V) :
     e ∈ clusterAdaptiveInsideEdges G roots rho ↔
       ∃ x y : V, e = s(x, y) ∧
@@ -59,26 +93,28 @@ theorem mem_clusterAdaptiveInsideEdges_iff (roots : Finset V)
     let y' : ClusterUnexploredVertex G rho roots := ⟨y, hy⟩
     exact ⟨s(x', y'), ocd_innerEdge_mk _ x' y'⟩
 
-
+/-- Close every inside edge of `ρ`, keeping all other coordinates. -/
 def clusterAdaptiveProjection (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) : ConfigSpace (Sym2 V) :=
   projOff (clusterAdaptiveInsideEdges G roots rho) rho
 
-theorem clusterAdaptiveProjection_le (roots : Finset V)
+lemma clusterAdaptiveProjection_le (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) :
     clusterAdaptiveProjection G roots rho ≤ rho := by
   intro e
   unfold clusterAdaptiveProjection projOff
   by_cases he : e ∈ clusterAdaptiveInsideEdges G roots rho <;> simp [he]
 
-theorem clusterAdaptiveProjection_eq_of_not_mem (roots : Finset V)
+lemma clusterAdaptiveProjection_eq_of_not_mem (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) {e : Sym2 V}
     (he : e ∉ clusterAdaptiveInsideEdges G roots rho) :
     clusterAdaptiveProjection G roots rho e = rho e := by
   unfold clusterAdaptiveProjection projOff
   simp [he]
 
-theorem not_mem_clusterAdaptiveInsideEdges_of_explored_left
+/-! ## B. The projection preserves the explored clusters -/
+
+lemma not_mem_clusterAdaptiveInsideEdges_of_explored_left
     (roots : Finset V) (rho : ConfigSpace (Sym2 V)) {x y : V}
     (hx : ClusterExploredVertex G rho roots x) :
     s(x, y) ∉ clusterAdaptiveInsideEdges G roots rho := by
@@ -89,7 +125,7 @@ theorem not_mem_clusterAdaptiveInsideEdges_of_explored_left
   · exact hu (hxu ▸ hx)
   · exact hv (hxv ▸ hx)
 
-theorem clusterAdaptiveProjection_openAdj_of_explored
+lemma clusterAdaptiveProjection_openAdj_of_explored
     (roots : Finset V) (rho : ConfigSpace (Sym2 V)) {x y : V}
     (hx : ClusterExploredVertex G rho roots x)
     (hxy : (openSub G rho).Adj x y) :
@@ -100,7 +136,7 @@ theorem clusterAdaptiveProjection_openAdj_of_explored
       G roots rho hx)]
   exact hxy.2
 
-theorem clusterExploredVertex_projection_of_explored
+lemma clusterExploredVertex_projection_of_explored
     (roots : Finset V) (rho : ConfigSpace (Sym2 V)) {v : V}
     (hv : ClusterExploredVertex G rho roots v) :
     ClusterExploredVertex G (clusterAdaptiveProjection G roots rho)
@@ -124,7 +160,7 @@ theorem clusterExploredVertex_projection_of_explored
   exact hreach.elim fun path =>
     ⟨liftWalk path (SimpleGraph.Reachable.refl source)⟩
 
-theorem clusterExploredVertex_of_projection (roots : Finset V)
+lemma clusterExploredVertex_of_projection (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) {v : V}
     (hv : ClusterExploredVertex G (clusterAdaptiveProjection G roots rho)
       roots v) :
@@ -133,16 +169,14 @@ theorem clusterExploredVertex_of_projection (roots : Finset V)
   exact ⟨r, hr, hreach.mono (openSub_mono G
     (clusterAdaptiveProjection_le G roots rho))⟩
 
-
-theorem clusterExploredVertex_projection_iff (roots : Finset V)
+lemma clusterExploredVertex_projection_iff (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) (v : V) :
     ClusterExploredVertex G (clusterAdaptiveProjection G roots rho) roots v ↔
       ClusterExploredVertex G rho roots v :=
   ⟨clusterExploredVertex_of_projection G roots rho,
     clusterExploredVertex_projection_of_explored G roots rho⟩
 
-
-theorem clusterRootReachable_projection_iff (roots : Finset V)
+lemma clusterRootReachable_projection_iff (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) {r : V} (hr : r ∈ roots) (v : V) :
     (openSub G (clusterAdaptiveProjection G roots rho)).Reachable r v ↔
       (openSub G rho).Reachable r v := by
@@ -167,7 +201,7 @@ theorem clusterRootReachable_projection_iff (roots : Finset V)
     exact hreach.elim fun path =>
       ⟨liftWalk path (SimpleGraph.Reachable.refl r)⟩
 
-theorem clusterAdaptiveInsideEdges_projection (roots : Finset V)
+lemma clusterAdaptiveInsideEdges_projection (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) :
     clusterAdaptiveInsideEdges G roots
         (clusterAdaptiveProjection G roots rho) =
@@ -185,7 +219,7 @@ theorem clusterAdaptiveInsideEdges_projection (roots : Finset V)
       fun h => hx ((clusterExploredVertex_projection_iff G roots rho x).1 h),
       fun h => hy ((clusterExploredVertex_projection_iff G roots rho y).1 h)⟩
 
-
+/-- The adaptive projection is idempotent. -/
 theorem clusterAdaptiveProjection_idem (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) :
     clusterAdaptiveProjection G roots
@@ -200,9 +234,9 @@ theorem clusterAdaptiveProjection_idem (roots : Finset V)
   unfold clusterAdaptiveProjection
   exact projOff_idem _ _
 
+/-! ## C. Agreement off the inside edges -/
 
-
-theorem clusterRootReachable_agreesOff_iff (roots : Finset V)
+lemma clusterRootReachable_agreesOff_iff (roots : Finset V)
     (psi rho : ConfigSpace (Sym2 V))
     (hagree : AgreesOff (clusterAdaptiveInsideEdges G roots psi) psi rho)
     {r : V} (hr : r ∈ roots) (v : V) :
@@ -249,7 +283,7 @@ theorem clusterRootReachable_agreesOff_iff (roots : Finset V)
     exact hreach.elim fun path =>
       ⟨liftWalk path (SimpleGraph.Reachable.refl r)⟩
 
-theorem clusterExploredVertex_agreesOff_iff (roots : Finset V)
+lemma clusterExploredVertex_agreesOff_iff (roots : Finset V)
     (psi rho : ConfigSpace (Sym2 V))
     (hagree : AgreesOff (clusterAdaptiveInsideEdges G roots psi) psi rho)
     (v : V) :
@@ -263,7 +297,9 @@ theorem clusterExploredVertex_agreesOff_iff (roots : Finset V)
     exact ⟨r, hr,
       (clusterRootReachable_agreesOff_iff G roots psi rho hagree hr v).2 hrv⟩
 
-theorem clusterAdaptiveInsideEdges_eq_of_agreesOff (roots : Finset V)
+/-- If `ρ` agrees with `ψ` off the inside edges of `ψ`, then `ρ` and `ψ` have the same inside edges.
+-/
+lemma clusterAdaptiveInsideEdges_eq_of_agreesOff (roots : Finset V)
     (psi rho : ConfigSpace (Sym2 V))
     (hagree : AgreesOff (clusterAdaptiveInsideEdges G roots psi) psi rho) :
     clusterAdaptiveInsideEdges G roots rho =
@@ -285,8 +321,10 @@ theorem clusterAdaptiveInsideEdges_eq_of_agreesOff (roots : Finset V)
       fun h => hy ((clusterExploredVertex_agreesOff_iff
         G roots psi rho hagree y).2 h)⟩
 
+/-! ## D. Fibres of the projection -/
 
-
+/-- For a projected configuration `ψ`, the configurations projecting to `ψ` are exactly those
+agreeing with `ψ` off its inside edges. -/
 theorem clusterAdaptiveProjection_filter_eq_condFibre (roots : Finset V)
     (psi : ConfigSpace (Sym2 V))
     (hpsi : clusterAdaptiveProjection G roots psi = psi) :

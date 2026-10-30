@@ -12,6 +12,44 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTailTriviality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKTwoBoxDecoupling
 public import MathlibExt.Dynamics.Ergodic.BirkhoffErgodic
 
+/-!
+# Pair mixing of the free FK–Ising measure from tail triviality
+
+The free infinite-volume random-cluster measure at `q = 2` is ergodic under a single axis
+translation and satisfies the pair-mixing property for multi-edge open events.
+
+## i. Overview
+
+Translating finitely many edges far along the first coordinate axis moves them outside any finite
+window. Combined with tail triviality of the free measure, this shows that every event invariant
+under the unit axis translation is trivial, so that translation is ergodic. By the Birkhoff
+ergodic theorem and dominated convergence, the Cesàro averages of the correlations
+`μ(T open ∩ shift_k⁻¹(U open))` converge to `μ(T open) μ(U open)`. By the FKG inequality each
+correlation gap is nonnegative, so a small average forces some translation with all gaps below a
+given `δ`, which is the pair-mixing property. `freeInfiniteVolume_axisShift_ergodic` and
+`freeInfiniteVolume_pairMixing_all_parameters` are proved unconditionally (only `1 ≤ d` and
+`0 < p < 1`, at `q = 2`).
+
+## ii. Key results
+
+- `freeInfiniteVolume_axisShift_ergodic` : the unit axis translation is ergodic for the free
+  measure.
+- `freeInfiniteVolume_pairCorrelationAverage_tendsto` : Cesàro averages of translated
+  correlations converge to the product of the probabilities.
+- `freeInfiniteVolume_pairMixing_all_parameters` : the free measure satisfies pair mixing.
+
+## iii. Table of contents
+
+- A. Axis translations
+- B. Ergodicity of the axis translation
+- C. Averaged correlations
+- D. Pair mixing
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
 
 open MeasureTheory Set Filter Function
@@ -21,21 +59,24 @@ namespace StatMech
 
 namespace FK
 
-open ConfigSpace Lattice
+open ConfigSpace StatMech.Lattice
 
 variable {d : ℕ}
 
+/-! ## A. Axis translations -/
 
+/-- The unit translation of `ℤ^d` along the first coordinate axis. -/
 noncomputable def freeAxisTranslation (hd : 1 ≤ d) :
     Multiplicative (Site d) :=
   Multiplicative.ofAdd fun i => if i = ⟨0, hd⟩ then 1 else 0
 
-
+/-- The translation of `ℤ^d` by `n` along the first coordinate axis. -/
 noncomputable def freeAxisTranslationPower (hd : 1 ≤ d) (n : ℕ) :
     Multiplicative (Site d) :=
   Multiplicative.ofAdd fun i => if i = ⟨0, hd⟩ then (n : ℤ) else 0
 
-theorem freeAxisTranslationPower_eq_pow (hd : 1 ≤ d) (n : ℕ) :
+/-- The translation by `n` is the `n`-th power of the unit axis translation. -/
+lemma freeAxisTranslationPower_eq_pow (hd : 1 ≤ d) (n : ℕ) :
     freeAxisTranslationPower hd n = (freeAxisTranslation hd) ^ n := by
   unfold freeAxisTranslationPower freeAxisTranslation
   rw [← ofAdd_nsmul]
@@ -44,7 +85,8 @@ theorem freeAxisTranslationPower_eq_pow (hd : 1 ≤ d) (n : ℕ) :
   simp only [Pi.smul_apply]
   by_cases hi : i = ⟨0, hd⟩ <;> simp [hi]
 
-theorem shift_freeAxisTranslationPower (hd : 1 ≤ d) (n : ℕ) :
+/-- Shifting by `n` along the axis is the `n`-th iterate of the unit shift. -/
+lemma shift_freeAxisTranslationPower (hd : 1 ≤ d) (n : ℕ) :
     (shift (freeAxisTranslationPower hd n) :
       ConfigSpace (Sym2 (Site d)) → ConfigSpace (Sym2 (Site d))) =
       (shift (freeAxisTranslation hd))^[n] := by
@@ -54,11 +96,13 @@ theorem shift_freeAxisTranslationPower (hd : 1 ≤ d) (n : ℕ) :
   | succ n ih =>
       rw [pow_succ, shift_mul, ih, Function.iterate_succ]
 
+/-- The set of endpoints of the edges in `F`. -/
 private noncomputable def freeAxisVertexSupport
     (F : Finset (Sym2 (Site d))) : Finset (Site d) :=
   F.biUnion fun e => {e.out.1, e.out.2}
 
-private theorem mem_freeAxisVertexSupport_of_mem
+/-- An endpoint of an edge of `F` lies in the endpoint set of `F`. -/
+private lemma mem_freeAxisVertexSupport_of_mem
     {F : Finset (Sym2 (Site d))} {e : Sym2 (Site d)} (he : e ∈ F)
     {x : Site d} (hx : x ∈ e) : x ∈ freeAxisVertexSupport F := by
   rw [freeAxisVertexSupport, Finset.mem_biUnion]
@@ -70,9 +114,8 @@ private theorem mem_freeAxisVertexSupport_of_mem
   simpa only [Finset.mem_insert, Finset.mem_singleton] using
     (Sym2.mem_iff.mp hx')
 
-
-
-theorem freeAxisTranslationPower_escape (hd : 1 ≤ d)
+/-- A finite edge set translated far enough along the axis lies outside any given window. -/
+lemma freeAxisTranslationPower_escape (hd : 1 ≤ d)
     (F : Finset (Sym2 (Site d))) (k : ℕ) :
     ∃ n : ℕ,
       (↑(F.image (fun e => (freeAxisTranslationPower hd n)⁻¹ • e)) :
@@ -104,7 +147,7 @@ theorem freeAxisTranslationPower_escape (hd : 1 ≤ d)
         ring
       have hxOutside :
           (freeAxisTranslationPower hd (M + k + 1))⁻¹ • x ∉ box d k := by
-        rw [box, Set.mem_setOf_eq]
+        rw [box, Set.mem_ofPred_eq]
         intro hall
         have hcoord := hall ⟨0, hd⟩
         rw [hxval] at hcoord
@@ -125,7 +168,9 @@ theorem freeAxisTranslationPower_escape (hd : 1 ≤ d)
       rw [Percolation.smul_sym2_mk]
       exact Sym2.mem_mk_left _ _
 
+/-! ## B. Ergodicity of the axis translation -/
 
+/-- At `q = 2`, the unit axis translation is ergodic for the free infinite-volume measure. -/
 theorem freeInfiniteVolume_axisShift_ergodic
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     _root_.Ergodic
@@ -157,13 +202,17 @@ theorem freeInfiniteVolume_axisShift_ergodic
       measure_univ]
     simp
 
-private theorem free_moInd_mem_Icc (T : Finset (Sym2 (Site d)))
+/-! ## C. Averaged correlations -/
+
+/-- The indicator of a multi-edge open event takes values in `[0, 1]`. -/
+private lemma free_moInd_mem_Icc (T : Finset (Sym2 (Site d)))
     (omega : ConfigSpace (Sym2 (Site d))) :
     fmu_moInd T omega ∈ Set.Icc (0 : ℝ) 1 := by
   rw [fmu_moInd_eq_indicator]
   by_cases h : omega ∈ fmu_multiOpen T <;> simp [h]
 
-private theorem free_birkhoffAverage_moInd_mem_Icc
+/-- Birkhoff averages of the indicator of a multi-edge open event take values in `[0, 1]`. -/
+private lemma free_birkhoffAverage_moInd_mem_Icc
     (Tmap : ConfigSpace (Sym2 (Site d)) → ConfigSpace (Sym2 (Site d)))
     (T : Finset (Sym2 (Site d))) (n : ℕ)
     (omega : ConfigSpace (Sym2 (Site d))) :
@@ -195,7 +244,9 @@ private theorem free_birkhoffAverage_moInd_mem_Icc
               mul_le_mul_of_nonneg_left hsum1 (inv_nonneg.mpr (by positivity))
         _ = 1 := inv_mul_cancel₀ (by positivity)
 
-private theorem freeAxis_integral_mul_birkhoffAverage
+/-- The integral of an indicator times a Birkhoff average of another indicator is the Cesàro
+average of the translated joint probabilities. -/
+private lemma freeAxis_integral_mul_birkhoffAverage
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (T U : Finset (Sym2 (Site d))) (n : ℕ) :
     let mu := (freeInfiniteVolume d hp hp1
@@ -237,9 +288,9 @@ private theorem freeAxis_integral_mul_birkhoffAverage
     exact fmu_integrable_moInd_mul_shift
       (μ := mu) (freeAxisTranslationPower hd k) T U
 
-
-
-theorem freeInfiniteVolume_pairCorrelationAverage_tendsto
+/-- Cesàro averages of the translated joint probabilities of two multi-edge open events converge
+to the product of their probabilities. -/
+lemma freeInfiniteVolume_pairCorrelationAverage_tendsto
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (T U : Finset (Sym2 (Site d))) :
     let mu := (freeInfiniteVolume d hp hp1
@@ -278,7 +329,7 @@ theorem freeInfiniteVolume_pairCorrelationAverage_tendsto
     have hT := free_moInd_mem_Icc T omega
     have hU := free_birkhoffAverage_moInd_mem_Icc Tmap U n omega
     rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg hT.1 hU.1)]
-    exact mul_le_one₀ hT.2 hU.1 hU.2
+    exact (mul_le_mul hT.2 hU.2 hU.1 zero_le_one).trans_eq (mul_one 1)
   have hdct := MeasureTheory.tendsto_integral_of_dominated_convergence
     (μ := mu) (fun _ => (1 : ℝ)) hmeas (by fun_prop) hbound hlim
   have hlimitIntegral :
@@ -289,6 +340,9 @@ theorem freeInfiniteVolume_pairCorrelationAverage_tendsto
   simpa only [F, Tmap, mu, freeAxis_integral_mul_birkhoffAverage hd hp hp1 T U]
     using hdct
 
+/-! ## D. Pair mixing -/
+
+/-- The correlation gap between a multi-edge open event and the translate by `k` of another. -/
 private noncomputable def freePairGap
     (hd : 1 ≤ d) (mu : Measure (ConfigSpace (Sym2 (Site d))))
     (T U : Finset (Sym2 (Site d))) (k : ℕ) : ℝ :=
@@ -296,7 +350,8 @@ private noncomputable def freePairGap
       shift (freeAxisTranslationPower hd k) ⁻¹' fmu_multiOpen U) -
     mu.real (fmu_multiOpen T) * mu.real (fmu_multiOpen U)
 
-private theorem freePairGap_nonneg
+/-- The correlation gap is nonnegative, by the FKG inequality. -/
+private lemma freePairGap_nonneg
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (T U : Finset (Sym2 (Site d))) (k : ℕ) :
     let mu := (freeInfiniteVolume d hp hp1
@@ -321,7 +376,8 @@ private theorem freePairGap_nonneg
   rw [fmu_shift_multiOpen (freeAxisTranslationPower hd k) U]
   exact sub_nonneg.mpr hfkg
 
-private theorem freePairGapAverage_tendsto
+/-- Cesàro averages of the correlation gaps tend to zero. -/
+private lemma freePairGapAverage_tendsto
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (T U : Finset (Sym2 (Site d))) :
     let mu := (freeInfiniteVolume d hp hp1
@@ -349,8 +405,8 @@ private theorem freePairGapAverage_tendsto
   have hnR : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
   field_simp
 
-
-
+/-- At `q = 2`, the free infinite-volume measure satisfies pair mixing: for every finite family of
+multi-edge open events and every `δ > 0` some translation makes all correlation gaps below `δ`. -/
 theorem freeInfiniteVolume_pairMixing_all_parameters
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     fmu_PairMixing (G := Multiplicative (Site d))

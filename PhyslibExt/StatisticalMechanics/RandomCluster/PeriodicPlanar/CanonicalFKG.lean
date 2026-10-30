@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic
@@ -17,15 +14,46 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRExtreme
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MeasurableFKGClosure
 
+/-!
+# The FKG property for the buffered infinite-volume FK measures
+
+For `0 < p < 1` and `q ≥ 1`, the free and wired buffered infinite-volume random-cluster measures on
+a periodic graph are FKG.
+
+## i. Overview
+
+The finite-volume free and wired FK measures on buffered boxes satisfy the FKG inequality, so the
+inequality holds for increasing cylinder events of a fixed box at every larger volume. Passing to
+the weak limits gives it for the infinite-volume measures on increasing cylinders, hence on all
+increasing clopen events, and a measurable closure argument extends it to all measurable increasing
+events. Antitone limits give the inequality for decreasing intersections of increasing clopen or
+cylinder events. `freeBufferedInfiniteVolume_isFKG` and `wiredBufferedInfiniteVolume_isFKG` are
+proved unconditionally, with only `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedInfiniteVolume_fkg_isClopen` : the FKG inequality for increasing
+  clopen events under the free limit.
+- `PeriodicGraph.freeBufferedInfiniteVolume_isFKG` : the free buffered infinite-volume FK measure
+  is FKG.
+- `PeriodicGraph.wiredBufferedInfiniteVolume_isFKG` : the wired buffered infinite-volume FK measure
+  is FKG.
+
+## iii. Table of contents
+
+- A. Finite-volume FKG on buffered cylinders
+- B. Infinite-volume FKG on cylinders and clopen events
+- C. The FKG property
+- D. Decreasing intersections
+
+## iv. References
+
+- C. M. Fortuin, P. W. Kasteleyn, and J. Ginibre, *Correlation inequalities on some partially
+  ordered sets*, Comm. Math. Phys. 22 (1971).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
@@ -33,7 +61,9 @@ namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V] [Countable V]
 
-theorem PeriodicGraph.freeBufferedMeasure_fkg_cylinder
+/-! ## A. Finite-volume FKG on buffered cylinders -/
+
+lemma PeriodicGraph.freeBufferedMeasure_fkg_cylinder
     (P : PeriodicGraph V) (N m : Nat) (hNm : N <= m)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -79,7 +109,7 @@ theorem PeriodicGraph.freeBufferedMeasure_fkg_cylinder
       intro omega homega
       exact mul_comm _ _
 
-theorem PeriodicGraph.wiredBufferedMeasure_fkg_cylinder
+lemma PeriodicGraph.wiredBufferedMeasure_fkg_cylinder
     (P : PeriodicGraph V) (N m : Nat) (hNm : N <= m)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -128,7 +158,9 @@ theorem PeriodicGraph.wiredBufferedMeasure_fkg_cylinder
       intro omega homega
       exact mul_comm _ _
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_cylinder
+/-! ## B. Infinite-volume FKG on cylinders and clopen events -/
+
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_cylinder
     (P : PeriodicGraph V) (N : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -146,7 +178,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_cylinder
     filter_upwards [eventually_ge_atTop N] with m hm
     exact P.freeBufferedMeasure_fkg_cylinder N m hm hp hp1 hq hA hB
 
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_cylinder
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_cylinder
     (P : PeriodicGraph V) (N : Nat)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -164,9 +196,9 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_cylinder
     filter_upwards [eventually_ge_atTop N] with m hm
     exact P.wiredBufferedMeasure_fkg_cylinder N m hm hp hp1 hq hA hB
 
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_isClopen
+/-- The FKG inequality for increasing clopen events under the free buffered infinite-volume FK
+measure. -/
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_isClopen
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 V))}
@@ -211,9 +243,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_isClopen
   simpa only [PeriodicGraph.bufferedCylinder, Set.preimage_inter] using
     P.freeBufferedInfiniteVolume_fkg_cylinder N hp hp1 hq hRA hRB
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_isClopen
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_isClopen
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 V))}
@@ -258,8 +288,9 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_isClopen
   simpa only [PeriodicGraph.bufferedCylinder, Set.preimage_inter] using
     P.wiredBufferedInfiniteVolume_fkg_cylinder N hp hp1 hq hRA hRB
 
+/-! ## C. The FKG property -/
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure is FKG. -/
 theorem PeriodicGraph.freeBufferedInfiniteVolume_isFKG
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
@@ -273,8 +304,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_isFKG
   exact P.freeBufferedInfiniteVolume_fkg_isClopen
     hp hp1 hq hCcl hDcl hCinc hDinc
 
-
-
+/-- For `0 < p < 1` and `q ≥ 1`, the wired buffered infinite-volume FK measure is FKG. -/
 theorem PeriodicGraph.wiredBufferedInfiniteVolume_isFKG
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
@@ -288,9 +318,9 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_isFKG
   exact P.wiredBufferedInfiniteVolume_fkg_isClopen
     hp hp1 hq hCcl hDcl hCinc hDinc
 
+/-! ## D. Decreasing intersections -/
 
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_iInter_isClopen
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_iInter_isClopen
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (A B : Nat -> Set (ConfigSpace (Sym2 V)))
@@ -310,9 +340,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_iInter_isClopen
   · exact fun n => P.freeBufferedInfiniteVolume_fkg_isClopen
       hp hp1 hq (hAcl n) (hBcl n) (hA n) (hB n)
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_isClopen
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_isClopen
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (A B : Nat -> Set (ConfigSpace (Sym2 V)))
@@ -332,9 +360,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_isClopen
   · exact fun n => P.wiredBufferedInfiniteVolume_fkg_isClopen
       hp hp1 hq (hAcl n) (hBcl n) (hA n) (hB n)
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_cylinder
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_cylinder
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (N : Nat -> Nat)
@@ -358,9 +384,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_iInter_cylinder
       P.wiredBufferedInfiniteVolume_fkg_cylinder
         (N n) hp hp1 hq (hA n) (hB n)
 
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_iInter_cylinder
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_iInter_cylinder
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (N : Nat -> Nat)

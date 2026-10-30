@@ -6,28 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreDomination
 
+/-!
+# Conditioning on a fibre of the boundary-conditioned measure
+
+The mass of an event inside a conditioning fibre is the fibre mass times the conditional probability
+of the event.
+
+## i. Overview
+
+Fix a set `F` of edges and a configuration `ψ`; the fibre consists of the configurations agreeing
+with `ψ` off `F`. Each configuration in the fibre has the same fibre and the same conditional law,
+so the factorization `μ(ρ) = μ(fibre) · μ(ρ | fibre)` sums to `μ(A ∩ fibre) = μ(fibre) · μ(A |
+fibre)`. This is the law of total probability for the boundary-conditioned random-cluster measure.
+
+The result is proved unconditionally, under only `0 < p < 1` and `0 < q`.
+
+## ii. Key results
+
+- `condBcProb_event_fibre_eq_mass_mul_cond` : `μ(A ∩ fibre) = μ(fibre) · μ(A | fibre)`.
+
+## iii. Table of contents
+
+- A. Event mass in a fibre
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 namespace StatMech.FK
 
 noncomputable section
 
+/-! ## A. Event mass in a fibre -/
 
-
+/-- The boundary-conditioned mass of `A` inside the fibre of `ψ` off `F` is the fibre mass times the
+conditional probability of `A`. -/
 theorem condBcProb_event_fibre_eq_mass_mul_cond
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
@@ -50,7 +70,7 @@ theorem condBcProb_event_fibre_eq_mass_mul_cond
     intro rho _ hrho
     rw [mem_condFibre] at hrho
     unfold condBcProb
-    rw [if_neg hrho, mul_zero]
+    rw [ite_eq_right hrho, mul_zero]
   rw [hrestrict, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro rho hrho

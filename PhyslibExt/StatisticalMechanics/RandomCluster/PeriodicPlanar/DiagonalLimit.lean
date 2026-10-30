@@ -6,23 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalSheffieldFKG
 
+/-!
+# Diagonal limits of boundary-connection probabilities
+
+The probability that the root (or a finite set) is joined to the boundary of the buffered box of
+radius `n`, computed under the wired measure on that same box, converges to the percolation
+probability as `n → ∞`.
+
+## i. Overview
+
+Two monotonicities drive the argument: the boundary-connection event shrinks as the box grows,
+and for `q ≥ 1` the wired measure of a fixed increasing cylinder decreases as the volume grows
+(comparison of boundary conditions). The diagonal sequence is therefore antitone and has a limit
+`L`. Comparing with the fixed-cylinder limits under the infinite-volume wired measure, and using
+continuity from above for the decreasing cylinders, identifies `L` with the percolation
+probability (for the root) or with the probability that the set meets an infinite cluster.
+All results are unconditional (only `0 < p < 1`, `1 ≤ q`, and finiteness of the set).
+
+## ii. Key results
+
+- `PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto` : the diagonal root-to-boundary
+  probabilities converge to `θ(p, q)`.
+- `PeriodicGraph.wiredBufferedSetBoundary_diag_tendsto` : the diagonal set-to-boundary
+  probabilities converge to the probability that the set meets an infinite cluster.
+
+## iii. Table of contents
+
+- A. Root-to-boundary connections
+- B. Set-to-boundary connections
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
@@ -30,9 +52,9 @@ namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V] [Countable V]
 
+/-! ## A. Root-to-boundary connections -/
 
-
-theorem PeriodicGraph.wiredBufferedRootBoundary_diag_antitone
+lemma PeriodicGraph.wiredBufferedRootBoundary_diag_antitone
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     Antitone (fun n =>
@@ -56,8 +78,8 @@ theorem PeriodicGraph.wiredBufferedRootBoundary_diag_antitone
         P.wiredBufferedMeasure_step_cylinder (le_refl n) hp hp1 hq
           (P.bufferedRootBoundaryEvent_isIncreasing n)
 
-
-
+/-- For `q ≥ 1`, the wired probability on the buffered box of radius `n` that the root reaches its
+boundary converges to the wired percolation probability `θ(p, q)`. -/
 theorem PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
@@ -126,9 +148,11 @@ theorem PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto
   rw [le_antisymm hLle hthetaLe] at halim
   exact halim
 
+/-! ## B. Set-to-boundary connections -/
 
-
-
+/-- For `q ≥ 1` and a finite set `S` inside the buffered box of radius `N`, the wired probability on
+the box of radius `N + n` that `S` reaches its boundary converges to the infinite-volume probability
+that `S` meets an infinite cluster. -/
 theorem PeriodicGraph.wiredBufferedSetBoundary_diag_tendsto
     (P : PeriodicGraph V) (S : Set V) (hSfinite : S.Finite) (N : Nat)
     (hS : S ⊆ (P.orbitBox (P.bufferedRadius N) : Set V))

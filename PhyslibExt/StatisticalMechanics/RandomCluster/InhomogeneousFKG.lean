@@ -5,12 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta
@@ -18,9 +12,47 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
 public import MathlibExt.Probability.OSSS.Monotonic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.HorizontalBridgeDecay
 
+/-!
+# The FKG inequality for the inhomogeneous random-cluster model
+
+For edge-dependent parameters `p(e) ∈ (0, 1)` and `q ≥ 1`, the finite-volume random-cluster measure
+satisfies the FKG lattice condition and is a monotonic measure.
+
+## i. Overview
+
+The Bernoulli edge product `∏ₑ p(e)^{ω(e)} (1 - p(e))^{1 - ω(e)}` is log-modular, and the cluster
+count is supermodular, so for `q ≥ 1` the inhomogeneous FK weight is log-supermodular. After
+normalization this is the FKG lattice condition, which implies that the measure is monotonic
+(its single-edge conditional probabilities increase with the boundary configuration). Both results
+are proved unconditionally, under only `0 < p(e) < 1` and `1 ≤ q`. The file also records that
+flipping an edge outside the graph does not change the measure.
+
+## ii. Key results
+
+- `fkProbW_FKGLatticeCondition` : the inhomogeneous FK measure satisfies the FKG lattice condition
+  for `q ≥ 1`.
+- `fkProbW_isMonotonic` : the inhomogeneous FK measure is a monotonic measure for `q ≥ 1`.
+- `fkProbW_flipE_off` : flipping an edge outside the graph leaves the measure unchanged.
+
+## iii. Table of contents
+
+- A. Log-supermodularity of the weight
+- B. The FKG lattice condition and monotonicity
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.8.
+- C. M. Fortuin, P. W. Kasteleyn, and J. Ginibre, *Correlation inequalities on some partially
+  ordered sets*, Comm. Math. Phys. 22 (1971).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 namespace FK
@@ -28,7 +60,10 @@ namespace FK
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-theorem edgeProductW_logModular (pf : Sym2 V → ℝ)
+/-! ## A. Log-supermodularity of the weight -/
+
+/-- The inhomogeneous Bernoulli edge product is log-modular. -/
+lemma edgeProductW_logModular (pf : Sym2 V → ℝ)
     (a b : ConfigSpace (Sym2 V)) :
     edgeProductW G pf a * edgeProductW G pf b =
       edgeProductW G pf (a ⊔ b) * edgeProductW G pf (a ⊓ b) := by
@@ -41,9 +76,10 @@ theorem edgeProductW_logModular (pf : Sym2 V → ℝ)
   rw [hsup, hinf]
   cases a e <;> cases b e <;>
     simp only [Bool.or_self, Bool.or_false, Bool.or_true, Bool.and_self,
-      Bool.and_false, Bool.and_true, if_true, mul_comm]
+      Bool.and_false, Bool.and_true, ite_true, mul_comm]
 
-theorem fkWeightW_logSupermodular {pf : Sym2 V → ℝ}
+/-- For `q ≥ 1` the inhomogeneous FK weight is log-supermodular. -/
+lemma fkWeightW_logSupermodular {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) (a b : ConfigSpace (Sym2 V)) :
     fkWeightW G pf q a * fkWeightW G pf q b ≤
@@ -71,7 +107,10 @@ theorem fkWeightW_logSupermodular {pf : Sym2 V → ℝ}
     _ = edgeProductW G pf (a ⊔ b) * q ^ numClusters G (a ⊔ b) *
           (edgeProductW G pf (a ⊓ b) * q ^ numClusters G (a ⊓ b)) := by ring
 
-theorem fkProbW_sum_eq_one {pf : Sym2 V → ℝ}
+/-! ## B. The FKG lattice condition and monotonicity -/
+
+/-- The inhomogeneous FK measure is a probability mass function. -/
+lemma fkProbW_sum_eq_one {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 0 < q) :
     ∑ ω, fkProbW G pf q ω = 1 := by
@@ -79,6 +118,8 @@ theorem fkProbW_sum_eq_one {pf : Sym2 V → ℝ}
   rw [← Finset.sum_div]
   exact div_self (fkZW_ne_zero G hpf hpf1 hq)
 
+/-- For `0 < p(e) < 1` and `q ≥ 1`, the inhomogeneous FK measure satisfies the FKG lattice
+condition. -/
 theorem fkProbW_FKGLatticeCondition {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) :
@@ -91,6 +132,8 @@ theorem fkProbW_FKGLatticeCondition {pf : Sym2 V → ℝ}
   exact (div_le_div_iff_of_pos_right (mul_pos hZ hZ)).mpr
     (fkWeightW_logSupermodular G hpf hpf1 hq a b)
 
+/-- For `0 < p(e) < 1` and `q ≥ 1`, the inhomogeneous FK measure is monotonic: the conditional
+probability that an edge is open increases with the rest of the configuration. -/
 theorem fkProbW_isMonotonic {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) :
@@ -101,7 +144,8 @@ theorem fkProbW_isMonotonic {pf : Sym2 V → ℝ}
       (fkZW_pos G hpf hpf1 hq0))
     (fkProbW_FKGLatticeCondition G hpf hpf1 hq)
 
-theorem fkProbW_flipE_off (pf : Sym2 V → ℝ) (q : ℝ)
+/-- Flipping an edge that is not in the graph leaves the inhomogeneous FK measure unchanged. -/
+lemma fkProbW_flipE_off (pf : Sym2 V → ℝ) (q : ℝ)
     {e : Sym2 V} (he : e ∉ G.edgeFinset) (ω : ConfigSpace (Sym2 V)) :
     fkProbW G pf q (OSSS.HBridgeClose.flipE e ω) = fkProbW G pf q ω := by
   unfold fkProbW fkWeightW edgeProductW

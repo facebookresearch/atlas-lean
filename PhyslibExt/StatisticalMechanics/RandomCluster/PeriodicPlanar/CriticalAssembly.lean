@@ -6,14 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CriticalReduction
+
+/-!
+# Critical-point duality from monotonicity of the percolation probability
+
+Off-critical sharpness of the wired percolation predicate follows from monotonicity of
+`p ↦ θ(p, q)`, which reduces the self-dual critical relation to monotonicity, coverage and
+no-coexistence.
+
+## i. Overview
+
+If `θ ≥ 0` is monotone on `(0, 1)` and `pc` is the supremum of its zero set, then `θ = 0` below
+`pc` and `θ > 0` above it. For a periodic graph this gives off-critical sharpness of the wired
+model from monotonicity of its percolation probability. Coverage in both directions keeps the
+primal and dual critical points away from `1`. Feeding sharpness into the reduction of
+`CriticalReduction` gives `pc* = (pc)*`.
+The headline `PeriodicGraph.dualCritical_relation_of_monotonicity_noCoexistence` is conditional:
+it assumes monotonicity of `θ` on `(0, 1)` for the primal and dual graphs,
+`DualSubcriticalCoverage` and `DualNoCoexistence`, besides `pc, pc* ∈ (0, 1)` and `0 < q`.
+
+## ii. Key results
+
+- `offCriticalSharpness_of_nonnegative_monotoneOn` : a nonnegative monotone function is sharp at
+  the supremum of its zero set.
+- `PeriodicGraph.criticalPoints_mem_Ioo_of_bidirectionalCoverage` : coverage in both directions
+  puts both critical points in `(0, 1)`.
+- `PeriodicGraph.dualCritical_relation_of_monotonicity_noCoexistence` : the critical relation from
+  monotonicity, coverage and no-coexistence.
+
+## iii. Table of contents
+
+- A. Sharpness from monotonicity
+- B. Bounds on the critical point
+- C. The critical relation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Sections 5.1 and 6.2.
+-/
 
 @[expose] public section
 
@@ -23,9 +56,11 @@ namespace StatMech.FK.PeriodicPlanar
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
+/-! ## A. Sharpness from monotonicity -/
 
-
-theorem offCriticalSharpness_of_nonnegative_monotoneOn
+/-- A nonnegative function, monotone on `(0, 1)` with a nonempty zero set, is sharp at the supremum
+`pc` of its zero set: it vanishes below `pc` and is positive above. -/
+lemma offCriticalSharpness_of_nonnegative_monotoneOn
     {theta : Real -> Real} {pc : Real}
     (htheta : forall p, 0 <= theta p)
     (hmono : MonotoneOn theta (Ioo (0 : Real) 1))
@@ -56,20 +91,20 @@ theorem offCriticalSharpness_of_nonnegative_monotoneOn
       exact (not_le_of_gt hpcp) hle
     exact lt_of_le_of_ne (htheta p) (Ne.symm hnezero)
 
+/-! ## B. Bounds on the critical point -/
+
 section Countable
 
 variable [Countable V]
 
-theorem PeriodicGraph.subcriticalSet_bddAbove
+lemma PeriodicGraph.subcriticalSet_bddAbove
     (P : PeriodicGraph V) (q : Real) :
     BddAbove (P.subcriticalSet q) := by
   refine ⟨1, ?_⟩
   intro p hp
   exact hp.1.2.le
 
-
-
-theorem PeriodicGraph.subcriticalSet_nonempty_of_criticalPoint_pos
+lemma PeriodicGraph.subcriticalSet_nonempty_of_criticalPoint_pos
     (P : PeriodicGraph V) {q : Real} (hpc : 0 < P.criticalPoint q) :
     (P.subcriticalSet q).Nonempty := by
   rcases (P.subcriticalSet q).eq_empty_or_nonempty with hempty | hne
@@ -78,18 +113,14 @@ theorem PeriodicGraph.subcriticalSet_nonempty_of_criticalPoint_pos
     exact (lt_irrefl 0) hpc
   · exact hne
 
-
-
-theorem PeriodicGraph.criticalPoint_le_one_of_pos
+lemma PeriodicGraph.criticalPoint_le_one_of_pos
     (P : PeriodicGraph V) {q : Real} (hpc : 0 < P.criticalPoint q) :
     P.criticalPoint q <= 1 := by
   rw [PeriodicGraph.criticalPoint]
   exact csSup_le (P.subcriticalSet_nonempty_of_criticalPoint_pos hpc)
     (fun _ hp => hp.1.2.le)
 
-
-
-theorem PeriodicGraph.wiredPercolationProbability_eq_zero_of_lt_criticalPoint
+lemma PeriodicGraph.wiredPercolationProbability_eq_zero_of_lt_criticalPoint
     (P : PeriodicGraph V) {q p : Real}
     (hpc : 0 < P.criticalPoint q)
     (hmono : MonotoneOn
@@ -104,10 +135,7 @@ theorem PeriodicGraph.wiredPercolationProbability_eq_zero_of_lt_criticalPoint
   exact le_antisymm (by simpa only [hr.2] using hle)
     (P.wiredPercolationProbability_nonneg p q)
 
-
-
-
-theorem PeriodicGraph.wiredPercolates_of_criticalPoint_lt
+lemma PeriodicGraph.wiredPercolates_of_criticalPoint_lt
     (P : PeriodicGraph V) {q p : Real}
     (hp : p ∈ Ioo (0 : Real) 1) (hlt : P.criticalPoint q < p) :
     P.wiredPercolates p q := by
@@ -121,11 +149,7 @@ theorem PeriodicGraph.wiredPercolates_of_criticalPoint_lt
       simpa only [PeriodicGraph.criticalPoint] using hle)
   exact lt_of_le_of_ne (P.wiredPercolationProbability_nonneg p q) hne.symm
 
-
-
-
-
-theorem PeriodicGraph.criticalPoint_lt_one_of_dualSubcriticalCoverage
+lemma PeriodicGraph.criticalPoint_lt_one_of_dualSubcriticalCoverage
     [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W) {q : Real}
     (hq : 0 < q)
@@ -164,10 +188,9 @@ theorem PeriodicGraph.criticalPoint_lt_one_of_dualSubcriticalCoverage
   rw [hinv] at hperc
   exact (ne_of_gt hperc) hzero
 
-
-
-
-theorem PeriodicGraph.criticalPoints_mem_Ioo_of_bidirectionalCoverage
+/-- Given positive critical points, monotone percolation probabilities and dual subcritical coverage
+in both directions, both critical points lie in `(0, 1)`. -/
+lemma PeriodicGraph.criticalPoints_mem_Ioo_of_bidirectionalCoverage
     [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W) {q : Real}
     (hq : 0 < q)
@@ -189,9 +212,7 @@ theorem PeriodicGraph.criticalPoints_mem_Ioo_of_bidirectionalCoverage
     ⟨hpcDual, Pdual.criticalPoint_lt_one_of_dualSubcriticalCoverage
       P hq hpcDual hpc hmonoPrimal hcoverageDual⟩⟩
 
-
-
-theorem PeriodicGraph.offCriticalSharpness_of_monotoneOn
+lemma PeriodicGraph.offCriticalSharpness_of_monotoneOn
     (P : PeriodicGraph V) {q : Real}
     (hpc : P.criticalPoint q ∈ Ioo (0 : Real) 1)
     (hmono : MonotoneOn
@@ -205,9 +226,11 @@ theorem PeriodicGraph.offCriticalSharpness_of_monotoneOn
 
 end Countable
 
+/-! ## C. The critical relation -/
 
-
-
+/-- Conditional critical-point duality: monotonicity of the primal and dual wired percolation
+probabilities, dual subcritical coverage and no-coexistence give `pc* = (pc)*` and
+`pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
 theorem PeriodicGraph.dualCritical_relation_of_monotonicity_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)

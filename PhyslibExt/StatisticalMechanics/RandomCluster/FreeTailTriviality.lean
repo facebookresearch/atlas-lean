@@ -6,16 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRExtreme
@@ -24,6 +14,49 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainM
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MultiEdgeDecay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
 public import MathlibExt.Probability.Configuration.AeTailInvariant
+
+/-!
+# Tail triviality and ergodicity of the free infinite-volume random-cluster measure
+
+For `q ≥ 1` the free infinite-volume random-cluster measure on `ℤ^d` is tail-trivial and
+translation-ergodic, and therefore has at most one infinite cluster almost surely.
+
+## i. Overview
+
+For an FK-DLR measure, an increasing event in a box and an event depending only on edges outside the
+box are positively correlated, with the free finite-box probability as a lower bound: the free
+boundary condition is the smallest one. Approximating an exterior event by cylinders extends this to
+every event measurable outside a box, and letting the box grow shows that the free infinite-volume
+measure is dominated, on clopen increasing events, by its conditioning on any tail event of positive
+probability. Since the free measure is extreme in this order, conditioning on a tail event `s` or on
+its complement cannot change it, so `s` has probability `0` or `1`. Invariant events agree almost
+surely with tail events, which gives ergodicity, and the Burton–Keane argument then gives uniqueness
+of the infinite cluster. `freeInfiniteVolume_tail_trivial_generalQ`,
+`freeInfiniteVolume_isErgodic_generalQ`, and `freeInfinite_canonical_uniqueness_all_parameters` are
+proved unconditionally (only `1 ≤ d`, `0 < p < 1`, `1 ≤ q`).
+
+## ii. Key results
+
+- `freeInfiniteVolume_tail_box_product_le_generalQ` : a tail event and an increasing box event are
+  positively correlated under the free measure.
+- `freeInfiniteVolume_tail_trivial_generalQ` : every tail event has free probability `0` or `1`.
+- `freeInfiniteVolume_isErgodic_generalQ` : the free measure is translation-ergodic.
+- `freeInfinite_canonical_uniqueness_all_parameters` : almost surely there is at most one infinite
+  cluster.
+
+## iii. Table of contents
+
+- A. Positive correlation with events outside a box
+- B. Tail triviality
+- C. Ergodicity and uniqueness of the infinite cluster
+- D. The case `q = 2`
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121
+  (1989).
+-/
 
 @[expose] public section
 
@@ -39,9 +72,12 @@ open StatMech.Lattice
 variable {Vin Vout : Type*} [Fintype Vin] [DecidableEq Vin]
   [Fintype Vout] [DecidableEq Vout]
 
+/-! ## A. Positive correlation with events outside a box -/
 
-
-theorem freeInner_mul_outside_le_bcProb
+/-- For `q ≥ 1`, the free inner probability of an increasing event `A`, times the outer
+boundary-condition probability of an event `B` depending only on edges outside the inner graph,
+is at most the outer probability of both. -/
+lemma freeInner_mul_outside_le_bcProb
     (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
     (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout) (hι : Function.Injective ιV)
@@ -114,9 +150,9 @@ theorem freeInner_mul_outside_le_bcProb
 
 variable {d : ℕ}
 
-
-
-theorem isFKDLR_freeMass_mul_outside_le_generalQ
+/-- Under an FK-DLR measure, the free box probability of an increasing event times the probability
+of an event depending only on edges outside the box is at most the probability of both. -/
+lemma isFKDLR_freeMass_mul_outside_le_generalQ
     {N m : ℕ} (hNm : N < m) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q)
     (phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
@@ -158,7 +194,8 @@ theorem isFKDLR_freeMass_mul_outside_le_generalQ
   have hc := hcomponent C
   nlinarith [mul_le_mul_of_nonneg_left hc hw]
 
-theorem edgeIncl_mem_fkTailEdgeWindow (N : ℕ)
+/-- Every edge of the box of radius `N` lies in the edge window of radius `N`. -/
+lemma edgeIncl_mem_fkTailEdgeWindow (N : ℕ)
     (eb : Sym2 (boxVerts d N)) :
     edgeIncl d N eb ∈ fkTailEdgeWindow d N := by
   intro x hx
@@ -169,10 +206,9 @@ theorem edgeIncl_mem_fkTailEdgeWindow (N : ℕ)
       · exact u.2
       · exact v.2
 
-
-
-
-theorem exteriorCylinder_realise_in_box
+/-- A cylinder event on edges outside the window of radius `N` is the pull-back of an event in a
+larger box that depends only on edges outside the inner box. -/
+lemma exteriorCylinder_realise_in_box
     (N : ℕ) (F : Finset (Sym2 (Site d)))
     (S : Set (ConfigSpace F))
     (hF : (↑F : Set (Sym2 (Site d))) ⊆ (fkTailEdgeWindow d N)ᶜ) :
@@ -223,9 +259,9 @@ theorem exteriorCylinder_realise_in_box
   simp only [MeasureTheory.mem_cylinder]
   rw [hrestr]
 
-
-
-theorem isFKDLR_freeMass_mul_exterior_le_generalQ
+/-- Under an FK-DLR measure, the free box probability of an increasing event times the probability
+of an event measurable outside the box is at most the probability of both. -/
+lemma isFKDLR_freeMass_mul_exterior_le_generalQ
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
     (hphi : IsFKDLR d p q phi)
@@ -313,9 +349,11 @@ theorem isFKDLR_freeMass_mul_exterior_le_generalQ
   dsimp [delta] at hBlow hBup hIlow hIup
   nlinarith
 
+/-! ## B. Tail triviality -/
 
-
-theorem freeInfiniteVolume_tail_box_product_le_generalQ
+/-- For `q ≥ 1`, a tail event and an increasing box event are positively correlated under the
+free infinite-volume measure. -/
+lemma freeInfiniteVolume_tail_box_product_le_generalQ
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (s : Set (ConfigSpace (Sym2 (Site d))))
     (hs : FKIsTailEvent d s)
@@ -367,9 +405,9 @@ theorem freeInfiniteVolume_tail_box_product_le_generalQ
     hconv.mul_const (mu.real s)
   exact le_of_tendsto hprod (Filter.eventually_atTop.mpr ⟨N, hbound⟩)
 
-
-
-theorem freeInfiniteVolume_le_cond_tail_clopen_generalQ
+/-- For `q ≥ 1`, the free infinite-volume measure is dominated on clopen increasing events by its
+conditioning on any tail event of positive probability. -/
+lemma freeInfiniteVolume_le_cond_tail_clopen_generalQ
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {s : Set (ConfigSpace (Sym2 (Site d)))}
     (hs : FKIsTailEvent d s)
@@ -402,7 +440,8 @@ theorem freeInfiniteVolume_le_cond_tail_clopen_generalQ
   rw [inv_mul_eq_div]
   exact (le_div_iff₀ hs_pos).mpr hprod
 
-
+/-- For `q ≥ 1`, every tail event has probability `0` or `1` under the free infinite-volume
+measure. -/
 theorem freeInfiniteVolume_tail_trivial_generalQ
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (s : Set (ConfigSpace (Sym2 (Site d))))
@@ -419,8 +458,8 @@ theorem freeInfiniteVolume_tail_trivial_generalQ
     rw [hsc0, add_zero] at hadd
     rw [measure_univ] at hadd
     simpa only [mu] using hadd
-  haveI hp1s : IsProbabilityMeasure (mu[|s]) := cond_isProbabilityMeasure hs0
-  haveI hp2s : IsProbabilityMeasure (mu[|sᶜ]) := cond_isProbabilityMeasure hsc0
+  have hp1s : IsProbabilityMeasure (mu[|s]) := cond_isProbabilityMeasure hs0
+  have hp2s : IsProbabilityMeasure (mu[|sᶜ]) := cond_isProbabilityMeasure hsc0
   have hdom1 := freeInfiniteVolume_le_cond_tail_clopen_generalQ
     hp hp1 hq hs hs0
   have hdom2 := freeInfiniteVolume_le_cond_tail_clopen_generalQ
@@ -442,8 +481,9 @@ theorem freeInfiniteVolume_tail_trivial_generalQ
   rw [heq.1] at hself
   simpa only [mu] using hself
 
+/-! ## C. Ergodicity and uniqueness of the infinite cluster -/
 
-
+/-- For `q ≥ 1` and `d ≥ 1`, the free infinite-volume measure is translation-ergodic. -/
 theorem freeInfiniteVolume_isErgodic_generalQ
     (hd : 1 ≤ d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
@@ -464,8 +504,8 @@ theorem freeInfiniteVolume_isErgodic_generalQ
     rw [measure_univ]
     exact heq.trans ht1
 
-
-
+/-- For `q ≥ 1` and `d ≥ 1`, the free infinite-volume measure has almost surely zero or one
+infinite clusters, and never two or more. -/
 theorem freeInfinite_canonical_uniqueness_all_parameters
     (hd : 1 ≤ d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ((freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
@@ -479,9 +519,10 @@ theorem freeInfinite_canonical_uniqueness_all_parameters
   exact freeInfinite_canonical_uniqueness_of_isErgodic hd hp hp1 hq
     (freeInfiniteVolume_isErgodic_generalQ hd hp hp1 hq)
 
+/-! ## D. The case `q = 2` -/
 
-
-theorem freeInfiniteVolume_tail_trivial
+/-- The `q = 2` case of `freeInfiniteVolume_tail_trivial_generalQ`. -/
+lemma freeInfiniteVolume_tail_trivial
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (s : Set (ConfigSpace (Sym2 (Site d)))) (hs : FKIsTailEvent d s) :
     (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _) s = 0 ∨
@@ -489,9 +530,8 @@ theorem freeInfiniteVolume_tail_trivial
   freeInfiniteVolume_tail_trivial_generalQ hp hp1
     (by norm_num : (1 : ℝ) ≤ 2) s hs
 
-
-
-theorem freeInfiniteVolume_isErgodic_all_parameters
+/-- The `q = 2` case of `freeInfiniteVolume_isErgodic_generalQ`. -/
+lemma freeInfiniteVolume_isErgodic_all_parameters
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) :
@@ -499,8 +539,8 @@ theorem freeInfiniteVolume_isErgodic_all_parameters
   freeInfiniteVolume_isErgodic_generalQ hd hp hp1
     (by norm_num : (1 : ℝ) ≤ 2)
 
-
-theorem freeInfinite_q2_canonical_uniqueness_all_parameters
+/-- The `q = 2` case of `freeInfinite_canonical_uniqueness_all_parameters`. -/
+lemma freeInfinite_q2_canonical_uniqueness_all_parameters
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     ((freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
           {omega | Percolation.numInfiniteClusters d omega = 0} = 1 ∨

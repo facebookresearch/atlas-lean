@@ -6,24 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CriticalReduction
 
+/-!
+# Critical-point duality from strict no-coexistence
+
+The self-dual relation `pc / (1 - pc) · pc* / (1 - pc*) = q` between the primal and dual critical
+points, derived from a strict form of primal/dual no-coexistence.
+
+## i. Overview
+
+Strict no-coexistence asks that primal percolation at `r` and dual percolation at `p*` never hold
+together when `r < p`. Together with off-critical sharpness of both models and the coverage input
+(dual percolation at `p*` for every subcritical `p`), it gives the two cross bounds between `pc*`
+and `p*`, and the strict monotonicity of `p ↦ p*` turns them into `pc* = (pc)*`.
+Both results are conditional: they assume `OffCriticalSharpness` for the primal and the dual
+percolation predicates, `DualSubcriticalCoverage`, and `StrictDualNoCoexistence`, besides
+`pc, pc* ∈ (0, 1)` and `0 < q`.
+
+## ii. Key results
+
+- `dualCritical_crossBounds_of_sharpness_strictNoCoexistence` : the cross bounds between `pc*`
+  and the dual parameters.
+- `dualCritical_relation_of_sharpness_strictNoCoexistence` : `pc* = (pc)*` and
+  `pc / (1 - pc) · pc* / (1 - pc*) = q`.
+
+## iii. Table of contents
+
+- A. Strict no-coexistence
+- B. The critical relation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 6.2.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
@@ -31,16 +51,18 @@ namespace StatMech.FK.PeriodicPlanar
 
 open BeffaraDC
 
+/-! ## A. Strict no-coexistence -/
 
-
+/-- Strict primal/dual no-coexistence: for `r < p` in `(0, 1)`, the primal model does not percolate
+at `r` while the dual model percolates at `p*`. -/
 def StrictDualNoCoexistence
     (primalPercolates dualPercolates : Real → Prop) (q : Real) : Prop :=
   ∀ r ∈ Ioo (0 : Real) 1, ∀ p ∈ Ioo (0 : Real) 1, r < p →
     ¬(primalPercolates r ∧ dualPercolates (dualParam p q))
 
+/-! ## B. The critical relation -/
 
-
-theorem dualCritical_crossBounds_of_sharpness_strictNoCoexistence
+lemma dualCritical_crossBounds_of_sharpness_strictNoCoexistence
     {primalPercolates dualPercolates : Real → Prop}
     {pc pcDual q : Real}
     (hq : 0 < q)
@@ -76,8 +98,8 @@ theorem dualCritical_crossBounds_of_sharpness_strictNoCoexistence
     have hprimal : primalPercolates r := hsharpPrimal.2 r hr hpcr
     exact hstrict r hr p hp hrp ⟨hprimal, hdual⟩
 
-
-
+/-- Conditional critical-point duality: off-critical sharpness of both models, dual subcritical
+coverage and strict no-coexistence give `pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
 theorem dualCritical_relation_of_sharpness_strictNoCoexistence
     {primalPercolates dualPercolates : Real → Prop}
     {pc pcDual q : Real}

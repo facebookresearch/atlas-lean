@@ -6,33 +6,60 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
+
+/-!
+# Monotonicity of the random-cluster measure in `q`
+
+For `1 ≤ q₁ ≤ q₂` the random-cluster measure with parameter `q₂` is stochastically dominated by the
+one with parameter `q₁`.
+
+## i. Overview
+
+The cluster count is antitone in the configuration and supermodular, so for `1 ≤ q₁ ≤ q₂` the
+factors `q₂^{k(a)} q₁^{k(b)}` satisfy the cross inequality `q₂^{k(a)} q₁^{k(b)} ≤ q₂^{k(a ⊓ b)}
+q₁^{k(a ⊔ b)}`. The Bernoulli edge product is log-modular, so the two normalized measures satisfy
+Holley's condition `μ₂(a) μ₁(b) ≤ μ₂(a ⊓ b) μ₁(a ⊔ b)`, and Holley's inequality gives stochastic
+domination.
+
+The headline `fk_antitone_in_q` is proved unconditionally, under only `0 < p < 1` and `1 ≤ q₁ ≤ q₂`.
+
+## ii. Key results
+
+- `fkProb_cross_q` : Holley's cross condition between the measures at `q₂` and `q₁`.
+- `fk_antitone_in_q` : the measure at `q₂` is stochastically dominated by the measure at `q₁`.
+
+## iii. Table of contents
+
+- A. The cross inequality for cluster factors
+- B. Holley's condition and stochastic domination
+
+## iv. References
+
+- R. Holley, *Remarks on the FKG inequalities*, Comm. Math. Phys. 36 (1974).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.21.
+-/
 
 @[expose] public section
 
 open MeasureTheory SimpleGraph
 open scoped BigOperators
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
+
 namespace StatMech.FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. The cross inequality for cluster factors -/
 
-
-theorem qFactor_cross {q₁ q₂ : ℝ} (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ ≤ q₂)
+lemma qFactor_cross {q₁ q₂ : ℝ} (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ ≤ q₂)
     (a b : ConfigSpace (Sym2 V)) :
     q₂ ^ numClusters G a * q₁ ^ numClusters G b
       ≤ q₂ ^ numClusters G (a ⊓ b) * q₁ ^ numClusters G (a ⊔ b) := by
@@ -66,9 +93,9 @@ theorem qFactor_cross {q₁ q₂ : ℝ} (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ �
     _ ≤ q₂ ^ ka * q₁ ^ ku * q₂ ^ di := by gcongr
     _ = (q₂ ^ ka * q₂ ^ di) * q₁ ^ ku := by ring
 
+/-! ## B. Holley's condition and stochastic domination -/
 
-
-theorem fkWeight_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma fkWeight_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ ≤ q₂) (a b : ConfigSpace (Sym2 V)) :
     fkWeight G p q₂ a * fkWeight G p q₁ b
       ≤ fkWeight G p q₂ (a ⊓ b) * fkWeight G p q₁ (a ⊔ b) := by
@@ -91,9 +118,9 @@ theorem fkWeight_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
     _ = edgeProduct G p (a ⊓ b) * q₂ ^ numClusters G (a ⊓ b)
           * (edgeProduct G p (a ⊔ b) * q₁ ^ numClusters G (a ⊔ b)) := by ring
 
-
-
-theorem fkProb_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
+/-- Holley's cross condition: `μ_{q₂}(a) μ_{q₁}(b) ≤ μ_{q₂}(a ⊓ b) μ_{q₁}(a ⊔ b)` for `1 ≤ q₁ ≤ q₂`.
+-/
+lemma fkProb_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ ≤ q₂) (a b : ConfigSpace (Sym2 V)) :
     fkProb G p q₂ a * fkProb G p q₁ b
       ≤ fkProb G p q₂ (a ⊓ b) * fkProb G p q₁ (a ⊔ b) := by
@@ -106,8 +133,8 @@ theorem fkProb_cross_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
     div_le_div_iff_of_pos_right (mul_pos hZ₂ hZ₁)]
   exact fkWeight_cross_q G hp hp1 hq₁ hq₁₂ a b
 
-
-
+/-- For `1 ≤ q₁ ≤ q₂` the random-cluster measure at `q₂` is stochastically dominated by the one at
+`q₁`. -/
 theorem fk_antitone_in_q {p q₁ q₂ : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq₁ : 1 ≤ q₁) (hq₁₂ : q₁ ≤ q₂) :
     measOfMass (fkProb G p q₂) ≼ measOfMass (fkProb G p q₁) := by

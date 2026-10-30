@@ -6,22 +6,49 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonoBC
 
+/-!
+# Random-cluster measures on edge-indexed multigraphs with a boundary wiring
+
+Finite random-cluster measures whose edges are indexed by an arbitrary finite type `E`, with
+endpoints `ends : E → Sym2 V` and a boundary wiring graph `C`, are monotone in `C` for `q ≥ 1`.
+
+## i. Overview
+
+An edge configuration `ω : E → Bool` opens the edges `ends i` with `ω i = true`; the cluster count
+with boundary condition `C` is the number of components of the open graph joined with `C`. Since
+several indices may share endpoints, this covers multigraphs. The Bernoulli edge product is
+log-modular, and the mixed inequality
+`k_C(a) + k_{C'}(b) ≤ k_C(a ⊓ b) + k_{C'}(a ⊔ b)` holds for `C ≤ C'`, so for `q ≥ 1` the pair of
+measures with wirings `C ≤ C'` satisfies the Holley lattice condition. Holley's inequality then
+shows that increasing events are more likely under the larger wiring. The headlines
+`indexedMixed_supermodular_bc` and `indexedBcEventMass_mono_bc` are proved unconditionally (only
+`C ≤ C'`, `0 < p < 1`, `1 ≤ q`).
+
+## ii. Key results
+
+- `indexedMixed_supermodular_bc` : the mixed supermodularity of the cluster count for `C ≤ C'`.
+- `indexedBcProb_cross` : the Holley lattice condition for the two measures.
+- `indexedBcEventMass_mono_bc` : increasing events have larger probability under a larger
+  boundary wiring.
+
+## iii. Table of contents
+
+- A. Open graphs and the edge product
+- B. Cluster counts with a boundary wiring
+- C. Boundary-condition measures
+- D. Monotonicity in the boundary condition
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+- R. Holley, *Remarks on the FKG inequalities*, Comm. Math. Phys. 36 (1974).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open scoped BigOperators
 open SimpleGraph
@@ -37,33 +64,36 @@ noncomputable section
 variable {V E : Type*} [Fintype V] [DecidableEq V]
   [Fintype E] [DecidableEq E]
 
+/-! ## A. Open graphs and the edge product -/
 
-
+/-- The graph of open edges: the endpoints `ends i` of every index `i` with `omega i = true`. -/
 def indexedOpenGraph (ends : E -> Sym2 V) (omega : E -> Bool) :
     SimpleGraph V :=
   SimpleGraph.fromEdgeSet {e | exists i, ends i = e /\ omega i = true}
 
-theorem indexedOpenGraph_inf_le
+/-- The open graph of a meet is contained in the meet of the open graphs. -/
+lemma indexedOpenGraph_inf_le
     (ends : E -> Sym2 V) (a b : E -> Bool) :
     indexedOpenGraph ends (a ⊓ b) <=
       indexedOpenGraph ends a ⊓ indexedOpenGraph ends b := by
   intro x y hxy
   rw [SimpleGraph.inf_adj]
   simp only [indexedOpenGraph, SimpleGraph.fromEdgeSet_adj,
-    Set.mem_setOf_eq] at hxy ⊢
+    Set.mem_ofPred_eq] at hxy ⊢
   obtain ⟨⟨i, hi, hab⟩, hne⟩ := hxy
   have hab' : a i = true ∧ b i = true := by simpa using hab
   have ha : a i = true := hab'.1
   have hb : b i = true := hab'.2
   exact ⟨⟨⟨i, hi, ha⟩, hne⟩, ⟨⟨i, hi, hb⟩, hne⟩⟩
 
-theorem indexedOpenGraph_sup
+/-- The open graph of a join is the join of the open graphs. -/
+lemma indexedOpenGraph_sup
     (ends : E -> Sym2 V) (a b : E -> Bool) :
     indexedOpenGraph ends (a ⊔ b) =
       indexedOpenGraph ends a ⊔ indexedOpenGraph ends b := by
   ext x y
   simp only [indexedOpenGraph, SimpleGraph.fromEdgeSet_adj,
-    Set.mem_setOf_eq, SimpleGraph.sup_adj]
+    Set.mem_ofPred_eq, SimpleGraph.sup_adj]
   constructor
   · rintro ⟨⟨i, hi, hab⟩, hne⟩
     have hor : a i = true ∨ b i = true := by
@@ -75,11 +105,12 @@ theorem indexedOpenGraph_sup
     · exact ⟨⟨i, hi, by simp [ha]⟩, hne⟩
     · exact ⟨⟨i, hi, by simp [hb]⟩, hne⟩
 
-
+/-- The Bernoulli product weight `∏ p^{ω e} (1 - p)^{1 - ω e}`. -/
 def indexedEdgeProduct (p : Real) (omega : E -> Bool) : Real :=
   ∏ e, if omega e then p else 1 - p
 
-theorem indexedEdgeProduct_pos {p : Real} (hp : 0 < p) (hp1 : p < 1)
+/-- The Bernoulli product weight is positive for `0 < p < 1`. -/
+lemma indexedEdgeProduct_pos {p : Real} (hp : 0 < p) (hp1 : p < 1)
     (omega : E -> Bool) :
     0 < indexedEdgeProduct p omega := by
   apply Finset.prod_pos
@@ -88,7 +119,8 @@ theorem indexedEdgeProduct_pos {p : Real} (hp : 0 < p) (hp1 : p < 1)
   · exact hp
   · linarith
 
-theorem indexedEdgeProduct_logModular
+/-- The Bernoulli product weight is log-modular. -/
+lemma indexedEdgeProduct_logModular
     (p : Real) (a b : E -> Bool) :
     indexedEdgeProduct p a * indexedEdgeProduct p b =
       indexedEdgeProduct p (a ⊓ b) * indexedEdgeProduct p (a ⊔ b) := by
@@ -100,22 +132,24 @@ theorem indexedEdgeProduct_logModular
   cases a e <;> cases b e <;> simp
   all_goals ring
 
+/-! ## B. Cluster counts with a boundary wiring -/
 
-theorem card_connectedComponent_antitone
+/-- Adding edges does not increase the number of connected components. -/
+lemma card_connectedComponent_antitone
     {G H : SimpleGraph V} (hGH : G <= H) :
     Nat.card H.ConnectedComponent <= Nat.card G.ConnectedComponent := by
   classical
-  letI : DecidableRel H.Adj := Classical.decRel _
+  let _ : DecidableRel H.Adj := Classical.decRel _
   have h := card_connectedComponent_marginal hGH H
   rw [sup_eq_right.mpr hGH, sup_idem] at h
   omega
 
-
-
+/-- The number of clusters of the open graph joined with the boundary wiring `C`. -/
 def indexedNumClustersBC (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj] (omega : E -> Bool) : Nat :=
   Nat.card (indexedOpenGraph ends omega ⊔ C).ConnectedComponent
 
+/-- For wirings `C ≤ C'`, `k_C(a) + k_{C'}(b) ≤ k_C(a ⊓ b) + k_{C'}(a ⊔ b)`. -/
 theorem indexedMixed_supermodular_bc
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]
@@ -157,23 +191,29 @@ theorem indexedMixed_supermodular_bc
   rw [hU]
   omega
 
+/-! ## C. Boundary-condition measures -/
+
+/-- The unnormalized random-cluster weight `∏ p^{ω e} (1 - p)^{1 - ω e} q^{k_C(ω)}`. -/
 def indexedBcWeight (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (p q : Real) (omega : E -> Bool) : Real :=
   indexedEdgeProduct p omega * q ^ indexedNumClustersBC ends C omega
 
-theorem indexedBcWeight_pos
+/-- The random-cluster weight is positive. -/
+lemma indexedBcWeight_pos
     (ends : E -> Sym2 V) (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : E -> Bool) :
     0 < indexedBcWeight ends C p q omega :=
   mul_pos (indexedEdgeProduct_pos hp hp1 omega) (pow_pos hq _)
 
+/-- The partition function with boundary wiring `C`. -/
 def indexedBcZ (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj] (p q : Real) : Real :=
   ∑ omega : E -> Bool, indexedBcWeight ends C p q omega
 
-theorem indexedBcZ_pos
+/-- The partition function is positive. -/
+lemma indexedBcZ_pos
     (ends : E -> Sym2 V) (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < indexedBcZ ends C p q :=
@@ -181,12 +221,14 @@ theorem indexedBcZ_pos
     (fun omega _ => indexedBcWeight_pos ends C hp hp1 hq omega)
     Finset.univ_nonempty
 
+/-- The random-cluster probability of a configuration with boundary wiring `C`. -/
 def indexedBcProb (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (p q : Real) (omega : E -> Bool) : Real :=
   indexedBcWeight ends C p q omega / indexedBcZ ends C p q
 
-theorem indexedBcProb_nonneg
+/-- Random-cluster probabilities are nonnegative. -/
+lemma indexedBcProb_nonneg
     (ends : E -> Sym2 V) (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : E -> Bool) :
@@ -194,7 +236,8 @@ theorem indexedBcProb_nonneg
   div_nonneg (indexedBcWeight_pos ends C hp hp1 hq omega).le
     (indexedBcZ_pos ends C hp hp1 hq).le
 
-theorem indexedBcProb_sum_eq_one
+/-- Random-cluster probabilities sum to one. -/
+lemma indexedBcProb_sum_eq_one
     (ends : E -> Sym2 V) (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ omega : E -> Bool, indexedBcProb ends C p q omega = 1 := by
@@ -202,7 +245,8 @@ theorem indexedBcProb_sum_eq_one
   rw [← Finset.sum_div]
   exact div_self (indexedBcZ_pos ends C hp hp1 hq).ne'
 
-theorem indexedBcWeight_cross
+/-- For `C ≤ C'` and `q ≥ 1`, the weights satisfy the Holley lattice condition. -/
+lemma indexedBcWeight_cross
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]
     (hCC' : C <= C') {p q : Real}
@@ -240,7 +284,8 @@ theorem indexedBcWeight_cross
   rw [hedge]
   exact mul_le_mul_of_nonneg_left hcluster hedge0
 
-theorem indexedBcProb_cross
+/-- For `C ≤ C'` and `q ≥ 1`, the probabilities satisfy the Holley lattice condition. -/
+lemma indexedBcProb_cross
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]
     (hCC' : C <= C') {p q : Real}
@@ -258,12 +303,17 @@ theorem indexedBcProb_cross
     div_le_div_iff_of_pos_right (mul_pos hZ hZ')]
   exact indexedBcWeight_cross ends C C' hCC' hp hp1 hq a b
 
+/-! ## D. Monotonicity in the boundary condition -/
+
+/-- The probability of an event `A` under the measure with boundary wiring `C`. -/
 def indexedBcEventMass (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (p q : Real) (A : Set (E -> Bool)) : Real :=
   ∑ omega, A.indicator (fun _ => (1 : Real)) omega *
     indexedBcProb ends C p q omega
 
+/-- For `C ≤ C'` and `q ≥ 1`, an increasing event is at least as likely with wiring `C'` as with
+`C`. -/
 theorem indexedBcEventMass_mono_bc
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]

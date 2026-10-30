@@ -6,47 +6,80 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneMerge
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiniteCutHubCount
+
+/-!
+# Trifurcations have probability zero on periodic planar graphs
+
+Under a translation-invariant measure on a periodic graph embedded in the plane, a vertex is a
+trifurcation with probability zero.
+
+## i. Overview
+
+A vertex is a trifurcation when it has three open neighbors in three distinct infinite clusters of
+the configuration with the vertex removed. Trifurcation events are measurable and translation
+covariant, so every translate of a fixed vertex has the same trifurcation probability. In a box of
+side `2n + 1` of translates, the trifurcations each split the clusters reaching the boundary shell,
+so their number is at most the size of the shell, which is `O(n)`, while the expected number is the
+trifurcation probability times the `(2n + 1)²` translates. Letting `n → ∞` forces the probability
+to vanish. This is the counting half of the Burton–Keane argument.
+`trifurcation_measure_eq_zero` is proved unconditionally: its only hypotheses are a periodic plane
+embedding and translation invariance of the probability measure.
+
+## ii. Key results
+
+- `PeriodicGraph.measurableSet_isTrifurcation` : the trifurcation event is measurable.
+- `PeriodicPlaneEmbedding.orbitTrifurcation_count_le_shell` : the trifurcations among the translates
+  of a vertex in a box are at most the size of the boundary shell.
+- `PeriodicPlaneEmbedding.trifurcation_measure_eq_zero` : every vertex is a trifurcation with
+  probability zero under a translation-invariant probability measure.
+
+## iii. Table of contents
+
+- A. Removing a vertex and trifurcations
+- B. Orbit boxes and boundary shells
+- C. Counting trifurcations in a box
+- D. Trifurcations have probability zero
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
 open Filter MeasureTheory Set SimpleGraph Topology Finset
 open scoped ENNReal BigOperators
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice StatMech.FrontierA
+open StatMech.Lattice StatMech.FrontierA
 
 variable {V : Type*} [Countable V] [DecidableEq V]
 
+/-! ## A. Removing a vertex and trifurcations -/
 
+/-- The configuration `omega` with every edge incident to `x` closed. -/
 def removeVertex (x : V) (omega : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 V) :=
   fun e => if x ∈ e then false else omega e
 
-theorem measurable_removeVertex (x : V) :
+lemma measurable_removeVertex (x : V) :
     Measurable (removeVertex x :
       ConfigSpace (Sym2 V) -> ConfigSpace (Sym2 V)) := by
   apply measurable_pi_iff.mpr
   intro e
   by_cases hx : x ∈ e
-  · simpa [removeVertex, hx] using
-      (measurable_const : Measurable (fun _ : ConfigSpace (Sym2 V) => false))
+  · simp [removeVertex, hx]
   · simpa [removeVertex, hx] using measurable_pi_apply e
 
-theorem PeriodicGraph.removeVertex_configTranslate
+lemma PeriodicGraph.removeVertex_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     removeVertex (P.shift z x) (P.configTranslate z omega) =
@@ -75,16 +108,16 @@ theorem PeriodicGraph.removeVertex_configTranslate
               _ = b := P.shift_shift_neg z b
       by_cases hx : P.shift z x ∈ s(a, b)
       · have h2 := hmem.mp hx
-        rw [if_pos hx]
+        rw [ite_eq_left_of_eq_true _ _ (eq_true hx)]
         simp only [Sym2.mem_iff] at h2 ⊢
         simp [h2]
       · have h2 : ¬ x ∈ s(P.shift (-z) a, P.shift (-z) b) := fun h => hx (hmem.mpr h)
-        rw [if_neg hx]
+        rw [ite_eq_right_of_eq_false _ _ (eq_false hx)]
         simp only [Sym2.mem_iff] at h2 ⊢
         simp [h2]
 
-
-
+/-- `x` is a trifurcation of `omega`: it has three open neighbors lying in three distinct infinite
+clusters of the configuration with `x` removed. -/
 def PeriodicGraph.IsTrifurcation (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (x : V) : Prop :=
   ∃ a1 a2 a3 : V,
@@ -98,7 +131,7 @@ def PeriodicGraph.IsTrifurcation (P : PeriodicGraph V)
     ¬ (P.openSubgraph (removeVertex x omega)).Reachable a1 a3 ∧
     ¬ (P.openSubgraph (removeVertex x omega)).Reachable a2 a3
 
-theorem PeriodicGraph.measurableSet_openAdj
+lemma PeriodicGraph.measurableSet_openAdj
     (P : PeriodicGraph V) (x y : V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       (P.openSubgraph omega).Adj x y} := by
@@ -107,17 +140,18 @@ theorem PeriodicGraph.measurableSet_openAdj
         (P.openSubgraph omega).Adj x y} =
       {omega | omega s(x, y) = true} := by
       ext omega
-      simp [P.openSubgraph_adj, hxy]
+      simp [hxy]
     rw [heq]
     exact measurableSet_eq_fun (measurable_pi_apply s(x, y)) measurable_const
   · have heq : {omega : ConfigSpace (Sym2 V) |
         (P.openSubgraph omega).Adj x y} = ∅ := by
       ext omega
-      simp [P.openSubgraph_adj, hxy]
+      simp [hxy]
     rw [heq]
     exact MeasurableSet.empty
 
-theorem PeriodicGraph.measurableSet_isTrifurcation
+/-- The event that `x` is a trifurcation is measurable. -/
+lemma PeriodicGraph.measurableSet_isTrifurcation
     (P : PeriodicGraph V) (x : V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       P.IsTrifurcation omega x} := by
@@ -154,7 +188,7 @@ theorem PeriodicGraph.measurableSet_isTrifurcation
     ((P.measurableSet_twoPointEvent a2 a3).preimage
       (measurable_removeVertex x)).compl
 
-theorem PeriodicGraph.isTrifurcation_configTranslate
+lemma PeriodicGraph.isTrifurcation_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     P.IsTrifurcation (P.configTranslate z omega) (P.shift z x) ↔
@@ -232,7 +266,7 @@ theorem PeriodicGraph.isTrifurcation_configTranslate
       exact hd23 ((P.reachable_configTranslate z
         (removeVertex x omega) a2 a3).mp h)
 
-theorem PeriodicGraph.trifurcation_measure_eq_orbit
+lemma PeriodicGraph.trifurcation_measure_eq_orbit
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (u : V) :
     mu {omega | P.IsTrifurcation omega (P.shift z u)} =
@@ -250,17 +284,20 @@ theorem PeriodicGraph.trifurcation_measure_eq_orbit
         (P.measurableSet_isTrifurcation (P.shift z u)).nullMeasurableSet).symm
     _ = mu {omega | P.IsTrifurcation omega u} := by rw [hpre]
 
+/-! ## B. Orbit boxes and boundary shells -/
 
+/-- A box radius such that the neighbors of a vertex in the orbit box of radius `n` lie in the orbit
+box of radius `n` plus this radius. -/
 noncomputable def PeriodicGraph.neighborOrbitRadius (P : PeriodicGraph V) : Nat :=
   P.nextBufferedRadius 0
 
-theorem PeriodicGraph.fundamentalDomain_mem_orbitBox_zero
+lemma PeriodicGraph.fundamentalDomain_mem_orbitBox_zero
     (P : PeriodicGraph V) {u : V} (hu : u ∈ P.fundamentalDomain) :
     u ∈ P.orbitBox 0 := by
   rw [P.mem_orbitBox_iff]
   exact ⟨0, by simp, u, hu, by rw [P.shift_zero]; rfl⟩
 
-theorem PeriodicGraph.neighbor_mem_orbitBox_add
+lemma PeriodicGraph.neighbor_mem_orbitBox_add
     (P : PeriodicGraph V) {n : Nat} {x y : V}
     (hx : x ∈ P.orbitBox n) (hxy : P.graph.Adj x y) :
     y ∈ P.orbitBox (n + P.neighborOrbitRadius) := by
@@ -287,16 +324,20 @@ theorem PeriodicGraph.neighbor_mem_orbitBox_add
     rw [← hshift, ← hwv]
     exact P.shift_add w z v
 
+/-- The boundary shell: vertices in the orbit box of radius `n + c` but not in that of radius
+`n`. -/
 noncomputable def PeriodicGraph.orbitShell
     (P : PeriodicGraph V) (n c : Nat) : Finset V :=
   P.orbitBox (n + c) \ P.orbitBox n
 
+/-- The pairs of a translation in the annulus of boxes `n + c` minus `n` and a fundamental-domain
+vertex; the shell is contained in their image. -/
 noncomputable def PeriodicGraph.orbitShellSource
     (P : PeriodicGraph V) (n c : Nat) : Finset (Site 2 × V) :=
   ((box_finite 2 (n + c)).toFinset \ (box_finite 2 n).toFinset) ×ˢ
     P.fundamentalDomain
 
-theorem PeriodicGraph.orbitShell_subset_source_image
+lemma PeriodicGraph.orbitShell_subset_source_image
     (P : PeriodicGraph V) (n c : Nat) :
     P.orbitShell n c ⊆
       (P.orbitShellSource n c).image (fun zu => P.shift zu.1 zu.2) := by
@@ -314,7 +355,7 @@ theorem PeriodicGraph.orbitShell_subset_source_image
   rw [P.mem_orbitBox_iff]
   exact ⟨z, hzsmall, u, hu, rfl⟩
 
-theorem PeriodicGraph.orbitShell_card_le
+lemma PeriodicGraph.orbitShell_card_le
     (P : PeriodicGraph V) (n c : Nat) :
     (P.orbitShell n c).card <=
       (((2 * (n + c) + 1) ^ 2 - (2 * n + 1) ^ 2) *
@@ -334,7 +375,7 @@ theorem PeriodicGraph.orbitShell_card_le
         rw [Set.Finite.mem_toFinset] at hz ⊢
         exact box_mono 2 (Nat.le_add_right n c) hz
 
-theorem PeriodicPlaneEmbedding.orbitBox_card_ge_quadratic
+lemma PeriodicPlaneEmbedding.orbitBox_card_ge_quadratic
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P) (n : Nat) :
     (2 * n + 1) ^ 2 <= (P.orbitBox n).card := by
   let u := P.root
@@ -359,19 +400,21 @@ theorem PeriodicPlaneEmbedding.orbitBox_card_ge_quadratic
       (Finset.card_image_of_injective _ hinj).symm
     _ <= (P.orbitBox n).card := Finset.card_le_card hsub
 
+/-! ## C. Counting trifurcations in a box -/
+
 omit [Countable V] in
-theorem removeVertex_le (x : V) (omega : ConfigSpace (Sym2 V)) :
+lemma removeVertex_le (x : V) (omega : ConfigSpace (Sym2 V)) :
     removeVertex x omega <= omega := by
   intro e
   by_cases hx : x ∈ e <;> simp [removeVertex, hx]
 
 omit [Countable V] in
-theorem PeriodicGraph.openSubgraph_removeVertex_le
+lemma PeriodicGraph.openSubgraph_removeVertex_le
     (P : PeriodicGraph V) (x : V) (omega : ConfigSpace (Sym2 V)) :
     P.openSubgraph (removeVertex x omega) <= P.openSubgraph omega :=
   P.openSubgraph_mono (removeVertex_le x omega)
 
-theorem PeriodicGraph.trifurcation_orbitShell_witnesses
+lemma PeriodicGraph.trifurcation_orbitShell_witnesses
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (n : Nat) {x : V} (hx : x ∈ P.orbitBox n)
     (htrif : P.IsTrifurcation omega x) :
@@ -440,7 +483,7 @@ theorem PeriodicGraph.trifurcation_orbitShell_witnesses
       simpa only [Sym2.mem_iff, not_or] using ⟨hxa, hxb⟩
     have hax : a ≠ x := Ne.symm hxa
     have hbx : b ≠ x := Ne.symm hxb
-    simp [hxa, hxb, hax, hbx, hxmem]
+    simp [hax, hbx, hxmem]
   have hne (t : V) (ht : t ∈ P.orbitShell n P.neighborOrbitRadius) : x ≠ t := by
     intro hxt
     subst t
@@ -458,6 +501,8 @@ theorem PeriodicGraph.trifurcation_orbitShell_witnesses
     intro h
     exact hd23 (ht2.trans (h.trans ht3.symm))
 
+/-- The translations `z` in the box of radius `n` for which the translate of `u` by `z` is a
+trifurcation. -/
 noncomputable def PeriodicGraph.orbitTrifurcationCoords
     (P : PeriodicGraph V) (u : V) (omega : ConfigSpace (Sym2 V))
     (n : Nat) : Finset (Site 2) :=
@@ -466,12 +511,13 @@ noncomputable def PeriodicGraph.orbitTrifurcationCoords
     exact (box_finite 2 n).toFinset.filter
       (fun z => P.IsTrifurcation omega (P.shift z u))
 
+/-- The translates of `u` in the box of radius `n` that are trifurcations. -/
 noncomputable def PeriodicGraph.orbitTrifurcationHubs
     (P : PeriodicGraph V) (u : V) (omega : ConfigSpace (Sym2 V))
     (n : Nat) : Finset V :=
   (P.orbitTrifurcationCoords u omega n).image (fun z => P.shift z u)
 
-theorem PeriodicPlaneEmbedding.orbitTrifurcationHubs_card
+lemma PeriodicPlaneEmbedding.orbitTrifurcationHubs_card
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (u : V) (omega : ConfigSpace (Sym2 V)) (n : Nat) :
     (P.orbitTrifurcationHubs u omega n).card =
@@ -484,7 +530,9 @@ theorem PeriodicPlaneEmbedding.orbitTrifurcationHubs_card
   rw [E.vertex_shift, E.vertex_shift] at hv
   exact E.period_injective (add_left_cancel hv)
 
-theorem PeriodicPlaneEmbedding.orbitTrifurcation_count_le_shell
+/-- The number of trifurcations among the translates of `u` in the box of radius `n` is at most the
+size of the boundary shell. -/
+lemma PeriodicPlaneEmbedding.orbitTrifurcation_count_le_shell
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (u : V) (hu : u ∈ P.fundamentalDomain)
     (omega : ConfigSpace (Sym2 V)) (n : Nat) :
@@ -504,7 +552,7 @@ theorem PeriodicPlaneEmbedding.orbitTrifurcation_count_le_shell
     exact ⟨z, by simpa using hz.1, u, hu, rfl⟩
   exact P.trifurcation_orbitShell_witnesses omega n hxbox hz.2
 
-theorem PeriodicGraph.orbitTrifurcationCoords_cast_eq_sum_indicator
+lemma PeriodicGraph.orbitTrifurcationCoords_cast_eq_sum_indicator
     (P : PeriodicGraph V) (u : V) (omega : ConfigSpace (Sym2 V))
     (n : Nat) :
     ((P.orbitTrifurcationCoords u omega n).card : ENNReal) =
@@ -519,7 +567,7 @@ theorem PeriodicGraph.orbitTrifurcationCoords_cast_eq_sum_indicator
   intro z _
   by_cases h : P.IsTrifurcation omega (P.shift z u) <;> simp [h]
 
-theorem PeriodicGraph.expected_orbitTrifurcationCoords
+lemma PeriodicGraph.expected_orbitTrifurcationCoords
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (u : V) (n : Nat) :
     ∫⁻ omega, ((P.orbitTrifurcationCoords u omega n).card : ENNReal) ∂mu =
@@ -557,7 +605,9 @@ theorem PeriodicGraph.expected_orbitTrifurcationCoords
         mu {omega | P.IsTrifurcation omega u} := by
       simp
 
-theorem PeriodicGraph.orbitShell_polynomial_ratio_tendsto_zero
+/-! ## D. Trifurcations have probability zero -/
+
+lemma PeriodicGraph.orbitShell_polynomial_ratio_tendsto_zero
     (P : PeriodicGraph V) (c : Nat) :
     Tendsto (fun n =>
       ((((2 * (n + c) + 1) ^ 2 - (2 * n + 1) ^ 2) *
@@ -616,8 +666,8 @@ theorem PeriodicGraph.orbitShell_polynomial_ratio_tendsto_zero
   have hC0 : 0 <= C := by dsimp [C]; positivity
   nlinarith
 
-
-
+/-- Under a translation-invariant probability measure on a periodic graph with a plane embedding,
+each vertex is a trifurcation with probability zero. -/
 theorem PeriodicPlaneEmbedding.trifurcation_measure_eq_zero
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

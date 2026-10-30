@@ -6,14 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.ParameterMonotonicity
+
+/-!
+# Cylinder approximation of the percolation event
+
+The event that the root is joined to the boundary of the buffered box of radius `n` decreases to
+the percolation event, which makes the wired percolation probability monotone in `p` and removes
+the monotonicity input from critical-point duality.
+
+## i. Overview
+
+An open path from the root leaving a finite vertex set passes through an inner boundary vertex of
+that set, so "the root reaches the boundary of the buffered box" is an increasing cylinder event,
+decreasing in `n`, whose intersection over `n` is "the cluster of the root is infinite".
+Continuity from above gives convergence of its probabilities to `θ(p, q)`, which is the cylinder
+approximation of `ParameterMonotonicity`; hence `θ` is monotone in `p` for `q ≥ 1` and the wired
+model is sharp off its critical point.
+`PeriodicGraph.wiredPercolationProbability_monotoneOn` and `PeriodicGraph.offCriticalSharpness`
+are unconditional (only `1 ≤ q`, and `pc ∈ (0, 1)` for sharpness). The headline
+`PeriodicGraph.dualCritical_relation_of_noCoexistence` is conditional: it assumes
+`DualSubcriticalCoverage` and `DualNoCoexistence`, besides `pc, pc* ∈ (0, 1)` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.iInter_bufferedRootBoundaryCylinder` : the root-to-boundary cylinders decrease to
+  the percolation event.
+- `PeriodicGraph.wiredPercolationProbability_monotoneOn` : `θ(p, q)` is monotone in `p` for
+  `q ≥ 1`.
+- `PeriodicGraph.offCriticalSharpness` : the wired model is sharp off its critical point.
+- `PeriodicGraph.dualCritical_relation_of_noCoexistence` : the critical relation from coverage and
+  no-coexistence.
+
+## iii. Table of contents
+
+- A. Boundary crossings of finite sets
+- B. Root-to-boundary cylinders
+- C. Monotonicity, sharpness and the critical relation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Sections 5.1 and 6.2.
+-/
 
 @[expose] public section
 
@@ -23,10 +59,10 @@ namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V]
 
+/-! ## A. Boundary crossings of finite sets -/
+
 omit [DecidableEq V] in
-
-
-theorem reachable_induce_innerBoundary
+lemma reachable_induce_innerBoundary
     (G : SimpleGraph V) (S : Set V) {x z : V}
     (hx : x ∈ S) (hz : z ∉ S) (hreach : G.Reachable x z) :
     ∃ y : S, (G.induce S).Reachable ⟨x, hx⟩ y ∧
@@ -41,29 +77,31 @@ theorem reachable_induce_innerBoundary
         exact ((show (G.induce S).Adj ⟨x, hx⟩ ⟨y, hy⟩ from hxy).reachable).trans hv
       · exact ⟨⟨x, hx⟩, .refl _, y, hxy, hy⟩
 
-theorem PeriodicGraph.root_mem_orbitBox_zero (P : PeriodicGraph V) :
+/-! ## B. Root-to-boundary cylinders -/
+
+lemma PeriodicGraph.root_mem_orbitBox_zero (P : PeriodicGraph V) :
     P.root ∈ P.orbitBox 0 := by
   rw [P.mem_orbitBox_iff]
   refine ⟨0, by simp, P.root, P.root_mem_fundamentalDomain, ?_⟩
   rw [P.shift_zero]
   rfl
 
-
+/-- The root, as a vertex of the buffered box of radius `n`. -/
 noncomputable def PeriodicGraph.bufferedRoot (P : PeriodicGraph V) (n : Nat) :
     P.BufferedVertex n :=
   ⟨P.root, P.orbitBox_mono (Nat.zero_le _) P.root_mem_orbitBox_zero⟩
 
-@[simp] theorem PeriodicGraph.bufferedRoot_val (P : PeriodicGraph V) (n : Nat) :
+@[simp] lemma PeriodicGraph.bufferedRoot_val (P : PeriodicGraph V) (n : Nat) :
     (P.bufferedRoot n : V) = P.root := rfl
 
-
-
+/-- The event that the root is joined by an open path in the buffered box of radius `n` to a
+boundary vertex of that box. -/
 def PeriodicGraph.bufferedRootBoundaryEvent (P : PeriodicGraph V) (n : Nat) :
     Set (ConfigSpace (Sym2 (P.BufferedVertex n))) :=
   {omega | ∃ v : P.BufferedVertex n, P.bufferedBoundary n v ∧
     (FK.openSub (P.bufferedGraph n) omega).Reachable (P.bufferedRoot n) v}
 
-theorem PeriodicGraph.bufferedRootBoundaryEvent_isIncreasing
+lemma PeriodicGraph.bufferedRootBoundaryEvent_isIncreasing
     (P : PeriodicGraph V) (n : Nat) :
     IsIncreasing (P.bufferedRootBoundaryEvent n) := by
   intro omega eta home hmem
@@ -75,7 +113,7 @@ theorem PeriodicGraph.bufferedRootBoundaryEvent_isIncreasing
   apply Bool.eq_true_of_true_le
   simpa [hxy.2] using home s(x, y)
 
-theorem PeriodicGraph.openSub_bufferedRestrict_eq_induce
+lemma PeriodicGraph.openSub_bufferedRestrict_eq_induce
     (P : PeriodicGraph V) (n : Nat) (omega : ConfigSpace (Sym2 V)) :
     FK.openSub (P.bufferedGraph n) (P.bufferedRestrict n omega) =
       (P.openSubgraph omega).induce
@@ -85,7 +123,7 @@ theorem PeriodicGraph.openSub_bufferedRestrict_eq_induce
     PeriodicGraph.openSubgraph_adj]
   rfl
 
-theorem PeriodicGraph.bufferedReachable_iff_inducedReachable
+lemma PeriodicGraph.bufferedReachable_iff_inducedReachable
     (P : PeriodicGraph V) (n : Nat) (omega : ConfigSpace (Sym2 V))
     (x y : P.BufferedVertex n) :
     (FK.openSub (P.bufferedGraph n) (P.bufferedRestrict n omega)).Reachable x y ↔
@@ -93,7 +131,7 @@ theorem PeriodicGraph.bufferedReachable_iff_inducedReachable
         (P.orbitBox (P.bufferedRadius n) : Set V)).Reachable x y := by
   rw [P.openSub_bufferedRestrict_eq_induce]
 
-theorem PeriodicGraph.bufferedReachable_full
+lemma PeriodicGraph.bufferedReachable_full
     (P : PeriodicGraph V) (n : Nat) (omega : ConfigSpace (Sym2 V))
     {x y : P.BufferedVertex n}
     (h : (FK.openSub (P.bufferedGraph n)
@@ -102,9 +140,7 @@ theorem PeriodicGraph.bufferedReachable_full
   rw [P.bufferedReachable_iff_inducedReachable] at h
   exact h.map (SimpleGraph.Embedding.induce _).toHom
 
-
-
-theorem PeriodicGraph.bufferedBoundary_reachable_of_reachable_outside
+lemma PeriodicGraph.bufferedBoundary_reachable_of_reachable_outside
     (P : PeriodicGraph V) (n : Nat) (omega : ConfigSpace (Sym2 V))
     {x z : V} (hx : x ∈ P.orbitBox (P.bufferedRadius n))
     (hz : z ∉ P.orbitBox (P.bufferedRadius n))
@@ -119,9 +155,7 @@ theorem PeriodicGraph.bufferedBoundary_reachable_of_reachable_outside
   rw [P.bufferedReachable_iff_inducedReachable]
   exact hyreach
 
-
-
-theorem PeriodicGraph.bufferedBoundary_not_mem_of_lt
+lemma PeriodicGraph.bufferedBoundary_not_mem_of_lt
     (P : PeriodicGraph V) {n m : Nat} (hnm : n < m)
     (v : P.BufferedVertex m) (hv : P.bufferedBoundary m v) :
     v.1 ∉ P.orbitBox (P.bufferedRadius n) := by
@@ -132,9 +166,7 @@ theorem PeriodicGraph.bufferedBoundary_not_mem_of_lt
   exact hw (P.orbitBox_mono
     (P.bufferedRadius_strictMono.monotone hnm') hwSucc)
 
-
-
-theorem PeriodicGraph.bufferedRootBoundaryCylinder_antitone
+lemma PeriodicGraph.bufferedRootBoundaryCylinder_antitone
     (P : PeriodicGraph V) :
     Antitone (fun n => P.bufferedCylinder n
       (P.bufferedRootBoundaryEvent n)) := by
@@ -151,9 +183,9 @@ theorem PeriodicGraph.bufferedRootBoundaryCylinder_antitone
         hfull
     exact ⟨y, hybd, hyreach⟩
 
-
-
-theorem PeriodicGraph.iInter_bufferedRootBoundaryCylinder
+/-- The root-to-boundary cylinder events intersect to the percolation event: the root reaches every
+box boundary exactly when its cluster is infinite. -/
+lemma PeriodicGraph.iInter_bufferedRootBoundaryCylinder
     (P : PeriodicGraph V) :
     (⋂ n : Nat, P.bufferedCylinder n (P.bufferedRootBoundaryEvent n)) =
       P.percolationEvent := by
@@ -161,7 +193,7 @@ theorem PeriodicGraph.iInter_bufferedRootBoundaryCylinder
   ext omega
   simp only [Set.mem_iInter, PeriodicGraph.bufferedCylinder,
     Set.mem_preimage, PeriodicGraph.bufferedRootBoundaryEvent,
-    PeriodicGraph.percolationEvent, Set.mem_setOf_eq]
+    PeriodicGraph.percolationEvent, Set.mem_ofPred_eq]
   constructor
   · intro hall
     by_contra hfinite
@@ -190,13 +222,13 @@ theorem PeriodicGraph.iInter_bufferedRootBoundaryCylinder
         (P.bufferedRoot n).2 hzout hzreach
     exact ⟨y, hybd, hyreach⟩
 
+/-! ## C. Monotonicity, sharpness and the critical relation -/
+
 section Countable
 
 variable [Countable V]
 
-
-
-theorem PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto_measure
+lemma PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto_measure
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu] :
     Tendsto
@@ -214,9 +246,7 @@ theorem PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto_measure
     (ENNReal.tendsto_toReal (measure_ne_top mu P.percolationEvent)).comp htend
   exact hreal
 
-
-
-theorem PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto
+lemma PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     Tendsto
@@ -235,12 +265,10 @@ theorem PeriodicGraph.bufferedRootBoundaryCylinder_real_tendsto
     ⟨0, measure_ne_top mu _⟩
   rw [P.iInter_bufferedRootBoundaryCylinder] at htend
   have hreal := (ENNReal.tendsto_toReal (measure_ne_top mu P.percolationEvent)).comp htend
-  rw [PeriodicGraph.wiredPercolationProbability, dif_pos ⟨⟨hp, hp1⟩, hq⟩]
+  rw [PeriodicGraph.wiredPercolationProbability, dite_eq_left ⟨⟨hp, hp1⟩, hq⟩]
   exact hreal
 
-
-
-theorem PeriodicGraph.hasPercolationCylinderApproximation
+lemma PeriodicGraph.hasPercolationCylinderApproximation
     (P : PeriodicGraph V) {q : Real} (hq : 1 ≤ q) :
     P.HasPercolationCylinderApproximation q := by
   refine ⟨P.bufferedRootBoundaryEvent,
@@ -249,8 +277,7 @@ theorem PeriodicGraph.hasPercolationCylinderApproximation
   exact P.bufferedRootBoundaryCylinder_real_tendsto hp hp1
     (zero_lt_one.trans_le hq)
 
-
-
+/-- For `q ≥ 1` the wired percolation probability `θ(p, q)` is monotone in `p` on `(0, 1)`. -/
 theorem PeriodicGraph.wiredPercolationProbability_monotoneOn
     (P : PeriodicGraph V) {q : Real} (hq : 1 ≤ q) :
     MonotoneOn (fun p => P.wiredPercolationProbability p q)
@@ -258,8 +285,8 @@ theorem PeriodicGraph.wiredPercolationProbability_monotoneOn
   P.wiredPercolationProbability_monotoneOn_of_cylinderApproximation hq
     (P.hasPercolationCylinderApproximation hq)
 
-
-
+/-- For `q ≥ 1` and `pc ∈ (0, 1)`, the wired model does not percolate below `pc` and percolates
+above it. -/
 theorem PeriodicGraph.offCriticalSharpness
     (P : PeriodicGraph V) {q : Real} (hq : 1 ≤ q)
     (hpc : P.criticalPoint q ∈ Ioo (0 : Real) 1) :
@@ -268,9 +295,8 @@ theorem PeriodicGraph.offCriticalSharpness
   P.offCriticalSharpness_of_monotoneOn hpc
     (P.wiredPercolationProbability_monotoneOn hq)
 
-
-
-
+/-- Conditional critical-point duality: dual subcritical coverage and no-coexistence give
+`pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q` for `q ≥ 1`. -/
 theorem PeriodicGraph.dualCritical_relation_of_noCoexistence
     {W : Type*} [DecidableEq W] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)

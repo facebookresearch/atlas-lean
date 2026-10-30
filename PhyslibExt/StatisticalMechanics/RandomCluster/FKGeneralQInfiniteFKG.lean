@@ -5,26 +5,46 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
 
+/-!
+# FKG inequality for the free infinite-volume FK measure
+
+For `q ≥ 1` increasing events are positively correlated under the free infinite-volume
+random-cluster measure on `ℤ^d`.
+
+## i. Overview
+
+For an increasing event depending on the edges of a box `Λ_N`, the finite-volume FKG inequality
+holds under the free measure on every larger box `Λ_m`. The free infinite-volume measure is the weak
+limit of these measures, and box events have converging probabilities, so the inequality passes to
+the limit. Continuity along decreasing intersections then extends it to countable decreasing
+intersections of such events. All results are proved unconditionally (only `0 < p < 1` and `1 ≤ q`).
+
+## ii. Key results
+
+- `fkgq_freeInfiniteVolume_fkg` : FKG for increasing events of the box `Λ_N`.
+- `fkgq_freeInfiniteVolume_fkg_of_dependsOn` : FKG for increasing events depending only on the edges
+  of a box.
+- `fkgq_freeInfiniteVolume_fkg_iInter_of_dependsOn` : FKG for decreasing intersections of such
+  events.
+
+## iii. Table of contents
+
+- A. Finite-volume FKG for box events
+- B. Passage to the infinite-volume limit
+- C. Decreasing intersections
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Filter Topology SimpleGraph
 open StatMech.Lattice StatMech.IsingFK
@@ -33,9 +53,9 @@ namespace StatMech.FK
 
 variable {d : Nat}
 
+/-! ## A. Finite-volume FKG for box events -/
 
-
-theorem fkgq_freeFiniteMeasure_fkg
+lemma fkgq_freeFiniteMeasure_fkg
     (N m : Nat) (hNm : N <= m) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -92,8 +112,10 @@ theorem fkgq_freeFiniteMeasure_fkg
         fkProb (boxGraph d m) p q omega :=
       Finset.sum_congr rfl (fun omega _ => mul_comm _ _)
 
+/-! ## B. Passage to the infinite-volume limit -/
 
-
+/-- FKG inequality for the free infinite-volume measure on `ℤ^d`, `q ≥ 1`, for increasing
+events of the box `Λ_N`. -/
 theorem fkgq_freeInfiniteVolume_fkg
     (N : Nat) {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -119,9 +141,8 @@ theorem fkgq_freeInfiniteVolume_fkg
   filter_upwards [eventually_ge_atTop N] with m hm
   exact fkgq_freeFiniteMeasure_fkg N m hm hp hp1 hq hS₁ hS₂
 
-
-
-
+/-- FKG inequality for the free infinite-volume measure, `q ≥ 1`, for increasing events that
+depend only on the edges of a box. -/
 theorem fkgq_freeInfiniteVolume_fkg_of_dependsOn
     (N : Nat) {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {A B : Set (ConfigSpace (Sym2 (Site d)))}
@@ -157,9 +178,9 @@ theorem fkgq_freeInfiniteVolume_fkg_of_dependsOn
   rw [heq₁, heq₂]
   exact fkgq_freeInfiniteVolume_fkg N hp hp1 hq hS₁ hS₂
 
+/-! ## C. Decreasing intersections -/
 
-
-theorem fkgq_freeInfiniteVolume_fkg_iInter
+lemma fkgq_freeInfiniteVolume_fkg_iInter
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (N : Nat -> Nat)
     (S₁ S₂ : (n : Nat) -> Set (ConfigSpace (Sym2 (boxVerts d (N n)))))
@@ -185,10 +206,9 @@ theorem fkgq_freeInfiniteVolume_fkg_iInter
   · intro n
     exact fkgq_freeInfiniteVolume_fkg (N n) hp hp1 hq (hS₁ n) (hS₂ n)
 
-
-
-
-theorem fkgq_freeInfiniteVolume_fkg_iInter_of_dependsOn
+/-- FKG inequality for decreasing intersections of increasing box-local events under the free
+infinite-volume measure. -/
+lemma fkgq_freeInfiniteVolume_fkg_iInter_of_dependsOn
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (N : Nat -> Nat)
     (A B : Nat -> Set (ConfigSpace (Sym2 (Site d))))

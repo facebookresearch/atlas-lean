@@ -6,30 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.ThermodynamicDuality
 
+/-!
+# Reduction of critical-point duality to sharpness and no-coexistence
+
+Percolation probabilities and critical points of periodic random-cluster models, and the
+reduction of the self-dual relation between primal and dual critical points to three inputs.
+
+## i. Overview
+
+For a periodic graph we define open subgraphs, clusters, the percolation event at a root vertex,
+the wired percolation probability `θ(p, q)` under the buffered wired infinite-volume measure, and
+the critical point `pc(q) = sup {p : θ(p, q) = 0}`. The abstract argument then shows: if the primal
+and dual percolation predicates are sharp off their critical points, the dual percolates at `p*`
+for every subcritical `p` (coverage), and the two never percolate together at `p` and `p*`
+(no-coexistence), then `pc* = (pc)*`, that is `pc / (1 - pc) · pc* / (1 - pc*) = q`.
+The two headline results are conditional on `OffCriticalSharpness` (primal and dual),
+`DualSubcriticalCoverage` and `DualNoCoexistence`, besides `pc, pc* ∈ (0, 1)` and `0 < q`.
+
+## ii. Key results
+
+- `PeriodicGraph.criticalPoint` : the wired critical point of a periodic random-cluster model.
+- `dualCritical_eq_of_crossBounds` : cross bounds between `pc*` and `p*` force `pc* = (pc)*`.
+- `dualCritical_relation_of_sharpness_noCoexistence` : the abstract critical relation.
+- `PeriodicGraph.dualCritical_relation_of_sharpness_noCoexistence` : the critical relation for a
+  periodic graph and its dual.
+
+## iii. Table of contents
+
+- A. Clusters and percolation
+- B. Percolation probability and critical point
+- C. Sharpness, coverage and no-coexistence
+- D. The critical relation
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Sections 5.1 and 6.2.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
@@ -41,51 +59,52 @@ open BeffaraDC
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
+/-! ## A. Clusters and percolation -/
 
+/-- The subgraph of open edges of a configuration. -/
 def PeriodicGraph.openSubgraph (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) : SimpleGraph V where
   Adj x y := P.graph.Adj x y ∧ omega s(x, y) = true
   symm := ⟨fun x y h ↦ ⟨h.1.symm, by simpa [Sym2.eq_swap] using h.2⟩⟩
   loopless := ⟨fun x h ↦ h.1.ne rfl⟩
 
-@[simp] theorem PeriodicGraph.openSubgraph_adj
+@[simp] lemma PeriodicGraph.openSubgraph_adj
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x y : V) :
     (P.openSubgraph omega).Adj x y ↔
       P.graph.Adj x y ∧ omega s(x, y) = true :=
   Iff.rfl
 
-
-
+/-- A chosen root vertex in the fundamental domain. -/
 noncomputable def PeriodicGraph.root (P : PeriodicGraph V) : V :=
   P.fundamentalDomain_nonempty.choose
 
-theorem PeriodicGraph.root_mem_fundamentalDomain (P : PeriodicGraph V) :
+lemma PeriodicGraph.root_mem_fundamentalDomain (P : PeriodicGraph V) :
     P.root ∈ P.fundamentalDomain :=
   P.fundamentalDomain_nonempty.choose_spec
 
-
+/-- The open cluster of a vertex: all vertices joined to it by an open path. -/
 def PeriodicGraph.cluster (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (v : V) : Set V :=
   {w | (P.openSubgraph omega).Reachable v w}
 
-
-
+/-- The configuration has an infinite open cluster. -/
 def PeriodicGraph.HasInfiniteCluster
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) : Prop :=
   ∃ x, (P.cluster omega x).Infinite
 
-
+/-- The event that the open cluster of the root is infinite. -/
 def PeriodicGraph.percolationEvent (P : PeriodicGraph V) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | (P.cluster omega P.root).Infinite}
+
+/-! ## B. Percolation probability and critical point -/
 
 section Countable
 
 variable [Countable V]
 
-
-
-
+/-- The wired percolation probability `θ(p, q)`: the probability that the root cluster is infinite
+under the buffered wired infinite-volume measure, and `0` outside `0 < p < 1`, `0 < q`. -/
 noncomputable def PeriodicGraph.wiredPercolationProbability
     (P : PeriodicGraph V) (p q : ℝ) : ℝ :=
   if h : p ∈ Ioo (0 : ℝ) 1 ∧ 0 < q then
@@ -94,7 +113,7 @@ noncomputable def PeriodicGraph.wiredPercolationProbability
       Measure (ConfigSpace (Sym2 V))).real P.percolationEvent
   else 0
 
-theorem PeriodicGraph.wiredPercolationProbability_nonneg
+lemma PeriodicGraph.wiredPercolationProbability_nonneg
     (P : PeriodicGraph V) (p q : ℝ) :
     0 ≤ P.wiredPercolationProbability p q := by
   unfold PeriodicGraph.wiredPercolationProbability
@@ -102,7 +121,7 @@ theorem PeriodicGraph.wiredPercolationProbability_nonneg
   · exact ENNReal.toReal_nonneg
   · exact le_rfl
 
-theorem PeriodicGraph.wiredPercolationProbability_le_one
+lemma PeriodicGraph.wiredPercolationProbability_le_one
     (P : PeriodicGraph V) (p q : ℝ) :
     P.wiredPercolationProbability p q ≤ 1 := by
   unfold PeriodicGraph.wiredPercolationProbability
@@ -113,57 +132,53 @@ theorem PeriodicGraph.wiredPercolationProbability_le_one
     exact prob_le_one
   · norm_num
 
-
-
+/-- The wired model percolates at `(p, q)`: `θ(p, q) > 0`. -/
 def PeriodicGraph.wiredPercolates
     (P : PeriodicGraph V) (p q : ℝ) : Prop :=
   0 < P.wiredPercolationProbability p q
 
-
+/-- The parameters `p ∈ (0, 1)` at which `θ(p, q) = 0`. -/
 def PeriodicGraph.subcriticalSet
     (P : PeriodicGraph V) (q : ℝ) : Set ℝ :=
   {p | p ∈ Ioo (0 : ℝ) 1 ∧ P.wiredPercolationProbability p q = 0}
 
-@[simp] theorem PeriodicGraph.mem_subcriticalSet
+@[simp] lemma PeriodicGraph.mem_subcriticalSet
     (P : PeriodicGraph V) {p q : ℝ} :
     p ∈ P.subcriticalSet q ↔
       p ∈ Ioo (0 : ℝ) 1 ∧ P.wiredPercolationProbability p q = 0 :=
   Iff.rfl
 
-
-
+/-- The wired critical point `pc(q) = sup {p : θ(p, q) = 0}`. -/
 noncomputable def PeriodicGraph.criticalPoint
     (P : PeriodicGraph V) (q : ℝ) : ℝ :=
   sSup (P.subcriticalSet q)
 
 end Countable
 
+/-! ## C. Sharpness, coverage and no-coexistence -/
 
-
-
-
-
+/-- A percolation predicate is sharp off `pc`: it fails below `pc` and holds above `pc` on `(0, 1)`.
+-/
 def OffCriticalSharpness (percolates : ℝ → Prop) (pc : ℝ) : Prop :=
   (∀ p ∈ Ioo (0 : ℝ) 1, p < pc → ¬percolates p) ∧
   (∀ p ∈ Ioo (0 : ℝ) 1, pc < p → percolates p)
 
-
-
+/-- Dual subcritical coverage: the dual model percolates at `p*` for every `p < pc` in `(0, 1)`. -/
 def DualSubcriticalCoverage
     (dualPercolates : ℝ → Prop) (pc q : ℝ) : Prop :=
   ∀ p ∈ Ioo (0 : ℝ) 1, p < pc →
     dualPercolates (dualParam p q)
 
-
-
+/-- Primal/dual no-coexistence: the primal model at `p` and the dual model at `p*` never percolate
+together. -/
 def DualNoCoexistence
     (primalPercolates dualPercolates : ℝ → Prop) (q : ℝ) : Prop :=
   ∀ p ∈ Ioo (0 : ℝ) 1,
     ¬(primalPercolates p ∧ dualPercolates (dualParam p q))
 
+/-! ## D. The critical relation -/
 
-
-theorem dualParam_strictAntiOn {q : ℝ} (hq : 0 < q) :
+lemma dualParam_strictAntiOn {q : ℝ} (hq : 0 < q) :
     StrictAntiOn (fun p : ℝ ↦ dualParam p q) (Ioo 0 1) := by
   intro p hp r hr hpr
   unfold dualParam
@@ -171,9 +186,7 @@ theorem dualParam_strictAntiOn {q : ℝ} (hq : 0 < q) :
     (dualDen_pos hp.1 hp.2 hq)]
   nlinarith
 
-
-
-theorem dualCritical_crossBounds_of_sharpness_noCoexistence
+lemma dualCritical_crossBounds_of_sharpness_noCoexistence
     {primalPercolates dualPercolates : ℝ → Prop}
     {pc pcDual q : ℝ}
     (hq : 0 < q)
@@ -203,9 +216,8 @@ theorem dualCritical_crossBounds_of_sharpness_noCoexistence
     have hlt : pcDual < dualParam p q := lt_of_not_ge hnot
     exact hdualNot (hsharpDual.2 (dualParam p q) hpDual hlt)
 
-
-
-theorem dualCritical_eq_of_crossBounds
+/-- Cross bounds `pc* ≤ p*` for `p < pc` and `p* ≤ pc*` for `p > pc` force `pc* = (pc)*`. -/
+lemma dualCritical_eq_of_crossBounds
     {pc pcDual q : ℝ}
     (hpc : pc ∈ Ioo (0 : ℝ) 1)
     (hpcDual : pcDual ∈ Ioo (0 : ℝ) 1)
@@ -252,9 +264,8 @@ theorem dualCritical_eq_of_crossBounds
       simpa only [hinvPcDual] using h
     linarith
 
-
-
-
+/-- Conditional critical-point duality: off-critical sharpness of both models, dual subcritical
+coverage and no-coexistence give `pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
 theorem dualCritical_relation_of_sharpness_noCoexistence
     {primalPercolates dualPercolates : ℝ → Prop}
     {pc pcDual q : ℝ}
@@ -285,8 +296,8 @@ theorem dualCritical_relation_of_sharpness_noCoexistence
           field_simp [hpcDen, hpcDualDen]
     _ = q := hproduct
 
-
-
+/-- Conditional critical-point duality for a periodic graph and its dual, under off-critical
+sharpness of both wired models, dual subcritical coverage and no-coexistence. -/
 theorem PeriodicGraph.dualCritical_relation_of_sharpness_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)

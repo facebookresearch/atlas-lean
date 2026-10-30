@@ -5,31 +5,52 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreDomination
 
+/-!
+# The law of inner events under the conditioned off-centre measure
+
+If the conditioned boundary-clique measure on a larger graph agrees pointwise on the embedded box
+with a function `μ`, then every inner event has conditioned probability equal to its `μ`-mass.
+
+## i. Overview
+
+For a box graph embedded in a larger graph by an injective, adjacency-matching vertex map, the
+measure obtained by conditioning on the outside edges is carried by the extensions of the outside
+configuration. Pulling back inner events along the restriction map turns the conditioned
+probability of an inner event into a sum over inner configurations. The result is proved
+unconditionally, under `0 < p < 1`, `0 < q`, and the pointwise identification `hmu` it is about.
+
+## ii. Key results
+
+- `ocd_condBcProb_innerEvent_eq_of_pointwise` : the conditioned probability of an inner event equals
+  its `μ`-mass when the conditioned measure agrees pointwise with `μ`.
+
+## iii. Table of contents
+
+- A. Inner events under the conditioned measure
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.2.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
 noncomputable section
 
+/-! ## A. Inner events under the conditioned measure -/
 
-
+/-- If the conditioned boundary-clique measure, read on extensions of the outside configuration,
+equals `μ` pointwise, then every inner event has conditioned probability equal to its `μ`-mass. -/
 theorem ocd_condBcProb_innerEvent_eq_of_pointwise
     {Vin Vout : Type*}
     [Fintype Vin] [DecidableEq Vin]

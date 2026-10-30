@@ -5,42 +5,74 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
 module
 
 public import MathlibExt.Probability.Configuration.AeTailInvariant
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 
+/-!
+# Translation-invariant edge events are almost surely tail events
+
+For a translation-invariant finite measure on edge configurations of `ℤᵈ`, every measurable
+translation-invariant event agrees almost surely with a tail event.
+
+## i. Overview
+
+The edge windows `{e : both endpoints of e lie in Λₙ}` exhaust the edges of `ℤᵈ`, and any finite
+edge set can be translated out of any given window. The general result that invariant events of a
+translation-invariant measure are almost surely tail events, when finite sets can be moved off every
+window, then applies to these windows. The headline is proved unconditionally, for `d ≥ 1` and any
+translation-invariant finite measure.
+
+## ii. Key results
+
+- `fk_invariant_event_ae_tail` : a measurable translation-invariant event is almost surely equal to
+  a tail event.
+- `fkTailEdgeWindow_escape` : every finite edge set can be translated outside any box window.
+
+## iii. Table of contents
+
+- A. Box edge windows
+- B. Invariant events are tail events
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.3.
+-/
+
 @[expose] public section
 
 open MeasureTheory Set
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
 namespace FK
 
-open ConfigSpace Lattice
+open ConfigSpace StatMech.Lattice
 
 variable {d : ℕ}
 
+/-! ## A. Box edge windows -/
 
-
-
-
-
+/-- The edges of `ℤᵈ` with both endpoints in the box `Λₙ`. -/
 def fkTailEdgeWindow (d n : ℕ) : Set (Sym2 (Site d)) :=
   {e | ∀ x, x ∈ e → x ∈ box d n}
 
-theorem fkTailEdgeWindow_mono : Monotone (fkTailEdgeWindow d) := by
+lemma fkTailEdgeWindow_mono : Monotone (fkTailEdgeWindow d) := by
   intro m n hmn e he x hx
   exact box_mono d hmn (he x hx)
 
+/-- The finite set of endpoints of the edges in `F`. -/
 private noncomputable def fkTailVertexSupport
     (F : Finset (Sym2 (Site d))) : Finset (Site d) :=
   F.biUnion fun e => {e.out.1, e.out.2}
 
-private theorem mem_fkTailVertexSupport_of_mem
+private lemma mem_fkTailVertexSupport_of_mem
     {F : Finset (Sym2 (Site d))} {e : Sym2 (Site d)} (he : e ∈ F)
     {x : Site d} (hx : x ∈ e) : x ∈ fkTailVertexSupport F := by
   rw [fkTailVertexSupport, Finset.mem_biUnion]
@@ -52,10 +84,8 @@ private theorem mem_fkTailVertexSupport_of_mem
   simpa only [Finset.mem_insert, Finset.mem_singleton] using
     (Sym2.mem_iff.mp hx')
 
-
-
-
-theorem fkTailEdgeWindow_escape (hd : 1 ≤ d)
+/-- For `d ≥ 1`, every finite edge set can be translated so that it avoids the box window `k`. -/
+lemma fkTailEdgeWindow_escape (hd : 1 ≤ d)
     (F : Finset (Sym2 (Site d))) (k : ℕ) :
     ∃ g : Multiplicative (Site d),
       (↑(F.image (fun e => g⁻¹ • e)) : Set (Sym2 (Site d))) ⊆
@@ -87,10 +117,10 @@ theorem fkTailEdgeWindow_escape (hd : 1 ≤ d)
         rw [hg]
         change -(if (⟨0, hd⟩ : Fin d) = ⟨0, hd⟩ then
           (M + k + 1 : ℤ) else 0) + x ⟨0, hd⟩ = _
-        rw [if_pos rfl]
+        rw [ite_eq_left_of_eq_true _ _ (eq_true rfl)]
         ring
       have hxOutside : g⁻¹ • x ∉ box d k := by
-        rw [box, Set.mem_setOf_eq]
+        rw [box, Set.mem_ofPred_eq]
         intro hall
         have hcoord := hall ⟨0, hd⟩
         rw [hxval] at hcoord
@@ -110,14 +140,15 @@ theorem fkTailEdgeWindow_escape (hd : 1 ≤ d)
       rw [Percolation.smul_sym2_mk]
       exact Sym2.mem_mk_left (g⁻¹ • x) (g⁻¹ • y)
 
+/-! ## B. Invariant events are tail events -/
+
+/-- An edge event is a tail event if it does not depend on the edges of any box window. -/
 abbrev FKIsTailEvent (d : ℕ)
     (s : Set (ConfigSpace (Sym2 (Site d)))) : Prop :=
   AtiTailEvent (fkTailEdgeWindow d) s
 
-
-
-
-
+/-- For `d ≥ 1` and a translation-invariant finite measure, every measurable translation-invariant
+edge event is almost surely equal to a tail event. -/
 theorem fk_invariant_event_ae_tail (hd : 1 ≤ d)
     {mu : Measure (ConfigSpace (Sym2 (Site d)))} [IsFiniteMeasure mu]
     (hmu : IsTranslationInvariant (G := Multiplicative (Site d)) mu) :

@@ -5,12 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
@@ -18,6 +12,45 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredTranslationInva
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicOfUpperDecay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InclusionExclusion
+
+/-!
+# Translation invariance of the free and wired infinite-volume FK measures
+
+For `q ≥ 1` the free and wired infinite-volume random-cluster measures on `ℤ^d` are invariant under
+lattice translations.
+
+## i. Overview
+
+The probability that a finite set of edges is all open is computed in the box `Λ_m` and in its
+translate `v + Λ_m`; the two finite-volume quantities agree by relabeling vertices. For the wired
+measure the translated boxes are squeezed between centred boxes of slightly smaller and larger
+radius, and monotonicity in the domain (for increasing events, `q ≥ 1`) makes both sequences
+converge to the infinite-volume value; the free measure is handled the same way with the
+inequalities reversed. A probability measure on edge configurations is determined by the
+probabilities of the events "all edges of `T` are open", so the shifted measure equals the original.
+Both headlines are proved unconditionally (only `0 < p < 1` and `1 ≤ q`).
+
+## ii. Key results
+
+- `fkgqt_measure_eq_of_multiOpen_eq` : probability measures on `Bool`-configurations agreeing on all
+  "every edge of `T` is open" events are equal.
+- `fkgqt_wiredIV_isTranslationInvariant` : the wired infinite-volume measure is translation
+  invariant.
+- `fkgqt_freeIV_isTranslationInvariant` : the free infinite-volume measure is translation invariant.
+
+## iii. Table of contents
+
+- A. Wired measure: translated box masses
+- B. Wired measure: squeezing and the limit
+- C. Wired measure: translation invariance
+- D. Free measure: translated box masses
+- E. Free measure: squeezing and the limit
+- F. Free measure: translation invariance
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
 
 @[expose] public section
 
@@ -31,16 +64,17 @@ open StatMech.IsingFK
 
 variable {d : ℕ}
 
+/-! ## A. Wired measure: translated box masses -/
 
+/-- The wired probability, in the translated box `v + Λ_m`, that all edges of the translate of `t ⊆
+Λ_N` are open. -/
 noncomputable def fkgqt_transBoxMass (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) (p q : ℝ) (m : ℕ) (hNm : N ≤ m) : ℝ :=
   med_multiMassProb
     (wiredFkProb (fvs_transBoxGraph d m v) (fvs_transBoxBoundary d m v) p q)
     (flc_transEdges v N t m hNm)
 
-
-
-theorem fkgqt_centred_eq_translated_wired (m : ℕ) (v : Site d)
+lemma fkgqt_centred_eq_translated_wired (m : ℕ) (v : Site d)
     (t : Finset (Sym2 (boxVerts d m))) (p q : ℝ) :
     med_multiMassProb (wiredFkProb (boxGraph d m) (boxBoundary d m) p q) t =
       med_multiMassProb
@@ -57,9 +91,7 @@ theorem fkgqt_centred_eq_translated_wired (m : ℕ) (v : Site d)
   refine Finset.sum_congr rfl fun omega _ ↦ ?_
   rw [med_reCfgIso_preimage (fvs_transEquiv d m v) t]
 
-
-
-theorem fkgqt_centred_med_eq_measure (n : ℕ)
+lemma fkgqt_centred_med_eq_measure (n : ℕ)
     (tb : Finset (Sym2 (boxVerts d n))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     med_multiMassProb
@@ -75,8 +107,7 @@ theorem fkgqt_centred_med_eq_measure (n : ℕ)
     (cdc_boxMultiOpenEvent n tb) hmeas]
   rfl
 
-
-theorem fkgqt_transBoxMass_eq_centred (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMass_eq_centred (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (m : ℕ) (hNm : N ≤ m) :
@@ -93,9 +124,7 @@ theorem fkgqt_transBoxMass_eq_centred (v : Site d) (N : ℕ)
   rw [Finset.image_image]
   exact Finset.image_congr (fun eb _ ↦ edgeIncl_innerEdgeLE d hNm eb)
 
-
-
-theorem fkgqt_transBoxMass_tendsto_centred_iv (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMass_tendsto_centred_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun k : ℕ ↦ fkgqt_transBoxMass v N t p q (N + k)
@@ -113,8 +142,9 @@ theorem fkgqt_transBoxMass_tendsto_centred_iv (v : Site d) (N : ℕ)
     (fkgqt_transBoxMass_eq_centred v N t hp hp1
       (zero_lt_one.trans_le hq) (N + k) (Nat.le_add_right N k)).symm
 
+/-! ## B. Wired measure: squeezing and the limit -/
 
-theorem fkgqt_squeeze_lower (v : Site d) (N : ℕ)
+lemma fkgqt_squeeze_lower (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (m : ℕ) (hNm : N ≤ m) (hm : 1 ≤ m) :
@@ -151,8 +181,7 @@ theorem fkgqt_squeeze_lower (v : Site d) (N : ℕ)
     flc_valImage_ocd_innerEdge_image hsub (flc_transEdges v N t m hNm),
     flc_valImage_transEdges v N t m hNm]
 
-
-theorem fkgqt_squeeze_upper (v : Site d) (N : ℕ)
+lemma fkgqt_squeeze_upper (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (m a : ℕ) (hNm : N ≤ m) (ha : 1 ≤ a)
@@ -185,8 +214,7 @@ theorem fkgqt_squeeze_upper (v : Site d) (N : ℕ)
   change med_multiMassProb (wiredFkProb (boxGraph d a) (boxBoundary d a) p q) tb ≤ _
   rw [fkgqt_centred_med_eq_measure a tb hp hp1 (zero_lt_one.trans_le hq), htb]
 
-
-theorem fkgqt_transBoxMass_tendsto_translated_iv (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMass_tendsto_translated_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun k : ℕ ↦ fkgqt_transBoxMass v N t p q (N + k)
@@ -252,9 +280,9 @@ theorem fkgqt_transBoxMass_tendsto_translated_iv (v : Site d) (N : ℕ)
       (N + k) ((N + k) - c - 1) (Nat.le_add_right N k) ha hcond
       (t'.image (innerEdgeLE d hNa)) htb
 
+/-! ## C. Wired measure: translation invariance -/
 
-
-theorem fkgqt_wired_multiOpen_translation (v : Site d)
+lemma fkgqt_wired_multiOpen_translation (v : Site d)
     (s : Finset (Sym2 (Site d))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
@@ -275,9 +303,9 @@ theorem fkgqt_wired_multiOpen_translation (v : Site d)
   exact (ENNReal.toReal_eq_toReal_iff'
     (measure_ne_top μ _) (measure_ne_top μ _)).mp hreal
 
-
-
-theorem fkgqt_measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
+/-- Two probability measures on configurations of a countable edge set are equal if they agree on
+every event "all edges of `T` are open". -/
+lemma fkgqt_measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
     (μ ν : Measure (ConfigSpace E))
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (hmom : ∀ T : Finset E, μ (fmu_multiOpen T) = ν (fmu_multiOpen T)) :
@@ -303,8 +331,8 @@ theorem fkgqt_measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
       (measure_ne_top μ C) (measure_ne_top ν C)).mp hreal
   · simp
 
-
-
+/-- The wired infinite-volume random-cluster measure on `ℤ^d` is translation invariant for
+`q ≥ 1`. -/
 theorem fkgqt_wiredIV_isTranslationInvariant {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
@@ -313,10 +341,10 @@ theorem fkgqt_wiredIV_isTranslationInvariant {p q : ℝ}
   intro g
   let μ : Measure (ConfigSpace (Sym2 (Site d))) :=
     wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq)
-  haveI : IsProbabilityMeasure μ := by
+  have : IsProbabilityMeasure μ := by
     dsimp [μ]
     infer_instance
-  haveI : IsProbabilityMeasure (Measure.map (shift g) μ) :=
+  have : IsProbabilityMeasure (Measure.map (shift g) μ) :=
     inferInstance
   refine ⟨measurable_shift g, ?_⟩
   apply fkgqt_measure_eq_of_multiOpen_eq
@@ -328,17 +356,16 @@ theorem fkgqt_wiredIV_isTranslationInvariant {p q : ℝ}
   simp only [ofAdd_toAdd] at h
   exact h
 
+/-! ## D. Free measure: translated box masses -/
 
-
-
+/-- The free probability, in the translated box `v + Λ_m`, that all edges of the translate of `t ⊆
+Λ_N` are open. -/
 noncomputable def fkgqt_transBoxMassFree (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) (p q : ℝ) (m : ℕ) (hNm : N ≤ m) : ℝ :=
   med_multiMassProb (fkProb (fvs_transBoxGraph d m v) p q)
     (flc_transEdges v N t m hNm)
 
-
-
-theorem fkgqt_centred_eq_translated_free (m : ℕ) (v : Site d)
+lemma fkgqt_centred_eq_translated_free (m : ℕ) (v : Site d)
     (t : Finset (Sym2 (boxVerts d m))) (p q : ℝ) :
     med_multiMassProb (fkProb (boxGraph d m) p q) t =
       med_multiMassProb (fkProb (fvs_transBoxGraph d m v) p q)
@@ -354,9 +381,7 @@ theorem fkgqt_centred_eq_translated_free (m : ℕ) (v : Site d)
   refine Finset.sum_congr rfl fun omega _ ↦ ?_
   rw [med_reCfgIso_preimage (fvs_transEquiv d m v) t]
 
-
-
-theorem fkgqt_centred_med_eq_measure_free (n : ℕ)
+lemma fkgqt_centred_med_eq_measure_free (n : ℕ)
     (tb : Finset (Sym2 (boxVerts d n))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     med_multiMassProb (fkProb (boxGraph d n) p q) tb =
@@ -371,9 +396,7 @@ theorem fkgqt_centred_med_eq_measure_free (n : ℕ)
     (cdc_boxMultiOpenEvent n tb) hmeas]
   rfl
 
-
-
-theorem fkgqt_transBoxMassFree_eq_centred (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMassFree_eq_centred (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (m : ℕ) (hNm : N ≤ m) :
@@ -391,9 +414,7 @@ theorem fkgqt_transBoxMassFree_eq_centred (v : Site d) (N : ℕ)
   rw [Finset.image_image]
   exact Finset.image_congr (fun eb _ ↦ edgeIncl_innerEdgeLE d hNm eb)
 
-
-
-theorem fkgqt_transBoxMassFree_tendsto_centred_iv (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMassFree_tendsto_centred_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun k : ℕ ↦ fkgqt_transBoxMassFree v N t p q (N + k)
@@ -411,8 +432,9 @@ theorem fkgqt_transBoxMassFree_tendsto_centred_iv (v : Site d) (N : ℕ)
     (fkgqt_transBoxMassFree_eq_centred v N t hp hp1
       (zero_lt_one.trans_le hq) (N + k) (Nat.le_add_right N k)).symm
 
+/-! ## E. Free measure: squeezing and the limit -/
 
-theorem fkgqt_freeSqueeze_upper (v : Site d) (N : ℕ)
+lemma fkgqt_freeSqueeze_upper (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (m : ℕ) (hNm : N ≤ m) :
@@ -444,8 +466,7 @@ theorem fkgqt_freeSqueeze_upper (v : Site d) (N : ℕ)
     flc_valImage_ocd_innerEdge_image hsub (flc_transEdges v N t m hNm),
     flc_valImage_transEdges v N t m hNm]
 
-
-theorem fkgqt_freeSqueeze_lower (v : Site d) (N : ℕ)
+lemma fkgqt_freeSqueeze_lower (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (m a : ℕ) (hNm : N ≤ m)
@@ -478,9 +499,7 @@ theorem fkgqt_freeSqueeze_lower (v : Site d) (N : ℕ)
   rw [fkgqt_centred_med_eq_measure_free a tb hp hp1
     (zero_lt_one.trans_le hq), htb]
 
-
-
-theorem fkgqt_transBoxMassFree_tendsto_translated_iv (v : Site d) (N : ℕ)
+lemma fkgqt_transBoxMassFree_tendsto_translated_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun k : ℕ ↦ fkgqt_transBoxMassFree v N t p q (N + k)
@@ -547,9 +566,9 @@ theorem fkgqt_transBoxMassFree_tendsto_translated_iv (v : Site d) (N : ℕ)
     simpa only [vs, c] using fkgqt_freeSqueeze_upper v N t hp hp1 hq
       (N + k) (Nat.le_add_right N k)
 
+/-! ## F. Free measure: translation invariance -/
 
-
-theorem fkgqt_free_multiOpen_translation (v : Site d)
+lemma fkgqt_free_multiOpen_translation (v : Site d)
     (s : Finset (Sym2 (Site d))) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
@@ -570,8 +589,8 @@ theorem fkgqt_free_multiOpen_translation (v : Site d)
   exact (ENNReal.toReal_eq_toReal_iff'
     (measure_ne_top μ _) (measure_ne_top μ _)).mp hreal
 
-
-
+/-- The free infinite-volume random-cluster measure on `ℤ^d` is translation invariant for
+`q ≥ 1`. -/
 theorem fkgqt_freeIV_isTranslationInvariant {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
@@ -580,10 +599,10 @@ theorem fkgqt_freeIV_isTranslationInvariant {p q : ℝ}
   intro g
   let μ : Measure (ConfigSpace (Sym2 (Site d))) :=
     freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq)
-  haveI : IsProbabilityMeasure μ := by
+  have : IsProbabilityMeasure μ := by
     dsimp [μ]
     infer_instance
-  haveI : IsProbabilityMeasure (Measure.map (shift g) μ) :=
+  have : IsProbabilityMeasure (Measure.map (shift g) μ) :=
     inferInstance
   refine ⟨measurable_shift g, ?_⟩
   apply fkgqt_measure_eq_of_multiOpen_eq

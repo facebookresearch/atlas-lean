@@ -6,22 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRKernel
@@ -29,6 +13,47 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TrifurcationPatternUniqueness
 public import PhyslibExt.CondensedMatter.IsingModel.PlusStateExtremeErgodic
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
+
+/-!
+# Extremality and uniqueness of the free infinite-volume random-cluster measure
+
+The free infinite-volume random-cluster measure on `ℤ^d` is extreme among FK-DLR measures, and,
+when it is ergodic, it has at most one infinite cluster almost surely.
+
+## i. Overview
+
+Every clopen event of the edge configuration space depends on finitely many edges, so it is the
+pull-back of an event in a finite box. The finite-volume DLR sandwich then shows that the free
+infinite-volume measure is stochastically dominated by every FK-DLR measure on clopen increasing
+events (`1 ≤ q`). A minimal measure in this order cannot be a proper convex combination of two
+other DLR measures, which gives extremality. Combining finite-energy merging with positivity of
+trifurcations, the Burton–Keane argument gives uniqueness of the infinite cluster.
+`freeInfiniteVolume_weakDLR_extreme` is proved unconditionally (only `0 < p < 1`, `1 ≤ q`, and the
+DLR property of the two summands). `freeInfinite_canonical_uniqueness_of_isErgodic` is
+conditional: it assumes that the free infinite-volume measure is translation-ergodic (`herg`).
+
+## ii. Key results
+
+- `isClopen_dependsOn_finset` : a clopen event depends on finitely many edges.
+- `freeInfiniteVolume_le_isFKDLR_clopen` : the free measure is dominated by every FK-DLR measure
+  on clopen increasing events.
+- `freeInfiniteVolume_weakDLR_extreme` : the free measure is not a proper convex combination of
+  two other FK-DLR measures.
+- `freeInfinite_canonical_uniqueness_of_isErgodic` : if the free measure is ergodic, the number of
+  infinite clusters is almost surely `0` or `1`.
+
+## iii. Table of contents
+
+- A. Clopen events are finite-box cylinders
+- B. Minimality and extremality of the free measure
+- C. Uniqueness of the infinite cluster
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121
+  (1989).
+-/
 
 @[expose] public section
 
@@ -44,30 +69,27 @@ open StatMech.Percolation
 
 variable {E : Type*}
 
+/-! ## A. Clopen events are finite-box cylinders -/
 
-def exactFiniteCylinder (F : Finset E) (omega : ConfigSpace E) :
-    Set (ConfigSpace E) :=
-  {eta | ∀ e ∈ F, eta e = omega e}
-
-theorem exactFiniteCylinder_isOpen (F : Finset E) (omega : ConfigSpace E) :
-    IsOpen (exactFiniteCylinder F omega) := by
-  have heq : exactFiniteCylinder F omega =
+/-- An exact finite cylinder is open in the product topology. -/
+lemma exactFiniteCylinder_isOpen (F : Finset E) (omega : ConfigSpace E) :
+    IsOpen (cyl F omega) := by
+  have heq : cyl F omega =
       ⋂ e ∈ F, (fun eta : ConfigSpace E => eta e) ⁻¹' {omega e} := by
     ext eta
-    simp only [exactFiniteCylinder, mem_setOf_eq, mem_iInter, mem_preimage,
+    simp only [cyl, mem_ofPred_eq, mem_iInter, mem_preimage,
       mem_singleton_iff]
   rw [heq]
   exact isOpen_biInter_finset fun e _ =>
     (isOpen_discrete {omega e}).preimage (continuous_apply e)
 
-
-
-theorem isClopen_dependsOn_finset (A : Set (ConfigSpace E)) (hA : IsClopen A) :
+/-- A clopen event of the configuration space depends on only finitely many edges. -/
+lemma isClopen_dependsOn_finset (A : Set (ConfigSpace E)) (hA : IsClopen A) :
     ∃ F : Finset E, StatMech.DependsOn A (F : Set E) := by
   classical
   have hlocal : ∀ omega : A, ∃ F : Finset E,
-      omega.1 ∈ exactFiniteCylinder F omega.1 ∧
-        exactFiniteCylinder F omega.1 ⊆ A := by
+      omega.1 ∈ cyl F omega.1 ∧
+        cyl F omega.1 ⊆ A := by
     intro omega
     obtain ⟨F, u, hu, hsub⟩ :=
       isOpen_pi_iff.mp hA.isOpen omega.1 omega.2
@@ -81,15 +103,15 @@ theorem isClopen_dependsOn_finset (A : Set (ConfigSpace E)) (hA : IsClopen A) :
       exact (hu e he).2
   choose support hmem hsub using hlocal
   have hopen : ∀ omega : A,
-      IsOpen (exactFiniteCylinder (support omega) omega.1) :=
+      IsOpen (cyl (support omega) omega.1) :=
     fun omega => exactFiniteCylinder_isOpen (support omega) omega.1
   have hcover : A ⊆ ⋃ omega : A,
-      exactFiniteCylinder (support omega) omega.1 := by
+      cyl (support omega) omega.1 := by
     intro omega homega
     exact mem_iUnion.mpr ⟨⟨omega, homega⟩, hmem ⟨omega, homega⟩⟩
   obtain ⟨witnesses, hwitnesses⟩ :=
     hA.isClosed.isCompact.elim_finite_subcover
-      (fun omega : A => exactFiniteCylinder (support omega) omega.1)
+      (fun omega : A => cyl (support omega) omega.1)
       hopen hcover
   let F : Finset E := witnesses.biUnion support
   refine ⟨F, ?_⟩
@@ -116,9 +138,9 @@ theorem isClopen_dependsOn_finset (A : Set (ConfigSpace E)) (hA : IsClopen A) :
 
 variable {d : ℕ}
 
-
-
-theorem isClopen_eq_boxRestrict_preimage
+/-- A clopen event of `ℤ^d` is the pull-back of an event in a finite box; an increasing event
+pulls back from an increasing one. -/
+lemma isClopen_eq_boxRestrict_preimage
     (A : Set (ConfigSpace (Sym2 (Site d)))) (hA : IsClopen A) :
     ∃ (N : ℕ) (S : Set (ConfigSpace (Sym2 (boxVerts d N)))),
       A = boxRestrict d N ⁻¹' S ∧
@@ -149,9 +171,11 @@ theorem isClopen_eq_boxRestrict_preimage
   · intro hinc
     exact isIncreasing_preimage_extendEdge d N hinc
 
+/-! ## B. Minimality and extremality of the free measure -/
 
-
-theorem freeInfiniteVolume_le_isFKDLR_clopen {p q : ℝ}
+/-- For `q ≥ 1`, the free infinite-volume measure is stochastically dominated by every FK-DLR
+measure on clopen increasing events. -/
+lemma freeInfiniteVolume_le_isFKDLR_clopen {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
     (hphi : IsFKDLR d p q phi) :
@@ -165,8 +189,8 @@ theorem freeInfiniteVolume_le_isFKDLR_clopen {p q : ℝ}
   exact (dlr_infinite_sandwich hp hp1 hq
     hphi (hS hAinc)).1
 
-
-
+/-- For `q ≥ 1`, if the free infinite-volume measure is a proper convex combination of two FK-DLR
+measures, both equal the free measure. -/
 theorem freeInfiniteVolume_weakDLR_extreme {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (phi1 phi2 : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
@@ -194,8 +218,10 @@ theorem freeInfiniteVolume_weakDLR_extreme {p q : ℝ}
     (freeInfiniteVolume_le_isFKDLR_clopen hp hp1 hq phi1 hphi1)
     (freeInfiniteVolume_le_isFKDLR_clopen hp hp1 hq phi2 hphi2)
 
+/-! ## C. Uniqueness of the infinite cluster -/
 
-
+/-- If the free infinite-volume measure on `ℤ^d` is translation-ergodic, then almost surely there
+are zero or one infinite clusters, and never two or more. -/
 theorem freeInfinite_canonical_uniqueness_of_isErgodic
     (hd : 1 ≤ d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (herg : StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
@@ -214,10 +240,8 @@ theorem freeInfinite_canonical_uniqueness_of_isErgodic
     hd herg (freeInfiniteVolume_hasFiniteEnergyMerge hp hp1 hq)
     (freeInfinite_canonical_trifurcation_pos_of_top_pos hp hp1 hq)
 
-
-
-
-theorem freeInfinite_q2_canonical_uniqueness_of_isErgodic
+/-- The `q = 2` (FK–Ising) case of `freeInfinite_canonical_uniqueness_of_isErgodic`. -/
+lemma freeInfinite_q2_canonical_uniqueness_of_isErgodic
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (herg : StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) :

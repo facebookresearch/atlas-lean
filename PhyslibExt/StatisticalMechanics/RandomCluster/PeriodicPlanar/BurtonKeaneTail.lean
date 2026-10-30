@@ -6,39 +6,76 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneTrifurcation
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanContour
 public import Mathlib.Combinatorics.SimpleGraph.Ends.Properties
 
+/-!
+# Infinite tails of an infinite cluster outside a finite set
+
+An infinite open cluster meeting a finite set `K` leaves `K` through an open edge into an infinite
+part of the cluster that stays connected outside `K`.
+
+## i. Overview
+
+The open cluster of `x`, viewed as a locally finite connected graph, is infinite and so has an end.
+That end picks an infinite component of the cluster with the vertices of `K` removed. A boundary
+edge of this component gives an open edge from a vertex inside `K` to a vertex outside, and the
+component is an infinite tail connected by open paths avoiding `K`. These tails are the input to
+the trifurcation construction of the Burton–Keane argument. `infiniteCluster_has_open_exit` is
+proved unconditionally.
+
+## ii. Key results
+
+- `PeriodicGraph.infiniteCluster_component_after_finset` : removing a finite set from an infinite
+  cluster leaves an infinite component.
+- `PeriodicGraph.infiniteCluster_has_open_exit` : an infinite cluster meeting `K` has an open exit
+  edge from `K` into an infinite tail connected outside `K`.
+
+## iii. Table of contents
+
+- A. The cluster as a locally finite graph
+- B. Infinite components outside a finite set
+- C. Exit edges and tail data
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
 
 open Set SimpleGraph
+
+set_option linter.unusedSectionVars false
 
 namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type} [Countable V] [DecidableEq V]
 
+/-! ## A. The cluster as a locally finite graph -/
+
+/-- The vertices of the open cluster of `x`, as a subtype. -/
 abbrev PeriodicGraph.TailClusterVertex (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (x : V) :=
   {y : V // y ∈ P.cluster omega x}
 
+/-- The open subgraph induced on the open cluster of `x`. -/
 abbrev PeriodicGraph.tailClusterGraph (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     SimpleGraph (P.TailClusterVertex omega x) :=
   (P.openSubgraph omega).induce (P.cluster omega x)
 
+/-- The vertices of `K` that lie in the open cluster of `x`, as a finite set of cluster vertices. -/
 noncomputable def PeriodicGraph.tailClusterCut (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (x : V) (K : Finset V) :
     Finset (P.TailClusterVertex omega x) :=
   K.preimage Subtype.val Subtype.val_injective.injOn
 
+/-- The cluster graph is locally finite, since the periodic graph is. -/
 noncomputable instance PeriodicGraph.tailClusterGraphLocallyFinite
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V) :
     SimpleGraph.LocallyFinite (P.tailClusterGraph omega x) := by
@@ -53,6 +90,8 @@ noncomputable instance PeriodicGraph.tailClusterGraphLocallyFinite
     apply Subtype.ext
     exact congrArg (fun z : P.graph.neighborSet v.1 => (z : V)) h)
 
+/-- The cluster graph is preconnected: any two cluster vertices are joined by an open path inside
+the cluster. -/
 instance PeriodicGraph.tailClusterGraphPreconnected
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V) :
     Fact (P.tailClusterGraph omega x).Preconnected := ⟨by
@@ -64,12 +103,15 @@ instance PeriodicGraph.tailClusterGraphPreconnected
       exact u.2.trans (w.takeUntil z hz).reachable)
     u.2 v.2⟩
 
-theorem PeriodicGraph.infiniteCluster_component_after_finset
+/-! ## B. Infinite components outside a finite set -/
+
+/-- Removing the finite set `K` from an infinite cluster leaves an infinite connected component. -/
+lemma PeriodicGraph.infiniteCluster_component_after_finset
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (hinf : (P.cluster omega x).Infinite) (K : Finset V) :
     ∃ D : (P.tailClusterGraph omega x).ComponentCompl
         (P.tailClusterCut omega x K), D.supp.Infinite := by
-  letI : Infinite (P.TailClusterVertex omega x) := hinf.to_subtype
+  have : Infinite (P.TailClusterVertex omega x) := hinf.to_subtype
   let e : (P.tailClusterGraph omega x).end :=
     ⟨(SimpleGraph.nonempty_ends_of_infinite
       (P.tailClusterGraph omega x)).choose,
@@ -83,6 +125,7 @@ theorem PeriodicGraph.infiniteCluster_component_after_finset
   exact ⟨D, SimpleGraph.end_componentCompl_infinite
     (P.tailClusterGraph omega x) e (Opposite.op (P.tailClusterCut omega x K))⟩
 
+/-- The vertices of `V` underlying a component of the cluster with `K` removed. -/
 def PeriodicGraph.tailComponentVertices
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (K : Finset V)
@@ -90,7 +133,7 @@ def PeriodicGraph.tailComponentVertices
       (P.tailClusterCut omega x K)) : Set V :=
   Subtype.val '' (D : Set (P.TailClusterVertex omega x))
 
-theorem PeriodicGraph.tailComponentVertices_infinite
+lemma PeriodicGraph.tailComponentVertices_infinite
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (K : Finset V)
     (D : (P.tailClusterGraph omega x).ComponentCompl
@@ -98,7 +141,7 @@ theorem PeriodicGraph.tailComponentVertices_infinite
     (P.tailComponentVertices omega x K D).Infinite :=
   hD.image Subtype.val_injective.injOn
 
-theorem PeriodicGraph.tailComponentVertices_subset_cluster
+lemma PeriodicGraph.tailComponentVertices_subset_cluster
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (K : Finset V)
     (D : (P.tailClusterGraph omega x).ComponentCompl
@@ -107,7 +150,7 @@ theorem PeriodicGraph.tailComponentVertices_subset_cluster
   rintro _ ⟨y, _, rfl⟩
   exact y.2
 
-theorem PeriodicGraph.tailComponentVertices_connected_outside
+lemma PeriodicGraph.tailComponentVertices_connected_outside
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (K : Finset V)
     (D : (P.tailClusterGraph omega x).ComponentCompl
@@ -142,6 +185,10 @@ theorem PeriodicGraph.tailComponentVertices_connected_outside
     map_rel' := by intro a b hab; exact hab }
   exact hreach.map f
 
+/-! ## C. Exit edges and tail data -/
+
+/-- An open exit edge from `inside ∈ K` to `outside ∉ K` together with an infinite tail of the
+cluster of `x` that contains `outside` and is connected by open paths avoiding `K`. -/
 structure PeriodicGraph.InfiniteTailData (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) (K : Finset V) (x : V) where
   inside : V
@@ -159,6 +206,8 @@ structure PeriodicGraph.InfiniteTailData (P : PeriodicGraph V)
         ((P.openSubgraph omega).induce (K : Set V)ᶜ).Reachable
           ⟨a, ha⟩ ⟨b, hb⟩
 
+/-- An infinite cluster containing a vertex of the finite set `K` has an open exit edge from `K`
+into an infinite tail connected outside `K`. -/
 theorem PeriodicGraph.infiniteCluster_has_open_exit
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (hinf : (P.cluster omega x).Infinite) (K : Finset V) (hxK : x ∈ K) :
@@ -186,6 +235,7 @@ theorem PeriodicGraph.infiniteCluster_has_open_exit
     tail_connected_outside :=
       P.tailComponentVertices_connected_outside omega x K D }⟩
 
+/-- A chosen exit edge and infinite tail for an infinite cluster meeting `K`. -/
 noncomputable def PeriodicGraph.infiniteTailData
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (hinf : (P.cluster omega x).Infinite) (K : Finset V) (hxK : x ∈ K) :

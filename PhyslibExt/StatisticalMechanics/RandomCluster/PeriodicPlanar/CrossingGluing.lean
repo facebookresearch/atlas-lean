@@ -6,43 +6,72 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic
 
+/-!
+# Gluing open crossings of rectangles
+
+In a periodic plane embedding, a horizontal and a vertical open crossing of overlapping
+rectangles meet in a common vertex, so two overlapping horizontal crossings joined by a vertical
+crossing give a horizontal crossing of the union.
+
+## i. Overview
+
+Edges are drawn as arcs whose coordinates stay within `B` of their endpoints. Extending an open
+horizontal crossing and an open vertical crossing by their boundary edges gives two continuous
+paths crossing a rectangle in the two directions, which must intersect (the planar crossing
+lemma). Two edge arcs that meet share an endpoint, so the two open walks share a vertex and their
+starting points are joined by an open walk staying in the rectangle (with a margin of a few `B`).
+Applied twice, this glues the horizontal crossings of two overlapping rectangles across a
+vertical crossing of their overlap, the geometric step behind RSW-type arguments.
+Both headline results are unconditional: their hypotheses are geometric (the edge-arc bound `B`
+and rectangle sizes that leave margins of `5 B`).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.bufferedOpenRectWalks_start_reachable` : a horizontal and a vertical
+  open crossing are joined by an open walk inside the rectangle.
+- `PeriodicPlaneEmbedding.bufferedCrossings_openCluster` : horizontal and vertical crossings of a
+  rectangle lie in a common open cluster.
+- `PeriodicPlaneEmbedding.overlapCrossings_glue_horizontal` : overlapping horizontal crossings and
+  a vertical crossing of the overlap give a horizontal crossing of the union.
+
+## iii. Table of contents
+
+- A. Open subgraphs of rectangles
+- B. Intersecting walk arcs
+- C. Gluing crossings
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 6.4.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-
 open Set SimpleGraph Topology
+
+set_option linter.unusedSectionVars false
 
 namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Open subgraphs of rectangles -/
 
-
+/-- The inclusion of the open subgraph into the ambient graph, as a graph homomorphism. -/
 def PeriodicGraph.openSubgraphAmbientHom (P : PeriodicGraph V)
     (omega : ConfigSpace (Sym2 V)) : P.openSubgraph omega →g P.graph :=
   SimpleGraph.Hom.ofLE fun _ _ h => h.1
 
-@[simp] theorem PeriodicGraph.openSubgraphAmbientHom_apply
+@[simp] lemma PeriodicGraph.openSubgraphAmbientHom_apply
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (v : V) :
     P.openSubgraphAmbientHom omega v = v := rfl
 
-
-
+/-- The inclusion of the open subgraph of a rectangle into the open subgraph of the whole graph. -/
 def PeriodicPlaneEmbedding.openRectToOpenSubgraphHom
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (omega : ConfigSpace (Sym2 V)) :
@@ -55,14 +84,12 @@ def PeriodicPlaneEmbedding.openRectToOpenSubgraphHom
     change P.graph.Adj x.1 y.1 ∧ omega s(x.1, y.1) = true
     exact ⟨SimpleGraph.induce_adj.mp hxy.1, hxy.2⟩
 
-@[simp] theorem PeriodicPlaneEmbedding.openRectToOpenSubgraphHom_apply
+@[simp] lemma PeriodicPlaneEmbedding.openRectToOpenSubgraphHom_apply
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (omega : ConfigSpace (Sym2 V)) (v : E.RectVertex a b c d) :
     E.openRectToOpenSubgraphHom a b c d omega v = v.1 := rfl
 
-
-
-theorem PeriodicPlaneEmbedding.map_openRectToOpenSubgraphHom_ambient
+lemma PeriodicPlaneEmbedding.map_openRectToOpenSubgraphHom_ambient
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (omega : ConfigSpace (Sym2 V))
     {x y : E.RectVertex a b c d}
@@ -74,9 +101,7 @@ theorem PeriodicPlaneEmbedding.map_openRectToOpenSubgraphHom_ambient
   rw [SimpleGraph.Walk.map_map]
   congr 1
 
-
-
-theorem PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce_gluing
+lemma PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce_gluing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (omega : ConfigSpace (Sym2 V)) :
     FK.openSub (E.rectGraph a b c d) (E.rectRestrict a b c d omega) =
@@ -86,9 +111,9 @@ theorem PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce_gluing
     PeriodicGraph.openSubgraph_adj]
   rfl
 
+/-! ## B. Intersecting walk arcs -/
 
-
-theorem PeriodicPlaneEmbedding.exists_common_support_of_walkArc_intersection
+lemma PeriodicPlaneEmbedding.exists_common_support_of_walkArc_intersection
     (E : PeriodicPlaneEmbedding P) {x y z w : V}
     (p : P.graph.Walk x y) (q : P.graph.Walk z w)
     (hp : ¬ p.Nil) (hq : ¬ q.Nil) {r : ℂ}
@@ -114,9 +139,7 @@ theorem PeriodicPlaneEmbedding.exists_common_support_of_walkArc_intersection
       · exact q.fst_mem_support_of_mem_edges hcdq
       · exact q.snd_mem_support_of_mem_edges hcdq
 
-
-
-theorem PeriodicPlaneEmbedding.openWalk_start_reachable_of_walkArc_intersection
+lemma PeriodicPlaneEmbedding.openWalk_start_reachable_of_walkArc_intersection
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V))
     {x y z w : V} (p : (P.openSubgraph omega).Walk x y)
     (q : (P.openSubgraph omega).Walk z w) (hxy : x ≠ y) (hzw : z ≠ w)
@@ -143,10 +166,11 @@ theorem PeriodicPlaneEmbedding.openWalk_start_reachable_of_walkArc_intersection
     simpa only [huv] using hu
   exact (p.takeUntil v hvp').reachable.trans (q.takeUntil v hvq').reachable.symm
 
+/-! ## C. Gluing crossings -/
 
-
-
-theorem PeriodicPlaneEmbedding.bufferedOpenRectWalks_start_reachable
+/-- An open horizontal crossing of a slightly shorter rectangle and an open vertical crossing of a
+slightly narrower one have starting points joined by an open walk inside the full rectangle. -/
+lemma PeriodicPlaneEmbedding.bufferedOpenRectWalks_start_reachable
     (E : PeriodicPlaneEmbedding P) {B a b c d av bv : ℝ}
     (hBpos : 0 < B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -348,8 +372,8 @@ theorem PeriodicPlaneEmbedding.bufferedOpenRectWalks_start_reachable
     exact ⟨by linarith [u.2.1], by linarith [u.2.2.1],
       u.2.2.2.1, u.2.2.2.2⟩
 
-
-
+/-- If a configuration crosses a rectangle horizontally (with vertical margin `4 B`) and vertically
+(with horizontal margin `4 B`), then the two crossings lie in one open cluster. -/
 theorem PeriodicPlaneEmbedding.bufferedCrossings_openCluster
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hBpos : 0 < B)
@@ -388,8 +412,8 @@ theorem PeriodicPlaneEmbedding.bufferedCrossings_openCluster
   exact ⟨xp, yp, xd, yd, hxp, hyp, hxd, hyd,
     pOpen.reachable, qOpen.reachable, r.reachable⟩
 
-
-
+/-- Horizontal crossings of two overlapping rectangles, together with a vertical crossing of their
+overlap, give a horizontal crossing of the union rectangle. -/
 theorem PeriodicPlaneEmbedding.overlapCrossings_glue_horizontal
     (E : PeriodicPlaneEmbedding P) {B a l m b c d : ℝ}
     (hBpos : 0 < B)

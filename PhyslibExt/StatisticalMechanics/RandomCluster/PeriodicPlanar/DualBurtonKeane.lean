@@ -6,38 +6,69 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneUniqueness
 
+/-!
+# Burton–Keane uniqueness for the primal and dual infinite clusters
+
+Under the free buffered infinite-volume measure of a periodic planar graph, positive percolation
+gives a unique infinite cluster almost surely, and the same holds for the dual configuration;
+with both, primal and dual unique infinite clusters coexist almost surely.
+
+## i. Overview
+
+The event "there is an infinite cluster" is translation invariant, so by ergodicity it has
+probability `0` or `1`, and positive percolation at the root forces `1`. By the Burton–Keane
+argument the number of infinite clusters is almost surely `0` or `1`, so the infinite cluster is
+unique. For the dual configuration, the image measure under configuration duality inherits
+ergodicity and finite energy (fixing a finite pattern of dual edges is fixing the complementary
+pattern of primal edges), so the same argument applies on the dual graph.
+The results are unconditional in the sense of this file: besides `0 < p < 1` and `1 ≤ q`, they
+assume connectedness and positive primal (or dual) percolation. The dual results take a periodic
+planar dual pair `D`, whose structure includes the infinite-volume dual laws (see `DualPair`),
+though the proofs here use only the edge duality and the embeddings.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_hasUniqueInfiniteCluster_measure_eq_one` :
+  primal uniqueness of the infinite cluster.
+- `PeriodicPlanarDualPair.freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one`
+  : dual uniqueness of the infinite cluster.
+- `freeBufferedInfiniteVolume_commonUniqueInfiniteClusterEvent_measure_eq_one` (in
+  `PeriodicPlanarDualPair`) : primal and dual unique infinite clusters coexist almost surely.
+
+## iii. Table of contents
+
+- A. Primal uniqueness
+- B. Ergodicity and finite energy of the dual measure
+- C. Dual uniqueness
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121
+  (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 5.99.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
+set_option linter.unusedSectionVars false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V W : Type} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Primal uniqueness -/
 
-
-theorem PeriodicGraph.hasInfiniteCluster_configTranslate
+lemma PeriodicGraph.hasInfiniteCluster_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) :
     P.HasInfiniteCluster (P.configTranslate z omega) ↔
@@ -50,9 +81,7 @@ theorem PeriodicGraph.hasInfiniteCluster_configTranslate
   · rintro ⟨x, hx⟩
     exact ⟨P.shift z x, (P.cluster_infinite_configTranslate z omega x).2 hx⟩
 
-
-
-theorem PeriodicGraph.hasInfiniteCluster_measure_eq_one_of_percolation_pos
+lemma PeriodicGraph.hasInfiniteCluster_measure_eq_one_of_percolation_pos
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (herg : P.IsErgodic mu)
@@ -75,9 +104,7 @@ theorem PeriodicGraph.hasInfiniteCluster_measure_eq_one_of_percolation_pos
     exact False.elim (lt_irrefl 0 hhasPos)
   · exact hone
 
-
-
-theorem PeriodicGraph.hasUniqueInfiniteCluster_measure_eq_one_of_zero_or_one
+lemma PeriodicGraph.hasUniqueInfiniteCluster_measure_eq_one_of_zero_or_one
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hzeroOne : ∃ k : ℕ∞,
@@ -104,8 +131,9 @@ theorem PeriodicGraph.hasUniqueInfiniteCluster_measure_eq_one_of_zero_or_one
   · subst k
     rwa [P.numInfiniteClusters_eq_one_event] at hk
 
-
-
+/-- On a connected periodic planar graph with `q ≥ 1`, if the root percolates with positive
+probability under the free buffered infinite-volume measure, then almost surely there is exactly one
+infinite cluster. -/
 theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_hasUniqueInfiniteCluster_measure_eq_one
     (E : PeriodicPlaneEmbedding P) (hconn : P.graph.Connected)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -125,18 +153,18 @@ theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_hasUniqueInfiniteClust
     (E.freeBufferedInfiniteVolume_numInfiniteClusters_zero_or_one
       hconn hp hp1 hq) hinfinite
 
+/-! ## B. Ergodicity and finite energy of the dual measure -/
+
 namespace PeriodicPlanarDualPair
 
-
-
+/-- The primal pattern on the dual-preimage edges corresponding to a dual pattern: each primal edge
+takes the negated state of its dual edge. -/
 def dualPatternPullback (D : PeriodicPlanarDualPair P Pdual)
     (I : Finset (Sym2 W)) (eta : ConfigSpace ↥I) :
     ConfigSpace ↥(I.map D.edgeDual.symm.toEmbedding) :=
   fun e => !eta ⟨D.edgeDual e.1, by simpa using e.2⟩
 
-
-
-theorem dualConfigEquiv_setPattern
+lemma dualConfigEquiv_setPattern
     (D : PeriodicPlanarDualPair P Pdual)
     (I : Finset (Sym2 W)) (eta : ConfigSpace ↥I)
     (omega : ConfigSpace (Sym2 V)) :
@@ -161,9 +189,7 @@ theorem dualConfigEquiv_setPattern
         (D.dualPatternPullback I eta) omega (D.edgeDual.symm e))
     rw [setPattern_of_not_mem (D.dualPatternPullback I eta) hePre]
 
-
-
-theorem dualMeasure_setPattern_absolutelyContinuous
+lemma dualMeasure_setPattern_absolutelyContinuous
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hpattern : ∀ (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I),
@@ -186,9 +212,7 @@ theorem dualMeasure_setPattern_absolutelyContinuous
       (measurable_setPattern Ipre etaPre)]
   exact hac
 
-
-
-theorem dualMeasure_isErgodic
+lemma dualMeasure_isErgodic
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (herg : P.IsErgodic mu) :
@@ -212,9 +236,7 @@ theorem dualMeasure_isErgodic
     (continuous_dualConfigEquiv D.edgeDual).measurable hs]
   exact hzeroOne
 
-
-
-theorem dualMeasure_hasFiniteEnergy
+lemma dualMeasure_hasFiniteEnergy
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hpattern : ∀ (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I),
@@ -234,9 +256,9 @@ theorem dualMeasure_hasFiniteEnergy
       simp [setOpen, hfe]
   rwa [heq] at hac
 
+/-! ## C. Dual uniqueness -/
 
-
-theorem dualMeasure_numInfiniteClusters_zero_or_one
+lemma dualMeasure_numInfiniteClusters_zero_or_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconn : Pdual.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -246,7 +268,7 @@ theorem dualMeasure_numInfiniteClusters_zero_or_one
     ∃ k : ℕ∞,
       D.dualMeasure mu {omega | Pdual.numInfiniteClusters omega = k} = 1 ∧
         (k = 0 ∨ k = 1) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) := by
+  let : IsProbabilityMeasure (D.dualMeasure mu) := by
     unfold dualMeasure
     infer_instance
   exact D.dualEmbedding.numInfiniteClusters_zero_or_one hconn
@@ -254,9 +276,7 @@ theorem dualMeasure_numInfiniteClusters_zero_or_one
       (D.dualMeasure_hasFiniteEnergy mu hpattern)
       (D.dualMeasure_setPattern_absolutelyContinuous mu hpattern)
 
-
-
-theorem dualMeasure_hasUniqueInfiniteCluster_measure_eq_one
+lemma dualMeasure_hasUniqueInfiniteCluster_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconn : Pdual.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -267,7 +287,7 @@ theorem dualMeasure_hasUniqueInfiniteCluster_measure_eq_one
       {omega | Pdual.HasInfiniteCluster omega} = 1) :
     D.dualMeasure mu
       {omega | Pdual.HasUniqueInfiniteCluster omega} = 1 := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) := by
+  let : IsProbabilityMeasure (D.dualMeasure mu) := by
     unfold dualMeasure
     infer_instance
   exact Pdual.hasUniqueInfiniteCluster_measure_eq_one_of_zero_or_one
@@ -275,8 +295,9 @@ theorem dualMeasure_hasUniqueInfiniteCluster_measure_eq_one
       (D.dualMeasure_numInfiniteClusters_zero_or_one hconn mu herg hpattern)
       hinfinite
 
-
-
+/-- On a connected dual graph with `q ≥ 1`, if the dual configuration percolates with positive
+probability under the free primal buffered infinite-volume measure, then almost surely the dual
+configuration has exactly one infinite cluster. -/
 theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconnDual : Pdual.graph.Connected)
@@ -290,7 +311,7 @@ theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
   let mu := (P.freeBufferedInfiniteVolume hp hp1
     (zero_lt_one.trans_le hq) : Measure (ConfigSpace (Sym2 V)))
   have herg := D.primalEmbedding.freeBufferedInfiniteVolume_isErgodic hp hp1 hq
-  letI : IsProbabilityMeasure (D.dualMeasure mu) := by
+  let : IsProbabilityMeasure (D.dualMeasure mu) := by
     unfold dualMeasure
     infer_instance
   have hdualPercMeasure : 0 < D.dualMeasure mu Pdual.percolationEvent :=
@@ -303,10 +324,7 @@ theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
       (P.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous hp hp1 hq)
       hinfinite
 
-
-
-
-theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_of_freeDualPercolates
+lemma freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_of_freeDualPercolates
     (D : PeriodicPlanarDualPair P Pdual)
     (hconnDual : Pdual.graph.Connected)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -317,16 +335,15 @@ theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_of_freeDualPerc
   apply D.freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
     hconnDual hp hp1 hq
   unfold FreeDualPercolates freeDualPercolationProbability at hdual
-  rw [dif_pos ⟨⟨hp, hp1⟩, zero_lt_one.trans_le hq⟩] at hdual
+  rw [dite_eq_left ⟨⟨hp, hp1⟩, zero_lt_one.trans_le hq⟩] at hdual
   unfold dualMeasure Measure.real
   rw [Measure.map_apply
     (continuous_dualConfigEquiv D.edgeDual).measurable
     (percolationEvent_measurableSet Pdual)]
   exact hdual
 
-
-
-
+/-- If both the primal and the dual configuration percolate with positive probability under the free
+buffered infinite-volume measure, then almost surely each has exactly one infinite cluster. -/
 theorem freeBufferedInfiniteVolume_commonUniqueInfiniteClusterEvent_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconn : P.graph.Connected) (hconnDual : Pdual.graph.Connected)

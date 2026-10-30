@@ -6,14 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeanePattern
+
+/-!
+# Uniqueness of the infinite cluster on periodic planar graphs
+
+On a connected periodic graph embedded in the plane, the infinite-volume random-cluster measure has
+at most one infinite cluster almost surely.
+
+## i. Overview
+
+If infinitely many infinite clusters occur with positive probability, then with positive
+probability three given vertices lie in three distinct infinite clusters. Inserting a finite edge
+pattern turns this into a trifurcation, and if the pattern maps are absolutely continuous the
+trifurcation itself has positive probability, which contradicts the counting bound that
+trifurcations have probability zero. Combined with the reduction of the count to `0`, `1`, or `∞`,
+this gives the Burton–Keane theorem: almost surely at most one infinite cluster.
+`numInfiniteClusters_top_measure_zero` is conditional on the pattern absolute-continuity hypothesis
+`hpattern : ∀ I eta, mu.map (setPattern I eta) ≪ mu` (and translation invariance).
+`numInfiniteClusters_zero_or_one` is conditional on the ergodicity hypothesis `P.IsErgodic mu`, the
+finite-energy hypothesis `HasFiniteEnergy mu`, and `hpattern`.
+`freeBufferedInfiniteVolume_numInfiniteClusters_zero_or_one` is proved unconditionally for the
+free buffered infinite-volume FK measure, with only `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero` : infinitely many infinite clusters
+  have probability zero.
+- `PeriodicPlaneEmbedding.numInfiniteClusters_zero_or_one` : the number of infinite clusters is
+  almost surely `0` or `1`.
+- `PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_numInfiniteClusters_zero_or_one` : the free
+  buffered infinite-volume FK measure has almost surely `0` or `1` infinite clusters.
+
+## iii. Table of contents
+
+- A. Three distinct infinite clusters
+- B. Positive probability of a trifurcation
+- C. Uniqueness
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
@@ -22,16 +59,19 @@ open scoped ENNReal
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type} [Countable V] [DecidableEq V]
 
+/-! ## A. Three distinct infinite clusters -/
+
+/-- The event that the three vertices `x i` lie in three pairwise distinct infinite clusters. -/
 def PeriodicGraph.threeDistinctInfiniteEvent (P : PeriodicGraph V)
     (x : Fin 3 → V) : Set (ConfigSpace (Sym2 V)) :=
   {omega | (∀ i, (P.cluster omega (x i)).Infinite) ∧
     ∀ i j, i ≠ j → P.cluster omega (x i) ≠ P.cluster omega (x j)}
 
-theorem PeriodicGraph.numInfiniteClusters_top_subset_threeDistinct
+lemma PeriodicGraph.numInfiniteClusters_top_subset_threeDistinct
     (P : PeriodicGraph V) :
     {omega | P.numInfiniteClusters omega = ⊤} ⊆
       ⋃ x : Fin 3 → V, P.threeDistinctInfiniteEvent x := by
@@ -64,7 +104,9 @@ theorem PeriodicGraph.numInfiniteClusters_top_subset_threeDistinct
     exact hij (hxinj (P.injOn_cluster_infiniteClusterRepSet omega
       (hxrep i) (hxrep j) hcluster))
 
-private theorem exists_pos_of_countable_cover
+/-! ## B. Positive probability of a trifurcation -/
+
+private lemma exists_pos_of_countable_cover
     {Omega A : Type*} [MeasurableSpace Omega] [Countable A]
     (mu : Measure Omega) (S : Set Omega) (B : A → Set Omega)
     (hsub : S ⊆ ⋃ a, B a) (hpos : 0 < mu S) :
@@ -77,14 +119,14 @@ private theorem exists_pos_of_countable_cover
   rw [hu] at hle
   exact (not_lt_of_ge hle) hpos
 
-theorem PeriodicGraph.exists_threeDistinctInfinite_pos_of_top
+lemma PeriodicGraph.exists_threeDistinctInfinite_pos_of_top
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (htop : 0 < mu {omega | P.numInfiniteClusters omega = ⊤}) :
     ∃ x : Fin 3 → V, 0 < mu (P.threeDistinctInfiniteEvent x) :=
   exists_pos_of_countable_cover mu _ _
     P.numInfiniteClusters_top_subset_threeDistinct htop
 
-theorem PeriodicGraph.threeDistinct_subset_pattern_trifurcations
+lemma PeriodicGraph.threeDistinct_subset_pattern_trifurcations
     (P : PeriodicGraph V) (hconn : P.graph.Connected) (x : Fin 3 → V) :
     P.threeDistinctInfiniteEvent x ⊆
       ⋃ I : Finset (Sym2 V), ⋃ eta : ConfigSpace ↥I, ⋃ hub : V,
@@ -95,7 +137,7 @@ theorem PeriodicGraph.threeDistinct_subset_pattern_trifurcations
   exact Set.mem_iUnion.mpr ⟨I, Set.mem_iUnion.mpr ⟨eta,
     Set.mem_iUnion.mpr ⟨hub, htrif⟩⟩⟩
 
-theorem PeriodicGraph.exists_trifurcation_pos_of_top
+lemma PeriodicGraph.exists_trifurcation_pos_of_top
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hpattern : ∀ (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I),
@@ -119,8 +161,10 @@ theorem PeriodicGraph.exists_trifurcation_pos_of_top
     (P.measurableSet_isTrifurcation hub)] at hmapzero
   exact (ne_of_gt hpre) hmapzero
 
+/-! ## C. Uniqueness -/
 
-
+/-- If the finite-pattern maps are absolutely continuous, a translation-invariant probability
+measure gives probability zero to infinitely many infinite clusters. -/
 theorem PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected)
@@ -140,8 +184,8 @@ theorem PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
   rw [hzero] at hhub
   exact (lt_irrefl 0) hhub
 
-
-
+/-- Burton–Keane under ergodicity, finite energy, and absolutely continuous pattern maps: the number
+of infinite clusters is almost surely `0` or `1`. -/
 theorem PeriodicPlaneEmbedding.numInfiniteClusters_zero_or_one
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected)
@@ -160,7 +204,8 @@ theorem PeriodicPlaneEmbedding.numInfiniteClusters_zero_or_one
     rw [← htop, hk] at htop0
     exact False.elim (one_ne_zero htop0)
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure has almost surely `0`
+or `1` infinite clusters. -/
 theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_numInfiniteClusters_zero_or_one
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected) {p q : Real}

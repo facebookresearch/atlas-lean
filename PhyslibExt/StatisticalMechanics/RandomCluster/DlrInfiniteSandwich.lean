@@ -5,25 +5,43 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.DlrSandwich
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IvProperties
+
+/-!
+# Sandwiching FK-DLR measures between the free and wired limits
+
+Every random-cluster measure satisfying the box-mixture DLR property lies between the free and wired
+infinite-volume measures on increasing box events.
+
+## i. Overview
+
+`IsFKDLR d p q φ` says that on every box `Λ_n` the marginal of `φ` is a convex mixture of
+finite-volume random-cluster measures with boundary conditions `C`, each `C` a subgraph of the
+complete graph on the boundary. For `q ≥ 1` the comparison of boundary conditions puts each mixture
+component between the free (`C = ⊥`) and wired (`C` = boundary clique) measures on increasing
+events, hence so is the mixture. Letting the outer box grow and using the convergence of the free
+and wired finite-volume measures gives the infinite-volume sandwich. Both results are proved for
+every measure satisfying `IsFKDLR` (the defining property of the class of measures considered), with
+only `0 < p < 1` and `1 ≤ q` besides; no further inputs are assumed.
+
+## ii. Key results
+
+- `dlr_box_mixture_sandwich` : finite-volume sandwich between free and wired box measures.
+- `dlr_infinite_sandwich` : `φ_free(A) ≤ φ(A) ≤ φ_wired(A)` for increasing box events `A`.
+
+## iii. Table of contents
+
+- A. Boundary-condition mixtures and the DLR property
+- B. The sandwich inequalities
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+-/
 
 @[expose] public section
 
@@ -36,18 +54,17 @@ namespace FK
 
 open StatMech.Lattice
 
+/-! ## A. Boundary-condition mixtures and the DLR property -/
 
-
+/-- The probability of an event `A` under the box random-cluster measure with boundary
+wiring `C` (vertices joined in `C` count as connected when clusters are counted). -/
 noncomputable def dlrBcEventMass {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) : ℝ :=
   ∑ omega, A.indicator (fun _ => (1 : ℝ)) omega * bcProb G C p q omega
 
-
-
-
-
-
+/-- The box-mixture DLR property: on every box, the marginal of `φ` is a convex mixture of
+boundary-condition random-cluster measures whose boundary graphs live on the box boundary. -/
 noncomputable def IsFKDLR (d : ℕ) (p q : ℝ)
     (phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) : Prop := by
   classical
@@ -59,9 +76,11 @@ noncomputable def IsFKDLR (d : ℕ) (p q : ℝ)
         (phi : Measure _).real (boxRestrict d n ⁻¹' A) =
           ∑ C, weight C * dlrBcEventMass (boxGraph d n) C p q A
 
+/-! ## B. The sandwich inequalities -/
 
-
-theorem dlr_box_mixture_sandwich
+/-- On a box, an `IsFKDLR` measure gives increasing events probability between the free and
+wired box measures, for `q ≥ 1`. -/
+lemma dlr_box_mixture_sandwich
     {d n : ℕ} {p q : ℝ}
     {phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -108,9 +127,8 @@ theorem dlr_box_mixture_sandwich
   rw [hmix A]
   exact ⟨hlower, hupper⟩
 
-
-
-
+/-- An `IsFKDLR` measure lies between the free and wired infinite-volume random-cluster
+measures on increasing box events, for `q ≥ 1`. -/
 theorem dlr_infinite_sandwich
     {d N : ℕ} {p q : ℝ}
     {phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))}

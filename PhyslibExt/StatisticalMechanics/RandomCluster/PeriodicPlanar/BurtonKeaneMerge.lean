@@ -6,46 +6,84 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneCore
+
+/-!
+# Finitely many infinite clusters merge into one
+
+Under finite energy, the number of infinite clusters is almost surely `0`, `1`, or `∞`.
+
+## i. Overview
+
+Forcing a finite set of edges open can only enlarge clusters, and every infinite cluster of the
+modified configuration contains an infinite cluster of the original one. If there are `k` infinite
+clusters with `2 ≤ k < ∞`, then with positive probability two given vertices lie in distinct
+infinite clusters; opening the edges of a path between them merges these clusters and lowers the
+count below `k`. Finite energy makes the modified event non-null, which contradicts almost-sure
+constancy of the count. This is the first half of the Burton–Keane argument.
+`numInfiniteClusters_const_ne_finite_two` is conditional on the finite-energy hypothesis
+`HasFiniteEnergy mu` (and connectivity of the graph). `numInfiniteClusters_zero_one_or_top` is
+conditional on the ergodicity hypothesis `P.IsErgodic mu` and the finite-energy hypothesis
+`HasFiniteEnergy mu`.
+
+## ii. Key results
+
+- `PeriodicGraph.numInfiniteClusters_lt_of_merge` : forcing open edges that join two distinct
+  infinite clusters strictly lowers a finite infinite-cluster count.
+- `PeriodicGraph.numInfiniteClusters_const_ne_finite_two` : an almost-sure constant count cannot be
+  finite and at least `2` under finite energy.
+- `PeriodicGraph.numInfiniteClusters_zero_one_or_top` : under ergodicity and finite energy, the
+  count is almost surely `0`, `1`, or `∞`.
+
+## iii. Table of contents
+
+- A. Forcing edges open
+- B. Infinite clusters after forcing edges open
+- C. Merging two infinite clusters
+- D. The count is `0`, `1`, or `∞`
+
+## iv. References
+
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121 (1989).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
 open MeasureTheory Set SimpleGraph
 open scoped ENNReal
 
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
+
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [Countable V] [DecidableEq V]
 
-@[simp] theorem forceOpenFinset_of_mem {F : Finset (Sym2 V)} {e : Sym2 V}
+/-! ## A. Forcing edges open -/
+
+@[simp] lemma forceOpenFinset_of_mem {F : Finset (Sym2 V)} {e : Sym2 V}
     (he : e ∈ F) (omega : ConfigSpace (Sym2 V)) :
     forceOpenFinset F omega e = true := by
   simp [forceOpenFinset, he]
 
-@[simp] theorem forceOpenFinset_of_notMem {F : Finset (Sym2 V)} {e : Sym2 V}
+@[simp] lemma forceOpenFinset_of_notMem {F : Finset (Sym2 V)} {e : Sym2 V}
     (he : e ∉ F) (omega : ConfigSpace (Sym2 V)) :
     forceOpenFinset F omega e = omega e := by
   simp [forceOpenFinset, he]
 
-theorem forceOpenFinset_le (F : Finset (Sym2 V))
+lemma forceOpenFinset_le (F : Finset (Sym2 V))
     (omega : ConfigSpace (Sym2 V)) : omega <= forceOpenFinset F omega := by
   intro e
   by_cases he : e ∈ F <;> simp [forceOpenFinset, he]
 
 omit [Countable V] in
-theorem PeriodicGraph.openSubgraph_mono (P : PeriodicGraph V)
+lemma PeriodicGraph.openSubgraph_mono (P : PeriodicGraph V)
     {omega eta : ConfigSpace (Sym2 V)} (h : omega <= eta) :
     P.openSubgraph omega <= P.openSubgraph eta := by
   intro x y hxy
@@ -56,29 +94,24 @@ theorem PeriodicGraph.openSubgraph_mono (P : PeriodicGraph V)
   exact le_antisymm (by simp) he
 
 omit [Countable V] in
-theorem PeriodicGraph.reachable_mono (P : PeriodicGraph V)
+lemma PeriodicGraph.reachable_mono (P : PeriodicGraph V)
     {omega eta : ConfigSpace (Sym2 V)} (h : omega <= eta) {x y : V}
     (hxy : (P.openSubgraph omega).Reachable x y) :
     (P.openSubgraph eta).Reachable x y :=
   hxy.mono (P.openSubgraph_mono h)
 
 omit [Countable V] in
-theorem PeriodicGraph.cluster_mono (P : PeriodicGraph V)
+lemma PeriodicGraph.cluster_mono (P : PeriodicGraph V)
     {omega eta : ConfigSpace (Sym2 V)} (h : omega <= eta) (x : V) :
     P.cluster omega x ⊆ P.cluster eta x := fun _ hxy => P.reachable_mono h hxy
 
-theorem encard_image_lt_of_not_injOn_periodic
-    {A B : Type*} {s : Set A} {f : A -> B}
-    (hfin : s.Finite) (hni : ¬ Set.InjOn f s) :
-    (f '' s).encard < s.encard := by
-  rcases lt_or_eq_of_le (Set.encard_image_le f s) with h | h
-  · exact h
-  · exact False.elim (hni (hfin.injOn_of_encard_image_eq h))
+/-! ## B. Infinite clusters after forcing edges open -/
 
+/-- The endpoints of the edges in the finite edge set `F`. -/
 def finiteOpenAnchors (F : Finset (Sym2 V)) : Set V :=
   {x | ∃ e ∈ F, x ∈ e}
 
-theorem finiteOpenAnchors_finite (F : Finset (Sym2 V)) :
+lemma finiteOpenAnchors_finite (F : Finset (Sym2 V)) :
     (finiteOpenAnchors F).Finite := by
   have hsub : finiteOpenAnchors F ⊆ ⋃ e ∈ F, {x | x ∈ e} := by
     rintro x ⟨e, he, hxe⟩
@@ -94,7 +127,7 @@ theorem finiteOpenAnchors_finite (F : Finset (Sym2 V)) :
           (Sym2.mem_iff.mp hz)
       exact Set.Finite.subset ((Set.finite_singleton y).insert x) hsubxy
 
-theorem PeriodicGraph.adj_forceOpenFinset_cases (P : PeriodicGraph V)
+lemma PeriodicGraph.adj_forceOpenFinset_cases (P : PeriodicGraph V)
     (F : Finset (Sym2 V)) (omega : ConfigSpace (Sym2 V)) {x y : V}
     (h : (P.openSubgraph (forceOpenFinset F omega)).Adj x y) :
     (P.openSubgraph omega).Adj x y ∨ s(x, y) ∈ F := by
@@ -105,7 +138,7 @@ theorem PeriodicGraph.adj_forceOpenFinset_cases (P : PeriodicGraph V)
     rw [P.openSubgraph_adj]
     exact ⟨h.1, by simpa [forceOpenFinset, he] using h.2⟩
 
-theorem PeriodicGraph.forceOpen_reachable_anchor (P : PeriodicGraph V)
+lemma PeriodicGraph.forceOpen_reachable_anchor (P : PeriodicGraph V)
     (F : Finset (Sym2 V)) (omega : ConfigSpace (Sym2 V)) (x z : V)
     (h : (P.openSubgraph (forceOpenFinset F omega)).Reachable x z) :
     (P.openSubgraph omega).Reachable x z ∨
@@ -121,7 +154,7 @@ theorem PeriodicGraph.forceOpen_reachable_anchor (P : PeriodicGraph V)
       · exact Or.inr ⟨z, ⟨s(y, z), he, Sym2.mem_mk_right y z⟩,
           SimpleGraph.Reachable.refl z⟩
 
-theorem PeriodicGraph.exists_old_infinite_cluster_in_forceOpen
+lemma PeriodicGraph.exists_old_infinite_cluster_in_forceOpen
     (P : PeriodicGraph V) (F : Finset (Sym2 V))
     (omega : ConfigSpace (Sym2 V)) (x : V)
     (hinf : (P.cluster (forceOpenFinset F omega) x).Infinite) :
@@ -151,7 +184,7 @@ theorem PeriodicGraph.exists_old_infinite_cluster_in_forceOpen
     hainf.mono Set.inter_subset_left
   exact (P.cluster_eq_of_reachable omega hwa) ▸ haInf
 
-theorem PeriodicGraph.forceOpen_image_repSet_eq
+lemma PeriodicGraph.forceOpen_image_repSet_eq
     (P : PeriodicGraph V) (F : Finset (Sym2 V))
     (omega : ConfigSpace (Sym2 V)) :
     (fun a => P.cluster (forceOpenFinset F omega) a) ''
@@ -160,7 +193,7 @@ theorem PeriodicGraph.forceOpen_image_repSet_eq
   let omega' := forceOpenFinset F omega
   have hle : omega <= omega' := forceOpenFinset_le F omega
   ext D
-  simp only [Set.mem_image, PeriodicGraph.infiniteClusters, Set.mem_setOf_eq]
+  simp only [Set.mem_image, PeriodicGraph.infiniteClusters, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨a, ha, rfl⟩
     exact ⟨ha.1.mono (P.cluster_mono hle a), a, rfl⟩
@@ -178,7 +211,11 @@ theorem PeriodicGraph.forceOpen_image_repSet_eq
         P.reachable_mono hle hr.symm
       exact P.cluster_eq_of_reachable omega' (hrw.trans hwD.symm)
 
-theorem PeriodicGraph.numInfiniteClusters_lt_of_merge
+/-! ## C. Merging two infinite clusters -/
+
+/-- If the infinite-cluster count is finite and forcing the edges of `F` open connects two
+distinct infinite clusters, the count strictly decreases. -/
+lemma PeriodicGraph.numInfiniteClusters_lt_of_merge
     (P : PeriodicGraph V) (F : Finset (Sym2 V))
     (omega : ConfigSpace (Sym2 V))
     (hfin : P.numInfiniteClusters omega ≠ ⊤)
@@ -231,15 +268,18 @@ theorem PeriodicGraph.numInfiniteClusters_lt_of_merge
       P.forceOpen_image_repSet_eq F omega]
     rfl
   rw [hlhs, P.numInfiniteClusters_eq_repSet_encard]
-  exact encard_image_lt_of_not_injOn_periodic hrepfin hni
+  exact StatMech.Percolation.encard_image_lt_of_not_injOn hrepfin hni
 
+/-! ## D. The count is `0`, `1`, or `∞` -/
+
+/-- The event that `x` and `y` lie in two distinct infinite clusters. -/
 def PeriodicGraph.distinctInfinitePairEvent
     (P : PeriodicGraph V) (x y : V) : Set (ConfigSpace (Sym2 V)) :=
   {omega | (P.cluster omega x).Infinite ∧
     (P.cluster omega y).Infinite ∧
       P.cluster omega x ≠ P.cluster omega y}
 
-theorem PeriodicGraph.exists_distinctInfinitePair_of_two_le
+lemma PeriodicGraph.exists_distinctInfinitePair_of_two_le
     (P : PeriodicGraph V) {omega : ConfigSpace (Sym2 V)}
     (h : 2 <= P.numInfiniteClusters omega) :
     ∃ x y, omega ∈ P.distinctInfinitePairEvent x y := by
@@ -251,7 +291,7 @@ theorem PeriodicGraph.exists_distinctInfinitePair_of_two_le
   obtain ⟨hyInf, y, rfl⟩ := hCy
   exact ⟨x, y, hxInf, hyInf, hne⟩
 
-theorem PeriodicGraph.exists_distinctInfinitePair_pos
+lemma PeriodicGraph.exists_distinctInfinitePair_pos
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu] {k : ℕ∞}
     (hk : mu {omega | P.numInfiniteClusters omega = k} = 1)
@@ -276,7 +316,7 @@ theorem PeriodicGraph.exists_distinctInfinitePair_pos
   rw [hunion0] at hone
   exact one_ne_zero (le_antisymm hone bot_le)
 
-theorem PeriodicGraph.exists_forceOpen_walk
+lemma PeriodicGraph.exists_forceOpen_walk
     (P : PeriodicGraph V) (hconn : P.graph.Connected) (x y : V) :
     ∃ F : Finset (Sym2 V), ∀ omega,
       (P.openSubgraph (forceOpenFinset F omega)).Reachable x y := by
@@ -292,14 +332,14 @@ theorem PeriodicGraph.exists_forceOpen_walk
       refine ⟨heG, ?_⟩
       exact forceOpenFinset_of_mem (by simpa [F] using he) omega
 
-theorem PeriodicGraph.measurableSet_numInfiniteClusters_lt
+lemma PeriodicGraph.measurableSet_numInfiniteClusters_lt
     (P : PeriodicGraph V) (k : ℕ∞) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       P.numInfiniteClusters omega < k} :=
   (P.measurable_numInfiniteClusters MeasurableSet.of_discrete :
     MeasurableSet (P.numInfiniteClusters ⁻¹' {x | x < k}))
 
-theorem PeriodicGraph.numInfiniteClusters_lt_null
+lemma PeriodicGraph.numInfiniteClusters_lt_null
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu] {k : ℕ∞}
     (hk : mu {omega | P.numInfiniteClusters omega = k} = 1) :
@@ -307,15 +347,15 @@ theorem PeriodicGraph.numInfiniteClusters_lt_null
   have hsub : {omega | P.numInfiniteClusters omega = k} ⊆
       {omega | P.numInfiniteClusters omega < k}ᶜ := by
     intro omega homega
-    simp only [Set.mem_setOf_eq] at homega
-    simp only [Set.mem_compl_iff, Set.mem_setOf_eq, homega]
+    simp only [Set.mem_ofPred_eq] at homega
+    simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, homega]
     exact lt_irrefl k
   have hfull : mu {omega | P.numInfiniteClusters omega < k}ᶜ = 1 :=
     le_antisymm prob_le_one (hk ▸ measure_mono hsub)
   exact (prob_compl_eq_one_iff (P.measurableSet_numInfiniteClusters_lt k)).mp hfull
 
-
-
+/-- Under finite energy on a connected periodic graph, the infinite-cluster count cannot be almost
+surely equal to a finite constant `k ≥ 2`. -/
 theorem PeriodicGraph.numInfiniteClusters_const_ne_finite_two
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -365,9 +405,8 @@ theorem PeriodicGraph.numInfiniteClusters_const_ne_finite_two
   rw [hpre0] at hAle
   exact (not_lt_of_ge hAle) hApos
 
-
-
-
+/-- Under ergodicity and finite energy on a connected periodic graph, the number of infinite
+clusters is almost surely a constant in `{0, 1, ∞}`. -/
 theorem PeriodicGraph.numInfiniteClusters_zero_one_or_top
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -382,7 +421,7 @@ theorem PeriodicGraph.numInfiniteClusters_zero_one_or_top
     intro hk2
     exact P.numInfiniteClusters_const_ne_finite_two hconn mu hfe hk hk2 htop
   have hle : k <= 1 := StatMech.Percolation.enat_le_one_of_not_two hnot2
-  rcases ENat.le_one_iff_eq_zero_or_eq_one.mp hle with hzero | hone
+  rcases Order.le_one_iff.mp hle with hzero | hone
   · exact Or.inl hzero
   · exact Or.inr (Or.inl hone)
 

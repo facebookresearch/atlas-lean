@@ -5,33 +5,57 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedHighBeta
 
+/-!
+# Monotonicity of the inhomogeneous random-cluster measure in the edge parameters
+
+For `q ≥ 1`, increasing the edge parameters `p(e)` pointwise increases the probability of every
+increasing event under the inhomogeneous random-cluster measure with boundary graph `C`.
+
+## i. Overview
+
+The inhomogeneous measure with edge parameters in `[0, 1)` is a well-defined probability measure.
+For `pf1 ≤ pf2` pointwise, the edge products satisfy the cross inequality `w₁(a) w₂(b) ≤ w₁(a ⊓ b)
+w₂(a ⊔ b)`, and the cluster weight is supermodular for `q ≥ 1`, so the two measures satisfy Holley's
+condition. Holley's inequality then gives stochastic domination. The headline is proved
+unconditionally, under `0 ≤ pf1 ≤ pf2 < 1` pointwise and `1 ≤ q`.
+
+## ii. Key results
+
+- `bcProbW_mono_params_of_nonneg` : increasing events have larger probability under larger edge
+  parameters.
+- `bcWeightW_cross_params_of_nonneg` : Holley's cross condition for the two weights.
+
+## iii. Table of contents
+
+- A. The measure for parameters in `[0, 1)`
+- B. Holley's condition and monotonicity
+
+## iv. References
+
+- R. Holley, *Remarks on the FKG inequalities*, Comm. Math. Phys. 36 (1974).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.21.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-theorem edgeProductW_nonneg_of_nonneg
+/-! ## A. The measure for parameters in `[0, 1)` -/
+
+lemma edgeProductW_nonneg_of_nonneg
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 <= pf e)
     (hpf1 : forall e, pf e < 1)
@@ -44,7 +68,7 @@ theorem edgeProductW_nonneg_of_nonneg
   · exact hpf e
   · linarith [hpf1 e]
 
-theorem bcWeightW_nonneg_of_nonneg
+lemma bcWeightW_nonneg_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 <= pf e)
     (hpf1 : forall e, pf e < 1)
@@ -53,7 +77,7 @@ theorem bcWeightW_nonneg_of_nonneg
   exact mul_nonneg (edgeProductW_nonneg_of_nonneg G hpf hpf1 omega)
     (pow_nonneg hq.le _)
 
-theorem bcZW_pos_of_nonneg
+lemma bcZW_pos_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 <= pf e)
     (hpf1 : forall e, pf e < 1)
@@ -74,7 +98,7 @@ theorem bcZW_pos_of_nonneg
     exact bcWeightW_nonneg_of_nonneg G C hpf hpf1 hq omega
   · exact ⟨closed, Finset.mem_univ _, hclosed⟩
 
-theorem bcProbW_nonneg_of_nonneg
+lemma bcProbW_nonneg_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 <= pf e)
     (hpf1 : forall e, pf e < 1)
@@ -83,7 +107,7 @@ theorem bcProbW_nonneg_of_nonneg
   exact div_nonneg (bcWeightW_nonneg_of_nonneg G C hpf hpf1 hq omega)
     (bcZW_pos_of_nonneg G C hpf hpf1 hq).le
 
-theorem bcProbW_sum_eq_one_of_nonneg
+lemma bcProbW_sum_eq_one_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf : Sym2 V -> Real} (hpf : forall e, 0 <= pf e)
     (hpf1 : forall e, pf e < 1)
@@ -93,7 +117,9 @@ theorem bcProbW_sum_eq_one_of_nonneg
   rw [<- Finset.sum_div]
   exact div_self (bcZW_pos_of_nonneg G C hpf hpf1 hq).ne'
 
-theorem edgeProductW_cross_params_of_nonneg
+/-! ## B. Holley's condition and monotonicity -/
+
+lemma edgeProductW_cross_params_of_nonneg
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {pf1 pf2 : Sym2 V -> Real}
     (hpf1 : forall e, 0 <= pf1 e) (hpf1' : forall e, pf1 e < 1)
@@ -118,10 +144,12 @@ theorem edgeProductW_cross_params_of_nonneg
         (if b e then pf2 e else 1 - pf2 e) <=
       (if a e && b e then pf1 e else 1 - pf1 e) *
         (if a e || b e then pf2 e else 1 - pf2 e)
-    cases ha : a e <;> cases hb : b e <;> simp <;>
-      nlinarith [hle e]
+    cases ha : a e <;> cases hb : b e <;> simp
+    nlinarith [hle e]
 
-theorem bcWeightW_cross_params_of_nonneg
+/-- For `pf1 ≤ pf2` pointwise and `q ≥ 1`, the inhomogeneous weights satisfy Holley's condition
+`w₁(a) w₂(b) ≤ w₁(a ⊓ b) w₂(a ⊔ b)`. -/
+lemma bcWeightW_cross_params_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf1 pf2 : Sym2 V -> Real}
     (hpf1 : forall e, 0 <= pf1 e) (hpf1' : forall e, pf1 e < 1)
@@ -157,8 +185,8 @@ theorem bcWeightW_cross_params_of_nonneg
       mul_le_mul_of_nonneg_right hedge hcluster0
     _ = _ := by ring
 
-
-
+/-- For `0 ≤ pf1 ≤ pf2 < 1` pointwise and `q ≥ 1`, every increasing event is at least as likely
+under the inhomogeneous random-cluster measure with parameters `pf2` as with `pf1`. -/
 theorem bcProbW_mono_params_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf1 pf2 : Sym2 V -> Real}

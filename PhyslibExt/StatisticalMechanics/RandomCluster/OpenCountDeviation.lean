@@ -5,39 +5,6 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -48,9 +15,47 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.DensityBounds
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 
+/-!
+# Deviations of the number of open edges in the random-cluster model
+
+For `q ≥ 1`, the number of open edges of the finite-volume random-cluster measure falls below `(p +
+ε) |E|`, and exceeds `(p / (p + q (1 - p)) - ε) |E|`, with probability at least `ε`.
+
+## i. Overview
+
+By the edge-marginal bounds `p / (p + q (1 - p)) ≤ φ(ω(e) = 1) ≤ p`, the mean number of open edges
+lies between `p / (p + q (1 - p)) |E|` and `p |E|`. A reverse Markov inequality for a nonnegative
+variable bounded by `|E|` converts each mean bound into a lower bound on the probability of the
+corresponding one-sided deviation. Both deviation bounds are proved unconditionally, under `0 < p <
+1`, `1 ≤ q`, `0 < ε`, the natural range condition on `ε`, and a nonempty edge set.
+
+## ii. Key results
+
+- `den_openCount_upper_deviation` : the open-edge count is at most `(p + ε) |E|` with probability
+  at least `ε`.
+- `den_openCount_lower_deviation` : the open-edge count is at least
+  `(p / (p + q (1 - p)) - ε) |E|` with probability at least `ε`.
+- `reverse_markov_upper`, `reverse_markov_lower` : reverse Markov inequalities on a finite
+  probability space.
+
+## iii. Table of contents
+
+- A. The mean number of open edges
+- B. Reverse Markov inequalities
+- C. Deviation bounds
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.21.
+-/
+
 @[expose] public section
 
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
@@ -58,40 +63,20 @@ namespace FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. The mean number of open edges -/
 
-
-
-
-
-
-
+/-- The expected number of open edges under the random-cluster measure `φ_{G,p,q}`. -/
 noncomputable def fkMeanOpenCount (p q : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), (chOpenCount G ω : ℝ) * fkProb G p q ω
 
-
-
-
-
-
-
 omit [DecidableEq V] in
-
-
-theorem chOpenCount_eq_sum_indicator (ω : ConfigSpace (Sym2 V)) :
+lemma chOpenCount_eq_sum_indicator (ω : ConfigSpace (Sym2 V)) :
     (chOpenCount G ω : ℝ)
       = ∑ e ∈ G.edgeFinset, (if ω e = true then (1 : ℝ) else 0) := by
   unfold chOpenCount
   rw [Finset.sum_boole]
 
-
-
-
-
-
-
-
-
-theorem fkMeanOpenCount_eq_sum_marginals (p q : ℝ) :
+lemma fkMeanOpenCount_eq_sum_marginals (p q : ℝ) :
     fkMeanOpenCount G p q = ∑ e ∈ G.edgeFinset, edgeMarginalOpen G p q e := by
   unfold fkMeanOpenCount edgeMarginalOpen
   
@@ -110,14 +95,7 @@ theorem fkMeanOpenCount_eq_sum_marginals (p q : ℝ) :
   intro e _
   rw [Finset.sum_filter]
 
-
-
-
-
-
-
-
-theorem fkMeanOpenCount_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
+lemma fkMeanOpenCount_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     fkMeanOpenCount G p q ≤ p * (G.edgeFinset.card : ℝ) := by
   rw [fkMeanOpenCount_eq_sum_marginals G p q]
   calc ∑ e ∈ G.edgeFinset, edgeMarginalOpen G p q e
@@ -128,9 +106,7 @@ theorem fkMeanOpenCount_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     _ = p * (G.edgeFinset.card : ℝ) := by
         rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
 
-
-
-theorem fkMeanOpenCount_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
+lemma fkMeanOpenCount_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     p / (p + q * (1 - p)) * (G.edgeFinset.card : ℝ) ≤ fkMeanOpenCount G p q := by
   rw [fkMeanOpenCount_eq_sum_marginals G p q]
   calc p / (p + q * (1 - p)) * (G.edgeFinset.card : ℝ)
@@ -141,8 +117,7 @@ theorem fkMeanOpenCount_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
         intro e he
         exact (edge_density_bounds G hp hp1 hq he).1
 
-
-theorem fkMeanOpenCount_le_card {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
+lemma fkMeanOpenCount_le_card {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     fkMeanOpenCount G p q ≤ (G.edgeFinset.card : ℝ) := by
   unfold fkMeanOpenCount
   calc ∑ ω : ConfigSpace (Sym2 V), (chOpenCount G ω : ℝ) * fkProb G p q ω
@@ -154,25 +129,11 @@ theorem fkMeanOpenCount_le_card {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 <
     _ = (G.edgeFinset.card : ℝ) := by
         rw [← Finset.mul_sum, fkProb_sum_eq_one G hp hp1 hq, mul_one]
 
+/-! ## B. Reverse Markov inequalities -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem reverse_markov_upper {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ)
+/-- Reverse Markov inequality: if a nonnegative variable has mean at most `μ M`, it is at most
+`(μ + ε) M` with probability at least `ε / (μ + ε)`. -/
+lemma reverse_markov_upper {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ)
     (hw : ∀ ω, 0 ≤ w ω) (hsum : ∑ ω, w ω = 1)
     (hX0 : ∀ ω, 0 ≤ X ω) {M μ ε : ℝ}
     (hmean : ∑ ω, X ω * w ω ≤ μ * M)
@@ -205,16 +166,9 @@ theorem reverse_markov_upper {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ)
   have hcompl : ε / (μ + ε) + μ / (μ + ε) = 1 := by field_simp; ring
   linarith [hmassA, hsplit, hcompl]
 
-
-
-
-
-
-
-
-
-
-theorem reverse_markov_lower {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ) {M : ℝ}
+/-- Reverse Markov inequality: if a variable bounded by `M` has mean at least `ν M`, it is at
+least `(ν - ε) M` with probability at least `ε / (1 - ν + ε)`. -/
+lemma reverse_markov_lower {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ) {M : ℝ}
     (hw : ∀ ω, 0 ≤ w ω) (hsum : ∑ ω, w ω = 1)
     (hXM : ∀ ω, X ω ≤ M) {ν ε : ℝ}
     (hmean : ν * M ≤ ∑ ω, X ω * w ω)
@@ -252,39 +206,26 @@ theorem reverse_markov_lower {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ) {M : �
     rw [hmBc_eq] at h1
     rw [le_div_iff₀ hden]
     nlinarith [h1]
-  show ε / (1 - ν + ε) ≤ mBc
+  change ε / (1 - ν + ε) ≤ mBc
   have hmBc_eq : mBc = 1 - mB := by linarith [hmass1]
   rw [hmBc_eq]
   have hcompl : ε / (1 - ν + ε) + (1 - ν) / (1 - ν + ε) = 1 := by field_simp; ring
   linarith [hmBbound, hcompl]
 
+/-! ## C. Deviation bounds -/
 
-
-
-
-
-
-
+/-- The random-cluster probability that the number of open edges is at most `s`. -/
 noncomputable def fkOpenCountLeProb (p q : ℝ) (s : ℝ) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => (chOpenCount G ω : ℝ) ≤ s),
     fkProb G p q ω
 
-
-
+/-- The random-cluster probability that the number of open edges is at least `s`. -/
 noncomputable def fkOpenCountGeProb (p q : ℝ) (s : ℝ) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => s ≤ (chOpenCount G ω : ℝ)),
     fkProb G p q ω
 
-
-
-
-
-
-
-
-
-
-
+/-- For `q ≥ 1`, the number of open edges is at most `(p + ε) |E|` with probability at least
+`ε`. -/
 theorem den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεa : ε ≤ 1 - p)
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :
@@ -305,16 +246,8 @@ theorem den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
     nlinarith
   exact le_trans hε_le hrm
 
-
-
-
-
-
-
-
-
-
-
+/-- For `q ≥ 1`, the number of open edges is at least `(p / (p + q (1 - p)) - ε) |E|` with
+probability at least `ε`. -/
 theorem den_openCount_lower_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεb : ε ≤ p / (p + q * (1 - p)))
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :

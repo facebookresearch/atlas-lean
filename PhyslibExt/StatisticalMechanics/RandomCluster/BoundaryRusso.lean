@@ -6,25 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonoBC
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
 
+/-!
+# Russo formula for the boundary-conditioned random-cluster measure
+
+For the random-cluster measure on `G` with boundary wiring `C`, the `p`-derivative of an event
+probability is `(p(1 - p))⁻¹ ∑_{e ∈ E(G)} Cov(𝟙_A, ω_e)`.
+
+## i. Overview
+
+The boundary-conditioned weight is the Bernoulli edge product times `q^{k_C(ω)}`, and only the edge
+product depends on `p`; its logarithmic derivative is `∑_e (ω_e - p) / (p(1 - p))`. Differentiating
+the numerator and partition function and using the quotient rule writes the derivative of any
+expectation as a covariance with the centered edge count, which splits into covariances with the
+individual edge indicators.
+
+Both key results are proved unconditionally, under only `0 < p < 1` and `0 < q`.
+
+## ii. Key results
+
+- `hasDerivAt_bcMean` : the `p`-derivative of a boundary-conditioned expectation is a sum of edge
+  covariances.
+- `hasDerivAt_bcProbOf` : Russo's formula for the `p`-derivative of an event probability.
+
+## iii. Table of contents
+
+- A. Expectations and covariances
+- B. Derivatives and covariance identities
+
+## iv. References
+
+- L. Russo, *On the critical percolation probabilities*, Z. Wahrsch. Verw. Gebiete 56 (1981).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.12.
+-/
+
 @[expose] public section
 
 open scoped BigOperators
 open Finset
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech.FK
 
@@ -32,21 +60,25 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
+/-! ## A. Expectations and covariances -/
 
+/-- The expectation of `g` under the boundary-conditioned random-cluster measure. -/
 noncomputable def bcMean (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω, g ω * bcProb G C p q ω
 
-
+/-- The covariance of `f` and `g` under the boundary-conditioned random-cluster measure. -/
 noncomputable def bcCov (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   bcMean G C p q (fun ω => f ω * g ω) - bcMean G C p q f * bcMean G C p q g
 
-
+/-- The unnormalized expectation `∑ ω, g ω * w_C(ω)` for the boundary-conditioned weight. -/
 noncomputable def bcNumer (p q : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω, g ω * bcWeight G C p q ω
 
-
+/-- The probability of the event `A` under the boundary-conditioned random-cluster measure. -/
 noncomputable def bcProbOf (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) : ℝ :=
   bcMean G C p q (A.indicator fun _ => (1 : ℝ))
+
+/-! ## B. Derivatives and covariance identities -/
 
 lemma hasDerivAt_bcWeight {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
     (ω : ConfigSpace (Sym2 V)) :
@@ -111,7 +143,7 @@ lemma bcMean_const (p q : ℝ) {c : ℝ} (hZ : bcZ G C p q ≠ 0) :
         (c * bcWeight G C p q ω) / bcZ G C p q
       exact (mul_div_assoc c _ _).symm),
     ← Finset.sum_div, ← Finset.mul_sum]
-  show (c * bcZ G C p q) / bcZ G C p q = c
+  change (c * bcZ G C p q) / bcZ G C p q = c
   rw [mul_div_assoc, div_self hZ, mul_one]
 
 lemma bcMean_const_mul (p q c : ℝ) (g : ConfigSpace (Sym2 V) → ℝ) :
@@ -160,7 +192,8 @@ lemma bcCov_centeredCount (p q : ℝ) (hZ : bcZ G C p q ≠ 0)
   rw [bcCov_sum_right G C p q G.edgeFinset]
   exact Finset.sum_congr rfl fun e _ => bcCov_sub_const G C p q g (coord e) hZ
 
-
+/-- The `p`-derivative of the boundary-conditioned expectation of `g` is `(p(1 - p))⁻¹ ∑_{e ∈ E(G)}
+Cov(g, ω_e)`. -/
 theorem hasDerivAt_bcMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun p => bcMean G C p q g)
@@ -213,8 +246,7 @@ theorem hasDerivAt_bcMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [hcov]
   field_simp
 
-
-
+/-- Russo's formula: the `p`-derivative of `P(A)` is `(p(1 - p))⁻¹ ∑_{e ∈ E(G)} Cov(𝟙_A, ω_e)`. -/
 theorem hasDerivAt_bcProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun p => bcProbOf G C p q A)

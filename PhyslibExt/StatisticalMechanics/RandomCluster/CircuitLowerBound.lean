@@ -6,45 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -53,9 +14,49 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FiniteEnergy
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 
+/-!
+# Finite-energy lower bound for closing a set of edges
+
+For `q ≥ 1` the random-cluster probability that every edge of a finite set `γ` is closed is at least
+`cFE(p, q)^{|γ|}`, also conditionally on the configuration off `γ`.
+
+## i. Overview
+
+Finite energy for a single edge says the closed state carries at least a fraction `cFE(p, q)` of the
+combined weight of the open and closed states, for every configuration of the other edges; for an
+edge outside `G` the two weights are equal and `cFE ≤ 1/2`. Closing the edges of `γ` one at a time
+and inducting on `|γ|` gives `cFE^{|γ|} · ∑_{σ = ψ off γ} w(σ) ≤ w(ψ closed on γ)`, which is the
+conditional bound, and summing over the boundary configuration gives the unconditional bound
+`cFE^{|γ|} ≤ P(every edge of γ closed)`. This is the closed-circuit lower bound used in circuit and
+blocking arguments.
+
+Both key results are proved unconditionally, under only `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `cFE_pow_le_condClosedOn` : given the configuration off `γ`, all of `γ` is closed with probability
+  at least `cFE^{|γ|}`.
+- `cFE_pow_le_closedEventMass` : every edge of `γ` is closed with probability at least `cFE^{|γ|}`.
+
+## iii. Table of contents
+
+- A. Single-edge finite energy
+- B. Closing a set of edges
+- C. Conditional lower bound
+- D. Unconditional lower bound
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Theorem 3.7 (finite energy).
+-/
+
 @[expose] public section
 
 open scoped BigOperators
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 
@@ -63,25 +64,9 @@ namespace FK
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Single-edge finite energy -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) :
     cFE p q * (fkWeight G p q (setOpen e ω) + fkWeight G p q (setClosed e ω))
       ≤ fkWeight G p q (setClosed e ω) := by
@@ -91,16 +76,13 @@ theorem fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤
     have hW0pos : 0 < fkWeight G p q (setClosed e ω) := fkWeight_pos G hp hp1 hq0 _
     have hlo : (1 - p) * fkWeight G p q (setOpen e ω) ≤ p * fkWeight G p q (setClosed e ω) :=
       fkWeight_lo G hp hp1 hq he ω
-    
     have hcfe : cFE p q ≤ 1 - p := min_le_right _ _
     have hkey : (1 - p) * (fkWeight G p q (setOpen e ω) + fkWeight G p q (setClosed e ω))
         ≤ fkWeight G p q (setClosed e ω) := by nlinarith
     have hsum : (0 : ℝ) ≤ fkWeight G p q (setOpen e ω) + fkWeight G p q (setClosed e ω) := by
       linarith
     nlinarith [mul_le_mul_of_nonneg_right hcfe hsum]
-  · 
-    
-    have hep : edgeProduct G p (setOpen e ω) = edgeProduct G p (setClosed e ω) := by
+  · have hep : edgeProduct G p (setOpen e ω) = edgeProduct G p (setClosed e ω) := by
       unfold edgeProduct
       apply Finset.prod_congr rfl
       intro e' he'
@@ -116,85 +98,59 @@ theorem fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤
     nlinarith [mul_le_mul_of_nonneg_right hcfe
       (by linarith : (0 : ℝ) ≤ fkWeight G p q (setClosed e ω) + fkWeight G p q (setClosed e ω))]
 
+/-! ## B. Closing a set of edges -/
 
-
-
-
-
-
-
-
-
-
-
-
-
+/-- Close every edge of `γ`, leaving the other coordinates unchanged. -/
 noncomputable def closeAllOn (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 V) := fun e => if e ∈ γ then false else ψ e
 
 omit [Fintype V] in
-@[simp] theorem closeAllOn_of_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∈ γ)
+@[simp] lemma closeAllOn_of_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∈ γ)
     (ψ : ConfigSpace (Sym2 V)) : closeAllOn γ ψ e = false := by simp [closeAllOn, he]
 
 omit [Fintype V] in
-theorem closeAllOn_of_not_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∉ γ)
+lemma closeAllOn_of_not_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∉ γ)
     (ψ : ConfigSpace (Sym2 V)) : closeAllOn γ ψ e = ψ e := by simp [closeAllOn, he]
 
 omit [Fintype V] in
-
-
-theorem closeAllOn_setClosed {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
+lemma closeAllOn_setClosed {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
     (ψ : ConfigSpace (Sym2 V)) :
     closeAllOn γ (setClosed e ψ) = setClosed e (closeAllOn γ ψ) := by
   funext x
   by_cases hx : x = e
-  · subst hx; simp only [setClosed_self, closeAllOn, if_neg he]
+  · subst hx; simp only [setClosed_self, closeAllOn, ite_eq_right he]
   · rw [setClosed_of_ne hx]
     simp only [closeAllOn]
     by_cases hxg : x ∈ γ
     · simp [hxg]
-    · rw [if_neg hxg, if_neg hxg, setClosed_of_ne hx]
+    · rw [ite_eq_right hxg, ite_eq_right hxg, setClosed_of_ne hx]
 
 omit [Fintype V] in
-
-
-theorem closeAllOn_setOpen {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
+lemma closeAllOn_setOpen {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
     (ψ : ConfigSpace (Sym2 V)) :
     closeAllOn γ (setOpen e ψ) = setOpen e (closeAllOn γ ψ) := by
   funext x
   by_cases hx : x = e
-  · subst hx; simp only [setOpen_self, closeAllOn, if_neg he]
+  · subst hx; simp only [setOpen_self, closeAllOn, ite_eq_right he]
   · rw [setOpen_of_ne hx]
     simp only [closeAllOn]
     by_cases hxg : x ∈ γ
     · simp [hxg]
-    · rw [if_neg hxg, if_neg hxg, setOpen_of_ne hx]
+    · rw [ite_eq_right hxg, ite_eq_right hxg, setOpen_of_ne hx]
 
-
-
-
-
+/-- The total random-cluster weight of the configurations that agree with `ψ` off `γ`. -/
 noncomputable def agreeWeightSum (p q : ℝ) (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     ℝ :=
   ∑ σ ∈ Finset.univ.filter (fun σ : ConfigSpace (Sym2 V) => ∀ e' ∉ γ, σ e' = ψ e'),
     fkWeight G p q σ
 
-
-
-theorem agreeWeightSum_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
+lemma agreeWeightSum_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     0 < agreeWeightSum G p q γ ψ := by
   unfold agreeWeightSum
   exact Finset.sum_pos (fun σ _ => fkWeight_pos G hp hp1 hq σ) ⟨ψ, by simp⟩
 
-
-
-
-
-
-
-
-theorem agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
+lemma agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
     (ψ : ConfigSpace (Sym2 V)) :
     agreeWeightSum G p q (insert e γ) ψ
       = agreeWeightSum G p q γ (setClosed e ψ) + agreeWeightSum G p q γ (setOpen e ψ) := by
@@ -235,9 +191,7 @@ theorem agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (h
       · have := hfree e (by simpa using he)
         rwa [setOpen_self] at this
 
-
-
-theorem agreeWeightSum_empty (p q : ℝ) (ψ : ConfigSpace (Sym2 V)) :
+lemma agreeWeightSum_empty (p q : ℝ) (ψ : ConfigSpace (Sym2 V)) :
     agreeWeightSum G p q ∅ ψ = fkWeight G p q ψ := by
   classical
   unfold agreeWeightSum
@@ -252,39 +206,24 @@ theorem agreeWeightSum_empty (p q : ℝ) (ψ : ConfigSpace (Sym2 V)) :
     · intro h; funext e'; exact h e'
     · rintro rfl; intro e'; rfl
 
-
-
-
-
-
-
-
-
-
-
-
-theorem cFE_pow_mul_agreeWeightSum_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma cFE_pow_mul_agreeWeightSum_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     cFE p q ^ γ.card * agreeWeightSum G p q γ ψ ≤ fkWeight G p q (closeAllOn γ ψ) := by
   classical
   induction γ using Finset.induction generalizing ψ with
   | empty =>
     rw [Finset.card_empty, pow_zero, one_mul, agreeWeightSum_empty]
-    
     have : closeAllOn (∅ : Finset (Sym2 V)) ψ = ψ := by funext x; simp [closeAllOn]
     rw [this]
   | @insert e γ he ih =>
     rw [Finset.card_insert_of_notMem he, pow_succ, agreeWeightSum_insert G p q he]
     have hcfe_nonneg : (0 : ℝ) ≤ cFE p q := (cFE_pos hp hp1 hq).le
-    
     have ihc := ih (setClosed e ψ)
     have iho := ih (setOpen e ψ)
-    
     have hc : fkWeight G p q (closeAllOn γ (setClosed e ψ))
         = fkWeight G p q (setClosed e (closeAllOn γ ψ)) := by rw [closeAllOn_setClosed he]
     have ho : fkWeight G p q (closeAllOn γ (setOpen e ψ))
         = fkWeight G p q (setOpen e (closeAllOn γ ψ)) := by rw [closeAllOn_setOpen he]
-    
     have htarget : closeAllOn (insert e γ) ψ = setClosed e (closeAllOn γ ψ) := by
       funext x
       by_cases hx : x = e
@@ -307,14 +246,10 @@ theorem cFE_pow_mul_agreeWeightSum_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
       _ ≤ fkWeight G p q (setClosed e (closeAllOn γ ψ)) :=
             fkWeight_setClosed_ge G hp hp1 hq e (closeAllOn γ ψ)
 
+/-! ## C. Conditional lower bound -/
 
-
-
-
-
-
-
-
+/-- Conditionally on agreeing with `ψ` off `γ`, the probability that `γ` is all closed is at least
+`cFE(p, q)^{|γ|}`. -/
 theorem cFE_pow_le_condClosedOn {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     cFE p q ^ γ.card ≤ fkWeight G p q (closeAllOn γ ψ) / agreeWeightSum G p q γ ψ := by
@@ -322,20 +257,14 @@ theorem cFE_pow_le_condClosedOn {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 �
   rw [le_div_iff₀ (agreeWeightSum_pos G hp hp1 hq0 γ ψ)]
   exact cFE_pow_mul_agreeWeightSum_le G hp hp1 hq γ ψ
 
+/-! ## D. Unconditional lower bound -/
 
-
-
-
-
-
-
-
+/-- The random-cluster probability that every edge of `γ` is closed. -/
 noncomputable def closedMass (p q : ℝ) (γ : Finset (Sym2 V)) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => ∀ e ∈ γ, ω e = false),
     fkProb G p q ω
 
-
-theorem closedMass_empty {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
+lemma closedMass_empty {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     closedMass G p q ∅ = 1 := by
   classical
   unfold closedMass
@@ -344,19 +273,12 @@ theorem closedMass_empty {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
       = Finset.univ from by ext ω; simp]
   exact fkProb_sum_eq_one G hp hp1 hq
 
-
-
-
+/-- The configurations closed at `e` and on all of `γ`. -/
 noncomputable def cfib (e : Sym2 V) (γ : Finset (Sym2 V)) :
     Finset (ConfigSpace (Sym2 V)) :=
   Finset.univ.filter (fun ψ : ConfigSpace (Sym2 V) => ψ e = false ∧ ∀ e' ∈ γ, ψ e' = false)
 
-
-
-
-
-
-theorem closedMass_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
+lemma closedMass_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
     closedMass G p q γ
       = ∑ ψ ∈ cfib e γ,
           (fkProb G p q (setOpen e ψ) + fkProb G p q (setClosed e ψ)) := by
@@ -430,10 +352,7 @@ theorem closedMass_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he :
         (Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => ∀ e' ∈ γ, ω e' = false))
         (fun ω => ω e = false) (fkProb G p q)).symm
 
-
-
-
-theorem closedMass_insert_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
+lemma closedMass_insert_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
     closedMass G p q (insert e γ)
       = ∑ ψ ∈ cfib e γ, fkProb G p q (setClosed e ψ) := by
   classical
@@ -454,18 +373,13 @@ theorem closedMass_insert_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)
     · subst hx; simp [hω.1]
     · rw [setClosed_of_ne hx]
 
-
-
-
-
-theorem cFE_mul_closedMass_le_insert {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma cFE_mul_closedMass_le_insert {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
     cFE p q * closedMass G p q γ ≤ closedMass G p q (insert e γ) := by
   have hq0 : 0 < q := lt_of_lt_of_le one_pos hq
   rw [closedMass_reindex G e he, closedMass_insert_reindex G e he, Finset.mul_sum]
   apply Finset.sum_le_sum
   intro ψ _
-  
   have hZpos : 0 < fkZ G p q := fkZ_pos G hp hp1 hq0
   have hwt : cFE p q * (fkWeight G p q (setOpen e ψ) + fkWeight G p q (setClosed e ψ))
       ≤ fkWeight G p q (setClosed e ψ) := fkWeight_setClosed_ge G hp hp1 hq e ψ
@@ -476,21 +390,7 @@ theorem cFE_mul_closedMass_le_insert {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq 
       from by ring]
   exact (div_le_div_iff_of_pos_right hZpos).mpr hwt
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem cFE_pow_le_closedMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma cFE_pow_le_closedMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) :
     cFE p q ^ γ.card ≤ closedMass G p q γ := by
   have hq0 : 0 < q := lt_of_lt_of_le one_pos hq
@@ -505,22 +405,11 @@ theorem cFE_pow_le_closedMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤
           mul_le_mul_of_nonneg_left ih (cFE_pos hp hp1 hq).le
       _ ≤ closedMass G p q (insert e γ) := cFE_mul_closedMass_le_insert G hp hp1 hq e he
 
-
-
-
-
-
-
-
-
-
-
+/-- The event that every edge of `γ` is closed. -/
 def closedEvent (γ : Finset (Sym2 V)) : Set (ConfigSpace (Sym2 V)) :=
   {ω | ∀ e ∈ γ, ω e = false}
 
-
-
-theorem closedMass_eq_indicator_sum (p q : ℝ) (γ : Finset (Sym2 V)) :
+lemma closedMass_eq_indicator_sum (p q : ℝ) (γ : Finset (Sym2 V)) :
     closedMass G p q γ
       = ∑ ω, (closedEvent γ).indicator (fun _ => (1 : ℝ)) ω * fkProb G p q ω := by
   classical
@@ -529,17 +418,11 @@ theorem closedMass_eq_indicator_sum (p q : ℝ) (γ : Finset (Sym2 V)) :
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   by_cases hω : ∀ e ∈ γ, ω e = false
   · have hmem : ω ∈ closedEvent γ := hω
-    rw [if_pos hω, Set.indicator_of_mem hmem, one_mul]
+    rw [ite_eq_left hω, Set.indicator_of_mem hmem, one_mul]
   · have hnmem : ω ∉ closedEvent γ := hω
-    rw [if_neg hω, Set.indicator_of_notMem hnmem, zero_mul]
+    rw [ite_eq_right hω, Set.indicator_of_notMem hnmem, zero_mul]
 
-
-
-
-
-
-
-
+/-- For `q ≥ 1`, the probability that every edge of `γ` is closed is at least `cFE(p, q)^{|γ|}`. -/
 theorem cFE_pow_le_closedEventMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) :
     cFE p q ^ γ.card

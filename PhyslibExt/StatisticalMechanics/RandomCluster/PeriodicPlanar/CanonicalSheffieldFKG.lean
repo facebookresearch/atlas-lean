@@ -6,32 +6,65 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference
 
+/-!
+# FKG for infinite-cluster and rectangle-connection events
+
+The free and wired buffered infinite-volume FK measures satisfy the FKG inequality for the events
+used in Sheffield's periodic planar argument: a finite set meets an infinite cluster, and a set of
+vertices is joined to a rectangle side by an infinite open path.
+
+## i. Overview
+
+The event that a finite set `S` meets an infinite cluster is the decreasing intersection of the
+increasing clopen events that `S` is connected to the boundary of the buffered box of index `n`.
+More generally, the event that some `x ∈ S` satisfies an increasing clopen condition `Q x` and lies
+in an infinite cluster is a decreasing intersection of increasing clopen approximations. The FKG
+inequality for decreasing limits of increasing clopen events then applies. Rectangle side-connection
+events have this form, with `Q x` the event that `x` is connected inside the rectangle to the given
+side. `freeBufferedInfiniteVolume_fkg_rectSideConnection` and
+`wiredBufferedInfiniteVolume_fkg_rectSideConnection` are proved unconditionally, with only
+`0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedInfiniteVolume_fkg_setHitsInfinite` : FKG for the events that two
+  finite sets meet an infinite cluster.
+- `PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection` : FKG for rectangle
+  side-connection events under the free limit.
+- `PeriodicPlaneEmbedding.wiredBufferedInfiniteVolume_fkg_rectSideConnection` : the same under the
+  wired limit.
+
+## iii. Table of contents
+
+- A. Hitting an infinite cluster
+- B. Finite witnesses in an infinite cluster
+- C. Rectangle side-connection events
+
+## iv. References
+
+- S. Sheffield, *Random surfaces*, Astérisque 304 (2005).
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
 open Filter MeasureTheory Set SimpleGraph Topology
+
+set_option linter.unusedSectionVars false
 
 namespace StatMech.FK.PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V] [Countable V]
 
+/-! ## A. Hitting an infinite cluster -/
 
-
+/-- The event in the buffered box of index `n` that some vertex of `S` is connected by an open path
+to the box boundary. -/
 def PeriodicGraph.bufferedSetBoundaryEvent
     (P : PeriodicGraph V) (S : Set V) (n : Nat) :
     Set (ConfigSpace (Sym2 (P.BufferedVertex n))) :=
@@ -39,7 +72,7 @@ def PeriodicGraph.bufferedSetBoundaryEvent
     exists y : P.BufferedVertex n, P.bufferedBoundary n y ∧
       (FK.openSub (P.bufferedGraph n) eta).Reachable x y}
 
-theorem PeriodicGraph.bufferedSetBoundaryEvent_isIncreasing
+lemma PeriodicGraph.bufferedSetBoundaryEvent_isIncreasing
     (P : PeriodicGraph V) (S : Set V) (n : Nat) :
     IsIncreasing (P.bufferedSetBoundaryEvent S n) := by
   intro eta theta hle
@@ -50,14 +83,12 @@ theorem PeriodicGraph.bufferedSetBoundaryEvent_isIncreasing
   refine ⟨huv.1, Bool.eq_true_of_true_le ?_⟩
   simpa [huv.2] using hle s(u, v)
 
-theorem PeriodicGraph.bufferedSetBoundaryCylinder_isClopen
+lemma PeriodicGraph.bufferedSetBoundaryCylinder_isClopen
     (P : PeriodicGraph V) (S : Set V) (n : Nat) :
     IsClopen (P.bufferedCylinder n (P.bufferedSetBoundaryEvent S n)) :=
   P.bufferedCylinder_isClopen n _
 
-
-
-theorem PeriodicGraph.bufferedSetBoundaryCylinder_antitone_from
+lemma PeriodicGraph.bufferedSetBoundaryCylinder_antitone_from
     (P : PeriodicGraph V) (S : Set V) (N : Nat)
     (hS : S ⊆ (P.orbitBox (P.bufferedRadius N) : Set V)) :
     Antitone (fun k => P.bufferedCylinder (N + k)
@@ -81,9 +112,7 @@ theorem PeriodicGraph.bufferedSetBoundaryCylinder_antitone_from
       hxsmall hyout hfull
   exact ⟨⟨x.1, hxsmall⟩, hxS, z, hzbd, hxz⟩
 
-
-
-theorem PeriodicGraph.iInter_bufferedSetBoundaryCylinder
+lemma PeriodicGraph.iInter_bufferedSetBoundaryCylinder
     (P : PeriodicGraph V) (S : Set V) (hSfinite : S.Finite)
     (N : Nat) (hS : S ⊆ (P.orbitBox (P.bufferedRadius N) : Set V)) :
     (iInter fun k => P.bufferedCylinder (N + k)
@@ -92,7 +121,7 @@ theorem PeriodicGraph.iInter_bufferedSetBoundaryCylinder
   ext omega
   simp only [Set.mem_iInter, PeriodicGraph.bufferedCylinder,
     Set.mem_preimage, PeriodicGraph.bufferedSetBoundaryEvent,
-    PeriodicGraph.setHitsInfinite, Set.mem_setOf_eq]
+    PeriodicGraph.setHitsInfinite, Set.mem_ofPred_eq]
   constructor
   · intro hall
     by_contra hnot
@@ -125,9 +154,9 @@ theorem PeriodicGraph.iInter_bufferedSetBoundaryCylinder
         hxlevel hzout hzcluster
     exact ⟨⟨x, hxlevel⟩, hxS, y, hybd, hxy⟩
 
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_setHitsInfinite
+/-- FKG under the free limit for the events that the finite sets `S` and `T` meet an infinite
+cluster. -/
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_setHitsInfinite
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (S T : Finset V) :
@@ -171,9 +200,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_setHitsInfinite
           (T : Set V) T.finite_toSet N hT] at hfkg
   exact hfkg
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_setHitsInfinite
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_setHitsInfinite
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (S T : Finset V) :
@@ -217,16 +244,17 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_setHitsInfinite
           (T : Set V) T.finite_toSet N hT] at hfkg
   exact hfkg
 
+/-! ## B. Finite witnesses in an infinite cluster -/
 
-
+/-- The event that some `x ∈ S` satisfies `Q x` and lies in an infinite open cluster. -/
 def PeriodicGraph.finiteWitnessInfiniteEvent
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V))) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ x ∈ (S : Set V), Q x ∩ {omega | (P.cluster omega x).Infinite}
 
-
-
+/-- The approximation of `finiteWitnessInfiniteEvent` at box index `n`: some `x ∈ S` satisfies
+`Q x` and is connected to the boundary of the buffered box. -/
 def PeriodicGraph.finiteWitnessBoundaryApprox
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V))) (n : Nat) :
@@ -234,7 +262,7 @@ def PeriodicGraph.finiteWitnessBoundaryApprox
   ⋃ x ∈ (S : Set V), Q x ∩
     P.bufferedCylinder n (P.bufferedSetBoundaryEvent ({x} : Set V) n)
 
-theorem PeriodicGraph.finiteWitnessBoundaryApprox_isClopen
+lemma PeriodicGraph.finiteWitnessBoundaryApprox_isClopen
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V)))
     (hQ : ∀ x ∈ S, IsClopen (Q x)) (n : Nat) :
@@ -245,7 +273,7 @@ theorem PeriodicGraph.finiteWitnessBoundaryApprox_isClopen
   exact (hQ x hx).inter
     (P.bufferedSetBoundaryCylinder_isClopen ({x} : Set V) n)
 
-theorem PeriodicGraph.finiteWitnessBoundaryApprox_isIncreasing
+lemma PeriodicGraph.finiteWitnessBoundaryApprox_isIncreasing
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V)))
     (hQ : ∀ x ∈ S, IsIncreasing (Q x)) (n : Nat) :
@@ -259,7 +287,7 @@ theorem PeriodicGraph.finiteWitnessBoundaryApprox_isIncreasing
       (P.bufferedSetBoundaryEvent_isIncreasing ({x} : Set V) n)
       home hboundary⟩
 
-theorem PeriodicGraph.finiteWitnessBoundaryApprox_antitone_from
+lemma PeriodicGraph.finiteWitnessBoundaryApprox_antitone_from
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V))) (N : Nat)
     (hS : (S : Set V) ⊆
@@ -277,9 +305,7 @@ theorem PeriodicGraph.finiteWitnessBoundaryApprox_antitone_from
     P.bufferedSetBoundaryCylinder_antitone_from ({x} : Set V) N hxsub
       hkl hboundary⟩
 
-
-
-theorem PeriodicGraph.iInter_finiteWitnessBoundaryApprox
+lemma PeriodicGraph.iInter_finiteWitnessBoundaryApprox
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V))) (N : Nat)
     (hS : (S : Set V) ⊆
@@ -290,7 +316,7 @@ theorem PeriodicGraph.iInter_finiteWitnessBoundaryApprox
   ext omega
   simp only [Set.mem_iInter, PeriodicGraph.finiteWitnessBoundaryApprox,
     PeriodicGraph.finiteWitnessInfiniteEvent, Set.mem_iUnion,
-    Set.mem_inter_iff, Set.mem_setOf_eq]
+    Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · intro hall
     by_contra hnot
@@ -331,9 +357,7 @@ theorem PeriodicGraph.iInter_finiteWitnessBoundaryApprox
         hxlevel hzout hzcluster
     exact ⟨x, hxS, hxQ, ⟨x, hxlevel⟩, rfl, y, hybd, hxy⟩
 
-
-
-theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_finiteWitnessInfinite
+lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_finiteWitnessInfinite
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (S T : Finset V)
@@ -378,9 +402,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_fkg_finiteWitnessInfinite
         exact P.iInter_finiteWitnessBoundaryApprox T R N hT] at hfkg
   exact hfkg
 
-
-
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_finiteWitnessInfinite
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_finiteWitnessInfinite
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (S T : Finset V)
@@ -425,10 +447,10 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_fkg_finiteWitnessInfinite
         exact P.iInter_finiteWitnessBoundaryApprox T R N hT] at hfkg
   exact hfkg
 
+/-! ## C. Rectangle side-connection events -/
 
-
-
-
+/-- The event in the finite rectangle graph that `x` is joined by an open path inside the rectangle
+to a vertex of `T`. -/
 def PeriodicPlaneEmbedding.finiteRectTargetConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V) :
@@ -436,7 +458,8 @@ def PeriodicPlaneEmbedding.finiteRectTargetConnection
   {eta | ∃ x' y : E.RectVertex a b c d, x'.1 = x ∧ y.1 ∈ T ∧
     (FK.openSub (E.rectGraph a b c d) eta).Reachable x' y}
 
-
+/-- The infinite-volume event that `x` is joined by an open path inside the rectangle to a vertex
+of `T`. -/
 def PeriodicPlaneEmbedding.rectTargetConnectionEvent
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V) :
@@ -444,7 +467,7 @@ def PeriodicPlaneEmbedding.rectTargetConnectionEvent
   E.rectRestrict a b c d ⁻¹'
     E.finiteRectTargetConnection a b c d x T
 
-theorem PeriodicPlaneEmbedding.finiteRectTargetConnection_isIncreasing
+lemma PeriodicPlaneEmbedding.finiteRectTargetConnection_isIncreasing
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V) :
     IsIncreasing (E.finiteRectTargetConnection a b c d x T) := by
@@ -455,14 +478,14 @@ theorem PeriodicPlaneEmbedding.finiteRectTargetConnection_isIncreasing
   rw [FK.openSub_adj] at huv ⊢
   exact ⟨huv.1, Bool.eq_true_of_true_le (by simpa [huv.2] using hle s(u, v))⟩
 
-theorem PeriodicPlaneEmbedding.rectTargetConnectionEvent_isClopen
+lemma PeriodicPlaneEmbedding.rectTargetConnectionEvent_isClopen
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V) :
     IsClopen (E.rectTargetConnectionEvent a b c d x T) :=
   IsClopen.preimage (isClopen_discrete _)
     (E.continuous_rectRestrict a b c d)
 
-theorem PeriodicPlaneEmbedding.rectTargetConnectionEvent_isIncreasing
+lemma PeriodicPlaneEmbedding.rectTargetConnectionEvent_isIncreasing
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V) :
     IsIncreasing (E.rectTargetConnectionEvent a b c d x T) := by
@@ -470,9 +493,7 @@ theorem PeriodicPlaneEmbedding.rectTargetConnectionEvent_isIncreasing
   exact E.finiteRectTargetConnection_isIncreasing a b c d x T
     (E.rectRestrict_mono a b c d hle) homega
 
-
-
-theorem PeriodicPlaneEmbedding.mem_rectTargetConnectionEvent_iff
+lemma PeriodicPlaneEmbedding.mem_rectTargetConnectionEvent_iff
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (x : V) (T : Set V)
     (omega : ConfigSpace (Sym2 V)) :
@@ -511,9 +532,7 @@ theorem PeriodicPlaneEmbedding.mem_rectTargetConnectionEvent_iff
       exact ⟨q.induce (E.rectVertices a b c d) hq⟩
     exact ⟨⟨x, hx⟩, ⟨y, hyRect⟩, rfl, hy, hreach⟩
 
-
-
-theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_eq_finiteWitnessInfinite
+lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_eq_finiteWitnessInfinite
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (a b c d : Real) (S : Finset V) (T : Set V) :
     E.rectSideConnectionEvent a b c d (S : Set V) T =
@@ -526,14 +545,13 @@ theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_eq_finiteWitnessInfinite
       ⟨(E.mem_rectTargetConnectionEvent_iff a b c d x T omega).2
         ⟨y, hy, hxy⟩, hxinf⟩⟩⟩
   · simp only [PeriodicGraph.finiteWitnessInfiniteEvent, Set.mem_iUnion,
-      Set.mem_inter_iff, Set.mem_setOf_eq]
+      Set.mem_inter_iff, Set.mem_ofPred_eq]
     rintro ⟨x, hx, hxT, hxinf⟩
     obtain ⟨y, hy, hxy⟩ :=
       (E.mem_rectTargetConnectionEvent_iff a b c d x T omega).1 hxT
     exact ⟨x, hx, hxinf, y, hy, hxy⟩
 
-
-
+/-- FKG for rectangle side-connection events under the free buffered infinite-volume FK measure. -/
 theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -559,8 +577,7 @@ theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
         a b c d T sideT] at hfkg
   exact hfkg
 
-
-
+/-- FKG for rectangle side-connection events under the wired buffered infinite-volume FK measure. -/
 theorem PeriodicPlaneEmbedding.wiredBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)

@@ -6,23 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Graph
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InclusionExclusion
+
+/-!
+# Coherent free and wired infinite-volume limits on periodic graphs
+
+The free and wired random-cluster measures on an exhausting sequence of buffered boxes converge
+weakly, for `0 < p < 1` and `q ≥ 1`, to the free and wired infinite-volume FK measures.
+
+## i. Overview
+
+The buffered boxes are orbit boxes whose radii grow so that every neighbor of a box vertex lies in
+the next box. For `q ≥ 1`, the comparison between consecutive boxes (free measures increase and
+wired measures decrease in the volume on increasing events) makes the probability of every
+increasing cylinder event monotone in the box index, hence convergent. Compactness gives a weakly
+convergent subsequence; its limit is the infinite-volume measure. Every subsequential limit agrees
+with it on increasing cylinders, hence by inclusion–exclusion on all cylinders, hence everywhere,
+so the whole sequence converges. `freeBufferedMeasure_weakConverges` and
+`wiredBufferedMeasure_weakConverges` are proved unconditionally, with only `0 < p < 1` and `1 ≤ q`.
+
+## ii. Key results
+
+- `PeriodicGraph.freeBufferedMeasure_step_cylinder` : free buffered measures increase in the box
+  index on increasing cylinder events.
+- `PeriodicGraph.freeBufferedMeasure_weakConverges` : the free buffered measures converge weakly to
+  the free infinite-volume FK measure.
+- `PeriodicGraph.wiredBufferedMeasure_weakConverges` : the wired buffered measures converge weakly
+  to the wired infinite-volume FK measure.
+
+## iii. Table of contents
+
+- A. Buffered boxes
+- B. Comparison between consecutive boxes
+- C. Finite-volume buffered measures and cylinders
+- D. Infinite-volume limits
+- E. Identification of subsequential limits and weak convergence
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
@@ -34,7 +61,9 @@ namespace PeriodicPlanar
 
 variable {V : Type*} [DecidableEq V]
 
-theorem PeriodicGraph.finite_subset_orbitBox (P : PeriodicGraph V)
+/-! ## A. Buffered boxes -/
+
+lemma PeriodicGraph.finite_subset_orbitBox (P : PeriodicGraph V)
     (S : Finset V) :
     ∃ n, ∀ v ∈ S, v ∈ P.orbitBox n := by
   classical
@@ -50,12 +79,11 @@ theorem PeriodicGraph.finite_subset_orbitBox (P : PeriodicGraph V)
       · exact P.orbitBox_mono (Nat.le_max_left _ _) haBox
       · exact P.orbitBox_mono (Nat.le_max_right _ _) (hSBox v hv)
 
-
-theorem PeriodicGraph.exists_buffer_radius (P : PeriodicGraph V) (n : ℕ) :
+lemma PeriodicGraph.exists_buffer_radius (P : PeriodicGraph V) (n : ℕ) :
     ∃ m, n < m ∧
       ∀ v ∈ P.orbitBox n, ∀ w, P.graph.Adj v w → w ∈ P.orbitBox m := by
   classical
-  letI : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
+  let : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
   let neighborUnion := (P.orbitBox n).biUnion
     (fun v => P.graph.neighborFinset v)
   obtain ⟨k, hk⟩ := P.finite_subset_orbitBox neighborUnion
@@ -67,42 +95,43 @@ theorem PeriodicGraph.exists_buffer_radius (P : PeriodicGraph V) (n : ℕ) :
     exact ⟨v, hv, by simpa only [SimpleGraph.mem_neighborFinset] using hvw⟩
   exact P.orbitBox_mono (Nat.le_max_right _ _) (hk w hw)
 
-
+/-- A radius larger than `n` such that every neighbor of a vertex in the orbit box of radius `n`
+lies in the orbit box of this radius. -/
 noncomputable def PeriodicGraph.nextBufferedRadius
     (P : PeriodicGraph V) (n : ℕ) : ℕ :=
   (P.exists_buffer_radius n).choose
 
-theorem PeriodicGraph.lt_nextBufferedRadius (P : PeriodicGraph V) (n : ℕ) :
+lemma PeriodicGraph.lt_nextBufferedRadius (P : PeriodicGraph V) (n : ℕ) :
     n < P.nextBufferedRadius n :=
   (P.exists_buffer_radius n).choose_spec.1
 
-theorem PeriodicGraph.neighbor_mem_nextBufferedRadius
+lemma PeriodicGraph.neighbor_mem_nextBufferedRadius
     (P : PeriodicGraph V) (n : ℕ) {v w : V}
     (hv : v ∈ P.orbitBox n) (hvw : P.graph.Adj v w) :
     w ∈ P.orbitBox (P.nextBufferedRadius n) :=
   (P.exists_buffer_radius n).choose_spec.2 v hv w hvw
 
-
+/-- The radii of the buffered boxes: `0`, then iterated `nextBufferedRadius`. -/
 noncomputable def PeriodicGraph.bufferedRadius
     (P : PeriodicGraph V) : ℕ → ℕ
   | 0 => 0
   | n + 1 => P.nextBufferedRadius (P.bufferedRadius n)
 
-@[simp] theorem PeriodicGraph.bufferedRadius_zero (P : PeriodicGraph V) :
+@[simp] lemma PeriodicGraph.bufferedRadius_zero (P : PeriodicGraph V) :
     P.bufferedRadius 0 = 0 := rfl
 
-@[simp] theorem PeriodicGraph.bufferedRadius_succ (P : PeriodicGraph V) (n : ℕ) :
+@[simp] lemma PeriodicGraph.bufferedRadius_succ (P : PeriodicGraph V) (n : ℕ) :
     P.bufferedRadius (n + 1) =
       P.nextBufferedRadius (P.bufferedRadius n) := rfl
 
-theorem PeriodicGraph.bufferedRadius_strictMono (P : PeriodicGraph V) :
+lemma PeriodicGraph.bufferedRadius_strictMono (P : PeriodicGraph V) :
     StrictMono P.bufferedRadius := by
   apply strictMono_nat_of_lt_succ
   intro n
   rw [P.bufferedRadius_succ]
   exact P.lt_nextBufferedRadius (P.bufferedRadius n)
 
-theorem PeriodicGraph.id_le_bufferedRadius (P : PeriodicGraph V) (n : ℕ) :
+lemma PeriodicGraph.id_le_bufferedRadius (P : PeriodicGraph V) (n : ℕ) :
     n ≤ P.bufferedRadius n := by
   induction n with
   | zero => simp
@@ -110,33 +139,37 @@ theorem PeriodicGraph.id_le_bufferedRadius (P : PeriodicGraph V) (n : ℕ) :
       exact Nat.succ_le_of_lt
         (ih.trans_lt (P.bufferedRadius_strictMono (Nat.lt_succ_self n)))
 
-
-theorem PeriodicGraph.mem_bufferedBox_of_eventually
+lemma PeriodicGraph.mem_bufferedBox_of_eventually
     (P : PeriodicGraph V) (v : V) :
     ∃ n, v ∈ P.orbitBox (P.bufferedRadius n) := by
   obtain ⟨n, hn⟩ := P.mem_orbitBox_of_eventually v
   exact ⟨n, P.orbitBox_mono (P.id_le_bufferedRadius n) hn⟩
 
+/-- The vertices of the buffered box of index `n`. -/
 abbrev PeriodicGraph.BufferedVertex (P : PeriodicGraph V) (n : ℕ) :=
   P.OrbitVertex (P.bufferedRadius n)
 
+/-- The buffered box is finite. -/
 noncomputable instance PeriodicGraph.instFintypeBufferedVertex
     (P : PeriodicGraph V) (n : ℕ) : Fintype (P.BufferedVertex n) :=
   P.instFintypeOrbitVertex (P.bufferedRadius n)
 
+/-- Decidable equality of buffered box vertices. -/
 instance PeriodicGraph.instDecidableEqBufferedVertex
     (P : PeriodicGraph V) (n : ℕ) : DecidableEq (P.BufferedVertex n) :=
   Subtype.instDecidableEq
 
+/-- The graph induced on the buffered box of index `n`. -/
 noncomputable def PeriodicGraph.bufferedGraph (P : PeriodicGraph V) (n : ℕ) :
     SimpleGraph (P.BufferedVertex n) :=
   P.orbitGraph (P.bufferedRadius n)
 
+/-- Classical decidability of adjacency in the buffered box. -/
 noncomputable instance PeriodicGraph.instDecidableRelBufferedGraph
     (P : PeriodicGraph V) (n : ℕ) : DecidableRel (P.bufferedGraph n).Adj :=
   Classical.decRel _
 
-
+/-- The inclusion of the buffered box of index `n` into that of index `m ≥ n`. -/
 noncomputable def PeriodicGraph.bufferedVertexInclLE (P : PeriodicGraph V)
     {n m : ℕ} (hnm : n ≤ m) : P.BufferedVertex n ↪ P.BufferedVertex m where
   toFun v := ⟨v.1, P.orbitBox_mono
@@ -147,32 +180,36 @@ noncomputable def PeriodicGraph.bufferedVertexInclLE (P : PeriodicGraph V)
       congrArg (fun z : P.BufferedVertex m => (z : V)) h
     exact Subtype.ext hval
 
-@[simp] theorem PeriodicGraph.bufferedVertexInclLE_val
+@[simp] lemma PeriodicGraph.bufferedVertexInclLE_val
     (P : PeriodicGraph V) {n m : ℕ} (hnm : n ≤ m)
     (v : P.BufferedVertex n) :
     (P.bufferedVertexInclLE hnm v : V) = v := rfl
 
+/-- The inclusion of the buffered box of index `n` into that of index `n + 1`. -/
 noncomputable def PeriodicGraph.bufferedVertexIncl (P : PeriodicGraph V) (n : ℕ) :
     P.BufferedVertex n ↪ P.BufferedVertex (n + 1) :=
   P.bufferedVertexInclLE (Nat.le_succ n)
 
-theorem PeriodicGraph.bufferedAdjMatch (P : PeriodicGraph V) (n : ℕ) :
+lemma PeriodicGraph.bufferedAdjMatch (P : PeriodicGraph V) (n : ℕ) :
     ocd_AdjMatch (P.bufferedGraph n) (P.bufferedGraph (n + 1))
       (P.bufferedVertexIncl n) := by
   intro x y
   rfl
 
+/-! ## B. Comparison between consecutive boxes -/
 
+/-- The boundary of the buffered box: vertices with a graph neighbor outside the box. -/
 def PeriodicGraph.bufferedBoundary (P : PeriodicGraph V) (n : ℕ)
     (v : P.BufferedVertex n) : Prop :=
   ∃ w : V, P.graph.Adj v.1 w ∧
     w ∉ P.orbitBox (P.bufferedRadius n)
 
+/-- Classical decidability of the buffered boundary. -/
 noncomputable instance PeriodicGraph.instDecidablePredBufferedBoundary
     (P : PeriodicGraph V) (n : ℕ) : DecidablePred (P.bufferedBoundary n) :=
   fun _ => Classical.dec _
 
-theorem PeriodicGraph.neighbor_mem_buffered_succ
+lemma PeriodicGraph.neighbor_mem_buffered_succ
     (P : PeriodicGraph V) (n : ℕ) {v w : V}
     (hv : v ∈ P.orbitBox (P.bufferedRadius n))
     (hvw : P.graph.Adj v w) :
@@ -180,14 +217,13 @@ theorem PeriodicGraph.neighbor_mem_buffered_succ
   rw [P.bufferedRadius_succ]
   exact P.neighbor_mem_nextBufferedRadius (P.bufferedRadius n) hv hvw
 
-
-theorem PeriodicGraph.not_bufferedBoundary_incl_succ
+lemma PeriodicGraph.not_bufferedBoundary_incl_succ
     (P : PeriodicGraph V) (n : ℕ) (v : P.BufferedVertex n) :
     ¬ P.bufferedBoundary (n + 1) (P.bufferedVertexIncl n v) := by
   rintro ⟨w, hvw, hw⟩
   exact hw (P.neighbor_mem_buffered_succ n v.2 hvw)
 
-theorem PeriodicGraph.bufferedBoundary_of_outsideGraph_adj
+lemma PeriodicGraph.bufferedBoundary_of_outsideGraph_adj
     (P : PeriodicGraph V) (n : ℕ)
     (psi : ConfigSpace (Sym2 (P.BufferedVertex (n + 1))))
     {x : P.BufferedVertex n} {z : P.BufferedVertex (n + 1)}
@@ -207,9 +243,7 @@ theorem PeriodicGraph.bufferedBoundary_of_outsideGraph_adj
     exact ⟨z.1, hadj, hznot⟩
   · exact (P.not_bufferedBoundary_incl_succ n x hbdry).elim
 
-
-
-theorem PeriodicGraph.bufferedInducedWiring_le (P : PeriodicGraph V) (n : ℕ)
+lemma PeriodicGraph.bufferedInducedWiring_le (P : PeriodicGraph V) (n : ℕ)
     (psi : ConfigSpace (Sym2 (P.BufferedVertex (n + 1)))) :
     ocd_inducedWiring (P.bufferedGraph (n + 1))
         (P.bufferedVertexIncl n) (P.bufferedBoundary (n + 1)) psi
@@ -232,8 +266,7 @@ theorem PeriodicGraph.bufferedInducedWiring_le (P : PeriodicGraph V) (n : ℕ)
     · exact (hne' heq).elim
     · exact P.bufferedBoundary_of_outsideGraph_adj n psi hadj
 
-
-theorem PeriodicGraph.freeBuffered_step
+lemma PeriodicGraph.freeBuffered_step
     (P : PeriodicGraph V) (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 (P.BufferedVertex n)))}
@@ -246,8 +279,7 @@ theorem PeriodicGraph.freeBuffered_step
   exact bdp_free_inner_dominated_fkProb
     (P.bufferedVertexIncl n).injective (P.bufferedAdjMatch n) hp hp1 hq hA
 
-
-theorem PeriodicGraph.wiredBuffered_step
+lemma PeriodicGraph.wiredBuffered_step
     (P : PeriodicGraph V) (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 (P.BufferedVertex n)))}
@@ -264,23 +296,23 @@ theorem PeriodicGraph.wiredBuffered_step
     (fun psi => P.bufferedInducedWiring_le n psi) hA
   simpa only [bcProb_clique_eq_wiredFkProb] using h
 
-
-
 variable [Countable V]
 
+/-! ## C. Finite-volume buffered measures and cylinders -/
 
+/-- The free FK measure on the buffered box of index `n`, extended to all edges as closed. -/
 noncomputable def PeriodicGraph.freeBufferedMeasure (P : PeriodicGraph V) (n : ℕ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 V)) :=
   P.freeFiniteMeasure (P.bufferedRadius n) hp hp1 hq
 
-
+/-- The wired FK distribution on the buffered box of index `n`, with the box boundary wired. -/
 noncomputable def PeriodicGraph.wiredBufferedPMF (P : PeriodicGraph V) (n : ℕ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     PMF (ConfigSpace (Sym2 (P.BufferedVertex n))) :=
   wiredFkPMF (P.bufferedGraph n) (P.bufferedBoundary n) hp hp1 hq
 
-
+/-- The wired FK measure on the buffered box of index `n`, pushed forward to all edges. -/
 noncomputable def PeriodicGraph.wiredBufferedMeasure (P : PeriodicGraph V) (n : ℕ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 V)) :=
@@ -288,28 +320,28 @@ noncomputable def PeriodicGraph.wiredBufferedMeasure (P : PeriodicGraph V) (n : 
       (P.extendEdge (P.bufferedRadius n)),
     inferInstance⟩
 
-
+/-- The restriction of a configuration to the edges of the buffered box of index `n`. -/
 noncomputable def PeriodicGraph.bufferedRestrict (P : PeriodicGraph V) (n : ℕ)
     (omega : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 (P.BufferedVertex n)) :=
   fun e => omega (P.edgeIncl (P.bufferedRadius n) e)
 
 omit [Countable V] in
-theorem PeriodicGraph.continuous_bufferedRestrict
+lemma PeriodicGraph.continuous_bufferedRestrict
     (P : PeriodicGraph V) (n : ℕ) : Continuous (P.bufferedRestrict n) := by
   exact continuous_pi fun e => continuous_apply (P.edgeIncl (P.bufferedRadius n) e)
 
-theorem PeriodicGraph.measurable_bufferedRestrict
+lemma PeriodicGraph.measurable_bufferedRestrict
     (P : PeriodicGraph V) (n : ℕ) : Measurable (P.bufferedRestrict n) :=
   (P.continuous_bufferedRestrict n).measurable
 
 omit [Countable V] in
-theorem PeriodicGraph.monotone_bufferedRestrict
+lemma PeriodicGraph.monotone_bufferedRestrict
     (P : PeriodicGraph V) (n : ℕ) : Monotone (P.bufferedRestrict n) := by
   intro omega eta home e
   exact home _
 
-
+/-- The restriction of a configuration on the box of index `m` to the box of index `n ≤ m`. -/
 noncomputable def PeriodicGraph.bufferedRestrictLE (P : PeriodicGraph V)
     {n m : ℕ} (hnm : n ≤ m)
     (omega : ConfigSpace (Sym2 (P.BufferedVertex m))) :
@@ -317,14 +349,14 @@ noncomputable def PeriodicGraph.bufferedRestrictLE (P : PeriodicGraph V)
   fun e => omega (Sym2.map (P.bufferedVertexInclLE hnm) e)
 
 omit [Countable V] in
-theorem PeriodicGraph.monotone_bufferedRestrictLE
+lemma PeriodicGraph.monotone_bufferedRestrictLE
     (P : PeriodicGraph V) {n m : ℕ} (hnm : n ≤ m) :
     Monotone (P.bufferedRestrictLE hnm) := by
   intro omega eta home e
   exact home _
 
 omit [Countable V] in
-theorem PeriodicGraph.edgeIncl_bufferedVertexInclLE
+lemma PeriodicGraph.edgeIncl_bufferedVertexInclLE
     (P : PeriodicGraph V) {n m : ℕ} (hnm : n ≤ m)
     (e : Sym2 (P.BufferedVertex n)) :
     P.edgeIncl (P.bufferedRadius m)
@@ -334,7 +366,7 @@ theorem PeriodicGraph.edgeIncl_bufferedVertexInclLE
   | _ x y => rfl
 
 omit [Countable V] in
-@[simp] theorem PeriodicGraph.bufferedRestrict_extendEdge_le
+@[simp] lemma PeriodicGraph.bufferedRestrict_extendEdge_le
     (P : PeriodicGraph V) {n m : ℕ} (hnm : n ≤ m)
     (omega : ConfigSpace (Sym2 (P.BufferedVertex m))) :
     P.bufferedRestrict n (P.extendEdge (P.bufferedRadius m) omega) =
@@ -345,7 +377,7 @@ omit [Countable V] in
     P.extendEdge_edgeIncl]
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedRestrictLE_succ
+lemma PeriodicGraph.bufferedRestrictLE_succ
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     (omega : ConfigSpace (Sym2 (P.BufferedVertex (m + 1)))) :
     P.bufferedRestrictLE (hNm.trans (Nat.le_succ m)) omega =
@@ -355,35 +387,35 @@ theorem PeriodicGraph.bufferedRestrictLE_succ
   induction e using Sym2.inductionOn with
   | _ x y => rfl
 
-
+/-- The cylinder event determined by the event `S` on the buffered box of index `N`. -/
 def PeriodicGraph.bufferedCylinder (P : PeriodicGraph V) (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
     Set (ConfigSpace (Sym2 V)) :=
   P.bufferedRestrict N ⁻¹' S
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedCylinder_isClopen
+lemma PeriodicGraph.bufferedCylinder_isClopen
     (P : PeriodicGraph V) (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
     IsClopen (P.bufferedCylinder N S) :=
   IsClopen.preimage ⟨isClosed_discrete _, isOpen_discrete _⟩
     (P.continuous_bufferedRestrict N)
 
-theorem PeriodicGraph.bufferedCylinder_measurableSet
+lemma PeriodicGraph.bufferedCylinder_measurableSet
     (P : PeriodicGraph V) (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
     MeasurableSet (P.bufferedCylinder N S) :=
   (P.bufferedCylinder_isClopen N S).isOpen.measurableSet
 
 omit [Countable V] in
-theorem PeriodicGraph.bufferedCylinder_isIncreasing
+lemma PeriodicGraph.bufferedCylinder_isIncreasing
     (P : PeriodicGraph V) (N : ℕ)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
     (hS : IsIncreasing S) :
     IsIncreasing (P.bufferedCylinder N S) :=
   fun _ _ home hmem => hS (P.monotone_bufferedRestrict N home) hmem
 
-private theorem fkPMF_toMeasure_toReal_generic
+private lemma fkPMF_toMeasure_toReal_generic
     {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -405,7 +437,7 @@ private theorem fkPMF_toMeasure_toReal_generic
     · rw [Set.indicator_of_notMem ha]
       simp
 
-private theorem wiredFkPMF_toMeasure_toReal_generic
+private lemma wiredFkPMF_toMeasure_toReal_generic
     {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (bdry : W → Prop) [DecidablePred bdry]
@@ -430,7 +462,7 @@ private theorem wiredFkPMF_toMeasure_toReal_generic
     · rw [Set.indicator_of_notMem ha]
       simp
 
-theorem PeriodicGraph.freeBufferedMeasure_real_cylinder
+lemma PeriodicGraph.freeBufferedMeasure_real_cylinder
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
@@ -456,7 +488,7 @@ theorem PeriodicGraph.freeBufferedMeasure_real_cylinder
   rw [hmap, hpre]
   exact fkPMF_toMeasure_toReal_generic (P.bufferedGraph m) hp hp1 hq _
 
-theorem PeriodicGraph.wiredBufferedMeasure_real_cylinder
+lemma PeriodicGraph.wiredBufferedMeasure_real_cylinder
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
@@ -482,7 +514,8 @@ theorem PeriodicGraph.wiredBufferedMeasure_real_cylinder
   exact wiredFkPMF_toMeasure_toReal_generic (P.bufferedGraph m)
     (P.bufferedBoundary m) hp hp1 hq _
 
-theorem PeriodicGraph.freeBufferedMeasure_step_cylinder
+/-- For `q ≥ 1`, free buffered measures increase in the box index on increasing cylinder events. -/
+lemma PeriodicGraph.freeBufferedMeasure_step_cylinder
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -504,7 +537,7 @@ theorem PeriodicGraph.freeBufferedMeasure_step_cylinder
     simp only [A, Set.mem_preimage, P.bufferedRestrictLE_succ hNm]
   rwa [hpre] at hstep
 
-theorem PeriodicGraph.wiredBufferedMeasure_step_cylinder
+lemma PeriodicGraph.wiredBufferedMeasure_step_cylinder
     (P : PeriodicGraph V) {N m : ℕ} (hNm : N ≤ m)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -526,16 +559,17 @@ theorem PeriodicGraph.wiredBufferedMeasure_step_cylinder
     simp only [A, Set.mem_preimage, P.bufferedRestrictLE_succ hNm]
   rwa [hpre] at hstep
 
+/-! ## D. Infinite-volume limits -/
 
-
-
+/-- The free buffered infinite-volume FK measure: a chosen subsequential weak limit of the free
+buffered measures. -/
 noncomputable def PeriodicGraph.freeBufferedInfiniteVolume
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 V)) :=
   (CompactSpace.tendsto_subseq (fun n => P.freeBufferedMeasure n hp hp1 hq)).choose
 
-theorem PeriodicGraph.freeBufferedInfiniteVolume_isLimit
+lemma PeriodicGraph.freeBufferedInfiniteVolume_isLimit
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∃ phi : ℕ → ℕ, StrictMono phi ∧
@@ -546,14 +580,15 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_isLimit
       (fun n => P.freeBufferedMeasure n hp hp1 hq)).choose_spec
   exact ⟨phi, hphi, hlimit⟩
 
-
+/-- The wired buffered infinite-volume FK measure: a chosen subsequential weak limit of the wired
+buffered measures. -/
 noncomputable def PeriodicGraph.wiredBufferedInfiniteVolume
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 V)) :=
   (CompactSpace.tendsto_subseq (fun n => P.wiredBufferedMeasure n hp hp1 hq)).choose
 
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_isLimit
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_isLimit
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∃ phi : ℕ → ℕ, StrictMono phi ∧
@@ -564,8 +599,7 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_isLimit
       (fun n => P.wiredBufferedMeasure n hp hp1 hq)).choose_spec
   exact ⟨phi, hphi, hlimit⟩
 
-
-theorem PeriodicGraph.freeBufferedMeasure_tendsto_cylinder
+lemma PeriodicGraph.freeBufferedMeasure_tendsto_cylinder
     (P : PeriodicGraph V) (N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -603,8 +637,7 @@ theorem PeriodicGraph.freeBufferedMeasure_tendsto_cylinder
     tendsto_nhds_unique hsub hport
   rwa [heq] at hfull
 
-
-theorem PeriodicGraph.wiredBufferedMeasure_tendsto_cylinder
+lemma PeriodicGraph.wiredBufferedMeasure_tendsto_cylinder
     (P : PeriodicGraph V) (N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))}
@@ -642,9 +675,9 @@ theorem PeriodicGraph.wiredBufferedMeasure_tendsto_cylinder
     tendsto_nhds_unique hsub hport
   rwa [heq] at hfull
 
+/-! ## E. Identification of subsequential limits and weak convergence -/
 
-
-theorem PeriodicGraph.freeBuffered_subseq_cylinder_eq
+lemma PeriodicGraph.freeBuffered_subseq_cylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -662,7 +695,7 @@ theorem PeriodicGraph.freeBuffered_subseq_cylinder_eq
     hphi.tendsto_atTop
   exact tendsto_nhds_unique hport hsub
 
-theorem PeriodicGraph.wiredBuffered_subseq_cylinder_eq
+lemma PeriodicGraph.wiredBuffered_subseq_cylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -680,12 +713,12 @@ theorem PeriodicGraph.wiredBuffered_subseq_cylinder_eq
     hphi.tendsto_atTop
   exact tendsto_nhds_unique hport hsub
 
-
+/-- The finite set of endpoints of the edges in `T`. -/
 def PeriodicGraph.edgeVertexFinset (T : Finset (Sym2 V)) : Finset V :=
   T.biUnion Sym2.toFinset
 
 omit [Countable V] in
-theorem PeriodicGraph.exists_bufferedLevel_edges (P : PeriodicGraph V)
+lemma PeriodicGraph.exists_bufferedLevel_edges (P : PeriodicGraph V)
     (T : Finset (Sym2 V)) :
     ∃ N, ∀ e ∈ T, e ∈ Set.range (P.edgeIncl (P.bufferedRadius N)) := by
   classical
@@ -706,7 +739,7 @@ theorem PeriodicGraph.exists_bufferedLevel_edges (P : PeriodicGraph V)
         ⟨y, P.orbitBox_mono (P.id_le_bufferedRadius N) (hN y hymem)⟩
       exact ⟨s(xb, yb), rfl⟩
 
-private theorem PeriodicGraph.bufferedCylinder_real_eq_signedSum
+private lemma PeriodicGraph.bufferedCylinder_real_eq_signedSum
     (P : PeriodicGraph V)
     (mu : ProbabilityMeasure (ConfigSpace (Sym2 V))) (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N))))
@@ -747,13 +780,13 @@ private theorem PeriodicGraph.bufferedCylinder_real_eq_signedSum
             congr 1
             have h := integral_indicator_const (μ := (mu : Measure _)) (1 : ℝ)
               (P.bufferedCylinder_measurableSet N (A i))
-            simp at h ⊢
+            simp only [ProbabilityMeasure.measureReal_eq_coe_coeFn, smul_eq_mul, mul_one] at h ⊢
             exact h
           · intro i hi
             exact ((integrable_const (1 : ℝ)).indicator
               (P.bufferedCylinder_measurableSet N (A i))).const_mul _
 
-theorem PeriodicGraph.freeBuffered_subseq_allCylinder_eq
+lemma PeriodicGraph.freeBuffered_subseq_allCylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -783,7 +816,7 @@ theorem PeriodicGraph.freeBuffered_subseq_allCylinder_eq
   intro i hi
   rw [P.freeBuffered_subseq_cylinder_eq hp hp1 hq nu phi hphi hconv N (hA i hi)]
 
-theorem PeriodicGraph.wiredBuffered_subseq_allCylinder_eq
+lemma PeriodicGraph.wiredBuffered_subseq_allCylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -814,9 +847,7 @@ theorem PeriodicGraph.wiredBuffered_subseq_allCylinder_eq
   rw [P.wiredBuffered_subseq_cylinder_eq hp hp1 hq nu phi hphi hconv N (hA i hi)]
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.fullCylinder_eq_bufferedCylinder
+lemma PeriodicGraph.fullCylinder_eq_bufferedCylinder
     (P : PeriodicGraph V) (N : ℕ) (s : Finset (Sym2 V))
     (S : Set (∀ _i : s, Bool))
     (hs : ∀ e ∈ s, e ∈ Set.range (P.edgeIncl (P.bufferedRadius N))) :
@@ -834,7 +865,7 @@ theorem PeriodicGraph.fullCylinder_eq_bufferedCylinder
     rfl
   simp only [mem_cylinder, hrestr]
 
-theorem PeriodicGraph.freeBuffered_subseq_finiteCylinder_eq
+lemma PeriodicGraph.freeBuffered_subseq_finiteCylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -849,7 +880,7 @@ theorem PeriodicGraph.freeBuffered_subseq_finiteCylinder_eq
   rw [P.fullCylinder_eq_bufferedCylinder N s S hs]
   exact P.freeBuffered_subseq_allCylinder_eq hp hp1 hq nu phi hphi hconv N _
 
-theorem PeriodicGraph.wiredBuffered_subseq_finiteCylinder_eq
+lemma PeriodicGraph.wiredBuffered_subseq_finiteCylinder_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -864,7 +895,7 @@ theorem PeriodicGraph.wiredBuffered_subseq_finiteCylinder_eq
   rw [P.fullCylinder_eq_bufferedCylinder N s S hs]
   exact P.wiredBuffered_subseq_allCylinder_eq hp hp1 hq nu phi hphi hconv N _
 
-private theorem probabilityMeasure_eq_of_finiteCylinder_real_eq
+private lemma probabilityMeasure_eq_of_finiteCylinder_real_eq
     {E : Type*} [Countable E]
     (mu nu : ProbabilityMeasure (ConfigSpace E))
     (h : ∀ (s : Finset E) (S : Set (∀ _i : s, Bool)),
@@ -884,9 +915,7 @@ private theorem probabilityMeasure_eq_of_finiteCylinder_real_eq
       (measure_ne_top (nu : Measure (ConfigSpace E)) (cylinder s S))).mp hreal
   · rw [measure_univ, measure_univ]
 
-
-
-theorem PeriodicGraph.freeBuffered_subseq_eq
+lemma PeriodicGraph.freeBuffered_subseq_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -897,9 +926,7 @@ theorem PeriodicGraph.freeBuffered_subseq_eq
   apply probabilityMeasure_eq_of_finiteCylinder_real_eq
   exact P.freeBuffered_subseq_finiteCylinder_eq hp hp1 hq nu phi hphi hconv
 
-
-
-theorem PeriodicGraph.wiredBuffered_subseq_eq
+lemma PeriodicGraph.wiredBuffered_subseq_eq
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (nu : ProbabilityMeasure (ConfigSpace (Sym2 V)))
@@ -910,7 +937,8 @@ theorem PeriodicGraph.wiredBuffered_subseq_eq
   apply probabilityMeasure_eq_of_finiteCylinder_real_eq
   exact P.wiredBuffered_subseq_finiteCylinder_eq hp hp1 hq nu phi hphi hconv
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the free buffered measures converge weakly to the free
+infinite-volume FK measure. -/
 theorem PeriodicGraph.freeBufferedMeasure_weakConverges
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -924,7 +952,8 @@ theorem PeriodicGraph.freeBufferedMeasure_weakConverges
   apply P.freeBuffered_subseq_eq hp hp1 hq nu phi hphi
   exact hconv
 
-
+/-- For `0 < p < 1` and `q ≥ 1`, the wired buffered measures converge weakly to the wired
+infinite-volume FK measure. -/
 theorem PeriodicGraph.wiredBufferedMeasure_weakConverges
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -938,8 +967,7 @@ theorem PeriodicGraph.wiredBufferedMeasure_weakConverges
   apply P.wiredBuffered_subseq_eq hp hp1 hq nu phi hphi
   exact hconv
 
-
-theorem PeriodicGraph.freeBufferedMeasure_tendsto_finiteCylinder
+lemma PeriodicGraph.freeBufferedMeasure_tendsto_finiteCylinder
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (s : Finset (Sym2 V)) (S : Set (∀ _i : s, Bool)) :
@@ -951,8 +979,7 @@ theorem PeriodicGraph.freeBufferedMeasure_tendsto_finiteCylinder
   (P.freeBufferedMeasure_weakConverges hp hp1 hq).tendsto_real_of_isClopen
     (isClopen_cylinderEvent s S)
 
-
-theorem PeriodicGraph.wiredBufferedMeasure_tendsto_finiteCylinder
+lemma PeriodicGraph.wiredBufferedMeasure_tendsto_finiteCylinder
     (P : PeriodicGraph V) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (s : Finset (Sym2 V)) (S : Set (∀ _i : s, Bool)) :

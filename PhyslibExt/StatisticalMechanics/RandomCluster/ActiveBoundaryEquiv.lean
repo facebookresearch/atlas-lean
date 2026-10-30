@@ -6,21 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEdges
 public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IvProperties
 
+/-!
+# Active-edge marginals of the boundary-conditioned random-cluster measure
+
+The boundary-wired active measure on `E(G)` is the marginal on `E(G)` of the boundary-conditioned
+random-cluster measure on all of `Sym2 V`; with the boundary-clique wiring it is the wired measure.
+
+## i. Overview
+
+Configurations on `Sym2 V` split as a pair: the values on the edges of `G` and the values off `G`.
+The boundary-conditioned weight depends only on the edges of `G`, so summing out the inactive
+coordinates multiplies the active weight by `2^{#(Sym2 V \ E(G))}`. This factorizes the partition
+function and every numerator, hence expectations of functions of the active edges agree under the
+two measures. Joining all boundary vertices into a clique turns the boundary-conditioned measure
+into the wired random-cluster measure, giving the same identities for wired boundary conditions.
+
+All key results are proved unconditionally, under only `0 < p < 1` and `0 < q` (the factorization
+needs no hypotheses at all).
+
+## ii. Key results
+
+- `activeBCZ_factorization` : the full partition function is `2^{#inactive}` times the active one.
+- `activeBCMean_eq_bcProb_lift` : active expectations equal expectations of the restriction under
+  the boundary-conditioned measure.
+- `activeBCMean_boundaryClique_eq_wired` : with boundary-clique wiring, active expectations equal
+  wired expectations.
+
+## iii. Table of contents
+
+- A. Restriction and the active/inactive splitting
+- B. Factorization of the partition function
+- C. Marginals of the boundary-conditioned measure
+- D. Wired boundary conditions
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Section 4.2.
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedDecidableInType false
 
 namespace StatMech
 namespace FK
@@ -29,22 +66,24 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
+/-! ## A. Restriction and the active/inactive splitting -/
 
+/-- Restrict a configuration on all of `Sym2 V` to the edges of `G`. -/
 def restrictActive (omega : ConfigSpace (Sym2 V)) : ConfigSpace G.edgeSet :=
   fun e => omega e.1
 
-@[simp] theorem restrictActive_extendActive (omega : ConfigSpace G.edgeSet) :
+@[simp] lemma restrictActive_extendActive (omega : ConfigSpace G.edgeSet) :
     restrictActive G (extendActive G omega) = omega := by
   funext e
   exact extendActive_apply G omega e
 
-
+/-- Split a configuration on `Sym2 V` into its values on the edges of `G` and its values off `G`. -/
 noncomputable def activeSplitEquiv :
     ConfigSpace (Sym2 V) ≃
       ConfigSpace G.edgeSet × ConfigSpace {e : Sym2 V // e ∉ G.edgeSet} :=
   Equiv.piEquivPiSubtypeProd (fun e : Sym2 V => e ∈ G.edgeSet) (fun _ => Bool)
 
-@[simp] theorem restrictActive_activeSplitEquiv_symm
+@[simp] lemma restrictActive_activeSplitEquiv_symm
     (eta : ConfigSpace G.edgeSet)
     (xi : ConfigSpace {e : Sym2 V // e ∉ G.edgeSet}) :
     restrictActive G ((activeSplitEquiv G).symm (eta, xi)) = eta := by
@@ -52,14 +91,14 @@ noncomputable def activeSplitEquiv :
   simp [restrictActive, activeSplitEquiv,
     Equiv.piEquivPiSubtypeProd_symm_apply, e.2]
 
-theorem numClustersBC_eq_of_edges
+lemma numClustersBC_eq_of_edges
     (omega eta : ConfigSpace (Sym2 V))
     (h : ∀ e ∈ G.edgeFinset, omega e = eta e) :
     numClustersBC G C omega = numClustersBC G C eta := by
   unfold numClustersBC
   rw [ecz_openSub_eq_of_edges G omega eta h]
 
-theorem bcWeight_eq_of_edges (p q : Real)
+lemma bcWeight_eq_of_edges (p q : Real)
     (omega eta : ConfigSpace (Sym2 V))
     (h : ∀ e ∈ G.edgeFinset, omega e = eta e) :
     bcWeight G C p q omega = bcWeight G C p q eta := by
@@ -69,13 +108,15 @@ theorem bcWeight_eq_of_edges (p q : Real)
   unfold edgeProduct
   exact Finset.prod_congr rfl fun e he => by rw [h e he]
 
-theorem activeBCWeight_const_eq_bcWeight (p q : Real)
+/-! ## B. Factorization of the partition function -/
+
+lemma activeBCWeight_const_eq_bcWeight (p q : Real)
     (omega : ConfigSpace G.edgeSet) :
     activeBCWeight G C (fun _ => p) q omega =
       bcWeight G C p q (extendActive G omega) := by
   rfl
 
-theorem bcWeight_activeSplitEquiv_symm (p q : Real)
+lemma bcWeight_activeSplitEquiv_symm (p q : Real)
     (eta : ConfigSpace G.edgeSet)
     (xi : ConfigSpace {e : Sym2 V // e ∉ G.edgeSet}) :
     bcWeight G C p q ((activeSplitEquiv G).symm (eta, xi)) =
@@ -90,7 +131,7 @@ theorem bcWeight_activeSplitEquiv_symm (p q : Real)
       simp [activeSplitEquiv, Equiv.piEquivPiSubtypeProd_symm_apply, heSet]]
   exact (extendActive_apply G eta ⟨e, heSet⟩).symm
 
-theorem card_inactive_config :
+lemma card_inactive_config :
     Fintype.card (ConfigSpace {e : Sym2 V // e ∉ G.edgeSet}) =
       2 ^ ecz_NE G := by
   rw [Fintype.card_fun, Fintype.card_bool, Fintype.card_subtype]
@@ -99,8 +140,8 @@ theorem card_inactive_config :
   ext e
   simp [SimpleGraph.mem_edgeFinset]
 
-
-
+/-- The boundary-conditioned partition function is `2^{#inactive}` times the active partition
+function. -/
 theorem activeBCZ_factorization (p q : Real) :
     bcZ G C p q = 2 ^ ecz_NE G * activeBCZ G C (fun _ => p) q := by
   rw [bcZ, ← Equiv.sum_comp (activeSplitEquiv G).symm
@@ -117,7 +158,7 @@ theorem activeBCZ_factorization (p q : Real) :
   rw [Finset.sum_congr rfl fun eta _ => key eta, ← Finset.mul_sum]
   rfl
 
-theorem activeBCNumer_factorization (p q : Real)
+lemma activeBCNumer_factorization (p q : Real)
     (f : ConfigSpace G.edgeSet -> Real) :
     (∑ omega : ConfigSpace (Sym2 V),
       f (restrictActive G omega) * bcWeight G C p q omega) =
@@ -140,8 +181,10 @@ theorem activeBCNumer_factorization (p q : Real)
   rw [Finset.sum_congr rfl fun eta _ => key eta, ← Finset.mul_sum]
   rfl
 
+/-! ## C. Marginals of the boundary-conditioned measure -/
 
-
+/-- The active expectation of `f` equals the expectation of `f ∘ restrictActive` under the
+boundary-conditioned measure. -/
 theorem activeBCMean_eq_bcProb_lift {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (f : ConfigSpace G.edgeSet -> Real) :
@@ -163,7 +206,7 @@ theorem activeBCMean_eq_bcProb_lift {p q : Real}
     activeBCZ_factorization G C]
   field_simp
 
-theorem activeBCProbOf_eq_bcProb_preimage {p q : Real}
+lemma activeBCProbOf_eq_bcProb_preimage {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (ConfigSpace G.edgeSet)) :
     activeBCProbOf G C (fun _ => p) q A =
@@ -175,8 +218,10 @@ theorem activeBCProbOf_eq_bcProb_preimage {p q : Real}
   intro omega _
   rfl
 
+/-! ## D. Wired boundary conditions -/
 
-
+/-- With the boundary-clique wiring, the active expectation of `f` equals the expectation of `f ∘
+restrictActive` under the wired measure. -/
 theorem activeBCMean_boundaryClique_eq_wired
     (bdry : V -> Prop) [DecidablePred bdry]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -189,7 +234,7 @@ theorem activeBCMean_boundaryClique_eq_wired
   exact Finset.sum_congr rfl fun omega _ => by
     rw [bcProb_clique_eq_wiredFkProb]
 
-theorem activeBCProbOf_boundaryClique_eq_wired
+lemma activeBCProbOf_boundaryClique_eq_wired
     (bdry : V -> Prop) [DecidablePred bdry]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (ConfigSpace G.edgeSet)) :

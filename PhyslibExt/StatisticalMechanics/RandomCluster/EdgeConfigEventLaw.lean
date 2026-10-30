@@ -5,25 +5,43 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction
 
+/-!
+# Event probabilities through closed-off edge configurations
+
+The random-cluster probability of an event that depends only on the edges of `G` equals its weight
+among configurations closed off outside `G`, divided by the edge partition function.
+
+## i. Overview
+
+Configurations on all of `Sym2 V` split into the states of the edges of `G` and the states of the
+remaining pairs, which do not affect the FK weight. Summing out the `2 ^ ecz_NE G` free states of
+the non-edges factors the total weight of an event, and dividing by the matching factorization of
+the partition function gives the event probability as a ratio of sums over the closed-off
+configurations `ecz_ClosedOff G`. Both results are proved unconditionally (no hypotheses on `p` or
+`q`).
+
+## ii. Key results
+
+- `ecz_eventWeight_factorization` : the total FK weight of a closed-off event is `2 ^ ecz_NE G`
+  times its closed-off weight.
+- `ecz_eventProb_eq` : the event probability is the closed-off weight over the edge partition
+  function.
+
+## iii. Table of contents
+
+- A. Closing off the non-edges
+- B. Factorization of event weights
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open scoped BigOperators
 open SimpleGraph
@@ -35,19 +53,22 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V]
   (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Closing off the non-edges -/
 
+/-- The closed-off configuration that agrees with `ω` on the edges of `G` and is closed on every
+other pair. -/
 def ecz_closeOff (omega : ConfigSpace (Sym2 V)) : ecz_ClosedOff G :=
   ⟨fun e => if he : e ∈ G.edgeFinset then omega e else false, by
     intro e he
     change (if _ : e ∈ G.edgeFinset then omega e else false) = false
-    rw [dif_neg he]⟩
+    rw [dite_eq_right he]⟩
 
 @[simp] theorem ecz_closeOff_apply_edge
     (omega : ConfigSpace (Sym2 V)) {e : Sym2 V}
     (he : e ∈ G.edgeFinset) :
     (ecz_closeOff G omega).1 e = omega e := by
   change (if _ : e ∈ G.edgeFinset then omega e else false) = omega e
-  rw [dif_pos he]
+  rw [dite_eq_left he]
 
 @[simp] theorem ecz_closeOff_val (omega : ecz_ClosedOff G) :
     ecz_closeOff G omega.1 = omega := by
@@ -55,18 +76,20 @@ def ecz_closeOff (omega : ConfigSpace (Sym2 V)) : ecz_ClosedOff G :=
   funext e
   by_cases he : e ∈ G.edgeFinset
   · change (if _ : e ∈ G.edgeFinset then omega.1 e else false) = omega.1 e
-    rw [dif_pos he]
+    rw [dite_eq_left he]
   · change (if _ : e ∈ G.edgeFinset then omega.1 e else false) = omega.1 e
-    rw [dif_neg he, omega.2 e he]
+    rw [dite_eq_right he, omega.2 e he]
 
+/-! ## B. Factorization of event weights -/
 
+/-- The total FK weight of a set `A` of closed-off configurations. -/
 def ecz_eventWeight (p q : Real) (A : Set (ecz_ClosedOff G)) : Real :=
   ∑ omega : ecz_ClosedOff G,
     A.indicator (fun omega => fkWeight G p q omega.1) omega
 
-
-
-theorem ecz_eventWeight_factorization (p q : Real)
+/-- The total FK weight of the preimage of `A` under closing off is `2 ^ ecz_NE G` times the
+closed-off weight of `A`, since the non-edges do not affect the weight. -/
+lemma ecz_eventWeight_factorization (p q : Real)
     (A : Set (ecz_ClosedOff G)) :
     (∑ omega : ConfigSpace (Sym2 V),
         (ecz_closeOff G ⁻¹' A).indicator
@@ -86,7 +109,7 @@ theorem ecz_eventWeight_factorization (p q : Real)
     fun eta => ⟨(Equiv.piEquivPiSubtypeProd P (fun _ => Bool)).symm
         (eta, fun _ => false), by
       intro e he
-      rw [Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg he]⟩
+      rw [Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_right he]⟩
   have hclose : ∀ eta : ({e // P e} → Bool),
       ∀ xi : ({e // ¬ P e} → Bool),
       ecz_closeOff G
@@ -102,15 +125,15 @@ theorem ecz_eventWeight_factorization (p q : Real)
         else false) =
         (Equiv.piEquivPiSubtypeProd P (fun _ => Bool)).symm
           (eta, fun _ => false) e
-      rw [dif_pos hedge, Equiv.piEquivPiSubtypeProd_symm_apply,
-        Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos he, dif_pos he]
+      rw [dite_eq_left hedge, Equiv.piEquivPiSubtypeProd_symm_apply,
+        Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left he, dite_eq_left he]
     · have hedge : e ∉ G.edgeFinset := by simpa [P] using he
       change (if _ : e ∈ G.edgeFinset then
           (Equiv.piEquivPiSubtypeProd P (fun _ => Bool)).symm (eta, xi) e
         else false) =
         (Equiv.piEquivPiSubtypeProd P (fun _ => Bool)).symm
           (eta, fun _ => false) e
-      rw [dif_neg hedge, Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg he]
+      rw [dite_eq_right hedge, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_right he]
   have hweight : ∀ eta : ({e // P e} → Bool),
       ∀ xi : ({e // ¬ P e} → Bool),
       fkWeight G p q
@@ -186,8 +209,8 @@ theorem ecz_eventWeight_factorization (p q : Real)
           omega.2 e he]
     rw [hj]
 
-
-
+/-- The FK probability of an event determined by the edges of `G` is its closed-off weight divided
+by the edge partition function. -/
 theorem ecz_eventProb_eq (p q : Real) (A : Set (ecz_ClosedOff G)) :
     (∑ omega : ConfigSpace (Sym2 V),
         (ecz_closeOff G ⁻¹' A).indicator (fun _ => (1 : Real)) omega *
