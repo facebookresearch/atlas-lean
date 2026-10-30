@@ -35,11 +35,57 @@ example (W : ℝ≥0) (b : ℝ) : wakefieldABF 0 W b = 0 := by
 
 /-! ### Single-effect regression -/
 
+/-- A normalized, non-negative prior on two variants. -/
+noncomputable def uniformPrior : PriorWeights (Fin 2) where
+  weight := ![1 / 2, 1 / 2]
+  weight_nonneg := by intro j; fin_cases j <;> norm_num
+  sum_weight := by simp [Fin.sum_univ_two]; norm_num
+
 /-- Posterior inclusion probabilities with a uniform prior are proportional to the Bayes
 factors. -/
-example : pip ![1 / 2, 1 / 2] ![1, 3] 1 = 3 / 4 := by
-  simp [pip, Fin.sum_univ_two]
+example : pip uniformPrior ![1, 3] 1 = 3 / 4 := by
+  simp [pip, normalizedWeightedEvidence, uniformPrior, Fin.sum_univ_two]
   norm_num
+
+/-- Positive Bayes factors give positive evidence under a valid prior. -/
+example : 0 < ∑ j, uniformPrior.weight j * ![1, 3] j := by
+  apply PriorWeights.evidence_pos
+  intro j
+  fin_cases j <;> norm_num
+
+/-- Posterior inclusion probabilities are non-negative. -/
+example (j : Fin 2) : 0 ≤ pip uniformPrior ![1, 3] j := by
+  apply pip_nonneg
+  intro k
+  fin_cases k <;> norm_num
+
+/-- Posterior inclusion probabilities sum to one. -/
+example : ∑ j, pip uniformPrior ![1, 3] j = 1 := by
+  apply sum_pip
+  intro j
+  fin_cases j <;> norm_num
+
+/-- The singleton prior is the boundary case: its sole posterior probability is one. -/
+noncomputable def singletonPrior : PriorWeights (Fin 1) where
+  weight := ![1]
+  weight_nonneg := by simp
+  sum_weight := by simp
+
+example : pip singletonPrior ![7] 0 = 1 := by
+  simp [pip, normalizedWeightedEvidence, singletonPrior]
+
+/-- Signed weights cannot inhabit the probability-domain prior API. -/
+example : ¬∃ w : PriorWeights (Fin 2), w.weight = ![1, -1] := by
+  rintro ⟨w, hw⟩
+  have h := w.weight_nonneg 1
+  rw [hw] at h
+  norm_num at h
+
+/-- Identically zero weights cannot inhabit the probability-domain prior API. -/
+example : ¬∃ w : PriorWeights (Fin 2), w.weight = 0 := by
+  rintro ⟨w, hw⟩
+  have h := w.sum_weight
+  simp [hw] at h
 
 /-- The least-squares estimate of `y = x` on `x ≠ 0` is `1`. -/
 example {n : Type*} [Fintype n] {x : EuclideanSpace ℝ n} (hx : x ≠ 0) : olsEffect x x = 1 := by
@@ -66,6 +112,16 @@ noncomputable def defaultPrior : ColocPrior (Fin 2) where
   p12_nonneg := by norm_num
   sum_le_one := by simp; norm_num
 
+/-- The review's one-variant edge case. -/
+noncomputable def oneVariantPrior : ColocPrior (Fin 1) where
+  p1 := 0
+  p2 := 0
+  p12 := 1 / 2
+  p1_nonneg := by norm_num
+  p2_nonneg := by norm_num
+  p12_nonneg := by norm_num
+  sum_le_one := by simp; norm_num
+
 example : colocHypothesis ((some 0, some 0) : Option (Fin 2) × Option (Fin 2)) = .h4 := rfl
 
 example : colocHypothesis ((some 0, some 1) : Option (Fin 2) × Option (Fin 2)) = .h3 := rfl
@@ -76,14 +132,25 @@ example : colocClosedForm defaultPrior 1 1 .h4 = 2 / 10 ^ 5 := by
   simp [colocClosedForm, defaultPrior]
   norm_num
 
-/-- The priors of the witness sum to one. -/
-example : ∑ S, defaultPrior.prior S = 1 := defaultPrior.sum_prior
+/-- The cited coloc H0 configuration weight is one. -/
+example : colocClosedForm oneVariantPrior 1 1 .h0 = 1 := by
+  simp [colocClosedForm]
+
+/-- In the review's example, the cited H0 posterior is `1 / (1 + 1/2) = 2/3`. -/
+example : colocClosedForm oneVariantPrior 1 1 .h0 /
+    ∑ h, colocClosedForm oneVariantPrior 1 1 h = 2 / 3 := by
+  rw [show (Finset.univ : Finset ColocHypothesis) = {.h0, .h1, .h2, .h3, .h4} from rfl]
+  simp [colocClosedForm, oneVariantPrior]
+  norm_num
+
+/-- The optional categorical configuration priors retain their normalized interpretation. -/
+example : ∑ S, defaultPrior.categoricalPrior S = 1 := defaultPrior.sum_categoricalPrior
 
 /-- The H3 sum by brute force, for two variants with Bayes factors `(2, 3)` and `(5, 7)`:
 `p1 p2 (2 · 7 + 3 · 5)`. -/
 example : ∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = .h3),
-    defaultPrior.prior S * colocBF ![2, 3] ![5, 7] S = 29 / 10 ^ 8 := by
-  rw [sum_colocPrior_mul_colocBF]
+    defaultPrior.weight S * colocBF ![2, 3] ![5, 7] S = 29 / 10 ^ 8 := by
+  rw [sum_colocWeight_mul_colocBF]
   simp [colocClosedForm, defaultPrior, Fin.sum_univ_two]
   norm_num
 
@@ -118,9 +185,14 @@ example (S : Finset (Fin 3)) (hS : IsCredibleSet α3 (4 / 5) S) : 2 ≤ S.card :
 #print axioms wakefieldABF_eq
 #print axioms rnDeriv_map_add_ae_eq
 #print axioms multivariateGaussianPDFReal_serCov_div
+#print axioms serLikelihoodRatio_eq_normalizedWeightedEvidence
+#print axioms serPosterior_evidence_pos
 #print axioms serPosterior_eq_pip
+#print axioms sum_pip
 #print axioms condDistrib_ser_effect
-#print axioms sum_colocPrior_mul_colocBF
+#print axioms sum_colocWeight_mul_colocBF
+#print axioms ColocPrior.sum_categoricalPrior
+#print axioms colocCategoricalPosterior_eq
 #print axioms exists_minimal_credible_prefix
 
 end MathlibExtTest.Biology.StatisticalGenetics.FineMapping

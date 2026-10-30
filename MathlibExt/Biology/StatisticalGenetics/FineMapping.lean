@@ -29,8 +29,8 @@ credible sets.
   summary statistics `β̂ = xᵀ y / xᵀ x` (`olsEffect`) and `s² = σ² / xᵀ x` (`olsVar`). For
   `x = 0` both are junk values (`0`); every theorem about them assumes `x ≠ 0`.
 * coloc configurations are pairs `(causal variant of trait 1, causal variant of trait 2)` in
-  `Option ι × Option ι`, `none` meaning no causal variant, with the priors of Giambartolomei et
-  al. (2014).
+  `Option ι × Option ι`, `none` meaning no causal variant. The cited Giambartolomei et al. (2014)
+  calculation uses unnormalized configuration weights with H0 weight `1`.
 
 ## Main results
 
@@ -42,13 +42,13 @@ credible sets.
 * `multivariateGaussianPDFReal_serCov_div`: the Bayes factor of the regression (density of `y`
   given that `x` carries the effect, over its density with no effect) is the ABF of `(β̂, s²)`;
   `map_ser_eq_withDensity` identifies that density as the law of `y`.
-  `serPosterior_eq_pip`: hence the posterior inclusion probabilities, Bayes' rule over the
-  causal variant with prior weights `w`, are `α_j = w_j BF_j / ∑_k w_k BF_k` (`pip`).
+  `serPosterior_eq_pip`: hence, for a normalized non-negative causal-variant prior `w`, the
+  posterior inclusion probabilities are `α_j = w_j BF_j / ∑_k w_k BF_k` (`pip`).
   `condDistrib_ser_effect`: given `y`, the effect is `N(σ₀² β̂ / (σ₀² + s²), σ₀² s² / (σ₀² + s²))`.
-* `sum_colocPrior_mul_colocBF`: **the coloc closed forms**: the sums of prior × Bayes factor over
-  the configurations of each hypothesis H0–H4 equal `p0`, `p1 ∑ BF1`, `p2 ∑ BF2`,
+* `sum_colocWeight_mul_colocBF`: **the coloc closed forms**: the sums of unnormalized weight ×
+  Bayes factor over the configurations of H0–H4 equal `1`, `p1 ∑ BF1`, `p2 ∑ BF2`,
   `p1 p2 (∑ BF1 ∑ BF2 - ∑ BF1 BF2)` and `p12 ∑ BF1 BF2`; `colocPosterior_eq` normalizes them,
-  and `ColocPrior.sum_prior` checks that the configuration priors sum to one.
+  while `ColocPrior.sum_categoricalPrior` preserves the separate categorical-prior model.
 * `le_card_of_isCredibleSet`, `exists_minimal_credible_prefix`: **credible sets**: the shortest
   prefix of the variants sorted by decreasing inclusion probability whose mass is at least `ρ`
   has the minimum size among all sets of mass at least `ρ`.
@@ -113,6 +113,12 @@ theorem wakefieldABF_eq {V : ℝ≥0} (hV : V ≠ 0) (W : ℝ≥0) (b : ℝ) :
   · congr 1
     field_simp
     ring
+
+/-- Wakefield's ABF is strictly positive on its sampling-variance domain. -/
+theorem wakefieldABF_pos {V : ℝ≥0} (hV : V ≠ 0) (W : ℝ≥0) (b : ℝ) :
+    0 < wakefieldABF V W b := by
+  rw [wakefieldABF_eq hV]
+  positivity
 
 /-- The alternative marginal `N(0, V + W)` has density `wakefieldABF V W` with respect to the null
 law `N(0, V)`. -/
@@ -330,20 +336,68 @@ theorem multivariateGaussianPDFReal_serCov_div {σ2 : ℝ≥0} (hσ : σ2 ≠ 0)
       ring
   · exact hP.ne'
 
-/-- The posterior inclusion probabilities `α j = w j BF j / ∑ k, w k BF k` for prior weights `w`
-and Bayes factors `BF` (Lean's `0` when the denominator vanishes). -/
-noncomputable def pip {ι : Type*} [Fintype ι] (w BF : ι → ℝ) (j : ι) : ℝ :=
+/-- A finite probability distribution used as the prior over the single causal variant. -/
+structure PriorWeights (ι : Type*) [Fintype ι] where
+  /-- The prior probability of each variant. -/
+  weight : ι → ℝ
+  weight_nonneg : ∀ j, 0 ≤ weight j
+  sum_weight : ∑ j, weight j = 1
+
+instance {ι : Type*} [Fintype ι] : CoeFun (PriorWeights ι) fun _ => ι → ℝ :=
+  ⟨PriorWeights.weight⟩
+
+namespace PriorWeights
+
+/-- A normalized non-negative finite prior assigns positive weight to some variant. -/
+theorem exists_weight_pos {ι : Type*} [Fintype ι] (w : PriorWeights ι) :
+    ∃ j, 0 < w j := by
+  by_contra h
+  push Not at h
+  have hw : w.weight = 0 := funext fun j => le_antisymm (h j) (w.weight_nonneg j)
+  have hsum := w.sum_weight
+  simp [hw] at hsum
+
+/-- Strictly positive evidence has a strictly positive prior-weighted marginal likelihood. -/
+theorem evidence_pos {ι : Type*} [Fintype ι] (w : PriorWeights ι) {BF : ι → ℝ}
+    (hBF : ∀ j, 0 < BF j) : 0 < ∑ j, w j * BF j := by
+  refine Finset.sum_pos' (fun j _ => mul_nonneg (w.weight_nonneg j) (hBF j).le) ?_
+  obtain ⟨j, hj⟩ := w.exists_weight_pos
+  exact ⟨j, Finset.mem_univ j, mul_pos hj (hBF j)⟩
+
+end PriorWeights
+
+/-- Algebraic normalization of arbitrary weights times evidence. This is useful even outside the
+probability domain; it takes Lean's value `0` when the denominator vanishes. -/
+noncomputable def normalizedWeightedEvidence {ι : Type*} [Fintype ι]
+    (w BF : ι → ℝ) (j : ι) : ℝ :=
   w j * BF j / ∑ k, w k * BF k
 
-/-- **Posterior inclusion probabilities of the single-effect regression** (Wang et al. 2020):
-Bayes' rule for the causal variant `γ` with prior `w` and the marginal densities of
-`y` given `γ = j` equals `pip w BF` with the Wakefield ABFs of the variants. -/
-theorem serPosterior_eq_pip {ι : Type*} [Fintype ι] (w : ι → ℝ) {σ2 : ℝ≥0} (hσ : σ2 ≠ 0)
+/-- Posterior inclusion probability from a normalized non-negative prior and variant evidence. -/
+noncomputable def pip {ι : Type*} [Fintype ι] (w : PriorWeights ι)
+    (BF : ι → ℝ) (j : ι) : ℝ :=
+  normalizedWeightedEvidence w.weight BF j
+
+/-- Posterior inclusion probabilities are non-negative when every evidence value is positive. -/
+theorem pip_nonneg {ι : Type*} [Fintype ι] (w : PriorWeights ι) {BF : ι → ℝ}
+    (hBF : ∀ j, 0 < BF j) (j : ι) : 0 ≤ pip w BF j := by
+  exact div_nonneg (mul_nonneg (w.weight_nonneg j) (hBF j).le) (w.evidence_pos hBF).le
+
+/-- Posterior inclusion probabilities normalize to one when every evidence value is positive. -/
+theorem sum_pip {ι : Type*} [Fintype ι] (w : PriorWeights ι) {BF : ι → ℝ}
+    (hBF : ∀ j, 0 < BF j) : ∑ j, pip w BF j = 1 := by
+  simp only [pip, normalizedWeightedEvidence, ← Finset.sum_div]
+  exact div_self (w.evidence_pos hBF).ne'
+
+/-- The unconditional algebraic single-effect likelihood-ratio identity for arbitrary real
+weights. Its right side is accurately named algebraic normalization, not a posterior probability. -/
+theorem serLikelihoodRatio_eq_normalizedWeightedEvidence {ι : Type*} [Fintype ι]
+    (w : ι → ℝ) {σ2 : ℝ≥0} (hσ : σ2 ≠ 0)
     (σ02 : ℝ≥0) (X : ι → EuclideanSpace ℝ n) (hX : ∀ k, X k ≠ 0) (y : EuclideanSpace ℝ n)
     (j : ι) :
     w j * multivariateGaussianPDFReal 0 (serCov σ2 σ02 (X j)) y /
         ∑ k, w k * multivariateGaussianPDFReal 0 (serCov σ2 σ02 (X k)) y =
-      pip w (fun k => wakefieldABF (olsVar σ2 (X k)) σ02 (olsEffect (X k) y)) j := by
+      normalizedWeightedEvidence w
+        (fun k => wakefieldABF (olsVar σ2 (X k)) σ02 (olsEffect (X k) y)) j := by
   set L0 := multivariateGaussianPDFReal 0 ((σ2 : ℝ) • (1 : Matrix n n ℝ)) y
   have hnull : ∀ x : EuclideanSpace ℝ n, serCov σ2 0 x = (σ2 : ℝ) • 1 := fun x => by
     simp [serCov]
@@ -358,9 +412,34 @@ theorem serPosterior_eq_pip {ι : Type*} [Fintype ι] (w : ι → ℝ) {σ2 : �
       L0 * wakefieldABF (olsVar σ2 (X k)) σ02 (olsEffect (X k) y) := fun k => by
     rw [← multivariateGaussianPDFReal_serCov_div hσ σ02 (hX k) y, hnull,
       mul_div_cancel₀ _ hL0.ne']
-  simp only [hL, pip]
+  simp only [hL, normalizedWeightedEvidence]
   simp_rw [mul_left_comm (w _) L0, ← Finset.mul_sum]
   exact mul_div_mul_left _ _ hL0.ne'
+
+omit [DecidableEq n] in
+/-- The prior-weighted single-effect evidence is strictly positive on the regression domain. -/
+theorem serPosterior_evidence_pos {ι : Type*} [Fintype ι] (w : PriorWeights ι)
+    {σ2 : ℝ≥0} (hσ : σ2 ≠ 0) (σ02 : ℝ≥0) (X : ι → EuclideanSpace ℝ n)
+    (hX : ∀ k, X k ≠ 0) (y : EuclideanSpace ℝ n) :
+    0 < ∑ k, w k * wakefieldABF (olsVar σ2 (X k)) σ02 (olsEffect (X k) y) := by
+  apply w.evidence_pos
+  intro k
+  apply wakefieldABF_pos
+  rw [← NNReal.coe_ne_zero, coe_olsVar]
+  have := dotProduct_self_pos (hX k)
+  positivity
+
+/-- **Posterior inclusion probabilities of the single-effect regression** (Wang et al. 2020):
+Bayes' rule for the causal variant with a normalized non-negative prior equals `pip` applied to
+the strictly positive Wakefield ABFs. -/
+theorem serPosterior_eq_pip {ι : Type*} [Fintype ι] (w : PriorWeights ι)
+    {σ2 : ℝ≥0} (hσ : σ2 ≠ 0) (σ02 : ℝ≥0) (X : ι → EuclideanSpace ℝ n)
+    (hX : ∀ k, X k ≠ 0) (y : EuclideanSpace ℝ n) (j : ι) :
+    w j * multivariateGaussianPDFReal 0 (serCov σ2 σ02 (X j)) y /
+        ∑ k, w k * multivariateGaussianPDFReal 0 (serCov σ2 σ02 (X k)) y =
+      pip w (fun k => wakefieldABF (olsVar σ2 (X k)) σ02 (olsEffect (X k) y)) j := by
+  simpa only [pip] using
+    serLikelihoodRatio_eq_normalizedWeightedEvidence w.weight hσ σ02 X hX y j
 
 /-- The posterior gain: `σ₀² Hᵀ (σ₀² H Hᵀ + σ² I)⁻¹ y = σ₀² / (σ₀² + s²) · β̂` for the
 genotype column `H = x`. -/
@@ -463,20 +542,20 @@ def colocHypothesis : Option ι × Option ι → ColocHypothesis
   | (none, some _) => .h2
   | (some j, some k) => if j = k then .h4 else .h3
 
-/-- Prior probabilities of the coloc model (Giambartolomei et al. 2014): `p1`, `p2`, `p12` for
-a variant causal for trait 1 only, trait 2 only, and both; a configuration with distinct causal
-variants gets `p1 * p2`, and the null configuration takes the remaining mass. -/
+/-- Non-negative coloc configuration-weight parameters (Giambartolomei et al. 2014): `p1`, `p2`,
+`p12` for a variant causal for trait 1 only, trait 2 only, and both. The cited hypothesis weights
+use null weight `1`. The bound also supports a separate normalized categorical-prior model. -/
 structure ColocPrior (ι : Type*) [Fintype ι] where
-  /-- Prior of a configuration in `h1`. -/
+  /-- Weight of a configuration in `h1`. -/
   p1 : ℝ
-  /-- Prior of a configuration in `h2`. -/
+  /-- Weight of a configuration in `h2`. -/
   p2 : ℝ
-  /-- Prior of a configuration in `h4`. -/
+  /-- Weight of a configuration in `h4`. -/
   p12 : ℝ
   p1_nonneg : 0 ≤ p1
   p2_nonneg : 0 ≤ p2
   p12_nonneg : 0 ≤ p12
-  /-- The configuration priors leave non-negative mass for the null configuration. -/
+  /-- The optional categorical priors leave non-negative mass for the null configuration. -/
   sum_le_one : (Fintype.card ι : ℝ) * p1 + Fintype.card ι * p2 +
     Fintype.card ι * (Fintype.card ι - 1) * (p1 * p2) + Fintype.card ι * p12 ≤ 1
 
@@ -484,13 +563,13 @@ namespace ColocPrior
 
 variable (P : ColocPrior ι)
 
-/-- The prior of the null configuration. -/
+/-- The remaining null mass in the optional normalized categorical-prior model. -/
 def p0 : ℝ :=
   1 - ((Fintype.card ι : ℝ) * P.p1 + Fintype.card ι * P.p2 +
     Fintype.card ι * (Fintype.card ι - 1) * (P.p1 * P.p2) + Fintype.card ι * P.p12)
 
-/-- The prior of a configuration. -/
-def prior (S : Option ι × Option ι) : ℝ :=
+/-- A normalized categorical prior, distinct from the cited coloc relative weights. -/
+def categoricalPrior (S : Option ι × Option ι) : ℝ :=
   match colocHypothesis S with
   | .h0 => P.p0
   | .h1 => P.p1
@@ -498,8 +577,17 @@ def prior (S : Option ι × Option ι) : ℝ :=
   | .h3 => P.p1 * P.p2
   | .h4 => P.p12
 
-/-- Configuration priors are non-negative. -/
-theorem prior_nonneg (S : Option ι × Option ι) : 0 ≤ P.prior S := by
+/-- The cited coloc unnormalized configuration weight, whose H0 weight is `1`. -/
+def weight (S : Option ι × Option ι) : ℝ :=
+  match colocHypothesis S with
+  | .h0 => 1
+  | .h1 => P.p1
+  | .h2 => P.p2
+  | .h3 => P.p1 * P.p2
+  | .h4 => P.p12
+
+/-- Categorical configuration priors are non-negative. -/
+theorem categoricalPrior_nonneg (S : Option ι × Option ι) : 0 ≤ P.categoricalPrior S := by
   have := P.p1_nonneg
   have := P.p2_nonneg
   have := P.p12_nonneg
@@ -507,7 +595,15 @@ theorem prior_nonneg (S : Option ι × Option ι) : 0 ≤ P.prior S := by
     have := P.sum_le_one
     unfold p0
     linarith
-  unfold prior
+  unfold categoricalPrior
+  split <;> first | assumption | positivity
+
+/-- Cited coloc configuration weights are non-negative. -/
+theorem weight_nonneg (S : Option ι × Option ι) : 0 ≤ P.weight S := by
+  have := P.p1_nonneg
+  have := P.p2_nonneg
+  have := P.p12_nonneg
+  unfold weight
   split <;> first | assumption | positivity
 
 end ColocPrior
@@ -517,27 +613,39 @@ factors, `1` for a trait without a causal variant (the two studies are independe
 def colocBF (bf1 bf2 : ι → ℝ) (S : Option ι × Option ι) : ℝ :=
   S.1.elim 1 bf1 * S.2.elim 1 bf2
 
-/-- The coloc closed forms of the unnormalized hypothesis posteriors. -/
+/-- The cited coloc closed forms as unnormalized hypothesis weights. H0 has weight `1`; H1--H4
+retain the per-configuration coefficients of Giambartolomei et al. (2014). -/
 def colocClosedForm (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) : ColocHypothesis → ℝ
+  | .h0 => 1
+  | .h1 => P.p1 * ∑ j, bf1 j
+  | .h2 => P.p2 * ∑ k, bf2 k
+  | .h3 => P.p1 * P.p2 * ((∑ j, bf1 j) * (∑ k, bf2 k) - ∑ j, bf1 j * bf2 j)
+  | .h4 => P.p12 * ∑ j, bf1 j * bf2 j
+
+/-- Closed forms for the optional normalized categorical-prior model. This differs from the cited
+coloc formula only in using its remaining null mass rather than the cited H0 weight `1`. -/
+def colocCategoricalClosedForm (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) :
+    ColocHypothesis → ℝ
   | .h0 => P.p0
   | .h1 => P.p1 * ∑ j, bf1 j
   | .h2 => P.p2 * ∑ k, bf2 k
   | .h3 => P.p1 * P.p2 * ((∑ j, bf1 j) * (∑ k, bf2 k) - ∑ j, bf1 j * bf2 j)
   | .h4 => P.p12 * ∑ j, bf1 j * bf2 j
 
-/-- **The coloc closed forms** (Giambartolomei et al. 2014): the sum of prior times Bayes factor
-over the configurations of each hypothesis equals its closed form. -/
-theorem sum_colocPrior_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) (h : ColocHypothesis) :
-    ∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h), P.prior S * colocBF bf1 bf2 S =
+/-- **The coloc closed forms** (Giambartolomei et al. 2014): the sum of unnormalized configuration
+weight times Bayes factor over each hypothesis equals its closed form. -/
+theorem sum_colocWeight_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (h : ColocHypothesis) :
+    ∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h), P.weight S * colocBF bf1 bf2 S =
       colocClosedForm P bf1 bf2 h := by
   have key : ∀ j k : ι, (if colocHypothesis (some j, some k) = h then
-      P.prior (some j, some k) * colocBF bf1 bf2 (some j, some k) else 0) =
+      P.weight (some j, some k) * colocBF bf1 bf2 (some j, some k) else 0) =
       (if h = .h4 then (if j = k then P.p12 * (bf1 j * bf2 k) else 0) else 0) +
       (if h = .h3 then P.p1 * P.p2 * (bf1 j * bf2 k) -
         (if j = k then P.p1 * P.p2 * (bf1 j * bf2 k) else 0) else 0) := by
     intro j k
     by_cases hjk : j = k <;> cases h <;>
-      simp [colocHypothesis, ColocPrior.prior, colocBF, hjk]
+      simp [colocHypothesis, ColocPrior.weight, colocBF, hjk]
   rw [Finset.sum_filter, Fintype.sum_prod_type, Fintype.sum_option]
   simp only [Fintype.sum_option, key, Finset.sum_add_distrib]
   cases h
@@ -547,33 +655,77 @@ theorem sum_colocPrior_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) (h
       Finset.mul_sum, Finset.sum_mul, mul_assoc]
     rw [Finset.sum_comm]
   all_goals
-    simp [colocHypothesis, ColocPrior.prior, colocBF, colocClosedForm, Finset.mul_sum,
+    simp [colocHypothesis, ColocPrior.weight, colocBF, colocClosedForm, Finset.mul_sum,
       Finset.sum_ite_eq]
 
+/-- The corresponding closed forms for the optional normalized categorical-prior model. -/
+theorem sum_categoricalPrior_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (h : ColocHypothesis) :
+    ∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h),
+        P.categoricalPrior S * colocBF bf1 bf2 S = colocCategoricalClosedForm P bf1 bf2 h := by
+  have key : ∀ j k : ι, (if colocHypothesis (some j, some k) = h then
+      P.categoricalPrior (some j, some k) * colocBF bf1 bf2 (some j, some k) else 0) =
+      (if h = .h4 then (if j = k then P.p12 * (bf1 j * bf2 k) else 0) else 0) +
+      (if h = .h3 then P.p1 * P.p2 * (bf1 j * bf2 k) -
+        (if j = k then P.p1 * P.p2 * (bf1 j * bf2 k) else 0) else 0) := by
+    intro j k
+    by_cases hjk : j = k <;> cases h <;>
+      simp [colocHypothesis, ColocPrior.categoricalPrior, colocBF, hjk]
+  rw [Finset.sum_filter, Fintype.sum_prod_type, Fintype.sum_option]
+  simp only [Fintype.sum_option, key, Finset.sum_add_distrib]
+  cases h
+  case h3 =>
+    simp only [reduceCtorEq, ↓reduceIte, Finset.sum_const_zero, Finset.sum_sub_distrib,
+      Finset.sum_ite_eq, Finset.mem_univ, zero_add, colocHypothesis, colocCategoricalClosedForm,
+      mul_sub, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+  all_goals
+    simp [colocHypothesis, ColocPrior.categoricalPrior, colocBF, colocCategoricalClosedForm,
+      Finset.mul_sum, Finset.sum_ite_eq]
 
-/-- The brute-force total over all configurations is the sum of the five closed forms. -/
-private theorem sum_prior_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) :
-    ∑ S, P.prior S * colocBF bf1 bf2 S = ∑ h, colocClosedForm P bf1 bf2 h := by
+
+/-- The brute-force total cited weight is the sum of the five closed forms. -/
+private theorem sum_weight_mul_colocBF (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) :
+    ∑ S, P.weight S * colocBF bf1 bf2 S = ∑ h, colocClosedForm P bf1 bf2 h := by
   rw [← Finset.sum_fiberwise Finset.univ colocHypothesis]
-  exact Finset.sum_congr rfl fun h _ => sum_colocPrior_mul_colocBF P bf1 bf2 h
+  exact Finset.sum_congr rfl fun h _ => sum_colocWeight_mul_colocBF P bf1 bf2 h
 
-/-- Configuration priors sum to one. -/
-theorem ColocPrior.sum_prior (P : ColocPrior ι) : ∑ S, P.prior S = 1 := by
-  have h := sum_prior_mul_colocBF P 1 1
+/-- The brute-force categorical total is the sum of its five closed forms. -/
+private theorem sum_categoricalPrior_mul_colocBF_total (P : ColocPrior ι)
+    (bf1 bf2 : ι → ℝ) :
+    ∑ S, P.categoricalPrior S * colocBF bf1 bf2 S =
+      ∑ h, colocCategoricalClosedForm P bf1 bf2 h := by
+  rw [← Finset.sum_fiberwise Finset.univ colocHypothesis]
+  exact Finset.sum_congr rfl fun h _ => sum_categoricalPrior_mul_colocBF P bf1 bf2 h
+
+/-- The optional categorical configuration priors sum to one. -/
+theorem ColocPrior.sum_categoricalPrior (P : ColocPrior ι) :
+    ∑ S, P.categoricalPrior S = 1 := by
+  have h := sum_categoricalPrior_mul_colocBF_total P (1 : ι → ℝ) 1
   have h1 : ∀ S : Option ι × Option ι, colocBF (1 : ι → ℝ) 1 S = 1 := fun ⟨a, b⟩ => by
     cases a <;> cases b <;> simp [colocBF]
   simp only [h1, mul_one] at h
   rw [h, univ_colocHypothesis]
-  simp [colocClosedForm, ColocPrior.p0]
+  simp [colocCategoricalClosedForm, ColocPrior.p0]
   ring
 
-/-- **coloc posterior probabilities**: the posterior of each hypothesis, computed by brute force
-over configurations, is its closed form normalized over the five hypotheses. -/
+/-- **coloc posterior probabilities**: each hypothesis's unnormalized cited configuration-weight
+sum, normalized over the five hypotheses, equals its normalized closed form. -/
 theorem colocPosterior_eq (P : ColocPrior ι) (bf1 bf2 : ι → ℝ) (h : ColocHypothesis) :
-    (∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h), P.prior S * colocBF bf1 bf2 S) /
-        ∑ S, P.prior S * colocBF bf1 bf2 S =
+    (∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h), P.weight S * colocBF bf1 bf2 S) /
+        ∑ S, P.weight S * colocBF bf1 bf2 S =
       colocClosedForm P bf1 bf2 h / ∑ h', colocClosedForm P bf1 bf2 h' := by
-  rw [sum_colocPrior_mul_colocBF, sum_prior_mul_colocBF]
+  rw [sum_colocWeight_mul_colocBF, sum_weight_mul_colocBF]
+
+/-- The normalized posterior identity for the separate categorical-prior model. -/
+theorem colocCategoricalPosterior_eq (P : ColocPrior ι) (bf1 bf2 : ι → ℝ)
+    (h : ColocHypothesis) :
+    (∑ S ∈ Finset.univ.filter (fun S => colocHypothesis S = h),
+        P.categoricalPrior S * colocBF bf1 bf2 S) /
+        ∑ S, P.categoricalPrior S * colocBF bf1 bf2 S =
+      colocCategoricalClosedForm P bf1 bf2 h /
+        ∑ h', colocCategoricalClosedForm P bf1 bf2 h' := by
+  rw [sum_categoricalPrior_mul_colocBF, sum_categoricalPrior_mul_colocBF_total]
 
 end Coloc
 
