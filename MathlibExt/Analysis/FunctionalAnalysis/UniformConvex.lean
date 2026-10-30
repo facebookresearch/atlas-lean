@@ -62,8 +62,8 @@ instances, but no implication between them in finite dimensions.
 
 ## References
 
-* J. A. Clarkson, “Uniformly convex spaces,” *Transactions of the American
-  Mathematical Society* **40** (1936), 396–414, for uniform convexity.
+* J. A. Clarkson, *Transactions of the American Mathematical Society* **40**
+  (1936), for uniform convexity.
 * K. Goebel and W. A. Kirk, *Topics in Metric Fixed Point Theory*, Cambridge
   University Press, 1990, for minimizing sequences in uniformly convex spaces
   and the finite-dimensional compactness argument from strict to uniform
