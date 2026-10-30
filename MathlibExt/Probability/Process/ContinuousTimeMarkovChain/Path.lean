@@ -67,14 +67,16 @@ state is drawn from row `Y n` of `Π`.
   on `{T n < ∞, Y n = k}` the path after `T n` is distributed as the chain started at `k`.
 * `IsRateMatrix.ctmcInputMeasure_real_ctmcPath_eq`: **Kolmogorov**,
   `P_i(X t = j) = exp (t Q) i j`.
-* `IsRateMatrix.ctmcInputMeasure_real_ctmcPath_add`: the **Markov property at a fixed time**
-  `s`: `P_i(X s = k, X (s + ·) ∈ B) = exp (s Q) i k * P_k(X ∈ B)`.
+* `IsRateMatrix.ctmcInputMeasure_real_ctmcPath_add`: the **restart law at a fixed time** `s`:
+  `P_i(X s = k, X (s + ·) ∈ B) = exp (s Q) i k * P_k(X ∈ B)`. This is not the full Markov
+  property: events of the path before `s` (the natural filtration at time `s`) are not covered,
+  and no conditional-expectation form is stated.
 * `IsRateMatrix.ctmcInputMeasure_real_ctmcPath_fdd`: the **finite-dimensional distributions**
   are products of transition matrices over the time increments.
 
 ## Proof outline
 
-Both the Kolmogorov identity and the fixed-time Markov property are proved by a renewal
+Both the Kolmogorov identity and the fixed-time restart law are proved by a renewal
 argument. Conditioning on the first step (whose law is a product with the law of the remaining
 steps) gives a renewal equation in the time variable; the matrix exponential satisfies the same
 equation (integrate the Kolmogorov backward equation against the exponential density); and a
@@ -1285,11 +1287,12 @@ private lemma real_eq_prod_cons (hQ : IsRateMatrix Q) {A : Set (ℕ → (ι → 
   conv_lhs => rw [← ctmc_map_cons hQ]
   rw [map_measureReal_apply measurable_ctmcCons hA]
 
-/-- **Markov property at a fixed time** (Norris 1997, §2.8), for events of `X s` and of the
-path after `s`: for the chain started at `i`, the probability that `X s = k` and that the path
-after `s` lies in a measurable set `B` is `exp (s Q) i k` times the probability that the chain
-started at `k` lies in `B`. Events of the path before `s` are not covered here, except through
-the finite-dimensional distributions (`ctmcInputMeasure_real_ctmcPath_fdd`). -/
+/-- **Restart law at a fixed time** (cf. the Markov property, Norris 1997, §2.8), for events of
+`X s` and of the path after `s` only: for the chain started at `i`, the probability that
+`X s = k` and that the path after `s` lies in a measurable set `B` is `exp (s Q) i k` times the
+probability that the chain started at `k` lies in `B`. This is weaker than the Markov property
+with respect to the natural filtration: arbitrary events of the path before `s` are not covered
+(only through the finite-dimensional distributions, `ctmcInputMeasure_real_ctmcPath_fdd`). -/
 theorem ctmcInputMeasure_real_ctmcPath_add (hQ : IsRateMatrix Q) (i k : ι) (s : ℝ≥0)
     {B : Set (ℝ≥0 → ι)} (hB : MeasurableSet B) :
     (ctmcInputMeasure hQ).real

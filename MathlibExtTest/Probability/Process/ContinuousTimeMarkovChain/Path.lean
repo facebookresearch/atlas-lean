@@ -115,7 +115,7 @@ example (i : Fin 2) :
   rw [isRateMatrix_q2.ctmcInputMeasure_real_ctmcPath_eq]
   simp
 
--- The fixed-time Markov property with `B = univ` recovers the transition law.
+-- The fixed-time restart law with `B = univ` recovers the transition law.
 example (i k : Fin 2) (s : ℝ≥0) :
     (ctmcInputMeasure isRateMatrix_q2).real
         {ω | ctmcPath q2 i ω s = k ∧ (fun u => ctmcPath q2 i ω (s + u)) ∈ Set.univ} =
