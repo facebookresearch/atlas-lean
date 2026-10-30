@@ -12,7 +12,7 @@ public import MathlibExt.RingTheory.IntegralClosure.DVR
 
 @[expose] public section
 
-open IntegralClosureDVR IsLocalRing
+open IsLocalRing
 
 example (𝒪 : Type*) [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
     [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
