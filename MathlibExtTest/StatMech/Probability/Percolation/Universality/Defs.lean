@@ -15,9 +15,10 @@ public import MathlibExt.Probability.Percolation.Universality.Defs
 
 Tests the definitions of `StatMech.Universality`: `criticalProbability_eq_pc` at `d = 2`, the
 increasing percolation event, `translateConfig` at `0` and the translated crossing events at `0`,
-and the named predicate `PositivelyAssociated`, proved for the Dirac mass at the all-open
-configuration (every nonempty increasing event contains it). `BoxCrossingProperty` is only
-restated via `boxCrossingProperty_iff`: a witness needs crossings of all large rectangles.
+and the measurable-event contract of `PositivelyAssociated`, proved for the Dirac mass at the
+all-open configuration (every nonempty increasing event contains it) and exercised on the
+infinite configuration space `ConfigSpace ℕ`. `BoxCrossingProperty` is only restated via
+`boxCrossingProperty_iff`: a witness needs crossings of all large rectangles.
 -/
 
 @[expose] public section
@@ -51,7 +52,7 @@ theorem dirac_real_of_increasing {A : Set (ConfigSpace (Sym2 (Site 2)))} (hA : I
 
 -- `PositivelyAssociated` holds for the Dirac mass at the all-open configuration.
 example : PositivelyAssociated (Measure.dirac allOpen) := by
-  intro A B hA hB
+  intro A B _hAm _hBm hA hB
   rcases A.eq_empty_or_nonempty with hAe | hAn
   · simp [hAe]
   rcases B.eq_empty_or_nonempty with hBe | hBn
@@ -60,6 +61,31 @@ example : PositivelyAssociated (Measure.dirac allOpen) := by
   rw [dirac_real_of_increasing hA hAn, dirac_real_of_increasing hB hBn,
     dirac_real_of_increasing (IsUpperSet.inter hA hB) hAB]
   norm_num
+
+/-- The event that coordinate `i` is open on the conventional infinite cube `ConfigSpace ℕ`. -/
+def natOpenAt (i : ℕ) : Set (ConfigSpace ℕ) := {ω | ω i = true}
+
+theorem measurableSet_natOpenAt (i : ℕ) : MeasurableSet (natOpenAt i) :=
+  measurableSet_eq_fun (measurable_pi_apply i) measurable_const
+
+theorem isIncreasing_natOpenAt (i : ℕ) : IsIncreasing (natOpenAt i) := by
+  intro ω ω' hωω' hω
+  have hi := hωω' i
+  simp only [natOpenAt, Set.mem_ofPred_eq] at hω ⊢
+  rw [hω] at hi
+  exact top_le_iff.mp hi
+
+-- A Harris inequality stated on measurable increasing events constructs positive association.
+example (μ : Measure (ConfigSpace ℕ))
+    (hHarris : ∀ A B : Set (ConfigSpace ℕ), MeasurableSet A → MeasurableSet B →
+      IsIncreasing A → IsIncreasing B → μ.real A * μ.real B ≤ μ.real (A ∩ B)) :
+    PositivelyAssociated μ :=
+  hHarris
+
+-- The measurable-event API is consumed on an infinite (not finite-vacuous) configuration space.
+example (μ : Measure (ConfigSpace ℕ)) (hpa : PositivelyAssociated μ) :
+    μ.real (natOpenAt 0) * μ.real (natOpenAt 0) ≤ μ.real (natOpenAt 0) :=
+  hpa.sq_le_self (natOpenAt 0) (measurableSet_natOpenAt 0) (isIncreasing_natOpenAt 0)
 
 -- `BoxCrossingProperty` unfolds to a positive infimum of crossing probabilities.
 example (μ : Measure (ConfigSpace (Sym2 (Site 2)))) :
