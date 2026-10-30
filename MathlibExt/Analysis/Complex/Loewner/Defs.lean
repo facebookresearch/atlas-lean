@@ -34,7 +34,6 @@ contains definitions and immediate facts only; existence of solutions is in
 * `StatMech.SLE.loewnerField`: the vector field `2 / (w - W_t)`.
 * `StatMech.SLE.IsLoewnerSolutionAt`, `StatMech.SLE.IsLoewnerSolutionOn`,
   `StatMech.SLE.SatisfiesLoewnerEquation`, `StatMech.SLE.SatisfiesMaximalLoewnerEquation`.
-* `StatMech.SLE.LoewnerChain`: a continuous driving function with a global solution.
 * `StatMech.SLE.IsStandardBrownianMotion`, `StatMech.SLE.sleDriving`, `StatMech.SLE.IsChordalSLE`.
 
 ## References
@@ -194,24 +193,6 @@ lemma conformalAt (h : SatisfiesMaximalLoewnerEquation W D g)
   h.2.2.2.2.2.2.2 t ht z hz
 
 end SatisfiesMaximalLoewnerEquation
-
-/-- A continuous driving function `W` together with maps `g_t` satisfying `SatisfiesLoewnerEquation`
-(a solution for every starting point `z ∈ ℂ` and all times `t ≥ 0`). This structure is expected to
-be empty: points of `ℍ` are swallowed in finite time, and at the swallowing time no two-sided
-derivative exists (for `W = 0` the solution from `I` is `I √(1 - 4t)`, and `loewnerLifetime 0 I =
-1/4`). Uninhabitedness is not proved; nothing in the library uses `LoewnerChain` beyond its
-projections. The maximal form `SatisfiesMaximalLoewnerEquation` (`LoewnerMaximal`) is inhabited. -/
-structure LoewnerChain where
-  driving : ℝ → ℝ
-  driving_continuous : Continuous driving
-  maps : ℝ → ℂ → ℂ
-  loewner : SatisfiesLoewnerEquation driving maps
-
-lemma LoewnerChain.continuous_driving (c : LoewnerChain) : Continuous c.driving :=
-  c.driving_continuous
-
-lemma LoewnerChain.maps_zero (c : LoewnerChain) (z : ℂ) : c.maps 0 z = z :=
-  c.loewner.1 z
 
 /-- A standard real Brownian motion indexed by `ℝ` (used for `t ≥ 0`): `B_0 = 0` a.s., continuous
 paths a.s., Gaussian, with independent increments `B_t - B_s ~ N(0, t - s)`.
