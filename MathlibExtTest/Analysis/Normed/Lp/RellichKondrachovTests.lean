@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Normed.Lp.RellichKondrachov
+public import MathlibExt.Analysis.Normed.Lp.Compactness
 
 /-!
 # Tests for Rellich–Kondrachov compactness in Fourier coordinates
@@ -23,6 +24,7 @@ public import MathlibExt.Analysis.Normed.Lp.RellichKondrachov
 -/
 
 open MathlibExt.Analysis.Normed.Lp.RellichKondrachov
+open MathlibExt.Analysis.Normed.Lp.Compactness
 open scoped lp ENNReal Topology
 
 namespace MathlibExtTest.Analysis.Normed.Lp.RellichKondrachovTests
@@ -102,6 +104,10 @@ example : ‖(lp.single 2 0 (3 : ℝ) + lp.single 2 1 (4 : ℝ) : ℓ²(ℕ, ℝ
 section Characterization
 
 variable {𝕜 : Type*} [RCLike 𝕜]
+
+/-- The original truncation is definitionally the canonical truncation at `p = 2`. -/
+example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : rellichTrunc N x = lpTrunc 2 N x :=
+  rfl
 
 /-- The finite-sum truncation has exactly the original shifted-tail norm. -/
 example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
