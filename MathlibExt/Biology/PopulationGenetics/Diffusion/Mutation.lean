@@ -11,7 +11,7 @@ module
 public import MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisher
 public import Mathlib.Probability.Distributions.Beta
 public import Mathlib.Probability.Distributions.Binomial
-import Mathlib.RingTheory.Polynomial.Bernstein
+import MathlibExt.Probability.Distributions.BinomialMoments
 
 /-!
 # The Wright–Fisher diffusion with two-way mutation: Wright's Beta stationary law
@@ -364,38 +364,28 @@ noncomputable def mutatedFreq (u₁ u₂ x : unitInterval) : unitInterval :=
     · nlinarith
     · nlinarith⟩
 
-private theorem eval_bernsteinPolynomial' (M k : ℕ) (x : ℝ) :
-    (bernsteinPolynomial ℝ M k).eval x = (M.choose k : ℝ) * x ^ k * (1 - x) ^ (M - k) := by
-  simp [bernsteinPolynomial]
-
-/-- Integrals against `Bin(M, p)` of `a + b k + c (M p - k) ^ 2`, from the binomial moments. -/
+/-- Integrals against `Bin(M, p)` of `a + b k + c (M p - k) ^ 2`, from the binomial mean
+(`integral_of_hasLaw_binomial`) and second moment (`integral_sq_map_cast_binomial`). -/
 private theorem integral_binomial_quadratic (M : ℕ) (p : unitInterval) (a b c : ℝ) :
     ∫ k, (a + b * (k : ℝ) + c * (M * (p : ℝ) - k) ^ 2) ∂(binomial M p) =
       a + b * (M * p) + c * (M * p * (1 - p)) := by
-  set y : ℝ := (p : ℝ)
-  set w : ℕ → ℝ := fun k => (M.choose k : ℝ) * y ^ k * (1 - y) ^ (M - k) with hw
-  have S0 : ∑ k ∈ Finset.range (M + 1), w k = 1 := by
-    have := congrArg (Polynomial.eval y) (bernsteinPolynomial.sum ℝ M)
-    simpa [Polynomial.eval_finsetSum, eval_bernsteinPolynomial'] using this
-  have S1 : ∑ k ∈ Finset.range (M + 1), (k : ℝ) * w k = M * y := by
-    have := congrArg (Polynomial.eval y) (bernsteinPolynomial.sum_smul ℝ M)
-    simpa [Polynomial.eval_finsetSum, eval_bernsteinPolynomial', nsmul_eq_mul, mul_assoc, hw]
-      using this
-  have S2 : ∑ k ∈ Finset.range (M + 1), (M * y - k) ^ 2 * w k = M * y * (1 - y) := by
-    have := congrArg (Polynomial.eval y) (bernsteinPolynomial.variance ℝ M)
-    simpa [Polynomial.eval_finsetSum, eval_bernsteinPolynomial', nsmul_eq_mul, mul_assoc, hw]
-      using this
-  rw [integral_binomial, ← Nat.range_succ_eq_Iic]
-  simp only [smul_eq_mul]
-  change ∑ k ∈ Finset.range (M + 1), w k * (a + b * (k : ℝ) + c * (M * y - k) ^ 2) = _
-  calc ∑ k ∈ Finset.range (M + 1), w k * (a + b * (k : ℝ) + c * (M * y - k) ^ 2)
-      = ∑ k ∈ Finset.range (M + 1), (a * w k + b * ((k : ℝ) * w k)
-          + c * ((M * y - k) ^ 2 * w k)) := by
-        refine Finset.sum_congr rfl fun k _ => ?_
-        ring
-    _ = a + b * (M * y) + c * (M * y * (1 - y)) := by
-        rw [Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
-          ← Finset.mul_sum, S0, S1, S2, mul_one]
+  rw [integral_binomial, ← integral_map_cast_binomial (R := ℝ)
+    (fun x : ℝ => a + b * x + c * (M * (p : ℝ) - x) ^ 2)]
+  have hmean : ∫ x, x ∂Bin(ℝ, M, p) = (p : ℝ) * M := integral_of_hasLaw_binomial HasLaw.id
+  have hsq := integral_sq_map_cast_binomial (n := M) (p := p)
+  have he : (fun x : ℝ => a + b * x + c * (M * (p : ℝ) - x) ^ 2) =
+      fun x => (a + c * (M * (p : ℝ)) ^ 2) + ((b - 2 * c * (M * p)) * x + c * x ^ 2) := by
+    funext x
+    ring
+  rw [he]
+  generalize hK : a + c * (M * (p : ℝ)) ^ 2 = K
+  generalize hB : b - 2 * c * (M * (p : ℝ)) = B
+  rw [integral_add (integrable_map_cast_binomial _) (integrable_map_cast_binomial _),
+    integral_add (integrable_map_cast_binomial _) (integrable_map_cast_binomial _),
+    integral_const, integral_const_mul, integral_const_mul, hmean, hsq]
+  simp only [probReal_univ, one_smul]
+  rw [← hK, ← hB]
+  ring
 
 /-- **Drift of the Wright–Fisher chain with mutation (Ewens 2004, ch. 4).** One generation of the
 Wright–Fisher chain on `M` gene copies (`M = 2N`): mutation moves the frequency `x` to

@@ -12,7 +12,8 @@ import MathlibExt.Biology.PopulationGenetics.Diffusion.Mutation
 
 /-! Tests for the Wright–Fisher diffusion with mutation: the neutral special case, concrete
 stationary moments (uniform and symmetric Beta laws), weak stationarity for a polynomial test
-function, the zero-flux identity at a point, one generation of the chain, and a junk value
+function, the zero-flux identity at a point, one generation of the chain (drift and scaled second
+moment), and a junk value
 outside the parameter domain `θ₁, θ₂ > 0`. -/
 
 open Real Set MeasureTheory ProbabilityTheory
@@ -109,6 +110,27 @@ example : ∫ x, x ∂(betaMeasure 1 0) = 0 := by
     funext x
     simp [betaPDF, betaPDFReal, hB]
   simp [betaMeasure, hpdf]
+
+/-- One generation with `M = 2` copies, `θ₁ = 1`, `θ₂ = 1/2` (so `u₁ = 1/4`, `u₂ = 1/8`) and
+`x = 1/2`: mutation moves the frequency to `p' = 9/16`, and the scaled second moment is
+`p' (1 - p') + (θ₁ (1 - x) - θ₂ x) ^ 2 / (4M) = 63/256 + 1/128 = 65/256`. -/
+example {u₁ u₂ x : unitInterval} (hu₁ : (u₁ : ℝ) = 1 / 4) (hu₂ : (u₂ : ℝ) = 1 / 8)
+    (hx : (x : ℝ) = 1 / 2) :
+    (2 : ℕ) * ∫ k, ((k : ℝ) / (2 : ℕ) - x) ^ 2 ∂(binomial 2 (mutatedFreq u₁ u₂ x)) =
+      65 / 256 := by
+  rw [integral_binomial_mutatedFreq_sq (θ₁ := 1) (θ₂ := 1 / 2) (by norm_num)
+    (by rw [hu₁]; norm_num) (by rw [hu₂]; norm_num) x]
+  simp only [mutatedFreq, hu₁, hu₂, hx]
+  norm_num
+
+/-- The same value by direct summation over `k = 0, 1, 2` with `p' = 9/16`. -/
+example {u₁ u₂ x : unitInterval} (hu₁ : (u₁ : ℝ) = 1 / 4) (hu₂ : (u₂ : ℝ) = 1 / 8)
+    (hx : (x : ℝ) = 1 / 2) :
+    (2 : ℕ) * ∫ k, ((k : ℝ) / (2 : ℕ) - x) ^ 2 ∂(binomial 2 (mutatedFreq u₁ u₂ x)) =
+      65 / 256 := by
+  rw [integral_binomial, ← Nat.range_succ_eq_Iic]
+  simp only [mutatedFreq, hu₁, hu₂, hx, Finset.sum_range_succ, Finset.sum_range_zero]
+  norm_num
 
 #print axioms integral_mutationGenerator_betaMeasure
 #print axioms integral_heterozygosity_betaMeasure
