@@ -1,0 +1,284 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import PhyslibExt.CondensedMatter.IsingModel.GKS2
+
+/-!
+# Monotonicity of Ising correlations in the inverse temperature
+
+For a finite ferromagnetic Ising model with nonnegative field, every spin correlation
+`⟨σ_A⟩_{β,h}` is nondecreasing in `β ≥ 0`.
+
+## i. Overview
+
+The derivative of `⟨σ_A⟩` in `β` is the covariance of `σ_A` with the energy observable
+`∑_e σ_x σ_y + h ∑_x σ_x`. Each term of the energy is itself a spin product `σ_B`, and the second
+Griffiths inequality gives `⟨σ_A σ_B⟩ - ⟨σ_A⟩⟨σ_B⟩ ≥ 0` for `β, h ≥ 0`. Hence the derivative is
+nonnegative and the correlation is monotone; in particular the two-point function and the
+magnetization are nondecreasing in `β`.
+
+## ii. Key results
+
+- `energyObs` : the energy observable `∑_e σ_x σ_y + h ∑_x σ_x`.
+- `corr_hasDerivAt` : the derivative of `⟨σ_A⟩` in `β`.
+- `corr_deriv_nonneg` : it is nonnegative for `β, h ≥ 0`.
+- `corr_monotone` : `β ↦ ⟨σ_A⟩_{β,h}` is nondecreasing on `[0, ∞)`.
+
+## iii. Table of contents
+
+- A. Derivatives of the Boltzmann weights
+- B. Covariances and the second Griffiths inequality
+- C. Monotonicity of correlations
+
+## iv. References
+
+- R. B. Griffiths, *Correlations in Ising ferromagnets. II. External magnetic fields*, J. Math.
+  Phys. 8 (1967) 484–489.
+- D. G. Kelly and S. Sherman, *General Griffiths' inequalities on correlations in Ising
+  ferromagnets*, J. Math. Phys. 9 (1968) 466–484.
+- S. Friedli and Y. Velenik, *Statistical Mechanics of Lattice Systems*, Cambridge University
+  Press (2017), Section 3.8.
+-/
+
+@[expose] public section
+
+open scoped BigOperators symmDiff
+open Finset
+
+set_option linter.style.show false
+set_option linter.unusedSectionVars false
+set_option linter.style.longLine false
+
+namespace StatMech
+
+namespace IsingFK
+
+open StatMech.Ising
+
+variable {V : Type*} [Fintype V] [DecidableEq V]
+variable (G : SimpleGraph V) [DecidableRel G.Adj]
+
+/-! ## A. Derivatives of the Boltzmann weights -/
+
+/-- The energy observable `∑_{e ∈ E(G)} σ_x σ_y + h ∑_x σ_x`, the `β`-derivative of the
+log-weight. -/
+noncomputable def energyObs (h : ℝ) (s : ConfigSpace V) : ℝ :=
+  (∑ e ∈ G.edgeFinset, bond s e) + h * ∑ x, spin s x
+
+omit [DecidableEq V] in
+lemma weight_hasDerivAt (h β₀ : ℝ) (s : ConfigSpace V) :
+    HasDerivAt (fun β => isingWeight G β h s)
+      (energyObs G h s * isingWeight G β₀ h s) β₀ := by
+  classical
+  unfold isingWeight energyObs
+  have hH : -hamiltonian G h s = (∑ e ∈ G.edgeFinset, bond s e) + h * ∑ x, spin s x := by
+    unfold hamiltonian; ring
+  set U := (∑ e ∈ G.edgeFinset, bond s e) + h * ∑ x, spin s x with hU
+  have hcoe : (fun β : ℝ => Real.exp (-β * hamiltonian G h s))
+      = (fun β : ℝ => Real.exp (β * U)) := by
+    funext β; rw [← hH]; ring_nf
+  rw [hcoe]
+  have h1 : HasDerivAt (fun β : ℝ => β * U) U β₀ := by
+    simpa using (hasDerivAt_id β₀).mul_const U
+  have h2 := (Real.hasDerivAt_exp (β₀ * U)).comp β₀ h1
+  have hfun : (Real.exp ∘ fun β : ℝ => β * U) = (fun β : ℝ => Real.exp (β * U)) := rfl
+  rw [hfun] at h2
+  have hval : U * Real.exp (-β₀ * hamiltonian G h s) = Real.exp (β₀ * U) * U := by
+    rw [← hH]; ring_nf
+  rw [hval]; exact h2
+
+lemma num_hasDerivAt (h β₀ : ℝ) (A : Finset V) :
+    HasDerivAt (fun β => ∑ s, spinProd A s * isingWeight G β h s)
+      (∑ s, spinProd A s * (energyObs G h s * isingWeight G β₀ h s)) β₀ := by
+  have hp : ∀ s : ConfigSpace V,
+      HasDerivAt (fun β => spinProd A s * isingWeight G β h s)
+        (spinProd A s * (energyObs G h s * isingWeight G β₀ h s)) β₀ :=
+    fun s => (weight_hasDerivAt G h β₀ s).const_mul (spinProd A s)
+  have hsum := HasDerivAt.sum (fun s (_ : s ∈ (Finset.univ : Finset (ConfigSpace V))) => hp s)
+  have heq : (∑ s, fun β => spinProd A s * isingWeight G β h s)
+      = (fun β => ∑ s, spinProd A s * isingWeight G β h s) := by
+    funext β; rw [Finset.sum_apply]
+  rwa [heq] at hsum
+
+lemma den_hasDerivAt (h β₀ : ℝ) :
+    HasDerivAt (fun β => isingZ G β h)
+      (∑ s, energyObs G h s * isingWeight G β₀ h s) β₀ := by
+  have hp : ∀ s : ConfigSpace V,
+      HasDerivAt (fun β => isingWeight G β h s)
+        (energyObs G h s * isingWeight G β₀ h s) β₀ :=
+    fun s => weight_hasDerivAt G h β₀ s
+  have hsum := HasDerivAt.sum (fun s (_ : s ∈ (Finset.univ : Finset (ConfigSpace V))) => hp s)
+  have heq : (∑ s, fun β => isingWeight G β h s) = (fun β => isingZ G β h) := by
+    funext β; rw [Finset.sum_apply]; rfl
+  rwa [heq] at hsum
+
+/-! ## B. Covariances and the second Griffiths inequality -/
+
+lemma covar_spinProd_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A B : Finset V) :
+    0 ≤ (∑ s, (spinProd A s * spinProd B s) * isingWeight G β h s) * isingZ G β h
+        - (∑ s, spinProd A s * isingWeight G β h s) *
+          (∑ s, spinProd B s * isingWeight G β h s) := by
+  rw [sub_nonneg]
+  have key := unnorm_gks2 G β h hβ hh A B
+  have hABe : (∑ s, spinProd (A ∆ B) s * isingWeight G β h s)
+      = ∑ s, (spinProd A s * spinProd B s) * isingWeight G β h s :=
+    Finset.sum_congr rfl (fun s _ => by rw [spinProd_mul_self])
+  rw [hABe] at key
+  have hZ : (∑ s, isingWeight G β h s) = isingZ G β h := rfl
+  rw [hZ] at key
+  linarith
+
+lemma covarTerm_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A : Finset V)
+    (g : ConfigSpace V → ℝ) (B : Finset V) (hgB : ∀ s, g s = spinProd B s) :
+    0 ≤ (∑ s, (spinProd A s * g s) * isingWeight G β h s) * isingZ G β h
+        - (∑ s, spinProd A s * isingWeight G β h s) * (∑ s, g s * isingWeight G β h s) := by
+  have h1 : (∑ s, (spinProd A s * g s) * isingWeight G β h s)
+      = (∑ s, (spinProd A s * spinProd B s) * isingWeight G β h s) :=
+    Finset.sum_congr rfl (fun s _ => by rw [hgB s])
+  have h2 : (∑ s, g s * isingWeight G β h s) = (∑ s, spinProd B s * isingWeight G β h s) :=
+    Finset.sum_congr rfl (fun s _ => by rw [hgB s])
+  rw [h1, h2]
+  exact covar_spinProd_nonneg G β h hβ hh A B
+
+omit [DecidableEq V] in
+lemma exists_spinProd_eq_bond (e : Sym2 V) (he : e ∈ G.edgeFinset) :
+    ∃ B : Finset V, ∀ s : ConfigSpace V, bond s e = spinProd B s := by
+  classical
+  rw [SimpleGraph.mem_edgeFinset] at he
+  induction e with
+  | h a b =>
+    rw [SimpleGraph.mem_edgeSet] at he
+    have hab : a ≠ b := G.ne_of_adj he
+    exact ⟨{a, b}, fun s => by rw [bond_mk]; unfold spinProd; rw [Finset.prod_pair hab]⟩
+
+omit [DecidableEq V] [Fintype V] in
+lemma spin_eq_spinProd_singleton (x : V) (s : ConfigSpace V) :
+    spin s x = spinProd {x} s := by
+  classical
+  unfold spinProd; rw [Finset.prod_singleton]
+
+lemma num_deriv_decomp (β h : ℝ) (A : Finset V) :
+    (∑ s, spinProd A s * (energyObs G h s * isingWeight G β h s))
+      = (∑ e ∈ G.edgeFinset, ∑ s, (spinProd A s * bond s e) * isingWeight G β h s)
+        + h * ∑ x, ∑ s, (spinProd A s * spin s x) * isingWeight G β h s := by
+  have inner : ∀ s : ConfigSpace V,
+      spinProd A s * (energyObs G h s * isingWeight G β h s)
+        = (∑ e ∈ G.edgeFinset, (spinProd A s * bond s e) * isingWeight G β h s)
+          + h * ∑ x, (spinProd A s * spin s x) * isingWeight G β h s := by
+    intro s
+    unfold energyObs
+    have e1 : spinProd A s * (∑ e ∈ G.edgeFinset, bond s e) * isingWeight G β h s
+        = (∑ e ∈ G.edgeFinset, (spinProd A s * bond s e) * isingWeight G β h s) := by
+      rw [Finset.mul_sum, Finset.sum_mul]
+    have e2 : spinProd A s * (h * ∑ x, spin s x) * isingWeight G β h s
+        = h * ∑ x, (spinProd A s * spin s x) * isingWeight G β h s := by
+      rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, Finset.sum_mul]
+      apply Finset.sum_congr rfl; intro x _; ring
+    rw [← e1, ← e2]; ring
+  rw [Finset.sum_congr rfl (fun s _ => inner s)]
+  rw [Finset.sum_add_distrib]
+  congr 1
+  · rw [Finset.sum_comm]
+  · rw [← Finset.mul_sum, Finset.sum_comm]
+
+lemma deriv_numerator_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A : Finset V) :
+    0 ≤ (∑ s, spinProd A s * (energyObs G h s * isingWeight G β h s)) * isingZ G β h
+        - (∑ s, spinProd A s * isingWeight G β h s)
+            * (∑ s, energyObs G h s * isingWeight G β h s) := by
+  set Z := isingZ G β h with hZdef
+  set Na := ∑ s, spinProd A s * isingWeight G β h s with hNa
+  set P : Sym2 V → ℝ := fun e => ∑ s, (spinProd A s * bond s e) * isingWeight G β h s with hP
+  set Q : V → ℝ := fun x => ∑ s, (spinProd A s * spin s x) * isingWeight G β h s with hQ
+  set R : Sym2 V → ℝ := fun e => ∑ s, bond s e * isingWeight G β h s with hR
+  set S : V → ℝ := fun x => ∑ s, spin s x * isingWeight G β h s with hS
+  have hNum : (∑ s, spinProd A s * (energyObs G h s * isingWeight G β h s))
+      = (∑ e ∈ G.edgeFinset, P e) + h * ∑ x, Q x := num_deriv_decomp G β h A
+  have hDen : (∑ s, energyObs G h s * isingWeight G β h s)
+      = (∑ e ∈ G.edgeFinset, R e) + h * ∑ x, S x := by
+    have := num_deriv_decomp G β h (∅ : Finset V)
+    simp only [spinProd_empty, one_mul] at this
+    rw [hR, hS]; exact this
+  rw [hNum, hDen]
+  have hrearr :
+      ((∑ e ∈ G.edgeFinset, P e) + h * ∑ x, Q x) * Z
+        - Na * ((∑ e ∈ G.edgeFinset, R e) + h * ∑ x, S x)
+      = (∑ e ∈ G.edgeFinset, (P e * Z - Na * R e))
+        + h * ∑ x, (Q x * Z - Na * S x) := by
+    have hE : (∑ e ∈ G.edgeFinset, (P e * Z - Na * R e))
+        = (∑ e ∈ G.edgeFinset, P e) * Z - Na * (∑ e ∈ G.edgeFinset, R e) := by
+      rw [Finset.sum_sub_distrib, Finset.sum_mul, Finset.mul_sum]
+    have hW : (∑ x, (Q x * Z - Na * S x))
+        = (∑ x, Q x) * Z - Na * (∑ x, S x) := by
+      rw [Finset.sum_sub_distrib, Finset.sum_mul, Finset.mul_sum]
+    rw [hE, hW]; ring
+  rw [hrearr]
+  apply add_nonneg
+  · apply Finset.sum_nonneg
+    intro e he
+    obtain ⟨B, hB⟩ := exists_spinProd_eq_bond G e he
+    have := covarTerm_nonneg G β h hβ hh A (fun s => bond s e) B hB
+    simpa only [hP, hR] using this
+  · apply mul_nonneg hh
+    apply Finset.sum_nonneg
+    intro x _
+    have := covarTerm_nonneg G β h hβ hh A (fun s => spin s x) {x}
+      (fun s => spin_eq_spinProd_singleton x s)
+    simpa only [hQ, hS] using this
+
+/-! ## C. Monotonicity of correlations -/
+
+lemma corr_hasDerivAt (h β₀ : ℝ) (A : Finset V) :
+    HasDerivAt (fun β => isingExpectation G β h (spinProd A))
+      (((∑ s, spinProd A s * (energyObs G h s * isingWeight G β₀ h s)) * isingZ G β₀ h
+          - (∑ s, spinProd A s * isingWeight G β₀ h s)
+              * (∑ s, energyObs G h s * isingWeight G β₀ h s))
+        / (isingZ G β₀ h) ^ 2) β₀ := by
+  have hfun : (fun β => isingExpectation G β h (spinProd A))
+      = (fun β => (∑ s, spinProd A s * isingWeight G β h s) / isingZ G β h) := by
+    funext β; rw [isingExpectation_spinProd_eq]
+  rw [hfun]
+  exact (num_hasDerivAt G h β₀ A).div (den_hasDerivAt G h β₀) (isingZ_ne_zero G β₀ h)
+
+lemma corr_deriv_nonneg (h β : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A : Finset V) :
+    0 ≤ ((∑ s, spinProd A s * (energyObs G h s * isingWeight G β h s)) * isingZ G β h
+          - (∑ s, spinProd A s * isingWeight G β h s)
+              * (∑ s, energyObs G h s * isingWeight G β h s))
+        / (isingZ G β h) ^ 2 := by
+  apply div_nonneg (deriv_numerator_nonneg G β h hβ hh A)
+  positivity
+
+/-- **Monotonicity of correlations** (a consequence of the second Griffiths inequality): for `h ≥
+0`, every spin correlation `⟨σ_A⟩_{β,h}` is nondecreasing in `β ≥ 0` (Griffiths, J. Math. Phys.
+8 (1967)). -/
+theorem corr_monotone (h : ℝ) (hh : 0 ≤ h) (A : Finset V) :
+    MonotoneOn (fun β => isingExpectation G β h (spinProd A)) (Set.Ici (0 : ℝ)) := by
+  apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici 0)
+      (f' := fun β =>
+        ((∑ s, spinProd A s * (energyObs G h s * isingWeight G β h s)) * isingZ G β h
+            - (∑ s, spinProd A s * isingWeight G β h s)
+                * (∑ s, energyObs G h s * isingWeight G β h s))
+          / (isingZ G β h) ^ 2)
+  · exact fun β _ => (corr_hasDerivAt G h β A).continuousAt.continuousWithinAt
+  · intro β hβ
+    exact (corr_hasDerivAt G h β A).hasDerivWithinAt
+  · intro β hβ
+    rw [interior_Ici, Set.mem_Ioi] at hβ
+    exact corr_deriv_nonneg G h β hβ.le hh A
+
+lemma twoPoint_monotone (h : ℝ) (hh : 0 ≤ h) (x y : V) :
+    MonotoneOn (fun β => isingExpectation G β h (spinProd {x, y})) (Set.Ici (0 : ℝ)) :=
+  corr_monotone G h hh {x, y}
+
+lemma magnetization_monotone (h : ℝ) (hh : 0 ≤ h) (x : V) :
+    MonotoneOn (fun β => isingExpectation G β h (spinProd {x})) (Set.Ici (0 : ℝ)) :=
+  corr_monotone G h hh {x}
+
+end IsingFK
+
+end StatMech
