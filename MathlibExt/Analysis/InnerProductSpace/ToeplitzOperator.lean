@@ -45,20 +45,19 @@ of an absolutely summable symbol:
 * Compactness: `Tₐ` is compact iff `a = 0`. A nonzero symbol gives a
   non-compact operator: the images `Tₐ eₙ` of the standard basis vectors
   have a coordinate `a k₀ ≠ 0` and converge coordinatewise to `0`, so no
-  subsequence can converge in norm. This is in sharp contrast with the
-  Hankel operators of batch 128, which are always compact for an
-  absolutely summable symbol.
+  subsequence can converge in norm. Hankel operators with an absolutely
+  summable symbol are compact.
 * Delta symbols: `‖T_{δ_m • c}‖ = ‖c‖` for every `m : ℤ`.
 
 This is a companion to the Hilbert-space / compact-operator material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`. It is
-not one of the 72 v1 targets, and it is not in the pinned Mathlib or in base
-MathlibExt: base MathlibExt has only finite Toeplitz *matrices*
-(`MathlibExt/LinearAlgebra/Matrix/Toeplitz.lean`, `Matrix.Toeplitz`), with
-no operator, boundedness, adjoint, or compactness statement. It is distinct
-from batch 128 (`HankelOperator.lean`), which treats the anti-diagonal
-slices `a (i + j)`; the diagonal slices, the adjoint symbol, and the
-compact-iff-zero dichotomy here are new.
+not one of the 72 v1 targets. The existing matrix API in
+`MathlibExt/LinearAlgebra/Matrix/LowerToeplitz.lean` defines the infinite
+lower-triangular matrix `Matrix.lowerToeplitz : (ℕ → R) → Matrix ℕ ℕ R`.
+The bounded Toeplitz-operator API on `ℓ²` developed here is absent from
+the pinned Mathlib and base MathlibExt: this file constructs operators
+from absolutely summable symbols on `ℤ`, with diagonal slices, the
+adjoint symbol, and the compact-iff-zero dichotomy.
 
 ## Main declarations
 
