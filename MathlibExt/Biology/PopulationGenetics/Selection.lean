@@ -26,9 +26,13 @@ Discrete-generation selection models on a finite set of types.
   fitnesses `w i > 0` (expected number of offspring). The next generation has frequencies
   `select p w i = p i * w i / w̄` with mean fitness `w̄ = meanFitness p w = ∑ i, p i * w i`.
 * Diploid viability selection under random mating (Hardy–Weinberg proportions at birth): allele
-  frequencies `p i` and genotype fitnesses `w i j`. The next generation has allele frequencies
-  `diploidSelect p w i = p i * (∑ j, w i j * p j) / w̄` with
-  `w̄ = diploidMeanFitness p w = ∑ i, ∑ j, p i * p j * w i j`.
+  frequencies `p i` and fitnesses `w i j` of the ordered genotypes `(i, j)` (first and second
+  allele). Each survivor transmits each of its two alleles with probability `1/2`, so the next
+  generation has allele frequencies
+  `diploidSelect p w i = p i * (∑ j, (w i j + w j i) / 2 * p j) / w̄` with
+  `w̄ = diploidMeanFitness p w = ∑ i, ∑ j, p i * p j * w i j`; for symmetric fitnesses
+  (`w i j = w j i`, the usual unordered genotypes) the marginal fitness is `∑ j, w i j * p j`
+  (`marginalFitness_of_symm`).
 * The Price equation for a finite population of individuals `i : ι`, each with fitness `w i`
   (number of offspring), trait value `z i`, and mean offspring trait value `z' i`.
 
@@ -136,16 +140,27 @@ theorem sum_select {p w : ι → ℝ} (hw : meanFitness p w ≠ 0) : ∑ i, sele
 
 /-! ### Diploid viability selection under Hardy–Weinberg proportions -/
 
-/-- The marginal fitness `∑ j, w i j * p j` of allele `i`: the mean fitness of a genotype
-carrying `i` whose other allele is drawn from the frequencies `p`. -/
-def marginalFitness (p : ι → ℝ) (w : ι → ι → ℝ) (i : ι) : ℝ := ∑ j, w i j * p j
+/-- The marginal fitness `∑ j, (w i j + w j i) / 2 * p j` of allele `i`: the mean fitness of a
+genotype carrying `i` whose other allele is drawn from the frequencies `p`, averaging the two
+positions at which `i` can sit in the ordered genotype. -/
+noncomputable def marginalFitness (p : ι → ℝ) (w : ι → ι → ℝ) (i : ι) : ℝ :=
+  ∑ j, (w i j + w j i) / 2 * p j
+
+/-- For symmetric genotype fitnesses the marginal fitness is the row marginal
+`∑ j, w i j * p j`. -/
+theorem marginalFitness_of_symm {p : ι → ℝ} {w : ι → ι → ℝ} (hw : ∀ i j, w i j = w j i)
+    (i : ι) : marginalFitness p w i = ∑ j, w i j * p j := by
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [hw j i]
+  ring
 
 /-- The mean fitness `w̄ = ∑ i, ∑ j, p i * p j * w i j` of a population in Hardy–Weinberg
 proportions with allele frequencies `p` and genotype fitnesses `w`. -/
 def diploidMeanFitness (p : ι → ℝ) (w : ι → ι → ℝ) : ℝ := ∑ i, ∑ j, p i * p j * w i j
 
-/-- One generation of diploid viability selection under random mating:
-`diploidSelect p w i = p i * (∑ j, w i j * p j) / w̄`. -/
+/-- One generation of diploid viability selection under random mating, followed by Mendelian
+transmission of either allele of each survivor:
+`diploidSelect p w i = p i * (∑ j, (w i j + w j i) / 2 * p j) / w̄`. -/
 noncomputable def diploidSelect (p : ι → ℝ) (w : ι → ι → ℝ) (i : ι) : ℝ :=
   p i * marginalFitness p w i / diploidMeanFitness p w
 
@@ -165,15 +180,24 @@ theorem diploidMeanFitness_pos {p : ι → ℝ} {w : ι → ι → ℝ} (hp0 : �
 /-- Diploid viability selection keeps allele frequencies nonnegative. -/
 theorem diploidSelect_nonneg {p : ι → ℝ} {w : ι → ι → ℝ} (hp0 : ∀ i, 0 ≤ p i)
     (hp : ∑ i, p i = 1) (hw : ∀ i j, 0 < w i j) (i : ι) : 0 ≤ diploidSelect p w i :=
-  div_nonneg (mul_nonneg (hp0 i) (Finset.sum_nonneg fun j _ => mul_nonneg (hw i j).le (hp0 j)))
+  div_nonneg (mul_nonneg (hp0 i) (Finset.sum_nonneg fun j _ =>
+    mul_nonneg (div_nonneg (add_nonneg (hw i j).le (hw j i).le) zero_le_two) (hp0 j)))
     (diploidMeanFitness_pos hp0 hp hw).le
 
 /-- Diploid viability selection keeps allele frequencies summing to `1`. -/
 theorem sum_diploidSelect {p : ι → ℝ} {w : ι → ι → ℝ} (hw : diploidMeanFitness p w ≠ 0) :
     ∑ i, diploidSelect p w i = 1 := by
-  have h : ∑ i, p i * marginalFitness p w i = diploidMeanFitness p w := by
-    simp only [marginalFitness, diploidMeanFitness, Finset.mul_sum]
+  have hs : ∑ i, ∑ j, p i * p j * w j i = diploidMeanFitness p w := by
+    rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+  have h : ∑ i, p i * marginalFitness p w i = diploidMeanFitness p w := by
+    have he : ∑ i, p i * marginalFitness p w i =
+        (diploidMeanFitness p w + ∑ i, ∑ j, p i * p j * w j i) / 2 := by
+      simp only [marginalFitness, diploidMeanFitness, Finset.mul_sum, ← Finset.sum_add_distrib,
+        Finset.sum_div]
+      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+    rw [he, hs]
+    ring
   simp only [diploidSelect]
   rw [← Finset.sum_div, h, div_self hw]
 

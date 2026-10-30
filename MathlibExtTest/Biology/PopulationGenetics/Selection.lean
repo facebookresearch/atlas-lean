@@ -75,6 +75,18 @@ example : diploidMeanFitness p₂ wOver = 3 / 2 := by
 example : diploidSelect p₂ wOver 0 = 1 / 2 := by
   norm_num [diploidSelect, marginalFitness, diploidMeanFitness, p₂, wOver, Fin.sum_univ_two]
 
+/-- Symmetric fitnesses: the marginal fitness is the row marginal `∑ j, w i j * p j`. -/
+example (i : Fin 2) : marginalFitness p₂ wOver i = ∑ j, wOver i j * p₂ j :=
+  marginalFitness_of_symm (w := wOver) (by simp [Fin.forall_fin_two, wOver]) i
+
+/-- Asymmetric ordered-genotype fitnesses `w₀₀ = w₀₁ = w₁₁ = 1`, `w₁₀ = 3` at `p = (1/2, 1/2)`:
+both alleles of the favored genotype `(1, 0)` are transmitted, so the frequencies stay
+`(1/2, 1/2)` (the row marginal alone would give `(1/3, 2/3)`). -/
+noncomputable def wAsym : Fin 2 → Fin 2 → ℝ := ![![1, 1], ![3, 1]]
+
+example : diploidSelect p₂ wAsym 0 = 1 / 2 ∧ diploidSelect p₂ wAsym 1 = 1 / 2 := by
+  norm_num [diploidSelect, marginalFitness, diploidMeanFitness, p₂, wAsym, Fin.sum_univ_two]
+
 example (p : Fin 3 → ℝ) (w : Fin 3 → Fin 3 → ℝ) (hp0 : ∀ i, 0 ≤ p i) (hp : ∑ i, p i = 1)
     (hw : ∀ i j, 0 < w i j) : ∑ i, diploidSelect p w i = 1 ∧ ∀ i, 0 ≤ diploidSelect p w i :=
   ⟨sum_diploidSelect (diploidMeanFitness_pos hp0 hp hw).ne', diploidSelect_nonneg hp0 hp hw⟩
