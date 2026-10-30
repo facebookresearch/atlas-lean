@@ -6,16 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import Mathlib
 public import MathlibExt.Probability.Percolation.DifferentialInequality
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ConnWithinFactorization
+
+/-!
+# Pivotal edges on a surface event factorize
+
+On the event that the cluster surface of the origin in `Λ_n` is `S`, a boundary edge `xy` of `S` is
+pivotal for `0 ↔ ∂Λ_n` exactly when `0 ↔ x` inside `S`; the probability of the intersection then
+factorizes into `P(0 ↔ x in S) · P(surface S)`.
+
+## i. Overview
+
+Edges inside `S` are distinct from the boundary edge, and the surface event depends only on edges
+outside `S`, while `{0 ↔ x in S}` depends only on edges inside `S`. Independence of the product
+measure gives `pivotal_surface_factor`. All results are proved; their only hypotheses are
+`0 ∈ S ⊆ Λ_{n-1}` and `n ≥ 1`.
+
+## ii. Key results
+
+- `pivotal_surface_event_eq_withinConn` : `{xy pivotal} ∩ {surface S} = {0 ↔ x in S} ∩ {surface S}`
+- `pivotal_surface_factor` : the factorization of its probability
+
+## iii. Table of contents
+
+- A. Pivotal edges on a surface
+- B. Factorization
+
+## iv. References
+
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+-/
 
 @[expose] public section
 
@@ -30,9 +55,10 @@ open StatMech.Lattice
 
 variable {d : ℕ}
 
+/-! ## A. Pivotal edges on a surface -/
 
-theorem internal_edge_ne_boundary {S : Finset (Site d)} {x y : Site d}
-    (hx : x ∈ S) (hy : y ∉ S) {e : Sym2 (Site d)}
+lemma internal_edge_ne_boundary {S : Finset (Site d)} {x y : Site d}
+    (_hx : x ∈ S) (hy : y ∉ S) {e : Sym2 (Site d)}
     (he : e ∈ Sharpness.internalEdges (S : Set (Site d))) : e ≠ s(x, y) := by
   rintro rfl
   obtain ⟨a, ha, b, hb, hab⟩ := he
@@ -41,18 +67,10 @@ theorem internal_edge_ne_boundary {S : Finset (Site d)} {x y : Site d}
   · exact hy hb
   · exact hy ha
 
-
-
-
-
-
-
-
-
-theorem pivotal_of_surface_imp_withinConn {n : ℕ} {ω : ConfigSpace (Sym2 (Site d))}
+lemma pivotal_of_surface_imp_withinConn {n : ℕ} {ω : ConfigSpace (Sym2 (Site d))}
     {S : Finset (Site d)} (hS : surfaceSet d n ω = S) (h0S : origin d ∈ S)
     {x y : Site d} (hadj : (hypercubicLattice d).Adj x y)
-    (hxS : x ∈ S) (hybox : y ∈ box d n) (hyS : y ∉ S)
+    (hxS : x ∈ S) (_hybox : y ∈ box d n) (hyS : y ∉ S)
     (hpiv : IsPivotal (s(x, y) : Sym2 (Site d)) (boxCrossingEvent d n) ω) :
     ω ∈ withinConnEvent d (S : Set (Site d)) (origin d) x := by
   classical
@@ -112,9 +130,7 @@ theorem pivotal_of_surface_imp_withinConn {n : ℕ} {ω : ConfigSpace (Sym2 (Sit
   refine ⟨by exact_mod_cast h0S, by exact_mod_cast hxS, ?_⟩
   simpa only [ha] using hconn
 
-
-
-theorem pivotal_surface_event_eq_withinConn {n : ℕ} {S : Finset (Site d)}
+lemma pivotal_surface_event_eq_withinConn {n : ℕ} {S : Finset (Site d)}
     (h0S : origin d ∈ S) (hSinner : (S : Set (Site d)) ⊆ box d (n - 1))
     (hn : 1 ≤ n) {e : Site d × Site d} (he : e ∈ boundaryEdges d S) :
     pivotalEvent s(e.1, e.2) (boxCrossingEvent d n) ∩ surfaceEvent d n S =
@@ -130,10 +146,10 @@ theorem pivotal_surface_event_eq_withinConn {n : ℕ} {S : Finset (Site d)}
     have hs := withinConn_surf_subset_pivotalClosed h0S hSinner hn he h
     exact ⟨hs.1.1, hs.2⟩
 
+/-! ## B. Factorization -/
 
-
-
-
+/-- For a boundary edge `xy` of `S ∋ 0` with `S ⊆ Λ_{n-1}`:
+`P(xy pivotal for 0 ↔ ∂Λ_n, surface S) = P(0 ↔ x in S) · P(surface S)`. -/
 theorem pivotal_surface_factor (p : ℝ≥0) (hp : p ≤ 1)
     {n : ℕ} {S : Finset (Site d)} (h0S : origin d ∈ S)
     (hSinner : (S : Set (Site d)) ⊆ box d (n - 1)) (hn : 1 ≤ n)

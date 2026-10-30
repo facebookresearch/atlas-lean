@@ -6,26 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib.Combinatorics.Graph.Basic
@@ -33,6 +13,70 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosureDualit
 public import PhyslibExt.CondensedMatter.IsingModel.Peierls.PeierlsHoleFreeBoundary
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannierCutMatching
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion
+
+/-!
+# Kramers–Wannier duality for finite planar subgraphs of `ℤ²`
+
+The geometric dual of a finite subgraph of the square lattice, cut–cycle duality between primal
+spin configurations and even sets of dual edges, and the resulting duality of zero-field Ising
+partition functions.
+
+## i. Overview
+
+For a finite subgraph `P` of `ℤ²`, the faces are the connected components of the face-region
+graph of its image. Every edge of `P` gives a dual edge between the faces on its two sides, so the
+geometric dual is a multigraph on the faces (`kwg_dualGraph`), with possible loops and multiple
+edges. The high-temperature expansion holds for such multigraphs (`kwg_isingZ_high_temp`).
+
+Cut–cycle duality (`kwg_geometricCutCycleDuality`): a set of dual edges is even (every face meets
+it an even number of times) iff it is the cut set of a spin configuration of `P`.
+- Cut sets are even because the boundary of each face has even degree everywhere.
+- Conversely, an even dual set meets every closed walk of `P` evenly (via the face-region parity
+  flip of `FaceRegion`), hence is a cut.
+
+Each cut set has exactly `2^{#components}` preimages. Combining the low-temperature (cut)
+expansion of `P` with the high-temperature expansion of the dual gives the Kramers–Wannier
+duality `kwg_isingZ_duality` at `tanh β* = e^{-2β}`.
+
+Headline fidelity:
+- `kwg_isingZ_duality`, `kwg_geometricCutCycleDuality`, `kwg_geometricCutEvenMatching` and
+  `kwg_isingZ_high_temp` are proved unconditionally.
+- `kwg_isingZ_duality_of_cutMatching` and `kwg_dualContourMatching_of_cutMatching` are
+  conditional on `hmatch : kwg_GeometricCutEvenMatching P (exp (-2β)) 2`. That holds for connected
+  `P` (`kwg_geometricCutEvenMatching_of_connected`).
+- `kwg_cutEvenMatching_of_duality` is conditional on `hdual` (proved:
+  `kwg_geometricCutCycleDuality`) and on the constant-fibre hypothesis `hfib`.
+- The backbone chain rule (P2) does not appear.
+
+## ii. Key results
+
+- `StatMech.Ising.kwg_dualGraph` : the geometric dual multigraph
+- `StatMech.Ising.kwg_isingZ_high_temp` : high-temperature expansion for multigraphs
+- `StatMech.Ising.kwg_geometricCutCycleDuality` : even dual sets are primal cut sets
+- `StatMech.Ising.kwg_geometricCutEvenMatching` : cut sums equal even-set sums up to
+  `2^{#components}`
+- `StatMech.Ising.kwg_isingZ_duality` : Kramers–Wannier duality
+
+## iii. Table of contents
+
+- A. Faces and the geometric dual graph
+- B. Split edges and face boundaries
+- C. Cut sets and even edge sets
+- D. Walks and face colourings
+- E. Even dual sets are primal cuts
+- F. The high-temperature expansion for multigraphs
+- G. Counting cuts
+- H. Minimal cuts
+- I. Minimal even sets and the subdivision graph
+- J. Kramers–Wannier duality
+
+## iv. References
+
+- H. A. Kramers, G. H. Wannier, "Statistics of the two-dimensional ferromagnet. Part I",
+  Phys. Rev. 60 (1941) 252–262
+- S. Friedli, Y. Velenik, *Statistical Mechanics of Lattice Systems*, Cambridge University Press
+  (2017), Section 3.7
+-/
 
 @[expose] public section
 
@@ -45,54 +89,57 @@ namespace Ising
 open StatMech.Lattice
 open StatMech.Walls
 
+/-! ## A. Faces and the geometric dual graph -/
 
-
-
-
+/-- The edges of the finite planar subgraph `P` of `ℤ²`. -/
 abbrev kwg_Edge (P : PlanarZ2Subgraph) := P.G.edgeSet
 
-
-
+/-- The faces of `P`: connected components of the face-region graph of the image of `P` in `ℤ²`. -/
 abbrev kwg_Face (P : PlanarZ2Subgraph) :=
   (whb_faceRegion (imageGraph P)).ConnectedComponent
 
+/-- `P` has finitely many edges. -/
 noncomputable instance kwg_edgeFinite (P : PlanarZ2Subgraph) : Finite (kwg_Edge P) :=
   Set.toFinite P.G.edgeSet
 
+/-- The vertex type of `P` as a `Fintype`. -/
 noncomputable instance kwg_vertexFintype (P : PlanarZ2Subgraph) : Fintype P.V :=
   Fintype.ofFinite P.V
 
+/-- Classical decidability of adjacency in `P`. -/
 noncomputable instance kwg_adjDecidable (P : PlanarZ2Subgraph) : DecidableRel P.G.Adj :=
   Classical.decRel _
 
-
+/-- The finset of all edges of `P`. -/
 noncomputable def kwg_allEdges (P : PlanarZ2Subgraph) : Finset (kwg_Edge P) := by
   classical
   letI : Fintype (kwg_Edge P) := P.G.fintypeEdgeSet
   exact Finset.univ
 
-@[simp] theorem kwg_mem_allEdges (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
+@[simp] lemma kwg_mem_allEdges (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     e ∈ kwg_allEdges P := by
   classical
   simp [kwg_allEdges]
 
+/-- `P` has finitely many faces. -/
 noncomputable instance kwg_faceFinite (P : PlanarZ2Subgraph) : Finite (kwg_Face P) :=
   jfc_whb_regionComponents_finite (imageGraph P) (Set.toFinite (imageGraph P).edgeSet)
 
+/-- The faces of `P` as a `Fintype`. -/
 noncomputable instance kwg_faceFintype (P : PlanarZ2Subgraph) : Fintype (kwg_Face P) :=
   Fintype.ofFinite (kwg_Face P)
 
+/-- Classical decidable equality of faces. -/
 noncomputable instance kwg_faceDecidableEq (P : PlanarZ2Subgraph) : DecidableEq (kwg_Face P) :=
   Classical.decEq _
 
-
+/-- The lattice edge of `ℤ²` that is the image of an edge of `P`. -/
 noncomputable def kwg_embeddedEdge (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     Sym2 (Site 2) :=
   Sym2.map P.emb e.1
 
-
-
-theorem kwg_exists_flankingFaces (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
+/-- Every edge of `P` is the shared edge of two adjacent unit squares. -/
+lemma kwg_exists_flankingFaces (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     ∃ f g : Site 2, (hypercubicLattice 2).Adj f g ∧
       sharedPrimalEdge f g = kwg_embeddedEdge P e := by
   rcases e with ⟨e, he⟩
@@ -101,36 +148,30 @@ theorem kwg_exists_flankingFaces (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
       have hxy : P.G.Adj x y := (SimpleGraph.mem_edgeSet P.G).mp he
       simpa [kwg_embeddedEdge] using jfc_flankingFaces (P.isSub hxy)
 
-
-
+/-- One of the two unit squares flanking an edge of `P`. -/
 noncomputable def kwg_flankLeft (P : PlanarZ2Subgraph) (e : kwg_Edge P) : Site 2 :=
   (kwg_exists_flankingFaces P e).choose
 
-
+/-- The other unit square flanking an edge of `P`. -/
 noncomputable def kwg_flankRight (P : PlanarZ2Subgraph) (e : kwg_Edge P) : Site 2 :=
   (kwg_exists_flankingFaces P e).choose_spec.choose
 
-theorem kwg_flanks_adj (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
+lemma kwg_flanks_adj (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     (hypercubicLattice 2).Adj (kwg_flankLeft P e) (kwg_flankRight P e) :=
   (kwg_exists_flankingFaces P e).choose_spec.choose_spec.1
 
-theorem kwg_flanks_shared (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
+lemma kwg_flanks_shared (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     sharedPrimalEdge (kwg_flankLeft P e) (kwg_flankRight P e) = kwg_embeddedEdge P e :=
   (kwg_exists_flankingFaces P e).choose_spec.choose_spec.2
 
-
-
-
-
-
+/-- The ends of the dual edge of `e`: the faces containing its two flanking squares. -/
 noncomputable def kwg_dualEnds (P : PlanarZ2Subgraph) (e : kwg_Edge P) :
     Sym2 (kwg_Face P) :=
   s((whb_faceRegion (imageGraph P)).connectedComponentMk (kwg_flankLeft P e),
     (whb_faceRegion (imageGraph P)).connectedComponentMk (kwg_flankRight P e))
 
-
-
-
+/-- The geometric dual multigraph of `P`: vertices are faces, and every edge of `P` is a dual edge
+joining the faces on its two sides (possibly a loop). -/
 noncomputable def kwg_dualGraph (P : PlanarZ2Subgraph) :
     Graph (kwg_Face P) (kwg_Edge P) where
   vertexSet := Set.univ
@@ -150,25 +191,23 @@ noncomputable def kwg_dualGraph (P : PlanarZ2Subgraph) :
     | _ x y => exact ⟨x, y, rfl⟩
   left_mem_of_isLink := by simp
 
-@[simp] theorem kwg_dualGraph_vertexSet (P : PlanarZ2Subgraph) :
+@[simp] lemma kwg_dualGraph_vertexSet (P : PlanarZ2Subgraph) :
     (kwg_dualGraph P).vertexSet = Set.univ := rfl
 
-@[simp] theorem kwg_dualGraph_edgeSet (P : PlanarZ2Subgraph) :
+@[simp] lemma kwg_dualGraph_edgeSet (P : PlanarZ2Subgraph) :
     (kwg_dualGraph P).edgeSet = Set.univ := rfl
 
-theorem kwg_dualGraph_isLink_iff (P : PlanarZ2Subgraph) (e : kwg_Edge P)
+lemma kwg_dualGraph_isLink_iff (P : PlanarZ2Subgraph) (e : kwg_Edge P)
     (x y : kwg_Face P) :
     (kwg_dualGraph P).IsLink e x y ↔ kwg_dualEnds P e = s(x, y) := Iff.rfl
 
-
-
+/-- `P` has exactly one unbounded face. -/
 theorem kwg_unique_outerFace (P : PlanarZ2Subgraph) :
     ∃! C : kwg_Face P, C.supp.Infinite :=
   jfc_whb_unique_infinite_component P
 
-
-
-theorem kwg_card_face_eq_faceCount (P : PlanarZ2Subgraph) :
+/-- The number of faces of `P` is its combinatorial face count `nullity + 1` (Euler formula). -/
+lemma kwg_card_face_eq_faceCount (P : PlanarZ2Subgraph) :
     Nat.card (kwg_Face P) = faceCount P.G := by
   obtain ⟨e⟩ := jed_faithfulDiscreteJordan P
   have hbounded :
@@ -182,29 +221,23 @@ theorem kwg_card_face_eq_faceCount (P : PlanarZ2Subgraph) :
     _ = nullity P.G + 1 := congrArg (fun n => n + 1) hb
     _ = faceCount P.G := rfl
 
-
-theorem kwg_card_edge_eq_ncard (P : PlanarZ2Subgraph) :
+lemma kwg_card_edge_eq_ncard (P : PlanarZ2Subgraph) :
     Nat.card (kwg_Edge P) = P.G.edgeSet.ncard :=
   Nat.card_coe_set_eq P.G.edgeSet
 
+/-! ## B. Split edges and face boundaries -/
 
-
-
-
-
-
-
-
+/-- The edge `xy` is split by the colouring `c`: `c x ≠ c y`. -/
 def kwg_isSplit {V : Type*} (c : V → Bool) : Sym2 V → Prop :=
   Sym2.lift ⟨fun x y => c x ≠ c y, by
     intro x y
     apply propext
     exact ne_comm⟩
 
-@[simp] theorem kwg_isSplit_mk {V : Type*} (c : V → Bool) (x y : V) :
+@[simp] lemma kwg_isSplit_mk {V : Type*} (c : V → Bool) (x y : V) :
     kwg_isSplit c s(x, y) ↔ c x ≠ c y := Iff.rfl
 
-theorem kwg_isSplit_iff_bond_neg {V : Type*} (c : ConfigSpace V) (e : Sym2 V) :
+lemma kwg_isSplit_iff_bond_neg {V : Type*} (c : ConfigSpace V) (e : Sym2 V) :
     kwg_isSplit c e ↔ bond c e = -1 := by
   induction e using Sym2.inductionOn with
   | _ x y =>
@@ -212,11 +245,13 @@ theorem kwg_isSplit_iff_bond_neg {V : Type*} (c : ConfigSpace V) (e : Sym2 V) :
       unfold spin
       cases c x <;> cases c y <;> norm_num
 
+/-- Classical decidability of `kwg_isSplit`. -/
 noncomputable instance kwg_isSplitDecidable {V : Type*} (c : V → Bool) (e : Sym2 V) :
     Decidable (kwg_isSplit c e) :=
   Classical.propDecidable _
 
-
+/-- The edge `xy` meets `v` an odd number of times: exactly one endpoint is `v` (loops count zero).
+-/
 def kwg_incidentMod2 {V : Type*} (v : V) : Sym2 V → Prop :=
   Sym2.lift ⟨fun x y => (x = v ∧ y ≠ v) ∨ (y = v ∧ x ≠ v), by
     intro x y
@@ -227,19 +262,16 @@ def kwg_incidentMod2 {V : Type*} (v : V) : Sym2 V → Prop :=
     · exact Or.inr ⟨h.1, h.2⟩
     · exact Or.inl ⟨h.1, h.2⟩⟩
 
+/-- Classical decidability of `kwg_incidentMod2`. -/
 noncomputable instance kwg_incidentMod2Decidable {V : Type*} [DecidableEq V]
     (v : V) (e : Sym2 V) : Decidable (kwg_incidentMod2 v e) :=
   Classical.propDecidable _
 
-@[simp] theorem kwg_incidentMod2_mk {V : Type*} (v x y : V) :
+@[simp] lemma kwg_incidentMod2_mk {V : Type*} (v x y : V) :
     kwg_incidentMod2 v s(x, y) ↔
       (x = v ∧ y ≠ v) ∨ (y = v ∧ x ≠ v) := Iff.rfl
 
-
-
-
-
-theorem kwg_incident_iff_componentCut (P : PlanarZ2Subgraph) (e : kwg_Edge P)
+lemma kwg_incident_iff_componentCut (P : PlanarZ2Subgraph) (e : kwg_Edge P)
     (C : kwg_Face P) :
     kwg_incidentMod2 C (kwg_dualEnds P e) ↔
       kwg_embeddedEdge P e ∈ jed_cutSet
@@ -250,8 +282,7 @@ theorem kwg_incident_iff_componentCut (P : PlanarZ2Subgraph) (e : kwg_Edge P)
   rw [kwg_incidentMod2_mk]
   tauto
 
-
-theorem kwg_componentCut_subset_imageGraph (P : PlanarZ2Subgraph) (C : kwg_Face P) :
+lemma kwg_componentCut_subset_imageGraph (P : PlanarZ2Subgraph) (C : kwg_Face P) :
     jed_cutSet (fun z => (whb_faceRegion (imageGraph P)).connectedComponentMk z = C) ⊆
       (imageGraph P).edgeSet := by
   rintro _ ⟨a, b, hab, rfl, hsplit⟩
@@ -263,14 +294,12 @@ theorem kwg_componentCut_subset_imageGraph (P : PlanarZ2Subgraph) (C : kwg_Face 
   rw [heq] at hsplit
   tauto
 
-
-
-theorem kwg_componentCut_even (P : PlanarZ2Subgraph) (C : kwg_Face P) (v : Site 2) :
+lemma kwg_componentCut_even (P : PlanarZ2Subgraph) (C : kwg_Face P) (v : Site 2) :
     Even (jce_degree
       (jed_cutSet (fun z => (whb_faceRegion (imageGraph P)).connectedComponentMk z = C)) v) :=
   jed_cutSet_even _ v
 
-
+/-- The subgraph of `P` of edges on the boundary of the face `C`. -/
 noncomputable def kwg_componentBoundaryGraph (P : PlanarZ2Subgraph) (C : kwg_Face P) :
     SimpleGraph P.V where
   Adj x y := P.G.Adj x y ∧
@@ -283,21 +312,21 @@ noncomputable def kwg_componentBoundaryGraph (P : PlanarZ2Subgraph) (C : kwg_Fac
     rwa [Sym2.eq_swap]
   loopless := ⟨fun x h => P.G.irrefl h.1⟩
 
+/-- The boundary graph of a face is locally finite. -/
 noncomputable instance kwg_componentBoundaryGraph_locallyFinite
     (P : PlanarZ2Subgraph) (C : kwg_Face P) :
     SimpleGraph.LocallyFinite (kwg_componentBoundaryGraph P C) := fun _ =>
   Fintype.ofFinite _
 
-
-theorem kwg_componentBoundaryGraph_degree (P : PlanarZ2Subgraph) (C : kwg_Face P)
+lemma kwg_componentBoundaryGraph_degree (P : PlanarZ2Subgraph) (C : kwg_Face P)
     (x : P.V) :
     (kwg_componentBoundaryGraph P C).degree x =
       jce_degree
         (jed_cutSet (fun z =>
           (whb_faceRegion (imageGraph P)).connectedComponentMk z = C)) (P.emb x) := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
-  letI : SimpleGraph.LocallyFinite (kwg_componentBoundaryGraph P C) := fun _ =>
+  let : Fintype P.V := Fintype.ofFinite P.V
+  let : SimpleGraph.LocallyFinite (kwg_componentBoundaryGraph P C) := fun _ =>
     Fintype.ofFinite _
   let E := jed_cutSet (fun z =>
     (whb_faceRegion (imageGraph P)).connectedComponentMk z = C)
@@ -326,51 +355,54 @@ theorem kwg_componentBoundaryGraph_degree (P : PlanarZ2Subgraph) (C : kwg_Face P
     rw [hb]
     exact hz.2
 
-
-theorem kwg_componentBoundaryGraph_even (P : PlanarZ2Subgraph) (C : kwg_Face P)
+/-- Every vertex has even degree in the boundary graph of a face. -/
+lemma kwg_componentBoundaryGraph_even (P : PlanarZ2Subgraph) (C : kwg_Face P)
     (x : P.V) : Even ((kwg_componentBoundaryGraph P C).degree x) := by
-  letI : Fintype P.V := Fintype.ofFinite P.V
-  letI : SimpleGraph.LocallyFinite (kwg_componentBoundaryGraph P C) := fun _ =>
+  let : Fintype P.V := Fintype.ofFinite P.V
+  let : SimpleGraph.LocallyFinite (kwg_componentBoundaryGraph P C) := fun _ =>
     Fintype.ofFinite _
   rw [kwg_componentBoundaryGraph_degree P C x]
   exact kwg_componentCut_even P C (P.emb x)
 
+/-! ## C. Cut sets and even edge sets -/
 
+/-- The edges split by a colouring `c`, for edges given by an endpoint map `ends : E → Sym2 V`. -/
 noncomputable def kwg_cutSet {V E : Type*} [Finite E]
     (ends : E → Sym2 V) (c : V → Bool) : Finset E := by
   classical
   letI : Fintype E := Fintype.ofFinite E
   exact Finset.univ.filter (fun e => kwg_isSplit c (ends e))
 
-@[simp] theorem kwg_mem_cutSet {V E : Type*} [Finite E]
+@[simp] lemma kwg_mem_cutSet {V E : Type*} [Finite E]
     (ends : E → Sym2 V) (c : V → Bool) (e : E) :
     e ∈ kwg_cutSet ends c ↔ kwg_isSplit c (ends e) := by
   classical
   simp [kwg_cutSet]
 
-
+/-- The edge set `F` is even: every vertex meets an even number of edges of `F` (loops do not
+count). -/
 noncomputable def kwg_IsEven {V E : Type*}
     (ends : E → Sym2 V) (F : Finset E) : Prop := by
   classical
   exact ∀ v : V, Even (F.filter (fun e => kwg_incidentMod2 v (ends e))).card
 
+/-- Classical decidability of `kwg_IsEven`. -/
 noncomputable instance kwg_isEvenDecidable {V E : Type*}
     (ends : E → Sym2 V) (F : Finset E) : Decidable (kwg_IsEven ends F) :=
   Classical.propDecidable _
 
-
+/-- The number of edges of `F` meeting `v` once. -/
 noncomputable def kwg_degree {V E : Type*} [DecidableEq E]
     (ends : E → Sym2 V) (F : Finset E) (v : V) : ℕ := by
   classical
   exact (F.filter (fun e => kwg_incidentMod2 v (ends e))).card
 
-theorem kwg_IsEven_iff_degree {V E : Type*} [DecidableEq E]
+lemma kwg_IsEven_iff_degree {V E : Type*} [DecidableEq E]
     (ends : E → Sym2 V) (F : Finset E) :
     kwg_IsEven ends F ↔ ∀ v, Even (kwg_degree ends F v) := by
   rfl
 
-
-theorem kwg_IsEven_sdiff {V E : Type*} [DecidableEq E]
+lemma kwg_IsEven_sdiff {V E : Type*} [DecidableEq E]
     (ends : E → Sym2 V) {F S : Finset E} (hSF : S ⊆ F)
     (hF : kwg_IsEven ends F) (hS : kwg_IsEven ends S) :
     kwg_IsEven ends (F \ S) := by
@@ -390,7 +422,7 @@ theorem kwg_IsEven_sdiff {V E : Type*} [DecidableEq E]
   rw [Nat.even_sub hle]
   exact ⟨fun _ => hS v, fun _ => hF v⟩
 
-theorem kwg_degree_insert {V E : Type*} [DecidableEq V] [DecidableEq E]
+lemma kwg_degree_insert {V E : Type*} [DecidableEq V] [DecidableEq E]
     (ends : E → Sym2 V) (F : Finset E) (e : E) (he : e ∉ F) (v : V) :
     kwg_degree ends (insert e F) v = kwg_degree ends F v +
       (if kwg_incidentMod2 v (ends e) then 1 else 0) := by
@@ -398,20 +430,18 @@ theorem kwg_degree_insert {V E : Type*} [DecidableEq V] [DecidableEq E]
   unfold kwg_degree
   rw [Finset.filter_insert]
   by_cases hv : kwg_incidentMod2 v (ends e)
-  · rw [if_pos hv, Finset.card_insert_of_notMem (by simp [he]), if_pos hv]
-  · rw [if_neg hv, if_neg hv, add_zero]
+  · rw [ite_eq_left hv, Finset.card_insert_of_notMem (by simp [he]), ite_eq_left hv]
+  · rw [ite_eq_right hv, ite_eq_right hv, add_zero]
 
-
-
-
-
+/-- The zero-field Ising partition function `∑_c exp(β ∑_e σ_x σ_y)` of a multigraph given by
+`ends : E → Sym2 V`. -/
 noncomputable def kwg_isingZ {V E : Type*} [Fintype V] [DecidableEq V] [Fintype E]
     (ends : E → Sym2 V) (β : ℝ) : ℝ :=
   ∑ c : ConfigSpace V, Real.exp (β * ∑ e : E, bond c (ends e))
 
-
-
-theorem kwg_prod_bond_eq_prod_pow_degree {V E : Type*} [Fintype V] [DecidableEq V]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma kwg_prod_bond_eq_prod_pow_degree {V E : Type*} [Fintype V] [DecidableEq V]
     [DecidableEq E] (ends : E → Sym2 V) (c : ConfigSpace V) (F : Finset E) :
     (∏ e ∈ F, bond c (ends e)) = ∏ v : V, (spin c v) ^ (kwg_degree ends F v) := by
   classical
@@ -434,7 +464,7 @@ theorem kwg_prod_bond_eq_prod_pow_degree {V E : Type*} [Fintype V] [DecidableEq 
             intro v _
             have hi : ¬ kwg_incidentMod2 v s(x, x) := by
               simp [kwg_incidentMod2_mk]
-            rw [if_neg hi, pow_zero]
+            rw [ite_eq_right hi, pow_zero]
           · rw [bond_mk]
             have hcvt : ∀ v : V,
                 (spin c v) ^ (if kwg_incidentMod2 v s(x, y) then 1 else 0) =
@@ -450,8 +480,8 @@ theorem kwg_prod_bond_eq_prod_pow_degree {V E : Type*} [Fintype V] [DecidableEq 
                   · exact Or.inl ⟨rfl, Ne.symm hxy⟩
                   · exact Or.inr ⟨rfl, hxy⟩
               by_cases hv : v ∈ ({x, y} : Finset V)
-              · rw [if_pos hv, if_pos (hi.mpr hv), pow_one]
-              · rw [if_neg hv, if_neg (fun h => hv (hi.mp h)), pow_zero]
+              · rw [ite_eq_left hv, ite_eq_left (hi.mpr hv), pow_one]
+              · rw [ite_eq_right hv, ite_eq_right (fun h => hv (hi.mp h)), pow_zero]
             symm
             calc
               (∏ v : V, (spin c v) ^
@@ -463,10 +493,10 @@ theorem kwg_prod_bond_eq_prod_pow_degree {V E : Type*} [Fintype V] [DecidableEq 
               _ = spin c x * spin c y := by
                 rw [Finset.prod_ite_mem, Finset.univ_inter, Finset.prod_pair hxy]
 
-
-
-
-theorem kwg_even_split_card {V E : Type*} [Fintype V] [DecidableEq V]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+lemma kwg_even_split_card {V E : Type*} [Fintype V] [DecidableEq V]
     [DecidableEq E] (ends : E → Sym2 V) (F : Finset E) (c : V → Bool)
     (hev : kwg_IsEven ends F) :
     Even (F.filter (fun e => kwg_isSplit c (ends e))).card := by
@@ -485,8 +515,8 @@ theorem kwg_even_split_card {V E : Type*} [Fintype V] [DecidableEq V]
             apply Finset.prod_congr rfl
             intro e he
             by_cases h : kwg_isSplit c (ends e)
-            · rw [if_pos h, (kwg_isSplit_iff_bond_neg c (ends e)).mp h]
-            · rw [if_neg h]
+            · rw [ite_eq_left h, (kwg_isSplit_iff_bond_neg c (ends e)).mp h]
+            · rw [ite_eq_right h]
               rcases bond_eq_pm c (ends e) with hb | hb
               · exact hb
               · exact (h ((kwg_isSplit_iff_bond_neg c (ends e)).mpr hb)).elim
@@ -497,25 +527,22 @@ theorem kwg_even_split_card {V E : Type*} [Fintype V] [DecidableEq V]
   rw [hlhs] at hprod
   exact (neg_one_pow_eq_one_iff_even (by norm_num : (-1 : ℝ) ≠ 1)).mp hprod
 
+/-! ## D. Walks and face colourings -/
 
-
-
+/-- The embedding of `P` as a graph homomorphism to its image in `ℤ²`. -/
 noncomputable def kwg_imageHom (P : PlanarZ2Subgraph) : P.G →g imageGraph P where
   toFun := P.emb
   map_rel' := by
     intro x y hxy
     exact ⟨x, y, hxy, rfl, rfl⟩
 
-
+/-- A walk of `P` as a walk of `ℤ²`. -/
 noncomputable def kwg_latticeWalk (P : PlanarZ2Subgraph) {x y : P.V}
     (p : P.G.Walk x y) :
     (hypercubicLattice 2).Walk (P.emb x) (P.emb y) :=
   (p.map (kwg_imageHom P)).mapLe (imageGraph_le_lattice P)
 
-
-
-
-theorem kwg_faceInside_eq_of_regionReachable (P : PlanarZ2Subgraph) {x : P.V}
+lemma kwg_faceInside_eq_of_regionReachable (P : PlanarZ2Subgraph) {x : P.V}
     (p : P.G.Walk x x) {a b : Site 2}
     (hab : (whb_faceRegion (imageGraph P)).Reachable a b) :
     (fwr_faceInside (kwg_latticeWalk P p) a ↔
@@ -545,16 +572,13 @@ theorem kwg_faceInside_eq_of_regionReachable (P : PlanarZ2Subgraph) {x : P.V}
         tauto
       exact hsame.trans ih
 
-
-
+/-- The colouring of faces of `P` by whether they are inside the closed walk `p`. -/
 noncomputable def kwg_walkFaceColour (P : PlanarZ2Subgraph) {x : P.V}
     (p : P.G.Walk x x) : kwg_Face P → Bool := by
   classical
   exact fun C => decide (fwr_faceInside (kwg_latticeWalk P p) C.out)
 
-
-
-theorem kwg_walkFaceColour_split_iff_odd (P : PlanarZ2Subgraph) {x : P.V}
+lemma kwg_walkFaceColour_split_iff_odd (P : PlanarZ2Subgraph) {x : P.V}
     (p : P.G.Walk x x) (e : kwg_Edge P) :
     kwg_isSplit (kwg_walkFaceColour P p) (kwg_dualEnds P e) ↔
       Odd ((kwg_latticeWalk P p).edges.count (kwg_embeddedEdge P e)) := by
@@ -593,8 +617,9 @@ theorem kwg_walkFaceColour_split_iff_odd (P : PlanarZ2Subgraph) {x : P.V}
       by_cases hUf : fwr_faceInside (kwg_latticeWalk P p) U <;> simp_all
   exact hsides.trans hflip
 
-
-theorem kwg_even_sum_iff_even_odd_filter {E : Type*} [DecidableEq E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma kwg_even_sum_iff_even_odd_filter {E : Type*} [DecidableEq E]
     (F : Finset E) (n : E → ℕ) :
     Even (∑ e ∈ F, n e) ↔ Even (F.filter (fun e => Odd (n e))).card := by
   classical
@@ -609,16 +634,15 @@ theorem kwg_even_sum_iff_even_odd_filter {E : Type*} [DecidableEq E]
             apply Finset.prod_congr rfl
             intro e _
             by_cases ho : Odd (n e)
-            · rw [if_pos ho, ho.neg_one_pow]
-            · rw [if_neg ho]
+            · rw [ite_eq_left ho, ho.neg_one_pow]
+            · rw [ite_eq_right ho]
               exact Even.neg_one_pow ((Nat.even_or_odd (n e)).resolve_right ho)
       _ = (-1 : ℤ) ^ (F.filter (fun e => Odd (n e))).card := by
         rw [← Finset.prod_filter]
         simp
   rw [hprod]
 
-
-theorem kwg_walkParity_eq_decide_odd_countP {V : Type*} [DecidableEq V]
+lemma kwg_walkParity_eq_decide_odd_countP {V : Type*} [DecidableEq V]
     {G : SimpleGraph V} (D : Finset (Sym2 V)) {x y : V} (p : G.Walk x y) :
     walkParity G D p =
       decide (Odd (p.edges.countP (fun e => decide (e ∈ D)))) := by
@@ -641,8 +665,7 @@ theorem kwg_walkParity_eq_decide_odd_countP {V : Type*} [DecidableEq V]
       · rw [decide_eq_false hm]
         simp
 
-
-theorem kwg_latticeWalk_count (P : PlanarZ2Subgraph) {x y : P.V}
+lemma kwg_latticeWalk_count (P : PlanarZ2Subgraph) {x y : P.V}
     (p : P.G.Walk x y) (e : Sym2 P.V) :
     (kwg_latticeWalk P p).edges.count (Sym2.map P.emb e) = p.edges.count e := by
   rw [show (kwg_latticeWalk P p).edges =
@@ -661,16 +684,15 @@ theorem kwg_latticeWalk_count (P : PlanarZ2Subgraph) {x y : P.V}
   exact List.count_map_of_injective p.edges (Sym2.map P.emb)
     (Sym2.map.injective P.emb.injective) e
 
-
+/-- A set of edges of `P` as a finset of unordered pairs of vertices. -/
 noncomputable def kwg_primalEdgeFinset (P : PlanarZ2Subgraph)
     (F : Finset (kwg_Edge P)) : Finset (Sym2 P.V) :=
   F.map ⟨Subtype.val, Subtype.val_injective⟩
 
-
+/-- The endpoints of an edge of `P`. -/
 noncomputable def kwg_primalEnds (P : PlanarZ2Subgraph) (e : kwg_Edge P) : Sym2 P.V := e.1
 
-
-theorem kwg_primal_incident_iff_mem (P : PlanarZ2Subgraph) (e : kwg_Edge P) (x : P.V) :
+lemma kwg_primal_incident_iff_mem (P : PlanarZ2Subgraph) (e : kwg_Edge P) (x : P.V) :
     kwg_incidentMod2 x (kwg_primalEnds P e) ↔ x ∈ e.1 := by
   rcases e with ⟨e, he⟩
   induction e using Sym2.inductionOn with
@@ -687,14 +709,13 @@ theorem kwg_primal_incident_iff_mem (P : PlanarZ2Subgraph) (e : kwg_Edge P) (x :
         · exact Or.inl ⟨rfl, huv.symm⟩
         · exact Or.inr ⟨rfl, huv⟩
 
-@[simp] theorem kwg_mem_primalEdgeFinset (P : PlanarZ2Subgraph)
+@[simp] lemma kwg_mem_primalEdgeFinset (P : PlanarZ2Subgraph)
     (F : Finset (kwg_Edge P)) (e : kwg_Edge P) :
     e.1 ∈ kwg_primalEdgeFinset P F ↔ e ∈ F := by
   classical
   simp [kwg_primalEdgeFinset]
 
-
-theorem kwg_sum_count_eq_countP {A : Type*} [DecidableEq A]
+lemma kwg_sum_count_eq_countP {A : Type*} [DecidableEq A]
     (D : Finset A) (l : List A) :
     (∑ a ∈ D, l.count a) = l.countP (fun a => decide (a ∈ D)) := by
   induction l with
@@ -707,14 +728,15 @@ theorem kwg_sum_count_eq_countP {A : Type*} [DecidableEq A]
       · simp [ha]
       · simp [ha]
 
+/-! ## E. Even dual sets are primal cuts -/
 
-
-
-theorem kwg_dualEven_evenOnCycles (P : PlanarZ2Subgraph)
+/-- An even set of dual edges pulls back to a set of primal edges that meets every closed walk of
+`P` an even number of times. -/
+lemma kwg_dualEven_evenOnCycles (P : PlanarZ2Subgraph)
     (F : Finset (kwg_Edge P)) (hev : kwg_IsEven (kwg_dualEnds P) F) :
     EvenOnCycles P.G (kwg_primalEdgeFinset P F) := by
   classical
-  letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
+  let : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
   intro x p
   have hs := kwg_even_split_card (kwg_dualEnds P) F (kwg_walkFaceColour P p) hev
   have hfilter :
@@ -742,19 +764,17 @@ theorem kwg_dualEven_evenOnCycles (P : PlanarZ2Subgraph)
     omega
   rw [decide_eq_false hnot]
 
-
-
-
+/-- A chosen walk from the representative of the component of `v` to `v`. -/
 noncomputable def kwg_componentPath {V : Type*} (G : SimpleGraph V) (v : V) :
     G.Walk (G.connectedComponentMk v).out v :=
   (ConnectedComponent.exact (G.connectedComponentMk v).out_eq).some
 
-
+/-- The parity of `D`-edges along the chosen walk to `v` from its component representative. -/
 noncomputable def kwg_componentParityColour {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) (D : Finset (Sym2 V)) : V → Bool :=
   fun v => walkParity G D (kwg_componentPath G v)
 
-theorem kwg_walkParity_copy {V : Type*} [DecidableEq V] {G : SimpleGraph V}
+lemma kwg_walkParity_copy {V : Type*} [DecidableEq V] {G : SimpleGraph V}
     {D : Finset (Sym2 V)} {u v u' v' : V} (p : G.Walk u v)
     (hu : u = u') (hv : v = v') :
     walkParity G D (p.copy hu hv) = walkParity G D p := by
@@ -762,9 +782,7 @@ theorem kwg_walkParity_copy {V : Type*} [DecidableEq V] {G : SimpleGraph V}
   subst v'
   rfl
 
-
-
-theorem kwg_componentParityColour_adj_xor {V : Type*} [DecidableEq V]
+lemma kwg_componentParityColour_adj_xor {V : Type*} [DecidableEq V]
     {G : SimpleGraph V} {D : Finset (Sym2 V)} (hev : EvenOnCycles G D)
     {x y : V} (hxy : G.Adj x y) :
     (kwg_componentParityColour G D x).xor (kwg_componentParityColour G D y) =
@@ -793,9 +811,8 @@ theorem kwg_componentParityColour_adj_xor {V : Type*} [DecidableEq V]
   cases kwg_componentParityColour G D x <;>
     cases decide (s(x, y) ∈ D) <;> rfl
 
-
-
-theorem kwg_exists_colour_of_evenOnCycles {V : Type*} [Fintype V] [DecidableEq V]
+/-- A set of edges meeting every cycle evenly is the cut set of a colouring. -/
+lemma kwg_exists_colour_of_evenOnCycles {V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {D : Finset (Sym2 V)}
     (hsub : D ⊆ G.edgeFinset) (hev : EvenOnCycles G D) :
     ∃ c : V → Bool, cutEdges G c = D := by
@@ -831,13 +848,12 @@ theorem kwg_exists_colour_of_evenOnCycles {V : Type*} [Fintype V] [DecidableEq V
           exact hxy this
         simp [hD, hdis]
 
-
-
+/-- Every even set of dual edges is the cut set of a spin configuration of `P`. -/
 theorem kwg_dualEven_exists_primalCut (P : PlanarZ2Subgraph)
     (F : Finset (kwg_Edge P)) (hev : kwg_IsEven (kwg_dualEnds P) F) :
     ∃ c : ConfigSpace P.V, kwg_cutSet (kwg_primalEnds P) c = F := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype P.V := Fintype.ofFinite P.V
   have hsub : kwg_primalEdgeFinset P F ⊆ P.G.edgeFinset := by
     intro e he
     rw [kwg_primalEdgeFinset, Finset.mem_map] at he
@@ -858,17 +874,15 @@ theorem kwg_dualEven_exists_primalCut (P : PlanarZ2Subgraph)
       rw [← mem_cutEdges_iff P.G c hxy, hc]
       exact kwg_mem_primalEdgeFinset P F ⟨s(x, y), he⟩
 
-
-
-theorem kwg_componentIncident_isEven (P : PlanarZ2Subgraph) (C : kwg_Face P) : by
+lemma kwg_componentIncident_isEven (P : PlanarZ2Subgraph) (C : kwg_Face P) : by
     classical
     letI : Fintype P.V := Fintype.ofFinite P.V
     letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
     exact kwg_IsEven (kwg_primalEnds P)
       ((kwg_allEdges P).filter (fun e => kwg_incidentMod2 C (kwg_dualEnds P e))) := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
-  letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
+  let : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
   intro x
   have hcard :
       (((kwg_allEdges P).filter (fun e => kwg_incidentMod2 C (kwg_dualEnds P e))).filter
@@ -910,8 +924,7 @@ theorem kwg_componentIncident_isEven (P : PlanarZ2Subgraph) (C : kwg_Face P) : b
   rw [hcard, SimpleGraph.card_incidenceFinset_eq_degree]
   exact kwg_componentBoundaryGraph_even P C x
 
-
-
+/-- The cut set of every spin configuration of `P` is an even set of dual edges. -/
 theorem kwg_primalCut_isEven (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     kwg_IsEven (kwg_dualEnds P) (kwg_cutSet (kwg_primalEnds P) c) := by
   classical
@@ -932,9 +945,12 @@ theorem kwg_primalCut_isEven (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
   rw [heq]
   exact hs
 
+/-! ## F. The high-temperature expansion for multigraphs -/
 
-
-theorem kwg_sum_prod_bond {V E : Type*} [Fintype V] [DecidableEq V] [DecidableEq E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+/-- `∑_c ∏_{e ∈ F} σ_x σ_y` is `2^{|V|}` if `F` is even and `0` otherwise. -/
+lemma kwg_sum_prod_bond {V E : Type*} [Fintype V] [DecidableEq V] [DecidableEq E]
     (ends : E → Sym2 V) (F : Finset E) :
     (∑ c : ConfigSpace V, ∏ e ∈ F, bond c (ends e)) =
       if kwg_IsEven ends F then (2 : ℝ) ^ Fintype.card V else 0 := by
@@ -952,17 +968,22 @@ theorem kwg_sum_prod_bond {V E : Type*} [Fintype V] [DecidableEq V] [DecidableEq
   simp_rw [hstep]
   rw [sum_prod_spin_set]
   by_cases hev : kwg_IsEven ends F
-  · rw [if_pos hev, if_pos]
+  · rw [ite_eq_left hev, ite_eq_left]
     rw [Finset.filter_eq_empty_iff]
     intro v _
     exact not_not_intro ((kwg_IsEven_iff_degree ends F).mp hev v)
-  · rw [if_neg hev, if_neg]
+  · rw [ite_eq_right hev, ite_eq_right]
     rw [kwg_IsEven_iff_degree, not_forall] at hev
     obtain ⟨v, hv⟩ := hev
     exact Finset.ne_empty_of_mem (Finset.mem_filter.mpr ⟨Finset.mem_univ v, hv⟩)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+/-- **High-temperature expansion** for multigraphs:
+`Z(β) = 2^{|V|} (cosh β)^{|E|} ∑_{F even} (tanh β)^{|F|}`.
 
-
+See also `StatMech.Ising.isingZ_high_temp_expansion` (KWSelfDuality), the same expansion for simple
+graphs. -/
 theorem kwg_isingZ_high_temp {V E : Type*} [Fintype V] [DecidableEq V]
     [Fintype E] [DecidableEq E] (ends : E → Sym2 V) (β : ℝ) :
     kwg_isingZ ends β =
@@ -1026,9 +1047,10 @@ theorem kwg_isingZ_high_temp {V E : Type*} [Fintype V] [DecidableEq V]
         (if kwg_IsEven ends F then (Real.tanh β) ^ F.card else 0) := by
       by_cases hev : kwg_IsEven ends F <;> simp [hev, mul_comm]
 
+/-! ## G. Counting cuts -/
 
-
-
+/-- Matching of cut sums and even-set sums:
+`∑_c t^{|cut(c)|} = mult · ∑_{F even in the dual} t^{|F|}`. -/
 noncomputable def kwg_CutEvenMatching {Vp Vd E : Type*} [Fintype Vp] [Fintype Vd]
     [Fintype E] [DecidableEq Vp] [DecidableEq Vd] [DecidableEq E]
     (primalEnds : E → Sym2 Vp) (dualEnds : E → Sym2 Vd) (t mult : ℝ) : Prop := by
@@ -1036,9 +1058,7 @@ noncomputable def kwg_CutEvenMatching {Vp Vd E : Type*} [Fintype Vp] [Fintype Vd
   exact (∑ c : Vp → Bool, t ^ (kwg_cutSet primalEnds c).card) =
     mult * ∑ F : Finset E, if kwg_IsEven dualEnds F then t ^ F.card else 0
 
-
-
-theorem kwg_primalCut_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
+lemma kwg_primalCut_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     (kwg_cutSet (kwg_primalEnds P) c).card = (cutEdges P.G c).card := by
   classical
   apply Finset.card_bij (fun e _ => e.1)
@@ -1060,9 +1080,7 @@ theorem kwg_primalCut_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     rw [cutEdges, Finset.mem_filter] at hg
     exact (kwg_isSplit_iff_bond_neg c g).mpr hg.2
 
-
-
-theorem kwg_primalEdgeFinset_cutSet (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
+lemma kwg_primalEdgeFinset_cutSet (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     kwg_primalEdgeFinset P (kwg_cutSet (kwg_primalEnds P) c) = cutEdges P.G c := by
   classical
   apply Finset.ext
@@ -1085,8 +1103,7 @@ theorem kwg_primalEdgeFinset_cutSet (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
     rw [cutEdges, Finset.mem_filter] at hg
     exact (kwg_isSplit_iff_bond_neg c g).mpr hg.2
 
-
-theorem kwg_cutSet_eq_iff_cutEdges_eq (P : PlanarZ2Subgraph) (c d : ConfigSpace P.V) :
+lemma kwg_cutSet_eq_iff_cutEdges_eq (P : PlanarZ2Subgraph) (c d : ConfigSpace P.V) :
     kwg_cutSet (kwg_primalEnds P) c = kwg_cutSet (kwg_primalEnds P) d ↔
       cutEdges P.G c = cutEdges P.G d := by
   constructor
@@ -1099,12 +1116,12 @@ theorem kwg_cutSet_eq_iff_cutEdges_eq (P : PlanarZ2Subgraph) (c d : ConfigSpace 
         kwg_primalEdgeFinset P (kwg_cutSet (kwg_primalEnds P) d) by
           rw [kwg_primalEdgeFinset_cutSet, kwg_primalEdgeFinset_cutSet, h])
 
-
+/-- Flip the spins on the components of `P` where `a` is false. -/
 noncomputable def kwg_componentTwist (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
     (a : P.G.ConnectedComponent → Bool) : ConfigSpace P.V :=
   fun v => if a (P.G.connectedComponentMk v) then c v else !c v
 
-theorem kwg_componentTwist_cutEdges (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
+lemma kwg_componentTwist_cutEdges (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
     (a : P.G.ConnectedComponent → Bool) :
     cutEdges P.G (kwg_componentTwist P c a) = cutEdges P.G c := by
   classical
@@ -1129,8 +1146,8 @@ theorem kwg_componentTwist_cutEdges (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
           exact hxy hedge
         simp [hn1, hn2]
 
-
-theorem kwg_primalCut_fiber_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
+/-- Each cut set of `P` arises from exactly `2^{#components}` spin configurations. -/
+lemma kwg_primalCut_fiber_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     (Finset.univ.filter (fun d : ConfigSpace P.V =>
       kwg_cutSet (kwg_primalEnds P) d = kwg_cutSet (kwg_primalEnds P) c)).card =
         2 ^ Nat.card P.G.ConnectedComponent := by
@@ -1174,31 +1191,26 @@ theorem kwg_primalCut_fiber_card (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
   rw [hcard, Finset.card_univ, Fintype.card_fun, Fintype.card_bool,
     ← Nat.card_eq_fintype_card]
 
-
-theorem kwg_primalCut_sum (P : PlanarZ2Subgraph) (t : ℝ) : by
+/-- The cut sum over `kwg_cutSet` equals the cut sum over `cutEdges`. -/
+lemma kwg_primalCut_sum (P : PlanarZ2Subgraph) (t : ℝ) : by
     letI : Fintype P.V := Fintype.ofFinite P.V
     exact (∑ c : ConfigSpace P.V, t ^ (kwg_cutSet (kwg_primalEnds P) c).card) =
       ∑ c : ConfigSpace P.V, t ^ (cutEdges P.G c).card := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype P.V := Fintype.ofFinite P.V
   apply Finset.sum_congr rfl
   intro c _
   rw [kwg_primalCut_card P c]
 
-
-
-
+/-- `kwg_CutEvenMatching` for `P` and its geometric dual. -/
 def kwg_GeometricCutEvenMatching (P : PlanarZ2Subgraph) (t mult : ℝ) : Prop := by
   classical
   letI : Fintype P.V := Fintype.ofFinite P.V
   letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
   exact kwg_CutEvenMatching (kwg_primalEnds P) (kwg_dualEnds P) t mult
 
-
-
-
-
-
+/-- For `P` and its geometric dual, the even sets of dual edges are exactly the cut sets of primal
+spin configurations. -/
 def kwg_GeometricCutCycleDuality (P : PlanarZ2Subgraph) : Prop := by
   classical
   letI : Fintype P.V := Fintype.ofFinite P.V
@@ -1207,9 +1219,8 @@ def kwg_GeometricCutCycleDuality (P : PlanarZ2Subgraph) : Prop := by
     kwg_IsEven (kwg_dualEnds P) F ↔
       ∃ c : ConfigSpace P.V, kwg_cutSet (kwg_primalEnds P) c = F
 
-
-
-
+/-- **Cut–cycle duality** for finite planar subgraphs of `ℤ²`: even sets of dual edges are exactly
+primal cut sets. -/
 theorem kwg_geometricCutCycleDuality (P : PlanarZ2Subgraph) :
     kwg_GeometricCutCycleDuality P := by
   intro F
@@ -1218,15 +1229,16 @@ theorem kwg_geometricCutCycleDuality (P : PlanarZ2Subgraph) :
   · rintro ⟨c, rfl⟩
     exact kwg_primalCut_isEven P c
 
+/-! ## H. Minimal cuts -/
 
-
-
+/-- Both colour classes of `c` induce connected subgraphs of `G`. -/
 def kwg_ColourSidesConnected {V : Type*} (G : SimpleGraph V) (c : V → Bool) : Prop :=
   ∀ b : Bool, ∀ x y : {v : V // c v = b}, (G.induce {v | c v = b}).Reachable x y
 
-
-
-
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+/-- If both colour classes of `c` are connected, every nonempty cut set inside `cut(c)` equals
+`cut(c)` (minimal cuts). -/
 theorem kwg_cutEdges_eq_of_nonempty_subset_of_colourSidesConnected
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (c d : V → Bool)
@@ -1298,15 +1310,16 @@ theorem kwg_cutEdges_eq_of_nonempty_subset_of_colourSidesConnected
               exact habG (SimpleGraph.mem_edgeFinset.mp ((Finset.filter_subset _ _) h))
             simp [hnd, hnc]
 
-
-theorem kwg_dualEven_subset_bond_eq (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
+/-- If both colour classes of `c` are connected, every nonempty even dual set inside `cut(c)` equals
+it. -/
+lemma kwg_dualEven_subset_bond_eq (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
     (hcconn : kwg_ColourSidesConnected P.G c)
     (F : Finset (kwg_Edge P))
     (hsub : F ⊆ kwg_cutSet (kwg_primalEnds P) c) (hne : F.Nonempty)
     (heven : kwg_IsEven (kwg_dualEnds P) F) :
     F = kwg_cutSet (kwg_primalEnds P) c := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype P.V := Fintype.ofFinite P.V
   obtain ⟨d, hd⟩ := (kwg_geometricCutCycleDuality P F).mp heven
   have hsub' : kwg_cutSet (kwg_primalEnds P) d ⊆
       kwg_cutSet (kwg_primalEnds P) c := by
@@ -1325,13 +1338,12 @@ theorem kwg_dualEven_subset_bond_eq (P : PlanarZ2Subgraph) (c : ConfigSpace P.V)
     (kwg_cutSet_eq_iff_cutEdges_eq P d c).mpr hcutEq
   rw [← hd, hindexEq]
 
+/-! ## I. Minimal even sets and the subdivision graph -/
 
-
-
-
+/-- Vertices of the subdivision graph: original vertices and two ports per edge. -/
 abbrev kwg_SubdivVertex (V E : Type*) := Sum V (E × Bool)
 
-
+/-- The subdivision of a multigraph: every edge is replaced by a path through its two ports. -/
 noncomputable def kwg_subdivGraph {V E : Type*} (ends : E → Sym2 V) :
     SimpleGraph (kwg_SubdivVertex V E) where
   Adj x y := match x, y with
@@ -1346,8 +1358,8 @@ noncomputable def kwg_subdivGraph {V E : Type*} (ends : E → Sym2 V) :
     intro x y
     rcases x with v | ⟨e, b⟩ <;> rcases y with w | ⟨e', b'⟩
     · simp
-    · cases b' <;> simp [eq_comm]
-    · cases b <;> simp [eq_comm]
+    · cases b' <;> simp
+    · cases b <;> simp
     · cases b <;> cases b' <;> simp [eq_comm]
   loopless := ⟨by
     intro x
@@ -1355,34 +1367,36 @@ noncomputable def kwg_subdivGraph {V E : Type*} (ends : E → Sym2 V) :
     · simp
     · cases b <;> simp⟩
 
-@[simp] theorem kwg_subdivGraph_face_port_false {V E : Type*} (ends : E → Sym2 V)
+@[simp] lemma kwg_subdivGraph_face_port_false {V E : Type*} (ends : E → Sym2 V)
     (v : V) (e : E) :
     (kwg_subdivGraph ends).Adj (Sum.inl v) (Sum.inr (e, false)) ↔
       v = (ends e).out.1 := Iff.rfl
 
-@[simp] theorem kwg_subdivGraph_face_port_true {V E : Type*} (ends : E → Sym2 V)
+@[simp] lemma kwg_subdivGraph_face_port_true {V E : Type*} (ends : E → Sym2 V)
     (v : V) (e : E) :
     (kwg_subdivGraph ends).Adj (Sum.inl v) (Sum.inr (e, true)) ↔
       v = (ends e).out.2 := Iff.rfl
 
-@[simp] theorem kwg_subdivGraph_ports {V E : Type*} (ends : E → Sym2 V)
+@[simp] lemma kwg_subdivGraph_ports {V E : Type*} (ends : E → Sym2 V)
     (e e' : E) (b b' : Bool) :
     (kwg_subdivGraph ends).Adj (Sum.inr (e, b)) (Sum.inr (e', b')) ↔
       e = e' ∧ b ≠ b' := by cases b <;> cases b' <;> rfl
 
+/-- The subdivision graph is locally finite. -/
 noncomputable instance kwg_subdivGraph_locallyFinite {V E : Type*} [Finite V] [Finite E]
     (ends : E → Sym2 V) : SimpleGraph.LocallyFinite (kwg_subdivGraph ends) :=
   fun _ => Fintype.ofFinite _
 
-
-theorem kwg_subdivGraph_port_degree {V E : Type*} [Finite V] [Finite E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma kwg_subdivGraph_port_degree {V E : Type*} [Finite V] [Finite E]
     [DecidableEq V] [DecidableEq E]
     (ends : E → Sym2 V) (e : E) (b : Bool) :
     (kwg_subdivGraph ends).degree (Sum.inr (e, b)) = 2 := by
   classical
-  letI : SimpleGraph.LocallyFinite (kwg_subdivGraph ends) :=
+  let : SimpleGraph.LocallyFinite (kwg_subdivGraph ends) :=
     kwg_subdivGraph_locallyFinite ends
-  letI : Fintype ((kwg_subdivGraph ends).neighborSet (Sum.inr (e, b))) :=
+  let : Fintype ((kwg_subdivGraph ends).neighborSet (Sum.inr (e, b))) :=
     Fintype.ofFinite _
   rw [SimpleGraph.degree]
   apply Finset.card_eq_two.mpr
@@ -1395,8 +1409,10 @@ theorem kwg_subdivGraph_port_degree {V E : Type*} [Finite V] [Finite E]
     · cases b <;> simp [v]
     · cases b <;> cases b' <;> simp [eq_comm]
 
-
-theorem kwg_subdivGraph_face_degree {V E : Type*} [Fintype V] [Fintype E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+lemma kwg_subdivGraph_face_degree {V E : Type*} [Fintype V] [Fintype E]
     [DecidableEq V] [DecidableEq E] (ends : E → Sym2 V) (v : V) :
     (kwg_subdivGraph ends).degree (Sum.inl v) =
       ((Finset.univ : Finset E).filter (fun e => (ends e).out.1 = v)).card +
@@ -1428,18 +1444,20 @@ theorem kwg_subdivGraph_face_degree {V E : Type*} [Fintype V] [Fintype E]
     obtain ⟨e1, _, h⟩ := Finset.mem_image.mp hz1
     simp [p0, p1] at h
 
-private theorem kwg_card_filter_eq_sum_ite {E : Type*} [DecidableEq E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+private lemma kwg_card_filter_eq_sum_ite {E : Type*} [DecidableEq E]
     (F : Finset E) (p : E → Prop) [DecidablePred p] :
     (F.filter p).card = ∑ e ∈ F, if p e then 1 else 0 := by
   classical
   induction F using Finset.induction with
   | empty => simp
   | @insert e F he ih =>
-      by_cases hp : p e <;> simp [he, hp, ih]
+      by_cases hp : p e <;> simp
 
-
-
-theorem kwg_sum_degree_even {V E : Type*} [Fintype V] [DecidableEq V]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma kwg_sum_degree_even {V E : Type*} [Fintype V] [DecidableEq V]
     [DecidableEq E] (ends : E → Sym2 V) (F : Finset E) :
     Even (∑ v : V, kwg_degree ends F v) := by
   classical
@@ -1470,8 +1488,7 @@ theorem kwg_sum_degree_even {V E : Type*} [Fintype V] [DecidableEq V]
         rw [hfilter, Finset.card_pair hxy]
         exact ⟨1, rfl⟩
 
-
-
+/-- The simple graph on `V` joining `x ≠ y` when some edge has ends `{x, y}`. -/
 noncomputable def kwg_faceSupportGraph {V E : Type*} (ends : E → Sym2 V) :
     SimpleGraph V where
   Adj x y := x ≠ y ∧ ∃ e : E, ends e = s(x, y)
@@ -1481,7 +1498,7 @@ noncomputable def kwg_faceSupportGraph {V E : Type*} (ends : E → Sym2 V) :
     exact ⟨hxy.symm, e, he.trans Sym2.eq_swap⟩
   loopless := ⟨fun x h => h.1 rfl⟩
 
-
+/-- The graph `G` with all edges at `v` removed. -/
 def kwg_deleteVertexGraph {V : Type*} (G : SimpleGraph V) (v : V) : SimpleGraph V where
   Adj x y := G.Adj x y ∧ x ≠ v ∧ y ≠ v
   symm := by
@@ -1490,11 +1507,12 @@ def kwg_deleteVertexGraph {V : Type*} (G : SimpleGraph V) (v : V) : SimpleGraph 
     exact ⟨hxy.symm, hy, hx⟩
   loopless := ⟨fun x h => G.irrefl h.1⟩
 
-
-
-theorem kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+lemma kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
     [DecidableEq V] [DecidableEq E] (ends : E → Sym2 V) (outer : V)
-    (hne : Nonempty E) (heven : kwg_IsEven ends Finset.univ)
+    (_hne : Nonempty E) (heven : kwg_IsEven ends Finset.univ)
     (hmin : ∀ S : Finset E, S.Nonempty → kwg_IsEven ends S → S = Finset.univ)
     {v w : V} (hvout : v ≠ outer) (hwout : w ≠ outer)
     (hvinc : ∃ e : E, kwg_incidentMod2 v (ends e))
@@ -1538,7 +1556,7 @@ theorem kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
           (fun e => kwg_incidentMod2 z (ends e))).card else 0) := by
     intro z hzout
     by_cases hzC : inC z
-    · rw [if_pos hzC]
+    · rw [ite_eq_left hzC]
       congr 1
       ext e
       simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]
@@ -1549,7 +1567,7 @@ theorem kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
         rcases incident_end hinc with hz | hz
         · exact Or.inl (hz ▸ hzC)
         · exact Or.inr (hz ▸ hzC)
-    · rw [if_neg hzC]
+    · rw [ite_eq_right hzC]
       have hempty : S.filter (fun e => kwg_incidentMod2 z (ends e)) = ∅ := by
         rw [Finset.filter_eq_empty_iff]
         intro e heS hinc
@@ -1578,7 +1596,7 @@ theorem kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
         intro z _
         by_cases hz : z = outer
         · simp [hz]
-        · simp only [hz, if_false]
+        · simp only [hz, ite_false]
           change Even ((S.filter (fun e => kwg_incidentMod2 z (ends e))).card)
           rw [hnonouter z hz]
           by_cases hzC : inC z
@@ -1619,8 +1637,10 @@ theorem kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
     simpa [inC, hw] using (close_edge h1 hout2 hne (ends e).out_eq.symm).2
   · simpa [inC, hw] using h2.2
 
-
-theorem kwg_minimalEvenFinset_nonOuter_reachable {V E : Type*} [Fintype V]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+lemma kwg_minimalEvenFinset_nonOuter_reachable {V E : Type*} [Fintype V]
     [DecidableEq V] [DecidableEq E] (ends : E → Sym2 V) (F : Finset E) (outer : V)
     (hne : F.Nonempty) (heven : kwg_IsEven ends F)
     (hmin : ∀ S : Finset E, S ⊆ F → S.Nonempty → kwg_IsEven ends S → S = F)
@@ -1632,7 +1652,7 @@ theorem kwg_minimalEvenFinset_nonOuter_reachable {V E : Type*} [Fintype V]
   classical
   let emb : ↑F ↪ E := ⟨Subtype.val, Subtype.val_injective⟩
   let e0 : E := hne.choose
-  letI : Nonempty ↑F := ⟨⟨e0, hne.choose_spec⟩⟩
+  let : Nonempty ↑F := ⟨⟨e0, hne.choose_spec⟩⟩
   have heven' : kwg_IsEven (fun e : ↑F => ends e.1) Finset.univ := by
     intro z
     have hz := heven z
@@ -1679,10 +1699,9 @@ theorem kwg_minimalEvenFinset_nonOuter_reachable {V E : Type*} [Fintype V]
   · obtain ⟨e, heF, he⟩ := hwinc
     exact ⟨⟨e, heF⟩, he⟩
 
-
-
-
-theorem kwg_exists_minimalEvenFinset_subset_mem {V E : Type*} [DecidableEq E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma kwg_exists_minimalEvenFinset_subset_mem {V E : Type*} [DecidableEq E]
     (ends : E → Sym2 V) {F : Finset E} {e : E} (heF : e ∈ F)
     (hF : kwg_IsEven ends F) :
     ∃ S : Finset E, S ⊆ F ∧ e ∈ S ∧ S.Nonempty ∧ kwg_IsEven ends S ∧
@@ -1728,9 +1747,7 @@ theorem kwg_exists_minimalEvenFinset_subset_mem {V E : Type*} [DecidableEq E]
     have hTpos : 0 < T.card := Finset.card_pos.mpr hTne
     omega
 
-
-
-theorem kwg_exists_minimalEvenFinset_peel_mem {V E : Type*} [DecidableEq E]
+lemma kwg_exists_minimalEvenFinset_peel_mem {V E : Type*} [DecidableEq E]
     (ends : E → Sym2 V) {F : Finset E} {e : E} (heF : e ∈ F)
     (hF : kwg_IsEven ends F) :
     ∃ S R : Finset E,
@@ -1750,9 +1767,10 @@ theorem kwg_exists_minimalEvenFinset_peel_mem {V E : Type*} [DecidableEq E]
   exact ⟨S, R, hSF, heS, hSne, hSeven, hSmin, rfl,
     hReven, hdisjoint, hunion⟩
 
-
-
-theorem kwg_subdivGraph_face_degree_even {V E : Type*} [Fintype V] [Fintype E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+lemma kwg_subdivGraph_face_degree_even {V E : Type*} [Fintype V] [Fintype E]
     [DecidableEq V] [DecidableEq E] (ends : E → Sym2 V)
     (heven : kwg_IsEven ends Finset.univ) (v : V) :
     Even ((kwg_subdivGraph ends).degree (Sum.inl v)) := by
@@ -1799,8 +1817,7 @@ theorem kwg_subdivGraph_face_degree_even {V E : Type*} [Fintype V] [Fintype E]
   have hI : I.card = k + k := hk
   exact ⟨k + L.card, by omega⟩
 
-
-theorem kwg_subdivGraph_reachable_port_of_incident {V E : Type*}
+lemma kwg_subdivGraph_reachable_port_of_incident {V E : Type*}
     (ends : E → Sym2 V) {v : V} {e : E}
     (hinc : kwg_incidentMod2 v (ends e)) (b : Bool) :
     (kwg_subdivGraph ends).Reachable (Sum.inl v) (Sum.inr (e, b)) := by
@@ -1824,8 +1841,12 @@ theorem kwg_subdivGraph_reachable_port_of_incident {V E : Type*}
     · exact SimpleGraph.Adj.reachable
         ((kwg_subdivGraph_face_port_true ends _ _).2 rfl)
 
-
-theorem kwg_minimalEven_edgePorts_reachable {V E : Type*} [Fintype V] [Fintype E]
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+/-- In a minimal nonempty even multigraph, all edge ports of the subdivision graph are mutually
+reachable. -/
+lemma kwg_minimalEven_edgePorts_reachable {V E : Type*} [Fintype V] [Fintype E]
     [DecidableEq V] [DecidableEq E] (ends : E → Sym2 V)
     (hne : Nonempty E) (heven : kwg_IsEven ends Finset.univ)
     (hmin : ∀ S : Finset E, S.Nonempty → kwg_IsEven ends S → S = Finset.univ) :
@@ -1897,9 +1918,11 @@ theorem kwg_minimalEven_edgePorts_reachable {V E : Type*} [Fintype V] [Fintype E
     · exact SimpleGraph.Adj.reachable (by simp [G])
   exact hb0.trans (he0.trans (he'0.symm.trans hb'0.symm))
 
+/-! ## J. Kramers–Wannier duality -/
 
-
-theorem kwg_cutEvenMatching_of_duality (P : PlanarZ2Subgraph) (t mult : ℝ)
+/-- Cut–cycle duality and a constant fibre size `mult` give the cut/even matching with factor
+`mult`. -/
+lemma kwg_cutEvenMatching_of_duality (P : PlanarZ2Subgraph) (t mult : ℝ)
     (hdual : kwg_GeometricCutCycleDuality P)
     (hfib : ∀ F : Finset (kwg_Edge P), kwg_IsEven (kwg_dualEnds P) F →
       ((Finset.univ.filter (fun c : ConfigSpace P.V =>
@@ -1929,8 +1952,8 @@ theorem kwg_cutEvenMatching_of_duality (P : PlanarZ2Subgraph) (t mult : ℝ)
       _ = _ := by rw [Finset.sum_const, nsmul_eq_mul]
   rw [hinter]
   by_cases hev : kwg_IsEven (kwg_dualEnds P) F
-  · rw [if_pos hev, hfib F hev]
-  · rw [if_neg hev, mul_zero]
+  · rw [ite_eq_left hev, hfib F hev]
+  · rw [ite_eq_right hev, mul_zero]
     have hempty : Finset.univ.filter (fun c : ConfigSpace P.V =>
         kwg_cutSet (kwg_primalEnds P) c = F) = ∅ := by
       rw [Finset.filter_eq_empty_iff]
@@ -1939,8 +1962,7 @@ theorem kwg_cutEvenMatching_of_duality (P : PlanarZ2Subgraph) (t mult : ℝ)
     rw [hempty, Finset.card_empty]
     norm_num
 
-
-
+/-- The cut/even matching for `P` with factor `2^{#components of P}`. -/
 theorem kwg_geometricCutEvenMatching (P : PlanarZ2Subgraph) (t : ℝ) :
     kwg_GeometricCutEvenMatching P t
       ((2 : ℝ) ^ Nat.card P.G.ConnectedComponent) := by
@@ -1960,12 +1982,11 @@ theorem kwg_geometricCutEvenMatching (P : PlanarZ2Subgraph) (t : ℝ) :
   rw [hfilter, kwg_primalCut_fiber_card]
   norm_num
 
-
-
+/-- The cut/even matching for connected `P` with factor `2`. -/
 theorem kwg_geometricCutEvenMatching_of_connected (P : PlanarZ2Subgraph)
     (hconn : P.G.Connected) (t : ℝ) : kwg_GeometricCutEvenMatching P t 2 := by
   classical
-  letI : Nonempty P.V := hconn.nonempty
+  let : Nonempty P.V := hconn.nonempty
   apply kwg_cutEvenMatching_of_duality P t 2 (kwg_geometricCutCycleDuality P)
   intro F hev
   obtain ⟨c, hc⟩ := (kwg_geometricCutCycleDuality P F).mp hev
@@ -1979,10 +2000,8 @@ theorem kwg_geometricCutEvenMatching_of_connected (P : PlanarZ2Subgraph)
   rw [hfilter]
   exact_mod_cast fiber_card_eq_two P.G hconn.preconnected rfl
 
-
-
-
-
+/-- The low/high-temperature matching at `tanh β* = e^{-2β}`:
+`2^{|faces|} (cosh β*)^{|E|} ∑_{F even in the dual} (tanh β*)^{|F|} = c · Z_P(β)`. -/
 noncomputable def kwg_DualContourMatching (P : PlanarZ2Subgraph)
     (β βstar c : ℝ) : Prop := by
   classical
@@ -1995,10 +2014,9 @@ noncomputable def kwg_DualContourMatching (P : PlanarZ2Subgraph)
           if kwg_IsEven (kwg_dualEnds P) F then (Real.tanh βstar) ^ F.card else 0)
       = c * isingZ P.G β 0
 
-
-
-
-theorem kwg_dualContourMatching_of_cutMatching (P : PlanarZ2Subgraph)
+/-- The cut/even matching with factor `2` gives `kwg_DualContourMatching` with an explicit constant.
+-/
+lemma kwg_dualContourMatching_of_cutMatching (P : PlanarZ2Subgraph)
     (β βstar : ℝ) (htemp : Real.tanh βstar = Real.exp (-2 * β))
     (hmatch : kwg_GeometricCutEvenMatching P (Real.exp (-2 * β)) 2) :
     kwg_DualContourMatching P β βstar
@@ -2006,8 +2024,8 @@ theorem kwg_dualContourMatching_of_cutMatching (P : PlanarZ2Subgraph)
         (Real.cosh βstar) ^ Nat.card (kwg_Edge P) /
         (Real.exp (β * P.G.edgeSet.ncard) * 2)) := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
-  letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
+  let : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
   refine ⟨htemp, ?_⟩
   unfold kwg_GeometricCutEvenMatching kwg_CutEvenMatching at hmatch
   rw [kwg_primalCut_sum P] at hmatch
@@ -2027,8 +2045,7 @@ theorem kwg_dualContourMatching_of_cutMatching (P : PlanarZ2Subgraph)
   rw [hmatch]
   field_simp
 
-
-
+/-- Kramers–Wannier duality conditional on the cut/even matching with factor `2`. -/
 theorem kwg_isingZ_duality_of_cutMatching (P : PlanarZ2Subgraph)
     (β βstar : ℝ) (htemp : Real.tanh βstar = Real.exp (-2 * β))
     (hmatch : kwg_GeometricCutEvenMatching P (Real.exp (-2 * β)) 2) : by
@@ -2040,15 +2057,19 @@ theorem kwg_isingZ_duality_of_cutMatching (P : PlanarZ2Subgraph)
         (Real.cosh βstar) ^ Nat.card (kwg_Edge P) /
         (Real.exp (β * P.G.edgeSet.ncard) * 2)) * isingZ P.G β 0 := by
   classical
-  letI : Fintype P.V := Fintype.ofFinite P.V
-  letI : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
+  let : Fintype P.V := Fintype.ofFinite P.V
+  let : Fintype (kwg_Face P) := Fintype.ofFinite (kwg_Face P)
   have hdcm := kwg_dualContourMatching_of_cutMatching P β βstar htemp hmatch
   obtain ⟨_, hdcm⟩ := hdcm
   rw [kwg_isingZ_high_temp]
   simpa only [Nat.card_eq_fintype_card] using hdcm
 
+/-- **Kramers–Wannier duality** for a finite planar subgraph `P` of `ℤ²`: if `tanh β* = e^{-2β}`,
+the zero-field Ising partition function of the geometric dual at `β*` is an explicit multiple of
+that of `P` at `β`.
 
-
+H. A. Kramers, G. H. Wannier, "Statistics of the two-dimensional ferromagnet. Part I", Phys. Rev. 60
+(1941). -/
 theorem kwg_isingZ_duality (P : PlanarZ2Subgraph)
     (β βstar : ℝ) (htemp : Real.tanh βstar = Real.exp (-2 * β)) :
     kwg_isingZ (kwg_dualEnds P) βstar =

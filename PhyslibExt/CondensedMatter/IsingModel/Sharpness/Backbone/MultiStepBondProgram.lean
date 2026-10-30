@@ -6,26 +6,64 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteBondProgram
+
+/-!
+# A concrete two-step bondwise segment program
+
+A concrete bondwise segment program whose complete events select the empty word or a word of two
+canonical one-edge segments, built from the first two edges of the domain graph, together with its
+complete bondwise selector specification. It shows that complete specifications with nonempty
+two-segment fibers exist, and that no program of this kind realizes the one-step selector.
+
+## i. Overview
+
+The scan accepts at most two edges: first the first edge of the domain graph, then the first edge
+different from the accepted one. A two-letter word of canonical segments of distinct edges `e`,
+`f` is encoded as `[e, f]`; every other nonempty word is encoded as a diagonal pair, which the scan
+never accepts. The terminal condition asks for no sources before any edge is accepted, and, after
+two distinct edges, for both canonical segments to be active and for the sources to be the
+symmetric difference of their endpoints, nonempty.
+
+Complete events select words of length zero or two (`program_complete_word_eq_nil_or_pair`), are
+functional and determine the sources, giving `selectorSpec`. When the first two edges `e`, `f` of
+the domain graph have active canonical segments (`IsDesignatedPair`), the flux with one unit on
+each of them lies in the fiber of the two-letter word
+(`selectorSpec_fiber_designated_twoUnitFlux`).
+
+Headline fidelity:
+- `selectorSpec`, `selectorRealization`, `program_realizes_selectorSpec` and the fiber computations
+  are unconditional (the designated-pair results under `IsDesignatedPair` and activity of the two
+  canonical segments).
+- `intendedOneStepRealization_isEmpty_of_designated_pair`: as soon as one domain has a designated
+  pair with active canonical segments, the program does not realize the one-step partial selector
+  `shb_oneStepPartialSelector`.
+- No canonical toggle is constructed for `selectorSpec`; the backbone chain rule (P2) is not proved
+  here.
+
+## ii. Key results
+
+- `program` : the concrete two-step bondwise segment program
+- `selectorSpec` : its complete bondwise selector specification
+- `program_complete_word_eq_nil_or_pair` : complete events select words of length zero or two
+- `selectorSpec_fiber_designated_twoUnitFlux` : a nonempty two-segment fiber
+- `intendedOneStepRealization_isEmpty_of_designated_pair` : no realization of the one-step selector
+
+## iii. Table of contents
+
+- A. Source classes of pairs
+- B. The two-step program
+- C. Complete events of the program
+- D. The selector specification and realization
+- E. Designated pairs
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -46,41 +84,43 @@ open BackboneConcreteSelector
 open BackboneConcreteBondProgram
 open BackboneDeterminedCutSwitching
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 noncomputable local instance multiStepDecidableAdj
     (G : SimpleGraph V) : DecidableRel G.Adj := Classical.decRel _
 
+/-! ## A. Source classes of pairs -/
 
+/-- The endpoints of a segment. -/
 def segmentEnds (s : shb_ExplorationSegment V) : Finset V :=
   {s.1, s.2.1}
 
-
-
+/-- The source class of a pair of segments: the symmetric difference of their endpoints. -/
 def pairSourceClass (s t : shb_ExplorationSegment V) : Finset V :=
   segmentEnds s ∆ segmentEnds t
 
-
+/-- The source class: the pair source class for a two-letter word, empty otherwise. -/
 def sourceClass (_d : shb_ExplorationDomain V) :
     List (shb_ExplorationSegment V) -> Finset V
   | [] => ∅
   | [s, t] => pairSourceClass s t
   | _ => ∅
 
-@[simp] theorem sourceClass_nil (d : shb_ExplorationDomain V) :
+@[simp] lemma sourceClass_nil (d : shb_ExplorationDomain V) :
     sourceClass d [] = ∅ := rfl
 
-@[simp] theorem sourceClass_pair
+@[simp] lemma sourceClass_pair
     (d : shb_ExplorationDomain V) (s t : shb_ExplorationSegment V) :
     sourceClass d [s, t] = pairSourceClass s t := rfl
 
+/-! ## B. The two-step program -/
 
-
+/-- States of the two-step scan: a domain and the list of accepted edges. -/
 structure State (V : Type*) [Fintype V] [DecidableEq V] where
   domain : shb_ExplorationDomain V
   accepted : List (Sym2 V)
 
-
-
-
+/-- The scan: first test the first edge of the domain graph, then the first edge different from the
+accepted one, then stop. -/
 noncomputable def scan :
     shb_DynamicEdgeExploration (State V) (Sym2 V) where
   edgeOrder := fun st =>
@@ -104,13 +144,13 @@ noncomputable def scan :
     | [first] => ⟨st.domain, [first, e]⟩
     | _ => st
 
-
-
+/-- `e` and `f` are the first two edges of the domain graph. -/
 def IsDesignatedPair (d : shb_ExplorationDomain V)
     (e f : d.graph.edgeFinset) : Prop :=
   ∃ tail, d.graph.edgeFinset.1.toList = e.1 :: f.1 :: tail
 
-theorem IsDesignatedPair.ne
+/-- The two edges of a designated pair are distinct. -/
+lemma IsDesignatedPair.ne
     {d : shb_ExplorationDomain V} {e f : d.graph.edgeFinset}
     (h : IsDesignatedPair d e f) : e.1 ≠ f.1 := by
   rcases h with ⟨tail, horder⟩
@@ -120,23 +160,22 @@ theorem IsDesignatedPair.ne
   intro hef
   exact (List.nodup_cons.mp hnodup).1 (by simp [hef])
 
-theorem scan_edgeOrder_initial_of_designated
+lemma scan_edgeOrder_initial_of_designated
     {d : shb_ExplorationDomain V} {e f : d.graph.edgeFinset}
     (h : IsDesignatedPair d e f) :
     scan.edgeOrder ⟨d, []⟩ = [e.1] := by
   rcases h with ⟨tail, horder⟩
   simp [scan, horder]
 
-theorem scan_edgeOrder_second_of_designated
+lemma scan_edgeOrder_second_of_designated
     {d : shb_ExplorationDomain V} {e f : d.graph.edgeFinset}
     (h : IsDesignatedPair d e f) :
     scan.edgeOrder (scan.advance ⟨d, []⟩ e.1) = [f.1] := by
   rcases h with ⟨tail, horder⟩
   simp [scan, horder]
 
-
-
-
+/-- The encoding of words: the empty word as `[]`, two canonical segments of distinct edges as the
+two edges, and every other word as a diagonal pair. -/
 noncomputable def encode
     (d : shb_ExplorationDomain V) :
     List (shb_ExplorationSegment V) -> List (Sym2 V)
@@ -148,12 +187,12 @@ noncomputable def encode
       | _, _ => [s(s.1, s.1)]
   | s :: _ => [s(s.1, s.1)]
 
-
+/-- The sources of the parity current read from a bond configuration. -/
 def boolSources (st : State V) (omega : Sym2 V -> Bool) : Finset V :=
   sources st.domain.graph (boolCurrent omega)
 
-
-
+/-- The terminal condition: no sources before acceptance; after two distinct edges, both canonical
+segments are active and the sources are their pair source class, nonempty. -/
 def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
   match st.accepted with
   | [] => boolSources st omega = ∅
@@ -169,7 +208,7 @@ def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
       else False
   | _ => False
 
-
+/-- The concrete two-step bondwise segment program. -/
 noncomputable def program : BondwiseSegmentProgram V where
   State := State V
   scan := scan
@@ -178,11 +217,11 @@ noncomputable def program : BondwiseSegmentProgram V where
   bit := oddBit
   terminal := terminal
 
-
+/-- The flux with one unit on each of two edges. -/
 def twoUnitFlux (G : SimpleGraph V) (e f : G.edgeFinset) :
     G.edgeFinset -> Nat := fun g => unitFlux G e g + unitFlux G f g
 
-theorem sources_twoUnitFlux (G : SimpleGraph V) (e f : G.edgeFinset) :
+lemma sources_twoUnitFlux (G : SimpleGraph V) (e f : G.edgeFinset) :
     sources G (ofEdgeFun G (twoUnitFlux G e f)) =
       pairSourceClass (canonicalEdgeSegment G e)
         (canonicalEdgeSegment G f) := by
@@ -191,14 +230,14 @@ theorem sources_twoUnitFlux (G : SimpleGraph V) (e f : G.edgeFinset) :
   rw [← ofEdgeFun_add, sources_add, sources_unitFlux, sources_unitFlux]
   rfl
 
-theorem segmentEnds_canonicalEdgeSegment
+lemma segmentEnds_canonicalEdgeSegment
     (G : SimpleGraph V) (e : G.edgeFinset) :
     segmentEnds (canonicalEdgeSegment G e) = e.1.toFinset := by
   change {e.1.out.1, e.1.out.2} = e.1.toFinset
   rw [← Sym2.toFinset_mk_eq]
   exact congrArg Sym2.toFinset e.1.out_eq
 
-theorem pairSourceClass_canonicalEdgeSegment_ne_empty
+lemma pairSourceClass_canonicalEdgeSegment_ne_empty
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e.1 ≠ f.1) :
     pairSourceClass (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f) ≠ ∅ := by
@@ -212,9 +251,7 @@ theorem pairSourceClass_canonicalEdgeSegment_ne_empty
   intro x
   rw [← Sym2.mem_toFinset, ← Sym2.mem_toFinset, hfin]
 
-
-
-theorem scan_selects_twoUnitFlux
+lemma scan_selects_twoUnitFlux
     {d : shb_ExplorationDomain V} {e f : d.graph.edgeFinset}
     (hpair : IsDesignatedPair d e f) :
     scan.Selects
@@ -235,7 +272,9 @@ theorem scan_selects_twoUnitFlux
       simp [fluxBitConfig, hfedge, oddBit, twoUnitFlux, unitFlux, hfe]
     · trivial
 
-@[simp] theorem program_complete_nil_iff
+/-! ## C. Complete events of the program -/
+
+@[simp] lemma program_complete_nil_iff
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     program.CompleteEvent d [] m <->
       sources d.graph (ofEdgeFun d.graph m) = ∅ := by
@@ -244,8 +283,7 @@ theorem scan_selects_twoUnitFlux
   rw [sources_boolCurrent_oddBit]
   simp
 
-
-theorem scan_firstAdmissible_ne_diagonal_initial
+lemma scan_firstAdmissible_ne_diagonal_initial
     (d : shb_ExplorationDomain V) (omega : Sym2 V -> Bool) (x : V) :
     scan.firstAdmissible (fun _ e => omega e) ⟨d, []⟩ ≠ some s(x, x) := by
   intro h
@@ -254,12 +292,12 @@ theorem scan_firstAdmissible_ne_diagonal_initial
   have hlist : s(x, x) ∈ d.graph.edgeFinset.1.toList :=
     List.mem_of_mem_take hmem
   have hedge : s(x, x) ∈ d.graph.edgeFinset := by
-    simpa using hlist
+    simp at hlist
   have hadj : d.graph.Adj x x := by
-    simpa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hedge
+    simp [SimpleGraph.mem_edgeFinset] at hedge
   exact d.graph.loopless.irrefl x hadj
 
-@[simp] theorem encode_pair_of_edges
+@[simp] lemma encode_pair_of_edges
     (d : shb_ExplorationDomain V) (s t : shb_ExplorationSegment V)
     (e f : d.graph.edgeFinset)
     (hs : edgeOfSegment? d s = some e)
@@ -268,9 +306,8 @@ theorem scan_firstAdmissible_ne_diagonal_initial
     encode d [s, t] = [e.1, f.1] := by
   simp [encode, hs, ht, hne]
 
-
-
-theorem program_complete_word_eq_nil_or_pair
+/-- Complete events of the program select words of length zero or two. -/
+lemma program_complete_word_eq_nil_or_pair
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -297,9 +334,7 @@ theorem program_complete_word_eq_nil_or_pair
               exact (scan_firstAdmissible_ne_diagonal_initial d
                 (fluxBitConfig d.graph oddBit m) s.1 hfirst).elim
 
-
-
-theorem edgeOfSegment?_pair_of_program_complete
+lemma edgeOfSegment?_pair_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s, t] m) :
@@ -334,9 +369,7 @@ theorem edgeOfSegment?_pair_of_program_complete
               (fluxBitConfig d.graph oddBit m) s.1 hfirst).elim
           · exact ⟨e, f, rfl, rfl, hne⟩
 
-
-
-theorem program_complete_pair_data
+lemma program_complete_pair_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s, t] m) :
@@ -387,8 +420,7 @@ theorem program_complete_pair_data
     edgeOfSegment?_eq_some_spec d t f ht,
     hterminal.2.1, hterminal.2.2.1, hsources, hnonempty⟩
 
-
-theorem program_complete_functional
+lemma program_complete_functional
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word word' : List (shb_ExplorationSegment V))
     (hword : program.CompleteEvent d word m)
@@ -425,8 +457,7 @@ theorem program_complete_functional
       have htv : t = v := htf.symm.trans hvf'
       simp [hsu, htv]
 
-
-theorem sources_eq_sourceClass_of_program_complete
+lemma sources_eq_sourceClass_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -438,8 +469,7 @@ theorem sources_eq_sourceClass_of_program_complete
       program_complete_pair_data d m s t h
     simpa [sourceClass, hse, htf] using hsources
 
-
-theorem head_active_of_program_complete
+lemma head_active_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V))
@@ -459,7 +489,9 @@ theorem head_active_of_program_complete
     rw [hsu, ← heu]
     exact heactive
 
+/-! ## D. The selector specification and realization -/
 
+/-- The complete bondwise selector specification of the two-step program. -/
 noncomputable def selectorSpec :
     CompleteBondwiseSelectorSpec (V := V) (program (V := V)) where
   sourceClass := sourceClass (V := V)
@@ -470,25 +502,23 @@ noncomputable def selectorSpec :
   complete_nil_iff := program_complete_nil_iff
   head_active_of_complete := head_active_of_program_complete
 
-
-
-noncomputable def selectorRealization :
+/-- The two-step program realizes the partial selector of its own specification. -/
+lemma selectorRealization :
     SelectorRealization (program (V := V))
       (selectorSpec (V := V)).toPartialSelector where
   complete_iff_fiber := by
     intro d word m
     exact ((selectorSpec (V := V)).fiber_iff_completeEvent d word m).symm
 
-
-
-theorem program_realizes_selectorSpec :
+/-- The two-step program realizes its own specification. -/
+lemma program_realizes_selectorSpec :
     ProgramRealizes (program (V := V))
       (selectorSpec (V := V)).toPartialSelector :=
   selectorRealization.programRealizes
 
+/-! ## E. Designated pairs -/
 
-
-theorem program_complete_pair_of_data
+lemma program_complete_pair_of_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V) (e f : d.graph.edgeFinset)
     (hs : edgeOfSegment? d s = some e)
@@ -522,9 +552,7 @@ theorem program_complete_pair_of_data
       scan, terminal, boolSources, e.2, f.2, hne] using
         ⟨heactive, hfactive, hboolSources, hboolNonempty⟩
 
-
-
-theorem program_complete_designated_twoUnitFlux
+lemma program_complete_designated_twoUnitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpair : IsDesignatedPair d e f)
     (heactive : canonicalEdgeSegment d.graph e ∈ d.active)
@@ -543,9 +571,9 @@ theorem program_complete_designated_twoUnitFlux
       exact pairSourceClass_canonicalEdgeSegment_ne_empty
         d.graph e f hpair.ne)
 
-
-
-theorem selectorSpec_fiber_designated_twoUnitFlux
+/-- For a designated pair with active canonical segments, the two-unit flux lies in the fiber of
+the two-letter word. -/
+lemma selectorSpec_fiber_designated_twoUnitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpair : IsDesignatedPair d e f)
     (heactive : canonicalEdgeSegment d.graph e ∈ d.active)
@@ -557,9 +585,9 @@ theorem selectorSpec_fiber_designated_twoUnitFlux
   exact program_complete_designated_twoUnitFlux d e f hpair
     heactive hfactive
 
-
-
-theorem selectorSpec_fiber_designated_twoEdgePath
+/-- The designated-pair fiber statement, together with the hypothesis that the two canonical
+segments form a path. -/
+lemma selectorSpec_fiber_designated_twoEdgePath
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpair : IsDesignatedPair d e f)
     (heactive : canonicalEdgeSegment d.graph e ∈ d.active)
@@ -574,10 +602,8 @@ theorem selectorSpec_fiber_designated_twoEdgePath
   ⟨selectorSpec_fiber_designated_twoUnitFlux d e f hpair
       heactive hfactive, hpath⟩
 
-
-
-
-theorem selectorRealization_designated_pair_fiber
+/-- Any selector realized by the two-step program contains the designated-pair fiber. -/
+lemma selectorRealization_designated_pair_fiber
     {S : shb_PartialCurrentDynamicSelector (V := V)}
     (R : SelectorRealization (program (V := V)) S)
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
@@ -591,9 +617,8 @@ theorem selectorRealization_designated_pair_fiber
     (program_complete_designated_twoUnitFlux d e f hpair
       heactive hfactive)
 
-
-
-
+/-- The two-step program does not realize the one-step partial selector when a domain has a
+designated pair with active canonical segments. -/
 theorem intendedOneStepRealization_isEmpty_of_designated_pair
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpair : IsDesignatedPair d e f)
@@ -615,7 +640,7 @@ theorem intendedOneStepRealization_isEmpty_of_designated_pair
   by_cases hvac : sources d.graph
       (ofEdgeFun d.graph (twoUnitFlux d.graph e f)) = ∅
   · simp [hvac] at hfiber
-  · rw [if_neg hvac] at hfiber
+  · rw [ite_eq_right hvac] at hfiber
     cases hchosen : shb_oneStepChosenSegment d
         (twoUnitFlux d.graph e f) <;> simp [hchosen] at hfiber
 

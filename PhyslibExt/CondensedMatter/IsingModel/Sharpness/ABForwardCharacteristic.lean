@@ -6,12 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABHypercubic
+
+/-!
+# The forward characteristic bound for the Aizenman–Barsky magnetization
+
+From the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with `C_n ≤ M`, the limit magnetization
+satisfies, for small `t ≥ 0`, `M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`: moving along the
+characteristic increases `h` faster than `β`.
+
+## i. Overview
+
+`abfc_forward_characteristic_physical_envelope` is real analysis on functions `M_n`, `C_n`, `M`. Its
+hypotheses carry the input: the finite-volume differential inequality `hfinite`, monotonicity of
+`C_n` (`hmonoBeta`, `hmonoField`), the envelope `C_n ≤ M` (`hle`), pointwise convergence `hconv`,
+and continuity of `M` at `(β, h)` (`hcont`). `abfc_abig_forward_characteristic_of_exhaustion`
+applies it to the infinite-graph magnetization `abigMag` along an exhaustion by finite windows; its
+remaining hypotheses are the row-sum bound `hrow`, the comparison `hInfiniteTarget` (every site has
+magnetization at most that of `o`, e.g. by translation invariance), and the exhaustion properties
+`hmonoWindow`, `hcover`.
+
+## ii. Key results
+
+- `abfc_forward_characteristic_physical_envelope` : the forward characteristic bound for limits
+- `abfc_abig_forward_characteristic_of_exhaustion` : the bound for `abigMag`
+
+## iii. Table of contents
+
+- A. The characteristic bound for limits
+- B. Application to the infinite-graph magnetization
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+-/
 
 @[expose] public section
 
@@ -20,8 +51,11 @@ open Filter Set Topology
 namespace StatMech
 namespace Sharpness
 
+/-! ## A. The characteristic bound for limits -/
 
-
+/-- Forward characteristic bound: under the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with
+`C_n ≤ M` monotone and `M_n → M`, for every `ε > 0` and small `t ≥ 0`,
+`M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`. -/
 theorem abfc_forward_characteristic_physical_envelope
     (Mn Cn : Nat → Real → Real → Real) (M : Real → Real → Real)
     (J beta h : Real)
@@ -131,7 +165,6 @@ theorem abfc_forward_characteristic_physical_envelope
       exact (hline n s).differentiableAt.differentiableWithinAt
     · intro s hs
       rw [interior_Icc, mem_Ioo] at hs
-      change deriv (fn n) s ≤ 0
       rw [(hline n s).deriv]
       let db := deriv (fun b ↦ Mn n b (h + c * (t - s))) (beta + s)
       let dh := deriv (fun y ↦ Mn n (beta + s) y) (h + c * (t - s))
@@ -158,8 +191,11 @@ theorem abfc_forward_characteristic_physical_envelope
     have hant := hanti n (left_mem_Icc.mpr ht.1) (right_mem_Icc.mpr ht.1) ht.1
     simpa [fn, c] using hant)
 
+/-! ## B. Application to the infinite-graph magnetization -/
 
-
+/-- The forward characteristic bound for the infinite-graph magnetization `abigMag`, obtained from
+an
+exhaustion by finite windows; conditional on `hrow` and `hInfiniteTarget`. -/
 theorem abfc_abig_forward_characteristic_of_exhaustion
     {V : Type*} [Countable V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]

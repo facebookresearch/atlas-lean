@@ -6,29 +6,63 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelectorAdmissible
+
+/-!
+# Current dynamic selectors and the switching law
+
+A current dynamic selector assigns to each current on an exploration domain a word of segments,
+with sources determined by the word. If a switching bijection matches the weights of the two
+sides of the fiber cut resummation identity, the selector's actual fiber mass satisfies these
+identities and therefore equals the generated fiber mass.
+
+## i. Overview
+
+`shb_CurrentDynamicSelector` packages a source class for each domain and word, a selection map
+from currents to words, and four axioms: the empty word has empty source class, a current has the
+source class of its selected word, sourceless currents select the empty word, and no current
+selects a word starting with an inactive segment. Its actual fiber mass is the weight mass of the
+currents selecting a given word.
+
+The switching law `SwitchingLaw` asks, for each domain and each active segment, for a bijection of
+pairs (current on the domain, current on the residual domain) carrying the summand of
+`fiber(s :: ss) × Z(residual)` to the summand of `N(s) × fiber(ss)`. Summing over pairs proves the
+active cut resummation identity (`shb_currentDynamicSelector_actualMass_active`), so the actual
+fiber mass realizes the identities and equals the generated fiber mass.
+
+Headline fidelity: `shb_CurrentDynamicSelector.actualFiberRealizes` and
+`shb_CurrentDynamicSelector.actualMass_eq_generated` are conditional on `S.SwitchingLaw β J`.
+They are vacuous whenever `V` has two distinct vertices: the structure `shb_CurrentDynamicSelector`
+is then empty (`shb_CurrentDynamicSelector_isEmpty_of_exists_ne`, `ActualSelectorObstruction`),
+because a single-edge current on a domain with no active segments has nonempty sources but can
+select neither the empty word nor a word starting with a segment. The fiber identities for the
+empty and inactive words and `shb_activeSegmentFiberMass_eq_segmentNum` are unconditional.
+
+## ii. Key results
+
+- `shb_CurrentDynamicSelector` : current dynamic selectors (empty when `V` has two distinct
+  vertices)
+- `shb_CurrentDynamicSelector.SwitchingLaw` : the switching law
+- `shb_currentDynamicSelector_actualMass_active` : the active cut resummation identity
+  (conditional on the switching law)
+- `shb_CurrentDynamicSelector.actualMass_eq_generated` : the actual fiber mass is the generated
+  one (conditional on the switching law; vacuous, see above)
+
+## iii. Table of contents
+
+- A. Current dynamic selectors
+- B. Active segment fibers
+- C. The switching law
+- D. The cut resummation identities
+
+## iv. References
+
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for
+  Bernoulli percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+
+-/
 
 @[expose] public section
 
@@ -43,14 +77,17 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 local instance (H : SimpleGraph V) : DecidableRel H.Adj :=
   Classical.decRel _
 
+/-! ## A. Current dynamic selectors -/
 
-
-
-
-
+/-- A current dynamic selector: a source class for each domain and word, a selection map from
+currents on a domain to words, such that the empty word has empty source class, every current has
+the source class of its selected word, sourceless currents select the empty word, and no current
+selects a word starting with an inactive segment. This type is empty as soon as `V` has two
+distinct vertices (`shb_CurrentDynamicSelector_isEmpty_of_exists_ne`). -/
 structure shb_CurrentDynamicSelector where
   sourceClass : shb_ExplorationDomain V ->
     List (shb_ExplorationSegment V) -> Finset V
@@ -65,7 +102,8 @@ structure shb_CurrentDynamicSelector where
   select_ne_cons_of_not_active : forall d s ss m,
     s ∉ d.active -> select d m ≠ s :: ss
 
-
+/-- The fiber of a word: the currents on the domain graph with the source class of the word that
+select it. -/
 def shb_CurrentDynamicSelector.Fiber
     (S : shb_CurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V)
@@ -74,6 +112,7 @@ def shb_CurrentDynamicSelector.Fiber
   sources d.graph (ofEdgeFun d.graph m) = S.sourceClass d word /\
     S.select d m = word
 
+/-- Classical decidability of fibers. -/
 noncomputable instance shb_CurrentDynamicSelector.fiberDecidable
     (S : shb_CurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V)
@@ -81,16 +120,14 @@ noncomputable instance shb_CurrentDynamicSelector.fiberDecidable
     DecidablePred (S.Fiber d word) :=
   Classical.decPred _
 
-
-
+/-- The actual fiber mass of the selector: the weight mass of the fiber of each word. -/
 noncomputable def shb_CurrentDynamicSelector.actualMass
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real) : shb_ExplorationFiberMass V :=
   shb_actualExplorationFiberMass beta J S.sourceClass
     (fun d word m => S.select d m = word)
 
-
-theorem shb_CurrentDynamicSelector.actualMass_eq_fiberTsum
+lemma shb_CurrentDynamicSelector.actualMass_eq_fiberTsum
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V)
@@ -107,13 +144,16 @@ theorem shb_CurrentDynamicSelector.actualMass_eq_fiberTsum
       sources d.graph (ofEdgeFun d.graph m) = S.sourceClass d word /\
         S.select d m = word <;> simp [h]
 
+/-! ## B. Active segment fibers -/
 
+/-- The current weight of an edge function on the domain graph. -/
 noncomputable def shb_explorationCoordinateWeight
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) : Real :=
   weight d.graph beta J (ofEdgeFun d.graph m)
 
-
+/-- The currents on the domain graph with sources the endpoints of an active segment whose
+selected backbone is that segment. -/
 def shb_ActiveSegmentFiber
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (hs : s ∈ d.active) (m : d.graph.edgeFinset -> Nat) : Prop :=
@@ -121,13 +161,13 @@ def shb_ActiveSegmentFiber
     shb_backboneSelectSupport d.graph (ofEdgeFun d.graph m) s.1 s.2.1 =
       some (s.toPath d.graph (d.active_supported s hs))
 
+/-- Classical decidability of active segment fibers. -/
 noncomputable instance shb_ActiveSegmentFiber_decidable
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (hs : s ∈ d.active) : DecidablePred (shb_ActiveSegmentFiber d s hs) :=
   Classical.decPred _
 
-
-theorem shb_summable_explorationFiberIndicator
+lemma shb_summable_explorationFiberIndicator
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V)
     (P : (d.graph.edgeFinset -> Nat) -> Prop) [DecidablePred P] :
@@ -143,9 +183,8 @@ theorem shb_summable_explorationFiberIndicator
   rw [heq]
   exact hf.indicator _
 
-
-
-theorem shb_activeSegmentFiberMass_eq_segmentNum
+/-- The weight mass of an active segment fiber is the segment numerator. -/
+lemma shb_activeSegmentFiberMass_eq_segmentNum
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (hs : s ∈ d.active) :
@@ -154,7 +193,7 @@ theorem shb_activeSegmentFiberMass_eq_segmentNum
         shb_explorationCoordinateWeight beta J d m else 0) =
       shb_segmentNum beta J d s := by
   unfold shb_segmentNum
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
   unfold shb_backboneNumSupport shb_ActiveSegmentFiber
     shb_explorationCoordinateWeight
   apply tsum_congr
@@ -164,15 +203,15 @@ theorem shb_activeSegmentFiberMass_eq_segmentNum
         shb_backboneSelectSupport d.graph (ofEdgeFun d.graph m) s.1 s.2.1 =
           some (s.toPath d.graph (d.active_supported s hs)) <;> simp [h]
 
+/-! ## C. The switching law -/
 
-
+/-- Pairs of edge functions on a domain graph and on the residual graph after exploring `s`. -/
 abbrev shb_SelectorSwitchPair (d : shb_ExplorationDomain V)
     (s : shb_ExplorationSegment V) :=
   (d.graph.edgeFinset -> Nat) ×
     ((shb_BackboneExplorationDomain.advance d s).graph.edgeFinset -> Nat)
 
-
-
+/-- The summand of `fiber(s :: ss) × Z(residual)` at a pair. -/
 noncomputable def shb_selectorSwitchLeftTerm
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
@@ -188,8 +227,7 @@ noncomputable def shb_selectorSwitchLeftTerm
         (shb_BackboneExplorationDomain.advance d s) mr.2
   else 0
 
-
-
+/-- The summand of `N(s) × fiber(ss)` at a pair. -/
 noncomputable def shb_selectorSwitchRightTerm
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
@@ -204,10 +242,8 @@ noncomputable def shb_selectorSwitchRightTerm
         (shb_BackboneExplorationDomain.advance d s) mr.2
   else 0
 
-
-
-
-
+/-- The switching law: for each domain and active segment, a bijection of pairs carrying each left
+summand to the right summand at the image. -/
 def shb_CurrentDynamicSelector.SwitchingLaw
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real) : Prop :=
@@ -217,9 +253,9 @@ def shb_CurrentDynamicSelector.SwitchingLaw
         shb_selectorSwitchLeftTerm S beta J d s ss mr =
           shb_selectorSwitchRightTerm S beta J d s ss hs (switch mr)
 
+/-! ## D. The cut resummation identities -/
 
-
-theorem shb_currentDynamicSelector_actualMass_nil
+lemma shb_currentDynamicSelector_actualMass_nil
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real) (d : shb_ExplorationDomain V) :
     S.actualMass beta J d [] = currentSum d.graph beta J ∅ := by
@@ -237,11 +273,10 @@ theorem shb_currentDynamicSelector_actualMass_nil
     · intro h
       exact ⟨h, S.select_nil_of_sources_empty d m h⟩
   by_cases h : sources d.graph (ofEdgeFun d.graph m) = ∅
-  · rw [if_pos (hiff.mpr h), if_pos h]
-  · rw [if_neg (fun hh => h (hiff.mp hh)), if_neg h]
+  · rw [ite_eq_left (hiff.mpr h), ite_eq_left h]
+  · rw [ite_eq_right (fun hh => h (hiff.mp hh)), ite_eq_right h]
 
-
-theorem shb_currentDynamicSelector_actualMass_inactive
+lemma shb_currentDynamicSelector_actualMass_inactive
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -255,14 +290,13 @@ theorem shb_currentDynamicSelector_actualMass_inactive
         weight d.graph beta J (ofEdgeFun d.graph m) else 0) =
       (fun _ => 0) by
     funext m
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact S.select_ne_cons_of_not_active d s ss m hs h.2]
   exact tsum_zero
 
-
-
-theorem shb_currentDynamicSelector_actualMass_active
+/-- Under the switching law, the active cut resummation identity holds for the actual fiber mass. -/
+lemma shb_currentDynamicSelector_actualMass_active
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (hswitch : S.SwitchingLaw beta J)
@@ -345,9 +379,8 @@ theorem shb_currentDynamicSelector_actualMass_active
           shb_selectorSwitchRightTerm S beta J d s ss hs mr :=
       switch.tsum_eq _
 
-
-
-theorem shb_CurrentDynamicSelector.actualFiberRealizes
+/-- Under the switching law, the actual fiber mass satisfies the cut resummation identities. -/
+lemma shb_CurrentDynamicSelector.actualFiberRealizes
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (hswitch : S.SwitchingLaw beta J) :
@@ -359,9 +392,8 @@ theorem shb_CurrentDynamicSelector.actualFiberRealizes
   · intro d s ss hs
     exact shb_currentDynamicSelector_actualMass_inactive S beta J d s ss hs
 
-
-
-theorem shb_CurrentDynamicSelector.actualMass_eq_generated
+/-- Under the switching law, the actual fiber mass equals the generated fiber mass. -/
+lemma shb_CurrentDynamicSelector.actualMass_eq_generated
     (S : shb_CurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (hswitch : S.SwitchingLaw beta J) :

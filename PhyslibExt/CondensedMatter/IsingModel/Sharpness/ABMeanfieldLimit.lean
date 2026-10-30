@@ -6,12 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryLimit
+
+/-!
+# Passing the mean-field inequality to the limit
+
+If finite-volume functions `M_n` satisfy `1 - M_n(b) ≤ b ∂_b M_n(b)` for `b ≥ β` and converge
+pointwise to a function `M` differentiable at `β`, then `1 - M(β) ≤ β M'(β)`.
+
+## i. Overview
+
+The derivative bound is integrated on `[β, β + t]` for each `n`, passed to the limit using pointwise
+convergence, and differentiated back at `β`. The lemma is real analysis; it takes the finite-volume
+inequality `hfinite`, differentiability `hdiffFinite`, `hdiff` and the convergence `hconv` as
+hypotheses.
+
+## ii. Key results
+
+- `abml_meanfield_limit` : the mean-field inequality survives pointwise limits
+
+## iii. Table of contents
+
+- A. The limit
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+-/
 
 @[expose] public section
 
@@ -20,12 +44,13 @@ open Filter Set Topology
 namespace StatMech
 namespace Sharpness
 
+/-! ## A. The limit -/
 
-
-
+/-- The mean-field inequality `1 - M ≤ β M'` passes from finite volumes `M_n` (for all `b ≥ β`) to a
+pointwise limit `M` differentiable at `β`. -/
 theorem abml_meanfield_limit
     (Mn : Nat → Real → Real) (M : Real → Real) (beta : Real)
-    (hbeta : 0 < beta)
+    (_hbeta : 0 < beta)
     (hfinite : ∀ n b, beta ≤ b →
       1 - Mn n b ≤ b * deriv (Mn n) b)
     (hdiffFinite : ∀ n b, DifferentiableAt Real (Mn n) b)

@@ -6,24 +6,74 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelectorObstruction
+
+/-!
+# Asymmetric bondwise coordinate certificates
+
+Coordinate certificates in which the two sides of the active cut resummation identity are put in
+normal form by possibly different bondwise run specifications, and the canonical certificate of a
+complete bondwise selector specification. The canonical certificate exists exactly when a
+canonical toggle exists, and several obstructions to such toggles are proved.
+
+## i. Overview
+
+A bondwise run specification is a scanning exploration with a state, a suffix of bonds, a bit map
+and a terminal condition on the flux; its event is "the suffix is selected and the terminal
+condition holds". Every predicate on fluxes is the event of some run specification
+(`BondwiseRunSpec.ofPredicate`). A pair event asks the two parts of a labeled split to satisfy two
+run events, and toggle covariance of two run specifications along a path says that toggling the
+path carries one event to the other; covariance in each component gives a pair toggle.
+
+An asymmetric bondwise coordinate certificate gives a contributing-path selector with sources
+`stepToggleSource`, normal forms of the left and right pair fibers as pair events, and a pair
+toggle between them; it yields coordinate toggle data and hence the active cut resummation
+identity (`AsymmetricBondwiseCoordinateCertificate.actualMass_active`). For a complete bondwise
+selector specification there are canonical run specifications for the four fibers, and the
+canonical certificate exists iff the canonical toggle exists
+(`nonempty_canonicalCertificate_iff_toggleExists`).
+
+Headline fidelity:
+- `AsymmetricBondwiseCoordinateCertificate.actualMass_active` is conditional on a certificate.
+- `CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists` and
+  `path_sources_of_canonical_toggle` (the source condition is automatic for a canonical toggle)
+  are proved for every `CompleteBondwiseSelectorSpec`.
+- The canonical toggle cannot exist when the active identity fails
+  (`not_toggleExists_of_clearedP2_ne`), and it forces an empty toggle source when the right pair
+  event is toggle invariant (`stepToggleSource_eq_empty_of_right_invariant`) or when the active
+  head event is local outside the cut (`stepToggleSource_eq_empty_of_activeHead_outsideCut`,
+  `not_activeHead_outsideCut_of_toggleSource_ne_empty`). No canonical toggle is constructed for
+  any selector; it is a form of the backbone chain rule (P2).
+
+## ii. Key results
+
+- `BondwiseRunSpec` : bondwise run specifications and their events
+- `BondwisePairEvent.toggle_iff_of_componentwise` : componentwise covariance gives a pair toggle
+- `AsymmetricBondwiseCoordinateCertificate.actualMass_active` : the active identity from a
+  certificate (conditional)
+- `CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists` : canonical
+  certificates exist iff canonical toggles exist
+- `CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne`,
+  `CompleteBondwiseSelectorSpec.not_activeHead_outsideCut_of_toggleSource_ne_empty` :
+  obstructions to canonical toggles
+
+## iii. Table of contents
+
+- A. Suffix and run specifications
+- B. Pair events and toggle covariance
+- C. Asymmetric coordinate certificates
+- D. Run specifications of a segment program
+- E. Canonical certificates
+- F. Obstructions to canonical toggles
+- G. Existence of canonical toggles
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -38,6 +88,7 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 noncomputable local instance asymmetricCertificateDecidableAdj
     (G : SimpleGraph V) : DecidableRel G.Adj := Classical.decRel _
 
@@ -51,11 +102,10 @@ open FluxEdgeCopy
 
 variable {D : Type*}
 
+/-! ## A. Suffix and run specifications -/
 
-
-
-
-
+/-- A bondwise suffix specification: a scanning exploration with a state, a suffix of bonds and a
+bit map reading bonds off a flux. -/
 structure BondwiseSuffixSpec (V : Type*) [Fintype V] [DecidableEq V] where
   State : Type*
   scan : shb_DynamicEdgeExploration State (Sym2 V)
@@ -63,19 +113,19 @@ structure BondwiseSuffixSpec (V : Type*) [Fintype V] [DecidableEq V] where
   suffix : List (Sym2 V)
   bit : Nat -> Bool
 
-
+/-- The suffix event of a suffix specification. -/
 def BondwiseSuffixSpec.Event
     (E : BondwiseSuffixSpec V) (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) : Prop :=
   BondwiseSuffixEvent G E.scan E.state E.suffix E.bit m
 
+/-- Classical decidability of suffix events. -/
 noncomputable instance BondwiseSuffixSpec.eventDecidable
     (E : BondwiseSuffixSpec V) (G : SimpleGraph V) [DecidableRel G.Adj] :
     DecidablePred (E.Event G) := Classical.decPred _
 
-
-
-
+/-- A bondwise run specification: a suffix specification together with a terminal condition on the
+state reached and the flux. -/
 structure BondwiseRunSpec (V : Type*) [Fintype V] [DecidableEq V] where
   State : Type*
   scan : shb_DynamicEdgeExploration State (Sym2 V)
@@ -84,32 +134,31 @@ structure BondwiseRunSpec (V : Type*) [Fintype V] [DecidableEq V] where
   bit : Nat -> Bool
   terminal : State -> (Sym2 V -> Option Nat) -> Prop
 
-
-
-
+/-- The flux as an optional value on unordered pairs (`none` off the graph). -/
 noncomputable def fluxOptionConfig
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) : Sym2 V -> Option Nat :=
   fun e => if h : e ∈ G.edgeFinset then some (m ⟨e, h⟩) else none
 
-
+/-- The terminal condition holds at the state reached after scanning the suffix. -/
 def BondwiseRunSpec.TerminalEvent
     (E : BondwiseRunSpec V) (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) : Prop :=
   E.terminal (E.scan.residual E.state E.suffix) (fluxOptionConfig G m)
 
-
+/-- The run event: the suffix is selected and the terminal condition holds. -/
 def BondwiseRunSpec.Event
     (E : BondwiseRunSpec V) (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) : Prop :=
   BondwiseSuffixEvent G E.scan E.state E.suffix E.bit m /\
     E.TerminalEvent G m
 
+/-- Classical decidability of run events. -/
 noncomputable instance BondwiseRunSpec.eventDecidable
     (E : BondwiseRunSpec V) (G : SimpleGraph V) [DecidableRel G.Adj] :
     DecidablePred (E.Event G) := Classical.decPred _
 
-
+/-- A suffix specification as a run specification with trivial terminal condition. -/
 def BondwiseSuffixSpec.toRunSpec
     (E : BondwiseSuffixSpec V) : BondwiseRunSpec V where
   State := E.State
@@ -119,7 +168,7 @@ def BondwiseSuffixSpec.toRunSpec
   bit := E.bit
   terminal := fun _ _ => True
 
-@[simp] theorem BondwiseSuffixSpec.toRunSpec_event
+@[simp] lemma BondwiseSuffixSpec.toRunSpec_event
     (E : BondwiseSuffixSpec V) (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) :
     E.toRunSpec.Event G m <-> E.Event G m := by
@@ -127,10 +176,8 @@ def BondwiseSuffixSpec.toRunSpec
   simp [BondwiseRunSpec.Event, BondwiseRunSpec.TerminalEvent,
     BondwiseSuffixSpec.Event, BondwiseSuffixSpec.toRunSpec]
 
-
-
-
-
+/-- The run specification whose event is a given predicate on fluxes (empty scan, the predicate as
+terminal condition). -/
 noncomputable def BondwiseRunSpec.ofPredicate
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (Q : (G.edgeFinset -> Nat) -> Prop) : BondwiseRunSpec V where
@@ -144,9 +191,7 @@ noncomputable def BondwiseRunSpec.ofPredicate
   bit := fun _ => false
   terminal := fun _ omega => Q (fun e => (omega e.1).getD 0)
 
-
-
-@[simp] theorem BondwiseRunSpec.ofPredicate_event
+@[simp] lemma BondwiseRunSpec.ofPredicate_event
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (Q : (G.edgeFinset -> Nat) -> Prop)
     (m : G.edgeFinset -> Nat) :
@@ -158,8 +203,9 @@ noncomputable def BondwiseRunSpec.ofPredicate
   simp [BondwiseRunSpec.ofPredicate, BondwiseRunSpec.Event,
     BondwiseRunSpec.TerminalEvent, BondwiseSuffixEvent, hread]
 
+/-! ## B. Pair events and toggle covariance -/
 
-
+/-- The pair event: the two parts of a labeled split satisfy the two run events. -/
 def BondwisePairEvent
     (E₁ E₂ : BondwiseRunSpec V)
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -168,9 +214,7 @@ def BondwisePairEvent
   E₁.Event G (profileFlux G m T) /\
     E₂.Event G (profileFlux G m (univ \ T))
 
-
-
-
+/-- Toggling `path` carries the event of `E` to the event of `F`. -/
 def BondwiseRunToggleCovariance
     (E F : BondwiseRunSpec V)
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -178,9 +222,7 @@ def BondwiseRunToggleCovariance
   ∀ T, E.Event G (profileFlux G m T) <->
     F.Event G (profileFlux G m (T ∆ path))
 
-
-
-theorem BondwiseRunToggleCovariance.refl_of_outsideCut
+lemma BondwiseRunToggleCovariance.refl_of_outsideCut
     (E : BondwiseRunSpec V)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) (cut : Set (Sym2 V))
@@ -191,10 +233,8 @@ theorem BondwiseRunToggleCovariance.refl_of_outsideCut
   intro T
   exact fluxEvent_toggle_iff G m cut (E.Event G) hE T path hpath
 
-
-
-
-theorem BondwisePairEvent.toggle_iff_of_componentwise
+/-- Toggle covariance in each component gives a toggle of pair events. -/
+lemma BondwisePairEvent.toggle_iff_of_componentwise
     (left₁ left₂ right₁ right₂ : BondwiseRunSpec V)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) (path : Finset (Copy G m))
@@ -215,10 +255,8 @@ theorem BondwisePairEvent.toggle_iff_of_componentwise
       rw [hcompl] at hright₂
       exact hright₂)⟩
 
-
-
-
-theorem BondwisePairEvent.toggle_iff_of_outsideCut
+/-- Pair events of events outside a cut are invariant under toggles in the cut. -/
+lemma BondwisePairEvent.toggle_iff_of_outsideCut
     (E₁ E₂ : BondwiseRunSpec V)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) (cut : Set (Sym2 V))
@@ -236,15 +274,11 @@ theorem BondwisePairEvent.toggle_iff_of_outsideCut
       (BondwiseRunToggleCovariance.refl_of_outsideCut
         E₂ G m cut path hpath h₂) T
 
+/-! ## C. Asymmetric coordinate certificates -/
 
-
-
-
-
-
-
-
-
+/-- An asymmetric bondwise coordinate certificate: a contributing-path selector with sources
+`stepToggleSource`, normal forms of the left and right pair fibers as pair events of possibly
+different run specifications, and a pair toggle between them. -/
 structure AsymmetricBondwiseCoordinateCertificate
     (left₁ left₂ right₁ right₂ : BondwiseRunSpec V)
     (S : shb_PartialCurrentDynamicSelector (V := V))
@@ -275,8 +309,7 @@ structure AsymmetricBondwiseCoordinateCertificate
     BondwisePairEvent left₁ left₂ d.graph m T <->
       BondwisePairEvent right₁ right₂ d.graph m (T ∆ path m hm)
 
-
-
+/-- Coordinate toggle data from an asymmetric certificate. -/
 noncomputable def AsymmetricBondwiseCoordinateCertificate.toCoordinateToggleData
     (left₁ left₂ right₁ right₂ : BondwiseRunSpec V)
     (S : shb_PartialCurrentDynamicSelector (V := V))
@@ -294,9 +327,8 @@ noncomputable def AsymmetricBondwiseCoordinateCertificate.toCoordinateToggleData
       ((R.bondwise_toggle m hm T).trans
         (R.right_normal_form m hm (T ∆ R.path m hm)).symm)
 
-
-
-theorem AsymmetricBondwiseCoordinateCertificate.actualMass_active
+/-- An asymmetric certificate gives the active cut resummation identity. -/
+lemma AsymmetricBondwiseCoordinateCertificate.actualMass_active
     (left₁ left₂ right₁ right₂ : BondwiseRunSpec V)
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
@@ -314,9 +346,9 @@ theorem AsymmetricBondwiseCoordinateCertificate.actualMass_active
     (R.toCoordinateToggleData left₁ left₂ right₁ right₂
       S beta J d s ss hs)
 
+/-! ## D. Run specifications of a segment program -/
 
-
-
+/-- The suffix specification of the encoding of a word. -/
 def BondwiseSegmentProgram.suffixSpec
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
@@ -327,7 +359,7 @@ def BondwiseSegmentProgram.suffixSpec
   suffix := P.encode d word
   bit := P.bit
 
-@[simp] theorem BondwiseSegmentProgram.suffixSpec_event
+@[simp] lemma BondwiseSegmentProgram.suffixSpec_event
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -336,7 +368,7 @@ def BondwiseSegmentProgram.suffixSpec
       BondwiseSuffixEvent d.graph P.scan (P.initial d)
         (P.encode d word) P.bit m := rfl
 
-
+/-- The run specification of the encoding of a word, with the program's terminal condition. -/
 def BondwiseSegmentProgram.runSpec
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
@@ -349,7 +381,8 @@ def BondwiseSegmentProgram.runSpec
   terminal := fun state omega =>
     P.terminal state (fun e => (omega e).map P.bit |>.getD false)
 
-@[simp] theorem BondwiseSegmentProgram.runSpec_event
+/-- The run event of a word is its complete event. -/
+@[simp] lemma BondwiseSegmentProgram.runSpec_event
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -367,9 +400,7 @@ def BondwiseSegmentProgram.runSpec
   by_cases he : e ∈ d.graph.edgeFinset <;>
     simp [fluxOptionConfig, fluxBitConfig, he]
 
-
-
-theorem CompleteBondwiseSelectorSpec.fiber_iff_runSpec_event
+lemma CompleteBondwiseSelectorSpec.fiber_iff_runSpec_event
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -379,7 +410,7 @@ theorem CompleteBondwiseSelectorSpec.fiber_iff_runSpec_event
   exact (R.fiber_iff_completeEvent d word m).trans
     (P.runSpec_event d word m).symm
 
-
+/-- The complete event of a word in the residual domain, lifted to fluxes of the domain graph. -/
 def BondwiseSegmentProgram.LiftedRunEvent
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -389,40 +420,40 @@ def BondwiseSegmentProgram.LiftedRunEvent
     ((P.runSpec (shb_BackboneExplorationDomain.advance d s) word).Event
       (shb_BackboneExplorationDomain.advance d s).graph)
 
-
+/-- The run specification of the lifted residual vacuum predicate. -/
 noncomputable def residualVacuumRunSpec
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V) :
     BondwiseRunSpec V :=
   BondwiseRunSpec.ofPredicate d.graph (liftedResidualVacuum d s)
 
-
+/-- The run specification of the active segment fiber. -/
 noncomputable def activeSegmentRunSpec
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (hs : s ∈ d.active) : BondwiseRunSpec V :=
   BondwiseRunSpec.ofPredicate d.graph (shb_ActiveSegmentFiber d s hs)
 
-
+/-- The run specification of the lifted residual run event. -/
 noncomputable def BondwiseSegmentProgram.liftedResidualRunSpec
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (word : List (shb_ExplorationSegment V)) : BondwiseRunSpec V :=
   BondwiseRunSpec.ofPredicate d.graph (P.LiftedRunEvent d s word)
 
-@[simp] theorem residualVacuumRunSpec_event
+@[simp] lemma residualVacuumRunSpec_event
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (m : d.graph.edgeFinset -> Nat) :
     (residualVacuumRunSpec d s).Event d.graph m <->
       liftedResidualVacuum d s m := by
   exact BondwiseRunSpec.ofPredicate_event d.graph _ m
 
-@[simp] theorem activeSegmentRunSpec_event
+@[simp] lemma activeSegmentRunSpec_event
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (hs : s ∈ d.active) (m : d.graph.edgeFinset -> Nat) :
     (activeSegmentRunSpec d s hs).Event d.graph m <->
       shb_ActiveSegmentFiber d s hs m := by
   exact BondwiseRunSpec.ofPredicate_event d.graph _ m
 
-@[simp] theorem BondwiseSegmentProgram.liftedResidualRunSpec_event
+@[simp] lemma BondwiseSegmentProgram.liftedResidualRunSpec_event
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (word : List (shb_ExplorationSegment V))
@@ -431,15 +462,14 @@ noncomputable def BondwiseSegmentProgram.liftedResidualRunSpec
       P.LiftedRunEvent d s word m := by
   exact BondwiseRunSpec.ofPredicate_event d.graph _ m
 
+/-- Classical decidability of lifted run events. -/
 noncomputable instance BondwiseSegmentProgram.liftedRunEventDecidable
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (word : List (shb_ExplorationSegment V)) :
     DecidablePred (P.LiftedRunEvent d s word) := Classical.decPred _
 
-
-
-theorem CompleteBondwiseSelectorSpec.liftedResidualFiber_iff_liftedRunEvent
+lemma CompleteBondwiseSelectorSpec.liftedResidualFiber_iff_liftedRunEvent
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (word : List (shb_ExplorationSegment V))
@@ -454,10 +484,7 @@ theorem CompleteBondwiseSelectorSpec.liftedResidualFiber_iff_liftedRunEvent
     exact ⟨r, hr, (R.fiber_iff_runSpec_event
       (shb_BackboneExplorationDomain.advance d s) word r).mpr hrun⟩
 
-
-
-
-theorem CompleteBondwiseSelectorSpec.leftPairNormalForm
+lemma CompleteBondwiseSelectorSpec.leftPairNormalForm
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (vacuum : BondwiseRunSpec V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -476,11 +503,7 @@ theorem CompleteBondwiseSelectorSpec.leftPairNormalForm
     (R.fiber_iff_runSpec_event d (s :: ss) (profileFlux d.graph m T))
     hvacuum
 
-
-
-
-
-theorem CompleteBondwiseSelectorSpec.rightPairNormalForm
+lemma CompleteBondwiseSelectorSpec.rightPairNormalForm
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (head residual : BondwiseRunSpec V)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -500,10 +523,10 @@ theorem CompleteBondwiseSelectorSpec.rightPairNormalForm
     ((R.liftedResidualFiber_iff_liftedRunEvent d s ss
       (profileFlux d.graph m (univ \ T))).trans hresidual)
 
+/-! ## E. Canonical certificates -/
 
-
-
-
+/-- An asymmetric certificate for the partial selector of a complete specification, from a vacuum
+normal form, a right normal form and a pair toggle. -/
 noncomputable def CompleteBondwiseSelectorSpec.toAsymmetricCertificate
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (vacuum right₁ right₂ : BondwiseRunSpec V)
@@ -550,13 +573,10 @@ noncomputable def CompleteBondwiseSelectorSpec.toAsymmetricCertificate
   bondwise_toggle := bondwise_toggle
 
 set_option maxHeartbeats 800000 in
-
-
-
-
-
-
-theorem CompleteBondwiseSelectorSpec.path_sources_of_canonical_toggle
+-- the `change` and labeled-split unfolding in this proof needs extra elaboration time
+/-- For the canonical run specifications, a pair toggle forces the path to have sources
+`stepToggleSource`. -/
+lemma CompleteBondwiseSelectorSpec.path_sources_of_canonical_toggle
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -671,10 +691,10 @@ theorem CompleteBondwiseSelectorSpec.path_sources_of_canonical_toggle
       _ = R.toPartialSelector.sourceClass d (s :: ss) ∆ {s.1, s.2.1} :=
         symmDiff_comm _ _
 
+/-! ## F. Obstructions to canonical toggles -/
 
-
-
-theorem CompleteBondwiseSelectorSpec.exists_canonical_rightPair_of_contributes
+/-- At a contributing flux, the canonical right pair event holds for some labeled split. -/
+lemma CompleteBondwiseSelectorSpec.exists_canonical_rightPair_of_contributes
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -733,11 +753,8 @@ theorem CompleteBondwiseSelectorSpec.exists_canonical_rightPair_of_contributes
           ((R.liftedResidualFiber_iff_liftedRunEvent d s ss _).mp
             hresidual)⟩
 
-
-
-
-
-theorem CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_right_invariant
+/-- If the canonical right pair event is invariant under the toggle, the toggle source is empty. -/
+lemma CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_right_invariant
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -788,11 +805,8 @@ theorem CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_right_invarian
   exact (R.path_sources_of_canonical_toggle
     beta J d s ss hs path bondwise_toggle m hm).symm.trans hpathEmpty
 
-
-
-
-
-theorem CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_activeHead_outsideCut
+/-- If the active head event is outside a cut containing the path, the toggle source is empty. -/
+lemma CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_activeHead_outsideCut
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -844,9 +858,9 @@ theorem CompleteBondwiseSelectorSpec.stepToggleSource_eq_empty_of_activeHead_out
   exact (R.path_sources_of_canonical_toggle
     beta J d s ss hs path bondwise_toggle m hm).symm.trans hpathEmpty
 
-
-
-theorem CompleteBondwiseSelectorSpec.not_activeHead_outsideCut_of_toggleSource_ne_empty
+/-- For a nonempty toggle source, the active head event is not outside any cut containing the path.
+-/
+lemma CompleteBondwiseSelectorSpec.not_activeHead_outsideCut_of_toggleSource_ne_empty
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -876,10 +890,8 @@ theorem CompleteBondwiseSelectorSpec.not_activeHead_outsideCut_of_toggleSource_n
   exact hsource (R.stepToggleSource_eq_empty_of_activeHead_outsideCut
     beta J d s ss hs path bondwise_toggle m hm cut hpath hhead)
 
-
-
-
-
+/-- The canonical asymmetric certificate of a complete specification, from a canonical pair toggle.
+-/
 noncomputable def CompleteBondwiseSelectorSpec.toCanonicalAsymmetricCertificate
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
@@ -921,10 +933,9 @@ noncomputable def CompleteBondwiseSelectorSpec.toCanonicalAsymmetricCertificate
           (profileFlux d.graph m (univ \ T))).symm)
     bondwise_toggle
 
+/-! ## G. Existence of canonical toggles -/
 
-
-
-
+/-- A canonical pair toggle exists at every contributing flux. -/
 def CompleteBondwiseSelectorSpec.CanonicalBondwiseToggleExists
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
@@ -938,10 +949,8 @@ def CompleteBondwiseSelectorSpec.CanonicalBondwiseToggleExists
           BondwisePairEvent (activeSegmentRunSpec d s hs)
             (P.liftedResidualRunSpec d s ss) d.graph m (T ∆ path)
 
-
-
-
-
+/-- A path with componentwise toggle covariance of the canonical run specifications exists at every
+contributing flux. -/
 def CompleteBondwiseSelectorSpec.CanonicalComponentwiseToggleExists
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
@@ -955,8 +964,8 @@ def CompleteBondwiseSelectorSpec.CanonicalComponentwiseToggleExists
           BondwiseRunToggleCovariance (residualVacuumRunSpec d s)
             (P.liftedResidualRunSpec d s ss) d.graph m path
 
-
-theorem CompleteBondwiseSelectorSpec.canonicalToggleExists_of_componentwise
+/-- Componentwise toggles give canonical pair toggles. -/
+lemma CompleteBondwiseSelectorSpec.canonicalToggleExists_of_componentwise
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -970,9 +979,7 @@ theorem CompleteBondwiseSelectorSpec.canonicalToggleExists_of_componentwise
     (activeSegmentRunSpec d s hs) (P.liftedResidualRunSpec d s ss)
     d.graph m path hhead hresidual⟩
 
-
-
-
+/-- The canonical asymmetric certificate from the existence of canonical pair toggles. -/
 noncomputable def
     CompleteBondwiseSelectorSpec.toCanonicalAsymmetricCertificate_of_toggleExists
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
@@ -995,7 +1002,7 @@ noncomputable def
   intro m hm T
   simpa only [path] using (Classical.choose_spec (h m hm) T)
 
-
+/-- The canonical asymmetric certificate from componentwise canonical toggles. -/
 noncomputable def
     CompleteBondwiseSelectorSpec.toCanonicalAsymmetricCertificate_of_componentwise
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
@@ -1010,9 +1017,7 @@ noncomputable def
   R.toCanonicalAsymmetricCertificate_of_toggleExists beta J d s ss hs
     (R.canonicalToggleExists_of_componentwise beta J d s ss hs h)
 
-
-
-
+/-- A canonical asymmetric certificate exists iff a canonical pair toggle exists. -/
 theorem CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
@@ -1030,11 +1035,8 @@ theorem CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExi
     exact ⟨R.toCanonicalAsymmetricCertificate_of_toggleExists
       beta J d s ss hs h⟩
 
-
-
-
-
-theorem CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne
+/-- If the active cut resummation identity fails, no canonical pair toggle exists. -/
+lemma CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -1054,7 +1056,7 @@ theorem CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne
     (activeSegmentRunSpec d s hs) (P.liftedResidualRunSpec d s ss)
     R.toPartialSelector beta J d s ss hs)
 
-
+/-- Coordinate toggle data from an asymmetric certificate for a complete specification. -/
 noncomputable def CompleteBondwiseSelectorSpec.toCoordinateToggleData_of_asymmetric
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (vacuum right₁ right₂ : BondwiseRunSpec V)

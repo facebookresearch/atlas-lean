@@ -6,17 +6,55 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.InhomogeneousBK
 public import MathlibExt.Probability.Percolation.TranslationInvariance
 public import MathlibExt.Probability.Percolation.SurfaceReassembly
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BkFirstExit
+
+/-!
+# Subcritical exponential decay for finite-range percolation
+
+Independent bond percolation on `ℤ^d` where the edge `{x, y}` is open with probability
+`1 - e^{-β K(y - x)}` for a symmetric, nonnegative, finitely supported kernel `K`: if some finite
+`S ∋ 0` has `φ_β(S) < 1`, the one-arm probability decays exponentially.
+
+## i. Overview
+
+The measure is a translation-invariant product measure (section A). A connection from `u ∈ S` to a
+set outside `S` leaves `S` through a first boundary pair; the inhomogeneous BK inequality bounds its
+probability by `∑ p_{xy} P(u ↔ x in S) P(y ↔ B)` (`frp_bk_criterion`, section B). The crossing
+events depend on finitely many edges (section C) and are translation covariant (section D), so the
+surface argument of Duminil-Copin–Tassion gives geometric decay along a subsequence and exponential
+decay of the one-arm probability (section E). With `β̃_c(K)` the supremum of the `β` below which
+witnesses exist, decay holds for every `β < β̃_c(K)` (section F). All results are proved
+unconditionally.
+
+## ii. Key results
+
+- `FiniteRangeKernel` : finite-range couplings on `ℤ^d`
+- `frpMeasure` : the percolation measure; `frpMeasure_translationInvariant`
+- `frp_bk_criterion` : the first-exit BK bound
+- `frp_subcritical_decay` : exponential decay from a witness `φ_β(S) < 1`
+- `frpTildeBetaC`, `frp_subcritical_decay_of_lt_tildeBetaC` : decay below `β̃_c(K)`
+
+## iii. Table of contents
+
+- A. The kernel, the graph and the measure
+- B. The first-exit BK bound
+- C. Crossing events depend on finitely many edges
+- D. Translations
+- E. Subcritical decay
+- F. The critical point `β̃_c(K)`
+
+## iv. References
+
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+- J. van den Berg, H. Kesten, "Inequalities with applications to percolation and reliability",
+  J. Appl. Probab. 22 (1985) 556–569
+-/
 
 @[expose] public section
 
@@ -26,10 +64,12 @@ open scoped NNReal
 namespace StatMech
 namespace Sharpness
 
-open ConfigSpace Lattice Percolation
+open ConfigSpace StatMech.Lattice Percolation
 
+/-! ## A. The kernel, the graph and the measure -/
 
-
+/-- A finite-range coupling on `ℤ^d`: a function `K` that is nonnegative, vanishes at `0`, is
+symmetric (`K(-z) = K(z)`) and is supported in the box `Λ_R` for some range `R`. -/
 structure FiniteRangeKernel (d : ℕ) where
   coupling : Site d → ℝ
   nonneg : ∀ z, 0 ≤ coupling z
@@ -40,8 +80,7 @@ structure FiniteRangeKernel (d : ℕ) where
 
 variable {d : ℕ}
 
-
-theorem frp_finset_subset_box (S : Finset (Site d)) :
+lemma frp_finset_subset_box (S : Finset (Site d)) :
     ∃ N : ℕ, (S : Set (Site d)) ⊆ box d N := by
   classical
   refine ⟨S.sup (fun x => Finset.univ.sup (fun i => (x i).natAbs)), ?_⟩
@@ -55,7 +94,7 @@ theorem frp_finset_subset_box (S : Finset (Site d)) :
     _ ≤ S.sup (fun y => Finset.univ.sup (fun j => (y j).natAbs)) :=
       Finset.le_sup (f := fun y => Finset.univ.sup (fun j => (y j).natAbs)) hx
 
-
+/-- The coupling `J_{xy} = K(y - x)` of the edge `{x, y}`. -/
 noncomputable def frpEdgeCoupling (K : FiniteRangeKernel d) :
     Sym2 (Site d) → ℝ :=
   Sym2.lift ⟨fun x y => K.coupling (y - x), by
@@ -63,11 +102,10 @@ noncomputable def frpEdgeCoupling (K : FiniteRangeKernel d) :
     dsimp only
     rw [show x - y = -(y - x) by abel, K.symmetric]⟩
 
-@[simp] theorem frpEdgeCoupling_mk (K : FiniteRangeKernel d) (x y : Site d) :
+@[simp] lemma frpEdgeCoupling_mk (K : FiniteRangeKernel d) (x y : Site d) :
     frpEdgeCoupling K s(x, y) = K.coupling (y - x) := rfl
 
-
-
+/-- The graph on `ℤ^d` joining `x` and `y` when `K(y - x) > 0`. -/
 noncomputable def frpGraph (K : FiniteRangeKernel d) : SimpleGraph (Site d) where
   Adj x y := 0 < K.coupling (y - x)
   symm := by
@@ -80,34 +118,35 @@ noncomputable def frpGraph (K : FiniteRangeKernel d) : SimpleGraph (Site d) wher
     rw [hz, K.zero] at h
     exact (lt_irrefl 0 h)⟩
 
+/-- Adjacency in `frpGraph K` is decidable (classically). -/
 noncomputable instance (K : FiniteRangeKernel d) : DecidableRel (frpGraph K).Adj :=
   Classical.decRel _
 
-
+/-- The edge probability `1 - e^{-β J_e}` (truncated at `0`). -/
 noncomputable def frpEdgeParam (K : FiniteRangeKernel d) (beta : ℝ)
     (e : Sym2 (Site d)) : ℝ≥0 :=
   Real.toNNReal (1 - Real.exp (-beta * frpEdgeCoupling K e))
 
-theorem frpEdgeParam_le_one (K : FiniteRangeKernel d) (beta : ℝ) (e) :
+lemma frpEdgeParam_le_one (K : FiniteRangeKernel d) (beta : ℝ) (e) :
     frpEdgeParam K beta e ≤ 1 := by
   unfold frpEdgeParam
   rw [Real.toNNReal_le_one]
   have hpos := Real.exp_pos (-beta * frpEdgeCoupling K e)
   linarith
 
-
+/-- The product measure with edge probabilities `frpEdgeParam K β`. -/
 noncomputable def frpMeasure (K : FiniteRangeKernel d) (beta : ℝ) :
     Measure (ConfigSpace (Sym2 (Site d))) :=
   inhomBernoulliProductMeasure (frpEdgeParam K beta)
     (frpEdgeParam_le_one K beta)
 
+/-- `frpMeasure K β` is a probability measure. -/
 noncomputable instance (K : FiniteRangeKernel d) (beta : ℝ) :
     IsProbabilityMeasure (frpMeasure K beta) := by
   unfold frpMeasure
   infer_instance
 
-
-theorem frpEdgeCoupling_smul (K : FiniteRangeKernel d)
+lemma frpEdgeCoupling_smul (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d)) (e : Sym2 (Site d)) :
     frpEdgeCoupling K (g • e) = frpEdgeCoupling K e := by
   induction e using Sym2.inductionOn with
@@ -120,15 +159,13 @@ theorem frpEdgeCoupling_smul (K : FiniteRangeKernel d)
       simp only [Pi.sub_apply]
       abel
 
-
-theorem frpEdgeParam_smul (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frpEdgeParam_smul (K : FiniteRangeKernel d) (beta : ℝ)
     (g : Multiplicative (Site d)) (e : Sym2 (Site d)) :
     frpEdgeParam K beta (g • e) = frpEdgeParam K beta e := by
   unfold frpEdgeParam
   rw [frpEdgeCoupling_smul]
 
-
-
+/-- The finite-range percolation measure is translation invariant. -/
 theorem frpMeasure_translationInvariant (K : FiniteRangeKernel d) (beta : ℝ) :
     IsTranslationInvariant (G := Multiplicative (Site d)) (frpMeasure K beta) := by
   intro g
@@ -152,16 +189,17 @@ theorem frpMeasure_translationInvariant (K : FiniteRangeKernel d) (beta : ℝ) :
         congr 1; exact hpi.symm]
   exact h
 
-
-theorem frpGraph_adj_displacement (K : FiniteRangeKernel d) {x y : Site d}
+lemma frpGraph_adj_displacement (K : FiniteRangeKernel d) {x y : Site d}
     (hxy : (frpGraph K).Adj x y) : y - x ∈ box d K.range :=
   K.support (y - x) (ne_of_gt hxy)
 
+/-! ## B. The first-exit BK bound -/
 
+/-- The steps `z` with `K(z) > 0`. -/
 noncomputable def frpSteps (K : FiniteRangeKernel d) : Finset (Site d) :=
   (box_finite d K.range).toFinset.filter (fun z => 0 < K.coupling z)
 
-theorem mem_frpSteps (K : FiniteRangeKernel d) {z : Site d} :
+lemma mem_frpSteps (K : FiniteRangeKernel d) {z : Site d} :
     z ∈ frpSteps K ↔ 0 < K.coupling z := by
   rw [frpSteps, Finset.mem_filter, Set.Finite.mem_toFinset]
   constructor
@@ -169,13 +207,13 @@ theorem mem_frpSteps (K : FiniteRangeKernel d) {z : Site d} :
   · intro h
     exact ⟨K.support z (ne_of_gt h), h⟩
 
-
+/-- The pairs `(x, x + z)` with `x ∈ S`, `K(z) > 0` and `x + z ∉ S`. -/
 noncomputable def frpBoundaryPairs (K : FiniteRangeKernel d)
     (S : Finset (Site d)) : Finset (Site d × Site d) :=
   ((S ×ˢ frpSteps K).image fun xz => (xz.1, xz.1 + xz.2)).filter
     (fun q => q.2 ∉ S)
 
-theorem mem_frpBoundaryPairs (K : FiniteRangeKernel d) (S : Finset (Site d))
+lemma mem_frpBoundaryPairs (K : FiniteRangeKernel d) (S : Finset (Site d))
     {x y : Site d} :
     (x, y) ∈ frpBoundaryPairs K S ↔
       x ∈ S ∧ y ∉ S ∧ (frpGraph K).Adj x y := by
@@ -197,19 +235,13 @@ theorem mem_frpBoundaryPairs (K : FiniteRangeKernel d) (S : Finset (Site d))
     refine ⟨⟨(x, z), Finset.mem_product.mpr ⟨hxS, hz⟩, ?_⟩, hyS⟩
     simp [hsum]
 
-
-noncomputable def frpInternalEdges (S : Finset (Site d)) :
-    Finset (Sym2 (Site d)) :=
-  (S ×ˢ S).image (fun xy => s(xy.1, xy.2))
-
-theorem frp_mem_internalEdges {S : Finset (Site d)} {x y : Site d}
-    (hx : x ∈ S) (hy : y ∈ S) : s(x, y) ∈ frpInternalEdges S :=
+lemma frp_mem_internalEdges {S : Finset (Site d)} {x y : Site d}
+    (hx : x ∈ S) (hy : y ∈ S) : s(x, y) ∈ StatMech.Percolation.edgesWithinFinset S :=
   Finset.mem_image.mpr ⟨(x, y), Finset.mem_product.mpr ⟨hx, hy⟩, rfl⟩
 
-
-theorem frp_connWithin_transfer (K : FiniteRangeKernel d)
+lemma frp_connWithin_transfer (K : FiniteRangeKernel d)
     {omega omega' : ConfigSpace (Sym2 (Site d))} {S : Finset (Site d)}
-    (hagree : ∀ e ∈ frpInternalEdges S, omega e = omega' e)
+    (hagree : ∀ e ∈ StatMech.Percolation.edgesWithinFinset S, omega e = omega' e)
     {a b : (S : Set (Site d))}
     (h : ConnWithin (frpGraph K) omega (S : Set (Site d)) a b) :
     ConnWithin (frpGraph K) omega' (S : Set (Site d)) a b := by
@@ -225,11 +257,10 @@ theorem frp_connWithin_transfer (K : FiniteRangeKernel d)
       exact (show ((openSub (frpGraph K) omega').induce
         (S : Set (Site d))).Adj u v from hopen').reachable.trans ih
 
-
-theorem frp_connEvent_dependsOn (K : FiniteRangeKernel d)
+lemma frp_connEvent_dependsOn (K : FiniteRangeKernel d)
     (S : Finset (Site d)) (u x : Site d) :
     DependsOn (connEvent (frpGraph K) (S : Set (Site d)) u {x})
-      (frpInternalEdges S : Set (Sym2 (Site d))) := by
+      (StatMech.Percolation.edgesWithinFinset S : Set (Sym2 (Site d))) := by
   intro omega omega' hagree
   constructor
   · rintro ⟨hu, z, hzS, hzx, hconn⟩
@@ -245,11 +276,10 @@ theorem frp_connEvent_dependsOn (K : FiniteRangeKernel d)
       frp_connWithin_transfer K
         (fun e he => hagree e (by exact_mod_cast he)) hconn⟩
 
-
-theorem frp_connEvent_set_dependsOn (K : FiniteRangeKernel d)
+lemma frp_connEvent_set_dependsOn (K : FiniteRangeKernel d)
     (S : Finset (Site d)) (u : Site d) (B : Set (Site d)) :
     DependsOn (connEvent (frpGraph K) (S : Set (Site d)) u B)
-      (frpInternalEdges S : Set (Sym2 (Site d))) := by
+      (StatMech.Percolation.edgesWithinFinset S : Set (Sym2 (Site d))) := by
   intro omega omega' hagree
   constructor
   · rintro ⟨hu, z, hzS, hzB, hconn⟩
@@ -261,8 +291,7 @@ theorem frp_connEvent_set_dependsOn (K : FiniteRangeKernel d)
       frp_connWithin_transfer K
         (fun e he => hagree e (by exact_mod_cast he)) hconn⟩
 
-
-theorem frp_firstExit_inclusion (K : FiniteRangeKernel d)
+lemma frp_firstExit_inclusion (K : FiniteRangeKernel d)
     (A : Set (Site d)) (S : Finset (Site d)) (B : Set (Site d))
     (u : Site d) (huS : u ∈ S) (hBS : ∀ z ∈ B, z ∉ S) :
     connEvent (frpGraph K) A u B ⊆
@@ -272,11 +301,11 @@ theorem frp_firstExit_inclusion (K : FiniteRangeKernel d)
           (disjointOccurrence (edgeOpenEvent q.1 q.2)
             (connEvent (frpGraph K) A q.2 B)) := by
   intro omega homega
-  simp only [connEvent, Set.mem_setOf_eq] at homega
+  simp only [connEvent, Set.mem_ofPred_eq] at homega
   obtain ⟨b, hbA, hbB, path, hsupp⟩ :=
     shk_walk_of_connToSet (frpGraph K) omega A u B homega
   have hbypass_supp : ∀ z ∈ path.bypass.support, z ∈ A := fun z hz =>
-    hsupp z (path.support_bypass_subset hz)
+    hsupp z (path.support_bypass_subset_support hz)
   have hbS : b ∉ (S : Set (Site d)) := hBS b hbB
   obtain ⟨x, y, hxS, hyS, hadj, htriple⟩ :=
     shk_firstExit_triple (frpGraph K) omega A (S : Set (Site d)) B
@@ -284,22 +313,22 @@ theorem frp_firstExit_inclusion (K : FiniteRangeKernel d)
   rw [Set.mem_iUnion₂]
   exact ⟨(x, y), (mem_frpBoundaryPairs K S).mpr ⟨hxS, hyS, hadj⟩, htriple⟩
 
-private theorem frp_edgeOpen_dependsOn (x y : Site d) :
+private lemma frp_edgeOpen_dependsOn (x y : Site d) :
     DependsOn (edgeOpenEvent x y)
       ({s(x, y)} : Set (Sym2 (Site d))) := by
   intro omega omega' hagree
   change (omega s(x, y) = true) ↔ (omega' s(x, y) = true)
   rw [hagree s(x, y) (by simp)]
 
-
+/-- The edges on which the first-exit decomposition from `S` inside `Λ` depends. -/
 noncomputable def frpFirstExitSupport (K : FiniteRangeKernel d)
     (S Lam : Finset (Site d)) : Finset (Sym2 (Site d)) :=
-  (frpInternalEdges S ∪
+  (StatMech.Percolation.edgesWithinFinset S ∪
       (frpBoundaryPairs K S).image (fun q => s(q.1, q.2))) ∪
-    frpInternalEdges Lam
+    StatMech.Percolation.edgesWithinFinset Lam
 
-
-
+/-- First-exit BK bound (van den Berg–Kesten): for `u ∈ S` and `B` disjoint from `S`,
+`P(u ↔ B in Λ) ≤ ∑_{(x,y)} p_{xy} P(u ↔ x in S) P(y ↔ B in Λ)` over boundary pairs of `S`. -/
 theorem frp_bk_criterion (K : FiniteRangeKernel d) (beta : ℝ)
     (Lam S : Finset (Site d)) (u : Site d) (B : Set (Site d))
     (huS : u ∈ S) (hBS : ∀ z ∈ B, z ∉ S) :
@@ -361,10 +390,12 @@ theorem frp_bk_criterion (K : FiniteRangeKernel d) (beta : ℝ)
           (frpEdgeParam K beta s(q.1, q.2) : ℝ) by
         exact inhom_coord_true_prob (frpEdgeParam K beta)
           (frpEdgeParam_le_one K beta) s(q.1, q.2)]
-      simp only [bnd, P, R]
+      simp only [P, R]
       ring
 
+/-! ## C. Crossing events depend on finitely many edges -/
 
+/-- `φ_β(S) = ∑_{(x,y) boundary pair} p_{xy} P(0 ↔ x in S)`. -/
 noncomputable def frpPhi (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) : ℝ :=
   ∑ q ∈ frpBoundaryPairs K S,
@@ -372,17 +403,17 @@ noncomputable def frpPhi (K : FiniteRangeKernel d) (beta : ℝ)
       (frpMeasure K beta).real
         (connEvent (frpGraph K) (S : Set (Site d)) (0 : Site d) {q.1})
 
-
+/-- The one-arm event `{0 ↔ ℤ^d \ Λ_{n-1}}` in `frpGraph K`. -/
 def frpCrossingEvent (K : FiniteRangeKernel d) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   connEvent (frpGraph K) Set.univ (0 : Site d) (box d (n - 1))ᶜ
 
+/-- The one-arm probability `P_β(0 ↔ ℤ^d \ Λ_{n-1})`. -/
 noncomputable def frpCrossProb (K : FiniteRangeKernel d) (beta : ℝ)
     (n : ℕ) : ℝ :=
   (frpMeasure K beta).real (frpCrossingEvent K n)
 
-
-theorem frp_adj_mem_box_add (K : FiniteRangeKernel d) {N : ℕ}
+lemma frp_adj_mem_box_add (K : FiniteRangeKernel d) {N : ℕ}
     {x y : Site d} (hx : x ∈ box d N) (hxy : (frpGraph K).Adj x y) :
     y ∈ box d (N + K.range) := by
   have hz := frpGraph_adj_displacement K hxy
@@ -394,8 +425,7 @@ theorem frp_adj_mem_box_add (K : FiniteRangeKernel d) {N : ℕ}
     exact Int.natAbs_add_le _ _
   exact hadd.trans (Nat.add_le_add (hx i) (hz i))
 
-
-theorem frp_connWithin_mono_set (K : FiniteRangeKernel d)
+lemma frp_connWithin_mono_set (K : FiniteRangeKernel d)
     (omega : ConfigSpace (Sym2 (Site d))) {S T : Set (Site d)}
     (hST : S ⊆ T) {x y : S}
     (h : ConnWithin (frpGraph K) omega S x y) :
@@ -407,21 +437,17 @@ theorem frp_connWithin_mono_set (K : FiniteRangeKernel d)
       map_rel' := fun {a b} hab => hab }
   exact h.map f
 
-
-
+/-- A finite window `Λ_{n-1+R}` containing all edges the one-arm event depends on. -/
 noncomputable def frpCrossingWindow (K : FiniteRangeKernel d) (n : ℕ) :
     Finset (Site d) :=
   (box_finite d ((n - 1) + K.range)).toFinset
 
-@[simp] theorem mem_frpCrossingWindow (K : FiniteRangeKernel d) (n : ℕ)
+@[simp] lemma mem_frpCrossingWindow (K : FiniteRangeKernel d) (n : ℕ)
     (x : Site d) :
     x ∈ frpCrossingWindow K n ↔ x ∈ box d ((n - 1) + K.range) := by
   rw [frpCrossingWindow, Set.Finite.mem_toFinset]
 
-
-
-
-theorem frpCrossingEvent_eq_finite (K : FiniteRangeKernel d) (n : ℕ) :
+lemma frpCrossingEvent_eq_finite (K : FiniteRangeKernel d) (n : ℕ) :
     frpCrossingEvent K n =
       connEvent (frpGraph K) (frpCrossingWindow K n : Set (Site d))
         (0 : Site d) (box d (n - 1))ᶜ := by
@@ -478,25 +504,23 @@ theorem frpCrossingEvent_eq_finite (K : FiniteRangeKernel d) (n : ℕ) :
     refine ⟨Set.mem_univ _, z, Set.mem_univ _, hzout, ?_⟩
     exact frp_connWithin_mono_set K omega (Set.subset_univ _) hconn
 
-
-theorem frpCrossingEvent_dependsOn (K : FiniteRangeKernel d) (n : ℕ) :
+lemma frpCrossingEvent_dependsOn (K : FiniteRangeKernel d) (n : ℕ) :
     DependsOn (frpCrossingEvent K n)
-      (frpInternalEdges (frpCrossingWindow K n) : Set (Sym2 (Site d))) := by
+      (StatMech.Percolation.edgesWithinFinset (frpCrossingWindow K n) : Set (Sym2 (Site d))) := by
   rw [frpCrossingEvent_eq_finite]
   exact frp_connEvent_set_dependsOn K (frpCrossingWindow K n)
     (0 : Site d) (box d (n - 1))ᶜ
 
-
-
+/-- `S` together with all sites one step of `K` away. -/
 noncomputable def frpOneStepClosure (K : FiniteRangeKernel d)
     (S : Finset (Site d)) : Finset (Site d) :=
   S ∪ (S ×ˢ frpSteps K).image (fun xz => xz.1 + xz.2)
 
-theorem frp_subset_oneStepClosure (K : FiniteRangeKernel d)
+lemma frp_subset_oneStepClosure (K : FiniteRangeKernel d)
     (S : Finset (Site d)) : S ⊆ frpOneStepClosure K S :=
   Finset.subset_union_left
 
-theorem frp_boundary_snd_mem_closure (K : FiniteRangeKernel d)
+lemma frp_boundary_snd_mem_closure (K : FiniteRangeKernel d)
     (S : Finset (Site d)) {q : Site d × Site d}
     (hq : q ∈ frpBoundaryPairs K S) : q.2 ∈ frpOneStepClosure K S := by
   have hm := (mem_frpBoundaryPairs K S).mp hq
@@ -507,9 +531,7 @@ theorem frp_boundary_snd_mem_closure (K : FiniteRangeKernel d)
   refine ⟨(q.1, z), Finset.mem_product.mpr ⟨hm.1, hz⟩, ?_⟩
   simp [z]
 
-
-
-theorem frp_exitEvent_eq_finite (K : FiniteRangeKernel d)
+lemma frp_exitEvent_eq_finite (K : FiniteRangeKernel d)
     (S : Finset (Site d)) (u : Site d) (huS : u ∈ S) :
     connEvent (frpGraph K) Set.univ u (S : Set (Site d))ᶜ =
       connEvent (frpGraph K) (frpOneStepClosure K S : Set (Site d))
@@ -549,22 +571,23 @@ theorem frp_exitEvent_eq_finite (K : FiniteRangeKernel d)
     exact ⟨Set.mem_univ _, z, Set.mem_univ _, hzout,
       frp_connWithin_mono_set K omega (Set.subset_univ _) hconn⟩
 
-theorem frp_exitEvent_dependsOn (K : FiniteRangeKernel d)
+lemma frp_exitEvent_dependsOn (K : FiniteRangeKernel d)
     (S : Finset (Site d)) (u : Site d) (huS : u ∈ S) :
     DependsOn (connEvent (frpGraph K) Set.univ u (S : Set (Site d))ᶜ)
-      (frpInternalEdges (frpOneStepClosure K S) : Set (Sym2 (Site d))) := by
+      (StatMech.Percolation.edgesWithinFinset (frpOneStepClosure K S) : Set (Sym2 (Site d))) := by
   rw [frp_exitEvent_eq_finite K S u huS]
   exact frp_connEvent_set_dependsOn K (frpOneStepClosure K S) u
     (S : Set (Site d))ᶜ
 
-theorem measurableSet_frp_exitEvent (K : FiniteRangeKernel d)
+lemma measurableSet_frp_exitEvent (K : FiniteRangeKernel d)
     (S : Finset (Site d)) (u : Site d) (huS : u ∈ S) :
     MeasurableSet (connEvent (frpGraph K) Set.univ u (S : Set (Site d))ᶜ) :=
   measurableSet_of_dependsOn
     (ih_indicator_dependsOn_of_event (frp_exitEvent_dependsOn K S u huS))
 
+/-! ## D. Translations -/
 
-theorem frpGraph_adj_smul (K : FiniteRangeKernel d)
+lemma frpGraph_adj_smul (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d)) (x y : Site d) :
     (frpGraph K).Adj (g • x) (g • y) ↔ (frpGraph K).Adj x y := by
   have hcouple := frpEdgeCoupling_smul K g s(x, y)
@@ -572,7 +595,7 @@ theorem frpGraph_adj_smul (K : FiniteRangeKernel d)
   change 0 < K.coupling (g • y - g • x) ↔ 0 < K.coupling (y - x)
   rw [hcouple]
 
-theorem frp_openSub_adj_shift (K : FiniteRangeKernel d)
+lemma frp_openSub_adj_shift (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d))
     (omega : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
     (openSub (frpGraph K) (shift g omega)).Adj (g • x) (g • y) ↔
@@ -580,12 +603,14 @@ theorem frp_openSub_adj_shift (K : FiniteRangeKernel d)
   simp only [openSub]
   rw [frpGraph_adj_smul, shift_apply_smul]
 
+/-- Translation by `g` as a homomorphism of open subgraphs. -/
 private def frpTranslateHom (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d)) (omega : ConfigSpace (Sym2 (Site d))) :
     openSub (frpGraph K) omega →g openSub (frpGraph K) (shift g omega) where
   toFun x := g • x
   map_rel' {x y} h := (frp_openSub_adj_shift K g omega x y).mpr h
 
+/-- Translation by `-g` as a homomorphism of open subgraphs. -/
 private def frpTranslateHomInv (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d)) (omega : ConfigSpace (Sym2 (Site d))) :
     openSub (frpGraph K) (shift g omega) →g openSub (frpGraph K) omega where
@@ -595,8 +620,7 @@ private def frpTranslateHomInv (K : FiniteRangeKernel d)
     simp only [smul_inv_smul] at h'
     exact h' h
 
-
-theorem frp_connWithin_univ_shift (K : FiniteRangeKernel d)
+lemma frp_connWithin_univ_shift (K : FiniteRangeKernel d)
     (g : Multiplicative (Site d)) (omega : ConfigSpace (Sym2 (Site d)))
     (x y : Site d) :
     ConnWithin (frpGraph K) (shift g omega) Set.univ
@@ -622,11 +646,11 @@ theorem frp_connWithin_univ_shift (K : FiniteRangeKernel d)
         map_rel' := fun {a b} hab => (frpTranslateHom K g omega).map_rel hab }
     exact h.map f
 
-
+/-- The box `Λ_{n-1}` translated by `-y`. -/
 noncomputable def frpShiftedBox (y : Site d) (n : ℕ) : Finset (Site d) :=
   ((box_finite d (n - 1)).toFinset).image (fun z => z - y)
 
-theorem mem_frpShiftedBox (y z : Site d) (n : ℕ) :
+lemma mem_frpShiftedBox (y z : Site d) (n : ℕ) :
     z ∈ frpShiftedBox y n ↔ z + y ∈ box d (n - 1) := by
   classical
   rw [frpShiftedBox, Finset.mem_image]
@@ -640,16 +664,15 @@ theorem mem_frpShiftedBox (y z : Site d) (n : ℕ) :
     · simpa [Set.Finite.mem_toFinset] using hz
     · simp
 
+/-- The one-arm event `{y ↔ ℤ^d \ Λ_{n-1}}` from the site `y`. -/
 def frpCrossingEventFrom (K : FiniteRangeKernel d) (y : Site d) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   connEvent (frpGraph K) Set.univ y (box d (n - 1))ᶜ
 
-theorem frpCrossingEventFrom_zero (K : FiniteRangeKernel d) (n : ℕ) :
+lemma frpCrossingEventFrom_zero (K : FiniteRangeKernel d) (n : ℕ) :
     frpCrossingEventFrom K 0 n = frpCrossingEvent K n := rfl
 
-
-
-theorem frpCrossingEventFrom_eq_preimage (K : FiniteRangeKernel d)
+lemma frpCrossingEventFrom_eq_preimage (K : FiniteRangeKernel d)
     (y : Site d) (n : ℕ) :
     frpCrossingEventFrom K y n =
       (shift (Multiplicative.ofAdd (-y)) : ConfigSpace (Sym2 (Site d)) → _) ⁻¹'
@@ -659,7 +682,7 @@ theorem frpCrossingEventFrom_eq_preimage (K : FiniteRangeKernel d)
   set g := Multiplicative.ofAdd (-y) with hg
   have hgy : g • y = (0 : Site d) := by
     funext i
-    show -y i + y i = (0 : ℤ)
+    change -y i + y i = (0 : ℤ)
     ring
   constructor
   · rintro ⟨_, v, _, hvout, hconn⟩
@@ -667,7 +690,7 @@ theorem frpCrossingEventFrom_eq_preimage (K : FiniteRangeKernel d)
     · rw [Set.mem_compl_iff, Finset.mem_coe, mem_frpShiftedBox]
       have heq : g • v + y = v := by
         funext i
-        show (-y i + v i) + y i = v i
+        change (-y i + v i) + y i = v i
         ring
       rwa [heq]
     · have hs := (frp_connWithin_univ_shift K g omega y v).mpr hconn
@@ -686,14 +709,13 @@ theorem frpCrossingEventFrom_eq_preimage (K : FiniteRangeKernel d)
       · rw [hgy, smul_inv_smul]
         exact hconn
 
-
-theorem frp_crossProbFrom_le (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frp_crossProbFrom_le (K : FiniteRangeKernel d) (beta : ℝ)
     (y : Site d) {L m n : ℕ} (hy : y ∈ box d L)
     (hmLn : m + L ≤ n) (hm : 1 ≤ m) :
     (frpMeasure K beta).real (frpCrossingEventFrom K y n) ≤
       frpCrossProb K beta m := by
   let mu := frpMeasure K beta
-  letI : IsProbabilityMeasure mu := by
+  let : IsProbabilityMeasure mu := by
     dsimp [mu, frpMeasure]
     infer_instance
   let g := Multiplicative.ofAdd (-y)
@@ -722,16 +744,18 @@ theorem frp_crossProbFrom_le (K : FiniteRangeKernel d) (beta : ℝ)
     exact box_shift_mem hy hvm hmLn hm
   exact measureReal_mono hsub (measure_ne_top _ _)
 
-theorem frpCrossProb_nonneg (K : FiniteRangeKernel d) (beta : ℝ) (n : ℕ) :
+/-! ## E. Subcritical decay -/
+
+lemma frpCrossProb_nonneg (K : FiniteRangeKernel d) (beta : ℝ) (n : ℕ) :
     0 ≤ frpCrossProb K beta n := measureReal_nonneg
 
-theorem frpCrossProb_le_one (K : FiniteRangeKernel d) (beta : ℝ) (n : ℕ) :
+lemma frpCrossProb_le_one (K : FiniteRangeKernel d) (beta : ℝ) (n : ℕ) :
     frpCrossProb K beta n ≤ 1 := by
   unfold frpCrossProb
   rw [show (1 : ℝ) = (frpMeasure K beta).real Set.univ by rw [probReal_univ]]
   exact measureReal_mono (Set.subset_univ _) (measure_ne_top _ _)
 
-theorem frpCrossingEvent_antitone (K : FiniteRangeKernel d) {m n : ℕ}
+lemma frpCrossingEvent_antitone (K : FiniteRangeKernel d) {m n : ℕ}
     (hmn : m ≤ n) : frpCrossingEvent K n ⊆ frpCrossingEvent K m := by
   rintro omega ⟨_, z, _, hzout, hconn⟩
   refine ⟨Set.mem_univ _, z, Set.mem_univ _, ?_, hconn⟩
@@ -739,13 +763,11 @@ theorem frpCrossingEvent_antitone (K : FiniteRangeKernel d) {m n : ℕ}
   intro hzm
   exact hzout (box_mono d (by omega) hzm)
 
-theorem frpCrossProb_antitone (K : FiniteRangeKernel d) (beta : ℝ) :
+lemma frpCrossProb_antitone (K : FiniteRangeKernel d) (beta : ℝ) :
     Antitone (frpCrossProb K beta) := fun _ _ hmn =>
   measureReal_mono (frpCrossingEvent_antitone K hmn) (measure_ne_top _ _)
 
-
-
-theorem frp_subcritical_oneStep (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frp_subcritical_oneStep (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) (h0S : (0 : Site d) ∈ S)
     (L : ℕ) (hL : 1 ≤ L) (hRL : K.range ≤ L)
     (hSbox : (S : Set (Site d)) ⊆ box d (L - K.range))
@@ -775,7 +797,6 @@ theorem frp_subcritical_oneStep (K : FiniteRangeKernel d) (beta : ℝ)
   have hBS : ∀ z ∈ B, z ∉ S := by
     intro z hzout hzS
     apply hzout
-    change z ∈ box d (n - 1)
     rw [← show (T : Set (Site d)) = box d (n - 1) by
       ext w
       simp only [T, Finset.mem_coe, Set.Finite.mem_toFinset]]
@@ -827,7 +848,7 @@ theorem frp_subcritical_oneStep (K : FiniteRangeKernel d) (beta : ℝ)
       unfold frpPhi
       rw [Finset.sum_mul]
 
-theorem frpPhi_nonneg (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frpPhi_nonneg (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) : 0 ≤ frpPhi K beta S := by
   unfold frpPhi
   apply Finset.sum_nonneg
@@ -835,9 +856,7 @@ theorem frpPhi_nonneg (K : FiniteRangeKernel d) (beta : ℝ)
   exact mul_nonneg (frpEdgeParam K beta s(q.1, q.2)).coe_nonneg
     measureReal_nonneg
 
-
-
-theorem frp_subcritical_geometric (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frp_subcritical_geometric (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) (h0S : (0 : Site d) ∈ S)
     (hphi : frpPhi K beta S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hRL : K.range ≤ L)
@@ -870,9 +889,8 @@ theorem frp_subcritical_geometric (K : FiniteRangeKernel d) (beta : ℝ)
       rw [show r⁻¹ * r ^ (j + 1) = r ^ j from by field_simp; ring]
       exact hj
 
-
-
-
+/-- **Subcritical exponential decay** (Duminil-Copin–Tassion 2016) for finite-range percolation: if
+`φ_β(S) < 1` for some `S ∋ 0` inside `Λ_{L-R}`, then `P_β(0 ↔ ∂Λ_n) ≤ C e^{-cn}`. -/
 theorem frp_subcritical_decay (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) (h0S : (0 : Site d) ∈ S)
     (hphi : frpPhi K beta S < 1)
@@ -885,7 +903,9 @@ theorem frp_subcritical_decay (K : FiniteRangeKernel d) (beta : ℝ)
   exact geometric_subseq_antitone_decay' hL hr0 hr1 (by positivity)
     (frpCrossProb_antitone K beta) hsub
 
-theorem frpEdgeParam_eq_zero_of_nonpos (K : FiniteRangeKernel d)
+/-! ## F. The critical point `β̃_c(K)` -/
+
+lemma frpEdgeParam_eq_zero_of_nonpos (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta ≤ 0) (e : Sym2 (Site d)) :
     frpEdgeParam K beta e = 0 := by
   unfold frpEdgeParam
@@ -899,7 +919,7 @@ theorem frpEdgeParam_eq_zero_of_nonpos (K : FiniteRangeKernel d)
         | _ x y => exact K.nonneg (y - x)))
   linarith
 
-theorem frpPhi_eq_zero_of_nonpos (K : FiniteRangeKernel d)
+lemma frpPhi_eq_zero_of_nonpos (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta ≤ 0) (S : Finset (Site d)) :
     frpPhi K beta S = 0 := by
   unfold frpPhi
@@ -908,17 +928,16 @@ theorem frpPhi_eq_zero_of_nonpos (K : FiniteRangeKernel d)
   rw [frpEdgeParam_eq_zero_of_nonpos K hbeta]
   simp
 
-
-
-
+/-- The `β ≥ 0` such that every `γ ∈ [0, β]` has a witness `S ∋ 0` with `φ_γ(S) < 1`. -/
 def frpSubcriticalSet (K : FiniteRangeKernel d) : Set ℝ :=
   {beta | 0 ≤ beta ∧ ∀ gamma, 0 ≤ gamma → gamma ≤ beta →
     ∃ S : Finset (Site d), (0 : Site d) ∈ S ∧ frpPhi K gamma S < 1}
 
+/-- The critical point `β̃_c(K) = sup frpSubcriticalSet K`. -/
 noncomputable def frpTildeBetaC (K : FiniteRangeKernel d) : ℝ :=
   sSup (frpSubcriticalSet K)
 
-theorem frpSubcriticalSet_nonempty (K : FiniteRangeKernel d) :
+lemma frpSubcriticalSet_nonempty (K : FiniteRangeKernel d) :
     (frpSubcriticalSet K).Nonempty := by
   refine ⟨0, le_rfl, ?_⟩
   intro gamma hgamma0 hgamma
@@ -928,9 +947,7 @@ theorem frpSubcriticalSet_nonempty (K : FiniteRangeKernel d) :
   rw [frpPhi_eq_zero_of_nonpos K le_rfl]
   norm_num
 
-
-
-theorem exists_frpPhi_witness_of_lt_tildeBetaC (K : FiniteRangeKernel d)
+lemma exists_frpPhi_witness_of_lt_tildeBetaC (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta < frpTildeBetaC K) :
     ∃ S : Finset (Site d), (0 : Site d) ∈ S ∧ frpPhi K beta S < 1 := by
   by_cases hb0 : beta < 0
@@ -943,12 +960,7 @@ theorem exists_frpPhi_witness_of_lt_tildeBetaC (K : FiniteRangeKernel d)
       exists_lt_of_lt_csSup (frpSubcriticalSet_nonempty K) hbeta
     exact hgamma.2 beta hb0' hbg.le
 
-
-
-
-
-
-
+/-- Exponential decay of the one-arm probability for every `β < β̃_c(K)`. -/
 theorem frp_subcritical_decay_of_lt_tildeBetaC (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta < frpTildeBetaC K) :
     ∃ c > 0, ∃ C > 0, ∀ n,

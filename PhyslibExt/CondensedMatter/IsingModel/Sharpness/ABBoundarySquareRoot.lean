@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryLimit
@@ -18,6 +15,44 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildePcBetaForm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PcUpperViaFK
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarTopology
 
+/-!
+# The mean-field lower bound `M(β̃_c, h) ≥ c √h`
+
+At and above the critical point `β̃_c` of bond percolation on `ℤ^d`, the magnetization with a ghost
+field satisfies `M(β, h) ≥ c √h` for small `h > 0`: the critical exponent `δ` is at most `2`.
+
+## i. Overview
+
+For unit couplings on `ℤ^d` every row sum is `2d` (section A). The forward characteristic bound
+(`abfc_abig_forward_characteristic_of_exhaustion`) applies with `J₀ = 2d` (section B). Above `p̃_c`
+the finite-volume mean-field inequality makes `b ↦ b (1 - M_n(b))` antitone; passing to the limit
+and combining with the characteristic bound gives `1 - M ≤ 2dβ M ∂_h M` (section C). Integrating
+this differential inequality in `h` yields `M(h) ≥ c √h` (section D). `abbs_perco_meanfield_sqrt`
+is proved for every `β` with `p̃_c ≤ 1 - e^{-β}`; `abbs_perco_meanfield_sqrt_critical` takes
+`p̃_c < 1` as a hypothesis; `abbs_perco_meanfield_sqrt_unconditional` discharges it for `d ≥ 2` and
+is unconditional.
+
+## ii. Key results
+
+- `abbs_forward_characteristic` : the forward characteristic bound on `ℤ^d`
+- `abbs_infinite_field_meanfield` : `1 - M ≤ 2dβ M ∂_h M` for `p(β) ≥ p̃_c`
+- `abbs_field_sqrt_lower_bound_pos` : `1 - m ≤ K m m'` implies `m(h) ≥ c √h`
+- `abbs_perco_meanfield_sqrt_unconditional` : `M(β̃_c, h) ≥ c √h` for `d ≥ 2`
+
+## iii. Table of contents
+
+- A. Row sums of the lattice coupling
+- B. The forward characteristic
+- C. The field mean-field inequality
+- D. Integration in the field
+- E. The square-root lower bound
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+-/
+
 @[expose] public section
 
 open Filter Finset Set SimpleGraph Topology
@@ -25,35 +60,33 @@ open Filter Finset Set SimpleGraph Topology
 namespace StatMech
 namespace Sharpness
 
-open ConfigSpace Lattice
+open ConfigSpace StatMech.Lattice
 open StatMech.Percolation
 
+/-! ## A. Row sums of the lattice coupling -/
 
-
-theorem abbs_latticeCoupling_translate {d : Nat} (x u v : Site d) :
+lemma abbs_latticeCoupling_translate {d : Nat} (x u v : Site d) :
     abblLatticeCoupling d s(FK.fktc_translate x u, FK.fktc_translate x v) =
       abblLatticeCoupling d s(u, v) := by
   rw [abblLatticeCoupling_mk, abblLatticeCoupling_mk]
   exact if_congr (FK.fktc_translate_adj x u v) rfl rfl
 
-
-theorem abbs_latticeCoupling_row_summable {d : Nat} (x : Site d) :
+lemma abbs_latticeCoupling_row_summable {d : Nat} (x : Site d) :
     Summable (fun y ↦ if (hypercubicLattice d).Adj x y
       then abblLatticeCoupling d s(x, y) else 0) := by
   apply summable_of_ne_finset_zero
     (s := (hypercubicLattice d).neighborFinset x)
   intro y hy
-  rw [if_neg]
+  rw [ite_eq_right]
   intro hxy
   exact hy ((mem_neighborFinset (hypercubicLattice d) x y).mpr hxy)
 
-
-theorem abbs_latticeCoupling_row_tsum {d : Nat} (x : Site d) :
+lemma abbs_latticeCoupling_row_tsum {d : Nat} (x : Site d) :
     (∑' y, if (hypercubicLattice d).Adj x y
       then abblLatticeCoupling d s(x, y) else 0) = (2 * d : Real) := by
   rw [tsum_eq_sum (s := (hypercubicLattice d).neighborFinset x) (by
     intro y hy
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hxy
     exact hy ((mem_neighborFinset (hypercubicLattice d) x y).mpr hxy))]
   calc
@@ -64,12 +97,11 @@ theorem abbs_latticeCoupling_row_tsum {d : Nat} (x : Site d) :
       apply Finset.sum_congr rfl
       intro y hy
       have hxy := (mem_neighborFinset (hypercubicLattice d) x y).mp hy
-      rw [if_pos hxy, abblLatticeCoupling_mk, if_pos hxy]
+      rw [ite_eq_left hxy, abblLatticeCoupling_mk, ite_eq_left hxy]
     _ = (2 * d : Real) := by
       simp [card_neighborFinset_eq_degree, degree_eq]
 
-
-theorem abbs_latticeCoupling_window_row {d : Nat} (S : Finset (Site d))
+lemma abbs_latticeCoupling_window_row {d : Nat} (S : Finset (Site d))
     (x : S) :
     abcrIncidentCoupling
       (abigWindowGraph (hypercubicLattice d) S)
@@ -81,8 +113,10 @@ theorem abbs_latticeCoupling_window_row {d : Nat} (S : Finset (Site d))
   · intro y
     exact le_of_eq (abbs_latticeCoupling_row_tsum y)
 
+/-! ## B. The forward characteristic -/
 
-
+/-- The forward characteristic bound `M(β + t, h) ≤ M(β, h + 2d (M(β, h) + ε) t)` for small `t ≥ 0`,
+on `ℤ^d` with unit couplings. -/
 theorem abbs_forward_characteristic {d : Nat} (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h) :
     ∀ epsilon, 0 < epsilon → ∃ delta > 0,
@@ -112,9 +146,9 @@ theorem abbs_forward_characteristic {d : Nat} (beta h : Real)
   · exact ablGhostWindow_mono d
   · exact ablGhostWindow_cover d
 
+/-! ## C. The field mean-field inequality -/
 
-
-theorem abbs_finite_integratingFactor_antitone {d n : Nat} (hn : 0 < n)
+lemma abbs_finite_integratingFactor_antitone {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h)
     (hcrit : tildePc d ≤ bondParam beta) :
     AntitoneOn (fun b ↦ b * (1 - abbMag d n b h)) (Ici beta) := by
@@ -138,7 +172,7 @@ theorem abbs_finite_integratingFactor_antitone {d n : Nat} (hn : 0 < n)
       ((hasDerivAt_const (x := b) (1 : Real)).sub hN)
     change deriv (fun x ↦ x * (1 - N x)) b =
       1 - N b - b * deriv N b
-    convert hg.deriv using 1 <;> first | rfl | (simp only [id_eq, Pi.sub_apply]; ring1) | ring1
+    convert hg.deriv using 1 <;> first | rfl | (simp only [id_eq, Pi.sub_apply]; ring1)
   apply antitoneOn_of_deriv_nonpos (convex_Ici beta)
   · intro b hb
     exact (hdiffg b).continuousAt.continuousWithinAt
@@ -155,10 +189,7 @@ theorem abbs_finite_integratingFactor_antitone {d n : Nat} (hn : 0 < n)
       b * deriv (fun x ↦ abbMag d n x h) b ≤ 0
     linarith
 
-
-
-
-theorem abbs_infinite_integratingFactor_antitone {d : Nat}
+lemma abbs_infinite_integratingFactor_antitone {d : Nat}
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 < h)
     (hcrit : tildePc d ≤ bondParam beta) :
     AntitoneOn
@@ -177,9 +208,7 @@ theorem abbs_infinite_integratingFactor_antitone {d : Nat}
     abbs_finite_integratingFactor_antitone (Nat.succ_pos n)
       beta h hbeta hh.le hcrit hb₁ hb₂ hb₁₂
 
-
-
-
+/-- For `p̃_c ≤ 1 - e^{-β}` and `h > 0`: `1 - M(β, h) ≤ 2dβ M(β, h) ∂_h M(β, h)`. -/
 theorem abbs_infinite_field_meanfield {d : Nat} (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h)
     (hcrit : tildePc d ≤ bondParam beta) :
@@ -296,9 +325,9 @@ theorem abbs_infinite_field_meanfield {d : Nat} (beta h : Real)
           beta * J0 * (M beta h * dh) + beta * J0 * dh by ring, hzero,
           add_zero]
 
+/-! ## D. Integration in the field -/
 
-
-theorem abbs_field_sq_lower_bound_pos (K : Real) (hK : 0 < K)
+lemma abbs_field_sq_lower_bound_pos (K : Real) (hK : 0 < K)
     (m : Real → Real)
     (hdiff : ∀ h ∈ Ioi (0 : Real), DifferentiableAt Real m h)
     (hmono : ∀ h ∈ Ioi (0 : Real), 0 ≤ deriv m h)
@@ -325,7 +354,7 @@ theorem abbs_field_sq_lower_bound_pos (K : Real) (hK : 0 < K)
     have hlin : HasDerivAt (fun t : Real ↦ t / K) (1 / K) h := by
       simpa using (hasDerivAt_id h).div_const K
     have hg := hpow.sub hlin
-    convert hg.deriv using 1 <;> simp [g, pow_one] <;> ring
+    convert hg.deriv using 1; simp
   have hcut : ∀ epsilon ∈ Ioc (0 : Real) h₀,
       -epsilon / K ≤ g h₀ := by
     intro epsilon hepsilon
@@ -378,8 +407,8 @@ theorem abbs_field_sq_lower_bound_pos (K : Real) (hK : 0 < K)
   dsimp [g] at hg0
   linarith
 
-
-
+/-- If `m ≥ 0` is nondecreasing and `1 - m ≤ K m m'` on `h > 0`, then `m(h) ≥ c √h` for
+`0 < h ≤ K/4`. -/
 theorem abbs_field_sqrt_lower_bound_pos (K : Real) (hK : 0 < K)
     (m : Real → Real)
     (hdiff : ∀ h ∈ Ioi (0 : Real), DifferentiableAt Real m h)
@@ -410,10 +439,9 @@ theorem abbs_field_sqrt_lower_bound_pos (K : Real) (hK : 0 < K)
   rw [Real.sqrt_div hh.1.le] at hroot
   simpa [div_eq_mul_inv, mul_comm] using hroot
 
+/-! ## E. The square-root lower bound -/
 
-
-
-
+/-- For `p̃_c ≤ 1 - e^{-β}`: `M(β, h) ≥ c √h` for `0 < h ≤ 2dβ/4`. -/
 theorem abbs_perco_meanfield_sqrt {d : Nat} (hd : 0 < d)
     (beta : Real) (hbeta : 0 < beta)
     (hcrit : tildePc d ≤ bondParam beta) :
@@ -459,8 +487,7 @@ theorem abbs_perco_meanfield_sqrt {d : Nat} (hd : 0 < d)
     simpa [K, m, mul_assoc] using
       abbs_infinite_field_meanfield beta h hbeta.le hh hcrit
 
-
-
+/-- At `β = β̃_c`, assuming `p̃_c < 1`: `M(β̃_c, h) ≥ c √h` for small `h > 0`. -/
 theorem abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
     (htc1 : (tildePc d : Real) < 1) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real)
@@ -476,8 +503,8 @@ theorem abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
       pBeta_betaTildeC one_pos htc1]
   exact abbs_perco_meanfield_sqrt hd (betaTildeC d 1) hbeta hparam.ge
 
-
-
+/-- **Mean-field bound `δ ≤ 2`** (Aizenman–Barsky 1987) for bond percolation on `ℤ^d`, `d ≥ 2`:
+`M(β̃_c, h) ≥ c √h` for `0 < h ≤ 2d β̃_c/4`. Unconditional. -/
 theorem abbs_perco_meanfield_sqrt_unconditional {d : Nat} (hd : 2 ≤ d) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real)
         (betaTildeC d 1 * (2 * d : Real) / 4),

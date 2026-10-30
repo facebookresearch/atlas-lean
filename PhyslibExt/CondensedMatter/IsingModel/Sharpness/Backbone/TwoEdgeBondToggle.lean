@@ -6,20 +6,61 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondProgram
 
+/-!
+# The copy toggle for the two-edge program on two-unit fluxes
+
+For the two-edge bondwise program and the current with one unit on each of two edges `e`, `f`
+forming an active two-edge path, toggling the labeled copy of `f` exchanges the full-run and
+residual-vacuum events with the active-segment and lifted-residual events.
+
+## i. Overview
+
+The current `twoUnitFlux e f` has exactly two labeled edge copies, one on `e` and one on `f`, so a
+subset of copies is one of `∅`, `{e}`, `{f}`, `{e, f}` and determines one of the four currents
+`0`, `unit e`, `unit f`, `e + f`. The file computes, for each of these currents, whether it lies in
+the full run `[e, f]`, the active segment `e`, the residual vacuum after `e` and the lifted
+residual run `[f]`. From this truth table, toggling the copy of `f` is a covariance between the
+full run and the active segment and between the residual vacuum and the lifted residual
+(`twoUnit_componentwise_covariance`), which gives the pair-event toggle
+`twoUnit_pair_toggle`. `TwoUnitComponentwiseEventTable` packages the truth table, and the
+covariance is equivalent to it.
+
+Headline fidelity: `twoUnit_componentwise_covariance` and `twoUnit_pair_toggle` are proved
+unconditionally, under the explicit geometric hypotheses on `e`, `f` (`hne`, `hfirst`: the scan
+admits `e` first, `hactiveE`, `hactiveF`, `hpath`). They concern the two-unit flux only and do not
+give the chain rule (P2) for the program in general. `twoUnit_pair_toggle_of_eventTable` is
+conditional on `TwoUnitComponentwiseEventTable`.
+
+## ii. Key results
+
+- `BackboneTwoEdgeBondToggle.firstCopy`, `secondCopy` : the two labeled copies of `twoUnitFlux e f`
+- `BackboneTwoEdgeBondToggle.program_complete_canonical_singleton_unitFlux` : a unit flux on an
+  active edge completes the one-letter word
+- `BackboneTwoEdgeBondToggle.twoUnit_componentwise_covariance` : toggling the copy of `f` is a
+  componentwise covariance (unconditional, under the geometric hypotheses)
+- `BackboneTwoEdgeBondToggle.twoUnit_pair_toggle` : the pair-event toggle on the two-unit flux
+- `BackboneTwoEdgeBondToggle.twoUnit_componentwise_covariance_iff_eventTable` : the covariance is
+  equivalent to the event truth table
+
+## iii. Table of contents
+
+- A. The two copies of a two-unit flux
+- B. Unit fluxes and single segments
+- C. The residual edge after the first segment
+- D. Pair events that cannot occur
+- E. Profiles of subsets of copies
+- F. Covariance of the full run with the active segment
+- G. Covariance of the residual vacuum with the lifted residual
+- H. The componentwise toggle
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 @[expose] public section
 
 open SimpleGraph Finset
@@ -42,36 +83,37 @@ open BackboneDeterminedCutSwitching
 open BackboneP2CoordinateReindex
 open FluxEdgeCopy
 
+/-- Adjacency is decided classically in this file. -/
 noncomputable local instance toggleDecidableAdj
     (G : SimpleGraph V) : DecidableRel G.Adj := Classical.decRel _
 
+/-! ## A. The two copies of a two-unit flux -/
 
-def firstCopy (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
+/-- The labeled copy of the edge `e` in the two-unit flux. -/
+def firstCopy (G : SimpleGraph V) (e f : G.edgeFinset) (_hne : e ≠ f) :
     Copy G (twoUnitFlux G e f) :=
   ⟨e, ⟨0, by simp [twoUnitFlux, unitFlux]⟩⟩
 
-
-def secondCopy (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
+/-- The labeled copy of the edge `f` in the two-unit flux. -/
+def secondCopy (G : SimpleGraph V) (e f : G.edgeFinset) (_hne : e ≠ f) :
     Copy G (twoUnitFlux G e f) :=
-  ⟨f, ⟨0, by simp [twoUnitFlux, unitFlux, hne]⟩⟩
+  ⟨f, ⟨0, by simp [twoUnitFlux, unitFlux]⟩⟩
 
-@[simp] theorem firstCopy_edge
+@[simp] lemma firstCopy_edge
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     (firstCopy G e f hne).1 = e := rfl
 
-@[simp] theorem secondCopy_edge
+@[simp] lemma secondCopy_edge
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     (secondCopy G e f hne).1 = f := rfl
 
-theorem firstCopy_ne_secondCopy
+lemma firstCopy_ne_secondCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     firstCopy G e f hne ≠ secondCopy G e f hne := by
   intro h
   exact hne (congrArg Sigma.fst h)
 
-
-
-theorem copy_eq_first_or_second
+lemma copy_eq_first_or_second
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f)
     (i : Copy G (twoUnitFlux G e f)) :
     i = firstCopy G e f hne ∨ i = secondCopy G e f hne := by
@@ -102,8 +144,7 @@ theorem copy_eq_first_or_second
     simp [twoUnitFlux, unitFlux, hie] at hj
     omega
 
-
-theorem copy_univ_eq_pair
+lemma copy_univ_eq_pair
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     (univ : Finset (Copy G (twoUnitFlux G e f))) =
       {firstCopy G e f hne, secondCopy G e f hne} := by
@@ -111,9 +152,7 @@ theorem copy_univ_eq_pair
   simp only [mem_univ, mem_insert, mem_singleton, true_iff]
   exact copy_eq_first_or_second G e f hne i
 
-
-
-theorem subset_eq_of_twoUnitFlux
+lemma subset_eq_of_twoUnitFlux
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f)
     (T : Finset (Copy G (twoUnitFlux G e f))) :
     T = ∅ ∨
@@ -162,11 +201,8 @@ theorem subset_eq_of_twoUnitFlux
       · exact heT hi
       · exact hfT hi
 
-
-
-
-
-theorem activeSegmentFiber_unitFlux
+/-! ## B. Unit fluxes and single segments -/
+lemma activeSegmentFiber_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     shb_ActiveSegmentFiber d (canonicalEdgeSegment d.graph e) hactive
@@ -254,11 +290,7 @@ theorem activeSegmentFiber_unitFlux
   rw [hset]
   simp
 
-
-
-
-
-theorem scan_after_unitFlux_none
+lemma scan_after_unitFlux_none
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     scan.firstAdmissible
         (fun _ b => fluxBitConfig d.graph oddBit (unitFlux d.graph e) b)
@@ -274,23 +306,22 @@ theorem scan_after_unitFlux_none
   intro htrue
   change fluxBitConfig d.graph oddBit (unitFlux d.graph e) b = true at htrue
   unfold fluxBitConfig at htrue
-  rw [dif_pos hbG] at htrue
+  rw [dite_eq_left hbG] at htrue
   have hsub : (⟨b, hbG⟩ : d.graph.edgeFinset) ≠ e := by
     intro h
     exact hbne (congrArg Subtype.val h)
   simp [oddBit, unitFlux, hsub] at htrue
 
-
-
+/-- The unit flux on an active edge completes the program along the one-letter word. -/
 theorem program_complete_canonical_singleton_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     BackboneTwoEdgeBondProgram.program.CompleteEvent d
       [canonicalEdgeSegment d.graph e] (unitFlux d.graph e) := by
   constructor
-  · simp [BackboneTwoEdgeBondProgram.program,
-      BackboneTwoEdgeBondProgram.encode, BondwiseSuffixEvent,
-      edgeOfSegment?_canonicalEdgeSegment]
+  · simp only [BondwiseSuffixEvent, BackboneTwoEdgeBondProgram.program,
+      BackboneTwoEdgeBondProgram.encode, edgeOfSegment?_canonicalEdgeSegment,
+      shb_DynamicEdgeExploration.selects_cons, shb_DynamicEdgeExploration.selects_nil, and_true]
     exact BackboneConcreteBondProgram.scan_firstAdmissible_unitFlux d e
   · have hterminal :
         canonicalEdgeSegment d.graph e ∈ d.active /\
@@ -311,8 +342,8 @@ theorem program_complete_canonical_singleton_unitFlux
       BackboneTwoEdgeBondProgram.boolSources,
       e.2] using hterminal
 
-
-theorem secondEdge_mem_delete
+/-! ## C. The residual edge after the first segment -/
+lemma secondEdge_mem_delete
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     f.1 ∈ (d.graph.deleteEdges (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset := by
   rw [SimpleGraph.mem_edgeFinset, SimpleGraph.edgeSet_deleteEdges,
@@ -322,23 +353,20 @@ theorem secondEdge_mem_delete
   intro hfe
   exact hne (Subtype.ext hfe.symm)
 
-
+/-- The edge `f` as an edge of the residual graph after deleting the first segment `e`. -/
 noncomputable def residualEdge
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     (d.graph.deleteEdges (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset :=
   ⟨f.1, secondEdge_mem_delete d e f hne⟩
 
-
-
-theorem residualEdge_canonical_eq
+lemma residualEdge_canonical_eq
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     canonicalEdgeSegment
         (d.graph.deleteEdges (canonicalEdgeSegment d.graph e).edgeSet)
         (residualEdge d e f hne) = canonicalEdgeSegment d.graph f := by
   simp [canonicalEdgeSegment, residualEdge]
 
-
-theorem distinct_canonical_compatible
+lemma distinct_canonical_compatible
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     shb_BackboneExplorationDomain.compatible
       (canonicalEdgeSegment d.graph e) (canonicalEdgeSegment d.graph f) := by
@@ -346,9 +374,7 @@ theorem distinct_canonical_compatible
     canonicalEdgeSegment_edgeSet, canonicalEdgeSegment_edgeSet]
   exact Set.disjoint_singleton.mpr (fun hef => hne (Subtype.ext hef))
 
-
-
-theorem residualEdge_active_advance
+lemma residualEdge_active_advance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hactive : canonicalEdgeSegment d.graph f ∈ d.active) :
     canonicalEdgeSegment
@@ -366,9 +392,7 @@ theorem residualEdge_active_advance
   rw [residualEdge_canonical_eq]
   simp [hactive, distinct_canonical_compatible d e f hne]
 
-
-
-theorem extendFlux_residual_unitFlux
+lemma extendFlux_residual_unitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     extendFlux (d.graph.deleteEdges_le (canonicalEdgeSegment d.graph e).edgeSet)
         (unitFlux
@@ -403,9 +427,7 @@ theorem extendFlux_residual_unitFlux
       exact (hg (secondEdge_mem_delete d e f hne)).elim
     · simp [hgf]
 
-
-
-theorem firstEndpoints_ne_secondEndpoints
+lemma firstEndpoints_ne_secondEndpoints
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f)) :
@@ -427,7 +449,7 @@ theorem firstEndpoints_ne_secondEndpoints
   rw [Finset.mem_insert, Finset.mem_singleton] at ha
   exact ha.elim hastart hpath.2
 
-theorem firstEndpoints_ne_pairBoundary
+lemma firstEndpoints_ne_pairBoundary
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f)) :
@@ -456,7 +478,7 @@ theorem firstEndpoints_ne_pairBoundary
   rw [← heq] at hmem
   exact hnotFirst hmem
 
-theorem secondEndpoints_ne_pairBoundary
+lemma secondEndpoints_ne_pairBoundary
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f)) :
@@ -485,14 +507,13 @@ theorem secondEndpoints_ne_pairBoundary
   rw [← heq] at hmem
   exact hnotSecond hmem
 
-
-
-@[simp] theorem sources_ofEdgeFun_zero (G : SimpleGraph V) :
+/-! ## D. Pair events that cannot occur -/
+@[simp] lemma sources_ofEdgeFun_zero (G : SimpleGraph V) :
     sources G (ofEdgeFun G (0 : G.edgeFinset -> Nat)) = ∅ := by
   ext x
   simp [mem_sources, incidentFlux, ofEdgeFun]
 
-theorem program_pair_zero_false
+lemma program_pair_zero_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment d.graph e)
       (canonicalEdgeSegment d.graph f)) :
@@ -510,7 +531,7 @@ theorem program_pair_zero_false
     _ = sources d.graph (ofEdgeFun d.graph 0) := hsource.symm
     _ = ∅ := sources_ofEdgeFun_zero d.graph
 
-theorem program_pair_unitFlux_first_false
+lemma program_pair_unitFlux_first_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment d.graph e)
       (canonicalEdgeSegment d.graph f)) :
@@ -528,7 +549,7 @@ theorem program_pair_unitFlux_first_false
   rw [sources_unitFlux] at hsource
   exact firstEndpoints_ne_pairBoundary d.graph e f hpath hsource
 
-theorem program_pair_unitFlux_second_false
+lemma program_pair_unitFlux_second_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment d.graph e)
       (canonicalEdgeSegment d.graph f)) :
@@ -546,7 +567,7 @@ theorem program_pair_unitFlux_second_false
   rw [sources_unitFlux] at hsource
   exact secondEndpoints_ne_pairBoundary d.graph e f hpath hsource
 
-theorem activeSegmentFiber_zero_false
+lemma activeSegmentFiber_zero_false
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active) :
     ¬shb_ActiveSegmentFiber d (canonicalEdgeSegment d.graph e) hs 0 := by
@@ -558,9 +579,9 @@ theorem activeSegmentFiber_zero_false
   have hmem : (canonicalEdgeSegment d.graph e).1 ∈ (∅ : Finset V) := by
     rw [hsource']
     simp
-  simpa using hmem
+  simp at hmem
 
-theorem activeSegmentFiber_second_unitFlux_false
+lemma activeSegmentFiber_second_unitFlux_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment d.graph e)
@@ -571,7 +592,7 @@ theorem activeSegmentFiber_second_unitFlux_false
   rw [sources_unitFlux] at hsource
   exact firstEndpoints_ne_secondEndpoints d.graph e f hpath hsource.symm
 
-theorem activeSegmentFiber_twoUnitFlux_false
+lemma activeSegmentFiber_twoUnitFlux_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment d.graph e)
@@ -582,9 +603,8 @@ theorem activeSegmentFiber_twoUnitFlux_false
   rw [sources_twoUnitFlux] at hsource
   exact firstEndpoints_ne_pairBoundary d.graph e f hpath hsource.symm
 
-
-
-theorem profileFlux_singleton_apply
+/-! ## E. Profiles of subsets of copies -/
+lemma profileFlux_singleton_apply
     (G : SimpleGraph V) (m : G.edgeFinset -> Nat)
     (i : Copy G m) (g : G.edgeFinset) :
     profileFlux G m {i} g = if i.1 = g then 1 else 0 := by
@@ -592,7 +612,7 @@ theorem profileFlux_singleton_apply
   rw [Finset.filter_singleton]
   by_cases hig : i.1 = g <;> simp [hig]
 
-theorem profileFlux_pair_apply
+lemma profileFlux_pair_apply
     (G : SimpleGraph V) (m : G.edgeFinset -> Nat)
     (i j : Copy G m) (hij : i ≠ j) (g : G.edgeFinset) :
     profileFlux G m {i, j} g =
@@ -602,30 +622,32 @@ theorem profileFlux_pair_apply
   by_cases hig : i.1 = g <;> by_cases hjg : j.1 = g <;>
     simp [hig, hjg, hij]
 
-@[simp] theorem profileFlux_empty_twoUnitFlux
-    (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
+@[simp] lemma profileFlux_empty_twoUnitFlux
+    (G : SimpleGraph V) (e f : G.edgeFinset) (_hne : e ≠ f) :
     profileFlux G (twoUnitFlux G e f)
         (∅ : Finset (Copy G (twoUnitFlux G e f))) = 0 := by
   funext g
   simp [profileFlux]
 
-@[simp] theorem profileFlux_firstCopy
+@[simp] lemma profileFlux_firstCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     profileFlux G (twoUnitFlux G e f) {firstCopy G e f hne} =
       unitFlux G e := by
   funext g
   rw [profileFlux_singleton_apply]
-  simp [firstCopy, unitFlux, eq_comm] <;> by_cases h : e = g <;> simp [h]
+  simp [firstCopy, unitFlux, eq_comm]
+  by_cases h : e = g <;> simp [h]
 
-@[simp] theorem profileFlux_secondCopy
+@[simp] lemma profileFlux_secondCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     profileFlux G (twoUnitFlux G e f) {secondCopy G e f hne} =
       unitFlux G f := by
   funext g
   rw [profileFlux_singleton_apply]
-  simp [secondCopy, unitFlux, eq_comm] <;> by_cases h : f = g <;> simp [h]
+  simp [secondCopy, unitFlux, eq_comm]
+  by_cases h : f = g <;> simp [h]
 
-@[simp] theorem profileFlux_bothCopies
+@[simp] lemma profileFlux_bothCopies
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     profileFlux G (twoUnitFlux G e f)
         {firstCopy G e f hne, secondCopy G e f hne} =
@@ -636,7 +658,7 @@ theorem profileFlux_pair_apply
   simp [firstCopy, secondCopy, twoUnitFlux, unitFlux, eq_comm]
   rfl
 
-@[simp] theorem empty_symmDiff_secondCopy
+@[simp] lemma empty_symmDiff_secondCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     (∅ : Finset (Copy G (twoUnitFlux G e f))) ∆
         ({secondCopy G e f hne} :
@@ -644,12 +666,10 @@ theorem profileFlux_pair_apply
       ({secondCopy G e f hne} :
         Finset (Copy G (twoUnitFlux G e f))) := by
   ext i
-  have hfe : secondCopy G e f hne ≠ firstCopy G e f hne :=
-    (firstCopy_ne_secondCopy G e f hne).symm
   rcases copy_eq_first_or_second G e f hne i with rfl | rfl <;>
-    simp [Finset.mem_symmDiff, firstCopy_ne_secondCopy G e f hne, hfe]
+    simp [Finset.mem_symmDiff, firstCopy_ne_secondCopy G e f hne]
 
-@[simp] theorem firstCopy_symmDiff_secondCopy
+@[simp] lemma firstCopy_symmDiff_secondCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     ({firstCopy G e f hne} : Finset (Copy G (twoUnitFlux G e f))) ∆
         {secondCopy G e f hne} =
@@ -661,18 +681,16 @@ theorem profileFlux_pair_apply
   rcases copy_eq_first_or_second G e f hne i with rfl | rfl <;>
     simp [Finset.mem_symmDiff, firstCopy_ne_secondCopy G e f hne, hfe]
 
-@[simp] theorem secondCopy_symmDiff_self
+@[simp] lemma secondCopy_symmDiff_self
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     ({secondCopy G e f hne} : Finset (Copy G (twoUnitFlux G e f))) ∆
         {secondCopy G e f hne} =
       (∅ : Finset (Copy G (twoUnitFlux G e f))) := by
   ext i
-  have hfe : secondCopy G e f hne ≠ firstCopy G e f hne :=
-    (firstCopy_ne_secondCopy G e f hne).symm
   rcases copy_eq_first_or_second G e f hne i with rfl | rfl <;>
-    simp [Finset.mem_symmDiff, firstCopy_ne_secondCopy G e f hne, hfe]
+    simp
 
-@[simp] theorem bothCopies_symmDiff_secondCopy
+@[simp] lemma bothCopies_symmDiff_secondCopy
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     ({firstCopy G e f hne, secondCopy G e f hne} :
         Finset (Copy G (twoUnitFlux G e f))) ∆
@@ -685,13 +703,8 @@ theorem profileFlux_pair_apply
   rcases copy_eq_first_or_second G e f hne i with rfl | rfl <;>
     simp [Finset.mem_symmDiff, firstCopy_ne_secondCopy G e f hne, hfe]
 
-
-
-
-
-
-
-theorem bondwiseRunToggleCovariance_twoUnit_iff
+/-! ## F. Covariance of the full run with the active segment -/
+lemma bondwiseRunToggleCovariance_twoUnit_iff
     (E F : BondwiseRunSpec V)
     (G : SimpleGraph V) (e f : G.edgeFinset) (hne : e ≠ f) :
     BondwiseRunToggleCovariance E F G (twoUnitFlux G e f)
@@ -703,7 +716,8 @@ theorem bondwiseRunToggleCovariance_twoUnit_iff
   constructor
   · intro h
     refine ⟨?_, ?_, ?_, ?_⟩
-    · simpa [profileFlux_empty_twoUnitFlux G e f hne] using h (∅ : Finset (Copy G (twoUnitFlux G e f)))
+    · simpa [profileFlux_empty_twoUnitFlux G e f hne] using
+        h (∅ : Finset (Copy G (twoUnitFlux G e f)))
     · simpa [profileFlux_empty_twoUnitFlux G e f hne] using h
         ({firstCopy G e f hne} : Finset (Copy G (twoUnitFlux G e f)))
     · simpa [profileFlux_empty_twoUnitFlux G e f hne] using h
@@ -719,10 +733,7 @@ theorem bondwiseRunToggleCovariance_twoUnit_iff
     · simpa [profileFlux_empty_twoUnitFlux G e f hne] using hsecond
     · simpa [profileFlux_empty_twoUnitFlux G e f hne] using hboth
 
-
-
-
-theorem fullRun_activeHead_twoUnit_covariance
+lemma fullRun_activeHead_twoUnit_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : scan.firstAdmissible
@@ -791,16 +802,15 @@ theorem fullRun_activeHead_twoUnit_covariance
           (program_complete_canonical_pair_twoUnitFlux d e f hne hfirst
             hactiveE hactiveF hpath)
 
-
-
-theorem firstEdge_not_mem_delete
+/-! ## G. Covariance of the residual vacuum with the lifted residual -/
+lemma firstEdge_not_mem_delete
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     e.1 ∉ (d.graph.deleteEdges (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset := by
   rw [SimpleGraph.mem_edgeFinset, SimpleGraph.edgeSet_deleteEdges,
     canonicalEdgeSegment_edgeSet]
   simp
 
-theorem extendFlux_zero
+lemma extendFlux_zero
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     extendFlux (d.graph.deleteEdges_le (canonicalEdgeSegment d.graph e).edgeSet)
         (0 : (d.graph.deleteEdges
@@ -808,7 +818,7 @@ theorem extendFlux_zero
   funext g
   simp [extendFlux]
 
-theorem liftedPredicate_zero_iff
+lemma liftedPredicate_zero_iff
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (P : ((d.graph.deleteEdges
       (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset -> Nat) -> Prop) :
@@ -824,7 +834,7 @@ theorem liftedPredicate_zero_iff
   · intro hP
     exact ⟨0, extendFlux_zero d e, hP⟩
 
-theorem liftedPredicate_second_iff
+lemma liftedPredicate_second_iff
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (P : ((d.graph.deleteEdges
       (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset -> Nat) -> Prop) :
@@ -846,7 +856,7 @@ theorem liftedPredicate_second_iff
   · intro hP
     exact ⟨rF, extendFlux_residual_unitFlux d e f hne, hP⟩
 
-theorem not_lifted_first
+lemma not_lifted_first
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (P : ((d.graph.deleteEdges
       (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset -> Nat) -> Prop) :
@@ -857,7 +867,7 @@ theorem not_lifted_first
   have heq := congrFun hr e
   simp [extendFlux, firstEdge_not_mem_delete d e, unitFlux] at heq
 
-theorem not_lifted_twoUnit
+lemma not_lifted_twoUnit
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (P : ((d.graph.deleteEdges
       (canonicalEdgeSegment d.graph e).edgeSet).edgeFinset -> Nat) -> Prop) :
@@ -869,7 +879,7 @@ theorem not_lifted_twoUnit
   simp [extendFlux, firstEdge_not_mem_delete d e, twoUnitFlux,
     unitFlux, hne] at heq
 
-theorem vacuum_zero
+lemma vacuum_zero
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     (residualVacuumRunSpec d (canonicalEdgeSegment d.graph e)).Event d.graph 0 := by
   rw [residualVacuumRunSpec_event]
@@ -877,7 +887,7 @@ theorem vacuum_zero
   rw [liftedPredicate_zero_iff]
   exact sources_ofEdgeFun_zero _
 
-theorem vacuum_second_false
+lemma vacuum_second_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f) :
     ¬(residualVacuumRunSpec d (canonicalEdgeSegment d.graph e)).Event d.graph
       (unitFlux d.graph f) := by
@@ -899,9 +909,9 @@ theorem vacuum_second_false
         (residualEdge d e f hne)).1 ∈ (∅ : Finset V) := by
     rw [← hsource]
     simp
-  simpa using hmem
+  simp at hmem
 
-theorem suffix_second
+lemma suffix_second
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hactiveF : canonicalEdgeSegment d.graph f ∈ d.active) :
     ((BackboneTwoEdgeBondProgram.program (V := V)).liftedResidualRunSpec d
@@ -932,7 +942,7 @@ theorem suffix_second
     (residualEdge d e f hne) (residualEdge_active_advance d e f hne hactiveF))
   exact hrun
 
-theorem suffix_zero_false
+lemma suffix_zero_false
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) :
     ¬((BackboneTwoEdgeBondProgram.program (V := V)).liftedResidualRunSpec d
       (canonicalEdgeSegment d.graph e) [canonicalEdgeSegment d.graph f]).Event
@@ -963,11 +973,7 @@ theorem suffix_zero_false
   exact complete_nil_singleton_false d' 0 (canonicalEdgeSegment d.graph f)
     hnil hcomplete
 
-
-
-
-
-theorem residualVacuum_suffix_twoUnit_truthTable
+lemma residualVacuum_suffix_twoUnit_truthTable
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hactiveF : canonicalEdgeSegment d.graph f ∈ d.active) :
@@ -1001,7 +1007,7 @@ theorem residualVacuum_suffix_twoUnit_truthTable
       rw [BondwiseSegmentProgram.liftedResidualRunSpec_event] at h
       exact not_lifted_first d e _ h
 
-theorem residualVacuum_suffix_twoUnit_covariance
+lemma residualVacuum_suffix_twoUnit_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hactiveF : canonicalEdgeSegment d.graph f ∈ d.active) :
@@ -1031,8 +1037,10 @@ theorem residualVacuum_suffix_twoUnit_covariance
       rw [BondwiseSegmentProgram.liftedResidualRunSpec_event] at h
       exact (not_lifted_first d e _ h).elim
 
+/-! ## H. The componentwise toggle -/
 
-
+/-- Toggling the copy of `f` is a covariance between the full run and the active segment, and
+between the residual vacuum and the lifted residual run. -/
 theorem twoUnit_componentwise_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
@@ -1057,8 +1065,7 @@ theorem twoUnit_componentwise_covariance
       hactiveF hpath,
     residualVacuum_suffix_twoUnit_covariance d e f hne hactiveF⟩
 
-
-
+/-- The pair-event toggle on the two-unit flux. -/
 theorem twoUnit_pair_toggle
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
@@ -1093,10 +1100,10 @@ theorem twoUnit_pair_toggle
     d.graph (twoUnitFlux d.graph e f) {secondCopy d.graph e f hne}
     hhead hresidual T
 
-
-
+/-- The truth table of the four run events on the currents `0`, `unit e`, `unit f`, `e + f` that
+expresses the componentwise covariance of the copy toggle. -/
 def TwoUnitComponentwiseEventTable
-    (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
+    (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (_hne : e ≠ f)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active) : Prop :=
   let s := canonicalEdgeSegment d.graph e
   let t := canonicalEdgeSegment d.graph f
@@ -1118,8 +1125,7 @@ def TwoUnitComponentwiseEventTable
     (vacuum.Event d.graph (twoUnitFlux d.graph e f) <->
       suffix.Event d.graph (unitFlux d.graph e)))
 
-
-
+/-- The componentwise covariance is equivalent to the event truth table. -/
 theorem twoUnit_componentwise_covariance_iff_eventTable
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active) :
@@ -1139,8 +1145,7 @@ theorem twoUnit_componentwise_covariance_iff_eventTable
     bondwiseRunToggleCovariance_twoUnit_iff]
   rfl
 
-
-
+/-- The pair-event toggle, given the event truth table. -/
 theorem twoUnit_pair_toggle_of_eventTable
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active)

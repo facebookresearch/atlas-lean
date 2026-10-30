@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BkLattice
@@ -20,6 +15,42 @@ public import MathlibExt.Probability.Percolation.ConnectionsInsideSet
 public import MathlibExt.Probability.Percolation.TranslationInvariance
 public import MathlibExt.Probability.Percolation.SharpnessTheorem
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanContour
+
+/-!
+# Finite susceptibility below `β̃_c` for percolation
+
+If some finite set `S ∋ 0` has `φ_p(S) < 1`, the susceptibility `∑_x P_p(0 ↔ x)` is finite and
+every finite-volume susceptibility is at most `|S| / (1 - φ_p(S))`.
+
+## i. Overview
+
+`φ_p(S)` is translation invariant (section A). In a finite set `Λ`, take the site `u` maximizing
+the restricted susceptibility `χ_Λ(u) = ∑_{x ∈ Λ} P(u ↔ x in Λ)`; the BK criterion on the lattice
+(`bk_criterion_infinite_lattice_singleton`) applied to the translate of `S` at `u` gives
+`χ_Λ(u) ≤ |S| + φ(S) χ_Λ(u)` (section B). Letting `Λ` grow gives summability of the two-point
+function (section D). For `β < β̃_c^{perc}` a witness `S` exists, so the susceptibility is finite
+there (`finite_susceptibility_of_lt_tildeBetaCPerco`). All results are proved unconditionally.
+
+## ii. Key results
+
+- `shk_phi_translate` : translation invariance of `φ`
+- `shk_restrictedSusceptibility_le` : `χ_Λ(0) ≤ |S| / (1 - φ(S))`
+- `exists_phiBeta_witness_of_lt_tildeBetaCPerco` : a witness `S` exists below `β̃_c^{perc}`
+- `shk_twoPoint_summable_of_phi_lt_one` : summability of `x ↦ P(0 ↔ x)`
+- `finite_susceptibility_of_lt_tildeBetaCPerco` : finite susceptibility below `β̃_c^{perc}`
+
+## iii. Table of contents
+
+- A. Translation invariance of `φ`
+- B. The restricted susceptibility
+- C. Monotonicity in the parameter
+- D. The two-point function
+
+## iv. References
+
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+-/
 
 @[expose] public section
 
@@ -35,12 +66,14 @@ open StatMech.Lattice StatMech.Percolation
 
 variable {d : ℕ}
 
+/-! ## A. Translation invariance of `φ` -/
 
+/-- The translate `g + S` of a finite set of sites. -/
 noncomputable def shk_translateFinset (g : Multiplicative (Site d))
     (S : Finset (Site d)) : Finset (Site d) :=
   S.image (fun x => g • x)
 
-@[simp] theorem shk_mem_translateFinset_smul
+@[simp] lemma shk_mem_translateFinset_smul
     (g : Multiplicative (Site d)) (S : Finset (Site d)) (x : Site d) :
     g • x ∈ shk_translateFinset g S ↔ x ∈ S := by
   classical
@@ -55,15 +88,15 @@ noncomputable def shk_translateFinset (g : Multiplicative (Site d))
   · intro hx
     exact Finset.mem_image.mpr ⟨x, hx, rfl⟩
 
-theorem shk_translateFinset_card (g : Multiplicative (Site d))
+lemma shk_translateFinset_card (g : Multiplicative (Site d))
     (S : Finset (Site d)) :
     (shk_translateFinset g S).card = S.card := by
   classical
   exact Finset.card_image_of_injective S
     (MulAction.toPerm (β := Site d) g).injective
 
-
-
+/-- Translation by `g` as an isomorphism between the open subgraphs induced on `S` (in `ω`) and on
+`g + S` (in the shifted configuration). -/
 noncomputable def shk_translateInduceIso (g : Multiplicative (Site d))
     (omega : ConfigSpace (Sym2 (Site d))) (S : Finset (Site d)) :
     openSubgraphInduce d omega (S : Set (Site d)) ≃g
@@ -87,8 +120,7 @@ noncomputable def shk_translateInduceIso (g : Multiplicative (Site d))
     simp only [openSubgraphInduce_adj]
     exact openSubgraph_adj_shift g omega x y
 
-
-theorem shk_connectedWithin_shift_iff (g : Multiplicative (Site d))
+lemma shk_connectedWithin_shift_iff (g : Multiplicative (Site d))
     (omega : ConfigSpace (Sym2 (Site d))) (S : Finset (Site d))
     (x y : S) :
     ConnectedWithin d (ConfigSpace.shift g omega)
@@ -98,12 +130,11 @@ theorem shk_connectedWithin_shift_iff (g : Multiplicative (Site d))
       ConnectedWithin d omega (S : Set (Site d)) x y := by
   exact (shk_translateInduceIso g omega S).reachable_iff (u := x) (v := y)
 
-
-
-theorem shk_shift_preimage_connWithinEvent (g : Multiplicative (Site d))
+lemma shk_shift_preimage_connWithinEvent (g : Multiplicative (Site d))
     (S : Finset (Site d)) (u x : Site d) (hu : u ∈ S) (hx : x ∈ S) :
     (ConfigSpace.shift g) ⁻¹'
-        StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d)) (g • u) (g • x) =
+        StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d))
+          (g • u) (g • x) =
       StatMech.Percolation.withinConnEvent d (S : Set (Site d)) u x := by
   ext omega
   constructor
@@ -115,18 +146,18 @@ theorem shk_shift_preimage_connWithinEvent (g : Multiplicative (Site d))
       (shk_mem_translateFinset_smul g S x).2 hx,
       (shk_connectedWithin_shift_iff g omega S ⟨u, hu⟩ ⟨x, hx⟩).2 hconn⟩
 
-
-
-theorem shk_connWithinEvent_prob_translate (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_connWithinEvent_prob_translate (p : ℝ≥0) (hp : p ≤ 1)
     (g : Multiplicative (Site d)) (S : Finset (Site d))
     (u x : Site d) (hu : u ∈ S) (hx : x ∈ S) :
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
-        (StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d)) (g • u) (g • x)) =
+        (StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d))
+          (g • u) (g • x)) =
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
         (StatMech.Percolation.withinConnEvent d (S : Set (Site d)) u x) := by
   let mu := bernoulliProductMeasure (E := Sym2 (Site d)) p hp
   have hmeas : MeasurableSet
-      (StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d)) (g • u) (g • x)) := by
+      (StatMech.Percolation.withinConnEvent d (shk_translateFinset g S : Set (Site d))
+        (g • u) (g • x)) := by
     apply measurableSet_of_dependsOn
     exact StatMech.Percolation.withinConn_dependsOn _ _ _
   have hpres := (bernoulli_translationInvariant (E := Sym2 (Site d))
@@ -135,20 +166,18 @@ theorem shk_connWithinEvent_prob_translate (p : ℝ≥0) (hp : p ≤ 1)
   rw [shk_shift_preimage_connWithinEvent g S u x hu hx] at hpre
   exact hpre.symm
 
-
+/-- Translation of a pair of sites. -/
 def shk_pairSmul (g : Multiplicative (Site d)) (q : Site d × Site d) :
     Site d × Site d := (g • q.1, g • q.2)
 
-theorem shk_pairSmul_injective (g : Multiplicative (Site d)) :
+lemma shk_pairSmul_injective (g : Multiplicative (Site d)) :
     Function.Injective (shk_pairSmul (d := d) g) := by
   rintro ⟨a, b⟩ ⟨c, e⟩ h
   simp only [shk_pairSmul, Prod.mk.injEq] at h ⊢
   exact ⟨(MulAction.toPerm (β := Site d) g).injective h.1,
     (MulAction.toPerm (β := Site d) g).injective h.2⟩
 
-
-
-theorem shk_boundaryEdges_translate (g : Multiplicative (Site d))
+lemma shk_boundaryEdges_translate (g : Multiplicative (Site d))
     (S : Finset (Site d)) :
     boundaryEdges d (shk_translateFinset g S) =
       (boundaryEdges d S).image (shk_pairSmul g) := by
@@ -184,9 +213,7 @@ theorem shk_boundaryEdges_translate (g : Multiplicative (Site d))
       fun h => hqout ((shk_mem_translateFinset_smul g S q0.2).1 h),
       (hyper_adj_smul g q0.1 q0.2).2 hqadj⟩
 
-
-
-theorem shk_boundaryConnSum_translate (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_boundaryConnSum_translate (p : ℝ≥0) (hp : p ≤ 1)
     (g : Multiplicative (Site d)) (S : Finset (Site d))
     (h0 : origin d ∈ S) :
     ∑ q ∈ boundaryEdges d (shk_translateFinset g S),
@@ -196,17 +223,16 @@ theorem shk_boundaryConnSum_translate (p : ℝ≥0) (hp : p ≤ 1)
       ∑ q ∈ boundaryEdges d S, connWithinProb d p hp S q.1 := by
   classical
   rw [shk_boundaryEdges_translate, Finset.sum_image]
-  apply Finset.sum_congr rfl
-  intro q hq
-  have hqS : q.1 ∈ S := (shk_mem_boundaryEdges_iff.mp hq).1
-  have htrans := shk_connWithinEvent_prob_translate p hp g S
-    (origin d) q.1 h0 hqS
-  have hbook := connWithinProb_eq p hp S q.1 (by simpa using h0) (by simpa using hqS)
-  simpa only [shk_pairSmul] using htrans.trans hbook.symm
-  exact (shk_pairSmul_injective g).injOn
+  · apply Finset.sum_congr rfl
+    intro q hq
+    have hqS : q.1 ∈ S := (shk_mem_boundaryEdges_iff.mp hq).1
+    have htrans := shk_connWithinEvent_prob_translate p hp g S
+      (origin d) q.1 h0 hqS
+    have hbook := connWithinProb_eq p hp S q.1 (by simpa using h0) (by simpa using hqS)
+    simpa only [shk_pairSmul] using htrans.trans hbook.symm
+  · exact (shk_pairSmul_injective g).injOn
 
-
-theorem shk_phi_translate (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_phi_translate (p : ℝ≥0) (hp : p ≤ 1)
     (g : Multiplicative (Site d)) (S : Finset (Site d))
     (h0 : origin d ∈ S) :
     (p : ℝ) * ∑ q ∈ boundaryEdges d (shk_translateFinset g S),
@@ -216,15 +242,16 @@ theorem shk_phi_translate (p : ℝ≥0) (hp : p ≤ 1)
   rw [shk_boundaryConnSum_translate p hp g S h0]
   rfl
 
+/-! ## B. The restricted susceptibility -/
 
+/-- The susceptibility `χ_Λ(u) = ∑_{x ∈ Λ} P(u ↔ x in Λ)` restricted to a finite set `Λ`. -/
 noncomputable def shk_restrictedSusceptibility (p : ℝ≥0) (hp : p ≤ 1)
     (Lam : Finset (Site d)) (u : Site d) : ℝ :=
   ∑ x ∈ Lam, (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
     (connEvent (hypercubicLattice d) (Lam : Set (Site d)) u {x})
 
-
-
-
+/-- If `φ_p(S) < 1` for some `S ∋ 0`, every restricted susceptibility satisfies
+`χ_Λ(0) ≤ |S| / (1 - φ_p(S))`. -/
 theorem shk_restrictedSusceptibility_le (p : ℝ≥0) (hp : p ≤ 1)
     (S Lam : Finset (Site d)) (h0S : origin d ∈ S) (h0Lam : origin d ∈ Lam)
     (hphi : phi d p hp S < 1) :
@@ -263,7 +290,7 @@ theorem shk_restrictedSusceptibility_le (p : ℝ≥0) (hp : p ≤ 1)
                 ConnWithin (hypercubicLattice d) omega (Lam : Set (Site d))
                   ⟨b, by assumption⟩ ⟨z, by assumption⟩} = ∅ := by
           ext omega
-          simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+          simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
           rintro ⟨hb', _⟩
           exact hb (by simpa using hb')
         rw [hempty]
@@ -298,12 +325,13 @@ theorem shk_restrictedSusceptibility_le (p : ℝ≥0) (hp : p ≤ 1)
   have hself : chi u ≤ (S.card : ℝ) + phi d p hp S * chi u :=
     hselfSin.trans (add_le_add hcard le_rfl)
   have hchi0 : 0 ≤ chi u := Finset.sum_nonneg fun x _ => measureReal_nonneg
-  have hub := (susceptibility_finite_of_self_consistent
+  have hub := (StatMech.Sharpness.susceptibility_finite
     (chi u) (S.card : ℝ) (phi d p hp S) hchi0 hphi hself).2
   exact (humax (origin d) h0Lam).trans hub
 
+/-! ## C. Monotonicity in the parameter -/
 
-theorem shk_connWithinProb_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
+lemma shk_connWithinProb_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
     (hpq : p ≤ q) (S : Finset (Site d)) (x : Site d) :
     connWithinProb d p hp S x ≤ connWithinProb d q hq S x := by
   classical
@@ -320,12 +348,11 @@ theorem shk_connWithinProb_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
       rw [hpbook, hqbook]
       simpa only [withinConnEvent] using hm
     · unfold connWithinProb
-      rw [dif_pos h0, dif_neg hx, dif_pos h0, dif_neg hx]
+      rw [dite_eq_left h0, dite_eq_right hx, dite_eq_left h0, dite_eq_right hx]
   · unfold connWithinProb
-    rw [dif_neg h0, dif_neg h0]
+    rw [dite_eq_right h0, dite_eq_right h0]
 
-
-theorem shk_phi_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
+lemma shk_phi_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
     (hpq : p ≤ q) (S : Finset (Site d)) :
     phi d p hp S ≤ phi d q hq S := by
   unfold phi
@@ -341,8 +368,7 @@ theorem shk_phi_mono {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
     _ ≤ (q : ℝ) * ∑ e ∈ boundaryEdges d S, connWithinProb d q hq S e.1 :=
       mul_le_mul_of_nonneg_right (by exact_mod_cast hpq) hsum0
 
-
-theorem bondParam_mono : Monotone bondParam := by
+lemma bondParam_mono : Monotone bondParam := by
   intro beta gamma hbg
   unfold bondParam
   apply Real.toNNReal_le_toNNReal
@@ -350,8 +376,7 @@ theorem bondParam_mono : Monotone bondParam := by
     Real.exp_le_exp.mpr (neg_le_neg hbg)
   linarith
 
-
-
+/-- Below `β̃_c^{perc}` some finite `S ∋ 0` has `φ_β(S) < 1`. -/
 theorem exists_phiBeta_witness_of_lt_tildeBetaCPerco {beta : ℝ}
     (hbeta : beta < tildeBetaCPerco d) :
     ∃ S : Finset (Site d), origin d ∈ S ∧ phiBeta d beta S < 1 := by
@@ -366,16 +391,15 @@ theorem exists_phiBeta_witness_of_lt_tildeBetaCPerco {beta : ℝ}
   exact (shk_phi_mono (bondParam_le_one beta) (bondParam_le_one gamma)
     (bondParam_mono hbg.le) S).trans_lt hphi
 
+/-! ## D. The two-point function -/
 
-
-
+/-- The two-point function `x ↦ P_p(0 ↔ x)`. -/
 noncomputable def shk_twoPointProb (p : ℝ≥0) (hp : p ≤ 1)
     (x : Site d) : ℝ :=
   (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
     {omega | Connected d omega (origin d) x}
 
-
-theorem shk_withinBoxEvent_mono (x : Site d) :
+lemma shk_withinBoxEvent_mono (x : Site d) :
     Monotone (fun n : ℕ =>
       StatMech.Percolation.withinConnEvent d (box d n) (origin d) x) := by
   intro m n hmn omega homega
@@ -384,8 +408,7 @@ theorem shk_withinBoxEvent_mono (x : Site d) :
   exact ⟨hsub h0m, hsub hxm,
     StatMech.Lattice.connectedWithin_mono_set omega hsub hconn⟩
 
-
-theorem shk_connected_iff_mem_iUnion_withinBox (omega : ConfigSpace (Sym2 (Site d)))
+lemma shk_connected_iff_mem_iUnion_withinBox (omega : ConfigSpace (Sym2 (Site d)))
     (x : Site d) :
     Connected d omega (origin d) x ↔
       omega ∈ ⋃ n : ℕ, StatMech.Percolation.withinConnEvent d (box d n) (origin d) x := by
@@ -406,8 +429,7 @@ theorem shk_connected_iff_mem_iUnion_withinBox (omega : ConfigSpace (Sym2 (Site 
     obtain ⟨n, h0, hx, hconn⟩ := Set.mem_iUnion.mp hmem
     exact hconn.connected
 
-
-theorem shk_connWithinBox_tendsto_twoPoint (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_connWithinBox_tendsto_twoPoint (p : ℝ≥0) (hp : p ≤ 1)
     (x : Site d) :
     Tendsto (fun n =>
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
@@ -417,7 +439,8 @@ theorem shk_connWithinBox_tendsto_twoPoint (p : ℝ≥0) (hp : p ≤ 1)
   have hmeasure := tendsto_measure_iUnion_atTop (μ := mu)
     (shk_withinBoxEvent_mono (d := d) x)
   have hreal := (ENNReal.tendsto_toReal
-    (measure_ne_top mu (⋃ n : ℕ, StatMech.Percolation.withinConnEvent d (box d n) (origin d) x))).comp hmeasure
+    (measure_ne_top mu
+      (⋃ n : ℕ, StatMech.Percolation.withinConnEvent d (box d n) (origin d) x))).comp hmeasure
   have hunion : (⋃ n : ℕ, StatMech.Percolation.withinConnEvent d (box d n) (origin d) x) =
       {omega | Connected d omega (origin d) x} := by
     ext omega
@@ -425,9 +448,7 @@ theorem shk_connWithinBox_tendsto_twoPoint (p : ℝ≥0) (hp : p ≤ 1)
   rw [hunion] at hreal
   exact hreal
 
-
-
-theorem shk_twoPoint_partialSum_le (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_twoPoint_partialSum_le (p : ℝ≥0) (hp : p ≤ 1)
     (S : Finset (Site d)) (h0S : origin d ∈ S)
     (hphi : phi d p hp S < 1) (T : Finset (Site d)) :
     ∑ x ∈ T, shk_twoPointProb p hp x ≤
@@ -462,7 +483,7 @@ theorem shk_twoPoint_partialSum_le (p : ℝ≥0) (hp : p ≤ 1)
       shk_restrictedSusceptibility_le p hp S (boxFinset d n) h0S
         (mem_boxFinset.mpr (origin_mem_box' n)) hphi
 
-
+/-- If `φ_p(S) < 1` for some `S ∋ 0`, the two-point function `x ↦ P_p(0 ↔ x)` is summable. -/
 theorem shk_twoPoint_summable_of_phi_lt_one (p : ℝ≥0) (hp : p ≤ 1)
     (S : Finset (Site d)) (h0S : origin d ∈ S)
     (hphi : phi d p hp S < 1) :
@@ -470,9 +491,10 @@ theorem shk_twoPoint_summable_of_phi_lt_one (p : ℝ≥0) (hp : p ≤ 1)
   apply summable_of_sum_le (fun _ => measureReal_nonneg)
   exact shk_twoPoint_partialSum_le p hp S h0S hphi
 
-
-
-
+/-- **Finite susceptibility** below `β̃_c^{perc}` (Duminil-Copin–Tassion 2016): there is `S ∋ 0`
+with
+`φ_β(S) < 1`, the two-point function is summable, and every restricted susceptibility is at most
+`|S| / (1 - φ_β(S))`. -/
 theorem finite_susceptibility_of_lt_tildeBetaCPerco {beta : ℝ}
     (hbeta : beta < tildeBetaCPerco d) :
     ∃ S : Finset (Site d),

@@ -6,33 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexK4Realization
 
+/-!
+# Failure of domain monotonicity for the literal support-ordered backbone weight on `K₄`
+
+The literal backbone weight `shb_rhoSupport` of the direct path `0 → 3` is strictly larger in `K₄`
+than in `K₄ \ 12`, at `β = artanh (2/3)` and `J ≡ 1`. So domain monotonicity (P3) fails for the
+support-lex selector.
+
+## i. Overview
+
+Grouping the currents on `shbK4Graph E` by their odd-support configuration, and summing each edge
+multiplicity over a fixed parity, turns the backbone numerator and the sourceless partition
+function into the parity-grouped current series of `SupportLexParityBridge`
+(`shbK4_backboneNumSupport_eq_seriesMass`, `shbK4_currentSum_empty_eq_seriesMass`). Hence the
+literal backbone weight equals the current-series direct-path weight
+(`shbK4_rhoSupport_eq_directRhoSeries`), and the strict inequality of
+`shb_supportLex_series_P3_counterexample` transfers.
+
+Headline fidelity: `shb_supportLex_literal_P3_counterexample` is proved unconditionally. It shows
+that P3 cannot be proved for `shb_rhoSupport` in general; see also `PartialEdgeCopyObstruction`.
+
+## ii. Key results
+
+- `shb_current_tsum_eq_paritySeriesMassOn` : a current series grouped by odd support is a parity
+  series mass (for `x ≥ 0`)
+- `shbK4_rhoSupport_eq_directRhoSeries` : the literal weight equals the current-series weight on
+  `K₄` subgraphs
+- `shb_supportLex_literal_P3_counterexample` : `ρ_{K₄ \ 12}(0 → 3) < ρ_{K₄}(0 → 3)`
+  (unconditional)
+
+## iii. Table of contents
+
+- A. Single-edge series with fixed parity
+- B. Current series grouped by odd support
+- C. The literal backbone weight on `K₄` subgraphs
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 @[expose] public section
 
 open Finset SimpleGraph
 open scoped BigOperators
 
-set_option maxHeartbeats 1600000
-
 namespace StatMech.Sharpness
 
+/-! ## A. Single-edge series with fixed parity -/
+
+/-- The single-edge current weight `x^k / k!`. -/
 noncomputable def shbCurrentTerm (x : ℝ) (k : ℕ) : ℝ :=
   x ^ k / k.factorial
 
-private theorem shb_summable_currentTerm (x : ℝ) :
+private lemma shb_summable_currentTerm (x : ℝ) :
     Summable (shbCurrentTerm x) := by
   have h := NormedSpace.expSeries_summable' (𝕂 := ℝ) x
   exact h.congr (fun k => by simp [shbCurrentTerm, div_eq_inv_mul, mul_comm])
 
-private theorem shb_summable_currentTerm_filter (x : ℝ) (Q : ℕ → Prop)
+private lemma shb_summable_currentTerm_filter (x : ℝ) (Q : ℕ → Prop)
     [DecidablePred Q] :
     Summable (fun k => if Q k then shbCurrentTerm x k else 0) := by
   apply Summable.of_norm
@@ -40,7 +75,7 @@ private theorem shb_summable_currentTerm_filter (x : ℝ) (Q : ℕ → Prop)
     (shb_summable_currentTerm x).norm
   split <;> simp
 
-private theorem shb_tsum_even_filter (x : ℝ) :
+private lemma shb_tsum_even_filter (x : ℝ) :
     (∑' k : ℕ, if Even k then shbCurrentTerm x k else 0) =
       shbEvenCurrentSeries x := by
   unfold shbEvenCurrentSeries
@@ -55,7 +90,7 @@ private theorem shb_tsum_even_filter (x : ℝ) :
     simp only [Function.mem_support] at hk
     have he : Even k := by
       by_contra hne
-      rw [if_neg hne] at hk
+      rw [ite_eq_right hne] at hk
       exact hk rfl
     obtain ⟨n, rfl⟩ := he
     have hterm : shbCurrentTerm x (n + n) ≠ 0 := by simpa using hk
@@ -63,7 +98,7 @@ private theorem shb_tsum_even_filter (x : ℝ) :
   · intro k
     simp [shbCurrentTerm]
 
-private theorem shb_tsum_odd_filter (x : ℝ) :
+private lemma shb_tsum_odd_filter (x : ℝ) :
     (∑' k : ℕ, if Odd k then shbCurrentTerm x k else 0) =
       shbOddCurrentSeries x := by
   unfold shbOddCurrentSeries
@@ -78,7 +113,7 @@ private theorem shb_tsum_odd_filter (x : ℝ) :
     simp only [Function.mem_support] at hk
     have ho : Odd k := by
       by_contra hne
-      rw [if_neg hne] at hk
+      rw [ite_eq_right hne] at hk
       exact hk rfl
     obtain ⟨n, hn⟩ := ho
     refine ⟨⟨n, ?_⟩, hn.symm⟩
@@ -86,19 +121,21 @@ private theorem shb_tsum_odd_filter (x : ℝ) :
   · intro k
     simp [shbCurrentTerm]
 
+/-! ## B. Current series grouped by odd support -/
 
+/-- The edges of `S` on which the multiplicity function `m` is odd. -/
 def shbParitySupportOn {E : Type*} [DecidableEq E]
     (S : Finset E) (m : ↑S → ℕ) : Finset E :=
   (S.attach.filter fun e => Odd (m e)).map
     ⟨Subtype.val, Subtype.val_injective⟩
 
-@[simp] private theorem shb_mem_paritySupportOn
+@[simp] private lemma shb_mem_paritySupportOn
     {E : Type*} [DecidableEq E] (S : Finset E) (m : ↑S → ℕ)
     (e : ↑S) :
     e.1 ∈ shbParitySupportOn S m ↔ Odd (m e) := by
   simp [shbParitySupportOn]
 
-private theorem shb_paritySupportOn_eq_iff
+private lemma shb_paritySupportOn_eq_iff
     {E : Type*} [DecidableEq E] (S A : Finset E) (hAS : A ⊆ S)
     (m : ↑S → ℕ) :
     shbParitySupportOn S m = A ↔
@@ -106,10 +143,10 @@ private theorem shb_paritySupportOn_eq_iff
   constructor
   · intro h e
     by_cases he : e.1 ∈ A
-    · simp only [if_pos he]
+    · simp only [ite_eq_left he]
       rw [← h] at he
       simpa using he
-    · simp only [if_neg he]
+    · simp only [ite_eq_right he]
       rw [← Nat.not_odd_iff_even]
       intro ho
       apply he
@@ -130,7 +167,7 @@ private theorem shb_paritySupportOn_eq_iff
     · have heA : e ∉ A := fun he => heS (hAS he)
       simp [shbParitySupportOn, heS, heA]
 
-private theorem shb_fixedParity_tsum
+private lemma shb_fixedParity_tsum
     {E : Type*} [DecidableEq E] (S A : Finset E) (hAS : A ⊆ S)
     (x : ℝ) (hx : 0 ≤ x) :
     (∑' m : ↑S → ℕ,
@@ -147,7 +184,7 @@ private theorem shb_fixedParity_tsum
   have hgnn : ∀ e k, 0 ≤ g e k := by
     intro e k
     by_cases h : if e ∈ A then Odd k else Even k
-    · simp only [g, h, if_true]
+    · simp only [g, h, ite_true]
       exact div_nonneg (pow_nonneg hx _) (by positivity)
     · simp [g, h]
   calc
@@ -158,13 +195,13 @@ private theorem shb_fixedParity_tsum
       apply tsum_congr
       intro m
       by_cases hs : shbParitySupportOn S m = A
-      · rw [if_pos hs]
+      · rw [ite_eq_left hs]
         have hall := (shb_paritySupportOn_eq_iff S A hAS m).mp hs
         apply Finset.prod_congr rfl
         intro e _
         simp only [g]
-        rw [if_pos (hall e)]
-      · rw [if_neg hs]
+        rw [ite_eq_left (hall e)]
+      · rw [ite_eq_right hs]
         have hall : ¬ ∀ e : ↑S,
             if e.1 ∈ A then Odd (m e) else Even (m e) :=
           fun h => hs ((shb_paritySupportOn_eq_iff S A hAS m).mpr h)
@@ -173,7 +210,7 @@ private theorem shb_fixedParity_tsum
         symm
         apply Finset.prod_eq_zero (Finset.mem_univ e)
         simp only [g]
-        rw [if_neg he]
+        rw [ite_eq_right he]
     _ = ∏ e ∈ S, ∑' k : ℕ, g e k :=
       (prod_tsum_fubini g hgsum hgnn S).2.symm
     _ = ∏ e ∈ S,
@@ -181,14 +218,12 @@ private theorem shb_fixedParity_tsum
       apply Finset.prod_congr rfl
       intro e heS
       by_cases heA : e ∈ A
-      · simp only [g, heA, if_true]
+      · simp only [g, heA, ite_true]
         exact shb_tsum_odd_filter x
-      · simp only [g, heA, if_false]
+      · simp only [g, heA, ite_false]
         exact shb_tsum_even_filter x
 
-
-
-theorem shb_current_tsum_eq_paritySeriesMassOn
+lemma shb_current_tsum_eq_paritySeriesMassOn
     {E : Type*} [DecidableEq E] (S : Finset E)
     (P : Finset E → Prop) [DecidablePred P]
     (x : ℝ) (hx : 0 ≤ x) :
@@ -205,7 +240,7 @@ theorem shb_current_tsum_eq_paritySeriesMassOn
   have hFsum : ∀ A ∈ S.powerset, Summable (F A) := by
     intro A hAS
     by_cases hPA : P A
-    · simp only [F, hPA, if_true]
+    · simp only [F, hPA, ite_true]
       refine Summable.of_nonneg_of_le (fun m => ?_) (fun m => ?_)
         (prod_tsum_fubini (fun _ k => shbCurrentTerm x k)
           (fun _ => shb_summable_currentTerm x)
@@ -231,8 +266,8 @@ theorem shb_current_tsum_eq_paritySeriesMassOn
       · simp [F, A]
       · intro B hB hBA
         by_cases hPB : P B
-        · simp only [F, hPB, if_true]
-          rw [if_neg]
+        · simp only [F, hPB, ite_true]
+          rw [ite_eq_right]
           intro heq
           exact hBA heq.symm
         · simp [F, hPB]
@@ -251,24 +286,23 @@ theorem shb_current_tsum_eq_paritySeriesMassOn
       apply Finset.sum_congr rfl
       intro A hAS
       by_cases hPA : P A
-      · simp only [F, hPA, if_true]
+      · simp only [F, hPA, ite_true]
         exact shb_fixedParity_tsum S A (Finset.mem_powerset.mp hAS) x hx
       · simp [F, hPA]
 
+/-! ## C. The literal backbone weight on `K₄` subgraphs -/
 
-
-
-
+/-- Edge functions on `E` and on the edges of `shbK4Graph E` correspond. -/
 private noncomputable def shbK4CurrentEquiv (E : Finset shbK4Edge) :
     (↑E → ℕ) ≃ ((shbK4Graph E).edgeFinset → ℕ) :=
   Equiv.arrowCongr (shbK4GraphEdgeEquiv E) (Equiv.refl ℕ)
 
-private theorem shbK4CurrentEquiv_apply
+private lemma shbK4CurrentEquiv_apply
     (E : Finset shbK4Edge) (m : ↑E → ℕ) (k : ↑E) :
     shbK4CurrentEquiv E m (shbK4GraphEdgeEquiv E k) = m k := by
   simp [shbK4CurrentEquiv]
 
-private theorem shbK4_oddSupport_reindex
+private lemma shbK4_oddSupport_reindex
     (E : Finset shbK4Edge) (m : ↑E → ℕ) :
     shbK4OddSupport E
         (ofEdgeFun (shbK4Graph E) (shbK4CurrentEquiv E m)) =
@@ -284,11 +318,11 @@ private theorem shbK4_oddSupport_reindex
     have hcode : (shbK4GraphEdgeEquiv E ks).1 = k.code := rfl
     rw [← hcode]
     unfold ofEdgeFun
-    rw [dif_pos (shbK4GraphEdgeEquiv E ks).2,
+    rw [dite_eq_left (shbK4GraphEdgeEquiv E ks).2,
       shbK4CurrentEquiv_apply]
   · simp [shbK4OddSupport, shbParitySupportOn, hk]
 
-private theorem shbK4_weight_reindex
+private lemma shbK4_weight_reindex
     (E : Finset shbK4Edge) (x : ℝ) (m : ↑E → ℕ) :
     weight (shbK4Graph E) x (fun _ ↦ 1)
         (ofEdgeFun (shbK4Graph E) (shbK4CurrentEquiv E m)) =
@@ -299,9 +333,7 @@ private theorem shbK4_weight_reindex
   rw [shbK4CurrentEquiv_apply]
   rfl
 
-
-
-theorem shbK4_backboneNumSupport_eq_seriesMass
+lemma shbK4_backboneNumSupport_eq_seriesMass
     (E : Finset shbK4Edge) (h03 : shbK4Edge.e03 ∈ E)
     (x : ℝ) (hx : 0 ≤ x) :
     shb_backboneNumSupport (shbK4Graph E) x (fun _ ↦ 1) 0 3
@@ -332,14 +364,12 @@ theorem shbK4_backboneNumSupport_eq_seriesMass
             shbK4SelectsDirect03 (shbParitySupportOn E m) := by
         rw [shbK4_source_selector_fiber_iff, shbK4_oddSupport_reindex]
       by_cases hsel : shbK4SelectsDirect03 (shbParitySupportOn E m)
-      · rw [if_pos (hfiber.mpr hsel), if_pos hsel, shbK4_weight_reindex]
-      · rw [if_neg (fun h => hsel (hfiber.mp h)), if_neg hsel]
+      · rw [ite_eq_left (hfiber.mpr hsel), ite_eq_left hsel, shbK4_weight_reindex]
+      · rw [ite_eq_right (fun h => hsel (hfiber.mp h)), ite_eq_right hsel]
     _ = shbParitySeriesMassOn E shbK4SelectsDirect03 x :=
       shb_current_tsum_eq_paritySeriesMassOn E shbK4SelectsDirect03 x hx
 
-
-
-theorem shbK4_currentSum_empty_eq_seriesMass
+lemma shbK4_currentSum_empty_eq_seriesMass
     (E : Finset shbK4Edge) (x : ℝ) (hx : 0 ≤ x) :
     currentSum (shbK4Graph E) x (fun _ ↦ 1) ∅ =
       shbK4VacuumSeriesMass E x := by
@@ -362,8 +392,7 @@ theorem shbK4_currentSum_empty_eq_seriesMass
       shb_current_tsum_eq_paritySeriesMassOn E
         (fun A ↦ shbK4Boundary A = ∅) x hx
 
-
-
+/-- On a `K₄` subgraph the literal direct-path backbone weight equals the current-series weight. -/
 theorem shbK4_rhoSupport_eq_directRhoSeries
     (E : Finset shbK4Edge) (h03 : shbK4Edge.e03 ∈ E)
     (x : ℝ) (hx : 0 ≤ x) :
@@ -374,9 +403,8 @@ theorem shbK4_rhoSupport_eq_directRhoSeries
   rw [shbK4_backboneNumSupport_eq_seriesMass E h03 x hx,
     shbK4_currentSum_empty_eq_seriesMass E x hx]
 
-
-
-
+/-- Domain monotonicity fails for the literal support-ordered backbone weight:
+`ρ_{K₄ \ 12}(0 → 3) < ρ_{K₄}(0 → 3)` at `β = artanh (2/3)`, `J ≡ 1`. -/
 theorem shb_supportLex_literal_P3_counterexample :
     shb_rhoSupport (shbK4Graph shbK4H) (Real.artanh (2 / 3))
         (fun _ ↦ 1) 0 3 (shbK4DirectPath shbK4H (by decide)) <

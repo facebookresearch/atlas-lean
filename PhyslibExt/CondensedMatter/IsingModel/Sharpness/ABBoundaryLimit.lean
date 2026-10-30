@@ -6,13 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABHypercubic
+
+/-!
+# The boundary-target magnetization converges to the infinite-volume magnetization
+
+The box magnetization with boundary target, `abbMag d n β h`, differs from the box magnetization
+with ghost target by at most `e^{-h(n+1)}`, and the latter converges to the magnetization `abigMag`
+of `ℤ^d` with a ghost. Hence `abbMag d (n + 1) β h → abigMag(β, h)` for `h > 0`.
+
+## i. Overview
+
+A configuration in which the origin reaches `∂Λ_n` but not the ghost has at least `n + 1` sites
+connected to the origin whose ghost edges are all closed; given the edges of the box, this has
+probability at most `e^{-h(n+1)}` (sections A and B). So
+`abfaMag ≤ abbMag ≤ abfaMag + e^{-h(n+1)}` (`abbl_abfaMag_le_abbMag_le`). The box with a ghost is a
+window of `ℤ^d` with a ghost (section C), and the window magnetizations converge to `abigMag`
+(section D). All results are proved unconditionally.
+
+## ii. Key results
+
+- `abbl_abfaMag_le_abbMag_le` : `abfaMag ≤ abbMag ≤ abfaMag + e^{-h(n+1)}`
+- `abblLatticeCoupling` : unit couplings on the edges of `ℤ^d`
+- `abbl_tendsto_abbMag_shifted` : `abbMag d (n + 1) β h → abigMag(β, h)` for `h > 0`
+
+## iii. Table of contents
+
+- A. The residual event and its probability
+- B. Comparing the two box magnetizations
+- C. The box as a window of `ℤ^d`
+- D. Convergence
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+-/
 
 @[expose] public section
 
@@ -21,10 +53,12 @@ open Filter Finset MeasureTheory Set SimpleGraph Topology
 namespace StatMech
 namespace Sharpness
 
-open ConfigSpace Lattice
+open ConfigSpace StatMech.Lattice
 open StatMech.Percolation
 
-@[simp] theorem abbl_abbEdgeEquiv_symm_mk {U W : Type*}
+/-! ## A. The residual event and its probability -/
+
+@[simp] lemma abbl_abbEdgeEquiv_symm_mk {U W : Type*}
     (sigma : U ≃ W) (a b : W) :
     (abbEdgeEquiv sigma).symm s(a, b) = s(sigma.symm a, sigma.symm b) := by
   apply (abbEdgeEquiv sigma).injective
@@ -34,11 +68,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 set_option maxHeartbeats 800000 in
-
-
-
-
-theorem abbl_residual_le_exp (J : Sym2 V → Real) (o : V)
+-- the `calc` over the product of edge and site weights is slow to elaborate
+lemma abbl_residual_le_exp (J : Sym2 V → Real) (o : V)
     (beta h : Real) (hJ : ∀ e ∈ G.edgeFinset, 0 ≤ J e)
     (hbeta : 0 ≤ beta) (hh : 0 ≤ h) (k : Nat)
     (R : Set (ConfigSpace (Sym2 (Option V))))
@@ -97,8 +128,7 @@ theorem abbl_residual_le_exp (J : Sym2 V → Real) (o : V)
           abgr_probV_allClosed]
         have hprofile := abgr_cluster_profile_eq_exp h
           (abgrActiveGhost G o eta).card
-        simp only [q, qField, sub_sub_cancel, Finset.prod_const,
-          Finset.card_attach] at hprofile ⊢
+        simp only [q, qField, sub_sub_cancel, Finset.prod_const] at hprofile ⊢
         linarith
       rw [hclosed] at hmono
       exact hmono.trans (Real.exp_le_exp.mpr (by
@@ -125,9 +155,8 @@ theorem abbl_residual_le_exp (J : Sym2 V → Real) (o : V)
     _ = Real.exp (-(h * (k : Real))) := by
       rw [← Finset.sum_mul, abgr_sum_offWeight G J beta, one_mul]
 
-
-
-theorem abbl_closeGhost_conn_of_not_ghost (o y : V)
+omit [DecidableRel G.Adj] in
+lemma abbl_closeGhost_conn_of_not_ghost (o y : V)
     (omega : ConfigSpace (Sym2 (Option V)))
     (hconn : omega ∈
       connEvent (withGhost G) Set.univ (some o) {some y})
@@ -183,15 +212,13 @@ theorem abbl_closeGhost_conn_of_not_ghost (o y : V)
   refine ⟨Set.mem_univ _, some y, Set.mem_univ _, rfl, ?_⟩
   exact ⟨(htransfer q hnone).induce Set.univ (fun _ _ ↦ Set.mem_univ _)⟩
 
-
-
-theorem abbl_le_l1dist_origin_of_boundary {d n : Nat} (hn : 0 < n)
+lemma abbl_le_l1dist_origin_of_boundary {d n : Nat} (hn : 0 < n)
     {y : Site d} (hy : y ∈ vertexBoundary d n) :
     n ≤ l1dist d (origin d) y := by
   obtain ⟨hybox, hyinner⟩ := hy
   rw [mem_box] at hybox
   rw [mem_box] at hyinner
-  push_neg at hyinner
+  push Not at hyinner
   obtain ⟨i, hi⟩ := hyinner
   have hni : n ≤ (y i).natAbs := by omega
   have hterm : (y i).natAbs = ((origin d) i - y i).natAbs := by
@@ -201,9 +228,7 @@ theorem abbl_le_l1dist_origin_of_boundary {d n : Nat} (hn : 0 < n)
     (fun j hj ↦ Nat.zero_le (((origin d) j - y j).natAbs))
     (Finset.mem_univ i))
 
-
-
-theorem abbl_activeGhost_card_ge_of_boundary {d n : Nat} (hn : 0 < n)
+lemma abbl_activeGhost_card_ge_of_boundary {d n : Nat} (hn : 0 < n)
     (eta : {e // e ∉ FieldGhostDict.ghostEdges (sctBox d n)} → Bool)
     (gamma : {e // e ∈ FieldGhostDict.ghostEdges (sctBox d n)} → Bool)
     (y : sctBox d n) (hy : (y : Site d) ∈ vertexBoundary d n)
@@ -288,8 +313,9 @@ theorem abbl_activeGhost_card_ge_of_boundary {d n : Nat} (hn : 0 < n)
   rw [hghostCard]
   omega
 
+/-! ## B. Comparing the two box magnetizations -/
 
-
+/-- The event that the origin reaches the boundary target but not the ghost. -/
 def abblResidualEvent (d n : Nat) :
     Set (ConfigSpace (Sym2 (Option (sctBox d n)))) :=
   connEvent (withGhost (sctBoxGraph d n)) Set.univ
@@ -297,9 +323,7 @@ def abblResidualEvent (d n : Nat) :
     (connEvent (withGhost (sctBoxGraph d n)) Set.univ
       (some (sctBoxOrigin d n)) {none})ᶜ
 
-
-
-theorem abbl_residual_activeGhost_card {d n : Nat} (hn : 0 < n)
+lemma abbl_residual_activeGhost_card {d n : Nat} (hn : 0 < n)
     (eta : {e // e ∉ FieldGhostDict.ghostEdges (sctBox d n)} → Bool)
     (gamma : {e // e ∈ FieldGhostDict.ghostEdges (sctBox d n)} → Bool)
     (hres : abgrMerge (FieldGhostDict.ghostEdges (sctBox d n)) gamma eta ∈
@@ -319,9 +343,7 @@ theorem abbl_residual_activeGhost_card {d n : Nat} (hn : 0 < n)
       (sctBoxGraph d n) (sctBoxOrigin d n) y omega hphys hnot
     exact abbl_activeGhost_card_ge_of_boundary hn eta gamma y hybdry hclosed
 
-
-
-theorem abbl_residual_prob_le {d n : Nat} (hn : 0 < n)
+lemma abbl_residual_prob_le {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h) :
     probV (abfaParams (sctBoxGraph d n) (abbCoupling d n) beta h)
         (abblResidualEvent d n) ≤
@@ -338,8 +360,8 @@ theorem abbl_residual_prob_le {d n : Nat} (hn : 0 < n)
   · intro eta gamma hres
     exact abbl_residual_activeGhost_card hn eta gamma hres
 
-
-
+/-- The box magnetizations with ghost target and with boundary target differ by at most
+`e^{-h(n+1)}`. -/
 theorem abbl_abfaMag_le_abbMag_le {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h) :
     abfaMag (sctBoxGraph d n) (abbCoupling d n)
@@ -383,9 +405,7 @@ theorem abbl_abfaMag_le_abbMag_le {d n : Nat} (hn : 0 < n)
             add_le_add (le_refl (probV p B))
               (abbl_residual_prob_le (d := d) hn beta h hbeta hh)
 
-
-
-theorem abbl_abfaMag_relabel {U W : Type*}
+lemma abbl_abfaMag_relabel {U W : Type*}
     [Fintype U] [DecidableEq U] [Fintype W] [DecidableEq W]
     (G : SimpleGraph U) [DecidableRel G.Adj]
     (H : SimpleGraph W) [DecidableRel H.Adj]
@@ -434,23 +454,24 @@ theorem abbl_abfaMag_relabel {U W : Type*}
         have hghostW : s(some a, some b) ∉
             FieldGhostDict.ghostEdges W := by
           simp [FieldGhostDict.ghostEdges]
-        rw [if_neg hghostU, if_neg hghostW,
+        rw [ite_eq_right hghostU, ite_eq_right hghostW,
           abfaLiftCoupling_some_some, abfaLiftCoupling_some_some]
         by_cases hab : G.Adj (sigma.symm a) (sigma.symm b)
         · have hab' : H.Adj a b := by
             simpa using (hgraph (sigma.symm a) (sigma.symm b)).mp hab
-          rw [if_pos (SimpleGraph.mem_edgeFinset.mpr hab),
-            if_pos (SimpleGraph.mem_edgeFinset.mpr hab')]
+          rw [ite_eq_left (SimpleGraph.mem_edgeFinset.mpr hab),
+            ite_eq_left (SimpleGraph.mem_edgeFinset.mpr hab')]
           have hc : J s(sigma.symm a, sigma.symm b) = K s(a, b) := by
             simpa using hcoupling (sigma.symm a) (sigma.symm b) hab
           exact congrArg (fun t ↦ pBeta t beta) hc
         · have hab' : ¬ H.Adj a b := fun hw ↦
             hab ((hgraph (sigma.symm a) (sigma.symm b)).mpr (by simpa using hw))
-          rw [if_neg (fun he ↦ hab (SimpleGraph.mem_edgeFinset.mp he)),
-            if_neg (fun he ↦ hab' (SimpleGraph.mem_edgeFinset.mp he))]
+          rw [ite_eq_right (fun he ↦ hab (SimpleGraph.mem_edgeFinset.mp he)),
+            ite_eq_right (fun he ↦ hab' (SimpleGraph.mem_edgeFinset.mp he))]
 
+/-! ## C. The box as a window of `ℤ^d` -/
 
-
+/-- Unit couplings on the nearest-neighbour edges of `ℤ^d` (zero on non-edges). -/
 noncomputable def abblLatticeCoupling (d : Nat) : Sym2 (Site d) → Real :=
   Sym2.lift ⟨fun x y ↦
     if (hypercubicLattice d).Adj x y then 1 else 0, by
@@ -458,28 +479,27 @@ noncomputable def abblLatticeCoupling (d : Nat) : Sym2 (Site d) → Real :=
       change (if (hypercubicLattice d).Adj x y then 1 else 0) =
         if (hypercubicLattice d).Adj y x then 1 else 0
       by_cases hxy : (hypercubicLattice d).Adj x y
-      · rw [if_pos hxy, if_pos hxy.symm]
-      · rw [if_neg hxy, if_neg (fun hyx ↦ hxy hyx.symm)]⟩
+      · rw [ite_eq_left hxy, ite_eq_left hxy.symm]
+      · rw [ite_eq_right hxy, ite_eq_right (fun hyx ↦ hxy hyx.symm)]⟩
 
-@[simp] theorem abblLatticeCoupling_mk (d : Nat) (x y : Site d) :
+@[simp] lemma abblLatticeCoupling_mk (d : Nat) (x y : Site d) :
     abblLatticeCoupling d s(x, y) =
       if (hypercubicLattice d).Adj x y then 1 else 0 := by
   simp [abblLatticeCoupling]
 
-theorem abblLatticeCoupling_nonneg (d : Nat) (e : Sym2 (Site d)) :
+lemma abblLatticeCoupling_nonneg (d : Nat) (e : Sym2 (Site d)) :
     0 ≤ abblLatticeCoupling d e := by
   induction e using Sym2.inductionOn with
   | _ x y =>
       rw [abblLatticeCoupling_mk]
       split <;> norm_num
 
-theorem abblLatticeCoupling_support {d : Nat} (x y : Site d)
+lemma abblLatticeCoupling_support {d : Nat} (x y : Site d)
     (hxy : ¬ (hypercubicLattice d).Adj x y) :
     abblLatticeCoupling d s(x, y) = 0 := by
-  rw [abblLatticeCoupling_mk, if_neg hxy]
+  rw [abblLatticeCoupling_mk, ite_eq_right hxy]
 
-
-
+/-- The box `sctBox d n` as the finite set `ablBoxFinset d n`. -/
 noncomputable def abblBoxEquiv (d n : Nat) :
     sctBox d n ≃ ↑(ablBoxFinset d n) where
   toFun x := ⟨x.1, mem_ablBoxFinset.mpr x.2⟩
@@ -487,18 +507,16 @@ noncomputable def abblBoxEquiv (d n : Nat) :
   left_inv x := by ext; rfl
   right_inv x := by ext; rfl
 
-@[simp] theorem abblBoxEquiv_val (d n : Nat) (x : sctBox d n) :
+@[simp] lemma abblBoxEquiv_val (d n : Nat) (x : sctBox d n) :
     ((abblBoxEquiv d n x : ↑(ablBoxFinset d n)) : Site d) = x := rfl
 
-@[simp] theorem abblBoxEquiv_origin (d n : Nat) :
+@[simp] lemma abblBoxEquiv_origin (d n : Nat) :
     abblBoxEquiv d n (sctBoxOrigin d n) =
       ⟨(0 : Site d), zero_mem_ablBoxFinset d n⟩ := by
   ext i
   rfl
 
-
-
-theorem abbl_abfaMag_eq_window (d n : Nat) (beta h : Real) :
+lemma abbl_abfaMag_eq_window (d n : Nat) (beta h : Real) :
     abfaMag (sctBoxGraph d n) (abbCoupling d n)
         (sctBoxOrigin d n) beta h =
       abfaMag
@@ -521,12 +539,10 @@ theorem abbl_abfaMag_eq_window (d n : Nat) (beta h : Real) :
       rw [abigWindowCoupling_mk, abblLatticeCoupling_mk]
       change 1 = if (hypercubicLattice d).Adj (x : Site d) (y : Site d)
         then 1 else 0
-      rw [if_pos hamb])
+      rw [ite_eq_left hamb])
     (sctBoxOrigin d n) beta h
 
-
-
-theorem abbl_finiteGhost_eq_ambient {d n : Nat} (beta h : Real)
+lemma abbl_finiteGhost_eq_ambient {d n : Nat} (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 ≤ h) :
     abfaMag (sctBoxGraph d n) (abbCoupling d n)
         (sctBoxOrigin d n) beta h =
@@ -540,9 +556,9 @@ theorem abbl_finiteGhost_eq_ambient {d n : Nat} (beta h : Real)
     ⟨origin d, zero_mem_ablBoxFinset d n⟩ beta h hbeta hh
     (abblLatticeCoupling_nonneg d) abblLatticeCoupling_support
 
+/-! ## D. Convergence -/
 
-
-theorem abbl_tendsto_finiteGhost_shiftedBase (d : Nat) (beta h : Real)
+lemma abbl_tendsto_finiteGhost_shiftedBase (d : Nat) (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 ≤ h) :
     Tendsto
       (fun n ↦ abfaMag (sctBoxGraph d n) (abbCoupling d n)
@@ -560,9 +576,7 @@ theorem abbl_tendsto_finiteGhost_shiftedBase (d : Nat) (beta h : Real)
   exact Filter.Eventually.of_forall fun n ↦
     (abbl_abfaMag_eq_window d n beta h).symm
 
-
-
-theorem abbl_tendsto_boundaryError_zero (h : Real) (hh : 0 < h) :
+lemma abbl_tendsto_boundaryError_zero (h : Real) (hh : 0 < h) :
     Tendsto
       (fun n : Nat ↦ Real.exp (-(h * (((n + 2 : Nat) : Real)))))
       atTop (nhds 0) := by
@@ -572,9 +586,9 @@ theorem abbl_tendsto_boundaryError_zero (h : Real) (hh : 0 < h) :
     tendsto_atTop_add_const_right atTop 2 tendsto_natCast_atTop_atTop
   simpa only [Nat.cast_add, Nat.cast_ofNat] using hn.const_mul_atTop hh
 
-
-
-
+/-- For `h > 0`, the boundary-target box magnetization converges to the infinite-volume
+magnetization
+`abigMag(β, h)` of `ℤ^d` with a ghost. -/
 theorem abbl_tendsto_abbMag_shifted (d : Nat) (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h) :
     Tendsto (fun n ↦ abbMag d (n + 1) beta h) atTop
@@ -604,7 +618,6 @@ theorem abbl_tendsto_abbMag_shifted (d : Nat) (beta h : Real)
     simpa [P, E, Nat.add_assoc] using
       (abbl_abfaMag_le_abbMag_le (d := d) (n := n + 1)
         (Nat.succ_pos n) beta h hbeta hh.le).2
-
 
 end Sharpness
 end StatMech

@@ -6,25 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelector
+
+/-!
+# Obstruction to bondwise coordinate certificates
+
+A bondwise coordinate certificate forces the toggle source to be empty at every contributing flux;
+hence no certificate exists when the selector's actual mass on `s :: ss` is nonzero and the toggle
+source `sourceClass(s :: ss) ∆ {s.1, s.2.1}` is nonempty.
+
+## i. Overview
+
+At a contributing flux, a labeled split of the left pair fiber exists; the two normal forms of a
+certificate carry it to the right pair fiber, so the full current has both the source class of
+`s :: ss` and the sources `{s.1, s.2.1}` of the active segment
+(`BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes`). A nonzero actual mass
+gives a contributing flux, so certificates are empty when the toggle source is nonempty
+(`bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero`).
+
+All results are proved unconditionally (under the stated nonvanishing hypotheses).
+
+## ii. Key results
+
+- `BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes` : a certificate forces
+  an empty toggle source
+- `bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero` : no certificate when the actual
+  mass is nonzero and the toggle source is nonempty
+
+## iii. Table of contents
+
+- A. Labeled splits of nonzero pair masses
+- B. Emptiness of bondwise coordinate certificates
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -39,6 +59,7 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 noncomputable local instance certificateObstructionDecidableAdj
     (G : SimpleGraph V) :
     DecidableRel G.Adj := Classical.decRel _
@@ -53,10 +74,11 @@ open FluxEdgeCopy
 
 variable {D : Type*}
 
+/-! ## A. Labeled splits of nonzero pair masses -/
 
-
-
-theorem exists_labeled_split_of_rawSourcePairFiberMass_ne_zero
+/-- A nonzero raw source pair fiber mass has a labeled split of edge copies with the prescribed
+sources and both fiber conditions. -/
+lemma exists_labeled_split_of_rawSourcePairFiberMass_ne_zero
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A : Finset V)
@@ -77,10 +99,11 @@ theorem exists_labeled_split_of_rawSourcePairFiberMass_ne_zero
   exact (hex <| by
     exact ⟨T.1, T.2.1, T.2.2.1, T.2.2.2⟩).elim
 
+/-! ## B. Emptiness of bondwise coordinate certificates -/
 
-
-
-theorem BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes
+/-- A bondwise coordinate certificate forces the toggle source to be empty at a contributing
+flux. -/
+lemma BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)
     (suffix1 suffix2 : List (Sym2 V))
@@ -126,9 +149,7 @@ theorem BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes
       hfullSources.symm.trans hhead.1
     simp [stepToggleSource, heq]
 
-
-
-theorem BondwiseCoordinateCertificate.not_contributes_of_toggleSource_ne_empty
+lemma BondwiseCoordinateCertificate.not_contributes_of_toggleSource_ne_empty
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)
     (suffix1 suffix2 : List (Sym2 V))
@@ -147,10 +168,7 @@ theorem BondwiseCoordinateCertificate.not_contributes_of_toggleSource_ne_empty
     (BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes
       X x accepted suffix1 suffix2 bit1 bit2 S beta J d s ss hs C m hm)
 
-
-
-
-theorem bondwiseCoordinateCertificate_isEmpty_of_contributes
+lemma bondwiseCoordinateCertificate_isEmpty_of_contributes
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)
     (suffix1 suffix2 : List (Sym2 V))
@@ -170,10 +188,8 @@ theorem bondwiseCoordinateCertificate_isEmpty_of_contributes
     (BondwiseCoordinateCertificate.stepToggleSource_eq_empty_of_contributes
       X x accepted suffix1 suffix2 bit1 bit2 S beta J d s ss hs C m hm)
 
-
-
-
-
+/-- There is no bondwise coordinate certificate when the actual mass on `s :: ss` is nonzero and the
+toggle source is nonempty. -/
 theorem bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)

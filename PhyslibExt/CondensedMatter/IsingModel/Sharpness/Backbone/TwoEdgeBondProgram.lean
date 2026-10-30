@@ -6,21 +6,61 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteBondProgram
 
+/-!
+# A two-edge bondwise exploration program
+
+A bondwise segment program that explores at most two edges, accepting the vacuum, a single active
+edge, or a pair of active edges forming a two-edge path, together with the complete selector
+specification it realizes and an explicit computation on the path graph with three vertices.
+
+## i. Overview
+
+The scan of `BackboneTwoEdgeBondProgram` visits the edges of the domain graph in a fixed order and
+records up to two accepted edges. A run is complete when the accepted word is empty and the
+current is sourceless, or is one active edge whose endpoints are the sources and no further edge is
+admissible, or is two distinct active edges forming a path whose endpoint sets have symmetric
+difference equal to the sources. Completion is functional in the current
+(`program_complete_functional`), so the program defines a complete bondwise selector specification
+(`selectorSpec`) with source class `{s₀, s₁} ∆ {t₀, t₁}`. The two-unit flux `twoUnitFlux e f`
+realizes the canonical pair `[e, f]` when `e` is scanned first. On the path graph `0 – 1 – 2` the
+two-segment fibers are characterized by the edge orientation and the scan order
+(`fin3_twoSegment_fiber_iff_orientation_and_scan`).
+
+Headline fidelity: the program and selector results are proved unconditionally.
+`selectorSpec_nonempty_canonicalCertificate_iff_toggleExists` is an unconditional equivalence, and
+`selectorSpec_canonicalToggleExists_of_componentwise` is conditional on the componentwise toggle
+hypothesis `h : CanonicalComponentwiseToggleExists …`, which is false on the path-plus-triangle
+domain (`BackboneTwoEdgeCycleObstruction.not_canonicalComponentwiseToggleExists`). These
+toggle-existence statements carry the chain rule (P2) for this program; they are not proved here.
+
+## ii. Key results
+
+- `BackboneTwoEdgeBondProgram.program` : the two-edge bondwise program
+- `BackboneTwoEdgeBondProgram.program_complete_functional` : completion is functional
+- `BackboneTwoEdgeBondProgram.selectorSpec` : the complete selector specification it defines
+- `BackboneTwoEdgeBondProgram.program_realizes_selectorSpec` : the program realizes it
+- `BackboneTwoEdgeBondProgram.fin3_twoSegment_fiber_iff_orientation_and_scan` : the two-segment
+  fibers on the three-vertex path
+- `BackboneTwoEdgeBondProgram.selectorSpec_nonempty_canonicalCertificate_iff_toggleExists` : a
+  certificate exists iff the canonical bondwise toggle exists
+
+## iii. Table of contents
+
+- A. The scan and the program
+- B. Shape and functionality of complete runs
+- C. The selector specification
+- D. Two-unit fluxes
+- E. The path graph on three vertices
+- F. Realization and toggles
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 @[expose] public section
 
 open SimpleGraph Finset
@@ -40,17 +80,19 @@ open BackboneConcreteSelector
 open BackboneConcreteBondProgram
 open BackboneDeterminedCutSwitching
 
+/-- Adjacency is decided classically in this file. -/
 noncomputable local instance twoEdgeDecidableAdj
     (G : SimpleGraph V) : DecidableRel G.Adj := Classical.decRel _
 
+/-! ## A. The scan and the program -/
 
-
+/-- The state of the two-edge scan: the domain and the edges accepted so far. -/
 structure State (V : Type*) [Fintype V] [DecidableEq V] where
   domain : shb_ExplorationDomain V
   accepted : List (Sym2 V)
 
-
-
+/-- The scan: all edges of the domain graph while nothing is accepted, the remaining edges after one
+acceptance, and nothing after two. -/
 noncomputable def scan :
     shb_DynamicEdgeExploration (State V) (Sym2 V) where
   edgeOrder := fun st =>
@@ -68,9 +110,7 @@ noncomputable def scan :
         | cons second tail => simp
   advance := fun st e => ⟨st.domain, st.accepted ++ [e]⟩
 
-
-
-
+/-- The edges of a word of at most two segments; longer or non-edge words map to a loop. -/
 noncomputable def encode
     (d : shb_ExplorationDomain V) :
     List (shb_ExplorationSegment V) -> List (Sym2 V)
@@ -85,20 +125,17 @@ noncomputable def encode
       | _, _ => [s(s.1, s.1)]
   | s :: _ :: _ :: _ => [s(s.1, s.1)]
 
-
-
+/-- The segments `s` and `t` form a path: `s` ends where `t` starts, and its ends differ. -/
 def FormsTwoEdgePath
     (s t : shb_ExplorationSegment V) : Prop :=
   s.2.1 = t.1 /\ s.1 ≠ t.2.1
 
-
+/-- The sources of the Boolean current `ω` on the domain graph of the state. -/
 def boolSources (st : State V) (omega : Sym2 V -> Bool) : Finset V :=
   sources st.domain.graph
     (BackboneConcreteBondProgram.boolCurrent omega)
 
-
-
-
+/-- The terminal condition of a run, by the number of accepted edges. -/
 def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
   match st.accepted with
   | [] => boolSources st omega = ∅
@@ -121,7 +158,7 @@ def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
       else False
   | _ => False
 
-
+/-- The two-edge bondwise segment program. -/
 noncomputable def program : BondwiseSegmentProgram V where
   State := State V
   scan := scan
@@ -130,7 +167,8 @@ noncomputable def program : BondwiseSegmentProgram V where
   bit := BackboneConcreteBondProgram.oddBit
   terminal := terminal
 
-@[simp] theorem program_complete_nil_iff
+/-! ## B. Shape and functionality of complete runs -/
+@[simp] lemma program_complete_nil_iff
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     program.CompleteEvent d [] m <->
       sources d.graph (ofEdgeFun d.graph m) = ∅ := by
@@ -140,24 +178,19 @@ noncomputable def program : BondwiseSegmentProgram V where
   rw [BackboneConcreteBondProgram.sources_boolCurrent_oddBit]
   simp
 
-
-theorem scan_firstAdmissible_ne_diagonal
+lemma scan_firstAdmissible_ne_diagonal
     (d : shb_ExplorationDomain V) (omega : Sym2 V -> Bool) (x : V) :
     scan.firstAdmissible (fun _ e => omega e) ⟨d, []⟩ ≠ some s(x, x) := by
   intro h
   have hmem := scan.firstAdmissible_mem (fun _ e => omega e)
     ⟨d, []⟩ s(x, x) h
   have hedge : s(x, x) ∈ d.graph.edgeFinset := by
-    simpa [scan] using hmem
+    simp [scan] at hmem
   have hadj : d.graph.Adj x x := by
-    simpa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hedge
+    simp [SimpleGraph.mem_edgeFinset] at hedge
   exact d.graph.loopless.irrefl x hadj
 
-
-
-
-
-theorem program_complete_singleton_data
+lemma program_complete_singleton_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s] m) :
@@ -214,9 +247,7 @@ theorem program_complete_singleton_data
         d.graph m]
       exact hterminal.2.1
 
-
-
-theorem program_complete_pair_data
+lemma program_complete_pair_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s, t] m) :
@@ -299,8 +330,7 @@ theorem program_complete_pair_data
             d.graph m]
           exact hterminal.2.2.2.2
 
-
-theorem program_complete_three_cons_false
+lemma program_complete_three_cons_false
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t u : shb_ExplorationSegment V)
     (rest : List (shb_ExplorationSegment V)) :
@@ -316,8 +346,7 @@ theorem program_complete_three_cons_false
     (fluxBitConfig d.graph BackboneConcreteBondProgram.oddBit m)
     s.1 hfirst
 
-
-theorem program_complete_word_shape
+lemma program_complete_word_shape
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -333,8 +362,7 @@ theorem program_complete_word_shape
           | cons u rest => exact (program_complete_three_cons_false
               d m s t u rest h).elim
 
-
-theorem canonicalEdgeSegment_start_ne_end
+lemma canonicalEdgeSegment_start_ne_end
     (G : SimpleGraph V) (e : G.edgeFinset) :
     (canonicalEdgeSegment G e).1 ≠ (canonicalEdgeSegment G e).2.1 := by
   simp only [canonicalEdgeSegment]
@@ -344,9 +372,7 @@ theorem canonicalEdgeSegment_start_ne_end
   rw [← e.1.out_eq, Sym2.mk_isDiag_iff]
   exact h
 
-
-
-theorem canonicalPair_boundary_ne_empty
+lemma canonicalPair_boundary_ne_empty
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f)) :
@@ -368,8 +394,7 @@ theorem canonicalPair_boundary_ne_empty
   rw [hempty] at hmem
   simp at hmem
 
-
-
+/-- The two-edge path formed by the canonical segments of two edges forming a path. -/
 noncomputable def canonicalPairPath
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
@@ -397,8 +422,7 @@ noncomputable def canonicalPairPath
   refine ⟨w, ?_⟩
   simp [w, hab, hbc, houter]
 
-
-theorem canonicalPairPath_edges
+lemma canonicalPairPath_edges
     (G : SimpleGraph V) (e f : G.edgeFinset)
     (hpath : FormsTwoEdgePath (canonicalEdgeSegment G e)
       (canonicalEdgeSegment G f)) :
@@ -410,8 +434,7 @@ theorem canonicalPairPath_edges
     s(e.1.out.2, f.1.out.2)] = [e.1, f.1]
   rw [hedgeE, hjoin, hedgeF]
 
-
-theorem complete_nil_singleton_false
+lemma complete_nil_singleton_false
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (hnil : program.CompleteEvent d [] m)
@@ -425,8 +448,7 @@ theorem complete_nil_singleton_false
     simp
   simp at hmem
 
-
-theorem complete_nil_pair_false
+lemma complete_nil_pair_false
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)
     (hnil : program.CompleteEvent d [] m)
@@ -437,8 +459,7 @@ theorem complete_nil_pair_false
   apply canonicalPair_boundary_ne_empty d.graph e f hpath
   exact hsource.symm.trans hzero
 
-
-theorem complete_singleton_pair_false
+lemma complete_singleton_pair_false
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t u : shb_ExplorationSegment V)
     (hsingle : program.CompleteEvent d [s] m)
@@ -453,7 +474,7 @@ theorem complete_singleton_pair_false
   rw [hfinished] at hsecond
   simp at hsecond
 
-
+/-- A current completes the two-edge program along at most one word. -/
 theorem program_complete_functional
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word word' : List (shb_ExplorationSegment V))
@@ -505,9 +526,9 @@ theorem program_complete_functional
       subst f'
       rw [← hse, ← htf, ← hue, ← hvf]
 
+/-! ## C. The selector specification -/
 
-
-
+/-- The source class of a word: the symmetric difference of the endpoint sets of its segments. -/
 def sourceClass (_d : shb_ExplorationDomain V) :
     List (shb_ExplorationSegment V) -> Finset V
   | [] => ∅
@@ -515,11 +536,10 @@ def sourceClass (_d : shb_ExplorationDomain V) :
   | [s, t] => {s.1, s.2.1} ∆ {t.1, t.2.1}
   | _ => ∅
 
-@[simp] theorem sourceClass_nil (d : shb_ExplorationDomain V) :
+@[simp] lemma sourceClass_nil (d : shb_ExplorationDomain V) :
     sourceClass d [] = ∅ := rfl
 
-
-theorem sources_eq_sourceClass_of_program_complete
+lemma sources_eq_sourceClass_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -542,8 +562,7 @@ theorem sources_eq_sourceClass_of_program_complete
     rw [← hsegmentS, ← hsegmentT]
     exact hsource
 
-
-theorem head_active_of_program_complete
+lemma head_active_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V))
@@ -562,7 +581,7 @@ theorem head_active_of_program_complete
       | cons u rest =>
           exact (program_complete_three_cons_false d m s t u rest h).elim
 
-
+/-- The complete bondwise selector specification defined by the two-edge program. -/
 noncomputable def selectorSpec :
     CompleteBondwiseSelectorSpec (V := V) (program (V := V)) where
   sourceClass := sourceClass (V := V)
@@ -573,10 +592,7 @@ noncomputable def selectorSpec :
   complete_nil_iff := program_complete_nil_iff
   head_active_of_complete := head_active_of_program_complete
 
-
-
-
-theorem program_complete_pair_of_scan_data
+lemma program_complete_pair_of_scan_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V) (e f : d.graph.edgeFinset)
     (hencodeS : edgeOfSegment? d s = some e)
@@ -626,8 +642,7 @@ theorem program_complete_pair_of_scan_data
       BondwiseSegmentProgram.TerminalEvent, scan, terminal, boolSources,
       e.2, f.2] using hterminal
 
-
-theorem selectorSpec_fiber_pair_of_scan_data
+lemma selectorSpec_fiber_pair_of_scan_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V) (e f : d.graph.edgeFinset)
     (hencodeS : edgeOfSegment? d s = some e)
@@ -653,17 +668,15 @@ theorem selectorSpec_fiber_pair_of_scan_data
   exact program_complete_pair_of_scan_data d m s t e f hencodeS hencodeT
     hfirst hsecond hne hactiveS hactiveT hpath hsource
 
+/-! ## D. Two-unit fluxes -/
 
-
-
+/-- The current with multiplicity one on each of the edges `e` and `f`. -/
 def twoUnitFlux (G : SimpleGraph V) (e f : G.edgeFinset) :
     G.edgeFinset -> Nat := fun g =>
   BackboneConcreteBondProgram.unitFlux G e g +
     BackboneConcreteBondProgram.unitFlux G f g
 
-
-
-theorem sources_twoUnitFlux
+lemma sources_twoUnitFlux
     (G : SimpleGraph V) (e f : G.edgeFinset) :
     sources G (ofEdgeFun G (twoUnitFlux G e f)) =
       {(canonicalEdgeSegment G e).1,
@@ -675,9 +688,9 @@ theorem sources_twoUnitFlux
     BackboneConcreteBondProgram.sources_unitFlux,
     BackboneConcreteBondProgram.sources_unitFlux]
 
-
-
-theorem find?_eq_some_of_unique_true_mem
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+lemma find?_eq_some_of_unique_true_mem
     {A : Type*} [DecidableEq A] (xs : List A) (a : A) (p : A -> Bool)
     (hnodup : xs.Nodup) (ha : a ∈ xs)
     (hp : ∀ x, x ∈ xs -> (p x = true <-> x = a)) :
@@ -696,9 +709,7 @@ theorem find?_eq_some_of_unique_true_mem
             exact ih hnodup.2 ha' (fun y hy => hp y (by simp [hy]))
         | true => exact (hxa ((hp x (by simp)).mp hpx)).elim
 
-
-
-theorem scan_secondAdmissible_twoUnitFlux
+lemma scan_secondAdmissible_twoUnitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f) :
     scan.firstAdmissible
@@ -740,10 +751,7 @@ theorem scan_secondAdmissible_twoUnitFlux
       simp [f.2, BackboneConcreteBondProgram.oddBit, twoUnitFlux,
         BackboneConcreteBondProgram.unitFlux, hne.symm]
 
-
-
-
-theorem program_complete_canonical_pair_twoUnitFlux
+lemma program_complete_canonical_pair_twoUnitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : scan.firstAdmissible
@@ -769,8 +777,7 @@ theorem program_complete_canonical_pair_twoUnitFlux
   · exact hpath
   · exact sources_twoUnitFlux d.graph e f
 
-
-theorem selectorSpec_fiber_canonical_pair_twoUnitFlux
+lemma selectorSpec_fiber_canonical_pair_twoUnitFlux
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : scan.firstAdmissible
@@ -788,20 +795,20 @@ theorem selectorSpec_fiber_canonical_pair_twoUnitFlux
   exact program_complete_canonical_pair_twoUnitFlux d e f hne hfirst
     hactiveE hactiveF hpath
 
+/-! ## E. The path graph on three vertices -/
 
-
-
+/-- The path graph `0 – 1 – 2`. -/
 def fin3PathGraph : SimpleGraph (Fin 3) :=
   SimpleGraph.fromEdgeSet
     ({s((0 : Fin 3), 1), s((1 : Fin 3), 2)} : Set (Sym2 (Fin 3)))
 
-@[simp] theorem fin3PathGraph_edgeFinset :
+@[simp] lemma fin3PathGraph_edgeFinset :
     fin3PathGraph.edgeFinset =
       {s((0 : Fin 3), 1), s((1 : Fin 3), 2)} := by
   ext e
   rw [SimpleGraph.mem_edgeFinset, fin3PathGraph,
     SimpleGraph.edgeSet_fromEdgeSet]
-  simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
     Finset.mem_insert, Finset.mem_singleton]
   constructor
   · exact And.left
@@ -809,23 +816,22 @@ def fin3PathGraph : SimpleGraph (Fin 3) :=
     refine ⟨he, ?_⟩
     rcases he with rfl | rfl <;> decide
 
-
+/-- The edge `01` of the three-vertex path. -/
 def fin3LeftEdge : fin3PathGraph.edgeFinset :=
   ⟨s((0 : Fin 3), 1), by simp⟩
 
-
+/-- The edge `12` of the three-vertex path. -/
 def fin3RightEdge : fin3PathGraph.edgeFinset :=
   ⟨s((1 : Fin 3), 2), by simp⟩
 
-theorem fin3LeftEdge_ne_rightEdge : fin3LeftEdge ≠ fin3RightEdge := by
+lemma fin3LeftEdge_ne_rightEdge : fin3LeftEdge ≠ fin3RightEdge := by
   intro h
   have hv := congrArg Subtype.val h
   exact (by decide :
     s((0 : Fin 3), 1) ≠ s((1 : Fin 3), 2)) (by
-      simpa [fin3LeftEdge, fin3RightEdge] using hv)
+      simp [fin3LeftEdge, fin3RightEdge] at hv)
 
-
-
+/-- The exploration domain on the three-vertex path with both edges active. -/
 noncomputable def fin3PathDomain : shb_ExplorationDomain (Fin 3) where
   graph := fin3PathGraph
   active :=
@@ -848,40 +854,38 @@ noncomputable def fin3PathDomain : shb_ExplorationDomain (Fin 3) where
       subst edge
       exact SimpleGraph.mem_edgeFinset.mp fin3RightEdge.2
 
-@[simp] theorem fin3PathDomain_graph : fin3PathDomain.graph = fin3PathGraph :=
+@[simp] lemma fin3PathDomain_graph : fin3PathDomain.graph = fin3PathGraph :=
   rfl
 
-@[simp] theorem fin3LeftEdge_active :
+@[simp] lemma fin3LeftEdge_active :
     canonicalEdgeSegment fin3PathGraph fin3LeftEdge ∈
       fin3PathDomain.active := by
   simp [fin3PathDomain]
 
-@[simp] theorem fin3RightEdge_active :
+@[simp] lemma fin3RightEdge_active :
     canonicalEdgeSegment fin3PathGraph fin3RightEdge ∈
       fin3PathDomain.active := by
   simp [fin3PathDomain]
 
-
+/-- The current with multiplicity one on both edges of the three-vertex path. -/
 def fin3PathFlux : fin3PathDomain.graph.edgeFinset -> Nat :=
   twoUnitFlux fin3PathDomain.graph fin3LeftEdge fin3RightEdge
 
-
+/-- The scan admits the left edge first for the path current. -/
 def fin3LeftFirst : Prop :=
   scan.firstAdmissible
       (fun _ b => fluxBitConfig fin3PathDomain.graph
         BackboneConcreteBondProgram.oddBit fin3PathFlux b)
       ⟨fin3PathDomain, []⟩ = some fin3LeftEdge.1
 
-
+/-- The scan admits the right edge first for the path current. -/
 def fin3RightFirst : Prop :=
   scan.firstAdmissible
       (fun _ b => fluxBitConfig fin3PathDomain.graph
         BackboneConcreteBondProgram.oddBit fin3PathFlux b)
       ⟨fin3PathDomain, []⟩ = some fin3RightEdge.1
 
-
-
-theorem fin3_first_scan_cases : fin3LeftFirst ∨ fin3RightFirst := by
+lemma fin3_first_scan_cases : fin3LeftFirst ∨ fin3RightFirst := by
   let admissible : State (Fin 3) -> Sym2 (Fin 3) -> Bool :=
     fun _ b => fluxBitConfig fin3PathDomain.graph
       BackboneConcreteBondProgram.oddBit fin3PathFlux b
@@ -902,7 +906,7 @@ theorem fin3_first_scan_cases : fin3LeftFirst ∨ fin3RightFirst := by
         have hmemDomain :
             fin3LeftEdge.1 ∈ fin3PathDomain.graph.edgeFinset :=
           fin3LeftEdge.2
-        rw [dif_pos hmemDomain]
+        rw [dite_eq_left hmemDomain]
         change BackboneConcreteBondProgram.oddBit
           (fin3PathFlux fin3LeftEdge) = true
         rw [BackboneConcreteBondProgram.oddBit_eq_true_iff]
@@ -939,15 +943,13 @@ theorem fin3_first_scan_cases : fin3LeftFirst ∨ fin3RightFirst := by
         unfold fin3RightFirst
         simpa [admissible, hedge, fin3RightEdge] using hresult
 
-
-theorem fin3_first_scan_exclusive : ¬(fin3LeftFirst ∧ fin3RightFirst) := by
+lemma fin3_first_scan_exclusive : ¬(fin3LeftFirst ∧ fin3RightFirst) := by
   rintro ⟨hleft, hright⟩
   have hedge : fin3LeftEdge.1 = fin3RightEdge.1 :=
     Option.some.inj (hleft.symm.trans hright)
   exact fin3LeftEdge_ne_rightEdge (Subtype.ext hedge)
 
-
-theorem fin3LeftEdge_out_cases :
+lemma fin3LeftEdge_out_cases :
     fin3LeftEdge.1.out = ((0 : Fin 3), 1) ∨
       fin3LeftEdge.1.out = ((1 : Fin 3), 0) := by
   have hout := fin3LeftEdge.1.out_eq
@@ -958,8 +960,7 @@ theorem fin3LeftEdge_out_cases :
   · exact Or.inl (Prod.ext h.1 h.2)
   · exact Or.inr (Prod.ext h.1 h.2)
 
-
-theorem fin3RightEdge_out_cases :
+lemma fin3RightEdge_out_cases :
     fin3RightEdge.1.out = ((1 : Fin 3), 2) ∨
       fin3RightEdge.1.out = ((2 : Fin 3), 1) := by
   have hout := fin3RightEdge.1.out_eq
@@ -970,9 +971,7 @@ theorem fin3RightEdge_out_cases :
   · exact Or.inl (Prod.ext h.1 h.2)
   · exact Or.inr (Prod.ext h.1 h.2)
 
-
-
-theorem fin3_forward_path_iff :
+lemma fin3_forward_path_iff :
     FormsTwoEdgePath
         (canonicalEdgeSegment fin3PathGraph fin3LeftEdge)
         (canonicalEdgeSegment fin3PathGraph fin3RightEdge) <->
@@ -982,9 +981,7 @@ theorem fin3_forward_path_iff :
     rcases fin3RightEdge_out_cases with hright | hright <;>
     simp [FormsTwoEdgePath, canonicalEdgeSegment, hleft, hright]
 
-
-
-theorem fin3_reverse_path_iff :
+lemma fin3_reverse_path_iff :
     FormsTwoEdgePath
         (canonicalEdgeSegment fin3PathGraph fin3RightEdge)
         (canonicalEdgeSegment fin3PathGraph fin3LeftEdge) <->
@@ -994,10 +991,7 @@ theorem fin3_reverse_path_iff :
     rcases fin3RightEdge_out_cases with hright | hright <;>
     simp [FormsTwoEdgePath, canonicalEdgeSegment, hleft, hright]
 
-
-
-
-theorem fin3_forward_fiber_iff :
+lemma fin3_forward_fiber_iff :
     (selectorSpec (V := Fin 3)).toPartialSelector.Fiber fin3PathDomain
         [canonicalEdgeSegment fin3PathGraph fin3LeftEdge,
           canonicalEdgeSegment fin3PathGraph fin3RightEdge]
@@ -1026,8 +1020,7 @@ theorem fin3_forward_fiber_iff :
       fin3LeftEdge_ne_rightEdge hfirst fin3LeftEdge_active
       fin3RightEdge_active hpath
 
-
-theorem fin3_reverse_fiber_iff :
+lemma fin3_reverse_fiber_iff :
     (selectorSpec (V := Fin 3)).toPartialSelector.Fiber fin3PathDomain
         [canonicalEdgeSegment fin3PathGraph fin3RightEdge,
           canonicalEdgeSegment fin3PathGraph fin3LeftEdge]
@@ -1073,9 +1066,8 @@ theorem fin3_reverse_fiber_iff :
     rw [hfluxSwap] at hfiber
     exact hfiber
 
-
-
-
+/-- On the three-vertex path, the path current lies in a two-segment fiber exactly when the scan
+order and the edge orientations agree. -/
 theorem fin3_twoSegment_fiber_iff_orientation_and_scan :
     ((selectorSpec (V := Fin 3)).toPartialSelector.Fiber fin3PathDomain
           [canonicalEdgeSegment fin3PathGraph fin3LeftEdge,
@@ -1094,17 +1086,16 @@ theorem fin3_twoSegment_fiber_iff_orientation_and_scan :
   rw [fin3_forward_fiber_iff, fin3_reverse_fiber_iff,
     fin3_forward_path_iff, fin3_reverse_path_iff]
 
+/-! ## F. Realization and toggles -/
 
-
-
-
+/-- The two-edge program realizes its selector specification. -/
 theorem program_realizes_selectorSpec :
     ProgramRealizes (program (V := V))
       (selectorSpec (V := V)).toPartialSelector := by
   exact ⟨selectorSpec (V := V), fun _ _ _ => Iff.rfl⟩
 
-
-
+/-- A coordinate certificate for the two-edge selector exists iff the canonical bondwise toggle
+exists. -/
 theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -1119,8 +1110,7 @@ theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
   (selectorSpec (V := V)).nonempty_canonicalCertificate_iff_toggleExists
     beta J d s ss hs
 
-
-
+/-- The canonical bondwise toggle exists, given the componentwise toggle hypothesis `h`. -/
 theorem selectorSpec_canonicalToggleExists_of_componentwise
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -1135,6 +1125,5 @@ theorem selectorSpec_canonicalToggleExists_of_componentwise
 end BackboneTwoEdgeBondProgram
 
 end
-
 
 end StatMech.Sharpness

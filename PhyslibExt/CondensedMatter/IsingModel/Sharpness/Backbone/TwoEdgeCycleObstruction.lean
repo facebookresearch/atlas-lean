@@ -6,25 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondToggle
 
+/-!
+# A disjoint odd cycle obstructs the componentwise copy toggle
+
+On the graph made of a path `0 – 1 – 2` and a disjoint triangle `3 – 4 – 5`, no set of labeled
+copies toggles the residual-vacuum event to the lifted-residual event for the two-edge program,
+so the canonical componentwise toggle does not exist at any `β > 0`, `J > 0`.
+
+## i. Overview
+
+The domain has the path edges `01` (head) and `12` (suffix) active, and the current
+`superposition` puts one unit on each path edge and two units on each triangle edge. Its labeled
+copies can be split so that the triangle receives one unit per edge (`oddCycleSplit`): the odd
+cycle is sourceless, so this split lies in the residual vacuum, but after toggling any set of
+copies the parity on a triangle edge breaks the lifted-residual run `[12]`
+(`suffix_event_cycle₀_not_odd`, `profile_cycle₀_odd_symmDiff_iff_not`). Hence no toggle is a
+covariance between the two runs (`no_residualVacuum_suffix_covariance`). Since `superposition`
+contributes with positive weight (`coordinatePairContributes`), the canonical componentwise toggle
+existence fails (`not_canonicalComponentwiseToggleExists`).
+
+Headline fidelity: `no_residualVacuum_suffix_covariance` and
+`not_canonicalComponentwiseToggleExists` are unconditional refutations (for `β > 0`, `J > 0`).
+They show that the hypothesis `CanonicalComponentwiseToggleExists` of
+`BackboneTwoEdgeBondProgram.selectorSpec_canonicalToggleExists_of_componentwise` fails on this
+domain, so that route to the chain rule (P2) cannot work for all domains.
+
+## ii. Key results
+
+- `BackboneTwoEdgeCycleObstruction.graph`, `domain` : the path-plus-triangle domain
+- `BackboneTwoEdgeCycleObstruction.superposition` : the current `01 + 12 + 2·triangle`
+- `BackboneTwoEdgeCycleObstruction.no_residualVacuum_suffix_covariance` : no copy toggle is a
+  covariance of the residual runs (unconditional)
+- `BackboneTwoEdgeCycleObstruction.not_canonicalComponentwiseToggleExists` : the canonical
+  componentwise toggle does not exist (unconditional, `β > 0`, `J > 0`)
+
+## iii. Table of contents
+
+- A. The path-plus-triangle graph and its edges
+- B. The domain and the currents
+- C. Splits of the superposition
+- D. The residual graph after the head edge
+- E. Events of the splits
+- F. Parity of the triangle copies
+- G. No covariance and no componentwise toggle
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 @[expose] public section
 
 open SimpleGraph Finset BigOperators
@@ -48,23 +81,26 @@ open BackboneTwoEdgeBondProgram
 open BackboneTwoEdgeBondToggle
 open FluxEdgeCopy
 
+/-- Adjacency is decided classically in this file. -/
 noncomputable local instance obstructionDecidableAdj
     (G : SimpleGraph (Fin 6)) : DecidableRel G.Adj := Classical.decRel _
 
+/-! ## A. The path-plus-triangle graph and its edges -/
 
+/-- The graph on `Fin 6` with the path `0 – 1 – 2` and the triangle `3 – 4 – 5`. -/
 def graph : SimpleGraph (Fin 6) :=
   SimpleGraph.fromEdgeSet
     ({s((0 : Fin 6), 1), s((1 : Fin 6), 2), s((3 : Fin 6), 4),
         s((4 : Fin 6), 5), s((5 : Fin 6), 3)} : Set (Sym2 (Fin 6)))
 
-@[simp] theorem graph_edgeFinset :
+@[simp] lemma graph_edgeFinset :
     graph.edgeFinset =
       {s((0 : Fin 6), 1), s((1 : Fin 6), 2), s((3 : Fin 6), 4),
         s((4 : Fin 6), 5), s((5 : Fin 6), 3)} := by
   ext e
   rw [SimpleGraph.mem_edgeFinset, graph,
     SimpleGraph.edgeSet_fromEdgeSet]
-  simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
     Finset.mem_insert, Finset.mem_singleton]
   constructor
   · exact And.left
@@ -72,81 +108,86 @@ def graph : SimpleGraph (Fin 6) :=
     refine ⟨he, ?_⟩
     rcases he with rfl | rfl | rfl | rfl | rfl <;> decide
 
+/-- The head edge `01`. -/
 def headEdge : graph.edgeFinset := ⟨s((0 : Fin 6), 1), by simp⟩
+/-- The suffix edge `12`. -/
 def suffixEdge : graph.edgeFinset := ⟨s((1 : Fin 6), 2), by simp⟩
+/-- The triangle edge `34`. -/
 def cycleEdge₀ : graph.edgeFinset := ⟨s((3 : Fin 6), 4), by simp⟩
+/-- The triangle edge `45`. -/
 def cycleEdge₁ : graph.edgeFinset := ⟨s((4 : Fin 6), 5), by simp⟩
+/-- The triangle edge `53`. -/
 def cycleEdge₂ : graph.edgeFinset := ⟨s((5 : Fin 6), 3), by simp⟩
 
-theorem headEdge_ne_suffixEdge : headEdge ≠ suffixEdge := by
+lemma headEdge_ne_suffixEdge : headEdge ≠ suffixEdge := by
   intro h
   exact (by decide : s((0 : Fin 6), 1) ≠ s((1 : Fin 6), 2))
     (congrArg Subtype.val h)
 
-theorem headEdge_ne_cycleEdge₀ : headEdge ≠ cycleEdge₀ := by
+lemma headEdge_ne_cycleEdge₀ : headEdge ≠ cycleEdge₀ := by
   intro h
   exact (by decide : s((0 : Fin 6), 1) ≠ s((3 : Fin 6), 4))
     (congrArg Subtype.val h)
 
-theorem headEdge_ne_cycleEdge₁ : headEdge ≠ cycleEdge₁ := by
+lemma headEdge_ne_cycleEdge₁ : headEdge ≠ cycleEdge₁ := by
   intro h
   exact (by decide : s((0 : Fin 6), 1) ≠ s((4 : Fin 6), 5))
     (congrArg Subtype.val h)
 
-theorem headEdge_ne_cycleEdge₂ : headEdge ≠ cycleEdge₂ := by
+lemma headEdge_ne_cycleEdge₂ : headEdge ≠ cycleEdge₂ := by
   intro h
   exact (by decide : s((0 : Fin 6), 1) ≠ s((5 : Fin 6), 3))
     (congrArg Subtype.val h)
 
-theorem suffixEdge_ne_cycleEdge₀ : suffixEdge ≠ cycleEdge₀ := by
+lemma suffixEdge_ne_cycleEdge₀ : suffixEdge ≠ cycleEdge₀ := by
   intro h
   exact (by decide : s((1 : Fin 6), 2) ≠ s((3 : Fin 6), 4))
     (congrArg Subtype.val h)
 
-theorem suffixEdge_ne_cycleEdge₁ : suffixEdge ≠ cycleEdge₁ := by
+lemma suffixEdge_ne_cycleEdge₁ : suffixEdge ≠ cycleEdge₁ := by
   intro h
   exact (by decide : s((1 : Fin 6), 2) ≠ s((4 : Fin 6), 5))
     (congrArg Subtype.val h)
 
-theorem suffixEdge_ne_cycleEdge₂ : suffixEdge ≠ cycleEdge₂ := by
+lemma suffixEdge_ne_cycleEdge₂ : suffixEdge ≠ cycleEdge₂ := by
   intro h
   exact (by decide : s((1 : Fin 6), 2) ≠ s((5 : Fin 6), 3))
     (congrArg Subtype.val h)
 
-theorem cycleEdge₀_ne_cycleEdge₁ : cycleEdge₀ ≠ cycleEdge₁ := by
+lemma cycleEdge₀_ne_cycleEdge₁ : cycleEdge₀ ≠ cycleEdge₁ := by
   intro h
   exact (by decide : s((3 : Fin 6), 4) ≠ s((4 : Fin 6), 5))
     (congrArg Subtype.val h)
 
-theorem cycleEdge₀_ne_cycleEdge₂ : cycleEdge₀ ≠ cycleEdge₂ := by
+lemma cycleEdge₀_ne_cycleEdge₂ : cycleEdge₀ ≠ cycleEdge₂ := by
   intro h
   exact (by decide : s((3 : Fin 6), 4) ≠ s((5 : Fin 6), 3))
     (congrArg Subtype.val h)
 
-theorem cycleEdge₁_ne_cycleEdge₂ : cycleEdge₁ ≠ cycleEdge₂ := by
+lemma cycleEdge₁_ne_cycleEdge₂ : cycleEdge₁ ≠ cycleEdge₂ := by
   intro h
   exact (by decide : s((4 : Fin 6), 5) ≠ s((5 : Fin 6), 3))
     (congrArg Subtype.val h)
 
-theorem suffixEdge_ne_headEdge : suffixEdge ≠ headEdge :=
+lemma suffixEdge_ne_headEdge : suffixEdge ≠ headEdge :=
   headEdge_ne_suffixEdge.symm
-theorem cycleEdge₀_ne_headEdge : cycleEdge₀ ≠ headEdge :=
+lemma cycleEdge₀_ne_headEdge : cycleEdge₀ ≠ headEdge :=
   headEdge_ne_cycleEdge₀.symm
-theorem cycleEdge₁_ne_headEdge : cycleEdge₁ ≠ headEdge :=
+lemma cycleEdge₁_ne_headEdge : cycleEdge₁ ≠ headEdge :=
   headEdge_ne_cycleEdge₁.symm
-theorem cycleEdge₂_ne_headEdge : cycleEdge₂ ≠ headEdge :=
+lemma cycleEdge₂_ne_headEdge : cycleEdge₂ ≠ headEdge :=
   headEdge_ne_cycleEdge₂.symm
-theorem cycleEdge₀_ne_suffixEdge : cycleEdge₀ ≠ suffixEdge :=
+lemma cycleEdge₀_ne_suffixEdge : cycleEdge₀ ≠ suffixEdge :=
   suffixEdge_ne_cycleEdge₀.symm
-theorem cycleEdge₁_ne_suffixEdge : cycleEdge₁ ≠ suffixEdge :=
+lemma cycleEdge₁_ne_suffixEdge : cycleEdge₁ ≠ suffixEdge :=
   suffixEdge_ne_cycleEdge₁.symm
-theorem cycleEdge₂_ne_suffixEdge : cycleEdge₂ ≠ suffixEdge :=
+lemma cycleEdge₂_ne_suffixEdge : cycleEdge₂ ≠ suffixEdge :=
   suffixEdge_ne_cycleEdge₂.symm
-theorem cycleEdge₁_ne_cycleEdge₀ : cycleEdge₁ ≠ cycleEdge₀ :=
+lemma cycleEdge₁_ne_cycleEdge₀ : cycleEdge₁ ≠ cycleEdge₀ :=
   cycleEdge₀_ne_cycleEdge₁.symm
-theorem cycleEdge₂_ne_cycleEdge₀ : cycleEdge₂ ≠ cycleEdge₀ :=
+lemma cycleEdge₂_ne_cycleEdge₀ : cycleEdge₂ ≠ cycleEdge₀ :=
   cycleEdge₀_ne_cycleEdge₂.symm
-theorem cycleEdge₂_ne_cycleEdge₁ : cycleEdge₂ ≠ cycleEdge₁ :=
+lemma cycleEdge₂_ne_cycleEdge₁ : cycleEdge₂ ≠ cycleEdge₁ :=
   cycleEdge₁_ne_cycleEdge₂.symm
 
 attribute [simp] headEdge_ne_suffixEdge headEdge_ne_cycleEdge₀
@@ -160,7 +201,9 @@ attribute [simp] headEdge_ne_suffixEdge headEdge_ne_cycleEdge₀
   cycleEdge₁_ne_cycleEdge₀ cycleEdge₂_ne_cycleEdge₀
   cycleEdge₂_ne_cycleEdge₁
 
+/-! ## B. The domain and the currents -/
 
+/-- The exploration domain on `graph` with the head and suffix edges active. -/
 @[implicit_reducible]
 noncomputable def domain : shb_ExplorationDomain (Fin 6) where
   graph := graph
@@ -182,31 +225,30 @@ noncomputable def domain : shb_ExplorationDomain (Fin 6) where
       subst edge
       exact SimpleGraph.mem_edgeFinset.mp suffixEdge.2
 
-@[simp] theorem domain_graph : domain.graph = graph := rfl
+@[simp] lemma domain_graph : domain.graph = graph := rfl
 
-@[simp] theorem head_active :
+@[simp] lemma head_active :
     canonicalEdgeSegment graph headEdge ∈ domain.active := by
   simp [domain]
 
-@[simp] theorem suffix_active :
+@[simp] lemma suffix_active :
     canonicalEdgeSegment graph suffixEdge ∈ domain.active := by
   simp [domain]
 
-
-
+/-- The current with one unit on each path edge and two units on each triangle edge. -/
 def superposition : domain.graph.edgeFinset → Nat := fun e =>
   unitFlux domain.graph headEdge e + unitFlux domain.graph suffixEdge e +
     2 * unitFlux domain.graph cycleEdge₀ e +
     2 * unitFlux domain.graph cycleEdge₁ e +
     2 * unitFlux domain.graph cycleEdge₂ e
 
-
+/-- The current with one unit on each triangle edge. -/
 def oddCycleFlux : domain.graph.edgeFinset → Nat := fun e =>
   unitFlux domain.graph cycleEdge₀ e +
     unitFlux domain.graph cycleEdge₁ e +
     unitFlux domain.graph cycleEdge₂ e
 
-theorem edge_cases (e : domain.graph.edgeFinset) :
+lemma edge_cases (e : domain.graph.edgeFinset) :
     e = headEdge ∨ e = suffixEdge ∨ e = cycleEdge₀ ∨
       e = cycleEdge₁ ∨ e = cycleEdge₂ := by
   have he : e.1 ∈ graph.edgeFinset := by
@@ -220,7 +262,7 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
   · exact Or.inr (Or.inr (Or.inr (Or.inl (Subtype.ext he))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Subtype.ext he))))
 
-@[simp] theorem superposition_head : superposition headEdge = 1 := by
+@[simp] lemma superposition_head : superposition headEdge = 1 := by
   change (((((if headEdge = headEdge then 1 else 0) +
     (if headEdge = suffixEdge then 1 else 0)) +
     2 * (if headEdge = cycleEdge₀ then 1 else 0)) +
@@ -228,7 +270,7 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
     2 * (if headEdge = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-@[simp] theorem superposition_suffix : superposition suffixEdge = 1 := by
+@[simp] lemma superposition_suffix : superposition suffixEdge = 1 := by
   change (((((if suffixEdge = headEdge then 1 else 0) +
     (if suffixEdge = suffixEdge then 1 else 0)) +
     2 * (if suffixEdge = cycleEdge₀ then 1 else 0)) +
@@ -236,7 +278,7 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
     2 * (if suffixEdge = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-@[simp] theorem superposition_cycle₀ : superposition cycleEdge₀ = 2 := by
+@[simp] lemma superposition_cycle₀ : superposition cycleEdge₀ = 2 := by
   change (((((if cycleEdge₀ = headEdge then 1 else 0) +
     (if cycleEdge₀ = suffixEdge then 1 else 0)) +
     2 * (if cycleEdge₀ = cycleEdge₀ then 1 else 0)) +
@@ -244,7 +286,7 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
     2 * (if cycleEdge₀ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem superposition_cycle₁ : superposition cycleEdge₁ = 2 := by
+@[simp] lemma superposition_cycle₁ : superposition cycleEdge₁ = 2 := by
   change (((((if cycleEdge₁ = headEdge then 1 else 0) +
     (if cycleEdge₁ = suffixEdge then 1 else 0)) +
     2 * (if cycleEdge₁ = cycleEdge₀ then 1 else 0)) +
@@ -252,7 +294,7 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
     2 * (if cycleEdge₁ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem superposition_cycle₂ : superposition cycleEdge₂ = 2 := by
+@[simp] lemma superposition_cycle₂ : superposition cycleEdge₂ = 2 := by
   change (((((if cycleEdge₂ = headEdge then 1 else 0) +
     (if cycleEdge₂ = suffixEdge then 1 else 0)) +
     2 * (if cycleEdge₂ = cycleEdge₀ then 1 else 0)) +
@@ -260,37 +302,37 @@ theorem edge_cases (e : domain.graph.edgeFinset) :
     2 * (if cycleEdge₂ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem oddCycleFlux_head : oddCycleFlux headEdge = 0 := by
+@[simp] lemma oddCycleFlux_head : oddCycleFlux headEdge = 0 := by
   change ((if headEdge = cycleEdge₀ then 1 else 0) +
     (if headEdge = cycleEdge₁ then 1 else 0) +
     (if headEdge = cycleEdge₂ then 1 else 0)) = 0
   simp
 
-@[simp] theorem oddCycleFlux_suffix : oddCycleFlux suffixEdge = 0 := by
+@[simp] lemma oddCycleFlux_suffix : oddCycleFlux suffixEdge = 0 := by
   change ((if suffixEdge = cycleEdge₀ then 1 else 0) +
     (if suffixEdge = cycleEdge₁ then 1 else 0) +
     (if suffixEdge = cycleEdge₂ then 1 else 0)) = 0
   simp
 
-@[simp] theorem oddCycleFlux_cycle₀ : oddCycleFlux cycleEdge₀ = 1 := by
+@[simp] lemma oddCycleFlux_cycle₀ : oddCycleFlux cycleEdge₀ = 1 := by
   change ((if cycleEdge₀ = cycleEdge₀ then 1 else 0) +
     (if cycleEdge₀ = cycleEdge₁ then 1 else 0) +
     (if cycleEdge₀ = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-@[simp] theorem oddCycleFlux_cycle₁ : oddCycleFlux cycleEdge₁ = 1 := by
+@[simp] lemma oddCycleFlux_cycle₁ : oddCycleFlux cycleEdge₁ = 1 := by
   change ((if cycleEdge₁ = cycleEdge₀ then 1 else 0) +
     (if cycleEdge₁ = cycleEdge₁ then 1 else 0) +
     (if cycleEdge₁ = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-@[simp] theorem oddCycleFlux_cycle₂ : oddCycleFlux cycleEdge₂ = 1 := by
+@[simp] lemma oddCycleFlux_cycle₂ : oddCycleFlux cycleEdge₂ = 1 := by
   change ((if cycleEdge₂ = cycleEdge₀ then 1 else 0) +
     (if cycleEdge₂ = cycleEdge₁ then 1 else 0) +
     (if cycleEdge₂ = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-theorem unitHead_le_superposition :
+lemma unitHead_le_superposition :
     unitFlux domain.graph headEdge ≤ superposition := by
   intro e
   have hu : unitFlux domain.graph headEdge e ≤ 1 := by
@@ -301,98 +343,99 @@ theorem unitHead_le_superposition :
       superposition_cycle₀, superposition_cycle₁, superposition_cycle₂] <;>
     omega
 
-theorem oddCycleFlux_le_superposition : oddCycleFlux ≤ superposition := by
+lemma oddCycleFlux_le_superposition : oddCycleFlux ≤ superposition := by
   intro e
   rcases edge_cases e with rfl | rfl | rfl | rfl | rfl <;> simp
 
+/-! ## C. Splits of the superposition -/
 
+/-- The labeled copy of the head edge. -/
 def headSplit : Finset (Copy domain.graph superposition) :=
   univ.filter (fun i => i.2.val < unitFlux domain.graph headEdge i.1)
 
-
+/-- One labeled copy of each triangle edge. -/
 def oddCycleSplit : Finset (Copy domain.graph superposition) :=
   univ.filter (fun i => i.2.val < oddCycleFlux i.1)
 
-@[simp] theorem profileFlux_headSplit :
+@[simp] lemma profileFlux_headSplit :
     profileFlux domain.graph superposition headSplit =
       unitFlux domain.graph headEdge := by
   exact profileFlux_surj domain.graph superposition
     (unitFlux domain.graph headEdge) unitHead_le_superposition
 
-@[simp] theorem profileFlux_oddCycleSplit :
+@[simp] lemma profileFlux_oddCycleSplit :
     profileFlux domain.graph superposition oddCycleSplit = oddCycleFlux := by
   exact profileFlux_surj domain.graph superposition oddCycleFlux
     oddCycleFlux_le_superposition
 
-
-
+/-- The current with one unit on the suffix edge and two units on each triangle edge. -/
 def suffixEvenFlux : domain.graph.edgeFinset → Nat := fun e =>
   unitFlux domain.graph suffixEdge e +
     2 * unitFlux domain.graph cycleEdge₀ e +
     2 * unitFlux domain.graph cycleEdge₁ e +
     2 * unitFlux domain.graph cycleEdge₂ e
 
-@[simp] theorem suffixEvenFlux_head : suffixEvenFlux headEdge = 0 := by
+@[simp] lemma suffixEvenFlux_head : suffixEvenFlux headEdge = 0 := by
   change ((((if headEdge = suffixEdge then 1 else 0) +
     2 * (if headEdge = cycleEdge₀ then 1 else 0)) +
     2 * (if headEdge = cycleEdge₁ then 1 else 0)) +
     2 * (if headEdge = cycleEdge₂ then 1 else 0)) = 0
   simp
 
-@[simp] theorem suffixEvenFlux_suffix : suffixEvenFlux suffixEdge = 1 := by
+@[simp] lemma suffixEvenFlux_suffix : suffixEvenFlux suffixEdge = 1 := by
   change ((((if suffixEdge = suffixEdge then 1 else 0) +
     2 * (if suffixEdge = cycleEdge₀ then 1 else 0)) +
     2 * (if suffixEdge = cycleEdge₁ then 1 else 0)) +
     2 * (if suffixEdge = cycleEdge₂ then 1 else 0)) = 1
   simp
 
-@[simp] theorem suffixEvenFlux_cycle₀ : suffixEvenFlux cycleEdge₀ = 2 := by
+@[simp] lemma suffixEvenFlux_cycle₀ : suffixEvenFlux cycleEdge₀ = 2 := by
   change ((((if cycleEdge₀ = suffixEdge then 1 else 0) +
     2 * (if cycleEdge₀ = cycleEdge₀ then 1 else 0)) +
     2 * (if cycleEdge₀ = cycleEdge₁ then 1 else 0)) +
     2 * (if cycleEdge₀ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem suffixEvenFlux_cycle₁ : suffixEvenFlux cycleEdge₁ = 2 := by
+@[simp] lemma suffixEvenFlux_cycle₁ : suffixEvenFlux cycleEdge₁ = 2 := by
   change ((((if cycleEdge₁ = suffixEdge then 1 else 0) +
     2 * (if cycleEdge₁ = cycleEdge₀ then 1 else 0)) +
     2 * (if cycleEdge₁ = cycleEdge₁ then 1 else 0)) +
     2 * (if cycleEdge₁ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem suffixEvenFlux_cycle₂ : suffixEvenFlux cycleEdge₂ = 2 := by
+@[simp] lemma suffixEvenFlux_cycle₂ : suffixEvenFlux cycleEdge₂ = 2 := by
   change ((((if cycleEdge₂ = suffixEdge then 1 else 0) +
     2 * (if cycleEdge₂ = cycleEdge₀ then 1 else 0)) +
     2 * (if cycleEdge₂ = cycleEdge₁ then 1 else 0)) +
     2 * (if cycleEdge₂ = cycleEdge₂ then 1 else 0)) = 2
   simp
 
-@[simp] theorem unitHead_head :
+@[simp] lemma unitHead_head :
     unitFlux domain.graph headEdge headEdge = 1 := by
   change (if headEdge = headEdge then 1 else 0) = 1
   simp
 
-@[simp] theorem unitHead_suffix :
+@[simp] lemma unitHead_suffix :
     unitFlux domain.graph headEdge suffixEdge = 0 := by
   change (if suffixEdge = headEdge then 1 else 0) = 0
   simp
 
-@[simp] theorem unitHead_cycle₀ :
+@[simp] lemma unitHead_cycle₀ :
     unitFlux domain.graph headEdge cycleEdge₀ = 0 := by
   change (if cycleEdge₀ = headEdge then 1 else 0) = 0
   simp
 
-@[simp] theorem unitHead_cycle₁ :
+@[simp] lemma unitHead_cycle₁ :
     unitFlux domain.graph headEdge cycleEdge₁ = 0 := by
   change (if cycleEdge₁ = headEdge then 1 else 0) = 0
   simp
 
-@[simp] theorem unitHead_cycle₂ :
+@[simp] lemma unitHead_cycle₂ :
     unitFlux domain.graph headEdge cycleEdge₂ = 0 := by
   change (if cycleEdge₂ = headEdge then 1 else 0) = 0
   simp
 
-theorem superposition_sub_unitHead :
+lemma superposition_sub_unitHead :
     (fun e => superposition e - unitFlux domain.graph headEdge e) =
       suffixEvenFlux := by
   funext e
@@ -404,25 +447,28 @@ theorem superposition_sub_unitHead :
       unitHead_head, unitHead_suffix, unitHead_cycle₀, unitHead_cycle₁,
       unitHead_cycle₂]
 
-@[simp] theorem profileFlux_headSplit_compl :
+@[simp] lemma profileFlux_headSplit_compl :
     profileFlux domain.graph superposition (univ \ headSplit) =
       suffixEvenFlux := by
   rw [profileFlux_compl, profileFlux_headSplit,
     superposition_sub_unitHead]
 
+/-! ## D. The residual graph after the head edge -/
 
-
+/-- The residual graph after deleting the head edge. -/
 abbrev residualGraph : SimpleGraph (Fin 6) :=
   domain.graph.deleteEdges (canonicalEdgeSegment domain.graph headEdge).edgeSet
 
+/-- The residual graph is a subgraph of the domain graph. -/
 abbrev residualLe : residualGraph ≤ domain.graph :=
   domain.graph.deleteEdges_le (canonicalEdgeSegment domain.graph headEdge).edgeSet
 
+/-- The restriction of a current to the residual graph. -/
 noncomputable def restrictResidual
     (p : domain.graph.edgeFinset → Nat) : residualGraph.edgeFinset → Nat :=
   fun e => p ⟨e.1, edgeFinset_subset residualLe e.2⟩
 
-theorem extendFlux_restrictResidual
+lemma extendFlux_restrictResidual
     (p : domain.graph.edgeFinset → Nat) (hp : p headEdge = 0) :
     extendFlux residualLe (restrictResidual p) = p := by
   funext e
@@ -430,7 +476,7 @@ theorem extendFlux_restrictResidual
   · subst e
     rw [show extendFlux residualLe (restrictResidual p) headEdge = 0 by
       unfold extendFlux
-      rw [dif_neg (firstEdge_not_mem_delete domain headEdge)]]
+      rw [dite_eq_right (firstEdge_not_mem_delete domain headEdge)]]
     exact hp.symm
   · have hmem : e.1 ∈ residualGraph.edgeFinset := by
       rw [SimpleGraph.mem_edgeFinset, SimpleGraph.edgeSet_deleteEdges,
@@ -438,31 +484,33 @@ theorem extendFlux_restrictResidual
       refine ⟨SimpleGraph.mem_edgeFinset.mp e.2, ?_⟩
       simpa only [Set.mem_singleton_iff, Subtype.ext_iff] using he
     unfold extendFlux
-    rw [dif_pos hmem]
+    rw [dite_eq_left hmem]
     rfl
 
+/-- The suffix edge as an edge of the residual graph. -/
 def residualSuffix : residualGraph.edgeFinset :=
   residualEdge domain headEdge suffixEdge headEdge_ne_suffixEdge
 
+/-- The triangle edge `34` as an edge of the residual graph. -/
 def residualCycle₀ : residualGraph.edgeFinset :=
   residualEdge domain headEdge cycleEdge₀ headEdge_ne_cycleEdge₀
 
+/-- The triangle edge `45` as an edge of the residual graph. -/
 def residualCycle₁ : residualGraph.edgeFinset :=
   residualEdge domain headEdge cycleEdge₁ headEdge_ne_cycleEdge₁
 
+/-- The triangle edge `53` as an edge of the residual graph. -/
 def residualCycle₂ : residualGraph.edgeFinset :=
   residualEdge domain headEdge cycleEdge₂ headEdge_ne_cycleEdge₂
 
-theorem residualCycle₀_ne_suffix : residualCycle₀ ≠ residualSuffix := by
+lemma residualCycle₀_ne_suffix : residualCycle₀ ≠ residualSuffix := by
   intro h
   apply cycleEdge₀_ne_suffixEdge
   apply Subtype.ext
   simpa [residualCycle₀, residualSuffix, residualEdge] using
     congrArg Subtype.val h
 
-
-
-theorem residual_complete_suffixEven :
+lemma residual_complete_suffixEven :
     BackboneTwoEdgeBondProgram.program.CompleteEvent
       (shb_BackboneExplorationDomain.advance domain
         (canonicalEdgeSegment domain.graph headEdge))
@@ -504,7 +552,7 @@ theorem residual_complete_suffixEven :
       change oddBit (suffixEvenFlux ambient) =
         oddBit (unitFlux d'.graph residualSuffix e)
       simp only [unitFlux]
-      rw [hsuffix, suffixEvenFlux_suffix, if_pos he]
+      rw [hsuffix, suffixEvenFlux_suffix, ite_eq_left he]
     · have he : e = residualCycle₀ := by
         apply Subtype.ext
         simpa [ambient, residualCycle₀, residualEdge] using
@@ -514,7 +562,7 @@ theorem residual_complete_suffixEven :
       change oddBit (suffixEvenFlux ambient) =
         oddBit (unitFlux d'.graph residualSuffix e)
       simp only [unitFlux]
-      rw [hc₀, suffixEvenFlux_cycle₀, if_neg hne]
+      rw [hc₀, suffixEvenFlux_cycle₀, ite_eq_right hne]
       decide
     · have he : e = residualCycle₁ := by
         apply Subtype.ext
@@ -530,7 +578,7 @@ theorem residual_complete_suffixEven :
       change oddBit (suffixEvenFlux ambient) =
         oddBit (unitFlux d'.graph residualSuffix e)
       simp only [unitFlux]
-      rw [hc₁, suffixEvenFlux_cycle₁, if_neg hne]
+      rw [hc₁, suffixEvenFlux_cycle₁, ite_eq_right hne]
       decide
     · have he : e = residualCycle₂ := by
         apply Subtype.ext
@@ -546,7 +594,7 @@ theorem residual_complete_suffixEven :
       change oddBit (suffixEvenFlux ambient) =
         oddBit (unitFlux d'.graph residualSuffix e)
       simp only [unitFlux]
-      rw [hc₂, suffixEvenFlux_cycle₂, if_neg hne]
+      rw [hc₂, suffixEvenFlux_cycle₂, ite_eq_right hne]
       decide
   have hbits :
       fluxBitConfig d'.graph
@@ -593,8 +641,8 @@ theorem residual_complete_suffixEven :
         st omega) hbits
     exact Eq.mpr heq hunit'.2
 
-
-theorem suffixEven_event :
+/-! ## E. Events of the splits -/
+lemma suffixEven_event :
     ((BackboneTwoEdgeBondProgram.program (V := Fin 6)).liftedResidualRunSpec
       domain (canonicalEdgeSegment domain.graph headEdge)
       [canonicalEdgeSegment domain.graph suffixEdge]).Event
@@ -608,7 +656,7 @@ theorem suffixEven_event :
       [canonicalEdgeSegment domain.graph suffixEdge]
       (restrictResidual suffixEvenFlux)).mpr residual_complete_suffixEven⟩
 
-theorem sources_unitFlux_eq_toFinset
+lemma sources_unitFlux_eq_toFinset
     (e : domain.graph.edgeFinset) :
     sources domain.graph (ofEdgeFun domain.graph (unitFlux domain.graph e)) =
       e.1.toFinset := by
@@ -617,8 +665,7 @@ theorem sources_unitFlux_eq_toFinset
   rw [← Sym2.toFinset_mk_eq]
   exact congrArg Sym2.toFinset e.1.out_eq
 
-
-theorem oddCycle_sources_empty :
+lemma oddCycle_sources_empty :
     sources domain.graph (ofEdgeFun domain.graph oddCycleFlux) = ∅ := by
   change sources domain.graph (ofEdgeFun domain.graph
     (fun e => (unitFlux domain.graph cycleEdge₀ e +
@@ -631,8 +678,7 @@ theorem oddCycle_sources_empty :
     s((5 : Fin 6), 3).toFinset = ∅
   decide
 
-
-theorem oddCycle_vacuum_event :
+lemma oddCycle_vacuum_event :
     (residualVacuumRunSpec domain
       (canonicalEdgeSegment domain.graph headEdge)).Event
       domain.graph oddCycleFlux := by
@@ -646,9 +692,7 @@ theorem oddCycle_vacuum_event :
   rw [extendFlux_restrictResidual oddCycleFlux oddCycleFlux_head]
   exact oddCycle_sources_empty
 
-
-
-theorem suffix_event_cycle₀_not_odd
+lemma suffix_event_cycle₀_not_odd
     (p : domain.graph.edgeFinset → Nat)
     (h : ((BackboneTwoEdgeBondProgram.program (V := Fin 6)).liftedResidualRunSpec
       domain (canonicalEdgeSegment domain.graph headEdge)
@@ -699,8 +743,9 @@ theorem suffix_event_cycle₀_not_odd
   have hfind :
       (residualGraph.edgeFinset.erase residualSuffix.1).1.toList.find?
           (fun b => fluxBitConfig residualGraph oddBit r b) = none := by
-    simp [BackboneTwoEdgeBondProgram.scan,
-      shb_DynamicEdgeExploration.firstAdmissible] at hfinished ⊢
+    simp only [shb_DynamicEdgeExploration.firstAdmissible, domain_graph,
+      BackboneTwoEdgeBondProgram.scan, erase_val, List.find?_eq_none, Multiset.mem_toList,
+      Bool.not_eq_true] at hfinished ⊢
     exact hfinished
   have hmemList : cycleEdge₀.1 ∈
       (residualGraph.edgeFinset.erase residualSuffix.1).1.toList := by
@@ -712,12 +757,13 @@ theorem suffix_event_cycle₀_not_odd
     exact Subtype.ext hval
   exact ((List.find?_eq_none.mp hfind) cycleEdge₀.1 hmemList htrue).elim
 
+/-! ## F. Parity of the triangle copies -/
 
-
+/-- The first labeled copy of the triangle edge `34`. -/
 def cycle₀Copy₀ : Copy domain.graph superposition :=
   ⟨cycleEdge₀, ⟨0, by simp⟩⟩
 
-theorem oddCycleSplit_filter_cycle₀ :
+lemma oddCycleSplit_filter_cycle₀ :
     oddCycleSplit.filter
         (fun i : Copy domain.graph superposition => i.1 = cycleEdge₀) =
       {cycle₀Copy₀} := by
@@ -745,7 +791,7 @@ theorem oddCycleSplit_filter_cycle₀ :
       simp
     · rfl
 
-theorem filter_symmDiff
+lemma filter_symmDiff
     (S T : Finset (Copy domain.graph superposition)) :
     (S ∆ T).filter (fun i => i.1 = cycleEdge₀) =
       S.filter (fun i => i.1 = cycleEdge₀) ∆
@@ -754,7 +800,7 @@ theorem filter_symmDiff
   simp only [Finset.mem_filter, Finset.mem_symmDiff]
   tauto
 
-theorem odd_card_symmDiff_singleton_iff_not
+lemma odd_card_symmDiff_singleton_iff_not
     {A : Type*} [DecidableEq A] (S : Finset A) (a : A) :
     Odd #(S ∆ {a}) ↔ ¬ Odd #S := by
   by_cases ha : a ∈ S
@@ -781,9 +827,7 @@ theorem odd_card_symmDiff_singleton_iff_not
     rw [Nat.odd_add]
     simp
 
-
-
-theorem profile_cycle₀_odd_symmDiff_iff_not
+lemma profile_cycle₀_odd_symmDiff_iff_not
     (T : Finset (Copy domain.graph superposition)) :
     Odd (profileFlux domain.graph superposition (T ∆ oddCycleSplit)
       cycleEdge₀) ↔
@@ -801,18 +845,16 @@ theorem profile_cycle₀_odd_symmDiff_iff_not
   rw [hset]
   exact odd_card_symmDiff_singleton_iff_not A cycle₀Copy₀
 
-
-
-@[simp] theorem profileFlux_empty :
+@[simp] lemma profileFlux_empty :
     profileFlux domain.graph superposition
       (∅ : Finset (Copy domain.graph superposition)) = 0 := by
   funext e
   simp [profileFlux]
 
+/-! ## G. No covariance and no componentwise toggle -/
 
-
-
-
+/-- No set of labeled copies of `superposition` toggles the residual-vacuum run to the lifted
+residual run `[12]`. -/
 theorem no_residualVacuum_suffix_covariance
     (path : Finset (Copy domain.graph superposition)) :
     ¬ BondwiseRunToggleCovariance
@@ -852,9 +894,7 @@ theorem no_residualVacuum_suffix_covariance
     exact (profile_cycle₀_odd_symmDiff_iff_not path).mpr hpathEven
   exact (suffix_event_cycle₀_not_odd _ hsuffixToggle) htoggleOdd
 
-
-
-theorem superposition_weight_pos
+lemma superposition_weight_pos
     (beta : Real) (J : Sym2 (Fin 6) → Real)
     (hbeta : 0 < beta) (hJ : ∀ g, 0 < J g) :
     0 < weight domain.graph beta J
@@ -864,8 +904,7 @@ theorem superposition_weight_pos
   exact div_pos (pow_pos (mul_pos hbeta (hJ g)) _)
     (by positivity)
 
-
-theorem right_rawPairFiberMass_pos
+lemma right_rawPairFiberMass_pos
     (beta : Real) (J : Sym2 (Fin 6) → Real)
     (hbeta : 0 < beta) (hJ : ∀ g, 0 < J g) :
     0 < rawSourcePairFiberMass domain.graph beta J superposition
@@ -933,9 +972,7 @@ theorem right_rawPairFiberMass_pos
     (fun _ _ => superposition_weight_pos beta J hbeta hJ)
     ⟨witness, Finset.mem_univ witness⟩
 
-
-
-theorem coordinatePairContributes
+lemma coordinatePairContributes
     (beta : Real) (J : Sym2 (Fin 6) → Real)
     (hbeta : 0 < beta) (hJ : ∀ g, 0 < J g) :
     CoordinatePairContributes
@@ -946,8 +983,8 @@ theorem coordinatePairContributes
       superposition := by
   exact Or.inr (ne_of_gt (right_rawPairFiberMass_pos beta J hbeta hJ))
 
-
-
+/-- The canonical componentwise toggle of the two-edge selector does not exist on the
+path-plus-triangle domain, for `β > 0` and `J > 0`. -/
 theorem not_canonicalComponentwiseToggleExists
     (beta : Real) (J : Sym2 (Fin 6) → Real)
     (hbeta : 0 < beta) (hJ : ∀ g, 0 < J g) :

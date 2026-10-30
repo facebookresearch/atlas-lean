@@ -6,26 +6,70 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelector
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCut
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching
+
+/-!
+# Bondwise ordered explorations and suffix toggles
+
+A dynamic edge exploration whose tests read one bond each is an ordered local exploration; its
+determined cut at an accepted edge is the list of edges inspected up to it. Events "the suffix is
+selected" that only read bonds outside this cut are invariant under toggling edge copies inside
+it. This is assembled into a conditional proof of the active cut resummation identity.
+
+## i. Overview
+
+`shb_bondwiseOrderedTests` makes a list of bonds into ordered local tests whose test at a bond is
+the value of the configuration at that bond, with exposure the bond itself; the determined cut of
+an accepted bond is the list of bonds tested up to it. A dynamic edge exploration thus becomes an
+ordered local exploration `bondwiseOrdered`, with trace cut the determined trace.
+
+For random currents, a bond configuration is read off a flux through a bit map
+(`fluxBitConfig`). If the bonds inspected by the suffix exploration are fresh (outside the
+determined cut of the accepted bond, `SuffixFresh`), the suffix selection event is an event
+outside the cut, and edge-copy toggles in the cut preserve raw fiber masses
+(`rawFiberMass_eq_of_bondwiseSuffixToggle`).
+
+`BondwiseP2Reindex` bundles the data needed to turn this into the active cut resummation
+identity for a current dynamic selector: a choice of path copies with sources `C` in the cut and
+two reindexings of the two sides as raw fiber mass sums.
+
+Headline fidelity:
+- `rawFiberMass_eq_of_bondwiseDeterminedToggle` and `rawFiberMass_eq_of_bondwiseSuffixToggle`
+  are proved under the premises `hPsrc`, `hPcut` (and `hQ`, respectively `hfresh`).
+- `actualMass_active_of_bondwiseSuffixToggle` is conditional on a selector
+  `S : shb_CurrentDynamicSelector` and a reindexing `R : BondwiseP2Reindex …`. It is vacuous:
+  `shb_CurrentDynamicSelector` is empty when `V` has two distinct vertices
+  (`shb_CurrentDynamicSelector_isEmpty_of_exists_ne`), and `BondwiseP2Reindex` forces `C = ∅`
+  (`BondwiseP2Reindex.path_source_eq_empty`; empty for `C ≠ ∅` by
+  `bondwiseP2Reindex_isEmpty_of_path_source_ne_empty`), whereas the backbone toggle needs path
+  copies with nonempty sources.
+
+## ii. Key results
+
+- `shb_bondwiseOrderedTests` : one-bond ordered local tests
+- `shb_DynamicEdgeExploration.selects_iff_of_agreeOn_determinedTrace` : selection only depends on
+  the determined trace (unconditional)
+- `BackboneDeterminedCutSwitching.rawFiberMass_eq_of_bondwiseSuffixToggle` : suffix events are
+  toggle invariant (premises `hfresh`, `hPsrc`, `hPcut`)
+- `BackboneDeterminedCutSwitching.actualMass_active_of_bondwiseSuffixToggle` : the active cut
+  resummation identity from a bondwise reindexing (vacuous, see above)
+
+## iii. Table of contents
+
+- A. One-bond ordered local tests
+- B. Dynamic explorations as ordered local explorations
+- C. Flux bit configurations and suffix events
+- D. The bondwise reindexing
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -36,9 +80,10 @@ set_option linter.unusedSectionVars false
 
 namespace StatMech.Sharpness
 
+/-! ## A. One-bond ordered local tests -/
 
-
-
+/-- Ordered local tests on a list of bonds: the test at a bond is the value of the configuration
+there, and the exposure is the bond itself. -/
 def shb_bondwiseOrderedTests {B : Type*} [DecidableEq B]
     (order : List B) (hnodup : order.Nodup) : shb_OrderedLocalTests B B where
   order := order
@@ -53,16 +98,16 @@ namespace shb_bondwiseOrderedTests
 
 variable {B : Type*} [DecidableEq B]
 
-@[simp] theorem test_apply (order : List B) (hnodup : order.Nodup)
+@[simp] lemma test_apply (order : List B) (hnodup : order.Nodup)
     (omega : B -> Bool) (b : B) :
     (shb_bondwiseOrderedTests order hnodup).test omega b = omega b := rfl
 
-@[simp] theorem exposure_apply (order : List B) (hnodup : order.Nodup)
+@[simp] lemma exposure_apply (order : List B) (hnodup : order.Nodup)
     (b : B) :
     (shb_bondwiseOrderedTests order hnodup).exposure b = {b} := rfl
 
-
-theorem mem_determinedCut_iff (order : List B) (hnodup : order.Nodup)
+/-- For one-bond tests, the determined cut is the list of bonds tested up to the accepted one. -/
+lemma mem_determinedCut_iff (order : List B) (hnodup : order.Nodup)
     (accepted b : B) :
     b ∈ (shb_bondwiseOrderedTests order hnodup).determinedCut accepted <->
       b ∈ (shb_bondwiseOrderedTests order hnodup).testedThrough accepted := by
@@ -72,16 +117,14 @@ theorem mem_determinedCut_iff (order : List B) (hnodup : order.Nodup)
   · intro hb
     exact ⟨b, hb, Set.mem_singleton b⟩
 
-
-theorem rejected_mem_determinedCut (order : List B) (hnodup : order.Nodup)
+lemma rejected_mem_determinedCut (order : List B) (hnodup : order.Nodup)
     (accepted rejected : B)
     (hrejected : rejected ∈ order.takeWhile (fun b => b != accepted)) :
     rejected ∈ (shb_bondwiseOrderedTests order hnodup).determinedCut accepted := by
   rw [mem_determinedCut_iff]
   exact List.mem_append_left _ hrejected
 
-
-theorem accepted_mem_determinedCut (order : List B) (hnodup : order.Nodup)
+lemma accepted_mem_determinedCut (order : List B) (hnodup : order.Nodup)
     (accepted : B) :
     accepted ∈ (shb_bondwiseOrderedTests order hnodup).determinedCut accepted := by
   rw [mem_determinedCut_iff]
@@ -89,31 +132,29 @@ theorem accepted_mem_determinedCut (order : List B) (hnodup : order.Nodup)
 
 end shb_bondwiseOrderedTests
 
-
-
 namespace shb_DynamicEdgeExploration
 
 variable {D B : Type*} [DecidableEq B]
 
+/-! ## B. Dynamic explorations as ordered local explorations -/
 
-
-
+/-- A dynamic edge exploration as an ordered local exploration with one-bond tests. -/
 def bondwiseOrdered (X : shb_DynamicEdgeExploration D B) :
     shb_OrderedLocalExploration D B B where
   tests := fun d => shb_bondwiseOrderedTests (X.edgeOrder d) (X.edgeOrder_nodup d)
   advance := X.advance
 
-@[simp] theorem bondwiseOrdered_tests_order
+@[simp] lemma bondwiseOrdered_tests_order
     (X : shb_DynamicEdgeExploration D B) (d : D) :
     ((X.bondwiseOrdered).tests d).order = X.edgeOrder d := rfl
 
-@[simp] theorem bondwiseOrdered_advance
+@[simp] lemma bondwiseOrdered_advance
     (X : shb_DynamicEdgeExploration D B) (d : D) (b : B) :
     X.bondwiseOrdered.advance d b = X.advance d b := rfl
 
-
-
-theorem bondwiseOrdered_selects_iff
+/-- Selection in the bondwise ordered exploration is selection with the configuration as
+admissibility test. -/
+lemma bondwiseOrdered_selects_iff
     (X : shb_DynamicEdgeExploration D B) (omega : B -> Bool)
     (d : D) (word : List B) :
     X.bondwiseOrdered.Selects omega d word <->
@@ -125,9 +166,7 @@ theorem bondwiseOrdered_selects_iff
         bondwiseOrdered, shb_bondwiseOrderedTests, firstAdmissible]
       exact and_congr Iff.rfl (ih (X.advance d b))
 
-
-
-theorem mem_bondwiseOrdered_determinedCut_iff
+lemma mem_bondwiseOrdered_determinedCut_iff
     (X : shb_DynamicEdgeExploration D B) (d : D) (accepted b : B) :
     b ∈ ((X.bondwiseOrdered).tests d).determinedCut accepted <->
       b ∈ X.determinedAt d accepted := by
@@ -142,9 +181,7 @@ theorem mem_bondwiseOrdered_determinedCut_iff
     shb_bondwiseOrderedTests]
   rw [hpred]
 
-
-
-theorem mem_bondwiseOrdered_traceCut_iff
+lemma mem_bondwiseOrdered_traceCut_iff
     (X : shb_DynamicEdgeExploration D B) (d : D) (word : List B) (b : B) :
     b ∈ X.bondwiseOrdered.traceCut d word <->
       b ∈ X.determinedTrace d word := by
@@ -156,9 +193,8 @@ theorem mem_bondwiseOrdered_traceCut_iff
       rw [mem_bondwiseOrdered_determinedCut_iff]
       exact or_congr Iff.rfl (ih (X.advance d accepted))
 
-
-
-theorem selects_iff_of_agreeOn_determinedTrace
+/-- Selection of a word only depends on the configuration on the determined trace. -/
+lemma selects_iff_of_agreeOn_determinedTrace
     (X : shb_DynamicEdgeExploration D B) (omega eta : B -> Bool)
     (d : D) (word : List B)
     (hagree : ∀ b ∈ X.determinedTrace d word, omega b = eta b) :
@@ -172,8 +208,6 @@ theorem selects_iff_of_agreeOn_determinedTrace
 
 end shb_DynamicEdgeExploration
 
-
-
 namespace BackboneDeterminedCutSwitching
 
 open FluxEdgeCopy
@@ -183,12 +217,14 @@ variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 variable {D : Type*}
 
+/-- Classical decidability of adjacency, used in this section. -/
 noncomputable local instance shb_bondwiseDecidableAdj (H : SimpleGraph V) :
     DecidableRel H.Adj := Classical.decRel _
 
+/-! ## C. Flux bit configurations and suffix events -/
 
-
-theorem profileFlux_eq_of_outsideCopies_eq
+/-- Two copy sets with the same copies outside a cut give the same flux on edges outside the cut. -/
+lemma profileFlux_eq_of_outsideCopies_eq
     (m : G.edgeFinset -> Nat) (cut : Set (Sym2 V))
     (S T : Finset (FluxEdgeCopy.Copy G m))
     (hout : outsideCopies G m cut S = outsideCopies G m cut T)
@@ -214,24 +250,20 @@ theorem profileFlux_eq_of_outsideCopies_eq
   rw [hfilter S, hfilter T] at hcard
   exact hcard
 
-
-
+/-- The bond configuration read off a flux through a bit map (`false` off the graph). -/
 noncomputable def fluxBitConfig
     (bit : Nat -> Bool) (n : G.edgeFinset -> Nat) : Sym2 V -> Bool :=
   fun e => if h : e ∈ G.edgeFinset then bit (n ⟨e, h⟩) else false
 
-
-
-
+/-- The bonds inspected by the suffix exploration lie outside the determined cut of the accepted
+bond. -/
 def SuffixFresh
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (d : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V)) : Prop :=
   ∀ e ∈ X.determinedTrace (X.advance d accepted) suffix,
     e ∉ (X.bondwiseOrdered.tests d).determinedCut accepted
 
-
-
-theorem fluxBitConfig_eq_on_freshSuffix
+lemma fluxBitConfig_eq_on_freshSuffix
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (d : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (hfresh : SuffixFresh X d accepted suffix)
@@ -252,24 +284,22 @@ theorem fluxBitConfig_eq_on_freshSuffix
     rw [profileFlux_eq_of_outsideCopies_eq G m _ S T hout ⟨e, hedge⟩ hecut]
   · rfl
 
-
-
+/-- The event that the suffix is selected for the bond configuration read off the flux. -/
 def BondwiseSuffixEvent
     (X : shb_DynamicEdgeExploration D (Sym2 V))
     (d : D) (suffix : List (Sym2 V)) (bit : Nat -> Bool)
     (n : G.edgeFinset -> Nat) : Prop :=
   X.Selects (fun _ e => fluxBitConfig G bit n e) d suffix
 
+/-- Classical decidability of the suffix event. -/
 noncomputable instance bondwiseSuffixEventDecidable
     (X : shb_DynamicEdgeExploration D (Sym2 V))
     (d : D) (suffix : List (Sym2 V)) (bit : Nat -> Bool) :
     DecidablePred (BondwiseSuffixEvent G X d suffix bit) :=
   Classical.decPred _
 
-
-
-
-theorem bondwiseSuffixEvent_fluxEventOutsideCut
+/-- Under `SuffixFresh`, the suffix event is an event outside the determined cut. -/
+lemma bondwiseSuffixEvent_fluxEventOutsideCut
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (d : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (hfresh : SuffixFresh X d accepted suffix)
@@ -282,11 +312,8 @@ theorem bondwiseSuffixEvent_fluxEventOutsideCut
   exact fluxBitConfig_eq_on_freshSuffix G X d accepted suffix
     hfresh bit m S T hout
 
-
-
-
-
-theorem rawFiberMass_eq_of_bondwiseDeterminedToggle
+/-- The determined-cut toggle for the determined cut of a bondwise ordered exploration. -/
+lemma rawFiberMass_eq_of_bondwiseDeterminedToggle
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (d : D)
     (accepted : Sym2 V)
     (beta : Real) (J : Sym2 V -> Real)
@@ -303,9 +330,9 @@ theorem rawFiberMass_eq_of_bondwiseDeterminedToggle
   rawFiberMass_eq_of_orderedDeterminedToggle G
     (X.bondwiseOrdered.tests d) accepted beta J m A C P hPsrc hPcut Q hQ
 
-
-
-theorem rawFiberMass_eq_of_bondwiseSuffixToggle
+/-- Under `SuffixFresh`, raw fiber masses of the suffix event are invariant under toggling edge
+copies with sources `C` in the determined cut. -/
+lemma rawFiberMass_eq_of_bondwiseSuffixToggle
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (d : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (hfresh : SuffixFresh X d accepted suffix)
@@ -325,12 +352,11 @@ theorem rawFiberMass_eq_of_bondwiseSuffixToggle
   exact bondwiseSuffixEvent_fluxEventOutsideCut G X d accepted suffix
     hfresh bit m
 
+/-! ## D. The bondwise reindexing -/
 
-
-
-
-
-
+/-- Data reducing the active cut resummation identity to suffix toggles: path copies with sources
+`C` in the determined cut for every flux, and reindexings of both sides as raw fiber mass sums.
+It forces `C = ∅` (`BondwiseP2Reindex.path_source_eq_empty`). -/
 structure BondwiseP2Reindex
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
@@ -361,11 +387,8 @@ structure BondwiseP2Reindex
         rawFiberMass d.graph beta J m (A ∆ C)
           (BondwiseSuffixEvent d.graph X (X.advance x accepted) suffix bit)
 
-
-
-
-
-theorem BondwiseP2Reindex.path_source_eq_empty
+/-- A bondwise reindexing forces `C = ∅`: at the zero flux there are no copies. -/
+lemma BondwiseP2Reindex.path_source_eq_empty
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (bit : Nat -> Bool) (A C : Finset V)
@@ -387,9 +410,8 @@ theorem BondwiseP2Reindex.path_source_eq_empty
       ext v
       simp [RandomCurrent.mem_sources, RandomCurrent.degK]
 
-
-
-theorem bondwiseP2Reindex_isEmpty_of_path_source_ne_empty
+/-- There is no bondwise reindexing with `C ≠ ∅`. -/
+lemma bondwiseP2Reindex_isEmpty_of_path_source_ne_empty
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (bit : Nat -> Bool) (A C : Finset V)
@@ -403,11 +425,9 @@ theorem bondwiseP2Reindex_isEmpty_of_path_source_ne_empty
   intro R
   exact hC R.path_source_eq_empty
 
-
-
-
-
-theorem actualMass_active_of_bondwiseSuffixToggle
+/-- The active cut resummation identity for a current dynamic selector from a bondwise reindexing.
+Vacuous: no selector exists when `V` has two distinct vertices, and a reindexing forces `C = ∅`. -/
+lemma actualMass_active_of_bondwiseSuffixToggle
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V) (suffix : List (Sym2 V))
     (hfresh : SuffixFresh X x accepted suffix)

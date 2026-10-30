@@ -6,24 +6,69 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateToggleObstruction
+
+/-!
+# Bondwise segment programs and coordinate certificates
+
+Partial current dynamic selectors built from a bondwise scanning program, and certificates that
+turn bondwise suffix events into the coordinate toggle data of `P2CoordinateToggleObstruction`.
+
+## i. Overview
+
+First, two negative remarks: a selector fiber cannot coincide with a bondwise suffix event along
+the empty word for currents with sources
+(`no_nilFiber_iff_bondwiseSuffixEvent_of_sources_ne_empty`), and no decoding of bond lists into
+words makes all fibers equal to suffix events once two different words are decoded from satisfied
+events (`no_functional_fiber_bridge_of_nonempty_event`).
+
+A bondwise segment program scans bonds with a dynamic edge exploration, encodes words of segments
+as bond lists, reads bonds off a flux through a bit map, and has a terminal condition. Its complete
+event for a word is "the encoded word is selected by the scan and the terminal condition holds".
+A complete bondwise selector specification (functionality of complete events, sources determined
+by the word, the empty word iff no sources, active first segment) yields a partial current dynamic
+selector whose fibers are the complete events (`CompleteBondwiseSelectorSpec.toPartialSelector`,
+`fiber_iff_completeEvent`). Under freshness and a locality hypothesis on the terminal event, its
+fibers are events outside the determined cut.
+
+A bondwise coordinate certificate packages two fresh suffixes, a contributing-path selector in the
+determined cut with the right sources, and normal forms of both pair fibers as products of suffix
+events; it yields coordinate toggle data (`BondwiseCoordinateCertificate.toCoordinateToggleData`).
+
+Headline fidelity:
+- `CompleteBondwiseSelectorSpec.toPartialSelector`, `fiber_iff_completeEvent` are proved from the
+  structure fields of `CompleteBondwiseSelectorSpec` (instances are constructed in
+  `ConcreteBondProgram` and `MultiStepBondProgram`).
+- `completeEvent_fluxEventOutsideCut`, `fiber_fluxEventOutsideCut` are conditional on `hstate`,
+  `hfresh` and the locality hypothesis `hterminal`.
+- `BondwiseCoordinateCertificate.toCoordinateToggleData` takes a certificate, which is empty when
+  the selector's actual mass on `s :: ss` is nonzero and the toggle source is nonempty
+  (`bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero`,
+  `ConcreteSelectorObstruction`).
+
+## ii. Key results
+
+- `no_functional_fiber_bridge_of_nonempty_event` : fibers are not functional suffix events
+- `BondwiseSegmentProgram` : bondwise scanning programs
+- `CompleteBondwiseSelectorSpec.toPartialSelector` : the partial selector of a complete
+  specification
+- `BondwiseCoordinateCertificate.toCoordinateToggleData` : coordinate toggle data from a
+  certificate (certificates are empty in the relevant case, see above)
+
+## iii. Table of contents
+
+- A. Suffix events and selector fibers
+- B. Bondwise segment programs
+- C. Complete bondwise selector specifications
+- D. Bondwise coordinate certificates
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -38,6 +83,7 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 noncomputable local instance candidateDecidableAdj (G : SimpleGraph V) :
     DecidableRel G.Adj := Classical.decRel _
 
@@ -51,18 +97,18 @@ open FluxEdgeCopy
 
 variable {D : Type*}
 
+/-! ## A. Suffix events and selector fibers -/
 
-
-@[simp] theorem bondwiseSuffixEvent_nil
+@[simp] lemma bondwiseSuffixEvent_nil
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (bit : Nat -> Bool) (m : G.edgeFinset -> Nat) :
     BondwiseSuffixEvent G X x [] bit m := by
   simp [BondwiseSuffixEvent]
 
-
-
-theorem no_nilFiber_iff_bondwiseSuffixEvent_of_sources_ne_empty
+/-- For a current with sources, the fiber of the empty word is not the (always true) empty suffix
+event. -/
+lemma no_nilFiber_iff_bondwiseSuffixEvent_of_sources_ne_empty
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
@@ -73,9 +119,9 @@ theorem no_nilFiber_iff_bondwiseSuffixEvent_of_sources_ne_empty
   have hfiber : S.Fiber d [] m := hbridge.mpr (bondwiseSuffixEvent_nil _ _ _ _ _)
   exact hsrc ((S.select?_eq_some_nil_iff d m).mp hfiber)
 
-
-
-theorem no_functional_fiber_bridge_of_nonempty_event
+/-- No decoding of bond lists into words makes every fiber equal to the corresponding suffix event,
+if a satisfied event decodes to a word different from the decoding of the empty list. -/
+lemma no_functional_fiber_bridge_of_nonempty_event
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
@@ -93,11 +139,11 @@ theorem no_functional_fiber_bridge_of_nonempty_event
   apply hdecode
   exact Option.some.inj (hnil.symm.trans hword)
 
+/-! ## B. Bondwise segment programs -/
 
-
-
-
-
+/-- A bondwise segment program: a scanning exploration on bonds, an initial state for each domain,
+an encoding of words of segments as bond lists, a bit map reading bonds off a flux, and a terminal
+condition. -/
 structure BondwiseSegmentProgram (V : Type*) [Fintype V] [DecidableEq V] where
   State : Type*
   scan : shb_DynamicEdgeExploration State (Sym2 V)
@@ -107,8 +153,7 @@ structure BondwiseSegmentProgram (V : Type*) [Fintype V] [DecidableEq V] where
   bit : Nat -> Bool
   terminal : State -> (Sym2 V -> Bool) -> Prop
 
-
-
+/-- The terminal condition holds at the state reached after scanning the encoded word. -/
 def BondwiseSegmentProgram.TerminalEvent
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
@@ -117,8 +162,8 @@ def BondwiseSegmentProgram.TerminalEvent
   P.terminal (P.scan.residual (P.initial d) (P.encode d word))
     (fluxBitConfig d.graph P.bit m)
 
-
-
+/-- The complete event of a word: the encoded word is selected by the scan and the terminal
+condition holds. -/
 def BondwiseSegmentProgram.CompleteEvent
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V)
@@ -127,21 +172,21 @@ def BondwiseSegmentProgram.CompleteEvent
   BondwiseSuffixEvent d.graph P.scan (P.initial d) (P.encode d word) P.bit m /\
     P.TerminalEvent d word m
 
+/-- Classical decidability of complete events. -/
 noncomputable instance completeEventDecidable
     (P : BondwiseSegmentProgram V) (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V)) :
     DecidablePred (P.CompleteEvent d word) := Classical.decPred _
 
+/-- Classical decidability of terminal events. -/
 noncomputable instance terminalEventDecidable
     (P : BondwiseSegmentProgram V) (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V)) :
     DecidablePred (P.TerminalEvent d word) := Classical.decPred _
 
-
-
-
-
-theorem completeEvent_fluxEventOutsideCut
+/-- Under freshness and locality of the terminal event, the complete event is an event outside the
+determined cut. -/
+lemma completeEvent_fluxEventOutsideCut
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (word : List (shb_ExplorationSegment V))
     (x : P.State) (accepted : Sym2 V)
@@ -168,9 +213,11 @@ theorem completeEvent_fluxEventOutsideCut
     have hresult := hevent.mpr (by simpa [hstate] using hselect)
     simpa [hstate] using hresult
 
+/-! ## C. Complete bondwise selector specifications -/
 
-
-
+/-- A complete bondwise selector specification: a source class with empty class for the empty word,
+such that complete events are functional in the word, determine the sources, hold for the empty
+word exactly for sourceless currents, and start with an active segment. -/
 structure CompleteBondwiseSelectorSpec (P : BondwiseSegmentProgram V) where
   sourceClass : shb_ExplorationDomain V ->
     List (shb_ExplorationSegment V) -> Finset V
@@ -186,7 +233,7 @@ structure CompleteBondwiseSelectorSpec (P : BondwiseSegmentProgram V) where
   head_active_of_complete : ∀ d m s ss,
     P.CompleteEvent d (s :: ss) m -> s ∈ d.active
 
-
+/-- The word whose complete event holds, if any. -/
 noncomputable def CompleteBondwiseSelectorSpec.select?
     {P : BondwiseSegmentProgram V} (_R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
@@ -195,8 +242,7 @@ noncomputable def CompleteBondwiseSelectorSpec.select?
   exact if h : ∃ word, P.CompleteEvent d word m then some (Classical.choose h)
     else none
 
-
-
+/-- The partial current dynamic selector of a complete specification. -/
 noncomputable def CompleteBondwiseSelectorSpec.toPartialSelector
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P) :
     shb_PartialCurrentDynamicSelector (V := V) where
@@ -227,7 +273,7 @@ noncomputable def CompleteBondwiseSelectorSpec.toPartialSelector
       have hnil : P.CompleteEvent d [] m := (R.complete_nil_iff d m).mpr hsrc
       let hex : ∃ word, P.CompleteEvent d word m := ⟨[], hnil⟩
       unfold CompleteBondwiseSelectorSpec.select?
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
       apply congrArg some
       exact R.complete_functional d m (Classical.choose hex) []
         (Classical.choose_spec hex) hnil
@@ -241,9 +287,8 @@ noncomputable def CompleteBondwiseSelectorSpec.toPartialSelector
         (hchosen ▸ Classical.choose_spec hex)
     · simp at hselect
 
-
-
-theorem CompleteBondwiseSelectorSpec.fiber_iff_completeEvent
+/-- The fibers of the partial selector are the complete events. -/
+lemma CompleteBondwiseSelectorSpec.fiber_iff_completeEvent
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -264,15 +309,13 @@ theorem CompleteBondwiseSelectorSpec.fiber_iff_completeEvent
     unfold shb_PartialCurrentDynamicSelector.Fiber
     change R.select? d m = some word
     unfold CompleteBondwiseSelectorSpec.select?
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     apply congrArg some
     exact R.complete_functional d m
       (Classical.choose hex) word (Classical.choose_spec hex) hcomplete
 
-
-
-
-theorem CompleteBondwiseSelectorSpec.fiber_iff_bondwiseSuffixEvent
+/-- Where the terminal event holds, the fiber of a word is the suffix event of its encoding. -/
+lemma CompleteBondwiseSelectorSpec.fiber_iff_bondwiseSuffixEvent
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -284,9 +327,9 @@ theorem CompleteBondwiseSelectorSpec.fiber_iff_bondwiseSuffixEvent
   rw [R.fiber_iff_completeEvent]
   simp [BondwiseSegmentProgram.CompleteEvent, hterminal]
 
-
-
-theorem CompleteBondwiseSelectorSpec.fiber_fluxEventOutsideCut
+/-- Under freshness and locality of the terminal event, fibers are events outside the determined
+cut. -/
+lemma CompleteBondwiseSelectorSpec.fiber_fluxEventOutsideCut
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V)
     (word : List (shb_ExplorationSegment V))
@@ -305,9 +348,9 @@ theorem CompleteBondwiseSelectorSpec.fiber_fluxEventOutsideCut
   exact completeEvent_fluxEventOutsideCut P d word x accepted hstate hfresh
     m hterminal T U hout
 
+/-! ## D. Bondwise coordinate certificates -/
 
-
-
+/-- A flux contributes to one of the two pair masses of the active cut resummation identity. -/
 abbrev CoordinatePairContributes
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
@@ -319,11 +362,10 @@ abbrev CoordinatePairContributes
     (S.Fiber d (s :: ss)) (liftedResidualVacuum d s)
     (shb_ActiveSegmentFiber d s hs) (liftedResidualFiber S d s ss)
 
-
-
-
-
-
+/-- A bondwise coordinate certificate: two fresh suffixes, a contributing-path selector in the
+determined cut with sources `stepToggleSource`, and normal forms of both pair fibers as products of
+the two suffix events. Empty when the actual mass is nonzero and the toggle source nonempty
+(`bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero`). -/
 structure BondwiseCoordinateCertificate
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)
@@ -364,8 +406,7 @@ structure BondwiseCoordinateCertificate
         BondwiseSuffixEvent d.graph X (X.advance x accepted)
           suffix₂ bit₂ (profileFlux d.graph m (univ \ T)))
 
-
-
+/-- Coordinate toggle data from a bondwise coordinate certificate. -/
 noncomputable def BondwiseCoordinateCertificate.toCoordinateToggleData
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)

@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryProfile
@@ -18,6 +15,47 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildeBc
 public import MathlibExt.Probability.Percolation.DifferentialInequality
 public import Mathlib.Data.Finset.Preimage
 
+/-!
+# `φ(S) ≥ 1` for the box problem at and above `p̃_c`
+
+For the box `Λ_n` with a ghost and the boundary target, the `φ(S)` of every possible surface equals
+the percolation `φ_p(S')` of the corresponding set of sites `S' ⊂ ℤ^d`. Since `φ_p(S') ≥ 1` for
+every `S' ∋ 0` when `p ≥ p̃_c`, the mean-field inequality `1 - M ≤ β ∂_β M` holds for the box
+magnetization whenever `p(β) ≥ p̃_c`.
+
+## i. Overview
+
+Section A transfers probabilities of connection events along restrictions and relabelings of the
+edge set. Section B identifies a possible surface `S` of the ghost graph with a set of sites of the
+box. On a surface event the surface contains no ghost and no boundary site, so the connection
+probabilities inside `S` are those of bond percolation on `ℤ^d` with parameter `1 - e^{-β}`
+(section C). Section D matches boundary pairs, giving `abbPhi = φ_p` (`abbPhi_eq_phi`). By the
+definition of `p̃_c` this is at least `1` for `p > p̃_c`, and by continuity in `β` also at
+`p = p̃_c` (`abbPhi_ge_one_of_tildePc_le`). Section E feeds this into `abbMag_meanfield`. All
+results are proved unconditionally; `p(β) ≥ p̃_c` is the regime, not an assumption on the model.
+
+## ii. Key results
+
+- `abbPhi_eq_phi` : the box `φ(S)` is the percolation `φ_p` of the site set of `S`
+- `abbPhi_ge_one_of_tildePc_le` : `φ(S) ≥ 1` when `p̃_c ≤ p(β)`
+- `abbMag_meanfield_of_tildePc_le` : `1 - M ≤ β ∂_β M` when `p̃_c ≤ p(β)`
+
+## iii. Table of contents
+
+- A. Transfer of connection probabilities
+- B. Surfaces of the ghost graph as sets of sites
+- C. Connection probabilities inside a surface
+- D. Boundary pairs and `φ`
+- E. The mean-field inequality
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+-/
+
 @[expose] public section
 
 open Filter Finset Set SimpleGraph Topology
@@ -26,12 +64,12 @@ open scoped NNReal
 namespace StatMech
 namespace Sharpness
 
-open ConfigSpace Lattice
+open ConfigSpace StatMech.Lattice
 open StatMech.Percolation
 
+/-! ## A. Transfer of connection probabilities -/
 
-
-theorem abb_probV_eq_section {E : Type*} [Fintype E] [DecidableEq E]
+lemma abb_probV_eq_section {E : Type*} [Fintype E] [DecidableEq E]
     (p : E → Real) (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)
     (A : Set (ConfigSpace E)) (F : Finset E)
     (hA : StatMech.DependsOn A (F : Set E)) :
@@ -56,9 +94,7 @@ theorem abb_probV_eq_section {E : Type*} [Fintype E] [DecidableEq E]
       inhom_real_eq_probV_of_mem (fun e : F ↦ p e)
         (fun e ↦ hp0 e) (fun e ↦ hp1 e) _
 
-
-
-theorem abb_probV_eq_of_agreeOn {E : Type*} [Fintype E] [DecidableEq E]
+lemma abb_probV_eq_of_agreeOn {E : Type*} [Fintype E] [DecidableEq E]
     (p q : E → Real)
     (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)
     (hq0 : ∀ e, 0 ≤ q e) (hq1 : ∀ e, q e ≤ 1)
@@ -72,9 +108,7 @@ theorem abb_probV_eq_of_agreeOn {E : Type*} [Fintype E] [DecidableEq E]
   funext e
   exact hpq e e.property
 
-
-
-theorem abb_internal_openSub_adj {W : Type*} [DecidableEq W]
+lemma abb_internal_openSub_adj {W : Type*} [DecidableEq W]
     (G : SimpleGraph W) (T : Finset W)
     (eta : ConfigSpace (abigInternalEdges T)) (a b : T) :
     (openSub (G.induce (T : Set W))
@@ -87,16 +121,14 @@ theorem abb_internal_openSub_adj {W : Type*} [DecidableEq W]
     apply Subtype.ext
     exact abigInternalEdgeEquiv_mk T a b
   simp only [openSub, SimpleGraph.induce_adj, cfgEquiv_apply]
-  rw [ih_fill, dif_pos he]
+  rw [ih_fill, dite_eq_left he]
   constructor
   · rintro ⟨hG, heta⟩
     exact ⟨hG, hcoord ▸ heta⟩
   · rintro ⟨hG, heta⟩
     exact ⟨hG, hcoord.symm ▸ heta⟩
 
-
-
-theorem abb_preimage_connEvent_induce {W : Type*} [DecidableEq W]
+lemma abb_preimage_connEvent_induce {W : Type*} [DecidableEq W]
     (G : SimpleGraph W) (T : Finset W) (o x : T) :
     (cfgEquiv (abigInternalEdgeEquiv T)) ⁻¹'
         connEvent (G.induce (T : Set W)) Set.univ o {x} =
@@ -133,9 +165,7 @@ theorem abb_preimage_connEvent_induce {W : Type*} [DecidableEq W]
           (abb_internal_openSub_adj G T eta u v).mpr huv }
     exact ⟨Set.mem_univ _, x, Set.mem_univ _, rfl, hconn.map f⟩
 
-
-
-theorem abb_probV_connEvent_eq_induce {W : Type*}
+lemma abb_probV_connEvent_eq_induce {W : Type*}
     [Fintype W] [DecidableEq W]
     (G : SimpleGraph W) (p : Sym2 W → Real)
     (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)
@@ -166,9 +196,7 @@ theorem abb_probV_connEvent_eq_induce {W : Type*}
       apply congrArg p
       exact congrArg Subtype.val ((abigInternalEdgeEquiv T).apply_symm_apply e)
 
-
-
-theorem abb_hom_real_eq_probV {E : Type*} [Fintype E] [DecidableEq E]
+lemma abb_hom_real_eq_probV {E : Type*} [Fintype E] [DecidableEq E]
     (p : NNReal) (hp : p ≤ 1) (A : Set (ConfigSpace E)) :
     (inhomBernoulliProductMeasure (fun _ : E ↦ p) (fun _ ↦ hp)).real A =
       probV (fun _ : E ↦ (p : Real)) A := by
@@ -176,9 +204,7 @@ theorem abb_hom_real_eq_probV {E : Type*} [Fintype E] [DecidableEq E]
     (inhom_real_eq_probV_of_mem (fun _ : E ↦ (p : Real))
       (fun _ ↦ p.coe_nonneg) (fun _ ↦ NNReal.coe_le_one.mpr hp) A)
 
-
-
-theorem abb_probV_section_const_eq_induce {W : Type*} [DecidableEq W]
+lemma abb_probV_section_const_eq_induce {W : Type*} [DecidableEq W]
     (p : Real) (G : SimpleGraph W) (T : Finset W) (o x : T) :
     probV (fun _ : abigInternalEdges T ↦ p)
         (ih_section (connEvent G (T : Set W) (o : W) {(x : W)})
@@ -191,18 +217,17 @@ theorem abb_probV_section_const_eq_induce {W : Type*} [DecidableEq W]
   rw [abb_preimage_connEvent_induce G T o x] at ht
   simpa only using ht.symm
 
-
+/-- The bijection of unordered pairs induced by a bijection of vertices (`sym2Congr`). -/
 noncomputable def abbEdgeEquiv {V U : Type*} (sigma : V ≃ U) :
     Sym2 V ≃ Sym2 U :=
   StatMech.Lattice.sym2Congr sigma
 
-@[simp] theorem abbEdgeEquiv_mk {V U : Type*} (sigma : V ≃ U)
+@[simp] lemma abbEdgeEquiv_mk {V U : Type*} (sigma : V ≃ U)
     (x y : V) :
     abbEdgeEquiv sigma s(x, y) = s(sigma x, sigma y) := by
   simp [abbEdgeEquiv, StatMech.Lattice.sym2Congr_mk]
 
-
-theorem abb_openSub_adj_relabel {V U : Type*}
+lemma abb_openSub_adj_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (omega : ConfigSpace (Sym2 U)) (x y : V) :
@@ -211,8 +236,7 @@ theorem abb_openSub_adj_relabel {V U : Type*}
   simp only [openSub, cfgEquiv_apply, abbEdgeEquiv_mk]
   exact and_congr (hG x y) Iff.rfl
 
-
-theorem abb_connWithin_univ_relabel {V U : Type*}
+lemma abb_connWithin_univ_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (omega : ConfigSpace (Sym2 U)) (x y : V) :
@@ -248,9 +272,7 @@ theorem abb_connWithin_univ_relabel {V U : Type*}
     rw [hx, hy] at hmap
     exact hmap
 
-
-
-theorem abb_preimage_connEvent_relabel {V U : Type*}
+lemma abb_preimage_connEvent_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (o x : V) :
@@ -272,9 +294,7 @@ theorem abb_preimage_connEvent_relabel {V U : Type*}
     exact ⟨Set.mem_univ _, x, Set.mem_univ _, rfl,
       (abb_connWithin_univ_relabel G H sigma hG omega o x).mpr hconn⟩
 
-
-
-theorem abb_probV_connEvent_relabel {V U : Type*}
+lemma abb_probV_connEvent_relabel {V U : Type*}
     [Fintype V] [DecidableEq V] [Fintype U] [DecidableEq U]
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
@@ -285,9 +305,10 @@ theorem abb_probV_connEvent_relabel {V U : Type*}
   rw [← abb_preimage_connEvent_relabel G H sigma hG o x]
   exact abfs_probV_transfer (abbEdgeEquiv sigma) p _
 
-
-
-theorem abb_connEvent_univ_dependsOn_edges {V : Type*}
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+lemma abb_connEvent_univ_dependsOn_edges {V : Type*}
     [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     (D : Finset (Sym2 V))
     (hD : ∀ a b, G.Adj a b → s(a, b) ∈ D) (o x : V) :
@@ -317,24 +338,26 @@ theorem abb_connEvent_univ_dependsOn_edges {V : Type*}
   · exact hforward hagree
   · exact hforward (fun e he ↦ (hagree e he).symm)
 
+/-! ## B. Surfaces of the ghost graph as sets of sites -/
 
+/-- The non-ghost vertices of a vertex set of the ghost graph. -/
 noncomputable def abbPhysicalSurface (d n : Nat)
     (S : Finset (Option (sctBox d n))) : Finset (sctBox d n) :=
   S.preimage some (by
     intro x hx y hy hxy
     exact Option.some.inj hxy)
 
-@[simp] theorem mem_abbPhysicalSurface_iff {d n : Nat}
+@[simp] lemma mem_abbPhysicalSurface_iff {d n : Nat}
     {S : Finset (Option (sctBox d n))} {x : sctBox d n} :
     x ∈ abbPhysicalSurface d n S ↔ some x ∈ S := by
   simp [abbPhysicalSurface]
 
-
+/-- The sites of `ℤ^d` of the non-ghost vertices of `S`. -/
 noncomputable def abbSiteSurface (d n : Nat)
     (S : Finset (Option (sctBox d n))) : Finset (Site d) :=
   (abbPhysicalSurface d n S).image Subtype.val
 
-@[simp] theorem mem_abbSiteSurface_iff {d n : Nat}
+@[simp] lemma mem_abbSiteSurface_iff {d n : Nat}
     {S : Finset (Option (sctBox d n))} {x : Site d} :
     x ∈ abbSiteSurface d n S ↔
       ∃ hx : x ∈ box d n, some (⟨x, hx⟩ : sctBox d n) ∈ S := by
@@ -347,8 +370,7 @@ noncomputable def abbSiteSurface (d n : Nat)
     rw [abbSiteSurface, Finset.mem_image]
     exact ⟨⟨x, hx⟩, mem_abbPhysicalSurface_iff.mpr hS, rfl⟩
 
-
-theorem abb_surface_eq_some_of_occurs {d n : Nat}
+lemma abb_surface_eq_some_of_occurs {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) {z : Option (sctBox d n)} (hz : z ∈ S) :
@@ -360,23 +382,21 @@ theorem abb_surface_eq_some_of_occurs {d n : Nat}
       (Set.disjoint_left.mp hdisj (by simpa using hz) (none_mem_abbTarget d n))
   · exact ⟨x, rfl⟩
 
-
-
+/-- The box vertex underlying a vertex of a possible surface (which is never the ghost). -/
 noncomputable def abbSurfaceValue {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) (z : S) : sctBox d n :=
   Classical.choose (abb_surface_eq_some_of_occurs hocc z.property)
 
-theorem abbSurfaceValue_spec {d n : Nat}
+lemma abbSurfaceValue_spec {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) (z : S) :
     (z : Option (sctBox d n)) = some (abbSurfaceValue hocc z) :=
   Classical.choose_spec (abb_surface_eq_some_of_occurs hocc z.property)
 
-
-
+/-- A possible surface is in bijection with its non-ghost vertices. -/
 noncomputable def abbSurfaceEquiv {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
@@ -397,7 +417,7 @@ noncomputable def abbSurfaceEquiv {d n : Nat}
       ⟨some (x : sctBox d n),
         mem_abbPhysicalSurface_iff.mp x.property⟩).symm
 
-@[simp] theorem abbSurfaceEquiv_mk_some {d n : Nat}
+@[simp] lemma abbSurfaceEquiv_mk_some {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) (x : sctBox d n) (hx : some x ∈ S) :
@@ -406,7 +426,7 @@ noncomputable def abbSurfaceEquiv {d n : Nat}
   apply Subtype.ext
   exact Option.some.inj (abbSurfaceValue_spec hocc ⟨some x, hx⟩).symm
 
-@[simp] theorem abbSurfaceEquiv_symm_apply {d n : Nat}
+@[simp] lemma abbSurfaceEquiv_symm_apply {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -415,8 +435,7 @@ noncomputable def abbSurfaceEquiv {d n : Nat}
       (⟨some (x : sctBox d n),
         mem_abbPhysicalSurface_iff.mp x.property⟩ : S) := rfl
 
-
-
+/-- The non-ghost vertices of `S` are in bijection with their sites in `ℤ^d`. -/
 noncomputable def abbSiteSurfaceEquiv (d n : Nat)
     (S : Finset (Option (sctBox d n))) :
     abbPhysicalSurface d n S ≃ abbSiteSurface d n S :=
@@ -437,15 +456,13 @@ noncomputable def abbSiteSurfaceEquiv (d n : Nat)
       obtain ⟨x, hx, rfl⟩ := hz
       exact ⟨⟨x, hx⟩, rfl⟩⟩
 
-@[simp] theorem abbSiteSurfaceEquiv_apply (d n : Nat)
+@[simp] lemma abbSiteSurfaceEquiv_apply (d n : Nat)
     (S : Finset (Option (sctBox d n)))
     (x : abbPhysicalSurface d n S) :
     ((abbSiteSurfaceEquiv d n S x : abbSiteSurface d n S) : Site d) =
       ((x : sctBox d n) : Site d) := rfl
 
-
-
-theorem abbSurfaceEquiv_adj {d n : Nat}
+lemma abbSurfaceEquiv_adj {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) (x y : S) :
@@ -457,16 +474,14 @@ theorem abbSurfaceEquiv_adj {d n : Nat}
   have hy := abbSurfaceValue_spec hocc y
   simp only [SimpleGraph.induce_adj]
   rw [hx, hy]
-  simp only [withGhost, Option.some.injEq]
+  simp only [withGhost]
   change (sctBoxGraph d n).Adj (abbSurfaceValue hocc x)
       (abbSurfaceValue hocc y) ↔
     (sctBoxGraph d n).Adj (abbSurfaceValue hocc x)
       (abbSurfaceValue hocc y)
   rfl
 
-
-
-theorem abbSiteSurfaceEquiv_adj {d n : Nat}
+lemma abbSiteSurfaceEquiv_adj {d n : Nat}
     (S : Finset (Option (sctBox d n)))
     (x y : abbPhysicalSurface d n S) :
     ((sctBoxGraph d n).induce
@@ -476,9 +491,9 @@ theorem abbSiteSurfaceEquiv_adj {d n : Nat}
           (abbSiteSurfaceEquiv d n S x) (abbSiteSurfaceEquiv d n S y) := by
   simp [sctBoxGraph]
 
+/-! ## C. Connection probabilities inside a surface -/
 
-
-theorem abbParams_some_some (d n : Nat) (beta h : Real)
+lemma abbParams_some_some (d n : Nat) (beta h : Real)
     (x y : sctBox d n) :
     abfaParams (sctBoxGraph d n) (abbCoupling d n) beta h
         s(some x, some y) =
@@ -493,12 +508,9 @@ theorem abbParams_some_some (d n : Nat) (beta h : Real)
       hxy (SimpleGraph.mem_edgeFinset.mp h)
     simp [abfaParams, abpdBetaFieldParams, paramOn,
       FieldGhostDict.ghostEdges, abfaLiftCoupling, abfaBaseCoupling,
-      abbCoupling, hxy, he, pBeta]
+      hxy, he, pBeta]
 
-
-
-
-theorem abb_surface_conn_prob_eq_site {d n : Nat}
+lemma abb_surface_conn_prob_eq_site {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -582,10 +594,8 @@ theorem abb_surface_conn_prob_eq_site {d n : Nat}
           (abbSurfaceEquiv hocc o) (abbSurfaceEquiv hocc x))
 
 set_option maxHeartbeats 800000 in
-
-
-
-theorem abb_connWithinProb_eq_probV_induce {d : Nat}
+-- transporting the measure along the surface equivalence is slow to elaborate
+lemma abb_connWithinProb_eq_probV_induce {d : Nat}
     (p : NNReal) (hp : p ≤ 1) (T : Finset (Site d)) (x : Site d)
     (ho : origin d ∈ T) (hx : x ∈ T) :
     connWithinProb d p hp T x =
@@ -624,17 +634,13 @@ theorem abb_connWithinProb_eq_probV_induce {d : Nat}
       exact abb_probV_section_const_eq_induce (p : Real)
         (hypercubicLattice d) T ⟨origin d, ho⟩ ⟨x, hx⟩
 
-
-
-theorem abb_bondParam_coe_eq_pBeta (beta : Real) (hbeta : 0 ≤ beta) :
+lemma abb_bondParam_coe_eq_pBeta (beta : Real) (hbeta : 0 ≤ beta) :
     (bondParam beta : Real) = pBeta 1 beta := by
   rw [bondParam, Real.coe_toNNReal]
   · simp [pBeta]
   · exact sub_nonneg.mpr (Real.exp_le_one_iff.mpr (by linarith))
 
-
-
-theorem abb_surface_conn_prob_eq_connWithin {d n : Nat}
+lemma abb_surface_conn_prob_eq_connWithin {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -662,7 +668,7 @@ theorem abb_surface_conn_prob_eq_connWithin {d n : Nat}
   have hoz : oz = (⟨origin d, hoSite⟩ : abbSiteSurface d n S) := by
     apply Subtype.ext
     simp [oz, op, os, abbSurfaceEquiv_mk_some,
-      StatMech.Percolation.origin, sctBoxOrigin]
+      sctBoxOrigin]
     rfl
   have hxz : xz = (⟨(x : Site d), hxSite⟩ : abbSiteSurface d n S) := by
     apply Subtype.ext
@@ -687,8 +693,7 @@ theorem abb_surface_conn_prob_eq_connWithin {d n : Nat}
     _ = connWithinProb d (bondParam beta) (bondParam_le_one beta)
         (abbSiteSurface d n S) (x : Site d) := hlattice.symm
 
-
-theorem abb_surface_avoids_boundary {d n : Nat}
+lemma abb_surface_avoids_boundary {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) {x : sctBox d n} (hx : some x ∈ S) :
@@ -699,9 +704,7 @@ theorem abb_surface_avoids_boundary {d n : Nat}
   exact Set.disjoint_left.mp hdisj (by simpa using hx)
     ((some_mem_abbTarget_iff d n x).mpr hxb)
 
-
-
-theorem abbSiteSurface_subset_innerBox {d n : Nat}
+lemma abbSiteSurface_subset_innerBox {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) :
@@ -711,9 +714,7 @@ theorem abbSiteSurface_subset_innerBox {d n : Nat}
   exact Classical.byContradiction fun hxinner =>
     abb_surface_avoids_boundary hocc hxS ⟨hxbox, hxinner⟩
 
-
-
-theorem origin_mem_abbSiteSurface {d n : Nat}
+lemma origin_mem_abbSiteSurface {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     (ho : some (sctBoxOrigin d n) ∈ S) :
     origin d ∈ abbSiteSurface d n S := by
@@ -721,9 +722,7 @@ theorem origin_mem_abbSiteSurface {d n : Nat}
   refine ⟨(sctBoxOrigin d n).2, ?_⟩
   exact ho
 
-
-
-theorem abb_phi_ge_one_projected {d n : Nat} {p : NNReal}
+lemma abb_phi_ge_one_projected {d n : Nat} {p : NNReal}
     (hp : p ≤ 1) (hgt : tildePc d < p)
     {S : Finset (Option (sctBox d n))}
     (ho : some (sctBoxOrigin d n) ∈ S) :
@@ -731,24 +730,25 @@ theorem abb_phi_ge_one_projected {d n : Nat} {p : NNReal}
   exact phi_ge_one_of_gt_tildePc hp hgt (abbSiteSurface d n S)
     (origin_mem_abbSiteSurface ho)
 
+/-! ## D. Boundary pairs and `φ` -/
 
-
+/-- The pair of sites of a pair of vertices of the ghost graph (the ghost is sent to the origin). -/
 def abbPairToSite (d n : Nat)
     (q : Option (sctBox d n) × Option (sctBox d n)) : Site d × Site d :=
   (q.1.elim (origin d) Subtype.val,
     q.2.elim (origin d) Subtype.val)
 
-@[simp] theorem abbPairToSite_some_some (d n : Nat) (x y : sctBox d n) :
+@[simp] lemma abbPairToSite_some_some (d n : Nat) (x y : sctBox d n) :
     abbPairToSite d n (some x, some y) = ((x : Site d), (y : Site d)) := rfl
 
-
+/-- The boundary pairs of `S` whose edge is an edge of the box (not a ghost edge). -/
 noncomputable def abbPhysicalBoundaryPairs (d n : Nat)
     (S : Finset (Option (sctBox d n))) :
     Finset (Option (sctBox d n) × Option (sctBox d n)) :=
   (shk_boundaryPairs (withGhost (sctBoxGraph d n)) S).filter fun q ↦
     s(q.1, q.2) ∈ FieldGhostDict.origEdges (sctBoxGraph d n)
 
-@[simp] theorem mem_abbPhysicalBoundaryPairs_iff {d n : Nat}
+@[simp] lemma mem_abbPhysicalBoundaryPairs_iff {d n : Nat}
     {S : Finset (Option (sctBox d n))}
     {q : Option (sctBox d n) × Option (sctBox d n)} :
     q ∈ abbPhysicalBoundaryPairs d n S ↔
@@ -756,8 +756,7 @@ noncomputable def abbPhysicalBoundaryPairs (d n : Nat)
         s(q.1, q.2) ∈ FieldGhostDict.origEdges (sctBoxGraph d n) := by
   simp [abbPhysicalBoundaryPairs]
 
-
-theorem abb_origEdge_endpoints_some {V : Type*}
+lemma abb_origEdge_endpoints_some {V : Type*}
     [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {a b : Option V} (h : s(a, b) ∈ FieldGhostDict.origEdges G) :
     ∃ x y : V, a = some x ∧ b = some y := by
@@ -770,11 +769,9 @@ theorem abb_origEdge_endpoints_some {V : Type*}
       · exact ⟨x, y, hmap.1.symm, hmap.2.symm⟩
       · exact ⟨y, x, hmap.2.symm, hmap.1.symm⟩
 
-
-
-theorem abbPairToSite_mem_boundaryEdges {d n : Nat}
+lemma abbPairToSite_mem_boundaryEdges {d n : Nat}
     {S : Finset (Option (sctBox d n))}
-    (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
+    (_hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
     {q : Option (sctBox d n) × Option (sctBox d n)}
     (hq : q ∈ abbPhysicalBoundaryPairs d n S) :
@@ -797,8 +794,7 @@ theorem abbPairToSite_mem_boundaryEdges {d n : Nat}
     exact hq2S (by simpa [hbeq] using hbS)
   · simpa [withGhost, sctBoxGraph] using hqadj
 
-
-theorem abbPairToSite_injectiveOn {d n : Nat}
+lemma abbPairToSite_injectiveOn {d n : Nat}
     {S : Finset (Option (sctBox d n))} :
     Set.InjOn (abbPairToSite d n)
       (abbPhysicalBoundaryPairs d n S : Set _) := by
@@ -820,9 +816,7 @@ theorem abbPairToSite_injectiveOn {d n : Nat}
   subst e
   rfl
 
-
-
-theorem exists_abbPhysicalBoundaryPair {d n : Nat}
+lemma exists_abbPhysicalBoundaryPair {d n : Nat}
     (hn : 0 < n) {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -857,9 +851,7 @@ theorem exists_abbPhysicalBoundaryPair {d n : Nat}
   · rcases e with ⟨a, b⟩
     rfl
 
-
-
-theorem image_abbPhysicalBoundaryPairs {d n : Nat}
+lemma image_abbPhysicalBoundaryPairs {d n : Nat}
     (hn : 0 < n) {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty) :
@@ -874,8 +866,8 @@ theorem image_abbPhysicalBoundaryPairs {d n : Nat}
     obtain ⟨q, hq, hqe⟩ := exists_abbPhysicalBoundaryPair hn hocc he
     exact Finset.mem_image.mpr ⟨q, hq, hqe⟩
 
-
-
+/-- For a possible surface `S ∋ o`, the box `φ(S)` equals the percolation `φ_p` of its site set,
+with `p = 1 - e^{-β}`. -/
 theorem abbPhi_eq_phi {d n : Nat} (hn : 0 < n)
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
@@ -905,9 +897,9 @@ theorem abbPhi_eq_phi {d n : Nat} (hn : 0 < n)
     subst q
     have hab : (sctBoxGraph d n).Adj a b := by
       simpa [withGhost] using hqadj
-    simp only [Prod.fst, Prod.snd, abbPairToSite_some_some]
+    simp only [abbPairToSite_some_some]
     dsimp only [p]
-    rw [abbParams_some_some d n beta h, if_pos hab,
+    rw [abbParams_some_some d n beta h, ite_eq_left hab,
       abb_bondParam_coe_eq_pBeta beta hbeta]
     rw [abb_surface_conn_prob_eq_connWithin hocc ho a hq1S
       beta h hbeta hh]
@@ -937,9 +929,7 @@ theorem abbPhi_eq_phi {d n : Nat} (hn : 0 < n)
         (abbSiteSurface d n S) := by
       rfl
 
-
-
-theorem abbPhi_ge_one_of_gt_tildePc {d n : Nat} (hn : 0 < n)
+lemma abbPhi_ge_one_of_gt_tildePc {d n : Nat} (hn : 0 < n)
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -951,9 +941,7 @@ theorem abbPhi_ge_one_of_gt_tildePc {d n : Nat} (hn : 0 < n)
   exact phi_ge_one_of_gt_tildePc (bondParam_le_one beta) hgt
     (abbSiteSurface d n S) (origin_mem_abbSiteSurface ho)
 
-
-
-theorem abbPhi_differentiableAt_beta (d n : Nat)
+lemma abbPhi_differentiableAt_beta (d n : Nat)
     (S : Finset (Option (sctBox d n))) (beta h : Real) :
     DifferentiableAt Real (fun b ↦ abbPhi d n b h S) beta := by
   have hparam : ∀ e : Sym2 (Option (sctBox d n)),
@@ -983,12 +971,11 @@ theorem abbPhi_differentiableAt_beta (d n : Nat)
   apply DifferentiableAt.fun_sum
   intro q hq
   by_cases he : s(q.1, q.2) ∈ FieldGhostDict.origEdges (sctBoxGraph d n)
-  · simp only [he, if_true]
+  · simp only [he, ite_true]
     exact (hparam s(q.1, q.2)).mul (hprob q)
   · simp [he]
 
-
-
+/-- `φ(S) ≥ 1` for every possible surface `S ∋ o`, when `p̃_c ≤ p(β)`. -/
 theorem abbPhi_ge_one_of_tildePc_le {d n : Nat} (hn : 0 < n)
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
@@ -1022,9 +1009,9 @@ theorem abbPhi_ge_one_of_tildePc_le {d n : Nat} (hn : 0 < n)
   exact abbPhi_ge_one_of_gt_tildePc hn hocc ho (b k) h hbk0 hh
     (hge.trans_lt hpgt)
 
+/-! ## E. The mean-field inequality -/
 
-
-
+/-- The mean-field inequality `1 - M ≤ β ∂_β M` for the box magnetization when `p(β) > p̃_c`. -/
 theorem abbMag_meanfield_of_gt_tildePc {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h)
     (hgt : tildePc d < bondParam beta) :
@@ -1034,7 +1021,7 @@ theorem abbMag_meanfield_of_gt_tildePc {d n : Nat} (hn : 0 < n)
   intro S ho hocc
   exact abbPhi_ge_one_of_gt_tildePc hn hocc ho beta h hbeta hh hgt
 
-
+/-- The mean-field inequality `1 - M ≤ β ∂_β M` for the box magnetization when `p(β) ≥ p̃_c`. -/
 theorem abbMag_meanfield_of_tildePc_le {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h)
     (hge : tildePc d ≤ bondParam beta) :

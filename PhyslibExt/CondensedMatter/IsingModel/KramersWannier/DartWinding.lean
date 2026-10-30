@@ -6,92 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import Mathlib
@@ -102,6 +16,43 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.MinimalPeriodLoop
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BdEdgeMatchFinite
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.RayCrossFlip
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap
+
+/-!
+# Reformulations of the crossing-edge matching for closed walks
+
+Equivalent forms of `rpc_CrossEdgeOddIffOnWalk` for a closed lattice walk, in terms of edge
+membership, boundary edges of the inside region, and the two inclusions between them.
+
+## i. Overview
+
+For a walk without repeated edges, an edge is traversed an odd number of times iff it is an edge of
+the walk. So `rpc_CrossEdgeOddIffOnWalk Vc` says that `rpc_crossEdge u v` is an edge of `Vc` iff
+`uv` is, and, by `rpc_crossFlip`, that the boundary edges of the inside region of `Vc` are exactly
+the edges of `Vc`. The latter splits into `jbw_hard_gap Vc` and its converse.
+
+Headline fidelity:
+- The equivalences `dow_bridge_iff_crossEdge_mem_iff_shared_mem`,
+  `dow_bridge_iff_bdEdge_shared_mem` and `dow_bridge_iff_hardGap_and_reverse` are unconditional.
+- `dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse` is vacuous. Its hypothesis `hnd` (every
+  closed walk has no repeated edges) is false: a walk that goes along an edge and back repeats it.
+  Its conclusion is refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`.
+
+## ii. Key results
+
+- `StatMech.Walls.dow_bridge_iff_bdEdge_shared_mem` : crossing-edge matching ↔ boundary edges
+  of the inside are the edges of the walk
+- `StatMech.Walls.dow_bridge_iff_hardGap_and_reverse` : the same split into two inclusions
+- `StatMech.Walls.dow_unitSquare_bridgeBody` : the unit-square instance at one edge
+
+## iii. Table of contents
+
+- A. Odd counts and membership
+- B. Equivalent forms of the crossing-edge matching
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
 
 @[expose] public section
 
@@ -114,21 +65,13 @@ namespace Walls
 
 open StatMech.Lattice
 
+/-! ## A. Odd counts and membership -/
 
-
-
-
-
-
-
-
-
-
-theorem dow_odd_count_iff_mem_of_nodup {α : Type*} [DecidableEq α] {l : List α} (hnd : l.Nodup)
+/-- In a list without duplicates an element occurs an odd number of times iff it occurs. -/
+lemma dow_odd_count_iff_mem_of_nodup {α : Type*} [DecidableEq α] {l : List α} (hnd : l.Nodup)
     (e : α) : Odd (l.count e) ↔ e ∈ l := by
   constructor
   · intro hodd
-    
     rcases Nat.eq_zero_or_pos (l.count e) with h0 | hpos
     · rw [h0] at hodd; exact absurd hodd (by decide)
     · exact List.count_pos_iff.mp hpos
@@ -136,34 +79,18 @@ theorem dow_odd_count_iff_mem_of_nodup {α : Type*} [DecidableEq α] {l : List �
     rw [List.count_eq_one_of_mem hnd hmem]
     exact ⟨0, rfl⟩
 
-
-
-
-
-theorem dow_walk_odd_count_iff_mem {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+/-- For a walk without repeated edges, an edge is traversed an odd number of times iff it is an edge
+of the walk. -/
+lemma dow_walk_odd_count_iff_mem {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hnd : Vc.edges.Nodup) (e : Sym2 (Site 2)) :
     Odd (Vc.edges.count e) ↔ e ∈ Vc.edges :=
   dow_odd_count_iff_mem_of_nodup hnd e
 
+/-! ## B. Equivalent forms of the crossing-edge matching -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem dow_bridge_iff_crossEdge_mem_iff_shared_mem {a : Site 2}
+/-- For a walk without repeated edges, `rpc_CrossEdgeOddIffOnWalk` says that `rpc_crossEdge u v` is
+an edge of the walk iff `uv` is. -/
+lemma dow_bridge_iff_crossEdge_mem_iff_shared_mem {a : Site 2}
     (Vc : (hypercubicLattice 2).Walk a a) (hnd : Vc.edges.Nodup) :
     rpc_CrossEdgeOddIffOnWalk Vc ↔
       (∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
@@ -176,22 +103,8 @@ theorem dow_bridge_iff_crossEdge_mem_iff_shared_mem {a : Site 2}
     rw [dow_walk_odd_count_iff_mem Vc hnd (rpc_crossEdge u v)]
     exact hmem hadj
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- `rpc_CrossEdgeOddIffOnWalk Vc` iff the boundary edges of the inside region of `Vc` are exactly
+the edges of `Vc`. -/
 theorem dow_bridge_iff_bdEdge_shared_mem {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
     rpc_CrossEdgeOddIffOnWalk Vc ↔
       (∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
@@ -204,60 +117,8 @@ theorem dow_bridge_iff_bdEdge_shared_mem {a : Site 2} (Vc : (hypercubicLattice 2
     rw [← rpc_crossFlip Vc hadj]
     exact hmatch hadj
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem dow_bdEdge_meets_support {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {u v : Site 2} (hadj : (hypercubicLattice 2).Adj u v)
-    (hbd : bdEdge (jec_leftRegion Vc) s(u, v)) :
-    u ∈ Vc.support ∨ v ∈ Vc.support :=
-  StatMech.Lattice.jec_leftRegion_bdEdge_support Vc hadj hbd
-
-
-
-
-
-
-theorem dow_off_support_not_bdEdge {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {u v : Site 2} (hadj : (hypercubicLattice 2).Adj u v)
-    (hu : u ∉ Vc.support) (hv : v ∉ Vc.support) :
-    ¬ bdEdge (jec_leftRegion Vc) s(u, v) :=
-  StatMech.Lattice.jlri_no_bdEdge_off_support Vc hadj hu hv
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/-- `rpc_CrossEdgeOddIffOnWalk Vc` iff `jbw_hard_gap Vc` and every boundary edge of the inside is an
+edge of `Vc`. -/
 theorem dow_bridge_iff_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (_hnd : Vc.edges.Nodup) :
     rpc_CrossEdgeOddIffOnWalk Vc ↔
@@ -276,50 +137,18 @@ theorem dow_bridge_iff_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice
   · rintro ⟨hhard, hrev⟩ u v hadj
     exact ⟨fun hbd => hrev hadj hbd, fun he => hhard hadj (List.mem_toFinset.mpr he)⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem dow_bridge_of_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+/-- The two inclusions give `rpc_CrossEdgeOddIffOnWalk Vc`. -/
+lemma dow_bridge_of_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hnd : Vc.edges.Nodup) (hhard : jbw_hard_gap Vc)
     (hrev : ∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
       bdEdge (jec_leftRegion Vc) s(u, v) → s(u, v) ∈ Vc.edges) :
     rpc_CrossEdgeOddIffOnWalk Vc :=
   (dow_bridge_iff_hardGap_and_reverse Vc hnd).mpr ⟨hhard, hrev⟩
 
-
-
-
-
-
-theorem dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse
+/-- Assembling the two inclusions for all closed walks gives `kwc_PrimalWalkLeftRegionMatch`.
+Vacuous: the hypothesis `hnd` (no closed walk repeats an edge) is false, and the conclusion is
+refuted by `ceo_primalWalkLeftRegionMatch_false`. -/
+lemma dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse
     (hnd : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), Vc.edges.Nodup)
     (hhard : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), jbw_hard_gap Vc)
     (hrev : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) {u v : Site 2},
@@ -329,22 +158,9 @@ theorem dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse
   rpc_primalWalkLeftRegionMatch_of_bridge (fun Vc =>
     dow_bridge_of_hardGap_and_reverse Vc (hnd Vc) (hhard Vc) (fun hadj => hrev Vc hadj))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-theorem dow_unitSquare_bridgeBody :
+/-- For the unit-square loop and the edge `(0, 1)`–`(1, 1)`, odd crossing-edge count and
+boundary-edge membership agree. -/
+lemma dow_unitSquare_bridgeBody :
     Odd (wwit_unitSquareLoop.edges.count
       (rpc_crossEdge (![0, 1] : Site 2) (![1, 1] : Site 2))) ↔
       bdEdge (jec_leftRegion wwit_unitSquareLoop) s((![0, 1] : Site 2), (![1, 1] : Site 2)) :=

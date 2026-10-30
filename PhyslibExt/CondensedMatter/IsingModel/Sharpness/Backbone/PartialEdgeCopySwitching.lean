@@ -6,28 +6,62 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationRealization
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.EdgeCopyEncoding
 
+/-!
+# Partial exploration selectors and edge-copy switching of fiber masses
+
+Exploration selectors that are defined only on part of the currents (partial selectors), two
+examples, and the switching identity for split current masses obtained by toggling a set of
+labeled edge copies.
+
+## i. Overview
+
+A partial current selector assigns to some currents on an exploration domain a word of exploration
+segments, with the sources of the current prescribed by the word; currents with no word are not
+admissible. The vacuum selector accepts exactly the sourceless currents, and the one-step selector
+also accepts a current whose sources are the endpoints of an active segment selected by the
+support-lex backbone selector.
+
+The second part works with a current `m` split into two parts `K + (m - K)`. Splitting is encoded
+by subsets of labeled edge copies of `m` (`FluxEdgeCopy`), and symmetric difference with a fixed
+subset `P` of copies is a weight-preserving bijection between fibers with sources `A` and `A ∆ ∂P`
+(`toggleEquiv`). Summing gives the switching identity `rawFiberMass_eq_of_labeledToggle`: the split
+mass with sources `A` and predicate `Q` equals the split mass with sources `A ∆ C` and predicate
+`R`, provided `Q` is transported to `R` by the toggle. The pair masses multiply out:
+`∑_m rawPairFiberMass m Q R = (∑_p Q-mass)(∑_q R-mass)`.
+
+Headline fidelity: all results are proved. `rawFiberMass_eq_of_labeledToggle` is conditional on its
+explicit hypotheses `hPsrc` (the toggled copies have sources `C`) and `htransport` (the toggle maps
+`Q` to `R`); it is the switching lemma for split currents. The selector results are unconditional.
+
+## ii. Key results
+
+- `shb_PartialCurrentDynamicSelector` : partial exploration selectors
+- `shb_vacuumPartialSelector`, `shb_oneStepPartialSelector` : the vacuum and one-step selectors
+- `BackboneLabeledSwitching.toggleEquiv` : toggling labeled copies as a bijection of fibers
+- `BackboneLabeledSwitching.rawPairFiberMass_tsum_eq_mul` : split masses factor (unconditional)
+- `BackboneLabeledSwitching.rawFiberMass_eq_of_labeledToggle` : the switching identity, given
+  `hPsrc` and `htransport`
+
+## iii. Table of contents
+
+- A. Partial selectors
+- B. The vacuum and one-step selectors
+- C. Fibers of labeled edge copies and toggling
+- D. Split masses
+- E. The switching identity
+
+## iv. References
+
+- M. Aizenman, "Geometric analysis of φ⁴ fields and Ising models", Comm. Math. Phys. 86 (1982)
+  1–48
+- H. Duminil-Copin, "Random currents expansion of the Ising model", lecture notes (2016),
+  arXiv:1607.06933
+-/
 @[expose] public section
 
 open SimpleGraph Finset BigOperators
@@ -41,37 +75,43 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+/-- Adjacency is decided classically in this file. -/
 local instance shb_partialSelectorDecidableAdj (H : SimpleGraph V) :
     DecidableRel H.Adj :=
   Classical.decRel _
 
+/-! ## A. Partial selectors -/
 
-
-
-
-
+/-- A partial exploration selector: a word of exploration segments for some currents on a domain,
+consistent with the sources of the current. -/
 structure shb_PartialCurrentDynamicSelector where
+  /-- The source set prescribed by an exploration word. -/
   sourceClass : shb_ExplorationDomain V ->
     List (shb_ExplorationSegment V) -> Finset V
+  /-- The word selected for a current, or `none` if the current is not admissible. -/
   select? : (d : shb_ExplorationDomain V) ->
     (d.graph.edgeFinset -> Nat) -> Option (List (shb_ExplorationSegment V))
+  /-- The empty word prescribes no sources. -/
   sourceClass_nil : forall d, sourceClass d [] = ∅
+  /-- A selected current has the sources prescribed by its word. -/
   sources_eq_sourceClass_of_select : forall d m word,
     select? d m = some word ->
       sources d.graph (ofEdgeFun d.graph m) = sourceClass d word
+  /-- The empty word is selected exactly for sourceless currents. -/
   select?_eq_some_nil_iff : forall d m,
     select? d m = some [] <->
       sources d.graph (ofEdgeFun d.graph m) = ∅
+  /-- The first segment of a selected word is active in the domain. -/
   head_active_of_select : forall d m s ss,
     select? d m = some (s :: ss) -> s ∈ d.active
 
-
+/-- The current `m` is assigned a word by the selector. -/
 def shb_PartialCurrentDynamicSelector.Admissible
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) : Prop :=
   ∃ word, S.select? d m = some word
 
-
+/-- The current `m` is assigned the word `word`. -/
 def shb_PartialCurrentDynamicSelector.Fiber
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V)
@@ -79,6 +119,7 @@ def shb_PartialCurrentDynamicSelector.Fiber
     (m : d.graph.edgeFinset -> Nat) : Prop :=
   S.select? d m = some word
 
+/-- Fiber membership is decided classically. -/
 noncomputable instance shb_PartialCurrentDynamicSelector.fiberDecidable
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V)
@@ -86,8 +127,9 @@ noncomputable instance shb_PartialCurrentDynamicSelector.fiberDecidable
     DecidablePred (S.Fiber d word) :=
   Classical.decPred _
 
+/-! ## B. The vacuum and one-step selectors -/
 
-
+/-- The partial selector accepting exactly the sourceless currents, with the empty word. -/
 noncomputable def shb_vacuumPartialSelector :
     shb_PartialCurrentDynamicSelector (V := V) where
   sourceClass := fun _ _ => ∅
@@ -111,7 +153,7 @@ noncomputable def shb_vacuumPartialSelector :
     intro d m s ss h
     split at h <;> simp at h
 
-theorem shb_vacuumPartialSelector_admissible_iff
+lemma shb_vacuumPartialSelector_admissible_iff
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     shb_vacuumPartialSelector.Admissible d m <->
       sources d.graph (ofEdgeFun d.graph m) = ∅ := by
@@ -125,11 +167,8 @@ theorem shb_vacuumPartialSelector_admissible_iff
   · intro hs
     exact ⟨[], by simp [shb_vacuumPartialSelector, hs]⟩
 
-
-
-
-
-
+/-- The active segment `s` is a one-step candidate for `m`: the sources of `m` are its endpoints and
+the support-lex selected backbone of `m` is the path of `s`. -/
 def shb_oneStepCandidate
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V) : Prop :=
@@ -138,18 +177,19 @@ def shb_oneStepCandidate
       shb_backboneSelectSupport d.graph (ofEdgeFun d.graph m) s.1 s.2.1 =
         some (s.toPath d.graph (d.active_supported s hs))
 
+/-- Candidacy is decided classically. -/
 noncomputable instance shb_oneStepCandidate_decidable
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     DecidablePred (shb_oneStepCandidate d m) := Classical.decPred _
 
-
+/-- A chosen one-step candidate segment, if any exists. -/
 noncomputable def shb_oneStepChosenSegment
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     Option (shb_ExplorationSegment V) :=
   if h : ∃ s, shb_oneStepCandidate d m s then some (Classical.choose h)
   else none
 
-theorem shb_oneStepCandidate_of_chosen_eq_some
+lemma shb_oneStepCandidate_of_chosen_eq_some
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (h : shb_oneStepChosenSegment d m = some s) :
@@ -162,10 +202,8 @@ theorem shb_oneStepCandidate_of_chosen_eq_some
     exact Classical.choose_spec hex
   · simp at h
 
-
-
-
-
+/-- The partial selector accepting sourceless currents (empty word) and currents with a one-step
+candidate segment (one-letter word). -/
 noncomputable def shb_oneStepPartialSelector :
     shb_PartialCurrentDynamicSelector (V := V) where
   sourceClass := fun _ word =>
@@ -182,7 +220,7 @@ noncomputable def shb_oneStepPartialSelector :
     · change (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
         else (shb_oneStepChosenSegment d m).map (fun s => [s])) =
           some word at hword
-      rw [if_pos hvac] at hword
+      rw [ite_eq_left hvac] at hword
       have : ([] : List (shb_ExplorationSegment V)) = word :=
         Option.some.inj hword
       subst word
@@ -190,7 +228,7 @@ noncomputable def shb_oneStepPartialSelector :
     · change (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
         else (shb_oneStepChosenSegment d m).map (fun s => [s])) =
           some word at hword
-      rw [if_neg hvac] at hword
+      rw [ite_eq_right hvac] at hword
       cases hs : shb_oneStepChosenSegment d m with
       | none => simp [hs] at hword
       | some s =>
@@ -201,9 +239,7 @@ noncomputable def shb_oneStepPartialSelector :
     intro d m
     by_cases hvac : sources d.graph (ofEdgeFun d.graph m) = ∅
     · simp [hvac]
-    · change ((if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
-        else (shb_oneStepChosenSegment d m).map (fun s => [s])) = some []) <-> _
-      rw [if_neg hvac]
+    · rw [ite_eq_right hvac]
       constructor
       · intro h
         cases hs : shb_oneStepChosenSegment d m <;> simp [hs] at h
@@ -215,7 +251,7 @@ noncomputable def shb_oneStepPartialSelector :
     · change (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
         else (shb_oneStepChosenSegment d m).map (fun t => [t])) =
           some (s :: ss) at hword
-      rw [if_neg hvac] at hword
+      rw [ite_eq_right hvac] at hword
       cases ht : shb_oneStepChosenSegment d m with
       | none => simp [ht] at hword
       | some t =>
@@ -224,8 +260,7 @@ noncomputable def shb_oneStepPartialSelector :
           obtain ⟨rfl, rfl⟩ := hword
           exact (shb_oneStepCandidate_of_chosen_eq_some d m t ht).choose
 
-
-theorem shb_oneStepPartialSelector_admissible_iff
+lemma shb_oneStepPartialSelector_admissible_iff
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     shb_oneStepPartialSelector.Admissible d m <->
       sources d.graph (ofEdgeFun d.graph m) = ∅ ∨
@@ -239,7 +274,7 @@ theorem shb_oneStepPartialSelector_admissible_iff
       change (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
         else (shb_oneStepChosenSegment d m).map (fun s => [s])) =
           some word at hword
-      rw [if_neg hvac] at hword
+      rw [ite_eq_right hvac] at hword
       cases hs : shb_oneStepChosenSegment d m with
       | none => simp [hs] at hword
       | some s =>
@@ -249,12 +284,10 @@ theorem shb_oneStepPartialSelector_admissible_iff
       change ∃ word,
         (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
           else (shb_oneStepChosenSegment d m).map (fun t => [t])) = some word
-      rw [if_neg hvac]
+      rw [ite_eq_right hvac]
       unfold shb_oneStepChosenSegment
-      rw [dif_pos ⟨s, hs⟩]
+      rw [dite_eq_left ⟨s, hs⟩]
       exact ⟨[Classical.choose ⟨s, hs⟩], rfl⟩
-
-
 
 namespace BackboneLabeledSwitching
 
@@ -263,13 +296,15 @@ open RandomCurrent
 
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## C. Fibers of labeled edge copies and toggling -/
 
-
+/-- Subsets of labeled edge copies of `m` with sources `A` satisfying `Q`. -/
 def Fiber (m : G.edgeFinset -> Nat) (A : Finset V)
     (Q : Finset (FluxEdgeCopy.Copy G m) -> Prop) :=
   {S : Finset (FluxEdgeCopy.Copy G m) //
     RandomCurrent.sources (endsM G m) S = A ∧ Q S}
 
+/-- A fiber of labeled copies is finite. -/
 noncomputable instance fiberFintype (m : G.edgeFinset -> Nat) (A : Finset V)
     (Q : Finset (FluxEdgeCopy.Copy G m) -> Prop) [DecidablePred Q] :
     Fintype (Fiber G m A Q) := by
@@ -280,9 +315,7 @@ noncomputable instance fiberFintype (m : G.edgeFinset -> Nat) (A : Finset V)
     Finite.of_injective Subtype.val Subtype.val_injective
   exact Fintype.ofFinite _
 
-
-
-
+/-- Symmetric difference with a fixed subset `P` of copies, as a bijection between fibers. -/
 noncomputable def toggleEquiv
     (m : G.edgeFinset -> Nat) (A C : Finset V)
     (P : Finset (FluxEdgeCopy.Copy G m))
@@ -307,14 +340,13 @@ noncomputable def toggleEquiv
     apply Subtype.ext
     simp only [symmDiff_symmDiff_cancel_right]
 
-
-
+/-- The weight of a labeled subset of copies: the weight of the underlying current `m`. -/
 noncomputable def labeledWeight (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat)
     (_ : Finset (FluxEdgeCopy.Copy G m)) : Real :=
   weight G beta J (ofEdgeFun G m)
 
-theorem toggleEquiv_weight_preserving
+lemma toggleEquiv_weight_preserving
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A C : Finset V)
     (P : Finset (FluxEdgeCopy.Copy G m))
@@ -326,8 +358,7 @@ theorem toggleEquiv_weight_preserving
       labeledWeight G beta J m
         ((toggleEquiv G m A C P hPsrc Q R htransport S).1) := rfl
 
-
-theorem sum_labeledWeight_toggle
+lemma sum_labeledWeight_toggle
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A C : Finset V)
     (P : Finset (FluxEdgeCopy.Copy G m))
@@ -342,16 +373,16 @@ theorem sum_labeledWeight_toggle
   intro S _
   exact toggleEquiv_weight_preserving G beta J m A C P hPsrc Q R htransport S
 
+/-! ## D. Split masses -/
 
-
-
+/-- The weight `w(K) w(m - K)` of a split of the current `m`. -/
 noncomputable def rawSplitWeight (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat)
     (K : {p : G.edgeFinset -> Nat // p <= m}) : Real :=
   weight G beta J (ofEdgeFun G K.1) *
     weight G beta J (ofEdgeFun G (fun e => m e - K.1 e))
 
-
+/-- The total weight of the splits `K ≤ m` with `∂K = A` and `Q K`. -/
 noncomputable def rawFiberMass (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A : Finset V)
     (Q : (G.edgeFinset -> Nat) -> Prop) [DecidablePred Q] : Real :=
@@ -359,9 +390,7 @@ noncomputable def rawFiberMass (beta : Real) (J : Sym2 V -> Real)
     if sources G (ofEdgeFun G K.1) = A ∧ Q K.1 then
       rawSplitWeight G beta J m K else 0
 
-
-
-
+/-- The total weight of the splits `K ≤ m` with `Q K` and `R (m - K)`. -/
 noncomputable def rawPairFiberMass (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat)
     (Q R : (G.edgeFinset -> Nat) -> Prop)
@@ -370,9 +399,7 @@ noncomputable def rawPairFiberMass (beta : Real) (J : Sym2 V -> Real)
     if Q K.1 ∧ R (fun e => m e - K.1 e) then
       rawSplitWeight G beta J m K else 0
 
-
-
-
+/-- The pair masses summed over `m` factor as a product of two current sums. -/
 theorem rawPairFiberMass_tsum_eq_mul
     (beta : Real) (J : Sym2 V -> Real)
     (Q R : (G.edgeFinset -> Nat) -> Prop)
@@ -432,10 +459,7 @@ theorem rawPairFiberMass_tsum_eq_mul
     by_cases hR : R (fun e => m e - K.1 e) <;>
     simp [hQ, hR]
 
-
-
-
-theorem rawFiberMass_eq_rawPairFiberMass
+lemma rawFiberMass_eq_rawPairFiberMass
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A : Finset V)
     (Q : (G.edgeFinset -> Nat) -> Prop) [DecidablePred Q] :
@@ -448,10 +472,7 @@ theorem rawFiberMass_eq_rawPairFiberMass
   intro K _
   simp
 
-
-
-
-theorem tsum_rawFiberMass_eq_mul_unrestricted
+lemma tsum_rawFiberMass_eq_mul_unrestricted
     (beta : Real) (J : Sym2 V -> Real) (A : Finset V)
     (Q : (G.edgeFinset -> Nat) -> Prop) [DecidablePred Q] :
     (∑' m : G.edgeFinset -> Nat, rawFiberMass G beta J m A Q) =
@@ -472,10 +493,8 @@ theorem tsum_rawFiberMass_eq_mul_unrestricted
     (fun p => sources G (ofEdgeFun G p) = A ∧ Q p) (fun _ => True)]
   congr 1
 
-
-
-
-theorem rawPredicateMass_eq_labeled
+/-! ## E. The switching identity -/
+lemma rawPredicateMass_eq_labeled
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat)
     (Q : (G.edgeFinset -> Nat) -> Prop) [DecidablePred Q] :
@@ -491,7 +510,7 @@ theorem rawPredicateMass_eq_labeled
           (if Q K.1 then weight G beta J (ofEdgeFun G m) else 0) := by
     intro K
     by_cases hQ : Q K.1
-    · rw [if_pos hQ, if_pos hQ, rawSplitWeight,
+    · rw [ite_eq_left hQ, ite_eq_left hQ, rawSplitWeight,
         weight_split_eq_binom G beta J m K.1 K.2,
         nsmul_eq_mul, Nat.cast_prod]
       have hprod :
@@ -504,7 +523,7 @@ theorem rawPredicateMass_eq_labeled
         apply Finset.prod_congr rfl
         intro e _
         unfold ofEdgeFun
-        rw [dif_pos e.2, dif_pos e.2]
+        rw [dite_eq_left e.2, dite_eq_left e.2]
       rw [hprod]
     · simp [hQ]
   simp_rw [hstep]
@@ -512,7 +531,7 @@ theorem rawPredicateMass_eq_labeled
     (fun k => if Q k then weight G beta J (ofEdgeFun G m) else 0)]
   rfl
 
-
+/-- `rawFiberMass` written as a sum over labeled subsets of copies. -/
 noncomputable def labeledFiberMass
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A : Finset V)
@@ -520,8 +539,7 @@ noncomputable def labeledFiberMass
   ∑ S : Fiber G m A (fun S => Q (profileFlux G m S)),
     labeledWeight G beta J m S.1
 
-
-theorem rawFiberMass_eq_labeledFiberMass
+lemma rawFiberMass_eq_labeledFiberMass
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A : Finset V)
     (Q : (G.edgeFinset -> Nat) -> Prop) [DecidablePred Q] :
@@ -546,10 +564,8 @@ theorem rawFiberMass_eq_labeledFiberMass
   intro S _
   rw [FluxEdgeCopy.sources_eq]
 
-
-
-
-
+/-- The switching identity for split currents: toggling a set of copies with sources `C` that
+transports `Q` to `R` identifies the masses with sources `A` and `A ∆ C`. -/
 theorem rawFiberMass_eq_of_labeledToggle
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A C : Finset V)
@@ -570,6 +586,5 @@ theorem rawFiberMass_eq_of_labeledToggle
 end BackboneLabeledSwitching
 
 end
-
 
 end StatMech.Sharpness

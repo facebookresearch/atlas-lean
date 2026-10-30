@@ -6,13 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.MeanfieldTargetReassembly
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABFiniteGraph
+
+/-!
+# The mean-field inequality on the graph with a ghost vertex
+
+For bond percolation with field `h` on a finite graph `G` (edges of `G` open with probability
+`1 - e^{-βJ_e}`, ghost edges with probability `1 - e^{-h}`): `m (1 - M) ≤ β ∂_β M`, where `M` is the
+probability that `o` reaches a target set and `m` bounds `φ(S)` from below.
+
+## i. Overview
+
+The reassembly `mtr_meanfield_reassembly` with `D` the edges of `G` (ghost edges excluded) bounds
+`m (1 - M)` by `β ∑_e J_e P(e closed pivotal)`, and the `β`-derivative formula of `ABPhysicalDeriv`
+identifies the latter sum with `β ∂_β M`. `abmg_meanfield_target_finite` treats a general target
+set `B`, `abmg_meanfield_finite` the ghost target `{none}`. Both are proved; their content-carrying
+hypothesis is the lower bound `hm : m ≤ φ(S)` for every possible surface `S`.
+
+## ii. Key results
+
+- `abmgPhi`, `abmgTargetPhi` : `φ(S)` over the edges of `G`
+- `abmgTargetMag` : the probability that `o` reaches the target set
+- `abmg_meanfield_target_finite` : `m (1 - M_B) ≤ β ∂_β M_B`
+- `abmg_meanfield_finite` : the same with the ghost as target
+
+## iii. Table of contents
+
+- A. Magnetization and `φ` with a ghost
+- B. The mean-field inequality
+
+## iv. References
+
+- M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
+  Comm. Math. Phys. 108 (1987) 489–526
+- H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase transition for Bernoulli
+  percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745
+-/
 
 @[expose] public section
 
@@ -26,29 +58,30 @@ open ConfigSpace RandomCurrent
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+/-! ## A. Magnetization and `φ` with a ghost -/
 
-
+/-- `φ(S)` on the ghost graph, counting only edges of `G` (not ghost edges). -/
 noncomputable def abmgPhi (J : Sym2 V -> Real) (o : V)
     (beta h : Real) (S : Finset (Option V)) : Real :=
   mtrPhi (withGhost G) (abfaParams G J beta h)
     (FieldGhostDict.origEdges G) (some o) S
 
-
-
+/-- The probability `M_B(β, h)` that `o` is connected to the target set `B` in the ghost graph. -/
 noncomputable def abmgTargetMag (J : Sym2 V -> Real) (o : V)
     (B : Set (Option V)) (beta h : Real) : Real :=
   probV (abfaParams G J beta h)
     (connEvent (withGhost G) Set.univ (some o) B)
 
-
-
+/-- `φ(S)` for the target problem; it does not depend on `B` and equals `abmgPhi`. -/
 noncomputable def abmgTargetPhi (J : Sym2 V -> Real) (o : V)
-    (B : Set (Option V)) (beta h : Real) (S : Finset (Option V)) : Real :=
+    (_B : Set (Option V)) (beta h : Real) (S : Finset (Option V)) : Real :=
   mtrPhi (withGhost G) (abfaParams G J beta h)
     (FieldGhostDict.origEdges G) (some o) S
 
+/-! ## B. The mean-field inequality -/
 
-
+/-- Mean-field inequality with a target set: if `m ≤ φ(S)` for every possible surface `S ∋ o`, then
+`m (1 - M_B) ≤ β ∂_β M_B`. -/
 theorem abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
     (B : Set (Option V)) (beta h m : Real)
     (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
@@ -72,7 +105,7 @@ theorem abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
       intro hg
       exact (Finset.disjoint_left.mp (FieldGhostDict.disjoint_orig_ghost G)) he hg
     change abfaParams G J beta h e <= beta * abfaLiftCoupling G J e
-    simp only [abfaParams, abpdBetaFieldParams, paramOn, hghost, if_false]
+    simp only [abfaParams, abpdBetaFieldParams, paramOn, hghost, ite_false]
     exact shr_pBeta_le_betaJ _ _
   have hre := mtr_meanfield_reassembly (withGhost G) p c hp D beta m hbeta
     hc hpc (some o) B (by
@@ -94,9 +127,8 @@ theorem abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
           (connEvent (withGhost G) Set.univ (some o) B)) beta
       rw [abfa_deriv_beta_connTarget_eq_origEdges G J o B beta h]
 
-
-
-
+/-- Mean-field inequality for the magnetization: if `m ≤ φ(S)` for every possible surface `S ∋ o`,
+then `m (1 - M) ≤ β ∂_β M`, where `M` is the probability that `o` reaches the ghost. -/
 theorem abmg_meanfield_finite (J : Sym2 V -> Real) (o : V)
     (beta h m : Real) (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
     (hbeta : 0 <= beta) (hh : 0 <= h)
@@ -119,7 +151,7 @@ theorem abmg_meanfield_finite (J : Sym2 V -> Real) (o : V)
       intro hg
       exact (Finset.disjoint_left.mp (FieldGhostDict.disjoint_orig_ghost G)) he hg
     change abfaParams G J beta h e <= beta * abfaLiftCoupling G J e
-    simp only [abfaParams, abpdBetaFieldParams, paramOn, hghost, if_false]
+    simp only [abfaParams, abpdBetaFieldParams, paramOn, hghost, ite_false]
     exact shr_pBeta_le_betaJ _ _
   have hre := mtr_meanfield_reassembly (withGhost G) p c hp D beta m hbeta
     hc hpc (some o) {none} (by

@@ -6,25 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.AsymmetricCoordinateCertificate
+
+/-!
+# A concrete one-step bondwise segment program
+
+A concrete bondwise segment program whose complete events select at most one segment, the
+canonical one-edge segment of an edge, and its complete bondwise selector specification. This is
+an instance of `CompleteBondwiseSelectorSpec`; it does not realize selectors with words of length
+two or more, nor the intended one-step selector.
+
+## i. Overview
+
+The program scans the edges of the domain graph once, reading bonds as the parity of the flux
+(`oddBit`). It encodes the empty word as the empty bond list, a one-letter word whose segment is the
+canonical segment of an edge `e` as `[e]`, and every other word as a diagonal pair, which the scan
+never accepts. The terminal condition asks for no sources before any edge is accepted, and for an
+active canonical segment whose endpoints are the sources after an edge is accepted.
+
+Complete events are functional, determine the sources and select only words of length at most one
+(`program_complete_word_eq_nil_or_singleton`), which gives the specification `selectorSpec`. The
+unit flux on an edge with active canonical segment lies in the fiber of that segment.
+
+`SelectorRealization P S` says that the complete events of `P` are the fibers of the partial
+selector `S`; it is equivalent to `ProgramRealizes P S`
+(`nonempty_selectorRealization_iff_programRealizes`).
+
+Headline fidelity:
+- `selectorSpec`, `program_realizes_selectorSpec` and the fiber computations are unconditional.
+- `program_not_realizes_of_two_segment_fiber`: the program realizes no selector with a nonempty
+  fiber on a word of length at least two (unconditional).
+- `intendedOneStepRealization_isEmpty_of_noncanonical_chosen`: there is no realization of the
+  one-step partial selector `shb_oneStepPartialSelector` as soon as some current with sources has
+  a chosen segment that is not a canonical edge segment (unconditional).
+- `selectorSpec_nonempty_canonicalCertificate_iff_toggleExists` and
+  `selectorSpec_canonicalToggleExists_of_componentwise` specialize
+  `AsymmetricCoordinateCertificate`; the canonical toggle for `selectorSpec` is not constructed.
+
+## ii. Key results
+
+- `program` : the concrete one-step bondwise segment program
+- `selectorSpec` : its complete bondwise selector specification
+- `program_complete_word_eq_nil_or_singleton` : complete events select words of length at most one
+- `program_not_realizes_of_two_segment_fiber` : no realization of selectors with longer words
+- `intendedOneStepRealization_isEmpty_of_noncanonical_chosen` : no realization of the intended
+  one-step selector
+
+## iii. Table of contents
+
+- A. Selector realizations
+- B. Parity currents
+- C. The concrete program
+- D. Complete events of the program
+- E. The selector specification
+- F. Realizations by the program
+
+## iv. References
+
+None beyond those in the imported modules.
+
+-/
 
 @[expose] public section
 
@@ -43,21 +86,21 @@ namespace BackboneConcreteBondProgram
 open BackboneConcreteSelector
 open BackboneDeterminedCutSwitching
 
+/-- Classical decidability of adjacency, used throughout this file. -/
 noncomputable local instance concreteBondDecidableAdj
     (G : SimpleGraph V) : DecidableRel G.Adj := Classical.decRel _
 
+/-! ## A. Selector realizations -/
 
-
-
-
+/-- A realization of a partial selector by a bondwise segment program: complete events are exactly
+the selector fibers. -/
 structure SelectorRealization
     (P : BondwiseSegmentProgram V)
     (S : shb_PartialCurrentDynamicSelector (V := V)) where
   complete_iff_fiber : ∀ d word m,
     P.CompleteEvent d word m <-> S.Fiber d word m
 
-
-
+/-- The complete bondwise selector specification induced by a realization. -/
 noncomputable def SelectorRealization.toCompleteSpec
     {P : BondwiseSegmentProgram V}
     {S : shb_PartialCurrentDynamicSelector (V := V)}
@@ -83,18 +126,20 @@ noncomputable def SelectorRealization.toCompleteSpec
     exact S.head_active_of_select d m s ss
       ((R.complete_iff_fiber d (s :: ss) m).mp hword)
 
+/-! ## B. Parity currents -/
 
+/-- The current with multiplicity one on the bonds where `omega` is true. -/
 def boolCurrent (omega : Sym2 V -> Bool) : Current V :=
   fun e => if omega e then 1 else 0
 
-
+/-- The parity bit of a natural number. -/
 def oddBit (n : Nat) : Bool := decide (Odd n)
 
-@[simp] theorem oddBit_eq_true_iff (n : Nat) : oddBit n = true <-> Odd n := by
+@[simp] lemma oddBit_eq_true_iff (n : Nat) : oddBit n = true <-> Odd n := by
   simp [oddBit]
 
-
-theorem sources_boolCurrent_oddBit
+/-- The parity current of a flux has the same sources as the flux. -/
+lemma sources_boolCurrent_oddBit
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (m : G.edgeFinset -> Nat) :
     sources G (boolCurrent (fluxBitConfig G oddBit m)) =
@@ -116,26 +161,26 @@ theorem sources_boolCurrent_oddBit
       have heG : e ∈ G.edgeFinset := (Finset.mem_filter.mp heE).1
       by_cases ho : Odd (m ⟨e, heG⟩)
       · simpa [ofEdgeFun, heG] using ho
-      · simp [heG, oddBit, ofEdgeFun, ho] at heodd
+      · simp [heG, oddBit, ho] at heodd
     · rintro ⟨heE, heodd⟩
       refine ⟨heE, ?_⟩
       have heG : e ∈ G.edgeFinset := (Finset.mem_filter.mp heE).1
       have ho : Odd (m ⟨e, heG⟩) := by
         simpa [heG, ofEdgeFun] using heodd
-      simp [heG, oddBit, ofEdgeFun, ho]
+      simp [heG, oddBit, ho]
   rw [Finset.odd_sum_iff_odd_card_odd,
     Finset.odd_sum_iff_odd_card_odd]
   apply iff_of_eq
   simpa only [E] using congrArg Odd (congrArg Finset.card hfilter)
 
+/-! ## C. The concrete program -/
 
-
+/-- States of the concrete scan: a domain and the accepted edge, if any. -/
 structure State (V : Type*) [Fintype V] [DecidableEq V] where
   domain : shb_ExplorationDomain V
   accepted : Option (Sym2 V)
 
-
-
+/-- The canonical one-edge segment of an edge, oriented by `Quot.out`. -/
 noncomputable def canonicalEdgeSegment
     (G : SimpleGraph V)
     (e : G.edgeFinset) : shb_ExplorationSegment V := by
@@ -152,20 +197,20 @@ noncomputable def canonicalEdgeSegment
     SimpleGraph.Walk.cons (by simpa using habne) SimpleGraph.Walk.nil
   exact ⟨a, b, ⟨w, by simpa [w] using habne⟩⟩
 
-
-theorem canonicalEdgeSegment_edgeSet
+/-- The canonical segment of an edge has that edge as its only edge. -/
+lemma canonicalEdgeSegment_edgeSet
     (G : SimpleGraph V)
     (e : G.edgeFinset) :
     (canonicalEdgeSegment G e).edgeSet = {e.1} := by
   simp only [canonicalEdgeSegment]
   ext f
-  simp only [shb_AmbientSegment.edgeSet, Set.mem_setOf_eq,
+  simp only [shb_AmbientSegment.edgeSet, Set.mem_ofPred_eq,
     SimpleGraph.Walk.edges_cons, SimpleGraph.Walk.edges_nil,
     List.mem_singleton, Set.mem_singleton_iff]
   have hout : s(e.1.out.1, e.1.out.2) = e.1 := e.1.out_eq
   rw [hout]
 
-
+/-- The edge whose canonical segment is `s`, if any. -/
 noncomputable def edgeOfSegment?
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V) :
     Option d.graph.edgeFinset :=
@@ -174,7 +219,7 @@ noncomputable def edgeOfSegment?
     some (Classical.choose h)
   else none
 
-theorem edgeOfSegment?_eq_some_spec
+lemma edgeOfSegment?_eq_some_spec
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (e : d.graph.edgeFinset)
     (h : edgeOfSegment? d s = some e) :
@@ -186,8 +231,8 @@ theorem edgeOfSegment?_eq_some_spec
     simpa [he] using Classical.choose_spec hex
   · simp at h
 
-
-
+/-- The encoding of words: the empty word as `[]`, a canonical one-edge segment as its edge, and
+every other word as a diagonal pair. -/
 noncomputable def encode
     (d : shb_ExplorationDomain V) :
     List (shb_ExplorationSegment V) -> List (Sym2 V)
@@ -198,7 +243,7 @@ noncomputable def encode
       | none => [s(s.1, s.1)]
   | s :: _ :: _ => [s(s.1, s.1)]
 
-
+/-- The scan: before acceptance, test the edges of the domain graph once; after acceptance, stop. -/
 noncomputable def scan :
     shb_DynamicEdgeExploration (State V) (Sym2 V) where
   edgeOrder := fun st =>
@@ -212,11 +257,12 @@ noncomputable def scan :
     · simp
   advance := fun st e => ⟨st.domain, some e⟩
 
-
+/-- The sources of the parity current read from a bond configuration. -/
 def boolSources (st : State V) (omega : Sym2 V -> Bool) : Finset V :=
   sources st.domain.graph (boolCurrent omega)
 
-
+/-- The terminal condition: no sources before acceptance; after accepting an edge, its canonical
+segment is active and its endpoints are the sources. -/
 def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
   match st.accepted with
   | none => boolSources st omega = ∅
@@ -228,7 +274,7 @@ def terminal (st : State V) (omega : Sym2 V -> Bool) : Prop :=
               (canonicalEdgeSegment st.domain.graph ⟨e, he⟩).2.1}
       else False
 
-
+/-- The concrete one-step bondwise segment program. -/
 noncomputable def program : BondwiseSegmentProgram V where
   State := State V
   scan := scan
@@ -237,7 +283,9 @@ noncomputable def program : BondwiseSegmentProgram V where
   bit := oddBit
   terminal := terminal
 
-@[simp] theorem program_complete_nil_iff
+/-! ## D. Complete events of the program -/
+
+@[simp] lemma program_complete_nil_iff
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat) :
     program.CompleteEvent d [] m <->
       sources d.graph (ofEdgeFun d.graph m) = ∅ := by
@@ -246,22 +294,23 @@ noncomputable def program : BondwiseSegmentProgram V where
   rw [sources_boolCurrent_oddBit]
   simp
 
-
-theorem scan_firstAdmissible_ne_diagonal
+/-- The scan never accepts a diagonal pair. -/
+lemma scan_firstAdmissible_ne_diagonal
     (d : shb_ExplorationDomain V) (omega : Sym2 V -> Bool) (x : V) :
     scan.firstAdmissible (fun _ e => omega e) ⟨d, none⟩ ≠ some s(x, x) := by
   intro h
   have hmem := scan.firstAdmissible_mem (fun _ e => omega e)
     ⟨d, none⟩ s(x, x) h
   have hedge : s(x, x) ∈ d.graph.edgeFinset := by
-    simpa [scan] using hmem
+    simp [scan] at hmem
   have hadj : d.graph.Adj x x := by
-    simpa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hedge
+    simp [SimpleGraph.mem_edgeFinset] at hedge
   exact d.graph.loopless.irrefl x hadj
 
-
-
-theorem find?_eq_some_of_unique_true
+set_option linter.unusedDecidableInType false in
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+/-- If `a` is the only element satisfying `p`, `find?` returns it. -/
+lemma find?_eq_some_of_unique_true
     {A : Type*} [DecidableEq A] (xs : List A) (a : A) (p : A -> Bool)
     (hnodup : xs.Nodup) (ha : a ∈ xs)
     (hp : ∀ x, p x = true <-> x = a) :
@@ -281,12 +330,11 @@ theorem find?_eq_some_of_unique_true
         | false => simpa [List.find?, hpx] using ih hnodup.2 ha'
         | true => exact (hxa ((hp x).mp hpx)).elim
 
-
+/-- The flux with multiplicity one on a single edge. -/
 def unitFlux (G : SimpleGraph V) (e : G.edgeFinset) :
     G.edgeFinset -> Nat := fun f => if f = e then 1 else 0
 
-
-theorem scan_firstAdmissible_unitFlux
+lemma scan_firstAdmissible_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     scan.firstAdmissible
         (fun _ f => fluxBitConfig d.graph oddBit (unitFlux d.graph e) f)
@@ -294,7 +342,7 @@ theorem scan_firstAdmissible_unitFlux
   unfold shb_DynamicEdgeExploration.firstAdmissible
   apply find?_eq_some_of_unique_true
   · exact Finset.nodup_toList _
-  · simpa [scan] using e.2
+  · simp [scan]
   · intro f
     constructor
     · intro hf
@@ -312,9 +360,8 @@ theorem scan_firstAdmissible_unitFlux
       change fluxBitConfig d.graph oddBit (unitFlux d.graph e) e.1 = true
       simp [fluxBitConfig, e.2, oddBit, unitFlux]
 
-
-
-theorem sources_unitFlux
+/-- The unit flux on an edge has the endpoints of the edge as sources. -/
+lemma sources_unitFlux
     (G : SimpleGraph V) (e : G.edgeFinset) :
     sources G (ofEdgeFun G (unitFlux G e)) =
       {(canonicalEdgeSegment G e).1, (canonicalEdgeSegment G e).2.1} := by
@@ -345,9 +392,9 @@ theorem sources_unitFlux
         if v ∈ e.1 then 1 else 0 := by
     unfold incidentFlux
     by_cases hv : v ∈ e.1
-    · rw [if_pos hv]
+    · rw [ite_eq_left hv]
       simp [hv, e.2]
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       apply Finset.sum_eq_zero
       intro f hf
       have hfe : f ≠ e.1 := by
@@ -363,21 +410,19 @@ theorem sources_unitFlux
       _ <-> v = e.1.out.1 ∨ v = e.1.out.2 := Sym2.mem_iff
   simp only [canonicalEdgeSegment, Finset.mem_insert, Finset.mem_singleton]
   by_cases hv : v ∈ e.1
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     exact ⟨fun _ => hviff.mp hv, fun _ => odd_one⟩
-  · rw [if_neg hv]
+  · rw [ite_eq_right hv]
     exact ⟨fun hodd => (by simp at hodd), fun hends => (hv (hviff.mpr hends)).elim⟩
 
-
-theorem canonicalEdgeSegment_injective (G : SimpleGraph V) :
+lemma canonicalEdgeSegment_injective (G : SimpleGraph V) :
     Function.Injective (canonicalEdgeSegment G) := by
   intro e f hsegment
   have hedges := congrArg shb_AmbientSegment.edgeSet hsegment
   rw [canonicalEdgeSegment_edgeSet, canonicalEdgeSegment_edgeSet] at hedges
   exact Subtype.ext (Set.singleton_eq_singleton_iff.mp hedges)
 
-
-@[simp] theorem edgeOfSegment?_canonicalEdgeSegment
+@[simp] lemma edgeOfSegment?_canonicalEdgeSegment
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
     edgeOfSegment? d (canonicalEdgeSegment d.graph e) = some e := by
   unfold edgeOfSegment?
@@ -390,15 +435,7 @@ theorem canonicalEdgeSegment_injective (G : SimpleGraph V) :
   · rename_i hnone
     exact (hnone ⟨e, rfl⟩).elim
 
-
-@[simp] theorem edgeOfSegment?_canonical
-    (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset) :
-    edgeOfSegment? d (canonicalEdgeSegment d.graph e) = some e :=
-  edgeOfSegment?_canonicalEdgeSegment d e
-
-
-
-theorem program_complete_singleton_data
+lemma program_complete_singleton_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s] m) :
@@ -432,10 +469,7 @@ theorem program_complete_singleton_data
       rw [← sources_boolCurrent_oddBit d.graph m]
       exact hterminal.2
 
-
-
-
-theorem program_complete_singleton_data_with_scan
+lemma program_complete_singleton_data_with_scan
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s] m) :
@@ -459,11 +493,7 @@ theorem program_complete_singleton_data_with_scan
     simpa [program, encode, hencode, BondwiseSuffixEvent] using h.1
   exact ⟨e, hfirst, hsegment, hactive, hsources⟩
 
-
-
-
-
-theorem scan_selects_length_le_one
+lemma scan_selects_length_le_one
     (d : shb_ExplorationDomain V) (omega : Sym2 V -> Bool)
     (bonds : List (Sym2 V))
     (hselect : scan.Selects (fun _ e => omega e) ⟨d, none⟩ bonds) :
@@ -477,8 +507,8 @@ theorem scan_selects_length_le_one
           have hnext := hselect.2.1
           simp [scan, shb_DynamicEdgeExploration.firstAdmissible] at hnext
 
-
-theorem program_complete_word_eq_nil_or_singleton
+/-- Complete events of the program select words of length at most one. -/
+lemma program_complete_word_eq_nil_or_singleton
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -496,8 +526,7 @@ theorem program_complete_word_eq_nil_or_singleton
           exact (scan_firstAdmissible_ne_diagonal d
             (fluxBitConfig d.graph oddBit m) s.1 hfirst).elim
 
-
-theorem program_complete_cons_tail_eq_nil
+lemma program_complete_cons_tail_eq_nil
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V) (ss : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d (s :: ss) m) : ss = [] := by
@@ -506,9 +535,7 @@ theorem program_complete_cons_tail_eq_nil
   · simp at hnil
   · simpa using congrArg List.tail hsingleton
 
-
-
-theorem edgeOfSegment?_eq_some_of_program_complete_singleton
+lemma edgeOfSegment?_eq_some_of_program_complete_singleton
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (h : program.CompleteEvent d [s] m) :
@@ -523,8 +550,8 @@ theorem edgeOfSegment?_eq_some_of_program_complete_singleton
         (fluxBitConfig d.graph oddBit m) s.1 hfirst).elim
   | some e => exact ⟨e, rfl⟩
 
-
-theorem program_complete_singleton_injective
+/-- A flux lies in the complete event of at most one one-letter word. -/
+lemma program_complete_singleton_injective
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)
     (hs : program.CompleteEvent d [s] m)
@@ -550,22 +577,22 @@ theorem program_complete_singleton_injective
   have hesub : es = et := Subtype.ext he
   exact hses.symm.trans (hesub ▸ htet)
 
+/-! ## E. The selector specification -/
 
+/-- The source class: the endpoints of the segment for a one-letter word, empty otherwise. -/
 def sourceClass : shb_ExplorationDomain V ->
     List (shb_ExplorationSegment V) -> Finset V
   | _, [s] => {s.1, s.2.1}
   | _, _ => ∅
 
-@[simp] theorem sourceClass_nil (d : shb_ExplorationDomain V) :
+@[simp] lemma sourceClass_nil (d : shb_ExplorationDomain V) :
     sourceClass d [] = ∅ := rfl
 
-@[simp] theorem sourceClass_singleton
+@[simp] lemma sourceClass_singleton
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V) :
     sourceClass d [s] = {s.1, s.2.1} := rfl
 
-
-
-theorem program_complete_functional
+lemma program_complete_functional
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word word' : List (shb_ExplorationSegment V))
     (hword : program.CompleteEvent d word m)
@@ -590,10 +617,9 @@ theorem program_complete_functional
       have hmem := congrArg
         (fun U : Finset V => (canonicalEdgeSegment d.graph e).1 ∈ U) hsrc
       simp at hmem
-    · simpa [program_complete_singleton_injective d m s t hword hword']
+    · simp [program_complete_singleton_injective d m s t hword hword']
 
-
-theorem sources_eq_sourceClass_of_program_complete
+lemma sources_eq_sourceClass_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word : List (shb_ExplorationSegment V))
     (h : program.CompleteEvent d word m) :
@@ -606,8 +632,7 @@ theorem sources_eq_sourceClass_of_program_complete
     subst s
     exact hsrc
 
-
-theorem head_active_of_program_complete
+lemma head_active_of_program_complete
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V))
@@ -622,10 +647,7 @@ theorem head_active_of_program_complete
       program_complete_singleton_data d m s h
     simpa only [hes] using hactive
 
-
-
-
-
+/-- The complete bondwise selector specification of the concrete program. -/
 noncomputable def selectorSpec :
     CompleteBondwiseSelectorSpec (V := V) (program (V := V)) where
   sourceClass := sourceClass (V := V)
@@ -636,15 +658,13 @@ noncomputable def selectorSpec :
   complete_nil_iff := program_complete_nil_iff
   head_active_of_complete := head_active_of_program_complete
 
-
+/-- The complete bondwise selector specification of the concrete program (same as
+`selectorSpec`). -/
 noncomputable abbrev completeSpec :
     CompleteBondwiseSelectorSpec (V := V) (program (V := V)) :=
   selectorSpec (V := V)
 
-
-
-
-theorem program_complete_singleton_of_scan_data
+lemma program_complete_singleton_of_scan_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V) (e : d.graph.edgeFinset)
     (hencode : edgeOfSegment? d s = some e)
@@ -668,9 +688,7 @@ theorem program_complete_singleton_of_scan_data
     simpa [program, encode, hencode, BondwiseSegmentProgram.TerminalEvent,
       scan, terminal, boolSources, e.2] using hterminal
 
-
-
-theorem selectorSpec_fiber_singleton_of_scan_data
+lemma selectorSpec_fiber_singleton_of_scan_data
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V) (e : d.graph.edgeFinset)
     (hencode : edgeOfSegment? d s = some e)
@@ -685,9 +703,9 @@ theorem selectorSpec_fiber_singleton_of_scan_data
   exact program_complete_singleton_of_scan_data d m s e hencode hfirst
     hactive hsource
 
-
-
-theorem program_complete_canonical_unitFlux
+/-- The unit flux on an edge with active canonical segment lies in the complete event of that
+segment. -/
+lemma program_complete_canonical_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     program.CompleteEvent d [canonicalEdgeSegment d.graph e]
@@ -698,17 +716,7 @@ theorem program_complete_canonical_unitFlux
     (scan_firstAdmissible_unitFlux d e) hactive
     (sources_unitFlux d.graph e)
 
-
-theorem program_complete_canonicalEdge
-    (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
-    (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
-    program.CompleteEvent d [canonicalEdgeSegment d.graph e]
-      (unitFlux d.graph e) :=
-  program_complete_canonical_unitFlux d e hactive
-
-
-
-theorem selectorSpec_fiber_canonical_unitFlux
+lemma selectorSpec_fiber_canonical_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     ((selectorSpec (V := V)).toPartialSelector).Fiber d
@@ -716,18 +724,15 @@ theorem selectorSpec_fiber_canonical_unitFlux
   rw [(selectorSpec (V := V)).fiber_iff_completeEvent]
   exact program_complete_canonical_unitFlux d e hactive
 
-
-theorem concrete_selector_fiber_canonicalEdge
+lemma concrete_selector_fiber_canonicalEdge
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     ((completeSpec (V := V)).toPartialSelector).Fiber d
       [canonicalEdgeSegment d.graph e] (unitFlux d.graph e) :=
   selectorSpec_fiber_canonical_unitFlux d e hactive
 
-
-
-
-theorem selectorSpec_fiber_nonempty_is_singleton
+/-- Nonempty words with nonempty fibers have length one. -/
+lemma selectorSpec_fiber_nonempty_is_singleton
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V))
@@ -741,27 +746,23 @@ theorem selectorSpec_fiber_nonempty_is_singleton
   · simp at hnil
   · simpa using congrArg List.tail hsingleton
 
+/-! ## F. Realizations by the program -/
 
-
-
-
-noncomputable def completeSpecRealization :
+/-- The concrete program realizes the partial selector of its own specification. -/
+lemma completeSpecRealization :
     SelectorRealization (program (V := V))
       (completeSpec (V := V)).toPartialSelector where
   complete_iff_fiber := by
     intro d word m
     exact ((completeSpec (V := V)).fiber_iff_completeEvent d word m).symm
 
-
-
-
+/-- Realizations of the one-step partial selector by the concrete program. -/
 abbrev IntendedOneStepRealization :=
   SelectorRealization (program (V := V))
     (shb_oneStepPartialSelector (V := V))
 
-
-
-
+/-- The concrete program does not realize the one-step partial selector if some current with sources
+has a chosen segment that is not a canonical edge segment. -/
 theorem intendedOneStepRealization_isEmpty_of_noncanonical_chosen
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
@@ -776,17 +777,15 @@ theorem intendedOneStepRealization_isEmpty_of_noncanonical_chosen
     unfold shb_PartialCurrentDynamicSelector.Fiber
     change (if sources d.graph (ofEdgeFun d.graph m) = ∅ then some []
       else (shb_oneStepChosenSegment d m).map (fun t => [t])) = some [s]
-    rw [if_neg hsrc, hchosen]
+    rw [ite_eq_right hsrc, hchosen]
     rfl
   have hcomplete := (R.complete_iff_fiber d [s] m).mpr hfiber
   obtain ⟨e, hsegment, _, _⟩ :=
     program_complete_singleton_data d m s hcomplete
   exact hnoncanonical e hsegment
 
-
-
-
-
+/-- A program realizes a partial selector if some complete specification of the program has the
+selector's fibers. -/
 def ProgramRealizes
     (P : BondwiseSegmentProgram V)
     (S : shb_PartialCurrentDynamicSelector (V := V)) : Prop :=
@@ -796,9 +795,7 @@ def ProgramRealizes
       (m : d.graph.edgeFinset -> Nat),
       R.toPartialSelector.Fiber d word m <-> S.Fiber d word m
 
-
-
-theorem SelectorRealization.programRealizes
+lemma SelectorRealization.programRealizes
     {P : BondwiseSegmentProgram V}
     {S : shb_PartialCurrentDynamicSelector (V := V)}
     (R : SelectorRealization P S) : ProgramRealizes P S := by
@@ -807,10 +804,8 @@ theorem SelectorRealization.programRealizes
   exact (R.toCompleteSpec.fiber_iff_completeEvent d word m).trans
     (R.complete_iff_fiber d word m)
 
-
-
-
-theorem nonempty_selectorRealization_iff_programRealizes
+/-- Realizations exist iff the program realizes the selector. -/
+lemma nonempty_selectorRealization_iff_programRealizes
     (P : BondwiseSegmentProgram V)
     (S : shb_PartialCurrentDynamicSelector (V := V)) :
     Nonempty (SelectorRealization P S) <-> ProgramRealizes P S := by
@@ -823,17 +818,14 @@ theorem nonempty_selectorRealization_iff_programRealizes
     exact (R.fiber_iff_completeEvent d word m).symm.trans
       (hrealizes d word m)
 
-
-theorem program_realizes_selectorSpec :
+/-- The concrete program realizes its own specification. -/
+lemma program_realizes_selectorSpec :
     ProgramRealizes (program (V := V))
       (selectorSpec (V := V)).toPartialSelector := by
   exact ⟨selectorSpec (V := V), fun _ _ _ => Iff.rfl⟩
 
-
-
-
-
-
+/-- The concrete program does not realize a selector with a nonempty fiber on a word of length at
+least two. -/
 theorem program_not_realizes_of_two_segment_fiber
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
@@ -850,11 +842,8 @@ theorem program_not_realizes_of_two_segment_fiber
   · simp at hnil
   · simp at hsingleton
 
-
-
-
-
-theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
+/-- For the concrete specification, canonical certificates exist iff canonical toggles exist. -/
+lemma selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V)) (hs : s ∈ d.active) :
@@ -868,9 +857,8 @@ theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
   (selectorSpec (V := V)).nonempty_canonicalCertificate_iff_toggleExists
     beta J d s ss hs
 
-
-
-theorem selectorSpec_canonicalToggleExists_of_componentwise
+/-- For the concrete specification, componentwise toggles give canonical toggles. -/
+lemma selectorSpec_canonicalToggleExists_of_componentwise
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V)) (hs : s ∈ d.active)
