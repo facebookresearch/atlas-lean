@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.FunctionalAnalysis.Hypercyclicity
-public import Mathlib.Analysis.InnerProductSpace.l2Space
+public import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 public import Mathlib.Analysis.RCLike.Basic
 
 import Mathlib.Algebra.Order.Archimedean.Basic
@@ -50,20 +50,19 @@ truncation of the canonical series `x = ∑ i, lp.single 2 i (x i)`.
 This is a companion to the Baire-category, bounded-operator, and
 Hilbert-space material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/`. It is not one of the
-72 v1 targets, and it is not in the pinned Mathlib or in base
-MathlibExt, which have the Baire theorem and shift-free operator
-theory but no hypercyclicity. Classical reference: S. Rolewicz,
+72 v1 targets. The proof uses the canonical shifts from `LpShiftOperator`
+and their power formulas and left-inverse identity from `ShiftFredholmIndex`,
+together with the hypercyclicity criterion above. Classical reference: S. Rolewicz,
 "On orbits of elements", *Studia Math.* 32 (1969), 17–22; see also
 F. Bayart and É. Matheron, *Dynamics of Linear Operators*, Cambridge
 University Press, 2009, Example 1.8.
 
 ## Main declarations
 
-* `forwardShiftCLM` / `backwardShiftCLM` : the forward and backward
-  shifts as bounded operators on `ℓ²(ℕ, 𝕜)`, defined from scratch in
-  this file's own namespace.
-* `forwardShiftCLM_pow_apply` / `backwardShiftCLM_pow_apply` : the
-  pointwise action of the powers of the shifts.
+* `LpShiftOperator.shiftCLM` / `LpShiftOperator.backwardCLM` : the
+  canonical forward and backward shifts used by this proof.
+* `ShiftFredholmIndex.shiftCLM_pow_apply` and
+  `ShiftFredholmIndex.backwardCLM_pow_apply` : the reused coordinate powers.
 * `dense_range_ratApproxScalar` : `ℚ + ℚ * I` is dense in `𝕜`.
 * `dense_range_ratApproxSeq` : finite `ℚ + ℚ * I`-coefficient sequences
   are dense in `ℓ²(ℕ, 𝕜)`.
@@ -76,243 +75,51 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.Rolewicz
 
 open Filter Topology Set Metric
 open MathlibExt.Analysis.FunctionalAnalysis.Hypercyclicity
+open MathlibExt.Analysis.InnerProductSpace
 open scoped _root_.lp ENNReal
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-! ### The forward and backward shifts on `ℓ²(ℕ, 𝕜)` -/
-
-/-- The forward-shift function on sequences: insert `0` at `0` and shift up by one. -/
-def forwardShiftFun (x : ℕ → 𝕜) : ℕ → 𝕜
-  | 0 => 0
-  | n + 1 => x n
-
-/-- The backward-shift function on sequences: drop coordinate `0` and shift down by one. -/
-def backwardShiftFun (x : ℕ → 𝕜) (i : ℕ) : 𝕜 := x (i + 1)
-
-@[simp] theorem forwardShiftFun_zero (x : ℕ → 𝕜) : forwardShiftFun x 0 = 0 := rfl
-
-@[simp] theorem forwardShiftFun_succ (x : ℕ → 𝕜) (n : ℕ) :
-    forwardShiftFun x (n + 1) = x n := rfl
-
-omit [RCLike 𝕜] in
-@[simp] theorem backwardShiftFun_apply (x : ℕ → 𝕜) (i : ℕ) :
-    backwardShiftFun x i = x (i + 1) :=
-  rfl
-
-/-- The shifted sequence of an `ℓ²` sequence is in `ℓ²`. -/
-theorem memℓp_forwardShiftFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (forwardShiftFun (x : ℕ → 𝕜)) 2 := by
-  apply memℓp_gen
-  have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
-  have h' : Summable (fun n => ‖forwardShiftFun (x : ℕ → 𝕜) (n + 1)‖ ^ (2 : ℝ≥0∞).toReal) := by
-    simpa only [forwardShiftFun_succ] using h
-  exact (summable_nat_add_iff 1).mp h'
-
-/-- The backward-shifted sequence of an `ℓ²` sequence is in `ℓ²`. -/
-theorem memℓp_backwardShiftFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (backwardShiftFun (x : ℕ → 𝕜)) 2 := by
-  apply memℓp_gen
-  have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
-  have h' : Summable (fun n => ‖backwardShiftFun (x : ℕ → 𝕜) n‖ ^ (2 : ℝ≥0∞).toReal) := by
-    simpa only [backwardShiftFun_apply] using (summable_nat_add_iff 1).mpr h
-  exact h'
-
-/-- The forward shift as a linear map. -/
-noncomputable def forwardShiftLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) where
-  toFun x := ⟨forwardShiftFun (x : ℕ → 𝕜), memℓp_forwardShiftFun⟩
-  map_add' x y := by
-    apply lp.ext
-    funext i
-    cases i with
-    | zero =>
-        simp only [lp.coeFn_add, forwardShiftFun_zero, Pi.add_apply, add_zero]
-    | succ n => simp only [lp.coeFn_add, forwardShiftFun_succ, Pi.add_apply]
-  map_smul' c x := by
-    apply lp.ext
-    funext i
-    cases i with
-    | zero =>
-        simp only [lp.coeFn_smul, forwardShiftFun_zero, Pi.smul_apply, smul_zero]
-    | succ n =>
-        simp only [lp.coeFn_smul, forwardShiftFun_succ, Pi.smul_apply, smul_eq_mul,
-          RingHom.id_apply]
-
-/-- The backward shift as a linear map. -/
-noncomputable def backwardShiftLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) where
-  toFun x := ⟨backwardShiftFun (x : ℕ → 𝕜), memℓp_backwardShiftFun⟩
-  map_add' x y := by
-    apply lp.ext
-    funext i
-    simp only [lp.coeFn_add, backwardShiftFun_apply, Pi.add_apply]
-  map_smul' c x := by
-    apply lp.ext
-    funext i
-    simp only [lp.coeFn_smul, backwardShiftFun_apply, Pi.smul_apply, smul_eq_mul,
-      RingHom.id_apply]
-
-/-- Pointwise action of the forward-shift linear map. -/
-theorem forwardShiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
-    forwardShiftLinMap x i = forwardShiftFun (x : ℕ → 𝕜) i :=
-  rfl
-
-/-- Pointwise action of the backward-shift linear map. -/
-theorem backwardShiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
-    backwardShiftLinMap x i = backwardShiftFun (x : ℕ → 𝕜) i :=
-  rfl
-
-/-- The squared norms of a shifted sequence sum to the squared norms of
-the original sequence. -/
-theorem tsum_forwardShiftFun_norm (x : ℓ²(ℕ, 𝕜)) :
-    ∑' i, ‖forwardShiftFun (x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal =
-      ∑' i, ‖(x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal := by
-  have hs : Summable (fun i => ‖forwardShiftFun (x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal) :=
-    memℓp_forwardShiftFun.summable (by simp)
-  rw [hs.tsum_eq_zero_add]
-  simp only [forwardShiftFun_zero, forwardShiftFun_succ, norm_zero,
-    Real.zero_rpow (by simp : (2 : ℝ≥0∞).toReal ≠ 0), zero_add]
-
-/-- The squared norms of a backward-shifted sequence sum to at most the
-squared norms of the original sequence: they are a tail sum. -/
-theorem tsum_backwardShiftFun_norm_le (x : ℓ²(ℕ, 𝕜)) :
-    ∑' i, ‖backwardShiftFun (x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal ≤
-      ∑' i, ‖(x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal := by
-  have hs : Summable (fun i => ‖(x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal) :=
-    (lp.memℓp x).summable (by simp)
-  rw [hs.tsum_eq_zero_add]
-  simp only [backwardShiftFun_apply]
-  exact le_add_of_nonneg_left (Real.rpow_nonneg (norm_nonneg _) _)
-
-/-- The forward shift preserves norms. -/
-theorem norm_forwardShiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) : ‖forwardShiftLinMap x‖ = ‖x‖ := by
-  have hpow : ‖forwardShiftLinMap x‖ ^ (2 : ℝ≥0∞).toReal = ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
-    rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (forwardShiftLinMap x),
-      lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) x]
-    exact tsum_forwardShiftFun_norm x
-  have hexp : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
-  rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hpow
-
-/-- The backward shift does not increase norms. -/
-theorem norm_backwardShiftLinMap_apply_le (x : ℓ²(ℕ, 𝕜)) : ‖backwardShiftLinMap x‖ ≤ ‖x‖ := by
-  have hpow : ‖backwardShiftLinMap x‖ ^ (2 : ℝ≥0∞).toReal ≤ ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
-    rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (backwardShiftLinMap x),
-      lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) x]
-    exact tsum_backwardShiftFun_norm_le x
-  have hexp : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
-  rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
-  exact le_of_sq_le_sq hpow (norm_nonneg _)
-
-/-- The forward shift as a bounded operator on `ℓ²(ℕ, 𝕜)`. -/
-noncomputable def forwardShiftCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜) :=
-  forwardShiftLinMap.mkContinuous 1 (fun x => by
-    rw [one_mul]
-    exact le_of_eq (norm_forwardShiftLinMap_apply x))
-
-/-- The backward shift as a bounded operator on `ℓ²(ℕ, 𝕜)`. -/
-noncomputable def backwardShiftCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜) :=
-  backwardShiftLinMap.mkContinuous 1 (fun x => by
-    rw [one_mul]
-    exact norm_backwardShiftLinMap_apply_le x)
-
-/-- Pointwise action of the forward shift. -/
-theorem forwardShiftCLM_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
-    forwardShiftCLM x i = forwardShiftFun (x : ℕ → 𝕜) i :=
-  rfl
-
-/-- Pointwise action of the backward shift. -/
-theorem backwardShiftCLM_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
-    backwardShiftCLM x i = backwardShiftFun (x : ℕ → 𝕜) i :=
-  rfl
-
-/-- The forward shift is an isometry: `‖F x‖ = ‖x‖`. -/
-theorem norm_forwardShiftCLM_apply (x : ℓ²(ℕ, 𝕜)) : ‖forwardShiftCLM x‖ = ‖x‖ :=
-  norm_forwardShiftLinMap_apply x
-
-/-- The backward shift does not increase norms. -/
-theorem norm_backwardShiftCLM_apply_le (x : ℓ²(ℕ, 𝕜)) : ‖backwardShiftCLM x‖ ≤ ‖x‖ :=
-  norm_backwardShiftLinMap_apply_le x
-
-/-! ### Powers of the shifts -/
-
-/-- Pointwise action of the `n`-th power of the backward shift:
-`(Bⁿ x) i = x (i + n)`. -/
-theorem backwardShiftCLM_pow_apply : ∀ (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ),
-    ((backwardShiftCLM ^ n) x) i = x (i + n) := by
-  intro n
-  induction n with
-  | zero => intro x i; simp
-  | succ n ih =>
-    intro x i
-    rw [pow_succ, mul_apply_eq_comp, ih, backwardShiftCLM_apply, backwardShiftFun_apply]
-    congr 1
-
-/-- Pointwise action of the `n`-th power of the forward shift:
-`(Fⁿ x) i = 0` for `i < n` and `x (i - n)` otherwise. -/
-theorem forwardShiftCLM_pow_apply : ∀ (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ),
-    ((forwardShiftCLM ^ n) x) i = if i < n then 0 else x (i - n) := by
-  intro n
-  induction n with
-  | zero => intro x i; simp
-  | succ n ih =>
-    intro x i
-    rw [pow_succ, mul_apply_eq_comp, ih]
-    by_cases hi : i < n
-    · rw [ite_eq_left hi, ite_eq_left (hi.trans (Nat.lt_succ_self n))]
-    · rw [ite_eq_right hi]
-      rcases Nat.eq_zero_or_pos (i - n) with h0 | hpos
-      · have hi' : i = n := by omega
-        rw [hi', Nat.sub_self, forwardShiftCLM_apply, forwardShiftFun_zero,
-          ite_eq_left (Nat.lt_succ_self n)]
-      · obtain ⟨m, hm⟩ : ∃ m, i - n = m + 1 := ⟨i - n - 1, by omega⟩
-        rw [hm, forwardShiftCLM_apply, forwardShiftFun_succ,
-          ite_eq_right (by omega : ¬ i < n + 1)]
-        have hsub : i - (n + 1) = m := by omega
-        rw [hsub]
-
-/-- `Bⁿ Fⁿ = 1`: the powers of the backward shift undo the powers of
-the forward shift. -/
-theorem backwardShiftCLM_pow_forwardShiftCLM_pow_apply (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    (backwardShiftCLM ^ n) ((forwardShiftCLM ^ n) x) = x := by
-  apply lp.ext
-  funext i
-  rw [backwardShiftCLM_pow_apply, forwardShiftCLM_pow_apply,
-    ite_eq_right (by omega : ¬ i + n < n)]
-  have hsub : i + n - n = i := by omega
-  rw [hsub]
+/-! ### Norms and scalar multiples of canonical shift powers -/
 
 /-- Powers of the forward shift preserve norms. -/
 theorem norm_forwardShiftCLM_pow_apply (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    ‖(forwardShiftCLM ^ n) x‖ = ‖x‖ := by
+    ‖(LpShiftOperator.shiftCLM ^ n) x‖ = ‖x‖ := by
   induction n generalizing x with
   | zero => simp
   | succ n ih =>
-    rw [pow_succ, mul_apply_eq_comp, ih, norm_forwardShiftCLM_apply]
+    rw [pow_succ, mul_apply_eq_comp, ih, LpShiftOperator.norm_shiftCLM_apply]
 
 /-- Powers of the backward shift do not increase norms. -/
 theorem norm_backwardShiftCLM_pow_apply_le (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    ‖(backwardShiftCLM ^ n) x‖ ≤ ‖x‖ := by
+    ‖(LpShiftOperator.backwardCLM ^ n) x‖ ≤ ‖x‖ := by
   induction n generalizing x with
   | zero => simp
   | succ n ih =>
     rw [pow_succ, mul_apply_eq_comp]
-    exact le_trans (ih (backwardShiftCLM x)) (norm_backwardShiftCLM_apply_le x)
+    exact le_trans (ih (LpShiftOperator.backwardCLM x))
+      (LpShiftOperator.norm_backwardLinMap_apply_le x)
 
 /-- Powers of a scalar multiple of the backward shift, applied pointwise. -/
 theorem smul_backwardShiftCLM_pow_apply (μ : 𝕜) (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    (((μ • backwardShiftCLM) ^ n) x) = μ ^ n • (backwardShiftCLM ^ n) x := by
+    (((μ • LpShiftOperator.backwardCLM) ^ n) x) = μ ^ n • (LpShiftOperator.backwardCLM ^ n) x := by
   induction n generalizing x with
   | zero => simp
   | succ n ih =>
-    calc (((μ • backwardShiftCLM) ^ (n + 1)) x)
-        = ((μ • backwardShiftCLM) ^ n) ((μ • backwardShiftCLM) x) := by
+    calc (((μ • LpShiftOperator.backwardCLM) ^ (n + 1)) x)
+        = ((μ • LpShiftOperator.backwardCLM) ^ n) ((μ • LpShiftOperator.backwardCLM) x) := by
           rw [pow_succ, mul_apply_eq_comp]
-      _ = μ ^ n • (backwardShiftCLM ^ n) ((μ • backwardShiftCLM) x) := by rw [ih]
-      _ = μ ^ n • (backwardShiftCLM ^ n) (μ • backwardShiftCLM x) := by rfl
-      _ = μ ^ n • (μ • (backwardShiftCLM ^ n) (backwardShiftCLM x)) := by rw [map_smul]
-      _ = (μ ^ n * μ) • (backwardShiftCLM ^ n) (backwardShiftCLM x) := by rw [smul_smul]
-      _ = μ ^ (n + 1) • (backwardShiftCLM ^ (n + 1)) x := by
+      _ = μ ^ n • (LpShiftOperator.backwardCLM ^ n) ((μ • LpShiftOperator.backwardCLM) x) := by
+          rw [ih]
+      _ = μ ^ n • (LpShiftOperator.backwardCLM ^ n) (μ • LpShiftOperator.backwardCLM x) := by rfl
+      _ = μ ^ n • (μ • (LpShiftOperator.backwardCLM ^ n) (LpShiftOperator.backwardCLM x)) := by
+          rw [map_smul]
+      _ = (μ ^ n * μ) • (LpShiftOperator.backwardCLM ^ n) (LpShiftOperator.backwardCLM x) := by
+          rw [smul_smul]
+      _ = μ ^ (n + 1) • (LpShiftOperator.backwardCLM ^ (n + 1)) x := by
           have h1 : μ ^ (n + 1) = μ ^ n * μ := pow_succ _ _
-          have h2 : (backwardShiftCLM ^ (n + 1)) x =
-              (backwardShiftCLM ^ n) (backwardShiftCLM x) := by
+          have h2 : (LpShiftOperator.backwardCLM ^ (n + 1)) x =
+              (LpShiftOperator.backwardCLM ^ n) (LpShiftOperator.backwardCLM x) := by
             rw [pow_succ, mul_apply_eq_comp]
           rw [h1, h2]
 
@@ -440,7 +247,7 @@ theorem dense_range_ratApproxSeq : Dense (Set.range (ratApproxSeq (𝕜 := 𝕜)
   set g' : ↥s₀ → ℚ × ℚ := fun i => g (i : ℕ) with hg'
   set y : ℓ²(ℕ, 𝕜) := ratApproxSeq ⟨s₀, g'⟩ with hy
   have hy_rat : y = ∑ i ∈ s₀, lp.single 2 i (ratApproxScalar (g i)) := by
-    show (∑ i : ↥s₀, lp.single 2 (i : ℕ) (ratApproxScalar (g' i))) = _
+    change (∑ i : ↥s₀, lp.single 2 (i : ℕ) (ratApproxScalar (g' i))) = _
     exact Finset.sum_attach s₀ (fun i => lp.single 2 i (ratApproxScalar (g i)))
   have hdiff : y - ∑ i ∈ s₀, lp.single 2 i ((x : ℕ → 𝕜) i) =
       ∑ i ∈ s₀, lp.single 2 i (ratApproxScalar (g i) - (x : ℕ → 𝕜) i) := by
@@ -528,7 +335,7 @@ theorem exists_forall_eq_zero_of_mem_span_single {x : ℓ²(ℕ, 𝕜)}
   | mem y hy =>
     obtain ⟨i, rfl⟩ := hy
     refine ⟨i + 1, fun j hj => ?_⟩
-    show (↑(lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) : ℕ → 𝕜) j = 0
+    change (↑(lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) : ℕ → 𝕜) j = 0
     exact lp.single_apply_ne (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜) (by omega : j ≠ i)
   | zero => exact ⟨0, fun _ _ => by simp⟩
   | add y z _ _ hy hz =>
@@ -546,25 +353,25 @@ theorem exists_forall_eq_zero_of_mem_span_single {x : ℓ²(ℕ, 𝕜)}
 /-- **Rolewicz's theorem.** The scalar multiple `μ • B` of the backward
 shift on `ℓ²(ℕ, 𝕜)` is hypercyclic if and only if `‖μ‖ > 1`. -/
 theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
-    IsHypercyclic ((μ • backwardShiftCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜))) ↔ 1 < ‖μ‖ := by
+    IsHypercyclic ((μ • LpShiftOperator.backwardCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜))) ↔ 1 < ‖μ‖ := by
   constructor
   · intro h
     by_contra hlt
     push Not at hlt
     obtain ⟨x, hx⟩ := h
-    have hbound : ∀ n, ‖((μ • backwardShiftCLM) ^ n) x‖ ≤ ‖x‖ := by
+    have hbound : ∀ n, ‖((μ • LpShiftOperator.backwardCLM) ^ n) x‖ ≤ ‖x‖ := by
       intro n
       rw [smul_backwardShiftCLM_pow_apply, norm_smul, norm_pow]
-      calc ‖μ‖ ^ n * ‖(backwardShiftCLM ^ n) x‖
+      calc ‖μ‖ ^ n * ‖(LpShiftOperator.backwardCLM ^ n) x‖
           ≤ (1 : ℝ) * ‖x‖ :=
             mul_le_mul (pow_le_one₀ (norm_nonneg _) hlt)
               (norm_backwardShiftCLM_pow_apply_le n x) (norm_nonneg _) zero_le_one
         _ = ‖x‖ := one_mul _
     have hmem : ((‖x‖ + 1 : ℝ) : 𝕜) • lp.single 2 0 (1 : 𝕜) ∈
-        closure (Set.range fun n => ((μ • backwardShiftCLM) ^ n) x) := by
+        closure (Set.range fun n => ((μ • LpShiftOperator.backwardCLM) ^ n) x) := by
       rw [hx.closure_eq]
       exact Set.mem_univ _
-    have hsub : closure (Set.range fun n => ((μ • backwardShiftCLM) ^ n) x) ⊆
+    have hsub : closure (Set.range fun n => ((μ • LpShiftOperator.backwardCLM) ^ n) x) ⊆
         Metric.closedBall 0 ‖x‖ := by
       refine closure_minimal ?_ Metric.isClosed_closedBall
       rintro y ⟨n, rfl⟩
@@ -587,23 +394,24 @@ theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
         (Set.range fun i => (lp.single 2 i (1 : 𝕜) : ℓ²(ℕ, 𝕜)))) : Set (ℓ²(ℕ, 𝕜)))
       (Set.countable_range (ratApproxSeq (𝕜 := 𝕜))) dense_range_ratApproxSeq
       dense_span_single dense_span_single
-      (fun n y => (μ ^ n)⁻¹ • (forwardShiftCLM ^ n) y) ?_ ?_ ?_
+      (fun n y => (μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) ?_ ?_ ?_
     · intro x hx
       have hx' : x ∈ Submodule.span 𝕜 (Set.range fun i => lp.single 2 i (1 : 𝕜)) := hx
       obtain ⟨N, hN⟩ := exists_forall_eq_zero_of_mem_span_single hx'
       refine tendsto_atTop_of_eventually_const (i₀ := N) fun n hn => ?_
-      have hzero : (backwardShiftCLM ^ n) x = 0 := by
+      have hzero : (LpShiftOperator.backwardCLM ^ n) x = 0 := by
         apply lp.ext
         funext i
-        rw [backwardShiftCLM_pow_apply]
+        rw [ShiftFredholmIndex.backwardCLM_pow_apply]
         exact hN (i + n) (by omega)
       rw [smul_backwardShiftCLM_pow_apply, hzero, smul_zero]
     · intro y _
-      show Tendsto (fun n => (μ ^ n)⁻¹ • (forwardShiftCLM ^ n) y) atTop (𝓝 0)
+      change Tendsto (fun n => (μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) atTop (𝓝 0)
       rw [Metric.tendsto_atTop]
       intro ε hε
-      have hnormlim : Tendsto (fun n => ‖(μ ^ n)⁻¹ • (forwardShiftCLM ^ n) y‖) atTop (𝓝 0) := by
-        have hnorm : ∀ n, ‖(μ ^ n)⁻¹ • (forwardShiftCLM ^ n) y‖ = (‖μ‖⁻¹) ^ n * ‖y‖ := by
+      have hnormlim : Tendsto
+        (fun n => ‖(μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y‖) atTop (𝓝 0) := by
+        have hnorm : ∀ n, ‖(μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y‖ = (‖μ‖⁻¹) ^ n * ‖y‖ := by
           intro n
           rw [norm_smul, norm_inv, norm_pow, inv_pow, norm_forwardShiftCLM_pow_apply]
         simp_rw [hnorm]
@@ -616,9 +424,14 @@ theorem isHypercyclic_smul_backwardShiftCLM_iff (μ : 𝕜) :
       rw [dist_zero_right, Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)] at h
       rwa [dist_zero_right]
     · intro n y _
-      show ((μ • backwardShiftCLM) ^ n) ((μ ^ n)⁻¹ • (forwardShiftCLM ^ n) y) = y
+      change ((μ • LpShiftOperator.backwardCLM) ^ n)
+        ((μ ^ n)⁻¹ • (LpShiftOperator.shiftCLM ^ n) y) = y
+      have hBS : (LpShiftOperator.backwardCLM (𝕜 := 𝕜) ^ n)
+          ((LpShiftOperator.shiftCLM (𝕜 := 𝕜) ^ n) y) = y := by
+        simpa only [ContinuousLinearMap.comp_apply, one_apply_eq_self] using
+          DFunLike.congr_fun (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow n) y
       rw [smul_backwardShiftCLM_pow_apply, map_smul,
-        backwardShiftCLM_pow_forwardShiftCLM_pow_apply, smul_smul,
+        hBS, smul_smul,
         mul_inv_cancel₀ (pow_ne_zero n hμ0), one_smul]
 
 end MathlibExt.Analysis.FunctionalAnalysis.Rolewicz

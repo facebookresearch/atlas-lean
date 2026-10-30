@@ -31,58 +31,62 @@ open MathlibExt.Analysis.InnerProductSpace
 namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests
 
 /-- `2 • B` is hypercyclic on `ℓ²(ℕ, ℂ)`. -/
-theorem rolewicz_two_complex : IsHypercyclic ((2 : ℂ) • backwardShiftCLM (𝕜 := ℂ)) :=
+theorem rolewicz_two_complex : IsHypercyclic ((2 : ℂ) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) :=
   (isHypercyclic_smul_backwardShiftCLM_iff (2 : ℂ)).mpr (by
     rw [Complex.norm_two]
     norm_num)
 
 /-- `-2 • B` is hypercyclic on `ℓ²(ℕ, ℂ)`. -/
-example : IsHypercyclic (((-2 : ℂ)) • backwardShiftCLM (𝕜 := ℂ)) := by
+example : IsHypercyclic (((-2 : ℂ)) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff, norm_neg, Complex.norm_two]
   norm_num
 
 /-- `(1 / 2) • B` is not hypercyclic on `ℓ²(ℕ, ℂ)`. -/
-example : ¬ IsHypercyclic (((1 / 2 : ℂ)) • backwardShiftCLM (𝕜 := ℂ)) := by
+example : ¬ IsHypercyclic (((1 / 2 : ℂ)) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff, Complex.norm_div, norm_one,
     Complex.norm_two]
   norm_num
 
 /-- `1 • B` is not hypercyclic on `ℓ²(ℕ, ℂ)`. -/
-example : ¬ IsHypercyclic (((1 : ℂ)) • backwardShiftCLM (𝕜 := ℂ)) := by
+example : ¬ IsHypercyclic (((1 : ℂ)) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff, norm_one]
   norm_num
 
 /-- `I • B` is not hypercyclic on `ℓ²(ℕ, ℂ)`: `‖I‖ = 1`. -/
-example : ¬ IsHypercyclic (Complex.I • backwardShiftCLM (𝕜 := ℂ)) := by
+example : ¬ IsHypercyclic (Complex.I • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff, Complex.norm_I]
   norm_num
 
 /-- `3 • B` is hypercyclic on `ℓ²(ℕ, ℝ)`. -/
-example : IsHypercyclic ((3 : ℝ) • backwardShiftCLM (𝕜 := ℝ)) := by
+example : IsHypercyclic ((3 : ℝ) • LpShiftOperator.backwardCLM (𝕜 := ℝ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff (𝕜 := ℝ)]
   norm_num
 
 /-- `1 • B` is not hypercyclic on `ℓ²(ℕ, ℝ)`. -/
-example : ¬ IsHypercyclic (((1 : ℝ)) • backwardShiftCLM (𝕜 := ℝ)) := by
+example : ¬ IsHypercyclic (((1 : ℝ)) • LpShiftOperator.backwardCLM (𝕜 := ℝ)) := by
   rw [isHypercyclic_smul_backwardShiftCLM_iff (𝕜 := ℝ), norm_one]
   norm_num
 
 /-- The second power of the backward shift drops two coordinates. -/
-example (x : ℓ²(ℕ, ℂ)) : (backwardShiftCLM (𝕜 := ℂ) ^ 2) x 3 = x 5 :=
-  backwardShiftCLM_pow_apply 2 x 3
+example (x : ℓ²(ℕ, ℂ)) : (LpShiftOperator.backwardCLM (𝕜 := ℂ) ^ 2) x 3 = x 5 :=
+  ShiftFredholmIndex.backwardCLM_pow_apply 2 x 3
 
 /-- The second power of the forward shift vanishes in coordinate `0`. -/
-example (x : ℓ²(ℕ, ℂ)) : (forwardShiftCLM (𝕜 := ℂ) ^ 2) x 0 = 0 := by
-  rw [forwardShiftCLM_pow_apply]
+example (x : ℓ²(ℕ, ℂ)) : (LpShiftOperator.shiftCLM (𝕜 := ℂ) ^ 2) x 0 = 0 := by
+  rw [ShiftFredholmIndex.shiftCLM_pow_apply]
   simp
 
 /-- `B F = 1` on the first basis vector. -/
-example : (backwardShiftCLM (𝕜 := ℂ) ^ 1) ((forwardShiftCLM (𝕜 := ℂ) ^ 1) (lp.single 2 0 (1 : ℂ))) =
-    lp.single 2 0 (1 : ℂ) :=
-  backwardShiftCLM_pow_forwardShiftCLM_pow_apply 1 _
+example : (LpShiftOperator.backwardCLM (𝕜 := ℂ) ^ 1)
+    ((LpShiftOperator.shiftCLM (𝕜 := ℂ) ^ 1) (lp.single 2 0 (1 : ℂ))) =
+    lp.single 2 0 (1 : ℂ) := by
+  simpa only [ContinuousLinearMap.comp_apply, one_apply_eq_self] using
+      DFunLike.congr_fun
+        (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow (𝕜 := ℂ) 1)
+        (lp.single 2 0 (1 : ℂ))
 
 /-- Powers of the forward shift preserve norms. -/
-example (x : ℓ²(ℕ, ℂ)) : ‖(forwardShiftCLM (𝕜 := ℂ) ^ 3) x‖ = ‖x‖ :=
+example (x : ℓ²(ℕ, ℂ)) : ‖(LpShiftOperator.shiftCLM (𝕜 := ℂ) ^ 3) x‖ = ‖x‖ :=
   norm_forwardShiftCLM_pow_apply 3 x
 
 /-- `ℚ + ℚ * I` is dense in `ℂ`; the approximant for `(1 / 2, 1 / 3)`
@@ -95,8 +99,7 @@ example : ratApproxScalar (𝕜 := ℂ) (1 / 2, 1 / 3) ∈
 
 /-- A nonreal scalar of norm two makes the canonical backward shift hypercyclic. -/
 example : IsHypercyclic ((2 * Complex.I : ℂ) • LpShiftOperator.backwardCLM (𝕜 := ℂ)) := by
-  have hB : LpShiftOperator.backwardCLM (𝕜 := ℂ) = backwardShiftCLM (𝕜 := ℂ) := rfl
-  rw [hB, isHypercyclic_smul_backwardShiftCLM_iff, norm_mul,
+  rw [isHypercyclic_smul_backwardShiftCLM_iff, norm_mul,
     Complex.norm_two, Complex.norm_I, mul_one]
   norm_num
 
@@ -110,8 +113,7 @@ example : (LpShiftOperator.shiftCLM (𝕜 := ℂ) ∘L LpShiftOperator.backwardC
 /-- Scalar powers and canonical backward powers have the correct coordinate action. -/
 example (μ : ℂ) (n : ℕ) (x : ℓ²(ℕ, ℂ)) :
     (((μ • LpShiftOperator.backwardCLM (𝕜 := ℂ)) ^ n) x) 0 = μ ^ n * x n := by
-  have hB : LpShiftOperator.backwardCLM (𝕜 := ℂ) = backwardShiftCLM (𝕜 := ℂ) := rfl
-  rw [hB, smul_backwardShiftCLM_pow_apply, lp.coeFn_smul, Pi.smul_apply,
-    backwardShiftCLM_pow_apply, Nat.zero_add, smul_eq_mul]
+  rw [smul_backwardShiftCLM_pow_apply, lp.coeFn_smul, Pi.smul_apply,
+    ShiftFredholmIndex.backwardCLM_pow_apply, Nat.zero_add, smul_eq_mul]
 
 end MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests
