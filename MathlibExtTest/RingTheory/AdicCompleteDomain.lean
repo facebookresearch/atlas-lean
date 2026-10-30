@@ -16,13 +16,23 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 example (p : ℕ) [Fact p.Prime] : IsLocalRing ℤ_[p] :=
   IsLocalRing.of_isDomain_of_module_finite_of_isAdicComplete (R := ℤ_[p]) (S := ℤ_[p])
 
-universe u
+universe u v
 
-/-- The local-ring criterion is available for rings in an arbitrary common universe. -/
-example {R S : Type u} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
+/-- The local-ring criterion allows the base and algebra to be in independent universes. -/
+example {R : Type u} {S : Type v} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
     [CommRing S] [IsDomain S] [Algebra R S] [Module.Finite R S] : IsLocalRing S :=
   IsLocalRing.of_isDomain_of_module_finite_of_isAdicComplete (R := R) (S := S)
+
+/-- The local-ring criterion applies across concrete universes. -/
+example (p : ℕ) [Fact p.Prime] : IsLocalRing (ULift.{1} ℤ_[p]) := by
+  let hcancel : IsCancelMulZero (ULift.{1} ℤ_[p]) :=
+    Function.Injective.isCancelMulZero ULift.down ULift.down_injective rfl (fun _ _ ↦ rfl)
+  let hdomain : IsDomain (ULift.{1} ℤ_[p]) :=
+    { toIsCancelMulZero := hcancel, toNontrivial := inferInstance }
+  exact
+    IsLocalRing.of_isDomain_of_module_finite_of_isAdicComplete
+      (R := ℤ_[p]) (S := ULift.{1} ℤ_[p])
 
 /-- The local-ring criterion applies to a genuine higher-universe ring. -/
 example (p : ℕ) [Fact p.Prime] : IsLocalRing (ULift.{1} ℤ_[p]) := by

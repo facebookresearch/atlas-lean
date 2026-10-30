@@ -41,6 +41,7 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.Push
+import Mathlib.RingTheory.AdicCompletion.Noetherian
 
 /-!
 # Finite domain algebras over adically complete local rings are local
@@ -62,35 +63,34 @@ namespace AdicCompleteDomainAux
 
 section Complete
 
-universe u
+universe u v
 
 variable {R : Type u} [CommRing R] (I : Ideal R)
 
-private theorem isAdicComplete_of_finite (M : Type u) [AddCommGroup M] [Module R M]
+private theorem isAdicComplete_of_finite (M : Type v) [AddCommGroup M] [Module R M]
     [IsNoetherianRing R] [Module.Finite R M] [IsAdicComplete I R] :
     IsAdicComplete I M := by
-  rw [← AdicCompletion.of_bijective_iff]
-  have h1 : Function.Bijective (AdicCompletion.of I R) := AdicCompletion.of_bijective I R
-  let e1 : R ≃ₗ[R] AdicCompletion I R := LinearEquiv.ofBijective _ h1
-  let e2 : M ≃ₗ[R] AdicCompletion I R ⊗[R] M :=
-    (TensorProduct.lid R M).symm ≪≫ₗ TensorProduct.congr e1 (LinearEquiv.refl R M)
-  have he1 : e1 (1 : R) = (1 : AdicCompletion I R) := by
-    change AdicCompletion.of I R 1 = 1
-    have : algebraMap R (AdicCompletion I R) 1 = AdicCompletion.of I R (algebraMap R R 1) :=
-      AdicCompletion.algebraMap_apply I 1
-    simpa using this.symm
-  have key : ∀ x : M, AdicCompletion.ofTensorProduct I M (e2 x) = AdicCompletion.of I M x := by
-    intro x
-    change AdicCompletion.ofTensorProduct I M
-      (TensorProduct.congr e1 (LinearEquiv.refl R M) ((TensorProduct.lid R M).symm x)) = _
-    rw [TensorProduct.lid_symm_apply, TensorProduct.congr_tmul, LinearEquiv.refl_apply, he1,
-      AdicCompletion.ofTensorProduct_tmul, one_smul]
-  have hcomp : ⇑(AdicCompletion.of I M) = ⇑(AdicCompletion.ofTensorProduct I M) ∘ ⇑e2 :=
-    funext fun x => (key x).symm
-  rw [hcomp]
-  exact (AdicCompletion.ofTensorProduct_bijective_of_finite_of_isNoetherian I M).comp e2.bijective
+  refine
+    { toIsHausdorff := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson_bot I)
+      toIsPrecomplete := ?_ }
+  rw [← AdicCompletion.of_surjective_iff]
+  obtain ⟨n, p, hp⟩ := Module.Finite.exists_fin' R M
+  have hfree : Function.Bijective (AdicCompletion.of I (Fin n → R)) := by
+    let e := AdicCompletion.piEquivOfFintype I (fun _ : Fin n ↦ R)
+    have h : ⇑e ∘ ⇑(AdicCompletion.of I (Fin n → R)) =
+        Pi.map fun _ : Fin n ↦ AdicCompletion.of I R := by
+      funext x j
+      rfl
+    have hb : Function.Bijective (⇑e ∘ ⇑(AdicCompletion.of I (Fin n → R))) := by
+      rw [h]
+      exact Function.Bijective.piMap fun _ ↦ AdicCompletion.of_bijective I R
+    exact (Function.Bijective.of_comp_iff' e.bijective _).mp hb
+  intro y
+  obtain ⟨z, rfl⟩ := AdicCompletion.map_surjective I hp y
+  obtain ⟨x, rfl⟩ := hfree.surjective z
+  exact ⟨p x, (AdicCompletion.map_of I p x).symm⟩
 
-private theorem isAdicComplete_map_algebraMap (S : Type u) [CommRing S] [Algebra R S]
+private theorem isAdicComplete_map_algebraMap (S : Type v) [CommRing S] [Algebra R S]
     [IsNoetherianRing R] [Module.Finite R S] [IsAdicComplete I R] :
     IsAdicComplete (I.map (algebraMap R S)) S :=
   (IsAdicComplete.map_algebraMap_iff I S).mpr (isAdicComplete_of_finite I S)
@@ -148,12 +148,12 @@ end AdicCompleteDomainAux
 
 namespace IsLocalRing
 
-universe u
+universe u v
 
 /-- A finite algebra over an adically complete Noetherian local ring that is
 a domain is itself local. -/
 theorem of_isDomain_of_module_finite_of_isAdicComplete
-    {R S : Type u} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
+    {R : Type u} {S : Type v} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
     [CommRing S] [IsDomain S] [Algebra R S] [Module.Finite R S] : IsLocalRing S := by
   by_contra hS
