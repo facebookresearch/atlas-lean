@@ -11,9 +11,16 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_IsAdicComplete_of_module_finite_free_span_natCast.lean` and
 `P2M/Sol/S_IsAdicComplete_of_module_finite_free_span_natCast.lean`
-(fermats-last-theorem):
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statement and proof are reused here with that machinery
 removed and the name restated in Mathlib style.
