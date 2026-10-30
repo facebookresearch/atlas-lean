@@ -24,9 +24,8 @@ Namespaces follow the path: `MathlibExt.Biology.<Area>.<Topic>` for models,
 (`ProbabilityTheory`, `Nat`, `Matrix`, …) for generic lemmas that could move upstream.
 
 Search pinned Mathlib and `MathlibExt`/`CSLibExt` before adding a definition, and reuse what
-exists (for example `MathlibExt.Biology.PopulationGenetics.Diffusion.generator` and
-`kimuraFixation`, `MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanTimes`,
-and the exponential-law moments in `MathlibExt/Probability/Distributions/ExponentialMoments.lean`).
+exists: a model's generator, transition kernel, or holding-time structure should be defined
+once and imported by every file that needs it.
 
 ## Units and parameters
 
@@ -41,7 +40,9 @@ and the exponential-law moments in `MathlibExt/Probability/Distributions/Exponen
 - **Selection.** `σ = 2Ns` for genic (additive) selection, where `s` is the per-allele
   advantage (genotype fitnesses `1 + 2s`, `1 + s`, `1`). The Wright–Fisher diffusion then has
   drift `σ x (1 - x)` and variance `x (1 - x)`, and Kimura's fixation probability is
-  `(1 - e^{-2σx}) / (1 - e^{-2σ})`. A model of a haploid population (for example the Moran
+  `(1 - e^{-2σx}) / (1 - e^{-2σ})` for `σ ≠ 0` and `x` in the neutral case `σ = 0` (its
+  continuous extension); a definition must give the neutral branch explicitly rather than rely
+  on Lean's `0 / 0 = 0`. A model of a haploid population (for example the Moran
   model with `N` individuals) states its own scaling in its module docstring.
 - **Migration.** `4Nm` for the island model, with `m` the per-generation migration fraction.
 - **Substitution models.** Branch lengths are expected substitutions per site (`μ * t`).
@@ -61,7 +62,8 @@ and the exponential-law moments in `MathlibExt/Probability/Distributions/Exponen
   limit (`Filter.Tendsto` with the scaling written out, e.g. `r = 1 + σ / N`, `i = ⌊x N⌋`).
 - Docstrings cite the primary source and state units and conventions.
 - Every model `structure` has a non-vacuity witness in its test file: a concrete instance
-  showing the hypotheses are satisfiable (for example `KingmanTimes.ofPi`).
+  showing the hypotheses are satisfiable (for example, holding times realized as coordinates of
+  a product of exponential laws).
 - A model structure must not assume its conclusion or carry unconstrained data; hypotheses that
   are only needed for some theorems go on those theorems.
 - Deferred results go to `WantedExt` as precise `theorem_wanted` statements over real
