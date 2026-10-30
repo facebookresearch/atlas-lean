@@ -30,8 +30,9 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.AlgebraicGeometry.Geometrically.Integral
-public import MathlibExt.AlgebraicGeometry.GeometricallyIrreducible
-public import MathlibExt.AlgebraicGeometry.GeometricallyReduced
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+import MathlibExt.AlgebraicGeometry.GeometricallyIrreducible
+import MathlibExt.AlgebraicGeometry.GeometricallyReduced
 
 /-!
 # Geometrically integral schemes over an algebraically closed field
