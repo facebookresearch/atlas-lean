@@ -26,6 +26,8 @@ complement of `K` lies outside the loop.
   ray count.
 * `StatMech.Lattice.oee_outsideHalf_of_exteriorEq`: under that connectivity, all sites outside `K`
   have even ray count.
+* `StatMech.Lattice.owr_exists_not_exteriorHyp`: for finite nonempty `K`, that connectivity fails
+  for the leftward dart out of a leftmost site of `K`.
 -/
 
 @[expose] public section
@@ -74,6 +76,37 @@ theorem oee_exterior_even (K : Set (Site 2)) (hK : K.Finite) (e : Dart)
   have hconst := oee_rayParity_const_along_walk (olb_orbitLoop K hK e he) p hp
   exact hconst.mpr hbase
 
+/-- The exterior hypothesis `hExt` of `oee_outsideHalf_of_exteriorEq` (every site outside `K` is
+joined, by a lattice path avoiding the support of the orbit loop of `e`, to a site weakly left of
+that loop) fails for some boundary dart of every finite nonempty `K`. Take `c ∈ K` with least
+first coordinate and `e` the dart from `c` to `c - (1,0)`: the face label
+`dartFace e = c - (1,1)` lies outside `K` and on the orbit loop of `e`, so no path from it avoids
+the loop. In particular `hExt` cannot hold for all boundary darts of a finite nonempty set. -/
+theorem owr_exists_not_exteriorHyp (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty) :
+    ∃ (e : Dart) (he : IsBoundaryDart K e),
+      ¬ ∀ z, z ∉ K → ∃ z0 : Site 2, ∃ p : (hypercubicLattice 2).Walk z z0,
+        (∀ w ∈ p.support, w ∉ (olb_orbitLoop K hK e he).support) ∧
+        (∀ q ∈ (olb_orbitLoop K hK e he).support, z0 0 ≤ q 0) := by
+  obtain ⟨c, hc, hmin⟩ := Set.exists_min_image K (fun z : Site 2 => z 0) hK hne
+  have hnot : ∀ z : Site 2, z 0 < c 0 → z ∉ K := fun z hz hzK =>
+    absurd (hmin z hzK) (not_le.mpr hz)
+  have hg : unitWt (![-1, 0] : Site 2) = 1 := by simp only [unitWt, Fin.sum_univ_two]; decide
+  have he : IsBoundaryDart K (mkDart c ![-1, 0] hg) :=
+    ⟨by rw [mkDart_tail]; exact hc, hnot _ (by simp)⟩
+  refine ⟨mkDart c ![-1, 0] hg, he, fun hExt => ?_⟩
+  have hface : dartFace (mkDart c ![-1, 0] hg) 0 = c 0 - 1 := by
+    rw [dartFace_of_dir_left _ (mkDart_dir _ _ _)]; simp
+  obtain ⟨z0, p, hp, -⟩ := hExt (dartFace (mkDart c ![-1, 0] hg))
+    (hnot _ (by rw [hface]; omega))
+  exact hp _ p.start_mem_support (olb_orbitLoop K hK _ he).start_mem_support
+
+/-- If every site outside `K` is joined, by a lattice path avoiding the orbit loop of `e`, to a
+site weakly left of the whole loop, then every site outside `K` has even ray count with respect
+to that loop. The hypothesis `hExt` fails whenever some vertex of the orbit loop `olb_orbitLoop
+K hK e he` lies outside `K`: a path from that vertex starts on the loop. This happens for the
+leftward dart out of a site of `K` with least first coordinate, for every finite nonempty `K`
+(`StatMech.Lattice.owr_exists_not_exteriorHyp`), and for every boundary dart of a single site.
+Whether `hExt` can hold for some other dart is not settled, so the statement is kept. -/
 theorem oee_outsideHalf_of_exteriorEq (K : Set (Site 2)) (hK : K.Finite) (e : Dart)
     (he : IsBoundaryDart K e)
     (hExt : ∀ z, z ∉ K → ∃ z0 : Site 2, ∃ p : (hypercubicLattice 2).Walk z z0,

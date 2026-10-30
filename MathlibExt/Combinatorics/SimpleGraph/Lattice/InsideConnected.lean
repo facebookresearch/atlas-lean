@@ -13,9 +13,14 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanLeftRegionInter
 # Connectivity off a closed walk
 
 Remove the vertices of a closed lattice walk `Vc` from `ℤ²`. Components of what remains lie entirely
-inside or entirely outside `jec_leftRegion Vc`. If the inside is covered by one such component and
-so is the outside, the lattice with the boundary edges of the inside removed has exactly two
-components.
+inside or entirely outside `jec_leftRegion Vc`. The inside is connected off `Vc` iff one such
+component covers it.
+
+Hypotheses saying that every site of a side lies off `Vc` hold only in degenerate cases: some vertex
+of `Vc` is always outside (`StatMech.Lattice.oc_not_forall_outside_offSupport`), and a nonempty
+inside always contains a vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`). The
+results below that assume every inside site is off `Vc` therefore apply only when the inside is
+empty.
 
 ## Main definitions
 
@@ -28,8 +33,6 @@ components.
 * `StatMech.Lattice.offSupport_reachable_iff_offSupportWalk`: reachability off `Vc` is the existence
   of a lattice path avoiding `Vc`.
 * `StatMech.Lattice.offSupport_component_monochromatic`: components off `Vc` stay on one side.
-* `StatMech.Lattice.two_components_of_hubs`, `StatMech.Lattice.two_components_of_covers`: if both
-  sides are connected off `Vc`, the cut lattice has two components.
 * `StatMech.Lattice.inside_offSupport_connected_iff_covers`: the inside is connected off `Vc` iff
   one component covers it.
 -/
@@ -130,6 +133,11 @@ theorem offSupport_component_monochromatic_out {a : Site 2}
     t ∉ jec_leftRegion Vc :=
   fun ht => hs ((inside_sameRegion_offSupport Vc hst hsoff).mpr ht)
 
+/-- If every inside site is off `Vc` and the inside is connected in the lattice with `Vc`
+removed, any two inside sites are joined by a lattice path avoiding `Vc`. The hypothesis `hoff`
+(every inside site is off `Vc`) holds only when the inside is empty: a nonempty inside contains
+a vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty inside this
+statement is vacuous. -/
 theorem hInOff_of_offSupport_connected {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     (hconn : ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
@@ -147,6 +155,11 @@ theorem inside_offSupport_connected_of_hub {a : Site 2} (Vc : (hypercubicLattice
   intro s t hs ht
   exact ((hhub s hs).symm).trans (hhub t ht)
 
+/-- If every inside site is off `Vc` and is reachable off `Vc` from one hub `c₀`, any two inside
+sites are joined by a lattice path avoiding `Vc`. The hypothesis `hoff` (every inside site is
+off `Vc`) holds only when the inside is empty: a nonempty inside contains a vertex of `Vc`
+(`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty inside this statement is
+vacuous. -/
 theorem hInOff_of_interiorHub {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     {c₀ : Site 2}
@@ -155,35 +168,16 @@ theorem hInOff_of_interiorHub {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support :=
   hInOff_of_offSupport_connected Vc hoff (inside_offSupport_connected_of_hub Vc hhub)
 
-theorem hOutOff_of_exteriorHub {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    (hoff : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
-    {d₀ : Site 2}
-    (hhub : ∀ s : Site 2, s ∉ jec_leftRegion Vc → (offSupport Vc).Reachable d₀ s) :
-    ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
-      ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
-  intro s t hs ht
-  have hconn : (offSupport Vc).Reachable s t := ((hhub s hs).symm).trans (hhub t ht)
-  exact offSupport_reachable_to_offSupportWalk Vc hconn (hoff s hs)
-
-theorem two_components_of_hubs {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
-    (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
-    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
-    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
-    {c₀ d₀ : Site 2}
-    (hubIn : ∀ s : Site 2, s ∈ jec_leftRegion Vc → (offSupport Vc).Reachable c₀ s)
-    (hubOut : ∀ s : Site 2, s ∉ jec_leftRegion Vc → (offSupport Vc).Reachable d₀ s) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 :=
-  jlri_two_components_of_offSupport_connected Vc hp hq
-    (hInOff_of_interiorHub Vc hoffIn hubIn)
-    (hOutOff_of_exteriorHub Vc hoffOut hubOut)
-
 theorem minimalLoop_inside_sameRegion_offSupport (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e}) {x y : Site 2}
     (h : (offSupport (mpl_orbitLoop K a)).Reachable x y) (hx : x ∉ (mpl_orbitLoop K a).support) :
     (x ∈ jec_leftRegion (mpl_orbitLoop K a) ↔ y ∈ jec_leftRegion (mpl_orbitLoop K a)) :=
   inside_sameRegion_offSupport (mpl_orbitLoop K a) h hx
 
+/-- `StatMech.Lattice.hInOff_of_interiorHub` for the face loop of a boundary orbit. The
+hypothesis `hoff` (every inside site is off `Vc`) holds only when the inside is empty: a
+nonempty inside contains a vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so
+for a nonempty inside this statement is vacuous. -/
 theorem minimalLoop_hInOff_of_interiorHub (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e})
     (hoff : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
@@ -194,20 +188,6 @@ theorem minimalLoop_hInOff_of_interiorHub (K : Set (Site 2))
       t ∈ jec_leftRegion (mpl_orbitLoop K a) →
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support :=
   hInOff_of_interiorHub (mpl_orbitLoop K a) hoff hhub
-
-theorem minimalLoop_two_components_of_hubs (K : Set (Site 2))
-    (a : {e : Dart // IsBoundaryDart K e})
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))
-    (hq : ∀ w ∈ (mpl_orbitLoop K a).support, w 0 ≤ q 0 - 1)
-    (hoffIn : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
-    (hoffOut : ∀ s ∉ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
-    {c₀ d₀ : Site 2}
-    (hubIn : ∀ s : Site 2, s ∈ jec_leftRegion (mpl_orbitLoop K a) →
-        (offSupport (mpl_orbitLoop K a)).Reachable c₀ s)
-    (hubOut : ∀ s : Site 2, s ∉ jec_leftRegion (mpl_orbitLoop K a) →
-        (offSupport (mpl_orbitLoop K a)).Reachable d₀ s) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).ConnectedComponent = 2 :=
-  two_components_of_hubs (mpl_orbitLoop K a) hp hq hoffIn hoffOut hubIn hubOut
 
 /-- The sites reachable from `seed` in the lattice with the vertices of `Vc` removed. -/
 def offSupportComponent {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) (seed : Site 2) :
@@ -263,6 +243,11 @@ theorem interiorHub_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     ∀ s : Site 2, s ∈ jec_leftRegion Vc → (offSupport Vc).Reachable seed s :=
   fun _ hs => (mem_offSupportComponent Vc).mp (hcov hs)
 
+/-- If every inside site is off `Vc` and one component off `Vc` covers the inside, any two
+inside sites are joined by a lattice path avoiding `Vc`. The hypothesis `hoff` (every inside
+site is off `Vc`) holds only when the inside is empty: a nonempty inside contains a vertex of
+`Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty inside this statement
+is vacuous. -/
 theorem hInOff_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     {seed : Site 2}
@@ -279,23 +264,6 @@ theorem inside_offSupport_connected_of_covers {a : Site 2} (Vc : (hypercubicLatt
   intro s t hs ht
   exact ((interiorHub_of_covers Vc hcov s hs).symm).trans (interiorHub_of_covers Vc hcov t ht)
 
-theorem two_components_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
-    (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
-    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
-    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
-    {sIn sOut : Site 2}
-    (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn)
-    (hcovOut : (jec_leftRegion Vc)ᶜ ⊆ offSupportComponent Vc sOut) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 := by
-  refine jlri_two_components_of_offSupport_connected Vc hp hq
-    (hInOff_of_covers Vc hoffIn hcovIn) ?_
-  intro s t hs ht
-  have hubOut : ∀ r : Site 2, r ∉ jec_leftRegion Vc → (offSupport Vc).Reachable sOut r :=
-    fun r hr => (mem_offSupportComponent Vc).mp (hcovOut hr)
-  have hconn : (offSupport Vc).Reachable s t := ((hubOut s hs).symm).trans (hubOut t ht)
-  exact offSupport_reachable_to_offSupportWalk Vc hconn (hoffOut _ hs)
-
 theorem minimalLoop_offSupportComponent_subset_interior (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e}) {seed : Site 2}
     (hseed : seed ∈ jec_leftRegion (mpl_orbitLoop K a))
@@ -303,6 +271,10 @@ theorem minimalLoop_offSupportComponent_subset_interior (K : Set (Site 2))
     offSupportComponent (mpl_orbitLoop K a) seed ⊆ jec_leftRegion (mpl_orbitLoop K a) :=
   offSupportComponent_subset_interior (mpl_orbitLoop K a) hseed hsoff
 
+/-- `StatMech.Lattice.hInOff_of_covers` for the face loop of a boundary orbit. The hypothesis
+`hoff` (every inside site is off `Vc`) holds only when the inside is empty: a nonempty inside
+contains a vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty
+inside this statement is vacuous. -/
 theorem minimalLoop_hInOff_of_covers (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e})
     (hoff : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
@@ -312,19 +284,6 @@ theorem minimalLoop_hInOff_of_covers (K : Set (Site 2))
       t ∈ jec_leftRegion (mpl_orbitLoop K a) →
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support :=
   hInOff_of_covers (mpl_orbitLoop K a) hoff hcov
-
-theorem minimalLoop_two_components_of_covers (K : Set (Site 2))
-    (a : {e : Dart // IsBoundaryDart K e})
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))
-    (hq : ∀ w ∈ (mpl_orbitLoop K a).support, w 0 ≤ q 0 - 1)
-    (hoffIn : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
-    (hoffOut : ∀ s ∉ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
-    {sIn sOut : Site 2}
-    (hcovIn : jec_leftRegion (mpl_orbitLoop K a) ⊆ offSupportComponent (mpl_orbitLoop K a) sIn)
-    (hcovOut : (jec_leftRegion (mpl_orbitLoop K a))ᶜ ⊆
-        offSupportComponent (mpl_orbitLoop K a) sOut) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).ConnectedComponent = 2 :=
-  two_components_of_covers (mpl_orbitLoop K a) hp hq hoffIn hoffOut hcovIn hcovOut
 
 theorem inside_offSupport_connected_iff_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∈ jec_leftRegion Vc) :
@@ -336,19 +295,6 @@ theorem inside_offSupport_connected_iff_covers {a : Site 2} (Vc : (hypercubicLat
     exact (mem_offSupportComponent Vc).mpr (hconn seed z hseed hz)
   · intro hcov
     exact inside_offSupport_connected_of_covers Vc hcov
-
-theorem hInOff_iff_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
-    {seed : Site 2} (hseed : seed ∈ jec_leftRegion Vc) :
-    (∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
-        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support)
-      ↔ jec_leftRegion Vc ⊆ offSupportComponent Vc seed := by
-  constructor
-  · intro hwalk z hz
-    obtain ⟨pw, hpw⟩ := hwalk seed z hseed hz
-    exact (mem_offSupportComponent Vc).mpr (offSupportWalk_to_offSupport_reachable Vc pw hpw)
-  · intro hcov
-    exact hInOff_of_covers Vc hoff hcov
 
 end Lattice
 
