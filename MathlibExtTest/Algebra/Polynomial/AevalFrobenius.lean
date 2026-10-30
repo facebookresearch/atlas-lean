@@ -12,7 +12,19 @@ public import MathlibExt.Algebra.Polynomial.AevalFrobenius
 
 @[expose] public section
 
-example (F : Type) [Field F] [Fintype F] (E : Type) [CommRing E] [Algebra F E]
+universe u v
+
+example (F : Type u) [Field F] [Fintype F] (E : Type v) [CommRing E] [Algebra F E]
+    (p : Polynomial F) (x : E) :
+    Polynomial.aeval (x ^ Fintype.card F) p = (Polynomial.aeval x p) ^ Fintype.card F :=
+  Polynomial.aeval_pow_card_eq_pow_card F E p x
+
+example (F : Type (u + 1)) [Field F] [Fintype F] (E : Type) [CommRing E] [Algebra F E]
+    (p : Polynomial F) (x : E) :
+    Polynomial.aeval (x ^ Fintype.card F) p = (Polynomial.aeval x p) ^ Fintype.card F :=
+  Polynomial.aeval_pow_card_eq_pow_card F E p x
+
+example (F : Type) [Field F] [Fintype F] (E : Type (v + 1)) [CommRing E] [Algebra F E]
     (p : Polynomial F) (x : E) :
     Polynomial.aeval (x ^ Fintype.card F) p = (Polynomial.aeval x p) ^ Fintype.card F :=
   Polynomial.aeval_pow_card_eq_pow_card F E p x
