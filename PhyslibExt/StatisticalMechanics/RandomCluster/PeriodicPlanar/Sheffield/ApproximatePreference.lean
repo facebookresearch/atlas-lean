@@ -6,36 +6,64 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PreferenceClosure
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference
 
+/-!
+# Approximate side preferences and crossing probabilities
+
+A version of the preference-grid argument with an error `ε`: approximate preferences at the
+boundary of a grid force a grid point with neighbouring approximate preferences, and these give
+lower bounds on rectangle crossing probabilities.
+
+## i. Overview
+
+Each source in a grid of translates prefers, up to `ε`, the bottom over the top and the left over
+the right side of a rectangle (in terms of the probability of connecting to that side). If the
+boundary rows and columns prefer the appropriate sides, a discrete topological argument on the
+king's-move grid gives a point `x` with neighbours preferring the opposite sides
+(`exists_common_weak_approximate_preference_grid_witness`). The intrinsic error
+`rectangleEndpointPreferenceError` makes the boundary conditions automatic, and it tends to `0`
+when the boundary connection probabilities tend to `1`. Combined with FKG and the square-root
+trick, the witness yields a lower bound on the vertical or the horizontal crossing probability
+(`exists_intrinsicEndpointError_crossing_branch`); the final lemmas turn these bounds into
+crossing probabilities tending to `1`. The combinatorial results are unconditional; the
+crossing bounds assume FKG and the stated score identities.
+
+## ii. Key results
+
+- `exists_common_weak_approximate_preference_grid_witness`.
+- `rectangleEndpointPreferenceError`, `rectangleEndpointPreferenceError_tendsto_zero`.
+- `PeriodicPlaneEmbedding.exists_intrinsicEndpointError_crossing_branch`.
+- `crossing_max_tendsto_one_of_approxPreferredSide_root_branches`.
+
+## iii. Table of contents
+
+- A. Approximate preference witnesses on a grid
+- B. The intrinsic endpoint error
+- C. From preferences to crossing bounds
+- D. Crossing probabilities tending to one
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. Approximate preference witnesses on a grid -/
 
-
-
-theorem exists_common_approximate_preference_grid_witness
+/-- Approximate preference witness with strict preferences on the top row and right column. Follows
+from `exists_common_weak_approximate_preference_grid_witness`. -/
+lemma exists_common_approximate_preference_grid_witness
     {n m : Nat} (hn : 0 < n) (epsilon : Real) (hepsilon : 0 ≤ epsilon)
     (bottom top left right : PreferenceGridVertex n m → Real)
     (hbottom : ∀ i : Fin (n + 1),
@@ -84,10 +112,9 @@ theorem exists_common_approximate_preference_grid_witness
   exact ⟨x, xVertical, xHorizontal, hxv', hxh', hxVertical,
     by linarith, hxHorizontal, by linarith⟩
 
-
-
-
-
+/-- If the bottom row prefers bottom, the top row top, the left column left and the right column
+right (each up to `ε`), some grid point prefers bottom and left while king-neighbours prefer top,
+resp. right (up to `ε`). -/
 theorem exists_common_weak_approximate_preference_grid_witness
     {n m : Nat} (hn : 0 < n) (hm : 0 < m)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
@@ -170,8 +197,10 @@ theorem exists_common_weak_approximate_preference_grid_witness
   exact ⟨x, xVertical, xHorizontal, hxv', hxh', hxVertical,
     hxvOpposite, hxHorizontal, hxhOpposite⟩
 
+/-! ## B. The intrinsic endpoint error -/
 
-
+/-- Total violation of the boundary preference conditions: the sum of the positive parts of the four
+boundary preference defects. -/
 def rectangleEndpointPreferenceError {n m : Nat}
     (bottom top left right : PreferenceGridVertex n m → Real) : Real :=
   (∑ i : Fin (n + 1), max (top (i, 0) - bottom (i, 0)) 0) +
@@ -181,15 +210,13 @@ def rectangleEndpointPreferenceError {n m : Nat}
   ∑ j : Fin (m + 1),
     max (left (Fin.last n, j) - right (Fin.last n, j)) 0
 
-theorem rectangleEndpointPreferenceError_nonneg {n m : Nat}
+lemma rectangleEndpointPreferenceError_nonneg {n m : Nat}
     (bottom top left right : PreferenceGridVertex n m → Real) :
     0 ≤ rectangleEndpointPreferenceError bottom top left right := by
   unfold rectangleEndpointPreferenceError
   positivity
 
-
-
-theorem rectangleEndpointPreferenceError_bounds {n m : Nat}
+lemma rectangleEndpointPreferenceError_bounds {n m : Nat}
     (bottom top left right : PreferenceGridVertex n m → Real) :
     (∀ i : Fin (n + 1), top (i, 0) ≤ bottom (i, 0) +
       rectangleEndpointPreferenceError bottom top left right) ∧
@@ -271,10 +298,9 @@ theorem rectangleEndpointPreferenceError_bounds {n m : Nat}
       ((∑ k, eB k) + (∑ k, eT k) + (∑ k, eL k) + ∑ k, eR k)
     linarith
 
-
-
-
-theorem rectangleEndpointPreferenceError_tendsto_zero {n m : Nat}
+/-- The endpoint error tends to `0` when the preferred boundary connection probabilities tend to
+`1`. -/
+lemma rectangleEndpointPreferenceError_tendsto_zero {n m : Nat}
     (bottom top left right : Nat → PreferenceGridVertex n m → Real)
     (hbottomOne : ∀ i : Fin (n + 1),
       Tendsto (fun N => bottom N (i, 0)) atTop (nhds 1))
@@ -336,9 +362,9 @@ theorem rectangleEndpointPreferenceError_tendsto_zero {n m : Nat}
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## C. From preferences to crossing bounds -/
 
-
-theorem PeriodicPlaneEmbedding.preference_max_bottom_left_add_epsilon_ge_fourthRoot
+lemma PeriodicPlaneEmbedding.preference_max_bottom_left_add_epsilon_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (S : Set V)
@@ -408,8 +434,7 @@ theorem PeriodicPlaneEmbedding.preference_max_bottom_left_add_epsilon_ge_fourthR
   dsimp only [B, T, L, R] at hfour hsqrt hmax ⊢
   linarith
 
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_ge_approxPreferredSide_transfer
+lemma PeriodicPlaneEmbedding.verticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
@@ -444,8 +469,7 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_ge_approxPreferredSide_transfer
     mu hFKG a b c d L R
   nlinarith
 
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_approxPreferredSide_transfer
+lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
@@ -480,11 +504,7 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_approxPreferredSide_transfe
     mu hFKG a b c d L R
   nlinarith
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_approxPreferredSide_crossing_branch
+lemma PeriodicPlaneEmbedding.exists_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real)
@@ -577,10 +597,9 @@ theorem PeriodicPlaneEmbedding.exists_approxPreferredSide_crossing_branch
     rw [← hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_intrinsicEndpointError_crossing_branch
+/-- With `ε` the intrinsic endpoint error, some grid point gives a lower bound on the vertical or on
+the horizontal crossing probability. -/
+lemma PeriodicPlaneEmbedding.exists_intrinsicEndpointError_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real)
@@ -633,9 +652,9 @@ theorem PeriodicPlaneEmbedding.exists_intrinsicEndpointError_crossing_branch
     source bottom top left right hsource hbottomScore htopScore hleftScore
     hrightScore hbottom htop hleft hright
 
+/-! ## D. Crossing probabilities tending to one -/
 
-
-theorem crossing_max_tendsto_one_of_approxPreferredSide_branches
+lemma crossing_max_tendsto_one_of_approxPreferredSide_branches
     (A Hv Hh Mv Mh epsilon Cv Ch : Nat → Real)
     (hA : Tendsto A atTop (nhds 1))
     (hHv : Tendsto Hv atTop (nhds 1))
@@ -652,12 +671,12 @@ theorem crossing_max_tendsto_one_of_approxPreferredSide_branches
   let Lh := fun N => A N * (Hh N * A N - Mh N - epsilon N) - Mh N
   have hLv : Tendsto Lv atTop (nhds 1) := by
     dsimp only [Lv]
-    convert hA.mul (((hHv.mul hA).sub hMv).sub hepsilon) |>.sub hMv using 1 <;>
-      norm_num
+    convert hA.mul (((hHv.mul hA).sub hMv).sub hepsilon) |>.sub hMv using 1
+    norm_num
   have hLh : Tendsto Lh atTop (nhds 1) := by
     dsimp only [Lh]
-    convert hA.mul (((hHh.mul hA).sub hMh).sub hepsilon) |>.sub hMh using 1 <;>
-      norm_num
+    convert hA.mul (((hHh.mul hA).sub hMh).sub hepsilon) |>.sub hMh using 1
+    norm_num
   have hmin : Tendsto (fun N => min (Lv N) (Lh N)) atTop (nhds 1) := by
     simpa using hLv.min hLh
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le hmin tendsto_const_nhds
@@ -668,11 +687,7 @@ theorem crossing_max_tendsto_one_of_approxPreferredSide_branches
   · intro N
     exact max_le (hCv N) (hCh N)
 
-
-
-
-
-theorem crossing_selected_tendsto_one_of_approxPreferredSide_branches
+lemma crossing_selected_tendsto_one_of_approxPreferredSide_branches
     (branch : Nat -> Bool)
     (A Hv Hh Mv Mh epsilon Cv Ch : Nat -> Real)
     (hA : Tendsto A atTop (nhds 1))
@@ -693,11 +708,13 @@ theorem crossing_selected_tendsto_one_of_approxPreferredSide_branches
   have hLv : Tendsto Lv atTop (nhds 1) := by
     dsimp only [Lv]
     convert hA.mul (((hHv.mul hA).sub hMv).sub hepsilon) |>.sub hMv
-      using 1 <;> norm_num
+      using 1
+    norm_num
   have hLh : Tendsto Lh atTop (nhds 1) := by
     dsimp only [Lh]
     convert hA.mul (((hHh.mul hA).sub hMh).sub hepsilon) |>.sub hMh
-      using 1 <;> norm_num
+      using 1
+    norm_num
   have hmin : Tendsto (fun N => min (Lv N) (Lh N)) atTop (nhds 1) := by
     simpa using hLv.min hLh
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le hmin tendsto_const_nhds
@@ -714,11 +731,9 @@ theorem crossing_selected_tendsto_one_of_approxPreferredSide_branches
     · simpa [hbranch] using hCh N
     · simpa [hbranch] using hCv N
 
-
-
-
-
-theorem crossing_max_tendsto_one_of_approxPreferredSide_root_branches
+/-- If the crossing lower bounds hold branchwise and the root bound tends to `1`, the larger
+crossing probability tends to `1`. -/
+lemma crossing_max_tendsto_one_of_approxPreferredSide_root_branches
     (root A Hv Hh Mv Mh epsilon Cv Ch : Nat → Real)
     (hroot : Tendsto root atTop (nhds 1))
     (hrootA : ∀ N, root N ≤ A N + epsilon N)
@@ -734,7 +749,8 @@ theorem crossing_max_tendsto_one_of_approxPreferredSide_root_branches
     (hCv : ∀ N, Cv N ≤ 1) (hCh : ∀ N, Ch N ≤ 1) :
     Tendsto (fun N => max (Cv N) (Ch N)) atTop (nhds 1) := by
   have hlower : Tendsto (fun N => root N - epsilon N) atTop (nhds 1) := by
-    convert hroot.sub hepsilon using 1 <;> norm_num
+    convert hroot.sub hepsilon using 1
+    norm_num
   have hA : Tendsto A atTop (nhds 1) := by
     apply tendsto_of_tendsto_of_tendsto_of_le_of_le
       hlower tendsto_const_nhds
@@ -745,8 +761,7 @@ theorem crossing_max_tendsto_one_of_approxPreferredSide_root_branches
     A Hv Hh Mv Mh epsilon Cv Ch hA hHv hHh hMv hMh hepsilon
     hbranch hCv hCh
 
-
-theorem crossing_selected_tendsto_one_of_approxPreferredSide_root_branches
+lemma crossing_selected_tendsto_one_of_approxPreferredSide_root_branches
     (branch : Nat -> Bool)
     (root A Hv Hh Mv Mh epsilon Cv Ch : Nat -> Real)
     (hroot : Tendsto root atTop (nhds 1))
@@ -765,7 +780,8 @@ theorem crossing_selected_tendsto_one_of_approxPreferredSide_root_branches
     Tendsto (fun N => if branch N then Cv N else Ch N)
       atTop (nhds 1) := by
   have hlower : Tendsto (fun N => root N - epsilon N) atTop (nhds 1) := by
-    convert hroot.sub hepsilon using 1 <;> norm_num
+    convert hroot.sub hepsilon using 1
+    norm_num
   have hA : Tendsto A atTop (nhds 1) := by
     apply tendsto_of_tendsto_of_tendsto_of_le_of_le
       hlower tendsto_const_nhds

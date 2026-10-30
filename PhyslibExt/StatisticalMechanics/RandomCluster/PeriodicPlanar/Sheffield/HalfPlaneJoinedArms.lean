@@ -6,78 +6,92 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInfiniteArm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneStripUnion
 
+/-!
+# Joined infinite arms to the two boundary rays of a half-plane
+
+Two finite source sets with infinite arms to the lower and upper boundary rays of a half-plane,
+joined to each other inside a vertical strip, and the open walks and barrier geometry they give.
+
+## i. Overview
+
+`finiteJoinedBoundaryArmEvent r c d n L R` says that some `x ∈ L` has an infinite arm within
+`H_r = {x ≥ r}` to the lower ray `{y ≤ c}` of `∂H_r`, some `y ∈ R` has one to the upper ray
+`{y ≥ d}`, and no strip merge error occurs: any `x ∈ L`, `y ∈ R` in infinite clusters are connected
+inside the strip `{r ≤ x ≤ r + n}`. On this event one extracts open walks from the two rays to a
+common vertex of `L`, a single open crosscut from the lower ray to the upper ray inside `H_r`,
+and, when `L` lies deep enough in `H_r`, nontrivial walks whose arcs stay in a vertical strip
+(the input of the barrier argument of `HalfPlaneBarrier`). A union bound gives
+`P(joined arms) ≥ P(lower arm) + P(upper arm) - P(merge error) - 1`, and combining the
+adjacent-arm estimates of `HalfPlaneInfiniteArm` with the strip placements of
+`HalfPlaneStripUnion` gives joined arms with probability at least
+`1 - 2√(1 - P(arm to ∂H_r)) - 3ε`.
+
+Headline fidelity:
+- The walk-extraction and geometry lemmas are unconditional.
+- `finiteJoinedBoundaryArmEvent_measureReal_ge` and `_gt` are unconditional inequalities.
+- `exists_inward_…_measureReal_gt` (three variants) are conditional on FKG, translation
+  invariance and almost sure uniqueness of the infinite cluster.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent`
+- `PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_barrierReady`
+- `exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt`
+
+## iii. Table of contents
+
+- A. Open walks from chains
+- B. The joined arm event
+- C. Walks and crosscuts on the joined arm event
+- D. Barrier geometry
+- E. Probability of joined arms
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Open walks from chains -/
 
-
-
-
-def walkOfChain (G : SimpleGraph V) (x : V) :
-    (l : List V) → List.IsChain G.Adj (x :: l) →
-      G.Walk x ((x :: l).getLast (List.cons_ne_nil _ _))
-  | [], _ => .nil
-  | y :: l, h => by
-      have h' : G.Adj x y ∧ List.IsChain G.Adj (y :: l) := by
-        simpa only [List.isChain_cons_cons] using h
-      exact .cons h'.1 (walkOfChain G y l h'.2)
-
-@[simp] theorem walkOfChain_support (G : SimpleGraph V) (x : V)
-    (l : List V) (h : List.IsChain G.Adj (x :: l)) :
-    (walkOfChain G x l h).support = x :: l := by
-  induction l generalizing x with
-  | nil => rfl
-  | cons y l ih =>
-      have h' : G.Adj x y ∧ List.IsChain G.Adj (y :: l) := by
-        simpa only [List.isChain_cons_cons] using h
-      simp only [walkOfChain, SimpleGraph.Walk.support_cons]
-      exact congrArg (List.cons x) (ih y _)
-
-
-
-theorem PeriodicGraph.connectedWithinSet_exists_openSubgraphWalk
+omit [Countable V] in
+/-- A connection within `A` is witnessed by an open walk with all vertices in `A`. -/
+lemma PeriodicGraph.connectedWithinSet_exists_openSubgraphWalk
     (P : PeriodicGraph V) {omega : ConfigSpace (Sym2 V)}
     {A : Set V} {x y : V}
     (h : omega ∈ P.connectedWithinSet A x y) :
     ∃ q : (P.openSubgraph omega).Walk x y,
       ∀ v ∈ q.support, v ∈ A := by
   rcases h with ⟨l, hchain, hlast, hregion⟩
-  let q₀ := walkOfChain (P.openSubgraph omega) x l hchain
+  let q₀ : (P.openSubgraph omega).Walk x ((x :: l).getLast (List.cons_ne_nil _ _)) :=
+    SimpleGraph.Walk.ofSupport (x :: l) (List.cons_ne_nil _ _) hchain
   let q : (P.openSubgraph omega).Walk x y := q₀.copy rfl hlast
   refine ⟨q, ?_⟩
   intro v hv
   apply hregion v
   have hv₀ : v ∈ q₀.support := by
     simpa only [q, SimpleGraph.Walk.support_copy] using hv
-  rwa [walkOfChain_support] at hv₀
+  rwa [show q₀.support = x :: l from SimpleGraph.Walk.support_ofSupport _ hchain] at hv₀
 
-
-
-theorem PeriodicGraph.openSubgraphWalk_exists_graphWalk
+omit [Countable V] in
+/-- An open walk lifts to a walk in the underlying graph with the same support and all edges
+open. -/
+lemma PeriodicGraph.openSubgraphWalk_exists_graphWalk
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) {x y : V}
     (q : (P.openSubgraph omega).Walk x y) :
     ∃ qG : P.graph.Walk x y,
@@ -97,8 +111,11 @@ theorem PeriodicGraph.openSubgraphWalk_exists_graphWalk
   have hadj := q.adj_of_mem_edges huv'
   exact hadj.2
 
+/-! ## B. The joined arm event -/
 
-
+/-- Joined arm event: some `x ∈ L` has an infinite arm within `H_r` to the lower ray `{y ≤ c}` of
+`∂H_r`, some `y ∈ R` has one to the upper ray `{y ≥ d}`, and no strip merge error occurs in
+the strip `{r ≤ x ≤ r + n}`. -/
 def PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -108,7 +125,7 @@ def PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent
       (E.upperBoundaryRayVertices r d)) \
     E.halfPlaneStripPairMergeErrorUnion r n L R
 
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measurableSet
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) :
     MeasurableSet (E.finiteJoinedBoundaryArmEvent r c d n L R) :=
@@ -120,9 +137,9 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measurableSet
       (E.upperBoundaryRayVertices r d))).diff
     (E.halfPlaneStripPairMergeErrorUnion_measurableSet r n L R)
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_witnesses
+omit [Countable V] in
+/-- Unfolded witnesses of the joined arm event. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_witnesses
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :
@@ -146,9 +163,10 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_witnesses
   exact ⟨x, hxL, hxinf, b, hb, hxb, y, hyR, hyinf,
     u, hu, hyu, hxy⟩
 
+/-! ## C. Walks and crosscuts on the joined arm event -/
 
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_openWalks
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_openWalks
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :
@@ -180,10 +198,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_openWalks
       have hvxy : v ∈ qxy.support := by simpa using hv'
       exact E.rightHalfPlaneStripVertices_subset r n (hqxy v hvxy)
 
-
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallWalks
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallWalks
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :
@@ -226,10 +242,10 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallWalks
   · intro v hv
     exact hqyu v (hupperSupport ▸ hv)
 
-
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallCrosscutWalk
+omit [Countable V] in
+/-- On the joined arm event (with `c < d`), a nontrivial open walk in `H_r` runs from the lower
+ray to the upper ray through a vertex of `L` and a vertex of `R`. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallCrosscutWalk
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V} (hcd : c < d)
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :
@@ -277,9 +293,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_threeWallCrosscutWal
     simp only [SimpleGraph.Walk.mem_support_append_iff]
     exact Or.inr (Or.inl right.end_mem_support)
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :
@@ -308,9 +323,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks
   · intro v hv
     exact hupperH v (by rwa [← hupperSupport])
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks_notNil
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks_notNil
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {B r c d : Real} {n : Nat} {L R : Finset V}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -348,8 +362,10 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_graphWalks_notNil
     SimpleGraph.Walk.not_nil_of_ne huj,
     hlowerOpen, hupperOpen, hlowerH, hupperH⟩
 
+/-! ## D. Barrier geometry -/
 
-theorem PeriodicPlaneEmbedding.exists_walkArc_horizontal_strict_bounds
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_walkArc_horizontal_strict_bounds
     (E : PeriodicPlaneEmbedding P) {x y z : V}
     (lower : P.graph.Walk x z) (upper : P.graph.Walk y z) :
     ∃ a b : Real, a < b ∧
@@ -386,9 +402,11 @@ theorem PeriodicPlaneEmbedding.exists_walkArc_horizontal_strict_bounds
     dsimp only [fu, f] at hlow hupp
     constructor <;> linarith
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_barrierReady
+omit [Countable V] in
+/-- On the joined arm event with `L` at depth at least the edge-length bound `B`, there are
+nontrivial open walks from below and above a height window to a common vertex whose arcs stay
+in a vertical strip: the input of the half-plane barrier. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_barrierReady
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {B r c d : Real} {n : Nat} {L R : Finset V}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -434,8 +452,10 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_barrierReady
     hlowerNil, hupperNil, hlowerOpen, hupperOpen,
     hxlC, hDxu, hlowerX, hupperX⟩
 
+/-! ## E. Probability of joined arms -/
 
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_ge
+/-- Union bound `P(joined) ≥ P(lower arm) + P(upper arm) - P(merge error) - 1`. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r c d : Real) (n : Nat) (L R : Finset V) :
@@ -463,12 +483,11 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_ge
   rw [hC] at hthree
   change mu.real A + mu.real B - mu.real C - 1 ≤
     mu.real ((A ∩ B) \ C)
-  convert hthree using 1 <;> first | ring | simp [Set.diff_eq]
+  convert hthree using 1 <;> first | ring | simp [Set.sdiff_eq]
 
-
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_gt
+/-- If both arms have probability above `1 - ε` and the merge error is below `ε`, the joined arm
+event has probability above `1 - 3ε`. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r c d : Real) (n : Nat) (L R : Finset V) {epsilon : Real}
@@ -486,9 +505,13 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_gt
     mu r c d n L R
   linarith
 
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_measureReal_gt
+/-- Joined arms from a vertical translate of `S = L + z₀` to the lower ray `{y ≤ 0}` and from its
+vertical neighbour to the upper ray `{y ≥ 0}`, with probability above `1 - 2√(1 - P(arm of S
+to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure uniqueness). Implied by the case `R
+= r`, `s = 0`, `t = 0` of
+`exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt` up to
+rewriting. -/
+lemma PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -559,10 +582,11 @@ theorem PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_measur
     mu r 0 0 n Slo Shi
   linarith
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
+/-- Two-step margin version: translated sources in `H_R` (`R ≥ r`), joined arms to the rays `{y ≤
+0}` and `{y ≥ 1}` from a translate and its vertical translate by two steps. The case `s = 0`,
+`t = 1` of `exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt`
+up to rewriting. -/
+lemma PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -641,10 +665,12 @@ theorem PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_with_m
     mu r 0 1 n Slo Shi
   linarith
 
+namespace PeriodicPlaneEmbedding
 
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
+/-- Separated margin version: joined arms between a translate of `L` in `H_R` and its vertical
+translate by `1 + t` steps, to the rays `{y ≤ s}` and `{y ≥ s + t}`, with probability above
+`1 - 2√(1 - P(arm to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure uniqueness). -/
+theorem exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -739,5 +765,7 @@ theorem PeriodicPlaneEmbedding.exists_inward_separated_finiteJoinedBoundaryArmEv
   have hbound := E.finiteJoinedBoundaryArmEvent_measureReal_ge
     mu r s (s + t) n Slo Shi
   linarith
+
+end PeriodicPlaneEmbedding
 
 end StatMech.FK.PeriodicPlanar

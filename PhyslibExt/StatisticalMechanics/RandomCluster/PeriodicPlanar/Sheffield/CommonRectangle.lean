@@ -6,19 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryEnlargement
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectangleTranslation
+
+/-!
+# Four boundary placements in one common square
+
+One sequence of squares `[-M, M]²` in which, near each of the four sides, a translated box is
+connected to that side with probability tending to one.
+
+## i. Overview
+
+`Sheffield.BoundaryEnlargement` gives, separately for each side, a base point and a radius such
+that the buffered translated box lies in any rectangle having that side fixed and far enough
+from the other three, and is connected to the chosen side with probability tending to `1`. Here
+the four radii are combined into their maximum `M N`, and each placement is translated by
+`±M N` along the axis normal to its side (`commonRectLeftShift` and its three siblings) so that
+the four placements sit in the common square `[-M N, M N]²`. Translation invariance of `mu`
+transports the side-connection probabilities.
+
+Headline fidelity. `exists_commonSquare_fourBoundaryPlacements` is proved conditionally on
+`IsFKG mu`, `P.IsTranslationInvariant mu` and almost sure uniqueness of the infinite cluster;
+these are satisfiable, so the result is not vacuous.
+
+## ii. Key results
+
+- `commonRectLeftShift`, `commonRectRightShift`, `commonRectBottomShift`, `commonRectTopShift` :
+  translation by `∓M N` along the horizontal or vertical axis.
+- `PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements` : the four placements in a
+  common square.
+
+## iii. Table of contents
+
+- A. Axis translations by the square size
+- B. Four placements in a common square
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
 
 @[expose] public section
 
@@ -26,27 +54,39 @@ open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Axis translations by the square size -/
+
+/-- Translation by `-M N` along the horizontal axis, moving a placement next to the left side of
+`[-M N, M N]²`. Definitionally `horizontalShift (-(M N : Int))` (`Sheffield.CommonArray`). -/
 def commonRectLeftShift (M : Nat → Nat) (N : Nat) : Site 2 :=
   fun i => if i = 0 then -(M N : Int) else 0
 
+/-- Translation by `M N` along the horizontal axis, moving a placement next to the right side of
+`[-M N, M N]²`. Definitionally `horizontalShift (M N : Int)` (`Sheffield.CommonArray`). -/
 def commonRectRightShift (M : Nat → Nat) (N : Nat) : Site 2 :=
   fun i => if i = 0 then (M N : Int) else 0
 
+/-- Translation by `-M N` along the vertical axis, moving a placement next to the bottom side of
+`[-M N, M N]²`. Definitionally `verticalShift (-(M N : Int))` (`Sheffield.HalfPlaneTranslation`). -/
 def commonRectBottomShift (M : Nat → Nat) (N : Nat) : Site 2 :=
   fun i => if i = 1 then -(M N : Int) else 0
 
+/-- Translation by `M N` along the vertical axis, moving a placement next to the top side of
+`[-M N, M N]²`. Definitionally `verticalShift (M N : Int)` (`Sheffield.HalfPlaneTranslation`). -/
 def commonRectTopShift (M : Nat → Nat) (N : Nat) : Site 2 :=
   fun i => if i = 1 then (M N : Int) else 0
 
+/-! ## B. Four placements in a common square -/
 
-
-
-
+/-- Four boundary placements in a common square: for an FKG, translation invariant probability
+measure with an almost surely unique infinite cluster, there are square sizes `M N` and four base
+points such that each buffered box, translated next to its side, lies in `[-M N, M N]²` and is
+connected inside the square to that side with probability tending to `1`. -/
 theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -130,7 +170,7 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
       have h : (radiusL N : Real) ≤ M N := by
         exact_mod_cast hL N
       linarith)
-    (by intro N; change (radiusL N : Real) ≤ M N; exact_mod_cast hL N)
+    (by intro N; exact_mod_cast hL N)
   have rightData := hright
     (fun N => -(2 * (M N : Real)))
     (fun N => -(M N : Real)) (fun N => (M N : Real))
@@ -144,7 +184,7 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
       have h : (radiusR N : Real) ≤ M N := by
         exact_mod_cast hR N
       linarith)
-    (by intro N; change (radiusR N : Real) ≤ M N; exact_mod_cast hR N)
+    (by intro N; exact_mod_cast hR N)
   have bottomData := hbottom
     (fun N => -(M N : Real)) (fun N => (M N : Real))
     (fun N => 2 * (M N : Real))
@@ -153,7 +193,7 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
       have h : (radiusB N : Real) ≤ M N := by
         exact_mod_cast hB N
       linarith)
-    (by intro N; change (radiusB N : Real) ≤ M N; exact_mod_cast hB N)
+    (by intro N; exact_mod_cast hB N)
     (by
       intro N
       have h : (radiusB N : Real) ≤ M N := by
@@ -167,7 +207,7 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
       have h : (radiusT N : Real) ≤ M N := by
         exact_mod_cast hT N
       linarith)
-    (by intro N; change (radiusT N : Real) ≤ M N; exact_mod_cast hT N)
+    (by intro N; exact_mod_cast hT N)
     (by
       intro N
       have h : (radiusT N : Real) ≤ M N := by
@@ -181,7 +221,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     have hmem := (E.shift_mem_rectVertices (commonRectLeftShift M N)
       0 (2 * M N) (-(M N : Real)) (M N : Real) y).2
         hy'
-    convert hmem using 1 <;> simp [commonRectLeftShift] <;> ring_nf
+    convert hmem using 1
+    simp [commonRectLeftShift]
+    ring_nf
   · intro N x hx
     obtain ⟨y, hy, rfl⟩ := hx
     have hy' : y ∈ E.rectVertices (-(2 * (M N : Real))) 0
@@ -189,7 +231,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     have hmem := (E.shift_mem_rectVertices (commonRectRightShift M N)
       (-(2 * (M N : Real))) 0 (-(M N : Real)) (M N : Real) y).2
         hy'
-    convert hmem using 1 <;> simp [commonRectRightShift] <;> ring_nf
+    convert hmem using 1
+    simp [commonRectRightShift]
+    ring_nf
   · intro N x hx
     obtain ⟨y, hy, rfl⟩ := hx
     have hy' : y ∈ E.rectVertices (-(M N : Real)) (M N : Real)
@@ -197,7 +241,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     have hmem := (E.shift_mem_rectVertices (commonRectBottomShift M N)
       (-(M N : Real)) (M N : Real) 0 (2 * M N) y).2
         hy'
-    convert hmem using 1 <;> simp [commonRectBottomShift] <;> ring_nf
+    convert hmem using 1
+    simp [commonRectBottomShift]
+    ring_nf
   · intro N x hx
     obtain ⟨y, hy, rfl⟩ := hx
     have hy' : y ∈ E.rectVertices (-(M N : Real)) (M N : Real)
@@ -205,7 +251,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     have hmem := (E.shift_mem_rectVertices (commonRectTopShift M N)
       (-(M N : Real)) (M N : Real) (-(2 * (M N : Real))) 0 y).2
         hy'
-    convert hmem using 1 <;> simp [commonRectTopShift] <;> ring_nf
+    convert hmem using 1
+    simp [commonRectTopShift]
+    ring_nf
   · apply leftData.2.congr'
     filter_upwards with N
     symm
@@ -213,7 +261,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
         (commonRectLeftShift M N) 0 (2 * M N)
           (-(M N : Real)) (M N : Real)
           (P.shift (baseL N) '' (P.orbitBox N : Set V))
-    convert h using 1 <;> simp [commonRectLeftShift] <;> ring_nf
+    convert h using 1
+    simp [commonRectLeftShift]
+    ring_nf
   · apply rightData.2.congr'
     filter_upwards with N
     symm
@@ -221,7 +271,8 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
         (commonRectRightShift M N) (-(2 * (M N : Real))) 0
           (-(M N : Real)) (M N : Real)
           (P.shift (baseR N) '' (P.orbitBox N : Set V))
-    convert h using 1 <;> simp [commonRectRightShift] <;> ring_nf
+    convert h using 1 <;> simp [commonRectRightShift]
+    ring_nf
   · apply bottomData.2.congr'
     filter_upwards with N
     symm
@@ -229,7 +280,9 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
         (commonRectBottomShift M N) (-(M N : Real)) (M N : Real)
           0 (2 * M N)
           (P.shift (baseB N) '' (P.orbitBox N : Set V))
-    convert h using 1 <;> simp [commonRectBottomShift] <;> ring_nf
+    convert h using 1
+    simp [commonRectBottomShift]
+    ring_nf
   · apply topData.2.congr'
     filter_upwards with N
     symm
@@ -237,6 +290,7 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
         (commonRectTopShift M N) (-(M N : Real)) (M N : Real)
           (-(2 * (M N : Real))) 0
           (P.shift (baseT N) '' (P.orbitBox N : Set V))
-    convert h using 1 <;> simp [commonRectTopShift] <;> ring_nf
+    convert h using 1 <;> simp [commonRectTopShift]
+    ring_nf
 
 end StatMech.FK.PeriodicPlanar

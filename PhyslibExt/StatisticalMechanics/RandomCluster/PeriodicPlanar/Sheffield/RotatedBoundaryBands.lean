@@ -6,46 +6,70 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualBoundaryBands
 
+/-!
+# Boundary-band families under the axis swap
+
+Normal boundary-band families and paired aligned margin schedules are transported along the
+exchange of the two axes, giving rotated mixed boundary scores.
+
+## i. Overview
+
+A `NormalBoundaryBandFamily` records, for each side of a rectangle, translated source sets
+whose connection to that side is likely; exchanging the axes permutes the four sides
+(left ↔ bottom, right ↔ top). A `PairedAlignedMarginSchedule` for a primal/dual pair of families
+is transported the same way, with the vertical and horizontal schedules exchanged (and the new
+vertical schedule shifted by one index). The existence theorem for paired mixed boundary scores
+then applies to the swapped embeddings.
+
+## ii. Key results
+
+- `exists_pairedRotatedMixedBoundaryScores` : conditional on translation invariance of the
+  primal and dual measures and on the given boundary-band families and margin schedule (all
+  passed as data). The index `k` does not enter the conclusion.
+
+## iii. Table of contents
+
+- A. Axis swap of the unit shifts
+- B. Transport of families and schedules
+- C. Rotated mixed boundary scores
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
-@[simp] theorem siteAxisSwap_horizontalShift (t : Int) :
+/-! ## A. Axis swap of the unit shifts -/
+
+@[simp] lemma siteAxisSwap_horizontalShift (t : Int) :
     siteAxisSwap (horizontalShift t) = verticalShift t := by
   ext i
   fin_cases i <;> rfl
 
-@[simp] theorem siteAxisSwap_verticalShift (t : Int) :
+@[simp] lemma siteAxisSwap_verticalShift (t : Int) :
     siteAxisSwap (verticalShift t) = horizontalShift t := by
   ext i
   fin_cases i <;> rfl
 
+/-! ## B. Transport of families and schedules -/
 
-
-
+/-- A normal boundary-band family for `E`, viewed as a family for the swapped embedding: the left
+and right bands become the bottom and top bands and conversely. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.axisSwap
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -92,9 +116,8 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.axisSwap
     · rw [E.axisSwap_topBoundaryEvent]
       simpa [PeriodicGraph.axisSwap] using h.2
 
-
-
-
+/-- A paired aligned margin schedule, transported to the swapped embeddings: the horizontal and
+vertical schedules are exchanged, the new vertical schedule shifted by one index. -/
 def PairedAlignedMarginSchedule.axisSwap
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}
@@ -136,9 +159,10 @@ def PairedAlignedMarginSchedule.axisSwap
   dual_bottom_right := fun n ↦ schedule.dual_left_top (n + 1)
   dual_top_right := fun n ↦ schedule.dual_right_top (n + 1)
 
+/-! ## C. Rotated mixed boundary scores -/
 
-
-
+/-- Paired mixed boundary scores exist for the swapped primal and dual embeddings, given
+translation-invariant measures, boundary-band families and an aligned margin schedule. -/
 theorem exists_pairedRotatedMixedBoundaryScores
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

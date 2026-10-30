@@ -6,40 +6,106 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryBandPadding
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Exclusion
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepTemplateGridAssembly
 
+/-!
+# Boundary bands and crossings of large boxes
+
+Boundary-band seeds for the four sides of a box, their transfer to common squares, and the
+preference argument on mixed rectangles: if translated orbit boxes near each side are joined to
+that side with probability close to one, then a large box is crossed with probability tending to
+one.
+
+## i. Overview
+
+For an FKG, translation-invariant edge measure with almost surely a unique infinite cluster, the
+half-plane estimates of `Sheffield.BoundaryBandPadding` give, for any finite family of translates
+of a finite set `S`, side-connection probabilities `> P(S hits ∞)² - ε`, uniformly in tangential
+translations along the side. A `BoundaryBandSeed` (indexed by a preference grid) or a
+`NormalBoundaryBandSeed` (indexed by the distance `i ≤ margin` from the side) records base
+points and radii of such bands for the four sides; `toCommonSquare` moves all four into one
+square `[-M, M]²` (`CommonSquareBoundaryBandData`, `CommonSquareNormalBoundaryBandData`).
+
+The preference argument on a mixed pair of nested rectangles (the vertical one inside
+`[a1, b1] × [c1, d1]`, the horizontal one inside `[a0, b0] × [c0, d0]`) uses the square-root
+trick twice: a source hitting the infinite cluster connects to one of the four sides, so the
+preferred side among bottom/left has probability at least `1 - (1 - P(hit))^{1/4} - ε`. Together
+with the discrete preference lemma (`Sheffield.ApproximatePreference`) and the pair-merge bound,
+this gives a horizontal crossing of the first rectangle or a vertical crossing of the second
+with probability tending to one, provided the templates hit the infinite cluster with
+probability tending to one and the boundary scores near each side tend to one.
+`TwoLevelRectangleArray` collects primal and dual crossing limits on two levels of rectangles; it
+is contradictory (`TwoLevelRectangleArray.false`), by planar duality
+(`Sheffield.Synchronization`).
+
+Headline fidelity.
+- Results conditional on `IsFKG mu`, `P.IsTranslationInvariant mu` and almost-sure uniqueness of
+  the primal infinite cluster (satisfiable, for example by supercritical Bernoulli percolation,
+  so not vacuous): the `*_centered` and `*_uniform_tangentialPlacement` placements,
+  `exists_orbitBox_boundaryBandSeed`, `exists_orbitBox_normalBoundaryBandSeed`,
+  `exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one`,
+  `exists_uniformTemplate_mixedBoundaryScores_crossing_max_tendsto_one` and
+  `exists_uniformRadius_boundaryBandScores_crossing_max_tendsto_one`. The crossing results also
+  carry, inside the statement, the placement hypotheses and score lower bounds tending to one.
+- Results needing only translation invariance: `toCommonSquare`, `*_tangential`,
+  `*_translate_to_rect`, `exists_matched_commonSquareBoundaryBandData`.
+- `preference_mixed_max_add_epsilon_ge_fourthRoot` and
+  `exists_mixed_approxPreferredSide_crossing_branch` need only `IsFKG mu`; the remaining lemmas
+  are unconditional.
+- `PeriodicPlanarDualPair.TwoLevelRectangleArray.false` is a genuine no-go lemma: the structure
+  `TwoLevelRectangleArray` is empty for every dual pair, measure and bound `B`. It is used in
+  `Sheffield.ArrayClosure` to close the duality argument by contradiction.
+- Eight placement results carry `[Fintype ι] [DecidableEq ι]` binders that their statements do
+  not use (linters `unusedFintypeInType`, `unusedDecidableInType`); they are kept, since removing
+  them would change the statements.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandSeed` : normal boundary bands of
+  orbit boxes with scores `> P(orbit box hits ∞)² - δ`.
+- `PeriodicPlaneEmbedding.NormalBoundaryBandSeed.toCommonSquare` : the four bands in one common
+  square.
+- `PeriodicPlaneEmbedding.exists_uniformRadius_boundaryBandScores_crossing_max_tendsto_one` :
+  boundary-band scores tending to one force a box crossing with probability tending to one.
+- `PeriodicPlanarDualPair.TwoLevelRectangleArray.false` : the two-level primal/dual crossing
+  configuration is impossible.
+
+## iii. Table of contents
+
+- A. Centered and tangential boundary placements
+- B. Boundary-band seeds on preference grids
+- C. Normal boundary-band seeds
+- D. Alternating sequences and grid alignment
+- E. Preference on mixed rectangles and box crossings
+- F. Two-level rectangle arrays
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Centered and tangential boundary placements -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_centered
+/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
+half-plane `x ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
+tangential coordinate, with left-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -79,8 +145,8 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_ce
   refine ⟨radius, ?_⟩
   intro i
   let z := verticalShift (shift i 1)
-  have hz0 : (z 0 : Real) = 0 := by simp [z, verticalShift]
-  have hz1 : (z 1 : Real) = shift i 1 := by simp [z, verticalShift]
+  have hz0 : (z 0 : Real) = 0 := by simp [z]
+  have hz1 : (z 1 : Real) = shift i 1 := by simp [z]
   have horiginal :
       P.shift z '' (P.shift (normalized i) '' (S : Set V)) =
         P.shift (shift i) '' (S : Set V) := by
@@ -111,10 +177,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_ce
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialPlacement
+/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
+offsets in the half-plane `x ≥ r` and every choice of tangential translations, with left-side
+connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -169,8 +235,10 @@ theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialP
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_centered
+/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
+half-plane `x ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
+tangential coordinate, with right-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -238,8 +306,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_c
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_centered
+/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
+half-plane `y ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
+tangential coordinate, with bottom-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -307,8 +377,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_centered
+/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
+half-plane `y ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
+tangential coordinate, with top-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -376,8 +448,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_cen
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangentialPlacement
+/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
+offsets in the half-plane `x ≤ -r` and every choice of tangential translations, with right-side
+connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+lemma PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -426,8 +500,10 @@ theorem PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangential
     rw [← ht] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentialPlacement
+/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
+offsets in the half-plane `y ≥ r` and every choice of tangential translations, with bottom-side
+connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+lemma PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -477,8 +553,10 @@ theorem PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentia
     rw [← ht] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.exists_topBoundaryExhaustion_uniform_tangentialPlacement
+/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
+offsets in the half-plane `y ≤ -r` and every choice of tangential translations, with top-side
+connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+lemma PeriodicPlaneEmbedding.exists_topBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -528,8 +606,11 @@ theorem PeriodicPlaneEmbedding.exists_topBoundaryExhaustion_uniform_tangentialPl
     rw [← ht] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+/-! ## B. Boundary-band seeds on preference grids -/
 
-
+/-- Boundary bands for the four sides indexed by a `width × height` preference grid: base points and
+radii such that each grid translate of `S` near a side lies in a box touching the axis and is joined
+to that side of the box with probability `> p`. -/
 structure PeriodicPlaneEmbedding.BoundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -578,9 +659,9 @@ structure PeriodicPlaneEmbedding.BoundaryBandSeed
         (E.rectTopBoundaryVertices
           (-(radiusTop : Real)) radiusTop (-(radiusTop : Real)) 0))
 
-
-
-theorem PeriodicPlaneEmbedding.exists_orbitBox_boundaryBandSeed
+/-- FKG, translation invariance, a.s. uniqueness: the orbit box of radius `N` has boundary-band
+seeds for any grid size with score `P(orbit box hits ∞)² - δ`. -/
+lemma PeriodicPlaneEmbedding.exists_orbitBox_boundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -701,9 +782,9 @@ theorem PeriodicPlaneEmbedding.exists_orbitBox_boundaryBandSeed
     bottom := by simpa using hbottom
     top := by simpa using htop }⟩
 
-
-
-
+/-- Four translates `zLeft`, `zRight`, `zBottom`, `zTop` of `S` whose grid translates lie in the
+common square `[-M, M]²` and are joined to the corresponding side of the square with probability `>
+p`. -/
 structure PeriodicPlaneEmbedding.CommonSquareBoundaryBandData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -754,7 +835,9 @@ structure PeriodicPlaneEmbedding.CommonSquareBoundaryBandData
           (-(M : Real)) M (-(M : Real)) M))
 
 omit [Countable V] in
-theorem PeriodicGraph.componentGridImage_eq_normalShift
+/-- Translating a grid translate of `S` by an extra normal shift is the same as translating `S`
+first. -/
+lemma PeriodicGraph.componentGridImage_eq_normalShift
     (P : PeriodicGraph V) (S : Finset V)
     (base normal : Site 2) {width height : Nat}
     (v : PreferenceGridVertex width height) :
@@ -784,8 +867,8 @@ theorem PeriodicGraph.componentGridImage_eq_normalShift
     congr 2
     abel
 
-
-
+/-- Translation invariance moves a boundary-band seed with all radii at most `M` into the common
+square `[-M, M]²`. -/
 def PeriodicPlaneEmbedding.BoundaryBandSeed.toCommonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -836,9 +919,9 @@ def PeriodicPlaneEmbedding.BoundaryBandSeed.toCommonSquare
       (seed.top v).1 (seed.top v).2
     simpa only [zTop, P.componentGridImage_eq_normalShift] using hv
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.template_subset
+omit [Countable V] in
+/-- Every grid translate of the four-shift template lies in the common square. -/
+lemma PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.template_subset
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     {S : Finset V} {width height M : Nat} {p : Real}
@@ -859,9 +942,10 @@ theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.template_subset
   · exact (data.bottom v).1 (Finset.mem_image.mpr ⟨y, hy, rfl⟩)
   · exact (data.top v).1 (Finset.mem_image.mpr ⟨y, hy, rfl⟩)
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.leftScore_gt
+omit [Countable V] in
+/-- The left-side score of every grid translate of the four-shift template in the common square is
+`> p`. -/
+lemma PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.leftScore_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {S : Finset V} {width height M : Nat} {p : Real}
@@ -884,7 +968,10 @@ theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.leftScore_gt
     P.image_subset_fourShiftTemplate S data.zLeft data.zRight
       data.zBottom data.zTop hy, rfl⟩
 
-theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.rightScore_gt
+omit [Countable V] in
+/-- The right-side score of every grid translate of the four-shift template in the common square is
+`> p`. -/
+lemma PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.rightScore_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {S : Finset V} {width height M : Nat} {p : Real}
@@ -907,7 +994,10 @@ theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.rightScore_gt
     P.image_right_subset_fourShiftTemplate S data.zLeft data.zRight
       data.zBottom data.zTop hy, rfl⟩
 
-theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.bottomScore_gt
+omit [Countable V] in
+/-- The bottom-side score of every grid translate of the four-shift template in the common square is
+`> p`. -/
+lemma PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.bottomScore_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {S : Finset V} {width height M : Nat} {p : Real}
@@ -930,7 +1020,10 @@ theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.bottomScore_gt
     P.image_bottom_subset_fourShiftTemplate S data.zLeft data.zRight
       data.zBottom data.zTop hy, rfl⟩
 
-theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.topScore_gt
+omit [Countable V] in
+/-- The top-side score of every grid translate of the four-shift template in the common square is `>
+p`. -/
+lemma PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.topScore_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {S : Finset V} {width height M : Nat} {p : Real}
@@ -956,9 +1049,9 @@ theorem PeriodicPlaneEmbedding.CommonSquareBoundaryBandData.topScore_gt
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
-
-
-theorem exists_matched_commonSquareBoundaryBandData
+/-- A primal and a dual boundary-band seed fit in common squares of the same half-width `M`
+(translation invariance of both measures). -/
+lemma exists_matched_commonSquareBoundaryBandData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -989,9 +1082,11 @@ theorem exists_matched_commonSquareBoundaryBandData
       h.2.2.2.2.1 h.2.2.2.2.2.1
       h.2.2.2.2.2.2.1 h.2.2.2.2.2.2.2⟩⟩
 
+/-! ## C. Normal boundary-band seeds -/
 
-
-
+/-- Boundary bands for the four sides indexed by the distance `i ≤ margin` from the side: base
+points and radii such that the translate of `S` at distance `i` lies in a box touching the axis and
+is joined to that side of the box with probability `> p`. -/
 structure PeriodicPlaneEmbedding.NormalBoundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -1040,9 +1135,9 @@ structure PeriodicPlaneEmbedding.NormalBoundaryBandSeed
         (E.rectTopBoundaryVertices
           (-(radiusTop : Real)) radiusTop (-(radiusTop : Real)) 0))
 
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_tangential
+/-- Translation invariance: shifting the left band source by `tangent i` along the left side keeps
+it in the correspondingly shifted box and keeps its left-side score `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_tangential
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1091,8 +1186,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_tangential
     rw [← ht] at hp
     simpa only [base, add_assoc, add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_tangential
+/-- Translation invariance: shifting the right band source by `tangent i` along the right side keeps
+it in the correspondingly shifted box and keeps its right-side score `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_tangential
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1142,8 +1238,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_tangential
     rw [← ht] at hp
     simpa only [base, add_assoc, add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_tangential
+/-- Translation invariance: shifting the bottom band source by `tangent i` along the bottom side
+keeps it in the correspondingly shifted box and keeps its bottom-side score `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_tangential
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1186,8 +1283,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_tangential
     rw [← ht] at hp
     simpa only [base, add_assoc, add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_tangential
+/-- Translation invariance: shifting the top band source by `tangent i` along the top side keeps it
+in the correspondingly shifted box and keeps its top-side score `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_tangential
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1232,9 +1330,10 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_tangential
     rw [← ht] at hp
     simpa only [base, add_assoc, add_zero, sub_eq_add_neg, add_comm] using hp
 
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_translate_to_rect
+/-- Translation invariance and monotonicity: translating the left band source by `z` puts it in any
+rectangle whose left side passes through the translated base and whose other sides are at least the
+band radius away, with left-side score still `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_translate_to_rect
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1277,8 +1376,10 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.left_translate_to_rect
     exact hp'.trans_le (measureReal_mono
       (E.rectLeftConnectionEvent_mono_otherBounds _ hb hc hd))
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_translate_to_rect
+/-- Translation invariance and monotonicity: translating the right band source by `z` puts it in any
+rectangle whose right side passes through the translated base and whose other sides are at least the
+band radius away, with right-side score still `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_translate_to_rect
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1324,8 +1425,10 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.right_translate_to_rect
     exact hp'.trans_le (measureReal_mono
       (E.rectRightConnectionEvent_mono_otherBounds _ ha hc hd))
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_translate_to_rect
+/-- Translation invariance and monotonicity: translating the bottom band source by `z` puts it in
+any rectangle whose bottom side passes through the translated base and whose other sides are at
+least the band radius away, with bottom-side score still `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_translate_to_rect
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1369,8 +1472,10 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.bottom_translate_to_rect
     exact hp'.trans_le (measureReal_mono
       (E.rectBottomConnectionEvent_mono_otherBounds _ ha hb hd))
 
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_translate_to_rect
+/-- Translation invariance and monotonicity: translating the top band source by `z` puts it in any
+rectangle whose top side passes through the translated base and whose other sides are at least the
+band radius away, with top-side score still `> p`. -/
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_translate_to_rect
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1416,9 +1521,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_translate_to_rect
     exact hp'.trans_le (measureReal_mono
       (E.rectTopConnectionEvent_mono_otherBounds _ ha hb hc))
 
-
-
-theorem PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandSeed
+/-- FKG, translation invariance, a.s. uniqueness: the orbit box of radius `N` has normal
+boundary-band seeds for any margin with score `P(orbit box hits ∞)² - δ`. -/
+lemma PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1529,8 +1634,9 @@ theorem PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandSeed
     bottom := by simpa using hbottom
     top := by simpa using htop }⟩
 
-
-
+/-- Normal boundary bands of `S` for the four sides, all inside the common square `[-M, M]²`: the
+translate at distance `i ≤ margin` from a side is joined to that side of the square with probability
+`> p`. -/
 structure PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -1573,7 +1679,9 @@ structure PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData
           (-(M : Real)) M (-(M : Real)) M))
 
 omit [Countable V] in
-theorem PeriodicGraph.normalShift_image_add
+/-- Translating a band translate by a normal shift regroups the shifts: `normal + (base + band) =
+(base + normal) + band`. -/
+lemma PeriodicGraph.normalShift_image_add
     (P : PeriodicGraph V) (S : Set V)
     (base band normal : Site 2) :
     P.shift normal '' (P.shift (base + band) '' S) =
@@ -1585,7 +1693,8 @@ theorem PeriodicGraph.normalShift_image_add
   congr 2
   abel
 
-
+/-- Translation invariance moves a normal boundary-band seed with all radii at most `M` into the
+common square `[-M, M]²`. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandSeed.toCommonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -1638,9 +1747,11 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandSeed.toCommonSquare
       (seed.top i).1 (seed.top i).2
     simpa only [zTop, P.normalShift_image_add] using hi
 
+/-! ## D. Alternating sequences and grid alignment -/
 
-
-theorem exists_alternating_dominating_sequences (f g : Nat → Nat) :
+/-- For any `f g : ℕ → ℕ` there are sequences `x`, `y` tending to infinity with `f (x n) ≤ y n` and
+`g (y n) ≤ x (n + 1)`. -/
+lemma exists_alternating_dominating_sequences (f g : Nat → Nat) :
     ∃ x y : Nat → Nat,
       Tendsto x atTop atTop ∧ Tendsto y atTop atTop ∧
       (∀ n, f (x n) ≤ y n) ∧
@@ -1676,9 +1787,9 @@ theorem exists_alternating_dominating_sequences (f g : Nat → Nat) :
     exact hn.trans (hyLower n)
 
 omit [Countable V] in
-
-
-theorem normalBand_left_source_aligned
+/-- Site arithmetic: the left band source at offset `i`, translated to the grid base, is the grid
+site `(i, j)`. -/
+lemma normalBand_left_source_aligned
     (baseLeft gridBase : Site 2) (i j : Nat) :
     baseLeft + horizontalShift i +
         (gridBase - baseLeft + verticalShift j) =
@@ -1686,8 +1797,9 @@ theorem normalBand_left_source_aligned
   abel
 
 omit [Countable V] in
-
-theorem normalBand_right_source_aligned
+/-- Site arithmetic: the right band source at offset `i`, translated to the grid base, is the grid
+site `(width - i, j)`. -/
+lemma normalBand_right_source_aligned
     (baseRight gridBase : Site 2) (width i j : Nat) :
     baseRight + horizontalShift (-(i : Int)) +
         (gridBase - baseRight + horizontalShift width + verticalShift j) =
@@ -1696,8 +1808,9 @@ theorem normalBand_right_source_aligned
   fin_cases k <;> simp [horizontalShift, verticalShift] <;> omega
 
 omit [Countable V] in
-
-theorem normalBand_bottom_source_aligned
+/-- Site arithmetic: the bottom band source at offset `j`, translated to the grid base, is the grid
+site `(i, j)`. -/
+lemma normalBand_bottom_source_aligned
     (baseBottom gridBase : Site 2) (i j : Nat) :
     baseBottom + verticalShift j +
         (gridBase - baseBottom + horizontalShift i) =
@@ -1705,8 +1818,9 @@ theorem normalBand_bottom_source_aligned
   abel
 
 omit [Countable V] in
-
-theorem normalBand_top_source_aligned
+/-- Site arithmetic: the top band source at offset `j`, translated to the grid base, is the grid
+site `(i, height - j)`. -/
+lemma normalBand_top_source_aligned
     (baseTop gridBase : Site 2) (height i j : Nat) :
     baseTop + verticalShift (-(j : Int)) +
         (gridBase - baseTop + verticalShift height + horizontalShift i) =
@@ -1714,10 +1828,12 @@ theorem normalBand_top_source_aligned
   funext k
   fin_cases k <;> simp [horizontalShift, verticalShift] <;> omega
 
+/-! ## E. Preference on mixed rectangles and box crossings -/
 
-
-
-theorem PeriodicPlaneEmbedding.setHitsInfinite_subset_mixedRectSideConnection_union
+omit [Countable V] in
+/-- For nested mixed rectangles, a set inside both that hits the infinite cluster is joined to the
+bottom or top side of the tall rectangle or to the left or right side of the wide one. -/
+lemma PeriodicPlaneEmbedding.setHitsInfinite_subset_mixedRectSideConnection_union
     (E : PeriodicPlaneEmbedding P)
     (a0 b0 c0 d0 a1 b1 c1 d1 : Real) (S : Set V)
     (ha : a1 ≤ a0) (hb : b0 ≤ b1) (hc : c0 ≤ c1) (hd : d1 ≤ d0)
@@ -1746,8 +1862,10 @@ theorem PeriodicPlaneEmbedding.setHitsInfinite_subset_mixedRectSideConnection_un
       (E.rectRightConnectionEvent_mono_otherBounds S
         (le_refl a0) hc hd hright)))
 
-
-theorem PeriodicPlaneEmbedding.preference_mixed_max_add_epsilon_ge_fourthRoot
+/-- Square-root trick (FKG): if the top score is at most the bottom score plus `ε` and the right
+score at most the left score plus `ε`, then `max (bottom, left) + ε ≥ 1 - (1 - P(S hits ∞))^{1/4}`.
+-/
+lemma PeriodicPlaneEmbedding.preference_mixed_max_add_epsilon_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -1819,10 +1937,11 @@ theorem PeriodicPlaneEmbedding.preference_mixed_max_add_epsilon_ge_fourthRoot
   dsimp only [B, T, L, R] at hfour hsqrt hmax ⊢
   linarith
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_mixed_approxPreferredSide_crossing_branch
+/-- Preference on a mixed grid (FKG): from approximate boundary preferences there are King-adjacent
+grid sites where the preferred side has the fourth-root lower bound and the pair-merge estimate
+bounds a vertical crossing of the tall rectangle or a horizontal crossing of the wide one from
+below. -/
+lemma PeriodicPlaneEmbedding.exists_mixed_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -1918,9 +2037,11 @@ theorem PeriodicPlaneEmbedding.exists_mixed_approxPreferredSide_crossing_branch
 
 set_option linter.unusedVariables false in
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one
+/-- Crossing from a mixed preference grid (FKG, translation invariance, a.s. uniqueness, templates
+hitting the infinite cluster with probability tending to one): there are buffer radii such that, for
+placed grids with approximate boundary preferences of error `ε n → 0`, the larger of the horizontal
+crossing of the wide rectangle and the vertical crossing of the tall one tends to one. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2095,10 +2216,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossi
     · simpa [A, root, source, hv] using ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n ≤ 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, ite_eq_left hv]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, ite_eq_right hv]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :
@@ -2118,8 +2239,9 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossi
 
 set_option linter.unusedVariables false in
 
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_mixedBoundaryScores_crossing_max_tendsto_one
+/-- Version of `exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one` with boundary
+scores at least `p n → 1` on the four sides of the grid instead of approximate preferences. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2243,9 +2365,12 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_mixedBoundaryScores_crossi
 
 set_option linter.unusedVariables false in
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformRadius_boundaryBandScores_crossing_max_tendsto_one
+/-- Box crossing from boundary bands (FKG, translation invariance, a.s. uniqueness): there are
+buffer radii such that, for grids of translated orbit boxes in `[a, b] × [c, d]` whose interior
+sites have buffered connectors inside and whose sites within `margin` of a side are joined to that
+side with probability at least `p n → 1`, the larger crossing probability of the box tends to one.
+-/
+lemma PeriodicPlaneEmbedding.exists_uniformRadius_boundaryBandScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2392,9 +2517,12 @@ theorem PeriodicPlaneEmbedding.exists_uniformRadius_boundaryBandScores_crossing_
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
+/-! ## F. Two-level rectangle arrays -/
 
-
-
+/-- Two sequences of rectangles (levels 0 and 1) with primal vertical crossings of level 0 and
+horizontal crossings of level 1 of probability tending to one, an adjacent primal crossing limit,
+and dual crossing limits at both levels, all with edge excursion bound `B`. The configuration is
+contradictory (`TwoLevelRectangleArray.false`). -/
 structure PeriodicPlanarDualPair.TwoLevelRectangleArray
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) (B : Real) where
@@ -2445,9 +2573,11 @@ structure PeriodicPlanarDualPair.TwoLevelRectangleArray
       D.dualEmbedding.horizontalCrossingEvent
         (a1 n) (b1 n) (c1 n + 4 * B) (d1 n - 4 * B)))) atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.TwoLevelRectangleArray.false
+/-- No-go lemma: a two-level rectangle array cannot exist, since the primal and dual crossing limits
+contradict planar duality. See also
+`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false`, which allows paddings of at least
+`4 * B`. -/
+lemma PeriodicPlanarDualPair.TwoLevelRectangleArray.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (data : D.TwoLevelRectangleArray mu B) : False := by
@@ -2474,7 +2604,7 @@ theorem PeriodicPlanarDualPair.TwoLevelRectangleArray.false
       have := hk n
       dsimp only [K] at this
       omega
-    simpa only [a, b, c, d, hk0, if_pos, Nat.zero_add, one_ne_zero, reduceIte] using
+    simpa only [a, b, c, d, hk0, ite_eq_left, Nat.zero_add, one_ne_zero, reduceIte] using
       data.primalAdjacent
   · intro k
     let q0 : Nat → Real := fun n => max
@@ -2508,9 +2638,9 @@ theorem PeriodicPlanarDualPair.TwoLevelRectangleArray.false
     have hupper : ∀ n, q n ≤ 1 := by
       intro n
       by_cases hn : k n = 0
-      · simp only [q, hn, if_pos, q0]
+      · simp only [q, hn, ite_eq_left, q0]
         exact max_le measureReal_le_one measureReal_le_one
-      · simp only [q, hn, if_neg, q1]
+      · simp only [q, hn, q1]
         exact max_le measureReal_le_one measureReal_le_one
     have hq' := (hq0.min hq1).squeeze tendsto_const_nhds hlower
       (fun n => by simpa using hupper n)

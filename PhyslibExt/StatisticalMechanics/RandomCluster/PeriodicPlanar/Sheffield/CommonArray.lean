@@ -6,129 +6,180 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryGrid
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.GridAssembly
 
+/-!
+# Boundary preference grids in a common rectangle
+
+The preference grid spanned by four boundary placements, its alignment with the placements,
+and the crossing bound for labeled grids with margins.
+
+## i. Overview
+
+Given four base sites `baseLeft`, `baseRight`, `baseBottom`, `baseTop` (one per side of a common
+square) and horizontal and vertical extents, `boundaryGridBase` is the lower-left corner of a
+`boundaryGridWidth × boundaryGridHeight` grid of sites whose left column passes through the
+left placement, whose bottom row passes through the bottom placement, and whose right column
+and top row pass through the right and top placements translated by the extents. The shifts
+`boundaryGridLeftShift` and its three siblings move each placement onto its row or column of
+the grid; translation invariance then transports side-connection probabilities from a placement
+to every vertex of the corresponding boundary row or column, in rectangles enlarged by the
+shift.
+
+`exists_deep_common_preference_grid_witness` is the combinatorial core: on a grid whose
+Boolean labels `vertical` and `horizontal` are fixed within distance `margin` of the boundary,
+there is a vertex at distance more than `margin` from the boundary labeled bottom/left with
+king-move neighbors labeled top and right. Combined with the uniform connector bound of
+`RectangleLimit`, this gives the crossing bound for labeled grids where buffered connectors are
+required only at deep vertices.
+
+## ii. Key results
+
+- `boundaryGridBase`, `boundaryGridWidth`, `boundaryGridHeight` : the grid spanned by four
+  boundary placements.
+- `PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commonSquare` : the
+  translated grid lies in `[-M, M + extentX] × [-M, M + extentY]` when the four placements lie
+  in `[-M, M]²`.
+- `exists_deep_common_preference_grid_witness` : a deep bottom/left vertex with top and right
+  king-move neighbors. Unconditional (pure combinatorics, `0 < width`).
+- `PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_max_tendsto_one` :
+  the crossing bound for labeled grids with margins. Conditional on `mu` a probability measure
+  that is FKG (`hFKG`), translation invariant (`hTI`) and has an almost surely unique infinite
+  cluster (`hunique`), plus the labeling, preference and containment hypotheses in the
+  conclusion. Not vacuous. With `margin = 0` it implies
+  `exists_uniformRadius_gridPreference_crossing_max_tendsto_one` (`Sheffield.GridAssembly`).
+- `exists_commonPreferenceExtents_ge` : extents, at least given minima, for which the primal and
+  dual grids are both nondegenerate. Unconditional.
+
+## iii. Table of contents
+
+- A. Axis translations and the grid base
+- B. Grid size and alignment of the four placements
+- C. Transport of side connections to boundary rows and columns
+- D. Grid containment in a common rectangle
+- E. Crossing bound for labeled grids with margins
+- F. Common extents for primal and dual grids
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Axis translations and the grid base -/
 
+/-- The site `(t, 0)` of `ℤ²`: translation by `t` along the horizontal axis. Propositionally equal
+to `Pi.single 0 t`. -/
 def horizontalShift (t : Int) : Site 2 :=
   fun i => if i = 0 then t else 0
 
-@[simp] theorem horizontalShift_zero_apply (t : Int) :
+@[simp] lemma horizontalShift_zero_apply (t : Int) :
     horizontalShift t 0 = t := by
   simp [horizontalShift]
 
-@[simp] theorem horizontalShift_one_apply (t : Int) :
+@[simp] lemma horizontalShift_one_apply (t : Int) :
     horizontalShift t 1 = 0 := by
   simp [horizontalShift]
 
-
+/-- The lower-left corner of the boundary preference grid: the horizontal coordinate of the left
+placement and the vertical coordinate of the bottom placement. -/
 def boundaryGridBase (baseLeft baseBottom : Site 2) : Site 2 :=
   fun i => if i = 0 then baseLeft 0 else baseBottom 1
 
-@[simp] theorem boundaryGridBase_zero_apply
+@[simp] lemma boundaryGridBase_zero_apply
     (baseLeft baseBottom : Site 2) :
     boundaryGridBase baseLeft baseBottom 0 = baseLeft 0 := by
   simp [boundaryGridBase]
 
-@[simp] theorem boundaryGridBase_one_apply
+@[simp] lemma boundaryGridBase_one_apply
     (baseLeft baseBottom : Site 2) :
     boundaryGridBase baseLeft baseBottom 1 = baseBottom 1 := by
   simp [boundaryGridBase]
 
+/-! ## B. Grid size and alignment of the four placements -/
 
+/-- The vertical translation moving the left placement onto the bottom-left corner of the boundary
+grid. -/
 def boundaryGridLeftShift (baseLeft baseBottom : Site 2) : Site 2 :=
   verticalShift (baseBottom 1 - baseLeft 1)
 
-
+/-- The horizontal translation moving the bottom placement onto the bottom-left corner of the
+boundary grid. -/
 def boundaryGridBottomShift (baseLeft baseBottom : Site 2) : Site 2 :=
   horizontalShift (baseLeft 0 - baseBottom 0)
 
-
-
+/-- The translation moving the right placement, shifted right by `extent`, onto the bottom row of
+the boundary grid. -/
 def boundaryGridRightShift
     (extent : Int) (baseRight baseBottom : Site 2) : Site 2 :=
   horizontalShift extent + verticalShift (baseBottom 1 - baseRight 1)
 
-
-
+/-- The translation moving the top placement, shifted up by `extent`, onto the left column of the
+boundary grid. -/
 def boundaryGridTopShift
     (extent : Int) (baseLeft baseTop : Site 2) : Site 2 :=
   horizontalShift (baseLeft 0 - baseTop 0) + verticalShift extent
 
-@[simp] theorem boundaryGridLeftShift_zero_apply
+@[simp] lemma boundaryGridLeftShift_zero_apply
     (baseLeft baseBottom : Site 2) :
     boundaryGridLeftShift baseLeft baseBottom 0 = 0 := by
   simp [boundaryGridLeftShift]
 
-@[simp] theorem boundaryGridBottomShift_one_apply
+@[simp] lemma boundaryGridBottomShift_one_apply
     (baseLeft baseBottom : Site 2) :
     boundaryGridBottomShift baseLeft baseBottom 1 = 0 := by
   simp [boundaryGridBottomShift]
 
-@[simp] theorem boundaryGridRightShift_zero_apply
+@[simp] lemma boundaryGridRightShift_zero_apply
     (extent : Int) (baseRight baseBottom : Site 2) :
     boundaryGridRightShift extent baseRight baseBottom 0 = extent := by
   simp [boundaryGridRightShift]
 
-@[simp] theorem boundaryGridTopShift_one_apply
+@[simp] lemma boundaryGridTopShift_one_apply
     (extent : Int) (baseLeft baseTop : Site 2) :
     boundaryGridTopShift extent baseLeft baseTop 1 = extent := by
   simp [boundaryGridTopShift]
 
-
+/-- The width of the boundary grid: the horizontal distance from the left placement to the right
+placement shifted right by `extent`, truncated at `0`. -/
 def boundaryGridWidth
     (extent : Nat) (baseLeft baseRight : Site 2) : Nat :=
   (baseRight 0 + (extent : Int) - baseLeft 0).toNat
 
-
+/-- The height of the boundary grid: the vertical distance from the bottom placement to the top
+placement shifted up by `extent`, truncated at `0`. -/
 def boundaryGridHeight
     (extent : Nat) (baseBottom baseTop : Site 2) : Nat :=
   (baseTop 1 + (extent : Int) - baseBottom 1).toNat
 
-theorem boundaryGridWidth_pos
+lemma boundaryGridWidth_pos
     (extent : Nat) (baseLeft baseRight : Site 2)
     (hpos : 0 < baseRight 0 + (extent : Int) - baseLeft 0) :
     0 < boundaryGridWidth extent baseLeft baseRight := by
   simp only [boundaryGridWidth]
   omega
 
-theorem boundaryGridHeight_pos
+lemma boundaryGridHeight_pos
     (extent : Nat) (baseBottom baseTop : Site 2)
     (hpos : 0 < baseTop 1 + (extent : Int) - baseBottom 1) :
     0 < boundaryGridHeight extent baseBottom baseTop := by
   simp only [boundaryGridHeight]
   omega
 
-theorem boundaryGrid_left_aligned
+lemma boundaryGrid_left_aligned
     (baseLeft baseBottom : Site 2) :
     baseLeft + boundaryGridLeftShift baseLeft baseBottom =
       boundaryGridBase baseLeft baseBottom := by
@@ -136,7 +187,7 @@ theorem boundaryGrid_left_aligned
   fin_cases i <;>
     simp [boundaryGridLeftShift, boundaryGridBase, verticalShift]
 
-theorem boundaryGrid_bottom_aligned
+lemma boundaryGrid_bottom_aligned
     (baseLeft baseBottom : Site 2) :
     baseBottom + boundaryGridBottomShift baseLeft baseBottom =
       boundaryGridBase baseLeft baseBottom := by
@@ -144,7 +195,7 @@ theorem boundaryGrid_bottom_aligned
   fin_cases i <;>
     simp [boundaryGridBottomShift, boundaryGridBase, horizontalShift]
 
-theorem boundaryGrid_right_aligned
+lemma boundaryGrid_right_aligned
     (extent : Nat) (baseLeft baseRight baseBottom : Site 2)
     (hpos : 0 < baseRight 0 + (extent : Int) - baseLeft 0) :
     baseRight + boundaryGridRightShift extent baseRight baseBottom =
@@ -163,7 +214,7 @@ theorem boundaryGrid_right_aligned
   · simp [boundaryGridRightShift, boundaryGridWidth, boundaryGridBase,
       preferenceGridSite, horizontalShift, verticalShift]
 
-theorem boundaryGrid_top_aligned
+lemma boundaryGrid_top_aligned
     (extent : Nat) (baseLeft baseBottom baseTop : Site 2)
     (hpos : 0 < baseTop 1 + (extent : Int) - baseBottom 1) :
     baseTop + boundaryGridTopShift extent baseLeft baseTop =
@@ -182,9 +233,7 @@ theorem boundaryGrid_top_aligned
   · simp [boundaryGridTopShift, boundaryGridHeight, boundaryGridBase,
       preferenceGridSite, horizontalShift, verticalShift, htoNat]
 
-
-
-theorem boundaryGrid_bottom_row_aligned
+lemma boundaryGrid_bottom_row_aligned
     (width height : Nat) (baseLeft baseBottom : Site 2)
     (i : Fin (width + 1)) :
     baseBottom + boundaryGridBottomShift baseLeft baseBottom +
@@ -196,9 +245,7 @@ theorem boundaryGrid_bottom_row_aligned
     simp [boundaryGridBottomShift, boundaryGridBase, horizontalShift,
       preferenceGridSite]
 
-
-
-theorem boundaryGrid_left_column_aligned
+lemma boundaryGrid_left_column_aligned
     (width height : Nat) (baseLeft baseBottom : Site 2)
     (j : Fin (height + 1)) :
     baseLeft + boundaryGridLeftShift baseLeft baseBottom +
@@ -210,9 +257,7 @@ theorem boundaryGrid_left_column_aligned
     simp [boundaryGridLeftShift, boundaryGridBase, preferenceGridSite,
       verticalShift]
 
-
-
-theorem boundaryGrid_right_column_aligned
+lemma boundaryGrid_right_column_aligned
     (extent height : Nat) (baseLeft baseRight baseBottom : Site 2)
     (hpos : 0 < baseRight 0 + (extent : Int) - baseLeft 0)
     (j : Fin (height + 1)) :
@@ -229,9 +274,7 @@ theorem boundaryGrid_right_column_aligned
     simp [boundaryGridRightShift, boundaryGridWidth, boundaryGridBase,
       preferenceGridSite, horizontalShift, verticalShift, htoNat]
 
-
-
-theorem boundaryGrid_top_row_aligned
+lemma boundaryGrid_top_row_aligned
     (extent width : Nat) (baseLeft baseBottom baseTop : Site 2)
     (hpos : 0 < baseTop 1 + (extent : Int) - baseBottom 1)
     (i : Fin (width + 1)) :
@@ -248,10 +291,9 @@ theorem boundaryGrid_top_row_aligned
     simp [boundaryGridTopShift, boundaryGridHeight, boundaryGridBase,
       preferenceGridSite, horizontalShift, verticalShift, htoNat]
 
+/-! ## C. Transport of side connections to boundary rows and columns -/
 
-
-
-theorem PeriodicPlaneEmbedding.rectBottomConnection_boundaryGrid_measureReal_le
+lemma PeriodicPlaneEmbedding.rectBottomConnection_boundaryGrid_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -287,9 +329,7 @@ theorem PeriodicPlaneEmbedding.rectBottomConnection_boundaryGrid_measureReal_le
     mu hTI z hz a b c d a' b' d' (P.shift baseBottom '' S) ha hb hd
   simpa only [himage] using hle
 
-
-
-theorem PeriodicPlaneEmbedding.rectLeftConnection_boundaryGrid_measureReal_le
+lemma PeriodicPlaneEmbedding.rectLeftConnection_boundaryGrid_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -323,10 +363,7 @@ theorem PeriodicPlaneEmbedding.rectLeftConnection_boundaryGrid_measureReal_le
     mu hTI z hz a b c d b' c' d' (P.shift baseLeft '' S) hb hc hd
   simpa only [himage] using hle
 
-
-
-
-theorem PeriodicPlaneEmbedding.rectRightConnection_boundaryGrid_measureReal_le
+lemma PeriodicPlaneEmbedding.rectRightConnection_boundaryGrid_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -372,8 +409,7 @@ theorem PeriodicPlaneEmbedding.rectRightConnection_boundaryGrid_measureReal_le
         (Fin.last (boundaryGridWidth extent baseLeft baseRight), j)) '' S)
       ha hc hd)
 
-
-theorem PeriodicPlaneEmbedding.rectTopConnection_boundaryGrid_measureReal_le
+lemma PeriodicPlaneEmbedding.rectTopConnection_boundaryGrid_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -418,11 +454,10 @@ theorem PeriodicPlaneEmbedding.rectTopConnection_boundaryGrid_measureReal_le
         (i, Fin.last (boundaryGridHeight extent baseBottom baseTop))) '' S)
       ha hb hc)
 
+/-! ## D. Grid containment in a common rectangle -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_corners
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_corners
     (E : PeriodicPlaneEmbedding P)
     {width height : Nat} (base : Site 2) (S : Set V)
     (a b c d : Real)
@@ -465,10 +500,7 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_corne
   · linarith
   constructor <;> linarith
 
-
-
-
-
+omit [Countable V] in
 theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (M extentX extentY : Nat)
@@ -518,10 +550,12 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commo
     simpa [boundaryGridTopShift] using
       (show E.vertexCoord (P.shift baseTop u) 1 ≤ M from hcoord)
 
+/-! ## E. Crossing bound for labeled grids with margins -/
 
-
-
-
+/-- Deep preference-grid witness: on a grid of positive width whose labels `vertical` and
+`horizontal` are fixed within distance `margin` of the four sides, some vertex at distance more than
+`margin` from the boundary is labeled bottom and left and has one king-move neighbor labeled top and
+one labeled right. The margin-free form is `exists_common_preference_grid_witness`. -/
 theorem exists_deep_common_preference_grid_witness
     {width height margin : Nat} (hwidth : 0 < width)
     (vertical horizontal : PreferenceGridVertex width height → Bool)
@@ -596,11 +630,12 @@ theorem exists_deep_common_preference_grid_witness
   exact ⟨x, xVertical, xHorizontal, hxV, hxH, hxVadj, hxVfalse,
     hxHadj, hxHfalse, hxLeft, hxRight, hxBottom, hxTop⟩
 
-set_option linter.unusedVariables false in
-
-
-
-
+/-- Crossing bound for labeled grids with margins: under FKG, translation invariance and an almost
+surely unique infinite cluster, there is a connector radius such that any labeled grid whose labels
+are backed by side preferences, with buffered connectors inside the rectangle at deep vertices,
+forces the larger crossing probability to tend to `1` (Sheffield, *Random Surfaces*, Ch. 9). See
+also `exists_uniformRadius_gridPreference_crossing_max_tendsto_one`, the `margin = 0` case with
+containment required at every vertex, which this implies. -/
 theorem PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -608,7 +643,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ radius : Nat → Nat, ∀
       (width height margin : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n)
+      (_hwidth : ∀ n, 0 < width n)
       (base : Nat → Site 2)
       (vertical horizontal : (n : Nat) →
         PreferenceGridVertex (width n) (height n) → Bool)
@@ -683,7 +718,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_
     rw [hzH n]
     exact hHfalse n (xHorizontal n) (hxHfalse n)
 
-
+/-! ## F. Common extents for primal and dual grids -/
 
 theorem exists_commonPreferenceExtents_ge
     (baseLeft baseRight baseBottom baseTop : Site 2)
@@ -747,8 +782,9 @@ theorem exists_commonPreferenceExtents_ge
   exact ⟨extentX, extentY, hminimumX, hminimumY,
     by omega, by omega, by omega, by omega⟩
 
-
-theorem exists_commonPositivePreferenceExtents
+/-- Horizontal and vertical extents making the primal and the dual boundary grids nondegenerate. See
+also `exists_commonPreferenceExtents_ge`, which also bounds the extents below. -/
+lemma exists_commonPositivePreferenceExtents
     (baseLeft baseRight baseBottom baseTop : Site 2)
     (baseLeftDual baseRightDual baseBottomDual baseTopDual : Site 2) :
     ∃ extentX extentY : Nat,

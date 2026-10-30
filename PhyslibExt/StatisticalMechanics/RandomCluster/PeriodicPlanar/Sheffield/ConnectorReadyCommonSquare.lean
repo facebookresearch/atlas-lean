@@ -6,14 +6,55 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Exclusion
+
+/-!
+# Common squares with connectors at all four sides
+
+Squares `[-M, M]²` carrying four translated boxes, one near each side, each connected to its own
+side with probability tending to one, with room for a buffered connector around every box.
+
+## i. Overview
+
+`E.UniformConnectorCrossingRadius mu radius` is the uniform local-to-global crossing bound: for
+every placement of a buffered connector inside a rectangle, if the box at `x` prefers the bottom
+and the left side while one king-move neighbor prefers the top and another the right side, then
+`max (vertical crossing) (horizontal crossing) → 1`.
+
+`E.ConnectorReadyCommonSquareData mu radius` packages a sequence of squares `[-M n, M n]²` and
+four sites `baseLeft`, `baseRight`, `baseBottom`, `baseTop` such that the buffered connector of
+radius `radius n` around each site lies in the square and the box `P.orbitBox n` at each site is
+connected inside the square to the matching side with probability tending to `1`.
+
+Such data exist for every connector radius under FKG, translation invariance and almost sure
+uniqueness of the infinite cluster; they are obtained from the four-sided placements of
+`CommonRectangle` by shifting each site inward by `commonRect*Shift`. Given primal and dual
+data, the last result chooses horizontal and vertical extents so that the preference grids
+spanned by the four sites, on both lattices, fit in a common enlarged rectangle.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData` : connector-ready common squares
+  exist for every radius. Conditional on `mu` a probability measure that is FKG (`hFKG`),
+  translation invariant (`hTI`) and has an almost surely unique infinite cluster (`hunique`).
+- `PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare` : a radius for which
+  the uniform crossing bound holds together with connector-ready common squares. Same
+  hypotheses.
+- `exists_matchedPreferenceGrid_connectorContainment` : matched primal and dual preference grids
+  inside a common rectangle. Unconditional given the two data packages.
+
+## iii. Table of contents
+
+- A. Uniform crossing radius and connector-ready squares
+- B. Existence of connector-ready squares
+- C. Matched primal and dual preference grids
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
 
 @[expose] public section
 
@@ -21,14 +62,17 @@ open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Uniform crossing radius and connector-ready squares -/
 
-
-
+/-- Uniform local-to-global crossing bound at connector radius `radius`: whenever the buffered
+connector around `x n` lies in the rectangle, the box at `x n` prefers bottom and left, and two
+king-move neighbors of `x n` prefer top and right respectively, the larger of the vertical and
+horizontal crossing probabilities of the rectangle tends to `1`. -/
 def PeriodicPlaneEmbedding.UniformConnectorCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) (radius : Nat -> Nat) : Prop :=
@@ -75,8 +119,9 @@ def PeriodicPlaneEmbedding.UniformConnectorCrossingRadius
       (mu.real (E.horizontalCrossingEvent (a n) (b n) (c n) (d n))))
       atTop (nhds 1)
 
-
-
+/-- A sequence of squares `[-M n, M n]²` with four sites, one for each side, such that the buffered
+connector of radius `radius n` around each site lies in the square and the box `P.orbitBox n` at
+each site is connected inside the square to its own side with probability tending to `1`. -/
 structure PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) (radius : Nat -> Nat) where
@@ -130,9 +175,10 @@ structure PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData
       (E.rectTopBoundaryVertices (-(M n : Real)) (M n : Real)
         (-(M n : Real)) (M n : Real)))) atTop (nhds 1)
 
+/-! ## B. Existence of connector-ready squares -/
 
-
-
+/-- Connector-ready common squares exist for every connector radius, for an FKG, translation
+invariant probability measure with an almost surely unique infinite cluster. -/
 theorem PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -213,8 +259,9 @@ theorem PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
   · simpa only [zBottom, ← hshiftSet] using hbottomLimit
   · simpa only [zTop, ← hshiftSet] using htopLimit
 
-
-
+/-- There is a connector radius for which the uniform crossing bound holds and connector-ready
+common squares exist, for an FKG, translation invariant probability measure with an almost surely
+unique infinite cluster. -/
 theorem PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -230,12 +277,16 @@ theorem PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare
     E.exists_connectorReadyCommonSquareData
       mu hFKG hTI hunique radius⟩
 
+/-! ## C. Matched primal and dual preference grids -/
+
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
-
-
-
+omit [Countable V] [Countable W] in
+/-- Given connector-ready common squares for a primal and a dual lattice, there are horizontal and
+vertical extents for which the boundary preference grids of both lattices are nondegenerate and all
+their buffered connectors fit in the common rectangle `[-M, M + extentX] × [-M, M + extentY]`, `M`
+the larger of the two square sizes. -/
 theorem exists_matchedPreferenceGrid_connectorContainment
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)

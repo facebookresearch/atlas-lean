@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonArray
@@ -20,27 +15,78 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalErgodicity
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFKG
 
+/-!
+# Crossings of large rectangles from boundary-connected templates
+
+Under FKG, translation invariance and uniqueness of the infinite cluster, rectangles of
+arbitrary aspect ratio are crossed (horizontally or vertically) with probability tending to `1`;
+the inputs and the zero-one law used in Sheffield's exclusion argument.
+
+## i. Overview
+
+A four-shift template is the union of four translates of an orbit box, placed next to the four
+sides of a square. A preference-grid argument over translates of the template inside a
+`width × height` rectangle (`exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one`,
+conditional on side-connection limits) shows that the larger of the vertical and horizontal
+crossing probabilities tends to `1`. The side-connection limits are supplied by templates
+adjacent to a common square (`…_of_connector`, `…_of_coordinateBounds`), and
+`exists_commonSquare_fourShift_crossing_max_tendsto_one_of_coordinateBounds` packages the whole
+construction. Caveat: that statement chooses the square sizes `M` and buffer radii together and
+then assumes the coordinate bound `orbitBoxCoordinateBound (bufferedRadius (radius n)) ≤ M n`;
+nothing guarantees the bound for the chosen data, so the conclusion is only usable where the
+bound is checked separately.
+
+The file also proves FKG for decreasing events, that the dual measure of an FKG measure is
+FKG, and the zero-one law for the event that both the primal and the dual model have a unique
+infinite cluster under the free buffered infinite-volume FK measure (unconditional, by
+ergodicity).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one` :
+  conditional on template placement and side-connection limits.
+- `exists_commonSquare_fourShift_crossing_max_tendsto_one_of_coordinateBounds` : under FKG,
+  translation invariance and uniqueness; see the caveat above.
+- `PeriodicPlanarDualPair.dualMeasure_isFKG`.
+- `PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_zero_or_one`.
+
+## iii. Table of contents
+
+- A. Four-shift templates
+- B. Templates in rectangles
+- C. FKG and the dual measure
+- D. Crossings of large rectangles
+- E. Zero-one law for coexistence of unique clusters
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V W : Type*} [Countable V] [Countable W]
   [DecidableEq V] [DecidableEq W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Four-shift templates -/
 
-
+/-- The union of the translates of `S` by `zLeft`, `zRight`, `zBottom` and `zTop`. -/
 def PeriodicGraph.fourShiftTemplate (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2) : Finset V :=
   (S.image (P.shift zLeft) ∪ S.image (P.shift zRight)) ∪
     (S.image (P.shift zBottom) ∪ S.image (P.shift zTop))
 
 omit [Countable V] in
-theorem PeriodicGraph.image_subset_fourShiftTemplate
+lemma PeriodicGraph.image_subset_fourShiftTemplate
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2) :
     S.image (P.shift zLeft) ⊆
@@ -50,7 +96,7 @@ theorem PeriodicGraph.image_subset_fourShiftTemplate
   exact Or.inl (Or.inl hx)
 
 omit [Countable V] in
-theorem PeriodicGraph.image_right_subset_fourShiftTemplate
+lemma PeriodicGraph.image_right_subset_fourShiftTemplate
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2) :
     S.image (P.shift zRight) ⊆
@@ -60,7 +106,7 @@ theorem PeriodicGraph.image_right_subset_fourShiftTemplate
   exact Or.inl (Or.inr hx)
 
 omit [Countable V] in
-theorem PeriodicGraph.image_bottom_subset_fourShiftTemplate
+lemma PeriodicGraph.image_bottom_subset_fourShiftTemplate
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2) :
     S.image (P.shift zBottom) ⊆
@@ -70,7 +116,7 @@ theorem PeriodicGraph.image_bottom_subset_fourShiftTemplate
   exact Or.inr (Or.inl hx)
 
 omit [Countable V] in
-theorem PeriodicGraph.image_top_subset_fourShiftTemplate
+lemma PeriodicGraph.image_top_subset_fourShiftTemplate
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2) :
     S.image (P.shift zTop) ⊆
@@ -79,10 +125,10 @@ theorem PeriodicGraph.image_top_subset_fourShiftTemplate
   simp only [PeriodicGraph.fourShiftTemplate, Finset.mem_union]
   exact Or.inr (Or.inr hx)
 
+/-! ## B. Templates in rectangles -/
+
 omit [Countable V] in
-
-
-theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_mono_source
+lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_mono_source
     (E : PeriodicPlaneEmbedding P) {a b c d : Real}
     {S T side : Set V} (hST : S ⊆ T) :
     E.rectSideConnectionEvent a b c d S side ⊆
@@ -90,12 +136,8 @@ theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_mono_source
   rintro omega ⟨x, hxS, hxInfinite, y, hySide, hxy⟩
   exact ⟨x, hST hxS, hxInfinite, y, hySide, hxy⟩
 
-
-
-
-
-
-theorem PeriodicPlaneEmbedding.fourShiftTemplate_preferenceGrid_subset_rect
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.fourShiftTemplate_preferenceGrid_subset_rect
     (E : PeriodicPlaneEmbedding P) (M width height : Nat) (S : Finset V)
     (zLeft zRight zBottom zTop : Site 2)
     (hleft : (S.image (P.shift zLeft) : Set V) ⊆ E.rectVertices
@@ -144,10 +186,8 @@ theorem PeriodicPlaneEmbedding.fourShiftTemplate_preferenceGrid_subset_rect
   · linarith
   constructor <;> linarith
 
-
-
-
-theorem PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_rect_of_coordinateBound
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_rect_of_coordinateBound
     (E : PeriodicPlaneEmbedding P) (R M width height : Nat)
     (hx : E.orbitBoxCoordinateBound R (0 : Fin 2) ≤ M)
     (hy : E.orbitBoxCoordinateBound R (1 : Fin 2) ≤ M) :
@@ -183,9 +223,7 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_rect_of_coordinate
   · linarith
   constructor <;> linarith
 
-
-
-theorem PeriodicPlaneEmbedding.rectBottomConnection_fourShiftTemplate_le
+lemma PeriodicPlaneEmbedding.rectBottomConnection_fourShiftTemplate_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -227,8 +265,7 @@ theorem PeriodicPlaneEmbedding.rectBottomConnection_fourShiftTemplate_le
     ⟨y, P.image_bottom_subset_fourShiftTemplate S
       zLeft zRight zBottom zTop hy, rfl⟩
 
-
-theorem PeriodicPlaneEmbedding.rectLeftConnection_fourShiftTemplate_le
+lemma PeriodicPlaneEmbedding.rectLeftConnection_fourShiftTemplate_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -270,9 +307,7 @@ theorem PeriodicPlaneEmbedding.rectLeftConnection_fourShiftTemplate_le
     ⟨y, P.image_subset_fourShiftTemplate S
       zLeft zRight zBottom zTop hy, rfl⟩
 
-
-
-theorem PeriodicPlaneEmbedding.rectRightConnection_fourShiftTemplate_le
+lemma PeriodicPlaneEmbedding.rectRightConnection_fourShiftTemplate_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -332,9 +367,7 @@ theorem PeriodicPlaneEmbedding.rectRightConnection_fourShiftTemplate_le
         ⟨y, P.image_right_subset_fourShiftTemplate S
           zLeft zRight zBottom zTop hy, rfl⟩
 
-
-
-theorem PeriodicPlaneEmbedding.rectTopConnection_fourShiftTemplate_le
+lemma PeriodicPlaneEmbedding.rectTopConnection_fourShiftTemplate_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -394,9 +427,9 @@ theorem PeriodicPlaneEmbedding.rectTopConnection_fourShiftTemplate_le
         ⟨y, P.image_top_subset_fourShiftTemplate S
           zLeft zRight zBottom zTop hy, rfl⟩
 
-
-
-theorem PeriodicGraph.fourShiftTemplate_hitsInfinite_tendsto_one
+/-- Four-shift templates of growing orbit boxes meet the infinite cluster with probability tending
+to `1` when an infinite cluster exists almost surely. -/
+lemma PeriodicGraph.fourShiftTemplate_hitsInfinite_tendsto_one
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -427,11 +460,12 @@ theorem PeriodicGraph.fourShiftTemplate_hitsInfinite_tendsto_one
         (zLeft n) (zRight n) (zBottom n) (zTop n) hx, hinfinite⟩)
   · exact fun _ => measureReal_le_one
 
+/-! ## C. FKG and the dual measure -/
+
 omit [Countable V] in
 omit [Countable V] [DecidableEq V] in
-
-
-theorem isFKG_decreasing
+/-- FKG inequality for two decreasing events. -/
+lemma isFKG_decreasing
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
     (hA : IsDecreasing A) (hB : IsDecreasing B)
@@ -450,8 +484,8 @@ theorem isFKG_decreasing
   nlinarith
 
 omit [Countable V] [Countable W] [DecidableEq V] [DecidableEq W] in
-
-theorem dualConfigEquiv_antitone (edgeDual : Sym2 V ≃ Sym2 W) :
+/-- The dual configuration map is order-reversing. -/
+lemma dualConfigEquiv_antitone (edgeDual : Sym2 V ≃ Sym2 W) :
     Antitone (dualConfigEquiv edgeDual) := by
   intro omega omega' homega f
   have hf := homega (edgeDual.symm f)
@@ -460,9 +494,8 @@ theorem dualConfigEquiv_antitone (edgeDual : Sym2 V ≃ Sym2 W) :
     cases hb : omega' (edgeDual.symm f) <;>
       simp_all [Bool.le_iff_imp]
 
-
-
-theorem PeriodicPlanarDualPair.dualMeasure_isFKG
+/-- The dual measure of an FKG measure is FKG. -/
+lemma PeriodicPlanarDualPair.dualMeasure_isFKG
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) : IsFKG (D.dualMeasure mu) := by
@@ -479,8 +512,7 @@ theorem PeriodicPlanarDualPair.dualMeasure_isFKG
   · exact hAm.preimage (continuous_dualConfigEquiv D.edgeDual).measurable
   · exact hBm.preimage (continuous_dualConfigEquiv D.edgeDual).measurable
 
-
-theorem PeriodicPlanarDualPair.primalUnique_measure_eq_one_of_common
+lemma PeriodicPlanarDualPair.primalUnique_measure_eq_one_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hcommon : mu D.commonUniqueInfiniteClusterEvent = 1) :
@@ -489,9 +521,7 @@ theorem PeriodicPlanarDualPair.primalUnique_measure_eq_one_of_common
   rw [← hcommon]
   exact measure_mono fun _ h => h.1
 
-
-
-theorem PeriodicPlanarDualPair.dualUnique_measure_eq_one_of_common
+lemma PeriodicPlanarDualPair.dualUnique_measure_eq_one_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hcommon : mu D.commonUniqueInfiniteClusterEvent = 1) :
@@ -507,10 +537,9 @@ theorem PeriodicPlanarDualPair.dualUnique_measure_eq_one_of_common
     Pdual.measurableSet_hasUniqueInfiniteCluster]
   exact hpre
 
-
-
-
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_sheffieldData_of_common
+/-- If primal and dual unique infinite clusters coexist almost surely under the free buffered
+infinite-volume FK measure, all hypotheses of the crossing arguments hold for it and its dual. -/
+lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_sheffieldData_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (hcommon : let mu : Measure (ConfigSpace (Sym2 V)) :=
@@ -536,10 +565,11 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_sheffieldData_of_commo
 
 set_option linter.unusedVariables false in
 
+/-! ## D. Crossings of large rectangles -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one
+/-- If translates of a template inside the rectangles connect to the four sides with probabilities
+tending to `1`, the larger of the two crossing probabilities tends to `1`. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -550,7 +580,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_ma
         atTop (nhds 1)) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n)
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n)
       (base : Nat → Site 2)
       (a b c d : Nat → Real)
       (bottom top left right : (n : Nat) →
@@ -660,12 +690,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_ma
       (le_max_right _ _).trans (le_max_right _ _)
     linarith [hright n j]
 
-
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_connector
+lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -713,7 +738,7 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one
           (-(M n : Real)) (M n : Real)))) atTop (nhds 1)) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n),
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n),
       (∀ n (v : PreferenceGridVertex (width n) (height n)),
         (P.shift (preferenceGridSite v) ''
           (P.orbitBox (P.bufferedRadius (radius n)) : Set V)) ⊆
@@ -854,10 +879,7 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one
   · simpa only [pLeft] using hleftLimit
   · simpa only [pRight] using hrightLimit
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_coordinateBounds
+lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_coordinateBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -905,7 +927,7 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one
           (-(M n : Real)) (M n : Real)))) atTop (nhds 1)) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n),
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n),
       (∀ n, E.orbitBoxCoordinateBound
         (P.bufferedRadius (radius n)) (0 : Fin 2) ≤ M n) →
       (∀ n, E.orbitBoxCoordinateBound
@@ -931,20 +953,21 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one
     (P.bufferedRadius (radius n)) (M n) (width n) (height n)
       (hx n) (hy n) v
 
+namespace PeriodicPlaneEmbedding
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_commonSquare_fourShift_crossing_max_tendsto_one_of_coordinateBounds
+/-- Square sizes `M`, template shifts and buffer radii such that, for every choice of widths and
+heights, if the buffered orbit boxes fit in the squares then the larger crossing probability of the
+`(M + width) × (M + height)` rectangles tends to `1`. The fitting hypothesis is not guaranteed for
+the chosen `M` and radii. -/
+lemma exists_commonSquare_fourShift_crossing_max_tendsto_one_of_coordinateBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
-    ∃ (M : Nat → Nat) (zLeft zRight zBottom zTop : Nat → Site 2)
+    ∃ (M : Nat → Nat) (_zLeft _zRight _zBottom _zTop : Nat → Site 2)
       (radius : Nat → Nat), ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n),
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n),
       (∀ n, E.orbitBoxCoordinateBound
         (P.bufferedRadius (radius n)) (0 : Fin 2) ≤ M n) →
       (∀ n, E.orbitBoxCoordinateBound
@@ -1047,8 +1070,12 @@ theorem PeriodicPlaneEmbedding.exists_commonSquare_fourShift_crossing_max_tendst
           hbottomLimit' htopLimit'
   exact ⟨M, zLeft, zRight, zBottom, zTop, radius, hcross⟩
 
+end PeriodicPlaneEmbedding
 
+/-! ## E. Zero-one law for coexistence of unique clusters -/
 
+/-- Zero-one law: under the free buffered infinite-volume FK measure, coexistence of unique primal
+and dual infinite clusters has probability `0` or `1`. -/
 theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_zero_or_one
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -1064,9 +1091,7 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_z
     D.commonUniqueInfiniteClusterEvent_measurableSet
     D.commonUniqueInfiniteClusterEvent_translate_preimage
 
-
-
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_eq_zero_iff_ne_one
+lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_eq_zero_iff_ne_one
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     let mu : Measure (ConfigSpace (Sym2 V)) :=

@@ -6,12 +6,77 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PairedRecurrence
+
+/-!
+# Crossing limits for normal and rotated preference grids
+
+Sequences of matched primal and dual preference grids, in the normal orientation and rotated by
+the axis swap, along which crossing probabilities tend to one, and the extraction of a common
+subsequence on which one primal and one dual crossing direction both have probability tending to
+one.
+
+## i. Overview
+
+Running the preference argument (`Sheffield.BoundaryGrid`, `Sheffield.PairedRecurrence`) on the
+primal and dual band families, and again on their axis-swapped versions, gives, at each stage
+`n`, grids of exact extents whose box crossings have probability tending to one in the form
+`max (horizontal crossing) (vertical crossing) → 1`. Connector slack
+(`PairedAlignedConnectorSlack`) makes sure the buffered connectors around grid sites fit in the
+margins; it is monotone in the connector radius and can be achieved simultaneously for the
+normal and the rotated schedule. Rotating back by the axis swap turns a rotated horizontal
+crossing into a normal vertical crossing.
+
+`NormalRotatedInsetLimitData` packages, for a fixed padding, the normal and rotated grids whose
+spans are matched (the normal wide span equals the rotated height plus twice the padding, the
+rotated wide span equals the normal height), together with the four crossing limits (primal and
+dual, normal and rotated). `NormalTwoRotatedEndpointLimitData` is the variant with one normal and
+two rotated grids. From `max (H0, V1) → 1` and `max (V0, H1) → 1`, the elementary lemma
+`tendsto_two_max_one_fixedBranches_subsequence` extracts a subsequence along which one fixed term
+of each maximum tends to one.
+
+Headline fidelity.
+- Sections A–C are unconditional (`axisSwap_crossingMax_tendsto_one` needs a probability
+  measure only).
+- `PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit` is
+  conditional on `IsFKG`, translation invariance and almost-sure uniqueness for the dual measure
+  `muDual`, plus band scores tending to one.
+- The structure lemmas of sections E and F are unconditional consequences of the structure
+  fields.
+- `nonempty_normalRotatedInsetLimitData_of_unique` and
+  `nonempty_normalTwoRotatedEndpointLimitData_of_unique` assume `IsFKG`, translation invariance
+  and almost-sure uniqueness of the infinite cluster for both `mu` and `muDual`. As stated,
+  `muDual` is an arbitrary measure on the dual graph, so the hypotheses are satisfiable and the
+  results are not vacuous; with `muDual = D.dualMeasure mu` they are the coexistence of primal and
+  dual unique infinite clusters that Sheffield's theorem rules out, and these results are
+  reductio steps of that proof. No module currently uses them.
+
+## ii. Key results
+
+- `exists_pairedAlignedNormalRotatedConnectorSlack` : connector slack for the normal and rotated
+  schedules at a common stage.
+- `PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit` : dual
+  crossing limit along exact-extent grids.
+- `NormalRotatedInsetLimitData.exists_primalDualFixedBranchesSubsequence` : a subsequence with one
+  primal and one dual crossing direction of probability tending to one.
+- `nonempty_normalRotatedInsetLimitData_of_unique`,
+  `nonempty_normalTwoRotatedEndpointLimitData_of_unique` : the limit data exist (reductio steps).
+
+## iii. Table of contents
+
+- A. Margin indices
+- B. Crossings under the axis swap
+- C. A subsequence lemma
+- D. A dual crossing limit with uniform radius
+- E. Normal and rotated inset limit data
+- F. Normal and two rotated endpoint limit data
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
 
 @[expose] public section
 
@@ -19,11 +84,11 @@ open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
+/-! ## A. Margin indices -/
 
-
-
-
-theorem exists_currentSuccessorMarginIndex
+/-- For two margin sequences tending to infinity and finitely many integer requirements, some stage
+`k` has `horizontal k`, `horizontal (k + 1)` and `vertical k` above all requirements. -/
+lemma exists_currentSuccessorMarginIndex
     (horizontal vertical : Nat -> Nat)
     (hhorizontal : Tendsto horizontal atTop atTop)
     (hvertical : Tendsto vertical atTop atTop)
@@ -79,37 +144,12 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
-omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.orbitBoxCoordinateBound_mono
-    (E : PeriodicPlaneEmbedding P) {n m : Nat} (hnm : n <= m)
-    (i : Fin 2) :
-    E.orbitBoxCoordinateBound n i <= E.orbitBoxCoordinateBound m i := by
-  classical
-  unfold PeriodicPlaneEmbedding.orbitBoxCoordinateBound
-  exact Finset.sup'_mono (fun v => |E.vertexCoord v i|)
-    (fun _ hv => P.orbitBox_mono hnm hv)
-    ⟨P.root, P.orbitBox_mono (Nat.zero_le n)
-      P.root_mem_orbitBox_zero⟩
+/-! ## B. Crossings under the axis swap -/
 
 omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.connectorMarginRequirement_mono
-    (E : PeriodicPlaneEmbedding P) {radius radius' : Nat}
-    (h : radius <= radius') :
-    E.connectorMarginRequirement radius <=
-      E.connectorMarginRequirement radius' := by
-  unfold PeriodicPlaneEmbedding.connectorMarginRequirement
-  apply Nat.ceil_mono
-  apply max_le_max
-  · apply E.orbitBoxCoordinateBound_mono
-    exact P.bufferedRadius_strictMono.monotone h
-  · apply E.orbitBoxCoordinateBound_mono
-    exact P.bufferedRadius_strictMono.monotone h
-
-
-
-theorem PeriodicPlaneEmbedding.axisSwap_horizontalCrossingEvent_subset_verticalCrossingEvent
+/-- A horizontal crossing of `[a, b] × [c, d]` for the axis-swapped embedding is a vertical crossing
+of `[c, d] × [a, b]` for the original embedding. -/
+lemma PeriodicPlaneEmbedding.axisSwap_horizontalCrossingEvent_subset_verticalCrossingEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) :
     E.axisSwap.horizontalCrossingEvent a b c d ⊆
       E.verticalCrossingEvent c d a b := by
@@ -155,9 +195,10 @@ theorem PeriodicPlaneEmbedding.axisSwap_horizontalCrossingEvent_subset_verticalC
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
-
-
-theorem PeriodicPlaneEmbedding.axisSwap_crossingMax_tendsto_one
+omit [Countable V] in
+/-- Crossing limits for the axis-swapped embedding transfer to the original embedding, with
+horizontal and vertical crossings exchanged. -/
+lemma PeriodicPlaneEmbedding.axisSwap_crossingMax_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (aH bH cH dH aV bV cV dV : Nat -> Real)
@@ -183,54 +224,11 @@ theorem PeriodicPlaneEmbedding.axisSwap_crossingMax_tendsto_one
   · intro n
     exact max_le measureReal_le_one measureReal_le_one
 
-omit [Countable V] [Countable W] in
+/-! ## C. A subsequence lemma -/
 
-
-theorem PairedAlignedConnectorSlack.of_le
-    (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
-    {mu : Measure (ConfigSpace (Sym2 V))}
-    {muDual : Measure (ConfigSpace (Sym2 W))}
-    {S : Finset V} {Sdual : Finset W} {p pDual : Real}
-    {family : E.NormalBoundaryBandFamily mu S p}
-    {familyDual : Edual.NormalBoundaryBandFamily muDual Sdual pDual}
-    {verticalRequirement horizontalRequirement : Nat -> Nat}
-    {schedule : PairedAlignedMarginSchedule E Edual family familyDual
-      verticalRequirement horizontalRequirement}
-    {radius radius' k : Nat} (h : radius <= radius')
-    (slack : PairedAlignedConnectorSlack E Edual family familyDual
-      schedule radius' k) :
-    PairedAlignedConnectorSlack E Edual family familyDual
-      schedule radius k := by
-  have hprimal := E.connectorMarginRequirement_mono h
-  have hdual := Edual.connectorMarginRequirement_mono h
-  have hprimalInt : (E.connectorMarginRequirement radius : Int) <=
-      E.connectorMarginRequirement radius' := by
-    exact_mod_cast hprimal
-  have hdualInt : (Edual.connectorMarginRequirement radius : Int) <=
-      Edual.connectorMarginRequirement radius' := by
-    exact_mod_cast hdual
-  exact {
-    primalLeft := hprimalInt.trans slack.primalLeft
-    primalRight := by
-      have := slack.primalRight
-      omega
-    primalBottom := hprimalInt.trans slack.primalBottom
-    primalTop := by
-      have := slack.primalTop
-      omega
-    dualLeft := hdualInt.trans slack.dualLeft
-    dualRight := by
-      have := slack.dualRight
-      omega
-    dualBottom := hdualInt.trans slack.dualBottom
-    dualTop := by
-      have := slack.dualTop
-      omega }
-
-
-
-
-theorem tendsto_two_max_one_fixedBranches_subsequence
+/-- If `max (H0 n) (V1 n) → 1` and `max (V0 n) (H1 n) → 1`, then along some strictly increasing
+subsequence one fixed term of each maximum tends to one. -/
+lemma tendsto_two_max_one_fixedBranches_subsequence
     (H0 V1 V0 H1 : Nat -> Real)
     (hnormal : Tendsto (fun n => max (H0 n) (V1 n))
       atTop (nhds 1))
@@ -283,9 +281,10 @@ theorem tendsto_two_max_one_fixedBranches_subsequence
       · exact hV1.comp hpsi.tendsto_atTop
       · simpa only [Function.comp_apply] using hH1
 
-
-
-theorem exists_pairedAlignedNormalRotatedConnectorSlack
+omit [Countable V] [Countable W] in
+/-- Some stage of the schedule gives connector slack for radius `radius` in the normal orientation
+and for `radiusRotated` in the rotated orientation. -/
+lemma exists_pairedAlignedNormalRotatedConnectorSlack
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -391,10 +390,14 @@ theorem exists_pairedAlignedNormalRotatedConnectorSlack
       Edual.axisSwap.connectorMarginRequirement radiusRotated <= 0
     omega
 
+/-! ## D. A dual crossing limit with uniform radius -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit
+omit [Countable V] in
+/-- If the dual measure is FKG, translation invariant and has a.s. a unique infinite cluster, and
+the dual band scores tend to one, there are connector radii such that along any exact-extent paired
+grids with connector slack, the larger of a horizontal and a vertical dual crossing probability
+tends to one. -/
+lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -500,8 +503,11 @@ theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_du
       (data n).raw.tallTop_eq] using
       le_of_lt ((data n).raw.data.dual_right j)
 
+/-! ## E. Normal and rotated inset limit data -/
 
-
+/-- Matched normal and rotated paired grids at every stage, with the normal wide span equal to the
+rotated height plus `2 * padding` and the rotated wide span equal to the normal height, together
+with the four crossing limits (primal and dual, normal and rotated) tending to one. -/
 structure NormalRotatedInsetLimitData
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -567,9 +573,10 @@ structure NormalRotatedInsetLimitData
       (rotatedLevel n).raw.data.wideRight 0 (level n).rotatedY)))
     atTop (nhds 1)
 
-
-
-theorem NormalRotatedInsetLimitData.normalWideInset_eq_rotatedY
+omit [Countable V] [Countable W] in
+/-- The normal wide interval, inset by `padding` on both sides, has length the rotated height
+(integer form). -/
+lemma NormalRotatedInsetLimitData.normalWideInset_eq_rotatedY
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -581,8 +588,10 @@ theorem NormalRotatedInsetLimitData.normalWideInset_eq_rotatedY
   have hspan := (data.level n).normalSpan_eq
   omega
 
-
-theorem NormalRotatedInsetLimitData.normalWideInset_real_eq_rotatedY
+omit [Countable V] [Countable W] in
+/-- The normal wide interval, inset by `padding` on both sides, has length the rotated height (real
+form). -/
+lemma NormalRotatedInsetLimitData.normalWideInset_real_eq_rotatedY
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -595,8 +604,9 @@ theorem NormalRotatedInsetLimitData.normalWideInset_real_eq_rotatedY
     (data.level n).normal.raw.wideRight_eq]
   exact_mod_cast data.normalWideInset_eq_rotatedY n
 
-
-theorem NormalRotatedInsetLimitData.rotatedWideRight_eq_left_add_normalY
+omit [Countable V] [Countable W] in
+/-- The rotated wide interval has length the normal height (integer form). -/
+lemma NormalRotatedInsetLimitData.rotatedWideRight_eq_left_add_normalY
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -608,8 +618,9 @@ theorem NormalRotatedInsetLimitData.rotatedWideRight_eq_left_add_normalY
   have hspan := (data.level n).rotatedSpan_eq
   omega
 
-
-theorem NormalRotatedInsetLimitData.rotatedWide_real_eq_normalY
+omit [Countable V] [Countable W] in
+/-- The rotated wide interval has length the normal height (real form). -/
+lemma NormalRotatedInsetLimitData.rotatedWide_real_eq_normalY
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -622,9 +633,9 @@ theorem NormalRotatedInsetLimitData.rotatedWide_real_eq_normalY
     (data.level n).rotated.raw.wideRight_eq]
   exact_mod_cast data.rotatedWideRight_eq_left_add_normalY n
 
-
-
-theorem NormalRotatedInsetLimitData.rotatedX_le_normalY
+omit [Countable V] [Countable W] in
+/-- The rotated width is at most the normal height. -/
+lemma NormalRotatedInsetLimitData.rotatedX_le_normalY
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -636,9 +647,9 @@ theorem NormalRotatedInsetLimitData.rotatedX_le_normalY
   norm_num at hspan
   exact_mod_cast hspan
 
-
-
-theorem NormalRotatedInsetLimitData.rotatedOriginalLimit
+omit [Countable W] [Countable V] in
+/-- The primal rotated crossing limit, written for the original embedding. -/
+lemma NormalRotatedInsetLimitData.rotatedOriginalLimit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))} {padding : Nat}
@@ -659,9 +670,9 @@ theorem NormalRotatedInsetLimitData.rotatedOriginalLimit
     (fun _ => 0) (fun n => (data.level n).rotatedY)
     data.rotatedLimit
 
-
-
-theorem NormalRotatedInsetLimitData.dualRotatedOriginalLimit
+omit [Countable V] [Countable W] in
+/-- The dual rotated crossing limit, written for the original dual embedding. -/
+lemma NormalRotatedInsetLimitData.dualRotatedOriginalLimit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -684,9 +695,10 @@ theorem NormalRotatedInsetLimitData.dualRotatedOriginalLimit
     (fun _ => 0) (fun n => (data.level n).rotatedY)
     data.dualRotatedLimit
 
-
-
-theorem NormalRotatedInsetLimitData.exists_primalDualFixedBranchesSubsequence
+omit [Countable V] [Countable W] in
+/-- Along a subsequence, one primal crossing (normal horizontal or vertical) and one dual crossing
+(rotated, in original coordinates) both have probability tending to one. -/
+lemma NormalRotatedInsetLimitData.exists_primalDualFixedBranchesSubsequence
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -725,10 +737,10 @@ theorem NormalRotatedInsetLimitData.exists_primalDualFixedBranchesSubsequence
   exact tendsto_two_max_one_fixedBranches_subsequence _ _ _ _
     data.normalLimit data.dualRotatedOriginalLimit
 
-
-
-
-theorem nonempty_normalRotatedInsetLimitData_of_unique
+/-- If `mu` and `muDual` are both FKG, translation invariant and have a.s. a unique infinite
+cluster, normal and rotated inset limit data exist for every padding. With `muDual` the dual of `mu`
+this is a reductio step of Sheffield's theorem. -/
+lemma nonempty_normalRotatedInsetLimitData_of_unique
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -879,10 +891,10 @@ theorem nonempty_normalRotatedInsetLimitData_of_unique
     dualNormalLimit := hnormalDualLimit
     dualRotatedLimit := hrotatedDualLimit }⟩
 
+/-! ## F. Normal and two rotated endpoint limit data -/
 
-
-
-
+/-- One normal and two rotated paired grids at every stage, with matched spans, together with the
+primal normal and two dual rotated crossing limits tending to one. -/
 structure NormalTwoRotatedEndpointLimitData
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -953,9 +965,9 @@ structure NormalTwoRotatedEndpointLimitData
       (rotatedHorizontalLevel n).raw.data.wideRight 0
         (level n).rotatedHorizontalY))) atTop (nhds 1)
 
-
-
-theorem NormalTwoRotatedEndpointLimitData.normalWide_real_span_eq
+omit [Countable V] [Countable W] in
+/-- The normal wide interval has length the height of the rotated horizontal grid. -/
+lemma NormalTwoRotatedEndpointLimitData.normalWide_real_span_eq
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -968,9 +980,9 @@ theorem NormalTwoRotatedEndpointLimitData.normalWide_real_span_eq
     (data.level n).normal.raw.wideRight_eq]
   exact_mod_cast (data.level n).normalSpan_eq
 
-
-
-theorem NormalTwoRotatedEndpointLimitData.rotatedHorizontalWide_real_span_eq
+omit [Countable V] [Countable W] in
+/-- The wide interval of the rotated horizontal grid has length the normal height. -/
+lemma NormalTwoRotatedEndpointLimitData.rotatedHorizontalWide_real_span_eq
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -984,9 +996,10 @@ theorem NormalTwoRotatedEndpointLimitData.rotatedHorizontalWide_real_span_eq
     (data.level n).rotatedHorizontal.raw.wideRight_eq]
   exact_mod_cast hspan
 
-
-
-theorem NormalTwoRotatedEndpointLimitData.dualRotatedVerticalOriginalLimit
+omit [Countable V] [Countable W] in
+/-- The dual crossing limit of the rotated vertical grid, written for the original dual embedding.
+-/
+lemma NormalTwoRotatedEndpointLimitData.dualRotatedVerticalOriginalLimit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -1008,9 +1021,10 @@ theorem NormalTwoRotatedEndpointLimitData.dualRotatedVerticalOriginalLimit
     (fun _ => 0) (fun n => (data.level n).normalX)
     data.dualRotatedVerticalLimit
 
-
-
-theorem NormalTwoRotatedEndpointLimitData.dualRotatedHorizontalOriginalLimit
+omit [Countable V] [Countable W] in
+/-- The dual crossing limit of the rotated horizontal grid, written for the original dual embedding.
+-/
+lemma NormalTwoRotatedEndpointLimitData.dualRotatedHorizontalOriginalLimit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -1033,9 +1047,10 @@ theorem NormalTwoRotatedEndpointLimitData.dualRotatedHorizontalOriginalLimit
     (fun _ => 0) (fun n => (data.level n).rotatedHorizontalY)
     data.dualRotatedHorizontalLimit
 
-
-
-theorem nonempty_normalTwoRotatedEndpointLimitData_of_unique
+/-- If `mu` and `muDual` are both FKG, translation invariant and have a.s. a unique infinite
+cluster, normal and two-rotated endpoint limit data exist. With `muDual` the dual of `mu` this is a
+reductio step of Sheffield's theorem. -/
+lemma nonempty_normalTwoRotatedEndpointLimitData_of_unique
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))

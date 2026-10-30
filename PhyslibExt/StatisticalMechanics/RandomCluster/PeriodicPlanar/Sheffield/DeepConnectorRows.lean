@@ -6,35 +6,71 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundaryCrossover
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorMeasureClosure
 
+/-!
+# Deep connector schedules from separated rows of sources
+
+Finite deep connectors of high probability between a source row and its vertical translate, and
+the resulting half-plane statement for the dual model under a disjointness hypothesis.
+
+## i. Overview
+
+Under FKG, translation invariance and uniqueness of the primal infinite cluster, for every
+`ε > 0` there are finite source sets `L` and `U = L + (1 + t)` (vertical translate) in the deep
+half-plane and a strip width for which the finite deep connector with rays at heights `s` and
+`s + t` has probability greater than `1 - 2 √(1 - P(orbit box hits ∞)²) - 3ε`
+(`…_measureReal_gt`, unconditional given these inputs). Choosing `ε = 1/(n+1)` and growing orbit
+boxes gives a `FiniteDeepConnectorBandSchedule` for each band, provided every such connector is
+disjoint from the dual band event (hypothesis `hdisjoint`). Hence
+`complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows` is conditional on
+`hdisjoint` for every band and every admissible `L, U, width`. That hypothesis is a strong
+planar-topology statement (all source rows, all widths); it is not proved here and no Lean
+refutation is known. The only caller,
+`complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages`, derives it from a
+certificate family that is refuted in Lean (see `Sheffield.DeepConnectorCageSchedule`).
+
+## ii. Key results
+
+- `exists_separated_finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_gt`.
+- `PeriodicPlanarDualPair.finiteDeepConnectorBandSchedule_of_separatedRows`.
+- `PeriodicPlanarDualPair.complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows` :
+  conditional on `hdisjoint`, dual ergodicity and dual uniqueness.
+
+## iii. Table of contents
+
+- A. High-probability deep connectors between separated rows
+- B. Schedules and the dual half-plane
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Filter MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+namespace PeriodicPlaneEmbedding
 
+/-! ## A. High-probability deep connectors between separated rows -/
 
-
-
-theorem
-    PeriodicPlaneEmbedding.exists_separated_finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_gt
+/-- Finite source rows `L` and `U = L + (1 + t)` in the deep half-plane with a finite deep connector
+of probability greater than `1 - 2 √(1 - P(orbit box hits ∞)²) - 3ε`. -/
+lemma
+    exists_separated_finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -156,14 +192,17 @@ theorem
       mu r R s (s + t) width L U
   linarith
 
+end PeriodicPlaneEmbedding
+
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
 namespace PeriodicPlanarDualPair
 
+/-! ## B. Schedules and the dual half-plane -/
 
-
-
+/-- A deep connector schedule for one band, built from separated rows with `ε = 1/(n+1)` and orbit
+boxes of radius `n`, given that every such connector is disjoint from the dual band event. -/
 noncomputable def finiteDeepConnectorBandSchedule_of_separatedRows
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -241,10 +280,9 @@ noncomputable def finiteDeepConnectorBandSchedule_of_separatedRows
     hlowerLimit tendsto_const_nhds
       (fun n => (hmass n).le) (fun _ => measureReal_le_one)
 
-
-
-
-theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows
+/-- If the separated-row deep connectors are disjoint from the dual band events for every band, an
+ergodic dual measure with a unique infinite cluster has no infinite cluster in `{x ≥ rDual}`. -/
+lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

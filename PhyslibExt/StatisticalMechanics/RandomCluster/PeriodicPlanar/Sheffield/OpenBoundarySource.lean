@@ -6,35 +6,59 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCage
 
+/-!
+# Infinite clusters exiting a half-plane: source sets
+
+Lower bounds for the event that an infinite cluster from a source set exits a right half-plane
+through an open boundary edge.
+
+## i. Overview
+
+If a source set `S` lies in the half-plane and some lattice translate of it lies outside, FKG
+and uniqueness of the infinite cluster give `P(S hits ∞)² ≤ P(an infinite cluster from S exits
+the half-plane)`. With orbit boxes as sources this gives source sets whose exit probability
+tends to `1`, and, splitting the boundary at a height `s`, sources for which the better of the
+lower and upper boundary rays has probability tending to `1`. All results are unconditional given
+FKG, translation invariance and uniqueness of the infinite cluster.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_of_translate`.
+- `PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_sequence_tendsto_one`.
+- `PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryRay_max_sequence_tendsto_one`.
+
+## iii. Table of contents
+
+- A. Exit probabilities of source sets
+- B. Splitting the boundary into two rays
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Exit probabilities of source sets -/
 
-
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_of_translate
+/-- If `S` lies in the half-plane and a translate of `S` lies outside, the probability that an
+infinite cluster from `S` exits the half-plane is at least `P(S hits ∞)²`. -/
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_of_translate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -49,9 +73,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_
   rw [P.setHitsInfinite_translate_measureReal_eq mu hTI z S] at hmul
   simpa [pow_two] using hmul
 
-
-
-theorem PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_ge_orbitBox_sq
+lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_ge_orbitBox_sq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -73,9 +95,8 @@ theorem PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_ge_orbitBox
     rfl
   rwa [hmass] at hsq
 
-
-
-theorem PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_sequence_tendsto_one
+/-- Source sets in the half-plane whose exit probability tends to `1`. -/
+lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -102,8 +123,10 @@ theorem PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_sequence_te
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hlower tendsto_const_nhds hbound (fun _ => measureReal_le_one)
 
+/-! ## B. Splitting the boundary into two rays -/
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_lower_union_upper
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_lower_union_upper
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     E.infiniteOpenBoundaryConnectionTo r S
         (E.lowerBoundaryRayVertices r s) ∪
@@ -123,9 +146,9 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_lower_union_uppe
     · exact Or.inr ⟨x, hxS, hxInfinite, b, hbUpper, hbUpper.1,
         z, hbz, hz, hbzOpen, hxb⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryRay_max_sequence_tendsto_one
+/-- Source sets for which the better of the lower and upper boundary rays (split at heights `s N`)
+has exit probability tending to `1`. -/
+lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryRay_max_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

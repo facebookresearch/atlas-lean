@@ -6,49 +6,77 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneMerge
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneStrip
 
+/-!
+# Strip merge errors for finite source sets
+
+The strip merge error for finite source sets, its vertical translation invariance, and
+placements of a source set and its vertical translate with small strip merge error.
+
+## i. Overview
+
+`halfPlaneStripPairMergeErrorUnion r n L R` is the union over `x ∈ L`, `y ∈ R` of the strip merge
+errors. It decreases in `n` to the half-plane merge error, is invariant under vertical lattice
+translations (which preserve strips), and, by the results of `HalfPlaneMerge`, can be made small
+by translating the sources. The placement lemmas produce a translate `S` of a finite set `L`
+inside `H_R` (`R ≥ r`) such that `S` and its vertical translate by `1`, `2` or `1 + t` lattice
+steps have strip merge error below `ε`.
+
+Headline fidelity: the set identities, limits and vertical invariance are unconditional (apart
+from translation invariance where stated); the placement lemmas are conditional on translation
+invariance and almost sure uniqueness of the infinite cluster.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion`
+- `PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_vertical`
+- `PeriodicPlaneEmbedding.exists_inward_separated_stripPlacement_with_margin`
+
+## iii. Table of contents
+
+- A. The finite-set strip merge error
+- B. Vertical translation invariance
+- C. Placements with small merge error
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. The finite-set strip merge error -/
 
-
+/-- Strip merge error for finite source sets: some `x ∈ L` and `y ∈ R` lie in infinite open
+clusters but are not connected within the strip `{r ≤ x ≤ r + n}`. -/
 def PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion
     (E : PeriodicPlaneEmbedding P) (r : Real) (n : Nat)
     (L R : Finset V) : Set (ConfigSpace (Sym2 V)) :=
   ⋃ p : ↥(L.product R),
     E.halfPlaneStripPairMergeError r n p.1.1 p.1.2
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measurableSet
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : Real) (n : Nat)
     (L R : Finset V) :
     MeasurableSet (E.halfPlaneStripPairMergeErrorUnion r n L R) :=
   MeasurableSet.iUnion fun p =>
     E.halfPlaneStripPairMergeError_measurableSet r n p.1.1 p.1.2
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_antitone
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_antitone
     (E : PeriodicPlaneEmbedding P) (r : Real) (L R : Finset V) :
     Antitone (fun n => E.halfPlaneStripPairMergeErrorUnion r n L R) := by
   intro n N hnN omega homega
@@ -56,7 +84,9 @@ theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_antitone
   exact Set.mem_iUnion.2
     ⟨p, E.halfPlaneStripPairMergeError_antitone r p.1.1 p.1.2 hnN hp⟩
 
-theorem PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion_eq_product
+omit [Countable V] in
+/-- The half-plane merge error union written as a union over the product `L × R`. -/
+lemma PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion_eq_product
     (E : PeriodicPlaneEmbedding P) (r : Real) (L R : Finset V) :
     E.halfPlanePairMergeErrorUnion r L R =
       ⋃ p : ↥(L.product R), E.halfPlanePairMergeError r p.1.1 p.1.2 := by
@@ -70,7 +100,9 @@ theorem PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion_eq_product
     obtain ⟨hx, hy⟩ := Finset.mem_product.mp hxy
     exact ⟨x, hx, y, hy, homega⟩
 
-theorem PeriodicPlaneEmbedding.iInter_halfPlaneStripPairMergeErrorUnion
+omit [Countable V] in
+/-- The finite-set strip merge errors decrease to the half-plane merge error. -/
+lemma PeriodicPlaneEmbedding.iInter_halfPlaneStripPairMergeErrorUnion
     (E : PeriodicPlaneEmbedding P) (r : Real) (L R : Finset V) :
     (⋂ n : Nat, E.halfPlaneStripPairMergeErrorUnion r n L R) =
       E.halfPlanePairMergeErrorUnion r L R := by
@@ -84,7 +116,7 @@ theorem PeriodicPlaneEmbedding.iInter_halfPlaneStripPairMergeErrorUnion
   · intro p
     exact E.halfPlaneStripPairMergeError_antitone r p.1.1 p.1.2
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_tendsto
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (L R : Finset V) :
@@ -103,9 +135,7 @@ theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_ten
   rw [E.iInter_halfPlaneStripPairMergeErrorUnion r L R] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt
+lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -126,9 +156,11 @@ theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal
   obtain ⟨n, hn⟩ := hev.exists
   exact ⟨z, n, hn⟩
 
+/-! ## B. Vertical translation invariance -/
 
-
-theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneStripVertices_vertical
+omit [Countable V] in
+/-- Vertical lattice translations preserve every strip `{r ≤ x ≤ r + n}`. -/
+lemma PeriodicPlaneEmbedding.shift_image_rightHalfPlaneStripVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r : Real) (n : Nat) :
     P.shift (verticalShift t) '' E.rightHalfPlaneStripVertices r n =
       E.rightHalfPlaneStripVertices r n := by
@@ -142,7 +174,7 @@ theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneStripVertices_vertical
   · intro hx
     let y := P.shift (-(verticalShift t)) x
     have hxy : P.shift (verticalShift t) y = x := by
-      simpa [y] using P.shift_shift_neg (verticalShift t) x
+      simp [y]
     refine ⟨y, ?_, hxy⟩
     rw [← hxy] at hx
     change P.shift (verticalShift t) y ∈ E.rightHalfPlaneVertices r ∧
@@ -152,7 +184,8 @@ theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneStripVertices_vertical
     rw [E.vertexCoord_shift] at hx
     simpa using hx.2
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeError_configTranslate_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeError_configTranslate_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int)
     (omega : ConfigSpace (Sym2 V)) (r : Real) (n : Nat) (x y : V) :
     P.configTranslate (verticalShift t) omega ∈
@@ -160,14 +193,15 @@ theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeError_configTranslate_vert
           (P.shift (verticalShift t) x) (P.shift (verticalShift t) y) ↔
       omega ∈ E.halfPlaneStripPairMergeError r n x y := by
   simp only [PeriodicPlaneEmbedding.halfPlaneStripPairMergeError,
-    Set.mem_diff, Set.mem_inter_iff, Set.mem_setOf_eq]
+    Set.mem_sdiff, Set.mem_inter_iff, Set.mem_ofPred_eq]
   rw [P.cluster_infinite_configTranslate, P.cluster_infinite_configTranslate]
   have hconn := P.connectedWithinSet_configTranslate (verticalShift t) omega
     (E.rightHalfPlaneStripVertices r n) x y
   rw [E.shift_image_rightHalfPlaneStripVertices_vertical] at hconn
   exact and_congr_right fun _ => not_congr hconn
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_configTranslate_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_configTranslate_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int)
     (omega : ConfigSpace (Sym2 V)) (r : Real) (n : Nat)
     (L R : Finset V) :
@@ -204,7 +238,9 @@ theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_configTranslate
     exact (E.halfPlaneStripPairMergeError_configTranslate_vertical
       t omega r n x y).mpr hp
 
-theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_vertical
+/-- Under translation invariance, the strip merge error is invariant under vertical lattice
+translations of the sources. -/
+lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int)
@@ -229,9 +265,12 @@ theorem PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_ver
   rw [hpre] at hm
   exact congrArg ENNReal.toReal hm.symm
 
+/-! ## C. Placements with small merge error -/
 
-
-theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_sources
+/-- A translate of the sources lies in `H_r` and has strip merge error below `ε` for some width.
+This is the case `R = r` of
+`exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin`. -/
+lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_sources
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -272,9 +311,9 @@ theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal
   obtain ⟨n, hn⟩ := hev.exists
   exact ⟨z, n, hLH, hRH, hn⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin
+/-- A translate of the sources lies in `H_R` (`R ≥ r`) and has strip merge error in `H_r` below
+`ε` for some width. -/
+lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -317,9 +356,9 @@ theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal
   obtain ⟨n, hn⟩ := hev.exists
   exact ⟨z, n, hLH, hRH, hn⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement
+/-- A translate `S` of `L` and its vertical neighbour `S + e₂` lie in `H_r` with small strip
+merge error. This is the case `R = r` of `exists_inward_adjacent_stripPlacement_with_margin`. -/
+lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -350,9 +389,10 @@ theorem PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement_with_margin
+/-- A translate `S` of `L` and `S + e₂` lie in `H_R` with small strip merge error in `H_r`. This
+is the case `t = 0` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting
+`1 + 0`. -/
+lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -384,9 +424,10 @@ theorem PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement_with_margin
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
+/-- A translate `S` of `L` and `S + 2e₂` lie in `H_R` with small strip merge error in `H_r`. This
+is the case `t = 1` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting
+`1 + 1`. -/
+lemma PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -418,8 +459,9 @@ theorem PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-
-
+/-- A translate `S` of `L` and its vertical translate `S + (1 + t)e₂` lie in `H_R` with strip
+merge error in `H_r` below `ε` for some width (translation invariance, almost sure
+uniqueness). -/
 theorem PeriodicPlaneEmbedding.exists_inward_separated_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

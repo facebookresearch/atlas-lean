@@ -6,36 +6,82 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AdjacentHeight
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonSquareEnlarge
 
+/-!
+# Normal boundary bands and boundary scores of a macroscopic array
+
+Families of placements of a finite set along the inward normal of each side of a square, each
+connected to its side with probability above a threshold, and the boundary scores they give
+to a preference grid with margins.
+
+## i. Overview
+
+`E.NormalBoundaryBandFamily mu S p` fixes one base site per side and, for every margin `m`, a
+radius `radiusSide m` such that each of the `m + 1` translates of `S` obtained by moving `0, …, m`
+steps from the base along the inward normal lies in a box of that radius attached to the side,
+and is connected inside the box to the side with probability greater than `p`. For
+`S = P.orbitBox N` such a family exists with `p = θ_N² - δ`, `θ_N` the probability that the box
+meets the infinite cluster, for every `δ > 0` (under FKG, translation invariance and
+uniqueness). Each margin gives a `NormalBoundaryBandSeed` (`Sheffield.BoundaryBandAssembly`).
+
+`exists_alternatingMargins` chooses horizontal and vertical margin sequences, both tending to
+infinity, that alternate so that the bands of each direction fit inside the margin of the other.
+`mixedBoundaryScores` places a `width × height` grid inside the margins and shows, by
+translation invariance and monotonicity in the rectangle, that every vertex of the bottom
+(top, left, right) row or column has bottom (top, left, right) side score greater than `p` in
+an explicit enlarged rectangle.
+
+The remaining lemmas compare side connections of a translated component with those of a
+template containing it (in particular the four-shift template of `Sheffield.Exclusion`), and
+translate the containment of boundary grids of connector-ready common squares.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.NormalBoundaryBandFamily` : normal boundary bands at every margin.
+- `PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily` : such bands exist for orbit
+  boxes with threshold `θ_N² - δ`. Conditional on `mu` a probability measure that is FKG
+  (`hFKG`), translation invariant (`hTI`), with an almost surely unique infinite cluster
+  (`hunique`). Not vacuous.
+- `PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins` : alternating
+  margin sequences tending to infinity. Unconditional.
+- `PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores` : boundary scores above
+  `p` on the four sides of a grid placed inside the margins. Conditional on translation
+  invariance and the two fitting inequalities.
+
+## iii. Table of contents
+
+- A. Normal boundary bands
+- B. Alternating margins
+- C. Boundary scores of a grid inside the margins
+- D. Components and templates
+- E. Translated boundary grids of common squares
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Normal boundary bands -/
 
-
-
-
+/-- Normal boundary bands for `S` at threshold `p`: a base site for each side of a square and, for
+every margin `m`, a radius per side such that each translate of `S` by `0, …, m` steps along the
+inward normal lies in a box of that radius attached to the side and is connected inside the box to
+the side with probability greater than `p`. -/
 structure PeriodicPlaneEmbedding.NormalBoundaryBandFamily
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -90,7 +136,7 @@ structure PeriodicPlaneEmbedding.NormalBoundaryBandFamily
         (E.rectTopBoundaryVertices (-(radiusTop margin : Real))
           (radiusTop margin) (-(radiusTop margin : Real)) 0))
 
-
+/-- The normal boundary band of a family at one fixed margin. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -109,9 +155,9 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed
   bottom := family.bottom margin
   top := family.top margin
 
-
-
-
+/-- Normal boundary bands exist for the orbit box `P.orbitBox N` at threshold `θ_N² - δ`, `θ_N` the
+probability that the box meets the infinite cluster, for every `δ > 0`, under FKG, translation
+invariance and an almost surely unique infinite cluster. -/
 theorem PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -230,8 +276,10 @@ theorem PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily
       intro margin
       simpa using htop margin }⟩
 
+/-! ## B. Alternating margins -/
 
-
+/-- The vertical room needed above the bottom base by the left and right bands at horizontal margin
+`horizontalMargin`. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.horizontalRadiusRequirement
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -243,8 +291,8 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.horizontalRadiusRequirement
     (((family.radiusRight horizontalMargin : Int) +
       family.baseRight 1 - family.baseBottom 1).toNat)
 
-
-
+/-- The horizontal room needed to the right of the left base by the bottom and top bands at vertical
+margin `verticalMargin`. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.verticalRadiusRequirement
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -256,18 +304,10 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.verticalRadiusRequirement
     (((family.radiusTop verticalMargin : Int) +
       family.baseTop 0 - family.baseLeft 0).toNat)
 
-private theorem int_le_nat_of_toNat_le {x : Int} {n : Nat}
-    (h : x.toNat ≤ n) : x ≤ n := by
-  by_cases hx : 0 ≤ x
-  · have h' : (x.toNat : Int) ≤ (n : Int) := by exact_mod_cast h
-    rwa [Int.toNat_of_nonneg hx] at h'
-  · have : x < 0 := lt_of_not_ge hx
-    omega
-
-
-
-
-
+omit [Countable V] in
+/-- Alternating margin sequences, both tending to infinity, such that the left and right bands at
+horizontal margin `horizontal n` fit below vertical margin `vertical n`, and the bottom and top
+bands at `vertical n` fit before `horizontal (n + 1)`. -/
 theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -291,34 +331,34 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
     have hle : (((family.radiusLeft (horizontal n) : Int) +
         family.baseLeft 1 - family.baseBottom 1).toNat) ≤ vertical n :=
       (Nat.le_max_left _ _).trans (hhv n)
-    have := int_le_nat_of_toNat_le hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hle : (((family.radiusRight (horizontal n) : Int) +
         family.baseRight 1 - family.baseBottom 1).toNat) ≤ vertical n :=
       (Nat.le_max_right _ _).trans (hhv n)
-    have := int_le_nat_of_toNat_le hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hle : (((family.radiusBottom (vertical n) : Int) +
         family.baseBottom 0 - family.baseLeft 0).toNat) ≤
         horizontal (n + 1) :=
       (Nat.le_max_left _ _).trans (hvh n)
-    have := int_le_nat_of_toNat_le hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hle : (((family.radiusTop (vertical n) : Int) +
         family.baseTop 0 - family.baseLeft 0).toNat) ≤
         horizontal (n + 1) :=
       (Nat.le_max_right _ _).trans (hvh n)
-    have := int_le_nat_of_toNat_le hle
+    have := Int.toNat_le.mp hle
     omega
 
-set_option linter.unusedVariables false in
+/-! ## C. Boundary scores of a grid inside the margins -/
 
-
-
-
+/-- Boundary scores of a grid placed inside the margins: for a translation invariant measure, every
+vertex of the bottom, top, left and right row or column of the grid is connected to the matching
+side of an explicit enlarged rectangle with probability greater than `p`. -/
 theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -456,7 +496,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
         z, bottomLower, gridBase] at hmin ⊢
       simp only [Pi.add_apply, Pi.sub_apply, horizontalShift_zero_apply,
         verticalShift_zero_apply, Int.cast_add, Int.cast_sub,
-        Int.cast_neg, Int.cast_natCast]
+        Int.cast_natCast]
       norm_num at ⊢
       exact_mod_cast (by omega :
         (family.radiusBottom verticalMargin : Int) + a1 ≤
@@ -503,7 +543,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
       have hlast : (Fin.last verticalMargin).val = verticalMargin := rfl
       rw [hlast]
       funext k
-      fin_cases k <;> simp [gridBase, preferenceGridSite] <;> omega
+      fin_cases k <;> simp [gridBase, preferenceGridSite]
     rw [← hsource]
     simpa [seed, PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed,
       hz1] using hscore.2
@@ -519,7 +559,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
         z, topLower, gridBase] at hmin ⊢
       simp only [Pi.add_apply, Pi.sub_apply, horizontalShift_zero_apply,
         verticalShift_zero_apply, Int.cast_add, Int.cast_sub,
-        Int.cast_neg, Int.cast_natCast]
+        Int.cast_natCast]
       norm_num at ⊢
       exact_mod_cast (by omega :
         (family.radiusTop verticalMargin : Int) + a1 ≤
@@ -566,7 +606,8 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
       rw [hvlast]
       funext k
       fin_cases k <;>
-        simp [gridBase, preferenceGridSite, sub_eq_add_neg] <;> omega
+        simp [gridBase, preferenceGridSite, sub_eq_add_neg]
+      omega
     rw [← hsource]
     simpa [seed, PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed,
       hz1] using hscore.2
@@ -582,7 +623,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
         z, gridBase] at hfitLeft ⊢
       simp only [Pi.add_apply, Pi.sub_apply, verticalShift_one_apply,
         horizontalShift_one_apply, Int.cast_add, Int.cast_sub,
-        Int.cast_neg, Int.cast_natCast]
+        Int.cast_natCast]
       norm_num at ⊢
       have hj : (0 : Int) ≤ j.val := by omega
       exact_mod_cast (by omega :
@@ -620,7 +661,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
       have hlast : (Fin.last horizontalMargin).val = horizontalMargin := rfl
       rw [hlast]
       funext k
-      fin_cases k <;> simp [gridBase, preferenceGridSite] <;> omega
+      fin_cases k <;> simp [gridBase, preferenceGridSite]
     rw [← hsource]
     simpa [seed, PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed,
       hz0] using hscore.2
@@ -640,7 +681,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
         z, gridBase] at hfitRight ⊢
       simp only [Pi.add_apply, Pi.sub_apply, verticalShift_one_apply,
         horizontalShift_one_apply, Int.cast_add, Int.cast_sub,
-        Int.cast_neg, Int.cast_natCast]
+        Int.cast_natCast]
       norm_num at ⊢
       have hj : (0 : Int) ≤ j.val := by omega
       exact_mod_cast (by omega :
@@ -680,15 +721,18 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
       rw [hvlast]
       funext k
       fin_cases k <;>
-        simp [gridBase, preferenceGridSite, sub_eq_add_neg] <;> omega
+        simp [gridBase, preferenceGridSite, sub_eq_add_neg]
+      omega
     rw [← hsource]
     simpa [seed, PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed,
       hz0] using hscore.2
 
+/-! ## D. Components and templates -/
+
 omit [Countable V] in
-
-
-theorem PeriodicPlaneEmbedding.rectSideConnection_component_le_template
+/-- A translated subset of a template is less likely than the translated template to be connected to
+a side. See also `rectSideConnectionEvent_mono_source` (`Sheffield.Exclusion`). -/
+lemma PeriodicPlaneEmbedding.rectSideConnection_component_le_template
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (a b c d : Real) (component template : Finset V)
@@ -702,8 +746,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnection_component_le_template
   exact_mod_cast (Finset.image_mono (P.shift base)) hcomponent
 
 omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.rectSideConnection_leftComponent_le_fourShift
+lemma PeriodicPlaneEmbedding.rectSideConnection_leftComponent_le_fourShift
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (a b c d : Real) (S : Finset V)
@@ -719,8 +762,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnection_leftComponent_le_fourShift
     (P.image_subset_fourShiftTemplate S zLeft zRight zBottom zTop)
 
 omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.rectSideConnection_rightComponent_le_fourShift
+lemma PeriodicPlaneEmbedding.rectSideConnection_rightComponent_le_fourShift
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (a b c d : Real) (S : Finset V)
@@ -736,8 +778,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnection_rightComponent_le_fourShift
     (P.image_right_subset_fourShiftTemplate S zLeft zRight zBottom zTop)
 
 omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.rectSideConnection_bottomComponent_le_fourShift
+lemma PeriodicPlaneEmbedding.rectSideConnection_bottomComponent_le_fourShift
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (a b c d : Real) (S : Finset V)
@@ -753,8 +794,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnection_bottomComponent_le_fourShift
     (P.image_bottom_subset_fourShiftTemplate S zLeft zRight zBottom zTop)
 
 omit [Countable V] in
-
-theorem PeriodicPlaneEmbedding.rectSideConnection_topComponent_le_fourShift
+lemma PeriodicPlaneEmbedding.rectSideConnection_topComponent_le_fourShift
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (a b c d : Real) (S : Finset V)
@@ -770,9 +810,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnection_topComponent_le_fourShift
     (P.image_top_subset_fourShiftTemplate S zLeft zRight zBottom zTop)
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.fourShiftTemplate_image_subset
+lemma PeriodicGraph.fourShiftTemplate_image_subset
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop base : Site 2) (R : Set V)
     (hleft : ((S.image (P.shift zLeft)).image (P.shift base) : Set V) ⊆ R)
@@ -799,8 +837,10 @@ theorem PeriodicGraph.fourShiftTemplate_image_subset
       simpa only [Finset.mem_image] using hu
     exact htop (by exact_mod_cast Finset.mem_image.mpr ⟨u, hu', rfl⟩)
 
+/-! ## E. Translated boundary grids of common squares -/
+
 omit [Countable V] in
-theorem boundaryGridBase_add
+lemma boundaryGridBase_add
     (baseLeft baseBottom z : Site 2) :
     boundaryGridBase (baseLeft + z) (baseBottom + z) =
       boundaryGridBase baseLeft baseBottom + z := by
@@ -808,7 +848,7 @@ theorem boundaryGridBase_add
   fin_cases i <;> simp [boundaryGridBase]
 
 omit [Countable V] in
-@[simp] theorem boundaryGridWidth_add
+@[simp] lemma boundaryGridWidth_add
     (extent : Nat) (baseLeft baseRight z : Site 2) :
     boundaryGridWidth extent (baseLeft + z) (baseRight + z) =
       boundaryGridWidth extent baseLeft baseRight := by
@@ -817,7 +857,7 @@ omit [Countable V] in
   omega
 
 omit [Countable V] in
-@[simp] theorem boundaryGridHeight_add
+@[simp] lemma boundaryGridHeight_add
     (extent : Nat) (baseBottom baseTop z : Site 2) :
     boundaryGridHeight extent (baseBottom + z) (baseTop + z) =
       boundaryGridHeight extent baseBottom baseTop := by
@@ -825,10 +865,8 @@ omit [Countable V] in
   congr 1
   omega
 
-
-
-
-theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_translated
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_translated
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {radius : Nat → Nat}
     (data : E.ConnectorReadyCommonSquareData mu radius)
@@ -870,9 +908,8 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_transl
     (P.shift (base + preferenceGridSite v) u)).2 hu0
   simpa only [Nat.cast_add, Int.cast_add, Int.cast_natCast] using hshift
 
-
-
-theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_translated_of_le
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_translated_of_le
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {radius : Nat → Nat}
     (data : E.ConnectorReadyCommonSquareData mu radius)
@@ -898,9 +935,8 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.grid_subset_transl
     P.orbitBox_mono (P.bufferedRadius_strictMono.monotone hsmall) hu)).trans
   exact data.grid_subset_translated E n extentX extentY z hposX hposY v
 
-
-
-theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.template_grid_subset_translated
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.template_grid_subset_translated
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {radius : Nat → Nat}
     (data : E.ConnectorReadyCommonSquareData mu radius)

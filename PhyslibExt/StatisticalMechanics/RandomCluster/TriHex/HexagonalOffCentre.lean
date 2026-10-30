@@ -6,17 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularOffCentre
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalSharpness
 
+/-!
+# Translated hexagonal boxes and domination by wired boundary conditions
+
+Translated boxes of the hexagonal lattice, translation invariance of their wired crossing
+probabilities, and the comparison showing that a wired FK measure on a large box, seen on a
+translated sub-box, is dominated by the wired measure of the sub-box.
+
+## i. Overview
+
+`hexagonalTransBox R x` is the box of radius `R` centered at the site `x`; its hexagonal vertices
+are the pairs `(z, b)` with `z` in the box. The translation map `hexagonalTransEquiv R x` from the
+centered box sends `(z, b)` to `(z + x.1, b)` if `x` is black, and composes with the color-swapping
+reflection `hexagonalReflect` if `x` is white, so that the root `(0, false)` goes to `x`; it is a
+graph isomorphism (`hexagonalTransEquiv_adj`). Hence the wired FK probability that the center is
+joined to the shell of radius `k` does not depend on `x`
+(`hexagonalTransShellEvent_betaMean_eq_centeredFullMass`). If `x.1 ∈ Λ_n` and `2k < n`, the
+translated box of radius `2k` sits inside the box of radius `2n` away from its boundary, and for
+every increasing event `A` of the translated box, its probability under the measure wired at the
+large box is at most its probability under the measure wired at the translated box
+(`hexagonalTransBox_activeBCMean_le`, `q ≥ 1`), using the induced-wiring lemmas of
+`TriangularOffCentre` (comparison of boundary conditions and domain Markov property).
+
+Fidelity: all results are unconditional (with `q ≥ 1`, `β > 0` where stated).
+
+## ii. Key results
+
+- `hexagonalTransShellEvent_betaMean_eq_centeredFullMass` : translation invariance of wired
+  shell-crossing probabilities. Unconditional.
+- `hexagonalTransBox_activeBCMean_le` : increasing events of a translated sub-box are less likely
+  under the outer wired measure than under the sub-box wired measure. Unconditional (`q ≥ 1`).
+
+## iii. Table of contents
+
+- A. Translated hexagonal boxes
+- B. Shell events and translation invariance
+- C. Domination by the wired measure of a sub-box
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §§4.2–4.3.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+-/
+
 @[expose] public section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
@@ -27,71 +68,84 @@ open StatMech.OSSS.FiniteGraphBoundaryDifferential
 
 noncomputable section
 
+/-! ## A. Translated hexagonal boxes -/
 
-
+/-- The box of radius `R` of the hexagonal lattice centered at `x`. -/
 abbrev hexagonalTransBox (R : Nat) (x : Site 2) : Set (Site 2) :=
   StatMech.FK.fvs_transBox 2 R x
 
+/-- The hexagonal vertices `(z, b)` with `z` in the translated box `x + Λ_R`. -/
 abbrev HexagonalTransBoxVertex (R : Nat) (x : Site 2) :=
   ↑((hexagonalTransBox R x) ×ˢ (Set.univ : Set Bool))
 
+/-- Translated-box vertices as pairs of a box site and a color. -/
 def hexagonalTransBoxVertexEquiv (R : Nat) (x : Site 2) :
     (StatMech.FK.fvs_transBoxVerts 2 R x × Bool) ≃
       HexagonalTransBoxVertex R x where
   toFun y := ⟨(y.1.1, y.2), ⟨y.1.2, Set.mem_univ _⟩⟩
   invFun y := (⟨y.1.1, y.2.1⟩, y.1.2)
-  left_inv y := rfl
-  right_inv y := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
 
+/-- The translated-box vertices form a finite type. -/
 noncomputable instance (R : Nat) (x : Site 2) :
     Fintype (HexagonalTransBoxVertex R x) :=
   Fintype.ofEquiv (StatMech.FK.fvs_transBoxVerts 2 R x × Bool)
     (hexagonalTransBoxVertexEquiv R x)
 
+/-- The inclusion of translated-box vertices into the hexagonal lattice. -/
 def hexagonalTransBoxEmbedding (R : Nat) (x : Site 2) :
     HexagonalTransBoxVertex R x → HexVertex :=
   Subtype.val
 
+/-- The hexagonal lattice restricted to the translated box. -/
 def hexagonalTransBoxGraph (R : Nat) (x : Site 2) :
     SimpleGraph (HexagonalTransBoxVertex R x) :=
   SimpleGraph.comap (hexagonalTransBoxEmbedding R x) hexagonalGraph
 
+/-- Classical decidability of adjacency in the translated box graph. -/
 noncomputable instance (R : Nat) (x : Site 2) :
     DecidableRel (hexagonalTransBoxGraph R x).Adj := Classical.decRel _
 
+/-- The inclusion of a translated box into a centered box containing it. -/
 def hexagonalTransBoxIncl {R N : Nat} {x : Site 2}
     (hsub : hexagonalTransBox R x ⊆ box 2 N) :
     HexagonalTransBoxVertex R x -> HexagonalBoxVertex N :=
   fun y => ⟨y.1, ⟨hsub y.2.1, Set.mem_univ _⟩⟩
 
-@[simp] theorem hexagonalTransBoxIncl_val {R N : Nat} {x : Site 2}
+@[simp] lemma hexagonalTransBoxIncl_val {R N : Nat} {x : Site 2}
     (hsub : hexagonalTransBox R x ⊆ box 2 N)
     (y : HexagonalTransBoxVertex R x) :
     (hexagonalTransBoxIncl hsub y).1.1 = y.1.1 := rfl
 
-theorem hexagonalTransBoxIncl_injective {R N : Nat} {x : Site 2}
+lemma hexagonalTransBoxIncl_injective {R N : Nat} {x : Site 2}
     (hsub : hexagonalTransBox R x ⊆ box 2 N) :
     Function.Injective (hexagonalTransBoxIncl hsub) := by
   intro y z hyz
   apply Subtype.ext
   exact congrArg (fun w : HexagonalBoxVertex N => (w : HexVertex)) hyz
 
-
+/-- The boundary of the translated box: sites at sup-distance exactly `R` from `x`. -/
 def hexagonalTransBoxBoundary (R : Nat) (x : Site 2)
     (y : HexagonalTransBoxVertex R x) : Prop :=
   y.1.1 - x ∈ vertexBoundary 2 R
 
+open scoped Classical in
+/-- The sites of the translated box at sup-distance `k` from `x`. -/
 noncomputable def hexagonalTransBoxShell (R k : Nat) (x : Site 2) :
     Finset (HexagonalTransBoxVertex R x) :=
   Finset.univ.filter fun y => y.1.1 - x ∈ vertexBoundary 2 k
 
+/-- The vertex `x` as the center of the translated box. -/
 def hexagonalTransBoxCenter (R : Nat) (x : HexVertex) :
     HexagonalTransBoxVertex R x.1 :=
   ⟨x, by simp [StatMech.FK.fvs_transBox]⟩
 
+/-- The point reflection `(z, b) ↦ (-z, !b)` of the hexagonal lattice, which swaps the two colors.
+-/
 def hexagonalReflect (y : HexVertex) : HexVertex := (-y.1, !y.2)
 
-theorem hexagonalReflect_adj (u v : HexVertex) :
+lemma hexagonalReflect_adj (u v : HexVertex) :
     hexagonalGraph.Adj u v ↔
       hexagonalGraph.Adj (hexagonalReflect u) (hexagonalReflect v) := by
   rw [hexagonalGraph_adj, hexagonalGraph_adj]
@@ -129,6 +183,9 @@ theorem hexagonalReflect_adj (u v : HexVertex) :
         v.1 - u.1 = -u.1 - -v.1 := by abel
         _ = hexagonalStep i := h
 
+/-- The lattice isomorphism from the centered box to the translated box sending the root `(0,
+false)` to `x`: a translation if `x` is black, a translation composed with `hexagonalReflect` if `x`
+is white. -/
 def hexagonalTransEquiv (R : Nat) (x : HexVertex) :
     HexagonalBoxVertex R ≃ HexagonalTransBoxVertex R x.1 where
   toFun y := if x.2 then
@@ -154,13 +211,13 @@ def hexagonalTransEquiv (R : Nat) (x : HexVertex) :
         simpa [StatMech.FK.fvs_transBox] using y.2.1⟩
   left_inv y := by
     cases hx : x.2
-    · simp only [hx, Bool.false_eq_true, ↓reduceIte]
+    · simp only [Bool.false_eq_true, ↓reduceIte]
       apply Subtype.ext
       apply Prod.ext
       · ext i
         simp
       · rfl
-    · simp only [hx, ↓reduceIte]
+    · simp only [↓reduceIte]
       apply Subtype.ext
       apply Prod.ext
       · ext i
@@ -168,22 +225,20 @@ def hexagonalTransEquiv (R : Nat) (x : HexVertex) :
       · simp
   right_inv y := by
     cases hx : x.2
-    · simp only [hx, Bool.false_eq_true, ↓reduceIte]
+    · simp only [Bool.false_eq_true, ↓reduceIte]
       apply Subtype.ext
       apply Prod.ext
       · ext i
         simp
       · rfl
-    · simp only [hx, ↓reduceIte]
+    · simp only [↓reduceIte]
       apply Subtype.ext
       apply Prod.ext
       · ext i
         simp
       · simp
 
-
-
-theorem hexagonalTransEquiv_adj (R : Nat) (x : HexVertex)
+lemma hexagonalTransEquiv_adj (R : Nat) (x : HexVertex)
     (u v : HexagonalBoxVertex R) :
     (hexagonalBoxGraph R).Adj u v ↔
       (hexagonalTransBoxGraph R x.1).Adj
@@ -206,9 +261,8 @@ theorem hexagonalTransEquiv_adj (R : Nat) (x : HexVertex)
     constructor
     · intro huv
       have hs := hshift.mp (href.mp huv)
-      simp [hexagonal, hexTranslate_apply, hexagonalReflect,
-        sub_eq_add_neg, add_comm] at hs
-      exact hs
+      simpa [hexagonal, hexTranslate_apply, hexagonalReflect, hexagonalBoxEmbedding,
+        sub_eq_add_neg, add_comm] using hs
     · intro huv
       have hs : hexagonalGraph.Adj
           (hexagonal.shift x.1 (hexagonalReflect u.1))
@@ -217,14 +271,15 @@ theorem hexagonalTransEquiv_adj (R : Nat) (x : HexVertex)
           sub_eq_add_neg, add_comm] using huv
       exact href.mpr (hshift.mpr hs)
 
-@[simp] theorem hexagonalTransEquiv_center (R : Nat) (x : HexVertex) :
+@[simp] lemma hexagonalTransEquiv_center (R : Nat) (x : HexVertex) :
     hexagonalTransEquiv R x (hexagonalBoxRoot R) =
       hexagonalTransBoxCenter R x := by
   rcases x with ⟨x, b⟩
   cases b <;> apply Subtype.ext <;>
     simp [hexagonalTransEquiv, hexagonalBoxRoot, hexagonalTransBoxCenter]
 
-theorem hexagonalTransEquiv_mem_shell (R k : Nat) (x : HexVertex)
+open scoped Classical in
+lemma hexagonalTransEquiv_mem_shell (R k : Nat) (x : HexVertex)
     (y : HexagonalBoxVertex R) :
     hexagonalTransEquiv R x y ∈ hexagonalTransBoxShell R k x.1 ↔
       y ∈ hexagonalBoxShell R k := by
@@ -232,118 +287,53 @@ theorem hexagonalTransEquiv_mem_shell (R k : Nat) (x : HexVertex)
     simp [hexagonalTransEquiv, hx, hexagonalTransBoxShell, hexagonalBoxShell,
       sub_eq_add_neg, Int.natAbs_neg]
 
+/-- The first endpoint of a translated-box edge. -/
 noncomputable def hexagonalTransBoxEndU (R : Nat) (x : Site 2) :
     (hexagonalTransBoxGraph R x).edgeSet -> HexagonalTransBoxVertex R x :=
   fun e => e.1.out.1
 
+/-- The second endpoint of a translated-box edge. -/
 noncomputable def hexagonalTransBoxEndV (R : Nat) (x : Site 2) :
     (hexagonalTransBoxGraph R x).edgeSet -> HexagonalTransBoxVertex R x :=
   fun e => e.1.out.2
 
+/-! ## B. Shell events and translation invariance -/
 
-
+/-- The event that the center of the translated box is joined to its shell of radius `k`. -/
 def hexagonalTransShellEvent (R k : Nat) (x : HexVertex) :
     Set (ConfigSpace (hexagonalTransBoxGraph R x.1).edgeSet) :=
   openCrossEvent (hexagonalTransBoxEndU R x.1) (hexagonalTransBoxEndV R x.1)
     (hexagonalTransBoxCenter R x) (hexagonalTransBoxShell R k x.1)
 
-
-
+/-- The event that the origin is joined to the shell of radius `k` in the centered box. -/
 def hexagonalCenteredShellEvent (R k : Nat) :
     Set (ConfigSpace (hexagonalBoxGraph R).edgeSet) :=
   openCrossEvent (hexagonalBoxEndU R) (hexagonalBoxEndV R)
     (hexagonalBoxRoot R) (hexagonalBoxShell R k)
 
-theorem hexagonalTransShellEvent_increasing (R k : Nat) (x : HexVertex) :
+lemma hexagonalTransShellEvent_increasing (R k : Nat) (x : HexVertex) :
     IsIncreasing (hexagonalTransShellEvent R k x) :=
   openCrossEvent_isIncreasing _ _ _ _
 
-theorem hexagonalCenteredShellEvent_increasing (R k : Nat) :
+lemma hexagonalCenteredShellEvent_increasing (R k : Nat) :
     IsIncreasing (hexagonalCenteredShellEvent R k) :=
   openCrossEvent_isIncreasing _ _ _ _
 
-
-
-theorem hexagonal_reachOpen_edgeSet_iff_openSub_reachable
-    {W : Type*} [Fintype W] [DecidableEq W]
-    (H : SimpleGraph W) [DecidableRel H.Adj]
-    (omega : ConfigSpace H.edgeSet) (u v : W) :
-    ReachOpen (fun e : H.edgeSet => e.1.out.1)
-        (fun e : H.edgeSet => e.1.out.2) omega u v ↔
-      (openSub H (extendActive H omega)).Reachable u v := by
-  constructor
-  · intro h
-    induction h with
-    | refl w => exact SimpleGraph.Reachable.refl w
-    | @step a b c e hopen hpair _ ih =>
-        have hedge : (openSub H (extendActive H omega)).Adj
-            e.1.out.1 e.1.out.2 := by
-          rw [openSub_adj]
-          refine ⟨?_, ?_⟩
-          · rw [← SimpleGraph.mem_edgeSet]
-            have hout : s(e.1.out.1, e.1.out.2) = e.1 := e.1.out_eq
-            rw [hout]
-            exact e.2
-          · calc
-              extendActive H omega s(e.1.out.1, e.1.out.2) =
-                  extendActive H omega e.1 := congrArg _ e.1.out_eq
-              _ = omega e := extendActive_apply H omega e
-              _ = true := hopen
-        rcases hpair with ⟨hU, hV⟩ | ⟨hU, hV⟩
-        · rw [hU, hV] at hedge
-          exact hedge.reachable.trans ih
-        · rw [hU, hV] at hedge
-          exact hedge.symm.reachable.trans ih
-  · intro h
-    rw [SimpleGraph.reachable_iff_reflTransGen] at h
-    induction h with
-    | refl => exact ReachOpen.refl u
-    | @tail a b _ hab ih =>
-        rw [openSub_adj] at hab
-        let e : H.edgeSet := ⟨s(a, b), by
-          rw [SimpleGraph.mem_edgeSet]
-          exact hab.1⟩
-        have hopen : omega e = true := by
-          have hext := extendActive_apply H omega e
-          have hopenfull : extendActive H omega s(a, b) = true := hab.2
-          exact hext.symm.trans hopenfull
-        have hepair :
-            ((fun e : H.edgeSet => e.1.out.1) e = a ∧
-              (fun e : H.edgeSet => e.1.out.2) e = b) ∨
-            ((fun e : H.edgeSet => e.1.out.1) e = b ∧
-              (fun e : H.edgeSet => e.1.out.2) e = a) := by
-          have hout : s(e.1.out.1, e.1.out.2) = s(a, b) := e.1.out_eq
-          exact Sym2.eq_iff.mp hout
-        exact ih.trans (ReachOpen.step e hopen hepair (ReachOpen.refl b))
-
-theorem hexagonal_connOpenSet_edgeSet_iff_openSub
-    {W : Type*} [Fintype W] [DecidableEq W]
-    (H : SimpleGraph W) [DecidableRel H.Adj]
-    (omega : ConfigSpace H.edgeSet) (u : W) (B : Set W) :
-    ConnOpenSet (fun e : H.edgeSet => e.1.out.1)
-        (fun e : H.edgeSet => e.1.out.2) omega u B ↔
-      ∃ v ∈ B, (openSub H (extendActive H omega)).Reachable u v := by
-  simp only [ConnOpenSet]
-  apply exists_congr
-  intro v
-  apply and_congr_right
-  intro _
-  exact reachOpen_edgeSet_iff_openSub_reachable H omega u v
-
+/-- The centered shell-crossing event for configurations of all vertex pairs of the box. -/
 def hexagonalCenteredShellFullEvent (R k : Nat) :
     Set (ConfigSpace (Sym2 (HexagonalBoxVertex R))) :=
   {omega | ∃ y ∈ hexagonalBoxShell R k,
     (openSub (hexagonalBoxGraph R) omega).Reachable (hexagonalBoxRoot R) y}
 
+/-- The translated shell-crossing event for configurations of all vertex pairs of the translated
+box. -/
 def hexagonalTransShellFullEvent (R k : Nat) (x : HexVertex) :
     Set (ConfigSpace (Sym2 (HexagonalTransBoxVertex R x.1))) :=
   {omega | ∃ y ∈ hexagonalTransBoxShell R k x.1,
     (openSub (hexagonalTransBoxGraph R x.1) omega).Reachable
       (hexagonalTransBoxCenter R x) y}
 
-
-
-theorem restrictActive_preimage_hexagonalCenteredShellEvent
+lemma restrictActive_preimage_hexagonalCenteredShellEvent
     (R k : Nat) :
     restrictActive (hexagonalBoxGraph R) ⁻¹'
         hexagonalCenteredShellEvent R k =
@@ -359,7 +349,7 @@ theorem restrictActive_preimage_hexagonalCenteredShellEvent
   rw [openSub_extendActive_restrictActive_eq]
   simp
 
-theorem restrictActive_preimage_hexagonalTransShellEvent
+lemma restrictActive_preimage_hexagonalTransShellEvent
     (R k : Nat) (x : HexVertex) :
     restrictActive (hexagonalTransBoxGraph R x.1) ⁻¹'
         hexagonalTransShellEvent R k x =
@@ -377,9 +367,7 @@ theorem restrictActive_preimage_hexagonalTransShellEvent
   rw [openSub_extendActive_restrictActive_eq]
   simp
 
-
-
-theorem reCfgIso_preimage_hexagonalCenteredShellFullEvent
+lemma reCfgIso_preimage_hexagonalCenteredShellFullEvent
     (R k : Nat) (x : HexVertex) :
     reCfgIso (hexagonalTransEquiv R x) ⁻¹'
         hexagonalCenteredShellFullEvent R k =
@@ -405,9 +393,7 @@ theorem reCfgIso_preimage_hexagonalCenteredShellFullEvent
       rw [hexagonalTransEquiv_center]
       simpa [sigma, y0] using hreach
 
-
-
-theorem hexagonalTransEquiv_boundary (R : Nat) (x : HexVertex)
+lemma hexagonalTransEquiv_boundary (R : Nat) (x : HexVertex)
     (y : HexagonalBoxVertex R) :
     y ∈ hexagonalBoxShell R R ↔
       hexagonalTransBoxBoundary R x.1
@@ -416,10 +402,8 @@ theorem hexagonalTransEquiv_boundary (R : Nat) (x : HexVertex)
     simp [hexagonalBoxShell, hexagonalTransBoxBoundary,
       hexagonalTransEquiv, hx, sub_eq_add_neg, Int.natAbs_neg]
 
-
-
-
-theorem hexagonalTransShellEvent_activeBCMean_eq_centeredFullMass
+open scoped Classical in
+lemma hexagonalTransShellEvent_activeBCMean_eq_centeredFullMass
     (R k : Nat) (x : HexVertex) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     activeBCMean (hexagonalTransBoxGraph R x.1)
@@ -480,8 +464,8 @@ theorem hexagonalTransShellEvent_activeBCMean_eq_centeredFullMass
         (hexagonalCenteredShellFullEvent R k)]
       rw [reCfgIso_preimage_hexagonalCenteredShellFullEvent]
 
-
-theorem hexagonalTransShellEvent_betaMean_eq_centeredFullMass
+open scoped Classical in
+lemma hexagonalTransShellEvent_betaMean_eq_centeredFullMass
     (R k : Nat) (x : HexVertex) (q beta : Real)
     (hq : 0 < q) (hbeta : 0 < beta) :
     activeBCMean (hexagonalTransBoxGraph R x.1)
@@ -507,8 +491,9 @@ theorem hexagonalTransShellEvent_betaMean_eq_centeredFullMass
   exact hexagonalTransShellEvent_activeBCMean_eq_centeredFullMass
     R k x hp hp1 hq
 
+/-! ## C. Domination by the wired measure of a sub-box -/
 
-theorem hexagonalTransBox_subset_double
+lemma hexagonalTransBox_subset_double
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n) (hkn : 2 * k < n) :
     hexagonalTransBox (2 * k) x ⊆ box 2 (2 * n) := by
   intro y hy i
@@ -522,9 +507,8 @@ theorem hexagonalTransBox_subset_double
     _ <= 2 * k + n := Nat.add_le_add hyi hxi
     _ <= 2 * n := by omega
 
-
-
-theorem hexagonalTransBox_outer_margin
+open scoped Classical in
+lemma hexagonalTransBox_outer_margin
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n) (hkn : 2 * k < n)
     (y : HexagonalTransBoxVertex (2 * k) x) :
     hexagonalTransBoxIncl (hexagonalTransBox_subset_double hx hkn) y ∉
@@ -544,7 +528,7 @@ theorem hexagonalTransBox_outer_margin
       _ <= 2 * n - 1 := by omega
   exact hycoord hybox
 
-theorem hexagonal_adj_sub_right (x : Site 2) {y z : HexVertex}
+lemma hexagonal_adj_sub_right (x : Site 2) {y z : HexVertex}
     (hyz : hexagonalGraph.Adj y z) :
     hexagonalGraph.Adj (y.1 - x, y.2) (z.1 - x, z.2) := by
   rw [hexagonalGraph_adj] at hyz ⊢
@@ -558,9 +542,7 @@ theorem hexagonal_adj_sub_right (x : Site 2) {y z : HexVertex}
       (y.1 - x) - (z.1 - x) = y.1 - z.1 := by abel
       _ = hexagonalStep i := h
 
-
-
-theorem hexagonalTransBox_boundary_of_adj_outside
+lemma hexagonalTransBox_boundary_of_adj_outside
     {R : Nat} (hR : 1 <= R) {x : Site 2}
     (y : HexagonalTransBoxVertex R x) (z : HexVertex)
     (hyz : hexagonalGraph.Adj y.1 z) (hz : z.1 ∉ hexagonalTransBox R x) :
@@ -578,9 +560,8 @@ theorem hexagonalTransBox_boundary_of_adj_outside
     exact hexagonal_adj_mem_box_of_mem_pred hR hsmall hadj
   exact hz hzR
 
-
-
-theorem hexagonalTransBox_inducedWiring_le
+open scoped Classical in
+lemma hexagonalTransBox_inducedWiring_le
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n)
     (hk : 1 <= k) (hkn : 2 * k < n)
     (psi : ConfigSpace (Sym2 (HexagonalBoxVertex (2 * n)))) :
@@ -601,8 +582,11 @@ theorem hexagonalTransBox_inducedWiring_le
     intro hzcoord
     exact hz ⟨hzcoord, Set.mem_univ _⟩
 
-
-
+open scoped Classical in
+/-- Comparison of boundary conditions for translated hexagonal boxes: for `q ≥ 1` and an increasing
+event of the box of radius `2k` at `x`, its probability under the measure wired at `Λ_{2n}` is at
+most its probability under the measure wired at the translated box (Grimmett, *The Random-Cluster
+Model*, §4.2). -/
 theorem hexagonalTransBox_activeBCMean_le
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n)
     (hk : 1 <= k) (hkn : 2 * k < n)

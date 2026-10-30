@@ -6,30 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCage
 
+/-!
+# First and last contacts of a planar path with a line
+
+For a continuous path in `ℝ²` and a coordinate line `{z i = a}` that it reaches, the first and
+last contact times and the excursions of the path on one side of the line.
+
+## i. Overview
+
+If a path starts on one side of the line and ends on the other, there is a first contact time
+`t` with the line, and the subpath before `t` stays on the starting side; symmetrically for the
+last contact and the subpath after it. If a path starts and ends below the line and visits
+`{z i ≥ a}` at time `t`, the last contact before `t` and the first contact after `t` cut out an
+excursion from the line to the line staying in `{z i ≥ a}` (and symmetrically for lower
+excursions). These are the topological inputs of the crosscut arguments; all results are
+proved unconditionally.
+
+## ii. Key results
+
+- `exists_first_line_contact_prefix_in_halfPlane`, `exists_last_line_contact_suffix_in_halfPlane`.
+- `exists_upper_line_excursion_path`, `exists_lower_line_excursion_path`.
+
+## iii. Table of contents
+
+- A. First and last contacts
+- B. Excursions above and below a line
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Set
 
 namespace StatMech.FK.PeriodicPlanar.ContinuousHalfPlaneCrosscut
 
+/-! ## A. First and last contacts -/
 
-
-theorem exists_first_line_contact_prefix_in_halfPlane
+lemma exists_first_line_contact_prefix_in_halfPlane
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i <= a)
     (hfinish : a <= finish i) :
@@ -64,9 +84,7 @@ theorem exists_first_line_contact_prefix_in_halfPlane
     have huLine : gamma u i = a := by simpa [huv] using hvLine
     exact (lt_of_not_ge hnot).ne' huLine
 
-
-
-theorem exists_last_line_contact_suffix_in_halfPlane
+lemma exists_last_line_contact_suffix_in_halfPlane
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i <= a)
     (hfinish : a <= finish i) :
@@ -101,9 +119,7 @@ theorem exists_last_line_contact_suffix_in_halfPlane
     have huLine : gamma u i = a := by simpa [huv] using hvLine
     exact (lt_of_not_ge hnot).ne huLine
 
-
-
-theorem exists_first_line_contact_prefix_in_upperHalfPlane
+lemma exists_first_line_contact_prefix_in_upperHalfPlane
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : a <= start i)
     (hfinish : finish i <= a) :
@@ -139,9 +155,7 @@ theorem exists_first_line_contact_prefix_in_upperHalfPlane
     have huLine : gamma u i = a := by simpa [huv] using hvLine
     exact (lt_of_not_ge hnot).ne huLine
 
-
-
-theorem exists_last_line_contact_suffix_in_lowerHalfPlane
+lemma exists_last_line_contact_suffix_in_lowerHalfPlane
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : a <= start i)
     (hfinish : finish i <= a) :
@@ -177,11 +191,9 @@ theorem exists_last_line_contact_suffix_in_lowerHalfPlane
     have huLine : gamma u i = a := by simpa [huv] using hvLine
     exact (lt_of_not_ge hnot).ne' huLine
 
+/-! ## B. Excursions above and below a line -/
 
-
-
-
-theorem exists_upper_line_excursion
+lemma exists_upper_line_excursion
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i <= a)
     (hfinish : finish i <= a) (t : unitInterval)
@@ -229,8 +241,7 @@ theorem exists_upper_line_excursion
   · rw [hupperCoe]
     exact huHalf
 
-
-theorem exists_lower_line_excursion
+lemma exists_lower_line_excursion
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : a <= start i)
     (hfinish : a <= finish i) (t : unitInterval)
@@ -278,9 +289,9 @@ theorem exists_lower_line_excursion
   · rw [hupperCoe]
     exact huHalf
 
-
-
-theorem exists_upper_line_excursion_path
+/-- An excursion of the path from the line `{z i = a}` back to it, staying in `{z i ≥ a}`, as a
+single path. Derived from `exists_upper_line_excursion` by concatenation. -/
+lemma exists_upper_line_excursion_path
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i <= a)
     (hfinish : finish i <= a) (t : unitInterval)
@@ -299,8 +310,9 @@ theorem exists_upper_line_excursion_path
     rw [Path.trans_range] at hz
     exact hz.elim (hlowerHalf z) (hupperHalf z)
 
-
-theorem exists_lower_line_excursion_path
+/-- An excursion of the path from the line `{z i = a}` back to it, staying in `{z i ≤ a}`, as a
+single path. -/
+lemma exists_lower_line_excursion_path
     {start finish : Fin 2 -> Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : a <= start i)
     (hfinish : a <= finish i) (t : unitInterval)

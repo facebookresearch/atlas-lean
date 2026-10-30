@@ -6,25 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArmsHighProbability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneBarrier
 
+/-!
+# Primal barriers exclude complementary dual crossings
+
+Almost surely there are joined open primal arms in some vertical strip, and such arms rule out
+open dual walks crossing every rectangle horizontally.
+
+## i. Overview
+
+`PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady` (defined in
+`HalfPlaneJoinedArmsHighProbability`) says that two nontrivial open primal walks meet at a common
+vertex, have arcs inside a vertical strip `a < x < b`, and start below height `C` and above
+height `D`. Despite its name it does not refer to a half-plane. Under an FKG, translation
+invariant measure with an almost surely unique infinite cluster, this event has probability one.
+`HasOpenComplementaryDualTransverseWalks` asks for an open dual walk crossing every rectangle
+`(a, b) × (c, d)` from left to right; the barrier makes the two events incompatible.
+
+Headline fidelity:
+- `primalHalfPlaneBarrierReady_measureReal_eq_one` is conditional on FKG, translation invariance
+  and almost sure uniqueness of the infinite cluster.
+- `not_primalBarrierReady_and_complementaryDualTransverseWalks` is unconditional.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one`
+- `PeriodicPlanarDualPair.not_primalBarrierReady_and_complementaryDualTransverseWalks`
+
+## iii. Table of contents
+
+- A. Joined primal arms occur almost surely
+- B. Exclusion of complementary dual crossings
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
@@ -33,8 +56,10 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Joined primal arms occur almost surely -/
 
-
+/-- Under an FKG, translation-invariant probability measure with an almost surely unique infinite
+cluster, joined open primal arms in some vertical strip exist almost surely. -/
 theorem PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -60,10 +85,12 @@ theorem PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
+/-! ## B. Exclusion of complementary dual crossings -/
+
 namespace PeriodicPlanarDualPair
 
-
-
+/-- The configuration has a nontrivial open dual walk starting left of `a`, ending right of `b`,
+whose arc stays at heights in `(c, d)` (heights measured in the primal coordinates). -/
 def HasOpenComplementaryDualTransverseWalkAt
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V)) (a b c d : Real) : Prop :=
@@ -79,17 +106,15 @@ def HasOpenComplementaryDualTransverseWalkAt
           D.primalEmbedding.coordinates
             (D.dualEmbedding.walkArc dual t) 1 < d
 
-
-
-
+/-- Every rectangle `(a, b) × (c, d)` is crossed horizontally by an open dual walk. -/
 def HasOpenComplementaryDualTransverseWalks
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V)) : Prop :=
   ∀ a b c d : Real, a < b → c < d →
     D.HasOpenComplementaryDualTransverseWalkAt omega a b c d
 
-
-
+/-- Joined open primal arms in a strip and open dual horizontal crossings of every rectangle
+cannot occur together. -/
 theorem not_primalBarrierReady_and_complementaryDualTransverseWalks
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V)) :

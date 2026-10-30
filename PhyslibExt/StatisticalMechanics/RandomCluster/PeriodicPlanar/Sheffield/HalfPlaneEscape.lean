@@ -6,20 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlane
+
+/-!
+# Infinite clusters reach the boundary of a half-plane
+
+Under uniqueness, a set inside a half-plane that meets the infinite cluster is connected to the
+half-plane boundary inside the half-plane, with probability tending to one for large boxes.
+
+## i. Overview
+
+Fix a periodic planar graph with an embedding and the right half-plane `H_r = {x ≥ r}`. A cluster
+that starts in `H_r` and leaves it must cross the boundary vertex set `∂H_r` (vertices of `H_r`
+with a neighbour to the left). If the infinite cluster is unique and is met both by a set
+`S ⊆ H_r` and a set `T` outside `H_r`, then `S` is connected to `∂H_r` within `H_r`. The FKG
+inequality turns this into `P(S ↔ ∂H_r in H_r) ≥ P(S meets ∞) · P(T meets ∞)`; translating an
+orbit box across the boundary gives a square, and large boxes give a sequence of finite sources
+whose boundary-connection probability tends to one. Splitting `∂H_r` into a lower and an upper
+ray, the larger of the two connection probabilities also tends to one.
+
+Headline fidelity: the probability bounds (`boundaryConnection_measureReal_ge_mul` and its
+consequences) are conditional on the FKG inequality, translation invariance (where used) and
+almost sure uniqueness of the infinite cluster (`hunique`); the walk and translation lemmas are
+unconditional.
+
+## ii. Key results
+
+- `PeriodicGraph.setHitsInfinite` : some vertex of a set lies in an infinite cluster.
+- `PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul` : the FKG lower bound.
+- `PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one`
+- `PeriodicPlaneEmbedding.exists_boundaryRay_max_sequence_tendsto_one`
+
+## iii. Table of contents
+
+- A. Walks leaving a half-plane
+- B. Sets meeting an infinite cluster
+- C. Translating boxes across the boundary
+- D. Connection to the boundary line
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §4 (FKG inequality).
+-/
 
 @[expose] public section
 
@@ -27,14 +58,16 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Walks leaving a half-plane -/
 
-
-theorem PeriodicGraph.mem_connectedWithinSet_of_walk
+omit [Countable V] in
+/-- An open walk with all vertices in `A` witnesses a connection within `A`. -/
+lemma PeriodicGraph.mem_connectedWithinSet_of_walk
     (P : PeriodicGraph V) {omega : ConfigSpace (Sym2 V)}
     {A : Set V} {x y : V} (p : (P.openSubgraph omega).Walk x y)
     (hp : ∀ v ∈ p.support, v ∈ A) :
@@ -45,10 +78,10 @@ theorem PeriodicGraph.mem_connectedWithinSet_of_walk
   · simpa only [p.cons_tail_support] using p.getLast_support
   · rwa [p.cons_tail_support]
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_boundary_walk_of_walk_to_left
+omit [Countable V] in
+/-- An open walk from a vertex of `H_r` to a vertex outside `H_r` has an initial segment inside
+`H_r` ending at a boundary vertex of `H_r`. -/
+lemma PeriodicPlaneEmbedding.exists_boundary_walk_of_walk_to_left
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V)) (r : ℝ)
     {x y : V} (p : (P.openSubgraph omega).Walk x y)
     (hx : x ∈ E.rightHalfPlaneVertices r)
@@ -72,10 +105,10 @@ theorem PeriodicPlaneEmbedding.exists_boundary_walk_of_walk_to_left
           exact lt_of_not_ge hz
         · simpa using hx
 
-
-
-
-theorem PeriodicPlaneEmbedding.connectedWithin_rightHalfPlane_boundary_of_reachable
+omit [Countable V] in
+/-- A vertex of `H_r` whose open cluster leaves `H_r` is connected within `H_r` to a boundary
+vertex of `H_r`. -/
+lemma PeriodicPlaneEmbedding.connectedWithin_rightHalfPlane_boundary_of_reachable
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V)) (r : ℝ)
     {x y : V} (hx : x ∈ E.rightHalfPlaneVertices r)
     (hy : y ∉ E.rightHalfPlaneVertices r)
@@ -87,15 +120,15 @@ theorem PeriodicPlaneEmbedding.connectedWithin_rightHalfPlane_boundary_of_reacha
     E.exists_boundary_walk_of_walk_to_left omega r p hx hy
   exact ⟨b, hb, P.mem_connectedWithinSet_of_walk q hq⟩
 
+/-! ## B. Sets meeting an infinite cluster -/
 
-
-
+/-- The event that some vertex of `S` lies in an infinite open cluster. -/
 def PeriodicGraph.setHitsInfinite
     (P : PeriodicGraph V) (S : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ S, (P.cluster omega x).Infinite}
 
-theorem PeriodicGraph.setHitsInfinite_measurableSet
+lemma PeriodicGraph.setHitsInfinite_measurableSet
     (P : PeriodicGraph V) (S : Set V) :
     MeasurableSet (P.setHitsInfinite S) := by
   classical
@@ -111,22 +144,22 @@ theorem PeriodicGraph.setHitsInfinite_measurableSet
     · simpa [hx] using P.measurableSet_cluster_infinite x
     · simp [hx]
 
-theorem PeriodicGraph.setHitsInfinite_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.setHitsInfinite_isIncreasing
     (P : PeriodicGraph V) (S : Set V) :
     IsIncreasing (P.setHitsInfinite S) := by
   intro omega eta home
   rintro ⟨x, hx, hinf⟩
   exact ⟨x, hx, P.clusterInfinite_isIncreasing x home hinf⟩
 
-
-
-theorem PeriodicGraph.setHitsInfinite_translate_preimage
+omit [Countable V] in
+lemma PeriodicGraph.setHitsInfinite_translate_preimage
     (P : PeriodicGraph V) (z : Site 2) (S : Set V) :
     P.configTranslate z ⁻¹' P.setHitsInfinite (P.shift z '' S) =
       P.setHitsInfinite S := by
   ext omega
   simp only [Set.mem_preimage, PeriodicGraph.setHitsInfinite,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, ⟨u, hu, rfl⟩, hinf⟩
     exact ⟨u, hu, (P.cluster_infinite_configTranslate z omega u).mp hinf⟩
@@ -134,7 +167,9 @@ theorem PeriodicGraph.setHitsInfinite_translate_preimage
     exact ⟨P.shift z u, ⟨u, hu, rfl⟩,
       (P.cluster_infinite_configTranslate z omega u).mpr hinf⟩
 
-theorem PeriodicGraph.setHitsInfinite_translate_measureReal_eq
+/-- Under a translation-invariant measure, the probability that `S` meets an infinite cluster is
+translation invariant. -/
+lemma PeriodicGraph.setHitsInfinite_translate_measureReal_eq
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (S : Set V) :
@@ -145,14 +180,17 @@ theorem PeriodicGraph.setHitsInfinite_translate_measureReal_eq
   rw [P.setHitsInfinite_translate_preimage z S] at hmeasure
   exact congrArg ENNReal.toReal hmeasure.symm
 
-@[simp] theorem PeriodicGraph.setHitsInfinite_orbitBox
+omit [Countable V] in
+@[simp] lemma PeriodicGraph.setHitsInfinite_orbitBox
     (P : PeriodicGraph V) (N : ℕ) :
     P.setHitsInfinite (P.orbitBox N : Set V) =
       P.orbitBoxHitsInfinite N := rfl
 
+/-! ## C. Translating boxes across the boundary -/
 
-
-theorem PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_leftComplement
+omit [Countable V] in
+/-- Every orbit box can be translated entirely to the left of the line `x = r`. -/
+lemma PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_leftComplement
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ) :
     ∃ z : Site 2, ∀ v ∈ P.orbitBox N,
       P.shift z v ∉ E.rightHalfPlaneVertices r := by
@@ -172,14 +210,15 @@ theorem PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_leftComplement
   rw [E.vertexCoord_shift]
   have hz : (z 0 : ℝ) = -(n + 1 : ℝ) := by simp [z]
   rw [hz]
-  push_neg
+  push Not
   norm_num at *
   linarith
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox
+omit [Countable V] in
+/-- An orbit box can be translated into `H_r` and then translated again into the complement of
+`H_r`. See also `exists_opposite_translated_orbitBox_with_margin` (`HalfPlaneInteriorArm`),
+the stronger margin version. -/
+lemma PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ) :
     ∃ z₀ z₁ : Site 2,
       P.shift z₀ '' (P.orbitBox N : Set V) ⊆
@@ -199,10 +238,14 @@ theorem PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox
     rw [hshift]
     exact hzL v hv
 
+/-! ## D. Connection to the boundary line -/
 
-
-
-theorem PeriodicPlaneEmbedding.unique_two_sides_subset_boundaryConnection
+omit [Countable V] in
+/-- If the infinite cluster is unique and meets both `S ⊆ H_r` and `T ⊆ H_rᶜ`, then `S` is
+connected to `∂H_r` within `H_r`. See also
+`unique_two_sides_subset_infiniteBoundaryConnection` (`HalfPlaneInfiniteArm`), which gives
+the stronger event with the source in an infinite cluster. -/
+lemma PeriodicPlaneEmbedding.unique_two_sides_subset_boundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : ℝ) {S T : Set V}
     (hS : S ⊆ E.rightHalfPlaneVertices r)
     (hT : T ⊆ (E.rightHalfPlaneVertices r)ᶜ) :
@@ -218,11 +261,10 @@ theorem PeriodicPlaneEmbedding.unique_two_sides_subset_boundaryConnection
     E.connectedWithin_rightHalfPlane_boundary_of_reachable omega r hxH hyH hxy
   exact ⟨x, hxS, b, hb, hxb⟩
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
+/-- FKG lower bound `P(S ↔ ∂H_r in H_r) ≥ P(S meets ∞) P(T meets ∞)` for `S ⊆ H_r`, `T ⊆ H_rᶜ`,
+assuming FKG and almost sure uniqueness. See also
+`infiniteBoundaryConnection_measureReal_ge_mul` (`HalfPlaneInfiniteArm`, stronger event). -/
+lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -256,9 +298,10 @@ theorem PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
     ENNReal.toReal_mono (measure_ne_top mu C) hmeasure
   exact hprod.trans hreal
 
-
-
-theorem PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_sq_of_translate
+/-- Square lower bound when a translate of `S` lies outside `H_r`. See also
+`infiniteBoundaryConnection_measureReal_ge_sq_of_translate` (`HalfPlaneInfiniteArm`, stronger
+event). -/
+lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_sq_of_translate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -274,11 +317,9 @@ theorem PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_sq_of_translate
   rw [P.setHitsInfinite_translate_measureReal_eq mu hTI z S] at hmul
   simpa [pow_two] using hmul
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
+/-- For every orbit box there is a source set in `H_r` whose boundary-connection probability is
+at least the square of the probability that the box meets an infinite cluster. -/
+lemma PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -301,9 +342,10 @@ theorem PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
     rfl
   rwa [hmass] at hsq
 
-
-
-
+/-- Sources in `H_r` whose connection to `∂H_r` within `H_r` has probability tending to one (FKG,
+translation invariance, almost sure uniqueness). See also
+`exists_infiniteBoundaryConnection_sequence_tendsto_one` (`HalfPlaneInfiniteArm`), which is
+stronger (finite sources, infinite-cluster event). -/
 theorem PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -333,10 +375,9 @@ theorem PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
   · intro N
     exact measureReal_le_one
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_boundaryRay_max_sequence_tendsto_one
+/-- The larger of the lower-ray and upper-ray connection probabilities tends to one along
+suitable sources in `H_r`. -/
+lemma PeriodicPlaneEmbedding.exists_boundaryRay_max_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

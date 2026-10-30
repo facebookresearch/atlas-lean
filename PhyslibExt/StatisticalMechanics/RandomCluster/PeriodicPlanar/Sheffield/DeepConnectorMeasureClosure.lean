@@ -6,26 +6,55 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorCage
 
+/-!
+# No dual infinite cluster in a half-plane, from deep connector schedules
+
+If, for every boundary band, finite deep connectors of probability tending to `1` are disjoint
+from the event that a dual infinite cluster touches that band, then no dual infinite cluster
+lives in the right half-plane.
+
+## i. Overview
+
+An event of probability tending to `1` that is disjoint from a measurable set forces that set to
+have measure `0` (`measure_eq_zero_of_disjoint_measureReal_tendsto_one`). A
+`FiniteDeepConnectorBandSchedule` for band `[-band, band]` provides exactly such a sequence of
+deep connector events, so the dual band event is null. Taking all bands and using ergodicity and
+uniqueness of the dual infinite cluster gives
+`complementaryDual_rightHalfPlane_measure_eq_zero_of_finiteDeepConnector_schedules`. This is
+conditional on a schedule for every band; such schedules are built in
+`Sheffield.DeepConnectorRows` from a disjointness hypothesis that is not proved.
+
+## ii. Key results
+
+- `measure_eq_zero_of_disjoint_measureReal_tendsto_one`.
+- `PeriodicPlanarDualPair.FiniteDeepConnectorBandSchedule`.
+- `complementaryDual_rightHalfPlane_measure_eq_zero_of_finiteDeepConnector_schedules` :
+  conditional on a schedule for every band, dual ergodicity and dual uniqueness.
+
+## iii. Table of contents
+
+- A. Null sets disjoint from likely events
+- B. Deep connector schedules
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Filter MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
+/-! ## A. Null sets disjoint from likely events -/
 
-
-theorem measure_eq_zero_of_disjoint_measureReal_tendsto_one
+/-- A measurable set disjoint from events of probability tending to `1` has measure `0`. -/
+lemma measure_eq_zero_of_disjoint_measureReal_tendsto_one
     {X : Type*} [MeasurableSpace X]
     (mu : Measure X) [IsProbabilityMeasure mu]
     (A : Nat → Set X) (B : Set X) (hB : MeasurableSet B)
@@ -56,8 +85,11 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## B. Deep connector schedules -/
 
-
+/-- A sequence of finite deep connector events with probability tending to `1`, each disjoint from
+the event that a dual infinite cluster in `{x ≥ rDual}` touches the boundary band `[-band, band]`.
+-/
 structure FiniteDeepConnectorBandSchedule
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -81,9 +113,9 @@ structure FiniteDeepConnectorBandSchedule
       D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
         rDual (-(band : Real)) band)
 
-
-
-theorem dual_boundaryBand_measure_eq_zero_of_finiteDeepConnector_tendsto_one
+/-- Deep connectors of probability tending to `1` disjoint from the dual band event make that event
+null. -/
+lemma dual_boundaryBand_measure_eq_zero_of_finiteDeepConnector_tendsto_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (rPrimal Rdeep cArm dArm : Nat → Real)
@@ -123,9 +155,9 @@ theorem dual_boundaryBand_measure_eq_zero_of_finiteDeepConnector_tendsto_one
     (continuous_dualConfigEquiv D.edgeDual).measurable hbandMeas]
   exact hpulledZero
 
-
-
-theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_finiteDeepConnector_schedules
+/-- Given a deep connector schedule for every band, an ergodic dual measure with a unique infinite
+cluster has no infinite cluster in the right half-plane `{x ≥ rDual}`. -/
+lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_finiteDeepConnector_schedules
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
@@ -137,7 +169,7 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_finiteDeepConnector_
     D.dualMeasure mu
       (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance

@@ -6,36 +6,79 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepTemplateGridAssembly
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OrientedBoundary
 
+/-!
+# Boundary bands: uniform radii and the common square
+
+Uniform box radii for finite families of translated sources, transfer of side connections to a
+common square `[-M, M]²`, and the coloring used on boundary bands of a preference grid.
+
+## i. Overview
+
+For a finite family of sources in a half-plane, one exhaustion radius works for the whole family
+(the left-side exhaustion events of `Sheffield.NearBoundary` converge for each source). For a
+family of translates of one finite set `S`, the half-plane estimate gives the uniform lower bound
+`P(S hits ∞)² - ε` on the side-connection probability, for each of the four sides.
+
+A box `[0, R] × [-R, R]` touching the axis is moved by a horizontal or vertical translation of
+size `M ≥ R` so that its chosen side lies on the corresponding side of the common square
+`[-M, M]²`; by translation invariance and monotonicity in the other sides, the side-connection
+probability does not drop. `commonPrimalDualBandHalfWidth` is the common half-width (the
+maximum of the eight primal and dual radii). `boundaryBandPreferenceColor` colors a grid row or
+column: `true` within `margin` of the preferred side, `false` within `margin` of the opposite
+side, and otherwise `true` exactly when the opposite score exceeds the preferred one by at most
+`ε`.
+
+Headline fidelity.
+- `exists_common_leftBoundaryExhaustion_measureReal_gt`, the `*_to_commonSquare` lemmas
+  (translation invariance only) and the coloring lemmas are unconditional.
+- The four `exists_translatedFamily_*BoundaryExhaustion_measureReal_gt` results are conditional on
+  `IsFKG mu`, `P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite
+  cluster; satisfiable (for example supercritical Bernoulli percolation), so not vacuous.
+- Five results of section A carry `[Fintype ι] [DecidableEq ι]` binders that their statements do
+  not use (linters `unusedFintypeInType`, `unusedDecidableInType`); they are kept, since removing
+  them would change the statements.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_measureReal_gt` and its
+  right, bottom and top versions.
+- `PeriodicPlaneEmbedding.leftBoundaryExhaustion_to_commonSquare` and its right, bottom and top
+  versions.
+- `boundaryBandPreferenceColor_true_imp`, `boundaryBandPreferenceColor_false_imp`.
+
+## iii. Table of contents
+
+- A. Uniform radii for finite families of sources
+- B. Moving a side connection to the common square
+- C. Common half-width and boundary-band coloring
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Uniform radii for finite families of sources -/
 
-
-theorem PeriodicPlaneEmbedding.exists_common_leftBoundaryExhaustion_measureReal_gt
+omit [Countable V] in
+/-- For a finite family of finite sources in the half-plane `x ≥ r`, one exhaustion radius makes
+each left-side exhaustion event `ε`-close to the corresponding half-plane boundary connection. -/
+lemma PeriodicPlaneEmbedding.exists_common_leftBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -65,10 +108,10 @@ theorem PeriodicPlaneEmbedding.exists_common_leftBoundaryExhaustion_measureReal_
   · exact (hlocal i).2.trans_le (measureReal_mono
       (E.leftBoundaryExhaustionEvent_mono r (source i : Set V) hle))
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_measureReal_gt
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
+of translates of `S` in the half-plane `x ≥ r`, one radius `R` puts every translate in the box `[r,
+r + R] × [-R, R]` with left-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -124,8 +167,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_me
   · rw [← hsourceSet i]
     linarith [(hradius i).2]
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_measureReal_gt
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
+of translates of `S` in the half-plane `x ≤ -r`, one radius `R` puts every translate in the box `[-r
+- R, -r] × [-R, R]` with right-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -148,7 +193,7 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_m
   have huniqueNeg :
       mu {omega | P.axisNeg.HasUniqueInfiniteCluster omega} = 1 := by
     exact hunique
-  let shiftNeg : ι → Site 2 := fun i => siteNeg (shift i)
+  let shiftNeg : ι → Site 2 := fun i => -(shift i)
   have hinsideNeg (i : ι) :
       P.axisNeg.shift (shiftNeg i) '' (S : Set V) ⊆
         E.axisNeg.rightHalfPlaneVertices r := by
@@ -193,8 +238,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_m
     rw [E.axisNeg_leftBoundaryEvent] at hprob
     simpa only [neg_neg] using hprob
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_measureReal_gt
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
+of translates of `S` in the half-plane `y ≥ r`, one radius `R` puts every translate in the box `[-R,
+R] × [r, r + R]` with bottom-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -259,8 +306,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_
     rw [E.axisSwap_leftBoundaryEvent] at hprob
     exact hprob
 
-
-theorem PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_measureReal_gt
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
+of translates of `S` in the half-plane `y ≤ -r`, one radius `R` puts every translate in the box
+`[-R, R] × [-r - R, -r]` with top-side connection probability `> P(S hits ∞)² - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -324,9 +373,12 @@ theorem PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_mea
     rw [E.axisSwap_rightBoundaryEvent] at hprob
     exact hprob
 
+/-! ## B. Moving a side connection to the common square -/
 
-
-theorem PeriodicPlaneEmbedding.leftBoundaryExhaustion_to_commonSquare
+/-- Translation invariance: a set joined to the left side of `[0, R] × [-R, R]` with probability `>
+p` is moved by `-M` horizontally into the common square `[-M, M]²`, `M ≥ R`, and is still joined to
+its left side with probability `> p`. -/
+lemma PeriodicPlaneEmbedding.leftBoundaryExhaustion_to_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -344,8 +396,8 @@ theorem PeriodicPlaneEmbedding.leftBoundaryExhaustion_to_commonSquare
           (-(M : Real)) M (-(M : Real)) M)) := by
   let z := horizontalShift (-(M : Int))
   have hMr : (radius : Real) ≤ M := by exact_mod_cast hM
-  have hz0 : (z 0 : Real) = -(M : Real) := by simp [z, horizontalShift]
-  have hz1 : (z 1 : Real) = 0 := by simp [z, horizontalShift]
+  have hz0 : (z 0 : Real) = -(M : Real) := by simp [z]
+  have hz1 : (z 1 : Real) = 0 := by simp [z]
   constructor
   · rintro _ ⟨x, hx, rfl⟩
     have hx' := (E.shift_mem_rectVertices z 0 radius
@@ -374,8 +426,10 @@ theorem PeriodicPlaneEmbedding.leftBoundaryExhaustion_to_commonSquare
     exact hp.trans_le (by
       simpa only [z, sub_eq_add_neg, add_comm] using hmono)
 
-
-theorem PeriodicPlaneEmbedding.rightBoundaryExhaustion_to_commonSquare
+/-- Translation invariance: a set joined to the right side of `[-R, 0] × [-R, R]` with probability
+`> p` is moved by `M` horizontally into the common square `[-M, M]²`, `M ≥ R`, and is still joined
+to its right side with probability `> p`. -/
+lemma PeriodicPlaneEmbedding.rightBoundaryExhaustion_to_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -395,8 +449,8 @@ theorem PeriodicPlaneEmbedding.rightBoundaryExhaustion_to_commonSquare
           (-(M : Real)) M (-(M : Real)) M)) := by
   let z := horizontalShift (M : Int)
   have hMr : (radius : Real) ≤ M := by exact_mod_cast hM
-  have hz0 : (z 0 : Real) = M := by simp [z, horizontalShift]
-  have hz1 : (z 1 : Real) = 0 := by simp [z, horizontalShift]
+  have hz0 : (z 0 : Real) = M := by simp [z]
+  have hz1 : (z 1 : Real) = 0 := by simp [z]
   constructor
   · rintro _ ⟨x, hx, rfl⟩
     have hx' := (E.shift_mem_rectVertices z (-(radius : Real)) 0
@@ -424,8 +478,10 @@ theorem PeriodicPlaneEmbedding.rightBoundaryExhaustion_to_commonSquare
     exact hp.trans_le (by
       simpa only [z, sub_eq_add_neg, add_comm] using hmono)
 
-
-theorem PeriodicPlaneEmbedding.bottomBoundaryExhaustion_to_commonSquare
+/-- Translation invariance: a set joined to the bottom side of `[-R, R] × [0, R]` with probability
+`> p` is moved by `-M` vertically into the common square `[-M, M]²`, `M ≥ R`, and is still joined to
+its bottom side with probability `> p`. -/
+lemma PeriodicPlaneEmbedding.bottomBoundaryExhaustion_to_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -444,8 +500,8 @@ theorem PeriodicPlaneEmbedding.bottomBoundaryExhaustion_to_commonSquare
           (-(M : Real)) M (-(M : Real)) M)) := by
   let z := verticalShift (-(M : Int))
   have hMr : (radius : Real) ≤ M := by exact_mod_cast hM
-  have hz0 : (z 0 : Real) = 0 := by simp [z, verticalShift]
-  have hz1 : (z 1 : Real) = -(M : Real) := by simp [z, verticalShift]
+  have hz0 : (z 0 : Real) = 0 := by simp [z]
+  have hz1 : (z 1 : Real) = -(M : Real) := by simp [z]
   constructor
   · rintro _ ⟨x, hx, rfl⟩
     have hx' := (E.shift_mem_rectVertices z (-(radius : Real)) radius
@@ -473,8 +529,10 @@ theorem PeriodicPlaneEmbedding.bottomBoundaryExhaustion_to_commonSquare
     rw [← htranslate] at hp
     exact hp.trans_le hmono
 
-
-theorem PeriodicPlaneEmbedding.topBoundaryExhaustion_to_commonSquare
+/-- Translation invariance: a set joined to the top side of `[-R, R] × [-R, 0]` with probability `>
+p` is moved by `M` vertically into the common square `[-M, M]²`, `M ≥ R`, and is still joined to its
+top side with probability `> p`. -/
+lemma PeriodicPlaneEmbedding.topBoundaryExhaustion_to_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -494,8 +552,8 @@ theorem PeriodicPlaneEmbedding.topBoundaryExhaustion_to_commonSquare
           (-(M : Real)) M (-(M : Real)) M)) := by
   let z := verticalShift (M : Int)
   have hMr : (radius : Real) ≤ M := by exact_mod_cast hM
-  have hz0 : (z 0 : Real) = 0 := by simp [z, verticalShift]
-  have hz1 : (z 1 : Real) = M := by simp [z, verticalShift]
+  have hz0 : (z 0 : Real) = 0 := by simp [z]
+  have hz1 : (z 1 : Real) = M := by simp [z]
   constructor
   · rintro _ ⟨x, hx, rfl⟩
     have hx' := (E.shift_mem_rectVertices z (-(radius : Real)) radius
@@ -523,15 +581,18 @@ theorem PeriodicPlaneEmbedding.topBoundaryExhaustion_to_commonSquare
     exact hp.trans_le (by
       simpa only [z, sub_eq_add_neg, add_comm] using hmono)
 
+/-! ## C. Common half-width and boundary-band coloring -/
 
-
+/-- The common half-width of the primal and dual boundary bands: the maximum of the four primal and
+four dual side radii. -/
 def commonPrimalDualBandHalfWidth
     (primalLeft primalRight primalBottom primalTop
       dualLeft dualRight dualBottom dualTop : Nat) : Nat :=
   max (max (max primalLeft primalRight) (max primalBottom primalTop))
     (max (max dualLeft dualRight) (max dualBottom dualTop))
 
-theorem le_commonPrimalDualBandHalfWidth
+/-- Each of the eight radii is at most the common half-width. -/
+lemma le_commonPrimalDualBandHalfWidth
     (primalLeft primalRight primalBottom primalTop
       dualLeft dualRight dualBottom dualTop : Nat) :
     let M := commonPrimalDualBandHalfWidth
@@ -543,21 +604,26 @@ theorem le_commonPrimalDualBandHalfWidth
     dualBottom ≤ M ∧ dualTop ≤ M := by
   simp [commonPrimalDualBandHalfWidth]
 
-
+/-- Coloring of a grid position along one axis: `true` within `margin` of the preferred side,
+`false` within `margin` of the far end `extent`, and otherwise `true` exactly when `opposite ≤
+preferred + ε`. -/
 noncomputable def boundaryBandPreferenceColor
     (margin extent position : Nat) (epsilon preferred opposite : Real) : Bool :=
   if position ≤ margin then true
   else if extent ≤ position + margin then false
   else decide (opposite ≤ preferred + epsilon)
 
-@[simp] theorem boundaryBandPreferenceColor_eq_true_of_lower
+/-- Positions within `margin` of the preferred side are colored `true`. -/
+@[simp] lemma boundaryBandPreferenceColor_eq_true_of_lower
     {margin extent position : Nat} {epsilon preferred opposite : Real}
     (hposition : position ≤ margin) :
     boundaryBandPreferenceColor margin extent position
       epsilon preferred opposite = true := by
   simp [boundaryBandPreferenceColor, hposition]
 
-@[simp] theorem boundaryBandPreferenceColor_eq_false_of_upper
+/-- Positions within `margin` of the far end are colored `false`, when the two margins do not
+overlap. -/
+@[simp] lemma boundaryBandPreferenceColor_eq_false_of_upper
     {margin extent position : Nat} {epsilon preferred opposite : Real}
     (hsep : 2 * margin < extent)
     (hposition : extent ≤ position + margin) :
@@ -566,11 +632,11 @@ noncomputable def boundaryBandPreferenceColor
   have hnot : ¬position ≤ margin := by omega
   simp [boundaryBandPreferenceColor, hnot, hposition]
 
-
-
-theorem boundaryBandPreferenceColor_true_imp
+/-- A `true` position satisfies `opposite ≤ preferred + ε`, given that preferred scores in the lower
+band are at least `p` with `1 - p ≤ ε`. The hypotheses `_hepsilon` and `_hsep` are not used. -/
+lemma boundaryBandPreferenceColor_true_imp
     {margin extent position : Nat} {epsilon preferred opposite p : Real}
-    (hepsilon : 0 ≤ epsilon) (hsep : 2 * margin < extent)
+    (_hepsilon : 0 ≤ epsilon) (_hsep : 2 * margin < extent)
     (hopposite : opposite ≤ 1)
     (hlower : position ≤ margin → p ≤ preferred)
     (hdefect : 1 - p ≤ epsilon)
@@ -585,11 +651,11 @@ theorem boundaryBandPreferenceColor_true_imp
       simpa [boundaryBandPreferenceColor, hlowerBand, hupperBand] using hcolor
     exact of_decide_eq_true hdecide
 
-
-
-theorem boundaryBandPreferenceColor_false_imp
+/-- A `false` position satisfies `preferred ≤ opposite + ε`, given that opposite scores in the upper
+band are at least `p` with `1 - p ≤ ε`. The hypothesis `_hsep` is not used. -/
+lemma boundaryBandPreferenceColor_false_imp
     {margin extent position : Nat} {epsilon preferred opposite p : Real}
-    (hepsilon : 0 ≤ epsilon) (hsep : 2 * margin < extent)
+    (hepsilon : 0 ≤ epsilon) (_hsep : 2 * margin < extent)
     (hpreferred : preferred ≤ 1)
     (hupper : extent ≤ position + margin → p ≤ opposite)
     (hdefect : 1 - p ≤ epsilon)

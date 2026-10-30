@@ -6,15 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKFiniteWiredSweep
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKTorusSweep
+
+/-!
+# Finite wired triangular and hexagonal graphs built from up-triangle cells
+
+The finite triangular graph formed by the up-triangles of a planar box and the finite hexagonal
+graph formed by the corresponding stars, with wired boundary conditions, and the reduction of
+their wired cluster counts to the terminal sector graph.
+
+## i. Overview
+
+For the planar volume of radius `n` (cells `z ∈ box 2 n`, terminals `z + hexagonalStep i`),
+`triHexPlanarFiniteTriangleGraph n` is the graph on the terminals whose edges are the three sides
+of every up-triangle (a finite piece of the triangular lattice, with the edge identification
+`triHexPlanarFiniteTriangleEdge_val`), and `triHexPlanarFiniteStarGraph n` is the bipartite graph
+joining a black center per cell to its three terminals (a finite piece of the hexagonal lattice).
+Both edge sets are charted by `cell × Fin 3`, so configurations are one `LocalConfig` per cell.
+The main facts are:
+- triangular open (and wired) connectivity equals connectivity of the terminal sector graph
+  (with the boundary wired), so `numClustersWired` of the triangle graph is the number of
+  components of the wired sector graph;
+- for the star graph, white connectivity equals sector-graph connectivity, and the wired cluster
+  count is the wired sector count plus the number of isolated black centers.
+These identify the abstract `starFK…`/`triangleFK…` sums of `FKFiniteWiredSweep` with genuine
+finite-volume wired FK measures, which is done in `FKFiniteWiredWeights`. All results are
+unconditional combinatorics.
+
+## ii. Key results
+
+- `triHexPlanarFiniteTriangle_numClustersWired_eq_sector` : wired triangular cluster count via the
+  sector graph. Unconditional.
+- `triHexPlanarFiniteStar_numClustersWired_eq_sector_add_isolated` : wired hexagonal cluster count
+  via the sector graph plus isolated centers. Unconditional.
+- `triHexPlanarFiniteTriangle_wired_reachable_iff_sector`,
+  `triHexPlanarFiniteStar_wired_white_reachable_iff_sector` : wired connectivity via the sector
+  graph. Unconditional.
+
+## iii. Table of contents
+
+- A. The finite triangle graph
+- B. The finite star graph
+- C. Cell configurations
+- D. Triangular clusters through the sector graph
+- E. Hexagonal clusters through the sector graph
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §§4.1, 6.6.
+-/
 
 @[expose] public section
 
@@ -27,13 +70,14 @@ open Universality
 
 noncomputable section
 
+/-! ## A. The finite triangle graph -/
 
-
+/-- The shift moving the base point of a planar edge index to the up-triangle containing that edge.
+-/
 def triHexPlanarTriangleEdgeBaseShift (i : Fin 3) : Site 2 :=
   ![![0, 1], ![1, 0], ![1, 0]] i
 
-
-
+/-- The reindexing of planar edge indices by the up-triangle base shift. -/
 def triHexPlanarTriangleIndexEquiv :
     (Site 2 × Fin 3) ≃ (Site 2 × Fin 3) where
   toFun a := (a.1 + triHexPlanarTriangleEdgeBaseShift a.2, a.2)
@@ -45,16 +89,14 @@ def triHexPlanarTriangleIndexEquiv :
     rintro ⟨z, i⟩
     ext <;> simp
 
-
+/-- Side `i` of the up-triangle of a planar cell, as an edge between its terminals. -/
 def triHexPlanarFiniteTriangleEdge (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     Sym2 (TriHexPlanarFiniteTerminal n) :=
   s(triHexPlanarFiniteTerminalMap n a.1 (triHexTriangleEdgeTerminal1 a.2),
     triHexPlanarFiniteTerminalMap n a.1 (triHexTriangleEdgeTerminal2 a.2))
 
-
-
-theorem triHexPlanarFiniteTriangleEdge_val (n : Nat)
+lemma triHexPlanarFiniteTriangleEdge_val (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     Sym2.map (fun v : TriHexPlanarFiniteTerminal n => v.1)
         (triHexPlanarFiniteTriangleEdge n a) =
@@ -69,24 +111,23 @@ theorem triHexPlanarFiniteTriangleEdge_val (n : Nat)
       simp [triHexPlanarFiniteTerminalMap, triHexPlanarCellTerminal,
         triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
         triHexPlanarTriangleIndexEquiv, triHexPlanarTriangleEdgeBaseShift,
-        triangularIndexedEdge, triangularStep, hexagonalStep]
+        triangularStep, hexagonalStep]
   · apply Sym2.eq_iff.mpr
     right
     constructor <;> ext k <;> fin_cases k <;>
       simp [triHexPlanarFiniteTerminalMap, triHexPlanarCellTerminal,
         triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
         triHexPlanarTriangleIndexEquiv, triHexPlanarTriangleEdgeBaseShift,
-        triangularIndexedEdge, triangularStep, hexagonalStep]
+        triangularStep, hexagonalStep]
   · apply Sym2.eq_iff.mpr
     left
     constructor <;> ext k <;> fin_cases k <;>
       simp [triHexPlanarFiniteTerminalMap, triHexPlanarCellTerminal,
         triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
         triHexPlanarTriangleIndexEquiv, triHexPlanarTriangleEdgeBaseShift,
-        triangularIndexedEdge, triangularStep, hexagonalStep]
+        triangularStep, hexagonalStep]
 
-
-theorem triHexPlanarFiniteTriangleEdge_injective (n : Nat) :
+lemma triHexPlanarFiniteTriangleEdge_injective (n : Nat) :
     Function.Injective (triHexPlanarFiniteTriangleEdge n) := by
   rintro ⟨a, i⟩ ⟨b, j⟩ hab
   have hval := congrArg
@@ -106,17 +147,18 @@ theorem triHexPlanarFiniteTriangleEdge_injective (n : Nat) :
     congrArg (fun x : Site 2 × Fin 3 => x.2) hindex
   exact Prod.ext (Subtype.ext hz) hi
 
-
-
+/-- The finite triangular graph on the terminals of the planar volume: all sides of all
+up-triangles. -/
 def triHexPlanarFiniteTriangleGraph (n : Nat) :
     SimpleGraph (TriHexPlanarFiniteTerminal n) :=
   SimpleGraph.fromEdgeSet (Set.range (triHexPlanarFiniteTriangleEdge n))
 
+/-- Classical decidability of adjacency in the finite triangle graph. -/
 noncomputable instance triHexPlanarFiniteTriangleGraphDecidable (n : Nat) :
     DecidableRel (triHexPlanarFiniteTriangleGraph n).Adj :=
   Classical.decRel _
 
-theorem triHexPlanarFiniteTriangleEdge_ne (n : Nat)
+lemma triHexPlanarFiniteTriangleEdge_ne (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     (triHexPlanarFiniteTerminalMap n a.1
         (triHexTriangleEdgeTerminal1 a.2)) ≠
@@ -130,8 +172,7 @@ theorem triHexPlanarFiniteTriangleEdge_ne (n : Nat)
       triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
       hexagonalStep, funext_iff] at hval
 
-
-theorem triHexPlanarFiniteTriangleEdge_mem (n : Nat)
+lemma triHexPlanarFiniteTriangleEdge_mem (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     triHexPlanarFiniteTriangleEdge n a ∈
       (triHexPlanarFiniteTriangleGraph n).edgeSet := by
@@ -140,15 +181,14 @@ theorem triHexPlanarFiniteTriangleEdge_mem (n : Nat)
   rw [Sym2.mem_diagSet]
   exact triHexPlanarFiniteTriangleEdge_ne n a
 
-
-
+/-- The chart sending `(cell, i)` to side `i` of that up-triangle. -/
 noncomputable def triHexPlanarFiniteTriangleEdgeChart (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     (triHexPlanarFiniteTriangleGraph n).edgeSet :=
   ⟨triHexPlanarFiniteTriangleEdge n a,
     triHexPlanarFiniteTriangleEdge_mem n a⟩
 
-theorem triHexPlanarFiniteTriangleEdgeChart_bijective (n : Nat) :
+lemma triHexPlanarFiniteTriangleEdgeChart_bijective (n : Nat) :
     Function.Bijective (triHexPlanarFiniteTriangleEdgeChart n) := by
   constructor
   · intro a b h
@@ -160,26 +200,26 @@ theorem triHexPlanarFiniteTriangleEdgeChart_bijective (n : Nat) :
     obtain ⟨⟨a, rfl⟩, _⟩ := he
     exact ⟨a, rfl⟩
 
+/-- The edges of the finite triangle graph are in bijection with `cell × Fin 3`. -/
 noncomputable def triHexPlanarFiniteTriangleEdgeEquiv (n : Nat) :
     (TriHexPlanarFiniteCell n × Fin 3) ≃
       (triHexPlanarFiniteTriangleGraph n).edgeSet :=
   Equiv.ofBijective (triHexPlanarFiniteTriangleEdgeChart n)
     (triHexPlanarFiniteTriangleEdgeChart_bijective n)
 
+/-! ## B. The finite star graph -/
 
-
-
-
+/-- Vertices of the finite star graph: a black center per cell and the white terminals. -/
 abbrev TriHexPlanarFiniteStarVertex (n : Nat) :=
   TriHexPlanarFiniteCell n ⊕ TriHexPlanarFiniteTerminal n
 
-
+/-- Spoke `i` of the star of a planar cell, from its center to terminal `i`. -/
 def triHexPlanarFiniteStarEdge (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     Sym2 (TriHexPlanarFiniteStarVertex n) :=
   s(Sum.inl a.1, Sum.inr (triHexPlanarFiniteTerminalMap n a.1 a.2))
 
-theorem triHexPlanarFiniteStarEdge_injective (n : Nat) :
+lemma triHexPlanarFiniteStarEdge_injective (n : Nat) :
     Function.Injective (triHexPlanarFiniteStarEdge n) := by
   rintro ⟨z, i⟩ ⟨w, j⟩ h
   change s(Sum.inl z,
@@ -198,17 +238,17 @@ theorem triHexPlanarFiniteStarEdge_injective (n : Nat) :
     exact Prod.ext rfl (hexagonalStep_injective hstep)
   · exact (Sum.inl_ne_inr hswap.1).elim
 
-
-
+/-- The finite hexagonal (star) graph: every cell center joined to its three terminals. -/
 def triHexPlanarFiniteStarGraph (n : Nat) :
     SimpleGraph (TriHexPlanarFiniteStarVertex n) :=
   SimpleGraph.fromEdgeSet (Set.range (triHexPlanarFiniteStarEdge n))
 
+/-- Classical decidability of adjacency in the finite star graph. -/
 noncomputable instance triHexPlanarFiniteStarGraphDecidable (n : Nat) :
     DecidableRel (triHexPlanarFiniteStarGraph n).Adj :=
   Classical.decRel _
 
-theorem triHexPlanarFiniteStarEdge_mem (n : Nat)
+lemma triHexPlanarFiniteStarEdge_mem (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     triHexPlanarFiniteStarEdge n a ∈
       (triHexPlanarFiniteStarGraph n).edgeSet := by
@@ -220,12 +260,13 @@ theorem triHexPlanarFiniteStarEdge_mem (n : Nat)
   rw [Sym2.mk_isDiag_iff]
   exact Sum.inl_ne_inr
 
+/-- The chart sending `(cell, i)` to spoke `i` of that star. -/
 noncomputable def triHexPlanarFiniteStarEdgeChart (n : Nat)
     (a : TriHexPlanarFiniteCell n × Fin 3) :
     (triHexPlanarFiniteStarGraph n).edgeSet :=
   ⟨triHexPlanarFiniteStarEdge n a, triHexPlanarFiniteStarEdge_mem n a⟩
 
-theorem triHexPlanarFiniteStarEdgeChart_bijective (n : Nat) :
+lemma triHexPlanarFiniteStarEdgeChart_bijective (n : Nat) :
     Function.Bijective (triHexPlanarFiniteStarEdgeChart n) := by
   constructor
   · intro a b h
@@ -237,14 +278,17 @@ theorem triHexPlanarFiniteStarEdgeChart_bijective (n : Nat) :
     obtain ⟨⟨a, rfl⟩, _⟩ := he
     exact ⟨a, rfl⟩
 
+/-- The edges of the finite star graph are in bijection with `cell × Fin 3`. -/
 noncomputable def triHexPlanarFiniteStarEdgeEquiv (n : Nat) :
     (TriHexPlanarFiniteCell n × Fin 3) ≃
       (triHexPlanarFiniteStarGraph n).edgeSet :=
   Equiv.ofBijective (triHexPlanarFiniteStarEdgeChart n)
     (triHexPlanarFiniteStarEdgeChart_bijective n)
 
+/-! ## C. Cell configurations -/
 
-
+/-- Edge configurations indexed by `I × Fin 3` as one local three-edge configuration per cell. See
+also `triHexTorusCellConfigEquiv` (TriHex.FKTorusSweep), its special case `I = TorusSite L`. -/
 def triHexFiniteCellConfigEquiv (I : Type*) :
     ConfigSpace (I × Fin 3) ≃ (I → LocalConfig) where
   toFun omega z := (omega (z, 0), omega (z, 1), omega (z, 2))
@@ -258,22 +302,21 @@ def triHexFiniteCellConfigEquiv (I : Type*) :
     funext z
     rfl
 
-
-
+/-- Configurations of the finite triangle graph as one local configuration per up-triangle. -/
 noncomputable def triHexPlanarFiniteTriangleConfigEquiv (n : Nat) :
     ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet ≃
       (TriHexPlanarFiniteCell n → LocalConfig) :=
   (configReindexEquiv (triHexPlanarFiniteTriangleEdgeEquiv n)).trans
     (triHexFiniteCellConfigEquiv _)
 
-
+/-- Configurations of the finite star graph as one local configuration per star. -/
 noncomputable def triHexPlanarFiniteStarConfigEquiv (n : Nat) :
     ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet ≃
       (TriHexPlanarFiniteCell n → LocalConfig) :=
   (configReindexEquiv (triHexPlanarFiniteStarEdgeEquiv n)).trans
     (triHexFiniteCellConfigEquiv _)
 
-@[simp] theorem triHexPlanarFiniteTriangleConfigEquiv_direction
+@[simp] lemma triHexPlanarFiniteTriangleConfigEquiv_direction
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i : Fin 3) :
@@ -281,7 +324,7 @@ noncomputable def triHexPlanarFiniteStarConfigEquiv (n : Nat) :
       omega (triHexPlanarFiniteTriangleEdgeEquiv n (z, i)) := by
   fin_cases i <;> rfl
 
-@[simp] theorem triHexPlanarFiniteStarConfigEquiv_direction
+@[simp] lemma triHexPlanarFiniteStarConfigEquiv_direction
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i : Fin 3) :
@@ -289,11 +332,9 @@ noncomputable def triHexPlanarFiniteStarConfigEquiv (n : Nat) :
       omega (triHexPlanarFiniteStarEdgeEquiv n (z, i)) := by
   fin_cases i <;> rfl
 
+/-! ## D. Triangular clusters through the sector graph -/
 
-
-
-
-theorem triHexPlanarFiniteTriangle_openSub_adj_cellEdge
+lemma triHexPlanarFiniteTriangle_openSub_adj_cellEdge
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i : Fin 3)
@@ -316,9 +357,7 @@ theorem triHexPlanarFiniteTriangle_openSub_adj_cellEdge
     exact (triHexPlanarFiniteTriangleConfigEquiv_direction n omega z i).symm.trans
       hopen
 
-
-
-theorem triHexPlanarFiniteTriangle_openSub_reachable_of_connects
+lemma triHexPlanarFiniteTriangle_openSub_reachable_of_connects
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i j : Fin 3)
@@ -377,8 +416,7 @@ theorem triHexPlanarFiniteTriangle_openSub_reachable_of_connects
         hconnects)).symm
   · exact SimpleGraph.Reachable.refl _
 
-
-
+/-- The terminal sector graph of a finite triangle-graph configuration. -/
 def triHexPlanarFiniteTriangleSectorGraph (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet) :
     SimpleGraph (TriHexPlanarFiniteTerminal n) :=
@@ -386,8 +424,7 @@ def triHexPlanarFiniteTriangleSectorGraph (n : Nat)
     (fun z => triangleFKLocalConnectivity
       (triHexPlanarFiniteTriangleConfigEquiv n omega z))
 
-
-theorem triHexPlanarFiniteTriangle_openSub_adj_sector
+lemma triHexPlanarFiniteTriangle_openSub_adj_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     {x y : TriHexPlanarFiniteTerminal n}
@@ -402,8 +439,7 @@ theorem triHexPlanarFiniteTriangle_openSub_adj_sector
   let z := a.1
   let i := a.2
   have ha : triHexPlanarFiniteTriangleEdgeEquiv n (z, i) = e := by
-    simpa [z, i, a] using
-      (triHexPlanarFiniteTriangleEdgeEquiv n).apply_symm_apply e
+    simp [z, i, a]
   have hedge : s(x, y) =
       s(triHexPlanarFiniteTerminalMap n z (triHexTriangleEdgeTerminal1 i),
         triHexPlanarFiniteTerminalMap n z
@@ -428,8 +464,7 @@ theorem triHexPlanarFiniteTriangle_openSub_adj_sector
   exact ⟨⟨z, triHexTriangleEdgeTerminal1 i,
     triHexTriangleEdgeTerminal2 i, hconnects, hedge⟩, hxy.ne⟩
 
-
-theorem triHexPlanarFiniteTriangle_sector_adj_openSub_reachable
+lemma triHexPlanarFiniteTriangle_sector_adj_openSub_reachable
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     {x y : TriHexPlanarFiniteTerminal n}
@@ -446,9 +481,7 @@ theorem triHexPlanarFiniteTriangle_sector_adj_openSub_reachable
   · simpa [hxi, hyj] using hreach
   · simpa [hxj, hyi] using hreach.symm
 
-
-
-theorem triHexPlanarFiniteTriangle_openSub_reachable_iff_sector
+lemma triHexPlanarFiniteTriangle_openSub_reachable_iff_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     (x y : TriHexPlanarFiniteTerminal n) :
@@ -463,8 +496,7 @@ theorem triHexPlanarFiniteTriangle_openSub_reachable_iff_sector
       (fun _ _ hab =>
         triHexPlanarFiniteTriangle_sector_adj_openSub_reachable n omega hab) h
 
-
-
+/-- The terminal sector graph of a finite triangle-graph configuration with the boundary wired. -/
 def triHexPlanarFiniteTriangleWiredSectorGraph (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet) :
     SimpleGraph (TriHexPlanarFiniteTerminal n) :=
@@ -473,9 +505,7 @@ def triHexPlanarFiniteTriangleWiredSectorGraph (n : Nat)
     (fun z => triangleFKLocalConnectivity
       (triHexPlanarFiniteTriangleConfigEquiv n omega z))
 
-
-
-theorem triHexPlanarFiniteTriangle_wired_reachable_iff_sector
+lemma triHexPlanarFiniteTriangle_wired_reachable_iff_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet)
     (x y : TriHexPlanarFiniteTerminal n) :
@@ -510,9 +540,7 @@ theorem triHexPlanarFiniteTriangle_wired_reachable_iff_sector
             n omega _ _).mpr hsectorEdge.reachable |>.mono le_sup_left
         · exact hboundary.reachable.mono le_sup_right) h
 
-
-
-theorem triHexPlanarFiniteTriangle_numClustersWired_eq_sector
+lemma triHexPlanarFiniteTriangle_numClustersWired_eq_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteTriangleGraph n).edgeSet) :
     numClustersWired (triHexPlanarFiniteTriangleGraph n)
@@ -525,20 +553,21 @@ theorem triHexPlanarFiniteTriangle_numClustersWired_eq_sector
     (connectedComponentEquivOfReachableIff _ _
       (triHexPlanarFiniteTriangle_wired_reachable_iff_sector n omega))
 
+/-! ## E. Hexagonal clusters through the sector graph -/
 
-
-
+/-- The boundary of the finite star graph: the boundary terminals (no center is a boundary vertex).
+-/
 def triHexPlanarFiniteStarBoundary (n : Nat) :
     TriHexPlanarFiniteStarVertex n → Prop
   | Sum.inl _ => False
   | Sum.inr v => triHexPlanarFiniteBoundary n v
 
+/-- Classical decidability of the star-graph boundary. -/
 noncomputable instance triHexPlanarFiniteStarBoundaryDecidable (n : Nat) :
     DecidablePred (triHexPlanarFiniteStarBoundary n) :=
   Classical.decPred _
 
-
-theorem triHexPlanarFiniteStar_openSub_adj_spoke
+lemma triHexPlanarFiniteStar_openSub_adj_spoke
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i : Fin 3)
@@ -560,9 +589,7 @@ theorem triHexPlanarFiniteStar_openSub_adj_spoke
     exact (triHexPlanarFiniteStarConfigEquiv_direction n omega z i).symm.trans
       hopen
 
-
-
-theorem triHexPlanarFiniteStar_openSub_reachable_of_connects
+lemma triHexPlanarFiniteStar_openSub_reachable_of_connects
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (z : TriHexPlanarFiniteCell n) (i j : Fin 3)
@@ -581,7 +608,7 @@ theorem triHexPlanarFiniteStar_openSub_reachable_of_connects
         (SimpleGraph.Adj.reachable
           (triHexPlanarFiniteStar_openSub_adj_spoke n omega z j hj))
 
-
+/-- The terminal sector graph of a finite star-graph configuration. -/
 def triHexPlanarFiniteStarSectorGraph (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     SimpleGraph (TriHexPlanarFiniteTerminal n) :=
@@ -589,8 +616,8 @@ def triHexPlanarFiniteStarSectorGraph (n : Nat)
     (fun z => starFKLocalConnectivity
       (triHexPlanarFiniteStarConfigEquiv n omega z))
 
-
-
+/-- A white representative of each star-graph vertex: itself if white, the terminal of a chosen
+spoke if a center. -/
 def triHexPlanarFiniteStarRepresentative (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     TriHexPlanarFiniteStarVertex n → TriHexPlanarFiniteTerminal n
@@ -599,9 +626,7 @@ def triHexPlanarFiniteStarRepresentative (n : Nat)
       (starFKRepresentativeDirection
         (triHexPlanarFiniteStarConfigEquiv n omega z))
 
-
-
-theorem triHexPlanarFiniteStar_openSub_adj_representative_reachable
+lemma triHexPlanarFiniteStar_openSub_adj_representative_reachable
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     {u v : TriHexPlanarFiniteStarVertex n}
@@ -618,8 +643,7 @@ theorem triHexPlanarFiniteStar_openSub_adj_representative_reachable
   let z := a.1
   let i := a.2
   have ha : triHexPlanarFiniteStarEdgeEquiv n (z, i) = e := by
-    simpa [z, i, a] using
-      (triHexPlanarFiniteStarEdgeEquiv n).apply_symm_apply e
+    simp [z, i, a]
   have hedge : s(Sum.inl z,
       Sum.inr (triHexPlanarFiniteTerminalMap n z i)) = s(u, v) := by
     calc
@@ -657,8 +681,7 @@ theorem triHexPlanarFiniteStar_openSub_adj_representative_reachable
     simpa [triHexPlanarFiniteStarRepresentative,
       triHexPlanarFiniteStarSectorGraph] using hreach.symm
 
-
-theorem triHexPlanarFiniteStar_sector_adj_openSub_reachable
+lemma triHexPlanarFiniteStar_sector_adj_openSub_reachable
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     {x y : TriHexPlanarFiniteTerminal n}
@@ -676,9 +699,7 @@ theorem triHexPlanarFiniteStar_sector_adj_openSub_reachable
   · simpa [hxi, hyj] using hreach
   · simpa [hxj, hyi] using hreach.symm
 
-
-
-theorem triHexPlanarFiniteStar_openSub_white_reachable_iff_sector
+lemma triHexPlanarFiniteStar_openSub_white_reachable_iff_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (x y : TriHexPlanarFiniteTerminal n) :
@@ -698,7 +719,7 @@ theorem triHexPlanarFiniteStar_openSub_white_reachable_iff_sector
       (fun _ _ hab =>
         triHexPlanarFiniteStar_sector_adj_openSub_reachable n omega hab) h
 
-
+/-- The terminal sector graph of a finite star-graph configuration with the boundary wired. -/
 def triHexPlanarFiniteStarWiredSectorGraph (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     SimpleGraph (TriHexPlanarFiniteTerminal n) :=
@@ -707,9 +728,7 @@ def triHexPlanarFiniteStarWiredSectorGraph (n : Nat)
     (fun z => starFKLocalConnectivity
       (triHexPlanarFiniteStarConfigEquiv n omega z))
 
-
-
-theorem triHexPlanarFiniteStar_wired_white_reachable_iff_sector
+lemma triHexPlanarFiniteStar_wired_white_reachable_iff_sector
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (x y : TriHexPlanarFiniteTerminal n) :
@@ -760,8 +779,7 @@ theorem triHexPlanarFiniteStar_wired_white_reachable_iff_sector
         rcases huv with hsectorEdge | hboundary
         · exact (triHexPlanarFiniteStar_openSub_white_reachable_iff_sector
             n omega u v).mpr hsectorEdge.reachable |>.mono le_sup_left
-        · change (Gopen ⊔ Kstar).Reachable (Sum.inr u) (Sum.inr v)
-          have hb : Kstar.Adj (Sum.inr u) (Sum.inr v) := by
+        · have hb : Kstar.Adj (Sum.inr u) (Sum.inr v) := by
             change (boundaryCliqueGraph
               (triHexPlanarFiniteStarBoundary n)).Adj (Sum.inr u) (Sum.inr v)
             rw [boundaryCliqueGraph_adj]
@@ -774,8 +792,7 @@ theorem triHexPlanarFiniteStar_wired_white_reachable_iff_sector
             (show Kstar ≤ Gopen ⊔ Kstar from le_sup_right) hb
           exact hb'.reachable) h
 
-
-theorem triHexPlanarFiniteStar_openSub_adj_eq_spoke
+lemma triHexPlanarFiniteStar_openSub_adj_eq_spoke
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     {u v : TriHexPlanarFiniteStarVertex n}
@@ -795,8 +812,7 @@ theorem triHexPlanarFiniteStar_openSub_adj_eq_spoke
   let z := a.1
   let i := a.2
   have ha : triHexPlanarFiniteStarEdgeEquiv n (z, i) = e := by
-    simpa [z, i, a] using
-      (triHexPlanarFiniteStarEdgeEquiv n).apply_symm_apply e
+    simp [z, i, a]
   have hedge : s(Sum.inl z,
       Sum.inr (triHexPlanarFiniteTerminalMap n z i)) = s(u, v) := by
     calc
@@ -819,12 +835,13 @@ theorem triHexPlanarFiniteStar_openSub_adj_eq_spoke
   · exact Or.inl ⟨hu.symm, hv.symm⟩
   · exact Or.inr ⟨hv.symm, hu.symm⟩
 
-
+/-- The cell centers of the finite star graph all of whose spokes are closed. -/
 def TriHexPlanarFiniteStarIsolatedCenter (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :=
   {z : TriHexPlanarFiniteCell n //
     triHexPlanarFiniteStarConfigEquiv n omega z = (false, false, false)}
 
+/-- The isolated centers form a finite type. -/
 noncomputable instance triHexPlanarFiniteStarIsolatedCenterFintype
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
@@ -833,9 +850,7 @@ noncomputable instance triHexPlanarFiniteStarIsolatedCenterFintype
     (fun z => triHexPlanarFiniteStarConfigEquiv n omega z =
       (false, false, false)) inferInstance inferInstance
 
-
-
-theorem triHexPlanarFiniteStar_isolatedCenter_not_wired_adj
+lemma triHexPlanarFiniteStar_isolatedCenter_not_wired_adj
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     (z : TriHexPlanarFiniteStarIsolatedCenter n omega)
@@ -858,9 +873,7 @@ theorem triHexPlanarFiniteStar_isolatedCenter_not_wired_adj
       exact Sum.inl_ne_inr this
   · exact hboundary.2.1.elim
 
-
-
-theorem triHexPlanarFiniteStar_wired_adj_representative_reachable
+lemma triHexPlanarFiniteStar_wired_adj_representative_reachable
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     {u v : TriHexPlanarFiniteStarVertex n}
@@ -885,7 +898,8 @@ theorem triHexPlanarFiniteStar_wired_adj_representative_reachable
       exact ⟨fun huv => hboundary.1 (congrArg Sum.inr huv),
         hboundary.2.1, hboundary.2.2⟩
 
-
+/-- Label of each star-graph vertex by its wired sector-graph component, or by itself if it is an
+isolated center. -/
 def triHexPlanarFiniteStarVertexComponentLabel (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     TriHexPlanarFiniteStarVertex n →
@@ -900,8 +914,7 @@ def triHexPlanarFiniteStarVertexComponentLabel (n : Nat)
       Sum.inl ((triHexPlanarFiniteStarWiredSectorGraph n omega).connectedComponentMk
         (triHexPlanarFiniteStarRepresentative n omega (Sum.inl z)))
 
-
-theorem triHexPlanarFiniteStarVertexComponentLabel_eq_of_wired_adj
+lemma triHexPlanarFiniteStarVertexComponentLabel_eq_of_wired_adj
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet)
     {u v : TriHexPlanarFiniteStarVertex n}
@@ -928,9 +941,9 @@ theorem triHexPlanarFiniteStarVertexComponentLabel_eq_of_wired_adj
       rw [hclosed] at hi
       fin_cases i <;> simp [triHexLocalDirection] at hi
     rcases horient with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · simp only [triHexPlanarFiniteStarVertexComponentLabel, dif_neg hnot]
+    · simp only [triHexPlanarFiniteStarVertexComponentLabel, dite_eq_right hnot]
       exact congrArg Sum.inl hcomponent
-    · simp only [triHexPlanarFiniteStarVertexComponentLabel, dif_neg hnot]
+    · simp only [triHexPlanarFiniteStarVertexComponentLabel, dite_eq_right hnot]
       exact congrArg Sum.inl hcomponent
   · rcases u with u | u <;> rcases v with v | v
     · exact hboundary.2.1.elim
@@ -939,8 +952,8 @@ theorem triHexPlanarFiniteStarVertexComponentLabel_eq_of_wired_adj
     · simp only [triHexPlanarFiniteStarVertexComponentLabel]
       exact congrArg Sum.inl hcomponent
 
-
-
+/-- Wired open clusters of the finite star graph correspond to wired sector-graph components plus
+isolated centers. -/
 def triHexPlanarFiniteStarConnectedComponentEquiv (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     (wiredGraph (triHexPlanarFiniteStarGraph n)
@@ -1000,9 +1013,7 @@ def triHexPlanarFiniteStarConnectedComponentEquiv (n : Nat)
     · simp [triHexPlanarFiniteStarVertexComponentLabel, z.2]
       rfl
 
-
-
-theorem triHexPlanarFiniteStar_numClustersWired_eq_sector_add_isolated
+lemma triHexPlanarFiniteStar_numClustersWired_eq_sector_add_isolated
     (n : Nat)
     (omega : ConfigSpace (triHexPlanarFiniteStarGraph n).edgeSet) :
     numClustersWired (triHexPlanarFiniteStarGraph n)

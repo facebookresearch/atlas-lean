@@ -6,41 +6,85 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneTranslation
 
+/-!
+# Infinite arms to the boundary of a half-plane
+
+Events that a source set lies in an infinite cluster connected inside a region to a target set,
+lower bounds for arms from sources in a half-plane to its boundary and boundary rays, and
+vertically adjacent sources whose arms reach opposite boundary rays.
+
+## i. Overview
+
+`infiniteSetConnectionWithin A S T` is the event that some `x ∈ S` lies in an infinite cluster and
+is connected within `A` to some vertex of `T`. For `A = H_r = {x ≥ r}` and `T = ∂H_r` this is an
+"infinite arm" to the boundary. Under uniqueness and FKG its probability is at least
+`P(S meets ∞) P(T' meets ∞)` for any `T'` outside `H_r`, hence tends to one along orbit boxes.
+The boundary splits into the lower ray `{y ≤ s}` and the upper ray `{y ≥ s}`; arm probabilities
+to rays increase to the boundary-arm probability as the cut moves, and are invariant under
+vertical lattice translations. The FKG square-root trick gives, for the preferred ray,
+`P(arm to ray) ≥ 1 - √(1 - P(arm to ∂H_r))`. A discrete crossover argument over vertical
+translates produces a translate `z` such that the arm from `S + z e₂` to the lower ray and the arm
+from `S + (z + 1) e₂` to the upper ray both have probability at least
+`1 - √(1 - P(arm to ∂H_r)) - ε`.
+
+Headline fidelity:
+- `infiniteBoundaryConnection_measureReal_ge_mul` and the box and finite-source consequences are
+  conditional on FKG, translation invariance (where used) and almost sure uniqueness.
+- The square-root bounds are conditional on FKG and on the displayed preference hypothesis
+  (`hpref`), which is a genuine assumption on the ordering of the two ray probabilities.
+- `exists_adjacent_infiniteBoundaryRays_measureReal_ge`, `exists_twoStep_…` and
+  `exists_separated_…` are conditional on FKG and translation invariance only; uniqueness is not
+  needed.
+- The ray exhaustions, vertical invariance and discrete crossover lemmas are unconditional.
+
+## ii. Key results
+
+- `PeriodicGraph.infiniteSetConnectionWithin`
+- `PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_mul`
+- `PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_measureReal_gt`
+- `PeriodicPlaneEmbedding.exists_separated_infiniteBoundaryRays_measureReal_ge`
+
+## iii. Table of contents
+
+- A. Infinite-cluster connections within a region
+- B. Arms to the half-plane boundary
+- C. Arms to boundary rays
+- D. Square-root bounds for the preferred ray
+- E. Vertically translated sources
+- F. Adjacent sources with arms to opposite rays
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §4 (FKG and the square-root trick).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Infinite-cluster connections within a region -/
 
-
+/-- Infinite arm event: some `x ∈ S` lies in an infinite open cluster and is connected within `A`
+to some vertex of `T`. -/
 def PeriodicGraph.infiniteSetConnectionWithin
     (P : PeriodicGraph V) (A S T : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ S, (P.cluster omega x).Infinite ∧
     ∃ y ∈ T, omega ∈ P.connectedWithinSet A x y}
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_measurableSet
+lemma PeriodicGraph.infiniteSetConnectionWithin_measurableSet
     (P : PeriodicGraph V) (A S T : Set V) :
     MeasurableSet (P.infiniteSetConnectionWithin A S T) := by
   classical
@@ -49,7 +93,7 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_measurableSet
         {omega : ConfigSpace (Sym2 V) | (P.cluster omega x).Infinite} ∩
           ⋃ y : V, ⋃ (_hy : y ∈ T), P.connectedWithinSet A x y := by
     ext omega
-    simp only [PeriodicGraph.infiniteSetConnectionWithin, Set.mem_setOf_eq,
+    simp only [PeriodicGraph.infiniteSetConnectionWithin, Set.mem_ofPred_eq,
       Set.mem_iUnion, Set.mem_inter_iff]
     constructor
     · rintro ⟨x, hx, hinf, y, hy, hxy⟩
@@ -62,7 +106,8 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_measurableSet
       (MeasurableSet.iUnion fun y => MeasurableSet.iUnion fun _hy =>
         P.connectedWithinSet_measurableSet A x y)
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.infiniteSetConnectionWithin_isIncreasing
     (P : PeriodicGraph V) (A S T : Set V) :
     IsIncreasing (P.infiniteSetConnectionWithin A S T) := by
   intro omega eta home
@@ -70,14 +115,16 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_isIncreasing
   exact ⟨x, hx, P.clusterInfinite_isIncreasing x home hinf,
     y, hy, P.connectedWithinSet_isIncreasing A x y home hxy⟩
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_mono_target
+omit [Countable V] in
+lemma PeriodicGraph.infiniteSetConnectionWithin_mono_target
     (P : PeriodicGraph V) (A S : Set V) {T U : Set V} (hTU : T ⊆ U) :
     P.infiniteSetConnectionWithin A S T ⊆
       P.infiniteSetConnectionWithin A S U := by
   rintro omega ⟨x, hx, hinf, y, hy, hxy⟩
   exact ⟨x, hx, hinf, y, hTU hy, hxy⟩
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_union_target
+omit [Countable V] in
+lemma PeriodicGraph.infiniteSetConnectionWithin_union_target
     (P : PeriodicGraph V) (A S T U : Set V) :
     P.infiniteSetConnectionWithin A S (T ∪ U) =
       P.infiniteSetConnectionWithin A S T ∪
@@ -94,8 +141,8 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_union_target
     · obtain ⟨x, hx, hinf, y, hy, hxy⟩ := h
       exact ⟨x, hx, hinf, y, Or.inr hy, hxy⟩
 
-
-theorem PeriodicGraph.infiniteSetConnectionWithin_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.infiniteSetConnectionWithin_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A S T : Set V) :
     P.configTranslate z omega ∈
@@ -112,9 +159,12 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_configTranslate
       P.shift z y, ⟨y, hy, rfl⟩,
       (P.connectedWithinSet_configTranslate z omega A x y).mpr hxy⟩
 
+/-! ## B. Arms to the half-plane boundary -/
 
-
-theorem PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteBoundaryConnection
+omit [Countable V] in
+/-- If the infinite cluster is unique and meets both `S ⊆ H_r` and `T ⊆ H_rᶜ`, then `S` has an
+infinite arm to `∂H_r` within `H_r`. -/
+lemma PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteBoundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : ℝ) {S T : Set V}
     (hS : S ⊆ E.rightHalfPlaneVertices r)
     (hT : T ⊆ (E.rightHalfPlaneVertices r)ᶜ) :
@@ -130,9 +180,9 @@ theorem PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteBoundaryConnectio
     E.connectedWithin_rightHalfPlane_boundary_of_reachable omega r hxH hyH hxy
   exact ⟨x, hxS, hxinf, b, hb, hxb⟩
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_mul
+/-- FKG lower bound for the infinite arm from `S ⊆ H_r` to `∂H_r`, assuming FKG and almost sure
+uniqueness. -/
+lemma PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_mul
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -166,7 +216,7 @@ theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_mul
     ENNReal.toReal_mono (measure_ne_top mu C) hmeasure
   exact hprod.trans hreal
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_translate_measureReal_eq
+lemma PeriodicGraph.infiniteSetConnectionWithin_translate_measureReal_eq
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (A S T : Set V) :
     mu.real (P.infiniteSetConnectionWithin (P.shift z '' A)
@@ -185,7 +235,7 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_translate_measureReal_eq
   rw [hpre] at hm
   exact congrArg ENNReal.toReal hm.symm
 
-theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_sq_of_translate
+lemma PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_sq_of_translate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -201,9 +251,7 @@ theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_sq_of_t
   rw [P.setHitsInfinite_translate_measureReal_eq mu hTI z S] at hmul
   simpa [pow_two] using hmul
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_orbitBox_sq_of_shift
+lemma PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_orbitBox_sq_of_shift
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -236,9 +284,9 @@ theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_ge_orbitBo
   rw [hmass] at hbound
   exact hbound
 
-
-
-theorem PeriodicPlaneEmbedding.exists_infiniteBoundaryConnection_sequence_tendsto_one
+/-- Finite sources in `H_r` whose infinite arm to `∂H_r` has probability tending to one (FKG,
+translation invariance, almost sure uniqueness). -/
+lemma PeriodicPlaneEmbedding.exists_infiniteBoundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -279,9 +327,10 @@ theorem PeriodicPlaneEmbedding.exists_infiniteBoundaryConnection_sequence_tendst
   · intro N
     exact measureReal_le_one
 
+/-! ## C. Arms to boundary rays -/
 
-
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.infiniteSetConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -294,7 +343,10 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono
   change E.vertexCoord y 1 ≤ (N : Real)
   exact hy.trans (by exact_mod_cast hnN)
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection
+omit [Countable V] in
+/-- Arms to the lower rays `{y ≤ n}` exhaust arms to `∂H_r`. Special case `s = 0` of
+`iUnion_infiniteLowerBoundaryRay_connection_add` up to rewriting `0 + n`. -/
+lemma PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, P.infiniteSetConnectionWithin
         (E.rightHalfPlaneVertices r) S
@@ -311,7 +363,10 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection
     obtain ⟨n, hn⟩ := exists_nat_ge (E.vertexCoord y 1)
     exact Set.mem_iUnion.2 ⟨n, x, hx, hinf, y, ⟨hyB, hn⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto
+omit [Countable V] in
+/-- Lower-ray arm probabilities converge to the boundary-arm probability. Special case `s = 0` of
+`infiniteLowerBoundaryRay_measureReal_tendsto_add` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V) :
@@ -326,7 +381,8 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto
   rw [E.iUnion_infiniteLowerBoundaryRay_connection r S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_neg
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_neg
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.infiniteSetConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -340,7 +396,10 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_neg
   have hcast : (n : Real) ≤ N := by exact_mod_cast hnN
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_neg
+omit [Countable V] in
+/-- Arms to the upper rays `{y ≥ -n}` exhaust arms to `∂H_r`. Special case `s = 0` of
+`iUnion_infiniteUpperBoundaryRay_connection_sub` up to rewriting `0 - n`. -/
+lemma PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_neg
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, P.infiniteSetConnectionWithin
         (E.rightHalfPlaneVertices r) S
@@ -358,7 +417,10 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_neg
     have hy : -(n : Real) ≤ E.vertexCoord y 1 := by linarith
     exact Set.mem_iUnion.2 ⟨n, x, hx, hinf, y, ⟨hyB, hy⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_neg
+omit [Countable V] in
+/-- Upper-ray arm probabilities converge to the boundary-arm probability. Special case `s = 0` of
+`infiniteUpperBoundaryRay_measureReal_tendsto_sub` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_neg
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V) :
@@ -373,9 +435,8 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_neg
   rw [E.iUnion_infiniteUpperBoundaryRay_connection_neg r S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono_add
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.infiniteSetConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -389,7 +450,8 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_connection_mono_add
   have hcast : (n : Real) ≤ N := by exact_mod_cast hnN
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection_add
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     (⋃ n : Nat, P.infiniteSetConnectionWithin
         (E.rightHalfPlaneVertices r) S
@@ -407,7 +469,8 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteLowerBoundaryRay_connection_add
     have hy : E.vertexCoord y 1 ≤ s + (n : Real) := by linarith
     exact Set.mem_iUnion.2 ⟨n, x, hx, hinf, y, ⟨hyB, hy⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto_add
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r s : Real) (S : Set V) :
@@ -422,7 +485,8 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_tendsto_add
   rw [E.iUnion_infiniteLowerBoundaryRay_connection_add r s S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_sub
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.infiniteSetConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -436,7 +500,8 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_connection_mono_sub
   have hcast : (n : Real) ≤ N := by exact_mod_cast hnN
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_sub
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     (⋃ n : Nat, P.infiniteSetConnectionWithin
         (E.rightHalfPlaneVertices r) S
@@ -454,7 +519,8 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteUpperBoundaryRay_connection_sub
     have hy : s - (n : Real) ≤ E.vertexCoord y 1 := by linarith
     exact Set.mem_iUnion.2 ⟨n, x, hx, hinf, y, ⟨hyB, hy⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_sub
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r s : Real) (S : Set V) :
@@ -469,7 +535,7 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_tendsto_sub
   rw [E.iUnion_infiniteUpperBoundaryRay_connection_sub r s S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_vertical
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int) (r s : Real) (S : Set V) :
@@ -499,7 +565,7 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_vertical
   rw [hpre] at hm
   exact congrArg ENNReal.toReal hm.symm
 
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_vertical
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int) (r s : Real) (S : Set V) :
@@ -529,9 +595,7 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_vertical
   rw [hpre] at hm
   exact congrArg ENNReal.toReal hm.symm
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_vertical
+lemma PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int) (r : Real) (S : Set V) :
@@ -561,9 +625,12 @@ theorem PeriodicPlaneEmbedding.infiniteBoundaryConnection_measureReal_vertical
   rw [hpre] at hm
   exact congrArg ENNReal.toReal hm.symm
 
+/-! ## D. Square-root bounds for the preferred ray -/
 
-
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt
+/-- Square-root trick: if the lower ray is preferred, its arm probability is at least `1 - √(1 -
+P(arm to ∂H_r))` (FKG). Special case `ε = 0` of
+`infiniteLowerBoundaryRay_measureReal_ge_sqrt_sub` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (r s : Real) (S : Set V)
@@ -592,9 +659,9 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt
     ← E.boundary_eq_lower_union_upper] at h
   exact h
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt
+/-- Square-root trick for a preferred upper ray (FKG). Special case `ε = 0` of
+`infiniteUpperBoundaryRay_measureReal_ge_sqrt_sub` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (r s : Real) (S : Set V)
@@ -623,8 +690,7 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt
     Set.union_comm, ← E.boundary_eq_lower_union_upper] at h
   exact h
 
-
-theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt_sub
+lemma PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt_sub
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (r s : Real) (S : Set V) {epsilon : Real}
@@ -670,8 +736,7 @@ theorem PeriodicPlaneEmbedding.infiniteLowerBoundaryRay_measureReal_ge_sqrt_sub
         (E.rightHalfPlaneBoundaryVertices r))) - epsilon ≤ mu.real L
   linarith
 
-
-theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt_sub
+lemma PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt_sub
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (r s : Real) (S : Set V) {epsilon : Real}
@@ -717,7 +782,12 @@ theorem PeriodicPlaneEmbedding.infiniteUpperBoundaryRay_measureReal_ge_sqrt_sub
         (E.rightHalfPlaneBoundaryVertices r))) - epsilon ≤ mu.real U
   linarith
 
-theorem PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_tendsto
+/-! ## E. Vertically translated sources -/
+
+/-- Shifting the sources down, the arm probability to the lower ray `{y ≤ 0}` converges to the
+boundary-arm probability. Special case `s = 0` of
+`shift_down_infiniteLowerBoundaryRay_measureReal_tendsto_at`. -/
+lemma PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r : Real) (S : Set V) :
@@ -735,7 +805,10 @@ theorem PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_t
     mu hTI (-(n : Int)) r (n : Real) S
   simpa using hmove.symm
 
-theorem PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_tendsto
+/-- Shifting the sources up, the arm probability to the upper ray `{y ≥ 0}` converges to the
+boundary-arm probability. Special case `s = 0` of
+`shift_up_infiniteUpperBoundaryRay_measureReal_tendsto_at`. -/
+lemma PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r : Real) (S : Set V) :
@@ -753,7 +826,7 @@ theorem PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_ten
     mu hTI (n : Int) r (-(n : Real)) S
   simpa using hmove.symm
 
-theorem PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_tendsto_at
+lemma PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_tendsto_at
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r s : Real) (S : Set V) :
@@ -771,7 +844,7 @@ theorem PeriodicPlaneEmbedding.shift_down_infiniteLowerBoundaryRay_measureReal_t
     mu hTI (-(n : Int)) r (s + (n : Real)) S
   simpa using hmove.symm
 
-theorem PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_tendsto_at
+lemma PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_tendsto_at
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r s : Real) (S : Set V) :
@@ -789,9 +862,10 @@ theorem PeriodicPlaneEmbedding.shift_up_infiniteUpperBoundaryRay_measureReal_ten
     mu hTI (n : Int) r (s - (n : Real)) S
   simpa using hmove.symm
 
-
-
-theorem PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_measureReal_gt
+/-- A finite source in `H_r` has an infinite arm to `∂H_r` with probability above `1 - ε`.
+Special case `R = r` of `exists_finite_infiniteBoundaryConnection_with_margin_gt`
+(`HalfPlaneInteriorArm`). -/
+lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -811,9 +885,10 @@ theorem PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_measureR
   obtain ⟨N, hN⟩ := hev.exists
   exact ⟨S N, hfinite N, hsubset N, hN⟩
 
-
-
-
+/-- Finite sources in `H_r` with infinite arms to the lower ray `{y ≤ 0}` and to the upper ray
+`{y ≥ 1}`, each with probability above `1 - ε` (FKG, translation invariance, almost sure
+uniqueness). Special case `R = r` of
+`exists_finite_opposite_infiniteBoundaryRays_with_margin_gt` (`HalfPlaneInteriorArm`). -/
 theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -876,12 +951,11 @@ theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_measu
     rw [hmove']
     exact hnR
 
+/-! ## F. Adjacent sources with arms to opposite rays -/
 
-
-
-
-
-theorem exists_adjacent_preference_crossover
+/-- Discrete crossover: if the upper sequence is at most the lower one at `a` and at least it at
+`a + k + 1`, the order flips between two consecutive indices. -/
+lemma exists_adjacent_preference_crossover
     (lower upper : Nat → Real) (a k : Nat)
     (hstart : upper a ≤ lower a)
     (hend : lower (a + k + 1) ≤ upper (a + k + 1)) :
@@ -902,9 +976,9 @@ theorem exists_adjacent_preference_crossover
         obtain ⟨t, hat, htb, ht, htnext⟩ := ih (a + 1) hnext' hend'
         exact ⟨t, by omega, by omega, ht, htnext⟩
 
-
-
-theorem exists_adjacent_approximate_preference_crossover
+/-- Discrete crossover with tolerance `ε`. Generalizes `exists_adjacent_preference_crossover`
+(the case `ε = 0` up to rewriting). -/
+lemma exists_adjacent_approximate_preference_crossover
     (lower upper : Nat → Real) (epsilon : Real) (a k : Nat)
     (hepsilon : 0 ≤ epsilon)
     (hstart : upper a ≤ lower a + epsilon)
@@ -928,13 +1002,14 @@ theorem exists_adjacent_approximate_preference_crossover
         obtain ⟨t, hat, htb, ht, htnext⟩ := ih (a + 1) hnext' hend'
         exact ⟨t, by omega, by omega, ht, htnext⟩
 
-
-theorem verticalShift_add (a b : Int) :
+/-- Vertical lattice shifts add. -/
+lemma verticalShift_add (a b : Int) :
     verticalShift (a + b) = verticalShift a + verticalShift b := by
   ext i
   fin_cases i <;> simp [verticalShift]
 
-theorem PeriodicGraph.shift_image_vertical_add
+omit [Countable V] in
+lemma PeriodicGraph.shift_image_vertical_add
     (P : PeriodicGraph V) (a b : Int) (S : Set V) :
     P.shift (verticalShift b) '' (P.shift (verticalShift a) '' S) =
       P.shift (verticalShift (a + b)) '' S := by
@@ -947,10 +1022,11 @@ theorem PeriodicGraph.shift_image_vertical_add
     refine ⟨P.shift (verticalShift a) x, ⟨x, hx, rfl⟩, ?_⟩
     rw [← P.shift_add, verticalShift_add]
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_adjacent_infiniteBoundaryRays_measureReal_ge
+/-- Some vertical translate `S + z e₂` has an arm to the lower ray `{y ≤ s}` and `S + (z + 1) e₂`
+has an arm to the upper ray `{y ≥ s}`, each with probability at least `1 - √(1 - P(arm to
+∂H_r)) - ε` (FKG, translation invariance). Special case `t = 0` of
+`exists_separated_infiniteBoundaryRays_measureReal_ge` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1059,9 +1135,10 @@ theorem PeriodicPlaneEmbedding.exists_adjacent_infiniteBoundaryRays_measureReal_
       exact hsqrt
     · simpa only [lower, upper, f, g, hznext] using htUpper
 
-
-
-theorem PeriodicPlaneEmbedding.exists_twoStep_infiniteBoundaryRays_measureReal_ge
+/-- Two-step version: arms from `S + z e₂` to `{y ≤ 0}` and from `S + (z + 2) e₂` to `{y ≥ 1}`.
+Special case `s = 0`, `t = 1` of `exists_separated_infiniteBoundaryRays_measureReal_ge` up to
+rewriting. -/
+lemma PeriodicPlaneEmbedding.exists_twoStep_infiniteBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1102,9 +1179,9 @@ theorem PeriodicPlaneEmbedding.exists_twoStep_infiniteBoundaryRays_measureReal_g
     simpa using hmove
   rwa [hmove']
 
-
-
-
+/-- Separated version: some vertical translate `S + z e₂` has an arm to `{y ≤ s}` and `S + (z + 1
++ t) e₂` has an arm to `{y ≥ s + t}`, each with probability at least `1 - √(1 - P(arm to
+∂H_r)) - ε` (FKG, translation invariance). -/
 theorem PeriodicPlaneEmbedding.exists_separated_infiniteBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

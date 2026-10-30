@@ -6,41 +6,72 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInfiniteArm
 
+/-!
+# Translating rectangles and side-connection events
+
+A lattice translation of the periodic graph maps the vertices drawn in a rectangle, and each of
+its four boundary sets, onto those of the translated rectangle; under a translation-invariant
+measure, side-connection probabilities are unchanged.
+
+## i. Overview
+
+For `z ∈ ℤ²`, `P.shift z` moves every drawn vertex by `z` (the embedding is periodic). Hence
+`x ∈ rectVertices a b c d` iff `P.shift z x` is in the rectangle translated by `z`, and the same
+holds for the bottom, top, left and right boundary vertex sets; the images of these sets under
+`P.shift z` are exactly the translated sets. Since the side-connection event of the translated
+source in the translated rectangle is the preimage of the original event under the configuration
+translation, translation invariance of `μ` gives equal probabilities, for a general target side
+and for each of the four boundary sides.
+
+Headline fidelity: all results are unconditional (the probability identities assume translation
+invariance of `μ`, which is stated as a hypothesis).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.shift_image_rectVertices`
+- `PeriodicPlaneEmbedding.rectSideConnectionEvent_translate_measureReal_eq`
+- `PeriodicPlaneEmbedding.rectLeftConnection_translate_measureReal_eq` and its right, bottom and
+  top analogues.
+
+## iii. Table of contents
+
+- A. Translating drawn vertex sets
+- B. Translating boundary sets
+- C. Translation invariance of side-connection probabilities
+
+## iv. References
+
+None beyond those in the imported modules.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
-theorem PeriodicPlaneEmbedding.shift_mem_rectVertices
+/-! ## A. Translating drawn vertex sets -/
+
+omit [Countable V] in
+/-- A vertex lies in a rectangle iff its translate by `z` lies in the rectangle translated by `z`.
+-/
+lemma PeriodicPlaneEmbedding.shift_mem_rectVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) (x : V) :
     P.shift z x ∈ E.rectVertices
         (a + (z 0 : Real)) (b + (z 0 : Real))
         (c + (z 1 : Real)) (d + (z 1 : Real)) ↔
       x ∈ E.rectVertices a b c d := by
-  simp only [PeriodicPlaneEmbedding.rectVertices, Set.mem_setOf_eq,
+  simp only [PeriodicPlaneEmbedding.rectVertices, Set.mem_ofPred_eq,
     E.vertexCoord_shift]
   constructor
   · rintro ⟨hxa, hxb, hxc, hxd⟩
@@ -48,7 +79,10 @@ theorem PeriodicPlaneEmbedding.shift_mem_rectVertices
   · rintro ⟨hxa, hxb, hxc, hxd⟩
     exact ⟨by linarith, by linarith, by linarith, by linarith⟩
 
-private theorem shift_image_eq_of_mem_iff
+omit [Countable V] in
+/-- If `P.shift z x ∈ B ↔ x ∈ A` for all `x`, then the image of `A` under `P.shift z` is `B` (the
+shift is a bijection). -/
+private lemma shift_image_eq_of_mem_iff
     (P : PeriodicGraph V) (z : Site 2) (A B : Set V)
     (hmem : ∀ x, P.shift z x ∈ B ↔ x ∈ A) :
     P.shift z '' A = B := by
@@ -62,7 +96,10 @@ private theorem shift_image_eq_of_mem_iff
       simpa using hx
     · exact P.shift_shift_neg z x
 
-theorem PeriodicPlaneEmbedding.shift_image_rectVertices
+omit [Countable V] in
+/-- The image of the vertices drawn in a rectangle under `P.shift z` is the set of vertices drawn in
+the translated rectangle. -/
+lemma PeriodicPlaneEmbedding.shift_image_rectVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) :
     P.shift z '' E.rectVertices a b c d =
       E.rectVertices
@@ -71,7 +108,11 @@ theorem PeriodicPlaneEmbedding.shift_image_rectVertices
   apply shift_image_eq_of_mem_iff P z
   exact E.shift_mem_rectVertices z a b c d
 
-theorem PeriodicPlaneEmbedding.shift_mem_rectBottomBoundaryVertices
+/-! ## B. Translating boundary sets -/
+
+omit [Countable V] in
+/-- Translation commutes with the bottom boundary vertex set (membership form). -/
+lemma PeriodicPlaneEmbedding.shift_mem_rectBottomBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) (x : V) :
     P.shift z x ∈ E.rectBottomBoundaryVertices
         (a + (z 0 : Real)) (b + (z 0 : Real))
@@ -92,7 +133,9 @@ theorem PeriodicPlaneEmbedding.shift_mem_rectBottomBoundaryVertices
     rw [E.vertexCoord_shift]
     linarith
 
-theorem PeriodicPlaneEmbedding.shift_mem_rectTopBoundaryVertices
+omit [Countable V] in
+/-- Translation commutes with the top boundary vertex set (membership form). -/
+lemma PeriodicPlaneEmbedding.shift_mem_rectTopBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) (x : V) :
     P.shift z x ∈ E.rectTopBoundaryVertices
         (a + (z 0 : Real)) (b + (z 0 : Real))
@@ -113,7 +156,9 @@ theorem PeriodicPlaneEmbedding.shift_mem_rectTopBoundaryVertices
     rw [E.vertexCoord_shift]
     linarith
 
-theorem PeriodicPlaneEmbedding.shift_mem_rectLeftBoundaryVertices
+omit [Countable V] in
+/-- Translation commutes with the left boundary vertex set (membership form). -/
+lemma PeriodicPlaneEmbedding.shift_mem_rectLeftBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) (x : V) :
     P.shift z x ∈ E.rectLeftBoundaryVertices
         (a + (z 0 : Real)) (b + (z 0 : Real))
@@ -134,7 +179,9 @@ theorem PeriodicPlaneEmbedding.shift_mem_rectLeftBoundaryVertices
     rw [E.vertexCoord_shift]
     linarith
 
-theorem PeriodicPlaneEmbedding.shift_mem_rectRightBoundaryVertices
+omit [Countable V] in
+/-- Translation commutes with the right boundary vertex set (membership form). -/
+lemma PeriodicPlaneEmbedding.shift_mem_rectRightBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) (x : V) :
     P.shift z x ∈ E.rectRightBoundaryVertices
         (a + (z 0 : Real)) (b + (z 0 : Real))
@@ -155,7 +202,10 @@ theorem PeriodicPlaneEmbedding.shift_mem_rectRightBoundaryVertices
     rw [E.vertexCoord_shift]
     linarith
 
-theorem PeriodicPlaneEmbedding.shift_image_rectBottomBoundaryVertices
+omit [Countable V] in
+/-- The image of the bottom boundary set under `P.shift z` is the bottom boundary set of the
+translated rectangle. -/
+lemma PeriodicPlaneEmbedding.shift_image_rectBottomBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) :
     P.shift z '' E.rectBottomBoundaryVertices a b c d =
       E.rectBottomBoundaryVertices
@@ -164,7 +214,10 @@ theorem PeriodicPlaneEmbedding.shift_image_rectBottomBoundaryVertices
   apply shift_image_eq_of_mem_iff P z
   exact E.shift_mem_rectBottomBoundaryVertices z a b c d
 
-theorem PeriodicPlaneEmbedding.shift_image_rectTopBoundaryVertices
+omit [Countable V] in
+/-- The image of the top boundary set under `P.shift z` is the top boundary set of the translated
+rectangle. -/
+lemma PeriodicPlaneEmbedding.shift_image_rectTopBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) :
     P.shift z '' E.rectTopBoundaryVertices a b c d =
       E.rectTopBoundaryVertices
@@ -173,7 +226,10 @@ theorem PeriodicPlaneEmbedding.shift_image_rectTopBoundaryVertices
   apply shift_image_eq_of_mem_iff P z
   exact E.shift_mem_rectTopBoundaryVertices z a b c d
 
-theorem PeriodicPlaneEmbedding.shift_image_rectLeftBoundaryVertices
+omit [Countable V] in
+/-- The image of the left boundary set under `P.shift z` is the left boundary set of the translated
+rectangle. -/
+lemma PeriodicPlaneEmbedding.shift_image_rectLeftBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) :
     P.shift z '' E.rectLeftBoundaryVertices a b c d =
       E.rectLeftBoundaryVertices
@@ -182,7 +238,10 @@ theorem PeriodicPlaneEmbedding.shift_image_rectLeftBoundaryVertices
   apply shift_image_eq_of_mem_iff P z
   exact E.shift_mem_rectLeftBoundaryVertices z a b c d
 
-theorem PeriodicPlaneEmbedding.shift_image_rectRightBoundaryVertices
+omit [Countable V] in
+/-- The image of the right boundary set under `P.shift z` is the right boundary set of the
+translated rectangle. -/
+lemma PeriodicPlaneEmbedding.shift_image_rectRightBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (a b c d : Real) :
     P.shift z '' E.rectRightBoundaryVertices a b c d =
       E.rectRightBoundaryVertices
@@ -191,9 +250,11 @@ theorem PeriodicPlaneEmbedding.shift_image_rectRightBoundaryVertices
   apply shift_image_eq_of_mem_iff P z
   exact E.shift_mem_rectRightBoundaryVertices z a b c d
 
+/-! ## C. Translation invariance of side-connection probabilities -/
 
-
-theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_translate_measureReal_eq
+/-- Under a translation-invariant measure, translating the rectangle, the source and the target side
+by `z` does not change the side-connection probability. -/
+lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_translate_measureReal_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)
@@ -208,7 +269,9 @@ theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_translate_measureReal_eq
   exact P.infiniteSetConnectionWithin_translate_measureReal_eq
     mu hTI z (E.rectVertices a b c d) S side
 
-theorem PeriodicPlaneEmbedding.rectLeftConnection_translate_measureReal_eq
+/-- Left-side connection probabilities are invariant under lattice translations of the rectangle and
+the source. -/
+lemma PeriodicPlaneEmbedding.rectLeftConnection_translate_measureReal_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)
@@ -226,7 +289,9 @@ theorem PeriodicPlaneEmbedding.rectLeftConnection_translate_measureReal_eq
   exact E.rectSideConnectionEvent_translate_measureReal_eq mu hTI z
     a b c d S (E.rectLeftBoundaryVertices a b c d)
 
-theorem PeriodicPlaneEmbedding.rectRightConnection_translate_measureReal_eq
+/-- Right-side connection probabilities are invariant under lattice translations of the rectangle
+and the source. -/
+lemma PeriodicPlaneEmbedding.rectRightConnection_translate_measureReal_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)
@@ -244,7 +309,9 @@ theorem PeriodicPlaneEmbedding.rectRightConnection_translate_measureReal_eq
   exact E.rectSideConnectionEvent_translate_measureReal_eq mu hTI z
     a b c d S (E.rectRightBoundaryVertices a b c d)
 
-theorem PeriodicPlaneEmbedding.rectBottomConnection_translate_measureReal_eq
+/-- Bottom-side connection probabilities are invariant under lattice translations of the rectangle
+and the source. -/
+lemma PeriodicPlaneEmbedding.rectBottomConnection_translate_measureReal_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)
@@ -262,7 +329,9 @@ theorem PeriodicPlaneEmbedding.rectBottomConnection_translate_measureReal_eq
   exact E.rectSideConnectionEvent_translate_measureReal_eq mu hTI z
     a b c d S (E.rectBottomBoundaryVertices a b c d)
 
-theorem PeriodicPlaneEmbedding.rectTopConnection_translate_measureReal_eq
+/-- Top-side connection probabilities are invariant under lattice translations of the rectangle and
+the source. -/
+lemma PeriodicPlaneEmbedding.rectTopConnection_translate_measureReal_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)

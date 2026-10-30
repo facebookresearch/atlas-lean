@@ -6,26 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualBurtonKeane
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.WholeArcCrosscut
 
+/-!
+# Finite-energy surgery opening prescribed primal and dual edges
+
+Forcing finitely many primal edges open and finitely many dual edges open by resampling a
+finite pattern, and transferring positive probability through such surgery.
+
+## i. Overview
+
+A dual edge is open exactly when its primal partner is closed, so a set of primal edges and a
+set of dual edges can be open simultaneously iff no primal edge of the first set is the partner
+of a dual edge of the second (`exists_primal_dual_open_iff_disjoint`).
+`primalDualOpenPattern` is the pattern on the union of the two edge sets that opens the primal
+edges and closes the partners of the dual ones. Applying it with `setPattern` keeps every open
+path avoiding the pattern's support, and open dual walks can be rerouted around modified edges.
+
+If the measure has finite energy for patterns (`μ.map (setPattern I η) ≪ μ` for all finite
+patterns), an event of positive probability whose image under the surgery lies in `B` forces
+`μ B > 0`.
+
+## ii. Key results
+
+- `PeriodicPlanarDualPair.exists_primal_dual_open_iff_disjoint` : unconditional.
+- `PeriodicPlanarDualPair.setPattern_primalDualOpenPattern_preserves_walks` : unconditional.
+- `PeriodicPlanarDualPair.measureReal_pos_of_primalDualOpenPattern_preimage` : conditional on
+  the pattern finite-energy hypothesis `hpattern` (satisfied, for example, by Bernoulli bond
+  percolation with `0 < p < 1`).
+
+## iii. Table of contents
+
+- A. Primal/dual open patterns
+- B. Rerouting walks around modified edges
+- C. Positive probability through surgery
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- R. M. Burton and M. Keane, *Density and uniqueness in percolation*, Comm. Math. Phys. 121
+  (1989).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
@@ -37,24 +63,25 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## A. Primal/dual open patterns -/
 
-
+/-- The primal edges touched by the surgery: the given primal edges together with the primal
+partners of the given dual edges. -/
 def primalDualPatternSupport
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W)) :
     Finset (Sym2 V) :=
   primal ∪ dual.map D.edgeDual.symm.toEmbedding
 
-
-
+/-- The pattern on `primalDualPatternSupport` that opens the given primal edges and closes the
+primal partners of the given dual edges, so that those dual edges are open. -/
 def primalDualOpenPattern
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W)) :
     ConfigSpace ↑(D.primalDualPatternSupport primal dual) :=
   fun e => decide (e.1 ∈ primal)
 
-
-theorem setPattern_primalDualOpenPattern_primal
+lemma setPattern_primalDualOpenPattern_primal
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W))
     (omega : ConfigSpace (Sym2 V)) {e : Sym2 V} (he : e ∈ primal) :
@@ -65,9 +92,7 @@ theorem setPattern_primalDualOpenPattern_primal
   rw [setPattern_of_mem (D.primalDualOpenPattern primal dual) heSupport]
   simp [primalDualOpenPattern, he]
 
-
-
-theorem setPattern_primalDualOpenPattern_dual
+lemma setPattern_primalDualOpenPattern_dual
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W))
     (hcompat : Disjoint primal (dual.map D.edgeDual.symm.toEmbedding))
@@ -88,9 +113,8 @@ theorem setPattern_primalDualOpenPattern_dual
   rw [setPattern_of_mem (D.primalDualOpenPattern primal dual) heSupport]
   simp [primalDualOpenPattern, heNotPrimal]
 
-
-
-
+/-- Finitely many primal edges and finitely many dual edges can all be open in one configuration iff
+no primal edge of the first set is the partner of a dual edge of the second. -/
 theorem exists_primal_dual_open_iff_disjoint
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W)) :
@@ -123,9 +147,7 @@ theorem exists_primal_dual_open_iff_disjoint
       exact D.setPattern_primalDualOpenPattern_dual
         primal dual hcompat omega he
 
-
-
-theorem setPattern_primalDualOpenPattern_of_not_mem
+lemma setPattern_primalDualOpenPattern_of_not_mem
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W))
     (omega : ConfigSpace (Sym2 V)) {e : Sym2 V}
@@ -134,11 +156,9 @@ theorem setPattern_primalDualOpenPattern_of_not_mem
         (D.primalDualOpenPattern primal dual) omega e = omega e := by
   exact setPattern_of_not_mem (D.primalDualOpenPattern primal dual) he omega
 
+/-! ## B. Rerouting walks around modified edges -/
 
-
-
-
-theorem setPattern_primalDualOpenPattern_preserves_walks
+lemma setPattern_primalDualOpenPattern_preserves_walks
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W))
     (omega : ConfigSpace (Sym2 V))
@@ -172,9 +192,9 @@ theorem setPattern_primalDualOpenPattern_preserves_walks
     simpa only [dualConfigEquiv_apply] using hqopen huv
 
 omit [DecidableEq W] [Countable W] in
-
-
-theorem exists_walk_of_walk_edge_replacements
+/-- If every edge of a walk inside `S` can be replaced by a walk inside `S` using only good edges,
+there is a walk with the same endpoints inside `S` using only good edges. -/
+lemma exists_walk_of_walk_edge_replacements
     {G : SimpleGraph W} {x y : W} (q : G.Walk x y)
     (S : Set W) (good : Sym2 W → Prop)
     (hqS : ∀ w ∈ q.support, w ∈ S)
@@ -214,10 +234,7 @@ theorem exists_walk_of_walk_edge_replacements
         rw [SimpleGraph.Walk.mem_support_append_iff] at hw
         exact hw.elim (hstepS w) (htailS w)
 
-
-
-
-theorem setPattern_complementaryDual_walk_of_edge_replacements
+lemma setPattern_complementaryDual_walk_of_edge_replacements
     (D : PeriodicPlanarDualPair P Pdual)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↑I)
     (omega : ConfigSpace (Sym2 V))
@@ -263,10 +280,12 @@ theorem setPattern_complementaryDual_walk_of_edge_replacements
       · simpa [hwu] using huS
       · simpa [hwv] using hvS
 
+/-! ## C. Positive probability through surgery -/
+
 omit [Countable V] in
-
-
-theorem measureReal_pos_of_setPattern_preimage
+/-- If imposing the pattern `η` on `I` is absolutely continuous for `μ` and maps an event of
+positive probability into `B`, then `B` has positive probability. -/
+lemma measureReal_pos_of_setPattern_preimage
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↑I)
     (hac : mu.map (setPattern I eta) ≪ mu)
@@ -288,8 +307,8 @@ theorem measureReal_pos_of_setPattern_preimage
   rw [hAzero] at hApos
   norm_num at hApos
 
-
-
+/-- Positive probability transfers through the primal/dual opening surgery for measures with finite
+energy for patterns. -/
 theorem measureReal_pos_of_primalDualOpenPattern_preimage
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]

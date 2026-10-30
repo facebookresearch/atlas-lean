@@ -6,18 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorCage
 
+/-!
+# Open crosscuts from finite deep connectors
+
+A finite deep connector yields an open walk and a simple open crosscut of the right half-plane
+from its lower boundary ray to its upper boundary ray.
+
+## i. Overview
+
+From a configuration in the finite deep connector event, joining the two arms through the deep
+strip gives an open walk between the two exit points staying in the half-plane
+(`…_openWalk`). Shortening it to a path between the two boundary vertices gives a simple open
+crosscut whose plane drawing is injective (`…_simpleCrosscut`), which is the input of the
+planar separation argument. Both results are proved unconditionally for `r ≤ R` (and `c < d`).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_openWalk`.
+- `PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_simpleCrosscut`.
+
+## iii. Table of contents
+
+- A. Open walks and crosscuts
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Set SimpleGraph
 
@@ -26,10 +47,14 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Open walks and crosscuts -/
 
-
-
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_openWalk
+omit [Countable V] in
+/-- A finite deep connector gives an open walk between two vertices just outside the half-plane,
+through a lower and an upper boundary vertex, otherwise inside the half-plane. See also
+`PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_openWalk`
+(`Sheffield.HalfPlaneCage`), the case `R = r`. -/
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_openWalk
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r R c d : Real} {width : Nat} {L U : Finset V}
     (hrR : r ≤ R)
@@ -78,7 +103,7 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_openWa
       rw [SimpleGraph.Walk.support_cons,
         SimpleGraph.Walk.support_reverse]
       apply List.mem_cons_of_mem
-      simpa using qxb.end_mem_support
+      simp
     simp only [q, SimpleGraph.Walk.mem_support_append_iff]
     exact Or.inl (Or.inl hbLeft)
   · have huRight : u ∈ right.support := by
@@ -108,9 +133,11 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_openWa
         · have hvw : v = w := by simpa using hv
           exact Or.inr (Or.inl hvw)
 
-
-
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_simpleCrosscut
+omit [Countable V] in
+/-- A finite deep connector gives a simple open path in the half-plane from a lower to an upper
+boundary vertex, with injective plane drawing. See also
+`PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut` (`Sheffield.Crosscut`). -/
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_simpleCrosscut
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r R c d : Real} {width : Nat} {L U : Finset V}
     (hrR : r ≤ R) (hcd : c < d)
@@ -149,9 +176,9 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_simple
     exact ((P.openSubgraph_adj omega v w).mp hvw).1
   let q : P.graph.Walk b u := qOpen.mapLe hopenLe
   have hqEdgesOpen : qOpen.edges ⊆ joined.edges :=
-    joined.edges_toPath_subset
+    joined.edges_toPath_subset_edges
   have hqSupportOpen : qOpen.support ⊆ joined.support :=
-    joined.support_toPath_subset
+    joined.support_toPath_subset_support
   have hqNil : ¬q.Nil := SimpleGraph.Walk.not_nil_of_ne hbu
   have hqOpenPath : qOpen.IsPath := by
     dsimp only [qOpen]

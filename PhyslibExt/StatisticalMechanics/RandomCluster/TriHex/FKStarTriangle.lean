@@ -6,20 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKDuality
+
+/-!
+# Star–triangle transformation for the random-cluster model
+
+The FK star–triangle transformation: on the triangular critical surface, a triangle with edge
+odds `y` and a star with dual odds `y*` induce the same law on the connectivity of their three
+terminals.
+
+## i. Overview
+
+A triangle (three edges between three terminals) and a star (three edges from a center to the
+terminals) are the two local pieces exchanged by the star–triangle move.
+`ThreeTerminalConnectivity` lists the five partitions of the terminals induced by the open edges.
+`triangleFKTerminalWeight y` and `starFKTerminalWeight q y*` are the FK weights (edge odds times
+`q` per cluster not containing a terminal) of each partition, and the corresponding normalized
+laws are `triangleFKTerminalProbability` and `starFKTerminalProbability`. The main result is that
+if `yᵢ yᵢ* = q` and `y` lies on the triangular critical surface, then the star weights are
+`q ^ 2 / (y₀ y₁ y₂)` times the triangle weights, so the two terminal laws coincide. This is the
+local identity behind the star–triangle transformation of Baxter–Temperley–Ashley (Grimmett,
+*The Random-Cluster Model*, §6.6). All results are unconditional for the stated positive odds,
+with the critical-surface equation as an explicit hypothesis.
+
+## ii. Key results
+
+- `triHexFK_terminalWeight_identity` : on the critical surface, `y₀ y₁ y₂ · star = q ^ 2 · triangle`
+  for each terminal partition. Unconditional (given the surface equation).
+- `triHexFK_terminalLaw_eq` : equality of the star and triangle terminal laws for positive odds on
+  the critical surface. Unconditional (given the surface equation).
+- `triHexFK_terminalLaw_dualParam` : the same for edge parameters `pᵢ ∈ (0, 1)` and the dual
+  parameters `dualParam pᵢ q`. Unconditional (given the surface equation).
+
+## iii. Table of contents
+
+- A. Terminal connectivity and local FK weights
+- B. Partition functions and terminal laws
+- C. The star–triangle identity
+
+## iv. References
+
+- R. J. Baxter, H. N. V. Temperley and S. E. Ashley, *Triangular Potts model at its transition
+  temperature, and related models*, Proc. R. Soc. Lond. A 358 (1978) 535–559.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.6.
+-/
 
 @[expose] public section
 
@@ -32,7 +64,10 @@ namespace PeriodicPlanar
 
 open FrontierA
 
+/-! ## A. Terminal connectivity and local FK weights -/
 
+/-- The five partitions of three terminals `0, 1, 2` that open edges of a triangle or a star can
+induce: all separate, one of the three pairs joined, or all together. -/
 inductive ThreeTerminalConnectivity
   | separate
   | pair01
@@ -41,13 +76,13 @@ inductive ThreeTerminalConnectivity
   | together
   deriving DecidableEq
 
+/-- The five terminal partitions form a finite type. -/
 instance instFintypeThreeTerminalConnectivity : Fintype ThreeTerminalConnectivity where
   elems := {.separate, .pair01, .pair12, .pair20, .together}
   complete := fun x => by cases x <;> decide
 
-
-
-
+/-- FK weight of each terminal partition for a triangle whose edge opposite terminal `i` has odds
+`yᵢ`: the sum of the odds products of the open-edge sets inducing that partition. -/
 def triangleFKTerminalWeight (y0 y1 y2 : Real) :
     ThreeTerminalConnectivity -> Real
   | .separate => 1
@@ -56,9 +91,8 @@ def triangleFKTerminalWeight (y0 y1 y2 : Real) :
   | .pair20 => y1
   | .together => y0 * y1 + y1 * y2 + y2 * y0 + y0 * y1 * y2
 
-
-
-
+/-- FK weight of each terminal partition for a star whose edge to terminal `i` has odds `yᵢ`; the
+isolated center carries an extra cluster factor `q`. -/
 def starFKTerminalWeight (q y0 y1 y2 : Real) :
     ThreeTerminalConnectivity -> Real
   | .separate => q + y0 + y1 + y2
@@ -67,27 +101,29 @@ def starFKTerminalWeight (q y0 y1 y2 : Real) :
   | .pair20 => y2 * y0
   | .together => y0 * y1 * y2
 
+/-! ## B. Partition functions and terminal laws -/
 
+/-- Local partition function of the triangle: the sum of its terminal weights. -/
 def triangleFKTerminalPartition (y0 y1 y2 : Real) : Real :=
   ∑ c, triangleFKTerminalWeight y0 y1 y2 c
 
-
+/-- Local partition function of the star: the sum of its terminal weights. -/
 def starFKTerminalPartition (q y0 y1 y2 : Real) : Real :=
   ∑ c, starFKTerminalWeight q y0 y1 y2 c
 
-
+/-- The law of the terminal partition induced by an FK triangle. -/
 noncomputable def triangleFKTerminalProbability (y0 y1 y2 : Real)
     (c : ThreeTerminalConnectivity) : Real :=
   triangleFKTerminalWeight y0 y1 y2 c /
     triangleFKTerminalPartition y0 y1 y2
 
-
+/-- The law of the terminal partition induced by an FK star. -/
 noncomputable def starFKTerminalProbability (q y0 y1 y2 : Real)
     (c : ThreeTerminalConnectivity) : Real :=
   starFKTerminalWeight q y0 y1 y2 c /
     starFKTerminalPartition q y0 y1 y2
 
-theorem triangleFKTerminalPartition_eq (y0 y1 y2 : Real) :
+lemma triangleFKTerminalPartition_eq (y0 y1 y2 : Real) :
     triangleFKTerminalPartition y0 y1 y2 =
       1 + y0 + y1 + y2 +
         (y0 * y1 + y1 * y2 + y2 * y0 + y0 * y1 * y2) := by
@@ -97,7 +133,7 @@ theorem triangleFKTerminalPartition_eq (y0 y1 y2 : Real) :
   simp [triangleFKTerminalWeight]
   ring
 
-theorem starFKTerminalPartition_eq (q y0 y1 y2 : Real) :
+lemma starFKTerminalPartition_eq (q y0 y1 y2 : Real) :
     starFKTerminalPartition q y0 y1 y2 =
       q + y0 + y1 + y2 + y0 * y1 + y1 * y2 + y2 * y0 +
         y0 * y1 * y2 := by
@@ -107,27 +143,27 @@ theorem starFKTerminalPartition_eq (q y0 y1 y2 : Real) :
   simp [starFKTerminalWeight]
   ring
 
-theorem triangleFKTerminalPartition_pos
+lemma triangleFKTerminalPartition_pos
     {y0 y1 y2 : Real} (hy0 : 0 < y0) (hy1 : 0 < y1) (hy2 : 0 < y2) :
     0 < triangleFKTerminalPartition y0 y1 y2 := by
   rw [triangleFKTerminalPartition_eq]
   positivity
 
-theorem starFKTerminalPartition_pos
+lemma starFKTerminalPartition_pos
     {q y0 y1 y2 : Real} (hq : 0 < q)
     (hy0 : 0 < y0) (hy1 : 0 < y1) (hy2 : 0 < y2) :
     0 < starFKTerminalPartition q y0 y1 y2 := by
   rw [starFKTerminalPartition_eq]
   positivity
 
-theorem triangleFKTerminalProbability_sum_eq_one
+lemma triangleFKTerminalProbability_sum_eq_one
     {y0 y1 y2 : Real} (hy0 : 0 < y0) (hy1 : 0 < y1) (hy2 : 0 < y2) :
     (∑ c, triangleFKTerminalProbability y0 y1 y2 c) = 1 := by
   unfold triangleFKTerminalProbability triangleFKTerminalPartition
   rw [← Finset.sum_div]
   exact div_self (triangleFKTerminalPartition_pos hy0 hy1 hy2).ne'
 
-theorem starFKTerminalProbability_sum_eq_one
+lemma starFKTerminalProbability_sum_eq_one
     {q y0 y1 y2 : Real} (hq : 0 < q)
     (hy0 : 0 < y0) (hy1 : 0 < y1) (hy2 : 0 < y2) :
     (∑ c, starFKTerminalProbability q y0 y1 y2 c) = 1 := by
@@ -135,10 +171,9 @@ theorem starFKTerminalProbability_sum_eq_one
   rw [← Finset.sum_div]
   exact div_self (starFKTerminalPartition_pos hq hy0 hy1 hy2).ne'
 
+/-! ## C. The star–triangle identity -/
 
-
-
-theorem triHexFK_terminalWeight_identity
+lemma triHexFK_terminalWeight_identity
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
@@ -194,9 +229,7 @@ theorem triHexFK_terminalWeight_identity
             linarith [hcritical]]
           ring
 
-
-
-theorem triHexFK_terminalPartition_identity
+lemma triHexFK_terminalPartition_identity
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
@@ -210,10 +243,7 @@ theorem triHexFK_terminalPartition_identity
   intro c _
   exact triHexFK_terminalWeight_identity h0 h1 h2 hsurface c
 
-
-
-
-theorem triHexFK_terminalProbability_eq
+lemma triHexFK_terminalProbability_eq
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (hq : 0 < q)
     (hy0 : 0 < y0) (hy1 : 0 < y1) (hy2 : 0 < y2)
@@ -256,7 +286,9 @@ theorem triHexFK_terminalProbability_eq
         (triangleFKTerminalWeight y0 y1 y2 c *
           starFKTerminalPartition q y0Star y1Star y2Star) := by ring
 
-
+/-- Star–triangle transformation for the random-cluster model: on the triangular critical surface
+with dual odds `yᵢ yᵢ* = q`, the star and the triangle induce the same terminal-connectivity law
+(Baxter–Temperley–Ashley 1978; Grimmett, *The Random-Cluster Model*, §6.6). -/
 theorem triHexFK_terminalLaw_eq
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (hq : 0 < q)
@@ -272,8 +304,9 @@ theorem triHexFK_terminalLaw_eq
   exact triHexFK_terminalProbability_eq hq hy0 hy1 hy2
     hy0Star hy1Star hy2Star h0 h1 h2 hsurface c
 
-
-
+/-- Star–triangle transformation in edge parameters: for `pᵢ ∈ (0, 1)` on the triangular critical
+surface, the star with the dual parameters `dualParam pᵢ q` and the triangle with parameters `pᵢ`
+induce the same terminal law (Grimmett, *The Random-Cluster Model*, §6.6). -/
 theorem triHexFK_terminalLaw_dualParam
     {q p0 p1 p2 : Real}
     (hq : 0 < q) (hp0 : p0 ∈ Set.Ioo (0 : Real) 1)

@@ -6,34 +6,55 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundaryCorridor
 
+/-!
+# Crossover between lower and upper boundary exits
+
+Vertical translates of one source set exit through the lower and the upper boundary ray with
+comparable probabilities.
+
+## i. Overview
+
+As the source `S` is shifted vertically, the probability of exiting through the lower ray below
+`s` goes from (almost) the full exit probability to (almost) `0`, and the upper ray does the
+opposite. A crossover argument with the square-root trick gives a shift `z` with both the lower
+exit of `S + z` and the upper exit of `S + z + 1` (resp. `S + z + 1 + t` through the ray above
+`s + t`) of probability at least `1 - √(1 - P(exit)) - ε`. Both results are unconditional
+given FKG and translation invariance.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_separated_infiniteOpenBoundaryRays_measureReal_ge`.
+
+## iii. Table of contents
+
+- A. Adjacent and separated crossovers
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Adjacent and separated crossovers -/
 
-
-theorem PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureReal_ge
+/-- A vertical shift `z` with the lower exit of `S + z` and the upper exit of `S + z + 1` both of
+probability `≥ 1 - √(1 - P(exit)) - ε`. Special case `t = 0` of
+`exists_separated_infiniteOpenBoundaryRays_measureReal_ge`. -/
+lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -208,9 +229,9 @@ theorem PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureR
       hsqrt.trans hmax
     simpa only [U, upper] using (sub_le_iff_le_add.mpr this)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_separated_infiniteOpenBoundaryRays_measureReal_ge
+/-- A vertical shift `z` with the lower exit of `S + z` below `s` and the upper exit of `S + z + 1 +
+t` above `s + t` both of probability `≥ 1 - √(1 - P(exit)) - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_separated_infiniteOpenBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

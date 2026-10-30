@@ -6,30 +6,60 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicPlaneEmbedding
 
+/-!
+# Straight edges of the triangular and hexagonal lattices do not cross
+
+Two distinct straight edge segments of the triangular (resp. hexagonal) lattice meet only at a
+common endpoint; hence the straight drawings are periodic plane embeddings.
+
+## i. Overview
+
+Coordinates of points on edge segments are affine in the segment parameter with integer (for the
+hexagonal lattice, integer after scaling by `3`) endpoints. If two canonical segments
+`[x, x + step i]` and `[z, z + step j]` share a point, comparing the ranges of the two coordinates
+and of their sum forces a common endpoint (`triangularCanonicalSegments_commonEndpoint`,
+`hexagonalCanonicalSegments_commonEndpoint`). Two segments from a common vertex to distinct
+neighbours meet only at that vertex. Together these give the segment-intersection properties
+`triangularStraightEdgeIntersection` and `hexagonalStraightEdgeIntersection`, unconditionally,
+and the embeddings `triangularPeriodicPlaneEmbedding`, `hexagonalPeriodicPlaneEmbedding`.
+
+## ii. Key results
+
+- `triangularStraightEdgeIntersection`, `hexagonalStraightEdgeIntersection` : straight edges
+  meet only at common endpoints.
+- `triangularPeriodicPlaneEmbedding`, `hexagonalPeriodicPlaneEmbedding` : the triangular and
+  hexagonal lattices as periodic plane embeddings.
+
+## iii. Table of contents
+
+- A. Triangular segments
+- B. Triangular edges meet only at endpoints
+- C. Hexagonal segments in scaled coordinates
+- D. Hexagonal edges meet only at endpoints
+- E. The periodic plane embeddings
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
-@[simp] theorem triangularCanonicalSegment_re
+/-! ## A. Triangular segments -/
+
+@[simp] lemma triangularCanonicalSegment_re
     (x : Site 2) (i : Fin 3) (t : unitInterval) :
     (Path.segment (triangularPlaneVertex x)
       (triangularPlaneVertex (x + triangularStep i)) t).re =
@@ -41,7 +71,7 @@ open Lattice
   simp [Complex.real_smul]
   ring
 
-@[simp] theorem triangularCanonicalSegment_im
+@[simp] lemma triangularCanonicalSegment_im
     (x : Site 2) (i : Fin 3) (t : unitInterval) :
     (Path.segment (triangularPlaneVertex x)
       (triangularPlaneVertex (x + triangularStep i)) t).im =
@@ -53,7 +83,9 @@ open Lattice
   simp [Complex.real_smul]
   ring
 
-private theorem affineInt_mem_interval (a b : Int) (t : unitInterval) :
+/-- A point `a + t (b - a)` of the segment between integers `a` and `b` lies between `min a b` and
+`max a b`. -/
+lemma affineInt_mem_interval (a b : Int) (t : unitInterval) :
     ((min a b : Int) : Real) <=
         (t : Real) * ((b : Real) - (a : Real)) + (a : Real) /\
       (t : Real) * ((b : Real) - (a : Real)) + (a : Real) <=
@@ -66,8 +98,9 @@ private theorem affineInt_mem_interval (a b : Int) (t : unitInterval) :
     have hbaR : (b : Real) <= a := by exact_mod_cast hba
     constructor <;> nlinarith [t.2.1, t.2.2]
 
-
-theorem triangularCanonicalSegments_commonEndpoint
+/-- Two canonical triangular segments `[x, x + triangularStep i]` and `[z, z + triangularStep j]`
+that share a point share an endpoint. -/
+lemma triangularCanonicalSegments_commonEndpoint
     (x z : Site 2) (i j : Fin 3) (p : Complex)
     (hp : p ∈ Set.range (Path.segment (triangularPlaneVertex x)
       (triangularPlaneVertex (x + triangularStep i))))
@@ -142,7 +175,7 @@ theorem triangularCanonicalSegments_commonEndpoint
       at h00 h01 h10 h11 hs0 hs1 ⊢
   all_goals omega
 
-@[simp] theorem triangularSegment_re
+@[simp] lemma triangularSegment_re
     (x y : Site 2) (t : unitInterval) :
     (Path.segment (triangularPlaneVertex x) (triangularPlaneVertex y) t).re =
       (t : Real) * ((y 0 : Real) - (x 0 : Real)) + (x 0 : Real) := by
@@ -150,7 +183,7 @@ theorem triangularCanonicalSegments_commonEndpoint
     triHexPlanePeriod x)).re = _
   simp [Complex.real_smul]
 
-@[simp] theorem triangularSegment_im
+@[simp] lemma triangularSegment_im
     (x y : Site 2) (t : unitInterval) :
     (Path.segment (triangularPlaneVertex x) (triangularPlaneVertex y) t).im =
       (t : Real) * ((y 1 : Real) - (x 1 : Real)) + (x 1 : Real) := by
@@ -158,7 +191,9 @@ theorem triangularCanonicalSegments_commonEndpoint
     triHexPlanePeriod x)).im = _
   simp [Complex.real_smul]
 
-theorem mem_range_triangularSegment_symm (x y : Site 2) {p : Complex}
+/-- A point of the segment `[x, y]` lies on `[y, x]`. See also `Path.range_segment` and
+`segment_symm` (Mathlib). -/
+lemma mem_range_triangularSegment_symm (x y : Site 2) {p : Complex}
     (hp : p ∈ Set.range
       (Path.segment (triangularPlaneVertex x) (triangularPlaneVertex y))) :
     p ∈ Set.range
@@ -166,8 +201,9 @@ theorem mem_range_triangularSegment_symm (x y : Site 2) {p : Complex}
   rw [Path.range_segment, segment_symm]
   simpa only [Path.range_segment] using hp
 
+/-! ## B. Triangular edges meet only at endpoints -/
 
-theorem triangularNeighborSegments_inter_eq
+lemma triangularNeighborSegments_inter_eq
     {v a b : Site 2}
     (hva : triangularGraph.Adj v a) (hvb : triangularGraph.Adj v b)
     (hab : Ne a b) {p : Complex}
@@ -190,25 +226,30 @@ theorem triangularNeighborSegments_inter_eq
   rcases ib with ⟨j, bj⟩
   fin_cases i <;> fin_cases j <;> cases bi <;> cases bj
   all_goals
-    simp [triangularNeighbor, triangularStep, funext_iff] at hre him hab
+    simp only [triangularNeighbor, Bool.false_eq_true, ↓reduceIte, triangularStep,
+      Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, Pi.sub_apply, Int.cast_sub, Int.cast_one, sub_sub_cancel_left,
+      mul_neg, mul_one, add_left_inj, neg_inj, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      sub_zero, sub_self, mul_zero, zero_add, Matrix.sub_cons, Matrix.empty_sub_empty, ne_eq,
+      not_true_eq_false, Pi.add_apply, Int.cast_add, add_sub_cancel_left, add_zero,
+      Matrix.add_cons, Matrix.empty_add_empty, funext_iff, Fin.forall_fin_two, and_true,
+      Fin.mk_one, right_eq_add, neg_eq_zero, Icc.coe_eq_zero, add_eq_right, sub_eq_self,
+      one_ne_zero, false_and, not_false_eq_true, left_eq_add, and_self, add_eq_left,
+      Fin.reduceFinMk, Matrix.cons_val, sub_neg_eq_add, not_and, Int.cast_neg, and_false,
+      true_and, add_right_inj, reduceCtorEq] at hre him hab
   all_goals
-    have htR : (t : Real) = 0 := by
-      first
-      | exact hre
-      | exact congrArg Subtype.val hre
-      | exact him
-      | exact congrArg Subtype.val him
-      | have huR : (u : Real) = 0 := congrArg Subtype.val him
-        linarith [hre, huR]
-      | have huR : (u : Real) = 0 := congrArg Subtype.val hre
-        linarith [him, huR]
-      | linarith [hre, him, t.2.1, u.2.1]
-    have ht : t = 0 := Subtype.ext htR
-    rw [ht]
-    exact (Path.segment (triangularPlaneVertex v)
-      (triangularPlaneVertex _)).source
+    suffices htR : (t : Real) = 0 by
+      rw [show t = 0 from Subtype.ext htR]
+      exact (Path.segment (triangularPlaneVertex v)
+        (triangularPlaneVertex _)).source
+    first
+    | simpa using congrArg Subtype.val hre
+    | simpa using congrArg Subtype.val him
+    | linarith [hre, show (u : Real) = 0 by simpa using congrArg Subtype.val him]
+    | linarith [him, show (u : Real) = 0 by simpa using congrArg Subtype.val hre]
+    | linarith [hre, him, t.2.1, u.2.1]
 
-private theorem triangularEdges_commonEndpoint_of_intersection
+private lemma triangularEdges_commonEndpoint_of_intersection
     {x y z w : Site 2}
     (hxy : triangularGraph.Adj x y) (hzw : triangularGraph.Adj z w)
     (p : Complex)
@@ -301,7 +342,7 @@ private theorem triangularEdges_commonEndpoint_of_intersection
       · exact ⟨a.1 + triangularStep a.2, Or.inl ha.2,
           Or.inl (h.trans hb.2)⟩
 
-
+/-- Two distinct straight triangular edges meet only at a common endpoint. -/
 theorem triangularStraightEdgeIntersection :
     TriangularStraightEdgeIntersectionProperty := by
   intro x y z w hxy hzw p hne hp hq
@@ -347,26 +388,26 @@ theorem triangularStraightEdgeIntersection :
       have hv := triangularNeighborSegments_inter_eq hxy.symm hzw.symm hxz hp' hq'
       exact ⟨y, Or.inr rfl, Or.inr rfl, hv.symm⟩
 
+/-! ## C. Hexagonal segments in scaled coordinates -/
 
-
-
-
+/-- Three times the plane coordinate `k` of the hexagonal vertex `u`, an integer: `3 * u.1 k ± 1`.
+-/
 def hexagonalScaledCoordinate (u : HexVertex) (k : Fin 2) : Int :=
   3 * u.1 k + if u.2 then -1 else 1
 
-private theorem complexSegment_re (a b : Complex) (t : unitInterval) :
+private lemma complexSegment_re (a b : Complex) (t : unitInterval) :
     (Path.segment a b t).re =
       (t : Real) * (b.re - a.re) + a.re := by
   change (((t : Real) • (b - a) + a)).re = _
   simp [Complex.real_smul]
 
-private theorem complexSegment_im (a b : Complex) (t : unitInterval) :
+private lemma complexSegment_im (a b : Complex) (t : unitInterval) :
     (Path.segment a b t).im =
       (t : Real) * (b.im - a.im) + a.im := by
   change (((t : Real) • (b - a) + a)).im = _
   simp [Complex.real_smul]
 
-@[simp] theorem hexagonalPlaneVertex_re_scaled (u : HexVertex) :
+@[simp] lemma hexagonalPlaneVertex_re_scaled (u : HexVertex) :
     (hexagonalPlaneVertex u : Complex).re =
       (hexagonalScaledCoordinate u 0 : Real) / 3 := by
   rcases u with ⟨x, b⟩
@@ -375,7 +416,7 @@ private theorem complexSegment_im (a b : Complex) (t : unitInterval) :
       hexagonalScaledCoordinate, hexagonalFaceCenterOffset, triHexPlanePeriod] <;>
     ring
 
-@[simp] theorem hexagonalPlaneVertex_im_scaled (u : HexVertex) :
+@[simp] lemma hexagonalPlaneVertex_im_scaled (u : HexVertex) :
     (hexagonalPlaneVertex u : Complex).im =
       (hexagonalScaledCoordinate u 1 : Real) / 3 := by
   rcases u with ⟨x, b⟩
@@ -384,7 +425,7 @@ private theorem complexSegment_im (a b : Complex) (t : unitInterval) :
       hexagonalScaledCoordinate, hexagonalFaceCenterOffset, triHexPlanePeriod] <;>
     ring
 
-@[simp] theorem hexagonalSegment_re_scaled
+@[simp] lemma hexagonalSegment_re_scaled
     (u v : HexVertex) (t : unitInterval) :
     3 * (Path.segment (hexagonalPlaneVertex u)
       (hexagonalPlaneVertex v) t).re =
@@ -395,7 +436,7 @@ private theorem complexSegment_im (a b : Complex) (t : unitInterval) :
   rw [hexagonalPlaneVertex_re_scaled, hexagonalPlaneVertex_re_scaled]
   ring
 
-@[simp] theorem hexagonalSegment_im_scaled
+@[simp] lemma hexagonalSegment_im_scaled
     (u v : HexVertex) (t : unitInterval) :
     3 * (Path.segment (hexagonalPlaneVertex u)
       (hexagonalPlaneVertex v) t).im =
@@ -407,9 +448,10 @@ private theorem complexSegment_im (a b : Complex) (t : unitInterval) :
   ring
 
 set_option maxHeartbeats 800000 in
-
-
-theorem hexagonalCanonicalSegments_commonEndpoint
+-- the 9 `fin_cases i, j` cases each run `simp` and `omega` on six integer interval bounds
+/-- Two canonical hexagonal segments from black vertices `(x, false)`, `(z, false)` that share a
+point share an endpoint. -/
+lemma hexagonalCanonicalSegments_commonEndpoint
     (x z : Site 2) (i j : Fin 3) (p : Complex)
     (hp : p ∈ Set.range (Path.segment
       (hexagonalPlaneVertex (x, false))
@@ -549,7 +591,11 @@ theorem hexagonalCanonicalSegments_commonEndpoint
       hxHead, hxTail, hzHead, hzTail] at h00 h01 h10 h11 hs0 hs1 ⊢
   all_goals omega
 
-theorem mem_range_hexagonalSegment_symm (u v : HexVertex) {p : Complex}
+/-! ## D. Hexagonal edges meet only at endpoints -/
+
+/-- A point of the segment `[u, v]` lies on `[v, u]`. See also `Path.range_segment` and
+`segment_symm` (Mathlib). -/
+lemma mem_range_hexagonalSegment_symm (u v : HexVertex) {p : Complex}
     (hp : p ∈ Set.range
       (Path.segment (hexagonalPlaneVertex u) (hexagonalPlaneVertex v))) :
     p ∈ Set.range
@@ -557,8 +603,7 @@ theorem mem_range_hexagonalSegment_symm (u v : HexVertex) {p : Complex}
   rw [Path.range_segment, segment_symm]
   simpa only [Path.range_segment] using hp
 
-
-theorem hexagonalNeighborSegments_inter_eq
+lemma hexagonalNeighborSegments_inter_eq
     {v a b : HexVertex}
     (hva : hexagonalGraph.Adj v a) (hvb : hexagonalGraph.Adj v b)
     (hab : Ne a b) {p : Complex}
@@ -584,22 +629,23 @@ theorem hexagonalNeighborSegments_inter_eq
   have hxTail : Matrix.vecHead (Matrix.vecTail x) = x 1 := rfl
   fin_cases i <;> fin_cases j <;> cases bv
   all_goals
-    simp [hexagonalNeighbor, hexagonalScaledCoordinate, hexagonalStep,
-      funext_iff, hxHead, hxTail] at hre him hab
+    simp only [hexagonalScaledCoordinate, hexagonalNeighbor, Bool.false_eq_true, ↓reduceIte,
+      hexagonalStep, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.add_cons, hxHead, hxTail, add_zero, Matrix.empty_add_empty,
+      Int.reduceNeg, Int.cast_add, Int.cast_mul, Int.cast_ofNat, Int.cast_one, Int.cast_neg,
+      add_left_inj, mul_eq_mul_right_iff, Matrix.cons_val_one, Matrix.cons_val_fin_one, ne_eq,
+      not_true_eq_false, Matrix.sub_cons, sub_zero, Matrix.empty_sub_empty, Int.cast_sub,
+      Fin.mk_one, Prod.mk.injEq, funext_iff, Fin.forall_fin_two, add_eq_left, one_ne_zero,
+      left_eq_add, and_self, and_true, not_false_eq_true, sub_eq_self, false_and, Fin.reduceFinMk,
+      Matrix.cons_val, and_false, true_and] at hre him hab
   all_goals
-    have htR : (t : Real) = 0 := by
-      first
-      | exact hre
-      | exact congrArg Subtype.val hre
-      | exact him
-      | exact congrArg Subtype.val him
-      | linarith [hre, him, t.2.1, u.2.1]
-    have ht : t = 0 := Subtype.ext htR
-    rw [ht]
-    exact (Path.segment (hexagonalPlaneVertex (x, _))
-      (hexagonalPlaneVertex _)).source
+    suffices htR : (t : Real) = 0 by
+      rw [show t = 0 from Subtype.ext htR]
+      exact (Path.segment (hexagonalPlaneVertex (x, _))
+        (hexagonalPlaneVertex _)).source
+    linarith [hre, him, t.2.1, u.2.1]
 
-private theorem hexagonalEdges_commonEndpoint_of_intersection
+private lemma hexagonalEdges_commonEndpoint_of_intersection
     {x y z w : HexVertex}
     (hxy : hexagonalGraph.Adj x y) (hzw : hexagonalGraph.Adj z w)
     (p : Complex)
@@ -680,7 +726,7 @@ private theorem hexagonalEdges_commonEndpoint_of_intersection
       · exact ⟨(a.1 + hexagonalStep a.2, true), Or.inl ha.2,
           Or.inl (h.trans hb.2)⟩
 
-
+/-- Two distinct straight hexagonal edges meet only at a common endpoint. -/
 theorem hexagonalStraightEdgeIntersection :
     HexagonalStraightEdgeIntersectionProperty := by
   intro x y z w hxy hzw p hne hp hq
@@ -726,13 +772,15 @@ theorem hexagonalStraightEdgeIntersection :
       have hv := hexagonalNeighborSegments_inter_eq hxy.symm hzw.symm hxz hp' hq'
       exact ⟨y, Or.inr rfl, Or.inr rfl, hv.symm⟩
 
+/-! ## E. The periodic plane embeddings -/
 
+/-- The triangular lattice drawn with straight edges, as a periodic plane embedding. -/
 noncomputable def triangularPeriodicPlaneEmbedding :
     PeriodicPlaneEmbedding triangular :=
   triangularPeriodicPlaneEmbedding_of_intersection
     triangularStraightEdgeIntersection
 
-
+/-- The hexagonal lattice drawn with straight edges, as a periodic plane embedding. -/
 noncomputable def hexagonalPeriodicPlaneEmbedding :
     PeriodicPlaneEmbedding hexagonal :=
   hexagonalPeriodicPlaneEmbedding_of_intersection

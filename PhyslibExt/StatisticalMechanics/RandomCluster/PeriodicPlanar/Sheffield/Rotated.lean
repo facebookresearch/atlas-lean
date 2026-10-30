@@ -6,14 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic
+
+/-!
+# Rotated matched crossings and the balanced-aspect contradiction
+
+The rotated form of planar crossing duality, and the contradiction obtained when primal
+crossings of balanced rectangles stay likely while dual crossings become likely.
+
+## i. Overview
+
+A primal vertical crossing of `[a + 4B, b - 4B] × [c, d]` and a dual horizontal crossing of
+`[a, b] × [c + 4B, d - 4B]` cannot both occur (the rotated form of
+`matchedCrossingEvents_disjoint`). Hence their probabilities sum to at most one, and if the
+larger dual crossing probability of a sequence of rectangles tends to one, the smaller primal
+crossing probability tends to zero.
+
+`balanced_aspect_contradiction_of_crossing_limits` combines this with an aspect-ratio comparison
+of primal crossings: if horizontal crossings are no likelier than vertical ones in one family of
+rectangles, the reverse holds in a taller family, the larger primal crossing probability tends
+to one and the larger dual crossing probability tends to one in both families, the hypotheses
+are contradictory.
+
+## ii. Key results
+
+- `PeriodicPlanarDualPair.matchedVerticalHorizontalCrossingEvents_disjoint`,
+  `PeriodicPlanarDualPair.matchedVerticalHorizontalCrossing_measureReal_add_le_one` :
+  unconditional (given the edge-arc displacement bound `B`).
+- `PeriodicPlanarDualPair.exists_buffer_primal_crossing_min_tendsto_zero_of_dual_max` :
+  unconditional; the limit hypothesis is part of the statement.
+- `PeriodicPlanarDualPair.balanced_aspect_contradiction_of_crossing_limits` : its conclusion is
+  `False`, so its hypotheses (`hbalance`, `hnext`, `hprimalMax`, `hdualMax`, `hdualMaxNext`) are
+  jointly unsatisfiable; it is used in a proof by contradiction.
+
+## iii. Table of contents
+
+- A. Rotated matched crossings
+- B. Small primal crossings from likely dual crossings
+- C. The balanced-aspect contradiction
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
 
 @[expose] public section
 
@@ -21,7 +58,7 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
@@ -29,9 +66,12 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## A. Rotated matched crossings -/
 
-
-theorem matchedVerticalHorizontalCrossingEvents_disjoint
+/-- A primal vertical crossing of `[a + 4B, b - 4B] × [c, d]` and a dual horizontal crossing of
+`[a, b] × [c + 4B, d - 4B]` cannot both occur. This is the rotated form of
+`matchedCrossingEvents_disjoint`, proved by the same argument with the axes exchanged. -/
+lemma matchedVerticalHorizontalCrossingEvents_disjoint
     (D : PeriodicPlanarDualPair P Pdual) {B a b c d : ℝ}
     (hBpos : 0 < B)
     (hBp : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -93,13 +133,11 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
       a b (c + 4 * B) (d - 4 * B) yd from ⟨xr, hxr, hxrcoord⟩)
   have hpNotNil : ¬ pfull.Nil := by
     apply SimpleGraph.Walk.not_nil_of_ne
-    change xp.1 ≠ yp.1
     intro heq
     rw [heq] at hxpNear
     linarith
   have hqNotNil : ¬ qfull.Nil := by
     apply SimpleGraph.Walk.not_nil_of_ne
-    change xd.1 ≠ yd.1
     intro heq
     rw [heq] at hxdNear
     linarith
@@ -110,8 +148,8 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
     dsimp only [eta] at hz
     rw [Path.trans_range] at hz
     rcases hz with hbottom | hrest
-    rw [Path.symm_range] at hbottom
-    · obtain ⟨t, rfl⟩ := hbottom
+    · rw [Path.symm_range] at hbottom
+      obtain ⟨t, rfl⟩ := hbottom
       exact D.primalEmbedding.edgeArc_mem_expanded_planeRect hBp hxb xp.2 t
     · simp only [Path.trans_range, Set.mem_union] at hrest
       rcases hrest with hcore | htop
@@ -126,8 +164,8 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
     dsimp only [gamma] at hz
     rw [Path.trans_range] at hz
     rcases hz with hleft | hrest
-    rw [Path.symm_range] at hleft
-    · obtain ⟨t, rfl⟩ := hleft
+    · rw [Path.symm_range] at hleft
+      obtain ⟨t, rfl⟩ := hleft
       exact D.dualEmbedding.edgeArc_mem_expanded_planeRect hBd hxl xd.2 t
     · simp only [Path.trans_range, Set.mem_union] at hrest
       rcases hrest with hcore | hright
@@ -202,8 +240,8 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
     dsimp only [gamma] at ht
     rw [Path.trans_range] at ht
     rcases ht with hleft | hrest
-    rw [Path.symm_range] at hleft
-    · obtain ⟨r, hr⟩ := hleft
+    · rw [Path.symm_range] at hleft
+      obtain ⟨r, hr⟩ := hleft
       have hu := D.dualEmbedding.edgeArc_coord_le_vertex_add hBd hxl r 0
       rw [hr] at hu
       rw [← D.coordinates_eq] at hu
@@ -223,8 +261,8 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
     dsimp only [eta] at hs
     rw [Path.trans_range] at hs
     rcases hs with hbottom | hrest
-    rw [Path.symm_range] at hbottom
-    · obtain ⟨r, hr⟩ := hbottom
+    · rw [Path.symm_range] at hbottom
+      obtain ⟨r, hr⟩ := hbottom
       have hu := D.primalEmbedding.edgeArc_coord_le_vertex_add hBp hxb r 1
       rw [hr] at hu
       rw [← hcross] at hu
@@ -240,8 +278,9 @@ theorem matchedVerticalHorizontalCrossingEvents_disjoint
   have hdisj := D.no_openRectWalkArc_crossing omega p q hpNotNil hqNotNil
   exact Set.disjoint_left.mp hdisj hsCore (hcross ▸ htCore)
 
-
-theorem matchedVerticalHorizontalCrossing_measureReal_add_le_one
+/-- The probabilities of matched primal vertical and dual horizontal crossings sum to at most
+one. -/
+lemma matchedVerticalHorizontalCrossing_measureReal_add_le_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B a b c d : ℝ}
@@ -274,11 +313,9 @@ theorem matchedVerticalHorizontalCrossing_measureReal_add_le_one
   rw [measureReal_union hdisj hHd] at hu
   exact hu
 
+/-! ## B. Small primal crossings from likely dual crossings -/
 
-
-
-
-theorem primalCrossing_min_lt_of_dualCrossing_max_gt
+lemma primalCrossing_min_lt_of_dualCrossing_max_gt
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B a b c d epsilon : ℝ}
@@ -315,9 +352,7 @@ theorem primalCrossing_min_lt_of_dualCrossing_max_gt
   · right
     linarith
 
-
-
-theorem exists_buffer_primalCrossing_min_lt_of_dualCrossing_max_gt
+lemma exists_buffer_primalCrossing_min_lt_of_dualCrossing_max_gt
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu] :
     ∃ B : ℝ, 0 < B ∧ ∀ {a b c d epsilon : ℝ},
@@ -341,16 +376,13 @@ theorem exists_buffer_primalCrossing_min_lt_of_dualCrossing_max_gt
   exact D.primalCrossing_min_lt_of_dualCrossing_max_gt
     mu hBpos hBp hBd hab hcd hdual
 
-
-
-
-theorem exists_buffer_primal_crossing_min_tendsto_zero_of_dual_max
+lemma exists_buffer_primal_crossing_min_tendsto_zero_of_dual_max
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (a b c d : ℕ → ℝ) :
     ∃ B : ℝ, 0 < B ∧
-      ∀ (hspanX : ∀ n, a n + 5 * B < b n - 5 * B)
-        (hspanY : ∀ n, c n + 5 * B < d n - 5 * B),
+      ∀ (_hspanX : ∀ n, a n + 5 * B < b n - 5 * B)
+        (_hspanY : ∀ n, c n + 5 * B < d n - 5 * B),
       Tendsto (fun n => max
         (mu.real ((dualConfigEquiv D.edgeDual) ⁻¹'
           D.dualEmbedding.verticalCrossingEvent
@@ -382,11 +414,10 @@ theorem exists_buffer_primal_crossing_min_tendsto_zero_of_dual_max
       mu hBpos hBp hBd (hspanX n) (hspanY n)
   · exact hdual
 
+/-! ## C. The balanced-aspect contradiction -/
 
-
-
-
-
+/-- The balanced-aspect contradiction: crossing probabilities with the stated aspect-ratio
+comparisons and limits cannot exist. The conclusion is `False`. -/
 theorem balanced_aspect_contradiction_of_crossing_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

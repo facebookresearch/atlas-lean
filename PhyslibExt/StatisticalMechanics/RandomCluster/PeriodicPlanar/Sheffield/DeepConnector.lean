@@ -6,23 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundarySource
 
+/-!
+# Deep connectors between boundary arms
+
+Two infinite open arms reaching the boundary of a right half-plane, below and above, that are
+joined deep inside the half-plane.
+
+## i. Overview
+
+`deepOpenExitedJoinedBoundaryArmEvent r R c d L U` asks for an infinite cluster from `L` that
+reaches the lower boundary ray of the half-plane `{x ≥ r}` (below height `c`) through an open edge
+leaving the half-plane, the same for `U` and the upper ray (above height `d`), and no
+pair-merge error: the two infinite clusters are connected inside the deeper half-plane
+`{x ≥ R}`. The file proves measurability, extracts the witnesses, gives the lower bound
+`P(A) + P(B) - P(merge error) - 1`, and deduces that the event has probability tending to `1`
+when the two arm events do and the merge error vanishes (conditional on these three limits). No
+other file uses these declarations; the finite-strip version in `Sheffield.DeepConnectorCage` is
+the one used downstream.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent` : the deep connector event.
+- `PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_tendsto_one` : conditional on the
+  two arm events tending to `1` and the merge error to `0`.
+
+## iii. Table of contents
+
+- A. The deep connector event
+- B. Probability bounds
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set
 
@@ -31,8 +55,10 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. The deep connector event -/
 
-
+/-- Infinite clusters from `L` and `U` exit the half-plane `{x ≥ r}` through its lower ray (below
+`c`) and upper ray (above `d`), and are joined inside the deeper half-plane `{x ≥ R}`. -/
 def PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P) (r R c d : Real)
     (L U : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -42,7 +68,7 @@ def PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent
       (E.upperBoundaryRayVertices r d)) \
     E.halfPlanePairMergeErrorUnion R L U
 
-theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measurableSet
+lemma PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (r R c d : Real)
     (L U : Finset V) :
     MeasurableSet
@@ -53,9 +79,8 @@ theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measurableSe
       (E.upperBoundaryRayVertices r d))).diff
     (E.halfPlanePairMergeErrorUnion_measurableSet R L U)
 
-
-
-theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_witnesses
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_witnesses
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r R c d : Real} {L U : Finset V}
     (h : omega ∈ E.deepOpenExitedJoinedBoundaryArmEvent r R c d L U) :
@@ -90,8 +115,9 @@ theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_witnesses
   exact ⟨x, hxL, hxInfinite, b, hbLower, z, hbz, hz, hbzOpen, hxb,
     y, hyU, hyInfinite, u, huUpper, w, huw, hw, huwOpen, hyu, hxy⟩
 
+/-! ## B. Probability bounds -/
 
-theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measureReal_ge
+lemma PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r R c d : Real) (L U : Finset V) :
@@ -117,11 +143,11 @@ theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_measureReal_
   rw [hC] at hthree
   change mu.real A + mu.real B - mu.real C - 1 ≤
     mu.real ((A ∩ B) \ C)
-  convert hthree using 1 <;> first | ring | simp [Set.diff_eq]
+  convert hthree using 1 <;> first | ring | simp [Set.sdiff_eq]
 
-
-
-theorem PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_tendsto_one
+/-- The deep connector event has probability tending to `1` if both arm events do and the pair-merge
+error tends to `0`. -/
+lemma PeriodicPlaneEmbedding.deepOpenExitedJoinedBoundaryArmEvent_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r R c d : Nat → Real) (L U : Nat → Finset V)

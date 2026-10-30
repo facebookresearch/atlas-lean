@@ -6,43 +6,54 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicStraightIntersection
 
+/-!
+# Crossings of triangular and hexagonal edges
+
+A straight triangular edge and a straight hexagonal edge cross exactly when they are dual to
+each other.
+
+## i. Overview
+
+In coordinates scaled by `3` all vertex positions are integers. Each triangular edge meets its
+dual hexagonal edge at their common midpoint (`triHexCanonicalPairedSegments_crossing`);
+conversely, a common point of a canonical triangular segment and a canonical hexagonal segment
+forces the two edge indices to correspond under `triHexIndexEquiv`
+(`triHexCanonicalSegments_of_crossing`). Translating to arbitrary edges gives
+`triHexStraightEdge_crossing_iff_dual`. All results are proved unconditionally.
+
+## ii. Key results
+
+- `triHexStraightEdge_crossing_iff_dual` : a triangular and a hexagonal edge cross if and only
+  if they are dual.
+
+## iii. Table of contents
+
+- A. Scaled coordinates of triangular segments
+- B. Dual edges cross, and only dual edges cross
+- C. Crossing criterion for arbitrary edges
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
-private theorem affineInt_mem_interval' (a b : Int) (t : unitInterval) :
-    ((min a b : Int) : Real) <=
-        (t : Real) * ((b : Real) - (a : Real)) + (a : Real) /\
-      (t : Real) * ((b : Real) - (a : Real)) + (a : Real) <=
-        ((max a b : Int) : Real) := by
-  rcases le_total a b with hab | hba
-  · rw [min_eq_left hab, max_eq_right hab]
-    have habR : (a : Real) <= b := by exact_mod_cast hab
-    constructor <;> nlinarith [t.2.1, t.2.2]
-  · rw [min_eq_right hba, max_eq_left hba]
-    have hbaR : (b : Real) <= a := by exact_mod_cast hba
-    constructor <;> nlinarith [t.2.1, t.2.2]
+/-! ## A. Scaled coordinates of triangular segments -/
 
-@[simp] theorem triangularSegment_re_scaled
+@[simp] lemma triangularSegment_re_scaled
     (x y : Site 2) (t : unitInterval) :
     3 * (Path.segment (triangularPlaneVertex x)
       (triangularPlaneVertex y) t).re =
@@ -52,7 +63,7 @@ private theorem affineInt_mem_interval' (a b : Int) (t : unitInterval) :
   push_cast
   ring
 
-@[simp] theorem triangularSegment_im_scaled
+@[simp] lemma triangularSegment_im_scaled
     (x y : Site 2) (t : unitInterval) :
     3 * (Path.segment (triangularPlaneVertex x)
       (triangularPlaneVertex y) t).im =
@@ -62,9 +73,11 @@ private theorem affineInt_mem_interval' (a b : Int) (t : unitInterval) :
   push_cast
   ring
 
+/-! ## B. Dual edges cross, and only dual edges cross -/
 
-
-theorem triHexCanonicalPairedSegments_crossing (a : TriHexEdgeIndex) :
+/-- A canonical triangular segment meets the segment of its dual hexagonal edge (at their common
+midpoint). -/
+lemma triHexCanonicalPairedSegments_crossing (a : TriHexEdgeIndex) :
     ∃ t u : unitInterval,
       Path.segment (triangularPlaneVertex a.1)
           (triangularPlaneVertex (a.1 + triangularStep a.2)) t =
@@ -93,11 +106,9 @@ theorem triHexCanonicalPairedSegments_crossing (a : TriHexEdgeIndex) :
       simp [half, triHexIndexEquiv, triangularStep, hexagonalStep,
         hexagonalScaledCoordinate, hxHead, hxTail] <;> ring
 
-set_option maxHeartbeats 800000 in
-
-
-
-theorem triHexCanonicalSegments_of_crossing
+/-- If a canonical triangular segment and a canonical hexagonal segment share a point, their edge
+indices correspond under `triHexIndexEquiv`. -/
+lemma triHexCanonicalSegments_of_crossing
     (x z : Site 2) (i j : Fin 3) (p : Complex)
     (hp : p ∈ Set.range (Path.segment
       (triangularPlaneVertex x)
@@ -144,12 +155,12 @@ theorem triHexCanonicalSegments_of_crossing
         congrArg (fun r : Real => 3 * r) him
       _ = _ := hexagonalSegment_im_scaled
         (z, false) (z + hexagonalStep j, true) u
-  have ha0 := affineInt_mem_interval' a0 b0 t
-  have hc0 := affineInt_mem_interval' c0 d0 u
-  have ha1 := affineInt_mem_interval' a1 b1 t
-  have hc1 := affineInt_mem_interval' c1 d1 u
-  have has := affineInt_mem_interval' (a0 + a1) (b0 + b1) t
-  have hcs := affineInt_mem_interval' (c0 + c1) (d0 + d1) u
+  have ha0 := affineInt_mem_interval a0 b0 t
+  have hc0 := affineInt_mem_interval c0 d0 u
+  have ha1 := affineInt_mem_interval a1 b1 t
+  have hc1 := affineInt_mem_interval c1 d1 u
+  have has := affineInt_mem_interval (a0 + a1) (b0 + b1) t
+  have hcs := affineInt_mem_interval (c0 + c1) (d0 + d1) u
   have hseq :
       (t : Real) * (((b0 + b1 : Int) : Real) -
           ((a0 + a1 : Int) : Real)) + ((a0 + a1 : Int) : Real) =
@@ -189,9 +200,9 @@ theorem triHexCanonicalSegments_of_crossing
       at h00 h01 h10 h11 hs0 hs1 ⊢
   all_goals omega
 
+/-! ## C. Crossing criterion for arbitrary edges -/
 
-
-theorem triangularStraightEdgeArc_range_chart
+lemma triangularStraightEdgeArc_range_chart
     {x y : Site 2} (hxy : triangularGraph.Adj x y) :
     let e : triangularGraph.edgeSet := ⟨s(x, y), hxy⟩
     let a := triangularEdgeChartEquiv.symm e
@@ -214,9 +225,7 @@ theorem triangularStraightEdgeArc_range_chart
     rw [ha.2, ha.1]
     exact segment_symm Real _ _
 
-
-
-theorem hexagonalStraightEdgeArc_range_chart
+lemma hexagonalStraightEdgeArc_range_chart
     {x y : HexVertex} (hxy : hexagonalGraph.Adj x y) :
     let e : hexagonalGraph.edgeSet := ⟨s(x, y), hxy⟩
     let a := hexagonalEdgeChartEquiv.symm e
@@ -239,8 +248,8 @@ theorem hexagonalStraightEdgeArc_range_chart
     rw [ha.2, ha.1]
     exact segment_symm Real _ _
 
-
-
+/-- A straight triangular edge and a straight hexagonal edge cross if and only if they are dual
+edges. -/
 theorem triHexStraightEdge_crossing_iff_dual
     {x y : Site 2} {z w : HexVertex}
     (hxy : triangularGraph.Adj x y) (hzw : hexagonalGraph.Adj z w) :

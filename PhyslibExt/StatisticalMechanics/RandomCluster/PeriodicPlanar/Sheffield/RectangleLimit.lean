@@ -6,38 +6,79 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference
 
+/-!
+# Crossing limits from preference witnesses and uniform merge radii
+
+A translated orbit box that prefers the bottom and left sides, next to boxes preferring the
+opposite sides, forces a crossing of the rectangle; with merge radii chosen uniformly, the larger
+of the vertical and horizontal crossing probabilities tends to one.
+
+## i. Overview
+
+`preferenceKingOffset ij` lists the nine king-move offsets `{-1, 0, 1}²`; every king neighbour
+of a site is reached by one of them. A preference witness is a site `x` whose translated orbit
+box prefers bottom to top and left to right, together with neighbours `xVertical` and
+`xHorizontal` whose boxes prefer top to bottom and right to left. By the fourth-root bound and
+the preferred-side transfer (from `RectanglePreference`), the larger `A` of the bottom and left
+connection probabilities of the box at `x` is at least `1 - (1 - μ(box hits ∞))^{1/4}`, and
+either the vertical or the horizontal crossing probability is at least `A (H A - M) - M`.
+
+Under almost sure uniqueness of the infinite cluster, ball merge errors tend to zero, so one can
+choose radii `radius n ≥ n` with merge errors below `1/(n+1)`, simultaneously for two targets or
+for a finite family of targets; translation invariance carries this to translated rectangles.
+Combining these, for rectangles containing the buffered ball of the chosen radius around the
+witness, `max (vertical crossing) (horizontal crossing) → 1`.
+
+Headline fidelity: `exists_connectorRadius_crossing_max_tendsto_one` and
+`exists_uniform_connectorRadius_crossing_max_tendsto_one` are proved conditionally on FKG,
+translation invariance and almost sure uniqueness of the infinite cluster, and on the
+preference-witness inequalities given as hypotheses.
+`PeriodicGraph.exists_uniform_pairMergeRadius` carries instance arguments
+`[Fintype ι] [DecidableEq ι]` that its type does not use; they are kept because removing them
+changes the statement.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.crossing_branch_of_preference_witness`
+- `PeriodicGraph.exists_uniform_pairMergeRadius`
+- `PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero`
+- `PeriodicPlaneEmbedding.exists_uniform_connectorRadius_crossing_max_tendsto_one`
+
+## iii. Table of contents
+
+- A. King offsets
+- B. Crossings from a preference witness
+- C. Uniform merge radii
+- D. Crossing limits
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. King offsets -/
 
-
+/-- The king-move offset `(i - 1, j - 1) ∈ {-1, 0, 1}²` indexed by `(i, j) : Fin 3 × Fin 3`. -/
 def preferenceKingOffset (ij : Fin 3 × Fin 3) : Site 2 := fun k =>
   if k = 0 then (ij.1.val : Int) - 1 else (ij.2.val : Int) - 1
 
-theorem exists_preferenceKingOffset_of_kingAdj {x y : Site 2}
+/-- Every king neighbour `y` of `x` is `x + preferenceKingOffset ij` for some index `ij`. -/
+lemma exists_preferenceKingOffset_of_kingAdj {x y : Site 2}
     (hxy : KingAdj x y) :
     ∃ ij : Fin 3 × Fin 3, y = x + preferenceKingOffset ij := by
   have hcoord (k : Fin 2) : -1 ≤ y k - x k ∧ y k - x k ≤ 1 := by
@@ -64,9 +105,13 @@ theorem exists_preferenceKingOffset_of_kingAdj {x y : Site 2}
       Int.toNat_of_nonneg hn
     simp [preferenceKingOffset, j, hc]
 
+/-! ## B. Crossings from a preference witness -/
 
-
-theorem PeriodicPlaneEmbedding.crossing_branch_of_preference_witness
+/-- For a preference witness `x` (box preferring bottom and left) with neighbours `xVertical`
+(preferring top) and `xHorizontal` (preferring right), the larger `A` of the bottom and left
+connection probabilities of the box at `x` satisfies the fourth-root bound, and the vertical or the
+horizontal crossing probability is at least the corresponding transfer bound `A (H A - M) - M`. -/
+lemma PeriodicPlaneEmbedding.crossing_branch_of_preference_witness
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -171,9 +216,12 @@ theorem PeriodicPlaneEmbedding.crossing_branch_of_preference_witness
     rw [max_eq_right hle']
     simpa [Al] using htransfer
 
+/-! ## C. Uniform merge radii -/
 
-
-theorem PeriodicGraph.exists_common_pairMergeRadius
+/-- Under uniqueness, radii `radius n ≥ n` making the ball merge errors of `(L n, R₁ n)` and `(L n,
+R₂ n)` both smaller than `1/(n+1)`. See also `PeriodicGraph.exists_uniform_pairMergeRadius`
+(stronger: any finite family of targets; this is its two-target case). -/
+lemma PeriodicGraph.exists_common_pairMergeRadius
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -207,9 +255,9 @@ theorem PeriodicGraph.exists_common_pairMergeRadius
   choose radius hradius using hrow
   exact ⟨radius, hradius⟩
 
-
-
-theorem PeriodicGraph.exists_uniform_pairMergeRadius
+/-- Under uniqueness, radii `radius n ≥ n` making the ball merge errors of `(L n, R n i)` smaller
+than `1/(n+1)` for all `i` in a finite index type. -/
+lemma PeriodicGraph.exists_uniform_pairMergeRadius
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -246,10 +294,9 @@ theorem PeriodicGraph.exists_uniform_pairMergeRadius
   choose radius hradius using hrow
   exact ⟨radius, hradius⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_translated_pairMergeErrors_tendsto_zero
+/-- Translated, rectangle form of `PeriodicGraph.exists_common_pairMergeRadius`: for any rectangles
+containing the translated buffered balls, both rectangle merge errors tend to zero. -/
+lemma PeriodicPlaneEmbedding.exists_translated_pairMergeErrors_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -286,10 +333,9 @@ theorem PeriodicPlaneEmbedding.exists_translated_pairMergeErrors_tendsto_zero
       mu hTI (z n) (a n) (b n) (c n) (d n)
       (L n) (R₂ n) (radius n) (hbox n)).trans (hradius n).2.2.le
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero
+/-- One radius sequence makes the rectangle merge error between the translated orbit box at `x n`
+and the box at any king neighbour `x n + preferenceKingOffset (ij n)` tend to zero. -/
+lemma PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -331,11 +377,12 @@ theorem PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero
     (L n) (R n (ij n)) (radius n) (hbox n)
   simpa only [L, hR] using hle.trans (((hradius n).2 (ij n)).le)
 
+/-! ## D. Crossing limits -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_connectorRadius_crossing_max_tendsto_one
+/-- Under FKG, translation invariance and uniqueness, for given witness sites there is a radius
+sequence such that, in rectangles containing the buffered balls and satisfying the
+preference-witness inequalities, the larger crossing probability tends to one. -/
+lemma PeriodicPlaneEmbedding.exists_connectorRadius_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -502,10 +549,9 @@ theorem PeriodicPlaneEmbedding.exists_connectorRadius_crossing_max_tendsto_one
       (fun n => (hbranch n).2) (fun _ => measureReal_le_one)
       (fun _ => measureReal_le_one)
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniform_connectorRadius_crossing_max_tendsto_one
+/-- Uniform version of `exists_connectorRadius_crossing_max_tendsto_one`: one radius sequence works
+for all witness sites and all king-neighbour choices. -/
+lemma PeriodicPlaneEmbedding.exists_uniform_connectorRadius_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

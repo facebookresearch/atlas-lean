@@ -6,38 +6,97 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RecursiveLimits
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.NormalBoundaryBandAssembly
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonSquareEnlarge
 
+/-!
+# Matched primal and dual boundary bands
+
+Primal and dual boundary-band families with a common margin schedule, common grid extents and a
+common square, as needed to run the preference argument on the primal and the dual lattice at
+the same scale.
+
+## i. Overview
+
+A `NormalBoundaryBandFamily` (`Sheffield.MacroArrayAssembly`) provides, for each side of a box and
+each margin, translates of a finite set `S` joined to that side of a box of the given radius with
+probability `> p`. This file pairs a primal family (measure `mu` on `P`) with a dual family
+(measure `muDual` on `Pdual`):
+- `PairedAlignedMarginSchedule` interleaves horizontal and vertical margins tending to infinity
+  so that every band radius fits inside the next margin, for both lattices at once;
+- `exists_pairedMixedGridDimensions` chooses common horizontal and vertical extents for the
+  primal and dual grids;
+- `PairedMixedBoundaryScores` records primal and dual grids whose four sides have scores `> p`
+  (`> pDual`) in common rectangles;
+- the cofinal results produce families for orbit boxes of every radius `m` with scores tending
+  to one, matched on common squares `[-M m, M m]²`, and connector radii with a common half-width.
+
+Headline fidelity.
+- `exists_pairedAlignedMarginSchedule`, `exists_pairedMixedGridDimensions` are unconditional;
+  `exists_pairedMixedBoundaryScores` needs only translation invariance of both measures.
+- `exists_pairedCofinalNormalBoundaryBandFamilies_bounded`,
+  `exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData` and
+  `exists_pairedUniformConnectorRadii_with_commonHalfWidthData` assume `IsFKG`, translation
+  invariance and almost-sure uniqueness of the infinite cluster for both `mu` and `muDual`. Here
+  `muDual` is an arbitrary measure on the dual graph, so these hypotheses are satisfiable (two
+  unrelated supercritical measures); the statements are not vacuous. They are applied with
+  `muDual = D.dualMeasure mu`, where the hypotheses describe coexistence of primal and dual unique
+  infinite clusters.
+- `PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common` and
+  `exists_canonicalConnectorReadyData_of_common` assume that the free-buffered infinite-volume FK
+  measure (`0 < p < 1`, `q ≥ 1`) has, almost surely, a unique primal and a unique dual infinite
+  cluster at the same time (`D.commonUniqueInfiniteClusterEvent`). This is the coexistence
+  scenario that Sheffield's theorem rules out, so for the FK measure the hypothesis is expected
+  to be false; no Lean refutation is available here. These are reductio steps: they derive the
+  matched data from which the duality argument reaches a contradiction.
+- The existential binders `_family`, `_familyDual` in the cofinal and canonical statements are
+  not referred to by the rest of the conclusion: those statements assert only that such families
+  exist. The leading underscore is an alpha-renaming and does not change the statement.
+
+## ii. Key results
+
+- `exists_pairedAlignedMarginSchedule` : interleaved margins for a primal and a dual family.
+- `exists_pairedMixedBoundaryScores` : primal and dual grids with good boundary scores in common
+  rectangles.
+- `exists_pairedUniformConnectorRadii_with_commonHalfWidthData` : connector radii and
+  connector-ready data on common squares for both lattices.
+- `PeriodicPlanarDualPair.exists_canonicalConnectorReadyData_of_common` : the same for the
+  free-buffered FK measure under coexistence (reductio step).
+
+## iii. Table of contents
+
+- A. Interleaved margin schedules and common grid extents
+- B. Mixed boundary scores in common rectangles
+- C. Cofinal matched families
+- D. The FK measure under coexistence of primal and dual infinite clusters
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Interleaved margin schedules and common grid extents -/
 
-
-
+/-- An interleaved schedule of horizontal and vertical margins, both tending to infinity, such that
+for the primal and the dual band family the left/right band radii at horizontal margin `horizontal
+n` fit below `vertical n`, and the bottom/top band radii at `vertical n` fit below `horizontal (n +
+1)`, together with external requirements `verticalRequirement`, `horizontalRequirement`. -/
 structure PairedAlignedMarginSchedule
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}
@@ -103,17 +162,10 @@ structure PairedAlignedMarginSchedule
     (familyDual.radiusTop (vertical n) : Int) + familyDual.baseRight 0 ≤
       familyDual.baseTop 0 + horizontal (n + 1)
 
-private theorem int_le_nat_of_toNat_le_paired {x : Int} {n : Nat}
-    (h : x.toNat ≤ n) : x ≤ n := by
-  by_cases hx : 0 ≤ x
-  · have h' : (x.toNat : Int) ≤ (n : Int) := by exact_mod_cast h
-    rwa [Int.toNat_of_nonneg hx] at h'
-  · omega
-
-
-
-
-theorem exists_pairedAlignedMarginSchedule
+omit [Countable V] [Countable W] in
+/-- Every pair of primal and dual band families admits an interleaved margin schedule meeting any
+given requirements. -/
+lemma exists_pairedAlignedMarginSchedule
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -181,32 +233,32 @@ theorem exists_pairedAlignedMarginSchedule
         family.baseLeft 1 - family.baseBottom 1).toNat)
         (((family.radiusRight (horizontal n) : Int) +
           family.baseRight 1 - family.baseBottom 1).toNat)) _).trans (hPV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_left
       (max (((family.radiusLeft (horizontal n) : Int) +
         family.baseLeft 1 - family.baseBottom 1).toNat)
         (((family.radiusRight (horizontal n) : Int) +
           family.baseRight 1 - family.baseBottom 1).toNat)) _).trans (hPV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hPV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hPV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_left _ _).trans (hPH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_left _ _).trans (hPH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hPH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hPH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_left
       (max (((familyDual.radiusLeft (horizontal n) : Int) +
@@ -214,7 +266,7 @@ theorem exists_pairedAlignedMarginSchedule
         (((familyDual.radiusRight (horizontal n) : Int) +
           familyDual.baseRight 1 - familyDual.baseBottom 1).toNat)) _).trans
       (hDV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_left
       (max (((familyDual.radiusLeft (horizontal n) : Int) +
@@ -222,31 +274,32 @@ theorem exists_pairedAlignedMarginSchedule
         (((familyDual.radiusRight (horizontal n) : Int) +
           familyDual.baseRight 1 - familyDual.baseBottom 1).toNat)) _).trans
       (hDV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hDV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hDV n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_left _ _).trans (hDH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_left _ _).trans (hDH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hDH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_left _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans h)
     omega
   · have h := (Nat.le_max_right _ _).trans (hDH n)
-    have := int_le_nat_of_toNat_le_paired ((Nat.le_max_right _ _).trans h)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans h)
     omega
 
-
-
-
-theorem exists_pairedMixedGridDimensions
+omit [Countable V] [Countable W] in
+/-- Common horizontal and vertical extents (at least given minima) for primal and dual grids with
+positive widths and heights, measured between the left/right and bottom/top band bases with the
+given margins. -/
+lemma exists_pairedMixedGridDimensions
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -329,8 +382,12 @@ theorem exists_pairedMixedGridDimensions
     simp [bottomDual, topDual]
     omega
 
+/-! ## B. Mixed boundary scores in common rectangles -/
 
-
+/-- Primal and dual preference grids based at `base`, `baseDual` whose bottom and top rows are
+joined to the bottom and top sides of a wide rectangle, and whose left and right columns are joined
+to the left and right sides of a tall rectangle, each with probability `> p` (primal) or `> pDual`
+(dual); the rectangles are the same for both lattices. -/
 structure PairedMixedBoundaryScores
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -395,9 +452,9 @@ structure PairedMixedBoundaryScores
         (Fin.last widthDual, j)) '' (Sdual : Set W))
       (Edual.rectRightBoundaryVertices 0 narrowRight 0 tallTop))
 
-
-
-theorem exists_pairedMixedBoundaryScores
+/-- Under translation invariance of both measures, an interleaved margin schedule yields, at each
+stage `k`, mixed primal and dual boundary scores in common rectangles. -/
+lemma exists_pairedMixedBoundaryScores
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -500,8 +557,7 @@ theorem exists_pairedMixedBoundaryScores
     (by simpa [baseDual, hdDual] using hbottomD)
     (by simpa [baseDual, hdDual] using htopD)
   dsimp only at hmixedP hmixedD
-  simp only [if_pos (rfl : (0 : Fin 2) = 0),
-    if_neg (by decide : (1 : Fin 2) ≠ 0), if_true, if_false]
+  simp only [ite_eq_right (by decide : (1 : Fin 2) ≠ 0), ite_true]
       at hmixedP hmixedD
   rw [hb, hd] at hmixedP
   rw [hbDual, hdDual] at hmixedD
@@ -582,9 +638,12 @@ theorem exists_pairedMixedBoundaryScores
       (Edual.rectRightConnectionEvent_mono_otherBounds _ le_rfl le_rfl
         (by exact_mod_cast le_max_right dP dD)))
 
+/-! ## C. Cofinal matched families -/
 
-
-theorem exists_pairedCofinalNormalBoundaryBandFamilies_bounded
+/-- If `mu` and `muDual` are both FKG, translation invariant and have a.s. a unique infinite
+cluster, there are band families for the orbit boxes of every radius `m`, with scores at most one
+tending to one, on both lattices. -/
+lemma exists_pairedCofinalNormalBoundaryBandFamilies_bounded
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -596,9 +655,9 @@ theorem exists_pairedCofinalNormalBoundaryBandFamilies_bounded
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :
     ∃ (p pDual : Nat → Real)
-      (family : ∀ m,
+      (_family : ∀ m,
         E.NormalBoundaryBandFamily mu (P.orbitBox m) (p m))
-      (familyDual : ∀ m,
+      (_familyDual : ∀ m,
         Edual.NormalBoundaryBandFamily muDual
           (Pdual.orbitBox m) (pDual m)),
       Tendsto p atTop (nhds 1) ∧
@@ -614,9 +673,10 @@ theorem exists_pairedCofinalNormalBoundaryBandFamilies_bounded
   exact ⟨p, pDual, family, familyDual,
     hp, hp_le, hpDual, hpDual_le⟩
 
-
-
-theorem exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData
+/-- Version of `exists_pairedCofinalNormalBoundaryBandFamilies_bounded` that also places both
+families on common squares `[-M m, M m]²` with the given margins. The families `_family`,
+`_familyDual` are only asserted to exist. -/
+lemma exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -629,9 +689,9 @@ theorem exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
     (margin : Nat → Nat) :
     ∃ (p pDual : Nat → Real)
-      (family : ∀ m,
+      (_family : ∀ m,
         E.NormalBoundaryBandFamily mu (P.orbitBox m) (p m))
-      (familyDual : ∀ m,
+      (_familyDual : ∀ m,
         Edual.NormalBoundaryBandFamily muDual
           (Pdual.orbitBox m) (pDual m))
       (M : Nat → Nat),
@@ -662,9 +722,10 @@ theorem exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData
     fun m ↦ (hdata m).1, fun m ↦ (hdata m).2,
     hp, hp_le, hpDual, hpDual_le⟩
 
-
-
-theorem exists_pairedUniformConnectorRadii_with_commonHalfWidthData
+/-- If `mu` and `muDual` are both FKG, translation invariant and have a.s. a unique infinite
+cluster, there are uniform connector crossing radii and connector-ready common-square data for both
+lattices with the same half-widths `M`. -/
+lemma exists_pairedUniformConnectorRadii_with_commonHalfWidthData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -693,10 +754,12 @@ theorem exists_pairedUniformConnectorRadii_with_commonHalfWidthData
   exact ⟨radius, radiusDual, hradius, hradiusDual,
     primal', dual', hprimalM.trans hdualM.symm⟩
 
+/-! ## D. The FK measure under coexistence of primal and dual infinite clusters -/
 
-
-
-theorem PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
+/-- Reductio step: if the free-buffered infinite-volume FK measure has a.s. both a unique primal and
+a unique dual infinite cluster (the coexistence that Sheffield's theorem excludes), then matched
+primal and dual band data exist on common squares with scores tending to one. -/
+lemma PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (hcommon :
@@ -708,9 +771,9 @@ theorem PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
       P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
     let muDual : Measure (ConfigSpace (Sym2 W)) := D.dualMeasure mu
     ∃ (score scoreDual : Nat → Real)
-      (family : ∀ m, D.primalEmbedding.NormalBoundaryBandFamily
+      (_family : ∀ m, D.primalEmbedding.NormalBoundaryBandFamily
         mu (P.orbitBox m) (score m))
-      (familyDual : ∀ m, D.dualEmbedding.NormalBoundaryBandFamily
+      (_familyDual : ∀ m, D.dualEmbedding.NormalBoundaryBandFamily
         muDual (Pdual.orbitBox m) (scoreDual m))
       (M : Nat → Nat),
       (∀ m, Nonempty
@@ -724,7 +787,7 @@ theorem PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
       Tendsto scoreDual atTop (nhds 1) ∧
       (∀ m, scoreDual m ≤ 1) := by
   dsimp only
-  letI : IsProbabilityMeasure
+  let _ : IsProbabilityMeasure
       (D.dualMeasure
         (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
           Measure (ConfigSpace (Sym2 V)))) :=
@@ -738,9 +801,10 @@ theorem PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
       hdata.2.2.1 hdata.2.2.2.1 hdata.2.2.2.2.2
       margin
 
-
-
-theorem PeriodicPlanarDualPair.exists_canonicalConnectorReadyData_of_common
+/-- Reductio step: under the same coexistence hypothesis for the free-buffered FK measure, there are
+connector radii and connector-ready data for the primal and dual lattice with the same half-widths.
+-/
+lemma PeriodicPlanarDualPair.exists_canonicalConnectorReadyData_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (hcommon :
@@ -759,7 +823,7 @@ theorem PeriodicPlanarDualPair.exists_canonicalConnectorReadyData_of_common
           muDual radiusDual),
         primal.M = dual.M := by
   dsimp only
-  letI : IsProbabilityMeasure
+  let _ : IsProbabilityMeasure
       (D.dualMeasure
         (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
           Measure (ConfigSpace (Sym2 V)))) :=

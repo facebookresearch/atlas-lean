@@ -6,21 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKTorusSweep
 
+/-!
+# Homogeneous star–triangle transformation on the tori
+
+Specialization of the torus star–triangle identities to homogeneous edge parameters: the
+triangular torus at `p` and the hexagonal torus at the dual parameter `dualParam p q`.
+
+## i. Overview
+
+For constant edge parameter `p` on the triangular torus and `p* = dualParam p q` on the
+hexagonal torus, the edge odds are the constant direction odds `y = p / (1 - p)` and
+`y* = p* / (1 - p*)` with `y y* = q`. When `y` solves the triangular critical cubic
+`y ^ 3 + 3 y ^ 2 = q`, the results of `FKTorusSweep` give equality of every sector-observable
+expectation and of the two-point functions of the two tori. Unconditional, given `q > 0`,
+`p ∈ (0, 1)` and the critical cubic at `p` (i.e. at the triangular self-dual point).
+
+## ii. Key results
+
+- `triHexFK_torus_homogeneous_activeSectorRatio_eq` : homogeneous equality of sector
+  expectations. Unconditional (given the critical cubic).
+- `triHexFK_torus_homogeneous_activeTwoPointRatio_eq` : the hexagonal-torus white two-point
+  function at `p*` equals the triangular-torus two-point function at `p`. Unconditional (given
+  the critical cubic).
+
+## iii. Table of contents
+
+- A. Constant edge odds
+- B. Homogeneous star–triangle identities
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 namespace StatMech.FK.PeriodicPlanar
 
@@ -28,7 +51,9 @@ open Set
 
 noncomputable section
 
-private theorem constant_triangularTorus_odds
+/-! ## A. Constant edge odds -/
+
+private lemma constant_triangularTorus_odds
     (L : Nat) [Fact (2 < L)] {p : Real} (hp1 : p < 1)
     (e : (triangularTorusGraph L).edgeSet) :
     p = (1 - p) * triangularTorusSweepEdgeOdds L
@@ -41,7 +66,7 @@ private theorem constant_triangularTorus_odds
     simp [triHexDirectionOdds, FrontierA.fkEdgeOdds] <;>
     field_simp [hden]
 
-private theorem constant_hexagonalTorus_odds
+private lemma constant_hexagonalTorus_odds
     (L : Nat) [Fact (2 < L)] {p : Real} (hp1 : p < 1)
     (e : (hexagonalTorusGraph L).edgeSet) :
     p = (1 - p) * hexagonalTorusSweepEdgeOdds L
@@ -54,10 +79,9 @@ private theorem constant_hexagonalTorus_odds
     simp [triHexDirectionOdds, FrontierA.fkEdgeOdds] <;>
     field_simp [hden]
 
+/-! ## B. Homogeneous star–triangle identities -/
 
-
-
-theorem triHexFK_torus_homogeneous_activeSectorRatio_eq
+lemma triHexFK_torus_homogeneous_activeSectorRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
     (hsurface : FrontierA.triangularFKCriticalPolynomial q
@@ -92,7 +116,10 @@ theorem triHexFK_torus_homogeneous_activeSectorRatio_eq
   · exact hdual
   · rwa [FrontierA.triangularFKCriticalSurface_diagonal]
 
-
+/-- Star–triangle transformation of homogeneous FK two-point functions on the torus: at the
+triangular self-dual point, the hexagonal-torus connection probability of white vertices at
+`dualParam p q` equals the triangular-torus connection probability at `p` (Grimmett, *The
+Random-Cluster Model*, §6.6). -/
 theorem triHexFK_torus_homogeneous_activeTwoPointRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)

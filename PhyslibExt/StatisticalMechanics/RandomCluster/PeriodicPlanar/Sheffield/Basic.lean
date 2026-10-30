@@ -6,16 +6,93 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Coverage
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ContinuousRectangleCrossing
 public import MathlibExt.Probability.Configuration.Ergodicity
+
+/-!
+# Crossings, translations and uniqueness for periodic planar FK configurations
+
+Rectangle crossing events for a periodic planar graph embedded in the plane, translation
+invariance, the square-root trick, and the planar duality between primal and dual crossings.
+
+## i. Overview
+
+A `PeriodicGraph` is a locally finite graph with a `ℤ²` action by graph automorphisms and a
+finite fundamental domain; a `PeriodicPlaneEmbedding` draws it in the plane so that the lattice
+action becomes translation by period vectors on vertices and edge arcs. This file
+sets up the objects used by Sheffield's proof that a translation-invariant, positively
+associated (FKG) bond measure on a periodic planar graph cannot have a unique infinite primal
+cluster and a unique infinite dual cluster at the same time.
+
+- Section A gives the planar coordinates of vertices and the uniform bound `B` on how far an edge
+  arc wanders from its endpoint.
+- Section B defines the finite subgraph of vertices in an axis-parallel rectangle, its four
+  boundaries, and the horizontal and vertical open-crossing events. Crossing events are
+  increasing and measurable, and an open crossing gives a continuous path in the `B`-enlarged
+  rectangle.
+- Section C defines the translation action on configurations, translation-invariant measures,
+  and how clusters transform.
+- Section D contains the FKG property `IsFKG` and the square-root trick, together with the
+  real-analysis lemmas that turn crossing estimates into a contradiction.
+- Section E defines finite-energy measures and the events "connected inside a box", "unique
+  infinite cluster", and the merging error of two infinite clusters.
+- Section F treats a primal/dual pair: the dual measure, the fact that an open primal edge arc
+  never meets an open dual edge arc, and the matched-crossing exclusion: a primal horizontal
+  crossing of one rectangle and a dual vertical crossing of the matching rectangle cannot both
+  occur.
+
+## ii. Key results
+
+All results are unconditional unless a hypothesis is named.
+
+- `PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound` : edge arcs stay within a uniform
+  distance `B` of their endpoints (unconditional; uses compactness of finitely many arcs).
+- `PeriodicPlaneEmbedding.horizontalCrossingEvent`, `verticalCrossingEvent` : crossing events,
+  increasing and measurable (unconditional).
+- `measurable_sqrt_trick`, `four_event_sqrt_trick`, `four_event_max_tendsto_one` : the
+  square-root trick for increasing events, conditional on `IsFKG mu`.
+- `PeriodicGraph.pairMergeError_real_tendsto_zero`,
+  `PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero` : two vertices both in infinite
+  clusters are connected inside a large box with probability tending to one, conditional on
+  almost-sure uniqueness of the infinite cluster.
+- `PeriodicGraph.exists_fundamental_clusterInfinite_pos` : some vertex of the fundamental domain
+  lies in an infinite cluster with positive probability, conditional on translation invariance
+  and almost-sure existence of an infinite cluster.
+- `PeriodicPlanarDualPair.matchedCrossingEvents_disjoint`,
+  `PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one` : planar duality of crossings
+  (unconditional, given the displacement bound `B` and rectangles of width and height above
+  `10 B`).
+- `PeriodicPlanarDualPair.commonUniqueInfiniteClusterEvent_measure_eq_one`,
+  `PeriodicPlanarDualPair.exists_primal_dual_fundamental_clusterInfinite_pos` : conditional on
+  almost-sure uniqueness of both the primal and the dual infinite cluster (and translation
+  invariance for the second). Under `IsFKG` and translation invariance these hypotheses are
+  jointly impossible by Sheffield's theorem; that contradiction is what the downstream files
+  derive. Here no FKG assumption is made, and the hypotheses are not refuted.
+- `balanced_aspect_crossing_contradiction_of_error` : a real-analysis lemma whose conclusion is
+  `False`; its hypotheses are jointly unsatisfiable by design (it is used in a proof by
+  contradiction).
+
+## iii. Table of contents
+
+- A. Coordinates and edge-arc displacement
+- B. Rectangles and crossing events
+  - B.1. Rectangle vertices and boundaries
+  - B.2. Horizontal and vertical crossings
+- C. Translations of configurations
+- D. FKG and the square-root trick
+- E. Finite energy, box connections and unique infinite clusters
+- F. Primal/dual pairs and matched crossings
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- H. Duminil-Copin, V. Sidoravicius and V. Tassion, *Continuity of the phase transition for
+  planar random-cluster and Potts models with 1 ≤ q ≤ 4*, Comm. Math. Phys. 349 (2017).
+-/
 
 @[expose] public section
 
@@ -23,20 +100,22 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Coordinates and edge-arc displacement -/
 
-
-
+/-- The planar coordinates of the embedded vertex `x`. -/
 noncomputable def PeriodicPlaneEmbedding.vertexCoord
     (E : PeriodicPlaneEmbedding P) (x : V) : Fin 2 → ℝ :=
   E.coordinates (E.vertex x)
 
-@[simp] theorem PeriodicPlaneEmbedding.vertexCoord_shift
+omit [Countable V] in
+/-- Translating a vertex by `z ∈ ℤ²` translates its coordinates by `z`. -/
+@[simp] lemma PeriodicPlaneEmbedding.vertexCoord_shift
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (x : V) (i : Fin 2) :
     E.vertexCoord (P.shift z x) i = E.vertexCoord x i + z i := by
   rw [PeriodicPlaneEmbedding.vertexCoord, E.vertex_shift,
@@ -46,13 +125,8 @@ noncomputable def PeriodicPlaneEmbedding.vertexCoord
   rw [E.coordinates_period]
   rfl
 
-
-
-
-
-
-
-
+/-- The set of displacement vectors `γ(t) - x` along all edge arcs `γ` leaving a vertex `x` of the
+fundamental domain. It is compact, being a finite union of arc images. -/
 noncomputable def PeriodicPlaneEmbedding.fundamentalArcDisplacements
     (E : PeriodicPlaneEmbedding P) : Set (Fin 2 → ℝ) := by
   letI : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
@@ -62,11 +136,12 @@ noncomputable def PeriodicPlaneEmbedding.fundamentalArcDisplacements
       Set.range (fun t => E.coordinates (E.edgeArc h t - E.vertex u))
     else ∅
 
-theorem PeriodicPlaneEmbedding.fundamentalArcDisplacements_isCompact
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.fundamentalArcDisplacements_isCompact
     (E : PeriodicPlaneEmbedding P) :
     IsCompact E.fundamentalArcDisplacements := by
-  letI : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
-  letI : DecidableRel P.graph.Adj := Classical.decRel _
+  let : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
+  let : DecidableRel P.graph.Adj := Classical.decRel _
   unfold PeriodicPlaneEmbedding.fundamentalArcDisplacements
   apply Finset.isCompact_biUnion
   intro u hu
@@ -78,14 +153,15 @@ theorem PeriodicPlaneEmbedding.fundamentalArcDisplacements_isCompact
         ((E.edgeArc h).continuous.sub continuous_const))
   · exact isCompact_empty
 
-
-
-theorem PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound
+omit [Countable V] in
+/-- Every edge arc stays within coordinate distance `B` of its starting vertex, for one uniform
+`B ≥ 0`. -/
+lemma PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound
     (E : PeriodicPlaneEmbedding P) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B := by
-  letI : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
-  letI : DecidableRel P.graph.Adj := Classical.decRel _
+  let : SimpleGraph.LocallyFinite P.graph := P.locallyFinite
+  let : DecidableRel P.graph.Adj := Classical.decRel _
   obtain ⟨R, hR⟩ :=
     E.fundamentalArcDisplacements_isCompact.isBounded.subset_closedBall
       (0 : Fin 2 → ℝ)
@@ -133,7 +209,7 @@ theorem PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound
     apply Set.mem_iUnion.2
     refine ⟨y₀, Set.mem_iUnion.2 ⟨?_, ?_⟩⟩
     · exact (SimpleGraph.mem_neighborFinset P.graph u₀ y₀).2 hbackEdge
-    · rw [dif_pos hbackEdge]
+    · rw [dite_eq_left hbackEdge]
       exact ⟨s, rfl⟩
   have hnorm := hR hmem
   rw [Metric.mem_closedBall, dist_zero_right] at hnorm
@@ -144,13 +220,16 @@ theorem PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound
       norm_le_pi_norm (E.coordinates (E.edgeArc hbackEdge s - E.vertex u₀)) i
   exact hi.trans (hnorm.trans (le_max_left _ _))
 
+/-! ## B. Rectangles and crossing events -/
 
+/-- The closed axis-parallel rectangle `[a, b] × [c, d]` in embedding coordinates. -/
 def PeriodicPlaneEmbedding.planeRect
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) : Set ℂ :=
   {p | a ≤ E.coordinates p 0 ∧ E.coordinates p 0 ≤ b ∧
     c ≤ E.coordinates p 1 ∧ E.coordinates p 1 ≤ d}
 
-theorem PeriodicPlaneEmbedding.edgeArc_mem_expanded_planeRect
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.edgeArc_mem_expanded_planeRect
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -185,7 +264,8 @@ theorem PeriodicPlaneEmbedding.edgeArc_mem_expanded_planeRect
         E.vertexCoord x 1 + B := by linarith [h₁'.2]
     linarith [ht, hxd]
 
-theorem PeriodicPlaneEmbedding.edgeArc_coord_le_vertex_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.edgeArc_coord_le_vertex_add
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -197,7 +277,8 @@ theorem PeriodicPlaneEmbedding.edgeArc_coord_le_vertex_add
   simp only [map_sub, Pi.sub_apply] at h
   linarith
 
-theorem PeriodicPlaneEmbedding.vertex_sub_le_edgeArc_coord
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.vertex_sub_le_edgeArc_coord
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -209,25 +290,26 @@ theorem PeriodicPlaneEmbedding.vertex_sub_le_edgeArc_coord
   simp only [map_sub, Pi.sub_apply] at h
   linarith
 
-
+/-- The continuous path in the plane traced by a graph walk: the concatenation of its edge arcs. -/
 noncomputable def PeriodicPlaneEmbedding.walkArc
     (E : PeriodicPlaneEmbedding P) :
     ∀ {x y : V}, P.graph.Walk x y → Path (E.vertex x) (E.vertex y)
   | _, _, .nil => Path.refl _
   | _, _, .cons h p => (E.edgeArc h).trans (E.walkArc p)
 
-@[simp] theorem PeriodicPlaneEmbedding.walkArc_nil
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.walkArc_nil
     (E : PeriodicPlaneEmbedding P) (x : V) :
     E.walkArc (.nil : P.graph.Walk x x) = Path.refl _ := rfl
 
-@[simp] theorem PeriodicPlaneEmbedding.walkArc_cons
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.walkArc_cons
     (E : PeriodicPlaneEmbedding P) {x y z : V}
     (hxy : P.graph.Adj x y) (p : P.graph.Walk y z) :
     E.walkArc (p.cons hxy) = (E.edgeArc hxy).trans (E.walkArc p) := rfl
 
-
-
-theorem PeriodicPlaneEmbedding.mem_walkArc_range_cases
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.mem_walkArc_range_cases
     (E : PeriodicPlaneEmbedding P) {x y : V} (p : P.graph.Walk x y)
     {q : ℂ} (hq : q ∈ Set.range (E.walkArc p)) :
     q = E.vertex x ∨
@@ -252,10 +334,8 @@ theorem PeriodicPlaneEmbedding.mem_walkArc_range_cases
           right
           exact ⟨a, b, hab, by simp [habmem], hqedge⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.mem_walkArc_range_of_not_nil
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.mem_walkArc_range_of_not_nil
     (E : PeriodicPlaneEmbedding P) {x y : V} (p : P.graph.Walk x y)
     (hp : ¬ p.Nil) {q : ℂ} (hq : q ∈ Set.range (E.walkArc p)) :
     ∃ u v : V, ∃ huv : P.graph.Adj u v,
@@ -267,7 +347,8 @@ theorem PeriodicPlaneEmbedding.mem_walkArc_range_of_not_nil
     simpa only [Path.source] using hstart.symm
   · exact hedge
 
-theorem PeriodicPlaneEmbedding.walkArc_range_subset_expanded_planeRect
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.walkArc_range_subset_expanded_planeRect
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -298,14 +379,16 @@ theorem PeriodicPlaneEmbedding.walkArc_range_subset_expanded_planeRect
           (hp x (by simp)) t
       · exact ih (fun v hv => hp v (by simp [hv])) hq
 
+/-! ### B.1. Rectangle vertices and boundaries -/
 
-
+/-- The vertices whose embedded positions lie in the rectangle `[a, b] × [c, d]`. -/
 def PeriodicPlaneEmbedding.rectVertices
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) : Set V :=
   {x | a ≤ E.vertexCoord x 0 ∧ E.vertexCoord x 0 ≤ b ∧
     c ≤ E.vertexCoord x 1 ∧ E.vertexCoord x 1 ≤ d}
 
-theorem PeriodicPlaneEmbedding.rectVertices_finite
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectVertices_finite
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     (E.rectVertices a b c d).Finite := by
   let lo : Fin 2 → ℝ := fun i => if i = 0 then a else c
@@ -336,26 +419,29 @@ theorem PeriodicPlaneEmbedding.rectVertices_finite
   have hvball := hR hvK
   simpa [Metric.mem_closedBall, dist_zero_left] using hvball
 
+/-- The (finite) type of vertices lying in the rectangle `[a, b] × [c, d]`. -/
 abbrev PeriodicPlaneEmbedding.RectVertex
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :=
   E.rectVertices a b c d
 
+/-- A rectangle contains finitely many vertices, since the embedding is proper. -/
 noncomputable instance PeriodicPlaneEmbedding.instFintypeRectVertex
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Fintype (E.RectVertex a b c d) :=
   (E.rectVertices_finite a b c d).fintype
 
+/-- Decidable equality on rectangle vertices, inherited from the vertex type. -/
 instance PeriodicPlaneEmbedding.instDecidableEqRectVertex
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     DecidableEq (E.RectVertex a b c d) := Subtype.instDecidableEq
 
-
+/-- The subgraph induced on the vertices of the rectangle `[a, b] × [c, d]`. -/
 def PeriodicPlaneEmbedding.rectGraph
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     SimpleGraph (E.RectVertex a b c d) :=
   P.graph.induce (E.rectVertices a b c d)
 
-
+/-- The inclusion of the open subgraph of the rectangle graph into the full graph. -/
 def PeriodicPlaneEmbedding.openRectHom
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (eta : ConfigSpace (Sym2 (E.RectVertex a b c d))) :
@@ -366,7 +452,8 @@ def PeriodicPlaneEmbedding.openRectHom
     rw [FK.openSub_adj] at hxy
     exact SimpleGraph.induce_adj.mp hxy.1
 
-theorem PeriodicPlaneEmbedding.openRectWalkArc_range_subset
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.openRectWalkArc_range_subset
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -384,21 +471,21 @@ theorem PeriodicPlaneEmbedding.openRectWalkArc_range_subset
     c ≤ E.vertexCoord w.1 1 ∧ E.vertexCoord w.1 1 ≤ d
   exact w.2
 
-
+/-- The restriction of a bond configuration to the edges of the rectangle graph. -/
 def PeriodicPlaneEmbedding.rectRestrict
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (omega : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 (E.RectVertex a b c d)) :=
   fun e => omega (Sym2.map Subtype.val e)
 
-theorem PeriodicPlaneEmbedding.continuous_rectRestrict
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.continuous_rectRestrict
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Continuous (E.rectRestrict a b c d) :=
   continuous_pi fun e => continuous_apply (Sym2.map Subtype.val e)
 
-
-
-theorem PeriodicPlaneEmbedding.openRectWalk_edge_open
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.openRectWalk_edge_open
     (E : PeriodicPlaneEmbedding P) {a b c d : ℝ}
     {omega : ConfigSpace (Sym2 V)}
     {x y : E.RectVertex a b c d}
@@ -420,9 +507,8 @@ theorem PeriodicPlaneEmbedding.openRectWalk_edge_open
       rw [← hmap]
       exact hrs.2
 
-
-
-theorem PeriodicPlaneEmbedding.mem_openRectWalkArc_range
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.mem_openRectWalkArc_range
     (E : PeriodicPlaneEmbedding P) {a b c d : ℝ}
     {omega : ConfigSpace (Sym2 V)}
     {x y : E.RectVertex a b c d}
@@ -440,27 +526,32 @@ theorem PeriodicPlaneEmbedding.mem_openRectWalkArc_range
     E.mem_walkArc_range_of_not_nil _ hp hq
   exact ⟨u, v, huv, E.openRectWalk_edge_open p hedge, hqedge⟩
 
+/-- A rectangle vertex is on the left boundary if it has a neighbour strictly left of `a`. -/
 def PeriodicPlaneEmbedding.rectLeftBoundary
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (x : E.RectVertex a b c d) : Prop :=
   ∃ y : V, P.graph.Adj x.1 y ∧ E.vertexCoord y 0 < a
 
+/-- A rectangle vertex is on the right boundary if it has a neighbour strictly right of `b`. -/
 def PeriodicPlaneEmbedding.rectRightBoundary
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (x : E.RectVertex a b c d) : Prop :=
   ∃ y : V, P.graph.Adj x.1 y ∧ b < E.vertexCoord y 0
 
+/-- A rectangle vertex is on the bottom boundary if it has a neighbour strictly below `c`. -/
 def PeriodicPlaneEmbedding.rectBottomBoundary
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (x : E.RectVertex a b c d) : Prop :=
   ∃ y : V, P.graph.Adj x.1 y ∧ E.vertexCoord y 1 < c
 
+/-- A rectangle vertex is on the top boundary if it has a neighbour strictly above `d`. -/
 def PeriodicPlaneEmbedding.rectTopBoundary
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ)
     (x : E.RectVertex a b c d) : Prop :=
   ∃ y : V, P.graph.Adj x.1 y ∧ d < E.vertexCoord y 1
 
-theorem PeriodicPlaneEmbedding.rectLeftBoundary_coord_lt
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectLeftBoundary_coord_lt
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -476,7 +567,8 @@ theorem PeriodicPlaneEmbedding.rectLeftBoundary_coord_lt
   have hd' := abs_le.mp hd
   linarith
 
-theorem PeriodicPlaneEmbedding.rectRightBoundary_coord_gt
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectRightBoundary_coord_gt
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -492,7 +584,8 @@ theorem PeriodicPlaneEmbedding.rectRightBoundary_coord_gt
   have hd' := abs_le.mp hd
   linarith
 
-theorem PeriodicPlaneEmbedding.rectBottomBoundary_coord_lt
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectBottomBoundary_coord_lt
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -508,7 +601,8 @@ theorem PeriodicPlaneEmbedding.rectBottomBoundary_coord_lt
   have hd' := abs_le.mp hd
   linarith
 
-theorem PeriodicPlaneEmbedding.rectTopBoundary_coord_gt
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectTopBoundary_coord_gt
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -524,7 +618,10 @@ theorem PeriodicPlaneEmbedding.rectTopBoundary_coord_gt
   have hd' := abs_le.mp hd
   linarith
 
+/-! ### B.2. Horizontal and vertical crossings -/
 
+/-- The event, for configurations on the rectangle graph, that an open path joins the left boundary
+to the right boundary. -/
 def PeriodicPlaneEmbedding.finiteHorizontalCrossing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Set (ConfigSpace (Sym2 (E.RectVertex a b c d))) :=
@@ -532,13 +629,16 @@ def PeriodicPlaneEmbedding.finiteHorizontalCrossing
     E.rectLeftBoundary a b c d x ∧ E.rectRightBoundary a b c d y ∧
       (FK.openSub (E.rectGraph a b c d) eta).Reachable x y}
 
-
+/-- The horizontal crossing event of the rectangle `[a, b] × [c, d]`: an open path inside the
+rectangle joins its left boundary to its right boundary. See also
+`StatMech.TwoDim.horizontalCrossingEvent` (square lattice, different form). -/
 def PeriodicPlaneEmbedding.horizontalCrossingEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Set (ConfigSpace (Sym2 V)) :=
   E.rectRestrict a b c d ⁻¹' E.finiteHorizontalCrossing a b c d
 
-theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteHorizontalCrossing_isIncreasing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     IsIncreasing (E.finiteHorizontalCrossing a b c d) := by
   intro eta theta hle
@@ -549,28 +649,29 @@ theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_isIncreasing
   refine ⟨huv.1, Bool.eq_true_of_true_le ?_⟩
   simpa [huv.2] using hle s(u, v)
 
-theorem PeriodicPlaneEmbedding.rectRestrict_mono
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectRestrict_mono
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Monotone (E.rectRestrict a b c d) := by
   intro omega eta hle e
   exact hle (Sym2.map Subtype.val e)
 
-theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.horizontalCrossingEvent_isIncreasing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     IsIncreasing (E.horizontalCrossingEvent a b c d) := by
   intro omega eta hle homega
   exact E.finiteHorizontalCrossing_isIncreasing a b c d
     (E.rectRestrict_mono a b c d hle) homega
 
-theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_measurableSet
+lemma PeriodicPlaneEmbedding.horizontalCrossingEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     MeasurableSet (E.horizontalCrossingEvent a b c d) :=
   (IsClopen.preimage ⟨isClosed_discrete _, isOpen_discrete _⟩
     (E.continuous_rectRestrict a b c d)).isOpen.measurableSet
 
-
-
-theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_embeddedPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteHorizontalCrossing_embeddedPath
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -588,9 +689,8 @@ theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_embeddedPath
     E.walkArc (p.map (E.openRectHom a b c d eta)), ?_⟩
   exact E.openRectWalkArc_range_subset hB0 hB p
 
-
-
-theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_openWalk_of_wide
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteHorizontalCrossing_openWalk_of_wide
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -611,10 +711,8 @@ theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_openWalk_of_wide
     linarith
   exact ⟨x, y, hx, hy, p, SimpleGraph.Walk.not_nil_of_ne hxy⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_extendedPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteHorizontalCrossing_extendedPath
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -641,7 +739,8 @@ theorem PeriodicPlaneEmbedding.finiteHorizontalCrossing_extendedPath
   · obtain ⟨t, rfl⟩ := hq
     exact E.edgeArc_mem_expanded_planeRect hB hxr (by exact y.2) t
 
-
+/-- The event, for configurations on the rectangle graph, that an open path joins the bottom
+boundary to the top boundary. -/
 def PeriodicPlaneEmbedding.finiteVerticalCrossing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Set (ConfigSpace (Sym2 (E.RectVertex a b c d))) :=
@@ -649,12 +748,16 @@ def PeriodicPlaneEmbedding.finiteVerticalCrossing
     E.rectBottomBoundary a b c d x ∧ E.rectTopBoundary a b c d y ∧
       (FK.openSub (E.rectGraph a b c d) eta).Reachable x y}
 
+/-- The vertical crossing event of the rectangle `[a, b] × [c, d]`: an open path inside the
+rectangle joins its bottom boundary to its top boundary. See also
+`StatMech.TwoDim.verticalCrossingEvent` (square lattice, different form). -/
 def PeriodicPlaneEmbedding.verticalCrossingEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     Set (ConfigSpace (Sym2 V)) :=
   E.rectRestrict a b c d ⁻¹' E.finiteVerticalCrossing a b c d
 
-theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteVerticalCrossing_isIncreasing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     IsIncreasing (E.finiteVerticalCrossing a b c d) := by
   intro eta theta hle
@@ -665,21 +768,22 @@ theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_isIncreasing
   refine ⟨huv.1, Bool.eq_true_of_true_le ?_⟩
   simpa [huv.2] using hle s(u, v)
 
-theorem PeriodicPlaneEmbedding.verticalCrossingEvent_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.verticalCrossingEvent_isIncreasing
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     IsIncreasing (E.verticalCrossingEvent a b c d) := by
   intro omega eta hle homega
   exact E.finiteVerticalCrossing_isIncreasing a b c d
     (E.rectRestrict_mono a b c d hle) homega
 
-theorem PeriodicPlaneEmbedding.verticalCrossingEvent_measurableSet
+lemma PeriodicPlaneEmbedding.verticalCrossingEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (a b c d : ℝ) :
     MeasurableSet (E.verticalCrossingEvent a b c d) :=
   (IsClopen.preimage ⟨isClosed_discrete _, isOpen_discrete _⟩
     (E.continuous_rectRestrict a b c d)).isOpen.measurableSet
 
-
-theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_embeddedPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteVerticalCrossing_embeddedPath
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -697,9 +801,8 @@ theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_embeddedPath
     E.walkArc (p.map (E.openRectHom a b c d eta)), ?_⟩
   exact E.openRectWalkArc_range_subset hB0 hB p
 
-
-
-theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_openWalk_of_tall
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteVerticalCrossing_openWalk_of_tall
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -720,8 +823,8 @@ theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_openWalk_of_tall
     linarith
   exact ⟨x, y, hx, hy, p, SimpleGraph.Walk.not_nil_of_ne hxy⟩
 
-
-theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_extendedPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteVerticalCrossing_extendedPath
     (E : PeriodicPlaneEmbedding P) {B : ℝ}
     (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -748,26 +851,30 @@ theorem PeriodicPlaneEmbedding.finiteVerticalCrossing_extendedPath
   · obtain ⟨t, rfl⟩ := hq
     exact E.edgeArc_mem_expanded_planeRect hB hxt (by exact y.2) t
 
+/-! ## C. Translations of configurations -/
 
-
-
+/-- The translate of a bond configuration by `z ∈ ℤ²`: the edge `e` gets the state of the edge
+`e - z`. -/
 def PeriodicGraph.configTranslate (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) : ConfigSpace (Sym2 V) :=
   fun e => omega (Sym2.map (P.shift (-z)) e)
 
-@[simp] theorem PeriodicGraph.shift_neg_shift
+omit [Countable V] in
+@[simp] lemma PeriodicGraph.shift_neg_shift
     (P : PeriodicGraph V) (z : Site 2) (x : V) :
     P.shift (-z) (P.shift z x) = x := by
   have h := P.shift_add z (-z) x
   rw [add_neg_cancel, P.shift_zero] at h
   exact h.symm
 
-@[simp] theorem PeriodicGraph.shift_shift_neg
+omit [Countable V] in
+@[simp] lemma PeriodicGraph.shift_shift_neg
     (P : PeriodicGraph V) (z : Site 2) (x : V) :
     P.shift z (P.shift (-z) x) = x := by
   simpa only [neg_neg] using P.shift_neg_shift (-z) x
 
-@[simp] theorem PeriodicGraph.configTranslate_neg
+omit [Countable V] in
+@[simp] lemma PeriodicGraph.configTranslate_neg
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) :
     P.configTranslate (-z) (P.configTranslate z omega) = omega := by
@@ -775,50 +882,56 @@ def PeriodicGraph.configTranslate (P : PeriodicGraph V) (z : Site 2)
   induction e using Sym2.inductionOn with
   | _ x y => simp [PeriodicGraph.configTranslate]
 
-theorem PeriodicGraph.measurable_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.measurable_configTranslate
     (P : PeriodicGraph V) (z : Site 2) :
     Measurable (P.configTranslate z) :=
-  Measurable.of_eval fun e => measurable_pi_apply _
+  Measurable.of_eval fun _ => measurable_pi_apply _
 
-
+/-- A bond measure is translation invariant if every lattice translation preserves it. See also
+`StatMech.ConfigSpace.IsTranslationInvariant` (general group actions, different form). -/
 def PeriodicGraph.IsTranslationInvariant
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V))) : Prop :=
   ∀ z, MeasurePreserving (P.configTranslate z) mu mu
 
-theorem PeriodicGraph.configTranslate_mono
+omit [Countable V] in
+lemma PeriodicGraph.configTranslate_mono
     (P : PeriodicGraph V) (z : Site 2) :
     Monotone (P.configTranslate z) := by
   intro omega eta hle e
   exact hle (Sym2.map (P.shift (-z)) e)
 
-
+/-- The translate of an event: the configurations whose translate by `z` lies in `A`. -/
 def PeriodicGraph.translateEvent
     (P : PeriodicGraph V) (z : Site 2)
     (A : Set (ConfigSpace (Sym2 V))) :
     Set (ConfigSpace (Sym2 V)) :=
   P.configTranslate z ⁻¹' A
 
-theorem PeriodicGraph.translateEvent_measurableSet
+omit [Countable V] in
+lemma PeriodicGraph.translateEvent_measurableSet
     (P : PeriodicGraph V) (z : Site 2)
     {A : Set (ConfigSpace (Sym2 V))} (hA : MeasurableSet A) :
     MeasurableSet (P.translateEvent z A) :=
   hA.preimage (P.measurable_configTranslate z)
 
-theorem PeriodicGraph.translateEvent_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.translateEvent_isIncreasing
     (P : PeriodicGraph V) (z : Site 2)
     {A : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) :
     IsIncreasing (P.translateEvent z A) :=
   fun _ _ home hmem => hA (P.configTranslate_mono z home) hmem
 
-theorem PeriodicGraph.translateEvent_measure_eq
+omit [Countable V] in
+lemma PeriodicGraph.translateEvent_measure_eq
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2)
     {A : Set (ConfigSpace (Sym2 V))} (hA : MeasurableSet A) :
     mu (P.translateEvent z A) = mu A :=
   (hTI z).measure_preimage hA.nullMeasurableSet
 
-
-
+/-- Translation by `z` maps the open subgraph of `ω` into the open subgraph of the translated
+configuration. -/
 def PeriodicGraph.openSubgraphTranslateHom
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) :
@@ -831,12 +944,14 @@ def PeriodicGraph.openSubgraphTranslateHom
     refine ⟨(P.shift_adj z x y).2 hxy.1, ?_⟩
     simpa [PeriodicGraph.configTranslate] using hxy.2
 
-@[simp] theorem PeriodicGraph.openSubgraphTranslateHom_apply
+omit [Countable V] in
+@[simp] lemma PeriodicGraph.openSubgraphTranslateHom_apply
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     P.openSubgraphTranslateHom z omega x = P.shift z x := rfl
 
-theorem PeriodicGraph.reachable_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.reachable_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x y : V) :
     (P.openSubgraph (P.configTranslate z omega)).Reachable
@@ -849,7 +964,8 @@ theorem PeriodicGraph.reachable_configTranslate
     simpa [PeriodicGraph.configTranslate, P.shift_neg_shift] using hmapped
   · exact fun h => h.map (P.openSubgraphTranslateHom z omega)
 
-theorem PeriodicGraph.cluster_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.cluster_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     P.cluster (P.configTranslate z omega) (P.shift z x) =
@@ -866,7 +982,8 @@ theorem PeriodicGraph.cluster_configTranslate
   · rintro ⟨y, hy, rfl⟩
     exact (P.reachable_configTranslate z omega x y).mpr hy
 
-theorem PeriodicGraph.cluster_infinite_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.cluster_infinite_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (x : V) :
     (P.cluster (P.configTranslate z omega) (P.shift z x)).Infinite ↔
@@ -875,15 +992,22 @@ theorem PeriodicGraph.cluster_infinite_configTranslate
   exact Set.infinite_image_iff
     (Set.injOn_of_injective (P.shift z).injective)
 
+/-! ## D. FKG and the square-root trick -/
 
-
+/-- A bond measure has the FKG (Harris) property if `μ(A) μ(B) ≤ μ(A ∩ B)` for all measurable
+increasing events `A`, `B`. See also `StatMech.Universality.PositivelyAssociated`, which drops
+the measurability requirement and so implies `IsFKG`. -/
 def IsFKG (mu : Measure (ConfigSpace (Sym2 V))) : Prop :=
   forall A B : Set (ConfigSpace (Sym2 V)),
     MeasurableSet A -> MeasurableSet B ->
     IsIncreasing A -> IsIncreasing B ->
       mu.real A * mu.real B <= mu.real (A ∩ B)
 
-
+omit [DecidableEq V] [Countable V] in
+/-- The **square-root trick**: for increasing events under an FKG probability measure,
+`1 - √(1 - μ(A ∪ B)) ≤ max (μ A) (μ B)` (Grimmett, *The Random-Cluster Model*, 2006). See also
+`StatMech.Universality.rsw_sqrt_trick`, the same bound under the stronger hypothesis
+`PositivelyAssociated`. -/
 theorem measurable_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
@@ -897,10 +1021,10 @@ theorem measurable_sqrt_trick
   apply Universality.sqrt_trick_max_real measureReal_le_one measureReal_le_one
   nlinarith
 
-
-
-
-theorem four_event_sqrt_trick
+omit [DecidableEq V] [Countable V] in
+/-- The square-root trick applied twice to four increasing events. See also
+`StatMech.TwoDim.zhg_sqrt_trick_four` (equal probabilities, positive association). -/
+lemma four_event_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B C D : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
@@ -934,7 +1058,10 @@ theorem four_event_sqrt_trick
       (le_max_left (max (mu.real A) (mu.real B))
         (max (mu.real C) (mu.real D)))
 
-theorem four_event_max_tendsto_one
+omit [DecidableEq V] [Countable V] in
+/-- If the union of four increasing events has probability tending to one under an FKG measure, so
+does the largest of the four probabilities. -/
+lemma four_event_max_tendsto_one
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
     (A B C D : ℕ → Set (ConfigSpace (Sym2 V)))
@@ -962,10 +1089,9 @@ theorem four_event_max_tendsto_one
     exact max_le (max_le measureReal_le_one measureReal_le_one)
       (max_le measureReal_le_one measureReal_le_one)
 
-
-
-
-theorem min_tendsto_zero_of_matched_exclusion
+/-- If primal and dual crossing probabilities of matched rectangles sum to at most one and the
+larger dual probability tends to one, the smaller primal probability tends to zero. -/
+lemma min_tendsto_zero_of_matched_exclusion
     (primalH primalV dualV dualH : ℕ → ℝ)
     (hH0 : ∀ n, 0 ≤ primalH n) (hV0 : ∀ n, 0 ≤ primalV n)
     (hmatchH : ∀ n, primalH n + dualV n ≤ 1)
@@ -990,11 +1116,9 @@ theorem min_tendsto_zero_of_matched_exclusion
     exact le_min (hH0 n) (hV0 n)
   · exact hupper
 
-
-
-
-
-theorem balanced_aspect_crossing_contradiction
+/-- Crossing probabilities whose aspect-ratio comparisons and limits are as stated cannot exist; the
+conclusion is `False`. -/
+lemma balanced_aspect_crossing_contradiction
     (h v hNext vNext : ℕ → ℝ)
     (hbalance : ∀ n, h n ≤ v n)
     (hnext : ∀ n, vNext n < hNext n)
@@ -1016,12 +1140,9 @@ theorem balanced_aspect_crossing_contradiction
   have h01 : (1 : ℝ) = 0 := tendsto_nhds_unique hmax hmaxZero
   norm_num at h01
 
-
-
-
-
-
-theorem balanced_aspect_crossing_contradiction_of_error
+/-- Version of `balanced_aspect_crossing_contradiction` allowing additive errors tending to zero;
+the conclusion is `False`. -/
+lemma balanced_aspect_crossing_contradiction_of_error
     (h v hNext vNext error : ℕ → ℝ)
     (hh0 : ∀ n, 0 ≤ h n) (hvNext0 : ∀ n, 0 ≤ vNext n)
     (herror0 : ∀ n, 0 ≤ error n)
@@ -1069,71 +1190,34 @@ theorem balanced_aspect_crossing_contradiction_of_error
   have h01 : (1 : ℝ) = 0 := tendsto_nhds_unique hmax hmaxZero
   norm_num at h01
 
+/-! ## E. Finite energy, box connections and unique infinite clusters -/
 
+/-- The configuration obtained from `ω` by opening every edge of the finite set `F`. See also
+`StatMech.Percolation.forceOpenFinset`, the same map on `ℤ^d`. -/
 def forceOpenFinset (F : Finset (Sym2 V))
     (omega : ConfigSpace (Sym2 V)) : ConfigSpace (Sym2 V) :=
   fun e => if e ∈ F then true else omega e
 
-theorem measurable_forceOpenFinset (F : Finset (Sym2 V)) :
+omit [Countable V] in
+/-- Opening a finite set of edges is measurable. See also
+`StatMech.Percolation.measurable_forceOpenFinset` (on `ℤ^d`). -/
+lemma measurable_forceOpenFinset (F : Finset (Sym2 V)) :
     Measurable (forceOpenFinset F :
       ConfigSpace (Sym2 V) → ConfigSpace (Sym2 V)) :=
   Measurable.of_eval fun e => by
     by_cases he : e ∈ F
-    · simpa [forceOpenFinset, he] using (measurable_const :
-        Measurable (fun _ : ConfigSpace (Sym2 V) => true))
+    · simp [forceOpenFinset, he]
     · simpa [forceOpenFinset, he] using measurable_pi_apply e
 
-
-
+/-- Finite energy for opening edges: for every finite edge set `F`, the law of `forceOpenFinset F ω`
+is absolutely continuous with respect to `μ`. See also
+`StatMech.Percolation.HasFiniteEnergyMerge`, the same condition on `ℤ^d`. -/
 def HasFiniteEnergy
     (mu : Measure (ConfigSpace (Sym2 V))) : Prop :=
   ∀ F : Finset (Sym2 V), mu.map (forceOpenFinset F) ≪ mu
 
-
-
-theorem PeriodicGraph.measurableSet_openChain_sheffield
-    (P : PeriodicGraph V) (l : List V) :
-    MeasurableSet {omega : ConfigSpace (Sym2 V) |
-      List.IsChain (P.openSubgraph omega).Adj l} := by
-  induction l with
-  | nil => simp only [List.isChain_nil, Set.setOf_true, MeasurableSet.univ]
-  | cons a l ih =>
-      cases l with
-      | nil => simp only [List.isChain_singleton, Set.setOf_true, MeasurableSet.univ]
-      | cons b l =>
-          have heq :
-              {omega : ConfigSpace (Sym2 V) |
-                  List.IsChain (P.openSubgraph omega).Adj (a :: b :: l)} =
-                ({omega | P.graph.Adj a b} ∩
-                  {omega | omega s(a, b) = true}) ∩
-                {omega | List.IsChain (P.openSubgraph omega).Adj (b :: l)} := by
-            ext omega
-            simp only [Set.mem_setOf_eq, Set.mem_inter_iff,
-              List.isChain_cons_cons, P.openSubgraph_adj]
-          rw [heq]
-          apply MeasurableSet.inter
-          · by_cases hab : P.graph.Adj a b
-            · simpa [hab] using measurableSet_eq_fun
-                (measurable_pi_apply s(a, b)) measurable_const
-            · simp [hab]
-          · exact ih
-
-theorem PeriodicGraph.reachable_iff_openChain_sheffield
-    (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x y : V) :
-    (P.openSubgraph omega).Reachable x y ↔
-      ∃ l : List V, List.IsChain (P.openSubgraph omega).Adj (x :: l) ∧
-        (x :: l).getLast (List.cons_ne_nil _ _) = y := by
-  rw [SimpleGraph.reachable_iff_reflTransGen]
-  constructor
-  · intro h
-    obtain ⟨l, hchain, hlast⟩ :=
-      List.exists_isChain_cons_of_relationReflTransGen h
-    exact ⟨l, hchain, hlast⟩
-  · rintro ⟨l, hchain, hlast⟩
-    exact List.relationReflTransGen_of_exists_isChain_cons l hchain hlast
-
-
-
+/-- The event that `x` and `y` are joined by an open path staying in the orbit box of radius
+`bufferedRadius N`. It is `connectedWithinSet` for that box. -/
 def PeriodicGraph.connectedWithinOrbit
     (P : PeriodicGraph V) (x y : V) (N : ℕ) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -1142,7 +1226,9 @@ def PeriodicGraph.connectedWithinOrbit
     (x :: l).getLast (List.cons_ne_nil _ _) = y ∧
     ∀ v ∈ x :: l, v ∈ P.orbitBox (P.bufferedRadius N)}
 
-theorem PeriodicGraph.connectedWithinOrbit_measurableSet
+/-- The box-connection event is measurable. See also
+`PeriodicGraph.connectedWithinSet_measurableSet`, the same statement for any vertex set. -/
+lemma PeriodicGraph.connectedWithinOrbit_measurableSet
     (P : PeriodicGraph V) (x y : V) (N : ℕ) :
     MeasurableSet (P.connectedWithinOrbit x y N) := by
   have heq : P.connectedWithinOrbit x y N =
@@ -1152,24 +1238,25 @@ theorem PeriodicGraph.connectedWithinOrbit_measurableSet
         then {omega | List.IsChain (P.openSubgraph omega).Adj (x :: l)}
         else ∅ := by
     ext omega
-    simp only [PeriodicGraph.connectedWithinOrbit, Set.mem_setOf_eq,
+    simp only [PeriodicGraph.connectedWithinOrbit, Set.mem_ofPred_eq,
       Set.mem_iUnion]
     constructor
     · rintro ⟨l, hchain, hlast, hbox⟩
       refine ⟨l, ?_⟩
-      rw [if_pos ⟨hlast, hbox⟩]
+      rw [ite_eq_left ⟨hlast, hbox⟩]
       exact hchain
     · rintro ⟨l, hl⟩
       split_ifs at hl with h
       · exact ⟨l, hl, h.1, h.2⟩
-      · exact False.elim (by simpa using hl)
+      · exact False.elim (by simp at hl)
   rw [heq]
   exact MeasurableSet.iUnion fun l => by
     split_ifs
-    · exact P.measurableSet_openChain_sheffield (x :: l)
+    · exact P.measurableSet_openChain (x :: l)
     · exact MeasurableSet.empty
 
-theorem PeriodicGraph.connectedWithinOrbit_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.connectedWithinOrbit_isIncreasing
     (P : PeriodicGraph V) (x y : V) (N : ℕ) :
     IsIncreasing (P.connectedWithinOrbit x y N) := by
   intro omega eta home
@@ -1180,7 +1267,8 @@ theorem PeriodicGraph.connectedWithinOrbit_isIncreasing
   refine ⟨hab.1, Bool.eq_true_of_true_le ?_⟩
   simpa [hab.2] using home s(a, b)
 
-theorem PeriodicGraph.connectedWithinOrbit_mono
+omit [Countable V] in
+lemma PeriodicGraph.connectedWithinOrbit_mono
     (P : PeriodicGraph V) (x y : V) :
     Monotone (P.connectedWithinOrbit x y) := by
   intro n m hnm omega
@@ -1189,29 +1277,28 @@ theorem PeriodicGraph.connectedWithinOrbit_mono
   intro v hv
   exact P.orbitBox_mono (P.bufferedRadius_strictMono.monotone hnm) (hbox v hv)
 
-theorem PeriodicGraph.iUnion_connectedWithinOrbit
+omit [Countable V] in
+lemma PeriodicGraph.iUnion_connectedWithinOrbit
     (P : PeriodicGraph V) (x y : V) :
     (⋃ N, P.connectedWithinOrbit x y N) = P.twoPointEvent x y := by
   ext omega
   simp only [Set.mem_iUnion, PeriodicGraph.connectedWithinOrbit,
-    Set.mem_setOf_eq, PeriodicGraph.twoPointEvent]
+    Set.mem_ofPred_eq, PeriodicGraph.twoPointEvent]
   constructor
   · rintro ⟨N, l, hchain, hlast, _hbox⟩
-    exact (P.reachable_iff_openChain_sheffield omega x y).2
+    exact (P.reachable_iff_openChain omega x y).2
       ⟨l, hchain, hlast⟩
   · intro hreach
     obtain ⟨l, hchain, hlast⟩ :=
-      (P.reachable_iff_openChain_sheffield omega x y).1 hreach
+      (P.reachable_iff_openChain omega x y).1 hreach
     obtain ⟨N, hN⟩ := P.finite_subset_orbitBox (x :: l).toFinset
     refine ⟨N, l, hchain, hlast, ?_⟩
     intro v hv
     exact P.orbitBox_mono (P.id_le_bufferedRadius N)
       (hN v (by simpa using hv))
 
-
-
-
-
+/-- The configuration has an infinite open cluster, and any two vertices in infinite clusters are
+connected. -/
 def PeriodicGraph.HasUniqueInfiniteCluster
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) : Prop :=
   P.HasInfiniteCluster omega ∧
@@ -1219,20 +1306,22 @@ def PeriodicGraph.HasUniqueInfiniteCluster
       (P.cluster omega y).Infinite →
         (P.openSubgraph omega).Reachable x y
 
-
+/-- Some vertex of the orbit box of radius `n` lies in an infinite open cluster. -/
 def PeriodicGraph.orbitBoxHitsInfinite
     (P : PeriodicGraph V) (n : ℕ) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ P.orbitBox n, (P.cluster omega x).Infinite}
 
-
+/-- Some vertex of the orbit box of radius `n`, translated by `z`, lies in an infinite open
+cluster. -/
 def PeriodicGraph.translatedOrbitBoxHitsInfinite
     (P : PeriodicGraph V) (z : Site 2) (n : ℕ) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ P.orbitBox n,
     (P.cluster omega (P.shift z x)).Infinite}
 
-theorem PeriodicGraph.hasUniqueInfiniteCluster_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.hasUniqueInfiniteCluster_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) :
     P.HasUniqueInfiniteCluster (P.configTranslate z omega) ↔
@@ -1267,7 +1356,8 @@ theorem PeriodicGraph.hasUniqueInfiniteCluster_configTranslate
     simpa [a0, b0] using
       (P.reachable_configTranslate z omega a0 b0).mpr hab
 
-theorem PeriodicGraph.clusterInfinite_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.clusterInfinite_isIncreasing
     (P : PeriodicGraph V) (x : V) :
     IsIncreasing {omega : ConfigSpace (Sym2 V) |
       (P.cluster omega x).Infinite} := by
@@ -1279,7 +1369,7 @@ theorem PeriodicGraph.clusterInfinite_isIncreasing
     simpa [hab.2] using home s(a, b)
   exact hinfinite.mono fun y hy => hy.mono hgraph
 
-theorem PeriodicGraph.orbitBoxHitsInfinite_measurableSet
+lemma PeriodicGraph.orbitBoxHitsInfinite_measurableSet
     (P : PeriodicGraph V) (n : ℕ) :
     MeasurableSet (P.orbitBoxHitsInfinite n) := by
   have heq : P.orbitBoxHitsInfinite n =
@@ -1287,7 +1377,7 @@ theorem PeriodicGraph.orbitBoxHitsInfinite_measurableSet
         {omega : ConfigSpace (Sym2 V) |
           (P.cluster omega x).Infinite} else ∅ := by
     ext omega
-    simp only [PeriodicGraph.orbitBoxHitsInfinite, Set.mem_setOf_eq,
+    simp only [PeriodicGraph.orbitBoxHitsInfinite, Set.mem_ofPred_eq,
       Set.mem_iUnion]
     constructor
     · rintro ⟨x, hx, hinf⟩
@@ -1302,27 +1392,29 @@ theorem PeriodicGraph.orbitBoxHitsInfinite_measurableSet
     · simpa [hx] using P.measurableSet_cluster_infinite x
     · simp [hx]
 
-theorem PeriodicGraph.orbitBoxHitsInfinite_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.orbitBoxHitsInfinite_isIncreasing
     (P : PeriodicGraph V) (n : ℕ) :
     IsIncreasing (P.orbitBoxHitsInfinite n) := by
   intro omega eta home
   rintro ⟨x, hx, hinfinite⟩
   exact ⟨x, hx, P.clusterInfinite_isIncreasing x home hinfinite⟩
 
-theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_preimage
+omit [Countable V] in
+lemma PeriodicGraph.translatedOrbitBoxHitsInfinite_preimage
     (P : PeriodicGraph V) (z : Site 2) (n : ℕ) :
     P.configTranslate z ⁻¹' P.translatedOrbitBoxHitsInfinite z n =
       P.orbitBoxHitsInfinite n := by
   ext omega
   simp only [Set.mem_preimage, PeriodicGraph.translatedOrbitBoxHitsInfinite,
-    PeriodicGraph.orbitBoxHitsInfinite, Set.mem_setOf_eq]
+    PeriodicGraph.orbitBoxHitsInfinite, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, hinf⟩
     exact ⟨x, hx, (P.cluster_infinite_configTranslate z omega x).mp hinf⟩
   · rintro ⟨x, hx, hinf⟩
     exact ⟨x, hx, (P.cluster_infinite_configTranslate z omega x).mpr hinf⟩
 
-theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_measurableSet
+lemma PeriodicGraph.translatedOrbitBoxHitsInfinite_measurableSet
     (P : PeriodicGraph V) (z : Site 2) (n : ℕ) :
     MeasurableSet (P.translatedOrbitBoxHitsInfinite z n) := by
   have heq : P.translatedOrbitBoxHitsInfinite z n =
@@ -1331,7 +1423,7 @@ theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_measurableSet
           (P.cluster omega (P.shift z x)).Infinite} else ∅ := by
     ext omega
     simp only [PeriodicGraph.translatedOrbitBoxHitsInfinite,
-      Set.mem_setOf_eq, Set.mem_iUnion]
+      Set.mem_ofPred_eq, Set.mem_iUnion]
     constructor
     · rintro ⟨x, hx, hinf⟩
       exact ⟨x, by simp [hx, hinf]⟩
@@ -1345,7 +1437,7 @@ theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_measurableSet
     · simpa [hx] using P.measurableSet_cluster_infinite (P.shift z x)
     · simp [hx]
 
-theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_measure_eq
+lemma PeriodicGraph.translatedOrbitBoxHitsInfinite_measure_eq
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (n : ℕ) :
     mu (P.translatedOrbitBoxHitsInfinite z n) =
@@ -1354,19 +1446,21 @@ theorem PeriodicGraph.translatedOrbitBoxHitsInfinite_measure_eq
   exact ((hTI z).measure_preimage
     (P.translatedOrbitBoxHitsInfinite_measurableSet z n).nullMeasurableSet).symm
 
-theorem PeriodicGraph.orbitBoxHitsInfinite_mono
+omit [Countable V] in
+lemma PeriodicGraph.orbitBoxHitsInfinite_mono
     (P : PeriodicGraph V) : Monotone P.orbitBoxHitsInfinite := by
   intro n m hnm omega
   rintro ⟨x, hx, hinf⟩
   exact ⟨x, P.orbitBox_mono hnm hx, hinf⟩
 
-theorem PeriodicGraph.iUnion_orbitBoxHitsInfinite
+omit [Countable V] in
+lemma PeriodicGraph.iUnion_orbitBoxHitsInfinite
     (P : PeriodicGraph V) :
     (⋃ n, P.orbitBoxHitsInfinite n) =
       {omega | P.HasInfiniteCluster omega} := by
   ext omega
   simp only [Set.mem_iUnion, PeriodicGraph.orbitBoxHitsInfinite,
-    PeriodicGraph.HasInfiniteCluster, Set.mem_setOf_eq]
+    PeriodicGraph.HasInfiniteCluster, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨n, x, _hx, hinf⟩
     exact ⟨x, hinf⟩
@@ -1374,7 +1468,8 @@ theorem PeriodicGraph.iUnion_orbitBoxHitsInfinite
     obtain ⟨n, hx⟩ := P.mem_orbitBox_of_eventually x
     exact ⟨n, x, hx, hinf⟩
 
-theorem PeriodicGraph.orbitBoxHitsInfinite_real_tendsto_one
+omit [Countable V] in
+lemma PeriodicGraph.orbitBoxHitsInfinite_real_tendsto_one
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu]
     (hexists : mu {omega | P.HasInfiniteCluster omega} = 1) :
@@ -1386,7 +1481,7 @@ theorem PeriodicGraph.orbitBoxHitsInfinite_real_tendsto_one
   exact (ENNReal.tendsto_toReal (by norm_num : (1 : ENNReal) ≠ ⊤)).comp
     hmeasure
 
-theorem PeriodicGraph.measurableSet_hasUniqueInfiniteCluster
+lemma PeriodicGraph.measurableSet_hasUniqueInfiniteCluster
     (P : PeriodicGraph V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       P.HasUniqueInfiniteCluster omega} := by
@@ -1398,7 +1493,7 @@ theorem PeriodicGraph.measurableSet_hasUniqueInfiniteCluster
       {omega | P.HasInfiniteCluster omega} ∩
         ⋂ x : V, ⋂ y : V, ((Inf x ∩ Inf y) ∩ (Conn x y)ᶜ)ᶜ := by
     ext omega
-    simp only [PeriodicGraph.HasUniqueInfiniteCluster, Set.mem_setOf_eq,
+    simp only [PeriodicGraph.HasUniqueInfiniteCluster, Set.mem_ofPred_eq,
       Set.mem_inter_iff, Set.mem_iInter, Set.mem_compl_iff,
       not_and, Inf, Conn, PeriodicGraph.twoPointEvent]
     aesop
@@ -1409,29 +1504,31 @@ theorem PeriodicGraph.measurableSet_hasUniqueInfiniteCluster
       (P.measurableSet_cluster_infinite y)).inter
       (P.measurableSet_twoPointEvent x y).compl).compl
 
-
-
+/-- Both `x` and `y` lie in infinite clusters but are not connected inside the box of radius
+`bufferedRadius N`. -/
 def PeriodicGraph.pairMergeError
     (P : PeriodicGraph V) (x y : V) (N : ℕ) :
     Set (ConfigSpace (Sym2 V)) :=
   ({omega | (P.cluster omega x).Infinite} ∩
     {omega | (P.cluster omega y).Infinite}) \ P.connectedWithinOrbit x y N
 
-theorem PeriodicGraph.pairMergeError_measurableSet
+lemma PeriodicGraph.pairMergeError_measurableSet
     (P : PeriodicGraph V) (x y : V) (N : ℕ) :
     MeasurableSet (P.pairMergeError x y N) :=
   ((P.measurableSet_cluster_infinite x).inter
     (P.measurableSet_cluster_infinite y)).diff
       (P.connectedWithinOrbit_measurableSet x y N)
 
-theorem PeriodicGraph.pairMergeError_antitone
+omit [Countable V] in
+lemma PeriodicGraph.pairMergeError_antitone
     (P : PeriodicGraph V) (x y : V) :
     Antitone (P.pairMergeError x y) := by
   intro n m hnm omega herror
   exact ⟨herror.1, fun hm =>
     herror.2 (P.connectedWithinOrbit_mono x y hnm hm)⟩
 
-theorem PeriodicGraph.iInter_pairMergeError_subset_not_unique
+omit [Countable V] in
+lemma PeriodicGraph.iInter_pairMergeError_subset_not_unique
     (P : PeriodicGraph V) (x y : V) :
     (⋂ N, P.pairMergeError x y N) ⊆
       {omega | P.HasUniqueInfiniteCluster omega}ᶜ := by
@@ -1445,10 +1542,9 @@ theorem PeriodicGraph.iInter_pairMergeError_subset_not_unique
   obtain ⟨N, hN⟩ := Set.mem_iUnion.mp htwo
   exact (Set.mem_iInter.mp herror N).2 hN
 
-
-
-
-theorem PeriodicGraph.pairMergeError_real_tendsto_zero
+/-- Under almost-sure uniqueness of the infinite cluster, the merging error of two vertices tends to
+zero as the box grows. -/
+lemma PeriodicGraph.pairMergeError_real_tendsto_zero
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -1471,13 +1567,13 @@ theorem PeriodicGraph.pairMergeError_real_tendsto_zero
   rw [hinter] at hlim
   exact (ENNReal.tendsto_toReal (by simp : (0 : ENNReal) ≠ ⊤)).comp hlim
 
-
+/-- The union of the merging errors over pairs `x ∈ L`, `y ∈ R`. -/
 def PeriodicGraph.pairMergeErrorUnion
     (P : PeriodicGraph V) (L R : Finset V) (N : ℕ) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ x ∈ L, ⋃ y ∈ R, P.pairMergeError x y N
 
-theorem PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero
+lemma PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -1490,7 +1586,8 @@ theorem PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero
     dsimp [F]
     convert tendsto_finsetSum L (fun x _ =>
       tendsto_finsetSum R (fun y _ =>
-        P.pairMergeError_real_tendsto_zero mu hunique x y)) using 1 <;> simp
+        P.pairMergeError_real_tendsto_zero mu hunique x y)) using 1
+    simp
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hF
   · intro N
     exact measureReal_nonneg
@@ -1498,7 +1595,8 @@ theorem PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero
     exact le_trans (measureReal_biUnion_finset_le _ _)
       (Finset.sum_le_sum fun x _ => measureReal_biUnion_finset_le _ _)
 
-theorem PeriodicGraph.hasUniqueInfiniteCluster_translate_preimage
+omit [Countable V] in
+lemma PeriodicGraph.hasUniqueInfiniteCluster_translate_preimage
     (P : PeriodicGraph V) (z : Site 2) :
     P.configTranslate z ⁻¹'
         {omega | P.HasUniqueInfiniteCluster omega} =
@@ -1506,7 +1604,8 @@ theorem PeriodicGraph.hasUniqueInfiniteCluster_translate_preimage
   ext omega
   exact P.hasUniqueInfiniteCluster_configTranslate z omega
 
-theorem PeriodicGraph.clusterInfinite_translate_preimage
+omit [Countable V] in
+lemma PeriodicGraph.clusterInfinite_translate_preimage
     (P : PeriodicGraph V) (z : Site 2) (x : V) :
     P.configTranslate z ⁻¹'
         {omega | (P.cluster omega (P.shift z x)).Infinite} =
@@ -1514,10 +1613,9 @@ theorem PeriodicGraph.clusterInfinite_translate_preimage
   ext omega
   exact P.cluster_infinite_configTranslate z omega x
 
-
-
-
-theorem PeriodicGraph.exists_fundamental_clusterInfinite_pos
+/-- Under translation invariance and almost-sure percolation, some vertex of the fundamental domain
+lies in an infinite cluster with positive probability. -/
+lemma PeriodicGraph.exists_fundamental_clusterInfinite_pos
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu] (hTI : P.IsTranslationInvariant mu)
     (hexists : mu {omega | P.HasInfiniteCluster omega} = 1) :
@@ -1558,19 +1656,17 @@ theorem PeriodicGraph.exists_fundamental_clusterInfinite_pos
 
 namespace PeriodicPlanarDualPair
 
+/-! ## F. Primal/dual pairs and matched crossings -/
 
-
-theorem dual_planeRect_eq
+lemma dual_planeRect_eq
     (D : PeriodicPlanarDualPair P Pdual) (a b c d : ℝ) :
     D.dualEmbedding.planeRect a b c d =
       D.primalEmbedding.planeRect a b c d := by
   ext z
-  simp only [PeriodicPlaneEmbedding.planeRect, Set.mem_setOf_eq]
+  simp only [PeriodicPlaneEmbedding.planeRect, Set.mem_ofPred_eq]
   rw [D.coordinates_eq]
 
-
-
-theorem exists_common_edgeArc_displacement_bound
+lemma exists_common_edgeArc_displacement_bound
     (D : PeriodicPlanarDualPair P Pdual) :
     ∃ B : ℝ, 0 < B ∧
       (∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -1590,7 +1686,7 @@ theorem exists_common_edgeArc_displacement_bound
   · intro x y hxy t i
     exact (hBd hxy t i).trans (by dsimp [B]; linarith [le_max_right Bp Bd])
 
-theorem dualConfigEquiv_configTranslate
+lemma dualConfigEquiv_configTranslate
     (D : PeriodicPlanarDualPair P Pdual) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) :
     dualConfigEquiv D.edgeDual (P.configTranslate z omega) =
@@ -1606,15 +1702,15 @@ theorem dualConfigEquiv_configTranslate
   simp only [dualConfigEquiv_apply, PeriodicGraph.configTranslate]
   rw [hsymm]
 
-
-
+/-- The law of the dual configuration: the push-forward of `μ` under primal-to-dual duality (a dual
+edge is open iff the crossing primal edge is closed). -/
 noncomputable def dualMeasure
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) :
     Measure (ConfigSpace (Sym2 W)) :=
   mu.map (dualConfigEquiv D.edgeDual)
 
-theorem dualMeasure_isTranslationInvariant
+lemma dualMeasure_isTranslationInvariant
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) :
@@ -1632,9 +1728,8 @@ theorem dualMeasure_isTranslationInvariant
     (continuous_dualConfigEquiv D.edgeDual).measurable
     (P.measurable_configTranslate z), (hTI z).map_eq]
 
-
-
-theorem no_open_primal_dual_edge_crossing
+/-- An open primal edge arc and an open dual edge arc never meet. -/
+lemma no_open_primal_dual_edge_crossing
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {a b : W}
@@ -1650,10 +1745,7 @@ theorem no_open_primal_dual_edge_crossing
   simp only [dualConfigEquiv_apply, hinv, hopen, Bool.not_true] at hdualOpen
   exact Bool.false_ne_true hdualOpen
 
-
-
-
-theorem no_open_primal_dual_walkArc_crossing
+lemma no_open_primal_dual_walkArc_crossing
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {a b : W}
@@ -1676,9 +1768,7 @@ theorem no_open_primal_dual_walkArc_crossing
   exact D.no_open_primal_dual_edge_crossing omega huv hrs
     (hpopen huvEdge) (hqopen hrsEdge) (ht.trans hw.symm)
 
-
-
-theorem no_openRectWalkArc_crossing
+lemma no_openRectWalkArc_crossing
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {ap bp cp dp ad bd cd dd : ℝ}
@@ -1708,10 +1798,10 @@ theorem no_openRectWalkArc_crossing
   · intro u v huv
     exact D.dualEmbedding.openRectWalk_edge_open q huv
 
-
-
-
-
+/-- **Planar duality of crossings**: a primal horizontal crossing of `[a, b] × [c + 4B, d - 4B]` and
+a dual vertical crossing of `[a + 4B, b - 4B] × [c, d]` cannot both occur. See also
+`PeriodicPlanarDualPair.matchedVerticalHorizontalCrossingEvents_disjoint`, the rotated
+statement. -/
 theorem matchedCrossingEvents_disjoint
     (D : PeriodicPlanarDualPair P Pdual) {B a b c d : ℝ}
     (hBpos : 0 < B)
@@ -1774,13 +1864,11 @@ theorem matchedCrossingEvents_disjoint
       (a + 4 * B) (b - 4 * B) c d yd from ⟨xt, hxt, hxtcoord⟩)
   have hpNotNil : ¬ pfull.Nil := by
     apply SimpleGraph.Walk.not_nil_of_ne
-    change xp.1 ≠ yp.1
     intro heq
     rw [heq] at hxpNear
     linarith
   have hqNotNil : ¬ qfull.Nil := by
     apply SimpleGraph.Walk.not_nil_of_ne
-    change xd.1 ≠ yd.1
     intro heq
     rw [heq] at hxdNear
     linarith
@@ -1791,8 +1879,8 @@ theorem matchedCrossingEvents_disjoint
     dsimp only [gamma] at hz
     rw [Path.trans_range] at hz
     rcases hz with hleft | hrest
-    rw [Path.symm_range] at hleft
-    · obtain ⟨t, rfl⟩ := hleft
+    · rw [Path.symm_range] at hleft
+      obtain ⟨t, rfl⟩ := hleft
       exact D.primalEmbedding.edgeArc_mem_expanded_planeRect hBp hxl xp.2 t
     · simp only [Path.trans_range, Set.mem_union] at hrest
       rcases hrest with hcore | hright
@@ -1807,8 +1895,8 @@ theorem matchedCrossingEvents_disjoint
     dsimp only [eta] at hz
     rw [Path.trans_range] at hz
     rcases hz with hbottom | hrest
-    rw [Path.symm_range] at hbottom
-    · obtain ⟨t, rfl⟩ := hbottom
+    · rw [Path.symm_range] at hbottom
+      obtain ⟨t, rfl⟩ := hbottom
       exact D.dualEmbedding.edgeArc_mem_expanded_planeRect hBd hxb xd.2 t
     · simp only [Path.trans_range, Set.mem_union] at hrest
       rcases hrest with hcore | htop
@@ -1851,12 +1939,10 @@ theorem matchedCrossingEvents_disjoint
     exact hxrcoord
   have hetaBottom : D.primalEmbedding.coordinates
       (D.dualEmbedding.vertex xb) 1 < c := by
-    change D.primalEmbedding.coordinates (D.dualEmbedding.vertex xb) 1 < c
     rw [D.coordinates_eq]
     exact hxbcoord
   have hetaTop : d < D.primalEmbedding.coordinates
       (D.dualEmbedding.vertex xt) 1 := by
-    change d < D.primalEmbedding.coordinates (D.dualEmbedding.vertex xt) 1
     rw [D.coordinates_eq]
     exact hxtcoord
   have hab0 : a < b := by linarith
@@ -1883,8 +1969,8 @@ theorem matchedCrossingEvents_disjoint
     dsimp only [gamma] at ht
     rw [Path.trans_range] at ht
     rcases ht with hleft | hrest
-    rw [Path.symm_range] at hleft
-    · obtain ⟨r, hr⟩ := hleft
+    · rw [Path.symm_range] at hleft
+      obtain ⟨r, hr⟩ := hleft
       have hu := D.primalEmbedding.edgeArc_coord_le_vertex_add hBp hxl r 0
       rw [hr] at hu
       rw [hcross] at hu
@@ -1902,8 +1988,8 @@ theorem matchedCrossingEvents_disjoint
     dsimp only [eta] at hs
     rw [Path.trans_range] at hs
     rcases hs with hbottom | hrest
-    rw [Path.symm_range] at hbottom
-    · obtain ⟨r, hr⟩ := hbottom
+    · rw [Path.symm_range] at hbottom
+      obtain ⟨r, hr⟩ := hbottom
       have hu := D.dualEmbedding.edgeArc_coord_le_vertex_add hBd hxb r 1
       rw [hr] at hu
       rw [← D.coordinates_eq] at hu
@@ -1921,7 +2007,9 @@ theorem matchedCrossingEvents_disjoint
   have hdisj := D.no_openRectWalkArc_crossing omega p q hpNotNil hqNotNil
   exact Set.disjoint_left.mp hdisj htCore (hcross.symm ▸ hsCore)
 
-theorem matchedCrossing_measureReal_add_le_one
+/-- The probabilities of matched primal horizontal and dual vertical crossings sum to at most
+one. -/
+lemma matchedCrossing_measureReal_add_le_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B a b c d : ℝ}
@@ -1953,10 +2041,7 @@ theorem matchedCrossing_measureReal_add_le_one
   rw [measureReal_union hdisj hVd] at hu
   exact hu
 
-
-
-
-theorem exists_buffer_matchedCrossing_measureReal_add_le_one
+lemma exists_buffer_matchedCrossing_measureReal_add_le_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu] :
     ∃ B : ℝ, 0 < B ∧ ∀ {a b c d : ℝ},
@@ -1973,8 +2058,7 @@ theorem exists_buffer_matchedCrossing_measureReal_add_le_one
   exact D.matchedCrossing_measureReal_add_le_one
     mu hBpos hBp hBd hab hcd
 
-
-
+/-- The event that both the primal and the dual configuration have a unique infinite cluster. -/
 def commonUniqueInfiniteClusterEvent
     (D : PeriodicPlanarDualPair P Pdual) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -1982,25 +2066,25 @@ def commonUniqueInfiniteClusterEvent
     (dualConfigEquiv D.edgeDual) ⁻¹'
       {eta | Pdual.HasUniqueInfiniteCluster eta}
 
-theorem commonUniqueInfiniteClusterEvent_measurableSet
+lemma commonUniqueInfiniteClusterEvent_measurableSet
     (D : PeriodicPlanarDualPair P Pdual) :
     MeasurableSet D.commonUniqueInfiniteClusterEvent :=
   P.measurableSet_hasUniqueInfiniteCluster.inter
     (Pdual.measurableSet_hasUniqueInfiniteCluster.preimage
       (continuous_dualConfigEquiv D.edgeDual).measurable)
 
-theorem commonUniqueInfiniteClusterEvent_translate_preimage
+lemma commonUniqueInfiniteClusterEvent_translate_preimage
     (D : PeriodicPlanarDualPair P Pdual) (z : Site 2) :
     P.configTranslate z ⁻¹' D.commonUniqueInfiniteClusterEvent =
       D.commonUniqueInfiniteClusterEvent := by
   ext omega
   simp only [commonUniqueInfiniteClusterEvent, Set.mem_preimage,
-    Set.mem_inter_iff, Set.mem_setOf_eq]
+    Set.mem_inter_iff, Set.mem_ofPred_eq]
   rw [P.hasUniqueInfiniteCluster_configTranslate,
     D.dualConfigEquiv_configTranslate,
     Pdual.hasUniqueInfiniteCluster_configTranslate]
 
-theorem commonUniqueInfiniteClusterEvent_measure_eq_one
+lemma commonUniqueInfiniteClusterEvent_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hprimal : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -2024,7 +2108,9 @@ theorem commonUniqueInfiniteClusterEvent_measure_eq_one
   change mu (A ∩ B) = 1
   simpa using MeasureTheory.measure_of_measure_compl_eq_zero hinterc
 
-theorem exists_primal_dual_fundamental_clusterInfinite_pos
+/-- Under translation invariance and almost-sure uniqueness of both infinite clusters, a primal and
+a dual fundamental-domain vertex each percolate with positive probability. -/
+lemma exists_primal_dual_fundamental_clusterInfinite_pos
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2042,7 +2128,7 @@ theorem exists_primal_dual_fundamental_clusterInfinite_pos
     exact measure_mono fun omega h => h.1
   have hleft := P.exists_fundamental_clusterInfinite_pos
     mu hTI hprimalExists
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   have hdualUnique : D.dualMeasure mu

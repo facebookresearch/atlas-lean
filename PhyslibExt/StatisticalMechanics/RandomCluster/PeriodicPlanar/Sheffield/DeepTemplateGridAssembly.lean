@@ -6,34 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonArray
 
+/-!
+# Rectangle crossings from a labeled template grid with margins
+
+Approximate side preferences of translated template sets on a labeled grid force one crossing
+direction of the rectangle to have probability tending to one, with connector containment
+required only for vertices at distance at least `margin n` from the grid boundary.
+
+## i. Overview
+
+This is the variant of `TemplateGridAssembly` used by the common-array construction. The grid
+carries two Boolean labels, `vertical` and `horizontal`: `vertical` is `true` within `margin n`
+of the bottom row and `false` within `margin n` of the top row, and similarly for `horizontal`
+with the left and right columns. Every label is backed by the matching approximate side
+preference of the translated template, up to an error `epsilon n → 0`. Buffered connectors need
+to fit in the rectangle only at deep vertices, those at distance at least `margin n` from the
+grid boundary.
+
+The deep witness `exists_deep_common_preference_grid_witness` provides a deep vertex labeled
+bottom/left with deep king-move neighbors labeled top and right; the square-root trick and the
+pair-merge bound then give `max (vertical crossing) (horizontal crossing) → 1`.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossing_max_tendsto_one` :
+  the crossing bound for a labeled template grid with margins. Conditional on: `mu` a
+  probability measure that is FKG (`hFKG`), translation invariant (`hTI`), with an almost surely
+  unique infinite cluster (`hunique`); templates hitting the infinite cluster with probability
+  tending to `1` (`htemplateHit`); and the grid containment, score, labeling and preference
+  hypotheses in the conclusion. Not vacuous.
+
+## iii. Table of contents
+
+- A. Crossing bound from a labeled template grid with margins
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Crossing bound from a labeled template grid with margins -/
 
+/-- Crossing bound from a labeled template grid with margins: under FKG, translation invariance, an
+almost surely unique infinite cluster and templates that hit the infinite cluster with probability
+tending to `1`, there is a connector radius such that any labeled grid of translated templates whose
+labels are backed by approximate side preferences, with buffered connectors inside the rectangle at
+deep vertices, forces the larger crossing probability to tend to `1` (Sheffield, *Random Surfaces*,
+Ch. 9). See also `exists_uniformTemplate_approxPreference_crossing_max_tendsto_one`. -/
 theorem PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -45,7 +79,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossin
         atTop (nhds 1)) :
     ∃ radius : Nat → Nat, ∀
       (width height margin : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n)
+      (_hwidth : ∀ n, 0 < width n)
       (base : Nat → Site 2)
       (vertical horizontal : (n : Nat) →
         PreferenceGridVertex (width n) (height n) → Bool)
@@ -298,10 +332,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossin
         ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n ≤ 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, hv, ↓reduceIte]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, hv, ↓reduceIte]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :

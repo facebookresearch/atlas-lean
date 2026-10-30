@@ -6,37 +6,70 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneFiniteStripArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualTransverse
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneBarrier
 
+/-!
+# A primal strip crossing blocks a transverse dual connection
+
+An open primal path that joins the two sides of a finite vertical strip separates the dual
+sources on its left from the dual sources on its right inside a horizontal band.
+
+## i. Overview
+
+`walkArc_coord_strict_bounds_of_support` is a geometric bound: if every vertex of a walk has its
+`i`-th coordinate in `(c + B, d - B)` and every edge arc moves at most `B` from its endpoint,
+then the whole drawn walk stays strictly inside `(c, d)`.
+
+`finiteStripPrimal_dualPairConnection_disjoint` is the planar duality step. Suppose the primal
+configuration `ω` lies in the finite-strip joined boundary-arm event (an open primal arm running
+from the left boundary to the right boundary of the strip of width `np` placed at `r`, within the
+horizontal band between heights `s` and `s + gap`), and the dual configuration has a dual path
+joining dual sources `Ld` to the left of the strip with dual sources `Rd` to its right through
+the buffered dual ball, which lies in the middle third of the band. Then the drawn dual path
+would cross the drawn primal arm, which planarity forbids, so the two events are disjoint.
+
+Headline fidelity: both results are unconditional (deterministic statements about one
+configuration, under the stated edge-arc bounds and positions).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.walkArc_coord_strict_bounds_of_support`
+- `PeriodicPlanarDualPair.finiteStripPrimal_dualPairConnection_disjoint`
+
+## iii. Table of contents
+
+- A. Drawn walks inside a coordinate band
+- B. Primal strip arms against dual connections
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6 (planar duality).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Drawn walks inside a coordinate band -/
 
-
-theorem PeriodicPlaneEmbedding.walkArc_coord_strict_bounds_of_support
+omit [Countable V] in
+/-- If every vertex of the walk `p` has `i`-th coordinate in `(c + B, d - B)` and every edge arc
+stays within distance `B` of its starting vertex, then every point of the drawn walk has `i`-th
+coordinate in `(c, d)`. -/
+lemma PeriodicPlaneEmbedding.walkArc_coord_strict_bounds_of_support
     (E : PeriodicPlaneEmbedding P) {B c d : Real} (hB0 : 0 ≤ B)
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc huv t - E.vertex u) i| ≤ B)
@@ -62,12 +95,14 @@ theorem PeriodicPlaneEmbedding.walkArc_coord_strict_bounds_of_support
     rw [← hq]
     constructor <;> linarith
 
+/-! ## B. Primal strip arms against dual connections -/
+
 namespace PeriodicPlanarDualPair
 
-
-
-
-theorem finiteStripPrimal_dualPairConnection_disjoint
+/-- Planar blocking: a primal configuration in the finite-strip joined boundary-arm event and a dual
+configuration joining the dual sources `Ld` (left of the strip) to `Rd` (right of the strip) within
+a buffered dual ball inside the band cannot occur together. -/
+lemma finiteStripPrimal_dualPairConnection_disjoint
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {Bp Bd r s : Real} {gap : Int} {np N : Nat}

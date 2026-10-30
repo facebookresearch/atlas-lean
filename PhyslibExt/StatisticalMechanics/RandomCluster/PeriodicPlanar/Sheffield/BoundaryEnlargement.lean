@@ -6,35 +6,63 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OrientedBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectangleMonotonicity
 
+/-!
+# Enlargeable boundary placements
+
+Side-connection placements that survive enlarging the box away from the chosen side.
+
+## i. Overview
+
+For each of the four sides of a box, the buffered placements of `Sheffield.NearBoundary`,
+`Sheffield.AxisNegation` and `Sheffield.OrientedBoundary` give translated orbit boxes whose
+`buffer N`-enlargement fits in a box of radius `radius N` next to a half-plane boundary, and whose
+connection to the infinite cluster and to the near side of the box has probability tending to one.
+Because the side-connection event only grows when the three other sides of the rectangle move
+outwards (`Sheffield.RectangleMonotonicity`), the same base points and radii work uniformly for
+every larger rectangle that keeps the chosen side fixed.
+
+Headline fidelity. All four results are proved conditionally on `IsFKG mu`,
+`P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite cluster. These
+are satisfiable hypotheses on the primal measure alone (for example supercritical Bernoulli
+percolation), so the results are not vacuous.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_enlargeable` and its right,
+  bottom and top versions.
+
+## iii. Table of contents
+
+- A. Placements uniform in the far sides of the rectangle
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
-theorem PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_enlargeable
+/-! ## A. Placements uniform in the far sides of the rectangle -/
+
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster: there are base
+points and radii such that, for every rectangle with left side `x = r` and its other sides at least
+`radius N` away, the buffered orbit box fits inside and the orbit box of radius `N` is joined to the
+infinite cluster and to the left side inside the rectangle with probability tending to one. -/
+lemma PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -72,7 +100,12 @@ theorem PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_enlargeable
     · intro N
       exact measureReal_le_one
 
-theorem PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_enlargeable
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster: there are base
+points and radii such that, for every rectangle with right side `x = -r` and its other sides at
+least `radius N` away, the buffered orbit box fits inside and the orbit box of radius `N` is joined
+to the infinite cluster and to the right side inside the rectangle with probability tending to one.
+-/
+lemma PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -110,7 +143,12 @@ theorem PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_enlargeabl
     · intro N
       exact measureReal_le_one
 
-theorem PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_enlargeable
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster: there are base
+points and radii such that, for every rectangle with bottom side `y = r` and its other sides at
+least `radius N` away, the buffered orbit box fits inside and the orbit box of radius `N` is joined
+to the infinite cluster and to the bottom side inside the rectangle with probability tending to one.
+-/
+lemma PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -148,7 +186,11 @@ theorem PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_enlargeab
     · intro N
       exact measureReal_le_one
 
-theorem PeriodicPlaneEmbedding.exists_buffered_topBoundaryPlacement_enlargeable
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster: there are base
+points and radii such that, for every rectangle with top side `y = -r` and its other sides at least
+`radius N` away, the buffered orbit box fits inside and the orbit box of radius `N` is joined to the
+infinite cluster and to the top side inside the rectangle with probability tending to one. -/
+lemma PeriodicPlaneEmbedding.exists_buffered_topBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

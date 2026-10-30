@@ -6,25 +6,59 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDual
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Duality
+
+/-!
+# Random-cluster duality between the triangular and hexagonal tori
+
+The triangular and hexagonal lattices on the `L × L` torus, their edge duality, and the exact
+FK-weight duality with the topological (Euler-characteristic) correction.
+
+## i. Overview
+
+For `L > 2` the triangular torus on `ZMod L × ZMod L` and the hexagonal torus on
+`(ZMod L × ZMod L) × Bool` have `3 L²` edges each, matched by `triHexTorusDualEdgeEquiv`. A
+triangular configuration `ω` has the dual configuration `triHexTorusDualConfig ω`, which opens a
+hexagonal edge exactly when its primal edge is closed. For a subgraph `K` the face count is the
+number of clusters of the dual of its open set, and `triHexTorusDefect K` is the integer by which
+Euler's formula `V - E + F = C + 1` fails (`triHexTorus_euler`); on a torus it records how the
+open clusters wrap around the two cycles. The FK weights then satisfy
+
+`φ_{p,q}(ω) q^{E+1} = (p / (1 - p*))^E q^V φ_{p*,q}(ω*) q^{defect(ω)}`
+
+(`triHexTorus_fkWeight_duality_signed`), with `p* = dualParam p q`. Summing over configurations
+of fixed defect gives sector-by-sector dualities of partition functions and expectations. All
+results are proved unconditionally for `0 < p < 1`, `0 < q`; the defect takes only the values
+`0, 1, 2` (proved in `TriHex.TorusDefectClassify`).
+
+## ii. Key results
+
+- `triangularTorusGraph`, `hexagonalTorusGraph`, `triHexTorusDualEdgeEquiv`.
+- `triHexTorusDualConfig`, `triHexTorusFaceCount`, `triHexTorusDefect`.
+- `triHexTorus_euler` : Euler's formula with the defect correction.
+- `triHexTorus_fkWeight_duality_signed` : FK-weight duality.
+- `triHexTorus_sectorSum_duality`, `triHexTorus_sectorNormalized_duality` : duality of
+  fixed-defect sector sums and of their normalized expectations.
+
+## iii. Table of contents
+
+- A. Torus sites and lattice steps
+- B. The triangular torus
+- C. The hexagonal torus
+- D. Edge duality and dual configurations
+- E. Faces, defect and Euler's formula
+- F. FK-weight duality
+- G. Sector sums
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
 
 @[expose] public section
 
@@ -34,14 +68,21 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
+/-! ## A. Torus sites and lattice steps -/
+
+/-- Sites of the `L × L` discrete torus. -/
 abbrev TorusSite (L : ℕ) := ZMod L × ZMod L
+/-- Edge index on the torus: a base site and one of three edge directions. -/
 abbrev TriHexTorusEdgeIndex (L : ℕ) := TorusSite L × Fin 3
+/-- Vertices of the hexagonal torus: a base site with a colour (`false` black, `true` white). -/
 abbrev HexTorusVertex (L : ℕ) := TorusSite L × Bool
 
+/-- For `L > 2`, `L ≠ 0`, so `ZMod L` is finite. -/
 instance triHexTorusNeZero (L : ℕ) [Fact (2 < L)] : NeZero L :=
   ⟨by have := (Fact.out : 2 < L); omega⟩
 
-private theorem zmod_one_ne_zero (L : ℕ) [Fact (2 < L)] :
+/-- For `L > 2`, `1 ≠ 0` in `ZMod L`. -/
+lemma zmod_one_ne_zero (L : ℕ) [Fact (2 < L)] :
     (1 : ZMod L) ≠ 0 := by
   have h : ((1 : ℕ) : ZMod L) ≠ 0 := by
     rw [Ne, ZMod.natCast_eq_zero_iff]
@@ -51,7 +92,7 @@ private theorem zmod_one_ne_zero (L : ℕ) [Fact (2 < L)] :
     omega
   simpa using h
 
-private theorem zmod_two_ne_zero (L : ℕ) [Fact (2 < L)] :
+private lemma zmod_two_ne_zero (L : ℕ) [Fact (2 < L)] :
     (2 : ZMod L) ≠ 0 := by
   have h : ((2 : ℕ) : ZMod L) ≠ 0 := by
     rw [Ne, ZMod.natCast_eq_zero_iff]
@@ -61,15 +102,15 @@ private theorem zmod_two_ne_zero (L : ℕ) [Fact (2 < L)] :
     omega
   simpa using h
 
-
+/-- The three triangular edge steps `(1, 0)`, `(0, 1)`, `(-1, 1)` on the torus. -/
 def triangularTorusStep (L : ℕ) (i : Fin 3) : TorusSite L :=
   ![(1, 0), (0, 1), (-1, 1)] i
 
-
+/-- The three hexagonal edge steps `(1, 0)`, `(0, 1)`, `(1, 1)` (black to white) on the torus. -/
 def hexagonalTorusStep (L : ℕ) (i : Fin 3) : TorusSite L :=
   ![(1, 0), (0, 1), (1, 1)] i
 
-theorem triangularTorusStep_ne_zero (L : ℕ) [Fact (2 < L)] (i : Fin 3) :
+lemma triangularTorusStep_ne_zero (L : ℕ) [Fact (2 < L)] (i : Fin 3) :
     triangularTorusStep L i ≠ 0 := by
   fin_cases i <;> intro h
   · exact zmod_one_ne_zero L (congrArg Prod.fst h)
@@ -78,7 +119,7 @@ theorem triangularTorusStep_ne_zero (L : ℕ) [Fact (2 < L)] (i : Fin 3) :
       have hs := congrArg Prod.snd h
       simpa [triangularTorusStep] using hs)
 
-theorem triangularTorusStep_injective (L : ℕ) [Fact (2 < L)] :
+lemma triangularTorusStep_injective (L : ℕ) [Fact (2 < L)] :
     Function.Injective (triangularTorusStep L) := by
   have h1 := zmod_one_ne_zero L
   have h2 := zmod_two_ne_zero L
@@ -89,7 +130,7 @@ theorem triangularTorusStep_injective (L : ℕ) [Fact (2 < L)] :
   intro i j h
   fin_cases i <;> fin_cases j <;> simp_all [triangularTorusStep]
 
-theorem triangularTorusStep_add_ne_zero (L : ℕ) [Fact (2 < L)]
+lemma triangularTorusStep_add_ne_zero (L : ℕ) [Fact (2 < L)]
     (i j : Fin 3) :
     triangularTorusStep L i + triangularTorusStep L j ≠ 0 := by
   have h1 := zmod_one_ne_zero L
@@ -103,31 +144,30 @@ theorem triangularTorusStep_add_ne_zero (L : ℕ) [Fact (2 < L)]
   all_goals first
     | exact h2 (by linear_combination h)
     | exact h2 (by linear_combination -h.1)
-    | exact h2 (by linear_combination -h.2)
     | exact h1 (by linear_combination h)
-    | exact h2 h.1
-    | exact h2 h.2
     | exact h1 h.1
 
-theorem hexagonalTorusStep_ne_zero (L : ℕ) [Fact (2 < L)] (i : Fin 3) :
+lemma hexagonalTorusStep_ne_zero (L : ℕ) [Fact (2 < L)] (i : Fin 3) :
     hexagonalTorusStep L i ≠ 0 := by
   fin_cases i <;> intro h
   · exact zmod_one_ne_zero L (congrArg Prod.fst h)
   · exact zmod_one_ne_zero L (congrArg Prod.snd h)
   · exact zmod_one_ne_zero L (congrArg Prod.fst h)
 
-theorem hexagonalTorusStep_injective (L : ℕ) [Fact (2 < L)] :
+lemma hexagonalTorusStep_injective (L : ℕ) [Fact (2 < L)] :
     Function.Injective (hexagonalTorusStep L) := by
   have h1 := zmod_one_ne_zero L
   intro i j h
   fin_cases i <;> fin_cases j <;> simp_all [hexagonalTorusStep]
 
+/-! ## B. The triangular torus -/
 
+/-- The triangular torus edge `s(x, x + triangularTorusStep L i)` with index `(x, i)`. -/
 def triangularTorusIndexedEdge (L : ℕ) (a : TriHexTorusEdgeIndex L) :
     Sym2 (TorusSite L) :=
   s(a.1, a.1 + triangularTorusStep L a.2)
 
-
+/-- The triangular lattice on the `L × L` torus. -/
 def triangularTorusGraph (L : ℕ) [Fact (2 < L)] : SimpleGraph (TorusSite L) where
   Adj x y := ∃ a : TriHexTorusEdgeIndex L,
     triangularTorusIndexedEdge L a = s(x, y)
@@ -152,21 +192,23 @@ def triangularTorusGraph (L : ℕ) [Fact (2 < L)] : SimpleGraph (TorusSite L) wh
         simpa using hright
       exact add_left_cancel hz⟩
 
+/-- Adjacency on the triangular torus is decidable (classically). -/
 noncomputable instance (L : ℕ) [Fact (2 < L)] :
     DecidableRel (triangularTorusGraph L).Adj := Classical.decRel _
 
-theorem triangularTorusIndexedEdge_mem (L : ℕ) [Fact (2 < L)]
+lemma triangularTorusIndexedEdge_mem (L : ℕ) [Fact (2 < L)]
     (a : TriHexTorusEdgeIndex L) :
     triangularTorusIndexedEdge L a ∈ (triangularTorusGraph L).edgeSet := by
   change (triangularTorusGraph L).Adj a.1
     (a.1 + triangularTorusStep L a.2)
   exact ⟨a, rfl⟩
 
+/-- The triangular torus edge with a given index, as an element of the edge set. -/
 def triangularTorusEdgeChart (L : ℕ) [Fact (2 < L)]
     (a : TriHexTorusEdgeIndex L) : (triangularTorusGraph L).edgeSet :=
   ⟨triangularTorusIndexedEdge L a, triangularTorusIndexedEdge_mem L a⟩
 
-theorem triangularTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
+lemma triangularTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
     Function.Injective (triangularTorusEdgeChart L) := by
   rintro ⟨x, i⟩ ⟨y, j⟩ h
   have he : s(x, x + triangularTorusStep L i) =
@@ -185,7 +227,7 @@ theorem triangularTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
       simpa [add_assoc] using hsecond
     exact (triangularTorusStep_add_ne_zero L j i hzero).elim
 
-theorem triangularTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
+lemma triangularTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
     Function.Surjective (triangularTorusEdgeChart L) := by
   rintro ⟨e, he⟩
   induction e using Sym2.inductionOn with
@@ -194,18 +236,20 @@ theorem triangularTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
       obtain ⟨a, ha⟩ := he
       exact ⟨a, Subtype.ext ha⟩
 
-
+/-- The edge set of the triangular torus is in bijection with the edge indices. -/
 noncomputable def triangularTorusEdgeChartEquiv (L : ℕ) [Fact (2 < L)] :
     TriHexTorusEdgeIndex L ≃ (triangularTorusGraph L).edgeSet :=
   Equiv.ofBijective (triangularTorusEdgeChart L)
     ⟨triangularTorusEdgeChart_injective L, triangularTorusEdgeChart_surjective L⟩
 
+/-! ## C. The hexagonal torus -/
 
+/-- The hexagonal torus edge from `(x, false)` to `(x + hexagonalTorusStep L i, true)`. -/
 def hexagonalTorusIndexedEdge (L : ℕ) (a : TriHexTorusEdgeIndex L) :
     Sym2 (HexTorusVertex L) :=
   s((a.1, false), (a.1 + hexagonalTorusStep L a.2, true))
 
-
+/-- The hexagonal lattice on the `L × L` torus. -/
 def hexagonalTorusGraph (L : ℕ) [Fact (2 < L)] :
     SimpleGraph (HexTorusVertex L) where
   Adj u v := ∃ a : TriHexTorusEdgeIndex L,
@@ -223,21 +267,23 @@ def hexagonalTorusGraph (L : ℕ) [Fact (2 < L)] :
     · have hb : (false : Bool) = true := congrArg Prod.snd (h.1.trans h.2.symm)
       simp at hb⟩
 
+/-- Adjacency on the hexagonal torus is decidable (classically). -/
 noncomputable instance (L : ℕ) [Fact (2 < L)] :
     DecidableRel (hexagonalTorusGraph L).Adj := Classical.decRel _
 
-theorem hexagonalTorusIndexedEdge_mem (L : ℕ) [Fact (2 < L)]
+lemma hexagonalTorusIndexedEdge_mem (L : ℕ) [Fact (2 < L)]
     (a : TriHexTorusEdgeIndex L) :
     hexagonalTorusIndexedEdge L a ∈ (hexagonalTorusGraph L).edgeSet := by
   change (hexagonalTorusGraph L).Adj (a.1, false)
     (a.1 + hexagonalTorusStep L a.2, true)
   exact ⟨a, rfl⟩
 
+/-- The hexagonal torus edge with a given index, as an element of the edge set. -/
 def hexagonalTorusEdgeChart (L : ℕ) [Fact (2 < L)]
     (a : TriHexTorusEdgeIndex L) : (hexagonalTorusGraph L).edgeSet :=
   ⟨hexagonalTorusIndexedEdge L a, hexagonalTorusIndexedEdge_mem L a⟩
 
-theorem hexagonalTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
+lemma hexagonalTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
     Function.Injective (hexagonalTorusEdgeChart L) := by
   rintro ⟨x, i⟩ ⟨y, j⟩ h
   have he : s((x, false), (x + hexagonalTorusStep L i, true)) =
@@ -253,7 +299,7 @@ theorem hexagonalTorusEdgeChart_injective (L : ℕ) [Fact (2 < L)] :
   · have hb : (false : Bool) = true := congrArg Prod.snd hswap.1
     simp at hb
 
-theorem hexagonalTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
+lemma hexagonalTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
     Function.Surjective (hexagonalTorusEdgeChart L) := by
   rintro ⟨e, he⟩
   induction e using Sym2.inductionOn with
@@ -262,13 +308,15 @@ theorem hexagonalTorusEdgeChart_surjective (L : ℕ) [Fact (2 < L)] :
       obtain ⟨a, ha⟩ := he
       exact ⟨a, Subtype.ext ha⟩
 
-
+/-- The edge set of the hexagonal torus is in bijection with the edge indices. -/
 noncomputable def hexagonalTorusEdgeChartEquiv (L : ℕ) [Fact (2 < L)] :
     TriHexTorusEdgeIndex L ≃ (hexagonalTorusGraph L).edgeSet :=
   Equiv.ofBijective (hexagonalTorusEdgeChart L)
     ⟨hexagonalTorusEdgeChart_injective L, hexagonalTorusEdgeChart_surjective L⟩
 
+/-! ## D. Edge duality and dual configurations -/
 
+/-- Reindexing matching a triangular torus edge with the hexagonal edge crossing it. -/
 def triHexTorusIndexEquiv (L : ℕ) :
     TriHexTorusEdgeIndex L ≃ TriHexTorusEdgeIndex L where
   toFun a := (if a.2 = 2 then a.1 - (1, 0) else a.1, a.2)
@@ -280,13 +328,14 @@ def triHexTorusIndexEquiv (L : ℕ) :
     rintro ⟨z, i⟩
     fin_cases i <;> ext <;> simp
 
-
+/-- Planar duality between the edge sets of the triangular and hexagonal tori. -/
 noncomputable def triHexTorusDualEdgeEquiv (L : ℕ) [Fact (2 < L)] :
     (triangularTorusGraph L).edgeSet ≃ (hexagonalTorusGraph L).edgeSet :=
   (triangularTorusEdgeChartEquiv L).symm.trans
     ((triHexTorusIndexEquiv L).trans (hexagonalTorusEdgeChartEquiv L))
 
-
+/-- The triangular edge crossed by a hexagonal edge (a fixed loop for pairs that are not hexagonal
+edges). -/
 noncomputable def triHexTorusPrimalOfDualEdge (L : ℕ) [Fact (2 < L)]
     (e : Sym2 (HexTorusVertex L)) : Sym2 (TorusSite L) :=
   if he : e ∈ (hexagonalTorusGraph L).edgeSet then
@@ -294,21 +343,21 @@ noncomputable def triHexTorusPrimalOfDualEdge (L : ℕ) [Fact (2 < L)]
       (triangularTorusGraph L).edgeSet)
   else s((0, 0), (0, 0))
 
-theorem triHexTorusPrimalOfDualEdge_mem (L : ℕ) [Fact (2 < L)]
+lemma triHexTorusPrimalOfDualEdge_mem (L : ℕ) [Fact (2 < L)]
     {e : Sym2 (HexTorusVertex L)}
     (he : e ∈ (hexagonalTorusGraph L).edgeFinset) :
     triHexTorusPrimalOfDualEdge L e ∈
       (triangularTorusGraph L).edgeFinset := by
   have heSet : e ∈ (hexagonalTorusGraph L).edgeSet := by
     simpa [SimpleGraph.edgeFinset] using he
-  simp only [triHexTorusPrimalOfDualEdge, dif_pos heSet]
+  simp only [triHexTorusPrimalOfDualEdge, dite_eq_left heSet]
   change (((triHexTorusDualEdgeEquiv L).symm ⟨e, heSet⟩ :
     (triangularTorusGraph L).edgeSet) : Sym2 (TorusSite L)) ∈
       (triangularTorusGraph L).edgeSet.toFinset
   rw [Set.mem_toFinset]
   exact ((triHexTorusDualEdgeEquiv L).symm ⟨e, heSet⟩).2
 
-theorem triHexTorusPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
+lemma triHexTorusPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
     Set.InjOn (triHexTorusPrimalOfDualEdge L)
       (↑(hexagonalTorusGraph L).edgeFinset :
         Set (Sym2 (HexTorusVertex L))) := by
@@ -317,11 +366,12 @@ theorem triHexTorusPrimalOfDualEdge_injOn (L : ℕ) [Fact (2 < L)] :
     simpa [SimpleGraph.edgeFinset] using he
   have heSet' : e' ∈ (hexagonalTorusGraph L).edgeSet := by
     simpa [SimpleGraph.edgeFinset] using he'
-  simp only [triHexTorusPrimalOfDualEdge, dif_pos heSet, dif_pos heSet'] at h
+  simp only [triHexTorusPrimalOfDualEdge, dite_eq_left heSet, dite_eq_left heSet'] at h
   exact congrArg Subtype.val ((triHexTorusDualEdgeEquiv L).symm.injective
     (Subtype.ext h))
 
-
+/-- The dual configuration: a hexagonal edge is open if and only if the triangular edge it crosses
+is closed. -/
 noncomputable def triHexTorusDualConfig (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L))) :
     ConfigSpace (Sym2 (HexTorusVertex L)) := fun e =>
@@ -329,8 +379,8 @@ noncomputable def triHexTorusDualConfig (L : ℕ) [Fact (2 < L)]
     !(omega (triHexTorusPrimalOfDualEdge L e))
   else false
 
-
-theorem triHexTorus_dual_openCount (L : ℕ) [Fact (2 < L)]
+/-- The dual configuration has `|E| - o(ω)` open edges. -/
+lemma triHexTorus_dual_openCount (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L))) :
     FK.openCount (hexagonalTorusGraph L) (triHexTorusDualConfig L omega) =
       (hexagonalTorusGraph L).edgeFinset.card -
@@ -349,7 +399,7 @@ theorem triHexTorus_dual_openCount (L : ℕ) [Fact (2 < L)]
     by_cases he : e ∈ EH
     · have heSet : e ∈ (hexagonalTorusGraph L).edgeSet := by
         simpa [EH, SimpleGraph.edgeFinset] using he
-      simp only [he, true_and, triHexTorusDualConfig, dif_pos heSet]
+      simp only [he, true_and, triHexTorusDualConfig, dite_eq_left heSet]
       cases omega (triHexTorusPrimalOfDualEdge L e) <;> simp
     · simp [he]
   rw [hopen]
@@ -379,7 +429,7 @@ theorem triHexTorus_dual_openCount (L : ℕ) [Fact (2 < L)]
       have hd : d ∈ EH := by
         simpa [EH, SimpleGraph.edgeFinset] using hdSet
       have hdb : triHexTorusPrimalOfDualEdge L d = b := by
-        simp only [triHexTorusPrimalOfDualEdge, dif_pos hdSet]
+        simp only [triHexTorusPrimalOfDualEdge, dite_eq_left hdSet]
         exact congrArg Subtype.val ((triHexTorusDualEdgeEquiv L).symm_apply_apply tb)
       refine ⟨d, ?_, hdb⟩
       simp only [Finset.mem_filter]
@@ -399,24 +449,29 @@ theorem triHexTorus_dual_openCount (L : ℕ) [Fact (2 < L)]
     ET.card - (ET.filter (fun e => omega e = true)).card
   omega
 
+/-! ## E. Faces, defect and Euler's formula -/
 
+/-- The configuration whose open edges are the edges of the graph `K`. See also `torusConfigOfGraph`
+(`CriticalPoint.TorusDefectComplement`), the case of the square torus. -/
 noncomputable def graphEdgeConfig {V : Type*} (K : SimpleGraph V) :
     ConfigSpace (Sym2 V) := by
   classical
   exact fun e => decide (e ∈ K.edgeSet)
 
-
+/-- Number of faces of the subgraph `K` of the triangular torus: the number of clusters of the dual
+of its edge set. -/
 noncomputable def triHexTorusFaceCount (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) : ℕ := by
   exact Nat.card (FK.openSub (hexagonalTorusGraph L)
     (triHexTorusDualConfig L (graphEdgeConfig K))).ConnectedComponent
 
-
+/-- The defect of `K` in Euler's formula on the torus, `E - V + C + 1 - F`. -/
 noncomputable def triHexTorusDefect (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) : ℤ :=
   (K.edgeSet.ncard : ℤ) - Nat.card (TorusSite L) +
     Nat.card K.ConnectedComponent + 1 - triHexTorusFaceCount L K
 
+/-- Euler's formula on the torus with the defect correction: `V - E + F = C + 1 - defect`. -/
 theorem triHexTorus_euler (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) :
     (Nat.card (TorusSite L) : ℤ) - K.edgeSet.ncard +
@@ -425,7 +480,7 @@ theorem triHexTorus_euler (L : ℕ) [Fact (2 < L)]
   unfold triHexTorusDefect
   ring
 
-private theorem mem_openSub_edgeSet_iff
+private lemma mem_openSub_edgeSet_iff
     {V : Type*} (G : SimpleGraph V) (omega : ConfigSpace (Sym2 V))
     {e : Sym2 V} (he : e ∈ G.edgeSet) :
     e ∈ (FK.openSub G omega).edgeSet ↔ omega e = true := by
@@ -434,7 +489,9 @@ private theorem mem_openSub_edgeSet_iff
       rw [SimpleGraph.mem_edgeSet, FK.openSub_adj]
       simpa only [SimpleGraph.mem_edgeSet] using and_iff_right he
 
-theorem triHexTorusFaceCount_openSub (L : ℕ) [Fact (2 < L)]
+/-- The face count of the open subgraph of `ω` is the number of clusters of the dual configuration.
+-/
+lemma triHexTorusFaceCount_openSub (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L))) :
     triHexTorusFaceCount L (FK.openSub (triangularTorusGraph L) omega) =
       FK.numClusters (hexagonalTorusGraph L) (triHexTorusDualConfig L omega) := by
@@ -446,14 +503,14 @@ theorem triHexTorusFaceCount_openSub (L : ℕ) [Fact (2 < L)]
     by_cases he : e ∈ (hexagonalTorusGraph L).edgeSet
     · have hpSet : triHexTorusPrimalOfDualEdge L e ∈
           (triangularTorusGraph L).edgeSet := by
-        simp only [triHexTorusPrimalOfDualEdge, dif_pos he]
+        simp only [triHexTorusPrimalOfDualEdge, dite_eq_left he]
         exact ((triHexTorusDualEdgeEquiv L).symm ⟨e, he⟩).2
       have hopen : triHexTorusPrimalOfDualEdge L e ∈
             (FK.openSub (triangularTorusGraph L) omega).edgeSet ↔
           omega (triHexTorusPrimalOfDualEdge L e) = true := by
         exact mem_openSub_edgeSet_iff (triangularTorusGraph L) omega hpSet
       unfold triHexTorusDualConfig
-      simp only [dif_pos he]
+      simp only [dite_eq_left he]
       cases homega : omega (triHexTorusPrimalOfDualEdge L e)
       · have hclosed : triHexTorusPrimalOfDualEdge L e ∉
             (FK.openSub (triangularTorusGraph L) omega).edgeSet := by
@@ -480,7 +537,11 @@ theorem triHexTorusFaceCount_openSub (L : ℕ) [Fact (2 < L)]
         (triHexTorusDualConfig L omega)).ConnectedComponent :=
       Nat.card_eq_fintype_card
 
-private theorem triHexTorus_openSub_edge_ncard
+/-! ## F. FK-weight duality -/
+
+/-- The open subgraph has `openCount` edges. See also `pfd_openSub_edge_ncard`
+(`CriticalPoint.PlanarFKDuality`), which assumes `[DecidableEq V]`. -/
+private lemma triHexTorus_openSub_edge_ncard
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (omega : ConfigSpace (Sym2 V)) :
@@ -495,14 +556,16 @@ private theorem triHexTorus_openSub_edge_ncard
       simp only [Set.mem_toFinset, SimpleGraph.mem_edgeSet, FK.openSub_adj,
         Finset.mem_filter, SimpleGraph.mem_edgeFinset]
 
-theorem triHexTorus_edge_card (L : ℕ) [Fact (2 < L)] :
+/-- The triangular and hexagonal tori have the same number of edges. -/
+lemma triHexTorus_edge_card (L : ℕ) [Fact (2 < L)] :
     (triangularTorusGraph L).edgeFinset.card =
       (hexagonalTorusGraph L).edgeFinset.card := by
   simpa [SimpleGraph.edgeFinset] using
     Fintype.card_congr (triHexTorusDualEdgeEquiv L)
 
-
-
+/-- Random-cluster duality on the triangular/hexagonal torus: the FK weight of `ω` equals that of
+the dual configuration at the dual parameter, up to explicit constants and the topological factor `q
+^ defect`. -/
 theorem triHexTorus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -575,10 +638,9 @@ theorem triHexTorus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
       rw [pow_add]
       ring
 
+/-! ## G. Sector sums -/
 
-
-
-
+/-- Sum of `F(ω*) φ_{p,q}(ω)` over triangular configurations of defect `r`. -/
 noncomputable def triHexTorusPrimalSectorSum
     (L : ℕ) [Fact (2 < L)] (r : ℤ) (p q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
@@ -589,8 +651,8 @@ noncomputable def triHexTorusPrimalSectorSum
         FK.fkWeight (triangularTorusGraph L) p q omega
     else 0
 
-
-
+/-- Sum of `F(ω*) φ_{p*,q}(ω*)` over triangular configurations of defect `r`, weighted by the dual
+FK weight. -/
 noncomputable def triHexTorusDualSectorSum
     (L : ℕ) [Fact (2 < L)] (r : ℤ) (pDual q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
@@ -602,8 +664,7 @@ noncomputable def triHexTorusDualSectorSum
           (triHexTorusDualConfig L omega)
     else 0
 
-
-
+/-- Duality of the fixed-defect sector sums. -/
 theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
     (r : ℤ) (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -637,7 +698,7 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
       intro omega homega
       by_cases hsector : triHexTorusDefect L
           (FK.openSub (triangularTorusGraph L) omega) = r
-      · simp only [hsector, if_true]
+      · simp only [hsector, ite_true]
         have hweight := triHexTorus_fkWeight_duality_signed L omega hp hp1 hq
         rw [hsector] at hweight
         calc
@@ -676,8 +737,8 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
       congr 1
       rw [← Finset.mul_sum]
 
-
-theorem triHexTorus_sectorPartition_duality (L : ℕ) [Fact (2 < L)]
+/-- Duality of the fixed-defect sector partition functions (`F = 1`). -/
+lemma triHexTorus_sectorPartition_duality (L : ℕ) [Fact (2 < L)]
     (r : ℤ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     triHexTorusPrimalSectorSum L r p q (fun _ => 1) *
         q ^ ((triangularTorusGraph L).edgeFinset.card + 1) =
@@ -688,9 +749,9 @@ theorem triHexTorus_sectorPartition_duality (L : ℕ) [Fact (2 < L)]
           (fun _ => 1) * q ^ r :=
   triHexTorus_sectorSum_duality L r (fun _ => 1) hp hp1 hq
 
-
-
-theorem triHexTorus_sectorNormalized_duality (L : ℕ) [Fact (2 < L)]
+/-- Within a fixed-defect sector, the primal expectation of `F(ω*)` equals the dual expectation of
+`F`. -/
+lemma triHexTorus_sectorNormalized_duality (L : ℕ) [Fact (2 < L)]
     (r : ℤ) (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hprimal : triHexTorusPrimalSectorSum L r p q (fun _ => 1) ≠ 0)

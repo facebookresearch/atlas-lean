@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CrossingFromArms
@@ -19,33 +16,111 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Rotated
 public import Mathlib.Topology.Subpath
 
+/-!
+# Primal cages in a half-plane and the complementary dual cluster
+
+Continuum crosscut lemmas, infinite arms with open exit edges, infinite clusters touching the
+boundary of a half-plane, and planar-duality statements that open primal crossings cage the dual
+cluster of a half-plane.
+
+## i. Overview
+
+The file has three layers.
+- Continuum geometry: coordinates along paths (intermediate values, first and last contacts with
+  a line), straight segments and horizontal prefixes, the first exit of a path from a rectangle,
+  and crosscut lemmas: a path inside a rectangle that starts on the left side between the two
+  endpoints of a left crosscut and ends on the right, top or bottom side must meet the crosscut.
+- Primal events: infinite arms from a source set to `∂H_r` whose last vertex has an open edge
+  leaving `H_r`; joined arms at fixed boundary vertices; with finite energy, opening the two exit
+  edges keeps positive probability. If `H_r` almost surely contains an infinite cluster and the
+  infinite cluster is unique, then almost surely an infinite cluster of `H_r` touches `∂H_r`, and
+  some bounded boundary band is touched with positive probability.
+- Duality: an open dual walk cannot escape from the region cut off by an attached primal
+  crosscut (`no_open_dual_escape_*`), and three open primal crossings (one vertical, two
+  horizontal) around a dual vertex make its dual cluster inside `H_r` finite.
+
+Headline fidelity:
+- The continuum crosscut lemmas, `no_open_dual_escape_*`, the crossing-event lemmas and
+  `not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings` are proved
+  unconditionally (deterministic statements).
+- `rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one` is conditional on translation
+  invariance, almost sure uniqueness and on `H_r` containing an infinite cluster almost surely.
+- `exists_positive_finiteOpenExitedJoinedBoundaryArmEvent` is conditional on FKG, translation
+  invariance, almost sure uniqueness and finite energy.
+- `infiniteOpenBoundaryConnection_measureReal_ge_mul` is conditional on FKG and almost sure
+  uniqueness.
+- `complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion`,
+  `…_of_deepJoinedBand_exclusion` and `…_of_joinedBand_exclusion` are conditional on FKG,
+  translation invariance, primal and dual uniqueness, dual ergodicity and the geometric
+  hypothesis `hgeom` discussed below; they are vacuous wherever `hgeom` fails.
+
+The hypothesis `hgeom` of the three `complementaryDual_rightHalfPlane_measure_eq_zero_of_*`
+results asserts, for every admissible choice of source sets and strip width, that the primal
+joined arm event at `rPrimal` is disjoint from the event that the complementary dual
+half-plane `H_rDual` has an infinite dual cluster touching the boundary band `|y| ≤ n`. This is a
+deterministic statement about the dual pair and it appears to be false in general:
+- if `rDual < rPrimal - C` (with `C` depending on the edge-length bound of the embedding), the
+  configuration in which exactly the primal edges with both endpoints in `H_rPrimal` are open
+  lies in both events (all arms exist and merge inside a wide enough strip, while the dual edges
+  dual to the closed primal edges between `x = rDual` and `x = rPrimal` form an infinite dual
+  cluster of `H_rDual` touching the band);
+- if `rDual > rPrimal + C`, a configuration whose open primal edges are two thin arms hugging the
+  line `x = rPrimal` up to height above `n` and then running out to the sources also lies in both
+  events, since the dual band vertices are not enclosed by the arms.
+No concrete `PeriodicPlanarDualPair` exists in the library, so this is not refuted in Lean;
+the three results are documented as resting on an unverified, probably false, hypothesis.
+
+## ii. Key results
+
+- `ContinuousHalfPlaneCrosscut.leftCrosscut_intersects_leftRightPath` (and the `leftTopPath`,
+  `leftBottomPath` variants) : continuum crosscut lemmas.
+- `PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArmEvent`
+- `PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one`
+- `PeriodicPlanarDualPair.no_open_dual_escape_of_doublyAttached_subpaths`
+- `PeriodicPlanarDualPair.`
+  `not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings`
+- `PeriodicPlanarDualPair.complementaryDual_rightHalfPlane_measure_eq_zero_of_joinedBand_exclusion`
+  (conditional on `hgeom`)
+
+## iii. Table of contents
+
+- A. Coordinates along continuum paths
+- B. Straight segments and horizontal prefixes
+- C. Leaving a rectangle
+- D. Crosscuts of a rectangle
+- E. Walk arcs near the boundary line
+- F. Infinite arms with an open exit edge
+- G. Joined arms with opened exit edges
+- H. Infinite clusters touching the half-plane boundary
+- I. No dual escape through a primal crosscut
+- J. Conditional exclusion of the complementary dual cluster
+- K. Open boundary connections and crossing events
+- L. Three crossings cage the dual half-plane cluster
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.1 (planar duality).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Coordinates along continuum paths -/
+
 namespace ContinuousHalfPlaneCrosscut
 
-
-
-
-theorem exists_parameter_coord_eq
+/-- Intermediate value theorem for a coordinate along a path in the plane (increasing case). See
+also Mathlib `intermediate_value_univ` (different form). -/
+lemma exists_parameter_coord_eq
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i ≤ a)
     (hfinish : a ≤ finish i) :
@@ -57,8 +132,8 @@ theorem exists_parameter_coord_eq
     simpa using ⟨hstart, hfinish⟩
   exact intermediate_value_univ (0 : unitInterval) 1 hcontinuous ha
 
-
-theorem exists_parameter_coord_eq_of_ge
+/-- Intermediate value theorem for a coordinate along a path in the plane (decreasing case). -/
+lemma exists_parameter_coord_eq_of_ge
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : a ≤ start i)
     (hfinish : finish i ≤ a) :
@@ -70,8 +145,8 @@ theorem exists_parameter_coord_eq_of_ge
     simpa using ⟨hfinish, hstart⟩
   exact intermediate_value_univ (1 : unitInterval) 0 hcontinuous ha
 
-
-theorem exists_first_parameter_coord_eq
+/-- A path that meets the line `{zᵢ = a}` has a first parameter on it. -/
+lemma exists_first_parameter_coord_eq
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real)
     (hne : ∃ u : unitInterval, gamma u i = a) :
@@ -89,8 +164,8 @@ theorem exists_first_parameter_coord_eq
     hKne continuous_id.continuousOn
   exact ⟨t, htK, fun u hu => htmin hu⟩
 
-
-theorem exists_last_parameter_coord_eq
+/-- A path that meets the line `{zᵢ = a}` has a last parameter on it. -/
+lemma exists_last_parameter_coord_eq
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real)
     (hne : ∃ u : unitInterval, gamma u i = a) :
@@ -108,9 +183,8 @@ theorem exists_last_parameter_coord_eq
     hKne continuous_id.continuousOn
   exact ⟨t, htK, fun u hu => htmax hu⟩
 
-
-
-theorem exists_first_line_contact_suffix
+/-- First contact with the line `{zᵢ = a}` and the suffix of the path after it. -/
+lemma exists_first_line_contact_suffix
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i ≤ a)
     (hfinish : a ≤ finish i) :
@@ -125,9 +199,8 @@ theorem exists_first_line_contact_suffix
   rw [Path.range_subpath]
   exact image_subset_range _ _
 
-
-
-theorem exists_last_line_contact_prefix
+/-- Last contact with the line `{zᵢ = a}` and the prefix of the path before it. -/
+lemma exists_last_line_contact_prefix
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     (i : Fin 2) (a : Real) (hstart : start i ≤ a)
     (hfinish : a ≤ finish i) :
@@ -142,31 +215,33 @@ theorem exists_last_line_contact_prefix
   rw [Path.range_subpath]
   exact image_subset_range _ _
 
+/-! ## B. Straight segments and horizontal prefixes -/
 
+/-- The straight segment from `x` to `y` in `ℝ²`, parametrized affinely. Equal to Mathlib
+`Path.segment x y`. -/
 noncomputable def affinePath (x y : Fin 2 → Real) : Path x y where
   toFun t i := (1 - (t : Real)) * x i + (t : Real) * y i
   continuous_toFun := by fun_prop
   source' := by ext i; simp
   target' := by ext i; simp
 
-@[simp] theorem affinePath_apply (x y : Fin 2 → Real) (t : unitInterval)
+/-- Coordinates of the straight segment. See also Mathlib `Path.segment_apply`. -/
+@[simp] lemma affinePath_apply (x y : Fin 2 → Real) (t : unitInterval)
     (i : Fin 2) :
     affinePath x y t i = (1 - (t : Real)) * x i + (t : Real) * y i := rfl
 
-
+/-- The horizontal segment from `(a, root₁)` to `root`. -/
 noncomputable def horizontalPrefix (a : Real) (root : Fin 2 → Real) :
     Path ![a, root 1] root :=
   affinePath ![a, root 1] root
 
-@[simp] theorem horizontalPrefix_apply_one (a : Real)
+@[simp] lemma horizontalPrefix_apply_one (a : Real)
     (root : Fin 2 → Real) (t : unitInterval) :
     horizontalPrefix a root t 1 = root 1 := by
   simp [horizontalPrefix, affinePath_apply]
   ring
 
-
-
-theorem horizontalPrefix_disjoint_of_range_below
+lemma horizontalPrefix_disjoint_of_range_below
     {x y root : Fin 2 → Real} (a : Real) (gamma : Path x y)
     (hbelow : ∀ z ∈ Set.range gamma, z 1 < root 1) :
     Disjoint (Set.range (horizontalPrefix a root)) (Set.range gamma) := by
@@ -177,9 +252,7 @@ theorem horizontalPrefix_disjoint_of_range_below
   rw [horizontalPrefix_apply_one] at h
   exact lt_irrefl _ h
 
-
-
-theorem horizontalPrefix_disjoint_of_range_above
+lemma horizontalPrefix_disjoint_of_range_above
     {x y root : Fin 2 → Real} (a : Real) (gamma : Path x y)
     (habove : ∀ z ∈ Set.range gamma, root 1 < z 1) :
     Disjoint (Set.range (horizontalPrefix a root)) (Set.range gamma) := by
@@ -190,18 +263,15 @@ theorem horizontalPrefix_disjoint_of_range_above
   rw [horizontalPrefix_apply_one] at h
   exact lt_irrefl _ h
 
-
-
-theorem disjoint_of_coord_lt {A C : Set (Fin 2 → Real)} (i : Fin 2)
+/-- Two plane sets separated strictly in one coordinate are disjoint. -/
+lemma disjoint_of_coord_lt {A C : Set (Fin 2 → Real)} (i : Fin 2)
     (hsep : ∀ x ∈ A, ∀ y ∈ C, x i < y i) :
     Disjoint A C := by
   rw [Set.disjoint_left]
   intro z hzA hzC
   exact lt_irrefl _ (hsep z hzA z hzC)
 
-
-
-theorem horizontalPrefix_coord_lt
+lemma horizontalPrefix_coord_lt
     {a R : Real} {root : Fin 2 → Real}
     (ha : a < R) (hroot : root 0 < R) :
     ∀ z ∈ Set.range (horizontalPrefix a root), z 0 < R := by
@@ -220,13 +290,16 @@ theorem horizontalPrefix_coord_lt
       mul_nonneg ht0 (sub_nonneg.mpr hroot.le)
     nlinarith
 
+/-! ## C. Leaving a rectangle -/
 
-
+/-- The smallest of the four coordinate gaps from `z` to the sides of the rectangle `[a, b] × [c,
+d]`. -/
 noncomputable def rectangleMargin (a b c d : Real)
     (z : Fin 2 → Real) : Real :=
   min (z 0 - a) (min (b - z 0) (min (z 1 - c) (d - z 1)))
 
-theorem rectangleMargin_nonneg_iff (a b c d : Real) (z : Fin 2 → Real) :
+/-- The margin is nonnegative exactly on the closed rectangle. -/
+lemma rectangleMargin_nonneg_iff (a b c d : Real) (z : Fin 2 → Real) :
     0 ≤ rectangleMargin a b c d z ↔
       ContinuousRectangleCrossing.InRectangle a b c d z := by
   simp only [rectangleMargin, le_min_iff,
@@ -237,10 +310,9 @@ theorem rectangleMargin_nonneg_iff (a b c d : Real) (z : Fin 2 → Real) :
   · rintro ⟨hax, hxb, hcy, hyd⟩
     exact ⟨by linarith, by linarith, by linarith, by linarith⟩
 
-
-
-
-theorem exists_first_rectangle_exit_prefix
+/-- A path starting inside a rectangle and ending outside it has a first boundary point, and the
+prefix before it stays in the rectangle. -/
+lemma exists_first_rectangle_exit_prefix
     {start finish : Fin 2 → Real} (gamma : Path start finish)
     {a b c d : Real}
     (hstart : a < start 0 ∧ start 0 < b ∧
@@ -341,10 +413,11 @@ theorem exists_first_rectangle_exit_prefix
   · rw [Path.range_subpath]
     exact Set.image_subset_range _ _
 
+/-! ## D. Crosscuts of a rectangle -/
 
-
-
-theorem leftCrosscut_intersects_leftRightPath_of_left_between
+/-- Crosscut lemma: a path in the rectangle from the left side to the right side, meeting the
+left side only between the endpoints of a left crosscut, meets the crosscut. -/
+lemma leftCrosscut_intersects_leftRightPath_of_left_between
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -374,7 +447,7 @@ theorem leftCrosscut_intersects_leftRightPath_of_left_between
       simpa using hcrossRect (Set.mem_range_self (0 : unitInterval))
     dsimp only [lower, bottom]
     simp only [affinePath_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, hloX]
+      hloX]
     constructor
     · ring_nf
       exact le_rfl
@@ -392,7 +465,7 @@ theorem leftCrosscut_intersects_leftRightPath_of_left_between
       simpa using hcrossRect (Set.mem_range_self (1 : unitInterval))
     dsimp only [upper, top]
     simp only [affinePath_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, hhiX]
+      hhiX]
     constructor
     · ring_nf
       exact le_rfl
@@ -440,9 +513,9 @@ theorem leftCrosscut_intersects_leftRightPath_of_left_between
     change escape t 1 = (1 - (u : Real)) * hi 1 + (u : Real) * d at hyEq
     nlinarith
 
-
-
-theorem leftCrosscut_intersects_leftTopPath_of_left_between
+/-- Crosscut lemma for a path from the left side to the top side, when the crosscut stays below
+the top. -/
+lemma leftCrosscut_intersects_leftTopPath_of_left_between
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -530,9 +603,9 @@ theorem leftCrosscut_intersects_leftTopPath_of_left_between
     rw [htailY] at hsCoord
     linarith
 
-
-
-theorem leftCrosscut_intersects_leftBottomPath_of_left_between
+/-- Crosscut lemma for a path from the left side to the bottom side, when the crosscut stays
+above the bottom. -/
+lemma leftCrosscut_intersects_leftBottomPath_of_left_between
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -620,10 +693,9 @@ theorem leftCrosscut_intersects_leftBottomPath_of_left_between
     rw [htailY] at hsCoord
     linarith
 
-
-
-
-theorem attachedCrosscut_intersection_reduces_to_core
+/-- If a path meets an attached crosscut `lower · core · upper` but not `lower` or `upper`, it
+meets `core`. -/
+lemma attachedCrosscut_intersection_reduces_to_core
     {lo hi x y start finish : Fin 2 → Real}
     (lower : Path lo x) (core : Path x y) (upper : Path y hi)
     (escape : Path start finish)
@@ -641,10 +713,9 @@ theorem attachedCrosscut_intersection_reduces_to_core
   · exact ⟨p, hpEscape, hpCore⟩
   · exact (Set.disjoint_left.1 hupper hpEscape hpUpper).elim
 
-
-
-
-theorem doublyAttached_intersection_reduces_to_cores
+/-- Two-sided version of `attachedCrosscut_intersection_reduces_to_core` for a path with a
+prefix. -/
+lemma doublyAttached_intersection_reduces_to_cores
     {plo px py phi estart eroot efinish : Fin 2 → Real}
     (plower : Path plo px) (pcore : Path px py) (pupper : Path py phi)
     (eprefix : Path estart eroot) (ecore : Path eroot efinish)
@@ -672,11 +743,9 @@ theorem doublyAttached_intersection_reduces_to_cores
     · exact ⟨z, hzCore, hzPCore⟩
     · exact (Set.disjoint_left.1 hCoreUpper hzCore hzUpper).elim
 
-
-
-
-
-theorem leftCrosscut_intersects_leftRightPath
+/-- Crosscut lemma (left to right) when the path meets the left side only at its start, which
+lies strictly between the crosscut endpoints. -/
+lemma leftCrosscut_intersects_leftRightPath
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -706,7 +775,7 @@ theorem leftCrosscut_intersects_leftRightPath
       simpa using hcrossRect (Set.mem_range_self (0 : unitInterval))
     dsimp only [lower, bottom]
     simp only [affinePath_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, hloX]
+      hloX]
     constructor
     · ring_nf
       exact le_rfl
@@ -724,7 +793,7 @@ theorem leftCrosscut_intersects_leftRightPath
       simpa using hcrossRect (Set.mem_range_self (1 : unitInterval))
     dsimp only [upper, top]
     simp only [affinePath_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, hhiX]
+      hhiX]
     constructor
     · ring_nf
       exact le_rfl
@@ -749,7 +818,6 @@ theorem leftCrosscut_intersects_leftRightPath
   · obtain ⟨u, hu⟩ := hsLower
     have hleft : escape t 0 = a := by
       rw [hts, ← hu]
-      change lower u 0 = a
       simp [lower, bottom, hloX]
       ring
     have ht : escape t = start :=
@@ -765,7 +833,6 @@ theorem leftCrosscut_intersects_leftRightPath
   · obtain ⟨u, hu⟩ := hsUpper
     have hleft : escape t 0 = a := by
       rw [hts, ← hu]
-      change upper u 0 = a
       simp [upper, top, hhiX]
       ring
     have ht : escape t = start :=
@@ -778,8 +845,8 @@ theorem leftCrosscut_intersects_leftRightPath
     change start 1 = (1 - (u : Real)) * hi 1 + (u : Real) * d at hyEq
     nlinarith
 
-
-theorem leftCrosscut_intersects_leftTopPath
+/-- Crosscut lemma (left to top) when the path meets the left side only at its start. -/
+lemma leftCrosscut_intersects_leftTopPath
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -866,8 +933,8 @@ theorem leftCrosscut_intersects_leftTopPath
     rw [htailY] at hsCoord
     linarith
 
-
-theorem leftCrosscut_intersects_leftBottomPath
+/-- Crosscut lemma (left to bottom) when the path meets the left side only at its start. -/
+lemma leftCrosscut_intersects_leftBottomPath
     {a b c d : Real} (hab : a < b) (hcd : c < d)
     {lo hi start finish : Fin 2 → Real}
     (crosscut : Path lo hi) (escape : Path start finish)
@@ -956,9 +1023,12 @@ theorem leftCrosscut_intersects_leftBottomPath
 
 end ContinuousHalfPlaneCrosscut
 
+/-! ## E. Walk arcs near the boundary line -/
 
-
-theorem PeriodicPlaneEmbedding.simpleWalkArc_coord_lower_of_support
+omit [Countable V] in
+/-- The simple arc of a walk whose vertices have `i`-th coordinate at least `r` stays above `r -
+B`. -/
+lemma PeriodicPlaneEmbedding.simpleWalkArc_coord_lower_of_support
     (E : PeriodicPlaneEmbedding P) {B r : Real}
     (hB0 : 0 ≤ B)
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
@@ -983,9 +1053,10 @@ theorem PeriodicPlaneEmbedding.simpleWalkArc_coord_lower_of_support
     rw [← hqEdge]
     linarith
 
-
-
-theorem PeriodicPlaneEmbedding.simpleWalkArc_coord_upper_of_support
+omit [Countable V] in
+/-- The simple arc of a walk whose vertices have `i`-th coordinate at most `r` stays below `r +
+B`. -/
+lemma PeriodicPlaneEmbedding.simpleWalkArc_coord_upper_of_support
     (E : PeriodicPlaneEmbedding P) {B r : Real}
     (hB0 : 0 ≤ B)
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
@@ -1010,13 +1081,12 @@ theorem PeriodicPlaneEmbedding.simpleWalkArc_coord_upper_of_support
     rw [← hqEdge]
     linarith
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_boundary_line_attachments
+omit [Countable V] in
+/-- Short continuum paths attaching a lower-ray and an upper-ray boundary vertex of `H_r` to the
+line `x = r`, staying near the rays. -/
+lemma PeriodicPlaneEmbedding.exists_boundary_line_attachments
     (E : PeriodicPlaneEmbedding P) {B r c d : Real}
-    (hB0 : 0 ≤ B)
+    (_hB0 : 0 ≤ B)
     (hB : ∀ {v w : V} (hvw : P.graph.Adj v w) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hvw t - E.vertex v) i| ≤ B)
     {b u : V} (hb : b ∈ E.lowerBoundaryRayVertices r c)
@@ -1129,9 +1199,9 @@ theorem PeriodicPlaneEmbedding.exists_boundary_line_attachments
     linarith [abs_le.mp hdisp |>.2]
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.exists_open_boundary_walk_of_walk_to_compl
+/-- An open walk leaving `A` has an initial segment inside `A` ending at a vertex with an open
+edge leaving `A`. -/
+lemma PeriodicGraph.exists_open_boundary_walk_of_walk_to_compl
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (A : Set V)
     {x y : V} (p : (P.openSubgraph omega).Walk x y)
     (hx : x ∈ A) (hy : y ∉ A) :
@@ -1165,8 +1235,10 @@ theorem PeriodicGraph.exists_open_boundary_walk_of_walk_to_compl
           exact List.mem_cons.2 (Or.inl hvx)
         · simp
 
+/-! ## F. Infinite arms with an open exit edge -/
 
-
+/-- Some `x ∈ S` in an infinite cluster is connected within `H_r` to a boundary vertex of `H_r`
+that has an open edge leaving `H_r`. -/
 def PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -1176,7 +1248,7 @@ def PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection
         omega s(b, z) = true ∧
         omega ∈ P.connectedWithinSet (E.rightHalfPlaneVertices r) x b}
 
-
+/-- As `infiniteOpenBoundaryConnection`, with the boundary vertex required to lie in `T`. -/
 def PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo
     (E : PeriodicPlaneEmbedding P) (r : Real) (S T : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -1186,7 +1258,7 @@ def PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo
         omega s(b, z) = true ∧
         omega ∈ P.connectedWithinSet (E.rightHalfPlaneVertices r) x b}
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_measurableSet
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : Real) (S T : Set V) :
     MeasurableSet (E.infiniteOpenBoundaryConnectionTo r S T) := by
   classical
@@ -1201,7 +1273,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_measurableSet
                     P.connectedWithinSet (E.rightHalfPlaneVertices r) x b := by
     ext omega
     simp [PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo,
-      and_left_comm, and_assoc]
+      and_left_comm]
   rw [heq]
   exact MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun _hx =>
     (P.measurableSet_cluster_infinite x).inter
@@ -1213,7 +1285,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_measurableSet
                 (P.connectedWithinSet_measurableSet
                   (E.rightHalfPlaneVertices r) x b))
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_isIncreasing
     (E : PeriodicPlaneEmbedding P) (r : Real) (S T : Set V) :
     IsIncreasing (E.infiniteOpenBoundaryConnectionTo r S T) := by
   intro omega eta homega
@@ -1222,17 +1295,16 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_isIncreasing
     b, hbT, hb, z, hbz, hz, homega _ hbzOpen,
     P.connectedWithinSet_isIncreasing _ _ _ homega hxb⟩
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_subset
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_subset
     (E : PeriodicPlaneEmbedding P) (r : Real) (S T : Set V) :
     E.infiniteOpenBoundaryConnectionTo r S T ⊆
       E.infiniteOpenBoundaryConnection r S := by
   rintro omega ⟨x, hxS, hxInfinite, b, _hbT, hb, z, hbz, hz, hbzOpen, hxb⟩
   exact ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hbzOpen, hxb⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_configTranslate_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_configTranslate_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int)
     (omega : ConfigSpace (Sym2 V)) (r : Real) (S T : Set V) :
     P.configTranslate (verticalShift t) omega ∈
@@ -1246,7 +1318,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_configTranslate_
       _, ⟨b, hbT, rfl⟩, hbBoundary, z, hbz, hzOutside, hbzOpen, hxb⟩
     let z₀ := P.shift (-q) z
     have hz : P.shift q z₀ = z := by
-      simpa [z₀] using P.shift_shift_neg q z
+      simp [z₀]
     refine ⟨x, hxS, (P.cluster_infinite_configTranslate q omega x).mp hxInfinite,
       b, hbT, (E.shift_mem_rightHalfPlaneBoundaryVertices_vertical t r b).mp
         hbBoundary, z₀, ?_, ?_, ?_, ?_⟩
@@ -1277,9 +1349,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_configTranslate_
       rw [E.shift_image_rightHalfPlaneVertices_vertical] at h
       exact h.mpr hxb
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_measureReal_vertical
+lemma PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int)
@@ -1311,9 +1381,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_measureReal_v
   rw [← hpre]
   exact congrArg ENNReal.toReal hm.symm
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_measureReal_vertical
+lemma PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int)
@@ -1345,8 +1413,9 @@ theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_measureReal_v
   rw [← hpre]
   exact congrArg ENNReal.toReal hm.symm
 
-
-theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection
+omit [Countable V] in
+/-- Open-exit arms to the lower rays `{y ≤ n}` exhaust open-exit arms to `∂H_r`. -/
+lemma PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, E.infiniteOpenBoundaryConnectionTo r S
       (E.lowerBoundaryRayVertices r n)) =
@@ -1362,9 +1431,9 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection
     refine ⟨n, x, hxS, hxInfinite, b, ?_, hb, z, hbz, hz, hbzOpen, hxb⟩
     exact ⟨hb, hn⟩
 
-
-
-theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection
+omit [Countable V] in
+/-- Open-exit arms to the upper rays `{y ≥ -n}` exhaust open-exit arms to `∂H_r`. -/
+lemma PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, E.infiniteOpenBoundaryConnectionTo r S
       (E.upperBoundaryRayVertices r (-(n : Real)))) =
@@ -1381,14 +1450,16 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection
     have hn' : -(n : Real) ≤ E.vertexCoord b 1 := by linarith
     exact ⟨hb, hn'⟩
 
-
-theorem exists_measureReal_pos_of_iUnion_measureReal_pos
+/-- If a countable union indexed by `ℕ` has positive measure, some member does. Special case of
+`exists_measureReal_pos_of_countable_iUnion_measureReal_pos`; see also Mathlib
+`MeasureTheory.measure_iUnion_null_iff`. -/
+lemma exists_measureReal_pos_of_iUnion_measureReal_pos
     {X : Type*} [MeasurableSpace X] (mu : Measure X) [IsFiniteMeasure mu]
     (A : Nat → Set X)
     (hpos : 0 < mu.real (⋃ n, A n)) :
     ∃ n, 0 < mu.real (A n) := by
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hrealZero (n : Nat) : mu.real (A n) = 0 := by
     exact le_antisymm (hnot n) measureReal_nonneg
   have hmeasureZero (n : Nat) : mu (A n) = 0 := by
@@ -1399,7 +1470,8 @@ theorem exists_measureReal_pos_of_iUnion_measureReal_pos
   rw [hunion] at hpos
   norm_num at hpos
 
-theorem PeriodicPlaneEmbedding.exists_positive_infiniteOpenLowerBoundaryConnection
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_positive_infiniteOpenLowerBoundaryConnection
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V)
@@ -1409,7 +1481,8 @@ theorem PeriodicPlaneEmbedding.exists_positive_infiniteOpenLowerBoundaryConnecti
   rw [← E.iUnion_infiniteOpenLowerBoundaryConnection r S] at hpos
   exact exists_measureReal_pos_of_iUnion_measureReal_pos mu _ hpos
 
-theorem PeriodicPlaneEmbedding.exists_positive_infiniteOpenUpperBoundaryConnection
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_positive_infiniteOpenUpperBoundaryConnection
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V)
@@ -1419,11 +1492,9 @@ theorem PeriodicPlaneEmbedding.exists_positive_infiniteOpenUpperBoundaryConnecti
   rw [← E.iUnion_infiniteOpenUpperBoundaryConnection r S] at hpos
   exact exists_measureReal_pos_of_iUnion_measureReal_pos mu _ hpos
 
+/-! ## G. Joined arms with opened exit edges -/
 
-
-
-
-
+/-- Joined arm event with prescribed boundary endpoints `b` (lower ray) and `u` (upper ray). -/
 def PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) (b u : V) : Set (ConfigSpace (Sym2 V)) :=
@@ -1437,7 +1508,7 @@ def PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt
       omega ∈ P.connectedWithinSet
         (E.rightHalfPlaneStripVertices r n) x y}
 
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_measurableSet
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_measurableSet
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) (b u : V) :
     MeasurableSet (E.finiteJoinedBoundaryArmAt r c d n L R b u) := by
@@ -1456,7 +1527,7 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_measurableSet
                     (E.rightHalfPlaneStripVertices r n) x y := by
         ext omega
         simp only [PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt,
-          Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_inter_iff, hb, hu,
+          Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff, hb, hu,
           true_and]
         aesop
       rw [heq]
@@ -1481,7 +1552,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_measurableSet
     rw [heq]
     exact MeasurableSet.empty
 
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_isIncreasing
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) (b u : V) :
     IsIncreasing (E.finiteJoinedBoundaryArmAt r c d n L R b u) := by
@@ -1495,8 +1567,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_isIncreasing
     P.connectedWithinSet_isIncreasing _ _ _ homega hyu,
     P.connectedWithinSet_isIncreasing _ _ _ homega hxy⟩
 
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_at
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_at
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) :
     E.finiteJoinedBoundaryArmEvent r c d n L R ⊆
@@ -1508,9 +1580,9 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_at
   exact Set.mem_iUnion.2 ⟨b, Set.mem_iUnion.2 ⟨u,
     hb, hu, x, hxL, hxInfinite, hxb, y, hyR, hyInfinite, hyu, hxy⟩⟩
 
-
-
-theorem exists_measureReal_pos_of_countable_iUnion_measureReal_pos
+/-- If a countable union has positive measure, some member does. See also Mathlib
+`MeasureTheory.measure_iUnion_null_iff` (different form). -/
+lemma exists_measureReal_pos_of_countable_iUnion_measureReal_pos
     {X I : Type*} [MeasurableSpace X] [Countable I]
     (mu : Measure X) [IsFiniteMeasure mu] (A : I → Set X)
     (hpos : 0 < mu.real (⋃ i, A i)) :
@@ -1527,8 +1599,7 @@ theorem exists_measureReal_pos_of_countable_iUnion_measureReal_pos
   rw [hunion] at hpos
   norm_num at hpos
 
-
-theorem PeriodicPlaneEmbedding.exists_positive_finiteJoinedBoundaryArmAt
+lemma PeriodicPlaneEmbedding.exists_positive_finiteJoinedBoundaryArmAt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r c d : Real) (n : Nat) (L R : Finset V)
@@ -1548,8 +1619,7 @@ theorem PeriodicPlaneEmbedding.exists_positive_finiteJoinedBoundaryArmAt
       (fun u => E.finiteJoinedBoundaryArmAt r c d n L R b u) hb
   exact ⟨b, u, hu⟩
 
-
-
+/-- Joined arm event whose two boundary endpoints have open edges leaving `H_r`. -/
 def PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -1567,7 +1637,7 @@ def PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent
       omega ∈ P.connectedWithinSet
         (E.rightHalfPlaneStripVertices r n) x y}
 
-theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measurableSet
+lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) :
     MeasurableSet (E.finiteOpenExitedJoinedBoundaryArmEvent r c d n L R) := by
@@ -1660,7 +1730,8 @@ theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measurable
                 (P.connectedWithinSet_measurableSet
                   (E.rightHalfPlaneStripVertices r n) x y))))
 
-theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_isIncreasing
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) :
     IsIncreasing (E.finiteOpenExitedJoinedBoundaryArmEvent r c d n L R) := by
@@ -1675,9 +1746,9 @@ theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_isIncreasi
     P.connectedWithinSet_isIncreasing _ _ _ homega hyu,
     P.connectedWithinSet_isIncreasing _ _ _ homega hxy⟩
 
-
-
-theorem measureReal_pos_of_forceOpenFinset_preimage
+/-- Finite energy: if an event of positive probability is mapped into `B` by opening finitely
+many edges, then `B` has positive probability. -/
+lemma measureReal_pos_of_forceOpenFinset_preimage
     {X : Type*} [DecidableEq X] [Countable X]
     (mu : Measure (ConfigSpace (Sym2 X))) [IsFiniteMeasure mu]
     (hfe : HasFiniteEnergy mu) (F : Finset (Sym2 X))
@@ -1699,9 +1770,8 @@ theorem measureReal_pos_of_forceOpenFinset_preimage
   rw [hAzero] at hApos
   norm_num at hApos
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_forceOpen_subset_exited
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_forceOpen_subset_exited
     (E : PeriodicPlaneEmbedding P) {r c d : Real} {n : Nat}
     {L R : Finset V} {b u z w : V}
     (hbz : P.graph.Adj b z) (hz : z ∉ E.rightHalfPlaneVertices r)
@@ -1729,9 +1799,9 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmAt_forceOpen_subset_exited
   · simp [eta, forceOpenFinset]
   · simp [eta, forceOpenFinset]
 
-
-
-theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measureReal_pos
+/-- Under finite energy, positive probability of joined arms implies positive probability of
+joined arms with opened exit edges. -/
+lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measureReal_pos
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hfe : HasFiniteEnergy mu)
@@ -1757,8 +1827,9 @@ theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measureRea
     hbz (by change ¬ r ≤ E.vertexCoord z 0; exact not_le.mpr hz)
     huw (by change ¬ r ≤ E.vertexCoord w 0; exact not_le.mpr hw)
 
-
-
+/-- Joined arms with open exit edges to the rays `{y ≤ 0}` and `{y ≥ 1}` have positive
+probability for suitable finite sources (FKG, translation invariance, almost sure uniqueness,
+finite energy). -/
 theorem PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -1777,9 +1848,10 @@ theorem PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArm
       mu hfe r 0 1 n L U ?_⟩
   linarith
 
-
-
-theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_openWalk
+omit [Countable V] in
+/-- On the opened-exit joined arm event there is an open walk from outside `H_r` through both
+boundary endpoints back to outside `H_r`, with all other vertices in `H_r`. -/
+lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_openWalk
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteOpenExitedJoinedBoundaryArmEvent r c d n L R) :
@@ -1807,7 +1879,7 @@ theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_openWalk
       dsimp only [left]
       rw [SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_reverse]
       apply List.mem_cons_of_mem
-      simpa using qxb.end_mem_support
+      simp
     simp only [q, SimpleGraph.Walk.mem_support_append_iff]
     exact Or.inl (Or.inl hbLeft)
   · have huRight : u ∈ right.support := by
@@ -1836,17 +1908,16 @@ theorem PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_openWalk
         · have hvw : v = w := by simpa using hv
           exact Or.inr (Or.inl hvw)
 
+/-! ## H. Infinite clusters touching the half-plane boundary -/
 
-
-
-
+/-- Some boundary vertex of `H_r` has an infinite open cluster inside `H_r`. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ b ∈ E.rightHalfPlaneBoundaryVertices r,
     (P.clusterWithinSet omega (E.rightHalfPlaneVertices r) b).Infinite}
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measurableSet
+lemma PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     MeasurableSet (E.rightHalfPlaneBoundaryHasInfiniteCluster r) := by
   have heq : E.rightHalfPlaneBoundaryHasInfiniteCluster r =
@@ -1861,8 +1932,10 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measurab
     P.measurableSet_clusterWithinSet_infinite
       (E.rightHalfPlaneVertices r) b
 
-
-theorem PeriodicGraph.clusterWithinSet_infinite_of_connectedWithinSet
+omit [Countable V] in
+/-- Two vertices connected within `A` have the same restricted cluster, so one is infinite iff
+the other is. -/
+lemma PeriodicGraph.clusterWithinSet_infinite_of_connectedWithinSet
     (P : PeriodicGraph V) {omega : ConfigSpace (Sym2 V)}
     {A : Set V} {x b : V}
     (hinfinite : (P.clusterWithinSet omega A x).Infinite)
@@ -1881,10 +1954,10 @@ theorem PeriodicGraph.clusterWithinSet_infinite_of_connectedWithinSet
     · exact hqxy v hv
   exact P.mem_connectedWithinSet_of_walk (qxb.reverse.append qxy) hwalk
 
-
-
-
-theorem PeriodicPlaneEmbedding.unique_halfPlane_outside_subset_boundaryInfinite
+omit [Countable V] in
+/-- With a unique infinite cluster, an infinite cluster in `H_r` and an infinite cluster meeting
+the complement force an infinite restricted cluster at a boundary vertex. -/
+lemma PeriodicPlaneEmbedding.unique_halfPlane_outside_subset_boundaryInfinite
     (E : PeriodicPlaneEmbedding P) (r : Real) (T : Set V)
     (hT : T ⊆ (E.rightHalfPlaneVertices r)ᶜ) :
     {omega : ConfigSpace (Sym2 V) | P.HasUniqueInfiniteCluster omega} ∩
@@ -1906,9 +1979,9 @@ theorem PeriodicPlaneEmbedding.unique_halfPlane_outside_subset_boundaryInfinite
   exact ⟨b, hb,
     P.clusterWithinSet_infinite_of_connectedWithinSet hxRestricted hxb⟩
 
-
-
-
+/-- If `H_r` almost surely contains an infinite cluster and the infinite cluster is almost surely
+unique, then almost surely some boundary vertex of `H_r` has an infinite cluster inside `H_r`
+(translation invariance). -/
 theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -1961,8 +2034,8 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_
     (by norm_num : (1 : ENNReal) ≠ ⊤)).mp
   simpa [Measure.real] using hreal
 
-
-
+/-- Some boundary vertex of `H_r` at height in `[c, d]` has an infinite open cluster inside
+`H_r`. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
     (E : PeriodicPlaneEmbedding P) (r c d : Real) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -1970,7 +2043,7 @@ def PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
     c ≤ E.vertexCoord b 1 ∧ E.vertexCoord b 1 ≤ d ∧
     (P.clusterWithinSet omega (E.rightHalfPlaneVertices r) b).Infinite}
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_measurableSet
+lemma PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_measurableSet
     (E : PeriodicPlaneEmbedding P) (r c d : Real) :
     MeasurableSet (E.rightHalfPlaneBoundaryBandHasInfiniteCluster r c d) := by
   have heq : E.rightHalfPlaneBoundaryBandHasInfiniteCluster r c d =
@@ -1982,7 +2055,7 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_meas
             (E.rightHalfPlaneVertices r) b).Infinite} := by
     ext omega
     simp only [PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster,
-      Set.mem_setOf_eq, Set.mem_iUnion]
+      Set.mem_ofPred_eq, Set.mem_iUnion]
     aesop
   rw [heq]
   exact MeasurableSet.iUnion fun b => MeasurableSet.iUnion fun _hb =>
@@ -1990,9 +2063,8 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_meas
       P.measurableSet_clusterWithinSet_infinite
         (E.rightHalfPlaneVertices r) b
 
-
-
-theorem PeriodicPlaneEmbedding.iUnion_boundaryBandHasInfiniteCluster
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_boundaryBandHasInfiniteCluster
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     (⋃ n : Nat, E.rightHalfPlaneBoundaryBandHasInfiniteCluster
       r (-(n : Real)) n) =
@@ -2003,7 +2075,7 @@ theorem PeriodicPlaneEmbedding.iUnion_boundaryBandHasInfiniteCluster
     obtain ⟨n, b, hb, _hc, _hd, hinfinite⟩ := by
       simpa only [Set.mem_iUnion,
         PeriodicPlaneEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster,
-        Set.mem_setOf_eq] using h
+        Set.mem_ofPred_eq] using h
     exact ⟨b, hb, hinfinite⟩
   · rintro ⟨b, hb, hinfinite⟩
     obtain ⟨n, hn⟩ := exists_nat_ge |E.vertexCoord b 1|
@@ -2012,8 +2084,10 @@ theorem PeriodicPlaneEmbedding.iUnion_boundaryBandHasInfiniteCluster
     · exact (neg_le_of_abs_le hn)
     · exact le_trans (le_abs_self _) hn
 
-
-theorem PeriodicPlaneEmbedding.exists_positive_boundaryBandHasInfiniteCluster
+omit [Countable V] in
+/-- If the boundary event has probability one, some bounded boundary band `|y| ≤ n` is touched by
+an infinite cluster of `H_r` with positive probability. -/
+lemma PeriodicPlaneEmbedding.exists_positive_boundaryBandHasInfiniteCluster
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r : Real)
@@ -2029,13 +2103,14 @@ theorem PeriodicPlaneEmbedding.exists_positive_boundaryBandHasInfiniteCluster
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
+/-! ## I. No dual escape through a primal crosscut -/
+
 namespace PeriodicPlanarDualPair
 
-
-
-
-
-theorem no_open_dual_escape_of_attached_simpleCrosscut
+/-- Planar duality: an open dual walk starting on the left side between the endpoints of a primal
+crosscut attached to that side by paths it avoids cannot exit the rectangle on the right, top
+or bottom. -/
+lemma no_open_dual_escape_of_attached_simpleCrosscut
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {s t : W}
@@ -2121,11 +2196,9 @@ theorem no_open_dual_escape_of_attached_simpleCrosscut
   exact Set.disjoint_left.1 hdisjoint
     ⟨v, rfl⟩ ⟨u, hphysical⟩
 
-
-
-
-
-theorem no_open_dual_escape_of_doublyAttached_simpleCrosscut
+/-- Version of `no_open_dual_escape_of_attached_simpleCrosscut` in which the dual path is
+attached to the left side by a prefix. -/
+lemma no_open_dual_escape_of_doublyAttached_simpleCrosscut
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {s t : W}
@@ -2220,10 +2293,9 @@ theorem no_open_dual_escape_of_doublyAttached_simpleCrosscut
   exact Set.disjoint_left.1 hdisjoint
     ⟨v, rfl⟩ ⟨u, hphysical⟩
 
-
-
-
-theorem no_open_dual_escape_of_doublyAttached_subpaths
+/-- Version of `no_open_dual_escape_of_doublyAttached_simpleCrosscut` for subpaths of the primal
+and dual arcs. -/
+lemma no_open_dual_escape_of_doublyAttached_subpaths
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {s t : W}
@@ -2300,10 +2372,13 @@ theorem no_open_dual_escape_of_doublyAttached_subpaths
   exact Set.disjoint_left.1 hdisjoint
     ⟨v, rfl⟩ ⟨u, hphysical⟩
 
+/-! ## J. Conditional exclusion of the complementary dual cluster -/
 
-
-
-theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion
+/-- Conditional: the dual half-plane `H_rDual` almost surely has no infinite dual cluster,
+assuming FKG, translation invariance, primal and dual uniqueness, dual ergodicity and the
+geometric exclusion hypothesis `hgeom` for ordered joined arms. `hgeom` appears false in
+general (see the module documentation), so this result may be vacuous. -/
+lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2329,7 +2404,7 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_ex
     D.dualMeasure mu
       (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
@@ -2380,11 +2455,10 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_ex
     rw [← hjShape] at hjoined
     linarith
 
-
-
-
-
-theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclusion
+/-- Conditional variant of
+`complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion` with a
+fixed margin between the band and the rays; rests on the same kind of hypothesis `hgeom`. -/
+lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclusion
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2407,7 +2481,7 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclu
     D.dualMeasure mu
       (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
@@ -2448,7 +2522,6 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclu
         (n + margin : Nat) := by
       dsimp only [gap]
       norm_num
-      push_cast
       ring
     have hjdisjoint : Disjoint joined pulled := by
       dsimp only [joined, pulled, band]
@@ -2473,10 +2546,8 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclu
     rw [← hjShape] at hjoined
     linarith
 
-
-
-
-
+/-- Conditional variant with rays at heights `±(n + 1)` and `hgeom` required for all source sets;
+rests on the same kind of hypothesis `hgeom`. -/
 theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_joinedBand_exclusion
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -2503,7 +2574,9 @@ theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_joinedBand_exclusion
 
 end PeriodicPlanarDualPair
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measurableSet
+/-! ## K. Open boundary connections and crossing events -/
+
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     MeasurableSet (E.infiniteOpenBoundaryConnection r S) := by
   classical
@@ -2518,9 +2591,9 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measurableSet
     ext omega
     constructor
     · rintro ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hzOpen, hxb⟩
-      simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+      simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
       exact ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hzOpen, hxb⟩
-    · simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+    · simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
       rintro ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hzOpen, hxb⟩
       exact ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hzOpen, hxb⟩
   rw [heq]
@@ -2534,7 +2607,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measurableSet
                 (P.connectedWithinSet_measurableSet
                   (E.rightHalfPlaneVertices r) x b))
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_isIncreasing
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_isIncreasing
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     IsIncreasing (E.infiniteOpenBoundaryConnection r S) := by
   intro omega eta homega
@@ -2543,9 +2617,10 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_isIncreasing
     b, hb, z, hbz, hz, homega _ hbzOpen,
     P.connectedWithinSet_isIncreasing _ _ _ homega hxb⟩
 
-
-
-theorem PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteOpenBoundaryConnection
+omit [Countable V] in
+/-- With a unique infinite cluster meeting `S ⊆ H_r` and `T ⊆ H_rᶜ`, `S` has an infinite arm to
+`∂H_r` ending at a vertex with an open exit edge. -/
+lemma PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteOpenBoundaryConnection
     (E : PeriodicPlaneEmbedding P) (r : Real) {S T : Set V}
     (hS : S ⊆ E.rightHalfPlaneVertices r)
     (hT : T ⊆ (E.rightHalfPlaneVertices r)ᶜ) :
@@ -2570,9 +2645,9 @@ theorem PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteOpenBoundaryConne
   exact ⟨x, hxS, hxInfinite, b, hbBoundary, z, hbzOpen.1,
     hzOutside, hbzOpen.2, hxb⟩
 
-
-
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_mul
+/-- FKG lower bound for open-exit arms, assuming FKG and almost sure uniqueness. Stronger event
+than `infiniteBoundaryConnection_measureReal_ge_mul` (`HalfPlaneInfiniteArm`). -/
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_mul
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -2603,11 +2678,10 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_mul
     ENNReal.toReal_mono (measure_ne_top mu C) hmeasure
   exact hAB.trans hreal
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_of_openWalk
+omit [Countable V] in
+/-- An open walk from left of `a` to right of `b` within heights `[c, d]` gives a horizontal
+crossing of the rectangle when `a + B < b`. -/
+lemma PeriodicPlaneEmbedding.horizontalCrossingEvent_of_openWalk
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V))
     {B a b c d : Real}
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
@@ -2622,7 +2696,7 @@ theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_of_openWalk
     change E.vertexCoord x 0 ≤ b
     linarith
   have hyB : y ∉ {v : V | E.vertexCoord v 0 ≤ b} := by
-    simpa only [Set.mem_setOf_eq, not_le] using hy
+    simpa only [Set.mem_ofPred_eq, not_le] using hy
   obtain ⟨xr, hxrB, zr, hxrZr, hzrB, right, hrightB,
     hrightSub, _hzrSupport⟩ :=
     P.exists_open_boundary_walk_of_walk_to_compl omega
@@ -2641,7 +2715,7 @@ theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_of_openWalk
     linarith
   have hxrA : xr ∈ {v : V | a ≤ E.vertexCoord v 0} := hxrNear.le
   have hxA : x ∉ {v : V | a ≤ E.vertexCoord v 0} := by
-    simpa only [Set.mem_setOf_eq, not_le] using hx
+    simpa only [Set.mem_ofPred_eq, not_le] using hx
   obtain ⟨xl, hxlA, zl, hxlZl, hzlA, middleRev, hmiddleA,
     hmiddleSub, _hzlSupport⟩ :=
     P.exists_open_boundary_walk_of_walk_to_compl omega
@@ -2674,9 +2748,10 @@ theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_of_openWalk
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
-
-
-theorem PeriodicPlaneEmbedding.verticalCrossingEvent_of_openWalk
+omit [Countable V] in
+/-- An open walk from below `c` to above `d` within abscissae `[a, b]` gives a vertical crossing
+of the rectangle when `c + B < d`. -/
+lemma PeriodicPlaneEmbedding.verticalCrossingEvent_of_openWalk
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V))
     {B a b c d : Real}
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
@@ -2691,7 +2766,7 @@ theorem PeriodicPlaneEmbedding.verticalCrossingEvent_of_openWalk
     change E.vertexCoord x 1 ≤ d
     linarith
   have hyD : y ∉ {v : V | E.vertexCoord v 1 ≤ d} := by
-    simpa only [Set.mem_setOf_eq, not_le] using hy
+    simpa only [Set.mem_ofPred_eq, not_le] using hy
   obtain ⟨xt, hxtD, zt, hxtZt, hztD, top, htopD,
     htopSub, _hztSupport⟩ :=
     P.exists_open_boundary_walk_of_walk_to_compl omega
@@ -2710,7 +2785,7 @@ theorem PeriodicPlaneEmbedding.verticalCrossingEvent_of_openWalk
     linarith
   have hxtC : xt ∈ {v : V | c ≤ E.vertexCoord v 1} := hxtNear.le
   have hxC : x ∉ {v : V | c ≤ E.vertexCoord v 1} := by
-    simpa only [Set.mem_setOf_eq, not_le] using hx
+    simpa only [Set.mem_ofPred_eq, not_le] using hx
   obtain ⟨xb, hxbC, zb, hxbZb, hzbC, middleRev, hmiddleC,
     hmiddleSub, _hzbSupport⟩ :=
     P.exists_open_boundary_walk_of_walk_to_compl omega
@@ -2744,10 +2819,12 @@ theorem PeriodicPlaneEmbedding.verticalCrossingEvent_of_openWalk
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
+/-! ## L. Three crossings cage the dual half-plane cluster -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_open_rectExit_of_clusterWithinSet_infinite
+omit [Countable V] in
+/-- An infinite restricted cluster starting in a rectangle has an open edge leaving the
+rectangle, reached inside the rectangle. -/
+lemma PeriodicPlaneEmbedding.exists_open_rectExit_of_clusterWithinSet_infinite
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V))
     (A : Set V) {a b c d : Real} {x : V}
     (hxRect : x ∈ E.rectVertices a b c d)
@@ -2769,11 +2846,10 @@ theorem PeriodicPlaneEmbedding.exists_open_rectExit_of_clusterWithinSet_infinite
   intro u hu
   exact ⟨hpA u (hqSub u hu), hqRect u hu⟩
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_open_exposedRectExit_of_rightHalfPlane_cluster
+omit [Countable V] in
+/-- An infinite cluster of `H_r` starting in the rectangle `[r, b] × [c, d]` leaves it through
+the right, bottom or top side. -/
+lemma PeriodicPlaneEmbedding.exists_open_exposedRectExit_of_rightHalfPlane_cluster
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V))
     {r b c d : Real} {x : V}
     (hxRect : x ∈ E.rectVertices r b c d)
@@ -2807,11 +2883,8 @@ variable {W : Type*} [DecidableEq W] [Countable W]
 
 namespace PeriodicPlanarDualPair
 
-
-
-
-
-
+/-- Three open primal crossings (one vertical on the right, two horizontal below and above)
+around a dual vertex make its dual cluster inside `H_r` finite. -/
 theorem not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
@@ -2898,7 +2971,7 @@ theorem not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossi
           (r - 5 * B + 4 * B) (R + 5 * B - 4 * B) C Tbottom := by
       change eta ∈ D.dualEmbedding.verticalCrossingEvent
         (r - 5 * B + 4 * B) (R + 5 * B - 4 * B) C Tbottom
-      convert hdualCrossing using 1 <;> ring_nf
+      convert hdualCrossing using 1; ring_nf
     exact Set.disjoint_left.mp hdisjoint hBottomCrossing hdualMem
   by_cases hzTop : D0 < D.dualEmbedding.vertexCoord z 1
   · have hdualCrossing : eta ∈
@@ -2914,7 +2987,7 @@ theorem not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossi
           (r - 5 * B + 4 * B) (R + 5 * B - 4 * B) Ttop D0 := by
       change eta ∈ D.dualEmbedding.verticalCrossingEvent
         (r - 5 * B + 4 * B) (R + 5 * B - 4 * B) Ttop D0
-      convert hdualCrossing using 1 <;> ring_nf
+      convert hdualCrossing using 1; ring_nf
     exact Set.disjoint_left.mp hdisjoint hTopCrossing hdualMem
   have hzRight : R < D.dualEmbedding.vertexCoord z 0 := by
     rcases hzSide with hzRight | hzBottom' | hzTop'
@@ -2950,7 +3023,7 @@ theorem not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossi
         (C - 4 * B + 4 * B) (D0 + 4 * B - 4 * B) := by
     change eta ∈ D.dualEmbedding.horizontalCrossingEvent A R
       (C - 4 * B + 4 * B) (D0 + 4 * B - 4 * B)
-    convert hdualCrossing using 1 <;> ring_nf
+    convert hdualCrossing using 1; ring_nf
   exact Set.disjoint_left.mp hdisjoint hRightCrossing hdualMem
 
 end PeriodicPlanarDualPair

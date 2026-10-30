@@ -6,29 +6,79 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryBandAssembly
 
+/-!
+# Crossings of rectangles at adjacent heights and outward padding
+
+Preference scores on the boundary of a grid of translated templates force, in the limit, a
+crossing of a rectangle or of its translate raised by one step (adjacent heights), or of the
+rectangle enlarged outward by a padding.
+
+## i. Overview
+
+The file starts with bookkeeping: the axis swap exchanges bottom/top boundaries with left/right
+boundaries; any dual pair of periodic plane drawings has one natural number `B > 0` bounding all
+edge-arc displacements; and `sheffieldMacroArrayCoordinates` lays out a vertical array of
+rectangles of increasing height (step `T`) that grow outward by `4B` at each level.
+
+The probabilistic part extends the preferred-side transfer of `RectanglePreference` in two ways.
+Adjacent heights: if `L` reaches the bottom of `[a, b] × [c, d]` and the translate `U` of `R`
+by `t` reaches the top of the rectangle raised by `t`, and the two are merged, then
+`[a, b] × [c, d + t]` is crossed vertically; with an approximate preference of `R` for the top
+side (error `ε`), this gives `A (H A - M_transfer - ε) - M_join ≤ μ(vertical crossing)`.
+Outward padding: the same with the sources shifted down and up by `pad`, giving a vertical
+crossing of `[a, b] × [c - pad, d + pad]` (and horizontally of `[a - pad, b + pad] × [c, d]`).
+A discrete argument on the boundary of a preference grid (`PreferenceGridVertex`) finds a site
+and king neighbours at which one of the two transfer bounds applies. With a uniform radius (merge
+errors tend to zero under uniqueness), the larger of the two crossing probabilities tends to one.
+
+`macroArray_contradiction_of_crossing_limits` closes the argument for the macro array: primal
+start/end crossing limits, adjacent-height limits and dual limits on every rectangle of the array
+are incompatible (it reduces to
+`PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_max_limits`).
+
+Headline fidelity: the crossing-limit results are proved conditionally on FKG, translation
+invariance, almost sure uniqueness of the infinite cluster, a template hitting the infinite
+cluster with probability tending to one, and the boundary preference inequalities (or boundary
+score lower bounds `p n → 1`) given as hypotheses. `macroArray_contradiction_of_crossing_limits`
+concludes `False` from its limit hypotheses (it states that they are jointly impossible). The
+bookkeeping results are unconditional.
+
+## ii. Key results
+
+- `PeriodicPlanarDualPair.exists_common_nat_edgeArc_displacement_bound`
+- `PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer`
+- `PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_transfer`
+- `PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_crossing_max_tendsto_one`
+- `PeriodicPlaneEmbedding.`
+  `exists_uniformTemplate_adjacentHeightBoundaryScores_crossing_max_tendsto_one`
+- `PeriodicPlanarDualPair.macroArray_contradiction_of_crossing_limits`
+
+## iii. Table of contents
+
+- A. Axis swap of boundary sets
+- B. A common edge-arc bound and the macro array
+- C. Crossings at adjacent heights
+- D. Outward padding and its crossing limits
+- E. Adjacent-height crossing limits
+- F. The macro-array contradiction
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 3 (FKG inequality).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
@@ -36,7 +86,12 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
-theorem PeriodicPlaneEmbedding.axisSwap_bottomBoundaryVertices
+/-! ## A. Axis swap of boundary sets -/
+
+omit [Countable V] in
+/-- After swapping the two axes, the bottom boundary of `[a, b] × [c, d]` is the left boundary of
+`[c, d] × [a, b]`. -/
+lemma PeriodicPlaneEmbedding.axisSwap_bottomBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) :
     E.axisSwap.rectBottomBoundaryVertices a b c d =
       E.rectLeftBoundaryVertices c d a b := by
@@ -47,7 +102,10 @@ theorem PeriodicPlaneEmbedding.axisSwap_bottomBoundaryVertices
   · rintro ⟨hx, y, hxy, hy⟩
     exact ⟨by simpa only [E.axisSwap_rectVertices] using hx, y, hxy, hy⟩
 
-theorem PeriodicPlaneEmbedding.axisSwap_topBoundaryVertices
+omit [Countable V] in
+/-- After swapping the two axes, the top boundary of `[a, b] × [c, d]` is the right boundary of `[c,
+d] × [a, b]`. -/
+lemma PeriodicPlaneEmbedding.axisSwap_topBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) :
     E.axisSwap.rectTopBoundaryVertices a b c d =
       E.rectRightBoundaryVertices c d a b := by
@@ -58,7 +116,10 @@ theorem PeriodicPlaneEmbedding.axisSwap_topBoundaryVertices
   · rintro ⟨hx, y, hxy, hy⟩
     exact ⟨by simpa only [E.axisSwap_rectVertices] using hx, y, hxy, hy⟩
 
-theorem PeriodicPlaneEmbedding.axisSwap_bottomBoundaryEvent
+omit [Countable V] in
+/-- After swapping the axes, bottom-side connection events become left-side connection events of the
+swapped rectangle. -/
+lemma PeriodicPlaneEmbedding.axisSwap_bottomBoundaryEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) (S : Set V) :
     E.axisSwap.rectSideConnectionEvent a b c d S
         (E.axisSwap.rectBottomBoundaryVertices a b c d) =
@@ -70,7 +131,10 @@ theorem PeriodicPlaneEmbedding.axisSwap_bottomBoundaryEvent
   rw [E.axisSwap_rectVertices, E.axisSwap_bottomBoundaryVertices]
   rfl
 
-theorem PeriodicPlaneEmbedding.axisSwap_topBoundaryEvent
+omit [Countable V] in
+/-- After swapping the axes, top-side connection events become right-side connection events of the
+swapped rectangle. -/
+lemma PeriodicPlaneEmbedding.axisSwap_topBoundaryEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) (S : Set V) :
     E.axisSwap.rectSideConnectionEvent a b c d S
         (E.axisSwap.rectTopBoundaryVertices a b c d) =
@@ -82,9 +146,11 @@ theorem PeriodicPlaneEmbedding.axisSwap_topBoundaryEvent
   rw [E.axisSwap_rectVertices, E.axisSwap_topBoundaryVertices]
   rfl
 
+/-! ## B. A common edge-arc bound and the macro array -/
 
-
-theorem PeriodicPlanarDualPair.exists_common_nat_edgeArc_displacement_bound
+/-- A dual pair of periodic plane drawings has a common bound `B : ℕ`, `B > 0`, on the coordinate
+displacement of every primal and every dual edge arc from its starting vertex. -/
+lemma PeriodicPlanarDualPair.exists_common_nat_edgeArc_displacement_bound
     (D : PeriodicPlanarDualPair P Pdual) :
     ∃ B : Nat, 0 < B ∧
       (∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -110,16 +176,16 @@ theorem PeriodicPlanarDualPair.exists_common_nat_edgeArc_displacement_bound
   · intro x y hxy t i
     exact (hRd hxy t i).trans hBR.le
 
-
+/-- The height increment `8B + 1` of the macro array, slightly more than eight edge-arc lengths. -/
 def sheffieldMacroIncrement (B : Nat) : Nat := 8 * B + 1
 
-theorem sheffieldMacroIncrement_gt_eight_mul (B : Nat) :
+/-- The macro increment exceeds `8B`. -/
+lemma sheffieldMacroIncrement_gt_eight_mul (B : Nat) :
     (8 : Real) * B < sheffieldMacroIncrement B := by
   simp [sheffieldMacroIncrement]
 
-
-
-
+/-- Coordinates `(a, b, c, d)` of the `k`-th rectangle of the `n`-th macro array: the base rectangle
+widened by `4Bk` on each side, raised by `4Bk` at the bottom and by `Tk` at the top. -/
 def sheffieldMacroArrayCoordinates (B T : Nat)
     (a0 b0 c0 d0 : Nat → Real) (n k : Nat) : Real × Real × Real × Real :=
   (a0 n - 4 * B * k,
@@ -127,10 +193,9 @@ def sheffieldMacroArrayCoordinates (B T : Nat)
     c0 n + 4 * B * k,
     d0 n + T * k)
 
-
-
-
-theorem sheffieldMacroArrayCoordinates_adjacent
+/-- Consecutive macro-array rectangles differ by `4B` in the horizontal bounds and the bottom, and
+by `T` in the top. -/
+lemma sheffieldMacroArrayCoordinates_adjacent
     (B T : Nat) (a0 b0 c0 d0 : Nat → Real) (n k : Nat) :
     let q := sheffieldMacroArrayCoordinates B T a0 b0 c0 d0
     (q n (k + 1)).1 + 4 * B = (q n k).1 ∧
@@ -146,9 +211,9 @@ theorem sheffieldMacroArrayCoordinates_adjacent
   · ring
   constructor <;> ring
 
-
-
-theorem sheffieldMacroArrayCoordinates_spans
+/-- If the base rectangles are wider and taller than `10B` and `T > 8B`, every macro-array rectangle
+is wider and taller than `10B`. -/
+lemma sheffieldMacroArrayCoordinates_spans
     (B T : Nat) (hT : 8 * B < T)
     (a0 b0 c0 d0 : Nat → Real)
     (hspanX0 : ∀ n, a0 n + 5 * B < b0 n - 5 * B)
@@ -162,18 +227,18 @@ theorem sheffieldMacroArrayCoordinates_spans
     have h := hspanX0 n
     have hk : (0 : Real) ≤ k := by positivity
     have hBk : (0 : Real) ≤ (B : Real) * k := mul_nonneg (by positivity) hk
-    push_cast at h ⊢
     nlinarith
   · intro n k
     have h := hspanY0 n
     have hTR : (8 : Real) * B < T := by exact_mod_cast hT
     have hk : (0 : Real) ≤ k := by positivity
-    push_cast
     nlinarith [mul_nonneg (show (0 : Real) ≤ (T : Real) - 4 * B by
       linarith) hk]
 
+/-! ## C. Crossings at adjacent heights -/
 
-
+/-- `L` reaches the bottom of `[a, b] × [c, d]`, `U` reaches the top of the rectangle raised by `t`,
+and `L` and `U` are merged inside `[a, b] × [c, d + t]`. -/
 def PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) (t : Int)
     (L U : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -183,7 +248,8 @@ def PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent
       (E.rectTopBoundaryVertices a b (c + t) (d + t))) \
     E.rectanglePairMergeErrorUnion a b c (d + t) L U
 
-theorem PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_measurableSet
+/-- The adjacent-height joined event is measurable. -/
+lemma PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) (t : Int)
     (L U : Finset V) :
     MeasurableSet
@@ -194,8 +260,10 @@ theorem PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_measurabl
       (U : Set V) (E.rectTopBoundaryVertices a b (c + t) (d + t)))).diff
     (E.rectanglePairMergeErrorUnion_measurableSet a b c (d + t) L U)
 
-
-theorem PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_subset_verticalCrossing
+omit [Countable V] in
+/-- For `t ≥ 0`, the adjacent-height joined event implies a vertical crossing of `[a, b] × [c, d +
+t]`. -/
+lemma PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_subset_verticalCrossing
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) (t : Int)
     (ht : 0 ≤ t) (L U : Finset V) :
     E.finiteAdjacentHeightJoinedVerticalEvent a b c d t L U ⊆
@@ -250,8 +318,9 @@ theorem PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_subset_ve
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
-
-theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_side_mul_sub_mergeError
+/-- FKG bound at adjacent heights: `μ(L → bottom) μ(U → top of raised rectangle) - μ(merge error) ≤
+μ(vertical crossing of [a, b] × [c, d + t])`. -/
+lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_side_mul_sub_mergeError
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (t : Int) (ht : 0 ≤ t)
@@ -278,7 +347,7 @@ theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_sid
       (E.rectSideConnectionEvent_isIncreasing a b (c + t) (d + t)
         (U : Set V) (E.rectTopBoundaryVertices a b (c + t) (d + t)))
   have hdiff : mu.real (A ∩ T) - mu.real M ≤
-      mu.real ((A ∩ T) \ M) := le_measureReal_diff
+      mu.real ((A ∩ T) \ M) := le_measureReal_sdiff
   have hjoined : mu.real ((A ∩ T) \ M) ≤
       mu.real (E.verticalCrossingEvent a b c (d + t)) :=
     measureReal_mono
@@ -287,11 +356,10 @@ theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_sid
   dsimp only [A, T, M] at hinter hdiff hjoined ⊢
   linarith
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer
+/-- Approximate preferred-side transfer at adjacent heights: if `R` prefers the top side up to `ε`,
+then `A (H A - M_transfer - ε) - M_join ≤ μ(vertical crossing of [a, b] × [c, d + t])`, where `U` is
+`R` raised by `t`. -/
+lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -349,11 +417,12 @@ theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferred
   dsimp only [U] at hcross ⊢
   nlinarith
 
+/-! ## D. Outward padding and its crossing limits -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_transfer
+/-- Approximate preferred-side transfer with outward padding: the bound of
+`adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer` for the vertical crossing of `[a,
+b] × [c - pad, d + pad]`, using sources shifted down and up by `pad`. -/
+lemma PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -425,13 +494,13 @@ theorem PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_tr
       rw [← P.shift_add]
       congr 2
       ext i
-      fin_cases i <;> simp [verticalShift] <;> omega
+      fin_cases i <;> simp [verticalShift]; omega
     · rintro ⟨u, hu, rfl⟩
       refine ⟨P.shift (verticalShift (-pad)) u, ⟨u, hu, rfl⟩, ?_⟩
       rw [← P.shift_add]
       congr 2
       ext i
-      fin_cases i <;> simp [verticalShift] <;> omega
+      fin_cases i <;> simp [verticalShift]; omega
   have hraw :=
     E.adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer
       mu hFKG hTI a b (c - pad) (d - pad) (2 * pad)
@@ -448,8 +517,9 @@ theorem PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_tr
   simp only [Ldown, Rdown, Rup] at hraw
   convert hraw using 1 <;> push_cast <;> ring
 
-
-theorem PeriodicPlaneEmbedding.outwardHorizontalCrossing_ge_approxPreferredSide_transfer
+/-- Horizontal version of `outwardVerticalCrossing_ge_approxPreferredSide_transfer`, for `[a - pad,
+b + pad] × [c, d]`. -/
+lemma PeriodicPlaneEmbedding.outwardHorizontalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -516,9 +586,11 @@ theorem PeriodicPlaneEmbedding.outwardHorizontalCrossing_ge_approxPreferredSide_
         c d (a - pad) (b + pad))
   exact haxis.trans hcross
 
-
-
-theorem PeriodicPlaneEmbedding.exists_outward_approxPreferredSide_crossing_branch
+/-- On a preference grid whose boundary scores prefer the outer sides up to `ε`, some site and king
+neighbours satisfy the fourth-root bound and one of the two outward transfer bounds. See also
+`PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_branch` (stronger: two
+rectangles). -/
+lemma PeriodicPlaneEmbedding.exists_outward_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -628,9 +700,12 @@ theorem PeriodicPlaneEmbedding.exists_outward_approxPreferredSide_crossing_branc
     rw [← hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-set_option linter.unusedVariables false in
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one
+/-- Under FKG, translation invariance and uniqueness, a uniform radius makes the larger of the
+padded vertical and horizontal crossing probabilities tend to one, for all preference grids of
+translated templates with approximate boundary preferences. See also
+`PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one`
+(stronger: two rectangles, branch selection). -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -641,7 +716,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
     (pad : Nat → Int) (hpad : ∀ n, 0 ≤ pad n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n)
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n)
       (base : Nat → Site 2) (a b c d epsilon : Nat → Real)
       (bottom top left right : (n : Nat) →
         PreferenceGridVertex (width n) (height n) → Real),
@@ -828,7 +903,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
       base n + preferenceGridSite (xVertical n) + verticalShift (pad n) := by
       rw [hzV]
       ext i
-      fin_cases i <;> simp [verticalShift] <;> omega
+      fin_cases i <;> simp [verticalShift]; omega
     rw [hs]
     exact (htranslatedSource n (xVertical n) (verticalShift (pad n))).symm
   have hLleft (n : Nat) :
@@ -854,7 +929,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
       base n + preferenceGridSite (xHorizontal n) + horizontalShift (pad n) := by
       rw [hzH]
       ext i
-      fin_cases i <;> simp [horizontalShift] <;> omega
+      fin_cases i <;> simp [horizontalShift]; omega
     rw [hs]
     exact (htranslatedSource n (xHorizontal n)
       (horizontalShift (pad n))).symm
@@ -938,10 +1013,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
         Mv0, Mv1, Mh0, Mh1, hv] using ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n ≤ 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, ite_eq_left hv]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, ite_eq_right hv]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :
@@ -955,7 +1030,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
         exact measureReal_nonneg
       have hM0 : 0 ≤ Mv0 n := measureReal_nonneg
       have hM1 : 0 ≤ Mv1 n := measureReal_nonneg
-      simp only [A, if_pos hv, Hv, Cv, Mv] at ⊢
+      simp only [A, ite_eq_left hv, Hv, Cv, Mv] at ⊢
       nlinarith
     · right
       have hraw := ((hbranch n).resolve_left hv).2
@@ -970,7 +1045,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
             Ch n := by
         simpa [Hh, Ch, source, Ldown, Rdown, Rup, Lleft, Rleft, Rright,
           Mv0, Mv1, Mh0, Mh1] using hraw
-      simp only [A, if_neg hv, Hh, Ch, Mh]
+      simp only [A, ite_eq_right hv, Hh, Ch, Mh]
       nlinarith [hraw']
   simpa [Cv, Ch] using
     crossing_max_tendsto_one_of_approxPreferredSide_root_branches
@@ -978,9 +1053,9 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing
       hHv hHh hMv hMh hepsilon hcrossingBranch
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
-set_option linter.unusedVariables false in
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_crossing_max_tendsto_one
+/-- Variant of `exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one` with boundary
+side-connection scores bounded below by `p n → 1` instead of preference inequalities. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -991,7 +1066,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_cros
     (pad : Nat → Int) (hpad : ∀ n, 0 ≤ pad n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n)
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n)
       (base : Nat → Site 2) (a b c d p : Nat → Real),
       Tendsto p atTop (nhds 1) → (∀ n, p n ≤ 1) →
       (∀ n (v : PreferenceGridVertex (width n) (height n)),
@@ -1114,10 +1189,14 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_cros
     dsimp only [left, right, epsilon]
     linarith
 
+/-! ## E. Adjacent-height crossing limits -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_adjacentHeight_approxPreferredSide_crossing_branch
+/-- On a preference grid with approximate boundary preferences, some site and king neighbours
+satisfy the fourth-root bound and either the adjacent-height vertical transfer bound or the
+horizontal transfer bound. See also
+`PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_crossing_branch` (stronger:
+two rectangles). -/
+lemma PeriodicPlaneEmbedding.exists_adjacentHeight_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1215,11 +1294,11 @@ theorem PeriodicPlaneEmbedding.exists_adjacentHeight_approxPreferredSide_crossin
     rw [← hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-set_option linter.unusedVariables false in
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_crossing_max_tendsto_one
+/-- Under FKG, translation invariance and uniqueness, a uniform radius makes `max (horizontal
+crossing of [a, b] × [c, d]) (vertical crossing of [a, b] × [c, d + step])` tend to one for
+preference grids of translated templates. -/
+lemma
+PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1230,7 +1309,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_c
     (step : Nat → Int) (hstep : ∀ n, 0 ≤ step n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n)
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n)
       (base : Nat → Site 2) (a b c d epsilon : Nat → Real)
       (bottom top left right : (n : Nat) →
         PreferenceGridVertex (width n) (height n) → Real),
@@ -1429,10 +1508,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_c
         ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n ≤ 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, ite_eq_left hv]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, ite_eq_right hv]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :
@@ -1446,7 +1525,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_c
         exact measureReal_nonneg
       have hM0 : 0 ≤ Mv0 n := measureReal_nonneg
       have hM1 : 0 ≤ Mv1 n := measureReal_nonneg
-      simp only [A, if_pos hv, Hv, Cv, Mv] at ⊢
+      simp only [A, ite_eq_left hv, Hv, Cv, Mv] at ⊢
       nlinarith
     · right
       have h := (hbranch n).resolve_left hv
@@ -1458,9 +1537,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_c
       hHv hHh hMv hMh hepsilon hcrossingBranch
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
-set_option linter.unusedVariables false in
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightBoundaryScores_crossing_max_tendsto_one
+/-- Variant of `exists_uniformTemplate_adjacentHeightPreference_crossing_max_tendsto_one` with
+boundary scores bounded below by `p n → 1`. -/
+lemma
+PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1471,7 +1551,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightBoundaryScor
     (step : Nat → Int) (hstep : ∀ n, 0 ≤ step n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n)
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n)
       (base : Nat → Site 2) (a b c d p : Nat → Real),
       Tendsto p atTop (nhds 1) → (∀ n, p n ≤ 1) →
       (∀ n (v : PreferenceGridVertex (width n) (height n)),
@@ -1571,10 +1651,12 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightBoundaryScor
     dsimp only [left, right, epsilon]
     linarith
 
+/-! ## F. The macro-array contradiction -/
 
-
-
-theorem PeriodicPlanarDualPair.macroArray_contradiction_of_crossing_limits
+/-- For the macro array of rectangles, a primal vertical start crossing and horizontal end crossing
+tending to one, adjacent-height primal limits along the array and dual crossing limits on every
+rectangle are incompatible. -/
+lemma PeriodicPlanarDualPair.macroArray_contradiction_of_crossing_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B T : Nat) (hBpos : 0 < B) (hT : 8 * B < T)

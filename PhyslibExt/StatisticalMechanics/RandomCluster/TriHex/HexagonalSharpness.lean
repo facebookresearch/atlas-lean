@@ -6,22 +6,70 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FiniteGraphBoundaryDifferential
 public import CSLibExt.Complexity.BooleanFunctions.DecisionTreeReindex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.CoarseGeometry
 
+/-!
+# OSSS differential inequality for the wired FK model in hexagonal-lattice boxes
+
+Finite boxes of the hexagonal (honeycomb) lattice with wired boundary, the box-crossing
+probabilities of the random-cluster measure, and the OSSS-type differential inequality for them.
+
+## i. Overview
+
+`hexagonalBoxGraph n` is the hexagonal lattice restricted to the vertices `(z, b)` with `z` in the
+box of radius `n` (`b` the color), and `hexagonalBoxBoundaryGraph n` wires its outer shell into a
+clique. The measure is the finite FK measure `FK.activeBCProb` with this wiring, cluster weight `q`
+and edge parameter `1 - e^{-β}` (`FK.betaParams`). Two observables are studied:
+- `hexagonalBoxCrossMass n q β`, the probability that the origin is connected to the boundary
+  of the box of radius `n` (wired at radius `n`);
+- `hexagonalOuterInnerTheta q β n`, the probability that the origin is connected to the shell
+  of radius `n` under the measure wired at radius `2n`.
+Both are increasing events, the shell-crossing event is monotone in the shell radius
+(`hexagonalBox_reachOpen_crosses`), and the measure satisfies the FKG lattice condition for
+`q ≥ 1`. Feeding these inputs to the generic OSSS covariance bound
+(`FiniteGraphBoundaryDifferential`) and the Russo-type derivative formula gives:
+- `hexagonal_outer_inner_differential_logistic`: `θ (1 - θ) / Δ ≤ dθ/dβ` with
+  `Δ = 2 (1 + max_x Σ_{k ≤ n} φ(x ↔ ∂Λ_k)) / n`;
+- `hexagonalBox_differential_inequality`: `c θ / Δ ≤ dθ/dβ` for some `c > 0`.
+
+Fidelity: both are unconditional for `n ≥ 1`, `q ≥ 1`, `0 < β` (and `β ≤ β₀`). They discharge
+the OSSS inputs (monotone increasing event, FKG, decision-tree revealment bound through the
+shell sums) for this finite-volume wired measure. In `hexagonalBox_differential_inequality` the
+constant `c` is existentially quantified after `n`, so the statement alone does not give an
+`n`-uniform constant (the proof uses `c = c_R ∏_{e ∋ 0} e^{-β₀}`); the uniform version with
+`Σ_n` is `hexagonal_outer_inner_differential_uniform` in `HexagonalSharpnessOffCentre`.
+
+## ii. Key results
+
+- `hexagonalBox_reachOpen_crosses` : crossing to a far shell implies crossing every nearer
+  shell. Unconditional.
+- `hexagonal_outer_inner_differential_logistic` : OSSS differential inequality for the
+  outer-wired inner crossing probability. Unconditional (`q ≥ 1`, `β > 0`).
+- `hexagonalBox_differential_inequality` : OSSS differential inequality for the box crossing
+  probability, with a non-uniform constant. Unconditional (`q ≥ 1`, `0 < β ≤ β₀`).
+
+## iii. Table of contents
+
+- A. Hexagonal boxes and their edges
+- B. Shell crossings
+- C. Wired crossing probabilities
+- D. Covariance bounds and the differential inequality
+
+## iv. References
+
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+- R. O'Donnell, M. Saks, O. Schramm and R. Servedio, *Every decision tree has an influential
+  variable*, FOCS 2005.
+-/
+
 @[expose] public section
 
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set Filter Topology MeasureTheory SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
@@ -30,41 +78,53 @@ open StatMech.Lattice
 open StatMech.OSSS RevealmentConstruction LindebergTree DecisionTree
 open StatMech.OSSS.FiniteGraphBoundaryDifferential
 
+/-! ## A. Hexagonal boxes and their edges -/
+
+/-- The vertices `(z, b)` of the hexagonal lattice with `z` in the box of radius `n`. -/
 abbrev HexagonalBoxVertex (n : Nat) :=
   ↑((box 2 n) ×ˢ (Set.univ : Set Bool))
 
+/-- The box vertices form a finite type. -/
 noncomputable instance (n : Nat) : Fintype (HexagonalBoxVertex n) :=
   ((box_finite 2 n).prod Set.finite_univ).fintype
 
+/-- The inclusion of box vertices into the hexagonal lattice. -/
 def hexagonalBoxEmbedding (n : Nat) : HexagonalBoxVertex n → HexVertex :=
   Subtype.val
 
+/-- The hexagonal lattice restricted to the box of radius `n`. -/
 def hexagonalBoxGraph (n : Nat) : SimpleGraph (HexagonalBoxVertex n) :=
   SimpleGraph.comap (hexagonalBoxEmbedding n) hexagonalGraph
 
+/-- Classical decidability of adjacency in the hexagonal box graph. -/
 noncomputable instance (n : Nat) : DecidableRel (hexagonalBoxGraph n).Adj :=
   Classical.decRel _
 
+/-- The black vertex `(0, false)` at the origin, as a vertex of the box. -/
 def hexagonalBoxRoot (n : Nat) : HexagonalBoxVertex n :=
   ⟨(0, false), by simp⟩
 
+open scoped Classical in
+/-- The vertices of the box on the sup-norm sphere of radius `k`. -/
 noncomputable def hexagonalBoxShell (n k : Nat) : Finset (HexagonalBoxVertex n) :=
   Finset.univ.filter fun x => (x.1.1 : Site 2) ∈ vertexBoundary 2 k
 
+/-- The first endpoint of a box edge (a chosen representative of the unordered pair). -/
 noncomputable def hexagonalBoxEndU (n : Nat) :
     (hexagonalBoxGraph n).edgeSet → HexagonalBoxVertex n :=
   fun e => e.1.out.1
 
+/-- The second endpoint of a box edge. -/
 noncomputable def hexagonalBoxEndV (n : Nat) :
     (hexagonalBoxGraph n).edgeSet → HexagonalBoxVertex n :=
   fun e => e.1.out.2
 
-@[simp] theorem hexagonalBox_end_coherent
+@[simp] lemma hexagonalBox_end_coherent
     (n : Nat) (e : (hexagonalBoxGraph n).edgeSet) :
     e.1 = s(hexagonalBoxEndU n e, hexagonalBoxEndV n e) := by
   exact e.1.out_eq.symm
 
-theorem hexagonalBox_end_adj
+lemma hexagonalBox_end_adj
     (n : Nat) (e : (hexagonalBoxGraph n).edgeSet) :
     (hexagonalBoxGraph n).Adj
       (hexagonalBoxEndU n e) (hexagonalBoxEndV n e) := by
@@ -75,11 +135,12 @@ theorem hexagonalBox_end_adj
     exact e.2
   exact he
 
-
+/-- The inclusion of the box of radius `n` into the box of radius `m ≥ n`. -/
 def hexagonalBoxVertInclLE {n m : Nat} (h : n ≤ m) :
     HexagonalBoxVertex n → HexagonalBoxVertex m :=
   fun x => ⟨x.1, ⟨box_mono 2 h x.2.1, Set.mem_univ _⟩⟩
 
+/-- The inclusion of edges of the box of radius `n` into the box of radius `m ≥ n`. -/
 def hexagonalBoxEdgeLE {n m : Nat} (h : n ≤ m) :
     (hexagonalBoxGraph n).edgeSet → (hexagonalBoxGraph m).edgeSet := fun e =>
   ⟨Sym2.map (hexagonalBoxVertInclLE h) e.1, by
@@ -101,7 +162,7 @@ def hexagonalBoxEdgeLE {n m : Nat} (h : n ≤ m) :
     simpa [hexagonalBoxGraph, hexagonalBoxEmbedding,
       hexagonalBoxVertInclLE, boxVertInclLE] using he⟩
 
-theorem hexagonalBoxEdgeLE_injective {n m : Nat} (h : n ≤ m) :
+lemma hexagonalBoxEdgeLE_injective {n m : Nat} (h : n ≤ m) :
     Function.Injective (hexagonalBoxEdgeLE h) := by
   intro e f hef
   apply Subtype.ext
@@ -114,7 +175,9 @@ theorem hexagonalBoxEdgeLE_injective {n m : Nat} (h : n ≤ m) :
     exact congrArg (fun z : HexagonalBoxVertex m => (z : HexVertex)) hxy
   exact (Sym2.map.injective hinj) hv
 
-theorem hexagonal_adj_mem_box_succ
+/-! ## B. Shell crossings -/
+
+lemma hexagonal_adj_mem_box_succ
     {k : Nat} {x y : HexVertex} (hx : x.1 ∈ box 2 k)
     (hxy : hexagonalGraph.Adj x y) :
     y.1 ∈ box 2 (k + 1) := by
@@ -129,13 +192,14 @@ theorem hexagonal_adj_mem_box_succ
     fin_cases i <;> fin_cases j <;>
       simp [hexagonalStep, funext_iff] at h hj ⊢ <;> omega
 
-theorem hexagonal_adj_mem_box_of_mem_pred
+lemma hexagonal_adj_mem_box_of_mem_pred
     {k : Nat} (hk : 1 ≤ k) {x y : HexVertex}
     (hx : x.1 ∈ box 2 (k - 1)) (hxy : hexagonalGraph.Adj x y) :
     y.1 ∈ box 2 k := by
   simpa [Nat.sub_add_cancel hk] using hexagonal_adj_mem_box_succ hx hxy
 
-theorem hexagonalBox_reachOpen_crosses
+open scoped Classical in
+lemma hexagonalBox_reachOpen_crosses
     {n k m : Nat} (hk : 1 ≤ k) (hkm : k ≤ m)
     (omega : ConfigSpace (hexagonalBoxGraph n).edgeSet)
     (h : ConnOpenSet (hexagonalBoxEndU n) (hexagonalBoxEndV n) omega
@@ -175,7 +239,7 @@ theorem hexagonalBox_reachOpen_crosses
             ReachOpen.step e hopen hpair (ReachOpen.refl y)⟩
   exact hfirst hreach hroot hbOuter
 
-theorem hexagonalBoxGraph_edgeSet_nonempty (n : Nat) (hn : 1 ≤ n) :
+lemma hexagonalBoxGraph_edgeSet_nonempty (n : Nat) (hn : 1 ≤ n) :
     Nonempty (hexagonalBoxGraph n).edgeSet := by
   let x : HexagonalBoxVertex n := hexagonalBoxRoot n
   let yFull := hexagonalNeighbor (hexagonalBoxEmbedding n x) 0
@@ -184,17 +248,24 @@ theorem hexagonalBoxGraph_edgeSet_nonempty (n : Nat) (hn : 1 ≤ n) :
       intro j
       fin_cases j <;>
         simp [yFull, x, hexagonalBoxRoot, hexagonalBoxEmbedding,
-          hexagonalNeighbor, hexagonalStep] <;> omega, Set.mem_univ _⟩⟩
+          hexagonalNeighbor, hexagonalStep]
+      omega, Set.mem_univ _⟩⟩
   refine ⟨⟨s(x, y), ?_⟩⟩
   change hexagonalGraph.Adj (hexagonalBoxEmbedding n x)
     (hexagonalBoxEmbedding n y)
   simpa [y, yFull, hexagonalBoxEmbedding] using
     hexagonal_adj_neighbor (hexagonalBoxEmbedding n x) 0
 
+/-! ## C. Wired crossing probabilities -/
+
+/-- The wiring graph joining all vertices of the outer shell of the box. -/
 noncomputable def hexagonalBoxBoundaryGraph (n : Nat) :
     SimpleGraph (HexagonalBoxVertex n) :=
   boundaryCliqueGraph fun x => x ∈ hexagonalBoxShell n n
 
+open scoped Classical in
+/-- The wired FK probability that the origin is connected to the boundary of the box of radius `n`,
+at edge parameter `1 - e^{-β}`. -/
 noncomputable def hexagonalBoxCrossMass
     (n : Nat) (q beta : Real) : Real :=
   FK.activeBCProbOf (hexagonalBoxGraph n) (hexagonalBoxBoundaryGraph n)
@@ -202,6 +273,8 @@ noncomputable def hexagonalBoxCrossMass
     (openCrossEvent (hexagonalBoxEndU n) (hexagonalBoxEndV n)
       (hexagonalBoxRoot n) (hexagonalBoxShell n n))
 
+open scoped Classical in
+/-- The wired FK probability that `x` is connected to the shell of radius `k`. -/
 noncomputable def hexagonalBoxConnMass
     (n : Nat) (q beta : Real) (x : HexagonalBoxVertex n) (k : Nat) : Real :=
   Lindeberg.mean
@@ -210,15 +283,15 @@ noncomputable def hexagonalBoxConnMass
     (fun omega => if ConnOpenSet (hexagonalBoxEndU n)
       (hexagonalBoxEndV n) omega x (hexagonalBoxShell n k) then 1 else 0)
 
-
-
+/-- The indicator, on configurations of the box of radius `2n`, that the origin is connected to the
+shell of radius `n` inside the box of radius `n`. -/
 noncomputable def hexagonalInnerCrossInd (n : Nat) :
     ConfigSpace (hexagonalBoxGraph (2 * n)).edgeSet → Real := fun omega =>
   (openCrossEvent (hexagonalBoxEndU n) (hexagonalBoxEndV n)
     (hexagonalBoxRoot n) (hexagonalBoxShell n n)).indicator (fun _ => 1)
       (restrictConfig (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n)) omega)
 
-theorem hexagonalInnerCrossInd_monotone (n : Nat) :
+lemma hexagonalInnerCrossInd_monotone (n : Nat) :
     Monotone (hexagonalInnerCrossInd n) := by
   intro omega eta hle
   apply (openCrossEvent_isIncreasing (hexagonalBoxEndU n)
@@ -227,7 +300,8 @@ theorem hexagonalInnerCrossInd_monotone (n : Nat) :
   intro e
   exact hle (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n) e)
 
-theorem hexagonalInnerCrossInd_idem (n : Nat)
+open scoped Classical in
+lemma hexagonalInnerCrossInd_idem (n : Nat)
     (omega : ConfigSpace (hexagonalBoxGraph (2 * n)).edgeSet) :
     hexagonalInnerCrossInd n omega * hexagonalInnerCrossInd n omega =
       hexagonalInnerCrossInd n omega := by
@@ -235,6 +309,9 @@ theorem hexagonalInnerCrossInd_idem (n : Nat)
   rw [Set.indicator_apply]
   split_ifs <;> norm_num
 
+open scoped Classical in
+/-- Under the measure wired at radius `2n`, the probability that `x` is connected to the shell of
+radius `k` inside the box of radius `n`. -/
 noncomputable def hexagonalOuterInnerConn
     (n : Nat) (q beta : Real) (x : HexagonalBoxVertex n) (k : Nat) : Real :=
   Lindeberg.mean
@@ -245,6 +322,8 @@ noncomputable def hexagonalOuterInnerConn
       (restrictConfig (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n)) omega)
       x (hexagonalBoxShell n k) then 1 else 0)
 
+/-- The OSSS denominator `2 (1 + max_x Σ_{k ≤ n} φ(x ↔ shell k)) / n` for the outer-inner
+observable. -/
 noncomputable def hexagonalOuterInnerDenom
     (n : Nat) (q beta : Real) : Real :=
   let M := (Finset.univ : Finset (HexagonalBoxVertex n)).sup'
@@ -253,6 +332,9 @@ noncomputable def hexagonalOuterInnerDenom
       hexagonalOuterInnerConn n q beta x k)
   2 * (1 + M) / (n : Real)
 
+open scoped Classical in
+/-- The outer-inner crossing probability `θ_n(β)`: the origin is connected to the shell of radius
+`n` under the measure wired at radius `2n` (`1` for `n = 0`). -/
 noncomputable def hexagonalOuterInnerTheta
     (q beta : Real) (n : Nat) : Real :=
   if n = 0 then 1 else
@@ -262,15 +344,20 @@ noncomputable def hexagonalOuterInnerTheta
         (FK.betaParams (fun _ => 1) beta) q)
       (hexagonalInnerCrossInd n)
 
+/-- The `β`-derivative of `θ_n(β)`. -/
 noncomputable def hexagonalOuterInnerThetaPrime
     (n : Nat) (q beta : Real) : Real :=
   deriv (fun b => hexagonalOuterInnerTheta q b n) beta
 
+/-- The partial sum `Σ_n(β) = Σ_{k < n} θ_k(β)`. -/
 noncomputable def hexagonalOuterInnerSig
     (n : Nat) (q beta : Real) : Real :=
   ∑ k ∈ Finset.range n, hexagonalOuterInnerTheta q beta k
 
-theorem hexagonalOuterInnerDenom_pos
+/-! ## D. Covariance bounds and the differential inequality -/
+
+open scoped Classical in
+lemma hexagonalOuterInnerDenom_pos
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     0 < hexagonalOuterInnerDenom n q beta := by
@@ -305,9 +392,8 @@ theorem hexagonalOuterInnerDenom_pos
   change 0 < 2 * (1 + M) / (n : Real)
   positivity
 
-
-
-theorem hexagonal_outer_inner_hcov
+open scoped Classical in
+lemma hexagonal_outer_inner_hcov
     (n : Nat) (hn : 1 ≤ n) (q beta D : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hD : 0 < D)
     (hsum : ∀ e : (hexagonalBoxGraph n).edgeSet,
@@ -364,9 +450,8 @@ theorem hexagonal_outer_inner_hcov
     n hn D hD hsum
   exact hmain
 
-
-
-theorem hexagonal_outer_inner_hcov_geom
+open scoped Classical in
+lemma hexagonal_outer_inner_hcov_geom
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     let mu := FK.activeBCProb (hexagonalBoxGraph (2 * n))
@@ -448,8 +533,9 @@ theorem hexagonal_outer_inner_hcov_geom
     (by simpa [mu] using hsum)
   simpa [hexagonalOuterInnerDenom, mu, M, D] using hmain
 
-
-
+open scoped Classical in
+/-- OSSS differential inequality for the outer-wired hexagonal crossing probability: `θ (1 - θ) / Δ
+≤ dθ/dβ` for `q ≥ 1`, `β > 0` (Duminil-Copin–Raoufi–Tassion 2019). -/
 theorem hexagonal_outer_inner_differential_logistic
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
@@ -457,7 +543,7 @@ theorem hexagonal_outer_inner_differential_logistic
         (1 - hexagonalOuterInnerTheta q beta n) /
           hexagonalOuterInnerDenom n q beta ≤
       hexagonalOuterInnerThetaPrime n q beta := by
-  letI : Nonempty (hexagonalBoxGraph (2 * n)).edgeSet :=
+  let : Nonempty (hexagonalBoxGraph (2 * n)).edgeSet :=
     hexagonalBoxGraph_edgeSet_nonempty (2 * n) (by omega)
   let G := hexagonalBoxGraph (2 * n)
   let C := hexagonalBoxBoundaryGraph (2 * n)
@@ -519,6 +605,9 @@ theorem hexagonal_outer_inner_differential_logistic
   simpa [hexagonalOuterInnerTheta, hexagonalOuterInnerThetaPrime,
     hn0, G, C, J, mu, f, FK.activeBCMean, Lindeberg.mean] using hmain
 
+open scoped Classical in
+/-- The OSSS denominator `2 (1 + max_x Σ_{k ≤ n} φ(x ↔ shell k)) / n` for the box crossing
+probability. -/
 noncomputable def hexagonalBoxDenom
     (n : Nat) (q beta : Real) : Real :=
   let M := (Finset.univ : Finset (HexagonalBoxVertex n)).sup'
@@ -526,6 +615,10 @@ noncomputable def hexagonalBoxDenom
       hexagonalBoxConnMass n q beta x k)
   2 * (1 + M) / (n : Real)
 
+open scoped Classical in
+/-- OSSS differential inequality for the wired hexagonal box crossing probability: `c θ / Δ ≤ dθ/dβ`
+for some `c > 0`, for `q ≥ 1`, `0 < β ≤ β₀` (Duminil-Copin–Raoufi–Tassion 2019). The constant is
+chosen after `n`. -/
 theorem hexagonalBox_differential_inequality
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
@@ -533,9 +626,9 @@ theorem hexagonalBox_differential_inequality
       c * (hexagonalBoxCrossMass n q beta /
         hexagonalBoxDenom n q beta) ≤
       deriv (hexagonalBoxCrossMass n q) beta := by
-  letI : Nonempty (hexagonalBoxGraph n).edgeSet :=
+  let : Nonempty (hexagonalBoxGraph n).edgeSet :=
     hexagonalBoxGraph_edgeSet_nonempty n hn
-  letI : Nonempty (HexagonalBoxVertex n) := ⟨hexagonalBoxRoot n⟩
+  let : Nonempty (HexagonalBoxVertex n) := ⟨hexagonalBoxRoot n⟩
   let mu := FK.activeBCProb (hexagonalBoxGraph n)
     (hexagonalBoxBoundaryGraph n) (FK.betaParams (fun _ => 1) beta) q
   let M := (Finset.univ : Finset (HexagonalBoxVertex n)).sup'

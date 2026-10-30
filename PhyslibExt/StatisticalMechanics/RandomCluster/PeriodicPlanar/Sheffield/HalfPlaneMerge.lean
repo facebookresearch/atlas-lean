@@ -6,19 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneEscape
+
+/-!
+# Merging infinite clusters inside a half-plane
+
+For finite source sets placed by a suitable translation, the probability that two of their
+vertices lie in infinite clusters that are not connected inside a half-plane is small.
+
+## i. Overview
+
+`halfPlanePairMergeErrorUnion r L R` is the event that some `x ∈ L` and `y ∈ R` both lie in
+infinite clusters but are not connected inside `H_r = {x ≥ r}`. Translating the sources far to the
+right turns the half-plane into a large region around them, so this error is bounded by the
+whole-plane merge error inside a buffered box (`PeriodicGraph.pairMergeErrorUnion`), which tends
+to zero when the infinite cluster is almost surely unique.
+
+Headline fidelity: the translation bounds are unconditional apart from translation invariance;
+`exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt` is conditional on translation
+invariance and almost sure uniqueness of the infinite cluster.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion`
+- `PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt`
+- `PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin`
+
+## iii. Table of contents
+
+- A. The half-plane merge error
+- B. Comparison with the whole-plane merge error
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
 
 @[expose] public section
 
@@ -26,28 +50,33 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. The half-plane merge error -/
 
-
+/-- Half-plane merge error for finite source sets: some `x ∈ L` and `y ∈ R` lie in infinite open
+clusters but are not connected within `H_r`. -/
 def PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion
     (E : PeriodicPlaneEmbedding P) (r : ℝ) (L R : Finset V) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ x ∈ L, ⋃ y ∈ R, E.halfPlanePairMergeError r x y
 
-theorem PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion_measurableSet
+lemma PeriodicPlaneEmbedding.halfPlanePairMergeErrorUnion_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : ℝ) (L R : Finset V) :
     MeasurableSet (E.halfPlanePairMergeErrorUnion r L R) :=
   MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun _hx =>
     MeasurableSet.iUnion fun y => MeasurableSet.iUnion fun _hy =>
       E.halfPlanePairMergeError_measurableSet r x y
 
+/-! ## B. Comparison with the whole-plane merge error -/
 
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_preimage_subset
+omit [Countable V] in
+/-- After a suitable translation of the sources, the half-plane merge error pulls back into the
+whole-plane merge error in the buffered box of radius `N`. -/
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_preimage_subset
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ)
     (L R : Finset V) :
     ∃ z : Site 2,
@@ -80,9 +109,7 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_preimag
   · intro hmerge
     exact hpair.2 (htransport omega x y hmerge)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (N : ℕ) (r : ℝ)
@@ -104,8 +131,8 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measure
   rw [← hreal]
   exact measureReal_mono hsub
 
-
-
+/-- Under translation invariance and almost sure uniqueness, a suitable translate of the sources
+has half-plane merge error below `ε`. -/
 theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -123,9 +150,9 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measure
       mu hTI N r L R
   exact ⟨z, hz.trans_lt hN⟩
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_sources
+/-- Translation bound that also places the translated sources in `H_r`. This is the case `R = r`
+of `exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin`. -/
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_sources
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (N : Nat) (r : Real)
@@ -197,10 +224,9 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measure
     rw [← hreal]
     exact measureReal_mono hpre
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin
+/-- Translation bound that places the translated sources in `H_R` for a given `R ≥ r` while the
+merge error is measured in `H_r`. -/
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (N : Nat) {r R : Real}

@@ -6,47 +6,74 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDualShift
 
+/-!
+# Plane positions of the triangular and hexagonal lattices
+
+Vertex positions in `ℂ`, straight-segment edges, and their basic geometric properties for the
+triangular and hexagonal lattices.
+
+## i. Overview
+
+The site `z : Site 2` sits at `z 0 + z 1 * I`, so the period lattice is `ℤ[I]` acting by
+translation. In these (sheared) coordinates the triangular lattice has edge steps `(1, 0)`,
+`(0, 1)`, `(-1, 1)`. The hexagonal vertex `(z, b)` sits at the centre of the corresponding
+triangular face, `z ± (1 + I) / 3`. Edges are drawn as straight segments. This file proves that
+the vertex maps are injective, translation covariant and proper (finitely many vertices in a
+ball), that edges have length at most `2`, and that the segment drawing is locally finite. All
+results are proved unconditionally; that two distinct segments meet only at shared endpoints is
+proved in `TriHex.PeriodicStraightIntersection`.
+
+## ii. Key results
+
+- `triangularPlaneVertex`, `hexagonalPlaneVertex` : vertex embeddings into `ℂ`.
+- `triangularStraightEdgeArc`, `hexagonalStraightEdgeArc` : straight edge arcs.
+- `triangularStraightEdgeArc_locallyFinite`, `hexagonalStraightEdgeArc_locallyFinite` : a
+  compact set meets finitely many edges.
+
+## iii. Table of contents
+
+- A. Periods and plane coordinates
+- B. Triangular vertices and edges
+- C. Hexagonal vertices and edges
+- D. Local finiteness of the edge drawings
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. Periods and plane coordinates -/
 
-
+/-- The period map `z ↦ z 0 + z 1 * I` from `Site 2` to `ℂ`. -/
 def triHexPlanePeriod : AddMonoidHom (Site 2) Complex where
   toFun z := (z 0 : Real) + (z 1 : Real) * Complex.I
   map_zero' := by simp
   map_add' z w := by
     apply Complex.ext <;> simp
 
-@[simp] theorem triHexPlanePeriod_re (z : Site 2) :
+@[simp] lemma triHexPlanePeriod_re (z : Site 2) :
     (triHexPlanePeriod z).re = z 0 := by
   simp [triHexPlanePeriod]
 
-@[simp] theorem triHexPlanePeriod_im (z : Site 2) :
+@[simp] lemma triHexPlanePeriod_im (z : Site 2) :
     (triHexPlanePeriod z).im = z 1 := by
   simp [triHexPlanePeriod]
 
-theorem triHexPlanePeriod_injective :
+lemma triHexPlanePeriod_injective :
     Function.Injective triHexPlanePeriod := by
   intro z w h
   funext i
@@ -58,42 +85,43 @@ theorem triHexPlanePeriod_injective :
       simpa using congrArg Complex.im h
     exact_mod_cast himag
 
-
+/-- The real-linear identification of `ℂ` with `Fin 2 → ℝ` (real and imaginary parts). -/
 noncomputable def triHexPlaneCoordinates :
     Complex ≃L[Real] (Fin 2 -> Real) :=
   Complex.equivRealProdCLM.trans
     (ContinuousLinearEquiv.finTwoArrow Real Real).symm
 
-@[simp] theorem triHexPlaneCoordinates_apply_zero (z : Complex) :
+@[simp] lemma triHexPlaneCoordinates_apply_zero (z : Complex) :
     triHexPlaneCoordinates z 0 = z.re := by
   rfl
 
-@[simp] theorem triHexPlaneCoordinates_apply_one (z : Complex) :
+@[simp] lemma triHexPlaneCoordinates_apply_one (z : Complex) :
     triHexPlaneCoordinates z 1 = z.im := by
   rfl
 
-@[simp] theorem triHexPlaneCoordinates_period
+@[simp] lemma triHexPlaneCoordinates_period
     (z : Site 2) (i : Fin 2) :
     triHexPlaneCoordinates (triHexPlanePeriod z) i = z i := by
   fin_cases i <;> simp
 
+/-! ## B. Triangular vertices and edges -/
 
+/-- Plane position of the triangular site `z`: the period point `z 0 + z 1 * I`. -/
 def triangularPlaneVertex : Site 2 ↪ Complex where
   toFun := triHexPlanePeriod
   inj' := triHexPlanePeriod_injective
 
-@[simp] theorem triangularPlaneVertex_apply (z : Site 2) :
+@[simp] lemma triangularPlaneVertex_apply (z : Site 2) :
     triangularPlaneVertex z = triHexPlanePeriod z := rfl
 
-@[simp] theorem triangularPlaneVertex_shift (z x : Site 2) :
+@[simp] lemma triangularPlaneVertex_shift (z x : Site 2) :
     triangularPlaneVertex (triangular.shift z x) =
       triangularPlaneVertex x + triHexPlanePeriod z := by
   change triHexPlanePeriod (x + z) =
     triHexPlanePeriod x + triHexPlanePeriod z
   exact map_add triHexPlanePeriod x z
 
-
-theorem triHexPlanePeriod_bounded_finite (R : Real) :
+lemma triHexPlanePeriod_bounded_finite (R : Real) :
     {z : Site 2 | ‖triHexPlanePeriod z‖ <= R}.Finite := by
   obtain ⟨N, hN⟩ := exists_nat_gt R
   apply (Set.Finite.pi (fun _ : Fin 2 =>
@@ -111,30 +139,30 @@ theorem triHexPlanePeriod_bounded_finite (R : Real) :
   · exact_mod_cast hlt.1.le
   · exact_mod_cast hlt.2.le
 
-theorem triangularPlaneVertex_bounded_finite (R : Real) :
+lemma triangularPlaneVertex_bounded_finite (R : Real) :
     {z : Site 2 | ‖(triangularPlaneVertex z : Complex)‖ <= R}.Finite := by
   simpa using triHexPlanePeriod_bounded_finite R
 
-
+/-- The triangular edge `xy` drawn as the straight segment between its endpoints. -/
 noncomputable def triangularStraightEdgeArc {x y : Site 2}
     (_hxy : triangularGraph.Adj x y) :
     Path (triangularPlaneVertex x) (triangularPlaneVertex y) :=
   Path.segment (triangularPlaneVertex x) (triangularPlaneVertex y)
 
-theorem triangularStraightEdgeArc_injective {x y : Site 2}
+lemma triangularStraightEdgeArc_injective {x y : Site 2}
     (hxy : triangularGraph.Adj x y) :
     Function.Injective (triangularStraightEdgeArc hxy) := by
   apply Path.segment_injective_of_ne
   exact triangularPlaneVertex.injective.ne hxy.ne
 
-theorem triangularStraightEdgeArc_symm {x y : Site 2}
+lemma triangularStraightEdgeArc_symm {x y : Site 2}
     (hxy : triangularGraph.Adj x y) :
     Set.range (triangularStraightEdgeArc hxy.symm) =
       Set.range (triangularStraightEdgeArc hxy) := by
   simp only [triangularStraightEdgeArc, Path.range_segment]
   exact segment_symm Real _ _
 
-theorem triangularStraightEdgeArc_shift
+lemma triangularStraightEdgeArc_shift
     (z : Site 2) {x y : Site 2} (hxy : triangularGraph.Adj x y) :
     Set.range (triangularStraightEdgeArc
         ((triangular.shift_adj z x y).2 hxy)) =
@@ -146,7 +174,7 @@ theorem triangularStraightEdgeArc_shift
     (segment_translate_image Real (triHexPlanePeriod z)
       (triangularPlaneVertex x) (triangularPlaneVertex y)).symm
 
-theorem triangularStraightEdge_length_le_two {x y : Site 2}
+lemma triangularStraightEdge_length_le_two {x y : Site 2}
     (hxy : triangularGraph.Adj x y) :
     dist (triangularPlaneVertex x) (triangularPlaneVertex y) <= 2 := by
   rw [triangularGraph_adj, triangularAdj] at hxy
@@ -200,21 +228,23 @@ theorem triangularStraightEdge_length_le_two {x y : Site 2}
           _ <= 2 := by
             fin_cases i <;> norm_num [triHexPlanePeriod, triangularStep]
 
+/-! ## C. Hexagonal vertices and edges -/
 
-
+/-- Offset of a hexagonal vertex from its base site: `(1 + I) / 3` for black and `-(1 + I) / 3` for
+white vertices, the centres of the two triangular faces. -/
 noncomputable def hexagonalFaceCenterOffset (white : Bool) : Complex :=
   if white then -(1 / 3 : Real) - (1 / 3 : Real) * Complex.I
   else (1 / 3 : Real) + (1 / 3 : Real) * Complex.I
 
-@[simp] theorem hexagonalFaceCenterOffset_false :
+@[simp] lemma hexagonalFaceCenterOffset_false :
     hexagonalFaceCenterOffset false =
       (1 / 3 : Real) + (1 / 3 : Real) * Complex.I := rfl
 
-@[simp] theorem hexagonalFaceCenterOffset_true :
+@[simp] lemma hexagonalFaceCenterOffset_true :
     hexagonalFaceCenterOffset true =
       -(1 / 3 : Real) - (1 / 3 : Real) * Complex.I := rfl
 
-theorem hexagonalFaceCenterOffset_norm_le_one (white : Bool) :
+lemma hexagonalFaceCenterOffset_norm_le_one (white : Bool) :
     ‖hexagonalFaceCenterOffset white‖ <= 1 := by
   cases white
   · calc
@@ -234,12 +264,11 @@ theorem hexagonalFaceCenterOffset_norm_le_one (white : Bool) :
             (((1 / 3 : Real) : Complex) * Complex.I)
       _ <= 1 := by norm_num [norm_mul]
 
-
-
+/-- Plane position of the hexagonal vertex `u`: base site plus face-centre offset. -/
 noncomputable def hexagonalPlaneVertexValue (u : HexVertex) : Complex :=
   triHexPlanePeriod u.1 + hexagonalFaceCenterOffset u.2
 
-theorem hexagonalPlaneVertexValue_injective :
+lemma hexagonalPlaneVertexValue_injective :
     Function.Injective hexagonalPlaneVertexValue := by
   rintro ⟨x, xb⟩ ⟨y, yb⟩ h
   cases xb <;> cases yb
@@ -247,16 +276,20 @@ theorem hexagonalPlaneVertexValue_injective :
     · apply triHexPlanePeriod_injective
       exact add_right_cancel h
     · rfl
-  · have hre := congrArg Complex.re h
-    simp [hexagonalPlaneVertexValue, hexagonalFaceCenterOffset] at hre
+  · have hre : (x 0 : Real) + 1 / 3 = (y 0 : Real) - 1 / 3 := by
+      have h' := congrArg Complex.re h
+      simp [hexagonalPlaneVertexValue, hexagonalFaceCenterOffset] at h'
+      linarith
     have hre' : (3 : Real) * (x 0 : Real) + 1 =
         (3 : Real) * (y 0 : Real) - 1 := by
       linarith
     have hreInt : (3 : Int) * x 0 + 1 = (3 : Int) * y 0 - 1 := by
       exact_mod_cast hre'
     omega
-  · have hre := congrArg Complex.re h
-    simp [hexagonalPlaneVertexValue, hexagonalFaceCenterOffset] at hre
+  · have hre : (x 0 : Real) - 1 / 3 = (y 0 : Real) + 1 / 3 := by
+      have h' := congrArg Complex.re h
+      simp [hexagonalPlaneVertexValue, hexagonalFaceCenterOffset] at h'
+      linarith
     have hre' : (3 : Real) * (x 0 : Real) - 1 =
         (3 : Real) * (y 0 : Real) + 1 := by
       linarith
@@ -268,15 +301,15 @@ theorem hexagonalPlaneVertexValue_injective :
       exact add_right_cancel h
     · rfl
 
-
+/-- Plane position of a hexagonal vertex, as an embedding `HexVertex ↪ ℂ`. -/
 noncomputable def hexagonalPlaneVertex : HexVertex ↪ Complex where
   toFun := hexagonalPlaneVertexValue
   inj' := hexagonalPlaneVertexValue_injective
 
-@[simp] theorem hexagonalPlaneVertex_apply (u : HexVertex) :
+@[simp] lemma hexagonalPlaneVertex_apply (u : HexVertex) :
     hexagonalPlaneVertex u = hexagonalPlaneVertexValue u := rfl
 
-@[simp] theorem hexagonalPlaneVertex_shift (z : Site 2) (u : HexVertex) :
+@[simp] lemma hexagonalPlaneVertex_shift (z : Site 2) (u : HexVertex) :
     hexagonalPlaneVertex (hexagonal.shift z u) =
       hexagonalPlaneVertex u + triHexPlanePeriod z := by
   rcases u with ⟨x, b⟩
@@ -286,9 +319,7 @@ noncomputable def hexagonalPlaneVertex : HexVertex ↪ Complex where
   rw [map_add]
   abel
 
-
-
-theorem hexagonalPlaneVertex_bounded_finite (R : Real) :
+lemma hexagonalPlaneVertex_bounded_finite (R : Real) :
     {u : HexVertex | ‖(hexagonalPlaneVertex u : Complex)‖ <= R}.Finite := by
   let K : Set (Site 2) := {z | ‖triHexPlanePeriod z‖ <= R + 1}
   have hK : K.Finite := triHexPlanePeriod_bounded_finite (R + 1)
@@ -304,26 +335,26 @@ theorem hexagonalPlaneVertex_bounded_finite (R : Real) :
       (add_le_add hu (hexagonalFaceCenterOffset_norm_le_one u.2))
   · simp
 
-
+/-- The hexagonal edge `uv` drawn as the straight segment between its endpoints. -/
 noncomputable def hexagonalStraightEdgeArc {u v : HexVertex}
     (_huv : hexagonalGraph.Adj u v) :
     Path (hexagonalPlaneVertex u) (hexagonalPlaneVertex v) :=
   Path.segment (hexagonalPlaneVertex u) (hexagonalPlaneVertex v)
 
-theorem hexagonalStraightEdgeArc_injective {u v : HexVertex}
+lemma hexagonalStraightEdgeArc_injective {u v : HexVertex}
     (huv : hexagonalGraph.Adj u v) :
     Function.Injective (hexagonalStraightEdgeArc huv) := by
   apply Path.segment_injective_of_ne
   exact hexagonalPlaneVertex.injective.ne huv.ne
 
-theorem hexagonalStraightEdgeArc_symm {u v : HexVertex}
+lemma hexagonalStraightEdgeArc_symm {u v : HexVertex}
     (huv : hexagonalGraph.Adj u v) :
     Set.range (hexagonalStraightEdgeArc huv.symm) =
       Set.range (hexagonalStraightEdgeArc huv) := by
   simp only [hexagonalStraightEdgeArc, Path.range_segment]
   exact segment_symm Real _ _
 
-theorem hexagonalStraightEdgeArc_shift
+lemma hexagonalStraightEdgeArc_shift
     (z : Site 2) {u v : HexVertex} (huv : hexagonalGraph.Adj u v) :
     Set.range (hexagonalStraightEdgeArc
         ((hexagonal.shift_adj z u v).2 huv)) =
@@ -335,7 +366,7 @@ theorem hexagonalStraightEdgeArc_shift
     (segment_translate_image Real (triHexPlanePeriod z)
       (hexagonalPlaneVertex u) (hexagonalPlaneVertex v)).symm
 
-theorem hexagonalStraightEdge_length_le_two {u v : HexVertex}
+lemma hexagonalStraightEdge_length_le_two {u v : HexVertex}
     (huv : hexagonalGraph.Adj u v) :
     dist (hexagonalPlaneVertex u) (hexagonalPlaneVertex v) <= 2 := by
   rw [hexagonalGraph_adj, hexagonalAdj] at huv
@@ -413,7 +444,9 @@ theorem hexagonalStraightEdge_length_le_two {u v : HexVertex}
               norm_num [d, hexagonalFaceCenterOffset, triHexPlanePeriod,
                 hexagonalStep]
 
-private theorem segment_endpoints_norm_le_add_two
+/-! ## D. Local finiteness of the edge drawings -/
+
+private lemma segment_endpoints_norm_le_add_two
     (a b : Complex) (t : unitInterval) (R : Real)
     (hpoint : ‖Path.segment a b t‖ <= R)
     (hlength : dist a b <= 2) :
@@ -454,9 +487,7 @@ private theorem segment_endpoints_norm_le_add_two
         exact add_le_add hright hpoint
       _ = R + 2 := by ring
 
-
-
-theorem triangularStraightEdgeArc_locallyFinite
+lemma triangularStraightEdgeArc_locallyFinite
     (K : Set Complex) (hK : IsCompact K) :
     {xy : Site 2 × Site 2 | ∃ hxy : triangularGraph.Adj xy.1 xy.2,
       (Set.range (triangularStraightEdgeArc hxy) ∩ K).Nonempty}.Finite := by
@@ -477,9 +508,7 @@ theorem triangularStraightEdgeArc_locallyFinite
     (triangularStraightEdge_length_le_two hxy)
   exact hend
 
-
-
-theorem hexagonalStraightEdgeArc_locallyFinite
+lemma hexagonalStraightEdgeArc_locallyFinite
     (K : Set Complex) (hK : IsCompact K) :
     {uv : HexVertex × HexVertex | ∃ huv : hexagonalGraph.Adj uv.1 uv.2,
       (Set.range (hexagonalStraightEdgeArc huv) ∩ K).Nonempty}.Finite := by

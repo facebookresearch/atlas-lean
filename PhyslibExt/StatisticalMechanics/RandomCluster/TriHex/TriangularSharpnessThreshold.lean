@@ -6,22 +6,67 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularSharpnessOffCentre
 public import MathlibExt.Probability.OSSS.BetaThresholdBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LogCesaroLimit
 
+/-!
+# Subcritical exponential decay below the OSSS threshold on the triangular lattice
+
+Integration of the uniform OSSS differential inequality: below the threshold `β₁` defined by the
+growth of `Σ_n`, the outer-wired crossing probability `θ_n` decays exponentially in `n`.
+
+## i. Overview
+
+`triangularNormalizedTheta = θ_n / c(β₀)` rescales the crossing probability of
+`TriangularSharpness` by the OSSS constant of `TriangularSharpnessOffCentre`, so that the
+differential inequality reads `(n / Σ_n) θ̃_n ≤ dθ̃_n/dβ`
+(`triangularNormalizedTheta_differential`). `triangularThresholdTheta` extends it to `β ≤ 0` (value
+`1 / c` at `n = 0` and `0` otherwise), and the generic integration argument of
+`MathlibExt.Probability.OSSS.BetaThresholdBound` defines `β₁ = inf {β : limsup_n log Σ_n(β) / log n
+≥ 1}`. The headline `triangularOuterInner_subcritical_decay_of_threshold` states: for `q ≥ 1`, `δ >
+0`, `0 < β - 2δ`, `β ≤ β₀` and `β < β₁`, there is `Q > 0` with `θ_n(β - 2δ) ≤ exp(-(n / Q) δ)` for
+all `n ≥ 1`.
+
+Fidelity:
+- This is only the subcritical half of the Duminil-Copin–Raoufi–Tassion theorem, for the
+  finite-volume quantity `θ_n` (connection to distance `n` under the measure wired at radius
+  `2n`), not for the infinite-volume measure. The mean-field lower bound above `β₁` is not
+  proved.
+- `β₁` is not shown to equal the critical point `β_c` (or the self-dual point) of the triangular
+  FK model.
+- The decay theorem is vacuous unless the threshold set is nonempty: if it is empty then
+  `β₁ = sInf ∅ = 0` and the hypotheses `0 < β - 2δ`, `β < β₁` are contradictory
+  (`triangularThreshold_decay_hypotheses_false_of_thresholdSet_empty`). Nonemptiness (some `β`
+  with `Σ_n(β)` growing like `n`, i.e. a supercritical regime) is not proved in the library.
+- The remaining lemmas (monotonicity, bounds, derivative of `θ_n`) are unconditional.
+
+## ii. Key results
+
+- `triangularNormalizedTheta_differential` : the normalized OSSS inequality. Unconditional
+  (`q ≥ 1`, `0 < β ≤ β₀`).
+- `triangularOuterInner_subcritical_decay_of_threshold` : exponential decay below `β₁`.
+  Conditional on `β < β₁`; vacuous if the threshold set is empty.
+- `triangularThreshold_decay_hypotheses_false_of_thresholdSet_empty` : the vacuity criterion.
+
+## iii. Table of contents
+
+- A. Normalized crossing probabilities
+- B. Bounds, monotonicity and derivatives
+- C. The threshold function
+- D. Exponential decay below the threshold
+
+## iv. References
+
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+-/
+
 @[expose] public section
 
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set Filter Topology MeasureTheory
 
 namespace StatMech.FK.PeriodicPlanar
@@ -29,21 +74,27 @@ namespace StatMech.FK.PeriodicPlanar
 open StatMech.Lattice
 open StatMech.OSSS
 
+/-! ## A. Normalized crossing probabilities -/
+
+/-- The crossing probability `θ_n(β)` divided by the OSSS constant `c(β₀)`. -/
 noncomputable def triangularNormalizedTheta
     (q beta0 : Real) (n : Nat) (beta : Real) : Real :=
   triangularOuterInnerTheta q beta n / triangularSharpConstant beta0
 
+/-- The `β`-derivative of the normalized crossing probability. -/
 noncomputable def triangularNormalizedThetaPrime
     (q beta0 : Real) (n : Nat) (beta : Real) : Real :=
   triangularOuterInnerThetaPrime n q beta / triangularSharpConstant beta0
 
+/-- The normalized crossing probability extended to `β ≤ 0` by `1 / c(β₀)` at `n = 0` and `0` for `n
+≥ 1`, as required by the threshold integration. -/
 noncomputable def triangularThresholdTheta
     (q beta0 : Real) (n : Nat) (beta : Real) : Real :=
   if beta <= 0 then
     if n = 0 then 1 / triangularSharpConstant beta0 else 0
   else triangularNormalizedTheta q beta0 n beta
 
-theorem triangularSharpConstant_le_one (beta0 : Real)
+lemma triangularSharpConstant_le_one (beta0 : Real)
     (hbeta0 : 0 <= beta0) : triangularSharpConstant beta0 <= 1 := by
   have he0 : 0 <= Real.exp (-beta0) := (Real.exp_pos _).le
   have he1 : Real.exp (-beta0) <= 1 :=
@@ -52,22 +103,24 @@ theorem triangularSharpConstant_le_one (beta0 : Real)
   unfold triangularSharpConstant
   nlinarith
 
-theorem one_le_inv_triangularSharpConstant (beta0 : Real)
+lemma one_le_inv_triangularSharpConstant (beta0 : Real)
     (hbeta0 : 0 <= beta0) : 1 <= 1 / triangularSharpConstant beta0 :=
   one_le_one_div (triangularSharpConstant_pos beta0)
     (triangularSharpConstant_le_one beta0 hbeta0)
 
-theorem triangularOuterInnerTheta_eq_activeBCMean
+open scoped Classical in
+lemma triangularOuterInnerTheta_eq_activeBCMean
     (n : Nat) (hn : 1 <= n) (q beta : Real) :
     triangularOuterInnerTheta q beta n =
       FK.activeBCMean (triangularBoxGraph (2 * n))
         (triangularBoxBoundaryGraph (2 * n))
         (FK.betaParams (fun _ => 1) beta) q
         (triangularInnerCrossInd n) := by
-  rw [triangularOuterInnerTheta, if_neg (by omega)]
+  rw [triangularOuterInnerTheta, ite_eq_right (by omega)]
   rfl
 
-theorem hasDerivAt_triangularOuterInnerTheta
+open scoped Classical in
+lemma hasDerivAt_triangularOuterInnerTheta
     (n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     HasDerivAt (fun b => triangularOuterInnerTheta q b n)
@@ -90,7 +143,7 @@ theorem hasDerivAt_triangularOuterInnerTheta
   rw [heq]
   exact h.congr_deriv h.deriv.symm
 
-theorem triangularNormalizedSig_eq
+lemma triangularNormalizedSig_eq
     (n : Nat) (q beta0 beta : Real) :
     IntegrationSubcritical.Sig (triangularNormalizedTheta q beta0) n beta =
       triangularOuterInnerSig n q beta / triangularSharpConstant beta0 := by
@@ -98,7 +151,7 @@ theorem triangularNormalizedSig_eq
     triangularOuterInnerSig
   rw [Finset.sum_div]
 
-theorem triangularNormalizedTheta_differential
+lemma triangularNormalizedTheta_differential
     (n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :
     (((n : Real) /
@@ -112,9 +165,10 @@ theorem triangularNormalizedTheta_differential
   rw [triangularNormalizedSig_eq]
   unfold triangularNormalizedTheta triangularNormalizedThetaPrime
   rw [le_div_iff₀ hc]
-  convert hmain using 1 <;> field_simp <;> ring
+  convert hmain using 1
+  field_simp
 
-theorem hasDerivAt_triangularNormalizedTheta
+lemma hasDerivAt_triangularNormalizedTheta
     (n : Nat) (hn : 1 <= n) (q beta0 beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     HasDerivAt (triangularNormalizedTheta q beta0 n)
@@ -122,7 +176,10 @@ theorem hasDerivAt_triangularNormalizedTheta
   have h := hasDerivAt_triangularOuterInnerTheta n hn q beta hq hbeta
   exact h.div_const (triangularSharpConstant beta0)
 
-theorem triangularOuterInnerTheta_le_one
+/-! ## B. Bounds, monotonicity and derivatives -/
+
+open scoped Classical in
+lemma triangularOuterInnerTheta_le_one
     (n : Nat) (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     triangularOuterInnerTheta q beta n <= 1 := by
   by_cases hn0 : n = 0
@@ -155,14 +212,14 @@ theorem triangularOuterInnerTheta_le_one
         split_ifs <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hmu1 1
 
-theorem triangularNormalizedTheta_nonneg
+lemma triangularNormalizedTheta_nonneg
     (n : Nat) (q beta0 beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     0 <= triangularNormalizedTheta q beta0 n beta := by
   exact div_nonneg
     (triangularOuterInnerTheta_nonneg q beta hq hbeta n)
     (triangularSharpConstant_pos beta0).le
 
-theorem triangularNormalizedTheta_le_invConstant
+lemma triangularNormalizedTheta_le_invConstant
     (n : Nat) (q beta0 beta : Real) (hq : 1 <= q) (hbeta : 0 < beta) :
     triangularNormalizedTheta q beta0 n beta <=
       1 / triangularSharpConstant beta0 := by
@@ -171,7 +228,7 @@ theorem triangularNormalizedTheta_le_invConstant
     (triangularOuterInnerTheta_le_one n q beta hq hbeta)
     (triangularSharpConstant_pos beta0).le
 
-theorem triangularNormalizedSig_pos
+lemma triangularNormalizedSig_pos
     (n : Nat) (hn : 1 <= n) (q beta0 beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     0 < IntegrationSubcritical.Sig
@@ -180,7 +237,7 @@ theorem triangularNormalizedSig_pos
   exact div_pos (triangularOuterInnerSig_pos n hn q beta hq hbeta)
     (triangularSharpConstant_pos beta0)
 
-theorem triangularOuterInnerThetaPrime_nonneg
+lemma triangularOuterInnerThetaPrime_nonneg
     (n : Nat) (hn : 1 <= n) (q beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     0 <= triangularOuterInnerThetaPrime n q beta := by
@@ -198,7 +255,7 @@ theorem triangularOuterInnerThetaPrime_nonneg
     div_nonneg (mul_nonneg htheta0 (sub_nonneg.mpr htheta1)) hden.le
   exact hnonneg.trans hlog
 
-theorem triangularNormalizedThetaPrime_nonneg
+lemma triangularNormalizedThetaPrime_nonneg
     (n : Nat) (hn : 1 <= n) (q beta0 beta : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) :
     0 <= triangularNormalizedThetaPrime q beta0 n beta := by
@@ -207,7 +264,7 @@ theorem triangularNormalizedThetaPrime_nonneg
     (triangularOuterInnerThetaPrime_nonneg n hn q beta hq hbeta)
     (triangularSharpConstant_pos beta0).le
 
-theorem triangularNormalizedTheta_mono_beta
+lemma triangularNormalizedTheta_mono_beta
     (n : Nat) (q beta0 y x : Real) (hq : 1 <= q)
     (hy : 0 < y) (hyx : y <= x) :
     triangularNormalizedTheta q beta0 n y <=
@@ -236,13 +293,15 @@ theorem triangularNormalizedTheta_mono_beta
         (hy.trans hz.1)
   exact hmono (Set.left_mem_Icc.mpr hyx) (Set.right_mem_Icc.mpr hyx) hyx
 
-theorem triangularThresholdTheta_of_pos
+/-! ## C. The threshold function -/
+
+lemma triangularThresholdTheta_of_pos
     (n : Nat) (q beta0 beta : Real) (hbeta : 0 < beta) :
     triangularThresholdTheta q beta0 n beta =
       triangularNormalizedTheta q beta0 n beta := by
   simp [triangularThresholdTheta, not_le.mpr hbeta]
 
-theorem triangularThresholdSig_of_pos
+lemma triangularThresholdSig_of_pos
     (n : Nat) (q beta0 beta : Real) (hbeta : 0 < beta) :
     IntegrationSubcritical.Sig (triangularThresholdTheta q beta0) n beta =
       IntegrationSubcritical.Sig (triangularNormalizedTheta q beta0) n beta := by
@@ -251,20 +310,20 @@ theorem triangularThresholdSig_of_pos
   intro k hk
   exact triangularThresholdTheta_of_pos k q beta0 beta hbeta
 
-theorem triangularThresholdSig_of_nonpos
+lemma triangularThresholdSig_of_nonpos
     (n : Nat) (hn : 1 <= n) (q beta0 beta : Real) (hbeta : beta <= 0) :
     IntegrationSubcritical.Sig (triangularThresholdTheta q beta0) n beta =
       1 / triangularSharpConstant beta0 := by
   unfold IntegrationSubcritical.Sig triangularThresholdTheta
-  simp only [if_pos hbeta]
+  simp only [ite_eq_left hbeta]
   rw [Finset.sum_eq_single 0]
-  · simp [(triangularSharpConstant_pos beta0).ne']
+  · simp
   · intro k hk hk0
     simp [hk0]
   · intro hnot
     exact (hnot (Finset.mem_range.mpr hn)).elim
 
-theorem triangularThresholdSet_bddBelow (q beta0 : Real) :
+lemma triangularThresholdSet_bddBelow (q beta0 : Real) :
     BddBelow (BetaThresholdBound.thresholdSet
       (fun b n => IntegrationSubcritical.Sig
         (triangularThresholdTheta q beta0) n b)) := by
@@ -299,32 +358,32 @@ theorem triangularThresholdSet_bddBelow (q beta0 : Real) :
   rw [hlimsup] at hmem
   linarith
 
-theorem triangularThresholdTheta_nonneg
+lemma triangularThresholdTheta_nonneg
     (n : Nat) (q beta0 beta : Real) (hq : 1 <= q) :
     0 <= triangularThresholdTheta q beta0 n beta := by
   by_cases hbeta : beta <= 0
   · by_cases hn0 : n = 0
-    · rw [triangularThresholdTheta, if_pos hbeta, if_pos hn0]
+    · rw [triangularThresholdTheta, ite_eq_left hbeta, ite_eq_left hn0]
       exact (div_pos one_pos (triangularSharpConstant_pos beta0)).le
-    · rw [triangularThresholdTheta, if_pos hbeta, if_neg hn0]
+    · rw [triangularThresholdTheta, ite_eq_left hbeta, ite_eq_right hn0]
   · rw [triangularThresholdTheta_of_pos n q beta0 beta (lt_of_not_ge hbeta)]
     exact triangularNormalizedTheta_nonneg n q beta0 beta hq
       (lt_of_not_ge hbeta)
 
-theorem triangularThresholdTheta_le_invConstant
+lemma triangularThresholdTheta_le_invConstant
     (n : Nat) (q beta0 beta : Real) (hq : 1 <= q) :
     triangularThresholdTheta q beta0 n beta <=
       1 / triangularSharpConstant beta0 := by
   by_cases hbeta : beta <= 0
   · by_cases hn0 : n = 0
-    · rw [triangularThresholdTheta, if_pos hbeta, if_pos hn0]
-    · rw [triangularThresholdTheta, if_pos hbeta, if_neg hn0]
+    · rw [triangularThresholdTheta, ite_eq_left hbeta, ite_eq_left hn0]
+    · rw [triangularThresholdTheta, ite_eq_left hbeta, ite_eq_right hn0]
       exact (div_pos one_pos (triangularSharpConstant_pos beta0)).le
   · rw [triangularThresholdTheta_of_pos n q beta0 beta (lt_of_not_ge hbeta)]
     exact triangularNormalizedTheta_le_invConstant n q beta0 beta hq
       (lt_of_not_ge hbeta)
 
-theorem triangularThresholdTheta_mono_beta
+lemma triangularThresholdTheta_mono_beta
     (n : Nat) (q beta0 a b : Real) (hq : 1 <= q) (hab : a <= b) :
     triangularThresholdTheta q beta0 n a <=
       triangularThresholdTheta q beta0 n b := by
@@ -336,15 +395,15 @@ theorem triangularThresholdTheta_mono_beta
     · subst n
       simp [triangularThresholdTheta, ha, hb, triangularNormalizedTheta,
         triangularOuterInnerTheta]
-    · rw [triangularThresholdTheta, if_pos ha, if_neg hn0,
-        triangularThresholdTheta, if_neg hb]
+    · rw [triangularThresholdTheta, ite_eq_left ha, ite_eq_right hn0,
+        triangularThresholdTheta, ite_eq_right hb]
       exact triangularNormalizedTheta_nonneg n q beta0 b hq (lt_of_not_ge hb)
   · rw [triangularThresholdTheta_of_pos n q beta0 a (lt_of_not_ge ha),
       triangularThresholdTheta_of_pos n q beta0 b (lt_of_not_ge hb)]
     exact triangularNormalizedTheta_mono_beta n q beta0 a b hq
       (lt_of_not_ge ha) hab
 
-theorem triangularThresholdSig_mono_beta
+lemma triangularThresholdSig_mono_beta
     (n : Nat) (q beta0 : Real) (hq : 1 <= q)
     {a b : Real} (hab : a <= b) :
     IntegrationSubcritical.Sig (triangularThresholdTheta q beta0) n a <=
@@ -353,7 +412,7 @@ theorem triangularThresholdSig_mono_beta
   exact Finset.sum_le_sum (fun k _ =>
     triangularThresholdTheta_mono_beta k q beta0 a b hq hab)
 
-theorem triangularThresholdSig_pos
+lemma triangularThresholdSig_pos
     (n : Nat) (hn : 1 <= n) (q beta0 beta : Real) (hq : 1 <= q) :
     0 < IntegrationSubcritical.Sig
       (triangularThresholdTheta q beta0) n beta := by
@@ -373,7 +432,7 @@ theorem triangularThresholdSig_pos
   rw [hzero] at hsum
   exact (div_pos zero_lt_one (triangularSharpConstant_pos beta0)).trans_le hsum
 
-theorem triangularThresholdSig_le_linear
+lemma triangularThresholdSig_le_linear
     (n : Nat) (q beta0 beta : Real) (hq : 1 <= q) :
     IntegrationSubcritical.Sig
         (triangularThresholdTheta q beta0) n beta <=
@@ -388,8 +447,12 @@ theorem triangularThresholdSig_le_linear
       rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
       ring
 
+/-! ## D. Exponential decay below the threshold -/
 
-
+/-- Subcritical exponential decay below the OSSS threshold (Duminil-Copin–Raoufi–Tassion 2019,
+subcritical half): for `q ≥ 1`, `0 < β - 2δ`, `β ≤ β₀` and `β < β₁`, `θ_n(β - 2δ) ≤ exp(-(n / Q)
+δ)`. Vacuous if the threshold set is empty, see
+`triangularThreshold_decay_hypotheses_false_of_thresholdSet_empty`. -/
 theorem triangularOuterInner_subcritical_decay_of_threshold
     (q delta beta beta0 : Real) (hq : 1 <= q)
     (hbeta0 : beta <= beta0)
@@ -519,5 +582,18 @@ theorem triangularOuterInner_subcritical_decay_of_threshold
     simpa [f, M, c, triangularThresholdTheta, triangularNormalizedTheta,
       hbeta2, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using hnDecay
   exact (div_le_div_iff_of_pos_right hc).mp hdiv
+
+/-- If the threshold set is empty then `β₁ = sInf ∅ = 0`, so the hypotheses `0 < β - 2δ` and
+`β < β₁` of `triangularOuterInner_subcritical_decay_of_threshold` cannot hold together: the decay
+result is then vacuous. -/
+lemma triangularThreshold_decay_hypotheses_false_of_thresholdSet_empty
+    (q beta0 delta beta : Real) (hdelta : 0 < delta)
+    (hempty : BetaThresholdBound.thresholdSet
+      (fun b n => IntegrationSubcritical.Sig (triangularThresholdTheta q beta0) n b) = ∅) :
+    ¬ (0 < beta - 2 * delta ∧ beta < BetaThresholdBound.beta1
+      (fun b n => IntegrationSubcritical.Sig (triangularThresholdTheta q beta0) n b)) := by
+  rintro ⟨hleft, hlt⟩
+  rw [BetaThresholdBound.beta1, hempty, Real.sInf_empty] at hlt
+  linarith
 
 end StatMech.FK.PeriodicPlanar

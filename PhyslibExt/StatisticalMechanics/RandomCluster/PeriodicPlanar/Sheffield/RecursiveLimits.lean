@@ -6,22 +6,51 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ArrayClosure
 
+/-!
+# Cofinal boundary-band families and recursive shared-level steps
+
+Under FKG, translation invariance and uniqueness of the infinite cluster, boundary-band families
+exist at every orbit-box scale with scores tending to one, and they can be chained into a
+recursive sequence of shared-level steps whose side connections tend to one and whose merge
+errors tend to zero.
+
+## i. Overview
+
+A `NormalBoundaryBandFamily` at scale `m` with score `p m` provides, for the orbit box of radius
+`m`, square rectangles in which translated boxes reach each of the four sides with probability
+at least `p m`. The first result chooses such families with `p m = h m ^ 2 - 1/(m+1)`, where
+`h m` is the probability that the orbit box reaches the infinite cluster, so `p m → 1` and
+`p m ≤ 1`. The second result adds a uniform boundary-band crossing radius and an aligned margin
+schedule. The last two results build, recursively in `n`, shared-level steps (`scale`,
+`nextConnector`) whose side-connection probabilities tend to one and whose merge errors at the
+next connector radius tend to zero, with accuracy `1/(n+1)` at stage `n`.
+
+Headline fidelity: all four results are proved conditionally on FKG, translation invariance and
+almost sure uniqueness of the infinite cluster (the third one also takes the families and their
+score limit as input). No hypothesis is known to be unsatisfiable.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded`
+- `PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule`
+- `PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limits`
+- `PeriodicPlaneEmbedding.exists_uniformRadius_recursiveAlignedSharedLevelSteps_with_limits`
+
+## iii. Table of contents
+
+- A. Boundary-band families at all scales
+- B. Recursive shared-level steps
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
@@ -30,16 +59,17 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Boundary-band families at all scales -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
+/-- Under FKG, translation invariance and uniqueness, there are boundary-band families for every
+orbit box `P.orbitBox m` with scores `p m ≤ 1` tending to one. -/
+lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     exists (p : Nat -> Real)
-      (family : forall m,
+      (_family : forall m,
         E.NormalBoundaryBandFamily mu (P.orbitBox m) (p m)),
       Tendsto p atTop (nhds 1) /\ (forall m, p m <= 1) := by
   have hexists : mu {omega | P.HasInfiniteCluster omega} = 1 := by
@@ -61,7 +91,7 @@ theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
   have hdelta : Tendsto delta atTop (nhds 0) := by
     simpa only [delta] using tendsto_one_div_add_atTop_nhds_zero_nat
   have hp : Tendsto p atTop (nhds 1) := by
-    convert (hhit.pow 2).sub hdelta using 1 <;> norm_num [p]
+    convert (hhit.pow 2).sub hdelta using 1; norm_num [p]
   have hp_le (m : Nat) : p m <= 1 := by
     have hprob0 : 0 <= mu.real (P.orbitBoxHitsInfinite m) :=
       measureReal_nonneg
@@ -75,10 +105,10 @@ theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
     nlinarith
   exact ⟨p, family, hp, hp_le⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule
+/-- Boundary-band families with scores tending to one, together with a uniform boundary-band
+crossing radius and, at every scale, an aligned margin schedule using the connector margin of that
+radius. -/
+lemma PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -104,10 +134,12 @@ theorem PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofi
     (fun _ => E.connectorMarginRequirement (radius m))
     (fun _ => E.connectorMarginRequirement (radius m))
 
+/-! ## B. Recursive shared-level steps -/
 
-
-
-theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limits
+/-- Given boundary-band families with scores tending to one, a recursive sequence of aligned
+shared-level steps at accuracy `1/(n+1)` whose scale tends to infinity, whose four side-connection
+probabilities tend to one and whose bottom-top and left-right merge errors tend to zero. -/
+lemma PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limits
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -225,10 +257,10 @@ theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limi
   exact ⟨state, steps, hstate0, hstateSucc, hscaleTop, hscore,
     hbottom, htop, hleft, hright, hverticalMerge, hhorizontalMerge⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformRadius_recursiveAlignedSharedLevelSteps_with_limits
+/-- Combination of `exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule` and
+`exists_recursiveAlignedSharedLevelSteps_with_limits`: under FKG, translation invariance and
+uniqueness, recursive shared-level steps exist for orbit-box families with a uniform radius. -/
+lemma PeriodicPlaneEmbedding.exists_uniformRadius_recursiveAlignedSharedLevelSteps_with_limits
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

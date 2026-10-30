@@ -6,49 +6,80 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInfiniteArm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ApproximatePreference
 
+/-!
+# Left-side placements near a half-plane boundary
+
+Exhausting the right half-plane by boxes, and placing a finite source so that it is joined to the
+infinite cluster and to the left side of a box with probability tending to one.
+
+## i. Overview
+
+`leftBoundaryExhaustionVertices r n` is the box `[r, r + n] × [-n, n]` in the half-plane `x ≥ r`,
+and `leftBoundaryExhaustionEvent r S n` is the event that some vertex of `S` lies in an infinite
+cluster and is joined, inside that box, to a vertex of its left side. The boxes increase to the
+half-plane, so for a finite `S` the events increase to the event that `S` meets the infinite
+cluster and is joined inside the half-plane to its boundary; continuity of measure gives
+convergence of the probabilities. Combined with the half-plane boundary estimate of
+`Sheffield.HalfPlaneInfiniteArm`, this yields sources (finite sets, translated orbit boxes,
+buffered translated orbit boxes) whose left-side connection has probability tending to one.
+
+Headline fidelity. The exhaustion statements (A, B) are unconditional (B needs only a finite
+measure). The placement results of section C are conditional on `IsFKG mu`,
+`P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite cluster; these are
+satisfiable (for example supercritical Bernoulli percolation), so they are not vacuous.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.iUnion_leftBoundaryExhaustionEvent` : the exhaustion events increase to
+  the half-plane boundary connection event.
+- `PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_tendsto_one` : buffered translated
+  orbit boxes joined to the left side of a box with probability tending to one.
+
+## iii. Table of contents
+
+- A. Box exhaustion of a half-plane
+- B. Convergence of the exhaustion events
+- C. Left-side placements with probability tending to one
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Box exhaustion of a half-plane -/
 
+/-- The box `[r, r + n] × [-n, n]`, the `n`-th box exhausting the right half-plane `x ≥ r`. -/
 def PeriodicPlaneEmbedding.leftBoundaryExhaustionVertices
     (E : PeriodicPlaneEmbedding P) (r : Real) (n : Nat) : Set V :=
   E.rectVertices r (r + n) (-(n : Real)) n
 
-
-
+/-- The event that some vertex of `S` lies in an infinite cluster and is joined, inside the box `[r,
+r + n] × [-n, n]`, to a vertex of the left side of that box. -/
 def PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) (n : Nat) :
     Set (ConfigSpace (Sym2 V)) :=
   E.rectSideConnectionEvent r (r + n) (-(n : Real)) n S
     (E.rectLeftBoundaryVertices r (r + n) (-(n : Real)) n)
 
-theorem PeriodicPlaneEmbedding.leftBoundaryExhaustionVertices_mono
+omit [Countable V] in
+/-- The exhausting boxes increase with `n`. -/
+lemma PeriodicPlaneEmbedding.leftBoundaryExhaustionVertices_mono
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     Monotone (E.leftBoundaryExhaustionVertices r) := by
   intro n N hnN v hv
@@ -60,7 +91,9 @@ theorem PeriodicPlaneEmbedding.leftBoundaryExhaustionVertices_mono
   rcases hv with ⟨h0, h1, h2, h3⟩
   exact ⟨h0, by linarith, by linarith, by linarith⟩
 
-theorem PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent_mono
+omit [Countable V] in
+/-- The exhaustion events increase with `n`. -/
+lemma PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent_mono
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Monotone (E.leftBoundaryExhaustionEvent r S) := by
   intro n N hnN
@@ -72,9 +105,11 @@ theorem PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent_mono
   exact ⟨E.leftBoundaryExhaustionVertices_mono r hnN hyRect,
     z, hyz, hz⟩
 
+/-! ## B. Convergence of the exhaustion events -/
 
-
-theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_subset
+omit [Countable V] in
+/-- A finite set in the half-plane `x ≥ r` lies in some exhausting box. -/
+lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_subset
     (E : PeriodicPlaneEmbedding P) (r : Real) {S : Set V}
     (hSfinite : S.Finite) (hSH : S ⊆ E.rightHalfPlaneVertices r) :
     ∃ n : Nat, S ⊆ E.leftBoundaryExhaustionVertices r n := by
@@ -107,11 +142,13 @@ theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_subset
   · linarith [le_abs_self (E.vertexCoord v 1),
       abs_nonneg (E.vertexCoord v 0 - r)]
 
-
-
-theorem PeriodicPlaneEmbedding.iUnion_leftBoundaryExhaustionEvent
+omit [Countable V] in
+/-- For finite `S`, the exhaustion events increase to the event that `S` meets the infinite cluster
+and is joined inside the half-plane to its boundary. The half-plane hypothesis `_hSH` is not used.
+-/
+lemma PeriodicPlaneEmbedding.iUnion_leftBoundaryExhaustionEvent
     (E : PeriodicPlaneEmbedding P) (r : Real) {S : Set V}
-    (hSfinite : S.Finite) (hSH : S ⊆ E.rightHalfPlaneVertices r) :
+    (hSfinite : S.Finite) (_hSH : S ⊆ E.rightHalfPlaneVertices r) :
     (⋃ n : Nat, E.leftBoundaryExhaustionEvent r S n) =
       P.infiniteSetConnectionWithin (E.rightHalfPlaneVertices r) S
         (E.rightHalfPlaneBoundaryVertices r) := by
@@ -174,7 +211,10 @@ theorem PeriodicPlaneEmbedding.iUnion_leftBoundaryExhaustionEvent
     exact ⟨n, x, hxS, hxinf, y,
       ⟨hyRect, hy.2⟩, l, hchain, hlast, hpathRect⟩
 
-theorem PeriodicPlaneEmbedding.leftBoundaryExhaustion_measureReal_tendsto
+omit [Countable V] in
+/-- Continuity of measure: the probabilities of the exhaustion events converge to the probability of
+the half-plane boundary connection. -/
+lemma PeriodicPlaneEmbedding.leftBoundaryExhaustion_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) {S : Set V}
@@ -188,9 +228,10 @@ theorem PeriodicPlaneEmbedding.leftBoundaryExhaustion_measureReal_tendsto
   rw [E.iUnion_leftBoundaryExhaustionEvent r hSfinite hSH] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-
-theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_measureReal_gt
+omit [Countable V] in
+/-- Some exhausting box contains `S` and its exhaustion event has probability within `epsilon` of
+the half-plane boundary connection. -/
+lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r : Real) {S : Set V}
@@ -219,9 +260,11 @@ theorem PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_measureReal_gt
   · exact hnScore.trans_le (measureReal_mono
       (E.leftBoundaryExhaustionEvent_mono r S (Nat.le_max_right _ _)))
 
+/-! ## C. Left-side placements with probability tending to one -/
 
-
-theorem PeriodicPlaneEmbedding.exists_leftBoundaryPlacement_tendsto_one
+/-- For an FKG, translation-invariant measure with a.s. unique infinite cluster, there are finite
+sources and radii whose left-side exhaustion event has probability tending to one. -/
+lemma PeriodicPlaneEmbedding.exists_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -258,10 +301,9 @@ theorem PeriodicPlaneEmbedding.exists_leftBoundaryPlacement_tendsto_one
     · intro N
       exact measureReal_le_one
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_translatedOrbitBox_leftBoundaryPlacement_tendsto_one
+/-- Version of `exists_leftBoundaryPlacement_tendsto_one` whose sources are translated orbit boxes
+`P.shift (base N) '' orbitBox N`. -/
+lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -323,10 +365,10 @@ theorem PeriodicPlaneEmbedding.exists_translatedOrbitBox_leftBoundaryPlacement_t
   · intro N
     exact measureReal_le_one
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_tendsto_one
+/-- Version with a buffer: the orbit box of radius `buffer N ≥ N` fits in the exhausting box, while
+the orbit box of radius `N` has left-side exhaustion event of probability tending to one (FKG,
+translation invariance, a.s. uniqueness). -/
+lemma PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

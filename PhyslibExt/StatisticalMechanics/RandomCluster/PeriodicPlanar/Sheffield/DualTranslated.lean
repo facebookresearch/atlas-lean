@@ -6,50 +6,99 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TransverseAssembly
 
+/-!
+# A translated dual crossing blocks a primal strip connection
+
+Translated dual pair connections, their probability under the dual measure, and the planar
+duality bound: a primal strip event and a translated dual crossing of the strip cannot both have
+probability above one half.
+
+## i. Overview
+
+`translatedFiniteInfinitePairConnectionEvent z L R N` is the pair connection event of
+`Sheffield.DualTransverse` translated by `z`; under a translation-invariant measure it has the
+same probability for every `z`, so the high-probability pair connection holds uniformly in `z`.
+Pulled back through the edge duality `dualConfigEquiv D.edgeDual`, this applies to the dual
+configuration when the dual measure `D.dualMeasure mu` has a.s. a unique infinite cluster.
+
+Geometrically, for dual sets `Ld` left of `x = r - Bp - 1` and `Rd` right of
+`x = r + np + Bp + 1`, a vertical translate `z` and a positive integer gap can be chosen so that
+the whole translated buffered dual orbit box lies in the middle third of the horizontal strip
+between heights `s` and `s + gap`. A primal open configuration in
+`finiteStripJoinedBoundaryArmEvent r s (s + gap) np Lp Rp` joins the lower boundary ray to the
+upper boundary ray across this strip, while the translated dual pair connection gives a dual open
+path from `Ld` to `Rd` crossing the strip horizontally; a primal and a dual open path cannot cross
+(`Sheffield.HalfPlaneBarrier`), so the two events are disjoint and their probabilities add to
+at most one.
+
+Headline fidelity.
+- `translatedFiniteStripPrimal_dualPairConnection_disjoint`,
+  `exists_verticalGap_translatedFiniteEvents_measureReal_add_le_one` and
+  `exists_verticalGap_not_both_translatedFiniteEvents_highProbability` are unconditional
+  (deterministic planar duality plus geometry; only the embedding bounds `Bp`, `Bd` and the
+  placement hypotheses on `Lp`, `Ld`, `Rd` are assumed).
+- `PeriodicGraph.exists_uniformRadius_highProbability_translatedFiniteEvent` is conditional on
+  translation invariance and a.s. uniqueness of the infinite cluster.
+- `PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementaryDualFiniteEvent` is
+  conditional on translation invariance of `mu` and a.s. uniqueness of the dual infinite cluster.
+  Used together with a high-probability primal strip estimate (which needs a unique primal
+  infinite cluster), it contradicts the bound above: this is a reductio step in Sheffield's proof
+  that primal and dual unique infinite clusters cannot coexist.
+
+## ii. Key results
+
+- `translatedFiniteStripPrimal_dualPairConnection_disjoint` : the primal strip event and the
+  translated dual crossing are disjoint.
+- `exists_verticalGap_not_both_translatedFiniteEvents_highProbability` : they cannot both have
+  probability `> 1 - ε` for `ε < 1/2`.
+- `PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementaryDualFiniteEvent` :
+  dual uniqueness makes the translated dual crossing likely, uniformly in the translate.
+
+## iii. Table of contents
+
+- A. Translated pair connection events
+- B. Pair connections of the dual configuration
+- C. Vertical gaps and the duality bound
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open MeasureTheory Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Translated pair connection events -/
 
-
+/-- The pair connection event between `L` and `R` at radius `N`, translated by `z`. -/
 def PeriodicGraph.translatedFiniteInfinitePairConnectionEvent
     (P : PeriodicGraph V) (z : Site 2) (L R : Finset V) (N : Nat) :
     Set (ConfigSpace (Sym2 V)) :=
   P.translateEvent z (P.finiteInfinitePairConnectionEvent L R N)
 
-theorem PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_measurableSet
+/-- The translated pair connection event is measurable. -/
+lemma PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_measurableSet
     (P : PeriodicGraph V) (z : Site 2) (L R : Finset V) (N : Nat) :
     MeasurableSet (P.translatedFiniteInfinitePairConnectionEvent z L R N) :=
   P.translateEvent_measurableSet z
     (P.finiteInfinitePairConnectionEvent_measurableSet L R N)
 
-
-
-theorem PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_measureReal
+/-- Under a translation-invariant measure, translating the pair connection event does not change its
+probability. -/
+lemma PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_measureReal
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu)
@@ -60,20 +109,22 @@ theorem PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_measureReal
     (P.translateEvent_measure_eq mu hTI z
       (P.finiteInfinitePairConnectionEvent_measurableSet L R N))
 
-
+/-- The lattice translation by `z` as a graph homomorphism of the periodic graph. -/
 def PeriodicGraph.shiftGraphHom
     (P : PeriodicGraph V) (z : Site 2) : P.graph →g P.graph where
   toFun := P.shift z
   map_rel' := fun {_ _} h => (P.shift_adj z _ _).2 h
 
-@[simp] theorem PeriodicGraph.shiftGraphHom_apply
+omit [Countable V] in
+/-- The translation homomorphism acts as `P.shift z`. -/
+@[simp] lemma PeriodicGraph.shiftGraphHom_apply
     (P : PeriodicGraph V) (z : Site 2) (v : V) :
     P.shiftGraphHom z v = P.shift z v := rfl
 
-
-
-
-theorem PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_graphWalk
+omit [Countable V] in
+/-- On the translated pair connection event there is an open walk between the `-z`-translates of `L`
+and `R` inside the `-z`-translate of the buffered orbit box. -/
+lemma PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_graphWalk
     (P : PeriodicGraph V) {omega : ConfigSpace (Sym2 V)}
     {z : Site 2} {L R : Finset V} {N : Nat}
     (h : omega ∈ P.translatedFiniteInfinitePairConnectionEvent z L R N) :
@@ -105,10 +156,10 @@ theorem PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_graphWalk
       simpa only [shiftHom, PeriodicGraph.shiftGraphHom_apply] using
         heq ▸ heOpen
 
-
-
-
-theorem PeriodicGraph.exists_uniformRadius_highProbability_translatedFiniteEvent
+/-- Under translation invariance and a.s. uniqueness, there is an orbit-box radius `n` such that any
+two translated boxes are joined with probability `> 1 - ε`, uniformly in the translate `z` of the
+event. -/
+lemma PeriodicGraph.exists_uniformRadius_highProbability_translatedFiniteEvent
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -131,9 +182,11 @@ theorem PeriodicGraph.exists_uniformRadius_highProbability_translatedFiniteEvent
     mu hTI z]
   exact hN
 
+/-! ## B. Pair connections of the dual configuration -/
 
-
-theorem PeriodicPlanarDualPair.dualMeasure_measureReal
+/-- The dual measure of a measurable event is the primal probability of its preimage under the edge
+duality. -/
+lemma PeriodicPlanarDualPair.dualMeasure_measureReal
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)
@@ -145,10 +198,10 @@ theorem PeriodicPlanarDualPair.dualMeasure_measureReal
   rw [Measure.map_apply
     (continuous_dualConfigEquiv D.edgeDual).measurable hA]
 
-
-
-
-theorem PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementaryDualFiniteEvent
+/-- If `mu` is translation invariant and the dual measure has a.s. a unique infinite cluster, the
+translated dual pair connection, pulled back to primal configurations, has probability `> 1 - ε`
+uniformly in the translate. -/
+lemma PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementaryDualFiniteEvent
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)
@@ -163,7 +216,7 @@ theorem PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementar
           ((Pdual.orbitBox n).image (Pdual.shift zL))
           ((Pdual.orbitBox n).image (Pdual.shift zR)) N) := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let _ : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
@@ -181,12 +234,13 @@ theorem PeriodicPlanarDualPair.exists_uniformRadius_highProbability_complementar
         ((Pdual.orbitBox n).image (Pdual.shift zR)) N)]
   exact hN z
 
+/-! ## C. Vertical gaps and the duality bound -/
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_verticalGap_shift_orbitBox_middleThird
+omit [Countable V] in
+/-- There are a positive integer gap and a vertical translate `z` placing the `-z`-translated
+buffered orbit box, thickened by `B`, in the open middle third of the strip between heights `s` and
+`s + gap`. -/
+lemma PeriodicPlaneEmbedding.exists_verticalGap_shift_orbitBox_middleThird
     (E : PeriodicPlaneEmbedding P) (N : Nat) (B s : Real) :
     ∃ gap : Int, 0 < (gap : Real) ∧ ∃ z : Site 2,
       z 0 = 0 ∧
@@ -235,11 +289,9 @@ namespace PeriodicPlanarDualPair
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
-
-
-
-
-theorem exists_verticalGap_translatedDualPlacement
+/-- Dual version of `exists_verticalGap_shift_orbitBox_middleThird` that also keeps `Ld` left of `x
+= a` and `Rd` right of `x = b` after the vertical translation. -/
+lemma exists_verticalGap_translatedDualPlacement
     (D : PeriodicPlanarDualPair P Pdual) (N : Nat) (Bd s a b : Real)
     {Ld Rd : Finset W}
     (hLd : ∀ y ∈ Ld,
@@ -278,10 +330,10 @@ theorem exists_verticalGap_translatedDualPlacement
     rw [D.dualEmbedding.vertexCoord_shift]
     simp [hz0, huRight]
 
-
-
-
-theorem translatedFiniteStripPrimal_dualPairConnection_disjoint
+/-- Planar duality: a primal configuration joining the two boundary rays across the strip of height
+`gap` and a translated dual open path from `Ld` to `Rd` through the middle third of the strip cannot
+occur together. -/
+lemma translatedFiniteStripPrimal_dualPairConnection_disjoint
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {z : Site 2} {Bp Bd r s : Real} {gap : Int} {np N : Nat}
@@ -351,11 +403,9 @@ theorem translatedFiniteStripPrimal_dualPairConnection_disjoint
     hlowerOpen hupperOpen hdualOpen hdualLeft hdualRight
     hlowerBottom hupperTop hlowerX hupperX hdualY
 
-
-
-
-
-theorem exists_verticalGap_translatedFiniteStripPrimal_dualPairConnection_disjoint
+/-- There are a gap and a translate for which the primal strip event and the translated dual pair
+connection are disjoint. -/
+lemma exists_verticalGap_translatedFiniteStripPrimal_dualPairConnection_disjoint
     (D : PeriodicPlanarDualPair P Pdual)
     {Bp Bd r s : Real} {np N : Nat}
     {Lp Rp : Finset V} {Ld Rd : Finset W}
@@ -389,11 +439,9 @@ theorem exists_verticalGap_translatedFiniteStripPrimal_dualPairConnection_disjoi
   exact D.translatedFiniteStripPrimal_dualPairConnection_disjoint
     omega hBp0 hBd0 hBp hBd hgap hLpDeep hLdZ hRdZ hbox hprimal hdual
 
-
-
-
-
-theorem exists_verticalGap_translatedFiniteEvents_measureReal_add_le_one
+/-- For some gap and translate, the probabilities of the primal strip event and of the translated
+dual pair connection add to at most one. -/
+lemma exists_verticalGap_translatedFiniteEvents_measureReal_add_le_one
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {Bp Bd r s : Real} {np N : Nat}
@@ -437,10 +485,9 @@ theorem exists_verticalGap_translatedFiniteEvents_measureReal_add_le_one
   rw [measureReal_union hAC hCmeas] at hunion
   exact ⟨gap, z, hgap, hunion⟩
 
-
-
-
-theorem exists_verticalGap_not_both_translatedFiniteEvents_highProbability
+/-- For `ε < 1/2` and some gap and translate, the primal strip event and the translated dual pair
+connection do not both have probability `> 1 - ε`. -/
+lemma exists_verticalGap_not_both_translatedFiniteEvents_highProbability
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {Bp Bd r s epsilon : Real} {np N : Nat}

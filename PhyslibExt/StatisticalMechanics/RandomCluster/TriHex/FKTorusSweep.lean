@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKGlobalSweep
@@ -18,29 +13,80 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDuality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdges
 public import MathlibExt.Probability.Percolation.Universality.STTTransport
 
+/-!
+# Star–triangle transformation of the FK model on the triangular and hexagonal tori
+
+The triangular torus is the union of its up-triangles and the hexagonal torus the union of the
+corresponding stars; at the critical surface the FK partition functions and two-point functions
+of the two tori are related by the simultaneous star–triangle move.
+
+## i. Overview
+
+Each torus site `z` carries one up-triangle of the triangular torus (edges between the terminals
+`z + hexagonalTorusStep i`) and one star of the hexagonal torus (black center `(z, false)` joined
+to the white terminals). The edge charts `triHexTorusTriangleSweepEdgeEquiv` and
+`triHexTorusStarSweepEdgeEquiv` identify both edge sets with `TorusSite L × Fin 3`, and
+`triangularTorusActiveConfigEquiv`, `hexagonalTorusActiveConfigEquiv` turn an edge configuration
+into one `LocalConfig` per cell. The combinatorial core shows:
+- triangular open connectivity equals connectivity of the terminal sector graph
+  (`triangularTorus_openSub_reachable_iff_terminalSectorGraph`), so the cluster count is that of
+  the sector graph;
+- hexagonal open connectivity between white vertices equals sector-graph connectivity, and the
+  hexagonal cluster count is the sector-graph count plus the number of isolated black centers
+  (`hexagonalTorus_numClusters_eq_terminalSector_add_isolated`).
+With edge parameters whose odds are the direction odds `yᵢ` (resp. `yᵢ*`), the FK weights
+(`activeWeight`, `activeZ`, `activeNumer` of `ActiveEdges`) factor as a closed-edge product times
+the global cell sums of `FKGlobalSweep`. On the triangular critical surface with `yᵢ yᵢ* = q` this
+gives the partition-function identity `triHexFK_torus_activeZ_identity` and the equality of all
+sector-observable expectations, in particular of the two-point functions
+(`triHexFK_torus_activeTwoPointRatio_eq`): the hexagonal-torus probability that white vertices
+`x, y` are connected equals the triangular-torus probability that `x, y` are connected.
+
+Fidelity: all results are unconditional, given the stated parameter hypotheses (edge odds equal
+to the direction odds, `q ≠ 0`, `y₀ y₁ y₂ ≠ 0`, `p ≠ 1`, and the critical-surface equation).
+
+## ii. Key results
+
+- `triangularTorus_numClusters_eq_terminalSector`,
+  `hexagonalTorus_numClusters_eq_terminalSector_add_isolated` : cluster counts through the
+  terminal sector graph. Unconditional.
+- `triHexFK_torus_activeZ_identity` : star–triangle identity of the torus FK partition functions.
+  Unconditional (given the surface equation).
+- `triHexFK_torus_activeTwoPointRatio_eq` : equality of the hexagonal (white-vertex) and
+  triangular FK two-point functions on the torus at dual parameters. Unconditional (given the
+  surface equation).
+
+## iii. Table of contents
+
+- A. Cell charts of the two tori
+- B. Triangular open clusters through the sector graph
+- C. Hexagonal open clusters through the sector graph
+- D. Product weights of active-edge configurations
+- E. Edge odds and factorization of the FK weights
+- F. Star–triangle identities on the torus
+
+## iv. References
+
+- R. J. Baxter, H. N. V. Temperley and S. E. Ashley, *Triangular Potts model at its transition
+  temperature, and related models*, Proc. R. Soc. Lond. A 358 (1978) 535–559.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 namespace StatMech.FK.PeriodicPlanar
 
 open Universality
 open scoped BigOperators
 
+/-! ## A. Cell charts of the two tori -/
 
-
+/-- The shift moving the base point of a torus edge index to the up-triangle containing that edge.
+-/
 def triHexTorusTriangleEdgeBaseShift (L : ℕ) (i : Fin 3) : TorusSite L :=
   ![(0, 1), (1, 0), (1, 0)] i
 
-
-
-
+/-- The reindexing of torus edge indices by the up-triangle base shift. -/
 def triHexTorusTriangleIndexEquiv (L : ℕ) :
     TriHexTorusEdgeIndex L ≃ TriHexTorusEdgeIndex L where
   toFun a := (a.1 + triHexTorusTriangleEdgeBaseShift L a.2, a.2)
@@ -52,38 +98,34 @@ def triHexTorusTriangleIndexEquiv (L : ℕ) :
     rintro ⟨z, i⟩
     ext <;> simp
 
-
+/-- The cell chart of the triangular torus: edge `i` of the up-triangle at `z` corresponds to `(z,
+i)`. -/
 noncomputable def triHexTorusTriangleSweepEdgeEquiv (L : ℕ) [Fact (2 < L)] :
     TriHexTorusEdgeIndex L ≃ (triangularTorusGraph L).edgeSet :=
   (triHexTorusTriangleIndexEquiv L).trans
     (triangularTorusEdgeChartEquiv L)
 
-
-
+/-- The cell chart of the hexagonal torus: spoke `i` of the star at `z` corresponds to `(z, i)`. -/
 noncomputable def triHexTorusStarSweepEdgeEquiv (L : ℕ) [Fact (2 < L)] :
     TriHexTorusEdgeIndex L ≃ (hexagonalTorusGraph L).edgeSet :=
   hexagonalTorusEdgeChartEquiv L
 
-
-
+/-- The terminal `z + hexagonalTorusStep L i` of the cell at `z`. -/
 def triHexTorusCellTerminal (L : ℕ) (z : TorusSite L) (i : Fin 3) :
     TorusSite L :=
   z + hexagonalTorusStep L i
 
-
-
+/-- The first endpoint of triangle edge `i` (the terminals other than `i`, in cyclic order). -/
 def triHexTriangleEdgeTerminal1 (i : Fin 3) : Fin 3 := ![1, 2, 0] i
 
-
+/-- The second endpoint of triangle edge `i`. -/
 def triHexTriangleEdgeTerminal2 (i : Fin 3) : Fin 3 := ![2, 0, 1] i
 
-
+/-- The state of edge `i` in a local three-edge configuration. -/
 def triHexLocalDirection (config : LocalConfig) (i : Fin 3) : Bool :=
   ![config.1, config.2.1, config.2.2] i
 
-
-
-theorem triHexTorusTriangleSweepEdge_val
+lemma triHexTorusTriangleSweepEdge_val
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) (i : Fin 3) :
     ((triHexTorusTriangleSweepEdgeEquiv L (z, i) :
       (triangularTorusGraph L).edgeSet) : Sym2 (TorusSite L)) =
@@ -97,18 +139,14 @@ theorem triHexTorusTriangleSweepEdge_val
       triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
       triangularTorusStep, hexagonalTorusStep, Prod.ext_iff, add_assoc]
 
-
-
-theorem triHexTorusStarSweepEdge_val
+lemma triHexTorusStarSweepEdge_val
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) (i : Fin 3) :
     ((triHexTorusStarSweepEdgeEquiv L (z, i) :
       (hexagonalTorusGraph L).edgeSet) : Sym2 (HexTorusVertex L)) =
         s((z, false), (triHexTorusCellTerminal L z i, true)) := by
   rfl
 
-
-
-theorem triangleFKLocalConnectivity_connects_of_direction
+lemma triangleFKLocalConnectivity_connects_of_direction
     (config : LocalConfig) (i : Fin 3)
     (h : triHexLocalDirection config i = true) :
     (triangleFKLocalConnectivity config).Connects
@@ -119,7 +157,7 @@ theorem triangleFKLocalConnectivity_connects_of_direction
       triHexTriangleEdgeTerminal1, triHexTriangleEdgeTerminal2,
       ThreeTerminalConnectivity.Connects]
 
-
+/-- Pullback of edge configurations along an equivalence of edge index types. -/
 def configReindexEquiv {E I : Type*} (e : I ≃ E) :
     ConfigSpace E ≃ ConfigSpace I where
   toFun omega i := omega (e i)
@@ -131,8 +169,9 @@ def configReindexEquiv {E I : Type*} (e : I ≃ E) :
     funext i
     simp
 
-
-
+/-- Edge configurations indexed by `TorusSite L × Fin 3` as one local three-edge configuration per
+cell. See also `triHexFiniteCellConfigEquiv` (TriHex.FKFiniteWiredGraphs), the same construction for
+an arbitrary cell type. -/
 def triHexTorusCellConfigEquiv (L : ℕ) :
     ConfigSpace (TriHexTorusEdgeIndex L) ≃
       (TorusSite L → LocalConfig) where
@@ -147,23 +186,21 @@ def triHexTorusCellConfigEquiv (L : ℕ) :
     funext z
     rfl
 
-
-
+/-- Configurations of the triangular torus as one local configuration per up-triangle. -/
 noncomputable def triangularTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
     ConfigSpace (triangularTorusGraph L).edgeSet ≃
       (TorusSite L → LocalConfig) :=
   (configReindexEquiv (triHexTorusTriangleSweepEdgeEquiv L)).trans
     (triHexTorusCellConfigEquiv L)
 
-
-
+/-- Configurations of the hexagonal torus as one local configuration per star. -/
 noncomputable def hexagonalTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
     ConfigSpace (hexagonalTorusGraph L).edgeSet ≃
       (TorusSite L → LocalConfig) :=
   (configReindexEquiv (triHexTorusStarSweepEdgeEquiv L)).trans
     (triHexTorusCellConfigEquiv L)
 
-@[simp] theorem triangularTorusActiveConfigEquiv_apply
+@[simp] lemma triangularTorusActiveConfigEquiv_apply
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     (z : TorusSite L) :
@@ -172,7 +209,7 @@ noncomputable def hexagonalTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
         omega (triHexTorusTriangleSweepEdgeEquiv L (z, 1)),
         omega (triHexTorusTriangleSweepEdgeEquiv L (z, 2))) := rfl
 
-@[simp] theorem triangularTorusActiveConfigEquiv_direction
+@[simp] lemma triangularTorusActiveConfigEquiv_direction
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     (z : TorusSite L) (i : Fin 3) :
@@ -180,7 +217,7 @@ noncomputable def hexagonalTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
       omega (triHexTorusTriangleSweepEdgeEquiv L (z, i)) := by
   fin_cases i <;> rfl
 
-@[simp] theorem hexagonalTorusActiveConfigEquiv_apply
+@[simp] lemma hexagonalTorusActiveConfigEquiv_apply
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : TorusSite L) :
@@ -189,7 +226,7 @@ noncomputable def hexagonalTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
         omega (triHexTorusStarSweepEdgeEquiv L (z, 1)),
         omega (triHexTorusStarSweepEdgeEquiv L (z, 2))) := rfl
 
-@[simp] theorem hexagonalTorusActiveConfigEquiv_direction
+@[simp] lemma hexagonalTorusActiveConfigEquiv_direction
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : TorusSite L) (i : Fin 3) :
@@ -197,9 +234,9 @@ noncomputable def hexagonalTorusActiveConfigEquiv (L : ℕ) [Fact (2 < L)] :
       omega (triHexTorusStarSweepEdgeEquiv L (z, i)) := by
   fin_cases i <;> rfl
 
+/-! ## B. Triangular open clusters through the sector graph -/
 
-
-theorem triangularTorus_openSub_adj_cellEdge
+lemma triangularTorus_openSub_adj_cellEdge
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     (z : TorusSite L) (i : Fin 3)
@@ -221,9 +258,7 @@ theorem triangularTorus_openSub_adj_cellEdge
   · rw [← heq, extendActive_apply]
     fin_cases i <;> exact hopen
 
-
-
-theorem hexagonalTorus_openSub_adj_spoke
+lemma hexagonalTorus_openSub_adj_spoke
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : TorusSite L) (i : Fin 3)
@@ -244,8 +279,7 @@ theorem hexagonalTorus_openSub_adj_spoke
     change omega (triHexTorusStarSweepEdgeEquiv L (z, i)) = true
     exact (hexagonalTorusActiveConfigEquiv_direction L omega z i).symm.trans hopen
 
-
-theorem hexagonalTorus_openSub_adj_center_iff
+lemma hexagonalTorus_openSub_adj_center_iff
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : TorusSite L) (v : HexTorusVertex L) :
@@ -276,9 +310,7 @@ theorem hexagonalTorus_openSub_adj_center_iff
   · rintro ⟨i, hopen, rfl⟩
     exact hexagonalTorus_openSub_adj_spoke L omega z i hopen
 
-
-
-theorem triangleFKLocalConnectivity_connects_zero_one
+lemma triangleFKLocalConnectivity_connects_zero_one
     (config : LocalConfig) :
     (triangleFKLocalConnectivity config).Connects 0 1 ↔
       triHexLocalDirection config 2 = true ∨
@@ -289,8 +321,7 @@ theorem triangleFKLocalConnectivity_connects_zero_one
     simp [triangleFKLocalConnectivity, ThreeTerminalConnectivity.Connects,
       triHexLocalDirection]
 
-
-theorem triangleFKLocalConnectivity_connects_zero_two
+lemma triangleFKLocalConnectivity_connects_zero_two
     (config : LocalConfig) :
     (triangleFKLocalConnectivity config).Connects 0 2 ↔
       triHexLocalDirection config 1 = true ∨
@@ -301,8 +332,7 @@ theorem triangleFKLocalConnectivity_connects_zero_two
     simp [triangleFKLocalConnectivity, ThreeTerminalConnectivity.Connects,
       triHexLocalDirection]
 
-
-theorem triangleFKLocalConnectivity_connects_one_two
+lemma triangleFKLocalConnectivity_connects_one_two
     (config : LocalConfig) :
     (triangleFKLocalConnectivity config).Connects 1 2 ↔
       triHexLocalDirection config 0 = true ∨
@@ -313,9 +343,7 @@ theorem triangleFKLocalConnectivity_connects_one_two
     simp [triangleFKLocalConnectivity, ThreeTerminalConnectivity.Connects,
       triHexLocalDirection]
 
-
-
-theorem triangularTorus_openSub_reachable_of_connects
+lemma triangularTorus_openSub_reachable_of_connects
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     (z : TorusSite L) (i j : Fin 3)
@@ -368,8 +396,8 @@ theorem triangularTorus_openSub_reachable_of_connects
       ((triangleFKLocalConnectivity config).connects_symm 1 2 |>.mpr hconnects)).symm
   · exact SimpleGraph.Reachable.refl _
 
-
-
+/-- The terminal sector graph of a triangular-torus configuration: terminals of each up-triangle
+joined according to its induced partition. -/
 noncomputable def triangularTorusTerminalSectorGraph
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet) :
@@ -378,9 +406,7 @@ noncomputable def triangularTorusTerminalSectorGraph
     (fun z => triangleFKLocalConnectivity
       (triangularTorusActiveConfigEquiv L omega z))
 
-
-
-theorem triangularTorus_openSub_adj_terminalSectorGraph
+lemma triangularTorus_openSub_adj_terminalSectorGraph
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     {x y : TorusSite L}
@@ -395,8 +421,7 @@ theorem triangularTorus_openSub_adj_terminalSectorGraph
   let z := a.1
   let i := a.2
   have ha : triHexTorusTriangleSweepEdgeEquiv L (z, i) = e := by
-    simpa [z, i, a] using
-      (triHexTorusTriangleSweepEdgeEquiv L).apply_symm_apply e
+    simp [z, i, a]
   have hedge : s(x, y) =
       s(triHexTorusCellTerminal L z (triHexTriangleEdgeTerminal1 i),
         triHexTorusCellTerminal L z (triHexTriangleEdgeTerminal2 i)) := by
@@ -422,9 +447,7 @@ theorem triangularTorus_openSub_adj_terminalSectorGraph
   exact ⟨⟨z, triHexTriangleEdgeTerminal1 i, triHexTriangleEdgeTerminal2 i,
     hconnects, hedge⟩, hxy.ne⟩
 
-
-
-theorem triangularTorus_terminalSectorGraph_adj_openSub_reachable
+lemma triangularTorus_terminalSectorGraph_adj_openSub_reachable
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     {x y : TorusSite L}
@@ -441,9 +464,7 @@ theorem triangularTorus_terminalSectorGraph_adj_openSub_reachable
   · simpa [hxi, hyj] using hreach
   · simpa [hxj, hyi] using hreach.symm
 
-
-
-theorem triangularTorus_openSub_reachable_iff_terminalSectorGraph
+lemma triangularTorus_openSub_reachable_iff_terminalSectorGraph
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet)
     (x y : TorusSite L) :
@@ -460,8 +481,8 @@ theorem triangularTorus_openSub_reachable_iff_terminalSectorGraph
         triangularTorus_terminalSectorGraph_adj_openSub_reachable L omega hab)
       rfl rfl h
 
-
-
+/-- Two graphs on the same vertex type with the same reachability relation have equivalent connected
+components. -/
 noncomputable def connectedComponentEquivOfReachableIff
     {V : Type*} (G H : SimpleGraph V)
     (h : ∀ x y, G.Reachable x y ↔ H.Reachable x y) :
@@ -483,9 +504,7 @@ noncomputable def connectedComponentEquivOfReachableIff
     induction component using SimpleGraph.ConnectedComponent.ind with
     | h x => simp only [SimpleGraph.ConnectedComponent.lift_mk]
 
-
-
-theorem reachable_map_of_adj_reachable
+lemma reachable_map_of_adj_reachable
     {V W : Type*} (G : SimpleGraph V) (H : SimpleGraph W)
     (f : V → W) (hedge : ∀ x y, G.Adj x y → H.Reachable (f x) (f y))
     {x y : V} (hxy : G.Reachable x y) : H.Reachable (f x) (f y) := by
@@ -494,9 +513,7 @@ theorem reachable_map_of_adj_reachable
   | nil => exact SimpleGraph.Reachable.refl _
   | cons h rest ih => exact (hedge _ _ h).trans ih
 
-
-
-theorem triangularTorus_numClusters_eq_terminalSector
+lemma triangularTorus_numClusters_eq_terminalSector
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet) :
     numClusters (triangularTorusGraph L)
@@ -507,11 +524,9 @@ theorem triangularTorus_numClusters_eq_terminalSector
     (connectedComponentEquivOfReachableIff _ _
       (triangularTorus_openSub_reachable_iff_terminalSectorGraph L omega))
 
+/-! ## C. Hexagonal open clusters through the sector graph -/
 
-
-
-
-theorem starFKLocalConnectivity_connects_iff
+lemma starFKLocalConnectivity_connects_iff
     (config : LocalConfig) (i j : Fin 3) :
     (starFKLocalConnectivity config).Connects i j ↔
       i = j ∨ (triHexLocalDirection config i = true ∧
@@ -522,9 +537,7 @@ theorem starFKLocalConnectivity_connects_iff
     simp [starFKLocalConnectivity, ThreeTerminalConnectivity.Connects,
       triHexLocalDirection]
 
-
-
-theorem hexagonalTorus_openSub_reachable_of_connects
+lemma hexagonalTorus_openSub_reachable_of_connects
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : TorusSite L) (i j : Fin 3)
@@ -543,8 +556,8 @@ theorem hexagonalTorus_openSub_reachable_of_connects
         (SimpleGraph.Adj.reachable
           (hexagonalTorus_openSub_adj_spoke L omega z j hj))
 
-
-
+/-- The terminal sector graph of a hexagonal-torus configuration: terminals of each star joined
+according to its induced partition. -/
 noncomputable def hexagonalTorusTerminalSectorGraph
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
@@ -553,9 +566,7 @@ noncomputable def hexagonalTorusTerminalSectorGraph
     (fun z => starFKLocalConnectivity
       (hexagonalTorusActiveConfigEquiv L omega z))
 
-
-
-theorem triHexFKTerminalSectorGraph_reachable_of_connects
+lemma triHexFKTerminalSectorGraph_reachable_of_connects
     {I V : Type*} [Fintype I] [DecidableEq I] [DecidableEq V]
     (terminal : I → Fin 3 → V)
     (sector : I → ThreeTerminalConnectivity)
@@ -563,19 +574,17 @@ theorem triHexFKTerminalSectorGraph_reachable_of_connects
     (triHexFKTerminalSectorGraph terminal sector).Reachable
       (terminal cell i) (terminal cell j) := by
   by_cases hterm : terminal cell i = terminal cell j
-  · simpa [hterm] using
-      (SimpleGraph.Reachable.refl (G := triHexFKTerminalSectorGraph terminal sector)
-        (terminal cell i))
+  · simp [hterm]
   · apply SimpleGraph.Adj.reachable
     rw [triHexFKTerminalSectorGraph, SimpleGraph.fromEdgeSet_adj]
     exact ⟨⟨cell, i, j, hconnects, rfl⟩, hterm⟩
 
-
-
+/-- An open spoke of a star configuration, if there is one (the first open direction, defaulting to
+`2`). -/
 def starFKRepresentativeDirection (config : LocalConfig) : Fin 3 :=
   if config.1 then 0 else if config.2.1 then 1 else 2
 
-theorem starFKRepresentativeDirection_open_of_open
+lemma starFKRepresentativeDirection_open_of_open
     (config : LocalConfig) (i : Fin 3)
     (hi : triHexLocalDirection config i = true) :
     triHexLocalDirection config (starFKRepresentativeDirection config) = true := by
@@ -583,8 +592,8 @@ theorem starFKRepresentativeDirection_open_of_open
   fin_cases b0 <;> fin_cases b1 <;> fin_cases b2 <;> fin_cases i <;>
     simp_all [triHexLocalDirection, starFKRepresentativeDirection]
 
-
-
+/-- A white representative of each hexagonal vertex: itself if white, and the terminal of a chosen
+spoke if black. -/
 noncomputable def hexagonalTorusOpenRepresentative
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
@@ -594,9 +603,7 @@ noncomputable def hexagonalTorusOpenRepresentative
       (starFKRepresentativeDirection
         (hexagonalTorusActiveConfigEquiv L omega z))
 
-
-
-theorem hexagonalTorus_openSub_adj_representative_reachable
+lemma hexagonalTorus_openSub_adj_representative_reachable
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     {u v : HexTorusVertex L}
@@ -639,9 +646,7 @@ theorem hexagonalTorus_openSub_adj_representative_reachable
     simpa [hexagonalTorusOpenRepresentative,
       hexagonalTorusTerminalSectorGraph, triHexTorusCellTerminal] using hreach.symm
 
-
-
-theorem hexagonalTorus_terminalSectorGraph_adj_openSub_reachable
+lemma hexagonalTorus_terminalSectorGraph_adj_openSub_reachable
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     {x y : TorusSite L}
@@ -659,9 +664,7 @@ theorem hexagonalTorus_terminalSectorGraph_adj_openSub_reachable
   · simpa [hxi, hyj] using hreach
   · simpa [hxj, hyi] using hreach.symm
 
-
-
-theorem hexagonalTorus_openSub_white_reachable_iff_terminalSectorGraph
+lemma hexagonalTorus_openSub_white_reachable_iff_terminalSectorGraph
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (x y : TorusSite L) :
@@ -689,8 +692,7 @@ theorem hexagonalTorus_openSub_white_reachable_iff_terminalSectorGraph
         hexagonalTorus_terminalSectorGraph_adj_openSub_reachable L omega hab)
       h
 
-
-theorem hexagonalTorus_openSub_adj_eq_spoke
+lemma hexagonalTorus_openSub_adj_eq_spoke
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     {u v : HexTorusVertex L}
@@ -719,29 +721,28 @@ theorem hexagonalTorus_openSub_adj_eq_spoke
   · exact Or.inr ⟨hv.symm, by
       simpa [triHexTorusCellTerminal] using hu.symm⟩
 
-
-
+/-- The black centers of the hexagonal torus all of whose spokes are closed. -/
 def HexagonalTorusIsolatedCenter
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :=
   {z : TorusSite L //
     hexagonalTorusActiveConfigEquiv L omega z = (false, false, false)}
 
+/-- The isolated black centers form a finite type. -/
 noncomputable instance hexagonalTorusIsolatedCenterFintype
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
     Fintype (HexagonalTorusIsolatedCenter L omega) :=
   Fintype.ofInjective Subtype.val Subtype.val_injective
 
-theorem starFKRepresentativeDirection_open_of_not_closed
+lemma starFKRepresentativeDirection_open_of_not_closed
     (config : LocalConfig) (h : config ≠ (false, false, false)) :
     triHexLocalDirection config (starFKRepresentativeDirection config) = true := by
   rcases config with ⟨b0, b1, b2⟩
   fin_cases b0 <;> fin_cases b1 <;> fin_cases b2 <;>
     simp_all [triHexLocalDirection, starFKRepresentativeDirection]
 
-
-theorem hexagonalTorus_isolatedCenter_not_adj
+lemma hexagonalTorus_isolatedCenter_not_adj
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     (z : HexagonalTorusIsolatedCenter L omega) (v : HexTorusVertex L) :
@@ -752,8 +753,8 @@ theorem hexagonalTorus_isolatedCenter_not_adj
   rw [z.2] at hi
   fin_cases i <;> simp [triHexLocalDirection] at hi
 
-
-
+/-- Label of each hexagonal vertex by its sector-graph component, or by itself if it is an isolated
+black center. -/
 noncomputable def hexagonalTorusVertexComponentLabel
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
@@ -769,8 +770,7 @@ noncomputable def hexagonalTorusVertexComponentLabel
       Sum.inl ((hexagonalTorusTerminalSectorGraph L omega).connectedComponentMk
         (hexagonalTorusOpenRepresentative L omega (z, false)))
 
-
-theorem hexagonalTorusVertexComponentLabel_eq_of_adj
+lemma hexagonalTorusVertexComponentLabel_eq_of_adj
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet)
     {u v : HexTorusVertex L}
@@ -793,13 +793,13 @@ theorem hexagonalTorusVertexComponentLabel_eq_of_adj
           (hexagonalTorusOpenRepresentative L omega v) :=
     SimpleGraph.ConnectedComponent.sound hreach
   rcases horient with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · simp only [hexagonalTorusVertexComponentLabel, dif_neg hnot]
+  · simp only [hexagonalTorusVertexComponentLabel, dite_eq_right hnot]
     exact congrArg Sum.inl hcomponent
-  · simp only [hexagonalTorusVertexComponentLabel, dif_neg hnot]
+  · simp only [hexagonalTorusVertexComponentLabel, dite_eq_right hnot]
     exact congrArg Sum.inl hcomponent
 
-
-
+/-- Open clusters of the hexagonal torus correspond to sector-graph components plus isolated black
+centers. -/
 noncomputable def hexagonalTorusConnectedComponentEquiv
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
@@ -851,9 +851,7 @@ noncomputable def hexagonalTorusConnectedComponentEquiv
     · simp [hexagonalTorusVertexComponentLabel, z.2]
       rfl
 
-
-
-theorem hexagonalTorus_numClusters_eq_terminalSector_add_isolated
+lemma hexagonalTorus_numClusters_eq_terminalSector_add_isolated
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
     numClusters (hexagonalTorusGraph L)
@@ -864,28 +862,29 @@ theorem hexagonalTorus_numClusters_eq_terminalSector_add_isolated
   rw [← Fintype.card_sum]
   exact Fintype.card_congr (hexagonalTorusConnectedComponentEquiv L omega)
 
+/-! ## D. Product weights of active-edge configurations -/
+
 section ActiveOdds
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-
-
-theorem edgeProductW_extendActive_eq_activeProduct
+omit [DecidableEq V] in
+lemma edgeProductW_extendActive_eq_activeProduct
     (pf : Sym2 V → ℝ) (omega : ConfigSpace G.edgeSet) :
     edgeProductW G pf (extendActive G omega) =
       ∏ e : G.edgeSet, if omega e then pf e.1 else 1 - pf e.1 := by
+  classical
   unfold edgeProductW
   rw [Finset.prod_subtype (p := fun e => e ∈ G.edgeSet)
     G.edgeFinset (fun e => by
-    simpa [SimpleGraph.mem_edgeFinset])]
+    simp [SimpleGraph.mem_edgeFinset])]
   apply Fintype.prod_congr
   intro e
   rw [extendActive_apply]
 
-
-
-theorem edgeProductW_extendActive_odds_factor
+omit [DecidableEq V] in
+lemma edgeProductW_extendActive_odds_factor
     (pf : Sym2 V → ℝ) (odds : G.edgeSet → ℝ)
     (h : ∀ e : G.edgeSet, pf e.1 = (1 - pf e.1) * odds e)
     (omega : ConfigSpace G.edgeSet) :
@@ -900,26 +899,26 @@ theorem edgeProductW_extendActive_odds_factor
       apply Fintype.prod_congr
       intro e
       by_cases he : omega e
-      · rw [if_pos he, if_pos he]
+      · rw [ite_eq_left he, ite_eq_left he]
         exact h e
-      · rw [if_neg he, if_neg he, mul_one]
+      · rw [ite_eq_right he, ite_eq_right he, mul_one]
     _ = (∏ e : G.edgeSet, (1 - pf e.1)) *
           ∏ e : G.edgeSet, if omega e then odds e else 1 := by
       rw [Finset.prod_mul_distrib]
 
 end ActiveOdds
 
+/-! ## E. Edge odds and factorization of the FK weights -/
 
-
-
+/-- The edge odds `yᵢ` of direction `i`. -/
 def triHexDirectionOdds (y0 y1 y2 : ℝ) (i : Fin 3) : ℝ :=
   ![y0, y1, y2] i
 
-
+/-- The cluster factor `q` of an isolated star center (all spokes closed), and `1` otherwise. -/
 def starFKIsolatedCenterFactor (q : ℝ) (config : LocalConfig) : ℝ :=
   if config = (false, false, false) then q else 1
 
-theorem triangleFKLocalOddsWeight_eq_directionProduct
+lemma triangleFKLocalOddsWeight_eq_directionProduct
     (y0 y1 y2 : ℝ) (config : LocalConfig) :
     triangleFKLocalOddsWeight y0 y1 y2 config =
       ∏ i : Fin 3, if triHexLocalDirection config i then
@@ -927,9 +926,10 @@ theorem triangleFKLocalOddsWeight_eq_directionProduct
   rcases config with ⟨b0, b1, b2⟩
   fin_cases b0 <;> fin_cases b1 <;> fin_cases b2 <;>
     simp [triangleFKLocalOddsWeight, triHexLocalDirection,
-      triHexDirectionOdds, Fin.prod_univ_succ] <;> ring
+      triHexDirectionOdds, Fin.prod_univ_succ]
+  ring
 
-theorem starFKLocalOddsWeight_eq_isolated_mul_directionProduct
+lemma starFKLocalOddsWeight_eq_isolated_mul_directionProduct
     (q y0 y1 y2 : ℝ) (config : LocalConfig) :
     starFKLocalOddsWeight q y0 y1 y2 config =
       starFKIsolatedCenterFactor q config *
@@ -938,9 +938,10 @@ theorem starFKLocalOddsWeight_eq_isolated_mul_directionProduct
   rcases config with ⟨b0, b1, b2⟩
   fin_cases b0 <;> fin_cases b1 <;> fin_cases b2 <;>
     simp [starFKLocalOddsWeight, starFKIsolatedCenterFactor,
-      triHexLocalDirection, triHexDirectionOdds, Fin.prod_univ_succ] <;> ring
+      triHexLocalDirection, triHexDirectionOdds, Fin.prod_univ_succ]
+  ring
 
-theorem triangleFKGlobalLocalOdds_eq_directionProduct
+lemma triangleFKGlobalLocalOdds_eq_directionProduct
     {I : Type*} [Fintype I] (y0 y1 y2 : ℝ)
     (config : I → LocalConfig) :
     (∏ z, triangleFKLocalOddsWeight y0 y1 y2 (config z)) =
@@ -951,7 +952,7 @@ theorem triangleFKGlobalLocalOdds_eq_directionProduct
   intro z
   exact triangleFKLocalOddsWeight_eq_directionProduct y0 y1 y2 (config z)
 
-theorem starFKGlobalLocalOdds_eq_isolated_mul_directionProduct
+lemma starFKGlobalLocalOdds_eq_isolated_mul_directionProduct
     {I : Type*} [Fintype I] (q y0 y1 y2 : ℝ)
     (config : I → LocalConfig) :
     (∏ z, starFKLocalOddsWeight q y0 y1 y2 (config z)) =
@@ -976,21 +977,21 @@ theorem starFKGlobalLocalOdds_eq_isolated_mul_directionProduct
           triHexDirectionOdds y0 y1 y2 a.2 else 1 := by
       rw [Fintype.prod_prod_type]
 
-
+/-- The odds of each triangular-torus edge: the direction odds of its cell index. -/
 noncomputable def triangularTorusSweepEdgeOdds
     (L : ℕ) [Fact (2 < L)] (y0 y1 y2 : ℝ)
     (e : (triangularTorusGraph L).edgeSet) : ℝ :=
   triHexDirectionOdds y0 y1 y2
     ((triHexTorusTriangleSweepEdgeEquiv L).symm e).2
 
-
+/-- The odds of each hexagonal-torus edge: the direction odds of its cell index. -/
 noncomputable def hexagonalTorusSweepEdgeOdds
     (L : ℕ) [Fact (2 < L)] (y0 y1 y2 : ℝ)
     (e : (hexagonalTorusGraph L).edgeSet) : ℝ :=
   triHexDirectionOdds y0 y1 y2
     ((triHexTorusStarSweepEdgeEquiv L).symm e).2
 
-theorem triangularTorus_localOddsProduct_eq_activeOddsProduct
+lemma triangularTorus_localOddsProduct_eq_activeOddsProduct
     (L : ℕ) [Fact (2 < L)] (y0 y1 y2 : ℝ)
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet) :
     (∏ z, triangleFKLocalOddsWeight y0 y1 y2
@@ -1015,7 +1016,7 @@ theorem triangularTorus_localOddsProduct_eq_activeOddsProduct
           (fun e => if omega e then
             triangularTorusSweepEdgeOdds L y0 y1 y2 e else 1)
 
-theorem hexagonalTorus_localOddsProduct_eq_activeOddsProduct
+lemma hexagonalTorus_localOddsProduct_eq_activeOddsProduct
     (L : ℕ) [Fact (2 < L)] (q y0 y1 y2 : ℝ)
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
     (∏ z, starFKLocalOddsWeight q y0 y1 y2
@@ -1043,21 +1044,16 @@ theorem hexagonalTorus_localOddsProduct_eq_activeOddsProduct
           (fun e => if omega e then
             hexagonalTorusSweepEdgeOdds L y0 y1 y2 e else 1)
 
-
-
-theorem fintype_prod_ite_eq_pow_card_subtype
+lemma fintype_prod_ite_eq_pow_card_subtype
     {I : Type*} [Fintype I] (P : I → Prop) [DecidablePred P]
     [Fintype {i // P i}] (q : ℝ) :
     (∏ i, if P i then q else 1) = q ^ Fintype.card {i // P i} := by
   classical
   rw [Fintype.card_subtype P]
-  change Finset.univ.prod (fun i => if P i then q else 1) = _
   rw [Finset.prod_ite]
   simp
 
-
-
-theorem hexagonalTorus_isolatedCenterFactor_product
+lemma hexagonalTorus_isolatedCenterFactor_product
     (L : ℕ) [Fact (2 < L)] (q : ℝ)
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
     (∏ z, starFKIsolatedCenterFactor q
@@ -1069,17 +1065,14 @@ theorem hexagonalTorus_isolatedCenterFactor_product
       (false, false, false)) inferInstance
     (hexagonalTorusIsolatedCenterFintype L omega) q
 
-
-
+/-- The cluster factor `q ^ (number of components)` of the torus terminal sector graph. -/
 noncomputable def triHexTorusSectorClusterWeight
     (L : ℕ) [Fact (2 < L)] (q : ℝ)
     (sector : TorusSite L → ThreeTerminalConnectivity) : ℝ :=
   q ^ Fintype.card
     (triHexFKTerminalSectorGraph (triHexTorusCellTerminal L) sector).ConnectedComponent
 
-
-
-theorem triangularTorus_activeWeight_eq_closedProduct_mul_cellWeight
+lemma triangularTorus_activeWeight_eq_closedProduct_mul_cellWeight
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (TorusSite L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (triangularTorusGraph L).edgeSet,
@@ -1099,9 +1092,7 @@ theorem triangularTorus_activeWeight_eq_closedProduct_mul_cellWeight
   unfold triangularTorusTerminalSectorGraph
   ring
 
-
-
-theorem hexagonalTorus_activeWeight_eq_closedProduct_mul_cellWeight
+lemma hexagonalTorus_activeWeight_eq_closedProduct_mul_cellWeight
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (HexTorusVertex L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (hexagonalTorusGraph L).edgeSet,
@@ -1122,9 +1113,7 @@ theorem hexagonalTorus_activeWeight_eq_closedProduct_mul_cellWeight
   unfold hexagonalTorusTerminalSectorGraph
   ring
 
-
-
-theorem triangularTorus_activeZ_eq_closedProduct_mul_globalConfigSum
+lemma triangularTorus_activeZ_eq_closedProduct_mul_globalConfigSum
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (TorusSite L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (triangularTorusGraph L).edgeSet,
@@ -1144,9 +1133,7 @@ theorem triangularTorus_activeZ_eq_closedProduct_mul_globalConfigSum
     L pf q y0 y1 y2 hodds]
   rw [(triangularTorusActiveConfigEquiv L).apply_symm_apply config]
 
-
-
-theorem hexagonalTorus_activeZ_eq_closedProduct_mul_globalConfigSum
+lemma hexagonalTorus_activeZ_eq_closedProduct_mul_globalConfigSum
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (HexTorusVertex L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (hexagonalTorusGraph L).edgeSet,
@@ -1166,9 +1153,9 @@ theorem hexagonalTorus_activeZ_eq_closedProduct_mul_globalConfigSum
     L pf q y0 y1 y2 hodds]
   rw [(hexagonalTorusActiveConfigEquiv L).apply_symm_apply config]
 
+/-! ## F. Star–triangle identities on the torus -/
 
-
-theorem triHexFK_globalConfigSum_identity
+lemma triHexFK_globalConfigSum_identity
     {I : Type*} [Fintype I] [DecidableEq I]
     {q y0 y1 y2 y0Star y1Star y2Star : ℝ}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
@@ -1183,10 +1170,9 @@ theorem triHexFK_globalConfigSum_identity
     triangleFKGlobalConfigSum_eq_sweepSum]
   exact triHexFK_globalSweepSum_identity h0 h1 h2 hsurface external
 
-
-
-
-
+/-- Star–triangle identity for the FK partition functions of the triangular and hexagonal tori on
+the triangular critical surface with dual odds (Baxter–Temperley–Ashley 1978; Grimmett, *The
+Random-Cluster Model*, §6.6). -/
 theorem triHexFK_torus_activeZ_identity
     (L : ℕ) [Fact (2 < L)]
     (pfTri : Sym2 (TorusSite L) → ℝ)
@@ -1235,8 +1221,7 @@ theorem triHexFK_torus_activeZ_identity
             triangleFKGlobalConfigSum y0 y1 y2
               (triHexTorusSectorClusterWeight L q)) := by ring
 
-
-
+/-- A sector observable evaluated on a triangular-torus configuration. -/
 noncomputable def triangularTorusSectorObservable
     (L : ℕ) [Fact (2 < L)]
     (observable : (TorusSite L → ThreeTerminalConnectivity) → ℝ)
@@ -1244,7 +1229,7 @@ noncomputable def triangularTorusSectorObservable
   observable (fun z => triangleFKLocalConnectivity
     (triangularTorusActiveConfigEquiv L omega z))
 
-
+/-- A sector observable evaluated on a hexagonal-torus configuration. -/
 noncomputable def hexagonalTorusSectorObservable
     (L : ℕ) [Fact (2 < L)]
     (observable : (TorusSite L → ThreeTerminalConnectivity) → ℝ)
@@ -1252,9 +1237,7 @@ noncomputable def hexagonalTorusSectorObservable
   observable (fun z => starFKLocalConnectivity
     (hexagonalTorusActiveConfigEquiv L omega z))
 
-
-
-theorem triangularTorus_activeNumer_sector_eq
+lemma triangularTorus_activeNumer_sector_eq
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (TorusSite L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (triangularTorusGraph L).edgeSet,
@@ -1280,8 +1263,7 @@ theorem triangularTorus_activeNumer_sector_eq
   rw [(triangularTorusActiveConfigEquiv L).apply_symm_apply config]
   ring
 
-
-theorem hexagonalTorus_activeNumer_sector_eq
+lemma hexagonalTorus_activeNumer_sector_eq
     (L : ℕ) [Fact (2 < L)] (pf : Sym2 (HexTorusVertex L) → ℝ)
     (q y0 y1 y2 : ℝ)
     (hodds : ∀ e : (hexagonalTorusGraph L).edgeSet,
@@ -1307,9 +1289,7 @@ theorem hexagonalTorus_activeNumer_sector_eq
   rw [(hexagonalTorusActiveConfigEquiv L).apply_symm_apply config]
   ring
 
-
-
-theorem triHexFK_torus_activeSectorRatio_eq
+lemma triHexFK_torus_activeSectorRatio_eq
     (L : ℕ) [Fact (2 < L)]
     (pfTri : Sym2 (TorusSite L) → ℝ)
     (pfStar : Sym2 (HexTorusVertex L) → ℝ)
@@ -1358,15 +1338,15 @@ theorem triHexFK_torus_activeSectorRatio_eq
   exact triHexFK_globalSweepRatio_eq hq hyprod h0 h1 h2 hsurface
     (triHexTorusSectorClusterWeight L q) observable
 
-
+/-- The indicator that `x` and `y` are joined by open edges of the triangular torus. -/
 noncomputable def triangularTorusActiveTwoPointIndicator
     (L : ℕ) [Fact (2 < L)] (x y : TorusSite L)
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet) : ℝ :=
   if (openSub (triangularTorusGraph L)
     (extendActive (triangularTorusGraph L) omega)).Reachable x y then 1 else 0
 
-
-
+/-- The indicator that the white vertices `(x, true)`, `(y, true)` are joined by open edges of the
+hexagonal torus. -/
 noncomputable def hexagonalTorusActiveWhiteTwoPointIndicator
     (L : ℕ) [Fact (2 < L)] (x y : TorusSite L)
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) : ℝ :=
@@ -1374,7 +1354,7 @@ noncomputable def hexagonalTorusActiveWhiteTwoPointIndicator
     (extendActive (hexagonalTorusGraph L) omega)).Reachable
       (x, true) (y, true) then 1 else 0
 
-theorem triangularTorusSectorTwoPointObservable_eq_indicator
+lemma triangularTorusSectorTwoPointObservable_eq_indicator
     (L : ℕ) [Fact (2 < L)] (x y : TorusSite L)
     (omega : ConfigSpace (triangularTorusGraph L).edgeSet) :
     triangularTorusSectorObservable L
@@ -1397,7 +1377,7 @@ theorem triangularTorusSectorTwoPointObservable_eq_indicator
       fun hs => h (hiff.mpr hs)
     simp [h, hs]
 
-theorem hexagonalTorusSectorTwoPointObservable_eq_indicator
+lemma hexagonalTorusSectorTwoPointObservable_eq_indicator
     (L : ℕ) [Fact (2 < L)] (x y : TorusSite L)
     (omega : ConfigSpace (hexagonalTorusGraph L).edgeSet) :
     hexagonalTorusSectorObservable L
@@ -1421,8 +1401,10 @@ theorem hexagonalTorusSectorTwoPointObservable_eq_indicator
       fun hs => h (hiff.mpr hs)
     simp [h, hs]
 
-
-
+/-- Star–triangle transformation of FK two-point functions on the torus: at dual parameters on the
+triangular critical surface, the hexagonal-torus connection probability of white vertices `x, y`
+equals the triangular-torus connection probability of `x, y` (Grimmett, *The Random-Cluster Model*,
+§6.6). -/
 theorem triHexFK_torus_activeTwoPointRatio_eq
     (L : ℕ) [Fact (2 < L)]
     (pfTri : Sym2 (TorusSite L) → ℝ)

@@ -6,31 +6,71 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.GlobalAssembly
 
+/-!
+# Contradictions from primal and dual crossing limits in rectangle arrays
+
+Along a finite array of rectangles, crossing probabilities cannot switch from vertical to
+horizontal while every adjacent pair and every dual rectangle has a crossing limit equal to one.
+
+## i. Overview
+
+The first group of results is real analysis on arrays of numbers in `[0, 1]`. Index rectangles
+by `k ≤ K n + 1`. If the vertical crossing probability of rectangle `0` tends to one, the
+horizontal crossing probability of rectangle `K n + 1` tends to one, and for every choice of
+index `k n` the larger of "horizontal at `k`" and "vertical at `k + 1`" tends to one while the
+smaller of the two crossings of each rectangle tends to zero, one obtains a contradiction by
+following the first index at which the horizontal crossing becomes large. The dual version
+replaces the vanishing minima by dual crossing limits and the complementarity
+`primal + dual ≤ 1` (a primal horizontal crossing and a dual vertical crossing of the same
+rectangle are disjoint events).
+
+`branchAlignedComplementaryLimits_false` and `balancedAdjacentSelectorsComplementary_false`
+are the same exclusion for one rectangle and for two adjacent rectangles with a balance error.
+
+`PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_max_limits` is the geometric form:
+for rectangles whose sides exceed ten edge-arc lengths, primal crossing limits along adjacent
+pairs and dual crossing limits on every rectangle are incompatible, because the primal and dual
+crossings of the slightly shrunken rectangles exclude each other.
+
+Headline fidelity: all five results conclude `False`. They are unconditional statements that the
+listed limits are jointly impossible; they are used as the closing step of contradiction
+arguments elsewhere.
+
+## ii. Key results
+
+- `adjacent_height_array_contradiction_of_endpoint_and_uniform_limits`
+- `adjacent_height_array_contradiction_of_primal_dual_limits`
+- `PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_max_limits`
+
+## iii. Table of contents
+
+- A. Arrays of numbers
+- B. Exclusion for one and two rectangles
+- C. Arrays with dual limits
+- D. Arrays of drawn rectangles
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
+/-! ## A. Arrays of numbers -/
 
-
-theorem adjacent_height_array_contradiction_of_endpoint_and_uniform_limits
+/-- Real-number array contradiction: vertical values starting near one, horizontal values ending
+near one, adjacent maxima `max (horizontal k) (vertical (k + 1))` tending to one and each
+rectangle's minimum `min (vertical k) (horizontal k)` tending to zero, uniformly over index
+sequences, cannot all hold. -/
+lemma adjacent_height_array_contradiction_of_endpoint_and_uniform_limits
     (horizontal vertical : Nat -> Nat -> Real) (K : Nat -> Nat)
     (hhorizontal_nonneg : forall n k, 0 <= horizontal n k)
     (hvertical_nonneg : forall n k, 0 <= vertical n k)
@@ -79,10 +119,11 @@ theorem adjacent_height_array_contradiction_of_endpoint_and_uniform_limits
     horizontal vertical error K hhorizontal_nonneg hvertical_nonneg
     herror_nonneg herror hstart hend hlimits
 
+/-! ## B. Exclusion for one and two rectangles -/
 
-
-
-theorem branchAlignedComplementaryLimits_false
+/-- If the primal branch selected by `branch n` and the dual branch of the opposite orientation both
+tend to one, the complementarity bounds `H + dualV ≤ 1` and `V + dualH ≤ 1` give a contradiction. -/
+lemma branchAlignedComplementaryLimits_false
     (branch : Nat -> Bool) (H V dualV dualH : Nat -> Real)
     (hHdual : forall n, H n + dualV n <= 1)
     (hVdual : forall n, V n + dualH n <= 1)
@@ -100,21 +141,18 @@ theorem branchAlignedComplementaryLimits_false
     · simpa [selectedPrimal, selectedDual, hbranch] using hVdual n
   have htwo : Tendsto (fun n => selectedPrimal n + selectedDual n)
       atTop (nhds 2) := by
-    convert hprimal.add hdual using 1 <;>
-      norm_num [selectedPrimal, selectedDual]
+    convert hprimal.add hdual using 1
+    norm_num [selectedPrimal, selectedDual]
   have heventually : ∀ᶠ n in atTop,
       (3 / 2 : Real) < selectedPrimal n + selectedDual n :=
     (tendsto_order.1 htwo).1 (3 / 2) (by norm_num)
   obtain ⟨n, hn⟩ := heventually.exists
   linarith [hsum n]
 
-
-
-
-
-
-
-theorem balancedAdjacentSelectorsComplementary_false
+/-- Two adjacent rectangles with balanced primal crossings (up to a vanishing error), a primal
+adjacent limit `max (H0 n) (V1 n) → 1`, dual limits on both rectangles and the four complementarity
+bounds give a contradiction. -/
+lemma balancedAdjacentSelectorsComplementary_false
     (H0 V0 H1 V1 dualV0 dualH0 dualV1 dualH1 error : Nat -> Real)
     (hH0_nonneg : forall n, 0 <= H0 n)
     (hV0_nonneg : forall n, 0 <= V0 n)
@@ -144,7 +182,7 @@ theorem balancedAdjacentSelectorsComplementary_false
     if levelBranch n then H1 n else V0 n
   have hprimary_eq (n : Nat) : primary n = max (H0 n) (V1 n) := by
     by_cases h : H0 n <= V1 n
-    · simp [primary, levelBranch, h, max_eq_right h]
+    · simp [primary, levelBranch, h]
     · simp [primary, levelBranch, h, max_eq_left (le_of_not_ge h)]
   have hprimary : Tendsto primary atTop (nhds 1) := by
     apply hadjacent.congr'
@@ -182,10 +220,8 @@ theorem balancedAdjacentSelectorsComplementary_false
     apply hprimaryMin.squeeze tendsto_const_nhds
     · intro n
       cases hlevel : levelBranch n
-      · simpa [selectedH, primary, companion, hlevel] using
-          min_le_left (primary n) (companion n)
-      · simpa [selectedH, primary, companion, hlevel] using
-          min_le_right (primary n) (companion n)
+      · simp [selectedH, primary, companion, hlevel]
+      · simp [selectedH, primary, companion, hlevel]
     · intro n
       cases hlevel : levelBranch n
       · simpa [selectedH, hlevel] using hH0_le_one n
@@ -194,10 +230,8 @@ theorem balancedAdjacentSelectorsComplementary_false
     apply hprimaryMin.squeeze tendsto_const_nhds
     · intro n
       cases hlevel : levelBranch n
-      · simpa [selectedV, primary, companion, hlevel] using
-          min_le_right (primary n) (companion n)
-      · simpa [selectedV, primary, companion, hlevel] using
-          min_le_left (primary n) (companion n)
+      · simp [selectedV, primary, companion, hlevel]
+      · simp [selectedV, primary, companion, hlevel]
     · intro n
       cases hlevel : levelBranch n
       · simpa [selectedV, hlevel] using hV0_le_one n
@@ -232,7 +266,7 @@ theorem balancedAdjacentSelectorsComplementary_false
     apply hselectedDualMax.congr'
     filter_upwards [] with n
     by_cases h : selectedDualV n <= selectedDualH n
-    · simp [dualBranch, h, max_eq_right h]
+    · simp [dualBranch, h]
     · simp [dualBranch, h, max_eq_left (le_of_not_ge h)]
   have hselectedMin : Tendsto (fun n => min (selectedH n) (selectedV n))
       atTop (nhds 1) := by
@@ -242,8 +276,8 @@ theorem balancedAdjacentSelectorsComplementary_false
     apply hselectedMin.squeeze tendsto_const_nhds
     · intro n
       cases hdual : dualBranch n
-      · simpa [hdual] using min_le_left (selectedH n) (selectedV n)
-      · simpa [hdual] using min_le_right (selectedH n) (selectedV n)
+      · simp [hdual]
+      · simp [hdual]
     · intro n
       cases hlevel : levelBranch n <;> cases hdual : dualBranch n
       · simpa [selectedH, hlevel, hdual] using hH0_le_one n
@@ -263,12 +297,14 @@ theorem balancedAdjacentSelectorsComplementary_false
   · exact hprimalSelected
   · exact hdualSelected
 
+/-! ## C. Arrays with dual limits -/
 
-
-
-
-
-theorem adjacent_height_array_contradiction_of_primal_dual_limits
+/-- Array contradiction with dual limits: the hypotheses of
+`adjacent_height_array_contradiction_of_endpoint_and_uniform_limits` with the vanishing minima
+replaced by dual crossing limits on every rectangle and complementarity `primal + dual ≤ 1`. See
+also `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` (stronger: dual limits only
+for indices `≤ K n + 1`). -/
+lemma adjacent_height_array_contradiction_of_primal_dual_limits
     (horizontal vertical dualVertical dualHorizontal : Nat -> Nat -> Real)
     (K : Nat -> Nat)
     (hhorizontal_nonneg : forall n k, 0 <= horizontal n k)
@@ -345,16 +381,18 @@ theorem adjacent_height_array_contradiction_of_primal_dual_limits
   · exact fun n => hmatchHorizontal n (k n + 1)
   · exact fun n => hmatchVertical n (k n + 1)
 
+/-! ## D. Arrays of drawn rectangles -/
+
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
-
-
-
-
-
-theorem PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_max_limits
+/-- For an array of drawn rectangles, primal start and end crossings tending to one, primal
+adjacent-pair maxima tending to one and dual crossing maxima tending to one on every rectangle are
+incompatible. See also
+`PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits` (stronger: dual
+limits only for indices `≤ K n + 1`). -/
+lemma PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_max_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (hBpos : 0 < B)

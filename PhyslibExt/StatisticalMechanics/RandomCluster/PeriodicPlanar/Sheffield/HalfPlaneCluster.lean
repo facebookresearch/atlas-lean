@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneExclusion
@@ -17,30 +14,71 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Canon
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AxisSwap
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AxisNegation
 
+/-!
+# Infinite clusters inside a half-plane
+
+Clusters restricted to a region, the event that a half-plane contains an infinite cluster, its
+translation invariance and zero–one law, and escape estimates when it has probability zero.
+
+## i. Overview
+
+`clusterWithinSet ω A x` is the set of vertices joined to `x` by an open path inside `A`.
+Exhausting `A` by orbit boxes shows that "this cluster is infinite" is measurable and is the
+decreasing limit of the events "the cluster reaches outside the box of radius `n`".
+`rightHalfPlaneHasInfiniteCluster r` is the event that `H_r = {x ≥ r}` contains an infinite
+cluster of the restricted configuration. Its probability does not depend on `r` under a
+translation-invariant measure; it equals the probability of the shift-invariant event that every
+right half-plane contains an infinite cluster, so ergodicity gives a zero–one law. When the
+probability is zero, the probability that a fixed finite set in `H_r` reaches outside the box of
+radius `n` within `H_r` tends to zero, which bounds rectangle side-connection events.
+The file also transfers ergodicity to the axis-swapped and axis-negated periodic structures.
+
+Headline fidelity:
+- `rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one` is conditional on ergodicity of the
+  measure under the lattice translations.
+- `rightHalfPlaneHasInfiniteCluster_measure_eq_boundary` (independence of `r`) is conditional on
+  translation invariance.
+- The escape estimates are conditional on the half-plane event having probability zero.
+- The remaining set identities and measurability results are unconditional.
+
+## ii. Key results
+
+- `PeriodicGraph.clusterWithinSet`, `PeriodicGraph.measurableSet_clusterWithinSet_infinite`
+- `PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster`
+- `PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_boundary`
+- `PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one`
+- `PeriodicPlaneEmbedding.rightHalfPlane_finiteSetEscape_measureReal_tendsto_zero`
+
+## iii. Table of contents
+
+- A. Ergodicity of the reflected periodic structures
+- B. Clusters within a region
+- C. Infinite clusters within a region
+- D. The half-plane infinite-cluster event
+- E. Escape from finite sets
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §4.3 (ergodicity and zero–one laws).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Ergodicity of the reflected periodic structures -/
 
-theorem PeriodicGraph.axisSwap_isErgodic
+omit [Countable V] in
+/-- Ergodicity is preserved when the two lattice axes are swapped. -/
+lemma PeriodicGraph.axisSwap_isErgodic
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hErgodic : P.IsErgodic mu) : P.axisSwap.IsErgodic mu := by
   refine ⟨P.axisSwap_isTranslationInvariant mu hErgodic.1, ?_⟩
@@ -51,35 +89,39 @@ theorem PeriodicGraph.axisSwap_isErgodic
   change P.configTranslate (siteAxisSwap (siteAxisSwap z)) ⁻¹' s = s at h
   simpa using h
 
-
-theorem PeriodicGraph.axisNeg_isErgodic
+omit [Countable V] in
+/-- Ergodicity is preserved when a lattice axis is negated. -/
+lemma PeriodicGraph.axisNeg_isErgodic
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hErgodic : P.IsErgodic mu) : P.axisNeg.IsErgodic mu := by
   refine ⟨P.axisNeg_isTranslationInvariant mu hErgodic.1, ?_⟩
   intro s hs hinvariant
   apply hErgodic.2 s hs
   intro z
-  have h := hinvariant (siteNeg z)
-  change P.configTranslate (siteNeg (siteNeg z)) ⁻¹' s = s at h
+  have h := hinvariant (-z)
+  change P.configTranslate (-(-z)) ⁻¹' s = s at h
   simpa using h
 
+/-! ## B. Clusters within a region -/
 
-
+/-- The open cluster of `x` inside `A`: vertices joined to `x` by an open path with all vertices
+in `A`. -/
 def PeriodicGraph.clusterWithinSet
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (A : Set V) (x : V) : Set V :=
   {y | omega ∈ P.connectedWithinSet A x y}
 
 omit [Countable V] in
-theorem PeriodicGraph.mem_clusterWithinSet
+lemma PeriodicGraph.mem_clusterWithinSet
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (A : Set V) (x y : V) :
     y ∈ P.clusterWithinSet omega A x ↔
       omega ∈ P.connectedWithinSet A x y :=
   Iff.rfl
 
-
-theorem PeriodicGraph.iUnion_connectedWithinSet_inter_orbitBox
+omit [Countable V] in
+/-- A connection within `A` takes place within `A ∩` some orbit box. -/
+lemma PeriodicGraph.iUnion_connectedWithinSet_inter_orbitBox
     (P : PeriodicGraph V) (A : Set V) (x y : V) :
     (⋃ n : Nat, P.connectedWithinSet
       (A ∩ (P.orbitBox n : Set V)) x y) =
@@ -107,9 +149,8 @@ theorem PeriodicGraph.iUnion_connectedWithinSet_inter_orbitBox
     intro v hv
     exact ⟨hregion v hv, hsupport v hv⟩
 
-
-
-theorem PeriodicGraph.iUnion_setConnectionWithin_inter_orbitBox
+omit [Countable V] in
+lemma PeriodicGraph.iUnion_setConnectionWithin_inter_orbitBox
     (P : PeriodicGraph V) (A S T : Set V) :
     (⋃ n : Nat, P.setConnectionWithin
       (A ∩ (P.orbitBox n : Set V)) S T) =
@@ -118,7 +159,7 @@ theorem PeriodicGraph.iUnion_setConnectionWithin_inter_orbitBox
   · intro omega homega
     obtain ⟨n, x, hx, y, hy, hxy⟩ := by
       simpa only [Set.mem_iUnion, PeriodicGraph.setConnectionWithin,
-        Set.mem_setOf_eq] using homega
+        Set.mem_ofPred_eq] using homega
     exact ⟨x, hx, y, hy,
       P.connectedWithinSet_mono_region inter_subset_left x y hxy⟩
   · rintro omega ⟨x, hx, y, hy, hxy⟩
@@ -127,7 +168,8 @@ theorem PeriodicGraph.iUnion_setConnectionWithin_inter_orbitBox
     apply Set.mem_iUnion.2
     exact ⟨n, x, hx, y, hy, hn⟩
 
-theorem PeriodicGraph.setConnectionWithin_inter_orbitBox_mono
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_inter_orbitBox_mono
     (P : PeriodicGraph V) (A S T : Set V) :
     Monotone (fun n => P.setConnectionWithin
       (A ∩ (P.orbitBox n : Set V)) S T) := by
@@ -135,9 +177,8 @@ theorem PeriodicGraph.setConnectionWithin_inter_orbitBox_mono
   exact P.setConnectionWithin_mono_region
     (inter_subset_inter_right _ (fun _ hv => P.orbitBox_mono hnN hv)) S T
 
-
-
-theorem PeriodicGraph.setConnectionWithin_inter_orbitBox_measureReal_tendsto
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_inter_orbitBox_measureReal_tendsto
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (A S T : Set V) :
@@ -149,8 +190,8 @@ theorem PeriodicGraph.setConnectionWithin_inter_orbitBox_measureReal_tendsto
   rw [P.iUnion_setConnectionWithin_inter_orbitBox A S T] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-theorem PeriodicGraph.clusterWithinSet_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.clusterWithinSet_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A : Set V) (x : V) :
     P.shift z '' P.clusterWithinSet omega A x =
@@ -169,9 +210,8 @@ theorem PeriodicGraph.clusterWithinSet_configTranslate
     exact (P.connectedWithinSet_configTranslate z omega A x u).1 hy
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.clusterWithinSet_infinite_iff_orbitBox_escape
+/-- A restricted cluster is infinite iff it reaches outside every orbit box. -/
+lemma PeriodicGraph.clusterWithinSet_infinite_iff_orbitBox_escape
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (A : Set V) (x : V) :
     (P.clusterWithinSet omega A x).Infinite ↔
@@ -204,8 +244,8 @@ theorem PeriodicGraph.clusterWithinSet_infinite_iff_orbitBox_escape
     exact hyOutside (hsubset (by
       simpa [PeriodicGraph.clusterWithinSet] using hyConnect))
 
-
-theorem PeriodicGraph.measurableSet_clusterWithinSet_infinite
+/-- The event that a restricted cluster is infinite is measurable. -/
+lemma PeriodicGraph.measurableSet_clusterWithinSet_infinite
     (P : PeriodicGraph V) (A : Set V) (x : V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       (P.clusterWithinSet omega A x).Infinite} := by
@@ -214,7 +254,7 @@ theorem PeriodicGraph.measurableSet_clusterWithinSet_infinite
       ⋂ n : Nat, ⋃ y : V, ⋃ (_hy : y ∉ (P.orbitBox n : Set V)),
         P.connectedWithinSet A x y := by
     ext omega
-    rw [Set.mem_setOf_eq]
+    rw [Set.mem_ofPred_eq]
     constructor
     · intro hinfinite
       rw [P.clusterWithinSet_infinite_iff_orbitBox_escape] at hinfinite
@@ -235,21 +275,22 @@ theorem PeriodicGraph.measurableSet_clusterWithinSet_infinite
     MeasurableSet.iUnion fun _hy =>
       P.connectedWithinSet_measurableSet A x y
 
-
+/-- The event that the cluster of `x` inside `A` contains a vertex outside the orbit box of
+radius `n`. -/
 def PeriodicGraph.clusterWithinSetEscape
     (P : PeriodicGraph V) (A : Set V) (x : V) (n : Nat) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ y : V, ⋃ (_hy : y ∉ (P.orbitBox n : Set V)),
     P.connectedWithinSet A x y
 
-theorem PeriodicGraph.clusterWithinSetEscape_measurableSet
+lemma PeriodicGraph.clusterWithinSetEscape_measurableSet
     (P : PeriodicGraph V) (A : Set V) (x : V) (n : Nat) :
     MeasurableSet (P.clusterWithinSetEscape A x n) :=
   MeasurableSet.iUnion fun y => MeasurableSet.iUnion fun _hy =>
     P.connectedWithinSet_measurableSet A x y
 
 omit [Countable V] in
-theorem PeriodicGraph.clusterWithinSetEscape_antitone
+lemma PeriodicGraph.clusterWithinSetEscape_antitone
     (P : PeriodicGraph V) (A : Set V) (x : V) :
     Antitone (P.clusterWithinSetEscape A x) := by
   intro n N hnN omega homega
@@ -263,13 +304,14 @@ theorem PeriodicGraph.clusterWithinSetEscape_antitone
   exact ⟨y, hyOutsideSmall, hyConnect⟩
 
 omit [Countable V] in
-theorem PeriodicGraph.iInter_clusterWithinSetEscape
+/-- The escape events decrease to the event that the restricted cluster is infinite. -/
+lemma PeriodicGraph.iInter_clusterWithinSetEscape
     (P : PeriodicGraph V) (A : Set V) (x : V) :
     (⋂ n : Nat, P.clusterWithinSetEscape A x n) =
       {omega : ConfigSpace (Sym2 V) |
         (P.clusterWithinSet omega A x).Infinite} := by
   ext omega
-  rw [Set.mem_iInter, Set.mem_setOf_eq,
+  rw [Set.mem_iInter, Set.mem_ofPred_eq,
     P.clusterWithinSet_infinite_iff_orbitBox_escape]
   constructor
   · intro h n
@@ -282,9 +324,7 @@ theorem PeriodicGraph.iInter_clusterWithinSetEscape
     simp only [PeriodicGraph.clusterWithinSetEscape, Set.mem_iUnion]
     exact ⟨y, hyOutside, hyConnect⟩
 
-
-
-theorem PeriodicGraph.clusterWithinSetEscape_measureReal_tendsto
+lemma PeriodicGraph.clusterWithinSetEscape_measureReal_tendsto
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (A : Set V) (x : V) :
@@ -301,13 +341,16 @@ theorem PeriodicGraph.clusterWithinSetEscape_measureReal_tendsto
   rw [P.iInter_clusterWithinSetEscape A x] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
+/-! ## C. Infinite clusters within a region -/
 
+/-- Some vertex of `A` has an infinite open cluster inside `A`. -/
 def PeriodicGraph.HasInfiniteClusterWithin
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (A : Set V) : Prop :=
   ∃ x ∈ A, (P.clusterWithinSet omega A x).Infinite
 
-theorem PeriodicGraph.hasInfiniteClusterWithin_mono
+omit [Countable V] in
+lemma PeriodicGraph.hasInfiniteClusterWithin_mono
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     {A B : Set V} (hAB : A ⊆ B) :
     P.HasInfiniteClusterWithin omega A →
@@ -317,7 +360,8 @@ theorem PeriodicGraph.hasInfiniteClusterWithin_mono
   intro y hy
   exact P.connectedWithinSet_mono_region hAB x y hy
 
-theorem PeriodicGraph.hasInfiniteClusterWithin_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.hasInfiniteClusterWithin_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A : Set V) :
     P.HasInfiniteClusterWithin (P.configTranslate z omega)
@@ -333,7 +377,7 @@ theorem PeriodicGraph.hasInfiniteClusterWithin_configTranslate
     rw [← P.clusterWithinSet_configTranslate z omega A x]
     exact hinfinite.image (P.shift z).injective.injOn
 
-theorem PeriodicGraph.measurableSet_hasInfiniteClusterWithin
+lemma PeriodicGraph.measurableSet_hasInfiniteClusterWithin
     (P : PeriodicGraph V) (A : Set V) :
     MeasurableSet {omega : ConfigSpace (Sym2 V) |
       P.HasInfiniteClusterWithin omega A} := by
@@ -348,14 +392,14 @@ theorem PeriodicGraph.measurableSet_hasInfiniteClusterWithin
   exact MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun _hx =>
     P.measurableSet_clusterWithinSet_infinite A x
 
-
-
+/-- Some vertex of `S` has an infinite open cluster inside `A`. -/
 def PeriodicGraph.setHitsInfiniteWithin
     (P : PeriodicGraph V) (A S : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ S, (P.clusterWithinSet omega A x).Infinite}
 
-theorem PeriodicGraph.setHitsInfiniteWithin_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.setHitsInfiniteWithin_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A S : Set V) :
     P.configTranslate z omega ∈ P.setHitsInfiniteWithin
@@ -371,7 +415,7 @@ theorem PeriodicGraph.setHitsInfiniteWithin_configTranslate
     rw [← P.clusterWithinSet_configTranslate z omega A x]
     exact hinfinite.image (P.shift z).injective.injOn
 
-theorem PeriodicGraph.setHitsInfiniteWithin_measurableSet
+lemma PeriodicGraph.setHitsInfiniteWithin_measurableSet
     (P : PeriodicGraph V) (A S : Set V) :
     MeasurableSet (P.setHitsInfiniteWithin A S) := by
   have heq : P.setHitsInfiniteWithin A S =
@@ -384,7 +428,7 @@ theorem PeriodicGraph.setHitsInfiniteWithin_measurableSet
   exact MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun _hx =>
     P.measurableSet_clusterWithinSet_infinite A x
 
-theorem PeriodicGraph.setHitsInfiniteWithin_translate_measureReal_eq
+lemma PeriodicGraph.setHitsInfiniteWithin_translate_measureReal_eq
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (A S : Set V) :
@@ -404,15 +448,18 @@ theorem PeriodicGraph.setHitsInfiniteWithin_translate_measureReal_eq
           (P.shift z '' A) (P.shift z '' S)).nullMeasurableSet).symm
     _ = mu.real (P.setHitsInfiniteWithin A S) := by rw [hpre]
 
+/-! ## D. The half-plane infinite-cluster event -/
 
-
+/-- The right half-plane `H_r = {x ≥ r}` contains an infinite open cluster of the configuration
+restricted to `H_r`. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | P.HasInfiniteClusterWithin omega
     (E.rightHalfPlaneVertices r)}
 
-theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (r : Real) :
     P.shift z '' E.rightHalfPlaneVertices r =
       E.rightHalfPlaneVertices (r + z 0) := by
@@ -431,7 +478,8 @@ theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices
     rw [← hux, E.vertexCoord_shift] at hx
     exact le_of_add_le_add_right hx
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_translate_preimage
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_translate_preimage
     (E : PeriodicPlaneEmbedding P) (z : Site 2) (r : Real) :
     P.configTranslate z ⁻¹'
         E.rightHalfPlaneHasInfiniteCluster (r + z 0) =
@@ -444,19 +492,20 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_translate_preima
   exact P.hasInfiniteClusterWithin_configTranslate z omega
     (E.rightHalfPlaneVertices r)
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measurableSet
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     MeasurableSet (E.rightHalfPlaneHasInfiniteCluster r) :=
   P.measurableSet_hasInfiniteClusterWithin (E.rightHalfPlaneVertices r)
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_antitone
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_antitone
     (E : PeriodicPlaneEmbedding P) :
     Antitone E.rightHalfPlaneHasInfiniteCluster := by
   intro r s hrs omega homega
   exact P.hasInfiniteClusterWithin_mono omega
     (fun v hv => hrs.trans hv) homega
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (z : Site 2) (r : Real) :
@@ -467,10 +516,9 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq
     (E.rightHalfPlaneHasInfiniteCluster_measurableSet
       (r + z 0)).nullMeasurableSet).symm
 
-
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_boundary
+/-- Under a translation-invariant measure the probability that `H_r` contains an infinite cluster
+does not depend on `r`. -/
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_boundary
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (r s : Real) :
@@ -492,20 +540,20 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_bound
   · exact measure_mono
       (E.rightHalfPlaneHasInfiniteCluster_antitone hrs)
 
-
-
-
+/-- Every right half-plane `H_n`, `n ∈ ℕ`, contains an infinite cluster; a translation-invariant
+event. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity
     (E : PeriodicPlaneEmbedding P) : Set (ConfigSpace (Sym2 V)) :=
   ⋂ n : Nat, E.rightHalfPlaneHasInfiniteCluster n
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measurableSet
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measurableSet
     (E : PeriodicPlaneEmbedding P) :
     MeasurableSet E.rightHalfPlaneHasInfiniteClusterAtInfinity :=
   MeasurableSet.iInter fun n =>
     E.rightHalfPlaneHasInfiniteCluster_measurableSet n
 
-theorem PeriodicPlaneEmbedding.mem_rightHalfPlaneHasInfiniteClusterAtInfinity_iff
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.mem_rightHalfPlaneHasInfiniteClusterAtInfinity_iff
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V)) :
     omega ∈ E.rightHalfPlaneHasInfiniteClusterAtInfinity ↔
       ∀ r : Real, omega ∈ E.rightHalfPlaneHasInfiniteCluster r := by
@@ -519,7 +567,8 @@ theorem PeriodicPlaneEmbedding.mem_rightHalfPlaneHasInfiniteClusterAtInfinity_if
       Set.mem_iInter]
     exact fun n => h n
 
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_translate_preimage
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_translate_preimage
     (E : PeriodicPlaneEmbedding P) (z : Site 2) :
     P.configTranslate z ⁻¹'
         E.rightHalfPlaneHasInfiniteClusterAtInfinity =
@@ -541,9 +590,7 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_transl
     rw [hr] at hpre
     exact (Set.ext_iff.1 hpre omega).2 hz
 
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measure_eq
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measure_eq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r : Real) :
@@ -576,7 +623,8 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measur
     exact tendsto_const_nhds
   exact tendsto_nhds_unique hmeasure hconstant
 
-
+/-- Zero–one law: under an ergodic measure, the right half-plane contains an infinite cluster
+with probability zero or one. -/
 theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -592,9 +640,7 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_
   exact htail
 
 omit [Countable V] in
-
-
-theorem PeriodicPlaneEmbedding.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPlane
+lemma PeriodicPlaneEmbedding.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPlane
     (E : PeriodicPlaneEmbedding P) (r : Real) :
     (⋃ n : Nat, P.setHitsInfiniteWithin (E.rightHalfPlaneVertices r)
       ((P.orbitBox n : Set V) ∩ E.rightHalfPlaneVertices r)) =
@@ -604,7 +650,7 @@ theorem PeriodicPlaneEmbedding.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPl
   · intro h
     obtain ⟨n, x, hx, hinfinite⟩ := by
       simpa only [Set.mem_iUnion, PeriodicGraph.setHitsInfiniteWithin,
-        Set.mem_setOf_eq] using h
+        Set.mem_ofPred_eq] using h
     exact ⟨x, hx.2, hinfinite⟩
   · rintro ⟨x, hxHalfPlane, hinfinite⟩
     obtain ⟨n, hxBox⟩ := P.mem_orbitBox_of_eventually x
@@ -612,9 +658,7 @@ theorem PeriodicPlaneEmbedding.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPl
     exact ⟨n, x, ⟨hxBox, hxHalfPlane⟩, hinfinite⟩
 
 omit [Countable V] in
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_of_orbitBox
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_of_orbitBox
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) (r : Real)
     (hzero : ∀ n : Nat, mu (P.setHitsInfiniteWithin
@@ -624,9 +668,9 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_
   rw [← E.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPlane r]
   exact measure_iUnion_null hzero
 
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlane_vertexEscape_measureReal_tendsto_zero
+/-- If `H_r` almost surely has no infinite cluster, the probability that the cluster of a fixed
+vertex inside `H_r` leaves the box of radius `n` tends to zero. -/
+lemma PeriodicPlaneEmbedding.rightHalfPlane_vertexEscape_measureReal_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (x : V) (hx : x ∈ E.rightHalfPlaneVertices r)
@@ -647,22 +691,23 @@ theorem PeriodicPlaneEmbedding.rightHalfPlane_vertexEscape_measureReal_tendsto_z
   simpa [hzero] using P.clusterWithinSetEscape_measureReal_tendsto
     mu (E.rightHalfPlaneVertices r) x
 
+/-! ## E. Escape from finite sets -/
 
+/-- Some vertex of the finite set `L` has its cluster inside `A` reaching outside the orbit box
+of radius `n`. -/
 def PeriodicGraph.finiteSetEscapeWithin
     (P : PeriodicGraph V) (A : Set V) (L : Finset V) (n : Nat) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ x ∈ L, P.clusterWithinSetEscape A x n
 
-theorem PeriodicGraph.finiteSetEscapeWithin_measurableSet
+lemma PeriodicGraph.finiteSetEscapeWithin_measurableSet
     (P : PeriodicGraph V) (A : Set V) (L : Finset V) (n : Nat) :
     MeasurableSet (P.finiteSetEscapeWithin A L n) :=
   L.measurableSet_biUnion fun x _hx =>
     P.clusterWithinSetEscape_measurableSet A x n
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.iInter_finiteSetEscapeWithin
+lemma PeriodicGraph.iInter_finiteSetEscapeWithin
     (P : PeriodicGraph V) (A : Set V) (L : Finset V) :
     (⋂ n : Nat, P.finiteSetEscapeWithin A L n) =
       P.setHitsInfiniteWithin A (L : Set V) := by
@@ -714,7 +759,7 @@ theorem PeriodicGraph.iInter_finiteSetEscapeWithin
     exact ⟨y, hyOutside, hyConnect⟩
 
 omit [Countable V] in
-theorem PeriodicGraph.finiteSetEscapeWithin_antitone
+lemma PeriodicGraph.finiteSetEscapeWithin_antitone
     (P : PeriodicGraph V) (A : Set V) (L : Finset V) :
     Antitone (P.finiteSetEscapeWithin A L) := by
   intro n N hnN omega homega
@@ -722,9 +767,7 @@ theorem PeriodicGraph.finiteSetEscapeWithin_antitone
   obtain ⟨x, hx, hxEscape⟩ := homega
   exact ⟨x, hx, P.clusterWithinSetEscape_antitone A x hnN hxEscape⟩
 
-
-
-theorem PeriodicGraph.finiteSetEscapeWithin_measureReal_tendsto
+lemma PeriodicGraph.finiteSetEscapeWithin_measureReal_tendsto
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (A : Set V) (L : Finset V) :
@@ -740,9 +783,9 @@ theorem PeriodicGraph.finiteSetEscapeWithin_measureReal_tendsto
   rw [P.iInter_finiteSetEscapeWithin A L] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlane_finiteSetEscape_measureReal_tendsto_zero
+/-- If `H_r` almost surely has no infinite cluster, escape of a fixed finite set in `H_r` from
+large boxes has probability tending to zero. -/
+lemma PeriodicPlaneEmbedding.rightHalfPlane_finiteSetEscape_measureReal_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (L : Finset V)
@@ -768,10 +811,8 @@ theorem PeriodicPlaneEmbedding.rightHalfPlane_finiteSetEscape_measureReal_tendst
         (E.rightHalfPlaneVertices r) x n)
   · exact hsum
 
-
-
-
-theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_subset_finiteSetEscapeWithin
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_subset_finiteSetEscapeWithin
     (E : PeriodicPlaneEmbedding P)
     {a b c d : Real} {L : Finset V} {side A : Set V} {n : Nat}
     (hrect : E.rectVertices a b c d ⊆ A)
@@ -784,7 +825,10 @@ theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_subset_finiteSetEscapeWit
   refine ⟨x, hxL, y, hside hySide, ?_⟩
   exact P.connectedWithinSet_mono_region hrect x y hxy
 
-theorem PeriodicPlaneEmbedding.rectSideConnection_measureReal_le_finiteSetEscapeWithin
+omit [Countable V] in
+/-- A rectangle side-connection event from `L` to a side outside a box is bounded by the escape
+event of `L` from that box. -/
+lemma PeriodicPlaneEmbedding.rectSideConnection_measureReal_le_finiteSetEscapeWithin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d : Real} {L : Finset V} {side A : Set V} {n : Nat}

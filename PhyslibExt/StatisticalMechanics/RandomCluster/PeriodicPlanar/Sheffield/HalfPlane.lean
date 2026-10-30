@@ -6,17 +6,55 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic
+
+/-!
+# Connections inside a half-plane and merging of infinite clusters
+
+Open connections constrained to a vertex set, the right half-plane and its boundary rays, and
+the statement that two infinite clusters meet inside a half-plane after a suitable translation.
+
+## i. Overview
+
+`PeriodicGraph.connectedWithinSet A x y` is the event that an open path from `x` to `y` stays in
+`A`; `setConnectionWithin A S T` asks for such a path from some vertex of `S` to some vertex of
+`T`. Both are measurable, increasing and transform correctly under lattice translations.
+
+For an embedding, the right half-plane `{x | r ≤ x₀}` has a boundary (half-plane vertices with
+a neighbour to the left), split at height `s` into a lower and an upper boundary ray. With the
+square-root trick, a likely connection to the whole boundary forces a likely connection to the
+more probable of the two rays.
+
+Translating a large box deep into the half-plane shows that, under translation invariance and
+almost-sure uniqueness of the infinite cluster, two given vertices are, after a suitable
+translation, either not both in infinite clusters or connected inside the half-plane, up to an
+error smaller than any `ε > 0`.
+
+## ii. Key results
+
+- `PeriodicGraph.connectedWithinSet_measurableSet`, `connectedWithinSet_isIncreasing`,
+  `connectedWithinSet_configTranslate` : unconditional.
+- `directional_sqrt_trick`, `PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick` :
+  conditional on `IsFKG mu`.
+- `three_event_intersection_lower_bound` : the Bonferroni bound
+  `μ A + μ B + μ C - 2 ≤ μ (A ∩ B ∩ C)` for a probability measure (unconditional).
+- `PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt` : conditional on
+  translation invariance and almost-sure uniqueness of the infinite cluster.
+
+## iii. Table of contents
+
+- A. Connections inside a vertex set
+- B. The square-root trick with a preferred event
+- C. The right half-plane and its boundary rays
+- D. Merging infinite clusters inside a half-plane
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
 
 @[expose] public section
 
@@ -24,15 +62,15 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Connections inside a vertex set -/
 
-
-
-
+/-- The event that an open path from `x` to `y` stays inside the vertex set `A`. See also
+`PeriodicGraph.connectedWithinOrbit`, the case of an orbit box. -/
 def PeriodicGraph.connectedWithinSet
     (P : PeriodicGraph V) (A : Set V) (x y : V) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -41,7 +79,7 @@ def PeriodicGraph.connectedWithinSet
     (x :: l).getLast (List.cons_ne_nil _ _) = y ∧
     ∀ v ∈ x :: l, v ∈ A}
 
-theorem PeriodicGraph.connectedWithinSet_measurableSet
+lemma PeriodicGraph.connectedWithinSet_measurableSet
     (P : PeriodicGraph V) (A : Set V) (x y : V) :
     MeasurableSet (P.connectedWithinSet A x y) := by
   classical
@@ -52,24 +90,25 @@ theorem PeriodicGraph.connectedWithinSet_measurableSet
         then {omega | List.IsChain (P.openSubgraph omega).Adj (x :: l)}
         else ∅ := by
     ext omega
-    simp only [PeriodicGraph.connectedWithinSet, Set.mem_setOf_eq,
+    simp only [PeriodicGraph.connectedWithinSet, Set.mem_ofPred_eq,
       Set.mem_iUnion]
     constructor
     · rintro ⟨l, hchain, hlast, hA⟩
       refine ⟨l, ?_⟩
-      rw [if_pos ⟨hlast, hA⟩]
+      rw [ite_eq_left ⟨hlast, hA⟩]
       exact hchain
     · rintro ⟨l, hl⟩
       split_ifs at hl with h
       · exact ⟨l, hl, h.1, h.2⟩
-      · exact False.elim (by simpa using hl)
+      · exact False.elim (by simp at hl)
   rw [heq]
   exact MeasurableSet.iUnion fun l => by
     split_ifs
-    · exact P.measurableSet_openChain_sheffield (x :: l)
+    · exact P.measurableSet_openChain (x :: l)
     · exact MeasurableSet.empty
 
-theorem PeriodicGraph.connectedWithinSet_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.connectedWithinSet_isIncreasing
     (P : PeriodicGraph V) (A : Set V) (x y : V) :
     IsIncreasing (P.connectedWithinSet A x y) := by
   intro omega eta home
@@ -80,15 +119,15 @@ theorem PeriodicGraph.connectedWithinSet_isIncreasing
   refine ⟨hab.1, Bool.eq_true_of_true_le ?_⟩
   simpa [hab.2] using home s(a, b)
 
-theorem PeriodicGraph.connectedWithinSet_mono_region
+omit [Countable V] in
+lemma PeriodicGraph.connectedWithinSet_mono_region
     (P : PeriodicGraph V) {A B : Set V} (hAB : A ⊆ B) (x y : V) :
     P.connectedWithinSet A x y ⊆ P.connectedWithinSet B x y := by
   rintro omega ⟨l, hchain, hlast, hA⟩
   exact ⟨l, hchain, hlast, fun v hv => hAB (hA v hv)⟩
 
-
-
-theorem PeriodicGraph.connectedWithinSet_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.connectedWithinSet_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A : Set V) (x y : V) :
     P.configTranslate z omega ∈
@@ -142,13 +181,13 @@ theorem PeriodicGraph.connectedWithinSet_configTranslate
       · obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hv
         exact ⟨a, hregion a (by simp [ha]), rfl⟩
 
-
+/-- The event that some vertex of `S` is joined to some vertex of `T` by an open path inside `A`. -/
 def PeriodicGraph.setConnectionWithin
     (P : PeriodicGraph V) (A S T : Set V) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | ∃ x ∈ S, ∃ y ∈ T, omega ∈ P.connectedWithinSet A x y}
 
-theorem PeriodicGraph.setConnectionWithin_measurableSet
+lemma PeriodicGraph.setConnectionWithin_measurableSet
     (P : PeriodicGraph V) (A S T : Set V) :
     MeasurableSet (P.setConnectionWithin A S T) := by
   have heq : P.setConnectionWithin A S T =
@@ -161,7 +200,8 @@ theorem PeriodicGraph.setConnectionWithin_measurableSet
     MeasurableSet.iUnion fun y => MeasurableSet.iUnion fun _hy =>
       P.connectedWithinSet_measurableSet A x y
 
-theorem PeriodicGraph.setConnectionWithin_isIncreasing
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_isIncreasing
     (P : PeriodicGraph V) (A S T : Set V) :
     IsIncreasing (P.setConnectionWithin A S T) := by
   intro omega eta home
@@ -169,7 +209,8 @@ theorem PeriodicGraph.setConnectionWithin_isIncreasing
   exact ⟨x, hx, y, hy,
     P.connectedWithinSet_isIncreasing A x y home hxy⟩
 
-theorem PeriodicGraph.setConnectionWithin_union_target
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_union_target
     (P : PeriodicGraph V) (A S T U : Set V) :
     P.setConnectionWithin A S (T ∪ U) =
       P.setConnectionWithin A S T ∪ P.setConnectionWithin A S U := by
@@ -185,12 +226,13 @@ theorem PeriodicGraph.setConnectionWithin_union_target
     · obtain ⟨x, hx, y, hy, hxy⟩ := h
       exact ⟨x, hx, y, Or.inr hy, hxy⟩
 
+/-! ## B. The square-root trick with a preferred event -/
 
-
-
-
-
-theorem directional_sqrt_trick
+omit [DecidableEq V] [Countable V] in
+/-- Square-root trick with a preferred event: if `μ B ≤ μ A` for increasing `A`, `B` under an FKG
+measure, then `1 - √(1 - μ(A ∪ B)) ≤ μ A`. See also `StatMech.Universality.rsw_sqrt_trick_eq`
+(equal probabilities, positive association). -/
+lemma directional_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
@@ -200,9 +242,9 @@ theorem directional_sqrt_trick
   have h := measurable_sqrt_trick mu hFKG hA hB hAm hBm
   rwa [max_eq_left hBA] at h
 
-
-
-theorem three_event_intersection_lower_bound
+omit [DecidableEq V] [Countable V] in
+/-- Bonferroni lower bound for three events: `μ A + μ B + μ C - 2 ≤ μ (A ∩ B ∩ C)`. -/
+lemma three_event_intersection_lower_bound
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {A B C : Set (ConfigSpace (Sym2 V))}
     (hBm : MeasurableSet B) (hCm : MeasurableSet C) :
@@ -218,31 +260,31 @@ theorem three_event_intersection_lower_bound
   have hABC := pairLower (S := A ∩ B) (T := C) hCm
   linarith
 
+/-! ## C. The right half-plane and its boundary rays -/
 
-
-
+/-- The vertices in the closed right half-plane `{x | r ≤ x₀}`. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneVertices
     (E : PeriodicPlaneEmbedding P) (r : ℝ) : Set V :=
   {x | r ≤ E.vertexCoord x 0}
 
-
-
+/-- The boundary of the right half-plane: its vertices with a neighbour strictly left of `r`. -/
 def PeriodicPlaneEmbedding.rightHalfPlaneBoundaryVertices
     (E : PeriodicPlaneEmbedding P) (r : ℝ) : Set V :=
   {x | x ∈ E.rightHalfPlaneVertices r ∧
     ∃ y, P.graph.Adj x y ∧ E.vertexCoord y 0 < r}
 
-
+/-- The lower boundary ray: boundary vertices of the right half-plane at height at most `s`. -/
 def PeriodicPlaneEmbedding.lowerBoundaryRayVertices
     (E : PeriodicPlaneEmbedding P) (r s : ℝ) : Set V :=
   E.rightHalfPlaneBoundaryVertices r ∩ {x | E.vertexCoord x 1 ≤ s}
 
-
+/-- The upper boundary ray: boundary vertices of the right half-plane at height at least `s`. -/
 def PeriodicPlaneEmbedding.upperBoundaryRayVertices
     (E : PeriodicPlaneEmbedding P) (r s : ℝ) : Set V :=
   E.rightHalfPlaneBoundaryVertices r ∩ {x | s ≤ E.vertexCoord x 1}
 
-theorem PeriodicPlaneEmbedding.boundary_eq_lower_union_upper
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.boundary_eq_lower_union_upper
     (E : PeriodicPlaneEmbedding P) (r s : ℝ) :
     E.rightHalfPlaneBoundaryVertices r =
       E.lowerBoundaryRayVertices r s ∪ E.upperBoundaryRayVertices r s := by
@@ -254,9 +296,8 @@ theorem PeriodicPlaneEmbedding.boundary_eq_lower_union_upper
     · exact Or.inr ⟨hx, hsx⟩
   · rintro (⟨hx, _⟩ | ⟨hx, _⟩) <;> exact hx
 
-
-
-theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundary_coord_lt
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rightHalfPlaneBoundary_coord_lt
     (E : PeriodicPlaneEmbedding P) {B r : ℝ}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc hxy t - E.vertex x) i| ≤ B)
@@ -272,9 +313,10 @@ theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundary_coord_lt
   have hd' := abs_le.mp hd
   linarith
 
-
-
-theorem PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick
+/-- If connecting `S` to the lower boundary ray is at least as likely as connecting it to the upper
+ray, the square-root trick bounds the lower-ray probability below by that of the whole boundary
+(under FKG). -/
+lemma PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (r s : ℝ) (S : Set V)
@@ -305,9 +347,10 @@ theorem PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick
     at hsqrt
   exact hsqrt
 
+/-! ## D. Merging infinite clusters inside a half-plane -/
 
-
-theorem PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_rightHalfPlane
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_rightHalfPlane
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ) :
     ∃ z : Site 2, ∀ v ∈ P.orbitBox N,
       P.shift z v ∈ E.rightHalfPlaneVertices r := by
@@ -328,9 +371,8 @@ theorem PeriodicPlaneEmbedding.exists_shift_orbitBox_subset_rightHalfPlane
   change r ≤ E.vertexCoord v 0 + (n : ℝ)
   linarith
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_connectedWithinOrbit_into_rightHalfPlane
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_shift_connectedWithinOrbit_into_rightHalfPlane
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ) :
     ∃ z : Site 2, ∀ (omega : ConfigSpace (Sym2 V)) (x y : V),
       omega ∈ P.connectedWithinOrbit x y N →
@@ -350,10 +392,8 @@ theorem PeriodicPlaneEmbedding.exists_shift_connectedWithinOrbit_into_rightHalfP
       (P.orbitBox (P.bufferedRadius N) : Set V) x y).2
   exact hxy
 
-
-
-
-
+/-- `x` and `y` both lie in infinite clusters but are not connected inside the right half-plane
+`{r ≤ x₀}`. See also `PeriodicGraph.pairMergeError`, the same event for an orbit box. -/
 def PeriodicPlaneEmbedding.halfPlanePairMergeError
     (E : PeriodicPlaneEmbedding P) (r : ℝ) (x y : V) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -361,16 +401,15 @@ def PeriodicPlaneEmbedding.halfPlanePairMergeError
     {omega | (P.cluster omega y).Infinite}) \
       P.connectedWithinSet (E.rightHalfPlaneVertices r) x y
 
-theorem PeriodicPlaneEmbedding.halfPlanePairMergeError_measurableSet
+lemma PeriodicPlaneEmbedding.halfPlanePairMergeError_measurableSet
     (E : PeriodicPlaneEmbedding P) (r : ℝ) (x y : V) :
     MeasurableSet (E.halfPlanePairMergeError r x y) :=
   ((P.measurableSet_cluster_infinite x).inter
     (P.measurableSet_cluster_infinite y)).diff
       (P.connectedWithinSet_measurableSet (E.rightHalfPlaneVertices r) x y)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_preimage_subset
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_preimage_subset
     (E : PeriodicPlaneEmbedding P) (N : ℕ) (r : ℝ) (x y : V) :
     ∃ z : Site 2,
       P.configTranslate z ⁻¹'
@@ -388,9 +427,7 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_preimage_sub
   · intro hmerge
     exact herror.2 (htransport omega x y hmerge)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_le
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (N : ℕ) (r : ℝ) (x y : V) :
@@ -410,8 +447,8 @@ theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_
   rw [← hreal]
   exact measureReal_mono hsub
 
-
-
+/-- Under translation invariance and almost-sure uniqueness of the infinite cluster, for every
+`ε > 0` some translate of `x`, `y` has half-plane merging error below `ε`. -/
 theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

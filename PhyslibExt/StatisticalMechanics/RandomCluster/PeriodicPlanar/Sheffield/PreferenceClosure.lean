@@ -6,32 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PreferenceInterface
 
+/-!
+# A common boundary point of two grid colorings
+
+Two colorings of a rectangular grid, one separating bottom from top and one separating left
+from right, have a common true vertex that is king-adjacent to a false vertex of each.
+
+## i. Overview
+
+This combines the grid-boundary preference witness of the interface file in both directions:
+the vertical coloring has opposite colors on the bottom and top rows, so its true/false
+interface links the left and right sides; the horizontal coloring is true on the left column and
+false on the right column. The set of true vertices of the horizontal coloring separates the
+left end of the vertical coloring's boundary walk from its right end, which yields the common
+witness.
+
+## ii. Key results
+
+- `exists_common_preference_grid_witness` : unconditional (for `0 < n` and bottom and top colors
+  of the vertical coloring that differ).
+
+## iii. Table of contents
+
+- A. The common witness
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. The common witness -/
 
-
+/-- Two grid colorings, the vertical one with different bottom and top colors and the horizontal one
+true on the left column and false on the right column, have a common true vertex that is
+king-adjacent to a false vertex of each coloring. -/
 theorem exists_common_preference_grid_witness
     {n m : Nat} (hn : 0 < n)
     (vertical horizontal : PreferenceGridVertex n m -> Bool)

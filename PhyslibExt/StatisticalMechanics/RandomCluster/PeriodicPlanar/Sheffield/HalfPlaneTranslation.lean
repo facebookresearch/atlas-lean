@@ -6,35 +6,61 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneEscape
 
+/-!
+# Vertical translations of half-plane boundary connections
+
+Vertical lattice translations preserve the right half-plane and move its boundary rays, so the
+probability of connecting a source to a boundary ray depends only on relative heights.
+
+## i. Overview
+
+`verticalShift t = (0, t)` maps the right half-plane and its boundary to themselves and shifts
+the lower and upper boundary rays by `t`. Under a translation-invariant measure, connecting a
+translated source to a translated ray has the same probability as the original connection.
+Since the lower rays at heights `0, 1, 2, …` increase to the whole boundary, moving the source
+down by `n` and keeping the ray at height `0` gives connection probabilities converging to the
+probability of connecting the source to the whole boundary; symmetrically for the upper ray.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_vertical`,
+  `PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_vertical` : conditional on
+  translation invariance.
+- `PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto`,
+  `PeriodicPlaneEmbedding.shift_up_upperBoundaryRay_measureReal_tendsto` : conditional on
+  translation invariance (finite measure).
+
+## iii. Table of contents
+
+- A. Set connections under translations
+- B. Vertical shifts of the half-plane and its rays
+- C. Exhausting the boundary by rays
+- D. Translation invariance of ray connections
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Set connections under translations -/
 
-
-theorem PeriodicGraph.setConnectionWithin_configTranslate
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_configTranslate
     (P : PeriodicGraph V) (z : Site 2)
     (omega : ConfigSpace (Sym2 V)) (A S T : Set V) :
     P.configTranslate z omega ∈
@@ -50,32 +76,37 @@ theorem PeriodicGraph.setConnectionWithin_configTranslate
       P.shift z y, ⟨y, hy, rfl⟩,
       (P.connectedWithinSet_configTranslate z omega A x y).mpr hxy⟩
 
-theorem PeriodicGraph.setConnectionWithin_mono_target
+omit [Countable V] in
+lemma PeriodicGraph.setConnectionWithin_mono_target
     (P : PeriodicGraph V) (A S : Set V) {T U : Set V} (hTU : T ⊆ U) :
     P.setConnectionWithin A S T ⊆ P.setConnectionWithin A S U := by
   rintro omega ⟨x, hx, y, hy, hxy⟩
   exact ⟨x, hx, y, hTU hy, hxy⟩
 
+/-! ## B. Vertical shifts of the half-plane and its rays -/
 
+/-- The vertical lattice vector `(0, t)`. -/
 def verticalShift (t : Int) : Site 2 :=
   fun i => if i = 1 then t else 0
 
-@[simp] theorem verticalShift_zero_apply (t : Int) :
+@[simp] lemma verticalShift_zero_apply (t : Int) :
     verticalShift t 0 = 0 := by
   simp [verticalShift]
 
-@[simp] theorem verticalShift_one_apply (t : Int) :
+@[simp] lemma verticalShift_one_apply (t : Int) :
     verticalShift t 1 = t := by
   simp [verticalShift]
 
-theorem PeriodicPlaneEmbedding.shift_mem_rightHalfPlaneVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_mem_rightHalfPlaneVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r : Real) (x : V) :
     P.shift (verticalShift t) x ∈ E.rightHalfPlaneVertices r ↔
       x ∈ E.rightHalfPlaneVertices r := by
-  simp only [PeriodicPlaneEmbedding.rightHalfPlaneVertices, Set.mem_setOf_eq,
+  simp only [PeriodicPlaneEmbedding.rightHalfPlaneVertices, Set.mem_ofPred_eq,
     E.vertexCoord_shift, verticalShift_zero_apply, Int.cast_zero, add_zero]
 
-theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r : Real) :
     P.shift (verticalShift t) '' E.rightHalfPlaneVertices r =
       E.rightHalfPlaneVertices r := by
@@ -87,15 +118,16 @@ theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneVertices_vertical
     refine ⟨P.shift (-(verticalShift t)) x, ?_, ?_⟩
     · have hback : P.shift (verticalShift t)
           (P.shift (-(verticalShift t)) x) = x := by
-        simpa using P.shift_shift_neg (verticalShift t) x
+        simp
       have himage : P.shift (-(verticalShift t)) x ∈
           E.rightHalfPlaneVertices r := by
         rw [← hback] at hx
         exact (E.shift_mem_rightHalfPlaneVertices_vertical t r _).mp hx
       exact himage
-    · simpa using P.shift_shift_neg (verticalShift t) x
+    · simp
 
-theorem PeriodicPlaneEmbedding.shift_mem_rightHalfPlaneBoundaryVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_mem_rightHalfPlaneBoundaryVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r : Real) (x : V) :
     P.shift (verticalShift t) x ∈ E.rightHalfPlaneBoundaryVertices r ↔
       x ∈ E.rightHalfPlaneBoundaryVertices r := by
@@ -117,7 +149,8 @@ theorem PeriodicPlaneEmbedding.shift_mem_rightHalfPlaneBoundaryVertices_vertical
     rw [E.vertexCoord_shift]
     simpa [verticalShift] using hy
 
-theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneBoundaryVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_image_rightHalfPlaneBoundaryVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r : Real) :
     P.shift (verticalShift t) '' E.rightHalfPlaneBoundaryVertices r =
       E.rightHalfPlaneBoundaryVertices r := by
@@ -129,12 +162,13 @@ theorem PeriodicPlaneEmbedding.shift_image_rightHalfPlaneBoundaryVertices_vertic
     refine ⟨P.shift (-(verticalShift t)) x, ?_, ?_⟩
     · have hback : P.shift (verticalShift t)
           (P.shift (-(verticalShift t)) x) = x := by
-        simpa using P.shift_shift_neg (verticalShift t) x
+        simp
       rw [← hback] at hx
       exact (E.shift_mem_rightHalfPlaneBoundaryVertices_vertical t r _).mp hx
-    · simpa using P.shift_shift_neg (verticalShift t) x
+    · simp
 
-theorem PeriodicPlaneEmbedding.shift_image_lowerBoundaryRayVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_image_lowerBoundaryRayVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r s : Real) :
     P.shift (verticalShift t) '' E.lowerBoundaryRayVertices r s =
       E.lowerBoundaryRayVertices r (s + t) := by
@@ -151,7 +185,7 @@ theorem PeriodicPlaneEmbedding.shift_image_lowerBoundaryRayVertices_vertical
     let y := P.shift (-(verticalShift t)) x
     have hxy : P.shift (verticalShift t) y = x := by
       dsimp only [y]
-      simpa using P.shift_shift_neg (verticalShift t) x
+      simp
     refine ⟨y, ⟨?_, ?_⟩, hxy⟩
     · rw [← hxy] at hxB
       exact (E.shift_mem_rightHalfPlaneBoundaryVertices_vertical t r y).mp hxB
@@ -161,7 +195,8 @@ theorem PeriodicPlaneEmbedding.shift_image_lowerBoundaryRayVertices_vertical
       change E.vertexCoord y 1 ≤ s
       linarith
 
-theorem PeriodicPlaneEmbedding.shift_image_upperBoundaryRayVertices_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.shift_image_upperBoundaryRayVertices_vertical
     (E : PeriodicPlaneEmbedding P) (t : Int) (r s : Real) :
     P.shift (verticalShift t) '' E.upperBoundaryRayVertices r s =
       E.upperBoundaryRayVertices r (s + t) := by
@@ -178,7 +213,7 @@ theorem PeriodicPlaneEmbedding.shift_image_upperBoundaryRayVertices_vertical
     let y := P.shift (-(verticalShift t)) x
     have hxy : P.shift (verticalShift t) y = x := by
       dsimp only [y]
-      simpa using P.shift_shift_neg (verticalShift t) x
+      simp
     refine ⟨y, ⟨?_, ?_⟩, hxy⟩
     · rw [← hxy] at hxB
       exact (E.shift_mem_rightHalfPlaneBoundaryVertices_vertical t r y).mp hxB
@@ -188,7 +223,10 @@ theorem PeriodicPlaneEmbedding.shift_image_upperBoundaryRayVertices_vertical
       change s ≤ E.vertexCoord y 1
       linarith
 
-theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_mono
+/-! ## C. Exhausting the boundary by rays -/
+
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.lowerBoundaryRay_connection_mono
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.setConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -201,7 +239,8 @@ theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_mono
   change E.vertexCoord y 1 ≤ (N : Real)
   exact hy.trans (by exact_mod_cast hnN)
 
-theorem PeriodicPlaneEmbedding.iUnion_lowerBoundaryRay_connection
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_lowerBoundaryRay_connection
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, P.setConnectionWithin (E.rightHalfPlaneVertices r) S
         (E.lowerBoundaryRayVertices r n)) =
@@ -217,7 +256,8 @@ theorem PeriodicPlaneEmbedding.iUnion_lowerBoundaryRay_connection
     obtain ⟨n, hn⟩ := exists_nat_ge (E.vertexCoord y 1)
     exact Set.mem_iUnion.2 ⟨n, x, hx, y, ⟨hyB, hn⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_tendsto
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V) :
@@ -231,7 +271,8 @@ theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_tendsto
   rw [E.iUnion_lowerBoundaryRay_connection r S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_mono_neg
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.upperBoundaryRay_connection_mono_neg
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     Monotone (fun n : Nat =>
       P.setConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -245,7 +286,8 @@ theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_mono_neg
   have hcast : (n : Real) ≤ N := by exact_mod_cast hnN
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_upperBoundaryRay_connection_neg
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_upperBoundaryRay_connection_neg
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     (⋃ n : Nat, P.setConnectionWithin (E.rightHalfPlaneVertices r) S
         (E.upperBoundaryRayVertices r (-(n : Real)))) =
@@ -262,7 +304,8 @@ theorem PeriodicPlaneEmbedding.iUnion_upperBoundaryRay_connection_neg
     have hy : -(n : Real) ≤ E.vertexCoord y 1 := by linarith
     exact Set.mem_iUnion.2 ⟨n, x, hx, y, ⟨hyB, hy⟩, hxy⟩
 
-theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_tendsto_neg
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_tendsto_neg
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r : Real) (S : Set V) :
@@ -276,9 +319,9 @@ theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_tendsto_n
   rw [E.iUnion_upperBoundaryRay_connection_neg r S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
+/-! ## D. Translation invariance of ray connections -/
 
-
-theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_vertical
+lemma PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int) (r s : Real) (S : Set V) :
@@ -311,9 +354,7 @@ theorem PeriodicPlaneEmbedding.lowerBoundaryRay_connection_measureReal_vertical
   rw [← hpre]
   exact congrArg ENNReal.toReal hm.symm
 
-
-
-theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_vertical
+lemma PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int) (r s : Real) (S : Set V) :
@@ -346,8 +387,9 @@ theorem PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_vertical
   rw [← hpre]
   exact congrArg ENNReal.toReal hm.symm
 
-
-
+/-- Under translation invariance, connecting the source moved down by `n` to the lower boundary ray
+at height `0` has probability tending to that of connecting the source to the whole half-plane
+boundary. -/
 theorem PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
@@ -365,8 +407,9 @@ theorem PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto
     mu hTI (-(n : Int)) r (n : Real) S
   simpa using hmove.symm
 
-
-
+/-- Under translation invariance, connecting the source moved up by `n` to the upper boundary ray at
+height `0` has probability tending to that of connecting the source to the whole half-plane
+boundary. -/
 theorem PeriodicPlaneEmbedding.shift_up_upperBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]

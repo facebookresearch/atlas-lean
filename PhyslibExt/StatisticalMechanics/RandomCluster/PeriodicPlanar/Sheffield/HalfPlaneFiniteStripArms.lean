@@ -6,32 +6,64 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArmsHighProbability
 
+/-!
+# Joined arms inside a finite strip
+
+Joined infinite arms whose arms stay in a vertical strip `r ≤ x ≤ r + n` of a half-plane,
+their approximation of the half-plane joined arms, and the walks and barrier geometry they give.
+
+## i. Overview
+
+`finiteStripJoinedBoundaryArmEvent r c d n L R` is `finiteJoinedBoundaryArmEvent` with both arms
+required to stay in the strip `{r ≤ x ≤ r + n}`. These events increase in `n` and their union
+contains the half-plane joined arm event, so high-probability half-plane joined arms give
+high-probability strip joined arms. The arcs of the resulting open walks lie in an explicit
+bounded vertical strip, which is the geometry needed by `HalfPlaneBarrier`.
+
+Headline fidelity:
+- The high-probability statements (`exists_highProbability_…_with_separation`,
+  `exists_rowwise_finiteStripJoinedBoundaryArms_tendsto_one`) are conditional on FKG,
+  translation invariance and almost sure uniqueness of the infinite cluster.
+- The walk-extraction and geometry lemmas are unconditional.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent`
+- `PeriodicPlaneEmbedding.exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation`
+- `PeriodicPlaneEmbedding.exists_rowwise_finiteStripJoinedBoundaryArms_tendsto_one`
+- `PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_barrierGeometry`
+
+## iii. Table of contents
+
+- A. The strip joined arm event
+- B. High-probability strip joined arms
+- C. Walks and barrier geometry
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
-theorem PeriodicGraph.infiniteSetConnectionWithin_mono_region
+/-! ## A. The strip joined arm event -/
+
+omit [Countable V] in
+/-- Infinite arm events are monotone in the region. -/
+lemma PeriodicGraph.infiniteSetConnectionWithin_mono_region
     (P : PeriodicGraph V) {A B : Set V} (hAB : A ⊆ B) (S T : Set V) :
     P.infiniteSetConnectionWithin A S T ⊆
       P.infiniteSetConnectionWithin B S T := by
@@ -39,8 +71,8 @@ theorem PeriodicGraph.infiniteSetConnectionWithin_mono_region
   exact ⟨x, hx, hinf, y, hy,
     P.connectedWithinSet_mono_region hAB x y hxy⟩
 
-
-
+/-- Strip joined arm event: as `finiteJoinedBoundaryArmEvent`, with both infinite arms required
+to stay in the strip `{r ≤ x ≤ r + n}`. -/
 def PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -50,7 +82,7 @@ def PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent
       (R : Set V) (E.upperBoundaryRayVertices r d)) \
     E.halfPlaneStripPairMergeErrorUnion r n L R
 
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measurableSet
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n : Nat)
     (L R : Finset V) :
     MeasurableSet (E.finiteStripJoinedBoundaryArmEvent r c d n L R) :=
@@ -62,7 +94,8 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measurableSet
       (E.upperBoundaryRayVertices r d))).diff
     (E.halfPlaneStripPairMergeErrorUnion_measurableSet r n L R)
 
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_mono
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_mono
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (L R : Finset V) :
     Monotone (fun n => E.finiteStripJoinedBoundaryArmEvent r c d n L R) := by
   intro n N hnN omega h
@@ -77,9 +110,9 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_mono
     exact h.2 (E.halfPlaneStripPairMergeErrorUnion_antitone
       r L R hnN herror)
 
-
-
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_finiteStrip
+omit [Countable V] in
+/-- Half-plane joined arms are joined arms in some finite strip. -/
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_finiteStrip
     (E : PeriodicPlaneEmbedding P) (r c d : Real) (n₀ : Nat)
     (L R : Finset V) :
     E.finiteJoinedBoundaryArmEvent r c d n₀ L R ⊆
@@ -105,7 +138,8 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_subset_iUnion_finite
     exact h.2 (E.halfPlaneStripPairMergeErrorUnion_antitone
       r L R (le_max_left _ _) herror)
 
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measureReal_tendsto
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r c d : Real) (L R : Finset V) :
@@ -117,9 +151,10 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_measureReal_ten
     (E.finiteStripJoinedBoundaryArmEvent_mono r c d L R)
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-
-
-theorem PeriodicPlaneEmbedding.exists_finiteStripJoinedBoundaryArmEvent_measureReal_gt
+omit [Countable V] in
+/-- High-probability half-plane joined arms give high-probability strip joined arms for some
+width. -/
+lemma PeriodicPlaneEmbedding.exists_finiteStripJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r c d : Real) (n₀ : Nat) (L R : Finset V) {epsilon : Real}
@@ -139,9 +174,13 @@ theorem PeriodicPlaneEmbedding.exists_finiteStripJoinedBoundaryArmEvent_measureR
     (tendsto_order.1 ht).1 (1 - epsilon) (by simpa only [U] using hU)
   exact hev.exists
 
+/-! ## B. High-probability strip joined arms -/
 
-
-theorem PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_separation
+/-- High-probability half-plane joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆
+H_R`. Weaker than `exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin`
+(`HalfPlaneJoinedArmsHighProbability`), which also identifies `U` as a vertical translate of
+`L`. -/
+lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_separation
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -206,10 +245,11 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEve
   refine ⟨Slo, Shi, n, hSlo, ?_⟩
   linarith
 
+namespace PeriodicPlaneEmbedding
 
-
-
-theorem PeriodicPlaneEmbedding.exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
+/-- High-probability strip joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆ H_R`
+(FKG, translation invariance, almost sure uniqueness). -/
+theorem exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -228,11 +268,12 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_finiteStripJoinedBoundaryA
       mu r s (s + t) n₀ L U hprob
   exact ⟨L, U, n, hL, hn⟩
 
+end PeriodicPlaneEmbedding
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_rowwise_finiteStripJoinedBoundaryArms_tendsto_one
+/-- Along any sequence of parameters there are sources and strip widths, at least any prescribed
+minimum, whose strip joined arm probabilities tend to one (FKG, translation invariance,
+almost sure uniqueness). -/
+lemma PeriodicPlaneEmbedding.exists_rowwise_finiteStripJoinedBoundaryArms_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -272,9 +313,10 @@ theorem PeriodicPlaneEmbedding.exists_rowwise_finiteStripJoinedBoundaryArms_tend
     hlowerLimit tendsto_const_nhds (fun n ↦ le_of_lt (hprob' n))
       (fun _ ↦ measureReal_le_one)
 
+/-! ## C. Walks and barrier geometry -/
 
-
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_openWalks
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_openWalks
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteStripJoinedBoundaryArmEvent r c d n L R) :
@@ -312,8 +354,8 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_openWalks
     · have hv' : v ∈ qxy.reverse.support := List.mem_of_mem_tail hv
       exact hqxy v (by simpa using hv')
 
-
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_graphWalks
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_graphWalks
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V}
     (h : omega ∈ E.finiteStripJoinedBoundaryArmEvent r c d n L R) :
@@ -343,9 +385,10 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_graphWalks
   · intro v hv
     exact hupperS v (by rwa [← hupperSupport])
 
-
-
-theorem PeriodicPlaneEmbedding.walkArc_horizontal_strict_bounds_of_strip
+omit [Countable V] in
+/-- The arc of a walk with vertices in the strip `{r ≤ x ≤ r + n}` stays strictly between `r - B
+- 1` and `r + n + B + 1`, where `B` bounds edge-arc displacements. -/
+lemma PeriodicPlaneEmbedding.walkArc_horizontal_strict_bounds_of_strip
     (E : PeriodicPlaneEmbedding P) {B r : Real} {n : Nat} {x y : V}
     (hB : ∀ {u v : V} (huv : P.graph.Adj u v) (t) (i : Fin 2),
       |E.coordinates (E.edgeArc huv t - E.vertex u) i| ≤ B)
@@ -378,9 +421,11 @@ theorem PeriodicPlaneEmbedding.walkArc_horizontal_strict_bounds_of_strip
     change E.vertexCoord u 0 ≤ r + (n : Real) at hun
     constructor <;> linarith
 
-
-
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_barrierGeometry
+omit [Countable V] in
+/-- On the strip joined arm event, with `L` at depth at least `B`, there are nontrivial open
+walks from the two rays to a common vertex whose arcs stay in the explicit strip `(r - B - 1,
+r + n + B + 1)`. -/
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_barrierGeometry
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {B r c d : Real} {n : Nat} {L R : Finset V}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),

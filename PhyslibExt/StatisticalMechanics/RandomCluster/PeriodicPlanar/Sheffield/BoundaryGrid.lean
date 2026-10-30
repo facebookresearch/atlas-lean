@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryEnlargement
@@ -16,29 +13,77 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ApproximatePreference
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateGridAssembly
 
+/-!
+# Crossings from boundary scores on a preference grid
+
+Small boundary defects of a grid of translated sources force a box crossing with probability
+tending to one.
+
+## i. Overview
+
+Place translates of a finite template at the vertices `v` of an `(n + 1) × (m + 1)` preference
+grid inside a rectangle, and record for each translate the probabilities `bottom v`, `top v`,
+`left v`, `right v` that it is joined to the infinite cluster and to the corresponding side of the
+rectangle. Sheffield's preference argument (`Sheffield.ApproximatePreference`,
+`Sheffield.TemplateGridAssembly`) shows that if the boundary preference error
+`rectangleEndpointPreferenceError` tends to zero, then the vertical or the horizontal crossing of
+the rectangle has probability tending to one. This file bounds that error by the boundary defects
+`(n + 1)(1 - pBottom) + (n + 1)(1 - pTop) + (m + 1)(1 - pLeft) + (m + 1)(1 - pRight)`, provides a
+diagonal choice of indices that makes such weighted defects tend to zero, and shows that
+side-connection probabilities do not decrease when the source is translated along the side and the
+three other sides are moved outwards.
+
+Headline fidelity.
+- `exists_cofinalIndex_*`, `rectangleEndpointPreferenceError_le_*`,
+  `rectangleEndpointPreferenceError_tendsto_zero_of_boundaryProbabilities` and the
+  `*_tangential_measureReal_le` lemmas are unconditional (the latter need translation invariance
+  of a finite measure only).
+- `PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one` and
+  `exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one` are conditional on `IsFKG mu`,
+  `P.IsTranslationInvariant mu`, almost-sure uniqueness of the primal infinite cluster, and
+  templates hitting the infinite cluster with probability tending to one; inside the statement
+  they further assume the placement hypotheses and that the preference error (respectively the
+  weighted boundary defects) tends to zero. The hypotheses are satisfiable on the primal side
+  (for example supercritical Bernoulli percolation), so the results are not vacuous.
+
+## ii. Key results
+
+- `rectangleEndpointPreferenceError_le_boundaryProbabilities` : the preference error is at most
+  the weighted boundary defects.
+- `PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one` :
+  vanishing weighted boundary defects give a crossing with probability tending to one.
+- `exists_cofinalIndex_weightedFourDefects_tendsto_zero` : a diagonal index choice making the
+  weighted defects vanish.
+
+## iii. Table of contents
+
+- A. Composing translations
+- B. Diagonal index sequences
+- C. Preference error and boundary defects
+- D. Crossings from template grids
+- E. Translating a source along a side
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Composing translations -/
+
 omit [Countable V] in
-theorem PeriodicGraph.shift_image_shift
+/-- Translating by `z` and then by `w` is translating by `z + w`. -/
+lemma PeriodicGraph.shift_image_shift
     (P : PeriodicGraph V) (z w : Site 2) (S : Set V) :
     P.shift w '' (P.shift z '' S) = P.shift (z + w) '' S := by
   rw [Set.image_image]
@@ -46,9 +91,12 @@ theorem PeriodicGraph.shift_image_shift
   funext x
   exact (P.shift_add z w x).symm
 
+/-! ## B. Diagonal index sequences -/
 
-
-theorem exists_cofinalIndex_weightedFourDefects_tendsto_zero
+/-- If four boundary scores at most one tend to one, there is an index sequence `index n ≥ n` along
+which the defects weighted by the grid widths `width n + 1` and heights `height n + 1` tend to zero.
+-/
+lemma exists_cofinalIndex_weightedFourDefects_tendsto_zero
     (fBottom fTop fLeft fRight : Nat → Real)
     (hfBottom : Tendsto fBottom atTop (nhds 1))
     (hfTop : Tendsto fTop atTop (nhds 1))
@@ -166,11 +214,9 @@ theorem exists_cofinalIndex_weightedFourDefects_tendsto_zero
   apply squeeze_zero hnonneg hupper
   exact tendsto_one_div_add_atTop_nhds_zero_nat
 
-
-
-
-
-theorem exists_cofinalIndex_finsetSum_tendsto_zero
+/-- Diagonal argument: if each `f k` tends to zero, there is an index sequence `index n ≥ n` along
+which `∑ k ≤ n, f k (index n)` tends to zero. -/
+lemma exists_cofinalIndex_finsetSum_tendsto_zero
     (f : Nat → Nat → Real)
     (hf : ∀ k, Tendsto (f k) atTop (nhds 0)) :
     ∃ index : Nat → Nat, (∀ n, n ≤ index n) ∧
@@ -201,9 +247,12 @@ theorem exists_cofinalIndex_finsetSum_tendsto_zero
     simpa [Real.dist_eq] using le_of_lt (hdist n)
   · exact tendsto_one_div_add_atTop_nhds_zero_nat
 
+/-! ## C. Preference error and boundary defects -/
 
-
-theorem rectangleEndpointPreferenceError_le_boundaryDefects
+/-- The preference error of a grid is at most `(n + 1) δBottom + (n + 1) δTop + (m + 1) δLeft + (m +
+1) δRight` when the boundary scores on each side are at least `1 - δ` and all scores are at most
+one. -/
+lemma rectangleEndpointPreferenceError_le_boundaryDefects
     {n m : Nat}
     (bottom top left right : PreferenceGridVertex n m → Real)
     (deltaBottom deltaTop deltaLeft deltaRight : Real)
@@ -270,9 +319,9 @@ theorem rectangleEndpointPreferenceError_le_boundaryDefects
   unfold rectangleEndpointPreferenceError
   linarith
 
-
-
-theorem rectangleEndpointPreferenceError_le_boundaryProbabilities
+/-- The preference error of a grid is at most the weighted boundary defects `(n + 1)(1 - pBottom) +
+... + (m + 1)(1 - pRight)` when the scores on each side are at least `p` and at most one. -/
+lemma rectangleEndpointPreferenceError_le_boundaryProbabilities
     {n m : Nat}
     (bottom top left right : PreferenceGridVertex n m → Real)
     (pBottom pTop pLeft pRight : Real)
@@ -302,10 +351,8 @@ theorem rectangleEndpointPreferenceError_le_boundaryProbabilities
   · exact hleftLe
   · exact hrightLe
 
-
-
-
-theorem rectangleEndpointPreferenceError_tendsto_zero_of_boundaryProbabilities
+/-- If the weighted boundary defects tend to zero, so does the preference error. -/
+lemma rectangleEndpointPreferenceError_tendsto_zero_of_boundaryProbabilities
     (width height : Nat → Nat)
     (bottom top left right : (n : Nat) →
       PreferenceGridVertex (width n) (height n) → Real)
@@ -343,9 +390,12 @@ theorem rectangleEndpointPreferenceError_tendsto_zero_of_boundaryProbabilities
       (hbottomLe n) (htopLe n) (hleftLe n) (hrightLe n)
   · exact hdefects
 
+/-! ## D. Crossings from template grids -/
 
-
-theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect
+omit [Countable V] in
+/-- If a translate of `S` lies in `[a, b] × [c, d]`, its translates by the grid sites of an `(n + 1)
+× (m + 1)` preference grid lie in any rectangle enlarged by `n` horizontally and `m` vertically. -/
+lemma PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect
     (E : PeriodicPlaneEmbedding P)
     {n m : Nat} (base : Site 2) (S : Set V)
     {a b c d a' b' c' d' : Real}
@@ -386,9 +436,11 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect
 
 set_option linter.unusedVariables false in
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one
+/-- Crossing from a preference grid (FKG, translation invariance, a.s. uniqueness, templates hitting
+the infinite cluster with probability tending to one): there are buffer radii such that, for any
+grids of translated templates placed in rectangles with vanishing preference error, the larger of
+the vertical and horizontal crossing probabilities tends to one. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -471,8 +523,9 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_ma
 
 set_option linter.unusedVariables false in
 
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one
+/-- Version of `exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one` whose error
+hypothesis is replaced by lower bounds `p` on the side scores with vanishing weighted defects. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -564,9 +617,12 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryScores_crossing_ma
     exact measureReal_le_one
   · exact hdefects
 
+/-! ## E. Translating a source along a side -/
 
-
-theorem PeriodicPlaneEmbedding.rectLeftConnection_tangential_measureReal_le
+/-- Translation invariance and monotonicity: translating the source by `z` along the left side (`z 0
+= 0`) and moving the three other sides outwards by at least the translation does not decrease the
+probability of the left-side connection. -/
+lemma PeriodicPlaneEmbedding.rectLeftConnection_tangential_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -588,9 +644,10 @@ theorem PeriodicPlaneEmbedding.rectLeftConnection_tangential_measureReal_le
     (E.rectLeftConnectionEvent_mono_otherBounds
       (P.shift z '' S) hb hc hd)
 
-
-
-theorem PeriodicPlaneEmbedding.rectRightConnection_tangential_measureReal_le
+/-- Translation invariance and monotonicity: translating the source by `z` along the right side (`z
+0 = 0`) and moving the three other sides outwards by at least the translation does not decrease the
+probability of the right-side connection. -/
+lemma PeriodicPlaneEmbedding.rectRightConnection_tangential_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -612,9 +669,10 @@ theorem PeriodicPlaneEmbedding.rectRightConnection_tangential_measureReal_le
     (E.rectRightConnectionEvent_mono_otherBounds
       (P.shift z '' S) ha hc hd)
 
-
-
-theorem PeriodicPlaneEmbedding.rectBottomConnection_tangential_measureReal_le
+/-- Translation invariance and monotonicity: translating the source by `z` along the bottom side (`z
+1 = 0`) and moving the three other sides outwards by at least the translation does not decrease the
+probability of the bottom-side connection. -/
+lemma PeriodicPlaneEmbedding.rectBottomConnection_tangential_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -636,9 +694,10 @@ theorem PeriodicPlaneEmbedding.rectBottomConnection_tangential_measureReal_le
     (E.rectBottomConnectionEvent_mono_otherBounds
       (P.shift z '' S) ha hb hd)
 
-
-
-theorem PeriodicPlaneEmbedding.rectTopConnection_tangential_measureReal_le
+/-- Translation invariance and monotonicity: translating the source by `z` along the top side (`z 1
+= 0`) and moving the three other sides outwards by at least the translation does not decrease the
+probability of the top-side connection. -/
+lemma PeriodicPlaneEmbedding.rectTopConnection_tangential_measureReal_le
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

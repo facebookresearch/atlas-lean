@@ -6,34 +6,62 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ConnectorReadyCommonSquare
 
+/-!
+# Enlarging connector-ready common squares
+
+Connector-ready common squares can be enlarged to any larger size, so a primal and a dual family
+can be brought to the same square size.
+
+## i. Overview
+
+Given `E.ConnectorReadyCommonSquareData mu radius` with square sizes `M n` and any `M' n ≥ M n`,
+each of the four sites is moved outward by `M' n - M n` along the axis normal to its side. The
+buffered connectors still lie in the larger square `[-M' n, M' n]²`, and, by translation
+invariance and monotonicity of side connections in the far sides of the rectangle, each box is
+still connected to its own side with probability tending to `1`.
+
+Applying this to a primal and a dual family with the common size `max (primal.M n) (dual.M n)`
+gives two connector-ready families on one sequence of squares.
+
+Headline fidelity. Both results are proved conditionally on translation invariance of the
+measures (`hTI`, `hTIDual`) and on the given connector-ready data; nothing else is assumed.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge` : enlarging a
+  connector-ready family to any larger square size.
+- `exists_commonHalfWidth_connectorReadyData` : primal and dual connector-ready families with
+  the same square size.
+
+## iii. Table of contents
+
+- A. Enlarging one family
+- B. A common size for primal and dual families
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Enlarging one family -/
 
-
+/-- A connector-ready common-square family for a translation invariant probability measure can be
+enlarged to any larger square size `M' ≥ M`, keeping the connector radius. -/
 theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -77,7 +105,9 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     have hcast : (data.M n : Real) <= M' n := by
       exact_mod_cast hM n
     refine E.rectVertices_mono ?_ ?_ ?_ ?_ hshift <;>
-      simp [zLeft] <;>
+      simp only [Fin.isValue, one_ne_zero, ↓reduceIte, Int.cast_neg, Int.cast_natCast,
+        Int.cast_zero, add_zero, le_add_neg_iff_add_le, neg_add_le_iff_le_add,
+        add_neg_le_iff_le_add, neg_le_neg_iff, Nat.cast_le, zLeft] <;>
       first | exact_mod_cast hM n | linarith [hsumR, hcast]
   have hconnectorRight (n : Nat) :
       P.shift (baseRight n) ''
@@ -97,7 +127,8 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     have hcast : (data.M n : Real) <= M' n := by
       exact_mod_cast hM n
     refine E.rectVertices_mono ?_ ?_ ?_ ?_ hshift <;>
-      simp [zRight] <;>
+      simp only [Fin.isValue, one_ne_zero, ↓reduceIte, Int.cast_natCast, Int.cast_zero, add_zero,
+        le_neg_add_iff_add_le, add_neg_le_iff_le_add, neg_le_neg_iff, Nat.cast_le, zRight] <;>
       first | exact_mod_cast hM n | linarith [hsumR, hcast]
   have hconnectorBottom (n : Nat) :
       P.shift (baseBottom n) ''
@@ -117,7 +148,9 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     have hcast : (data.M n : Real) <= M' n := by
       exact_mod_cast hM n
     refine E.rectVertices_mono ?_ ?_ ?_ ?_ hshift <;>
-      simp [zBottom] <;>
+      simp only [Fin.isValue, zero_ne_one, ↓reduceIte, Int.cast_neg, Int.cast_natCast,
+        Int.cast_zero, add_zero, le_add_neg_iff_add_le, neg_add_le_iff_le_add,
+        add_neg_le_iff_le_add, neg_le_neg_iff, Nat.cast_le, zBottom] <;>
       first | exact_mod_cast hM n | linarith [hsumR, hcast]
   have hconnectorTop (n : Nat) :
       P.shift (baseTop n) ''
@@ -137,7 +170,8 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     have hcast : (data.M n : Real) <= M' n := by
       exact_mod_cast hM n
     refine E.rectVertices_mono ?_ ?_ ?_ ?_ hshift <;>
-      simp [zTop] <;>
+      simp only [Fin.isValue, zero_ne_one, ↓reduceIte, Int.cast_natCast, Int.cast_zero, add_zero,
+        le_neg_add_iff_add_le, add_neg_le_iff_le_add, neg_le_neg_iff, Nat.cast_le, zTop] <;>
       first | exact_mod_cast hM n | linarith [hsumR, hcast]
   let left : Nat -> Real := fun n => mu.real
     (E.rectSideConnectionEvent (-(M' n : Real)) (M' n : Real)
@@ -315,12 +349,13 @@ theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     bottomLimit := hbottomLimit
     topLimit := htopLimit }, rfl⟩
 
+/-! ## B. A common size for primal and dual families -/
+
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
-
-
-
+/-- Primal and dual connector-ready families, for translation invariant probability measures, can be
+enlarged to the common square size `max (primal.M n) (dual.M n)`. -/
 theorem exists_commonHalfWidth_connectorReadyData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)

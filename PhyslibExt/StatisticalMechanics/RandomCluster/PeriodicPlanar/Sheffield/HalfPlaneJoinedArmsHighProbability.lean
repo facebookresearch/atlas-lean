@@ -6,31 +6,66 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArms
 
+/-!
+# High-probability joined arms and primal barriers
+
+Joined infinite arms to the two boundary rays of a half-plane occur with probability close to one,
+and they produce joined open primal arms in a vertical strip.
+
+## i. Overview
+
+Starting from the lower bound `1 - 2√(1 - P(arm to ∂H_r)) - 3ε` of `HalfPlaneJoinedArms` and the
+fact that boundary-arm probabilities tend to one for large sources, the joined arm event
+`finiteJoinedBoundaryArmEvent` has probability above `1 - ε` for suitable finite sources; versions
+with a margin, with vertically separated sources and with sources ordered far apart in height are
+given. `primalHalfPlaneBarrierReady` is the event that two nontrivial open primal walks meet at a
+common vertex, start below and above a height window, and have arcs inside a vertical strip; it
+does not refer to a half-plane. Joined arms with deep sources are contained in it.
+
+Headline fidelity: all `exists_highProbability_*` results are conditional on FKG, translation
+invariance and almost sure uniqueness of the infinite cluster; the barrier versions also assume a
+uniform bound `B` on edge-arc displacements (always available, see
+`PeriodicPlaneEmbedding.exists_edgeArc_displacement_bound`).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady`
+- `PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundaryArmEvent`
+- `PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady`
+- `PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneBarrierReady`
+
+## iii. Table of contents
+
+- A. Joined primal arms in a strip
+- B. High-probability joined arms
+- C. High-probability primal barriers
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Joined primal arms in a strip -/
 
-
-theorem exists_nat_abs_bound_on_finset (S : Finset V) (f : V → Real) :
+omit [DecidableEq V] [Countable V] in
+/-- A real function is bounded in absolute value by a natural number on a finite set. See also
+Mathlib `Finset.exists_le` and `Finset.bddAbove` (different form). -/
+lemma exists_nat_abs_bound_on_finset (S : Finset V) (f : V → Real) :
     ∃ K : Nat, ∀ x ∈ S, |f x| ≤ K := by
   classical
   induction S using Finset.induction_on with
@@ -44,8 +79,9 @@ theorem exists_nat_abs_bound_on_finset (S : Finset V) (f : V → Real) :
       · exact (le_max_left _ _).trans hK
       · exact (hN x hxS).trans ((le_max_right _ _).trans hK)
 
-
-
+/-- Joined open primal arms in a strip: nontrivial open walks from `xl` (below height `C`) and
+`xu` (above height `D`) to a common vertex, whose arcs stay in the vertical strip `a < x <
+b`. -/
 def PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P) (omega : ConfigSpace (Sym2 V)) : Prop :=
   ∃ a b C D : Real, a < b ∧ C < D ∧
@@ -63,11 +99,12 @@ def PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady
         a < E.coordinates (E.walkArc upper t) 0 ∧
           E.coordinates (E.walkArc upper t) 0 < b)
 
+/-! ## B. High-probability joined arms -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_margin
+/-- Joined arms to the rays `{y ≤ 0}` and `{y ≥ 1}` with `L ⊆ H_R` and probability above `1 - ε`.
+Weaker than the case `s = 0`, `t = 1` of
+`exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin` up to rewriting. -/
+lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -131,9 +168,12 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEve
   refine ⟨Slo, Shi, n, hSlo, ?_⟩
   linarith
 
+namespace PeriodicPlaneEmbedding
 
-
-theorem PeriodicPlaneEmbedding.exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin
+/-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` between `L ⊆ H_R` and its vertical
+translate by `1 + t` steps, with probability above `1 - ε` (FKG, translation invariance,
+almost sure uniqueness). -/
+lemma exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -210,10 +250,12 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_separated_finiteJoinedBoun
   refine ⟨Slo, Shi, n, hSlo, hShiTranslate, ?_⟩
   linarith
 
+end PeriodicPlaneEmbedding
 
-
-
-theorem PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundaryArmEvent
+/-- Joined arms to the rays `{y ≤ -m}` and `{y ≥ m}` between `L ⊆ H_R` and its vertical translate
+by `1 + 2m` steps, with `m` larger than a given band plus buffer and the two source sets
+separated in height by more than twice that size, with probability above `1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -326,9 +368,12 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBounda
   · rw [hend] at hjoined
     linarith
 
+/-! ## C. High-probability primal barriers -/
 
-
-
+/-- Joined arms to the rays `{y ≤ 0}` and `{y ≥ 1}` with probability above `1 - ε`, contained in
+the joined primal arms event (FKG, translation invariance, almost sure uniqueness). Weaker
+than the case `s = 0`, `t = 1` of
+`exists_highProbability_separated_primalHalfPlaneBarrierReady` up to rewriting. -/
 theorem PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -352,8 +397,9 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierRead
   exact E.finiteJoinedBoundaryArmEvent_barrierReady
     hB (by norm_num) hL homega
 
-
-
+/-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` (`t > 0`) with probability above `1 - ε`,
+contained in the joined primal arms event (FKG, translation invariance, almost sure
+uniqueness). -/
 theorem PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

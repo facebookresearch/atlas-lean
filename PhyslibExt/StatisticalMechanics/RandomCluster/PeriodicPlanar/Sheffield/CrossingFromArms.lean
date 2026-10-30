@@ -6,37 +6,65 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualTranslated
 
+/-!
+# Long vertical crossings from joined boundary arms
+
+Joined boundary arms in a finite strip produce vertical crossings of long strips with probability
+tending to `1`, for the primal model and for the complementary dual model.
+
+## i. Overview
+
+An open walk leaving a vertex set passes through a boundary vertex of the set
+(`PeriodicGraph.exists_boundary_walk_of_walk_to_compl`). Using arc-length bounds `B`, two arms
+joined in the strip `r ≤ x ≤ r + n` from below height `c` to above height `d` give a vertical
+crossing of the strip between the heights `(2c + d)/3` and `(c + 2d)/3`
+(`…_subset_verticalCrossing`). With the high-probability joined arms of the half-plane files,
+under FKG, translation invariance and uniqueness, this gives strip widths tending to infinity
+along which vertical crossings have probability tending to `1`
+(`exists_cofinal_verticalCrossing_tendsto_one_of_unique`). Applied to the dual measure the same
+holds for dual crossings (`exists_cofinal_complementaryDual_verticalCrossing_tendsto_one`),
+conditional on FKG and uniqueness for the dual measure.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_subset_verticalCrossing`.
+- `PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_unique`.
+- `PeriodicPlanarDualPair.exists_cofinal_complementaryDual_verticalCrossing_tendsto_one`.
+
+## iii. Table of contents
+
+- A. Walks leaving a set
+- B. Crossings from joined arms
+- C. Cofinal widths with crossings of probability tending to one
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Walks leaving a set -/
 
-
-
-theorem PeriodicGraph.exists_boundary_walk_of_walk_to_compl
+omit [Countable V] in
+/-- An open walk from inside `A` to outside `A` has an initial segment staying in `A` and ending at
+a vertex of `A` with a neighbour outside `A`. -/
+lemma PeriodicGraph.exists_boundary_walk_of_walk_to_compl
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (A : Set V)
     {x y : V} (p : (P.openSubgraph omega).Walk x y)
     (hx : x ∈ A) (hy : y ∉ A) :
@@ -68,9 +96,8 @@ theorem PeriodicGraph.exists_boundary_walk_of_walk_to_compl
           have hvx : v = x := by simpa using hv
           exact List.mem_cons.2 (Or.inl hvx)
 
-
-
-theorem PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce
     (E : PeriodicPlaneEmbedding P) (a b c d : Real)
     (omega : ConfigSpace (Sym2 V)) :
     FK.openSub (E.rectGraph a b c d) (E.rectRestrict a b c d omega) =
@@ -80,8 +107,12 @@ theorem PeriodicPlaneEmbedding.openSub_rectRestrict_eq_induce
     PeriodicGraph.openSubgraph_adj]
   rfl
 
+/-! ## B. Crossings from joined arms -/
 
-theorem PeriodicPlaneEmbedding.verticalCrossingEvent_mono_right
+omit [Countable V] in
+/-- Vertical crossings of a strip persist when the strip is widened to the right. Special case of
+`PeriodicPlaneEmbedding.verticalCrossingEvent_mono_horizontal` (`Sheffield.VariablePadding`). -/
+lemma PeriodicPlaneEmbedding.verticalCrossingEvent_mono_right
     (E : PeriodicPlaneEmbedding P) {a b b' c d : Real} (hbb' : b ≤ b') :
     E.verticalCrossingEvent a b c d ⊆
       E.verticalCrossingEvent a b' c d := by
@@ -123,7 +154,8 @@ theorem PeriodicPlaneEmbedding.verticalCrossingEvent_mono_right
   rw [E.openSub_rectRestrict_eq_induce]
   exact hxy'
 
-theorem PeriodicPlaneEmbedding.verticalCrossing_measureReal_mono_right
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.verticalCrossing_measureReal_mono_right
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b b' c d : Real}
@@ -132,9 +164,10 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_measureReal_mono_right
       mu.real (E.verticalCrossingEvent a b' c d) :=
   measureReal_mono (E.verticalCrossingEvent_mono_right hbb')
 
-
-
-theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_subset_verticalCrossing
+omit [Countable V] in
+/-- Arms joined in the strip `r ≤ x ≤ r + n` from below `c` to above `d` give a vertical crossing of
+the strip between heights `(2c + d)/3` and `(c + 2d)/3`. -/
+lemma PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_subset_verticalCrossing
     (E : PeriodicPlaneEmbedding P) {B r c d : Real} {n : Nat}
     {L R : Finset V}
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -241,12 +274,8 @@ theorem PeriodicPlaneEmbedding.finiteStripJoinedBoundaryArmEvent_subset_vertical
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
-
-
-
-
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_finiteStripJoinedBoundaryArms
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_finiteStripJoinedBoundaryArms
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real)
@@ -270,9 +299,9 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_finiteStripJoined
         hB hB0 (hgap n)))
     (fun _ ↦ measureReal_le_one)
 
+/-! ## C. Cofinal widths with crossings of probability tending to one -/
 
-
-theorem PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
+lemma PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -299,8 +328,8 @@ theorem PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
   norm_num at ht ⊢
   exact ht
 
-
-
+/-- Strip widths tending to infinity along which vertical crossings of the middle third have
+probability tending to `1`, under FKG, translation invariance and uniqueness. -/
 theorem PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -335,9 +364,8 @@ theorem PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_un
   intro k
   exact measureReal_le_one
 
-
-
-theorem PeriodicPlanarDualPair.exists_cofinal_complementaryDual_verticalCrossing_tendsto_one
+/-- The same for dual vertical crossings, under FKG and uniqueness of the dual measure. -/
+lemma PeriodicPlanarDualPair.exists_cofinal_complementaryDual_verticalCrossing_tendsto_one
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)
@@ -358,7 +386,7 @@ theorem PeriodicPlanarDualPair.exists_cofinal_complementaryDual_verticalCrossing
           ((2 * s + (s + t)) / 3) ((s + 2 * (s + t)) / 3)))
         atTop (nhds 1) := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance

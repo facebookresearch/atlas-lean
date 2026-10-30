@@ -6,29 +6,59 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundarySource
 
+/-!
+# Exits through boundary rays: monotonicity, limits and finite sources
+
+How the probability that an infinite cluster from `S` exits a half-plane through a boundary ray
+depends on the ray, on vertical translations of `S`, and on finite truncations of `S`.
+
+## i. Overview
+
+Exits through the lower ray below `s + n` increase with `n` and exhaust all exits; the same holds
+for upper rays above `s - n`. By translation invariance, shifting the source down (resp. up) by
+`n` makes a fixed lower (resp. upper) ray capture all exits in the limit. Under FKG, translation
+invariance and uniqueness, there are finite sources deep in the half-plane exiting with
+probability `> 1 - ε`, and pairs of finite sources `L, U` exiting through a prescribed lower and
+upper ray respectively, each with probability `> 1 - ε`. All results are unconditional given
+these inputs.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_tendsto_add`,
+  `PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_tendsto_sub`.
+- `PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt`.
+- `PeriodicPlaneEmbedding.exists_finite_opposite_infiniteOpenBoundaryRays_gt`.
+
+## iii. Table of contents
+
+- A. Exhausting the boundary by rays
+- B. Vertical translation of sources
+- C. Finite sources
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Filter MeasureTheory Set
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_boundary_eq
+/-! ## A. Exhausting the boundary by rays -/
+
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_boundary_eq
     (E : PeriodicPlaneEmbedding P) (r : Real) (S : Set V) :
     E.infiniteOpenBoundaryConnectionTo r S
       (E.rightHalfPlaneBoundaryVertices r) =
@@ -40,7 +70,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_boundary_eq
   · rintro ⟨x, hxS, hxInfinite, b, hb, z, hbz, hz, hbzOpen, hxb⟩
     exact ⟨x, hxS, hxInfinite, b, hb, hb, z, hbz, hz, hbzOpen, hxb⟩
 
-theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_mono_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_mono_add
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     Monotone (fun n : Nat => E.infiniteOpenBoundaryConnectionTo r S
       (E.lowerBoundaryRayVertices r (s + n))) := by
@@ -56,7 +87,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_mono_add
   change E.vertexCoord b 1 ≤ s + (N : Real)
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection_add
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     (⋃ n : Nat, E.infiniteOpenBoundaryConnectionTo r S
       (E.lowerBoundaryRayVertices r (s + n))) =
@@ -72,7 +104,8 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenLowerBoundaryConnection_add
     exact Set.mem_iUnion.2 ⟨n, x, hxS, hxInfinite, b,
       ⟨hb, hbn⟩, hb, z, hbz, hz, hbzOpen, hxb⟩
 
-theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_tendsto_add
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_tendsto_add
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r s : Real) (S : Set V) :
@@ -85,7 +118,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenLowerBoundaryConnection_tendsto_add
   rw [E.iUnion_infiniteOpenLowerBoundaryConnection_add r s S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_mono_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_mono_sub
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     Monotone (fun n : Nat => E.infiniteOpenBoundaryConnectionTo r S
       (E.upperBoundaryRayVertices r (s - n))) := by
@@ -101,7 +135,8 @@ theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_mono_sub
   change s - (N : Real) ≤ E.vertexCoord b 1
   linarith
 
-theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection_sub
     (E : PeriodicPlaneEmbedding P) (r s : Real) (S : Set V) :
     (⋃ n : Nat, E.infiniteOpenBoundaryConnectionTo r S
       (E.upperBoundaryRayVertices r (s - n))) =
@@ -117,7 +152,8 @@ theorem PeriodicPlaneEmbedding.iUnion_infiniteOpenUpperBoundaryConnection_sub
     exact Set.mem_iUnion.2 ⟨n, x, hxS, hxInfinite, b,
       ⟨hb, hbn⟩, hb, z, hbz, hz, hbzOpen, hxb⟩
 
-theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_tendsto_sub
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_tendsto_sub
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (r s : Real) (S : Set V) :
@@ -130,7 +166,9 @@ theorem PeriodicPlaneEmbedding.infiniteOpenUpperBoundaryConnection_tendsto_sub
   rw [E.iUnion_infiniteOpenUpperBoundaryConnection_sub r s S] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_vertical
+/-! ## B. Vertical translation of sources -/
+
+lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) (t : Int)
@@ -160,7 +198,7 @@ theorem PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_vertic
   rw [← hpre]
   exact congrArg ENNReal.toReal hm.symm
 
-theorem PeriodicPlaneEmbedding.shift_down_infiniteOpenLowerBoundary_tendsto_at
+lemma PeriodicPlaneEmbedding.shift_down_infiniteOpenLowerBoundary_tendsto_at
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r s : Real) (S : Set V) :
@@ -176,7 +214,7 @@ theorem PeriodicPlaneEmbedding.shift_down_infiniteOpenLowerBoundary_tendsto_at
     mu hTI (-(n : Int)) r (s + (n : Real)) S
   simpa using hmove.symm
 
-theorem PeriodicPlaneEmbedding.shift_up_infiniteOpenUpperBoundary_tendsto_at
+lemma PeriodicPlaneEmbedding.shift_up_infiniteOpenUpperBoundary_tendsto_at
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r s : Real) (S : Set V) :
@@ -192,9 +230,11 @@ theorem PeriodicPlaneEmbedding.shift_up_infiniteOpenUpperBoundary_tendsto_at
     mu hTI (n : Int) r (s - (n : Real)) S
   simpa using hmove.symm
 
+/-! ## C. Finite sources -/
 
-
-theorem PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt
+/-- A finite source set in `{x ≥ R}` from which an infinite cluster exits `{x ≥ r}` with probability
+`> 1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -248,9 +288,9 @@ theorem PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt
     rw [hmass] at hbound
     exact hN.trans_le (by simpa only [S, Finset.coe_image] using hbound)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteOpenBoundaryRays_gt
+/-- Finite sources `L, U` in `{x ≥ R}` exiting through the lower ray below `c`, resp. the upper ray
+above `d`, each with probability `> 1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_finite_opposite_infiniteOpenBoundaryRays_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

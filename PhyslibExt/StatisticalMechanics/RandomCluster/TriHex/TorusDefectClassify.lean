@@ -6,24 +6,53 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDuality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusConnected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerComponentCount
+
+/-!
+# The Euler defect on the triangular torus is 0, 1 or 2
+
+For every subgraph `K` of the triangular torus, the defect in Euler's formula satisfies
+`0 ≤ defect K ≤ 2`.
+
+## i. Overview
+
+The faces of `K` are the clusters of the dual cut graph `triHexTorusDualCutGraph L K` (hexagonal
+edges whose primal edge is not in `K`). Adding one triangular edge `pq` to `K` deletes one dual
+edge. If `p` and `q` were already connected the face count grows by at most one, so the defect
+does not decrease; if they were not, the two sides of the deleted dual edge stay connected
+(`triHexTorusDualCutGraph_crossed_reachable_of_primal_not_reachable`, proved with a parity
+argument on the dual of a vertex cut), so the face count and the defect are unchanged. The defect
+is therefore monotone along edge additions, from `0` at the empty graph to `2` at the full
+triangular torus (which has `3 L²` edges and `2 L²` faces). All results are proved
+unconditionally.
+
+## ii. Key results
+
+- `triHexTorusDefect_nonnegative`, `triHexTorusDefect_le_two`.
+- `triHexTorusDefect_classified`, `triHexTorusDefect_openSub_classified` : the defect is
+  `0`, `1` or `2`.
+- `triangularTorusGraph_connected`, `hexagonalTorusGraph_connected`.
+
+## iii. Table of contents
+
+- A. Dual cut graphs and faces
+- B. The edge correspondence in coordinates
+- C. Cuts have even dual degree
+- D. Adding one primal edge
+- E. Connectedness of the tori
+- F. Extreme cases and the classification
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
 
 @[expose] public section
 
@@ -36,15 +65,10 @@ namespace PeriodicPlanar
 open StatMech.Lattice
 open StatMech.Onsager
 
-private theorem triHex_zmod_one_ne_zero (L : ℕ) [Fact (2 < L)] :
-    (1 : ZMod L) ≠ 0 := by
-  rw [Ne, ← Nat.cast_one, ZMod.natCast_eq_zero_iff]
-  intro hdvd
-  have hle := Nat.le_of_dvd (by norm_num : 0 < 1) hdvd
-  have := (Fact.out : 2 < L)
-  omega
+/-! ## A. Dual cut graphs and faces -/
 
-
+/-- The dual cut graph of `K`: hexagonal edges whose primal edge is not in `K`. Its clusters are the
+faces of `K`. -/
 noncomputable def triHexTorusDualCutGraph (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) : SimpleGraph (HexTorusVertex L) where
   Adj f g := (hexagonalTorusGraph L).Adj f g ∧
@@ -56,15 +80,13 @@ noncomputable def triHexTorusDualCutGraph (L : ℕ) [Fact (2 < L)]
     simpa [Sym2.eq_swap] using hclosed
   loopless := ⟨fun f h => (hexagonalTorusGraph L).irrefl h.1⟩
 
-@[simp] theorem triHexTorusDualCutGraph_adj (L : ℕ) [Fact (2 < L)]
+@[simp] lemma triHexTorusDualCutGraph_adj (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) (f g : HexTorusVertex L) :
     (triHexTorusDualCutGraph L K).Adj f g ↔
       (hexagonalTorusGraph L).Adj f g ∧
         triHexTorusPrimalOfDualEdge L s(f, g) ∉ K.edgeSet := Iff.rfl
 
-
-
-theorem triHexTorus_openSub_dualConfig_graphEdgeConfig
+lemma triHexTorus_openSub_dualConfig_graphEdgeConfig
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L)) :
     FK.openSub (hexagonalTorusGraph L)
         (triHexTorusDualConfig L (graphEdgeConfig K)) =
@@ -75,32 +97,31 @@ theorem triHexTorus_openSub_dualConfig_graphEdgeConfig
   · have he : s(f, g) ∈ (hexagonalTorusGraph L).edgeSet := by
       simpa only [SimpleGraph.mem_edgeSet]
     simp only [FK.openSub_adj, triHexTorusDualCutGraph_adj, hfg, true_and,
-      triHexTorusDualConfig, dif_pos he, graphEdgeConfig]
+      triHexTorusDualConfig, dite_eq_left he, graphEdgeConfig]
     by_cases hmem : triHexTorusPrimalOfDualEdge L s(f, g) ∈ K.edgeSet <;>
       simp [hmem]
   · simp [FK.openSub_adj, triHexTorusDualCutGraph_adj, hfg]
 
-
-theorem triHexTorusFaceCount_eq_dualCutGraph
+lemma triHexTorusFaceCount_eq_dualCutGraph
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L)) :
     triHexTorusFaceCount L K =
       Nat.card (triHexTorusDualCutGraph L K).ConnectedComponent := by
   unfold triHexTorusFaceCount
   rw [triHexTorus_openSub_dualConfig_graphEdgeConfig]
 
-
+/-- The pair `e` has exactly one endpoint in `S`. -/
 def triHexTorusEdgeStraddles {V : Type*} (S : Set V) (e : Sym2 V) : Prop :=
   Sym2.lift ⟨fun x y => (x ∈ S ↔ y ∉ S), by
     intro x y
     simp only [eq_iff_iff]
     tauto⟩ e
 
-@[simp] theorem triHexTorusEdgeStraddles_mk {V : Type*} (S : Set V)
+@[simp] lemma triHexTorusEdgeStraddles_mk {V : Type*} (S : Set V)
     (x y : V) :
     triHexTorusEdgeStraddles S s(x, y) ↔ (x ∈ S ↔ y ∉ S) := Iff.rfl
 
-
-
+/-- Hexagonal edges dual to the triangular edges leaving the vertex set `S` (the dual of the edge
+boundary of `S`). -/
 noncomputable def triHexTorusCutDualGraph (L : ℕ) [Fact (2 < L)]
     (S : Set (TorusSite L)) : SimpleGraph (HexTorusVertex L) where
   Adj f g := (hexagonalTorusGraph L).Adj f g ∧
@@ -112,7 +133,7 @@ noncomputable def triHexTorusCutDualGraph (L : ℕ) [Fact (2 < L)]
     simpa [Sym2.eq_swap] using hcut
   loopless := ⟨fun f h => (hexagonalTorusGraph L).irrefl h.1⟩
 
-@[simp] theorem triHexTorusCutDualGraph_adj (L : ℕ) [Fact (2 < L)]
+@[simp] lemma triHexTorusCutDualGraph_adj (L : ℕ) [Fact (2 < L)]
     (S : Set (TorusSite L)) (f g : HexTorusVertex L) :
     (triHexTorusCutDualGraph L S).Adj f g ↔
       (hexagonalTorusGraph L).Adj f g ∧
@@ -123,24 +144,25 @@ noncomputable local instance triHexTorusCutDualGraph_decidableRel
     (L : ℕ) [Fact (2 < L)] (S : Set (TorusSite L)) :
     DecidableRel (triHexTorusCutDualGraph L S).Adj := Classical.decRel _
 
+/-! ## B. The edge correspondence in coordinates -/
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_indexed
+@[simp] lemma triHexTorusPrimalOfDualEdge_indexed
     (L : ℕ) [Fact (2 < L)] (a : TriHexTorusEdgeIndex L) :
     triHexTorusPrimalOfDualEdge L (hexagonalTorusIndexedEdge L a) =
       triangularTorusIndexedEdge L ((triHexTorusIndexEquiv L).symm a) := by
   have he : hexagonalTorusIndexedEdge L a ∈
       (hexagonalTorusGraph L).edgeSet := hexagonalTorusIndexedEdge_mem L a
-  simp only [triHexTorusPrimalOfDualEdge, dif_pos he]
+  simp only [triHexTorusPrimalOfDualEdge, dite_eq_left he]
   change (((triHexTorusDualEdgeEquiv L).symm
       (hexagonalTorusEdgeChart L a) :
         (triangularTorusGraph L).edgeSet) : Sym2 (TorusSite L)) = _
   rw [show hexagonalTorusEdgeChart L a =
       hexagonalTorusEdgeChartEquiv L a by rfl]
   simp [triHexTorusDualEdgeEquiv, triangularTorusEdgeChartEquiv,
-    hexagonalTorusEdgeChartEquiv, triangularTorusEdgeChart]
+    hexagonalTorusEdgeChartEquiv]
   rfl
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_index_zero
+@[simp] lemma triHexTorusPrimalOfDualEdge_index_zero
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         (hexagonalTorusIndexedEdge L (z, 0)) =
@@ -148,7 +170,7 @@ noncomputable local instance triHexTorusCutDualGraph_decidableRel
   rw [triHexTorusPrimalOfDualEdge_indexed]
   rfl
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_index_one
+@[simp] lemma triHexTorusPrimalOfDualEdge_index_one
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         (hexagonalTorusIndexedEdge L (z, 1)) =
@@ -156,7 +178,7 @@ noncomputable local instance triHexTorusCutDualGraph_decidableRel
   rw [triHexTorusPrimalOfDualEdge_indexed]
   rfl
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_index_two
+@[simp] lemma triHexTorusPrimalOfDualEdge_index_two
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         (hexagonalTorusIndexedEdge L (z, 2)) =
@@ -166,9 +188,7 @@ noncomputable local instance triHexTorusCutDualGraph_decidableRel
   congr 1
   ext <;> simp
 
-
-
-theorem hexagonalTorusGraph_adj_black_iff
+lemma hexagonalTorusGraph_adj_black_iff
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) (w : HexTorusVertex L) :
     (hexagonalTorusGraph L).Adj (z, false) w ↔
       ∃ i : Fin 3, w = (z + hexagonalTorusStep L i, true) := by
@@ -184,9 +204,7 @@ theorem hexagonalTorusGraph_adj_black_iff
   · rintro ⟨i, rfl⟩
     exact ⟨(z, i), rfl⟩
 
-
-
-theorem hexagonalTorusGraph_adj_white_iff
+lemma hexagonalTorusGraph_adj_white_iff
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) (w : HexTorusVertex L) :
     (hexagonalTorusGraph L).Adj (z, true) w ↔
       ∃ i : Fin 3, w = (z - hexagonalTorusStep L i, false) := by
@@ -210,8 +228,7 @@ theorem hexagonalTorusGraph_adj_white_iff
     congr 1
     ext <;> simp
 
-
-theorem hexagonalTorusGraph_neighborFinset_black
+lemma hexagonalTorusGraph_neighborFinset_black
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     (hexagonalTorusGraph L).neighborFinset (z, false) =
       {(z + (1, 0), true), (z + (0, 1), true),
@@ -227,8 +244,7 @@ theorem hexagonalTorusGraph_neighborFinset_black
     · exact ⟨1, by simp [hexagonalTorusStep]⟩
     · exact ⟨2, by simp [hexagonalTorusStep]⟩
 
-
-theorem hexagonalTorusGraph_neighborFinset_white
+lemma hexagonalTorusGraph_neighborFinset_white
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     (hexagonalTorusGraph L).neighborFinset (z, true) =
       {(z - (1, 0), false), (z - (0, 1), false),
@@ -244,8 +260,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
     · exact ⟨1, by simp [hexagonalTorusStep]⟩
     · exact ⟨2, by simp [hexagonalTorusStep]⟩
 
-
-@[simp] theorem triHexTorusPrimalOfDualEdge_white_zero
+@[simp] lemma triHexTorusPrimalOfDualEdge_white_zero
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, true), (z - (1, 0), false)) =
@@ -260,7 +275,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
   congr 1
   ext <;> simp
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_white_one
+@[simp] lemma triHexTorusPrimalOfDualEdge_white_one
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, true), (z - (0, 1), false)) =
@@ -275,7 +290,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
   congr 1
   ext <;> simp
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_white_two
+@[simp] lemma triHexTorusPrimalOfDualEdge_white_two
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, true), (z - (1, 1), false)) =
@@ -289,7 +304,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
   rw [triHexTorusPrimalOfDualEdge_index_two]
   congr 1 <;> ext <;> simp
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_black_zero
+@[simp] lemma triHexTorusPrimalOfDualEdge_black_zero
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, false), (z + (1, 0), true)) =
@@ -300,7 +315,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
     congr 1]
   exact triHexTorusPrimalOfDualEdge_index_zero L z
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_black_one
+@[simp] lemma triHexTorusPrimalOfDualEdge_black_one
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, false), (z + (0, 1), true)) =
@@ -311,7 +326,7 @@ theorem hexagonalTorusGraph_neighborFinset_white
     congr 1]
   exact triHexTorusPrimalOfDualEdge_index_one L z
 
-@[simp] theorem triHexTorusPrimalOfDualEdge_black_two
+@[simp] lemma triHexTorusPrimalOfDualEdge_black_two
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     triHexTorusPrimalOfDualEdge L
         s((z, false), (z + (1, 1), true)) =
@@ -322,8 +337,10 @@ theorem hexagonalTorusGraph_neighborFinset_white
     congr 1]
   exact triHexTorusPrimalOfDualEdge_index_two L z
 
+/-! ## C. Cuts have even dual degree -/
 
-theorem triHexTorusCutDualGraph_degree_even
+/-- Every hexagonal vertex has even degree in the dual of an edge boundary. -/
+lemma triHexTorusCutDualGraph_degree_even
     (L : ℕ) [Fact (2 < L)] (S : Set (TorusSite L))
     (v : HexTorusVertex L) :
     Even ((triHexTorusCutDualGraph L S).degree v) := by
@@ -339,7 +356,7 @@ theorem triHexTorusCutDualGraph_degree_even
   cases b with
   | false =>
       rw [hexagonalTorusGraph_neighborFinset_black]
-      have h1 : (1 : ZMod L) ≠ 0 := triHex_zmod_one_ne_zero L
+      have h1 : (1 : ZMod L) ≠ 0 := zmod_one_ne_zero L
       have h01 : (z + (1, 0), true) ≠ (z + (0, 1), true) := by
         intro h
         apply h1
@@ -365,7 +382,7 @@ theorem triHexTorusCutDualGraph_degree_even
           triHexTorusEdgeStraddles_mk, hz, hx, hy, h01, h02, h12]
   | true =>
       rw [hexagonalTorusGraph_neighborFinset_white]
-      have h1 : (1 : ZMod L) ≠ 0 := triHex_zmod_one_ne_zero L
+      have h1 : (1 : ZMod L) ≠ 0 := zmod_one_ne_zero L
       have h01 : (z - (1, 0), false) ≠ (z - (0, 1), false) := by
         intro h
         apply h1
@@ -390,7 +407,10 @@ theorem triHexTorusCutDualGraph_degree_even
         simp [Finset.filter_insert, Finset.filter_singleton,
           triHexTorusEdgeStraddles_mk, hz, hx, hy, h01, h02, h12]
 
+/-! ## D. Adding one primal edge -/
 
+/-- The hexagonal edge crossing a triangular edge (a fixed loop for pairs that are not triangular
+edges). -/
 noncomputable def triHexTorusDualOfPrimalEdge
     (L : ℕ) [Fact (2 < L)] (e : Sym2 (TorusSite L)) :
     Sym2 (HexTorusVertex L) :=
@@ -399,7 +419,7 @@ noncomputable def triHexTorusDualOfPrimalEdge
       ⟨e, he⟩ : (hexagonalTorusGraph L).edgeSet)
   else s(((0, 0), false), ((0, 0), false))
 
-theorem triHexTorusDualOfPrimalEdge_of_mem
+lemma triHexTorusDualOfPrimalEdge_of_mem
     (L : ℕ) [Fact (2 < L)] {e : Sym2 (TorusSite L)}
     (he : e ∈ (triangularTorusGraph L).edgeSet) :
     triHexTorusDualOfPrimalEdge L e =
@@ -407,9 +427,7 @@ theorem triHexTorusDualOfPrimalEdge_of_mem
         ⟨e, he⟩ : (hexagonalTorusGraph L).edgeSet) := by
   simp [triHexTorusDualOfPrimalEdge, he]
 
-
-
-theorem triHexTorusPrimalOfDualOfPrimalEdge
+lemma triHexTorusPrimalOfDualOfPrimalEdge
     (L : ℕ) [Fact (2 < L)] {e : Sym2 (TorusSite L)}
     (he : e ∈ (triangularTorusGraph L).edgeSet) :
     triHexTorusPrimalOfDualEdge L
@@ -419,12 +437,11 @@ theorem triHexTorusPrimalOfDualOfPrimalEdge
       ⟨e, he⟩ : (hexagonalTorusGraph L).edgeSet) :
         Sym2 (HexTorusVertex L)) ∈ (hexagonalTorusGraph L).edgeSet :=
     (triHexTorusDualEdgeEquiv L ⟨e, he⟩).2
-  simp only [triHexTorusPrimalOfDualEdge, dif_pos hd]
+  simp only [triHexTorusPrimalOfDualEdge, dite_eq_left hd]
   exact congrArg Subtype.val
     ((triHexTorusDualEdgeEquiv L).symm_apply_apply ⟨e, he⟩)
 
-
-theorem triHexTorusDualCutGraph_sup_edge
+lemma triHexTorusDualCutGraph_sup_edge
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q) :
     triHexTorusDualCutGraph L (K ⊔ edge p q) =
@@ -444,7 +461,7 @@ theorem triHexTorusDualCutGraph_sup_edge
       simpa only [SimpleGraph.mem_edgeSet] using hfg
     have hcross : triHexTorusPrimalOfDualEdge L s(f, g) = s(p, q) ↔
         s(f, g) = (ed : Sym2 (HexTorusVertex L)) := by
-      simp only [triHexTorusPrimalOfDualEdge, dif_pos hefg]
+      simp only [triHexTorusPrimalOfDualEdge, dite_eq_left hefg]
       constructor
       · intro h
         have hs : (triHexTorusDualEdgeEquiv L).symm
@@ -464,9 +481,7 @@ theorem triHexTorusDualCutGraph_sup_edge
     exact and_congr_right (fun _ => not_congr hcross)
   · simp [triHexTorusDualCutGraph_adj, deleteEdges_adj, hfg]
 
-
-
-theorem triHexTorusCutDualGraph_le_dualCutGraph
+lemma triHexTorusCutDualGraph_le_dualCutGraph
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (S : Set (TorusSite L))
     (hclosed : ∀ {u v}, K.Adj u v → (u ∈ S ↔ v ∈ S)) :
@@ -484,9 +499,9 @@ theorem triHexTorusCutDualGraph_le_dualCutGraph
       have hs := hclosed hopen
       simp [triHexTorusEdgeStraddles_mk, hs] at hcut
 
-
-
-theorem triHexTorusDualCutGraph_crossed_reachable_of_primal_not_reachable
+/-- If `p` and `q` are not connected in `K`, the two endpoints of the dual edge of `pq` stay
+connected in the dual cut graph after that edge is deleted. -/
+lemma triHexTorusDualCutGraph_crossed_reachable_of_primal_not_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} {f g : HexTorusVertex L}
     (hpq : (triangularTorusGraph L).Adj p q)
@@ -530,10 +545,7 @@ theorem triHexTorusDualCutGraph_crossed_reachable_of_primal_not_reachable
     (G := triHexTorusDualCutGraph L K)).mpr
       ⟨u, c', hcyc', hedge'⟩ |>.2
 
-
-
-
-theorem triHexTorusFaceCount_sup_edge_le
+lemma triHexTorusFaceCount_sup_edge_le
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q) :
     triHexTorusFaceCount L (K ⊔ edge p q) ≤
@@ -544,8 +556,7 @@ theorem triHexTorusFaceCount_sup_edge_le
   exact ecc_deleteEdge_card_le (triHexTorusDualCutGraph L K)
     (triHexTorusDualOfPrimalEdge L s(p, q))
 
-
-theorem triHexTorusDefect_le_sup_edge_of_reachable
+lemma triHexTorusDefect_le_sup_edge_of_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hnew : ¬ K.Adj p q) (hreach : K.Reachable p q) :
@@ -558,9 +569,7 @@ theorem triHexTorusDefect_le_sup_edge_of_reachable
   push_cast
   omega
 
-
-
-theorem triHexTorusFaceCount_sup_edge_of_not_reachable
+lemma triHexTorusFaceCount_sup_edge_of_not_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hmerge : ¬ K.Reachable p q) :
@@ -586,8 +595,7 @@ theorem triHexTorusFaceCount_sup_edge_of_not_reachable
       have heD : D.Adj f g := by
         refine ⟨?_, ?_⟩
         · simpa only [SimpleGraph.mem_edgeSet] using heDual
-        · change triHexTorusPrimalOfDualEdge L s(f, g) ∉ K.edgeSet
-          rw [hprimal, SimpleGraph.mem_edgeSet]
+        · rw [hprimal, SimpleGraph.mem_edgeSet]
           exact fun hadj => hmerge hadj.reachable
       have hr : (D.deleteEdges {s(f, g)}).Reachable f g := by
         apply triHexTorusDualCutGraph_crossed_reachable_of_primal_not_reachable
@@ -599,8 +607,7 @@ theorem triHexTorusFaceCount_sup_edge_of_not_reachable
         triHexTorusDualCutGraph_sup_edge L K hpq]
       simpa only [D, ed, hed] using hcard
 
-
-theorem triHexTorusDefect_sup_edge_of_not_reachable
+lemma triHexTorusDefect_sup_edge_of_not_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hmerge : ¬ K.Reachable p q) :
@@ -614,9 +621,8 @@ theorem triHexTorusDefect_sup_edge_of_not_reachable
   push_cast
   omega
 
-
-
-theorem triHexTorusDefect_le_sup_edge
+/-- Adding a new triangular edge does not decrease the defect. -/
+lemma triHexTorusDefect_le_sup_edge
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hnew : ¬ K.Adj p q) :
@@ -627,11 +633,9 @@ theorem triHexTorusDefect_le_sup_edge
   · exact (triHexTorusDefect_sup_edge_of_not_reachable
       L K hpq hreach).ge
 
+/-! ## E. Connectedness of the tori -/
 
-
-
-
-theorem onsTorusGraph_le_triangularTorusGraph
+lemma onsTorusGraph_le_triangularTorusGraph
     (L : ℕ) [Fact (2 < L)] :
     onsTorusGraph L ≤ triangularTorusGraph L := by
   intro u v huv
@@ -667,15 +671,13 @@ theorem onsTorusGraph_le_triangularTorusGraph
     change s(u, u + (1, 0)) = s(u, v)
     rw [hvu]
 
-
-theorem triangularTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
+/-- The triangular torus is connected. -/
+lemma triangularTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
     (triangularTorusGraph L).Connected :=
   (BeffaraDC.onsTorusGraph_connected L).mono
     (onsTorusGraph_le_triangularTorusGraph L)
 
-
-
-theorem hexagonalTorusGraph_black_reachable_add_fst
+lemma hexagonalTorusGraph_black_reachable_add_fst
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     (hexagonalTorusGraph L).Reachable (z, false) (z + (1, 0), false) := by
   have h1 : (hexagonalTorusGraph L).Adj
@@ -691,9 +693,7 @@ theorem hexagonalTorusGraph_black_reachable_add_fst
       ext <;> simp [hexagonalTorusStep]⟩
   exact h1.reachable.trans h2.symm.reachable
 
-
-
-theorem hexagonalTorusGraph_black_reachable_add_snd
+lemma hexagonalTorusGraph_black_reachable_add_snd
     (L : ℕ) [Fact (2 < L)] (z : TorusSite L) :
     (hexagonalTorusGraph L).Reachable (z, false) (z + (0, 1), false) := by
   have h1 : (hexagonalTorusGraph L).Adj
@@ -709,9 +709,7 @@ theorem hexagonalTorusGraph_black_reachable_add_snd
       ext <;> simp [hexagonalTorusStep]⟩
   exact h1.reachable.trans h2.symm.reachable
 
-
-
-theorem hexagonalTorusGraph_black_reachable_of_ons_adj
+lemma hexagonalTorusGraph_black_reachable_of_ons_adj
     (L : ℕ) [Fact (2 < L)] {u v : TorusSite L}
     (huv : (onsTorusGraph L).Adj u v) :
     (hexagonalTorusGraph L).Reachable (u, false) (v, false) := by
@@ -741,9 +739,7 @@ theorem hexagonalTorusGraph_black_reachable_of_ons_adj
       · simpa using h2.symm
     simpa [hvu] using hexagonalTorusGraph_black_reachable_add_fst L u
 
-
-
-theorem hexagonalTorusGraph_black_reachable_of_ons_reachable
+lemma hexagonalTorusGraph_black_reachable_of_ons_reachable
     (L : ℕ) [Fact (2 < L)] {u v : TorusSite L}
     (huv : (onsTorusGraph L).Reachable u v) :
     (hexagonalTorusGraph L).Reachable (u, false) (v, false) := by
@@ -754,8 +750,8 @@ theorem hexagonalTorusGraph_black_reachable_of_ons_reachable
       exact ih.trans
         (hexagonalTorusGraph_black_reachable_of_ons_adj L hyz)
 
-
-theorem hexagonalTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
+/-- The hexagonal torus is connected. -/
+lemma hexagonalTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
     (hexagonalTorusGraph L).Connected := by
   rw [SimpleGraph.connected_iff_exists_forall_reachable]
   refine ⟨((0, 0), false), ?_⟩
@@ -775,14 +771,16 @@ theorem hexagonalTorusGraph_connected (L : ℕ) [Fact (2 < L)] :
         ext <;> simp [a, hexagonalTorusStep]
       exact ha.trans hadj.reachable
 
-@[simp] theorem triHexTorusDualCutGraph_bot
+/-! ## F. Extreme cases and the classification -/
+
+@[simp] lemma triHexTorusDualCutGraph_bot
     (L : ℕ) [Fact (2 < L)] :
     triHexTorusDualCutGraph L (⊥ : SimpleGraph (TorusSite L)) =
       hexagonalTorusGraph L := by
   ext f g
   simp [triHexTorusDualCutGraph_adj]
 
-theorem triHexTorusDualCutGraph_full
+lemma triHexTorusDualCutGraph_full
     (L : ℕ) [Fact (2 < L)] :
     triHexTorusDualCutGraph L (triangularTorusGraph L) = ⊥ := by
   ext f g
@@ -794,7 +792,8 @@ theorem triHexTorusDualCutGraph_full
   have hp := triHexTorusPrimalOfDualEdge_mem L he
   simpa [SimpleGraph.edgeFinset] using hp
 
-theorem triangularTorusGraph_edge_card
+/-- The triangular torus has `3 L²` edges. -/
+lemma triangularTorusGraph_edge_card
     (L : ℕ) [Fact (2 < L)] :
     (triangularTorusGraph L).edgeFinset.card = 3 * L ^ 2 := by
   rw [SimpleGraph.edgeFinset_card]
@@ -806,12 +805,13 @@ theorem triangularTorusGraph_edge_card
       simp [TriHexTorusEdgeIndex, TorusSite]
       ring
 
-theorem triHexTorusFaceCount_bot (L : ℕ) [Fact (2 < L)] :
+lemma triHexTorusFaceCount_bot (L : ℕ) [Fact (2 < L)] :
     triHexTorusFaceCount L (⊥ : SimpleGraph (TorusSite L)) = 1 := by
   rw [triHexTorusFaceCount_eq_dualCutGraph, triHexTorusDualCutGraph_bot,
     card_components_eq_one_of_connected (hexagonalTorusGraph_connected L)]
 
-theorem triHexTorusFaceCount_full (L : ℕ) [Fact (2 < L)] :
+/-- The full triangular torus has `2 L²` faces. -/
+lemma triHexTorusFaceCount_full (L : ℕ) [Fact (2 < L)] :
     triHexTorusFaceCount L (triangularTorusGraph L) = 2 * L ^ 2 := by
   rw [triHexTorusFaceCount_eq_dualCutGraph, triHexTorusDualCutGraph_full,
     card_components_bot, Nat.card_eq_fintype_card, Fintype.card_prod,
@@ -819,14 +819,15 @@ theorem triHexTorusFaceCount_full (L : ℕ) [Fact (2 < L)] :
   rw [Fintype.card_bool]
   ring
 
-@[simp] theorem triHexTorusDefect_bot (L : ℕ) [Fact (2 < L)] :
+@[simp] lemma triHexTorusDefect_bot (L : ℕ) [Fact (2 < L)] :
     triHexTorusDefect L (⊥ : SimpleGraph (TorusSite L)) = 0 := by
   unfold triHexTorusDefect
   rw [triHexTorusFaceCount_bot, card_components_bot,
     Nat.card_eq_fintype_card, Fintype.card_prod, ZMod.card]
   simp
 
-theorem triHexTorusDefect_full (L : ℕ) [Fact (2 < L)] :
+/-- The full triangular torus has defect `2`. -/
+lemma triHexTorusDefect_full (L : ℕ) [Fact (2 < L)] :
     triHexTorusDefect L (triangularTorusGraph L) = 2 := by
   have hedge : (triangularTorusGraph L).edgeSet.ncard = 3 * L ^ 2 := by
     rw [Set.ncard_eq_toFinset_card']
@@ -839,11 +840,8 @@ theorem triHexTorusDefect_full (L : ℕ) [Fact (2 < L)] :
   push_cast
   ring
 
-
-
-
-
-theorem triHexTorusDefect_nonnegative
+/-- The defect of a subgraph of the triangular torus is nonnegative. -/
+lemma triHexTorusDefect_nonnegative
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
     0 ≤ triHexTorusDefect L K := by
@@ -885,9 +883,8 @@ theorem triHexTorusDefect_nonnegative
         rw [← hKeq] at hstep
         exact ihK'.trans hstep
 
-
-
-theorem triHexTorusDefect_le_two
+/-- The defect of a subgraph of the triangular torus is at most `2`. -/
+lemma triHexTorusDefect_le_two
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
     triHexTorusDefect L K ≤ 2 := by
@@ -927,10 +924,10 @@ theorem triHexTorusDefect_le_two
         have hMset : A.edgeSet \ K'.edgeSet = M \ {s(p, q)} := by
           ext e'
           simp only [K', M, edgeSet_sup, edgeSet_edge_of_ne hpq.ne,
-            Set.mem_diff, Set.mem_union, Set.mem_singleton_iff]
+            Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff]
           tauto
         have hdrop : (M \ {s(p, q)}).ncard + 1 = M.ncard :=
-          Set.ncard_diff_singleton_add_one ⟨heA, heK⟩ (Set.toFinite M)
+          Set.ncard_sdiff_singleton_add_one ⟨heA, heK⟩ (Set.toFinite M)
         have hn' : (A.edgeSet \ K'.edgeSet).ncard = n - 1 := by
           rw [hMset]
           omega
@@ -939,7 +936,7 @@ theorem triHexTorusDefect_le_two
         have hstep := triHexTorusDefect_le_sup_edge L K hpq hnew
         exact hstep.trans ihK'
 
-
+/-- The defect of a subgraph of the triangular torus is `0`, `1` or `2`. -/
 theorem triHexTorusDefect_classified
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
@@ -949,8 +946,8 @@ theorem triHexTorusDefect_classified
   have h2 := triHexTorusDefect_le_two L K hK
   omega
 
-
-theorem triHexTorusDefect_openSub_classified
+/-- The defect of the open subgraph of a configuration is `0`, `1` or `2`. -/
+lemma triHexTorusDefect_openSub_classified
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L))) :
     triHexTorusDefect L (FK.openSub (triangularTorusGraph L) omega) = 0 ∨

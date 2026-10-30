@@ -6,43 +6,72 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicCrossingGeometry
 
+/-!
+# Translation-covariant extension of the edge duality to all vertex pairs
+
+A bijection `Sym2 (Site 2) ≃ Sym2 HexVertex` that commutes with translations, preserves being
+an edge, and restricts to the triangular–hexagonal edge duality on edges.
+
+## i. Overview
+
+Unordered pairs of sites are charted by a base site and a normalized displacement ("pair
+shape"): `triangularPairOrbitEquiv`, `hexagonalPairOrbitEquiv`, both translation covariant.
+The three edge shapes of each lattice are matched with each other (with a base offset for the
+third direction), and the infinitely many non-edge shapes are matched by an arbitrary bijection
+of countably infinite sets. The result, `triHexFullDualEdgeEquiv`, is translation covariant,
+maps edges exactly to edges and agrees with `triHexDualEdgeEquiv` there. Its values on non-edges
+carry no geometric meaning; they only make the dual configuration map defined on all pairs. All
+results are proved unconditionally.
+
+## ii. Key results
+
+- `triHexFullDualEdgeEquiv` : the extended duality on all pairs.
+- `triHexFullDualEdgeEquiv_shift` : translation covariance.
+- `triHexFullDualEdgeEquiv_mem_edgeSet`, `triHexFullDualEdgeEquiv_eq_edgeDual` : it maps edges
+  to edges and agrees with the edge duality on them.
+
+## iii. Table of contents
+
+- A. Pair charts for the triangular lattice
+- B. Pair charts for the hexagonal lattice
+- C. Edge shapes and non-edge shapes
+- D. The extended duality
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. Pair charts for the triangular lattice -/
 
+/-- Lexicographic nonnegativity of a displacement `d : Site 2`. -/
 def siteLexNonnegative (d : Site 2) : Prop :=
   0 < d 0 ∨ d 0 = 0 ∧ 0 <= d 1
 
+/-- Lexicographic nonnegativity is decidable. -/
 instance siteLexNonnegative_decidable (d : Site 2) :
     Decidable (siteLexNonnegative d) := by
   unfold siteLexNonnegative
   infer_instance
 
-theorem siteLexNonnegative_zero :
+lemma siteLexNonnegative_zero :
     siteLexNonnegative (0 : Site 2) := by
   right
   simp
 
-theorem siteLexNonnegative_neg_of_not
+lemma siteLexNonnegative_neg_of_not
     {d : Site 2} (h : ¬ siteLexNonnegative d) :
     siteLexNonnegative (-d) := by
   unfold siteLexNonnegative at h ⊢
@@ -57,7 +86,7 @@ theorem siteLexNonnegative_neg_of_not
     have hle : d 0 <= 0 := by omega
     omega
 
-theorem not_siteLexNonnegative_neg_of_ne_zero
+lemma not_siteLexNonnegative_neg_of_ne_zero
     {d : Site 2} (hd : d ≠ 0) (h : siteLexNonnegative d) :
     ¬ siteLexNonnegative (-d) := by
   unfold siteLexNonnegative at h ⊢
@@ -78,9 +107,12 @@ theorem not_siteLexNonnegative_neg_of_ne_zero
     · rcases hn with hneg | ⟨hz', _⟩ <;> omega
     · exact h0 hz
 
-
+/-- Normalized displacement of an unordered pair of sites: a lexicographically nonnegative vector.
+-/
 abbrev TriangularPairShape := {d : Site 2 // siteLexNonnegative d}
 
+/-- Normal form `(base, shape)` of the ordered pair `(x, y)`: the endpoint from which the
+displacement is lexicographically nonnegative. -/
 def triangularPairNormal (x y : Site 2) :
     Site 2 × TriangularPairShape :=
   if h : siteLexNonnegative (y - x) then (x, ⟨y - x, h⟩)
@@ -88,7 +120,7 @@ def triangularPairNormal (x y : Site 2) :
     have := siteLexNonnegative_neg_of_not h
     simpa only [neg_sub] using this⟩)
 
-theorem triangularPairNormal_symm (x y : Site 2) :
+lemma triangularPairNormal_symm (x y : Site 2) :
     triangularPairNormal x y = triangularPairNormal y x := by
   by_cases hxy : x = y
   · subst y
@@ -104,21 +136,21 @@ theorem triangularPairNormal_symm (x y : Site 2) :
         simpa only [neg_sub] using this
       simp only [triangularPairNormal, h, hr, dite_true, dite_false]
 
-
+/-- The normal form of an unordered pair of sites. -/
 def triangularPairOrbitTo : Sym2 (Site 2) →
     Site 2 × TriangularPairShape :=
   Sym2.lift ⟨triangularPairNormal, triangularPairNormal_symm⟩
 
-@[simp] theorem triangularPairOrbitTo_mk (x y : Site 2) :
+@[simp] lemma triangularPairOrbitTo_mk (x y : Site 2) :
     triangularPairOrbitTo s(x, y) = triangularPairNormal x y := by
   exact Sym2.lift_mk _ _ _
 
-
+/-- The unordered pair with given base and shape. -/
 def triangularPairOrbitFrom
     (a : Site 2 × TriangularPairShape) : Sym2 (Site 2) :=
   s(a.1, a.1 + a.2.1)
 
-theorem triangularPairOrbitFrom_to (e : Sym2 (Site 2)) :
+lemma triangularPairOrbitFrom_to (e : Sym2 (Site 2)) :
     triangularPairOrbitFrom (triangularPairOrbitTo e) = e := by
   induction e using Sym2.inductionOn with
   | _ x y =>
@@ -131,7 +163,7 @@ theorem triangularPairOrbitFrom_to (e : Sym2 (Site 2)) :
       · rw [show y + (x - y) = x by abel]
         exact Sym2.eq_swap
 
-theorem triangularPairOrbitTo_from
+lemma triangularPairOrbitTo_from
     (a : Site 2 × TriangularPairShape) :
     triangularPairOrbitTo (triangularPairOrbitFrom a) = a := by
   rcases a with ⟨x, d, hd⟩
@@ -140,7 +172,7 @@ theorem triangularPairOrbitTo_from
   unfold triangularPairNormal
   simp only [add_sub_cancel_left, hd, dite_true]
 
-
+/-- Unordered pairs of sites are in bijection with `Site 2 × TriangularPairShape`. -/
 def triangularPairOrbitEquiv :
     Sym2 (Site 2) ≃ Site 2 × TriangularPairShape where
   toFun := triangularPairOrbitTo
@@ -148,7 +180,7 @@ def triangularPairOrbitEquiv :
   left_inv := triangularPairOrbitFrom_to
   right_inv := triangularPairOrbitTo_from
 
-theorem triangularPairNormal_add (z x y : Site 2) :
+lemma triangularPairNormal_add (z x y : Site 2) :
     triangularPairNormal (x + z) (y + z) =
       (triangularPairNormal x y).map (fun b => b + z) id := by
   unfold triangularPairNormal
@@ -157,7 +189,7 @@ theorem triangularPairNormal_add (z x y : Site 2) :
   simp only [hsub, hsub']
   split_ifs <;> rfl
 
-theorem triangularPairOrbitEquiv_add (z : Site 2)
+lemma triangularPairOrbitEquiv_add (z : Site 2)
     (e : Sym2 (Site 2)) :
     triangularPairOrbitEquiv (Sym2.map (siteTranslate z) e) =
       (triangularPairOrbitEquiv e).map (fun b => b + z) id := by
@@ -167,24 +199,25 @@ theorem triangularPairOrbitEquiv_add (z : Site 2)
         Sym2.map_mk, siteTranslate_apply, triangularPairOrbitTo_mk]
       exact triangularPairNormal_add z x y
 
+/-! ## B. Pair charts for the hexagonal lattice -/
 
-
-
+/-- Strict lexicographic positivity of a displacement `d : Site 2`. -/
 def siteLexPositive (d : Site 2) : Prop :=
   0 < d 0 ∨ d 0 = 0 ∧ 0 < d 1
 
+/-- Strict lexicographic positivity is decidable. -/
 instance siteLexPositive_decidable (d : Site 2) :
     Decidable (siteLexPositive d) := by
   unfold siteLexPositive
   infer_instance
 
-theorem not_siteLexPositive_neg_of_pos {d : Site 2}
+lemma not_siteLexPositive_neg_of_pos {d : Site 2}
     (h : siteLexPositive d) : ¬ siteLexPositive (-d) := by
   unfold siteLexPositive at h ⊢
   simp only [Pi.neg_apply]
   omega
 
-theorem site_eq_zero_of_not_lexPositive_or_neg {d : Site 2}
+lemma site_eq_zero_of_not_lexPositive_or_neg {d : Site 2}
     (h : ¬ siteLexPositive d) (hn : ¬ siteLexPositive (-d)) :
     d = 0 := by
   unfold siteLexPositive at h hn
@@ -194,20 +227,22 @@ theorem site_eq_zero_of_not_lexPositive_or_neg {d : Site 2}
   funext k
   fin_cases k <;> simp [h0, h1]
 
-
+/-- The order `false ≤ true` on colours, used to normalize pairs with the same base site. -/
 def boolOrdered (b c : Bool) : Prop := b = false ∨ c = true
 
+/-- `boolOrdered` is decidable. -/
 instance boolOrdered_decidable (b c : Bool) : Decidable (boolOrdered b c) :=
   by
     unfold boolOrdered
     infer_instance
 
-
-
+/-- Normalized shape of an unordered pair of hexagonal vertices: a positive displacement with the
+two colours, or an ordered colour pair at displacement zero. -/
 abbrev HexagonalPairShape :=
   ({d : Site 2 // siteLexPositive d} × Bool × Bool) ⊕
     {bc : Bool × Bool // boolOrdered bc.1 bc.2}
 
+/-- Normal form `(base, shape)` of the ordered pair `(u, v)` of hexagonal vertices. -/
 def hexagonalPairNormal (u v : HexVertex) :
     Site 2 × HexagonalPairShape :=
   if h : siteLexPositive (v.1 - u.1) then
@@ -222,7 +257,7 @@ def hexagonalPairNormal (u v : HexVertex) :
       rcases v with ⟨y, c⟩
       cases b <;> cases c <;> simp [boolOrdered] at hb ⊢⟩)
 
-theorem hexagonalPairNormal_symm (u v : HexVertex) :
+lemma hexagonalPairNormal_symm (u v : HexVertex) :
     hexagonalPairNormal u v = hexagonalPairNormal v u := by
   by_cases h : siteLexPositive (v.1 - u.1)
   · have hn : ¬ siteLexPositive (u.1 - v.1) := by
@@ -243,23 +278,23 @@ theorem hexagonalPairNormal_symm (u v : HexVertex) :
       cases b <;> cases c <;>
         simp [hexagonalPairNormal, siteLexPositive, boolOrdered]
 
-
+/-- The normal form of an unordered pair of hexagonal vertices. -/
 def hexagonalPairOrbitTo : Sym2 HexVertex →
     Site 2 × HexagonalPairShape :=
   Sym2.lift ⟨hexagonalPairNormal, hexagonalPairNormal_symm⟩
 
-@[simp] theorem hexagonalPairOrbitTo_mk (u v : HexVertex) :
+@[simp] lemma hexagonalPairOrbitTo_mk (u v : HexVertex) :
     hexagonalPairOrbitTo s(u, v) = hexagonalPairNormal u v := by
   exact Sym2.lift_mk _ _ _
 
-
+/-- The unordered pair of hexagonal vertices with given base and shape. -/
 def hexagonalPairOrbitFrom
     (a : Site 2 × HexagonalPairShape) : Sym2 HexVertex :=
   match a.2 with
   | Sum.inl s => s((a.1, s.2.1), (a.1 + s.1.1, s.2.2))
   | Sum.inr s => s((a.1, s.1.1), (a.1, s.1.2))
 
-theorem hexagonalPairOrbitFrom_to (e : Sym2 HexVertex) :
+lemma hexagonalPairOrbitFrom_to (e : Sym2 HexVertex) :
     hexagonalPairOrbitFrom (hexagonalPairOrbitTo e) = e := by
   induction e using Sym2.inductionOn with
   | _ u v =>
@@ -294,7 +329,7 @@ theorem hexagonalPairOrbitFrom_to (e : Sym2 HexVertex) :
         simp only [hexagonalPairOrbitFrom]
         exact Sym2.eq_swap
 
-theorem hexagonalPairOrbitTo_from
+lemma hexagonalPairOrbitTo_from
     (a : Site 2 × HexagonalPairShape) :
     hexagonalPairOrbitTo (hexagonalPairOrbitFrom a) = a := by
   rcases a with ⟨x, s⟩
@@ -317,7 +352,7 @@ theorem hexagonalPairOrbitTo_from
       simp [siteLexPositive]
     simp only [hn, dite_false, hbc, dite_true]
 
-
+/-- Unordered pairs of hexagonal vertices are in bijection with `Site 2 × HexagonalPairShape`. -/
 def hexagonalPairOrbitEquiv :
     Sym2 HexVertex ≃ Site 2 × HexagonalPairShape where
   toFun := hexagonalPairOrbitTo
@@ -325,7 +360,7 @@ def hexagonalPairOrbitEquiv :
   left_inv := hexagonalPairOrbitFrom_to
   right_inv := hexagonalPairOrbitTo_from
 
-theorem hexagonalPairNormal_add (z : Site 2) (u v : HexVertex) :
+lemma hexagonalPairNormal_add (z : Site 2) (u v : HexVertex) :
     hexagonalPairNormal (hexTranslate z u) (hexTranslate z v) =
       (hexagonalPairNormal u v).map (fun b => b + z) id := by
   rcases u with ⟨x, b⟩
@@ -337,7 +372,7 @@ theorem hexagonalPairNormal_add (z : Site 2) (u v : HexVertex) :
   simp only [hsub, hsub']
   split_ifs <;> simp_all
 
-theorem hexagonalPairOrbitEquiv_add (z : Site 2) (e : Sym2 HexVertex) :
+lemma hexagonalPairOrbitEquiv_add (z : Site 2) (e : Sym2 HexVertex) :
     hexagonalPairOrbitEquiv (Sym2.map (hexTranslate z) e) =
       (hexagonalPairOrbitEquiv e).map (fun b => b + z) id := by
   induction e using Sym2.inductionOn with
@@ -346,59 +381,66 @@ theorem hexagonalPairOrbitEquiv_add (z : Site 2) (e : Sym2 HexVertex) :
         Sym2.map_mk, hexagonalPairOrbitTo_mk]
       exact hexagonalPairNormal_add z u v
 
+/-! ## C. Edge shapes and non-edge shapes -/
 
-
-
+/-- Shape of the triangular edge in direction `i`. -/
 def triangularEdgePairShape (i : Fin 3) : TriangularPairShape :=
   (triangularPairNormal 0 (triangularStep i)).2
 
-
+/-- Base site of the normal form of the edge `s(0, triangularStep i)`. -/
 def triangularEdgePairBase (i : Fin 3) : Site 2 :=
   (triangularPairNormal 0 (triangularStep i)).1
 
-
+/-- Shape of the hexagonal edge in direction `i`. -/
 def hexagonalEdgePairShape (i : Fin 3) : HexagonalPairShape :=
   (hexagonalPairNormal (0, false) (hexagonalStep i, true)).2
 
-theorem triangularEdgePairShape_injective :
+lemma triangularEdgePairShape_injective :
     Function.Injective triangularEdgePairShape := by
   intro i j hij
   fin_cases i <;> fin_cases j <;>
-    simp [triangularEdgePairShape, triangularPairNormal,
-      triangularStep, siteLexNonnegative] at hij ⊢
+    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.reduceEq,
+      zero_ne_one, one_ne_zero] at hij ⊢
   all_goals
     have h := congrArg (fun s : TriangularPairShape => (s.1 0, s.1 1)) hij
-    norm_num at h
+    norm_num [triangularEdgePairShape, triangularPairNormal, triangularStep,
+      siteLexNonnegative] at h
 
-theorem hexagonalEdgePairShape_injective :
+lemma hexagonalEdgePairShape_injective :
     Function.Injective hexagonalEdgePairShape := by
   intro i j hij
   fin_cases i <;> fin_cases j <;>
-    simp [hexagonalEdgePairShape, hexagonalPairNormal,
-      hexagonalStep, siteLexPositive, boolOrdered] at hij ⊢
+    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.reduceEq,
+      zero_ne_one, one_ne_zero] at hij ⊢
   all_goals
     have h := congrArg (fun s : HexagonalPairShape =>
       match s with
       | Sum.inl d => (d.1.1 0, d.1.1 1)
       | Sum.inr _ => (0, 0)) hij
-    norm_num at h
+    norm_num [hexagonalEdgePairShape, hexagonalPairNormal, hexagonalStep, siteLexPositive,
+      boolOrdered] at h
 
+/-- The shape is that of a triangular edge. -/
 def IsTriangularEdgePairShape (s : TriangularPairShape) : Prop :=
   ∃ i, triangularEdgePairShape i = s
 
+/-- The shape is that of a hexagonal edge. -/
 def IsHexagonalEdgePairShape (s : HexagonalPairShape) : Prop :=
   ∃ i, hexagonalEdgePairShape i = s
 
+/-- Being a triangular edge shape is decidable. -/
 instance (s : TriangularPairShape) :
     Decidable (IsTriangularEdgePairShape s) := by
   unfold IsTriangularEdgePairShape
   infer_instance
 
+/-- Being a hexagonal edge shape is decidable. -/
 instance (s : HexagonalPairShape) :
     Decidable (IsHexagonalEdgePairShape s) := by
   unfold IsHexagonalEdgePairShape
   infer_instance
 
+/-- The three edge directions are in bijection with the triangular edge shapes. -/
 noncomputable def triangularEdgePairShapeEquiv :
     Fin 3 ≃ {s : TriangularPairShape // IsTriangularEdgePairShape s} :=
   Equiv.ofBijective
@@ -409,6 +451,7 @@ noncomputable def triangularEdgePairShapeEquiv :
         rcases s with ⟨s, i, hi⟩
         exact ⟨i, Subtype.ext hi⟩⟩
 
+/-- The three edge directions are in bijection with the hexagonal edge shapes. -/
 noncomputable def hexagonalEdgePairShapeEquiv :
     Fin 3 ≃ {s : HexagonalPairShape // IsHexagonalEdgePairShape s} :=
   Equiv.ofBijective
@@ -419,19 +462,21 @@ noncomputable def hexagonalEdgePairShapeEquiv :
         rcases s with ⟨s, i, hi⟩
         exact ⟨i, Subtype.ext hi⟩⟩
 
+/-- The displacement `(n + 2, 0)`, never an edge displacement. -/
 def longPairDisplacement (n : Nat) : Site 2 :=
   ![(n : Int) + 2, 0]
 
-theorem longPairDisplacement_nonnegative (n : Nat) :
+lemma longPairDisplacement_nonnegative (n : Nat) :
     siteLexNonnegative (longPairDisplacement n) := by
   left
   simp only [longPairDisplacement, Matrix.cons_val_zero]
   exact add_pos_of_nonneg_of_pos (Int.natCast_nonneg n) (by norm_num)
 
+/-- The triangular non-edge shape with displacement `(n + 2, 0)`. -/
 def triangularNonedgePairShape (n : Nat) : TriangularPairShape :=
   ⟨longPairDisplacement n, longPairDisplacement_nonnegative n⟩
 
-theorem triangularNonedgePairShape_not_edge (n : Nat) :
+lemma triangularNonedgePairShape_not_edge (n : Nat) :
     ¬ IsTriangularEdgePairShape (triangularNonedgePairShape n) := by
   rintro ⟨i, hi⟩
   fin_cases i <;>
@@ -442,13 +487,14 @@ theorem triangularNonedgePairShape_not_edge (n : Nat) :
   all_goals have hn : (0 : Int) <= n := Int.natCast_nonneg n
   all_goals omega
 
-theorem triangularNonedgePairShape_injective :
+lemma triangularNonedgePairShape_injective :
     Function.Injective triangularNonedgePairShape := by
   intro n m h
   have h0 := congrArg (fun s : TriangularPairShape => s.1 0) h
   simp [triangularNonedgePairShape, longPairDisplacement] at h0
   omega
 
+/-- Infinitely many triangular non-edge shapes. -/
 def triangularNonedgePairShapeEmbedding :
     Nat ↪ {s : TriangularPairShape // ¬ IsTriangularEdgePairShape s} where
   toFun n := ⟨triangularNonedgePairShape n,
@@ -456,6 +502,7 @@ def triangularNonedgePairShapeEmbedding :
   inj' _ _ h := triangularNonedgePairShape_injective
     (congrArg Subtype.val h)
 
+/-- The hexagonal non-edge shape with displacement `(n + 2, 0)` between black vertices. -/
 def hexagonalNonedgePairShape (n : Nat) : HexagonalPairShape :=
   Sum.inl (⟨longPairDisplacement n, by
     left
@@ -463,7 +510,7 @@ def hexagonalNonedgePairShape (n : Nat) : HexagonalPairShape :=
     exact add_pos_of_nonneg_of_pos (Int.natCast_nonneg n) (by norm_num)⟩,
       false, false)
 
-theorem hexagonalNonedgePairShape_not_edge (n : Nat) :
+lemma hexagonalNonedgePairShape_not_edge (n : Nat) :
     ¬ IsHexagonalEdgePairShape (hexagonalNonedgePairShape n) := by
   rintro ⟨i, hi⟩
   have hc := congrArg (fun s : HexagonalPairShape =>
@@ -475,7 +522,7 @@ theorem hexagonalNonedgePairShape_not_edge (n : Nat) :
       hexagonalPairNormal, hexagonalStep, siteLexPositive,
       boolOrdered] at hc
 
-theorem hexagonalNonedgePairShape_injective :
+lemma hexagonalNonedgePairShape_injective :
     Function.Injective hexagonalNonedgePairShape := by
   intro n m h
   have h0 := congrArg (fun s : HexagonalPairShape =>
@@ -485,6 +532,7 @@ theorem hexagonalNonedgePairShape_injective :
   simp [hexagonalNonedgePairShape, longPairDisplacement] at h0
   omega
 
+/-- Infinitely many hexagonal non-edge shapes. -/
 def hexagonalNonedgePairShapeEmbedding :
     Nat ↪ {s : HexagonalPairShape // ¬ IsHexagonalEdgePairShape s} where
   toFun n := ⟨hexagonalNonedgePairShape n,
@@ -492,6 +540,7 @@ def hexagonalNonedgePairShapeEmbedding :
   inj' _ _ h := hexagonalNonedgePairShape_injective
     (congrArg Subtype.val h)
 
+/-- An arbitrary bijection between the (countably infinite) sets of non-edge shapes. -/
 noncomputable def triHexNonedgePairShapeEquiv :
     {s : TriangularPairShape // ¬ IsTriangularEdgePairShape s} ≃
       {s : HexagonalPairShape // ¬ IsHexagonalEdgePairShape s} := by
@@ -503,8 +552,10 @@ noncomputable def triHexNonedgePairShapeEquiv :
     Infinite.of_injective _ hexagonalNonedgePairShapeEmbedding.injective
   exact Classical.choice inferInstance
 
+/-! ## D. The extended duality -/
 
-
+/-- Bijection of pair shapes matching edge directions and sending non-edge shapes to non-edge
+shapes. -/
 noncomputable def triHexPairShapeEquiv :
     TriangularPairShape ≃ HexagonalPairShape :=
   (Equiv.sumCompl IsTriangularEdgePairShape).symm |>.trans
@@ -513,7 +564,7 @@ noncomputable def triHexPairShapeEquiv :
       triHexNonedgePairShapeEquiv).trans
     (Equiv.sumCompl IsHexagonalEdgePairShape))
 
-theorem triHexPairShapeEquiv_edge (i : Fin 3) :
+lemma triHexPairShapeEquiv_edge (i : Fin 3) :
     triHexPairShapeEquiv (triangularEdgePairShape i) =
       hexagonalEdgePairShape i := by
   unfold triHexPairShapeEquiv
@@ -528,11 +579,11 @@ theorem triHexPairShapeEquiv_edge (i : Fin 3) :
         triangularEdgePairShapeEquiv i by rfl]
   simp [hexagonalEdgePairShapeEquiv, Equiv.ofBijective]
 
-
+/-- Base-site correction for the third edge direction, matching `triHexIndexEquiv`. -/
 def triHexPairShapeOffset (s : TriangularPairShape) : Site 2 :=
   if s = triangularEdgePairShape 2 then ![0, -1] else 0
 
-theorem triHexPairShapeOffset_edge (i : Fin 3) :
+lemma triHexPairShapeOffset_edge (i : Fin 3) :
     triangularEdgePairBase i + triHexPairShapeOffset
       (triangularEdgePairShape i) =
         (triHexIndexEquiv (0, i)).1 := by
@@ -544,11 +595,11 @@ theorem triHexPairShapeOffset_edge (i : Fin 3) :
            siteLexNonnegative] at h1
          done)
       | exact absurd rfl h
-      | simp [triangularEdgePairBase, triangularEdgePairShape,
-          triangularPairNormal, triangularStep, siteLexNonnegative,
-          triHexIndexEquiv, funext_iff]
+      | simp [triangularEdgePairBase, triangularPairNormal, triangularStep,
+          siteLexNonnegative, triHexIndexEquiv]
 
-
+/-- Bijection on `(base, shape)` data: shapes via `triHexPairShapeEquiv`, bases corrected by
+`triHexPairShapeOffset`. -/
 noncomputable def triHexPairOrbitDataEquiv :
     (Site 2 × TriangularPairShape) ≃
       (Site 2 × HexagonalPairShape) where
@@ -564,13 +615,14 @@ noncomputable def triHexPairOrbitDataEquiv :
     rcases b with ⟨x, s⟩
     simp
 
-
+/-- Translation-covariant bijection between all unordered pairs of triangular sites and all
+unordered pairs of hexagonal vertices, extending the edge duality. -/
 noncomputable def triHexFullDualEdgeEquiv :
     Sym2 (Site 2) ≃ Sym2 HexVertex :=
   triangularPairOrbitEquiv.trans
     (triHexPairOrbitDataEquiv.trans hexagonalPairOrbitEquiv.symm)
 
-theorem triHexPairOrbitDataEquiv_add (z : Site 2)
+lemma triHexPairOrbitDataEquiv_add (z : Site 2)
     (a : Site 2 × TriangularPairShape) :
     triHexPairOrbitDataEquiv (a.map (fun b => b + z) id) =
       (triHexPairOrbitDataEquiv a).map (fun b => b + z) id := by
@@ -581,6 +633,7 @@ theorem triHexPairOrbitDataEquiv_add (z : Site 2)
   · abel
   · rfl
 
+/-- The extended duality commutes with lattice translations. -/
 theorem triHexFullDualEdgeEquiv_shift (z : Site 2)
     (e : Sym2 (Site 2)) :
     triHexFullDualEdgeEquiv (Sym2.map (siteTranslate z) e) =
@@ -591,7 +644,7 @@ theorem triHexFullDualEdgeEquiv_shift (z : Site 2)
     triHexPairOrbitDataEquiv_add]
   simp
 
-theorem triangularPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
+lemma triangularPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
     triangularPairOrbitEquiv (triangularIndexedEdge a) =
       (a.1 + triangularEdgePairBase a.2,
         triangularEdgePairShape a.2) := by
@@ -604,7 +657,7 @@ theorem triangularPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
       triangularEdgePairShape, triangularPairNormal,
       triangularStep, siteLexNonnegative, hxHead, hxTail]
 
-theorem hexagonalPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
+lemma hexagonalPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
     hexagonalPairOrbitEquiv (hexagonalIndexedEdge a) =
       (a.1, hexagonalEdgePairShape a.2) := by
   rcases a with ⟨x, i⟩
@@ -616,9 +669,7 @@ theorem hexagonalPairOrbitEquiv_indexedEdge (a : TriHexEdgeIndex) :
       hexagonalPairNormal, hexagonalStep, siteLexPositive,
       boolOrdered, hxHead, hxTail]
 
-
-
-theorem triHexFullDualEdgeEquiv_indexedEdge (a : TriHexEdgeIndex) :
+lemma triHexFullDualEdgeEquiv_indexedEdge (a : TriHexEdgeIndex) :
     triHexFullDualEdgeEquiv (triangularIndexedEdge a) =
       hexagonalIndexedEdge (triHexIndexEquiv a) := by
   apply hexagonalPairOrbitEquiv.injective
@@ -642,12 +693,15 @@ theorem triHexFullDualEdgeEquiv_indexedEdge (a : TriHexEdgeIndex) :
     rcases a with ⟨x, i⟩
     fin_cases i <;> rfl
 
-theorem triHexFullDualEdgeEquiv_edgeChart (a : TriHexEdgeIndex) :
+/-- On indexed edges the extended duality is the edge duality. Special case of
+`triHexFullDualEdgeEquiv_eq_edgeDual`. -/
+lemma triHexFullDualEdgeEquiv_edgeChart (a : TriHexEdgeIndex) :
     triHexFullDualEdgeEquiv (triangularEdgeChart a : Sym2 (Site 2)) =
       (triHexDualEdgeEquiv (triangularEdgeChart a) : Sym2 HexVertex) := by
   rw [triHexDualEdgeEquiv_chart]
   exact triHexFullDualEdgeEquiv_indexedEdge a
 
+/-- A pair is a triangular edge if and only if its image is a hexagonal edge. -/
 theorem triHexFullDualEdgeEquiv_mem_edgeSet (e : Sym2 (Site 2)) :
     e ∈ triangularGraph.edgeSet ↔
       triHexFullDualEdgeEquiv e ∈ hexagonalGraph.edgeSet := by
@@ -675,6 +729,7 @@ theorem triHexFullDualEdgeEquiv_mem_edgeSet (e : Sym2 (Site 2)) :
     rw [← ha]
     exact triangularIndexedEdge_mem a
 
+/-- On triangular edges the extended duality agrees with `triHexDualEdgeEquiv`. -/
 theorem triHexFullDualEdgeEquiv_eq_edgeDual
     (e : triangularGraph.edgeSet) :
     triHexFullDualEdgeEquiv (e : Sym2 (Site 2)) =

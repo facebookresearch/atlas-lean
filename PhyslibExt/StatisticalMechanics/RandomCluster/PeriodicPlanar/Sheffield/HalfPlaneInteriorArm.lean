@@ -6,31 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInfiniteArm
 
+/-!
+# Infinite arms from deep inside a half-plane
+
+Finite sources lying deep inside a half-plane are, with high probability, in an infinite cluster
+connected to the half-plane boundary, or to each of its two boundary rays.
+
+## i. Overview
+
+These are the margin versions of the arm estimates in `HalfPlaneInfiniteArm`: the sources may be
+required to lie in `H_R = {x ≥ R}` for any `R ≥ r` while the connection takes place in
+`H_r` and ends on `∂H_r`. The proof translates an orbit box deep into `H_R` and uses the
+square lower bound of `HalfPlaneInfiniteArm`.
+
+Headline fidelity: both probability statements are conditional on the FKG inequality,
+translation invariance and almost sure uniqueness of the infinite cluster.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margin_gt`
+- `PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_with_margin_gt`
+
+## iii. Table of contents
+
+- A. Boxes deep inside a half-plane
+- B. Arms with a margin
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Boxes deep inside a half-plane -/
 
-
-theorem PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox_with_margin
+omit [Countable V] in
+/-- An orbit box can be translated into `H_R` and then into the complement of `H_r`. Generalizes
+`exists_opposite_translated_orbitBox` (`HalfPlaneEscape`, the case `R = r`). -/
+lemma PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox_with_margin
     (E : PeriodicPlaneEmbedding P) (N : Nat) (r R : Real) :
     ∃ z₀ z₁ : Site 2,
       P.shift z₀ '' (P.orbitBox N : Set V) ⊆
@@ -50,9 +77,13 @@ theorem PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox_with_margin
     rw [hshift]
     exact hzL v hv
 
+/-! ## B. Arms with a margin -/
 
-
-theorem PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margin_gt
+/-- For `r ≤ R` there is a finite source in `H_R` whose infinite-cluster connection to `∂H_r`
+within `H_r` has probability above `1 - ε`. Generalizes
+`exists_finite_infiniteBoundaryConnection_measureReal_gt` (`HalfPlaneInfiniteArm`, the case
+`R = r`). -/
+lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margin_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -92,8 +123,10 @@ theorem PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_mar
   exact ⟨S, (P.orbitBox N).finite_toSet.image _, hdeep,
     hN.trans_le hbound⟩
 
-
-
+/-- For `r ≤ R` there are finite sources in `H_R` connected by infinite clusters within `H_r` to
+the lower ray `{y ≤ 0}` and to the upper ray `{y ≥ 1}` of `∂H_r`, each with probability above
+`1 - ε`. Generalizes `exists_finite_opposite_infiniteBoundaryRays_measureReal_gt`
+(`HalfPlaneInfiniteArm`, the case `R = r`). -/
 theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_with_margin_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

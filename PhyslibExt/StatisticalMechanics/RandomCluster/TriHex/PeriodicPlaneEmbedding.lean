@@ -6,34 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualPair
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicVertexGeometry
 
+/-!
+# Periodic plane embeddings of the triangular and hexagonal lattices
+
+Packaging of the straight-segment drawings as `PeriodicPlaneEmbedding`s, given the
+segment-intersection property.
+
+## i. Overview
+
+`TriangularStraightEdgeIntersectionProperty` (resp. the hexagonal version) says that two distinct
+edge segments meet only at a common endpoint. Given it, segments of vertex-disjoint edges are
+disjoint, and the straight drawing satisfies every axiom of a periodic plane embedding. The
+constructions here are conditional on the intersection property; it is proved for both lattices
+in `TriHex.PeriodicStraightIntersection`, which defines the unconditional embeddings.
+
+## ii. Key results
+
+- `TriangularStraightEdgeIntersectionProperty`, `HexagonalStraightEdgeIntersectionProperty`.
+- `triangularPeriodicPlaneEmbedding_of_intersection`,
+  `hexagonalPeriodicPlaneEmbedding_of_intersection` : the embeddings, given the property.
+
+## iii. Table of contents
+
+- A. The segment-intersection properties
+- B. The periodic plane embeddings
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. The segment-intersection properties -/
 
-
+/-- Two distinct triangular edge segments meet only at a common endpoint. -/
 def TriangularStraightEdgeIntersectionProperty : Prop :=
   forall {x y z w : Site 2}
     (hxy : triangularGraph.Adj x y) (hzw : triangularGraph.Adj z w)
@@ -44,8 +62,7 @@ def TriangularStraightEdgeIntersectionProperty : Prop :=
       ∃ v, (v = x ∨ v = y) ∧ (v = z ∨ v = w) ∧
         triangularPlaneVertex v = p
 
-
-
+/-- Two distinct hexagonal edge segments meet only at a common endpoint. -/
 def HexagonalStraightEdgeIntersectionProperty : Prop :=
   forall {x y z w : HexVertex}
     (hxy : hexagonalGraph.Adj x y) (hzw : hexagonalGraph.Adj z w)
@@ -56,7 +73,7 @@ def HexagonalStraightEdgeIntersectionProperty : Prop :=
       ∃ v, (v = x ∨ v = y) ∧ (v = z ∨ v = w) ∧
         hexagonalPlaneVertex v = p
 
-theorem triangularStraightEdgeArc_disjoint_of_intersection
+lemma triangularStraightEdgeArc_disjoint_of_intersection
     (hinter : TriangularStraightEdgeIntersectionProperty)
     {x y z w : Site 2}
     (hxy : triangularGraph.Adj x y) (hzw : triangularGraph.Adj z w)
@@ -80,7 +97,7 @@ theorem triangularStraightEdgeArc_disjoint_of_intersection
     · exact hyz rfl
     · exact hyw rfl
 
-theorem hexagonalStraightEdgeArc_disjoint_of_intersection
+lemma hexagonalStraightEdgeArc_disjoint_of_intersection
     (hinter : HexagonalStraightEdgeIntersectionProperty)
     {x y z w : HexVertex}
     (hxy : hexagonalGraph.Adj x y) (hzw : hexagonalGraph.Adj z w)
@@ -104,8 +121,10 @@ theorem hexagonalStraightEdgeArc_disjoint_of_intersection
     · exact hyz rfl
     · exact hyw rfl
 
+/-! ## B. The periodic plane embeddings -/
 
-
+/-- The straight-segment drawing of the triangular lattice as a periodic plane embedding, given the
+segment-intersection property. -/
 noncomputable def triangularPeriodicPlaneEmbedding_of_intersection
     (hinter : TriangularStraightEdgeIntersectionProperty) :
     PeriodicPlaneEmbedding triangular where
@@ -125,8 +144,8 @@ noncomputable def triangularPeriodicPlaneEmbedding_of_intersection
     triangularStraightEdgeArc_disjoint_of_intersection hinter
   edgeArc_locallyFinite := triangularStraightEdgeArc_locallyFinite
 
-
-
+/-- The straight-segment drawing of the hexagonal lattice as a periodic plane embedding, given the
+segment-intersection property. -/
 noncomputable def hexagonalPeriodicPlaneEmbedding_of_intersection
     (hinter : HexagonalStraightEdgeIntersectionProperty) :
     PeriodicPlaneEmbedding hexagonal where

@@ -6,21 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCage
 
+/-!
+# A three-crossing cage blocks dual infinite clusters at the half-plane boundary
+
+If a primal vertical crossing and two primal horizontal crossings form a cage around a boundary
+window, no dual cluster inside the half-plane can start in that window and be infinite.
+
+## i. Overview
+
+`threeCrossingCageEvent` is the intersection of a primal vertical crossing of a tall rectangle
+to the right of the window with primal horizontal crossings of two thin rectangles, one below
+and one above the window, each reaching back across the half-plane boundary at `r`. A dual path
+starting on the boundary window `[c, d]` and staying in the right half-plane must cross one of
+the three primal crossings to escape, which planar duality forbids; so the dual boundary band
+has no infinite cluster inside the half-plane on this event.
+
+## ii. Key results
+
+- `PeriodicPlanarDualPair.threeCrossingCageEvent_disjoint_boundaryBandHasInfiniteCluster` :
+  unconditional, given the displacement bound `B` and the stated geometric margins.
+- `PeriodicPlanarDualPair.finiteJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage` :
+  the same for any event contained in the cage (unconditional apart from the inclusion
+  hypothesis `hjoined`).
+
+## iii. Table of contents
+
+- A. The three-crossing cage
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
 
 open MeasureTheory Set
 
@@ -32,8 +54,11 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## A. The three-crossing cage -/
 
-
+/-- A primal cage around a boundary window: a vertical crossing of
+`[A + 4B, R - 4B] × [C - 4B, D0 + 4B]` and horizontal crossings of the strips below `Tbottom`
+and above `Ttop`, each of `[r - 5B, R + 5B]`. -/
 def threeCrossingCageEvent
     (D : PeriodicPlanarDualPair P Pdual)
     (B r R C D0 A Tbottom Ttop : Real) :
@@ -45,9 +70,9 @@ def threeCrossingCageEvent
     D.primalEmbedding.horizontalCrossingEvent
       (r - 5 * B) (R + 5 * B) (Ttop + 4 * B) (D0 - 4 * B)
 
-
-
-theorem threeCrossingCageEvent_disjoint_boundaryBandHasInfiniteCluster
+/-- On the three-crossing cage event, no dual vertex of the boundary window `[c, d]` has an infinite
+dual cluster inside the right half-plane. -/
+lemma threeCrossingCageEvent_disjoint_boundaryBandHasInfiniteCluster
     (D : PeriodicPlanarDualPair P Pdual)
     {B r R C D0 A Tbottom Ttop c d : Real}
     (hBpos : 0 < B)
@@ -88,9 +113,8 @@ theorem threeCrossingCageEvent_disjoint_boundaryBandHasInfiniteCluster
         hRightCrossing hBottomCrossing hTopCrossing
   exact hnot hxInfinite
 
-
-
-
+/-- Any joined boundary-arm event contained in the three-crossing cage is disjoint from the event
+that the dual boundary window has an infinite cluster in the half-plane. -/
 theorem finiteJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage
     (D : PeriodicPlanarDualPair P Pdual)
     {B r R C D0 A Tbottom Ttop c d : Real}

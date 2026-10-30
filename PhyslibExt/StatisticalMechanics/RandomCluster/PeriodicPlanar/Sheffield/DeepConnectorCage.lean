@@ -6,24 +6,52 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnector
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneTopologyClosure
 
+/-!
+# Deep connectors in a finite strip and the three-crossing cage
+
+Finite-strip deep connectors, their probability bounds, and the inclusion into a primal cage
+that blocks dual infinite clusters at the boundary band.
+
+## i. Overview
+
+`finiteDeepOpenExitedJoinedBoundaryArmEvent r R c d width L U` is the deep connector of
+`Sheffield.DeepConnector` with the joining path confined to the strip `R ≤ x ≤ R + width`. The
+joined path crosses the strip vertically, so the event lies in a vertical crossing event
+(`…_subset_verticalCrossing`, given arc-length bounds `B` and source heights). If moreover the two
+arm events lie in two horizontal crossing events of a corridor (hypotheses `hLowerCorridor`,
+`hUpperCorridor`), the event lies in the three-crossing cage
+(`finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_threeCrossingCageEvent`), which is disjoint
+from the event that a dual infinite cluster touches the boundary band
+(`…_disjoint_boundaryBand_of_subset_cage`). These two results are conditional on the stated
+inclusions and geometric inequalities.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent`.
+- `PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_tendsto_one` : conditional
+  on the arm events tending to `1` and the strip merge error to `0`.
+- `finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_threeCrossingCageEvent`,
+  `finiteDeepOpenExitedJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage`.
+
+## iii. Table of contents
+
+- A. The finite deep connector event
+- B. Probability bounds
+- C. The deep connector inside a cage
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019), 75–99.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph
 
@@ -32,8 +60,10 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. The finite deep connector event -/
 
-
+/-- Infinite clusters from `L` and `U` exit the half-plane `{x ≥ r}` through its lower and upper
+boundary rays and are joined inside the strip `R ≤ x ≤ R + width`. -/
 def PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P) (r R c d : Real) (width : Nat)
     (L U : Finset V) : Set (ConfigSpace (Sym2 V)) :=
@@ -43,7 +73,7 @@ def PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent
       (E.upperBoundaryRayVertices r d)) \
     E.halfPlaneStripPairMergeErrorUnion R width L U
 
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measurableSet
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measurableSet
     (E : PeriodicPlaneEmbedding P) (r R c d : Real) (width : Nat)
     (L U : Finset V) :
     MeasurableSet
@@ -54,9 +84,8 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measur
       (E.upperBoundaryRayVertices r d))).diff
     (E.halfPlaneStripPairMergeErrorUnion_measurableSet R width L U)
 
-
-
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_witnesses
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_witnesses
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r R c d : Real} {width : Nat} {L U : Finset V}
     (h : omega ∈
@@ -86,9 +115,10 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_witnes
   exact ⟨x, hxL, hxInfinite, b, hbLower, hxb,
     y, hyU, hyInfinite, u, huUpper, hyu, hxy⟩
 
-
-
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_verticalCrossing
+omit [Countable V] in
+/-- With sources below `cRight` and above `dRight`, a finite deep connector contains a vertical
+crossing of the strip between these heights. -/
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_verticalCrossing
     (E : PeriodicPlaneEmbedding P)
     {B r R c d cRight dRight : Real} {width : Nat} {L U : Finset V}
     (hB : ∀ {v w : V} (hvw : P.graph.Adj v w) (t) (i : Fin 2),
@@ -108,8 +138,9 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_subset
   intro v hv
   exact hpStrip v hv
 
+/-! ## B. Probability bounds -/
 
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_ge
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r R c d : Real) (width : Nat) (L U : Finset V) :
@@ -137,11 +168,11 @@ theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_measur
   rw [hC] at hthree
   change mu.real A + mu.real Bset - mu.real C - 1 ≤
     mu.real ((A ∩ Bset) \ C)
-  convert hthree using 1 <;> first | ring | simp [Set.diff_eq]
+  convert hthree using 1 <;> first | ring | simp [Set.sdiff_eq]
 
-
-
-theorem PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_tendsto_one
+/-- The finite deep connector event has probability tending to `1` if both arm events do and the
+strip pair-merge error tends to `0`. -/
+lemma PeriodicPlaneEmbedding.finiteDeepOpenExitedJoinedBoundaryArmEvent_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (r R c d : Nat → Real) (width : Nat → Nat)
@@ -179,10 +210,11 @@ variable {W : Type*} [DecidableEq W] [Countable W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## C. The deep connector inside a cage -/
 
-
-
-theorem finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_threeCrossingCageEvent
+/-- If the two arm events lie in the corridor crossings, the finite deep connector lies in the
+three-crossing cage. -/
+lemma finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_threeCrossingCageEvent
     (D : PeriodicPlanarDualPair P Pdual)
     {B rPrimal Rdeep rDual Rcage C D0 A Tbottom Ttop c d : Real}
     {width : Nat} {L U : Finset V}
@@ -224,10 +256,11 @@ theorem finiteDeepOpenExitedJoinedBoundaryArmEvent_subset_threeCrossingCageEvent
   rw [hwidth.1]
   simpa only [← hwidth.2] using hRight
 
-
-
-
-theorem finiteDeepOpenExitedJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage
+/-- A finite deep connector contained in the cage is disjoint from the event that a dual infinite
+cluster touches the boundary band. See also
+`finiteJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage`
+(`Sheffield.HalfPlaneTopologyClosure`), the same argument for joined arms. -/
+lemma finiteDeepOpenExitedJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage
     (D : PeriodicPlanarDualPair P Pdual)
     {B rPrimal Rdeep rDual Rcage C D0 A Tbottom Ttop c d : Real}
     {width : Nat} {L U : Finset V}

@@ -6,48 +6,82 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CrossingFromArms
 
+/-!
+# Exchanging the two axes of a periodic planar embedding
+
+Swapping the two lattice coordinates turns vertical crossings into horizontal crossings, so
+horizontal statements follow from vertical ones.
+
+## i. Overview
+
+`PeriodicGraph.axisSwap` keeps the graph and precomposes the lattice action with the coordinate
+swap `(z₀, z₁) ↦ (z₁, z₀)`; `PeriodicPlaneEmbedding.axisSwap` composes the embedding coordinates
+with the reflection of the plane in the diagonal. A vertical crossing of `[a, b] × [c, d]` for
+the swapped embedding is a horizontal crossing of `[c, d] × [a, b]` for the original one.
+
+Combined with the strip-arm results (crossings from joined boundary arms), this shows that a
+translation-invariant FKG measure with an almost surely unique infinite cluster has horizontal
+crossings of thin, tall rectangles with probability tending to one along a sequence of heights;
+the same holds for the dual configuration.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent` :
+  unconditional.
+- The strip-arm transfer
+  `PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_axisSwap_finiteStripJoinedBoundaryArms`
+  is conditional on the swapped joined-boundary-arm events having probability tending to one.
+- `PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique` : conditional
+  on `IsFKG mu`, translation invariance and almost-sure uniqueness of the primal infinite
+  cluster.
+- `PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one` : the
+  dual statement, conditional on `IsFKG` of the dual measure, translation invariance of `mu` and
+  almost-sure uniqueness of the dual infinite cluster.
+
+## iii. Table of contents
+
+- A. The coordinate swap on the lattice and the plane
+- B. Crossings under the swap
+- C. Horizontal crossings with probability tending to one
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. The coordinate swap on the lattice and the plane -/
 
+/-- The coordinate swap `(z₀, z₁) ↦ (z₁, z₀)` on `ℤ²`. -/
 def siteAxisSwap (z : Site 2) : Site 2 := fun i => z (Fin.rev i)
 
-@[simp] theorem siteAxisSwap_zero : siteAxisSwap (0 : Site 2) = 0 := by
+@[simp] lemma siteAxisSwap_zero : siteAxisSwap (0 : Site 2) = 0 := by
   rfl
 
-@[simp] theorem siteAxisSwap_add (z w : Site 2) :
+@[simp] lemma siteAxisSwap_add (z w : Site 2) :
     siteAxisSwap (z + w) = siteAxisSwap z + siteAxisSwap w := by
   rfl
 
-@[simp] theorem siteAxisSwap_swap (z : Site 2) :
+@[simp] lemma siteAxisSwap_swap (z : Site 2) :
     siteAxisSwap (siteAxisSwap z) = z := by
   ext i
   simp [siteAxisSwap]
 
+/-- The coordinate swap as an additive automorphism of `ℤ²`. -/
 def siteAxisSwapAddEquiv : Site 2 ≃+ Site 2 where
   toFun := siteAxisSwap
   invFun := siteAxisSwap
@@ -55,7 +89,7 @@ def siteAxisSwapAddEquiv : Site 2 ≃+ Site 2 where
   right_inv := siteAxisSwap_swap
   map_add' := siteAxisSwap_add
 
-
+/-- The same graph with the lattice action precomposed with the coordinate swap. -/
 def PeriodicGraph.axisSwap (P : PeriodicGraph V) : PeriodicGraph V where
   graph := P.graph
   shift z := P.shift (siteAxisSwap z)
@@ -70,19 +104,20 @@ def PeriodicGraph.axisSwap (P : PeriodicGraph V) : PeriodicGraph V where
     exact ⟨siteAxisSwap z, u, hu, by simpa [siteAxisSwap_swap] using hzu⟩
   locallyFinite := P.locallyFinite
 
-
+/-- The reflection of the plane `ℝ²` in the diagonal, as a continuous linear equivalence. -/
 def axisSwapCoordinates :
     (Fin 2 → Real) ≃L[Real] (Fin 2 → Real) :=
   ContinuousLinearEquiv.piCongrLeft Real (fun _ : Fin 2 => Real) Fin.revPerm
 
-@[simp] theorem axisSwapCoordinates_apply (x : Fin 2 → Real) (i : Fin 2) :
+@[simp] lemma axisSwapCoordinates_apply (x : Fin 2 → Real) (i : Fin 2) :
     axisSwapCoordinates x i = x (Fin.rev i) := by
   change (Equiv.piCongrLeft (fun _ : Fin 2 => Real) Fin.revPerm) x i =
     x (Fin.rev i)
   simpa using (Equiv.piCongrLeft_apply_apply
     (P := fun _ : Fin 2 => Real) Fin.revPerm x (Fin.rev i))
 
-
+/-- The embedding composed with the reflection in the diagonal; it is an embedding of
+`P.axisSwap`. -/
 noncomputable def PeriodicPlaneEmbedding.axisSwap
     (E : PeriodicPlaneEmbedding P) : PeriodicPlaneEmbedding P.axisSwap where
   vertex := E.vertex
@@ -104,33 +139,38 @@ noncomputable def PeriodicPlaneEmbedding.axisSwap
   edgeArc_disjoint := E.edgeArc_disjoint
   edgeArc_locallyFinite := E.edgeArc_locallyFinite
 
-@[simp] theorem PeriodicPlaneEmbedding.axisSwap_vertexCoord
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.axisSwap_vertexCoord
     (E : PeriodicPlaneEmbedding P) (x : V) (i : Fin 2) :
     E.axisSwap.vertexCoord x i = E.vertexCoord x (Fin.rev i) := by
   simp [PeriodicPlaneEmbedding.vertexCoord, PeriodicPlaneEmbedding.axisSwap]
 
-@[simp] theorem PeriodicPlaneEmbedding.axisSwap_vertexCoord_zero
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.axisSwap_vertexCoord_zero
     (E : PeriodicPlaneEmbedding P) (x : V) :
     E.axisSwap.vertexCoord x 0 = E.vertexCoord x 1 := by
   rfl
 
-@[simp] theorem PeriodicPlaneEmbedding.axisSwap_vertexCoord_one
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.axisSwap_vertexCoord_one
     (E : PeriodicPlaneEmbedding P) (x : V) :
     E.axisSwap.vertexCoord x 1 = E.vertexCoord x 0 := by
   rfl
 
-
-
-theorem PeriodicGraph.axisSwap_isTranslationInvariant
+omit [Countable V] in
+lemma PeriodicGraph.axisSwap_isTranslationInvariant
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     (hTI : P.IsTranslationInvariant mu) :
     P.axisSwap.IsTranslationInvariant mu := by
   intro z
   exact hTI (siteAxisSwap z)
 
+/-! ## B. Crossings under the swap -/
 
-
-theorem PeriodicPlaneEmbedding.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent
+omit [Countable V] in
+/-- A vertical crossing of `[a, b] × [c, d]` for the swapped embedding is a horizontal crossing of
+`[c, d] × [a, b]` for the original embedding. -/
+lemma PeriodicPlaneEmbedding.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent
     (E : PeriodicPlaneEmbedding P) (a b c d : Real) :
     E.axisSwap.verticalCrossingEvent a b c d ⊆
       E.horizontalCrossingEvent c d a b := by
@@ -176,11 +216,11 @@ theorem PeriodicPlaneEmbedding.axisSwap_verticalCrossingEvent_subset_horizontalC
   rw [E.openSub_rectRestrict_eq_induce]
   exact hreach
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_axisSwap_finiteStripJoinedBoundaryArms
+omit [Countable V] in
+/-- If the joined boundary-arm events of the swapped embedding have probability tending to one, so
+do horizontal crossings of the middle third of the corresponding strips. -/
+lemma
+    PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_axisSwap_finiteStripJoinedBoundaryArms
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real)
@@ -217,8 +257,11 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_axisSwap_finite
         ((2 * c n + d n) / 3) ((c n + 2 * d n) / 3)))
     (fun _ ↦ measureReal_le_one)
 
+/-! ## C. Horizontal crossings with probability tending to one -/
 
-theorem PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_unique
+/-- Under FKG, translation invariance and almost-sure uniqueness, for every `ε > 0` some arbitrarily
+tall rectangle of fixed width is crossed horizontally with probability above `1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -249,9 +292,9 @@ theorem PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_uniqu
   exact E.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent
     r (r + n) ((2 * s + (s + t)) / 3) ((s + 2 * (s + t)) / 3)
 
-
-
-
+/-- Under FKG, translation invariance and almost-sure uniqueness of the infinite cluster, along a
+sequence of heights tending to infinity the horizontal crossing probability of a rectangle of
+fixed width tends to one. -/
 theorem PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -296,8 +339,10 @@ theorem PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_
   intro k
   exact measureReal_le_one
 
-
-
+/-- Dual version of `exists_cofinal_horizontalCrossing_tendsto_one_of_unique`: under FKG for the
+dual measure, translation invariance and almost-sure uniqueness of the dual infinite cluster,
+dual horizontal crossings of tall rectangles have probability tending to one along a sequence of
+heights. -/
 theorem PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
@@ -319,7 +364,7 @@ theorem PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossi
           ((2 * s + (s + t)) / 3) ((s + 2 * (s + t)) / 3)
           r (r + height k))) atTop (nhds 1) := by
   let muDual := D.dualMeasure mu
-  letI : IsProbabilityMeasure muDual := by
+  let : IsProbabilityMeasure muDual := by
     dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
     exact (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance

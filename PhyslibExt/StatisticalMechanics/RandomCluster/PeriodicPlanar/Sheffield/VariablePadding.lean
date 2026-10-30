@@ -6,22 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RotatedBoundaryBands
 
+/-!
+# Matched primal and dual crossings with variable paddings
+
+A primal crossing and the matching dual crossing of a padded rectangle cannot both be likely;
+hence a two-level rectangle array with likely crossings at every level is impossible.
+
+## i. Overview
+
+Crossing events are monotone in the rectangle sides. For a rectangle with paddings at least
+`4B` (where `B` bounds the arc lengths), a primal horizontal crossing of the padded rectangle and
+a dual vertical crossing of the rectangle shrunk horizontally cannot occur together, so their
+probabilities sum to at most `1` (`matchedCrossing_measureReal_add_le_one_of_pads`, and the
+transposed version). A `VariablePadTwoLevelRectangleArray` asks for two levels of rectangles
+whose primal and dual crossing probabilities (in the stated combinations) tend to `1`; these
+requirements contradict the matched bound, which is proved in Lean as
+`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false`. The structure is used as the
+target of proofs by contradiction elsewhere in the lane.
+
+## ii. Key results
+
+- `PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one_of_pads`.
+- `PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false` : no such array exists.
+
+## iii. Table of contents
+
+- A. Monotonicity of crossing events
+- B. Matched crossings
+- C. Two-level arrays with variable paddings
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set SimpleGraph Topology
 
@@ -31,9 +54,11 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Monotonicity of crossing events -/
 
-
-theorem PeriodicPlaneEmbedding.verticalCrossingEvent_mono_horizontal
+omit [Countable V] in
+/-- Vertical crossings persist when the strip is widened on both sides. -/
+lemma PeriodicPlaneEmbedding.verticalCrossingEvent_mono_horizontal
     (E : PeriodicPlaneEmbedding P) {a' a b b' c d : Real}
     (ha : a' ≤ a) (hb : b ≤ b') :
     E.verticalCrossingEvent a b c d ⊆
@@ -76,9 +101,8 @@ theorem PeriodicPlaneEmbedding.verticalCrossingEvent_mono_horizontal
   rw [E.openSub_rectRestrict_eq_induce]
   exact hxy'
 
-
-
-theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_mono_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.horizontalCrossingEvent_mono_vertical
     (E : PeriodicPlaneEmbedding P) {a b c' c d d' : Real}
     (hc : c' ≤ c) (hd : d ≤ d') :
     E.horizontalCrossingEvent a b c d ⊆
@@ -121,9 +145,8 @@ theorem PeriodicPlaneEmbedding.horizontalCrossingEvent_mono_vertical
   rw [E.openSub_rectRestrict_eq_induce]
   exact hxy'
 
-
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_mono_horizontal
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_mono_horizontal
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (a b c d a' b' : Nat -> Real)
@@ -139,9 +162,8 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_mono_horizontal
       (E.verticalCrossingEvent_mono_horizontal (ha n) (hb n)))
     (fun _ => measureReal_le_one)
 
-
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_mono_vertical
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_mono_vertical
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (a b c d c' d' : Nat -> Real)
@@ -157,9 +179,11 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_mono_vertical
       (E.horizontalCrossingEvent_mono_vertical (hc n) (hd n)))
     (fun _ => measureReal_le_one)
 
+/-! ## B. Matched crossings -/
 
-
-theorem PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one_of_pads
+/-- A primal horizontal crossing of the vertically padded rectangle and a dual vertical crossing of
+the horizontally padded rectangle have probabilities summing to at most `1`. -/
+lemma PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one_of_pads
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B xPad yPad a b c d : Real}
@@ -205,9 +229,7 @@ theorem PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one_of_pads
     hVpre
   linarith
 
-
-
-theorem PeriodicPlanarDualPair.matchedVerticalHorizontalCrossing_measureReal_add_le_one_of_pads
+lemma PeriodicPlanarDualPair.matchedVerticalHorizontalCrossing_measureReal_add_le_one_of_pads
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B xPad yPad a b c d : Real}
@@ -253,9 +275,12 @@ theorem PeriodicPlanarDualPair.matchedVerticalHorizontalCrossing_measureReal_add
     hHpre
   linarith
 
+/-! ## C. Two-level arrays with variable paddings -/
 
-
-
+/-- Two levels of padded rectangles in which the primal vertical crossing at level `0`, the primal
+horizontal crossing at level `1`, the better primal crossing linking the levels and the better dual
+crossing at each level all have probability tending to `1`. No such array exists, see
+`VariablePadTwoLevelRectangleArray.false`. -/
 structure PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) (B : Real) where
@@ -317,9 +342,9 @@ structure PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray
         (a1 n) (b1 n) (c1 n + yPad1 n) (d1 n - yPad1 n))))
     atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false
+/-- A variable-pad two-level rectangle array does not exist: its crossing requirements contradict
+the matched primal–dual crossing bound. -/
+lemma PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (data : D.VariablePadTwoLevelRectangleArray mu B) : False := by
@@ -428,6 +453,6 @@ theorem PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false
         have h := _hk n
         dsimp only [K] at h
         omega
-      simp [q, q1, hn, hk1]
+      simp [q, q1, hk1]
 
 end StatMech.FK.PeriodicPlanar

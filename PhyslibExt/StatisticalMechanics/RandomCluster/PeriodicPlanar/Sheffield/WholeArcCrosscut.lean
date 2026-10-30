@@ -6,26 +6,58 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ContinuousRectangleCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCage
 
+/-!
+# Crosscuts of a half-plane meet every escaping path
+
+A path crossing the right half-plane from below a root point to above it, and staying left of a
+far point, must meet every path from the root that stays in the half-plane and reaches the far
+point. Applied to open primal and dual arcs this rules out certain primal/dual configurations.
+
+## i. Overview
+
+Section A proves the discrete statement on `ℤ²`: close the crosscut `![α, c] → ![α, d]` into a
+loop by the return path through the column `α - 1`; the root `![α, e]` (`c < e < d`) has odd ray
+count (winding parity) with respect to this loop, a far endpoint outside the loop's range has
+even ray count, and parity is constant along a walk avoiding the loop, so the escape walk meets
+the crosscut.
+
+Section B transfers this to continuous paths in `ℝ²` by sampling the paths on finer and finer
+grids (the grid walks of `ContinuousRectangleCrossing`) and passing to the limit, using
+compactness of `[0, 1]`: `wholeArc_intersects_escape_of_outside`.
+
+Section C applies it to a primal/dual pair: an open primal simple arc in the half-plane joining
+two boundary points and an open dual simple arc from a boundary point between them to a point
+outside the region swept by the primal arc would have to meet, which planar duality forbids.
+
+## ii. Key results
+
+- `StatMech.Lattice.halfPlane_walks_intersect`,
+  `StatMech.Lattice.halfPlane_walks_intersect_of_endpoint_outside` : unconditional.
+- `StatMech.ContinuousHalfPlaneCrosscut.wholeArc_intersects_escape_of_outside` and its variants :
+  unconditional.
+- `PeriodicPlanarDualPair.no_open_primal_dual_of_wholeArcBoundaryIncidence`,
+  `PeriodicPlanarDualPair.no_open_primal_dual_of_wholeArcTraceIncidence` : conclusion `False`,
+  conditional on the geometric incidence data (`WholeArcBoundaryIncidence`,
+  `WholeArcTraceIncidence`) together with openness of the two arcs. They state that such
+  open primal/dual pairs do not exist.
+
+## iii. Table of contents
+
+- A. Lattice crosscuts and winding parity
+- B. Continuous crosscuts
+- C. Open primal and dual arcs
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph Topology
 open scoped unitInterval
@@ -36,8 +68,10 @@ namespace Lattice
 
 open ContinuousRectangleCrossing
 
+/-! ## A. Lattice crosscuts and winding parity -/
 
-
+/-- The lattice walk from `![α, d]` to `![α, c]` through the column `α - 1`: one step left, down the
+column, one step right. It closes a crosscut of the half-plane `{α ≤ x₀}` into a loop. -/
 def halfPlaneReturnPath (alpha c d : Int) (hcd : c <= d) :
     (hypercubicLattice 2).Walk ![alpha, d] ![alpha, c] :=
   let top : (hypercubicLattice 2).Walk ![alpha, d] ![alpha - 1, d] :=
@@ -51,9 +85,7 @@ def halfPlaneReturnPath (alpha c d : Int) (hcd : c <= d) :
       (by ext i; fin_cases i <;> simp)
   top.append (side.append bottom)
 
-
-
-theorem jec_rayCount_halfPlaneReturnPath
+lemma jec_rayCount_halfPlaneReturnPath
     (alpha c d e : Int) (hcd : c <= d) (hce : c < e) (hed : e < d) :
     jec_rayCount ![alpha, e] (halfPlaneReturnPath alpha c d hcd) = 1 := by
   unfold halfPlaneReturnPath
@@ -65,9 +97,7 @@ theorem jec_rayCount_halfPlaneReturnPath
   simp [h]
   omega
 
-
-
-theorem mem_halfPlaneReturnPath_of_coord_ge
+lemma mem_halfPlaneReturnPath_of_coord_ge
     (alpha c d : Int) (hcd : c <= d) {z : Site 2}
     (hz : z ∈ (halfPlaneReturnPath alpha c d hcd).support)
     (hz0 : alpha <= z 0) : z = ![alpha, d] ∨ z = ![alpha, c] := by
@@ -92,9 +122,7 @@ theorem mem_halfPlaneReturnPath_of_coord_ge
     · simpa using h0
     · simpa using h1
 
-
-
-theorem halfPlaneReturnPath_coord_le
+lemma halfPlaneReturnPath_coord_le
     (alpha c d : Int) (hcd : c <= d) {z : Site 2}
     (hz : z ∈ (halfPlaneReturnPath alpha c d hcd).support) :
     z 0 <= alpha := by
@@ -107,9 +135,7 @@ theorem halfPlaneReturnPath_coord_le
     omega
   · simpa using (jec_hsegRight_support c (alpha - 1) 1 hz).2.2
 
-
-
-theorem halfPlaneReturnPath_vertical_bounds
+lemma halfPlaneReturnPath_vertical_bounds
     (alpha c d : Int) (hcd : c <= d) {z : Site 2}
     (hz : z ∈ (halfPlaneReturnPath alpha c d hcd).support) :
     c <= z 1 ∧ z 1 <= d := by
@@ -125,8 +151,7 @@ theorem halfPlaneReturnPath_vertical_bounds
   · have h1 := (jec_hsegRight_support c (alpha - 1) 1 hz).1
     omega
 
-
-theorem jec_rayCount_eq_zero_of_support_below
+lemma jec_rayCount_eq_zero_of_support_below
     (z : Site 2) {x y : Site 2}
     (w : (hypercubicLattice 2).Walk x y)
     (h : ∀ p ∈ w.support, p 1 < z 1) :
@@ -142,8 +167,7 @@ theorem jec_rayCount_eq_zero_of_support_below
   rw [jec_rayEdge_mk]
   omega
 
-
-theorem jec_rayCount_eq_zero_of_support_above
+lemma jec_rayCount_eq_zero_of_support_above
     (z : Site 2) {x y : Site 2}
     (w : (hypercubicLattice 2).Walk x y)
     (h : ∀ p ∈ w.support, z 1 < p 1) :
@@ -159,9 +183,7 @@ theorem jec_rayCount_eq_zero_of_support_above
   rw [jec_rayEdge_mk]
   omega
 
-
-
-theorem jec_rayParity_eq_along_walk {a x y : Site 2}
+lemma jec_rayParity_eq_along_walk {a x y : Site 2}
     (loop : (hypercubicLattice 2).Walk a a)
     (p : (hypercubicLattice 2).Walk x y)
     (hdisj : ∀ z, z ∈ p.support -> z ∉ loop.support) :
@@ -176,11 +198,9 @@ theorem jec_rayParity_eq_along_walk {a x y : Site 2}
       exact (jec_localConstancy loop hxy hx hy).trans
         (ih (fun w hw => hdisj w (by simp [hw])))
 
-
-
-
-
-theorem halfPlane_walks_intersect
+/-- A lattice crosscut from `![α, c]` to `![α, d]` in the half-plane `{α ≤ x₀}` and left of `β`
+meets every walk in the half-plane from `![α, e]` (`c < e < d`) to a point `![β, f]`. -/
+lemma halfPlane_walks_intersect
     (alpha c d e beta f : Int) (hce : c < e) (hed : e < d)
     (crosscut : (hypercubicLattice 2).Walk ![alpha, c] ![alpha, d])
     (escape : (hypercubicLattice 2).Walk ![alpha, e] ![beta, f])
@@ -235,8 +255,8 @@ theorem halfPlane_walks_intersect
       omega
   exact hstartOdd ((jec_rayParity_eq_along_walk loop escape hescapeLoop).2 hendEven)
 
-
-
+/-- A lattice crosscut of the half-plane meets every half-plane walk from a root between its
+endpoints to a point lying to its right, above it, or below it. -/
 theorem halfPlane_walks_intersect_of_endpoint_outside
     (alpha c d e beta f : Int) (hce : c < e) (hed : e < d)
     (crosscut : (hypercubicLattice 2).Walk ![alpha, c] ![alpha, d])
@@ -324,11 +344,11 @@ end Lattice
 
 namespace ContinuousHalfPlaneCrosscut
 
-open Lattice ContinuousRectangleCrossing
+open StatMech.Lattice ContinuousRectangleCrossing
 
+/-! ## B. Continuous crosscuts -/
 
-
-theorem gridConnector_coord_ge {alpha : Int} {x y z : Site 2}
+lemma gridConnector_coord_ge {alpha : Int} {x y z : Site 2}
     (hx : alpha <= x 0) (hy : alpha <= y 0)
     (hz : z ∈ (gridConnector x y).support) : alpha <= z 0 := by
   rw [gridConnector_mem_support] at hz
@@ -339,17 +359,14 @@ theorem gridConnector_coord_ge {alpha : Int} {x y z : Site 2}
     simpa using hat
   · simpa using hy
 
-
-theorem gridWalk_coord_ge {alpha : Int} {g : Nat -> Site 2} {N : Nat}
+lemma gridWalk_coord_ge {alpha : Int} {g : Nat -> Site 2} {N : Nat}
     (hg : ∀ k, k <= N -> alpha <= g k 0) {z : Site 2}
     (hz : z ∈ (gridWalk g N).support) : alpha <= z 0 := by
   rcases gridWalk_mem_support_cases g N z hz with rfl | ⟨k, hk, hzk⟩
   · exact hg 0 (Nat.zero_le _)
   · exact gridConnector_coord_ge (hg k hk.le) (hg (k + 1) hk) hzk
 
-
-
-theorem sampledGrid_walk_coord_ge_source
+lemma sampledGrid_walk_coord_ge_source
     {p q : Fin 2 -> Real} (gamma : Path p q)
     (hgamma : ∀ t : unitInterval, p 0 <= gamma t 0)
     {n N : Nat} (hN : 0 < N) {z : Site 2}
@@ -361,9 +378,7 @@ theorem sampledGrid_walk_coord_ge_source
   apply Int.floor_mono
   exact mul_le_mul_of_nonneg_left (hgamma _) (Nat.cast_nonneg n)
 
-
-
-theorem gridFloor_coord_lt_of_two_mesh_lt
+lemma gridFloor_coord_lt_of_two_mesh_lt
     {n : Nat} (hn : 0 < n) {p q : Fin 2 -> Real} {i : Fin 2}
     (hgap : 2 / (n : Real) < q i - p i) :
     gridFloor n p i < gridFloor n q i := by
@@ -379,12 +394,7 @@ theorem gridFloor_coord_lt_of_two_mesh_lt
   rw [div_lt_div_iff_of_pos_right hnR] at hembed
   exact_mod_cast hembed
 
-
-
-
-
-
-theorem wholeArc_intersects_escape_of_margin_outside
+lemma wholeArc_intersects_escape_of_margin_outside
     {lo hi root far : Fin 2 -> Real}
     (crosscut : Path lo hi) (escape : Path root far)
     (hloRootX : lo 0 = root 0) (hhiRootX : hi 0 = root 0)
@@ -586,9 +596,7 @@ theorem wholeArc_intersects_escape_of_margin_outside
       _ = 6 / (n : Real) := by ring
   linarith
 
-
-
-theorem wholeArc_intersects_escape
+lemma wholeArc_intersects_escape
     {lo hi root far : Fin 2 -> Real}
     (crosscut : Path lo hi) (escape : Path root far)
     (hloRootX : lo 0 = root 0) (hhiRootX : hi 0 = root 0)
@@ -602,9 +610,7 @@ theorem wholeArc_intersects_escape
     hloRootX hhiRootX hloRootY hrootHiY hcrossLeft hescapeLeft
       hmargin (Or.inl hfar)
 
-
-
-theorem wholeArc_intersects_escape_of_far
+lemma wholeArc_intersects_escape_of_far
     {lo hi root far : Fin 2 -> Real}
     (crosscut : Path lo hi) (escape : Path root far)
     (hloRootX : lo 0 = root 0) (hhiRootX : hi 0 = root 0)
@@ -628,8 +634,9 @@ theorem wholeArc_intersects_escape_of_far
   dsimp only [margin]
   linarith [hfar tmax]
 
-
-
+/-- A continuous crosscut of the half-plane `{lo₀ ≤ x₀}` from `lo` to `hi` meets every half-plane
+path from a root between `lo` and `hi` on the boundary line to a point lying strictly to the
+right of, above, or below the whole crosscut. -/
 theorem wholeArc_intersects_escape_of_outside
     {lo hi root far : Fin 2 -> Real}
     (crosscut : Path lo hi) (escape : Path root far)
@@ -686,11 +693,9 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 namespace PeriodicPlanarDualPair
 
+/-! ## C. Open primal and dual arcs -/
 
-
-
-
-theorem exists_open_graphWalk_to_exposedRectExit
+lemma exists_open_graphWalk_to_exposedRectExit
     (D : PeriodicPlanarDualPair P Pdual)
     (eta : ConfigSpace (Sym2 W))
     {r right bottom top : Real} {x : W}
@@ -735,9 +740,9 @@ theorem exists_open_graphWalk_to_exposedRectExit
     · have hwz : w = z := by simpa using hw
       exact hwz.symm ▸ hzHalfPlane
 
-
-
-
+/-- Placement of a primal simple arc `p` and a dual simple arc `q`: `p` starts and ends on the
+vertical line through the root `a` of `q`, below and above it, and both arcs stay in the right
+half-plane of that line. -/
 structure WholeArcBoundaryPlacement
     (D : PeriodicPlanarDualPair P Pdual)
     {x y : V} {a b : W}
@@ -759,8 +764,8 @@ structure WholeArcBoundaryPlacement
       D.dualEmbedding.coordinates
         (D.dualEmbedding.simpleWalkArc q t) 0
 
-
-
+/-- A boundary placement in which the dual endpoint lies strictly to the right of, above, or below
+the whole primal arc. -/
 structure WholeArcBoundaryIncidence
     (D : PeriodicPlanarDualPair P Pdual)
     {x y : V} {a b : W}
@@ -780,9 +785,7 @@ structure WholeArcBoundaryIncidence
         D.primalEmbedding.coordinates
           (D.primalEmbedding.simpleWalkArc p t) 1)
 
-
-
-theorem WholeArcBoundaryPlacement.toIncidence_of_exposedEndpoint
+lemma WholeArcBoundaryPlacement.toIncidence_of_exposedEndpoint
     (D : PeriodicPlanarDualPair P Pdual)
     {x y : V} {a b : W}
     {p : P.graph.Walk x y} {q : Pdual.graph.Walk a b}
@@ -814,10 +817,9 @@ theorem WholeArcBoundaryPlacement.toIncidence_of_exposedEndpoint
     intro t
     exact (hcrossTop t).trans htop
 
-
-
-
-theorem no_open_primal_dual_of_wholeArcBoundaryIncidence
+/-- An open primal simple arc and an open dual simple arc in boundary incidence cannot exist: the
+conclusion is `False`. -/
+lemma no_open_primal_dual_of_wholeArcBoundaryIncidence
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {a b : W}
@@ -852,10 +854,9 @@ theorem no_open_primal_dual_of_wholeArcBoundaryIncidence
   exact Set.disjoint_left.1 hdisjoint
     ⟨t, rfl⟩ ⟨s, hphysical.symm⟩
 
-
-
-
-
+/-- Coordinate traces of a primal and a dual simple arc in the placement of the continuous crosscut
+lemma: a primal trace crossing the half-plane around the dual root and a dual trace escaping
+beyond the primal trace. -/
 structure WholeArcTraceIncidence
     (D : PeriodicPlanarDualPair P Pdual)
     {x y : V} {a b : W}
@@ -885,8 +886,8 @@ structure WholeArcTraceIncidence
     (∀ t : unitInterval, primalTrace t 1 < far 1) ∨
     (∀ t : unitInterval, far 1 < primalTrace t 1)
 
-
-
+/-- An open primal simple arc and an open dual simple arc with traces in crosscut position cannot
+exist: the conclusion is `False`. -/
 theorem no_open_primal_dual_of_wholeArcTraceIncidence
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))

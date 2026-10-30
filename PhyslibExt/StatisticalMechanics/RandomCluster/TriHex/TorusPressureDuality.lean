@@ -6,21 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusComparison
+
+/-!
+# Pressure duality between the triangular and hexagonal tori
+
+The free energies per site of the random-cluster model on the triangular torus at `(p, q)` and on
+the hexagonal torus at `(p*, q)` agree up to explicit terms and an error that vanishes as
+`L → ∞`.
+
+## i. Overview
+
+The partition functions are positive for `0 < p < 1`, `q > 0`. The pressure duality residual
+`triHexTorusPressureDualityResidual L p q` is the difference of the two sides of the duality
+relation for `log Z / L²`; it equals `log (Z_defect / Z_dual) / L²`, which lies in
+`[0, 2 log q / L²]` for `q ≥ 1`. Hence it tends to `0`
+(`triHexTorusPressureDualityResidual_tendsto_zero`), unconditionally for `0 < p < 1`, `q ≥ 1`.
+
+## ii. Key results
+
+- `triHexTorusPrimalPartitionSum_pos`, `triHexTorusDualPartitionSum_pos`.
+- `triHexTorusPressureDualityResidual_tendsto_zero` : pressure duality in the thermodynamic
+  limit.
+
+## iii. Table of contents
+
+- A. Positivity of the partition functions
+- B. The partition-function correction
+- C. The pressure duality residual
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
 
 @[expose] public section
 
@@ -30,7 +52,9 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
-theorem triHexTorusPrimalPartitionSum_pos
+/-! ## A. Positivity of the partition functions -/
+
+lemma triHexTorusPrimalPartitionSum_pos
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 < triHexTorusPrimalPartitionSum L p q := by
@@ -39,7 +63,7 @@ theorem triHexTorusPrimalPartitionSum_pos
     (fun omega _ => FK.fkWeight_pos _ hp hp1 hq omega)
     Finset.univ_nonempty
 
-theorem triHexTorusDualPartitionSum_pos
+lemma triHexTorusDualPartitionSum_pos
     (L : ℕ) [Fact (2 < L)] {pDual q : ℝ}
     (hp : 0 < pDual) (hp1 : pDual < 1) (hq : 0 < q) :
     0 < triHexTorusDualPartitionSum L pDual q := by
@@ -49,7 +73,7 @@ theorem triHexTorusDualPartitionSum_pos
       (triHexTorusDualConfig L omega))
     Finset.univ_nonempty
 
-theorem triHexTorusDefectWeightedDualPartitionSum_pos
+lemma triHexTorusDefectWeightedDualPartitionSum_pos
     (L : ℕ) [Fact (2 < L)] {pDual q : ℝ}
     (hp : 0 < pDual) (hp1 : pDual < 1) (hq : 0 < q) :
     0 < triHexTorusDefectWeightedDualPartitionSum L pDual q := by
@@ -58,9 +82,9 @@ theorem triHexTorusDefectWeightedDualPartitionSum_pos
     (FK.fkWeight_pos _ hp hp1 hq (triHexTorusDualConfig L omega))
     (zpow_pos hq _)) Finset.univ_nonempty
 
+/-! ## B. The partition-function correction -/
 
-
-theorem triHexTorus_partitionCorrection_ratio_bounds
+lemma triHexTorus_partitionCorrection_ratio_bounds
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     1 ≤ triHexTorusDefectWeightedDualPartitionSum L
@@ -80,8 +104,7 @@ theorem triHexTorus_partitionCorrection_ratio_bounds
   · rw [div_le_iff₀ hD]
     simpa [mul_comm] using hbounds.2
 
-
-theorem triHexTorus_partitionCorrection_log_bounds
+lemma triHexTorus_partitionCorrection_log_bounds
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     0 ≤ Real.log
@@ -112,7 +135,7 @@ theorem triHexTorus_partitionCorrection_log_bounds
       hratioPos hq2 hb.2
     simpa [Real.log_pow] using hmono
 
-
+/-- `log (Z_defect / Z_dual) / L²` on the torus of side `L = n + 3`. -/
 noncomputable def triHexTorusPartitionCorrectionLogDensity
     (p q : ℝ) (n : ℕ) : ℝ := by
   let L := n + 3
@@ -123,8 +146,8 @@ noncomputable def triHexTorusPartitionCorrectionLogDensity
       triHexTorusDualPartitionSum L (BeffaraDC.dualParam p q) q) /
     (L ^ 2 : ℕ)
 
-
-theorem triHexTorus_partitionCorrection_logDensity_tendsto_zero
+/-- The partition-function correction per site vanishes as `L → ∞`. -/
+lemma triHexTorus_partitionCorrection_logDensity_tendsto_zero
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (triHexTorusPartitionCorrectionLogDensity p q)
       atTop (nhds 0) := by
@@ -135,7 +158,7 @@ theorem triHexTorus_partitionCorrection_logDensity_tendsto_zero
         C / ((n + 1 : ℕ) : ℝ) := by
     intro n
     let L := n + 3
-    letI : Fact (2 < L) := ⟨by simp [L]⟩
+    let : Fact (2 < L) := ⟨by simp [L]⟩
     have hlog :=
       (triHexTorus_partitionCorrection_log_bounds L hp hp1 hq).2
     have hden0 : 0 ≤ ((L ^ 2 : ℕ) : ℝ) := by positivity
@@ -161,7 +184,7 @@ theorem triHexTorus_partitionCorrection_logDensity_tendsto_zero
   apply squeeze_zero
   · intro n
     let L := n + 3
-    letI : Fact (2 < L) := ⟨by simp [L]⟩
+    let : Fact (2 < L) := ⟨by simp [L]⟩
     unfold triHexTorusPartitionCorrectionLogDensity
     dsimp only
     exact div_nonneg
@@ -170,7 +193,10 @@ theorem triHexTorus_partitionCorrection_logDensity_tendsto_zero
   · exact hub
   · exact hupper
 
+/-! ## C. The pressure duality residual -/
 
+/-- The difference of the two sides of the duality relation for `log Z / L²` on the torus of side
+`L`. -/
 noncomputable def triHexTorusPressureDualityResidual
     (L : ℕ) [Fact (2 < L)] (p q : ℝ) : ℝ :=
   let pDual := BeffaraDC.dualParam p q
@@ -183,9 +209,8 @@ noncomputable def triHexTorusPressureDualityResidual
       Real.log (triHexTorusDualPartitionSum L pDual q))) /
     (L ^ 2 : ℕ)
 
-
-
-theorem triHexTorusPressureDualityResidual_eq_partitionCorrection
+/-- The pressure residual equals the partition-function correction per site. -/
+lemma triHexTorusPressureDualityResidual_eq_partitionCorrection
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     triHexTorusPressureDualityResidual L p q =
@@ -232,9 +257,8 @@ theorem triHexTorusPressureDualityResidual_eq_partitionCorrection
         ((L ^ 2 : ℕ) : ℝ) = _
   rw [hres]
 
-
-
-
+/-- Pressure duality: the residual of the triangular–hexagonal duality relation for the free energy
+per site tends to `0` as `L → ∞`. -/
 theorem triHexTorusPressureDualityResidual_tendsto_zero
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun n : ℕ => (by
@@ -246,7 +270,7 @@ theorem triHexTorusPressureDualityResidual_tendsto_zero
     hp hp1 hq).congr'
   filter_upwards [] with n
   let L := n + 3
-  letI : Fact (2 < L) := ⟨by simp [L]⟩
+  let : Fact (2 < L) := ⟨by simp [L]⟩
   exact (triHexTorusPressureDualityResidual_eq_partitionCorrection
     L hp hp1 hq).symm
 

@@ -6,19 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Graph
+
+/-!
+# Coarse geometry of the triangular and hexagonal lattices
+
+Connectivity of the triangular and hexagonal lattice graphs and comparison of their graph
+distances with box radii and with each other.
+
+## i. Overview
+
+On `Site 2 = ℤ²` with the triangular steps `(1, 0), (0, 1), (-1, 1)`, every axis segment is a
+triangular path, so `triangularGraph` is connected and its graph distance is at most the
+`ℓ¹` norm of the displacement; conversely one step moves at most one unit in sup norm, so
+`y - x ∈ box 2 (dist x y)`. Each triangular step is the difference of two hexagonal steps, so a
+triangular walk lifts to a hexagonal walk of twice the length between black vertices; with the
+anchor map `hexToTriAnchor` (a hexagonal vertex to a nearby black vertex's site) this gives
+`hexagonalGraph` connected and `d_hex(u, v) ≤ 2 d_tri(anchor u, anchor v) + 2`. All results are
+unconditional.
+
+## ii. Key results
+
+- `triangularGraph_connected`, `hexagonalGraph_connected` : both lattices are connected.
+  Unconditional.
+- `triangular_sub_mem_box_dist`, `triangular_dist_le_two_mul_of_sub_mem_box` : triangular
+  distance and box radius are comparable up to a factor `2`. Unconditional.
+- `half_hexagonal_dist_le_triangular_anchor_dist_add_one` : `d_hex / 2 ≤ d_tri ∘ anchor + 1`.
+  Unconditional.
+
+## iii. Table of contents
+
+- A. Triangular lattice: connectivity and distance
+- B. Lifting triangular walks to the hexagonal lattice
+- C. Hexagonal lattice: connectivity and distance comparison
+
+## iv. References
+
+- G. Grimmett, *Percolation*, 2nd ed., Springer (1999), §11.9.
+-/
 
 @[expose] public section
 
@@ -28,11 +55,11 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
+/-! ## A. Triangular lattice: connectivity and distance -/
 
-
-private theorem triangular_reachable_axis_le
+private lemma triangular_reachable_axis_le
     (x : Site 2) (j : Fin 2) (a : Int) (n : Nat) :
     triangularGraph.Reachable (Function.update x j a)
       (Function.update x j (a + n)) := by
@@ -49,8 +76,7 @@ private theorem triangular_reachable_axis_le
         ext k
         fin_cases k <;> simp [triangularStep]
 
-
-private theorem triangular_reachable_axis
+private lemma triangular_reachable_axis
     (x : Site 2) (j : Fin 2) (a b : Int) :
     triangularGraph.Reachable (Function.update x j a)
       (Function.update x j b) := by
@@ -60,8 +86,7 @@ private theorem triangular_reachable_axis
   · obtain ⟨n, rfl⟩ := Int.le.dest hab
     exact (triangular_reachable_axis_le x j b n).symm
 
-
-theorem triangularGraph_connected : triangularGraph.Connected := by
+lemma triangularGraph_connected : triangularGraph.Connected := by
   rw [SimpleGraph.connected_iff]
   refine ⟨?_, ⟨0⟩⟩
   intro x y
@@ -78,8 +103,7 @@ theorem triangularGraph_connected : triangularGraph.Connected := by
   rw [hzy] at h1
   exact h0.trans h1
 
-
-theorem triangular_adj_sub_mem_box_one
+lemma triangular_adj_sub_mem_box_one
     {x y : Site 2} (hxy : triangularGraph.Adj x y) :
     y - x ∈ box 2 1 := by
   rw [triangularGraph_adj] at hxy
@@ -94,9 +118,7 @@ theorem triangular_adj_sub_mem_box_one
     intro j
     fin_cases i <;> fin_cases j <;> norm_num [triangularStep]
 
-
-
-theorem triangular_walk_sub_mem_box
+lemma triangular_walk_sub_mem_box
     {x y : Site 2} (w : triangularGraph.Walk x y) :
     y - x ∈ box 2 w.length := by
   induction w with
@@ -116,14 +138,12 @@ theorem triangular_walk_sub_mem_box
         _ ≤ w.length + 1 := Nat.add_le_add (ih j) (hstep j)
         _ = (Walk.cons hxy w).length := by simp [Nat.add_comm]
 
-
-theorem triangular_sub_mem_box_dist (x y : Site 2) :
+lemma triangular_sub_mem_box_dist (x y : Site 2) :
     y - x ∈ box 2 (triangularGraph.dist x y) := by
   obtain ⟨w, hw⟩ := triangularGraph_connected.exists_walk_length_eq_dist x y
   simpa [hw] using triangular_walk_sub_mem_box w
 
-
-private theorem exists_triangular_axis_walk_le
+private lemma exists_triangular_axis_walk_le
     (x : Site 2) (j : Fin 2) (a : Int) (n : Nat) :
     ∃ w : triangularGraph.Walk (Function.update x j a)
         (Function.update x j (a + n)), w.length = n := by
@@ -148,9 +168,7 @@ private theorem exists_triangular_axis_walk_le
       refine ⟨w.concat hadj, ?_⟩
       simp [hw]
 
-
-
-private theorem exists_triangular_axis_walk
+private lemma exists_triangular_axis_walk
     (x : Site 2) (j : Fin 2) (a b : Int) :
     ∃ w : triangularGraph.Walk (Function.update x j a)
         (Function.update x j b), w.length = (b - a).natAbs := by
@@ -164,8 +182,7 @@ private theorem exists_triangular_axis_walk
     refine ⟨w.reverse, ?_⟩
     simpa using hw
 
-
-private theorem exists_triangular_axis_walk_from
+private lemma exists_triangular_axis_walk_from
     (x : Site 2) (j : Fin 2) (b : Int) :
     ∃ w : triangularGraph.Walk x (Function.update x j b),
       w.length = (b - x j).natAbs := by
@@ -174,8 +191,7 @@ private theorem exists_triangular_axis_walk_from
   rw [hstart] at h
   exact h
 
-
-private theorem exists_triangular_coordinate_walk (x y : Site 2) :
+private lemma exists_triangular_coordinate_walk (x y : Site 2) :
     ∃ w : triangularGraph.Walk x y,
       w.length = (y 0 - x 0).natAbs + (y 1 - x 1).natAbs := by
   obtain ⟨w0, hw0⟩ := exists_triangular_axis_walk_from x 0 (y 0)
@@ -193,17 +209,13 @@ private theorem exists_triangular_coordinate_walk (x y : Site 2) :
   rw [hend] at hwalk
   exact hwalk
 
-
-
-theorem triangular_dist_le_coordinate_sum (x y : Site 2) :
+lemma triangular_dist_le_coordinate_sum (x y : Site 2) :
     triangularGraph.dist x y ≤
       (y 0 - x 0).natAbs + (y 1 - x 1).natAbs := by
   obtain ⟨w, hw⟩ := exists_triangular_coordinate_walk x y
   exact (SimpleGraph.dist_le w).trans_eq hw
 
-
-
-theorem triangular_dist_le_two_mul_of_sub_mem_box
+lemma triangular_dist_le_two_mul_of_sub_mem_box
     {x y : Site 2} {n : Nat} (hxy : y - x ∈ box 2 n) :
     triangularGraph.dist x y ≤ 2 * n := by
   have h0 := hxy 0
@@ -212,23 +224,23 @@ theorem triangular_dist_le_two_mul_of_sub_mem_box
   have hdist := triangular_dist_le_coordinate_sum x y
   omega
 
+/-! ## B. Lifting triangular walks to the hexagonal lattice -/
 
+/-- The hexagonal step entering the lift of triangular step `i`. -/
 private def triHexLiftEntry (i : Fin 3) : Fin 3 :=
   ![2, 2, 1] i
 
-
+/-- The hexagonal step leaving the lift of triangular step `i`. -/
 private def triHexLiftExit (i : Fin 3) : Fin 3 :=
   ![1, 0, 0] i
 
-private theorem triangularStep_eq_hexagonalStep_sub (i : Fin 3) :
+private lemma triangularStep_eq_hexagonalStep_sub (i : Fin 3) :
     triangularStep i =
       hexagonalStep (triHexLiftEntry i) -
         hexagonalStep (triHexLiftExit i) := by
   fin_cases i <;> decide
 
-
-
-private theorem exists_hexagonal_walk_of_triangular_step
+private lemma exists_hexagonal_walk_of_triangular_step
     {x y : Site 2} (i : Fin 3) (h : y - x = triangularStep i) :
     ∃ w : hexagonalGraph.Walk (x, false) (y, false), w.length = 2 := by
   let m := x + hexagonalStep (triHexLiftEntry i)
@@ -247,8 +259,7 @@ private theorem exists_hexagonal_walk_of_triangular_step
         abel
   exact ⟨Walk.cons hxm (Walk.cons hmy Walk.nil), by simp⟩
 
-
-private theorem exists_hexagonal_walk_of_triangular_adj
+private lemma exists_hexagonal_walk_of_triangular_adj
     {x y : Site 2} (hxy : triangularGraph.Adj x y) :
     ∃ w : hexagonalGraph.Walk (x, false) (y, false), w.length = 2 := by
   rw [triangularGraph_adj] at hxy
@@ -257,8 +268,7 @@ private theorem exists_hexagonal_walk_of_triangular_adj
   · obtain ⟨w, hw⟩ := exists_hexagonal_walk_of_triangular_step i h
     exact ⟨w.reverse, by simpa using hw⟩
 
-
-private theorem exists_hexagonal_walk_of_triangular_walk
+private lemma exists_hexagonal_walk_of_triangular_walk
     {x y : Site 2} (w : triangularGraph.Walk x y) :
     ∃ W : hexagonalGraph.Walk (x, false) (y, false),
       W.length = 2 * w.length := by
@@ -271,12 +281,14 @@ private theorem exists_hexagonal_walk_of_triangular_walk
       rw [Walk.length_append, he, hW, Walk.length_cons]
       omega
 
+/-! ## C. Hexagonal lattice: connectivity and distance comparison -/
 
+/-- The triangular-lattice site anchoring a hexagonal vertex: its own site if black, the site of a
+neighboring black vertex if white. -/
 def hexToTriAnchor (u : HexVertex) : Site 2 :=
   if u.2 then u.1 - hexagonalStep 0 else u.1
 
-
-private theorem exists_hexagonal_walk_to_anchor (u : HexVertex) :
+private lemma exists_hexagonal_walk_to_anchor (u : HexVertex) :
     ∃ w : hexagonalGraph.Walk u (hexToTriAnchor u, false),
       w.length ≤ 1 := by
   rcases u with ⟨x, b⟩
@@ -291,8 +303,7 @@ private theorem exists_hexagonal_walk_to_anchor (u : HexVertex) :
         simp [hexToTriAnchor]
       exact ⟨Walk.cons h Walk.nil, by simp⟩
 
-
-theorem hexagonalGraph_connected : hexagonalGraph.Connected := by
+lemma hexagonalGraph_connected : hexagonalGraph.Connected := by
   rw [SimpleGraph.connected_iff]
   refine ⟨?_, ⟨(0, false)⟩⟩
   intro u v
@@ -303,9 +314,7 @@ theorem hexagonalGraph_connected : hexagonalGraph.Connected := by
   obtain ⟨wh, _⟩ := exists_hexagonal_walk_of_triangular_walk wt
   exact ⟨wu.append (wh.append wv.reverse)⟩
 
-
-
-theorem hexagonal_dist_le_two_mul_triangular_anchor_dist_add_two
+lemma hexagonal_dist_le_two_mul_triangular_anchor_dist_add_two
     (u v : HexVertex) :
     hexagonalGraph.dist u v ≤
       2 * triangularGraph.dist (hexToTriAnchor u) (hexToTriAnchor v) + 2 := by
@@ -321,8 +330,7 @@ theorem hexagonal_dist_le_two_mul_triangular_anchor_dist_add_two
     omega
   exact (SimpleGraph.dist_le (wu.append (wh.append wv.reverse))).trans hlen
 
-
-theorem half_hexagonal_dist_le_triangular_anchor_dist_add_one
+lemma half_hexagonal_dist_le_triangular_anchor_dist_add_one
     (u v : HexVertex) :
     (1 / 2 : Real) * (hexagonalGraph.dist u v : Real) ≤
       (triangularGraph.dist (hexToTriAnchor u) (hexToTriAnchor v) : Real) + 1 := by
@@ -332,9 +340,7 @@ theorem half_hexagonal_dist_le_triangular_anchor_dist_add_one
     exact_mod_cast h
   linarith
 
-
-
-theorem hexagonal_dist_le_four_mul_add_two_of_anchor_sub_mem_box
+lemma hexagonal_dist_le_four_mul_add_two_of_anchor_sub_mem_box
     {u v : HexVertex} {n : Nat}
     (huv : hexToTriAnchor v - hexToTriAnchor u ∈ box 2 n) :
     hexagonalGraph.dist u v ≤ 4 * n + 2 := by

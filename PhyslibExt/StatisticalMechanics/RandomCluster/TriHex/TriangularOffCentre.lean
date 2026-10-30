@@ -6,27 +6,69 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularSharpness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryEdgeAbsorption
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedDomainActive
 
+/-!
+# Translated triangular boxes and domination by wired boundary conditions
+
+Translated boxes of the triangular lattice, translation invariance of their wired crossing
+probabilities, and the comparison showing that a wired FK measure on a large box, seen on a
+translated sub-box, is dominated by the wired measure of the sub-box.
+
+## i. Overview
+
+The first part is generic: for an induced subgraph `G[Sin] ⊆ G[Sout]` (inclusion `iota`) whose
+outer boundary is away from `Sin`, the wiring induced on `Sin` by any outside configuration is
+contained in the clique on the inner boundary (`ocd_comapInducedWiring_le`); also under a graph
+automorphism (`ocd_comapInducedWiring_le_equiv`).
+
+For the triangular lattice, `triangularTransBox R x` is the box of radius `R` centered at `x`, with
+its graph, boundary, shells and center. Translation by `x` is a graph isomorphism from the
+centered box (`triangularTransEquiv_adj`), so the wired FK probability that the center is joined
+to the shell of radius `k` does not depend on `x`
+(`triangularTransShellEvent_betaMean_eq_centeredFullMass`). Finally, if `x ∈ Λ_n` and `2k < n`,
+the translated box of radius `2k` sits inside `Λ_{2n}` away from its boundary, and for every
+increasing event `A` of the translated box, its probability under the measure wired at `Λ_{2n}`
+is at most its probability under the measure wired at the translated box
+(`triangularTransBox_activeBCMean_le`, `q ≥ 1`); this is the comparison of boundary conditions
+combined with the domain Markov property (Grimmett, §4.2).
+
+The generic lemmas `reachOpen_edgeSet_iff_openSub_reachable` and
+`connOpenSet_edgeSet_iff_openSub` identify open-path reachability in the decision-tree encoding
+with reachability in the open subgraph.
+
+Fidelity: all results are unconditional (with `q ≥ 1`, `β > 0` where stated).
+
+## ii. Key results
+
+- `ocd_comapInducedWiring_le` : induced wiring of an inner box is dominated by full wiring of its
+  boundary. Unconditional.
+- `triangularTransShellEvent_betaMean_eq_centeredFullMass` : translation invariance of wired
+  shell-crossing probabilities. Unconditional.
+- `triangularTransBox_activeBCMean_le` : increasing events of a translated sub-box are less likely
+  under the outer wired measure than under the sub-box wired measure. Unconditional (`q ≥ 1`).
+
+## iii. Table of contents
+
+- A. Induced wiring on subgraphs
+- B. Translated triangular boxes
+- C. Shell events and translation invariance
+- D. Domination by the wired measure of a sub-box
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §§4.2–4.3.
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+-/
+
 @[expose] public section
 
-
-
-
-
-
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set SimpleGraph
 
 namespace StatMech.FK
@@ -37,23 +79,22 @@ open StatMech.OSSS.FiniteGraphBoundaryDifferential
 
 noncomputable section
 
+/-! ## A. Induced wiring on subgraphs -/
+
 variable {V : Type*} [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 variable {Sin Sout : Set V} [Fintype Sin] [Fintype Sout]
 
-
-
-theorem ocd_comapAdjMatch
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype Sin] [Fintype Sout] in
+lemma ocd_comapAdjMatch
     (iota : Sin -> Sout) (hiotaVal : forall x, (iota x : V) = (x : V)) :
     ocd_AdjMatch (SimpleGraph.comap Subtype.val G)
       (SimpleGraph.comap Subtype.val G) iota := by
   intro x y
   rw [SimpleGraph.comap_adj, SimpleGraph.comap_adj, hiotaVal x, hiotaVal y]
 
-
-
-
-theorem ocd_comap_bdryIn_of_outsideGraph_adj
+omit [DecidableRel G.Adj] in
+lemma ocd_comap_bdryIn_of_outsideGraph_adj
     (iota : Sin -> Sout) (hiotaVal : forall x, (iota x : V) = (x : V))
     (bdryOut : Sout -> Prop) [DecidablePred bdryOut]
     (bdryIn : Sin -> Prop) [DecidablePred bdryIn]
@@ -79,10 +120,8 @@ theorem ocd_comap_bdryIn_of_outsideGraph_adj
     exact hbdryIn x z.1 hadj' hznot
   · exact absurd hb (hmargin x)
 
-
-
-
-theorem ocd_comapInducedWiring_le
+omit [DecidableRel G.Adj] in
+lemma ocd_comapInducedWiring_le
     (iota : Sin -> Sout) (hiotaVal : forall x, (iota x : V) = (x : V))
     (hiota : Function.Injective iota)
     (bdryOut : Sout -> Prop) [DecidablePred bdryOut]
@@ -112,9 +151,8 @@ theorem ocd_comapInducedWiring_le
     · exact ocd_comap_bdryIn_of_outsideGraph_adj G iota hiotaVal
         bdryOut bdryIn hmargin hbdryIn psi hadj
 
-
-
-theorem ocd_comapInducedWiring_le_equiv
+omit [DecidableRel G.Adj] in
+lemma ocd_comapInducedWiring_le_equiv
     (e : V ≃ V) (he : ∀ x y, G.Adj (e x) (e y) ↔ G.Adj x y)
     (iota : Sin -> Sout) (hiotaVal : ∀ x, (iota x : V) = e (x : V))
     (hiota : Function.Injective iota)
@@ -176,54 +214,60 @@ open StatMech.OSSS.FiniteGraphBoundaryDifferential
 
 noncomputable section
 
+/-! ## B. Translated triangular boxes -/
 
-
+/-- The box of radius `R` of the triangular lattice centered at `x`. -/
 abbrev triangularTransBox (R : Nat) (x : Site 2) : Set (Site 2) :=
   StatMech.FK.fvs_transBox 2 R x
 
+/-- The sites of the translated box `x + Λ_R`. -/
 abbrev TriangularTransBoxVertex (R : Nat) (x : Site 2) :=
   {y : Site 2 // y ∈ triangularTransBox R x}
 
+/-- The triangular lattice restricted to the translated box. -/
 def triangularTransBoxGraph (R : Nat) (x : Site 2) :
     SimpleGraph (TriangularTransBoxVertex R x) :=
   SimpleGraph.comap Subtype.val triangularGraph
 
+/-- Classical decidability of adjacency in the translated box graph. -/
 noncomputable instance (R : Nat) (x : Site 2) :
     DecidableRel (triangularTransBoxGraph R x).Adj := Classical.decRel _
 
+/-- The inclusion of a translated box into a centered box containing it. -/
 def triangularTransBoxIncl {R N : Nat} {x : Site 2}
     (hsub : triangularTransBox R x ⊆ box 2 N) :
     TriangularTransBoxVertex R x -> TriangularBoxVertex N :=
   fun y => ⟨y.1, hsub y.2⟩
 
-@[simp] theorem triangularTransBoxIncl_val {R N : Nat} {x : Site 2}
+@[simp] lemma triangularTransBoxIncl_val {R N : Nat} {x : Site 2}
     (hsub : triangularTransBox R x ⊆ box 2 N)
     (y : TriangularTransBoxVertex R x) :
     (triangularTransBoxIncl hsub y : Site 2) = y.1 := rfl
 
-theorem triangularTransBoxIncl_injective {R N : Nat} {x : Site 2}
+lemma triangularTransBoxIncl_injective {R N : Nat} {x : Site 2}
     (hsub : triangularTransBox R x ⊆ box 2 N) :
     Function.Injective (triangularTransBoxIncl hsub) := by
   intro y z hyz
   apply Subtype.ext
   exact congrArg (fun w : TriangularBoxVertex N => (w : Site 2)) hyz
 
-
+/-- The boundary of the translated box: sites at sup-distance exactly `R` from `x`. -/
 def triangularTransBoxBoundary (R : Nat) (x : Site 2)
     (y : TriangularTransBoxVertex R x) : Prop :=
   y.1 - x ∈ vertexBoundary 2 R
 
+open scoped Classical in
+/-- The sites of the translated box at sup-distance `k` from `x`. -/
 noncomputable def triangularTransBoxShell (R k : Nat) (x : Site 2) :
     Finset (TriangularTransBoxVertex R x) :=
   Finset.univ.filter fun y => y.1 - x ∈ vertexBoundary 2 k
 
+/-- The center `x` of the translated box. -/
 def triangularTransBoxCenter (R : Nat) (x : Site 2) :
     TriangularTransBoxVertex R x :=
   ⟨x, by simp [StatMech.FK.fvs_transBox]⟩
 
-
-
-theorem triangularTransEquiv_adj (R : Nat) (x : Site 2)
+lemma triangularTransEquiv_adj (R : Nat) (x : Site 2)
     (u v : TriangularBoxVertex R) :
     (triangularBoxGraph R).Adj u v ↔
       (triangularTransBoxGraph R x).Adj
@@ -254,53 +298,54 @@ theorem triangularTransEquiv_adj (R : Nat) (x : Site 2)
         u.1 - v.1 = (u.1 + x) - (v.1 + x) := by abel
         _ = triangularStep i := h
 
-@[simp] theorem triangularTransEquiv_center (R : Nat) (x : Site 2) :
+@[simp] lemma triangularTransEquiv_center (R : Nat) (x : Site 2) :
     StatMech.FK.fvs_transEquiv 2 R x (triangularBoxRoot R) =
       triangularTransBoxCenter R x := by
   apply Subtype.ext
   funext i
   simp [triangularBoxRoot, triangularTransBoxCenter]
 
-theorem triangularTransEquiv_mem_shell (R k : Nat) (x : Site 2)
+open scoped Classical in
+lemma triangularTransEquiv_mem_shell (R k : Nat) (x : Site 2)
     (y : TriangularBoxVertex R) :
     StatMech.FK.fvs_transEquiv 2 R x y ∈ triangularTransBoxShell R k x ↔
       y ∈ triangularBoxShell R k := by
   simp [triangularTransBoxShell, triangularBoxShell,
     StatMech.FK.fvs_transEquiv_val]
 
+/-- The first endpoint of a translated-box edge. -/
 noncomputable def triangularTransBoxEndU (R : Nat) (x : Site 2) :
     (triangularTransBoxGraph R x).edgeSet -> TriangularTransBoxVertex R x :=
   fun e => e.1.out.1
 
+/-- The second endpoint of a translated-box edge. -/
 noncomputable def triangularTransBoxEndV (R : Nat) (x : Site 2) :
     (triangularTransBoxGraph R x).edgeSet -> TriangularTransBoxVertex R x :=
   fun e => e.1.out.2
 
+/-! ## C. Shell events and translation invariance -/
 
-
+/-- The event that the center of the translated box is joined to its shell of radius `k`. -/
 def triangularTransShellEvent (R k : Nat) (x : Site 2) :
     Set (ConfigSpace (triangularTransBoxGraph R x).edgeSet) :=
   openCrossEvent (triangularTransBoxEndU R x) (triangularTransBoxEndV R x)
     (triangularTransBoxCenter R x) (triangularTransBoxShell R k x)
 
-
-
+/-- The event that the origin is joined to the shell of radius `k` in the centered box. -/
 def triangularCenteredShellEvent (R k : Nat) :
     Set (ConfigSpace (triangularBoxGraph R).edgeSet) :=
   openCrossEvent (triangularBoxEndU R) (triangularBoxEndV R)
     (triangularBoxRoot R) (triangularBoxShell R k)
 
-theorem triangularTransShellEvent_increasing (R k : Nat) (x : Site 2) :
+lemma triangularTransShellEvent_increasing (R k : Nat) (x : Site 2) :
     IsIncreasing (triangularTransShellEvent R k x) :=
   openCrossEvent_isIncreasing _ _ _ _
 
-theorem triangularCenteredShellEvent_increasing (R k : Nat) :
+lemma triangularCenteredShellEvent_increasing (R k : Nat) :
     IsIncreasing (triangularCenteredShellEvent R k) :=
   openCrossEvent_isIncreasing _ _ _ _
 
-
-
-theorem reachOpen_edgeSet_iff_openSub_reachable
+lemma reachOpen_edgeSet_iff_openSub_reachable
     {W : Type*} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (omega : ConfigSpace H.edgeSet) (u v : W) :
@@ -352,7 +397,7 @@ theorem reachOpen_edgeSet_iff_openSub_reachable
           exact Sym2.eq_iff.mp hout
         exact ih.trans (ReachOpen.step e hopen hepair (ReachOpen.refl b))
 
-theorem connOpenSet_edgeSet_iff_openSub
+lemma connOpenSet_edgeSet_iff_openSub
     {W : Type*} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (omega : ConfigSpace H.edgeSet) (u : W) (B : Set W) :
@@ -366,20 +411,21 @@ theorem connOpenSet_edgeSet_iff_openSub
   intro _
   exact reachOpen_edgeSet_iff_openSub_reachable H omega u v
 
+/-- The centered shell-crossing event for configurations of all vertex pairs of the box. -/
 def triangularCenteredShellFullEvent (R k : Nat) :
     Set (ConfigSpace (Sym2 (TriangularBoxVertex R))) :=
   {omega | ∃ y ∈ triangularBoxShell R k,
     (openSub (triangularBoxGraph R) omega).Reachable (triangularBoxRoot R) y}
 
+/-- The translated shell-crossing event for configurations of all vertex pairs of the translated
+box. -/
 def triangularTransShellFullEvent (R k : Nat) (x : Site 2) :
     Set (ConfigSpace (Sym2 (TriangularTransBoxVertex R x))) :=
   {omega | ∃ y ∈ triangularTransBoxShell R k x,
     (openSub (triangularTransBoxGraph R x) omega).Reachable
       (triangularTransBoxCenter R x) y}
 
-
-
-theorem restrictActive_preimage_triangularCenteredShellEvent
+lemma restrictActive_preimage_triangularCenteredShellEvent
     (R k : Nat) :
     restrictActive (triangularBoxGraph R) ⁻¹'
         triangularCenteredShellEvent R k =
@@ -395,7 +441,7 @@ theorem restrictActive_preimage_triangularCenteredShellEvent
   rw [openSub_extendActive_restrictActive_eq]
   simp
 
-theorem restrictActive_preimage_triangularTransShellEvent
+lemma restrictActive_preimage_triangularTransShellEvent
     (R k : Nat) (x : Site 2) :
     restrictActive (triangularTransBoxGraph R x) ⁻¹'
         triangularTransShellEvent R k x =
@@ -413,9 +459,7 @@ theorem restrictActive_preimage_triangularTransShellEvent
   rw [openSub_extendActive_restrictActive_eq]
   simp
 
-
-
-theorem reCfgIso_preimage_triangularCenteredShellFullEvent
+lemma reCfgIso_preimage_triangularCenteredShellFullEvent
     (R k : Nat) (x : Site 2) :
     reCfgIso (StatMech.FK.fvs_transEquiv 2 R x) ⁻¹'
         triangularCenteredShellFullEvent R k =
@@ -441,9 +485,7 @@ theorem reCfgIso_preimage_triangularCenteredShellFullEvent
       rw [triangularTransEquiv_center]
       simpa [sigma, y0] using hreach
 
-
-
-theorem triangularTransEquiv_boundary (R : Nat) (x : Site 2)
+lemma triangularTransEquiv_boundary (R : Nat) (x : Site 2)
     (y : TriangularBoxVertex R) :
     y ∈ triangularBoxShell R R ↔
       triangularTransBoxBoundary R x
@@ -451,10 +493,8 @@ theorem triangularTransEquiv_boundary (R : Nat) (x : Site 2)
   simp [triangularBoxShell, triangularTransBoxBoundary,
     StatMech.FK.fvs_transEquiv_val]
 
-
-
-
-theorem triangularTransShellEvent_activeBCMean_eq_centeredFullMass
+open scoped Classical in
+lemma triangularTransShellEvent_activeBCMean_eq_centeredFullMass
     (R k : Nat) (x : Site 2) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     activeBCMean (triangularTransBoxGraph R x)
@@ -515,8 +555,8 @@ theorem triangularTransShellEvent_activeBCMean_eq_centeredFullMass
         (triangularCenteredShellFullEvent R k)]
       rw [reCfgIso_preimage_triangularCenteredShellFullEvent]
 
-
-theorem triangularTransShellEvent_betaMean_eq_centeredFullMass
+open scoped Classical in
+lemma triangularTransShellEvent_betaMean_eq_centeredFullMass
     (R k : Nat) (x : Site 2) (q beta : Real)
     (hq : 0 < q) (hbeta : 0 < beta) :
     activeBCMean (triangularTransBoxGraph R x)
@@ -542,8 +582,9 @@ theorem triangularTransShellEvent_betaMean_eq_centeredFullMass
   exact triangularTransShellEvent_activeBCMean_eq_centeredFullMass
     R k x hp hp1 hq
 
+/-! ## D. Domination by the wired measure of a sub-box -/
 
-theorem triangularTransBox_subset_double
+lemma triangularTransBox_subset_double
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n) (hkn : 2 * k < n) :
     triangularTransBox (2 * k) x ⊆ box 2 (2 * n) := by
   intro y hy i
@@ -557,9 +598,8 @@ theorem triangularTransBox_subset_double
     _ <= 2 * k + n := Nat.add_le_add hyi hxi
     _ <= 2 * n := by omega
 
-
-
-theorem triangularTransBox_outer_margin
+open scoped Classical in
+lemma triangularTransBox_outer_margin
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n) (hkn : 2 * k < n)
     (y : TriangularTransBoxVertex (2 * k) x) :
     triangularTransBoxIncl (triangularTransBox_subset_double hx hkn) y ∉
@@ -579,7 +619,7 @@ theorem triangularTransBox_outer_margin
       _ <= 2 * n - 1 := by omega
   exact hycoord hybox
 
-theorem triangular_adj_sub_right (x : Site 2) {y z : Site 2}
+lemma triangular_adj_sub_right (x : Site 2) {y z : Site 2}
     (hyz : triangularGraph.Adj y z) :
     triangularGraph.Adj (y - x) (z - x) := by
   rw [triangularGraph_adj] at hyz ⊢
@@ -593,9 +633,7 @@ theorem triangular_adj_sub_right (x : Site 2) {y z : Site 2}
       (y - x) - (z - x) = y - z := by abel
       _ = triangularStep i := h
 
-
-
-theorem triangularTransBox_boundary_of_adj_outside
+lemma triangularTransBox_boundary_of_adj_outside
     {R : Nat} (hR : 1 <= R) {x : Site 2}
     (y : TriangularTransBoxVertex R x) (z : Site 2)
     (hyz : triangularGraph.Adj y.1 z) (hz : z ∉ triangularTransBox R x) :
@@ -613,9 +651,8 @@ theorem triangularTransBox_boundary_of_adj_outside
     exact triangular_adj_mem_box_of_mem_pred hR hsmall hadj
   exact hz hzR
 
-
-
-theorem triangularTransBox_inducedWiring_le
+open scoped Classical in
+lemma triangularTransBox_inducedWiring_le
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n)
     (hk : 1 <= k) (hkn : 2 * k < n)
     (psi : ConfigSpace (Sym2 (TriangularBoxVertex (2 * n)))) :
@@ -634,8 +671,11 @@ theorem triangularTransBox_inducedWiring_le
   · intro y z hyz hz
     exact triangularTransBox_boundary_of_adj_outside (by omega) y z hyz hz
 
-
-
+open scoped Classical in
+/-- Comparison of boundary conditions for translated triangular boxes: for `q ≥ 1` and an increasing
+event of the box of radius `2k` at `x`, its probability under the measure wired at `Λ_{2n}` is at
+most its probability under the measure wired at the translated box (Grimmett, *The Random-Cluster
+Model*, §4.2). -/
 theorem triangularTransBox_activeBCMean_le
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n)
     (hk : 1 <= k) (hkn : 2 * k < n)

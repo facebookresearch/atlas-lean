@@ -6,21 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularOffCentre
 public import MathlibExt.Probability.OSSS.WiredDenominatorArithmetic
 
+/-!
+# Uniform OSSS differential inequality for triangular-lattice crossing probabilities
+
+The OSSS differential inequality `dθ_n/dβ ≥ c (n / Σ_n) θ_n` with an `n`-uniform constant for
+the probability `θ_n` that the origin is connected to distance `n` under the FK measure wired at
+radius `2n` on the triangular lattice.
+
+## i. Overview
+
+`TriangularSharpness` bounds `dθ_n/dβ` below through the revealment denominator
+`Δ = 2 (1 + max_x Σ_k φ(x ↔ shell k)) / n`, which involves off-center connection probabilities.
+This file replaces the off-center terms by centered ones. A path from `x` to the shell of radius
+`k` around the origin must reach the sup-sphere of radius `j` around `x` for suitable `j`
+(`triangularBox_reachOpen_hits_centered`, `triangular_rootShell_sum_le_centered_sup`), so `Δ` is
+bounded by the centered denominator `triangularCenteredDenom`. The centered probabilities
+`triangularOuterCenteredConn n q β x k` are, by the domination of `TriangularOffCentre`
+(boundary-condition comparison and translation invariance), at most `θ_k`
+(`triangularOuterCenteredConn_le_theta_strict`), which gives `Δ ≤ 8 Σ_n / n` with
+`Σ_n = Σ_{k < n} θ_k`. Together with the lower bound `1 - θ_n ≥ ∏_{e ∋ 0} e^{-β₀} ≥ e^{-6β₀}`
+(the origin has degree at most `6`), this yields
+`triangular_outer_inner_differential_uniform`:
+`(e^{-6β₀} / 8) · (n / Σ_n) · θ_n ≤ dθ_n/dβ` for `n ≥ 1`, `q ≥ 1`, `0 < β ≤ β₀`.
+
+Fidelity: this is the Duminil-Copin–Raoufi–Tassion differential inequality, and it is proved
+unconditionally for the finite-volume measure wired at radius `2n` (the OSSS inputs: increasing
+event, FKG, revealment bound, are all discharged here or in the imported files). The
+`…_of_strict_comparison` lemmas take the off-center comparison `hcomp` as a hypothesis; their
+unconditional versions are `triangular_outer_inner_hcov_sharp`,
+`triangular_outer_inner_differential_sharp`, `triangular_outer_inner_differential_linear` and
+`triangular_outer_inner_differential_uniform`.
+
+## ii. Key results
+
+- `triangularOuterCenteredConn_le_theta_strict` : centered connection probabilities from interior
+  points are at most `θ_k`. Unconditional (`q ≥ 1`, `β > 0`).
+- `triangular_outer_inner_differential_sharp` : `θ (1 - θ) / (8 Σ_n / n) ≤ dθ/dβ`.
+  Unconditional.
+- `triangular_outer_inner_differential_uniform` : `c(β₀) (n / Σ_n) θ_n ≤ dθ_n/dβ` with
+  `c(β₀) = e^{-6β₀} / 8`. Unconditional (`q ≥ 1`, `0 < β ≤ β₀`).
+
+## iii. Table of contents
+
+- A. Centered shells and off-center crossings
+- B. Centered connection probabilities
+- C. Comparison with the outer-inner crossing probability
+- D. The sharp covariance bound
+- E. The uniform differential inequality
+
+## iv. References
+
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+-/
+
 @[expose] public section
 
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
@@ -31,11 +78,17 @@ open StatMech.OSSS.FiniteGraphBoundaryDifferential
 open StatMech.OSSS.ReachBoxCrossing
 open StatMech.OSSS.RevealmentTranslation
 
+/-! ## A. Centered shells and off-center crossings -/
+
+/-- The vertices of the box at sup-distance `k` from `x`. -/
 noncomputable def triangularBoxCenteredShell
     (n : Nat) (x : TriangularBoxVertex n) (k : Nat) :
     Finset (TriangularBoxVertex n) :=
   Finset.univ.filter fun y => centeredRadius x.1 y.1 = k
 
+open scoped Classical in
+/-- Under the measure wired at radius `2n`, the probability that `x` is connected to the sup-sphere
+of radius `k` around `x` inside the box of radius `n`. -/
 noncomputable def triangularOuterCenteredConn
     (n : Nat) (q beta : Real) (x : TriangularBoxVertex n) (k : Nat) : Real :=
   Lindeberg.mean
@@ -46,9 +99,7 @@ noncomputable def triangularOuterCenteredConn
       (restrictConfig (triangularBoxEdgeLE (by omega : n ≤ 2 * n)) omega)
       x (triangularBoxCenteredShell n x k) then (1 : Real) else 0)
 
-
-
-theorem triangularBox_reachOpen_hits_centered
+lemma triangularBox_reachOpen_hits_centered
     {n m : Nat} {omega : ConfigSpace (triangularBoxGraph n).edgeSet}
     {x b : TriangularBoxVertex n}
     (hreach : ReachOpen (triangularBoxEndU n) (triangularBoxEndV n) omega x b)
@@ -101,7 +152,8 @@ theorem triangularBox_reachOpen_hits_centered
             ReachOpen.step e hopen hpair (ReachOpen.refl y)⟩
   exact hfirst hreach hxInner hbOuter
 
-theorem triangularBox_rootShell_imp_centered_of_le
+open scoped Classical in
+lemma triangularBox_rootShell_imp_centered_of_le
     {n k m : Nat} {omega : ConfigSpace (triangularBoxGraph n).edgeSet}
     {x : TriangularBoxVertex n}
     (hm : m ≤ ((k : Int) - (siteRadius x.1 : Int)).natAbs) :
@@ -129,9 +181,8 @@ theorem triangularBox_rootShell_imp_centered_of_le
       omega
   exact triangularBox_reachOpen_hits_centered hreach (hm.trans hdist)
 
-
-
-theorem triangular_rootShell_sum_le_centered_sup
+open scoped Classical in
+lemma triangular_rootShell_sum_le_centered_sup
     (n : Nat) (mu : ConfigSpace (triangularBoxGraph (2 * n)).edgeSet → Real)
     (hmu0 : ∀ omega, 0 ≤ mu omega) (u : TriangularBoxVertex n) :
     (∑ k : ↑(Finset.Icc 1 n),
@@ -192,6 +243,9 @@ theorem triangular_rootShell_sum_le_centered_sup
     intro omega homega
     exact triangularBox_rootShell_imp_centered_of_le le_rfl homega
 
+/-! ## B. Centered connection probabilities -/
+
+/-- The centered OSSS denominator `4 max_x Σ_{j < n} φ(x ↔ ∂(x + Λ_j)) / n`. -/
 noncomputable def triangularCenteredDenom
     (n : Nat) (q beta : Real) : Real :=
   4 * (Finset.univ : Finset (TriangularBoxVertex n)).sup'
@@ -199,7 +253,8 @@ noncomputable def triangularCenteredDenom
     (fun x => ∑ j ∈ Finset.range n,
       triangularOuterCenteredConn n q beta x j) / (n : Real)
 
-theorem triangularOuterCenteredConn_nonneg
+open scoped Classical in
+lemma triangularOuterCenteredConn_nonneg
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : TriangularBoxVertex n) (j : Nat) :
     0 ≤ triangularOuterCenteredConn n q beta x j := by
@@ -214,7 +269,8 @@ theorem triangularOuterCenteredConn_nonneg
   unfold triangularOuterCenteredConn
   exact mean_indicator_nonneg hmu0 _
 
-theorem triangularOuterCenteredConn_zero
+open scoped Classical in
+lemma triangularOuterCenteredConn_zero
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : TriangularBoxVertex n) :
     triangularOuterCenteredConn n q beta x 0 = 1 := by
@@ -232,14 +288,15 @@ theorem triangularOuterCenteredConn_zero
         x (triangularBoxCenteredShell n x 0) then (1 : Real) else 0) =
       fun _ => 1 := by
     funext omega
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, centeredRadius_self x.1⟩,
       ReachOpen.refl x⟩
   unfold triangularOuterCenteredConn
   rw [hall]
   exact Lindeberg.mean_const mu hmu1 1
 
-theorem triangularOuterCenteredConn_le_one
+open scoped Classical in
+lemma triangularOuterCenteredConn_le_one
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : TriangularBoxVertex n) (j : Nat) :
     triangularOuterCenteredConn n q beta x j ≤ 1 := by
@@ -269,7 +326,8 @@ theorem triangularOuterCenteredConn_le_one
       split_ifs <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hmu1 1
 
-theorem triangularOuterCenteredConn_antitone
+open scoped Classical in
+lemma triangularOuterCenteredConn_antitone
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : TriangularBoxVertex n) :
     Antitone (triangularOuterCenteredConn n q beta x) := by
@@ -289,12 +347,13 @@ theorem triangularOuterCenteredConn_antitone
   have hrad : centeredRadius x.1 b.1 = k := (Finset.mem_filter.mp hb).2
   exact triangularBox_reachOpen_hits_centered hreach (hjk.trans_eq hrad.symm)
 
-theorem triangularOuterInnerTheta_nonneg
+open scoped Classical in
+lemma triangularOuterInnerTheta_nonneg
     (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta) (k : Nat) :
     0 ≤ triangularOuterInnerTheta q beta k := by
   by_cases hk : k = 0
   · simp [triangularOuterInnerTheta, hk]
-  rw [triangularOuterInnerTheta, if_neg hk]
+  rw [triangularOuterInnerTheta, ite_eq_right hk]
   unfold triangularInnerCrossInd Lindeberg.mean
   apply Finset.sum_nonneg
   intro omega _
@@ -310,13 +369,14 @@ theorem triangularOuterInnerTheta_nonneg
       (FK.betaParams_lt_one (fun _ => 1) beta)
       (zero_lt_one.trans_le hq) omega).le
 
-@[simp] theorem triangularOuterInnerTheta_zero (q beta : Real) :
+@[simp] lemma triangularOuterInnerTheta_zero (q beta : Real) :
     triangularOuterInnerTheta q beta 0 = 1 := by
   simp [triangularOuterInnerTheta]
 
+/-! ## C. Comparison with the outer-inner crossing probability -/
 
-
-theorem triangularCenteredShellEvent_iff_innerCross
+open scoped Classical in
+lemma triangularCenteredShellEvent_iff_innerCross
     (k : Nat) (hk : 1 ≤ k)
     (omega : ConfigSpace (triangularBoxGraph (2 * k)).edgeSet) :
     omega ∈ triangularCenteredShellEvent (2 * k) k ↔
@@ -367,8 +427,8 @@ theorem triangularCenteredShellEvent_iff_innerCross
                 have hout : s(triangularBoxEndU (2 * k) e,
                     triangularBoxEndV (2 * k) e) = e.1 := e.1.out_eq
                 rcases hpair with hp | hp
-                · simpa [hp.1, hp.2] using hout.symm
-                · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+                · simp [hp.1, hp.2]
+                · simp [hp.1, hp.2, Sym2.eq_swap]
               change innerEdgeLE 2 (by omega : k ≤ 2 * k) ei.1 = e.1
               have hia : boxVertInclLE 2 (by omega : k ≤ 2 * k) ai = a :=
                 Subtype.ext (by rfl)
@@ -404,8 +464,8 @@ theorem triangularCenteredShellEvent_iff_innerCross
                 have hout : s(triangularBoxEndU (2 * k) e,
                     triangularBoxEndV (2 * k) e) = e.1 := e.1.out_eq
                 rcases hpair with hp | hp
-                · simpa [hp.1, hp.2] using hout.symm
-                · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+                · simp [hp.1, hp.2]
+                · simp [hp.1, hp.2, Sym2.eq_swap]
               change innerEdgeLE 2 (by omega : k ≤ 2 * k) ei.1 = e.1
               have hia : boxVertInclLE 2 (by omega : k ≤ 2 * k) ai = a :=
                 Subtype.ext (by rfl)
@@ -443,8 +503,8 @@ theorem triangularCenteredShellEvent_iff_innerCross
             have hout : s(triangularBoxEndU k e, triangularBoxEndV k e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have heoPair : eo.1 = s(incl a, incl y) := by
             change innerEdgeLE 2 (by omega : k ≤ 2 * k) e.1 =
               s(incl a, incl y)
@@ -464,7 +524,8 @@ theorem triangularCenteredShellEvent_iff_innerCross
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hb'.1,
       fun hsmall => hb'.2 hsmall⟩
 
-theorem triangularCenteredFullMass_eq_outerInnerTheta
+open scoped Classical in
+lemma triangularCenteredFullMass_eq_outerInnerTheta
     (k : Nat) (hk : 1 ≤ k) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     (∑ omega : ConfigSpace (Sym2 (TriangularBoxVertex (2 * k))),
@@ -499,14 +560,14 @@ theorem triangularCenteredFullMass_eq_outerInnerTheta
     rw [Set.indicator_apply, Set.indicator_apply]
     have hiff := triangularCenteredShellEvent_iff_innerCross k hk omega
     by_cases h : omega ∈ A
-    · rw [if_pos h, if_pos (hiff.mp h)]
-    · rw [if_neg h, if_neg (fun hi => h (hiff.mpr hi))]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mp h)]
+    · rw [ite_eq_right h, ite_eq_right (fun hi => h (hiff.mpr hi))]
   have hactive :
       FK.activeBCMean G (boundaryCliqueGraph boundary) (fun _ => p) q
           (A.indicator fun _ => (1 : Real)) =
         triangularOuterInnerTheta q beta k := by
     have hk0 : k ≠ 0 := by omega
-    rw [triangularOuterInnerTheta, if_neg hk0, ← hevent, hparam]
+    rw [triangularOuterInnerTheta, ite_eq_right hk0, ← hevent, hparam]
     rfl
   rw [← hactive]
   rw [hmean]
@@ -522,7 +583,8 @@ theorem triangularCenteredFullMass_eq_outerInnerTheta
   · rw [Set.indicator_of_notMem h,
       Set.indicator_of_notMem (fun hf => h (hiff.mpr hf))]
 
-theorem triangular_centeredConn_imp_transShell
+open scoped Classical in
+lemma triangular_centeredConn_imp_transShell
     {n k : Nat} (x : TriangularBoxVertex n) (hk : 1 ≤ k)
     (hkn : 2 * k < n)
     (rho : ConfigSpace (triangularBoxGraph (2 * n)).edgeSet)
@@ -597,8 +659,8 @@ theorem triangular_centeredConn_imp_transShell
             have hout : s(triangularBoxEndU n e, triangularBoxEndV n e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have houtEq : etOut = iotaN e := by
             apply Subtype.ext
             change Sym2.map transIncl et.1 = innerEdgeLE 2 (by omega) e.1
@@ -645,8 +707,8 @@ theorem triangular_centeredConn_imp_transShell
             have hout : s(triangularBoxEndU n e, triangularBoxEndV n e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have houtEq : etOut = iotaN e := by
             apply Subtype.ext
             change Sym2.map transIncl et.1 = innerEdgeLE 2 (by omega) e.1
@@ -679,7 +741,8 @@ theorem triangular_centeredConn_imp_transShell
   simpa [transCfg, transIncl, hsub, hadjm, iotaN,
     triangularTransShellEvent, triangularTransBoxCenter, openCrossEvent] using hresult
 
-theorem triangularOuterCenteredConn_le_theta_strict
+open scoped Classical in
+lemma triangularOuterCenteredConn_le_theta_strict
     (n k : Nat) (x : TriangularBoxVertex n)
     (hk : 1 ≤ k) (hkn : 2 * k < n)
     (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta) :
@@ -734,7 +797,9 @@ theorem triangularOuterCenteredConn_le_theta_strict
         simpa [A] using htrans]
       exact hcenter
 
-theorem triangularCenteredDenom_pos
+/-! ## D. The sharp covariance bound -/
+
+lemma triangularCenteredDenom_pos
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     0 < triangularCenteredDenom n q beta := by
@@ -759,9 +824,8 @@ theorem triangularCenteredDenom_pos
   change 0 < 4 * M / (n : Real)
   positivity
 
-
-
-theorem triangular_outer_inner_hcov_centered
+open scoped Classical in
+lemma triangular_outer_inner_hcov_centered
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     let mu := FK.activeBCProb (triangularBoxGraph (2 * n))
@@ -818,9 +882,7 @@ theorem triangular_outer_inner_hcov_centered
     (by simpa [mu] using hsum)
   simpa [triangularCenteredDenom, mu, M, D] using hmain
 
-
-
-theorem triangular_centered_sup_le_two_sig_of_strict_comparison
+lemma triangular_centered_sup_le_two_sig_of_strict_comparison
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : TriangularBoxVertex n, ∀ k,
       k ∈ Finset.Icc 1 (n / 2) → 2 * k < n →
@@ -846,7 +908,7 @@ theorem triangular_centered_sup_le_two_sig_of_strict_comparison
       rw [triangularOuterInnerTheta_zero]
       exact triangularOuterCenteredConn_le_one n q beta hq hbeta x k)
 
-theorem triangularCenteredDenom_le_eight_sig_of_strict_comparison
+lemma triangularCenteredDenom_le_eight_sig_of_strict_comparison
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : TriangularBoxVertex n, ∀ k,
       k ∈ Finset.Icc 1 (n / 2) → 2 * k < n →
@@ -867,7 +929,8 @@ theorem triangularCenteredDenom_le_eight_sig_of_strict_comparison
         (mul_le_mul_of_nonneg_left hsup (by norm_num)) (Nat.cast_nonneg n)
     _ = 8 * triangularOuterInnerSig n q beta / (n : Real) := by ring
 
-theorem triangular_outer_inner_hcov_sharp_of_strict_comparison
+open scoped Classical in
+lemma triangular_outer_inner_hcov_sharp_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : TriangularBoxVertex n, ∀ k,
@@ -936,7 +999,8 @@ theorem triangular_outer_inner_hcov_sharp_of_strict_comparison
   have hbase := triangular_outer_inner_hcov_centered n hn q beta hq hbeta
   exact hfrac.trans (by simpa [mu, theta] using hbase)
 
-theorem triangular_outer_inner_differential_sharp_of_strict_comparison
+open scoped Classical in
+lemma triangular_outer_inner_differential_sharp_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : TriangularBoxVertex n, ∀ k,
@@ -947,7 +1011,7 @@ theorem triangular_outer_inner_differential_sharp_of_strict_comparison
         (1 - triangularOuterInnerTheta q beta n) /
           (8 * triangularOuterInnerSig n q beta / (n : Real)) ≤
       triangularOuterInnerThetaPrime n q beta := by
-  letI : Nonempty (triangularBoxGraph (2 * n)).edgeSet :=
+  let : Nonempty (triangularBoxGraph (2 * n)).edgeSet :=
     triangularBoxGraph_edgeSet_nonempty (2 * n) (by omega)
   let G := triangularBoxGraph (2 * n)
   let C := triangularBoxBoundaryGraph (2 * n)
@@ -1009,12 +1073,17 @@ theorem triangular_outer_inner_differential_sharp_of_strict_comparison
   simpa [triangularOuterInnerTheta, triangularOuterInnerThetaPrime,
     hn0, G, C, J, mu, f, FK.activeBCMean, Lindeberg.mean] using hmain
 
+/-! ## E. The uniform differential inequality -/
+
+/-- The product `∏ e^{-β₀}` over the edges at the origin of the inner box: a lower bound for the
+probability that all of them are closed. -/
 noncomputable def triangularInnerKappa (n : Nat) (beta0 : Real) : Real :=
   (reindexedOpenIncidentEdges
     (triangularBoxEdgeLE (by omega : n ≤ 2 * n))
     (triangularBoxEndU n) (triangularBoxEndV n) (triangularBoxRoot n)).prod
       (fun _ => Real.exp (-beta0))
 
+/-- The six triangular-lattice neighbors of the origin, as vertices of the box. -/
 def triangularBoxNeighbor (n : Nat) (hn : 1 ≤ n) (ib : Fin 3 × Bool) :
     TriangularBoxVertex n :=
   ⟨triangularNeighbor 0 ib, by
@@ -1022,7 +1091,7 @@ def triangularBoxNeighbor (n : Nat) (hn : 1 ≤ n) (ib : Fin 3 × Bool) :
     fin_cases i <;> cases b <;> intro j <;> fin_cases j <;>
       simp [triangularNeighbor, triangularStep] <;> omega⟩
 
-theorem triangularBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma triangularBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
     ((triangularBoxGraph n).neighborFinset (triangularBoxRoot n)).card ≤ 6 := by
   let candidates : Finset (TriangularBoxVertex n) :=
     Finset.univ.image (triangularBoxNeighbor n hn)
@@ -1042,12 +1111,12 @@ theorem triangularBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
     _ ≤ (Finset.univ : Finset (Fin 3 × Bool)).card := Finset.card_image_le
     _ = 6 := by decide
 
-theorem triangularBox_root_degree_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma triangularBox_root_degree_le_six (n : Nat) (hn : 1 ≤ n) :
     (triangularBoxGraph n).degree (triangularBoxRoot n) ≤ 6 := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   exact triangularBox_root_neighbor_card_le_six n hn
 
-theorem triangularInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma triangularInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
     (reindexedOpenIncidentEdges
       (triangularBoxEdgeLE (by omega : n ≤ 2 * n))
       (triangularBoxEndU n) (triangularBoxEndV n)
@@ -1113,12 +1182,12 @@ theorem triangularInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
         exact Finset.card_image_of_injOn hinj
   exact himage.trans (hI.trans (triangularBox_root_neighbor_card_le_six n hn))
 
-theorem triangularInnerKappa_pos (n : Nat) (beta0 : Real) :
+lemma triangularInnerKappa_pos (n : Nat) (beta0 : Real) :
     0 < triangularInnerKappa n beta0 := by
   unfold triangularInnerKappa
   exact Finset.prod_pos fun e he => Real.exp_pos _
 
-theorem exp_neg_pow_six_le_triangularInnerKappa
+lemma exp_neg_pow_six_le_triangularInnerKappa
     (n : Nat) (hn : 1 ≤ n) (beta0 : Real) (hbeta0 : 0 ≤ beta0) :
     Real.exp (-beta0) ^ 6 ≤ triangularInnerKappa n beta0 := by
   unfold triangularInnerKappa
@@ -1127,7 +1196,8 @@ theorem exp_neg_pow_six_le_triangularInnerKappa
     (Real.exp_le_one_iff.mpr (by linarith))
     (triangularInnerIncident_card_le_six n hn)
 
-theorem triangular_outer_inner_one_sub_lower
+open scoped Classical in
+lemma triangular_outer_inner_one_sub_lower
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     triangularInnerKappa n beta0 ≤
@@ -1150,7 +1220,7 @@ theorem triangular_outer_inner_one_sub_lower
   simpa [triangularInnerKappa, triangularOuterInnerTheta, hn0, Lindeberg.mean,
     triangularInnerCrossInd] using hmain
 
-theorem triangular_outer_inner_differential_linear_of_strict_comparison
+lemma triangular_outer_inner_differential_linear_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0)
     (hcomp : ∀ x : TriangularBoxVertex n, ∀ k,
@@ -1192,7 +1262,8 @@ theorem triangular_outer_inner_differential_linear_of_strict_comparison
         (mul_le_mul_of_nonneg_left hgap htheta0)
     _ ≤ triangularOuterInnerThetaPrime n q beta := hlog
 
-theorem triangular_outer_inner_hcov_sharp
+open scoped Classical in
+lemma triangular_outer_inner_hcov_sharp
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     let mu := FK.activeBCProb (triangularBoxGraph (2 * n))
@@ -1208,7 +1279,7 @@ theorem triangular_outer_inner_hcov_sharp
   exact triangularOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem triangular_outer_inner_differential_sharp
+lemma triangular_outer_inner_differential_sharp
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     triangularOuterInnerTheta q beta n *
@@ -1221,7 +1292,7 @@ theorem triangular_outer_inner_differential_sharp
   exact triangularOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem triangular_outer_inner_differential_linear
+lemma triangular_outer_inner_differential_linear
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     triangularInnerKappa n beta0 *
@@ -1234,7 +1305,7 @@ theorem triangular_outer_inner_differential_linear
   exact triangularOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem triangularOuterInnerSig_pos
+lemma triangularOuterInnerSig_pos
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     0 < triangularOuterInnerSig n q beta := by
@@ -1246,14 +1317,18 @@ theorem triangularOuterInnerSig_pos
   rw [triangularOuterInnerTheta_zero] at hsingle
   exact lt_of_lt_of_le zero_lt_one hsingle
 
+/-- The uniform OSSS constant `e^{-6β₀} / 8` for the triangular lattice. -/
 noncomputable def triangularSharpConstant (beta0 : Real) : Real :=
   Real.exp (-beta0) ^ 6 / 8
 
-theorem triangularSharpConstant_pos (beta0 : Real) :
+lemma triangularSharpConstant_pos (beta0 : Real) :
     0 < triangularSharpConstant beta0 := by
   unfold triangularSharpConstant
   positivity
 
+/-- Uniform OSSS differential inequality for triangular-lattice FK crossing probabilities:
+`(e^{-6β₀} / 8) (n / Σ_n) θ_n ≤ dθ_n/dβ` for `n ≥ 1`, `q ≥ 1`, `0 < β ≤ β₀`
+(Duminil-Copin–Raoufi–Tassion 2019). -/
 theorem triangular_outer_inner_differential_uniform
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :

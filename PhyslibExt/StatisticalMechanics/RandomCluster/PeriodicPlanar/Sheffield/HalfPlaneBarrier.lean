@@ -6,14 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic
+
+/-!
+# Joined primal arms block transverse dual walks
+
+Two open primal arms that meet and stay inside a vertical strip separate the strip, so no open
+dual walk can cross the strip horizontally between them.
+
+## i. Overview
+
+Planar duality forbids an open primal edge and an open dual edge from crossing. This file turns
+that into a barrier statement. In the continuum, a path that enters a vertical strip
+`a < x < b` from the left, leaves it on the right and stays at heights `c < y < d` must meet any
+pair of paths that stay in the strip, start below height `c` and above height `d`, and end at a
+common point. Applied to the arcs of an open primal pair of walks and an open dual walk, this
+gives a contradiction.
+
+Headline fidelity: both results are proved unconditionally (no probabilistic or geometric
+hypotheses beyond the displayed coordinate bounds).
+
+## ii. Key results
+
+- `ContinuousHalfPlaneBarrier.joined_boundary_arms_intersect_transverse_path` : the continuum
+  barrier.
+- `PeriodicPlanarDualPair.no_open_dual_transverse_walk_of_joined_primal_arms` : no open dual
+  walk crosses a strip spanned by two joined open primal arms.
+
+## iii. Table of contents
+
+- A. The continuum barrier
+- B. The primal–dual barrier
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.1 (planar duality).
+-/
 
 @[expose] public section
 
@@ -21,14 +52,16 @@ open Filter MeasureTheory Set SimpleGraph Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open BeffaraDC Lattice
+open BeffaraDC StatMech.Lattice
+
+/-! ## A. The continuum barrier -/
 
 namespace ContinuousHalfPlaneBarrier
 
-
-
-
-theorem joined_boundary_arms_intersect_transverse_path
+/-- Continuum barrier: two paths in the open strip `a < x < b`, one starting below height `c`,
+one above height `d`, and ending at a common point, meet every path that runs from left of
+`a` to right of `b` at heights in `(c, d)`. -/
+lemma joined_boundary_arms_intersect_transverse_path
     {a b c d : ℝ} (hab : a < b) (hcd : c < d)
     {lo hi j gl gr : Fin 2 → ℝ}
     (lower : Path lo j) (upper : Path hi j) (gamma : Path gl gr)
@@ -65,12 +98,13 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## B. The primal–dual barrier -/
+
 namespace PeriodicPlanarDualPair
 
-
-
-
-
+/-- Two nontrivial open primal walks ending at a common vertex, with arcs in the strip `a < x <
+b`, one starting below `c` and the other above `d`, leave no nontrivial open dual walk
+crossing the strip from left of `a` to right of `b` at heights in `(c, d)`. -/
 theorem no_open_dual_transverse_walk_of_joined_primal_arms
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))

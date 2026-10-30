@@ -6,36 +6,124 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PairedRecurrence
 
+/-!
+# Endpoint crossings for cross-nested arrays of rectangles
+
+Arrays of rectangles whose primal adjacent-pair crossings and dual crossings tend to one are
+built for the free buffered FK measure under common uniqueness; an array whose first rectangle is
+also crossed vertically and last rectangle horizontally would be contradictory, but the two
+endpoint crossings are only obtained separately.
+
+## i. Overview
+
+The setting is a dual pair of periodic plane drawings `D` (primal graph `P`, dual graph `Pdual`)
+with a measure `μ` on primal configurations and its dual image `D.dualMeasure μ`. The argument
+follows Sheffield's proof that the primal and dual infinite clusters cannot both be unique. A
+primal horizontal crossing and a dual vertical crossing of the same rectangle exclude each
+other, so an array of rectangles with
+
+- a primal vertical crossing of the first rectangle and a primal horizontal crossing of the last
+  rectangle with probability tending to one (the endpoint crossings),
+- primal crossings of adjacent pairs and dual crossings of every rectangle with limits one,
+
+is impossible (`adjacent_height_array_contradiction_…`, `shifted_crossNested_array_…`,
+`PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints`).
+
+The file builds such arrays. Sections A–C choose endpoint coordinates, widths, heights and
+merge radii so that the endpoint crossings hold at a fixed finite precision, row by row. Section
+D extends the preferred-side transfer of `AdjacentHeight` to two nested rectangles (mixed
+preferences). Section E combines this with boundary-band schedules into exact aligned extents.
+Sections F–H assemble cross-nested chains of rectangles (`AlignedCrossNestedPairedChain`,
+widths fixed from the start and heights from the end), arrays of such chains with dual outward
+limits, and the preparation `CrossNestedOutwardArrayPreparation`, which exists for every FKG,
+translation-invariant measure with unique primal and dual infinite clusters
+(`nonempty_crossNestedOutwardArrayPreparation`). A preparation can be rebuilt so that its
+horizontal endpoint crossing tends to one (`exists_horizontalEndpoint_rebuild`), or so that its
+vertical endpoint crossing tends to one (`exists_verticalEndpoint_rebuild`), but not both at
+once. The toy scores `opposedEndpointVerticalScore` and `opposedEndpointHorizontalScore` show
+that two such one-sided selections need not combine.
+
+## ii. Key results
+
+Headline fidelity, read from the statements:
+
+- `PeriodicPlanarDualPair.`
+  `freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_crossNestedOutwardEndpointCertificate`:
+  the free buffered infinite-volume FK measure (`0 < p < 1`, `q ≥ 1`) does not give probability
+  `1` to the common unique primal and dual infinite cluster event. **Circular: the hypothesis
+  `hcertificate` is equivalent to the conclusion**
+  (`crossNestedOutwardEndpointCertificate_hypothesis_iff`). Under common uniqueness the free
+  buffered measure satisfies FKG, translation invariance, uniqueness and dual translation
+  invariance (`freeBufferedInfiniteVolume_sheffieldData_of_common`), and for such measures every
+  `CrossNestedOutwardEndpointCertificate` is refuted by
+  `CrossNestedOutwardEndpointCertificate.false`. So `hcertificate` holds exactly when the measure
+  of the event is not `1`.
+- `PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false` : proved; the certificate
+  structure is empty for every FKG, translation-invariant measure with a unique infinite cluster
+  and translation-invariant dual image. It is a vacuous hypothesis predicate in that setting.
+- `PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false` : proved with no
+  hypothesis on `μ`; the structure `EndpointBridgedRectangleArrayCertificate` is empty for every
+  probability measure (vacuous).
+- `PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation` : conditional on FKG,
+  translation invariance and uniqueness for both the primal measure and its dual image; not
+  vacuous as far as known. `exists_canonicalCrossNestedOutwardArrayPreparation_of_common`
+  specializes it to the free buffered measure under common uniqueness.
+- `CrossNestedOutwardArrayPreparation.exists_horizontalEndpoint_rebuild` and
+  `…exists_verticalEndpoint_rebuild` : conditional on FKG, translation invariance, uniqueness and
+  dual translation invariance; each gives only one of the two endpoint limits.
+- `PeriodicPlanarDualPair.`
+  `exists_carriedAsymmetricEndpoints_false_of_primal_limit_with_requirements` :
+  conditional on primal uniqueness and dual FKG, translation invariance and uniqueness; it gives
+  coordinates for which the primal crossing limit fails.
+- The contradiction lemmas
+  `adjacent_height_array_contradiction_of_primal_dual_bounded_limits_of_bounded_matches` and
+  `shifted_crossNested_array_contradiction_of_bounded_limits` are unconditional real analysis.
+
+No declaration of this file is used by other modules.
+
+## iii. Table of contents
+
+- A. Endpoint coordinates with radius requirements
+- B. Centered crossings and endpoint bridges
+- C. Finite-width endpoint merge rows
+- D. Mixed preferences for two nested rectangles
+- E. Aligned exact extents
+- F. Cross-nested outward data
+- G. Cross-nested paired chains
+  - G.1. Opposed endpoint scores
+  - G.2. Chains above lower bounds
+- H. Cross-nested outward arrays and the endpoint certificate
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 3 (FKG inequality) and Ch. 6
+  (planar duality).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
   [Countable V] [Countable W]
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
+/-! ## A. Endpoint coordinates with radius requirements -/
 
-
-theorem exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
+/-- Under primal uniqueness and dual FKG, translation invariance and uniqueness, choose radii,
+widths and heights (with width requirements depending on the radius) such that the template merge
+errors at the chosen radii tend to zero and the dual vertical and horizontal crossings of the
+carried endpoint rectangles tend to one, together with the coordinate inequalities needed later. -/
+lemma exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -78,10 +166,10 @@ theorem exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
         width n + 12 * B - 5 * B) /\
       (forall n, (0 : Real) + 5 * B <
         targetY n (radius n) + height n - 5 * B) /\
-      (forall n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
+      (forall _n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
       (forall n, (4 * B : Real) + width n <=
         width n + 8 * B - 4 * B) /\
-      (forall n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
+      (forall _n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
       (forall n, (4 * B : Real) + height n <=
         targetY n (radius n) + height n - 4 * B) := by
   let r : Nat -> Int -> Nat -> Real := fun _ _ _ => 4 * B
@@ -167,37 +255,32 @@ theorem exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
     have hy : (20 * B + 1 : Real) <= targetY n (radius n) := by
       exact_mod_cast htargetY n (radius n)
     have hBreal : (0 : Real) < B := by exact_mod_cast hBpos
-    push_cast
     nlinarith
   · intro n
     have hBreal : (0 : Real) < B := by exact_mod_cast hBpos
     have hw : (0 : Real) <= width n := by positivity
-    push_cast
     linarith
   · intro n
     have hy : (20 * B + 1 : Real) <= targetY n (radius n) := by
       exact_mod_cast htargetY n (radius n)
     have hBreal : (0 : Real) < B := by exact_mod_cast hBpos
     have hh : (0 : Real) <= height n := by positivity
-    push_cast
     nlinarith
   · intro n
     norm_num
   · intro n
     have hBreal : (0 : Real) <= B := by positivity
-    push_cast
     linarith
   · intro n
     norm_num
   · intro n
     have hy : (20 * B + 1 : Real) <= targetY n (radius n) := by
       exact_mod_cast htargetY n (radius n)
-    push_cast
     linarith
 
-
-
-theorem exists_carriedAsymmetricEndpointCoordinates_with_requirements
+/-- Version of `exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements` with
+radius-independent width and height requirements. -/
+lemma exists_carriedAsymmetricEndpointCoordinates_with_requirements
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -239,10 +322,10 @@ theorem exists_carriedAsymmetricEndpointCoordinates_with_requirements
         width n + 12 * B - 5 * B) /\
       (forall n, (0 : Real) + 5 * B <
         targetY n + height n - 5 * B) /\
-      (forall n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
+      (forall _n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
       (forall n, (4 * B : Real) + width n <=
         width n + 8 * B - 4 * B) /\
-      (forall n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
+      (forall _n : Nat, (0 : Real) + 4 * B <= 4 * B) /\
       (forall n, (4 * B : Real) + height n <=
         targetY n + height n - 4 * B) := by
   simpa using
@@ -251,9 +334,11 @@ theorem exists_carriedAsymmetricEndpointCoordinates_with_requirements
       template (fun n _ => minimumWidth n) (fun n _ => targetY n)
       (fun n _ => hminimumWidth n) (fun n _ => htargetY n))
 
-
-
-theorem PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal_limit_with_requirements
+/-- For a dual pair, coordinates as in
+`exists_carriedAsymmetricEndpointCoordinates_with_requirements` exist for which the primal crossing
+maximum of the carried rectangles cannot tend to one. -/
+lemma
+PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal_limit_with_requirements
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -291,7 +376,7 @@ theorem PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal
         (mu.real (D.primalEmbedding.verticalCrossingEvent
           0 (width n + 8 * B) 0 (targetY n + height n))))
         atTop (nhds 1) -> False) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   obtain ⟨radius, width, height, hradius, hwidth, hmerge,
@@ -350,10 +435,11 @@ theorem PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal
     (fun _ => by norm_num) (fun _ => by apply le_of_eq; ring)
     hDHBottom hDHTop' hprimal hdualV hdualH
 
+/-! ## B. Centered crossings and endpoint bridges -/
 
-
-
-theorem PeriodicPlaneEmbedding.centeredCrossingMax_tendsto_origin
+/-- Translation invariance moves a crossing-maximum limit for rectangles centered at `-M n` to the
+rectangles with corner at the origin. -/
+lemma PeriodicPlaneEmbedding.centeredCrossingMax_tendsto_origin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -394,14 +480,14 @@ theorem PeriodicPlaneEmbedding.centeredCrossingMax_tendsto_origin
   filter_upwards [] with n
   have hwn := hwidth n
   have hhn := hheight n
-  congr 3 <;> simp [z]
+  congr 3 <;> simp only [Nat.cast_add, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, Int.cast_natCast, neg_add_cancel, z]
   all_goals first | rw [Nat.cast_sub hwn] | rw [Nat.cast_sub hhn]
-  all_goals push_cast <;> ring
+  all_goals push_cast; ring
 
-
-
-
-theorem PeriodicPlaneEmbedding.adjacentCrossingMax_tendsto_one_mono_vertical_width
+omit [Countable V] in
+/-- Widening the rectangle of the vertical crossing keeps a crossing-maximum limit equal to one. -/
+lemma PeriodicPlaneEmbedding.adjacentCrossingMax_tendsto_one_mono_vertical_width
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (a b c d step aVertical bVertical : Nat -> Real)
@@ -424,11 +510,9 @@ theorem PeriodicPlaneEmbedding.adjacentCrossingMax_tendsto_one_mono_vertical_wid
         (E.verticalCrossingEvent_mono_horizontal (ha n) (hb n))))
     (fun _ => max_le measureReal_le_one measureReal_le_one)
 
-
-
-
-
-theorem PeriodicPlanarDualPair.pointwiseRecursiveRectangleArray_false_of_primal_dualMeasure_limits
+/-- A recursive rectangle array with a vertical start crossing, horizontal crossings at every level,
+primal adjacent-pair limits and dual limits at every level is impossible. -/
+lemma PeriodicPlanarDualPair.pointwiseRecursiveRectangleArray_false_of_primal_dualMeasure_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real) (hBpos : 0 < B)
@@ -472,11 +556,9 @@ theorem PeriodicPlanarDualPair.pointwiseRecursiveRectangleArray_false_of_primal_
     (fun n => c k n + 4 * B) (fun n => d k n - 4 * B)
     (hdualLevel k)
 
-
-
-
-
-
+/-- A four-rectangle array (start, lower, upper, end) with endpoint crossings, bridging
+adjacent-pair limits and dual limits on each rectangle. Vacuous:
+`EndpointBridgedRectangleArrayCertificate.false` shows it is empty for every probability measure. -/
 structure PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -563,9 +645,9 @@ structure PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate
       (endA n) (endB n) (endC n + 4 * B) (endD n - 4 * B))))
     atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
+/-- Every endpoint-bridged rectangle array certificate is contradictory, for every probability
+measure: the structure is empty. -/
+lemma PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.EndpointBridgedRectangleArrayCertificate mu) : False := by
@@ -689,27 +771,27 @@ theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
     dualLevels := ?_ }
   · intro n k
     by_cases hk0 : k = 0
-    · simpa only [a, b, hk0, if_pos] using data.startSpanX n
+    · simpa only [a, b, hk0, ite_eq_left] using data.startSpanX n
     by_cases hk1 : k = 1
-    · simp only [a, b, hk0, if_neg, hk1, if_pos]
+    · simp only [a, b, hk1, ite_eq_left]
       exact data.lowerSpanX n
     by_cases hk2 : k = 2
-    · simp only [a, b, hk0, if_neg, hk1, hk2, if_pos]
+    · simp only [a, b, hk2, ite_eq_left]
       exact data.upperSpanX n
-    · simp only [a, b, hk0, if_neg, hk1, hk2]
+    · simp only [a, b, hk0, hk1, hk2]
       exact data.endSpanX n
   · intro n k
     by_cases hk0 : k = 0
-    · simpa only [c, d, hk0, if_pos] using data.startSpanY n
+    · simpa only [c, d, hk0, ite_eq_left] using data.startSpanY n
     by_cases hk1 : k = 1
-    · simp only [c, d, hk0, if_neg, hk1, if_pos]
+    · simp only [c, d, hk1, ite_eq_left]
       exact data.lowerSpanY n
     by_cases hk2 : k = 2
-    · simp only [c, d, hk0, if_neg, hk1, hk2, if_pos]
+    · simp only [c, d, hk2, ite_eq_left]
       exact data.upperSpanY n
-    · simp only [c, d, hk0, if_neg, hk1, hk2]
+    · simp only [c, d, hk0, hk1, hk2]
       exact data.endSpanY n
-  · simpa only [a, b, c, d, if_pos] using data.verticalStart
+  · simpa only [a, b, c, d, ite_eq_left] using data.verticalStart
   · simpa [K, a, b, c, d] using data.horizontalEnd
   · intro k hk
     apply hprimalMin.squeeze tendsto_const_nhds
@@ -719,17 +801,17 @@ theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
         dsimp only [K] at this
         omega
       rcases hcases with h0 | h1 | h2
-      · simpa only [a, b, c, d, h0, if_pos, Nat.zero_add, if_false,
+      · simpa only [a, b, c, d, h0, ite_eq_left, Nat.zero_add, ite_false,
           one_ne_zero, primal0] using
           (min_le_left (primal0 n) (min (primal1 n) (primal2 n)))
       · have h10 : k n ≠ 0 := by omega
-        simpa only [a, b, c, d, h1, h10, if_false, if_pos,
+        simpa only [a, b, c, d, h1, h10, ite_false, ite_eq_left,
             Nat.reduceAdd, OfNat.ofNat, one_ne_zero, primal1, Nat.reduceEqDiff, reduceIte] using
           ((min_le_right (primal0 n) (min (primal1 n) (primal2 n))).trans
             (min_le_left (primal1 n) (primal2 n)))
       · have h20 : k n ≠ 0 := by omega
         have h21 : k n ≠ 1 := by omega
-        simpa only [a, b, c, d, h2, h20, h21, if_false, if_pos,
+        simpa only [a, b, c, d, h2, h20, h21, ite_false, ite_eq_left,
             Nat.reduceAdd, OfNat.ofNat, one_ne_zero, primal2, Nat.reduceEqDiff, reduceIte] using
           ((min_le_right (primal0 n) (min (primal1 n) (primal2 n))).trans
             (min_le_right (primal1 n) (primal2 n)))
@@ -743,18 +825,18 @@ theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
         dsimp only [K] at this
         omega
       rcases hcases with h0 | h1 | h2 | h3
-      · simpa only [a, b, c, d, h0, if_pos, dual0] using
+      · simpa only [a, b, c, d, h0, ite_eq_left, dual0] using
           (min_le_left (dual0 n)
             (min (dual1 n) (min (dual2 n) (dual3 n))))
       · have h10 : k n ≠ 0 := by omega
-        simpa only [a, b, c, d, h1, h10, if_false, if_pos, dual1, Nat.reduceEqDiff,
+        simpa only [a, b, c, d, h1, h10, ite_false, ite_eq_left, dual1, Nat.reduceEqDiff,
           reduceIte] using
           ((min_le_right (dual0 n)
             (min (dual1 n) (min (dual2 n) (dual3 n)))).trans
               (min_le_left (dual1 n) (min (dual2 n) (dual3 n))))
       · have h20 : k n ≠ 0 := by omega
         have h21 : k n ≠ 1 := by omega
-        simpa only [a, b, c, d, h2, h20, h21, if_false, if_pos, dual2, Nat.reduceEqDiff,
+        simpa only [a, b, c, d, h2, h20, h21, ite_false, ite_eq_left, dual2, Nat.reduceEqDiff,
           reduceIte] using
           ((min_le_right (dual0 n)
             (min (dual1 n) (min (dual2 n) (dual3 n)))).trans
@@ -763,7 +845,7 @@ theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
       · have h30 : k n ≠ 0 := by omega
         have h31 : k n ≠ 1 := by omega
         have h32 : k n ≠ 2 := by omega
-        simpa only [a, b, c, d, h3, h30, h31, h32, if_false, dual3, Nat.reduceEqDiff,
+        simpa only [a, b, c, d, h3, h30, h31, h32, ite_false, dual3, Nat.reduceEqDiff,
           reduceIte] using
           ((min_le_right (dual0 n)
             (min (dual1 n) (min (dual2 n) (dual3 n)))).trans
@@ -772,9 +854,10 @@ theorem PeriodicPlanarDualPair.EndpointBridgedRectangleArrayCertificate.false
     · intro n
       exact max_le measureReal_le_one measureReal_le_one
 
-
-
-theorem PeriodicPlaneEmbedding.verticalEndpoint_tendsto_startBridge_of_mono
+omit [Countable V] in
+/-- A vertical endpoint crossing limit yields the start-bridge adjacent limit when the next
+rectangle is wider. -/
+lemma PeriodicPlaneEmbedding.verticalEndpoint_tendsto_startBridge_of_mono
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real) (startA startB startC startD lowerA lowerB : Nat -> Real)
@@ -799,9 +882,10 @@ theorem PeriodicPlaneEmbedding.verticalEndpoint_tendsto_startBridge_of_mono
   exact hwide.squeeze tendsto_const_nhds
     (fun _ => le_max_right _ _) (fun _ => max_le measureReal_le_one measureReal_le_one)
 
-
-
-theorem PeriodicPlaneEmbedding.horizontalEndpoint_tendsto_endBridge_of_mono
+omit [Countable V] in
+/-- A horizontal endpoint crossing limit yields the end-bridge adjacent limit when the previous
+rectangle is taller. -/
+lemma PeriodicPlaneEmbedding.horizontalEndpoint_tendsto_endBridge_of_mono
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real) (endA endB upperC upperD endC endD : Nat -> Real)
@@ -825,10 +909,12 @@ theorem PeriodicPlaneEmbedding.horizontalEndpoint_tendsto_endBridge_of_mono
   exact htall.squeeze tendsto_const_nhds
     (fun _ => le_max_left _ _) (fun _ => max_le measureReal_le_one measureReal_le_one)
 
+/-! ## C. Finite-width endpoint merge rows -/
 
-
-
-theorem PeriodicGraph.exists_finiteAdjacentHeights_pairMergeRadius_at_error
+/-- Under uniqueness, for a finite set of vertical steps there is a radius above any cutoff at which
+all king-offset merge errors of the template are below `ε`. See also
+`PeriodicPlaneEmbedding.exists_adjacentHeight_pairMergeRadius_at_error` (weaker: one step). -/
+lemma PeriodicGraph.exists_finiteAdjacentHeights_pairMergeRadius_at_error
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -859,11 +945,9 @@ theorem PeriodicGraph.exists_finiteAdjacentHeights_pairMergeRadius_at_error
   exact ((hradius n).2 branch).trans
     (hthreshold n (Nat.le_max_right _ _))
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
+/-- Under FKG, translation invariance and uniqueness, for finitely many widths there is a height at
+which all the horizontal endpoint crossings have probability above `1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -897,7 +981,7 @@ theorem PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
       E.exists_horizontalCrossing_measureReal_gt_of_unique
         mu hFKG hTI hunique y B s hB0 hB t ht minimumHeight hepsilon
     refine ⟨height, hheight, ?_⟩
-    convert hcrossing using 1 <;> dsimp only [s, t] <;> push_cast <;> ring
+    convert hcrossing using 1; dsimp only [s, t]; push_cast; ring
   let chosen : Width -> Nat := fun width => Classical.choose (hexists width)
   have hchosen (width : Width) := Classical.choose_spec (hexists width)
   let height := minimumHeight + ∑ width : Width, chosen width
@@ -917,9 +1001,9 @@ theorem PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
     le_rfl (by gcongr)
   exact (hchosen indexed).2.trans_le (measureReal_mono hmono)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
+/-- Under FKG, translation invariance and uniqueness, for finitely many heights there is a width at
+which all the vertical endpoint crossings have probability above `1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -953,7 +1037,7 @@ theorem PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
       E.exists_verticalCrossing_measureReal_gt_of_unique
         mu hFKG hTI hunique x B s hB0 hB t ht minimumWidth hepsilon
     refine ⟨width, hwidth, ?_⟩
-    convert hcrossing using 1 <;> dsimp only [s, t] <;> push_cast <;> ring
+    convert hcrossing using 1; dsimp only [s, t]; push_cast; ring
   let chosen : Height -> Nat := fun height => Classical.choose (hexists height)
   have hchosen (height : Height) := Classical.choose_spec (hexists height)
   let width := minimumWidth + ∑ height : Height, chosen height
@@ -972,11 +1056,9 @@ theorem PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
     (d := (verticalTop height : Real)) le_rfl (by gcongr)
   exact (hchosen indexed).2.trans_le (measureReal_mono hmono)
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_finiteHeight_coupledEndpointWidthHeight
+/-- A width and a height chosen together so that the vertical endpoint crossings (finitely many
+heights) and the horizontal endpoint crossing have probability above `1 - ε`. -/
+lemma PeriodicPlaneEmbedding.exists_finiteHeight_coupledEndpointWidthHeight
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1016,10 +1098,9 @@ theorem PeriodicPlaneEmbedding.exists_finiteHeight_coupledEndpointWidthHeight
   refine ⟨width, height, hwidth, hheight, hvertical, ?_⟩
   exact hhorizontal width (Finset.mem_singleton_self width)
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_finiteWidth_endpointHeight_pairMergeRadius
+/-- A height and a radius such that the horizontal endpoint crossings for finitely many widths are
+likely and the merge errors for all steps up to that height are small. -/
+lemma PeriodicPlaneEmbedding.exists_finiteWidth_endpointHeight_pairMergeRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1062,7 +1143,9 @@ theorem PeriodicPlaneEmbedding.exists_finiteWidth_endpointHeight_pairMergeRadius
   simp only [steps, Finset.mem_image, Finset.mem_range]
   exact ⟨step, Nat.lt_succ_iff.mpr hstep, rfl⟩
 
-
+/-- One row of the endpoint construction: a height and a radius at which the horizontal endpoint
+crossings for the given widths have probability above `1 - endpointEpsilon` and the merge errors for
+all steps up to the height are below `mergeEpsilon`. -/
 structure PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -1084,9 +1167,8 @@ structure PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow
           if q.1.val = 0 then 0 else verticalShift step))) radius) <
         mergeEpsilon
 
-
-
-
+/-- Extension of a merge row by a width at which the vertical endpoint crossings for all steps up to
+the row height have probability above `1 - verticalEndpointEpsilon`. -/
 structure PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.VerticalEndpointExtension
     {E : PeriodicPlaneEmbedding P}
     {mu : Measure (ConfigSpace (Sym2 V))}
@@ -1105,8 +1187,8 @@ structure PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.VerticalEndpointExt
     1 - verticalEndpointEpsilon < mu.real (E.verticalCrossingEvent
       x (x + width) (verticalBottom step) (verticalTop step))
 
-
-theorem PeriodicPlaneEmbedding.nonempty_finiteWidthEndpointMergeRow
+/-- Under FKG, translation invariance and uniqueness, merge rows exist for every precision. -/
+lemma PeriodicPlaneEmbedding.nonempty_finiteWidthEndpointMergeRow
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1138,9 +1220,9 @@ theorem PeriodicPlaneEmbedding.nonempty_finiteWidthEndpointMergeRow
     horizontalEndpoint := hhorizontal
     merge := hmerge }⟩
 
-
-
-theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.nonempty_verticalEndpointExtension
+/-- Under FKG, translation invariance and uniqueness, every merge row has a vertical endpoint
+extension. -/
+lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.nonempty_verticalEndpointExtension
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1174,10 +1256,9 @@ theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.nonempty_verticalEndp
     verticalEndpoint := fun step hstep =>
       hvertical step (Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hstep)) }⟩
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_recursiveFiniteWidthEndpointMergeRows
+/-- A recursive sequence of merge rows in which the width set of row `n + 1` contains the connector
+margin of row `n`. -/
+lemma PeriodicPlaneEmbedding.exists_recursiveFiniteWidthEndpointMergeRows
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1228,10 +1309,9 @@ theorem PeriodicPlaneEmbedding.exists_recursiveFiniteWidthEndpointMergeRows
       (E.connectorMarginRequirement (chooseRow n (widths n)).radius)
       (widths n)
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_recursiveMonotoneFiniteWidthEndpointMergeRows
+/-- Version of `exists_recursiveFiniteWidthEndpointMergeRows` with an explicit recursion state and
+nondecreasing row heights. -/
+lemma PeriodicPlaneEmbedding.exists_recursiveMonotoneFiniteWidthEndpointMergeRows
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1299,9 +1379,10 @@ theorem PeriodicPlaneEmbedding.exists_recursiveMonotoneFiniteWidthEndpointMergeR
     exact hprevious.symm.le.trans
       ((Nat.le_max_right _ _).trans hminimum)
 
-
-
-theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.horizontalEndpoint_tendsto_one
+omit [Countable V] in
+/-- Along merge rows with precision tending to zero, the horizontal endpoint crossing probabilities
+tend to one. -/
+lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.horizontalEndpoint_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (template : Nat -> Finset V) (widths : Nat -> Finset Nat)
@@ -1323,9 +1404,12 @@ theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.horizontalEndpoint_te
     (fun n => le_of_lt ((rows n).horizontalEndpoint (width n) (hwidth n)))
     (fun _ => measureReal_le_one)
 
+namespace PeriodicPlaneEmbedding
 
-
-theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.VerticalEndpointExtension.verticalEndpoint_tendsto_one
+omit [Countable V] in
+/-- Along vertical endpoint extensions with precision tending to zero, the vertical endpoint
+crossing probabilities tend to one. -/
+lemma FiniteWidthEndpointMergeRow.VerticalEndpointExtension.verticalEndpoint_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (template : Nat -> Finset V) (widths : Nat -> Finset Nat)
@@ -1354,9 +1438,11 @@ theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.VerticalEndpointExten
     (fun n => le_of_lt ((extensions n).verticalEndpoint (step n) (hstep n)))
     (fun _ => measureReal_le_one)
 
+end PeriodicPlaneEmbedding
 
-
-theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.merge_tendsto_zero
+omit [Countable V] in
+/-- Along merge rows with precision tending to zero, the merge errors tend to zero. -/
+lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.merge_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (template : Nat -> Finset V) (widths : Nat -> Finset Nat)
@@ -1376,12 +1462,12 @@ theorem PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.merge_tendsto_zero
   exact squeeze_zero (fun _ => measureReal_nonneg)
     (fun n => le_of_lt ((rows n).merge (step n) (hstep n) (q n))) hepsilon
 
+/-! ## D. Mixed preferences for two nested rectangles -/
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.centeredAdjacent_limit_of_pairMerge
+/-- From square boundary-band data with scores tending to one, templates hitting infinity and
+vanishing merge errors, the crossing maximum of the rectangle and its raised neighbour tends to one.
+-/
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.centeredAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1449,12 +1535,9 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.centeredAdjace
   congr 3
   rw [hstepCast]
 
-
-
-
-
-
-theorem PeriodicPlanarDualPair.canonicalAdjacentHeightArray_false
+/-- An array of rectangles of common width and heights `baseHeight + k` with endpoint crossing
+limits, primal adjacent limits and dual limits is impossible. -/
+lemma PeriodicPlanarDualPair.canonicalAdjacentHeightArray_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (B : Real) (hBpos : 0 < B)
@@ -1506,13 +1589,11 @@ theorem PeriodicPlanarDualPair.canonicalAdjacentHeightArray_false
   · intro n k
     dsimp only [a, b]
     have hw := hwidth n
-    push_cast at hw ⊢
     linarith
   · intro n k
     dsimp only [c, d]
     have hh := hheight n
     have hk : (0 : Real) <= k := by positivity
-    push_cast at hh ⊢
     linarith
   · simpa only [a, b, c, d, Nat.cast_zero, Nat.cast_add,
       zero_add, add_zero] using hverticalStart
@@ -1525,11 +1606,9 @@ theorem PeriodicPlanarDualPair.canonicalAdjacentHeightArray_false
     simpa only [a, b, c, d, Nat.cast_zero, Nat.cast_add,
       zero_add] using hdual k hk
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_crossing_branch
+/-- Two-rectangle version of `exists_adjacentHeight_approxPreferredSide_crossing_branch`: vertical
+scores are measured in `[a1, b1] × [c1, d1]` and horizontal scores in `[a0, b0] × [c0, d0]`. -/
+lemma PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1635,12 +1714,10 @@ theorem PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_cr
     rw [<- hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-set_option linter.unusedVariables false in
-
-
-
-
-theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendsto_one_of_pairMerge
+/-- Two-rectangle preference limit: with templates hitting infinity, vanishing merge errors and
+approximate boundary preferences, the maximum of the horizontal crossing of the first rectangle and
+the raised vertical crossing of the second tends to one. -/
+lemma PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendsto_one_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1754,7 +1831,7 @@ theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendst
       (neighbor n ((0 : Fin 2), ij)).image (P.shift (z n)) =
         (template n).image
           (P.shift (z n + preferenceKingOffset ij)) := by
-    simp only [neighbor, Fin.isValue, Fin.val_zero, if_pos, add_zero,
+    simp only [neighbor, Fin.isValue, Fin.val_zero, ite_eq_left, add_zero,
       Finset.image_image]
     apply Finset.image_congr
     intro u hu
@@ -1765,7 +1842,7 @@ theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendst
         ((template n).image
           (P.shift (z n + preferenceKingOffset ij))).image
             (P.shift (verticalShift (step n))) := by
-    simp only [neighbor, Fin.isValue, Fin.val_one, one_ne_zero, if_false,
+    simp only [neighbor, Fin.isValue, Fin.val_one, one_ne_zero, ite_false,
       Finset.image_image]
     apply Finset.image_congr
     intro u hu
@@ -1883,10 +1960,10 @@ theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendst
         hv] using ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n <= 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, ite_eq_left hv]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, ite_eq_right hv]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :
@@ -1900,7 +1977,7 @@ theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendst
         exact measureReal_nonneg
       have hM0 : 0 <= Mv0 n := measureReal_nonneg
       have hM1 : 0 <= Mv1 n := measureReal_nonneg
-      simp only [A, if_pos hv, Hv, Cv, Mv] at ⊢
+      simp only [A, ite_eq_left hv, Hv, Cv, Mv] at ⊢
       nlinarith
     · right
       have hraw := ((hbranch n).resolve_left hv).2
@@ -1912,12 +1989,9 @@ theorem PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendst
       hHv hHh hMv hMh hepsilon hcrossingBranch
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
-
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_branch
+/-- Two-rectangle version of `exists_outward_approxPreferredSide_crossing_branch` with outward
+padding. -/
+lemma PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2042,11 +2116,9 @@ theorem PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing
     rw [<- hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-set_option linter.unusedVariables false in
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one
+/-- Two-rectangle version of `exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one`,
+also selecting a branch sequence along which the chosen padded crossing tends to one. -/
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2057,8 +2129,8 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
     (pad : Nat -> Int) (hpad : forall n, 0 <= pad n) :
     exists radius : Nat -> Nat, forall
       (width height : Nat -> Nat)
-      (hwidth : forall n, 0 < width n)
-      (hheight : forall n, 0 < height n)
+      (_hwidth : forall n, 0 < width n)
+      (_hheight : forall n, 0 < height n)
       (base : Nat -> Site 2)
       (a0 b0 c0 d0 a1 b1 c1 d1 epsilon : Nat -> Real)
       (bottom top left right : (n : Nat) ->
@@ -2258,7 +2330,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
       (neighbor n ((0 : Fin 3), ijV n)).image (P.shift (zV n)) =
         Rdown n := by
     rw [hneighbor]
-    simp only [Fin.val_zero, if_pos, add_zero]
+    simp only [Fin.val_zero, ite_eq_left, add_zero]
     rw [hzV]
     exact (htranslatedSource n (xVertical n)
       (verticalShift (-(pad n)))).symm
@@ -2266,13 +2338,13 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
       (neighbor n ((1 : Fin 3), ijV n)).image (P.shift (zV n)) =
         Rup n := by
     rw [hneighbor]
-    simp only [Fin.val_one, one_ne_zero, if_false, if_pos]
+    simp only [Fin.val_one, one_ne_zero, ite_false, ite_eq_left]
     have hs : zV n + preferenceKingOffset (ijV n) +
         verticalShift (2 * pad n) =
       base n + preferenceGridSite (xVertical n) + verticalShift (pad n) := by
       rw [hzV]
       ext i
-      fin_cases i <;> simp [verticalShift] <;> omega
+      fin_cases i <;> simp [verticalShift]; omega
     rw [hs]
     exact (htranslatedSource n (xVertical n) (verticalShift (pad n))).symm
   have hLleft (n : Nat) :
@@ -2282,7 +2354,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
       (neighbor n ((0 : Fin 3), ijH n)).image (P.shift (zH n)) =
         Rleft n := by
     rw [hneighbor]
-    simp only [Fin.val_zero, if_pos, add_zero]
+    simp only [Fin.val_zero, ite_eq_left, add_zero]
     rw [hzH]
     exact (htranslatedSource n (xHorizontal n)
       (horizontalShift (-(pad n)))).symm
@@ -2299,7 +2371,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
         horizontalShift (pad n) := by
       rw [hzH]
       ext i
-      fin_cases i <;> simp [horizontalShift] <;> omega
+      fin_cases i <;> simp [horizontalShift]; omega
     rw [hs]
     exact (htranslatedSource n (xHorizontal n)
       (horizontalShift (pad n))).symm
@@ -2385,10 +2457,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
         ((hbranch n).resolve_left hv).1
   have hAupper (n : Nat) : A n <= 1 := by
     by_cases hv : verticalBranch n
-    · simp only [A, if_pos hv]
+    · simp only [A, ite_eq_left hv]
       rw [hbottomScore n (x n)]
       exact measureReal_le_one
-    · simp only [A, if_neg hv]
+    · simp only [A, ite_eq_right hv]
       rw [hleftScore n (x n)]
       exact measureReal_le_one
   have hcrossingBranch (n : Nat) :
@@ -2402,7 +2474,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
         exact measureReal_nonneg
       have hM0 : 0 <= Mv0 n := measureReal_nonneg
       have hM1 : 0 <= Mv1 n := measureReal_nonneg
-      simp only [A, if_pos hv, Hv, Cv, Mv] at ⊢
+      simp only [A, ite_eq_left hv, Hv, Cv, Mv] at ⊢
       nlinarith
     · right
       have hraw := ((hbranch n).resolve_left hv).2
@@ -2417,7 +2489,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
             Ch n := by
         simpa [Hh, Ch, source, Ldown, Rdown, Rup, Lleft, Rleft,
           Rright, Mv0, Mv1, Mh0, Mh1] using hraw
-      simp only [A, if_neg hv, Hh, Ch, Mh]
+      simp only [A, ite_eq_right hv, Hh, Ch, Mh]
       nlinarith [hraw']
   let selectedBranch : Nat -> Bool := fun n => decide (verticalBranch n)
   have hselectedVertical (n : Nat) (hselected : selectedBranch n = true) :
@@ -2429,7 +2501,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
       exact measureReal_nonneg
     have hM0 : 0 <= Mv0 n := measureReal_nonneg
     have hM1 : 0 <= Mv1 n := measureReal_nonneg
-    simp only [A, if_pos hv, Hv, Cv, Mv] at ⊢
+    simp only [A, ite_eq_left hv, Hv, Cv, Mv] at ⊢
     nlinarith
   have hselectedHorizontal (n : Nat)
       (hselected : selectedBranch n = false) :
@@ -2447,7 +2519,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
           Ch n := by
       simpa [Hh, Ch, source, Ldown, Rdown, Rup, Lleft, Rleft,
         Rright, Mv0, Mv1, Mh0, Mh1] using hraw
-    simp only [A, if_neg hv, Hh, Ch, Mh]
+    simp only [A, ite_eq_right hv, Hh, Ch, Mh]
     nlinarith [hraw']
   have hselected :=
     crossing_selected_tendsto_one_of_approxPreferredSide_root_branches
@@ -2464,11 +2536,13 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cro
   · simpa [Cv, Ch] using hselected
   · simpa [Cv, Ch] using hmaximum
 
+/-! ## E. Aligned exact extents -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedExact_dualLimit
+omit [Countable V] in
+/-- Under dual FKG, translation invariance and uniqueness, a radius sequence such that, for exact
+aligned extents with connector slack at that radius, the padded dual crossing maximum tends to one.
+-/
+lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedExact_dualLimit
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -2667,7 +2741,6 @@ theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedE
       simpa [verticalShift, ← sub_eq_add_neg] using hshift
     apply Edual.rectVertices_mono le_rfl le_rfl le_rfl _ hshift'
     have hp : (0 : Real) <= pad n := by exact_mod_cast hpad n
-    push_cast
     linarith
   · intro n gridVertex vertex hvertex
     obtain ⟨u, hu, rfl⟩ := hvertex
@@ -2716,7 +2789,6 @@ theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedE
       simpa [horizontalShift, ← sub_eq_add_neg] using hshift
     apply Edual.rectVertices_mono le_rfl _ le_rfl le_rfl hshift'
     have hp : (0 : Real) <= pad n := by exact_mod_cast hpad n
-    push_cast
     linarith
   · intro n v
     rfl
@@ -2761,11 +2833,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedE
     dsimp only [epsilon]
     linarith
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMerge
+omit [Countable W] in
+/-- Under FKG, translation invariance and uniqueness, exact aligned extents with connector slack and
+vanishing merge errors give a primal adjacent crossing limit. -/
+lemma PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -2853,7 +2924,7 @@ theorem PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMer
       (E.rectRightBoundaryVertices 0 (extentX n) 0 (extentY n)))
   apply E.mixedAdjacentHeightPreference_crossing_max_tendsto_one_of_pairMerge
       mu hFKG hTI template htemplateHit (fun n => (step n : Int))
-      (fun _ => Int.ofNat_zero_le _) radius
+      (fun _ => Int.natCast_nonneg _) radius
       (by simpa only [template] using hmerge)
       (fun n => (data n).raw.data.width)
       (fun n => (data n).raw.data.height)
@@ -2937,11 +3008,10 @@ theorem PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMer
     dsimp only [epsilon]
     linarith
 
-
-
-
-
-theorem PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
+omit [Countable W] in
+/-- Primal adjacent crossing limit for exact aligned extents built from paired boundary-band
+schedule data. -/
+lemma PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -2987,10 +3057,10 @@ theorem PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
     Int.toNat_of_nonneg (scheduleData.step_nonneg n)
   simp only [hstep]
 
-
-
-
-theorem PairedAdjacentBoundaryBandScheduleData.exists_alignedExact_dualOutwardRadius
+omit [Countable V] in
+/-- Dual outward crossing limit for exact aligned extents built from paired boundary-band schedule
+data, at a suitable radius. -/
+lemma PairedAdjacentBoundaryBandScheduleData.exists_alignedExact_dualOutwardRadius
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3033,83 +3103,11 @@ theorem PairedAdjacentBoundaryBandScheduleData.exists_alignedExact_dualOutwardRa
     scheduleData.schedule scheduleData.scoreDual_tendsto
     scheduleData.scoreDual_le_one pad hpad
 
-omit [Countable V] in
+/-! ## F. Cross-nested outward data -/
 
-
-theorem PeriodicPlaneEmbedding.orbitBoxCoordinateBound_mono_adaptive
-    (E : PeriodicPlaneEmbedding P) {n m : Nat} (hnm : n <= m)
-    (i : Fin 2) :
-    E.orbitBoxCoordinateBound n i <= E.orbitBoxCoordinateBound m i := by
-  classical
-  unfold PeriodicPlaneEmbedding.orbitBoxCoordinateBound
-  exact Finset.sup'_mono (fun v => |E.vertexCoord v i|)
-    (fun _ hv => P.orbitBox_mono hnm hv)
-    ⟨P.root, P.orbitBox_mono (Nat.zero_le n)
-      P.root_mem_orbitBox_zero⟩
-
-omit [Countable V] in
-
-
-theorem PeriodicPlaneEmbedding.connectorMarginRequirement_mono_adaptive
-    (E : PeriodicPlaneEmbedding P) {radius radius' : Nat}
-    (h : radius <= radius') :
-    E.connectorMarginRequirement radius <=
-      E.connectorMarginRequirement radius' := by
-  unfold PeriodicPlaneEmbedding.connectorMarginRequirement
-  apply Nat.ceil_mono
-  apply max_le_max
-  · apply E.orbitBoxCoordinateBound_mono_adaptive
-    exact P.bufferedRadius_strictMono.monotone h
-  · apply E.orbitBoxCoordinateBound_mono_adaptive
-    exact P.bufferedRadius_strictMono.monotone h
-
-omit [Countable V] [Countable W] in
-
-
-theorem PairedAlignedConnectorSlack.restrictRadius
-    (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
-    {mu : Measure (ConfigSpace (Sym2 V))}
-    {muDual : Measure (ConfigSpace (Sym2 W))}
-    {S : Finset V} {Sdual : Finset W} {p pDual : Real}
-    {family : E.NormalBoundaryBandFamily mu S p}
-    {familyDual : Edual.NormalBoundaryBandFamily muDual Sdual pDual}
-    {verticalRequirement horizontalRequirement : Nat -> Nat}
-    {schedule : PairedAlignedMarginSchedule E Edual family familyDual
-      verticalRequirement horizontalRequirement}
-    {radius radius' k : Nat} (h : radius <= radius')
-    (slack : PairedAlignedConnectorSlack E Edual family familyDual
-      schedule radius' k) :
-    PairedAlignedConnectorSlack E Edual family familyDual
-      schedule radius k := by
-  have hprimal := E.connectorMarginRequirement_mono_adaptive h
-  have hdual := Edual.connectorMarginRequirement_mono_adaptive h
-  have hprimalInt : (E.connectorMarginRequirement radius : Int) <=
-      E.connectorMarginRequirement radius' := by
-    exact_mod_cast hprimal
-  have hdualInt : (Edual.connectorMarginRequirement radius : Int) <=
-      Edual.connectorMarginRequirement radius' := by
-    exact_mod_cast hdual
-  exact {
-    primalLeft := hprimalInt.trans slack.primalLeft
-    primalRight := by
-      have := slack.primalRight
-      omega
-    primalBottom := hprimalInt.trans slack.primalBottom
-    primalTop := by
-      have := slack.primalTop
-      omega
-    dualLeft := hdualInt.trans slack.dualLeft
-    dualRight := by
-      have := slack.dualRight
-      omega
-    dualBottom := hdualInt.trans slack.dualBottom
-    dualTop := by
-      have := slack.dualTop
-      omega }
-
-
-
-
+/-- Data for the cross-nested construction: a dual radius with its outward dual limit, and for each
+`n` an index with connector slack and a triple (previous, current, next) of exact aligned extents
+with padding. -/
 structure PairedAdjacentCrossNestedOutwardData
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -3147,10 +3145,9 @@ structure PairedAdjacentCrossNestedOutwardData
     (scheduleData.family n) (scheduleData.familyDual n)
     (scheduleData.schedule n) (index n) padding
 
-
-
-
-theorem PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
+/-- Under translation invariance and dual FKG, translation invariance and uniqueness, cross-nested
+outward data exist with current extents above given lower bounds. -/
+lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3206,10 +3203,10 @@ theorem PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
   · intro n
     exact (Classical.choose_spec (htriple n)).2.1
 
-
-
-
-theorem PairedAdjacentCrossNestedOutwardData.local_limits
+omit [Countable W] in
+/-- Under FKG, translation invariance and uniqueness, the current extent has a primal adjacent limit
+and the previous and next extents have padded dual limits. -/
+lemma PairedAdjacentCrossNestedOutwardData.local_limits
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3255,14 +3252,14 @@ theorem PairedAdjacentCrossNestedOutwardData.local_limits
       (scheduleData.schedule n)
       (max (scheduleData.radius n) n) (data.index n) := by
     intro n
-    apply (data.slack n).restrictRadius E Edual
+    apply (data.slack n).of_le E Edual
     omega
   have hdualSlack : forall n, PairedAlignedConnectorSlack E Edual
       (scheduleData.family n) (scheduleData.familyDual n)
       (scheduleData.schedule n)
       (max (data.dualRadius n) n) (data.index n) := by
     intro n
-    apply (data.slack n).restrictRadius E Edual
+    apply (data.slack n).of_le E Edual
     omega
   refine ⟨scheduleData.alignedExact_primalAdjacent_limit hFKG hTI
       hunique data.index (fun n => (data.triple n).currentX)
@@ -3277,11 +3274,9 @@ theorem PairedAdjacentCrossNestedOutwardData.local_limits
       (fun n => (data.triple n).nextY)
       (fun n => (data.triple n).next) hdualSlack
 
-
-
-
-
-theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
+/-- Planar exclusion for the cross-nested triple: primal crossings of the current extent and dual
+crossings of the neighbouring extents have probabilities summing to at most one. -/
+lemma PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {step : Nat -> Int}
@@ -3320,7 +3315,7 @@ theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
         (D.dualMeasure mu).real
           (D.dualEmbedding.horizontalCrossingEvent 0
             (data.triple n).nextX 0 (data.triple n).nextY) <= 1) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   constructor
@@ -3372,7 +3367,7 @@ theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
             (D.dualMeasure mu).real event)
           congr 1
           all_goals
-            simp only [z, Pi.zero_apply, if_pos, if_neg]
+            simp only [z, ite_eq_left]
           · rw [(data.triple n).previous.raw.wideLeft_eq]
             push_cast
             ring
@@ -3417,7 +3412,6 @@ theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
           (data.triple n).current.raw.data.wideRight + padding - 5 * B := by
       rw [(data.triple n).current.raw.wideLeft_eq,
         (data.triple n).current.raw.wideRight_eq]
-      push_cast
       have hpad0 : (0 : Real) <= padding := by positivity
       linarith [hcurrentX n]
     have hspanY : (0 : Real) + 5 * B <
@@ -3451,7 +3445,7 @@ theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
             (D.dualMeasure mu).real event)
           congr 1
           all_goals
-            simp only [z, Pi.zero_apply, if_pos, if_neg]
+            simp only [z, ite_eq_left]
           · rw [(data.triple n).current.raw.wideLeft_eq]
             push_cast
             ring
@@ -3479,9 +3473,10 @@ theorem PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
       (D.dualEmbedding.horizontalCrossingEvent_measurableSet _ _ _ _)]
     linarith
 
-
-
-theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits_of_bounded_matches
+/-- Array contradiction in which the complementarity bounds are needed only for indices `≤ K n + 1`.
+See also `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` (weaker:
+complementarity for all indices). -/
+lemma adjacent_height_array_contradiction_of_primal_dual_bounded_limits_of_bounded_matches
     (horizontal vertical dualVertical dualHorizontal : Nat -> Nat -> Real)
     (K : Nat -> Nat)
     (hhorizontal_nonneg : forall n k, 0 <= horizontal n k)
@@ -3533,10 +3528,9 @@ theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits_of_bou
       (fun n => hmatchVertical n (k n + 1) (hkNextBound n))
       (hdualLimits (fun n => k n + 1) hkNextBound)
 
-
-
-
-theorem shifted_crossNested_array_contradiction_of_bounded_limits
+/-- Array contradiction for the cross-nested indexing, with primal limits at even levels, dual
+limits at odd levels and shifted complementarity bounds. -/
+lemma shifted_crossNested_array_contradiction_of_bounded_limits
     (horizontal vertical dualVertical dualHorizontal : Nat -> Nat -> Real)
     (K : Nat -> Nat)
     (hhorizontal_nonneg : forall n k, 0 <= horizontal n k)
@@ -3591,8 +3585,10 @@ theorem shifted_crossNested_array_contradiction_of_bounded_limits
   · intro k hk
     simpa only [dualVertical', dualHorizontal'] using hdualLimits k hk
 
+/-! ## G. Cross-nested paired chains -/
 
-
+/-- A chain of exact aligned extents of a given length in which each width is determined by the
+previous level plus padding and each height is the next height plus twice the padding. -/
 structure AlignedCrossNestedPairedChain
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -3616,12 +3612,10 @@ structure AlignedCrossNestedPairedChain
   nextY_eq : forall j, j < length ->
     extentY j = extentY (j + 1) + 2 * padding
 
-
-
-
-
-
-theorem AlignedCrossNestedPairedChain.extentX_eq_of_zero_eq
+omit [Countable V] in
+omit [Countable W] in
+/-- Two chains with the same initial width have the same widths at every level. -/
+lemma AlignedCrossNestedPairedChain.extentX_eq_of_zero_eq
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3647,10 +3641,9 @@ theorem AlignedCrossNestedPairedChain.extentX_eq_of_zero_eq
       rw [(second.level j).wideSpan_formula] at hsecond
       exact_mod_cast hfirst.trans hsecond.symm
 
-
-
-
-theorem AlignedCrossNestedPairedChain.extentY_eq_terminal_add
+omit [Countable V] [Countable W] in
+/-- The height at level `j` is the terminal height plus `2 · padding · (length - j)`. -/
+lemma AlignedCrossNestedPairedChain.extentY_eq_terminal_add
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3681,10 +3674,10 @@ theorem AlignedCrossNestedPairedChain.extentY_eq_terminal_add
           rw [ih (j := j + 1) (by omega) (by omega) (by omega)]
         _ = data.extentY length + 2 * padding * (d + 1) := by ring
 
-
-
-
-theorem AlignedCrossNestedPairedChain.extentY_eq_of_terminal_eq
+omit [Countable V] in
+omit [Countable W] in
+/-- Two chains with the same terminal height have the same heights at every level. -/
+lemma AlignedCrossNestedPairedChain.extentY_eq_of_terminal_eq
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -3703,11 +3696,9 @@ theorem AlignedCrossNestedPairedChain.extentY_eq_of_terminal_eq
   rw [first.extentY_eq_terminal_add hj,
     second.extentY_eq_terminal_add hj, hterminal]
 
-
-
-
-
-theorem exists_alignedCrossNestedPairedChain_at_endpoints
+/-- Chains exist for every large enough initial width and terminal height, with all widths and
+heights above them. -/
+lemma exists_alignedCrossNestedPairedChain_at_endpoints
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -3783,7 +3774,7 @@ theorem exists_alignedCrossNestedPairedChain_at_endpoints
         (show (0 : Int) <= (state j).1.1 by omega).trans
           (state j).2.raw.extentX_le_wideSpan
       change ((state (j + 1)).1.1 : Int) = span + 2 * (padding : Int)
-      simp only [state, Nat.rec_add_one, nextState]
+      simp only [state, nextState]
       change ((span.toNat + 2 * padding : Nat) : Int) =
         span + 2 * (padding : Int)
       push_cast
@@ -3804,12 +3795,9 @@ theorem exists_alignedCrossNestedPairedChain_at_endpoints
     dsimp only [data, extentY]
     omega
 
-
-
-
-
-
-theorem exists_alignedCrossNestedPairedChain_horizontalEnd_gt
+/-- Under FKG, translation invariance and uniqueness, a chain above given lower bounds whose
+terminal rectangle is crossed horizontally with probability above `1 - ε`. -/
+lemma exists_alignedCrossNestedPairedChain_horizontalEnd_gt
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -3867,7 +3855,7 @@ theorem exists_alignedCrossNestedPairedChain_horizontalEnd_gt
     · exact le_rfl
   have hcrossing' : 1 - epsilon < mu.real
       (E.horizontalCrossingEvent 0 (probe.extentX length) 0 height) := by
-    convert hcrossing using 1 <;> push_cast <;> ring
+    convert hcrossing using 1; push_cast; ring
   refine ⟨data, ?_, ?_, ?_⟩
   · intro j
     exact (Nat.le_max_right _ _).trans (hdataXLower j)
@@ -3876,12 +3864,9 @@ theorem exists_alignedCrossNestedPairedChain_horizontalEnd_gt
   · rw [← hterminalX, hdataY]
     exact hcrossing'
 
-
-
-
-
-
-theorem exists_alignedCrossNestedPairedChain_verticalStart_gt
+/-- Under FKG, translation invariance and uniqueness, a chain above given lower bounds whose initial
+rectangle is crossed vertically with probability above `1 - ε`. -/
+lemma exists_alignedCrossNestedPairedChain_verticalStart_gt
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -3936,7 +3921,7 @@ theorem exists_alignedCrossNestedPairedChain_verticalStart_gt
     simp only [initialY, Nat.sub_zero]
   have hcrossing' : 1 - epsilon < mu.real
       (E.verticalCrossingEvent 0 width 0 initialY) := by
-    convert hcrossing using 1 <;> push_cast <;> ring
+    convert hcrossing using 1; push_cast; ring
   have hleft : (data.level 0).raw.data.wideLeft <= (0 : Real) :=
     (data.level 0).raw.data.wideLeft_le
   have hright : (width : Real) <=
@@ -3967,50 +3952,50 @@ theorem exists_alignedCrossNestedPairedChain_verticalStart_gt
     rw [hinitialYReal]
     exact hwideCrossing
 
+/-! ### G.1. Opposed endpoint scores -/
 
-
-
-
-
+/-- Toy vertical score: `1` if the height is less than the width, else `0`. -/
 def opposedEndpointVerticalScore (width height : Nat) : Real :=
   if height < width then 1 else 0
 
-
-
+/-- Toy horizontal score: `1` if the width is less than the height, else `0`. -/
 def opposedEndpointHorizontalScore (width height : Nat) : Real :=
   if width < height then 1 else 0
 
-theorem opposedEndpointVerticalScore_mono_width
+/-- The toy vertical score is monotone in the width. -/
+lemma opposedEndpointVerticalScore_mono_width
     {width width' height : Nat} (hwidth : width <= width') :
     opposedEndpointVerticalScore width height <=
       opposedEndpointVerticalScore width' height := by
   unfold opposedEndpointVerticalScore
-  split_ifs <;> norm_num <;> omega
+  split_ifs <;> norm_num; omega
 
-theorem opposedEndpointVerticalScore_anti_height
+/-- The toy vertical score is antitone in the height. -/
+lemma opposedEndpointVerticalScore_anti_height
     {width height height' : Nat} (hheight : height <= height') :
     opposedEndpointVerticalScore width height' <=
       opposedEndpointVerticalScore width height := by
   unfold opposedEndpointVerticalScore
-  split_ifs <;> norm_num <;> omega
+  split_ifs <;> norm_num; omega
 
-theorem opposedEndpointHorizontalScore_anti_width
+/-- The toy horizontal score is antitone in the width. -/
+lemma opposedEndpointHorizontalScore_anti_width
     {width width' height : Nat} (hwidth : width <= width') :
     opposedEndpointHorizontalScore width' height <=
       opposedEndpointHorizontalScore width height := by
   unfold opposedEndpointHorizontalScore
-  split_ifs <;> norm_num <;> omega
+  split_ifs <;> norm_num; omega
 
-theorem opposedEndpointHorizontalScore_mono_height
+/-- The toy horizontal score is monotone in the height. -/
+lemma opposedEndpointHorizontalScore_mono_height
     {width height height' : Nat} (hheight : height <= height') :
     opposedEndpointHorizontalScore width height <=
       opposedEndpointHorizontalScore width height' := by
   unfold opposedEndpointHorizontalScore
-  split_ifs <;> norm_num <;> omega
+  split_ifs <;> norm_num; omega
 
-
-
-theorem exists_opposedEndpointVerticalSelector
+/-- For any heights, widths can be chosen so that the toy vertical score tends to one. -/
+lemma exists_opposedEndpointVerticalSelector
     (height minimumWidth : Nat -> Nat) :
     exists width : Nat -> Nat,
       (forall n, minimumWidth n <= width n) /\
@@ -4023,14 +4008,12 @@ theorem exists_opposedEndpointVerticalSelector
     funext n
     have hlt : height n < width n :=
       (Nat.lt_succ_self _).trans_le (Nat.le_max_right _ _)
-    simp only [opposedEndpointVerticalScore, hlt, if_pos]
+    simp only [opposedEndpointVerticalScore, hlt, ite_eq_left]
   rw [heq]
   exact tendsto_const_nhds
 
-
-
-
-theorem exists_opposedEndpointHorizontalSelector
+/-- For any widths, heights can be chosen so that the toy horizontal score tends to one. -/
+lemma exists_opposedEndpointHorizontalSelector
     (width minimumHeight : Nat -> Nat) :
     exists height : Nat -> Nat,
       (forall n, minimumHeight n <= height n) /\
@@ -4043,16 +4026,13 @@ theorem exists_opposedEndpointHorizontalSelector
     funext n
     have hlt : width n < height n :=
       (Nat.lt_succ_self _).trans_le (Nat.le_max_right _ _)
-    simp only [opposedEndpointHorizontalScore, hlt, if_pos]
+    simp only [opposedEndpointHorizontalScore, hlt, ite_eq_left]
   rw [heq]
   exact tendsto_const_nhds
 
-
-
-
-
-
-theorem opposedEndpointScores_not_simultaneously_tendsto_one
+/-- The two toy scores never tend to one simultaneously: separate endpoint selections need not
+combine. -/
+lemma opposedEndpointScores_not_simultaneously_tendsto_one
     (width height : Nat -> Nat) :
     ¬ (Tendsto
       (fun n => opposedEndpointVerticalScore (width n) (height n))
@@ -4076,9 +4056,10 @@ theorem opposedEndpointScores_not_simultaneously_tendsto_one
   · simp only [opposedEndpointVerticalScore, hlt] at hv
     norm_num at hv
 
+/-! ### G.2. Chains above lower bounds -/
 
-
-theorem exists_alignedCrossNestedPairedChain_ge
+/-- Chains exist with all widths and heights above given lower bounds. -/
+lemma exists_alignedCrossNestedPairedChain_ge
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -4157,7 +4138,7 @@ theorem exists_alignedCrossNestedPairedChain_ge
       (show (0 : Int) <= (state j).1.1 by omega).trans
         (state j).2.raw.extentX_le_wideSpan
     change ((state (j + 1)).1.1 : Int) = span + 2 * (padding : Int)
-    simp only [state, Nat.rec_add_one, nextState]
+    simp only [state, nextState]
     change ((span.toNat + 2 * padding : Nat) : Int) =
       span + 2 * (padding : Int)
     push_cast
@@ -4173,8 +4154,8 @@ theorem exists_alignedCrossNestedPairedChain_ge
   · intro j
     exact (Nat.le_max_right _ _).trans (hy j)
 
-
-theorem nonempty_alignedCrossNestedPairedChain
+/-- Chains of every length exist. -/
+lemma nonempty_alignedCrossNestedPairedChain
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -4195,9 +4176,10 @@ theorem nonempty_alignedCrossNestedPairedChain
       k padding length 0 0
   exact ⟨data⟩
 
+/-! ## H. Cross-nested outward arrays and the endpoint certificate -/
 
-
-
+/-- Array data for the cross-nested construction: a dual radius with its dual limit, and for each
+`n` an index with connector slack and a chain of length `2 (K n + 1) + 2`. -/
 structure PairedAdjacentCrossNestedOutwardArrayData
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -4234,9 +4216,9 @@ structure PairedAdjacentCrossNestedOutwardArrayData
     (scheduleData.family n) (scheduleData.familyDual n)
     (scheduleData.schedule n) (index n) padding (2 * (K n + 1) + 2)
 
-
-
-theorem PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayData
+/-- Under translation invariance and dual FKG, translation invariance and uniqueness, cross-nested
+array data exist above given lower bounds. -/
+lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayData
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -4310,9 +4292,10 @@ theorem PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayDat
   · intro n j
     exact (Classical.choose_spec (hchain n)).2 j
 
-
-
-theorem PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
+omit [Countable W] in
+/-- Under FKG, translation invariance and uniqueness, the chain has primal adjacent limits at even
+levels and dual limits at odd levels. -/
+lemma PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     {muDual : Measure (ConfigSpace (Sym2 W))}
@@ -4348,14 +4331,14 @@ theorem PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
       (scheduleData.schedule n)
       (max (scheduleData.radius n) n) (data.index n) := by
     intro n
-    apply (data.slack n).restrictRadius E Edual
+    apply (data.slack n).of_le E Edual
     omega
   have hdualSlack : forall n, PairedAlignedConnectorSlack E Edual
       (scheduleData.family n) (scheduleData.familyDual n)
       (scheduleData.schedule n)
       (max (data.dualRadius n) n) (data.index n) := by
     intro n
-    apply (data.slack n).restrictRadius E Edual
+    apply (data.slack n).of_le E Edual
     omega
   constructor
   · intro k
@@ -4369,9 +4352,9 @@ theorem PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
       (fun n => (data.chain n).extentY (2 * k n + 1))
       (fun n => (data.chain n).level (2 * k n + 1)) hdualSlack
 
-
-
-theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
+/-- Planar exclusion for two consecutive chain levels: the primal crossings of one and the dual
+crossings of the other have probabilities summing to at most one. -/
+lemma AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {S : Finset V} {Sdual : Finset W} {p pDual : Real}
@@ -4386,7 +4369,7 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
     (lower : AlignedExactExtentPairedMixedBoundaryScores
       D.primalEmbedding D.dualEmbedding mu (D.dualMeasure mu)
       S Sdual p pDual family familyDual schedule k lowerX lowerY)
-    (upper : AlignedExactExtentPairedMixedBoundaryScores
+    (_upper : AlignedExactExtentPairedMixedBoundaryScores
       D.primalEmbedding D.dualEmbedding mu (D.dualMeasure mu)
       S Sdual p pDual family familyDual schedule k upperX upperY)
     (hnextX : (upperX : Int) = lower.raw.wideRightInt -
@@ -4403,7 +4386,7 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
         (D.dualEmbedding.edgeArc hxy t -
           D.dualEmbedding.vertex x) i| <= B)
     (hpadding : 4 * B <= (padding : Real))
-    (hlowerX : 10 * B < lowerX) (hlowerY : 10 * B < lowerY)
+    (hlowerX : 10 * B < lowerX) (_hlowerY : 10 * B < lowerY)
     (hupperX : 10 * B < upperX) (hupperY : 10 * B < upperY) :
     mu.real (D.primalEmbedding.horizontalCrossingEvent
         0 upperX 0 upperY) +
@@ -4413,7 +4396,7 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
         lower.raw.data.wideLeft lower.raw.data.wideRight 0 lowerY) +
       (D.dualMeasure mu).real (D.dualEmbedding.horizontalCrossingEvent
         0 upperX 0 upperY) <= 1 := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   constructor
@@ -4451,7 +4434,7 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
           apply congrArg (fun event : Set (ConfigSpace (Sym2 W)) =>
             (D.dualMeasure mu).real event)
           congr 1
-          all_goals simp only [z, Pi.zero_apply, if_pos, if_neg]
+          all_goals simp only [z, ite_eq_left]
           · rw [lower.raw.wideLeft_eq]
             push_cast
             ring
@@ -4490,7 +4473,6 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
     have hspanX : lower.raw.data.wideLeft - padding + 5 * B <
         lower.raw.data.wideRight + padding - 5 * B := by
       rw [lower.raw.wideLeft_eq, lower.raw.wideRight_eq]
-      push_cast
       have hpad0 : (0 : Real) <= padding := by positivity
       linarith
     have hspanY : (0 : Real) + 5 * B < lowerY - 5 * B := by
@@ -4517,7 +4499,7 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
           apply congrArg (fun event : Set (ConfigSpace (Sym2 W)) =>
             (D.dualMeasure mu).real event)
           congr 1
-          all_goals simp only [z, Pi.zero_apply, if_pos, if_neg]
+          all_goals simp only [z, ite_eq_left]
           · rw [lower.raw.wideLeft_eq]
             push_cast
             ring
@@ -4543,10 +4525,10 @@ theorem AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
       (D.dualEmbedding.horizontalCrossingEvent_measurableSet _ _ _ _)]
     linarith
 
-
-
-
-theorem PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
+/-- Cross-nested array data with a vertical crossing of the first rectangle and a horizontal
+crossing of the last rectangle, both with probability tending to one, are contradictory (under FKG,
+translation invariance, uniqueness and dual translation invariance). -/
+lemma PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {scheduleData : PairedAdjacentBoundaryBandScheduleData
@@ -4580,7 +4562,7 @@ theorem PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
         ((data.chain n).extentX (2 * (K n + 1) + 2)) 0
         ((data.chain n).extentY (2 * (K n + 1) + 2))))
       atTop (nhds 1)) : False := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   let horizontal : Nat -> Nat -> Real := fun n j => mu.real
@@ -4638,10 +4620,9 @@ theorem PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
   · intro k hk
     simpa only [dualVertical, dualHorizontal] using hdual k
 
-
-
-
-
+/-- A prepared cross-nested array for `μ`: a common edge-arc bound `B`, padding `≥ 4B`, paired
+boundary-band schedule data at step `0`, array data with `K n = n`, and all extents larger than
+`10B`. -/
 structure PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -4665,10 +4646,9 @@ structure PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation
   extentX_large : forall n j, 10 * B < (array.chain n).extentX j
   extentY_large : forall n j, 10 * B < (array.chain n).extentY j
 
-
-
-
-theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizontalEndpoint_rebuild
+/-- A preparation can be rebuilt so that the horizontal crossing of the last rectangle tends to one.
+-/
+lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizontalEndpoint_rebuild
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
@@ -4681,7 +4661,7 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizon
           ((rebuilt.array.chain n).extentX (2 * (n + 1) + 2)) 0
           ((rebuilt.array.chain n).extentY (2 * (n + 1) + 2))))
         atTop (nhds 1) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   obtain ⟨lower, hlower⟩ := exists_nat_gt (10 * preparation.B)
@@ -4753,10 +4733,10 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizon
   intro n
   exact le_of_lt (Classical.choose_spec (hrow n)).2.2
 
-
-
-
-theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild_at_error
+/-- A preparation can be rebuilt so that the vertical crossing of the first rectangle exceeds `1 - ε
+n` at every `n`, hence tends to one. -/
+lemma
+PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild_at_error
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
@@ -4776,7 +4756,7 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_vertica
           ((rebuilt.array.chain n).level 0).raw.data.wideLeft
           ((rebuilt.array.chain n).level 0).raw.data.wideRight 0
           ((rebuilt.array.chain n).extentY 0))) atTop (nhds 1) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   obtain ⟨lower, hlower⟩ := exists_nat_gt (10 * preparation.B)
@@ -4847,9 +4827,9 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_vertica
       hlowerLimit tendsto_const_nhds (fun n => le_of_lt (hpointwise n))
         (fun _ => measureReal_le_one)⟩
 
-
-
-theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild
+/-- A preparation can be rebuilt so that the vertical crossing of the first rectangle tends to one.
+-/
+lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
@@ -4872,9 +4852,9 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_vertica
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := Real)))
   exact ⟨rebuilt, hlimit⟩
 
-
-
-theorem PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
+/-- Under FKG, translation invariance and uniqueness for the primal measure and its dual image, a
+cross-nested array preparation exists. -/
+lemma PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -4884,7 +4864,7 @@ theorem PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
     (huniqueDual : (D.dualMeasure mu)
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :
     Nonempty (D.CrossNestedOutwardArrayPreparation mu) := by
-  letI : IsProbabilityMeasure (D.dualMeasure mu) :=
+  let : IsProbabilityMeasure (D.dualMeasure mu) :=
     (Measure.isProbabilityMeasure_map_iff
       (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
   obtain ⟨Bp, hBp0, hBp⟩ :=
@@ -4933,9 +4913,9 @@ theorem PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
     extentY_large := fun n j => hlower.trans_le (by
       exact_mod_cast hlargeY n j) }⟩
 
-
-
-theorem PeriodicPlanarDualPair.exists_canonicalCrossNestedOutwardArrayPreparation_of_common
+/-- If the free buffered infinite-volume FK measure gives probability one to common uniqueness, it
+has a cross-nested array preparation. -/
+lemma PeriodicPlanarDualPair.exists_canonicalCrossNestedOutwardArrayPreparation_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (hcommon :
@@ -4946,7 +4926,7 @@ theorem PeriodicPlanarDualPair.exists_canonicalCrossNestedOutwardArrayPreparatio
       P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
     Nonempty (D.CrossNestedOutwardArrayPreparation mu) := by
   dsimp only
-  letI : IsProbabilityMeasure
+  let : IsProbabilityMeasure
       (D.dualMeasure
         (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
           Measure (ConfigSpace (Sym2 V)))) :=
@@ -4958,9 +4938,9 @@ theorem PeriodicPlanarDualPair.exists_canonicalCrossNestedOutwardArrayPreparatio
     hdata.1 hdata.2.1 hdata.2.2.2.2.1
     hdata.2.2.1 hdata.2.2.2.1 hdata.2.2.2.2.2
 
-
-
-
+/-- A preparation whose first rectangle is crossed vertically and last rectangle horizontally with
+probabilities tending to one. Vacuous for FKG, translation-invariant measures with unique infinite
+cluster and translation-invariant dual image: see `CrossNestedOutwardEndpointCertificate.false`. -/
 structure PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -4976,8 +4956,9 @@ structure PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate
       ((preparation.array.chain n).extentY (2 * (n + 1) + 2))))
     atTop (nhds 1)
 
-
-theorem PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false
+/-- For an FKG, translation-invariant measure with a unique infinite cluster and
+translation-invariant dual image, no endpoint certificate exists. -/
+lemma PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.CrossNestedOutwardEndpointCertificate mu)
@@ -4990,9 +4971,15 @@ theorem PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false
     data.preparation.padding_ge data.preparation.extentX_large
     data.preparation.extentY_large data.verticalStart data.horizontalEnd
 
+namespace PeriodicPlanarDualPair
 
-
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_crossNestedOutwardEndpointCertificate
+/-- The hypothesis `hcertificate` is equivalent to the conclusion
+(`crossNestedOutwardEndpointCertificate_hypothesis_iff`): the certificate it produces is refuted by
+`CrossNestedOutwardEndpointCertificate.false` (the model properties come from
+`freeBufferedInfiniteVolume_sheffieldData_of_common`), so `hcertificate` says exactly that the
+common uniqueness event does not have probability `1`. This result only restates its hypothesis. -/
+lemma
+freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_crossNestedOutwardEndpointCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (hcertificate :
@@ -5005,7 +4992,7 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_n
     mu D.commonUniqueInfiniteClusterEvent ≠ 1 := by
   dsimp only
   intro hcommon
-  letI : IsProbabilityMeasure
+  let : IsProbabilityMeasure
       (D.dualMeasure
         (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
           Measure (ConfigSpace (Sym2 V)))) :=
@@ -5016,5 +5003,23 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_n
   obtain ⟨data⟩ := hcertificate hcommon
   exact data.false D _ hmodel.1 hmodel.2.1 hmodel.2.2.2.2.1
     hmodel.2.2.2.1
+
+/-- The hypothesis of
+`freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_crossNestedOutwardEndpointCertificate`
+is equivalent to its conclusion, so that result is circular. -/
+lemma crossNestedOutwardEndpointCertificate_hypothesis_iff
+    (D : PeriodicPlanarDualPair P Pdual)
+    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
+    (let mu : Measure (ConfigSpace (Sym2 V)) :=
+        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
+     mu D.commonUniqueInfiniteClusterEvent = 1 ->
+        Nonempty (D.CrossNestedOutwardEndpointCertificate mu)) ↔
+    (let mu : Measure (ConfigSpace (Sym2 V)) :=
+        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
+     mu D.commonUniqueInfiniteClusterEvent ≠ 1) :=
+  ⟨freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_crossNestedOutwardEndpointCertificate
+      D hp hp1 hq, fun h hcommon => absurd hcommon h⟩
+
+end PeriodicPlanarDualPair
 
 end StatMech.FK.PeriodicPlanar

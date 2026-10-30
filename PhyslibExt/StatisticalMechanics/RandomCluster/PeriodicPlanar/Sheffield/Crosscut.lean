@@ -6,25 +6,46 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneBarrier
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArms
 
+/-!
+# Simple crosscuts of the half-plane from joined boundary arms
+
+Simple walk arcs: embedded paths traced by graph paths without the trailing constant piece, and
+a simple open crosscut of the right half-plane from the lower to the upper boundary ray.
+
+## i. Overview
+
+`simpleWalkArc` concatenates the edge arcs of a walk, ending with the last arc instead of a
+constant path, so the arc of a graph path is injective. Two consecutive pieces meet only at their
+shared vertex, which gives injectivity of concatenations. On the joined boundary-arm event the
+two arms from the lower and upper boundary rays merge inside the half-plane; reducing the joined
+walk to a path gives a simple open crosscut of the half-plane joining the two rays. An open
+primal simple arc and an open dual simple arc never meet.
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.simpleWalkArc_injective_of_isPath` : unconditional (for a non-trivial
+  path).
+- `PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut` : unconditional
+  (given `c < d`).
+- `PeriodicPlanarDualPair.no_open_primal_dual_simpleWalkArc_crossing` : unconditional.
+
+## iii. Table of contents
+
+- A. Simple walk arcs
+- B. Injectivity
+- C. Simple crosscuts from joined arms
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Set SimpleGraph Topology
 open scoped unitInterval
@@ -34,9 +55,10 @@ namespace StatMech.FK.PeriodicPlanar
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Simple walk arcs -/
 
-
-
+/-- The planar path of a walk: the concatenation of its edge arcs, with no trailing constant piece.
+Its range equals that of `walkArc`. -/
 noncomputable def PeriodicPlaneEmbedding.simpleWalkArc
     (E : PeriodicPlaneEmbedding P) :
     ∀ {x y : V}, P.graph.Walk x y → Path (E.vertex x) (E.vertex y)
@@ -45,24 +67,26 @@ noncomputable def PeriodicPlaneEmbedding.simpleWalkArc
   | _, _, .cons h (.cons h' p) =>
       (E.edgeArc h).trans (E.simpleWalkArc (.cons h' p))
 
-@[simp] theorem PeriodicPlaneEmbedding.simpleWalkArc_nil
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.simpleWalkArc_nil
     (E : PeriodicPlaneEmbedding P) (x : V) :
     E.simpleWalkArc (.nil : P.graph.Walk x x) = Path.refl _ := rfl
 
-@[simp] theorem PeriodicPlaneEmbedding.simpleWalkArc_single
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.simpleWalkArc_single
     (E : PeriodicPlaneEmbedding P) {x y : V} (hxy : P.graph.Adj x y) :
     E.simpleWalkArc (.cons hxy .nil) = E.edgeArc hxy := rfl
 
-@[simp] theorem PeriodicPlaneEmbedding.simpleWalkArc_cons_cons
+omit [Countable V] in
+@[simp] lemma PeriodicPlaneEmbedding.simpleWalkArc_cons_cons
     (E : PeriodicPlaneEmbedding P) {x y z w : V}
     (hxy : P.graph.Adj x y) (hyz : P.graph.Adj y z)
     (p : P.graph.Walk z w) :
     E.simpleWalkArc (.cons hxy (.cons hyz p)) =
       (E.edgeArc hxy).trans (E.simpleWalkArc (.cons hyz p)) := rfl
 
-
-
-theorem PeriodicPlaneEmbedding.simpleWalkArc_range
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.simpleWalkArc_range
     (E : PeriodicPlaneEmbedding P) {x y : V} (p : P.graph.Walk x y) :
     Set.range (E.simpleWalkArc p) = Set.range (E.walkArc p) := by
   induction p with
@@ -84,9 +108,8 @@ theorem PeriodicPlaneEmbedding.simpleWalkArc_range
           rw [E.simpleWalkArc_cons_cons, E.walkArc_cons,
             Path.trans_range, Path.trans_range, ih]
 
-
-
-theorem PeriodicPlaneEmbedding.edgeArc_inter_simpleWalkArc_eq_join
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.edgeArc_inter_simpleWalkArc_eq_join
     (E : PeriodicPlaneEmbedding P) {x y z : V}
     (hxy : P.graph.Adj x y) (p : P.graph.Walk y z)
     (hpath : (p.cons hxy).IsPath)
@@ -99,7 +122,7 @@ theorem PeriodicPlaneEmbedding.edgeArc_inter_simpleWalkArc_eq_join
   have hqRest' : q ∈ Set.range (E.walkArc p) := by
     rwa [← E.simpleWalkArc_range p]
   rcases E.mem_walkArc_range_cases p hqRest' with hstart | hedge
-  · simpa [hstart]
+  · simp [hstart]
   · obtain ⟨u, v, huv, huvEdges, hqUV⟩ := hedge
     have hne : s(x, y) ≠ s(u, v) := by
       intro heq
@@ -122,9 +145,11 @@ theorem PeriodicPlaneEmbedding.edgeArc_inter_simpleWalkArc_eq_join
     have hwy : w = y := hwXY.resolve_left hwNeX
     simpa [hwy] using hwq.symm
 
+/-! ## B. Injectivity -/
 
-
-theorem pathTrans_injective_of_range_inter
+/-- The concatenation of two injective paths is injective when their ranges meet only at the
+junction point. -/
+lemma pathTrans_injective_of_range_inter
     {X : Type*} [TopologicalSpace X] {x y z : X}
     (gamma : Path x y) (eta : Path y z)
     (hgamma : Function.Injective gamma)
@@ -183,9 +208,8 @@ theorem pathTrans_injective_of_range_inter
     have := congrArg Subtype.val hscaled
     linarith
 
-
-
-theorem PeriodicPlaneEmbedding.simpleWalkArc_injective_of_isPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.simpleWalkArc_injective_of_isPath
     (E : PeriodicPlaneEmbedding P) {x y : V}
     (p : P.graph.Walk x y) (hp : p.IsPath) (hnil : ¬ p.Nil) :
     Function.Injective (E.simpleWalkArc p) := by
@@ -203,9 +227,8 @@ theorem PeriodicPlaneEmbedding.simpleWalkArc_injective_of_isPath
             exact E.edgeArc_inter_simpleWalkArc_eq_join
               hxy (.cons hyz p) hp hqEdge hqRest
 
-
-
-theorem PeriodicPlaneEmbedding.exists_injective_walkArc_toPath
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_injective_walkArc_toPath
     (E : PeriodicPlaneEmbedding P) {x y : V} (p : P.graph.Walk x y)
     (hxy : x ≠ y) :
     Function.Injective (E.simpleWalkArc (p.toPath : P.graph.Walk x y)) ∧
@@ -214,12 +237,14 @@ theorem PeriodicPlaneEmbedding.exists_injective_walkArc_toPath
     SimpleGraph.Walk.not_nil_of_ne hxy
   exact ⟨E.simpleWalkArc_injective_of_isPath (p.toPath : P.graph.Walk x y)
       p.toPath.isPath hnil,
-    p.edges_toPath_subset⟩
+    p.edges_toPath_subset_edges⟩
 
+/-! ## C. Simple crosscuts from joined arms -/
 
-
-
-
+omit [Countable V] in
+/-- On the joined boundary-arm event, an open graph path inside the right half-plane joins the lower
+boundary ray (below `c`) to the upper boundary ray (above `d`), and its planar arc is injective:
+a simple open crosscut. -/
 theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V} (hcd : c < d)
@@ -246,9 +271,9 @@ theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut
   let joined : P.graph.Walk b u := lower.append upper.reverse
   let q : P.graph.Walk b u := joined.toPath
   have hqEdges : q.edges ⊆ joined.edges := by
-    exact joined.edges_toPath_subset
+    exact joined.edges_toPath_subset_edges
   have hqSupport : q.support ⊆ joined.support := by
-    exact joined.support_toPath_subset
+    exact joined.support_toPath_subset_support
   have hqNil : ¬ q.Nil := SimpleGraph.Walk.not_nil_of_ne hbu
   have hqPath : q.IsPath := by
     dsimp only [q]
@@ -274,9 +299,7 @@ variable {W : Type*} [DecidableEq W] [Countable W]
 
 namespace PeriodicPlanarDualPair
 
-
-
-theorem no_open_primal_dual_simpleWalkArc_crossing
+lemma no_open_primal_dual_simpleWalkArc_crossing
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {a b : W}

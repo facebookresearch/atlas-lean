@@ -6,21 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
-
-
-
-
-
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDefectClassify
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.SelfDualValue
+
+/-!
+# Comparing the torus partition functions under duality
+
+Partition functions and numerators on the triangular and hexagonal tori, their exact duality
+with the topological weight `q ^ defect`, and two-sided bounds removing that weight.
+
+## i. Overview
+
+Summing the FK-weight duality of `TriHex.TorusDuality` over configurations expresses the
+triangular partition function at `(p, q)` through a defect-weighted hexagonal partition function
+at `(p*, q)` (`triHexTorus_partition_duality_defectWeighted`), and the same for numerators of
+expectations of functions of the dual configuration. Since the defect lies in `{0, 1, 2}`, for
+`q ≥ 1` the weight `q ^ defect` is between `1` and `q²`; hence the defect-weighted sums are
+within a factor `q²` of the plain dual sums, and the correction to the free energy per site
+vanishes as `L → ∞`. All results are proved unconditionally under the stated parameter
+ranges.
+
+## ii. Key results
+
+- `triHexTorus_partition_duality_defectWeighted`, `triHexTorus_numerator_duality_defectWeighted`.
+- `triHexTorus_defectWeighted_partition_bounds`, `triHexTorus_defectWeighted_normalized_bounds`.
+- `triHexTorus_topologicalCorrection_logDensity_tendsto_zero`.
+
+## iii. Table of contents
+
+- A. Partition functions and numerators
+- B. Bounds on the topological weight
+- C. Sector decompositions
+- D. Duality of partition functions and numerators
+- E. Removing the topological weight
+
+## iv. References
+
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Ch. 6.
+- V. Beffara and H. Duminil-Copin, *The self-dual point of the two-dimensional random-cluster
+  model is critical for q ≥ 1*, Probab. Theory Related Fields 153 (2012), 511–542.
+-/
 
 @[expose] public section
 
@@ -30,22 +57,24 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
+/-! ## A. Partition functions and numerators -/
 
-
+/-- The FK partition function of the triangular torus at `(p, q)`. -/
 noncomputable def triHexTorusPrimalPartitionSum
     (L : ℕ) [Fact (2 < L)] (p q : ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
     FK.fkWeight (triangularTorusGraph L) p q omega
 
-
+/-- The FK partition function of the hexagonal torus at `(pDual, q)`, written as a sum over
+triangular configurations through the dual map. -/
 noncomputable def triHexTorusDualPartitionSum
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
     FK.fkWeight (hexagonalTorusGraph L) pDual q
       (triHexTorusDualConfig L omega)
 
-
-
+/-- The hexagonal partition function with each term weighted by `q ^ defect` of the primal
+configuration. -/
 noncomputable def triHexTorusDefectWeightedDualPartitionSum
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
@@ -54,7 +83,7 @@ noncomputable def triHexTorusDefectWeightedDualPartitionSum
       q ^ triHexTorusDefect L
         (FK.openSub (triangularTorusGraph L) omega)
 
-
+/-- Unnormalized triangular expectation of `F` of the dual configuration. -/
 noncomputable def triHexTorusPrimalNumerator
     (L : ℕ) [Fact (2 < L)] (p q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
@@ -62,7 +91,7 @@ noncomputable def triHexTorusPrimalNumerator
     F (triHexTorusDualConfig L omega) *
       FK.fkWeight (triangularTorusGraph L) p q omega
 
-
+/-- Unnormalized hexagonal expectation of `F`. -/
 noncomputable def triHexTorusDualNumerator
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
@@ -71,7 +100,7 @@ noncomputable def triHexTorusDualNumerator
       FK.fkWeight (hexagonalTorusGraph L) pDual q
         (triHexTorusDualConfig L omega)
 
-
+/-- Unnormalized hexagonal expectation of `F`, weighted by `q ^ defect`. -/
 noncomputable def triHexTorusDefectWeightedDualNumerator
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
@@ -82,9 +111,9 @@ noncomputable def triHexTorusDefectWeightedDualNumerator
       q ^ triHexTorusDefect L
         (FK.openSub (triangularTorusGraph L) omega)
 
+/-! ## B. Bounds on the topological weight -/
 
-
-theorem triHexTorus_topologicalCorrection_bounds
+lemma triHexTorus_topologicalCorrection_bounds
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {q : ℝ} (hq : 1 ≤ q) :
@@ -105,8 +134,7 @@ theorem triHexTorus_topologicalCorrection_bounds
     rw [zpow_ofNat]
     exact ⟨one_le_pow₀ hq, le_rfl⟩
 
-
-theorem triHexTorus_topologicalCorrection_log_bound
+lemma triHexTorus_topologicalCorrection_log_bound
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {q : ℝ} (hq : 1 ≤ q) :
@@ -126,8 +154,8 @@ theorem triHexTorus_topologicalCorrection_log_bound
     rw [abs_of_nonneg (mul_nonneg (by norm_num) hlog)]
     norm_num
 
-
-
+/-- `|log q ^ defect| / L²` on the torus of side `L = n + 3`, for a chosen configuration on each
+torus. -/
 noncomputable def triHexTorusTopologicalCorrectionLogDensity
     (q : ℝ)
     (omega : ∀ L : ℕ, ConfigSpace (Sym2 (TorusSite L)))
@@ -137,9 +165,8 @@ noncomputable def triHexTorusTopologicalCorrectionLogDensity
   exact |Real.log (q ^ triHexTorusDefect L
     (FK.openSub (triangularTorusGraph L) (omega L)))| / (L ^ 2 : ℕ)
 
-
-
-theorem triHexTorus_topologicalCorrection_logDensity_tendsto_zero
+/-- The topological correction per site vanishes in the thermodynamic limit. -/
+lemma triHexTorus_topologicalCorrection_logDensity_tendsto_zero
     (q : ℝ) (hq : 1 ≤ q)
     (omega : ∀ L : ℕ, ConfigSpace (Sym2 (TorusSite L))) :
     Filter.Tendsto
@@ -152,7 +179,7 @@ theorem triHexTorus_topologicalCorrection_logDensity_tendsto_zero
         C / ((n + 1 : ℕ) : ℝ) := by
     intro n
     let L := n + 3
-    letI : Fact (2 < L) := ⟨by simp [L]⟩
+    let : Fact (2 < L) := ⟨by simp [L]⟩
     have hlog := triHexTorus_topologicalCorrection_log_bound
       L (omega L) hq
     have hden0 : 0 ≤ ((L ^ 2 : ℕ) : ℝ) := by positivity
@@ -181,9 +208,9 @@ theorem triHexTorus_topologicalCorrection_logDensity_tendsto_zero
   · exact hub
   · exact hupper
 
+/-! ## C. Sector decompositions -/
 
-
-theorem triHexTorusDualPartitionSum_eq_sectorSum
+lemma triHexTorusDualPartitionSum_eq_sectorSum
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ) :
     triHexTorusDualPartitionSum L pDual q =
       triHexTorusDualSectorSum L 0 pDual q (fun _ => 1) +
@@ -197,9 +224,7 @@ theorem triHexTorusDualPartitionSum_eq_sectorSum
   rcases triHexTorusDefect_openSub_classified L omega with h | h | h <;>
     simp [h]
 
-
-
-theorem triHexTorusDefectWeightedDualPartitionSum_eq_sectorSum
+lemma triHexTorusDefectWeightedDualPartitionSum_eq_sectorSum
     (L : ℕ) [Fact (2 < L)] (pDual q : ℝ) :
     triHexTorusDefectWeightedDualPartitionSum L pDual q =
       triHexTorusDualSectorSum L 0 pDual q (fun _ => 1) +
@@ -219,9 +244,10 @@ theorem triHexTorusDefectWeightedDualPartitionSum_eq_sectorSum
   · simp [h, zpow_ofNat]
     ring
 
+/-! ## D. Duality of partition functions and numerators -/
 
-
-
+/-- Duality of torus partition functions: triangular at `(p, q)` against defect-weighted hexagonal
+at `(p*, q)`. -/
 theorem triHexTorus_partition_duality_defectWeighted
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -263,8 +289,8 @@ theorem triHexTorus_partition_duality_defectWeighted
               (FK.openSub (triangularTorusGraph L) omega)) := by
       rw [Finset.mul_sum]
 
-
-theorem triHexTorus_numerator_duality_defectWeighted
+/-- Duality of torus expectation numerators. -/
+lemma triHexTorus_numerator_duality_defectWeighted
     (L : ℕ) [Fact (2 < L)]
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -334,9 +360,10 @@ theorem triHexTorus_numerator_duality_defectWeighted
               (FK.openSub (triangularTorusGraph L) omega)) := by
       rw [Finset.mul_sum]
 
+/-! ## E. Removing the topological weight -/
 
-
-theorem triHexTorus_defectWeighted_partition_bounds
+/-- For `q ≥ 1` the defect-weighted hexagonal partition function is between `Z` and `q² Z`. -/
+lemma triHexTorus_defectWeighted_partition_bounds
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     triHexTorusDualPartitionSum L (BeffaraDC.dualParam p q) q ≤
@@ -369,8 +396,7 @@ theorem triHexTorus_defectWeighted_partition_bounds
     have hd := (triHexTorus_topologicalCorrection_bounds L omega hq).2
     nlinarith
 
-
-theorem triHexTorus_defectWeighted_numerator_bounds
+lemma triHexTorus_defectWeighted_numerator_bounds
     (L : ℕ) [Fact (2 < L)]
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     (hF : ∀ eta, 0 ≤ F eta) {p q : ℝ}
@@ -415,9 +441,9 @@ theorem triHexTorus_defectWeighted_numerator_bounds
     have hd := (triHexTorus_topologicalCorrection_bounds L omega hq).2
     nlinarith
 
-
-
-theorem triHexTorus_defectWeighted_normalized_bounds
+/-- For `q ≥ 1` and `F ≥ 0` the defect-weighted hexagonal expectation is within a factor `q²` of the
+plain one. -/
+lemma triHexTorus_defectWeighted_normalized_bounds
     (L : ℕ) [Fact (2 < L)]
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     (hF : ∀ eta, 0 ≤ F eta) {p q : ℝ}

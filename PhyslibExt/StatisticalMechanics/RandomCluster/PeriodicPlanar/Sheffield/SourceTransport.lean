@@ -6,40 +6,62 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AdjacentHeight
 
+/-!
+# Vertical crossings of a taller rectangle from transported sources
+
+A bottom-side connection of one source and a top-preferring second source give, after merging,
+vertical crossings of the rectangle raised by one step, with probability tending to one.
+
+## i. Overview
+
+Fix rectangles `[a n, b n] × [c n, d n]`, a source `L n` and a second source `R n`, both
+translated by `z n`. Assume that the translated `L n` reaches the bottom side with probability
+tending to one, that `R n` reaches the infinite cluster with probability tending to one, that the
+translated `R n` prefers the top side to the bottom side up to an error `ε n → 0`, and that the
+merge errors of `(L n, R n)` and of `(L n, R n shifted up by step n)` within the buffered ball of
+radius `radius n` tend to zero. By FKG, translation invariance and the preferred-side transfer
+inequality, the vertical crossing probability of `[a n, b n] × [c n, d n + step n]` tends to one.
+
+Headline fidelity:
+`PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_transport_tendsto_one` is proved
+conditionally on FKG, translation invariance and the listed limit hypotheses; no uniqueness
+hypothesis appears (it enters only through the merge-error hypotheses).
+
+## ii. Key results
+
+- `PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_transport_tendsto_one`
+
+## iii. Table of contents
+
+- A. Transport to the raised rectangle
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
+/-! ## A. Transport to the raised rectangle -/
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_transport_tendsto_one
+/-- Under an FKG, translation-invariant measure: if a translated source reaches the bottom side with
+probability tending to one, a second source reaches infinity with probability tending to one and
+prefers the top side up to a vanishing error, and the relevant merge errors vanish, then the
+vertical crossing probability of the rectangle raised by `step n` tends to one. -/
+lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_transport_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

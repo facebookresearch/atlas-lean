@@ -6,30 +6,57 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.NormalRotatedSlack
 
+/-!
+# Fixing three crossing branches along one subsequence
+
+If three maxima of pairs of crossing probabilities tend to one, a single subsequence fixes, for
+each pair, which member tends to one.
+
+## i. Overview
+
+A quantity of the form `max (X₀ n) (X₁ n) → 1` does not say which of `X₀`, `X₁` carries the
+limit; along a subsequence one of them does. Applying this three times, with nested
+subsequences, gives one strictly monotone reindexing `φ` and three Boolean choices such that the
+chosen crossing probability of each pair tends to one along `φ`. The second result applies this
+to the three crossing limits stored in a `NormalTwoRotatedEndpointLimitData` (one primal limit
+and two dual limits for rotated rectangles).
+
+Headline fidelity: both results are unconditional. The second one only reads the limits already
+stored in its `NormalTwoRotatedEndpointLimitData` argument.
+
+## ii. Key results
+
+- `tendsto_three_max_one_fixedBranches_subsequence` : three pair-maxima tending to one have a
+  common subsequence with fixed branches.
+- `NormalTwoRotatedEndpointLimitData.exists_fixedBranchesSubsequence` : the same for the primal
+  and the two rotated dual crossing limits of the endpoint data.
+
+## iii. Table of contents
+
+- A. Fixing branches of three maxima
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
 
 open Filter Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
+/-! ## A. Fixing branches of three maxima -/
 
-
-theorem tendsto_three_max_one_fixedBranches_subsequence
+/-- If `max (H0 n) (H1 n)`, `max (V0 n) (V1 n)` and `max (K0 n) (K1 n)` all tend to one, then along
+one strictly monotone subsequence a fixed member of each pair tends to one. See also
+`tendsto_two_max_one_fixedBranches_subsequence` (two pairs) and
+`tendsto_max_one_fixedBranch_subsequence` (one pair). -/
+lemma tendsto_three_max_one_fixedBranches_subsequence
     (H0 H1 V0 V1 K0 K1 : Nat -> Real)
     (hH : Tendsto (fun n => max (H0 n) (H1 n)) atTop (nhds 1))
     (hV : Tendsto (fun n => max (V0 n) (V1 n)) atTop (nhds 1))
@@ -121,9 +148,9 @@ theorem tendsto_three_max_one_fixedBranches_subsequence
         · simpa [Function.comp_def] using hVfixed.comp hphiK.tendsto_atTop
         · simpa using hKfixed
 
-
-
-theorem NormalTwoRotatedEndpointLimitData.exists_fixedBranchesSubsequence
+/-- For endpoint limit data with one primal and two rotated dual crossing limits, one subsequence
+fixes which crossing (horizontal or vertical) carries each limit. -/
+lemma NormalTwoRotatedEndpointLimitData.exists_fixedBranchesSubsequence
     {V W : Type*} [DecidableEq V] [DecidableEq W]
     [Countable V] [Countable W]
     {P : PeriodicGraph V} {Pdual : PeriodicGraph W}

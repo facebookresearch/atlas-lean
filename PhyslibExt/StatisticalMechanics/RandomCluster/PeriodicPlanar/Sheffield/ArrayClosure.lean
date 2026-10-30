@@ -6,46 +6,125 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.MacroArrayAssembly
 
+/-!
+# Rectangle arrays and the exclusion of common primal and dual uniqueness
+
+Crossing bounds from carried boundary components, recursive choice of boundary-band scales,
+and the rectangle-array contradictions that rule out a common unique infinite primal and dual
+cluster, the last of them only under a hypothesis equivalent to the conclusion.
+
+## i. Overview
+
+*Carried components.* If finite sets `bottom` and `top` inside a rectangle are each connected to
+their side with probability tending to `1`, and the probability that points of the two sets
+lie in infinite clusters without being joined inside a buffered box (`pairMergeErrorUnion`)
+tends to `0`, then FKG gives crossings, with probability tending to `1`, of a rectangle widened
+to contain that box; similarly for horizontal crossings. `CarriedCrossNestedArray` packages
+both directions.
+
+*Boundary bands and margins.* Starting from the normal boundary bands of
+`Sheffield.MacroArrayAssembly`, this file constructs common boundary scores for the four-shift
+template on a grid inside a common square, alternating margin schedules satisfying arbitrary
+growth requirements (`AlignedMarginSchedule`), the uniform crossing radius for boundary-band
+labelings (`UniformBoundaryBandCrossingRadius`, `UniformTemplateBoundaryBandCrossingRadius`),
+and a recursive sequence of scales at which the four side components have scores close to `1`
+and merge errors close to `0` (`AlignedSharedLevelStep`,
+`exists_recursiveAlignedSharedLevelSteps`).
+`uniform_cofinal_diagonal_below_growing_cutoff` is the diagonal-extraction lemma used to pass
+from pointwise to uniform limits.
+
+*Rectangle arrays.* `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` is the
+abstract contradiction: an array of rectangles indexed by height whose first member is crossed
+vertically and last member horizontally with probability tending to `1`, with primal crossings
+dominating at every adjacent pair and dual crossings at every level, cannot exist when primal
+and dual crossings exclude each other (`horizontal + dualVertical ≤ 1`). The planar version
+`PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits` supplies the
+exclusion from planar duality for embeddings with edge arcs bounded by `B`.
+
+## ii. Key results
+
+Headline fidelity, read from the statements:
+
+- `PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_recursiveArray`,
+  `…_of_macroArray`, `…_of_boundaryScoreArray` : the free buffered infinite-volume FK measure
+  does not give probability `1` to a common unique infinite primal and dual cluster. **The
+  hypothesis `harray` is equivalent to the conclusion.** It reads "if the common uniqueness
+  event has probability `1`, then a certificate exists", and every certificate is refuted:
+  `RecursiveRectangleArrayCertificate.false` and `MacroArrayCertificate.false` show these
+  structures are empty for every probability measure, and `TwoLevelBoundaryScoreArray.false`
+  shows that structure is empty for every FKG probability measure (the free buffered measure is
+  FKG under common uniqueness, `freeBufferedInfiniteVolume_sheffieldData_of_common`). So
+  `harray` holds exactly when the measure of the event is not `1`; the three results prove
+  nothing beyond restating their hypothesis. The certificate structures (and
+  `PointwiseMacroArrayCertificate`, refuted by `PointwiseMacroArrayCertificate.false`) are
+  vacuous hypothesis predicates.
+- `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` : proved unconditionally
+  from its stated hypotheses (real analysis only).
+- `PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits` : proved;
+  conditional on the arc bound `B`, the span conditions and the four crossing-limit hypotheses.
+- `PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores` and its horizontal
+  version : conditional on FKG and the side-score and merge-error limits. Not vacuous.
+- `PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius` : conditional on FKG,
+  translation invariance, almost sure uniqueness of the infinite cluster and templates hitting
+  the infinite cluster with probability tending to `1`.
+- `PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConnectorSchedule` :
+  conditional on FKG, translation invariance and almost sure uniqueness.
+- `PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps` : conditional on translation
+  invariance, almost sure uniqueness and band families whose thresholds tend to `1`.
+- `exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds`
+  : conditional on FKG, translation invariance, almost sure uniqueness and the placement
+  hypotheses.
+- `uniform_cofinal_diagonal_below_growing_cutoff` : unconditional; it contains
+  `exists_cofinalIndex_uniform_tendsto_one_below_diagonal` as the case without a cutoff.
+
+## iii. Table of contents
+
+- A. Elementary identities for shifts, templates and merge errors
+- B. Crossings from carried boundary components
+- C. Shared boundary templates and endpoint sources
+- D. Common boundary scores on a grid
+- E. Margin schedules
+- F. Uniform boundary-band crossing radii
+- G. Recursive choice of scales
+- H. Crossings from boundary scores and four-shift templates
+- I. Rectangle-array contradictions and certificates
+
+## iv. References
+
+- S. Sheffield, *Random Surfaces*, Astérisque 304 (2005), Ch. 9.
+- G. Grimmett, *The Random-Cluster Model*, Springer (2006).
+-/
+
 @[expose] public section
-
-
-
-
-
-
-
-
-
 
 open Filter MeasureTheory Set Topology
 
 namespace StatMech.FK.PeriodicPlanar
 
-open Lattice
+open StatMech.Lattice
 
 variable {V : Type*} [DecidableEq V] [Countable V]
   {P : PeriodicGraph V}
 
-@[simp] theorem horizontalShift_zero_vector : horizontalShift 0 = 0 := by
+/-! ## A. Elementary identities for shifts, templates and merge errors -/
+
+/-- Translation by `0` along the horizontal axis is the zero site. -/
+@[simp] lemma horizontalShift_zero_vector : horizontalShift 0 = 0 := by
   funext i
   fin_cases i <;> simp
 
-@[simp] theorem verticalShift_zero_vector : verticalShift 0 = 0 := by
+/-- Translation by `0` along the vertical axis is the zero site. -/
+@[simp] lemma verticalShift_zero_vector : verticalShift 0 = 0 := by
   funext i
   fin_cases i <;> simp
 
 omit [Countable V] in
-
-
-
-theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_union_source
+/-- The side-connection event of a union of sources is the union of the side-connection events. -/
+lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_union_source
     (E : PeriodicPlaneEmbedding P) (a b c d : Real)
     (S T side : Set V) :
     E.rectSideConnectionEvent a b c d (S ∪ T) side =
@@ -64,9 +143,7 @@ theorem PeriodicPlaneEmbedding.rectSideConnectionEvent_union_source
       exact ⟨x, Or.inr hx, hxInfinite, y, hy, hxy⟩
 
 omit [Countable V] in
-
-
-theorem PeriodicGraph.fourShiftTemplate_add
+lemma PeriodicGraph.fourShiftTemplate_add
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop t : Site 2) :
     P.fourShiftTemplate S (zLeft + t) (zRight + t)
@@ -98,7 +175,7 @@ theorem PeriodicGraph.fourShiftTemplate_add
         exact P.shift_add zTop t u⟩)
 
 omit [Countable V] in
-theorem PeriodicGraph.fourShiftTemplate_add_image
+lemma PeriodicGraph.fourShiftTemplate_add_image
     (P : PeriodicGraph V) (S : Finset V)
     (zLeft zRight zBottom zTop t w : Site 2) :
     (P.fourShiftTemplate S (zLeft + t) (zRight + t)
@@ -110,9 +187,8 @@ theorem PeriodicGraph.fourShiftTemplate_add_image
   funext x
   exact (P.shift_add t w x).symm
 
-
-
-theorem PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_mono_rectangle
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_mono_rectangle
     (E : PeriodicPlaneEmbedding P)
     {a b c d a' b' c' d' : Real} (L R : Finset V)
     (ha : a' ≤ a) (hb : b ≤ b') (hc : c' ≤ c) (hd : d ≤ d') :
@@ -121,18 +197,17 @@ theorem PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_mono_rectangle
   intro omega homega
   obtain ⟨x, hxL, y, hyR, hinfinite, hnotLarge⟩ := by
     simpa only [PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion,
-      Set.mem_iUnion, Set.mem_diff, Set.mem_inter_iff,
-      Set.mem_setOf_eq] using homega
+      Set.mem_iUnion, Set.mem_sdiff, Set.mem_inter_iff,
+      Set.mem_ofPred_eq] using homega
   simp only [PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion,
-    Set.mem_iUnion, Set.mem_diff, Set.mem_inter_iff, Set.mem_setOf_eq]
+    Set.mem_iUnion, Set.mem_sdiff, Set.mem_inter_iff, Set.mem_ofPred_eq]
   refine ⟨x, hxL, y, hyR, hinfinite, ?_⟩
   intro hsmall
   exact hnotLarge (P.connectedWithinSet_mono_region
     (E.rectVertices_mono ha hb hc hd) x y hsmall)
 
-
-
-theorem PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_measureReal_mono_rectangle
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_measureReal_mono_rectangle
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d a' b' c' d' : Real} (L R : Finset V)
@@ -142,9 +217,8 @@ theorem PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_measureReal_mono_rec
   measureReal_mono
     (E.rectanglePairMergeErrorUnion_mono_rectangle L R ha hb hc hd)
 
-
-
-theorem PeriodicPlaneEmbedding.rectBottomConnection_component_le_template_of_enlarge
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectBottomConnection_component_le_template_of_enlarge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d a' b' d' : Real} (component template : Finset V)
@@ -159,9 +233,8 @@ theorem PeriodicPlaneEmbedding.rectBottomConnection_component_le_template_of_enl
     (component : Set V) ha hb hd).trans
       (E.rectSideConnectionEvent_mono_source (by exact_mod_cast hcomponent))
 
-
-
-theorem PeriodicPlaneEmbedding.rectTopConnection_component_le_template_of_enlarge
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectTopConnection_component_le_template_of_enlarge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d a' b' c' : Real} (component template : Finset V)
@@ -176,9 +249,8 @@ theorem PeriodicPlaneEmbedding.rectTopConnection_component_le_template_of_enlarg
     (component : Set V) ha hb hc).trans
       (E.rectSideConnectionEvent_mono_source (by exact_mod_cast hcomponent))
 
-
-
-theorem PeriodicPlaneEmbedding.rectLeftConnection_component_le_template_of_enlarge
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectLeftConnection_component_le_template_of_enlarge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d b' c' d' : Real} (component template : Finset V)
@@ -193,9 +265,8 @@ theorem PeriodicPlaneEmbedding.rectLeftConnection_component_le_template_of_enlar
     (component : Set V) hb hc hd).trans
       (E.rectSideConnectionEvent_mono_source (by exact_mod_cast hcomponent))
 
-
-
-theorem PeriodicPlaneEmbedding.rectRightConnection_component_le_template_of_enlarge
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.rectRightConnection_component_le_template_of_enlarge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     {a b c d a' c' d' : Real} (component template : Finset V)
@@ -210,11 +281,12 @@ theorem PeriodicPlaneEmbedding.rectRightConnection_component_le_template_of_enla
     (component : Set V) ha hc hd).trans
       (E.rectSideConnectionEvent_mono_source (by exact_mod_cast hcomponent))
 
+/-! ## B. Crossings from carried boundary components -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents
+/-- Vertical crossing from carried components (FKG): the product of the bottom and top
+side-connection probabilities of `L` and `R`, minus the merge error, bounds the vertical crossing
+probability of the enclosing rectangle from below. -/
+lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
@@ -276,8 +348,9 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents
       E.verticalCrossing_measureReal_ge_side_mul_sub_mergeError
         mu hFKG a b c d L R
 
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents
+/-- Horizontal crossing from carried components (FKG): the horizontal analogue of
+`verticalCrossing_ge_carriedComponents`. -/
+lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
@@ -339,10 +412,7 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents
       E.horizontalCrossing_measureReal_ge_side_mul_sub_mergeError
         mu hFKG a b c d L R
 
-
-
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents_of_connector
+lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -363,10 +433,7 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents_of_connecto
     mu a' b' c d bottom top radius hbox
   linarith
 
-
-
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents_of_connector
+lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -387,8 +454,10 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents_of_connec
     mu a b c' d' left right radius hbox
   linarith
 
-
-theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_carriedComponents
+/-- If bottom and top components are connected to their sides with probability tending to `1` and
+their merge error tends to `0`, the vertical crossing probability of the widened rectangle tends to
+`1` (FKG). -/
+lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -428,12 +497,13 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_carriedComponents
           (E.rectTopBoundaryVertices (a n) (b n) (c n) (d n))) -
         mu.real (P.pairMergeErrorUnion (bottom n) (top n) (radius n)))
       atTop (nhds 1) := by
-    convert hlimit using 1 <;> norm_num
+    convert hlimit using 1
+    norm_num
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hlimit' tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-
-theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_carriedComponents
+/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_carriedComponents`. -/
+lemma PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -473,13 +543,14 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_carriedComponen
           (E.rectRightBoundaryVertices (a n) (b n) (c n) (d n))) -
         mu.real (P.pairMergeErrorUnion (left n) (right n) (radius n)))
       atTop (nhds 1) := by
-    convert hlimit using 1 <;> norm_num
+    convert hlimit using 1
+    norm_num
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hlimit' tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-
-
-
+/-- A sequence of rectangles with a wider and a taller companion, carrying bottom, top, left and
+right components connected to their sides with probability tending to `1`, with buffered connectors
+in the companions and merge errors tending to `0`. -/
 structure PeriodicPlaneEmbedding.CarriedCrossNestedArray
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -534,7 +605,7 @@ structure PeriodicPlaneEmbedding.CarriedCrossNestedArray
     (P.pairMergeErrorUnion (left n) (right n) (horizontalRadius n)))
     atTop (nhds 0)
 
-theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.verticalCrossingLimit
+lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.verticalCrossingLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
@@ -547,7 +618,7 @@ theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.verticalCrossingLimit
     data.verticalConnector data.bottomLimit data.topLimit
     data.verticalMergeLimit
 
-theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.horizontalCrossingLimit
+lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.horizontalCrossingLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
@@ -560,7 +631,7 @@ theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.horizontalCrossingLimit
     data.horizontalConnector data.leftLimit data.rightLimit
     data.horizontalMergeLimit
 
-theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.crossingMaxLimit
+lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.crossingMaxLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
@@ -574,45 +645,44 @@ theorem PeriodicPlaneEmbedding.CarriedCrossNestedArray.crossingMaxLimit
     (data.horizontalCrossingLimit E mu hFKG).max
       (data.verticalCrossingLimit E mu hFKG)
 
+/-! ## C. Shared boundary templates and endpoint sources -/
 
-
+/-- The union of the four boundary components `bottom`, `top`, `left`, `right`. -/
 def PeriodicGraph.fourBoundaryComponentTemplate
-    (P : PeriodicGraph V)
+    (_P : PeriodicGraph V)
     (bottom top left right : Finset V) : Finset V :=
   (bottom ∪ top) ∪ (left ∪ right)
 
 omit [Countable V] in
-theorem PeriodicGraph.bottom_subset_fourBoundaryComponentTemplate
+lemma PeriodicGraph.bottom_subset_fourBoundaryComponentTemplate
     (P : PeriodicGraph V) (bottom top left right : Finset V) :
     bottom ⊆ P.fourBoundaryComponentTemplate bottom top left right := by
   intro x hx
   simp [PeriodicGraph.fourBoundaryComponentTemplate, hx]
 
 omit [Countable V] in
-theorem PeriodicGraph.top_subset_fourBoundaryComponentTemplate
+lemma PeriodicGraph.top_subset_fourBoundaryComponentTemplate
     (P : PeriodicGraph V) (bottom top left right : Finset V) :
     top ⊆ P.fourBoundaryComponentTemplate bottom top left right := by
   intro x hx
   simp [PeriodicGraph.fourBoundaryComponentTemplate, hx]
 
 omit [Countable V] in
-theorem PeriodicGraph.left_subset_fourBoundaryComponentTemplate
+lemma PeriodicGraph.left_subset_fourBoundaryComponentTemplate
     (P : PeriodicGraph V) (bottom top left right : Finset V) :
     left ⊆ P.fourBoundaryComponentTemplate bottom top left right := by
   intro x hx
   simp [PeriodicGraph.fourBoundaryComponentTemplate, hx]
 
 omit [Countable V] in
-theorem PeriodicGraph.right_subset_fourBoundaryComponentTemplate
+lemma PeriodicGraph.right_subset_fourBoundaryComponentTemplate
     (P : PeriodicGraph V) (bottom top left right : Finset V) :
     right ⊆ P.fourBoundaryComponentTemplate bottom top left right := by
   intro x hx
   simp [PeriodicGraph.fourBoundaryComponentTemplate, hx]
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_sharedBoundaryComponentTemplate
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_sharedBoundaryComponentTemplate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (p a b c d : Real)
@@ -690,11 +760,7 @@ theorem PeriodicPlaneEmbedding.exists_sharedBoundaryComponentTemplate
     hTopScore.trans_le hTop, hLeftScore.trans_le hLeft,
     hRightScore.trans_le hRight⟩
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -756,7 +822,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zBottom]
       simp only [Pi.add_apply, horizontalShift_zero_apply,
         verticalShift_zero_apply, Int.cast_add, Int.cast_natCast,
-        Int.cast_zero, add_zero]
+        add_zero]
       change (family.radiusBottom verticalMargin : Real) +
           ((a0 : Real) + family.radiusBottom verticalMargin) ≤ (b0 : Real)
       have hw : a0 + (family.radiusBottom verticalMargin : Int) +
@@ -767,9 +833,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
     (by
       dsimp only [verticalSeed,
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zBottom]
-      simp only [horizontalShift_one_apply, Int.cast_zero, add_zero,
-        Int.cast_natCast, Pi.add_apply, verticalShift_one_apply,
-        Int.cast_add, zero_add]
+      simp only [horizontalShift_one_apply,
+        Pi.add_apply, verticalShift_one_apply,
+        zero_add]
       have hh : (c0 : Real) + family.radiusBottom verticalMargin ≤ d0 := by
         exact_mod_cast (by omega : c0 +
           (family.radiusBottom verticalMargin : Int) ≤ d0)
@@ -785,7 +851,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zTop]
       simp only [Pi.add_apply, horizontalShift_zero_apply,
         verticalShift_zero_apply, Int.cast_add, Int.cast_natCast,
-        Int.cast_zero, add_zero]
+        add_zero]
       have hw : a0 + (family.radiusTop verticalMargin : Int) +
           family.radiusTop verticalMargin ≤ b0 := by omega
       have hwR : (a0 : Real) + family.radiusTop verticalMargin +
@@ -795,8 +861,8 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
       dsimp only [verticalSeed,
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zTop]
       simp only [Pi.add_apply, horizontalShift_one_apply,
-        verticalShift_one_apply, Int.cast_add, Int.cast_natCast,
-        Int.cast_zero, zero_add]
+        verticalShift_one_apply,
+        zero_add]
       have hh : (c0 : Real) ≤ d0 - family.radiusTop verticalMargin := by
         exact_mod_cast (by omega : c0 ≤ d0 -
           (family.radiusTop verticalMargin : Int))
@@ -807,7 +873,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
       dsimp only [horizontalSeed,
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zLeft]
       simp only [Pi.add_apply, horizontalShift_zero_apply,
-        verticalShift_zero_apply, Int.cast_add, Int.cast_zero, add_zero]
+        verticalShift_zero_apply, add_zero]
       have hw : (a1 : Real) + family.radiusLeft horizontalMargin ≤ b1 := by
         exact_mod_cast (by omega : a1 +
           (family.radiusLeft horizontalMargin : Int) ≤ b1)
@@ -821,7 +887,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zLeft]
       simp only [Pi.add_apply, horizontalShift_one_apply,
         verticalShift_one_apply, Int.cast_add, Int.cast_natCast,
-        Int.cast_zero, zero_add]
+        zero_add]
       have hh : c1 + (family.radiusLeft horizontalMargin : Int) +
           family.radiusLeft horizontalMargin ≤ d1 := by omega
       have hhR : (c1 : Real) + family.radiusLeft horizontalMargin +
@@ -833,7 +899,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
       dsimp only [horizontalSeed,
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zRight]
       simp only [Pi.add_apply, horizontalShift_zero_apply,
-        verticalShift_zero_apply, Int.cast_add, Int.cast_zero, add_zero]
+        verticalShift_zero_apply, add_zero]
       have hw : (a1 : Real) ≤ b1 - family.radiusRight horizontalMargin := by
         exact_mod_cast (by omega : a1 ≤ b1 -
           (family.radiusRight horizontalMargin : Int))
@@ -847,7 +913,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
         PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zRight]
       simp only [Pi.add_apply, horizontalShift_one_apply,
         verticalShift_one_apply, Int.cast_add, Int.cast_natCast,
-        Int.cast_zero, zero_add]
+        zero_add]
       have hh : c1 + (family.radiusRight horizontalMargin : Int) +
           family.radiusRight horizontalMargin ≤ d1 := by omega
       have hhR : (c1 : Real) + family.radiusRight horizontalMargin +
@@ -875,10 +941,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_endpointSources
   · simpa [horizontalSeed,
       PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed, zRight] using hright.2
 
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointTemplate
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointTemplate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -918,10 +981,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointTem
     le_rfl le_rfl le_rfl le_rfl le_rfl le_rfl
     le_rfl le_rfl le_rfl le_rfl le_rfl le_rfl
 
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointComponents
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -975,11 +1035,9 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_sharedEndpointCom
     hbottomSource, hbottomScore, htopSource, htopScore,
     hleftSource, hleftScore, hrightSource, hrightScore, hshared⟩
 
+/-! ## D. Common boundary scores on a grid -/
 
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.commonBoundaryScores
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.commonBoundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1060,34 +1118,34 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.commonBoundaryScores
     family.radiusRight horizontalMargin
   have hbottomLower : 0 ≤ bottomLower := by
     dsimp only [bottomLower, gridBase]
-    simp only [if_pos, Fin.isValue]
+    simp only [ite_eq_left, Fin.isValue]
     omega
   have htopLower : 0 ≤ topLower := by
     dsimp only [topLower, gridBase]
-    simp only [if_pos, Fin.isValue]
+    simp only [ite_eq_left, Fin.isValue]
     omega
   have hbottomUpper : bottomUpper ≤ b := by
     dsimp only [bottomUpper, b, gridBase]
-    simp only [if_pos, Fin.isValue]
+    simp only [ite_eq_left, Fin.isValue]
     omega
   have htopUpper : topUpper ≤ b := by
     dsimp only [topUpper, b, gridBase]
-    simp only [if_pos, Fin.isValue]
+    simp only [ite_eq_left, Fin.isValue]
     omega
   have hleftUpper : leftUpper ≤ d := by
     dsimp only [leftUpper, d, gridBase]
-    simp only [if_neg (by decide : (1 : Fin 2) ≠ 0)]
+    simp only [ite_eq_right (by decide : (1 : Fin 2) ≠ 0)]
     omega
   have hrightUpper : rightUpper ≤ d := by
     dsimp only [rightUpper, d, gridBase]
-    simp only [if_neg (by decide : (1 : Fin 2) ≠ 0)]
+    simp only [ite_eq_right (by decide : (1 : Fin 2) ≠ 0)]
     omega
   have ha : min 0 (min bottomLower topLower) = 0 := by
-    simp [min_eq_left, hbottomLower, htopLower]
+    simp [hbottomLower, htopLower]
   have hb : max b (max bottomUpper topUpper) = b := by
-    simp [max_eq_left, hbottomUpper, htopUpper]
+    simp [hbottomUpper, htopUpper]
   have hd : max d (max leftUpper rightUpper) = d := by
-    simp [max_eq_left, hleftUpper, hrightUpper]
+    simp [hleftUpper, hrightUpper]
   have hb0 : (0 : Real) ≤ b := by
     have hr : (0 : Int) ≤ family.radiusLeft horizontalMargin := by omega
     exact_mod_cast hr.trans hbLeft
@@ -1103,9 +1161,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.commonBoundaryScores
   · simpa only [gridBase, b, d, Int.cast_zero] using hmixed.2.2.2.1
   · simpa only [gridBase, b, d, Int.cast_zero] using hmixed.2.2.2.2
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.bottomBandScore
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.bottomBandScore
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1147,9 +1203,7 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.bottomBandScor
     simpa only [Finset.coe_image, t] using hscore
   exact hscore'.trans_le hle
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.topBandScore
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.topBandScore
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1179,7 +1233,8 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.topBandScore
     congr 2
     apply congrArg P.shift
     funext q
-    fin_cases q <;> simp [t, k, preferenceGridSite] <;> omega
+    fin_cases q <;> simp [t, k, preferenceGridSite]
+    omega
   rw [htarget] at hle
   have hscore := (data.top k).2
   have hscore' : p < mu.real (E.rectSideConnectionEvent
@@ -1190,9 +1245,7 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.topBandScore
     simpa only [Finset.coe_image, t] using hscore
   exact hscore'.trans_le hle
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.leftBandScore
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.leftBandScore
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1234,9 +1287,7 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.leftBandScore
     simpa only [Finset.coe_image, t] using hscore
   exact hscore'.trans_le hle
 
-
-
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.rightBandScore
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.rightBandScore
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1266,7 +1317,8 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.rightBandScore
     congr 2
     apply congrArg P.shift
     funext q
-    fin_cases q <;> simp [t, k, preferenceGridSite] <;> omega
+    fin_cases q <;> simp [t, k, preferenceGridSite]
+    omega
   rw [htarget] at hle
   have hscore := (data.right k).2
   have hscore' : p < mu.real (E.rectSideConnectionEvent
@@ -1277,11 +1329,7 @@ theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.rightBandScore
     simpa only [Finset.coe_image, t] using hscore
   exact hscore'.trans_le hle
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_commonBoundaryBandScores
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_commonBoundaryBandScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -1364,8 +1412,10 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_commonBoundaryBan
   · intro v hv
     exact data.rightBandScore E mu hTI width height v hv
 
+/-! ## E. Margin schedules -/
 
-
+/-- The vertical margin needed so that the left and right bands at horizontal margin `h` fit between
+the bottom and top bases. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.fullVerticalRequirement
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -1382,8 +1432,8 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.fullVerticalRequirement
       (((family.radiusRight h : Int) + family.baseTop 1 -
         family.baseRight 1).toNat))
 
-
-
+/-- The horizontal margin needed so that the bottom and top bands at vertical margin `v` fit between
+the left and right bases. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.fullHorizontalRequirement
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -1400,17 +1450,8 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.fullHorizontalRequirement
       (((family.radiusTop v : Int) + family.baseRight 0 -
         family.baseTop 0).toNat))
 
-private theorem int_le_nat_of_toNat_le_array {x : Int} {n : Nat}
-    (h : x.toNat ≤ n) : x ≤ n := by
-  by_cases hx : 0 ≤ x
-  · have h' : (x.toNat : Int) ≤ (n : Int) := by exact_mod_cast h
-    rwa [Int.toNat_of_nonneg hx] at h'
-  · omega
-
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p) :
@@ -1444,7 +1485,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMa
         (((family.radiusRight (horizontal n) : Int) + family.baseRight 1 -
           family.baseBottom 1).toNat)) _).trans (hhv n)
     have hle' := (Nat.le_max_left _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_left
@@ -1454,43 +1495,41 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMa
         (((family.radiusRight (horizontal n) : Int) + family.baseRight 1 -
           family.baseBottom 1).toNat)) _).trans (hhv n)
     have hle' := (Nat.le_max_right _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hhv n)
     have hle' := (Nat.le_max_left _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hhv n)
     have hle' := (Nat.le_max_right _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_left _ _).trans (hvh n)
     have hle' := (Nat.le_max_left _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_left _ _).trans (hvh n)
     have hle' := (Nat.le_max_right _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hvh n)
     have hle' := (Nat.le_max_left _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hvh n)
     have hle' := (Nat.le_max_right _ _).trans hle
-    have := int_le_nat_of_toNat_le_array hle'
+    have := Int.toNat_le.mp hle'
     omega
 
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins_with_requirements
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins_with_requirements
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p)
@@ -1524,7 +1563,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
     have hle : (((family.radiusLeft (horizontal n) : Int) +
         family.baseLeft 1 - family.baseBottom 1).toNat) ≤ vertical n :=
       (Nat.le_max_left _ _).trans hreq
-    have := int_le_nat_of_toNat_le_array hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hreq : family.horizontalRadiusRequirement E (horizontal n) ≤
@@ -1532,7 +1571,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
     have hle : (((family.radiusRight (horizontal n) : Int) +
         family.baseRight 1 - family.baseBottom 1).toNat) ≤ vertical n :=
       (Nat.le_max_right _ _).trans hreq
-    have := int_le_nat_of_toNat_le_array hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hreq : family.verticalRadiusRequirement E (vertical n) ≤
@@ -1540,7 +1579,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
     have hle : (((family.radiusBottom (vertical n) : Int) +
         family.baseBottom 0 - family.baseLeft 0).toNat) ≤
         horizontal (n + 1) := (Nat.le_max_left _ _).trans hreq
-    have := int_le_nat_of_toNat_le_array hle
+    have := Int.toNat_le.mp hle
     omega
   · intro n
     have hreq : family.verticalRadiusRequirement E (vertical n) ≤
@@ -1548,13 +1587,12 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
     have hle : (((family.radiusTop (vertical n) : Int) +
         family.baseTop 0 - family.baseLeft 0).toNat) ≤
         horizontal (n + 1) := (Nat.le_max_right _ _).trans hreq
-    have := int_le_nat_of_toNat_le_array hle
+    have := Int.toNat_le.mp hle
     omega
 
-
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins_with_requirements
+omit [Countable V] in
+lemma
+    PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins_with_requirements
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p)
@@ -1600,7 +1638,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMa
           family.baseBottom 1).toNat)
         (((family.radiusRight (horizontal n) : Int) + family.baseRight 1 -
           family.baseBottom 1).toNat)) _).trans (hV n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_left _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_left
@@ -1609,42 +1647,43 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMa
           family.baseBottom 1).toNat)
         (((family.radiusRight (horizontal n) : Int) + family.baseRight 1 -
           family.baseBottom 1).toNat)) _).trans (hV n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_right _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hV n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_left _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hV n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_right _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_left _ _).trans (hH n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_left _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_left _ _).trans (hH n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_right _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hH n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_left _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_left _ _).trans hle)
     omega
   · intro n
     have hle := (Nat.le_max_right _ _).trans (hH n)
-    have := int_le_nat_of_toNat_le_array ((Nat.le_max_right _ _).trans hle)
+    have := Int.toNat_le.mp ((Nat.le_max_right _ _).trans hle)
     omega
 
-
-
+/-- The margin, in grid steps, that contains the buffered connector of radius `radius` in both
+coordinate directions. -/
 noncomputable def PeriodicPlaneEmbedding.connectorMarginRequirement
     (E : PeriodicPlaneEmbedding P) (radius : Nat) : Nat :=
   Nat.ceil (max
     (E.orbitBoxCoordinateBound (P.bufferedRadius radius) 0)
     (E.orbitBoxCoordinateBound (P.bufferedRadius radius) 1))
 
-theorem PeriodicPlaneEmbedding.orbitBoxCoordinateBound_le_connectorMarginRequirement
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.orbitBoxCoordinateBound_le_connectorMarginRequirement
     (E : PeriodicPlaneEmbedding P) (radius : Nat) (i : Fin 2) :
     E.orbitBoxCoordinateBound (P.bufferedRadius radius) i ≤
       E.connectorMarginRequirement radius := by
@@ -1654,7 +1693,8 @@ theorem PeriodicPlaneEmbedding.orbitBoxCoordinateBound_le_connectorMarginRequire
   · exact le_max_left _ _
   · exact le_max_right _ _
 
-theorem PeriodicPlaneEmbedding.orbitBox_subset_connectorMarginSquare
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.orbitBox_subset_connectorMarginSquare
     (E : PeriodicPlaneEmbedding P) (radius : Nat) :
     (P.orbitBox (P.bufferedRadius radius) : Set V) ⊆
       E.rectVertices (-(E.connectorMarginRequirement radius : Real))
@@ -1670,9 +1710,8 @@ theorem PeriodicPlaneEmbedding.orbitBox_subset_connectorMarginSquare
   exact ⟨by linarith [hv0.1, h0], hv0.2.trans h0,
     by linarith [hv1.1, h1], hv1.2.trans h1⟩
 
-
-
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins_with_connector
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMargins_with_connector
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p) (radius : Nat) :
@@ -1700,7 +1739,8 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_fullAlternatingMa
     (fun _ ↦ E.connectorMarginRequirement radius)
     (fun _ ↦ E.connectorMarginRequirement radius)
 
-
+/-- Alternating horizontal and vertical margins, both tending to infinity, that meet the given
+growth requirements and for which all four bands fit inside the margins of the other direction. -/
 def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.AlignedMarginSchedule
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
@@ -1727,7 +1767,8 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.AlignedMarginSchedule
     (∀ n, (family.radiusTop (vertical n) : Int) +
       family.baseRight 0 ≤ family.baseTop 0 + horizontal (n + 1))
 
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.alignedMarginSchedule
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.alignedMarginSchedule
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p)
@@ -1736,15 +1777,13 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.alignedMarginSchedule
   family.exists_fullAlternatingMargins_with_requirements E
     verticalRequirement horizontalRequirement
 
-
-
-theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies
+lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ (p : Nat → Real)
-      (family : ∀ m,
+      (_family : ∀ m,
         E.NormalBoundaryBandFamily mu (P.orbitBox m) (p m)),
       Tendsto p atTop (nhds 1) := by
   have hexists : mu {omega | P.HasInfiniteCluster omega} = 1 := by
@@ -1766,13 +1805,10 @@ theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies
   have hhit := P.orbitBoxHitsInfinite_real_tendsto_one mu hexists
   have hdelta : Tendsto delta atTop (nhds 0) := by
     simpa only [delta] using tendsto_one_div_add_atTop_nhds_zero_nat
-  convert (hhit.pow 2).sub hdelta using 1 <;> norm_num [p]
+  convert (hhit.pow 2).sub hdelta using 1
+  norm_num [p]
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_with_connectorSchedule
+lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_with_connectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1793,8 +1829,11 @@ theorem PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_with_con
     (fun _ ↦ E.connectorMarginRequirement (radius m))
     (fun _ ↦ E.connectorMarginRequirement (radius m))
 
+/-! ## F. Uniform boundary-band crossing radii -/
 
-
+/-- Uniform crossing bound for orbit-box boundary bands at connector radius `radius`: for every grid
+with margins whose boundary bands have side scores at least `p n → 1` and whose deep vertices carry
+buffered connectors inside the rectangle, the larger crossing probability tends to `1`. -/
 def PeriodicPlaneEmbedding.UniformBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) (radius : Nat → Nat) : Prop :=
@@ -1842,7 +1881,8 @@ def PeriodicPlaneEmbedding.UniformBoundaryBandCrossingRadius
       (mu.real (E.horizontalCrossingEvent (a n) (b n) (c n) (d n))))
       atTop (nhds 1)
 
-
+/-- The version of `UniformBoundaryBandCrossingRadius` with translated templates `template n` in
+place of orbit boxes. -/
 def PeriodicPlaneEmbedding.UniformTemplateBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) (template : Nat → Finset V)
@@ -1891,8 +1931,9 @@ def PeriodicPlaneEmbedding.UniformTemplateBoundaryBandCrossingRadius
       (mu.real (E.horizontalCrossingEvent (a n) (b n) (c n) (d n))))
       atTop (nhds 1)
 
-
-
+/-- A uniform template boundary-band crossing radius exists under FKG, translation invariance, an
+almost surely unique infinite cluster and templates hitting the infinite cluster with probability
+tending to `1`. -/
 theorem PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -1985,8 +2026,9 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
       (sub_nonneg.mpr (hp n)) (hwidthSep n) measureReal_le_one
       (fun h ↦ hright n v h) (le_refl _) hv
 
-
-
+/-- Under FKG, translation invariance and an almost surely unique infinite cluster, there are a
+uniform boundary-band crossing radius and orbit-box band families with thresholds tending to `1`,
+each admitting a margin schedule that contains the connector. -/
 theorem PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -2008,9 +2050,10 @@ theorem PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConn
       mu hFKG hTI hunique radius
   exact ⟨radius, p, family, hradius, hp, hschedule⟩
 
+/-! ## G. Recursive choice of scales -/
 
-
-theorem PeriodicPlaneEmbedding.exists_alignedActiveSide_choice
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_alignedActiveSide_choice
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (S : Nat → Finset V) (p : Nat → Real)
@@ -2029,9 +2072,8 @@ theorem PeriodicPlaneEmbedding.exists_alignedActiveSide_choice
   exact (family m).alignedMarginSchedule E
     (verticalRequirement m) (horizontalRequirement m)
 
-
-
-theorem PeriodicPlaneEmbedding.exists_uniformRadius_alignedActiveSide_choice
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.exists_uniformRadius_alignedActiveSide_choice
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
     (S : Nat → Finset V) (p : Nat → Real)
@@ -2047,10 +2089,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformRadius_alignedActiveSide_choice
     (fun m _ ↦ E.connectorMarginRequirement (radius m))
     cutoff hepsilon
 
-
-
-
-theorem PeriodicGraph.exists_commonBoundaryPairMergeRadius
+lemma PeriodicGraph.exists_commonBoundaryPairMergeRadius
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -2079,10 +2118,7 @@ theorem PeriodicGraph.exists_commonBoundaryPairMergeRadius
   · exact hhorizontalCutoff radius
       ((Nat.le_max_right _ _).trans (Nat.le_max_right _ _))
 
-
-
-
-theorem PeriodicPlaneEmbedding.exists_alignedSharedLevel_choice
+lemma PeriodicPlaneEmbedding.exists_alignedSharedLevel_choice
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2249,11 +2285,7 @@ theorem PeriodicPlaneEmbedding.exists_alignedSharedLevel_choice
     And.intro hleftSource <| And.intro hleftScore <|
     And.intro hrightSource <| And.intro hrightScore hshared
 
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_alignedSharedLevel_with_nextConnector
+lemma PeriodicPlaneEmbedding.exists_alignedSharedLevel_with_nextConnector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2345,7 +2377,9 @@ theorem PeriodicPlaneEmbedding.exists_alignedSharedLevel_with_nextConnector
       exact ⟨htemplate, hbottom, htop, hleftScore, hrightScore⟩),
     hverticalMerge, hhorizontalMerge⟩
 
-
+/-- One step of the recursive scale choice: a scale beyond the previous one with threshold close to
+`1` and a margin schedule, a square containing the previous connector, four side components with
+scores above the threshold, and a next connector radius for which the merge errors are small. -/
 structure PeriodicPlaneEmbedding.AlignedSharedLevelStep
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V)))
@@ -2421,7 +2455,7 @@ structure PeriodicPlaneEmbedding.AlignedSharedLevelStep
   horizontalMerge :
     mu.real (P.pairMergeErrorUnion left right nextConnector) < mergeEpsilon
 
-theorem PeriodicPlaneEmbedding.nonempty_alignedSharedLevelStep
+lemma PeriodicPlaneEmbedding.nonempty_alignedSharedLevelStep
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2478,9 +2512,8 @@ theorem PeriodicPlaneEmbedding.nonempty_alignedSharedLevelStep
     verticalMerge := hvertical
     horizontalMerge := hhorizontal }⟩
 
-
-
-
+/-- A recursively chosen sequence of `AlignedSharedLevelStep`s with prescribed score and merge
+tolerances, under translation invariance and an almost surely unique infinite cluster. -/
 theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -2517,12 +2550,10 @@ theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps
     fun n ↦ chooseStep n (state n)
   refine ⟨state, steps, rfl, ?_⟩
   intro n
-  simp only [state, steps, Nat.rec_add_one]
+  simp only [state, steps]
 
-
-
-
-
+/-- Diagonal extraction: for countably many sequences `f k` tending to `1` and bounded by `1`, a
+cofinal index beyond any cutoff along which `f (k n) (index n) → 1` uniformly in `k n ≤ n`. -/
 theorem uniform_cofinal_diagonal_below_growing_cutoff
     (f : Nat → Nat → Real)
     (hf : ∀ k, Tendsto (f k) atTop (nhds 1))
@@ -2576,11 +2607,9 @@ theorem uniform_cofinal_diagonal_below_growing_cutoff
   have hone := (tendsto_const_nhds (x := (1 : Real))).sub hzero
   simpa [defect] using hone
 
-
-
-
-
-theorem exists_cofinalIndex_uniform_tendsto_one_below_diagonal
+/-- Diagonal extraction without a cutoff. See also `uniform_cofinal_diagonal_below_growing_cutoff`,
+which implies this with `cutoff = 0`. -/
+lemma exists_cofinalIndex_uniform_tendsto_one_below_diagonal
     (f : Nat → Nat → Real)
     (hf : ∀ k, Tendsto (f k) atTop (nhds 1))
     (hle : ∀ k n, f k n ≤ 1) :
@@ -2609,8 +2638,10 @@ theorem exists_cofinalIndex_uniform_tendsto_one_below_diagonal
   have hone := (tendsto_const_nhds (x := (1 : Real))).sub hzero
   simpa [defect] using hone
 
+/-! ## H. Crossings from boundary scores and four-shift templates -/
 
-
+/-- Bottom and top sources connected to their sides with probability tending to `1`, with merge
+error tending to `0`, give vertical crossings with probability tending to `1` (FKG). -/
 theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -2652,12 +2683,12 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
           (bottomSource n) (topSource n)
   have hbound : Tendsto (fun n ↦ A n * H n - M n)
       atTop (nhds 1) := by
-    convert hbottom.mul htop |>.sub hmerge using 1 <;> norm_num
+    convert hbottom.mul htop |>.sub hmerge using 1
+    norm_num
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hbound tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-
-
+/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_boundaryScores`. -/
 theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -2699,13 +2730,13 @@ theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_boundaryScores
           (leftSource n) (rightSource n)
   have hbound : Tendsto (fun n ↦ A n * H n - M n)
       atTop (nhds 1) := by
-    convert hleft.mul hright |>.sub hmerge using 1 <;> norm_num
+    convert hleft.mul hright |>.sub hmerge using 1
+    norm_num
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hbound tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-
-
-theorem PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_translated_rect
+omit [Countable V] in
+lemma PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_translated_rect
     (E : PeriodicPlaneEmbedding P) (R M width height : Nat) (z : Site 2)
     (hx : E.orbitBoxCoordinateBound R (0 : Fin 2) ≤ M)
     (hy : E.orbitBoxCoordinateBound R (1 : Fin 2) ≤ M) :
@@ -2721,13 +2752,7 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_translated_rect
   exact E.preferenceGrid_orbitBox_subset_rect_of_coordinateBound
     R M width height hx hy v ⟨u, hu, rfl⟩
 
-set_option linter.unusedVariables false in
-
-
-
-
-
-theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_connector
+lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2776,7 +2801,7 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_ten
     (pad : Nat → Int) (hpad : ∀ n, 0 ≤ pad n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n),
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n),
       (∀ n (v : PreferenceGridVertex (width n) (height n)),
         (P.shift (preferenceGridSite v + verticalShift (-(pad n))) ''
           (P.orbitBox (P.bufferedRadius (radius n)) : Set V)) ⊆
@@ -2896,9 +2921,12 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_ten
     exact ((min_le_right _ _).trans (min_le_right _ _)).trans
       (by simpa only [right, template, zero_add] using hside)
 
+namespace PeriodicPlaneEmbedding
 
-
-theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds
+/-- Crossing bound for grids of four-shift templates placed outward from a common square, under FKG,
+translation invariance and an almost surely unique infinite cluster, with connector containment
+given by coordinate bounds. -/
+theorem exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2947,7 +2975,7 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_ten
     (pad : Nat → Int) (hpad : ∀ n, 0 ≤ pad n) :
     ∃ radius : Nat → Nat, ∀
       (width height : Nat → Nat)
-      (hwidth : ∀ n, 0 < width n) (hheight : ∀ n, 0 < height n),
+      (_hwidth : ∀ n, 0 < width n) (_hheight : ∀ n, 0 < height n),
       (∀ n, E.orbitBoxCoordinateBound
         (P.bufferedRadius (radius n)) (0 : Fin 2) ≤ M n) →
       (∀ n, E.orbitBoxCoordinateBound
@@ -3014,12 +3042,16 @@ theorem PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_ten
     · exact le_rfl
     · exact le_rfl
 
+end PeriodicPlaneEmbedding
+
 variable {W : Type*} [DecidableEq W] [Countable W]
   {Pdual : PeriodicGraph W}
 
+/-! ## I. Rectangle-array contradictions and certificates -/
 
-
-
+/-- Abstract rectangle-array contradiction: crossing probabilities indexed by height, starting
+vertical and ending horizontal, with primal crossings winning at every adjacent pair and dual
+crossings winning at every level, are incompatible with primal-dual exclusion. -/
 theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits
     (horizontal vertical dualVertical dualHorizontal : Nat → Nat → Real)
     (K : Nat → Nat)
@@ -3072,7 +3104,10 @@ theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits
       (fun n ↦ hmatchVertical n (k n + 1))
       (hdualLimits (fun n ↦ k n + 1) hkNextBound)
 
-
+/-- Planar rectangle-array contradiction: for a dual pair of embeddings with edge arcs bounded by
+`B`, an array of rectangles with the crossing limits of
+`adjacent_height_array_contradiction_of_primal_dual_bounded_limits` cannot exist (Sheffield, *Random
+Surfaces*, Ch. 9). -/
 theorem PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -3145,10 +3180,9 @@ theorem PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_
   · intro k hk
     simpa [dualVertical, dualHorizontal] using hdual k hk
 
-
-
-
-
+/-- Data of a rectangle array satisfying the hypotheses of
+`adjacent_rectangles_contradiction_of_bounded_max_limits`. Empty for every probability measure
+(`RecursiveRectangleArrayCertificate.false`). -/
 structure PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -3195,9 +3229,9 @@ structure PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate
           (a n (k n)) (b n (k n))
           (c n (k n) + 4 * B) (d n (k n) - 4 * B)))) atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate.false
+/-- Refutation: a recursive rectangle-array certificate does not exist for any probability measure.
+-/
+lemma PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.RecursiveRectangleArrayCertificate mu) : False := by
@@ -3206,8 +3240,11 @@ theorem PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate.false
     data.a data.b data.c data.d data.K data.spanX data.spanY
     data.verticalStart data.horizontalEnd data.primalAdjacent data.dualLevels
 
-
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_recursiveArray
+/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
+by `RecursiveRectangleArrayCertificate.false`, so `harray` says exactly that the common uniqueness
+event does not have probability `1`. This result only restates its hypothesis. -/
+theorem
+    PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_recursiveArray
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (harray :
@@ -3223,10 +3260,8 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_n
   obtain ⟨data⟩ := harray hcommon
   exact data.false D _
 
-
-
-
-
+/-- A rectangle array on the macroscopic coordinates `sheffieldMacroArrayCoordinates`. Empty for
+every probability measure (`MacroArrayCertificate.false`). -/
 structure PeriodicPlanarDualPair.MacroArrayCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -3284,9 +3319,8 @@ structure PeriodicPlanarDualPair.MacroArrayCertificate
           ) ((q n (k n)).2.2.1 + 4 * B)
           ((q n (k n)).2.2.2 - 4 * B)))) atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.MacroArrayCertificate.false
+/-- Refutation: a macro-array certificate does not exist for any probability measure. -/
+lemma PeriodicPlanarDualPair.MacroArrayCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.MacroArrayCertificate mu) : False := by
@@ -3328,7 +3362,9 @@ theorem PeriodicPlanarDualPair.MacroArrayCertificate.false
   · intro k hk
     simpa only [a, b, c, d, q] using data.dualLevels k hk
 
-
+/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
+by `MacroArrayCertificate.false`, so `harray` says exactly that the common uniqueness event does not
+have probability `1`. This result only restates its hypothesis. -/
 theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_macroArray
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -3345,9 +3381,8 @@ theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_n
   obtain ⟨data⟩ := harray hcommon
   exact data.false D _
 
-
-
-
+/-- A macro-array certificate with crossing limits required only level by level. Empty for every
+probability measure (`PointwiseMacroArrayCertificate.false`). -/
 structure PeriodicPlanarDualPair.PointwiseMacroArrayCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) where
@@ -3401,9 +3436,8 @@ structure PeriodicPlanarDualPair.PointwiseMacroArrayCertificate
           ((q n k).2.2.1 + 4 * B) ((q n k).2.2.2 - 4 * B))))
       atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.PointwiseMacroArrayCertificate.toMacroArrayCertificate
+/-- Pointwise limits at every level give a macro-array certificate along a cofinal subsequence. -/
+lemma PeriodicPlanarDualPair.PointwiseMacroArrayCertificate.toMacroArrayCertificate
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (raw : D.PointwiseMacroArrayCertificate mu) :
@@ -3524,17 +3558,26 @@ theorem PeriodicPlanarDualPair.PointwiseMacroArrayCertificate.toMacroArrayCertif
           | zero => exact (hn rfl).elim
           | succ m => rfl
         rw [hp] at hkn
-        simp only [k', hn, if_neg]
+        simp only [k', hn]
         exact Nat.lt_succ_of_le hkn
     have hlim := hdualOfCombined k' hk'
     apply hlim.congr'
     filter_upwards [eventually_ge_atTop 1] with n hn
     have hn0 : n ≠ 0 := by omega
-    simpa [dual, q', hq, k', hn0]
+    simp [dual, q', hq, k', hn0]
 
+/-- Refutation: `PointwiseMacroArrayCertificate` is empty for every probability measure, since it
+yields a `MacroArrayCertificate`, which `MacroArrayCertificate.false` refutes. -/
+lemma PeriodicPlanarDualPair.PointwiseMacroArrayCertificate.false
+    (D : PeriodicPlanarDualPair P Pdual)
+    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
+    (raw : D.PointwiseMacroArrayCertificate mu) : False := by
+  obtain ⟨data⟩ := raw.toMacroArrayCertificate D mu
+  exact data.false D mu
 
-
-
+/-- Two levels of rectangles with boundary sources whose side scores tend to `1` and merge errors to
+`0`, primal crossings winning across levels and dual crossings at both levels. Empty for every FKG
+probability measure (`TwoLevelBoundaryScoreArray.false`). -/
 structure PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) (B : Real) where
@@ -3620,9 +3663,8 @@ structure PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray
         (a1 n) (b1 n) (c1 n + 4 * B) (d1 n - 4 * B))))
     atTop (nhds 1)
 
-
-
-theorem PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false
+/-- Refutation: a two-level boundary-score array does not exist for any FKG probability measure. -/
+lemma PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {B : Real}
@@ -3661,11 +3703,12 @@ theorem PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false
     dualLevel0 := data.dualLevel0
     dualLevel1 := data.dualLevel1 }
 
-
-
-
-
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_boundaryScoreArray
+/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
+by `TwoLevelBoundaryScoreArray.false`, so `harray` says exactly that the common uniqueness event
+does not have probability `1`. FKG of the measure is supplied by
+`freeBufferedInfiniteVolume_sheffieldData_of_common`. This result only restates its hypothesis. -/
+theorem
+PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_boundaryScoreArray
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (harray :

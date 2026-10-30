@@ -6,21 +6,68 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
-
-
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalOffCentre
 public import MathlibExt.Probability.OSSS.WiredDenominatorArithmetic
 
+/-!
+# Uniform OSSS differential inequality for hexagonal-lattice crossing probabilities
+
+The OSSS differential inequality `dθ_n/dβ ≥ c (n / Σ_n) θ_n` with an `n`-uniform constant for
+the probability `θ_n` that the origin is connected to distance `n` under the FK measure wired at
+radius `2n` on the hexagonal lattice.
+
+## i. Overview
+
+`HexagonalSharpness` bounds `dθ_n/dβ` below through the revealment denominator
+`Δ = 2 (1 + max_x Σ_k φ(x ↔ shell k)) / n`, which involves off-center connection probabilities.
+This file replaces the off-center terms by centered ones. A path from `x` to the shell of radius
+`k` around the origin must reach the sup-sphere of radius `j` around `x` for suitable `j`
+(`hexagonalBox_reachOpen_hits_centered`, `hexagonal_rootShell_sum_le_centered_sup`), so `Δ` is
+bounded by the centered denominator `hexagonalCenteredDenom`. The centered probabilities
+`hexagonalOuterCenteredConn n q β x k` are, by the domination of `HexagonalOffCentre`
+(boundary-condition comparison and translation invariance), at most `θ_k`
+(`hexagonalOuterCenteredConn_le_theta_strict`), which gives `Δ ≤ 8 Σ_n / n` with
+`Σ_n = Σ_{k < n} θ_k`. Together with the lower bound `1 - θ_n ≥ ∏_{e ∋ 0} e^{-β₀} ≥ e^{-6β₀}`
+(the bound `6` on the root degree is used; the actual degree is `3`), this yields
+`hexagonal_outer_inner_differential_uniform`:
+`(e^{-6β₀} / 8) · (n / Σ_n) · θ_n ≤ dθ_n/dβ` for `n ≥ 1`, `q ≥ 1`, `0 < β ≤ β₀`.
+
+Fidelity: this is the Duminil-Copin–Raoufi–Tassion differential inequality, and it is proved
+unconditionally for the finite-volume measure wired at radius `2n` (the OSSS inputs: increasing
+event, FKG, revealment bound, are all discharged here or in the imported files). The
+`…_of_strict_comparison` lemmas take the off-center comparison `hcomp` as a hypothesis; their
+unconditional versions are `hexagonal_outer_inner_hcov_sharp`,
+`hexagonal_outer_inner_differential_sharp`, `hexagonal_outer_inner_differential_linear` and
+`hexagonal_outer_inner_differential_uniform`.
+
+## ii. Key results
+
+- `hexagonalOuterCenteredConn_le_theta_strict` : centered connection probabilities from interior
+  points are at most `θ_k`. Unconditional (`q ≥ 1`, `β > 0`).
+- `hexagonal_outer_inner_differential_sharp` : `θ (1 - θ) / (8 Σ_n / n) ≤ dθ/dβ`.
+  Unconditional.
+- `hexagonal_outer_inner_differential_uniform` : `c(β₀) (n / Σ_n) θ_n ≤ dθ_n/dβ` with
+  `c(β₀) = e^{-6β₀} / 8`. Unconditional (`q ≥ 1`, `0 < β ≤ β₀`).
+
+## iii. Table of contents
+
+- A. Centered shells and off-center crossings
+- B. Centered connection probabilities
+- C. Comparison with the outer-inner crossing probability
+- D. The sharp covariance bound
+- E. The uniform differential inequality
+
+## iv. References
+
+- H. Duminil-Copin, A. Raoufi and V. Tassion, *Sharp phase transition for the random-cluster
+  and Potts models via decision trees*, Ann. of Math. 189 (2019) 75–99.
+-/
+
 @[expose] public section
 
-
-
-
-
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset Set SimpleGraph
 
 namespace StatMech.FK.PeriodicPlanar
@@ -31,11 +78,17 @@ open StatMech.OSSS.FiniteGraphBoundaryDifferential
 open StatMech.OSSS.ReachBoxCrossing
 open StatMech.OSSS.RevealmentTranslation
 
+/-! ## A. Centered shells and off-center crossings -/
+
+/-- The vertices of the box at sup-distance `k` from `x`. -/
 noncomputable def hexagonalBoxCenteredShell
     (n : Nat) (x : HexagonalBoxVertex n) (k : Nat) :
     Finset (HexagonalBoxVertex n) :=
   Finset.univ.filter fun y => centeredRadius x.1.1 y.1.1 = k
 
+open scoped Classical in
+/-- Under the measure wired at radius `2n`, the probability that `x` is connected to the sup-sphere
+of radius `k` around `x` inside the box of radius `n`. -/
 noncomputable def hexagonalOuterCenteredConn
     (n : Nat) (q beta : Real) (x : HexagonalBoxVertex n) (k : Nat) : Real :=
   Lindeberg.mean
@@ -46,9 +99,7 @@ noncomputable def hexagonalOuterCenteredConn
       (restrictConfig (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n)) omega)
       x (hexagonalBoxCenteredShell n x k) then (1 : Real) else 0)
 
-
-
-theorem hexagonalBox_reachOpen_hits_centered
+lemma hexagonalBox_reachOpen_hits_centered
     {n m : Nat} {omega : ConfigSpace (hexagonalBoxGraph n).edgeSet}
     {x b : HexagonalBoxVertex n}
     (hreach : ReachOpen (hexagonalBoxEndU n) (hexagonalBoxEndV n) omega x b)
@@ -103,7 +154,8 @@ theorem hexagonalBox_reachOpen_hits_centered
             ReachOpen.step e hopen hpair (ReachOpen.refl y)⟩
   exact hfirst hreach hxInner hbOuter
 
-theorem hexagonalBox_rootShell_imp_centered_of_le
+open scoped Classical in
+lemma hexagonalBox_rootShell_imp_centered_of_le
     {n k m : Nat} {omega : ConfigSpace (hexagonalBoxGraph n).edgeSet}
     {x : HexagonalBoxVertex n}
     (hm : m ≤ ((k : Int) - (siteRadius x.1.1 : Int)).natAbs) :
@@ -131,9 +183,8 @@ theorem hexagonalBox_rootShell_imp_centered_of_le
       omega
   exact hexagonalBox_reachOpen_hits_centered hreach (hm.trans hdist)
 
-
-
-theorem hexagonal_rootShell_sum_le_centered_sup
+open scoped Classical in
+lemma hexagonal_rootShell_sum_le_centered_sup
     (n : Nat) (mu : ConfigSpace (hexagonalBoxGraph (2 * n)).edgeSet → Real)
     (hmu0 : ∀ omega, 0 ≤ mu omega) (u : HexagonalBoxVertex n) :
     (∑ k : ↑(Finset.Icc 1 n),
@@ -194,6 +245,9 @@ theorem hexagonal_rootShell_sum_le_centered_sup
     intro omega homega
     exact hexagonalBox_rootShell_imp_centered_of_le le_rfl homega
 
+/-! ## B. Centered connection probabilities -/
+
+/-- The centered OSSS denominator `4 max_x Σ_{j < n} φ(x ↔ ∂(x + Λ_j)) / n`. -/
 noncomputable def hexagonalCenteredDenom
     (n : Nat) (q beta : Real) : Real :=
   4 * (Finset.univ : Finset (HexagonalBoxVertex n)).sup'
@@ -201,7 +255,8 @@ noncomputable def hexagonalCenteredDenom
     (fun x => ∑ j ∈ Finset.range n,
       hexagonalOuterCenteredConn n q beta x j) / (n : Real)
 
-theorem hexagonalOuterCenteredConn_nonneg
+open scoped Classical in
+lemma hexagonalOuterCenteredConn_nonneg
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : HexagonalBoxVertex n) (j : Nat) :
     0 ≤ hexagonalOuterCenteredConn n q beta x j := by
@@ -216,7 +271,8 @@ theorem hexagonalOuterCenteredConn_nonneg
   unfold hexagonalOuterCenteredConn
   exact mean_indicator_nonneg hmu0 _
 
-theorem hexagonalOuterCenteredConn_zero
+open scoped Classical in
+lemma hexagonalOuterCenteredConn_zero
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : HexagonalBoxVertex n) :
     hexagonalOuterCenteredConn n q beta x 0 = 1 := by
@@ -234,14 +290,15 @@ theorem hexagonalOuterCenteredConn_zero
         x (hexagonalBoxCenteredShell n x 0) then (1 : Real) else 0) =
       fun _ => 1 := by
     funext omega
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, centeredRadius_self x.1.1⟩,
       ReachOpen.refl x⟩
   unfold hexagonalOuterCenteredConn
   rw [hall]
   exact Lindeberg.mean_const mu hmu1 1
 
-theorem hexagonalOuterCenteredConn_le_one
+open scoped Classical in
+lemma hexagonalOuterCenteredConn_le_one
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : HexagonalBoxVertex n) (j : Nat) :
     hexagonalOuterCenteredConn n q beta x j ≤ 1 := by
@@ -271,7 +328,8 @@ theorem hexagonalOuterCenteredConn_le_one
       split_ifs <;> norm_num
     _ = 1 := Lindeberg.mean_const mu hmu1 1
 
-theorem hexagonalOuterCenteredConn_antitone
+open scoped Classical in
+lemma hexagonalOuterCenteredConn_antitone
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (x : HexagonalBoxVertex n) :
     Antitone (hexagonalOuterCenteredConn n q beta x) := by
@@ -291,12 +349,13 @@ theorem hexagonalOuterCenteredConn_antitone
   have hrad : centeredRadius x.1.1 b.1.1 = k := (Finset.mem_filter.mp hb).2
   exact hexagonalBox_reachOpen_hits_centered hreach (hjk.trans_eq hrad.symm)
 
-theorem hexagonalOuterInnerTheta_nonneg
+open scoped Classical in
+lemma hexagonalOuterInnerTheta_nonneg
     (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta) (k : Nat) :
     0 ≤ hexagonalOuterInnerTheta q beta k := by
   by_cases hk : k = 0
   · simp [hexagonalOuterInnerTheta, hk]
-  rw [hexagonalOuterInnerTheta, if_neg hk]
+  rw [hexagonalOuterInnerTheta, ite_eq_right hk]
   unfold hexagonalInnerCrossInd Lindeberg.mean
   apply Finset.sum_nonneg
   intro omega _
@@ -312,13 +371,14 @@ theorem hexagonalOuterInnerTheta_nonneg
       (FK.betaParams_lt_one (fun _ => 1) beta)
       (zero_lt_one.trans_le hq) omega).le
 
-@[simp] theorem hexagonalOuterInnerTheta_zero (q beta : Real) :
+@[simp] lemma hexagonalOuterInnerTheta_zero (q beta : Real) :
     hexagonalOuterInnerTheta q beta 0 = 1 := by
   simp [hexagonalOuterInnerTheta]
 
+/-! ## C. Comparison with the outer-inner crossing probability -/
 
-
-theorem hexagonalCenteredShellEvent_iff_innerCross
+open scoped Classical in
+lemma hexagonalCenteredShellEvent_iff_innerCross
     (k : Nat) (hk : 1 ≤ k)
     (omega : ConfigSpace (hexagonalBoxGraph (2 * k)).edgeSet) :
     omega ∈ hexagonalCenteredShellEvent (2 * k) k ↔
@@ -372,8 +432,8 @@ theorem hexagonalCenteredShellEvent_iff_innerCross
                 have hout : s(hexagonalBoxEndU (2 * k) e,
                     hexagonalBoxEndV (2 * k) e) = e.1 := e.1.out_eq
                 rcases hpair with hp | hp
-                · simpa [hp.1, hp.2] using hout.symm
-                · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+                · simp [hp.1, hp.2]
+                · simp [hp.1, hp.2, Sym2.eq_swap]
               change Sym2.map (hexagonalBoxVertInclLE (by omega : k ≤ 2 * k))
                 ei.1 = e.1
               have hia : hexagonalBoxVertInclLE (by omega : k ≤ 2 * k) ai = a :=
@@ -412,8 +472,8 @@ theorem hexagonalCenteredShellEvent_iff_innerCross
                 have hout : s(hexagonalBoxEndU (2 * k) e,
                     hexagonalBoxEndV (2 * k) e) = e.1 := e.1.out_eq
                 rcases hpair with hp | hp
-                · simpa [hp.1, hp.2] using hout.symm
-                · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+                · simp [hp.1, hp.2]
+                · simp [hp.1, hp.2, Sym2.eq_swap]
               change Sym2.map (hexagonalBoxVertInclLE (by omega : k ≤ 2 * k))
                 ei.1 = e.1
               have hia : hexagonalBoxVertInclLE (by omega : k ≤ 2 * k) ai = a :=
@@ -452,8 +512,8 @@ theorem hexagonalCenteredShellEvent_iff_innerCross
             have hout : s(hexagonalBoxEndU k e, hexagonalBoxEndV k e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have heoPair : eo.1 = s(incl a, incl y) := by
             change Sym2.map (hexagonalBoxVertInclLE (by omega : k ≤ 2 * k)) e.1 =
               s(incl a, incl y)
@@ -473,7 +533,8 @@ theorem hexagonalCenteredShellEvent_iff_innerCross
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hb'.1,
       fun hsmall => hb'.2 hsmall⟩
 
-theorem hexagonalCenteredFullMass_eq_outerInnerTheta
+open scoped Classical in
+lemma hexagonalCenteredFullMass_eq_outerInnerTheta
     (k : Nat) (hk : 1 ≤ k) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     (∑ omega : ConfigSpace (Sym2 (HexagonalBoxVertex (2 * k))),
@@ -508,14 +569,14 @@ theorem hexagonalCenteredFullMass_eq_outerInnerTheta
     rw [Set.indicator_apply, Set.indicator_apply]
     have hiff := hexagonalCenteredShellEvent_iff_innerCross k hk omega
     by_cases h : omega ∈ A
-    · rw [if_pos h, if_pos (hiff.mp h)]
-    · rw [if_neg h, if_neg (fun hi => h (hiff.mpr hi))]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mp h)]
+    · rw [ite_eq_right h, ite_eq_right (fun hi => h (hiff.mpr hi))]
   have hactive :
       FK.activeBCMean G (boundaryCliqueGraph boundary) (fun _ => p) q
           (A.indicator fun _ => (1 : Real)) =
         hexagonalOuterInnerTheta q beta k := by
     have hk0 : k ≠ 0 := by omega
-    rw [hexagonalOuterInnerTheta, if_neg hk0, ← hevent, hparam]
+    rw [hexagonalOuterInnerTheta, ite_eq_right hk0, ← hevent, hparam]
     rfl
   rw [← hactive]
   rw [hmean]
@@ -531,7 +592,8 @@ theorem hexagonalCenteredFullMass_eq_outerInnerTheta
   · rw [Set.indicator_of_notMem h,
       Set.indicator_of_notMem (fun hf => h (hiff.mpr hf))]
 
-theorem hexagonal_centeredConn_imp_transShell
+open scoped Classical in
+lemma hexagonal_centeredConn_imp_transShell
     {n k : Nat} (x : HexagonalBoxVertex n) (hk : 1 ≤ k)
     (hkn : 2 * k < n)
     (rho : ConfigSpace (hexagonalBoxGraph (2 * n)).edgeSet)
@@ -609,8 +671,8 @@ theorem hexagonal_centeredConn_imp_transShell
             have hout : s(hexagonalBoxEndU n e, hexagonalBoxEndV n e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have houtEq : etOut = iotaN e := by
             apply Subtype.ext
             change Sym2.map transIncl et.1 =
@@ -660,8 +722,8 @@ theorem hexagonal_centeredConn_imp_transShell
             have hout : s(hexagonalBoxEndU n e, hexagonalBoxEndV n e) = e.1 :=
               e.1.out_eq
             rcases hpair with hp | hp
-            · simpa [hp.1, hp.2] using hout.symm
-            · simpa [hp.1, hp.2, Sym2.eq_swap] using hout.symm
+            · simp [hp.1, hp.2]
+            · simp [hp.1, hp.2, Sym2.eq_swap]
           have houtEq : etOut = iotaN e := by
             apply Subtype.ext
             change Sym2.map transIncl et.1 =
@@ -695,7 +757,8 @@ theorem hexagonal_centeredConn_imp_transShell
   simpa [transCfg, transIncl, hsub, hadjm, iotaN,
     hexagonalTransShellEvent, hexagonalTransBoxCenter, openCrossEvent] using hresult
 
-theorem hexagonalOuterCenteredConn_le_theta_strict
+open scoped Classical in
+lemma hexagonalOuterCenteredConn_le_theta_strict
     (n k : Nat) (x : HexagonalBoxVertex n)
     (hk : 1 ≤ k) (hkn : 2 * k < n)
     (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta) :
@@ -750,7 +813,9 @@ theorem hexagonalOuterCenteredConn_le_theta_strict
         simpa [A] using htrans]
       exact hcenter
 
-theorem hexagonalCenteredDenom_pos
+/-! ## D. The sharp covariance bound -/
+
+lemma hexagonalCenteredDenom_pos
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     0 < hexagonalCenteredDenom n q beta := by
@@ -775,9 +840,8 @@ theorem hexagonalCenteredDenom_pos
   change 0 < 4 * M / (n : Real)
   positivity
 
-
-
-theorem hexagonal_outer_inner_hcov_centered
+open scoped Classical in
+lemma hexagonal_outer_inner_hcov_centered
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     let mu := FK.activeBCProb (hexagonalBoxGraph (2 * n))
@@ -834,9 +898,7 @@ theorem hexagonal_outer_inner_hcov_centered
     (by simpa [mu] using hsum)
   simpa [hexagonalCenteredDenom, mu, M, D] using hmain
 
-
-
-theorem hexagonal_centered_sup_le_two_sig_of_strict_comparison
+lemma hexagonal_centered_sup_le_two_sig_of_strict_comparison
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : HexagonalBoxVertex n, ∀ k,
       k ∈ Finset.Icc 1 (n / 2) → 2 * k < n →
@@ -862,7 +924,7 @@ theorem hexagonal_centered_sup_le_two_sig_of_strict_comparison
       rw [hexagonalOuterInnerTheta_zero]
       exact hexagonalOuterCenteredConn_le_one n q beta hq hbeta x k)
 
-theorem hexagonalCenteredDenom_le_eight_sig_of_strict_comparison
+lemma hexagonalCenteredDenom_le_eight_sig_of_strict_comparison
     (n : Nat) (q beta : Real) (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : HexagonalBoxVertex n, ∀ k,
       k ∈ Finset.Icc 1 (n / 2) → 2 * k < n →
@@ -883,7 +945,8 @@ theorem hexagonalCenteredDenom_le_eight_sig_of_strict_comparison
         (mul_le_mul_of_nonneg_left hsup (by norm_num)) (Nat.cast_nonneg n)
     _ = 8 * hexagonalOuterInnerSig n q beta / (n : Real) := by ring
 
-theorem hexagonal_outer_inner_hcov_sharp_of_strict_comparison
+open scoped Classical in
+lemma hexagonal_outer_inner_hcov_sharp_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : HexagonalBoxVertex n, ∀ k,
@@ -952,7 +1015,8 @@ theorem hexagonal_outer_inner_hcov_sharp_of_strict_comparison
   have hbase := hexagonal_outer_inner_hcov_centered n hn q beta hq hbeta
   exact hfrac.trans (by simpa [mu, theta] using hbase)
 
-theorem hexagonal_outer_inner_differential_sharp_of_strict_comparison
+open scoped Classical in
+lemma hexagonal_outer_inner_differential_sharp_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta)
     (hcomp : ∀ x : HexagonalBoxVertex n, ∀ k,
@@ -963,7 +1027,7 @@ theorem hexagonal_outer_inner_differential_sharp_of_strict_comparison
         (1 - hexagonalOuterInnerTheta q beta n) /
           (8 * hexagonalOuterInnerSig n q beta / (n : Real)) ≤
       hexagonalOuterInnerThetaPrime n q beta := by
-  letI : Nonempty (hexagonalBoxGraph (2 * n)).edgeSet :=
+  let : Nonempty (hexagonalBoxGraph (2 * n)).edgeSet :=
     hexagonalBoxGraph_edgeSet_nonempty (2 * n) (by omega)
   let G := hexagonalBoxGraph (2 * n)
   let C := hexagonalBoxBoundaryGraph (2 * n)
@@ -1025,12 +1089,17 @@ theorem hexagonal_outer_inner_differential_sharp_of_strict_comparison
   simpa [hexagonalOuterInnerTheta, hexagonalOuterInnerThetaPrime,
     hn0, G, C, J, mu, f, FK.activeBCMean, Lindeberg.mean] using hmain
 
+/-! ## E. The uniform differential inequality -/
+
+/-- The product `∏ e^{-β₀}` over the edges at the origin of the inner box: a lower bound for the
+probability that all of them are closed. -/
 noncomputable def hexagonalInnerKappa (n : Nat) (beta0 : Real) : Real :=
   (reindexedOpenIncidentEdges
     (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n))
     (hexagonalBoxEndU n) (hexagonalBoxEndV n) (hexagonalBoxRoot n)).prod
       (fun _ => Real.exp (-beta0))
 
+/-- The three hexagonal-lattice neighbors of the root, as vertices of the box. -/
 def hexagonalBoxNeighbor (n : Nat) (hn : 1 ≤ n) (i : Fin 3) :
     HexagonalBoxVertex n :=
   ⟨hexagonalNeighbor (0, false) i, ⟨by
@@ -1038,7 +1107,7 @@ def hexagonalBoxNeighbor (n : Nat) (hn : 1 ≤ n) (i : Fin 3) :
       simp [hexagonalNeighbor, hexagonalStep] <;> omega,
     Set.mem_univ _⟩⟩
 
-theorem hexagonalBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma hexagonalBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
     ((hexagonalBoxGraph n).neighborFinset (hexagonalBoxRoot n)).card ≤ 6 := by
   let candidates : Finset (HexagonalBoxVertex n) :=
     Finset.univ.image (hexagonalBoxNeighbor n hn)
@@ -1047,7 +1116,6 @@ theorem hexagonalBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
     intro y hy
     rw [SimpleGraph.mem_neighborFinset] at hy
     have hyAmbient : hexagonalGraph.Adj (0, false) y.1 := by
-      simp [hexagonalBoxGraph, hexagonalBoxRoot] at hy
       exact hy
     have hc := hexagonal_mem_candidates_of_adj hyAmbient
     rw [Finset.mem_image] at hc ⊢
@@ -1060,12 +1128,12 @@ theorem hexagonalBox_root_neighbor_card_le_six (n : Nat) (hn : 1 ≤ n) :
     _ ≤ (Finset.univ : Finset (Fin 3)).card := Finset.card_image_le
     _ ≤ 6 := by decide
 
-theorem hexagonalBox_root_degree_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma hexagonalBox_root_degree_le_six (n : Nat) (hn : 1 ≤ n) :
     (hexagonalBoxGraph n).degree (hexagonalBoxRoot n) ≤ 6 := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   exact hexagonalBox_root_neighbor_card_le_six n hn
 
-theorem hexagonalInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
+lemma hexagonalInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
     (reindexedOpenIncidentEdges
       (hexagonalBoxEdgeLE (by omega : n ≤ 2 * n))
       (hexagonalBoxEndU n) (hexagonalBoxEndV n)
@@ -1131,12 +1199,12 @@ theorem hexagonalInnerIncident_card_le_six (n : Nat) (hn : 1 ≤ n) :
         exact Finset.card_image_of_injOn hinj
   exact himage.trans (hI.trans (hexagonalBox_root_neighbor_card_le_six n hn))
 
-theorem hexagonalInnerKappa_pos (n : Nat) (beta0 : Real) :
+lemma hexagonalInnerKappa_pos (n : Nat) (beta0 : Real) :
     0 < hexagonalInnerKappa n beta0 := by
   unfold hexagonalInnerKappa
   exact Finset.prod_pos fun e he => Real.exp_pos _
 
-theorem exp_neg_pow_six_le_hexagonalInnerKappa
+lemma exp_neg_pow_six_le_hexagonalInnerKappa
     (n : Nat) (hn : 1 ≤ n) (beta0 : Real) (hbeta0 : 0 ≤ beta0) :
     Real.exp (-beta0) ^ 6 ≤ hexagonalInnerKappa n beta0 := by
   unfold hexagonalInnerKappa
@@ -1145,7 +1213,8 @@ theorem exp_neg_pow_six_le_hexagonalInnerKappa
     (Real.exp_le_one_iff.mpr (by linarith))
     (hexagonalInnerIncident_card_le_six n hn)
 
-theorem hexagonal_outer_inner_one_sub_lower
+open scoped Classical in
+lemma hexagonal_outer_inner_one_sub_lower
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     hexagonalInnerKappa n beta0 ≤
@@ -1168,7 +1237,7 @@ theorem hexagonal_outer_inner_one_sub_lower
   simpa [hexagonalInnerKappa, hexagonalOuterInnerTheta, hn0, Lindeberg.mean,
     hexagonalInnerCrossInd] using hmain
 
-theorem hexagonal_outer_inner_differential_linear_of_strict_comparison
+lemma hexagonal_outer_inner_differential_linear_of_strict_comparison
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0)
     (hcomp : ∀ x : HexagonalBoxVertex n, ∀ k,
@@ -1210,7 +1279,8 @@ theorem hexagonal_outer_inner_differential_linear_of_strict_comparison
         (mul_le_mul_of_nonneg_left hgap htheta0)
     _ ≤ hexagonalOuterInnerThetaPrime n q beta := hlog
 
-theorem hexagonal_outer_inner_hcov_sharp
+open scoped Classical in
+lemma hexagonal_outer_inner_hcov_sharp
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     let mu := FK.activeBCProb (hexagonalBoxGraph (2 * n))
@@ -1226,7 +1296,7 @@ theorem hexagonal_outer_inner_hcov_sharp
   exact hexagonalOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem hexagonal_outer_inner_differential_sharp
+lemma hexagonal_outer_inner_differential_sharp
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     hexagonalOuterInnerTheta q beta n *
@@ -1239,7 +1309,7 @@ theorem hexagonal_outer_inner_differential_sharp
   exact hexagonalOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem hexagonal_outer_inner_differential_linear
+lemma hexagonal_outer_inner_differential_linear
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     hexagonalInnerKappa n beta0 *
@@ -1252,7 +1322,7 @@ theorem hexagonal_outer_inner_differential_linear
   exact hexagonalOuterCenteredConn_le_theta_strict n k x
     (Finset.mem_Icc.mp hk).1 hstrict q beta hq hbeta
 
-theorem hexagonalOuterInnerSig_pos
+lemma hexagonalOuterInnerSig_pos
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     0 < hexagonalOuterInnerSig n q beta := by
@@ -1264,14 +1334,18 @@ theorem hexagonalOuterInnerSig_pos
   rw [hexagonalOuterInnerTheta_zero] at hsingle
   exact lt_of_lt_of_le zero_lt_one hsingle
 
+/-- The uniform OSSS constant `e^{-6β₀} / 8` for the hexagonal lattice. -/
 noncomputable def hexagonalSharpConstant (beta0 : Real) : Real :=
   Real.exp (-beta0) ^ 6 / 8
 
-theorem hexagonalSharpConstant_pos (beta0 : Real) :
+lemma hexagonalSharpConstant_pos (beta0 : Real) :
     0 < hexagonalSharpConstant beta0 := by
   unfold hexagonalSharpConstant
   positivity
 
+/-- Uniform OSSS differential inequality for hexagonal-lattice FK crossing probabilities: `(e^{-6β₀}
+/ 8) (n / Σ_n) θ_n ≤ dθ_n/dβ` for `n ≥ 1`, `q ≥ 1`, `0 < β ≤ β₀` (Duminil-Copin–Raoufi–Tassion
+2019). -/
 theorem hexagonal_outer_inner_differential_uniform
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
