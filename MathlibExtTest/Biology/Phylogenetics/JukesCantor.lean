@@ -84,6 +84,13 @@ example : pDiff 1 (-1) 0 < 0 := by
 -- and the totalized logarithm returns the junk value `0`.
 example : jcDistance (3 / 4) = 0 := by norm_num [jcDistance]
 
+-- Interoperability with the finite Markov-chain API.
+example : (jcStochasticMatrix 1 2 (by norm_num)).matPow 3 0 1 = jcProb 1 6 0 1 := by
+  rw [matPow_jcStochasticMatrix]; norm_num
+example : (jcStochasticMatrix 1 2 (by norm_num)).IsStationary
+    ⟨fun _ => 1 / 4, fun _ => by norm_num, by simp⟩ :=
+  StochasticMatrix.detailedBalance_isStationary _ _ (detailedBalance_jcStochasticMatrix 1 2 _)
+
 -- The matrix exponential: at `t = 0` it is the identity, and its rows sum to `1`.
 example : NormedSpace.exp ((0 : ℝ) • jcRateMatrix 1) 2 2 = 1 := by
   rw [← jcProb_eq_exp, jcProb_zero]; simp
