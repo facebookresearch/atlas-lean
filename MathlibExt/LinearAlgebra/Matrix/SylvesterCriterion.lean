@@ -44,12 +44,13 @@ namespace Matrix
 
 /-- The leading `k × k` principal submatrix of `A`: the submatrix on the
 first `k` rows and columns. -/
-def leadingPrincipalSubmatrix {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (k : ℕ)
-    (hk : k ≤ n) : Matrix (Fin k) (Fin k) ℝ :=
+def leadingPrincipalSubmatrix {α : Type*} {n : ℕ} (A : Matrix (Fin n) (Fin n) α)
+    (k : ℕ) (hk : k ≤ n) : Matrix (Fin k) (Fin k) α :=
   A.submatrix (Fin.castLE hk) (Fin.castLE hk)
 
 /-- The full leading principal submatrix is the matrix itself. -/
-theorem leadingPrincipalSubmatrix_self {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) :
+theorem leadingPrincipalSubmatrix_self {α : Type*} {n : ℕ}
+    (A : Matrix (Fin n) (Fin n) α) :
     leadingPrincipalSubmatrix A n (Nat.le_refl n) = A := by
   ext i j
   simp [leadingPrincipalSubmatrix, Matrix.submatrix_apply]
