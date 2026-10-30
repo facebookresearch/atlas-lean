@@ -30,9 +30,8 @@ A Hankel operator on `ℓ²(ℕ, 𝕜)` is the operator whose matrix is constant
 antidiagonals: for a symbol `a : ℕ → 𝕜`,
 `(Hₐ x)ᵢ = ∑'ⱼ, a (i + j) * x j`.
 The classical instance is the Hilbert matrix `a k = 1 / (k + 1)`, whose symbol
-is *not* absolutely summable; it is not treated here (see batch 83
-`HilbertInequality.lean` for the Hilbert-matrix norm bound, proved by a
-weighted Schur test). Here we treat the cleanly bounded case:
+is *not* absolutely summable, so it is outside the scope of this file.
+Here we treat absolutely summable symbols:
 
 * `hankelSlice k` is the `k`-th anti-diagonal slice `Eₖ`, which reverses the
   first `k + 1` coordinates and kills the rest. It is a self-adjoint
@@ -47,17 +46,14 @@ weighted Schur test). Here we treat the cleanly bounded case:
 
 This is a companion to the Hilbert-space / compact-operator material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`. It is
-not one of the 72 v1 targets, and it is not in the pinned Mathlib or in base
-MathlibExt: base MathlibExt has only finite Hankel *matrices*
-(`MathlibExt/LinearAlgebra/Matrix/Hankel.lean`, `Matrix.hankel`,
-`Matrix.hankelFin`), with no operator, boundedness, adjoint, or compactness
-statement. It is distinct from batch 102 (`SchurTestInfinite.lean`), which
-proves the *general* Schur test for infinite matrices: no Schur test is
-stated or proved here — boundedness comes from the anti-diagonal slice
-decomposition and the triangle inequality, and compactness from the finite
-partial sums. It is also distinct from batch 68 (`HilbertSchmidt.lean`):
-a Hankel operator with an `ℓ¹` symbol need not be Hilbert–Schmidt in the
-sense of that file, and no Hilbert–Schmidt norm is introduced here.
+not one of the 72 v1 targets. The matrix API in
+`MathlibExt/LinearAlgebra/Matrix/Hankel.lean` defines the infinite matrix
+`Matrix.hankel` on `ℕ × ℕ` and the finite matrix `Matrix.hankelFin`.
+This file treats bounded Hankel operators on `ℓ²` with an `ℓ¹` symbol.
+Boundedness comes from the anti-diagonal slice decomposition and the
+triangle inequality, and compactness from the finite partial sums.
+No Schur test is stated or proved here. An `ℓ¹`-symbol Hankel operator
+need not be Hilbert–Schmidt, and no Hilbert–Schmidt norm is introduced here.
 
 ## Main declarations
 
