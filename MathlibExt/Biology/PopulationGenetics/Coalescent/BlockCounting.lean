@@ -57,6 +57,9 @@ the two matrices are mutually inverse. The formula holds for every real `t`.
   from the eigen-relations and triangularity, without a summation identity).
 * `exp_smul_blockCountingGenerator`: the spectral decomposition of `exp (t • G)`.
 * `exp_blockCountingGenerator_apply`: **Tavaré's formula**.
+* `exp_smul_blockCountingGenerator_of_lt`, `exp_smul_blockCountingGenerator_castLE`: the
+  process never gains lineages, and the transition matrix on `{0, …, n}` is the top-left block
+  of the one on `{0, …, N}` for `n ≤ N`.
 
 ## References
 
@@ -538,5 +541,58 @@ theorem exp_blockCountingGenerator_apply (n : ℕ) (t : ℝ) (i j : Fin (n + 1))
         rw [Nat.cast_choose_two]; ring_nf
       simp only [wL, show k ≠ 0 by omega, ite_false, hk.1, ite_true, vR, hexp]
       ring
+
+/-- **Truncation consistency.** For `n ≤ N`, the top-left `(n + 1) × (n + 1)` block of the
+transition matrix `exp (t • G)` of the block-counting process on `{0, …, N}` is the transition
+matrix of the process on `{0, …, n}` (the process only moves down). Holds for every real `t`. -/
+theorem exp_smul_blockCountingGenerator_castLE {n N : ℕ} (h : n ≤ N) (t : ℝ)
+    (i j : Fin (n + 1)) :
+    NormedSpace.exp (t • blockCountingGenerator N) (Fin.castLE (by omega) i)
+        (Fin.castLE (by omega) j) =
+      NormedSpace.exp (t • blockCountingGenerator n) i j := by
+  classical
+  rw [exp_smul_blockCountingGenerator N t, exp_smul_blockCountingGenerator n t]
+  conv_lhs => rw [Matrix.mul_apply]
+  conv_rhs => rw [Matrix.mul_apply]
+  simp only [Matrix.mul_diagonal]
+  let f : ℕ → ℝ := fun k =>
+    ((i : ℕ).descFactorial k : ℝ) / ((i : ℕ).ascFactorial k : ℝ) *
+      Real.exp (t * -((k.choose 2 : ℕ) : ℝ)) *
+      (if k = 0 then (if (j : ℕ) = 0 then 1 else 0)
+      else if (j : ℕ) ≤ k then
+        (2 * (k : ℕ) - 1) * (-1) ^ (k - j) * ((j : ℕ).ascFactorial (k - 1) : ℝ) /
+          (((j : ℕ).factorial : ℝ) * ((k - j).factorial : ℝ))
+      else 0)
+  change (∑ k : Fin (N + 1), f k.val) = ∑ k : Fin (n + 1), f k.val
+  rw [Fin.sum_univ_eq_sum_range f, Fin.sum_univ_eq_sum_range f]
+  symm
+  apply Finset.sum_subset (Finset.range_mono (by omega))
+  intro k _ hkn
+  have hik : (i : ℕ) < k := by
+    have hi := i.isLt
+    simp only [Finset.mem_range] at hkn
+    omega
+  simp [f, Nat.descFactorial_eq_zero_iff_lt.mpr hik]
+
+/-- The block-counting process never gains lineages: `exp (t • G) i j = 0` for `i < j`. Holds
+for every real `t`. -/
+theorem exp_smul_blockCountingGenerator_of_lt {n : ℕ} (t : ℝ) {i j : Fin (n + 1)} (h : i < j) :
+    NormedSpace.exp (t • blockCountingGenerator n) i j = 0 := by
+  classical
+  rw [exp_smul_blockCountingGenerator n t, Matrix.mul_apply]
+  simp only [Matrix.mul_diagonal]
+  apply Finset.sum_eq_zero
+  intro k _
+  by_cases hik : (i : ℕ) < k
+  · simp [blockCountingRightEigen, Nat.descFactorial_eq_zero_iff_lt.mpr hik]
+  · have hkj : ¬ (j : ℕ) ≤ k := by
+      have hij : (i : ℕ) < j := h
+      omega
+    have hj : (j : ℕ) ≠ 0 := by
+      have hij : (i : ℕ) < j := h
+      omega
+    have hleft : blockCountingLeftEigen n k j = 0 := by
+      simp only [blockCountingLeftEigen, Matrix.of_apply, hj, hkj, ite_false, ite_self]
+    rw [hleft, mul_zero]
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
