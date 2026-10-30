@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.MeanInequalities
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
+import Mathlib.Analysis.MeanInequalities
+import Mathlib.Topology.Algebra.InfiniteSum.Real
 
 /-!
 # Carleman's inequality (sharp form, constant `e`)
