@@ -30,7 +30,10 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.RingTheory.DiscreteValuationRing.IntegralClosureComplete
+public import Mathlib.FieldTheory.Separable
+public import Mathlib.RingTheory.DiscreteValuationRing.Basic
+public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
+import MathlibExt.RingTheory.DiscreteValuationRing.IntegralClosureComplete
 
 /-!
 # Integral closures of complete DVRs in finite separable extensions
