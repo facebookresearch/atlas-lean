@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.List.Range
+import Mathlib.Data.List.Infix
 import Mathlib.Data.List.TakeDrop
 
 /-!
@@ -70,6 +71,21 @@ namespace Cslib.Bioinformatics.Assembly.DeBruijn
 for `i + k ≤ |s|`. -/
 def kmers {α : Type*} (k : ℕ) (s : List α) : List (List α) :=
   (List.range (s.length + 1 - k)).map fun i => (s.drop i).take k
+
+/-- Executable form of `kmers`: the suffixes of `s` are generated once by `List.tails`, so the
+cost is `O(|s| · k)` rather than the `Θ(|s|²)` of recomputing `s.drop i` for every `i`. The
+compiler uses it in place of `kmers` (`kmers_eq_kmersImpl`). -/
+def kmersImpl {α : Type*} (k : ℕ) (s : List α) : List (List α) :=
+  (s.tails.take (s.length + 1 - k)).map (·.take k)
+
+@[csimp] theorem kmers_eq_kmersImpl : @kmers = @kmersImpl := by
+  funext α k s
+  apply List.ext_getElem
+  · simp only [kmers, kmersImpl, List.length_map, List.length_range, List.length_take,
+      List.length_tails]
+    omega
+  · intro i _ _
+    simp [kmers, kmersImpl, List.getElem_tails]
 
 /-- The edge of the de Bruijn multigraph contributed by a `k`-mer `w`: from its prefix
 `(k-1)`-mer `w.dropLast` to its suffix `(k-1)`-mer `w.tail`. -/

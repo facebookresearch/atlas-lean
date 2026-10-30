@@ -50,6 +50,9 @@ def W₃ : List (List Char) :=
 #guard deBruijnEdges 3 "A".toList = []
 #guard kmers 2 "AC".toList = ["AC".toList] ∧ spell (kmers 2 "AC".toList) = "AC".toList
 
+-- The compiled `kmers` (`kmersImpl`) is linear in `|s|` for fixed `k`.
+#guard (kmers 3 (List.replicate 100000 'A')).length = 99998
+
 -- The theorems, instantiated.
 example : (kmers 2 s₁).zip (kmers 2 s₁).tail = deBruijnEdges 3 s₁ :=
   zip_tail_kmers 3 (by decide) s₁
