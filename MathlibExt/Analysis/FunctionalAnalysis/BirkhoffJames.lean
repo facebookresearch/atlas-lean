@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.Normed.Module.HahnBanach
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
+public import MathlibExt.Analysis.Normed.Module.DualDistanceFormula
 
 @[expose] public section
 
@@ -46,9 +47,8 @@ Main results:
 * `birkhoffJamesOrthogonal_iff_exists_norming`: for `x ≠ 0`, `x` is
   Birkhoff–James orthogonal to `y` if and only if there is a norming
   functional `f` of `x` (so `‖f‖ = 1` and `f x = ‖x‖`) with `f y = 0`.
-  The proof passes to the quotient `E / 𝕜 ∙ y`, where the quotient norm of
-  `x` is exactly `‖x‖` by Birkhoff–James orthogonality, and applies
-  Hahn–Banach (`exists_dual_vector`) there.
+  The proof identifies the distance from `x` to `𝕜 ∙ y` with `‖x‖` and uses
+  the dual distance formula to obtain an annihilating norming functional.
 * `dualityMapping`: the duality set `J(x) = {f | f x = ‖x‖ ^ 2, ‖f‖ = ‖x‖}`,
   with `dualityMapping_nonempty` and
   `birkhoffJamesOrthogonal_iff_exists_dualityMapping`: `x` is
@@ -131,68 +131,27 @@ theorem birkhoffJamesOrthogonal_of_exists_norming {x y : E} {f : E →L[𝕜] �
     _ = ‖x + c • y‖ := by rw [hf, one_mul]
 
 /-- The converse: if `x ≠ 0` is Birkhoff–James orthogonal to `y`, there is a
-norming functional of `x` vanishing at `y`. The proof passes to the quotient
-`E / 𝕜 ∙ y`, where the quotient norm of `x` is exactly `‖x‖` by
-Birkhoff–James orthogonality, and applies Hahn–Banach there. -/
+norming functional of `x` vanishing at `y`. Birkhoff–James orthogonality makes
+the distance from `x` to `𝕜 ∙ y` equal to `‖x‖`, so the dual distance formula
+supplies an annihilating norming functional. -/
 theorem exists_norming_of_birkhoffJamesOrthogonal {x y : E} (hx : x ≠ 0)
     (h : BirkhoffJamesOrthogonal 𝕜 x y) :
     ∃ f : E →L[𝕜] 𝕜, ‖f‖ = 1 ∧ f x = ‖x‖ ∧ f y = 0 := by
-  have hMclosed : IsClosed ((𝕜 ∙ y : Submodule 𝕜 E) : Set E) :=
-    Submodule.closed_of_finiteDimensional _
-  have hqnorm : ∀ z : E,
-      ‖(𝕜 ∙ y : Submodule 𝕜 E).mkQL z‖ ≤ ‖z‖ := by
-    intro z
-    rw [Submodule.mkQL_apply, Submodule.mkQ_apply]
-    exact Submodule.Quotient.norm_mk_le _ z
-  have hqnormx : ‖(𝕜 ∙ y : Submodule 𝕜 E).mkQL x‖ = ‖x‖ := by
-    apply le_antisymm (hqnorm x)
-    apply le_of_forall_pos_le_add
-    intro ε hε
-    obtain ⟨m, hm, hmlt⟩ := Submodule.Quotient.norm_mk_lt
-      (S := 𝕜 ∙ y) (Submodule.Quotient.mk x) hε
-    have hmem : m - x ∈ (𝕜 ∙ y : Submodule 𝕜 E) :=
-      (Submodule.Quotient.eq (𝕜 ∙ y)).mp hm
-    obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hmem
-    have hmx : m = c • y + x := sub_eq_iff_eq_add.mp hc.symm
-    have hle : ‖x‖ ≤ ‖m‖ := by
-      rw [hmx, add_comm]
-      exact h c
-    have hqx : (𝕜 ∙ y : Submodule 𝕜 E).mkQL x = Submodule.Quotient.mk x := rfl
-    rw [hqx]
-    linarith [hle, hmlt]
-  obtain ⟨g, hg1, hg2⟩ := exists_dual_vector 𝕜 ((𝕜 ∙ y : Submodule 𝕜 E).mkQL x)
-    (by rw [hqnormx]; exact norm_ne_zero_iff.mpr hx)
-  have hqop : ‖(𝕜 ∙ y : Submodule 𝕜 E).mkQL‖ ≤ 1 := by
-    refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun z => ?_
-    rw [one_mul]
-    exact hqnorm z
-  refine ⟨g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL, ?_, ?_, ?_⟩
-  · apply le_antisymm _ _
-    · calc ‖g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL‖
-          ≤ ‖g‖ * ‖(𝕜 ∙ y : Submodule 𝕜 E).mkQL‖ :=
-            ContinuousLinearMap.opNorm_comp_le g _
-        _ ≤ 1 * 1 := mul_le_mul hg1.le hqop (norm_nonneg _) zero_le_one
-        _ = 1 := one_mul 1
-    · have hle : ‖(g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL) x‖
-          ≤ ‖g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL‖ * ‖x‖ :=
-            (g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL).le_opNorm x
-      have hgx : (g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL) x = ((‖x‖ : ℝ) : 𝕜) := by
-        rw [ContinuousLinearMap.comp_apply, hg2, hqnormx]
-      have hnormcoe : ‖((‖x‖ : ℝ) : 𝕜)‖ = ‖x‖ := by
-        rw [RCLike.norm_ofReal, abs_of_nonneg (norm_nonneg _)]
-      rw [hgx, hnormcoe] at hle
-      have hpos : (0 : ℝ) < ‖x‖ := norm_pos_iff.mpr hx
-      have hle' : ‖x‖ * 1 ≤ ‖x‖ * ‖g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL‖ := by
-        rw [mul_one]
-        rwa [mul_comm ‖g.comp (𝕜 ∙ y : Submodule 𝕜 E).mkQL‖ ‖x‖] at hle
-      exact le_of_mul_le_mul_left hle' hpos
-  · rw [ContinuousLinearMap.comp_apply, hg2, hqnormx]
-  · have hqy : (𝕜 ∙ y : Submodule 𝕜 E).mkQL y = 0 := by
-      have hy : y ∈ (𝕜 ∙ y : Submodule 𝕜 E) :=
-        Submodule.mem_span_singleton_self y
-      rw [Submodule.mkQL_apply, Submodule.mkQ_apply]
-      exact (Submodule.Quotient.mk_eq_zero (𝕜 ∙ y)).mpr hy
-    rw [ContinuousLinearMap.comp_apply, hqy, map_zero]
+  have hdist : Metric.infDist x ((𝕜 ∙ y : Submodule 𝕜 E) : Set E) = ‖x‖ := by
+    apply le_antisymm
+    · calc Metric.infDist x ((𝕜 ∙ y : Submodule 𝕜 E) : Set E) ≤ dist x 0 :=
+            Metric.infDist_le_dist_of_mem (zero_mem _)
+        _ = ‖x‖ := by simp
+    · refine (Metric.le_infDist ⟨0, zero_mem _⟩).mpr ?_
+      intro z hz
+      obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hz
+      simpa only [dist_eq_norm, sub_eq_add_neg, neg_smul] using h (-c)
+  obtain ⟨f, hfvan, hf, hfx⟩ :=
+    MathlibExt.Analysis.Normed.Module.DualDistanceFormula.exists_annihilating_norm_one
+      (𝕜 ∙ y) (by
+        rw [hdist]
+        exact norm_pos_iff.mpr hx)
+  exact ⟨f, hf, by simpa only [hdist] using hfx, hfvan y (mem_span_singleton_self y)⟩
 
 /-- For `x ≠ 0`, Birkhoff–James orthogonality to `y` is equivalent to the
 existence of a norming functional of `x` vanishing at `y`. -/
