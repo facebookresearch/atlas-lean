@@ -46,7 +46,7 @@ step of the classical proof of Fermat's Last Theorem via the Frey curve:
 a Frey curve is modular, Ribet's level lowering puts its mod-`p`
 representation in `S₂(Γ₀(2))`, and that space being zero gives the
 contradiction. Along the way we record the two reusable ingredients, the
-norm (trace) of a cusp form over a finite-index subgroup and the index
+product norm of a cusp form over a finite-index subgroup and the index
 `[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two case be reduced to the
 weight-six level-one dimension formula.
 
@@ -80,7 +80,7 @@ open scoped CongruenceSubgroup MatrixGroups UpperHalfPlane
 
 namespace CuspForm
 
-/-- The norm (trace) of a cusp form: for `𝒢` of finite relative index in `ℋ`,
+/-- The product norm of a cusp form: for `𝒢` of finite relative index in `ℋ`,
 the product of the `ℋ / 𝒢`-translates of `f`, viewed as a cusp form on the
 larger group `ℋ` at weight `k * [ℋ : 𝒢]`. This lifts Mathlib's
 `ModularForm.norm` to cusp forms; the only new work is checking vanishing
