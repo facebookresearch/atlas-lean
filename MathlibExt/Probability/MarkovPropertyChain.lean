@@ -1,0 +1,229 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.MarkovChainPathMeasure
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+public import Mathlib.Probability.Process.Filtration
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+
+/-!
+# Markov property for discrete-time Markov chains
+
+For the Markov chain with initial distribution `μ` and transition kernel
+`κ` on a standard Borel space `S`, conditioning on the trajectory up to
+time `n` only depends on the value at time `n`: the conditional
+expectation of a bounded measurable path functional composed with the
+time-`n` shift equals the expectation of the functional under the chain
+restarted from the current state.
+
+## Source
+
+This formalizes `v1/Atlas/TheoryOfProbability/code/MarkovPropertyChain.lean`
+(`markov_setIntegral_shift`, `markov_property_full`), which rests in v1
+on `integral_shiftPath_traj_eq_markovExpectation`, left unproved there.
+That identity is proved in
+`MathlibExt.Probability.MarkovChainPathMeasure`
+(`integral_shiftPath_traj_eq_markovExpectation`); the two theorems here
+are ported from v1 with no statement change. The strong Markov property
+is in `MathlibExt.Probability.StrongMarkovChain`.
+
+## Main results
+
+* `MathlibExt.Probability.MarkovPropertyChain.markov_setIntegral_shift`:
+  the set-integral form of the Markov property.
+* `MathlibExt.Probability.MarkovPropertyChain.markov_property_full`:
+  the conditional-expectation form of the Markov property.
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory Kernel Finset
+open MathlibExt.Probability.MarkovChainPath
+
+namespace MathlibExt.Probability.MarkovPropertyChain
+
+/-- Set-integral form of the Markov property for the Markov chain path measure.
+For any bounded measurable path functional `Y` and any set `A` measurable with
+respect to `pathFiltration S n`,
+
+  `∫_A Y(shiftPath n ω) dP_μ = ∫_A markovExpectation S κ Y (ω n) dP_μ`.
+
+This is the analogue of `setIntegral_shift_eq_pathExpectation` for discrete-time
+Markov chains. -/
+theorem markov_setIntegral_shift
+    (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
+    (μ : Measure S) [IsFiniteMeasure μ]
+    (κ : Kernel S S) [IsMarkovKernel κ]
+    (Y : (ℕ → S) → ℝ) (hY_meas : @Measurable _ _ MeasurableSpace.pi _ Y)
+    (hY_bdd : ∃ C : ℝ, ∀ ω, |Y ω| ≤ C)
+    (n : ℕ) (A : Set (ℕ → S))
+    (hA : @MeasurableSet _ (pathFiltration S n) A) :
+    let P_μ := MarkovChainPathMeasure S μ κ
+    ∫ ω in A, (Y ∘ shiftPath n) ω ∂P_μ = ∫ ω in A, markovExpectation S κ Y (ω n) ∂P_μ := by
+  intro P_μ
+  obtain ⟨C, hC⟩ := hY_bdd
+  set κ' := markovLiftKernel κ
+  set K := Kernel.traj (X := fun _ : ℕ => S) κ' 0
+  set e := MeasurableEquiv.piUnique (fun _ : ↥(Finset.Iic 0) => S)
+  set ν := Measure.map (⇑e.symm) μ
+
+  have hP_eq : P_μ = K ∘ₘ ν := by
+    simp only [P_μ, MarkovChainPathMeasure,
+      MathlibExt.Probability.MarkovChainConstruction.markovChainMeasure,
+      Kernel.trajMeasure, K, ν, κ']
+    rfl
+  have hA_pi : @MeasurableSet _ MeasurableSpace.pi A := pathFiltration_le_pi S n A hA
+
+  have hf_meas : @Measurable _ _ MeasurableSpace.pi _ (Y ∘ shiftPath n) :=
+    hY_meas.comp (measurable_shiftPath n)
+  have hf_int : IntegrableOn (Y ∘ shiftPath n) A P_μ := by
+    apply IntegrableOn.of_bound (measure_lt_top P_μ A)
+      hf_meas.aestronglyMeasurable.restrict C
+    exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hC (shiftPath n ω))
+
+  have hg_meas_pi : Measurable (markovExpectation S κ Y) :=
+    measurable_markovExpectation S κ Y hY_meas ⟨C, hC⟩
+  have hg_bdd : ∀ ω : ℕ → S, |markovExpectation S κ Y (ω n)| ≤ C := by
+    intro ω
+    simp only [markovExpectation]
+    calc |∫ ω', Y ω' ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ|
+        ≤ ∫ ω', |Y ω'| ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ :=
+          by have := norm_integral_le_integral_norm (f := Y) (μ := MarkovChainPathMeasure S (Measure.dirac (ω n)) κ)
+             rw [Real.norm_eq_abs] at this
+             simp_rw [Real.norm_eq_abs] at this
+             exact this
+      _ ≤ ∫ _ : ℕ → S, C ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ :=
+          integral_mono_of_nonneg (ae_of_all _ (fun _ => abs_nonneg _))
+            (integrable_const C) (ae_of_all _ (fun ω' => hC ω'))
+      _ = C := by rw [MeasureTheory.integral_const, smul_eq_mul, mul_comm]; simp
+  have hg_int : IntegrableOn (fun ω => markovExpectation S κ Y (ω n)) A P_μ := by
+    apply IntegrableOn.of_bound (measure_lt_top P_μ A)
+      (hg_meas_pi.comp (measurable_pi_apply n)).aestronglyMeasurable.restrict C
+    exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hg_bdd ω)
+  rw [hP_eq, Measure.comp_eq_comp_const_apply]
+  have hP_eq' : P_μ = (K ∘ₖ Kernel.const Unit ν) () := by rw [hP_eq, Measure.comp_eq_comp_const_apply]
+  rw [Kernel.setIntegral_comp hA_pi (hP_eq' ▸ hf_int),
+      Kernel.setIntegral_comp hA_pi (hP_eq' ▸ hg_int)]
+  congr 1
+  ext x₀
+  have hA_piLE : @MeasurableSet _ ((Filtration.piLE (X := fun _ : ℕ => S)).seq n) A := by
+    apply (show pathFiltration S n ≤
+      (Filtration.piLE (X := fun _ : ℕ => S)).seq n from ?_) _ hA
+    apply iSup_le; intro i; apply iSup_le; intro hi
+    simp only [Filtration.piLE]
+    rw [show (fun (ω : ℕ → S) => ω i) = (fun x : ↥(Set.Iic n) → S => x ⟨i, hi⟩) ∘
+      Preorder.restrictLe n from rfl]
+    rw [← MeasurableSpace.comap_comp]
+    exact MeasurableSpace.comap_mono (measurable_pi_apply _).comap_le
+
+  have hf_int_K : Integrable (Y ∘ shiftPath n) (K x₀) := by
+    apply Integrable.of_bound hf_meas.aestronglyMeasurable C
+    exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hC (shiftPath n ω))
+
+  have hcondExp := Kernel.condExp_traj (κ := κ') (X := fun _ : ℕ => S)
+    (a := 0) (b := n) (Nat.zero_le n) (x₀ := x₀) (f := Y ∘ shiftPath n) hf_int_K
+
+  have hinner : ∀ ω : ℕ → S,
+      ∫ y, (Y ∘ shiftPath n) y ∂(Kernel.traj (X := fun _ : ℕ => S) κ' n (Preorder.frestrictLe n ω)) =
+      markovExpectation S κ Y (ω n) := by
+    intro ω
+    have := integral_shiftPath_traj_eq_markovExpectation (S := S) μ κ Y hY_meas ⟨C, hC⟩ n
+      (Preorder.frestrictLe n ω)
+    simp only [Function.comp_apply] at this ⊢
+    rw [this]
+    simp only [markovExpectation, Preorder.frestrictLe_apply]
+
+  have hcondExp_eq : (K x₀)[Y ∘ shiftPath n | Filtration.piLE n] =ᵐ[K x₀]
+      fun ω => markovExpectation S κ Y (ω n) := by
+    exact hcondExp.trans (Filter.Eventually.of_forall hinner)
+
+  have hpiLE_le : (Filtration.piLE (X := fun _ : ℕ => S)).seq n ≤ MeasurableSpace.pi :=
+    (Filtration.piLE (X := fun _ : ℕ => S)).le' n
+  rw [← setIntegral_condExp hpiLE_le hf_int_K hA_piLE]
+  exact setIntegral_congr_ae hA_pi (hcondExp_eq.mono fun ω hω _ => hω)
+
+/-- **Markov property** for a discrete-time Markov chain (conditional-expectation form).
+For any bounded measurable path functional `Y` on `ℕ → S`,
+
+  `E_μ[Y ∘ shiftPath n | pathFiltration n] = (ω ↦ E_{ω n} Y)`  `P_μ`-a.e.,
+
+i.e. conditioning on the trajectory up to time `n` only depends on the value `ω n`, and the
+conditional expectation of `Y(shiftPath n ·)` equals the expectation `E_{ω n} Y` of `Y`
+under the chain restarted from `ω n`. -/
+theorem markov_property_full
+    (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
+    (μ : Measure S) [IsFiniteMeasure μ]
+    (κ : Kernel S S) [IsMarkovKernel κ]
+    (Y : (ℕ → S) → ℝ)
+    (hY_meas : @Measurable _ _ MeasurableSpace.pi _ Y)
+    (hY_bdd : ∃ C : ℝ, ∀ ω, |Y ω| ≤ C)
+    (n : ℕ) :
+    let P_μ := MarkovChainPathMeasure S μ κ
+    P_μ[Y ∘ shiftPath n | pathFiltration S n]
+    =ᵐ[P_μ]
+      fun ω => markovExpectation S κ Y (ω n) := by
+  intro P_μ
+
+  set g := fun ω : ℕ → S => markovExpectation S κ Y (ω n) with hg_def
+  set f := Y ∘ shiftPath n with hf_def
+  have hle : pathFiltration S n ≤ MeasurableSpace.pi := (pathFiltration S).le' n
+
+  obtain ⟨C, hC⟩ := hY_bdd
+  have hf_bdd : ∀ ω, |f ω| ≤ C := fun ω => hC (shiftPath n ω)
+
+  have hg_bdd : ∀ ω : ℕ → S, |g ω| ≤ C := by
+    intro ω
+    simp only [hg_def, markovExpectation]
+    have : ‖∫ ω', Y ω' ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ‖ ≤
+        ∫ ω', ‖Y ω'‖ ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ :=
+      norm_integral_le_integral_norm _
+    rw [Real.norm_eq_abs] at this
+    simp_rw [Real.norm_eq_abs] at this
+    calc |∫ ω', Y ω' ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ|
+        ≤ ∫ ω', |Y ω'| ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ := this
+      _ ≤ ∫ _ : ℕ → S, C ∂MarkovChainPathMeasure S (Measure.dirac (ω n)) κ := by
+            apply integral_mono_of_nonneg
+            · exact ae_of_all _ (fun ω' => abs_nonneg _)
+            · exact integrable_const C
+            · exact ae_of_all _ (fun ω' => hC ω')
+      _ = C := by
+            rw [MeasureTheory.integral_const, smul_eq_mul, mul_comm]
+            simp
+
+  have hf_sm : @Measurable _ _ MeasurableSpace.pi _ f := hY_meas.comp (measurable_shiftPath n)
+  have hf_int : Integrable f P_μ := by
+    apply Integrable.of_bound hf_sm.aestronglyMeasurable C
+    exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hf_bdd ω)
+
+  have hg_meas_pi : Measurable (markovExpectation S κ Y) :=
+    measurable_markovExpectation S κ Y hY_meas ⟨C, hC⟩
+
+  have hn_meas : @Measurable _ _ (pathFiltration S n) _ (fun ω : ℕ → S => ω n) := by
+    rw [measurable_iff_comap_le]
+    exact le_iSup₂ (f := fun (i : ℕ) (_ : i ≤ n) =>
+      MeasurableSpace.comap (fun (ω : ℕ → S) => ω i) ‹MeasurableSpace S›) n le_rfl
+  have hg_meas : @Measurable _ _ (pathFiltration S n) _ g := hg_meas_pi.comp hn_meas
+  have hg_aesm : AEStronglyMeasurable (m := pathFiltration S n) g P_μ :=
+    hg_meas.aestronglyMeasurable
+
+  have hg_int_finite : ∀ s, @MeasurableSet _ (pathFiltration S n) s → P_μ s < ⊤ →
+      IntegrableOn g s P_μ := by
+    intro s _ hs_lt
+    apply IntegrableOn.of_bound hs_lt
+      (hg_meas_pi.comp (measurable_pi_apply n)).aestronglyMeasurable.restrict C
+    exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hg_bdd ω)
+
+  have hg_eq : ∀ s : Set (ℕ → S), @MeasurableSet _ (pathFiltration S n) s → P_μ s < ⊤ →
+      ∫ x in s, g x ∂P_μ = ∫ x in s, f x ∂P_μ := by
+    intro s hs _
+    exact (markov_setIntegral_shift (S := S) μ κ Y hY_meas ⟨C, hC⟩ n s hs).symm
+  exact (ae_eq_condExp_of_forall_setIntegral_eq hle hf_int hg_int_finite hg_eq hg_aesm).symm
+
+end MathlibExt.Probability.MarkovPropertyChain
