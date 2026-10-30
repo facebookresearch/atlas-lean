@@ -21,9 +21,9 @@ on `{0, …, n}` with transition matrix `wfLineageMatrix n M`.
 Kingman's theorem, restricted to the block-counting (lineage-count) process, says that with
 time measured in units of `M` generations this chain converges to the pure-death process in
 which `k` lineages become `k - 1` at rate `k.choose 2` (`blockCountingGenerator n`): after
-`⌊t M⌋` generations the transition matrix converges entrywise to `exp (t • G)`. The one-entry
-special case `j = k` (no coalescence) is proved in
-`MathlibExt.Biology.PopulationGenetics.Coalescent.tendsto_noCoalProb_pow_floor`.
+`⌊t M⌋` generations the transition matrix converges entrywise to `exp (t • G)`. Its simplest
+consequence, that the probability of no coalescence among `k` lineages in `⌊t M⌋` generations
+tends to `exp (-(k.choose 2) t)`, is elementary; the full matrix limit is the deferred result.
 
 Tavaré (1984) computed the transition probabilities of the pure-death process: for
 `1 ≤ j ≤ i`, `P(i → j in time t)` is `∑_{k=j}^{i} e^{-k(k-1)t/2} (2k-1) (-1)^{k-j}
