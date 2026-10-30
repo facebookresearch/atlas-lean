@@ -79,7 +79,7 @@ example : ‖(lp.single 2 0 (1 : ℝ) : ℓ²(ℕ, ℝ)) -
     rellichTrunc 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2 ≤ 1 / 2 := by
   calc ‖(lp.single 2 0 (1 : ℝ) : ℓ²(ℕ, ℝ)) -
         rellichTrunc 1 (lp.single 2 0 (1 : ℝ))‖ ^ 2
-      ≤ (1 : ℝ) ^ 2 / rellichWeight 1 := norm_sub_rellichTrunc_sq_le single_zero_mem 1
+      ≤ (1 : ℝ) ^ 2 / rellichWeight 1 := norm_sub_lpTrunc_sq_le single_zero_mem 1
     _ = 1 / 2 := by simp [rellichWeight]; norm_num
 
 /-- Total boundedness on a concrete ball. -/
@@ -113,13 +113,13 @@ example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : rellichTrunc N x = lpTrunc 2 N x :=
 example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
     ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 =
       ∑' n, ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 :=
-  norm_sub_rellichTrunc_sq_eq N
+  norm_sub_lpTrunc_sq_eq N
 
 /-- The finite-sum tail keeps the original weighted bound for every real radius. -/
 example {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellichBall x M) (N : ℕ) :
     ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 ≤
       M ^ 2 / rellichWeight N :=
-  norm_sub_rellichTrunc_sq_le hx N
+  norm_sub_lpTrunc_sq_le hx N
 
 /-- The finite-sum truncation keeps the original span-membership statement. -/
 example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
@@ -127,7 +127,7 @@ example (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
       Submodule.span 𝕜
         ((fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ''
           (Finset.range N : Set ℕ)) :=
-  rellichTrunc_mem_rellichSpan N x
+  lpTrunc_mem_span N x
 
 end Characterization
 

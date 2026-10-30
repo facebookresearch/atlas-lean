@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Normed.Lp.lpSpace
+public import MathlibExt.Analysis.Normed.Lp.Compactness
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Analysis.RCLike.Lemmas
@@ -44,7 +44,7 @@ is totally bounded, closed, compact, and sequentially compact in `ℓ²(ℕ, �
 The finite-sum form of the defining bound is used instead of a `tsum`
 bound, so no summability hypothesis is needed in the definition (for
 nonnegative terms the two forms are equivalent). The truncation argument
-is the content of `norm_sub_rellichTrunc_sq_le`.
+is the content of `norm_sub_lpTrunc_sq_le`.
 
 Companion to the `L^p`-space and compact-operator material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/LpSpaces.lean` and
@@ -59,6 +59,8 @@ Springer, 2011, Theorem 9.16.
 namespace MathlibExt.Analysis.Normed.Lp.RellichKondrachov
 
 open scoped lp ENNReal Topology
+open MathlibExt.Analysis.Normed.Lp.Compactness
+open MathlibExt.Analysis.Normed.Lp.SchauderBasis
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
@@ -152,13 +154,13 @@ theorem memRellichBall_of_support {x : ℓ²(ℕ, 𝕜)} {S : Finset ℕ} {M : �
 
 /-- The truncation of `x` to its first `N` coordinates. -/
 noncomputable def rellichTrunc (N : ℕ) (x : ℓ²(ℕ, 𝕜)) : ℓ²(ℕ, 𝕜) :=
-  ∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i)
+  lpTrunc 2 N x
 
 /-- The tail norm identity: the distance from `x` to its truncation is the
 `ℓ²` norm of the tail. -/
-theorem norm_sub_rellichTrunc_sq_eq {x : ℓ²(ℕ, 𝕜)} (N : ℕ) :
-    ‖x - rellichTrunc N x‖ ^ 2 = ∑' n, ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 := by
-  show ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 = _
+theorem norm_sub_lpTrunc_sq_eq {x : ℓ²(ℕ, 𝕜)} (N : ℕ) :
+    ‖x - lpTrunc 2 N x‖ ^ 2 = ∑' n, ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 := by
+  change ‖x - (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i))‖ ^ 2 = _
   have hp : (0 : ℝ) < (2 : ℝ≥0∞).toReal := by norm_num
   have h1 := lp.norm_sub_norm_compl_sub_single hp x (Finset.range N)
   have h2 := (summable_norm_sq x).sum_add_tsum_nat_add N
@@ -168,12 +170,12 @@ theorem norm_sub_rellichTrunc_sq_eq {x : ℓ²(ℕ, 𝕜)} (N : ℕ) :
 
 /-- The tail estimate: the squared distance from `x` to its truncation is at
 most `M ^ 2 / (1 + N ^ 2)`. -/
-theorem norm_sub_rellichTrunc_sq_le {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellichBall x M)
-    (N : ℕ) : ‖x - rellichTrunc N x‖ ^ 2 ≤ M ^ 2 / rellichWeight N := by
-  rw [norm_sub_rellichTrunc_sq_eq]
+theorem norm_sub_lpTrunc_sq_le {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellichBall x M)
+    (N : ℕ) : ‖x - lpTrunc 2 N x‖ ^ 2 ≤ M ^ 2 / rellichWeight N := by
+  rw [norm_sub_lpTrunc_sq_eq]
   have hw : Summable fun n => rellichWeight n * ‖(x : ℕ → 𝕜) n‖ ^ 2 :=
     summable_weighted hx
-  have hinj : Function.Injective (. + N : ℕ → ℕ) := fun a b h => Nat.add_right_cancel h
+  have hinj : Function.Injective (· + N : ℕ → ℕ) := fun a b h => Nat.add_right_cancel h
   have hshift : Summable fun n => rellichWeight (n + N) * ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 :=
     hw.comp_injective hinj
   have hshift_unweighted : Summable fun n => ‖(x : ℕ → 𝕜) (n + N)‖ ^ 2 :=
@@ -206,24 +208,16 @@ instance (N : ℕ) : FiniteDimensional 𝕜 (rellichSpan (𝕜 := 𝕜) N) :=
   FiniteDimensional.span_of_finite 𝕜
     ((Finset.range N).finite_toSet.image (fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)))
 
-/-- Truncations land in the span of the first `N` basis vectors. -/
-theorem rellichTrunc_mem_rellichSpan (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    rellichTrunc N x ∈ rellichSpan N := by
-  show (∑ i ∈ Finset.range N, lp.single 2 i ((x : ℕ → 𝕜) i)) ∈ rellichSpan N
-  have hspan : rellichSpan N =
-      Submodule.span 𝕜 (Set.image (fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ↑(Finset.range N)) := rfl
-  rw [hspan]
-  apply Submodule.sum_mem
-  intro i hi
-  have hiS : lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜) ∈
-      Submodule.span 𝕜 (Set.image (fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ↑(Finset.range N)) := by
-    apply Submodule.subset_span
-    exact Set.mem_image_of_mem _ (Finset.mem_coe.mpr hi)
-  have hsmul : lp.single 2 i ((x : ℕ → 𝕜) i) = (x : ℕ → 𝕜) i • lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜) := by
-    rw [← lp.single_smul]
-    simp
-  rw [hsmul]
-  exact Submodule.smul_mem _ _ hiS
+/-- Canonical truncations land in the span of the first `N` basis vectors. -/
+theorem lpTrunc_mem_span (N : ℕ) (x : ℓ²(ℕ, 𝕜)) :
+    lpTrunc 2 N x ∈ Submodule.span 𝕜
+      ((fun i : ℕ => lp.single (E := fun _ : ℕ => 𝕜) 2 i (1 : 𝕜)) ''
+        (Finset.range N : Set ℕ)) := by
+  rw [lpTrunc_eq_lpSchauderBasis_proj (by norm_num)]
+  have h := LinearMap.mem_range_self
+    ((lpSchauderBasis (𝕜 := 𝕜) (p := 2) (by norm_num)).proj N).toLinearMap x
+  rw [SchauderBasis.range_proj_eq_span] at h
+  exact h
 
 /-- The Rellich ball only depends on `|M|`, since the bound is on `M ^ 2`. -/
 theorem rellichBall_abs (M : ℝ) :
@@ -284,7 +278,7 @@ theorem totallyBounded_rellichBall (M : ℝ) :
             ∑ i ∈ Finset.range N, ‖(x : ℕ → 𝕜) i‖ ^ 2 := by
           have hp : (0 : ℝ) < (2 : ℝ≥0∞).toReal := by norm_num
           have h := lp.norm_sum_single hp (fun i => (x : ℕ → 𝕜) i) (Finset.range N)
-          simpa only [toReal_two, Real.rpow_two, rellichTrunc] using h
+          simpa only [toReal_two, Real.rpow_two, rellichTrunc, lpTrunc, lpLift] using h
         rw [hsum, norm_sq_eq_tsum]
         exact (summable_norm_sq x).sum_le_tsum _ (fun i _ => sq_nonneg _)
       calc ‖rellichTrunc N x‖ = Real.sqrt (‖rellichTrunc N x‖ ^ 2) :=
@@ -293,13 +287,13 @@ theorem totallyBounded_rellichBall (M : ℝ) :
         _ = ‖x‖ := Real.sqrt_sq (norm_nonneg _)
     exact h1.trans (norm_le_of_memRellichBall (abs_nonneg _) hx')
   have htruncK : rellichTrunc N x ∈ K := by
-    refine ⟨⟨rellichTrunc N x, rellichTrunc_mem_rellichSpan N x⟩, ?_, rfl⟩
+    refine ⟨⟨rellichTrunc N x, lpTrunc_mem_span N x⟩, ?_, rfl⟩
     rw [Metric.mem_closedBall, dist_eq_norm, sub_zero]
     exact htruncNorm
   obtain ⟨y, hyt, hy⟩ := Set.mem_iUnion₂.mp (hcover htruncK)
   have hdist1 : dist x (rellichTrunc N x) < ε / 2 := by
     rw [dist_eq_norm]
-    have htail := norm_sub_rellichTrunc_sq_le hx' N
+    have htail := norm_sub_lpTrunc_sq_le hx' N
     have hlt : ‖x - rellichTrunc N x‖ ^ 2 < (ε / 2) ^ 2 := lt_of_le_of_lt htail hN
     have habs := sq_lt_sq.mp hlt
     rwa [abs_of_nonneg (norm_nonneg _), abs_of_pos (by linarith : (0 : ℝ) < ε / 2)] at habs
