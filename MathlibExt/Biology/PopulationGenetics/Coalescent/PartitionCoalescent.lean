@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.Normed.Algebra.MatrixExponentialIntertwining
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.BlockCounting
 public import MathlibExt.Combinatorics.Finpartition.Comap
+public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Semigroup
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.LinearAlgebra.Matrix.Stochastic
@@ -66,6 +67,10 @@ restricted partitions) is stated, not proved, in
 * `jumpLaw_comap_perm`, `timeLaw_comap_perm`: exchangeability.
 * `blockCountingGenerator_mul_kingmanMatrix`, `timeLaw_eq`, `timeLaw_eq_tavareProb`: the time-`t`
   marginal is the block-counting probability times Kingman's formula; `sum_timeLaw`.
+* `isRateMatrix_partitionRate`, `timeLaw_eq_ctmcTransition`, `timeLaw_nonneg`,
+  `ctmcTransition_partitionRate_mem_rowStochastic`: `partitionRate n` is a rate matrix, so for
+  `t ≥ 0` the transition matrix is row-stochastic and `timeLaw n t` is a probability
+  distribution.
 * `partitionRate_mul_restrictMatrix`, `sum_timeLaw_restrict`: consistency of the time-`t`
   marginals under restriction.
 
@@ -1280,6 +1285,29 @@ theorem sum_partitionRate (π : SamplePartition n) : ∑ π', partitionRate n π
   simp_rw [h]
   rw [sum_add_distrib, sum_ite_eq, ← sum_filter, sum_const, card_isMerge]
   simp
+
+/-- The partition rate matrix is a rate matrix: off-diagonal entries are `0` or `1`, and each
+row sums to `0` (`sum_partitionRate`). -/
+theorem isRateMatrix_partitionRate : ProbabilityTheory.IsRateMatrix (partitionRate n) := by
+  classical
+  refine ⟨fun π π' h => ?_, sum_partitionRate⟩
+  simp only [partitionRate, Matrix.of_apply, h, ite_false]
+  split_ifs <;> norm_num
+
+/-- `timeLaw` is a row of the transition function `P t = exp (t • partitionRate n)` of the
+continuous-time chain with rate matrix `partitionRate n`. -/
+theorem timeLaw_eq_ctmcTransition (t : ℝ) (π : SamplePartition n) :
+    timeLaw n t π = ProbabilityTheory.ctmcTransition (partitionRate n) t ⊥ π := rfl
+
+/-- For `t ≥ 0` the transition matrix `exp (t • partitionRate n)` is row-stochastic. -/
+theorem ctmcTransition_partitionRate_mem_rowStochastic {t : ℝ} (ht : 0 ≤ t) :
+    ProbabilityTheory.ctmcTransition (partitionRate n) t ∈ rowStochastic ℝ (SamplePartition n) :=
+  isRateMatrix_partitionRate.ctmcTransition_mem_rowStochastic ht
+
+/-- For `t ≥ 0` the time-`t` marginal is nonnegative; with `sum_timeLaw` it is a probability
+distribution on the partitions of the sample. -/
+theorem timeLaw_nonneg {t : ℝ} (ht : 0 ≤ t) (π : SamplePartition n) : 0 ≤ timeLaw n t π :=
+  isRateMatrix_partitionRate.ctmcTransition_nonneg ht ⊥ π
 
 /-- The time-`t` marginal sums to one over all partitions: `∑_π timeLaw n t π = 1` (for every
 real `t`, since the rows of the rate matrix sum to `0`). -/

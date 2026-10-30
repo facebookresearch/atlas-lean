@@ -122,6 +122,12 @@ example : ∑ π with #π.parts = 2, kingmanProb 3 π = 1 :=
 example (t : ℝ) : ∑ π, timeLaw 4 t π = 1 :=
   sum_timeLaw t
 
+/-- For `t ≥ 0` the time-`t` marginal is a probability distribution. -/
+example {t : ℝ} (ht : 0 ≤ t) : (∀ π, 0 ≤ timeLaw 4 t π) ∧ ∑ π, timeLaw 4 t π = 1 :=
+  ⟨timeLaw_nonneg ht, sum_timeLaw t⟩
+
+example : ProbabilityTheory.IsRateMatrix (partitionRate 3) := isRateMatrix_partitionRate
+
 /-- Consistency of the time-`t` marginals under restriction, for a sample of `2 + 1` genes. -/
 example (t : ℝ) (ρ : SamplePartition 2) :
     ∑ π with π.comap Fin.castSucc = ρ, timeLaw 3 t π = timeLaw 2 t ρ :=
