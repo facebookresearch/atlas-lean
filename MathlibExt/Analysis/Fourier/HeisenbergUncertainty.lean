@@ -26,8 +26,9 @@ sharply localized: with `A = ∫ ‖f x‖²`, `X = ∫ x² ‖f x‖²` and
 `D = ∫ ‖f' x‖²`,
 `(∫ ‖f x‖²)² ≤ 4 * (∫ x² ‖f x‖²) * (∫ ‖f' x‖²)`.
 With the Fourier normalization `𝓕 f ξ = ∫ f(x) e ^ (-2 * π * I * x * ξ) dx`
-used by Mathlib, the momentum side reads `∫ ξ² ‖𝓕 f ξ‖²`, and the inequality
-becomes `(∫ ‖f x‖²)² ≤ 16 * π² * (∫ x² ‖f x‖²) * (∫ ξ² ‖𝓕 f ξ‖²)`.
+used by Mathlib, the Fourier second moment about zero is `∫ ξ² ‖𝓕 f ξ‖²`,
+and the inequality becomes
+`(∫ ‖f x‖²)² ≤ 16 * π² * (∫ x² ‖f x‖²) * (∫ ξ² ‖𝓕 f ξ‖²)`.
 
 The proof is the classical one: integration by parts gives
 `∫ (f x)² = -2 * ∫ x * f x * f' x`, and the pointwise AM–GM estimate
@@ -36,8 +37,9 @@ integrated and optimized in `ε`, yields the result for real-valued `f`.
 The complex case follows by applying the real case to the real and
 imaginary parts and combining with two-dimensional Cauchy–Schwarz; the
 Fourier form follows from Plancherel and the Fourier differentiation
-formula. The shifted form is the variance form of the inequality: it holds
-about any center `a`, in particular about the mean position.
+formula. The shifted form measures the position second moment about any
+center `a`, in particular about the mean position. Only the position factor
+is centered; the derivative factor is unchanged.
 
 This is a companion to the Fourier-series and Hilbert-space material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/` (Fejér, Bessel, Parseval);
@@ -532,7 +534,7 @@ theorem heisenberg_uncertainty_complex (f : 𝓢(ℝ, ℂ)) :
 /-! ### The Fourier form -/
 
 /-- **Heisenberg's uncertainty principle** in Fourier form: with Mathlib's
-Fourier normalization, the momentum variance is `∫ ξ² * ‖𝓕 f ξ‖²`, and
+Fourier normalization, the Fourier second moment about zero is `∫ ξ² * ‖𝓕 f ξ‖²`, and
 `(∫ ‖f x‖²)² ≤ 16 * π² * (∫ x² * ‖f x‖²) * (∫ ξ² * ‖𝓕 f ξ‖²)`. -/
 theorem heisenberg_uncertainty_fourier (f : 𝓢(ℝ, ℂ)) :
     (∫ x, ‖f x‖ ^ 2) ^ 2 ≤ 16 * Real.pi ^ 2 * (∫ x, x ^ 2 * ‖f x‖ ^ 2)
@@ -615,10 +617,10 @@ theorem heisenberg_uncertainty_fourier (f : 𝓢(ℝ, ℂ)) :
   rw [hEq] at hcomplex
   exact hcomplex
 
-/-! ### The shifted (variance) form -/
+/-! ### Shifting and centering the position factor -/
 
 /-- **Heisenberg's uncertainty principle** about an arbitrary center `a`:
-the position variance may be measured about any point, not only about `0`. -/
+the position second moment is measured about `a`; the derivative factor is unchanged. -/
 theorem heisenberg_uncertainty_shifted (f : 𝓢(ℝ, ℂ)) (a : ℝ) :
     (∫ x, ‖f x‖ ^ 2) ^ 2
       ≤ 4 * (∫ x, (x - a) ^ 2 * ‖f x‖ ^ 2) * (∫ x, ‖deriv f x‖ ^ 2) := by
@@ -663,9 +665,9 @@ theorem heisenberg_uncertainty_shifted (f : 𝓢(ℝ, ℂ)) (a : ℝ) :
   rw [hA, hX, hD] at h
   exact h
 
-/-- **Heisenberg's uncertainty principle** in centered form: with
-`μ = (∫ y * ‖f y‖²) / (∫ ‖f x‖²)` the mean position, the variance about the
-mean satisfies the same bound. -/
+/-- **Heisenberg's uncertainty principle** with the position factor centered: with
+`μ = (∫ y * ‖f y‖²) / (∫ ‖f x‖²)` the mean position, the position second moment
+about the mean satisfies the same bound. Only the position factor is centered. -/
 theorem heisenberg_uncertainty_centered (f : 𝓢(ℝ, ℂ)) :
     (∫ x, ‖f x‖ ^ 2) ^ 2 ≤ 4
       * (∫ x, (x - (∫ y, y * ‖f y‖ ^ 2) / (∫ z, ‖f z‖ ^ 2)) ^ 2 * ‖f x‖ ^ 2)
@@ -673,3 +675,83 @@ theorem heisenberg_uncertainty_centered (f : 𝓢(ℝ, ℂ)) :
   heisenberg_uncertainty_shifted f _
 
 end MathlibExt.Analysis.Fourier.HeisenbergUncertainty
+
+/-
+# The normalized Fourier corollary with constant 1/(16π²)
+
+Copyright (c) 2026 OpenBMB
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Attribution and modification notice: the normalized statement below is taken from
+openbmb/ma-proofbench at commit 31bab4c78fd1b0c464e767d62e9202163d1e9029,
+`benchmark/level2/ma_proofbench_l2_57.lean` (MA-ProofBench, L. Pu et al.,
+*MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem Proving in Mathematical Analysis*,
+arXiv:2606.13782; byte-identical to the Hugging Face dataset openbmb/MA-ProofBench),
+distributed under the MIT License above. The source's helper Fourier transform is replaced
+by Mathlib's `𝓕 (⇑ψ)`, with the same `∫ ψ(x) e^{-2πixξ} dx` normalization. The declaration
+retains the name, namespace, and statement of the completed target from
+`WantedExt/Analysis/Fourier/HeisenbergUncertaintyFourierWanted.lean` and is proved as a
+normalized corollary of `HeisenbergUncertainty.heisenberg_uncertainty_fourier`.
+-/
+
+open scoped FourierTransform
+
+namespace MathlibExt.Analysis.Fourier.HeisenbergUncertaintyFourierWanted
+
+/-- Denote by $\mathcal{S}(\mathbb{R})$ the Schwartz space on $\mathbb{R}$ consisting of all
+complex-valued $C^\infty$ functions $f(x)$ on $\mathbb{R}$ such that
+\[
+\sup_{x\in\mathbb{R}} |x|^k \left|\frac{d^\ell f}{dx^\ell}(x)\right| < \infty
+\quad\text{for all } k,\ell\in\mathbb{N}\cup\{0\}.
+\]
+Suppose $\psi(x)\in\mathcal{S}(\mathbb{R})$ satisfies
+\[
+\int_{-\infty}^{\infty}|\psi(x)|^2\,dx=1.
+\]
+Denote by $\hat{\psi}(\xi)$ the Fourier transform of $\psi(x)$ defined by
+\[
+\hat{\psi}(\xi)=\int_{-\infty}^{\infty}\psi(x)e^{-2\pi i x\xi}\,dx.
+\]
+Prove the Fourier-transform version of the Heisenberg uncertainty principle
+\[
+\left(\int_{-\infty}^{\infty} x^2|\psi(x)|^2\,dx\right)
+\left(\int_{-\infty}^{\infty} \xi^2|\hat{\psi}(\xi)|^2\,d\xi\right)
+\ge \frac{1}{16\pi^2}.
+\]
+
+Lean variant: the Fourier transform is Mathlib's `𝓕`, which has the source's normalization `∫ ψ(x)
+e^{-2πixξ} dx`, instead of the source's helper definition.
+
+Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis;
+Distributions, generalized functions, distribution spaces),
+`benchmark/level2/ma_proofbench_l2_57.lean` at openbmb/ma-proofbench@31bab4c, with the change
+above.
+-/
+public theorem integral_sq_mul_norm_sq_mul_integral_sq_mul_norm_fourier_sq_ge
+    (ψ : SchwartzMap ℝ ℂ)
+    (hL2 : (∫ x : ℝ, ‖ψ x‖ ^ 2) = 1) :
+    ( (∫ x : ℝ, (x ^ 2) * (‖ψ x‖ ^ 2)) *
+        (∫ ξ : ℝ, (ξ ^ 2) * (‖𝓕 (⇑ψ) ξ‖ ^ 2)) )
+      ≥ 1 / (16 * Real.pi ^ 2) := by
+  apply (div_le_iff₀' (by positivity : (0 : ℝ) < 16 * Real.pi ^ 2)).2
+  simpa only [hL2, one_pow, mul_assoc, SchwartzMap.fourier_coe] using
+    HeisenbergUncertainty.heisenberg_uncertainty_fourier ψ
+
+end MathlibExt.Analysis.Fourier.HeisenbergUncertaintyFourierWanted

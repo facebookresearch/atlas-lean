@@ -24,7 +24,7 @@ import Mathlib.Tactic.Positivity
 * A concrete nonzero test case: a smooth bump function, viewed as a real
   Schwartz function, has `(bumpSchwartzReal 0) = 1` and strictly positive
   `∫ (f x)²`, so Heisenberg's inequality for it is nontrivial; its
-  complexification satisfies the Fourier and centered forms.
+  complexification satisfies the Fourier form and the form with position centered.
 * `#print axioms` for `heisenberg_uncertainty_complex`: standard triple only.
 -/
 
@@ -124,7 +124,7 @@ example : (∫ x, ‖(SchwartzMap.postcompCLM Complex.ofRealCLM bumpSchwartzReal
           (SchwartzMap.postcompCLM Complex.ofRealCLM bumpSchwartzReal) ξ‖ ^ 2) :=
   heisenberg_uncertainty_fourier _
 
-/-- The complexification of the bump function satisfies the centered form. -/
+/-- The complexification of the bump function satisfies the form with position centered. -/
 example : (∫ x, ‖(SchwartzMap.postcompCLM Complex.ofRealCLM bumpSchwartzReal) x‖ ^ 2) ^ 2
     ≤ 4 * (∫ x, (x - (∫ y, y * ‖(SchwartzMap.postcompCLM Complex.ofRealCLM
         bumpSchwartzReal) y‖ ^ 2) / (∫ z, ‖(SchwartzMap.postcompCLM Complex.ofRealCLM
@@ -134,5 +134,15 @@ example : (∫ x, ‖(SchwartzMap.postcompCLM Complex.ofRealCLM bumpSchwartzReal
   heisenberg_uncertainty_centered _
 
 #print axioms heisenberg_uncertainty_complex
+
+open scoped FourierTransform
+open MathlibExt.Analysis.Fourier
+
+/-- The normalized Fourier target retains its original public name and hypotheses. -/
+example (ψ : SchwartzMap ℝ ℂ) (hL2 : (∫ x : ℝ, ‖ψ x‖ ^ 2) = 1) :
+    ((∫ x : ℝ, x ^ 2 * ‖ψ x‖ ^ 2) *
+      (∫ ξ : ℝ, ξ ^ 2 * ‖𝓕 (⇑ψ) ξ‖ ^ 2)) ≥ 1 / (16 * Real.pi ^ 2) :=
+  HeisenbergUncertaintyFourierWanted.integral_sq_mul_norm_sq_mul_integral_sq_mul_norm_fourier_sq_ge
+    ψ hL2
 
 end MathlibExtTest.Analysis.Fourier.HeisenbergUncertaintyTests
