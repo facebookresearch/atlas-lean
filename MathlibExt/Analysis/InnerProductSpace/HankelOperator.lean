@@ -18,7 +18,6 @@ import Mathlib.Analysis.Normed.Operator.Bilinear
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 import Mathlib.Topology.Algebra.InfiniteSum.Module
-import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -88,7 +87,8 @@ def hankelSliceFun (k : ℕ) (x : ℕ → 𝕜) (i : ℕ) : 𝕜 :=
 /-- The slice of an `ℓ²` sequence is in `ℓ²`. -/
 theorem hankel_memℓp_sliceFun {k : ℕ} {x : ℓ²(ℕ, 𝕜)} :
     Memℓp (hankelSliceFun k (x : ℕ → 𝕜)) 2 := by
-  apply HilbertSchmidt.memℓp_of_summable_norm_sq
+  apply (memℓp_gen_iff (p := (2 : ℝ≥0∞))
+    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mpr
   refine summable_of_ne_finset_zero (s := Finset.range (k + 1)) ?_
   intro i hi
   simp only [Finset.mem_range, not_lt] at hi
@@ -132,14 +132,23 @@ theorem hankel_tsum_normSq_slice_le {k : ℕ} (x : ℓ²(ℕ, 𝕜)) :
       have hik : ¬ i ≤ k := by omega
       simp [hankelSliceFun, hik]
   rw [hsum]
-  exact (HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x)).sum_le_tsum
-    (Finset.range (k + 1)) (fun i _ => by positivity)
+  have hsumm := (memℓp_gen_iff (p := (2 : ℝ≥0∞))
+    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mp (lp.memℓp x)
+  have hsumm' : Summable fun i => ‖(x : ℕ → 𝕜) i‖ ^ 2 := by
+    simpa using hsumm
+  exact hsumm'.sum_le_tsum (Finset.range (k + 1)) (fun i _ => by positivity)
 
 /-- A slice does not increase norms. -/
 theorem norm_hankelSliceLinMap_apply_le (k : ℕ) (x : ℓ²(ℕ, 𝕜)) :
     ‖hankelSliceLinMap k x‖ ≤ ‖x‖ := by
   have hpow : ‖hankelSliceLinMap k x‖ ^ 2 ≤ ‖x‖ ^ 2 := by
-    rw [HilbertSchmidt.norm_sq_lp_eq_tsum, HilbertSchmidt.norm_sq_lp_eq_tsum]
+    have hslice := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
+      (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
+      (hankelSliceLinMap k x)
+    have hx := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
+      (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal) x
+    simp only [ENNReal.toReal_ofNat, Real.rpow_two] at hslice hx
+    rw [hslice, hx]
     exact hankel_tsum_normSq_slice_le x
   exact le_of_sq_le_sq hpow (norm_nonneg _)
 
