@@ -265,16 +265,25 @@ theorem abs_coeff_le_norm (a : ℓ²(ℕ, ℂ)) (n : ℕ) : ‖a n‖ ≤ ‖a�
   rw [h2, Real.rpow_two, Real.rpow_two] at hle
   exact le_of_sq_le_sq hle (norm_nonneg _)
 
+/-- The normalized monomial `eₙ(z) = zⁿ / √(n!)`, represented by the `n`th
+standard basis vector in the Taylor-coefficient model of Fock space. -/
+@[reducible] noncomputable def fockMonomial (n : ℕ) : ℓ²(ℕ, ℂ) :=
+  lp.single 2 n (1 : ℂ)
+
 /-- The rescaled monomials `eₙ(z) = zⁿ / √(n!)`, i.e. the standard basis
 vectors of the coefficient model, are orthonormal. -/
 theorem fockMonomial_orthonormal (m n : ℕ) :
-    ⟪(lp.single 2 m (1 : ℂ) : ℓ²(ℕ, ℂ)), (lp.single 2 n (1 : ℂ) : ℓ²(ℕ, ℂ))⟫_ℂ =
+    ⟪fockMonomial m, fockMonomial n⟫_ℂ =
       if m = n then (1 : ℂ) else 0 := by
   rw [lp.inner_single_left, lp.single_apply]
   by_cases h : m = n
   · subst h
     simp [Pi.single_eq_same]
   · simp [h]
+
+/-- The normalized monomial family satisfies Mathlib's standard orthonormal predicate. -/
+theorem orthonormal_fockMonomial : Orthonormal ℂ fockMonomial :=
+  orthonormal_iff_ite.mpr fockMonomial_orthonormal
 
 /-- The coefficient of `a` at `n` is the inner product with `eₙ`. -/
 theorem fockCoeff_eq_inner (a : ℓ²(ℕ, ℂ)) (n : ℕ) :

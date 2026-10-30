@@ -134,6 +134,10 @@ example (a : ℓ²(ℕ, ℂ)) :
       (Real.sqrt (Nat.factorial n : ℝ) : ℂ)) :=
   summable_fockEval_terms ((1 / 2 : ℝ) : ℂ) a
 
+/-- The named normalized monomials support standard family consequences. -/
+theorem linearIndependent_fockMonomial : LinearIndependent ℂ fockMonomial :=
+  orthonormal_fockMonomial.linearIndependent
+
 #print axioms MathlibExt.Analysis.InnerProductSpace.FockSpace.norm_fockKernel
 #print axioms MathlibExt.Analysis.InnerProductSpace.FockSpace.inner_fockKernel_fockKernel
 #print axioms MathlibExt.Analysis.InnerProductSpace.FockSpace.norm_fockEvalCLM
