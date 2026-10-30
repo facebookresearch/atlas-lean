@@ -32,7 +32,7 @@ The Dirichlet space `𝒟(𝔻)` is the Hilbert space of holomorphic functions
 `f(z) = ∑ₙ aₙ zⁿ` on the open unit disc whose norm
 `‖f‖² = ∑ₙ (n + 1) * ‖aₙ‖²` is finite. We model the space by the
 coefficients of a function in the orthonormal basis of rescaled monomials
-`eₙ(z) = √(n + 1) * zⁿ`, i.e. by `ℓ²(ℕ, ℂ)`: a sequence `b` represents
+`eₙ(z) = zⁿ / √(n + 1)`, i.e. by `ℓ²(ℕ, ℂ)`: a sequence `b` represents
 `f(z) = ∑' n, b n * zⁿ / √(n + 1)`.
 
 Under this identification, point evaluation at `z` in the disc is the
