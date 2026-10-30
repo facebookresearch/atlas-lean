@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
+public import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.Analysis.RCLike.Basic
 
@@ -76,6 +76,7 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic
 
 open Filter Topology Set Metric
 open MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
+open MathlibExt.Analysis.InnerProductSpace
 open scoped _root_.lp ENNReal
 
 variable {𝕜 : Type*} [RCLike 𝕜]
@@ -95,52 +96,6 @@ theorem summable_norm_sq (z : ℓ²(ℕ, 𝕜)) :
   exact h
 
 /-! ### Powers of the shifts -/
-
-/-- Pointwise action of the `n`-th power of the backward shift:
-`(Bⁿ x) i = x (i + n)`. -/
-theorem backwardCLM_pow_apply : ∀ (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ),
-    ((backwardCLM ^ n) x) i = x (i + n) := by
-  intro n
-  induction n with
-  | zero => intro x i; simp
-  | succ n ih =>
-    intro x i
-    rw [pow_succ, mul_apply_eq_comp, ih, backwardCLM_apply, backwardFun_apply]
-    congr 1
-
-/-- Pointwise action of the `n`-th power of the forward shift:
-`(Fⁿ x) i = 0` for `i < n` and `x (i - n)` otherwise. -/
-theorem shiftCLM_pow_apply : ∀ (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ),
-    ((shiftCLM ^ n) x) i = if i < n then 0 else x (i - n) := by
-  intro n
-  induction n with
-  | zero => intro x i; simp
-  | succ n ih =>
-    intro x i
-    rw [pow_succ, mul_apply_eq_comp, ih]
-    by_cases hi : i < n
-    · rw [ite_eq_left hi, ite_eq_left (hi.trans (Nat.lt_succ_self n))]
-    · rw [ite_eq_right hi]
-      rcases Nat.eq_zero_or_pos (i - n) with h0 | hpos
-      · have hi' : i = n := by omega
-        rw [hi', Nat.sub_self, shiftCLM_apply, shiftFun_zero,
-          ite_eq_left (Nat.lt_succ_self n)]
-      · obtain ⟨m, hm⟩ : ∃ m, i - n = m + 1 := ⟨i - n - 1, by omega⟩
-        rw [hm, shiftCLM_apply, shiftFun_succ,
-          ite_eq_right (by omega : ¬ i < n + 1)]
-        have hsub : i - (n + 1) = m := by omega
-        rw [hsub]
-
-/-- `Bⁿ Fⁿ = 1`: the powers of the backward shift undo the powers of
-the forward shift. -/
-theorem backwardCLM_pow_shiftCLM_pow_apply (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
-    (backwardCLM ^ n) ((shiftCLM ^ n) x) = x := by
-  apply lp.ext
-  funext i
-  rw [backwardCLM_pow_apply, shiftCLM_pow_apply,
-    ite_eq_right (by omega : ¬ i + n < n)]
-  have hsub : i + n - n = i := by omega
-  rw [hsub]
 
 /-- Powers of the forward shift preserve norms. -/
 theorem norm_shiftCLM_pow_apply (n : ℕ) (x : ℓ²(ℕ, 𝕜)) :
@@ -184,7 +139,7 @@ theorem smul_backwardCLM_pow_apply (μ : 𝕜) (n : ℕ) (x : ℓ²(ℕ, 𝕜)) 
 theorem smul_backwardCLM_pow_apply_coord (μ : 𝕜) (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     (((μ • backwardCLM) ^ n) x) i = μ ^ n * (x : ℕ → 𝕜) (i + n) := by
   rw [smul_backwardCLM_pow_apply, lp.coeFn_smul, Pi.smul_apply, smul_eq_mul,
-    backwardCLM_pow_apply]
+    ShiftFredholmIndex.backwardCLM_pow_apply]
 
 /-- A power of a scalar multiple of the backward shift, as an operator. -/
 theorem smul_backwardCLM_pow (μ : 𝕜) (n : ℕ) :
@@ -330,7 +285,7 @@ theorem backwardCLM_pow_trunc (N : ℕ) (y : ℓ²(ℕ, 𝕜)) :
     (backwardCLM ^ N) (trunc N y) = 0 := by
   apply lp.ext
   funext i
-  rw [backwardCLM_pow_apply, trunc_apply,
+  rw [ShiftFredholmIndex.backwardCLM_pow_apply, trunc_apply,
     ite_eq_right (by omega : ¬ i + N < N)]
   simp
 
@@ -364,7 +319,9 @@ theorem periodicApprox_step {μ : 𝕜} (hμ : 1 < ‖μ‖) {N : ℕ}
         ((shiftCLM ^ N) ^ (m - 1)) (trunc N y) := by
       conv_lhs => rw [← Nat.succ_pred_eq_of_pos hm, pow_succ', mul_apply_eq_comp,
         Nat.pred_eq_sub_one]
-      exact backwardCLM_pow_shiftCLM_pow_apply N _
+      simpa using DFunLike.congr_fun
+        (ShiftFredholmIndex.backwardCLM_pow_comp_shiftCLM_pow (𝕜 := 𝕜) N)
+        (((shiftCLM ^ N) ^ (m - 1)) (trunc N y))
     rw [hshift, mul_comm ((μ⁻¹ ^ N) ^ m) (μ ^ N), hcancel]
 
 /-- Summability of the terms of the periodic approximant after applying

@@ -34,6 +34,7 @@ open Set Filter Topology Metric
 open scoped _root_.lp ENNReal
 open MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic
 open MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
+open MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 
 namespace MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczPeriodicTests
 
@@ -135,6 +136,12 @@ example {𝕜 : Type*} [RCLike 𝕜] {μ : 𝕜} (hμ : 1 < ‖μ‖)
 example {𝕜 : Type*} [RCLike 𝕜] (μ : 𝕜) :
     Dense (Function.periodicPts (⇑(μ • backwardCLM (𝕜 := 𝕜)))) ↔ 1 < ‖μ‖ :=
   dense_periodicPoints_iff μ
+
+/-- A client opening the periodic and Fredholm namespaces has one canonical power API. -/
+example {𝕜 : Type*} [RCLike 𝕜] (n : ℕ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
+    (backwardCLM ^ n) x i = x (i + n) ∧
+      (shiftCLM ^ n) x i = if i < n then 0 else x (i - n) :=
+  ⟨backwardCLM_pow_apply n x i, shiftCLM_pow_apply n x i⟩
 
 #print axioms MathlibExt.Analysis.FunctionalAnalysis.RolewiczPeriodic.dense_periodicPoints_iff
 
