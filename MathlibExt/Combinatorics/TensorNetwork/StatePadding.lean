@@ -2,10 +2,12 @@
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
+-/
 
-Modifications copyright (c) Meta Platforms, Inc. and affiliates.
-Modified for Atlas: generalized state padding to finite ordered vertex types and distinct
-state carriers, retained arbitrary pair kernels, and specialized to factored networks.
+/-
+Modifications (c) 2026 Meta Platforms, Inc. and affiliates:
+generalize state padding to finite ordered vertex types and distinct state carriers,
+retain arbitrary pair kernels, and specialize to factored networks.
 -/
 module
 
