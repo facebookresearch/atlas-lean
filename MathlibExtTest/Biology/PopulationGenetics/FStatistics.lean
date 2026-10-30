@@ -131,8 +131,8 @@ example : f3 μ4 M.freq 2 0 1 = -1 / 32 := by
 example : f3 μ4 M.freq 2 0 1 < 0 :=
   M.f3_neg_of_admixture (by norm_num) (by norm_num) (by rw [f2_AB]; norm_num) weight_C
 
-example : ¬ M.IsUnadmixed :=
-  M.not_isUnadmixed_of_f3_neg
+example : ¬ M.HasBinaryLoadings :=
+  M.not_hasBinaryLoadings_of_f3_neg
     (M.f3_neg_of_admixture (by norm_num) (by norm_num) (by rw [f2_AB]; norm_num) weight_C)
 
 /-- f4-ratio with `A = 1`, outgroup `O = 3` (the root), admixed `X = 2` mixing `Y = 0` and
@@ -145,7 +145,7 @@ example : f4 μ4 M.freq 1 3 2 1 / f4 μ4 M.freq 1 3 0 1 = 1 / 2 := by
 
 end Witness
 
-/-! ### A tree (unadmixed) model -/
+/-! ### A tree model (binary loadings from root paths) -/
 
 section Tree
 
@@ -154,17 +154,17 @@ has the private edge `1`, population `2` is the root. -/
 noncomputable def T : DriftModel μ4 (Fin 2) (Fin 3) :=
   { M with weight := ![![1, 0], ![1, 1], ![0, 0]] }
 
-/-- `T` is unadmixed. -/
-theorem T_isUnadmixed : T.IsUnadmixed := by
+/-- `T` has binary loadings. -/
+theorem T_hasBinaryLoadings : T.HasBinaryLoadings := by
   intro X e
   fin_cases X <;> fin_cases e <;> simp [T]
 
 /-- On a tree `f3 ≥ 0`. -/
-example : 0 ≤ f3 μ4 T.freq 0 1 2 := T.f3_nonneg_of_isUnadmixed T_isUnadmixed 0 1 2
+example : 0 ≤ f3 μ4 T.freq 0 1 2 := T.f3_nonneg_of_hasBinaryLoadings T_hasBinaryLoadings 0 1 2
 
 /-- On a tree `f2` is the tree distance: populations `0` and `1` differ by edge `1` only. -/
 example : f2 μ4 T.freq 0 1 = 1 / 16 := by
-  rw [T.f2_eq_sum_symmDiff T_isUnadmixed]
+  rw [T.f2_eq_sum_symmDiff T_hasBinaryLoadings]
   have h0 : T.lineage 0 = {0} := by
     ext e; fin_cases e <;> simp [DriftModel.lineage, T]
   have h1 : T.lineage 1 = Finset.univ := by

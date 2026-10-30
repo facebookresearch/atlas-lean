@@ -46,9 +46,12 @@ root-to-`X` lineage.
 
 * `f4_freq`: in the drift model `f4 A B C D` is the weighted overlap
   `∑ e, (w A e - w B e) * (w C e - w D e) * len e` of the paths `A–B` and `C–D`.
-* `f2_eq_sum_symmDiff`: on a tree `f2` is the additive tree distance.
-* `f3_nonneg_of_isUnadmixed`, `not_isUnadmixed_of_f3_neg`: the three-population test —
-  a negative `f3 C A B` rules out a tree.
+* `f2_eq_sum_symmDiff`: with binary (`0`/`1`) loadings, `f2` is the total drift length of the
+  symmetric difference of the two lineage edge sets; when those sets are root-to-leaf paths of
+  a tree, this is the additive tree distance.
+* `f3_nonneg_of_hasBinaryLoadings`, `not_hasBinaryLoadings_of_f3_neg`: the three-population
+  test. Every tree model has binary loadings, so a negative `f3 C A B` rules out every tree.
+  (Binary loadings alone do not make a tree: see `HasBinaryLoadings`.)
 * `f3_admixture`: if `C` is an `α : 1 - α` mixture of `A` and `B`, then
   `f3 C A B = -α (1 - α) f2 A B`; `f3_neg_of_admixture` gives the negative sign.
 * `f3_admixture_drift`: drift on `C`'s private edge after admixture adds its length to `f3`.
@@ -277,34 +280,45 @@ theorem f4_eq_zero_of_disjoint {A B C D : P}
     f4 μ M.freq A B C D = 0 := by
   simp [f4_freq, h]
 
-/-- The model is unadmixed (tree-like) if every lineage weight is `0` or `1`. -/
-def IsUnadmixed : Prop := ∀ X e, M.weight X e = 0 ∨ M.weight X e = 1
+/-- The model has binary loadings if every lineage weight is `0` or `1`.
 
-/-- The edges on the root-to-`X` lineage: those of weight `1`. -/
+Every tree model has binary loadings: there `weight X e` is the indicator of `e` lying on the
+root-to-`X` path. The converse fails, since nothing forces the weight-`1` edge sets to be
+compatible root-to-leaf paths: two edges of length `1` and four populations with weight
+vectors `00`, `10`, `01`, `11` have binary loadings, but their `f2` distances form a square,
+which violates the four-point condition of tree metrics. The results below use only the binary
+values, so they apply to every tree. -/
+def HasBinaryLoadings : Prop := ∀ X e, M.weight X e = 0 ∨ M.weight X e = 1
+
+/-- The edges of weight `1` for population `X`; on a tree, the root-to-`X` lineage. -/
 noncomputable def lineage (X : P) : Finset E :=
   haveI := Classical.decEq ℝ
   {e | M.weight X e = 1}
 
-/-- On a tree `f3` is nonnegative: it is the drift length of the path from `C` to the
-`A–B` path. -/
-theorem f3_nonneg_of_isUnadmixed (hM : M.IsUnadmixed) (C A B : P) : 0 ≤ f3 μ M.freq C A B := by
+/-- With binary loadings `f3` is nonnegative; on a tree it is the drift length of the path from
+`C` to the `A–B` path. -/
+theorem f3_nonneg_of_hasBinaryLoadings (hM : M.HasBinaryLoadings) (C A B : P) :
+    0 ≤ f3 μ M.freq C A B := by
   rw [f3_freq]
   refine Finset.sum_nonneg fun e _ => mul_nonneg ?_ (M.len_nonneg e)
   rcases hM C e with hC | hC <;> rcases hM A e with hA | hA <;> rcases hM B e with hB | hB <;>
     norm_num [hA, hB, hC]
 
-/-- On a tree `f2` is the additive tree distance: the total drift length of the edges lying on
-exactly one of the root-to-`X` and root-to-`Y` lineages. -/
-theorem f2_eq_sum_symmDiff [DecidableEq E] (hM : M.IsUnadmixed) (X Y : P) :
+/-- With binary loadings `f2 X Y` is the total drift length of the edges in exactly one of the
+weight-`1` edge sets of `X` and `Y`. On a tree, where these sets are the root-to-`X` and
+root-to-`Y` paths, this is the additive tree distance between `X` and `Y`. -/
+theorem f2_eq_sum_symmDiff [DecidableEq E] (hM : M.HasBinaryLoadings) (X Y : P) :
     f2 μ M.freq X Y = ∑ e ∈ M.lineage X ∆ M.lineage Y, M.len e := by
   rw [f2_freq, ← Finset.univ_inter (M.lineage X ∆ M.lineage Y), ← Finset.sum_ite_mem]
   refine Finset.sum_congr rfl fun e _ => ?_
   rcases hM X e with hX | hX <;> rcases hM Y e with hY | hY <;>
     simp [lineage, Finset.mem_symmDiff, hX, hY]
 
-/-- Three-population test: a negative `f3 C A B` is incompatible with a tree. -/
-theorem not_isUnadmixed_of_f3_neg {C A B : P} (h : f3 μ M.freq C A B < 0) : ¬ M.IsUnadmixed :=
-  fun hM => (M.f3_nonneg_of_isUnadmixed hM C A B).not_gt h
+/-- Three-population test: a negative `f3 C A B` is incompatible with binary loadings, hence
+with every tree model. -/
+theorem not_hasBinaryLoadings_of_f3_neg {C A B : P} (h : f3 μ M.freq C A B < 0) :
+    ¬ M.HasBinaryLoadings :=
+  fun hM => (M.f3_nonneg_of_hasBinaryLoadings hM C A B).not_gt h
 
 /-- If `C` is a mixture of `A` and `B` in proportions `α : 1 - α` (with no subsequent drift),
 then `f3 C A B = -α (1 - α) f2 A B`. -/
@@ -411,10 +425,11 @@ theorem hetSub_le_hetTotal (hc0 : ∀ i, 0 ≤ c i) (hc : ∑ i, c i = 1) :
     Finset.sum_nonneg fun i _ => mul_nonneg (hc0 i) (sq_nonneg _)
   linarith
 
-/-- `F_ST = (H_T - H_S) / H_T` is nonnegative for nonnegative weights summing to `1`. -/
-theorem fst_nonneg (hc0 : ∀ i, 0 ≤ c i) (hc : ∑ i, c i = 1) (hT : 0 ≤ hetTotal c q) :
+/-- `F_ST = (H_T - H_S) / H_T` is nonnegative for nonnegative weights summing to `1`. The ratio
+is defined only when `H_T > 0` (at a fixed allele `H_T = H_S = 0`), so that is assumed. -/
+theorem fst_nonneg (hc0 : ∀ i, 0 ≤ c i) (hc : ∑ i, c i = 1) (hT : 0 < hetTotal c q) :
     0 ≤ (hetTotal c q - hetSub c q) / hetTotal c q :=
-  div_nonneg (sub_nonneg.2 (hetSub_le_hetTotal c q hc0 hc)) hT
+  div_nonneg (sub_nonneg.2 (hetSub_le_hetTotal c q hc0 hc)) hT.le
 
 end Wahlund
 
