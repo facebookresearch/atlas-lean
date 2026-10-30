@@ -40,7 +40,8 @@ where `G = blockCountingGenerator n` is the rate matrix of the block-counting (p
 process. We define `polySemigroup t` on polynomials by `X^n ↦ ∑_k exp (t • G) n k · X^k`
 (`dualMomentPoly`); it is a group of linear maps (`polySemigroup_add`), using that the
 block-counting transition matrices are lower triangular and consistent across truncation levels
-(`exp_smul_blockCountingGenerator_of_lt`, `exp_smul_blockCountingGenerator_castLE`). For every
+(`KingmanBlockCounting.exp_smul_blockCountingGenerator_of_lt`,
+`KingmanBlockCounting.exp_smul_blockCountingGenerator_castLE`). For every
 polynomial `p` and `t ≥ 0`, `(wfStep M)^⌊tM⌋ p → polySemigroup t p` uniformly on `[0, 1]`.
 Because the chain operators are contractions and polynomials are dense (Weierstrass),
 `(wfStep M)^⌊tM⌋ f` converges uniformly for **every** continuous `f`; the limit defines
@@ -51,7 +52,8 @@ properties of a Feller semigroup on `[0, 1]`, and `tendsto_wfStep_pow_floor` is 
 the Trotter–Kato approximation theorem in this concrete case, proved here directly from duality.
 
 Not covered: the Wright–Fisher diffusion as a stochastic process (path space, weak convergence of
-the rescaled chains), the full domain of the generator (only polynomials, a core, are treated),
+the rescaled chains), the full domain of the generator (only polynomial test functions are
+treated; that they form a core is not proved),
 and selection or mutation. For `t < 0`, `wfSemigroup t` is the identity because `⌊tM⌋₊ = 0`
 (a junk value outside the domain `t ≥ 0`), whereas `polySemigroup t` is the algebraic inverse.
 
@@ -60,8 +62,6 @@ and selection or mutation. For `t < 0`, `wfSemigroup t` is the identity because 
 * `wfStep`, `norm_wfStep_le`: one Wright–Fisher generation as a linear contraction.
 * `sum_binomial_mul_div_pow`, `integral_binomial_div_pow`: one-generation moment duality.
 * `wfStep_pow_X_pow`: moment duality for `m` generations.
-* `exp_smul_blockCountingGenerator_castLE`, `exp_smul_blockCountingGenerator_of_lt`: truncation
-  consistency and triangularity of the block-counting transition matrices.
 * `polySemigroup`, `polySemigroup_zero`, `polySemigroup_add`, `polySemigroup_one`: the dual
   semigroup on polynomials.
 * `tendsto_wfStep_pow_floor_toContinuousMapOn`: the chain converges on polynomials.
@@ -321,59 +321,6 @@ theorem wfStep_pow_X_pow (M m N : ℕ) (hM : M ≠ 0) (n : Fin (N + 1)) :
     exact Finset.sum_comm
 
 /-! ### The dual semigroup on polynomials -/
-
-/-- **Truncation consistency.** For `n ≤ N`, the top-left `(n + 1) × (n + 1)` block of the
-transition matrix `exp (t • G)` of the block-counting process on `{0, …, N}` is the transition
-matrix of the process on `{0, …, n}` (the process only moves down). Holds for every real `t`. -/
-theorem exp_smul_blockCountingGenerator_castLE {n N : ℕ} (h : n ≤ N) (t : ℝ)
-    (i j : Fin (n + 1)) :
-    NormedSpace.exp (t • blockCountingGenerator N) (Fin.castLE (by omega) i)
-        (Fin.castLE (by omega) j) =
-      NormedSpace.exp (t • blockCountingGenerator n) i j := by
-  classical
-  rw [exp_smul_blockCountingGenerator N t, exp_smul_blockCountingGenerator n t]
-  conv_lhs => rw [Matrix.mul_apply]
-  conv_rhs => rw [Matrix.mul_apply]
-  simp only [Matrix.mul_diagonal]
-  let f : ℕ → ℝ := fun k =>
-    ((i : ℕ).descFactorial k : ℝ) / ((i : ℕ).ascFactorial k : ℝ) *
-      Real.exp (t * -((k.choose 2 : ℕ) : ℝ)) *
-      (if k = 0 then (if (j : ℕ) = 0 then 1 else 0)
-      else if (j : ℕ) ≤ k then
-        (2 * (k : ℕ) - 1) * (-1) ^ (k - j) * ((j : ℕ).ascFactorial (k - 1) : ℝ) /
-          (((j : ℕ).factorial : ℝ) * ((k - j).factorial : ℝ))
-      else 0)
-  change (∑ k : Fin (N + 1), f k.val) = ∑ k : Fin (n + 1), f k.val
-  rw [Fin.sum_univ_eq_sum_range f, Fin.sum_univ_eq_sum_range f]
-  symm
-  apply Finset.sum_subset (Finset.range_mono (by omega))
-  intro k _ hkn
-  have hik : (i : ℕ) < k := by
-    have hi := i.isLt
-    simp only [Finset.mem_range] at hkn
-    omega
-  simp [f, Nat.descFactorial_eq_zero_iff_lt.mpr hik]
-
-/-- The block-counting process never gains lineages: `exp (t • G) i j = 0` for `i < j`. Holds
-for every real `t`. -/
-theorem exp_smul_blockCountingGenerator_of_lt {n : ℕ} (t : ℝ) {i j : Fin (n + 1)} (h : i < j) :
-    NormedSpace.exp (t • blockCountingGenerator n) i j = 0 := by
-  classical
-  rw [exp_smul_blockCountingGenerator n t, Matrix.mul_apply]
-  simp only [Matrix.mul_diagonal]
-  apply Finset.sum_eq_zero
-  intro k _
-  by_cases hik : (i : ℕ) < k
-  · simp [blockCountingRightEigen, Nat.descFactorial_eq_zero_iff_lt.mpr hik]
-  · have hkj : ¬ (j : ℕ) ≤ k := by
-      have hij : (i : ℕ) < j := h
-      omega
-    have hj : (j : ℕ) ≠ 0 := by
-      have hij : (i : ℕ) < j := h
-      omega
-    have hleft : blockCountingLeftEigen n k j = 0 := by
-      simp only [blockCountingLeftEigen, Matrix.of_apply, hj, hkj, ite_false, ite_self]
-    rw [hleft, mul_zero]
 
 /-- The dual moment polynomial `∑_k P_t(n → k) X^k`, where for `t ≥ 0`,
 `P_t(n → k) = exp (t • G) n k` is the probability that `n` lineages of Kingman's coalescent have
