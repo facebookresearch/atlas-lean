@@ -17,22 +17,22 @@ open scoped ENNReal NNReal
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.MendelianRandomization
 
-/-! ### The linear IV model: a non-vacuous witness
+/-! ### The linear moment model: a non-vacuous observational witness
 
-A standard normal instrument that is also the exposure, no error term, and outcome
-`Y = 1 + 2 X`; the Wald ratio returns `β = 2`. -/
+A standard normal instrument that is also the exposure, zero residual, and outcome
+`Y = 1 + 2 X`; the covariance ratio returns the observational coefficient `β = 2`. -/
 
-/-- The witness linear IV model on `(ℝ, N(0, 1))`. -/
-noncomputable def ivWitness : LinearIVModel (gaussianReal 0 1) where
+/-- The witness linear moment model on `(ℝ, N(0, 1))`. -/
+noncomputable def ivWitness : LinearMomentModel (gaussianReal 0 1) where
   instrument := id
   exposure := id
   outcome := fun x => 1 + 2 * x
-  error := 0
+  residual := 0
   intercept := 1
-  effect := 2
+  coefficient := 2
   memLp_instrument := memLp_id_gaussianReal 2
   memLp_exposure := memLp_id_gaussianReal 2
-  memLp_error := MemLp.zero
+  memLp_residual := MemLp.zero
   outcome_eq := fun x => by simp
 
 theorem covariance_id_id : cov[id, id; gaussianReal 0 1] = 1 := by
@@ -45,18 +45,28 @@ example : cov[ivWitness.instrument, ivWitness.outcome; gaussianReal 0 1] /
   ivWitness.covariance_div_covariance (by simp [ivWitness])
     (by simp [ivWitness, covariance_id_id])
 
-/-- A confounded model: the error equals the exposure (`U = X`), so `Y = 1 + 2 X + X`. The OLS
-slope is `2 + Cov(X, U) / Var(X) = 3`, not the causal effect `2`. -/
-noncomputable def confounded : LinearIVModel (gaussianReal 0 1) where
+/-- A structural response with the same observed values as `ivWitness` but a direct effect of
+the instrument: it ignores the intervened exposure argument. The observational moment model
+cannot distinguish this response from one mediated by the exposure because `X = Z`. -/
+def directInstrumentResponse (z _x : ℝ) : ℝ := 1 + 2 * z
+
+example (z x x' : ℝ) : directInstrumentResponse z x = directInstrumentResponse z x' := rfl
+
+example (z : ℝ) : directInstrumentResponse z z = ivWitness.outcome z := rfl
+
+/-- A correlated-residual model: the residual equals the exposure (`U = X`), so
+`Y = 1 + 2 X + X`. The OLS coefficient is `2 + Cov(X, U) / Var(X) = 3`, not the decomposition
+coefficient `2`. -/
+noncomputable def confounded : LinearMomentModel (gaussianReal 0 1) where
   instrument := id
   exposure := id
   outcome := fun x => 1 + 2 * x + x
-  error := id
+  residual := id
   intercept := 1
-  effect := 2
+  coefficient := 2
   memLp_instrument := memLp_id_gaussianReal 2
   memLp_exposure := memLp_id_gaussianReal 2
-  memLp_error := memLp_id_gaussianReal 2
+  memLp_residual := memLp_id_gaussianReal 2
   outcome_eq := fun _ => rfl
 
 example : cov[confounded.exposure, confounded.outcome; gaussianReal 0 1] /
@@ -103,7 +113,7 @@ example : Var[fun ω => ivw (fun _ : Fin 1 => (2 : ℝ)) (fun _ => 5 * 2 + id ω
 
 /-! ### MR-Egger under directional pleiotropy
 
-Three SNPs with unit weights, strengths `γ = (1, 2, 3)` and a common direct effect `α = 1`.
+Three SNPs with unit weights, strengths `γ = (1, 2, 3)` and a common pleiotropic term `α = 1`.
 InSIDE holds (a constant is uncorrelated with anything), so the Egger slope is `β` and the
 intercept is `1`; IVW is biased upwards by `∑ γ / ∑ γ² = 6 / 14`. -/
 
@@ -204,6 +214,14 @@ theorem lateWitness_independence : lateWitness.Independence (μ2.prod μ2) :=
       else 0))
     measurable_id (measurable_of_countable _)
 
+/-- Generic source-shaped client: relevance is an explicit premise of LATE identification. -/
+example {Ω : Type*} [MeasurableSpace Ω] (P : PotentialOutcomes Ω) {μ : Measure Ω}
+    [IsProbabilityMeasure μ] (hind : P.Independence μ) (hexcl : P.Exclusion)
+    (hmono : P.Monotonicity) (hY : ∀ z d, Integrable (P.outcome z d) μ)
+    (hZ : ∀ z, μ (P.instrument ⁻¹' {z}) ≠ 0) (hC : μ P.compliers ≠ 0) (z : Bool) :
+    P.waldEstimand μ = ∫ ω, P.outcome z true ω - P.outcome z false ω ∂μ[|P.compliers] :=
+  P.waldEstimand_eq_late hind hexcl hmono hY hZ hC z
+
 example : lateWitness.waldEstimand (μ2.prod μ2) = 1 := by
   have hC : (μ2.prod μ2) lateWitness.compliers ≠ 0 := by
     rw [lateWitness_compliers, Measure.prod_prod, measure_univ]
@@ -214,10 +232,70 @@ example : lateWitness.waldEstimand (μ2.prod μ2) = 1 := by
       Measure.prod_prod, measure_univ]
     simp [μ2_singleton]
   rw [lateWitness.waldEstimand_eq_late lateWitness_independence (fun _ _ => rfl)
-    (fun ω => by cases ω.2 <;> simp [lateWitness]) (fun _ _ => Integrable.of_finite) hZ true]
+    (fun ω => by cases ω.2 <;> simp [lateWitness]) (fun _ _ => Integrable.of_finite) hZ hC
+    true]
   have := cond_isProbabilityMeasure (μ := μ2.prod μ2) hC
   rw [show (fun ω : Bool × Bool => lateWitness.outcome true true ω -
       lateWitness.outcome true false ω) = fun _ => 1 by funext; simp [lateWitness]]
   simp
+
+/-- Positive complier mass gives a genuinely nonzero first stage. -/
+example : lateWitness.armMean (μ2.prod μ2) lateWitness.treated true -
+    lateWitness.armMean (μ2.prod μ2) lateWitness.treated false ≠ 0 := by
+  have hC : (μ2.prod μ2) lateWitness.compliers ≠ 0 := by
+    rw [lateWitness_compliers, Measure.prod_prod, measure_univ]
+    simp [μ2_singleton]
+  have hZ : ∀ z, (μ2.prod μ2) (lateWitness.instrument ⁻¹' {z}) ≠ 0 := by
+    intro z
+    rw [show lateWitness.instrument ⁻¹' {z} = {z} ×ˢ Set.univ by ext; simp [lateWitness],
+      Measure.prod_prod, measure_univ]
+    simp [μ2_singleton]
+  rw [lateWitness.armMean_treated_sub lateWitness_independence
+    (fun ω => by cases ω.2 <;> simp [lateWitness]) hZ]
+  exact (measureReal_ne_zero_iff (by simp)).2 hC
+
+/-! ### Zero-complier boundary: only the totalized algebraic identity remains -/
+
+/-- A randomized instrument with no compliers: every unit is a never-taker and every potential
+outcome is zero. The structural independence, exclusion and monotonicity assumptions all hold,
+but relevance does not. -/
+def zeroComplierWitness : PotentialOutcomes (Bool × Bool) where
+  instrument := Prod.fst
+  treatment := fun _ _ => false
+  outcome := fun _ _ _ => 0
+  measurable_instrument := measurable_fst
+  measurable_treatment := fun _ => measurable_const
+  measurable_outcome := fun _ _ => measurable_const
+
+theorem zeroComplierWitness_compliers : zeroComplierWitness.compliers = ∅ := by
+  ext ⟨z, u⟩
+  simp [PotentialOutcomes.compliers, PotentialOutcomes.type, complianceType,
+    zeroComplierWitness]
+
+theorem zeroComplierWitness_independence : zeroComplierWitness.Independence (μ2.prod μ2) :=
+  indepFun_prod (X := id)
+    (Y := fun _ : Bool => ((fun _ => false), fun (_ : Bool) (_ : Bool) => (0 : ℝ)))
+    measurable_id (measurable_of_countable _)
+
+/-- At the zero-complier boundary, the old unrestricted identity is only the totalized `0 = 0`. -/
+example : zeroComplierWitness.waldEstimand (μ2.prod μ2) =
+    ∫ ω, zeroComplierWitness.outcome true true ω -
+      zeroComplierWitness.outcome true false ω ∂(μ2.prod μ2)[|zeroComplierWitness.compliers] := by
+  have hZ : ∀ z, (μ2.prod μ2) (zeroComplierWitness.instrument ⁻¹' {z}) ≠ 0 := by
+    intro z
+    rw [show zeroComplierWitness.instrument ⁻¹' {z} = {z} ×ˢ Set.univ by
+      ext
+      simp [zeroComplierWitness], Measure.prod_prod, measure_univ]
+    simp [μ2_singleton]
+  exact zeroComplierWitness.waldEstimand_eq_late_totalized zeroComplierWitness_independence
+    (fun _ _ => rfl) (fun _ => by simp [zeroComplierWitness])
+    (fun _ _ => Integrable.of_finite) hZ true
+
+example : zeroComplierWitness.waldEstimand (μ2.prod μ2) = 0 ∧
+    (∫ ω, zeroComplierWitness.outcome true true ω -
+      zeroComplierWitness.outcome true false ω
+        ∂(μ2.prod μ2)[|zeroComplierWitness.compliers]) = 0 := by
+  simp [PotentialOutcomes.waldEstimand, PotentialOutcomes.armMean,
+    PotentialOutcomes.observedOutcome, zeroComplierWitness]
 
 end MathlibExtTest.Biology.StatisticalGenetics.MendelianRandomization

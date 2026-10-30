@@ -16,23 +16,21 @@ public import Mathlib.Probability.Moments.Variance
 import Mathlib.Probability.Independence.Integration
 
 /-!
-# Mendelian randomization and instrumental-variable identification
+# Mendelian randomization estimators and local-effect identification
 
 Mendelian randomization (Davey Smith & Ebrahim 2003) uses genetic variants as instrumental
-variables: a variant `Z` that shifts an exposure `X`, is independent of the confounders of the
-exposure–outcome relation, and affects the outcome `Y` only through `X` identifies the causal
-effect of `X` on `Y`. This file proves the identification results behind the standard
-estimators.
+variables. This file separates two formal scopes: observational covariance identities behind
+linear and summary-data estimators, and a causal local-average-treatment-effect theorem in an
+explicit potential-outcomes model with formal independence, exclusion and monotonicity
+predicates. The observational identities alone do not encode an intervention or exclusion.
 
-* **Wald ratio**, named after the grouping estimator of Wald (1940), which is this ratio for a
-  two-valued grouping variable. In the linear structural model `Y = α + β X + U`, where the
-  error `U` collects every other cause of `Y` (confounders of `X` and `Y` included) and the
-  instrument enters `Y` only through `X` (exclusion, encoded by the structural equation), an
-  instrument uncorrelated with `U` (exogeneity) and correlated with `X` (relevance) gives
-  `Cov(Z, Y) / Cov(Z, X) = β`. The ordinary regression slope of `Y` on `X` is instead
-  `β + Cov(X, U) / Var(X)` (confounding bias). The exclusion restriction is often phrased as
-  "`Z ⊥ Y` given `X` and the confounders"; given `X` alone it fails whenever `X` and `Y` are
-  confounded, so it is not used here.
+* **Wald covariance identity**, named after the grouping estimator of Wald (1940), which is this
+  ratio for a two-valued grouping variable. In the observational decomposition
+  `Y = α + β X + U`, orthogonality `Cov(Z, U) = 0` and a nonzero first-stage covariance give
+  `Cov(Z, Y) / Cov(Z, X) = β`. Here `U` is an arbitrary residual and `β` is its associated
+  moment coefficient: the equation does not prevent `U` or `Y` from depending directly on `Z`
+  under interventions, so it neither encodes exclusion nor identifies a causal effect. The
+  ordinary regression coefficient identity is `β + Cov(X, U) / Var(X)`.
 * **Inverse-variance weighting** (Burgess, Butterworth & Thompson 2013). For SNP-level summary
   statistics `β̂_{Xj}`, `β̂_{Yj}` with outcome standard errors `σ_j > 0`, the IVW estimator
   `∑ β̂_{Xj} β̂_{Yj} σ_j⁻² / ∑ β̂_{Xj}² σ_j⁻²` is the weighted least-squares slope through the
@@ -41,14 +39,14 @@ estimators.
   variance `σ_j²` and the `β̂_{Xj}` treated as fixed (the first-order, "no measurement error"
   approximation), the estimator is unbiased with variance `(∑ w_j)⁻¹`, exactly.
 * **MR-Egger** (Bowden, Davey Smith & Burgess 2015). The weighted regression of `β̂_{Yj}` on
-  `β̂_{Xj}` with an intercept. If the SNP effects on the outcome are `Γ_j = α_j + β γ_j`, where
-  `α_j` is the direct (pleiotropic) effect and `γ_j` the SNP–exposure effect, the Egger slope
+  `β̂_{Xj}` with an intercept. If the SNP associations satisfy `Γ_j = α_j + β γ_j`, where
+  `α_j` is a pleiotropic term and `γ_j` the SNP–exposure association, the Egger slope
   is `β + Cov_w(γ, α) / Var_w(γ)` and the intercept is the weighted mean pleiotropy minus a
-  correction; under InSIDE (`Cov_w(α, γ) = 0`, instrument strength independent of direct
-  effect) the slope is `β` and the intercept is the weighted mean pleiotropic effect, while the
+  correction; under InSIDE (`Cov_w(α, γ) = 0`) the slope is `β` and the intercept is the
+  weighted mean pleiotropic term, while the
   IVW estimator is biased by `∑ w'_j γ_j α_j / ∑ w'_j γ_j²`. The statements are exact
-  identities for the given (population) SNP effects, with InSIDE as the weighted covariance of
-  the `J` SNPs; the paper's `J → ∞` sampling version is not formalized.
+  identities for the given SNP associations, with InSIDE as the weighted covariance of the `J`
+  SNPs; the paper's `J → ∞` sampling version and causal interpretation are not formalized.
 * **Weak instruments** (Burgess & Thompson 2011). A ratio whose denominator is Gaussian with
   positive variance, and whose numerator is independent of it and not almost surely zero, has
   `𝔼|N / D| = ∞`: the ratio estimator `β̂_Y / β̂_X` with normally distributed `β̂_X` has no
@@ -58,23 +56,24 @@ estimators.
   `D(z)` and potential outcomes `Y(z, d)`. Under independence of `Z` from the potential
   variables, exclusion (`Y(0, d) = Y(1, d)`) and monotonicity (`D(0) ≤ D(1)`), the Wald
   estimand `(𝔼[Y | Z = 1] - 𝔼[Y | Z = 0]) / (𝔼[D | Z = 1] - 𝔼[D | Z = 0])` equals the average
-  effect `𝔼[Y(1) - Y(0) | complier]`. The denominator is the proportion of compliers
-  (`D(0) = 0`, `D(1) = 1`), so relevance (a positive proportion of compliers) is what makes the
-  identity informative; without it both sides are Lean's junk value `0`.
+  effect `𝔼[Y(1) - Y(0) | complier]`, assuming a nonzero proportion of compliers. The
+  denominator is the complier proportion (`D(0) = 0`, `D(1) = 1`), so this relevance premise
+  makes both the ratio and the conditional average meaningful. A separately named theorem records
+  the totalized algebraic identity at zero complier mass without calling it identification.
 
 ## Main results
 
-* `LinearIVModel.covariance_div_covariance` (and `_of_indepFun`, `covariance_div_variance_div`):
-  the Wald ratio identifies `β`.
-* `LinearIVModel.covariance_div_variance`: the confounded regression slope.
+* `LinearMomentModel.covariance_div_covariance` (and `_of_indepFun`,
+  `covariance_div_variance_div`): observational covariance identities for `β`.
+* `LinearMomentModel.covariance_div_variance`: the ordinary regression coefficient identity.
 * `ivw_eq_weightedMean`, `ivw_le_weightedSSR`, `integral_ivw`, `variance_ivw`: the IVW estimator.
 * `eggerSSR_le`, `eggerSlope_eq`, `eggerIntercept_eq`, `eggerSlope_eq_of_inside`,
   `ivw_of_pleiotropy`: MR-Egger, InSIDE, and the pleiotropy bias of IVW.
 * `lintegral_enorm_div_eq_top`, `not_integrable_div_gaussian`: no mean for a ratio with a
   Gaussian denominator.
 * `PotentialOutcomes.armMean_treated_sub`, `PotentialOutcomes.armMean_outcome_sub`,
-  `PotentialOutcomes.waldEstimand_eq_late`: first stage, reduced form, and the IV estimand as
-  the complier average effect.
+  `PotentialOutcomes.waldEstimand_eq_late`: first stage, reduced form, and source-faithful LATE
+  identification; `waldEstimand_eq_late_totalized` is the unrestricted algebraic identity.
 
 ## References
 
@@ -105,73 +104,78 @@ namespace MathlibExt.Biology.StatisticalGenetics.MendelianRandomization
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
-/-! ### The Wald ratio in the linear instrumental-variable model -/
+/-! ### Wald covariance identities in an observational linear moment model -/
 
-/-- The linear instrumental-variable model: an instrument `Z`, an exposure `X` and
-an outcome `Y = α + β X + U` on a probability space, all square integrable. The error `U`
-collects every cause of `Y` other than `X`, including the confounders of `X` and `Y`; `X` may
-depend on `U` arbitrarily. The instrument enters the outcome only through the exposure
-(exclusion), which is the content of the structural equation `outcome_eq`. Exogeneity
-(`Cov(Z, U) = 0`) and relevance (`Cov(Z, X) ≠ 0`) are hypotheses of the theorems that use
-them. -/
-structure LinearIVModel (μ : Measure Ω) where
+/-- An observational linear moment model: variables `Z`, `X`, `Y` and `U` on a probability
+space, all square integrable, with the algebraic decomposition `Y = α + β X + U`.
+The residual `U` is an arbitrary observed-variable function. Consequently `outcome_eq` does not
+exclude direct effects of `Z` under interventions, and `β` is only the coefficient in this
+decomposition. Orthogonality (`Cov(Z, U) = 0`) and nonzero first stage (`Cov(Z, X) ≠ 0`) are
+hypotheses of the covariance identities that use them. -/
+structure LinearMomentModel (μ : Measure Ω) where
   /-- The instrument `Z` (in Mendelian randomization, a genotype). -/
   instrument : Ω → ℝ
   /-- The exposure `X`. -/
   exposure : Ω → ℝ
   /-- The outcome `Y`. -/
   outcome : Ω → ℝ
-  /-- The structural error `U`: all other causes of the outcome. -/
-  error : Ω → ℝ
+  /-- The observational residual `U`. It may contain direct dependence on the instrument. -/
+  residual : Ω → ℝ
   /-- The intercept `α`. -/
   intercept : ℝ
-  /-- The causal effect `β` of the exposure on the outcome. -/
-  effect : ℝ
+  /-- The coefficient `β` in the observational decomposition. -/
+  coefficient : ℝ
   /-- The instrument is square integrable. -/
   memLp_instrument : MemLp instrument 2 μ
   /-- The exposure is square integrable. -/
   memLp_exposure : MemLp exposure 2 μ
-  /-- The error is square integrable. -/
-  memLp_error : MemLp error 2 μ
-  /-- The structural equation `Y = α + β X + U`. -/
-  outcome_eq : ∀ ω, outcome ω = intercept + effect * exposure ω + error ω
+  /-- The residual is square integrable. -/
+  memLp_residual : MemLp residual 2 μ
+  /-- The observational decomposition `Y = α + β X + U`. -/
+  outcome_eq : ∀ ω, outcome ω = intercept + coefficient * exposure ω + residual ω
 
-namespace LinearIVModel
+namespace LinearMomentModel
 
-variable {μ : Measure Ω} [IsProbabilityMeasure μ] (M : LinearIVModel μ)
+variable {μ : Measure Ω} [IsProbabilityMeasure μ] (M : LinearMomentModel μ)
 
 /-- The covariance of any square-integrable variable with the outcome splits along the
-structural equation: `Cov(V, Y) = β Cov(V, X) + Cov(V, U)`. -/
+observational decomposition: `Cov(V, Y) = β Cov(V, X) + Cov(V, U)`. -/
 theorem covariance_outcome {V : Ω → ℝ} (hV : MemLp V 2 μ) :
-    cov[V, M.outcome; μ] = M.effect * cov[V, M.exposure; μ] + cov[V, M.error; μ] := by
-  have hXL : MemLp (M.effect • M.exposure) 2 μ := M.memLp_exposure.const_smul _
-  have hY : M.outcome = fun ω => M.intercept + (M.effect • M.exposure + M.error) ω := by
+    cov[V, M.outcome; μ] =
+      M.coefficient * cov[V, M.exposure; μ] + cov[V, M.residual; μ] := by
+  have hXL : MemLp (M.coefficient • M.exposure) 2 μ := M.memLp_exposure.const_smul _
+  have hY : M.outcome =
+      fun ω => M.intercept + (M.coefficient • M.exposure + M.residual) ω := by
     funext ω
     simp [M.outcome_eq, add_assoc]
-  rw [hY, covariance_const_add_right ((hXL.add M.memLp_error).integrable one_le_two),
-    covariance_add_right hV hXL M.memLp_error, covariance_smul_right]
+  rw [hY, covariance_const_add_right ((hXL.add M.memLp_residual).integrable one_le_two),
+    covariance_add_right hV hXL M.memLp_residual, covariance_smul_right]
 
-/-- The Wald ratio: for an exogenous (`Cov(Z, U) = 0`) and relevant (`Cov(Z, X) ≠ 0`)
-instrument, `Cov(Z, Y) / Cov(Z, X) = β`. For a two-valued `Z` the ratio is the grouping
-estimator of Wald (1940), the difference of the group means of `Y` over that of `X`. -/
-theorem covariance_div_covariance (hZU : cov[M.instrument, M.error; μ] = 0)
+/-- The Wald covariance identity: if `Cov(Z, U) = 0` and `Cov(Z, X) ≠ 0`, then
+`Cov(Z, Y) / Cov(Z, X) = β`. For a two-valued `Z` the ratio is the grouping estimator of Wald
+(1940), the difference of the group means of `Y` over that of `X`. This is a moment-condition
+identity, not a formal causal-identification result. -/
+theorem covariance_div_covariance (hZU : cov[M.instrument, M.residual; μ] = 0)
     (hZX : cov[M.instrument, M.exposure; μ] ≠ 0) :
-    cov[M.instrument, M.outcome; μ] / cov[M.instrument, M.exposure; μ] = M.effect := by
+    cov[M.instrument, M.outcome; μ] / cov[M.instrument, M.exposure; μ] =
+      M.coefficient := by
   rw [M.covariance_outcome M.memLp_instrument, hZU, add_zero, mul_div_assoc, div_self hZX,
     mul_one]
 
-/-- The Wald ratio for an instrument independent of the error term. -/
-theorem covariance_div_covariance_of_indepFun (hZU : IndepFun M.instrument M.error μ)
+/-- The Wald covariance identity when the instrument is independent of the residual. -/
+theorem covariance_div_covariance_of_indepFun (hZU : IndepFun M.instrument M.residual μ)
     (hZX : cov[M.instrument, M.exposure; μ] ≠ 0) :
-    cov[M.instrument, M.outcome; μ] / cov[M.instrument, M.exposure; μ] = M.effect :=
-  M.covariance_div_covariance (hZU.covariance_eq_zero M.memLp_instrument M.memLp_error) hZX
+    cov[M.instrument, M.outcome; μ] / cov[M.instrument, M.exposure; μ] =
+      M.coefficient :=
+  M.covariance_div_covariance (hZU.covariance_eq_zero M.memLp_instrument M.memLp_residual) hZX
 
 /-- The Wald ratio as a ratio of regression slopes: the slope of `Y` on `Z` divided by the slope
-of `X` on `Z` (the form used with SNP–outcome and SNP–exposure associations) is `β`. -/
-theorem covariance_div_variance_div (hZU : cov[M.instrument, M.error; μ] = 0)
+of `X` on `Z` (the form used with SNP–outcome and SNP–exposure associations) is `β`. This is
+again an observational moment identity. -/
+theorem covariance_div_variance_div (hZU : cov[M.instrument, M.residual; μ] = 0)
     (hZX : cov[M.instrument, M.exposure; μ] ≠ 0) :
     (cov[M.instrument, M.outcome; μ] / Var[M.instrument; μ]) /
-      (cov[M.instrument, M.exposure; μ] / Var[M.instrument; μ]) = M.effect := by
+      (cov[M.instrument, M.exposure; μ] / Var[M.instrument; μ]) = M.coefficient := by
   have hV : Var[M.instrument; μ] ≠ 0 := by
     intro hv
     apply hZX
@@ -181,15 +185,15 @@ theorem covariance_div_variance_div (hZU : cov[M.instrument, M.error; μ] = 0)
     simp [hω]
   rw [div_div_div_cancel_right₀ hV, M.covariance_div_covariance hZU hZX]
 
-/-- Confounding bias: the ordinary least-squares slope of `Y` on `X` is
+/-- The ordinary least-squares coefficient identity for `Y` on `X` is
 `β + Cov(X, U) / Var(X)`, which differs from `β` exactly when `Cov(X, U) ≠ 0`. -/
 theorem covariance_div_variance (hX : Var[M.exposure; μ] ≠ 0) :
     cov[M.exposure, M.outcome; μ] / Var[M.exposure; μ] =
-      M.effect + cov[M.exposure, M.error; μ] / Var[M.exposure; μ] := by
+      M.coefficient + cov[M.exposure, M.residual; μ] / Var[M.exposure; μ] := by
   rw [M.covariance_outcome M.memLp_exposure, covariance_self M.memLp_exposure.aemeasurable,
     add_div, mul_div_assoc, div_self hX, mul_one]
 
-end LinearIVModel
+end LinearMomentModel
 
 /-! ### Summary-data estimators: inverse-variance weighting -/
 
@@ -274,8 +278,9 @@ theorem sum_ivwWeight_pos {bX se : ι → ℝ} (hse : ∀ j, 0 < se j) (hX : ∃
   unfold ivwWeight
   positivity
 
-/-- Without error, IVW recovers the causal effect: if `β̂_{Yj} = β β̂_{Xj}` for all `j` and some
-`β̂_{Xj} ≠ 0`, then the IVW estimate is `β`. -/
+/-- Without error, IVW recovers the proportionality coefficient: if
+`β̂_{Yj} = β β̂_{Xj}` for all `j` and some `β̂_{Xj} ≠ 0`, then the IVW estimate is `β`.
+This algebraic statement does not itself give `β` a causal interpretation. -/
 theorem ivw_of_proportional {bX se : ι → ℝ} (hse : ∀ j, 0 < se j) (hX : ∃ j, bX j ≠ 0)
     (β : ℝ) : ivw bX (fun j => β * bX j) se = β := by
   have hW := (sum_ivwWeight_pos hse hX).ne'
@@ -462,8 +467,8 @@ theorem eggerSSR_le {v bX : ι → ℝ} (bY : ι → ℝ) (hv : ∀ j, 0 ≤ v j
     mul_nonneg hSnn (sq_nonneg (n - a - b * m))]
 
 /-- The MR-Egger slope under pleiotropy (Bowden, Davey Smith & Burgess 2015): if the SNP–outcome
-effects are `Γ_j = α_j + β γ_j`, with direct (pleiotropic) effects `α_j` and SNP–exposure
-effects `γ_j`, the Egger slope of `Γ` on `γ` is `β + Cov_v(γ, α) / Var_v(γ)`. -/
+associations are `Γ_j = α_j + β γ_j`, with pleiotropic terms `α_j` and SNP–exposure
+associations `γ_j`, the Egger slope of `Γ` on `γ` is `β + Cov_v(γ, α) / Var_v(γ)`. -/
 theorem eggerSlope_eq {v γ : ι → ℝ} (hγ : weightedCov v γ γ ≠ 0)
     (α : ι → ℝ) (β : ℝ) :
     eggerSlope v γ (fun j => α j + β * γ j) = β + weightedCov v γ α / weightedCov v γ γ := by
@@ -480,10 +485,10 @@ theorem eggerIntercept_eq {v γ : ι → ℝ} (hγ : weightedCov v γ γ ≠ 0)
   rw [eggerSlope_eq hγ, weightedMean_add_mul]
   ring
 
-/-- InSIDE (Bowden, Davey Smith & Burgess 2015): if the pleiotropic effects are uncorrelated with
-the instrument strengths in the weighted sense, `Cov_v(α, γ) = 0`, the MR-Egger slope is the
-causal effect `β` and the intercept is the weighted mean pleiotropic effect `ᾱ_v`, the
-directional pleiotropy. -/
+/-- The finite-sample InSIDE identity (Bowden, Davey Smith & Burgess 2015): if the pleiotropic
+terms are uncorrelated with the instrument strengths in the weighted sense,
+`Cov_v(α, γ) = 0`, the MR-Egger slope is the coefficient `β` and the intercept is the weighted
+mean pleiotropic term `ᾱ_v`. This identity alone does not encode a causal interpretation. -/
 theorem eggerSlope_eq_of_inside {v γ α : ι → ℝ} (hγ : weightedCov v γ γ ≠ 0)
     (hinside : weightedCov v α γ = 0) (β : ℝ) :
     eggerSlope v γ (fun j => α j + β * γ j) = β ∧
@@ -494,7 +499,7 @@ theorem eggerSlope_eq_of_inside {v γ α : ι → ℝ} (hγ : weightedCov v γ �
   · rw [eggerIntercept_eq hγ, hinside, zero_div, zero_mul, sub_zero]
 
 /-- Directional pleiotropy biases IVW: if `Γ_j = α_j + β γ_j`, the IVW estimate is
-`β + ∑ γ_j α_j σ_j⁻² / ∑ γ_j² σ_j⁻²`. For example a common direct effect `α_j = α ≠ 0`
+`β + ∑ γ_j α_j σ_j⁻² / ∑ γ_j² σ_j⁻²`. For example a common pleiotropic term `α_j = α ≠ 0`
 biases IVW whenever `∑ γ_j σ_j⁻² ≠ 0`, whereas a constant `α` satisfies InSIDE, so
 `eggerSlope_eq_of_inside` gives MR-Egger slope `β` and intercept `α`. -/
 theorem ivw_of_pleiotropy {γ se : ι → ℝ} (hse : ∀ j, 0 < se j) (hγ : ∃ j, γ j ≠ 0)
@@ -826,15 +831,10 @@ theorem armMean_outcome_sub {μ : Measure Ω} [IsProbabilityMeasure μ]
   cases z <;> by_cases h0 : P.treatment false ω = true <;>
     by_cases h1 : P.treatment true ω = true <;> simp_all [complianceType]
 
-/-- The local average treatment effect theorem (Imbens & Angrist 1994, Theorem 1; Angrist,
-Imbens & Rubin 1996): under independence, exclusion and monotonicity, with integrable potential
-outcomes and both arms of positive probability, the Wald estimand is the average treatment
-effect among compliers, `𝔼[Y(1) - Y(0) | complier]` (read at either instrument value `z`, which
-exclusion makes irrelevant). Relevance, a positive proportion of compliers, is what makes the
-two sides meaningful: by `armMean_treated_sub` it is the statement that the Wald denominator is
-nonzero. Without it both sides are Lean's junk value `0` (division by `0`, and conditioning on
-a null set), so the identity holds but says nothing; the proof does not need it. -/
-theorem waldEstimand_eq_late {μ : Measure Ω} [IsProbabilityMeasure μ]
+/-- The unrestricted algebraic identity behind LATE. If the complier set has measure zero, both
+sides totalize to `0`; therefore this theorem is not an identification or complier-average claim
+at that boundary. Use `waldEstimand_eq_late` for the source-faithful result with relevance. -/
+theorem waldEstimand_eq_late_totalized {μ : Measure Ω} [IsProbabilityMeasure μ]
     (hind : P.Independence μ) (hexcl : P.Exclusion) (hmono : P.Monotonicity)
     (hY : ∀ z d, Integrable (P.outcome z d) μ)
     (hZ : ∀ z, μ (P.instrument ⁻¹' {z}) ≠ 0) (z : Bool) :
@@ -842,6 +842,20 @@ theorem waldEstimand_eq_late {μ : Measure Ω} [IsProbabilityMeasure μ]
   rw [waldEstimand, P.armMean_outcome_sub hind hexcl hmono hY hZ z,
     P.armMean_treated_sub hind hmono hZ, ProbabilityTheory.cond, integral_smul_measure,
     smul_eq_mul, ENNReal.toReal_inv, measureReal_def, div_eq_inv_mul]
+
+/-- The local average treatment effect theorem (Imbens & Angrist 1994, Theorem 1; Angrist,
+Imbens & Rubin 1996): under independence, exclusion, monotonicity and relevance, with integrable
+potential outcomes and both arms of positive probability, the Wald estimand is the average
+treatment effect among compliers, `𝔼[Y(1) - Y(0) | complier]` (read at either instrument value
+`z`, which exclusion makes irrelevant). Relevance is the nonzero complier mass hypothesis; by
+`armMean_treated_sub`, it is equivalent here to a nonzero Wald denominator. -/
+theorem waldEstimand_eq_late {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (hind : P.Independence μ) (hexcl : P.Exclusion) (hmono : P.Monotonicity)
+    (hY : ∀ z d, Integrable (P.outcome z d) μ)
+    (hZ : ∀ z, μ (P.instrument ⁻¹' {z}) ≠ 0) (hC : μ P.compliers ≠ 0) (z : Bool) :
+    P.waldEstimand μ = ∫ ω, P.outcome z true ω - P.outcome z false ω ∂μ[|P.compliers] :=
+  have _ := cond_isProbabilityMeasure hC
+  P.waldEstimand_eq_late_totalized hind hexcl hmono hY hZ z
 
 end PotentialOutcomes
 
