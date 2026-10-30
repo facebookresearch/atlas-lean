@@ -13,9 +13,16 @@ Portions of this file are adapted from:
 `Theorems/Thm_ModularForm_S2_Gamma0_one_eq_zero.lean`,
 `P2M/Sol/S_ModularForm_S2_Gamma0_2_eq_zero.lean` and
 `P2M/Sol/S_ModularForm_S2_Gamma0_one_eq_zero.lean`
-(fermats-last-theorem):
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and arguments are reused here with that machinery
 removed, the names restated in Mathlib style, and the proofs rewritten to use
@@ -42,6 +49,28 @@ contradiction. Along the way we record the two reusable ingredients, the
 norm (trace) of a cusp form over a finite-index subgroup and the index
 `[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two case be reduced to the
 weight-six level-one dimension formula.
+
+## Mathematical references
+
+For the classical level-one dimension formula, see Jean-Pierre Serre,
+*A Course in Arithmetic*, Springer (1973), Chapter VII ("Modular forms").
+
+The formal norm and vanishing inputs are in
+https://github.com/leanprover-community/mathlib4 at commit
+`56a005855ea17e0b0958f73ec801ae140b0a1679`:
+* `Mathlib/NumberTheory/ModularForms/NormTrace.lean` defines the product
+  `ModularForm.norm` and proves `ModularForm.norm_eq_zero_iff`.
+* `Mathlib/NumberTheory/ModularForms/LevelOne/DimensionFormula.lean`
+  proves `CuspForm.rank_eq_zero_of_weight_lt_twelve`, via division by
+  the weight-twelve discriminant and negative-weight vanishing.
+
+For the index and the full reduction, the pinned
+`P2M/Sol/S_ModularForm_S2_Gamma0_2_eq_zero.lean` cited above proves
+`Gamma0_two_index_eq_three` by identifying cosets with the three nonzero
+first-column vectors mod 2. The product norm of a weight-two cusp form
+therefore has level one and weight six. It is a cusp form because its
+factors are cusp translates; weight-six vanishing and the norm criterion
+then force the original form to vanish.
 -/
 
 @[expose] public section
