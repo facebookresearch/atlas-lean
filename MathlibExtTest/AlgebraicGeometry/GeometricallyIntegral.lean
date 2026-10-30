@@ -14,13 +14,17 @@ public import MathlibExt.AlgebraicGeometry.GeometricallyIntegral
 
 open CategoryTheory AlgebraicGeometry
 
+universe u
+
+/-- An arbitrary integral scheme over an algebraically closed field is geometrically integral,
+without any finite-type hypothesis. -/
+example {K : Type u} [Field K] [IsAlgClosed K] {X : Scheme.{u}}
+    (f : X ⟶ Spec (CommRingCat.of K)) [IsIntegral X] : GeometricallyIntegral f :=
+  GeometricallyIntegral.of_isIntegral_of_isAlgClosed f
+
 /-- The affine line over `ℂ` is geometrically integral over `ℂ`. -/
 example :
     GeometricallyIntegral
       (Spec.map (CommRingCat.ofHom (algebraMap ℂ (Polynomial ℂ))) :
-        (Spec (CommRingCat.of (Polynomial ℂ)) ⟶ Spec (CommRingCat.of ℂ))) := by
-  haveI : LocallyOfFiniteType
-      (Spec.map (CommRingCat.ofHom (algebraMap ℂ (Polynomial ℂ)))) :=
-    (HasRingHomProperty.Spec_iff (P := @LocallyOfFiniteType)).mpr
-      (RingHom.finiteType_algebraMap.mpr inferInstance)
-  exact AlgebraicGeometry.geometricallyIntegral_of_isAlgClosed _
+        (Spec (CommRingCat.of (Polynomial ℂ)) ⟶ Spec (CommRingCat.of ℂ))) :=
+  GeometricallyIntegral.of_isIntegral_of_isAlgClosed _
