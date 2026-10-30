@@ -31,10 +31,10 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 public import Mathlib.LinearAlgebra.Matrix.Trace
-public import Mathlib.Data.Int.GCD
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Group
-public import Mathlib.Tactic.LinearCombination
+import Mathlib.Data.Int.GCD
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Group
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Parabolic elements of the modular group
