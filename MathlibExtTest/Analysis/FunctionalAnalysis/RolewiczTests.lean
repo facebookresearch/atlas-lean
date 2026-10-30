@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Analysis.FunctionalAnalysis.Rolewicz
 public import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
+public import MathlibExt.Analysis.InnerProductSpace.SeparableHilbertBasis
 
 /-!
 # Tests for Rolewicz's theorem
@@ -117,3 +118,17 @@ example (μ : ℂ) (n : ℕ) (x : ℓ²(ℕ, ℂ)) :
     ShiftFredholmIndex.backwardCLM_pow_apply, Nat.zero_add, smul_eq_mul]
 
 end MathlibExtTest.Analysis.FunctionalAnalysis.RolewiczTests
+
+/-! The countable-density API and the concrete approximation contracts used below. -/
+
+example {𝕜 : Type*} [RCLike 𝕜] : TopologicalSpace.SeparableSpace (ℓ²(ℕ, 𝕜)) :=
+  SeparableHilbertBasis.separableSpace_of_countable_hilbertBasis
+    (default : HilbertBasis ℕ 𝕜 ℓ²(ℕ, 𝕜))
+
+example {𝕜 : Type*} [RCLike 𝕜] :
+    Dense (Set.range (ratApproxScalar (𝕜 := 𝕜))) :=
+  dense_range_ratApproxScalar
+
+example {𝕜 : Type*} [RCLike 𝕜] :
+    Dense (Set.range (ratApproxSeq (𝕜 := 𝕜))) :=
+  dense_range_ratApproxSeq
