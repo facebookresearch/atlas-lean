@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Bioinformatics.Phylogenetics.Parsimony
+public meta import CSLibExt.Bioinformatics.Phylogenetics.Parsimony
 
 /-!
 # Tests for Sankoff's and Fitch's parsimony algorithms
@@ -52,6 +53,15 @@ theorem sankoff_t₀_true : sankoff σ₀ t₀ true = 2 := by
 
 -- Fitch's algorithm: set `{0}` (state `false`) and one change.
 example : fitch σ₀ t₀ = ({false}, 1) := by decide
+
+/-- A caterpillar tree with leaves `0, …, n`, each new leaf joined to the previous subtree. -/
+def caterpillar : ℕ → Tree ℕ Bool Unit
+  | 0 => leaf 0
+  | n + 1 => node (fun _ _ => ()) (caterpillar n) (fun _ _ => ()) (leaf (n + 1))
+
+-- Fitch evaluates each child once: alternating states on a 41-leaf caterpillar finish with
+-- `20` changes (re-evaluating children would make `3 ^ 40` calls).
+#guard (fitch (fun i : ℕ => decide (i % 2 = 0)) (caterpillar 40)).2 = 20
 
 -- Fitch agrees with Sankoff.
 example : ((fitch σ₀ t₀).2 : WithTop ℕ) = Finset.univ.inf (sankoff σ₀ t₀) :=

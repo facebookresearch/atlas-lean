@@ -183,14 +183,14 @@ def IsUnitCost : Tree L S Cost → Prop
   | node P l Q r => P = unitCost ∧ Q = unitCost ∧ IsUnitCost l ∧ IsUnitCost r
 
 /-- **Fitch's algorithm**: the set of candidate states at the root of the subtree and the number
-of changes counted so far. The edge weights of the tree are ignored. -/
+of changes counted so far. The edge weights of the tree are ignored. Each child is evaluated
+once per node, so the recursion makes one call per vertex. -/
 def fitch {R : Type w} (σ : L → S) : Tree L S R → Finset S × ℕ
   | leaf l => ({σ l}, 0)
   | node _ l _ r =>
-    if (fitch σ l).1 ∩ (fitch σ r).1 |>.Nonempty then
-      ((fitch σ l).1 ∩ (fitch σ r).1, (fitch σ l).2 + (fitch σ r).2)
-    else
-      ((fitch σ l).1 ∪ (fitch σ r).1, (fitch σ l).2 + (fitch σ r).2 + 1)
+    let a := fitch σ l
+    let b := fitch σ r
+    if (a.1 ∩ b.1).Nonempty then (a.1 ∩ b.1, a.2 + b.2) else (a.1 ∪ b.1, a.2 + b.2 + 1)
 
 variable [Fintype S]
 
