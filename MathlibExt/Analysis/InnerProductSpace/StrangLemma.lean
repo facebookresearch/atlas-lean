@@ -19,7 +19,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Strang's first lemma for variational crimes
 
-Let `E` be a real Hilbert space, `B : E →L[ℝ] E →L[ℝ] ℝ` a bounded bilinear
+Let `E` be a real inner-product space, `B : E →L[ℝ] E →L[ℝ] ℝ` a bounded bilinear
 form and `ℓ : E →L[ℝ] ℝ` a bounded linear functional. The *variational
 problem* is to find `u : E` with `B u w = ℓ w` for all `w : E`.
 
@@ -45,11 +45,9 @@ forms are coercive, but is taken as a hypothesis here). Setting the
 consistency errors to zero recovers the Céa-type estimate for the
 unperturbed Galerkin method.
 
-This is the finite-element counterpart of the Galerkin theory in
-`MathlibExt/Analysis/InnerProductSpace/CeaLemma.lean` (which treats the
-conforming case `Bh = B`, `ℓh = ℓ`). It is not one of the 72 targets of
-`v1/Atlas/IntroductionToFunctionalAnalysis`, and Strang's lemma is not in
-the pinned Mathlib or in base MathlibExt.
+This is a companion to the Galerkin material of
+`v1/Atlas/IntroductionToFunctionalAnalysis`. It is not one of the 72
+targets, and Strang's lemma is not in the pinned Mathlib or in base MathlibExt.
 
 Reference: G. Strang, "Variational crimes in the finite element method"
 (1972); see also Brenner-Scott, *The Mathematical Theory of Finite Element
