@@ -11,8 +11,9 @@ module
 import MathlibExt.Biology.PopulationGenetics.Diffusion.PoissonRandomField
 
 /-! Tests for the Poisson random field: the explicit density, the neutral reduction `θ / i` of
-the expected spectrum, the forward equation and boundary fluxes, and the ODE characterization
-applied to the density itself. -/
+the expected spectrum (and the separate sample-monomorphic class `i = n`), the forward
+equation, its constant probability current and boundary normalizations, and the ODE
+characterization applied to the density itself. -/
 
 open Real Set Filter
 open scoped Topology
@@ -39,13 +40,14 @@ is `θ / 3`. -/
 example (θ : ℝ) : expectedSFS θ 0 10 3 = θ / 3 := by
   simpa using expectedSFS_neutral θ (n := 10) (i := 3) (by norm_num) (by norm_num)
 
-/-- Singletons: `E ξ₁ = θ`. -/
-example (θ : ℝ) (n : ℕ) (hn : 1 ≤ n) : expectedSFS θ 0 n 1 = θ := by
+/-- Singletons: `E ξ₁ = θ` in a sample of at least two copies. -/
+example (θ : ℝ) (n : ℕ) (hn : 2 ≤ n) : expectedSFS θ 0 n 1 = θ := by
   simpa using expectedSFS_neutral θ one_pos hn
 
-/-- The top class `i = n` (all sampled copies derived) is included: `E ξ_n = θ / n`. -/
+/-- Sites where all `5` sampled copies are derived (monomorphic in the sample, outside the
+spectrum): `θ / 5`. -/
 example (θ : ℝ) : expectedSFS θ 0 5 5 = θ / 5 := by
-  simpa using expectedSFS_neutral θ (n := 5) (i := 5) (by norm_num) le_rfl
+  simpa using expectedSFS_neutral_self θ (n := 5) (by norm_num)
 
 /-- The neutral density as the Green's function of mutations entering at frequency `1/10`. -/
 example (θ : ℝ) : prfDensity θ 0 (1 / 2) = θ / (2 * (1 / 10)) * neutralGreen (1 / 10) (1 / 2) :=
@@ -57,12 +59,29 @@ example (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
   forward_prfDensity 3 (-2) hx
 
 example : Tendsto (fun y => y * (1 - y) * prfDensity 3 5 y) (𝓝[>] 0) (𝓝 3) :=
-  tendsto_flux_prfDensity_zero 3 5
+  tendsto_weighted_prfDensity_zero 3 5
 
 example : Tendsto (fun y => y * (1 - y) * prfDensity 3 5 y) (𝓝[<] 1) (𝓝 0) :=
-  tendsto_flux_prfDensity_one 3 5
+  tendsto_weighted_prfDensity_one 3 5
 
-/-- The ODE characterization pins down the neutral density: a density whose flux is the line
+/-- The neutral probability current is `θ / 2`, not the boundary value `θ` of the weighted
+density. -/
+example (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
+    0 * (x * (1 - x) * prfDensity 3 0 x) -
+      deriv (fun y => y * (1 - y) * prfDensity 3 0 y) x / 2 = 3 / 2 := by
+  rw [current_prfDensity 3 0 hx]
+  simp [kimuraSlope]
+
+/-- With selection the current is `θ σ / (1 - e^{-2σ})`. -/
+example (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
+    5 * (x * (1 - x) * prfDensity 3 5 x) -
+      deriv (fun y => y * (1 - y) * prfDensity 3 5 y) x / 2 = 3 * 5 / (1 - exp (-2 * 5)) := by
+  rw [current_prfDensity 3 5 hx]
+  simp only [kimuraSlope, show (5 : ℝ) ≠ 0 by norm_num, ↓reduceIte]
+  ring
+
+/-- The ODE characterization pins down the neutral density: a density whose weighted density
+is the line
 `F(x) = θ (1 - x)` is `θ / x`. -/
 example (θ : ℝ) (hθ : θ ≠ 0) (φ : ℝ → ℝ) (hφ : ∀ x ∈ Ioo (0 : ℝ) 1, θ * (1 - x) = x * (1 - x) * φ x)
     (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) : φ x = θ / x := by

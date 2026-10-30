@@ -25,8 +25,8 @@ sites whose derived-allele frequency lies in `(x, x + dx)` is Poisson with mean 
 Writing `φ(x) = θ · u_σ(1 - x) / (x (1 - x))` with Kimura's fixation probability `u_σ`
 (`kimuraFixation`) covers both cases at once. Sampling `n` gene copies, the expected number of
 sites at which exactly `i` copies carry the derived allele (the unfolded site-frequency
-spectrum) is `E ξ_i = ∫ x in 0..1, C(n, i) x ^ i (1 - x) ^ (n - i) φ(x)`; in the neutral case
-it is `θ / i` (Fu 1995).
+spectrum) is `E ξ_i = ∫ x in 0..1, C(n, i) x ^ i (1 - x) ^ (n - i) φ(x)` for the segregating
+classes `1 ≤ i < n`; in the neutral case it is `θ / i` (Fu 1995).
 
 The Poisson-process construction itself is not formalized; the statements are the analytic
 facts about `φ` and `E ξ_i`.
@@ -37,12 +37,19 @@ facts about `φ` and `E ξ_i`.
 * `prfDensity_of_ne_zero`, `prfDensity_zero`: the explicit formulas.
 * `prfDensity_zero_eq_neutralGreen`: the neutral density is `θ / (2p) · G(p, x)` for `x ≥ p`,
   the sojourn density of mutations entering at frequency `p`.
-* `forward_prfDensity`: the flux `F(x) = x (1 - x) φ(x)` solves the stationary forward
-  (Fokker–Planck) equation `½ F'' - σ F' = 0` on `(0, 1)`, with boundary values
-  `F(0⁺) = θ` (influx of new mutations) and `F(1⁻) = 0` (`tendsto_flux_prfDensity_zero`,
-  `tendsto_flux_prfDensity_one`).
-* `eq_prfDensity_of_forward`: these conditions characterize `φ` on `(0, 1)`.
-* `expectedSFS_neutral`: `E ξ_i = θ / i` for `σ = 0` and `1 ≤ i ≤ n`.
+* `forward_prfDensity`: the weighted density `F(x) = x (1 - x) φ(x)` solves the stationary
+  forward (Fokker–Planck) equation `½ F'' - σ F' = 0` on `(0, 1)`, with boundary
+  normalizations `F(0⁺) = θ` and `F(1⁻) = 0` (`tendsto_weighted_prfDensity_zero`,
+  `tendsto_weighted_prfDensity_one`).
+* `current_prfDensity`: the probability current `J = σ F - F' / 2` of the forward equation is
+  the constant `θ · u_σ'(0) / 2 = θ σ / (1 - e^{-2σ})` on `(0, 1)` (`θ / 2` when `σ = 0`):
+  the rate at which mutant frequency enters at `0` and is carried to fixation at `1`.
+* `eq_prfDensity_of_forward`: the forward equation with these boundary normalizations
+  characterizes `φ` on `(0, 1)`.
+* `expectedSFS_neutral`: `E ξ_i = θ / i` for `σ = 0` and `1 ≤ i < n`.
+* `expectedSFS_neutral_self`: the same integral at `i = n` is `θ / n`; it counts sites at which
+  every sampled copy carries the derived allele, which are monomorphic in the sample and not part
+  of the site-frequency spectrum.
 
 ## References
 
@@ -97,25 +104,25 @@ theorem prfDensity_zero_eq_neutralGreen (θ : ℝ) {p x : ℝ} (hp : 0 < p) (hpx
     field_simp
   · field_simp
 
-/-- On `(0, 1)` the flux `x (1 - x) φ(x)` is `θ · u_σ(1 - x)`. -/
-private theorem flux_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+/-- On `(0, 1)` the weighted density `x (1 - x) φ(x)` is `θ · u_σ(1 - x)`. -/
+private theorem weighted_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     x * (1 - x) * prfDensity θ σ x = θ * kimuraFixation σ (1 - x) := by
   have h0 : x * (1 - x) ≠ 0 := mul_ne_zero hx.1.ne' (sub_pos.2 hx.2).ne'
   rw [prfDensity, mul_div_cancel₀ _ h0]
 
-private theorem flux_eventuallyEq (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+private theorem weighted_eventuallyEq (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     (fun y => y * (1 - y) * prfDensity θ σ y) =ᶠ[𝓝 x]
       fun y => θ * kimuraFixation σ (1 - y) :=
-  eventually_of_mem (isOpen_Ioo.mem_nhds hx) fun _ hy => flux_prfDensity θ σ hy
+  eventually_of_mem (isOpen_Ioo.mem_nhds hx) fun _ hy => weighted_prfDensity θ σ hy
 
-private theorem hasDerivAt_flux (θ σ y : ℝ) :
+private theorem hasDerivAt_weighted (θ σ y : ℝ) :
     HasDerivAt (fun y => θ * kimuraFixation σ (1 - y))
       (-(θ * kimuraSlope σ) * exp (-2 * σ * (1 - y))) y := by
   have h := ((hasDerivAt_kimuraFixation σ (1 - y)).comp y
     ((hasDerivAt_id' y).const_sub 1)).const_mul θ
   exact h.congr_deriv (by ring)
 
-/-- **Stationary forward equation (Sawyer–Hartl 1992).** On `(0, 1)` the flux
+/-- **Stationary forward equation (Sawyer–Hartl 1992).** On `(0, 1)` the weighted density
 `F(x) = x (1 - x) φ(x)` of the Poisson-random-field density solves the stationary
 Fokker–Planck equation `½ F'' - σ F' = 0` of the Wright–Fisher diffusion with genic selection
 `σ` (the forward equation `½ (x (1 - x) φ)'' - (σ x (1 - x) φ)' = 0`). -/
@@ -124,8 +131,8 @@ theorem forward_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) 
       σ * deriv (fun y => y * (1 - y) * prfDensity θ σ y) x = 0 := by
   have hD : deriv (fun y => y * (1 - y) * prfDensity θ σ y) =ᶠ[𝓝 x]
       fun y => -(θ * kimuraSlope σ) * exp (-2 * σ * (1 - y)) :=
-    (flux_eventuallyEq θ σ hx).deriv.trans
-      (Eventually.of_forall fun y => (hasDerivAt_flux θ σ y).deriv)
+    (weighted_eventuallyEq θ σ hx).deriv.trans
+      (Eventually.of_forall fun y => (hasDerivAt_weighted θ σ y).deriv)
   have h2 : HasDerivAt (fun y => -(θ * kimuraSlope σ) * exp (-2 * σ * (1 - y)))
       (-(θ * kimuraSlope σ) * (exp (-2 * σ * (1 - x)) * (2 * σ))) x := by
     refine HasDerivAt.const_mul _ ?_
@@ -134,9 +141,28 @@ theorem forward_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) 
   rw [hD.deriv_eq, h2.deriv, hD.eq_of_nhds]
   ring
 
-/-- **Influx boundary condition.** As `x → 0⁺` the flux `x (1 - x) φ(x)` tends to `θ`: new
-mutations enter the frequency space at the boundary `0` at the scaled rate `θ`. -/
-theorem tendsto_flux_prfDensity_zero (θ σ : ℝ) :
+/-- **Probability current.** On `(0, 1)` the current `J = σ F - F' / 2` of the stationary
+forward equation, for the weighted density `F(x) = x (1 - x) φ(x)`, is the constant
+`θ · u_σ'(0) / 2` (`u_σ'(0) = kimuraSlope σ = 2σ / (1 - e^{-2σ})`, and `1` for `σ = 0`), so
+`J = θ σ / (1 - e^{-2σ})`, and `J = θ / 2` in the neutral case: the mutational input of
+frequency at `0`, carried through `(0, 1)` to fixation at `1`. -/
+theorem current_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+    σ * (x * (1 - x) * prfDensity θ σ x) -
+      deriv (fun y => y * (1 - y) * prfDensity θ σ y) x / 2 = θ * kimuraSlope σ / 2 := by
+  rw [weighted_prfDensity θ σ hx, (weighted_eventuallyEq θ σ hx).deriv_eq,
+    (hasDerivAt_weighted θ σ x).deriv]
+  by_cases h : σ = 0
+  · subst h
+    simp [kimuraSlope]
+    ring
+  · have hd := one_sub_exp_ne_zero h
+    simp only [kimuraFixation, kimuraSlope, h, ↓reduceIte]
+    field_simp
+    ring
+
+/-- **Boundary normalization at `0`.** As `x → 0⁺` the weighted density `x (1 - x) φ(x)` tends
+to `θ`. (This is not the probability current, which is `current_prfDensity`.) -/
+theorem tendsto_weighted_prfDensity_zero (θ σ : ℝ) :
     Tendsto (fun y => y * (1 - y) * prfDensity θ σ y) (𝓝[>] 0) (𝓝 θ) := by
   have hc : Tendsto (fun y => θ * kimuraFixation σ (1 - y)) (𝓝[>] 0) (𝓝 θ) := by
     have hcont : Continuous fun y : ℝ => θ * kimuraFixation σ (1 - y) :=
@@ -144,10 +170,11 @@ theorem tendsto_flux_prfDensity_zero (θ σ : ℝ) :
     simpa using (hcont.tendsto 0).mono_left nhdsWithin_le_nhds
   refine hc.congr' ?_
   filter_upwards [Ioo_mem_nhdsGT (zero_lt_one' ℝ)] with y hy
-  exact (flux_prfDensity θ σ hy).symm
+  exact (weighted_prfDensity θ σ hy).symm
 
-/-- **Absorbing boundary condition.** As `x → 1⁻` the flux `x (1 - x) φ(x)` tends to `0`. -/
-theorem tendsto_flux_prfDensity_one (θ σ : ℝ) :
+/-- **Boundary normalization at `1`.** As `x → 1⁻` the weighted density `x (1 - x) φ(x)` tends
+to `0`. -/
+theorem tendsto_weighted_prfDensity_one (θ σ : ℝ) :
     Tendsto (fun y => y * (1 - y) * prfDensity θ σ y) (𝓝[<] 1) (𝓝 0) := by
   have hc : Tendsto (fun y => θ * kimuraFixation σ (1 - y)) (𝓝[<] 1) (𝓝 0) := by
     have hcont : Continuous fun y : ℝ => θ * kimuraFixation σ (1 - y) :=
@@ -155,13 +182,13 @@ theorem tendsto_flux_prfDensity_one (θ σ : ℝ) :
     simpa using (hcont.tendsto 1).mono_left nhdsWithin_le_nhds
   refine hc.congr' ?_
   filter_upwards [Ioo_mem_nhdsLT (zero_lt_one' ℝ)] with y hy
-  exact (flux_prfDensity θ σ hy).symm
+  exact (weighted_prfDensity θ σ hy).symm
 
 /-- **ODE characterization of the Poisson-random-field density.** Let `θ ≠ 0` and let `φ` be
-a density on `(0, 1)` whose flux `x (1 - x) φ(x)` extends to a function `F` continuous on
-`[0, 1]`, twice differentiable on `(0, 1)`, solving the stationary forward equation
-`½ F'' - σ F' = 0` there, with influx `F(0) = θ` and `F(1) = 0`. Then `φ` is the Sawyer–Hartl
-density on `(0, 1)`. -/
+a density on `(0, 1)` whose weighted density `x (1 - x) φ(x)` extends to a function `F`
+continuous on `[0, 1]`, twice differentiable on `(0, 1)`, solving the stationary forward
+equation `½ F'' - σ F' = 0` there, with boundary normalizations `F(0) = θ` and `F(1) = 0`.
+Then `φ` is the Sawyer–Hartl density on `(0, 1)`. -/
 theorem eq_prfDensity_of_forward {θ σ : ℝ} (hθ : θ ≠ 0) {φ F : ℝ → ℝ}
     (hF : ∀ x ∈ Ioo (0 : ℝ) 1, F x = x * (1 - x) * φ x) (hcont : ContinuousOn F (Icc 0 1))
     (hdiff : DifferentiableOn ℝ F (Ioo 0 1)) (hdiff' : DifferentiableOn ℝ (deriv F) (Ioo 0 1))
@@ -208,8 +235,11 @@ theorem eq_prfDensity_of_forward {θ σ : ℝ} (hθ : θ ≠ 0) {φ F : ℝ → 
 /-- The expected unfolded site-frequency spectrum of a sample of `n` gene copies under the
 Poisson random field: the expected number of sites where exactly `i` of the `n` sampled copies
 carry the derived allele, `E ξ_i = ∫ x in 0..1, C(n, i) x ^ i (1 - x) ^ (n - i) φ(x)`.
-Meaningful for `1 ≤ i ≤ n`: for `i = 0` the integrand is not integrable at `0` (the expected
-number of monomorphic sites is infinite) and Lean's integral returns its junk value `0`. -/
+The site-frequency spectrum consists of the segregating classes `1 ≤ i < n`. The value at
+`i = n` is the expected number of sites at which every sampled copy is derived (monomorphic in
+the sample, `expectedSFS_neutral_self`); for `i = 0` the integrand is not integrable at `0` (the
+expected number of ancestral-monomorphic sites is infinite) and Lean's integral returns its junk
+value `0`. -/
 noncomputable def expectedSFS (θ σ : ℝ) (n i : ℕ) : ℝ :=
   ∫ x in (0 : ℝ)..1, (n.choose i : ℝ) * x ^ i * (1 - x) ^ (n - i) * prfDensity θ σ x
 
@@ -240,9 +270,9 @@ private theorem integral_pow_mul_one_sub_pow (a b : ℕ) :
     field_simp
     ring
 
-/-- **Neutral site-frequency spectrum (Fu 1995).** With `σ = 0`, for `1 ≤ i ≤ n` the expected
-number of sites with `i` derived copies in a sample of `n` is `θ / i`. -/
-theorem expectedSFS_neutral (θ : ℝ) {n i : ℕ} (hi : 0 < i) (hin : i ≤ n) :
+/-- The neutral integral `∫₀¹ C(n, i) x ^ i (1 - x) ^ (n - i) θ / x dx = θ / i` for
+`1 ≤ i ≤ n`. -/
+private theorem expectedSFS_neutral_of_le (θ : ℝ) {n i : ℕ} (hi : 0 < i) (hin : i ≤ n) :
     expectedSFS θ 0 n i = θ / i := by
   obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
   obtain ⟨m, rfl⟩ : ∃ m, n = j + 1 + m := ⟨n - (j + 1), by omega⟩
@@ -271,5 +301,19 @@ theorem expectedSFS_neutral (θ : ℝ) {n i : ℕ} (hi : 0 < i) (hin : i ≤ n) 
     show j + m + 1 = j + 1 + m by ring, ← hc, Nat.factorial_succ j]
   push_cast
   field_simp
+
+/-- **Neutral site-frequency spectrum (Fu 1995).** With `σ = 0`, for the segregating classes
+`1 ≤ i < n` the expected number of sites with `i` derived copies in a sample of `n` is
+`θ / i`. -/
+theorem expectedSFS_neutral (θ : ℝ) {n i : ℕ} (hi : 0 < i) (hin : i < n) :
+    expectedSFS θ 0 n i = θ / i :=
+  expectedSFS_neutral_of_le θ hi hin.le
+
+/-- With `σ = 0` the expected number of sites at which all `n ≥ 1` sampled copies carry the
+derived allele is `θ / n`. These sites are monomorphic in the sample, so this is not a class of
+the site-frequency spectrum. -/
+theorem expectedSFS_neutral_self (θ : ℝ) {n : ℕ} (hn : 0 < n) :
+    expectedSFS θ 0 n n = θ / n :=
+  expectedSFS_neutral_of_le θ hn le_rfl
 
 end MathlibExt.Biology.PopulationGenetics.Diffusion
