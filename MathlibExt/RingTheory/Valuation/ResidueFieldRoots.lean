@@ -14,12 +14,19 @@ Portions of this file are adapted from:
 `Theorems/Thm_ValuationSubring_residue_injOn_pow_eq_one_and_exists_residue_eq_
 of_isAlgClosed.lean` and
 `P2M/Sol/S_ValuationSubring_residue_injOn_pow_eq_one_and_exists_residue_eq_of_isAlgClosed.lean`
-(fermats-last-theorem):
+in https://github.com/anthropics/fermats-last-theorem
+at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The upstream NOTICE also credits Mathlib as a whole:
+https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 module
@@ -27,9 +34,10 @@ module
 public import Mathlib.RingTheory.Valuation.LocalSubring
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
-public import Mathlib.Algebra.CharP.Algebra
-public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
+public import Mathlib.Algebra.Field.ZMod
+import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
+import Mathlib.Algebra.CharP.Algebra
+import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 
 /-!
 # Residue fields of valuation subrings
