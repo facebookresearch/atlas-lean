@@ -35,8 +35,10 @@ with probability `θ / (θ + k)`, and otherwise copies an earlier gene chosen un
 existing allele carried by `j` genes gains a copy with probability `j / (θ + k)`. On allelic
 partitions this is a Markov chain: from `π ⊢ k` it moves to `π + {1}` with probability
 `θ / (θ + k)`, and replaces one part `j` by `j + 1` with probability `j * a j / (θ + k)`.
-We formalize the urn directly as this chain on allelic partitions (`hoppeStep`, `hoppeLaw`);
-the reduction from the urn on individual genes to the chain on partitions is not formalized.
+We formalize the urn directly as this chain on allelic partitions (`hoppeStep`, `hoppeLaw`).
+The gene-level urn, the Chinese restaurant process on set partitions, is in
+`MathlibExt.Biology.PopulationGenetics.ChineseRestaurant`, which proves that its block sizes
+follow `hoppeLaw` (`crp_map_blockSizes_eq_hoppeLaw`).
 
 All results assume `θ > 0`. The definitions are total: for instance, for `θ = 0` and `n ≥ 1`
 the rising factorial vanishes and `ewensProb` returns Lean's junk value `0`.
