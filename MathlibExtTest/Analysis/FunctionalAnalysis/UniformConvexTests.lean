@@ -60,6 +60,21 @@ example : ∃! y, y ∈ Set.Icc (0 : ℝ) 1 ∧ ‖y - 2‖ = Metric.infDist 2 (
   rw [hfun, infDist_two_Icc]
   exact tendsto_const_nhds
 
+/-- Two nearest points supplied by an ordinary client are equal; neither point
+needs to be a limit of the minimizing sequence. -/
+example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] [StrictConvexSpace ℝ E] {K : Set E}
+    (hKconv : Convex ℝ K) (hKclosed : IsClosed K) {x : E} (u : ℕ → E)
+    (hu : ∀ n, u n ∈ K)
+    (hmin : Tendsto (fun n => ‖u n - x‖) atTop (𝓝 (Metric.infDist x K)))
+    {y z : E} (hyK : y ∈ K) (hynorm : ‖y - x‖ = Metric.infDist x K)
+    (hzK : z ∈ K) (hznorm : ‖z - x‖ = Metric.infDist x K) :
+    y = z := by
+  obtain ⟨_, _, huniq⟩ :=
+    exists_unique_nearestPoint_of_minimizingSequence_of_finiteDimensional
+      hKconv hKclosed u hu hmin
+  exact (huniq y ⟨hyK, hynorm⟩).trans (huniq z ⟨hzK, hznorm⟩).symm
+
 /-- A genuinely non-constant minimizing sequence for the distance from `2`
 to `[0, 1]`: `u n = 1 - (1 / 2) ^ n` lies in `[0, 1]` and its distance to
 `2` tends to `1`. The minimizing-sequence theorem says it converges to a

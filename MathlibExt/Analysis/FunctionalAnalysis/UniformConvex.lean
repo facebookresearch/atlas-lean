@@ -60,6 +60,15 @@ minimizing sequences converge in uniformly convex spaces. Pinned Mathlib has the
 `UniformConvexSpace` and `StrictConvexSpace` classes with the Hilbert-space
 instances, but no implication between them in finite dimensions.
 
+## References
+
+* J. A. Clarkson, “Uniformly convex spaces,” *Transactions of the American
+  Mathematical Society* **40** (1936), 396–414, for uniform convexity.
+* K. Goebel and W. A. Kirk, *Topics in Metric Fixed Point Theory*, Cambridge
+  University Press, 1990, for minimizing sequences in uniformly convex spaces
+  and the finite-dimensional compactness argument from strict to uniform
+  convexity.
+
 ## Main declarations
 
 * `uniformConvexSpace_of_finiteDimensional_strictConvexSpace` : strict
@@ -69,6 +78,9 @@ instances, but no implication between them in finite dimensions.
 * `exists_tendsto_of_minimizingSequence` : a minimizing sequence for the
   distance to a closed convex set in a complete uniformly convex space
   converges to a nearest point.
+* `exists_unique_nearestPoint_of_minimizingSequence_of_finiteDimensional` :
+  the nearest point is unique, independently of any convergence property of
+  a second nearest point.
 * `exists_unique_tendsto_of_minimizingSequence_of_finiteDimensional` :
   the finite-dimensional strictly convex form, with uniqueness.
 -/
@@ -319,19 +331,21 @@ theorem exists_tendsto_of_minimizingSequence {K : Set E} (hKconv : Convex ℝ K)
 end MinimizingSequence
 
 /-- In a finite-dimensional strictly convex space, a minimizing sequence for
-the distance to a closed convex set converges to the unique point of the
-set attaining that distance. -/
-theorem exists_unique_tendsto_of_minimizingSequence_of_finiteDimensional
+the distance to a closed convex set supplies a unique nearest point. The
+uniqueness clause only assumes that a second point belongs to the set and
+attains the distance; it does not assume that the minimizing sequence
+converges to that point. -/
+theorem exists_unique_nearestPoint_of_minimizingSequence_of_finiteDimensional
     [FiniteDimensional ℝ E] [StrictConvexSpace ℝ E] {K : Set E} (hKconv : Convex ℝ K)
     (hKclosed : IsClosed K) {x : E} (u : ℕ → E) (hu : ∀ n, u n ∈ K)
     (hmin : Tendsto (fun n => ‖u n - x‖) atTop (𝓝 (infDist x K))) :
-    ∃! y, y ∈ K ∧ ‖y - x‖ = infDist x K ∧ Tendsto u atTop (𝓝 y) := by
+    ∃! y, y ∈ K ∧ ‖y - x‖ = infDist x K := by
   have : UniformConvexSpace E :=
     uniformConvexSpace_of_finiteDimensional_strictConvexSpace
   have : CompleteSpace E := FiniteDimensional.complete ℝ E
-  obtain ⟨y, hyK, hynorm, hy⟩ := exists_tendsto_of_minimizingSequence hKconv hKclosed u hu hmin
-  refine ⟨y, ⟨hyK, hynorm, hy⟩, ?_⟩
-  intro z ⟨hzK, hznorm, _⟩
+  obtain ⟨y, hyK, hynorm, _⟩ := exists_tendsto_of_minimizingSequence hKconv hKclosed u hu hmin
+  refine ⟨y, ⟨hyK, hynorm⟩, ?_⟩
+  intro z ⟨hzK, hznorm⟩
   -- Uniqueness via the midpoint: if `z` is another nearest point, the
   -- midpoint of `y` and `z` lies in `K` and is at least as far from `x`,
   -- so the triangle inequality is an equality, and strict convexity
@@ -364,5 +378,26 @@ theorem exists_unique_tendsto_of_minimizingSequence_of_finiteDimensional
     have hab : a = b :=
       eq_of_norm_eq_of_norm_add_eq (by rw [hynorm, hznorm]) hsum
     exact (sub_left_inj.1 hab).symm
+
+/-- In a finite-dimensional strictly convex space, a minimizing sequence for
+the distance to a closed convex set converges to the unique point of the
+set attaining that distance. This preserves the original combined API as a
+corollary of nearest-point uniqueness and minimizing-sequence convergence. -/
+theorem exists_unique_tendsto_of_minimizingSequence_of_finiteDimensional
+    [FiniteDimensional ℝ E] [StrictConvexSpace ℝ E] {K : Set E} (hKconv : Convex ℝ K)
+    (hKclosed : IsClosed K) {x : E} (u : ℕ → E) (hu : ∀ n, u n ∈ K)
+    (hmin : Tendsto (fun n => ‖u n - x‖) atTop (𝓝 (infDist x K))) :
+    ∃! y, y ∈ K ∧ ‖y - x‖ = infDist x K ∧ Tendsto u atTop (𝓝 y) := by
+  have : UniformConvexSpace E :=
+    uniformConvexSpace_of_finiteDimensional_strictConvexSpace
+  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  obtain ⟨y, hyK, hynorm, hy⟩ :=
+    exists_tendsto_of_minimizingSequence hKconv hKclosed u hu hmin
+  obtain ⟨_, _, huniq⟩ :=
+    exists_unique_nearestPoint_of_minimizingSequence_of_finiteDimensional
+      hKconv hKclosed u hu hmin
+  refine ⟨y, ⟨hyK, hynorm, hy⟩, ?_⟩
+  intro z hz
+  exact (huniq z ⟨hz.1, hz.2.1⟩).trans (huniq y ⟨hyK, hynorm⟩).symm
 
 end MathlibExt.Analysis.FunctionalAnalysis.UniformConvex
