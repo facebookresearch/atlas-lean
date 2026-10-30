@@ -33,8 +33,12 @@ Let the network have deficiency zero.
   mass-action system have a positive equilibrium.
 
 Feinberg's theorem also asserts that the equilibrium in the weakly reversible case is complex
-balanced and locally asymptotically stable, and the second part holds for arbitrary kinetics;
-those parts are not stated here.
+balanced (stated here as `exists_pos_isComplexBalanced`) and locally asymptotically stable, and
+the second part holds for arbitrary kinetics; stability and general kinetics are not stated
+here. The reaction networks, the stoichiometric subspace, the mass-action vector field and
+complex balancing are defined in `MathlibExt.Biology.Dynamics.ComplexBalanced`, which also
+proves the Horn–Jackson theorem: given one positive complex-balanced equilibrium, each positive
+stoichiometric compatibility class contains exactly one positive equilibrium.
 
 Sources: M. Feinberg, "Chemical reaction network structure and the stability of complex
 isothermal reactors — I. The deficiency zero and deficiency one theorems", Chem. Eng. Sci. 42
@@ -48,27 +52,18 @@ Mech. Anal. 49 (1972) 187–194; M. Feinberg, *Foundations of Chemical Reaction 
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Biology.Dynamics.ComplexBalanced
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.LinearAlgebra.Dimension.Finrank
-public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Logic.Relation
-public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 
-namespace MathlibExt.Biology.Dynamics.DeficiencyZeroWanted
+-- The extension declarations live in the namespace of `ReactionNetwork` so that dot notation
+-- (`N.deficiency`) resolves.
+namespace MathlibExt.Biology.Dynamics.ComplexBalanced
 
 variable {S ρ : Type*}
-
-/-- A chemical reaction network on the species `S` with reactions indexed by `ρ`: reaction `r`
-turns the source complex `src r` into the product complex `prod r` (stoichiometric
-coefficients). -/
-structure ReactionNetwork (S ρ : Type*) where
-  /-- The source (reactant) complex of each reaction. -/
-  src : ρ → S → ℕ
-  /-- The product complex of each reaction. -/
-  prod : ρ → S → ℕ
 
 namespace ReactionNetwork
 
@@ -92,10 +87,6 @@ def linkageGraph : SimpleGraph N.complexes :=
 noncomputable def numLinkageClasses : ℕ :=
   Nat.card N.linkageGraph.ConnectedComponent
 
-/-- The stoichiometric subspace: the span of the reaction vectors `prod r - src r`. -/
-def stoichiometricSubspace : Submodule ℝ (S → ℝ) :=
-  Submodule.span ℝ (Set.range fun r s => (N.prod r s : ℝ) - N.src r s)
-
 /-- The deficiency `δ = n - ℓ - s` (number of complexes, linkage classes, dimension of the
 stoichiometric subspace). -/
 noncomputable def deficiency : ℤ :=
@@ -107,11 +98,15 @@ reactions from `y'` back to `y`. -/
 def IsWeaklyReversible : Prop :=
   ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
 
-/-- The mass-action vector field with rate constants `k`:
-`x ↦ ∑_r k r (∏_s x_s ^ (src r s)) (prod r - src r)`. -/
-noncomputable def massActionField [Fintype S] [Fintype ρ] (k : ρ → ℝ) (x : S → ℝ) :
-    S → ℝ :=
-  fun s => ∑ r, k r * (∏ s', x s' ^ N.src r s') * ((N.prod r s : ℝ) - N.src r s)
+/-- **Horn–Feinberg: complex balancing for every choice of rate constants.** A weakly
+reversible mass-action network of deficiency zero has, for any positive rate constants, a
+positive complex-balanced equilibrium. Together with
+`existsUnique_equilibrium_of_isComplexBalanced` this gives `existsUnique_equilibrium`.
+
+Source: Horn (1972); Feinberg (1972); Feinberg (1987). -/
+theorem_wanted exists_pos_isComplexBalanced [Fintype S] [Fintype ρ] (hδ : N.deficiency = 0)
+    (hwr : N.IsWeaklyReversible) {k : ρ → ℝ} (hk : ∀ r, 0 < k r) :
+    ∃ c : S → ℝ, (∀ s, 0 < c s) ∧ N.IsComplexBalanced k c
 
 /-- **Deficiency-zero theorem, weakly reversible case.** A weakly reversible mass-action
 network of deficiency zero has, for any positive rate constants, exactly one equilibrium in
@@ -136,4 +131,4 @@ theorem_wanted not_exists_positive_equilibrium [Fintype S] [Fintype ρ]
 
 end ReactionNetwork
 
-end MathlibExt.Biology.Dynamics.DeficiencyZeroWanted
+end MathlibExt.Biology.Dynamics.ComplexBalanced
