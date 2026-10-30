@@ -40,10 +40,12 @@ Hilbert-space material of
 72 v1 targets, and it is not in the pinned Mathlib or in base
 MathlibExt: Mathlib has the Baire theorem and the Banach–Steinhaus
 theorem, but no notion of a hypercyclic operator. Classical reference:
-G. Godefroy and J. H. Shapiro, "Operators with dense, invariant,
-cyclic vector manifolds", *J. Funct. Anal.* 98 (1991), 229–269 (the
-criterion); see also F. Bayart and É. Matheron, *Dynamics of Linear
-Operators*, Cambridge University Press, 2009, Theorem 1.6.
+C. Kitai, "Invariant closed sets for linear operators", Ph.D. thesis,
+University of Toronto, 1982, and R. M. Gethner and J. H. Shapiro,
+"Universal vectors for operators on spaces of holomorphic functions",
+*Proc. Amer. Math. Soc.* 100 (1987), 281–288. See also F. Bayart and
+É. Matheron, *Dynamics of Linear Operators*, Cambridge University Press,
+2009, Chapter 1.
 
 ## Main declarations
 
