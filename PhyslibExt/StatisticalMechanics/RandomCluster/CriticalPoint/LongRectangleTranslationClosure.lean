@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import
-    PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusPushforward
+public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusPushforward
 
 /-!
 # Translation closure of thin crossings and a counterexample

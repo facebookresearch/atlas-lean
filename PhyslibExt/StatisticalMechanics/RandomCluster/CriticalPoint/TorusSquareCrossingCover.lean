@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import
-    PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCounterexample
+public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCounterexample
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LeftFillInteriorArc
 public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
 
