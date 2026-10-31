@@ -14,6 +14,24 @@ namespace TensorNetwork
 
 open Finset
 
+inductive UnorderedTwo
+  | first
+  | second
+  deriving DecidableEq
+
+instance : Fintype UnorderedTwo :=
+  Fintype.ofList [.first, .second] (by intro x; cases x <;> simp)
+
+def unorderedLabeling : Matrix (UnorderedTwo × UnorderedTwo) (UnorderedTwo × UnorderedTwo) Nat :=
+  fun w w' => if w' = w then 1 else 0
+
+example : unorderedLabeling ∈ gridLabelings {0} {1} := by
+  rw [mem_gridLabelings]
+  intro w w'
+  by_cases h : w' = w
+  · simp [unorderedLabeling, h]
+  · simp [unorderedLabeling, h]
+
 private def sourceGridValue {ρ γ A : Type*} [Fintype ρ] [LinearOrder ρ]
     [Fintype γ] [LinearOrder γ] [Fintype A] [DecidableEq A]
     (R : Instance (ρ × γ) A)

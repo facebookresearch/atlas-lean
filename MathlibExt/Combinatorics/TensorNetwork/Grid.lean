@@ -51,7 +51,7 @@ def rectangleApply (G : A → A → A → A → ℤ)
     (ℓ (ω.1.2, ω.2.2) (ω.1.1, ω.2.1))
 
 /-- Directed grid labelings with independent finite choices on edges and diagonal entries. -/
-def gridLabelings [Fintype ρ] [LinearOrder ρ] [Fintype γ] [LinearOrder γ] [DecidableEq A]
+def gridLabelings [Fintype ρ] [Fintype γ] [DecidableEq (ρ × γ)] [DecidableEq A]
     (labels diagonalLabels : Finset A) : Finset (Matrix (ρ × γ) (ρ × γ) A) :=
   (Fintype.piFinset fun w =>
     Fintype.piFinset fun w' => if w' = w then diagonalLabels else labels).map
@@ -59,7 +59,7 @@ def gridLabelings [Fintype ρ] [LinearOrder ρ] [Fintype γ] [LinearOrder γ] [D
 
 /-- Membership in `gridLabelings` means precisely that diagonal and edge coordinates use their
 respective finite choice sets. -/
-@[simp] theorem mem_gridLabelings [Fintype ρ] [LinearOrder ρ] [Fintype γ] [LinearOrder γ]
+@[simp] theorem mem_gridLabelings [Fintype ρ] [Fintype γ] [DecidableEq (ρ × γ)]
     [DecidableEq A]
     (labels diagonalLabels : Finset A) (ℓ : Matrix (ρ × γ) (ρ × γ) A) :
     ℓ ∈ gridLabelings labels diagonalLabels ↔
@@ -185,8 +185,8 @@ private theorem symmIndicator_eq_gridIndicators [Fintype ρ] [LinearOrder ρ]
       Matrix.isSymm_prod_iff
     simp [hs, hr, hc, hd]
 
-private theorem gridLabelings_singleton [Fintype ρ] [LinearOrder ρ]
-    [Fintype γ] [LinearOrder γ] [DecidableEq A] (labels : Finset A) (default : A) :
+private theorem gridLabelings_singleton [Fintype ρ] [Fintype γ] [DecidableEq (ρ × γ)]
+    [DecidableEq A] (labels : Finset A) (default : A) :
     gridLabelings (ρ := ρ) (γ := γ) labels {default} =
       (Fintype.piFinset fun w : ρ × γ =>
         Fintype.piFinsetOn (fun w' => w' ≠ w) (fun _ => labels) default).map
