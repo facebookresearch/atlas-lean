@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
@@ -32,7 +32,8 @@ clusters are unchanged.
 ## ii. Key results
 
 - `bc9_cutCluster_survives_infinite` : infinite cut clusters survive forcing.
-- `bc9_cutCluster_eq_of_originIncident` : forcing at the origin leaves cut clusters unchanged.
+- `StatMech.Walls.bc8_cluster_forceOpen_eq` (in `RemoveForceCommute`) : forcing at the origin leaves
+  cut clusters unchanged.
 
 ## iii. Table of contents
 
@@ -140,13 +141,6 @@ lemma bc9_cut_survives_self
   bc9_cut_survives W ω hW hinf
 
 /-! ## C. Forcing at the origin -/
-
-lemma bc9_cutCluster_eq_of_originIncident
-    (F : Finset (Sym2 (Site d))) (ω : ConfigSpace (Sym2 (Site d)))
-    (hF : ∀ e ∈ F, (0 : Site d) ∈ e) (a : Site d) :
-    cluster d (removeSite (0 : Site d) (forceOpenFinset F ω)) a
-      = cluster d (removeSite (0 : Site d) ω) a :=
-  bc8_cluster_forceOpen_eq F ω hF a
 
 end Walls
 

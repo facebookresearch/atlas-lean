@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Exclusion
+public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateCrossings
 
 /-!
 # Common squares with connectors at all four sides

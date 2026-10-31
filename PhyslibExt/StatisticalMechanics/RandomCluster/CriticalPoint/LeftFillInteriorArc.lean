@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Probability.Percolation.RSW.BoxCrossing
 public import MathlibExt.Probability.Percolation.RSW.Defs
 public import MathlibExt.Probability.Percolation.RSW.SelfDuality

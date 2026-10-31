@@ -794,7 +794,7 @@ lemma wiredOuterInner_strictTranslationComparison
         WiredBoxLocalized.wiredOuterInnerTheta d q beta k := by
   intro x hx k hk hstrict
   apply wiredOuterInnerConn_le_theta_strict d n k x
-  · simpa [WiredBoxDifferential.mem_osssBoxFinset] using hx
+  · simpa [Percolation.mem_boxFinset] using hx
   · exact (Finset.mem_Icc.mp hk).1
   · exact hstrict
   · exact hq

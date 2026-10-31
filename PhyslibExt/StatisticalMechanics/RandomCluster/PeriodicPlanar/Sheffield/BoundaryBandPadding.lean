@@ -75,6 +75,9 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-! ## A. Uniform radii for finite families of sources -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 omit [Countable V] in
 /-- For a finite family of finite sources in the half-plane `x ≥ r`, one exhaustion radius makes
 each left-side exhaustion event `ε`-close to the corresponding half-plane boundary connection. -/
@@ -108,6 +111,9 @@ lemma PeriodicPlaneEmbedding.exists_common_leftBoundaryExhaustion_measureReal_gt
   · exact (hlocal i).2.trans_le (measureReal_mono
       (E.leftBoundaryExhaustionEvent_mono r (source i : Set V) hle))
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
 of translates of `S` in the half-plane `x ≥ r`, one radius `R` puts every translate in the box `[r,
 r + R] × [-R, R]` with left-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -167,6 +173,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_meas
   · rw [← hsourceSet i]
     linarith [(hradius i).2]
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
 of translates of `S` in the half-plane `x ≤ -r`, one radius `R` puts every translate in the box `[-r
 - R, -r] × [-R, R]` with right-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -238,6 +247,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_mea
     rw [E.axisNeg_leftBoundaryEvent] at hprob
     simpa only [neg_neg] using hprob
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
 of translates of `S` in the half-plane `y ≥ r`, one radius `R` puts every translate in the box `[-R,
 R] × [r, r + R]` with bottom-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -306,6 +318,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_me
     rw [E.axisSwap_leftBoundaryEvent] at hprob
     exact hprob
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- For an FKG, translation-invariant measure with a.s. unique infinite cluster and a finite family
 of translates of `S` in the half-plane `y ≤ -r`, one radius `R` puts every translate in the box
 `[-R, R] × [-r - R, -r]` with top-side connection probability `> P(S hits ∞)² - ε`. -/

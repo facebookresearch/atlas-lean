@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoxUpperLines
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction

@@ -44,7 +44,7 @@ in any ambient graph (`finite_cutHub_count_of_ambient`).
 
 open Finset Set SimpleGraph
 
-namespace StatMech.FrontierA
+namespace StatMech.FK.TriHex
 
 open StatMech.Walls StatMech.Percolation
 
@@ -316,4 +316,4 @@ lemma finite_cutHub_count_of_ambient
     _ ≤ targetSet.card := hcount
     _ ≤ boundary.card := htargetCard
 
-end StatMech.FrontierA
+end StatMech.FK.TriHex

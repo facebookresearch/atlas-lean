@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.MeasureTheory.Constructions.Cylinders
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RemoveSitePosition
 public import MathlibExt.Probability.CorrelationInequalities.DisjointOccurrence
 public import MathlibExt.Probability.CorrelationInequalities.ReimerCompression

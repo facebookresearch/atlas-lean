@@ -21,16 +21,16 @@ decay of crossing probabilities.
 ## i. Overview
 
 `cov_crossbox_uncond` gives the covariance lower bound for the crossing of a box under a product
-weight, under the geometric embedding hypotheses. `osss_subcritical_decay_uncond` integrates the
-differential inequality from supplied covariance and Russo bounds. `osss_crossing_decay_uncond` is
-CONDITIONAL on the connection comparison `hcompu` (and its companions), which bounds revealment by
-the supplied connection function `μ`. The `_uncond` suffix is misleading; a rename is proposed.
+weight, under the geometric embedding hypotheses. `osss_subcritical_decay_of_bounds` integrates the
+differential inequality from supplied covariance and Russo bounds.
+`osss_crossing_decay_of_connComparison` is conditional on the connection comparison `hcompu` (and
+its companions), which bounds revealment by the supplied connection function `μ`.
 
 ## ii. Key results
 
 - `cov_crossbox_uncond`: covariance lower bound for box crossings (geometric hypotheses only).
-- `osss_crossing_decay_uncond`: exponential decay, conditional on the connection comparison
-  `hcompu`.
+- `osss_crossing_decay_of_connComparison`: exponential decay, conditional on the connection
+  comparison `hcompu`.
 
 ## iii. Table of contents
 
@@ -169,7 +169,7 @@ lemma theta_mul_one_sub_ge_of_bounded {θ κ : ℝ} (hθnn : 0 ≤ θ) (hθub : 
     θ * κ ≤ θ * (1 - θ) :=
   mul_le_mul_of_nonneg_left (by linarith) hθnn
 
-lemma osss_subcritical_decay_uncond (n : ℕ) (c₀ cR D κ : ℝ) (a b : ℝ) (hab : a < b)
+lemma osss_subcritical_decay_of_bounds (n : ℕ) (c₀ cR D κ : ℝ) (a b : ℝ) (hab : a < b)
     (hD : 0 < D) (hcR : 0 < cR) (hc₀ : 0 < c₀) (hn : 1 ≤ n) (hκ : 0 < κ)
     (θn θn' S : ℝ → ℝ)
     (hd : ∀ x ∈ Icc a b, HasDerivAt θn (θn' x) x)
@@ -199,7 +199,7 @@ lemma osss_subcritical_decay_uncond (n : ℕ) (c₀ cR D κ : ℝ) (a b : ℝ) (
   exact hfin.2.1
 
 open Classical in
-lemma osss_crossing_decay_uncond {n : ℕ} (hn : 1 ≤ n)
+lemma osss_crossing_decay_of_connComparison {n : ℕ} (hn : 1 ≤ n)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
     (hadj : ∀ e, (hypercubicLattice d).Adj (endU e) (endV e))
@@ -252,7 +252,7 @@ lemma osss_crossing_decay_uncond {n : ℕ} (hn : 1 ≤ n)
       (hcompu x) (hcompv x) c₀ hc₀.le (hc₀le x)
     rw [hθndef, hScov x hx, hDeq x hx]
     exact hbase
-  exact osss_subcritical_decay_uncond n c₀ cR Dval κ a b hab hDpos hcR hc₀ hn hκ
+  exact osss_subcritical_decay_of_bounds n c₀ cR Dval κ a b hab hDpos hcR hc₀ hn hκ
     θn θn' S hd hcov hRusso hθnn hθub hθa hθb
 
 end Lattice

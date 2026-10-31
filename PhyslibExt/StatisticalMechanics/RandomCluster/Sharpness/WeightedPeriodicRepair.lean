@@ -365,7 +365,7 @@ theorem weightedPhaseOffCentreStrict_of_covariant
   intro x hx k hk hkn
   apply weightedOuterInnerConn_le_phase_strict
     d n k x _ hk hkn J hJ phase phaseJ hcov q beta hq hbeta
-  simpa [mem_osssBoxFinset] using hx
+  simpa [Percolation.mem_boxFinset] using hx
 
 lemma periodicWeightedNestedDominationStrict_of_covariant
     (d n : Nat) {P : Type*}

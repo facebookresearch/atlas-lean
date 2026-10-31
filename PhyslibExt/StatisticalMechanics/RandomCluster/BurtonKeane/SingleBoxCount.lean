@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnCoarseInfiniteCluster
 
 /-!
@@ -120,10 +121,10 @@ lemma bc82_cardinal_verdict (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProb
       bc61_coarseTcount ω L R = (boxFinsetBK d R).card) ∧
     ((μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0) → bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters d ω = ⊤} = 0) := by
-  refine ⟨fun R => bc77_expected_count μ hinv L R, ?_, ?_, ?_⟩
+  refine ⟨fun R => bc62_coarse_expectation μ hinv L R, ?_, ?_, ?_⟩
   · intro ω R h; exact bc73_covering ω L R h
   · intro ω R hall; exact bc82_coarseTcount_eq_volume_of_all_trif ω L R hall
-  · intro h0 hexist; exact bc79_bk_from_leaf μ hd L hinv h0 hexist
+  · intro h0 hexist; exact bc78_bk_closed μ hd L hinv h0 hexist
 
 /-! ## B. Summary -/
 
@@ -150,10 +151,10 @@ lemma bc82_status :
       μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0 → bc61_CoarseTrifExistence μ L →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · intro μ L R hinv; exact bc77_expected_count μ hinv L R
+  · intro μ L R hinv; exact bc62_coarse_expectation μ hinv L R
   · intro ω L R h; exact bc73_covering ω L R h
   · intro ω L R hall; exact bc82_singleBox_gives_no_count_bound ω L R hall
   · intro L hL; exact (bc82_borelCantelli_route_fails hL).2.2
-  · intro μ _ L hinv h0 hexist; exact bc79_bk_from_leaf μ (by norm_num) L hinv h0 hexist
+  · intro μ _ L hinv h0 hexist; exact bc78_bk_closed μ (by norm_num) L hinv h0 hexist
 
 end StatMech.Walls

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoxUpperLines
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
 

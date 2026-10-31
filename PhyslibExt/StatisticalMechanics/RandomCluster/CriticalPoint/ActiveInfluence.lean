@@ -8,7 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Topology.Algebra.Module.ModuleTopology
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveRussoHamming
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
 

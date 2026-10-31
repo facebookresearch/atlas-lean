@@ -41,11 +41,11 @@ Headline fidelity:
   `path_sources_of_canonical_toggle` (the source condition is automatic for a canonical toggle)
   are proved for every `CompleteBondwiseSelectorSpec`.
 - The canonical toggle cannot exist when the active identity fails
-  (`not_toggleExists_of_clearedP2_ne`), and it forces an empty toggle source when the right pair
-  event is toggle invariant (`stepToggleSource_eq_empty_of_right_invariant`) or when the active
+  (`not_toggleExists_of_activeIdentity_ne`), and it forces an empty toggle source when the right
+  pair event is toggle invariant (`stepToggleSource_eq_empty_of_right_invariant`) or when the active
   head event is local outside the cut (`stepToggleSource_eq_empty_of_activeHead_outsideCut`,
-  `not_activeHead_outsideCut_of_toggleSource_ne_empty`). No canonical toggle is constructed for
-  any selector; it is a form of the backbone chain rule (P2).
+  `not_activeHead_outsideCut_of_toggleSource_ne_empty`). No canonical toggle is constructed for any
+  selector; it is a form of the backbone chain rule (P2).
 
 ## ii. Key results
 
@@ -55,7 +55,7 @@ Headline fidelity:
   certificate (conditional)
 - `CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists` : canonical
   certificates exist iff canonical toggles exist
-- `CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne`,
+- `CompleteBondwiseSelectorSpec.not_toggleExists_of_activeIdentity_ne`,
   `CompleteBondwiseSelectorSpec.not_activeHead_outsideCut_of_toggleSource_ne_empty` :
   obstructions to canonical toggles
 
@@ -1036,7 +1036,7 @@ theorem CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExi
       beta J d s ss hs h⟩
 
 /-- If the active cut resummation identity fails, no canonical pair toggle exists. -/
-lemma CompleteBondwiseSelectorSpec.not_toggleExists_of_clearedP2_ne
+lemma CompleteBondwiseSelectorSpec.not_toggleExists_of_activeIdentity_ne
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)

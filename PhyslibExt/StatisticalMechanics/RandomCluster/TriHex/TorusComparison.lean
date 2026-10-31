@@ -80,7 +80,7 @@ noncomputable def triHexTorusDefectWeightedDualPartitionSum
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
     FK.fkWeight (hexagonalTorusGraph L) pDual q
         (triHexTorusDualConfig L omega) *
-      q ^ triHexTorusDefect L
+      q ^ triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega)
 
 /-- Unnormalized triangular expectation of `F` of the dual configuration. -/
@@ -108,7 +108,7 @@ noncomputable def triHexTorusDefectWeightedDualNumerator
     F (triHexTorusDualConfig L omega) *
       FK.fkWeight (hexagonalTorusGraph L) pDual q
         (triHexTorusDualConfig L omega) *
-      q ^ triHexTorusDefect L
+      q ^ triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega)
 
 /-! ## B. Bounds on the topological weight -/
@@ -117,9 +117,9 @@ lemma triHexTorus_topologicalCorrection_bounds
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {q : ℝ} (hq : 1 ≤ q) :
-    1 ≤ q ^ triHexTorusDefect L
+    1 ≤ q ^ triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega) ∧
-      q ^ triHexTorusDefect L
+      q ^ triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) omega) ≤ q ^ 2 := by
   rcases triHexTorusDefect_openSub_classified L omega with h | h | h
   · rw [h]
@@ -138,7 +138,7 @@ lemma triHexTorus_topologicalCorrection_log_bound
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {q : ℝ} (hq : 1 ≤ q) :
-    |Real.log (q ^ triHexTorusDefect L
+    |Real.log (q ^ triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega))| ≤
       2 * Real.log q := by
   have hlog : 0 ≤ Real.log q := Real.log_nonneg hq
@@ -162,7 +162,7 @@ noncomputable def triHexTorusTopologicalCorrectionLogDensity
     (n : ℕ) : ℝ := by
   let L := n + 3
   letI : Fact (2 < L) := ⟨by simp [L]⟩
-  exact |Real.log (q ^ triHexTorusDefect L
+  exact |Real.log (q ^ triHexTorusEulerDefect L
     (FK.openSub (triangularTorusGraph L) (omega L)))| / (L ^ 2 : ℕ)
 
 /-- The topological correction per site vanishes in the thermodynamic limit. -/
@@ -190,7 +190,7 @@ lemma triHexTorus_topologicalCorrection_logDensity_tendsto_zero
     unfold triHexTorusTopologicalCorrectionLogDensity
     dsimp only
     calc
-      |Real.log (q ^ triHexTorusDefect L
+      |Real.log (q ^ triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) (omega L)))| /
             ((L ^ 2 : ℕ) : ℝ) ≤ C / ((L ^ 2 : ℕ) : ℝ) :=
         div_le_div_of_nonneg_right hlog hden0
@@ -272,11 +272,11 @@ theorem triHexTorus_partition_duality_defectWeighted
           (FK.fkWeight (hexagonalTorusGraph L)
               (BeffaraDC.dualParam p q) q
               (triHexTorusDualConfig L omega) *
-            q ^ triHexTorusDefect L
+            q ^ triHexTorusEulerDefect L
               (FK.openSub (triangularTorusGraph L) omega)) := by
         apply Finset.sum_congr rfl
         intro omega homega
-        have h := triHexTorus_fkWeight_duality_signed L omega hp hp1 hq
+        have h := triHexTorus_fkWeight_duality L omega hp hp1 hq
         linarith
     _ = (p / (1 - BeffaraDC.dualParam p q)) ^
           (triangularTorusGraph L).edgeFinset.card *
@@ -285,7 +285,7 @@ theorem triHexTorus_partition_duality_defectWeighted
           FK.fkWeight (hexagonalTorusGraph L)
               (BeffaraDC.dualParam p q) q
               (triHexTorusDualConfig L omega) *
-          q ^ triHexTorusDefect L
+          q ^ triHexTorusEulerDefect L
               (FK.openSub (triangularTorusGraph L) omega)) := by
       rw [Finset.mul_sum]
 
@@ -318,11 +318,11 @@ lemma triHexTorus_numerator_duality_defectWeighted
             FK.fkWeight (hexagonalTorusGraph L)
               (BeffaraDC.dualParam p q) q
               (triHexTorusDualConfig L omega) *
-            q ^ triHexTorusDefect L
+            q ^ triHexTorusEulerDefect L
               (FK.openSub (triangularTorusGraph L) omega)) := by
         apply Finset.sum_congr rfl
         intro omega homega
-        have h := triHexTorus_fkWeight_duality_signed L omega hp hp1 hq
+        have h := triHexTorus_fkWeight_duality L omega hp hp1 hq
         calc
           (F (triHexTorusDualConfig L omega) *
               FK.fkWeight (triangularTorusGraph L) p q omega) *
@@ -337,7 +337,7 @@ lemma triHexTorus_numerator_duality_defectWeighted
                 FK.fkWeight (hexagonalTorusGraph L)
                   (BeffaraDC.dualParam p q) q
                   (triHexTorusDualConfig L omega) *
-                q ^ triHexTorusDefect L
+                q ^ triHexTorusEulerDefect L
                   (FK.openSub (triangularTorusGraph L) omega)) := by rw [h]
           _ = (p / (1 - BeffaraDC.dualParam p q)) ^
                 (triangularTorusGraph L).edgeFinset.card *
@@ -346,7 +346,7 @@ lemma triHexTorus_numerator_duality_defectWeighted
                 FK.fkWeight (hexagonalTorusGraph L)
                   (BeffaraDC.dualParam p q) q
                   (triHexTorusDualConfig L omega) *
-                q ^ triHexTorusDefect L
+                q ^ triHexTorusEulerDefect L
                   (FK.openSub (triangularTorusGraph L) omega)) := by ring
     _ = (p / (1 - BeffaraDC.dualParam p q)) ^
           (triangularTorusGraph L).edgeFinset.card *
@@ -356,7 +356,7 @@ lemma triHexTorus_numerator_duality_defectWeighted
             FK.fkWeight (hexagonalTorusGraph L)
               (BeffaraDC.dualParam p q) q
               (triHexTorusDualConfig L omega) *
-            q ^ triHexTorusDefect L
+            q ^ triHexTorusEulerDefect L
               (FK.openSub (triangularTorusGraph L) omega)) := by
       rw [Finset.mul_sum]
 

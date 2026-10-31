@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangHarris
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 

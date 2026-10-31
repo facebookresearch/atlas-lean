@@ -49,7 +49,7 @@ exclusion from planar duality for embeddings with edge arcs bounded by `B`.
 
 Headline fidelity, read from the statements:
 
-- `PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_recursiveArray`,
+- `PeriodicPlanarDualPair.commonUnique_ne_one_of_recursiveArrayCertificate_imp`,
   `…_of_macroArray`, `…_of_boundaryScoreArray` : the free buffered infinite-volume FK measure
   does not give probability `1` to a common unique infinite primal and dual cluster. **The
   hypothesis `harray` is equivalent to the conclusion.** It reads "if the common uniqueness
@@ -75,7 +75,7 @@ Headline fidelity, read from the statements:
   conditional on FKG, translation invariance and almost sure uniqueness.
 - `PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps` : conditional on translation
   invariance, almost sure uniqueness and band families whose thresholds tend to `1`.
-- `exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds`
+- `fourShift_crossing_tendsto_one_of_coordBounds`
   : conditional on FKG, translation invariance, almost sure uniqueness and the placement
   hypotheses.
 - `uniform_cofinal_diagonal_below_growing_cutoff` : unconditional; it contains
@@ -2926,7 +2926,7 @@ namespace PeriodicPlaneEmbedding
 /-- Crossing bound for grids of four-shift templates placed outward from a common square, under FKG,
 translation invariance and an almost surely unique infinite cluster, with connector containment
 given by coordinate bounds. -/
-theorem exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds
+theorem fourShift_crossing_tendsto_one_of_coordBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -3244,7 +3244,7 @@ lemma PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate.false
 by `RecursiveRectangleArrayCertificate.false`, so `harray` says exactly that the common uniqueness
 event does not have probability `1`. This result only restates its hypothesis. -/
 theorem
-    PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_recursiveArray
+    PeriodicPlanarDualPair.commonUnique_ne_one_of_recursiveArrayCertificate_imp
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (harray :
@@ -3365,7 +3365,7 @@ lemma PeriodicPlanarDualPair.MacroArrayCertificate.false
 /-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
 by `MacroArrayCertificate.false`, so `harray` says exactly that the common uniqueness event does not
 have probability `1`. This result only restates its hypothesis. -/
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_macroArray
+theorem PeriodicPlanarDualPair.commonUnique_ne_one_of_macroArrayCertificate_imp
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (harray :
@@ -3708,7 +3708,7 @@ by `TwoLevelBoundaryScoreArray.false`, so `harray` says exactly that the common 
 does not have probability `1`. FKG of the measure is supplied by
 `freeBufferedInfiniteVolume_sheffieldData_of_common`. This result only restates its hypothesis. -/
 theorem
-PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_ne_one_of_boundaryScoreArray
+PeriodicPlanarDualPair.commonUnique_ne_one_of_boundaryScoreArray_imp
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (harray :

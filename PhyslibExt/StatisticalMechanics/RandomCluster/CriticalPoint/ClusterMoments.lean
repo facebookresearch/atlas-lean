@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.LinearAlgebra.AffineSpace.Slope
+public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import MathlibExt.Probability.Percolation.TreePercolation
 
 /-!

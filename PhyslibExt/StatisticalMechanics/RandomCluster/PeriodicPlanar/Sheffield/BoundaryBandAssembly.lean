@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryBandPadding
-public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Exclusion
+public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateCrossings
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepTemplateGridAssembly
 
 /-!
@@ -102,6 +102,9 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-! ## A. Centered and tangential boundary placements -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
 half-plane `x ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
 tangential coordinate, with left-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -177,6 +180,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_cent
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
 offsets in the half-plane `x ≥ r` and every choice of tangential translations, with left-side
 connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
@@ -235,6 +241,9 @@ lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialPla
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
 half-plane `x ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
 tangential coordinate, with right-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -306,6 +315,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_cen
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
 half-plane `y ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
 tangential coordinate, with bottom-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -377,6 +389,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_ce
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
 half-plane `y ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
 tangential coordinate, with top-side connection probability `> P(S hits ∞)² - ε`. -/
@@ -448,6 +463,9 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_cente
     rw [← htranslate] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
 offsets in the half-plane `x ≤ -r` and every choice of tangential translations, with right-side
 connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
@@ -500,6 +518,9 @@ lemma PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangentialPl
     rw [← ht] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
 offsets in the half-plane `y ≥ r` and every choice of tangential translations, with bottom-side
 connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
@@ -553,6 +574,9 @@ lemma PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentialP
     rw [← ht] at hp
     simpa only [add_zero, sub_eq_add_neg, add_comm] using hp
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
 offsets in the half-plane `y ≤ -r` and every choice of tangential translations, with top-side
 connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
@@ -2575,7 +2599,7 @@ structure PeriodicPlanarDualPair.TwoLevelRectangleArray
 
 /-- No-go lemma: a two-level rectangle array cannot exist, since the primal and dual crossing limits
 contradict planar duality. See also
-`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false`, which allows paddings of at least
+`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.elim`, which allows paddings of at least
 `4 * B`. -/
 lemma PeriodicPlanarDualPair.TwoLevelRectangleArray.false
     (D : PeriodicPlanarDualPair P Pdual)

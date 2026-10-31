@@ -62,7 +62,7 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
-open FrontierA
+open FK.TriHex
 
 /-! ## A. Terminal connectivity and local FK weights -/
 

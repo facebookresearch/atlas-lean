@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.OuterMeasure.AE
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLeafBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifUpperLines
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleBoxCount
@@ -63,13 +64,6 @@ variable {d : ℕ}
 
 /-! ## A. Expectation and probability zero -/
 
-/-- Same statement as `bc62_coarse_expectation`; kept because GenuineTrifAlmostSure uses it. -/
-lemma bc85_expectation_identity (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (L R : ℕ) :
-    ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
-      = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ :=
-  bc62_coarse_expectation μ hinv L R
-
 lemma bc85_prob_zero_of_count_forest (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
@@ -77,7 +71,7 @@ lemma bc85_prob_zero_of_count_forest (μ : Measure (ConfigSpace (Sym2 (Site d)))
     μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0 :=
   bc77_coarseTrif_prob_eq_zero_ae μ L
     (fun R => (2 * L + 1) ^ d * boxSV_boundaryCard d R)
-    (fun R => bc85_expectation_identity μ hinv L R)
+    (fun R => bc62_coarse_expectation μ hinv L R)
     (bc77_ae_bound_of_ae_forest μ L hforest_ae)
     (fun R => bkc_boxFinsetBK_card_pos d R)
     (bc73_const_boundary_vol_tendsto d hd L)
@@ -93,16 +87,6 @@ lemma bc85_exclude_infinite_N (μ : Measure (ConfigSpace (Sym2 (Site d))))
   rw [h0] at this
   exact lt_irrefl 0 this
 
-/-- Same statement as `bc78_infinitely_many_excluded`; kept because GenuineTrifAlmostSure uses it.
--/
-lemma bc85_dc_bootstrap (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hforest_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R)
-    (hexist : bc61_CoarseTrifExistence μ L) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc85_exclude_infinite_N μ L (bc85_prob_zero_of_count_forest μ hd L hinv hforest_ae) hexist
-
 lemma bc85_dc_step1_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
@@ -114,7 +98,7 @@ lemma bc85_dc_step1_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
       ∃ F : Finset (Sym2 (Site d)), 0 < μ (MergeWitness d F k)) :
     μ {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
   have htop : μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-    bc85_dc_bootstrap μ hd L hinv hforest_ae hexist
+    bc77_top_null_of_ae_forest μ hd L hinv hforest_ae hexist
   have hkne_top : ∀ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 → k ≠ ⊤ := by
     intro k hk hktop
     rw [hktop] at hk; rw [hk] at htop; exact one_ne_zero htop
@@ -123,20 +107,6 @@ lemma bc85_dc_step1_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
   exact infiniteCluster_unique_ae μ herg hmerge
 
 /-! ## B. Finite `N` -/
-
-lemma bc85_finiteN_iff_top_null (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] :
-    μ {ω | numInfiniteClusters d ω < ⊤} = 1 ↔ μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc79_finite_N_iff_top_null μ
-
-lemma bc85_count_on_finiteN_needs_le_one (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
-    (hN : numInfiniteClusters d ω ≤ 1) (h : bc61_IsCoarseTrifurcation ω L y) :
-    ∃ a₁ a₂ a₃ : Site d,
-      Connected d ω a₁ a₂ ∧ Connected d ω a₁ a₃ ∧ Connected d ω a₂ a₃ ∧
-      (¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ ∧
-       ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₃ ∧
-       ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₂ a₃) :=
-  bc81_coarseTrif_arms_connected_of_le_one ω L hN h
 
 lemma bc85_finiteN_not_enough_note {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
@@ -159,12 +129,6 @@ lemma bc85_bootstrap_noncircular_order (μ : Measure (ConfigSpace (Sym2 (Site d)
   intro h0 hexist
   exact bc85_exclude_infinite_N μ L h0 hexist
 
-/-- Same statement as `bc78_upperLines_isInfinitelyMany`; kept because GenuineTrifDensity uses it.
--/
-lemma bc85_upperLines_N_top :
-    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  bc60_numInfiniteClusters_top
-
 lemma bc85_circularity_verdict (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) :
@@ -173,9 +137,9 @@ lemma bc85_circularity_verdict (μ : Measure (ConfigSpace (Sym2 (Site d))))
     ((μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0) →
       ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R) ∧
     (μ {ω | numInfiniteClusters d ω < ⊤} = 1 ↔ μ {ω | numInfiniteClusters d ω = ⊤} = 0) := by
-  refine ⟨fun hforest_ae hexist => bc85_dc_bootstrap μ hd L hinv hforest_ae hexist, ?_, ?_⟩
+  refine ⟨fun hforest_ae hexist => bc77_top_null_of_ae_forest μ hd L hinv hforest_ae hexist, ?_, ?_⟩
   · intro h0; exact bc78_ae_forest_of_dichotomy μ L hinv h0
-  · exact bc85_finiteN_iff_top_null μ
+  · exact bc79_finite_N_iff_top_null μ
 
 lemma bc85_status :
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ] (L : ℕ),
@@ -199,13 +163,13 @@ lemma bc85_status :
     (numInfiniteClusters 2 bc60_upperLines = ⊤) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro μ _ L hinv hforest_ae hexist
-    exact bc85_dc_bootstrap μ (by norm_num) L hinv hforest_ae hexist
+    exact bc77_top_null_of_ae_forest μ (by norm_num) L hinv hforest_ae hexist
   · intro μ _ L herg hfe hinv hforest_ae hexist hmergeGeom
     exact bc85_dc_step1_uniqueness μ (by norm_num) L herg hfe hinv hforest_ae hexist hmergeGeom
-  · intro μ _; exact bc85_finiteN_iff_top_null μ
+  · intro μ _; exact bc79_finite_N_iff_top_null μ
   · intro ω L y hN h
-    obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, _⟩ := bc85_count_on_finiteN_needs_le_one ω L hN h
+    obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, _⟩ := bc81_coarseTrif_arms_connected_of_le_one ω L hN h
     exact ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃⟩
-  · exact bc85_upperLines_N_top
+  · exact bc60_numInfiniteClusters_top
 
 end StatMech.Walls

@@ -349,7 +349,7 @@ theorem weightedPhaseFiniteMeasure_tendsto_selected
       (zero_lt_one.trans_le hq) hbeta
   change xi = nu
   apply ProbabilityMeasure.toMeasure_injective
-  apply fkgqt_measure_eq_of_multiOpen_eq
+  apply measure_eq_of_multiOpen_eq
   intro T
   change (xi : Measure _) (cdc_multiOpenEvent T) =
     (nu : Measure _) (cdc_multiOpenEvent T)

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerGeneral
 
 /-!
@@ -44,7 +45,6 @@ statement, not a topological theorem: the defect is an input.
 
 open SimpleGraph Set
 
-
 namespace StatMech.BeffaraDC
 
 variable {V : Type*} [Finite V] [DecidableEq V]
@@ -62,10 +62,6 @@ structure IsTorusDefect (G : SimpleGraph V) (δ : ℕ) : Prop where
   le_two : δ ≤ 2
 
   le_nullity : δ ≤ nullity G
-
-omit [DecidableEq V] [Finite V] in
-lemma bet_torus_defect_le_two {G : SimpleGraph V} {δ : ℕ} (h : IsTorusDefect G δ) :
-    δ ≤ 2 := h.le_two
 
 omit [DecidableEq V] [Finite V] in
 lemma bet_torusFaceCount_pos {G : SimpleGraph V} {δ : ℕ} (h : IsTorusDefect G δ) :

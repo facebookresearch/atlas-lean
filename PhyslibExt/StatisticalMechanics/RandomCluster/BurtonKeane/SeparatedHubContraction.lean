@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedTrifContraction
 
@@ -215,6 +218,9 @@ def bc112_starRel (hd : 1 ≤ d) (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) 
   fun u v => ∃ y ∈ bc112_hubs ω L R, ∃ k ∈ bc112_shifts,
     (u = y ∧ v = bc112_leaf hd y k) ∨ (v = y ∧ u = bc112_leaf hd y k)
 
+-- `Symmetric` is deprecated in favor of `Std.Symm`. The `Symmetric` form is kept because the
+-- star-graph construction below consumes it; switching to `Std.Symm` breaks the build.
+set_option linter.deprecated false in
 lemma bc112_starRel_symm (hd : 1 ≤ d) (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     Symmetric (bc112_starRel hd ω L R) := by
   rintro u v ⟨y, hy, k, hk, h⟩
@@ -237,7 +243,7 @@ lemma bc112_leaf_ne_hub (hd : 1 ≤ d) {ω : ConfigSpace (Sym2 (Site d))} {L R :
   · subst hyz
     exact bc112_leaf_ne_centre hd y (bc112_shifts_ne_zero hk) h
   · have hleafbox : bc112_leaf hd y k ∈ bc61_boxAround d L y := bc112_leaf_mem_own_box hd hL y hk
-    have hzbox : z ∈ bc61_boxAround d L z := bc105_centre_mem_own_box L z
+    have hzbox : z ∈ bc61_boxAround d L z := bc72_y_mem_box L z
     have hdisj := bc112_hubs_boxes_disjoint hy hz hyz
     rw [h] at hleafbox
     exact (Finset.disjoint_left.mp hdisj hleafbox) hzbox

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DecoupledForestCount
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 
 /-!
 # Probability of a canonical trifurcation
@@ -53,16 +54,6 @@ variable {d : ℕ}
 
 /-! ## A. Measurability and shifts -/
 
-/-- Same statement as `measurableSet_clusterInfinite_removeSite`; kept because
-`CorridorCoverRouting` is
-not imported by all its users. -/
-lemma ctp_measurableSet_removeSiteClusterInfinite (x a : Site d) :
-    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite} := by
-  have heq : {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite}
-      = (fun ω => removeSite x ω) ⁻¹' {ω' | (cluster d ω' a).Infinite} := rfl
-  rw [heq]
-  exact (measurable_removeSite x) (measurableSet_clusterInfinite a)
-
 lemma ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
     MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | IsCanonicalTrifurcation d ω x} := by
   classical
@@ -98,9 +89,9 @@ lemma ctp_measurableSet_isCanonicalTrifurcation (x : Site d) :
   · exact ((StatMech.Percolation.measurableSet_openAdj x a₁).inter
       (StatMech.Percolation.measurableSet_openAdj x a₂)).inter
       (StatMech.Percolation.measurableSet_openAdj x a₃)
-  · exact ((ctp_measurableSet_removeSiteClusterInfinite x a₁).inter
-      (ctp_measurableSet_removeSiteClusterInfinite x a₂)).inter
-      (ctp_measurableSet_removeSiteClusterInfinite x a₃)
+  · exact ((DisjointPaths.measurableSet_clusterInfinite_removeSite x a₁).inter
+      (DisjointPaths.measurableSet_clusterInfinite_removeSite x a₂)).inter
+      (DisjointPaths.measurableSet_clusterInfinite_removeSite x a₃)
   · exact (((measurableSet_connected_removeSite x a₁ a₂).compl).inter
       ((measurableSet_connected_removeSite x a₁ a₃).compl)).inter
       ((measurableSet_connected_removeSite x a₂ a₃).compl)

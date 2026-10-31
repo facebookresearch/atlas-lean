@@ -23,13 +23,13 @@ For `L > 2` the triangular torus on `ZMod L × ZMod L` and the hexagonal torus o
 `(ZMod L × ZMod L) × Bool` have `3 L²` edges each, matched by `triHexTorusDualEdgeEquiv`. A
 triangular configuration `ω` has the dual configuration `triHexTorusDualConfig ω`, which opens a
 hexagonal edge exactly when its primal edge is closed. For a subgraph `K` the face count is the
-number of clusters of the dual of its open set, and `triHexTorusDefect K` is the integer by which
-Euler's formula `V - E + F = C + 1` fails (`triHexTorus_euler`); on a torus it records how the
+number of clusters of the dual of its open set, and `triHexTorusEulerDefect K` is the integer by
+which Euler's formula `V - E + F = C + 1` fails (`triHexTorus_euler`); on a torus it records how the
 open clusters wrap around the two cycles. The FK weights then satisfy
 
 `φ_{p,q}(ω) q^{E+1} = (p / (1 - p*))^E q^V φ_{p*,q}(ω*) q^{defect(ω)}`
 
-(`triHexTorus_fkWeight_duality_signed`), with `p* = dualParam p q`. Summing over configurations
+(`triHexTorus_fkWeight_duality`), with `p* = dualParam p q`. Summing over configurations
 of fixed defect gives sector-by-sector dualities of partition functions and expectations. All
 results are proved unconditionally for `0 < p < 1`, `0 < q`; the defect takes only the values
 `0, 1, 2` (proved in `TriHex.TorusDefectClassify`).
@@ -37,9 +37,9 @@ results are proved unconditionally for `0 < p < 1`, `0 < q`; the defect takes on
 ## ii. Key results
 
 - `triangularTorusGraph`, `hexagonalTorusGraph`, `triHexTorusDualEdgeEquiv`.
-- `triHexTorusDualConfig`, `triHexTorusFaceCount`, `triHexTorusDefect`.
+- `triHexTorusDualConfig`, `triHexTorusFaceCount`, `triHexTorusEulerDefect`.
 - `triHexTorus_euler` : Euler's formula with the defect correction.
-- `triHexTorus_fkWeight_duality_signed` : FK-weight duality.
+- `triHexTorus_fkWeight_duality` : FK-weight duality.
 - `triHexTorus_sectorSum_duality`, `triHexTorus_sectorNormalized_duality` : duality of
   fixed-defect sector sums and of their normalized expectations.
 
@@ -466,7 +466,7 @@ noncomputable def triHexTorusFaceCount (L : ℕ) [Fact (2 < L)]
     (triHexTorusDualConfig L (graphEdgeConfig K))).ConnectedComponent
 
 /-- The defect of `K` in Euler's formula on the torus, `E - V + C + 1 - F`. -/
-noncomputable def triHexTorusDefect (L : ℕ) [Fact (2 < L)]
+noncomputable def triHexTorusEulerDefect (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) : ℤ :=
   (K.edgeSet.ncard : ℤ) - Nat.card (TorusSite L) +
     Nat.card K.ConnectedComponent + 1 - triHexTorusFaceCount L K
@@ -476,8 +476,8 @@ theorem triHexTorus_euler (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) :
     (Nat.card (TorusSite L) : ℤ) - K.edgeSet.ncard +
         triHexTorusFaceCount L K =
-      Nat.card K.ConnectedComponent + 1 - triHexTorusDefect L K := by
-  unfold triHexTorusDefect
+      Nat.card K.ConnectedComponent + 1 - triHexTorusEulerDefect L K := by
+  unfold triHexTorusEulerDefect
   ring
 
 private lemma mem_openSub_edgeSet_iff
@@ -566,7 +566,7 @@ lemma triHexTorus_edge_card (L : ℕ) [Fact (2 < L)] :
 /-- Random-cluster duality on the triangular/hexagonal torus: the FK weight of `ω` equals that of
 the dual configuration at the dual parameter, up to explicit constants and the topological factor `q
 ^ defect`. -/
-theorem triHexTorus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
+theorem triHexTorus_fkWeight_duality (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkWeight (triangularTorusGraph L) p q omega *
@@ -576,7 +576,7 @@ theorem triHexTorus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
         q ^ Nat.card (TorusSite L) *
         FK.fkWeight (hexagonalTorusGraph L)
           (BeffaraDC.dualParam p q) q (triHexTorusDualConfig L omega) *
-        q ^ triHexTorusDefect L
+        q ^ triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) omega) := by
   let m := (triangularTorusGraph L).edgeFinset.card
   let o := FK.openCount (triangularTorusGraph L) omega
@@ -584,7 +584,7 @@ theorem triHexTorus_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
   let kd := Nat.card (FK.openSub (hexagonalTorusGraph L)
     (triHexTorusDualConfig L omega)).ConnectedComponent
   let v := Nat.card (TorusSite L)
-  let d := triHexTorusDefect L (FK.openSub (triangularTorusGraph L) omega)
+  let d := triHexTorusEulerDefect L (FK.openSub (triangularTorusGraph L) omega)
   have hom : o ≤ m := Finset.card_filter_le _ _
   have hedge := BeffaraDC.dlt_edgeProduct_duality hp hp1 hq m o hom
   have heuler : ((o + k + 1 : ℕ) : ℤ) = ((v + kd : ℕ) : ℤ) + d := by
@@ -645,7 +645,7 @@ noncomputable def triHexTorusPrimalSectorSum
     (L : ℕ) [Fact (2 < L)] (r : ℤ) (p q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
-    if triHexTorusDefect L
+    if triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega) = r then
       F (triHexTorusDualConfig L omega) *
         FK.fkWeight (triangularTorusGraph L) p q omega
@@ -657,7 +657,7 @@ noncomputable def triHexTorusDualSectorSum
     (L : ℕ) [Fact (2 < L)] (r : ℤ) (pDual q : ℝ)
     (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ) : ℝ :=
   ∑ omega : ConfigSpace (Sym2 (TorusSite L)),
-    if triHexTorusDefect L
+    if triHexTorusEulerDefect L
         (FK.openSub (triangularTorusGraph L) omega) = r then
       F (triHexTorusDualConfig L omega) *
         FK.fkWeight (hexagonalTorusGraph L) pDual q
@@ -678,7 +678,7 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
   unfold triHexTorusPrimalSectorSum triHexTorusDualSectorSum
   rw [Finset.sum_mul]
   calc
-    ∑ omega, (if triHexTorusDefect L
+    ∑ omega, (if triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) omega) = r then
         F (triHexTorusDualConfig L omega) *
           FK.fkWeight (triangularTorusGraph L) p q omega
@@ -687,7 +687,7 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
           (p / (1 - BeffaraDC.dualParam p q)) ^
               (triangularTorusGraph L).edgeFinset.card *
             q ^ Nat.card (TorusSite L) *
-            (if triHexTorusDefect L
+            (if triHexTorusEulerDefect L
                 (FK.openSub (triangularTorusGraph L) omega) = r then
               F (triHexTorusDualConfig L omega) *
                 FK.fkWeight (hexagonalTorusGraph L)
@@ -696,10 +696,10 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
             else 0) * q ^ r := by
       apply Finset.sum_congr rfl
       intro omega homega
-      by_cases hsector : triHexTorusDefect L
+      by_cases hsector : triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) omega) = r
       · simp only [hsector, ite_true]
-        have hweight := triHexTorus_fkWeight_duality_signed L omega hp hp1 hq
+        have hweight := triHexTorus_fkWeight_duality L omega hp hp1 hq
         rw [hsector] at hweight
         calc
           (F (triHexTorusDualConfig L omega) *
@@ -726,7 +726,7 @@ theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
     _ = (p / (1 - BeffaraDC.dualParam p q)) ^
           (triangularTorusGraph L).edgeFinset.card *
         q ^ Nat.card (TorusSite L) *
-        (∑ omega, if triHexTorusDefect L
+        (∑ omega, if triHexTorusEulerDefect L
               (FK.openSub (triangularTorusGraph L) omega) = r then
             F (triHexTorusDualConfig L omega) *
               FK.fkWeight (hexagonalTorusGraph L)

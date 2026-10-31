@@ -20,19 +20,19 @@ truncation telescope, and the OSSS inequality under the step covariance bound `A
 
 Coordinates are revealed in the order `σ`. `adaptWt` mixes two independent samples `U` and `V`, and
 `stopVal` is the first step at which `f` is determined. Telescoping the truncated indicators bounds
-the variance by the sum of step covariances. Under `AdaptStepCovBound` this gives `Var f ≤ ∑
-revealAdapt e · Cov(f, ω_e)`. The headlines `tree_osss_sharp_unconditional` and
-`fk_q2_osss_sharp_unconditional` are CONDITIONAL on `hStep : AdaptStepCovBound`, despite their names
-(rename proposed). This file is one step of the OSSS chain for monotonic measures:
-`AdaptMConditional` (OSSS from `AdaptStepCovBound`) ← `AdaptDisintegration` (`AdaptCondBBB` ⇒
-`AdaptStepCovBound`) ← `AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ←
-`TailCondLawConstant` / `CrossMonotone` (`acp_TailCondLaw` for monotonic measures), assembled
-unconditionally in `MonotoneOSSSAssembly.osss_monotone_sharp`.
+the variance by the sum of step covariances. Under `AdaptStepCovBound` this gives
+`Var f ≤ ∑ revealAdapt e · Cov(f, ω_e)`. The headlines `tree_osss_sharp_of_adaptStepCovBound` and
+`fk_q2_osss_sharp_of_adaptStepCovBound` are conditional on `hStep : AdaptStepCovBound`. This file is
+one step of the OSSS chain for monotonic measures: `AdaptMConditional` (OSSS from
+`AdaptStepCovBound`) ← `AdaptDisintegration` (`AdaptCondBBB` ⇒ `AdaptStepCovBound`) ←
+`AdaptCondReduction` (`acp_TailCondLaw` ⇒ `AdaptCondBBB`) ← `TailCondLawConstant` / `CrossMonotone`
+(`acp_TailCondLaw` for monotonic measures), assembled unconditionally in
+`MonotoneOSSSAssembly.osss_monotone_sharp`.
 
 ## ii. Key results
 
 - `var_le_trunc_telescope`: variance bounded by the truncation telescope.
-- `tree_osss_sharp_unconditional`: OSSS, conditional on `hStep : AdaptStepCovBound μ σ f`.
+- `tree_osss_sharp_of_adaptStepCovBound`: OSSS, conditional on `hStep : AdaptStepCovBound μ σ f`.
 
 ## iii. Table of contents
 
@@ -414,7 +414,7 @@ lemma integral_truncInd_eq_reveal (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : F
   unfold revealAdapt
   rw [Equiv.symm_apply_apply]
 
-lemma tree_osss_sharp_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma tree_osss_sharp_of_adaptStepCovBound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) (hStep : AdaptStepCovBound μ σ f) :
     Lindeberg.var μ f
@@ -469,7 +469,7 @@ section FK
 
 open StatMech.OSSS.MonotonicFK
 
-lemma fk_q2_osss_sharp_unconditional {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_q2_osss_sharp_of_adaptStepCovBound {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) {f : ConfigSpace (Sym2 V) → ℝ}
     (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)
@@ -477,7 +477,7 @@ lemma fk_q2_osss_sharp_unconditional {V : Type*} [Fintype V] [DecidableEq V]
     Lindeberg.var (fkMass G p 2) f
       ≤ ∑ e, revealAdapt (fkMass G p 2) σ f e
           * Lindeberg.cov (fkMass G p 2) f (Lindeberg.coord e) :=
-  tree_osss_sharp_unconditional
+  tree_osss_sharp_of_adaptStepCovBound
     (fun ω => fkMass_pos G hp hp1 (by norm_num) ω)
     (fkMass_sum_eq_one G hp hp1 (by norm_num)) σ hf0 hf1 hStep
 

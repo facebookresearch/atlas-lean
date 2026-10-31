@@ -8,7 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters

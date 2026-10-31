@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestInsertionTolerance
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DisjointStarForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount

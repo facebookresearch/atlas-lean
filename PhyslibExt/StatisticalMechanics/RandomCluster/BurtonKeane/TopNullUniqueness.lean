@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarsePrecursorFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedHubContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmThroughPathCover
@@ -152,11 +153,6 @@ lemma bc120_bk_uniqueness_via_bc73 (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) 
   have htop : μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
     bc73_infiniteClusters_top_null μ hd L hexp hforest hexist
   exact bc120_uniqueness_of_top_null μ herg hfe htop
-
-lemma bc120_armCovered_of_H1 (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d)
-    {B H : Site d → Prop} (hmem : bc116_ArmPathMembership ω L y B H) :
-    bc114_ArmCovered (bc67_contractedLattice ω L y) B H :=
-  bc116_armCovered_concrete_of_membership ω L y hmem
 
 /-! ## B. Summary -/
 

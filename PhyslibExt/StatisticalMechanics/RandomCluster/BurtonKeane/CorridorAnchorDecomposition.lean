@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Data.Set.Finite.Lattice
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedCorridorRouting
 
 /-!
@@ -27,7 +29,8 @@ origin and the corridor cells are anchors.
 
 ## ii. Key results
 
-- `bc3_anchor_decomp` : the anchor decomposition of forced connections.
+- `StatMech.Percolation.anchor_decomp` (in `BurtonKeaneMerge`) : the anchor decomposition of forced
+  connections.
 - `bc3_cluster_covered_by_anchors` : forced clusters are covered by finitely many clusters.
 
 ## iii. Table of contents
@@ -54,54 +57,23 @@ namespace Walls
 
 variable {d : ℕ}
 
-/-- The endpoints of the edges of `G`. Same statement as `anchorSites`; kept because replacing a
-definition changes the statements that mention it. -/
-def bc3_anchorSites (G : Finset (Sym2 (Site d))) : Set (Site d) :=
-  {a | ∃ e ∈ G, a ∈ e}
-
 /-! ## A. Anchors -/
 
 @[simp] lemma bc3_mem_anchorSites {G : Finset (Sym2 (Site d))} {a : Site d} :
-    a ∈ bc3_anchorSites G ↔ ∃ e ∈ G, a ∈ e := Iff.rfl
-
-lemma bc3_anchorSites_finite (G : Finset (Sym2 (Site d))) : (bc3_anchorSites G).Finite := by
-  have hsub : bc3_anchorSites G ⊆ ⋃ e ∈ G, {a | a ∈ e} := by
-    intro a ha; obtain ⟨e, he, hae⟩ := ha; exact Set.mem_biUnion he hae
-  refine Set.Finite.subset (Set.Finite.biUnion G.finite_toSet ?_) hsub
-  intro e _
-  induction e with
-  | h p q =>
-    refine Set.Finite.subset ((Set.finite_singleton q).insert p) ?_
-    intro a ha
-    simp only [Set.mem_ofPred_eq, Sym2.mem_iff] at ha
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; exact ha
-
-lemma bc3_anchor_decomp (G : Finset (Sym2 (Site d))) (ω : ConfigSpace (Sym2 (Site d)))
-    (x z : Site d) (h : Connected d (forceOpenFinset G ω) x z) :
-    Connected d ω x z ∨ ∃ a ∈ bc3_anchorSites G, Connected d ω a z := by
-  unfold Connected at h
-  rw [SimpleGraph.reachable_iff_reflTransGen] at h
-  induction h with
-  | refl => exact Or.inl connected_rfl
-  | @tail b c hxb hbc ih =>
-    rcases adj_forceOpenFinset_cases G ω hbc with hadj | hF
-    · rcases ih with hxb' | ⟨a, ha, hab⟩
-      · exact Or.inl (hxb'.trans (SimpleGraph.Adj.reachable (G := openSubgraph d ω) hadj))
-      · exact Or.inr ⟨a, ha, hab.trans (SimpleGraph.Adj.reachable (G := openSubgraph d ω) hadj)⟩
-    · exact Or.inr ⟨c, ⟨s(b, c), hF, Sym2.mem_mk_right b c⟩, connected_rfl⟩
+    a ∈ Percolation.anchorSites G ↔ ∃ e ∈ G, a ∈ e := Iff.rfl
 
 lemma bc3_cluster_covered_by_anchors (G : Finset (Sym2 (Site d)))
     (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
     cluster d (forceOpenFinset G ω) x ⊆
-      ⋃ a ∈ insert x (bc3_anchorSites G), cluster d ω a := by
+      ⋃ a ∈ insert x (Percolation.anchorSites G), cluster d ω a := by
   intro z hz
   rw [mem_cluster] at hz
-  rcases bc3_anchor_decomp G ω x z hz with hconn | ⟨a, ha, haz⟩
+  rcases Percolation.anchor_decomp G ω x z hz with hconn | ⟨a, ha, haz⟩
   · exact Set.mem_biUnion (Set.mem_insert x _) (by rw [mem_cluster]; exact hconn)
   · exact Set.mem_biUnion (Set.mem_insert_of_mem x ha) (by rw [mem_cluster]; exact haz)
 
 lemma bc3_anchor_cover_index_finite (G : Finset (Sym2 (Site d))) (x : Site d) :
-    (insert x (bc3_anchorSites G)).Finite := (bc3_anchorSites_finite G).insert x
+    (insert x (Percolation.anchorSites G)).Finite := (Percolation.anchorSites_finite G).insert x
 
 /-! ## B. Three corridors -/
 
@@ -126,22 +98,22 @@ lemma bc3_anchor_decomp_corridor (j₁ j₂ j₃ : Fin d) (L₁ L₂ L₃ : ℕ)
     (ω : ConfigSpace (Sym2 (Site d))) (x z : Site d)
     (h : Connected d (forceOpenFinset (bc3_corridorUnion j₁ j₂ j₃ L₁ L₂ L₃) ω) x z) :
     Connected d ω x z ∨
-      ∃ a ∈ bc3_anchorSites (bc3_corridorUnion j₁ j₂ j₃ L₁ L₂ L₃), Connected d ω a z :=
-  bc3_anchor_decomp _ ω x z h
+      ∃ a ∈ Percolation.anchorSites (bc3_corridorUnion j₁ j₂ j₃ L₁ L₂ L₃), Connected d ω a z :=
+  Percolation.anchor_decomp _ ω x z h
 
 lemma bc3_origin_mem_anchorSites_corridor (j : Fin d) (L : ℕ) :
-    (0 : Site d) ∈ bc3_anchorSites (hrHD_corridorEdges j (L + 1)) := by
+    (0 : Site d) ∈ Percolation.anchorSites (hrHD_corridorEdges j (L + 1)) := by
   refine ⟨s(hrHD_rayPt j (0 : ℤ), hrHD_rayPt j ((0 : ℤ) + 1)),
     hrHD_mem_corridorEdges (Nat.succ_pos L), ?_⟩
   have h0 : hrHD_rayPt j (0 : ℤ) = (0 : Site d) := by simp [hrHD_rayPt]
   rw [← h0]; exact Sym2.mem_mk_left _ _
 
 lemma bc3_rayPt_mem_anchorSites_corridor (j : Fin d) (L t : ℕ) (ht : t < L) :
-    hrHD_rayPt j ((t : ℤ) + 1) ∈ bc3_anchorSites (hrHD_corridorEdges j L) :=
+    hrHD_rayPt j ((t : ℤ) + 1) ∈ Percolation.anchorSites (hrHD_corridorEdges j L) :=
   ⟨_, hrHD_mem_corridorEdges ht, Sym2.mem_mk_right _ _⟩
 
 lemma bc3_anchorSites_corridorUnion_nonempty (j₁ j₂ j₃ : Fin d) (L₁ L₂ L₃ : ℕ) :
-    (bc3_anchorSites (bc3_corridorUnion j₁ j₂ j₃ L₁ L₂ L₃)).Nonempty := by
+    (Percolation.anchorSites (bc3_corridorUnion j₁ j₂ j₃ L₁ L₂ L₃)).Nonempty := by
   refine ⟨0, ?_⟩
   obtain ⟨e, he, h0e⟩ := bc3_origin_mem_anchorSites_corridor j₁ L₁
   exact ⟨e, by

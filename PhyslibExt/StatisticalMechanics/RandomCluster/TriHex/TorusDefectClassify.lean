@@ -560,11 +560,11 @@ lemma triHexTorusDefect_le_sup_edge_of_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hnew : ¬ K.Adj p q) (hreach : K.Reachable p q) :
-    triHexTorusDefect L K ≤ triHexTorusDefect L (K ⊔ edge p q) := by
+    triHexTorusEulerDefect L K ≤ triHexTorusEulerDefect L (K ⊔ edge p q) := by
   have hedge := card_edgeSet_sup_edge K hpq.ne hnew
   have hcomp := card_components_sup_edge_of_reachable K p q hreach
   have hface := triHexTorusFaceCount_sup_edge_le L K hpq
-  unfold triHexTorusDefect
+  unfold triHexTorusEulerDefect
   rw [hedge, hcomp]
   push_cast
   omega
@@ -611,12 +611,12 @@ lemma triHexTorusDefect_sup_edge_of_not_reachable
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hmerge : ¬ K.Reachable p q) :
-    triHexTorusDefect L (K ⊔ edge p q) = triHexTorusDefect L K := by
+    triHexTorusEulerDefect L (K ⊔ edge p q) = triHexTorusEulerDefect L K := by
   have hnew : ¬ K.Adj p q := fun h => hmerge h.reachable
   have hedge := card_edgeSet_sup_edge K hpq.ne hnew
   have hcomp := card_components_sup_edge_of_not_reachable K p q hmerge
   have hface := triHexTorusFaceCount_sup_edge_of_not_reachable L K hpq hmerge
-  unfold triHexTorusDefect
+  unfold triHexTorusEulerDefect
   rw [hedge, hface]
   push_cast
   omega
@@ -626,7 +626,7 @@ lemma triHexTorusDefect_le_sup_edge
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     {p q : TorusSite L} (hpq : (triangularTorusGraph L).Adj p q)
     (hnew : ¬ K.Adj p q) :
-    triHexTorusDefect L K ≤ triHexTorusDefect L (K ⊔ edge p q) := by
+    triHexTorusEulerDefect L K ≤ triHexTorusEulerDefect L (K ⊔ edge p q) := by
   by_cases hreach : K.Reachable p q
   · exact triHexTorusDefect_le_sup_edge_of_reachable
       L K hpq hnew hreach
@@ -820,19 +820,19 @@ lemma triHexTorusFaceCount_full (L : ℕ) [Fact (2 < L)] :
   ring
 
 @[simp] lemma triHexTorusDefect_bot (L : ℕ) [Fact (2 < L)] :
-    triHexTorusDefect L (⊥ : SimpleGraph (TorusSite L)) = 0 := by
-  unfold triHexTorusDefect
+    triHexTorusEulerDefect L (⊥ : SimpleGraph (TorusSite L)) = 0 := by
+  unfold triHexTorusEulerDefect
   rw [triHexTorusFaceCount_bot, card_components_bot,
     Nat.card_eq_fintype_card, Fintype.card_prod, ZMod.card]
   simp
 
 /-- The full triangular torus has defect `2`. -/
 lemma triHexTorusDefect_full (L : ℕ) [Fact (2 < L)] :
-    triHexTorusDefect L (triangularTorusGraph L) = 2 := by
+    triHexTorusEulerDefect L (triangularTorusGraph L) = 2 := by
   have hedge : (triangularTorusGraph L).edgeSet.ncard = 3 * L ^ 2 := by
     rw [Set.ncard_eq_toFinset_card']
     exact triangularTorusGraph_edge_card L
-  unfold triHexTorusDefect
+  unfold triHexTorusEulerDefect
   rw [hedge,
     card_components_eq_one_of_connected (triangularTorusGraph_connected L),
     triHexTorusFaceCount_full, Nat.card_eq_fintype_card,
@@ -844,7 +844,7 @@ lemma triHexTorusDefect_full (L : ℕ) [Fact (2 < L)] :
 lemma triHexTorusDefect_nonnegative
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
-    0 ≤ triHexTorusDefect L K := by
+    0 ≤ triHexTorusEulerDefect L K := by
   classical
   generalize hn : K.edgeSet.ncard = n
   induction n using Nat.strong_induction_on generalizing K with
@@ -871,7 +871,7 @@ lemma triHexTorusDefect_nonnegative
         have hn' : K'.edgeSet.ncard = n - 1 := by omega
         have hK' : K' ≤ triangularTorusGraph L :=
           le_trans (SimpleGraph.deleteEdges_le _) hK
-        have ihK' : 0 ≤ triHexTorusDefect L K' :=
+        have ihK' : 0 ≤ triHexTorusEulerDefect L K' :=
           ih (n - 1) (by omega) K' hK' hn'
         have hpqK : K.Adj p q := by
           simpa only [SimpleGraph.mem_edgeSet] using he
@@ -887,7 +887,7 @@ lemma triHexTorusDefect_nonnegative
 lemma triHexTorusDefect_le_two
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
-    triHexTorusDefect L K ≤ 2 := by
+    triHexTorusEulerDefect L K ≤ 2 := by
   classical
   let A := triangularTorusGraph L
   let M : Set (Sym2 (TorusSite L)) := A.edgeSet \ K.edgeSet
@@ -931,7 +931,7 @@ lemma triHexTorusDefect_le_two
         have hn' : (A.edgeSet \ K'.edgeSet).ncard = n - 1 := by
           rw [hMset]
           omega
-        have ihK' : triHexTorusDefect L K' ≤ 2 := by
+        have ihK' : triHexTorusEulerDefect L K' ≤ 2 := by
           exact ih (n - 1) (by omega) K' hK' hn'
         have hstep := triHexTorusDefect_le_sup_edge L K hpq hnew
         exact hstep.trans ihK'
@@ -940,8 +940,8 @@ lemma triHexTorusDefect_le_two
 theorem triHexTorusDefect_classified
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
-    triHexTorusDefect L K = 0 ∨ triHexTorusDefect L K = 1 ∨
-      triHexTorusDefect L K = 2 := by
+    triHexTorusEulerDefect L K = 0 ∨ triHexTorusEulerDefect L K = 1 ∨
+      triHexTorusEulerDefect L K = 2 := by
   have h0 := triHexTorusDefect_nonnegative L K hK
   have h2 := triHexTorusDefect_le_two L K hK
   omega
@@ -950,9 +950,9 @@ theorem triHexTorusDefect_classified
 lemma triHexTorusDefect_openSub_classified
     (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L))) :
-    triHexTorusDefect L (FK.openSub (triangularTorusGraph L) omega) = 0 ∨
-      triHexTorusDefect L (FK.openSub (triangularTorusGraph L) omega) = 1 ∨
-        triHexTorusDefect L
+    triHexTorusEulerDefect L (FK.openSub (triangularTorusGraph L) omega) = 0 ∨
+      triHexTorusEulerDefect L (FK.openSub (triangularTorusGraph L) omega) = 1 ∨
+        triHexTorusEulerDefect L
           (FK.openSub (triangularTorusGraph L) omega) = 2 :=
   triHexTorusDefect_classified L _
     (FK.openSub_le (triangularTorusGraph L) omega)

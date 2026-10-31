@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiniteVolumeCutCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLeafBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBranchLeafCount
@@ -107,13 +109,6 @@ lemma bc87_prune_step_degree_le {V : Type*} [Fintype V] (G : SimpleGraph V) [Dec
     (G.deleteEdges s).degree v ≤ G.degree v :=
   SimpleGraph.degree_le_of_le (SimpleGraph.deleteEdges_le s)
 
-lemma bc87_prune_reduces_to_cut (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y y' : Site d}
-    (hN : numInfiniteClusters d ω ≤ 1)
-    (h : bc61_IsCoarseTrifurcation ω L y) (h' : bc61_IsCoarseTrifurcation ω L y') :
-    ∃ a a' : Site d,
-      (cluster d ω a).Infinite ∧ (cluster d ω a').Infinite ∧ Connected d ω a a' :=
-  bc86_fiber_arms_can_coincide ω L hN h h'
-
 lemma bc87_witness_upperLines_arms_reach {L : ℕ} (hL : 3 ≤ L) (n : ℕ) :
     ∃ a₁ a₂ a₃ : Site 2,
       (∃ z, z ∉ box 2 n ∧ Connected 2 (removeSites (bc61_boxAround 2 L (0 : Site 2)) bc60_upperLines) a₁ z) ∧
@@ -127,7 +122,7 @@ lemma bc87_witness_upperLines_N_top_cut_fails (L : ℕ) :
           (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
           (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) :=
-  ⟨bc86_upperLines_N_top, bc86_upperLines_gnCut_needs_buffer L⟩
+  ⟨bc60_numInfiniteClusters_top, bc64_arms_can_share_boundary L⟩
 
 /-! ## B. Summary -/
 
@@ -153,8 +148,8 @@ lemma bc87_status :
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro ω L y h n; exact bc87_coarseTrif_arms_reach_outside ω L h n
   · intro R S _ G _ hbdry; exact bc69_leaf_card_le_boundary_subtype R G hbdry
-  · intro ω L R c h; exact bc80_fiber_le_boundary_via_branch ω L R c h
-  · intro ω L y y' hN h h'; exact bc87_prune_reduces_to_cut ω L hN h h'
-  · exact bc86_upperLines_N_top
+  · intro ω L R c h; exact bc75_fiber_count_of_gnTrifData ω L R c h
+  · intro ω L y y' hN h h'; exact bc86_fiber_arms_can_coincide ω L hN h h'
+  · exact bc60_numInfiniteClusters_top
 
 end StatMech.Walls

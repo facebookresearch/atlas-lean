@@ -8,8 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
 
 /-!
 # Merge-free insertion at the origin
@@ -288,7 +292,8 @@ lemma tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d))
   obtain ⟨a₁, a₂, a₃, x₁, x₂, x₃, hadj, ⟨hc1, hc2, hc3⟩, ⟨hi1, hi2, hi3⟩,
     hd12, hd13, hd23⟩ := h
   set ϱ := removeSite (0 : Site d) ω with hϱ
-  have hemp : forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := bka_forceOpenFinset_empty ω
+  have hemp : forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω :=
+    DisjointPaths.mng_forceOpenFinset_empty ω
   have hrm : removeSite (0 : Site d) (forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω) = ϱ := by
     rw [hemp]
   have ea1 : cluster d ϱ a₁ = cluster d ϱ x₁ := cluster_eq_of_connected hc1
@@ -321,8 +326,8 @@ lemma tre_mergeFreeInsertionRho_of_reachOrigin (ω : ConfigSpace (Sym2 (Site d))
       rw [← hϱ, ea3]; exact hi3
   · exact ⟨self_mem_cluster ϱ a₁, self_mem_cluster ϱ a₂, self_mem_cluster ϱ a₃⟩
   · rw [hrm]
-    exact ⟨bcc_cluster_adjClosed ϱ a₁, bcc_cluster_adjClosed ϱ a₂,
-      bcc_cluster_adjClosed ϱ a₃⟩
+    exact ⟨csc_cluster_adjClosed ϱ a₁, csc_cluster_adjClosed ϱ a₂,
+      csc_cluster_adjClosed ϱ a₃⟩
   · exact ⟨hdisj a₁ a₂ nda12, hdisj a₁ a₃ nda13, hdisj a₂ a₃ nda23⟩
 
 end Percolation

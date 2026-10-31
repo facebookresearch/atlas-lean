@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Dynamics.Ergodic.MeasurePreserving
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom

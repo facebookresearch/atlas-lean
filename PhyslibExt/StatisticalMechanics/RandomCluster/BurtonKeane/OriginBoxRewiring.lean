@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Topology.Defs.Filter
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Order.Filter.AtTopBot.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalOriginRewiring
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourCutCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterSurvives

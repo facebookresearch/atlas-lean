@@ -8,10 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutAvoidingSurvives
 
 /-!
 # Clusters after cutting the origin
@@ -27,7 +28,8 @@ that `y` is in the cluster of an open neighbour of the origin in `removeSite 0 �
 
 ## ii. Key results
 
-- `bc9nbr_avoiding_walk_survives_origin_cut` : origin-avoiding walks survive the cut
+- `StatMech.Walls.bc4_avoiding_walk_survives_origin_cut` (in `OriginCutAvoidingSurvives`) :
+  origin-avoiding walks survive the cut
 - `bc9nbr_mem_neighbour_cutCluster` : sites of the origin's cluster lie in a neighbour's cut cluster
 - `bc9nbr_mem_neighbour_cutCluster_of_adj` : the same for an open neighbour
 
@@ -74,19 +76,6 @@ lemma bc9nbr_adj_dies_origin_cut (ω : ConfigSpace (Sym2 (Site d))) {u w : Site 
   rw [removeSite_apply_of_mem h0]
   simp
 
-lemma bc9nbr_avoiding_walk_survives_origin_cut (ω : ConfigSpace (Sym2 (Site d))) {u w : Site d}
-    (p : (openSubgraph d ω).Walk u w) (hp : (0 : Site d) ∉ p.support) :
-    Connected d (removeSite 0 ω) u w := by
-  induction p with
-  | nil => exact connected_rfl
-  | @cons a b c hadj p' ih =>
-    rw [SimpleGraph.Walk.support_cons, List.mem_cons, not_or] at hp
-    obtain ⟨h0a, h0rest⟩ := hp
-    have h0b : (0 : Site d) ≠ b := fun h => h0rest (h ▸ p'.start_mem_support)
-    have hstep : (openSubgraph d (removeSite 0 ω)).Adj a b :=
-      bc9nbr_adj_survives_origin_cut ω (Ne.symm h0a) (Ne.symm h0b) hadj
-    exact (SimpleGraph.Adj.reachable hstep).trans (ih h0rest)
-
 lemma bc9nbr_origin_neighbour_of_connected (ω : ConfigSpace (Sym2 (Site d))) {y : Site d}
     (hy0 : y ≠ 0) (hconn : Connected d ω 0 y) :
     ∃ n, (openSubgraph d ω).Adj 0 n ∧
@@ -110,7 +99,7 @@ lemma bc9nbr_mem_neighbour_cutCluster (ω : ConfigSpace (Sym2 (Site d))) {y : Si
     (hy0 : y ≠ 0) (hconn : Connected d ω 0 y) :
     ∃ n, (openSubgraph d ω).Adj 0 n ∧ y ∈ cluster d (removeSite 0 ω) n := by
   obtain ⟨n, hadj, r, hr⟩ := bc9nbr_origin_neighbour_of_connected ω hy0 hconn
-  exact ⟨n, hadj, mem_cluster.mpr (bc9nbr_avoiding_walk_survives_origin_cut ω r hr)⟩
+  exact ⟨n, hadj, mem_cluster.mpr (bc4_avoiding_walk_survives_origin_cut ω r hr)⟩
 
 lemma bc9nbr_mem_neighbour_cutCluster' (ω : ConfigSpace (Sym2 (Site d))) {y : Site d}
     (hy0 : y ≠ 0) (hconn : Connected d ω y 0) :
@@ -123,7 +112,7 @@ lemma bc9nbr_mem_neighbour_cutCluster_strong (ω : ConfigSpace (Sym2 (Site d))) 
       y ∈ cluster d (removeSite 0 ω) n := by
   obtain ⟨n, hadj, r, hr⟩ := bc9nbr_origin_neighbour_of_connected ω hy0 hconn
   have hsurv : Connected d (removeSite 0 ω) n y :=
-    bc9nbr_avoiding_walk_survives_origin_cut ω r hr
+    bc4_avoiding_walk_survives_origin_cut ω r hr
   exact ⟨n, hadj, hsurv, mem_cluster.mpr hsurv⟩
 
 lemma bc9nbr_mem_neighbour_cutCluster_of_adj (ω : ConfigSpace (Sym2 (Site d))) {y : Site d}
@@ -136,10 +125,6 @@ section AxiomAudit
 /-- info: 'StatMech.Walls.bc9nbr_adj_survives_origin_cut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms bc9nbr_adj_survives_origin_cut
-
-/-- info: 'StatMech.Walls.bc9nbr_avoiding_walk_survives_origin_cut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-#print axioms bc9nbr_avoiding_walk_survives_origin_cut
 
 /-- info: 'StatMech.Walls.bc9nbr_origin_neighbour_of_connected' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in

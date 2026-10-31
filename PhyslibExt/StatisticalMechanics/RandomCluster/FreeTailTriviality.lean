@@ -32,7 +32,7 @@ probability. Since the free measure is extreme in this order, conditioning on a 
 its complement cannot change it, so `s` has probability `0` or `1`. Invariant events agree almost
 surely with tail events, which gives ergodicity, and the Burton–Keane argument then gives uniqueness
 of the infinite cluster. `freeInfiniteVolume_tail_trivial_generalQ`,
-`freeInfiniteVolume_isErgodic_generalQ`, and `freeInfinite_canonical_uniqueness_all_parameters` are
+`freeInfiniteVolume_isErgodic_generalQ`, and `freeInfinite_canonical_uniqueness` are
 proved unconditionally (only `1 ≤ d`, `0 < p < 1`, `1 ≤ q`).
 
 ## ii. Key results
@@ -41,7 +41,7 @@ proved unconditionally (only `1 ≤ d`, `0 < p < 1`, `1 ≤ q`).
   positively correlated under the free measure.
 - `freeInfiniteVolume_tail_trivial_generalQ` : every tail event has free probability `0` or `1`.
 - `freeInfiniteVolume_isErgodic_generalQ` : the free measure is translation-ergodic.
-- `freeInfinite_canonical_uniqueness_all_parameters` : almost surely there is at most one infinite
+- `freeInfinite_canonical_uniqueness` : almost surely there is at most one infinite
   cluster.
 
 ## iii. Table of contents
@@ -493,7 +493,7 @@ theorem freeInfiniteVolume_isErgodic_generalQ
     Measure (ConfigSpace (Sym2 (Site d))))
   have hti : StatMech.ConfigSpace.IsTranslationInvariant
       (G := Multiplicative (Site d)) mu :=
-    fkgqt_freeIV_isTranslationInvariant hp hp1 hq
+    freeInfiniteVolume_isTranslationInvariant hp hp1 hq
   refine ⟨hti, ?_⟩
   intro s hs hinv
   obtain ⟨t, ht, hae⟩ := fk_invariant_event_ae_tail hd hti s hs hinv
@@ -506,7 +506,7 @@ theorem freeInfiniteVolume_isErgodic_generalQ
 
 /-- For `q ≥ 1` and `d ≥ 1`, the free infinite-volume measure has almost surely zero or one
 infinite clusters, and never two or more. -/
-theorem freeInfinite_canonical_uniqueness_all_parameters
+theorem freeInfinite_canonical_uniqueness
     (hd : 1 ≤ d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ((freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
           {omega | Percolation.numInfiniteClusters d omega = 0} = 1 ∨
@@ -522,7 +522,7 @@ theorem freeInfinite_canonical_uniqueness_all_parameters
 /-! ## D. The case `q = 2` -/
 
 /-- The `q = 2` case of `freeInfiniteVolume_tail_trivial_generalQ`. -/
-lemma freeInfiniteVolume_tail_trivial
+lemma freeInfiniteVolume_tail_trivial_q2
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (s : Set (ConfigSpace (Sym2 (Site d)))) (hs : FKIsTailEvent d s) :
     (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _) s = 0 ∨
@@ -531,7 +531,7 @@ lemma freeInfiniteVolume_tail_trivial
     (by norm_num : (1 : ℝ) ≤ 2) s hs
 
 /-- The `q = 2` case of `freeInfiniteVolume_isErgodic_generalQ`. -/
-lemma freeInfiniteVolume_isErgodic_all_parameters
+lemma freeInfiniteVolume_isErgodic_q2
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) :
@@ -539,8 +539,8 @@ lemma freeInfiniteVolume_isErgodic_all_parameters
   freeInfiniteVolume_isErgodic_generalQ hd hp hp1
     (by norm_num : (1 : ℝ) ≤ 2)
 
-/-- The `q = 2` case of `freeInfinite_canonical_uniqueness_all_parameters`. -/
-lemma freeInfinite_q2_canonical_uniqueness_all_parameters
+/-- The `q = 2` case of `freeInfinite_canonical_uniqueness`. -/
+lemma freeInfinite_q2_canonical_uniqueness
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     ((freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
           {omega | Percolation.numInfiniteClusters d omega = 0} = 1 ∨
@@ -550,7 +550,7 @@ lemma freeInfinite_q2_canonical_uniqueness_all_parameters
           (Percolation.atLeastTwoInfinite d) = 0 ∧
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
           {omega | Percolation.numInfiniteClusters d omega ≤ 1} = 1 :=
-  freeInfinite_canonical_uniqueness_all_parameters hd hp hp1
+  freeInfinite_canonical_uniqueness hd hp hp1
     (by norm_num : (1 : ℝ) ≤ 2)
 
 end FK

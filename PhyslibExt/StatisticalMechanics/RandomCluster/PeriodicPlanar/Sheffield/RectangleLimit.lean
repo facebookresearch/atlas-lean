@@ -255,6 +255,9 @@ lemma PeriodicGraph.exists_common_pairMergeRadius
   choose radius hradius using hrow
   exact ⟨radius, hradius⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- Under uniqueness, radii `radius n ≥ n` making the ball merge errors of `(L n, R n i)` smaller
 than `1/(n+1)` for all `i` in a finite index type. -/
 lemma PeriodicGraph.exists_uniform_pairMergeRadius

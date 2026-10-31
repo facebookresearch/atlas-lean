@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters
 
 /-!
 # Corridor confinement by distinct clusters
@@ -58,20 +61,6 @@ variable {d : ℕ}
 
 /-! ## A. Clusters as sides -/
 
-/-- Same statement as `csc_cluster_adjClosed`; kept because TrifurcationExistence uses it. -/
-lemma bcc_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (a : Site d) :
-    ∀ u v, u ∈ cluster d ϱ a → (openSubgraph d ϱ).Adj u v → v ∈ cluster d ϱ a := by
-  intro u v hu hadj
-  rw [mem_cluster] at hu ⊢
-  exact hu.trans (SimpleGraph.Adj.reachable hadj)
-
-lemma bcc_cluster_disjoint_of_ne (ϱ : ConfigSpace (Sym2 (Site d))) (a b : Site d)
-    (hne : cluster d ϱ a ≠ cluster d ϱ b) : Disjoint (cluster d ϱ a) (cluster d ϱ b) := by
-  rw [Set.disjoint_left]
-  intro x hxa hxb
-  rw [mem_cluster] at hxa hxb
-  exact hne (by rw [cluster_eq_of_connected hxa, cluster_eq_of_connected hxb])
-
 lemma bcc_disjoint_confining_sides
     (ϱ : ConfigSpace (Sym2 (Site d))) (a₁ a₂ a₃ : Site d)
     (hd12 : cluster d ϱ a₁ ≠ cluster d ϱ a₂)
@@ -85,9 +74,9 @@ lemma bcc_disjoint_confining_sides
       (Disjoint S₁ S₂ ∧ Disjoint S₁ S₃ ∧ Disjoint S₂ S₃) :=
   ⟨cluster d ϱ a₁, cluster d ϱ a₂, cluster d ϱ a₃,
     ⟨self_mem_cluster ϱ a₁, self_mem_cluster ϱ a₂, self_mem_cluster ϱ a₃⟩,
-    ⟨bcc_cluster_adjClosed ϱ a₁, bcc_cluster_adjClosed ϱ a₂, bcc_cluster_adjClosed ϱ a₃⟩,
-    bcc_cluster_disjoint_of_ne ϱ a₁ a₂ hd12, bcc_cluster_disjoint_of_ne ϱ a₁ a₃ hd13,
-    bcc_cluster_disjoint_of_ne ϱ a₂ a₃ hd23⟩
+    ⟨csc_cluster_adjClosed ϱ a₁, csc_cluster_adjClosed ϱ a₂, csc_cluster_adjClosed ϱ a₃⟩,
+    Walls.bc2_disjoint_of_ne hd12, Walls.bc2_disjoint_of_ne hd13,
+    Walls.bc2_disjoint_of_ne hd23⟩
 
 lemma bcc_corridorWorks_of_distinct_clusters (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d) (G : Finset (Sym2 (Site d)))
@@ -108,9 +97,9 @@ lemma bcc_corridorWorks_of_distinct_clusters (ω : ConfigSpace (Sym2 (Site d)))
   exact corridorWorks_of_separated ω a₁ a₂ a₃ G hne hadj
     (cluster d ϱ a₁) (cluster d ϱ a₂) (cluster d ϱ a₃)
     (self_mem_cluster ϱ a₁) (self_mem_cluster ϱ a₂) (self_mem_cluster ϱ a₃)
-    (bcc_cluster_adjClosed ϱ a₁) (bcc_cluster_adjClosed ϱ a₂) (bcc_cluster_adjClosed ϱ a₃)
-    (bcc_cluster_disjoint_of_ne ϱ a₁ a₂ hd12) (bcc_cluster_disjoint_of_ne ϱ a₁ a₃ hd13)
-    (bcc_cluster_disjoint_of_ne ϱ a₂ a₃ hd23) hinf
+    (csc_cluster_adjClosed ϱ a₁) (csc_cluster_adjClosed ϱ a₂) (csc_cluster_adjClosed ϱ a₃)
+    (Walls.bc2_disjoint_of_ne hd12) (Walls.bc2_disjoint_of_ne hd13)
+    (Walls.bc2_disjoint_of_ne hd23) hinf
 
 lemma bcc_disjoint_sides_iff_clusters_distinct
     (ϱ : ConfigSpace (Sym2 (Site d))) (a₁ a₂ a₃ : Site d) :
@@ -181,9 +170,9 @@ lemma bcc_disjointRouting_of_corridors_and_distinct (ω : ConfigSpace (Sym2 (Sit
   exact ⟨a₁, a₂, a₃, G, w₁, w₂, w₃, cluster d ϱ a₁, cluster d ϱ a₂, cluster d ϱ a₃,
     hne, hadj, ⟨hcor₁, hcor₂, hcor₃⟩, ⟨hw₁, hw₂, hw₃⟩,
     ⟨self_mem_cluster ϱ a₁, self_mem_cluster ϱ a₂, self_mem_cluster ϱ a₃⟩,
-    ⟨bcc_cluster_adjClosed ϱ a₁, bcc_cluster_adjClosed ϱ a₂, bcc_cluster_adjClosed ϱ a₃⟩,
-    bcc_cluster_disjoint_of_ne ϱ a₁ a₂ hd12, bcc_cluster_disjoint_of_ne ϱ a₁ a₃ hd13,
-    bcc_cluster_disjoint_of_ne ϱ a₂ a₃ hd23⟩
+    ⟨csc_cluster_adjClosed ϱ a₁, csc_cluster_adjClosed ϱ a₂, csc_cluster_adjClosed ϱ a₃⟩,
+    Walls.bc2_disjoint_of_ne hd12, Walls.bc2_disjoint_of_ne hd13,
+    Walls.bc2_disjoint_of_ne hd23⟩
 
 /-! ## B. The distinct-cluster residue -/
 

@@ -80,6 +80,8 @@ private lemma tpt_degree_mono {V : Type*} [Fintype V]
   rw [SimpleGraph.mem_neighborFinset] at hy ⊢
   exact hFG hy
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma three_pendant_vertices_have_tripod {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hG : G.Connected)
     (p : Fin 3 → V) (hpinj : Function.Injective p)

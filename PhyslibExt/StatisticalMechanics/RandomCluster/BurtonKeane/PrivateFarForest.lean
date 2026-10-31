@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndDisjoint
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleCutSeparation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateArmTwoTrif
@@ -24,10 +25,11 @@ same as a coherent arm selector.
 
 ## i. Overview
 
-`bc26_GlobalCutArmData ω n` chooses an infinite arm for each trifurcation such that distinct arms
-are in different components after all trifurcations are removed; this gives global forest arms and
-`Tcount ≤ |∂B_n|`. `bc26_PrivateFarOrder` is equivalent to `bkfl_CoherentArmSelector` and gives
-private arms. Both hold for at most two trifurcations.
+Global-cut arm data, which is `aed_GlobalForestArms ω n` (ArmEndDisjoint), chooses an infinite arm
+for each trifurcation such that distinct arms are in different components after all trifurcations
+are removed; this gives global forest arms and `Tcount ≤ |∂B_n|`. `bc26_PrivateFarOrder` is
+equivalent to `bkfl_CoherentArmSelector` and gives private arms. Both hold for at most two
+trifurcations.
 
 No certificate of this kind can hold for every configuration: each one yields the
 trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
@@ -38,7 +40,8 @@ configuration by configuration; the deterministic counting bound is the reusable
 ## ii. Key results
 
 - `bc26_globalForestArms_of_globalCutArmData` : global cut arm data give global forest arms
-- `bc26_Tcount_le_boundary_of_globalCutArmData` : the counting bound
+- `StatMech.Percolation.aed_Tcount_le_boundary_of_globalForestArms` (in `ArmEndDisjoint`) : the
+  counting bound
 - `bc26_privateFarOrder_iff_coherentSelector` : private-far orders are coherent selectors
 - `bc26_privateFarOrder_of_twoTrif` : private-far orders with two trifurcations
 
@@ -94,26 +97,9 @@ lemma bc26_avoiding_arm_of_trif (ω : ConfigSpace (Sym2 (Site d)))
   · exact ⟨a₁, hconn.1, hinf.1, h1⟩
   · exact ⟨a₂, hconn.2.1, hinf.2.1, h2⟩
 
-/-- Global cut arm data for `B_n`: each trifurcation has an arm site whose cluster stays infinite
-after all trifurcations are removed, and the arm sites of distinct trifurcations lie in
-different components of that configuration. -/
-def bc26_GlobalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
-  ∃ b : Site d → Site d,
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x →
-      b x ∈ box d n ∧ Connected d ω x (b x) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x)).Infinite) ∧
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-      x ≠ y → ¬ aed_sameGlobalComponent (tfc_trifFinset ω n) ω (b x) (b y))
-
 lemma bc26_globalForestArms_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bc26_GlobalCutArmData ω n) : aed_GlobalForestArms ω n :=
+    (h : Percolation.aed_GlobalForestArms ω n) : aed_GlobalForestArms ω n :=
   h
-
-lemma bc26_Tcount_le_boundary_of_globalCutArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n) (h : bc26_GlobalCutArmData ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  aed_Tcount_le_boundary_of_globalForestArms ω n hn
-    (bc26_globalForestArms_of_globalCutArmData ω n h)
 
 /-- A private-far order for `B_n`: arm data for every trifurcation, private with respect to every
 other connected trifurcation. -/
@@ -158,14 +144,6 @@ lemma bc26_coarseTrif_arms_cutInfinite {ω : ConfigSpace (Sym2 (Site d))}
   rw [hbridge] at hinf hsep
   refine ⟨a₁, a₂, a₃, hne, ?_, hinf, hsep⟩
   exact ⟨(hb₁0 ▸ hconn.1).symm, (hb₂0 ▸ hconn.2.1).symm, (hb₃0 ▸ hconn.2.2).symm⟩
-
-lemma bc26_globalForestArms_of_uniqueTrif_cutArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x₀ a : Site d} (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
-    (habox : a ∈ box d n) (haconn : Connected d ω x₀ a)
-    (hainf : (cluster d (removeSite x₀ ω) a).Infinite)
-    (huniq : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀) :
-    aed_GlobalForestArms ω n :=
-  aed_globalForestArms_of_uniqueTrif ω n hx0box htri0 habox haconn hainf huniq
 
 lemma bc26_privateFarOrder_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :

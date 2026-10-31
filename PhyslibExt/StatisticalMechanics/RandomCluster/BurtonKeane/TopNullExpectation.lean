@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxBuffer
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
@@ -34,7 +35,7 @@ all configurations.
 
 ## ii. Key results
 
-- `bc77_expected_count` : the expectation identity
+- `StatMech.Walls.bc62_coarse_expectation` (in `CoarseTrifRemoveSites`) : the expectation identity
 - `bc77_top_null_of_ae_bound` : an almost-sure `o(volume)` bound excludes `N = ∞`
 - `bc77_top_null_of_ae_forest` : an almost-sure forest excludes `N = ∞`
 - `bc77_status` : the statements together
@@ -69,12 +70,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Results -/
-
-lemma bc77_expected_count (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (L R : ℕ) :
-    ((boxFinsetBK d R).card : ℝ≥0∞) * μ {ω | bc61_IsCoarseTrifurcation ω L 0}
-      = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ :=
-  bc62_coarse_expectation μ hinv L R
 
 lemma bc77_coarseTrif_prob_eq_zero_ae (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (L : ℕ) (bdry : ℕ → ℕ)
@@ -154,7 +149,7 @@ lemma bc77_top_null_of_ae_forest (μ : Measure (ConfigSpace (Sym2 (Site d))))
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
   bc77_top_null_of_ae_bound μ L
     (fun R => (2 * L + 1) ^ d * boxSV_boundaryCard d R)
-    (fun R => bc77_expected_count μ hinv L R)
+    (fun R => bc62_coarse_expectation μ hinv L R)
     (bc77_ae_bound_of_ae_forest μ L hforest_ae)
     (fun R => bkc_boxFinsetBK_card_pos d R)
     (bc73_const_boundary_vol_tendsto d hd L)

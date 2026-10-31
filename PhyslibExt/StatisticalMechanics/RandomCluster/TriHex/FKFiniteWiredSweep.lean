@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKGlobalSweep
+public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKSimultaneousStarTriangle
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Graph
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoundaryConditions
 
@@ -132,7 +132,7 @@ lemma triHexFK_finiteWiredBoundaryReachRatio_eq
     (hq : q ≠ 0) (hyprod : y0 * y1 * y2 ≠ 0)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (terminal : ι → Fin 3 → V) (boundary : V → Prop)
     [DecidablePred boundary] (root : V) :
     starFKFiniteWiredBoundaryReachRatio q y0Star y1Star y2Star
@@ -153,25 +153,25 @@ lemma triHexFK_finiteWiredBoundaryReachRatio_eq_homogeneous
     {ι V : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype V] [DecidableEq V]
     {q p : Real} (hq : 0 < q) (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0)
     (terminal : ι → Fin 3 → V) (boundary : V → Prop)
     [DecidablePred boundary] (root : V) :
     starFKFiniteWiredBoundaryReachRatio q
-        (FrontierA.fkEdgeOdds (BeffaraDC.dualParam p q))
-        (FrontierA.fkEdgeOdds (BeffaraDC.dualParam p q))
-        (FrontierA.fkEdgeOdds (BeffaraDC.dualParam p q))
+        (FK.TriHex.fkEdgeOdds (BeffaraDC.dualParam p q))
+        (FK.TriHex.fkEdgeOdds (BeffaraDC.dualParam p q))
+        (FK.TriHex.fkEdgeOdds (BeffaraDC.dualParam p q))
         terminal boundary root =
       triangleFKFiniteWiredBoundaryReachRatio q
-        (FrontierA.fkEdgeOdds p) (FrontierA.fkEdgeOdds p)
-        (FrontierA.fkEdgeOdds p) terminal boundary root := by
-  have hy : 0 < FrontierA.fkEdgeOdds p :=
+        (FK.TriHex.fkEdgeOdds p) (FK.TriHex.fkEdgeOdds p)
+        (FK.TriHex.fkEdgeOdds p) terminal boundary root := by
+  have hy : 0 < FK.TriHex.fkEdgeOdds p :=
     div_pos hp.1 (sub_pos.mpr hp.2)
-  have hdual := FrontierA.fkEdgeOdds_mul_dualParam hp.1 hp.2 hq
+  have hdual := FK.TriHex.fkEdgeOdds_mul_dualParam hp.1 hp.2 hq
   apply triHexFK_finiteWiredBoundaryReachRatio_eq hq.ne'
     (mul_ne_zero (mul_ne_zero hy.ne' hy.ne') hy.ne')
     hdual hdual hdual
-  rwa [FrontierA.triangularFKCriticalSurface_diagonal]
+  rwa [FK.TriHex.triangularFKCriticalSurface_diagonal]
 
 /-! ## B. Finite wired volumes -/
 
@@ -199,8 +199,8 @@ def TriHexFiniteWiredLevel.triangleBoundaryReachRatio
   letI := D.vertexDecidableEq
   letI := D.boundaryDecidable
   exact triangleFKFiniteWiredBoundaryReachRatio q
-    (FrontierA.fkEdgeOdds p) (FrontierA.fkEdgeOdds p)
-    (FrontierA.fkEdgeOdds p) D.terminal D.boundary D.root
+    (FK.TriHex.fkEdgeOdds p) (FK.TriHex.fkEdgeOdds p)
+    (FK.TriHex.fkEdgeOdds p) D.terminal D.boundary D.root
 
 /-- The star-cell wired boundary-connection probability of a finite volume at the dual parameter
 `dualParam p q`. -/
@@ -213,14 +213,14 @@ def TriHexFiniteWiredLevel.starBoundaryReachRatio
   letI := D.boundaryDecidable
   let pStar := BeffaraDC.dualParam p q
   exact starFKFiniteWiredBoundaryReachRatio q
-    (FrontierA.fkEdgeOdds pStar) (FrontierA.fkEdgeOdds pStar)
-    (FrontierA.fkEdgeOdds pStar) D.terminal D.boundary D.root
+    (FK.TriHex.fkEdgeOdds pStar) (FK.TriHex.fkEdgeOdds pStar)
+    (FK.TriHex.fkEdgeOdds pStar) D.terminal D.boundary D.root
 
 lemma TriHexFiniteWiredLevel.starBoundaryReachRatio_eq_triangle
     (D : TriHexFiniteWiredLevel) {q p : Real}
     (hq : 0 < q) (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0) :
     D.starBoundaryReachRatio q p = D.triangleBoundaryReachRatio q p := by
   let := D.cellFintype
   let := D.cellDecidableEq
@@ -233,8 +233,8 @@ lemma TriHexFiniteWiredLevel.starBoundaryReachRatio_eq_triangle
 lemma triHexFK_finiteWiredExhaustion_tendsto_iff_homogeneous
     (D : Nat → TriHexFiniteWiredLevel) {q p theta : Real}
     (hq : 0 < q) (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0) :
     Filter.Tendsto (fun n => (D n).starBoundaryReachRatio q p)
         Filter.atTop (nhds theta) ↔
       Filter.Tendsto (fun n => (D n).triangleBoundaryReachRatio q p)
@@ -329,8 +329,8 @@ lemma triangularGraph_adj_triHexPlanarCellTerminal
 lemma triHexPlanarFiniteWiredBoundaryReachRatio_eq_homogeneous
     (n : Nat) {q p : Real} (hq : 0 < q)
     (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0) :
     (triHexPlanarFiniteWiredLevel n).starBoundaryReachRatio q p =
       (triHexPlanarFiniteWiredLevel n).triangleBoundaryReachRatio q p :=
   (triHexPlanarFiniteWiredLevel n).starBoundaryReachRatio_eq_triangle
@@ -339,8 +339,8 @@ lemma triHexPlanarFiniteWiredBoundaryReachRatio_eq_homogeneous
 lemma triHexPlanarFiniteWiredBoundaryReach_tendsto_iff_homogeneous
     {q p theta : Real} (hq : 0 < q)
     (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0) :
     Filter.Tendsto (fun n =>
         (triHexPlanarFiniteWiredLevel n).starBoundaryReachRatio q p)
         Filter.atTop (nhds theta) ↔

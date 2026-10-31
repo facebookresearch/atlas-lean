@@ -8,10 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Data.Sym.Sym2
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterRunsAxisFE
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterMeetsCorridor
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisAssignment
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedPathChain
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WiringForcesOpen
 
 /-!
 # Clusters running along an axis
@@ -55,12 +58,6 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma rap_runsAlongAxis_ray_open_edges (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
-    {t : ℕ} (ht : t < L) :
-    forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω
-      s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)) = true :=
-  craf_corridor_axis_edge_open ω j L ht
-
 lemma rap_runsAlongAxis_ray (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
     (hinf : (cluster d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω))
       (hrHD_rayPt j 1)).Infinite) :
@@ -68,15 +65,9 @@ lemma rap_runsAlongAxis_ray (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : 
         s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)) = true) ∧
       crr_ClusterRunsAlongAxis (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω)
         (hrHD_rayPt j 1) j := by
-  refine ⟨fun t ht => rap_runsAlongAxis_ray_open_edges ω j L ht, ?_⟩
+  refine ⟨fun t ht => Walls.bc_wiring_forces_open_eq_true ω j L t ht, ?_⟩
   exact craf_clusterRunsAlongAxis_of_insertion ω (hrHD_rayPt j 1) j L
     (craf_axisRoutingPremise_neighbour ω j L hinf)
-
-lemma rap_far_reach (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ) :
-    Connected d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω))
-      (hrHD_rayPt j 1) (hrHD_rayPt j ((L : ℤ) + 1)) :=
-  crr_axisOpen_connected_removeSite (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω) j L
-    (fun _t ht => rap_runsAlongAxis_ray_open_edges ω j L ht) L le_rfl
 
 lemma rap_clusterReachesRay_ray (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
     (hinf : (cluster d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω))
@@ -99,14 +90,7 @@ lemma rap_ray_open_edge_nonvacuous (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d
     (hL : 1 ≤ L) :
     forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω
       s(hrHD_rayPt j (((0 : ℕ) : ℤ) + 1), hrHD_rayPt j (((0 : ℕ) : ℤ) + 2)) = true :=
-  rap_runsAlongAxis_ray_open_edges ω j L (t := 0) (by omega)
-
-lemma rap_candidates_neighbour (ω : ConfigSpace (Sym2 (Site d)))
-    (a : Fin 3 → Fin d) (ha : Function.Injective a)
-    (hinf : ∀ i : Fin 3, (cluster d (removeSite 0 ω) (hrHD_rayPt (a i) 1)).Infinite) :
-    caa_RunsAlongCandidates ω (fun i => hrHD_rayPt (a i) 1)
-      (fun i => ({a i} : Finset (Fin d))) :=
-  caa_candidates_neighbour_witnesses ω a ha hinf
+  Walls.bc_wiring_forces_open_eq_true ω j L 0 (by omega)
 
 lemma rap_runsAlongAxis_entails_near_connection (ω : ConfigSpace (Sym2 (Site d)))
     (j : Fin d) (L : ℕ)

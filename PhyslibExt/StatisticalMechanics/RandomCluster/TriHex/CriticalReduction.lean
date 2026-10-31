@@ -80,7 +80,7 @@ namespace StatMech
 namespace FK
 namespace PeriodicPlanar
 
-open BeffaraDC FrontierA
+open BeffaraDC FK.TriHex
 
 variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 

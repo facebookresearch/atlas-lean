@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifUpperLines
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenForest
@@ -27,12 +31,14 @@ In `bc60_upperLines` (all horizontal edges at heights `h ≥ 1` open) the site `
 its two neighbours on the line forms a trifurcation in the sense of `IsTrifurcation`, because that
 notion allows the centre itself as one of the three sites. The centre has open degree two, so no
 open forest of the box gives it degree three: the hypothesis of
-`bc88_genuine_count_le_boundary_of_openForest` fails for every box. The configuration does have a
+`StatMech.Percolation.bst_Tcount_le_boundary_of_boxOpenForest` (in `BoxOpenForest`) fails for every
+box. The configuration does have a
 coarse trifurcation at the origin for `L ≥ 3`.
 
 ## ii. Key results
 
-- `bc88_genuine_count_le_boundary_of_openForest` : a box open forest bounds the trifurcation count
+- `StatMech.Percolation.bst_Tcount_le_boundary_of_boxOpenForest` (in `BoxOpenForest`) : a box open
+  forest bounds the trifurcation count
 - `bc88_upperLines_isTrifurcation_general` : every site of the first line is a trifurcation
 - `bc88_upperLines_boxOpenForest_fails` : no box open forest exists for `bc60_upperLines`
 - `bc88_status` : the statements together
@@ -67,11 +73,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Results -/
-
-lemma bc88_genuine_count_le_boundary_of_openForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bst_BoxOpenForest ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  bst_Tcount_le_boundary_of_boxOpenForest ω n h
 
 lemma bc88_left_ray_step {a b : Site 2}
     (hab : (openSubgraph 2 (removeSite (bc57_pt 0 1) bc60_upperLines)).Adj a b)
@@ -356,9 +357,9 @@ lemma bc88_status :
     (∀ n : ℕ, 1 ≤ n → ¬ bst_BoxOpenForest bc60_upperLines n) ∧
     (∀ L : ℕ, 3 ≤ L → bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2)) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · intro ω n h; exact bc88_genuine_count_le_boundary_of_openForest ω n h
+  · intro ω n h; exact Percolation.bst_Tcount_le_boundary_of_boxOpenForest ω n h
   · intro k; exact bc88_upperLines_isTrifurcation_general k
   · intro n hn; exact bc88_upperLines_boxOpenForest_fails hn
-  · intro L hL; exact bc80_upperLines_ambient_coarseTrif hL
+  · intro L hL; exact bc61_wholeBox_severs_upperLines hL
 
 end StatMech.Walls

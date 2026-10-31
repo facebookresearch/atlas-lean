@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestBuild
 
 /-!
@@ -62,29 +66,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Results -/
-
-lemma btr_removed_isolated {T : Finset (Site d)} {ω : ConfigSpace (Sym2 (Site d))} {a b : Site d}
-    (ha : a ∈ T) (hconn : Connected d (removeSites T ω) a b) : b = a := by
-  obtain ⟨w⟩ := hconn
-  cases w with
-  | nil => rfl
-  | cons hadj w' =>
-      exfalso
-      rw [openSubgraph_adj] at hadj
-      obtain ⟨_, hopen⟩ := hadj
-      unfold removeSites at hopen
-      rw [ite_eq_left ⟨a, ha, Sym2.mem_mk_left a _⟩] at hopen
-      exact Bool.false_ne_true hopen
-
-lemma btr_arm_outside_box {T : Finset (Site d)} {ω : ConfigSpace (Sym2 (Site d))} {a : Site d}
-    (hinf : (cluster d (removeSites T ω) a).Infinite) : a ∉ T := by
-  intro ha
-  have hsub : cluster d (removeSites T ω) a ⊆ {a} := by
-    intro b hb
-    rw [mem_cluster] at hb
-    rw [Set.mem_singleton_iff]
-    exact btr_removed_isolated ha hb
-  exact hinf (Set.Finite.subset (Set.finite_singleton a) hsub)
 
 /-- A classical coarse trifurcation at `y`: three open edges leaving the `L`-box around `y`,
 connected to `y`, whose outer ends lie in pairwise distinct infinite clusters after the box is
@@ -207,9 +188,9 @@ lemma btr_bc60_not_genuineTrif (L : ℕ) (y : Site 2) :
     ¬ btr_IsGenuineCoarseTrif bc60_upperLines L y := by
   rintro ⟨a₁, a₂, a₃, _hb1, _hb2, _hb3, ⟨hcy1, hcy2, hcy3⟩, ⟨hi1, hi2, hi3⟩, ⟨hs12, hs13, hs23⟩⟩
   have hyeq : y = bc57_pt (y 0) (y 1) := bc60_pt_coord y
-  have ho1 : a₁ ∉ bc61_boxAround 2 L y := btr_arm_outside_box hi1
-  have ho2 : a₂ ∉ bc61_boxAround 2 L y := btr_arm_outside_box hi2
-  have ho3 : a₃ ∉ bc61_boxAround 2 L y := btr_arm_outside_box hi3
+  have ho1 : a₁ ∉ bc61_boxAround 2 L y := Percolation.stac_infiniteCluster_notMem _ _ hi1
+  have ho2 : a₂ ∉ bc61_boxAround 2 L y := Percolation.stac_infiniteCluster_notMem _ _ hi2
+  have ho3 : a₃ ∉ bc61_boxAround 2 L y := Percolation.stac_infiniteCluster_notMem _ _ hi3
   have hyb : y ∈ bc61_boxAround 2 L y := btr_center_mem_box y
   have hne1 : a₁ ≠ y := fun h => ho1 (h ▸ hyb)
   have hhpos : 1 ≤ y 1 := btr_height_pos (u := y) (v := a₁) hne1 hcy1

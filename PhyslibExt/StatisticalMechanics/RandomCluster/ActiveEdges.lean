@@ -254,7 +254,7 @@ lemma edgeProductW_setClosed (pf : Sym2 V → ℝ) (e : G.edgeSet)
     exact (Finset.mem_erase.mp ha).1
   · simp [setClosed_self]
 
-lemma activeWeight_close_pair {pf : Sym2 V → ℝ}
+lemma activeWeight_open_closed_comparison {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) (e : G.edgeSet) (ω : ConfigSpace G.edgeSet) :
     (1 - pf e.1) * activeWeight G pf q (setOpen e ω) ≤
@@ -376,7 +376,7 @@ lemma active_openMarginal_le_param {pf : Sym2 V → ℝ}
   rw [show pf e.1 * (activeWeight G pf q (setClosed e ψ) / activeZ G pf q) =
       (pf e.1 * activeWeight G pf q (setClosed e ψ)) / activeZ G pf q by ring]
   exact (div_le_div_iff_of_pos_right hZ).2
-    (activeWeight_close_pair G hpf hpf1 hq e ψ)
+    (activeWeight_open_closed_comparison G hpf hpf1 hq e ψ)
 
 section ClosedProduct
 
@@ -511,7 +511,7 @@ lemma betaScore_extendActive (J : Sym2 V → ℝ) (β : ℝ)
   · apply Finset.sum_congr rfl
     intro e _
     congr 2
-    simp [coordR, OSSS.Lindeberg.coord, extendActive_apply]
+    simp [coord, OSSS.Lindeberg.coord, extendActive_apply]
   · intro e
     rw [SimpleGraph.mem_edgeFinset]
 

@@ -8,8 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CylinderResidue
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CylinderArmPattern
 
 /-!
 # The bridge to triple events

@@ -8,14 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosureDuality
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanFaithfulCount
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.RayCrossFlip
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.ShiftSquareCycle
-public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DartWinding
-public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.EventToCut
+public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.CrossEdgeMatchingForms
+public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk
 
 /-!
 # Face-region form of the inside of a closed lattice walk

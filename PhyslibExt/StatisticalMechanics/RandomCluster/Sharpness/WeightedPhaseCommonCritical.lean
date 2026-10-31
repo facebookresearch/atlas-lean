@@ -451,7 +451,7 @@ lemma covariantWeightedSelectedPhaseTranslation
   have : IsProbabilityMeasure (mux.map (ConfigSpace.shift g)) :=
     (Measure.isProbabilityMeasure_map_iff
       (ConfigSpace.measurable_shift g).aemeasurable).mpr inferInstance
-  apply fkgqt_measure_eq_of_multiOpen_eq
+  apply measure_eq_of_multiOpen_eq
   intro T
   rw [Measure.map_apply (ConfigSpace.measurable_shift g)
     (fmu_multiOpen_measurable T), fmu_shift_multiOpen]

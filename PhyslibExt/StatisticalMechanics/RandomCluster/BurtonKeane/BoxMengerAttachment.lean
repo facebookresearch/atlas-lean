@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMergeFreeMenger
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
 
 /-!
 # Cluster attachment
@@ -153,9 +155,9 @@ lemma bma_attachment_of_three_clusterAttachments (ω : ConfigSpace (Sym2 (Site d
   obtain ⟨a₁, W₁, hadj1, hW1, hin1, hmem1, hc1, hri1⟩ := h1
   obtain ⟨a₂, W₂, hadj2, hW2, hin2, hmem2, hc2, hri2⟩ := h2
   obtain ⟨a₃, W₃, hadj3, hW3, hin3, hmem3, hc3, hri3⟩ := h3
-  have hd12 : Disjoint (cluster d ω x₁) (cluster d ω x₂) := bmm_regions_disjoint ω hcd12
-  have hd13 : Disjoint (cluster d ω x₁) (cluster d ω x₃) := bmm_regions_disjoint ω hcd13
-  have hd23 : Disjoint (cluster d ω x₂) (cluster d ω x₃) := bmm_regions_disjoint ω hcd23
+  have hd12 : Disjoint (cluster d ω x₁) (cluster d ω x₂) := Walls.bc2_disjoint_of_ne hcd12
+  have hd13 : Disjoint (cluster d ω x₁) (cluster d ω x₃) := Walls.bc2_disjoint_of_ne hcd13
+  have hd23 : Disjoint (cluster d ω x₂) (cluster d ω x₃) := Walls.bc2_disjoint_of_ne hcd23
   set W : Finset (Sym2 (Site d)) := W₁ ∪ W₂ ∪ W₃ with hWdef
   have hs1 : W₁ ⊆ W := by rw [hWdef]; exact (Finset.subset_union_left).trans
                             Finset.subset_union_left

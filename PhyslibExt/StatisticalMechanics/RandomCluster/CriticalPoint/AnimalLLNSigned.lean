@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Probability.ProductMeasure
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.AnimalLLNAlmostSure
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned
 

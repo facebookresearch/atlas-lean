@@ -8,14 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.Hall.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalCutSeparation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HallArmEnds
@@ -74,6 +77,8 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
     (rootEnds : Finset V) (armEnds : V → Fin 2 → Finset V)
     (hrne : rootEnds.Nonempty)
@@ -87,10 +92,8 @@ lemma tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
       (∀ x ∈ T, ∀ i, ℓ x i ≠ r₀) ∧
       (∀ x ∈ T, ∀ i, ∀ y ∈ T, ∀ j, ℓ x i = ℓ y j → x = y ∧ i = j) := by
   classical
-
   set ι := Option ({x // x ∈ T} × Fin 2) with hι
   set t : ι → Finset V := fun p => p.elim rootEnds (fun q => armEnds q.1.1 q.2) with ht
-
   have hHall : ∀ s : Finset ι, s.card ≤ (s.biUnion t).card := by
     intro s
     rw [Finset.card_biUnion]

@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HarmBoxCoarseReach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalStarForest
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Coarse precursors under Bernoulli percolation
@@ -61,7 +63,7 @@ lemma bc109_precursor_pp (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) (L : ℕ)
       (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
     0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
       {ω | bc61_IsCoarseTrifurcation ω L 0} :=
-  bc107_coarseRoute_precursor_genuine
+  bc62_coarseTrif_pos_of_precursor_pos
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
     (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) L a₁ a₂ a₃ b₁ b₂ b₃ hpos
 

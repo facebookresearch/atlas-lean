@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosureDuality
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitWindingWitness
-public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.EventToCut
+public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk
 
 /-!
 # The gap between face-region separation and inside-region boundaries

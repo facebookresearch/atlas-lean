@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeSeverance
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingRayReach
 
@@ -161,7 +163,7 @@ lemma bc117_merge_of_boxAdjacentExternalArm {L n : ℕ}
   obtain ⟨a₁, a₂, a₃, hadj₁, hadj₂, hadj₃, hinf₁, hinf₂, hinf₃, he₁, he₂, he₃⟩ :=
     harm ω hω x₁ x₂ x₃ hb₁ hb₂ hb₃ hi₁ hi₂ hi₃ hd₁₂ hd₁₃ hd₂₃
   refine ⟨∅, ?_⟩
-  rw [StatMech.Percolation.bka_forceOpenFinset_empty]
+  rw [Percolation.DisjointPaths.mng_forceOpenFinset_empty]
   have hda₁₂ : cluster d ω a₁ ≠ cluster d ω a₂ := by rw [← he₁, ← he₂]; exact hd₁₂
   have hda₁₃ : cluster d ω a₁ ≠ cluster d ω a₃ := by rw [← he₁, ← he₃]; exact hd₁₃
   have hda₂₃ : cluster d ω a₂ ≠ cluster d ω a₃ := by rw [← he₂, ← he₃]; exact hd₂₃
@@ -234,7 +236,7 @@ lemma bc117_merge_of_clustersMeetBox {L n : ℕ}
   obtain ⟨a₂, hadj₂, hinf₂, he₂⟩ := bc117_attach_of_meetsBox hi₂ hm₂ hc₂
   obtain ⟨a₃, hadj₃, hinf₃, he₃⟩ := bc117_attach_of_meetsBox hi₃ hm₃ hc₃
   refine ⟨∅, ?_⟩
-  rw [StatMech.Percolation.bka_forceOpenFinset_empty]
+  rw [Percolation.DisjointPaths.mng_forceOpenFinset_empty]
   have hda₁₂ : cluster 2 ω a₁ ≠ cluster 2 ω a₂ := by rw [← he₁, ← he₂]; exact hd₁₂
   have hda₁₃ : cluster 2 ω a₁ ≠ cluster 2 ω a₃ := by rw [← he₁, ← he₃]; exact hd₁₃
   have hda₂₃ : cluster 2 ω a₂ ≠ cluster 2 ω a₃ := by rw [← he₂, ← he₃]; exact hd₂₃

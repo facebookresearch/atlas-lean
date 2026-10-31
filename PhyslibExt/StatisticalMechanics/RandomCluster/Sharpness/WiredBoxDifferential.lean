@@ -102,10 +102,6 @@ lemma boxActiveEnd_adj (d n : Nat) (e : (boxGraph d n).edgeSet) :
     exact e.2
   exact he
 
-@[simp] lemma mem_osssBoxFinset {d n : Nat} {x : Site d} :
-    x ∈ StatMech.Percolation.boxFinset d n <-> x ∈ box d n := by
-  rw [StatMech.Percolation.boxFinset, Set.Finite.mem_toFinset]
-
 /-- The vertex boundary of the box of radius `n`, as a `Finset`. -/
 noncomputable def osssBoundaryFinset (d n : Nat) : Finset (Site d) :=
   (vertexBoundary_finite d n).toFinset
@@ -116,7 +112,7 @@ noncomputable def osssBoundaryFinset (d n : Nat) : Finset (Site d) :=
 
 lemma origin_mem_osssBoxFinset (d n : Nat) :
     (0 : Site d) ∈ StatMech.Percolation.boxFinset d n := by
-  rw [mem_osssBoxFinset]
+  rw [Percolation.mem_boxFinset]
   intro i
   simp
 
@@ -128,12 +124,12 @@ lemma origin_not_mem_osssBoundaryFinset (d k : Nat) :
 
 lemma boxActiveEndU_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
     boxActiveEndU d n e ∈ StatMech.Percolation.boxFinset d n := by
-  rw [mem_osssBoxFinset]
+  rw [Percolation.mem_boxFinset]
   exact e.1.out.1.property
 
 lemma boxActiveEndV_mem (d n : Nat) (e : (boxGraph d n).edgeSet) :
     boxActiveEndV d n e ∈ StatMech.Percolation.boxFinset d n := by
-  rw [mem_osssBoxFinset]
+  rw [Percolation.mem_boxFinset]
   exact e.1.out.2.property
 
 /-! ## B. Wired boundary condition -/

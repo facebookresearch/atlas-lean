@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.SetTheory.ZFC.PSet
+public import Mathlib.Data.Set.Finite.Lattice
 
 /-!
 # Infinite unions over finite index sets

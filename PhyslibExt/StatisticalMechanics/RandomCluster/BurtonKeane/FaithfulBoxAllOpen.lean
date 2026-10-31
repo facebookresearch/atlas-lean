@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Tactic.NormNum.Core
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 

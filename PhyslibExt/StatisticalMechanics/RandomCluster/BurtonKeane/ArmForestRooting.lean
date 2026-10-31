@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Topology.Path
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -36,10 +37,10 @@ trifurcations of a box; each gives the self-down-arm property and the trifurcati
 separates its end from the lower-ranked ends. Two trifurcations are arm-adjacent
 (`bc37_ArmAdjacent`) when they are connected after all other trifurcations of the box are removed
 (`bc37_cutExcept`); the arm-adjacency graph `bc37_armAdjGraph` is a subgraph of the trifurcation
-graph. The arm forest rooting `bc37_ArmForestRooting` is equivalent to a down-arm selector, and
-parent funnelling `bc37_ParentFunneling` gives one. All give the self-down-arm property
-`bc36_SelfDownArm` and the bound `Tcount ≤ |∂Λₙ|`. They hold with no trifurcation, two
-trifurcations, a chain of three, a claw, or a tree of four.
+graph. Arm forest rooting is the self-down-arm property `bc36_SelfDownArm` (RootedSelfDivergence);
+it is equivalent to a down-arm selector, and parent funnelling `bc37_ParentFunneling` gives one. All
+give `bc36_SelfDownArm` and the bound `Tcount ≤ |∂Λₙ|`. RootedSelfDivergence proves that they
+hold with no trifurcation, two trifurcations, a chain of three, a claw, or a tree of four.
 
 The configuration-wide form of these conditions, for every configuration and every box of radius
 `n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
@@ -156,43 +157,17 @@ lemma bc37_isForest_iff_isAcyclic (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
 
 /-! ## C. Arm forest rooting -/
 
-/-- Arm forest rooting: arm ends `b x`, a rank and an arm-parent map `A` such that each
-trifurcation's
-end funnels through its arm parent. -/
-def bc37_ArmForestRooting (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
-  ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ) (A : Site d → Site d),
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x →
-      b x ∈ box d n ∧ Connected d ω x (b x) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x)).Infinite) ∧
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-      x ≠ y → Connected d ω x y → rank x ≠ rank y) ∧
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-      x ≠ y → Connected d ω x y → rank x < rank y →
-      Connected d (removeSite y ω) (A y) (b y) ∧
-      ¬ Connected d (removeSite y ω) (A y) (b x))
-
 lemma bc37_downArmSelector_of_armForestRooting (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bc37_ArmForestRooting ω n) : bc37_DownArmSelector ω n := by
+    (h : bc36_SelfDownArm ω n) : bc37_DownArmSelector ω n := by
   obtain ⟨b, rank, A, hdata, hrank, hplace⟩ := h
   refine ⟨b, rank, hdata, hrank, ?_⟩
   intro x hxbox htri y hybox htriy hxy hconn hlt
   obtain ⟨hdown, hbetween⟩ := hplace x hxbox htri y hybox htriy hxy hconn hlt
   exact bkfl_arms_separate ω hbetween hdown (bkfl_inArm_self ω y (b x))
 
-lemma bc37_selfDownArm_of_armForestRooting (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bc37_ArmForestRooting ω n) : bc36_SelfDownArm ω n :=
-  bc37_selfDownArm_of_downArmSelector ω n (bc37_downArmSelector_of_armForestRooting ω n h)
-
-lemma bc37_armForestRooting_of_downArmSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bc37_DownArmSelector ω n) : bc37_ArmForestRooting ω n := by
-  obtain ⟨b, rank, hdata, hrank, hdiv⟩ := h
-  refine ⟨b, rank, b, hdata, hrank, ?_⟩
-  intro x hxbox htri y hybox htriy hxy hconn hlt
-  exact ⟨connected_rfl, hdiv x hxbox htri y hybox htriy hxy hconn hlt⟩
-
 lemma bc37_armForestRooting_iff_downArmSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    bc37_ArmForestRooting ω n ↔ bc37_DownArmSelector ω n :=
-  ⟨bc37_downArmSelector_of_armForestRooting ω n, bc37_armForestRooting_of_downArmSelector ω n⟩
+    bc36_SelfDownArm ω n ↔ bc37_DownArmSelector ω n :=
+  ⟨bc37_downArmSelector_of_armForestRooting ω n, bc37_selfDownArm_of_downArmSelector ω n⟩
 
 lemma bc37_downArmSelector_of_singleCutSep (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : fcc_RootedSingleCutSeparation ω n) : bc37_DownArmSelector ω n := by
@@ -200,10 +175,6 @@ lemma bc37_downArmSelector_of_singleCutSep (ω : ConfigSpace (Sym2 (Site d))) (n
   refine ⟨b, rank, hdata, hrank, ?_⟩
   intro x hxbox htri y hybox htriy hxy hconn hlt
   exact fun hc => hsep x hxbox htri y hybox htriy hxy hconn hlt hc.symm
-
-lemma bc37_armForestRooting_of_singleCutSep (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : fcc_RootedSingleCutSeparation ω n) : bc37_ArmForestRooting ω n :=
-  bc37_armForestRooting_of_downArmSelector ω n (bc37_downArmSelector_of_singleCutSep ω n h)
 
 /-! ## D. Parent funnelling -/
 
@@ -238,14 +209,6 @@ lemma bc37_selfDownArm_of_parentFunneling (ω : ConfigSpace (Sym2 (Site d))) (n 
     (h : bc37_ParentFunneling ω n) : bc36_SelfDownArm ω n :=
   bc37_selfDownArm_of_downArmSelector ω n (bc37_downArmSelector_of_parentFunneling ω n h)
 
-lemma bc37_armForestRooting_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
-    bc37_ArmForestRooting ω n := by
-  refine ⟨id, (fun _ => toLex (0, 0)), id, ?_, ?_, ?_⟩
-  · intro x hxbox htri; exact absurd htri (hno x hxbox)
-  · intro x hxbox htri; exact absurd htri (hno x hxbox)
-  · intro x hxbox htri; exact absurd htri (hno x hxbox)
-
 lemma bc37_armForestRooting_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ y₀ : Site d} (b : Site d → Site d) (hx0y0 : x₀ ≠ y₀)
     (htwo : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = y₀)
@@ -254,9 +217,9 @@ lemma bc37_armForestRooting_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : �
     (hby0 : b y₀ ∈ box d n ∧ Connected d ω y₀ (b y₀) ∧
       (cluster d (removeSites (tfc_trifFinset ω n) ω) (b y₀)).Infinite)
     (hdiv : ¬ Connected d (removeSite y₀ ω) (b y₀) (b x₀)) :
-    bc37_ArmForestRooting ω n := by
+    bc36_SelfDownArm ω n := by
   classical
-  apply bc37_armForestRooting_of_downArmSelector
+  apply bc37_selfDownArm_of_downArmSelector
   refine ⟨b, (fun z => if z = y₀ then toLex (1, 0) else toLex (0, 0)), ?_, ?_, ?_⟩
   · intro x hxbox htri
     rcases htwo x hxbox htri with rfl | rfl
@@ -294,9 +257,9 @@ lemma bc37_armForestRooting_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n 
     (hsxm : ¬ Connected d (removeSite m ω) (b m) (b x₀))
     (hsxg : ¬ Connected d (removeSite g ω) (b g) (b x₀))
     (hsmg : ¬ Connected d (removeSite g ω) (b g) (b m)) :
-    bc37_ArmForestRooting ω n := by
+    bc36_SelfDownArm ω n := by
   classical
-  apply bc37_armForestRooting_of_downArmSelector
+  apply bc37_selfDownArm_of_downArmSelector
   refine ⟨b, (fun z => if z = x₀ then toLex (0, 0)
               else if z = m then toLex (1, 0) else toLex (2, 0)), ?_, ?_, ?_⟩
   · intro x hxbox htri
@@ -325,92 +288,6 @@ lemma bc37_armForestRooting_of_threeChain (ω : ConfigSpace (Sym2 (Site d))) (n 
       | exact hsxg
       | exact hsmg
       | exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
-
-lemma bc37_armForestRooting_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (x₀ : Site d) (y : Fin 3 → Site d) (lx : Site d → Fin 3) (ly : Fin 3 → Site d → Fin 3)
-    (hx0box : x₀ ∈ box d n) (htri0 : IsTrifurcation d ω x₀)
-    (hydata : ∀ i, y i ∈ box d n ∧ IsTrifurcation d ω (y i) ∧ x₀ ≠ y i ∧
-      Connected d ω x₀ (y i))
-    (hyinj : Function.Injective y)
-    (hlyf : ∀ i u v, Connected d ω (y i) u → y i ≠ u → Connected d ω (y i) v → y i ≠ v →
-      (ly i u = ly i v ↔ fsp_sameArm ω (y i) u v))
-    (hGstar : ∀ i w, Connected d ω x₀ w → x₀ ≠ w → Connected d ω (y i) w → y i ≠ w →
-      (ly i w = 0 ↔ lx w ≠ i))
-    (hsingle : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ ∃ i, x = y i)
-    (b : Site d → Site d)
-    (hbdata : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
-      b x ∈ box d n ∧ Connected d ω x (b x) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x)).Infinite)
-    (hcy : ∀ i, lx (b (y i)) = i)
-    {j₀ : Fin 3} (hcx : lx (b x₀) = j₀)
-    (hcentral : ly j₀ (b x₀) ≠ ly j₀ (b (y j₀))) :
-    bc37_ArmForestRooting ω n :=
-  bc37_armForestRooting_of_singleCutSep ω n
-    (fcc_rootedSingleCutSeparation_of_claw ω n x₀ y lx ly hx0box htri0 hydata hyinj hlyf hGstar
-      hsingle b hbdata hcy hcx hcentral)
-
-set_option linter.unusedSimpArgs false in
-lemma bc37_armForestRooting_of_fourTree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x₀ m g h : Site d} (b : Site d → Site d)
-    (hx0m : x₀ ≠ m) (hx0g : x₀ ≠ g) (hx0h : x₀ ≠ h) (hmg : m ≠ g) (hmh : m ≠ h) (hgh : g ≠ h)
-    (hfour : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x = x₀ ∨ x = m ∨ x = g ∨ x = h)
-    (hbx0 : b x₀ ∈ box d n ∧ Connected d ω x₀ (b x₀) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x₀)).Infinite)
-    (hbm : b m ∈ box d n ∧ Connected d ω m (b m) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b m)).Infinite)
-    (hbg : b g ∈ box d n ∧ Connected d ω g (b g) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b g)).Infinite)
-    (hbh : b h ∈ box d n ∧ Connected d ω h (b h) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b h)).Infinite)
-    (hm : ¬ Connected d (removeSite m ω) (b m) (b x₀))
-    (hg_x0 : ¬ Connected d (removeSite g ω) (b g) (b x₀))
-    (hg_m : ¬ Connected d (removeSite g ω) (b g) (b m))
-    (hh_x0 : ¬ Connected d (removeSite h ω) (b h) (b x₀))
-    (hh_m : ¬ Connected d (removeSite h ω) (b h) (b m))
-    (hh_g : ¬ Connected d (removeSite h ω) (b h) (b g)) :
-    bc37_ArmForestRooting ω n := by
-  classical
-  apply bc37_armForestRooting_of_downArmSelector
-  refine ⟨b, (fun z => if z = x₀ then toLex (0, 0) else if z = m then toLex (1, 0)
-              else if z = g then toLex (2, 0) else toLex (3, 0)), ?_, ?_, ?_⟩
-  · intro x hxbox htri
-    rcases hfour x hxbox htri with rfl | rfl | rfl | rfl
-    · exact hbx0
-    · exact hbm
-    · exact hbg
-    · exact hbh
-  · intro x hxbox htri y hybox htriy hxy _
-    simp only
-    rcases hfour x hxbox htri with rfl | rfl | rfl | rfl <;>
-      rcases hfour y hybox htriy with rfl | rfl | rfl | rfl <;>
-      simp only [↓reduceIte, ite_eq_right hx0m.symm, ite_eq_right hx0g.symm, ite_eq_right hx0h.symm,
-        ite_eq_right hmg.symm, ite_eq_right hmh.symm, ite_eq_right hgh.symm] <;>
-      first
-      | exact absurd rfl hxy
-      | exact stt_lex_ne_fst (by norm_num)
-  · intro x hxbox htri y hybox htriy hxy _ hlt
-    simp only at hlt
-    rcases hfour y hybox htriy with rfl | rfl | rfl | rfl <;>
-      rcases hfour x hxbox htri with rfl | rfl | rfl | rfl <;>
-      simp only [↓reduceIte, ite_eq_right hx0m, ite_eq_right hx0g, ite_eq_right hx0h,
-          ite_eq_right hmg, ite_eq_right hmh,
-        ite_eq_right hgh, ite_eq_right hx0m.symm, ite_eq_right hx0g.symm, ite_eq_right hx0h.symm,
-            ite_eq_right hmg.symm,
-        ite_eq_right hmh.symm, ite_eq_right hgh.symm] at hlt <;>
-      first
-      | exact absurd rfl hxy
-      | exact hm
-      | exact hg_x0
-      | exact hg_m
-      | exact hh_x0
-      | exact hh_m
-      | exact hh_g
-      | exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
-
-lemma bc37_Tcount_le_boundary_of_armForestRooting (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n) (h : bc37_ArmForestRooting ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  bc36_Tcount_le_boundary_of_selfDownArm ω n hn (bc37_selfDownArm_of_armForestRooting ω n h)
 
 lemma bc37_parentFunneling_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
@@ -597,15 +474,15 @@ lemma bc37_Tcount_le_boundary_of_parentFunneling (ω : ConfigSpace (Sym2 (Site d
 
 /-! ## E. Unsatisfiability of the configuration-wide conditions -/
 
-/-- `bc37_ArmForestRooting` for every configuration and every box of radius `n ≥ 1` is impossible
+/-- `bc36_SelfDownArm` for every configuration and every box of radius `n ≥ 1` is impossible
 when
 `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
 `tfc_not_forall_Tcount_le_boundary` refutes. -/
 lemma bc37_not_forall_armForestRooting (hd : 1 ≤ d) :
     ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      bc37_ArmForestRooting ω n :=
+      bc36_SelfDownArm ω n :=
   fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
-    bc37_Tcount_le_boundary_of_armForestRooting ω n hn (h ω n hn)
+    bc36_Tcount_le_boundary_of_selfDownArm ω n hn (h ω n hn)
 
 /-- `bc37_ParentFunneling` for every configuration and every box of radius `n ≥ 1` is impossible
 when

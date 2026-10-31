@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Data.Sym.Sym2
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterReachesRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConnect
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisAssignment

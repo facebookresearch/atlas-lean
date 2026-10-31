@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -165,29 +166,6 @@ lemma bc29_Tcount_le_boundary_of_rootedDownArmForest (ω : ConfigSpace (Sym2 (Si
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   bc28_Tcount_le_boundary_of_rootedArmDivergence ω n hn
     (bc29_rootedArmDivergence_of_bundled ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma bc29_burton_keane_bernoulli_of_rootedDownArmForest (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      bc29_BundledRootedDownArmForest ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc28_burton_keane_bernoulli_of_rootedArmDivergence hd p hp1 hp0
-    (fun ω n hn => bc29_rootedArmDivergence_of_bundled ω n (hres ω n hn))
-    htrif
 
 lemma bc29_rootedDownArmForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :

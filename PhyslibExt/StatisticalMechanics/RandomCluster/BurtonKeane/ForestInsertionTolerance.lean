@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifMerge
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
@@ -38,7 +40,8 @@ all configurations.
 
 ## ii. Key results
 
-- `bkw_lemma26_insertion_tolerance_pp` : `N = ∞` with positive probability gives a coarse
+- `StatMech.Walls.bkm_coarseTrifExistence_diag` (in `CoarseTrifMerge`) : `N = ∞` with positive
+  probability gives a coarse
   trifurcation at the origin with positive probability for some box size `L`
 - `bkw_count_half_of_forest` : a global contracted forest for every configuration excludes `N = ∞`
 - `bkw_bk_uniqueness_of_forest` : the resulting uniqueness statement for Bernoulli bond percolation
@@ -73,14 +76,6 @@ open StatMech.Percolation
 
 /-! ## A. Results -/
 
-lemma bkw_lemma26_insertion_tolerance_pp
-    (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site 2)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (htop : 0 < μ {ω | numInfiniteClusters 2 ω = ⊤}) :
-    ∃ L : ℕ, 0 < μ {ω | bc61_IsCoarseTrifurcation ω L 0} :=
-  bkm_coarseTrifExistence_diag μ hinv hfe htop
-
 lemma bkw_count_half_of_forest
     (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
     (hinv : IsTranslationInvariant (G := Multiplicative (Site 2)) μ)
@@ -89,7 +84,7 @@ lemma bkw_count_half_of_forest
     μ {ω | numInfiniteClusters 2 ω = ⊤} = 0 := by
   by_contra hne
   have htop : 0 < μ {ω | numInfiniteClusters 2 ω = ⊤} := pos_iff_ne_zero.mpr hne
-  obtain ⟨L, hpos⟩ := bkw_lemma26_insertion_tolerance_pp μ hinv hfe htop
+  obtain ⟨L, hpos⟩ := bkm_coarseTrifExistence_diag μ hinv hfe htop
   have hexist : bc61_CoarseTrifExistence μ L := fun _ => hpos
   have hzero : μ {ω | numInfiniteClusters 2 ω = ⊤} = 0 :=
     bc61_infiniteClusters_top_null_of_coarse μ L (fun R => boxSV_boundaryCard 2 R)
@@ -142,7 +137,7 @@ lemma bkw_status (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro μ _ hinv hfe htop; exact bkw_lemma26_insertion_tolerance_pp μ hinv hfe htop
+  · intro μ _ hinv hfe htop; exact bkm_coarseTrifExistence_diag μ hinv hfe htop
   · intro μ _ hinv hfe hforest; exact bkw_count_half_of_forest μ hinv hfe hforest
   · intro hforest; exact (bkw_bk_uniqueness_of_forest p hp1 hp0 hforest).2.1
 

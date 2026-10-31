@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AttachPrecursorRoute
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxAttachPrecursor
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisNeighbourMenger
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.UpperLinesReach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoxUpperLines

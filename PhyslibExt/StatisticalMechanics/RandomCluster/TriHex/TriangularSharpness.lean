@@ -41,7 +41,7 @@ the OSSS inputs (monotone increasing event, FKG, decision-tree revealment bound 
 shell sums) for this finite-volume wired measure. In `triangularBox_differential_inequality` the
 constant `c` is existentially quantified after `n`, so the statement alone does not give an
 `n`-uniform constant (the proof uses `c = c_R ∏_{e ∋ 0} e^{-β₀}`); the uniform version with
-`Σ_n` is `triangular_outer_inner_differential_uniform` in `TriangularSharpnessOffCentre`.
+`Σ_n` is `triangular_outer_inner_differential_uniform` in `TriangularOSSSUniform`.
 
 ## ii. Key results
 

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifDensity
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
 
@@ -67,19 +68,6 @@ lemma bc95_spanForest_exists {V : Type*} [Fintype V] (G : SimpleGraph V) :
   ⟨osf_spanForest G, osf_spanForest_le G, osf_spanForest_acyclic G,
     fun {_u _v} h => osf_spanForest_reachable_of G h⟩
 
-lemma bc95_spanForest_degree_pos {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel (osf_spanForest G).Adj] {u v : V} (hv : v ≠ u) (h : G.Reachable u v) :
-    1 ≤ (osf_spanForest G).degree u :=
-  osf_spanForest_degree_pos_of_reachable_ne G hv h
-
-lemma bc95_boxOpenForest_of_harmbox (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x)
-    (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
-      ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
-    (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
-    bst_BoxOpenForest ω n :=
-  bc90_boxOpenForest_of_genuine_armsInBox ω n hn hcanon harmbox hexists
-
 /-! ## B. Almost-sure arm reaching -/
 
 /-- Almost surely, for every box of radius `n ≥ 1`, every trifurcation is genuine and its arms start
@@ -104,7 +92,7 @@ lemma bc95_forestResidue_of_ae_armReaching (μ : Measure (ConfigSpace (Sym2 (Sit
     ∀ᵐ ω ∂μ, bst_BoxOpenForest ω n := by
   filter_upwards [hres n hn] with ω hω
   obtain ⟨hcanon, harmbox, hexists⟩ := hω
-  exact bc95_boxOpenForest_of_harmbox ω n hn hcanon harmbox hexists
+  exact bc90_boxOpenForest_of_genuine_armsInBox ω n hn hcanon harmbox hexists
 
 /-! ## C. Single-site rewiring -/
 
@@ -127,7 +115,7 @@ lemma bc95_bk_from_residues (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
     (hrw : bc95_SingleSiteRewiring μ) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc94_bk_from_density μ hprob0 (bc95_density_of_singleSiteRewiring μ hrw)
+  bc94_exclude_top_of_density μ hprob0 (bc95_density_of_singleSiteRewiring μ hrw)
 
 /-! ## D. The upper-lines configuration -/
 
@@ -142,12 +130,7 @@ lemma bc95_perConfig_contrast {V : Type*} [Fintype V] (G : SimpleGraph V)
      bst_BoxOpenForest ω n) := by
   refine ⟨bc95_spanForest_exists G, ?_⟩
   intro hcanon harmbox hexists
-  exact bc95_boxOpenForest_of_harmbox ω n hn hcanon harmbox hexists
-
-lemma bc95_upperLines_zero_density (n : ℕ) :
-    bc89_genuineTcount bc60_upperLines n = 0 ∧
-    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  ⟨bc89_upperLines_genuineTcount_zero n, bc85_upperLines_N_top⟩
+  exact bc90_boxOpenForest_of_genuine_armsInBox ω n hn hcanon harmbox hexists
 
 lemma bc95_status :
     (∀ {V : Type*} [Fintype V] (G : SimpleGraph V),
@@ -170,11 +153,12 @@ lemma bc95_status :
       numInfiniteClusters 2 bc60_upperLines = ⊤) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro V _ G; exact bc95_spanForest_exists G
-  · intro ω n hn hcanon harmbox hexists; exact bc95_boxOpenForest_of_harmbox ω n hn hcanon harmbox
+  · intro ω n hn hcanon harmbox hexists
+    exact bc90_boxOpenForest_of_genuine_armsInBox ω n hn hcanon harmbox
       hexists
   · intro μ hres n hn; exact bc95_forestResidue_of_ae_armReaching μ hres n hn
   · intro μ hrw; exact bc95_density_of_singleSiteRewiring μ hrw
   · intro μ _ hprob0 hrw; exact bc95_bk_from_residues μ hprob0 hrw
-  · intro n; exact bc95_upperLines_zero_density n
+  · intro n; exact bc94_upperLines_zero_density_and_N_top n
 
 end StatMech.Walls

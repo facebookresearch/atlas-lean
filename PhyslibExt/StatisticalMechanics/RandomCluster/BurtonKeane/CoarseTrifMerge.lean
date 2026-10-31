@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRecenter
 
 /-!
@@ -78,7 +80,7 @@ lemma bkm_recenterBoxMerge_of_le {L n : ℕ} (hnL : n ≤ L) :
     bc119_RecenterBoxMerge 2 L n := by
   intro ω hω x₁ x₂ x₃ hb₁ hb₂ hb₃ hi₁ hi₂ hi₃ hd₁₂ hd₁₃ hd₂₃
   refine ⟨0, ∅, ?_⟩
-  rw [StatMech.Percolation.bka_forceOpenFinset_empty]
+  rw [Percolation.DisjointPaths.mng_forceOpenFinset_empty]
   exact bkm_coarseTrif_of_le hnL hb₁ hb₂ hb₃ hi₁ hi₂ hi₃ hd₁₂ hd₁₃ hd₂₃
 
 lemma bkm_recenterBoxMerge_diag (n : ℕ) : bc119_RecenterBoxMerge 2 n n :=

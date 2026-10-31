@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Algebra.Operations
+public import Mathlib.Algebra.Algebra.Pi
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+public import Mathlib.Order.UpperLower.Basic
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 
 /-!

@@ -8,10 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Dynamics.Ergodic.MeasurePreserving
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.SegmentConn
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 
 /-!
 # Axis corridors and trifurcations in dimension at least three
@@ -177,42 +180,6 @@ lemma hrHD_precursor_of_removeSite_conditions
   · intro hc; exact hdist.2.1 (cluster_eq_of_connected hc)
   · intro hc; exact hdist.2.2 (cluster_eq_of_connected hc)
 
-lemma hrHD_measurableSet_neighborTrifPrecursor (a₁ a₂ a₃ : Site d) :
-    MeasurableSet (NeighborTrifPrecursor d a₁ a₂ a₃) := by
-  classical
-  have hcl : ∀ x : Site d, MeasurableSet
-      {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite 0 ω) x).Infinite} := by
-    intro x
-    have h : {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite 0 ω) x).Infinite}
-        = (fun ω => removeSite (0 : Site d) ω) ⁻¹' {ω' | (cluster d ω' x).Infinite} := rfl
-    rw [h]; exact (measurable_removeSite 0) (measurableSet_clusterInfinite x)
-  by_cases hpred : (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
-      ((hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
-        (hypercubicLattice d).Adj 0 a₃)
-  · have hset : NeighborTrifPrecursor d a₁ a₂ a₃
-        = ({ω | (cluster d (removeSite 0 ω) a₁).Infinite} ∩
-            {ω | (cluster d (removeSite 0 ω) a₂).Infinite} ∩
-            {ω | (cluster d (removeSite 0 ω) a₃).Infinite}) ∩
-          (({ω | Connected d (removeSite 0 ω) a₁ a₂}ᶜ) ∩
-            ({ω | Connected d (removeSite 0 ω) a₁ a₃}ᶜ) ∩
-            ({ω | Connected d (removeSite 0 ω) a₂ a₃}ᶜ)) := by
-      ext ω
-      simp only [NeighborTrifPrecursor, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_compl_iff]
-      constructor
-      · rintro ⟨_, _, ⟨h1, h2, h3⟩, ⟨h4, h5, h6⟩⟩; exact ⟨⟨⟨h1, h2⟩, h3⟩, ⟨⟨h4, h5⟩, h6⟩⟩
-      · rintro ⟨⟨⟨h1, h2⟩, h3⟩, ⟨⟨h4, h5⟩, h6⟩⟩
-        exact ⟨hpred.1, hpred.2, ⟨h1, h2, h3⟩, ⟨h4, h5, h6⟩⟩
-    rw [hset]
-    exact ((((hcl a₁).inter (hcl a₂)).inter (hcl a₃)).inter
-      ((((measurableSet_connected_removeSite 0 a₁ a₂).compl).inter
-        ((measurableSet_connected_removeSite 0 a₁ a₃).compl)).inter
-        ((measurableSet_connected_removeSite 0 a₂ a₃).compl)))
-  · have hempty : NeighborTrifPrecursor d a₁ a₂ a₃ = ∅ := by
-      ext ω
-      simp only [NeighborTrifPrecursor, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      rintro ⟨h1, h2, _, _⟩; exact hpred ⟨h1, h2⟩
-    rw [hempty]; exact MeasurableSet.empty
-
 /-- Disjoint routing in `B_n`: every configuration with three distinct infinite clusters meeting
 `B_n` becomes a neighbour trifurcation precursor after opening finitely many edges. -/
 def hrHD_DisjointRouting (d n : ℕ) : Prop :=
@@ -249,7 +216,7 @@ lemma hrHD_route_step
         = μ ((fun ω => forceOpenFinset p.1 ω) ⁻¹'
             (NeighborTrifPrecursor d p.2.1 p.2.2.1 p.2.2.2)) :=
       Measure.map_apply (measurable_forceOpenFinset p.1)
-        (hrHD_measurableSet_neighborTrifPrecursor _ _ _)
+        (DisjointPaths.measurableSet_neighborTrifPrecursor _ _ _)
     have hnull : μ ((fun ω => forceOpenFinset p.1 ω) ⁻¹'
         (NeighborTrifPrecursor d p.2.1 p.2.2.1 p.2.2.2)) = 0 := by
       rw [← hpush]; exact (hfe p.1) (hzero p)

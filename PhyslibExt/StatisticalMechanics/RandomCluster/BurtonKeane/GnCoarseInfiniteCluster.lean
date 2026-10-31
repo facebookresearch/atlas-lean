@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBranchLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullFiniteVolume
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
@@ -168,7 +171,7 @@ lemma bc81_cardinal_verdict (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProb
   · intro ω y hN h
     obtain ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃, _⟩ := bc81_coarseTrif_arms_connected_of_le_one ω L hN h
     exact ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃⟩
-  · intro h0 hexist; exact bc79_bk_from_leaf μ hd L hinv h0 hexist
+  · intro h0 hexist; exact bc78_bk_closed μ hd L hinv h0 hexist
 
 /-! ## B. Summary -/
 
@@ -200,6 +203,6 @@ lemma bc81_status :
     exact ⟨a₁, a₂, a₃, hc₁₂, hc₁₃, hc₂₃⟩
   · intro μ _; exact bc79_finite_N_iff_top_null μ
   · intro L hL; exact (bc81_route1_fails hL).2.2
-  · intro μ _ L hinv h0 hexist; exact bc79_bk_from_leaf μ (by norm_num) L hinv h0 hexist
+  · intro μ _ L hinv h0 hexist; exact bc78_bk_closed μ (by norm_num) L hinv h0 hexist
 
 end StatMech.Walls

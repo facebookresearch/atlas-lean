@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterNoCrossing
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DistinctCutClusters
 
@@ -102,20 +103,12 @@ lemma bc8_disjoint_of_cut_ne {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
 
 /-! ## B. No crossing -/
 
-/-- Same statement as `bc7_cut_no_crossing`; kept because ThreeDistinctCutClusters uses it. -/
-lemma bc8_cut_no_crossing {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
-    (hne : cluster d (removeSite 0 ω) x ≠ cluster d (removeSite 0 ω) y) :
-    ∀ ⦃u : Site d⦄, u ∈ cluster d (removeSite 0 ω) x →
-      ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
-        ¬ IsOpenEdge d (removeSite 0 ω) u v :=
-  bc7_cut_no_crossing hne
-
 lemma bc8_cut_no_crossing_of_disconnected {ω : ConfigSpace (Sym2 (Site d))} {x y : Site d}
     (h : ¬ Connected d (removeSite 0 ω) x y) :
     ∀ ⦃u : Site d⦄, u ∈ cluster d (removeSite 0 ω) x →
       ∀ ⦃v : Site d⦄, v ∈ cluster d (removeSite 0 ω) y →
         ¬ IsOpenEdge d (removeSite 0 ω) u v :=
-  bc8_cut_no_crossing (bc8_cut_ne_iff_disconnected.mpr h)
+  bc7_cut_no_crossing (bc8_cut_ne_iff_disconnected.mpr h)
 
 /-- The cut clusters of `x` and `y` differ iff `x` and `y` are disconnected iff the clusters are
 disjoint, and no open edge joins them when they differ. -/
@@ -131,7 +124,7 @@ def bc8_NoCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) : Prop :=
 
 lemma bc8_noCrossing (ω : ConfigSpace (Sym2 (Site d))) (x y : Site d) :
     bc8_NoCrossing ω x y :=
-  ⟨bc8_cut_ne_iff_disconnected, bc8_cut_disjoint_iff_disconnected, bc8_cut_no_crossing⟩
+  ⟨bc8_cut_ne_iff_disconnected, bc8_cut_disjoint_iff_disconnected, bc7_cut_no_crossing⟩
 
 /-! ## C. Three arms -/
 
@@ -157,7 +150,7 @@ lemma bc8_threeArms_pairwiseDisjoint (n : ℕ) (ω : ConfigSpace (Sym2 (Site d))
     bc8_threeArmClusters_distinct n ω hω
   exact ⟨x₁', x₂', x₃', hinf₁, hinf₂, hinf₃,
     bc8_disjoint_of_cut_ne hd12, bc8_disjoint_of_cut_ne hd13, bc8_disjoint_of_cut_ne hd23,
-    bc8_cut_no_crossing hd12, bc8_cut_no_crossing hd13, bc8_cut_no_crossing hd23⟩
+    bc7_cut_no_crossing hd12, bc7_cut_no_crossing hd13, bc7_cut_no_crossing hd23⟩
 
 lemma bc8_threeArms_noCrossing (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :

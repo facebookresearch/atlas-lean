@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -265,29 +266,6 @@ lemma bas_Tcount_le_boundary_of_rootedTreeArmSelection (ω : ConfigSpace (Sym2 (
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   fpc_Tcount_le_boundary_of_directionalDivergence ω n hn
     (bas_directionalDivergence_of_rootedTreeArmSelection ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma bas_burton_keane_bernoulli_of_rootedTreeArmSelection (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      bas_RootedTreeArmSelection ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  fpc_burton_keane_bernoulli_of_directionalDivergence hd p hp1 hp0
-    (fun ω n hn => bas_directionalDivergence_of_rootedTreeArmSelection ω n (hres ω n hn))
-    htrif
 
 end Percolation
 

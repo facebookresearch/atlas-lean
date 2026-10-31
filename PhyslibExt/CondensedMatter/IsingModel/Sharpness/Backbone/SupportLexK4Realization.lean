@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexParityBridge
-public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SelectorCompatible
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector
 
 /-!
 # Realizing the `K₄` parity model by the literal backbone selector

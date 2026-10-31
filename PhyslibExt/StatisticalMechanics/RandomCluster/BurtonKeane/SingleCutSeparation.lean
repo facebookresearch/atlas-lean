@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -251,52 +252,6 @@ lemma daep2_Tcount_le_boundary_of_singleCut (ω : ConfigSpace (Sym2 (Site d))) (
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   daep2_Tcount_le_boundary_of_sameCluster ω n hn
     (daep2_sameClusterCutSeparation_of_singleCut ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-theorem daep2_burton_keane_bernoulli_of_sameCluster (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      daep2_SameClusterCutSeparation ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  daep_burton_keane_bernoulli_of_globalCutSeparation hd p hp1 hp0
-    (fun ω n hn => daep2_globalCutSeparation_of_sameCluster ω n (hres ω n hn))
-    htrif
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma daep2_burton_keane_bernoulli_of_singleCut (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      daep2_SingleCutBranchSeparation ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  daep2_burton_keane_bernoulli_of_sameCluster hd p hp1 hp0
-    (fun ω n hn => daep2_sameClusterCutSeparation_of_singleCut ω n (hres ω n hn))
-    htrif
 
 end Percolation
 

@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.Positivity.Core
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxAllOpen
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
@@ -384,9 +387,9 @@ lemma bgf2_trif_separation {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ} (h : bao
   obtain ⟨htri, hbox⟩ := h
   have h0 : bgf2_IndexAllOpen ω L 0 := bgf2_indexAllOpen_zero_of_bff hbox
   obtain ⟨a₁, a₂, a₃, _hinc, ⟨hinf₁, hinf₂, hinf₃⟩, hcut₁₂, hcut₁₃, hcut₂₃⟩ := htri
-  have hout₁ : a₁ ∉ bc61_boxAround 2 L 0 := bsc_notMem_box_of_infinite hinf₁
-  have hout₂ : a₂ ∉ bc61_boxAround 2 L 0 := bsc_notMem_box_of_infinite hinf₂
-  have hout₃ : a₃ ∉ bc61_boxAround 2 L 0 := bsc_notMem_box_of_infinite hinf₃
+  have hout₁ : a₁ ∉ bc61_boxAround 2 L 0 := bc72_arm_outside_of_infinite hinf₁
+  have hout₂ : a₂ ∉ bc61_boxAround 2 L 0 := bc72_arm_outside_of_infinite hinf₂
+  have hout₃ : a₃ ∉ bc61_boxAround 2 L 0 := bc72_arm_outside_of_infinite hinf₃
   have hne₁ : bgf2_q ω L a₁ ≠ 0 := fun hz => hout₁ ((bgf2_q_eq_zero_iff_mem h0).mp hz)
   have hne₂ : bgf2_q ω L a₂ ≠ 0 := fun hz => hout₂ ((bgf2_q_eq_zero_iff_mem h0).mp hz)
   have hne₃ : bgf2_q ω L a₃ ≠ 0 := fun hz => hout₃ ((bgf2_q_eq_zero_iff_mem h0).mp hz)
@@ -403,7 +406,7 @@ lemma bgf2_trif_separation {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ} (h : bao
 
 #check @bgf2_trif_separation
 
-#check @StatMech.Walls.bca_fieldD_free
+#check @StatMech.Walls.bcv_trif_degree_ge_three
 
 /-! ## E. The single-box configuration -/
 
@@ -481,6 +484,6 @@ end StatMech.Walls
 #print axioms StatMech.Walls.bgf2_faithful
 #print axioms StatMech.Walls.bgf2_cut_connected_of_reach_aux
 #print axioms StatMech.Walls.bgf2_trif_separation
-#print axioms StatMech.Walls.bca_fieldD_free
+#print axioms StatMech.Walls.bcv_trif_degree_ge_three
 #print axioms StatMech.Walls.bgf2_onlyBox0_not_merged
 #print axioms StatMech.Walls.bgf2_onlyBox0_not_identified

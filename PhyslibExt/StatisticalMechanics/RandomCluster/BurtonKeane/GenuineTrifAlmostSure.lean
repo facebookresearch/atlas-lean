@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineRayCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap
 
@@ -246,8 +248,9 @@ lemma bc89_audit (μ : Measure (ConfigSpace (Sym2 (Site d))))
       (∀ k : ℕ∞, 2 ≤ k → k ≠ ⊤ → μ {ω | numInfiniteClusters d ω = k} = 1 →
         ∃ F : Finset (Sym2 (Site d)), 0 < μ (MergeWitness d F k)) →
       μ {ω | numInfiniteClusters d ω ≤ 1} = 1) := by
-  refine ⟨bc78_numInfinite_ae_const μ herg, fun R => bc85_expectation_identity μ hinv L R, ?_, ?_⟩
-  · intro hforest_ae hexist; exact bc85_dc_bootstrap μ hd L hinv hforest_ae hexist
+  refine ⟨Percolation.numInfiniteClusters_ae_const μ herg,
+    fun R => bc62_coarse_expectation μ hinv L R, ?_, ?_⟩
+  · intro hforest_ae hexist; exact bc77_top_null_of_ae_forest μ hd L hinv hforest_ae hexist
   · intro hforest_ae hexist hmergeGeom
     exact bc85_dc_step1_uniqueness μ hd L herg hfe hinv hforest_ae hexist hmergeGeom
 
@@ -272,6 +275,6 @@ lemma bc89_status :
   · intro n; exact bc89_upperLines_genuineTcount_zero n
   · intro ω x h; exact bc89_three_open_nbrs_of_genuine ω x h
   · intro ω n h; exact bc89_genuineTcount_le_boundary_of_openForest ω n h
-  · intro L hL; exact bc80_upperLines_ambient_coarseTrif hL
+  · intro L hL; exact bc61_wholeBox_severs_upperLines hL
 
 end StatMech.Walls

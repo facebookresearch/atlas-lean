@@ -29,7 +29,8 @@ domination and equal edge marginals are the hypotheses of the statements.
 
 ## ii. Key results
 
-- `emi_mass_eq_of_edgeMarg_eq` : finite-volume version for mass functions with a monotone coupling.
+- `mass_eq_of_monotoneCoupling_of_edgeMarg_eq` : finite-volume version for mass functions with a
+  monotone coupling.
 - `infiniteMeasure_eq_of_edgeMarg_eq` : `μ ≼ ν` and equal edge marginals imply `μ = ν`.
 
 ## iii. Table of contents
@@ -106,7 +107,7 @@ private lemma emi_one_le_gap_of_le_ne {z : ConfigSpace E × ConfigSpace E}
 
 /-- Two mass functions on finite edge configurations with a monotone coupling and equal edge
 marginals are equal. -/
-theorem emi_mass_eq_of_edgeMarg_eq
+theorem mass_eq_of_monotoneCoupling_of_edgeMarg_eq
     {P : ConfigSpace E × ConfigSpace E → ℝ} {μ ν : ConfigSpace E → ℝ}
     (hP : IsMonotoneCouplingFun P μ ν)
     (hmarg : ∀ e, edgeMargProb μ e = edgeMargProb ν e) : μ = ν := by
@@ -233,7 +234,7 @@ theorem infiniteMeasure_eq_of_edgeMarg_eq
         ext ω
         rfl
       rw [hpre, hmarg e.1]
-    have hmass : μF = νF := emi_mass_eq_of_edgeMarg_eq hP hmargF
+    have hmass : μF = νF := mass_eq_of_monotoneCoupling_of_edgeMarg_eq hP hmargF
     have hreal : μ.real (cylinder F A) = ν.real (cylinder F A) := by
       change μ.real (r ⁻¹' A) = ν.real (r ⁻¹' A)
       rw [← hrealμ A, ← hrealν A, hmass]

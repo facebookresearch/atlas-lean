@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedHubContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 
@@ -105,10 +107,6 @@ lemma bfc_disjointStar_leaves_interior (hd : 1 ≤ d) {R : ℕ} (hR : 2 ≤ R) :
   · rw [bc112_leaf_coord_ne hd (0 : Site d) 1 hi]
     simp
 
-lemma bfc_gap1_free (hd : 1 ≤ d) (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hL : 3 ≤ L) :
-    bc112_SeparatedArmGraph ω L R :=
-  bc112_separatedArmGraph_holds hd ω L R hL
-
 lemma bfc_status (hd : 1 ≤ d) :
     (∀ (β : Type), (bc64_starForest β).IsAcyclic) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 3 ≤ L → bc112_SeparatedArmGraph ω L R) ∧
@@ -117,9 +115,9 @@ lemma bfc_status (hd : 1 ≤ d) :
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       (∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) → bc69_Gn_globalForest ω L R) := by
   refine ⟨StatMech.Walls.bc64_starForest_acyclic, ?_, ?_, ?_⟩
-  · intro ω L R hL; exact bfc_gap1_free hd ω L R hL
+  · intro ω L R hL; exact bc112_separatedArmGraph_holds hd ω L R hL
   · intro R hR; exact bfc_disjointStar_leaves_interior hd hR
-  · intro ω L R z₀ z₁ hz₀ hz₁ hzne hno; exact StatMech.Walls.bc102_connectedForest_of_noTrif ω L R
+  · intro ω L R z₀ z₁ hz₀ hz₁ hzne hno; exact bc69_globalForest_of_noTrif ω L R
       hz₀ hz₁ hzne hno
 
 end StatMech.Walls

@@ -580,7 +580,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_isTranslationInvariant
   have : IsProbabilityMeasure (Measure.map (P.configTranslate z) mu) :=
     inferInstance
   refine MeasurePreserving.mk (P.measurable_configTranslate z) ?_
-  apply fkgqt_measure_eq_of_multiOpen_eq
+  apply measure_eq_of_multiOpen_eq
   intro T
   rw [Measure.map_apply (P.measurable_configTranslate z)
     (fmu_multiOpen_measurable T),

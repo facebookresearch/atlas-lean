@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 
 /-!

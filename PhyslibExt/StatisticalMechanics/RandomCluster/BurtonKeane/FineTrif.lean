@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutStarTransport
@@ -32,7 +34,7 @@ on `ℤ²`.
 
 - `bft_fineTrif_iff` : the explicit form of fine trifurcations.
 - `bft_count` : the hub count for fine trifurcations.
-- `bft_bk` : uniqueness from cluster tree data.
+- `StatMech.Walls.bcv_bk_of_treeData` (in `TreeCutVertex`) : uniqueness from cluster tree data.
 
 ## iii. Table of contents
 
@@ -267,11 +269,6 @@ lemma bft_datum_sep_free (ω : ConfigSpace (Sym2 (Site 2))) (S : Finset (Site 2)
   · intro heq; exact hn₂ (by have := congrArg Subtype.val heq; rw [hιU] at this; exact this)
   · intro heq; exact hn₃ (by have := congrArg Subtype.val heq; rw [hιU] at this; exact this)
 
-lemma bft_bk (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bcv_ClusterTreeData ω L R) :
-    bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  bcv_bk_of_treeData p hp1 hp0 hdata
-
 lemma bft_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (x : Site d),
       bc67_contractedLattice ω 0 x = bkg_deleteVertex (openSubgraph d ω) x) ∧
@@ -296,6 +293,6 @@ lemma bft_status :
   · intro ω x; exact bft_contractedLattice_zero ω x
   · intro ω S T _ hTH hT ι _ f hf harm B hleaf
     exact bft_count ω S hTH hT f hf harm B hleaf
-  · intro p hp1 hp0 hdata; exact bft_bk p hp1 hp0 hdata
+  · intro p hp1 hp0 hdata; exact bcv_bk_of_treeData p hp1 hp0 hdata
 
 end StatMech.Walls

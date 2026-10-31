@@ -20,8 +20,8 @@ f ≤ 1`, `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)`.
 
 Assembles the chain: `cmn_tailCondLaw` gives the tail conditional law,
 `otc_adaptCondBBB_of_tailCondLaw` gives `AdaptCondBBB`, and `adsD_adaptStepCovBound_of_condBBB`
-gives the step bound (`osss_onestep_cov_bound`). Then `tree_osss_sharp_unconditional` gives the
-inequality. `osss_monotone_sharp` is unconditional.
+gives the step bound (`osss_onestep_cov_bound`). Then `tree_osss_sharp_of_adaptStepCovBound` gives
+the inequality. `osss_monotone_sharp` is unconditional.
 
 ## ii. Key results
 
@@ -74,7 +74,7 @@ theorem osss_monotone_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ 
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f
       ≤ ∑ e, revealAdapt μ σ f e * Lindeberg.cov μ f (Lindeberg.coord e) :=
-  tree_osss_sharp_unconditional hpos hμ1 σ hf0 hf1
+  tree_osss_sharp_of_adaptStepCovBound hpos hμ1 σ hf0 hf1
     (osss_onestep_cov_bound hpos hμ1 hmono σ hf hf0 hf1)
 
 section FK

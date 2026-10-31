@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorRows
-public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Exclusion
+public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateCrossings
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualBurtonKeane
 
 /-!

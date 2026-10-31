@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.RussoHamming
+public import MathlibExt.Probability.Percolation.SharpThreshold
 
 /-!
 # Moments of the Hamming distance to an event
@@ -66,7 +67,7 @@ lemma expect_const (p : ℝ) (c : ℝ) :
     expect p (fun _ : ConfigSpace E => c) = c := by
   unfold expect
   simp only []
-  rw [← Finset.mul_sum, configWeight_sum_one, mul_one]
+  rw [← Finset.mul_sum, TwoDim.sth_sum_configWeight_eq_one, mul_one]
 
 lemma expect_le_const {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {c : ℝ}
     {f : ConfigSpace E → ℝ} (h : ∀ ω, f ω ≤ c) : expect p f ≤ c :=

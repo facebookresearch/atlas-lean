@@ -11,6 +11,8 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerFanPaths
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutAvoidingSurvives
 
 /-!
 # Menger routing at the origin
@@ -123,11 +125,6 @@ noncomputable def bc20_walk_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a x :
       have hv0 : v ≠ 0 := fun hv => hrest (hv ▸ p.start_mem_support)
       exact Walk.cons (bc20_edge_removeSite ω hadj (Ne.symm hu0) hv0) (ih hrest)
 
-lemma bc20_connected_removeSite_of_avoiding (ω : ConfigSpace (Sym2 (Site d)))
-    {a x : Site d} (w : (openSubgraph d ω).Walk a x) (h0 : (0 : Site d) ∉ w.support) :
-    Connected d (removeSite 0 ω) a x :=
-  (bc20_walk_removeSite ω w h0).reachable
-
 lemma bc20_origin_avoid_of_boxAvoid (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {u v : box d m} (p : (bc20_boxGraph d m ω).Walk u v)
     (h : bc20_originBox d m ∉ p.support) :
@@ -141,14 +138,12 @@ lemma bc20_origin_avoid_of_boxAvoid (d m : ℕ) (ω : ConfigSpace (Sym2 (Site d)
 universe u
 variable {V : Type u} [DecidableEq V] {GG : SimpleGraph V}
 
-
 omit [DecidableEq V] in
 lemma bc20_unique_index_through {A B : Set V} {k : ℕ}
     (F : bc16_DisjointPathFamily GG A B (Fin k)) (z₀ : V) {i j : Fin k}
     (hi : z₀ ∈ (F.p i).support) (hj : z₀ ∈ (F.p j).support) : i = j := by
   by_contra hne
   exact F.hdisj hne hi hj
-
 
 omit [DecidableEq V] in
 lemma bc20_disjointFamily_avoids_origin {A B : Set V}
@@ -174,7 +169,7 @@ lemma bc20_connected_removeSite_of_min2 (d m : ℕ) (ω : ConfigSpace (Sym2 (Sit
       Connected d (removeSite 0 ω) (u : Site d) (v : Site d) := by
   obtain ⟨u, v, p, hu, hv, h0⟩ := bc20_origin_avoiding_boxPath_of_min2 d m ω hmin
   refine ⟨u, v, hu, hv, ?_⟩
-  exact bc20_connected_removeSite_of_avoiding ω (bc20_mapWalk d m ω p)
+  exact bc4_avoiding_walk_survives_origin_cut ω (bc20_mapWalk d m ω p)
     (bc20_origin_avoid_of_boxAvoid d m ω p h0)
 
 /-- The boundary vertices of `B_m`, as vertices of the box graph. -/
@@ -190,7 +185,7 @@ lemma bc20_shellReach_at (d m R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
       Connected d (removeSite 0 ω) u z := by
   obtain ⟨u, v, p, hu, hv, hp0⟩ := bc20_origin_avoiding_boxPath_of_min2 d m ω hmin
   exact ⟨(u : Site d), (v : Site d), hu, hv,
-    bc20_connected_removeSite_of_avoiding ω (bc20_mapWalk d m ω p)
+    bc4_avoiding_walk_survives_origin_cut ω (bc20_mapWalk d m ω p)
       (bc20_origin_avoid_of_boxAvoid d m ω p hp0)⟩
 
 lemma bc20_exists_shellVertex_infinite (d R : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
@@ -224,7 +219,7 @@ lemma bc20_removeSite_cluster_ne (ω : ConfigSpace (Sym2 (Site d))) (a₁ a₂ :
   have hle : removeSite (0 : Site d) ω ≤ ω := by
     intro e; unfold removeSite; by_cases h : (0 : Site d) ∈ e <;> simp [h]
   exact cluster_ne_of_disjoint (removeSite 0 ω) a₁ a₂ (cluster d ω a₁) (cluster d ω a₂)
-    (cluster_mono hle a₁) (cluster_mono hle a₂) (mng_disjoint_of_cluster_ne ω a₁ a₂ hne)
+    (cluster_mono hle a₁) (cluster_mono hle a₂) (bc2_disjoint_of_ne hne)
 
 /-- Three distinct neighbours of the origin lie in pairwise distinct infinite clusters whose
 branches survive the removal of the origin. -/
@@ -259,7 +254,7 @@ lemma bc20_removeSite_infinite_of_originFree (ω : ConfigSpace (Sym2 (Site d))) 
   intro m
   obtain ⟨z, hzb, hconn⟩ := (cluster_infinite_iff ω a).mp hinf m
   obtain ⟨w⟩ := hconn
-  refine ⟨z, hzb, bc20_connected_removeSite_of_avoiding ω w (fun hmem => h0 ?_)⟩
+  refine ⟨z, hzb, bc4_avoiding_walk_survives_origin_cut ω w (fun hmem => h0 ?_)⟩
   rw [cluster_eq_of_connected w.reachable]
   exact ava_support_mem_cluster ω w hmem
 

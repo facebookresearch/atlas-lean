@@ -8,9 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Tactic.Ring.RingNF
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StraightWalk
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarFaceGeometric
 
 /-!
 # Three disjoint corridors in a planar box
@@ -88,16 +92,6 @@ def bcor_Corridors (n : ℕ) (u₁ u₂ u₃ : Site 2) : Prop :=
       (∀ z, z ∈ P₁.support → z ∈ P₃.support → z = ![0, 0]) ∧
       (∀ z, z ∈ P₂.support → z ∈ P₃.support → z = ![0, 0])
 
-/-- Rotation by `90°` maps the box `B_n` of `ℤ²` to itself. See also
-`StatMech.Lattice.rot90Fun_mem_box`, the same statement. -/
-lemma bcor_rot90_mem_box {n : ℕ} {x : Site 2} (hx : x ∈ box 2 n) :
-    rot90Fun x ∈ box 2 n := by
-  rw [mem_box] at hx ⊢
-  intro i
-  fin_cases i
-  · simpa [rot90Fun] using hx 1
-  · simpa [rot90Fun] using hx 0
-
 lemma bcor_corridors_rot90 {n : ℕ} {u₁ u₂ u₃ : Site 2}
     (hC : bcor_Corridors n u₁ u₂ u₃) :
     bcor_Corridors n (rot90Fun u₁) (rot90Fun u₂) (rot90Fun u₃) := by
@@ -124,15 +118,15 @@ lemma bcor_corridors_rot90 {n : ℕ} {u₁ u₂ u₃ : Site 2}
   · intro z hz
     rw [hs1, List.mem_map] at hz
     obtain ⟨x, hx, rfl⟩ := hz
-    exact bcor_rot90_mem_box (hb1 x hx)
+    exact Lattice.rot90Fun_mem_box _ (hb1 x hx)
   · intro z hz
     rw [hs2, List.mem_map] at hz
     obtain ⟨x, hx, rfl⟩ := hz
-    exact bcor_rot90_mem_box (hb2 x hx)
+    exact Lattice.rot90Fun_mem_box _ (hb2 x hx)
   · intro z hz
     rw [hs3, List.mem_map] at hz
     obtain ⟨x, hx, rfl⟩ := hz
-    exact bcor_rot90_mem_box (hb3 x hx)
+    exact Lattice.rot90Fun_mem_box _ (hb3 x hx)
   · intro z hz1 hz2
     rw [hs1, List.mem_map] at hz1
     rw [hs2, List.mem_map] at hz2

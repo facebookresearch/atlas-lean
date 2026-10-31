@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Set.Card
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisNeighbourMenger
 
 /-!

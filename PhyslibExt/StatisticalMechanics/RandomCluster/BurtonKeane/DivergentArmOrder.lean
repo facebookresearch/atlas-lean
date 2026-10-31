@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -32,13 +33,13 @@ and the trifurcation count.
 
 ## i. Overview
 
-`fsp_TreeSelector ω n` is single-cut branch separation `daep2_SingleCutBranchSeparation`. An arm
-placement `fsp_ArmPlacement` puts `b x` and `b y` in arms at `x` that are disconnected without `x`.
-The rooted arm order `fsp_RootedArmOrder` asks for such placements and gives tree selectors.
-`fsp_armWitness ω x v` chooses the neighbour of `x` through which `v` is reached. The divergent arm
-order `fsp_DivergentArmOrder` asks the arm witnesses of connected trifurcations to lie in different
-arms and gives the rooted arm order. All give the count bound; they hold with no trifurcation, one,
-or two.
+Tree selection is single-cut branch separation `daep2_SingleCutBranchSeparation ω n`
+(SingleCutSeparation). An arm placement `fsp_ArmPlacement` puts `b x` and `b y` in arms at `x` that
+are disconnected without `x`. The rooted arm order `fsp_RootedArmOrder` asks for such placements and
+gives tree selectors. `fsp_armWitness ω x v` chooses the neighbour of `x` through which `v` is
+reached. The divergent arm order `fsp_DivergentArmOrder` asks the arm witnesses of connected
+trifurcations to lie in different arms and gives the rooted arm order. All give the count bound;
+they hold with no trifurcation, one, or two.
 
 The configuration-wide form of these conditions, for every configuration and every box of radius
 `n ≥ 1`, is unsatisfiable when `d ≥ 1`: it implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
@@ -53,12 +54,11 @@ assumed them were removed as vacuous.
 
 ## iii. Table of contents
 
-- A. Tree selectors
-- B. Arm placements and the rooted order
-- C. Arm witnesses
-- D. The divergent order
-- E. The count
-- F. Unsatisfiability of the configuration-wide conditions
+- A. Arm placements and the rooted order
+- B. Arm witnesses
+- C. The divergent order
+- D. The count
+- E. Unsatisfiability of the configuration-wide conditions
 
 ## iv. References
 
@@ -79,33 +79,7 @@ namespace Percolation
 
 variable {d : ℕ}
 
-/-! ## A. Tree selectors -/
-
-lemma fsp_singleCut_sep_of_distinctWitness (ω : ConfigSpace (Sym2 (Site d)))
-    {x a c bx by_ : Site d}
-    (hdis : ¬ Connected d (removeSite x ω) a c)
-    (hbx : bkfl_inArm ω x a bx) (hby : bkfl_inArm ω x c by_) :
-    ¬ Connected d (removeSite x ω) bx by_ :=
-  bkfl_arms_separate ω hdis hbx hby
-
-/-- Tree selector: arm ends `b x` in the box with infinite clusters after removing `x`, such that
-removing `x` separates `b x` from `b y` for connected trifurcations `x ≠ y`. -/
-def fsp_TreeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
-  ∃ b : Site d → Site d,
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x →
-      b x ∈ box d n ∧ Connected d ω x (b x) ∧
-      (cluster d (removeSites (tfc_trifFinset ω n) ω) (b x)).Infinite) ∧
-    (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-      x ≠ y → Connected d ω x y →
-      ¬ Connected d (removeSite x ω) (b x) (b y))
-
-lemma fsp_treeSelector_iff_singleCut (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    fsp_TreeSelector ω n ↔ daep2_SingleCutBranchSeparation ω n := Iff.rfl
-
-lemma fsp_singleCut_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : fsp_TreeSelector ω n) : daep2_SingleCutBranchSeparation ω n := h
-
-/-! ## B. Arm placements and the rooted order -/
+/-! ## A. Arm placements and the rooted order -/
 
 /-- `b x` and `b y` lie in arms at `x` through neighbours `a`, `c` that are disconnected after `x`
 is
@@ -119,7 +93,7 @@ lemma fsp_singleCutSep_of_armPlacement (ω : ConfigSpace (Sym2 (Site d)))
     (b : Site d → Site d) {x y : Site d} (h : fsp_ArmPlacement ω b x y) :
     ¬ Connected d (removeSite x ω) (b x) (b y) := by
   obtain ⟨a, c, hdis, hbx, hby⟩ := h
-  exact fsp_singleCut_sep_of_distinctWitness ω hdis hbx hby
+  exact bkfl_arms_separate ω hdis hbx hby
 
 /-- Rooted arm order: arm ends `b x` with arm placements for all connected trifurcations `x ≠ y`. -/
 def fsp_RootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
@@ -131,17 +105,13 @@ def fsp_RootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
       x ≠ y → Connected d ω x y → fsp_ArmPlacement ω b x y)
 
 lemma fsp_treeSelector_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : fsp_RootedArmOrder ω n) : fsp_TreeSelector ω n := by
+    (h : fsp_RootedArmOrder ω n) : daep2_SingleCutBranchSeparation ω n := by
   obtain ⟨b, hdata, hplace⟩ := h
   refine ⟨b, hdata, ?_⟩
   intro x hxbox htri y hybox htriy hxy hconn
   exact fsp_singleCutSep_of_armPlacement ω b (hplace x hxbox htri y hybox htriy hxy hconn)
 
-lemma fsp_singleCut_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : fsp_RootedArmOrder ω n) : daep2_SingleCutBranchSeparation ω n :=
-  fsp_singleCut_of_treeSelector ω n (fsp_treeSelector_of_rootedArmOrder ω n h)
-
-/-! ## C. Arm witnesses -/
+/-! ## B. Arm witnesses -/
 
 lemma fsp_inSomeArm_of_connected (ω : ConfigSpace (Sym2 (Site d))) {x v : Site d}
     (hxv : Connected d ω x v) (hne : x ≠ v) :
@@ -201,10 +171,7 @@ lemma fsp_armPlacement_of_divergentWitness (ω : ConfigSpace (Sym2 (Site d)))
 lemma fsp_inArm_of_witness (ω : ConfigSpace (Sym2 (Site d))) {x a v : Site d}
     (h : Connected d (removeSite x ω) a v) : bkfl_inArm ω x a v := h
 
-lemma fsp_inArm_self (ω : ConfigSpace (Sym2 (Site d))) (x a : Site d) :
-    bkfl_inArm ω x a a := bkfl_inArm_self ω x a
-
-/-! ## D. The divergent order -/
+/-! ## C. The divergent order -/
 
 /-- Divergent arm order: arm ends `b x ≠ x` such that for connected trifurcations `x ≠ y`, `b x` and
 `b y` are in different arms at `x`. -/
@@ -330,17 +297,12 @@ lemma fsp_divergentArmOrder_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : �
       · exact hdiv_yx
       · exact absurd rfl hxy
 
-/-! ## E. The count -/
-
-lemma fsp_Tcount_le_boundary_of_treeSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n) (h : fsp_TreeSelector ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  daep2_Tcount_le_boundary_of_singleCut ω n hn (fsp_singleCut_of_treeSelector ω n h)
+/-! ## D. The count -/
 
 lemma fsp_Tcount_le_boundary_of_rootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : fsp_RootedArmOrder ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  fsp_Tcount_le_boundary_of_treeSelector ω n hn (fsp_treeSelector_of_rootedArmOrder ω n h)
+  daep2_Tcount_le_boundary_of_singleCut ω n hn (fsp_treeSelector_of_rootedArmOrder ω n h)
 
 lemma fsp_Tcount_le_boundary_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) (h : fsp_DivergentArmOrder ω n) :
@@ -348,16 +310,16 @@ lemma fsp_Tcount_le_boundary_of_divergentArmOrder (ω : ConfigSpace (Sym2 (Site 
   fsp_Tcount_le_boundary_of_rootedArmOrder ω n hn
     (fsp_rootedArmOrder_of_divergentArmOrder ω n h)
 
-/-! ## F. Unsatisfiability of the configuration-wide conditions -/
+/-! ## E. Unsatisfiability of the configuration-wide conditions -/
 
-/-- `fsp_TreeSelector` for every configuration and every box of radius `n ≥ 1` is impossible when
-`d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
+/-- `daep2_SingleCutBranchSeparation` for every configuration and every box of radius `n ≥ 1` is
+impossible when `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which
 `tfc_not_forall_Tcount_le_boundary` refutes. -/
 lemma fsp_not_forall_treeSelector (hd : 1 ≤ d) :
     ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      fsp_TreeSelector ω n :=
+      daep2_SingleCutBranchSeparation ω n :=
   fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
-    fsp_Tcount_le_boundary_of_treeSelector ω n hn (h ω n hn)
+    daep2_Tcount_le_boundary_of_singleCut ω n hn (h ω n hn)
 
 /-- `fsp_RootedArmOrder` for every configuration and every box of radius `n ≥ 1` is impossible when
 `d ≥ 1`: this implies the configuration-wide bound `Tcount ≤ |∂Λₙ|`, which

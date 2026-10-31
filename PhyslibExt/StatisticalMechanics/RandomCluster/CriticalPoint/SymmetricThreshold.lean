@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Sharp threshold from symmetry and maximal influence

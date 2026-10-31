@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -212,7 +214,7 @@ lemma bc63_status :
         (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
         (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3)) :=
   ⟨fun ω L R hR y a habox hinf => bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf,
-   fun G => StatMech.Walls.bc52_spanForest_acyclic G,
+   fun G => Percolation.osf_spanForest_acyclic G,
    fun ω L R h => bc63_coarseTcount_le_boundary_of_armEmbedding ω L R h,
    fun hL => StatMech.Walls.bc62_upperLines_mem_coarsePrecursor hL⟩
 

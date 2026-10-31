@@ -132,7 +132,7 @@ lemma PeriodicGraph.iUnion_connectedWithinSet_inter_orbitBox
     obtain ⟨n, hn⟩ := Set.mem_iUnion.1 homega
     exact P.connectedWithinSet_mono_region inter_subset_left x y hn
   · rintro omega ⟨l, hchain, hlast, hregion⟩
-    choose index hindex using fun v : V => P.mem_orbitBox_of_eventually v
+    choose index hindex using fun v : V => P.exists_mem_orbitBox v
     let support : Finset V := (x :: l).toFinset
     let N : Nat := ∑ v ∈ support, index v
     have hsupport (v : V) (hv : v ∈ x :: l) :
@@ -228,7 +228,7 @@ lemma PeriodicGraph.clusterWithinSet_infinite_iff_orbitBox_escape
       Classical.byContradiction fun hyBox =>
         hnot y hyBox (by simpa [PeriodicGraph.clusterWithinSet] using hy)
   · intro hescape hfinite
-    choose index hindex using fun y : V => P.mem_orbitBox_of_eventually y
+    choose index hindex using fun y : V => P.exists_mem_orbitBox y
     let N : Nat := ∑ y ∈ hfinite.toFinset, index y
     have hsubset : P.clusterWithinSet omega A x ⊆
         (P.orbitBox N : Set V) := by
@@ -653,7 +653,7 @@ lemma PeriodicPlaneEmbedding.iUnion_orbitBox_setHitsInfiniteWithin_rightHalfPlan
         Set.mem_ofPred_eq] using h
     exact ⟨x, hx.2, hinfinite⟩
   · rintro ⟨x, hxHalfPlane, hinfinite⟩
-    obtain ⟨n, hxBox⟩ := P.mem_orbitBox_of_eventually x
+    obtain ⟨n, hxBox⟩ := P.exists_mem_orbitBox x
     apply Set.mem_iUnion.2
     exact ⟨n, x, ⟨hxBox, hxHalfPlane⟩, hinfinite⟩
 

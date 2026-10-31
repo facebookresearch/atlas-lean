@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKGlobalSweep
+public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKSimultaneousStarTriangle
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDuality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdges
 public import MathlibExt.Probability.Percolation.Universality.STTTransport
@@ -33,14 +33,14 @@ into one `LocalConfig` per cell. The combinatorial core shows:
   the sector graph;
 - hexagonal open connectivity between white vertices equals sector-graph connectivity, and the
   hexagonal cluster count is the sector-graph count plus the number of isolated black centers
-  (`hexagonalTorus_numClusters_eq_terminalSector_add_isolated`).
-With edge parameters whose odds are the direction odds `yᵢ` (resp. `yᵢ*`), the FK weights
-(`activeWeight`, `activeZ`, `activeNumer` of `ActiveEdges`) factor as a closed-edge product times
-the global cell sums of `FKGlobalSweep`. On the triangular critical surface with `yᵢ yᵢ* = q` this
-gives the partition-function identity `triHexFK_torus_activeZ_identity` and the equality of all
-sector-observable expectations, in particular of the two-point functions
-(`triHexFK_torus_activeTwoPointRatio_eq`): the hexagonal-torus probability that white vertices
-`x, y` are connected equals the triangular-torus probability that `x, y` are connected.
+  (`hexagonalTorus_numClusters_eq_terminalSector_add_isolated`). With edge parameters whose odds are
+  the direction odds `yᵢ` (resp. `yᵢ*`), the FK weights (`activeWeight`, `activeZ`, `activeNumer` of
+  `ActiveEdges`) factor as a closed-edge product times the global cell sums of
+  `FKSimultaneousStarTriangle`. On the triangular critical surface with `yᵢ yᵢ* = q` this gives the
+  partition-function identity `triHexFK_torus_activeZ_identity` and the equality of all
+  sector-observable expectations, in particular of the two-point functions
+  (`triHexFK_torus_activeTwoPointRatio_eq`): the hexagonal-torus probability that white vertices
+  `x, y` are connected equals the triangular-torus probability that `x, y` are connected.
 
 Fidelity: all results are unconditional, given the stated parameter hypotheses (edge odds equal
 to the direction odds, `q ≠ 0`, `y₀ y₁ y₂ ≠ 0`, `p ≠ 1`, and the critical-surface equation).
@@ -1160,7 +1160,7 @@ lemma triHexFK_globalConfigSum_identity
     {q y0 y1 y2 y0Star y1Star y2Star : ℝ}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (external : (I → ThreeTerminalConnectivity) → ℝ) :
     (y0 * y1 * y2) ^ Fintype.card I *
         starFKGlobalConfigSum q y0Star y1Star y2Star external =
@@ -1186,7 +1186,7 @@ theorem triHexFK_torus_activeZ_identity
         hexagonalTorusSweepEdgeOdds L y0Star y1Star y2Star e)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0) :
     (y0 * y1 * y2) ^ Fintype.card (TorusSite L) *
         (∏ e : (triangularTorusGraph L).edgeSet, (1 - pfTri e.1)) *
           activeZ (hexagonalTorusGraph L) pfStar q =
@@ -1305,7 +1305,7 @@ lemma triHexFK_torus_activeSectorRatio_eq
         hexagonalTorusSweepEdgeOdds L y0Star y1Star y2Star e)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (observable : (TorusSite L → ThreeTerminalConnectivity) → ℝ) :
     activeNumer (hexagonalTorusGraph L) pfStar q
         (hexagonalTorusSectorObservable L observable) /
@@ -1421,7 +1421,7 @@ theorem triHexFK_torus_activeTwoPointRatio_eq
         hexagonalTorusSweepEdgeOdds L y0Star y1Star y2Star e)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (x y : TorusSite L) :
     activeNumer (hexagonalTorusGraph L) pfStar q
         (hexagonalTorusActiveWhiteTwoPointIndicator L x y) /

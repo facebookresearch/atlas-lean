@@ -431,7 +431,7 @@ lemma finiteWiredEventMass_mono {W : Type*} [Fintype W]
   · simp [Set.indicator_of_mem hA, Set.indicator_of_mem (hAB hA)]
   · by_cases hB : omega ∈ B <;> simp [hA, hB]
 
-lemma ocd_boundaryReach_of_outerBoundaryReach
+lemma innerBoundaryReach_of_outerBoundaryReach
     (hadj : ocd_AdjMatch Gin Gout incl)
     (hmargin : ∀ x, ¬ bdryOut (incl x))
     (hcross : ∀ x c, Gout.Adj (incl x) c →
@@ -484,7 +484,7 @@ theorem outerRootBoundaryEvent_subset_innerRestrict
       ocd_innerRestrict incl ⁻¹'
         finiteRootBoundaryEvent Gin bdryIn root := by
   intro rho hrho
-  exact ocd_boundaryReach_of_outerBoundaryReach Gin Gout incl bdryIn bdryOut
+  exact innerBoundaryReach_of_outerBoundaryReach Gin Gout incl bdryIn bdryOut
     hadj hmargin hcross rho root hrho
 
 end NestedBoundary

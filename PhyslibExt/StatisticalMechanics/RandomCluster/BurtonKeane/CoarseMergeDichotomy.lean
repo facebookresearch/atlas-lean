@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullExpectation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneErgodic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
@@ -29,8 +30,10 @@ not force two infinite clusters.
 
 ## ii. Key results
 
-- `bc78_infinitely_many_excluded` : infinitely many infinite clusters are excluded.
-- `bc78_upperLines_isInfinitelyMany` : the upper-lines configuration has `N = ⊤`.
+- `StatMech.Walls.bc77_top_null_of_ae_forest` (in `TopNullExpectation`) : infinitely many infinite
+  clusters are excluded.
+- `StatMech.Walls.bc60_numInfiniteClusters_top` (in `UpperLinesReach`) : the upper-lines
+  configuration has `N = ⊤`.
 
 ## iii. Table of contents
 
@@ -59,12 +62,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Probability zero and forests -/
-
-/-- Same statement as `numInfiniteClusters_ae_const`; kept because GenuineTrifAlmostSure uses it. -/
-lemma bc78_numInfinite_ae_const (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] (herg : IsErgodic (G := Multiplicative (Site d)) μ) :
-    ∃ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 :=
-  numInfiniteClusters_ae_const μ herg
 
 lemma bc78_ae_no_coarseTrif_of_prob_zero (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
@@ -101,21 +98,13 @@ lemma bc78_ae_forest_of_dichotomy (μ : Measure (ConfigSpace (Sym2 (Site d)))) (
 
 /-! ## B. Excluding infinitely many clusters -/
 
-lemma bc78_infinitely_many_excluded (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hforest_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R)
-    (hexist : bc61_CoarseTrifExistence μ L) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc77_top_null_of_ae_forest μ hd L hinv hforest_ae hexist
-
 lemma bc78_bk_closed (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
     (h0 : μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0)
     (hexist : bc61_CoarseTrifExistence μ L) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc78_infinitely_many_excluded μ hd L hinv (bc78_ae_forest_of_dichotomy μ L hinv h0) hexist
+  bc77_top_null_of_ae_forest μ hd L hinv (bc78_ae_forest_of_dichotomy μ L hinv h0) hexist
 
 lemma bc78_top_null_of_le_one (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ]
@@ -134,10 +123,6 @@ lemma bc78_top_null_of_le_one (μ : Measure (ConfigSpace (Sym2 (Site d))))
   decide
 
 /-! ## C. The upper-lines configuration -/
-
-lemma bc78_upperLines_isInfinitelyMany :
-    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  bc60_numInfiniteClusters_top
 
 lemma bc78_upperLines_excluded_null
     (μ : Measure (ConfigSpace (Sym2 (Site 2))))

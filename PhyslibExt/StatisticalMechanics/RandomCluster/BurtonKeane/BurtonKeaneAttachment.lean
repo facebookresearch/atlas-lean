@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConfinement
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
 
 /-!
 # Merge-free attachment and corridor routing
@@ -116,10 +119,6 @@ def bka_MergeFree (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
       cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₃ ∧
       cluster d (removeSite 0 ω) a₂ ≠ cluster d (removeSite 0 ω) a₃)
 
-lemma bka_forceOpenFinset_empty (ω : ConfigSpace (Sym2 (Site d))) :
-    forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by
-  funext e; simp [forceOpenFinset]
-
 lemma bka_corridor_refl (G : Finset (Sym2 (Site d))) (a : Site d) :
     Relation.ReflTransGen (CorridorStep G) a a := Relation.ReflTransGen.refl
 
@@ -128,9 +127,9 @@ lemma bka_distinct_clusters (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨a₁, a₂, a₃, hne, hadj, ⟨hi1, hi2, hi3⟩, hd12, hd13, hd23⟩ := h
   refine ⟨a₁, a₂, a₃, ∅, a₁, a₂, a₃, hne, hadj,
     ⟨bka_corridor_refl ∅ a₁, bka_corridor_refl ∅ a₂, bka_corridor_refl ∅ a₃⟩, ?_, ?_⟩
-  · rw [bka_forceOpenFinset_empty]
+  · rw [DisjointPaths.mng_forceOpenFinset_empty]
     exact ⟨hi1, hi2, hi3⟩
-  · rw [bka_forceOpenFinset_empty]
+  · rw [DisjointPaths.mng_forceOpenFinset_empty]
     exact ⟨hd12, hd13, hd23⟩
 
 lemma bka_disjointRouting_of_mergeFree (ω : ConfigSpace (Sym2 (Site d)))

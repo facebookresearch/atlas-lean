@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReachComponent
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestReaching
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanForestArms

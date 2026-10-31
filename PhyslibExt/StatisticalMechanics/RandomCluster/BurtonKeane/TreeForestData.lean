@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 
 /-!
@@ -69,6 +70,8 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma slh_cut_neighbor {W : Type*} [DecidableEq W] {G : SimpleGraph W} {x a : W} (hxa : x ≠ a)
     (h : G.Reachable x a) :
     ∃ (c : W) (hc : c ≠ x) (ha : a ≠ x), G.Adj x c ∧
@@ -95,6 +98,8 @@ lemma slh_cut_neighbor {W : Type*} [DecidableEq W] {G : SimpleGraph W} {x a : W}
   have hind := q.tail.induce ({x}ᶜ : Set W) hsupp
   exact ⟨c, hcx, hax, hadj, ⟨hind.copy (by simp [hc]) rfl⟩⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma slh_deg_ge_three_of_cut {W : Type*} [DecidableEq W] [Fintype W] {G : SimpleGraph W}
     [DecidableRel G.Adj] {x a₁ a₂ a₃ : W}
     (hr₁ : G.Reachable x a₁) (hr₂ : G.Reachable x a₂) (hr₃ : G.Reachable x a₃)

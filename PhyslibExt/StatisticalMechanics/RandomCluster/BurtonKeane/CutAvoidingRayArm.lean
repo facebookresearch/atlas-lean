@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Prod.Lex.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
@@ -33,9 +35,10 @@ Private far arms split the down-arm. Rooted arm divergence gives trifurcation-av
 along some rank, and so do private far orders and the claw arm geometry. A single-cut arm whose
 cluster avoids the other trifurcations is a global-cut arm, and claws give global-cut arms.
 
-**Fidelity.** `bc35_burton_keane_bernoulli_of_rootedArmDivergence` assumes rooted arm divergence for
-every configuration and box, which implies the configuration-wide trifurcation bound refuted by
-`tfc_not_forall_Tcount_le_boundary`; it is vacuous and kept only because another lane uses it.
+**Fidelity.** The results here are proved as stated. The Burton–Keane route that assumed rooted arm
+divergence for every configuration and box was deleted in the central cleanup: its hypothesis
+implies the configuration-wide trifurcation bound refuted by `tfc_not_forall_Tcount_le_boundary`, so
+it was vacuous.
 
 ## ii. Key results
 
@@ -82,64 +85,6 @@ lemma bc35_TavoidingRayData_of_rootedArmDivergence (ω : ConfigSpace (Sym2 (Site
   apply bc34_TavoidingRayData_of_globalCutArm ω n rank b hbdata
   intro x hxbox htri y hybox htriy hxy hconn hlt
   exact fun hc => hdiv x hxbox htri y hybox htriy hxy hconn hlt hc.symm
-
-/-- Burton–Keane uniqueness from rooted arm divergence for every configuration and box. Its
-configuration-wide hypothesis implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
-configuration and box, which is false for `d ≥ 1` (`tfc_not_forall_Tcount_le_boundary`), so the
-statement is vacuous. Same statement as `bc28_burton_keane_bernoulli_of_rootedArmDivergence`; kept
-because RootedSelfDivergence uses it. -/
-lemma bc35_burton_keane_bernoulli_of_rootedArmDivergence (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → rfp_RootedArmDivergence ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-  classical
-  set bfun : ConfigSpace (Sym2 (Site d)) → ℕ → Site d → Site d :=
-    fun ω n => if hn : 1 ≤ n then (hres ω n hn).choose else id with hbfun
-  set rank : ConfigSpace (Sym2 (Site d)) → ℕ → Site d → ℕ ×ₗ ℕ :=
-    fun ω n => if hn : 1 ≤ n then (hres ω n hn).choose_spec.choose else fun _ => 0 with hrank
-  have hbeq : ∀ ω n (hn : 1 ≤ n), bfun ω n = (hres ω n hn).choose := by
-    intro ω n hn; simp only [hbfun, dite_eq_left hn]
-  have hreq : ∀ ω n (hn : 1 ≤ n), rank ω n = (hres ω n hn).choose_spec.choose := by
-    intro ω n hn; simp only [hrank, dite_eq_left hn]
-  refine bc34_burton_keane_bernoulli_of_globalCutArm hd p hp1 hp0 rank bfun ?_ ?_ ?_ htrif
-  · intro ω n x hxbox htri y hybox htriy hxy hconn
-    rcases Nat.eq_zero_or_pos n with rfl | hpos
-    · rw [bc24_box_zero, Set.mem_singleton_iff] at hxbox hybox
-      exact absurd (hxbox.trans hybox.symm) hxy
-    · have hn : 1 ≤ n := hpos
-      rw [hreq ω n hn]
-      exact (hres ω n hn).choose_spec.choose_spec.2.1 x hxbox htri y hybox htriy hxy hconn
-  · intro ω n hn x hxbox htri
-    rw [hbeq ω n hn]
-    exact (hres ω n hn).choose_spec.choose_spec.1 x hxbox htri
-  · intro ω n hn x hxbox htri y hybox htriy hxy hconn hlt
-    rw [hreq ω n hn] at hlt
-    rw [hbeq ω n hn]
-    set b := (hres ω n hn).choose with hb
-    obtain ⟨hbdata, _hrankInj, hdiv⟩ := (hres ω n hn).choose_spec.choose_spec
-    intro hc
-    set T := tfc_trifFinset ω n with hTdef
-    have hyT : y ∈ T := tfc_mem_trifFinset.mpr ⟨hybox, htriy⟩
-    have hbxnotin : b x ∉ T :=
-      stac_infiniteCluster_notMem T ω (hbdata x hxbox htri).2.2
-    have hbynotin : b y ∉ T :=
-      stac_infiniteCluster_notMem T ω (hbdata y hybox htriy).2.2
-    have hne_y_bx : y ≠ b x := fun heq => hbxnotin (heq ▸ hyT)
-    have hne_y_by : y ≠ b y := fun heq => hbynotin (heq ▸ hyT)
-    have hy_bx : Connected d ω y (b x) := hconn.symm.trans (hbdata x hxbox htri).2.1
-    have hy_by : Connected d ω y (b y) := (hbdata y hybox htriy).2.1
-    exact fsp_sep_of_notSameArm ω hy_bx hne_y_bx hy_by hne_y_by
-      (hdiv x hxbox htri y hybox htriy hxy hconn hlt) hc.symm
 
 lemma bc35_TavoidingRayData_of_coherentSelector (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (h : bc26_PrivateFarOrder ω n) :

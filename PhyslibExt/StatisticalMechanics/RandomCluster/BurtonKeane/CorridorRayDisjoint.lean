@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Sym.Sym2
+public import Mathlib.Tactic.Positivity.Core
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorThreeAxes
 
@@ -52,10 +54,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Ray cells -/
-
-lemma bc2_rayCell_distinct_of_ne {i j : Fin d} (h : i ≠ j) {s t : ℤ} (hs : s ≠ 0) :
-    (hrHD_rayPt i s : Site d) ≠ hrHD_rayPt j t :=
-  hrHD_rayPt_disjoint_of_ne h hs
 
 lemma bc2_rayCell_distinct_of_ne' {i j : Fin d} (h : i ≠ j) {s t : ℤ} (ht : t ≠ 0) :
     (hrHD_rayPt i s : Site d) ≠ hrHD_rayPt j t :=
@@ -129,7 +127,7 @@ lemma bc2_ray_disjoint :
         Disjoint (hrHD_corridorEdges i L) (hrHD_corridorEdges j L') ∧
         bc2_corridorVerts i L ∩ bc2_corridorVerts j L' ⊆ {(0 : Site d)} :=
   fun h L L' =>
-    ⟨fun _ _ hs => bc2_rayCell_distinct_of_ne h hs,
+    ⟨fun _ _ hs => Percolation.hrHD_rayPt_disjoint_of_ne h hs,
      bc2_corridorEdges_disjoint h L L',
      bc2_corridorVerts_inter_subset_origin h L L'⟩
 
@@ -155,7 +153,7 @@ lemma bc2_ray_disjoint_nonvacuous (hd : 2 ≤ d) :
   refine ⟨⟨0, by omega⟩, ⟨1, by omega⟩, hij, ?_, ?_, ?_, ?_, ?_⟩
   · exact (bc2_unit_cell_mem_corridorVerts _ one_pos).2
   · exact (bc2_unit_cell_mem_corridorVerts _ one_pos).2
-  · exact bc2_rayCell_distinct_of_ne hij one_ne_zero
+  · exact Percolation.hrHD_rayPt_disjoint_of_ne hij one_ne_zero
   · exact bc2_corridorEdges_disjoint hij 1 1
   · exact bc2_corridorVerts_inter_subset_origin hij 1 1
 

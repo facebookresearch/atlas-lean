@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrif
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RaysInTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicArmSubforest
@@ -30,7 +32,8 @@ trifurcations at scale `0`, and the arm subforest datum at scale `0` gives the f
 ## ii. Key results
 
 - `bfl_fineArm_reaches_boundary` : fine arms reach the boundary.
-- `bfl_arbitrary_tree_fails_hleaf` : an arbitrary spanning tree can have a leaf off the boundary.
+- `StatMech.Walls.bof2_interiorLeaf_obstruction` (in `HandshakeLeafCount`) : an arbitrary spanning
+  tree can have a leaf off the boundary.
 
 ## iii. Table of contents
 
@@ -77,15 +80,6 @@ lemma bfl_treeRay_reaches_boundary {ω : ConfigSpace (Sym2 (Site d))} (T : Simpl
       (∀ k, T.Adj (r k) (r (k + 1))) ∧ (∃ k, r k ∈ vertexBoundary d R) :=
   bri_treeRay_reaches_boundary T (bfl_tree_le_lattice hT) hR hw hinf
 
-lemma bfl_armUnion_acyclic {V : Type*} {T : SimpleGraph V} (hT : T.IsTree)
-    {ι : Type*} (Gs : ι → SimpleGraph V) (hle : ∀ i, Gs i ≤ T) :
-    (⨆ i, Gs i).IsAcyclic :=
-  bri_union_le_acyclic hT Gs hle
-
-lemma bfl_rayGraph_le {V : Type*} (T : SimpleGraph V) (r : ℕ → V) (N : ℕ)
-    (hadj : ∀ k, T.Adj (r k) (r (k + 1))) : bri_rayGraph r N ≤ T :=
-  bri_rayGraph_le T r N hadj
-
 /-! ## B. Fine trifurcations -/
 
 lemma bfl_fineTrif_iff_bc67_zero (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
@@ -95,14 +89,6 @@ lemma bfl_fineCount_of_armSubforest (ω : ConfigSpace (Sym2 (Site 2))) (R : ℕ)
     (h : bau_ArmSubforestData ω 0 R) :
     bc61_coarseTcount ω 0 R ≤ boxSV_boundaryCard 2 R :=
   bca_datum_implies_count ω 0 R h
-
-lemma bfl_arbitrary_tree_fails_hleaf :
-    ∃ (G T : SimpleGraph (Fin 4)) (_ : DecidableRel G.Adj) (_ : DecidableRel T.Adj)
-      (B : Finset (Fin 4)),
-      T ≤ G ∧ T.IsTree ∧
-      (∃ v, G.degree v = 2 ∧ T.degree v = 1 ∧ v ∉ B) ∧
-      ¬ (∀ v, T.degree v = 1 → v ∈ B) :=
-  bof2_interiorLeaf_obstruction
 
 lemma bfl_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) {T : SimpleGraph (Site 2)},
@@ -126,8 +112,8 @@ lemma bfl_status :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ω T hT; exact bfl_tree_le_lattice hT
   · intro ω T _ hT w x R hR hwx hw hinf; exact bfl_fineArm_reaches_boundary T hT hR hwx hw hinf
-  · intro V T hT ι Gs hle; exact bfl_armUnion_acyclic hT Gs hle
-  · exact bfl_arbitrary_tree_fails_hleaf
+  · intro V T hT ι Gs hle; exact bri_union_le_acyclic hT Gs hle
+  · exact bof2_interiorLeaf_obstruction
   · intro ω R h; exact bfl_fineCount_of_armSubforest ω R h
   · intro p hp1 hp0 hdata; exact StatMech.Walls.bau_bk_of_subforestData p hp1 hp0 hdata
 

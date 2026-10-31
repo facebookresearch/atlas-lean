@@ -22,7 +22,7 @@ The Duminil-Copin–Tassion sharpness theorem for bond percolation, stated for t
 For `d > 0`, `J > 0` and `p_c(d) < 1`, `sas_sharpness_betaForm` collects four facts: `p̃_c = p_c`;
 `β > β̃_c` iff `p(β) > p̃_c`; exponential decay of the one-arm probability when `p(β)` lies in the
 subcritical set `tildePcSet`; and the mean-field bound `θ(p(β)) ≥ (β - β̃_c)/β` above `β̃_c`. It is
-proved with no hypotheses beyond `d > 0`, `J > 0` and `p_c(d) < 1`; `NontrivialAssembly`
+proved with no hypotheses beyond `d > 0`, `J > 0` and `p_c(d) < 1`; `SharpnessBetaFormDimTwo`
 discharges the last one for `d ≥ 2`.
 
 ## ii. Key results

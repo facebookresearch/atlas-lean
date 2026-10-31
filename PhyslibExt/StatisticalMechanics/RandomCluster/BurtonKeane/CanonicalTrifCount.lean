@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -158,10 +162,6 @@ lemma ctc2_count_of_subsingleton (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (h
   StatMech.Percolation.bk2_Tcount_le_boundary_of_disjointArmEnds ω n hn
       (bk2_disjointArmEnds_of_subsingleton ω n hsub)
 
-lemma ctc2_count_of_forestLeafInjection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : daec_ForestLeafInjection ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  daec_Tcount_le_boundary_of_forestLeafInjection ω n h
-
 /-! ## B. The canonical count -/
 
 open Classical in
@@ -181,7 +181,7 @@ lemma ctc2_canonTcount_le_Tcount (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
 lemma ctc2_canonTcount_le_boundary_of_forestLeafInjection (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (h : daec_ForestLeafInjection ω n) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d n :=
-  le_trans (ctc2_canonTcount_le_Tcount ω n) (ctc2_count_of_forestLeafInjection ω n h)
+  le_trans (ctc2_canonTcount_le_Tcount ω n) (daec_Tcount_le_boundary_of_forestLeafInjection ω n h)
 
 lemma ctc2_canonTcount_le_boundary_of_subsingleton (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (hn : 1 ≤ n)

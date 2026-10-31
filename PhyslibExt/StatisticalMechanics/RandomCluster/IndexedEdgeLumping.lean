@@ -27,16 +27,16 @@ value of its support fixed gives the effective parameter `1 - (1 - p)^{|f⁻¹(a
 function of the support integrates against the Bernoulli measure on `E` exactly as against the
 product measure on `A` with the effective parameters. A second version restricts to the edges of
 a simple graph `G`, the inactive bundles summing to one. Both headlines,
-`sum_indexedBernoulliWeight_bundleSupport` and
-`sum_indexedBernoulliWeight_restrictActive_bundleSupport`, are proved unconditionally (no
+`sum_indexedEdgeProduct_bundleSupport` and
+`sum_indexedEdgeProduct_restrictActive_bundleSupport`, are proved unconditionally (no
 hypothesis on `p`).
 
 ## ii. Key results
 
-- `sum_indexedBernoulliWeight_bundleSupport` : integrating a function of the bundle support
+- `sum_indexedEdgeProduct_bundleSupport` : integrating a function of the bundle support
   against the Bernoulli weight on `E` equals integrating it against the product weight with the
   effective bundle parameters.
-- `sum_indexedBernoulliWeight_restrictActive_bundleSupport` : the same identity for functions of
+- `sum_indexedEdgeProduct_restrictActive_bundleSupport` : the same identity for functions of
   the support restricted to the edges of a simple graph.
 
 ## iii. Table of contents
@@ -229,7 +229,7 @@ private lemma indexedBundleSupport_split
 
 /-- Summing a function of the bundle support against the Bernoulli weight on `E` equals summing
 it against the product weight with the effective bundle parameters. -/
-theorem sum_indexedBernoulliWeight_bundleSupport
+theorem sum_indexedEdgeProduct_bundleSupport
     (p : Real) (f : E → A) (F : (A → Bool) → Real) :
     ∑ eta : E → Bool,
         indexedEdgeProduct p eta * F (indexedBundleSupport f eta) =
@@ -278,7 +278,7 @@ theorem sum_indexedBernoulliWeight_bundleSupport
 
 /-- The lumping identity for functions of the bundle support restricted to the edges of a simple
 graph `G`. -/
-theorem sum_indexedBernoulliWeight_restrictActive_bundleSupport
+theorem sum_indexedEdgeProduct_restrictActive_bundleSupport
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (p : Real) (f : E → Sym2 V)
@@ -289,7 +289,7 @@ theorem sum_indexedBernoulliWeight_restrictActive_bundleSupport
       ∑ rho : ConfigSpace G.edgeSet,
         (∏ a, if rho a then indexedEffectiveParam f p a.1
           else 1 - indexedEffectiveParam f p a.1) * F rho := by
-  rw [sum_indexedBernoulliWeight_bundleSupport p f
+  rw [sum_indexedEdgeProduct_bundleSupport p f
     (fun omega => F (restrictActive G omega))]
   rw [← Equiv.sum_comp (activeSplitEquiv G).symm,
     Fintype.sum_prod_type]

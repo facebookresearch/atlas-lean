@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -265,7 +268,7 @@ lemma bc70_upperLines_globalForest {L R : ℕ} (hL : 3 ≤ L) (hR3 : 4 ≤ R)
 lemma bc70_upperLines_count {L R : ℕ} (hL : 3 ≤ L) (hR3 : 4 ≤ R)
     (hsingle : ∀ y, y ∈ box 2 R → bc67_IsGnTrifurcation bc60_upperLines L y → y = 0) :
     bc61_coarseTcount bc60_upperLines L R ≤ boxSV_boundaryCard 2 R :=
-  bc69_count_via_leafBound bc60_upperLines L R (bc70_upperLines_globalForest hL hR3 hsingle)
+  bc69_coarseTcount_le_boundary bc60_upperLines L R (bc70_upperLines_globalForest hL hR3 hsingle)
 
 
 open Classical in
@@ -367,6 +370,6 @@ lemma bc70_status :
   · intro ω L R x a hxbox hxtri hsingle habdry hxne hainj
     exact bc70_globalForest_of_singleStar ω L R a hxbox hxtri hsingle habdry hxne hainj
   · intro ω L R h
-    exact bc69_count_via_leafBound ω L R (bc70_globalForest_of_structure ω L R h)
+    exact bc69_coarseTcount_le_boundary ω L R (bc70_globalForest_of_structure ω L R h)
 
 end StatMech.Walls

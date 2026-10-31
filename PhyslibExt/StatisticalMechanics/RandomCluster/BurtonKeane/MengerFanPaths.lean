@@ -87,6 +87,8 @@ lemma bc19_AFan_c_inj {A S R : Set V} (F : bc19_AFan G A S R k) :
   exact F.hdisj hne hi hj'
 
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc19_AFan_c_cover [Fintype V] {A S R : Set V} (hS : S.ncard = k)
     (F : bc19_AFan G A S R k) : ∀ s ∈ S, ∃ i, F.c i = s := by
@@ -206,6 +208,9 @@ noncomputable def bc19_glueFans [Fintype V] {A B S RA RB : Set V} (hS : S.ncard 
     · exact hij (bc19_AFan_c_inj FA (bc19_cross_eq hS hRR FA FB hjA hiB)).symm
     · exact FB.hdisj ((bc19_match_inj hS FA FB).ne hij) hiB hjB
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_aFan_extract [Fintype V] {A B S : Set V}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hSsep : bc16_IsSeparator G A B S)
@@ -222,6 +227,8 @@ lemma bc19_aFan_extract [Fintype V] {A B S : Set V}
     rw [Walk.support_mapLe_eq_support] at hz; exact hregF i z hz
   exact ⟨bc19_AFan_of_family F' hregF'⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc19_trivFan [Fintype V] {B S : Set V} (hS : S.ncard = k) (hSB : S ⊆ B) :
     Nonempty (bc19_AFan G B S S k) := by
@@ -257,6 +264,8 @@ lemma bc19_lastEdge {a s : V} (Q : G.Walk a s) (hne : a ≠ s) :
         exact ⟨u, hu, by rw [Walk.support_cons]; exact List.mem_cons.2 (Or.inr hut)⟩
 
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc19_essential [Fintype V] {A B S : Set V} {s : V}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
@@ -268,6 +277,9 @@ lemma bc19_essential [Fintype V] {A B S : Set V} {s : V}
     Set.ncard_lt_ncard ⟨Set.sdiff_subset, fun h => (h hsS).2 rfl⟩ (Set.toFinite S)
   rw [hScard] at this; omega
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
@@ -290,6 +302,9 @@ lemma bc19_Bside_strict_of_notSubsetA [Fintype V] {A B S : Set V}
     huS (bc18_AReach_inter_subset hSsep ⟨huRA, huRB⟩)
   exact bc17_restr_edgeSet_ncard_lt G (bc18_AReach G B S) (x := s) (y := u) hAdj.symm huRB
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_Aside_strict_of_notSubsetB [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
@@ -352,6 +367,8 @@ def bc19_directSum {A B Y : Set V} {x y : V} {m : ℕ}
 noncomputable def bc19_sumEquiv (m : ℕ) : (Sum (Fin m) Unit) ≃ Fin (m + 1) :=
   Fintype.equivFinOfCardEq (by simp)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc19_directSolution [Fintype V] {A B Y : Set V} {x y : V}
     (hxy : G.Adj x y) (hxY : x ∉ Y) (hyY : y ∉ Y)
@@ -384,12 +401,18 @@ lemma bc19_Y_sep_of_xyA {A B Y : Set V} {x y : V}
   · rw [bc18_restr_compl_deleteEdges] at h2
     exact bc18_contra_of_reachable hYsep hxA hb₀ hxY h2
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_subset_AReach_of_min [Fintype V] {A B S : Set V}
     (hSsep : bc16_IsSeparator G A B S)
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hScard : S.ncard = k) : S ⊆ bc18_AReach G A S :=
   fun _s hsS => bc18_mem_AReach_of_essential hSsep (bc19_essential hmin hScard hsS)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_getAFan [Fintype V] {N : ℕ} {A B S : Set V}
     (IH : ∀ (G' : SimpleGraph V), G'.edgeSet.ncard < N → ∀ (A' B' : Set V), bc17_HardDir G' A' B')
     (hltN : (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < G.edgeSet.ncard →
@@ -405,6 +428,9 @@ lemma bc19_getAFan [Fintype V] {N : ℕ} {A B S : Set V}
       bc19_aFan_extract hmin hSsep
         (IH _ (hltN (bc19_Aside_strict_of_notSubsetB hSsep hmin hScard hSB)) A S)⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_routeS [Fintype V] {N : ℕ} {A B S : Set V}
     (IH : ∀ (G' : SimpleGraph V), G'.edgeSet.ncard < N → ∀ (A' B' : Set V), bc17_HardDir G' A' B')
     (hltA : (bc17_restr G (bc18_AReach G A S)).edgeSet.ncard < G.edgeSet.ncard →
@@ -421,6 +447,9 @@ lemma bc19_routeS [Fintype V] {N : ℕ} {A B S : Set V}
   exact ⟨bc19_glueFans hScard
     (fun z ⟨hzA, hzB⟩ => bc18_AReach_inter_subset hSsep ⟨hRA hzA, hRB hzB⟩) FA.some FB.some⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_hardDir_aux [Fintype V] (N : ℕ) :
     ∀ (G : SimpleGraph V), G.edgeSet.ncard < N → ∀ (A B : Set V), bc17_HardDir G A B := by
   induction N with
@@ -490,10 +519,16 @@ lemma bc19_hardDir_aux [Fintype V] (N : ℕ) :
         · exact bc19_routeS IH (mkLtA _) (mkLtB _) hmin hSxsep hSxcard
             (Or.inr hSxB) (Or.inr hSxA)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc19_hardDir_all [Fintype V] (G : SimpleGraph V) (A B : Set V) :
     bc17_HardDir G A B :=
   bc19_hardDir_aux (G.edgeSet.ncard + 1) G (by omega) A B
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- **Menger's theorem** (set version) for finite graphs: if every `A`–`B` separator has at least
 `k` vertices, there are `k` pairwise disjoint `A`–`B` paths (K. Menger, *Zur allgemeinen
 Kurventheorie*, 1927). See also `MathlibExt.menger_vertex` for the two-vertex form. -/

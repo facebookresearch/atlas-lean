@@ -8,7 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberForestSpanningTree
 
 /-!

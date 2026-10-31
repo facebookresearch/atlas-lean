@@ -29,7 +29,7 @@ the finite-volume mean-field inequality makes `b ↦ b (1 - M_n(b))` antitone; p
 and combining with the characteristic bound gives `1 - M ≤ 2dβ M ∂_h M` (section C). Integrating
 this differential inequality in `h` yields `M(h) ≥ c √h` (section D). `abbs_perco_meanfield_sqrt`
 is proved for every `β` with `p̃_c ≤ 1 - e^{-β}`; `abbs_perco_meanfield_sqrt_critical` takes
-`p̃_c < 1` as a hypothesis; `abbs_perco_meanfield_sqrt_unconditional` discharges it for `d ≥ 2` and
+`p̃_c < 1` as a hypothesis; `abigMag_critical_ge_sqrt` discharges it for `d ≥ 2` and
 is unconditional.
 
 ## ii. Key results
@@ -37,7 +37,7 @@ is unconditional.
 - `abbs_forward_characteristic` : the forward characteristic bound on `ℤ^d`
 - `abbs_infinite_field_meanfield` : `1 - M ≤ 2dβ M ∂_h M` for `p(β) ≥ p̃_c`
 - `abbs_field_sqrt_lower_bound_pos` : `1 - m ≤ K m m'` implies `m(h) ≥ c √h`
-- `abbs_perco_meanfield_sqrt_unconditional` : `M(β̃_c, h) ≥ c √h` for `d ≥ 2`
+- `abigMag_critical_ge_sqrt` : `M(β̃_c, h) ≥ c √h` for `d ≥ 2`
 
 ## iii. Table of contents
 
@@ -505,7 +505,7 @@ theorem abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
 
 /-- **Mean-field bound `δ ≤ 2`** (Aizenman–Barsky 1987) for bond percolation on `ℤ^d`, `d ≥ 2`:
 `M(β̃_c, h) ≥ c √h` for `0 < h ≤ 2d β̃_c/4`. Unconditional. -/
-theorem abbs_perco_meanfield_sqrt_unconditional {d : Nat} (hd : 2 ≤ d) :
+theorem abigMag_critical_ge_sqrt {d : Nat} (hd : 2 ≤ d) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real)
         (betaTildeC d 1 * (2 * d : Real) / 4),
       c * Real.sqrt h ≤

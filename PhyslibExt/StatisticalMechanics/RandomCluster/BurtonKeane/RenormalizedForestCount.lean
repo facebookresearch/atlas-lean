@@ -8,12 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.ENat.Defs
+public import Mathlib.Topology.Defs.Filter
+public import Mathlib.Order.Filter.AtTopBot.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndDisjoint
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneErgodic
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Coarse trifurcations at scale zero and global forest arms
@@ -38,7 +42,8 @@ configuration by configuration; the deterministic counting bound is the reusable
 ## ii. Key results
 
 - `bc25_isTrifurcation_of_coarseTrif_zero` : coarse trifurcations at scale zero are trifurcations
-- `bc25_Tcount_le_boundary_of_globalForestArms` : global forest arms bound the count
+- `StatMech.Percolation.aed_Tcount_le_boundary_of_globalForestArms` (in `ArmEndDisjoint`) : global
+  forest arms bound the count
 - `bc25_burton_keane_uniqueness_of_forest` : uniqueness from ergodicity and the merge condition
 
 ## iii. Table of contents
@@ -96,11 +101,6 @@ lemma bc25_bridge_nonvacuous :
       IsCoarseTrifurcation 2 0 ω ∧ IsTrifurcation 2 ω (0 : Site 2) := by
   obtain ⟨ω, hω⟩ := bc24_coarseTrif_nonvacuous
   exact ⟨ω, hω, bc25_isTrifurcation_of_coarseTrif_zero hω⟩
-
-lemma bc25_Tcount_le_boundary_of_globalForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n) (h : aed_GlobalForestArms ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  aed_Tcount_le_boundary_of_globalForestArms ω n hn h
 
 lemma bc25_Tcount_zero_le_box (ω : ConfigSpace (Sym2 (Site d))) :
     Tcount d ω 0 ≤ (boxFinsetBK d 0).card := by

@@ -109,7 +109,7 @@ lemma PeriodicGraph.orbitBox_mono (P : PeriodicGraph V) : Monotone P.orbitBox :=
   obtain ⟨z, hz, u, hu, rfl⟩ := hv
   exact ⟨z, box_mono 2 hmn hz, u, hu, rfl⟩
 
-lemma PeriodicGraph.mem_orbitBox_of_eventually (P : PeriodicGraph V) (v : V) :
+lemma PeriodicGraph.exists_mem_orbitBox (P : PeriodicGraph V) (v : V) :
     ∃ n, v ∈ P.orbitBox n := by
   obtain ⟨z, u, hu, rfl⟩ := P.covers v
   have hzUnion : z ∈ ⋃ n, box 2 n := by rw [iUnion_box]; trivial

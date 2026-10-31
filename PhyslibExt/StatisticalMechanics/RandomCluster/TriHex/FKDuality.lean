@@ -63,7 +63,7 @@ formalized here.
 
 @[expose] public section
 
-namespace StatMech.FrontierA
+namespace StatMech.FK.TriHex
 
 /-! ## A. Edge odds and the critical surfaces -/
 
@@ -242,4 +242,4 @@ theorem hexagonalFKCriticalSurface_one_iff_isCriticalHex
         (sub_ne_zero.mpr hp2.symm)
     exact (mul_eq_zero.mp hscale).resolve_left hfactor
 
-end StatMech.FrontierA
+end StatMech.FK.TriHex

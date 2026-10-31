@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Tactic.NormNum.Core
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryForestDegree
 
 /-!
@@ -60,6 +61,9 @@ variable {G : SimpleGraph V}
 
 /-! ## A. Results -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc114_internal_two_neighbours (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
     (hp : p.IsPath) {i : ℕ} (hi0 : 0 < i) (hilt : i < p.length) :
     F.Adj (p.getVert i) (p.getVert (i - 1)) ∧ F.Adj (p.getVert i) (p.getVert (i + 1)) ∧
@@ -78,6 +82,8 @@ lemma bc114_internal_two_neighbours (F : SimpleGraph V) {s t : V} (p : F.Walk s 
     have := hinj h1 h2 heq
     omega
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_internal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {s t : V}
     (p : F.Walk s t) (hp : p.IsPath) {i : ℕ} (hi0 : 0 < i) (hilt : i < p.length) :
     2 ≤ F.degree (p.getVert i) := by
@@ -98,12 +104,16 @@ lemma bc114_internal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {s t
 def bc114_IsInternal (F : SimpleGraph V) (v : V) : Prop :=
   ∃ (s t : V) (p : F.Walk s t) (i : ℕ), p.IsPath ∧ 0 < i ∧ i < p.length ∧ p.getVert i = v
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_isInternal_degree_ge_two (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
     (hv : bc114_IsInternal F v) : 2 ≤ F.degree v := by
   obtain ⟨s, t, p, i, hp, hi0, hilt, hveq⟩ := hv
   rw [← hveq]
   exact bc114_internal_degree_ge_two F p hp hi0 hilt
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_leaf_not_internal (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
     (hdeg : F.degree v = 1) : ¬ bc114_IsInternal F v := by
   intro hv
@@ -114,6 +124,8 @@ lemma bc114_leaf_not_internal (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
 def bc114_ArmCovered (F : SimpleGraph V) (B H : V → Prop) : Prop :=
   ∀ v, ¬ B v → ¬ H v → bc114_IsInternal F v
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_leaf_on_boundary_of_armCovered (F : SimpleGraph V) [DecidableRel F.Adj]
     {B H : V → Prop} (hcov : bc114_ArmCovered F B H)
     (hhub : ∀ v, H v → 3 ≤ F.degree v)
@@ -126,10 +138,12 @@ lemma bc114_leaf_on_boundary_of_armCovered (F : SimpleGraph V) [DecidableRel F.A
     have := bc114_isInternal_degree_ge_two F hint
     omega
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc114_isInternal_of_mem_support (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
     (hp : p.IsPath) {v : V} (hv : v ∈ p.support) (hvs : v ≠ s) (hvt : v ≠ t) :
     bc114_IsInternal F v := by
-
   rw [SimpleGraph.Walk.mem_support_iff_exists_getVert] at hv
   obtain ⟨i, hvi, hile⟩ := hv
   refine ⟨s, t, p, i, hp, ?_, ?_, hvi⟩
@@ -142,6 +156,9 @@ lemma bc114_isInternal_of_mem_support (F : SimpleGraph V) {s t : V} (p : F.Walk 
       have : i = p.length := by omega
       rw [← hvi, this, p.getVert_length]
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc114_internal_of_reachable_boundary (F : SimpleGraph V) {a z : V} (hr : F.Reachable a z)
     {v : V} (hva : v ≠ a) (hvz : v ≠ z)
     (hmem : ∃ p : F.Walk a z, p.IsPath ∧ v ∈ p.support) :
@@ -155,6 +172,8 @@ lemma bc114_hasChild_of_forestNeighbour_up (G : SimpleGraph V) (B : V → Prop)
       bc113_toB G B v < bc113_toB G B w) :
     bc113_HasChild G B hreach := hup
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_bForest_internal_has_child (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     {v : V} (hv : ¬ B v)
@@ -162,24 +181,18 @@ lemma bc114_bForest_internal_has_child (G : SimpleGraph V) (B : V → Prop)
     ∃ w, (bc113_bForest G B hreach).Adj v w ∧ bc113_toB G B v < bc113_toB G B w := by
   classical
   set F := bc113_bForest G B hreach with hF
-
   have hdeg2 : 2 ≤ F.degree v := bc114_isInternal_degree_ge_two F hint
-
   have hpar : F.Adj v (bc113_parent G B hreach v) := bc113_bForest_adj_parent G B hreach hv
   have hparlt : bc113_toB G B (bc113_parent G B hreach v) < bc113_toB G B v :=
     (bc113_parent_spec G B hreach hv).2
-
   have hcard : 2 ≤ (F.neighborFinset v).card := by
     rwa [SimpleGraph.card_neighborFinset_eq_degree]
-
   have hpmem : bc113_parent G B hreach v ∈ F.neighborFinset v := by
     rw [SimpleGraph.mem_neighborFinset]; exact hpar
   obtain ⟨w, hwmem, hwne⟩ := Finset.exists_mem_ne (by omega : 1 < (F.neighborFinset v).card)
     (bc113_parent G B hreach v)
   rw [SimpleGraph.mem_neighborFinset] at hwmem
   refine ⟨w, hwmem, ?_⟩
-
-
   have hsep : bc113_toB G B v ≠ bc113_toB G B w := bc113_bForest_toB_ne G B hreach hwmem
   rcases lt_or_gt_of_ne hsep with hlt | hgt
   · exact hlt
@@ -187,6 +200,8 @@ lemma bc114_bForest_internal_has_child (G : SimpleGraph V) (B : V → Prop)
     have := bc113_bForest_down_unique G B hreach hwmem hpar hgt hparlt
     exact hwne this
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_hasChild_of_armCovered (G : SimpleGraph V) (B : V → Prop)
     (hreach : bc113_ReachesB G B) [DecidableRel (bc113_bForest G B hreach).Adj]
     (hcov : ∀ v, ¬ B v → bc114_IsInternal (bc113_bForest G B hreach) v) :
@@ -194,17 +209,13 @@ lemma bc114_hasChild_of_armCovered (G : SimpleGraph V) (B : V → Prop)
   intro v hv
   exact bc114_bForest_internal_has_child G B hreach hv (hcov v hv)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_armForest_boundaryAnchored (F : SimpleGraph V) [DecidableRel F.Adj]
     {B H : V → Prop} (hcov : bc114_ArmCovered F B H) (hhub : ∀ v, H v → 3 ≤ F.degree v)
     (hac : F.IsAcyclic) (hmin : ∀ v, 1 ≤ F.degree v) :
     F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v) :=
   ⟨hac, hmin, fun v hdeg => bc114_leaf_on_boundary_of_armCovered F hcov hhub hdeg⟩
-
-lemma bc114_obstruction_real :
-    ¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
-        F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
-        (∀ v, F.degree v = 1 → v = 0) :=
-  bc113_no_boundaryAnchored_on_triangle
 
 lemma bc114_armCovered_nonvacuous :
     bc114_IsInternal (SimpleGraph.fromEdgeSet {s((0 : Fin 3), 1), s((1 : Fin 3), 2)}) 1 := by
@@ -224,24 +235,22 @@ lemma bc114_armCovered_nonvacuous :
 
 /-! ## B. Summary -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc114_status :
-
     (¬ ∃ (F : SimpleGraph (Fin 3)) (_ : DecidableRel F.Adj),
         F ≤ (⊤ : SimpleGraph (Fin 3)) ∧ F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧
         (∀ v, F.degree v = 1 → v = 0)) ∧
-
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (B H : V → Prop),
       bc114_ArmCovered F B H → (∀ v, H v → 3 ≤ F.degree v) →
       ∀ v, F.degree v = 1 → B v) ∧
-
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (B H : V → Prop),
       bc114_ArmCovered F B H → (∀ v, H v → 3 ≤ F.degree v) →
       F.IsAcyclic → (∀ v, 1 ≤ F.degree v) →
       F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v)) ∧
-
     (∀ (F : SimpleGraph V) [DecidableRel F.Adj] (v : V),
       F.degree v = 1 → ¬ bc114_IsInternal F v) := by
-  refine ⟨bc114_obstruction_real, ?_, ?_, ?_⟩
+  refine ⟨bc113_no_boundaryAnchored_on_triangle, ?_, ?_, ?_⟩
   · intro F _ B H hcov hhub v hdeg
     exact bc114_leaf_on_boundary_of_armCovered F hcov hhub hdeg
   · intro F _ B H hcov hhub hac hmin

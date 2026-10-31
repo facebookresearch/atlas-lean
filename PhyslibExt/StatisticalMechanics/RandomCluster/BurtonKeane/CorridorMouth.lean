@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Sym.Sym2
+public import Mathlib.Tactic.Ring.RingNF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorStepOpen
 

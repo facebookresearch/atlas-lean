@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBoundaryForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -103,21 +105,10 @@ lemma bc69_forestData_of_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : 
     (Subtype.val : (↑S : Type) → Site d), hacyc, hmin, hdeg3, hιinj, hlammap, ?_⟩
   exact bc69_subtypeVal_injOn _
 
-lemma bc69_count_via_leafBound (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc69_Gn_globalForest ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc68_coarseTcount_le_boundary_of_GnForestData ω L R (bc69_forestData_of_globalForest ω L R h)
-
 lemma bc69_coarseTcount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc69_Gn_globalForest ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc69_count_via_leafBound ω L R h
-
-lemma bc69_leaf_count_absorbs_shared {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v) :
-    (univ.filter (fun v => 3 ≤ G.degree v)).card
-      ≤ (univ.filter (fun v => G.degree v = 1)).card :=
-  flc2_forest_internal_le_leaves G hacyc hmin
+  bc68_coarseTcount_le_boundary_of_GnForestData ω L R (bc69_forestData_of_globalForest ω L R h)
 
 lemma bc69_leaf_card_le_boundary_subtype (R : ℕ) {S : Set (Site d)} [Fintype (↑S : Type)]
     (G : SimpleGraph (↑S : Type)) [DecidableRel G.Adj]
@@ -181,7 +172,6 @@ lemma bc69_single_edge_acyclic {V : Type*} [DecidableEq V] (a b : V) (hab : a �
   exact hne (w.eq_of_length_eq_zero
     (by cases w with | nil => rfl | cons h _ => exact absurd h (by simp)))
 
-
 open Classical in
 lemma bc69_globalForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R) (hzne : z₀ ≠ z₁)
@@ -240,7 +230,7 @@ lemma bc69_upperLines_boundary_mem {R : ℕ} (hR3 : 4 ≤ R) (i : Fin 3) :
 lemma bc69_upperLines_globalForest_count {L R : ℕ}
     (h : bc69_Gn_globalForest bc60_upperLines L R) :
     bc61_coarseTcount bc60_upperLines L R ≤ boxSV_boundaryCard 2 R :=
-  bc69_count_via_leafBound bc60_upperLines L R h
+  bc69_coarseTcount_le_boundary bc60_upperLines L R h
 
 /-! ## B. Summary -/
 
@@ -255,10 +245,10 @@ lemma bc69_status :
       bc69_Gn_globalForest ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) := by
   refine ⟨?_, ?_, ?_⟩
   · intro V _ _ G _ hacyc hmin
-    exact bc69_leaf_count_absorbs_shared G hacyc hmin
+    exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro R S
     exact bc69_subtypeVal_injOn S
   · intro ω L R h
-    exact bc69_count_via_leafBound ω L R h
+    exact bc69_coarseTcount_le_boundary ω L R h
 
 end StatMech.Walls

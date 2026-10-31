@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxQuotient
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -249,13 +253,6 @@ lemma bc73_infiniteClusters_top_null
     (bc73_const_boundary_vol_tendsto d hd L)
     hexist
 
-lemma bc73_disjointBoxes_deg3 {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 (Site d))}
-    (h : bc67_IsGnTrifurcation ω L y) :
-    ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (hyS : y ∈ S)
-      (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).Adj),
-      3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).degree ⟨y, hyS⟩ :=
-  bc72_quot_deg3_of_gnTrif h
-
 lemma bc73_fiber_empty_bound (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (hempty : bc73_fiber ω L R c = ∅) :
     (bc73_fiber ω L R c).card ≤ boxSV_boundaryCard d R := by
@@ -268,18 +265,6 @@ lemma bc73_sublatticeForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : 
   have hfib : bc73_fiber ω L R c = ∅ := by
     rw [bc73_fiber, hno]; simp
   rw [hfib]; simp
-
-lemma bc73_upperLines_sublattice_disjoint (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) :=
-  bc64_disjointBoxes_multiTrif L
-
-lemma bc73_upperLines_deg3_sublattice {L : ℕ} (hL : 3 ≤ L) :
-    ∃ (S : Set (Site 2)) (_ : Fintype (↑S : Type)) (hyS : (0 : Site 2) ∈ S)
-      (_ : DecidableRel ((bc72_quotGraph (openSubgraph 2 bc60_upperLines)
-              (bc72_collapseBox L (0 : Site 2))).induce S).Adj),
-      3 ≤ ((bc72_quotGraph (openSubgraph 2 bc60_upperLines)
-            (bc72_collapseBox L (0 : Site 2))).induce S).degree ⟨0, hyS⟩ :=
-  bc72_upperLines_deg3 hL
 
 /-! ## C. Summary -/
 

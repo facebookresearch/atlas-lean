@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxCutMerge
 
 /-!
@@ -251,7 +253,7 @@ lemma bc119_recenter_upperLines_witness {L : ℕ} (hL : 3 ≤ L) :
     ∃ (y : Site 2) (W : Finset (Sym2 (Site 2))),
       bc61_IsCoarseTrifurcation (forceOpenFinset W bc60_upperLines) L y := by
   refine ⟨0, ∅, ?_⟩
-  rw [StatMech.Percolation.bka_forceOpenFinset_empty]
+  rw [Percolation.DisjointPaths.mng_forceOpenFinset_empty]
   exact bc61_wholeBox_severs_upperLines hL
 
 lemma bc119_status :

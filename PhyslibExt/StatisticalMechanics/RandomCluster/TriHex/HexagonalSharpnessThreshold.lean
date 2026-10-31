@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalSharpnessOffCentre
+public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalOSSSUniform
 public import MathlibExt.Probability.OSSS.BetaThresholdBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LogCesaroLimit
 
@@ -21,7 +21,7 @@ growth of `Σ_n`, the outer-wired crossing probability `θ_n` decays exponential
 ## i. Overview
 
 `hexagonalNormalizedTheta = θ_n / c(β₀)` rescales the crossing probability of
-`HexagonalSharpness` by the OSSS constant of `HexagonalSharpnessOffCentre`, so that the
+`HexagonalSharpness` by the OSSS constant of `HexagonalOSSSUniform`, so that the
 differential inequality reads `(n / Σ_n) θ̃_n ≤ dθ̃_n/dβ` (`hexagonalNormalizedTheta_differential`).
 `hexagonalThresholdTheta` extends it to `β ≤ 0` (value `1 / c` at `n = 0` and `0` otherwise), and
 the generic integration argument of `MathlibExt.Probability.OSSS.BetaThresholdBound` defines

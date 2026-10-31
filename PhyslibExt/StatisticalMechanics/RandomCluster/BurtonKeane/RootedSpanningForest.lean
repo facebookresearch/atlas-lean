@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -434,29 +435,6 @@ lemma stt_Tcount_le_boundary_of_rootedSpanningForest (ω : ConfigSpace (Sym2 (Si
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   rts_Tcount_le_boundary_of_rootedColoredForest ω n hn
     (stt_rootedColoredForest_of_rootedSpanningForest ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma stt_burton_keane_bernoulli_of_rootedSpanningForest (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      stt_RootedSpanningForest ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  rts_burton_keane_bernoulli_of_rootedColoredForest hd p hp1 hp0
-    (fun ω n hn => stt_rootedColoredForest_of_rootedSpanningForest ω n (hres ω n hn))
-    htrif
 
 end Percolation
 

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BadBox
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineBoxOpenForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure
@@ -104,7 +105,7 @@ lemma bc94_ae_genuineCount_bound_of_residue (μ : Measure (ConfigSpace (Sym2 (Si
 lemma bc94_upperLines_zero_density_and_N_top (n : ℕ) :
     bc89_genuineTcount bc60_upperLines n = 0 ∧
     numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  ⟨bc89_upperLines_genuineTcount_zero n, bc85_upperLines_N_top⟩
+  ⟨bc89_upperLines_genuineTcount_zero n, bc60_numInfiniteClusters_top⟩
 
 lemma bc94_forward_density_uses_top (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hexist : bc94_GenuineTrifExistence μ)
@@ -122,13 +123,6 @@ lemma bc94_exclude_top_of_density (μ : Measure (ConfigSpace (Sym2 (Site d))))
   have := hexist hpos
   rw [hprob0] at this
   exact lt_irrefl 0 this
-
-lemma bc94_bk_from_density (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ]
-    (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
-    (hexist : bc94_GenuineTrifExistence μ) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc94_exclude_top_of_density μ hprob0 hexist
 
 lemma bc94_circularity_contrast (ω : ConfigSpace (Sym2 (Site d))) (L n : ℕ) :
     ((numInfiniteClusters d ω ≤ 1 → ∀ y', ¬ bc93_BadBox ω L y') ∧
@@ -165,7 +159,7 @@ lemma bc94_status :
   · intro μ hexist hpos; exact bc94_forward_density_uses_top μ hexist hpos
   · intro ω n hN h; exact bc94_count_bound_under_top ω n hN h
   · intro ω n hn hcanon harmbox; exact bc90_genuineTcount_le_boundary_of_genuine_armsInBox ω n hn hcanon harmbox
-  · intro μ _ hprob0 hexist; exact bc94_bk_from_density μ hprob0 hexist
+  · intro μ _ hprob0 hexist; exact bc94_exclude_top_of_density μ hprob0 hexist
   · intro ω L n; exact bc94_circularity_contrast ω L n
   · intro n; exact bc94_upperLines_zero_density_and_N_top n
 

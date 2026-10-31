@@ -85,12 +85,12 @@ lemma PeriodicGraph.mem_incidentEdgeFinset_mk
     · exact ⟨y, hyK, x, hxy.symm, by simp⟩
 
 /-- The image in `V` of the edges of a finite graph `T` under the vertex map `f`. -/
-noncomputable def programmedPeriodicTreeEdges {W : Type*} [Fintype W]
+noncomputable def treeEdgeImage {W : Type*} [Fintype W]
     (T : SimpleGraph W) [DecidableRel T.Adj] (f : W → V) :
     Finset (Sym2 V) := T.edgeFinset.image (Sym2.map f)
 
 /-- The pattern on the edge set `I` that opens exactly the edges lying in `O`. -/
-noncomputable def programmedPeriodicTreePattern (I O : Finset (Sym2 V)) :
+noncomputable def openExactlyPattern (I O : Finset (Sym2 V)) :
     ConfigSpace ↥I := fun e => decide (e.1 ∈ O)
 
 /-- The open edges of `omega` with both endpoints outside `K`. -/
@@ -220,8 +220,8 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
   have hsigmaSurj : Function.Surjective sigma :=
     Finite.injective_iff_surjective.mp hsigmaInj
   let I := P.incidentEdgeFinset K
-  let O := programmedPeriodicTreeEdges T embed
-  let eta := programmedPeriodicTreePattern I O
+  let O := treeEdgeImage T embed
+  let eta := openExactlyPattern I O
   let omega' := setPattern I eta omega
   let E := P.exteriorOpenGraph omega K
   let U := P.openSubgraph omega'
@@ -241,8 +241,8 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
     refine ⟨hHle (hTH a b hab), ?_⟩
     change (setPattern I eta omega) s(embed a, embed b) = true
     rw [setPattern_of_mem eta (htreeTouch hab)]
-    simp only [eta, programmedPeriodicTreePattern, decide_eq_true_eq]
-    unfold O programmedPeriodicTreeEdges
+    simp only [eta, openExactlyPattern, decide_eq_true_eq]
+    unfold O treeEdgeImage
     rw [Finset.mem_image]
     exact ⟨s(a, b), by simpa using hab, by simp⟩
   have hE_le_U : E ≤ U := by
@@ -314,8 +314,8 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
       change (setPattern I eta omega) s(a, b) = true at hopen
       rw [setPattern_of_mem eta hI] at hopen
       have hO : s(a, b) ∈ O := by
-        simpa only [eta, programmedPeriodicTreePattern, decide_eq_true_eq] using hopen
-      unfold O programmedPeriodicTreeEdges at hO
+        simpa only [eta, openExactlyPattern, decide_eq_true_eq] using hopen
+      unfold O treeEdgeImage at hO
       rw [Finset.mem_image] at hO
       obtain ⟨e, he, heq⟩ := hO
       induction e using Sym2.inductionOn with

@@ -2815,7 +2815,7 @@ lemma PeriodicPlaneEmbedding.exists_commonSquareNormalBoundaryBands_outward
     (fun n => le_of_lt (hbottomLower n)) (fun _ => measureReal_le_one)
   have htopLimit := hscore.squeeze tendsto_const_nhds
     (fun n => le_of_lt (htopLower n)) (fun _ => measureReal_le_one)
-  exact E.exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_coordinateBounds
+  exact E.fourShift_crossing_tendsto_one_of_coordBounds
     mu hFKG hTI hunique M zLeft zRight zBottom zTop
     hleftSubset hrightSubset hbottomSubset htopSubset
     hleftLimit hrightLimit hbottomLimit htopLimit pad hpad
@@ -5191,7 +5191,7 @@ lemma PeriodicPlanarDualPair.variablePadTwoLevel_false_of_normal_rotated_limits
         D.dualEmbedding.horizontalCrossingEvent
           (a1 n) (b1 n) (c1 n + yPad1 n) (d1 n - yPad1 n))))
       atTop (nhds 1)) : False := by
-  exact PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false
+  exact PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.elim
     D mu {
       Bpos := hBpos
       primalArcBound := hBp

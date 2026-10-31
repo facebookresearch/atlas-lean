@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterReachesRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WiringForcesOpen
 
 /-!
 # Running along an axis after forcing the corridor
@@ -62,12 +64,6 @@ lemma craf_mem_corridorEdges (j : Fin d) (L : ℕ) {t : ℕ} (ht : t < L) :
   have e2 : ((t : ℤ) + 1 + 1) = (t : ℤ) + 2 := by ring
   rwa [e2] at hmem
 
-lemma craf_corridor_axis_edge_open (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
-    {t : ℕ} (ht : t < L) :
-    forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω
-      s(hrHD_rayPt j ((t : ℤ) + 1), hrHD_rayPt j ((t : ℤ) + 2)) = true :=
-  forceOpenFinset_of_mem (craf_mem_corridorEdges j L ht) ω
-
 /-- After forcing the corridor along `j`, `x` is connected to `e_j` and `(L + 1) e_j` has an
 infinite
 cluster without the origin. -/
@@ -82,7 +78,7 @@ lemma craf_clusterRunsAlongAxis_of_insertion (ω : ConfigSpace (Sym2 (Site d))) 
     (j : Fin d) (L : ℕ) (h : craf_AxisRoutingPremise ω x j L) :
     crr_ClusterRunsAlongAxis (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω) x j := by
   obtain ⟨hnear, hnearCut, hinf⟩ := h
-  exact ⟨L, fun t ht => craf_corridor_axis_edge_open ω j L ht, hnear, hnearCut, hinf⟩
+  exact ⟨L, fun t ht => Walls.bc_wiring_forces_open_eq_true ω j L t ht, hnear, hnearCut, hinf⟩
 
 lemma craf_axisAssignment_of_insertion (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (j : Fin d) (L : ℕ) (h : craf_AxisRoutingPremise ω x j L) :

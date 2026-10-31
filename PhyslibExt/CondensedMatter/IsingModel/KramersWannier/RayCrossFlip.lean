@@ -8,11 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.NormNum.Ineq
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitWindingWitness
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitness
-public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.EventToCut
+public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk
 
 /-!
 # Ray-count parity flips across lattice edges

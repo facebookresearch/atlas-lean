@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -42,7 +43,8 @@ configuration by configuration; the deterministic counting bound is the reusable
 
 ## ii. Key results
 
-- `daepf_arm_class_unique` : a site lies in at most one arm
+- `StatMech.Percolation.daep2_meets_at_most_one_branch` (in `SingleCutSeparation`) : a site lies in
+  at most one arm
 - `daepf_singleCutBranchSeparation_of_privateArm` : private arms give single-cut separation
 - `daepf_Tcount_le_boundary_of_privateArm` : the counting bound
 - `daepf_privateArm_of_twoTrif` : private arms with two trifurcations
@@ -72,17 +74,6 @@ namespace Percolation
 variable {d : ℕ}
 
 /-! ## A. Results -/
-
-lemma daepf_arm_class_unique (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
-    (hd12 : ¬ Connected d (removeSite x ω) a₁ a₂)
-    (hd13 : ¬ Connected d (removeSite x ω) a₁ a₃)
-    (hd23 : ¬ Connected d (removeSite x ω) a₂ a₃) (v : Site d) :
-    ¬ (Connected d (removeSite x ω) a₁ v ∧ Connected d (removeSite x ω) a₂ v) ∧
-    ¬ (Connected d (removeSite x ω) a₁ v ∧ Connected d (removeSite x ω) a₃ v) ∧
-    ¬ (Connected d (removeSite x ω) a₂ v ∧ Connected d (removeSite x ω) a₃ v) :=
-  ⟨daep2_no_shared_boundary_of_disconnected_branches ω hd12 v,
-    daep2_no_shared_boundary_of_disconnected_branches ω hd13 v,
-   daep2_no_shared_boundary_of_disconnected_branches ω hd23 v⟩
 
 lemma daepf_in_some_or_no_arm (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a₃ : Site d}
     (hd12 : ¬ Connected d (removeSite x ω) a₁ a₂)
@@ -192,29 +183,6 @@ lemma daepf_Tcount_le_boundary_of_privateArm (ω : ConfigSpace (Sym2 (Site d))) 
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   daep2_Tcount_le_boundary_of_singleCut ω n hn
     (daepf_singleCutBranchSeparation_of_privateArm ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma daepf_burton_keane_bernoulli_of_privateArm (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      daepf_PrivateArm ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  daep2_burton_keane_bernoulli_of_singleCut hd p hp1 hp0
-    (fun ω n hn => daepf_singleCutBranchSeparation_of_privateArm ω n (hres ω n hn))
-    htrif
 
 end Percolation
 

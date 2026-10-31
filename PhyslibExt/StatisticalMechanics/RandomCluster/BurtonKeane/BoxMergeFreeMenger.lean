@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
 
 /-!
 # Box Menger attachment
@@ -61,12 +63,6 @@ lemma bmm_cluster_omegaClosed (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
   rw [mem_cluster] at hu ⊢
   exact hu.trans hedge.connected
 
-/-- Same statement as `bcc_cluster_disjoint_of_ne`; kept because TrifurcationExistence2 uses it. -/
-lemma bmm_regions_disjoint (ω : ConfigSpace (Sym2 (Site d))) {x y : Site d}
-    (hxy : cluster d ω x ≠ cluster d ω y) :
-    Disjoint (cluster d ω x) (cluster d ω y) :=
-  bcc_cluster_disjoint_of_ne ω x y hxy
-
 lemma bmm_distinct_neighbours_of_disjoint_regions {a b : Site d} {R S : Set (Site d)}
     (ha : a ∈ R) (hb : b ∈ S) (hdisj : Disjoint R S) : a ≠ b := by
   intro he
@@ -108,9 +104,9 @@ lemma bmm_boxMergeFreeInsertion_of_attachment {n : ℕ}
     ⟨hc1, hc2, hc3⟩, ⟨hri1, hri2, hri3⟩⟩ :=
     h ω ⟨hI, x₁, x₂, x₃, hb1, hb2, hb3, hi1, hi2, hi3, hcd12, hcd13, hcd23⟩
       x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
-  have hd12 : Disjoint (cluster d ω x₁) (cluster d ω x₂) := bmm_regions_disjoint ω hcd12
-  have hd13 : Disjoint (cluster d ω x₁) (cluster d ω x₃) := bmm_regions_disjoint ω hcd13
-  have hd23 : Disjoint (cluster d ω x₂) (cluster d ω x₃) := bmm_regions_disjoint ω hcd23
+  have hd12 : Disjoint (cluster d ω x₁) (cluster d ω x₂) := Walls.bc2_disjoint_of_ne hcd12
+  have hd13 : Disjoint (cluster d ω x₁) (cluster d ω x₃) := Walls.bc2_disjoint_of_ne hcd13
+  have hd23 : Disjoint (cluster d ω x₂) (cluster d ω x₃) := Walls.bc2_disjoint_of_ne hcd23
   have hne12 : a₁ ≠ a₂ := bmm_distinct_neighbours_of_disjoint_regions ha1 ha2 hd12
   have hne13 : a₁ ≠ a₃ := bmm_distinct_neighbours_of_disjoint_regions ha1 ha3 hd13
   have hne23 : a₂ ≠ a₃ := bmm_distinct_neighbours_of_disjoint_regions ha2 ha3 hd23

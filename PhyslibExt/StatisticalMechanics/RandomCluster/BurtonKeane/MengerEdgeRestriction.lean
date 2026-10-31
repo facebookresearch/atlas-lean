@@ -115,6 +115,8 @@ def bc17_botFamily {A B : Set V} {k : ℕ} {f : Fin k → V} (hinj : Function.In
     exact hij (hinj (hx.symm.trans hx'))
 
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_hard_bot [Fintype V] (A B : Set V) {k : ℕ}
     (hsep : ∀ C, bc16_IsSeparator (⊥ : SimpleGraph V) A B C → k ≤ C.ncard) :
@@ -126,6 +128,8 @@ lemma bc17_hard_bot [Fintype V] (A B : Set V) {k : ℕ}
 variable {G : SimpleGraph V}
 
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_edgeSet_ncard_lt_of_deleteEdge [Fintype V] {x y : V} (h : G.Adj x y) :
     (G.deleteEdges {s(x, y)}).edgeSet.ncard < G.edgeSet.ncard := by
@@ -135,6 +139,8 @@ lemma bc17_edgeSet_ncard_lt_of_deleteEdge [Fintype V] {x y : V} (h : G.Adj x y) 
   have hmem : s(x, y) ∈ G.edgeSet := by simpa using h
   simpa using hsub hmem
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc17_insert_isSeparator_left {A B Y : Set V} {x y : V}
     (hY : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y) :
     bc16_IsSeparator G A B (insert x Y) := by
@@ -144,6 +150,8 @@ lemma bc17_insert_isSeparator_left {A B Y : Set V} {x y : V}
   · obtain ⟨c, hcY, hcp⟩ := hY hs ht (p.toDeleteEdge (s(x, y)) he)
     exact ⟨c, Set.mem_insert_of_mem _ hcY, by rwa [Walk.support_transfer] at hcp⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc17_insert_isSeparator_right {A B Y : Set V} {x y : V}
     (hY : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y) :
     bc16_IsSeparator G A B (insert y Y) := by
@@ -154,6 +162,8 @@ lemma bc17_insert_isSeparator_right {A B Y : Set V} {x y : V}
   · obtain ⟨c, hcY, hcp⟩ := hY hs ht (p.toDeleteEdge (s(x, y)) he)
     exact ⟨c, Set.mem_insert_of_mem _ hcY, by rwa [Walk.support_transfer] at hcp⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc17_endpoints_notMem_of_not_isSeparator {A B Y : Set V} {x y : V}
     (hY : bc16_IsSeparator (G.deleteEdges {s(x, y)}) A B Y)
     (hnotG : ¬ bc16_IsSeparator G A B Y) : x ∉ Y ∧ y ∉ Y := by
@@ -161,6 +171,9 @@ lemma bc17_endpoints_notMem_of_not_isSeparator {A B Y : Set V} {x y : V}
   · rw [← Set.insert_eq_self.mpr hx]; exact bc17_insert_isSeparator_left hY
   · rw [← Set.insert_eq_self.mpr hy]; exact bc17_insert_isSeparator_right hY
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 lemma bc17_deleteEdge_dichotomy [Fintype V] {A B : Set V} {x y : V}
     (_hxy : G.Adj x y) {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard) :
@@ -174,7 +187,6 @@ lemma bc17_deleteEdge_dichotomy [Fintype V] {A B : Set V} {x y : V}
   · refine Or.inr ?_
     push Not at hcase
     obtain ⟨Y, hY, hYlt⟩ := hcase
-
     have hnotG : ¬ bc16_IsSeparator G A B Y := fun hG => absurd (hmin Y hG) (by omega)
     obtain ⟨hx, hy⟩ := bc17_endpoints_notMem_of_not_isSeparator hY hnotG
     exact ⟨Y, hY, hYlt, hx, hy, bc17_insert_isSeparator_left hY,
@@ -208,6 +220,8 @@ def bc17_HardDir (G : SimpleGraph V) (A B : Set V) : Prop :=
   ∀ k : ℕ, (∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard) →
     Nonempty (bc16_DisjointPathFamily G A B (Fin k))
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_hardDir_bot [Fintype V] (A B : Set V) :
     bc17_HardDir (⊥ : SimpleGraph V) A B :=
@@ -254,6 +268,8 @@ omit [DecidableEq V] in
 lemma bc17_restr_edgeSet_subset (G : SimpleGraph V) (W : Set V) :
     (bc17_restr G W).edgeSet ⊆ G.edgeSet := edgeSet_mono (bc17_restr_le G W)
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_restr_edgeSet_ncard_lt [Fintype V] (G : SimpleGraph V) (W : Set V) {x y : V}
     (hxy : G.Adj x y) (hy : y ∉ W) :
@@ -266,6 +282,8 @@ lemma bc17_restr_edgeSet_ncard_lt [Fintype V] (G : SimpleGraph V) (W : Set V) {x
   exact hy this.2.2
 
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_minmax_one [Fintype V] (G : SimpleGraph V) (A B : Set V)
     (hmin : ∀ C, bc16_IsSeparator G A B C → 1 ≤ C.ncard) :
@@ -274,6 +292,8 @@ lemma bc17_minmax_one [Fintype V] (G : SimpleGraph V) (A B : Set V)
   obtain ⟨F⟩ := bc17_hard_one G A B hmin
   exact ⟨F, fun C hC => by simpa using hmin C hC⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 omit [DecidableEq V] in
 lemma bc17_minmax_bot [Fintype V] (A B : Set V) {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator (⊥ : SimpleGraph V) A B C → k ≤ C.ncard) :

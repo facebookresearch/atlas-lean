@@ -92,7 +92,7 @@ lemma triHexFK_terminalWeightedSum_identity
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (external : ThreeTerminalConnectivity → Real) :
     (y0 * y1 * y2) *
         starFKTerminalWeightedSum q y0Star y1Star y2Star external =
@@ -121,7 +121,7 @@ theorem triHexFK_terminalWeightedRatio_eq
     (hq : q ≠ 0) (hyprod : y0 * y1 * y2 ≠ 0)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q)
-    (hsurface : FrontierA.triangularFKCriticalSurface q y0 y1 y2 = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalSurface q y0 y1 y2 = 0)
     (external observable : ThreeTerminalConnectivity → Real) :
     starFKTerminalWeightedRatio q y0Star y1Star y2Star external observable =
       triangleFKTerminalWeightedRatio y0 y1 y2 external observable := by

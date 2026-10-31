@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedTrifContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmLeafBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ContractedGraphDegree
@@ -81,36 +83,20 @@ lemma bc108_full_covering_of_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L 
     bc61_coarseTcount ω L R ≤ (2 * L + 1) ^ d * boxSV_boundaryCard d R :=
   bc73_covering ω L R (bc74_sublatticeForest_of_globalForest ω L R h)
 
-lemma bc108_hub_three_distinct_forestNeighbours {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel (osf_spanForest G).Adj] {u v₁ v₂ v₃ : V}
-    (hadj₁ : G.Adj u v₁) (hadj₂ : G.Adj u v₂) (hadj₃ : G.Adj u v₃)
-    (hcut₁₂ : ¬ (G.deleteIncidenceSet u).Reachable v₁ v₂)
-    (hcut₁₃ : ¬ (G.deleteIncidenceSet u).Reachable v₁ v₃)
-    (hcut₂₃ : ¬ (G.deleteIncidenceSet u).Reachable v₂ v₃) :
-    3 ≤ (osf_spanForest G).degree u :=
-  bc103_deg3_spanForest_of_noBypass G hadj₁ hadj₂ hadj₃ hcut₁₂ hcut₁₃ hcut₂₃
-
-lemma bc108_hub_arms_distinct {V : Type*} {G : SimpleGraph V} {u v₁ v₂ v₃ : V}
-    (hcut₁₂ : ¬ (G.deleteIncidenceSet u).Reachable v₁ v₂)
-    (hcut₁₃ : ¬ (G.deleteIncidenceSet u).Reachable v₁ v₃)
-    (hcut₂₃ : ¬ (G.deleteIncidenceSet u).Reachable v₂ v₃) :
-    v₁ ≠ v₂ ∧ v₁ ≠ v₃ ∧ v₂ ≠ v₃ :=
-  bc103_arms_distinct_of_deleteVert_cut hcut₁₂ hcut₁₃ hcut₂₃
-
 lemma bc108_bk_count_reduces_to_globalForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     (bc69_Gn_globalForest ω L R → bc73_SublatticeForest ω L R) ∧
     (bc69_Gn_globalForest ω L R → bc106_separatedTcount ω L R ≤ boxSV_boundaryCard d R) ∧
     (bc69_Gn_globalForest ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) :=
   ⟨bc74_sublatticeForest_of_globalForest ω L R,
    bc108_separatedCount_le_of_globalForest ω L R,
-   bc69_count_via_leafBound ω L R⟩
+   bc69_coarseTcount_le_boundary ω L R⟩
 
 lemma bc108_sublatticeForest_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R) (hzne : z₀ ≠ z₁)
     (hno : ∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) :
     bc73_SublatticeForest ω L R :=
   bc74_sublatticeForest_of_globalForest ω L R
-    (bc102_connectedForest_of_noTrif ω L R hz₀ hz₁ hzne hno)
+    (bc69_globalForest_of_noTrif ω L R hz₀ hz₁ hzne hno)
 
 /-! ## B. Summary -/
 
@@ -134,8 +120,8 @@ lemma bc108_status :
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro ω L R h; exact bc74_sublatticeForest_of_globalForest ω L R h
   · intro ω L R c; exact bc74_fiber_card_le_coarseTcount ω L R c
-  · intro L; exact bc68_multiTrif_shared_boundary_survives L
-  · intro V G u v₁ v₂ v₃ hc₁₂ hc₁₃ hc₂₃; exact bc108_hub_arms_distinct hc₁₂ hc₁₃ hc₂₃
+  · intro L; exact bc64_arms_can_share_boundary L
+  · intro V G u v₁ v₂ v₃ hc₁₂ hc₁₃ hc₂₃; exact bc103_arms_distinct_of_deleteVert_cut hc₁₂ hc₁₃ hc₂₃
   · intro ω L R h; exact bc108_separatedCount_le_of_globalForest ω L R h
 
 end StatMech.Walls

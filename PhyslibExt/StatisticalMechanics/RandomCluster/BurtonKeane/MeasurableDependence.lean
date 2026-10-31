@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Probability.Independence.ZeroOne
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Ergodicity
 public import MathlibExt.Probability.CorrelationInequalities.ReimerCompression
 

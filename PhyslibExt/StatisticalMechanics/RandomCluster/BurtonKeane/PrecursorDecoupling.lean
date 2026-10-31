@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Operations
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrecursorRouting
 public import MathlibExt.Probability.Configuration.CylinderDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Ergodicity

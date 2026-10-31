@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Paths
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
@@ -66,10 +66,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Spanning forests -/
-
-lemma bc52_spanForest_acyclic {V : Type*} [Fintype V] (G : SimpleGraph V) :
-    (osf_spanForest G).IsAcyclic :=
-  osf_spanForest_acyclic G
 
 lemma bc52_subgraph_acyclic {V : Type*} [Fintype V] (G T : SimpleGraph V)
     (hsub : T ≤ osf_spanForest G) : T.IsAcyclic :=
@@ -182,7 +178,7 @@ lemma bc52_status :
         ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) →
       (∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) →
       bc51_GlobalArmForest ω n) :=
-  ⟨fun G => bc52_spanForest_acyclic G, Bc52Witness.thetaG_not_acyclic,
+  ⟨fun G => Percolation.osf_spanForest_acyclic G, Bc52Witness.thetaG_not_acyclic,
    bc52_acyclic_no_boundedRegion, fun ω n => bc52_globalArmForest_of_canonical ω n⟩
 
 end StatMech.Walls

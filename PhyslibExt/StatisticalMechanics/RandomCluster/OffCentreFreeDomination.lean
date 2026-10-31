@@ -70,7 +70,9 @@ variable (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
 variable (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
 variable (iota : Vin -> Vout)
 
-/-- The empty boundary predicate: no vertex is a boundary vertex. -/
+/-- The empty boundary predicate: no vertex is a boundary vertex. See also `bdp_noBdry`
+(FreeTranslationInvariance), the same definition, kept separate to avoid importing the free-energy
+modules here. -/
 def falseBoundary (_ : Vout) : Prop := False
 
 /-- The empty boundary predicate is decidable. -/
@@ -80,7 +82,8 @@ instance : DecidablePred (falseBoundary : Vout -> Prop) :=
 /-! ## B. Domination of the free measure -/
 
 /-- For `q ≥ 1` and any outside configuration `ψ`, the free measure on the larger graph conditioned
-on `ψ` gives an increasing inner event at least its free probability on the box. -/
+on `ψ` gives an increasing inner event at least its free probability on the box. See also
+`bdp_condBcProb_innerRestrict_ge` (FreeTranslationInvariance), the boundary-condition form. -/
 theorem ocd_condFreeProb_innerRestrict_ge
     (hiota : Function.Injective iota)
     (hadj : ocd_AdjMatch Gin Gout iota)

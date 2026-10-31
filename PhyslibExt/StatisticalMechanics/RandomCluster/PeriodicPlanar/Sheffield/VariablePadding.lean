@@ -25,13 +25,13 @@ probabilities sum to at most `1` (`matchedCrossing_measureReal_add_le_one_of_pad
 transposed version). A `VariablePadTwoLevelRectangleArray` asks for two levels of rectangles
 whose primal and dual crossing probabilities (in the stated combinations) tend to `1`; these
 requirements contradict the matched bound, which is proved in Lean as
-`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false`. The structure is used as the
+`PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.elim`. The structure is used as the
 target of proofs by contradiction elsewhere in the lane.
 
 ## ii. Key results
 
 - `PeriodicPlanarDualPair.matchedCrossing_measureReal_add_le_one_of_pads`.
-- `PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false` : no such array exists.
+- `PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.elim` : no such array exists.
 
 ## iii. Table of contents
 
@@ -280,7 +280,7 @@ lemma PeriodicPlanarDualPair.matchedVerticalHorizontalCrossing_measureReal_add_l
 /-- Two levels of padded rectangles in which the primal vertical crossing at level `0`, the primal
 horizontal crossing at level `1`, the better primal crossing linking the levels and the better dual
 crossing at each level all have probability tending to `1`. No such array exists, see
-`VariablePadTwoLevelRectangleArray.false`. -/
+`VariablePadTwoLevelRectangleArray.elim`. -/
 structure PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) (B : Real) where
@@ -344,7 +344,7 @@ structure PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray
 
 /-- A variable-pad two-level rectangle array does not exist: its crossing requirements contradict
 the matched primal–dual crossing bound. -/
-lemma PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.false
+lemma PeriodicPlanarDualPair.VariablePadTwoLevelRectangleArray.elim
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (data : D.VariablePadTwoLevelRectangleArray mu B) : False := by

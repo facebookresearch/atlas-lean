@@ -8,7 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Probability.Configuration.ConfigSpace
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Tilt

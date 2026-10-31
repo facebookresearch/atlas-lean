@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -79,15 +81,6 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma bc51_arms_vertexDisjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
-    (hπ : ∀ u v, T.Adj u v → (openSubgraph d ω).Adj u v)
-    {x c0 c1 z0 z1 : Site d}
-    (w0 : T.Walk c0 z0) (hw0x : x ∉ w0.support)
-    (w1 : T.Walk c1 z1) (hw1x : x ∉ w1.support)
-    (hcut : ¬ Connected d (removeSite x ω) c0 c1) :
-    ∀ v, v ∈ w0.support → v ∈ w1.support → False :=
-  sfa_armWalks_disjoint ω T hπ w0 hw0x w1 hw1x hcut
-
 lemma bc51_arms_edgeDisjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph (Site d))
     (hπ : ∀ u v, T.Adj u v → (openSubgraph d ω).Adj u v)
     {x c0 c1 z0 z1 : Site d}
@@ -96,7 +89,7 @@ lemma bc51_arms_edgeDisjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph
     (hcut : ¬ Connected d (removeSite x ω) c0 c1) :
     ∀ e, e ∈ w0.edges → e ∈ w1.edges → False := by
   intro e he0 he1
-  have hd := bc51_arms_vertexDisjoint ω T hπ w0 hw0x w1 hw1x hcut
+  have hd := Percolation.sfa_armWalks_disjoint ω T hπ w0 hw0x w1 hw1x hcut
   induction e using Sym2.ind with
   | _ u v =>
     exact hd u (w0.fst_mem_support_of_mem_edges he0) (w1.fst_mem_support_of_mem_edges he1)
@@ -146,16 +139,6 @@ lemma bc51_Tcount_le_boundary_of_globalArmForest (ω : ConfigSpace (Sym2 (Site d
   sfa_Tcount_le_boundary_of_armForestReaching ω n
     (bc51_armForestReaching_of_globalArmForest ω n h)
 
-open Classical in
-lemma bc51_armForestEmbedding_iff_globalArmForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    bc51_GlobalArmForest ω n ↔ bc51_GlobalArmForest ω n :=
-  Iff.rfl
-
-lemma bc51_armForestReaching_of_armEmbedding (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bc51_GlobalArmForest ω n) : sfa_ArmForestReaching ω n :=
-  bc51_armForestReaching_of_globalArmForest ω n
-    ((bc51_armForestEmbedding_iff_globalArmForest ω n).mp h)
-
 lemma bc51_cutWalk_lift {x a b : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (w : (openSubgraph d (removeSite x ω)).Walk a b) (hwx : x ∉ w.support) :
     ∃ w' : (openSubgraph d ω).Walk a b, x ∉ w'.support ∧
@@ -201,19 +184,6 @@ lemma bc51_globalArmForest_of_forestCover (ω : ConfigSpace (Sym2 (Site d))) (n 
   obtain ⟨w', hw'x, _⟩ := bc51_cutWalk_lift w hwx
   exact bc51_walk_transfer_to_T T (w.mapLe (bc42_removeSite_openSubgraph_le x ω))
     (by rw [SimpleGraph.Walk.support_mapLe_eq_support]; exact hwx) hcov
-
-lemma bc51_arc_perArm_reaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hres : arc_TrifArmsRemoveSiteInfinite ω n)
-    (x : Site d) (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x) :
-    ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
-      (∀ i, (openSubgraph d ω).Adj x (c i)) ∧
-      (∀ i, c i ≠ x) ∧
-      (¬ Connected d (removeSite x ω) (c 0) (c 1) ∧
-       ¬ Connected d (removeSite x ω) (c 0) (c 2) ∧
-       ¬ Connected d (removeSite x ω) (c 1) (c 2)) ∧
-      (∀ i, zr i ∈ vertexBoundary d (n + 1) ∧
-        ∃ w : (openSubgraph d (removeSite x ω)).Walk (c i) (zr i), x ∉ w.support) :=
-  arc_trif_arm_data ω n hres x hxbox htri
 
 open Classical in
 lemma bc51_globalArmForest_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)

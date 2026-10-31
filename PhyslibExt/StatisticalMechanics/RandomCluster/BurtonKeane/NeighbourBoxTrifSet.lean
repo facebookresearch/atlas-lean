@@ -8,9 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BranchNeighbourArm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicArmSubforest
+public import CSLibExt.Complexity.BooleanFunctions.RevealmentCrossBox
 
 /-!
 # Trifurcations whose branches leave through neighbouring boxes
@@ -26,7 +30,8 @@ on the boundary, which bounds its size by `|∂B_R|`.
 
 ## ii. Key results
 
-- `bfin2_neighbor_in_box` : neighbours of `B_{R-1}` lie in `B_R`
+- `StatMech.OSSS.cb_mem_box_of_adj_box_pred` (in `RevealmentCrossBox`) : neighbours of `B_{R-1}` lie
+  in `B_R`
 - `bfin2_trifSet_finite` : the trifurcation set is finite
 - `bfin2_count` : its size is at most the boundary size
 
@@ -61,22 +66,6 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma bfin2_neighbor_in_box {d R : ℕ} (hR : 1 ≤ R) {x n : Site d}
-    (hx : x ∈ box d (R - 1)) (hadj : (hypercubicLattice d).Adj x n) : n ∈ box d R := by
-  rw [hypercubicLattice_adj] at hadj
-  intro i
-  have hxi : (x i).natAbs ≤ R - 1 := hx i
-  have hdi : (x i - n i).natAbs ≤ 1 := by
-    have hle := Finset.single_le_sum (f := fun j => (x j - n j).natAbs)
-      (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
-    rw [hadj] at hle
-    exact hle
-  have htri : (n i).natAbs ≤ (x i).natAbs + (x i - n i).natAbs := by
-    have hid : n i = x i - (x i - n i) := by ring
-    calc (n i).natAbs = (x i - (x i - n i)).natAbs := by rw [← hid]
-      _ ≤ (x i).natAbs + (x i - n i).natAbs := Int.natAbs_sub_le _ _
-  omega
-
 lemma bfin2_trifSet_finite (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) :
     {x : Site d | bft_FineTrif ω x ∧ x ∈ box d (R - 1)}.Finite :=
   (box_finite d (R - 1)).subset (fun _ hx => hx.2)
@@ -110,7 +99,7 @@ lemma bfin2_count (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ) (hR : 1 ≤ R) :
     obtain ⟨hfine, hbox⟩ := hmem
     have hnbox : ∀ n, F.Adj (i : Site d) n → n ∈ box d R := by
       intro n hn
-      exact bfin2_neighbor_in_box hR hbox ((hF_le.trans (openSubgraph_le ω)) hn)
+      exact OSSS.cb_mem_box_of_adj_box_pred _ _ hR _ _ hbox ((hF_le.trans (openSubgraph_le ω)) hn)
     obtain ⟨ρ₁, ρ₂, ρ₃, ℓ₁, ℓ₂, ℓ₃, ⟨hs1, hs2, hs3⟩, ⟨hd12, hd13, hd23⟩,
       ⟨hl1, hl2, hl3⟩, ⟨ha1, ha2, ha3⟩, ⟨hi1, hi2, hi3⟩, ⟨ht1, ht2, ht3⟩⟩ :=
       bae_trif_arms (i : Site d) F hF_le (hspan (i : Site d)) hR hnbox hfine

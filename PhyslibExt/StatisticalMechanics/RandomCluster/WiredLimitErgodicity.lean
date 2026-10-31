@@ -7,10 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.FKLimitsAssembly
+public import PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2InfiniteVolumeLimits
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity
-public import PhyslibExt.StatisticalMechanics.RandomCluster.DLRUniqueness
-public import Mathlib
+public import PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicConvexSummands
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Ergodicity of the wired `q = 2` infinite-volume random-cluster measure
@@ -25,7 +27,7 @@ implies that the two parts of any convex decomposition of the wired limit agree 
 translation-invariant events. Combining it with convergence of the finite-volume measures on
 increasing events, translation invariance of both limits, and the free-below-wired comparison gives
 the assembled list of properties. `feu_wiredIV_isErgodic` is proved unconditionally, under `d ≥ 1`
-and `0 < p < 1`. The two assembled statements are conditional: `feu_fk_limits_wired_unconditional`
+and `0 < p < 1`. The two assembled statements are conditional: `fk_limits_properties_of_freeExtreme`
 takes `hextF`, that the free limit is extremal among translation-invariant probability measures, and
 `feu_fk_limits_of_freeErg` takes `hFreeErg`, that the free limit is ergodic; both are used only for
 the ergodicity of the free limit.
@@ -33,7 +35,7 @@ the ergodicity of the free limit.
 ## ii. Key results
 
 - `feu_wiredIV_isErgodic` : the wired `q = 2` limit is ergodic under translations.
-- `feu_fk_limits_wired_unconditional` : convergence, translation invariance, ergodicity and the
+- `fk_limits_properties_of_freeExtreme` : convergence, translation invariance, ergodicity and the
   free-below-wired comparison for both limits, assuming `hextF`.
 - `feu_fk_limits_of_freeErg` : the same list, assuming `hFreeErg`.
 
@@ -90,7 +92,7 @@ lemma feu_wiredIV_extreme_on_invariants (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (h
 /-- Basic properties of the `q = 2` free and wired limits: convergence on increasing box events,
 translation invariance, ergodicity, and free-below-wired. Conditional on `hextF`, that the free
 limit is extremal among translation-invariant probability measures. -/
-theorem feu_fk_limits_wired_unconditional (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+theorem fk_limits_properties_of_freeExtreme (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hextF : ∀ (ν₁ ν₂ : Measure (ConfigSpace (Sym2 (Site d)))) (a b : ℝ≥0∞),
       IsTranslationInvariant (G := Multiplicative (Site d)) ν₁ →
         IsTranslationInvariant (G := Multiplicative (Site d)) ν₂ →

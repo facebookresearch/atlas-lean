@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BkLattice
-public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BKFirstExit
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.SusceptibilityFirstExit
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildeBc
 public import MathlibExt.Probability.Percolation.ConnectionsInsideSet
 public import MathlibExt.Probability.Percolation.TranslationInvariance

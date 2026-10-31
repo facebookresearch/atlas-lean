@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrifRoute
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrifUniqueness
 
 /-!
 # Positive routing to trifurcation precursors
@@ -84,7 +86,7 @@ lemma brt2_precursor_pos_of_forceOpen_pos
   have hpush : (μ.map (fun ω => forceOpenFinset G ω)) (NeighborTrifPrecursor d a₁ a₂ a₃)
       = μ ((fun ω => forceOpenFinset G ω) ⁻¹' NeighborTrifPrecursor d a₁ a₂ a₃) :=
     Measure.map_apply (measurable_forceOpenFinset G)
-      (hrHD_measurableSet_neighborTrifPrecursor a₁ a₂ a₃)
+      (Percolation.DisjointPaths.measurableSet_neighborTrifPrecursor a₁ a₂ a₃)
   have hnull : μ ((fun ω => forceOpenFinset G ω) ⁻¹' NeighborTrifPrecursor d a₁ a₂ a₃) = 0 := by
     rw [← hpush]; exact hac h
   rw [hnull] at hpos

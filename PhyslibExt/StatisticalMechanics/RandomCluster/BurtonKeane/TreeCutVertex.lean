@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestNeighbourSpanningTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalTrifContraction
 
@@ -203,14 +206,14 @@ lemma bcv_globalForest_of_treeData (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ
 lemma bcv_count_of_treeData (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ)
     (h : bcv_ClusterTreeData ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard 2 R :=
-  bc69_count_via_leafBound ω L R (bcv_globalForest_of_treeData ω L R h)
+  bc69_coarseTcount_le_boundary ω L R (bcv_globalForest_of_treeData ω L R h)
 
 lemma bcv_bk_of_treeData (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bcv_ClusterTreeData ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 := by
-  apply bgn_bk_of_forest p hp1 hp0
+  apply bfa_bk_of_classicalForest p hp1 hp0
   intro ω L R
-  rw [bgn_forest_iff_bc69]
+  rw [bfa_classical_iff_bc69]
   exact bcv_globalForest_of_treeData ω L R (hdata ω L R)
 
 /-! ## B. Summary -/

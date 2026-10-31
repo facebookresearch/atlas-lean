@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -185,17 +187,6 @@ lemma bc67_Gn_armForest_coarseTcount (ω : ConfigSpace (Sym2 (Site d))) (L R : �
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc65_coarseTcount_le_boundary_of_connectedForest ω L R
     (bc67_Gn_armForest_of_forestData ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj)
-
-lemma bc67_infiniteClusters_top_null_of_GnForest_route
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
-    (hGnforest : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc65_ConnectedCoarseForest ω L R)
-    (hcoarseRoute : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
-        0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc66_infiniteClusters_top_null_of_connectedForest μ hd hinv hfe L hGnforest hcoarseRoute
 
 /-! ## C. Summary -/
 

@@ -8,14 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HallArmEnds
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenForest
@@ -46,7 +48,8 @@ configuration by configuration; the deterministic counting bound is the reusable
 - `fli_forest_leaf_hall` : Hall's condition: branch vertices reach at least as many leaves
 - `fli_branch_leaf_injection` : an injection from branch vertices to reachable leaves
 - `fli_distinctArmEnds_of_boxOpenForest` : a box open forest yields distinct boundary arm ends
-- `fli_Tcount_le_boundary_of_boxOpenForest` : the trifurcation count is at most the boundary size
+- `StatMech.Percolation.bst_Tcount_le_boundary_of_boxOpenForest` (in `BoxOpenForest`) : the
+  trifurcation count is at most the boundary size
 
 ## iii. Table of contents
 
@@ -150,6 +153,8 @@ lemma fli_forest_leaf_hall (G : SimpleGraph V) [DecidableRel G.Adj]
     _ = leafV.card := hlcard.symm
     _ ≤ _ := Finset.card_le_card hleafsub
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma fli_branch_leaf_injection (G : SimpleGraph V) [DecidableRel G.Adj]
     (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v) (S : Finset V)
     (hS3 : ∀ x ∈ S, 3 ≤ G.degree x) :
@@ -169,6 +174,8 @@ end ForestLeaf
 
 variable {d : ℕ}
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma fli_reachable_to_connected {ω : ConfigSpace (Sym2 (Site d))} {Vset : Finset (Site d)}
     {F : SimpleGraph (↑Vset : Type)} [DecidableRel F.Adj]
     (hπ : ∀ u v, F.Adj u v → (openSubgraph d ω).Adj (u : Site d) (v : Site d))
@@ -219,10 +226,6 @@ lemma fli_distinctArmEnds_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n
     have hψeq : ψ (vx x) = ψ (vx y) := Subtype.val_injective hxy
     have hvxeq : vx x = vx y := hψinj hxS hyS hψeq
     rw [← hvxval x hxbox htri, ← hvxval y hybox htriy, hvxeq]
-
-lemma fli_Tcount_le_boundary_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : bst_BoxOpenForest ω n) : Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  tfc_Tcount_le_boundary_of_distinctArmEnds ω n (fli_distinctArmEnds_of_boxOpenForest ω n h)
 
 lemma fli_star_injection :
     ∃ ψ : Fin 4 → Fin 4,

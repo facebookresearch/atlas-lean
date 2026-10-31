@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Topology.GDelta.Basic
 
 /-!
 # Dynamic edge explorations and exploration kernels

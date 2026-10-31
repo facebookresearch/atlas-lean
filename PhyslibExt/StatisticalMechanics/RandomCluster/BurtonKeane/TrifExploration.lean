@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineExplorationLeaf
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseStarForestEmbedding
 
@@ -68,13 +72,6 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma bge_cluster_disjoint_of_notConnected {ω' : ConfigSpace (Sym2 (Site d))} {a b : Site d}
-    (h : ¬ Connected d ω' a b) : Disjoint (cluster d ω' a) (cluster d ω' b) := by
-  rw [Set.disjoint_left]
-  intro p hpa hpb
-  rw [mem_cluster] at hpa hpb
-  exact h (hpa.trans hpb.symm)
-
 lemma bge_singleGenuineTrif_arms_disjoint {ω : ConfigSpace (Sym2 (Site d))} {L : ℕ} {y : Site d}
     {a₁ a₂ a₃ : Site d}
     (hsep : ¬ Connected d (removeSites (bc61_boxAround d L y) ω) a₁ a₂ ∧
@@ -86,10 +83,9 @@ lemma bge_singleGenuineTrif_arms_disjoint {ω : ConfigSpace (Sym2 (Site d))} {L 
         (cluster d (removeSites (bc61_boxAround d L y) ω) a₃) ∧
     Disjoint (cluster d (removeSites (bc61_boxAround d L y) ω) a₂)
         (cluster d (removeSites (bc61_boxAround d L y) ω) a₃) :=
-  ⟨bge_cluster_disjoint_of_notConnected hsep.1,
-   bge_cluster_disjoint_of_notConnected hsep.2.1,
-   bge_cluster_disjoint_of_notConnected hsep.2.2⟩
-
+  ⟨Percolation.csc_clusters_disjoint _ hsep.1,
+   Percolation.csc_clusters_disjoint _ hsep.2.1,
+   Percolation.csc_clusters_disjoint _ hsep.2.2⟩
 
 open Classical in
 lemma bge_exploration_of_singleGenuineTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (y : Site d)
@@ -146,7 +142,6 @@ def bge_ArmComponents (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
     (∀ p : (↑(btr_genuineTrifFinset ω L R) : Type) × Fin 4, p.2 ≠ 0 →
       ∀ q : (↑(btr_genuineTrifFinset ω L R) : Type) × Fin 4, q.2 ≠ 0 → p ≠ q →
       Disjoint (comp p) (comp q))
-
 
 open Classical in
 lemma bge_exploration_of_armComponents (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -206,7 +201,7 @@ lemma bge_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       bge_ArmComponents ω L R → bfg_GenuineExploration ω L R) := by
-  refine ⟨fun hsep => bge_cluster_disjoint_of_notConnected hsep.1,
+  refine ⟨fun hsep => Percolation.csc_clusters_disjoint _ hsep.1,
     fun ω L R y hy huniq hbdry => bge_exploration_of_singleGenuineTrif ω L R y hy huniq hbdry,
     ?_⟩
   intro ω L R z₀ z₁ hz₀ hz₁ hzne h

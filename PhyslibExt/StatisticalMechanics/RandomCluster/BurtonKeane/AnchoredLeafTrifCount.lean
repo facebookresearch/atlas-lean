@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedHubContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PendantPathMember
 
@@ -152,10 +154,6 @@ lemma bc121_deleteEdge_card_lt {V : Type*} [Fintype V] [DecidableEq V] (G : Simp
   intro hmem
   exact hmem.2 (Set.mem_singleton _)
 
-lemma bc121_deleteEdge_acyclic {V : Type*} (G : SimpleGraph V) (hacyc : G.IsAcyclic)
-    (s : Set (Sym2 V)) : (G.deleteEdges s).IsAcyclic :=
-  hacyc.anti (SimpleGraph.deleteEdges_le s)
-
 /-! ## B. Anchored subforests -/
 
 set_option linter.unusedDecidableInType false in
@@ -188,7 +186,7 @@ lemma bc121_boundaryAnchored_subforest {V : Type*} [Fintype V] [DecidableEq V] (
     by_cases hbad : ∃ v, G.degree v = 1 ∧ ¬ B v
     · obtain ⟨v, hvdeg, hvB⟩ := hbad
       obtain ⟨w, hvw⟩ := bc121_leaf_has_neighbour G hvdeg
-      have hG'ac : (G.deleteEdges {s(v, w)}).IsAcyclic := bc121_deleteEdge_acyclic G hac _
+      have hG'ac : (G.deleteEdges {s(v, w)}).IsAcyclic := bc87_prune_step_acyclic G hac _
       have hlt : (G.deleteEdges {s(v, w)}).edgeFinset.card < G.edgeFinset.card :=
         bc121_deleteEdge_card_lt G hvw
       have hle' : (G.deleteEdges {s(v, w)}).edgeFinset.card ≤ n := by omega
@@ -329,15 +327,8 @@ lemma bc121_count_via_peel2
         G.Reachable a b → F.Reachable a b) →
       ∀ v : (↑S : Type), 1 ≤ F.degree v) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc118_count_closes_via_forest ω L R
+  bc69_coarseTcount_le_boundary ω L R
     (bc121_globalForest_of_peel2 ω L R G hGac ιU harm hinj hFmin)
-
-lemma bc121_nonvacuous (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R) (hzne : z₀ ≠
-        z₁)
-    (hno : ∀ y, y ∈ box d R → ¬ bc67_IsGnTrifurcation ω L y) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc118_count_closes_via_forest ω L R (bc110_globalForest_of_noTrif ω L R hz₀ hz₁ hzne hno)
 
 lemma bc121_status :
     (∀ {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -358,6 +349,6 @@ lemma bc121_status :
   · intro V _ _ G _ B _ hac; exact bc121_boundaryAnchored_subforest G B hac
   · intro V _ F _ u t₁ t₂ t₃ h₁ h₂ h₃ r₁ r₂ r₃ c₁₂ c₁₃ c₂₃
     exact bc121_deg3_of_three_reached_targets F h₁ h₂ h₃ r₁ r₂ r₃ c₁₂ c₁₃ c₂₃
-  · intro ω L R h; exact bc118_count_closes_via_forest ω L R h
+  · intro ω L R h; exact bc69_coarseTcount_le_boundary ω L R h
 
 end StatMech.Walls

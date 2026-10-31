@@ -8,9 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Dynamics.Ergodic.MeasurePreserving
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters
 
 /-!
 # Menger cores and corridor routing
@@ -27,7 +32,8 @@ for a core in every configuration with three distinct infinite clusters meeting 
 
 ## ii. Key results
 
-- `mng_disjoint_of_cluster_ne` : corridors to distinct clusters are disjoint
+- `StatMech.Walls.bc2_disjoint_of_ne` (in `ThreeDisjointWitnesses`) : corridors to distinct clusters
+  are disjoint
 - `mng_disjointRouting_of_mengerCore` : a Menger core gives disjoint routing
 - `mng_corridorCover_of_mengerCover` : the routing cover gives the corridor cover
 - `mng_burton_keane_uniqueness_mengerCover` : uniqueness from the routing cover and a
@@ -60,26 +66,12 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma mng_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (w : Site d)
-    {u v : Site d} (hu : u ∈ cluster d ϱ w) (hadj : (openSubgraph d ϱ).Adj u v) :
-    v ∈ cluster d ϱ w := by
-  rw [mem_cluster] at hu ⊢
-  exact hu.trans hadj.reachable
-
 lemma mng_corridor_mem_destCluster (ω : ConfigSpace (Sym2 (Site d)))
     (G : Finset (Sym2 (Site d))) {a w : Site d}
     (hc : Relation.ReflTransGen (CorridorStep G) a w) :
     a ∈ cluster d (removeSite 0 (forceOpenFinset G ω)) w := by
   rw [mem_cluster]
   exact (connected_removeSite_forceOpen_of_corridor ω G hc).symm
-
-lemma mng_disjoint_of_cluster_ne (ϱ : ConfigSpace (Sym2 (Site d))) (w₁ w₂ : Site d)
-    (h : cluster d ϱ w₁ ≠ cluster d ϱ w₂) :
-    Disjoint (cluster d ϱ w₁) (cluster d ϱ w₂) := by
-  rw [Set.disjoint_left]
-  intro z hz1 hz2
-  rw [mem_cluster] at hz1 hz2
-  exact h (cluster_eq_of_connected (hz1.trans hz2.symm))
 
 /-- A Menger core at the origin: three neighbours `a_i` and an edge set `G` whose corridor steps
 lead from `a_i` to sites in three pairwise distinct infinite clusters. -/
@@ -112,12 +104,12 @@ lemma mng_disjointRouting_of_mengerCore (ω : ConfigSpace (Sym2 (Site d)))
   · exact ⟨mng_corridor_mem_destCluster ω G hc1,
       mng_corridor_mem_destCluster ω G hc2,
       mng_corridor_mem_destCluster ω G hc3⟩
-  · exact ⟨fun u v hu hadj => mng_cluster_adjClosed ϱ w₁ hu hadj,
-      fun u v hu hadj => mng_cluster_adjClosed ϱ w₂ hu hadj,
-      fun u v hu hadj => mng_cluster_adjClosed ϱ w₃ hu hadj⟩
-  · exact ⟨mng_disjoint_of_cluster_ne ϱ w₁ w₂ hd12,
-      mng_disjoint_of_cluster_ne ϱ w₁ w₃ hd13,
-      mng_disjoint_of_cluster_ne ϱ w₂ w₃ hd23⟩
+  · exact ⟨fun u v hu hadj => csc_cluster_adjClosed ϱ w₁ u v hu hadj,
+      fun u v hu hadj => csc_cluster_adjClosed ϱ w₂ u v hu hadj,
+      fun u v hu hadj => csc_cluster_adjClosed ϱ w₃ u v hu hadj⟩
+  · exact ⟨Walls.bc2_disjoint_of_ne hd12,
+      Walls.bc2_disjoint_of_ne hd13,
+      Walls.bc2_disjoint_of_ne hd23⟩
 
 lemma mng_forceOpenFinset_empty (ω : ConfigSpace (Sym2 (Site d))) :
     forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by

@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineArmTreeLeaf
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FieldFreeDatum
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmSubforestCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 
 /-!
@@ -72,7 +74,7 @@ lemma bfk_forestCount {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
           rw [Finset.card_image_of_injective _ hf, Finset.card_univ]
     _ ≤ (Finset.univ.filter (fun v => 3 ≤ G.degree v)).card := Finset.card_le_card hbranch
     _ ≤ (Finset.univ.filter (fun v => G.degree v = 1)).card :=
-        StatMech.Walls.bc65_connected_leaf_count G hacyc hmin
+        Percolation.flc2_forest_internal_le_leaves G hacyc hmin
     _ ≤ B.card := by
           apply Finset.card_le_card
           intro v hv
@@ -106,10 +108,10 @@ lemma bfk_forestCount_status :
       (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bau_ArmSubforestData ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro V _ _ G _ hacyc hmin; exact StatMech.Walls.bc65_connected_leaf_count G hacyc hmin
+  · intro V _ _ G _ hacyc hmin; exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro V _ _ G _ hacyc hmin ι _ f hf hdeg3 B hleaf
     exact bfk_forestCount G hacyc hmin f hf hdeg3 B hleaf
-  · intro V T hT ι Gs hle; exact StatMech.Walls.bfl_armUnion_acyclic hT Gs hle
+  · intro V T hT ι Gs hle; exact bri_union_le_acyclic hT Gs hle
   · exact bfk_star_count_witness
   · intro ω R h; exact StatMech.Walls.bfl_fineCount_of_armSubforest ω R h
   · intro p hp1 hp0 hdata; exact StatMech.Walls.bau_bk_of_subforestData p hp1 hp0 hdata

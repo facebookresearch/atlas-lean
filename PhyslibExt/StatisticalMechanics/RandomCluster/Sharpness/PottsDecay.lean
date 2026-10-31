@@ -19,11 +19,12 @@ threshold, the mean-field bound, and the identification of the threshold.
 
 ## i. Overview
 
-`ofa_russoPrefactor_ge_four` gives `russoPrefactor p ≥ 4`. `ofa_fk_q2_differential_inequality` and
-`ofa_summary` are conditional on `hbridge` (discharged for connection events in
-`HorizontalBridgeDecay`) and `hθub`. `ofa_fk_q2_sharpness` also takes the supplied mean-field limits
-and the hypotheses `hP1`, `hP2` on `Θ`. `hP2` (the backbone chain rule, P2) is always an assumption.
-The third conjunct `sSup (bcm_subcriticalSet Θ) = β₁` follows from `hP1` and `hP2` alone.
+`russoPrefactor p ≥ 4` is `StatMech.FK.russoPrefactor_ge_four` (FKQ2Sharp).
+`ofa_fk_q2_differential_inequality` and `ofa_summary` are conditional on `hbridge` (discharged for
+connection events in `HorizontalBridgeDecay`) and `hθub`. `ofa_fk_q2_sharpness` also takes the
+supplied mean-field limits and the hypotheses `hP1`, `hP2` on `Θ`. `hP2` (the backbone chain rule,
+P2) is always an assumption. The third conjunct `sSup (bcm_subcriticalSet Θ) = β₁` follows from
+`hP1` and `hP2` alone.
 
 ## ii. Key results
 
@@ -46,7 +47,6 @@ The third conjunct `sSup (bcm_subcriticalSet Θ) = β₁` follows from `hP1` and
 open scoped BigOperators
 open Finset Real Set Filter Topology
 
-
 namespace StatMech
 namespace OSSS
 namespace OSFKAssemblyClose
@@ -61,11 +61,6 @@ open MonotonicFK
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. The q = 2 sharpness package -/
-
-lemma ofa_russoPrefactor_ge_four {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
-    (4 : ℝ) ≤ russoPrefactor p := by
-  rw [russoPrefactor, le_div_iff₀ (mul_pos hp (by linarith))]
-  nlinarith [sq_nonneg (p - 1 / 2)]
 
 lemma ofa_fk_q2_differential_inequality (G : SimpleGraph V) [DecidableRel G.Adj]
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)

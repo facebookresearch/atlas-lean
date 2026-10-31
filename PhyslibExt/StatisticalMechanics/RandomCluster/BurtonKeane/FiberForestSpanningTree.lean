@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeForestData

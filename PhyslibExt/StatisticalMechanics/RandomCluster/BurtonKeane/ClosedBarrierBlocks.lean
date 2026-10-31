@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters
 
 /-!
 # Closed barriers block connections
@@ -89,12 +91,12 @@ lemma bc3_disconnected_of_barrier_split (ϱ : ConfigSpace (Sym2 (Site d)))
 
 lemma bc3_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (w : Site d) :
     bc3_AdjClosed ϱ (cluster d ϱ w) :=
-  fun _ _ hu hadj => mng_cluster_adjClosed ϱ w hu hadj
+  fun u v hu hadj => Percolation.csc_cluster_adjClosed ϱ w u v hu hadj
 
 lemma bc3_compl_cluster_adjClosed (ϱ : ConfigSpace (Sym2 (Site d))) (w : Site d) :
     bc3_AdjClosed ϱ (cluster d ϱ w)ᶜ := by
   intro u v hu hadj hv
-  exact hu (mng_cluster_adjClosed ϱ w hv hadj.symm)
+  exact hu (Percolation.csc_cluster_adjClosed ϱ w _ _ hv hadj.symm)
 
 lemma bc3_barrier_blocks_iff_cluster (ϱ : ConfigSpace (Sym2 (Site d))) (p q : Site d) :
     (¬ Connected d ϱ p q) ↔

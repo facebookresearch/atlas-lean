@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Probability.Configuration.ConfigSpace
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FiniteEnergy
@@ -100,7 +103,9 @@ lemma fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q
 
 /-! ## B. Closing a set of edges -/
 
-/-- Close every edge of `γ`, leaving the other coordinates unchanged. -/
+/-- Close every edge of `γ`, leaving the other coordinates unchanged. See also `projOff`
+(FKDisjointBoxDomainMarkov), the same definition, kept separate to avoid importing the
+infinite-volume modules here. -/
 noncomputable def closeAllOn (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 V) := fun e => if e ∈ γ then false else ψ e
 
@@ -274,16 +279,16 @@ lemma closedMass_empty {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
   exact fkProb_sum_eq_one G hp hp1 hq
 
 /-- The configurations closed at `e` and on all of `γ`. -/
-noncomputable def cfib (e : Sym2 V) (γ : Finset (Sym2 V)) :
+noncomputable def closedFibreConfigs (e : Sym2 V) (γ : Finset (Sym2 V)) :
     Finset (ConfigSpace (Sym2 V)) :=
   Finset.univ.filter (fun ψ : ConfigSpace (Sym2 V) => ψ e = false ∧ ∀ e' ∈ γ, ψ e' = false)
 
 lemma closedMass_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
     closedMass G p q γ
-      = ∑ ψ ∈ cfib e γ,
+      = ∑ ψ ∈ closedFibreConfigs e γ,
           (fkProb G p q (setOpen e ψ) + fkProb G p q (setClosed e ψ)) := by
   classical
-  unfold closedMass cfib
+  unfold closedMass closedFibreConfigs
   rw [Finset.sum_add_distrib]
   have hclosed : (∑ ψ ∈ Finset.univ.filter
         (fun ψ : ConfigSpace (Sym2 V) => ψ e = false ∧ ∀ e' ∈ γ, ψ e' = false),
@@ -354,9 +359,9 @@ lemma closedMass_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e
 
 lemma closedMass_insert_reindex {p q : ℝ} (e : Sym2 V) {γ : Finset (Sym2 V)} (he : e ∉ γ) :
     closedMass G p q (insert e γ)
-      = ∑ ψ ∈ cfib e γ, fkProb G p q (setClosed e ψ) := by
+      = ∑ ψ ∈ closedFibreConfigs e γ, fkProb G p q (setClosed e ψ) := by
   classical
-  unfold closedMass cfib
+  unfold closedMass closedFibreConfigs
   apply Finset.sum_nbij' (fun ω => ω) (fun ψ => ψ)
   · intro ω hω
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.forall_mem_insert] at hω ⊢

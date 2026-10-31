@@ -58,6 +58,9 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-! ## A. Uniform merge radius -/
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- For a translation-invariant measure with a unique infinite cluster and a finite family of
 template pairs `(L n, R n i)`, there is a radius sequence `radius n ≥ n` such that, for all
 translations `z n`, choices `i n` and rectangles containing the translated buffered ball of radius

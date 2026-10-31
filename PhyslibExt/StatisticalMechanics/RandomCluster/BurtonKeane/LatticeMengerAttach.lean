@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence2
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachData
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForceMonotone
 
 /-!
 # Axis corridors attached to infinite clusters
@@ -144,16 +146,6 @@ lemma lma_corridorEdges_endpoints_mem (j : Fin d) (L : ℕ) :
   · exact ⟨t + 1, by omega, by omega, by push_cast; ring_nf⟩
   · exact ⟨t + 2, by omega, by omega, by push_cast; ring_nf⟩
 
-lemma lma_removeSite_le_forceOpen (ω : ConfigSpace (Sym2 (Site d)))
-    (W : Finset (Sym2 (Site d))) :
-    removeSite 0 ω ≤ removeSite 0 (forceOpenFinset W ω) := by
-  classical
-  have h := bma_removeSite_forceOpen_mono_sub ω (Wⱼ := (∅ : Finset (Sym2 (Site d)))) (W := W)
-    (Finset.empty_subset W)
-  have he : forceOpenFinset (∅ : Finset (Sym2 (Site d))) ω = ω := by
-    funext e; simp [forceOpenFinset]
-  rwa [he] at h
-
 /-- The cluster of `x` contains an axis corridor along `e_j` starting at `e_j`, and stays infinite
 and connected to the corridor's end after the origin is removed. -/
 def lma_ClusterReachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d) : Prop :=
@@ -173,7 +165,7 @@ lemma lma_clusterAttachment_of_reachesRay (ω : ConfigSpace (Sym2 (Site d))) (x 
       (hrHD_rayPt j 1) (hrHD_rayPt j ((L : ℤ) + 1)) := lma_corridor_connected ω j L L le_rfl
   have htail : Connected d (removeSite 0 (forceOpenFinset (lma_corridorEdges j L) ω))
       (hrHD_rayPt j ((L : ℤ) + 1)) x :=
-    connected_mono (lma_removeSite_le_forceOpen ω (lma_corridorEdges j L)) hreach
+    connected_mono (Walls.bc2_force_mono_origin ω (lma_corridorEdges j L)) hreach
   exact hcorr.trans htail
 
 lemma lma_attachData_of_three_reachesRay (ω : ConfigSpace (Sym2 (Site d)))

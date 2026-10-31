@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RaysInTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicArmSubforest
@@ -181,8 +184,8 @@ lemma bsg_status :
   · intro ω L T _ hT w R hR hw hinf; exact bsg_GnTreeRay_reaches_boundary ω L T hT hR hw hinf
   · intro T _ hTH hTconn; exact bcv_bgnW_test hTH hTconn
   · intro V T hT ι Gs hGs; exact bri_union_le_acyclic hT Gs hGs
-  · intro ω L R h; exact bri_datum_implies_count ω L R h
-  · intro p hp1 hp0 hdata; exact bri_bk_of_subforestData p hp1 hp0 hdata
+  · intro ω L R h; exact bca_datum_implies_count ω L R h
+  · intro p hp1 hp0 hdata; exact bau_bk_of_subforestData p hp1 hp0 hdata
 
 end StatMech.Walls
 

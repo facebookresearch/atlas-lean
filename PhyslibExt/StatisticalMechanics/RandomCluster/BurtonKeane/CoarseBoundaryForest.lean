@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -27,8 +29,10 @@ the coarse step, `μ(N = ⊤) = 0`. Coarse arms reach the boundary unconditional
 
 ## ii. Key results
 
-- `bc66_leaf_boundary_injection` : branch vertices from boundary leaves.
-- `bc66_infiniteClusters_top_null_of_connectedForest` : `μ(N = ⊤) = 0` from the connected forest.
+- `StatMech.Percolation.flc2_leaf_card_le_boundary` (in `SpanningTreeLeafCount`) : branch vertices
+  from boundary leaves.
+- `StatMech.Walls.bc65_infiniteClusters_top_null_of_connectedForest_route` (in
+  `CoarseForestConnected`) : `μ(N = ⊤) = 0` from the connected forest.
 
 ## iii. Table of contents
 
@@ -56,13 +60,6 @@ variable {d : ℕ}
 
 /-! ## A. Leaf injections and connected forests -/
 
-lemma bc66_leaf_boundary_injection {W : Type*} [Fintype W] (G : SimpleGraph W)
-    [DecidableRel G.Adj] (R : ℕ) (lam : W → Site d)
-    (hmap : ∀ v, G.degree v = 1 → lam v ∈ vertexBoundary d R)
-    (hinj : Set.InjOn lam (univ.filter (fun v => G.degree v = 1))) :
-    (univ.filter (fun v => G.degree v = 1)).card ≤ boxSV_boundaryCard d R :=
-  flc2_leaf_card_le_boundary G R lam hmap hinj
-
 set_option linter.unusedDecidableInType false in
 /-- Same statement as `bc65_connectedForest_of_forestData`; kept because TrifSuperVertex uses it. -/
 lemma bc66_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -76,27 +73,6 @@ lemma bc66_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
     bc65_ConnectedCoarseForest ω L R :=
   bc65_connectedForest_of_forestData ω L R W G ιT lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
-
-/-- Same statement as `bc64_arms_can_share_boundary`; kept because GnBoundaryForest uses it. -/
-lemma bc66_shared_boundary_survives (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
-      Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
-  bc64_arms_can_share_boundary L
-
-/-- Same statement as `bc65_infiniteClusters_top_null_of_connectedForest_route`; kept because
-TrifSuperVertex uses it. -/
-lemma bc66_infiniteClusters_top_null_of_connectedForest
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
-    (hconn : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc65_ConnectedCoarseForest ω L R)
-    (hcoarseRoute : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
-        0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc65_infiniteClusters_top_null_of_connectedForest_route μ hd hinv hfe L hconn hcoarseRoute
 
 /-- Same statement as `bc63_coarseArm_reaches_boundary`; kept because TrifSuperVertex uses it. -/
 lemma bc66_coarse_armReaching_unconditional (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -128,10 +104,10 @@ lemma bc66_status :
   · intro L hL
     exact StatMech.Walls.bc61_wholeBox_severs_upperLines hL
   · intro V _ _ G _ hacyc hmin
-    exact StatMech.Walls.bc65_connected_leaf_count G hacyc hmin
+    exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro ω L R z₀ z₁ hz₀ hz₁ hzne hinj
     exact StatMech.Walls.bc65_connectedForest_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
   · intro L
-    exact bc66_shared_boundary_survives L
+    exact bc64_arms_can_share_boundary L
 
 end StatMech.Walls

@@ -28,8 +28,8 @@ configurations `ecz_ClosedOff G`. Both results are proved unconditionally (no hy
 
 - `ecz_eventWeight_factorization` : the total FK weight of a closed-off event is `2 ^ ecz_NE G`
   times its closed-off weight.
-- `ecz_eventProb_eq` : the event probability is the closed-off weight over the edge partition
-  function.
+- `fkProb_closeOff_preimage_eq` : the event probability is the closed-off weight over the edge
+  partition function.
 
 ## iii. Table of contents
 
@@ -211,7 +211,7 @@ lemma ecz_eventWeight_factorization (p q : Real)
 
 /-- The FK probability of an event determined by the edges of `G` is its closed-off weight divided
 by the edge partition function. -/
-theorem ecz_eventProb_eq (p q : Real) (A : Set (ecz_ClosedOff G)) :
+theorem fkProb_closeOff_preimage_eq (p q : Real) (A : Set (ecz_ClosedOff G)) :
     (∑ omega : ConfigSpace (Sym2 V),
         (ecz_closeOff G ⁻¹' A).indicator (fun _ => (1 : Real)) omega *
           fkProb G p q omega) =

@@ -12,6 +12,7 @@ public import CSLibExt.Complexity.BooleanFunctions.SharpnessFK
 public import CSLibExt.Complexity.BooleanFunctions.RevealmentConstruction
 public import CSLibExt.Complexity.BooleanFunctions.TreeComplete
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
+public import MathlibExt.Probability.Percolation.Universality.Defs
 
 /-!
 # Crossing events and Russo's formula for the random-cluster model
@@ -50,7 +51,6 @@ open Finset
 open Real Set
 open StatMech.Lattice
 
-
 namespace StatMech
 namespace OSSS
 
@@ -78,25 +78,13 @@ lemma liftCfg_monotone (edge : E → Sym2 (Site d)) :
   · rw [dite_eq_left hex, dite_eq_left hex]; exact h hex.choose
   · rw [dite_eq_right hex, dite_eq_right hex]
 
-lemma openSubgraph_mono {ω₁ ω₂ : ConfigSpace (Sym2 (Site d))} (h : ω₁ ≤ ω₂) :
-    openSubgraph d ω₁ ≤ openSubgraph d ω₂ := by
-  intro x y hxy
-  rw [openSubgraph_adj] at hxy ⊢
-  refine ⟨hxy.1, ?_⟩
-  have hle := h s(x, y); rw [hxy.2] at hle
-  exact le_antisymm (Bool.le_true _) hle
-
-lemma connected_mono {ω₁ ω₂ : ConfigSpace (Sym2 (Site d))} (h : ω₁ ≤ ω₂)
-    {x y : Site d} (hc : Connected d ω₁ x y) : Connected d ω₂ x y :=
-  hc.mono (openSubgraph_mono h)
-
 omit [DecidableEq E] in
 lemma connectedToSet_mono {edge : E → Sym2 (Site d)} {o : Site d} {B : Set (Site d)}
     {ω₁ ω₂ : ConfigSpace E} (h : ω₁ ≤ ω₂)
     (hc : ConnectedToSet d (liftCfg edge ω₁) o B) :
     ConnectedToSet d (liftCfg edge ω₂) o B := by
   obtain ⟨b, hbB, hconn⟩ := hc
-  exact ⟨b, hbB, connected_mono (liftCfg_monotone edge h) hconn⟩
+  exact ⟨b, hbB, Universality.connected_mono_dim (liftCfg_monotone edge h) hconn⟩
 
 omit [DecidableEq E] in
 lemma connectedToSet_increasing (edge : E → Sym2 (Site d)) (o : Site d) (B : Set (Site d)) :

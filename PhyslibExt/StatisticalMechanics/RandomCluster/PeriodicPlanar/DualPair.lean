@@ -30,7 +30,7 @@ at `p` under configuration duality (`ThermodynamicDuality` derives such laws fro
 exchange). Through these laws, wired dual percolation at `p*` is free-primal percolation of the
 dual configuration at `p`, which rewrites the coverage and no-coexistence inputs of the critical
 relation.
-The headline `PeriodicPlanarDualPair.dualCritical_relation_of_commonCoupling` is conditional: it
+The headline `PeriodicPlanarDualPair.dualCritical_relation_of_freeDual` is conditional: it
 assumes a dual pair `D` (including the two dual-law fields above), coverage (free dual percolation
 for every `p < pc`) and no-coexistence of wired primal and free dual percolation, besides
 `pc, pc* ∈ (0, 1)` and `1 ≤ q`.
@@ -42,7 +42,7 @@ for every `p < pc`) and no-coexistence of wired primal and free dual percolation
 - `PeriodicPlanarDualPair.swap` : the roles of primal and dual exchanged.
 - `PeriodicPlanarDualPair.wiredPercolationProbability_dualParam` : wired dual percolation at `p*`
   equals free percolation of the dual configuration at `p`.
-- `PeriodicPlanarDualPair.dualCritical_relation_of_commonCoupling` : the critical relation from
+- `PeriodicPlanarDualPair.dualCritical_relation_of_freeDual` : the critical relation from
   coverage and no-coexistence for a dual pair.
 
 ## iii. Table of contents
@@ -388,7 +388,7 @@ lemma dualNoCoexistence_iff_freeDual
 /-- Conditional critical-point duality for a dual pair: free dual percolation below `pc` and
 no-coexistence of wired primal and free dual percolation give `pc* = (pc)*` and
 `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem dualCritical_relation_of_commonCoupling
+theorem dualCritical_relation_of_freeDual
     (D : PeriodicPlanarDualPair P Pdual) {q : ℝ}
     (hpc : P.criticalPoint q ∈ Ioo (0 : ℝ) 1)
     (hpcDual : Pdual.criticalPoint q ∈ Ioo (0 : ℝ) 1)

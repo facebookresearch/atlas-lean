@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HandshakeLeafCount
 
 /-!
@@ -111,9 +113,9 @@ lemma blf_bc69_of_acyclicArmUnion (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ)
 lemma blf_bk_of_acyclicArmUnion (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), blf_AcyclicArmUnion ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 := by
-  apply bgn_bk_of_forest p hp1 hp0
+  apply bfa_bk_of_classicalForest p hp1 hp0
   intro ω L R
-  rw [bgn_forest_iff_bc69]
+  rw [bfa_classical_iff_bc69]
   exact blf_bc69_of_acyclicArmUnion ω L R (hdata ω L R)
 
 /-- The path on three vertices. -/

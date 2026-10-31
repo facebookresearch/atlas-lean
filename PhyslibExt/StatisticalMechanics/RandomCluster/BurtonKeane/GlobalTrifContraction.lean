@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryPartitionCount
 
 /-!
@@ -35,8 +39,10 @@ all configurations.
 
 - `bgn_sameTrif_classes_laminar` : classes for the same centre are equal or disjoint
 - `bgn_crossing_witness` : `bgn_W` has crossing classes for two centres
-- `bgn_forest_iff_bc69` : classical forest data are the global contracted forest
-- `bgn_bk_of_forest` : uniqueness for Bernoulli percolation from classical forest data for every
+- `StatMech.Walls.bfa_classical_iff_bc69` (in `ClassicalForestData`) : classical forest data are the
+  global contracted forest
+- `StatMech.Walls.bfa_bk_of_classicalForest` (in `ClassicalForestData`) : uniqueness for Bernoulli
+  percolation from classical forest data for every
   configuration
 - `bgn_status` : the statements together
 
@@ -221,20 +227,6 @@ lemma bgn_crossing_witness :
   · exact fun h => absurd (bgn_reach_isolated iso4 h) (by decide)
   · exact fun h => absurd (bgn_reach_isolated iso2 h) (by decide)
 
-lemma bgn_forest_iff_bc69 (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
-    bkg_ClassicalForestData ω L R ↔ bc69_Gn_globalForest ω L R :=
-  bpt_partitionForest_iff_bc69 ω L R
-
-lemma bgn_count_of_forest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bkg_ClassicalForestData ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bpt_count_of_partitionForest ω L R h
-
-lemma bgn_bk_of_forest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) :
-    bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  bpt_bk_of_partitionForest p hp1 hp0 hdata
-
 /-! ## C. Summary -/
 
 lemma bgn_status :
@@ -253,7 +245,8 @@ lemma bgn_status :
       (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) →
       bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0) := by
   refine ⟨fun L hL => bgn_ground_common L hL, fun ω L R u a b => bgn_sameTrif_classes_laminar ω L R u a b,
-    ?_, fun ω L R => bgn_forest_iff_bc69 ω L R, fun p hp1 hp0 hdata => bgn_bk_of_forest p hp1 hp0 hdata⟩
+    ?_, fun ω L R => bfa_classical_iff_bc69 ω L R,
+    fun p hp1 hp0 hdata => bfa_bk_of_classicalForest p hp1 hp0 hdata⟩
   obtain ⟨_, _, ⟨h6a, h6b⟩, ⟨h4, h4'⟩, ⟨h2, h2'⟩⟩ := bgn_crossing_witness
   exact ⟨h6a, h6b, h4, h4', h2, h2'⟩
 

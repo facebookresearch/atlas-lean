@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -84,7 +85,6 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-
 /-! ## A. Definitions -/
 
 open Classical in
@@ -100,7 +100,6 @@ noncomputable def bc45_dep (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (v : Sit
     (bc37_armAdjGraph ω n).dist (bc45_root ω n ⟨v, hv⟩) ⟨v, hv⟩
   else 0
 
-
 open Classical in
 /-- An injective enumeration of the sites by natural numbers. -/
 noncomputable def bc45_idx (_ω : ConfigSpace (Sym2 (Site d))) (_n : ℕ) : Site d → ℕ :=
@@ -112,12 +111,10 @@ lemma bc45_idx_injective (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     Function.Injective (bc45_idx ω n) :=
   ((inferInstance : Countable (Site d)).exists_injective_nat).choose_spec
 
-
 open Classical in
 /-- The rank of a site: its depth, then its index, ordered lexicographically. -/
 noncomputable def bc45_armDepthRank (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Site d → ℕ ×ₗ ℕ :=
   fun v => toLex (bc45_dep ω n v, bc45_idx ω n v)
-
 
 open Classical in
 /-- The parent of a trifurcation towards its root in the arm adjacency graph. -/
@@ -355,27 +352,6 @@ lemma bc45_parentFunneling_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d)
 lemma bc45_selfDownArm_of_cutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hgeo : bc40_ArmCutGeometryFixed' ω n) : bc36_SelfDownArm ω n :=
   bc37_selfDownArm_of_parentFunneling ω n (bc45_parentFunneling_of_cutGeometryFixed' ω n hgeo)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma bc45_burton_keane_bernoulli (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hgeo : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc40_ArmCutGeometryFixed' ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc36_burton_keane_bernoulli_of_selfDownArm hd p hp1 hp0
-    (fun ω n hn => bc45_selfDownArm_of_cutGeometryFixed' ω n (hgeo ω n hn)) htrif
 
 lemma bc45_farSide_deeper_excluded (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) {y z : Site d}
     (hyT : y ∈ tfc_trifFinset ω n)

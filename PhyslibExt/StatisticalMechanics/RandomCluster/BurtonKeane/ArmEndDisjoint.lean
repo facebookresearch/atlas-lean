@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -38,9 +39,10 @@ condition for a system of distinct boundary representatives. `aed_GlobalForestAr
 ends lying in distinct global components. It is equivalent to `daep_GlobalCutSeparation`, gives Hall
 arm ends and the count bound, and holds with no trifurcation, one trifurcation or a forest peel.
 
-**Fidelity.** `aed_burton_keane_bernoulli_of_globalForestArms` assumes global forest arms for every
-configuration and box, which implies the configuration-wide trifurcation bound refuted by
-`tfc_not_forall_Tcount_le_boundary`; it is vacuous and kept only because another lane uses it.
+**Fidelity.** The results here are proved as stated. The Burton–Keane route that assumed global
+forest arms for every configuration and box was deleted in the central cleanup: its hypothesis
+implies the configuration-wide trifurcation bound refuted by `tfc_not_forall_Tcount_le_boundary`, so
+it was vacuous.
 
 ## ii. Key results
 
@@ -185,28 +187,6 @@ lemma aed_Tcount_le_boundary_of_globalForestArms (ω : ConfigSpace (Sym2 (Site d
     (hn : 1 ≤ n) (h : aed_GlobalForestArms ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   bhs_Tcount_le_boundary_of_hall ω n (aed_hallArmEnds_of_globalForestArms ω n hn h)
-
-/-- Burton–Keane uniqueness from global forest arms for every configuration and box. Its
-configuration-wide hypothesis implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every
-configuration and box, which is false for `d ≥ 1` (`tfc_not_forall_Tcount_le_boundary`), so the
-statement is vacuous. -/
-lemma aed_burton_keane_bernoulli_of_globalForestArms (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → aed_GlobalForestArms ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bhs_burton_keane_bernoulli_of_hall hd p hp1 hp0
-    (fun ω n hn => aed_hallArmEnds_of_globalForestArms ω n hn (hres ω n hn))
-    htrif
 
 /-! ## C. The setoid of components -/
 

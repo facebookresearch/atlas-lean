@@ -1465,7 +1465,7 @@ lemma PeriodicGraph.iUnion_orbitBoxHitsInfinite
   · rintro ⟨n, x, _hx, hinf⟩
     exact ⟨x, hinf⟩
   · rintro ⟨x, hinf⟩
-    obtain ⟨n, hx⟩ := P.mem_orbitBox_of_eventually x
+    obtain ⟨n, hx⟩ := P.exists_mem_orbitBox x
     exact ⟨n, x, hx, hinf⟩
 
 omit [Countable V] in

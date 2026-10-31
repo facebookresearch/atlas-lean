@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Data.Fin.VecNotation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure
 
@@ -86,7 +89,6 @@ lemma bc90_canonical_of_genuineTrif (ω : ConfigSpace (Sym2 (Site d))) (x : Site
     (h : bc89_GenuineTrif d ω x) : IsCanonicalTrifurcation d ω x :=
   (bc90_genuineTrif_iff_canonical ω x).mp h
 
-
 open Classical in
 lemma bc90_spanForest_preserves_genuineTrif_deg3 (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) {x : Site d} (hxbox : x ∈ box d n)
@@ -129,7 +131,6 @@ lemma bc90_spanForest_preserves_genuineTrif_deg3 (ω : ConfigSpace (Sym2 (Site d
   have hd02 : c 0 ≠ c 2 := fun h => hccut.2.1 (h ▸ connected_refl _ _)
   have hd12 : c 1 ≠ c 2 := fun h => hccut.2.2 (h ▸ connected_refl _ _)
   exact ⟨c, ⟨hd01, hd02, hd12⟩, hcadj, hccut⟩
-
 
 open Classical in
 lemma bc90_spanForest_subtype_deg3 (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
@@ -205,21 +206,6 @@ lemma bc90_upperLines_boxOpenForest_count_free (n : ℕ) :
     bc89_genuineTcount bc60_upperLines n = 0 ∧
     bc89_genuineTcount bc60_upperLines n ≤ boxSV_boundaryCard 2 n :=
   ⟨bc89_upperLines_genuineTcount_zero n, bc89_upperLines_genuine_le_boundary n⟩
-
-
-open Classical in
-lemma bc90_boxOpenForest_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x : Site d} (a : Fin 3 → Site d)
-    (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
-    (hadj : ∀ i, (openSubgraph d ω).Adj x (a i))
-    (habdry : ∀ i, a i ∈ vertexBoundary d n)
-    (hxne : ∀ i, a i ≠ x)
-    (hainj : Function.Injective a)
-    (hsep : ¬ Connected d (removeSite x ω) (a 0) (a 1) ∧
-            ¬ Connected d (removeSite x ω) (a 0) (a 2) ∧
-            ¬ Connected d (removeSite x ω) (a 1) (a 2)) :
-    bst_BoxOpenForest ω n :=
-  bst_boxOpenForest_star ω n a hsingle hadj habdry hxne hainj hsep
 
 /-! ## B. Summary -/
 

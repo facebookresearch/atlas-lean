@@ -590,7 +590,7 @@ lemma adsD_tree_osss_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ �
   have hf0' : ∀ ω, (0:ℝ) ≤ f ω := fun ω => hf0 ω
   have hfC : ∀ ω, |f ω| ≤ 1 := fun ω => by
     rw [abs_le]; exact ⟨by linarith [hf0' ω], hf1 ω⟩
-  exact AdaptMConditional.tree_osss_sharp_unconditional hpos hμ1 σ hf0 hf1
+  exact AdaptMConditional.tree_osss_sharp_of_adaptStepCovBound hpos hμ1 σ hf0 hf1
     (adsD_adaptStepCovBound_of_condBBB hpos hmono σ hf hfC hBBB)
 
 section FK

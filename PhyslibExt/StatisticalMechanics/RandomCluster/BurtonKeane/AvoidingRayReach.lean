@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarTopology
@@ -34,10 +37,10 @@ ray avoiding `S` (König's lemma, `ray34_konig`). In the open subgraph of `ℤ^d
 cluster contains rays avoiding any finite set. Global-cut arm data `bc34_TavoidingCutArmData` give
 trifurcation-avoiding ray data.
 
-**Fidelity.** `bc34_burton_keane_bernoulli_of_globalCutArm` assumes global-cut arms for every
-configuration and box, which implies the configuration-wide trifurcation bound refuted by
-`tfc_not_forall_Tcount_le_boundary`; it is vacuous and kept only because a chain used by another
-lane depends on it.
+**Fidelity.** The results here are proved as stated. The Burton–Keane route that assumed global-cut
+arms for every configuration and box was deleted in the central cleanup: its hypothesis implies the
+configuration-wide trifurcation bound refuted by `tfc_not_forall_Tcount_le_boundary`, so it was
+vacuous.
 
 ## ii. Key results
 
@@ -619,40 +622,6 @@ lemma bc34_TavoidingRayData_of_globalCutArm (ω : ConfigSpace (Sym2 (Site d))) (
     rw [Finset.mem_coe]; exact hbTf
   rw [ray34_avoidCluster_removeSite_eq_cluster_removeSites hxT hbT]
   exact hbinf
-
-/-- Burton–Keane uniqueness from global-cut arms for every configuration and box. Its
-configuration-wide
-hypothesis implies `Tcount d ω n ≤ boxSV_boundaryCard d n` for every configuration and box, which is
-false for `d ≥ 1` (`tfc_not_forall_Tcount_le_boundary`), so the statement is vacuous. -/
-lemma bc34_burton_keane_bernoulli_of_globalCutArm (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (rank : ConfigSpace (Sym2 (Site d)) → ℕ → Site d → ℕ ×ₗ ℕ)
-    (bfun : ConfigSpace (Sym2 (Site d)) → ℕ → Site d → Site d)
-    (hinj : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ),
-      ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-        x ≠ y → Connected d ω x y → rank ω n x ≠ rank ω n y)
-    (hbdata : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      ∀ x, x ∈ box d n → IsTrifurcation d ω x →
-        bfun ω n x ∈ box d n ∧ Connected d ω x (bfun ω n x) ∧
-        (cluster d (removeSites (tfc_trifFinset ω n) ω) (bfun ω n x)).Infinite)
-    (hsplit : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
-        x ≠ y → Connected d ω x y → rank ω n x < rank ω n y →
-        ¬ Connected d (removeSite y ω) (bfun ω n y) (bfun ω n x))
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc33_burton_keane_bernoulli_of_TavoidingRayData hd p hp1 hp0 rank hinj
-    (fun ω n hn => bc34_TavoidingRayData_of_globalCutArm ω n (rank ω n) (bfun ω n)
-      (hbdata ω n hn) (hsplit ω n hn)) htrif
 
 lemma bc34_TavoidingRayData_of_threeChain_globalCut (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {x₀ m g : Site d} (b : Site d → Site d)

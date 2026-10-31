@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Algebra.Ring.IsFormallyReal
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Critical polynomials of the homogeneous triangular and hexagonal random-cluster models
@@ -48,7 +52,7 @@ do not assert that either root is the critical point of an FK measure.
 
 @[expose] public section
 
-namespace StatMech.FrontierA
+namespace StatMech.FK.TriHex
 
 /-! ## A. The critical polynomials -/
 
@@ -114,4 +118,4 @@ theorem triangularFKCritical_iff_hexagonal_of_dual {q y yStar : ℝ}
   ⟨hexagonalFKCritical_of_dual_triangular hy hdual,
     triangularFKCritical_of_dual_hexagonal hyStar hdual⟩
 
-end StatMech.FrontierA
+end StatMech.FK.TriHex

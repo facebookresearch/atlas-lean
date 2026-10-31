@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -331,19 +334,14 @@ def bc47_IsClassicalTrifurcation (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
      ¬ Connected d (removeSite x ω) a₁ a₃ ∧
      ¬ Connected d (removeSite x ω) a₂ a₃)
 
-lemma bc47_removeSite_le (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
-    removeSite x ω ≤ ω := by
-  rw [← daep_removeSites_singleton x ω]
-  exact daep_removeSites_le {x} ω
-
 lemma bc47_isTrifurcation_of_classical (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (h : bc47_IsClassicalTrifurcation ω x) : IsTrifurcation d ω x := by
   obtain ⟨a₁, a₂, a₃, hne, ⟨he1, he2, he3⟩, ⟨hi1, hi2, hi3⟩, hsep⟩ := h
   refine ⟨a₁, a₂, a₃, hne, ⟨he1.connected, he2.connected, he3.connected⟩, ?_, hsep⟩
   refine ⟨?_, ?_, ?_⟩
-  · exact hi1.mono (cluster_mono (bc47_removeSite_le x ω) a₁)
-  · exact hi2.mono (cluster_mono (bc47_removeSite_le x ω) a₂)
-  · exact hi3.mono (cluster_mono (bc47_removeSite_le x ω) a₃)
+  · exact hi1.mono (cluster_mono (Percolation.removeSite_le x ω) a₁)
+  · exact hi2.mono (cluster_mono (Percolation.removeSite_le x ω) a₂)
+  · exact hi3.mono (cluster_mono (Percolation.removeSite_le x ω) a₃)
 
 lemma bc47_only_infinite_neighbour_is_R1 (a : Site 2)
     (hea : IsOpenEdge 2 bc47_fakeConfig bc47_x a)

@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Data.Set.Finite.Range
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicReachStep
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalStarForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestInsertionTolerance

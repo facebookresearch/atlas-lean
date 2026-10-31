@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Percolation.RussoInfluence
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Hamming
 public import MathlibExt.Probability.CorrelationInequalities.FKG
+public import MathlibExt.Probability.Percolation.SharpThreshold
 
 /-!
 # Russo–Hamming inequality for Bernoulli percolation
@@ -85,12 +86,6 @@ lemma expect_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f : ConfigSpace E
   have := expect_mono hp0 hp1 (f := fun _ => (0 : ℝ)) (g := f) h
   simpa [expect] using this
 
-lemma configWeight_sum_one (p : ℝ) : ∑ ω : ConfigSpace E, configWeight p ω = 1 := by
-  unfold configWeight edgeWeight
-  rw [← Fintype.prod_sum (fun (e : E) (b : Bool) => if b then p else 1 - p)]
-  refine Finset.prod_eq_one (fun e _ => ?_)
-  rw [Fintype.sum_bool]; simp
-
 omit [DecidableEq E] in
 lemma configWeight_logModular (p : ℝ) (a b : ConfigSpace E) :
     configWeight p a * configWeight p b = configWeight p (a ⊔ b) * configWeight p (a ⊓ b) := by
@@ -114,7 +109,8 @@ lemma fkg_cov {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {f g : ConfigSpace E →
     expect p f * expect p g ≤ expect p (fun ω => f ω * g ω) := by
   have hπ0 : (0 : ConfigSpace E → ℝ) ≤ configWeight p :=
     fun ω => configWeight_nonneg hp0 hp1 ω
-  have h := fkg_inequality (E := E) hπ0 (configWeight_sum_one p) (configWeight_fkg p) hf hg
+  have h :=
+    fkg_inequality (E := E) hπ0 (TwoDim.sth_sum_configWeight_eq_one p) (configWeight_fkg p) hf hg
   unfold expect
   calc (∑ ω, f ω * configWeight p ω) * (∑ ω, g ω * configWeight p ω)
       = (∑ ω, configWeight p ω * f ω) * (∑ ω, configWeight p ω * g ω) := by
@@ -409,10 +405,6 @@ lemma hammingToSet_real_antitone (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
   simp only
   exact_mod_cast hammingToSet_antitone A hA hle
 
-lemma differentiable_prob (A : Set (ConfigSpace E)) :
-    Differentiable ℝ (fun p => prob p A) :=
-  fun p => (hasDerivAt_prob A p).differentiableAt
-
 lemma prob_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (A : Set (ConfigSpace E)) :
     0 ≤ prob p A := by
   unfold prob
@@ -429,9 +421,9 @@ lemma gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : 
   set h := fun p => prob p A * Real.exp (- c * p) with hh
   have hmono : MonotoneOn h (Set.Icc p₁ p₂) := by
     apply monotoneOn_of_deriv_nonneg (convex_Icc p₁ p₂)
-    · exact (differentiable_prob A).continuous.continuousOn.mul
+    · exact (TwoDim.sth_prob_differentiable A).continuous.continuousOn.mul
         (Real.continuous_exp.comp (by continuity)).continuousOn
-    · exact (differentiable_prob A).differentiableOn.mul
+    · exact (TwoDim.sth_prob_differentiable A).differentiableOn.mul
         (Real.differentiable_exp.comp (by fun_prop)).differentiableOn
     · intro p hp'
       rw [interior_Icc, Set.mem_Ioo] at hp'
@@ -439,7 +431,7 @@ lemma gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : 
           (deriv (fun p => prob p A) p * Real.exp (- c * p)
             + prob p A * (Real.exp (- c * p) * (- c))) p := by
         have h1 : HasDerivAt (fun p => prob p A) (deriv (fun p => prob p A) p) p :=
-          (differentiable_prob A p).hasDerivAt
+          (TwoDim.sth_prob_differentiable A p).hasDerivAt
         have h2 : HasDerivAt (fun p => Real.exp (- c * p)) (Real.exp (- c * p) * (- c)) p := by
           have hlin : HasDerivAt (fun p : ℝ => - c * p) (- c) p := by
             simpa using (hasDerivAt_id p).const_mul (-c)

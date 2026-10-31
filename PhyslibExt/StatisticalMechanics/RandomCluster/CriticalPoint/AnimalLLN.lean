@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.Subadditive
 
 /-!
 # Law of large numbers for greedy lattice animals

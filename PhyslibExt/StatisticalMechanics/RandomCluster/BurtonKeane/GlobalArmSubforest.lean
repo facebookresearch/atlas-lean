@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnSpanningTreeRay
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FieldFreeDatum
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmSubforestCount
 
 /-!
 # Arm subforests of the contracted lattice
@@ -62,13 +65,9 @@ namespace StatMech.Walls
 
 open StatMech.Percolation
 
-#check @bri_bk_of_subforestData
+#check @bau_bk_of_subforestData
 
 /-! ## A. Results -/
-
-lemma bfin_acyclic_free {V : Type*} {T G : SimpleGraph V} (hT : T.IsAcyclic) (hle : G ≤ T) :
-    G.IsAcyclic :=
-  bau_isAcyclic_of_le_acyclic hT hle
 
 lemma bfin_datum_of_noTrif (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) (hR : 1 ≤ R)
     (hno : ∀ y, y ∈ box 2 R → ¬ bc67_IsGnTrifurcation ω L y) :
@@ -139,7 +138,7 @@ def bfin_GlobalArmForest (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) : Prop :
 lemma bfin_bk_of_globalArmForest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bfin_GlobalArmForest ω L R) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  bri_bk_of_subforestData p hp1 hp0 hdata
+  bau_bk_of_subforestData p hp1 hp0 hdata
 
 /-! ## B. Summary -/
 
@@ -153,10 +152,10 @@ lemma bfin_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ),
       bau_ArmSubforestData ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard 2 R) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · intro p hp1 hp0 hdata; exact bri_bk_of_subforestData p hp1 hp0 hdata
-  · intro V T G hT hle; exact bfin_acyclic_free hT hle
+  · intro p hp1 hp0 hdata; exact bau_bk_of_subforestData p hp1 hp0 hdata
+  · intro V T G hT hle; exact bau_isAcyclic_of_le_acyclic hT hle
   · intro ω L R hR hno; exact bfin_datum_of_noTrif ω L R hR hno
-  · intro ω L R h; exact bri_datum_implies_count ω L R h
+  · intro ω L R h; exact bca_datum_implies_count ω L R h
 
 end StatMech.Walls
 

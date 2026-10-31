@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseStarForestEmbedding
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourBoxConnect
@@ -35,7 +37,8 @@ all configurations.
 ## ii. Key results
 
 - `bc101_gnTrif_three_incident_arms` : three separated incident arms
-- `bc101_coarseTcount_of_boundaryInjection` : a boundary injection bounds the coarse count
+- `StatMech.Walls.bc64_coarseTcount_le_boundary_of_boundaryInjection` (in
+  `CoarseStarForestEmbedding`) : a boundary injection bounds the coarse count
 - `bc101_status` : the statements together
 
 ## iii. Table of contents
@@ -81,25 +84,12 @@ lemma bc101_gnTrif_three_incident_arms (ω : ConfigSpace (Sym2 (Site d))) (L : �
   obtain ⟨a₁, a₂, a₃, hincs, hinf, hcuts⟩ := bc67_gnTrif_of_coarseTrif ω L y h
   exact ⟨a₁, a₂, a₃, hincs, hinf, hcuts⟩
 
-lemma bc101_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R)
-    (y a : Site d) (habox : a ∈ box d R)
-    (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
-    ∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a z :=
-  bc67_Gn_arm_reaches_boundary ω L R hR y a habox hinf
-
 lemma bc101_residue_is_boundary_injection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
     (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
     bc61_CoarseForestLeafCount ω L R :=
   (bc63_coarseArmEmbedding_iff_forestLeafCount ω L R).mp
     (bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj)
-
-lemma bc101_coarseTcount_of_boundaryInjection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
-    (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc61_coarseTcount_le_boundary_of_forest ω L R
-    (bc101_residue_is_boundary_injection ω L R hz₀ hz₁ hzne hinj)
 
 lemma bc101_three_arms_upperLines {L : ℕ} (hL : 3 ≤ L) :
     ∃ a₁ a₂ a₃ : Site 2,
@@ -131,6 +121,6 @@ lemma bc101_status :
   · intro ω L y h; exact bc81_singleBox_no_gap ω L y h
   · intro L hL; exact bc99_notFree_of_coarseTrif hL
   · intro ω L R z₀ z₁ hz₀ hz₁ hzne hinj
-    exact bc101_coarseTcount_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
+    exact bc64_coarseTcount_le_boundary_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
 
 end StatMech.Walls

@@ -32,11 +32,12 @@ Both headlines are proved unconditionally (only `0 < p < 1` and `1 ≤ q`).
 
 ## ii. Key results
 
-- `fkgqt_measure_eq_of_multiOpen_eq` : probability measures on `Bool`-configurations agreeing on all
+- `measure_eq_of_multiOpen_eq` : probability measures on `Bool`-configurations agreeing on all
   "every edge of `T` is open" events are equal.
-- `fkgqt_wiredIV_isTranslationInvariant` : the wired infinite-volume measure is translation
+- `wiredInfiniteVolume_isTranslationInvariant` : the wired infinite-volume measure is translation
   invariant.
-- `fkgqt_freeIV_isTranslationInvariant` : the free infinite-volume measure is translation invariant.
+- `freeInfiniteVolume_isTranslationInvariant` : the free infinite-volume measure is translation
+  invariant.
 
 ## iii. Table of contents
 
@@ -305,7 +306,7 @@ lemma fkgqt_wired_multiOpen_translation (v : Site d)
 
 /-- Two probability measures on configurations of a countable edge set are equal if they agree on
 every event "all edges of `T` are open". -/
-lemma fkgqt_measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
+lemma measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
     (μ ν : Measure (ConfigSpace E))
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (hmom : ∀ T : Finset E, μ (fmu_multiOpen T) = ν (fmu_multiOpen T)) :
@@ -333,7 +334,7 @@ lemma fkgqt_measure_eq_of_multiOpen_eq {E : Type*} [Countable E]
 
 /-- The wired infinite-volume random-cluster measure on `ℤ^d` is translation invariant for
 `q ≥ 1`. -/
-theorem fkgqt_wiredIV_isTranslationInvariant {p q : ℝ}
+theorem wiredInfiniteVolume_isTranslationInvariant {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
       (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) :
@@ -347,7 +348,7 @@ theorem fkgqt_wiredIV_isTranslationInvariant {p q : ℝ}
   have : IsProbabilityMeasure (Measure.map (shift g) μ) :=
     inferInstance
   refine ⟨measurable_shift g, ?_⟩
-  apply fkgqt_measure_eq_of_multiOpen_eq
+  apply measure_eq_of_multiOpen_eq
   intro T
   rw [Measure.map_apply (measurable_shift g) (fmu_multiOpen_measurable T),
     fmu_shift_multiOpen]
@@ -591,7 +592,7 @@ lemma fkgqt_free_multiOpen_translation (v : Site d)
 
 /-- The free infinite-volume random-cluster measure on `ℤ^d` is translation invariant for
 `q ≥ 1`. -/
-theorem fkgqt_freeIV_isTranslationInvariant {p q : ℝ}
+theorem freeInfiniteVolume_isTranslationInvariant {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) :
@@ -605,7 +606,7 @@ theorem fkgqt_freeIV_isTranslationInvariant {p q : ℝ}
   have : IsProbabilityMeasure (Measure.map (shift g) μ) :=
     inferInstance
   refine ⟨measurable_shift g, ?_⟩
-  apply fkgqt_measure_eq_of_multiOpen_eq
+  apply measure_eq_of_multiOpen_eq
   intro T
   rw [Measure.map_apply (measurable_shift g) (fmu_multiOpen_measurable T),
     fmu_shift_multiOpen]

@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Order.SuccPred.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
 
@@ -189,20 +193,6 @@ lemma bc79_directCount_refuted_on_upperLines {L : ℕ} (hL : 3 ≤ L) :
       ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   bc76_buffer_insufficient hL
 
-lemma bc79_residue_noncircular (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (h0 : μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0) :
-    ∀ R : ℕ, ∀ᵐ ω ∂μ, bc73_SublatticeForest ω L R :=
-  bc78_ae_forest_of_dichotomy μ L hinv h0
-
-lemma bc79_bk_from_leaf (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (h0 : μ {ω | bc61_IsCoarseTrifurcation ω L 0} = 0)
-    (hexist : bc61_CoarseTrifExistence μ L) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc78_bk_closed μ hd L hinv h0 hexist
-
 lemma bc79_step1_from_leaf (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
@@ -213,19 +203,13 @@ lemma bc79_step1_from_leaf (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hmergeGeom : ∀ k : ℕ∞, 2 ≤ k → k ≠ ⊤ → μ {ω | numInfiniteClusters d ω = k} = 1 →
       ∃ F : Finset (Sym2 (Site d)), 0 < μ (MergeWitness d F k)) :
     μ {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-  have htop : μ {ω | numInfiniteClusters d ω = ⊤} = 0 := bc79_bk_from_leaf μ hd L hinv h0 hexist
+  have htop : μ {ω | numInfiniteClusters d ω = ⊤} = 0 := bc78_bk_closed μ hd L hinv h0 hexist
   have hkne_top : ∀ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 → k ≠ ⊤ := by
     intro k hk hktop
     rw [hktop] at hk; rw [hk] at htop; exact one_ne_zero htop
   have hmerge : μ (atLeastTwoInfinite d) = 0 :=
     merge_event_null μ herg hfe hkne_top hmergeGeom
   exact infiniteCluster_unique_ae μ herg hmerge
-
-lemma bc79_top_null_of_forest_and_le_one (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ]
-    (hle1 : μ {ω | numInfiniteClusters d ω ≤ 1} = 1) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc78_top_null_of_le_one μ hle1
 
 lemma bc79_cardinal_verdict
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)

@@ -83,7 +83,7 @@ theorem wiredInfinite_trifurcation_pos_of_top_pos
         {omega | IsTrifurcation d omega 0} := by
   exact trifurcation_at_origin_pos_of_patternAC (d := d)
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
-    (fkgqt_wiredIV_isTranslationInvariant (d := d) hp hp1 hq)
+    (wiredInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
     (fun I eta => wiredInfinite_setPattern_absolutelyContinuous
       (d := d) hp hp1 hq I eta)
     htop
@@ -100,7 +100,7 @@ theorem freeInfinite_trifurcation_pos_of_top_pos
         {omega | IsTrifurcation d omega 0} := by
   exact trifurcation_at_origin_pos_of_patternAC (d := d)
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
-    (fkgqt_freeIV_isTranslationInvariant (d := d) hp hp1 hq)
+    (freeInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
     (fun I eta => freeInfinite_setPattern_absolutelyContinuous
       (d := d) hp hp1 hq I eta)
     htop
@@ -115,7 +115,7 @@ lemma wiredInfinite_canonical_trifurcation_pos_of_top_pos
         {omega | IsCanonicalTrifurcation d omega 0} := by
   exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
-    (fkgqt_wiredIV_isTranslationInvariant (d := d) hp hp1 hq)
+    (wiredInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
     (fun I eta => wiredInfinite_setPattern_absolutelyContinuous
       (d := d) hp hp1 hq I eta)
     htop
@@ -130,7 +130,7 @@ lemma freeInfinite_canonical_trifurcation_pos_of_top_pos
         {omega | IsCanonicalTrifurcation d omega 0} := by
   exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
-    (fkgqt_freeIV_isTranslationInvariant (d := d) hp hp1 hq)
+    (freeInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
     (fun I eta => freeInfinite_setPattern_absolutelyContinuous
       (d := d) hp hp1 hq I eta)
     htop

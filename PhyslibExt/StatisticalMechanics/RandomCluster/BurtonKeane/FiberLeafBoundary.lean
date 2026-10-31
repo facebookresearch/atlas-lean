@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBranchLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxBuffer
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberForestSpanningTree
@@ -168,7 +170,7 @@ lemma bc84_status :
   · intro W _ _ G _ R lam hacyc hmin hmap hinj
     exact bc84_peeling_forest_le_boundary G R hacyc hmin lam hmap hinj
   · intro W _ G _ R lam hmap hinj
-    exact StatMech.Walls.bc66_leaf_boundary_injection G R lam hmap hinj
+    exact Percolation.flc2_leaf_card_le_boundary G R lam hmap hinj
   · intro ω L R c h; exact StatMech.Walls.bc75_fiber_count_of_gnTrifData ω L R c h
   · intro L hL; exact (bc84_upperLines_obstruction_is_cut hL).2.2
 

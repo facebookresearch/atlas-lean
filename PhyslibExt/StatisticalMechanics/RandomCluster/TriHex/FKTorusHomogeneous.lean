@@ -57,26 +57,26 @@ private lemma constant_triangularTorus_odds
     (L : Nat) [Fact (2 < L)] {p : Real} (hp1 : p < 1)
     (e : (triangularTorusGraph L).edgeSet) :
     p = (1 - p) * triangularTorusSweepEdgeOdds L
-      (FrontierA.fkEdgeOdds p) (FrontierA.fkEdgeOdds p)
-      (FrontierA.fkEdgeOdds p) e := by
+      (FK.TriHex.fkEdgeOdds p) (FK.TriHex.fkEdgeOdds p)
+      (FK.TriHex.fkEdgeOdds p) e := by
   have hden : 1 - p ≠ 0 := sub_ne_zero.mpr (Ne.symm (ne_of_lt hp1))
   unfold triangularTorusSweepEdgeOdds
   generalize ((triHexTorusTriangleSweepEdgeEquiv L).symm e).2 = i
   fin_cases i <;>
-    simp [triHexDirectionOdds, FrontierA.fkEdgeOdds] <;>
+    simp [triHexDirectionOdds, FK.TriHex.fkEdgeOdds] <;>
     field_simp [hden]
 
 private lemma constant_hexagonalTorus_odds
     (L : Nat) [Fact (2 < L)] {p : Real} (hp1 : p < 1)
     (e : (hexagonalTorusGraph L).edgeSet) :
     p = (1 - p) * hexagonalTorusSweepEdgeOdds L
-      (FrontierA.fkEdgeOdds p) (FrontierA.fkEdgeOdds p)
-      (FrontierA.fkEdgeOdds p) e := by
+      (FK.TriHex.fkEdgeOdds p) (FK.TriHex.fkEdgeOdds p)
+      (FK.TriHex.fkEdgeOdds p) e := by
   have hden : 1 - p ≠ 0 := sub_ne_zero.mpr (Ne.symm (ne_of_lt hp1))
   unfold hexagonalTorusSweepEdgeOdds
   generalize ((triHexTorusStarSweepEdgeEquiv L).symm e).2 = i
   fin_cases i <;>
-    simp [triHexDirectionOdds, FrontierA.fkEdgeOdds] <;>
+    simp [triHexDirectionOdds, FK.TriHex.fkEdgeOdds] <;>
     field_simp [hden]
 
 /-! ## B. Homogeneous star–triangle identities -/
@@ -84,8 +84,8 @@ private lemma constant_hexagonalTorus_odds
 lemma triHexFK_torus_homogeneous_activeSectorRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0)
     (observable : (TorusSite L → ThreeTerminalConnectivity) → Real) :
     activeNumer (hexagonalTorusGraph L)
           (fun _ => BeffaraDC.dualParam p q) q
@@ -98,9 +98,9 @@ lemma triHexFK_torus_homogeneous_activeSectorRatio_eq
   let pStar := BeffaraDC.dualParam p q
   have hpStar : pStar ∈ Ioo (0 : Real) 1 :=
     BeffaraDC.dualParam_mem_Ioo hp.1 hp.2 hq
-  have hy : 0 < FrontierA.fkEdgeOdds p :=
+  have hy : 0 < FK.TriHex.fkEdgeOdds p :=
     div_pos hp.1 (sub_pos.mpr hp.2)
-  have hdual := FrontierA.fkEdgeOdds_mul_dualParam hp.1 hp.2 hq
+  have hdual := FK.TriHex.fkEdgeOdds_mul_dualParam hp.1 hp.2 hq
   apply triHexFK_torus_activeSectorRatio_eq L (fun _ => p)
     (fun _ => pStar) hq.ne' (mul_ne_zero (mul_ne_zero hy.ne' hy.ne') hy.ne')
   · intro e
@@ -114,7 +114,7 @@ lemma triHexFK_torus_homogeneous_activeSectorRatio_eq
   · exact hdual
   · exact hdual
   · exact hdual
-  · rwa [FrontierA.triangularFKCriticalSurface_diagonal]
+  · rwa [FK.TriHex.triangularFKCriticalSurface_diagonal]
 
 /-- Star–triangle transformation of homogeneous FK two-point functions on the torus: at the
 triangular self-dual point, the hexagonal-torus connection probability of white vertices at
@@ -123,8 +123,8 @@ Random-Cluster Model*, §6.6). -/
 theorem triHexFK_torus_homogeneous_activeTwoPointRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0)
     (x y : TorusSite L) :
     activeNumer (hexagonalTorusGraph L)
           (fun _ => BeffaraDC.dualParam p q) q

@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.UpperLinesReach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
@@ -211,13 +213,6 @@ lemma bc61_wholeBox_severs_upperLines {L : ℕ} (hL : 3 ≤ L) :
   · exact bc61_upperLines_arm_disconnected (by norm_num)
   · exact bc61_upperLines_arm_disconnected (by norm_num)
 
-lemma bc61_singleSite_fails_upperLines {G : Finset (Sym2 (Site 2))} {a a' : Site 2}
-    (ha : a 1 ≤ 1) (ha' : a' 1 ≤ 1)
-    (hinf : (cluster 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a).Infinite)
-    (hinf' : (cluster 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a').Infinite) :
-    Connected 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a a' :=
-  bc60_arms_connected ha ha' hinf hinf'
-
 lemma bc61_contrast_upperLines {L : ℕ} (hL : 3 ≤ L) :
     bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2) ∧
     (∀ (G : Finset (Sym2 (Site 2))) (a a' : Site 2), a 1 ≤ 1 → a' 1 ≤ 1 →
@@ -225,7 +220,7 @@ lemma bc61_contrast_upperLines {L : ℕ} (hL : 3 ≤ L) :
       (cluster 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a').Infinite →
       Connected 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a a') :=
   ⟨bc61_wholeBox_severs_upperLines hL,
-   fun _ _ _ ha ha' hinf hinf' => bc61_singleSite_fails_upperLines ha ha' hinf hinf'⟩
+   fun _ _ _ ha ha' hinf hinf' => bc60_arms_connected ha ha' hinf hinf'⟩
 
 /-! ## D. The coarse count -/
 
@@ -361,7 +356,7 @@ lemma bc61_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ),
       bc61_CoarseForestLeafCount ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard 2 R) :=
   ⟨fun hL => bc61_wholeBox_severs_upperLines hL,
-   fun _hL _G _a _a' ha ha' hi hi' => bc61_singleSite_fails_upperLines ha ha' hi hi',
+   fun _hL _G _a _a' ha ha' hi hi' => bc60_arms_connected ha ha' hi hi',
    fun ω L R h => bc61_coarseTcount_le_boundary_of_forest ω L R h⟩
 
 end StatMech.Walls

@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.CondensedMatter.IsingModel.KWClosedWalkParity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 

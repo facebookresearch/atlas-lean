@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CycleRank
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
 

@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -35,7 +37,8 @@ all configurations.
 
 - `bc68_Gn_singleTrif_distinct_leaves` : one trifurcation reaches three distinct boundary sites
 - `bc68_coarseTcount_le_boundary_of_GnForestData` : the coarse counting bound
-- `bc68_multiTrif_shared_boundary_survives` : two trifurcations can share boundary sites
+- `StatMech.Walls.bc64_arms_can_share_boundary` (in `CoarseStarForestEmbedding`) : two trifurcations
+  can share boundary sites
 - `bc68_status` : the statements together
 
 ## iii. Table of contents
@@ -174,15 +177,8 @@ lemma bc68_infiniteClusters_top_null_of_GnForestData
       ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
         0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc67_infiniteClusters_top_null_of_GnForest_route μ hd hinv hfe L
+  bc65_infiniteClusters_top_null_of_connectedForest_route μ hd hinv hfe L
     (fun ω R => bc68_connectedForest_of_GnForestData ω L R (hGnData ω R)) hcoarseRoute
-
-lemma bc68_multiTrif_shared_boundary_survives (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
-      Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
-  bc66_shared_boundary_survives L
 
 /-! ## B. Summary -/
 
@@ -207,6 +203,6 @@ lemma bc68_status :
   · intro ω L R h
     exact bc68_coarseTcount_le_boundary_of_GnForestData ω L R h
   · intro L
-    exact bc68_multiTrif_shared_boundary_survives L
+    exact bc64_arms_can_share_boundary L
 
 end StatMech.Walls

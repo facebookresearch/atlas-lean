@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 
 /-!
@@ -198,6 +199,8 @@ lemma str_spider_edge_card : (str_spiderG N).edgeFinset.card = 3 * Fintype.card 
   have h := (str_spiderG N).sum_degrees_eq_twice_card_edges
   rw [str_spider_sum_deg] at h; omega
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedFintypeInType false in
 lemma str_spiderG_isTree : (str_spiderG N).IsTree := by
   rw [isTree_iff_connected_and_card]
   refine ⟨str_spiderG_connected, ?_⟩

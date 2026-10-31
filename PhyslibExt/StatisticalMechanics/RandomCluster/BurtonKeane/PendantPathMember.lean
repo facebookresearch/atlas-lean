@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmThroughPathCover
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmLeafBoundary
@@ -72,13 +74,13 @@ lemma bc118_interiorPendant_not_covered {V : Type*}
     ¬ bc116_ThroughPathCovered F B H := by
   intro hcov
   obtain ⟨s, t, p, hp, hmem, hvs, hvt⟩ := hcov v hvB hvH
-  exact hnotint (bc116_isInternal_of_throughPath F p hp hmem hvs hvt)
+  exact hnotint (bc116_isInternal_of_mem_support_free F p hp hmem hvs hvt)
 
 lemma bc118_degreeOnePendant_not_covered {V : Type*} [Fintype V] [DecidableEq V]
     (F : SimpleGraph V) [DecidableRel F.Adj] {B H : V → Prop} {v : V}
     (hdeg : F.degree v = 1) (hvB : ¬ B v) (hvH : ¬ H v) :
     ¬ bc116_ThroughPathCovered F B H :=
-  bc118_interiorPendant_not_covered F (bc116_pendant_not_covered F hdeg) hvB hvH
+  bc118_interiorPendant_not_covered F (bc114_leaf_not_internal F hdeg) hvB hvH
 
 lemma bc118_concrete_interiorPendant_not_covered :
     ¬ bc116_ThroughPathCovered (SimpleGraph.fromEdgeSet {s((0 : Fin 2), 1)})
@@ -100,27 +102,15 @@ lemma bc118_pathUnion_can_have_pendant :
 
 variable {d : ℕ}
 
-lemma bc118_count_closes_via_forest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc69_Gn_globalForest ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc102_count_forest_derivable ω L R h
-
 lemma bc118_membership_NOT_needed_for_count (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
     (bc69_Gn_globalForest ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
     (∀ {V : Type} [Fintype V] [Nonempty V] (G : SimpleGraph V) [DecidableRel G.Adj],
       G.IsAcyclic → (∀ v, 1 ≤ G.degree v) →
       (univ.filter (fun v => 3 ≤ G.degree v)).card
         ≤ (univ.filter (fun v => G.degree v = 1)).card) := by
-  refine ⟨bc118_count_closes_via_forest ω L R, ?_⟩
+  refine ⟨bc69_coarseTcount_le_boundary ω L R, ?_⟩
   intro V _ _ G _ hacyc hmin
   exact StatMech.Percolation.flc2_forest_internal_le_leaves G hacyc hmin
-
-lemma bc118_membership_suffices_but_is_not_the_route {V : Type*} [Fintype V] [DecidableEq V]
-    (F : SimpleGraph V) [DecidableRel F.Adj] {B H : V → Prop}
-    (hcov : bc116_ThroughPathCovered F B H)
-    (hhub : ∀ v, H v → 3 ≤ F.degree v) (hac : F.IsAcyclic) (hmin : ∀ v, 1 ≤ F.degree v) :
-    F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v) :=
-  bc116_armForest_boundaryAnchored F hcov hhub hac hmin
 
 /-! ## B. Summary -/
 
@@ -139,7 +129,8 @@ lemma bc118_status :
   refine ⟨?_, bc118_pathUnion_can_have_pendant, ?_, ?_⟩
   · intro V _ _ F _ B H v hdeg hvB hvH
     exact bc118_degreeOnePendant_not_covered F hdeg hvB hvH
-  · intro ω L R h; exact bc118_count_closes_via_forest ω L R h
-  · intro V _ _ G _ hacyc hmin; exact StatMech.Percolation.flc2_forest_internal_le_leaves G hacyc hmin
+  · intro ω L R h; exact bc69_coarseTcount_le_boundary ω L R h
+  · intro V _ _ G _ hacyc hmin
+    exact StatMech.Percolation.flc2_forest_internal_le_leaves G hacyc hmin
 
 end StatMech.Walls

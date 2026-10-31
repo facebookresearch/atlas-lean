@@ -72,7 +72,7 @@ variable {E : Type*}
 /-! ## A. Clopen events are finite-box cylinders -/
 
 /-- An exact finite cylinder is open in the product topology. -/
-lemma exactFiniteCylinder_isOpen (F : Finset E) (omega : ConfigSpace E) :
+lemma cyl_isOpen (F : Finset E) (omega : ConfigSpace E) :
     IsOpen (cyl F omega) := by
   have heq : cyl F omega =
       ⋂ e ∈ F, (fun eta : ConfigSpace E => eta e) ⁻¹' {omega e} := by
@@ -104,7 +104,7 @@ lemma isClopen_dependsOn_finset (A : Set (ConfigSpace E)) (hA : IsClopen A) :
   choose support hmem hsub using hlocal
   have hopen : ∀ omega : A,
       IsOpen (cyl (support omega) omega.1) :=
-    fun omega => exactFiniteCylinder_isOpen (support omega) omega.1
+    fun omega => cyl_isOpen (support omega) omega.1
   have hcover : A ⊆ ⋃ omega : A,
       cyl (support omega) omega.1 := by
     intro omega homega

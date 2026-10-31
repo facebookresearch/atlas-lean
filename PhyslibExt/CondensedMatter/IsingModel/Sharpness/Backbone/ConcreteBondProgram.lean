@@ -724,7 +724,7 @@ lemma selectorSpec_fiber_canonical_unitFlux
   rw [(selectorSpec (V := V)).fiber_iff_completeEvent]
   exact program_complete_canonical_unitFlux d e hactive
 
-lemma concrete_selector_fiber_canonicalEdge
+lemma completeSpec_fiber_canonicalEdge
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     ((completeSpec (V := V)).toPartialSelector).Fiber d

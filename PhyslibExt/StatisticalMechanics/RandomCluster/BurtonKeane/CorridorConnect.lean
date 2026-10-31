@@ -8,12 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterRunsAxisFE
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import MathlibExt.Combinatorics.SimpleGraph.Menger.MengerSplice
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForceMonotone
 
 /-!
 # Clusters meeting an axis corridor
@@ -96,7 +98,7 @@ lemma cnp_axisRoutingPremise_of_clusterMeetsCorridor (ω : ConfigSpace (Sym2 (Si
     craf_AxisRoutingPremise ω x j L := by
   obtain ⟨⟨m, hm1, hmL, hmeet⟩, hinf⟩ := h
   set ω' := forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω with hω'
-  have hle : removeSite 0 ω ≤ removeSite 0 ω' := lma_removeSite_le_forceOpen ω _
+  have hle : removeSite 0 ω ≤ removeSite 0 ω' := Walls.bc2_force_mono_origin ω _
   have hmeet' : Connected d (removeSite 0 ω') x (hrHD_rayPt j (m : ℤ)) :=
     connected_mono hle hmeet
   have hcorr : Connected d (removeSite 0 ω') (hrHD_rayPt j 1) (hrHD_rayPt j (m : ℤ)) :=

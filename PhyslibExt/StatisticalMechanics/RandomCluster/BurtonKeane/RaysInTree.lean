@@ -8,8 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FieldFreeDatum
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmSubforestCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay
 
 /-!
@@ -171,16 +174,6 @@ lemma bri_twoHub_count :
 #check @bri_union_le_acyclic
 #check bri_twoHub_witness
 
-lemma bri_bk_of_subforestData (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bau_ArmSubforestData ω L R) :
-    bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  bau_bk_of_subforestData p hp1 hp0 hdata
-
-lemma bri_datum_implies_count (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ)
-    (h : bau_ArmSubforestData ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard 2 R :=
-  bca_datum_implies_count ω L R h
-
 /-! ## B. Summary -/
 
 lemma bri_status :
@@ -206,7 +199,7 @@ lemma bri_status :
   · intro V T hT ι Gs hGs; exact bri_union_le_acyclic hT Gs hGs
   · exact ⟨bri_twoHub_witness.1, bri_twoHub_witness.2.2.1, bri_twoHub_witness.2.2.2.1,
       bri_twoHub_witness.2.2.2.2.1, bri_twoHub_witness.2.2.2.2.2.2.2.2.2⟩
-  · intro ω L R h; exact bri_datum_implies_count ω L R h
-  · intro p hp1 hp0 hdata; exact bri_bk_of_subforestData p hp1 hp0 hdata
+  · intro ω L R h; exact bca_datum_implies_count ω L R h
+  · intro p hp1 hp0 hdata; exact bau_bk_of_subforestData p hp1 hp0 hdata
 
 end StatMech.Walls

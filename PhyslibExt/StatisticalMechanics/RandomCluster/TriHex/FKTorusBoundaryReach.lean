@@ -196,8 +196,8 @@ lemma hexagonalTorusSectorReachObservable_eq_indicator
 lemma triHexFK_torus_homogeneous_activeReachRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0)
     (x : TorusSite L) (target : Finset (TorusSite L)) :
     activeNumer (hexagonalTorusGraph L)
           (fun _ => BeffaraDC.dualParam p q) q
@@ -229,8 +229,8 @@ Model*, §6.6). -/
 theorem triHexFK_torus_homogeneous_activeReachProbability_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0)
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0)
     (x : TorusSite L) (target : Finset (TorusSite L)) :
     activeProbOf (hexagonalTorusGraph L)
         (fun _ => BeffaraDC.dualParam p q) q

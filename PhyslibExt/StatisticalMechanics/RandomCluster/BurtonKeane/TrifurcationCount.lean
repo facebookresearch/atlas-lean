@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -16,7 +19,7 @@ public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Counting trifurcations against the box boundary
@@ -99,6 +102,8 @@ lemma tfc_boundary_cross_vertex (n : ℕ) (hn : 1 ≤ n) (z z' : Site d) (hz : z
   rw [mem_box]; push Not
   exact ⟨i, by rw [hzin]; omega⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma tfc_walk_crossing {V : Type*} (G : SimpleGraph V) (p : V → Prop) [DecidablePred p] :
     ∀ {x y : V} (_w : G.Walk x y), p x → ¬ p y →
       ∃ a b, G.Adj a b ∧ p a ∧ ¬ p b ∧ G.Reachable x a := by

@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerGapThreeArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineBoxOpenForest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalStarForest
@@ -35,7 +37,8 @@ all configurations.
 ## ii. Key results
 
 - `bc107_three_arms_reach_boundary` : infinite coarse arms reach the boundary
-- `bc107_coarseRoute_precursor_genuine` : coarse precursors give coarse trifurcations with positive
+- `StatMech.Walls.bc62_coarseTrif_pos_of_precursor_pos` (in `CoarseTrifRemoveSites`) : coarse
+  precursors give coarse trifurcations with positive
   probability
 - `bc107_status` : the statements together
 
@@ -84,16 +87,9 @@ lemma bc107_three_arms_reach_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : 
     (∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a₁ z) ∧
     (∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a₂ z) ∧
     (∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a₃ z) :=
-  ⟨bc101_arm_reaches_boundary ω L R hR y a₁ hbox.1 harmsub.1,
-   bc101_arm_reaches_boundary ω L R hR y a₂ hbox.2.1 harmsub.2.1,
-   bc101_arm_reaches_boundary ω L R hR y a₃ hbox.2.2 harmsub.2.2⟩
-
-lemma bc107_coarseRoute_precursor_genuine
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (hfe : HasFiniteEnergyMerge μ) (L : ℕ) (a₁ a₂ a₃ b₁ b₂ b₃ : Site d)
-    (hpos : 0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
-    0 < μ {ω | bc61_IsCoarseTrifurcation ω L 0} :=
-  bc62_coarseTrif_pos_of_precursor_pos μ hfe L a₁ a₂ a₃ b₁ b₂ b₃ hpos
+  ⟨bc67_Gn_arm_reaches_boundary ω L R hR y a₁ hbox.1 harmsub.1,
+   bc67_Gn_arm_reaches_boundary ω L R hR y a₂ hbox.2.1 harmsub.2.1,
+   bc67_Gn_arm_reaches_boundary ω L R hR y a₃ hbox.2.2 harmsub.2.2⟩
 
 lemma bc107_bk_residue_after_harmbox_discharge
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
@@ -109,13 +105,7 @@ lemma bc107_bk_residue_after_harmbox_discharge
 lemma bc107_armReach_upperLines {L R : ℕ} (hR : 1 ≤ R) (y a : Site 2) (habox : a ∈ box 2 R)
     (hinf : (cluster 2 (removeSites (bc61_boxAround 2 L y) bc60_upperLines) a).Infinite) :
     ∃ z ∈ vertexBoundary 2 R, (bc67_contractedLattice bc60_upperLines L y).Reachable a z :=
-  bc101_arm_reaches_boundary bc60_upperLines L R hR y a habox hinf
-
-lemma bc107_precursor_witness (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ)
-    (a₁ a₂ a₃ b₁ b₂ b₃ : Site d) (hω : ω ∈ bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃) :
-    bc61_IsCoarseTrifurcation
-      (forceOpenFinset {s(b₁, a₁), s(b₂, a₂), s(b₃, a₃)} ω) L 0 :=
-  bc62_coarseTrif_of_precursor_mem ω L a₁ a₂ a₃ b₁ b₂ b₃ hω
+  bc67_Gn_arm_reaches_boundary bc60_upperLines L R hR y a habox hinf
 
 /-! ## B. Summary -/
 
@@ -148,7 +138,7 @@ lemma bc107_status (hd : 1 ≤ d) :
   · intro ω L R hR y a habox hinf
     exact bc67_Gn_arm_reaches_boundary ω L R hR y a habox hinf
   · intro μ _ hfe L a₁ a₂ a₃ b₁ b₂ b₃ hpos
-    exact bc107_coarseRoute_precursor_genuine μ hfe L a₁ a₂ a₃ b₁ b₂ b₃ hpos
+    exact bc62_coarseTrif_pos_of_precursor_pos μ hfe L a₁ a₂ a₃ b₁ b₂ b₃ hpos
   · intro μ _ hinv hfe L hGlobal hcoarseRoute
     exact bc107_bk_residue_after_harmbox_discharge μ hd hinv hfe L hGlobal hcoarseRoute
 

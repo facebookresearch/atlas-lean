@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.OuterMeasure.AE
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLeafBoundary
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnCoarseInfiniteCluster
@@ -63,11 +64,6 @@ variable {d : ℕ}
 
 /-! ## A. Coarse trifurcations with one cluster -/
 
-lemma bc86_count_on_empty_coarseTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (hno : bc61_coarseTrifFinset ω L R = ∅) :
-    bc73_SublatticeForest ω L R :=
-  bc73_sublatticeForest_of_noTrif ω L R hno
-
 lemma bc86_coarseTrif_is_branchpoint (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y : Site d}
     (h : bc61_IsCoarseTrifurcation ω L y) :
     ∃ a₁ a₂ a₃ : Site d,
@@ -116,11 +112,6 @@ lemma bc86_count_holds_of_le_one_and_gnData (ω : ConfigSpace (Sym2 (Site d))) (
     bc73_SublatticeForest ω L R :=
   StatMech.Walls.bc75_sublatticeForest_of_gnTrifData ω L R hgn
 
-/-- Same statement as `bc78_upperLines_isInfinitelyMany`; kept because OutsideLeafPrune uses it. -/
-lemma bc86_upperLines_N_top :
-    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  bc85_upperLines_N_top
-
 /-! ## B. Almost-sure counts -/
 
 lemma bc86_ae_count_of_ae_gnData (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
@@ -136,7 +127,7 @@ lemma bc86_bk_from_ae_gnData (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hgn_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, ∀ c : Fin d → Fin (2 * L + 1), bc75_FiberGnTrifData ω L R c)
     (hexist : bc61_CoarseTrifExistence μ L) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc85_dc_bootstrap μ hd L hinv (bc86_ae_count_of_ae_gnData μ L hgn_ae) hexist
+  bc77_top_null_of_ae_forest μ hd L hinv (bc86_ae_count_of_ae_gnData μ L hgn_ae) hexist
 
 lemma bc86_finiteN_ae (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
@@ -144,23 +135,9 @@ lemma bc86_finiteN_ae (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hgn_ae : ∀ R : ℕ, ∀ᵐ ω ∂μ, ∀ c : Fin d → Fin (2 * L + 1), bc75_FiberGnTrifData ω L R c)
     (hexist : bc61_CoarseTrifExistence μ L) :
     μ {ω | numInfiniteClusters d ω < ⊤} = 1 :=
-  (bc85_finiteN_iff_top_null μ).mpr (bc86_bk_from_ae_gnData μ hd L hinv hgn_ae hexist)
+  (bc79_finite_N_iff_top_null μ).mpr (bc86_bk_from_ae_gnData μ hd L hinv hgn_ae hexist)
 
 /-! ## C. The upper-lines configuration -/
-
-lemma bc86_upperLines_emptyFiber_count {L R : ℕ} (hR : 1 ≤ R)
-    (c : Fin 2 → Fin (2 * L + 1)) (hempty : bc73_fiber bc60_upperLines L R c = ∅) :
-    (bc73_fiber bc60_upperLines L R c).card ≤ boxSV_boundaryCard 2 R :=
-  StatMech.Walls.bc75_fiber_count_of_gnTrifData bc60_upperLines L R c
-    (bc75_upperLines_emptyFiber_gnTrifData hR c hempty)
-
-/-- Same statement as `bc64_arms_can_share_boundary`; kept because OutsideLeafPrune uses it. -/
-lemma bc86_upperLines_gnCut_needs_buffer (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
-      Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
-  StatMech.Walls.bc64_arms_can_share_boundary L
 
 lemma bc86_cardinal_verdict (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ] (hd : 1 ≤ d) (L : ℕ)
@@ -204,6 +181,6 @@ lemma bc86_status :
   · intro ω L y y' hN h h'; exact bc86_fiber_arms_can_coincide ω L hN h h'
   · intro μ _ L hinv hgn_ae hexist; exact bc86_bk_from_ae_gnData μ (by norm_num) L hinv hgn_ae
       hexist
-  · exact bc86_upperLines_N_top
+  · exact bc60_numInfiniteClusters_top
 
 end StatMech.Walls

@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestArmDensity
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutsideLeafPrune
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence
@@ -118,13 +121,6 @@ lemma bc96_genuineTrif_of_reachOrigin_full (ω : ConfigSpace (Sym2 (Site d)))
     ⟨⟨hadj1, ho1⟩, ⟨hadj2, ho2⟩, ⟨hadj3, ho3⟩⟩,
     ⟨hai1, hai2, hai3⟩, ⟨hsep12, hsep13, hsep23⟩⟩
 
-lemma bc96_measurableSet_removeSite_clusterInfinite (x a : Site d) :
-    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite} := by
-  have h : {ω : ConfigSpace (Sym2 (Site d)) | (cluster d (removeSite x ω) a).Infinite}
-      = (fun ω => removeSite x ω) ⁻¹' {ω' | (cluster d ω' a).Infinite} := rfl
-  rw [h]
-  exact (measurable_removeSite x) (measurableSet_clusterInfinite a)
-
 lemma bc96_measurableSet_genuineTrif (x : Site d) :
     MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | bc89_GenuineTrif d ω x} := by
   classical
@@ -162,9 +158,9 @@ lemma bc96_measurableSet_genuineTrif (x : Site d) :
     · rw [ite_eq_right hh]; exact MeasurableSet.empty
   · exact ((StatMech.Percolation.measurableSet_openAdj x a₁).inter (StatMech.Percolation.measurableSet_openAdj x a₂)).inter
       (StatMech.Percolation.measurableSet_openAdj x a₃)
-  · exact ((bc96_measurableSet_removeSite_clusterInfinite x a₁).inter
-      (bc96_measurableSet_removeSite_clusterInfinite x a₂)).inter
-      (bc96_measurableSet_removeSite_clusterInfinite x a₃)
+  · exact ((Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₁).inter
+      (Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₂)).inter
+      (Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₃)
   · exact (((measurableSet_connected_removeSite x a₁ a₂).compl).inter
       ((measurableSet_connected_removeSite x a₁ a₃).compl)).inter
       ((measurableSet_connected_removeSite x a₂ a₃).compl)

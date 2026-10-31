@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Topology.Defs.Filter
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Order.Filter.AtTopBot.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedPathChain
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCutUnbounded
@@ -115,11 +118,11 @@ lemma bc2_csc_of_forcedCorridorRouting (ω : ConfigSpace (Sym2 (Site d)))
     rw [hGdef]; exact (Finset.subset_union_right).trans Finset.subset_union_left
   have hs3 : hrHD_corridorEdges j₃ (L₃ + 1) ⊆ G := by rw [hGdef]; exact Finset.subset_union_right
   have hne12 : (hrHD_rayPt j₁ 1 : Site d) ≠ hrHD_rayPt j₂ 1 :=
-    bc2_rayCell_distinct_of_ne hj12 one_ne_zero
+    Percolation.hrHD_rayPt_disjoint_of_ne hj12 one_ne_zero
   have hne13 : (hrHD_rayPt j₁ 1 : Site d) ≠ hrHD_rayPt j₃ 1 :=
-    bc2_rayCell_distinct_of_ne hj13 one_ne_zero
+    Percolation.hrHD_rayPt_disjoint_of_ne hj13 one_ne_zero
   have hne23 : (hrHD_rayPt j₂ 1 : Site d) ≠ hrHD_rayPt j₃ 1 :=
-    bc2_rayCell_distinct_of_ne hj23 one_ne_zero
+    Percolation.hrHD_rayPt_disjoint_of_ne hj23 one_ne_zero
   refine ⟨hrHD_rayPt j₁ 1, hrHD_rayPt j₂ 1, hrHD_rayPt j₃ 1, G,
     hrHD_rayPt j₁ ((L₁ : ℤ) + 1), hrHD_rayPt j₂ ((L₂ : ℤ) + 1), hrHD_rayPt j₃ ((L₃ : ℤ) + 1),
     ⟨hne12, hne13, hne23⟩,

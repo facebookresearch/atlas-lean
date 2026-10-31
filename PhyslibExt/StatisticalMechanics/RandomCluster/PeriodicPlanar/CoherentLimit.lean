@@ -70,7 +70,7 @@ lemma PeriodicGraph.finite_subset_orbitBox (P : PeriodicGraph V)
   induction S using Finset.induction_on with
   | empty => exact ⟨0, by simp⟩
   | @insert a S ha ih =>
-      obtain ⟨na, haBox⟩ := P.mem_orbitBox_of_eventually a
+      obtain ⟨na, haBox⟩ := P.exists_mem_orbitBox a
       obtain ⟨nS, hSBox⟩ := ih
       refine ⟨max na nS, ?_⟩
       intro v hv
@@ -142,7 +142,7 @@ lemma PeriodicGraph.id_le_bufferedRadius (P : PeriodicGraph V) (n : ℕ) :
 lemma PeriodicGraph.mem_bufferedBox_of_eventually
     (P : PeriodicGraph V) (v : V) :
     ∃ n, v ∈ P.orbitBox (P.bufferedRadius n) := by
-  obtain ⟨n, hn⟩ := P.mem_orbitBox_of_eventually v
+  obtain ⟨n, hn⟩ := P.exists_mem_orbitBox v
   exact ⟨n, P.orbitBox_mono (P.id_le_bufferedRadius n) hn⟩
 
 /-- The vertices of the buffered box of index `n`. -/

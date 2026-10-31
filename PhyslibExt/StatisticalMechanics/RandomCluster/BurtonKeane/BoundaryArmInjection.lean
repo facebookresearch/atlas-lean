@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafSelection
 
@@ -208,15 +209,10 @@ lemma lhc_boundaryArmInjection_of_forestLeafSelection (ω : ConfigSpace (Sym2 (S
   · intro x hxbox htri y hybox htriy hxy
     exact (hℓinj x hxbox htri y hybox htriy 0 0 hxy).1
 
-lemma lhc_Tcount_le_boundary_of_boundaryArmInjection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (h : tfc_BoundaryArmInjection ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  tfc_Tcount_le_boundary_of_residue ω n h
-
 lemma lhc_Tcount_le_boundary_of_forestLeafSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : str_ForestLeafSelection ω n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  lhc_Tcount_le_boundary_of_boundaryArmInjection ω n
+  tfc_Tcount_le_boundary_of_residue ω n
     (lhc_boundaryArmInjection_of_forestLeafSelection ω n h)
 
 lemma lhc_boundaryArmInjection_of_uniqueTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
@@ -236,7 +232,7 @@ lemma lhc_not_forall_boundaryArmInjection (hd : 1 ≤ d) :
     ¬ ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
       tfc_BoundaryArmInjection ω n :=
   fun h => tfc_not_forall_Tcount_le_boundary hd fun ω n hn =>
-    lhc_Tcount_le_boundary_of_boundaryArmInjection ω n (h ω n hn)
+    tfc_Tcount_le_boundary_of_residue ω n (h ω n hn)
 
 end Percolation
 

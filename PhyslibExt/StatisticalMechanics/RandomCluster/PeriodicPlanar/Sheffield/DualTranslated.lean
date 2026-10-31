@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TransverseAssembly
+public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.StripDualBlocking
 
 /-!
 # A translated dual crossing blocks a primal strip connection

@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifOverlapContraction
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerGapThreeArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes
@@ -103,10 +106,10 @@ lemma bc106_ιU_injective_free {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z
 lemma bc106_supervertex_sites_distinct {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hne : y ≠ z) :
     y ∈ bc61_boxAround d L y ∧ y ∉ bc61_boxAround d L z := by
-  refine ⟨bc105_centre_mem_own_box L y, ?_⟩
+  refine ⟨bc72_y_mem_box L y, ?_⟩
   intro hmem
   exact (Finset.disjoint_left.mp (bc106_boxes_disjoint hy hz hne)
-    (bc105_centre_mem_own_box L y)) hmem
+    (bc72_y_mem_box L y)) hmem
 
 lemma bc106_resVec_eq_zero {L : ℕ} {y : Site d} (hy : bc73_onSublattice L y) :
     bc73_resVec L y = 0 := by

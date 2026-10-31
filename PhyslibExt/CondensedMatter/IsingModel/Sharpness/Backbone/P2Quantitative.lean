@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BackboneDecomposition
-public import PhyslibExt.CondensedMatter.IsingModel.HdomNativeWeight
+public import PhyslibExt.CondensedMatter.IsingModel.ThreePointSplitMass
 
 /-!
 # Removing a selected backbone from a current

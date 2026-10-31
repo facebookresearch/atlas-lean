@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberForestSpanningTree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 
@@ -36,7 +39,8 @@ all configurations.
 
 - `bc80_branch_le_leaf` : branch vertices are at most leaves
 - `bc80_GnTrifCount_le_boundary` : the fibre count is at most the boundary size
-- `bc80_fiber_le_boundary_via_branch` : fibre trifurcation data bound the fibre size
+- `StatMech.Walls.bc75_fiber_count_of_gnTrifData` (in `FiberForestSpanningTree`) : fibre
+  trifurcation data bound the fibre size
 - `bc80_status` : the statements together
 
 ## iii. Table of contents
@@ -69,7 +73,6 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-
 /-! ## A. Definitions -/
 
 open Classical in
@@ -77,7 +80,6 @@ open Classical in
 noncomputable def bc80_leafFinset (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (S : Set (Site d)) [Fintype (↑S : Type)] : Finset (↑S : Type) :=
   Finset.univ.filter (fun v => (bc75_spanForest ω L R c S).degree v = 1)
-
 
 open Classical in
 /-- Vertices of degree at least three of the fibre spanning forest. -/
@@ -89,7 +91,6 @@ noncomputable def bc80_branchFinset (ω : ConfigSpace (Sym2 (Site d))) (L R : �
 noncomputable def bc80_GnTrifCount (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (S : Set (Site d)) [Fintype (↑S : Type)] : ℕ :=
   (bc80_branchFinset ω L R c S).card
-
 
 /-! ## B. Results -/
 
@@ -103,14 +104,12 @@ lemma bc80_branch_le_leaf (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
   have hkey := flc2_forest_internal_le_leaves (bc75_spanForest ω L R c S) hacyc hmin
   simpa only [bc80_branchFinset, bc80_leafFinset] using hkey
 
-
 open Classical in
 lemma bc80_GnTrifCount_le_leaf (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (S : Set (Site d)) [Fintype (↑S : Type)] [Nonempty (↑S : Type)]
     (hmin : ∀ v : (↑S : Type), 1 ≤ (bc75_spanForest ω L R c S).degree v) :
     bc80_GnTrifCount ω L R c S ≤ (bc80_leafFinset ω L R c S).card :=
   bc80_branch_le_leaf ω L R c S hmin
-
 
 open Classical in
 /-- The leaves of the fibre spanning forest map injectively into the boundary of `B_R`. -/
@@ -119,7 +118,6 @@ def bc80_LeafBoundaryInj (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
   ∃ lamL : (↑S : Type) → Site d,
     (∀ v : (↑S : Type), (bc75_spanForest ω L R c S).degree v = 1 → lamL v ∈ vertexBoundary d R) ∧
     Set.InjOn lamL (univ.filter (fun v => (bc75_spanForest ω L R c S).degree v = 1))
-
 
 open Classical in
 lemma bc80_leaf_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -131,7 +129,6 @@ lemma bc80_leaf_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
   have hkey := flc2_leaf_card_le_boundary (bc75_spanForest ω L R c S) R lamL hmap hinj
   simpa only [bc80_leafFinset] using hkey
 
-
 open Classical in
 lemma bc80_branch_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (S : Set (Site d)) [Fintype (↑S : Type)] [Nonempty (↑S : Type)]
@@ -140,7 +137,6 @@ lemma bc80_branch_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (bc80_branchFinset ω L R c S).card ≤ boxSV_boundaryCard d R :=
   le_trans (bc80_branch_le_leaf ω L R c S hmin) (bc80_leaf_le_boundary ω L R c S hleaf)
 
-
 open Classical in
 lemma bc80_GnTrifCount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (S : Set (Site d)) [Fintype (↑S : Type)] [Nonempty (↑S : Type)]
@@ -148,7 +144,6 @@ lemma bc80_GnTrifCount_le_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ
     (hleaf : bc80_LeafBoundaryInj ω L R c S) :
     bc80_GnTrifCount ω L R c S ≤ boxSV_boundaryCard d R :=
   bc80_branch_le_boundary ω L R c S hmin hleaf
-
 
 open Classical in
 lemma bc80_coarseTrif_mem_branch_of_gnCut (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -174,7 +169,6 @@ lemma bc80_coarseTrif_mem_branch_of_gnCut (ω : ConfigSpace (Sym2 (Site d))) (L 
   rw [bc80_branchFinset, Finset.mem_filter]
   exact ⟨Finset.mem_univ _,
     bc75_deg3_in_spanForest_of_gnCut ω L R c hyS hadj₁ hadj₂ hadj₃ hcut₁₂ hcut₁₃ hcut₂₃⟩
-
 
 open Classical in
 lemma bc80_coarseCount_le_branch_on_carrier (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -216,7 +210,6 @@ lemma bc80_coarseCount_le_branch_on_carrier (ω : ConfigSpace (Sym2 (Site d))) (
     rw [hιy, hιz] at hyz
     exact congrArg Subtype.val hyz
 
-
 open Classical in
 lemma bc80_coarseCount_le_branch_of_gnData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (c : Fin d → Fin (2 * L + 1)) (h : bc75_FiberGnTrifData ω L R c) :
@@ -226,7 +219,6 @@ lemma bc80_coarseCount_le_branch_of_gnData (ω : ConfigSpace (Sym2 (Site d))) (L
   obtain ⟨S, hSfin, hSne, hyS, htriData, hmin, hleaf⟩ := h
   have : Nonempty (↑S : Type) := hSne
   exact ⟨S, hSfin, bc80_coarseCount_le_branch_on_carrier ω L R c S hyS htriData⟩
-
 
 open Classical in
 lemma bc80_leafBoundaryInj_of_gnData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -239,21 +231,6 @@ lemma bc80_leafBoundaryInj_of_gnData (ω : ConfigSpace (Sym2 (Site d))) (L R : �
   intro a _ b _ hab
   exact Subtype.ext hab
 
-
-open Classical in
-lemma bc80_fiber_le_boundary_via_branch (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (c : Fin d → Fin (2 * L + 1)) (h : bc75_FiberGnTrifData ω L R c) :
-    (bc73_fiber ω L R c).card ≤ boxSV_boundaryCard d R := by
-  classical
-  obtain ⟨S, hSfin, hSne, hyS, htriData, hmin, hleafmap⟩ := h
-  have : Nonempty (↑S : Type) := hSne
-  have hfb : (bc73_fiber ω L R c).card ≤ (bc80_branchFinset ω L R c S).card :=
-    bc80_coarseCount_le_branch_on_carrier ω L R c S hyS htriData
-  have hbb : (bc80_branchFinset ω L R c S).card ≤ boxSV_boundaryCard d R :=
-    bc80_branch_le_boundary ω L R c S hmin (bc80_leafBoundaryInj_of_gnData ω L R c S hleafmap)
-  exact le_trans hfb hbb
-
-
 open Classical in
 /-- Fibre trifurcations that are not branch vertices of the fibre spanning forest. -/
 noncomputable def bc80_gapSet (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -264,7 +241,6 @@ noncomputable def bc80_gapSet (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (fun y => if hy : y ∈ bc73_fiber ω L R c
               then (⟨y, hyS y hy⟩ : (↑S : Type)) ∉ bc80_branchFinset ω L R c S
               else False)
-
 
 open Classical in
 lemma bc80_mem_gapSet (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -281,7 +257,6 @@ lemma bc80_mem_gapSet (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     exact ⟨hy, hcond⟩
   · rintro ⟨hy, hbr⟩
     exact ⟨hy, by rw [dite_eq_left hy]; exact hbr⟩
-
 
 open Classical in
 lemma bc80_coarseCount_le_branch_of_gap_empty (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -312,17 +287,12 @@ lemma bc80_coarseCount_le_branch_of_gap_empty (ω : ConfigSpace (Sym2 (Site d)))
       rw [hιy, hιz] at hyz
       exact congrArg Subtype.val hyz
 
-
 open Classical in
 lemma bc80_upperLines_emptyFiber_fiber_bound {L R : ℕ} (hR : 1 ≤ R)
     (c : Fin 2 → Fin (2 * L + 1)) (hempty : bc73_fiber bc60_upperLines L R c = ∅) :
     (bc73_fiber bc60_upperLines L R c).card ≤ boxSV_boundaryCard 2 R :=
-  bc80_fiber_le_boundary_via_branch bc60_upperLines L R c
+  bc75_fiber_count_of_gnTrifData bc60_upperLines L R c
     (bc75_upperLines_emptyFiber_gnTrifData hR c hempty)
-
-lemma bc80_upperLines_ambient_coarseTrif {L : ℕ} (hL : 3 ≤ L) :
-    bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2) :=
-  bc61_wholeBox_severs_upperLines hL
 
 /-! ## C. Summary -/
 
@@ -345,7 +315,7 @@ lemma bc80_status :
     exact bc80_branch_le_leaf ω L R c S (fun v => by convert hmin v using 2)
   · intro ω L R c S _ _ hmin hleaf
     exact bc80_GnTrifCount_le_boundary ω L R c S (fun v => by convert hmin v using 2) hleaf
-  · intro ω L R c h; exact bc80_fiber_le_boundary_via_branch ω L R c h
-  · intro L hL; exact bc80_upperLines_ambient_coarseTrif hL
+  · intro ω L R c h; exact bc75_fiber_count_of_gnTrifData ω L R c h
+  · intro L hL; exact bc61_wholeBox_severs_upperLines hL
 
 end StatMech.Walls

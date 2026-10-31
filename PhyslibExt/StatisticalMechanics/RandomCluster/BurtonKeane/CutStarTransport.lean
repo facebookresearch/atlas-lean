@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HandshakeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FaithfulContraction
 
@@ -151,20 +151,13 @@ instance bfct_delDec {V : Type*} [DecidableEq V] (G : SimpleGraph V) [DecidableR
     DecidableRel (bkg_deleteVertex G t).Adj :=
   fun a b => decidable_of_iff _ (bkg_deleteVertex_adj G t a b).symm
 
-lemma bfct_reach_isolated {V : Type*} {H : SimpleGraph V} {u : V}
-    (hiso : ∀ z, ¬ H.Adj u z) {a : V} (h : H.Reachable a u) : a = u := by
-  obtain ⟨w⟩ := h.symm
-  cases w with
-  | nil => rfl
-  | cons hadj _ => exact absurd hadj (hiso _)
-
 /-- The set `{0, 1, 2}` of `Fin 4`. -/
 def bfct_starS : Finset (Fin 4) := {0, 1, 2}
 
 lemma bfct_star_cut : ¬ (bkg_deleteVertex bfct_star (0 : Fin 4)).Reachable 1 2 := by
   have hiso : ∀ z, ¬ (bkg_deleteVertex bfct_star 0).Adj 1 z := by decide
   intro h
-  exact absurd (bfct_reach_isolated hiso h.symm) (by decide)
+  exact absurd (bgn_reach_isolated hiso h.symm) (by decide)
 
 lemma bfct_transport_witness :
     ¬ (bkg_deleteVertex (bfct_restrict bfct_star bfct_starS)

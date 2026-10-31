@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
@@ -32,7 +32,8 @@ This gives `bc3_OriginCutLeavesInfinite` for every configuration.
 ## ii. Key results
 
 - `bc8_cutLeavesInfinite` : an infinite cut cluster at a neighbour of the origin.
-- `bc8_originCutLeavesInfinite` : the condition for every configuration.
+- `StatMech.Walls.bc4c_originCutLeavesInfinite` (in `OriginCutNeighbour`) : the condition for every
+  configuration.
 
 ## iii. Table of contents
 
@@ -80,16 +81,6 @@ lemma bc8_cutLeavesInfinite_inCluster (ω : ConfigSpace (Sym2 (Site d))) {x : Si
   refine ⟨n, hadj, ?_, hninf⟩
   rw [mem_cluster]
   exact (mem_cluster.mp h0mem).trans hadj.reachable
-
-lemma bc8_origin_openNeighbours_ncard_le (ω : ConfigSpace (Sym2 (Site d))) :
-    {n : Site d | (openSubgraph d ω).Adj 0 n}.ncard ≤ 2 * d :=
-  bc4_origin_openNeighbours_ncard_le ω
-
-lemma bc8_originCutLeavesInfinite (ω : ConfigSpace (Sym2 (Site d))) :
-    bc3_OriginCutLeavesInfinite ω := by
-  intro x hinf h0mem
-  obtain ⟨n, _hadj, hmem, hninf⟩ := bc8_cutLeavesInfinite_inCluster ω hinf h0mem
-  exact ⟨n, hmem, hninf⟩
 
 lemma bc8_cutLeavesInfinite_origin (ω : ConfigSpace (Sym2 (Site d)))
     (hinf : (cluster d ω 0).Infinite) :

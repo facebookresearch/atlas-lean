@@ -517,15 +517,15 @@ boundary equals the triangular one at `p` (Grimmett, *The Random-Cluster Model*,
 theorem triHexPlanarFiniteWiredBoundaryProbability_eq_homogeneous
     (n : Nat) {q p : Real} (hq : 0 < q)
     (hp : p ∈ Set.Ioo (0 : Real) 1)
-    (hsurface : FrontierA.triangularFKCriticalPolynomial q
-      (FrontierA.fkEdgeOdds p) = 0) :
+    (hsurface : FK.TriHex.triangularFKCriticalPolynomial q
+      (FK.TriHex.fkEdgeOdds p) = 0) :
     triHexPlanarFiniteStarWiredBoundaryProbability n
         (BeffaraDC.dualParam p q) q =
       triHexPlanarFiniteTriangleWiredBoundaryProbability n p q := by
   have hpStar := BeffaraDC.dualParam_mem_Ioo hp.1 hp.2 hq
   have hodds (r : Real) (hr1 : r < 1) :
-      r = (1 - r) * FrontierA.fkEdgeOdds r := by
-    rw [FrontierA.fkEdgeOdds]
+      r = (1 - r) * FK.TriHex.fkEdgeOdds r := by
+    rw [FK.TriHex.fkEdgeOdds]
     field_simp [sub_ne_zero.mpr (Ne.symm hr1.ne)]
   rw [triHexPlanarFiniteStarWiredBoundaryProbability_eq n
       hpStar.1 hpStar.2 hq (hodds _ hpStar.2),

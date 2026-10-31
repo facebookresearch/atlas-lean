@@ -744,7 +744,7 @@ omit [DecidableEq V] [Countable V] in
 most likely: `1 - (1 - μ(A ∪ B ∪ C ∪ D))^{1/4} ≤ μ(A)`. See also `four_event_sqrt_trick` (stronger:
 bounds the maximum) and `zhg_sqrt_trick_four` (equal probabilities). Reference: G. Grimmett,
 *Percolation* (1999). -/
-lemma dominant_of_four_event_sqrt_trick
+lemma four_event_sqrt_trick_of_dominant
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B C D : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
@@ -795,7 +795,7 @@ lemma PeriodicPlaneEmbedding.dominant_bottomSide_measureReal_ge_fourthRoot
   have hdom :
       1 - Real.sqrt (Real.sqrt (1 - mu.real (A ∪ (B ∪ (C ∪ D))))) ≤
         mu.real A := by
-    exact dominant_of_four_event_sqrt_trick mu hFKG
+    exact four_event_sqrt_trick_of_dominant mu hFKG
       (E.rectSideConnectionEvent_isIncreasing a b c d S
         (E.rectBottomBoundaryVertices a b c d))
       (E.rectSideConnectionEvent_isIncreasing a b c d S
@@ -856,7 +856,7 @@ lemma PeriodicPlaneEmbedding.dominant_leftSide_measureReal_ge_fourthRoot
   have hdom :
       1 - Real.sqrt (Real.sqrt (1 - mu.real (A ∪ (B ∪ (C ∪ D))))) ≤
         mu.real A := by
-    exact dominant_of_four_event_sqrt_trick mu hFKG
+    exact four_event_sqrt_trick_of_dominant mu hFKG
       (E.rectSideConnectionEvent_isIncreasing a b c d S
         (E.rectLeftBoundaryVertices a b c d))
       (E.rectSideConnectionEvent_isIncreasing a b c d S

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalCutSeparation
@@ -60,17 +60,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Opening a box -/
-
-lemma bc24_cluster_ne_of_not_connected {σ : ConfigSpace (Sym2 (Site d))} {a b : Site d}
-    (h : ¬ Connected d σ a b) : cluster d σ a ≠ cluster d σ b := by
-  intro heq
-  exact h (mem_cluster.mp (heq ▸ self_mem_cluster σ b))
-
-lemma bc24_box_merges_infinite {n : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
-    {x y : Site d} (hx : x ∈ box d n) (hy : y ∈ box d n) :
-    cluster d (forceOpenFinset (boxEdges d n) ω) x
-      = cluster d (forceOpenFinset (boxEdges d n) ω) y :=
-  box_allOpen_cluster_eq ω hx hy
 
 lemma bc24_arm_connected_box {n : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
     {a b z : Site d} (hb : b ∈ box d n) (hz : z ∈ box d n)
@@ -128,9 +117,9 @@ lemma bc24_coarseTrif_armClusters_distinct_after_boxRemoval {n : ℕ}
           ≠ cluster d (removeSites (boxFinsetBK d n) ω) a₃ := by
   obtain ⟨a₁, a₂, a₃, _b₁, _b₂, _b₃, _hne, _hbox, _hadj, _hconn, hinf, hsep⟩ := h
   exact ⟨a₁, a₂, a₃, hinf.1, hinf.2.1, hinf.2.2,
-    bc24_cluster_ne_of_not_connected hsep.1,
-    bc24_cluster_ne_of_not_connected hsep.2.1,
-    bc24_cluster_ne_of_not_connected hsep.2.2⟩
+    bc12_cluster_ne_of_not_connected hsep.1,
+    bc12_cluster_ne_of_not_connected hsep.2.1,
+    bc12_cluster_ne_of_not_connected hsep.2.2⟩
 
 lemma bc24_box_hub_routes_armEnds {n : ℕ} {ω : ConfigSpace (Sym2 (Site d))}
     (h : IsCoarseTrifurcation d n ω) :

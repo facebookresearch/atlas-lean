@@ -8,8 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ContractedGraphDegree
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxQuotient
 
 /-!
 # Overlapping boxes of nearby coarse trifurcations
@@ -81,9 +84,6 @@ lemma bc105_boxes_overlap_of_close_centres {L : ℕ} {y z : Site d}
     simp only [sub_self]
     rw [mem_box]; intro i; simp
 
-lemma bc105_centre_mem_own_box (L : ℕ) (z : Site d) : z ∈ bc61_boxAround d L z := by
-  rw [bc61_mem_boxAround]; simp only [sub_self]; rw [mem_box]; intro i; simp
-
 lemma bc105_boxes_overlap_of_adjacent_centres {L : ℕ} (hL : 1 ≤ L) (hd : 1 ≤ d) (z : Site d) :
     ∃ y : Site d, y ≠ z ∧ z ∈ bc61_boxAround d L y ∧ z ∈ bc61_boxAround d L z ∧
       y ∈ bc61_boxAround d L y ∧ y ∈ bc61_boxAround d L z := by
@@ -102,8 +102,8 @@ lemma bc105_boxes_overlap_of_adjacent_centres {L : ℕ} (hL : 1 ≤ L) (hd : 1 �
     · have : (z - Function.update z ⟨0, hd⟩ (z ⟨0, hd⟩ + 1)) i = 0 := by
         simp [Pi.sub_apply, Function.update_of_ne hi]
       rw [this]; simp
-  · exact bc105_centre_mem_own_box L z
-  · exact bc105_centre_mem_own_box L _
+  · exact bc72_y_mem_box L z
+  · exact bc72_y_mem_box L _
   · rw [bc61_mem_boxAround, mem_box]; intro i
     by_cases hi : i = ⟨0, hd⟩
     · subst hi
@@ -113,7 +113,6 @@ lemma bc105_boxes_overlap_of_adjacent_centres {L : ℕ} (hL : 1 ≤ L) (hd : 1 �
     · have : (Function.update z ⟨0, hd⟩ (z ⟨0, hd⟩ + 1) - z) i = 0 := by
         simp [Pi.sub_apply, Function.update_of_ne hi]
       rw [this]; simp
-
 
 open Classical in
 lemma bc105_contractedTrifGraph_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -161,9 +160,9 @@ lemma bc105_count_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
 
 lemma bc105_adversary_box_overlap {L : ℕ} {z : Site 2} (hz : (z : Site 2) ∈ box 2 L) :
     (0 : Site 2) ∈ bc61_boxAround 2 L 0 ∧ z ∈ bc61_boxAround 2 L 0 ∧ z ∈ bc61_boxAround 2 L z := by
-  refine ⟨bc105_centre_mem_own_box L 0, ?_, ?_⟩
+  refine ⟨bc72_y_mem_box L 0, ?_, ?_⟩
   · rw [bc61_mem_boxAround]; simpa using hz
-  · exact bc105_centre_mem_own_box L z
+  · exact bc72_y_mem_box L z
 
 /-! ## B. Summary -/
 

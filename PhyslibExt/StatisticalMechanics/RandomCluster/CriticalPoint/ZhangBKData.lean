@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.TwoDimensional.ZhangRotSymmetry
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BranchSideClosure
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SquareLatticeUniqueness
 public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.DartDef
 
 /-!
 # Geometric data for Zhang's argument
@@ -595,10 +596,6 @@ lemma zbd_rotInv_sq (x : Site 2) : rot90Inv (rot90Inv x) = -x := by
   funext i
   fin_cases i <;> simp [rot90Inv]
 
-lemma zbd_rotFun_sq (x : Site 2) : rot90Fun (rot90Fun x) = -x := by
-  funext i
-  fin_cases i <;> simp [rot90Fun]
-
 lemma zbd_neg_mem_box (n : ℕ) {x : Site 2} (h : x ∈ box 2 n) : -x ∈ box 2 n := by
   rw [mem_box] at h ⊢
   intro i
@@ -622,11 +619,11 @@ lemma zbd_centered_opposite_rotation (n : ℕ) :
     have hix : rot90Inv (rot90Inv x) = y := by
       rw [zbd_rotInv_sq]
       dsimp [x]
-      rw [zbd_rotFun_sq]
+      rw [Lattice.rot90Fun_rot90Fun]
       simp
     refine ⟨x, ?_, ?_⟩
     · dsimp [x]
-      rw [zbd_rotFun_sq]
+      rw [Lattice.rot90Fun_rot90Fun]
       exact ⟨zbd_neg_mem_box n hy.1, by rw [Pi.neg_apply, hy.2]⟩
     · apply (zbd_rot_clusterInfinite_iff (kdi_rotConfig omega) x).mpr
       apply (zbd_rot_clusterInfinite_iff omega (rot90Inv x)).mpr

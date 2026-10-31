@@ -27,7 +27,7 @@ ergodic theorem and dominated convergence, the Cesàro averages of the correlati
 `μ(T open ∩ shift_k⁻¹(U open))` converge to `μ(T open) μ(U open)`. By the FKG inequality each
 correlation gap is nonnegative, so a small average forces some translation with all gaps below a
 given `δ`, which is the pair-mixing property. `freeInfiniteVolume_axisShift_ergodic` and
-`freeInfiniteVolume_pairMixing_all_parameters` are proved unconditionally (only `1 ≤ d` and
+`freeInfiniteVolume_pairMixing_q2` are proved unconditionally (only `1 ≤ d` and
 `0 < p < 1`, at `q = 2`).
 
 ## ii. Key results
@@ -36,7 +36,7 @@ given `δ`, which is the pair-mixing property. `freeInfiniteVolume_axisShift_erg
   measure.
 - `freeInfiniteVolume_pairCorrelationAverage_tendsto` : Cesàro averages of translated
   correlations converge to the product of the probabilities.
-- `freeInfiniteVolume_pairMixing_all_parameters` : the free measure satisfies pair mixing.
+- `freeInfiniteVolume_pairMixing_q2` : the free measure satisfies pair mixing.
 
 ## iii. Table of contents
 
@@ -193,7 +193,7 @@ theorem freeInfiniteVolume_axisShift_ergodic
       fkTailEdgeWindow_mono (freeAxisTranslationPower hd)
       (freeAxisTranslationPower_escape hd) hti s hs hinvPow
   rw [eventuallyEmptyOrUniv_iff']
-  rcases freeInfiniteVolume_tail_trivial hp hp1 t ht with ht0 | ht1
+  rcases freeInfiniteVolume_tail_trivial_q2 hp hp1 t ht with ht0 | ht1
   · exact Or.inl (hae.trans (ae_eq_empty.mpr ht0))
   · right
     apply hae.trans
@@ -407,7 +407,7 @@ private lemma freePairGapAverage_tendsto
 
 /-- At `q = 2`, the free infinite-volume measure satisfies pair mixing: for every finite family of
 multi-edge open events and every `δ > 0` some translation makes all correlation gaps below `δ`. -/
-theorem freeInfiniteVolume_pairMixing_all_parameters
+theorem freeInfiniteVolume_pairMixing_q2
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     fmu_PairMixing (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) :

@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourBoxTrifSet
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrif
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestProbCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullUniqueness
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Scale-zero coarse trifurcations and finite energy

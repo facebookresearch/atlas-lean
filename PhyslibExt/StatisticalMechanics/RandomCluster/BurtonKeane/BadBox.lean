@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.MeasureTheory.OuterMeasure.AE
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnCoarseInfiniteCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifUpperLines
@@ -30,7 +32,8 @@ configuration has a single-box genuine trifurcation, while the multi-box version
 ## ii. Key results
 
 - `bc93_no_badBox_of_le_one` : no bad box with at most one infinite cluster.
-- `bc93_singleBox_trif_perConfig` : single-box genuine trifurcations are coarse trifurcations.
+- `StatMech.Walls.bc83_genuineTrif_iff_coarse` (in `GenuineTrifUpperLines`) : single-box genuine
+  trifurcations are coarse trifurcations.
 
 ## iii. Table of contents
 
@@ -109,10 +112,6 @@ lemma bc93_upperLines_witnesses_in_box {L : ℕ} (hL : 3 ≤ L) :
 
 /-! ## B. Single-box trifurcations -/
 
-lemma bc93_singleBox_trif_perConfig (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) (y : Site d) :
-    bc83_genuineTrif ω L y ↔ bc61_IsCoarseTrifurcation ω L y :=
-  bc83_genuineTrif_iff_coarse ω L y
-
 lemma bc93_no_badBox_ae_of_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ]
     (L : ℕ) (h1 : μ {ω | numInfiniteClusters d ω ≤ 1} = 1) (y' : Site d) :
@@ -137,10 +136,6 @@ lemma bc93_no_badBox_ae_of_uniqueness (μ : Measure (ConfigSpace (Sym2 (Site d))
 
 /-! ## C. The upper-lines configuration -/
 
-lemma bc93_upperLines_singleBox_trif {L : ℕ} (hL : 3 ≤ L) :
-    bc83_genuineTrif bc60_upperLines L (0 : Site 2) :=
-  (bc93_singleBox_trif_perConfig bc60_upperLines L 0).mpr (bc80_upperLines_ambient_coarseTrif hL)
-
 lemma bc93_upperLines_multiBox_fails_and_N_top {L : ℕ} (hL : 3 ≤ L) :
     (bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
      Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
@@ -148,7 +143,7 @@ lemma bc93_upperLines_multiBox_fails_and_N_top {L : ℕ} (hL : 3 ≤ L) :
         ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
         ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) ∧
     numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  ⟨bc76_buffer_insufficient hL, bc85_upperLines_N_top⟩
+  ⟨bc76_buffer_insufficient hL, bc60_numInfiniteClusters_top⟩
 
 lemma bc93_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (y : Site 2),
@@ -168,13 +163,13 @@ lemma bc93_status :
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
     (numInfiniteClusters 2 bc60_upperLines = ⊤) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro ω L y; exact bc93_singleBox_trif_perConfig ω L y
+  · intro ω L y; exact bc83_genuineTrif_iff_coarse ω L y
   · intro ω L hN y'; exact bc93_no_badBox_of_le_one ω L hN y'
   · intro ω L y' h; exact bc93_two_le_numInfinite_of_badBox ω L h
   · intro ω L hN y'; exact StatMech.Walls.bc93_no_badBox_of_le_one ω L hN y'
   · intro μ _ L y' h1; exact bc93_no_badBox_ae_of_uniqueness μ L h1 y'
   · intro μ _ L hinv hforest_ae hexist
-    exact StatMech.Walls.bc78_infinitely_many_excluded μ (by norm_num) L hinv hforest_ae hexist
-  · exact bc85_upperLines_N_top
+    exact bc77_top_null_of_ae_forest μ (by norm_num) L hinv hforest_ae hexist
+  · exact bc60_numInfiniteClusters_top
 
 end StatMech.Walls

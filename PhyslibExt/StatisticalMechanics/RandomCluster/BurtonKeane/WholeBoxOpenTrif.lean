@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifNeighbourReach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
@@ -298,9 +302,6 @@ lemma bc58_evenLines_boxOpen_reconnect {k : ℕ} (hk : 1 ≤ k) :
     ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 k bc57_evenLines) 0 :=
   bc58_boxOpen_not_classicalTrif hk bc57_evenLines
 
-lemma bc58_threeMeet_evenLines : bc57_evenLines ∈ threeMeetBox 2 6 :=
-  bc57_mem_threeMeetBox
-
 /-! ## C. Summary -/
 
 lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
@@ -320,6 +321,6 @@ lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
   ⟨fun hmod => bc58_burton_keane_bernoulli_of_originTrifModification hd p hp1 hp0 hmod,
    fun hk ω => bc58_reconnect_around_origin hk ω,
    fun hk ω => bc58_boxOpen_not_classicalTrif hk ω,
-   bc58_threeMeet_evenLines⟩
+   bc57_mem_threeMeetBox⟩
 
 end StatMech.Walls

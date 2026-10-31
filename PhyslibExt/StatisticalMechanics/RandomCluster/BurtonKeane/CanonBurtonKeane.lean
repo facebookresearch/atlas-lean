@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Burton–Keane uniqueness from canonical trifurcations

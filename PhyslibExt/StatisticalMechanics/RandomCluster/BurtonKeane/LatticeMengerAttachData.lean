@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisAssignment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterReachesRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach
@@ -82,14 +84,6 @@ lemma lmg_attachData (ω : ConfigSpace (Sym2 (Site d)))
     (crr_clusterReachesRay_of_assignment ω x₂ j₂ h2)
     (crr_clusterReachesRay_of_assignment ω x₃ j₃ h3)
 
-lemma lmg_attachData_of_candidates (ω : ConfigSpace (Sym2 (Site d)))
-    (x₁ x₂ x₃ : Site d) (S : Fin 3 → Finset (Fin d))
-    (hcd12 : cluster d ω x₁ ≠ cluster d ω x₂) (hcd13 : cluster d ω x₁ ≠ cluster d ω x₃)
-    (hcd23 : cluster d ω x₂ ≠ cluster d ω x₃)
-    (h : caa_RunsAlongCandidates ω ![x₁, x₂, x₃] S) :
-    tex_AttachData ω x₁ x₂ x₃ :=
-  caa_attachData ω x₁ x₂ x₃ S hcd12 hcd13 hcd23 h
-
 lemma lmg_attachData_disjoint (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d) (j₁ j₂ j₃ : Fin d)
     (hjd12 : j₁ ≠ j₂) (hjd13 : j₁ ≠ j₃) (hjd23 : j₂ ≠ j₃)
@@ -143,11 +137,7 @@ lemma lmg_boxAttachData_of_candidates {n : ℕ}
     (h : caa_BoxRunsAlongCandidates d n) : tex_BoxAttachData d n := by
   intro ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
   obtain ⟨S, hcand⟩ := h ω hω x₁ x₂ x₃ hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
-  exact lmg_attachData_of_candidates ω x₁ x₂ x₃ S hcd12 hcd13 hcd23 hcand
-
-lemma lmg_disjointRouting_of_candidates {n : ℕ}
-    (h : caa_BoxRunsAlongCandidates d n) : hrHD_DisjointRouting d n :=
-  tex_disjointRouting_of_box (lmg_boxAttachData_of_candidates h)
+  exact caa_attachData ω x₁ x₂ x₃ S hcd12 hcd13 hcd23 hcand
 
 lemma lmg_axisAssignment_of_candidates (ω : ConfigSpace (Sym2 (Site d)))
     (x₁ x₂ x₃ : Site d) (S : Fin 3 → Finset (Fin d))

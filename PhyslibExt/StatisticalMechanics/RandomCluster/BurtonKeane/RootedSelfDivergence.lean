@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -75,11 +76,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. Results -/
-
-lemma bc36_rootedArmDivergence_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
-    rfp_RootedArmDivergence ω n :=
-  rfp_rootedArmDivergence_of_noTrif ω n hno
 
 /-- Self down arms for `B_n`: infinite arm sites, a rank injective on connected trifurcations and a
 down neighbour for each trifurcation such that its arm avoids the side of every lower connected
@@ -158,7 +154,6 @@ lemma bc36_selfDownArm_of_twoTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       · simp only [ite_eq_right hx0y0, ite_eq_left] at hlt
         exact absurd hlt (stt_lex_not_lt_fst (by norm_num))
       · exact absurd rfl hxy
-
 
 set_option linter.unusedSimpArgs false in
 lemma bc36_selfDownArm_of_fourTree (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
@@ -253,26 +248,5 @@ lemma bc36_Tcount_le_boundary_of_selfDownArm (ω : ConfigSpace (Sym2 (Site d))) 
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   bc28_Tcount_le_boundary_of_rootedArmDivergence ω n hn
     (bc36_rootedArmDivergence_of_selfDownArm ω n h)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma bc36_burton_keane_bernoulli_of_selfDownArm (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → bc36_SelfDownArm ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc35_burton_keane_bernoulli_of_rootedArmDivergence hd p hp1 hp0
-    (fun ω n hn => bc36_rootedArmDivergence_of_selfDownArm ω n (hres ω n hn)) htrif
 
 end StatMech.Walls

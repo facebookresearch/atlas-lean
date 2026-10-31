@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Computability.Reduce
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
@@ -36,7 +38,8 @@ all configurations.
 
 - `bc74_fiber_count_of_fiberForest` : a fibre forest bounds the fibre
 - `bc74_sublatticeForest_of_globalForest` : the global forest gives the fibre bound
-- `bc74_upperLines_arms_can_share_boundary` : arms can share boundary sites
+- `StatMech.Walls.bc64_arms_can_share_boundary` (in `CoarseStarForestEmbedding`) : arms can share
+  boundary sites
 - `bc74_status` : the statements together
 
 ## iii. Table of contents
@@ -111,7 +114,7 @@ lemma bc74_fiber_disjointBoxes_deg3 (ω : ConfigSpace (Sym2 (Site d))) (L R : �
     ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (hyS : y ∈ S)
       (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).Adj),
       3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L y)).induce S).degree ⟨y, hyS⟩ :=
-  bc73_disjointBoxes_deg3 (bc74_fiber_mem_gnTrif ω L R c hy)
+  bc72_quot_deg3_of_gnTrif (bc74_fiber_mem_gnTrif ω L R c hy)
 
 /-- A fibre forest for residue `c`: a finite forest without isolated vertices with the fibre
 trifurcations as injectively placed branch vertices and leaves on the boundary of `B_R`. -/
@@ -242,13 +245,6 @@ lemma bc74_upperLines_sameResidue (L : ℕ) :
   · change ((0 : Site 2) 1 % (2 * (L : ℤ) + 1)).toNat
       = ((bc57_pt (2 * (L : ℤ) + 1) 0) 1 % (2 * (L : ℤ) + 1)).toNat
     rw [bc57_pt_snd, hzero1]
-
-lemma bc74_upperLines_arms_can_share_boundary (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
-      Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
-  bc64_arms_can_share_boundary L
 
 /-! ## B. Summary -/
 

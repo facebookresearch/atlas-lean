@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoherentArmSelector
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
@@ -124,12 +125,6 @@ lemma bc3_arm_cutInfinite_of_residue (ω : ConfigSpace (Sym2 (Site d)))
   by_cases h0 : (0 : Site d) ∈ cluster d ω x
   · exact hres x hinf h0
   · exact ⟨x, self_mem_cluster ω x, bc3_cutClusterInfinite_of_originNotMem ω x hinf h0⟩
-
-lemma bc3_armEscapes_of_cutInfinite (ω : ConfigSpace (Sym2 (Site d))) (x' : Site d)
-    (hinf : (cluster d (removeSite 0 ω) x').Infinite) (n : ℕ) :
-    ∃ y, y ∉ box d n ∧ Connected d (removeSite 0 ω) x' y ∧
-      (cluster d (removeSite 0 ω) y).Infinite ∧ y ≠ 0 :=
-  bc2_cutUnbounded ω x' hinf n
 
 /-- In every configuration with three distinct infinite clusters meeting `B_n` there are three such
 clusters with witnesses whose clusters stay infinite after the origin is removed. -/

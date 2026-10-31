@@ -8,7 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
+public import Mathlib.Topology.UniformSpace.Path
+public import Mathlib.Analysis.Normed.Order.Lattice
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StraightWalk
 

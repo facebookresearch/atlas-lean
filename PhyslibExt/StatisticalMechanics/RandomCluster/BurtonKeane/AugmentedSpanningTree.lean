@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.StarForestFiber
 
 /-!
@@ -56,23 +59,6 @@ open StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## A. The augmented graph -/
-
-set_option linter.unusedDecidableInType false in
-lemma bsk_three_le_degree {W : Type*} [Fintype W] [DecidableEq W]
-    (G : SimpleGraph W) [DecidableRel G.Adj] {v a b c : W}
-    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
-    (ha : G.Adj v a) (hb : G.Adj v b) (hc : G.Adj v c) : 3 ≤ G.degree v := by
-  have hsub : ({a, b, c} : Finset W) ⊆ G.neighborFinset v := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl | rfl <;>
-      simp only [SimpleGraph.mem_neighborFinset, ha, hb, hc]
-  have hcard : ({a, b, c} : Finset W).card = 3 := by
-    rw [Finset.card_insert_of_notMem (by simp [hab, hac]),
-      Finset.card_insert_of_notMem (by simp [hbc]), Finset.card_singleton]
-  calc 3 = ({a, b, c} : Finset W).card := hcard.symm
-    _ ≤ (G.neighborFinset v).card := Finset.card_le_card hsub
-    _ = G.degree v := rfl
 
 /-- Adjacency of `H` augmented by a pendant vertex `l` attached to `par l`. -/
 def bsk_augRel {V Leaf : Type*} (H : SimpleGraph V) (par : Leaf → V) :
@@ -276,7 +262,7 @@ lemma bsk_exploration_of_armTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
   refine bsk_exploration_of_augmentedTree ω L R H par hH trifIdx compLeaf ?_ hinj hcompB hcompD
   intro a
   obtain ⟨x, y, z, hxy, hxz, hyz, hax, hay, haz⟩ := harm a
-  exact bsk_three_le_degree (bsk_augG H par) hxy hxz hyz hax hay haz
+  exact Percolation.spc_deg_ge_three (bsk_augG H par) _ _ _ _ hxy hxz hyz hax hay haz
 
 set_option linter.unusedDecidableInType false in
 lemma bsk_genuineForest_of_augmentedTree (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)

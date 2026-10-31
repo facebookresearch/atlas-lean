@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Data.Sym.Sym2
+public import Mathlib.Tactic.Ring.RingNF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WiringForcesOpen
@@ -106,12 +107,6 @@ lemma bc2_forcedPathConn_farEnd (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (
   have h := bc2_forcedPathConn ω j L (L + 1) (by omega) le_rfl
   have he : (((L + 1 : ℕ) : ℤ)) = ((L : ℤ) + 1) := by push_cast; ring
   rwa [he] at h
-
-lemma bc2_corridorMouth_forced_open (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
-    (L t : ℕ) (ht : t < L) :
-    IsOpenEdge d (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω)
-      (hrHD_rayPt j ((t : ℤ) + 1)) (hrHD_rayPt j ((t : ℤ) + 2)) :=
-  bc_wiring_forces_open ω j L t ht
 
 lemma bc2_corridorChain_one_step (j : Fin d) (L : ℕ) (hL : 1 ≤ L) :
     CorridorStep (hrHD_corridorEdges j (L + 1))

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Lindeberg
+public import CSLibExt.Complexity.BooleanFunctions.SharpnessFK
 
 /-!
 # Applications of the Poincaré inequality to indicators
@@ -43,7 +44,6 @@ no module imports both, so it is reported as a duplicate.
 open scoped BigOperators
 open Finset
 
-
 namespace StatMech
 
 namespace OSSS
@@ -67,18 +67,11 @@ lemma var_eq_theta_mul_one_sub (μ : ConfigSpace E → ℝ) (f : ConfigSpace E �
     rcases hf ω with h | h <;> simp only [h] <;> ring
   rw [hsq]; ring
 
-omit [Fintype E] [DecidableEq E] in
-lemma indicator_zero_or_one (A : Set (ConfigSpace E)) (ω : ConfigSpace E) :
-    A.indicator (fun _ => (1 : ℝ)) ω = 0 ∨ A.indicator (fun _ => (1 : ℝ)) ω = 1 := by
-  by_cases h : ω ∈ A
-  · right; rw [Set.indicator_of_mem h]
-  · left; rw [Set.indicator_of_notMem h]
-
 lemma var_indicator_eq (μ : ConfigSpace E → ℝ) (A : Set (ConfigSpace E)) :
     Lindeberg.var μ (A.indicator (fun _ => (1 : ℝ)))
       = Lindeberg.mean μ (A.indicator (fun _ => (1 : ℝ)))
         * (1 - Lindeberg.mean μ (A.indicator (fun _ => (1 : ℝ)))) :=
-  var_eq_theta_mul_one_sub μ _ (indicator_zero_or_one A)
+  var_eq_theta_mul_one_sub μ _ (SharpnessFK.indicator_zero_or_one A)
 
 /-! ## B. Covariance sums -/
 
@@ -103,7 +96,7 @@ lemma poincare_covSum_indicator_ge {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 
     Lindeberg.mean μ (A.indicator (fun _ => (1 : ℝ)))
         * (1 - Lindeberg.mean μ (A.indicator (fun _ => (1 : ℝ))))
       ≤ ∑ e, Lindeberg.cov μ (A.indicator (fun _ => (1 : ℝ))) (Lindeberg.coord e) :=
-  poincare_covSum_ge hpos hμ1 hFKG hA.indicator_monotone (indicator_zero_or_one A)
+  poincare_covSum_ge hpos hμ1 hFKG hA.indicator_monotone (SharpnessFK.indicator_zero_or_one A)
 
 end PoincareApp
 

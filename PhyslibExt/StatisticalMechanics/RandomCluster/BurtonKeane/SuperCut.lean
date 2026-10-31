@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalArmSubforest
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex
 
@@ -121,25 +123,12 @@ lemma bsc_box_isolated {L : ℕ} {y a : Site d} (ω : ConfigSpace (Sym2 (Site d)
   rw [ite_eq_left ⟨a, ha, by rw [Sym2.mem_iff]; left; rfl⟩] at hopen
   exact absurd hopen (by simp)
 
-lemma bsc_notMem_box_of_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
-    (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
-    a ∉ bc61_boxAround d L y := by
-  intro ha
-  have hsub : cluster d (removeSites (bc61_boxAround d L y) ω) a ⊆ {a} := by
-    intro z hz
-    have hr : (openSubgraph d (removeSites (bc61_boxAround d L y) ω)).Reachable a z := hz
-    obtain ⟨p⟩ := hr
-    cases p with
-    | nil => exact Set.mem_singleton_iff.mpr rfl
-    | cons hadj _ => exact absurd hadj (bsc_box_isolated ω ha _)
-  exact hinf (Set.Finite.subset (Set.finite_singleton a) hsub)
-
 lemma bsc_hub_adj_armImage {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Site d))}
     (hy : bsc_IsBoxCentre L y)
     (hinc : bc67_GnIncident ω L y a)
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     bgn_idx L a ≠ bgn_idx L y ∧ (bgn_Gn ω L).Adj (bgn_idx L y) (bgn_idx L a) := by
-  have haout : a ∉ bc61_boxAround d L y := bsc_notMem_box_of_infinite hinf
+  have haout : a ∉ bc61_boxAround d L y := bc72_arm_outside_of_infinite hinf
   have hne : bgn_idx L a ≠ bgn_idx L y := by
     intro h; exact haout ((hy a).mpr h)
   refine ⟨hne, hne.symm, ?_⟩
@@ -233,7 +222,7 @@ lemma bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Sit
     (hy : bsc_IsBoxCentre L y)
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     (ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} (bgn_idx L a)).Infinite := by
-  have haout : a ∉ bc61_boxAround d L y := bsc_notMem_box_of_infinite hinf
+  have haout : a ∉ bc61_boxAround d L y := bc72_arm_outside_of_infinite hinf
   have haidx : bgn_idx L a ≠ bgn_idx L y := fun h => haout ((hy a).mpr h)
   have himg : (bgn_idx L) '' (cluster d (removeSites (bc61_boxAround d L y) ω) a)
       ⊆ ray34_AvoidCluster (bgn_Gn ω L) {bgn_idx L y} (bgn_idx L a) := by

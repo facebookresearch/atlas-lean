@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularSharpnessOffCentre
+public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularOSSSUniform
 public import MathlibExt.Probability.OSSS.BetaThresholdBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LogCesaroLimit
 
@@ -21,7 +21,7 @@ growth of `Σ_n`, the outer-wired crossing probability `θ_n` decays exponential
 ## i. Overview
 
 `triangularNormalizedTheta = θ_n / c(β₀)` rescales the crossing probability of
-`TriangularSharpness` by the OSSS constant of `TriangularSharpnessOffCentre`, so that the
+`TriangularSharpness` by the OSSS constant of `TriangularOSSSUniform`, so that the
 differential inequality reads `(n / Σ_n) θ̃_n ≤ dθ̃_n/dβ`
 (`triangularNormalizedTheta_differential`). `triangularThresholdTheta` extends it to `β ≤ 0` (value
 `1 / c` at `n = 0` and `0` otherwise), and the generic integration argument of

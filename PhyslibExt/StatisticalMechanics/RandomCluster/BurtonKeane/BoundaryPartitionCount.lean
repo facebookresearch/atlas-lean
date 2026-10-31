@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedBoxDegree
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalVertexForest
@@ -31,7 +35,8 @@ uniqueness on `ℤ²`.
 ## ii. Key results
 
 - `bpt_trif_three_classes_disjoint` : three disjoint boundary classes.
-- `bpt_count_of_partitionForest` : the coarse count from classical forest data.
+- `StatMech.Walls.bkg_coarseTcount_of_classical` (in `ClassicalVertexForest`) : the coarse count
+  from classical forest data.
 
 ## iii. Table of contents
 
@@ -151,24 +156,6 @@ lemma bpt_cut_ground_sets_differ (L : ℕ) (hL : 1 ≤ L) :
 
 /-! ## C. The count -/
 
-/-- Same statement as `bfa_classical_iff_bc69`; kept because GlobalTrifContraction uses it. -/
-lemma bpt_partitionForest_iff_bc69 (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
-    bkg_ClassicalForestData ω L R ↔ bc69_Gn_globalForest ω L R :=
-  bfa_classical_iff_bc69 ω L R
-
-/-- Same statement as `bkg_coarseTcount_of_classical`; kept because GlobalTrifContraction uses it.
--/
-lemma bpt_count_of_partitionForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bkg_ClassicalForestData ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  StatMech.Walls.bkg_coarseTcount_of_classical ω L R h
-
-/-- Same statement as `bfa_bk_of_classicalForest`; kept because GlobalTrifContraction uses it. -/
-lemma bpt_bk_of_partitionForest (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bkg_ClassicalForestData ω L R) :
-    bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  (bkg_bk_uniqueness_of_classical p hp1 hp0 hdata).2.1
-
 lemma bpt_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 1 ≤ R → ∀ (x : Site d) (arm : Fin 3 → Site d),
       (∀ i, arm i ∈ box d R) → (∀ i, arm i ≠ x) →
@@ -195,6 +182,6 @@ lemma bpt_status :
   · intro L hL
     exact bpt_cut_ground_sets_differ L hL
   · intro ω L R
-    exact ⟨bpt_partitionForest_iff_bc69 ω L R, bpt_count_of_partitionForest ω L R⟩
+    exact ⟨bfa_classical_iff_bc69 ω L R, bkg_coarseTcount_of_classical ω L R⟩
 
 end StatMech.Walls

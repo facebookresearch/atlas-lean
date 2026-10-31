@@ -22,12 +22,12 @@ For `q ≥ 1` the free random-cluster measure is stochastically increasing in th
 embeds into `Gout` with matching adjacency, then the outer measure, restricted to the inner edges,
 dominates the inner measure on increasing events. Applying this to the complement of a decreasing
 event `A` and using that both measures have total mass one gives the reverse inequality for `A`.
-The headline `bdp_free_outer_dominated_inner_decreasing` is proved unconditionally (it takes only
+The headline `fkProb_free_nested_decreasing_le` is proved unconditionally (it takes only
 injectivity of the embedding, adjacency matching, and `0 < p < 1`, `1 ≤ q`).
 
 ## ii. Key results
 
-- `bdp_free_outer_dominated_inner_decreasing` : for a decreasing event `A` of the inner graph,
+- `fkProb_free_nested_decreasing_le` : for a decreasing event `A` of the inner graph,
   `φ^free_Gout(ω|_Gin ∈ A) ≤ φ^free_Gin(A)`.
 
 ## iii. Table of contents
@@ -57,7 +57,7 @@ variable {iota : Vin → Vout}
 
 /-- For `q ≥ 1`, the free random-cluster measure on an outer graph gives the pull-back of a
 decreasing event of an embedded inner graph at most the inner free measure of that event. -/
-theorem bdp_free_outer_dominated_inner_decreasing
+theorem fkProb_free_nested_decreasing_le
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

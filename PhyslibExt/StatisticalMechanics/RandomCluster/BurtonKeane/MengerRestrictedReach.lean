@@ -95,6 +95,8 @@ lemma bc18_firstHit {S : Set V} {a b : V} (p : G.Walk a b) :
           · exact absurd hzS huS
           · exact hq z hz hzS
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc18_firstHitPath {S : Set V} {a b : V} (p : G.Walk a b)
     (hmem : ∃ z ∈ p.support, z ∈ S) :
     ∃ (c : V) (q : G.Walk a c), q.IsPath ∧ c ∈ S ∧ q.support ⊆ p.support ∧
@@ -113,6 +115,8 @@ lemma bc18_subset_AReach (G : SimpleGraph V) (A S : Set V) : A ⊆ bc18_AReach G
   exact ⟨a, ha, Walk.nil, fun z hz _ => by
     rw [Walk.support_nil, List.mem_singleton] at hz; exact hz⟩
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc18_mem_AReach_of_mem_support {A S : Set V} {a v : V}
     (ha : a ∈ A) {q : G.Walk a v} (hqpath : q.IsPath)
     (hq : ∀ z ∈ q.support, z ∈ S → z = v) {z : V} (hz : z ∈ q.support) :
@@ -126,6 +130,8 @@ lemma bc18_mem_AReach_of_mem_support {A S : Set V} {a v : V}
   · subst hwv
     exact absurd hw (Walk.endpoint_notMem_support_takeUntil hqpath hz (Ne.symm hzv))
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc18_AReach_separator_transfer {A B S C : Set V}
     (hS : bc16_IsSeparator G A B S)
     (hC : bc16_IsSeparator (bc17_restr G (bc18_AReach G A S)) A S C) :
@@ -279,6 +285,8 @@ lemma bc18_AReach_inter_subset {A B S : Set V} (hS : bc16_IsSeparator G A B S) :
   · rw [Walk.support_reverse, List.mem_reverse] at h
     exact hpbS cc h hccS
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc18_mem_AReach_of_essential {A B S : Set V} {w : V}
     (hSsep : bc16_IsSeparator G A B S)
     (hnotSep : ¬ bc16_IsSeparator G A B (S \ {w})) :
@@ -312,6 +320,8 @@ lemma bc18_appendPath_of_inter {a v b : V} {p : G.Walk a v} {q : G.Walk v b}
     rw [Walk.cons_tail_support]; exact hq.support_nodup
   exact (List.nodup_cons.mp hnd).1 hw
 
+-- The instance binder is kept so that existing callers and the statement are unchanged.
+set_option linter.unusedDecidableInType false in
 lemma bc18_aside_fan {A B S : Set V} {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard)
     (hSsep : bc16_IsSeparator G A B S)

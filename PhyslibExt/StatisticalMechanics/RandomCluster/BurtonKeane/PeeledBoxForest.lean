@@ -8,14 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeForestData
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryPruning
@@ -69,7 +71,6 @@ namespace Percolation
 variable {d : ℕ}
 
 /-! ## A. Definitions -/
-
 
 open Classical in
 /-- A spanning forest of the finite graph `G`: a maximal acyclic subgraph. -/
@@ -152,7 +153,6 @@ lemma osf_spanForest_degree_of_acyclic {V : Type*} [Fintype V] (F₀ : SimpleGra
   have hns : (osf_spanForest F₀).neighborSet v = F₀.neighborSet v := by rw [heq]
   rw [Set.toFinset_congr hns]
 
-
 open Classical in
 /-- A peeled box forest for `B_n`: an open graph on finitely many sites whose spanning forest has no
 isolated vertices, keeps three separated neighbours at each trifurcation of `B_n`, and has its
@@ -187,7 +187,6 @@ lemma osf_boxOpenForest_of_peeled (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     exact ⟨osf_spanForest_reachable_of F₀ hr, hne⟩
   · exact hleaf
 
-
 open Classical in
 lemma osf_peeledBoxForest_of_acyclic (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (Vset : Finset (Site d)) (hVne : Nonempty (↑Vset : Type)) (F₀ : SimpleGraph (↑Vset : Type))
@@ -211,7 +210,6 @@ lemma osf_peeledBoxForest_of_acyclic (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ
   · intro v hv
     rw [osf_spanForest_degree_of_acyclic F₀ hac] at hv
     exact hleaf v hv
-
 
 open Classical in
 lemma osf_peeledBoxForest_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
@@ -312,12 +310,6 @@ lemma osf_peeledBoxForest_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     · rw [heval]; exact habdry 1
     · rw [heval]; exact habdry 2
 
-lemma osf_singleTree_refutable_forest_survives (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x y : Site d} (hxbox : x ∈ box d n) (hxtri : IsTrifurcation d ω x)
-    (hybox : y ∈ box d n) (hytri : IsTrifurcation d ω y) (hsep : ¬ Connected d ω x y) :
-    ¬ bpr_TreeForestData ω n :=
-  bst_treeForestData_refutable_of_twoClusters ω n hxbox hxtri hybox hytri hsep
-
 namespace OsfDoubleStar
 
 /-- Adjacency of two three-leaf stars with centres `0` and `4` joined by the edge `0 4`. -/
@@ -362,7 +354,6 @@ lemma dsG_hub4_deg : dsG.degree 4 = 3 := by decide
 lemma dsG_deg_pos (v : Fin 8) : 1 ≤ dsG.degree v := by fin_cases v <;> decide
 
 end OsfDoubleStar
-
 
 open Classical in
 lemma osf_peeledBoxForest_twoStar (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)

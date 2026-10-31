@@ -11,6 +11,7 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Ends.Properties
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanContour
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses
 
 /-!
 # Tails of infinite clusters outside a finite set
@@ -246,13 +247,6 @@ noncomputable def infiniteClusterTailData
       infiniteCluster_has_open_exit_to_infinite_tail omega x hinf K hxK
     exact ⟨⟨u, v, T, hu, hv, huv, hvT, hTinf, hTsub, hTconn⟩⟩)
 
-lemma disjoint_clusters_of_ne (omega : ConfigSpace (Sym2 (Site d)))
-    {x y : Site d} (hne : cluster d omega x ≠ cluster d omega y) :
-    Disjoint (cluster d omega x) (cluster d omega y) := by
-  rw [Set.disjoint_left]
-  intro z hzx hzy
-  exact hne ((cluster_eq_of_connected hzx).trans (cluster_eq_of_connected hzy).symm)
-
 lemma threeInfiniteClusters_have_disjoint_tails
     (omega : ConfigSpace (Sym2 (Site d))) (K : Finset (Site d))
     (x1 x2 x3 : Site d)
@@ -271,9 +265,9 @@ lemma threeInfiniteClusters_have_disjoint_tails
   let D1 := infiniteClusterTailData omega x1 hi1 K hx1
   let D2 := infiniteClusterTailData omega x2 hi2 K hx2
   let D3 := infiniteClusterTailData omega x3 hi3 K hx3
-  have hc12 := disjoint_clusters_of_ne omega hne12
-  have hc13 := disjoint_clusters_of_ne omega hne13
-  have hc23 := disjoint_clusters_of_ne omega hne23
+  have hc12 := Walls.bc2_disjoint_of_ne hne12
+  have hc13 := Walls.bc2_disjoint_of_ne hne13
+  have hc23 := Walls.bc2_disjoint_of_ne hne23
   exact ⟨D1, D2, D3,
     hc12.mono D1.tail_subset_cluster D2.tail_subset_cluster,
     hc13.mono D1.tail_subset_cluster D3.tail_subset_cluster,

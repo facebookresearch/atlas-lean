@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicReachStep
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount
@@ -93,32 +95,6 @@ lemma bkg_reachable_eq_of_edgeless {V : Type*} {H : SimpleGraph V} (he : ∀ u v
   cases p with
   | nil => rfl
   | cons hadj _ => exact absurd hadj (he _ _)
-
-lemma bkg_step_witness : bc70_star4.IsAcyclic := by
-  classical
-  refine bkg_acyclic_of_singleVertexCut bc70_star4 bc70_star4 le_rfl ?_
-  intro t a b hta htb hab
-  by_cases ht0 : t = 0
-  · subst ht0
-    intro hreach
-    have hedgeless : ∀ u v, ¬ (bkg_deleteVertex bc70_star4 0).Adj u v := by
-      intro u v ⟨hadj, hu, hv⟩
-      have : u = 0 ∨ v = 0 := by
-        revert hadj; simp only [bc70_star4, SimpleGraph.fromEdgeSet_adj]
-        intro ⟨hmem, _⟩; fin_cases u <;> fin_cases v <;> revert hmem <;> decide
-      rcases this with h | h
-      · exact hu h
-      · exact hv h
-    exact hab (bkg_reachable_eq_of_edgeless hedgeless hreach)
-  · exfalso
-    have hnb : ∀ z, bc70_star4.Adj t z → z = 0 := by
-      intro z hz
-      revert hz; simp only [bc70_star4, SimpleGraph.fromEdgeSet_adj]
-      intro ⟨hmem, _⟩
-      fin_cases t <;> first
-        | (exact absurd rfl ht0)
-        | (fin_cases z <;> revert hmem <;> decide)
-    exact hab ((hnb a hta).trans (hnb b htb).symm)
 
 /-! ## B. Classical forest data -/
 

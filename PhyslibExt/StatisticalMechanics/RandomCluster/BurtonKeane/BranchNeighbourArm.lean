@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Topology.LocallyFinite
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Paths
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.StarArmUnion
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineArmTreeLeaf
 
@@ -273,6 +275,6 @@ lemma bae_status :
   refine ⟨?_, ?_, ?_⟩
   · intro ω x T _i hle hspan h; exact bae_three_infinite_branches x T hle hspan h
   · intro ω x T _i hle n R hR hadj hn hbr; exact bae_arm x T hle hR hadj hn hbr
-  · exact bgf3_star_witness
+  · exact bfk_star_count_witness
 
 end StatMech.Walls

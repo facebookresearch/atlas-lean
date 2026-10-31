@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Paths
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InternalArmChild
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerGapThreeArms
 
@@ -71,13 +71,6 @@ lemma bc116_isInternal_of_mem_support_free (F : SimpleGraph V) {s t : V} (p : F.
       have : i = p.length := by omega
       rw [← hvi, this, p.getVert_length]
 
-/-- Same statement as `bc116_isInternal_of_mem_support_free`; kept because PendantPathMember uses
-it. -/
-lemma bc116_isInternal_of_throughPath (F : SimpleGraph V) {s t : V} (p : F.Walk s t)
-    (hp : p.IsPath) {v : V} (hv : v ∈ p.support) (hvs : v ≠ s) (hvt : v ≠ t) :
-    bc114_IsInternal F v :=
-  bc116_isInternal_of_mem_support_free F p hp hv hvs hvt
-
 /-! ## B. Through-path coverage -/
 
 /-- Every vertex outside `B` and `H` lies in the interior of a path of `F`. -/
@@ -89,7 +82,7 @@ lemma bc116_armCovered_of_throughPathCovered (F : SimpleGraph V) {B H : V → Pr
     (hcov : bc116_ThroughPathCovered F B H) : bc114_ArmCovered F B H := by
   intro v hvB hvH
   obtain ⟨s, t, p, hp, hmem, hvs, hvt⟩ := hcov v hvB hvH
-  exact bc116_isInternal_of_throughPath F p hp hmem hvs hvt
+  exact bc116_isInternal_of_mem_support_free F p hp hmem hvs hvt
 
 end StatMech.Walls
 
@@ -128,15 +121,6 @@ lemma bc116_armForest_boundaryAnchored (F : SimpleGraph V) [DecidableRel F.Adj] 
     F.IsAcyclic ∧ (∀ v, 1 ≤ F.degree v) ∧ (∀ v, F.degree v = 1 → B v) :=
   bc114_armForest_boundaryAnchored F (bc116_armCovered_of_throughPathCovered F hcov) hhub hac hmin
 
-set_option linter.unusedDecidableInType false in
-lemma bc116_pendant_not_covered (F : SimpleGraph V) [DecidableRel F.Adj] {v : V}
-    (hdeg : F.degree v = 1) : ¬ bc114_IsInternal F v :=
-  bc114_leaf_not_internal F hdeg
-
-lemma bc116_covered_nonvacuous :
-    bc114_IsInternal (SimpleGraph.fromEdgeSet {s((0 : Fin 3), 1), s((1 : Fin 3), 2)}) 1 :=
-  bc114_armCovered_nonvacuous
-
 end StatMech.Walls
 
 namespace StatMech.Walls
@@ -146,12 +130,6 @@ open StatMech StatMech.Lattice StatMech.ConfigSpace StatMech.Percolation
 variable {d : ℕ}
 
 /-! ## C. The contracted lattice -/
-
-lemma bc116_arm_boundary_path_concrete (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R)
-    (y a : Site d) (habox : a ∈ box d R)
-    (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
-    ∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a z :=
-  bc101_arm_reaches_boundary ω L R hR y a habox hinf
 
 lemma bc116_arm_interior_covered_concrete (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ)
     (y a z v : Site d) (hva : v ≠ a) (hvz : v ≠ z)
@@ -195,10 +173,10 @@ lemma bc116_status {V : Type*} :
       have hL : p.getVert i = p.getVert p.length := by rw [p.getVert_length]; exact h
       exact absurd (hp.getVert_injOn (by simp; omega) (by simp) hL) (by omega)
   · intro ω L R hR y a habox hinf
-    exact bc116_arm_boundary_path_concrete ω L R hR y a habox hinf
+    exact bc67_Gn_arm_reaches_boundary ω L R hR y a habox hinf
   · intro ω L y B H hmem
     exact bc116_armCovered_concrete_of_membership ω L y hmem
   · intro F _ _ _ v hdeg
-    exact bc116_pendant_not_covered F hdeg
+    exact bc114_leaf_not_internal F hdeg
 
 end StatMech.Walls

@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryVolumeRatio
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!
 # Spanning-tree leaf counts
@@ -298,7 +299,6 @@ lemma starG_deg1_iff (v : Fin 4) : starG.degree v = 1 ↔ v ≠ 0 := by
 
 end Flc2Witness
 
-
 open Classical in
 lemma flc2_spanningTreeLeafCount_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d n) (hz₁ : z₁ ∈ vertexBoundary d n)
@@ -320,7 +320,6 @@ lemma flc2_spanningTreeLeafCount_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n
     · exact absurd huv hzne
     · exact absurd huv.symm hzne
     · rfl
-
 
 open Classical in
 lemma flc2_spanningTreeLeafCount_star (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
@@ -360,34 +359,6 @@ lemma flc2_hbound_of_spanningTree
     ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
       Tcount d ω n ≤ boxSV_boundaryCard d n :=
   fun ω n hn => flc2_Tcount_le_boundary_of_spanningTree ω n (hres ω n hn)
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from a certificate for every
-configuration and box. The certificate implies the trifurcation-to-boundary injection
-`tfc_DistinctArmEnds` for every configuration, which `tfc_not_forall_distinctArmEnds` refutes
-for `d ≥ 1`; so the statement is vacuous. -/
-lemma flc2_burton_keane_bernoulli_of_spanningTree (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      flc2_SpanningTreeLeafCount ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  tfc_burton_keane_uniqueness_full (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n)
-    (flc2_hbound_of_spanningTree hres)
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd)
-    htrif
 
 end Percolation
 

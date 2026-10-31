@@ -59,7 +59,7 @@ set_option linter.unusedSectionVars false
 
 namespace StatMech.FK.PeriodicPlanar
 
-open StatMech.Lattice StatMech.FrontierA
+open StatMech.Lattice StatMech.FK.TriHex
 
 variable {V : Type*} [Countable V] [DecidableEq V]
 

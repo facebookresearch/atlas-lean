@@ -202,7 +202,7 @@ theorem activeBCProb_FKGLatticeCondition {pf : Sym2 V -> Real}
 
 /-! ## C. Open marginals and closed-edge products -/
 
-lemma activeBCWeight_close_pair {pf : Sym2 V -> Real}
+lemma activeBCWeight_open_closed_comparison {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (e : G.edgeSet)
     (omega : ConfigSpace G.edgeSet) :
@@ -248,7 +248,7 @@ lemma activeBC_openMarginal_le_param {pf : Sym2 V -> Real}
       (pf e.1 * activeBCWeight G C pf q (setClosed e psi)) /
         activeBCZ G C pf q by ring]
   exact (div_le_div_iff_of_pos_right hZ).2
-    (activeBCWeight_close_pair G C hpf hpf1 hq e psi)
+    (activeBCWeight_open_closed_comparison G C hpf hpf1 hq e psi)
 
 /-- For `q ≥ 1`, the probability that every edge of `S` is closed is at least `∏_{e ∈ S} (1 - p_e)`.
 -/

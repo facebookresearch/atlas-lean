@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Fintype.Pigeonhole
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
@@ -45,7 +49,8 @@ configuration by configuration; the deterministic counting bound is the reusable
 - `tac_ray_const_of_connected` : the ray label is constant along open walks
 - `tac_origin_isTrifurcation` : the origin is a trifurcation
 - `tac_threeArmCover_false` : the plus configuration has no three-arm cover
-- `tac_Tcount_le_boundary_of_globalForestArms` : global forest arms bound the count
+- `StatMech.Percolation.aed_Tcount_le_boundary_of_globalForestArms` (in `ArmEndDisjoint`) : global
+  forest arms bound the count
 
 ## iii. Table of contents
 
@@ -289,11 +294,6 @@ lemma tac_threeArmCover_false : ¬ fcc_ThreeArmCover (d := 2) tac_plus 1 := by
       first
       | exact absurd rfl hkl
       | exact tac_disconnected_of_ne_ray (by decide)
-
-lemma tac_Tcount_le_boundary_of_globalForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hn : 1 ≤ n) (h : aed_GlobalForestArms ω n) :
-    Tcount d ω n ≤ boxSV_boundaryCard d n :=
-  aed_Tcount_le_boundary_of_globalForestArms ω n hn h
 
 end Percolation
 

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 
@@ -164,12 +165,6 @@ lemma crr_runsAlongAxis_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (j : Fin
     crr_ClusterRunsAlongAxis ω (hrHD_rayPt j 1) j := by
   refine ⟨0, ?_, connected_rfl, connected_rfl, hinf⟩
   intro t ht; omega
-
-lemma crr_clusterReachesRay_of_neighbour' (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d)
-    (hinf : (cluster d (removeSite 0 ω) (hrHD_rayPt j 1)).Infinite) :
-    lma_ClusterReachesRay ω (hrHD_rayPt j 1) j :=
-  crr_clusterReachesRay_of_runsAlongAxis ω (hrHD_rayPt j 1) j
-    (crr_runsAlongAxis_of_neighbour ω j hinf)
 
 /-- Axis assignment, defined as `crr_ClusterRunsAlongAxis`. -/
 def crr_AxisAssignment (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d) : Prop :=

@@ -172,10 +172,10 @@ lemma triHexCriticalConclusion_of_exactDualThreshold_of_globalComparison
     (hphase : TriangularCriticalPhaseBoundary q pcTri)
     (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q pcTri)
     (hcompare : TriHexGlobalTwoPointComparison q pcTri pcHex) :
-    (FrontierA.triangularFKCriticalPolynomial q
-          (FrontierA.fkEdgeOdds pcTri) = 0 ∧
-        FrontierA.hexagonalFKCriticalPolynomial q
-          (FrontierA.fkEdgeOdds pcHex) = 0) ∧
+    (FK.TriHex.triangularFKCriticalPolynomial q
+          (FK.TriHex.fkEdgeOdds pcTri) = 0 ∧
+        FK.TriHex.hexagonalFKCriticalPolynomial q
+          (FK.TriHex.fkEdgeOdds pcHex) = 0) ∧
       SubcriticalTwoPointExponentialDecay triangular q pcTri ∧
       SubcriticalTwoPointExponentialDecay hexagonal q pcHex := by
   exact triHexCriticalConclusion_of_exactDualThreshold hq hpcTri hdual
@@ -190,10 +190,10 @@ lemma triHexCriticalConclusion_of_exactDualThreshold_of_probabilityComparison
     (hphase : TriangularCriticalPhaseBoundary q pcTri)
     (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q pcTri)
     (hprob : TriHexGlobalProbabilityComparison q pcTri pcHex) :
-    (FrontierA.triangularFKCriticalPolynomial q
-          (FrontierA.fkEdgeOdds pcTri) = 0 ∧
-        FrontierA.hexagonalFKCriticalPolynomial q
-          (FrontierA.fkEdgeOdds pcHex) = 0) ∧
+    (FK.TriHex.triangularFKCriticalPolynomial q
+          (FK.TriHex.fkEdgeOdds pcTri) = 0 ∧
+        FK.TriHex.hexagonalFKCriticalPolynomial q
+          (FK.TriHex.fkEdgeOdds pcHex) = 0) ∧
       SubcriticalTwoPointExponentialDecay triangular q pcTri ∧
       SubcriticalTwoPointExponentialDecay hexagonal q pcHex := by
   exact triHexCriticalConclusion_of_exactDualThreshold hq hpcTri hdual

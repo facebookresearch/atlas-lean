@@ -28,7 +28,8 @@ literal backbone weight equals the current-series direct-path weight
 `shb_supportLex_series_P3_counterexample` transfers.
 
 Headline fidelity: `shb_supportLex_literal_P3_counterexample` is proved unconditionally. It shows
-that P3 cannot be proved for `shb_rhoSupport` in general; see also `PartialEdgeCopyObstruction`.
+that P3 cannot be proved for `shb_rhoSupport` in general; see also
+`SupportLexDomainResummationCounterexample`.
 
 ## ii. Key results
 

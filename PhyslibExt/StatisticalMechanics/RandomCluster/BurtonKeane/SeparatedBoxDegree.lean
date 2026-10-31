@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalForestData
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedTrifContraction
@@ -76,7 +78,7 @@ lemma bsd_deg3_free_per_trif {L : ℕ} {x : Site d} {ω : ConfigSpace (Sym2 (Sit
     ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (hyS : x ∈ S)
       (_ : DecidableRel ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L x)).induce S).Adj),
       3 ≤ ((bc72_quotGraph (openSubgraph d ω) (bc72_collapseBox L x)).induce S).degree ⟨x, hyS⟩ :=
-  bc73_disjointBoxes_deg3 (bc106_gnTrif_of_separated hx)
+  bc72_quot_deg3_of_gnTrif (bc106_gnTrif_of_separated hx)
 
 lemma bsd_arm_tips_of_separated (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (hR : 1 ≤ R)
     {x : Site d} (arm : Fin 3 → Site d)
@@ -127,18 +129,6 @@ lemma bsd_bc69_of_separated_singleStar_route (ω : ConfigSpace (Sym2 (Site d))) 
     (bar_trifForestData_of_arms_route ω L R hR arm hxbox
       (bc106_gnTrif_of_separated hxsep) hsingle harmbox harmne harminf harmsep hroute)
 
-lemma bsd_collapse_survives (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
-      Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
-  bc64_arms_can_share_boundary L
-
-lemma bsd_bk_of_bc69_forall (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hdata : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ), bc69_Gn_globalForest ω L R) :
-    bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
-  bfa_bk_of_bc69Forest p hp1 hp0 hdata
-
 /-! ## B. Summary -/
 
 lemma bsd_status :
@@ -172,6 +162,6 @@ lemma bsd_status :
   · intro ω L R hR x arm hxbox hxsep hsingle harmbox harmne harminf harmsep hroute
     exact bsd_bc69_of_separated_singleStar_route ω L R hR arm hxbox hxsep hsingle
       harmbox harmne harminf harmsep hroute
-  · intro L; exact bsd_collapse_survives L
+  · intro L; exact bc64_arms_can_share_boundary L
 
 end StatMech.Walls

@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import MathlibExt.Probability.Percolation.Universality.RSWStrip
 
 /-!

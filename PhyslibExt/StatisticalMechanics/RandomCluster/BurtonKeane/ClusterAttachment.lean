@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutAvoidingSurvives
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting
 
 /-!
 # Attachment by walks avoiding the origin
@@ -73,12 +76,6 @@ lemma cla_walk_survival_force (ω : ConfigSpace (Sym2 (Site d))) (W : Finset (Sy
     have hsurv : IsOpenEdge d (removeSite 0 (forceOpenFinset W ω)) u v :=
       bka_isOpenEdge_survives ω W hopen h0e
     exact hsurv.connected.trans (ih h0rest)
-
-lemma cla_walk_survival (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
-    (w : (openSubgraph d ω).Walk a x) (hw : (0 : Site d) ∉ w.support) :
-    Connected d (removeSite 0 ω) a x := by
-  have h := cla_walk_survival_force ω ∅ w hw
-  rwa [bka_forceOpenFinset_empty] at h
 
 lemma cla_clusterAttachment_of_avoidingWalk (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (hadj : (hypercubicLattice d).Adj 0 a) (hmem : a ∈ cluster d ω x)

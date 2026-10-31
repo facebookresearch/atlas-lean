@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseStarForestEmbedding
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount
 
@@ -79,12 +81,6 @@ lemma bc65_coarseTcount_le_boundary_of_connectedForest (ω : ConfigSpace (Sym2 (
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
   bc63_coarseTcount_le_boundary_of_armEmbedding ω L R
     (bc65_coarseArmEmbedding_of_connectedForest ω L R h)
-
-lemma bc65_connected_leaf_count {V : Type*} [Fintype V] [Nonempty V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v) :
-    (univ.filter (fun v => 3 ≤ G.degree v)).card
-      ≤ (univ.filter (fun v => G.degree v = 1)).card :=
-  flc2_forest_internal_le_leaves G hacyc hmin
 
 /-! ## B. Caterpillars -/
 
@@ -234,7 +230,7 @@ lemma bc65_status :
       bc64_CoarseBoundaryInjection ω L R → bc65_ConnectedCoarseForest ω L R) := by
   refine ⟨?_, bc65_caterpillar2_savings, ?_, ?_⟩
   · intro V _ _ G _ hacyc hmin
-    exact bc65_connected_leaf_count G hacyc hmin
+    exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro ω L R h
     exact bc65_coarseTcount_le_boundary_of_connectedForest ω L R h
   · intro ω L R z₀ z₁ hz₀ hz₁ hzne hinj
