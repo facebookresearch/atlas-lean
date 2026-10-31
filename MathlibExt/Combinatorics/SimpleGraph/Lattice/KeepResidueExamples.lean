@@ -9,6 +9,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CutColoring
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+
 /-!
 # Test instances of the keep residue
 

@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.AE
 
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+
 /-!
 # Kingman's theorem for nonnegative cocycles: the lower bound
 

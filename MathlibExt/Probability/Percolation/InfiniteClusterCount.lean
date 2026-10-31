@@ -10,6 +10,8 @@ module
 public import MathlibExt.Probability.Configuration.Ergodicity
 public import MathlibExt.Probability.Percolation.SubcriticalDecay
 
+import Mathlib.MeasureTheory.MeasurableSpace.NCard
+
 /-!
 # The number of infinite clusters is almost surely constant
 

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Configuration.ConfigSpace
+public import Mathlib.Dynamics.Ergodic.MeasurePreserving
+public import Mathlib.Topology.Constructions
 
 /-!
 # Translation invariance and ergodicity on configuration space

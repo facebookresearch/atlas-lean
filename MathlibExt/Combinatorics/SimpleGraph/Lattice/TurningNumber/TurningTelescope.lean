@@ -8,6 +8,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.KacWardMatrix
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+
+import Lean.Elab.Tactic.NormCast
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Turning numbers of lattice walks

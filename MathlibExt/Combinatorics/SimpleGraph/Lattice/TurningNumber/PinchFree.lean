@@ -10,6 +10,11 @@ module
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellPinch
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.StraightCorner
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # The interior of a simple closed walk has no pinch points
 

@@ -7,13 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarFaceGeometric
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.RegionGraphAddEdge
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEulerInduction
+import Lean.Elab.Tactic.Omega
+import Mathlib.Order.UpperLower.CompleteLattice
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 /-!
 # The rotated region graph is the lattice minus a graph

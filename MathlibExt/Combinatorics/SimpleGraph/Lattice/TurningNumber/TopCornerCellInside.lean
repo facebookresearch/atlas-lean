@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.JordanParity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.InsidePropagation
+import Lean.Elab.Tactic.Omega
 
 /-!
 # The cell at the top corner is inside

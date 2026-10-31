@@ -10,6 +10,10 @@ module
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 public import MathlibExt.Probability.Configuration.ProductMeasure
 public import MathlibExt.Probability.CorrelationInequalities.BK
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
 
 @[expose] public section
 

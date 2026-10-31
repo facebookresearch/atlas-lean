@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
+import Mathlib.Tactic.FinCases
 
 /-!
 # Crossings of rectangles in bond percolation on `ℤ²`

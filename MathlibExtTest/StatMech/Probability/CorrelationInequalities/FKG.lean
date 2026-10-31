@@ -9,6 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.FKG
+public import Mathlib.Data.Fin.VecNotation
+
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring.RingNF
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Logic.Equiv.Fin.Basic
 
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.FKG`

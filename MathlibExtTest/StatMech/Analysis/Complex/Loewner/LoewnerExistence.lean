@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Analysis.Complex.Loewner.LoewnerExistence
 
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+
 /-!
 # Tests for `MathlibExt.Analysis.Complex.Loewner.LoewnerExistence`
 

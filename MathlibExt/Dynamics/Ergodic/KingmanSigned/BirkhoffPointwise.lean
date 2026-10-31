@@ -7,7 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
+public import Mathlib.MeasureTheory.MeasurableSpace.Invariants
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.MaximalErgodic
 
 /-!

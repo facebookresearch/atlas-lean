@@ -9,6 +9,13 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.AngleDefect
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellEuler
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Finset.Image
+public import Mathlib.SetTheory.Cardinal.Finite
+
+import Lean.Elab.Tactic.Omega
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Union
 
 /-!
 # An Euler characteristic bound for cell sets

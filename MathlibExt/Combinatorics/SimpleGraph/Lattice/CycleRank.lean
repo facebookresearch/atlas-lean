@@ -7,7 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Tactic.Linarith.Frontend
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Cyclomatic
 
 /-!

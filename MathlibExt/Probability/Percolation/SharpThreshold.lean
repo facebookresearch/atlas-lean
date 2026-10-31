@@ -11,6 +11,8 @@ public import MathlibExt.Probability.Percolation.PivotalFactor
 public import MathlibExt.Probability.Percolation.RussoInfluence
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+
 /-!
 # Sharp thresholds from lower bounds on the total influence
 

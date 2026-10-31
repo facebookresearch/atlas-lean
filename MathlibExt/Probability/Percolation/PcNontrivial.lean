@@ -10,6 +10,7 @@ module
 public import MathlibExt.Probability.Percolation.Theta
 public import MathlibExt.Probability.Percolation.TildePc
 public import MathlibExt.Probability.CorrelationInequalities.Harris
+import Mathlib.Tactic.Linarith.NNRealPreprocessor
 
 /-!
 # Lower bound on the critical probability: `p_c(d) > 0`

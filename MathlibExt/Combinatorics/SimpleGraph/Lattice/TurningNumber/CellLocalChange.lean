@@ -10,6 +10,9 @@ module
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellCornerCountLocal
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellGaussBonnetLocal
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Local changes of corner defect, vertices and edges
 

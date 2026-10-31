@@ -14,6 +14,10 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCro
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkVertices
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.InsidePropagation
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # A simple closed walk as a planar subgraph of the square lattice
 

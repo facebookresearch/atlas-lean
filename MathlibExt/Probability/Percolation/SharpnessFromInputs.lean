@@ -10,6 +10,12 @@ module
 public import MathlibExt.Probability.Percolation.SubcriticalDecay
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import MathlibExt.Probability.Percolation.PcNontrivial
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Mul
 
 /-!
 # Sharpness of the phase transition, assuming its two analytic inputs

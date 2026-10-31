@@ -10,6 +10,10 @@ module
 
 public import MathlibExt.Probability.Percolation.RSW.Defs
 
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Push
+
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.Defs`
 

@@ -9,6 +9,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanCrossingCount
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Even loops of the edge flip relation are closed contours
 

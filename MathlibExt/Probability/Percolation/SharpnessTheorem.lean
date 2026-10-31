@@ -12,6 +12,8 @@ public import MathlibExt.Probability.Percolation.SurfaceReassembly
 public import MathlibExt.Probability.Percolation.DifferentialInequality
 public import MathlibExt.Probability.Percolation.PcNontrivial
 
+import Mathlib.Tactic.Linarith.NNRealPreprocessor
+
 /-!
 # Sharpness of the phase transition for Bernoulli bond percolation on `ℤ^d`
 

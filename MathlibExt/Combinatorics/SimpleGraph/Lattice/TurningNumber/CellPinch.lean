@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellEuler
 
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Pinch points of a set of unit cells
 

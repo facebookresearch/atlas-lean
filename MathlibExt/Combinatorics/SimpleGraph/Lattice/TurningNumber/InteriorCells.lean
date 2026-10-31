@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.JordanParity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCrossingV
+import Mathlib.Data.Int.Interval
 
 /-!
 # The finite set of interior cells

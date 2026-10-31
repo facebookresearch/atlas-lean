@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellEuler
 
+import Mathlib.Tactic.NormNum
+
 /-!
 # The local identity behind the cell Gauss–Bonnet formula
 

@@ -8,6 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
+public import Mathlib.Data.Fin.VecNotation
+
+import Lean.Elab.Tactic.NormCast
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Euler's formula for the grid graph `[-n, n]²`

@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
 public import MathlibExt.Probability.Percolation.TwoDimensional.Crossings

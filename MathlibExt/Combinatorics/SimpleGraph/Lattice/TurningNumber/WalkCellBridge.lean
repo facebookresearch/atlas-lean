@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellCornerCountLocal
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.InteriorCells
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Corner counts of the interior at a point

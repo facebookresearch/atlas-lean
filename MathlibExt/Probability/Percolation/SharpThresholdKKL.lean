@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+
 public import MathlibExt.Probability.Percolation.SharpThreshold
 
 /-!

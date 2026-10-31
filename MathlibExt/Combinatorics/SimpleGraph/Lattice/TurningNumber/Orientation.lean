@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.InteriorCells
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # The cells to the left of a closed walk

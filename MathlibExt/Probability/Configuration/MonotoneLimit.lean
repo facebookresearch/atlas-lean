@@ -9,6 +9,11 @@ module
 
 public import MathlibExt.Probability.Configuration.Prokhorov
 public import MathlibExt.Probability.StochasticOrder.StochasticDomination
+public import Mathlib.MeasureTheory.Constructions.Cylinders
+
+import Mathlib.MeasureTheory.Measure.Portmanteau
+import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
+import Mathlib.MeasureTheory.Measure.Prokhorov
 
 /-!
 # Monotone limits of probability measures on configuration space

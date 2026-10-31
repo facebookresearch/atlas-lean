@@ -9,6 +9,11 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EvenContourColoring
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Push
+
 /-!
 # Whitney's duality for even-degree subgraphs of `ℤ²`
 

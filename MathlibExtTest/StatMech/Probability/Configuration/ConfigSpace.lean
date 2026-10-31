@@ -10,6 +10,9 @@ module
 
 public import MathlibExt.Probability.Configuration.ConfigSpace
 
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Topology.Constructions
+
 /-!
 # Tests for `MathlibExt.Probability.Configuration.ConfigSpace`
 

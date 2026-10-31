@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.DartInjective
+public import Mathlib.Dynamics.PeriodicPts.Defs
+import Mathlib.Dynamics.PeriodicPts.Lemmas
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
 
 /-!
 # Orbits of boundary darts

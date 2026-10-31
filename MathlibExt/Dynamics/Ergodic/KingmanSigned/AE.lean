@@ -9,6 +9,13 @@ module
 
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.BirkhoffPointwise
 
+import Lean.Elab.Tactic.NormCast
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Kingman's theorem: the upper bound
 

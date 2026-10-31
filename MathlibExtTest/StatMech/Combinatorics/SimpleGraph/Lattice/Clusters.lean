@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
+public import Mathlib.Data.Fin.VecNotation
+
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters`

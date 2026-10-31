@@ -8,6 +8,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
+public import Mathlib.Combinatorics.SetFamily.FourFunctions
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Group.Indicator
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 @[expose] public section
 

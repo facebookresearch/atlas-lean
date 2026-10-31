@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.UniqueInfiniteComponent
+import Mathlib.Tactic.FinCases
 
 /-!
 # Finite subgraphs of `ℤ²` and the regions of a rotated dual

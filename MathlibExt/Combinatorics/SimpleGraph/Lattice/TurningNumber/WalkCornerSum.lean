@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCellBridge
 
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # The corner defect of the interior is a sum over walk vertices
 

@@ -10,6 +10,10 @@ module
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KeepResidueExamples
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingColoring
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.NormNum
+
 /-!
 # Cut colorings and the keep–reconnect residue
 

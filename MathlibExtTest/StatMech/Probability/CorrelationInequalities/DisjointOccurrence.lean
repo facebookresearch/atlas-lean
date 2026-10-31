@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Probability.CorrelationInequalities.DisjointOccurrence
 
+import Mathlib.Tactic.FinCases
+
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.DisjointOccurrence`
 

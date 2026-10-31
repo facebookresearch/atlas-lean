@@ -7,7 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Group.Abs
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Data.Int.Interval
+import Mathlib.Algebra.CharP.Defs
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Order.Lattice.Nat
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum.Eq
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # The hypercubic lattice `ℤ^d`

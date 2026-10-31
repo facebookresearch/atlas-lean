@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellEuler
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Corner counts around a new cell

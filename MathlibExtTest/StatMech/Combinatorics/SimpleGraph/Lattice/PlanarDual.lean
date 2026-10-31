@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 
+import Mathlib.Tactic.FinCases
+
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`
 

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Axis-parallel segments are connected

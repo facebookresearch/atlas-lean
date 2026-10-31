@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Complex.Loewner.LoewnerODE
-public import Mathlib
+import Mathlib.Analysis.ODE.Gronwall
+import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Elementary properties of Loewner solutions and of half-plane capacity

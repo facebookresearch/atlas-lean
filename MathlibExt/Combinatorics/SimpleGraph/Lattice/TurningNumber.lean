@@ -8,6 +8,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.DartOrbit
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.ZMod.Basic
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Turning of boundary-tracing orbits on the square lattice

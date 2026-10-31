@@ -7,10 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
 public import MathlibExt.Probability.Percolation.TwoDimensional.Crossings
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Tactic.FinCases
 
 /-!
 # Rectangles, crossings, annuli and the box-crossing property on `ℤ²`

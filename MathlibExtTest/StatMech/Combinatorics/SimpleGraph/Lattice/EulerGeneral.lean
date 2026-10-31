@@ -10,6 +10,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerGeneral
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerGeneral`
 

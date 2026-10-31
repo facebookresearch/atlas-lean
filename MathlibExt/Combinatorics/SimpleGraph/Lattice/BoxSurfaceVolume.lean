@@ -8,6 +8,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
+public import Mathlib.Algebra.Field.GeomSum
+public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
+public import Mathlib.Topology.Algebra.Order.Field
+public import Mathlib.Order.Filter.AtTopBot.Archimedean
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Surface-to-volume ratio of boxes in `ℤ^d`
