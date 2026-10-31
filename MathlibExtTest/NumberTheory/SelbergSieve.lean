@@ -41,4 +41,45 @@ example (s : BoundingSieve)
   norm_num at h
   exact h
 
+-- At level `R = 1` only `d = 1` survives, `G(1) = 1`, and Selberg's bound is the trivial bound
+-- `S ≤ X + |R_1|`.
+example (s : BoundingSieve) : levelSet s 1 = {1} := by
+  ext d
+  simp only [levelSet, Finset.mem_filter, Nat.mem_divisors, Finset.mem_singleton]
+  constructor
+  · rintro ⟨⟨hd, -⟩, h1⟩
+    have := Nat.pos_of_dvd_of_pos hd (Nat.pos_of_ne_zero BoundingSieve.prodPrimes_ne_zero)
+    omega
+  · rintro rfl
+    exact ⟨⟨one_dvd _, BoundingSieve.prodPrimes_ne_zero⟩, le_rfl⟩
+
+example (s : BoundingSieve) : levelSum s 1 = 1 := by
+  have h : levelSet s 1 = {1} := by
+    ext d
+    simp only [levelSet, Finset.mem_filter, Nat.mem_divisors, Finset.mem_singleton]
+    constructor
+    · rintro ⟨⟨hd, -⟩, h1⟩
+      have := Nat.pos_of_dvd_of_pos hd (Nat.pos_of_ne_zero BoundingSieve.prodPrimes_ne_zero)
+      omega
+    · rintro rfl
+      exact ⟨⟨one_dvd _, BoundingSieve.prodPrimes_ne_zero⟩, le_rfl⟩
+  rw [levelSum, h, Finset.sum_singleton, BoundingSieve.selbergTerms_apply, s.nu_mult.map_one]
+  simp
+
+example (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
+    s.siftedSum ≤ s.totalMass / levelSum s R +
+      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| :=
+  siftedSum_le_totalMass_div_levelSum_add s R hR
+
+example (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
+    s.errSum (BoundingSieve.lambdaSquared (levelWeights s R)) ≤
+      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| :=
+  errSum_lambdaSquared_levelWeights_le s R hR
+
+-- The lower bound for `G(R)` at `R = 0` is `0 ≤ G(0)`, an empty sum on the left.
+example (s : BoundingSieve) :
+    ∑ δ ∈ (Finset.Icc 1 0).filter (fun δ => δ.primeFactors ⊆ s.prodPrimes.primeFactors),
+        ∏ p ∈ δ.primeFactors, s.nu p ^ δ.factorization p ≤ levelSum s 0 :=
+  sum_prod_nu_pow_le_levelSum s 0
+
 end MathlibExtTest.NumberTheory.SelbergSieve

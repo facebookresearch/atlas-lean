@@ -25,4 +25,17 @@ example : MeromorphicOn riemannZeta Set.univ :=
 example : MeromorphicAt riemannZeta 1 :=
   meromorphicOn_riemannZeta 1 (Set.mem_univ _)
 
+example : MeromorphicAt riemannZeta 1 :=
+  meromorphicAt_riemannZeta_one
+
+/-- The pole at `s = 1` is simple. -/
+example : meromorphicOrderAt riemannZeta 1 = -1 :=
+  meromorphicOrderAt_riemannZeta_one
+
+/-- In particular `ζ` is not analytic at `1`. -/
+example : ¬ AnalyticAt ℂ riemannZeta 1 := fun h => by
+  have := h.meromorphicOrderAt_nonneg
+  rw [meromorphicOrderAt_riemannZeta_one] at this
+  exact absurd this (by decide)
+
 end RiemannZetaTest

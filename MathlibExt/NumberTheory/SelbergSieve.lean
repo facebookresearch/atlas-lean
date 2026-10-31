@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.SelbergSieve
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.Field.GeomSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -20,6 +21,13 @@ import Mathlib.Tactic.Ring
 
 This module defines the optimal level-`R` Selberg weights for an arbitrary
 `BoundingSieve` and proves their diagonalization, support, and error bounds.
+
+## Main statements
+
+* `MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add`: Selberg's upper bound
+  sieve, `S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`.
+* `MathlibExt.SelbergSieve.sum_prod_nu_pow_le_levelSum`: a lower bound for the level sum
+  `G(R)` by the completely multiplicative extension of `ν`.
 -/
 
 @[expose] public section
@@ -877,5 +885,194 @@ theorem levelWeights_errSum_le
       rw [Nat.card_Icc]
       simp only [Nat.add_sub_cancel, Nat.cast_pow]
       ring
+
+/-- The `Λ²` error term of the level-`R` Selberg weights is bounded by the double sum of the
+remainders at least common multiples:
+`errSum ≤ ∑_{d₁, d₂ ∈ levelSet} |R_{[d₁, d₂]}|`. -/
+theorem errSum_lambdaSquared_levelWeights_le (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
+    s.errSum (BoundingSieve.lambdaSquared (levelWeights s R)) ≤
+      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| := by
+  have hP0 := BoundingSieve.prodPrimes_ne_zero (s := s)
+  set w := levelWeights s R with hw
+  set L := levelSet s R with hL
+  have hLP : ∀ d ∈ L, d ∈ s.prodPrimes.divisors := fun d hd => (Finset.mem_filter.mp hd).1
+  -- `λ²(d)` is a sum over pairs from the level set
+  have hlam : ∀ d ∈ s.prodPrimes.divisors,
+      |BoundingSieve.lambdaSquared w d| ≤
+        ∑ x ∈ L ×ˢ L, if d = x.1.lcm x.2 then (1 : ℝ) else 0 := by
+    intro d hd
+    have hdP := Nat.dvd_of_mem_divisors hd
+    have hd0 : d ≠ 0 := ne_zero_of_dvd_ne_zero hP0 hdP
+    set G : ℕ × ℕ → ℝ := fun x => if d = x.1.lcm x.2 then w x.1 * w x.2 else 0 with hG
+    have h1 : BoundingSieve.lambdaSquared w d = ∑ x ∈ d.divisors ×ˢ d.divisors, G x := by
+      rw [BoundingSieve.lambdaSquared, Finset.sum_product]
+    have hsub1 : d.divisors ×ˢ d.divisors ⊆ s.prodPrimes.divisors ×ˢ s.prodPrimes.divisors :=
+      Finset.product_subset_product (Nat.divisors_subset_of_dvd hP0 hdP)
+        (Nat.divisors_subset_of_dvd hP0 hdP)
+    have hsub2 : L ×ˢ L ⊆ s.prodPrimes.divisors ×ˢ s.prodPrimes.divisors :=
+      Finset.product_subset_product hLP hLP
+    have h2 : ∑ x ∈ d.divisors ×ˢ d.divisors, G x =
+        ∑ x ∈ s.prodPrimes.divisors ×ˢ s.prodPrimes.divisors, G x := by
+      refine Finset.sum_subset hsub1 fun x _ hx => ?_
+      simp only [hG]
+      rw [ite_eq_right_iff]
+      intro hdx
+      exfalso
+      apply hx
+      simp only [Finset.mem_product, Nat.mem_divisors]
+      exact ⟨⟨hdx ▸ Nat.dvd_lcm_left _ _, hd0⟩, ⟨hdx ▸ Nat.dvd_lcm_right _ _, hd0⟩⟩
+    have hw0 : ∀ e ∈ s.prodPrimes.divisors, e ∉ L → w e = 0 := by
+      intro e he heL
+      by_contra hne
+      exact heL (Finset.mem_filter.mpr ⟨he, levelWeights_support s R e hne⟩)
+    have h3 : ∑ x ∈ L ×ˢ L, G x = ∑ x ∈ s.prodPrimes.divisors ×ˢ s.prodPrimes.divisors, G x := by
+      refine Finset.sum_subset hsub2 fun x hx hxL => ?_
+      simp only [Finset.mem_product] at hx hxL
+      simp only [hG]
+      by_cases h1L : x.1 ∈ L
+      · rw [hw0 x.2 hx.2 (fun h => hxL ⟨h1L, h⟩), mul_zero, ite_self]
+      · rw [hw0 x.1 hx.1 h1L, zero_mul, ite_self]
+    rw [h1, h2, ← h3]
+    refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun x hx => ?_)
+    simp only [hG]
+    split_ifs
+    · rw [abs_mul]
+      simp only [Finset.mem_product] at hx
+      have h1' := levelWeights_abs_le s R x.1 hR (Nat.dvd_of_mem_divisors (hLP _ hx.1))
+      have h2' := levelWeights_abs_le s R x.2 hR (Nat.dvd_of_mem_divisors (hLP _ hx.2))
+      nlinarith [abs_nonneg (w x.1), abs_nonneg (w x.2)]
+    · simp
+  calc s.errSum (BoundingSieve.lambdaSquared w)
+      = ∑ d ∈ s.prodPrimes.divisors, |BoundingSieve.lambdaSquared w d| * |s.rem d| := rfl
+    _ ≤ ∑ d ∈ s.prodPrimes.divisors,
+          (∑ x ∈ L ×ˢ L, if d = x.1.lcm x.2 then (1 : ℝ) else 0) * |s.rem d| :=
+        Finset.sum_le_sum fun d hd => mul_le_mul_of_nonneg_right (hlam d hd) (abs_nonneg _)
+    _ = ∑ x ∈ L ×ˢ L, ∑ d ∈ s.prodPrimes.divisors,
+          if d = x.1.lcm x.2 then |s.rem d| else 0 := by
+        simp_rw [Finset.sum_mul, ite_mul, one_mul, zero_mul]
+        exact Finset.sum_comm
+    _ = ∑ x ∈ L ×ˢ L, |s.rem (x.1.lcm x.2)| := by
+        refine Finset.sum_congr rfl fun x hx => ?_
+        simp only [Finset.mem_product] at hx
+        rw [Finset.sum_ite_eq', ite_eq_left_iff]
+        intro h
+        exact absurd (Nat.mem_divisors.mpr ⟨Nat.lcm_dvd (Nat.dvd_of_mem_divisors (hLP _ hx.1))
+          (Nat.dvd_of_mem_divisors (hLP _ hx.2)), hP0⟩) h
+    _ = ∑ d₁ ∈ L, ∑ d₂ ∈ L, |s.rem (d₁.lcm d₂)| := Finset.sum_product _ _ _
+
+/-- **Selberg's upper bound sieve.** For every level `R ≥ 1`,
+`S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ∣ P, d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`, where
+`G(R) = ∑_{l ∣ P, l ≤ R} g(l)` is the Selberg level sum. -/
+theorem siftedSum_le_totalMass_div_levelSum_add (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
+    s.siftedSum ≤ s.totalMass / levelSum s R +
+      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| := by
+  have h := s.siftedSum_le_mainSum_errSum_of_upperMoebius _
+    (BoundingSieve.upperMoebius_lambdaSquared _ (levelWeights_one s R hR))
+  rw [levelWeights_mainSum s R hR, mul_one_div] at h
+  linarith [errSum_lambdaSquared_levelWeights_le s R hR]
+
+/-- The Selberg level sum dominates the sum of the completely multiplicative extension of `ν`
+over the integers `δ ≤ R` whose prime factors all divide `P`:
+`∑_{δ ≤ R, δ ∣ P^∞} ∏_{p^e ∥ δ} ν(p)^e ≤ G(R)`. -/
+theorem sum_prod_nu_pow_le_levelSum (s : BoundingSieve) (R : ℕ) :
+    ∑ δ ∈ (Finset.Icc 1 R).filter (fun δ => δ.primeFactors ⊆ s.prodPrimes.primeFactors),
+        ∏ p ∈ δ.primeFactors, s.nu p ^ δ.factorization p ≤ levelSum s R := by
+  classical
+  set Q := s.prodPrimes with hQ
+  have hQ0 : Q ≠ 0 := BoundingSieve.prodPrimes_ne_zero (s := s)
+  have hQsq : Squarefree Q := s.prodPrimes_squarefree
+  set rad : ℕ → ℕ := fun δ => ∏ p ∈ δ.primeFactors, p with hrad
+  set S := (Finset.Icc 1 R).filter (fun δ => δ.primeFactors ⊆ Q.primeFactors) with hS
+  have hmaps : ∀ δ ∈ S, rad δ ∈ levelSet s R := by
+    intro δ hδ
+    simp only [hS, Finset.mem_filter, Finset.mem_Icc] at hδ
+    obtain ⟨⟨h1, h2⟩, h3⟩ := hδ
+    have hle : rad δ ≤ δ := Nat.le_of_dvd (by omega) (Nat.prod_primeFactors_dvd δ)
+    simp only [levelSet, Finset.mem_filter, Nat.mem_divisors]
+    refine ⟨⟨?_, hQ0⟩, hle.trans h2⟩
+    calc rad δ ∣ ∏ p ∈ Q.primeFactors, p := Finset.prod_dvd_prod_of_subset _ _ _ h3
+      _ = Q := Nat.prod_primeFactors_of_squarefree hQsq
+  rw [levelSum, ← Finset.sum_fiberwise_of_maps_to hmaps]
+  refine Finset.sum_le_sum fun n hn => ?_
+  have hnQ : n ∣ Q := (Nat.mem_divisors.1 (Finset.mem_filter.1 hn).1).1
+  have hnsq : Squarefree n := hQsq.squarefree_of_dvd hnQ
+  have hpQ : ∀ p ∈ n.primeFactors, p.Prime ∧ p ∣ Q := fun p hp =>
+    ⟨Nat.prime_of_mem_primeFactors hp, (Nat.dvd_of_mem_primeFactors hp).trans hnQ⟩
+  have hnu0 : ∀ p ∈ n.primeFactors, 0 < s.nu p := fun p hp =>
+    s.nu_pos_of_prime p (hpQ p hp).1 (hpQ p hp).2
+  have hnu1 : ∀ p ∈ n.primeFactors, s.nu p < 1 := fun p hp =>
+    s.nu_lt_one_of_prime p (hpQ p hp).1 (hpQ p hp).2
+  -- the Selberg term of a squarefree `n` is `∏_{p ∣ n} ν(p) / (1 - ν(p))`
+  have hRHS : s.selbergTerms n = ∏ p ∈ n.primeFactors, s.nu p * (1 - s.nu p)⁻¹ := by
+    rw [BoundingSieve.selbergTerms_apply, Finset.prod_mul_distrib,
+      ← s.nu_mult.prod_primeFactors hnsq]
+  rw [hRHS]
+  set t := n.primeFactors with ht
+  have hfib : ∀ δ ∈ S.filter (fun δ => rad δ = n), δ ≠ 0 ∧ δ ≤ R ∧ δ.primeFactors = t := by
+    intro δ hδ
+    simp only [Finset.mem_filter, hS, Finset.mem_Icc] at hδ
+    refine ⟨by omega, hδ.1.1.2, ?_⟩
+    rw [ht, ← hδ.2, hrad, Nat.primeFactors_prod_primeFactors]
+  let φ : ℕ → (t → ℕ) := fun δ i => δ.factorization i
+  let G : (t → ℕ) → ℝ := fun x => ∏ i : t, s.nu (i : ℕ) ^ (x i)
+  have hval : ∀ δ ∈ S.filter (fun δ => rad δ = n),
+      ∏ p ∈ δ.primeFactors, s.nu p ^ δ.factorization p = G (φ δ) := by
+    intro δ hδ
+    obtain ⟨-, -, hpf⟩ := hfib δ hδ
+    rw [hpf]
+    exact (Finset.prod_coe_sort t (fun i => s.nu i ^ δ.factorization i)).symm
+  have hinj : Set.InjOn φ (S.filter (fun δ => rad δ = n)) := by
+    intro a ha b hb hab
+    obtain ⟨ha0, -, hapf⟩ := hfib a ha
+    obtain ⟨hb0, -, hbpf⟩ := hfib b hb
+    apply Nat.factorization_inj ha0 hb0
+    ext p
+    by_cases hp : p ∈ t
+    · exact congrFun hab ⟨p, hp⟩
+    · rw [Finsupp.notMem_support_iff.1 (by rw [Nat.support_factorization, hapf]; exact hp),
+        Finsupp.notMem_support_iff.1 (by rw [Nat.support_factorization, hbpf]; exact hp)]
+  have hsub : (S.filter (fun δ => rad δ = n)).image φ ⊆
+      Fintype.piFinset (fun _ : t => Finset.Icc 1 R) := by
+    intro x hx
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.1 hx
+    obtain ⟨h0, hR', hpf⟩ := hfib δ hδ
+    rw [Fintype.mem_piFinset]
+    intro i
+    have hi : (i : ℕ) ∈ δ.primeFactors := by rw [hpf]; exact i.2
+    have hpd := Nat.mem_primeFactors.1 hi
+    simp only [φ, Finset.mem_Icc]
+    exact ⟨hpd.1.factorization_pos_of_dvd h0 hpd.2.1,
+      ((Nat.factorization_lt _ h0).le).trans hR'⟩
+  have hGnn : ∀ x, 0 ≤ G x := fun x =>
+    Finset.prod_nonneg fun i _ => pow_nonneg (hnu0 i i.2).le _
+  calc ∑ δ ∈ S.filter (fun δ => rad δ = n), ∏ p ∈ δ.primeFactors, s.nu p ^ δ.factorization p
+      = ∑ δ ∈ S.filter (fun δ => rad δ = n), G (φ δ) := Finset.sum_congr rfl hval
+    _ = ∑ x ∈ (S.filter (fun δ => rad δ = n)).image φ, G x := (Finset.sum_image hinj).symm
+    _ ≤ ∑ x ∈ Fintype.piFinset (fun _ : t => Finset.Icc 1 R), G x :=
+        Finset.sum_le_sum_of_subset_of_nonneg hsub (fun x _ _ => hGnn x)
+    _ = ∏ i : t, ∑ k ∈ Finset.Icc 1 R, s.nu (i : ℕ) ^ k := Finset.sum_prod_piFinset _ _
+    _ ≤ ∏ i : t, s.nu (i : ℕ) * (1 - s.nu (i : ℕ))⁻¹ := by
+        refine Finset.prod_le_prod₀ (fun (i : t) _ => Finset.sum_nonneg fun k _ =>
+          pow_nonneg (hnu0 i i.2).le _) fun (i : t) _ => ?_
+        have h0 := hnu0 i i.2
+        have h1 := hnu1 i i.2
+        have hIcc : Finset.Icc 1 R = Finset.Ico 1 (R + 1) := by
+          ext; simp only [Finset.mem_Icc, Finset.mem_Ico]; omega
+        rw [hIcc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
+        simp_rw [pow_add, pow_one, ← Finset.mul_sum]
+        rw [geom_sum_eq h1.ne]
+        have hne : s.nu (i : ℕ) - 1 ≠ 0 := by linarith
+        have hne' : 1 - s.nu (i : ℕ) ≠ 0 := by linarith
+        have hR0 : 0 ≤ s.nu (i : ℕ) ^ R := pow_nonneg h0.le R
+        have key : s.nu (i : ℕ) * ((s.nu (i : ℕ) ^ R - 1) / (s.nu (i : ℕ) - 1)) =
+            (1 - s.nu (i : ℕ) ^ R) * (s.nu (i : ℕ) * (1 - s.nu (i : ℕ))⁻¹) := by
+          field_simp
+          ring
+        rw [key]
+        have : 0 ≤ s.nu (i : ℕ) * (1 - s.nu (i : ℕ))⁻¹ :=
+          mul_nonneg h0.le (inv_nonneg.mpr (by linarith))
+        nlinarith
+    _ = ∏ p ∈ t, s.nu p * (1 - s.nu p)⁻¹ :=
+        Finset.prod_coe_sort t (fun p => s.nu p * (1 - s.nu p)⁻¹)
 
 end MathlibExt.SelbergSieve
