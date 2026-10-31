@@ -46,8 +46,8 @@ theorem modelCount_nil : modelCount [] = 1 := by
 
 /-- Rename every occurring variable by its position in the last-occurrence list. -/
 def compact (formula : CNF) : CNF :=
-  formula.map fun clause => clause.map fun literal =>
-    (((formula.flatMap fun C => C.map Prod.fst).dedup.idxOf literal.1), literal.2)
+  let names := (formula.flatMap fun clause => clause.map Prod.fst).dedup
+  formula.map fun clause => clause.map fun literal => (names.idxOf literal.1, literal.2)
 
 /-- Compaction preserves the number of clauses. -/
 @[simp]

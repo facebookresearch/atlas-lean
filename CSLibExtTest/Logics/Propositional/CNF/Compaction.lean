@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Logics.Propositional.CNF.Compaction
+public meta import CSLibExt.Logics.Propositional.CNF.Compaction
 
 @[expose] public section
 
@@ -21,6 +22,8 @@ example : CNF.modelCount [] = 1 := by
 
 private def sparse : CNF :=
   [[(7, true), (100, false)], [(7, true)]]
+
+#eval sparse.compact
 
 private theorem compact_eq_source (formula : CNF) :
     formula.compact = formula.map fun clause => clause.map fun literal =>
