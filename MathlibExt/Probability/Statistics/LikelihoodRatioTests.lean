@@ -40,10 +40,10 @@ The regularity conditions are those of
 `MLEAsymptoticNormality.tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation` (Cramér's
 conditions: on a ball about `θ₀` the log-likelihood is three times differentiable in `θ` and
 its third derivative has an integrable envelope). Only a one-dimensional parameter and a simple
-null hypothesis are covered; composite hypotheses with `r` restrictions (limit `χ²_r`) and the
-local power under contiguous alternatives are not. The likelihood-ratio results
-are stated for consistent roots of the likelihood equation; when the root maximizes the
-likelihood the statistic is the supremum form `2 (sup_θ ℓₙ θ - ℓₙ θ₀)`
+null hypothesis are covered; composite hypotheses with `r` restrictions (limit `χ²_r`) are not.
+The local power under contiguous alternatives is in `LikelihoodRatioLocalPower`. The
+likelihood-ratio results are stated for consistent roots of the likelihood equation; when the
+root maximizes the likelihood the statistic is the supremum form `2 (sup_θ ℓₙ θ - ℓₙ θ₀)`
 (`tendstoInDistribution_two_mul_iSup_logLikelihood_sub`).
 
 ## Main results
