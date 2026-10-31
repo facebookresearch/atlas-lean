@@ -20,15 +20,11 @@ as the `L²` extension of the elementary Itô integral, and proves the Itô isom
 martingale property for every integrand that is an `L²(P ⊗ du)`-limit of elementary integrands
 (`ProbabilityTheory.IsItoApproximable`), the value on elementary integrands, Wiener's integration
 by parts for deterministic `C¹` integrands, and the identification of the Itô form of the
-Ornstein–Uhlenbeck solution with `ProbabilityTheory.ouPathSolution`. This file records what is
-still missing.
+Ornstein–Uhlenbeck solution with `ProbabilityTheory.ouPathSolution`.
+`MathlibExt.Probability.ItoDensity` proves that every progressive integrand with
+`E ∫_0^t H² < ∞` is Itô-approximable, so the isometry and the martingale property hold for
+progressive integrands. This file records what is still missing.
 
-* `isItoApproximable_of_isProgressive`: every progressive integrand with `E ∫_0^t H² < ∞` is
-  Itô-approximable (Karatzas–Shreve 1991, Lemma 3.2.4 and Proposition 3.2.6). With it, the
-  isometry and the martingale property below follow from
-  `ProbabilityTheory.lintegral_itoIntegral_sq` and `ProbabilityTheory.martingale_itoIntegral`.
-* `itoIntegral_isometry`, `martingale_itoIntegral`: the Itô isometry and the martingale property
-  for progressive integrands.
 * `ito_formula`: Itô's formula for `f(B_t)` with `f` of class `C²` with bounded first and second
   derivatives; it needs the quadratic variation of Brownian motion, which is not formalized.
 * `isOrnsteinUhlenbeckFromZero_ouPathSolution`, `isStationaryOrnsteinUhlenbeck_ouPathSolution`: the
@@ -60,39 +56,6 @@ open MeasureTheory ProbabilityTheory Real
 open scoped NNReal ENNReal ProbabilityTheory
 
 namespace MathlibExt.Probability.ItoCalculusWanted
-
-/-- **Density of elementary integrands.** A progressive integrand `H` with
-`E ∫_0^t H_u² du < ∞` is the `L²(P ⊗ du)`-limit on `(0, t] × Ω` of elementary integrands
-(Karatzas–Shreve 1991, Lemma 3.2.4 and Proposition 3.2.6). -/
-public theorem_wanted isItoApproximable_of_isProgressive {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} [IsFiniteMeasure P] {F : Filtration ℝ≥0 mΩ} {H : ℝ≥0 → Ω → ℝ}
-    (hH : IsProgressive F H) (t : ℝ≥0)
-    (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
-    IsItoApproximable P F H t
-
-/-- **Itô isometry.** For an `F`-progressive integrand `H` with `E ∫_0^t H_u² du < ∞`,
-`E[(∫_0^t H dB)²] = E ∫_0^t H_u² du` (Karatzas–Shreve 1991, Section 3.2). -/
-public theorem_wanted itoIntegral_isometry {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
-    (hBF : Adapted F B)
-    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
-      (F s) P)
-    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (t : ℝ≥0)
-    (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
-    ∫⁻ ω, ‖itoIntegral P F B H t ω‖ₑ ^ 2 ∂P =
-      ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P
-
-/-- **Martingale property.** For an `F`-progressive integrand `H` with `E ∫_0^t H_u² du < ∞`
-for every `t`, the Itô integral `t ↦ ∫_0^t H dB` is an `F`-martingale (Karatzas–Shreve 1991,
-Proposition 3.2.10). -/
-public theorem_wanted martingale_itoIntegral {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
-    (hBF : Adapted F B)
-    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
-      (F s) P)
-    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H)
-    (hH2 : ∀ t : ℝ≥0, ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
-    Martingale (itoIntegral P F B H) F P
 
 /-- **Itô's formula** for Brownian motion: for `f` of class `C²` with bounded `f'` and `f''`,
 `f(B t) = f(B 0) + ∫_0^t f'(B u) dB u + (1/2) ∫_0^t f''(B u) du` almost surely
