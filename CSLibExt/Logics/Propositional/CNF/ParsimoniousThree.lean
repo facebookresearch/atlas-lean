@@ -39,16 +39,20 @@ def to3Parsimonious (formula : CNF) (start : Nat) : CNF :=
   (splitAll ((List.range formula.numFreshParsimonious3).map fun offset => start + offset)
     formula).dedup
 where
+  /-- Negate one literal while preserving its variable name. -/
   neg (literal : Nat × Bool) : Nat × Bool := (literal.1, !literal.2)
+  /-- Force `fresh` to equal the disjunction of the first two literals. -/
   forced (fresh : Nat) (first second : Nat × Bool) : CNF :=
     [[(fresh, false), first, second],
       [(fresh, true), neg first],
       [(fresh, true), neg second]]
+  /-- Split one clause using its assigned fresh-variable names. -/
   splitClause : List Nat → CNFClause → CNF
     | fresh :: rest, first :: second :: third :: fourth :: tail =>
         forced fresh first second ++
           splitClause rest ((fresh, true) :: third :: fourth :: tail)
     | _, clause => [clause]
+  /-- Split every clause, consuming consecutive fresh-variable names. -/
   splitAll : List Nat → CNF → CNF
     | _, [] => []
     | fresh, clause :: rest =>
