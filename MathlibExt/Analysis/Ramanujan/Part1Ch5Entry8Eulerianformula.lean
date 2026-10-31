@@ -737,51 +737,63 @@ private theorem hasSumPsi (z : ℂ) (hz : ‖z‖ < Real.pi) :
   rw [heq]
   exact hT
 
-/-- Component of Entry 8 (see `ramanujan_part1_ch5_entry8_eulerianformula`):
-`Complex.exp z + 1 ≠ 0` for `‖z‖ < π`, without the unrelated positive `n`
-required by the bundled statement. -/
+/-- **No zeros of e^z + 1 in the disc of radius pi.** For every complex number $z$ with
+$|z| < \pi$, we have $e^z + 1 \ne 0$. -/
 theorem chapter5Entry8_exp_add_one_ne (z : ℂ) (hz : ‖z‖ < Real.pi) :
     Complex.exp z + 1 ≠ 0 :=
   aux_exp_add_one_ne z hz
 
-/-- Component of Entry 8 (see `ramanujan_part1_ch5_entry8_eulerianformula`):
-evaluation of the Eulerian polynomial at `-1`, for all `n` including `n = 0`,
-without the unrelated `z` and radius proof required by the bundled statement. -/
+/-- **Eulerian polynomials at p = -1.** Let $A(n,k)$ be the Eulerian numbers, given by
+$A(0,0) = 1$, $A(0,k) = 0$ for $k \ge 1$ and
+$A(n+1,k) = (k+1)A(n,k) + (n+1-k)A(n,k-1)$, where the last term is $0$ when $k = 0$, and let
+$\Psi_0(p) = 1$ and $\Psi_n(p) = \sum_{k=0}^{n-1} A(n,k)(-p)^k$ for $n \ge 1$. For every natural
+number $n$, $\Psi_n(-1) = n!$. -/
 theorem chapter5Entry8_psi_neg_one (n : ℕ) :
     chapter5Psi n (-1 : ℂ) = (n.factorial : ℂ) :=
   psi_neg_one n
 
-/-- Component of Entry 8 (see `ramanujan_part1_ch5_entry8_eulerianformula`):
-evaluation of the Eulerian polynomial at `1` in terms of Bernoulli numbers,
-without the unrelated `z` and radius proof required by the bundled statement. -/
+/-- **Eulerian polynomials at p = 1 in terms of Bernoulli numbers.** Let $A(n,k)$ be the Eulerian
+numbers, given by $A(0,0) = 1$, $A(0,k) = 0$ for $k \ge 1$ and
+$A(n+1,k) = (k+1)A(n,k) + (n+1-k)A(n,k-1)$, where the last term is $0$ when $k = 0$; let
+$\Psi_0(p) = 1$ and $\Psi_n(p) = \sum_{k=0}^{n-1} A(n,k)(-p)^k$ for $n \ge 1$, and let $B_m$ be
+the Bernoulli numbers. For every integer $n \ge 1$,
+$\Psi_n(1) = 2^{n+1}(2^{n+1} - 1)B_{n+1}/(n+1)$. -/
 theorem chapter5Entry8_psi_one (n : ℕ) (hn : 1 ≤ n) :
     chapter5Psi n (1 : ℂ) =
       (2 : ℂ) ^ (n + 1) * ((2 : ℂ) ^ (n + 1) - 1) *
         (bernoulli (n + 1) : ℂ) / (n + 1 : ℂ) :=
   psivalue n hn
 
-/-- Component of Entry 8 (see `ramanujan_part1_ch5_entry8_eulerianformula`):
-Bernoulli-number series for `1 / (Complex.exp z + 1)`, without the unrelated
-positive `n` required by the bundled statement. -/
+/-- **Bernoulli-number expansion of 1/(e^z + 1) in the disc of radius pi.** Let $B_m$ be the
+Bernoulli numbers, with $B_1 = -\tfrac{1}{2}$. For every complex number $z$ with $|z| < \pi$, the
+series $\sum_{j \ge 0} (1 - 2^{j+1}) B_{j+1} z^j/(j+1)!$ is summable with sum $1/(e^z + 1)$. -/
 theorem chapter5Entry8_hasSum_bernoulli (z : ℂ) (hz : ‖z‖ < Real.pi) :
     HasSum (chapter5Entry8BernoulliTerm z)
       (1 / (Complex.exp z + 1)) :=
   hasSumBernoulli z hz
 
-/-- Component of Entry 8 (see `ramanujan_part1_ch5_entry8_eulerianformula`):
-Eulerian-polynomial series for `1 / (Complex.exp z + 1)`, without the unrelated
-positive `n` required by the bundled statement. -/
+/-- **Eulerian-polynomial expansion of 1/(e^z + 1) in the disc of radius pi.** Let $A(n,k)$ be the
+Eulerian numbers, given by $A(0,0) = 1$, $A(0,k) = 0$ for $k \ge 1$ and
+$A(n+1,k) = (k+1)A(n,k) + (n+1-k)A(n,k-1)$, where the last term is $0$ when $k = 0$, and let
+$\Psi_0(p) = 1$ and $\Psi_n(p) = \sum_{k=0}^{n-1} A(n,k)(-p)^k$ for $n \ge 1$. For every complex
+number $z$ with $|z| < \pi$, the series $\sum_{m \ge 0} (-1)^m \Psi_m(1) z^m/(2^{m+1} m!)$ is
+summable with sum $1/(e^z + 1)$. -/
 theorem chapter5Entry8_hasSum_psi (z : ℂ) (hz : ‖z‖ < Real.pi) :
     HasSum (chapter5Entry8PsiTerm z)
       (1 / (Complex.exp z + 1)) :=
   hasSumPsi z hz
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5, Entry 8.
+/-- **Eulerian polynomials at 1 and -1 and two series for 1/(e^z + 1).** Let $A(n,k)$ be the
+Eulerian numbers, given by $A(0,0) = 1$, $A(0,k) = 0$ for $k \ge 1$ and
+$A(n+1,k) = (k+1)A(n,k) + (n+1-k)A(n,k-1)$, where the last term is $0$ when $k = 0$; let
+$\Psi_0(p) = 1$ and $\Psi_n(p) = \sum_{k=0}^{n-1} A(n,k)(-p)^k$ for $n \ge 1$, and let $B_m$ be
+the Bernoulli numbers, with $B_1 = -\tfrac{1}{2}$. For every integer $n \ge 1$ and every complex
+number $z$ with $|z| < \pi$, we have $e^z + 1 \ne 0$, $\Psi_n(-1) = n!$,
+$\Psi_n(1) = 2^{n+1}(2^{n+1} - 1)B_{n+1}/(n+1)$, the series
+$\sum_{j \ge 0} (1 - 2^{j+1}) B_{j+1} z^j/(j+1)!$ is summable with sum $1/(e^z + 1)$, and the
+series $\sum_{m \ge 0} (-1)^m \Psi_m(1) z^m/(2^{m+1} m!)$ is summable with sum $1/(e^z + 1)$.
 
-This entry was historically misnumbered as Entry 3
-(Entry 3 is `Entry3.ramanujan_part1_ch5_entry3`); the old name
-`Entry3Eulerianformula.ramanujan_part1_ch5_entry3_eulerianformula` remains as a
-compatibility alias.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5, Entry 8.
 -/
 theorem ramanujan_part1_ch5_entry8_eulerianformula (n : ℕ) (z : ℂ)
     (hn : 1 ≤ n) (hz : ‖z‖ < Real.pi) :

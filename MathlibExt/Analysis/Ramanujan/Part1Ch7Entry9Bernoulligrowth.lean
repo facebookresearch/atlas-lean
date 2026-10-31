@@ -238,9 +238,12 @@ private theorem entry9_summable (x : ℂ) (_hx : chapter7Admissible x) (r : ℂ)
     exact hb
   exact (summable_nat_add_iff J).mp htail
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 9.
+/-- **Convergence and holomorphy of the power-difference series.** Let $x$ be an admissible
+complex number. For every complex $r$ with $\operatorname{Re} r < 0$ the series
+$\sum_{j \ge 0} \bigl((j + 1)^r - (j + 1 + x)^r\bigr)$ (principal powers) is summable, and its
+sum $\varphi_r(x)$ is a holomorphic function of $r$ on the half-plane $\operatorname{Re} r < 0$.
 
-Proves `Wanted` entry `ramanujan_part1_ch7_entry9_bernoulligrowth`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 9.
 -/
 theorem ramanujan_part1_ch7_entry9_bernoulligrowth
     (x : ℂ) (hx : chapter7Admissible x) :
