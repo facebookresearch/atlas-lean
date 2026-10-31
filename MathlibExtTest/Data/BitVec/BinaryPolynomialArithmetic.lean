@@ -185,15 +185,24 @@ private theorem one_eq_source {s : Nat} (g : BitVec s) (hs : 0 < s) :
   rw [BitVec.getElem_toBoolListLE, BitVec.getLsbD_one]
   cases i <;> simp [hs]
 
+private theorem powMod_zero_imported {s t : Nat} (g : BitVec s) (u : BitVec t) :
+    g.powMod u 0 = 1#s := by
+  rw [BitVec.powMod, ← Nat.fold_eq_foldTR, Nat.fold_zero]
+
+private theorem powMod_succ_imported {s t : Nat} (g : BitVec s) (u : BitVec t)
+    (e : Nat) :
+    g.powMod u (e + 1) = g.mulMod (g.powMod u e) u := by
+  unfold BitVec.powMod
+  rw [← Nat.fold_eq_foldTR, Nat.fold_succ, Nat.fold_eq_foldTR]
+
 private theorem powMod_eq_source {s t : Nat} (g : BitVec s) (u : BitVec t)
     (e : Nat) (hs : 0 < s) :
     (g.powMod u e).toBoolListLE =
       sourcePowW g.toBoolListLE u.toBoolListLE e := by
   induction e with
-  | zero => exact one_eq_source g hs
+  | zero => simpa [powMod_zero_imported, sourcePowW] using one_eq_source g hs
   | succ e ih =>
-      have htarget : g.powMod u (e + 1) = g.mulMod (g.powMod u e) u := by
-        simp [BitVec.powMod, List.range_succ]
+      have htarget := powMod_succ_imported g u e
       have hsource :
           sourcePowW g.toBoolListLE u.toBoolListLE (e + 1) =
             sourceMulW g.toBoolListLE
@@ -278,9 +287,13 @@ example :
 example : sourcePowW [] [] 0 = [true] := rfl
 
 /-- The fixed-width operation instead returns the unique zero-width word. -/
-example : (0#0).powMod (0#0) 0 = 0#0 := by decide
+example : (0#0).powMod (0#0) 0 = 0#0 := by
+  rw [powMod_zero_imported]
+  exact Subsingleton.elim _ _
 
-example : ((0#0).powMod (0#0) 0).toBoolListLE ≠ sourcePowW [] [] 0 := by decide
+example : ((0#0).powMod (0#0) 0).toBoolListLE ≠ sourcePowW [] [] 0 := by
+  rw [powMod_zero_imported]
+  decide
 
 /-- The distinct representatives still denote the same element of the zero quotient. -/
 example :
@@ -330,15 +343,29 @@ example : (3#3).mulMod (3#3) (4#3) = 7#3 := by decide
 
 example : (3#3).mulMod (3#3) (3#3) = 5#3 := by decide
 
-example : (3#3).powMod (2#3) 7 = 1#3 := by decide
+private theorem powMod_two_seven : (3#3).powMod (2#3) 7 = 1#3 := by
+  simp only [ETHBinaryArithmeticReference.powMod_succ_imported,
+    ETHBinaryArithmeticReference.powMod_zero_imported]
+  decide
+
+example : (3#3).powMod (2#3) 7 = 1#3 := powMod_two_seven
 
 example : (3#3).mulMod (1#3) (16#5) = 6#3 := by decide
 
-example : (3#3).powMod (16#5) 1 = 6#3 := by decide
+private theorem powMod_sixteen_one : (3#3).powMod (16#5) 1 = 6#3 := by
+  rw [ETHBinaryArithmeticReference.powMod_succ_imported,
+    ETHBinaryArithmeticReference.powMod_zero_imported]
+  decide
 
-example : (3#3).powMod (0#3) 0 = 1#3 := by decide
+example : (3#3).powMod (16#5) 1 = 6#3 := powMod_sixteen_one
 
-example : (3#3).powMod (0#3) 1 = 0#3 := by decide
+example : (3#3).powMod (0#3) 0 = 1#3 :=
+  ETHBinaryArithmeticReference.powMod_zero_imported _ _
+
+example : (3#3).powMod (0#3) 1 = 0#3 := by
+  rw [ETHBinaryArithmeticReference.powMod_succ_imported,
+    ETHBinaryArithmeticReference.powMod_zero_imported]
+  decide
 
 example : (1#3).mulMod (3#3) (7#3) = 0#3 := by decide
 
@@ -348,15 +375,21 @@ example : (0#0).mulMod (0#0) (0#0) = 0#0 := by decide
 
 example {s : Nat} (x : BitVec s) : x ^^^ x = 0#s := by rw [BitVec.xor_self]
 
-#eval (3#3).mulXMod (2#3)
-#eval (3#3).mulXMod (4#3)
-#eval (3#3).mulMod (2#3) (4#3)
-#eval (3#3).mulMod (3#3) (4#3)
-#eval (3#3).mulMod (3#3) (3#3)
-#eval (3#3).powMod (2#3) 7
-#eval (3#3).mulMod (1#3) (16#5)
-#eval (3#3).powMod (16#5) 1
-#eval (1#3).mulMod (3#3) (7#3)
+private def assertEval {n : Nat} (actual expected : BitVec n) : IO (BitVec n) :=
+  if actual == expected then
+    pure actual
+  else
+    throw <| IO.userError "binary arithmetic evaluation mismatch"
+
+#eval assertEval ((3#3).mulXMod (2#3)) (4#3)
+#eval assertEval ((3#3).mulXMod (4#3)) (3#3)
+#eval assertEval ((3#3).mulMod (2#3) (4#3)) (3#3)
+#eval assertEval ((3#3).mulMod (3#3) (4#3)) (7#3)
+#eval assertEval ((3#3).mulMod (3#3) (3#3)) (5#3)
+#eval assertEval ((3#3).powMod (2#3) 7) (1#3)
+#eval assertEval ((3#3).mulMod (1#3) (16#5)) (6#3)
+#eval assertEval ((3#3).powMod (16#5) 1) (6#3)
+#eval assertEval ((1#3).mulMod (3#3) (7#3)) (0#3)
 
 example :
     ((2#3).toPolynomial * (4#3).toPolynomial).modByMonic
@@ -375,12 +408,14 @@ example :
         (3#3).monicModulus = (5#3).toPolynomial := by
   rw [modByMonic_powMod]
   congr 1
+  simp only [ETHBinaryArithmeticReference.powMod_succ_imported,
+    ETHBinaryArithmeticReference.powMod_zero_imported]
+  decide
 
 example :
     ((2#3).toPolynomial ^ 7).modByMonic
         (3#3).monicModulus = (1#3).toPolynomial := by
-  rw [modByMonic_powMod]
-  congr 1
+  rw [modByMonic_powMod, powMod_two_seven]
 
 example :
     (3#3).adjoinRootEquiv (2#3) *
@@ -406,7 +441,10 @@ example :
   calc
     _ = (3#3).adjoinRootEquiv ((3#3).powMod (3#3) 2) :=
       (BitVec.adjoinRootEquiv_powMod (3#3) (3#3) 2).symm
-    _ = _ := congrArg ((3#3).adjoinRootEquiv) (by decide)
+    _ = _ := congrArg ((3#3).adjoinRootEquiv) (by
+      simp only [ETHBinaryArithmeticReference.powMod_succ_imported,
+        ETHBinaryArithmeticReference.powMod_zero_imported]
+      decide)
 
 example :
     (AdjoinRoot.mk (3#3).monicModulus (2#3).toPolynomial) ^ 7 =
@@ -415,7 +453,7 @@ example :
     _ = (3#3).adjoinRootEquiv ((3#3).powMod (2#3) 7) :=
       (BitVec.adjoinRootEquiv_powMod (3#3) (2#3) 7).symm
     _ = (3#3).adjoinRootEquiv (1#3) :=
-      congrArg ((3#3).adjoinRootEquiv) (by decide)
+      congrArg ((3#3).adjoinRootEquiv) powMod_two_seven
     _ = 1 := by
       have hone : (1#3).toPolynomial = 1 := by
         ext i

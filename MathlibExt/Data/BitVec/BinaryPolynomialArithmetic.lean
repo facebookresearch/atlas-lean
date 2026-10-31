@@ -17,6 +17,13 @@ public import MathlibExt.RingTheory.AdjoinRoot.BitVec
 The operations in this file use fixed-width shifts, xor, and the little-endian source folds from
 the ETH formalization. They compute in the quotient by `X ^ s + g` without requiring that the
 modulus be irreducible.
+
+The implementation is adapted from `eth/proof/variables/VariableBound/Field/Defs.lean` and
+`eth/proof/variables/VariableBound/Field/Ring.lean` in
+https://github.com/anthropics/formal-math/tree/16a5ce41304fcdaea4e0be7c132e1c361dc26da5.
+
+`powMod` uses Lean's tail-recursive `Nat.foldTR` for the source `List.range`/`List.foldl`
+recurrence, avoiding a materialized list of unused indices.
 -/
 
 @[expose] public section
@@ -32,9 +39,9 @@ def mulMod {s t : Nat} (g x : BitVec s) (y : BitVec t) : BitVec s :=
   y.toBoolListLE.foldr
     (fun b c => if b then x ^^^ g.mulXMod c else g.mulXMod c) (0#s)
 
-/-- Raise a binary residue to a natural power by repeated modular multiplication. -/
+/-- Raise a binary residue to a natural power by tail-recursive repeated multiplication. -/
 def powMod {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Nat) : BitVec s :=
-  (List.range e).foldl (fun c _ => g.mulMod c u) (1#s)
+  Nat.foldTR e (fun _ _ c => g.mulMod c u) (1#s)
 
 private theorem toPolynomial_shiftLeft_add_high {s : Nat} (w : BitVec s) :
     (w.shiftLeft 1).toPolynomial +
@@ -155,7 +162,7 @@ private theorem one_toPolynomial {s : Nat} (hs : 0 < s) : (1#s).toPolynomial = 1
 
 private theorem powMod_succ {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Nat) :
     g.powMod u (e + 1) = g.mulMod (g.powMod u e) u := by
-  simp [powMod, List.range_succ]
+  simp [powMod, ← Nat.fold_eq_foldTR, Nat.fold_succ]
 
 /-- Repeated multiplication has its expected power evaluation for positive result width. -/
 theorem eval₂_powMod {s t : Nat} {R : Type*} [CommRing R]
@@ -164,7 +171,7 @@ theorem eval₂_powMod {s t : Nat} {R : Type*} [CommRing R]
     (g.powMod u e).toPolynomial.eval₂ φ r =
       (u.toPolynomial.eval₂ φ r) ^ e := by
   induction e with
-  | zero => simp [powMod, one_toPolynomial hs]
+  | zero => simp [powMod, ← Nat.fold_eq_foldTR, one_toPolynomial hs]
   | succ e ih =>
       rw [show e + 1 = Nat.succ e by rfl, powMod_succ,
         eval₂_mulMod φ r g _ u hr, ih, pow_succ]
