@@ -50,8 +50,8 @@ that these linear systems have exactly one solution for `ρ ≥ 0` and computes 
 `E T_A = 1`, `Var T_A = 1`, and from two linked sequences
 `Cov(T_A, T_B) = (ρ + 18) / (ρ² + 13 ρ + 18)` (Hudson 1983; Kaplan & Hudson 1985). The
 identification of the solutions with path-space expectations of the chain constructed in
-`MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path` is not proved here; it is
-recorded in `WantedExt.Biology.PopulationGenetics.TwoLocusCoalescentWanted`.
+`MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path` is proved in
+`MathlibExt.Biology.PopulationGenetics.TwoLocusCoalescentPath`.
 
 ## The Ohta–Kimura moment system
 
@@ -346,7 +346,7 @@ solve the mean equations of the two loci and `f` the product-moment equations (`
 either locus has coalesced, `(Q f) i = -(mA i + mB i)` where neither has). Then `f - mA mB` is
 `(ρ + 18) / (ρ² + 13ρ + 18)` from `linked`, `6 / (ρ² + 13ρ + 18)` from `partlySplit` and
 `4 / (ρ² + 13ρ + 18)` from `split`. This is a statement about the backward equations; that their
-solutions are the path-space moments of the chain is recorded in `WantedExt`. -/
+solutions are the path-space moments of the chain is proved in `TwoLocusCoalescentPath`. -/
 theorem covariance_of_productMoment {ρ : ℝ} (hρ : 0 ≤ ρ) {mA mB f : TwoLocusState → ℝ}
     (hA0 : ∀ i, coalescedA i = true → mA i = 0)
     (hA : ∀ i, coalescedA i = false → (twoLocusRate ρ *ᵥ mA) i = -1)
