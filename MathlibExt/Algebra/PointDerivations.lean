@@ -81,9 +81,6 @@ theorem apply_algebraMap {D : A →ₗ[k] M} (hD : D ∈ PointDerivations k A ev
     D (algebraMap k A c) = 0 := by
   rw [Algebra.algebraMap_eq_smul_one, LinearMap.map_smul, apply_one hD, smul_zero]
 
-theorem ev_smul (c : k) (a : A) : ev (c • a) = c * ev a := by
-  simp only [map_smul, smul_eq_mul]
-
 /-- Functoriality of point derivations in the coefficient module. -/
 def map (ev : A →ₐ[k] k) (φ : M →ₗ[k] M') :
     ↥(PointDerivations k A ev M) →ₗ[k] ↥(PointDerivations k A ev M') where

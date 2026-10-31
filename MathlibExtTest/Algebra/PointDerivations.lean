@@ -30,10 +30,6 @@ example (k : Type) [Field k] (A : Type) [CommRing A] [Algebra k A] (ev : A →�
     (hD : D ∈ Algebra.PointDerivations k A ev M) (c : k) : D (algebraMap k A c) = 0 :=
   Algebra.PointDerivations.apply_algebraMap hD c
 
-example (k : Type) [Field k] (A : Type) [CommRing A] [Algebra k A] (ev : A →ₐ[k] k)
-    (c : k) (a : A) : ev (c • a) = c * ev a :=
-  Algebra.PointDerivations.ev_smul c a
-
 open Polynomial
 
 private noncomputable def evalDerivativeAt (x : ℚ) : ℚ[X] →ₗ[ℚ] ℚ :=
