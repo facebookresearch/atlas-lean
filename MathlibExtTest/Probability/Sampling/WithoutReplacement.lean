@@ -23,6 +23,21 @@ private def weights : Fin 4 → ℝ := ![0, 0, 1, 1]
 private lemma weights_mem_Icc (i : Fin 4) : 0 ≤ weights i ∧ weights i ≤ 1 := by
   fin_cases i <;> norm_num [weights]
 
+private def higherPopulation : Finset (ULift.{1} (Fin 4)) := Finset.univ
+
+private def higherWeights (i : ULift.{1} (Fin 4)) : ℝ := weights i.down
+
+private lemma higherWeights_mem_Icc (i : ULift.{1} (Fin 4)) :
+    0 ≤ higherWeights i ∧ higherWeights i ≤ 1 := by
+  exact weights_mem_Icc i.down
+
+private lemma higherWeights_nonconstant :
+    higherWeights (ULift.up 0) ≠ higherWeights (ULift.up 2) := by
+  norm_num [higherWeights, weights]
+
+private lemma higherPopulation_nonempty : higherPopulation.Nonempty := by
+  exact ⟨ULift.up 0, by simp [higherPopulation]⟩
+
 private lemma population_pairs :
     population.powersetCard 2 =
       ({{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}} : Finset (Finset (Fin 4))) := by
@@ -72,6 +87,16 @@ example : (1 : ℝ) ≤ 6 * Real.exp (-1) := by
       norm_num
   rw [hcard] at h
   simpa [mul_comm] using h
+
+/-- The public bound applies to a populated finite type in a higher universe. -/
+example :
+    (#{S ∈ higherPopulation.powersetCard 2 |
+        2 * ((∑ i ∈ higherPopulation, higherWeights i) / #higherPopulation) +
+          (1 / 2 : ℝ) * 2 * 1 ≤ ∑ i ∈ S, higherWeights i} : ℝ) ≤
+      Real.exp (-(2 * 2 * (1 / 2 : ℝ) ^ 2)) * (#higherPopulation).choose 2 := by
+  exact Finset.card_sample_tail_le (ι := ULift.{1} (Fin 4)) higherPopulation higherWeights
+    (R := 1) (t := 1 / 2) (by norm_num) (fun i _ ↦ higherWeights_mem_Icc i)
+    higherPopulation_nonempty 2 (by norm_num)
 
 /-- At `t = 0`, constant weights select every two-element subset. -/
 example :

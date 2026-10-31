@@ -37,7 +37,7 @@ namespace Finset
 
 open Finset
 
-variable {ι : Type} [DecidableEq ι]
+variable {ι : Type*} [DecidableEq ι]
 
 /-- Hoeffding's two-point exponential-moment bound, specialized from Mathlib's interval bound. -/
 private theorem two_point_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (θ : ℝ) :
