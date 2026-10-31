@@ -89,10 +89,10 @@ they are positive and every invariant vector is a multiple of them.
 Infinite closed classes of the stochastic chain (where normalizability must be shown), the
 existence of a complex-balanced `c` (the deficiency-zero theorem, recorded as wanted in
 `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`), networks with conservation laws in
-metabolic control analysis (singular Jacobian, link matrices), piecewise linearity and
-differentiability of the FBA value and the existence of a balancing for nonnegative matrices
-with total support (recorded in `WantedExt/Biology/Dynamics/SystemsBiologyWanted.lean`), and
-Thomas' rules for Boolean networks with cycles.
+metabolic control analysis (singular Jacobian, link matrices), and Thomas' rules for Boolean
+networks with cycles. Piecewise linearity and differentiability of the FBA value are in
+`MathlibExt.Biology.Dynamics.FluxBalanceValue`; the existence of a balancing for symmetric
+nonnegative matrices with total support is in `MathlibExt.Biology.Dynamics.TotalSupportBalancing`.
 
 ## References
 
@@ -1108,7 +1108,8 @@ private theorem perm_sum_apply {n : ℕ} (w : Equiv.Perm (Fin n) → ℝ) (i j :
 
 /-- **Necessity of total support** (Sinkhorn & Knopp 1967; Csima & Datta 1972): if a positive
 diagonal scaling `diag(d) A diag(d)` is doubly stochastic, then `A` has total support. The proof
-uses Birkhoff's theorem. The converse for symmetric nonnegative `A` is recorded as wanted. -/
+uses Birkhoff's theorem. The converse for symmetric nonnegative `A` is
+`exists_symmetric_balancing_of_hasTotalSupport`. -/
 theorem hasTotalSupport_of_balancing {n : ℕ} (hn : 0 < n) {A : Matrix (Fin n) (Fin n) ℝ}
     {d : Fin n → ℝ} (hd : ∀ i, 0 < d i)
     (h : (fun i j => d i * A i j * d j) ∈ doublyStochastic ℝ (Fin n)) : HasTotalSupport A := by
