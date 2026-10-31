@@ -72,7 +72,7 @@ example : (toyTrans 0 .M .M + toyTrans 0 .M .I + toyTrans 0 .M .D = 1) ∧
   norm_num [toyTrans]
 
 /-- All binary sequences of length at most `n`. -/
-def boolSeqs : ℕ → List (List Bool)
+private def boolSeqs : ℕ → List (List Bool)
   | 0 => [[]]
   | n + 1 => [] :: ((boolSeqs n).flatMap fun s => [false :: s, true :: s]) |>.dedup
 

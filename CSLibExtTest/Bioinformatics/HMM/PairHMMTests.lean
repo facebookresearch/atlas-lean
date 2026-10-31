@@ -39,7 +39,7 @@ open Cslib.Algorithms.Lean
 /-! ## Executed fixtures -/
 
 /-- All binary sequences of length at most `n`. -/
-def boolSeqs : ℕ → List (List Bool)
+private def boolSeqs : ℕ → List (List Bool)
   | 0 => [[]]
   | n + 1 => [] :: ((boolSeqs n).flatMap fun s => [false :: s, true :: s]) |>.dedup
 
