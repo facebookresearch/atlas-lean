@@ -71,7 +71,8 @@ def IsTreeMetric {X : Type*} (d : X → X → ℝ) : Prop :=
 def FourPointCondition {X : Type*} (d : X → X → ℝ) : Prop :=
   ∀ x y z t, d x y + d z t ≤ max (d x z + d y t) (d x t + d y z)
 
-private theorem append_path {V : Type*} {G : SimpleGraph V} {u m v : V}
+/-- Two paths that meet only at their common endpoint `m` concatenate to a path. -/
+theorem isPath_append_of_isPath {V : Type*} {G : SimpleGraph V} {u m v : V}
     {p : G.Walk u m} {q : G.Walk m v} (hp : p.IsPath) (hq : q.IsPath)
     (hi : ∀ a ∈ p.support, a ∈ q.support → a = m) : (p.append q).IsPath := by
   apply SimpleGraph.Walk.IsPath.mk'
@@ -133,12 +134,12 @@ private theorem crossing_paths {V : Type*} {G : SimpleGraph V} (hG : G.IsTree)
   let px := p.takeUntil m hm
   let pz := p.dropUntil m hm
   have hxt : (px.append c.reverse).IsPath :=
-    append_path (hp.takeUntil hm) hc.reverse (by
+    isPath_append_of_isPath (hp.takeUntil hm) hc.reverse (by
       intro v hvx hvc
       apply hci v (by simpa using hvc)
       exact p.support_takeUntil_subset_support hm hvx)
   have hyz : (b.append pz).IsPath :=
-    append_path hb (hp.dropUntil hm) (by
+    isPath_append_of_isPath hb (hp.dropUntil hm) (by
       intro v hvb hvz
       exact hbi v hvb (p.support_dropUntil_subset_support hm hvz))
   have er : r = px.append c.reverse :=
