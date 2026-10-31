@@ -33,8 +33,9 @@ Combination rules for `k` independent studies of the same hypothesis or paramete
 
 ## Main results
 
-* `hasLaw_neg_two_mul_log_uniform`: `-2 log U ~ χ²₂` for `U` uniform on `[0, 1]`, and
-  `eq_gammaMeasure_of_mgf_eq` (MGF uniqueness for gamma laws).
+* `hasLaw_neg_two_mul_log_uniform`: `-2 log U ~ χ²₂` for `U` uniform on `[0, 1]`,
+  `eq_gammaMeasure_of_mgf_eq` (MGF uniqueness for gamma laws) and
+  `integrableExpSet_gammaMeasure` (the gamma `(a, r)` MGF is finite exactly below `r`).
 * `hasLaw_fisherStatistic`: for `k ≥ 1` independent p-values uniform on `[0, 1]`,
   `-2 ∑ log pᵢ ~ χ²_{2k}` (Fisher 1932, §21.1).
 * `hasLaw_stoufferStatistic`: for independent standard normal z-scores and weights `w ≠ 0`,
@@ -45,8 +46,8 @@ Combination rules for `k` independent studies of the same hypothesis or paramete
   positive variances, the inverse-variance-weighted average has the smallest variance among all
   weighted averages with weights summing to one (Cochran 1954).
 
-Cochran's `Q ~ χ²_{k-1}` is stated in
-`WantedExt/Probability/Statistics/TwoGroupsTestingWanted.lean`.
+Cochran's `Q ~ χ²_{k-1}` is `hasLaw_cochranQ` in
+`MathlibExt/Probability/Statistics/CochranQ.lean`.
 
 ## References
 
@@ -96,7 +97,9 @@ private theorem not_integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (
   have := (integrableOn_Ioi_rpow_iff one_pos).1 hon
   linarith
 
-private theorem integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a) (hr : 0 < r) :
+/-- The exponential moment `E[exp (t X)]` of a gamma `(a, r)` law is finite exactly for
+`t < r`. -/
+theorem integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a) (hr : 0 < r) :
     integrableExpSet id (gammaMeasure a r) = Iio r := by
   ext t
   refine ⟨fun h => ?_, fun h => Iio_subset_integrableExpSet_gammaMeasure ha hr h⟩
