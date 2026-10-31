@@ -1,0 +1,23 @@
+# Concept registry v0 — seed (90-day plan, Week 2).
+# status: reuse | bridge | build | wanted | deprecated
+# Every new PR must add/confirm its concepts or CI fails (design; not yet enforced).
+- {concept: "VC dimension", canonical_home: "Cslib.MachineLearning.PACLearning.VCDimension / vcDim", atlas_home: null, assurance: L2, consumers: ["LEARN: Sauer-Shelah", "LEARN: PAC fundamental theorem"], status: reuse}
+- {concept: "PAC learnability", canonical_home: "Cslib.MachineLearning.PACLearning / IsPACLearnable", atlas_home: null, assurance: L2, consumers: ["LEARN: PAC fundamental theorem"], status: reuse}
+- {concept: "Sorted (sorting)", canonical_home: "Mathlib.List.Sorted", atlas_home: null, aliases: ["Atlas CPythonListsort Sorted (Array, BoolComparator): BRIDGE, not alias"], assurance: L2, consumers: ["SPECS: SortingSpec", "LOGICS: VC demo (binary search)"], status: reuse+bridge}
+- {concept: "Permutation", canonical_home: "Mathlib.List.Perm", atlas_home: null, assurance: L2, consumers: ["SPECS: SortingSpec"], status: reuse}
+- {concept: "IsStable", canonical_home: null, atlas_home: null, aliases: ["MvPolynomial stable", "Gale-Shapley stable matching", "stable distribution — THREE meanings, qualify"], assurance: L0, consumers: [], status: bridge}
+- {concept: "Graph (finite)", canonical_home: "Mathlib.SimpleGraph", atlas_home: null, aliases: ["Kruskal structure Graph (n:Nat): model, bridge lemma"], assurance: L2, consumers: ["SPECS: graph specs"], status: reuse+bridge}
+- {concept: "Hedge / multiplicative weights", canonical_home: "Atlas Cslib.MachineLearning.Hedge (algLoss_le)", atlas_home: "CSLibExt/MachineLearning/Hedge.lean", assurance: L2, consumers: ["LEARN: online learning"], status: bridge}
+- {concept: "AdaBoost", canonical_home: "Atlas Cslib.MachineLearning.AdaBoost (trainErr_le_prod)", atlas_home: "CSLibExt/MachineLearning/AdaBoost.lean", assurance: L2, consumers: ["LEARN: boosting"], status: bridge}
+- {concept: "Perceptron", canonical_home: "Atlas Cslib.MachineLearning.Perceptron (mistakes_mul_sq_le)", atlas_home: "CSLibExt/MachineLearning/Perceptron.lean", assurance: L2, consumers: ["LEARN: online learning"], status: bridge}
+- {concept: "IsPolyTime / P / NP", canonical_home: "MetaMathlibExt.ComplexityTheory.IsPolyTime / P / NP", atlas_home: "MathlibExt/Computability/Complexity.lean", aliases: ["TimeM DecidesInDeclaredPolyTime: bridge only"], assurance: L2, consumers: ["COST: Cook-Levin, Karp", "LOGICS: cost logic"], status: reuse}
+- {concept: "PolyManyOneRed", canonical_home: "Cslib.CookLevin.PolyManyOneRed", atlas_home: "CSLibExt/Computability/CookLevin.lean", assurance: L2, consumers: ["COST: Karp"], status: reuse}
+- {concept: "Farkas lemma", canonical_home: "Mathlib.Analysis.Convex.Cone (geometric Farkas)", atlas_home: null, aliases: ["Finite alternative form: BUILD in LP"], assurance: L2, consumers: ["LP: strong duality"], status: reuse+build}
+- {concept: "Matroid", canonical_home: "Mathlib.Combinatorics.Matroid (structure Matroid)", atlas_home: null, assurance: L2, consumers: ["LP: matroid intersection"], status: reuse}
+- {concept: "pointsTo (heap)", canonical_home: "iris-lean GenHeap.lean:87 pointsTo (l : L) (dq : DFrac) (v : V)", atlas_home: null, assurance: L2, consumers: ["LOGICS: heap interface"], status: reuse}
+- {concept: "Neighbour (DP)", canonical_home: "SampCert Neighbour (add/remove)", atlas_home: null, aliases: ["Atlas bounded/replace-one: BRIDGE conversion required"], assurance: L2, consumers: ["DP: mechanisms, composition"], status: reuse+bridge}
+- {concept: "Renyi divergence", canonical_home: "SampCert RenyiDivergence_def", atlas_home: null, assurance: L2, consumers: ["DP: RDP composition"], status: reuse}
+- {concept: "Brouwer fixed-point", canonical_home: "TauCeti BrouwerFixedPoint.lean", atlas_home: null, aliases: ["Mathlib: none; Mathlib Kakutani = Riesz-Markov-Kakutani only"], assurance: L2, consumers: ["EconCS: Nash"], status: reuse}
+- {concept: "Rademacher complexity", canonical_home: null, atlas_home: null, assurance: L0, consumers: ["LEARN: uniform convergence"], status: build}
+- {concept: "McDiarmid / bounded differences", canonical_home: null, atlas_home: null, assurance: L0, consumers: ["LEARN: symmetrization"], status: build}
+- {concept: "Sauer-Shelah", canonical_home: null, atlas_home: null, assurance: L0, consumers: ["LEARN: PAC fundamental theorem"], status: build}
