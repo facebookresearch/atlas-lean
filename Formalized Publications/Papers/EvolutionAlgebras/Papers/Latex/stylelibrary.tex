@@ -1,0 +1,232 @@
+\usepackage[many]{tcolorbox} %box environment
+\usepackage[normalem]{ulem} %custom underline
+
+% Bar width and spacing
+\newlength{\framelinewidth}
+\setlength{\framelinewidth}{0.6mm}
+\newlength{\marginsep}
+\setlength{\marginsep}{3pt}
+\newlength{\defparindent}
+\setlength{\defparindent}{15pt}
+\setlength{\parindent}{\defparindent}
+\newlength{\boxparskip}
+\setlength{\boxparskip}{\parskip}
+
+%Define colors
+% https://davidmathlogic.com/colorblind/#%23038DFC-%232B65C6-%2322AA22-%23003300
+\definecolor{aicolor}{HTML}{038DFC}
+\definecolor{editedaicolor}{HTML}{2B65C6}
+\definecolor{humancolor}{HTML}{22AA22}
+\definecolor{aiassistedcolor}{HTML}{003300}
+\definecolor{defaultcolback}{HTML}{FFFFFF}  % white
+\newcommand{\opacityFrame}{0.5} %Opacity Percentage for the Frame
+\newcommand{\opacityText}{0.7} %Opacity Percentage for the Label Text
+
+%Define footenote commands: Creates an aux file for the footnotes inside the boxes
+\newif\iffootaux
+\newcounter{footaux}% for \csname
+\newcounter{auxpage}% to handle frontmatter etc.
+\setcounter{auxpage}{1}
+
+\makeatletter
+
+\def\tcb@footnote@setup{
+\let\footnotetext=\footaux
+\let\footnote=\footnoteaux
+}
+
+\def\footnoteaux{\@ifnextchar[\@xfootnoteaux{\stepcounter{footnote}%
+  \footnotemark[\thefootnote]\@footaux[\thefootnote]}}
+
+\def\@xfootnoteaux[#1]{\footnotemark[#1]\@footaux[#1]}
+
+\def\footaux{\@ifnextchar[\@footaux{\@footaux[\thefootnote]}}
+\def\@footaux[#1]#2{\protected@write{\@auxout}{\let\theauxpage\relax}{\string\newfootnote{\theauxpage}{#1}{#2}}}
+
+\newcommand{\newfootnote}[3]{% #1 = \theauxpage, #2 = \thefoontnote, #3 = text
+  \ifnum#1=1\relax
+    \footnotetext[#2]{#3}%
+  \else
+    \stepcounter{footaux}%
+    \expandafter\xdef\csname footauxpage\thefootaux\endcsname{#1}%
+    \expandafter\xdef\csname footauxnumber\thefootaux\endcsname{#2}%
+    \expandafter\protected@xdef\csname footauxtext\thefootaux\endcsname{#3}%
+  \fi}
+
+% to run at the end of every page (debug version)
+\newcommand{\addfootaux}{\loop
+  \@ifundefined{footauxpage\thefootaux}{\footauxfalse}{%
+    \count1=\csname footauxpage\thefootaux\endcsname\relax
+    \advance\count1 by -1
+    \ifnum\count1=\value{auxpage}%
+      \expandafter\let\expandafter\footauxnumber\csname footauxnumber\thefootaux\endcsname
+      \expandafter\let\expandafter\footauxtext\csname footauxtext\thefootaux\endcsname
+      \footnotetext[\footauxnumber]{\footauxtext}%
+      \footauxtrue
+    \else
+      \footauxfalse
+    \fi}
+  \iffootaux
+    \global\expandafter\let\csname footauxpage\thefootaux\endcsname\relax
+    \global\expandafter\let\csname footauxnumber\thefootaux\endcsname\relax
+    \global\expandafter\let\csname footauxtext\thefootaux\endcsname\relax
+    \stepcounter{footaux}%
+  \repeat
+\stepcounter{auxpage}}
+\makeatother
+
+\AtBeginDocument{\setcounter{footaux}{1}}% reset counter after \newfootnote
+\AddToHook{shipout/after}{\addfootaux}
+
+
+%Define box styles
+\makeatletter
+\tcbset{
+    roundbox/.style={
+    % Box Options
+    rounded corners,
+    arc=3mm,
+    boxrule=\framelinewidth
+  },
+  rectanglebox/.style={
+    % Box Options
+    sharp corners,
+    boxrule=\framelinewidth
+  },
+    linemargin/.style={
+    % Box Options
+    % Make frame with 1 line
+    sharp corners,
+    leftrule=\framelinewidth,    % Thickness of the left line
+    rightrule=-0.1mm,            % Removes right frame
+    toprule=-0.1mm,              % Removes top frame
+    bottomrule=-0.125mm,         % Removes bottom frame
+    % % make white background
+    colback=white,
+    % Oversize makes bigger, so that text alings with rest of the document
+    oversize,
+    % box margins
+    left=\marginsep,
+    right=\marginsep,
+    top=0.5pt,
+    bottom=0.5pt,
+    before skip=0.5\baselineskip,
+    after skip=0.5\baselineskip
+  },
+  alignoptions/.style={
+    % box margins
+    left=\marginsep,
+    right=\marginsep,
+    top=0.5pt,
+    bottom=0.5pt,
+    before skip=0.5\baselineskip,
+    after skip=\parskip,
+    before upper={
+    \parindent=\defparindent
+    \setlength{\parskip}{\boxparskip}
+    }
+  },
+  %Format for footnotes to appear in the correct page
+  footnoteformat/.style={
+  before upper app=\tcb@footnote@setup
+  }
+}
+\makeatother
+
+\tcbset{
+  enhancebreak/.style={
+    % Box Options
+    enhanced,
+    breakable,
+    skin first=enhanced,
+    skin middle=enhanced,
+    skin last=enhanced,
+    % Oversize makes bigger, so that text alings with rest of the document
+    oversize,
+  },
+}
+
+% Define Tcolorbox environments
+%% Args: #1 additional options, #2 color, #3 Side text label
+\newtcolorbox{labeledblock}[3][]{
+    colframe=#2,opacityframe=\opacityFrame,
+    enhancebreak, alignoptions, linemargin,
+    colback=white,
+    overlay={
+    \node[
+    #2, font=\tiny\bfseries\sffamily,
+    rotate=90, anchor=east, align=right,
+    text opacity=\opacityText
+      ]
+      at ([xshift=-\marginsep-\framelinewidth/2, yshift=3pt]frame.north west) {#3};
+    }, footnoteformat,
+    #1
+}
+
+\newtcolorbox{humanblock}[1][]{
+    colframe=humancolor, opacityframe=\opacityFrame,
+    enhancebreak, alignoptions, linemargin,
+    colback=white,
+    overlay={
+    \node[
+    humancolor, font=\tiny\bfseries\sffamily,
+    rotate=90, anchor=east, align=right,
+    text opacity=\opacityText
+      ]
+      at ([xshift=-\marginsep-\framelinewidth/2, yshift=3pt]frame.north west) {Human};
+    }, footnoteformat,
+    #1
+}
+
+\newtcolorbox{aiassistedblock}[1][]{
+    colframe=aiassistedcolor, opacityframe=\opacityFrame,
+    enhancebreak, alignoptions, linemargin,
+    colback=white,
+    overlay={
+    \node[aiassistedcolor, font=\tiny\bfseries\sffamily, rotate=90, anchor=east, align=right,
+      text opacity=\opacityText
+      ]
+      at ([
+      xshift=-\marginsep-\framelinewidth/2-4pt, yshift=3pt
+      ]frame.north west) {Human: \\ AI-assisted};
+    }, footnoteformat,
+    #1
+}
+
+\newtcolorbox{aiblock}[1][]{
+    colframe=aicolor, opacityframe=\opacityFrame,
+    enhancebreak, alignoptions, linemargin,
+    colback=white,
+    overlay={
+    \node[aicolor, font=\tiny\bfseries\sffamily, rotate=90, anchor=east, align=right,
+      text opacity=\opacityText
+      ]
+      at ([xshift=-\marginsep-\framelinewidth/2, yshift=3pt]frame.north west) {AI};
+    }, footnoteformat,
+    #1
+}
+
+\newtcolorbox{editedaiblock}[1][]{
+    colframe=editedaicolor, opacityframe=\opacityFrame,
+    enhancebreak, alignoptions, linemargin,
+    colback=white,
+    overlay={
+    \node[
+    editedaicolor, font=\tiny\bfseries\sffamily,
+    rotate=90, anchor=east, align=right,
+    text opacity=\opacityText
+      ]
+      at ([xshift=-\marginsep-\framelinewidth/2, yshift=3pt]frame.north west) {Edited AI};
+    }, footnoteformat,
+    #1
+}
+
+
+%%%---------------------- Underline Commands -------------------------
+
+% Dash pattern:
+\gdef\dashpattern{\kern.05em\lower.3ex\vbox{\hrule width.2em\kern.1ex}}
+
+\def\humanul{\textcolor{humancolor}\bgroup\markoverwith{\kern.05em\lower.3ex\vbox{\hrule width.2em\kern.1ex}\kern.05em}\ULon}
+
+\def\aiul{\textcolor{aicolor}\bgroup\markoverwith{\kern.05em\lower.3ex\vbox{\hrule width.2em\kern.1ex}\kern.05em}\ULon}
