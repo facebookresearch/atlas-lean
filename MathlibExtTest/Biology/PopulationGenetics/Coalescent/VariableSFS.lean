@@ -16,8 +16,9 @@ public import MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
 Kernel values and triangularity for `n = 3`, the variable-size spectrum for `n = 3` and its
 constant-size reduction, the inversion corollary, Achaz-type estimators on a point-mass model
 (non-vacuity of the estimator theorems), a non-vacuity witness for `integral_sfs_of_indep`
-(sample size `2`, deterministic holding times), and a non-vacuity witness for
-`PiecewiseHistory` with boundary and junk-value checks.
+(sample size `2`, deterministic holding times), a non-vacuity witness for
+`PiecewiseHistory` with boundary and junk-value checks, a second explicit tightness pair for
+`K = 2`, the sharpness of `n ≥ 2K` at `K = 3`, and the finite-sample non-identifiability.
 -/
 
 @[expose] public section
@@ -209,5 +210,97 @@ example : firstCoalMean (fun _ => 0) 2 = 0 := by
 example (h : PiecewiseHistory 1) : firstCoalMean h.sizeFn 2 = h.size 0 := by
   have := h.choose_two_mul_firstCoalMean one_pos le_rfl
   simpa using this
+
+/-- A two-piece history: size `1` on `[0, log 2)`, then size `3` (first half of the tightness
+example). -/
+noncomputable def tightA : PiecewiseHistory 2 where
+  size j := if j = 0 then 1 else 3
+  start j := if j = 0 then 0 else Real.log 2
+  size_pos j _ := by split_ifs <;> norm_num
+  start_zero := by simp
+  start_lt j hj := by
+    obtain rfl : j = 0 := by omega
+    simpa using Real.log_pos one_lt_two
+
+/-- A two-piece history: size `37/32` on `[0, (37/32) log 3)`, then size `59/16` (second half
+of the tightness example). -/
+noncomputable def tightB : PiecewiseHistory 2 where
+  size j := if j = 0 then 37 / 32 else 59 / 16
+  start j := if j = 0 then 0 else 37 / 32 * Real.log 3
+  size_pos j _ := by split_ifs <;> norm_num
+  start_zero := by simp
+  start_lt j hj := by
+    obtain rfl : j = 0 := by omega
+    have := Real.log_pos (by norm_num : (1 : ℝ) < 3)
+    simp only [↓reduceIte, Nat.add_eq_zero_iff, one_ne_zero, and_false]
+    positivity
+
+/-- The first coalescent-time breakpoint of a two-piece history. -/
+private lemma cumRate_start_one (h : PiecewiseHistory 2) :
+    cumRate h.sizeFn (h.start 1) = h.start 1 / h.size 0 := by
+  rw [(h.cumRate_piece 0 (by norm_num) _ (h.start_lt 0 (by norm_num)).le fun _ => le_rfl).2]
+  simp [h.start_zero, cumRate]
+
+/-- The closed form of `C(m,2) c_m` for a two-piece history. -/
+private lemma two_piece (h : PiecewiseHistory 2) {m : ℕ} (hm : 2 ≤ m) :
+    ((m.choose 2 : ℕ) : ℝ) * firstCoalMean h.sizeFn m =
+      h.size 0 + (h.size 1 - h.size 0) *
+        Real.exp (-((m.choose 2 : ℕ) : ℝ) * (h.start 1 / h.size 0)) := by
+  rw [h.choose_two_mul_firstCoalMean (by norm_num) hm,
+    show (Ico 1 2 : Finset ℕ) = {1} by decide, sum_singleton, cumRate_start_one]
+
+/-- **A second explicit pair for `K = 2`** with different breakpoints in coalescent time
+(`log 2` and `log 3`, unlike the construction of `exists_ne_firstCoalMean_eq_of_lt`): with
+`a c_m = η₀ + (η₁ - η₀) x^a`, `a = C(m,2)`, both histories give `a c_m = 2` at `a = 1` and
+`5/4` at `a = 3` (`x = 1/2` and `x = 1/3`). -/
+example :
+    ∃ h h' : PiecewiseHistory 2, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
+      ∀ m ∈ Icc 2 3, firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m := by
+  refine ⟨tightA, tightB, ⟨0, le_rfl, ?_⟩, fun m hm => ?_⟩
+  · rw [tightA.sizeFn_eq (j := 0) (by norm_num) tightA.start_zero.le (fun hk => by
+      simpa only [tightA.start_zero] using tightA.start_lt 0 hk),
+      tightB.sizeFn_eq (j := 0) (by norm_num) tightB.start_zero.le (fun hk => by
+      simpa only [tightB.start_zero] using tightB.start_lt 0 hk)]
+    simp [tightA, tightB]
+    norm_num
+  · have hm2 := (mem_Icc.1 hm).1
+    have ha : ((m.choose 2 : ℕ) : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.choose_pos hm2).ne'
+    refine mul_left_cancel₀ ha ?_
+    rw [two_piece _ hm2, two_piece _ hm2]
+    simp only [tightA, tightB, ↓reduceIte, one_ne_zero, div_one]
+    have e2 : ∀ k : ℕ, Real.exp (-(k : ℝ) * Real.log 2) = ((2 : ℝ) ^ k)⁻¹ := fun k => by
+      rw [neg_mul, Real.exp_neg, ← Real.log_pow, Real.exp_log (by positivity)]
+    have e3 : ∀ k : ℕ, Real.exp (-(k : ℝ) * (37 / 32 * Real.log 3 / (37 / 32))) =
+        ((3 : ℝ) ^ k)⁻¹ := fun k => by
+      rw [show 37 / 32 * Real.log 3 / (37 / 32) = Real.log 3 by ring, neg_mul, Real.exp_neg,
+        ← Real.log_pow, Real.exp_log (by positivity)]
+    rw [e2, e3]
+    have hm3 := (mem_Icc.1 hm).2
+    obtain rfl | rfl : m = 2 ∨ m = 3 := by omega
+    · norm_num
+    · norm_num [Nat.choose]
+
+/-- **The bound `n ≥ 2K` is sharp** for `K = 3`: `c_2, …, c_5` do not determine a three-piece
+history, `c_2, …, c_6` do. -/
+example : (∃ h h' : PiecewiseHistory 3, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
+      ∀ m ∈ Icc 2 5, firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m) ∧
+    ∀ h h' : PiecewiseHistory 3,
+      (∀ m ∈ Icc 2 6, firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m) →
+        ∀ s, 0 ≤ s → h.sizeFn s = h'.sizeFn s :=
+  ⟨PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt 3 (by norm_num),
+    fun h h' hc => PiecewiseHistory.sizeFn_eq_of_firstCoalMean_eq h h' (by norm_num) hc⟩
+
+/-- **Non-vacuity** of the finite-sample non-identifiability: two bounded histories, different
+on a set of positive measure, with the same `c_2, …, c_{20}`. -/
+example : ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
+      (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧
+      ¬ (η₁ =ᵐ[volume.restrict (Set.Ici 0)] η₂) ∧
+      ∀ m ∈ Icc 2 20, firstCoalMean η₁ m = firstCoalMean η₂ m :=
+  exists_ne_ae_firstCoalMean_eq_Icc 20
+
+/-- The first-coalescence times ignore the junk values of a size function before the present:
+replacing `sizeFn` by its value at `max s 0` changes nothing. -/
+example : firstCoalMean (fun s => twoPiece.sizeFn (max s 0)) 3 = firstCoalMean twoPiece.sizeFn 3 :=
+  firstCoalMean_comp_max _ _
 
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.VariableSFS

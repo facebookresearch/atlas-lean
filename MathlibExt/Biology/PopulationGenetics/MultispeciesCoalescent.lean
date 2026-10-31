@@ -13,6 +13,11 @@ public import MathlibExt.Biology.PopulationGenetics.Coalescent.BlockCounting
 public import MathlibExt.Biology.Phylogenetics.TreeCount
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.Analysis.Matrix.Normed
+import Mathlib.Data.List.GetD
+import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
 
 /-!
 # The multispecies coalescent: concordance, the anomaly zone, quartets, clades
@@ -29,7 +34,8 @@ length `t` the number of lineages goes from `m` to `j` with Tavaré's probabilit
 coalescences is random joining (`randomJoining`), as in Pamilo & Nei (1988) and Degnan &
 Salter (2005). A gene tree is recorded by its set of clusters (the sets of genes below its
 vertices). Expectations under random joining are averages over ranked histories, so the
-random-joining factors of the statements below are computed exactly by kernel evaluation.
+random-joining factors of the three- and four-species statements below are computed exactly
+by kernel evaluation; the clade probability is proved for every sample size.
 
 * **Three species** (Hudson 1983; Pamilo & Nei 1988): with internal branch `t`, the gene tree
   matches the species tree with probability `1 - (2/3) e^{-t}`, and each of the two other
@@ -49,7 +55,10 @@ random-joining factors of the statements below are computed exactly by kernel ev
   four-species fact behind the statistical consistency of quartet-based methods such as ASTRAL
   (Mirarab et al. 2014); consistency on `n` species is not formalized here.
 * **Clade probabilities** (Rosenberg 2003): under random joining a fixed set of `k` among
-  `m` genes is a clade with probability `2m / (k (k + 1) C(m, k))`, proved here for `m ≤ 5`.
+  `m` genes is a clade with probability `2m / (k (k + 1) C(m, k))`, for every `m`. The proof
+  conditions on the first merger: with `a` lineages inside the set and `b` outside, a merger
+  inside leads to `(a - 1, b)`, one outside to `(a, b - 1)`, and a mixed merger with `a ≥ 2`
+  makes the set never a clade; the closed form solves this recursion.
 
 ## Main results
 
@@ -66,15 +75,14 @@ random-joining factors of the statements below are computed exactly by kernel ev
   `caterpillar_exists_anomalous_iff`, `balanced_no_anomaly`: the anomaly zone.
 * `geneTreeProb_caterpillar_split_01`, `geneTreeProb_balanced_split_01` (and the discordant
   splits), `split_01_most_probable`: unrooted quartets.
-* `randomJoining_isClade_of_le_five`: Rosenberg's clade probability for `m ≤ 5`.
+* `randomJoining_isClade`: Rosenberg's clade probability.
 
 Not covered: gene trees on more than four species (the definition handles any species tree, but
 only the trees above are evaluated), in particular Degnan & Rosenberg's anomalies for five or
 more species; quartet concordance for every labeling of the leaves and for quartets inside
-larger species trees, hence ASTRAL's statistical consistency on `n` species; the clade
-probability for `m > 5` (stated in `MultispeciesCoalescentWanted`). The independence of the
-jump chain of Kingman's coalescent from its holding times, which justifies `branchStep`, is
-part of the model and is not derived here.
+larger species trees, hence ASTRAL's statistical consistency on `n` species. The
+independence of the jump chain of Kingman's coalescent from its holding times, which justifies
+`branchStep`, is part of the model and is not derived here.
 
 ## References
 
@@ -1018,27 +1026,630 @@ def IsClade {m : ℕ} (h : RankedHistory m) (S : Finset (Fin m)) : Prop :=
 instance {m : ℕ} (h : RankedHistory m) (S : Finset (Fin m)) : Decidable (IsClade h S) :=
   inferInstanceAs (Decidable (∃ P ∈ partitionsOf h, S ∈ P))
 
-/-- **Clade probability** (Rosenberg 2003), checked for samples of at most five
-genes: under random joining, a fixed set of `k` among `m` genes, `1 ≤ k < m`, is a clade with
-probability `2m / (k (k + 1) C(m, k))`. The statement for all `m` is
-`MultispeciesCoalescentWanted.randomJoining_isClade`. -/
-theorem randomJoining_isClade_of_le_five {m : ℕ} (hm : m ≤ 5) (S : Finset (Fin m))
-    (hS : 1 ≤ S.card) (hSm : S.card < m) :
+/-! #### Rosenberg's clade probability by conditioning on the first merger -/
+
+/-- Merging two blocks `a < b` replaces them by their union. -/
+private theorem mergeBlocks_perm {n : ℕ} {bs : List (Finset (Fin n))} {a b : ℕ} (hab : a < b)
+    (hb : b < bs.length) :
+    ∃ R : List (Finset (Fin n)), bs.Perm (bs[a] :: bs[b] :: R) ∧
+      (mergeBlocks bs a b).Perm ((bs[a] ∪ bs[b]) :: R) := by
+  have ha : a < bs.length := hab.trans hb
+  have hlen : b - 1 < (bs.eraseIdx a).length := by
+    rw [List.length_eraseIdx_of_lt ha]; omega
+  have hget : (bs.eraseIdx a)[b - 1] = bs[b] := by
+    rw [List.getElem_eraseIdx_of_ge hlen (by omega)]
+    congr 1; omega
+  refine ⟨(bs.eraseIdx a).eraseIdx (b - 1), ?_, ?_⟩
+  · refine (List.getElem_cons_eraseIdx_perm ha).symm.trans (List.Perm.cons _ ?_)
+    rw [← hget]
+    exact (List.getElem_cons_eraseIdx_perm hlen).symm
+  · set U := bs[a] ∪ bs[b]
+    have hU : bs.getD a ∅ ∪ bs.getD b ∅ = U := by
+      rw [List.getD_eq_getElem _ _ ha, List.getD_eq_getElem _ _ hb]
+    unfold mergeBlocks
+    rw [hU]
+    have hb' : b < (bs.set a U).length := by simpa using hb
+    have h1 := List.getElem_cons_eraseIdx_perm hb'
+    have h2 := List.set_perm_cons_eraseIdx ha U
+    have h3 : (bs.set a U)[b] = bs[b] := by
+      rw [List.getElem_set_ne (by omega)]
+    rw [h3] at h1
+    have h4 : (bs[b] :: ((bs.set a U).eraseIdx b)).Perm (bs[b] :: U ::
+        (bs.eraseIdx a).eraseIdx (b - 1)) := by
+      refine h1.trans (h2.trans ?_)
+      refine (List.Perm.cons _ ?_).trans (List.Perm.swap _ _ _)
+      rw [← hget]
+      exact (List.getElem_cons_eraseIdx_perm hlen).symm
+    exact (List.perm_cons _).1 h4
+
+/-- The two lineages of a pair, in increasing order. -/
+private theorem pair_min_max {k : ℕ} (q : LineagePair k) :
+    ∃ x y : Fin k, x < y ∧ q.1 = {x, y} ∧
+      (q.1.map Fin.valEmbedding).min.getD 0 = x ∧
+      (q.1.map Fin.valEmbedding).max.getD 0 = y := by
+  obtain ⟨x, y, hxy, he⟩ := Finset.card_eq_two.1 q.2
+  have key : ∀ x y : Fin k, x < y → q.1 = {x, y} →
+      (q.1.map Fin.valEmbedding).min.getD 0 = x ∧
+      (q.1.map Fin.valEmbedding).max.getD 0 = y := by
+    intro x y h he
+    have hm : q.1.map Fin.valEmbedding = {(x : ℕ), (y : ℕ)} := by rw [he]; simp
+    have h' : (x : ℕ) ≤ y := h.le
+    rw [hm, Finset.min_insert, Finset.min_singleton, Finset.max_insert, Finset.max_singleton,
+      min_eq_left (WithTop.coe_le_coe.2 h'), max_eq_right (WithBot.coe_le_coe.2 h')]
+    exact ⟨rfl, rfl⟩
+  rcases lt_or_gt_of_ne hxy with h | h
+  · exact ⟨x, y, h, he, key x y h he⟩
+  · have he' : q.1 = {y, x} := by rw [he, Finset.pair_comm]
+    exact ⟨y, x, h, he', key y x h he'⟩
+
+/-- Relabel a pair of lineages along an equality of lineage counts. -/
+private def castPair {a b : ℕ} (e : a = b) (q : LineagePair a) : LineagePair b :=
+  ⟨q.1.map (finCongr e).toEmbedding, by rw [card_map, q.2]⟩
+
+private theorem castPair_val {a b : ℕ} (e : a = b) (q : LineagePair a) :
+    (castPair e q).1.map Fin.valEmbedding = q.1.map Fin.valEmbedding := by
+  subst e
+  simp [castPair]
+
+private theorem castPair_rfl {a : ℕ} (e : a = a) (q : LineagePair a) : castPair e q = q := by
+  apply Subtype.ext
+  simp [castPair]
+
+private theorem castPair_castPair {a b c : ℕ} (e : a = b) (e' : b = c) (q : LineagePair a) :
+    castPair e' (castPair e q) = castPair (e.trans e') q := by
+  subst e e'
+  simp only [castPair_rfl]
+
+/-- The history of the lineages left after the first event. -/
+private def tailH {L : ℕ} (h : RankedHistory (L + 2)) : RankedHistory (L + 1) :=
+  fun i => castPair (by simp) (h (Fin.cast (by simp) i.succ))
+
+/-- A first event followed by a history of the remaining lineages. -/
+private def consH {L : ℕ} (q : LineagePair (L + 2)) (g : RankedHistory (L + 1)) :
+    RankedHistory (L + 2) :=
+  fun i => if hi : (i : ℕ) = 0 then castPair (by omega) q
+    else castPair (by simp; omega) (g ⟨i - 1, by omega⟩)
+
+private theorem history_congr {L : ℕ} (h : RankedHistory L) {i j : Fin (L - 1)} (hij : i = j)
+    (e : L - i = L - j) : castPair e (h i) = h j := by
+  subst hij
+  exact castPair_rfl _ _
+
+/-- A history of `L + 2` lineages is its first event and the history of the rest. -/
+private def historyEquiv (L : ℕ) :
+    RankedHistory (L + 2) ≃ LineagePair (L + 2) × RankedHistory (L + 1) where
+  toFun h := (h ⟨0, by omega⟩, tailH h)
+  invFun x := consH x.1 x.2
+  left_inv h := by
+    funext ⟨i, hi⟩
+    rcases i with _ | i
+    · simp only [consH, ↓reduceDIte]
+      exact history_congr h rfl _
+    · simp only [consH, Nat.add_one_ne_zero, ↓reduceDIte, tailH, castPair_castPair]
+      refine history_congr h (j := ⟨i + 1, hi⟩) ?_ _
+      ext
+      simp
+  right_inv x := by
+    obtain ⟨q, g⟩ := x
+    refine Prod.ext ?_ ?_
+    · simp only [consH, ↓reduceDIte]
+      exact castPair_rfl _ _
+    · funext ⟨i, hi⟩
+      simp only [tailH, consH, Fin.val_cast, Fin.val_succ, Nat.add_one_ne_zero, ↓reduceDIte,
+        castPair_castPair]
+      refine history_congr g (i := ⟨i + 1 - 1, by omega⟩) (j := ⟨i, hi⟩) ?_ _
+      ext
+      simp
+
+/-- The first event of a history, as positions `a < b` of the merged lineages. -/
+private def firstMerge {L : ℕ} (h : RankedHistory (L + 2)) {n : ℕ} (bs : List (Finset (Fin n))) :
+    List (Finset (Fin n)) :=
+  mergeBlocks bs (((h ⟨0, by omega⟩).1.map Fin.valEmbedding).min.getD 0)
+    (((h ⟨0, by omega⟩).1.map Fin.valEmbedding).max.getD 0)
+
+private theorem mergeAlong_zero {n m : ℕ} (bs : List (Finset (Fin n))) (h : RankedHistory m) :
+    mergeAlong bs h 0 = bs := by
+  simp [mergeAlong]
+
+private theorem mergeAlong_succ {n L : ℕ} (bs : List (Finset (Fin n))) (h : RankedHistory (L + 2))
+    (t : ℕ) : mergeAlong bs h (t + 1) = mergeAlong (firstMerge h bs) (tailH h) t := by
+  unfold mergeAlong
+  change ((List.finRange (L + 1)).take (t + 1)).foldl _ bs =
+    ((List.finRange L).take t).foldl _ (firstMerge h bs)
+  rw [List.finRange_succ, List.take_succ_cons, List.foldl_cons, ← List.map_take, List.foldl_map]
+  congr 1
+  funext bs' i
+  simp only [tailH, castPair_val]
+  rfl
+
+private theorem mergeAlong_of_le_one {n m : ℕ} (hm : m ≤ 1) (bs : List (Finset (Fin n)))
+    (h : RankedHistory m) (t : ℕ) : mergeAlong bs h t = bs := by
+  interval_cases m <;> simp [mergeAlong]
+
+/-! #### Invariants of the block lists -/
+
+section Invariants
+
+variable {n : ℕ} (S : Finset (Fin n))
+
+/-- The blocks are pairwise disjoint and nonempty. -/
+private def GoodBlocks (bs : List (Finset (Fin n))) : Prop :=
+  bs.Pairwise Disjoint ∧ ∀ B ∈ bs, B.Nonempty
+
+/-- Every block lies inside `S` or outside it. -/
+private def Clean (bs : List (Finset (Fin n))) : Prop := ∀ B ∈ bs, B ⊆ S ∨ Disjoint B S
+
+/-- The blocks cover `S`. -/
+private def Cover (bs : List (Finset (Fin n))) : Prop := ∀ x ∈ S, ∃ B ∈ bs, x ∈ B
+
+/-- Some block meets both `S` and its complement. -/
+private def Dirty (bs : List (Finset (Fin n))) : Prop := ∃ B ∈ bs, ¬ B ⊆ S ∧ ¬ Disjoint B S
+
+variable {S}
+
+private theorem inv_merge {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R)) (h : GoodBlocks bs) :
+    GoodBlocks M := by
+  have hsymm : Std.Symm (α := Finset (Fin n)) Disjoint := ⟨fun _ _ h => h.symm⟩
+  obtain ⟨hp, hne⟩ := h
+  rw [h1.pairwise_iff (fun h => h.symm)] at hp
+  simp only [List.pairwise_cons, List.mem_cons, forall_eq_or_imp] at hp
+  refine ⟨(h2.pairwise_iff (fun h => h.symm)).2 ?_, fun C hC => ?_⟩
+  · refine List.Pairwise.cons (fun C hC => ?_) hp.2.2
+    exact disjoint_union_left.2 ⟨hp.1.2 C hC, hp.2.1 C hC⟩
+  · rcases List.mem_cons.1 (h2.subset hC) with rfl | hC
+    · exact Finset.Nonempty.mono subset_union_left (hne A (h1.symm.subset (by simp)))
+    · exact hne C (h1.symm.subset (by simp [hC]))
+
+private theorem cover_merge {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R)) (h : Cover S bs) :
+    Cover S M := by
+  intro x hx
+  obtain ⟨C, hC, hxC⟩ := h x hx
+  rcases List.mem_cons.1 (h1.subset hC) with rfl | hC'
+  · exact ⟨_, h2.symm.subset (List.mem_cons_self ..), mem_union_left _ hxC⟩
+  rcases List.mem_cons.1 hC' with rfl | hC''
+  · exact ⟨_, h2.symm.subset (List.mem_cons_self ..), mem_union_right _ hxC⟩
+  · exact ⟨C, h2.symm.subset (List.mem_cons_of_mem _ hC''), hxC⟩
+
+private theorem dirty_merge {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R)) (h : Dirty S bs) :
+    Dirty S M := by
+  obtain ⟨C, hC, hs, hd⟩ := h
+  have hU : A ∪ B ∈ M := h2.symm.subset (List.mem_cons_self ..)
+  rcases List.mem_cons.1 (h1.subset hC) with rfl | hC'
+  · exact ⟨_, hU, fun h => hs (subset_union_left.trans h),
+      fun h => hd (h.mono_left subset_union_left)⟩
+  rcases List.mem_cons.1 hC' with rfl | hC''
+  · exact ⟨_, hU, fun h => hs (subset_union_right.trans h),
+      fun h => hd (h.mono_left subset_union_right)⟩
+  · exact ⟨C, h2.symm.subset (List.mem_cons_of_mem _ hC''), hs, hd⟩
+
+private theorem dirty_merge_mixed {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R)) (h : GoodBlocks bs)
+    (hA : A ⊆ S) (hB : Disjoint B S) : Dirty S M := by
+  have hAn := h.2 A (h1.symm.subset (by simp))
+  have hBn := h.2 B (h1.symm.subset (by simp))
+  refine ⟨_, h2.symm.subset (List.mem_cons_self ..), fun hs => ?_, fun hd => ?_⟩
+  · obtain ⟨y, hy⟩ := hBn
+    exact disjoint_left.1 hB hy (hs (mem_union_right _ hy))
+  · obtain ⟨x, hx⟩ := hAn
+    exact disjoint_left.1 hd (mem_union_left _ hx) (hA hx)
+
+private theorem clean_merge {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R)) (h : Clean S bs)
+    (hAB : (A ⊆ S ∧ B ⊆ S) ∨ (Disjoint A S ∧ Disjoint B S)) : Clean S M := by
+  intro C hC
+  rcases List.mem_cons.1 (h2.subset hC) with rfl | hC'
+  · rcases hAB with ⟨hA, hB⟩ | ⟨hA, hB⟩
+    · exact Or.inl (union_subset hA hB)
+    · exact Or.inr (disjoint_union_left.2 ⟨hA, hB⟩)
+  · exact h C (h1.symm.subset (by simp [hC']))
+
+private theorem countP_merge {bs M R : List (Finset (Fin n))} {A B : Finset (Fin n)}
+    (h1 : bs.Perm (A :: B :: R)) (h2 : M.Perm ((A ∪ B) :: R))
+    (p : Finset (Fin n) → Bool) :
+    M.countP p + (if p A then 1 else 0) + (if p B then 1 else 0) =
+      bs.countP p + (if p (A ∪ B) then 1 else 0) := by
+  rw [h1.countP_eq, h2.countP_eq]
+  simp only [List.countP_cons]
+  omega
+
+private theorem not_mem_of_dirty {bs : List (Finset (Fin n))} (h : GoodBlocks bs)
+    (hd : Dirty S bs) : S ∉ bs := by
+  intro hS
+  obtain ⟨C, hC, hs, hdis⟩ := hd
+  have hsymm : Std.Symm (α := Finset (Fin n)) Disjoint := ⟨fun _ _ h => h.symm⟩
+  exact hdis (h.1.forall hC hS fun e => hs (e ▸ subset_refl _))
+
+end Invariants
+
+/-- The first event of a history of `L + 2` blocks merges two of them. -/
+private theorem firstMerge_perm {n L : ℕ} (h : RankedHistory (L + 2)) {bs : List (Finset (Fin n))}
+    (hlen : bs.length = L + 2) :
+    ∃ x y : Fin (L + 2), x < y ∧ (h ⟨0, by omega⟩).1 = {x, y} ∧ ∃ R,
+      bs.Perm (bs[(x : ℕ)] :: bs[(y : ℕ)] :: R) ∧
+      (firstMerge h bs).Perm ((bs[(x : ℕ)] ∪ bs[(y : ℕ)]) :: R) := by
+  obtain ⟨x, y, hxy, he, hx, hy⟩ := pair_min_max (h ⟨0, by omega⟩)
+  have hxy' : (x : ℕ) < y := hxy
+  obtain ⟨R, h1, h2⟩ := mergeBlocks_perm (bs := bs) hxy' (by omega)
+  refine ⟨x, y, hxy, he, R, h1, ?_⟩
+  unfold firstMerge
+  rw [hx, hy]
+  exact h2
+
+/-- From a list with a block meeting both `S` and its complement, `S` is never a block. -/
+private theorem not_mem_mergeAlong_of_dirty {n : ℕ} {S : Finset (Fin n)} :
+    ∀ (L : ℕ) (bs : List (Finset (Fin n))), bs.length = L → GoodBlocks bs → Dirty S bs →
+      ∀ (h : RankedHistory L) (t : ℕ), S ∉ mergeAlong bs h t := by
+  intro L
+  induction L with
+  | zero => intro bs _ hi hd h t; rw [mergeAlong_of_le_one (by omega)]; exact not_mem_of_dirty hi hd
+  | succ L ih =>
+    intro bs hlen hi hd h t
+    rcases Nat.lt_or_ge L 1 with hL | hL
+    · rw [mergeAlong_of_le_one (by omega)]; exact not_mem_of_dirty hi hd
+    obtain ⟨L, rfl⟩ : ∃ L', L = L' + 1 := ⟨L - 1, by omega⟩
+    rcases t with _ | t
+    · rw [mergeAlong_zero]; exact not_mem_of_dirty hi hd
+    rw [mergeAlong_succ]
+    obtain ⟨x, y, -, -, R, h1, h2⟩ := firstMerge_perm h hlen
+    refine ih _ ?_ (inv_merge h1 h2 hi) (dirty_merge h1 h2 hd) _ _
+    have := h1.length_eq
+    have := h2.length_eq
+    simp only [List.length_cons] at *
+    omega
+
+/-- Counting positions of a list by a property of their entries. -/
+private theorem card_filter_getElem {α : Type*} (p : α → Prop) [DecidablePred p] :
+    ∀ (l : List α) {k : ℕ} (hk : l.length = k),
+      #{i : Fin k | p (l[(i : ℕ)]'(by omega))} = l.countP (fun x => decide (p x)) := by
+  intro l
+  induction l with
+  | nil => intro k hk; subst hk; simp
+  | cons a l ih =>
+    intro k hk
+    obtain rfl : k = l.length + 1 := by simp at hk; omega
+    rw [card_filter, Fin.sum_univ_succ, List.countP_cons, ← ih rfl, card_filter]
+    simp only [Fin.val_zero, List.getElem_cons_zero, Fin.val_succ,
+      List.getElem_cons_succ, decide_eq_true_eq]
+    by_cases ha : p a <;> simp [ha, add_comm]
+
+/-- The pairs inside a set `I` of `k` positions number `C(#I, 2)`. -/
+private theorem card_pair_subset {k : ℕ} (I : Finset (Fin k)) :
+    #{q : LineagePair k | q.1 ⊆ I} = (#I).choose 2 := by
+  rw [← card_powersetCard, ← card_map (Function.Embedding.subtype _)]
+  congr 1
+  ext s
+  simp only [Finset.mem_map, mem_filter, mem_univ, true_and, Function.Embedding.coe_subtype,
+    mem_powersetCard]
+  constructor
+  · rintro ⟨q, hq, rfl⟩; exact ⟨hq, q.2⟩
+  · rintro ⟨hs, hc⟩; exact ⟨⟨s, hc⟩, hs, rfl⟩
+
+/-- `S` is a block at some step of the history `h` started from the blocks `bs`. -/
+private def Hits {n L : ℕ} (S : Finset (Fin n)) (bs : List (Finset (Fin n)))
+    (h : RankedHistory L) : Prop :=
+  ∃ t < L, S ∈ mergeAlong bs h t
+
+private theorem hits_succ {n L : ℕ} (S : Finset (Fin n)) (bs : List (Finset (Fin n)))
+    (h : RankedHistory (L + 2)) :
+    Hits S bs h ↔ S ∈ bs ∨ Hits S (firstMerge h bs) (tailH h) := by
+  constructor
+  · rintro ⟨t, ht, hS⟩
+    rcases t with _ | t
+    · rw [mergeAlong_zero] at hS; exact Or.inl hS
+    · rw [mergeAlong_succ] at hS; exact Or.inr ⟨t, by omega, hS⟩
+  · rintro (hS | ⟨t, ht, hS⟩)
+    · exact ⟨0, by omega, by rw [mergeAlong_zero]; exact hS⟩
+    · exact ⟨t + 1, by omega, by rw [mergeAlong_succ]; exact hS⟩
+
+open scoped Classical in
+/-- The number of histories of `L` lineages, started from `bs`, in which `S` is a block. -/
+private def hitCount {n : ℕ} (S : Finset (Fin n)) (bs : List (Finset (Fin n))) (L : ℕ) : ℕ :=
+  #{h : RankedHistory L | Hits S bs h}
+
+/-- The first merge of `consH q g` is given by `q`. -/
+private def mergeQ {n L : ℕ} (q : LineagePair (L + 2)) (bs : List (Finset (Fin n))) :
+    List (Finset (Fin n)) :=
+  mergeBlocks bs ((q.1.map Fin.valEmbedding).min.getD 0) ((q.1.map Fin.valEmbedding).max.getD 0)
+
+open scoped Classical in
+private theorem hitCount_succ {n L : ℕ} (S : Finset (Fin n)) (bs : List (Finset (Fin n)))
+    (hS : S ∉ bs) :
+    hitCount S bs (L + 2) = ∑ q : LineagePair (L + 2), hitCount S (mergeQ q bs) (L + 1) := by
+  simp only [hitCount, card_filter]
+  rw [Fintype.sum_equiv (historyEquiv L) _
+    (fun x => if Hits S (mergeQ x.1 bs) x.2 then 1 else 0) (fun h => ?_),
+    Fintype.sum_prod_type]
+  rw [hits_succ, or_iff_right hS]
+  rfl
+
+private theorem mergeQ_perm {n L : ℕ} (q : LineagePair (L + 2)) {bs : List (Finset (Fin n))}
+    (hlen : bs.length = L + 2) :
+    ∃ x y : Fin (L + 2), x < y ∧ q.1 = {x, y} ∧ ∃ R,
+      bs.Perm (bs[(x : ℕ)] :: bs[(y : ℕ)] :: R) ∧
+      (mergeQ q bs).Perm ((bs[(x : ℕ)] ∪ bs[(y : ℕ)]) :: R) := by
+  obtain ⟨x, y, hxy, he, hx, hy⟩ := pair_min_max q
+  have hxy' : (x : ℕ) < y := hxy
+  obtain ⟨R, h1, h2⟩ := mergeBlocks_perm (bs := bs) hxy' (by omega)
+  refine ⟨x, y, hxy, he, R, h1, ?_⟩
+  unfold mergeQ
+  rw [hx, hy]
+  exact h2
+
+private theorem nodup_of_inv {n : ℕ} {bs : List (Finset (Fin n))} (h : GoodBlocks bs) : bs.Nodup :=
+  h.1.imp_of_mem fun hA _ hAB e => by
+    subst e
+    obtain ⟨x, hx⟩ := h.2 _ hA
+    exact disjoint_left.1 hAB hx hx
+
+/-- Two different blocks with a property make its count at least two. -/
+private theorem two_le_countP {n : ℕ} {bs : List (Finset (Fin n))} (h : GoodBlocks bs)
+    (p : Finset (Fin n) → Bool) {A B : Finset (Fin n)} (hA : A ∈ bs) (hB : B ∈ bs) (hAB : A ≠ B)
+    (hpA : p A) (hpB : p B) : 2 ≤ bs.countP p := by
+  rw [List.countP_eq_length_filter, ← List.toFinset_card_of_nodup ((nodup_of_inv h).filter _),
+    ← card_pair hAB]
+  refine card_le_card fun C hC => ?_
+  simp only [mem_insert, mem_singleton] at hC
+  rcases hC with rfl | rfl <;> simp [*]
+
+/-- If `S` is a block, no other block lies inside `S`. -/
+private theorem countP_le_one {n : ℕ} {S : Finset (Fin n)} {bs : List (Finset (Fin n))}
+    (h : GoodBlocks bs) (hS : S ∈ bs) : bs.countP (fun B => decide (B ⊆ S)) ≤ 1 := by
+  by_contra hc
+  have : 0 < (bs.filter fun B => decide (B ⊆ S)).length := by
+    rw [← List.countP_eq_length_filter]; omega
+  have hsymm : Std.Symm (α := Finset (Fin n)) Disjoint := ⟨fun _ _ h => h.symm⟩
+  have hsub : ∀ B ∈ bs, B ⊆ S → B = S := fun B hB hBS => by
+    by_contra hne
+    have hd := h.1.forall hB hS hne
+    obtain ⟨x, hx⟩ := h.2 B hB
+    exact disjoint_left.1 hd hx (hBS hx)
+  rw [List.countP_eq_length_filter, ← List.toFinset_card_of_nodup ((nodup_of_inv h).filter _)]
+    at hc
+  refine hc ((card_le_card (s := _) (t := {S}) fun C hC => ?_).trans (by simp))
+  simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq] at hC
+  simp [hsub C hC.1 hC.2]
+
+/-- With one block inside `S`, that block is `S`. -/
+private theorem mem_of_countP_eq_one {n : ℕ} {S : Finset (Fin n)} {bs : List (Finset (Fin n))}
+    (h : GoodBlocks bs) (hc : Clean S bs) (hv : Cover S bs)
+    (h1 : bs.countP (fun B => decide (B ⊆ S)) = 1) : S ∈ bs := by
+  obtain ⟨A, hA, hAS⟩ := List.countP_pos_iff.1
+    (by rw [h1]; omega : 0 < bs.countP (fun B => decide (B ⊆ S)))
+  have hAS : A ⊆ S := by simpa using hAS
+  suffices A = S by rwa [← this]
+  refine subset_antisymm hAS fun z hz => ?_
+  obtain ⟨B, hB, hzB⟩ := hv z hz
+  have hBS : B ⊆ S := (hc B hB).resolve_right fun hd => disjoint_left.1 hd hzB hz
+  by_contra hzA
+  have hAB : A ≠ B := fun e => hzA (e ▸ hzB)
+  have := two_le_countP h (fun B => decide (B ⊆ S)) hA hB hAB (by simpa using hAS)
+    (by simpa using hBS)
+  omega
+
+private theorem clade_algebra {a b L : ℕ} (ha : 2 ≤ a) (hb : 1 ≤ b) (hab : a + b = L + 2)
+    (P : ℚ) :
+    ((a.choose 2 : ℕ) * (2 * ((L + 1 : ℕ) : ℚ) * P /
+        (((a - 1 : ℕ) : ℚ) * a * ((L + 1).choose (a - 1) : ℕ))) +
+      ((b.choose 2 : ℕ) : ℚ) * (2 * ((L + 1 : ℕ) : ℚ) * P /
+        ((a : ℚ) * (a + 1) * ((L + 1).choose a : ℕ)))) *
+      ((a : ℚ) * (a + 1) * ((L + 2).choose a : ℕ)) =
+      2 * ((L + 2 : ℕ) : ℚ) * (P * ((L + 2).choose 2 : ℕ)) := by
+  have hc : 0 < (L + 2).choose a := Nat.choose_pos (by omega)
+  have h1 : (L + 1).choose (a - 1) * (L + 2) = (L + 2).choose a * a := by
+    have := Nat.add_one_mul_choose_eq (L + 1) (a - 1)
+    rw [Nat.sub_add_cancel (by omega : 1 ≤ a)] at this
+    linarith
+  have h2 : (L + 1).choose a * (L + 2) = (L + 2).choose a * b := by
+    have := Nat.choose_mul_succ_eq (L + 1) a
+    rw [show L + 1 + 1 - a = b by omega] at this
+    linarith
+  have h1' : ((L + 1).choose (a - 1) : ℚ) = ((L + 2).choose a : ℚ) * a / (L + 2) := by
+    rw [eq_div_iff (by positivity)]; exact_mod_cast h1
+  have h2' : ((L + 1).choose a : ℚ) = ((L + 2).choose a : ℚ) * b / (L + 2) := by
+    rw [eq_div_iff (by positivity)]; exact_mod_cast h2
+  have hb' : (b : ℚ) = L + 2 - a := by
+    have : ((a + b : ℕ) : ℚ) = ((L + 2 : ℕ) : ℚ) := by rw [hab]
+    push_cast at this; linarith
+  have hc' : (0 : ℚ) < ((L + 2).choose a : ℚ) := by exact_mod_cast hc
+  have ha' : (2 : ℚ) ≤ a := by exact_mod_cast ha
+  have hb1 : (1 : ℚ) ≤ b := by exact_mod_cast hb
+  simp only [Nat.cast_choose_two]
+  rw [h1', h2', Nat.cast_sub (by omega : 1 ≤ a)]
+  push_cast
+  rw [hb']
+  have : (L : ℚ) + 2 - a ≠ 0 := by rw [← hb']; positivity
+  have : (a : ℚ) - 1 ≠ 0 := by linarith
+  field_simp
+  ring
+
+open scoped Classical in
+private theorem hitCount_dirty {n L : ℕ} {S : Finset (Fin n)} {bs : List (Finset (Fin n))}
+    (hlen : bs.length = L) (h : GoodBlocks bs) (hd : Dirty S bs) : hitCount S bs L = 0 := by
+  rw [hitCount, card_eq_zero, filter_eq_empty_iff]
+  rintro g - ⟨t, -, ht⟩
+  exact not_mem_mergeAlong_of_dirty L bs hlen h hd g t ht
+
+private theorem countP_add_countP_not {α : Type*} (p : α → Bool) (l : List α) :
+    l.countP p + l.countP (fun x => !p x) = l.length := by
+  simpa using (List.length_eq_countP_add_countP p (l := l)).symm
+
+open scoped Classical in
+/-- **Rosenberg's recursion, solved.** From pairwise disjoint nonempty blocks, each inside or
+outside `S` and covering `S`, with `a ≥ 1` blocks inside and `b ≥ 1` outside, `S` becomes a
+block in `2 L ∏ C(k,2) / (a (a + 1) C(L, a))` of the histories. -/
+private theorem hitCount_mul {n : ℕ} {S : Finset (Fin n)} :
+    ∀ (L : ℕ) (bs : List (Finset (Fin n))) (a b : ℕ), bs.length = L → GoodBlocks bs → Clean S bs →
+      Cover S bs → bs.countP (fun B => decide (B ⊆ S)) = a →
+      bs.countP (fun B => !decide (B ⊆ S)) = b → 1 ≤ a → 1 ≤ b →
+      (hitCount S bs L : ℚ) * (a * (a + 1) * (L.choose a : ℕ)) =
+        2 * (L : ℚ) * ∏ k ∈ Icc 2 L, ((k.choose 2 : ℕ) : ℚ) := by
+  intro L
+  induction L with
+  | zero =>
+    intro bs a b hlen _ _ _ ha hb _ _
+    have := countP_add_countP_not (fun B => decide (B ⊆ S)) bs
+    omega
+  | succ L ih =>
+    intro bs a b hlen hi hc hv ha hb ha1 hb1
+    have hab := countP_add_countP_not (fun B => decide (B ⊆ S)) bs
+    obtain ⟨L, rfl⟩ : ∃ L', L = L' + 1 := ⟨L - 1, by omega⟩
+    have hab' : a + b = L + 2 := by omega
+    rcases Nat.eq_or_lt_of_le ha1 with rfl | ha2
+    · -- `S` is already a block
+      have hS := mem_of_countP_eq_one hi hc hv ha
+      have hall : hitCount S bs (L + 2) = ∏ k ∈ Icc 2 (L + 2), k.choose 2 := by
+        rw [hitCount, filter_true_of_mem fun g _ =>
+          ⟨0, by omega, by rw [mergeAlong_zero]; exact hS⟩, card_univ, card_rankedHistory]
+      rw [hall]
+      push_cast
+      simp only [Nat.choose_one_right]
+      push_cast
+      ring
+    -- `S` is not a block yet: condition on the first merger
+    have hS : S ∉ bs := fun hS => by have := countP_le_one hi hS; omega
+    rw [hitCount_succ S bs hS]
+    set P : ℚ := ∏ k ∈ Icc 2 (L + 1), ((k.choose 2 : ℕ) : ℚ)
+    set V₁ : ℚ := 2 * ((L + 1 : ℕ) : ℚ) * P /
+      (((a - 1 : ℕ) : ℚ) * a * ((L + 1).choose (a - 1) : ℕ))
+    set V₂ : ℚ := 2 * ((L + 1 : ℕ) : ℚ) * P / ((a : ℚ) * (a + 1) * ((L + 1).choose a : ℕ))
+    set I : Finset (Fin (L + 2)) := {i | bs[(i : ℕ)]'(by omega) ⊆ S}
+    set J : Finset (Fin (L + 2)) := {i | ¬ bs[(i : ℕ)]'(by omega) ⊆ S}
+    have hI : #I = a := by rw [← ha]; exact card_filter_getElem (· ⊆ S) bs hlen
+    have hJ : #J = b := by
+      rw [← hb, show (fun B : Finset (Fin n) => !decide (B ⊆ S)) =
+        fun B => decide ¬(B ⊆ S) by simp]
+      exact card_filter_getElem (fun B => ¬ B ⊆ S) bs hlen
+    have hterm : ∀ q : LineagePair (L + 2), (hitCount S (mergeQ q bs) (L + 1) : ℚ) =
+        (if q.1 ⊆ I then V₁ else 0) + (if q.1 ⊆ J then V₂ else 0) := by
+      intro q
+      obtain ⟨x, y, hxy, hq, R, h1, h2⟩ := mergeQ_perm q hlen
+      have hMlen : (mergeQ q bs).length = L + 1 := by
+        have := h1.length_eq; have := h2.length_eq
+        simp only [List.length_cons] at *; omega
+      have hcnt := countP_merge h1 h2 (fun B => decide (B ⊆ S))
+      have hcnt' := countP_merge h1 h2 (fun B => !decide (B ⊆ S))
+      have hxy' : x ≠ y := hxy.ne
+      rw [hq]
+      simp only [I, J, insert_subset_iff, singleton_subset_iff, mem_filter, mem_univ,
+        true_and]
+      by_cases hX : bs[(x : ℕ)] ⊆ S <;> by_cases hY : bs[(y : ℕ)] ⊆ S
+      · -- both inside `S`
+        simp only [hX, hY, and_self, ↓reduceIte, not_true_eq_false, add_zero]
+        have hA' : (mergeQ q bs).countP (fun B => decide (B ⊆ S)) = a - 1 := by
+          have := hcnt; simp [hX, hY, union_subset hX hY] at this; omega
+        have hB' : (mergeQ q bs).countP (fun B => !decide (B ⊆ S)) = b := by
+          have := hcnt'; simp [hX, hY, union_subset hX hY] at this; omega
+        have key := ih (mergeQ q bs) (a - 1) b hMlen (inv_merge h1 h2 hi)
+          (clean_merge h1 h2 hc (Or.inl ⟨hX, hY⟩)) (cover_merge h1 h2 hv) hA' hB' (by omega) hb1
+        have hne : (((a - 1 : ℕ) : ℚ) * (a - 1 + 1 : ℕ) * ((L + 1).choose (a - 1) : ℕ)) ≠ 0 := by
+          have := Nat.choose_pos (show a - 1 ≤ L + 1 by omega)
+          have : 1 ≤ a - 1 := by omega
+          positivity
+        rw [eq_div_iff (by rwa [show a - 1 + 1 = a by omega] at hne)]
+        push_cast at key ⊢
+        rw [Nat.cast_sub (by omega : 1 ≤ a)] at key ⊢
+        push_cast at key ⊢
+        linear_combination key
+      · -- mixed
+        simp only [hX, hY, and_false, false_and, ↓reduceIte, not_true_eq_false, add_zero,
+          Nat.cast_eq_zero]
+        refine hitCount_dirty hMlen (inv_merge h1 h2 hi) (dirty_merge_mixed h1 h2 hi hX ?_)
+        exact (hc _ (h1.symm.subset (by simp))).resolve_left hY
+      · -- mixed
+        simp only [hX, hY, and_false, ↓reduceIte, not_true_eq_false, add_zero,
+          Nat.cast_eq_zero, not_false_eq_true, and_true]
+        have h1' := h1.trans (List.Perm.swap _ _ _)
+        have h2' : (mergeQ q bs).Perm ((bs[(y : ℕ)] ∪ bs[(x : ℕ)]) :: R) := by
+          rw [union_comm]; exact h2
+        refine hitCount_dirty hMlen (inv_merge h1' h2' hi) (dirty_merge_mixed h1' h2' hi hY ?_)
+        exact (hc _ (h1.symm.subset (by simp))).resolve_left hX
+      · -- both outside `S`
+        simp only [hX, hY, ↓reduceIte, not_false_eq_true, and_self, zero_add]
+        have hdX := (hc _ (h1.symm.subset (by simp))).resolve_left hX
+        have hdY := (hc _ (h1.symm.subset (by simp))).resolve_left hY
+        have hU : ¬ (bs[(x : ℕ)] ∪ bs[(y : ℕ)] ⊆ S) := fun h => hX (subset_union_left.trans h)
+        have hb2 : 2 ≤ b := by
+          have hsub : ({x, y} : Finset (Fin (L + 2))) ⊆ J := by
+            intro i hi'
+            simp only [mem_insert, mem_singleton] at hi'
+            rcases hi' with rfl | rfl <;> simp [J, hX, hY]
+          have := card_le_card hsub
+          rw [card_pair hxy', hJ] at this
+          exact this
+        have hA' : (mergeQ q bs).countP (fun B => decide (B ⊆ S)) = a := by
+          have := hcnt; simp [hX, hY, hU] at this; omega
+        have hB' : (mergeQ q bs).countP (fun B => !decide (B ⊆ S)) = b - 1 := by
+          have := hcnt'; simp [hX, hY, hU] at this; omega
+        have key := ih (mergeQ q bs) a (b - 1) hMlen (inv_merge h1 h2 hi)
+          (clean_merge h1 h2 hc (Or.inr ⟨hdX, hdY⟩)) (cover_merge h1 h2 hv)
+          hA' hB' ha1 (by omega)
+        have hne : ((a : ℚ) * (a + 1) * ((L + 1).choose a : ℕ)) ≠ 0 := by
+          have := Nat.choose_pos (show a ≤ L + 1 by omega)
+          positivity
+        rw [eq_div_iff hne]
+        push_cast at key ⊢
+        linear_combination key
+    rw [Nat.cast_sum, sum_congr rfl fun q _ => hterm q, sum_add_distrib, ← sum_filter,
+      ← sum_filter, sum_const, sum_const, nsmul_eq_mul, nsmul_eq_mul, card_pair_subset,
+      card_pair_subset, hI, hJ, prod_Icc_succ_top (by omega)]
+    exact clade_algebra ha2 hb1 hab' P
+
+private theorem isClade_iff_hits {m : ℕ} (h : RankedHistory m) (S : Finset (Fin m)) :
+    IsClade h S ↔ Hits S ((List.finRange m).map fun j => {j}) h := by
+  simp only [IsClade, partitionsOf, blocksOf, List.map_map, List.mem_map, List.mem_range,
+    Function.comp_apply, Hits, mergeAlong_singletons]
+  constructor
+  · rintro ⟨P, ⟨t, ht, rfl⟩, hS⟩; exact ⟨t, ht, List.mem_toFinset.1 hS⟩
+  · rintro ⟨t, ht, hS⟩; exact ⟨_, ⟨t, ht, rfl⟩, List.mem_toFinset.2 hS⟩
+
+/-- **Clade probability** (Rosenberg 2003): under random joining, a fixed set of `k` among `m`
+genes, `1 ≤ k < m`, is a clade with probability `2m / (k (k + 1) C(m, k))`. -/
+theorem randomJoining_isClade {m : ℕ} (S : Finset (Fin m)) (hS : 1 ≤ S.card)
+    (hSm : S.card < m) :
     (randomJoining m).real {h | IsClade h S} =
       2 * m / (S.card * (S.card + 1) * (m.choose S.card : ℝ)) := by
-  have hcount : #{h | IsClade h S} * (S.card * (S.card + 1) * m.choose S.card) =
-      2 * m * ∏ k ∈ Icc 2 m, k.choose 2 := by
-    revert S
-    interval_cases m <;> decide +kernel
+  classical
+  set bs : List (Finset (Fin m)) := (List.finRange m).map fun j => {j}
+  have hlen : bs.length = m := by simp [bs]
+  have hget : ∀ i : Fin m, bs[(i : ℕ)]'(by omega) = {i} := fun i => by simp [bs]
+  have hi : GoodBlocks bs := by
+    refine ⟨List.pairwise_map.2 ((List.nodup_finRange m).imp fun hne => ?_), by simp [bs]⟩
+    exact disjoint_singleton.2 hne
+  have hc : Clean S bs := by
+    simp only [Clean, bs, List.mem_map, List.mem_finRange, true_and, forall_exists_index,
+      forall_apply_eq_imp_iff]
+    intro j
+    by_cases hj : j ∈ S
+    · exact Or.inl (singleton_subset_iff.2 hj)
+    · exact Or.inr (disjoint_singleton_left.2 hj)
+  have hv : Cover S bs := fun x _ => ⟨{x}, by simp [bs], mem_singleton_self x⟩
+  have ha : bs.countP (fun B => decide (B ⊆ S)) = S.card := by
+    rw [← card_filter_getElem (· ⊆ S) bs hlen]
+    congr 1
+    ext i
+    simp [hget]
+  have hb : bs.countP (fun B => !decide (B ⊆ S)) = m - S.card := by
+    have := countP_add_countP_not (fun B => decide (B ⊆ S)) bs
+    omega
+  have key := hitCount_mul m bs S.card (m - S.card) hlen hi hc hv ha hb hS (by omega)
+  have hcard : #{h : RankedHistory m | IsClade h S} = hitCount S bs m := by
+    unfold hitCount
+    congr 1
+    ext h
+    simp [isClade_iff_hits, bs]
   rw [randomJoining_real]
   simp only [Set.mem_ofPred_eq]
+  rw [hcard]
   have hN : (0 : ℝ) < ∏ k ∈ Icc 2 m, ((k.choose 2 : ℕ) : ℝ) :=
     prod_pos fun k hk => by exact_mod_cast Nat.choose_pos (mem_Icc.1 hk).1
   have hC : (0 : ℝ) < S.card * (S.card + 1) * (m.choose S.card : ℝ) := by
     have : 0 < m.choose S.card := Nat.choose_pos hSm.le
     positivity
   rw [div_eq_div_iff hN.ne' hC.ne']
-  have := congrArg (fun n : ℕ => (n : ℝ)) hcount
+  have := congrArg (fun x : ℚ => (x : ℝ)) key
   push_cast at this
   linarith
 

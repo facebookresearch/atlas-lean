@@ -16,8 +16,8 @@ public import MathlibExt.Biology.PopulationGenetics.MultispeciesCoalescent
 Concrete species trees and their clusters, the one-species boundary case, the star-tree limits
 (zero internal branches give the random-joining probabilities `1/3`, `1/18`, `1/9`), a point
 inside and a point outside the four-species anomaly zone, unrooted quartets at the boundary,
-clade probabilities for small samples (including the excluded case `k = m`), and junk values
-outside the parameter domains.
+clade probabilities for small samples (including the excluded case `k = m`) with an
+enumeration cross-check, and junk values outside the parameter domains.
 -/
 
 @[expose] public section
@@ -163,13 +163,23 @@ example (x x' y : ℝ) : geneTreeProb (caterpillar x y) (DisplaysSplit 0 1) =
 
 /-- A pair among four genes is a clade with probability `2/9`. -/
 example : (randomJoining 4).real {h | IsClade h {0, 1}} = 2 / 9 := by
-  rw [randomJoining_isClade_of_le_five (by norm_num) _ (by decide) (by decide)]
+  rw [randomJoining_isClade _ (by decide) (by decide)]
   norm_num [Nat.choose]
 
 /-- Three of four genes form a clade with probability `2 / (4 · 3) = 1/6`. -/
 example : (randomJoining 4).real {h | IsClade h {0, 1, 2}} = 1 / 6 := by
-  rw [randomJoining_isClade_of_le_five (by norm_num) _ (by decide) (by decide)]
+  rw [randomJoining_isClade _ (by decide) (by decide)]
   norm_num [Nat.choose]
+
+/-- Three of six genes form a clade with probability `12 / (3 · 4 · 20) = 1/20`. -/
+example : (randomJoining 6).real {h | IsClade h {0, 1, 2}} = 1 / 20 := by
+  rw [randomJoining_isClade _ (by decide) (by decide)]
+  norm_num [Nat.choose]
+
+/-- Cross-check of the encoding by enumeration: of the `1 · 3 · 6 · 10 = 180` ranked
+histories of five genes, `30` have `{0, 1}` as a clade, matching `2 · 5 / (2 · 3 · 10) = 1/6`. -/
+example : #{h : RankedHistory 5 | IsClade h {0, 1}} = 30 := by
+  decide +kernel
 
 /-- The excluded case `k = m`: the whole sample is always a clade (probability `1`), while the
 formula would give `2m / (m (m + 1)) = 1/2` for `m = 3`. -/
