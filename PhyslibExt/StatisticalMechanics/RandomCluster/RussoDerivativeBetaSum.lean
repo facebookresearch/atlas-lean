@@ -81,7 +81,7 @@ noncomputable def betaScore (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V → ℝ) (β : ℝ)
     (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∑ e ∈ G.edgeFinset,
-    (J e / betaParams J β e) * (coordR e ω - betaParams J β e)
+    (J e / betaParams J β e) * (coord e ω - betaParams J β e)
 
 omit [Fintype V] [DecidableEq V] in
 lemma betaParams_pos {J : Sym2 V → ℝ} (hJ : ∀ e, 0 < J e) {β : ℝ} (hβ : 0 < β)
@@ -119,11 +119,11 @@ lemma betaFactor_deriv_eq_mul_score {J : Sym2 V → ℝ} (hJ : ∀ e, 0 < J e)
     (if ω e then J e * Real.exp (-(β * J e))
       else -(J e * Real.exp (-(β * J e))))
       = (if ω e then betaParams J β e else 1 - betaParams J β e)
-        * ((J e / betaParams J β e) * (coordR e ω - betaParams J β e)) := by
+        * ((J e / betaParams J β e) * (coord e ω - betaParams J β e)) := by
   have hp : betaParams J β e ≠ 0 := (betaParams_pos hJ hβ e).ne'
   have hone : 1 - betaParams J β e = Real.exp (-(β * J e)) := by
     simp [betaParams]
-  cases hω : ω e <;> simp [hω, coordR, hone] <;> field_simp
+  cases hω : ω e <;> simp [hω, coord, hone] <;> field_simp
 
 /-!
 
@@ -239,7 +239,7 @@ lemma fkCovW_betaScore (G : SimpleGraph V) [DecidableRel G.Adj]
     (g : ConfigSpace (Sym2 V) → ℝ) :
     fkCovW G (betaParams J β) q g (betaScore G J β) =
       ∑ e ∈ G.edgeFinset,
-        (J e / betaParams J β e) * fkCovW G (betaParams J β) q g (coordR e) := by
+        (J e / betaParams J β e) * fkCovW G (betaParams J β) q g (coord e) := by
   have hZ : fkZW G (betaParams J β) q ≠ 0 :=
     fkZW_ne_zero G (betaParams_pos hJ hβ) (betaParams_lt_one J β) hq
   unfold betaScore
@@ -248,7 +248,7 @@ lemma fkCovW_betaScore (G : SimpleGraph V) [DecidableRel G.Adj]
   intro e _
   rw [fkCovW_const_mul_right]
   exact congrArg (fun x => (J e / betaParams J β e) * x)
-    (fkCovW_sub_const G (betaParams J β) q g (coordR e) hZ)
+    (fkCovW_sub_const G (betaParams J β) q g (coord e) hZ)
 
 /-!
 
@@ -265,7 +265,7 @@ theorem hasDerivAt_fkMeanW_beta_sum (G : SimpleGraph V) [DecidableRel G.Adj]
     (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun b => fkMeanW G (betaParams J b) q g)
       (∑ e ∈ G.edgeFinset,
-        (J e / betaParams J β e) * fkCovW G (betaParams J β) q g (coordR e)) β := by
+        (J e / betaParams J β e) * fkCovW G (betaParams J β) q g (coord e)) β := by
   have hN := hasDerivAt_fkNumerW_beta G hJ hβ q g
   have hZraw := hasDerivAt_fkNumerW_beta G hJ hβ q (fun _ => 1)
   have hZ : HasDerivAt (fun b => fkZW G (betaParams J b) q)
@@ -298,7 +298,7 @@ lemma hasDerivAt_fkProbWOf_beta_sum (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun b => fkProbWOf G (betaParams J b) q A)
       (∑ e ∈ G.edgeFinset, (J e / (1 - Real.exp (-(β * J e))))
-        * fkCovW G (betaParams J β) q (A.indicator (fun _ => (1 : ℝ))) (coordR e)) β := by
+        * fkCovW G (betaParams J β) q (A.indicator (fun _ => (1 : ℝ))) (coord e)) β := by
   simpa [fkProbWOf, betaParams] using
     hasDerivAt_fkMeanW_beta_sum G hJ hβ hq (A.indicator (fun _ => (1 : ℝ)))
 

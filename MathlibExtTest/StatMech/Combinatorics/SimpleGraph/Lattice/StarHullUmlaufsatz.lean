@@ -15,8 +15,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullUmlaufsatz
 
 * `shu_starHull_mpl_isCycle` (unconditional) for every boundary orbit of the star hull of the unit
   cell.
-* `shu_windingWitness_of_minVertStepLeft` instantiated with a finite set (its residual hypothesis
-  is the named predicate `shw_MinVertStepLeft`, satisfiable by the unit cell; see the StarHullWinding
+* `shu_windingWitness_of_minVertStepLeft` instantiated with a finite set (its residual hypothesis is
+  the named predicate `shw_MinVertStepLeft`, satisfiable by the unit cell; see the StarHullWinding
   tests).
 * Not tested: `shu_turningIsFullRevolution_of_saturating` (vacuous, its hypothesis is refuted) and
   `shu_turningIsFullRevolution_of_eulerCharOne` (circular, see the Stage B report).

@@ -928,37 +928,666 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Probability/VarGapProve2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/NearHalfKKLWire.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfKKLWire` |
 
+## PhyslibExt (third round)
+
+The third round ported the physics remainder: the random-cluster (FK), Ising, sharpness, Onsager,
+Beffara–Duminil-Copin, percolation, OSSS and wall modules that the physics results need. Duplicate
+and vacuous declarations were removed during the port. Several ported modules state conditional
+results or record refutations; their module docs say exactly what is proved.
+
+| Source file | Module |
+| --- | --- |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ActiveInfluence.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveInfluence` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ActiveInfluenceQOne.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveInfluenceQOne` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ActiveRussoHamming.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ActiveRussoHamming` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/AnimalLLN.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.AnimalLLN` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/AnimalLLNas.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.AnimalLLNAlmostSure` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/AnimalLLNsigned.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.AnimalLLNSigned` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ClusterDomination.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ClusterDomination` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ClusterMoments.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ClusterMoments` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/Duality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Duality` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/EulerTorus.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.EulerTorus` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/FiniteMoments.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.FiniteMoments` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/FiniteMomentsFull.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ClusterSizeMoments` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/Hamming.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Hamming` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/LongRectangleGeometry.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleGeometry` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/LongRectangleSqrtTrick.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleSqrtTrick` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/LongRectangleTorusCover.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusCover` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/LongRectangleTorusPushforward.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusPushforward` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/LongRectangleTranslationClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTranslationClosure` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/MaxInfluenceHalf.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.MaxInfluenceHalf` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/MaxInfluencePBiased.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.MaxInfluencePBiased` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/PlanarFKDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.PlanarFKDuality` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/RussoHamming.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.RussoHamming` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/SymmetricThreshold.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.SymmetricThreshold` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/ThresholdLift.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ThresholdLift` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellComplement.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellComplement` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellCrossing` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellDefectClassify.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellDefectClassify` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellDual.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellDual` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellFKDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellFKDuality` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusCellRN.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusCellRN` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusConnected.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusConnected` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusDefectComplement.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusDefectComplement` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusFKDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusFKDuality` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusGeometricEuler.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusGeometricEuler` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusSquareCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossing` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusSquareCrossingCounterexample.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCounterexample` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusSquareCrossingCover.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusSquareCrossingCover` |
+| `Atlas/StatisticalMechanics/Code/BeffaraDC/TorusWindingThinObstruction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusWindingThinObstruction` |
+| `Atlas/StatisticalMechanics/Code/FK/ActiveBoundaryEdges.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEdges` |
+| `Atlas/StatisticalMechanics/Code/FK/ActiveBoundaryEquiv.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ActiveBoundaryEquiv` |
+| `Atlas/StatisticalMechanics/Code/FK/ActiveEdgeRussoP.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdgeRussoP` |
+| `Atlas/StatisticalMechanics/Code/FK/ActiveEdges.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ActiveEdges` |
+| `Atlas/StatisticalMechanics/Code/FK/BoundaryEdgeAbsorption.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryEdgeAbsorption` |
+| `Atlas/StatisticalMechanics/Code/FK/BoundaryRusso.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryRusso` |
+| `Atlas/StatisticalMechanics/Code/FK/BoundaryScoreLipschitz.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryScoreLipschitz` |
+| `Atlas/StatisticalMechanics/Code/FK/BoxConnectionFullConnection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoxConnectionInfiniteConnection` |
+| `Atlas/StatisticalMechanics/Code/FK/CircuitLowerBound.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound` |
+| `Atlas/StatisticalMechanics/Code/FK/ClusterAdaptiveProjection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ClusterAdaptiveProjection` |
+| `Atlas/StatisticalMechanics/Code/FK/ClusterExplorationFreeBoundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ClusterExplorationFreeBoundary` |
+| `Atlas/StatisticalMechanics/Code/FK/ComparisonQ.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.AntitoneInQ` |
+| `Atlas/StatisticalMechanics/Code/FK/ConditionalFibreMass.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ConditionalFibreMass` |
+| `Atlas/StatisticalMechanics/Code/FK/ContinuousRectangleCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ContinuousRectangleCrossing` |
+| `Atlas/StatisticalMechanics/Code/FK/DLRUniqueness.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicConvexSummands` |
+| `Atlas/StatisticalMechanics/Code/FK/DensityDeviationFull.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OpenCountDeviation` |
+| `Atlas/StatisticalMechanics/Code/FK/DlrInfiniteSandwich.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.DlrInfiniteSandwich` |
+| `Atlas/StatisticalMechanics/Code/FK/EdgeConfigEventLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeConfigEventLaw` |
+| `Atlas/StatisticalMechanics/Code/FK/EdgeMarginalInfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeMarginalInfinite` |
+| `Atlas/StatisticalMechanics/Code/FK/EdgeSubsetDomainMarkov.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeSubsetDomainMarkov` |
+| `Atlas/StatisticalMechanics/Code/FK/FKGeneralQClusterFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQClusterFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/FKGeneralQInfiniteFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQInfiniteFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/FKGeneralQTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQTranslation` |
+| `Atlas/StatisticalMechanics/Code/FK/FKLimitsAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2InfiniteVolumeLimits` |
+| `Atlas/StatisticalMechanics/Code/FK/FKLimitsErgodicUncond.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity` |
+| `Atlas/StatisticalMechanics/Code/FK/FKQ2Sharp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2Sharp` |
+| `Atlas/StatisticalMechanics/Code/FK/FinitePatternEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FinitePatternEnergy` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeDLRExtreme.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRExtreme` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeDLRKernel.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRKernel` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeNestedDecreasing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeNestedDecreasing` |
+| `Atlas/StatisticalMechanics/Code/FK/FreePairMixingFromTail.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreePairMixingFromTail` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeTailErgodicityPrereq.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TailEventWindow` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeTailTriviality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTailTriviality` |
+| `Atlas/StatisticalMechanics/Code/FK/HexagonalOffCentre.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalTranslatedBoxes` |
+| `Atlas/StatisticalMechanics/Code/FK/HexagonalSharpness.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalSharpness` |
+| `Atlas/StatisticalMechanics/Code/FK/HexagonalSharpnessOffCentre.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalOSSSUniform` |
+| `Atlas/StatisticalMechanics/Code/FK/HexagonalSharpnessThreshold.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.HexagonalSharpnessThreshold` |
+| `Atlas/StatisticalMechanics/Code/FK/InclusionExclusion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.InclusionExclusion` |
+| `Atlas/StatisticalMechanics/Code/FK/IndexedBoundaryCondition.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.IndexedBoundaryCondition` |
+| `Atlas/StatisticalMechanics/Code/FK/IndexedEdgeLumping.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.IndexedEdgeLumping` |
+| `Atlas/StatisticalMechanics/Code/FK/InfiniteFiniteEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/FK/InhomogeneousFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.InhomogeneousFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/IvDensityDeviation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OpenCountDensityDeviation` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreConditionalLowerProduct.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreEventLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreEventLaw` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreFreeDomination.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination` |
+| `Atlas/StatisticalMechanics/Code/FK/PairMixingGenMixing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PairMixingGenMixing` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarAspectOrientationNoGo.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.FKGIncreasingComparisonNoGo` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeaneCore.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneCore` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeaneMerge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneMerge` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeanePattern.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeanePattern` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeaneTail.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneTail` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeaneTrifurcation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneTrifurcation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarBurtonKeaneUniqueness.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.BurtonKeaneUniqueness` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCanonicalErgodicity.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalErgodicity` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCanonicalFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCanonicalFiniteEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCanonicalSheffieldFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalSheffieldFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCanonicalTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalTranslation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCoherentLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CoherentLimit` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCoverage.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Coverage` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCoverageShells.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CoverageShells` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCoverageUpgrade.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CoverageUpgrade` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCriticalAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CriticalAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCriticalReduction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CriticalReduction` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarCrossingGluing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CrossingGluing` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarDiagonalLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DiagonalLimit` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarDualBurtonKeane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualBurtonKeane` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarDualPair.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.DualPair` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Duality` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarGraph.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Graph` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarParameterMonotonicity.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.ParameterMonotonicity` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarPercolationApproximation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.PercolationApproximation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffield.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Basic` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldAdaptiveEndpoint.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CrossNestedEndpoint` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldAdjacentHeight.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AdjacentHeight` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldApproximatePreference.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ApproximatePreference` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldArrayClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ArrayClosure` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldAxisNegation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AxisNegation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldAxisSwap.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AxisSwap` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldBoundaryBandAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryBandAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldBoundaryBandPadding.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryBandPadding` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldBoundaryEnlargement.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryEnlargement` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldBoundaryGrid.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryGrid` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldCommonArray.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonArray` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldCommonRectangle.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonRectangle` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldCommonSquareEnlarge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CommonSquareEnlarge` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldConnectorReadyCommonSquare.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ConnectorReadyCommonSquare` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldCrosscut.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Crosscut` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldCrossingFromArms.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.CrossingFromArms` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnector.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnector` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnectorCage.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorCage` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnectorCageSchedule.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorCageSchedule` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnectorCrosscut.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorCrosscut` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnectorMeasureClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorMeasureClosure` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepConnectorRows.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepConnectorRows` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDeepTemplateGridAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DeepTemplateGridAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDualBoundaryBands.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualBoundaryBands` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDualTranslated.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualTranslated` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldDualTransverse.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.DualTransverse` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldExclusion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateCrossings` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldGlobalAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.GlobalAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldGridAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.GridAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlane` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneBarrier.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneBarrier` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneCage.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCage` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneCluster.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneCluster` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneEscape.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneEscape` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneExclusion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneExclusion` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneFiniteStripArms.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneFiniteStripArms` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneInfiniteArm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInfiniteArm` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneInteriorArm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneInteriorArm` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneJoinedArms.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArms` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneJoinedArmsHighProbability.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneJoinedArmsHighProbability` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneMerge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneMerge` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneStrip.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneStrip` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneStripUnion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneStripUnion` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneTopologyClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneTopologyClosure` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldHalfPlaneTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.HalfPlaneTranslation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldLastContact.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.LastContact` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldMacroArrayAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.MacroArrayAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldNearBoundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.NearBoundary` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldNormalBoundaryBandAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.NormalBoundaryBandAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldNormalRotatedSlack.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.NormalRotatedSlack` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldOpenBoundaryCorridor.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundaryCorridor` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldOpenBoundaryCrossover.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundaryCrossover` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldOpenBoundarySource.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OpenBoundarySource` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldOrientedBoundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.OrientedBoundary` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldPairedRecurrence.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PairedRecurrence` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldPatternSurgery.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PatternSurgery` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldPreferenceClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PreferenceClosure` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldPreferenceInterface.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.PreferenceInterface` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRectangleLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectangleLimit` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRectangleMonotonicity.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectangleMonotonicity` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRectanglePreference.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRectangleTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectangleTranslation` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRecursiveLimits.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RecursiveLimits` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRotated.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.Rotated` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldRotatedBoundaryBands.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RotatedBoundaryBands` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldSourceTransport.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.AdjacentHeightTransport` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldSynchronization.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.ArrayCrossingContradiction` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldTangentialLimitTransport.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TangentialLimitTransport` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldTemplateGridAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateGridAssembly` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldTemplateMerge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateMerge` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldTransverseAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.StripDualBlocking` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldTripleBranchSelection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TripleBranchSelection` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldVariablePadding.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.VariablePadding` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarSheffieldWholeArcCrosscut.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.WholeArcCrosscut` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarStrictNoCoexistenceReduction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.StrictNoCoexistenceReduction` |
+| `Atlas/StatisticalMechanics/Code/FK/PeriodicPlanarThermodynamicDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.ThermodynamicDuality` |
+| `Atlas/StatisticalMechanics/Code/FK/PlacementClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.LimitTranslationInvariance` |
+| `Atlas/StatisticalMechanics/Code/FK/PositiveAssociation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PositiveAssociation` |
+| `Atlas/StatisticalMechanics/Code/FK/RussoDerivative.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexCoarseGeometry.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.CoarseGeometry` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexCriticalReduction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.CriticalReduction` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexDecayTransport.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.DecayTransport` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKExternalWeight.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKExternalWeight` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKFiniteWiredGraphs.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKFiniteWiredGraphs` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKFiniteWiredSweep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKFiniteWiredSweep` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKFiniteWiredWeights.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKFiniteWiredWeights` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKGlobalSweep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKSimultaneousStarTriangle` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKStarTriangle.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKStarTriangle` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKTorusBoundaryReach.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKTorusBoundaryReach` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKTorusHomogeneous.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKTorusHomogeneous` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexFKTorusSweep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKTorusSweep` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPairOrbitCharts.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PairOrbitCharts` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicCrossingGeometry.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicCrossingGeometry` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicDual.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDual` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicDualShift.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDualShift` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicPlaneEmbedding.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicPlaneEmbedding` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicStraightIntersection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicStraightIntersection` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexPeriodicVertexGeometry.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicVertexGeometry` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexTorusComparison.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusComparison` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexTorusDefectClassify.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDefectClassify` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexTorusDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusDuality` |
+| `Atlas/StatisticalMechanics/Code/FK/TriHexTorusPressureDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TorusPressureDuality` |
+| `Atlas/StatisticalMechanics/Code/FK/TriangularOffCentre.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularTranslatedBoxes` |
+| `Atlas/StatisticalMechanics/Code/FK/TriangularSharpness.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularSharpness` |
+| `Atlas/StatisticalMechanics/Code/FK/TriangularSharpnessOffCentre.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularOSSSUniform` |
+| `Atlas/StatisticalMechanics/Code/FK/TriangularSharpnessThreshold.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.TriangularSharpnessThreshold` |
+| `Atlas/StatisticalMechanics/Code/FK/TrifurcationPatternCapstone.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TrifurcationPatternUniqueness` |
+| `Atlas/StatisticalMechanics/Code/FK/TwoPointPathLower.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TwoPointPathLower` |
+| `Atlas/StatisticalMechanics/Code/FK/WeightedParameterMonotoneClosed.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.WeightedParameterMonotone` |
+| `Atlas/StatisticalMechanics/Code/FrontierA/FKCriticalAlgebra.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.CriticalAlgebra` |
+| `Atlas/StatisticalMechanics/Code/FrontierA/FKTrihexDuality.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.FKDuality` |
+| `Atlas/StatisticalMechanics/Code/FrontierA/FiniteCutHubCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiniteCutHubCount` |
+| `Atlas/StatisticalMechanics/Code/Ising/BackboneExists.lean` | `PhyslibExt.CondensedMatter.IsingModel.BackboneExists` |
+| `Atlas/StatisticalMechanics/Code/Ising/DualWalkBoundsClose.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkLeftRegion` |
+| `Atlas/StatisticalMechanics/Code/Ising/HdomNativeWeight.lean` | `PhyslibExt.CondensedMatter.IsingModel.ThreePointSplitMass` |
+| `Atlas/StatisticalMechanics/Code/Ising/KWGeometricDual.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual` |
+| `Atlas/StatisticalMechanics/Code/OSSS/ActiveBoundaryDifferential.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ActiveBoundaryDifferential` |
+| `Atlas/StatisticalMechanics/Code/OSSS/ActiveEdgeDifferential.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ActiveEdgeDifferential` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptCondBBProof2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptFiberCross` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptCondReduction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptCondReduction` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptDisintegration.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptDisintegration` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptMConditional.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptMConditional` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalCrossBridge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalCrossBridge` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalCrossMomentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalCrossFlipMoment` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalKernel.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalKernel` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalMoments.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalMoments` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalOSSS.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalOSSS` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalRootFlip.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalRootFlip` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalSplice.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalSplice` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCausalWeightedMoments.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCausalWeightedMoments` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCodingLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCodingLaw` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCovLowerClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCovLowerPoincare` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveCovLowerGeom.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveCovLowerGeom` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptivePredictableOrder.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptivePredictableOrder` |
+| `Atlas/StatisticalMechanics/Code/OSSS/AdaptiveTau.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveTau` |
+| `Atlas/StatisticalMechanics/Code/OSSS/CenteredFirstHit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.CenteredFirstHit` |
+| `Atlas/StatisticalMechanics/Code/OSSS/CouplingStructure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.CouplingStructure` |
+| `Atlas/StatisticalMechanics/Code/OSSS/CrossMonotone.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.CrossMonotone` |
+| `Atlas/StatisticalMechanics/Code/OSSS/CrossVFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.CrossVFKG` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKQ2SharpUncond.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FKQ2SharpTheorem` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKRevealmentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentCovLowerBound` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Assembly` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.BernoulliPointwiseDifferential` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessUncond.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.SubcriticalCrossingDecay` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeighted.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Weighted` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedCoherentLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedCoherentLimit` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedDomain.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedDomain` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedDomainActive.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedDomainActive` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedHighBeta.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedHighBeta` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedInfiniteVolume.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedInfiniteVolume` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedIntegration.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedIntegration` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedLocalized.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedLocalized` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedPeriodic.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPeriodic` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedPeriodicRepair.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPeriodicRepair` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedPhaseClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseCommonCritical` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedPhaseTransport.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseTransport` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedSelectedLaws.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedSelectedLaws` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedStrict.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedStrict` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedThreshold.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedThreshold` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpnessWeightedWeakLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedWeakLimit` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FamilyEqzzzResolution.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.AdaptiveFamilyCovLower` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FiniteGraphBoundaryDifferential.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FiniteGraphBoundaryDifferential` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FrontierFamilyClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FrontierFamilyRevealment` |
+| `Atlas/StatisticalMechanics/Code/OSSS/GrandCoupling.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.GrandCoupling` |
+| `Atlas/StatisticalMechanics/Code/OSSS/GrandCouplingAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.GrandCouplingAssembly` |
+| `Atlas/StatisticalMechanics/Code/OSSS/HBridgeClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.HorizontalBridgeDecay` |
+| `Atlas/StatisticalMechanics/Code/OSSS/Lindeberg.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Lindeberg` |
+| `Atlas/StatisticalMechanics/Code/OSSS/LindebergTree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LindebergTree` |
+| `Atlas/StatisticalMechanics/Code/OSSS/LocalizedCrossTree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LocalizedCrossTree` |
+| `Atlas/StatisticalMechanics/Code/OSSS/LogCesaroLimit.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.LogCesaroLimit` |
+| `Atlas/StatisticalMechanics/Code/OSSS/MargMonoRand.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.MargMonoRand` |
+| `Atlas/StatisticalMechanics/Code/OSSS/MonotoneOSSSAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.MonotoneOSSSAssembly` |
+| `Atlas/StatisticalMechanics/Code/OSSS/MonotonicOSSS.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.MonotonicOSSS` |
+| `Atlas/StatisticalMechanics/Code/OSSS/OSFKAssemblyClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PottsDecay` |
+| `Atlas/StatisticalMechanics/Code/OSSS/OptionalStopping.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.OptionalStopping` |
+| `Atlas/StatisticalMechanics/Code/OSSS/PerScaleRevealmentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PerScaleRevealment` |
+| `Atlas/StatisticalMechanics/Code/OSSS/PoincareApp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PoincareApp` |
+| `Atlas/StatisticalMechanics/Code/OSSS/PredictableTreeQuery.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PredictableTreeQuery` |
+| `Atlas/StatisticalMechanics/Code/OSSS/PrefixCoversClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PrefixCoversCluster` |
+| `Atlas/StatisticalMechanics/Code/OSSS/QueriedCrossTreeClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.QueriedCrossTree` |
+| `Atlas/StatisticalMechanics/Code/OSSS/ReachBoxCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ReachBoxCrossing` |
+| `Atlas/StatisticalMechanics/Code/OSSS/ReachDomination.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.ReachDomination` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentBoundAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentBoundAssembly` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentBoxCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentBoxCrossing` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.RevealmentTranslation` |
+| `Atlas/StatisticalMechanics/Code/OSSS/SharpnessUncond.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.SubcriticalDecayDischarged` |
+| `Atlas/StatisticalMechanics/Code/OSSS/SpliceST1.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailSelMPSplice` |
+| `Atlas/StatisticalMechanics/Code/OSSS/StepCov.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.StepCov` |
+| `Atlas/StatisticalMechanics/Code/OSSS/TailCondLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailCondLaw` |
+| `Atlas/StatisticalMechanics/Code/OSSS/TailCondLawClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailCondLawConstant` |
+| `Atlas/StatisticalMechanics/Code/OSSS/TailSelMP.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailSelMP` |
+| `Atlas/StatisticalMechanics/Code/OSSS/TailSelMPClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.TailSelMPRecovery` |
+| `Atlas/StatisticalMechanics/Code/OSSS/UBlockFactor.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.UBlockFactor` |
+| `Atlas/StatisticalMechanics/Code/OSSS/UFactorHelper.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.FactorOneComponent` |
+| `Atlas/StatisticalMechanics/Code/OSSS/WiredBoxDifferential.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxDifferential` |
+| `Atlas/StatisticalMechanics/Code/OSSS/WiredBoxLocalized.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxLocalized` |
+| `Atlas/StatisticalMechanics/Code/OSSS/WiredBoxOffCentre.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WiredBoxOffCentre` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ArmEndDisjointClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndDisjoint` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ArmReachComponentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReachComponent` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AvoidingAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AvoidingRoutingResidue.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginAvoidingResidues` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AxisAssignmentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisAssignment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKArmSelectorClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedTreeArmSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKForestLib.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKHallSDRClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HallArmEnds` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKSpanningTreeClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoundaryPruningClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryPruning` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoxMengerAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoxMergeFreeMenger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMergeFreeMenger` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndsDistinct` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneMergeGeom.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonBurtonKeane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonForestCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonTrifProb.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonicalCountFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCountBound` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonicalTrifCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterMeetsCorridorProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterMeetsCorridor` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterReachesRay.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterReachesRay` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterRunsAxisFE.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterRunsAxisFE` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorConfinement.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConfinement` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorConnectProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConnect` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorSidesFromClusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DecoupledForestCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DecoupledForestCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjectionBound` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateArmTwoTrif` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsProve2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/FacPairwiseClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DirectionalDivergence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestAcyclicityClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PairwiseCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestColouringClose2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSingleCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafCountClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafDisjointClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutwardArm` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafInjection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestPathStructure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPathStructure` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestRootingClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TwoSidedPrivateFar` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestSelectorProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DivergentArmOrder` |
+| `Atlas/StatisticalMechanics/Code/Percolation/GeneralTrifurcationPattern.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GeneralTrifurcationPattern` |
+| `Atlas/StatisticalMechanics/Code/Percolation/GridBoxConnected.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected` |
+| `Atlas/StatisticalMechanics/Code/Percolation/HrouteDisjointPaths.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/HrouteHighDim.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/InfiniteClusterTail.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteClusterTail` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LatticeMengerAttach.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LatticeMengerClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttachData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LatticeThreeExitTree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeThreeExitTree` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LeafHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryArmInjection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/MengerCorridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors` |
+| `Atlas/StatisticalMechanics/Code/Percolation/MengerRouting.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/OpenSpanningForestClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/OutwardArmForestClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutwardArmForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/PrivateArmProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoherentArmSelector` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RootedForestPeelClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoverArmDivergence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RootedTreeSelectorClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedColoredForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RunsAlongAxisProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RunsAlongAxis` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SecondPeelingClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanForestArms` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SingleLeafHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeForestData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanForestArmsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestReaching` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeArmClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClawDivergentArmOrder` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeRealiseClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeTrifClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSpanningForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ThreeArmCoverClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeArmCover` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ThreePendantTree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreePendantTree` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationConstruct.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MergeFreeTrifurcation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationConstruction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationExistence.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationExistence2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationFiniteEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationPatternMeasure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationPatternMeasure` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TwoFoldForestArmsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LeafDisjointSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TwoFoldHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TwoFoldForestArms` |
+| `Atlas/StatisticalMechanics/Code/Probability/MeasurableFKGClosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.MeasurableFKGClosure` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryLimit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryLimit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryPhi.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryProfile.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryProfile` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundarySquareRoot.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundarySquareRoot` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABForwardCharacteristic.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABForwardCharacteristic` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABMeanfieldGhost.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABMeanfieldGhost` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABMeanfieldLimit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABMeanfieldLimit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BKFirstExit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SusceptibilityFirstExit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneActualSelectorObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneActualSelectorSwitching.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneAsymmetricCoordinateCertificate.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.AsymmetricCoordinateCertificate` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneBondwiseOrderedExploration.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.BondwiseOrderedExploration` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteSelector.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteSelectorObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelectorObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationCutAdmissible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationCutAdmissible` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationRealization.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationRealization` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationSelector.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationSelectorAdmissible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelectorAdmissible` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneMultiStepBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.MultiStepBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneOrderedDeterminedCut.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCut` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneOrderedDeterminedCutObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCutObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CoordinateReindex.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateReindex` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CoordinateToggleObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateToggleObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CutResummation.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CutResummation` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2Quantitative.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2Quantitative` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP3Domain.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P3Domain` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialEdgeCopyObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexDomainResummationCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialEdgeCopySwitching.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.PartialEdgeCopySwitching` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialP2Reindex.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.PartialP2Reindex` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSelectorCompatible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexCounterexample.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexK4Literal.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexK4Literal` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexK4Realization.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexK4Realization` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexParityBridge.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexParityBridge` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeBondToggle.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondToggle` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeCycleObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeCycleObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeCyclePairToggle.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeCyclePairToggle` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeExhaustiveProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeExhaustiveProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BetaFormPerco.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.BetaFormPerco` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/FiniteRangePerco.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.FiniteRangePerco` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/Item1Htc1.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildePcBetaForm` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/Item3PercoLattice.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSubcriticalDecay` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/MeanfieldTargetReassembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.MeanfieldTargetReassembly` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/NontrivialAssembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessBetaFormDimTwo` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/PercoSusceptibility.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSusceptibility` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/PivotalFactorComplete.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PivotalSurfaceFactor` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/SharpnessAssembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessAssembly` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangBKData.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangBKData` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangFaithfulExclusive.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangFaithfulExclusive` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangFixedK.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangFixedK` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangHarris.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangHarris` |
+| `Atlas/StatisticalMechanics/Code/Universality/BXPMinimalHyp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.BXPMinimalHyp` |
+| `Atlas/StatisticalMechanics/Code/Universality/ConnectedRCoastClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LeftFillInteriorArc` |
+| `Atlas/StatisticalMechanics/Code/Universality/KestenBXPWire.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.KestenBXP` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWLowestCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.RSWLowestCrossing` |
+| `Atlas/StatisticalMechanics/Code/Walls/baearmexist.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BranchNeighbourArm` |
+| `Atlas/StatisticalMechanics/Code/Walls/baoallopen.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxAllOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bararmray.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRay` |
+| `Atlas/StatisticalMechanics/Code/Walls/bauacyclicarm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicArmSubforest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc101mengergap.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerGapThreeArms` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc102armleafboundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmLeafBoundary` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc103contractdeg.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ContractedGraphDegree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc105contraction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifOverlapContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc106separated.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedTrifContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc107harmbox.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HarmBoxCoarseReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc108sublatticeforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc109finiteenergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarsePrecursorFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc110globalforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc111routing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseAttachRouting` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc112sepcontract.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedHubContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc113boundaryforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryForestDegree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc114haschild.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InternalArmChild` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc115severance.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeSeverance` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc116armproof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmThroughPathCover` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc117mergeproof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxCutMerge` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc118pathmember.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PendantPathMember` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc119recenter.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRecenter` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc120closure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullUniqueness` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc121trifcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AnchoredLeafTrifCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc12core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginTrifurcationRewiring` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc16menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerSeparatorPath` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc17menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerEdgeRestriction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc18mengerhard.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRestrictedReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc19menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerFanPaths` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc20mengerroute.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerOriginRoute` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc21trifurc.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerTrifurcation` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc24coarsetrif.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifArms` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc25renormcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RenormalizedForestCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc26forest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateFarForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc27forestroot.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateFarArmOrder` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc28forestroot.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmDivergenceRank` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc29armdiv.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedArmDivergence` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedCorridorRouting` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_cutunbounded.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCutUnbounded` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_forcedpathconn.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedPathChain` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_forcemono.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForceMonotone` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_raydisjoint.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorRayDisjoint` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_threewitnesses.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc30armforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DownArmForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc31globalarm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalDownArm` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc32forestsep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.EscapingArmForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc33escaping.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingRayEscape` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc34ray.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingRayReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc35globalarm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutAvoidingRayArm` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc36rooteddiv.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSelfDivergence` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc37armadj.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestRooting` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc38acyclic.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutAcyclic` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc39spanning.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutSpanning` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_anchordecomp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorAnchorDecomposition` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_barrierblocks.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClosedBarrierBlocks` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorDisjointClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_distinctwitnessclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutDistinctWitnesses` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_rhoedgecases.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RhoEdgeCases` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc40funnel.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmCutFunnel` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc41rootside.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmRootSide` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc42rootward.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootwardAvoidingWalk` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc43rootparent.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootParentWard` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc44rootwalk.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FarRankRootWalk` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc45depthwalk.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootDepthWalk` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc46funnelproof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmFunnelParent` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc47trifarms.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifArms` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc48classical.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc49finiteenergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_avoidingsurvives.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutAvoidingSurvives` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutNeighbour` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_nbrfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginNeighbourFinite` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_pigeonhole.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteUnionPigeonhole` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc50arminjection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmInjectionCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc51armforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalArmForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc52jordanbridge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicForestJordanBridge` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc53harmbox.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalHarmBox` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc54coarse.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryTrifCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc55route.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerRoute` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc56menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisNeighbourMenger` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc57coarsetrif.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifNeighbourReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc58wholebox.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WholeBoxOpenTrif` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc59corridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCorridors` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc60upperlines.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.UpperLinesReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc61coarsebox.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoxUpperLines` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc62coarseclose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc63coarseforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseArmForestCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc64coarseembed.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseStarForestEmbedding` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc65connected.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc66assembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc67supervertex.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifSuperVertex` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc68Gnforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBoundaryForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc69count.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalForestLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc6raysetdef.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OffBoxRaySet` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc70globalforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalStarForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc71spanningtree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestNeighbourSpanningTree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc72quotient.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxQuotient` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc73sublattice.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointBoxes` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc74disjointforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SublatticeDisjointForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc75spanningtree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberForestSpanningTree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc76buffer.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxBuffer` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc77expectation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullExpectation` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc78mergedichotomy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc79finiteN.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TopNullFiniteVolume` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc7distinctwitnessclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutDistinctWitnessClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc7nocrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterNoCrossing` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc80gntrifcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnBranchLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc81gncutae.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnCoarseInfiniteCluster` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc82singleboxcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleBoxCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc83genuinetrif.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifUpperLines` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc84leafboundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLeafBoundary` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc85bootstrap.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc86finiteNcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiniteVolumeCutCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc87prune.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutsideLeafPrune` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc88genuinecount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineRayCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc89genuinetrifae.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalOriginRewiring` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8cutleavesinfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutLeavesInfinite` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8distinctcutclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DistinctCutClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8nocrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DisjointCutNoCrossing` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8removeforcecomm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RemoveForceCommute` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc90boxopenforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineBoxOpenForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc93badbox.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BadBox` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc94density.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifDensity` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc95forestdensity.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestArmDensity` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc96singlesiterewiring.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleSiteRewiring` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc97precursor.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuinePrecursor` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc98mcoroute.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxAttachPrecursor` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc99connect.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourBoxConnect` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginBoxRewiring` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9cutsurvives.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterSurvives` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9distinctcutclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDistinctCutClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9nbrcutcluster.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourCutCluster` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_cutunbounded.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutUnboundedCoordinate` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_mouthcorridor.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorMouth` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_wiringforcesopen.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WiringForcesOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bcaconcreteclose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmSubforestCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bcl2close.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BridgeThreeMeet` |
+| `Atlas/StatisticalMechanics/Code/Walls/bclclose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CylinderArmPattern` |
+| `Atlas/StatisticalMechanics/Code/Walls/bcorcorridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ReflectedCorridors` |
+| `Atlas/StatisticalMechanics/Code/Walls/bctconnectedtree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.StarForestFiber` |
+| `Atlas/StatisticalMechanics/Code/Walls/bcvcutvertex.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeCutVertex` |
+| `Atlas/StatisticalMechanics/Code/Walls/bdecdecouple.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrecursorDecoupling` |
+| `Atlas/StatisticalMechanics/Code/Walls/belexpleaf.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OpenLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfaforestassemble.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalForestData` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfc2indep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MeasurableDependence` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfcfaithful.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FaithfulBoxAllOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfcforestacyclic.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DisjointStarForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfctfinitecount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutStarTransport` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfefiniteenergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfggenuinecarrier.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineExplorationLeaf` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfin2assemble.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourBoxTrifSet` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfinfinalclose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalArmSubforest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfkforestbuild.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestBuild` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfkforestcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bflleafclose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineArmTreeLeaf` |
+| `Atlas/StatisticalMechanics/Code/Walls/bftfinetrif.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrif` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfxtrifexist.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FineTrifUniqueness` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgctrifgraph.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifForestGraph` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgeexploration.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifExploration` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgf2faithcontract.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FaithfulContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgf3armunion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.StarArmUnion` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgfacyclicstep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicReachStep` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgnglobalcontract.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalTrifContraction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bgtgenuineforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineForestCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/binsclosure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SquareLatticeUniqueness` |
+| `Atlas/StatisticalMechanics/Code/Walls/binsinsertion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ShellInsertionTolerance` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkgclassicalforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalVertexForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccstepopen.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorStepOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccthreeaxes.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorThreeAxes` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccwitnessnezero.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkmmerge.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifMerge` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkwburtonkeane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestInsertionTolerance` |
+| `Atlas/StatisticalMechanics/Code/Walls/blfboundaryleaf.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InteriorArmBoundaryLeaf` |
+| `Atlas/StatisticalMechanics/Code/Walls/bmfmergefree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MergeFree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bof2leafcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HandshakeLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bpeprobcount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestProbCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/bpt2corridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClosedCorridors` |
+| `Atlas/StatisticalMechanics/Code/Walls/bptpartitioncount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryPartitionCount` |
+| `Atlas/StatisticalMechanics/Code/Walls/briraysintree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RaysInTree` |
+| `Atlas/StatisticalMechanics/Code/Walls/brt2routing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrecursorRouting` |
+| `Atlas/StatisticalMechanics/Code/Walls/bscsupercut.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SuperCut` |
+| `Atlas/StatisticalMechanics/Code/Walls/bsdsepdegree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SeparatedBoxDegree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bsgspantreegn.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GnSpanningTreeRay` |
+| `Atlas/StatisticalMechanics/Code/Walls/bskspanningtree.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AugmentedSpanningTree` |
+| `Atlas/StatisticalMechanics/Code/Walls/btrtrifnotion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifNotion` |
+| `Atlas/StatisticalMechanics/Code/Walls/bxpxpos.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RemoveSitePosition` |
+| `Atlas/StatisticalMechanics/Code/Walls/ceosimplecycle.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.ShiftSquareCycle` |
+| `Atlas/StatisticalMechanics/Code/Walls/dowdartwinding.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.CrossEdgeMatchingForms` |
+| `Atlas/StatisticalMechanics/Code/Walls/fwrfaceregion.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion` |
+| `Atlas/StatisticalMechanics/Code/Walls/jbwbridge.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap` |
+| `Atlas/StatisticalMechanics/Code/Walls/kwceventtocut.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk` |
+| `Atlas/StatisticalMechanics/Code/Walls/rpccrossflip.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.RayCrossFlip` |
+
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
-modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
-counted once, under the first category that applies in the order below. All
-6,970 source modules are covered: 655 first-round rows and 238 second-round rows (one source,
+modules (`.lean` files) and lines (`wc -l`) at the time of the third round. Each module is counted
+once, under the first category that applies in the order below. All 6,970 source modules are
+covered: 655 first-round rows, 238 second-round rows (one source,
 `Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
-definition ported in the second), 1 deleted module, and the categories below.
+definition ported in the second), 635 third-round rows, 1 deleted module, and the categories below.
 
-### Physics remainder (636 modules, 299,048 lines)
+### Excluded from the physics port (1 module, 293 lines)
 
-These are the modules that the physics results (random-cluster/FK, Ising, sharpness, Onsager,
-Beffara–Duminil-Copin, and the physics-facing percolation, OSSS and wall modules) need, minus
-everything ported. They are left for a `PhyslibExt` follow-up. Every module they import is either
-ported (first or second round) or in this group, so the follow-up needs nothing from the categories
-further down.
-
-| Area | Modules | Lines |
-| --- | ---: | ---: |
-| `BeffaraDC` | 38 | 11,656 |
-| `FK` | 183 | 97,030 |
-| `FrontierA` | 3 | 583 |
-| `Ising` | 4 | 3,202 |
-| `OSSS` | 81 | 40,089 |
-| `Onsager` | 1 | 293 |
-| `Percolation` | 76 | 31,562 |
-| `Probability` | 1 | 362 |
-| `Sharpness` | 49 | 20,140 |
-| `TwoDim` | 4 | 3,138 |
-| `Universality` | 4 | 13,226 |
-| `Walls` | 192 | 77,767 |
+- `Atlas/StatisticalMechanics/Code/Onsager/WindingInvestigate.lean`. It is a root module (nothing
+  imports it) that assumes the refuted `BalancePreservingContraction` /
+  `bpc_BalanceSaturatingContraction` and uses `bpc_totalTurn_eq_four_value_of_saturating`, a vacuous
+  declaration deleted in an earlier round. Porting it would bring back vacuous statements.
 
 ### `Check*` verification files (1,981 modules, 39,452 lines)
 
@@ -967,9 +1596,8 @@ elaborates. They hold no reusable mathematics, and no ported module imports them
 
 ### Frontier and exploratory directories (2,087 modules, 1,025,815 lines)
 
-These are exploratory attempts on open or out-of-scope problems. No ported module and no module of
-the physics remainder imports them. The counts exclude `Check*` files and the 3 `FrontierA` modules
-that belong to the physics remainder.
+These are exploratory attempts on open or out-of-scope problems. No ported module imports them. The
+counts exclude `Check*` files and the 3 `FrontierA` modules ported in the third round.
 
 | Directory | Modules | Lines |
 | --- | ---: | ---: |
@@ -981,8 +1609,7 @@ that belong to the physics remainder.
 
 ### Unused scaffolding (1,034 modules, 507,152 lines)
 
-These are intermediate steps and alternative routes that no ported module and no module of the
-physics remainder imports.
+These are intermediate steps and alternative routes that no ported module imports.
 
 | Directory | Modules | Lines |
 | --- | ---: | ---: |
@@ -991,8 +1618,7 @@ physics remainder imports.
 
 ### Unused modules in the physics areas (339 modules, 129,039 lines)
 
-These modules sit in physics directories but are imported by no ported module and no module of the
-physics remainder. They are used only by `Check*` files, frontier files or each other, or by nothing
+These modules sit in physics directories but are imported by no ported module. They are used only by `Check*` files, frontier files or each other, or by nothing
 at all: superseded routes, conditional "close" files, and obstruction notes.
 
 | Directory | Modules | Lines |
@@ -1014,6 +1640,7 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
+- Third round: no ported module was deleted or merged; each of the 635 sources has its own module.
 - First round: no ported module was deleted as a whole. Two pairs of source files were merged into
   one module each, and both sources of each pair appear in the first-round table:
   - `Code/FK/EdgeConfigZ.lean` and `Code/Walls/fkc_rqbulkfraction.lean` →
