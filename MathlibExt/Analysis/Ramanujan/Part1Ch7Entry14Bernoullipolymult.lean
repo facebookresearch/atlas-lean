@@ -514,7 +514,10 @@ def chapter7Entry14A0Approx (m : ℕ) : ℝ :=
 def chapter7StieltjesA (c : ℕ → ℝ) (k : ℕ) : ℝ :=
   (-1 : ℝ) ^ k * c k / (k.factorial : ℝ)
 
-/-- The Entry 14 coefficient normalization agrees with the asymptotic entry's copy. -/
+/-- **Two definitions of the normalized Stieltjes coefficients agree.** For every real sequence
+$(c_k)_{k \ge 0}$, the coefficients $A_k = (-1)^k c_k / k!$ defined for the asymptotic expansion of
+$\sum 1/(n(n^x - 1))$ are, by definition, the coefficients $A_k$ used in the expansion of
+$\sum 1/(n^{s+1} \log n)$ in the Stieltjes constants. -/
 theorem chapter7StieltjesA_eq_entry14Bernoulliasymptotic :
     chapter7StieltjesA = Entry14Bernoulliasymptotic.chapter7StieltjesA := rfl
 
@@ -534,7 +537,8 @@ def chapter7Entry14Term (x : ℝ) (j : ℕ) : ℝ :=
 def chapter7Entry14Sum (x : ℝ) : ℝ :=
   ∑' j : ℕ, chapter7Entry14Term x j
 
-/-- The series defining `chapter7Entry14Sum` is summable at every positive argument. -/
+/-- **Convergence of $\sum 1/(n(n^x - 1))$.** For every real $x > 0$ the series
+$\sum_{n \ge 2} \frac{1}{n(n^x - 1)}$ converges absolutely. -/
 theorem summable_chapter7Entry14Term (x : ℝ) (hx : 0 < x) :
     Summable (chapter7Entry14Term x) := by
   have hp : 1 < x + 1 := by linarith
@@ -577,7 +581,10 @@ def chapter7StieltjesApprox (k m : ℕ) : ℝ :=
   (∑ j ∈ Icc 1 m, Real.log (j : ℝ) ^ k / j) -
     Real.log (m : ℝ) ^ (k + 1) / (k + 1)
 
-/-- The Entry 14 Stieltjes approximants agree with the Entry 13 copies. -/
+/-- **Two definitions of the Stieltjes approximants agree.** For all $k, m \ge 0$, the approximant
+$\sum_{j=1}^{m} (\log j)^k / j - (\log m)^{k+1} / (k+1)$ defined for the asymptotic expansion of
+$\sum 1/(n(n^x - 1))$ is, by definition, the approximant used for the existence of the Stieltjes
+constants. -/
 theorem chapter7StieltjesApprox_eq_entry13Bernoullipolyadd :
     chapter7StieltjesApprox = Entry13Bernoullipolyadd.chapter7StieltjesApprox := rfl
 
@@ -1011,12 +1018,23 @@ private lemma entry14Sum_eq_approx_add_error (a0 : ℝ) (c : ℕ → ℝ)
   exact tendsto_nhds_unique hleft
     (hright.congr' (heq.mono fun _ h => h.symm))
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
-
-Proves `Wanted` entry `ramanujan_part1_ch7_entry14_bernoullipolymult`.
+/-- **Asymptotic expansion of $\sum 1/(n(n^x - 1))$ as $x \to 0^+$.** Let $a_0$ be a real number
+such that $\sum_{n=2}^{m} \frac{1}{n \log n} - \log \log m$ tends to $a_0$ as $m \to \infty$, and
+let $(c_k)_{k \ge 0}$ be real numbers such that, for every $k \ge 0$,
+$\sum_{j=1}^{m} (\log j)^k / j - (\log m)^{k+1} / (k+1)$ tends to $c_k$ as $m \to \infty$. Then for
+every real $x > 0$ the series $F(x) = \sum_{n \ge 2} \frac{1}{n(n^x - 1)}$ converges absolutely, and
+for every $N \ge 0$,
+$$F(x) = \frac{a_0 - \log x}{x} + \frac{1 - \gamma}{2}
+  + \sum_{k=1}^{N} \frac{B_{2k}\, c_{2k-1}}{(2k)!} x^{2k-1} + O(x^{2N+1})
+  \quad (x \to 0^+),$$
+where $\gamma$ is Euler's constant and $B_{2k}$ are the Bernoulli numbers.
 
 Proof: Truncated Laurent expansion of the exponential kernel, an exact partial-sum identity,
 and a sum-versus-integral error bound, followed by passage to the defining limits.
+
+Proves `Wanted` entry `ramanujan_part1_ch7_entry14_bernoullipolymult`.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
 -/
 theorem ramanujan_part1_ch7_entry14_bernoullipolymult
     (a0 : ℝ) (c : ℕ → ℝ)

@@ -35,13 +35,19 @@ open Asymptotics Filter Finset
 
 noncomputable section
 
-/-- The `j`-th term `(-1)ʲ / ((x + 1)(x + 2) ⋯ (x + j + 1))` of Ramanujan's factorial series. -/
+/-- **Terms of Ramanujan's factorial series.** For a real number $x$ and a natural number $j$,
+the $j$-th term of Ramanujan's factorial series is $(-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$,
+read as $0$ when the denominator vanishes. -/
 def chapter6Section13ExampleCTerm (x : ℝ) (j : ℕ) : ℝ :=
   (-1 : ℝ) ^ j /
     ∏ r ∈ range (j + 1), (x + (r + 1 : ℕ))
 
-/-- The sum `∑_{j ≥ 0} (-1)ʲ / ((x + 1) ⋯ (x + j + 1))` of the factorial series; it converges for
-`0 < x` (`summable_chapter6Section13ExampleCTerm`). -/
+/-- **Ramanujan's factorial series.** For a real number $x$, $C(x)$ is the sum
+$\sum_{j \ge 0} (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$ of Ramanujan's factorial series,
+where a term is read as $0$ when its denominator vanishes and the sum is taken to be $0$ when
+the series is not summable.
+
+The series is summable for every $x > 0$. -/
 def chapter6Section13ExampleCSum (x : ℝ) : ℝ :=
   ∑' j : ℕ, chapter6Section13ExampleCTerm x j
 
@@ -74,7 +80,10 @@ private lemma norm_CTerm_le_aux (x : ℝ) (hx : 0 < x) (j : ℕ) :
     abs_of_pos hprod_pos]
   exact one_div_le_one_div_of_le hfact_pos hle
 
-/-- For `0 < x` the terms are bounded by `1 / (j + 1)!`, so the series converges. -/
+/-- **Convergence of Ramanujan's factorial series.** For every real $x > 0$, the series
+$\sum_{j \ge 0} (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$ is summable.
+
+Its $j$-th term is bounded in absolute value by $1 / (j + 1)!$. -/
 theorem summable_chapter6Section13ExampleCTerm (x : ℝ) (hx : 0 < x) :
     Summable (chapter6Section13ExampleCTerm x) := by
   have hsum : Summable (fun n : ℕ => (1 : ℝ) / (n.factorial : ℝ)) := by
@@ -190,8 +199,10 @@ theorem chapter6Section13ExampleCTerm_zero (x : ℝ) :
   unfold chapter6Section13ExampleCTerm
   simp
 
-/-- Peeling off the first factor: the `(j + 1)`-th term at `x` is `-1 / (x + 1)` times the
-`j`-th term at `x + 1`. -/
+/-- **Recursion for the terms of Ramanujan's factorial series.** Write
+$c_j(x) = (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$ for the $j$-th term of Ramanujan's
+factorial series, with division by $0$ read as $0$. For every real $x$ and every natural number
+$j$, $c_{j+1}(x) = -\frac{1}{x + 1} \, c_j(x + 1)$. -/
 theorem chapter6Section13ExampleCTerm_succ (x : ℝ) (j : ℕ) :
     chapter6Section13ExampleCTerm x (j + 1) =
       (-1 / (x + 1)) * chapter6Section13ExampleCTerm (x + 1) j := by
@@ -200,7 +211,9 @@ theorem chapter6Section13ExampleCTerm_succ (x : ℝ) (j : ℕ) :
   rw [pow_succ]
   field_simp
 
-/-- The functional equation `C(x) = 1 / (x + 1) - C(x + 1) / (x + 1)` for `0 < x`. -/
+/-- **Functional equation of Ramanujan's factorial series.** Let
+$C(x) = \sum_{j \ge 0} (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$ be Ramanujan's factorial
+series. For every real $x > 0$, $C(x) = \frac{1}{x + 1} - \frac{C(x + 1)}{x + 1}$. -/
 theorem chapter6Section13ExampleCSum_eq (x : ℝ) (hx : 0 < x) :
     chapter6Section13ExampleCSum x =
       1 / (x + 1) - chapter6Section13ExampleCSum (x + 1) / (x + 1) := by
@@ -557,8 +570,11 @@ private lemma const_bigO_one_aux (c : ℝ) : (fun _ : ℝ => c) =O[atTop] (fun _
   filter_upwards with x
   rw [Real.norm_eq_abs, norm_one, mul_one]
 
-/-- The asymptotic expansion `C(x) = ∑_{j < N} (-1)ʲ B_{j+1} / x^{j+1} + O(1 / x^{N+1})` of
-Ramanujan's factorial series as `x → ∞`, with the Bell numbers `Nat.bell`. -/
+/-- **Asymptotic expansion of Ramanujan's factorial series.** Let
+$C(x) = \sum_{j \ge 0} (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$ be Ramanujan's factorial
+series and let $B_n$ denote the $n$-th Bell number. For every natural number $N$,
+$$C(x) - \sum_{j=0}^{N-1} \frac{(-1)^j B_{j+1}}{x^{j+1}} = O\left(\frac{1}{x^{N+1}}\right)
+\quad \text{as } x \to \infty.$$ -/
 theorem isBigO_chapter6Section13ExampleCSum_sub_sum_bell (N : ℕ) :
     (fun x : ℝ => chapter6Section13ExampleCSum x -
         ∑ j ∈ range N, (-1 : ℝ) ^ j * ((j + 1).bell : ℝ) / x ^ (j + 1))
@@ -752,7 +768,14 @@ theorem isBigO_chapter6Section13ExampleCSum_sub_sum_bell (N : ℕ) :
       ring
     exact hAsm.congr' hEv.symm Filter.EventuallyEq.rfl
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Convergence and asymptotic expansion of Ramanujan's factorial series.** Let
+$c_j(x) = (-1)^j / ((x + 1)(x + 2) \cdots (x + j + 1))$, let $C(x) = \sum_{j \ge 0} c_j(x)$,
+and let $B_n$ denote the $n$-th Bell number. For all sufficiently large real $x$, $x > 0$ and the
+series $\sum_{j \ge 0} c_j(x)$ is summable; and for every natural number $N$,
+$$C(x) - \sum_{j=0}^{N-1} \frac{(-1)^j B_{j+1}}{x^{j+1}} = O\left(\frac{1}{x^{N+1}}\right)
+\quad \text{as } x \to \infty.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 Proves `Wanted` entry `ramanujan_part1_ch6_entry5_digamma`.
 -/
 theorem ramanujan_part1_ch6_entry5_digamma :
