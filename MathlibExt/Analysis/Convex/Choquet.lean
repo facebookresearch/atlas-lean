@@ -707,10 +707,14 @@ open MeasureTheory Set
 namespace MathlibExt.Analysis.Convex.ChoquetWanted
 
 /--
-Every point `x` of a compact set `K` is the Bochner barycenter of a Borel probability
-measure carried by the extreme points. Neither convexity nor nonemptiness of `K` is needed
-for the proof. `choquet_representation` is the specialization of this statement to nonempty
-compact convex sets.
+**Choquet representation for compact sets.** Let $E$ be a second-countable real Banach space
+with its Borel σ-algebra and let $K \subseteq E$ be compact. For every $x \in K$ there is a
+probability measure $\mu$ on $E$ such that the set $\operatorname{ext} K$ of extreme points of
+$K$ has $\mu(\operatorname{ext} K) = 1$, the identity map $y \mapsto y$ is Bochner integrable
+for $\mu$, and $\int_E y \, d\mu(y) = x$.
+
+Neither convexity nor nonemptiness of $K$ is assumed; Choquet's theorem for nonempty compact
+convex sets is the special case.
 -/
 public theorem choquet_representation_of_isCompact
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -771,15 +775,19 @@ public theorem choquet_representation_of_isCompact
     exact hbary
 
 /--
-For a nonempty compact convex `K` in a second-countable real Banach space, every `x ∈ K` is the
-Bochner barycenter of a Borel probability measure carried by the extreme points: there exists `μ`
-with `μ (extremePoints ℝ K) = 1`, integrable `y ↦ y`, and `∫ y dμ = x`. Source: G. Choquet,
+**Choquet's theorem.** Let $E$ be a second-countable real Banach space with its Borel σ-algebra
+and let $K \subseteq E$ be a nonempty compact convex set. For every $x \in K$ there is a
+probability measure $\mu$ on $E$ such that the set $\operatorname{ext} K$ of extreme points of
+$K$ has $\mu(\operatorname{ext} K) = 1$, the identity map $y \mapsto y$ is Bochner integrable
+for $\mu$, and $\int_E y \, d\mu(y) = x$.
+
+Proves `Wanted` entry `choquet_representation`.
+
+Source: G. Choquet,
 Seminaire Bourbaki 1956 and Lectures 1962; Bishop-de Leeuw and Choquet-Bishop-de Leeuw integral
 representation; Phelps, Lectures on Choquet's Theorem, 1966; Lean states compact-source
 specialization in second-countable real Banach space with `ProbabilityMeasure` carried by
 `extremePoints` and Bochner integral barycenter.
-
-Proves `Wanted` entry `choquet_representation`.
 -/
 public theorem choquet_representation
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
