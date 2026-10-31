@@ -19,6 +19,9 @@ import Mathlib.MeasureTheory.Integral.ExpDecay
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Probability.Independence.Integration
+import Mathlib.Algebra.Polynomial.BigOperators
+import Mathlib.Algebra.Polynomial.Eval.Coeff
+import Mathlib.Algebra.Polynomial.Eval.Degree
 
 /-!
 # The site frequency spectrum under a variable population size, and what it identifies
@@ -48,9 +51,12 @@ exponential sum with `r` terms vanishing at `r` distinct points is zero (the mat
 `K` pieces when `n ≥ 2K` (Bhaskar & Song 2014, Corollary 7). Bhaskar & Song show that the
 expected SFS of a sample of size `n` and `(c_2, …, c_n)` determine each other; that reduction
 (which needs the time-changed coalescent and subsampling) is not formalized here, so the
-identifiability theorem is stated for `(c_2, …, c_n)`. Tightness of `n ≥ 2K` is proved for
-`K = 2` by an explicit pair; tightness for general `K` and the Myers–Fefferman–Patterson
-non-identifiability of general histories are recorded in
+identifiability theorem is stated for `(c_2, …, c_n)`. The bound `n ≥ 2K` is tight for every
+`K ≥ 2`: an explicit pair of `K`-piece histories agrees on `c_2, …, c_{2K-1}` (Bhaskar & Song
+2014, Corollary 7). Consequently, for every `n` there are two bounded measurable histories,
+different on a set of positive measure, with the same `c_2, …, c_n`. The
+Myers–Fefferman–Patterson theorem (one pair with the same `c_m` for every `m`, which needs a
+Müntz-type construction) is recorded in
 `WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted.lean`.
 
 ## Main results
@@ -67,8 +73,10 @@ non-identifiability of general histories are recorded in
 * `sizeFn_eq_of_firstCoalMean_eq`: **Bhaskar–Song identifiability** — two piecewise-constant
   histories with `K` pieces and equal `c_m` for `2 ≤ m ≤ n`, `n ≥ 2K`, have the same size at
   every time `s ≥ 0`.
-* `exists_ne_firstCoalMean_eq_two`: the bound is tight for `K = 2` (an explicit pair of
-  two-piece histories with equal `c_2`, `c_3`).
+* `exists_ne_firstCoalMean_eq_of_lt`: the bound is tight for every `K ≥ 2` (an explicit pair
+  of `K`-piece histories with equal `c_2, …, c_{2K-1}`).
+* `exists_ne_ae_firstCoalMean_eq_Icc`: for every `n`, two bounded measurable histories that
+  differ on a set of positive measure and have equal `c_2, …, c_n`.
 
 ## References
 
@@ -85,6 +93,8 @@ non-identifiability of general histories are recorded in
   693–709.
 * A. Bhaskar and Y. S. Song, *Descartes' rule of signs and the identifiability of population
   demographic models from genomic variation data*, Ann. Statist. 42 (2014), 2469–2493.
+* S. Myers, C. Fefferman and N. Patterson, *Can one learn history from the allelic spectrum?*,
+  Theor. Popul. Biol. 73 (2008), 342–348.
 -/
 
 @[expose] public section
@@ -874,77 +884,236 @@ theorem sizeFn_eq_of_firstCoalMean_eq {n : ℕ} (h h' : PiecewiseHistory K) (hn 
       linarith
   rw [h.sizeFn_eq_inv_dual hK hs, h'.sizeFn_eq_inv_dual hK hs, hRR, hdual _ (hR h')]
 
-/-- A two-piece history: size `1` on `[0, log 2)`, then size `3` (first half of the tightness
-example). -/
-def tightA : PiecewiseHistory 2 where
-  size j := if j = 0 then 1 else 3
-  start j := if j = 0 then 0 else Real.log 2
-  size_pos j _ := by split_ifs <;> norm_num
-  start_zero := by simp
-  start_lt j hj := by
-    obtain rfl : j = 0 := by omega
-    simpa using Real.log_pos one_lt_two
+/-- The history with sizes `η j` whose pieces start at the coalescent times `u j` (the dual of
+the history with sizes `1 / η j` starting at `u j`). -/
+private def ofCoalTime (K : ℕ) (η u : ℕ → ℝ) (hη : ∀ j < K, 0 < η j) (hu0 : u 0 = 0)
+    (hu : ∀ j, j + 1 < K → u j < u (j + 1)) : PiecewiseHistory K :=
+  dual ⟨fun j => (η j)⁻¹, u, fun j hj => inv_pos.2 (hη j hj), hu0, hu⟩
 
-/-- A two-piece history: size `37/32` on `[0, (37/32) log 3)`, then size `59/16` (second half
-of the tightness example). -/
-def tightB : PiecewiseHistory 2 where
-  size j := if j = 0 then 37 / 32 else 59 / 16
-  start j := if j = 0 then 0 else 37 / 32 * Real.log 3
-  size_pos j _ := by split_ifs <;> norm_num
-  start_zero := by simp
-  start_lt j hj := by
-    obtain rfl : j = 0 := by omega
-    have := Real.log_pos (by norm_num : (1 : ℝ) < 3)
-    simp only [↓reduceIte, Nat.add_eq_zero_iff, one_ne_zero, and_false]
-    positivity
+private lemma choose_two_mul_firstCoalMean_ofCoalTime (hK : 0 < K) {η u : ℕ → ℝ}
+    (hη : ∀ j < K, 0 < η j) (hu0 : u 0 = 0) (hu : ∀ j, j + 1 < K → u j < u (j + 1))
+    {m : ℕ} (hm : 2 ≤ m) :
+    ((m.choose 2 : ℕ) : ℝ) * firstCoalMean (ofCoalTime K η u hη hu0 hu).sizeFn m =
+      η 0 + ∑ j ∈ Ico 1 K, (η j - η (j - 1)) *
+        Real.exp (-((m.choose 2 : ℕ) : ℝ) * u j) := by
+  set D : PiecewiseHistory K := ⟨fun j => (η j)⁻¹, u, fun j hj => inv_pos.2 (hη j hj), hu0, hu⟩
+  rw [choose_two_mul_firstCoalMean _ hK hm]
+  have hs : ∀ j, (ofCoalTime K η u hη hu0 hu).size j = η j := fun j => inv_inv (η j)
+  simp only [hs]
+  congr 1
+  refine sum_congr rfl fun j hj => ?_
+  have hjK : j < K := (mem_Ico.1 hj).2
+  congr 3
+  exact D.cumRate_dual_cumRate hK (D.start_nonneg hjK)
 
-/-- The first coalescent-time breakpoint of a two-piece history. -/
-private lemma cumRate_start_one (h : PiecewiseHistory 2) :
-    cumRate h.sizeFn (h.start 1) = h.start 1 / h.size 0 := by
-  rw [(h.cumRate_piece 0 (by norm_num) _ (h.start_lt 0 (by norm_num)).le fun _ => le_rfl).2]
-  simp [h.start_zero, cumRate]
+private lemma sum_range_odd_even (f : ℕ → ℝ) {K : ℕ} (hK : 1 ≤ K) :
+    ∑ k ∈ range (2 * K - 1), f k = f 0 + ∑ j ∈ Ico 1 K, (f (2 * j - 1) + f (2 * j)) := by
+  induction K, hK using Nat.le_induction with
+  | base => simp
+  | succ K hK ih =>
+    rw [show 2 * (K + 1) - 1 = 2 * K - 1 + 1 + 1 by omega, sum_range_succ, sum_range_succ, ih,
+      sum_Ico_succ_top hK, show 2 * K - 1 + 1 = 2 * K by omega]
+    ring
 
-/-- The closed form of `C(m,2) c_m` for a two-piece history. -/
-private lemma two_piece (h : PiecewiseHistory 2) {m : ℕ} (hm : 2 ≤ m) :
-    ((m.choose 2 : ℕ) : ℝ) * firstCoalMean h.sizeFn m =
-      h.size 0 + (h.size 1 - h.size 0) *
-        Real.exp (-((m.choose 2 : ℕ) : ℝ) * (h.start 1 / h.size 0)) := by
-  rw [h.choose_two_mul_firstCoalMean (by norm_num) hm,
-    show (Ico 1 2 : Finset ℕ) = {1} by decide, sum_singleton, cumRate_start_one]
+private lemma exp_neg_mul_log_two (c k : ℕ) :
+    Real.exp (-(c : ℝ) * ((k : ℝ) * Real.log 2)) = ((1 / 2 : ℝ) ^ c) ^ k := by
+  rw [show -(c : ℝ) * ((k : ℝ) * Real.log 2) = -(((c * k : ℕ) : ℝ) * Real.log 2) by
+    push_cast; ring, Real.exp_neg, ← Real.log_pow, Real.exp_log (by positivity), ← pow_mul,
+    one_div_pow, one_div]
 
-/-- **Tightness of `n ≥ 2K` for `K = 2`**: two different two-piece histories with the same
-`c_2` and `c_3`, so `c_2, …, c_{2K-1}` do not determine a two-piece history. This is an
-explicit instance (constructed here) of the tightness statement of Bhaskar & Song (2014),
-Corollary 7; with `a c_m = η₀ + (η₁ - η₀) x^a`, `a = C(m,2)`, both histories give
-`a c_m = 2` at `a = 1` and `5/4` at `a = 3` (`x = 1/2` and `x = 1/3`). The general `K` is
-`VariableSFSWanted.exists_ne_firstCoalMean_eq_of_lt`. -/
-theorem exists_ne_firstCoalMean_eq_two :
-    ∃ h h' : PiecewiseHistory 2, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
-      ∀ m ∈ Icc 2 3, firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m := by
-  refine ⟨tightA, tightB, ⟨0, le_rfl, ?_⟩, fun m hm => ?_⟩
-  · rw [tightA.sizeFn_eq (j := 0) (by norm_num) tightA.start_zero.le (fun hk => by
-      simpa only [tightA.start_zero] using tightA.start_lt 0 hk),
-      tightB.sizeFn_eq (j := 0) (by norm_num) tightB.start_zero.le (fun hk => by
-      simpa only [tightB.start_zero] using tightB.start_lt 0 hk)]
-    simp [tightA, tightB]
-    norm_num
+/-- **Tightness of `n ≥ 2K`** (Bhaskar & Song 2014, Corollary 7): for every `K ≥ 2` there are
+two piecewise-constant histories with `K` pieces whose sizes differ at some time `s ≥ 0` but
+whose first-coalescence times `c_m` agree for `2 ≤ m ≤ 2K - 1`; so
+`sizeFn_eq_of_firstCoalMean_eq` fails for `n = 2K - 1`. The construction is explicit: with
+`z = 2^{-C(m,2)}`, the two histories have coalescent-time breakpoints `(2j - 1) log 2` and
+`2j log 2`, so `C(m,2) (c_m - c'_m)` is a polynomial of degree `2K - 2` in `z`; its
+coefficients are those of `∏_{m=2}^{2K-1} (X - 2^{-C(m,2)})`, which vanishes at the `2K - 2`
+points and has a nonzero constant term (the sizes at time `0` differ). -/
+theorem exists_ne_firstCoalMean_eq_of_lt (K : ℕ) (hK : 2 ≤ K) :
+    ∃ h h' : PiecewiseHistory K, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
+      ∀ m ∈ Icc 2 (2 * K - 1), firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m := by
+  open Polynomial in
+  -- the polynomial vanishing at the points `(1/2)^C(m,2)`
+  set z : ℕ → ℝ := fun m => (1 / 2 : ℝ) ^ m.choose 2
+  set P : ℝ[X] := ∏ m ∈ Icc 2 (2 * K - 1), (X - C (z m))
+  set p : ℕ → ℝ := fun k => P.coeff k
+  have hdeg : P.natDegree < 2 * K - 1 := by
+    refine (natDegree_prod_le _ _).trans_lt ?_
+    simp only [natDegree_X_sub_C, sum_const, Nat.card_Icc, smul_eq_mul, mul_one]
+    omega
+  have hroot : ∀ m ∈ Icc 2 (2 * K - 1), ∑ k ∈ range (2 * K - 1), p k * z m ^ k = 0 := by
+    intro m hm
+    rw [← eval_eq_sum_range' hdeg, eval_prod]
+    exact prod_eq_zero hm (by simp)
+  have hp0 : p 0 ≠ 0 := by
+    simp only [p, coeff_zero_eq_eval_zero, P, eval_prod, eval_sub, eval_X, eval_C, zero_sub]
+    exact prod_ne_zero_iff.2 fun m _ => neg_ne_zero.2 (pow_ne_zero _ (by norm_num))
+  -- the sizes
+  set S : ℝ := ∑ k ∈ range (2 * K), |p k|
+  have hS0 : 0 ≤ S := sum_nonneg fun _ _ => abs_nonneg _
+  have hpS : ∀ k < 2 * K, |p k| ≤ S := fun k hk =>
+    single_le_sum (f := fun k => |p k|) (fun _ _ => abs_nonneg _) (mem_range.2 hk)
+  set M : ℝ := 1 + (K + 1) * S
+  set η : ℕ → ℝ := fun j => M + p 0 + ∑ i ∈ Ico 1 (j + 1), p (2 * i - 1)
+  set η' : ℕ → ℝ := fun j => M - ∑ i ∈ Ico 1 (j + 1), p (2 * i)
+  have hsum_le : ∀ (g : ℕ → ℕ), (∀ i, i < K → g i < 2 * K) → ∀ j < K,
+      |∑ i ∈ Ico 1 (j + 1), p (g i)| ≤ K * S := by
+    intro g hg j hj
+    refine (abs_sum_le_sum_abs _ _).trans ?_
+    refine (sum_le_card_nsmul _ _ S fun i hi => hpS _ (hg i (by simp at hi; omega))).trans ?_
+    rw [Nat.card_Ico, nsmul_eq_mul]
+    gcongr
+    exact_mod_cast (by omega : j + 1 - 1 ≤ K)
+  have hη : ∀ j < K, 0 < η j := by
+    intro j hj
+    have h1 := hsum_le (fun i => 2 * i - 1) (fun i hi => by omega) j hj
+    have h2 := hpS 0 (by omega)
+    have := abs_le.1 h1
+    have := abs_le.1 h2
+    simp only [η, M]
+    nlinarith
+  have hη' : ∀ j < K, 0 < η' j := by
+    intro j hj
+    have h1 := hsum_le (fun i => 2 * i) (fun i hi => by omega) j hj
+    have := abs_le.1 h1
+    simp only [η', M]
+    nlinarith
+  -- the coalescent-time breakpoints
+  set u : ℕ → ℝ := fun j => ((2 * j - 1 : ℕ) : ℝ) * Real.log 2
+  set u' : ℕ → ℝ := fun j => ((2 * j : ℕ) : ℝ) * Real.log 2
+  have hl2 := Real.log_pos one_lt_two
+  have hu0 : u 0 = 0 := by simp [u]
+  have hu'0 : u' 0 = 0 := by simp [u']
+  have hu : ∀ j, j + 1 < K → u j < u (j + 1) := fun j _ =>
+    mul_lt_mul_of_pos_right (by exact_mod_cast (by omega : 2 * j - 1 < 2 * (j + 1) - 1)) hl2
+  have hu' : ∀ j, j + 1 < K → u' j < u' (j + 1) := fun j _ =>
+    mul_lt_mul_of_pos_right (by exact_mod_cast (by omega : 2 * j < 2 * (j + 1))) hl2
+  set h := ofCoalTime K η u hη hu0 hu
+  set h' := ofCoalTime K η' u' hη' hu'0 hu'
+  refine ⟨h, h', ⟨0, le_rfl, ?_⟩, fun m hm => ?_⟩
+  · have e : ∀ g : PiecewiseHistory K, g.sizeFn 0 = g.size 0 := fun g =>
+      g.sizeFn_eq (j := 0) (by omega) g.start_zero.le fun hk => by
+        simpa only [g.start_zero] using g.start_lt 0 hk
+    rw [e, e]
+    simp only [h, h', ofCoalTime, dual, inv_inv, η, η', zero_add, Ico_self, sum_empty,
+      add_zero, sub_zero]
+    intro hc
+    exact hp0 (by linarith)
   · have hm2 := (mem_Icc.1 hm).1
     have ha : ((m.choose 2 : ℕ) : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.choose_pos hm2).ne'
     refine mul_left_cancel₀ ha ?_
-    rw [two_piece _ hm2, two_piece _ hm2]
-    simp only [tightA, tightB, ↓reduceIte, one_ne_zero, div_one]
-    have e2 : ∀ k : ℕ, Real.exp (-(k : ℝ) * Real.log 2) = ((2 : ℝ) ^ k)⁻¹ := fun k => by
-      rw [neg_mul, Real.exp_neg, ← Real.log_pow, Real.exp_log (by positivity)]
-    have e3 : ∀ k : ℕ, Real.exp (-(k : ℝ) * (37 / 32 * Real.log 3 / (37 / 32))) =
-        ((3 : ℝ) ^ k)⁻¹ := fun k => by
-      rw [show 37 / 32 * Real.log 3 / (37 / 32) = Real.log 3 by ring, neg_mul, Real.exp_neg,
-        ← Real.log_pow, Real.exp_log (by positivity)]
-    rw [e2, e3]
-    have hm3 := (mem_Icc.1 hm).2
-    obtain rfl | rfl : m = 2 ∨ m = 3 := by omega
-    · norm_num
-    · norm_num [Nat.choose]
+    rw [choose_two_mul_firstCoalMean_ofCoalTime (by omega) hη hu0 hu hm2,
+      choose_two_mul_firstCoalMean_ofCoalTime (by omega) hη' hu'0 hu' hm2]
+    have hd : ∀ j ∈ Ico 1 K, η j - η (j - 1) = p (2 * j - 1) := fun j hj => by
+      simp only [η]
+      rw [sum_Ico_succ_top (mem_Ico.1 hj).1, Nat.sub_add_cancel (mem_Ico.1 hj).1]
+      ring
+    have hd' : ∀ j ∈ Ico 1 K, η' j - η' (j - 1) = -p (2 * j) := fun j hj => by
+      simp only [η']
+      rw [sum_Ico_succ_top (mem_Ico.1 hj).1, Nat.sub_add_cancel (mem_Ico.1 hj).1]
+      ring
+    have L : ∑ j ∈ Ico 1 K, (η j - η (j - 1)) * Real.exp (-((m.choose 2 : ℕ) : ℝ) * u j) =
+        ∑ j ∈ Ico 1 K, p (2 * j - 1) * z m ^ (2 * j - 1) :=
+      sum_congr rfl fun j hj => by rw [hd j hj, exp_neg_mul_log_two]
+    have R : ∑ j ∈ Ico 1 K, (η' j - η' (j - 1)) * Real.exp (-((m.choose 2 : ℕ) : ℝ) * u' j) =
+        -∑ j ∈ Ico 1 K, p (2 * j) * z m ^ (2 * j) := by
+      rw [← sum_neg_distrib]
+      exact sum_congr rfl fun j hj => by rw [hd' j hj, exp_neg_mul_log_two, neg_mul]
+    rw [L, R]
+    have key := hroot m hm
+    rw [sum_range_odd_even _ (by omega), sum_add_distrib] at key
+    simp only [η, η', zero_add, Ico_self, sum_empty, add_zero, sub_zero, pow_zero,
+      mul_one] at key ⊢
+    linear_combination key
+
+/-- The size function is measurable. -/
+theorem measurable_sizeFn (h : PiecewiseHistory K) : Measurable h.sizeFn := by
+  refine Finset.measurable_sum _ fun j _ => Measurable.ite ?_ measurable_const measurable_const
+  by_cases hj : j + 1 < K
+  · have e : {s | h.start j ≤ s ∧ (j + 1 < K → s < h.start (j + 1))} =
+        Set.Ici (h.start j) ∩ Set.Iio (h.start (j + 1)) := by ext; simp [hj]
+    exact e ▸ measurableSet_Ici.inter measurableSet_Iio
+  · have e : {s | h.start j ≤ s ∧ (j + 1 < K → s < h.start (j + 1))} = Set.Ici (h.start j) := by
+      ext; simp [hj]
+    exact e ▸ measurableSet_Ici
+
+/-- On `[0, ∞)` the size function lies between the smallest and the largest piece size. -/
+theorem exists_le_sizeFn_le (h : PiecewiseHistory K) (hK : 0 < K) :
+    ∃ a b : ℝ, 0 < a ∧ ∀ s, 0 ≤ s → a ≤ h.sizeFn s ∧ h.sizeFn s ≤ b := by
+  have hne : (range K).Nonempty := ⟨0, mem_range.2 hK⟩
+  refine ⟨(range K).inf' hne h.size, (range K).sup' hne h.size, ?_, fun s hs => ?_⟩
+  · obtain ⟨j, hj, hjeq⟩ := exists_mem_eq_inf' hne h.size
+    rw [hjeq]; exact h.size_pos j (mem_range.1 hj)
+  · obtain ⟨j, hj, h1, h2⟩ := h.exists_piece hK hs
+    rw [h.sizeFn_eq hj h1 h2]
+    exact ⟨inf'_le _ (mem_range.2 hj), le_sup' _ (mem_range.2 hj)⟩
+
+/-- The size function is constant on an interval to the right of every `s ≥ 0`. -/
+theorem exists_sizeFn_eq_Ico (h : PiecewiseHistory K) (hK : 0 < K) {s : ℝ} (hs : 0 ≤ s) :
+    ∃ ε > 0, ∀ r ∈ Set.Ico s (s + ε), h.sizeFn r = h.sizeFn s := by
+  obtain ⟨j, hj, h1, h2⟩ := h.exists_piece hK hs
+  by_cases hk : j + 1 < K
+  · refine ⟨h.start (j + 1) - s, by linarith [h2 hk], fun r hr => ?_⟩
+    rw [h.sizeFn_eq hj (h1.trans hr.1) fun _ => by linarith [hr.2], h.sizeFn_eq hj h1 h2]
+  · refine ⟨1, one_pos, fun r hr => ?_⟩
+    rw [h.sizeFn_eq hj (h1.trans hr.1) fun hk' => absurd hk' hk, h.sizeFn_eq hj h1 h2]
 
 end PiecewiseHistory
+
+/-- Only the values on `[0, ∞)` enter the first-coalescence times. -/
+theorem firstCoalMean_comp_max (η : ℝ → ℝ) (m : ℕ) :
+    firstCoalMean (fun s => η (max s 0)) m = firstCoalMean η m := by
+  refine setIntegral_congr_fun measurableSet_Ioi fun s hs => ?_
+  have e : cumRate (fun s => η (max s 0)) s = cumRate η s := by
+    refine intervalIntegral.integral_congr fun r hr => ?_
+    rw [Set.uIcc_of_le (le_of_lt hs)] at hr
+    simp [max_eq_left hr.1]
+  simp only [e]
+
+/-- **Non-identifiability from a bounded sample size**: for every `n` there are two measurable
+population-size functions, bounded between positive constants and different on a set of
+positive measure in `[0, ∞)`, with the same `c_m` for `2 ≤ m ≤ n` (two `(n + 2)`-piece
+histories from `PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt`, extended to `s < 0` by
+their size at `0`). This is the finite-sample shape of the statement of Myers, Fefferman &
+Patterson (2008); their theorem, one pair of functions with equal `c_m` for **every** `m`, is
+not proved here (it is `VariableSFSWanted.exists_ne_ae_firstCoalMean_eq`). -/
+theorem exists_ne_ae_firstCoalMean_eq_Icc (n : ℕ) :
+    ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
+      (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧
+      ¬ (η₁ =ᵐ[volume.restrict (Set.Ici 0)] η₂) ∧
+      ∀ m ∈ Icc 2 n, firstCoalMean η₁ m = firstCoalMean η₂ m := by
+  obtain ⟨h, h', ⟨s, hs, hne⟩, hc⟩ :=
+    PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt (n + 2) (by omega)
+  have hK : 0 < n + 2 := by omega
+  have hmax : Measurable fun s : ℝ => max s 0 := measurable_id.max measurable_const
+  refine ⟨fun s => h.sizeFn (max s 0), fun s => h'.sizeFn (max s 0),
+    h.measurable_sizeFn.comp hmax, h'.measurable_sizeFn.comp hmax, ?_, ?_, fun m hm => ?_⟩
+  · obtain ⟨a, b, ha, hab⟩ := h.exists_le_sizeFn_le hK
+    obtain ⟨a', b', ha', hab'⟩ := h'.exists_le_sizeFn_le hK
+    refine ⟨min a a', max b b', lt_min ha ha', fun r => ?_⟩
+    have h1 := hab _ (le_max_right r 0)
+    have h2 := hab' _ (le_max_right r 0)
+    exact ⟨(min_le_left _ _).trans h1.1, h1.2.trans (le_max_left _ _),
+      (min_le_right _ _).trans h2.1, h2.2.trans (le_max_right _ _)⟩
+  · obtain ⟨ε, hε, hε'⟩ := h.exists_sizeFn_eq_Ico hK hs
+    obtain ⟨δ, hδ, hδ'⟩ := h'.exists_sizeFn_eq_Ico hK hs
+    intro hae
+    rw [Filter.EventuallyEq, ae_iff, Measure.restrict_apply' measurableSet_Ici] at hae
+    have hsub : Set.Ico s (s + min ε δ) ⊆
+        {r | ¬ h.sizeFn (max r 0) = h'.sizeFn (max r 0)} ∩ Set.Ici 0 := by
+      intro r hr
+      have hr0 : 0 ≤ r := hs.trans hr.1
+      have hrε : r ∈ Set.Ico s (s + ε) := ⟨hr.1, hr.2.trans_le (by simp)⟩
+      have hrδ : r ∈ Set.Ico s (s + δ) := ⟨hr.1, hr.2.trans_le (by simp)⟩
+      refine ⟨?_, hr0⟩
+      simp only [Set.mem_ofPred_eq, max_eq_left hr0]
+      rw [hε' r hrε, hδ' r hrδ]
+      exact hne
+    have := measure_mono (μ := volume) hsub
+    rw [hae, Real.volume_Ico, nonpos_iff_eq_zero, ENNReal.ofReal_eq_zero] at this
+    linarith [lt_min hε hδ]
+  · rw [firstCoalMean_comp_max, firstCoalMean_comp_max]
+    exact hc m (by simp only [mem_Icc] at hm ⊢; omega)
+
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
