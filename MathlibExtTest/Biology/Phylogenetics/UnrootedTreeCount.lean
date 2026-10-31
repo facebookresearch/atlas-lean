@@ -135,4 +135,9 @@ example : Nat.card (Quot (UnrootedBinaryTree.Iso (X := Fin 6))) = 105 := by
 #print axioms nat_card_unrootedBinaryTree
 #print axioms nat_card_binaryHierarchy
 
+/-- In the complete graph on `Fin 3` the vertex `1` has a parent one step closer to `0`. -/
+example : ∃ p, (⊤ : SimpleGraph (Fin 3)).Adj 1 p ∧
+    (⊤ : SimpleGraph (Fin 3)).dist 0 p + 1 = (⊤ : SimpleGraph (Fin 3)).dist 0 1 :=
+  exists_parent SimpleGraph.connected_top (by decide)
+
 end MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount

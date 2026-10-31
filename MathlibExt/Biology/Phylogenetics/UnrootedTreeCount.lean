@@ -376,7 +376,7 @@ private theorem equiv_of_clusterFinset_eq {α : Type u} [DecidableEq α] (s : Pl
           (.rel _ _ (.root _ _))
 
 /-- The members of a binary hierarchy below a member form a binary hierarchy. -/
-private theorem isBinaryHierarchy_filter {α : Type u} [DecidableEq α] {S D : Finset α}
+theorem isBinaryHierarchy_filter {α : Type u} [DecidableEq α] {S D : Finset α}
     {H : Finset (Finset α)} (hH : IsBinaryHierarchy S H) (hD : D ∈ H) :
     IsBinaryHierarchy D (H.filter (· ⊆ D)) := by
   obtain ⟨-, hsub, hsing, hlam, hsplit⟩ := hH
@@ -505,7 +505,9 @@ private theorem beyond_trans {V : Type} {G : SimpleGraph V} (hG : G.Connected) {
   have := hG.dist_triangle (u := s) (v := u) (w := w)
   omega
 
-private theorem exists_parent {V : Type} {G : SimpleGraph V} (hG : G.Connected) {s v : V}
+/-- In a connected graph every vertex `v ≠ s` has a neighbor `p` one step closer to `s`
+(a parent of `v` in a breadth-first tree rooted at `s`). -/
+theorem exists_parent {V : Type} {G : SimpleGraph V} (hG : G.Connected) {s v : V}
     (hv : v ≠ s) : ∃ p, G.Adj v p ∧ G.dist s p + 1 = G.dist s v := by
   obtain ⟨q, hq⟩ := hG.exists_walk_length_eq_dist v s
   cases q with

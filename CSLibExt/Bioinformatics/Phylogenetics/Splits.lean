@@ -219,26 +219,6 @@ private theorem isBinaryHierarchy_combine {S D₁ D₂ : Finset α} {H₁ H₂ :
       exact ⟨E₁, Finset.mem_insert_of_mem (Finset.mem_union_right _ hE₁), E₂,
         Finset.mem_insert_of_mem (Finset.mem_union_right _ hE₂), hd', hu'⟩
 
-/-- The members of a binary hierarchy inside one of its members form a binary hierarchy (the
-private `isBinaryHierarchy_filter` of `UnrootedTreeCount`, restated here). -/
-private theorem isBinaryHierarchy_filter {S D : Finset α} {H : Finset (Finset α)}
-    (hH : IsBinaryHierarchy S H) (hD : D ∈ H) : IsBinaryHierarchy D (H.filter (· ⊆ D)) := by
-  obtain ⟨-, hsub, hsing, hlam, hsplit⟩ := hH
-  refine ⟨Finset.mem_filter.mpr ⟨hD, le_rfl⟩, ?_, ?_, ?_, ?_⟩
-  · intro C hC
-    rw [Finset.mem_filter] at hC
-    exact ⟨(hsub C hC.1).1, hC.2⟩
-  · intro x hx
-    exact Finset.mem_filter.mpr ⟨hsing x ((hsub D hD).2 hx), Finset.singleton_subset_iff.mpr hx⟩
-  · intro C hC E hE
-    exact hlam C (Finset.mem_filter.mp hC).1 E (Finset.mem_filter.mp hE).1
-  · intro C hC hc
-    rw [Finset.mem_filter] at hC
-    obtain ⟨D₁, h₁, D₂, h₂, hd, hu⟩ := hsplit C hC.1 hc
-    refine ⟨D₁, Finset.mem_filter.mpr ⟨h₁, ?_⟩, D₂, Finset.mem_filter.mpr ⟨h₂, ?_⟩, hd, hu⟩
-    · exact (hu ▸ Finset.subset_union_left).trans hC.2
-    · exact (hu ▸ Finset.subset_union_right).trans hC.2
-
 /-- The only binary hierarchy on a singleton. -/
 private theorem isBinaryHierarchy_singleton (a : α) :
     IsBinaryHierarchy {a} {{a}} := by
@@ -516,23 +496,6 @@ private theorem dist_add_dist_le_length {V : Type} {G : SimpleGraph V} {x y a : 
   have h2 := SimpleGraph.dist_le (q.dropUntil a ha)
   omega
 
-/-- Two paths meeting only at the junction concatenate to a path (adapted from the private
-`append_path` of `MathlibExt.Biology.Phylogenetics.Buneman`). -/
-private theorem isPath_append {V : Type} {G : SimpleGraph V} {u m v : V}
-    {p : G.Walk u m} {q : G.Walk m v} (hp : p.IsPath) (hq : q.IsPath)
-    (hi : ∀ a ∈ p.support, a ∈ q.support → a = m) : (p.append q).IsPath := by
-  apply SimpleGraph.Walk.IsPath.mk'
-  rw [SimpleGraph.Walk.support_append]
-  apply List.nodup_append.mpr
-  refine ⟨hp.support_nodup, hq.support_nodup.tail, ?_⟩
-  intro a ha b hb hab
-  subst b
-  have ham := hi a ha (List.mem_of_mem_tail hb)
-  subst a
-  have hn := hq.support_nodup
-  rw [← q.cons_tail_support, List.nodup_cons] at hn
-  exact hn.1 hb
-
 /-- Crossing an edge: in a tree, if `v` is farther than its neighbor `p` from `s` and closer
 than `p` to `w`, then `v` lies on the path from `s` to `w`. -/
 private theorem dist_add_dist_of_cross {V : Type} {G : SimpleGraph V} (hG : G.IsTree)
@@ -547,7 +510,8 @@ private theorem dist_add_dist_of_cross {V : Type} {G : SimpleGraph V} (hG : G.Is
     have e2 : G.dist v w = G.dist w v := SimpleGraph.dist_comm
     omega
   have hpath : (q₁.append (SimpleGraph.Walk.cons hpv q₂)).IsPath := by
-    refine isPath_append hq₁ (hq₂.cons hpq₂) fun a ha ha' => ?_
+    refine MathlibExt.Biology.Phylogenetics.Buneman.isPath_append_of_isPath hq₁ (hq₂.cons hpq₂)
+      fun a ha ha' => ?_
     rw [SimpleGraph.Walk.support_cons, List.mem_cons] at ha'
     rcases ha' with rfl | ha'
     · rfl
@@ -608,25 +572,6 @@ theorem cluster_eq_edgeSide (T : UnrootedBinaryTree X) (a : X) {p v : T.V} (hpv 
     · exact dist_add_dist_of_cross T.isTree hpv hd h
     · omega
 
-omit [Fintype X] [DecidableEq X] in
-/-- Every vertex other than the leaf `a` has a neighbor one step closer to `a` (adapted from the
-private `exists_parent` of `UnrootedTreeCount`). -/
-private theorem exists_parent (T : UnrootedBinaryTree X) (a : X) {v : T.V}
-    (hv : v ≠ T.label a) :
-    ∃ p, T.G.Adj p v ∧ T.G.dist (T.label a) v = T.G.dist (T.label a) p + 1 := by
-  obtain ⟨q, hq⟩ := T.isTree.connected.exists_walk_length_eq_dist v (T.label a)
-  cases q with
-  | nil => exact absurd rfl hv
-  | @cons _ c _ h q' =>
-    refine ⟨c, h.symm, ?_⟩
-    have h1 := SimpleGraph.dist_le q'
-    have h3 := T.isTree.connected.dist_triangle (u := v) (v := c) (w := T.label a)
-    have h2 := SimpleGraph.dist_eq_one_iff_adj.mpr h
-    simp only [SimpleGraph.Walk.length_cons] at hq
-    have e1 : T.G.dist (T.label a : T.V) v = T.G.dist v (T.label a) := SimpleGraph.dist_comm
-    have e2 : T.G.dist (T.label a : T.V) c = T.G.dist c (T.label a) := SimpleGraph.dist_comm
-    omega
-
 /-- The cluster of the leaf `a` itself (all other taxa) is the side of its pendant edge. -/
 private theorem cluster_label_mem_edgeSplits (T : UnrootedBinaryTree X) (a : X) :
     cluster T a (T.label a) ∈ edgeSplits T := by
@@ -646,8 +591,8 @@ private theorem cluster_label_mem_edgeSplits (T : UnrootedBinaryTree X) (a : X) 
     · intro hx
       have hne : (T.label a : T.V) ≠ T.label x := fun e => hx (T.label.injective
         (Subtype.ext e)).symm
-      obtain ⟨c, hc, hd⟩ := exists_parent T x hne
-      rw [← huniq c hc.symm]
+      obtain ⟨c, hc, hd⟩ := exists_parent T.isTree.connected hne
+      rw [← huniq c hc]
       omega
     · intro hlt hx
       subst hx
@@ -669,8 +614,9 @@ theorem splitSet_eq_edgeSplits (T : UnrootedBinaryTree X) (a : X) :
       obtain ⟨e, he, he'⟩ := Finset.mem_image.mp h
       rw [← he', compl_edgeSide T (Finset.mem_filter.mp he).2]
       exact hmem (Finset.mem_filter.mp he).2.symm
-    · obtain ⟨p, hpv, hd⟩ := exists_parent T a hv
-      rw [cluster_eq_edgeSide T a hpv hd, compl_edgeSide T hpv]
+    · obtain ⟨p, hvp, hd⟩ := exists_parent T.isTree.connected hv
+      have hpv := hvp.symm
+      rw [cluster_eq_edgeSide T a hpv hd.symm, compl_edgeSide T hpv]
       exact ⟨hmem hpv, hmem hpv.symm⟩
   ext A
   constructor
