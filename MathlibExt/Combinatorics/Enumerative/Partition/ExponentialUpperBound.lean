@@ -12,9 +12,12 @@ importing-client tests.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-public import Mathlib.NumberTheory.ZetaValues
-public import MathlibExt.Combinatorics.Enumerative.Partition.Counting
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+import Mathlib.NumberTheory.ZetaValues
+import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-!
 # An exponential upper bound for integer partitions
