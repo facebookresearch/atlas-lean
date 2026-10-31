@@ -37,31 +37,31 @@ variable {ι : Type*} {α : ι → Type*} [Fintype ι] [DecidableEq ι]
 /-- The number of dependent functions in `piFinset s` with prescribed values on `S` is the
 product of the numbers of choices outside `S`. -/
 theorem card_filter_piFinset_eqOn_of_mem (s : (i : ι) → Finset (α i)) (S : Finset ι)
-    (f : (i : ι) → α i) (hf : ∀ i ∈ S, f i ∈ s i) :
-    {g ∈ piFinset s | ∀ i ∈ S, g i = f i}.card =
+    (f : (i : {i // i ∈ S}) → α i.1) (hf : ∀ i, f i ∈ s i.1) :
+    {g ∈ piFinset s | ∀ i, g i.1 = f i}.card =
       ∏ i ∈ Finset.univ \ S, (s i).card := by
-  have h : {g ∈ piFinset s | ∀ i ∈ S, g i = f i} =
-      piFinset (fun i => if i ∈ S then {f i} else s i) := by
+  have h : {g ∈ piFinset s | ∀ i, g i.1 = f i} =
+      piFinset (fun i => if hi : i ∈ S then {f ⟨i, hi⟩} else s i) := by
     ext g
     simp only [Finset.mem_filter, mem_piFinset]
     constructor
     · rintro ⟨hg, heq⟩ i
       by_cases hi : i ∈ S
-      · simp [hi, heq i hi]
+      · simp [hi, heq ⟨i, hi⟩]
       · simpa [hi] using hg i
     · intro hg
       constructor
       · intro i
         by_cases hi : i ∈ S
-        · have heq : g i = f i := by simpa [hi] using hg i
+        · have heq : g i = f ⟨i, hi⟩ := by simpa [hi] using hg i
           rw [heq]
-          exact hf i hi
+          exact hf ⟨i, hi⟩
         · simpa [hi] using hg i
-      · intro i hi
-        simpa [hi] using hg i
+      · intro i
+        simpa [i.2] using hg i.1
   rw [h, card_piFinset]
   calc
-    (∏ i, (if i ∈ S then {f i} else s i).card) =
+    (∏ i, (if hi : i ∈ S then {f ⟨i, hi⟩} else s i).card) =
         ∏ i, if i ∈ S then 1 else (s i).card := by
       apply Finset.prod_congr rfl
       intro i _
@@ -76,15 +76,15 @@ variable {κ : Type*} [Fintype κ] [DecidableEq κ]
 
 /-- The number of functions agreeing with `f` on `S` is the number of unrestricted choices on
 the remaining coordinates. -/
-theorem card_filter_univ_eqOn (S : Finset ι) (f : ι → κ) :
-    (Finset.univ.filter fun g : ι → κ => ∀ i ∈ S, g i = f i).card =
+theorem card_filter_univ_eqOn (S : Finset ι) (f : {i // i ∈ S} → κ) :
+    (Finset.univ.filter fun g : ι → κ => ∀ i, g i.1 = f i).card =
       Fintype.card κ ^ (Fintype.card ι - S.card) := by
   simpa [Finset.card_sdiff] using
     card_filter_piFinset_eqOn_of_mem (fun _ => (Finset.univ : Finset κ)) S f (by simp)
 
 /-- Division-free count of finite functions with prescribed values on a set of coordinates. -/
-theorem card_filter_univ_eqOn_mul_pow_card (S : Finset ι) (f : ι → κ) :
-    (Finset.univ.filter fun g : ι → κ => ∀ i ∈ S, g i = f i).card *
+theorem card_filter_univ_eqOn_mul_pow_card (S : Finset ι) (f : {i // i ∈ S} → κ) :
+    (Finset.univ.filter fun g : ι → κ => ∀ i, g i.1 = f i).card *
       Fintype.card κ ^ S.card =
       Fintype.card κ ^ Fintype.card ι := by
   rw [card_filter_univ_eqOn]
