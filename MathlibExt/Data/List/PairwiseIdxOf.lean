@@ -6,6 +6,9 @@ SPDX-License-Identifier: Apache-2.0
 Modified for Atlas: moved the theorem into the `List.Pairwise` namespace, narrowed imports,
 and added importing-client tests.
 -/
+/-
+Modified by Meta Platforms, Inc. and affiliates: generalized the carrier universe.
+-/
 module
 
 public import Mathlib.Data.List.Basic
@@ -25,7 +28,7 @@ Copyright 2026 Anthropic, PBC. Licensed under Apache 2.0 (see LICENSE).
 namespace List.Pairwise
 
 /-- In a list along which `f` increases, position order agrees with value order. -/
-theorem idxOf_lt_iff {α : Type} [BEq α] [LawfulBEq α] {f : α → ℕ} {l : List α}
+theorem idxOf_lt_iff {α : Type*} [BEq α] [LawfulBEq α] {f : α → ℕ} {l : List α}
     (hl : l.Pairwise fun x y => f x < f y) {x y : α} (hx : x ∈ l) (hy : y ∈ l) :
     l.idxOf x < l.idxOf y ↔ f x < f y := by
   have key : ∀ {x y : α}, x ∈ l → y ∈ l → l.idxOf x < l.idxOf y → f x < f y := by
