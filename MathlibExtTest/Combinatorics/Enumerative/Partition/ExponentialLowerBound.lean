@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Combinatorics.Enumerative.Partition.ExponentialLowerBound
 
+import MathlibExt.Combinatorics.Enumerative.Partition.Counting
+
 namespace Nat.Partition
 
 open Finset

@@ -12,17 +12,23 @@ importing-client tests.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-public import Mathlib.Analysis.PSeries
-public import Mathlib.NumberTheory.ZetaValues
-public import MathlibExt.Combinatorics.Enumerative.Partition.Counting
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+
+import Mathlib.Analysis.PSeries
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
+import Mathlib.NumberTheory.ZetaValues
+import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-! # A lower bound for the number of partitions
 
 `exists_exp_div_pow_le_card`: there are constants H > 0 and B with the number of partitions
-of E at least H·exp(c·√E)/E^B for all E ≥ 1, where c = π·√(2/3). Appendix B of the paper
-quotes the asymptotic formula of Hardy and
+of E at least H·exp(c·√E)/E^B for all E ≥ 1, where c = π·√(2/3). The proof is adapted from
+`eth/proof/rates/ClauseBound/Part/Lower.lean` in
+https://github.com/anthropics/formal-math/tree/16a5ce41304fcdaea4e0be7c132e1c361dc26da5.
+Appendix B of the paper *A 2^o(n) Time Algorithm for 3-SAT* quotes the asymptotic formula
+of Hardy and
 Ramanujan, which gives B = 1; here B = 3890, which is enough where the bound is used.
 
 The proof is Erdős's induction on n through the recurrence n·p(n) = Σ_{k,v ≥ 1, kv ≤ n} v·p(n − kv).
