@@ -35,7 +35,8 @@ def takeThroughAcc {α γ : Type*} (f : γ → α → γ) (stop : γ → Bool) :
     γ → List α → List α
   | _, [] => []
   | c, x :: xs =>
-    if stop (f c x) then [x] else x :: takeThroughAcc f stop (f c x) xs
+    let c' := f c x
+    if stop c' then [x] else x :: takeThroughAcc f stop c' xs
 
 /-- An empty list has an empty accumulator-stopped prefix. -/
 @[simp] theorem takeThroughAcc_nil {α γ : Type*} (f : γ → α → γ) (stop : γ → Bool)
