@@ -1103,9 +1103,20 @@ private lemma riesz_thorin_scale {ι κ : Type*} [Finite ι] [Finite κ]
           rw [hCval, haC]
           exact mul_comm _ _
 
-/-- Finite-hypothesis form of `riesz_thorin` below: the same interpolation bound
-under `[Finite ι] [Finite κ]`, installing `Fintype.ofFinite` locally where finite
-sums require it. `riesz_thorin` is the `Fintype` specialization, proved from this. -/
+/-- **Riesz–Thorin interpolation on finite sets, auxiliary form.** Let $\iota$ and $\kappa$ be
+finite sets, each with a σ-algebra in which singletons are measurable and with the counting
+measure, and write $\|g\|_r \in [0, \infty]$ for the $\ell^r$ norm of $g$ with respect to the
+counting measure. Let $p_0, p_1, p, q_0, q_1, q \in [1, \infty]$ and $\theta \in [0, 1]$ satisfy
+$1/p = (1-\theta)/p_0 + \theta/p_1$ and $1/q = (1-\theta)/q_0 + \theta/q_1$, where $1/\infty = 0$.
+Let $M_0, M_1 \in [0, \infty]$ and let $T : \mathbb{C}^\iota \to \mathbb{C}^\kappa$ be a
+$\mathbb{C}$-linear map with $\|Tf\|_{q_0} \le M_0 \|f\|_{p_0}$ and
+$\|Tf\|_{q_1} \le M_1 \|f\|_{p_1}$ for all $f \in \mathbb{C}^\iota$. Then
+$\|Tf\|_q \le M_0^{1-\theta} M_1^{\theta} \|f\|_p$ for all $f \in \mathbb{C}^\iota$, where
+products and powers are computed in $[0, \infty]$ with $0 \cdot \infty = 0$ and $c^0 = 1$.
+
+This is the Riesz–Thorin interpolation theorem on finite sets with finiteness assumed as a
+property rather than given by an explicit enumeration of the elements; that theorem is derived
+from this one. -/
 theorem riesz_thorin_finite
     {ι κ : Type*} [Finite ι] [Finite κ]
     [MeasurableSpace ι] [MeasurableSpace κ]
@@ -1191,17 +1202,26 @@ theorem riesz_thorin_finite
         hM₀T hM₁T T h₀ h₁
 
 /--
-For finite `ι, κ` with counting measure, if `T : (ι → ℂ) →ₗ[ℂ] (κ → ℂ)` has `ℓ^{p₀} → ℓ^{q₀}`
-bound `M₀` and `ℓ^{p₁} → ℓ^{q₁}` bound `M₁` and `1/p = (1-θ)/p₀ + θ/p₁`, `1/q = (1-θ)/q₀ + θ/q₁`
-with `θ ∈ [0, 1]`, then `eLpNorm (T f) q ≤ (M₀^(1-θ) * M₁^θ) * eLpNorm f p` for all `f`. Source:
+**Riesz–Thorin interpolation theorem on finite sets.** Let $\iota$ and $\kappa$ be finite
+sets, each with a σ-algebra in which singletons are measurable and with the counting measure, and
+write $\|g\|_r \in [0, \infty]$ for the $\ell^r$ norm of $g$ with respect to the counting measure.
+Let $p_0, p_1, p, q_0, q_1, q \in [1, \infty]$ and $\theta \in [0, 1]$ satisfy
+$1/p = (1-\theta)/p_0 + \theta/p_1$ and $1/q = (1-\theta)/q_0 + \theta/q_1$, where $1/\infty = 0$.
+Let $M_0, M_1 \in [0, \infty]$ and let $T : \mathbb{C}^\iota \to \mathbb{C}^\kappa$ be a
+$\mathbb{C}$-linear map with $\|Tf\|_{q_0} \le M_0 \|f\|_{p_0}$ and
+$\|Tf\|_{q_1} \le M_1 \|f\|_{p_1}$ for all $f \in \mathbb{C}^\iota$. Then
+$\|Tf\|_q \le M_0^{1-\theta} M_1^{\theta} \|f\|_p$ for all $f \in \mathbb{C}^\iota$, where
+products and powers are computed in $[0, \infty]$ with $0 \cdot \infty = 0$ and $c^0 = 1$.
+
+Proves `Wanted` entry `riesz_thorin`.
+
+Source:
 M. Riesz, Sur les maxima des formes bilinéaires et sur les fonctionnelles linéaires,
 Acta Math. 49 (1927), 465–497, DOI 10.1007/BF02564121; and G. O. Thorin, Convexity theorems
 generalizing those of M. Riesz and Hadamard with some applications,
 Comm. Sem. Math. Univ. Lund 9 (1948), 1–58, Riesz-Thorin interpolation theorem; Stein-Shakarchi
 Complex interpolation; Lean states finite counting-measure complex `→ₗ[ℂ]` form with explicit
 interpolation identities `p⁻¹=(1-θ)p₀⁻¹+θp₁⁻¹` and bound `M₀^(1-θ)M₁^θ`.
-
-Proves `Wanted` entry `riesz_thorin`.
 -/
 theorem riesz_thorin
     {ι κ : Type*} [Fintype ι] [Fintype κ]

@@ -43,16 +43,17 @@ open scoped FourierTransform
 
 namespace Fourier
 
-/-- The complex-parameter Fourier–Laplace integral
-`z ↦ ∫ x, f x * exp (-2π I x z)` on `ℝ`. -/
+/-- **Fourier–Laplace transform.** For $f : \mathbb{R} \to \mathbb{C}$ and $z \in \mathbb{C}$,
+the Fourier–Laplace transform of $f$ at $z$ is the Lebesgue integral
+$\int_{\mathbb{R}} f(x) \, e^{-2\pi i x z} \, dx$, taken to be $0$ when the integrand is not
+integrable. -/
 noncomputable def fourierLaplace (f : ℝ → ℂ) (z : ℂ) : ℂ :=
   ∫ x : ℝ, f x * Complex.exp (-2 * (Real.pi : ℂ) * Complex.I * (x : ℂ) * z)
 
-/-- On the real axis `fourierLaplace` coincides with Mathlib's Fourier integral
-for the standard `2π` additive character `Real.fourierChar`.
-
-More precisely, for `r : ℝ` (coerced to `ℂ`) we have
-`fourierLaplace f (r : ℂ) = fourierIntegral Real.fourierChar volume f r`. -/
+/-- **Fourier–Laplace transform on the real axis.** For every $f : \mathbb{R} \to \mathbb{C}$
+and every real $r$, the Fourier–Laplace transform of $f$ at the complex number $r$, namely
+$\int_{\mathbb{R}} f(x) \, e^{-2\pi i x r} \, dx$, equals the Fourier transform of $f$ at $r$
+with the $2\pi$ normalization, $\hat f(r) = \int_{\mathbb{R}} e^{-2\pi i x r} f(x) \, dx$. -/
 theorem fourierLaplace_ofReal (f : ℝ → ℂ) (r : ℝ) :
     fourierLaplace f (r : ℂ) = Fourier.fourierIntegral Real.fourierChar volume f r := by
   rw [fourierLaplace, Fourier.fourierIntegral_def]
@@ -67,8 +68,10 @@ theorem fourierLaplace_ofReal (f : ℝ → ℂ) (r : ℝ) :
   push_cast
   ring
 
-/-- Derivative of the Fourier–Laplace transform of an integrable compactly
-supported function. -/
+/-- **Derivative of the Fourier–Laplace transform.** Let $f : \mathbb{R} \to \mathbb{C}$ be
+integrable with compact support, and let $F(z) = \int_{\mathbb{R}} f(x) \, e^{-2\pi i x z} \, dx$
+be its Fourier–Laplace transform. Then at every $z \in \mathbb{C}$, $F$ is complex differentiable
+with derivative $F'(z) = \int_{\mathbb{R}} f(x) \, (-2\pi i x) \, e^{-2\pi i x z} \, dx$. -/
 theorem hasDerivAt_fourierLaplace {f : ℝ → ℂ} (hf : Integrable f)
     (hfc : HasCompactSupport f) (z : ℂ) :
     HasDerivAt (fourierLaplace f)
@@ -146,8 +149,10 @@ theorem hasDerivAt_fourierLaplace {f : ℝ → ℂ} (hf : Integrable f)
       Complex.exp (-2 * (Real.pi : ℂ) * Complex.I * (x : ℂ) * w)) _ z
   simpa [F, F', a] using hmain.2
 
-/-- The Fourier–Laplace transform of an integrable compactly supported function
-is entire (complex-differentiable at every `z`). -/
+/-- **The Fourier–Laplace transform of an integrable compactly supported function is entire.**
+Let $f : \mathbb{R} \to \mathbb{C}$ be integrable with compact support. Then its Fourier–Laplace
+transform $z \mapsto \int_{\mathbb{R}} f(x) \, e^{-2\pi i x z} \, dx$ is complex differentiable
+at every $z \in \mathbb{C}$, that is, it is entire. -/
 theorem differentiable_fourierLaplace {f : ℝ → ℂ} (hf : Integrable f)
     (hfc : HasCompactSupport f) : Differentiable ℂ (fourierLaplace f) := by
   intro z
