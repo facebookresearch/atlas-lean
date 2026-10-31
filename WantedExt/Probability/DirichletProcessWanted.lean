@@ -7,13 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# The Dirichlet process: marginals, conjugacy, the Pólya urn and the Chinese restaurant
+# The Dirichlet process: finite-dimensional marginals, moments and conjugacy
 
 `MathlibExt.Probability.DirichletProcess` defines the Dirichlet process `DP(α, H)`
 (`dirichletProcess α hα H`, a law on `Measure X`) through Sethuraman's (1994) stick-breaking
 construction and proves its mean, its variance, the almost-sure normalization of the weights,
-and the Blackwell–MacQueen predictive rule for two observations. This file records the
-classical results it does not prove.
+and the Blackwell–MacQueen predictive rule for two observations.
+`MathlibExt.Probability.BlackwellMacQueen` defines the Blackwell–MacQueen urn
+(`blackwellMacQueen`) and proves its exchangeability (`map_perm_blackwellMacQueen`), the
+Chinese restaurant law of its ties for an atomless base measure
+(`blackwellMacQueen_tiePartition`), and the moment identity below for `n ≤ 2`
+(`lintegral_dirichletProcess_prod_of_le_two`). This file records the classical results that
+remain unproved.
 
 * **Finite-dimensional marginals** (Ferguson 1973, §3; Sethuraman 1994, Theorem 3.4): for a
   measurable partition `A₀, …, A_m` of `X` with `H(Aᵢ) > 0`, the vector `(G(A₀), …, G(A_m))`
@@ -29,12 +34,11 @@ classical results it does not prove.
   of `G` is `DP(α + n, (α H + ∑ᵢ δ_{xᵢ}) / (α + n))`. We state it as the disintegration of the
   joint law of `(G, X₀, …, X_{n-1})` over the marginal law of the observations
   (`setLIntegral_dirichletProcess_prod`).
-* **Exchangeability** of the urn (`map_perm_blackwellMacQueen`) and the **Chinese restaurant
-  law of the ties**: for an atomless base measure, the partition of `{0, …, n-1}` into groups of
-  equal observations follows the Chinese restaurant process with parameter `α`
-  (`blackwellMacQueen_tiePartition`, Pitman 2006, §3.1; the law `crpProb` is proved in
-  `MathlibExt.Biology.PopulationGenetics.ChineseRestaurant`). The proved file covers `n = 2`:
-  two draws pick the same stick piece with probability `1 / (1 + α)`.
+* **What is missing.** The moment identity for `n ≥ 3` needs the distributional fixed point
+  `G = β₀ δ_{θ₀} + (1 - β₀) G'` of the stick-breaking measure (with `G'` an independent copy
+  built from the shifted sequences) and the matching recursion for the urn; the marginals then
+  need that a law on the simplex is determined by its moments (Hausdorff moment problem), and
+  conjugacy needs the moment identity jointly with events `{G ∈ S}`.
 
 Sources: T. S. Ferguson, "A Bayesian analysis of some nonparametric problems", Ann. Statist. 1
 (1973) 209–230; D. Blackwell and J. B. MacQueen, "Ferguson distributions via Pólya urn
@@ -45,8 +49,7 @@ Processes*, Lecture Notes in Math. 1875 (2006), ch. 3.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.ChineseRestaurant
-public import MathlibExt.Probability.DirichletProcess
+public import MathlibExt.Probability.BlackwellMacQueen
 public import MathlibExt.Probability.Distributions.Dirichlet
 
 @[expose] public section
@@ -57,19 +60,6 @@ open scoped ENNReal
 namespace ProbabilityTheory
 
 variable {X : Type*} [MeasurableSpace X]
-
-/-- The **Blackwell–MacQueen urn** with parameter `α` and base measure `H`: the joint law of the
-first `n` draws, where draw `n` has law `polyaUrnPredictive α H xs` given the previous draws
-`xs` (Blackwell–MacQueen 1973). -/
-noncomputable def blackwellMacQueen (α : ℝ) (H : Measure X) : (n : ℕ) → Measure (Fin n → X)
-  | 0 => Measure.dirac fun i ↦ i.elim0
-  | n + 1 => (blackwellMacQueen α H n).bind fun xs ↦
-      (polyaUrnPredictive α H xs).map fun x ↦ Fin.snoc (α := fun _ ↦ X) xs x
-
-/-- The partition of the indices `{0, …, n-1}` into groups of equal entries of `xs`. -/
-noncomputable def tiePartition {n : ℕ} (xs : Fin n → X) : Finpartition (univ : Finset (Fin n)) :=
-  haveI := Classical.decRel (Setoid.ker xs).r
-  Finpartition.ofSetoid (Setoid.ker xs)
 
 /-- **Finite-dimensional marginals of the Dirichlet process** (Ferguson 1973, §3; Sethuraman
 1994, Theorem 3.4): on a measurable partition `A₀, …, A_m` of `X` with `H(Aᵢ) > 0`, the vector
@@ -99,21 +89,5 @@ theorem_wanted setLIntegral_dirichletProcess_prod (α : ℝ) (hα : 0 < α) (H :
         (haveI := isProbabilityMeasure_polyaUrnPredictive hα (H := H) xs;
           dirichletProcess (α + n) (add_pos_of_pos_of_nonneg hα n.cast_nonneg)
             (polyaUrnPredictive α H xs)) S ∂blackwellMacQueen α H n
-
-/-- **Exchangeability of the Blackwell–MacQueen urn** (Blackwell–MacQueen 1973): relabeling the
-draws by a permutation does not change their joint law. -/
-theorem_wanted map_perm_blackwellMacQueen (α : ℝ) (hα : 0 < α) (H : Measure X)
-    [IsProbabilityMeasure H] {n : ℕ} (σ : Equiv.Perm (Fin n)) :
-    (blackwellMacQueen α H n).map (fun xs ↦ xs ∘ σ) = blackwellMacQueen α H n
-
-/-- **The ties of the Blackwell–MacQueen urn follow the Chinese restaurant process** (Pitman
-2006, §3.1): for an atomless base measure, the partition of the first `n` draws into groups of
-equal values has the law `θ^{|π|} ∏_{B ∈ π} (|B| - 1)! / θ^{(n)}` with `θ = α`. -/
-theorem_wanted blackwellMacQueen_tiePartition [MeasurableSingletonClass X]
-    [MeasurableSpace.CountablySeparated X] (α : ℝ) (hα : 0 < α) (H : Measure X)
-    [IsProbabilityMeasure H] (hH : ∀ x, H {x} = 0) {n : ℕ}
-    (π : Finpartition (univ : Finset (Fin n))) :
-    blackwellMacQueen α H n {xs | tiePartition xs = π} =
-      ENNReal.ofReal (MathlibExt.Biology.PopulationGenetics.ChineseRestaurant.crpProb α π)
 
 end ProbabilityTheory
