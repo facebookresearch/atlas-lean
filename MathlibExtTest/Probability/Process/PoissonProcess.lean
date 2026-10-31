@@ -66,9 +66,8 @@ theorem poissonMeasure_zero : poissonMeasure 0 = Measure.dirac 0 := by
     tsum_eq_single 0 fun i hi ↦ by simp [zero_pow hi]]
   by_cases h : 0 ∈ s <;> simp [h]
 
-/-- The zero process is a Poisson process of rate `0` (on the one-point probability space). A
-witness of positive rate needs the independence of the increments of the exponential counting
-process, which is a wanted result (`WantedExt.Probability.Process.PoissonProcessWanted`). -/
+/-- Boundary case: the zero process is a Poisson process of rate `0` (on the one-point probability
+space). The witness of positive rate is `isPoissonProcess_expCount` below. -/
 theorem isPoissonProcess_zero : IsPoissonProcess (fun _ _ ↦ (0 : ℕ)) 0 (Measure.dirac ()) where
   ae_zero := by simp
   ae_monotone := by simp [monotone_const]
@@ -88,25 +87,65 @@ theorem isPoissonProcess_zero : IsPoissonProcess (fun _ _ ↦ (0 : ℕ)) 0 (Meas
 
 /-! ### The exponential counting process on a concrete probability space -/
 
-/-- On the infinite product of rate-`2` exponential laws, the coordinate counting process has
-`N t ~ Poisson(2 t)`, starts at `0` and has nondecreasing paths almost surely. -/
+/-- The coordinates of the infinite product of rate-`2` exponential laws are i.i.d. rate-`2`
+exponential. -/
+theorem expCoord_hasLaw (i : ℕ) :
+    HasLaw (fun ω : ℕ → ℝ ↦ ω i) (expMeasure ((2 : ℝ≥0) : ℝ))
+      (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) := by
+  have : IsProbabilityMeasure (expMeasure 2) := isProbabilityMeasure_expMeasure (by norm_num)
+  exact ⟨(measurable_pi_apply i).aemeasurable, by
+    simpa using Measure.infinitePi_map_eval (fun _ : ℕ ↦ expMeasure 2) i⟩
+
+/-- The coordinates of the infinite product of rate-`2` exponential laws are independent. -/
+theorem expCoord_iIndepFun :
+    iIndepFun (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) := by
+  have : IsProbabilityMeasure (expMeasure 2) := isProbabilityMeasure_expMeasure (by norm_num)
+  exact iIndepFun_infinitePi (X := fun _ (x : ℝ) ↦ x) fun _ ↦ measurable_id
+
+/-- **Non-vacuity of `IsPoissonProcess` at positive rate**: on the infinite product of rate-`2`
+exponential laws, the coordinate counting process is a Poisson process of rate `2`. -/
+theorem isPoissonProcess_expCount :
+    IsPoissonProcess (count fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) 2
+      (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) :=
+  isPoissonProcess_count (by norm_num) expCoord_hasLaw expCoord_iIndepFun
+
+/-- In particular `N t ~ Poisson(2 t)`. -/
 example (t : ℝ≥0) :
     HasLaw (count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) t) (poissonMeasure (2 * t))
-      (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) ∧
-    (∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ expMeasure 2),
-      count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) 0 ω = 0) ∧
-    (∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ expMeasure 2),
-      Monotone fun t ↦ count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) t ω) := by
-  have : IsProbabilityMeasure (expMeasure 2) := isProbabilityMeasure_expMeasure (by norm_num)
-  have hT : ∀ i, HasLaw (fun ω : ℕ → ℝ ↦ ω i) (expMeasure ((2 : ℝ≥0) : ℝ))
-      (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) := fun i ↦
-    ⟨(measurable_pi_apply i).aemeasurable, by
-      simpa using Measure.infinitePi_map_eval (fun _ : ℕ ↦ expMeasure 2) i⟩
-  have hind : iIndepFun (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i)
       (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) :=
-    iIndepFun_infinitePi (X := fun _ (x : ℝ) ↦ x) fun _ ↦ measurable_id
-  exact ⟨hasLaw_count (by norm_num) hT hind t, ae_count_zero (by norm_num) hT,
-    ae_count_monotone (by norm_num) hT hind⟩
+  hasLaw_count (by norm_num) expCoord_hasLaw expCoord_iIndepFun t
+
+/-- The probability of no arrival in `(1, 3]` is `e^{-4}`. -/
+example :
+    (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2)
+        {ω | count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) 3 ω -
+          count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) 1 ω = 0} =
+      ENNReal.ofReal (Real.exp (-4)) := by
+  have h := (isPoissonProcess_expCount.hasLaw_sub (show (1 : ℝ≥0) ≤ 3 by norm_num)).measure_eq
+    (p := fun k : ℕ ↦ k = 0) (MeasurableSet.of_discrete)
+  have h31 : (3 : ℝ≥0) - 1 = 2 := tsub_eq_of_eq_add (by norm_num)
+  rw [Set.ofPred_eq_eq_singleton, poissonMeasure_singleton, h31] at h
+  rw [h]
+  norm_num
+
+/-- The increments over `(0, 1]` and `(1, 3]` are independent with laws `Poisson(2)` and
+`Poisson(4)`. -/
+example :
+    HasLaw (fun ω (i : Fin 2) ↦ count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) (![0, 1, 3] i.succ) ω -
+        count (fun (i : ℕ) (ω : ℕ → ℝ) ↦ ω i) (![0, 1, 3] i.castSucc) ω)
+      (Measure.pi ![poissonMeasure 2, poissonMeasure 4])
+      (Measure.infinitePi fun _ : ℕ ↦ expMeasure 2) := by
+  have hmono : Monotone (![0, 1, 3] : Fin 3 → ℝ≥0) := by
+    intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all
+  convert hasLaw_count_increments (by norm_num) expCoord_hasLaw expCoord_iIndepFun 2 _ hmono
+    using 2
+  have h31 : (3 : ℝ≥0) - 1 = 2 := tsub_eq_of_eq_add (by norm_num)
+  funext i
+  fin_cases i
+  · simp
+  · simp [h31]
+    norm_num
 
 /-! ### Superposition and thinning instances -/
 

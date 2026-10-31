@@ -19,6 +19,7 @@ import Mathlib.Order.Interval.Set.Nat
 import Mathlib.Probability.Distributions.Binomial
 import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Probability.Independence.Integration
+import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.StrongLaw
 import Mathlib.Tactic.FinCases
 
@@ -46,14 +47,13 @@ rate `r`: the `n`-th arrival happens at `S n = T 0 + ⋯ + T (n - 1)` and `N t =
 * `PoissonProcess.hasLaw_count`: `N t` has the Poisson law of mean `r t`.
 * `PoissonProcess.ae_count_zero`, `PoissonProcess.ae_count_monotone`: `N 0 = 0` and the paths of
   `N` are nondecreasing almost surely.
+* `PoissonProcess.hasLaw_count_increments`: the increments of `N` over consecutive intervals are
+  independent with the Poisson laws of means `r (t (i + 1) - t i)`.
+* `PoissonProcess.isPoissonProcess_count`: hence `N` is a Poisson process of rate `r`.
 * `IsPoissonProcess.add` (superposition): the sum of two independent Poisson processes of rates
   `r₁` and `r₂` is a Poisson process of rate `r₁ + r₂`.
 * `IsPoissonProcess.thinning`: keeping each point independently with probability `p` turns a
   Poisson process of rate `r` into a Poisson process of rate `p r`.
-
-That the exponential counting process has independent increments (so that it is a Poisson
-process in the sense of `IsPoissonProcess`) is not proved here; it is recorded as a wanted result
-in `WantedExt.Probability.Process.PoissonProcessWanted`.
 
 ## Implementation notes
 
@@ -62,7 +62,9 @@ monotone paths are required almost surely, as in Kingman (1993); the counting pr
 exponential interarrivals satisfies them only off a null set (an interarrival can vanish, and on
 the null event `∑ T i < ∞` the arrival set in `[0, t]` is infinite and `Set.ncard` returns its
 junk value `0`). Increments `N t - N s` use truncated subtraction on `ℕ`; along a.s. monotone
-paths it is the true increment.
+paths it is the true increment. The independence of the increments of `N` is proved by
+conditioning on the first interarrival time (memorylessness and the Erlang convolution), by
+induction over the blocks of consecutive intervals; no joint density of the arrival times is used.
 
 ## References
 
@@ -947,5 +949,592 @@ theorem IsPoissonProcess.thinning {N : ℝ≥0 → Ω → ℕ} {r p : ℝ≥0} {
       (fun (i : Fin 1) ↦ poissonMeasure ((p * r) * (ts i.succ - ts i.castSucc)))
       (0 : Fin 1)).fun_comp_hasLaw hl
     simpa [ts] using hl0
+
+/-! ### Exponential interarrivals give a Poisson process
+
+The joint law of the counts is computed on the canonical space `ℕ → ℝ` of interarrival sequences
+with the i.i.d. product law. For a list of blocks `(u₁, k₁), …, (uₙ, kₙ)`, the event that exactly
+`k₁ + ⋯ + k_j` arrivals lie in `[0, u₁ + ⋯ + u_j]` for every `j` has probability
+`∏ Poisson(r u_j){k_j}`. The proof conditions on the first interarrival time `a`: if the first
+block has `k₁ = 0`, memorylessness (`a > u₁` and `a - u₁` is again exponential) removes the block;
+if `k₁ > 0`, removing the first arrival lowers `k₁` by one and shortens the block to `u₁ - a`, and
+the convolution `∫₀^u r e^{-ra} Poisson(r (u - a)){m} da = Poisson(r u){m + 1}` closes the
+induction. -/
+
+namespace PoissonProcess
+
+/-- The i.i.d. product of rate-`r` exponential laws on sequences `ℕ → ℝ`. -/
+private noncomputable abbrev expSeq (r : ℝ≥0) : Measure (ℕ → ℝ) :=
+  Measure.infinitePi fun _ : ℕ ↦ expMeasure r
+
+/-- `seqCons a y` prepends `a` to the sequence `y`. -/
+private def seqCons (a : ℝ) (y : ℕ → ℝ) : ℕ → ℝ
+  | 0 => a
+  | i + 1 => y i
+
+/-- `InGaps x s m L` for `L = [(u₁, k₁), …, (uₙ, kₙ)]`: for every `j`, with
+`t_j = s + u₁ + ⋯ + u_j` and `K_j = m + k₁ + ⋯ + k_j`, the partial sums of `x` satisfy
+`x 0 + ⋯ + x (K_j - 1) ≤ t_j < x 0 + ⋯ + x K_j`. -/
+private def InGaps (x : ℕ → ℝ) : ℝ → ℕ → List (ℝ≥0 × ℕ) → Prop
+  | _, _, [] => True
+  | s, m, p :: L =>
+      (∑ i ∈ Finset.range (m + p.2), x i ≤ s + p.1 ∧
+        s + p.1 < ∑ i ∈ Finset.range (m + p.2 + 1), x i) ∧ InGaps x (s + p.1) (m + p.2) L
+
+
+private theorem lintegral_poisson_step {r : ℝ≥0} (hr : 0 < r) (u : ℝ≥0) (m : ℕ) :
+    ∫⁻ a, {a : ℝ | a ≤ u}.indicator
+        (fun a ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) a ∂expMeasure r =
+      poissonMeasure (r * u) {m + 1} := by
+  have hr' : (0 : ℝ) < r := hr
+  have hpois : (fun a : ℝ ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) = fun a ↦
+      ENNReal.ofReal (Real.exp (-(r * Real.toNNReal (u - a) : ℝ)) *
+        ((r * Real.toNNReal (u - a) : ℝ≥0) : ℝ) ^ m / (m.factorial : ℝ)) := by
+    funext a
+    rw [poissonMeasure_singleton]
+    push_cast
+    rfl
+  have hmeas : Measurable fun a : ℝ ↦ {a : ℝ | a ≤ u}.indicator
+      (fun a ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) a := by
+    refine Measurable.indicator ?_ (measurableSet_le measurable_id measurable_const)
+    rw [hpois]
+    fun_prop
+  have hint : ∀ a : ℝ, gammaPDF 1 r a * {a : ℝ | a ≤ u}.indicator
+      (fun a ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) a =
+      (Icc 0 (u : ℝ)).indicator (fun a ↦ ENNReal.ofReal
+        (r ^ (m + 1) * Real.exp (-(r * u)) / (m.factorial : ℝ) * (u - a) ^ m)) a := by
+    intro a
+    by_cases ha : 0 ≤ a
+    · by_cases hau : a ≤ u
+      · rw [indicator_of_mem (show a ∈ {a : ℝ | a ≤ u} from hau),
+          indicator_of_mem (show a ∈ Icc 0 (u : ℝ) from ⟨ha, hau⟩), poissonMeasure_singleton]
+        change exponentialPDF r a * _ = _
+        rw [exponentialPDF_of_nonneg ha, ← ENNReal.ofReal_mul (by positivity)]
+        congr 1
+        simp only [NNReal.coe_mul, Real.coe_toNNReal _ (sub_nonneg.mpr hau)]
+        have he : Real.exp (-(r * a)) * Real.exp (-(r * (u - a))) = Real.exp (-(r * u)) := by
+          rw [← Real.exp_add]
+          congr 1
+          ring
+        rw [← he, mul_pow, pow_succ]
+        field_simp
+      · rw [indicator_of_notMem (show a ∉ {a : ℝ | a ≤ u} from hau),
+          indicator_of_notMem (fun h ↦ hau h.2), mul_zero]
+    · rw [gammaPDF_of_neg (lt_of_not_ge ha), zero_mul,
+        indicator_of_notMem (fun h ↦ ha h.1)]
+  rw [expMeasure, gammaMeasure, lintegral_withDensity_eq_lintegral_mul _
+    (by unfold gammaPDF; fun_prop) hmeas]
+  simp only [Pi.mul_apply]
+  simp_rw [hint]
+  rw [lintegral_indicator measurableSet_Icc, ← ofReal_integral_eq_lintegral_ofReal
+    ((by fun_prop : Continuous fun a : ℝ ↦
+      r ^ (m + 1) * Real.exp (-(r * u)) / (m.factorial : ℝ) * (u - a) ^ m).integrableOn_Icc)]
+  · rw [integral_const_mul, integral_Icc_eq_integral_Ioc,
+      ← intervalIntegral.integral_of_le u.coe_nonneg,
+      intervalIntegral.integral_comp_sub_left (fun x : ℝ ↦ x ^ m), integral_pow,
+      poissonMeasure_singleton]
+    congr 1
+    simp only [sub_self, sub_zero, zero_pow (Nat.succ_ne_zero m), NNReal.coe_mul,
+      Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
+    rw [mul_pow, pow_succ]
+    field_simp
+  · filter_upwards [ae_restrict_mem measurableSet_Icc] with a ha
+    have : 0 ≤ (u : ℝ) - a := sub_nonneg.mpr ha.2
+    positivity
+
+private theorem lintegral_memoryless {r : ℝ≥0} (hr : 0 < r) (u : ℝ≥0) {g : ℝ → ℝ≥0∞}
+    (hg : Measurable g) :
+    ∫⁻ a, (Ioi (u : ℝ)).indicator (fun a ↦ g (a - u)) a ∂expMeasure r =
+      ENNReal.ofReal (Real.exp (-(r * u))) * ∫⁻ a, g a ∂expMeasure r := by
+  have hr' : (0 : ℝ) < r := hr
+  have hpdf : Measurable (gammaPDF 1 r) := by unfold gammaPDF; fun_prop
+  have hint : ∀ a : ℝ, gammaPDF 1 r a * (Ioi (u : ℝ)).indicator (fun a ↦ g (a - u)) a =
+      ENNReal.ofReal (Real.exp (-(r * u))) *
+        (Ioi (0 : ℝ)).indicator (fun b ↦ gammaPDF 1 r b * g b) (a - u) := by
+    intro a
+    by_cases hau : (u : ℝ) < a
+    · rw [indicator_of_mem (show a ∈ Ioi (u : ℝ) from hau),
+        indicator_of_mem (show a - u ∈ Ioi (0 : ℝ) from sub_pos.mpr hau)]
+      change exponentialPDF r a * _ = _ * (exponentialPDF r (a - u) * _)
+      rw [exponentialPDF_of_nonneg (by linarith [u.coe_nonneg]),
+        exponentialPDF_of_nonneg (by linarith), ← mul_assoc, ← ENNReal.ofReal_mul (by positivity)]
+      congr 2
+      have he : Real.exp (-(r * u)) * Real.exp (-(r * (a - u))) = Real.exp (-(r * a)) := by
+        rw [← Real.exp_add]
+        congr 1
+        ring
+      rw [← he]
+      ring
+    · rw [indicator_of_notMem (show a ∉ Ioi (u : ℝ) from hau),
+        indicator_of_notMem (show a - u ∉ Ioi (0 : ℝ) from fun h ↦ hau (sub_pos.mp h)),
+        mul_zero, mul_zero]
+  rw [expMeasure, gammaMeasure, lintegral_withDensity_eq_lintegral_mul _ hpdf
+    (show Measurable fun a ↦ (Ioi (u : ℝ)).indicator (fun a ↦ g (a - u)) a from
+      (hg.comp (measurable_id.sub_const _)).indicator measurableSet_Ioi),
+    lintegral_withDensity_eq_lintegral_mul _ hpdf hg]
+  simp only [Pi.mul_apply]
+  simp_rw [hint]
+  rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, lintegral_sub_right_eq_self
+      (fun b ↦ (Ioi (0 : ℝ)).indicator (fun b ↦ gammaPDF 1 r b * g b) b) (u : ℝ)]
+  congr 1
+  apply lintegral_congr_ae
+  have h0 : ∀ᵐ b : ℝ ∂volume, b ≠ 0 := by
+    rw [ae_iff]
+    simp
+  filter_upwards [h0] with b hb
+  by_cases hb' : 0 < b
+  · rw [indicator_of_mem (show b ∈ Ioi (0 : ℝ) from hb')]
+  · rw [indicator_of_notMem (show b ∉ Ioi (0 : ℝ) from hb'),
+      gammaPDF_of_neg (lt_of_le_of_ne (not_lt.mp hb') hb), zero_mul]
+
+private theorem map_seqCons_expSeq {r : ℝ≥0} (hr : 0 < r) :
+    ((expMeasure r).prod (expSeq r)).map (fun p ↦ seqCons p.1 p.2) = expSeq r := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have hm : Measurable (fun p : ℝ × (ℕ → ℝ) ↦ seqCons p.1 p.2) := by
+    rw [measurable_pi_iff]
+    intro i
+    cases i with
+    | zero => exact measurable_fst
+    | succ i => exact (measurable_pi_apply i).comp measurable_snd
+  refine Measure.eq_infinitePi _ fun s t ht ↦ ?_
+  classical
+  obtain ⟨N, hN⟩ : ∃ N, s ⊆ Finset.range (N + 1) :=
+    ⟨s.sup id, fun i hi ↦ Finset.mem_range.2 (Nat.lt_succ_of_le (Finset.le_sup (f := id) hi))⟩
+  set t' : ℕ → Set ℝ := fun i ↦ if i ∈ s then t i else univ with ht'
+  have hmt' : ∀ i, MeasurableSet (t' i) := by
+    intro i
+    simp only [ht']
+    split_ifs
+    exacts [ht i, .univ]
+  have hpi : Set.pi (s : Set ℕ) t = Set.pi (Finset.range (N + 1) : Set ℕ) t' := by
+    ext x
+    simp only [Set.mem_pi, Finset.mem_coe, ht']
+    constructor
+    · intro h i _
+      split_ifs with hi
+      exacts [h i hi, trivial]
+    · intro h i hi
+      simpa [hi] using h i (hN hi)
+  have hprod : ∏ i ∈ s, expMeasure r (t i) =
+      ∏ i ∈ Finset.range (N + 1), expMeasure r (t' i) := by
+    rw [← Finset.prod_subset hN]
+    · exact Finset.prod_congr rfl fun i hi ↦ by simp [ht', hi]
+    · intro i _ hi
+      simp [ht', hi]
+  rw [hpi, hprod, Measure.map_apply hm (MeasurableSet.pi (Finset.countable_toSet _)
+    fun i _ ↦ hmt' i)]
+  have hpre : (fun p : ℝ × (ℕ → ℝ) ↦ seqCons p.1 p.2) ⁻¹'
+      Set.pi (Finset.range (N + 1) : Set ℕ) t' =
+      t' 0 ×ˢ Set.pi (Finset.range N : Set ℕ) (fun i ↦ t' (i + 1)) := by
+    ext ⟨a, y⟩
+    simp only [Set.mem_preimage, Set.mem_pi, Finset.coe_range, Set.mem_Iio, Set.mem_prod]
+    constructor
+    · intro h
+      exact ⟨h 0 (Nat.succ_pos N), fun i hi ↦ h (i + 1) (by omega)⟩
+    · rintro ⟨h0, h⟩ i hi
+      cases i with
+      | zero => exact h0
+      | succ i => exact h i (by omega)
+  have : ∀ i : ℕ, IsProbabilityMeasure ((fun _ : ℕ ↦ expMeasure (r : ℝ)) i) := fun _ ↦ this
+  rw [hpre, Measure.prod_prod, Measure.infinitePi_pi (μ := fun _ : ℕ ↦ expMeasure (r : ℝ))
+    (mt := fun i _ ↦ hmt' (i + 1)),
+    Finset.prod_range_succ', mul_comm]
+
+private theorem measurableSet_inGaps (s : ℝ) (m : ℕ) (L : List (ℝ≥0 × ℕ)) :
+    MeasurableSet {x : ℕ → ℝ | InGaps x s m L} := by
+  induction L generalizing s m with
+  | nil => simp [InGaps]
+  | cons p L ih =>
+    simp only [InGaps, ofPred_and]
+    refine MeasurableSet.inter (MeasurableSet.inter ?_ ?_) (ih _ _)
+    · exact measurableSet_le (Finset.measurable_sum _ fun i _ ↦ measurable_pi_apply i)
+        measurable_const
+    · exact measurableSet_lt measurable_const
+        (Finset.measurable_sum _ fun i _ ↦ measurable_pi_apply i)
+
+private lemma sum_range_succ_tail (x : ℕ → ℝ) (n : ℕ) :
+    ∑ i ∈ Finset.range (n + 1), x i = x 0 + ∑ i ∈ Finset.range n, x (i + 1) := by
+  rw [Finset.sum_range_succ', add_comm]
+
+private theorem inGaps_succ_iff (x : ℕ → ℝ) (s : ℝ) (m : ℕ) (L : List (ℝ≥0 × ℕ)) :
+    InGaps x s (m + 1) L ↔ InGaps (fun i ↦ x (i + 1)) (s - x 0) m L := by
+  induction L generalizing s m with
+  | nil => simp [InGaps]
+  | cons p L ih =>
+    simp only [InGaps]
+    rw [show m + 1 + p.2 = m + p.2 + 1 by omega, ih, sum_range_succ_tail,
+      show m + p.2 + 1 + 1 = (m + p.2 + 1) + 1 by omega, sum_range_succ_tail x (m + p.2 + 1),
+      show s + p.1 - x 0 = s - x 0 + p.1 by ring]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, h3⟩
+      exact ⟨⟨by linarith, by linarith⟩, h3⟩
+    · rintro ⟨⟨h1, h2⟩, h3⟩
+      exact ⟨⟨by linarith, by linarith⟩, h3⟩
+
+private lemma sum_seqCons (x : ℕ → ℝ) (c : ℝ) (n : ℕ) :
+    ∑ i ∈ Finset.range (n + 1), seqCons (x 0 - c) (fun i ↦ x (i + 1)) i =
+      ∑ i ∈ Finset.range (n + 1), x i - c := by
+  rw [sum_range_succ_tail, sum_range_succ_tail]
+  simp only [seqCons]
+  ring
+
+private theorem inGaps_offset (x : ℕ → ℝ) {s s' : ℝ} (hs : 0 ≤ s) (hs' : 0 ≤ s') (m : ℕ)
+    (L : List (ℝ≥0 × ℕ)) :
+    InGaps x (s + s') m L ↔ InGaps (seqCons (x 0 - s) fun i ↦ x (i + 1)) s' m L := by
+  induction L generalizing s' m with
+  | nil => simp [InGaps]
+  | cons p L ih =>
+    have hp : (0 : ℝ) ≤ p.1 := p.1.coe_nonneg
+    simp only [InGaps]
+    rw [show s + s' + p.1 = s + (s' + p.1) by ring, ih (by positivity), sum_seqCons]
+    have hlow : (∑ i ∈ Finset.range (m + p.2), x i ≤ s + (s' + p.1)) ↔
+        (∑ i ∈ Finset.range (m + p.2), seqCons (x 0 - s) (fun i ↦ x (i + 1)) i ≤ s' + p.1) := by
+      rcases Nat.eq_zero_or_eq_succ_pred (m + p.2) with h | h
+      · rw [h]
+        simp only [Finset.range_zero, Finset.sum_empty]
+        constructor <;> intro <;> positivity
+      · rw [h, sum_seqCons]
+        constructor <;> intro <;> linarith
+    rw [hlow]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, h3⟩
+      exact ⟨⟨h1, by linarith⟩, h3⟩
+    · rintro ⟨⟨h1, h2⟩, h3⟩
+      exact ⟨⟨h1, by linarith⟩, h3⟩
+
+
+private lemma measurable_poisson_indicator (r u : ℝ≥0) (m : ℕ) :
+    Measurable fun a : ℝ ↦ {a : ℝ | a ≤ u}.indicator
+      (fun a ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) a := by
+  refine Measurable.indicator ?_ (measurableSet_le measurable_id measurable_const)
+  have hpois : (fun a : ℝ ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) = fun a ↦
+      ENNReal.ofReal (Real.exp (-(r * Real.toNNReal (u - a) : ℝ)) *
+        ((r * Real.toNNReal (u - a) : ℝ≥0) : ℝ) ^ m / (m.factorial : ℝ)) := by
+    funext a
+    rw [poissonMeasure_singleton]
+    push_cast
+    rfl
+  rw [hpois]
+  fun_prop
+
+private lemma measurable_seqCons :
+    Measurable (fun p : ℝ × (ℕ → ℝ) ↦ seqCons p.1 p.2) := by
+  rw [measurable_pi_iff]
+  intro i
+  cases i with
+  | zero => exact measurable_fst
+  | succ i => exact (measurable_pi_apply i).comp measurable_snd
+
+private lemma expSeq_eq_lintegral {r : ℝ≥0} (hr : 0 < r) {A : Set (ℕ → ℝ)}
+    (hA : MeasurableSet A) :
+    expSeq r A = ∫⁻ a, expSeq r {y | seqCons a y ∈ A} ∂expMeasure r := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have : ∀ i : ℕ, IsProbabilityMeasure ((fun _ : ℕ ↦ expMeasure (r : ℝ)) i) := fun _ ↦ this
+  conv_lhs => rw [← map_seqCons_expSeq hr]
+  rw [Measure.map_apply measurable_seqCons hA, Measure.prod_apply (measurable_seqCons hA)]
+  rfl
+
+private lemma measurable_expSeq_seqCons {r : ℝ≥0} (hr : 0 < r) {A : Set (ℕ → ℝ)}
+    (hA : MeasurableSet A) : Measurable fun a ↦ expSeq r {y | seqCons a y ∈ A} := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have : ∀ i : ℕ, IsProbabilityMeasure ((fun _ : ℕ ↦ expMeasure (r : ℝ)) i) := fun _ ↦ this
+  exact measurable_measure_prodMk_left (measurable_seqCons hA)
+
+private lemma ae_expSeq_nonneg {r : ℝ≥0} (hr : 0 < r) : ∀ᵐ y ∂expSeq r, ∀ i, 0 ≤ y i := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  rw [ae_all_iff]
+  intro i
+  have hm : (expSeq r).map (fun y ↦ y i) = expMeasure r :=
+    Measure.infinitePi_map_eval (fun _ : ℕ ↦ expMeasure (r : ℝ)) i
+  have h0 : ∀ᵐ x ∂expMeasure r, 0 ≤ x := ae_nonneg_exp (r : ℝ)
+  rw [← hm] at h0
+  exact ae_of_ae_map (measurable_pi_apply i).aemeasurable h0
+
+private lemma inGaps_seqCons_succ (a : ℝ) (y : ℕ → ℝ) (u : ℝ≥0) (m : ℕ)
+    (L : List (ℝ≥0 × ℕ)) :
+    InGaps (seqCons a y) 0 0 ((u, m + 1) :: L) ↔ InGaps y (-a) 0 ((u, m) :: L) := by
+  have hz : ∀ n, ∑ i ∈ Finset.range (n + 1), seqCons a y i = a + ∑ i ∈ Finset.range n, y i :=
+    fun n ↦ sum_range_succ_tail _ n
+  simp only [InGaps, zero_add]
+  rw [hz, hz, inGaps_succ_iff]
+  change ((a + _ ≤ (u : ℝ) ∧ (u : ℝ) < a + _) ∧ InGaps y ((u : ℝ) - a) m L) ↔ _
+  rw [show (u : ℝ) - a = -a + u by ring]
+  constructor
+  · rintro ⟨⟨h1, h2⟩, h3⟩
+    exact ⟨⟨by linarith, by linarith⟩, h3⟩
+  · rintro ⟨⟨h1, h2⟩, h3⟩
+    exact ⟨⟨by linarith, by linarith⟩, h3⟩
+
+private lemma inGaps_neg_offset {y : ℕ → ℝ} (hy : ∀ i, 0 ≤ y i) (a : ℝ) (u : ℝ≥0) (m : ℕ)
+    (L : List (ℝ≥0 × ℕ)) :
+    InGaps y (-a) 0 ((u, m) :: L) ↔
+      a ≤ u ∧ InGaps y 0 0 ((Real.toNNReal (u - a), m) :: L) := by
+  by_cases hau : a ≤ u
+  · have he : ((Real.toNNReal (u - a) : ℝ≥0) : ℝ) = u - a :=
+      Real.coe_toNNReal _ (sub_nonneg.mpr hau)
+    simp only [InGaps, he, hau, true_and]
+    rw [show (0 : ℝ) + (u - a) = -a + u by ring]
+  · simp only [hau, false_and, iff_false, InGaps]
+    rintro ⟨⟨h1, _⟩, _⟩
+    have : 0 ≤ ∑ i ∈ Finset.range (0 + m), y i := Finset.sum_nonneg fun i _ ↦ hy i
+    exact hau (by linarith)
+
+private theorem expSeq_inGaps {r : ℝ≥0} (hr : 0 < r) (L : List (ℝ≥0 × ℕ)) :
+    expSeq r {x | InGaps x 0 0 L} = (L.map fun p ↦ poissonMeasure (r * p.1) {p.2}).prod := by
+  have hP := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have : ∀ i : ℕ, IsProbabilityMeasure ((fun _ : ℕ ↦ expMeasure (r : ℝ)) i) := fun _ ↦ hP
+  induction L with
+  | nil => simp [InGaps]
+  | cons p L ih =>
+    obtain ⟨u, k⟩ := p
+    simp only [List.map_cons, List.prod_cons]
+    induction k generalizing u with
+    | zero =>
+      have hset : {x | InGaps x 0 0 ((u, 0) :: L)} =
+          {x | (u : ℝ) < x 0 ∧ InGaps (seqCons (x 0 - u) fun i ↦ x (i + 1)) 0 0 L} := by
+        ext x
+        have h := inGaps_offset x u.coe_nonneg le_rfl 0 L
+        rw [add_zero] at h
+        simp only [InGaps, mem_ofPred_eq, add_zero, zero_add, Finset.range_zero,
+          Finset.sum_empty, Finset.sum_range_one, h, u.coe_nonneg, true_and]
+      have hA := measurableSet_inGaps 0 0 L
+      have hint : ∀ a, expSeq r {y | seqCons a y ∈ {x | (u : ℝ) < x 0 ∧
+          InGaps (seqCons (x 0 - u) fun i ↦ x (i + 1)) 0 0 L}} =
+          (Ioi (u : ℝ)).indicator (fun a ↦ expSeq r {y | seqCons (a - u) y ∈
+            {x | InGaps x 0 0 L}}) a := by
+        intro a
+        by_cases ha : (u : ℝ) < a
+        · rw [indicator_of_mem (show a ∈ Ioi (u : ℝ) from ha)]
+          congr 1
+          ext y
+          change (u : ℝ) < a ∧ InGaps (seqCons (a - u) y) 0 0 L ↔ _
+          simp only [ha, true_and]
+          rfl
+        · rw [indicator_of_notMem (show a ∉ Ioi (u : ℝ) from ha)]
+          convert measure_empty (μ := expSeq r)
+          ext y
+          simp only [mem_ofPred_eq, mem_empty_iff_false, iff_false, not_and]
+          exact fun h ↦ absurd h ha
+      rw [hset, expSeq_eq_lintegral hr (by rw [← hset]; exact measurableSet_inGaps 0 0 _)]
+      simp_rw [hint]
+      rw [lintegral_memoryless hr u (g := fun b ↦ expSeq r {y | seqCons b y ∈
+        {x | InGaps x 0 0 L}}) (measurable_expSeq_seqCons hr hA), ← expSeq_eq_lintegral hr hA,
+        ih, poissonMeasure_singleton]
+      simp
+    | succ m ihm =>
+      have hA := measurableSet_inGaps 0 0 ((u, m + 1) :: L)
+      rw [expSeq_eq_lintegral hr hA]
+      have hint : ∀ a, expSeq r {y | seqCons a y ∈ {x | InGaps x 0 0 ((u, m + 1) :: L)}} =
+          {a : ℝ | a ≤ u}.indicator
+            (fun a ↦ poissonMeasure (r * Real.toNNReal (u - a)) {m}) a *
+            (L.map fun p ↦ poissonMeasure (r * p.1) {p.2}).prod := by
+        intro a
+        have hcongr : expSeq r {y | seqCons a y ∈ {x | InGaps x 0 0 ((u, m + 1) :: L)}} =
+            expSeq r {y | a ≤ u ∧ InGaps y 0 0 ((Real.toNNReal (u - a), m) :: L)} := by
+          apply measure_congr
+          filter_upwards [ae_expSeq_nonneg hr] with y hy
+          apply propext
+          rw [inGaps_seqCons_succ, inGaps_neg_offset hy]
+        rw [hcongr]
+        by_cases hau : a ≤ (u : ℝ)
+        · rw [indicator_of_mem (show a ∈ {a : ℝ | a ≤ u} from hau)]
+          simp only [hau, true_and]
+          exact ihm _
+        · rw [indicator_of_notMem (show a ∉ {a : ℝ | a ≤ u} from hau), zero_mul]
+          simp [hau]
+      simp_rw [hint]
+      rw [lintegral_mul_const _ (measurable_poisson_indicator r u m),
+        lintegral_poisson_step hr u m]
+
+/-- Along the list `L`, the path `c` takes the values `m + k₁ + ⋯ + k_j` at the times
+`s + u₁ + ⋯ + u_j`. -/
+private def CountsAlong (c : ℝ≥0 → ℕ) : ℝ≥0 → ℕ → List (ℝ≥0 × ℕ) → Prop
+  | _, _, [] => True
+  | s, m, p :: L => c (s + p.1) = m + p.2 ∧ CountsAlong c (s + p.1) (m + p.2) L
+
+private lemma countsAlong_ofFn {c : ℝ≥0 → ℕ} (hc : Monotone c) :
+    ∀ (n : ℕ) (t : Fin (n + 1) → ℝ≥0), Monotone t → ∀ (k : Fin n → ℕ),
+    (CountsAlong c (t 0) (c (t 0)) (List.ofFn fun i ↦ (t i.succ - t i.castSucc, k i)) ↔
+      ∀ i, c (t i.succ) - c (t i.castSucc) = k i)
+  | 0, t, _, k => by simp [CountsAlong]
+  | n + 1, t, ht, k => by
+    rw [List.ofFn_succ, Fin.forall_fin_succ]
+    simp only [CountsAlong, Fin.succ_zero_eq_one, Fin.castSucc_zero]
+    have h01 : t 0 ≤ t 1 := ht (Fin.zero_le _)
+    have hc01 : c (t 0) ≤ c (t 1) := hc h01
+    rw [add_tsub_cancel_of_le h01]
+    have ih := countsAlong_ofFn hc n (fun i ↦ t i.succ)
+      (fun i j hij ↦ ht (Fin.succ_le_succ_iff.2 hij)) (fun i ↦ k i.succ)
+    simp only [Fin.succ_zero_eq_one] at ih
+    constructor
+    · rintro ⟨h1, h2⟩
+      refine ⟨by omega, ?_⟩
+      rw [← h1] at h2
+      exact ih.1 h2
+    · rintro ⟨h1, h2⟩
+      have h1' : c (t 1) = c (t 0) + k 0 := by omega
+      refine ⟨h1', ?_⟩
+      rw [← h1']
+      exact ih.2 h2
+
+private lemma count_eq_iff {T : ℕ → Ω → ℝ} {ω : Ω} (hpos : ∀ i, 0 < T i ω)
+    (htend : Filter.Tendsto (fun n ↦ arrivalTime T n ω) Filter.atTop Filter.atTop)
+    (t : ℝ≥0) (K : ℕ) :
+    count T t ω = K ↔ arrivalTime T K ω ≤ t ∧ (t : ℝ) < arrivalTime T (K + 1) ω := by
+  refine ⟨?_, count_of_gap T t ω (fun i ↦ (hpos i).le) K⟩
+  rintro rfl
+  have hex : ∃ j, (t : ℝ) < arrivalTime T (j + 1) ω := by
+    obtain ⟨j, hj⟩ := Filter.eventually_atTop.1 (htend.eventually_gt_atTop (t : ℝ))
+    exact ⟨j, hj (j + 1) (by omega)⟩
+  classical
+  have hgap : arrivalTime T (Nat.find hex) ω ≤ t ∧
+      (t : ℝ) < arrivalTime T (Nat.find hex + 1) ω := by
+    refine ⟨?_, Nat.find_spec hex⟩
+    rcases Nat.eq_zero_or_eq_succ_pred (Nat.find hex) with h | h
+    · rw [h]
+      simp [arrivalTime]
+    · have hmin := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by omega)
+      rw [h]
+      exact not_lt.mp hmin
+  rw [count_of_gap T t ω (fun i ↦ (hpos i).le) _ hgap]
+  exact hgap
+
+private lemma inGaps_iff_countsAlong {T : ℕ → Ω → ℝ} {ω : Ω} (hpos : ∀ i, 0 < T i ω)
+    (htend : Filter.Tendsto (fun n ↦ arrivalTime T n ω) Filter.atTop Filter.atTop) :
+    ∀ (s : ℝ≥0) (m : ℕ) (L : List (ℝ≥0 × ℕ)),
+      InGaps (fun i ↦ T i ω) s m L ↔ CountsAlong (fun t ↦ count T t ω) s m L
+  | s, m, [] => by simp [InGaps, CountsAlong]
+  | s, m, p :: L => by
+    simp only [InGaps, CountsAlong]
+    rw [← NNReal.coe_add, count_eq_iff hpos htend, inGaps_iff_countsAlong hpos htend (s + p.1)]
+    rfl
+
+private lemma tsum_poissonMeasure_singleton (q : ℝ≥0) :
+    (∑' j : ℕ, poissonMeasure q {j}) = 1 := by
+  rw [← measure_iUnion (by intro i j hij; simpa using hij)
+    (fun j ↦ measurableSet_singleton j)]
+  rw [show (⋃ i : ℕ, ({i} : Set ℕ)) = Set.univ by ext x; simp]
+  exact measure_univ
+
+/-- The joint law of the increments of the exponential counting process over consecutive
+intervals is the product of the Poisson laws of means `r (t (i + 1) - t i)`. -/
+private theorem measure_increments_eq {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr : 0 < r)
+    (hT : ∀ i, HasLaw (T i) (expMeasure r) P) (hind : iIndepFun T P) (n : ℕ)
+    (t : Fin (n + 1) → ℝ≥0) (ht : Monotone t) (k : Fin n → ℕ) :
+    P {ω | ∀ i, count T (t i.succ) ω - count T (t i.castSucc) ω = k i} =
+      ∏ i, poissonMeasure (r * (t i.succ - t i.castSucc)) {k i} := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have hP : IsProbabilityMeasure P := (hT 0).isProbabilityMeasure
+  have hX : AEMeasurable (fun ω i ↦ T i ω) P :=
+    aemeasurable_pi_iff.2 fun i ↦ (hT i).aemeasurable
+  have hlaw : P.map (fun ω i ↦ T i ω) = expSeq r := by
+    rw [hind.map_fun_eq_infinitePi_map₀' fun i ↦ (hT i).aemeasurable]
+    congr 1
+    funext i
+    exact (hT i).map_eq
+  have hgap : ∀ L, P {ω | InGaps (fun i ↦ T i ω) 0 0 L} =
+      (L.map fun p ↦ poissonMeasure (r * p.1) {p.2}).prod := by
+    intro L
+    rw [← expSeq_inGaps hr L, ← hlaw,
+      Measure.map_apply_of_aemeasurable hX (measurableSet_inGaps 0 0 L)]
+    rfl
+  let G : ℕ → Set Ω := fun k₀ ↦ {ω | InGaps (fun i ↦ T i ω) 0 0
+    ((t 0, k₀) :: List.ofFn fun i ↦ (t i.succ - t i.castSucc, k i))}
+  have hmem : ∀ᵐ ω ∂P, ∀ k₀, ω ∈ G k₀ ↔ count T (t 0) ω = k₀ ∧
+      ∀ i, count T (t i.succ) ω - count T (t i.castSucc) ω = k i := by
+    filter_upwards [ae_interarrival_pos hr hT, ae_arrivalTime_tendsto hr hT hind,
+      ae_count_monotone hr hT hind] with ω hpos htend hmono k₀
+    change InGaps (fun i ↦ T i ω) ((0 : ℝ≥0) : ℝ) 0 _ ↔ _
+    rw [inGaps_iff_countsAlong hpos htend]
+    simp only [CountsAlong, zero_add]
+    constructor
+    · rintro ⟨h0, h⟩
+      refine ⟨h0, ?_⟩
+      rw [← h0] at h
+      exact (countsAlong_ofFn hmono n t ht k).1 h
+    · rintro ⟨h0, h⟩
+      refine ⟨h0, ?_⟩
+      rw [← h0]
+      exact (countsAlong_ofFn hmono n t ht k).2 h
+  have hE : P {ω | ∀ i, count T (t i.succ) ω - count T (t i.castSucc) ω = k i} =
+      P (⋃ k₀, G k₀) := by
+    apply measure_congr
+    filter_upwards [hmem] with ω hω
+    apply propext
+    simp only [mem_iUnion, hω]
+    constructor
+    · intro h
+      exact ⟨_, rfl, h⟩
+    · rintro ⟨_, _, h⟩
+      exact h
+  rw [hE, measure_iUnion₀]
+  · simp only [G, hgap, List.map_cons, List.prod_cons, List.map_ofFn, List.prod_ofFn,
+      Function.comp_def]
+    rw [ENNReal.tsum_mul_right, tsum_poissonMeasure_singleton, one_mul]
+  · intro i j hij
+    change P (G i ∩ G j) = 0
+    rw [measure_eq_zero_iff_ae_notMem]
+    filter_upwards [hmem] with ω hω
+    rintro ⟨hi, hj⟩
+    exact hij (((hω i).1 hi).1.symm.trans ((hω j).1 hj).1)
+  · intro k₀
+    exact hX.nullMeasurableSet_preimage (measurableSet_inGaps (0 : ℝ) 0
+      ((t 0, k₀) :: List.ofFn fun i ↦ (t i.succ - t i.castSucc, k i)))
+
+/-- The increments of the counting process of i.i.d. rate-`r` exponential interarrivals over
+consecutive intervals `(t i, t (i + 1)]` are independent with the Poisson laws of means
+`r (t (i + 1) - t i)`: the increment vector has the product law (Kingman 1993, ch. 4;
+Karlin–Taylor 1975, ch. 4). -/
+theorem hasLaw_count_increments {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr : 0 < r)
+    (hT : ∀ i, HasLaw (T i) (expMeasure r) P) (hind : iIndepFun T P) (n : ℕ)
+    (t : Fin (n + 1) → ℝ≥0) (ht : Monotone t) :
+    HasLaw (fun ω (i : Fin n) ↦ count T (t i.succ) ω - count T (t i.castSucc) ω)
+      (Measure.pi fun i ↦ poissonMeasure (r * (t i.succ - t i.castSucc))) P := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have hP : IsProbabilityMeasure P := (hT 0).isProbabilityMeasure
+  have hN : ∀ s, AEMeasurable (count T s) P := fun s ↦ (hasLaw_count hr hT hind s).aemeasurable
+  have hm : AEMeasurable
+      (fun ω (i : Fin n) ↦ count T (t i.succ) ω - count T (t i.castSucc) ω) P :=
+    aemeasurable_pi_iff.2 fun i ↦
+      (measurable_of_countable fun p : ℕ × ℕ ↦ p.1 - p.2).comp_aemeasurable
+        ((hN _).prodMk (hN _))
+  refine ⟨hm, Measure.ext_of_singleton fun y ↦ ?_⟩
+  rw [Measure.map_apply_of_aemeasurable hm (measurableSet_singleton y), Measure.pi_singleton,
+    ← measure_increments_eq hr hT hind n t ht y]
+  congr 1
+  ext ω
+  simp [funext_iff]
+
+/-- **Exponential interarrivals give a Poisson process** (Kingman 1993, ch. 4; Karlin–Taylor
+1975, ch. 4): the counting process of i.i.d. rate-`r` exponential interarrival times is a Poisson
+process of rate `r`. -/
+theorem isPoissonProcess_count {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr : 0 < r)
+    (hT : ∀ i, HasLaw (T i) (expMeasure r) P) (hind : iIndepFun T P) :
+    IsPoissonProcess (count T) r P := by
+  have := isProbabilityMeasure_expMeasure (NNReal.coe_pos.mpr hr)
+  have hP : IsProbabilityMeasure P := (hT 0).isProbabilityMeasure
+  refine ⟨ae_count_zero hr hT, ae_count_monotone hr hT hind, ?_, ?_⟩
+  · intro n t ht
+    have hl := hasLaw_count_increments hr hT hind n t ht
+    have hiLaw (i : Fin n) :=
+      (measurePreserving_eval
+        (fun (i : Fin n) ↦ poissonMeasure (r * (t i.succ - t i.castSucc))) i).fun_comp_hasLaw hl
+    apply (iIndepFun_iff_map_fun_eq_pi_map (fun i ↦ (hiLaw i).aemeasurable)).2
+    rw [hl.map_eq]
+    congr 1
+    funext i
+    exact (hiLaw i).map_eq.symm
+  · intro s t hst
+    let ts : Fin 2 → ℝ≥0 := ![s, t]
+    have hts : Monotone ts := by
+      intro i j hij
+      fin_cases i <;> fin_cases j <;> simp_all [ts]
+    have hl := hasLaw_count_increments hr hT hind 1 ts hts
+    have hl0 := (measurePreserving_eval
+      (fun (i : Fin 1) ↦ poissonMeasure (r * (ts i.succ - ts i.castSucc)))
+      (0 : Fin 1)).fun_comp_hasLaw hl
+    simpa [ts] using hl0
+
+end PoissonProcess
 
 end ProbabilityTheory
