@@ -64,16 +64,19 @@ def i₁ : CommRingCat.of B ⟶ R₂ A B := CommRingCat.ofHom Algebra.TensorProd
 def i₂ : CommRingCat.of B ⟶ R₂ A B :=
   CommRingCat.ofHom (Algebra.TensorProduct.includeRight (R := A) (A := B) (B := B)).toRingHom
 
-/-- The coface map inserting a factor between positions 1 and 2. -/
+/-- The coface map placing the source factors in positions 1–2 (inserting the unit in
+the third position). -/
 def c₁₂ : R₂ A B ⟶ R₃ A B :=
   CommRingCat.ofHom (Algebra.TensorProduct.map (AlgHom.id A B)
     (Algebra.TensorProduct.includeLeft (R := A) (S := A) (A := B) (B := B))).toRingHom
 
-/-- The coface map inserting a factor between positions 2 and 3. -/
+/-- The coface map placing the source factors in positions 2–3 (inserting the unit in
+the first position). -/
 def c₂₃ : R₂ A B ⟶ R₃ A B :=
   CommRingCat.ofHom (Algebra.TensorProduct.includeRight (R := A) (A := B) (B := B ⊗[A] B)).toRingHom
 
-/-- The coface map inserting a factor between positions 1 and 3. -/
+/-- The coface map placing the source factors in positions 1 and 3 (inserting the unit
+in the second position). -/
 def c₁₃ : R₂ A B ⟶ R₃ A B :=
   CommRingCat.ofHom (Algebra.TensorProduct.map (AlgHom.id A B)
     (Algebra.TensorProduct.includeRight (R := A) (A := B) (B := B))).toRingHom
@@ -122,11 +125,18 @@ def T (N : ModuleCat.{u} B) (c : R₂ A B ⟶ R₃ A B)
     (ModuleCat.extendScalarsComp (i₂ A B).hom c.hom).inv.app N
 
 variable {A B} in
-/-- The cocycle condition for a descent isomorphism. -/
+/-- Transport of the identity morphism is the identity. -/
+theorem T_id (N : ModuleCat.{u} B) (c : R₂ A B ⟶ R₃ A B) :
+    T N c (𝟙 _) = 𝟙 _ := by
+  simp [T]
+
+variable {A B} in
+/-- The cocycle condition for a descent isomorphism. `φ'` is an isomorphism: the zero
+morphism satisfies the displayed equation but is not descent data. -/
 def Cocycle (N : ModuleCat.{u} B)
-    (φ' : (ModuleCat.extendScalars (i₁ A B).hom).obj N ⟶
+    (φ' : (ModuleCat.extendScalars (i₁ A B).hom).obj N ≅
       (ModuleCat.extendScalars (i₂ A B).hom).obj N) : Prop :=
-  T N (c₁₂ A B) φ' ≫ T N (c₂₃ A B) φ' = T N (c₁₃ A B) φ'
+  T N (c₁₂ A B) φ'.hom ≫ T N (c₂₃ A B) φ'.hom = T N (c₁₃ A B) φ'.hom
 
 end Algebra.DescentCofaces
 
