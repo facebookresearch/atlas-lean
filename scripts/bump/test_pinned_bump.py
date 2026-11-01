@@ -397,6 +397,40 @@ class ForkPrTests(unittest.TestCase):
             "example/repo", branch))
 
 
+class PrepareBaseTests(unittest.TestCase):
+    def test_check_prepare_base(self):
+        import os
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "t"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "t@t"], cwd=root, check=True)
+            (root / "f").write_text("x\n")
+            subprocess.run(["git", "add", "f"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "c"], cwd=root, check=True)
+            head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root, check=True,
+                text=True, capture_output=True).stdout.strip()
+            old_cwd = os.getcwd()
+            old_env = os.environ.get("PREPARE_BASE_SHA")
+            os.chdir(root)
+            try:
+                os.environ["PREPARE_BASE_SHA"] = "0" * 40
+                with self.assertRaises(ValueError):
+                    pinned_bump.check_prepare_base()
+                os.environ["PREPARE_BASE_SHA"] = head
+                pinned_bump.check_prepare_base()
+                del os.environ["PREPARE_BASE_SHA"]
+                pinned_bump.check_prepare_base()
+            finally:
+                os.chdir(old_cwd)
+                if old_env is None:
+                    os.environ.pop("PREPARE_BASE_SHA", None)
+                else:
+                    os.environ["PREPARE_BASE_SHA"] = old_env
+
+
 class ConfigTests(unittest.TestCase):
     def test_checked_in_config_matches_this_repo(self):
         config = load_config(Path(__file__).resolve().parent.parent.parent)

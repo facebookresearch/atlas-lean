@@ -579,12 +579,31 @@ def validate_prepared_tree(
     return base
 
 
+def check_prepare_base() -> None:
+    """Fail if HEAD is not the commit `prepare` prepared from.
+
+    The workflow sets PREPARE_BASE_SHA; an empty value means the caller
+    did not set it, in which case this check is skipped (the workflow
+    is the only supported `finish` caller).
+    """
+    prepare_base = os.environ.get("PREPARE_BASE_SHA", "")
+    if not prepare_base:
+        return
+    head_sha = run(["git", "rev-parse", "HEAD"])
+    if head_sha != prepare_base:
+        raise ValueError(
+            f"HEAD {head_sha} != prepare base {prepare_base}; refusing to "
+            "publish prepared files onto a different tree"
+        )
+
+
 def cmd_finish(args: argparse.Namespace) -> int:
     root = Path.cwd()
     config = load_config(root)
     client = GitHub()
     target = args.target
     try:
+        check_prepare_base()
         base_tag = validate_prepared_tree(
             client, root, config, target, allow_rc=args.allow_rc
         )

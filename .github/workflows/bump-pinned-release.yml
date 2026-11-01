@@ -12,20 +12,42 @@ name: Bump pinned Lean/Mathlib release
 # verification, which executes the newly tagged Lean/Lake) runs with only
 # the read-only default token, and the App token is never minted there.
 # It hands only the whitelisted prepared files (`prepared_files`) to
-# `publish` via an artifact. `publish` runs on a fresh checkout whose
-# default token stays read-only, verifies the staged tree holds only the
-# prepared files, overlays it, and only then mints the write-capable App
-# token for `finish` (commit, push via an explicit push URL, PR creation).
+# `publish` via an artifact, and records the exact commit it prepared
+# from (`base_sha`). `publish` checks out that exact commit (never the
+# then-current default branch), verifies HEAD is that commit, verifies
+# the staged tree holds only the prepared files, overlays it, and only
+# then mints the write-capable App token for `finish` (commit, push via
+# an explicit push URL, PR creation). Building from the prepare base
+# SHA means a default-branch change between `prepare` and `publish`
+# cannot silently revert a prepared file: the prepared files are applied
+# to the tree they were prepared from, and merging the resulting branch
+# is a 3-way merge that keeps the default branch's newer changes (or
+# conflicts for a human to repair if they touch the same lines).
 # The checkout never persists any token. Dispatch inputs and job outputs
 # travel through environment variables, never interpolated into shell
 # programs, and `prepare`/`finish` revalidate the target against the live
 # tags before doing anything with it.
 #
 # Setup (once per org): a GitHub App installed on this repo with Contents RW
-# + Pull requests RW, stored as vars.BUMP_APP_ID (App ID, not secret) and
-# secrets.BUMP_APP_PRIVATE_KEY. PRs opened under the App token run this
-# repo's CI like human commits; PRs opened under the default GITHUB_TOKEN
-# would not run CI until a maintainer approves them.
+# + Pull requests RW. Its credentials live ONLY in the `bump-publish`
+# GitHub Environment (Settings > Environments), never as repo-level
+# secrets/variables: BUMP_APP_ID as an environment variable, and
+# BUMP_APP_PRIVATE_KEY as an environment secret, with the environment's
+# Deployment branches restricted to `main` (and required reviewers if
+# wanted). That restriction is the control that stops a branch-dispatched
+# run from minting the App token: GitHub executes a `workflow_dispatch`
+# run from the dispatched ref's workflow file, so an in-workflow `if`
+# cannot be trusted (the branch can delete it), and a repo-level secret
+# would be readable by any dispatched workflow. With the credential
+# only in the environment, a workflow from any other branch cannot
+# reach it at all: it either omits the environment (no credential) or
+# requests it and GitHub blocks the job because the branch is not
+# allowed to deploy to it. An early `ref == main` check in `publish`
+# is defense-in-depth only, never the control. Do NOT re-add a
+# repo-level BUMP_APP_PRIVATE_KEY: that would reopen the hole.
+# PRs opened under the App token run this repo's CI like human commits;
+# PRs opened under the default GITHUB_TOKEN would not run CI until a
+# maintainer approves them.
 
 on:
   schedule:
@@ -77,10 +99,21 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      base_sha: ${{ steps.base.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # The commit the prepared files are prepared from. `publish`
+      # checks out this exact SHA, so the overlay can never apply
+      # prepared files to a newer tree and silently revert it.
+      - name: Record prepare base SHA
+        id: base
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Install elan v4.2.4
         run: |
@@ -129,11 +162,39 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    # The App credential lives only in this environment, whose
+    # Deployment branches are restricted to `main`. See the header:
+    # this is the control that keeps a branch-dispatched run from
+    # minting the App token. The ref check below is defense-in-depth.
+    environment: bump-publish
     steps:
+      - name: Require the default branch (defense-in-depth only)
+        run: |
+          set -euo pipefail
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "::error::publish runs only from refs/heads/main (got ${{ github.ref }}); the bump-publish environment also blocks any other branch."
+            exit 1
+          fi
+
+      # Check out the exact commit `prepare` prepared from, not the
+      # then-current default branch: overlaying prepared files onto
+      # a newer checkout could silently revert them.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ needs.prepare.outputs.base_sha }}
+
+      - name: Verify publish checkout is the prepare base
+        env:
+          PREPARE_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
+          if [ "$HEAD_SHA" != "$PREPARE_BASE_SHA" ]; then
+            echo "::error::publish checkout HEAD $HEAD_SHA != prepare base $PREPARE_BASE_SHA; refusing to overlay prepared files onto a different tree."
+            exit 1
+          fi
 
       - name: Download prepared tree
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -155,7 +216,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${{ vars.BUMP_APP_ID }}" ] || [ -z "${{ secrets.BUMP_APP_PRIVATE_KEY }}" ]; then
-            echo "::error::Create the bump GitHub App and store vars.BUMP_APP_ID + secrets.BUMP_APP_PRIVATE_KEY (see the workflow header)."
+            echo "::error::Create the bump GitHub App and store BUMP_APP_ID (variable) + BUMP_APP_PRIVATE_KEY (secret) in the bump-publish environment only (see the workflow header)."
             exit 1
           fi
 
@@ -177,6 +238,7 @@ jobs:
           BUMP_BOT_NAME_EMAIL: ${{ vars.BUMP_BOT_NAME_EMAIL }}
           TARGET: ${{ needs.select.outputs.target }}
           INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+          PREPARE_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
         run: |
           set -euo pipefail
           ARGS=()
