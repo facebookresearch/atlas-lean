@@ -112,50 +112,6 @@ theorem measure_bonferroniLocalTest_le (μ : Measure Ω) (p : Fin m → Ω → �
   refine (measure_exists_mem_le_le μ p H0 hnull hc).trans_eq ?_
   rw [mul_div_cancel₀ α hc0.ne']
 
-/-- If Holm rejects some hypothesis in `J`, then some `j ∈ J` has `p j ≤ α / |J|`: the
-smallest p-value in `J` sits at a sorted position `k ≤ m - |J| + 1`. -/
-private theorem exists_le_div_card_of_holm {α : ℝ} (hα : 0 ≤ α) (p : Fin m → ℝ)
-    (J : Finset (Fin m)) (h : (holmRejections α p ∩ J).Nonempty) :
-    ∃ j ∈ J, p j ≤ α / J.card := by
-  classical
-  obtain ⟨i, hi⟩ := h
-  obtain ⟨hiR, hiJ⟩ := Finset.mem_inter.mp hi
-  obtain ⟨j, hjJ, hmin⟩ := Finset.exists_min_image J p ⟨i, hiJ⟩
-  have hjR : j ∈ holmRejections α p := mem_holmRejections_of_le (hmin i hiJ) hiR
-  let S := Finset.univ.filter fun l => p l < p j
-  let k := S.card + 1
-  have hjS : j ∉ S := by simp [S]
-  have hdisj : Disjoint S J := by
-    refine Finset.disjoint_left.mpr fun l hl hlJ => ?_
-    exact (not_lt_of_ge (hmin l hlJ)) (Finset.mem_filter.mp hl).2
-  have hsum : S.card + J.card ≤ m := by
-    rw [← Finset.card_union_of_disjoint hdisj]
-    exact (Finset.card_le_card (Finset.subset_univ _)).trans_eq (Finset.card_fin m)
-  have hsubset : insert j S ⊆ holmRejections α p := by
-    intro l hl
-    rcases Finset.mem_insert.mp hl with rfl | hl
-    · exact hjR
-    · exact mem_holmRejections_of_le (Finset.mem_filter.mp hl).2.le hjR
-  have hkr : k ≤ holmIndex α p := by
-    have hc := Finset.card_le_card hsubset
-    rwa [Finset.card_insert_of_notMem hjS, card_holmRejections hα p] at hc
-  have hkcount := le_numBelow_of_le_holmIndex (by omega : 1 ≤ k) hkr
-  have hjthreshold : p j ≤ α / ((m : ℝ) - k + 1) := by
-    by_contra hn
-    have hn' : α / ((m : ℝ) - k + 1) < p j := lt_of_not_ge hn
-    have hc : numBelow p (α / ((m : ℝ) - k + 1)) ≤ S.card := by
-      refine Finset.card_le_card fun l hl => Finset.mem_filter.mpr
-        ⟨Finset.mem_univ _, (Finset.mem_filter.mp hl).2.trans_lt hn'⟩
-    dsimp [k] at hkcount hc
-    omega
-  have hm0 : 0 < (J.card : ℝ) := by exact_mod_cast Finset.card_pos.mpr ⟨j, hjJ⟩
-  have hden : (J.card : ℝ) ≤ (m : ℝ) - k + 1 := by
-    have hs : (S.card : ℝ) + J.card ≤ m := by exact_mod_cast hsum
-    dsimp [k]
-    push_cast
-    linarith
-  exact ⟨j, hjJ, hjthreshold.trans (div_le_div_of_nonneg_left hα hm0 hden)⟩
-
 /-- **Holm's procedure is a closed test.** For `α ≥ 0`, the hypotheses rejected by Holm's
 step-down procedure are exactly those rejected by the closed testing procedure built on the
 Bonferroni local tests.
@@ -169,7 +125,7 @@ theorem holmRejections_eq_closedRejections {α : ℝ} (hα : 0 ≤ α) (p : Fin 
   rw [mem_closedRejections]
   constructor
   · intro hi J hiJ
-    exact exists_le_div_card_of_holm hα p J ⟨i, Finset.mem_inter.mpr ⟨hi, hiJ⟩⟩
+    exact exists_le_div_card_of_holmRejections hα p J ⟨i, Finset.mem_inter.mpr ⟨hi, hiJ⟩⟩
   · intro hcl
     by_contra hi
     set r := holmIndex α p with hr_def

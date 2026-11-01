@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Sufficiency.Basic
+public import MathlibExt.MeasureTheory.Function.ConditionalExpectation.BestPredictor
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
 import Mathlib.MeasureTheory.Function.ConditionalExpectation.CondJensen
@@ -132,38 +133,17 @@ theorem integral_comp_condExp_le {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
     _ = ∫ ω, L (W ω) ∂μ := integral_condExp hm
 
 /-- **Squared-error decomposition.** For `W` with a finite second moment and any target `c`,
-`E (W - c)² = E (μ[W | m] - c)² + E (W - μ[W | m])²`. -/
+`E (W - c)² = E (μ[W | m] - c)² + E (W - μ[W | m])²`. This is the Pythagorean identity
+`MeasureTheory.integral_sq_sub_eq_integral_sq_sub_condExp_add` with the constant predictor
+`fun _ => c`, with the two summands commuted; it is not a second Pythagorean proof. -/
 theorem integral_sq_sub_eq_add {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
     (μ : Measure[m₀] Ω) [IsProbabilityMeasure μ] {W : Ω → ℝ} (hW : MemLp W 2 μ) (c : ℝ) :
     ∫ ω, (W ω - c) ^ 2 ∂μ =
       ∫ ω, (μ[W | m] ω - c) ^ 2 ∂μ + ∫ ω, (W ω - μ[W | m] ω) ^ 2 ∂μ := by
-  set Y := μ[W | m] with hY
-  have hW1 : Integrable W μ := hW.integrable one_le_two
-  have hY2 : MemLp Y 2 μ := hW.condExp (by norm_num)
-  have hYc : MemLp (fun ω => Y ω - c) 2 μ := hY2.sub (memLp_const c)
-  have hWY : MemLp (fun ω => W ω - Y ω) 2 μ := hW.sub hY2
-  have hint1 : Integrable (fun ω => (Y ω - c) * W ω) μ := hYc.integrable_mul hW
-  have hint2 : Integrable (fun ω => (Y ω - c) * Y ω) μ := hYc.integrable_mul hY2
-  have hcross : ∫ ω, (Y ω - c) * (W ω - Y ω) ∂μ = 0 := by
-    have hpull := condExp_mul_of_stronglyMeasurable_left (m := m) (μ := μ)
-      (f := fun ω => Y ω - c) (g := W)
-      (stronglyMeasurable_condExp.sub stronglyMeasurable_const) hint1 hW1
-    have h1 : ∫ ω, (Y ω - c) * W ω ∂μ = ∫ ω, (Y ω - c) * Y ω ∂μ := by
-      rw [← integral_condExp hm (f := fun ω => (Y ω - c) * W ω)]
-      exact integral_congr_ae hpull
-    calc ∫ ω, (Y ω - c) * (W ω - Y ω) ∂μ
-        = ∫ ω, ((Y ω - c) * W ω - (Y ω - c) * Y ω) ∂μ := by congr 1; ext ω; ring
-      _ = 0 := by rw [integral_sub hint1 hint2, h1, sub_self]
-  have hexp : (fun ω => (W ω - c) ^ 2) = fun ω =>
-      ((Y ω - c) ^ 2 + (W ω - Y ω) ^ 2) + 2 * ((Y ω - c) * (W ω - Y ω)) := by
-    ext ω; ring
-  have hA : Integrable (fun ω => (Y ω - c) ^ 2) μ := hYc.integrable_sq
-  have hB : Integrable (fun ω => (W ω - Y ω) ^ 2) μ := hWY.integrable_sq
-  have hC : Integrable (fun ω => 2 * ((Y ω - c) * (W ω - Y ω))) μ :=
-    (hYc.integrable_mul hWY).const_mul 2
-  rw [hexp, integral_add (f := fun ω => (Y ω - c) ^ 2 + (W ω - Y ω) ^ 2) (hA.add hB) hC,
-    integral_add hA hB, integral_const_mul, hcross,
-    mul_zero, add_zero]
+  have h := MeasureTheory.integral_sq_sub_eq_integral_sq_sub_condExp_add hm hW
+    (memLp_const c) stronglyMeasurable_const
+  rw [add_comm] at h
+  exact h
 
 /-- **Equality case under squared error.** Conditioning leaves the squared-error risk at `c`
 unchanged if and only if `W` already equals `μ[W | m]` almost everywhere. -/
