@@ -27,8 +27,10 @@ namespace MathlibExt.Analysis.InnerProductSpace.KyFanWanted
 
 open scoped BigOperators
 
-/-- The sum of the first `k` entries of `eig : Fin n → ℝ`. Applied to the eigenvalues of a
-Hermitian matrix, listed in decreasing order, it is the sum of the `k` largest ones. -/
+/-- **Prefix sum of a finite real sequence.** For real numbers $\lambda_0, \dots, \lambda_{n-1}$
+and a natural number $k \le n$, the prefix sum of length $k$ is $\sum_{i < k} \lambda_i$, the
+sum of the first $k$ entries. Applied to the eigenvalues of a Hermitian matrix, listed in
+decreasing order, it is the sum of the $k$ largest ones. -/
 noncomputable def eigPrefSum {n : ℕ} (eig : Fin n → ℝ) (k : ℕ)
     (hk : k ≤ n) : ℝ :=
   ∑ i ∈ Finset.range k, if hi : i < k then eig (Fin.castLE hk ⟨i, hi⟩) else 0
@@ -418,10 +420,14 @@ private lemma rayleigh_top_eig
   rw [step1, step2, step3]
 
 /--
-Sum of k largest eigenvalues of A+B is at most sum for A plus sum for B.
-Source: Ky Fan, On a theorem of Weyl, PNAS 35 (1949), 652-655, DOI 10.1073/pnas.35.11.652.
+**Ky Fan inequality for sums of largest eigenvalues.** Let $A$ and $B$ be Hermitian $n \times n$
+complex matrices and let $k \le n$. Then the sum of the $k$ largest eigenvalues of $A + B$ is at
+most the sum of the $k$ largest eigenvalues of $A$ plus the sum of the $k$ largest eigenvalues
+of $B$, where eigenvalues are counted with multiplicity.
 
 Proves `Wanted` entry `ky_fan_eigenvalue_sum_le`.
+
+Source: Ky Fan, On a theorem of Weyl, PNAS 35 (1949), 652-655, DOI 10.1073/pnas.35.11.652.
 -/
 theorem ky_fan_eigenvalue_sum_le
     {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ)

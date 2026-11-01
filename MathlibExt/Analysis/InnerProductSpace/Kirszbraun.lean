@@ -658,14 +658,17 @@ section
 namespace MathlibExt.Analysis.InnerProductSpace.KirszbraunWanted
 
 /--
-For a real inner-product space `E` (not necessarily complete) and a complete real inner-product
-space `F`, every `K`-Lipschitz map `f : E → F` on a set `s` extends to a globally `K`-Lipschitz
-map `g : E → F` with `EqOn f g s` and the same constant `K`. Source: M. Kirszbraun, Fund. Math.
+**Kirszbraun extension theorem.** Let $E$ be a real inner product space (not necessarily
+complete), let $F$ be a complete real inner product space, let $s \subseteq E$ and let $K \ge 0$.
+Every map $f : E \to F$ that is $K$-Lipschitz on $s$ agrees on $s$ with some map
+$g : E \to F$ that is $K$-Lipschitz on all of $E$.
+
+Proves `Wanted` entry `kirszbraun`.
+
+Source: M. Kirszbraun, Fund. Math.
 22 (1934) 77-108 thesis; Valentine 1945 extension to Hilbert; Federer, Geometric Measure Theory,
 2.10.43; the Lean theorem takes a real inner-product-space domain `E` and a complete real
 inner-product-space target `F`, with the same Lipschitz constant `LipschitzWith K`.
-
-Proves `Wanted` entry `kirszbraun`.
 -/
 theorem kirszbraun_general
     {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
@@ -697,9 +700,12 @@ theorem kirszbraun_general
     exact sub_eq_zero.mp hzero
 
 /--
-Kirszbraun extension with the former `Wanted` signature. It follows from `kirszbraun_general`;
-the hypothesis `CompleteSpace E` is unused and keeps exact compatibility with the original
-statement.
+**Kirszbraun extension theorem for Hilbert spaces.** Let $E$ and $F$ be real Hilbert spaces,
+let $s \subseteq E$ and let $K \ge 0$. Every map $f : E \to F$ that is $K$-Lipschitz on $s$
+agrees on $s$ with some map $g : E \to F$ that is $K$-Lipschitz on all of $E$.
+
+Completeness of $E$ is not used: this is a special case of the Kirszbraun extension theorem for
+an arbitrary real inner product space domain.
 -/
 @[nolint unusedArguments]
 theorem kirszbraun

@@ -391,10 +391,13 @@ private lemma banachFunctional_shift_eq (f g : BoundedSeq) (h : ∀ n, g n = f (
   exact (sub_eq_zero.mp h0).symm
 
 /--
-There exists a Banach limit `L : (ℕ →ᵇ ℝ) →L[ℝ] ℝ` on bounded real sequences that is positive on
-pointwise nonnegative sequences, satisfies `L 1 = 1` for the constant-one sequence, is invariant
-under the left shift `g n = f (n+1)`, and extends ordinary limits in that `f n → l` implies `L f =
-l`. Source: S. Banach, Theorie des operations lineaires, 1932, definition of generalised limit; G.
+**Existence of Banach limits.** There is a continuous linear functional $L$ on the real Banach
+space $\ell^\infty$ of bounded real sequences with the supremum norm such that $L(f) \ge 0$
+whenever $f_n \ge 0$ for every $n$, $L$ maps the constant sequence $1$ to $1$, $L(f) = L(g)$
+whenever $g_n = f_{n+1}$ for every $n$, and $L(f) = l$ whenever the sequence $f_n$ converges
+to $l$.
+
+Source: S. Banach, Theorie des operations lineaires, 1932, definition of generalised limit; G.
 Lorentz, Acta Math. 80 (1948) 167-190; Lean formalizes ℓ∞ via `BoundedContinuousFunction ℕ ℝ` and
 real field `ℝ` with all four classical axioms.
 -/
