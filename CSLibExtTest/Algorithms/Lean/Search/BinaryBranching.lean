@@ -208,3 +208,164 @@ example (k : ℕ) (s : ℕ) : 0 < (leaves duplicateStep k s).length :=
 
 example (n : ℕ) : (round duplicateStep)^[n] ([], [8]) = ([], [8]) :=
   round_nil_iterate duplicateStep n [8]
+
+/-! Higher-universe regression clients. The source Type 0 clients above are retained. -/
+
+-- The same step is accepted by leaves/round and must be accepted by all companion APIs.
+private def liftedDuplicateStep (s : ULift.{1} ℕ) :
+    Option (ULift.{1} ℕ × ULift.{1} ℕ) :=
+  if s.down = 0 then some (⟨1⟩, ⟨1⟩) else none
+
+example : leaves liftedDuplicateStep 1 ⟨0⟩ = [⟨1⟩, ⟨1⟩] := rfl
+example : (round liftedDuplicateStep)^[3] ([⟨0⟩], []) = ([], [⟨1⟩, ⟨1⟩]) := rfl
+
+example (f : ULift.{1} ℕ → ℕ)
+    (hf : ∀ s l h, liftedDuplicateStep s = some (l, h) → f s = f l + f h)
+    (k : ℕ) (s : ULift.{1} ℕ) :
+    f s = ((leaves liftedDuplicateStep k s).map f).sum :=
+  sum_leaves liftedDuplicateStep f hf k s
+
+example (s₂ : ℕ → Option (ℕ × ℕ))
+    (h : ∀ x, s₂ x.down =
+      (liftedDuplicateStep x).map fun lh => (lh.1.down, lh.2.down))
+    (d : ℕ) (x : ULift.{1} ℕ) :
+    leaves s₂ d x.down = (leaves liftedDuplicateStep d x).map ULift.down :=
+  leaves_map h d x
+
+example (s₂ : ULift.{2} ℕ → Option (ULift.{2} ℕ × ULift.{2} ℕ))
+    (h : ∀ x, s₂ (ULift.up x.down) =
+      (liftedDuplicateStep x).map fun lh => (ULift.up lh.1.down, ULift.up lh.2.down))
+    (i : ℕ) (p : List (ULift.{1} ℕ) × List (ULift.{1} ℕ)) :
+    (round s₂)^[i] (p.1.map (fun x => ULift.up x.down),
+        p.2.map (fun x => ULift.up x.down)) =
+      (((round liftedDuplicateStep)^[i] p).1.map (fun x => ULift.up x.down),
+        ((round liftedDuplicateStep)^[i] p).2.map (fun x => ULift.up x.down)) :=
+  round_iterate_map h i p
+
+example : (roundCount liftedDuplicateStep (fun s => s.down + 2))^[3]
+    ([⟨0⟩], 5) = ([], 11) := rfl
+
+example (i : ℕ) (st out : List (ULift.{1} ℕ)) :
+    (roundCount liftedDuplicateStep ULift.down)^[i] (st, (out.map ULift.down).sum) =
+      (((round liftedDuplicateStep)^[i] (st, out)).1,
+        (((round liftedDuplicateStep)^[i] (st, out)).2.map ULift.down).sum) :=
+  roundCount_iterate liftedDuplicateStep ULift.down i st out
+
+example (d : ℕ) (s : ULift.{1} ℕ)
+    (hd : ∀ x ∈ leaves liftedDuplicateStep d s, liftedDuplicateStep x = none)
+    (R : ℕ) (hR : 2 * (leaves liftedDuplicateStep d s).length - 1 ≤ R) :
+    (roundCount liftedDuplicateStep ULift.down)^[R] ([s], 0) =
+      ([], ((leaves liftedDuplicateStep d s).map ULift.down).sum) :=
+  roundCount_iterate_of_le liftedDuplicateStep ULift.down d s hd R hR
+
+example (st : List (ULift.{1} ℕ) × List (ULift.{1} ℕ)) :
+    st.1.length + st.2.length ≤
+      (round liftedDuplicateStep st).1.length + (round liftedDuplicateStep st).2.length :=
+  total_le_round liftedDuplicateStep st
+
+example (d : ℕ) (s : ULift.{1} ℕ)
+    (hd : ∀ x ∈ leaves liftedDuplicateStep d s, liftedDuplicateStep x = none) (i : ℕ) :
+    ((round liftedDuplicateStep)^[i] ([s], [])).1.length +
+      ((round liftedDuplicateStep)^[i] ([s], [])).2.length ≤
+      (leaves liftedDuplicateStep d s).length :=
+  total_le_leaves liftedDuplicateStep d s hd i
+
+example (P : ULift.{1} ℕ → Prop) (s : ULift.{1} ℕ)
+    (h : ∀ i, ∀ x ∈ ((round liftedDuplicateStep)^[i] ([s], [])).1, P x) (i : ℕ) :
+    ∀ x ∈ ((round liftedDuplicateStep)^[i] ([s], [])).2, P x :=
+  out_of_stack liftedDuplicateStep P s h i
+
+private theorem lifted_additive_weight :
+    ∀ s l h, liftedDuplicateStep s = some (l, h) →
+      weight s.down = weight l.down + weight h.down := by
+  intro s l h hs
+  by_cases hz : s.down = 0
+  · simp only [liftedDuplicateStep, hz, ite_true, Option.some.injEq, Prod.mk.injEq] at hs
+    rcases hs with ⟨rfl, rfl⟩
+    simp [weight, hz]
+  · simp [liftedDuplicateStep, hz] at hs
+
+private theorem lifted_terminal :
+    ∀ x ∈ leaves liftedDuplicateStep 1 ⟨0⟩, liftedDuplicateStep x = none := by
+  simp [leaves, liftedDuplicateStep]
+
+private theorem lift_down_commutes (x : ULift.{1} ℕ) :
+    duplicateStep x.down =
+      (liftedDuplicateStep x).map fun lh => (lh.1.down, lh.2.down) := by
+  cases h : x.down <;> simp [liftedDuplicateStep, duplicateStep, h]
+
+private theorem lift_up_commutes (x : ℕ) :
+    liftedDuplicateStep ⟨x⟩ =
+      (duplicateStep x).map fun lh => (ULift.up lh.1, ULift.up lh.2) := by
+  cases x <;> simp [liftedDuplicateStep, duplicateStep]
+
+private def higherDuplicateStep (s : ULift.{2} ℕ) :
+    Option (ULift.{2} ℕ × ULift.{2} ℕ) :=
+  if s.down = 0 then some (⟨1⟩, ⟨1⟩) else none
+
+private theorem lift_higher_commutes (x : ULift.{1} ℕ) :
+    higherDuplicateStep (ULift.up x.down) =
+      (liftedDuplicateStep x).map fun lh => (ULift.up lh.1.down, ULift.up lh.2.down) := by
+  simp only [higherDuplicateStep, liftedDuplicateStep]
+  split <;> rfl
+
+example (k : ℕ) :
+    6 = ((leaves liftedDuplicateStep k ⟨0⟩).map (fun s => weight s.down)).sum :=
+  sum_leaves liftedDuplicateStep (fun s => weight s.down) lifted_additive_weight k ⟨0⟩
+
+example : leaves duplicateStep 1 0 =
+    (leaves liftedDuplicateStep 1 ⟨0⟩).map ULift.down :=
+  leaves_map lift_down_commutes 1 ⟨0⟩
+
+example : leaves liftedDuplicateStep 1 ⟨0⟩ = (leaves duplicateStep 1 0).map ULift.up :=
+  leaves_map lift_up_commutes 1 0
+
+example : leaves higherDuplicateStep 1 ⟨0⟩ =
+    (leaves liftedDuplicateStep 1 ⟨0⟩).map (fun x => ULift.up x.down) :=
+  leaves_map lift_higher_commutes 1 ⟨0⟩
+
+example (p : List (ULift.{1} ℕ) × List (ULift.{1} ℕ)) :
+    round duplicateStep (p.1.map ULift.down, p.2.map ULift.down) =
+      ((round liftedDuplicateStep p).1.map ULift.down,
+        (round liftedDuplicateStep p).2.map ULift.down) :=
+  round_map lift_down_commutes p
+
+example (i : ℕ) (p : List (ULift.{1} ℕ) × List (ULift.{1} ℕ)) :
+    (round higherDuplicateStep)^[i] (p.1.map (fun x => ULift.up x.down),
+        p.2.map (fun x => ULift.up x.down)) =
+      (((round liftedDuplicateStep)^[i] p).1.map (fun x => ULift.up x.down),
+        ((round liftedDuplicateStep)^[i] p).2.map (fun x => ULift.up x.down)) :=
+  round_iterate_map lift_higher_commutes i p
+
+example : (roundCount liftedDuplicateStep (fun s => s.down + 2))^[7]
+    ([⟨0⟩], 0) = ([], 6) :=
+  roundCount_iterate_of_le liftedDuplicateStep (fun s => s.down + 2) 1 ⟨0⟩
+    lifted_terminal 7 (by decide)
+
+example (i : ℕ) :
+    ((round liftedDuplicateStep)^[i] ([⟨0⟩], [])).1.length +
+      ((round liftedDuplicateStep)^[i] ([⟨0⟩], [])).2.length ≤ 2 :=
+  total_le_leaves liftedDuplicateStep 1 ⟨0⟩ lifted_terminal i
+
+example : (round liftedDuplicateStep)^[3] ([⟨0⟩, ⟨9⟩], [⟨8⟩]) =
+    ([⟨9⟩], [⟨1⟩, ⟨1⟩, ⟨8⟩]) :=
+  round_iterate liftedDuplicateStep 1 ⟨0⟩ lifted_terminal [⟨9⟩] [⟨8⟩]
+
+example : (roundCount liftedDuplicateStep (fun s => s.down + 2))^[2]
+    ([⟨0⟩], 5) = ([⟨1⟩], 8) := rfl
+example : (roundCount liftedDuplicateStep (fun _ => 0))^[7] ([⟨0⟩], 5) = ([], 5) := rfl
+example : (roundCount higherDuplicateStep (fun s => s.down + 2))^[3]
+    ([⟨0⟩], 5) = ([], 11) := rfl
+
+#eval ("UNIVERSE_CONSERVATION", ((leaves liftedDuplicateStep 1 ⟨0⟩).map
+  (fun s => weight s.down)).sum)
+#eval ("UNIVERSE_MAP_DOWN", (leaves liftedDuplicateStep 1 ⟨0⟩).map ULift.down)
+#eval ("UNIVERSE_MAP_HIGHER", (leaves higherDuplicateStep 1 ⟨0⟩).map ULift.down)
+#eval let p := (round liftedDuplicateStep)^[3] ([⟨0⟩, ⟨9⟩], [⟨8⟩])
+  ("UNIVERSE_ITERATION", p.1.map ULift.down, p.2.map ULift.down)
+#eval let p := (roundCount liftedDuplicateStep (fun s => s.down + 2))^[3] ([⟨0⟩], 5)
+  ("UNIVERSE_COUNT", p.1.map ULift.down, p.2)
+#eval let p := (roundCount liftedDuplicateStep (fun s => s.down + 2))^[2] ([⟨0⟩], 5)
+  ("UNIVERSE_COUNT_PARTIAL", p.1.map ULift.down, p.2)
+#eval let p := (round liftedDuplicateStep)^[2] ([⟨0⟩], [])
+  ("UNIVERSE_TOTAL", p.1.length, p.2.length, p.1.length + p.2.length)

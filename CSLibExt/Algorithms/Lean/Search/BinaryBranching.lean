@@ -27,6 +27,9 @@ Ported from `anthropics/formal-math` at `16a5ce41304fcdaea4e0be7c132e1c361dc26da
 `StepMachines/Math/SparsifyList.lean`, `SparsificationLemma/Mach/Walk.lean` and
 `StepSparsify/CalLeaves.lean`.
 
+All generic state types are universe polymorphic, including transport between different
+universes. The source Type 0 conservation, counting, transport and total bounds are instances.
+
 Boolean accumulation, preorder and visit lists, early-stop bounds, and application-specific
 CNF and machine wrappers are outside this module.
 -/
@@ -115,7 +118,7 @@ theorem round_iterate_of_le (k : ℕ) (s : σ) (hk : ∀ x ∈ leaves step k s, 
 
 /-- A natural-valued weight additive across each branch equals the sum of the frontier
 weights, even when the frontier is cut before termination. -/
-theorem sum_leaves {σ : Type} (step : σ → Option (σ × σ)) (f : σ → ℕ)
+theorem sum_leaves {σ : Type*} (step : σ → Option (σ × σ)) (f : σ → ℕ)
     (hf : ∀ s l h, step s = some (l, h) → f s = f l + f h)
     (k : ℕ) (s : σ) : f s = ((leaves step k s).map f).sum := by
   induction k generalizing s with
@@ -129,7 +132,7 @@ theorem sum_leaves {σ : Type} (step : σ → Option (σ × σ)) (f : σ → ℕ
 
 section Map
 
-variable {σ ρ : Type} {s₁ : σ → Option (σ × σ)} {s₂ : ρ → Option (ρ × ρ)}
+variable {σ ρ : Type*} {s₁ : σ → Option (σ × σ)} {s₂ : ρ → Option (ρ × ρ)}
   {f : σ → ρ}
 
 /-- A map commuting with both steps transports the ordered frontier, preserving multiplicity. -/
@@ -177,7 +180,7 @@ end Map
 
 /-- One stack round accumulating natural weights rather than a list of terminal states.
 The previous count is retained, and each terminal occurrence contributes its weight. -/
-def roundCount {σ : Type} (step : σ → Option (σ × σ)) (val : σ → ℕ) : List σ × ℕ → List σ × ℕ
+def roundCount {σ : Type*} (step : σ → Option (σ × σ)) (val : σ → ℕ) : List σ × ℕ → List σ × ℕ
   | ([], c) => ([], c)
   | (s :: r, c) =>
     match step s with
@@ -185,7 +188,7 @@ def roundCount {σ : Type} (step : σ → Option (σ × σ)) (val : σ → ℕ) 
     | some (l, h) => (l :: h :: r, c)
 
 /-- Counting rounds are the projection of list-output rounds to the sum of output weights. -/
-theorem roundCount_iterate {σ : Type} (step : σ → Option (σ × σ)) (val : σ → ℕ)
+theorem roundCount_iterate {σ : Type*} (step : σ → Option (σ × σ)) (val : σ → ℕ)
     (i : ℕ) (st out : List σ) :
     (roundCount step val)^[i] (st, (out.map val).sum) =
       (((round step)^[i] (st, out)).1,
@@ -200,7 +203,7 @@ theorem roundCount_iterate {σ : Type} (step : σ → Option (σ × σ)) (val : 
   exact (hs.iterate_right i (st, out)).symm
 
 /-- With a terminal frontier and enough rounds, the final count is its total weight. -/
-theorem roundCount_iterate_of_le {σ : Type} (step : σ → Option (σ × σ)) (val : σ → ℕ)
+theorem roundCount_iterate_of_le {σ : Type*} (step : σ → Option (σ × σ)) (val : σ → ℕ)
     (d : ℕ) (s : σ)
     (hd : ∀ x ∈ leaves step d s, step x = none) (R : ℕ)
     (hR : 2 * (leaves step d s).length - 1 ≤ R) :
@@ -406,7 +409,7 @@ end Simulation
 
 section Totals
 
-variable {σ : Type} (step : σ → Option (σ × σ))
+variable {σ : Type*} (step : σ → Option (σ × σ))
 
 /-- One round does not decrease the combined number of pending and collected occurrences. -/
 theorem total_le_round (st : List σ × List σ) :
