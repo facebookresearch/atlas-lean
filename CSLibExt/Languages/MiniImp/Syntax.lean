@@ -18,6 +18,10 @@ namespace CSLibExt.Languages.MiniImp
 The mini-language for the first VC target (IMP-like). Assignment,
 sequencing, if, while. States are `String → Nat` functions.
 
+Loops carry their invariant (`while b I c`): VC generation needs an
+invariant annotation, and the invariant is part of the program, not
+an afterthought. `BigStep` and `Hoare` read it from the statement.
+
 This is NOT a real language (no Hack/Python/Rust), no heap yet (heap
 comes via the iris-lean GenHeap interface, Weeks 3+), no Boole import
 (Boole has no Lean API on CSLib main — see Day-1 verification).
@@ -38,17 +42,20 @@ inductive BExp where
   | not : BExp → BExp
   deriving DecidableEq, Repr
 
-/-- Statements: skip, assignment, sequencing, if, while. -/
+/-- States: variable names to natural numbers. -/
+abbrev State := String → Nat
+
+/-- Statements: skip, assignment, sequencing, if, while (with
+invariant `I`). -/
 inductive Stmt where
   | skip : Stmt
   | assign : String → AExp → Stmt
   | seq : Stmt → Stmt → Stmt
   | if_ : BExp → Stmt → Stmt → Stmt
-  | while : BExp → Stmt → Stmt
-  deriving DecidableEq, Repr
+  | while : BExp → (State → Prop) → Stmt → Stmt
 
-/-- States: variable names to natural numbers. -/
-abbrev State := String → Nat
+-- No `deriving DecidableEq, Repr` on `Stmt`: the `while` invariant
+-- is a `Prop`, which has neither.
 
 /-- Worked example: `x := x + 1` as a statement. -/
 def incrX : Stmt := Stmt.assign "x" (AExp.add (AExp.var "x") (AExp.lit 1))
