@@ -55,20 +55,15 @@ example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] :
     (i₁ A B).hom.comp (algebraMap A B) = (i₂ A B).hom.comp (algebraMap A B) :=
   i₁_comp_algebraMap_eq A B
 
-/-- The canonical comparison has the stated type. -/
+/-- The canonical comparison is an isomorphism between the two pullbacks. -/
 example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (M : ModuleCat.{0} A) :
     (ModuleCat.extendScalars (i₁ A B).hom).obj
-        ((ModuleCat.extendScalars (algebraMap A B)).obj M) ⟶
+        ((ModuleCat.extendScalars (algebraMap A B)).obj M) ≅
       (ModuleCat.extendScalars (i₂ A B).hom).obj
         ((ModuleCat.extendScalars (algebraMap A B)).obj M) :=
   canonical A B M
 
-/-- Transport of the identity is the identity. -/
-example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (N : ModuleCat.{0} B)
-    (c : R₂ A B ⟶ R₃ A B) : T N c (𝟙 _) = 𝟙 _ :=
-  T_id N c
-
-/-- The identity isomorphism satisfies the cocycle condition. -/
-example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (N : ModuleCat.{0} B) :
-    Cocycle N (Iso.refl _) := by
-  simp [Cocycle, T_id]
+/-- The canonical descent isomorphism satisfies the cocycle condition. -/
+example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (M : ModuleCat.{0} A) :
+    Cocycle ((ModuleCat.extendScalars (algebraMap A B)).obj M) (canonical A B M) :=
+  canonical_cocycle M

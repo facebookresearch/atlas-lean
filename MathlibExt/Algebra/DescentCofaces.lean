@@ -102,16 +102,17 @@ theorem i₁_comp_algebraMap_eq :
   congrArg CommRingCat.Hom.hom (algebraMap_i₁_eq_i₂ A B)
 
 /-- The canonical comparison between the two pullbacks of an `A`-module along
-the two inclusions. -/
+the two inclusions, as an isomorphism: every component is an isomorphism, so the
+comparison keeps its inverse and can be passed to `Cocycle`. -/
 def canonical (M : ModuleCat.{u} A) :
     (ModuleCat.extendScalars (i₁ A B).hom).obj
-        ((ModuleCat.extendScalars (algebraMap A B)).obj M) ⟶
+        ((ModuleCat.extendScalars (algebraMap A B)).obj M) ≅
       (ModuleCat.extendScalars (i₂ A B).hom).obj
         ((ModuleCat.extendScalars (algebraMap A B)).obj M) :=
-  (ModuleCat.extendScalarsComp (algebraMap A B) (i₁ A B).hom).inv.app M ≫
-    eqToHom (congrArg (fun f : A →+* B ⊗[A] B => (ModuleCat.extendScalars f).obj M)
-      (i₁_comp_algebraMap_eq A B)) ≫
-    (ModuleCat.extendScalarsComp (algebraMap A B) (i₂ A B).hom).hom.app M
+  (ModuleCat.extendScalarsComp (algebraMap A B) (i₁ A B).hom).symm.app M |>.trans
+    ((eqToIso (congrArg (fun f : A →+* B ⊗[A] B => (ModuleCat.extendScalars f).obj M)
+      (i₁_comp_algebraMap_eq A B))).trans
+      ((ModuleCat.extendScalarsComp (algebraMap A B) (i₂ A B).hom).app M))
 
 variable {A B} in
 /-- Transport of a descent isomorphism along a coface map. -/
@@ -125,18 +126,18 @@ def T (N : ModuleCat.{u} B) (c : R₂ A B ⟶ R₃ A B)
     (ModuleCat.extendScalarsComp (i₂ A B).hom c.hom).inv.app N
 
 variable {A B} in
-/-- Transport of the identity morphism is the identity. -/
-theorem T_id (N : ModuleCat.{u} B) (c : R₂ A B ⟶ R₃ A B) :
-    T N c (𝟙 _) = 𝟙 _ := by
-  simp [T]
-
-variable {A B} in
 /-- The cocycle condition for a descent isomorphism. `φ'` is an isomorphism: the zero
 morphism satisfies the displayed equation but is not descent data. -/
 def Cocycle (N : ModuleCat.{u} B)
     (φ' : (ModuleCat.extendScalars (i₁ A B).hom).obj N ≅
       (ModuleCat.extendScalars (i₂ A B).hom).obj N) : Prop :=
   T N (c₁₂ A B) φ'.hom ≫ T N (c₂₃ A B) φ'.hom = T N (c₁₃ A B) φ'.hom
+
+variable {A B} in
+/-- The canonical descent isomorphism satisfies the cocycle condition. -/
+theorem canonical_cocycle (M : ModuleCat.{u} A) :
+    Cocycle ((ModuleCat.extendScalars (algebraMap A B)).obj M) (canonical A B M) := by
+  simp [Cocycle, T, canonical]
 
 end Algebra.DescentCofaces
 
