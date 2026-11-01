@@ -40,6 +40,12 @@ example : ∃ φ : ℕ → SimpleFunc ℕ ℝ≥0∞,
   obtain ⟨N, hN⟩ := hunif 2 (by norm_num) (1 / 2) (by norm_num)
   exact ⟨φ, N, fun n hn a ha => hN n hn a ha⟩
 
+/-- The uniform bound applied directly to the canonical approximants
+`SimpleFunc.eapprox`, without going through the existential witness. -/
+example : ∃ N : ℕ, ∀ n ≥ N, ∀ a : ℕ,
+    (2 : ℝ≥0∞) - SimpleFunc.eapprox (fun _ : ℕ => (2 : ℝ≥0∞)) n a < 1 / 2 :=
+  eapprox_uniform_on_bounded measurable_const 2 (by norm_num) (1 / 2) (by norm_num)
+
 /-- Monotone approximation of the zero function is identically zero. -/
 example : ∃ φ : ℕ → SimpleFunc ℕ ℝ≥0∞, ∀ n a, φ n a = 0 := by
   obtain ⟨φ, ⟨hle, -⟩, -, -⟩ :=
