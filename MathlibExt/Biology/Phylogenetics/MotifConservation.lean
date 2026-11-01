@@ -25,9 +25,10 @@ conserved across the aligned genomes, against the conservation probability `p` o
 random motifs. Under the null model the number of conserved occurrences is `Bin(N, p)`; the
 evidence is the binomial upper tail `P(Bin(N, p) ≥ k)`, and the **motif conservation score**
 (MCS) is described as essentially the number of standard deviations by which the observed
-conservation exceeds the expected one. We formalize the binomial tail and the binomial z-score
-`(k - N p) / √(N p (1 - p))` (`mcs`); the exact score computed by Xie et al. may differ in
-detail (see their Methods).
+conservation exceeds the expected one. We formalize the binomial tail and the binomial
+z-score `(k - N p) / √(N p (1 - p))` (`mcsApprox`): this is a binomial z-score
+approximation to the MCS, not Xie et al.'s exact score, which may differ in detail
+(see their Methods).
 
 ## Main results
 
@@ -37,9 +38,10 @@ detail (see their Methods).
 * `monotoneOn_binomTail`, `strictMonoOn_binomTail`: the tail is (strictly, for `1 ≤ k ≤ n`)
   increasing in `p` on `[0, 1]`: a higher background conservation rate makes the same count
   less surprising.
-* `mcs_strictMono`: the MCS is strictly increasing in the conserved count.
-* `tendsto_prob_le_mcs`: **de Moivre–Laplace for the MCS**: for i.i.d. Bernoulli(`p`)
-  conservation indicators, `P(z ≤ MCS)` tends to the standard normal mass of `[z, ∞)`.
+* `mcsApprox_strictMono`: the MCS approximation is strictly increasing in the conserved count.
+* `tendsto_prob_le_mcsApprox`: **de Moivre–Laplace for the MCS approximation**: for i.i.d.
+  Bernoulli(`p`) conservation indicators, `P(z ≤ MCS approximation)` tends to the standard
+  normal mass of `[z, ∞)`.
 
 ## References
 
@@ -190,31 +192,34 @@ theorem strictMonoOn_binomTail {n k : ℕ} (hk : 1 ≤ k) (hkn : k ≤ n) :
     have hp₁ : 0 < 1 - p := sub_pos.mpr hp.2
     positivity
 
-/-- **The motif conservation score**: the conserved count `k` of a motif with `N` occurrences,
-standardized under `Bin(N, p)`: `(k - N p) / √(N p (1 - p))`. -/
-noncomputable def mcs (N : ℕ) (k p : ℝ) : ℝ := (k - N * p) / Real.sqrt (N * p * (1 - p))
+/-- **Binomial z-score approximation to the motif conservation score**: the conserved count
+`k` of a motif with `N` occurrences, standardized under `Bin(N, p)`:
+`(k - N p) / √(N p (1 - p))`. This is an approximation to Xie et al.'s MCS, not their
+exact score. -/
+noncomputable def mcsApprox (N : ℕ) (k p : ℝ) : ℝ := (k - N * p) / Real.sqrt (N * p * (1 - p))
 
-/-- The MCS is strictly increasing in the conserved count, for `N ≥ 1` and `p ∈ (0, 1)`. -/
-theorem mcs_strictMono {N : ℕ} (hN : 0 < N) {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
-    StrictMono fun k => mcs N k p := by
+/-- The MCS approximation is strictly increasing in the conserved count, for `N ≥ 1` and `p ∈ (0, 1)`. -/
+theorem mcsApprox_strictMono {N : ℕ} (hN : 0 < N) {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+    StrictMono fun k => mcsApprox N k p := by
   intro a b hab
   have hs : 0 < Real.sqrt (N * p * (1 - p)) :=
     Real.sqrt_pos.2 (mul_pos (mul_pos (Nat.cast_pos.2 hN) hp0) (sub_pos.2 hp1))
   exact div_lt_div_of_pos_right (by linarith) hs
 
-/-- The MCS of the number of conserved occurrences among the first `n` is the de Moivre–Laplace
-standardized sum. -/
-theorem mcs_sum_eq {Ω : Type*} (X : ℕ → Ω → ℝ) (p : ℝ) (n : ℕ) (ω : Ω) :
-    mcs n (∑ i ∈ range n, X i ω) p = deMoivreLaplaceStandardized X p n ω := rfl
+/-- The MCS approximation of the number of conserved occurrences among the first `n` is the
+de Moivre–Laplace standardized sum. -/
+theorem mcsApprox_sum_eq {Ω : Type*} (X : ℕ → Ω → ℝ) (p : ℝ) (n : ℕ) (ω : Ω) :
+    mcsApprox n (∑ i ∈ range n, X i ω) p = deMoivreLaplaceStandardized X p n ω := rfl
 
-/-- **De Moivre–Laplace for the motif conservation score**: if the conservation indicators of
+/-- **De Moivre–Laplace for the MCS approximation**: if the conservation indicators of
 the occurrences are i.i.d. Bernoulli(`p`) with `0 < p < 1`, then for every `z`,
-`P(z ≤ MCS of the first n occurrences)` tends to the standard normal mass of `[z, ∞)`. -/
-theorem tendsto_prob_le_mcs {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+`P(z ≤ MCS approximation of the first n occurrences)` tends to the standard normal mass of
+`[z, ∞)`. -/
+theorem tendsto_prob_le_mcsApprox {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] (X : ℕ → Ω → ℝ) {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (h01 : ∀ i, ∀ᵐ ω ∂P, X i ω = 0 ∨ X i ω = 1) (hmean : ∀ i, ∫ ω, X i ω ∂P = p)
     (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P) (z : ℝ) :
-    Tendsto (fun n : ℕ => P.real {ω | z ≤ mcs n (∑ i ∈ range n, X i ω) p}) atTop
+    Tendsto (fun n : ℕ => P.real {ω | z ≤ mcsApprox n (∑ i ∈ range n, X i ω) p}) atTop
       (𝓝 ((gaussianReal 0 1).real (Set.Ici z))) := by
   have hdist := deMoivreLaplace_tendstoInDistribution X hp0 hp1 h01 hmean hindep hident
   have hlim := by simpa [Measure.map_id] using hdist.tendsto
@@ -231,7 +236,7 @@ theorem tendsto_prob_le_mcs {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
       atTop (𝓝 ((gaussianReal 0 1) (Set.Ici z))) :=
     hport
   have hreal := (ENNReal.tendsto_toReal (measure_ne_top _ _)).comp hport'
-  have hterm : ∀ n : ℕ, P.real {ω | z ≤ mcs n (∑ i ∈ range n, X i ω) p}
+  have hterm : ∀ n : ℕ, P.real {ω | z ≤ mcsApprox n (∑ i ∈ range n, X i ω) p}
       = ((P.map (fun ω => deMoivreLaplaceStandardized X p n ω)) (Set.Ici z)).toReal := by
     intro n
     have hmeas : AEMeasurable (fun ω => deMoivreLaplaceStandardized X p n ω) P :=

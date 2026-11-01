@@ -16,9 +16,10 @@ import Mathlib.Tactic.NormNum
 
 `P(Bin(2, 1/2) ≥ 1) = 3/4` and `P(Bin(2, 1/4) ≥ 1) = 7/16 < 3/4` (strict monotonicity in `p`);
 the boundary values `P(X ≥ 0) = 1` and `P(X ≥ 3) = 0` for `n = 2`; `P(Bin(2, p) ≥ 2) ≤
-P(Bin(2, p) ≥ 1)`; the MCS of `30` conserved out of `100` at `p = 1/5` is `(30 - 20)/4 = 5/2`.
-At `p = 0` the MCS divides by `√0 = 0` and returns the junk value `0`, outside the domain
-`0 < p < 1` of `mcs_strictMono`.
+P(Bin(2, p) ≥ 1)`; the MCS approximation for `30` conserved out of `100` at `p = 1/5`
+is `(30 - 20)/4 = 5/2`. At `p = 0` the MCS approximation divides by `√0 = 0` and returns
+the junk value `0`, outside the domain
+`0 < p < 1` of `mcsApprox_strictMono`.
 -/
 
 namespace MathlibExt.Biology.Phylogenetics.MotifConservation
@@ -40,14 +41,14 @@ example (p : ℝ) : binomTail 2 3 p = 0 := binomTail_of_lt (by norm_num) p
 example {p : ℝ} (h0 : 0 ≤ p) (h1 : p ≤ 1) : binomTail 2 2 p ≤ binomTail 2 1 p :=
   binomTail_succ_le 2 1 h0 h1
 
-example : mcs 100 30 (1 / 5) = 5 / 2 := by
+example : mcsApprox 100 30 (1 / 5) = 5 / 2 := by
   have : Real.sqrt ((100 : ℕ) * (1 / 5) * (1 - 1 / 5)) = 4 := by
     rw [show ((100 : ℕ) : ℝ) * (1 / 5) * (1 - 1 / 5) = 4 ^ 2 by norm_num]
     exact Real.sqrt_sq (by norm_num)
-  rw [mcs, this]; norm_num
+  rw [mcsApprox, this]; norm_num
 
-/-- Junk value outside the domain: at `p = 0` the MCS is `0`. -/
-example : mcs 100 30 0 = 0 := by
-  simp [mcs]
+/-- Junk value outside the domain: at `p = 0` the MCS approximation is `0`. -/
+example : mcsApprox 100 30 0 = 0 := by
+  simp [mcsApprox]
 
 end MathlibExt.Biology.Phylogenetics.MotifConservation

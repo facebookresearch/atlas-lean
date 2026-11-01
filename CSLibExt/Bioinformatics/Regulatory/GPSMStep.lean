@@ -32,11 +32,12 @@ eliminates such events. We therefore prove two exact statements:
   model).
 * `truncatedQ_le_mStep`: in general, the truncated objective
   `∑ j, max (N j - α) 0 * log (π j)` at `mStep` bounds its value at every positive
-  probability vector. This is a supremum/boundary statement, not a maximizer inside the
-  positive simplex: when elimination occurs `mStep` itself has zero coordinates (it lies
-  on the face where eliminated coordinates are zero), so it is the boundary point
-  attaining the supremum over the closed face. This characterization of the elimination
-  rule is derived here; neither paper states it.
+  probability vector. This is an upper-bound statement only, not a supremum: no
+  approximation or `sSup` theorem here shows the bound is the supremum, and when
+  elimination occurs `mStep` itself has zero coordinates (it lies on the face where
+  eliminated coordinates are zero), so it is not a maximizer inside the positive
+  simplex. This upper-bound characterization of the elimination rule is derived here;
+  neither paper states it.
 
 ## Main results
 
@@ -121,11 +122,12 @@ theorem mStep_zero {N : ι → ℝ} (hN : ∀ j, 0 ≤ N j) (j : ι) :
     mStep 0 N j = N j / ∑ k, N k := by
   simp only [mStep, survivorWeight, sub_zero, max_eq_left (hN _)]
 
-/-- **The update attains the supremum of the truncated objective** over the positive
-probability vectors (derived characterization of the elimination rule). Boundary
-statement: when elimination occurs `mStep` itself is not a positive vector (eliminated
-coordinates are zero), so it is the boundary point on the face where eliminated
-coordinates vanish, not a maximizer inside the positive simplex. -/
+/-- **The update is an upper bound for the truncated objective** over the positive
+probability vectors (derived characterization of the elimination rule). Upper-bound
+statement only: this does not prove the value at `mStep` is the supremum (no
+approximation or `sSup` theorem is given). When elimination occurs `mStep` itself is not
+a positive vector (eliminated coordinates are zero), so it is the boundary point on the
+face where eliminated coordinates vanish, not a maximizer inside the positive simplex. -/
 theorem truncatedQ_le_mStep {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N j₀) {π : ι → ℝ}
     (hπ : ∀ j, 0 < π j) (hsum : ∑ j, π j = 1) :
     truncatedQ α N π ≤ truncatedQ α N (mStep α N) :=
