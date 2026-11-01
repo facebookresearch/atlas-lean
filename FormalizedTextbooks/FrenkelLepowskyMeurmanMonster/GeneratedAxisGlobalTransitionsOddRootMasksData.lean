@@ -1,0 +1,46 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddRootQCacheData
+
+/-! Original triangular cocycle and linear phase metadata for the nine genuine root products. -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Candidate triangular cochain rows, checked against the actual original Q cocycle. -/
+def generatedAxisGlobalOddRootMaskRows : Fin 9 → Fin 24 → ℕ :=
+  ![![0, 12627456, 12639744, 12590592, 4770304, 12611072, 262144, 524288, 5036032, 12876800,
+    4749312, 8388608, 7266304, 8388608, 9175040, 786432, 0, 0, 524288, 8388608, 0, 0, 0, 0],
+  ![3424070, 9398800, 8641072, 806944, 3424064, 1876608, 9128448, 315392, 4638720, 8374272,
+    8583168, 7786496, 11280384, 4947968, 2981888, 1310720, 4718592, 3407872, 6291456, 14680064,
+    8388608, 8388608, 0, 0],
+  ![192000, 187904, 19968, 36352, 12288, 61440, 508672, 429824, 1306624, 5351424, 4261888,
+    8400896, 7979008, 7913472, 65536, 65536, 8126464, 0, 0, 0, 0, 0, 0, 0],
+  ![4210856, 8439536, 10365168, 10357488, 10797312, 7397632, 10600704, 11472640, 8439296,
+    11447296, 16056320, 9486336, 1056768, 9158656, 3899392, 2818048, 12845056, 0, 12582912, 0,
+    10485760, 8388608, 8388608, 0],
+  ![13406406, 8869784, 13129520, 13354064, 8717440, 9167232, 9052416, 13210112, 9220096,
+    9053184, 8941568, 0, 663552, 2801664, 9043968, 12910592, 14811136, 9175040, 6291456,
+    12582912, 8388608, 4194304, 0, 0],
+  ![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ![437318, 8826688, 404624, 32768, 8880224, 13042368, 4686464, 9338880, 492032, 950272,
+    4194304, 8388608, 0, 0, 0, 589824, 0, 0, 0, 0, 0, 0, 0, 0],
+  ![311308, 1311264, 8970256, 9232432, 1360384, 2930944, 262144, 524288, 1049088, 2148352,
+    4200448, 9818112, 335872, 0, 10256384, 9961472, 0, 0, 8388608, 0, 0, 0, 0, 0],
+  ![950136, 2004952, 1754352, 7376288, 7681536, 337920, 6355968, 7374592, 6370816, 16214016,
+    7053312, 1699840, 6979584, 7028736, 9175040, 16580608, 9437184, 7602176, 16252928, 6291456,
+    14680064, 0, 0, 0]]
+
+/-- Candidate full central coordinate coefficients in the same original root order. -/
+def generatedAxisGlobalOddRootMaskCoefficients : Fin 9 → ℕ :=
+  ![13141694, 9122097, 7627404, 3514322, 15212725, 0, 8842656, 2140630, 14514263]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

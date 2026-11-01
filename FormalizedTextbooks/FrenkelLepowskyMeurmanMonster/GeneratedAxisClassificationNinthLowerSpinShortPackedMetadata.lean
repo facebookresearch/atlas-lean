@@ -1,0 +1,47 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPackedMetadata10
+
+/-! Exact full extraspecial action by finite bit masks. -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open Multiplicative
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+/-- Every corrected source generator has its complete original binary and central metadata. -/
+theorem generatedNinth_lower_spin_short_packed_metadata (i : Fin 11) :
+    generatedNinthLowerSpinShortPackedMetadata i := by
+  fin_cases i
+  · exact generatedNinth_lower_spin_short_packed_metadata_00
+  · exact generatedNinth_lower_spin_short_packed_metadata_01
+  · exact generatedNinth_lower_spin_short_packed_metadata_02
+  · exact generatedNinth_lower_spin_short_packed_metadata_03
+  · exact generatedNinth_lower_spin_short_packed_metadata_04
+  · exact generatedNinth_lower_spin_short_packed_metadata_05
+  · exact generatedNinth_lower_spin_short_packed_metadata_06
+  · exact generatedNinth_lower_spin_short_packed_metadata_07
+  · exact generatedNinth_lower_spin_short_packed_metadata_08
+  · exact generatedNinth_lower_spin_short_packed_metadata_09
+  · exact generatedNinth_lower_spin_short_packed_metadata_10
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

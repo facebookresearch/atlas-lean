@@ -1,0 +1,242 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortSourceFormula
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket65
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket66
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket67
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket68
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket69
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket70
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket71
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket72
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket73
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket74
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket75
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket76
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket77
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket78
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket79
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket80
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket81
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket82
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket83
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket84
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket85
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket86
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket87
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket88
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket89
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket90
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket91
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket92
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket93
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket94
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerShortInputPacket95
+
+/-! Every original preferred-short input coefficient has its full source numerator. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+
+/-- The complete finite input certificate covers all98280 original preferred-short addresses. -/
+theorem generatedNinth_lower_short_input_certificate (a : Fin 98280) :
+    generatedNinthLowerSpinShortInputInteger (generatedNinthLowerSpinShortIndex a) =
+      generatedNinthLowerShortSourceInteger (generatedNinthLowerSpinShortIndex a) := by
+  have hall : ∀ b : Fin 96, ∀ m : Fin 1024, ∀ h : 1024 * b.val + m.val < 98280,
+      generatedNinthLowerSpinShortInputInteger
+        (generatedNinthLowerSpinShortIndex ⟨1024 * b.val + m.val, h⟩) =
+          generatedNinthLowerShortSourceInteger
+            (generatedNinthLowerSpinShortIndex ⟨1024 * b.val + m.val, h⟩) := by
+    intro b
+    fin_cases b
+    · exact generatedNinth_lower_short_input_packet_00
+    · exact generatedNinth_lower_short_input_packet_01
+    · exact generatedNinth_lower_short_input_packet_02
+    · exact generatedNinth_lower_short_input_packet_03
+    · exact generatedNinth_lower_short_input_packet_04
+    · exact generatedNinth_lower_short_input_packet_05
+    · exact generatedNinth_lower_short_input_packet_06
+    · exact generatedNinth_lower_short_input_packet_07
+    · exact generatedNinth_lower_short_input_packet_08
+    · exact generatedNinth_lower_short_input_packet_09
+    · exact generatedNinth_lower_short_input_packet_10
+    · exact generatedNinth_lower_short_input_packet_11
+    · exact generatedNinth_lower_short_input_packet_12
+    · exact generatedNinth_lower_short_input_packet_13
+    · exact generatedNinth_lower_short_input_packet_14
+    · exact generatedNinth_lower_short_input_packet_15
+    · exact generatedNinth_lower_short_input_packet_16
+    · exact generatedNinth_lower_short_input_packet_17
+    · exact generatedNinth_lower_short_input_packet_18
+    · exact generatedNinth_lower_short_input_packet_19
+    · exact generatedNinth_lower_short_input_packet_20
+    · exact generatedNinth_lower_short_input_packet_21
+    · exact generatedNinth_lower_short_input_packet_22
+    · exact generatedNinth_lower_short_input_packet_23
+    · exact generatedNinth_lower_short_input_packet_24
+    · exact generatedNinth_lower_short_input_packet_25
+    · exact generatedNinth_lower_short_input_packet_26
+    · exact generatedNinth_lower_short_input_packet_27
+    · exact generatedNinth_lower_short_input_packet_28
+    · exact generatedNinth_lower_short_input_packet_29
+    · exact generatedNinth_lower_short_input_packet_30
+    · exact generatedNinth_lower_short_input_packet_31
+    · exact generatedNinth_lower_short_input_packet_32
+    · exact generatedNinth_lower_short_input_packet_33
+    · exact generatedNinth_lower_short_input_packet_34
+    · exact generatedNinth_lower_short_input_packet_35
+    · exact generatedNinth_lower_short_input_packet_36
+    · exact generatedNinth_lower_short_input_packet_37
+    · exact generatedNinth_lower_short_input_packet_38
+    · exact generatedNinth_lower_short_input_packet_39
+    · exact generatedNinth_lower_short_input_packet_40
+    · exact generatedNinth_lower_short_input_packet_41
+    · exact generatedNinth_lower_short_input_packet_42
+    · exact generatedNinth_lower_short_input_packet_43
+    · exact generatedNinth_lower_short_input_packet_44
+    · exact generatedNinth_lower_short_input_packet_45
+    · exact generatedNinth_lower_short_input_packet_46
+    · exact generatedNinth_lower_short_input_packet_47
+    · exact generatedNinth_lower_short_input_packet_48
+    · exact generatedNinth_lower_short_input_packet_49
+    · exact generatedNinth_lower_short_input_packet_50
+    · exact generatedNinth_lower_short_input_packet_51
+    · exact generatedNinth_lower_short_input_packet_52
+    · exact generatedNinth_lower_short_input_packet_53
+    · exact generatedNinth_lower_short_input_packet_54
+    · exact generatedNinth_lower_short_input_packet_55
+    · exact generatedNinth_lower_short_input_packet_56
+    · exact generatedNinth_lower_short_input_packet_57
+    · exact generatedNinth_lower_short_input_packet_58
+    · exact generatedNinth_lower_short_input_packet_59
+    · exact generatedNinth_lower_short_input_packet_60
+    · exact generatedNinth_lower_short_input_packet_61
+    · exact generatedNinth_lower_short_input_packet_62
+    · exact generatedNinth_lower_short_input_packet_63
+    · exact generatedNinth_lower_short_input_packet_64
+    · exact generatedNinth_lower_short_input_packet_65
+    · exact generatedNinth_lower_short_input_packet_66
+    · exact generatedNinth_lower_short_input_packet_67
+    · exact generatedNinth_lower_short_input_packet_68
+    · exact generatedNinth_lower_short_input_packet_69
+    · exact generatedNinth_lower_short_input_packet_70
+    · exact generatedNinth_lower_short_input_packet_71
+    · exact generatedNinth_lower_short_input_packet_72
+    · exact generatedNinth_lower_short_input_packet_73
+    · exact generatedNinth_lower_short_input_packet_74
+    · exact generatedNinth_lower_short_input_packet_75
+    · exact generatedNinth_lower_short_input_packet_76
+    · exact generatedNinth_lower_short_input_packet_77
+    · exact generatedNinth_lower_short_input_packet_78
+    · exact generatedNinth_lower_short_input_packet_79
+    · exact generatedNinth_lower_short_input_packet_80
+    · exact generatedNinth_lower_short_input_packet_81
+    · exact generatedNinth_lower_short_input_packet_82
+    · exact generatedNinth_lower_short_input_packet_83
+    · exact generatedNinth_lower_short_input_packet_84
+    · exact generatedNinth_lower_short_input_packet_85
+    · exact generatedNinth_lower_short_input_packet_86
+    · exact generatedNinth_lower_short_input_packet_87
+    · exact generatedNinth_lower_short_input_packet_88
+    · exact generatedNinth_lower_short_input_packet_89
+    · exact generatedNinth_lower_short_input_packet_90
+    · exact generatedNinth_lower_short_input_packet_91
+    · exact generatedNinth_lower_short_input_packet_92
+    · exact generatedNinth_lower_short_input_packet_93
+    · exact generatedNinth_lower_short_input_packet_94
+    · exact generatedNinth_lower_short_input_packet_95
+  let b : Fin 96 := ⟨a.val / 1024, by omega⟩
+  let m : Fin 1024 := ⟨a.val % 1024, Nat.mod_lt _ (by decide)⟩
+  have he : 1024 * b.val + m.val = a.val := by dsimp [b, m]; omega
+  have h := hall b m (by rw [he]; exact a.isLt)
+  have ha : (⟨1024 * b.val + m.val, by rw [he]; exact a.isLt⟩ : Fin 98280) = a :=
+    Fin.ext he
+  simpa only [ha] using h
+
+/-- The complete source replay binds every actual256-normalized short coefficient to its cache. -/
+theorem generatedNinth_lower_short_input_actual
+    (hrows : ∀ k : Fin 4136, GeneratedNinthShortRowCertificate k)
+    (r : GriessShortIndex) :
+    256 * (griessConwayEncode generatedNinthAxis).2.1 r =
+      (generatedNinthLowerSpinShortInputInteger r : ℝ) := by
+  have hc := generatedNinth_lower_short_input_certificate
+    (generatedNinthLowerSpinShortAddress r)
+  rw [generatedNinth_lower_spin_short_index_address] at hc
+  rw [hc, generatedNinth_lower_short_source_actual hrows]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

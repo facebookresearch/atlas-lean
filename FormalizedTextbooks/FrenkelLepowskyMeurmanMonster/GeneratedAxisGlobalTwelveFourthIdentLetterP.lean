@@ -1,0 +1,140 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentPairWord
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTwelveFourthIdentWords
+
+/-! # Packed mask data of the letters of the Fourth identifications
+
+For every identification letter used by the Fourth identifications: the packed mask data of
+worker `gident2` (`QMaskP`): odd source data for Xi and the permutation letters, the zero-row
+data of an extraspecial element, and literal data for the code signs used (checked against the
+exact sign evaluator by `identLetterCheckP` in each identification).  `fourthDecode` unpacks a
+short image list from `24`-bit fields (`17`-bit label, `7`-bit coefficient offset `64`). -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+namespace GeneratedAxisGlobalTwelveFourthIdent
+open GeneratedAxisGlobalIdent
+set_option autoImplicit false
+
+/-- Literal packed mask data of the source code signs used by the Fourth identifications. -/
+def fourthSignP (a : ℕ) : QMaskP :=
+  if a = 16 then
+    ⟨0x4000ca20008c10030608020c04000f0200000103608081e08042a0802020801 |||
+    (0x10000008000004000002000001080000800000400000200000100000080000 <<< 256) |||
+    (0x80f0104000002000 <<< 512),
+      0x3000002000000000000000003600001e00002a0000020 |||
+    (0x80000000000000000000000000000000000000 <<< 256),
+      0xf⟩
+  else if a = 32 then
+    ⟨0x40004c2000c610010c08030a04000002000f0102d0808390804150802010801 |||
+    (0x10000008000004000002080001000000800000400000200000100000080000 <<< 256) |||
+    (0x80f0204000002000 <<< 512),
+      0x1000003000000000000000002d0000390000150000010 |||
+    (0x80000000000000000000000000000000000000000000 <<< 256),
+      0xf⟩
+  else if a = 128 then
+    ⟨0x40001c20003a10000008000e04010c020306010360808270804150802000001 |||
+    (0x10000008080004000002000001000000800000400000200000100000080000 <<< 256) |||
+    (0x80e0804000002000 <<< 512),
+      0x100000300000360000270000150000000 |||
+    (0x80000000000000000000000000000000000000000000000000000000 <<< 256),
+      0xe⟩
+  else if a = 800 then
+    ⟨0xc0044d2004c710012a88031004008a0200490102b00083008041a0002310001 |||
+    (0x10080008000004000002080001000000800000400000200000100000080030 <<< 256) |||
+    (0xc843204000002008 <<< 512),
+      0x4000004000001000003000000800000400002b00003000001a0000310 |||
+    (0x80000000000000000080000000000000000000000000000000000000000000 <<< 256) |||
+    (0x8000 <<< 512),
+      0x484⟩
+  else if a = 494 then
+    ⟨0x1400467a000d01001780803a80402d00201a90100d0008200804200802610801 |||
+    (0x10080008080004080002080001000000880000480000280000100000080020 <<< 256) |||
+    (0xa071ee4000002000 <<< 512),
+      0x4000000000001000003800002c00001a00000d0000200000200000610 |||
+    (0x80000080000080000080000000000080000080000080000000000000000000 <<< 256),
+      0x2f6⟩
+  else if a = 1981 then
+    ⟨0x24004cb2004d110033c8803328400d98201ef8102b700809b00465d00233e001 |||
+    (0x10080008080004000002080001080000880000480000200000180000080030 <<< 256) |||
+    (0x8f0fbd4008002008 <<< 512),
+      0x4000004000003000003000000c00001e00002b000009800065c00033e |||
+    (0x80000080000000000080000080000080000080000000000080000000000000 <<< 256) |||
+    (0x8000008000 <<< 512),
+      0xc2⟩
+  else if a = 552 then
+    ⟨0x7c000fca0041710027008028c04029c8203a5010260008770804500002510801 |||
+    (0x10000008000004000002080001000000880000400000200000100000080010 <<< 256) |||
+    (0xe252284000002008 <<< 512),
+      0x4000002000002800002800003a0000260000770000500000510 |||
+    (0x80000000000080000000000000000000000000000000 <<< 256) |||
+    (0x8000 <<< 512),
+      0x6d2⟩
+  else if a = 1276 then
+    ⟨0xcc001fca002fc90031488032884034982038581076780879b80400d00203e801 |||
+    (0x10000008080004080002080001080000880000480000200000100000080000 <<< 256) |||
+    (0xffdcfc4008002000 <<< 512),
+      0x20000030000030000034000038000076000079800000c00003e |||
+    (0x80000080000080000080000080000080000000000000000000000000 <<< 256) |||
+    (0x8000000000 <<< 512),
+      0x4f1⟩
+  else if a = 817 then
+    ⟨0xec00587a0064b90022c88011c8400958200698105d08086e0804700002330001 |||
+    (0x10080008000004000002080001080000800000400000200000180000080030 <<< 256) |||
+    (0xffc3314000002008 <<< 512),
+      0x4000006000002000001000000800000600005d00006e0000700000330 |||
+    (0x80000000000000000080000080000000000000000000000080000000000000 <<< 256) |||
+    (0x8000 <<< 512),
+      0x4c2⟩
+  else if a = 1890 then
+    ⟨0xdc0052ba0064b9000748801b00402d00200e581070780849b00430d80271e001 |||
+    (0x10080008000004080002080001000000800000400000280000100000080030 <<< 256) |||
+    (0xf9a7624008002008 <<< 512),
+      0x4000006000000000001800002c00000e000070000049800030c00071e |||
+    (0x80000000000080000080000000000000000000000080000000000000000000 <<< 256) |||
+    (0x8000008000 <<< 512),
+      0x467⟩
+  else if a = 926 then
+    ⟨0x14004d7a004b7900360080298040199020360010060008300804300802720801 |||
+    (0x10080008080004000002000001080000880000480000280000100000080030 <<< 256) |||
+    (0xb0739e4000002008 <<< 512),
+      0x400000400000300000280000180000360000060000300000300000720 |||
+    (0x80000080000000000000000080000080000080000080000000000000000000 <<< 256) |||
+    (0x8000 <<< 512),
+      0x3f6⟩
+  else ⟨0, 0, 0⟩
+
+/-- Packed mask data of an identification letter. -/
+def fourthLetterP : IdentLetter → QMaskP
+  | .xi => sourceLetterP 0
+  | .mono l => sourceLetterP (monoLetterIndex l)
+  | .qel g => ⟨unitsP, 0, maskOfBits (qLetterBits (qmEncode g).1)⟩
+  | .sign a _ => fourthSignP a.val
+
+/-- A word with the packed mask data of its letters. -/
+def fourthWordData (ls : List IdentLetter) : List (IdentLetter × QMaskP) :=
+  ls.map (fun l => (l, fourthLetterP l))
+
+/-- The letters of a word with data are the word. -/
+theorem fourthWordData_fst (ls : List IdentLetter) : (fourthWordData ls).map Prod.fst = ls := by
+  unfold fourthWordData
+  induction ls with
+  | nil => rfl
+  | cons l ls ih => simp only [List.map_cons, ih]
+
+/-- Unpack `n` short terms from `24`-bit fields. -/
+def fourthDecode (t n : ℕ) : List (ℕ × ℤ) :=
+  (List.range n).map (fun q => ((t >>> (24 * q)) % 131072,
+    (((t >>> (24 * q + 17)) % 128 : ℕ) : ℤ) - 64))
+
+end GeneratedAxisGlobalTwelveFourthIdent
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
