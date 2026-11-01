@@ -38,8 +38,8 @@ and we evaluate the statistic with a reference correlation `r` that may differ f
 * `dentistVariance_eq_one_iff`, `dentistMean_eq_zero_iff`: the standardized difference has unit
   variance iff `r = 0` or `r = ρ`, and mean zero iff `r = ρ` or `λ = 0`; so for `λ ≠ 0` the
   standardized difference is standard normal iff `r = ρ`.
-* `map_sq_stdGaussian_eq_chiSquare`: the square of a standard normal variable has the
-  `chiSquareMeasure 1` law.
+* The square of a standard normal variable has the `chiSquareMeasure 1` law: reuse
+  `ProbabilityTheory.gaussianReal_map_sq` (no duplicate proof here).
 
 The Gaussian model with exact unit variances is the large-sample idealization the paper's
 "approximately `χ²₁`" refers to; finite-sample effects of estimating `z`-scores are not modeled.
@@ -49,7 +49,7 @@ The Gaussian model with exact unit variances is the large-sample idealization th
 * `dentistS`: the DENTIST-S statistic.
 * `map_standardized_eq_gaussianReal`, `map_dentistS_eq_map_sq`, `map_dentistS_eq_chiSquare`.
 * `dentistVariance_eq_one_iff`, `dentistMean_eq_zero_iff`.
-* `map_sq_stdGaussian_eq_chiSquare`.
+* `map_dentistS_eq_chiSquare` via `ProbabilityTheory.gaussianReal_map_sq`.
 
 ## References
 
@@ -80,61 +80,6 @@ noncomputable def dentistMean (ρ r lam : ℝ) : ℝ := (ρ - r) * lam / Real.sq
 true correlation is `ρ` and the reference correlation is `r`. -/
 noncomputable def dentistVariance (ρ r : ℝ) : ℝ := (1 - 2 * r * ρ + r ^ 2) / (1 - r ^ 2)
 
-/-- The square of a standard normal variable has the chi-square law with one degree of freedom
-(`chiSquareMeasure 1`, the gamma law with shape `1/2` and rate `1/2`). -/
-theorem map_sq_stdGaussian_eq_chiSquare :
-    (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 := by
-  let μ := (gaussianReal 0 1).map (fun x : ℝ => x ^ 2)
-  let ν := gammaMeasure (1 / 2) (1 / 2)
-  have : IsProbabilityMeasure μ := by dsimp [μ]; infer_instance
-  have : IsProbabilityMeasure ν :=
-    isProbabilityMeasure_gammaMeasure (by norm_num) (by norm_num)
-  have hμ : Iio (1 / 2 : ℝ) ⊆ interior (integrableExpSet id μ) := by
-    apply isOpen_Iio.subset_interior_iff.mpr
-    intro t ht
-    change t < 1 / 2 at ht
-    apply mgf_pos_iff.mp
-    rw [mgf_id_map_sq_stdGaussian t]
-    exact inv_pos.mpr (Real.sqrt_pos.2 (by linarith))
-  have hν : Iio (1 / 2 : ℝ) ⊆ interior (integrableExpSet id ν) := by
-    apply isOpen_Iio.subset_interior_iff.mpr
-    intro t ht
-    change t < 1 / 2 at ht
-    apply mgf_pos_iff.mp
-    rw [mgf_gammaMeasure_half_half_eq_sqrt ht]
-    exact inv_pos.mpr (Real.sqrt_pos.2 (by linarith))
-  let S : Set ℂ := {z | z.re ∈ Iio (1 / 2 : ℝ)}
-  have hX : AnalyticOnNhd ℂ (complexMGF id μ) S :=
-    analyticOnNhd_complexMGF.mono (fun _ hz => hμ hz)
-  have hY : AnalyticOnNhd ℂ (complexMGF id ν) S :=
-    analyticOnNhd_complexMGF.mono (fun _ hz => hν hz)
-  have hS : IsPreconnected S :=
-    ((convex_Iio (1 / 2 : ℝ)).linear_preimage Complex.reLm).isPreconnected
-  have hzero : (0 : ℂ) ∈ S := by norm_num [S]
-  have hreal : ∃ᶠ (x : ℝ) in 𝓝[≠] 0, complexMGF id μ x = complexMGF id ν x := by
-    have hevent : ∀ᶠ x : ℝ in 𝓝[≠] 0, x < 1 / 2 :=
-      (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 2)).filter_mono
-        nhdsWithin_le_nhds
-    refine hevent.frequently.mono (fun x hx => ?_)
-    rw [complexMGF_ofReal, complexMGF_ofReal, mgf_id_map_sq_stdGaussian x,
-      mgf_gammaMeasure_half_half_eq_sqrt hx]
-  have hfreq : ∃ᶠ z : ℂ in 𝓝[≠] 0, complexMGF id μ z = complexMGF id ν z := by
-    rw [frequently_iff_seq_forall] at hreal ⊢
-    obtain ⟨xs, hx_tendsto, hx_eq⟩ := hreal
-    refine ⟨fun n => xs n, ?_, fun n => hx_eq n⟩
-    rw [tendsto_nhdsWithin_iff] at hx_tendsto ⊢
-    constructor
-    · rw [← Complex.ofReal_zero, tendsto_ofReal_iff]
-      exact hx_tendsto.1
-    · simpa using hx_tendsto.2
-  have heq := hX.eqOn_of_preconnected_of_frequently_eq hY hS hzero hfreq
-  have hmeasure : μ = ν := by
-    apply Measure.ext_of_charFun
-    funext t
-    rw [← complexMGF_id_mul_I, ← complexMGF_id_mul_I]
-    apply heq
-    norm_num [S]
-  simpa [μ, ν, chiSquareMeasure] using hmeasure
 
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
@@ -211,7 +156,7 @@ theorem map_dentistS_eq_chiSquare {zi zc : Ω → ℝ}
     (hvi : Var[zi; P] = 1) (hvc : Var[zc; P] = 1) (hcov : cov[zi, zc; P] = ρ)
     (hmi : P[zi] = ρ * lam) (hmc : P[zc] = lam) (hρ : ρ ^ 2 < 1) :
     P.map (fun ω => dentistS ρ (zi ω) (zc ω)) = chiSquareMeasure 1 := by
-  rw [map_dentistS_eq_map_sq hz hvi hvc hcov hmi hmc hρ, map_sq_stdGaussian_eq_chiSquare]
+  rw [map_dentistS_eq_map_sq hz hvi hvc hcov hmi hmc hρ, ProbabilityTheory.gaussianReal_map_sq]
 
 /-- The standardized DENTIST difference has unit variance iff the reference correlation is `0`
 or equals the true correlation (for `r ^ 2 < 1`). -/

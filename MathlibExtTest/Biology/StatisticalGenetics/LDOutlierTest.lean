@@ -47,6 +47,6 @@ example : dentistVariance 0.6 0 = 1 ∧ dentistMean 0.6 0 5 ≠ 0 := by
 
 /-- The chi-square identity. -/
 example : (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 :=
-  map_sq_stdGaussian_eq_chiSquare
+  ProbabilityTheory.gaussianReal_map_sq
 
 end MathlibExtTest.Biology.StatisticalGenetics.LDOutlierTest

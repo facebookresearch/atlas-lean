@@ -45,7 +45,7 @@ The paper states (after Equation 2) that `|E(α₁³ α₂)| ≥ |E(α₁ α₂�
 `κ_π > 0` (`abs_moment_le_iff_of_kurtosis_pos`); for `κ_π < 0` it is reversed
 (`abs_moment_le_iff_of_kurtosis_neg`). The comparison of the centred moments
 `E(α₁³ α₂) - 3 ρ_g` and `E(α₁ α₂³) - 3 ρ_g`, which is what the paper's estimator uses (Methods,
-the quantities `κ_k = E(α_k² α₁ α₂) - 3 ρ_g`), orders `q₁²` and `q₂²` whenever `κ_π ≠ 0`
+the quantities `κ_k = E(α_k² α₁ α₂) - 3 ρ_g`), orders `q₁²` and `q₂²` whenever `κ_π ρ_g ≠ 0` (both `κ_π ≠ 0` and `ρ_g = q₁ q₂ ≠ 0` are needed)
 (`abs_centredMoment_le_iff`).
 
 ## Main results
