@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Metric
-import Mathlib.Tactic.Omega
 
 /-!
 # A parent step towards a root in a connected graph
