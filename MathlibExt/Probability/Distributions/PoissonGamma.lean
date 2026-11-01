@@ -85,7 +85,7 @@ theorem poissonCDF_zero_left (k : ℕ) : poissonCDF 0 k = 1 := by
 theorem poissonCDF_zero_right (x : ℝ) : poissonCDF x 0 = exp (-x) := by
   simp [poissonCDF]
 
-/-- The distribution function is positive at every real mean. -/
+/-- The distribution function is positive at every nonnegative real mean. -/
 theorem poissonCDF_pos {x : ℝ} (hx : 0 ≤ x) (k : ℕ) : 0 < poissonCDF x k := by
   apply sum_pos'
   · intro j hj

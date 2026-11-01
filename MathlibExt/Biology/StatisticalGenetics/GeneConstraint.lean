@@ -27,10 +27,13 @@ bound divided by `E` (`gammaMeasure_real_Iic_oeUpper`). So the score is the exac
 
 **pLI** (Lek et al. 2016) is the posterior probability of the most depleted class in a
 mixture of Poisson classes `o ~ Poisson(λ_c E)` with prior weights `π_c` (in the paper: null,
-recessive, haploinsufficient, with fitted rates). For every prior and any rates, the posterior
-of the class with the smallest rate is antitone in `o` (`classPosterior_antitone`), strictly
-when another class with positive weight has a larger rate. The class rates themselves are
-parameters here; the paper's fitted values are not used. The EM fit of the weights is in
+recessive, haploinsufficient, with fitted rates). For strictly positive weights and rates and
+`E > 0`, the posterior of a class with the smallest rate is antitone in `o`
+(`classPosterior_antitone`), strictly when another class has a larger rate
+(`classPosterior_strictAnti`). The theorems require strict positivity of every weight and
+every rate: a zero-weight scored class has posterior identically zero, not strictly antitone,
+and a zero rate is outside the proved domain. The class rates themselves are parameters here;
+the paper's fitted values are not used. The EM fit of the weights is in
 `CSLibExt/Bioinformatics/StatisticalGenetics/PoissonClassEM.lean`.
 
 ## Main results
