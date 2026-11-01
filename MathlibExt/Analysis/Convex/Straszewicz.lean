@@ -43,7 +43,8 @@ open Set Metric Filter TopologicalSpace
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
 
-/-- Convex hull of a compact set in a finite-dimensional space is compact. -/
+/-- **Convex hull of a compact set is compact.** Let $E$ be a finite-dimensional real normed
+space. If $K \subseteq E$ is compact, then the convex hull of $K$ is compact. -/
 theorem IsCompact.convexHull_of_compact {K : Set E} (hK : IsCompact K) :
     IsCompact (convexHull ℝ K) := by
   rcases K.eq_empty_or_nonempty with rfl | ⟨p₀, hp₀⟩
@@ -189,18 +190,32 @@ theorem IsCompact.convexHull_of_compact {K : Set E} (hK : IsCompact K) :
     rw [himg]
     exact hdom.image hcont
 
-/-- Difference quotients whose infimum is the directional derivative. -/
+/-- **Difference quotients.** Let $E$ be a real normed space and $E^*$ its continuous dual. For
+$h : E^* \to \mathbb{R}$ and $x, v \in E^*$, the difference quotients of $h$ at $x$ in direction
+$v$ form the set $\{(h(x + t v) - h(x))/t : t > 0\}$.
+
+When $h$ is convex this set is bounded below, and its infimum is the one-sided directional
+derivative of $h$ at $x$ in direction $v$. -/
 noncomputable def dirQuot (h : StrongDual ℝ E → ℝ) (x v : StrongDual ℝ E) : Set ℝ :=
   (fun t : ℝ => (h (x + t • v) - h x) / t) '' Ioi 0
 
-/-- Directional derivative of a convex function as an infimum of quotients. -/
+/-- **Directional derivative.** Let $E$ be a real normed space with continuous dual $E^*$. For
+$h : E^* \to \mathbb{R}$ and $x, v \in E^*$, the directional derivative of $h$ at $x$ in
+direction $v$ is the infimum of the difference quotients,
+$h'(x; v) = \inf_{t > 0} \frac{h(x + t v) - h(x)}{t}$, which is taken to be $0$ when these
+quotients are not bounded below.
+
+For convex $h$ the quotients are bounded below, so this is the usual one-sided directional
+derivative. -/
 noncomputable def dirDeriv (h : StrongDual ℝ E → ℝ) (x v : StrongDual ℝ E) : ℝ :=
   sInf (dirQuot h x v)
 
 variable {h : StrongDual ℝ E → ℝ} {x : StrongDual ℝ E}
 
 omit [FiniteDimensional ℝ E] in
-/-- Restriction of a convex function to a line is convex. -/
+/-- **Restriction of a convex function to a line.** Let $E$ be a real normed space with
+continuous dual $E^*$, and let $h : E^* \to \mathbb{R}$ be convex. For all $x, v \in E^*$, the
+function $s \mapsto h(x + s v)$ is convex on $\mathbb{R}$. -/
 theorem convexOn_line (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
     ConvexOn ℝ univ (fun s : ℝ => h (x + s • v)) := by
   refine ⟨convex_univ, fun s _ u _ a b ha hb hab => ?_⟩
@@ -218,7 +233,12 @@ theorem convexOn_line (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
   exact hconv.2 (mem_univ _) (mem_univ _) ha hb hab
 
 omit [FiniteDimensional ℝ E] in
-/-- Difference quotients are bounded below (slope comparison on the line). -/
+/-- **Difference quotients of a convex function are bounded below.** Let $E$ be a real normed
+space, $E^*$ its continuous dual, and $h : E^* \to \mathbb{R}$ a convex function. For all
+$x, v \in E^*$, the set of difference quotients $\{(h(x + t v) - h(x))/t : t > 0\}$ is bounded
+below.
+
+The bound comes from comparing slopes of $h$ on the line through $x$ in direction $v$. -/
 theorem dirQuot_bddBelow (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
     BddBelow (dirQuot h x v) := by
   refine ⟨h x - h (x - v), fun z hz => ?_⟩
@@ -251,7 +271,10 @@ theorem dirDeriv_le_quot (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E)
   csInf_le (dirQuot_bddBelow hconv v) ⟨t, ht, rfl⟩
 
 omit [FiniteDimensional ℝ E] in
-/-- Subadditivity of the directional derivative (midpoint rescaling trick). -/
+/-- **Subadditivity of the directional derivative.** Let $E$ be a real normed space with
+continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write $h'(x; v)$ for the
+directional derivative of $h$ at $x$ in direction $v$. For all $x, v, w \in E^*$,
+$h'(x; v + w) \le h'(x; v) + h'(x; w)$. -/
 theorem dirDeriv_subadd (hconv : ConvexOn ℝ univ h) (v w : StrongDual ℝ E) :
     dirDeriv h x (v + w) ≤ dirDeriv h x v + dirDeriv h x w := by
   have key : ∀ s₁ s₂ : ℝ, 0 < s₁ → 0 < s₂ → dirDeriv h x (v + w)
@@ -323,7 +346,9 @@ theorem dirDeriv_subadd (hconv : ConvexOn ℝ univ h) (v w : StrongDual ℝ E) :
   linarith
 
 omit [FiniteDimensional ℝ E] in
-/-- The directional derivative in direction zero vanishes. -/
+/-- **Directional derivative in direction zero.** Let $E$ be a real normed space with continuous
+dual $E^*$ and let $h : E^* \to \mathbb{R}$ be any function. For every $x \in E^*$, the directional
+derivative of $h$ at $x$ in direction $0$ is $0$. -/
 theorem dirDeriv_zero : dirDeriv h x 0 = 0 := by
   have hset : dirQuot h x 0 = {0} := by
     ext z
@@ -344,7 +369,10 @@ theorem dirDeriv_zero : dirDeriv h x 0 = 0 := by
   exact le_antisymm hle hge
 
 omit [FiniteDimensional ℝ E] in
-/-- The two opposite directional derivatives sum to something nonnegative. -/
+/-- **Opposite directional derivatives have nonnegative sum.** Let $E$ be a real normed space
+with continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write $h'(x; v)$ for the
+directional derivative of $h$ at $x$ in direction $v$. For all $x, v \in E^*$,
+$h'(x; v) + h'(x; -v) \ge 0$. -/
 theorem dirDeriv_add_neg_nonneg (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
     0 ≤ dirDeriv h x v + dirDeriv h x (-v) := by
   have hsub := dirDeriv_subadd (x := x) hconv v (-v)
@@ -357,12 +385,19 @@ section Support
 
 variable {K : Set E}
 
-/-- Support function of a compact set. -/
+/-- **Support function.** For a set $K$ in a real normed space $E$, the support function of $K$
+sends a continuous linear functional $\ell$ on $E$ to the supremum $\sup_{x \in K} \ell(x)$ of the
+values of $\ell$ on $K$.
+
+The supremum is taken in $\mathbb{R}$, so it is $0$ when $K$ is empty or $\ell$ is unbounded
+above on $K$; for nonempty compact $K$ it is attained. -/
 noncomputable def suppFunc (K : Set E) : StrongDual ℝ E → ℝ :=
   fun l => sSup ((fun x => l x) '' K)
 
 omit [FiniteDimensional ℝ E] in
-/-- The support function attains its value. -/
+/-- **The support function of a compact set is attained.** Let $K$ be a nonempty compact subset
+of a real normed space $E$, and let $h_K(l) = \sup_{x \in K} l(x)$ be its support function on the
+continuous dual $E^*$. For every $l \in E^*$ there is $x \in K$ with $l(x) = h_K(l)$. -/
 theorem suppFunc_attain (hK : IsCompact K) (hKne : K.Nonempty) (l : StrongDual ℝ E) :
     ∃ x ∈ K, l x = suppFunc K l := by
   have hcont : Continuous (fun x => l x) := (l : E →L[ℝ] ℝ).continuous
@@ -372,7 +407,9 @@ theorem suppFunc_attain (hK : IsCompact K) (hKne : K.Nonempty) (l : StrongDual �
   exact ⟨x, hxK, hxl⟩
 
 omit [FiniteDimensional ℝ E] in
-/-- The support function is convex. -/
+/-- **The support function of a compact set is convex.** Let $K$ be a nonempty compact subset of
+a real normed space $E$. Its support function $h_K(l) = \sup_{x \in K} l(x)$ is a convex function
+on the whole continuous dual $E^*$. -/
 theorem suppFunc_convex (hK : IsCompact K) (hKne : K.Nonempty) :
     ConvexOn ℝ univ (suppFunc K) := by
   refine ⟨convex_univ, fun x _ y _ a b ha hb hab => ?_⟩
@@ -394,7 +431,11 @@ theorem suppFunc_convex (hK : IsCompact K) (hKne : K.Nonempty) :
   exact hle
 
 omit [FiniteDimensional ℝ E] in
-/-- The support function is Lipschitz on bounded sets. -/
+/-- **The support function of a compact set is Lipschitz.** Let $K$ be a nonempty compact subset
+of a real normed space $E$, and let $h_K(l) = \sup_{x \in K} l(x)$ be its support function on the
+continuous dual $E^*$. There is a constant $C \ge 0$ such that
+$h_K(l_1) - h_K(l_2) \le C \|l_1 - l_2\|$ for all $l_1, l_2 \in E^*$, where $\|\cdot\|$ is the
+operator norm. -/
 theorem suppFunc_lipschitz (hK : IsCompact K) (hKne : K.Nonempty) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ l₁ l₂ : StrongDual ℝ E,
       suppFunc K l₁ - suppFunc K l₂ ≤ C * ‖l₁ - l₂‖ := by
@@ -416,7 +457,9 @@ theorem suppFunc_lipschitz (hK : IsCompact K) (hKne : K.Nonempty) :
   linarith
 
 omit [FiniteDimensional ℝ E] in
-/-- The support function is continuous. -/
+/-- **The support function of a compact set is continuous.** Let $K$ be a nonempty compact
+subset of a real normed space $E$. Its support function $h_K(l) = \sup_{x \in K} l(x)$ is
+continuous on the continuous dual $E^*$ with the operator norm. -/
 theorem suppFunc_continuous (hK : IsCompact K) (hKne : K.Nonempty) :
     Continuous (suppFunc K) := by
   obtain ⟨C, hC, hlip⟩ := suppFunc_lipschitz hK hKne
@@ -449,12 +492,20 @@ theorem suppFunc_continuous (hK : IsCompact K) (hKne : K.Nonempty) :
   · calc suppFunc K l - suppFunc K l₀ ≤ C * ‖l - l₀‖ := h1
       _ < ε := hmain
 
-/-- Gateaux points: both opposite directional derivatives sum nonpositively. -/
+/-- **Gateaux points.** Let $E$ be a real normed space, $E^*$ its continuous dual, and
+$h : E^* \to \mathbb{R}$. For $x, v \in E^*$ let $h'(x; v)$ be the infimum of the difference
+quotients $(h(x + t v) - h(x))/t$ over $t > 0$, taken to be $0$ when they are unbounded below.
+A point $x \in E^*$ is a Gateaux point of $h$ when $h'(x; v) + h'(x; -v) \le 0$ for every
+$v \in E^*$. -/
 def GateauxPt (h : StrongDual ℝ E → ℝ) (x : StrongDual ℝ E) : Prop :=
   ∀ v, dirDeriv h x v + dirDeriv h x (-v) ≤ 0
 
 omit [FiniteDimensional ℝ E] in
-/-- Sublevel sets of the symmetrized directional derivative are open. -/
+/-- **Strict sublevel sets of the symmetrized directional derivative are open.** Let $E$ be a
+real normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty compact set with
+support function $h_K$, and write $h_K'(x; v)$ for the directional derivative of $h_K$ at $x$ in
+direction $v$. For every $v \in E^*$ and every real $c$, the set of $x \in E^*$ with
+$h_K'(x; v) + h_K'(x; -v) < c$ is open. -/
 theorem dirDeriv_sublevel_open (hK : IsCompact K) (hKne : K.Nonempty)
     (v : StrongDual ℝ E) (c : ℝ) :
     IsOpen {x | dirDeriv (suppFunc K) x v + dirDeriv (suppFunc K) x (-v) < c} := by
@@ -521,7 +572,11 @@ theorem dirDeriv_sublevel_open (hK : IsCompact K) (hKne : K.Nonempty)
     isOpen_Iio.preimage (hQ t₁ t₂)
 
 omit [FiniteDimensional ℝ E] in
-/-- The directional derivative is continuous in the direction. -/
+/-- **Continuity of the directional derivative of a support function in the direction.** Let
+$E$ be a real normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty compact
+set with support function $h_K$, and write $h_K'(x; w)$ for the directional derivative of $h_K$
+at $x$ in direction $w$. For every $x \in E^*$, the map $w \mapsto h_K'(x; w)$ is continuous on
+$E^*$. -/
 theorem dirDeriv_continuous_in_v (hK : IsCompact K) (hKne : K.Nonempty)
     (x : StrongDual ℝ E) :
     Continuous (fun w => dirDeriv (suppFunc K) x w) := by
@@ -578,7 +633,11 @@ theorem dirDeriv_continuous_in_v (hK : IsCompact K) (hKne : K.Nonempty)
       _ < ε := hmain
 
 omit [FiniteDimensional ℝ E] in
-/-- Directional derivatives of the support function are bounded by any Lipschitz constant. -/
+/-- **Lipschitz bound on directional derivatives of a support function.** Let $E$ be a real
+normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty compact set with
+support function $h_K$, and write $h_K'(x; w)$ for the directional derivative of $h_K$ at $x$ in
+direction $w$. If $C$ is a real number with $h_K(\ell_1) - h_K(\ell_2) \le C \|\ell_1 - \ell_2\|$
+for all $\ell_1, \ell_2 \in E^*$, then $h_K'(x; w) \le C \|w\|$ for all $x, w \in E^*$. -/
 theorem dirDeriv_suppFunc_bound (hK : IsCompact K) (hKne : K.Nonempty)
     {C : ℝ} (hlip : ∀ l₁ l₂ : StrongDual ℝ E,
       suppFunc K l₁ - suppFunc K l₂ ≤ C * ‖l₁ - l₂‖)
@@ -593,7 +652,11 @@ theorem dirDeriv_suppFunc_bound (hK : IsCompact K) (hKne : K.Nonempty)
   rw [add_sub_cancel_left] at h
   exact le_trans q1 h
 
-/-- Mazur's theorem: Gateaux points of the support function are dense. -/
+/-- **Mazur's theorem for support functions.** Let $E$ be a finite-dimensional real normed space
+with continuous dual $E^*$, let $K \subseteq E$ be a nonempty compact set with support function
+$h_K$, and write $h_K'(\ell; v)$ for the directional derivative of $h_K$ at $\ell$ in direction
+$v$. Then the Gateaux points of $h_K$, that is, the functionals $\ell \in E^*$ with
+$h_K'(\ell; v) + h_K'(\ell; -v) \le 0$ for every $v \in E^*$, form a dense subset of $E^*$. -/
 theorem dense_gateaux (hK : IsCompact K) (hKne : K.Nonempty) :
     Dense {l | GateauxPt (suppFunc K) l} := by
   rw [dense_iff_inter_open]
@@ -988,7 +1051,11 @@ section GateauxExposed
 
 set_option linter.unusedVariables false in
 omit [FiniteDimensional ℝ E] in
-/-- A maximizer of a functional lower-bounds the directional derivative. -/
+/-- **A maximizer bounds the directional derivative of the support function from below.** Let
+$K$ be a nonempty compact subset of a real normed space $E$, let $h_K(l) = \sup_{y \in K} l(y)$
+be its support function on the continuous dual $E^*$, and write $h_K'(u; v)$ for the
+directional derivative of $h_K$ at $u$ in direction $v$. If $u \in E^*$ and $z \in K$ satisfy
+$u(z) = h_K(u)$, then $v(z) \le h_K'(u; v)$ for every $v \in E^*$. -/
 theorem maximizer_dirDeriv_ge {K : Set E} (hK : IsCompact K) (hKne : K.Nonempty)
     {u : StrongDual ℝ E} {z : E} (hzK : z ∈ K) (hmax : u z = suppFunc K u)
     (v : StrongDual ℝ E) : v z ≤ dirDeriv (suppFunc K) u v := by
@@ -1010,7 +1077,10 @@ theorem maximizer_dirDeriv_ge {K : Set E} (hK : IsCompact K) (hKne : K.Nonempty)
   exact (le_div_iff₀ ht').mpr key
 
 omit [FiniteDimensional ℝ E] in
-/-- At a Gateaux point of the support function, the maximizer is unique. -/
+/-- **Maximizers at a Gateaux point of the support function are unique.** Let $K$ be a
+nonempty compact subset of a real normed space $E$, and let $h_K(l) = \sup_{y \in K} l(y)$ be its
+support function on the continuous dual $E^*$. If $l \in E^*$ is a Gateaux point of $h_K$ and
+$z_1, z_2 \in K$ satisfy $l(z_1) = h_K(l)$ and $l(z_2) = h_K(l)$, then $z_1 = z_2$. -/
 theorem gateaux_unique_maximizer {K : Set E} (hK : IsCompact K) (hKne : K.Nonempty)
     {l : StrongDual ℝ E} (hG : GateauxPt (suppFunc K) l)
     {z₁ z₂ : E} (h₁ : z₁ ∈ K) (h₂ : z₂ ∈ K)
@@ -1033,7 +1103,10 @@ theorem gateaux_unique_maximizer {K : Set E} (hK : IsCompact K) (hKne : K.Nonemp
 
 set_option linter.unusedVariables false in
 omit [FiniteDimensional ℝ E] in
-/-- A unique maximizer of a functional is an exposed point. -/
+/-- **A unique maximizer of a linear functional is an exposed point.** Let $K$ be a nonempty
+compact set in a real normed space $E$, let $\ell$ be a continuous linear functional on $E$, and
+let $h_K$ be the support function of $K$. If $z \in K$ satisfies $\ell(z) = h_K(\ell)$ and every
+$y \in K$ with $\ell(y) = h_K(\ell)$ equals $z$, then $z$ is an exposed point of $K$. -/
 theorem unique_maximizer_exposed {K : Set E} (hK : IsCompact K) (hKne : K.Nonempty)
     {l : StrongDual ℝ E} {z : E} (hzK : z ∈ K) (hmax : l z = suppFunc K l)
     (huniq : ∀ y ∈ K, l y = suppFunc K l → y = z) :
