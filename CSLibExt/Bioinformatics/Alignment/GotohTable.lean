@@ -48,7 +48,11 @@ column. The value returned is the same optimal score.
 The cost is the number of additions and comparisons on `ℤ`. Each cell is three maxima of three
 sums from three neighbouring cells (`step`), each computed once and shared through `let`;
 `nextRow` computes `|ys| + 1` cells from the previous row, and `gotohRows` computes `|xs| + 1`
-rows: `O(|xs| |ys|)` operations, with `O(|ys|)` live cells.
+rows: `O(|xs| |ys|)` operations, with `O(|ys|)` live cells. In addition, the call stack is
+`O(|xs| + |ys|)` in the worst case: `gotohRows` recurses over `xs` (it evaluates the row of
+`xs` before constructing the row of `a :: xs`, retaining one frame per element of `xs`) and
+`nextRow` recurses over `ys`, and neither recursion is tail-recursive, so the `O(|ys|)` live-cell
+bound does not bound the stack.
 
 ## References
 

@@ -49,9 +49,13 @@ appended, and the transform, LF-mapping and backward search are those of
 
 ## Cost model
 
-No complexity is claimed for building the suffix array (`List.mergeSort` on whole suffixes). With
-the FM-index directories of `BWT` (constant-time `lf`), locate costs at most `s - 1` LF steps
-when the rows of the text positions that are multiples of `s` are sampled (`locateSteps_le`).
+No complexity is claimed for building the suffix array (`List.mergeSort` on whole suffixes).
+Locate costs at most `s - 1` LF steps when the rows of the text positions that are multiples of
+`s` are sampled (`locateSteps_le`), counted in LF steps only. No cost is claimed for a single
+LF step: `locateAux` is hardwired to `BWT.lf`, whose `countLess`, `rank`, and `List.getD`
+operations rescan the list, so this API cannot realize a directory-backed constant-time LF
+step. A constant-time LF step would require parameterizing `locate` by an LF oracle/index
+structure with the required correctness property.
 
 ## References
 
