@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Bioinformatics.Phylogenetics.Splits
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Finset.Max
@@ -66,12 +67,15 @@ namespace Cslib.Bioinformatics.PopulationGenetics.HudsonKaplan
 variable {n s : ℕ} (M : Fin n → Fin s → Bool)
 
 /-- Sites `i` and `j` show all four gametes: for every pair of alleles `(a, b)` some haplotype
-carries `a` at `i` and `b` at `j`. -/
-def FourGametes (i j : Fin s) : Prop :=
-  ∀ a b : Bool, ∃ r : Fin n, M r i = a ∧ M r j = b
+carries `a` at `i` and `b` at `j`. This reuses
+`Cslib.Bioinformatics.Phylogenetics.Splits.FourGametes` applied to the site columns
+`(M · i)` and `(M · j)`; it is not a second definition of the four-gamete predicate. -/
+abbrev FourGametes (i j : Fin s) : Prop :=
+  Cslib.Bioinformatics.Phylogenetics.Splits.FourGametes (M · i) (M · j)
 
 instance (i j : Fin s) : Decidable (FourGametes M i j) := by
-  unfold FourGametes; infer_instance
+  unfold FourGametes Cslib.Bioinformatics.Phylogenetics.Splits.FourGametes
+  infer_instance
 
 /-- The haplotypes carrying allele `a` at site `i`; when `a` is the derived allele this is the
 clade defined by the mutation at `i`. -/
@@ -302,7 +306,8 @@ theorem not_fourGametes_iff (i j : Fin s) :
       carriers M i a ⊆ carriers M j b ∨ Disjoint (carriers M i a) (carriers M j b) := by
   constructor
   · intro h
-    simp only [FourGametes, not_forall, not_exists] at h
+    simp only [FourGametes, Cslib.Bioinformatics.Phylogenetics.Splits.FourGametes,
+      not_forall, not_exists] at h
     obtain ⟨a, b, hab⟩ := h
     refine ⟨a, b, Or.inr (Finset.disjoint_left.2 fun r hri hrj => hab r ?_)⟩
     simp only [carriers, Finset.mem_filter, Finset.mem_univ, true_and] at hri hrj

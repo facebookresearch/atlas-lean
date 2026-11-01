@@ -22,7 +22,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
-# Fisher's fundamental theorem for diploid multi-allele viability selection
+# Diploid Baum–Eagon mean-fitness inequality for multi-allele viability selection
 
 One locus with a finite set `ι` of alleles, random mating (Hardy–Weinberg proportions at birth)
 and viability selection with genotype fitnesses `w i j ≥ 0`. One generation maps the allele
@@ -189,13 +189,16 @@ theorem diploidMeanFitness_diploidSelect_pos {p : ι → ℝ} {w : ι → ι →
     (f := fun k => diploidSelect p w k * marginalFitness (diploidSelect p w) w k)
     (fun k _ => mul_nonneg (hs0 k) (hm0 _ hs0 k)) (Finset.mem_univ i))
 
-/-- **Fisher's fundamental theorem for diploid viability selection, sharp form.** With
+/-- **Diploid Baum–Eagon mean-fitness inequality, sharp form.** With
 nonnegative allele frequencies and genotype fitnesses and positive mean fitness, one generation
 of selection raises the log mean fitness by at least twice the relative entropy
 `∑ i, p'_i log (p'_i / p_i)` of the new allele frequencies `p'` from the old ones `p`
 (Baum–Eagon's argument for the quadratic form `w̄`). Alleles absent before selection stay absent
 (`p_i = 0 → p'_i = 0`), so the summands with `p_i = 0` vanish. The inequality does not need
-`∑ p = 1`; on the simplex its right side is nonnegative (Gibbs' inequality). -/
+`∑ p = 1`; on the simplex its right side is nonnegative (Gibbs' inequality). This is a
+mean-fitness monotonicity inequality, not Fisher's fundamental theorem: Fisher's theorem
+concerns the change attributable to selection expressed through additive genetic variance,
+which is not proved here. -/
 theorem two_mul_relEntropy_le_log_diploidMeanFitness_diploidSelect {p : ι → ℝ}
     {w : ι → ι → ℝ} (hp0 : ∀ i, 0 ≤ p i) (hw0 : ∀ i j, 0 ≤ w i j)
     (hpos : 0 < diploidMeanFitness p w) :
