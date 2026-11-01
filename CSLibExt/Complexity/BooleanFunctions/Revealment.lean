@@ -16,7 +16,7 @@ public import CSLibExt.Complexity.BooleanFunctions.OSSS
 
 `revealment ν T e` is the probability that the decision tree `T` queries coordinate `e`
 under the product weight `ν`. Summing over coordinates gives the expected number of
-queries (`sum_revealment_eq_expect_card`); the sum is at most the depth
+distinct queried coordinates (`sum_revealment_eq_expect_card`); the sum is at most the depth
 (`sum_revealment_le_depth`); revealment is monotone under queried-implies hypotheses.
 
 ## Main definitions
@@ -26,7 +26,8 @@ queries (`sum_revealment_eq_expect_card`); the sum is at most the depth
 
 ## Main results
 
-* `sum_revealment_eq_expect_card`: summed revealment is the expected query count.
+* `sum_revealment_eq_expect_card`: summed revealment is the expected number of
+  distinct queried coordinates.
 * `sum_revealment_le_depth`: summed revealment is at most the depth.
 -/
 
@@ -73,7 +74,7 @@ private lemma sum_indicator_mem_card (S : Finset E) :
   congr 1
   rw [Finset.filter_mem_eq_inter, Finset.univ_inter]
 
-/-- Summed revealment equals the expected number of queries. -/
+/-- Summed revealment equals the expected number of distinct queried coordinates. -/
 theorem sum_revealment_eq_expect_card (ν : E → Bool → ℝ) (T : DecisionTree E) :
     ∑ e, revealment ν T e = expect ν (fun ω => ((T.queried ω).card : ℝ)) := by
   simp only [revealment_eq_prob_queried, expect]

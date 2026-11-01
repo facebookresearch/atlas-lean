@@ -182,8 +182,9 @@ def geomGuard (endU endV : E → V) (disc : Finset V) (e : E) : Bool :=
 def geomStep (endU endV : E → V) (disc : Finset V) (e : E) (b : Bool) : Finset V :=
   if b then insert (endU e) (insert (endV e) disc) else disc
 
-/-- The invariant of the geometric exploration tree: the discovered set is exactly
-the open component intersected with the queried edges. -/
+/-- The invariant of the geometric exploration tree: a one-way soundness property,
+every discovered vertex is connected to `B`. It does not claim completeness, nor that
+the discovered set equals the open component intersected with the queried edges. -/
 def geomInv (endU endV : E → V) (ω : ConfigSpace E) (B : Set V) (disc : Finset V) : Prop :=
   ∀ x ∈ disc, ConnOpenSet endU endV ω x B
 

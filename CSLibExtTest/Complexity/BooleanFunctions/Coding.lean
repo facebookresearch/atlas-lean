@@ -125,6 +125,16 @@ example : codeMap μUnif (σTwo : Fin 2 → Bool) ![1 / 4, 3 / 4] ≠ fun _ => t
 example : stoppingTime andTree (fun _ => true) = 2 := by decide
 example : stoppingTime andTree (fun x => !x) = 1 := by decide
 
+/-- A tree that queries `true` twice along its all-true path: it traverses two query
+nodes but queries only one distinct coordinate. -/
+def repeatTree : DecisionTree Bool :=
+  .node true (.node true (.leaf true) (.leaf false)) (.leaf false)
+
+/-- `stoppingTime` counts distinct queried coordinates, not query nodes: the
+all-true path of `repeatTree` traverses two nodes yet `stoppingTime` is `1`. -/
+example : stoppingTime repeatTree (fun _ => true) = 1 := by decide
+example : repeatTree.queried (fun _ => true) = {true} := by decide
+
 /-- On a configuration with `ω true = false`, `andTree` reads only `true`, so changing the value
 at `false` does not change its output. -/
 example : andTree.eval (fun _ => false) = andTree.eval (fun x => !x) :=
