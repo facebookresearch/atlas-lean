@@ -52,6 +52,7 @@ from __future__ import annotations
 import argparse
 import base64
 import copy
+import hashlib
 import json
 import os
 import re
@@ -111,7 +112,309 @@ def prepared_files(config: dict) -> list[str]:
     files += [entry["path"] for entry in config.get("doc_replacements", [])]
     if config.get("pin_policy"):
         files.append(config["pin_policy"]["path"])
+    files += list(config.get("migration_ledgers") or [])
     return sorted(set(files))
+
+
+# Pin-coupled migration ledgers (AlgebraNotes). Their Mathlib API
+# revisions and `pins` must track the pinned Mathlib/Lean release, or
+# `scripts/check_algebra_notes_migration.py --source-revision HEAD` fails
+# on the bump PR with stale pins. They are part of the prepared tree, so
+# `prepared_files` includes them; the guard validates them on pin-change
+# PRs. These paths are fixed repo paths, like lean-toolchain.
+MIGRATION_LEDGER = "blueprint/migrations/AlgebraNotes.json"
+MIGRATION_CHECKS = "blueprint/migrations/AlgebraNotesChecks.json"
+
+
+def _migration_ledger_paths(config: dict) -> tuple[str, str]:
+    ledgers = config.get("migration_ledgers") or []
+    if len(ledgers) == 2:
+        return str(ledgers[0]), str(ledgers[1])
+    return MIGRATION_LEDGER, MIGRATION_CHECKS
+
+
+def _canonical_json(value) -> bytes:
+    """Canonical JSON bytes, matching inventory_v1.canonical: sorted keys,
+    compact separators, no ASCII escaping, no NaN."""
+    return json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+
+
+def _content_sha256(value) -> str:
+    return hashlib.sha256(_canonical_json(value)).hexdigest()
+
+
+def _row_content_sha256(row: dict) -> str:
+    return _content_sha256(
+        {key: value for key, value in row.items() if key != "row_content_sha256"}
+    )
+
+
+def _ledger_identity_sha256(ledger: dict) -> str:
+    return _content_sha256(
+        {key: ledger[key] for key in ("book", "base", "sources", "pins")}
+    )
+
+
+def _lane_content_fingerprints(lane: str, triage_rows: list, api_rows: list) -> dict:
+    """Mirror check_algebra_notes_migration.lane_content_fingerprints."""
+    lane_triage = sorted(
+        (
+            {key: value for key, value in row.items() if key != "row_content_sha256"}
+            for row in triage_rows
+            if row["lane"] == lane
+        ),
+        key=lambda row: row["ordinal"],
+    )
+    declarations = [
+        {"ordinal": row["ordinal"], "legacy_declarations": row["legacy_declarations"]}
+        for row in lane_triage
+    ]
+    lane_apis = sorted(
+        (
+            {key: value for key, value in row.items() if key != "row_content_sha256"}
+            for row in api_rows
+            if row["lane"] == lane
+        ),
+        key=lambda row: row["id"],
+    )
+    return {
+        "targets_content_sha256": _content_sha256(lane_triage),
+        "declarations_content_sha256": _content_sha256(declarations),
+        "api_rows_content_sha256": _content_sha256(lane_apis),
+    }
+
+
+def _expected_api_revision(module: str, *, mathlib_sha: str, base: str) -> str | None:
+    if module.startswith("Mathlib."):
+        return mathlib_sha
+    if module.startswith("MathlibExt."):
+        return base
+    return None
+
+
+def check_migration_ledger_pins(
+    ledger: dict, checks: dict, *, mathlib_sha: str, lean_tag: str
+) -> list[str]:
+    """Pin-consistency problems for a (ledger, checks) pair at the given
+    expected pins, mirroring the pin checks in
+    check_algebra_notes_migration.py. Returns [] when the pair is
+    consistent. This checks pins and content hashes, not whether the
+    named Mathlib APIs still exist at the new pin; that is covered by
+    the bump PR's Lean build."""
+    problems: list[str] = []
+    try:
+        pins = ledger["pins"]
+        base = ledger["base"]
+    except (KeyError, TypeError):
+        return ["migration ledger is missing pins/base"]
+    if pins.get("mathlib") != mathlib_sha:
+        problems.append(
+            f"migration ledger pins.mathlib {pins.get('mathlib')!r} != {mathlib_sha!r}"
+        )
+    if pins.get("lean") != lean_tag:
+        problems.append(
+            f"migration ledger pins.lean {pins.get('lean')!r} != {lean_tag!r}"
+        )
+    for api in ledger.get("destination_apis", []):
+        expected = _expected_api_revision(
+            api.get("module", ""), mathlib_sha=mathlib_sha, base=base
+        )
+        if expected is None:
+            problems.append(
+                f"migration API {api.get('id')} has unexpected module "
+                f"{api.get('module')!r}"
+            )
+        elif api.get("revision") != expected:
+            problems.append(
+                f"migration API {api.get('id')} revision is stale: "
+                f"{api.get('revision')!r} != {expected!r}"
+            )
+    if checks.get("identity_sha256") != _ledger_identity_sha256(ledger):
+        problems.append("migration checks identity_sha256 is stale")
+    for api in checks.get("triage_apis", []):
+        expected = _expected_api_revision(
+            api.get("module", ""), mathlib_sha=mathlib_sha, base=base
+        )
+        if expected is None:
+            problems.append(
+                f"triage API {api.get('id')} has unexpected module "
+                f"{api.get('module')!r}"
+            )
+        elif api.get("revision") != expected:
+            problems.append(
+                f"triage API {api.get('id')} revision is stale: "
+                f"{api.get('revision')!r} != {expected!r}"
+            )
+        if api.get("row_content_sha256") != _row_content_sha256(api):
+            problems.append(
+                f"triage API {api.get('id')} has a stale row_content_sha256"
+            )
+    for source in checks.get("triage_sources", []):
+        lane = source.get("lane")
+        expected_fp = _lane_content_fingerprints(
+            lane, checks.get("triage", []), checks.get("triage_apis", [])
+        )
+        for key, value in expected_fp.items():
+            if source.get(key) != value:
+                problems.append(f"triage source {lane} has a stale {key}")
+    return problems
+
+
+def _swap_once(text: str, needle: str, replacement: str, *, expected: int, label: str) -> str:
+    count = text.count(needle)
+    if count != expected:
+        raise ValueError(
+            f"cannot re-pin migration ledgers: expected {expected} {label}, "
+            f"found {count}"
+        )
+    return text.replace(needle, replacement)
+
+
+def repin_migration_ledgers(
+    root: Path, target: str, shas: dict[str, str],
+    *, ledger_rel: str = MIGRATION_LEDGER, checks_rel: str = MIGRATION_CHECKS,
+) -> list[str]:
+    """Re-pin the AlgebraNotes migration ledgers to a new release.
+
+    The ledger's `pins` and every Mathlib.* API revision move to the new
+    Mathlib SHA / Lean tag; MathlibExt.* revisions stay at the ledger
+    `base` (the frozen audit base, not the bump). Content hashes that
+    bind the changed rows (triage API `row_content_sha256`, lane
+    `api_rows_content_sha256`, checks `identity_sha256`) are recomputed,
+    so the pair still satisfies check_algebra_notes_migration.py.
+
+    Fail-closed: the pre-bump pair must already be consistent with the
+    tree being prepared from (its manifest Mathlib rev + toolchain), and
+    every Mathlib API revision must be exactly the old pin. Anything else
+    (a stale ledger, an unexpected revision, a mismatched hash) raises
+    ValueError instead of rewriting audit pointers. The writes are
+    textual (same-length SHA/tag swaps plus hash swaps), so the ledgers'
+    committed formatting is unchanged; the result is re-parsed and
+    re-checked against the new pins before returning.
+    """
+    ledger_path = root / ledger_rel
+    checks_path = root / checks_rel
+    try:
+        ledger_text = ledger_path.read_text(encoding="utf-8")
+        checks_text = checks_path.read_text(encoding="utf-8")
+        ledger = json.loads(ledger_text)
+        checks = json.loads(checks_text)
+        manifest = load_manifest(root)
+        old_mathlib = next(
+            p["rev"] for p in manifest["packages"] if p["name"] == "mathlib"
+        )
+        old_lean = f"leanprover/lean4:{toolchain_tag(root)}"
+    except (OSError, json.JSONDecodeError, KeyError, StopIteration, ValueError) as exc:
+        raise ValueError(f"cannot re-pin migration ledgers: {exc}") from exc
+    new_mathlib = shas.get("mathlib")
+    if not new_mathlib or not SHA_RE.fullmatch(new_mathlib):
+        raise ValueError("cannot re-pin migration ledgers: missing/invalid mathlib SHA")
+    new_lean = f"leanprover/lean4:{target}"
+    pre = check_migration_ledger_pins(
+        ledger, checks, mathlib_sha=old_mathlib, lean_tag=old_lean
+    )
+    if pre:
+        raise ValueError(
+            "cannot re-pin migration ledgers: pre-bump pair is inconsistent: "
+            + "; ".join(pre)
+        )
+    if old_mathlib == new_mathlib and old_lean == new_lean:
+        return []
+    new_ledger = copy.deepcopy(ledger)
+    new_ledger["pins"] = {"mathlib": new_mathlib, "lean": new_lean}
+    mathlib_apis = [
+        api for api in new_ledger.get("destination_apis", [])
+        if api.get("module", "").startswith("Mathlib.")
+    ]
+    for api in mathlib_apis:
+        api["revision"] = new_mathlib
+    new_checks = copy.deepcopy(checks)
+    mathlib_triage = [
+        api for api in new_checks.get("triage_apis", [])
+        if api.get("module", "").startswith("Mathlib.")
+    ]
+    for api in mathlib_triage:
+        api["revision"] = new_mathlib
+        api["row_content_sha256"] = _row_content_sha256(api)
+    for source in new_checks.get("triage_sources", []):
+        source.update(_lane_content_fingerprints(
+            source["lane"], new_checks.get("triage", []),
+            new_checks.get("triage_apis", []),
+        ))
+    new_checks["identity_sha256"] = _ledger_identity_sha256(new_ledger)
+    new_ledger_text = _swap_once(
+        ledger_text, f'"mathlib":"{old_mathlib}"', f'"mathlib":"{new_mathlib}"',
+        expected=1, label="pins.mathlib occurrences",
+    )
+    new_ledger_text = _swap_once(
+        new_ledger_text, f'"lean":"{old_lean}"', f'"lean":"{new_lean}"',
+        expected=1, label="pins.lean occurrences",
+    )
+    new_ledger_text = _swap_once(
+        new_ledger_text, f'"revision":"{old_mathlib}"',
+        f'"revision":"{new_mathlib}"',
+        expected=len(mathlib_apis), label="Mathlib destination_apis revisions",
+    )
+    new_checks_text = _swap_once(
+        checks_text, f'"revision":"{old_mathlib}"',
+        f'"revision":"{new_mathlib}"',
+        expected=len(mathlib_triage), label="Mathlib triage_apis revisions",
+    )
+    for api in mathlib_triage:
+        old_hash = next(
+            a["row_content_sha256"] for a in checks["triage_apis"]
+            if a["id"] == api["id"]
+        )
+        new_checks_text = _swap_once(
+            new_checks_text,
+            f'"row_content_sha256":"{old_hash}"',
+            f'"row_content_sha256":"{api["row_content_sha256"]}"',
+            expected=1, label=f"row_content_sha256 for {api['id']}",
+        )
+    old_identity = checks["identity_sha256"]
+    new_checks_text, identity_count = re.subn(
+        r'"identity_sha256"(\s*:\s*)"' + re.escape(old_identity) + r'"',
+        lambda m: f'"identity_sha256"{m.group(1)}"{new_checks["identity_sha256"]}"',
+        new_checks_text,
+    )
+    if identity_count != 1:
+        raise ValueError(
+            "cannot re-pin migration ledgers: expected 1 identity_sha256 "
+            f"occurrences, found {identity_count}"
+        )
+    old_sources = {s["lane"]: s for s in checks.get("triage_sources", [])}
+    for source in new_checks.get("triage_sources", []):
+        old_fp = old_sources[source["lane"]]["api_rows_content_sha256"]
+        new_fp = source["api_rows_content_sha256"]
+        if old_fp != new_fp:
+            new_checks_text = _swap_once(
+                new_checks_text,
+                f'"api_rows_content_sha256":"{old_fp}"',
+                f'"api_rows_content_sha256":"{new_fp}"',
+                expected=1,
+                label=f"api_rows_content_sha256 for {source['lane']}",
+            )
+    ledger_path.write_text(new_ledger_text, encoding="utf-8")
+    checks_path.write_text(new_checks_text, encoding="utf-8")
+    re_ledger = json.loads(new_ledger_text)
+    re_checks = json.loads(new_checks_text)
+    post = check_migration_ledger_pins(
+        re_ledger, re_checks, mathlib_sha=new_mathlib, lean_tag=new_lean
+    )
+    if post:
+        raise ValueError(
+            "cannot re-pin migration ledgers: re-pinned pair is inconsistent: "
+            + "; ".join(post)
+        )
+    if re_ledger != new_ledger or re_checks != new_checks:
+        raise ValueError(
+            "cannot re-pin migration ledgers: re-parsed pair differs from "
+            "the intended re-pinned pair"
+        )
+    return [ledger_rel, checks_rel]
 
 
 def _is_existing_bump_pr(pr: dict, repo: str, branch: str) -> bool:
@@ -129,8 +432,10 @@ def _is_existing_bump_pr(pr: dict, repo: str, branch: str) -> bool:
 
 def _is_superseded_candidate(pr: dict, repo: str, branch: str, target: str) -> bool:
     """True if `pr` is a same-repo bump PR on a strictly older target branch
-    than `target`: the head repository must match, so a fork PR reusing a
-    `bump-pinned/` branch name is never closed as superseded, and a PR for a
+    than `target` targeting main: the head repository must match, so a fork
+    PR reusing a `bump-pinned/` branch name is never closed as superseded;
+    the base must be main, so a bump PR intentionally targeting a
+    maintenance or release branch is never closed; and a PR for a
     newer (or unparseable) target is never closed when this run publishes an
     older manual target."""
     head = pr.get("head") or {}
@@ -139,6 +444,7 @@ def _is_superseded_candidate(pr: dict, repo: str, branch: str, target: str) -> b
         ref.startswith("bump-pinned/")
         and ref != branch
         and (head.get("repo") or {}).get("full_name") == repo
+        and (pr.get("base") or {}).get("ref") == "main"
     ):
         return False
     try:
@@ -358,9 +664,21 @@ def apply_pin_edits(
     root: Path, config: dict, current: str, target: str,
     shas: dict[str, str] | None = None,
 ) -> list[str]:
-    """Edit toolchain, lakefile revs, doc + pin-policy version lines."""
+    """Edit toolchain, lakefile revs, doc + pin-policy version lines, and
+    the pin-coupled migration ledgers. The ledgers move first, while the
+    tree still carries the old pins, so the re-pin can validate the
+    pre-bump pair against the tree being prepared from."""
     shas = shas or {}
     changed: list[str] = []
+    ledgers = config.get("migration_ledgers") or []
+    if ledgers:
+        if len(ledgers) != 2:
+            raise ValueError(
+                f"migration_ledgers must list the ledger and checks files: {ledgers!r}"
+            )
+        changed += repin_migration_ledgers(
+            root, target, shas, ledger_rel=ledgers[0], checks_rel=ledgers[1]
+        )
     toolchain_path = root / "lean-toolchain"
     toolchain_path.write_text(f"leanprover/lean4:{target}\n", encoding="utf-8")
     changed.append("lean-toolchain")
@@ -888,6 +1206,27 @@ def cmd_guard(args: argparse.Namespace) -> int:
                 )
         except (ValueError, OSError) as exc:
             problems.append(f"pin-policy check failed: {exc}")
+    # Migration ledgers: if either tree carries them, the PR tree's pair
+    # must be consistent with the PR's own manifest/toolchain pins, or
+    # the bump PR leaves the migration validator failing on stale pins.
+    ledger_rel, checks_rel = _migration_ledger_paths(config)
+    if (
+        (base / ledger_rel).is_file() or (pr / ledger_rel).is_file()
+        or (base / checks_rel).is_file() or (pr / checks_rel).is_file()
+    ):
+        try:
+            pr_manifest = load_manifest(pr)
+            pr_mathlib = next(
+                p["rev"] for p in pr_manifest["packages"] if p["name"] == "mathlib"
+            )
+            pr_ledger = json.loads((pr / ledger_rel).read_text(encoding="utf-8"))
+            pr_checks = json.loads((pr / checks_rel).read_text(encoding="utf-8"))
+            problems.extend(check_migration_ledger_pins(
+                pr_ledger, pr_checks,
+                mathlib_sha=pr_mathlib, lean_tag=f"leanprover/lean4:{pr_tag}",
+            ))
+        except (OSError, json.JSONDecodeError, KeyError, StopIteration, ValueError) as exc:
+            problems.append(f"migration ledgers are unreadable or inconsistent: {exc}")
     _ = merge_base
     try:
         base_manifest = load_manifest(base)

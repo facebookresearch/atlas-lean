@@ -10,6 +10,10 @@
       "repo": "leanprover/cslib"
     }
   ],
+  "migration_ledgers": [
+    "blueprint/migrations/AlgebraNotes.json",
+    "blueprint/migrations/AlgebraNotesChecks.json"
+  ],
   "doc_replacements": [
     {
       "path": "README.md",

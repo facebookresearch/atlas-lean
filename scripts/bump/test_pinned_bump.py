@@ -3,6 +3,7 @@
 python3 scripts/bump/test_pinned_bump.py
 """
 
+import hashlib
 import json
 import sys
 import tempfile
@@ -118,6 +119,122 @@ def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitiv
         json.dumps({"version": "1.3.0", "packages": direct + transitive}, indent=1))
 
 
+# --- Migration-ledger fixtures (independent of pinned_bump) ---
+# Canonical hashes recomputed here from scratch, so the tests check
+# pinned_bump's re-pinning rather than re-stating it.
+
+def _canonical(value):
+    return json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+
+
+def _test_sha(value):
+    return hashlib.sha256(_canonical(value)).hexdigest()
+
+
+def _test_row_sha(row):
+    return _test_sha(
+        {key: value for key, value in row.items() if key != "row_content_sha256"}
+    )
+
+
+def _test_lane_fp(lane, triage, apis):
+    lane_triage = sorted(
+        ({k: v for k, v in r.items() if k != "row_content_sha256"}
+         for r in triage if r["lane"] == lane),
+        key=lambda r: r["ordinal"],
+    )
+    declarations = [
+        {"ordinal": r["ordinal"], "legacy_declarations": r["legacy_declarations"]}
+        for r in lane_triage
+    ]
+    lane_apis = sorted(
+        ({k: v for k, v in r.items() if k != "row_content_sha256"}
+         for r in apis if r["lane"] == lane),
+        key=lambda r: r["id"],
+    )
+    return {
+        "targets_content_sha256": _test_sha(lane_triage),
+        "declarations_content_sha256": _test_sha(declarations),
+        "api_rows_content_sha256": _test_sha(lane_apis),
+    }
+
+
+MIGRATION_BASE = "b" * 40
+
+
+def migration_fixture(*, mathlib_sha, lean_tag, base=MIGRATION_BASE):
+    """A minimal but hash-consistent (ledger, checks) pair at the given pins."""
+    ledger = {
+        "book": "AlgebraNotes",
+        "base": base,
+        "sources": [{"path": "v1/x", "git_blob": "0" * 40,
+                     "sha256": "1" * 64, "bytes": 1}],
+        "pins": {"mathlib": mathlib_sha, "lean": lean_tag},
+        "destination_apis": [
+            {"id": "api-1", "module": "Mathlib.Foo", "name": "N1",
+             "relation": "replacement_candidate", "scope": "unverified",
+             "reason": "static_shape_only", "revision": mathlib_sha},
+            {"id": "api-2", "module": "MathlibExt.Foo", "name": "N2",
+             "relation": "replacement_candidate", "scope": "unverified",
+             "reason": "static_shape_only", "revision": base},
+        ],
+    }
+    triage_apis = [
+        {"id": "lane:api-1", "lane": "lane", "name": "N1", "kind": "named",
+         "module": "Mathlib.Foo", "revision": mathlib_sha,
+         "row_content_sha256": ""},
+        {"id": "lane:api-2", "lane": "lane", "name": "N2", "kind": "named",
+         "module": "MathlibExt.Foo", "revision": base,
+         "row_content_sha256": ""},
+    ]
+    for api in triage_apis:
+        api["row_content_sha256"] = _test_row_sha(api)
+    triage = [{
+        "lane": "lane", "ordinal": 0, "sourceHash": "2" * 64,
+        "row_content_sha256": "",
+        "legacy_declarations": [], "api_refs": ["lane:api-1", "lane:api-2"],
+        "disposition": "unresolved", "scope": "unverified", "issues": [],
+    }]
+    triage[0]["row_content_sha256"] = _test_row_sha(triage[0])
+    sources = [{"lane": "lane", "target_count": 1,
+                **_test_lane_fp("lane", triage, triage_apis)}]
+    checks = {
+        "schema": "algebra-notes-checks/2",
+        "identity_sha256": _test_sha(
+            {k: ledger[k] for k in ("book", "base", "sources", "pins")}),
+        "source_fidelity": "unverified",
+        "migration_gate": "parent_owned_pending",
+        "v1_compiler_gate": "parent_owned_pending",
+        "compiler_environments": [],
+        "triage_sources": sources,
+        "triage_apis": triage_apis,
+        "triage": triage,
+        "canonical_use_tests": [],
+        "pending_targets": [],
+    }
+    return ledger, checks
+
+
+def write_migration_ledgers(root: Path, *, mathlib_sha, lean_tag):
+    ledger, checks = migration_fixture(mathlib_sha=mathlib_sha, lean_tag=lean_tag)
+    dest = root / "blueprint" / "migrations"
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / "AlgebraNotes.json").write_text(
+        json.dumps(ledger, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+    checks_text = json.dumps(checks, sort_keys=True, separators=(",", ":"))
+    # The real checks file writes its top-level identity with a space after
+    # the colon (pretty top level, compact array rows); keep that shape so
+    # the re-pin is exercised against the real formatting.
+    checks_text = checks_text.replace(
+        f'"identity_sha256":"{checks["identity_sha256"]}"',
+        f'"identity_sha256": "{checks["identity_sha256"]}"', 1)
+    (dest / "AlgebraNotesChecks.json").write_text(checks_text, encoding="utf-8")
+    return ledger, checks
+
+
 class SelectTests(unittest.TestCase):
     def test_noop_when_a_dep_has_no_new_tag(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -183,6 +300,10 @@ class EditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             write_tree(root, "v4.35.0")
+            write_migration_ledgers(
+                root,
+                mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
+                lean_tag="leanprover/lean4:v4.35.0")
             with open(root / "README.md", "a", encoding="utf-8") as f:
                 f.write("https://github.com/leanprover/lean4/releases/tag/v4.35.0\n")
             (root / "scripts").mkdir()
@@ -191,6 +312,10 @@ class EditTests(unittest.TestCase):
                 policy_src.read_text())
             changed = apply_pin_edits(root, real_config, "v4.35.0", "v4.36.0", shas)
             self.assertIn("scripts/check_lake_surface.py", changed)
+            self.assertIn("blueprint/migrations/AlgebraNotes.json", changed)
+            ledger = json.loads(
+                (root / "blueprint/migrations/AlgebraNotes.json").read_text())
+            self.assertEqual(ledger["pins"]["mathlib"], shas["mathlib"])
             readme = (root / "README.md").read_text()
             self.assertIn('alt="Lean v4.36.0"', readme)
             self.assertNotIn('alt="Lean v4.35.0"', readme)
@@ -206,7 +331,7 @@ class GuardTests(unittest.TestCase):
                    tamper_lakefile_name=False, duplicate_require=False,
                    tamper_direct=False, conflict=False, duplicate_package=False,
                    missing_toolchain_tag=False, tamper_pin_policy=False,
-                   stale_pin_policy=False):
+                   stale_pin_policy=False, migration="absent"):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -229,6 +354,19 @@ class GuardTests(unittest.TestCase):
             write_tree(base, "v4.35.0")
             write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive)
+            if migration != "absent":
+                write_migration_ledgers(
+                    base, mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
+                    lean_tag="leanprover/lean4:v4.35.0")
+                pr_sha = (
+                    SHAS[("leanprover-community/mathlib4", "v4.35.0")]
+                    if migration == "stale"
+                    else SHAS[("leanprover-community/mathlib4", "v4.36.0")]
+                )
+                pr_tag = "v4.35.0" if migration == "stale" else "v4.36.0"
+                write_migration_ledgers(
+                    pr, mathlib_sha=pr_sha,
+                    lean_tag=f"leanprover/lean4:{pr_tag}")
             # The guard loads the checked-in config, which carries a
             # pin_policy for check_lake_surface.py: give base/pr the real
             # file at the old pins, and the PR the file with the new
@@ -314,6 +452,12 @@ class GuardTests(unittest.TestCase):
     def test_guard_fails_stale_pin_policy(self):
         self.assertEqual(self._run_guard(stale_pin_policy=True), 1)
 
+    def test_guard_fails_stale_migration_ledgers(self):
+        self.assertEqual(self._run_guard(migration="stale"), 1)
+
+    def test_guard_passes_repinned_migration_ledgers(self):
+        self.assertEqual(self._run_guard(migration="repinned"), 0)
+
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(
             'rev "' + "a" * 40 + '"',
@@ -331,6 +475,16 @@ class PreparedFilesTests(unittest.TestCase):
         )
         config = dict(CONFIG, pin_policy={"path": "scripts/check_lake_surface.py"})
         self.assertIn("scripts/check_lake_surface.py", pinned_bump.prepared_files(config))
+        config = dict(CONFIG, migration_ledgers=[
+            "blueprint/migrations/AlgebraNotes.json",
+            "blueprint/migrations/AlgebraNotesChecks.json",
+        ])
+        self.assertIn(
+            "blueprint/migrations/AlgebraNotes.json",
+            pinned_bump.prepared_files(config))
+        self.assertIn(
+            "blueprint/migrations/AlgebraNotesChecks.json",
+            pinned_bump.prepared_files(config))
 
     def test_stage_and_verify_prepared(self):
         import os
@@ -343,6 +497,10 @@ class PreparedFilesTests(unittest.TestCase):
                 (root / rel).write_text("placeholder\n")
             (root / "scripts").mkdir()
             (root / "scripts/check_lake_surface.py").write_text("placeholder\n")
+            migrations = root / "blueprint" / "migrations"
+            migrations.mkdir(parents=True)
+            (migrations / "AlgebraNotes.json").write_text("placeholder\n")
+            (migrations / "AlgebraNotesChecks.json").write_text("placeholder\n")
             old_cwd = os.getcwd()
             os.chdir(root)
             try:
@@ -357,6 +515,107 @@ class PreparedFilesTests(unittest.TestCase):
                 self.assertEqual(pinned_bump.cmd_verify_staged(vargs), 1)
             finally:
                 os.chdir(old_cwd)
+
+
+class MigrationLedgerTests(unittest.TestCase):
+    OLD = SHAS[("leanprover-community/mathlib4", "v4.35.0")]
+    NEW = SHAS[("leanprover-community/mathlib4", "v4.36.0")]
+
+    def _tree(self, tmp):
+        root = Path(tmp)
+        write_tree(root, "v4.35.0")
+        write_migration_ledgers(
+            root, mathlib_sha=self.OLD, lean_tag="leanprover/lean4:v4.35.0")
+        return root
+
+    def test_repin_moves_mathlib_pins_and_recomputes_hashes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._tree(tmp)
+            ledger_path = root / "blueprint/migrations/AlgebraNotes.json"
+            checks_path = root / "blueprint/migrations/AlgebraNotesChecks.json"
+            old_ledger_text = ledger_path.read_text()
+            old_checks_text = checks_path.read_text()
+            changed = pinned_bump.repin_migration_ledgers(
+                root, "v4.36.0", {"mathlib": self.NEW})
+            self.assertEqual(changed, [
+                "blueprint/migrations/AlgebraNotes.json",
+                "blueprint/migrations/AlgebraNotesChecks.json",
+            ])
+            ledger = json.loads(ledger_path.read_text())
+            checks = json.loads(checks_path.read_text())
+            self.assertEqual(ledger["pins"],
+                             {"mathlib": self.NEW, "lean": "leanprover/lean4:v4.36.0"})
+            self.assertEqual(
+                [a["revision"] for a in ledger["destination_apis"]],
+                [self.NEW, MIGRATION_BASE])
+            self.assertEqual(
+                [a["revision"] for a in checks["triage_apis"]],
+                [self.NEW, MIGRATION_BASE])
+            # Hashes recomputed independently in this test, not by pinned_bump.
+            expected_ledger, expected_checks = migration_fixture(
+                mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+            self.assertEqual(ledger, expected_ledger)
+            self.assertEqual(checks, expected_checks)
+            self.assertEqual(
+                pinned_bump.check_migration_ledger_pins(
+                    ledger, checks, mathlib_sha=self.NEW,
+                    lean_tag="leanprover/lean4:v4.36.0"), [])
+            # Formatting preserved: the new texts are the old texts with
+            # exactly the intended token swaps applied.
+            expected_ledger_text = old_ledger_text.replace(
+                f'"mathlib":"{self.OLD}"', f'"mathlib":"{self.NEW}"').replace(
+                '"lean":"leanprover/lean4:v4.35.0"',
+                '"lean":"leanprover/lean4:v4.36.0"').replace(
+                f'"revision":"{self.OLD}"', f'"revision":"{self.NEW}"')
+            self.assertEqual(ledger_path.read_text(), expected_ledger_text)
+
+    def test_repin_refuses_stale_pre_bump_pair(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._tree(tmp)
+            path = root / "blueprint/migrations/AlgebraNotes.json"
+            ledger = json.loads(path.read_text())
+            ledger["pins"]["mathlib"] = "0" * 40
+            path.write_text(json.dumps(
+                ledger, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                pinned_bump.repin_migration_ledgers(
+                    root, "v4.36.0", {"mathlib": self.NEW})
+
+    def test_repin_refuses_unexpected_api_revision(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._tree(tmp)
+            path = root / "blueprint/migrations/AlgebraNotes.json"
+            ledger = json.loads(path.read_text())
+            ledger["destination_apis"][0]["revision"] = "0" * 40
+            path.write_text(json.dumps(
+                ledger, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                pinned_bump.repin_migration_ledgers(
+                    root, "v4.36.0", {"mathlib": self.NEW})
+
+    def test_repin_is_noop_when_already_at_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._tree(tmp)
+            ledger_path = root / "blueprint/migrations/AlgebraNotes.json"
+            before = ledger_path.read_text()
+            self.assertEqual(pinned_bump.repin_migration_ledgers(
+                root, "v4.35.0", {"mathlib": self.OLD}), [])
+            self.assertEqual(ledger_path.read_text(), before)
+
+    def test_apply_pin_edits_repins_ledgers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._tree(tmp)
+            config = dict(CONFIG, migration_ledgers=[
+                "blueprint/migrations/AlgebraNotes.json",
+                "blueprint/migrations/AlgebraNotesChecks.json",
+            ])
+            changed = pinned_bump.apply_pin_edits(
+                root, config, "v4.35.0", "v4.36.0", {"mathlib": self.NEW})
+            self.assertIn("blueprint/migrations/AlgebraNotes.json", changed)
+            ledger = json.loads(
+                (root / "blueprint/migrations/AlgebraNotes.json").read_text())
+            self.assertEqual(ledger["pins"]["mathlib"], self.NEW)
+            self.assertEqual(pinned_bump.current_tag(root, config), "v4.36.0")
 
 
 class ForkPrTests(unittest.TestCase):
@@ -394,6 +653,19 @@ class ForkPrTests(unittest.TestCase):
             "example/repo", branch, "v4.36.0"))
         self.assertFalse(pinned_bump._is_superseded_candidate(
             self._pr(head_repo="example/repo", head_ref="some-feature"),
+            "example/repo", branch, "v4.36.0"))
+
+    def test_superseded_candidate_ignores_non_main_base(self):
+        branch = "bump-pinned/v4.36.0"
+        # An older bump PR intentionally targeting a release branch must
+        # never be closed when this run publishes to main.
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.35.0",
+                     base_ref="release"),
+            "example/repo", branch, "v4.36.0"))
+        self.assertTrue(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.35.0",
+                     base_ref="main"),
             "example/repo", branch, "v4.36.0"))
 
     def test_superseded_candidate_requires_strictly_older_target(self):
@@ -494,6 +766,11 @@ class ConfigTests(unittest.TestCase):
         # The pinned set is stable; the tag itself moves with each bump,
         # so only assert it is a final release tag the repo agrees on.
         self.assertTrue(pinned_bump.is_final(current_tag(repo_root, config)))
+        self.assertEqual(
+            config.get("migration_ledgers"),
+            ["blueprint/migrations/AlgebraNotes.json",
+             "blueprint/migrations/AlgebraNotesChecks.json"],
+        )
 
 
 class VersionTests(unittest.TestCase):
