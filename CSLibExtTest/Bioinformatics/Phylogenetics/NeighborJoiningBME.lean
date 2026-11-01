@@ -13,12 +13,13 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Neighbor joining as greedy balanced minimum evolution: tests
+# Neighbor joining: Q-criterion vs local star BME length: tests
 
 * The coefficients of `T_ab` on four clusters: `1/2`, `1/4` and `1/2`.
 * Non-vacuity of the run-level theorem: the start of every run on a symmetric dissimilarity
   with zero diagonal on four taxa satisfies its hypotheses (four singleton clusters), so the
-  pairs neighbor joining may join first are exactly the pairs of least BME length.
+  pairs neighbor joining may join first are exactly the pairs of least `cherryLength`, which
+  at this first step is the BME length of the join tree on the taxa.
 * Non-vacuity of `cherryLength_eq_length`: its realization hypothesis is satisfied by the
   dissimilarity it describes.
 * Boundary: with two clusters, `|S| - 2 = 0` and Lean's `1 / 0 = 0` makes the coefficients
@@ -51,13 +52,14 @@ theorem d₄_symm (x y : Fin 4) : d₄ x y = d₄ y x := by
 
 theorem d₄_diag (x : Fin 4) : d₄ x x = 0 := by simp [d₄]
 
--- At the start of a run, a pair of taxa minimizes `Q` iff joining it gives the least BME length.
+-- At the start of a run, a pair of taxa minimizes `Q` iff joining it gives the least
+-- `cherryLength` (the BME length of the join tree on the taxa at this first step).
 example (a b : Finset (Fin 4)) (ha : a ∈ four) (hb : b ∈ four) (hab : a ≠ b) :
     (∀ a' ∈ four, ∀ b' ∈ four, a' ≠ b' →
         qCriterion four (initialDist d₄) a b ≤ qCriterion four (initialDist d₄) a' b') ↔
       ∀ a' ∈ four, ∀ b' ∈ four, a' ≠ b' →
         cherryLength four (initialDist d₄) a b ≤ cherryLength four (initialDist d₄) a' b' :=
-  NJRun.isMin_qCriterion_iff d₄_symm d₄_diag NJRun.init (by decide) ha hb hab
+  NJRun.isMin_qCriterion_iff_cherryLength d₄_symm d₄_diag NJRun.init (by decide) ha hb hab
 
 -- The dissimilarity stays symmetric with zero diagonal along the run.
 example : (∀ u v, initialDist d₄ u v = initialDist d₄ v u) ∧

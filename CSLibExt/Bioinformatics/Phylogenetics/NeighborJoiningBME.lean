@@ -13,17 +13,18 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Neighbor joining selects pairs greedily for balanced minimum evolution
+# Neighbor joining: Q-criterion and the local star BME length
 
 Neighbor joining (NJ, `NeighborJoining.NJRun`) keeps a set `S` of clusters with a dissimilarity
 `D` between them, and joins a pair of distinct clusters minimizing the Q-criterion
 `Q(a, b) = (|S| - 2) D a b - ∑_{c ∈ S} D a c - ∑_{c ∈ S} D b c`.
 
 Gascuel and Steel (2006) showed that the selection step is greedy for the balanced
-minimum-evolution (BME) length, extended to trees with vertices of any degree. Here the
-extension uses the coefficients of Semple and Steel (2004), Theorem 4.2: a pair of leaves
-`i, j` gets coefficient `∏_v (deg v - 1)⁻¹` over the interior vertices `v` of the path from `i`
-to `j`, and the length of the tree for a dissimilarity `D` is `∑_{i<j} coeff(i, j) D(i, j)`.
+minimum-evolution (BME) length, extended to trees with vertices of any degree. This file
+proves only the *local* form of that statement. The extension uses the coefficients of
+Semple and Steel (2004), Theorem 4.2: a pair of leaves `i, j` gets coefficient
+`∏_v (deg v - 1)⁻¹` over the interior vertices `v` of the path from `i` to `j`, and the
+length of the tree for a dissimilarity `D` is `∑_{i<j} coeff(i, j) D(i, j)`.
 View the current clusters as the `m = |S|` leaves of a star (one interior vertex of degree `m`).
 Joining `a` and `b` gives the tree `T_ab` in which `a` and `b` hang from a new vertex `u` of
 degree three, joined to the center, which keeps degree `m - 1`. Its coefficients are `1/2` for
@@ -32,19 +33,23 @@ other clusters (`cherryCoeff`, `cherryLength`).
 
 * `cherryLength_eq`: `L(T_ab) = (∑_{c ≠ c'} D c c' + Q(a, b)) / (2 (m - 2))` for a symmetric `D`
   that vanishes on the diagonal of `S`, with `m ≥ 3`. The first term does not depend on the pair.
-* `qCriterion_le_iff_cherryLength_le`, `NJRun.isMin_qCriterion_iff`: so a pair minimizes `Q`
-  exactly when joining it gives the smallest BME length: NJ's selection step is greedy for BME.
-  At the first step (clusters = taxa, `D = d`) this is the statement of Gascuel and Steel for the
-  star tree on the taxa.
+* `qCriterion_le_iff_cherryLength_le`, `NJRun.isMin_qCriterion_iff_cherryLength`: so a pair
+  minimizes `Q` exactly when joining it gives the smallest `cherryLength`, the BME length of
+  `T_ab` on the current clusters for the current cluster dissimilarity `D`. This is a local
+  star identity, not the full Gascuel–Steel comparison of partially resolved trees on all taxa.
+  At the first step (clusters = taxa, `D = d` on singletons) the two coincide: `cherryLength`
+  is then the BME length of the join tree on the taxa for the original dissimilarity.
 * `cherryLength_eq_length`: the coefficients are the right ones: if `D` is the path-length
   dissimilarity of `T_ab` with real edge lengths, `cherryLength` is the total edge length.
 
 ## Scope
 
-At later steps the statement here is relative to the current cluster dissimilarity `D` and the
+The run-level statement here is relative to the current cluster dissimilarity `D` and the
 star on the current clusters. Gascuel and Steel also compare the BME lengths of the partially
 resolved trees on all taxa, computed from the original dissimilarity; that comparison is not
-formalized here.
+formalized here, and no statement in this file should be read as claiming it. In particular
+`NJRun.isMin_qCriterion_iff_cherryLength` uses the run hypothesis only to obtain symmetry of
+`D` and a zero diagonal; it does not define the run's partial topology on the taxa.
 
 ## References
 
@@ -172,7 +177,9 @@ theorem cherryLength_eq (S : Finset (Finset X)) (D : Finset X → Finset X → �
   field_simp
   ring
 
-/-- **Minimizing `Q` is minimizing the BME length of the join** (Gascuel and Steel 2006). -/
+/-- **Minimizing `Q` is minimizing the local star BME length of the join**: the BME length
+of `T_ab` on the current clusters for the current cluster dissimilarity `D`. This is the
+local star identity; it is not the full Gascuel–Steel comparison on all taxa. -/
 theorem qCriterion_le_iff_cherryLength_le (S : Finset (Finset X))
     (D : Finset X → Finset X → ℝ)
     (hsymm : ∀ u ∈ S, ∀ v ∈ S, D u v = D v u) (hdiag : ∀ u ∈ S, D u u = 0)
@@ -212,11 +219,13 @@ theorem NJRun.symm_diag [Fintype X] {d : X → X → ℝ} (hsymm : ∀ x y, d x 
         · exact absurd h hu'
         · exact ihd u (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h))
 
-/-- **Neighbor joining is greedy for balanced minimum evolution.** At every state of a run on a
+/-- **Q-minimality is cherry-length minimality at a run state.** At every state of a run on a
 symmetric dissimilarity with zero diagonal and at least three clusters, a pair of distinct
-clusters minimizes the Q-criterion (the pairs NJ may join) if and only if joining it gives the
-tree `T_ab` of smallest BME length. -/
-theorem NJRun.isMin_qCriterion_iff [Fintype X] {d : X → X → ℝ} (hsymm : ∀ x y, d x y = d y x)
+clusters minimizes the Q-criterion (the pairs NJ may join) if and only if joining it gives
+the smallest `cherryLength`, the BME length of the join tree `T_ab` on the current clusters
+for the current cluster dissimilarity `D`. This is the local star identity only: it does not
+compare partially resolved trees on all taxa under the original dissimilarity `d`. -/
+theorem NJRun.isMin_qCriterion_iff_cherryLength [Fintype X] {d : X → X → ℝ} (hsymm : ∀ x y, d x y = d y x)
     (hdiag : ∀ x, d x x = 0) {S : Finset (Finset X)} {D : Finset X → Finset X → ℝ}
     {C : Finset (Finset X)} (hrun : NJRun d S D C) (hS : 3 ≤ S.card) {a b : Finset X}
     (ha : a ∈ S) (hb : b ∈ S) (hab : a ≠ b) :
