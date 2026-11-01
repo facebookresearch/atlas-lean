@@ -891,10 +891,15 @@ say exactly what is proved.
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
 modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
-counted once, under the first category that applies in the order below. All
-6,970 source modules are covered: 655 first-round rows and 238 second-round rows (one source,
+counted once, under the first category that applies in the order below. The tables below
+account for 655 first-round rows and 202 second-round rows (one source,
 `Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
-definition ported in the second), 1 deleted module, and the categories below.
+definition ported in the second), 1 deleted module, and the categories below: 655 + 202 - 1
+(duplicate) + 1 (deleted) + 6,077 (categories) = 6,934 distinct source modules accounted for.
+The earlier draft claimed 238 second-round rows
+and 6,970 source modules in total; that did not reconcile with the tables, and the remaining
+36-module gap is an open reconciliation item: do not treat the coverage as complete until the
+missing 36 source modules are either added as rows or accounted for in the categories.
 
 ### Physics remainder (636 modules, 299,048 lines)
 
