@@ -56,19 +56,25 @@ open scoped Nat
 namespace ProbabilityTheory
 
 /-- The likelihood family `L : ℕ → ℝ → ℝ` (observation, parameter) has a **monotone
-likelihood ratio** on the parameter set `S`: for observations `n ≤ m` and parameters
-`θ ≤ θ'` in `S`, `L m θ * L n θ' ≤ L n θ * L m θ'` (total positivity of order two). For positive
-likelihoods this is monotonicity of `θ ↦ L m θ / L n θ`. -/
+likelihood ratio** on the parameter set `S`: `L` is nonnegative on `S`, and for
+observations `n ≤ m` and parameters `θ ≤ θ'` in `S`,
+`L m θ * L n θ' ≤ L n θ * L m θ'` (total positivity of order two). For positive
+likelihoods this is monotonicity of `θ ↦ L m θ / L n θ`. The nonnegativity is part of
+the predicate: without it the downstream `posteriorTail` would not be a posterior
+probability (a signed `L` can give `posteriorTail > 1`). -/
 def HasMonotoneLikelihoodRatioOn (L : ℕ → ℝ → ℝ) (S : Set ℝ) : Prop :=
-  ∀ ⦃n m : ℕ⦄, n ≤ m → ∀ ⦃θ θ' : ℝ⦄, θ ∈ S → θ' ∈ S → θ ≤ θ' →
-    L m θ * L n θ' ≤ L n θ * L m θ'
+  (∀ n θ, θ ∈ S → 0 ≤ L n θ) ∧
+    ∀ ⦃n m : ℕ⦄, n ≤ m → ∀ ⦃θ θ' : ℝ⦄, θ ∈ S → θ' ∈ S → θ ≤ θ' →
+      L m θ * L n θ' ≤ L n θ * L m θ'
 
-/-- The likelihood family has an **antitone likelihood ratio** on `S`: for `n ≤ m` and
-`θ ≤ θ'` in `S`, `L n θ * L m θ' ≤ L m θ * L n θ'`. For positive likelihoods this says
-`θ ↦ L m θ / L n θ` is nonincreasing (larger counts favor smaller parameters). -/
+/-- The likelihood family has an **antitone likelihood ratio** on `S`: `L` is nonnegative
+on `S`, and for `n ≤ m` and `θ ≤ θ'` in `S`, `L n θ * L m θ' ≤ L m θ * L n θ'`.
+For positive likelihoods this says `θ ↦ L m θ / L n θ` is nonincreasing (larger counts
+favor smaller parameters). -/
 def HasAntitoneLikelihoodRatioOn (L : ℕ → ℝ → ℝ) (S : Set ℝ) : Prop :=
-  ∀ ⦃n m : ℕ⦄, n ≤ m → ∀ ⦃θ θ' : ℝ⦄, θ ∈ S → θ' ∈ S → θ ≤ θ' →
-    L n θ * L m θ' ≤ L m θ * L n θ'
+  (∀ n θ, θ ∈ S → 0 ≤ L n θ) ∧
+    ∀ ⦃n m : ℕ⦄, n ≤ m → ∀ ⦃θ θ' : ℝ⦄, θ ∈ S → θ' ∈ S → θ ≤ θ' →
+      L n θ * L m θ' ≤ L m θ * L n θ'
 
 /-- **Posterior stochastic ordering, cross-multiplied form** (Milgrom 1981, Prop. 1). If the
 family `L` has a monotone likelihood ratio on a set `S` carrying the prior `μ`
@@ -94,7 +100,7 @@ theorem setIntegral_Ioi_mul_integral_le_of_hasMLR {μ : Measure ℝ}
     filter_upwards [ae_restrict_mem₀ measurableSet_Ioi.nullMeasurableSet,
       ae_restrict_of_ae hS] with x hxA hxS
     have hyx : y ≤ x := (not_lt.mp hyA).trans (le_of_lt hxA)
-    exact hL hnm hyS hxS hyx
+    exact hL.2 hnm hyS hxS hyx
   have hint2 := setIntegral_mono_ae_restrict ((hint m).integrableOn.const_mul _)
     ((hint n).integrableOn.const_mul _) hy
   rw [integral_const_mul, integral_const_mul] at hint2
@@ -124,7 +130,7 @@ theorem setIntegral_Ioi_mul_integral_le_of_hasAntitoneLR {μ : Measure ℝ}
     filter_upwards [ae_restrict_mem₀ measurableSet_Ioi.nullMeasurableSet,
       ae_restrict_of_ae hS] with x hxA hxS
     have hyx : y ≤ x := (not_lt.mp hyA).trans (le_of_lt hxA)
-    exact hL hnm hyS hxS hyx
+    exact hL.2 hnm hyS hxS hyx
   have hint2 := setIntegral_mono_ae_restrict ((hint n).integrableOn.const_mul _)
     ((hint m).integrableOn.const_mul _) hy
   rw [integral_const_mul, integral_const_mul] at hint2
@@ -133,7 +139,9 @@ theorem setIntegral_Ioi_mul_integral_le_of_hasAntitoneLR {μ : Measure ℝ}
 
 /-- Posterior probability of `{θ > t}` after observing `n`, by Bayes' formula for the prior
 `μ` and likelihood `L`: `(∫_{θ > t} L n θ dμ) / ∫ L n θ dμ`. Meaningful when the marginal
-likelihood `∫ L n dμ` is positive (otherwise the division returns the junk value `0`). -/
+likelihood `∫ L n dμ` is positive (otherwise the division returns the junk value `0`), and a
+genuine posterior probability only when `L` is nonnegative (as in the MLR predicates:
+a signed `L` can give a value outside `[0, 1]`). -/
 noncomputable def posteriorTail (μ : Measure ℝ) (L : ℕ → ℝ → ℝ) (n : ℕ) (t : ℝ) : ℝ :=
   (∫ θ in Ioi t, L n θ ∂μ) / ∫ θ, L n θ ∂μ
 
@@ -170,6 +178,11 @@ noncomputable def poissonLik (lam : ℝ → ℝ) (n : ℕ) (θ : ℝ) : ℝ :=
 ratio on `S`. -/
 theorem poissonLik_hasMLR {lam : ℝ → ℝ} {S : Set ℝ} (hmono : MonotoneOn lam S)
     (hnn : ∀ θ ∈ S, 0 ≤ lam θ) : HasMonotoneLikelihoodRatioOn (poissonLik lam) S := by
+  have hnn' : ∀ n θ, θ ∈ S → 0 ≤ poissonLik lam n θ := fun n θ hθ => by
+    have hlam := hnn θ hθ
+    unfold poissonLik
+    exact div_nonneg (mul_nonneg (exp_nonneg _) (pow_nonneg hlam _)) (Nat.cast_nonneg _)
+  refine ⟨hnn', ?_⟩
   intro n m hnm θ θ' hθ hθ' hle
   have ha := hnn θ hθ
   have hab := hmono hθ hθ' hle
@@ -190,6 +203,11 @@ theorem poissonLik_hasMLR {lam : ℝ → ℝ} {S : Set ℝ} (hmono : MonotoneOn 
 ratio on `S`. -/
 theorem poissonLik_hasAntitoneLR {lam : ℝ → ℝ} {S : Set ℝ} (hanti : AntitoneOn lam S)
     (hnn : ∀ θ ∈ S, 0 ≤ lam θ) : HasAntitoneLikelihoodRatioOn (poissonLik lam) S := by
+  have hnn' : ∀ n θ, θ ∈ S → 0 ≤ poissonLik lam n θ := fun n θ hθ => by
+    have hlam := hnn θ hθ
+    unfold poissonLik
+    exact div_nonneg (mul_nonneg (exp_nonneg _) (pow_nonneg hlam _)) (Nat.cast_nonneg _)
+  refine ⟨hnn', ?_⟩
   intro n m hnm θ θ' hθ hθ' hle
   have hb := hnn θ' hθ'
   have hba := hanti hθ hθ' hle
@@ -215,6 +233,12 @@ noncomputable def binomialLik (N : ℕ) (p : ℝ → ℝ) (n : ℕ) (θ : ℝ) :
 monotone likelihood ratio on `S`. -/
 theorem binomialLik_hasMLR {N : ℕ} {p : ℝ → ℝ} {S : Set ℝ} (hmono : MonotoneOn p S)
     (hp : ∀ θ ∈ S, p θ ∈ Icc (0 : ℝ) 1) : HasMonotoneLikelihoodRatioOn (binomialLik N p) S := by
+  have hnn' : ∀ n θ, θ ∈ S → 0 ≤ binomialLik N p n θ := fun n θ hθ => by
+    obtain ⟨hp0, hp1⟩ := hp θ hθ
+    unfold binomialLik
+    exact mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg hp0 _))
+      (pow_nonneg (by linarith) _)
+  refine ⟨hnn', ?_⟩
   intro n m hnm θ θ' hθ hθ' hle
   obtain ⟨hp0, hp1⟩ := hp θ hθ
   obtain ⟨hq0, hq1⟩ := hp θ' hθ'
