@@ -41,10 +41,12 @@ an equivalent sample size (`bdeHyper`).
 
 ## Main results
 
-* `seqProb_eq_bdScore`: the BD score equals `seqProb`, the probability of the data under
-  sequential Pólya–Dirichlet prediction (case `t` has probability
+* `seqProb_eq_bdScore`: the BD score equals `seqProb`, the sequential Pólya–Dirichlet
+  product for the data (case `t` contributes the factor
   `∏_v (α_{v,c} + n_{v,c}) / (α_{v,j} + n_{v,j})` with counts `n` over the earlier cases),
-  so it does not depend on the order of the cases. Each factor is the Dirichlet posterior
+  so it does not depend on the order of the cases. This product is a genuine probability of
+  the data only when `Pa` is a DAG (no self-parents, acyclic); for arbitrary parent maps the
+  factors need not sum to one. Each factor is the Dirichlet posterior
   predictive probability (see `posterior_predictive_dirichletMeasure` in
   `CSLibExt/MachineLearning/Bayesian/DirichletMultinomial.lean`); the measure-theoretic
   integral over the parameters is not restated here.
@@ -102,9 +104,11 @@ noncomputable def bdScore [Fintype V] (D : List ((v : V) → σ v)) (Pa : V → 
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) : ℝ :=
   ∏ v, bdFamily D (subset_insert v (Pa v)) (α v)
 
-/-- The sequential Pólya–Dirichlet prediction probability of the case `x` after the cases `D`:
+/-- The sequential Pólya–Dirichlet prediction factor for the case `x` after the cases `D`:
 `∏_v (α_{v,c} + n_{v,c}) / (α_{v,j} + n_{v,j})`, with `c`, `j` the family and parent values of
-`x` and `n` the counts in `D`. -/
+`x` and `n` the counts in `D`. This is a genuine conditional probability only when `Pa` is a
+DAG; for arbitrary parent maps (e.g. cycles or self-parents) the factors over all cases need
+not sum to one. -/
 noncomputable def predictive [Fintype V] (Pa : V → Finset V)
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) (D : List ((v : V) → σ v))
     (x : (v : V) → σ v) : ℝ :=
@@ -112,15 +116,17 @@ noncomputable def predictive [Fintype V] (Pa : V → Finset V)
     ((∑ c with Finset.restrict₂ (subset_insert v (Pa v)) c = (Pa v).restrict x, α v c) +
       count D (Pa v) ((Pa v).restrict x))
 
-/-- The probability of the cases `D`, in order, under sequential Pólya–Dirichlet prediction
-after the cases `E`: each case is predicted from all cases before it. -/
+/-- The sequential Pólya–Dirichlet product for the cases `D`, in order, after the cases `E`:
+each case contributes its `predictive` factor given all cases before it. A genuine probability
+of the data only when `Pa` is a DAG (see `predictive`). -/
 noncomputable def seqProbAfter [Fintype V] (Pa : V → Finset V)
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) :
     List ((v : V) → σ v) → List ((v : V) → σ v) → ℝ
   | _, [] => 1
   | E, x :: D => predictive Pa α E x * seqProbAfter Pa α (E ++ [x]) D
 
-/-- The probability of the cases of `D`, in order, under sequential Pólya–Dirichlet prediction. -/
+/-- The sequential Pólya–Dirichlet product for the cases of `D`, in order. A genuine probability
+of the data only when `Pa` is a DAG (see `predictive`). -/
 noncomputable def seqProb [Fintype V] (Pa : V → Finset V)
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) (D : List ((v : V) → σ v)) : ℝ :=
   seqProbAfter Pa α [] D
@@ -171,7 +177,7 @@ private theorem count_append_singleton (D : List ((v : V) → σ v)) (x : (v : V
     count (D ++ [x]) S c = count D S c + if S.restrict x = c then 1 else 0 := by
   simp [count, List.countP_append]
 
-/-- Adding a case multiplies the BD score by the sequential prediction probability of the case. -/
+/-- Adding a case multiplies the BD score by the sequential prediction factor of the case. -/
 private theorem bdScore_append_singleton [Fintype V] (Pa : V → Finset V)
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) (D : List ((v : V) → σ v))
     (x : (v : V) → σ v) :
@@ -191,9 +197,12 @@ private theorem seqProbAfter_mul_bdScore [Fintype V] (Pa : V → Finset V)
     rw [seqProbAfter, mul_comm (predictive Pa α E x), mul_assoc, mul_comm (predictive Pa α E x),
       ← bdScore_append_singleton, ih, List.append_assoc, List.singleton_append]
 
-/-- **The BD score is the sequential prediction probability** of the data (hence it does not
-depend on the order of the cases). This is an identity for all real hyperparameters; it is a
-probability statement when they are positive (then every predictive denominator is positive). -/
+/-- **The BD score is the sequential prediction product** of the data (hence it does not
+depend on the order of the cases). This is an identity for all real hyperparameters.
+Positivity of the hyperparameters only makes every predictive denominator positive; it does
+not make this product a probability. The product is a genuine probability of the data only
+when `Pa` is a DAG with no self-parents: for cyclic parent maps the predictive factors over
+all cases need not sum to one. -/
 theorem seqProb_eq_bdScore [Fintype V] (Pa : V → Finset V)
     (α : (v : V) → Config σ (insert v (Pa v)) → ℝ) (D : List ((v : V) → σ v)) :
     seqProb Pa α D = bdScore D Pa α := by

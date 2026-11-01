@@ -39,7 +39,7 @@ example (z : Fin 1 → ℝ) : rss dat (fun _ : Fin 1 => mean dat) ≤ rss dat z 
 private noncomputable def ends : Fin 2 → ℝ := ![0, 1]
 
 example : rss dat ends = 0 := by
-  apply rss_eq_zero_of_subset
+  refine rss_eq_zero_of_subset _ _ (by norm_num) ?_
   have h : convexHull ℝ (range ends) = Icc 0 1 := by
     rw [show range ends = {0, 1} by
       ext y; simp [ends]; tauto]

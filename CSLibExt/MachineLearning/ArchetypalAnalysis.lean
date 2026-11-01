@@ -62,7 +62,9 @@ open Set Metric
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {n p : ℕ}
 
 /-- The residual sum of squares of archetypes `z` for the data `x`: each data point is
-replaced by the closest point of the convex hull of the archetypes. -/
+replaced by the closest point of the convex hull of the archetypes. This is only meaningful
+for `0 < p`: for `p = 0` the hull is empty and `infDist` to the empty set is `0` by
+convention, so `rss` is `0` vacuously and must not be read as a perfect fit. -/
 noncomputable def rss (x : Fin n → E) (z : Fin p → E) : ℝ :=
   ∑ i, infDist (x i) (convexHull ℝ (range z)) ^ 2
 
@@ -224,8 +226,9 @@ theorem exists_frontier_minimizer [Nontrivial E] (x : Fin n → E) (hp : 2 ≤ p
   exact ⟨z', hz', hfr, fun z'' hz'' => hle.trans (hmin z'' hz'')⟩
 
 /-- Cutler–Breiman Proposition 1(iii): if every data point is a mixture of the archetypes, the
-RSS vanishes. -/
-theorem rss_eq_zero_of_subset (x : Fin n → E) (z : Fin p → E)
+RSS vanishes. Requires `0 < p`: for `p = 0` the hull is empty, so `rss` is `0` vacuously
+and the vanishing would not witness a fit. -/
+theorem rss_eq_zero_of_subset (x : Fin n → E) (z : Fin p → E) (hp : 0 < p)
     (h : ∀ i, x i ∈ convexHull ℝ (range z)) : rss x z = 0 := by
   simp [rss, infDist_zero_of_mem (h _)]
 

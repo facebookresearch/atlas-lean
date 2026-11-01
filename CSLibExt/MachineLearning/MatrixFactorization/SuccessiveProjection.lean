@@ -316,4 +316,3 @@ theorem exists_isSPARun [Finite ι] [Nonempty ι] (m : ι → E) (n : ℕ) :
     exact ⟨j :: S, by simp [hlen], hS, fun i => hj i (mem_univ i)⟩
 
 end Cslib.MachineLearning.MatrixFactorization.SuccessiveProjection
-
