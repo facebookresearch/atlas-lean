@@ -34,7 +34,7 @@ module
 public import Mathlib.RingTheory.RingHom.StandardSmooth
 public import Mathlib.RingTheory.DiscreteValuationRing.TFAE
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
-public import Mathlib.RingTheory.Filtration
+import Mathlib.RingTheory.Filtration
 public import Mathlib.RingTheory.Ideal.Over
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
 public import Mathlib.RingTheory.Unramified.LocalRing
@@ -44,16 +44,19 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.Ideal.Quotient.Basic
 public import Mathlib.RingTheory.Polynomial.Basic
 public import Mathlib.Algebra.MvPolynomial.Equiv
-public import Mathlib.RingTheory.Jacobson.Ring
+import Mathlib.RingTheory.Jacobson.Ring
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.RingTheory.Ideal.Basic
 public import Mathlib.RingTheory.FiniteType
 public import Mathlib.RingTheory.Etale.Basic
 public import Mathlib.RingTheory.PrincipalIdealDomain
-public import Mathlib.Tactic.ByContra
+import Mathlib.Tactic.ByContra
 public import Mathlib.Algebra.Regular.SMul
-public import Mathlib.Algebra.Polynomial.Basis
-public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+import Mathlib.Algebra.Polynomial.Basis
+import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Ring
+import Lean.Elab.Tactic.Omega
 
 /-!
 # Localizations of standard smooth algebras of relative dimension one
