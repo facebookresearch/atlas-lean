@@ -47,10 +47,18 @@ and its probability generating function at `1 - x` is the loss probability
 
 For drift `b` and infinitesimal variance `a > 0` on `(0, 1)`, with backward generator
 `L u = a / 2 · u'' + b · u'`, the scale density is `ψ(y) = exp (-∫₀^y 2 b / a)`, the scale
-function is `S(p) = ∫₀^p ψ`, the fixation probability is `S(p) / S(1)` and the Green's function
+function is `S(p) = ∫₀^p ψ`, the analytic Dirichlet ratio is `S(p) / S(1)` and the Green's function
 of `-L` with Dirichlet conditions at `0` and `1` is
 
   `G(p, x) = 2 S(min p x) (S(1) - S(max p x)) / (S(1) a(x) ψ(x))`.
+
+`fixationProb` and `greenFunction` are these analytic Dirichlet constructions. They are the
+hitting probability / expected sojourn time of the diffusion only when both boundaries are
+Feller-accessible (the scale–speed integrals `∫ (S(1) - S) / (ψ a)` and `∫ S / (ψ a)` are finite
+near `1` and `0`); `IsRegularDiffusion` does **not** imply accessibility. Counterexample:
+`b = 0`, `a x = x² (1 - x)²` satisfies all four fields and gives `S(x) = x`, so
+`fixationProb` returns `p`, but both Feller accessibility integrals diverge, so neither
+endpoint is hit in finite time.
 
 Genic selection (`b = σ x (1 - x)`, `a = x (1 - x)`) recovers Kimura's formula and the neutral
 Green's function of `Sojourn.lean`; Kimura's dominance formula is the case
@@ -71,7 +79,7 @@ sojourn density `G(p, x) u(x) / u(p)`. In the neutral case the conditional mean 
 * `diffusionGenerator`, `scaleDensity`, `scaleFunction`, `fixationProb`, `greenFunction`,
   `IsRegularDiffusion`.
 * `diffusionGenerator_fixationProb`, `eq_fixationProb_of_diffusionGenerator_eq_zero`: the
-  fixation probability is the unique solution of `L u = 0`, `u(0) = 0`, `u(1) = 1`.
+  scale-function ratio is the unique solution of `L u = 0`, `u(0) = 0`, `u(1) = 1`.
 * `diffusionGenerator_integral_greenFunction`, `integral_greenFunction_zero_left`,
   `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`: `G` inverts `-L` with
   Dirichlet conditions, and that problem has at most one regular solution.
@@ -275,17 +283,20 @@ noncomputable def scaleDensity (b a : ℝ → ℝ) (y : ℝ) : ℝ :=
 noncomputable def scaleFunction (b a : ℝ → ℝ) (p : ℝ) : ℝ :=
   ∫ y in (0 : ℝ)..p, scaleDensity b a y
 
-/-- The fixation probability `S(p) / S(1)` of the diffusion with drift `b` and variance `a`
-started at frequency `p` (Kimura 1962; Ewens 2004, Chapter 4). The probabilistic reading (hitting
-`1` before `0`) is not formalized; `eq_fixationProb_of_diffusionGenerator_eq_zero`
-characterizes it as the solution of the backward boundary-value problem. -/
+/-- The analytic Dirichlet ratio `S(p) / S(1)` for drift `b` and variance `a` (Kimura 1962;
+Ewens 2004, Chapter 4). This is the solution of the backward boundary-value problem
+`L u = 0`, `u(0) = 0`, `u(1) = 1` (see `eq_fixationProb_of_diffusionGenerator_eq_zero`).
+It is the hitting probability `P_p(hit 1 before 0)` only when both boundaries are
+Feller-accessible; that is not implied by `IsRegularDiffusion` (see the module docstring for
+the `a x = x² (1 - x)²` counterexample). -/
 noncomputable def fixationProb (b a : ℝ → ℝ) (p : ℝ) : ℝ :=
   scaleFunction b a p / scaleFunction b a 1
 
-/-- The Green's function (sojourn density) of the diffusion on `(0, 1)` killed at `0` and `1`
+/-- The Green's function (analytic Green kernel) of `-L` with Dirichlet conditions at `0` and `1`
 (Ewens 2004, Chapter 4; Karlin–Taylor 1981, Chapter 15):
 `G(p, x) = 2 S(min p x) (S(1) - S(max p x)) / (S(1) a(x) ψ(x))`. In the diffusion reading (not
-formalized), `G(p, x) dx` is the expected time spent in `(x, x + dx)` before absorption. -/
+formalized, and requiring Feller-accessible boundaries), `G(p, x) dx` is the expected time
+spent in `(x, x + dx)` before absorption. -/
 noncomputable def greenFunction (b a : ℝ → ℝ) (p x : ℝ) : ℝ :=
   2 * scaleFunction b a (min p x) * (scaleFunction b a 1 - scaleFunction b a (max p x)) /
     (scaleFunction b a 1 * a x * scaleDensity b a x)
@@ -294,7 +305,9 @@ noncomputable def greenFunction (b a : ℝ → ℝ) (p x : ℝ) : ℝ :=
 positive and continuous on `(0, 1)`, `b / a` is continuous on `(0, 1)` and integrable on
 `[0, 1]` (so the scale function is finite up to both boundaries). The values of `b` and `a` at
 `0` and `1` are irrelevant. These are standing hypotheses for this file, not Feller's
-classification of regular boundaries. -/
+classification of regular boundaries: they do **not** imply that either endpoint is
+accessible (finite scale–speed integrals), so the hitting-probability reading of
+`fixationProb` needs that extra hypothesis. -/
 structure IsRegularDiffusion (b a : ℝ → ℝ) : Prop where
   /-- The variance is positive inside the interval. -/
   pos : ∀ x ∈ Ioo (0 : ℝ) 1, 0 < a x
@@ -423,7 +436,7 @@ theorem strictMonoOn_scaleFunction (h : IsRegularDiffusion b a) :
   simp only [scaleFunction] at this ⊢
   linarith
 
-/-- `S(1) > 0`, so the fixation probability and the Green's function have a positive
+/-- `S(1) > 0`, so the scale-function ratio and the Green's function have a positive
 denominator. -/
 theorem scaleFunction_one_pos (h : IsRegularDiffusion b a) : 0 < scaleFunction b a 1 := by
   simpa using h.strictMonoOn_scaleFunction ⟨le_rfl, zero_le_one⟩ ⟨zero_le_one, le_rfl⟩ one_pos
@@ -432,7 +445,7 @@ theorem scaleFunction_one_pos (h : IsRegularDiffusion b a) : 0 < scaleFunction b
 theorem fixationProb_one (h : IsRegularDiffusion b a) : fixationProb b a 1 = 1 := by
   exact div_self h.scaleFunction_one_pos.ne'
 
-/-- The fixation probability is a probability on `[0, 1]`. -/
+/-- The scale-function ratio lies in `[0, 1]`. -/
 theorem fixationProb_mem_Icc (h : IsRegularDiffusion b a) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb b a p ∈ Icc (0 : ℝ) 1 := by
   have h0 : 0 ≤ scaleFunction b a p := by
@@ -448,7 +461,7 @@ end IsRegularDiffusion
 theorem fixationProb_zero (b a : ℝ → ℝ) : fixationProb b a 0 = 0 := by
   simp [fixationProb]
 
-/-- **Kimura (1962).** The fixation probability `S / S(1)` solves the backward equation
+/-- **Kimura (1962).** The scale-function ratio `S / S(1)` solves the backward equation
 `a / 2 · u'' + b · u' = 0` on `(0, 1)`. -/
 theorem diffusionGenerator_fixationProb {b a : ℝ → ℝ} (h : IsRegularDiffusion b a) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) : diffusionGenerator b a (fixationProb b a) x = 0 := by
@@ -514,7 +527,7 @@ theorem eq_of_diffusionGenerator_eq_zero {b a u : ℝ → ℝ} (h : IsRegularDif
   field_simp
   linarith
 
-/-- **Uniqueness of the fixation probability (Kimura 1962).** A function continuous on
+/-- **Uniqueness of the scale-function ratio (Kimura 1962).** A function continuous on
 `[0, 1]`, differentiable on `(0, 1)` with derivative differentiable on `(0, 1)`, solving
 `L u = 0` on `(0, 1)` with `u(0) = 0` and `u(1) = 1` equals `S / S(1)` on `[0, 1]`. -/
 theorem eq_fixationProb_of_diffusionGenerator_eq_zero {b a u : ℝ → ℝ}
@@ -722,7 +735,7 @@ theorem scaleDensity_wrightFisher (σ : ℝ) {y : ℝ} (hy : y ∈ Icc (0 : ℝ)
   rw [scaleDensity, integral_congr_Ioo hy hEq, intervalIntegral.integral_const, smul_eq_mul]
   ring_nf
 
-/-- **Kimura's formula as a corollary.** For genic selection the general fixation probability
+/-- **Kimura's formula as a corollary.** For genic selection the general scale-function ratio
 is `kimuraFixation σ p` on `[0, 1]`. -/
 theorem fixationProb_wrightFisher (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) p = kimuraFixation σ p := by
@@ -782,7 +795,7 @@ theorem isRegularDiffusion_dominance (c h : ℝ) :
         ((by fun_prop : Continuous fun x : ℝ =>
           2 * c * (h + (1 - 2 * h) * x)).intervalIntegrable 0 1) hEq }
 
-/-- **Kimura's fixation probability with dominance (Kimura 1962).** With `D = 2h - 1`, for
+/-- **Kimura's scale-function ratio with dominance (Kimura 1962).** With `D = 2h - 1`, for
 `p ∈ [0, 1]`,
 `u(p) = ∫₀^p e^{-2cDx(1-x) - 2cx} dx / ∫₀¹ e^{-2cDx(1-x) - 2cx} dx`. -/
 theorem fixationProb_dominance (c h : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
