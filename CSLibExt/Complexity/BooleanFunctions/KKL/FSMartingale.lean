@@ -14,8 +14,9 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.FSPerEdge
 # Log-sum estimates for damped influences under p-biased measures
 
 For a Boolean function under the Bernoulli(`p`) measure, the damped influence
-`Dₑ(ρ) = ∑_{S ∋ e} ρ^{2|S \ {e}|} f̂(S)² / (p(1-p))` interpolates between `0` and the influence
-`Infₑ` (at `ρ = 1`). By hypercontractivity of `∂ₑ 1_A`, `Dₑ(ρ) ≤ Infₑ^{2/q}` when
+`Dₑ(ρ) = ∑_{S ∋ e} ρ^{2|S \ {e}|} f̂(S)² / (p(1-p))` interpolates between the degree-one
+Fourier contribution and the influence `Infₑ` (at `ρ = 1`). By hypercontractivity
+of `∂ₑ 1_A`, `Dₑ(ρ) ≤ Infₑ^{2/q}` when
 `ρ² = 4p(1-p)(q-1)`, and the log-sum inequality turns the summed bound into
 `∑ₑ Infₑ · (2/q - 1) · log (1 / δ) ≤ ∑ₑ Infₑ · log (Infₑ / Dₑ)` (`fsm2_logGain_capped`).
 
