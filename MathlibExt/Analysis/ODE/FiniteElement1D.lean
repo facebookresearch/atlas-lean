@@ -263,25 +263,11 @@ theorem p1_eq_of_mem_Icc (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) {x : ℝ}
   simp only [Finset.mem_univ, ↓reduceIte]
   ring
 
-/-- A mesh of `[0, 1]` has at least one element. -/
-theorem n_pos : 0 < P.n := by
-  rcases Nat.eq_zero_or_pos P.n with hn | hn
-  · exfalso
-    have h := P.last
-    have : (Fin.last P.n) = 0 := Fin.ext (by simp [hn])
-    rw [this, P.first] at h
-    exact zero_ne_one h
-  · exact hn
-
-/-- The mesh size is nonnegative. -/
-theorem mesh_nonneg : 0 ≤ P.mesh :=
-  (width_pos P ⟨0, n_pos P⟩).le.trans (width_le_mesh P _)
-
 /-- `p1 P d` interpolates the nodal values. -/
 theorem p1_points (d : Fin (P.n + 1) → ℝ) (j : Fin (P.n + 1)) :
     p1 P d (P.points j) = d j := by
   rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨i, rfl⟩
-  · let i : Fin P.n := ⟨0, n_pos P⟩
+  · let i : Fin P.n := ⟨0, P.n_pos_of_lt zero_lt_one⟩
     have hi : i.castSucc = 0 := rfl
     have hx : P.points 0 ∈ Set.Icc (P.points i.castSucc) (P.points i.succ) := by
       rw [hi]
@@ -964,7 +950,8 @@ theorem sqrt_energy_sub_galerkin_le_mesh {f u : ℝ → ℝ} (hu : IsClassicalSo
     {c : Fin (P.n + 1) → ℝ} (hc : IsGalerkinSolution P f c) :
     √(energy (u - p1 P c) (u - p1 P c)) ≤
       P.mesh / Real.pi * √(∫ x in (0 : ℝ)..1, f x ^ 2) := by
-  have hc0 : 0 ≤ P.mesh / Real.pi := div_nonneg (mesh_nonneg P) Real.pi_pos.le
+  have hc0 : 0 ≤ P.mesh / Real.pi :=
+    div_nonneg (P.mesh_pos_of_lt zero_lt_one).le Real.pi_pos.le
   calc √(energy (u - p1 P c) (u - p1 P c))
       ≤ √((P.mesh / Real.pi) ^ 2 * ∫ x in (0 : ℝ)..1, f x ^ 2) :=
         Real.sqrt_le_sqrt (energy_sub_galerkin_le_mesh P hu hc)
