@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Computability.TuringMachine.ExactStackEmbedding
-public meta import Mathlib.Computability.TuringMachine.StackTuringMachine
+meta import Mathlib.Computability.TuringMachine.StackTuringMachine
 
 @[expose] public section
 
