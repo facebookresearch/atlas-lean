@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Probability.Martingale.Basic
 public import Mathlib.Probability.Process.Adapted
+public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 public import MathlibExt.Probability.OrnsteinUhlenbeck
 
 /-!
@@ -83,7 +84,10 @@ public theorem_wanted itoIntegral_indicator_Ioc {Ω : Type*} {mΩ : MeasurableSp
     ❰itoIntegral❱ P F B (fun u ω ↦ Set.indicator (Set.Ioc a b) (fun _ ↦ ξ ω) u) t =ᵐ[P]
       fun ω ↦ ξ ω * (B (min b t) ω - B (min a t) ω)
 
-/-- **Itô isometry.** For an `F`-progressive integrand `H` with `E ∫_0^t H_u² du < ∞`,
+/-- **Itô isometry.** For an `F`-progressive integrand `H` with genuine `L²` integrability —
+for a.e. `ω` the time integral `∫_0^t H_u² du` is `IntervalIntegrable` (so it is not the
+totalized `0` of a nonintegrable integrand) and the resulting expectation is integrable —
+the Itô integral at `t` is square-integrable and
 `E[(∫_0^t H dB)²] = E ∫_0^t H_u² du` (Karatzas–Shreve 1991, Section 3.2). -/
 public theorem_wanted itoIntegral_isometry {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
@@ -91,19 +95,25 @@ public theorem_wanted itoIntegral_isometry {Ω : Type*} {mΩ : MeasurableSpace �
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
     {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (t : ℝ≥0)
+    (hH2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
     (hH2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2) P) :
-    P[fun ω ↦ (❰itoIntegral❱ P F B H t ω) ^ 2] =
-      P[fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2]
+    MemLp (fun ω ↦ ❰itoIntegral❱ P F B H t ω) 2 P ∧
+      P[fun ω ↦ (❰itoIntegral❱ P F B H t ω) ^ 2] =
+        P[fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2]
 
-/-- **Martingale property.** For an `F`-progressive integrand `H` with `E ∫_0^t H_u² du < ∞`
-for every `t`, the Itô integral `t ↦ ∫_0^t H dB` is an `F`-martingale (Karatzas–Shreve 1991,
-Proposition 3.2.10). -/
+/-- **Martingale property.** For an `F`-progressive integrand `H` with genuine `L²`
+integrability at every `t` (a.e. `IntervalIntegrable` time integrals with integrable
+expectation, as in `itoIntegral_isometry`), the Itô integral `t ↦ ∫_0^t H dB` is an
+`F`-martingale (Karatzas–Shreve 1991, Proposition 3.2.10). -/
 public theorem_wanted martingale_itoIntegral {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
     {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H)
+    (hH2int : ∀ t : ℝ≥0, ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
     (hH2 : ∀ t : ℝ≥0, Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2) P) :
     Martingale (❰itoIntegral❱ P F B H) F P
 
