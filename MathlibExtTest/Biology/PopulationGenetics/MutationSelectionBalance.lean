@@ -82,7 +82,7 @@ example : diploidStep (1 / 10) (2 * (1 / 10) - (1 / 10) ^ 2) (1 / 1000) ((1 / 10
 /-- The Haldane–Muller load does not depend on `s`. -/
 example (s : ℝ) (hs : s ≠ 0) :
     1 - meanFitness s (2 * s - s ^ 2) ((1 / 1000) / s) = 2 * (1 / 1000) - (1 / 1000) ^ 2 :=
-  load_mult_at_equilibrium hs (by norm_num) _
+  load_mult_at_equilibrium hs (by norm_num)
 
 /-- Recessive lethality (`t = 1`) satisfies the hypothesis `2s - s² ≤ t` for every `s`. -/
 example (s : ℝ) : 2 * s - s ^ 2 ≤ 1 := by nlinarith [sq_nonneg (s - 1)]
