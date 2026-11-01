@@ -117,6 +117,7 @@ theorem isClassicalSolution_example : IsClassicalSolution (fun _ => 1) exampleSo
   contDiff := by
     unfold exampleSol
     fun_prop
+  f_cont := continuous_const
   zero_left := by simp [exampleSol]
   zero_right := by simp [exampleSol]
   eq x _ := by rw [deriv_deriv_exampleSol]; norm_num
