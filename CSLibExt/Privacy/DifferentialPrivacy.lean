@@ -44,37 +44,40 @@ def ReplaceOne {n : ℕ} {X : Type} (d d' : Fin n → X) : Prop :=
 
 /-- Pointwise `ε`-DP: adjacent databases give pointwise
 `exp ε`-close mass functions. -/
-def IsDP (M : Kernel Database Output) (adj : Database → Database → Prop)
+def IsDP {Database Output : Type} (M : Kernel Database Output)
+    (adj : Database → Database → Prop)
     (ε : ℝ) : Prop :=
   ∀ d d', adj d d' → ∀ o, M.prob d o ≤ Real.exp ε * M.prob d' o
 
 /-- Deterministic post-processing of a kernel. -/
-def postProcess (g : Output → Output') (M : Kernel Database Output) :
+def postProcess {Database Output Output' : Type} (g : Output → Output')
+    (M : Kernel Database Output) :
     Kernel Database Output' where
   prob d o' := ∑' o, if g o = o' then M.prob d o else 0
   nonneg d o' := by
     apply tsum_nonneg
     intro o
-    split
-    · exact M.nonneg d o
-    · exact le_rfl
+    by_cases h : g o = o'
+    · rw [if_pos h]; exact M.nonneg d o
+    · rw [if_neg h]; exact le_rfl
   summable d := by
     apply Summable.of_nonneg_of_le
       (f := M.prob d)
       (g := fun o => if g o = o' then M.prob d o else 0)
     · intro o
-      split
-      · exact M.nonneg d o
-      · exact le_rfl
+      by_cases h : g o = o'
+      · rw [if_pos h]; exact M.nonneg d o
+      · rw [if_neg h]; exact le_rfl
     · intro o
-      split
-      · exact le_rfl
-      · exact M.nonneg d o
+      by_cases h : g o = o'
+      · rw [if_pos h]; exact le_rfl
+      · rw [if_neg h]; exact M.nonneg d o
     · exact M.summable d
 
 /-- Post-processing preserves `ε`-DP: any deterministic function of
 an `ε`-DP mechanism is `ε`-DP. -/
-theorem isDP_postProcess {M : Kernel Database Output}
+theorem isDP_postProcess {Database Output Output' : Type}
+    {M : Kernel Database Output}
     {adj : Database → Database → Prop} {ε : ℝ} (h : IsDP M adj ε)
     (g : Output → Output') : IsDP (postProcess g M) adj ε := by
   intro d d' hadj o'
@@ -84,27 +87,27 @@ theorem isDP_postProcess {M : Kernel Database Output}
     rw [tsum_mul_left]
     apply tsum_congr
     intro o
-    split
-    · rfl
-    · exact mul_zero _
+    by_cases h : g o = o'
+    · rw [if_pos h]
+    · rw [if_neg h, if_neg h]; exact mul_zero _
   rw [hexp]
   apply tsum_le_tsum
   · intro o
-    split
-    · exact h d d' hadj o
-    · exact le_rfl
+    by_cases hc : g o = o'
+    · rw [if_pos hc, if_pos hc]; exact h d d' hadj o
+    · rw [if_neg hc, if_neg hc]; exact le_rfl
   · exact (postProcess g M).summable d
   · apply Summable.of_nonneg_of_le
       (f := fun o => Real.exp ε * M.prob d' o)
       (g := fun o => if g o = o' then Real.exp ε * M.prob d' o else 0)
     · intro o
-      split
-      · exact mul_nonneg (Real.exp_nonneg _) (M.nonneg d' o)
-      · exact le_rfl
+      by_cases hc : g o = o'
+      · rw [if_pos hc]; exact mul_nonneg (Real.exp_nonneg _) (M.nonneg d' o)
+      · rw [if_neg hc]; exact le_rfl
     · intro o
-      split
-      · exact le_rfl
-      · exact mul_nonneg (Real.exp_nonneg _) (M.nonneg d' o)
+      by_cases hc : g o = o'
+      · rw [if_pos hc]; exact le_rfl
+      · rw [if_neg hc]; exact mul_nonneg (Real.exp_nonneg _) (M.nonneg d' o)
     · exact (M.summable d').mul_left _
 
 end CSLibExt.Privacy.DifferentialPrivacy
