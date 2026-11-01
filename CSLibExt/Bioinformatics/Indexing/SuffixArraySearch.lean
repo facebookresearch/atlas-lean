@@ -37,10 +37,13 @@ so a binary search (`lowerBound`) finds each boundary.
 
 ## Cost model
 
-Each probe of `saSearch` compares a suffix truncated to `|P|` letters with `P`, `O(|P|)` letter
-comparisons, and each of the two binary searches makes at most `⌊log₂ |s|⌋ + 1` probes
-(`lowerBoundSteps_le`): `O(|P| log |s|)` comparisons in total, given random access to the suffix
-array. (`List.getD` is linear-time; the count is of probes and letter comparisons.) The
+The suffix array is computed once by `saSearch` and passed to both binary searches
+(`rowKey` takes the precomputed array), so the searches do not rebuild and re-sort the
+suffix array on every probe. Each probe of `saSearch` compares a suffix truncated to `|P|`
+letters with `P`, `O(|P|)` letter comparisons, and each of the two binary searches makes at
+most `⌊log₂ |s|⌋ + 1` probes (`lowerBoundSteps_le`): `O(|P| log |s|)` comparisons in total,
+plus one suffix-array construction, given random access to the suffix array.
+(`List.getD` is linear-time; the count is of probes and letter comparisons.) The
 `O(|P| + log |s|)` refinement of Manber and Myers with longest-common-prefix tables is not
 covered here.
 
@@ -93,9 +96,11 @@ theorem take_le_take {β : Type*} [LinearOrder β] {x y : List β} (h : x ≤ y)
 
 variable {α : Type*} [LinearOrder α]
 
-private theorem suffix_row_mono {β : Type*} [LinearOrder β] (s : List β)
+private theorem suffix_row_mono {β : Type*} [LinearOrder β] (sa : List ℕ) (s : List β)
+    (hsa : sa = suffixArray s)
     {i j : ℕ} (hij : i ≤ j) (hj : j < s.length) :
-    suffix s ((suffixArray s).getD i 0) ≤ suffix s ((suffixArray s).getD j 0) := by
+    suffix s (sa.getD i 0) ≤ suffix s (sa.getD j 0) := by
+  rw [hsa]
   rcases eq_or_lt_of_le hij with heq | hlt
   · subst j
     exact le_rfl
@@ -113,8 +118,8 @@ theorem prefix_suffixArray_of_le_of_le (s P : List α) {r₁ r₂ r₃ : ℕ} (h
     (hp₁ : P <+: suffix s ((suffixArray s).getD r₁ 0))
     (hp₃ : P <+: suffix s ((suffixArray s).getD r₃ 0)) :
     P <+: suffix s ((suffixArray s).getD r₂ 0) := by
-  exact prefix_of_le_of_le (suffix_row_mono s h₁₂ (by omega))
-    (suffix_row_mono s h₂₃ h₃) hp₁ hp₃
+  exact prefix_of_le_of_le (suffix_row_mono (suffixArray s) s rfl h₁₂ (by omega))
+    (suffix_row_mono (suffixArray s) s rfl h₂₃ h₃) hp₁ hp₃
 
 /-- Binary search for the boundary of a predicate on `[lo, hi)`: the first index at which `p`
 is false, assuming `p` holds on an initial segment of `[lo, hi)` (`lowerBound_spec`). Each call
@@ -203,42 +208,48 @@ theorem lowerBoundSteps_le (p : ℕ → Bool) (lo hi : ℕ) :
       · rw [lowerBoundSteps, dite_eq_right h]
         omega
 
-/-- The suffix of row `r` of the suffix array of `s`, truncated to `m` letters: the key compared
-with the pattern during the search. -/
-def rowKey (s : List α) (m r : ℕ) : List α :=
-  (suffix s ((suffixArray s).getD r 0)).take m
+/-- The suffix of row `r` of the (precomputed) suffix array `sa` of `s`, truncated to
+`m` letters: the key compared with the pattern during the search. `sa` is computed once
+by `saSearch` and passed in, so probes do not rebuild the suffix array. -/
+def rowKey (sa : List ℕ) (s : List α) (m r : ℕ) : List α :=
+  (suffix s (sa.getD r 0)).take m
 
-private theorem rowKey_mono {β : Type*} [LinearOrder β] (s : List β) (m : ℕ)
-    {i j : ℕ} (hij : i ≤ j) (hj : j < s.length) : rowKey s m i ≤ rowKey s m j := by
-  exact take_le_take (suffix_row_mono s hij hj) m
+private theorem rowKey_mono {β : Type*} [LinearOrder β] (sa : List ℕ) (s : List β)
+    (hsa : sa = suffixArray s) (m : ℕ)
+    {i j : ℕ} (hij : i ≤ j) (hj : j < s.length) : rowKey sa s m i ≤ rowKey sa s m j := by
+  exact take_le_take (suffix_row_mono sa s hsa hij hj) m
 
-private theorem rowKey_lt_initial {β : Type*} [LinearOrder β] (s P : List β)
+private theorem rowKey_lt_initial {β : Type*} [LinearOrder β] (sa : List ℕ) (s P : List β)
+    (hsa : sa = suffixArray s)
     (i j : ℕ) (_hi : 0 ≤ i) (hij : i ≤ j) (hj : j < s.length)
-    (hp : decide (rowKey s P.length j < P) = true) :
-    decide (rowKey s P.length i < P) = true := by
+    (hp : decide (rowKey sa s P.length j < P) = true) :
+    decide (rowKey sa s P.length i < P) = true := by
   simp only [decide_eq_true_eq] at hp ⊢
-  exact lt_of_le_of_lt (rowKey_mono s P.length hij hj) hp
+  exact lt_of_le_of_lt (rowKey_mono sa s hsa P.length hij hj) hp
 
-private theorem rowKey_le_initial {β : Type*} [LinearOrder β] (s P : List β)
+private theorem rowKey_le_initial {β : Type*} [LinearOrder β] (sa : List ℕ) (s P : List β)
+    (hsa : sa = suffixArray s)
     (i j : ℕ) (_hi : 0 ≤ i) (hij : i ≤ j) (hj : j < s.length)
-    (hp : decide (rowKey s P.length j ≤ P) = true) :
-    decide (rowKey s P.length i ≤ P) = true := by
+    (hp : decide (rowKey sa s P.length j ≤ P) = true) :
+    decide (rowKey sa s P.length i ≤ P) = true := by
   simp only [decide_eq_true_eq] at hp ⊢
-  exact le_trans (rowKey_mono s P.length hij hj) hp
+  exact le_trans (rowKey_mono sa s hsa P.length hij hj) hp
 
 /-- Suffix-array search (Manber and Myers 1993): the row interval `[sp, ep)` of the suffixes of
-`s` that start with `P`, found by two binary searches over the rows `[0, |s|)`. -/
+`s` that start with `P`, found by two binary searches over the rows `[0, |s|)`. The suffix
+array is computed once and shared by both searches. -/
 def saSearch (s P : List α) : ℕ × ℕ :=
-  (lowerBound (fun r => decide (rowKey s P.length r < P)) 0 s.length,
-    lowerBound (fun r => decide (rowKey s P.length r ≤ P)) 0 s.length)
+  let sa := suffixArray s
+  (lowerBound (fun r => decide (rowKey sa s P.length r < P)) 0 s.length,
+    lowerBound (fun r => decide (rowKey sa s P.length r ≤ P)) 0 s.length)
 
 /-- The search returns a genuine interval of rows: `sp ≤ ep ≤ |s|`. -/
 theorem saSearch_bounds (s P : List α) :
     (saSearch s P).1 ≤ (saSearch s P).2 ∧ (saSearch s P).2 ≤ s.length := by
-  have hsp := lowerBound_spec (fun r => decide (rowKey s P.length r < P))
-    0 s.length (Nat.zero_le _) (rowKey_lt_initial s P)
-  have hep := lowerBound_spec (fun r => decide (rowKey s P.length r ≤ P))
-    0 s.length (Nat.zero_le _) (rowKey_le_initial s P)
+  have hsp := lowerBound_spec (fun r => decide (rowKey (suffixArray s) s P.length r < P))
+    0 s.length (Nat.zero_le _) (rowKey_lt_initial (suffixArray s) s P rfl)
+  have hep := lowerBound_spec (fun r => decide (rowKey (suffixArray s) s P.length r ≤ P))
+    0 s.length (Nat.zero_le _) (rowKey_le_initial (suffixArray s) s P rfl)
   change _ ≤ _ ∧ _ ≤ s.length
   refine ⟨?_, hep.2.1⟩
   by_contra h
@@ -247,8 +258,8 @@ theorem saSearch_bounds (s P : List α) :
   have hp := hsp.2.2.1 _ (Nat.zero_le _) hlt
   have hn := hep.2.2.2 _ le_rfl hr
   simp only [decide_eq_true_eq] at hp
-  have ht : decide (rowKey s P.length
-      (lowerBound (fun r => decide (rowKey s P.length r ≤ P)) 0 s.length) ≤ P) = true :=
+  have ht : decide (rowKey (suffixArray s) s P.length
+      (lowerBound (fun r => decide (rowKey (suffixArray s) s P.length r ≤ P)) 0 s.length) ≤ P) = true :=
     decide_eq_true hp.le
   rw [ht] at hn
   contradiction
@@ -258,12 +269,12 @@ of row `r` starts with `P`. -/
 theorem saSearch_spec (s P : List α) (r : ℕ) (hr : r < s.length) :
     (saSearch s P).1 ≤ r ∧ r < (saSearch s P).2 ↔
       P <+: suffix s ((suffixArray s).getD r 0) := by
-  have hsp := lowerBound_spec (fun r => decide (rowKey s P.length r < P))
-    0 s.length (Nat.zero_le _) (rowKey_lt_initial s P)
-  have hep := lowerBound_spec (fun r => decide (rowKey s P.length r ≤ P))
-    0 s.length (Nat.zero_le _) (rowKey_le_initial s P)
+  have hsp := lowerBound_spec (fun r => decide (rowKey (suffixArray s) s P.length r < P))
+    0 s.length (Nat.zero_le _) (rowKey_lt_initial (suffixArray s) s P rfl)
+  have hep := lowerBound_spec (fun r => decide (rowKey (suffixArray s) s P.length r ≤ P))
+    0 s.length (Nat.zero_le _) (rowKey_le_initial (suffixArray s) s P rfl)
   rw [List.prefix_iff_eq_take]
-  change _ ≤ r ∧ r < _ ↔ P = rowKey s P.length r
+  change _ ≤ r ∧ r < _ ↔ P = rowKey (suffixArray s) s P.length r
   constructor
   · rintro ⟨hlo, hhi⟩
     have hn := hsp.2.2.2 r hlo hr
