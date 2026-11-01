@@ -374,7 +374,7 @@ theorem expected_noSuccessor {G L N : ℕ} (hG : 0 < G) (hL : L ≤ G) :
   have hG' : (G : ℝ) ≠ 0 := by exact_mod_cast hG.ne'
   have hL1 : L - 1 ≤ G := (Nat.sub_le L 1).trans hL
   simp only [uniformProb, ← Finset.sum_div]
-  rw [sum_card_noSuccessor hL hG]
+  rw [← Nat.cast_sum, sum_card_noSuccessor hL hG]
   rcases Nat.eq_zero_or_pos N with hN | hN
   · subst hN
     simp
