@@ -20,7 +20,8 @@ name: Bump pinned Lean/Mathlib release
 # the trusted script and the read-only token (`validate-prepared`:
 # manifest, lakefile, pin-policy, docs, migration ledgers against the
 # base tree and live tags), and only then mints the write-capable App
-# token for `finish` (commit, push via an explicit push URL, PR
+# token for `finish` (commit, push via a credential helper that reads
+# the token from $APP_TOKEN, never from argv or the push URL, PR
 # creation). The filename check alone is not enough: the prepare job
 # executes the newly tagged Lake code, which can rewrite any file,
 # including a whitelisted one, to arbitrary contents. Building from the
@@ -251,8 +252,9 @@ jobs:
           private-key: ${{ secrets.BUMP_APP_PRIVATE_KEY }}
 
       # The App token appears only here, after lake update + verification
-      # have already run on a separate runner. Push uses an explicit push
-      # URL; the checkout never persisted the token.
+      # have already run on a separate runner. Push uses a credential
+      # helper that reads the token from $APP_TOKEN, never from argv or
+      # the push URL; the checkout never persisted the token.
       - name: Publish bump PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}

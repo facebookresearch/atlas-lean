@@ -21,8 +21,10 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            job via an artifact.
   finish   App-token only, on a fresh checkout whose default token stays
            read-only, with the verified staged tree overlaid. Commit the
-           prepared tree, push it via an explicit push URL (the checkout
-           never persists the App token), and open the bump PR. Reconciles an existing branch: an open PR
+           prepared tree, push it via a credential helper that reads the
+           token from $APP_TOKEN (the token never appears in argv, in the
+           push URL, or in command errors; the checkout never persists
+           the App token), and open the bump PR. Reconciles an existing branch: an open PR
            on it means leave it alone; a branch with no PR and a tree
            identical to the prepared tree means create the missing PR
            (recovery from a push followed by a PR-creation failure); a
@@ -56,8 +58,10 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            the union of the deps' manifests at the tag (conflicts between
            upstream manifests fail instead of silently winning); no
            duplicate package names; pin-policy constants match the new
-           tag/SHAs; Mathlib@tag has a successful master-push build (so its
-           oleans are published to the cache).
+           tag/SHAs; configured doc files match the base file with the
+           new tag applied (a pin-change PR cannot omit, revert, or
+           arbitrarily edit them); Mathlib@tag has a successful
+           master-push build (so its oleans are published to the cache).
 
 Nothing here tracks nightly, master, last-known-good, or first-known-bad
 commits. A `-rc` tag is accepted only via an explicit manual dispatch with
@@ -1161,11 +1165,43 @@ def verify_manifest(
     return problems
 
 
-def run(cmd: list[str], *, cwd: Path | None = None, env: dict | None = None) -> str:
+def _redact(text: str, secrets) -> str:
+    for secret in secrets:
+        if secret:
+            text = text.replace(secret, "[redacted]")
+    return text
+
+
+def run(cmd: list[str], *, cwd: Path | None = None, env: dict | None = None,
+        redact=()) -> str:
     result = subprocess.run(cmd, cwd=cwd, env=env, text=True, capture_output=True)
     if result.returncode != 0:
-        raise RuntimeError(f"{' '.join(cmd)} failed: {result.stderr.strip()}")
+        display = _redact(" ".join(cmd), redact)
+        stderr = _redact(result.stderr.strip(), redact)
+        raise RuntimeError(f"{display} failed: {stderr}")
     return result.stdout.strip()
+
+
+def push_branch(repo: str, branch: str, token: str) -> None:
+    """Push HEAD to ``branch`` without the token in argv or error output.
+
+    The token reaches git only through ``$APP_TOKEN`` in the child env,
+    read by a credential helper that answers ``get`` requests only
+    (``store``/``erase`` are ignored). The push URL carries no
+    credentials, so neither the process command line nor git's stderr
+    can expose the token; ``redact`` is defense-in-depth for any
+    command error that echoes secret-bearing arguments.
+    """
+    helper = (
+        "!f() { if [ \"$1\" = get ]; then cat >/dev/null; "
+        "printf 'username=%s\\npassword=%s\\n' 'x-access-token' \"$APP_TOKEN\"; fi; }; f"
+    )
+    env = {**os.environ, "APP_TOKEN": token}
+    run(
+        ["git", "-c", f"credential.helper={helper}", "push",
+         f"https://github.com/{repo}.git", f"HEAD:refs/heads/{branch}"],
+        env=env, redact=(token,),
+    )
 
 
 def resolve_shas(client: GitHub, config: dict, target: str) -> dict[str, str]:
@@ -1514,8 +1550,7 @@ def cmd_finish(args: argparse.Namespace) -> int:
             if not app_token:
                 print("finish: FAIL - APP_TOKEN is not set", file=sys.stderr)
                 return 2
-            push_url = f"https://x-access-token:{app_token}@github.com/{client.repo}.git"
-            run(["git", "push", push_url, f"HEAD:refs/heads/{branch}"])
+            push_branch(client.repo, branch, app_token)
     except RuntimeError as exc:
         print(f"finish: FAIL - {exc}", file=sys.stderr)
         return 1
@@ -1744,6 +1779,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
     # Pin-policy constants (atlas check_lake_surface.py) must be exactly the
     # base file with the configured replacements applied for the new tag.
     pin_policy = config.get("pin_policy")
+    shas = None
     if pin_policy:
         try:
             shas = resolve_shas(client, config, pr_tag)
@@ -1759,6 +1795,50 @@ def cmd_guard(args: argparse.Namespace) -> int:
                 )
         except (ValueError, OSError) as exc:
             problems.append(f"pin-policy check failed: {exc}")
+    # Doc replacements: exactly the base file with the configured
+    # replacements applied for the new tag, as validate_prepared_contents
+    # checks the prepared tree. A pin-change PR that omits, reverts, or
+    # arbitrarily edits a configured doc file must fail here, not pass
+    # on the strength of the pin files alone. A doc file missing from
+    # the PR tree, or present in the PR tree but not the base tree,
+    # fails closed: there is no base text to derive the expected file
+    # from, or the PR deleted a file the bump is supposed to update.
+    by_path: dict[str, list[dict]] = {}
+    for entry in config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    for path, entries in by_path.items():
+        try:
+            base_file = base / path
+            pr_file = pr / path
+            if not base_file.is_file() and not pr_file.is_file():
+                continue
+            if not base_file.is_file():
+                problems.append(
+                    f"{path} is present in the PR tree but not the base "
+                    "tree; cannot derive its expected bumped contents"
+                )
+                continue
+            if not pr_file.is_file():
+                problems.append(
+                    f"{path} is missing from the PR tree; "
+                    "the bump must update it, not delete it"
+                )
+                continue
+            if shas is None:
+                shas = resolve_shas(client, config, pr_tag)
+            expected = base_file.read_text(encoding="utf-8")
+            for entry in entries:
+                expected = apply_replacements_to_text(
+                    expected, [entry], pr_tag, shas
+                )
+            if pr_file.read_text(encoding="utf-8") != expected:
+                problems.append(
+                    f"{path} does not match the base file with the "
+                    "new tag applied (missing update, revert, or an "
+                    "unrelated edit)"
+                )
+        except (ValueError, OSError) as exc:
+            problems.append(f"doc validation failed for {path}: {exc}")
     # Migration ledgers: if either tree carries them, the PR tree's pair
     # must be exactly the base pair re-pinned to the PR's pins -- a
     # pin-consistent pair with replaced records or a changed migration

@@ -364,7 +364,8 @@ class GuardTests(unittest.TestCase):
                    tamper_lakefile_name=False, duplicate_require=False,
                    tamper_direct=False, conflict=False, duplicate_package=False,
                    missing_toolchain_tag=False, tamper_pin_policy=False,
-                   stale_pin_policy=False, migration="absent"):
+                   stale_pin_policy=False, migration="absent",
+                   tamper_doc=False, stale_doc=False, missing_doc=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -388,6 +389,13 @@ class GuardTests(unittest.TestCase):
             write_tree(base, "v4.35.0")
             write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive)
+            # write_tree's README carries only the first two doc
+            # patterns; the real config has a third (releases/tag),
+            # which the real README carries. Give both trees that
+            # line at the old pin, as the validate-prepared fixtures do.
+            for tree in (base, pr):
+                with open(tree / "README.md", "a", encoding="utf-8") as f:
+                    f.write("https://github.com/leanprover/lean4/releases/tag/v4.35.0\n")
             if migration != "absent":
                 write_migration_ledgers(
                     base, mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
@@ -449,6 +457,19 @@ class GuardTests(unittest.TestCase):
                 if duplicate_package:
                     manifest["packages"].append(dict(manifest["packages"][0]))
                 manifest_path.write_text(json.dumps(manifest, indent=1))
+            # The valid PR README is the base README with the real
+            # config's doc replacements applied for the new tag; a
+            # stale README (left at the old pin) or a tampered one
+            # (expected text plus an unrelated edit) must fail.
+            if missing_doc:
+                (pr / "README.md").unlink()
+            elif not stale_doc:
+                readme = pinned_bump.apply_replacements_to_text(
+                    (pr / "README.md").read_text(),
+                    real_config["doc_replacements"], "v4.36.0", shas)
+                if tamper_doc:
+                    readme += "\nUnrelated doc edit.\n"
+                (pr / "README.md").write_text(readme)
             changed = Path(tmp) / "changed.txt"
             changed.write_text("lean-toolchain\nlakefile.toml\nlake-manifest.json\n")
             import pinned_bump as module
@@ -505,6 +526,15 @@ class GuardTests(unittest.TestCase):
     def test_guard_fails_forged_ledger_records(self):
         self.assertEqual(self._run_guard(migration="forged"), 1)
 
+    def test_guard_fails_stale_doc(self):
+        self.assertEqual(self._run_guard(stale_doc=True), 1)
+
+    def test_guard_fails_tampered_doc(self):
+        self.assertEqual(self._run_guard(tamper_doc=True), 1)
+
+    def test_guard_fails_missing_doc(self):
+        self.assertEqual(self._run_guard(missing_doc=True), 1)
+
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(
             'rev "' + "a" * 40 + '"',
@@ -512,6 +542,45 @@ class GuardTests(unittest.TestCase):
             "v4.36.0", {"mathlib": "f" * 40},
         )
         self.assertIn("f" * 40, out)
+
+
+class PushTests(unittest.TestCase):
+    def test_run_redacts_secrets_in_error(self):
+        import subprocess
+        import unittest.mock
+        secret = "SECRET-TOKEN-123"
+        fake = subprocess.CompletedProcess(
+            args=["git", "push", f"https://x-access-token:{secret}@github.com/x.git"],
+            returncode=1, stdout="", stderr=f"fatal: could not read from {secret}\n")
+        with unittest.mock.patch.object(
+                pinned_bump.subprocess, "run", return_value=fake):
+            with self.assertRaises(RuntimeError) as caught:
+                pinned_bump.run(["git", "push", "https://example.invalid/x.git"],
+                                redact=(secret,))
+        self.assertNotIn(secret, str(caught.exception))
+        self.assertIn("[redacted]", str(caught.exception))
+
+    def test_push_branch_uses_credential_helper_not_url_token(self):
+        import unittest.mock
+        captured = {}
+
+        def fake_run(cmd, **kwargs):
+            captured["cmd"] = cmd
+            captured.update(kwargs)
+            return ""
+
+        with unittest.mock.patch.object(pinned_bump, "run", side_effect=fake_run):
+            pinned_bump.push_branch("example/repo", "bump-pinned/v4.36.0",
+                                    "TOKEN-ABC-123")
+        argv = captured["cmd"]
+        self.assertNotIn("TOKEN-ABC-123", " ".join(argv))
+        self.assertNotIn("x-access-token:TOKEN", " ".join(argv))
+        self.assertIn("credential.helper", " ".join(argv))
+        helper = argv[argv.index("-c") + 1]
+        self.assertIn("$APP_TOKEN", helper)
+        self.assertIn("https://github.com/example/repo.git", argv)
+        self.assertEqual(captured["env"]["APP_TOKEN"], "TOKEN-ABC-123")
+        self.assertEqual(captured["redact"], ("TOKEN-ABC-123",))
 
 
 class PreparedFilesTests(unittest.TestCase):

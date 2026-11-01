@@ -74,6 +74,14 @@ jobs:
           # download them too for every tree; a tree that predates them
           # (contents API 404) legitimately has no ledger files.
           LEDGER_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print(" ".join(c.get("migration_ledgers") or []))')"
+          # Doc files carrying configured pin replacements (README.md):
+          # the guard validates them against the base tree with the new
+          # tag applied, so they must be downloaded for every tree too.
+          # Unique paths, in config order. Downloaded as optional
+          # (404-tolerated) like the ledgers: the guard itself fails
+          # closed when a doc file is missing from the PR tree or
+          # present there but absent from the base tree.
+          DOC_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); seen = []; [seen.append(e["path"]) for e in c.get("doc_replacements") or [] if e["path"] not in seen]; print(" ".join(seen))')"
           if [ "$EVENT_NAME" = "merge_group" ]; then
             BASE_REF="$MERGE_GROUP_BASE_SHA"
             HEAD_SHA="$MERGE_GROUP_HEAD_SHA"
@@ -113,6 +121,9 @@ jobs:
               download_one "$dir" "$REF" "$file" true
             done
             for file in $LEDGER_PATHS; do
+              download_one "$dir" "$REF" "$file" false
+            done
+            for file in $DOC_PATHS; do
               download_one "$dir" "$REF" "$file" false
             done
           done
