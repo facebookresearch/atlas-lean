@@ -78,6 +78,12 @@ def epistatic : CockerhamComponents where
   V i j := if (i, j) = (1, 0) ∨ (i, j) = (2, 0) then 1 else 0
   V_nonneg i j := by split_ifs <;> norm_num
   V_zero_zero := by simp
+  V_supported i j h := by
+    rcases h with hi | hj <;> split_ifs with h1 <;>
+      (first
+        | (rcases h1 with h1 | h1 <;>
+            (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h1; omega))
+        | rfl)
 
 /-- `V_A = 1` while Falconer's estimator is `1 + 2 (1 - 1/4) = 5/2`. -/
 example (C : ℝ) : epistatic.varA = 1 ∧ epistatic.falconer C = 5 / 2 := by

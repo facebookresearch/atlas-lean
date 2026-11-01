@@ -40,8 +40,13 @@ Two relatives that share `0`, `1`, or `2` alleles identical by descent with prob
 **Many loci (algebra on a stated representation).** Cockerham's and Kempthorne's extension
 writes the covariance between non-inbred relatives in a random-mating population at linkage
 equilibrium as `∑_{i + j ≥ 1} (2φ)^i Δ^j V_{A^i D^j}` with nonnegative components. This file
-does **not** prove that representation for many loci; it takes the components as data
-(`CockerhamComponents`) and proves what follows from it: Falconer's twin estimator
+does **not** prove that representation for many loci; it takes the representation itself as an
+explicit hypothesis, bundled in `CockerhamComponents`: finitely supported components
+(`V_supported`: components above order `n` vanish, so the `cov` sum over `i, j ≤ n` is the
+whole representation), nonnegativity, and no `(0, 0)` component. The downstream API is
+qualified accordingly: every many-locus statement is a statement about a
+`CockerhamComponents` witness, i.e. conditional on that representation holding. It proves
+what follows from it: Falconer's twin estimator
 `2 (r_MZ - r_DZ)` (the ACE-model population heritability of Zuk et al.) is at least the
 narrow-sense heritability `V_A / V_P`, with equality iff every non-additive component
 vanishes. The coefficient `2 (1 - 2^{-i} 4^{-j})` of each component in that estimator is
@@ -299,6 +304,10 @@ structure CockerhamComponents where
   V : ℕ → ℕ → ℝ
   V_nonneg : ∀ i j, 0 ≤ V i j
   V_zero_zero : V 0 0 = 0
+  /-- Finite support: components above order `n` vanish. `V` is total only as a function;
+  there are no unconstrained ignored components outside the summation range of `cov`, which
+  sums exactly over `i, j ≤ n`. -/
+  V_supported : ∀ i j, n < i ∨ n < j → V i j = 0
 
 namespace CockerhamComponents
 
@@ -455,6 +464,12 @@ def toComponents : CockerhamComponents where
     · exact m.varD_nonneg
     · exact le_refl 0
   V_zero_zero := by simp
+  V_supported i j h := by
+    rcases h with hi | hj <;> split_ifs with h1 h2 <;>
+      (first
+        | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h1; omega)
+        | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h2; omega)
+        | rfl)
 
 /-- The one-locus covariance between relatives is the Cockerham form of `toComponents`. -/
 theorem relCov_eq_cov {k₀ k₁ k₂ : ℝ} (hk : k₀ + k₁ + k₂ = 1) :
