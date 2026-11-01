@@ -15,7 +15,6 @@ public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Moments.IntegrableExpMul
 public import Mathlib.RingTheory.Polynomial.Pochhammer
-public import Mathlib.Analysis.SpecialFunctions.Integrals
 
 open MeasureTheory Set Filter Topology
 
