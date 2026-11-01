@@ -9,8 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.Probability.Moments.ComplexMGF
 public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Moments.IntegrableExpMul
@@ -244,6 +246,58 @@ theorem Ioo_subset_interior_integrableExpSet_gammaMeasure {a r ε : ℝ}
   apply hIio
   simp only [mem_Iio]
   linarith
+
+theorem not_integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
+    (ht : r ≤ t) : ¬ Integrable (fun x : ℝ => Real.exp (t * x)) (gammaMeasure a r) := by
+  intro h
+  rw [integrable_gammaMeasure_iff] at h
+  have hon : IntegrableOn (fun x : ℝ => x ^ (a - 1)) (Ioi 1) := by
+    refine Integrable.mono' ((h.integrableOn (s := Ioi 1)).const_mul (r ^ a / Real.Gamma a)⁻¹)
+      (by fun_prop) ?_
+    refine (ae_restrict_iff' measurableSet_Ioi).2 (Filter.Eventually.of_forall fun x hx => ?_)
+    have hx0 : 0 < x := lt_trans one_pos hx
+    rw [toReal_gammaPDF ha hr, gammaPDFReal, ite_eq_left hx0.le, smul_eq_mul,
+      Real.norm_of_nonneg (Real.rpow_nonneg hx0.le _)]
+    have he : 1 ≤ Real.exp (-(r * x)) * Real.exp (t * x) := by
+      rw [← Real.exp_add]
+      exact Real.one_le_exp (by nlinarith)
+    have hxa : 0 ≤ x ^ (a - 1) := Real.rpow_nonneg hx0.le _
+    calc x ^ (a - 1) ≤ x ^ (a - 1) * (Real.exp (-(r * x)) * Real.exp (t * x)) :=
+          le_mul_of_one_le_right hxa he
+      _ = (r ^ a / Real.Gamma a)⁻¹ *
+          (r ^ a / Real.Gamma a * x ^ (a - 1) * Real.exp (-(r * x)) * Real.exp (t * x)) := by
+          field_simp
+  have := (integrableOn_Ioi_rpow_iff one_pos).1 hon
+  linarith
+
+/-- The exponential moment `E[exp (t X)]` of a gamma `(a, r)` law is finite exactly for
+`t < r`. -/
+theorem integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a) (hr : 0 < r) :
+    integrableExpSet id (gammaMeasure a r) = Iio r := by
+  ext t
+  refine ⟨fun h => ?_, fun h => Iio_subset_integrableExpSet_gammaMeasure ha hr h⟩
+  by_contra h'
+  exact not_integrable_exp_mul_gammaMeasure ha hr (not_lt.1 h') h
+
+/-- MGF uniqueness for gamma laws: a real probability law whose MGF equals the gamma `(a, r)`
+MGF as a function on all of `ℝ` (both vanish where the exponential moment is infinite) is that
+gamma law. -/
+theorem eq_gammaMeasure_of_mgf_eq {a r : ℝ} (ha : 0 < a) (hr : 0 < r) {ν : Measure ℝ}
+    [IsProbabilityMeasure ν] (h : mgf id ν = mgf id (gammaMeasure a r)) :
+    ν = gammaMeasure a r := by
+  have := isProbabilityMeasure_gammaMeasure ha hr
+  have hS : integrableExpSet id ν = Iio r := by
+    rw [integrableExpSet_eq_of_mgf h, integrableExpSet_gammaMeasure ha hr]
+  apply Measure.ext_of_complexMGF_id_eq
+  funext z
+  by_cases hz : z.re < r
+  · exact eqOn_complexMGF_of_mgf h (by rw [hS, interior_Iio]; exact hz)
+  · rw [complexMGF_undef aemeasurable_id, complexMGF_undef aemeasurable_id]
+    · exact not_integrable_exp_mul_gammaMeasure ha hr (not_lt.1 hz)
+    · intro hi
+      have : z.re ∈ integrableExpSet id ν := hi
+      rw [hS] at this
+      exact hz this
 
 end
 

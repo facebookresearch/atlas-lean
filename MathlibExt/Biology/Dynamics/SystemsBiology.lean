@@ -89,10 +89,10 @@ they are positive and every invariant vector is a multiple of them.
 Infinite closed classes of the stochastic chain (where normalizability must be shown), the
 existence of a complex-balanced `c` (the deficiency-zero theorem, recorded as wanted in
 `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`), networks with conservation laws in
-metabolic control analysis (singular Jacobian, link matrices), piecewise linearity and
-differentiability of the FBA value and the existence of a balancing for nonnegative matrices
-with total support (recorded in `WantedExt/Biology/Dynamics/SystemsBiologyWanted.lean`), and
-Thomas' rules for Boolean networks with cycles.
+metabolic control analysis (singular Jacobian, link matrices), and Thomas' rules for Boolean
+networks with cycles. Piecewise linearity and differentiability of the FBA value are in
+`MathlibExt.Biology.Dynamics.FluxBalanceValue`; the existence of a balancing for symmetric
+nonnegative matrices with total support is in `MathlibExt.Biology.Dynamics.TotalSupportBalancing`.
 
 ## References
 
@@ -160,27 +160,6 @@ closed under firing (`isRateMatrix_classGenerator`). -/
 noncomputable def classGenerator (k : ρ → ℝ) (Ω : Finset (S → ℕ)) : Matrix Ω Ω ℝ :=
   fun x y => ∑ r, propensity N k r x *
     ((if fire N r x = (y : S → ℕ) then 1 else 0) - if x = y then 1 else 0)
-
-/-- Complex balance regroups rate-weighted sums of functions of the products. -/
-private theorem sum_rate_mul_prod_eq' {k : ρ → ℝ} {c : S → ℝ}
-    (h : N.IsComplexBalanced k c) (g : (S → ℕ) → ℝ) :
-    ∑ r, N.rate k c r * g (N.prod r) = ∑ r, N.rate k c r * g (N.src r) := by
-  classical
-  let T : Finset (S → ℕ) := univ.image N.src ∪ univ.image N.prod
-  rw [← Finset.sum_fiberwise_of_maps_to (s := univ) (t := T) (g := N.prod)
-      (fun r _ => by simp [T]),
-    ← Finset.sum_fiberwise_of_maps_to (s := univ) (t := T) (g := N.src)
-      (fun r _ => by simp [T])]
-  refine Finset.sum_congr rfl fun z _ => ?_
-  have h₁ : ∑ r ∈ univ.filter (N.prod · = z), N.rate k c r * g (N.prod r) =
-      ∑ r ∈ univ.filter (N.prod · = z), N.rate k c r * g z :=
-    Finset.sum_congr rfl fun r hr => by rw [(Finset.mem_filter.1 hr).2]
-  have h₂ : ∑ r ∈ univ.filter (N.src · = z), N.rate k c r * g (N.src r) =
-      ∑ r ∈ univ.filter (N.src · = z), N.rate k c r * g z :=
-    Finset.sum_congr rfl fun r hr => by rw [(Finset.mem_filter.1 hr).2]
-  rw [h₁, h₂, ← Finset.sum_mul, ← Finset.sum_mul]
-  congr 1
-  convert (h z).symm using 2
 
 /-- The remaining Poisson factor `∏_s c_s^{x_s - z_s} / Nat.factorial (x_s - z_s)`, zero
 unless `z ≤ x`. -/
@@ -261,7 +240,7 @@ theorem poissonWeight_mul_sum_propensity {k : ρ → ℝ} {c : S → ℝ}
     · simp [residual, h]
   rw [Finset.sum_congr rfl fun r _ => hin r]
   simp only [poissonWeight_mul_propensity, mul_assoc, ← Finset.mul_sum]
-  rw [sum_rate_mul_prod_eq' N hcb (residual c x)]
+  rw [N.sum_rate_mul_prod_eq hcb (residual c x)]
 
 /-- The restricted generator is a rate matrix when the rate constants are nonnegative and
 `Ω` is closed under the reactions. -/
@@ -1108,7 +1087,8 @@ private theorem perm_sum_apply {n : ℕ} (w : Equiv.Perm (Fin n) → ℝ) (i j :
 
 /-- **Necessity of total support** (Sinkhorn & Knopp 1967; Csima & Datta 1972): if a positive
 diagonal scaling `diag(d) A diag(d)` is doubly stochastic, then `A` has total support. The proof
-uses Birkhoff's theorem. The converse for symmetric nonnegative `A` is recorded as wanted. -/
+uses Birkhoff's theorem. The converse for symmetric nonnegative `A` is
+`exists_symmetric_balancing_of_hasTotalSupport`. -/
 theorem hasTotalSupport_of_balancing {n : ℕ} (hn : 0 < n) {A : Matrix (Fin n) (Fin n) ℝ}
     {d : Fin n → ℝ} (hd : ∀ i, 0 < d i)
     (h : (fun i j => d i * A i j * d j) ∈ doublyStochastic ℝ (Fin n)) : HasTotalSupport A := by
