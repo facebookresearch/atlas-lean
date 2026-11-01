@@ -510,7 +510,7 @@ private theorem dist_add_dist_of_cross {V : Type} {G : SimpleGraph V} (hG : G.Is
     have e2 : G.dist v w = G.dist w v := SimpleGraph.dist_comm
     omega
   have hpath : (q₁.append (SimpleGraph.Walk.cons hpv q₂)).IsPath := by
-    refine MathlibExt.Biology.Phylogenetics.Buneman.isPath_append_of_isPath hq₁ (hq₂.cons hpq₂)
+    refine SimpleGraph.Walk.isPath_append_of_isPath hq₁ (hq₂.cons hpq₂)
       fun a ha ha' => ?_
     rw [SimpleGraph.Walk.support_cons, List.mem_cons] at ha'
     rcases ha' with rfl | ha'
@@ -591,7 +591,7 @@ private theorem cluster_label_mem_edgeSplits (T : UnrootedBinaryTree X) (a : X) 
     · intro hx
       have hne : (T.label a : T.V) ≠ T.label x := fun e => hx (T.label.injective
         (Subtype.ext e)).symm
-      obtain ⟨c, hc, hd⟩ := exists_parent T.isTree.connected hne
+      obtain ⟨c, hc, hd⟩ := SimpleGraph.exists_parent T.isTree.connected hne
       rw [← huniq c hc]
       omega
     · intro hlt hx
@@ -614,7 +614,7 @@ theorem splitSet_eq_edgeSplits (T : UnrootedBinaryTree X) (a : X) :
       obtain ⟨e, he, he'⟩ := Finset.mem_image.mp h
       rw [← he', compl_edgeSide T (Finset.mem_filter.mp he).2]
       exact hmem (Finset.mem_filter.mp he).2.symm
-    · obtain ⟨p, hvp, hd⟩ := exists_parent T.isTree.connected hv
+    · obtain ⟨p, hvp, hd⟩ := SimpleGraph.exists_parent T.isTree.connected hv
       have hpv := hvp.symm
       rw [cluster_eq_edgeSide T a hpv hd.symm, compl_edgeSide T hpv]
       exact ⟨hmem hpv, hmem hpv.symm⟩
