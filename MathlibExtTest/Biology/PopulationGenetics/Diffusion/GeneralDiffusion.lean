@@ -44,12 +44,16 @@ example (n : ℕ) (x : ℝ) :
 /-- The stationary law puts no mass on `0` lines. -/
 example (σ : ℝ) : asgStationary σ 0 = 0 := by simp [asgStationary]
 
-/-- `π_1 = 2σ / (e^{2σ} - 1)`. -/
-example (σ : ℝ) : asgStationary σ 1 = 2 * σ / (exp (2 * σ) - 1) := by
-  simp [asgStationary]
+/-- `π_1 = 2σ / (e^{2σ} - 1)` for `σ ≠ 0`. -/
+example {σ : ℝ} (hσ : σ ≠ 0) : asgStationary σ 1 = 2 * σ / (exp (2 * σ) - 1) := by
+  simp [asgStationary, hσ]
 
-/-- Junk value outside the domain: for `σ = 0` every weight is `0` (no stationary law). -/
-example (k : ℕ) : asgStationary 0 k = 0 := by simp [asgStationary]
+/-- The neutral stationary law is `δ₁`: `π_1 = 1` and all other weights are `0`. -/
+example : asgStationary 0 1 = 1 := by simp [asgStationary]
+
+example (k : ℕ) (hk : k ≠ 1) : asgStationary 0 k = 0 := by simp [asgStationary, hk]
+
+example : HasSum (asgStationary 0) 1 := hasSum_asgStationary_zero
 
 /-- Detailed balance between one and two lines: `π_1 σ = π_2`. -/
 example (σ : ℝ) : asgStationary σ 1 * σ = asgStationary σ 2 := by

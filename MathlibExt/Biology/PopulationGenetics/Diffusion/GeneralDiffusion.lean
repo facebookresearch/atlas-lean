@@ -163,29 +163,40 @@ theorem generator_one_sub_pow_eq_asgGenerator (σ : ℝ) (n : ℕ) (x : ℝ) :
 
 /-- The stationary law of the ancestral-selection-graph line-counting process with `σ > 0`:
 `π_k = (2σ)^k / k! / (e^{2σ} - 1)` for `k ≥ 1` and `π_0 = 0`, a Poisson`(2σ)` law conditioned
-to be positive. For `σ = 0` the formula divides by `0` and every value is the junk value `0`
-(there is no stationary law: lines only coalesce). -/
+to be positive. For `σ = 0` the stationary law is `δ₁`: branching vanishes, coalescence
+reaches state `1`, and state `1` is absorbing, so `π_1 = 1` and `π_k = 0` otherwise (the
+limit of the `σ > 0` formula as `σ → 0`). -/
 noncomputable def asgStationary (σ : ℝ) (k : ℕ) : ℝ :=
-  if k = 0 then 0 else (2 * σ) ^ k / k ! / (exp (2 * σ) - 1)
+  if σ = 0 then (if k = 1 then 1 else 0)
+  else if k = 0 then 0 else (2 * σ) ^ k / k ! / (exp (2 * σ) - 1)
 
 /-- **Detailed balance** of the ancestral-selection-graph chain:
 `π_k · (k σ) = π_{k+1} · C(k + 1, 2)` for every `k` (the flux `k → k + 1` equals the flux
 `k + 1 → k`). This is an identity for every real `σ`. -/
 theorem asgStationary_detailed_balance (σ : ℝ) (k : ℕ) :
     asgStationary σ k * (k * σ) = asgStationary σ (k + 1) * ((k + 1).choose 2 : ℝ) := by
-  cases k with
-  | zero => simp [asgStationary]
-  | succ k =>
-    simp only [asgStationary, Nat.succ_ne_zero, ↓reduceIte]
-    rw [Nat.cast_choose_two]
-    simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, pow_succ]
-    have hf : (k.factorial : ℝ) ≠ 0 := by positivity
-    have hk : (k : ℝ) + 1 ≠ 0 := by positivity
-    have hk2 : (k : ℝ) + 1 + 1 ≠ 0 := by positivity
-    by_cases he : exp (2 * σ) - 1 = 0
-    · simp [he]
-    · field_simp
-      ring
+  by_cases hσ : σ = 0
+  · subst hσ
+    simp only [mul_zero]
+    cases k with
+    | zero => simp [asgStationary]
+    | succ k =>
+      by_cases hk : k + 1 + 1 = 1
+      · omega
+      · simp [asgStationary, hk]
+  · cases k with
+    | zero => simp [asgStationary, hσ]
+    | succ k =>
+      simp only [asgStationary, hσ, if_false, Nat.succ_ne_zero, ↓reduceIte]
+      rw [Nat.cast_choose_two]
+      simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, pow_succ]
+      have hf : (k.factorial : ℝ) ≠ 0 := by positivity
+      have hk : (k : ℝ) + 1 ≠ 0 := by positivity
+      have hk2 : (k : ℝ) + 1 + 1 ≠ 0 := by positivity
+      by_cases he : exp (2 * σ) - 1 = 0
+      · simp [he]
+      · field_simp
+        ring
 
 /-- **Global balance** (stationarity `π Q = 0`) of the ancestral-selection-graph chain at
 state `k + 1`: the outflow `π_{k+1} ((k + 1) σ + C(k + 1, 2))` equals the inflow
@@ -200,7 +211,10 @@ theorem asgStationary_global_balance (σ : ℝ) (k : ℕ) :
 
 /-- For `σ > 0` the stationary weights are nonnegative. -/
 theorem asgStationary_nonneg {σ : ℝ} (hσ : 0 < σ) (k : ℕ) : 0 ≤ asgStationary σ k := by
-  unfold asgStationary
+  have h : asgStationary σ k =
+      (if k = 0 then (0 : ℝ) else (2 * σ) ^ k / k ! / (exp (2 * σ) - 1)) := by
+    simp [asgStationary, ne_of_gt hσ]
+  rw [h]
   split_ifs
   · exact le_rfl
   · apply div_nonneg (div_nonneg (by positivity) (by positivity))
@@ -220,9 +234,10 @@ theorem hasSum_asgStationary_mul_pow {σ : ℝ} (hσ : 0 < σ) (y : ℝ) :
   convert (he.sub hz).div_const (exp (2 * σ) - 1) using 1
   ext k
   cases k with
-  | zero => simp [asgStationary]
+  | zero => simp [asgStationary, ne_of_gt hσ]
   | succ k =>
-    simp only [asgStationary, Nat.succ_ne_zero, ↓reduceIte, sub_zero, mul_pow]
+    simp only [asgStationary, ne_of_gt hσ, if_false, Nat.succ_ne_zero, ↓reduceIte, sub_zero,
+      mul_pow]
     field_simp [hd]
 
 /-- For `σ > 0` the stationary weights sum to `1`. -/
@@ -231,6 +246,25 @@ theorem hasSum_asgStationary {σ : ℝ} (hσ : 0 < σ) : HasSum (asgStationary �
     ne_of_gt (sub_pos.mpr (Real.one_lt_exp_iff.mpr (by positivity)))
   simpa only [one_pow, mul_one, div_self hd] using
     hasSum_asgStationary_mul_pow hσ 1
+
+/-- The neutral stationary law is `δ₁`: its generating function is `y`. -/
+theorem hasSum_asgStationary_mul_pow_zero (y : ℝ) :
+    HasSum (fun k => asgStationary 0 k * y ^ k) y := by
+  have h : (fun k => asgStationary 0 k * y ^ k) = fun k => if k = 1 then y else 0 := by
+    funext k
+    by_cases hk : k = 1
+    · subst hk; simp [asgStationary]
+    · have h2 : asgStationary 0 k = 0 := by simp [asgStationary, hk]
+      simp [h2, hk]
+  rw [h]
+  exact hasSum_ite_eq 1 y
+
+/-- The neutral stationary weights sum to `1`. -/
+theorem hasSum_asgStationary_zero : HasSum (asgStationary 0) 1 := by
+  have h : asgStationary 0 = fun k => (if k = 1 then (1 : ℝ) else 0) := by
+    funext k; simp [asgStationary]
+  rw [h]
+  exact hasSum_ite_eq 1 1
 
 /-- The loss probability in Kimura's formula, written with positive exponents: for `σ ≠ 0`,
 `1 - kimuraFixation σ x = (e^{2σ(1 - x)} - 1) / (e^{2σ} - 1)`. -/
