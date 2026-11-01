@@ -41,8 +41,9 @@ sequence to the whole model.
 * `ProfileHMM.forward_eq_sum`: **the forward value is the total weight of all paths** (all
   alignments of the sequence to the model), the sequence's probability under the model when the
   weights are probabilities.
-* `ProfileHMM.pathProb_le_viterbi`, `ProfileHMM.exists_pathProb_eq_viterbi`: **Viterbi is the
-  largest path weight** and is attained: the best alignment of the sequence to the profile.
+* `ProfileHMM.pathProb_le_viterbi`, `ProfileHMM.exists_pathProb_eq_viterbi`: **Viterbi is
+  attained**; under nonnegative weights (`ProfileHMM.Nonneg`) it is the largest path weight:
+  the best alignment of the sequence to the profile.
 * `ProfileHMM.sum_pseudocountEmission`, `ProfileHMM.pseudocountEmission_pos`: match-state
   emission estimates from the residues of a multiple-alignment column with positive pseudocounts
   are a distribution with full support. Choosing the match columns of a multiple alignment and
@@ -164,8 +165,9 @@ section Viterbi
 
 variable [Semiring R] [LinearOrder R] (h : ProfileHMM L α R)
 
-/-- The Viterbi value of a sequence `x`: the largest weight of a path through the model emitting
-`x` (`pathProb_le_viterbi`, `exists_pathProb_eq_viterbi`). -/
+/-- The Viterbi value of a sequence `x`: the value selected by the max recursion
+(`pathProb_le_viterbi`, `exists_pathProb_eq_viterbi`). Under nonnegative weights it is the
+largest weight of a path through the model emitting `x`. -/
 def viterbi (x : List α) : R := h.toAutomaton.maxDP (.M, 0) x (columns L)
 
 /-- Nonnegative transition and emission weights (the transitions to the end state may have any
@@ -195,8 +197,10 @@ theorem pathProb_le_viterbi [IsOrderedRing R] (hn : h.Nonneg) {x : List α}
   AlignmentAutomaton.alignWeight_le_maxDP (toAutomaton_nonneg hn) _ hA
 
 variable (h) in
-/-- **The Viterbi value is attained**: some path (alignment of `x` to the profile) has the
-largest weight. -/
+/-- **The Viterbi value is attained**: some path (alignment of `x` to the profile) has
+weight equal to the Viterbi value. Under nonnegative weights this attained value is the
+largest path weight (`pathProb_le_viterbi`); without that hypothesis attainment alone
+does not imply maximality. -/
 theorem exists_pathProb_eq_viterbi (x : List α) :
     ∃ A ∈ alignmentsOf x (columns L), h.pathProb A = h.viterbi x :=
   h.toAutomaton.exists_alignWeight_eq_maxDP _ x _
