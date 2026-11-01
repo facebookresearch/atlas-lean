@@ -22,7 +22,7 @@ Three SNPs in cells `0, 1, 1` (so `K = 2`), per-SNP values `1, 2, 3`.
 * Transform instances: with transform length `N = 3 = 2K - 1` (the smallest allowed),
   `autocorrDFT` returns `5` and `26`, and the pair counts `2` and `5`.
 * Weighted LD: two individuals with genotypes `(0, 1, 2)` and `(2, 1, 0)` and unit weights;
-  the transform algorithm equals the brute-force sum, which is evaluated directly as `-4`.
+  the transform algorithm equals the brute-force sum, which is evaluated directly as `-2`.
 -/
 
 @[expose] public section
