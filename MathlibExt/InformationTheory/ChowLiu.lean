@@ -21,7 +21,7 @@ a variable without a parent. A `DependenceForest` records the parent map togethe
 that strictly increases from parent to child, which certifies acyclicity; a dependence tree is
 the case of a single parentless variable.
 
-Chow and Liu show that the Kullback–Leibler divergence of `P_τ` from `P` is
+Chow and Liu show that the Kullback–Leibler divergence of `P` from `P_τ` is
 `D(P ‖ P_τ) = ∑_i H(X_i) - H(X) - ∑_i I(X_i; X_{j(i)})`, so the best dependence tree maximizes the
 total mutual information of its edges, which makes it a maximum-weight spanning tree for the
 weights `I(X_i; X_k)`. Information is in bits.
@@ -30,7 +30,7 @@ weights `I(X_i; X_k)`. Information is in bits.
 
 * `DependenceForest.sum_approx`: `P_τ` is a probability law (`∑_x P_τ(x) = 1`), packaged as
   `DependenceForest.approxPMF`; `DependenceForest.approx_pos` shows `P ≪ P_τ`.
-* `DependenceForest.divergence_eq_klDiv`: `divergence` is Mathlib's `klDiv` of `P_τ` from `P`,
+* `DependenceForest.divergence_eq_klDiv`: `divergence` is Mathlib's `klDiv` of `P` relative to `P_τ`,
   in bits.
 * `DependenceForest.divergence_eq` (**Chow–Liu identity**):
   `D(P ‖ P_τ) = ∑_i H(X_i) - H(X) - ∑_i I(X_i; X_{j(i)})`.
@@ -256,12 +256,11 @@ noncomputable def weight (τ : DependenceForest ι) (p : PMF (∀ i, α i)) : �
     | none => 0
     | some j => finiteMutualInformation (p.map fun y ↦ (y i, y j))
 
-/-- The divergence `D(P ‖ P_τ) = ∑_x P(x) log₂ (P(x) / P_τ(x))` of Chow–Liu's approximation from
-`P`, in bits (`divergence_eq_klDiv`). -/
+/-- The divergence `D(P ‖ P_τ) = ∑_x P(x) log₂ (P(x) / P_τ(x))` of `P` from Chow–Liu's approximation, in bits (`divergence_eq_klDiv`). -/
 noncomputable def divergence (τ : DependenceForest ι) (p : PMF (∀ i, α i)) : ℝ :=
   ∑ x, (p x).toReal * logb 2 ((p x).toReal / τ.approx p x)
 
-/-- `divergence` is Mathlib's Kullback–Leibler divergence `klDiv` of `P_τ` from `P`, converted to
+/-- `divergence` is Mathlib's Kullback–Leibler divergence `klDiv` of `P` relative to `P_τ`, converted to
 bits; the finite alphabet carries the discrete σ-algebra. -/
 theorem divergence_eq_klDiv (τ : DependenceForest ι) (p : PMF (∀ i, α i)) :
     letI : MeasurableSpace (∀ i, α i) := ⊤
@@ -324,7 +323,7 @@ theorem divergence_eq (τ : DependenceForest ι) (p : PMF (∀ i, α i)) :
     ← Finset.sum_mul, ← Finset.sum_mul, div_eq_iff hlog, weight]
   linear_combination shannonEntropy_mul_log_two p
 
-/-- The divergence of Chow–Liu's approximation is nonnegative, so
+/-- The divergence of `P` from Chow–Liu's approximation is nonnegative, so
 `∑_i I(X_i; X_{j(i)}) ≤ ∑_i H(X_i) - H(X)` for every dependence forest. -/
 theorem divergence_nonneg (τ : DependenceForest ι) (p : PMF (∀ i, α i)) :
     0 ≤ τ.divergence p := by

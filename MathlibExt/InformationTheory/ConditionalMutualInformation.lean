@@ -211,7 +211,7 @@ private theorem cmiRefPMF_eq_zero {α β γ : Type*} [Fintype α] [Fintype β] [
   · exact le_antisymm ((le_map_apply p (fun t ↦ (t.1, t.2.2)) t).trans h.le) bot_le
   · exact le_antisymm ((le_map_apply p (fun t ↦ t.2) t).trans h.le) bot_le
 
-/-- `I(X; Y | Z)` is the divergence of the reference law from `p`, in bits. -/
+/-- `I(X; Y | Z)` is the divergence of `p` from the reference law, in bits. -/
 private theorem cmi_eq_klDiv {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
     (p : PMF (α × β × γ)) :
     letI : MeasurableSpace (α × β × γ) := ⊤
