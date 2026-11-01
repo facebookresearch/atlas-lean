@@ -18,6 +18,11 @@
     },
     {
       "path": "README.md",
+      "pattern": "alt=\"Lean v[0-9]+\\.[0-9]+\\.[0-9]+\"",
+      "replacement": "alt=\"Lean {target}\""
+    },
+    {
+      "path": "README.md",
       "pattern": "lean4/releases/tag/v[0-9]+\\.[0-9]+\\.[0-9]+",
       "replacement": "lean4/releases/tag/{target}"
     }

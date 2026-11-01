@@ -23,6 +23,8 @@ CONFIG = {
     "doc_replacements": [
         {"path": "README.md", "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
          "replacement": "Lean-{target}"},
+        {"path": "README.md", "pattern": 'alt="Lean v[0-9]+\\.[0-9]+\\.[0-9]+"',
+         "replacement": 'alt="Lean {target}"'},
     ],
 }
 
@@ -98,7 +100,8 @@ def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitiv
         '[[require]]\nname = "%s"\nrev = "%s"' % (d["name"], tag) for d in CONFIG["deps"]
     )
     (root / "lakefile.toml").write_text('name = "fixture"\n\n' + requires + "\n")
-    (root / "README.md").write_text("badge Lean-v4.35.0 end\n")
+    (root / "README.md").write_text(
+        'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
     (root / "BACKPORTS.md").write_text("The repository now pins Mathlib and Lean `v4.35.0`.\n")
     direct = []
     for dep in CONFIG["deps"]:
@@ -169,6 +172,8 @@ class EditTests(unittest.TestCase):
             changed = apply_pin_edits(root, CONFIG, "v4.35.0", "v4.36.0")
             self.assertEqual(current_tag(root, CONFIG), "v4.36.0")
             self.assertIn("Lean-v4.36.0", (root / "README.md").read_text())
+            self.assertIn('alt="Lean v4.36.0"', (root / "README.md").read_text())
+            self.assertNotIn('alt="Lean v4.35.0"', (root / "README.md").read_text())
             self.assertIn("README.md", changed)
 
     def test_apply_pin_edits_updates_pin_policy_constants(self):
@@ -186,6 +191,9 @@ class EditTests(unittest.TestCase):
                 policy_src.read_text())
             changed = apply_pin_edits(root, real_config, "v4.35.0", "v4.36.0", shas)
             self.assertIn("scripts/check_lake_surface.py", changed)
+            readme = (root / "README.md").read_text()
+            self.assertIn('alt="Lean v4.36.0"', readme)
+            self.assertNotIn('alt="Lean v4.35.0"', readme)
             policy = (root / real_config["pin_policy"]["path"]).read_text()
             self.assertIn('"v4.36.0"', policy)
             self.assertIn(shas["mathlib"], policy)
