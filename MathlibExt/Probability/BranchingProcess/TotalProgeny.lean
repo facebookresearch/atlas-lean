@@ -29,6 +29,9 @@ progeny `T` is the first time this walk hits `0` (the Łukasiewicz path; Dwass 1
 Hofstad 2017, ch. 3). The steps `ξ_i` are i.i.d. with the offspring law `ν`.
 
 This file works with the first `n` steps `x : Fin n → ℕ`, whose joint law is `ν^{⊗n}`.
+The measure statements below assume only `[IsFiniteMeasure ν]`, so they are
+finite-measure identities: the stated event masses need not be probabilities. When `ν`
+is a probability measure they are the probabilities `P(T = n)` and `P(S_n = n - k)`.
 The event `{T = n}` is `{x | ∑ x_i + k = n ∧ IsFirstPassage k n x}`, where `IsFirstPassage k n x`
 says that the walk stays positive at the times `j < n`.
 
@@ -42,7 +45,8 @@ says that the walk stays positive at the times `j < n`.
   `∏ p(x_i)` over first-passage sequences ending at `0` at time `n` and `W_p` over all sequences
   ending at `0` at time `n`.
 * `natCast_mul_measure_firstPassage`: **Otter–Dwass formula** `n · P(T = n) = k · P(S_n = n - k)`
-  for i.i.d. offspring numbers with law `ν`, where `S_n = ξ_1 + ⋯ + ξ_n`.
+  for i.i.d. offspring numbers with law `ν` (a probability measure; as stated it is the
+  finite-measure identity), where `S_n = ξ_1 + ⋯ + ξ_n`.
 * `hittingWeight_poisson_one`: the **Borel law** — for Poisson(`r`) offspring and one ancestor,
   `P(T = n) = e^{-rn} (rn)^{n-1} / n!` (`n ≥ 1`); `natCast_mul_hittingWeight_poisson` gives the
   Borel–Tanner law for `k` ancestors.
@@ -379,7 +383,8 @@ private theorem measure_pi_eq_sum_of_subset {n : ℕ} (s : Finset (Fin n → ℕ
   simp [Measure.pi_singleton]
 
 /-- Under `ν^{⊗n}`, the event that the walk from `k` first hits `0` at time `n` has
-probability `H_p(k, n)` with `p(j) = ν{j}`. -/
+measure `H_p(k, n)` with `p(j) = ν{j}`. When `ν` is a probability measure this is the
+probability `P(T = n)`. -/
 theorem measure_firstPassage (k n : ℕ) :
     (Measure.pi fun _ : Fin n => ν) {x | ∑ i, x i + k = n ∧ IsFirstPassage k n x} =
       hittingWeight (fun j => ν {j}) k n := by
@@ -388,8 +393,9 @@ theorem measure_firstPassage (k n : ℕ) :
   simp only [mem_filter, Nat.mem_antidiagonalTuple]
   exact ⟨by omega, hx⟩
 
-/-- Under `ν^{⊗n}`, the event `ξ_1 + ⋯ + ξ_n + k = n` has probability `W_p(k, n)` with
-`p(j) = ν{j}`. -/
+/-- Under `ν^{⊗n}`, the event `ξ_1 + ⋯ + ξ_n + k = n` has measure `W_p(k, n)` with
+`p(j) = ν{j}`. When `ν` is a probability measure this is the probability
+`P(ξ_1 + ⋯ + ξ_n = n - k)`. -/
 theorem measure_walk (k n : ℕ) :
     (Measure.pi fun _ : Fin n => ν) {x | ∑ i, x i + k = n} =
       walkWeight (fun j => ν {j}) k n := by
@@ -399,7 +405,10 @@ theorem measure_walk (k n : ℕ) :
   exact ⟨by omega, hx⟩
 
 /-- **Otter–Dwass formula.** For i.i.d. offspring numbers with law `ν` and `k` ancestors,
-`n · P(T = n) = k · P(ξ_1 + ⋯ + ξ_n = n - k)` (Otter 1949; Dwass 1969). -/
+the finite-measure identity
+`n · P(T = n) = k · P(ξ_1 + ⋯ + ξ_n = n - k)` holds as an identity of event masses
+(Otter 1949; Dwass 1969); the two sides are probabilities when `ν` is a probability
+measure. -/
 theorem natCast_mul_measure_firstPassage (k n : ℕ) :
     (n : ℝ≥0∞) * (Measure.pi fun _ : Fin n => ν)
         {x | ∑ i, x i + k = n ∧ IsFirstPassage k n x} =
