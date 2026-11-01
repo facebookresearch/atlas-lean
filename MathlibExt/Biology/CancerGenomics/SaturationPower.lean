@@ -90,10 +90,10 @@ private theorem concentration (n : ℕ) {p d : ℝ} (hn : 0 < n) (hp : 0 ≤ p)
     calc
       _ = ∑ i ∈ s, ((n : ℝ) * d) ^ 2 * binomPmf n p i := mul_sum _ _ _
       _ ≤ ∑ i ∈ s, ((i : ℝ) - n * p) ^ 2 * binomPmf n p i :=
-        sum_le_sum fun i hi => mul_le_mul_of_nonneg_right (hdev i hi) (binomPmf_nonneg hp hp') i
+        sum_le_sum fun i hi => mul_le_mul_of_nonneg_right (hdev i hi) (binomPmf_nonneg hp hp' i)
       _ ≤ ∑ i ∈ range (n + 1), ((i : ℝ) - n * p) ^ 2 * binomPmf n p i :=
         sum_le_sum_of_subset_of_nonneg hs fun i _ _ =>
-          mul_nonneg (sq_nonneg _) (binomPmf_nonneg hp hp') i
+          mul_nonneg (sq_nonneg _) (binomPmf_nonneg hp hp' i)
       _ = n * p * (1 - p) := pmf_variance n p
   have hquot : (n : ℝ) * p * (1 - p) / ((n : ℝ) * d) ^ 2 =
       (p * (1 - p) / d ^ 2) / n := by
