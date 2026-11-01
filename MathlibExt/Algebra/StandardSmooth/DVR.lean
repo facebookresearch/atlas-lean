@@ -35,21 +35,21 @@ public import Mathlib.RingTheory.RingHom.StandardSmooth
 public import Mathlib.RingTheory.DiscreteValuationRing.TFAE
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 import Mathlib.RingTheory.Filtration
-public import Mathlib.RingTheory.Ideal.Over
+import Mathlib.RingTheory.Ideal.Over
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
-public import Mathlib.RingTheory.Unramified.LocalRing
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.Flat.Stability
-public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.RingTheory.Ideal.Quotient.Basic
-public import Mathlib.RingTheory.Polynomial.Basic
-public import Mathlib.Algebra.MvPolynomial.Equiv
+import Mathlib.RingTheory.Unramified.LocalRing
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.Stability
+import Mathlib.RingTheory.Ideal.Quotient.Operations
+import Mathlib.RingTheory.Ideal.Quotient.Basic
+import Mathlib.RingTheory.Polynomial.Basic
+import Mathlib.Algebra.MvPolynomial.Equiv
 import Mathlib.RingTheory.Jacobson.Ring
-public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
+import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.RingTheory.Ideal.Basic
-public import Mathlib.RingTheory.FiniteType
-public import Mathlib.RingTheory.Etale.Basic
-public import Mathlib.RingTheory.PrincipalIdealDomain
+import Mathlib.RingTheory.FiniteType
+import Mathlib.RingTheory.Etale.Basic
+import Mathlib.RingTheory.PrincipalIdealDomain
 import Mathlib.Tactic.ByContra
 public import Mathlib.Algebra.Regular.SMul
 import Mathlib.Algebra.Polynomial.Basis
