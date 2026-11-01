@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.SelectionScan.SelectiveSweep
+public import Mathlib.Probability.IdentDistrib
 public import Mathlib.MeasureTheory.Measure.Map
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
@@ -64,13 +65,15 @@ namespace MathlibExt.Biology.PopulationGenetics.SelectionScan
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X Y : Ω → ℝ}
 
 /-- The pair of statistics `(X, Y)` is exchangeable under `μ`: the joint law is unchanged by
-swapping the two coordinates. This is the null hypothesis of a two-group haplotype test. -/
+swapping the two coordinates. This is the null hypothesis of a two-group haplotype test.
+Defined as `IdentDistrib` of the two orderings, so the measurability of the joint laws is
+part of the hypothesis rather than restored separately in each theorem. -/
 def IsExchangeablePair (μ : Measure Ω) (X Y : Ω → ℝ) : Prop :=
-  μ.map (fun ω => (X ω, Y ω)) = μ.map (fun ω => (Y ω, X ω))
+  ProbabilityTheory.IdentDistrib (fun ω => (X ω, Y ω)) (fun ω => (Y ω, X ω)) μ μ
 
 namespace IsExchangeablePair
 
-theorem swap (h : IsExchangeablePair μ X Y) : IsExchangeablePair μ Y X := Eq.symm h
+theorem swap (h : IsExchangeablePair μ X Y) : IsExchangeablePair μ Y X := ProbabilityTheory.IdentDistrib.symm h
 
 /-- Applying the same measurable function to both statistics preserves exchangeability. -/
 theorem map_comp (h : IsExchangeablePair μ X Y) (hX : Measurable X) (hY : Measurable Y)
@@ -78,12 +81,7 @@ theorem map_comp (h : IsExchangeablePair μ X Y) (hX : Measurable X) (hY : Measu
     IsExchangeablePair μ (fun ω => f (X ω)) (fun ω => f (Y ω)) := by
   have hff : Measurable fun p : ℝ × ℝ => (f p.1, f p.2) :=
     (hf.comp measurable_fst).prodMk (hf.comp measurable_snd)
-  unfold IsExchangeablePair at h ⊢
-  rw [show (fun ω => (f (X ω), f (Y ω)))
-      = (fun p : ℝ × ℝ => (f p.1, f p.2)) ∘ (fun ω => (X ω, Y ω)) from rfl,
-    show (fun ω => (f (Y ω), f (X ω)))
-      = (fun p : ℝ × ℝ => (f p.1, f p.2)) ∘ (fun ω => (Y ω, X ω)) from rfl,
-    ← Measure.map_map hff (hX.prodMk hY), ← Measure.map_map hff (hY.prodMk hX), h]
+  exact ProbabilityTheory.IdentDistrib.comp h hff
 
 /-- The difference of an exchangeable pair has a symmetric law. -/
 theorem map_sub_neg (h : IsExchangeablePair μ X Y) (hX : Measurable X) (hY : Measurable Y) :
@@ -92,7 +90,7 @@ theorem map_sub_neg (h : IsExchangeablePair μ X Y) (hX : Measurable X) (hY : Me
   calc μ.map (fun ω => X ω - Y ω)
       = (μ.map (fun ω => (X ω, Y ω))).map (fun p : ℝ × ℝ => p.1 - p.2) :=
         (Measure.map_map hg (hX.prodMk hY)).symm
-    _ = (μ.map (fun ω => (Y ω, X ω))).map (fun p : ℝ × ℝ => p.1 - p.2) := by rw [h]
+    _ = (μ.map (fun ω => (Y ω, X ω))).map (fun p : ℝ × ℝ => p.1 - p.2) := by rw [ProbabilityTheory.IdentDistrib.map_eq h]
     _ = μ.map (fun ω => Y ω - X ω) := Measure.map_map hg (hY.prodMk hX)
     _ = μ.map (fun ω => -(X ω - Y ω)) := by simp [neg_sub]
 

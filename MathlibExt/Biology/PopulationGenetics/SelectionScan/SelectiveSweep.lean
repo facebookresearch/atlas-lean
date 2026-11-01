@@ -37,9 +37,12 @@ carriers identical over a window of genetic length `d` exactly when neither of t
 lineages recombined out of the sweeping background. With recombination events falling on each
 lineage as a Poisson process of rate `r * d` per unit time, the pair is identical with
 probability `exp (-2 (r d) T)`: this is `sweepEhh r T d`. Integrating over the window length
-gives the integrated haplotype homozygosity `ihh r T = (2 r T)⁻¹`, and the integrated
-haplotype score `ihs r T_A T_D = log (ihh r T_A / ihh r T_D) = log (T_D / T_A)`, negative
-exactly when the derived allele's star is the younger one.
+in one direction gives the one-sided integrated haplotype homozygosity
+`ihh r T = (2 r T)⁻¹`; Voight et al.'s cited iHH integrates in both directions, which is
+`ihh_twoSided r T = (r T)⁻¹` (twice the one-sided value). The integrated haplotype score
+`ihs r T_A T_D = log (ihh r T_A / ihh r T_D) = log (T_D / T_A)` is the same for the
+one-sided and two-sided versions, since the factor of two cancels in the ratio; it is
+negative exactly when the derived allele's star is the younger one.
 
 All statements about `sweepEhh`, `ihh` and `ihs` are statements about this deterministic
 star-genealogy model; they are not statements about expectations of the sample statistics
@@ -58,7 +61,8 @@ quantities, not `E[log(iHH_A/iHH_D)]`).
 * `sweepEhh_eq_poisson_sq`: the star-genealogy pair identity probability is the square of the
   probability that a Poisson count of mean `r d T` vanishes.
 * `sweepEhh_antitone`, `tendsto_sweepEhh_atTop`: EHH decays in the window length.
-* `ihh_eq`: `∫_0^∞ exp (-2 (r d) T) dd = (2 r T)⁻¹`.
+* `ihh_eq`: `∫_0^∞ exp (-2 (r d) T) dd = (2 r T)⁻¹` for the one-sided integral;
+  `ihh_twoSided_eq`: the two-sided (Voight) integral is `(r T)⁻¹`.
 * `ihs_eq_log_div`, `ihs_neg_iff`: `ihs = log (T_D / T_A)`, negative exactly when `T_D < T_A`.
 * `sweepEhh_sweepDuration_full`: after a complete sweep, `EHH(d) = (2N - 1) ^ (-(4 r d / s))`.
 
@@ -224,10 +228,23 @@ theorem tendsto_sweepEhh_atTop {r T : ℝ} (hr : 0 < r) (hT : 0 < T) :
   congr 1
   ring
 
-/-- The integrated haplotype homozygosity: the area under the EHH decay curve. -/
+/-- The one-sided integrated haplotype homozygosity: the area under the EHH decay curve
+in one direction from the focal site. Voight et al.'s iHH integrates in both directions;
+see `ihh_twoSided`. -/
 noncomputable def ihh (r T : ℝ) : ℝ := ∫ d in Ioi (0 : ℝ), sweepEhh r T d
 
-/-- In the star-genealogy model the integrated haplotype homozygosity is `1 / (2 r T)`. -/
+/-- The two-sided integrated haplotype homozygosity of Voight et al.: the sum of the
+one-sided integrals in the two chromosome directions. -/
+noncomputable def ihh_twoSided (r T : ℝ) : ℝ := 2 * ihh r T
+
+/-- In the star-genealogy model the two-sided integrated haplotype homozygosity is
+`1 / (r T)`. -/
+theorem ihh_twoSided_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh_twoSided r T = (r * T)⁻¹ := by
+  rw [ihh_twoSided, ihh_eq hr hT, show (2 : ℝ) * r * T = 2 * (r * T) by ring, mul_inv,
+    ← mul_assoc, mul_inv_cancel₀ two_ne_zero, one_mul]
+
+/-- In the star-genealogy model the one-sided integrated haplotype homozygosity is
+`1 / (2 r T)`. -/
 theorem ihh_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh r T = (2 * r * T)⁻¹ := by
   have hb : (0 : ℝ) < 2 * r * T := by positivity
   have hcongr : ∀ d ∈ Ioi (0 : ℝ), sweepEhh r T d = (fun y : ℝ => exp (-y)) ((2 * r * T) * d) := by
@@ -244,7 +261,8 @@ theorem ihh_pos {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : 0 < ihh r T := by
 
 /-- The integrated haplotype score of Voight et al. (2006): the log ratio of the integrated
 haplotype homozygosities of the ancestral and the derived allele, whose star genealogies have
-ages `T_A` and `T_D`. -/
+ages `T_A` and `T_D`. The factor of two between the one-sided and two-sided integrals
+cancels in this ratio. -/
 noncomputable def ihs (r T_A T_D : ℝ) : ℝ := log (ihh r T_A / ihh r T_D)
 
 /-- In the star-genealogy model the integrated haplotype score is the log ratio of the two

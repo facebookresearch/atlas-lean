@@ -31,7 +31,9 @@ theorem measurable_stat : Measurable stat := Real.measurable_exp
 theorem stat_pos (ω : ℝ) : 0 < stat ω := Real.exp_pos ω
 
 /-- Equal statistics form an exchangeable pair (the non-vacuity witness). -/
-theorem isExchangeablePair_stat (μ : Measure ℝ) : IsExchangeablePair μ stat stat := rfl
+theorem isExchangeablePair_stat (μ : Measure ℝ) : IsExchangeablePair μ stat stat :=
+  ProbabilityTheory.IdentDistrib.refl
+    (measurable_stat.prodMk measurable_stat).aemeasurable
 
 example (μ : Measure ℝ) (t : ℝ) :
     μ {ω | t ≤ stat ω - stat ω} = μ {ω | stat ω - stat ω ≤ -t} :=

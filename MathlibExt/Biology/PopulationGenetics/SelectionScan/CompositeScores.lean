@@ -19,12 +19,16 @@ Two results about statistics that combine many sites or many tests into one scor
 
 **The composite of multiple signals (CMS, Grossman et al. 2010).** Several selection-scan
 statistics are observed at a site. Conditionally on the hypothesis — the site is under
-selection, or it is neutral — they are modelled as independent, each with its own density
-under each hypothesis. `CompositeModel` holds this data: a prior probability of selection and
-the two families of positive densities. Bayes' rule then turns the posterior odds into the
-prior odds times the product of the per-statistic Bayes factors, which is exactly the CMS
-score; on the log scale the evidence is additive. The posterior is a strictly increasing
-function of the score, so ranking sites by CMS and by posterior probability agree.
+selection, or it is neutral — they are modelled as independent, each with its own positive
+score function under each hypothesis. `CompositeModel` holds this data: a prior probability
+of selection and the two families of positive score functions. The `posterior` below is the
+normalized ratio of the products of these scores; it is a genuine Bayes posterior only
+when each score function is a normalized density with respect to a common base measure
+(the normalization hypothesis carried by `sum_joint_eq_one`). Bayes' rule then turns the
+posterior odds into the prior odds times the product of the per-statistic Bayes factors,
+which is exactly the CMS score; on the log scale the evidence is additive. The posterior is
+a strictly increasing function of the score, so ranking sites by CMS and by posterior
+probability agree.
 
 **SweepFinder (Kim and Stephan 2002; Nielsen et al. 2005).** A sweep at position `x` of
 strength `α > 0` leaves a lineage at position `y` unaffected with probability
@@ -71,9 +75,11 @@ namespace MathlibExt.Biology.PopulationGenetics.SelectionScan
 /-! ### The composite of multiple signals -/
 
 /-- A composite-score model (Grossman et al. 2010): a prior probability `prior` that the site
-is under selection, and for each of the `k` component statistics a positive density `sel`
-under selection and `neut` under neutrality. Conditionally on the hypothesis the components
-are independent, which is what makes the joint densities the products below. -/
+is under selection, and for each of the `k` component statistics a positive score function
+`sel` under selection and `neut` under neutrality (unnormalized densities: only positivity is
+assumed). Conditionally on the hypothesis the components are independent, which is what
+makes the joint scores the products below. The Bayes/posterior reading of `posterior`
+requires the additional normalization hypothesis of `sum_joint_eq_one`. -/
 structure CompositeModel (k : ℕ) (σ : Fin k → Type*) where
   /-- The prior probability that the site is under selection. -/
   prior : ℝ
@@ -81,27 +87,30 @@ structure CompositeModel (k : ℕ) (σ : Fin k → Type*) where
   prior_pos : 0 < prior
   /-- The prior is a probability strictly between `0` and `1`. -/
   prior_lt_one : prior < 1
-  /-- The density of component `i` under selection. -/
+  /-- The unnormalized score function of component `i` under selection. -/
   sel : ∀ i, σ i → ℝ
-  /-- The density of component `i` under neutrality. -/
+  /-- The unnormalized score function of component `i` under neutrality. -/
   neut : ∀ i, σ i → ℝ
-  /-- Component densities under selection are positive. -/
+  /-- Component score functions under selection are positive. -/
   sel_pos : ∀ i x, 0 < sel i x
-  /-- Component densities under neutrality are positive. -/
+  /-- Component score functions under neutrality are positive. -/
   neut_pos : ∀ i x, 0 < neut i x
 
 namespace CompositeModel
 
 variable {k : ℕ} {σ : Fin k → Type*} (M : CompositeModel k σ) (x : ∀ i, σ i)
 
-/-- The Bayes factor of component `i` at the observed value: the ratio of its density under
-selection to its density under neutrality. -/
+/-- The Bayes factor of component `i` at the observed value: the ratio of its score
+function under selection to its score function under neutrality. -/
 noncomputable def bayesFactor (i : Fin k) (y : σ i) : ℝ := M.sel i y / M.neut i y
 
 /-- The CMS score: the product of the component Bayes factors. -/
 noncomputable def cms : ℝ := ∏ i, M.bayesFactor i (x i)
 
-/-- The posterior probability of selection given the observed component values. -/
+/-- The normalized composite score: the normalized ratio of the products of the
+component score functions. This is the posterior probability of selection given the
+observed component values when the score functions are normalized densities
+(see `sum_joint_eq_one` for the normalization hypothesis). -/
 noncomputable def posterior : ℝ :=
   M.prior * (∏ i, M.sel i (x i)) /
     (M.prior * (∏ i, M.sel i (x i)) + (1 - M.prior) * ∏ i, M.neut i (x i))
@@ -144,8 +153,10 @@ theorem posterior_mem_Ioo : M.posterior x ∈ Set.Ioo (0 : ℝ) 1 := by
   · rw [posterior, div_lt_one hD]
     nlinarith
 
-/-- Bayes' rule for conditionally independent components: the posterior odds of selection are
-the prior odds times the CMS score. -/
+/-- Bayes-rule identity for conditionally independent components: the posterior odds of
+selection are the prior odds times the CMS score. This is an algebraic identity for the
+normalized score; it is a genuine Bayes rule only under the normalization hypothesis of
+`sum_joint_eq_one`. -/
 theorem posterior_odds :
     M.posterior x / (1 - M.posterior x) = M.prior / (1 - M.prior) * M.cms x := by
   have hP := selProd_pos M x
@@ -197,8 +208,10 @@ theorem posterior_lt_posterior_of_cms_lt (y : ∀ i, σ i) (h : M.cms x < M.cms 
   have hpos : 0 < 1 + (1 - M.prior) / M.prior / M.cms y := by positivity
   exact one_div_lt_one_div_of_lt hpos (by linarith)
 
-/-- The model is a probability model: with normalised component densities, the joint
-distribution of the observations sums to one. -/
+/-- The model is a probability model: with normalised component score functions (each a
+density with respect to a common base measure), the joint distribution of the
+observations sums to one. This is the validity hypothesis that makes `posterior` a
+genuine Bayes posterior. -/
 theorem sum_joint_eq_one [∀ i, Fintype (σ i)]
     (hsel : ∀ i, ∑ y, M.sel i y = 1) (hneut : ∀ i, ∑ y, M.neut i y = 1) :
     ∑ z : (∀ i, σ i),

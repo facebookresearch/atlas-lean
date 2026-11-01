@@ -32,9 +32,12 @@ and in units of `2N` generations with `ρ = 4Nr` the scaled recombination rate p
 lineages of a pair carry recombination events at total rate `ρ * d` while they are distinct, so
 given a pair coalescence time `T₂` the probability that no recombination falls on the pair's
 genealogy within distance `d` is `exp (-(ρ * d) * T₂)`; for `T₂` exponential of rate `1` its
-expectation is `(1 + ρ * d)⁻¹`. This is **not** `E[EHH(d)]`: a lineage that recombines may carry
-the same alleles anyway (by recombining onto an identical haplotype, or by coalescing back), so
-the quantity computed here is a lower bound for the expected EHH rather than its value.
+expectation is `(1 + ρ * d)⁻¹`. This is **not** `E[EHH(d)]` in general. In a mutation-free
+model (no mutations on the descendant branches) no recombination implies identical windows,
+so the quantity is a lower bound for the expected EHH; without that assumption the bound
+is not established, since mutations can make two haplotypes differ even when neither
+recombined. A recombined lineage may also carry the same alleles anyway (by recombining
+onto an identical haplotype, or by coalescing back).
 
 ## Main results
 
@@ -240,9 +243,12 @@ genetic distance `d` of the core, given that the pair coalesces at time `t` (tim
 `2N` generations, `ρ = 4Nr` the scaled recombination rate per site): the two lineages carry
 recombination events at total rate `ρ * d` until they coalesce.
 
-This is a lower bound for the probability that the two haplotypes are identical over the
-window — a recombined lineage may still carry the same alleles — so it is a lower bound for
-the expected EHH, not its value. -/
+In a mutation-free model this is a lower bound for the probability that the two haplotypes
+are identical over the window — no recombination then implies identical windows, while a
+recombined lineage may still carry the same alleles — so it is a lower bound for the
+expected EHH, not its value. Without the mutation-free assumption the bound is not
+established: mutations on either descendant branch can make the haplotypes differ even
+with no recombination. -/
 noncomputable def pairNoRecomb (ρ d t : ℝ) : ℝ := exp (-(ρ * d) * t)
 
 theorem pairNoRecomb_pos (ρ d t : ℝ) : 0 < pairNoRecomb ρ d t := exp_pos _
@@ -267,8 +273,9 @@ theorem integrable_pairNoRecomb {ρ d : ℝ} (hρ : 0 ≤ ρ) (hd : 0 ≤ d) :
 
 /-- Averaging over the pair coalescence time `T₂`, which is exponential of rate `1` in units of
 `2N` generations under the neutral coalescent, the probability that no recombination falls on
-the pair's genealogy within distance `d` is `1 / (1 + ρ d)`. Since a recombined lineage can
-still carry an identical haplotype, this is a lower bound for `E[EHH(d)]`. -/
+the pair's genealogy within distance `d` is `1 / (1 + ρ d)`. In a mutation-free model, since
+a recombined lineage can still carry an identical haplotype, this is a lower bound for
+`E[EHH(d)]`; without that assumption the bound is not established. -/
 theorem integral_pairNoRecomb {ρ d : ℝ} (hρ : 0 ≤ ρ) (hd : 0 ≤ d) :
     ∫ t, pairNoRecomb ρ d t ∂(expMeasure 1) = (1 + ρ * d)⁻¹ := by
   have ht : -(ρ * d) < 1 := by nlinarith [mul_nonneg hρ hd]
