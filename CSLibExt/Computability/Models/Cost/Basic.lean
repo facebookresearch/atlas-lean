@@ -45,15 +45,15 @@ structure CostM (α : Type) where
   cost : Cost
 
 /-- Pure: no cost. -/
-def CostM.pure (a : α) : CostM α := ⟨a, Cost.zero⟩
+def CostM.pure {α : Type} (a : α) : CostM α := ⟨a, Cost.zero⟩
 
 /-- Sequential composition: run `x`, then `f` on its value, adding costs. -/
-def CostM.bind (x : CostM α) (f : α → CostM β) : CostM β :=
+def CostM.bind {α β : Type} (x : CostM α) (f : α → CostM β) : CostM β :=
   let y := f x.value
   ⟨y.value, x.cost.add y.cost⟩
 
 /-- Charge `c` to a computation. -/
-def CostM.charge (c : Cost) (x : CostM α) : CostM α :=
+def CostM.charge {α : Type} (c : Cost) (x : CostM α) : CostM α :=
   ⟨x.value, c.add x.cost⟩
 
 /-- Worked example: charging 3 time steps, then 2 more, costs 5. -/
