@@ -40,9 +40,10 @@ the **basic reproduction number** is its spectral radius `R₀ = ρ(F V⁻¹)`.
   eigenvalues of `F - V` have negative real part iff `R₀ < 1`.
 * `exists_re_pos_iff_one_lt_R0`: `F - V` has an eigenvalue with positive real part iff
   `R₀ > 1`.
-* `exists_locallyExponentiallyStable_of_R0_lt_one`: Theorem 2 of van den Driessche–Watmough,
-  stability half: if `R₀ < 1`, the disease-free equilibrium is locally (exponentially, hence
-  asymptotically) stable.
+* `globalSolution_decay_of_R0_lt_one`: Theorem 2 of van den Driessche–Watmough,
+  stability half, conditional decay form: if `R₀ < 1`, every global solution starting near
+  the disease-free equilibrium decays exponentially. This is not by itself local stability,
+  since solution existence is not proved here.
 * `exists_re_pos_jacobian_of_one_lt_R0`: Theorem 2, instability half, in spectral form: if
   `R₀ > 1`, the Jacobian at the disease-free equilibrium has an eigenvalue with positive real
   part. The nonlinear conclusion (instability of the equilibrium) additionally needs Lyapunov's
@@ -461,12 +462,14 @@ theorem isHurwitz_fromBlocks_zero₁₂_iff {A : Matrix ι ι ℝ} {C : Matrix �
     rcases mem_spectrum_fromBlocks_zero₁₂.1 hμ with h | h
     exacts [hA μ h, hD μ h]
 
-/-- **Threshold theorem, stability half** (van den Driessche–Watmough 2002, Theorem 2).
-Let `x₀` be an equilibrium of `x' = f(x)` on `ℝ^{ι ⊕ κ}` (infected compartments `ι`, the
-others `κ`), with `f` differentiable at `x₀` and Jacobian `[[F - V, 0], [C, D]]` as in their
-Lemma 1, where `F ≥ 0`, `V` is a nonsingular M-matrix and `D` is Hurwitz. If
-`R₀ = ρ(F V⁻¹) < 1`, then `x₀` is locally exponentially stable. -/
-theorem exists_locallyExponentiallyStable_of_R0_lt_one {f : (ι ⊕ κ → ℝ) → ι ⊕ κ → ℝ}
+/-- **Threshold theorem, stability half, conditional decay form** (van den Driessche–Watmough
+2002, Theorem 2). Let `x₀` be an equilibrium of `x' = f(x)` on `ℝ^{ι ⊕ κ}` (infected
+compartments `ι`, the others `κ`), with `f` differentiable at `x₀` and Jacobian
+`[[F - V, 0], [C, D]]` as in their Lemma 1, where `F ≥ 0`, `V` is a nonsingular M-matrix and
+`D` is Hurwitz. If `R₀ = ρ(F V⁻¹) < 1`, then every solution defined on all of `[0, ∞)`
+starting near `x₀` decays exponentially. Conditional on global solutions; solution
+existence is not proved here, so this is not by itself local exponential stability. -/
+theorem globalSolution_decay_of_R0_lt_one {f : (ι ⊕ κ → ℝ) → ι ⊕ κ → ℝ}
     {x₀ : ι ⊕ κ → ℝ} {F V : Matrix ι ι ℝ} {C : Matrix κ ι ℝ} {D : Matrix κ κ ℝ}
     (hf : f x₀ = 0)
     (hfJ : HasFDerivAt f
@@ -476,7 +479,7 @@ theorem exists_locallyExponentiallyStable_of_R0_lt_one {f : (ι ⊕ κ → ℝ) 
     ∃ δ K α : ℝ, 0 < δ ∧ 0 < K ∧ 0 < α ∧ ∀ x : ℝ → ι ⊕ κ → ℝ,
       (∀ t, 0 ≤ t → HasDerivAt x (f (x t)) t) → ‖x 0 - x₀‖ < δ →
         ∀ t, 0 ≤ t → ‖x t - x₀‖ ≤ K * Real.exp (-(α * t)) * ‖x 0 - x₀‖ :=
-  MathlibExt.Analysis.ODE.LinearizedStability.exists_locallyExponentiallyStable_of_hasFDerivAt
+  MathlibExt.Analysis.ODE.LinearizedStability.globalSolution_decay_of_hasFDerivAt
     hf hfJ (isHurwitz_fromBlocks_zero₁₂_iff.2 ⟨(isHurwitz_sub_iff_R0_lt_one hF hV).2 hR0, hD⟩)
 
 /-- **Threshold theorem, instability half, spectral form** (van den Driessche–Watmough 2002,

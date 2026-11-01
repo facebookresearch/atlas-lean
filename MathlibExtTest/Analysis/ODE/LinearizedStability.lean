@@ -49,12 +49,12 @@ theorem hasDerivAt_exp_smul (v : Fin 1 → ℝ) (t : ℝ) :
   have := ((Real.hasDerivAt_exp (-t)).comp t (hasDerivAt_neg t)).smul_const v
   simpa [neg_smul] using this
 
-/-- **Lyapunov's indirect method on `x' = -x`**: the origin is locally exponentially
-stable. -/
+/-- **Lyapunov's indirect method on `x' = -x`**: conditional exponential decay for global
+solutions (not by itself stability, since existence is not proved by the theorem). -/
 example : ∃ δ C α : ℝ, 0 < δ ∧ 0 < C ∧ 0 < α ∧ ∀ x : ℝ → Fin 1 → ℝ,
     (∀ t, 0 ≤ t → HasDerivAt x (-x t) t) → ‖x 0 - 0‖ < δ →
       ∀ t, 0 ≤ t → ‖x t - 0‖ ≤ C * Real.exp (-(α * t)) * ‖x 0 - 0‖ :=
-  exists_locallyExponentiallyStable_of_hasFDerivAt (f := fun x => -x) neg_zero
+  globalSolution_decay_of_hasFDerivAt (f := fun x => -x) neg_zero
     (hasFDerivAt_neg 0) isHurwitz_neg_one
 
 /-- The exponential bound for the Hurwitz matrix `-1`. -/

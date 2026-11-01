@@ -77,9 +77,10 @@ example : ∃ μ ∈ spectrum ℂ (((3 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) �
   (exists_re_pos_iff_one_lt_R0 (smul_one_nonneg (by norm_num))
     (isNonsingularMMatrix_smul_one one_pos)).2 (by rw [R0_smul_one_of_nonneg] <;> norm_num)
 
-/-- **Disease-free equilibrium, stability half.** For the model `x' = (β - γ) x` with one
-infected compartment and no other compartment (`κ = Fin 0`), `β = 1/2`, `γ = 1`
-(`R₀ = 1/2`), the equilibrium `0` is locally exponentially stable. -/
+/-- **Disease-free equilibrium, stability half, conditional decay form.** For the model
+`x' = (β - γ) x` with one infected compartment and no other compartment (`κ = Fin 0`),
+`β = 1/2`, `γ = 1` (`R₀ = 1/2`), every global solution starting near the equilibrium `0`
+decays exponentially. -/
 example (f : (Fin 1 ⊕ Fin 0 → ℝ) → Fin 1 ⊕ Fin 0 → ℝ) (hf : f 0 = 0)
     (hfJ : HasFDerivAt f (LinearMap.toContinuousLinearMap (Matrix.toLin'
       (fromBlocks ((1 / 2 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ) - (1 : ℝ) • 1) 0
@@ -87,7 +88,7 @@ example (f : (Fin 1 ⊕ Fin 0 → ℝ) → Fin 1 ⊕ Fin 0 → ℝ) (hf : f 0 = 
     ∃ δ K α : ℝ, 0 < δ ∧ 0 < K ∧ 0 < α ∧ ∀ x : ℝ → Fin 1 ⊕ Fin 0 → ℝ,
       (∀ t, 0 ≤ t → HasDerivAt x (f (x t)) t) → ‖x 0 - 0‖ < δ →
         ∀ t, 0 ≤ t → ‖x t - 0‖ ≤ K * Real.exp (-(α * t)) * ‖x 0 - 0‖ :=
-  exists_locallyExponentiallyStable_of_R0_lt_one hf hfJ (smul_one_nonneg (by norm_num))
+  globalSolution_decay_of_R0_lt_one hf hfJ (smul_one_nonneg (by norm_num))
     (isNonsingularMMatrix_smul_one one_pos) (fun μ hμ => by simp [spectrum.of_subsingleton] at hμ)
     (by rw [R0_smul_one_of_nonneg] <;> norm_num)
 

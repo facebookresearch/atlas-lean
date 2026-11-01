@@ -31,16 +31,20 @@ import Mathlib.Topology.Order.IntermediateValue
 # Linearized stability (Lyapunov's indirect method)
 
 Let `f : ℝⁿ → ℝⁿ` vanish at `x⋆` and be (Fréchet) differentiable there with Jacobian matrix
-`A`. If `A` is Hurwitz (every eigenvalue has negative real part), then `x⋆` is a locally
-exponentially stable equilibrium of `x' = f(x)`: there are `δ, C, α > 0` such that every
-solution with `‖x(0) - x⋆‖ < δ` satisfies `‖x(t) - x⋆‖ ≤ C e^{-α t} ‖x(0) - x⋆‖` for `t ≥ 0`.
-In particular `x⋆` is Lyapunov stable and attracts all solutions starting within `δ`, i.e. it
-is locally asymptotically stable.
+`A`. If `A` is Hurwitz (every eigenvalue has negative real part), then every solution of
+`x' = f(x)` defined on all of `[0, ∞)` with `‖x(0) - x⋆‖ < δ` satisfies
+`‖x(t) - x⋆‖ ≤ C e^{-α t} ‖x(0) - x⋆‖` for `t ≥ 0`, for some `δ, C, α > 0`.
+
+This is a conditional decay estimate for global solutions, not full local exponential
+stability in the standard sense: `HasFDerivAt` at `x⋆` gives no existence of solutions from
+nearby initial data, so the conclusion can hold vacuously at points where no global solution
+exists (e.g. a discontinuous vector field with no solution). It becomes stability once
+solution existence is supplied, e.g. under `C¹` / local Lipschitz hypotheses (Khalil 2002,
+Theorem 4.7), which are not proved here.
 
 Vectors are functions `ι → ℝ` with the sup norm; since all norms on `ℝⁿ` are equivalent, the
 statement does not depend on this choice (only the constants `δ` and `C` do). Only
-differentiability of `f` at `x⋆` is assumed (the classical statement assumes `f` is `C¹`), and
-no existence theorem for solutions is needed: the conclusion is about every solution.
+differentiability of `f` at `x⋆` is assumed (the classical statement assumes `f` is `C¹`).
 
 The converse instability statement (an eigenvalue with positive real part makes `x⋆` unstable)
 is not proved here.
@@ -49,7 +53,8 @@ is not proved here.
 
 * `Matrix.IsHurwitz.exists_norm_exp_smul_mulVec_le`: if `A` is Hurwitz, then
   `‖exp(t A) v‖ ≤ M e^{-α t} ‖v‖` for `t ≥ 0`, for some `M, α > 0`.
-* `exists_locallyExponentiallyStable_of_hasFDerivAt`: Lyapunov's indirect method.
+* `globalSolution_decay_of_hasFDerivAt`: conditional exponential decay for global solutions
+(Lyapunov's indirect method, stability half, without solution existence).
 
 ## References
 
@@ -459,12 +464,14 @@ private theorem interval_decay {ι : Type*} [Fintype ι] [DecidableEq ι]
     (hbound t (Set.right_mem_Icc.mpr ht)).trans (by gcongr; linarith)
   simpa [div_eq_mul_inv, ← exp_neg, mul_assoc, mul_comm, mul_left_comm] using hfinal
 
-/-- **Lyapunov's indirect method (linearized stability).** Let `f (x⋆) = 0` and let `f` be
-differentiable at `x⋆` with Jacobian matrix `A`. If `A` is Hurwitz, then `x⋆` is locally
-exponentially stable: for some `δ, C, α > 0`, every solution of `x' = f(x)` on `[0, ∞)` with
-`‖x(0) - x⋆‖ < δ` satisfies `‖x(t) - x⋆‖ ≤ C e^{-α t} ‖x(0) - x⋆‖` for all `t ≥ 0`
-(Khalil 2002, Theorem 4.7, which assumes `f` is `C¹` and concludes asymptotic stability). -/
-theorem exists_locallyExponentiallyStable_of_hasFDerivAt {f : (ι → ℝ) → ι → ℝ}
+/-- **Lyapunov's indirect method (linearized stability), conditional decay form.** Let
+`f (x⋆) = 0` and let `f` be differentiable at `x⋆` with Jacobian matrix `A`. If `A` is Hurwitz,
+then for some `δ, C, α > 0`, every solution of `x' = f(x)` on `[0, ∞)` with
+`‖x(0) - x⋆‖ < δ` satisfies `‖x(t) - x⋆‖ ≤ C e^{-α t} ‖x(0) - x⋆‖` for all `t ≥ 0`.
+This is conditional on the solution being defined on all of `[0, ∞)`; it does not assert
+solution existence, so it is not by itself local exponential stability (Khalil 2002,
+Theorem 4.7, which assumes `f` is `C¹` and concludes asymptotic stability). -/
+theorem globalSolution_decay_of_hasFDerivAt {f : (ι → ℝ) → ι → ℝ}
     {xstar : ι → ℝ} {A : Matrix ι ι ℝ} (hf : f xstar = 0)
     (hfA : HasFDerivAt f (LinearMap.toContinuousLinearMap (Matrix.toLin' A)) xstar)
     (hA : A.IsHurwitz) :
