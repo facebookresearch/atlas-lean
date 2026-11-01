@@ -1,8 +1,14 @@
 {
   "toolchain_repo": "leanprover/lean4",
   "deps": [
-    {"name": "mathlib", "repo": "leanprover-community/mathlib4"},
-    {"name": "cslib", "repo": "leanprover/cslib"}
+    {
+      "name": "mathlib",
+      "repo": "leanprover-community/mathlib4"
+    },
+    {
+      "name": "cslib",
+      "repo": "leanprover/cslib"
+    }
   ],
   "doc_replacements": [
     {
@@ -15,5 +21,22 @@
       "pattern": "lean4/releases/tag/v[0-9]+\\.[0-9]+\\.[0-9]+",
       "replacement": "lean4/releases/tag/{target}"
     }
-  ]
+  ],
+  "pin_policy": {
+    "path": "scripts/check_lake_surface.py",
+    "replacements": [
+      {
+        "pattern": "\"v[0-9]+\\.[0-9]+\\.[0-9]+\"",
+        "replacement": "\"{target}\""
+      },
+      {
+        "pattern": "(mathlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
+        "replacement": "{g1}{sha:mathlib}{g2}"
+      },
+      {
+        "pattern": "(cslib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
+        "replacement": "{g1}{sha:cslib}{g2}"
+      }
+    ]
+  }
 }

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Pinned-release-only Lean/Mathlib bump automation.
 
-One module, three entry points (see .github/workflows/bump-pinned-release.yml
-and bump-guard.yml):
+Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
 
   select   Credential-free. Pick the next final release tag shared by every
            pinned dependency (Lean, Mathlib, CSLib, plus Physlib/repl where
@@ -10,21 +9,35 @@ and bump-guard.yml):
            never sees the App secret. Adapted from TauCeti's select/publish
            split: the selector cannot push, the publisher never executes
            upstream code.
-  publish  App-token only. Apply the selected tag to lean-toolchain,
-           lakefile.toml, README/BACKPORTS version lines, run `lake update`,
-           verify the manifest, and open the bump PR. If the bump branch
-           already exists it is left alone: it may already contain human
-           repair commits (CSLib #1172 shape), and the bot must not rewrite
-           them. No auto-merge: a human merges after CI green plus repairs.
-  guard    Run on every PR touching the pin files, from trusted base code
-           (pull_request_target). Validates a pin-change PR without building
-           it or running any PR code. Adapted from TauCeti's check-bump.sh:
-           lakefile changes only in pinned revs, all to one final tag;
-           toolchain matches that tag; every direct manifest entry has
-           inputRev == tag and rev == that dep's tag SHA; the transitive
-           manifest is exactly the union of the deps' manifests at the tag;
-           Mathlib@tag has a successful master-push build (so its oleans
-           are published to the cache).
+  prepare  Read-only-token only (github.token). Revalidate the selected
+           target, apply the tag to lean-toolchain, lakefile.toml,
+           README/BACKPORTS version lines and the pin-policy constants
+           (atlas check_lake_surface.py), run `lake update`, and verify the
+           manifest. Writes only the working tree; commits nothing, pushes
+           nothing, opens nothing. The write-capable App token is minted
+           only after this step finishes, so `lake update` (which executes
+           the newly tagged Lean/Lake) never sees it.
+  finish   App-token only. Commit the prepared tree, push it via an
+           explicit push URL (the checkout never persists the App token),
+           and open the bump PR. Reconciles an existing branch: an open PR
+           on it means leave it alone; a branch with no PR and a tree
+           identical to the prepared tree means create the missing PR
+           (recovery from a push followed by a PR-creation failure); a
+           branch with no PR and a different tree fails visibly for a human.
+           No auto-merge: a human merges after CI green plus repairs.
+  guard    Run on every PR touching (or renaming) any file, from trusted
+           base code (pull_request_target). Validates a pin-change PR
+           without building it or running any PR code. Adapted from
+           TauCeti's check-bump.sh: the complete lakefile compared after
+           normalizing only the configured pinned revs; toolchain matches
+           that tag and the tag exists in the Lean repo too; every direct
+           manifest entry equals the base entry except rev/inputRev, with
+           rev == that dep's tag SHA; the transitive manifest is exactly
+           the union of the deps' manifests at the tag (conflicts between
+           upstream manifests fail instead of silently winning); no
+           duplicate package names; pin-policy constants match the new
+           tag/SHAs; Mathlib@tag has a successful master-push build (so its
+           oleans are published to the cache).
 
 Nothing here tracks nightly, master, last-known-good, or first-known-bad
 commits. A `-rc` tag is accepted only via an explicit manual dispatch with
@@ -35,6 +48,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import copy
 import json
 import os
 import re
@@ -47,6 +61,13 @@ FINAL_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 RC_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)-rc(\d+)$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 PIN_FILES = ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
+GUARD_FILES = (
+    ".github/workflows/bump-guard.yml",
+    ".github/workflows/bump-pinned-release.yml",
+    "scripts/bump/pinned_bump.py",
+    "scripts/bump/pinned_deps.json",
+    "scripts/bump/test_pinned_bump.py",
+)
 
 
 def version_key(tag: str):
@@ -86,10 +107,13 @@ def toolchain_tag(root: Path) -> str:
     return text[len(prefix):]
 
 
-def lakefile_requires(root: Path) -> list[dict]:
+def load_lakefile(root: Path) -> dict:
     with open(root / "lakefile.toml", "rb") as f:
-        data = tomllib.load(f)
-    requires = data.get("require", [])
+        return tomllib.load(f)
+
+
+def lakefile_requires(root: Path) -> list[dict]:
+    requires = load_lakefile(root).get("require", [])
     if not isinstance(requires, list):
         raise ValueError("lakefile.toml [[require]] is not a list")
     return requires
@@ -231,8 +255,41 @@ def select_target(
     return target, run_id, f"target {target} (mathlib {sha}, build run {run_id})"
 
 
-def apply_pin_edits(root: Path, config: dict, current: str, target: str) -> list[str]:
-    """Edit toolchain, lakefile revs, and doc version lines. Return changed files."""
+def apply_replacements_to_text(
+    text: str, replacements: list[dict], target: str, shas: dict[str, str]
+) -> str:
+    for entry in replacements:
+        replacement = entry["replacement"].replace("{target}", target)
+        for name, sha in shas.items():
+            replacement = replacement.replace("{sha:" + name + "}", sha)
+        if "{sha:" in replacement:
+            raise ValueError(
+                f"replacement {entry['replacement']!r} references an unresolved SHA"
+            )
+        # Resolve {g1}, {g2}, ... via a function, never a replacement
+        # string: a backreference immediately followed by SHA digits
+        # (e.g. \1 + "444...") would be parsed as a different group.
+        def _repl(match, _replacement=replacement):
+            out = _replacement
+            for i in range(match.re.groups + 1):
+                out = out.replace(f"{{g{i}}}", match.group(i) or "")
+            return out
+
+        new_text, count = re.subn(entry["pattern"], _repl, text)
+        if count == 0:
+            raise ValueError(
+                f"replacement pattern {entry['pattern']!r} did not match"
+            )
+        text = new_text
+    return text
+
+
+def apply_pin_edits(
+    root: Path, config: dict, current: str, target: str,
+    shas: dict[str, str] | None = None,
+) -> list[str]:
+    """Edit toolchain, lakefile revs, doc + pin-policy version lines."""
+    shas = shas or {}
     changed: list[str] = []
     toolchain_path = root / "lean-toolchain"
     toolchain_path.write_text(f"leanprover/lean4:{target}\n", encoding="utf-8")
@@ -257,15 +314,20 @@ def apply_pin_edits(root: Path, config: dict, current: str, target: str) -> list
     for entry in config.get("doc_replacements", []):
         path = root / entry["path"]
         content = path.read_text(encoding="utf-8")
-        replacement = entry["replacement"].replace("{target}", target)
-        new_content, count = re.subn(entry["pattern"], replacement, content)
-        if count == 0:
-            raise ValueError(
-                f"doc replacement pattern {entry['pattern']!r} did not match {entry['path']}"
-            )
+        new_content = apply_replacements_to_text(content, [entry], target, shas)
         if new_content != content:
             path.write_text(new_content, encoding="utf-8")
             changed.append(entry["path"])
+    pin_policy = config.get("pin_policy")
+    if pin_policy:
+        path = root / pin_policy["path"]
+        content = path.read_text(encoding="utf-8")
+        new_content = apply_replacements_to_text(
+            content, pin_policy["replacements"], target, shas
+        )
+        if new_content != content:
+            path.write_text(new_content, encoding="utf-8")
+            changed.append(pin_policy["path"])
     _ = current
     return changed
 
@@ -283,44 +345,91 @@ def direct_entries(manifest: dict) -> dict[str, dict]:
     }
 
 
+def check_no_duplicate_packages(manifest: dict, label: str) -> list[str]:
+    names = [pkg.get("name") for pkg in manifest.get("packages", [])]
+    dups = sorted({n for n in names if names.count(n) > 1})
+    if dups:
+        return [f"{label} has duplicate package names: {dups}"]
+    return []
+
+
 def verify_manifest(
-    client: GitHub, root: Path, config: dict, target: str
+    client: GitHub, root: Path, config: dict, target: str,
+    base_manifest: dict | None = None,
 ) -> list[str]:
     """Check direct + transitive manifest entries against deps@target."""
     problems: list[str] = []
     manifest = load_manifest(root)
-    direct = direct_entries(manifest)
+    problems.extend(check_no_duplicate_packages(manifest, "PR manifest"))
+    if base_manifest is not None:
+        problems.extend(check_no_duplicate_packages(base_manifest, "base manifest"))
+        base_top = {k: v for k, v in base_manifest.items() if k != "packages"}
+        pr_top = {k: v for k, v in manifest.items() if k != "packages"}
+        if base_top != pr_top:
+            diff = sorted(
+                k for k in set(base_top) | set(pr_top) if base_top.get(k) != pr_top.get(k)
+            )
+            problems.append(f"manifest top-level fields differ from base: {diff}")
     wanted = {dep["name"]: dep for dep in config["deps"]}
+    direct = direct_entries(manifest)
     if set(direct) != set(wanted):
         problems.append(
             f"direct manifest entries {sorted(direct)} != pinned deps {sorted(wanted)}"
         )
+    shas: dict[str, str] = {}
     for name, dep in wanted.items():
-        entry = direct.get(name)
-        if entry is None:
-            continue
         sha = client.tag_sha(dep["repo"], target)
         if sha is None:
             problems.append(f"could not resolve tag SHA for {name} {target}")
+            continue
+        shas[name] = sha
+        entry = direct.get(name)
+        if entry is None:
             continue
         if entry.get("inputRev") != target:
             problems.append(f"{name}: inputRev {entry.get('inputRev')!r} != {target!r}")
         if entry.get("rev") != sha:
             problems.append(f"{name}: rev {entry.get('rev')!r} != tag SHA {sha}")
-        expected_url = f"https://github.com/{dep['repo']}"
-        if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
-            problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
+        if base_manifest is not None:
+            base_entry = direct_entries(base_manifest).get(name)
+            if base_entry is not None:
+                diff = sorted(
+                    k for k in set(entry) | set(base_entry)
+                    if k not in ("rev", "inputRev") and entry.get(k) != base_entry.get(k)
+                )
+                if diff:
+                    problems.append(
+                        f"{name}: manifest entry differs from base in {diff} "
+                        "(only rev/inputRev may change)"
+                    )
+        else:
+            expected_url = f"https://github.com/{dep['repo']}"
+            if entry.get("type") != "git":
+                problems.append(f"{name}: type {entry.get('type')!r} != 'git'")
+            if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
+                problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
     # Transitive entries must be exactly the union of the deps' manifests.
+    # Conflicting records for one package from different upstream manifests
+    # fail instead of letting one silently win.
     expected: dict[str, dict] = {}
     for name, dep in wanted.items():
-        sha = client.tag_sha(dep["repo"], target)
+        sha = shas.get(name)
         if not sha:
             continue
         upstream = json.loads(client.contents(dep["repo"], "lake-manifest.json", sha))
+        problems.extend(
+            check_no_duplicate_packages(upstream, f"{name}@{target} manifest")
+        )
         for pkg in upstream.get("packages", []):
             if pkg.get("name") in wanted:
                 continue
-            expected.setdefault(pkg["name"], dict(pkg, inherited=True))
+            canonical = dict(pkg, inherited=True)
+            if pkg["name"] in expected and expected[pkg["name"]] != canonical:
+                problems.append(
+                    f"transitive entry {pkg['name']} conflicts between "
+                    f"upstream manifests at {target}"
+                )
+            expected.setdefault(pkg["name"], canonical)
     actual = {
         pkg["name"]: pkg
         for pkg in manifest.get("packages", [])
@@ -347,24 +456,185 @@ def run(cmd: list[str], *, cwd: Path | None = None, env: dict | None = None) -> 
     return result.stdout.strip()
 
 
-def cmd_publish(args: argparse.Namespace) -> int:
+def resolve_shas(client: GitHub, config: dict, target: str) -> dict[str, str]:
+    shas = {}
+    for dep in config["deps"]:
+        sha = client.tag_sha(dep["repo"], target)
+        if sha is None:
+            raise ValueError(f"could not resolve tag SHA for {dep['name']} {target}")
+        shas[dep["name"]] = sha
+    toolchain_sha = client.tag_sha(config["toolchain_repo"], target)
+    if toolchain_sha is None:
+        raise ValueError(f"could not resolve tag SHA for Lean {target}")
+    return shas
+
+
+def validate_target(client: GitHub, root: Path, config: dict, target: str,
+                    *, allow_rc: bool) -> None:
+    if not is_version_tag(target, allow_rc=allow_rc):
+        raise ValueError(f"target {target!r} is not a version tag")
+    current = current_tag(root, config)
+    if version_key(target) <= version_key(current):
+        raise ValueError(f"target {target} is not newer than current {current}")
+    # Revalidate against the live tags + cache, so a stale or forged job
+    # output cannot smuggle a target past the selector into the App-token job.
+    selected, _run_id, reason = select_target(
+        client, root, config, manual=target, allow_rc=allow_rc
+    )
+    if selected != target:
+        raise ValueError(f"target {target} failed revalidation: {reason}")
+
+
+def cmd_prepare(args: argparse.Namespace) -> int:
     root = Path.cwd()
     config = load_config(root)
     client = GitHub()
-    current = current_tag(root, config)
     target = args.target
-    if not is_version_tag(target, allow_rc=args.allow_rc):
-        print(f"error: target {target!r} is not a version tag", file=sys.stderr)
-        return 2
-    if version_key(target) <= version_key(current):
-        print(f"error: target {target} is not newer than current {current}", file=sys.stderr)
+    try:
+        validate_target(client, root, config, target, allow_rc=args.allow_rc)
+        base_manifest = load_manifest(root)
+        shas = resolve_shas(client, config, target)
+        changed = apply_pin_edits(root, config, current_tag(root, config), target, shas)
+        print(f"edited: {', '.join(changed)}")
+        run(["lake", "update"], cwd=root)
+        problems = verify_manifest(client, root, config, target, base_manifest)
+    except (ValueError, RuntimeError) as exc:
+        print(f"prepare: FAIL - {exc}", file=sys.stderr)
+        return 1
+    if problems:
+        print("prepare: FAIL - manifest verification failed after lake update:")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    print(f"prepare: OK - tree prepared for {target} (nothing committed or pushed)")
+    return 0
+
+
+def validate_prepared_tree(
+    client: GitHub, root: Path, config: dict, target: str, *, allow_rc: bool
+) -> str:
+    """Validate a prepared tree: it must already be at target, and the
+    target must still exist in every repo with a published Mathlib cache.
+    Returns the base tag the tree was prepared from (from HEAD)."""
+    if not is_version_tag(target, allow_rc=allow_rc):
+        raise ValueError(f"target {target!r} is not a version tag")
+    if current_tag(root, config) != target:
+        raise ValueError(
+            f"prepared tree is at {current_tag(root, config)} not {target}; "
+            "run prepare first on the same checkout"
+        )
+    resolve_shas(client, config, target)
+    mathlib = next(d for d in config["deps"] if d["name"] == "mathlib")
+    sha = client.tag_sha(mathlib["repo"], target)
+    if sha and client.successful_master_build_run(mathlib["repo"], sha) is None:
+        raise ValueError(f"mathlib {target} has no successful master-push build")
+    head_toolchain = run(["git", "show", "HEAD:lean-toolchain"]).strip()
+    prefix = "leanprover/lean4:"
+    if not head_toolchain.startswith(prefix):
+        raise ValueError(f"unexpected HEAD lean-toolchain: {head_toolchain!r}")
+    base = head_toolchain[len(prefix):]
+    if version_key(target) <= version_key(base):
+        raise ValueError(f"target {target} is not newer than base {base}")
+    return base
+
+
+def cmd_finish(args: argparse.Namespace) -> int:
+    root = Path.cwd()
+    config = load_config(root)
+    client = GitHub()
+    target = args.target
+    try:
+        base_tag = validate_prepared_tree(
+            client, root, config, target, allow_rc=args.allow_rc
+        )
+    except (ValueError, RuntimeError) as exc:
+        print(f"finish: FAIL - {exc}", file=sys.stderr)
         return 2
     branch = f"bump-pinned-rc/{target}" if args.allow_rc else f"bump-pinned/{target}"
-    remote = run(["git", "ls-remote", "--heads", "origin", branch])
-    if remote:
-        print(f"branch {branch} already exists; leaving it alone (repairs may be in progress)")
-        return 0
-    # Close superseded bot-only bump PRs for older targets.
+    # If an open PR already points at this branch, leave it alone: it may
+    # hold human repair commits.
+    for pr in client.open_prs():
+        if (pr.get("head") or {}).get("ref") == branch:
+            print(f"open bump PR #{pr['number']} already exists on {branch}; leaving it alone")
+            return 0
+    bot_name = os.environ.get("BUMP_BOT_NAME") or "bump-pinned-release[bot]"
+    bot_email = os.environ.get("BUMP_BOT_NAME_EMAIL") or (
+        "bump-pinned-release[bot]@users.noreply.github.com"
+    )
+    try:
+        run(["git", "config", "user.name", bot_name])
+        run(["git", "config", "user.email", bot_email])
+        changed = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
+        for entry in config.get("doc_replacements", []):
+            changed.append(entry["path"])
+        if config.get("pin_policy"):
+            changed.append(config["pin_policy"]["path"])
+        if run(["git", "status", "--porcelain"]):
+            run(["git", "add"] + sorted(set(changed)))
+            run(["git", "commit", "-m", f"Bump pinned Lean/Mathlib to {target}"])
+        else:
+            # Re-running finish after a previous run committed (but failed
+            # to open the PR): the tree is already committed, do not fail.
+            print("working tree already committed; reusing HEAD")
+        local_tree = run(["git", "rev-parse", "HEAD^{tree}"])
+        remote = run(["git", "ls-remote", "--heads", "origin", branch])
+        if remote:
+            run(["git", "fetch", "origin", branch])
+            remote_tree = run(["git", "rev-parse", "FETCH_HEAD^{tree}"])
+            if remote_tree != local_tree:
+                print(
+                    f"finish: FAIL - remote branch {branch} exists with different "
+                    "content and no open PR; human intervention needed (refusing to overwrite)"
+                )
+                return 1
+            print(f"remote branch {branch} already has the prepared tree; creating the missing PR")
+        else:
+            app_token = os.environ.get("APP_TOKEN")
+            if not app_token:
+                print("finish: FAIL - APP_TOKEN is not set", file=sys.stderr)
+                return 2
+            push_url = f"https://x-access-token:{app_token}@github.com/{client.repo}.git"
+            run(["git", "push", push_url, f"HEAD:refs/heads/{branch}"])
+    except RuntimeError as exc:
+        print(f"finish: FAIL - {exc}", file=sys.stderr)
+        return 1
+    rows = []
+    for dep in config["deps"]:
+        rows.append(
+            f"| {dep['name']} | `{base_tag}` | `{target}` | "
+            f"{client.tag_sha(dep['repo'], target)} |"
+        )
+    body = (
+        f"Bump the pinned Lean/Mathlib release from `{base_tag}` to `{target}`.\n\n"
+        "| Dependency | From | To | Tag SHA |\n|---|---|---|---|\n"
+        + "\n".join(rows)
+        + "\n\n"
+        + "Opened automatically by the pinned-release bump workflow "
+        "(selector: newest final release tag present in every pinned repo; "
+        "Mathlib@target has a successful master-push build, so its oleans are published).\n\n"
+        "Checklist before merging: CI green; commit source repairs on this branch if CI "
+        "fails (the bot never rewrites this branch once it exists); do not delete "
+        "`BACKPORTS.md` ledger rows on the strength of the bump alone — each row's "
+        "removal condition must be rechecked against the new pin.\n"
+    )
+    body_file = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "bump-pr-body.md"
+    body_file.write_text(body, encoding="utf-8")
+    try:
+        run([
+            "gh", "pr", "create", "--repo", client.repo, "--base", "main",
+            "--head", branch, "--title", f"Bump pinned Lean/Mathlib to {target}",
+            "--body-file", str(body_file),
+        ])
+    except RuntimeError as exc:
+        print(
+            f"finish: FAIL - PR creation failed after the branch was pushed; "
+            f"re-running finish will create the missing PR instead of pushing again: {exc}",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"opened bump PR on {branch}")
+    # Close superseded bot-only bump PRs for older targets, only now that
+    # the new PR exists. A PR with human repair commits is never closed here.
     for pr in client.open_prs():
         head = (pr.get("head") or {}).get("ref", "")
         if not head.startswith("bump-pinned/") or head == branch:
@@ -380,52 +650,6 @@ def cmd_publish(args: argparse.Namespace) -> int:
             print(f"closed superseded bot-only bump PR #{pr['number']}")
         else:
             print(f"leaving {head} (#{pr['number']}) alone: it has non-bot commits")
-    changed = apply_pin_edits(root, config, current, target)
-    print(f"edited: {', '.join(changed)}")
-    run(["lake", "update"], cwd=root)
-    changed.append("lake-manifest.json")
-    problems = verify_manifest(client, root, config, target)
-    if problems:
-        print("manifest verification failed after lake update:", file=sys.stderr)
-        for problem in problems:
-            print(f"  - {problem}", file=sys.stderr)
-        return 1
-    bot_name = os.environ.get("BUMP_BOT_NAME") or "bump-pinned-release[bot]"
-    bot_email = os.environ.get("BUMP_BOT_NAME_EMAIL") or (
-        "bump-pinned-release[bot]@users.noreply.github.com"
-    )
-    run(["git", "config", "user.name", bot_name])
-    run(["git", "config", "user.email", bot_email])
-    run(["git", "add"] + sorted(set(changed)))
-    run(["git", "commit", "-m", f"Bump pinned Lean/Mathlib to {target}"])
-    run(["git", "push", "origin", f"HEAD:refs/heads/{branch}"])
-    rows = []
-    for dep in config["deps"]:
-        rows.append(
-            f"| {dep['name']} | `{current}` | `{target}` | "
-            f"{client.tag_sha(dep['repo'], target)} |"
-        )
-    body = (
-        f"Bump the pinned Lean/Mathlib release from `{current}` to `{target}`.\n\n"
-        "| Dependency | From | To | Tag SHA |\n|---|---|---|---|\n"
-        + "\n".join(rows)
-        + "\n\n"
-        + "Opened automatically by the pinned-release bump workflow "
-        "(selector: newest final release tag present in every pinned repo; "
-        "Mathlib@target has a successful master-push build, so its oleans are published).\n\n"
-        "Checklist before merging: CI green; commit source repairs on this branch if CI "
-        "fails (the bot never rewrites this branch once it exists); do not delete "
-        "`BACKPORTS.md` ledger rows on the strength of the bump alone — each row's "
-        "removal condition must be rechecked against the new pin.\n"
-    )
-    body_file = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "bump-pr-body.md"
-    body_file.write_text(body, encoding="utf-8")
-    run([
-        "gh", "pr", "create", "--repo", client.repo, "--base", "main",
-        "--head", branch, "--title", f"Bump pinned Lean/Mathlib to {target}",
-        "--body-file", str(body_file),
-    ])
-    print(f"opened bump PR on {branch}")
     return 0
 
 
@@ -433,10 +657,11 @@ def cmd_select(args: argparse.Namespace) -> int:
     root = Path.cwd()
     config = load_config(root)
     client = GitHub()
+    manual = args.target or os.environ.get("INPUT_TARGET", "")
+    allow_rc = args.allow_rc or os.environ.get("INPUT_ALLOW_RC") == "true"
     try:
         target, run_id, reason = select_target(
-            client, root, config,
-            manual=args.target or "", allow_rc=args.allow_rc,
+            client, root, config, manual=manual, allow_rc=allow_rc,
         )
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -453,6 +678,23 @@ def cmd_select(args: argparse.Namespace) -> int:
     return 0
 
 
+def normalized_lakefile(doc: dict, config: dict, tag: str) -> dict:
+    """Deep copy of a lakefile doc with pinned dep revs set to tag."""
+    doc = copy.deepcopy(doc)
+    requires = doc.get("require", [])
+    if not isinstance(requires, list):
+        raise ValueError("lakefile.toml [[require]] is not a list")
+    names = [entry.get("name") for entry in requires if isinstance(entry, dict)]
+    dups = sorted({n for n in names if names.count(n) > 1})
+    if dups:
+        raise ValueError(f"lakefile.toml has duplicate [[require]] names: {dups}")
+    wanted = {dep["name"] for dep in config["deps"]}
+    for entry in requires:
+        if isinstance(entry, dict) and entry.get("name") in wanted:
+            entry["rev"] = tag
+    return doc
+
+
 def cmd_guard(args: argparse.Namespace) -> int:
     base = Path(args.base)
     merge_base = Path(args.merge_base)
@@ -466,12 +708,8 @@ def cmd_guard(args: argparse.Namespace) -> int:
     if not (changed & set(PIN_FILES)):
         print("guard: PASS - no pin files changed")
         return 0
-    if changed & {".github/workflows/bump-guard.yml", "scripts/bump/pinned_bump.py",
-                  "scripts/bump/pinned_deps.json"}:
-        print("guard: FAIL - a pin-change PR must not touch the guard or its config")
-        return 1
-    if changed & {".github/workflows/bump-pinned-release.yml"}:
-        print("guard: FAIL - a pin-change PR must not touch the bump workflow")
+    if changed & set(GUARD_FILES):
+        print("guard: FAIL - a pin-change PR must not touch the guard, its config, or the bump workflow")
         return 1
     problems: list[str] = []
     try:
@@ -486,24 +724,49 @@ def cmd_guard(args: argparse.Namespace) -> int:
         problems.append(f"PR tag {pr_tag} is not newer than base tag {base_tag}")
     if (pr / "lean-toolchain").read_text(encoding="utf-8").strip() != f"leanprover/lean4:{pr_tag}":
         problems.append("lean-toolchain does not match the PR tag")
-    base_reqs = {e["name"]: e for e in lakefile_requires(base)}
-    pr_reqs = {e["name"]: e for e in lakefile_requires(pr)}
-    if set(base_reqs) != set(pr_reqs):
-        problems.append(f"lakefile require names changed: {sorted(base_reqs)} -> {sorted(pr_reqs)}")
-    for name in sorted(set(base_reqs) & set(pr_reqs)):
-        diff = sorted(
-            k for k in set(base_reqs[name]) | set(pr_reqs[name])
-            if k != "rev" and base_reqs[name].get(k) != pr_reqs[name].get(k)
-        )
-        if diff:
-            problems.append(f"lakefile {name} changed fields other than rev: {diff}")
-        if pr_reqs[name].get("rev") != pr_tag and name in {d["name"] for d in config["deps"]}:
-            problems.append(f"lakefile {name} rev {pr_reqs[name].get('rev')!r} != PR tag {pr_tag!r}")
-    # The PR's own delta (vs merge-base) must not change pin files the PR does
-    # not claim: if the PR tag differs from the merge-base tag, the tag above
-    # already validates the full jump.
+    # The complete lakefile, not just [[require]]: normalize only the pinned
+    # revs in both documents and compare everything else exactly.
+    try:
+        base_doc = normalized_lakefile(load_lakefile(base), config, base_tag)
+        pr_doc = normalized_lakefile(load_lakefile(pr), config, base_tag)
+        if base_doc != pr_doc:
+            top_diff = sorted(
+                k for k in set(base_doc) | set(pr_doc) if base_doc.get(k) != pr_doc.get(k)
+            )
+            problems.append(
+                f"lakefile.toml differs from base outside the pinned revs: {top_diff}"
+            )
+    except ValueError as exc:
+        problems.append(f"lakefile.toml is malformed: {exc}")
+    # Pin-policy constants (atlas check_lake_surface.py) must be exactly the
+    # base file with the configured replacements applied for the new tag.
+    pin_policy = config.get("pin_policy")
+    if pin_policy:
+        try:
+            shas = resolve_shas(client, config, pr_tag)
+            base_text = (base / pin_policy["path"]).read_text(encoding="utf-8")
+            pr_text = (pr / pin_policy["path"]).read_text(encoding="utf-8")
+            expected = apply_replacements_to_text(
+                base_text, pin_policy["replacements"], pr_tag, shas
+            )
+            if pr_text != expected:
+                problems.append(
+                    f"{pin_policy['path']} does not match the base file with "
+                    "the new tag/SHAs applied (missing update, or an unrelated edit)"
+                )
+        except (ValueError, OSError) as exc:
+            problems.append(f"pin-policy check failed: {exc}")
     _ = merge_base
-    problems.extend(verify_manifest(client, pr, config, pr_tag))
+    try:
+        base_manifest = load_manifest(base)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"guard: FAIL - cannot read base manifest: {exc}")
+        return 1
+    problems.extend(verify_manifest(client, pr, config, pr_tag, base_manifest))
+    if client.tag_sha(config["toolchain_repo"], pr_tag) is None:
+        problems.append(
+            f"Lean tag {pr_tag} does not exist in {config['toolchain_repo']}"
+        )
     mathlib = next(d for d in config["deps"] if d["name"] == "mathlib")
     sha = client.tag_sha(mathlib["repo"], pr_tag)
     if sha and client.successful_master_build_run(mathlib["repo"], sha) is None:
@@ -524,10 +787,16 @@ def main(argv: list[str] | None = None) -> int:
     p_select.add_argument("--target", default="")
     p_select.add_argument("--allow-rc", action="store_true")
     p_select.set_defaults(func=cmd_select)
-    p_publish = sub.add_parser("publish", help="publish the bump PR for a selected target")
-    p_publish.add_argument("target")
-    p_publish.add_argument("--allow-rc", action="store_true")
-    p_publish.set_defaults(func=cmd_publish)
+    p_prepare = sub.add_parser(
+        "prepare", help="apply the bump to the working tree and verify it (no commit/push)")
+    p_prepare.add_argument("target")
+    p_prepare.add_argument("--allow-rc", action="store_true")
+    p_prepare.set_defaults(func=cmd_prepare)
+    p_finish = sub.add_parser(
+        "finish", help="commit, push, and open the PR for a prepared tree (App token)")
+    p_finish.add_argument("target")
+    p_finish.add_argument("--allow-rc", action="store_true")
+    p_finish.set_defaults(func=cmd_finish)
     p_guard = sub.add_parser("guard", help="validate a pin-change PR")
     p_guard.add_argument("--base", required=True)
     p_guard.add_argument("--merge-base", required=True)

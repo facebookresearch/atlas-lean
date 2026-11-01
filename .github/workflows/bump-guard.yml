@@ -6,22 +6,24 @@ name: Bump guard
 # via the API and runs no PR code. Fails the PR when the pin change is
 # not a forward move to a single final release tag shared by every
 # pinned dependency, with a manifest exactly derived from those tags.
+# Runs for every PR (no paths filter: path filtering only considers a
+# bounded file list) and on `edited` (a base retarget emits `edited`,
+# not `synchronize`, and must revalidate against the new base).
 # See scripts/bump/pinned_bump.py (guard).
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened]
-    paths:
-      - "lean-toolchain"
-      - "lakefile.toml"
-      - "lake-manifest.json"
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read
   pull-requests: read
 
+# github.ref is the base ref under pull_request_target, so key the
+# concurrency group by PR number: one PR's activity must not cancel
+# another PR's guard run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -55,7 +57,21 @@ jobs:
                 | base64 -d > "/tmp/guard/${dir}/${file}"
             done
           done
-          gh pr view "$PR_NUMBER" --json files --jq '.files[].path' > /tmp/guard/changed.txt
+          # Paginated REST file list: `gh pr view --json files` caps at 100.
+          # Include previous_filename so renaming a protected file (guard
+          # workflow/script/config) cannot hide its original name, and
+          # fail closed if the entry count disagrees with changed_files.
+          EXPECTED_COUNT="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq '.changed_files')"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '.[] | .filename' > /tmp/guard/filenames.txt
+          ENTRY_COUNT="$(wc -l < /tmp/guard/filenames.txt | tr -d ' ')"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '.[] | select(.previous_filename != null) | .previous_filename' >> /tmp/guard/filenames.txt
+          if [ "$ENTRY_COUNT" != "$EXPECTED_COUNT" ]; then
+            echo "::error::changed-file enumeration is incomplete (got $ENTRY_COUNT entries, PR reports $EXPECTED_COUNT); failing closed."
+            exit 1
+          fi
+          cp /tmp/guard/filenames.txt /tmp/guard/changed.txt
           python3 scripts/bump/pinned_bump.py guard \
             --base /tmp/guard/base \
             --merge-base /tmp/guard/merge-base \

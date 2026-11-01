@@ -171,14 +171,48 @@ class EditTests(unittest.TestCase):
             self.assertIn("Lean-v4.36.0", (root / "README.md").read_text())
             self.assertIn("README.md", changed)
 
+    def test_apply_pin_edits_updates_pin_policy_constants(self):
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        real_config = load_config(repo_root)
+        shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in real_config["deps"]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_tree(root, "v4.35.0")
+            with open(root / "README.md", "a", encoding="utf-8") as f:
+                f.write("https://github.com/leanprover/lean4/releases/tag/v4.35.0\n")
+            (root / "scripts").mkdir()
+            policy_src = repo_root / real_config["pin_policy"]["path"]
+            (root / real_config["pin_policy"]["path"]).write_text(
+                policy_src.read_text())
+            changed = apply_pin_edits(root, real_config, "v4.35.0", "v4.36.0", shas)
+            self.assertIn("scripts/check_lake_surface.py", changed)
+            policy = (root / real_config["pin_policy"]["path"]).read_text()
+            self.assertIn('"v4.36.0"', policy)
+            self.assertIn(shas["mathlib"], policy)
+            self.assertIn(shas["cslib"], policy)
+            self.assertNotIn("v4.35.0", policy)
+
 
 class GuardTests(unittest.TestCase):
-    def _run_guard(self, *, tamper_toolchain=False, tamper_transitive=False):
+    def _run_guard(self, *, tamper_toolchain=False, tamper_transitive=False,
+                   tamper_lakefile_name=False, duplicate_require=False,
+                   tamper_direct=False, conflict=False, duplicate_package=False,
+                   missing_toolchain_tag=False, tamper_pin_policy=False,
+                   stale_pin_policy=False):
         upstream = {}
         for dep in CONFIG["deps"]:
-            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = upstream_manifest(
-                ["batteries", "Qq"])
+            manifest = upstream_manifest(["batteries", "Qq"])
+            if conflict and dep["name"] == "cslib":
+                manifest = upstream_manifest(["batteries", "Qq"])
+                manifest["packages"][0] = dict(
+                    manifest["packages"][0], rev="d" * 40)
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = manifest
         client = FakeGitHub(tags={}, upstream=upstream)
+        if missing_toolchain_tag:
+            orig_tag_sha = client.tag_sha
+            client.tag_sha = lambda slug, tag: (
+                None if slug == "leanprover/lean4" else orig_tag_sha(slug, tag)
+            )
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp) / "base"
             pr = Path(tmp) / "pr"
@@ -187,6 +221,44 @@ class GuardTests(unittest.TestCase):
             write_tree(base, "v4.35.0")
             write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive)
+            # The guard loads the checked-in config, which carries a
+            # pin_policy for check_lake_surface.py: give base/pr the real
+            # file at the old pins, and the PR the file with the new
+            # tag/SHAs applied (or a tampered / stale variant).
+            repo_root = Path(__file__).resolve().parent.parent.parent
+            real_config = load_config(repo_root)
+            pin_policy = real_config["pin_policy"]
+            real_policy = (repo_root / pin_policy["path"]).read_text()
+            (base / "scripts").mkdir()
+            (base / pin_policy["path"]).write_text(real_policy)
+            shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in CONFIG["deps"]}
+            pr_policy = pinned_bump.apply_replacements_to_text(
+                real_policy, pin_policy["replacements"], "v4.36.0", shas)
+            if tamper_pin_policy:
+                pr_policy = pr_policy.replace(shas["mathlib"], "0" * 40)
+            if stale_pin_policy:
+                pr_policy = real_policy
+            (pr / "scripts").mkdir()
+            (pr / pin_policy["path"]).write_text(pr_policy)
+            if tamper_lakefile_name:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text().replace('name = "fixture"', 'name = "other"'))
+            if duplicate_require:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[require]]\nname = "mathlib"\nrev = "v4.36.0"\n')
+            if tamper_direct or duplicate_package:
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                if tamper_direct:
+                    for pkg in manifest["packages"]:
+                        if pkg["name"] == "mathlib":
+                            pkg["configFile"] = "evil.toml"
+                if duplicate_package:
+                    manifest["packages"].append(dict(manifest["packages"][0]))
+                manifest_path.write_text(json.dumps(manifest, indent=1))
             changed = Path(tmp) / "changed.txt"
             changed.write_text("lean-toolchain\nlakefile.toml\nlake-manifest.json\n")
             import pinned_bump as module
@@ -209,6 +281,38 @@ class GuardTests(unittest.TestCase):
 
     def test_guard_fails_transitive_tamper(self):
         self.assertEqual(self._run_guard(tamper_transitive=True), 1)
+
+    def test_guard_fails_lakefile_top_level_change(self):
+        self.assertEqual(self._run_guard(tamper_lakefile_name=True), 1)
+
+    def test_guard_fails_duplicate_require(self):
+        self.assertEqual(self._run_guard(duplicate_require=True), 1)
+
+    def test_guard_fails_direct_manifest_field_tamper(self):
+        self.assertEqual(self._run_guard(tamper_direct=True), 1)
+
+    def test_guard_fails_transitive_conflict(self):
+        self.assertEqual(self._run_guard(conflict=True), 1)
+
+    def test_guard_fails_duplicate_package(self):
+        self.assertEqual(self._run_guard(duplicate_package=True), 1)
+
+    def test_guard_fails_missing_lean_tag(self):
+        self.assertEqual(self._run_guard(missing_toolchain_tag=True), 1)
+
+    def test_guard_fails_pin_policy_tamper(self):
+        self.assertEqual(self._run_guard(tamper_pin_policy=True), 1)
+
+    def test_guard_fails_stale_pin_policy(self):
+        self.assertEqual(self._run_guard(stale_pin_policy=True), 1)
+
+    def test_replacement_sha_placeholder(self):
+        out = pinned_bump.apply_replacements_to_text(
+            'rev "' + "a" * 40 + '"',
+            [{"pattern": '"[0-9a-f]{40}"', "replacement": '"{sha:mathlib}"'}],
+            "v4.36.0", {"mathlib": "f" * 40},
+        )
+        self.assertIn("f" * 40, out)
 
 
 class ConfigTests(unittest.TestCase):

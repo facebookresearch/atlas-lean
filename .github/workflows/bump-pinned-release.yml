@@ -7,6 +7,15 @@ name: Bump pinned Lean/Mathlib release
 # committed on the bump branch. The bot never rewrites an existing bump
 # branch, so repair commits are safe from it. See scripts/bump/pinned_bump.py.
 #
+# Credential hygiene: `prepare` (pin edits + `lake update` + manifest
+# verification, which executes the newly tagged Lean/Lake) runs with only
+# the read-only github.token and before the App token is minted. The
+# write-capable App token is minted only for `finish` (commit, push via an
+# explicit push URL, PR creation). The checkout never persists any token.
+# Dispatch inputs and job outputs travel through environment variables,
+# never interpolated into shell programs, and `prepare`/`finish` revalidate
+# the target against the live tags before doing anything with it.
+#
 # Setup (once per org): a GitHub App installed on this repo with Contents RW
 # + Pull requests RW, stored as vars.BUMP_APP_ID (App ID, not secret) and
 # secrets.BUMP_APP_PRIVATE_KEY. PRs opened under the App token run this
@@ -46,16 +55,14 @@ jobs:
           persist-credentials: false
 
       # Credential-free: this job has no App secret and cannot push.
+      # Dispatch inputs arrive via environment, never interpolated.
       - name: Select next pinned release
         id: select
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          ARGS=()
-          if [ -n "${{ inputs.target }}" ]; then ARGS+=(--target "${{ inputs.target }}"); fi
-          if [ "${{ inputs.allow-rc }}" = "true" ]; then ARGS+=(--allow-rc); fi
-          python3 scripts/bump/pinned_bump.py select "${ARGS[@]+${ARGS[@]}}"
+          INPUT_TARGET: ${{ inputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: python3 scripts/bump/pinned_bump.py select
 
   publish:
     needs: select
@@ -66,6 +73,11 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
       - name: Require bump App credentials
         run: |
           set -euo pipefail
@@ -73,18 +85,6 @@ jobs:
             echo "::error::Create the bump GitHub App and store vars.BUMP_APP_ID + secrets.BUMP_APP_PRIVATE_KEY (see the workflow header)."
             exit 1
           fi
-
-      - name: Generate App token
-        id: app-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        with:
-          app-id: ${{ vars.BUMP_APP_ID }}
-          private-key: ${{ secrets.BUMP_APP_PRIVATE_KEY }}
-
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          fetch-depth: 0
 
       - name: Install elan v4.2.4
         run: |
@@ -102,13 +102,39 @@ jobs:
           "$installer_dir/elan-init" -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
-      - name: Publish pinned bump PR
+      # No App token exists yet in this job: only the read-only
+      # github.token is available, and this step commits/pushes nothing.
+      - name: Prepare bump tree
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          BUMP_BOT_NAME: ${{ vars.BUMP_BOT_NAME }}
-          BUMP_BOT_NAME_EMAIL: ${{ vars.BUMP_BOT_NAME_EMAIL }}
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
         run: |
           set -euo pipefail
           ARGS=()
-          if [ "${{ inputs.allow-rc }}" = "true" ]; then ARGS+=(--allow-rc); fi
-          python3 scripts/bump/pinned_bump.py publish "${{ needs.select.outputs.target }}" "${ARGS[@]+${ARGS[@]}}"
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py prepare "$TARGET" "${ARGS[@]+${ARGS[@]}}"
+
+      - name: Generate App token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ vars.BUMP_APP_ID }}
+          private-key: ${{ secrets.BUMP_APP_PRIVATE_KEY }}
+
+      # The App token appears only here, after lake update + verification
+      # have already run. Push uses an explicit push URL; the checkout
+      # never persisted the token.
+      - name: Publish bump PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          BUMP_BOT_NAME: ${{ vars.BUMP_BOT_NAME }}
+          BUMP_BOT_NAME_EMAIL: ${{ vars.BUMP_BOT_NAME_EMAIL }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py finish "$TARGET" "${ARGS[@]+${ARGS[@]}}"
