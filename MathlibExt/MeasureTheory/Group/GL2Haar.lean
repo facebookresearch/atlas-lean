@@ -53,6 +53,8 @@ public import Mathlib.Tactic.Group
 public import Mathlib.Tactic.Ring
 public import Mathlib.Topology.Algebra.Group.Units
 
+import MathlibExt.MeasureTheory.Measure.IsInvInvariant
+
 /-!
 # Unimodularity of `GL (2, F)`
 
@@ -352,29 +354,7 @@ theorem isMulRightInvariant_and_isInvInvariant_of_isHaarMeasure_fin_two
       modularCharacter_fin_two_eq_one g
     rw [MeasureTheory.Measure.map_right_mul_eq_modularCharacterFun_smul μ g, hmc,
       one_smul]⟩
-  refine ⟨hright, ?_⟩
-  constructor
-  let c : ℝ≥0 := MeasureTheory.Measure.haarScalarFactor μ.inv μ
-  have hc : μ.inv = c • μ := MeasureTheory.Measure.isMulLeftInvariant_eq_smul μ.inv μ
-  have h2 : MeasureTheory.Measure.map Inv.inv (MeasureTheory.Measure.map Inv.inv μ) =
-      c ^ 2 • μ := by
-    rw [← MeasureTheory.Measure.inv_def μ, hc,
-      MeasureTheory.Measure.map_smul _ continuous_inv.aemeasurable,
-      ← MeasureTheory.Measure.inv_def μ, hc, smul_smul, pow_two]
-  have μeq : μ = c ^ 2 • μ := by
-    rw [MeasureTheory.Measure.map_map continuous_inv.measurable continuous_inv.measurable]
-      at h2
-    simpa only [inv_involutive, Function.Involutive.comp_self, MeasureTheory.Measure.map_id]
-      using h2
-  have K : TopologicalSpace.PositiveCompacts (GL (Fin 2) F) := Classical.arbitrary _
-  have h3 : c ^ 2 * μ K = 1 ^ 2 * μ K := by
-    conv_rhs => rw [μeq]
-    simp
-  have h4 : (c : ENNReal) ^ 2 = (1 : ENNReal) ^ 2 :=
-    (ENNReal.mul_left_inj (MeasureTheory.Measure.measure_pos_of_nonempty_interior _
-          K.interior_nonempty).ne' K.isCompact.measure_lt_top.ne).1 h3
-  have h5 : (c : ENNReal) = 1 := (ENNReal.pow_right_strictMono two_ne_zero).injective h4
-  have h6 : c = 1 := by exact_mod_cast h5
-  rw [hc, h6, one_smul]
+  letI := hright
+  exact ⟨hright, MeasureTheory.Measure.isInvInvariant_of_isMulRightInvariant μ⟩
 
 end Matrix.GeneralLinearGroup
