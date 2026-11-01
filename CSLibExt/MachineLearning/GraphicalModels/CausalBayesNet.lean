@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.BayesianNetwork
+public import MathlibExt.Probability.FiniteWeight
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -24,7 +25,6 @@ Definition 1.3.1 and §3.2.2).
 
 * `BayesNet.paVal b k x`: the values of the parents of node `k` in a full assignment `x`.
 * `BayesNet.intervene b k a`: the network after the intervention `do(X_k = a)`.
-* `CondIndep P X Y Z`: conditional independence of sets of variables under a law `P`.
 * `BayesNet.Edge`, `BayesNet.IsDescendant`, `BayesNet.IsPath`, `BayesNet.PathBlocked`,
   `BayesNet.DSeparated`: the graph of a network, paths of its skeleton, blocking and
   d-separation (Pearl 2009, Definition 1.2.3).
@@ -337,21 +337,6 @@ theorem sum_intervene_joint_mul_of_pred_of_cpt_ne_zero [Fintype α] [DecidableEq
     exact mul_ne_zero (hcpt _) hz
 
 end BayesNet
-
-/-! ### Conditional independence of sets of variables -/
-
-/-- The probability under a law `P` of the event that the variables in `S` take the values
-they take in the assignment `x'`. -/
-def margProb {n : ℕ} [Fintype α] [DecidableEq α] (P : (Fin n → α) → ℝ) (S : Finset (Fin n))
-    (x' : Fin n → α) : ℝ :=
-  ∑ x with ∀ i ∈ S, x i = x' i, P x
-
-/-- The variables in `X` and `Y` are conditionally independent given those in `Z` under the
-law `P`: `P(x_X, y_Y, z_Z) P(z_Z) = P(x_X, z_Z) P(y_Y, z_Z)` for all values. -/
-def CondIndep {n : ℕ} [Fintype α] [DecidableEq α] (P : (Fin n → α) → ℝ)
-    (X Y Z : Finset (Fin n)) : Prop :=
-  ∀ x', margProb P (X ∪ Y ∪ Z) x' * margProb P Z x' =
-    margProb P (X ∪ Z) x' * margProb P (Y ∪ Z) x'
 
 namespace BayesNet
 

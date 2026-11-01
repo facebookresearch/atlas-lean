@@ -10,8 +10,9 @@ LICENSE file in the root directory of this source tree.
 # Graphical causal identification: wanted results
 
 Statements about causal Bayesian networks (`CSLibExt/MachineLearning/GraphicalModels/`), with
-the do-operator `BayesNet.intervene`, d-separation `BayesNet.DSeparated` and conditional
-independence of sets of variables `CondIndep` from `CausalBayesNet.lean`.
+the do-operator `BayesNet.intervene` and d-separation `BayesNet.DSeparated` from
+`CausalBayesNet.lean`, and conditional independence `MetaMathlibExt.FiniteWeight.CondIndep` from
+`MathlibExt/Probability/FiniteWeight.lean`.
 
 * `condIndep_of_dSeparated`: the global Markov property, d-separation implies conditional
   independence in every law that factorizes along the graph (Geiger, Verma & Pearl 1990;
@@ -48,10 +49,9 @@ open Finset Cslib.MachineLearning.GraphicalModels
 Bayesian network, then `X` and `Y` are conditionally independent given `Z` under its joint
 law. -/
 theorem_wanted condIndep_of_dSeparated {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
-    {n : ℕ} (b : BayesNet α n) (X Y Z : Finset (Fin n)) (hXY : Disjoint X Y)
-    (hXZ : Disjoint X Z) (hYZ : Disjoint Y Z)
-    (h : b.DSeparated (X : Set (Fin n)) (Y : Set (Fin n)) (Z : Set (Fin n))) :
-    CondIndep b.joint X Y Z
+    {n : ℕ} (b : BayesNet α n) (X Y Z : Set (Fin n)) (hXY : Disjoint X Y)
+    (hXZ : Disjoint X Z) (hYZ : Disjoint Y Z) (h : b.DSeparated X Y Z) :
+    MetaMathlibExt.FiniteWeight.CondIndep b.joint X Y Z
 
 /-- **The back-door adjustment** (Pearl 1995; Pearl 2009, Theorem 3.3.2): if the
 set `Z` contains no descendant of the treatment node `k` and blocks every path between `k` and
