@@ -47,19 +47,21 @@ example :
           multinomialReal 4 ![(1 / 2 : ℝ), 1 / 4, 1 / 4] x = 1 := by
   have hp : ∑ i, ![(1 / 2 : ℝ), 1 / 4, 1 / 4] i = 1 := by
     simp [Fin.sum_univ_three]; norm_num
+  have hp₀ : ∀ i, 0 ≤ ![(1 / 2 : ℝ), 1 / 4, 1 / 4] i := by
+    intro i; fin_cases i <;> norm_num
   refine ⟨?_, ?_⟩
-  · rw [sum_mul_multinomialReal hp]; norm_num
-  · have h := sum_covariance_multinomialReal (N := 4) hp 0 0
+  · rw [sum_mul_multinomialReal hp hp₀]; norm_num
+  · have h := sum_covariance_multinomialReal (N := 4) hp hp₀ 0 0
     simp only [ite_true] at h
     convert h using 1
     simp
     norm_num
 
 /-- Distinct cells are negatively correlated: `Cov(X₀, X₁) = -N p₀ p₁`. -/
-example {N : ℕ} {p : Fin 3 → ℝ} (hp : ∑ i, p i = 1) :
+example {N : ℕ} {p : Fin 3 → ℝ} (hp : ∑ i, p i = 1) (hp₀ : ∀ i, 0 ≤ p i) :
     ∑ x ∈ piAntidiag univ N, ((x 0 : ℝ) - N * p 0) * ((x 1 : ℝ) - N * p 1) * multinomialReal N p x
       = -(N * p 0 * p 1) := by
-  rw [sum_covariance_multinomialReal hp]
+  rw [sum_covariance_multinomialReal hp hp₀]
   simp
   ring
 

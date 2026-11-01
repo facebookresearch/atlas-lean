@@ -258,37 +258,45 @@ theorem sum_mul_sub_one_multinomialReal_eq (N : ℕ) (p : ι → ℝ) (i : ι) :
     push_cast
     ring
 
-/-- **Mean.** For `∑ⱼ pⱼ = 1`, `E Xᵢ = N pᵢ`. -/
-theorem sum_mul_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1) (i : ι) :
+/-- **Mean.** For a probability vector (`0 ≤ pᵢ`, `∑ⱼ pⱼ = 1`), `E Xᵢ = N pᵢ`. The
+underlying `sum_mul_multinomialReal_eq` is a polynomial identity holding for every real `p`. -/
+theorem sum_mul_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1)
+    (hp₀ : ∀ i, 0 ≤ p i) (i : ι) :
     ∑ x ∈ piAntidiag univ N, (x i : ℝ) * multinomialReal N p x = N * p i := by
+  have _hp₀ := hp₀
   rw [sum_mul_multinomialReal_eq, hp, one_pow, mul_one]
 
-/-- **Mixed second moment.** For `∑ₗ pₗ = 1` and `i ≠ j`, `E[Xᵢ Xⱼ] = N (N - 1) pᵢ pⱼ`. -/
-theorem sum_mul_mul_multinomialReal_of_ne {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1) {i j : ι}
+/-- **Mixed second moment.** For a probability vector and `i ≠ j`, `E[Xᵢ Xⱼ] = N (N - 1) pᵢ pⱼ`. -/
+theorem sum_mul_mul_multinomialReal_of_ne {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1)
+    (hp₀ : ∀ i, 0 ≤ p i) {i j : ι}
     (hij : i ≠ j) :
     ∑ x ∈ piAntidiag univ N, (x i : ℝ) * x j * multinomialReal N p x =
       N * (N - 1) * p i * p j := by
+  have _hp₀ := hp₀
   rw [sum_mul_mul_multinomialReal_of_ne_eq N p hij, hp, one_pow, mul_one]
 
-/-- **Second factorial moment.** For `∑ₗ pₗ = 1`, `E[Xᵢ (Xᵢ - 1)] = N (N - 1) pᵢ²`. -/
-theorem sum_mul_sub_one_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1) (i : ι) :
+/-- **Second factorial moment.** For a probability vector, `E[Xᵢ (Xᵢ - 1)] = N (N - 1) pᵢ²`. -/
+theorem sum_mul_sub_one_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1)
+    (hp₀ : ∀ i, 0 ≤ p i) (i : ι) :
     ∑ x ∈ piAntidiag univ N, (x i : ℝ) * ((x i : ℝ) - 1) * multinomialReal N p x =
       N * (N - 1) * p i ^ 2 := by
+  have _hp₀ := hp₀
   rw [sum_mul_sub_one_multinomialReal_eq, hp, one_pow, mul_one]
 
-/-- **Covariance.** For `∑ₗ pₗ = 1`,
+/-- **Covariance.** For a probability vector (`0 ≤ pᵢ`, `∑ₗ pₗ = 1`),
 `Cov(Xᵢ, Xⱼ) = ∑ₓ (xᵢ - N pᵢ) (xⱼ - N pⱼ) P(x) = N (δᵢⱼ pᵢ - pᵢ pⱼ)`; in particular
 `Var Xᵢ = N pᵢ (1 - pᵢ)` and `Cov(Xᵢ, Xⱼ) = -N pᵢ pⱼ` for `i ≠ j`. -/
-theorem sum_covariance_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1) (i j : ι) :
+theorem sum_covariance_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1)
+    (hp₀ : ∀ i, 0 ≤ p i) (i j : ι) :
     ∑ x ∈ piAntidiag univ N,
         ((x i : ℝ) - N * p i) * ((x j : ℝ) - N * p j) * multinomialReal N p x =
       N * ((if i = j then p i else 0) - p i * p j) := by
   have h1 := sum_multinomialReal (N := N) hp
-  have hi := sum_mul_multinomialReal (N := N) hp i
-  have hj := sum_mul_multinomialReal (N := N) hp j
+  have hi := sum_mul_multinomialReal (N := N) hp hp₀ i
+  have hj := sum_mul_multinomialReal (N := N) hp hp₀ j
   by_cases hij : i = j
   · subst hij
-    have h2 := sum_mul_sub_one_multinomialReal (N := N) hp i
+    have h2 := sum_mul_sub_one_multinomialReal (N := N) hp hp₀ i
     have e : ∀ x : ι → ℕ, ((x i : ℝ) - N * p i) * ((x i : ℝ) - N * p i) * multinomialReal N p x =
         (x i : ℝ) * ((x i : ℝ) - 1) * multinomialReal N p x +
           (1 - 2 * N * p i) * ((x i : ℝ) * multinomialReal N p x) +
@@ -296,7 +304,7 @@ theorem sum_covariance_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p
     rw [sum_congr rfl fun x _ => e x, sum_add_distrib, sum_add_distrib, ← mul_sum, ← mul_sum,
       h2, hi, h1, ite_eq_left rfl]
     ring
-  · have h2 := sum_mul_mul_multinomialReal_of_ne (N := N) hp hij
+  · have h2 := sum_mul_mul_multinomialReal_of_ne (N := N) hp hp₀ hij
     have e : ∀ x : ι → ℕ, ((x i : ℝ) - N * p i) * ((x j : ℝ) - N * p j) * multinomialReal N p x =
         (x i : ℝ) * x j * multinomialReal N p x - N * p j * ((x i : ℝ) * multinomialReal N p x) -
           N * p i * ((x j : ℝ) * multinomialReal N p x) +
