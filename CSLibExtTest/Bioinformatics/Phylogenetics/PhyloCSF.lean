@@ -18,7 +18,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 Two leaves on a cherry over `S = Bool`, with transition matrices `P_C` (stay with weight `9/10`)
 for the coding model and `P_N` (uniform `1/2`) for the non-coding one, and uniform root
 distributions. Both models give positive site likelihoods (the non-vacuity witness of the
-hypotheses of `power_le_scoreTest`); for the column `(true, true)` the site likelihoods are
+hypotheses of `weighted_power_le_scoreTest`); for the column `(true, true)` the site likelihoods are
 `41/100` and `1/4`, so the one-column score is `log (41/25) > 0` and the column is called coding
 at cutoff `0`. The theorem instance below compares the threshold test with the test that never
 calls coding.
@@ -75,12 +75,12 @@ example : 0 < score (cherry PC) unif (cherry PN) unif (fun (_ : Fin 1) _ => true
   simp only [score, Fin.sum_univ_one, hC, hN]
   exact Real.log_pos (by norm_num)
 
-/-- The threshold test is at least as powerful as never calling coding. -/
+/-- The threshold test has at least as much weighted power as never calling coding. -/
 example (c : ℝ) :
     ∑ A : Fin 1 → Bool → Bool, (0 : ℝ) * alignLik (cherry PC) unif A ≤
       ∑ A : Fin 1 → Bool → Bool,
         (scoreTest (cherry PC) unif (cherry PN) unif c A).val * alignLik (cherry PC) unif A :=
-  power_le_scoreTest siteLik_C_pos siteLik_N_pos c (fun _ => ⟨0, le_rfl, by norm_num⟩)
+  weighted_power_le_scoreTest siteLik_C_pos siteLik_N_pos c (fun _ => ⟨0, le_rfl, by norm_num⟩)
     (Finset.sum_le_sum fun A _ => by
       simp only [zero_mul]
       exact mul_nonneg (scoreTest _ _ _ _ c A).2.1

@@ -34,10 +34,14 @@ likelihoods, each computed by pruning (`alignLik`).
 * `score_eq_log_div`: the PhyloCSF score `∑ k, log (L_C(A k) / L_N(A k))` is the log of the
   likelihood ratio of the whole alignment.
 * `siteLik_eq_sum_prune`: each site likelihood is computed by Felsenstein's pruning.
-* `power_le_scoreTest`: **the score threshold test is most powerful** at its size (the
-  Neyman–Pearson lemma on the finite set of alignments): no test that calls coding with at most
-  the same probability under the non-coding model has larger probability of calling coding
-  under the coding model.
+* `weighted_power_le_scoreTest`: **the score threshold test is most powerful for
+  unnormalized weights** (the dominated Neyman–Pearson inequality on the finite set of
+  alignments): no test whose weighted size under the non-coding weights is at most that of
+  the threshold test has larger weighted power under the coding weights. The hypotheses
+  assume only positivity of the site likelihoods, not that either pruning model defines a
+  probability distribution, so the sums need not be probabilities; genuine statistical
+  size and power for two simple hypotheses would additionally need normalization
+  (`∑ A, alignLik = 1` for each model).
 
 The optimality is for fixed model parameters (two simple hypotheses). As published, PhyloCSF
 also fits a scale factor for the branch lengths of each model by maximum likelihood on each
@@ -102,11 +106,13 @@ noncomputable def scoreTest (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S
 
 variable [Fintype L] [DecidableEq L]
 
-/-- **PhyloCSF's score threshold test is most powerful at its size**: with positive site
-likelihoods under both models, a randomized test `φ` whose probability of calling coding under
-the non-coding model is at most that of `scoreTest c` has at most its probability of calling
-coding under the coding model. -/
-theorem power_le_scoreTest {tC tN : Tree L S ℝ} {πC πN : S → ℝ}
+/-- **PhyloCSF's score threshold test is most powerful for unnormalized weights**: with
+positive site likelihoods under both models, a randomized test `φ` whose weighted size under
+the non-coding weights is at most that of `scoreTest c` has at most its weighted power under
+the coding weights. This is the dominated Neyman–Pearson inequality for the unnormalized
+alignment weights `alignLik`; it becomes a statement about statistical size and power only
+under additional normalization hypotheses (`∑ A, alignLik = 1` for each model). -/
+theorem weighted_power_le_scoreTest {tC tN : Tree L S ℝ} {πC πN : S → ℝ}
     (hC : ∀ col, 0 < siteLik tC πC col) (hN : ∀ col, 0 < siteLik tN πN col) (c : ℝ)
     (φ : (Fin m → L → S) → Set.Icc (0 : ℝ) 1)
     (hsize : ∑ A, (φ A).val * alignLik tN πN A ≤
