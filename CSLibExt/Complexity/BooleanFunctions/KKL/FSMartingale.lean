@@ -20,20 +20,19 @@ of `∂ₑ 1_A`, `Dₑ(ρ) ≤ Infₑ^{2/q}` when
 `ρ² = 4p(1-p)(q-1)`, and the log-sum inequality turns the summed bound into
 `∑ₑ Infₑ · (2/q - 1) · log (1 / δ) ≤ ∑ₑ Infₑ · log (Infₑ / Dₑ)` (`fsm2_logGain_capped`).
 
-The predicate `fsm2_residue_statement q` asserts the KKL inequality with constant `2` for all
-`p ∈ (1/2, q)`; it is not proved in this library for any `q > 1/2`.
+There is no transfer from a residue statement to `ptn_RhoOptimise` here: stating the
+KKL conclusion itself as a hypothesis and discarding the capped estimate would be
+circular, so no such API is exported. The capped log-sum estimate above is the
+genuine proved step; deriving KKL from it remains open for `q > 1/2`.
 
 ## Main definitions
 
 * `StatMech.Probability.fsm2_dampWeight`: the damped influence `Dₑ(ρ)`.
-* `StatMech.Probability.fsm2_residue_statement`: KKL with constant `2` on `(1/2, q)`.
 
 ## Main results
 
 * `StatMech.Probability.fsm2_dampWeight_le_hc`: `Dₑ(ρ) ≤ Infₑ^{2/q}`.
 * `StatMech.Probability.fsm2_logGain_capped`: the capped log-sum estimate.
-* `StatMech.Probability.fsm2_rhoOptimise_of_residue`: `fsm2_residue_statement q` implies
-  `ptn_RhoOptimise q`.
 -/
 
 @[expose] public section
@@ -271,21 +270,5 @@ theorem fsm2_dampWeight_half_one (φ : ConfigSpace ι → Bool) (e : ι) :
     fsm2_dampWeight (1 / 2 : ℝ) 1 φ e
       = OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) e :=
   fsm2_dampWeight_one (by norm_num) (by norm_num) φ e
-
-/-- The KKL inequality with constant `2` for every `p ∈ (1/2, q)` with `p < 1`. Equivalent to
-  `kpb_PBiasedHC q` when `q ≤ 1`; not proved in this library for any `q > 1/2`. -/
-def fsm2_residue_statement (q : ℝ) : Prop :=
-  ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
-    (φ : ConfigSpace E → Bool),
-      2 * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-        ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-
-/-- `fsm2_residue_statement q` implies `ptn_RhoOptimise q` (the hypothesis of `ptn_RhoOptimise` is
-  not needed). -/
-theorem fsm2_rhoOptimise_of_residue {q : ℝ} (H : fsm2_residue_statement q) :
-    ptn_RhoOptimise q := by
-  intro p hp hp1 E _ _ _ φ _Hcap
-  exact H p hp hp1 φ
 
 end StatMech.Probability

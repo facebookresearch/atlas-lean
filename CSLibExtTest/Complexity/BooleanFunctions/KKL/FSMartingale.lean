@@ -20,8 +20,8 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.FSMartingale` at the `AND` f
 * `fsm2_dampWeight_le_hc` at `q = 1`, `ρ = 0` is the equality `p² ≤ p²`;
 * `fsm2_logGain_capped` instantiated at `p = 3/4`, `q = 2`, `ρ = √3/2`, with its positivity
   hypotheses discharged from the explicit influences;
-* `fsm2_residue_statement q` is proved here for no `q > 1/2`; it holds for `q ≤ 1/2` because
-  `(1/2, q)` is empty, and `fsm2_rhoOptimise_of_residue` transfers it to `ptn_RhoOptimise`.
+* `ptn_RhoOptimise (1/2)` holds vacuously because `(1/2, 1/2)` is empty; no residue
+  statement is used for it.
 -/
 
 @[expose] public section
@@ -60,10 +60,9 @@ example :
     rho_sq andFun (by rw [totalInfl_andInd_p]; norm_num) (by rw [maxInfl_andInd_p]; norm_num)
     (by rw [maxInfl_andInd_p]; norm_num)
 
-/-- `fsm2_residue_statement q` for `q ≤ 1/2` holds vacuously. -/
-lemma fsm2_residue_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : fsm2_residue_statement q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : ptn_RhoOptimise (1 / 2) := fsm2_rhoOptimise_of_residue (fsm2_residue_of_le_half le_rfl)
+/-- `ptn_RhoOptimise (1/2)` holds vacuously: no `p` lies in `(1/2, 1/2)`. -/
+example : ptn_RhoOptimise (1 / 2) := by
+  intro p hp
+  exact absurd (hp.1.trans hp.2) (not_lt.mpr le_rfl)
 
 end StatMechTest.BooleanFunctions
