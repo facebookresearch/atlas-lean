@@ -16,7 +16,7 @@ public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Probability.Independence.Integration
-import MathlibExt.Probability.Distributions.Beta
+import MathlibExt.Probability.Distributions.BetaMoments
 
 /-!
 # The Dirichlet process: Sethuraman's stick-breaking construction
@@ -649,8 +649,12 @@ private theorem integrable_betaMeasure_of_bound {a b : ℝ} (ha : 0 < a) (hb : 0
 theorem integral_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
     ∫ x, x ^ 2 ∂betaMeasure 1 α = 2 / ((1 + α) * (2 + α)) := by
   have h1 := integral_id_betaMeasure zero_lt_one hα
-  have h2 := integral_heterozygosity_betaMeasure
-    zero_lt_one hα
+  have h2 : ∫ x, 2 * x * (1 - x) ∂betaMeasure 1 α =
+      2 * 1 * α / ((1 + α) * (1 + α + 1)) := by
+    have h := integral_mul_one_sub_betaMeasure zero_lt_one hα
+    rw [show (fun x : ℝ ↦ 2 * x * (1 - x)) = fun x => 2 * (x * (1 - x)) by ext; ring,
+      integral_const_mul, h]
+    ring
   have i1 : Integrable (fun x : ℝ ↦ x) (betaMeasure 1 α) :=
     integrable_betaMeasure_of_bound zero_lt_one hα measurable_id (C := 1) fun x hx ↦ by
       rw [abs_le]; constructor <;> linarith [hx.1, hx.2]

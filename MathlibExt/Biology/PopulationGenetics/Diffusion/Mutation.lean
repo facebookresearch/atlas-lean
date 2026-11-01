@@ -11,7 +11,7 @@ module
 public import MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisher
 public import Mathlib.Probability.Distributions.Beta
 public import Mathlib.Probability.Distributions.Binomial
-import MathlibExt.Probability.Distributions.Beta
+import MathlibExt.Probability.Distributions.BetaMoments
 import MathlibExt.Probability.Distributions.BinomialMoments
 
 /-!
@@ -37,9 +37,11 @@ file proves the analytic stationarity statements:
   `½ (a π)'' - (b π)' = 0` on `(0, 1)` and has zero probability flux `½ (a π)' - b π = 0`;
 * weak stationarity: `∫ L f dπ = 0` for every `f` that is `C²` on `[0, 1]` (integration by parts;
   the boundary term `½ a π f'` vanishes at `0` and `1` because `a π ∝ x ^ θ₁ (1 - x) ^ θ₂`);
-* the stationary mean `θ₁ / (θ₁ + θ₂)` and expected heterozygosity
-  `2 θ₁ θ₂ / ((θ₁ + θ₂) (θ₁ + θ₂ + 1))`, obtained from weak stationarity applied to `x` and
-  `2 x (1 - x)`;
+* the generator applied to `x` and to the heterozygosity `2 x (1 - x)`, the identities that
+  weak stationarity turns into the stationary mean `θ₁ / (θ₁ + θ₂)` and expected heterozygosity
+  `2 θ₁ θ₂ / ((θ₁ + θ₂) (θ₁ + θ₂ + 1))`. Those two moments are moments of the Beta law and are
+  proved directly in `MathlibExt.Probability.Distributions.BetaMoments`
+  (`integral_id_betaMeasure`, `integral_mul_one_sub_betaMeasure`);
 * the link with the Wright–Fisher chain on `M = 2N` gene copies (mutation, then binomial
   sampling) with `uᵢ = θᵢ / (2M)`: the scaled mean change of frequency in one generation is
   exactly the drift `(θ₁ (1 - x) - θ₂ x) / 2`, and the scaled second moment is given exactly
@@ -55,12 +57,8 @@ file proves the analytic stationarity statements:
 * `intervalIntegrable_mutationGenerator_mul_betaPDFReal`,
   `integral_mutationGenerator_mul_betaPDFReal`, `integrable_mutationGenerator_betaMeasure`,
   `integral_mutationGenerator_betaMeasure`: weak stationarity.
-* `mutationGenerator_id`, `mutationGenerator_heterozygosity`: the generator
-  applied to the frequency and to the heterozygosity. The Beta moments
-  `integral_id_betaMeasure`, `integral_heterozygosity_betaMeasure` (the
-  stationary mean and heterozygosity) live in
-  `MathlibExt/Probability/Distributions/Beta.lean`, so generic probability
-  developments can use them without importing this biology file.
+* `mutationGenerator_id`, `mutationGenerator_heterozygosity`: the generator on the mean and
+  heterozygosity test functions.
 * `mutatedFreq`, `integral_binomial_mutatedFreq_drift`, `integral_binomial_mutatedFreq_sq`:
   one generation of the Wright–Fisher chain with mutation.
 
@@ -143,12 +141,6 @@ theorem forwardEquation_betaPDFReal (θ₁ θ₂ : ℝ) {x : ℝ} (hx : x ∈ Io
   rw [h.deriv_eq, deriv_const_mul_field']
   ring
 
-private theorem betaPDFReal_nonneg' {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) (x : ℝ) :
-    0 ≤ betaPDFReal θ₁ θ₂ x := by
-  by_cases hx : 0 < x ∧ x < 1
-  · exact (betaPDFReal_pos hx.1 hx.2 hθ₁ hθ₂).le
-  · simp [betaPDFReal, hx]
-
 private theorem intervalIntegrable_betaPDFReal {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
     IntervalIntegrable (betaPDFReal θ₁ θ₂) volume 0 1 := by
   have h := ((intervalIntegrable_wrightDensity (α := θ₁ / 2) (β := θ₂ / 2) (by linarith)
@@ -163,7 +155,7 @@ private theorem integral_betaMeasure {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (h
     integral_withDensity_eq_integral_toReal_smul
     (measurable_betaPDFReal θ₁ θ₂).ennreal_ofReal (ae_of_all _ fun _ => ENNReal.ofReal_lt_top),
     intervalIntegral.integral_of_le zero_le_one]
-  simp_rw [ENNReal.toReal_ofReal (betaPDFReal_nonneg' hθ₁ hθ₂ _), smul_eq_mul]
+  simp_rw [ENNReal.toReal_ofReal (betaPDFReal_nonneg hθ₁ hθ₂ _), smul_eq_mul]
   rw [← setIntegral_eq_integral_of_forall_compl_eq_zero (s := Ioc 0 1)]
   · exact setIntegral_congr_fun measurableSet_Ioc fun x _ => mul_comm _ _
   · intro x hx
@@ -178,7 +170,7 @@ private theorem integrable_betaMeasure_iff {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ�
     integrable_withDensity_iff_integrable_smul'
     (measurable_betaPDFReal θ₁ θ₂).ennreal_ofReal (ae_of_all _ fun _ => ENNReal.ofReal_lt_top),
     intervalIntegrable_iff_integrableOn_Ioc_of_le zero_le_one]
-  simp_rw [ENNReal.toReal_ofReal (betaPDFReal_nonneg' hθ₁ hθ₂ _), smul_eq_mul]
+  simp_rw [ENNReal.toReal_ofReal (betaPDFReal_nonneg hθ₁ hθ₂ _), smul_eq_mul]
   rw [← integrableOn_iff_integrable_of_support_subset (s := Ioc 0 1)]
   · exact ⟨fun h => h.congr_fun (fun x _ => mul_comm _ _) measurableSet_Ioc,
       fun h => h.congr_fun (fun x _ => mul_comm _ _) measurableSet_Ioc⟩
