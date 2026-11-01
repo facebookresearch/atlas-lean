@@ -11,6 +11,7 @@ module
 public import MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisher
 public import Mathlib.Probability.Distributions.Beta
 public import Mathlib.Probability.Distributions.Binomial
+import MathlibExt.Probability.Distributions.Beta
 import MathlibExt.Probability.Distributions.BinomialMoments
 
 /-!
@@ -54,8 +55,12 @@ file proves the analytic stationarity statements:
 * `intervalIntegrable_mutationGenerator_mul_betaPDFReal`,
   `integral_mutationGenerator_mul_betaPDFReal`, `integrable_mutationGenerator_betaMeasure`,
   `integral_mutationGenerator_betaMeasure`: weak stationarity.
-* `mutationGenerator_id`, `mutationGenerator_heterozygosity`, `integral_id_betaMeasure`,
-  `integral_heterozygosity_betaMeasure`: the stationary mean and heterozygosity.
+* `mutationGenerator_id`, `mutationGenerator_heterozygosity`: the generator
+  applied to the frequency and to the heterozygosity. The Beta moments
+  `integral_id_betaMeasure`, `integral_heterozygosity_betaMeasure` (the
+  stationary mean and heterozygosity) live in
+  `MathlibExt/Probability/Distributions/Beta.lean`, so generic probability
+  developments can use them without importing this biology file.
 * `mutatedFreq`, `integral_binomial_mutatedFreq_drift`, `integral_binomial_mutatedFreq_sq`:
   one generation of the Wright–Fisher chain with mutation.
 
@@ -298,58 +303,6 @@ theorem mutationGenerator_heterozygosity (θ₁ θ₂ x : ℝ) :
   have h2 : HasDerivAt (fun y : ℝ => 2 - 4 * y) (-4) x := by
     simpa using ((hasDerivAt_id' x).const_mul 4).const_sub 2
   rw [mutationGenerator, hD, h2.deriv]
-  ring
-
-/-- Quadratic moments under `betaMeasure θ₁ θ₂`, by linearity. -/
-private theorem integral_quadratic_betaMeasure {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂)
-    (a b c : ℝ) : ∫ x, (a + b * x + c * x ^ 2) ∂(betaMeasure θ₁ θ₂) =
-      a + b * (∫ x, x ∂(betaMeasure θ₁ θ₂)) + c * ∫ x, x ^ 2 ∂(betaMeasure θ₁ θ₂) := by
-  have := isProbabilityMeasureBeta hθ₁ hθ₂
-  have hI : ∀ g : ℝ → ℝ, Continuous g → Integrable g (betaMeasure θ₁ θ₂) := fun g hg =>
-    (integrable_betaMeasure_iff hθ₁ hθ₂ g).2
-      ((intervalIntegrable_betaPDFReal hθ₁ hθ₂).continuousOn_mul hg.continuousOn)
-  have h1 := hI (fun x => x) continuous_id
-  have h2 := hI (fun x => x ^ 2) (continuous_pow 2)
-  have hab : Integrable (fun x : ℝ => a + b * x) (betaMeasure θ₁ θ₂) :=
-    (integrable_const a).add (h1.const_mul b)
-  have hc : Integrable (fun x : ℝ => c * x ^ 2) (betaMeasure θ₁ θ₂) := h2.const_mul c
-  have hb : Integrable (fun x : ℝ => b * x) (betaMeasure θ₁ θ₂) := h1.const_mul b
-  rw [integral_add hab hc, integral_add (integrable_const a) hb, integral_const, integral_const_mul,
-    integral_const_mul]
-  simp
-
-/-- **Stationary mean (Wright 1931).** Under Wright's stationary law `Beta(θ₁, θ₂)` with
-`θ₁, θ₂ > 0` the mean allele frequency is `θ₁ / (θ₁ + θ₂)`. -/
-theorem integral_id_betaMeasure {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
-    ∫ x, x ∂(betaMeasure θ₁ θ₂) = θ₁ / (θ₁ + θ₂) := by
-  have h := integral_mutationGenerator_betaMeasure hθ₁ hθ₂ (f := id) contDiffOn_id
-  simp_rw [mutationGenerator_id] at h
-  rw [integral_congr_ae (g := fun x => θ₁ / 2 + (-(θ₁ + θ₂) / 2) * x + 0 * x ^ 2)
-    (ae_of_all _ fun x => by ring), integral_quadratic_betaMeasure hθ₁ hθ₂] at h
-  field_simp
-  linarith
-
-/-- **Stationary heterozygosity (Wright 1931; Ewens 2004, ch. 5).** Under Wright's stationary law
-`Beta(θ₁, θ₂)` with `θ₁, θ₂ > 0` the expected heterozygosity is
-`E[2x (1 - x)] = 2 θ₁ θ₂ / ((θ₁ + θ₂) (θ₁ + θ₂ + 1))`. -/
-theorem integral_heterozygosity_betaMeasure {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
-    ∫ x, 2 * x * (1 - x) ∂(betaMeasure θ₁ θ₂) =
-      2 * θ₁ * θ₂ / ((θ₁ + θ₂) * (θ₁ + θ₂ + 1)) := by
-  have hf : ContDiffOn ℝ 2 (fun y : ℝ => 2 * y * (1 - y)) (Icc 0 1) :=
-    ((contDiff_const.mul contDiff_id).mul (contDiff_const.sub contDiff_id)).contDiffOn
-  have h := integral_mutationGenerator_betaMeasure hθ₁ hθ₂ hf
-  simp_rw [mutationGenerator_heterozygosity] at h
-  rw [integral_congr_ae (g := fun x => θ₁ + (-2 - 3 * θ₁ - θ₂) * x + (2 + 2 * θ₁ + 2 * θ₂) * x ^ 2)
-    (ae_of_all _ fun x => by ring), integral_quadratic_betaMeasure hθ₁ hθ₂,
-    integral_id_betaMeasure hθ₁ hθ₂] at h
-  rw [integral_congr_ae (g := fun x => 0 + 2 * x + (-2) * x ^ 2) (ae_of_all _ fun x => by ring),
-    integral_quadratic_betaMeasure hθ₁ hθ₂, integral_id_betaMeasure hθ₁ hθ₂]
-  have hS : 0 < θ₁ + θ₂ := by linarith
-  have hm2 : ∫ x, x ^ 2 ∂(betaMeasure θ₁ θ₂) = θ₁ * (θ₁ + 1) / ((θ₁ + θ₂) * (θ₁ + θ₂ + 1)) := by
-    field_simp at h ⊢
-    nlinarith [h]
-  rw [hm2]
-  field_simp
   ring
 
 /-- Allele frequency after one generation of two-way mutation, before random sampling: an `a`

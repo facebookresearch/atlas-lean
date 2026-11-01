@@ -16,7 +16,7 @@ public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Probability.Independence.Integration
-import MathlibExt.Biology.PopulationGenetics.Diffusion.Mutation
+import MathlibExt.Probability.Distributions.Beta
 
 /-!
 # The Dirichlet process: Sethuraman's stick-breaking construction
@@ -648,8 +648,8 @@ private theorem integrable_betaMeasure_of_bound {a b : ℝ} (ha : 0 < a) (hb : 0
 /-- The second moment of `Beta(1, α)`: `E[x²] = 2 / ((1 + α) (2 + α))`. -/
 theorem integral_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
     ∫ x, x ^ 2 ∂betaMeasure 1 α = 2 / ((1 + α) * (2 + α)) := by
-  have h1 := MathlibExt.Biology.PopulationGenetics.Diffusion.integral_id_betaMeasure zero_lt_one hα
-  have h2 := MathlibExt.Biology.PopulationGenetics.Diffusion.integral_heterozygosity_betaMeasure
+  have h1 := integral_id_betaMeasure zero_lt_one hα
+  have h2 := integral_heterozygosity_betaMeasure
     zero_lt_one hα
   have i1 : Integrable (fun x : ℝ ↦ x) (betaMeasure 1 α) :=
     integrable_betaMeasure_of_bound zero_lt_one hα measurable_id (C := 1) fun x hx ↦ by
@@ -667,7 +667,7 @@ theorem integral_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
 theorem integral_one_sub_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
     ∫ x, (1 - x) ^ 2 ∂betaMeasure 1 α = α / (α + 2) := by
   have := isProbabilityMeasureBeta zero_lt_one hα
-  have h1 := MathlibExt.Biology.PopulationGenetics.Diffusion.integral_id_betaMeasure zero_lt_one hα
+  have h1 := integral_id_betaMeasure zero_lt_one hα
   have i1 : Integrable (fun x : ℝ ↦ x) (betaMeasure 1 α) :=
     integrable_betaMeasure_of_bound zero_lt_one hα measurable_id (C := 1) fun x hx ↦ by
       rw [abs_le]; constructor <;> linarith [hx.1, hx.2]
@@ -698,7 +698,7 @@ namespace IsDirichlet
 /-- The proportions of a Dirichlet process have mean `1 / (1 + α)`. -/
 theorem integral_β (hP : P.IsDirichlet α) (k : ℕ) : μ[P.β k] = 1 / (1 + α) := by
   rw [(hP.hasLaw_β k).integral_eq,
-    MathlibExt.Biology.PopulationGenetics.Diffusion.integral_id_betaMeasure zero_lt_one hP.pos]
+    integral_id_betaMeasure zero_lt_one hP.pos]
 
 /-- **Mean of a Dirichlet-process weight** (Sethuraman 1994): `E[πₖ] = αᵏ / (1 + α)^(k+1)`
 (`α^{k-1} / (1 + α)^k` for Sethuraman's `π_k`, indexed from `1`). -/
