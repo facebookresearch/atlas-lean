@@ -64,13 +64,14 @@ example : ∫ ω, D.imputed ![1, 0] ω ^ 2 ∂μ4 = 1 := by
   rw [D.integral_imputed_sq_of_normal normal_w]
   simp [D, dotProduct, Fin.sum_univ_two]
 
-/-- Conditional variance `Σ_tt - wᵀ Σ_ot = 1`. -/
+/-- Linear-prediction residual variance `Σ_tt - wᵀ Σ_ot = 1` (not a conditional variance:
+the witness is not Gaussian, so `z_t` is determined by `z_o` on some fibres). -/
 example : ∫ ω, (D.zt ω - D.imputed ![1, 0] ω) ^ 2 ∂μ4 = 1 := by
   rw [D.integral_error_sq_of_normal normal_w]
   simp [D, dotProduct, Fin.sum_univ_two]
   norm_num
 
-/-- The same conditional variance by direct computation. -/
+/-- The same residual variance by direct computation. -/
 example : ∫ ω, (D.zt ω - D.imputed ![1, 0] ω) ^ 2 ∂μ4 = 1 := by
   simp [integral_μ4, Model.imputed, D, s, Fin.sum_univ_two]
   norm_num

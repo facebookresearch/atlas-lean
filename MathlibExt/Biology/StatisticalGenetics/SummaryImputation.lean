@@ -20,8 +20,10 @@ the `z`-scores `z_o` of typed markers. Under the null model the vector `(z_t, z_
 with covariance given by the LD matrix, `Σ_oo = Cov(z_o)`, `Σ_to = Cov(z_t, z_o)`,
 `Σ_tt = Var z_t` (`= 1`); the imputed statistic is the conditional mean
 `ẑ_t = Σ_to Σ_oo⁻¹ z_o`, a fixed linear combination `wᵀ z_o` of the typed statistics, its
-accuracy is measured from the conditional variance `Σ_tt - Σ_to Σ_oo⁻¹ Σ_ot` (for `Σ_tt = 1`,
-`r²_pred = Σ_to Σ_oo⁻¹ Σ_ot`). To account for sampling noise in the reference-panel LD, ImpG
+accuracy is measured from the linear-prediction residual variance
+`Σ_tt - Σ_to Σ_oo⁻¹ Σ_ot` (for `Σ_tt = 1`,
+`r²_pred = Σ_to Σ_oo⁻¹ Σ_ot`), which is the conditional variance only under the Gaussian
+model. To account for sampling noise in the reference-panel LD, ImpG
 replaces `Σ_oo` by `Σ_oo + λ I`, and normalizes the imputed statistic by its variance under the
 null, `wᵀ Σ_oo w`, which is no longer `wᵀ Σ_ot`.
 
@@ -34,7 +36,8 @@ is also the conditional expectation, and the conditional law is
   moments of `ẑ = wᵀ z_o` and of the error `z_t - ẑ` for any weights `w`.
 * `Model.integral_imputed_sq_of_normal`, `Model.integral_error_sq_of_normal`: for the ImpG
   weights (`Σ_oo w = Σ_ot`), `𝔼 ẑ² = wᵀ Σ_ot` (`= r²_pred`) and
-  `𝔼 (z_t - ẑ)² = Σ_tt - wᵀ Σ_ot` (the conditional variance).
+  `𝔼 (z_t - ẑ)² = Σ_tt - wᵀ Σ_ot` (the linear-prediction residual variance; the conditional
+  variance only under the Gaussian model).
 * `Model.integral_error_sq_le`: the ImpG weights minimize the mean squared error among all linear
   imputations (best linear prediction); the excess error of `w'` is `(w' - w)ᵀ Σ_oo (w' - w)`.
 * `Model.integral_normalized_sq`: for any weights, in particular the ridge weights solving
@@ -155,13 +158,14 @@ theorem integral_error_sq (w : ι → ℝ) :
 
 /-- For the ImpG weights (`Σ_oo w = Σ_ot`, i.e. `w = Σ_oo⁻¹ Σ_ot` when `Σ_oo` is invertible) the
 imputed statistic has second moment `wᵀ Σ_ot = Σ_to Σ_oo⁻¹ Σ_ot`; for `Σ_tt = 1` this is
-`1 -` the conditional variance, ImpG's `r²_pred`. -/
+`1 -` the linear-prediction residual variance, ImpG's `r²_pred`. -/
 theorem integral_imputed_sq_of_normal {w : ι → ℝ} (hw : D.sigmaOO *ᵥ w = D.sigmaOT) :
     ∫ ω, D.imputed w ω ^ 2 ∂P = w ⬝ᵥ D.sigmaOT := by
   rw [D.integral_imputed_sq, hw]
 
 /-- For the ImpG weights (`Σ_oo w = Σ_ot`) the mean squared imputation error is
-`Σ_tt - wᵀ Σ_ot = Σ_tt - Σ_to Σ_oo⁻¹ Σ_ot`, the conditional variance of ImpG. -/
+`Σ_tt - wᵀ Σ_ot = Σ_tt - Σ_to Σ_oo⁻¹ Σ_ot`, the linear-prediction residual variance
+(the conditional variance only under the Gaussian ImpG model). -/
 theorem integral_error_sq_of_normal {w : ι → ℝ} (hw : D.sigmaOO *ᵥ w = D.sigmaOT) :
     ∫ ω, (D.zt ω - D.imputed w ω) ^ 2 ∂P = D.sigmaTT - w ⬝ᵥ D.sigmaOT := by
   rw [D.integral_error_sq, hw]

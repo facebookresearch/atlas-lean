@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Distributions.ChiSquare
+public import MathlibExt.Probability.Statistics.LikelihoodRatioTests
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 public import Mathlib.Probability.Moments.Covariance
 import Mathlib.Probability.Moments.ComplexMGF
