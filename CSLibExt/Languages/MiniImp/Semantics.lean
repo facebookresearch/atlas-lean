@@ -54,11 +54,11 @@ inductive BigStep : Stmt → State → State → Prop where
       beval b s → BigStep c₁ s s' → BigStep (.if_ b c₁ c₂) s s'
   | ifFalse {b : BExp} {c₁ c₂ : Stmt} {s s' : State} :
       ¬ beval b s → BigStep c₂ s s' → BigStep (.if_ b c₁ c₂) s s'
-  | whileTrue {b : BExp} {c : Stmt} {s s' s'' : State} :
-      beval b s → BigStep c s s' → BigStep (.while b c) s' s'' →
-        BigStep (.while b c) s s''
-  | whileFalse {b : BExp} {c : Stmt} {s : State} :
-      ¬ beval b s → BigStep (.while b c) s s
+  | whileTrue {b : BExp} {I : State → Prop} {c : Stmt} {s s' s'' : State} :
+      beval b s → BigStep c s s' → BigStep (.while b I c) s' s'' →
+        BigStep (.while b I c) s s''
+  | whileFalse {b : BExp} {I : State → Prop} {c : Stmt} {s : State} :
+      ¬ beval b s → BigStep (.while b I c) s s
 
 /-- Skip leaves the state unchanged. -/
 example {s : State} : BigStep .skip s s := BigStep.skip
