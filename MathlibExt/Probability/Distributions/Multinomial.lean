@@ -97,8 +97,10 @@ section Support
 
 variable [DecidableEq ι]
 
-/-- The support of the multinomial mass function is the finite set `piAntidiag univ N` of count
-vectors with total `N`. -/
+/-- The multinomial mass function vanishes outside the finite set `piAntidiag univ N` of
+count vectors with total `N`: the support is contained in the antidiagonal. Equality of
+the support with the antidiagonal needs all `p i > 0` (e.g. for `p = (1, 0)`, `N = 1` the
+vector `(0, 1)` is in the antidiagonal but has mass `0`). -/
 theorem multinomialReal_of_notMem {N : ℕ} {p : ι → ℝ} {x : ι → ℕ}
     (h : x ∉ piAntidiag univ N) : multinomialReal N p x = 0 :=
   multinomialReal_of_sum_ne (by simpa using h)
