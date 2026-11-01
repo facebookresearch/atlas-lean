@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.PopulationGenetics.Diffusion.GeneralDiffusion
 public import MathlibExt.Biology.PopulationGenetics.Diffusion.Sojourn
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.DSlope
@@ -44,6 +45,10 @@ diffusion process itself is not.
 * `generator_integral_selectionGreen`, `integral_selectionGreen_left`,
   `integral_selectionGreen_right`: for continuous `g`, `v(p) = ∫₀¹ Ψ(p, x) g(x) dx` solves
   `L_σ v = -g` on `(0, 1)` with `v(0) = v(1) = 0` (the paper's `δ`-equation in integrated form).
+* `greenFunction_eq_selectionGreen`: the general Green kernel `greenFunction` of
+  `GeneralDiffusion` at `b x = σ x (1 - x)`, `a x = x (1 - x)` is `selectionGreen σ`, so the
+  general API (e.g. `diffusionGenerator_integral_greenFunction`) applies to it and there are
+  no parallel Green-kernel representations.
 * `generator_selectionGreen_of_lt`, `generator_selectionGreen_of_gt`,
   `continuous_selectionGreen_left`, `hasDerivWithinAt_selectionGreen_Iic`,
   `hasDerivWithinAt_selectionGreen_Ici`: `Ψ(·, x)` solves the homogeneous equation off the
@@ -146,6 +151,60 @@ theorem selectionGreen_zero {p x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     field_simp
   · rw [min_eq_left (not_le.1 h).le, max_eq_right (not_le.1 h).le]
     field_simp
+
+/-- **The general Green kernel specializes to Kimura's sojourn density.** For genic selection
+`b x = σ x (1 - x)`, `a x = x (1 - x)`, the general Green's function `greenFunction` is
+`selectionGreen σ` on `[0, 1] × (0, 1)`. The scale function is `S(y) = u(y) / u'(0)` with
+`u = kimuraFixation σ` and `u'(0) = kimuraSlope σ`, since both have derivative `ψ(y) = e^{-2σy}`
+and vanish at `0`; substituting that and `S(1) = 1 / u'(0)` into `greenFunction` gives
+`selectionGreen`. -/
+theorem greenFunction_eq_selectionGreen (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1)
+    {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+    greenFunction (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) p x =
+      selectionGreen σ p x := by
+  have hS_eq : ∀ y ∈ Icc (0 : ℝ) 1,
+      scaleFunction (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) y =
+        kimuraFixation σ y / kimuraSlope σ := by
+    intro y hy
+    have hψ : (∫ t in (0 : ℝ)..y,
+        scaleDensity (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) t) =
+        ∫ t in (0 : ℝ)..y, exp (-2 * σ * t) := by
+      apply intervalIntegral.integral_congr
+      intro t ht
+      rw [uIcc_of_le hy.1] at ht
+      exact scaleDensity_wrightFisher σ ⟨ht.1, le_trans ht.2 hy.2⟩
+    have hFTC : (∫ t in (0 : ℝ)..y, exp (-2 * σ * t)) =
+        kimuraFixation σ y / kimuraSlope σ - kimuraFixation σ 0 / kimuraSlope σ :=
+      intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le (a := (0 : ℝ)) (b := y)
+        (f := fun z => kimuraFixation σ z / kimuraSlope σ)
+        (f' := fun t => exp (-2 * σ * t)) hy.1
+        ((continuous_kimuraFixation σ).continuousOn.div_const _)
+        (fun z hz => by
+          have h := (hasDerivAt_kimuraFixation σ z).div_const (kimuraSlope σ)
+          rwa [mul_div_cancel_left₀ _ (kimuraSlope_pos σ).ne'] at h)
+        ((by fun_prop : Continuous fun t : ℝ => exp (-2 * σ * t)).intervalIntegrable 0 y)
+    calc scaleFunction (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) y
+        = ∫ t in (0 : ℝ)..y,
+            scaleDensity (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) t := rfl
+      _ = ∫ t in (0 : ℝ)..y, exp (-2 * σ * t) := hψ
+      _ = kimuraFixation σ y / kimuraSlope σ := by
+          rw [hFTC, kimuraFixation_zero_right, zero_div, sub_zero]
+  have hS1 : scaleFunction (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) 1 =
+      1 / kimuraSlope σ := by
+    rw [hS_eq 1 ⟨zero_le_one, le_rfl⟩, kimuraFixation_one_right, one_div]
+  have hψx : scaleDensity (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) x =
+      exp (-2 * σ * x) :=
+    scaleDensity_wrightFisher σ ⟨hx.1.le, hx.2.le⟩
+  have hmin : min p x ∈ Icc (0 : ℝ) 1 :=
+    ⟨le_min hp.1 hx.1.le, le_trans (min_le_left _ _) hp.2⟩
+  have hmax : max p x ∈ Icc (0 : ℝ) 1 :=
+    ⟨le_max_of_le_left hp.1, max_le hp.2 hx.2.le⟩
+  have hslope : kimuraSlope σ ≠ 0 := (kimuraSlope_pos σ).ne'
+  have hA : x * (1 - x) ≠ 0 := mul_ne_zero hx.1.ne' (sub_pos.2 hx.2).ne'
+  have hexp : exp (-2 * σ * x) ≠ 0 := Real.exp_ne_zero _
+  simp only [greenFunction, selectionGreen, hS_eq _ hmin, hS_eq _ hmax, hS1, hψx]
+  field_simp
+  ring
 
 /-- `d/dx e^{c x} = c e^{c x}`. -/
 private theorem hasDerivAt_exp_mul' (c x : ℝ) :

@@ -84,6 +84,8 @@ sojourn density `G(p, x) u(x) / u(p)`. In the neutral case the conditional mean 
   `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`: `G` inverts `-L` with
   Dirichlet conditions, and that problem has at most one regular solution.
 * `fixationProb_wrightFisher`, `greenFunction_neutral`, `fixationProb_dominance`.
+  `greenFunction_eq_selectionGreen` (in `AlleleAge`) identifies `greenFunction` at genic
+  selection with `selectionGreen`, so there is one Green-kernel representation, not two.
 * `conditionalGreen`, `diffusionGenerator_mul_integral_conditionalGreen`: the `h`-transform and
   the backward equation `L (u t̄₁) = -u`.
 * `neutralFixationTime`, `neutralLossTime`, `integral_neutralGreen_mul_div`,
