@@ -87,9 +87,9 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} {X : ℝ≥0 �
 
 /-- A concrete transition law: for the stationary process with `θ = 1`, `σ = √2`, given
 `X 0 = x` the law of `X 1` is `N(e^{-1} x, 1 - e^{-2})`. -/
-example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
-    {X : ℝ≥0 → Ω → ℝ} (hX : IsStationaryOrnsteinUhlenbeck 1 (√2) X P)
-    (hm : ∀ t, Measurable (X t)) :
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} {X : ℝ≥0 → Ω → ℝ}
+    (hX : IsStationaryOrnsteinUhlenbeck 1 (√2) X P) (hm : ∀ t, Measurable (X t)) :
+    haveI := hX.isGaussianProcess.isProbabilityMeasure
     ∀ᵐ x ∂(P.map (X 0)), condDistrib (X 1) (X 0) P x =
       gaussianReal (exp (-1) * x) (1 - exp (-2)).toNNReal := by
   filter_upwards [hX.condDistrib_eval hm (zero_le : (0 : ℝ≥0) ≤ 1)] with x hx

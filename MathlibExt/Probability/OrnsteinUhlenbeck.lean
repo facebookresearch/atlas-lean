@@ -12,8 +12,8 @@ public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Kernel.CondDistrib
 public import Mathlib.Probability.Process.Filtration
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.ConditionalExpectation
-import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 import MathlibExt.Probability.KolmogorovExtension
 import MathlibExt.Probability.Distributions.GaussianConditioning
@@ -466,6 +466,7 @@ theorem IsGaussianProcess.condExp_natural_eq_of_covariance {X : ℝ≥0 → Ω �
 theorem IsGaussianProcess.condDistrib_eval_eq_of_covariance {T : Type*}
     {X : T → Ω → ℝ} (hX : IsGaussianProcess X P) (hm : ∀ t, Measurable (X t))
     (hint : ∀ t, P[X t] = 0) {s t : T} (c : ℝ) (hc : cov[X s, X t; P] = c * Var[X s; P]) :
+    haveI := hX.isProbabilityMeasure
     ∀ᵐ x ∂(P.map (X s)),
       condDistrib (X t) (X s) P x =
         gaussianReal (c * x) (Var[X t; P] - c ^ 2 * Var[X s; P]).toNNReal := by
@@ -541,6 +542,7 @@ theorem IsStationaryOrnsteinUhlenbeck.condExp_natural {θ σ : ℝ} {X : ℝ≥0
 theorem IsOrnsteinUhlenbeckFromZero.condDistrib_eval {θ σ : ℝ}
     {X : ℝ≥0 → Ω → ℝ} (hX : IsOrnsteinUhlenbeckFromZero θ σ X P)
     (hm : ∀ t, Measurable (X t)) {s t : ℝ≥0} (hst : s ≤ t) :
+    haveI := hX.isGaussianProcess.isProbabilityMeasure
     ∀ᵐ x ∂(P.map (X s)), condDistrib (X t) (X s) P x =
       gaussianReal (exp (-θ * (t - s)) * x)
         (σ ^ 2 / (2 * θ) * (1 - exp (-2 * θ * (t - s)))).toNNReal := by
@@ -570,6 +572,7 @@ theorem IsOrnsteinUhlenbeckFromZero.condDistrib_eval {θ σ : ℝ}
 theorem IsStationaryOrnsteinUhlenbeck.condDistrib_eval {θ σ : ℝ}
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStationaryOrnsteinUhlenbeck θ σ X P)
     (hm : ∀ t, Measurable (X t)) {s t : ℝ≥0} (hst : s ≤ t) :
+    haveI := hX.isGaussianProcess.isProbabilityMeasure
     ∀ᵐ x ∂(P.map (X s)), condDistrib (X t) (X s) P x =
       gaussianReal (exp (-θ * (t - s)) * x)
         (σ ^ 2 / (2 * θ) * (1 - exp (-2 * θ * (t - s)))).toNNReal := by
