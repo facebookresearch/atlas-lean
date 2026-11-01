@@ -30,6 +30,7 @@ theorem model : GridModel ![1, 1] ![1 / 2, 1] (1 / 2) 2 where
   copy_pos := by norm_num
   grid_nonneg := fun k => by fin_cases k <;> norm_num
   grid_le := fun k => by fin_cases k <;> norm_num
+  grid_le_one := fun k => by fin_cases k <;> norm_num
   prior_nonneg := fun k => by fin_cases k <;> norm_num
   exists_interior := ⟨0, by norm_num, by norm_num [somaticAF, mixCopy],
     by norm_num [somaticAF, mixCopy]⟩

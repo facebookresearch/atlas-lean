@@ -151,14 +151,16 @@ def IsClonal {m : ℕ} (prior grid : Fin m → ℝ) (α q : ℝ) (n a : ℕ) (t 
   γ < posteriorTail prior grid α q n a t
 
 /-- Hypotheses on the CCF grid model: purity `0 < α ≤ 1`, copy number `q > 0`, grid in
-`[0, q]`, a nonnegative prior, and one grid point of positive prior weight whose allelic
-fraction lies strictly inside `(0, 1)` (this makes every posterior well defined). -/
+`[0, q]` and within the defining CCF bound `≤ 1`, a nonnegative prior, and one grid point
+of positive prior weight whose allelic fraction lies strictly inside `(0, 1)` (this makes
+every posterior well defined). -/
 structure GridModel {m : ℕ} (prior grid : Fin m → ℝ) (α q : ℝ) : Prop where
   purity_pos : 0 < α
   purity_le_one : α ≤ 1
   copy_pos : 0 < q
   grid_nonneg : ∀ k, 0 ≤ grid k
   grid_le : ∀ k, grid k ≤ q
+  grid_le_one : ∀ k, grid k ≤ 1
   prior_nonneg : ∀ k, 0 ≤ prior k
   exists_interior : ∃ k, 0 < prior k ∧ 0 < somaticAF α q (grid k) ∧ somaticAF α q (grid k) < 1
 
