@@ -67,7 +67,12 @@ namespace MathlibExt.Probability.ItoCalculusWanted
 /-- The **Itô integral** `t ↦ ∫_0^t H_u dB_u` of an `F`-progressive integrand `H` with
 `E ∫_0^t H_u² du < ∞` against an `F`-Brownian motion `B`, as a real process (determined up to
 indistinguishability; Karatzas–Shreve 1991, Definition 3.2.9). Mathlib has no stochastic
-integral. -/
+integral. The construction is pinned down by the properties below: linearity
+(`itoIntegral_add`, `itoIntegral_smul`), the difference isometry
+(`itoIntegral_isometry_sub`), and existence of a continuous modification
+(`itoIntegral_continuous_modification`). The one-integrand isometry and martingale
+property alone would not pin it down (they are invariant under integrand-dependent sign
+changes); linearity plus the two-integrand isometry does. -/
 public def_wanted itoIntegral {Ω : Type*} {mΩ : MeasurableSpace Ω} (P : Measure Ω)
     (F : Filtration ℝ≥0 mΩ) (B H : ℝ≥0 → Ω → ℝ) : ℝ≥0 → Ω → ℝ
 
@@ -116,6 +121,84 @@ public theorem_wanted martingale_itoIntegral {Ω : Type*} {mΩ : MeasurableSpace
       volume (0 : ℝ) t)
     (hH2 : ∀ t : ℝ≥0, Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2) P) :
     Martingale (❰itoIntegral❱ P F B H) F P
+
+/-- **Linearity (additivity).** The Itô integral is additive in the integrand: for
+`F`-progressive `L²` integrands `H₁, H₂` whose sum is also `L²`, the integral of the sum is
+almost surely the sum of the integrals. Together with homogeneity this makes the
+construction a linear map on the `L²` quotient, ruling out integrand-dependent sign
+changes. -/
+public theorem_wanted itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂) (t : ℝ≥0)
+    (hH₁2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H₁ (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH₁2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H₁ (Real.toNNReal u) ω ^ 2) P)
+    (hH₂2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H₂ (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH₂2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H₂ (Real.toNNReal u) ω ^ 2) P)
+    (hH₁₂2int : ∀ᵐ ω ∂P, IntervalIntegrable
+      (fun u => ((H₁ + H₂) (Real.toNNReal u) ω) ^ 2) volume (0 : ℝ) t)
+    (hH₁₂2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, (H₁ + H₂) (Real.toNNReal u) ω ^ 2) P) :
+    ❰itoIntegral❱ P F B (H₁ + H₂) t =ᵐ[P]
+      fun ω ↦ ❰itoIntegral❱ P F B H₁ t ω + ❰itoIntegral❱ P F B H₂ t ω
+
+/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand. -/
+public theorem_wanted itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (a : ℝ) (t : ℝ≥0)
+    (hH2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2) P)
+    (haH2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => ((a • H) (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (haH2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, (a • H) (Real.toNNReal u) ω ^ 2) P) :
+    ❰itoIntegral❱ P F B (a • H) t =ᵐ[P] fun ω ↦ a * ❰itoIntegral❱ P F B H t ω
+
+/-- **Difference isometry.** For two `F`-progressive `L²` integrands, the `L²` norm of the
+difference of the integrals equals the `L²` norm of the difference of the integrands:
+`E[(∫ H₁ dB - ∫ H₂ dB)²] = E ∫ (H₁ - H₂)² du`. With linearity this is the two-integrand
+isometry that, together with the elementary-integrand formula, determines the construction
+on the whole `L²` space. -/
+public theorem_wanted itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂) (t : ℝ≥0)
+    (hH₁2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H₁ (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH₁2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H₁ (Real.toNNReal u) ω ^ 2) P)
+    (hH₂2int : ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H₂ (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH₂2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H₂ (Real.toNNReal u) ω ^ 2) P)
+    (hH₁₂2int : ∀ᵐ ω ∂P, IntervalIntegrable
+      (fun u => ((H₁ - H₂) (Real.toNNReal u) ω) ^ 2) volume (0 : ℝ) t)
+    (hH₁₂2 : Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, (H₁ - H₂) (Real.toNNReal u) ω ^ 2) P) :
+    MemLp (fun ω ↦ ❰itoIntegral❱ P F B H₁ t ω - ❰itoIntegral❱ P F B H₂ t ω) 2 P ∧
+      P[fun ω ↦ (❰itoIntegral❱ P F B H₁ t ω - ❰itoIntegral❱ P F B H₂ t ω) ^ 2] =
+        P[fun ω ↦ ∫ u in (0 : ℝ)..t, (H₁ (Real.toNNReal u) ω - H₂ (Real.toNNReal u) ω) ^ 2]
+
+/-- **Continuous modification.** The Itô integral admits a version with continuous paths,
+indistinguishable from it: there is a process `J` with continuous paths such that almost
+surely `J t = ∫_0^t H dB` for every `t` simultaneously. Any two such continuous versions
+are indistinguishable. -/
+public theorem_wanted itoIntegral_continuous_modification {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H)
+    (hH2int : ∀ t : ℝ≥0, ∀ᵐ ω ∂P, IntervalIntegrable (fun u => (H (Real.toNNReal u) ω) ^ 2)
+      volume (0 : ℝ) t)
+    (hH2 : ∀ t : ℝ≥0, Integrable (fun ω ↦ ∫ u in (0 : ℝ)..t, H (Real.toNNReal u) ω ^ 2) P) :
+    ∃ J : ℝ≥0 → Ω → ℝ, (∀ ω, Continuous fun t => J t ω) ∧
+      ∀ᵐ ω ∂P, ∀ t, J t ω = ❰itoIntegral❱ P F B H t ω
 
 /-- **Wiener's integration by parts.** For a `C¹` deterministic integrand `g`,
 `∫_0^t g dB = g t B t - g 0 B 0 - ∫_0^t g'(u) B u du` almost surely (Karatzas–Shreve 1991,

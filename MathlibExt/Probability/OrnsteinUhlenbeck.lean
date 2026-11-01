@@ -463,12 +463,13 @@ theorem IsGaussianProcess.condExp_natural_eq_of_covariance {X : ℝ≥0 → Ω �
 
 /-- For a centered Gaussian process with `cov(X s, X t) = c Var(X s)`, the conditional law of
 `X t` given `X s = x` is `N(c x, Var(X t) - c² Var(X s))` for almost every `x`. -/
-theorem IsGaussianProcess.condDistrib_eval_eq_of_covariance [IsProbabilityMeasure P] {T : Type*}
+theorem IsGaussianProcess.condDistrib_eval_eq_of_covariance {T : Type*}
     {X : T → Ω → ℝ} (hX : IsGaussianProcess X P) (hm : ∀ t, Measurable (X t))
     (hint : ∀ t, P[X t] = 0) {s t : T} (c : ℝ) (hc : cov[X s, X t; P] = c * Var[X s; P]) :
     ∀ᵐ x ∂(P.map (X s)),
       condDistrib (X t) (X s) P x =
         gaussianReal (c * x) (Var[X t; P] - c ^ 2 * Var[X s; P]).toNNReal := by
+  have : IsProbabilityMeasure P := hX.isProbabilityMeasure
   have hs := (hX.hasGaussianLaw_eval s).memLp_two
   have ht := (hX.hasGaussianLaw_eval t).memLp_two
   have hcs : MemLp (fun ω ↦ c * X s ω) 2 P := hs.const_mul c
@@ -537,12 +538,13 @@ theorem IsStationaryOrnsteinUhlenbeck.condExp_natural {θ σ : ℝ} {X : ℝ≥0
 /-- **Transition law.** For the OU process started at `0` and `s ≤ t`, the conditional law of
 `X t` given `X s = x` is `N(e^{-θ(t-s)} x, (σ² / (2θ)) (1 - e^{-2θ(t-s)}))` for almost every
 `x`. -/
-theorem IsOrnsteinUhlenbeckFromZero.condDistrib_eval [IsProbabilityMeasure P] {θ σ : ℝ}
+theorem IsOrnsteinUhlenbeckFromZero.condDistrib_eval {θ σ : ℝ}
     {X : ℝ≥0 → Ω → ℝ} (hX : IsOrnsteinUhlenbeckFromZero θ σ X P)
     (hm : ∀ t, Measurable (X t)) {s t : ℝ≥0} (hst : s ≤ t) :
     ∀ᵐ x ∂(P.map (X s)), condDistrib (X t) (X s) P x =
       gaussianReal (exp (-θ * (t - s)) * x)
         (σ ^ 2 / (2 * θ) * (1 - exp (-2 * θ * (t - s)))).toNNReal := by
+  have : IsProbabilityMeasure P := hX.isGaussianProcess.isProbabilityMeasure
   have hst' : (s : ℝ) ≤ t := hst
   have hvar : ∀ r, Var[X r; P] = σ ^ 2 / (2 * θ) * (1 - exp (-2 * θ * r)) := fun r ↦ by
     rw [← covariance_self (hX.isGaussianProcess.aemeasurable r), hX.covariance_eval,
@@ -565,12 +567,13 @@ theorem IsOrnsteinUhlenbeckFromZero.condDistrib_eval [IsProbabilityMeasure P] {�
 /-- **Transition law.** For the stationary OU process and `s ≤ t`, the conditional law of
 `X t` given `X s = x` is `N(e^{-θ(t-s)} x, (σ² / (2θ)) (1 - e^{-2θ(t-s)}))` for almost every
 `x`. -/
-theorem IsStationaryOrnsteinUhlenbeck.condDistrib_eval [IsProbabilityMeasure P] {θ σ : ℝ}
+theorem IsStationaryOrnsteinUhlenbeck.condDistrib_eval {θ σ : ℝ}
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStationaryOrnsteinUhlenbeck θ σ X P)
     (hm : ∀ t, Measurable (X t)) {s t : ℝ≥0} (hst : s ≤ t) :
     ∀ᵐ x ∂(P.map (X s)), condDistrib (X t) (X s) P x =
       gaussianReal (exp (-θ * (t - s)) * x)
         (σ ^ 2 / (2 * θ) * (1 - exp (-2 * θ * (t - s)))).toNNReal := by
+  have : IsProbabilityMeasure P := hX.isGaussianProcess.isProbabilityMeasure
   have hst' : (s : ℝ) ≤ t := hst
   have hvar : ∀ r, Var[X r; P] = σ ^ 2 / (2 * θ) := fun r ↦ by
     rw [← covariance_self (hX.isGaussianProcess.aemeasurable r), hX.covariance_eval,
