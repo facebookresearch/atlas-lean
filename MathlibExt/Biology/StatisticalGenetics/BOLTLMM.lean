@@ -13,6 +13,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import MathlibExt.Biology.StatisticalGenetics.MixedModel
+public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
 public import Mathlib.Order.ConditionallyCompleteLattice.Indexed
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.Deriv.Add
@@ -344,86 +346,63 @@ noncomputable def blup {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ
     (y : Fin n → ℝ) : Fin n → ℝ :=
   (M.σg2 • M.K) *ᵥ (M.V⁻¹ *ᵥ (y - X *ᵥ M.gls X y))
 
-/-- `(β, g)` solves Henderson's mixed-model equations with `R = σ_e² I` and `G = σ_g² K`:
-`Xᵀ R⁻¹ X β + Xᵀ R⁻¹ g = Xᵀ R⁻¹ y` and `R⁻¹ X β + (R⁻¹ + G⁻¹) g = R⁻¹ y`. They are meaningful
-when `G` is invertible (`isMMESolution_iff`); otherwise `G⁻¹` is Lean's junk inverse `0`. -/
+/-- `(β, g)` solves Henderson's mixed-model equations with `R = σ_e² I` and `G = σ_g² K`,
+i.e. the specialization of `MixedModel.IsMMESolution` to `Z = 1` (every individual has its
+own genetic effect), `G = σ_g² K`, `R = σ_e² I`. In unfolded form this is
+`Xᵀ R⁻¹ X β + Xᵀ R⁻¹ g = Xᵀ R⁻¹ y` and `R⁻¹ X β + (R⁻¹ + G⁻¹) g = R⁻¹ y`. The equations
+are meaningful when `G` is invertible (`isMMESolution_iff`); otherwise `G⁻¹` is Lean's
+junk inverse `0`. -/
 def IsMMESolution {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ)
     (y : Fin n → ℝ) (β : Fin p → ℝ) (g : Fin n → ℝ) : Prop :=
-  M.σe2⁻¹ • (Xᵀ *ᵥ (X *ᵥ β)) + M.σe2⁻¹ • (Xᵀ *ᵥ g) = M.σe2⁻¹ • (Xᵀ *ᵥ y) ∧
-    M.σe2⁻¹ • (X *ᵥ β) + (M.σe2⁻¹ • (1 : Matrix (Fin n) (Fin n) ℝ) + (M.σg2 • M.K)⁻¹) *ᵥ g =
-      M.σe2⁻¹ • y
+  MathlibExt.Biology.StatisticalGenetics.MixedModel.IsMMESolution X 1 (M.σg2 • M.K)
+    (M.σe2 • 1) y β g
 
 /-- **Henderson's mixed-model equations give the GLS estimator and the BLUP**: for positive
 definite `K`, `σ_g² > 0` and `X` of full column rank, `(β, g)` solves the mixed-model equations
-iff `β = β̂` and `g = σ_g² K V⁻¹ (y - X β̂)`. -/
+iff `β = β̂` and `g = σ_g² K V⁻¹ (y - X β̂)`. This is the specialization of
+`MixedModel.isMMESolution_iff_gls` to `Z = 1`, `G = σ_g² K`, `R = σ_e² I`; the generic
+theorem gives `β = glsMatrix X V *ᵥ y` and `g = G V⁻¹ (y - X β̂)`, which are `Model.gls`
+and `Model.blup` by the two conversion lemmas below. -/
 theorem isMMESolution_iff {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
     (hK : M.K.PosDef) (hg : 0 < M.σg2) (hX : Function.Injective X.mulVec)
     (y : Fin n → ℝ) (β : Fin p → ℝ) (g : Fin n → ℝ) :
     M.IsMMESolution X y β g ↔ β = M.gls X y ∧ g = M.blup X y := by
-  have hσ : M.σe2 ≠ 0 := M.σe2_pos.ne'
-  have hGdet : IsUnit (M.σg2 • M.K).det :=
-    (Matrix.isUnit_iff_isUnit_det _).mp (hK.smul hg).isUnit
-  have hWV : M.V⁻¹ * M.V = 1 := nonsing_inv_mul _ (isUnit_det_V M)
-  have hVW : M.V * M.V⁻¹ = 1 := mul_nonsing_inv _ (isUnit_det_V M)
-  have hWG : M.V⁻¹ * (M.σg2 • M.K) = 1 - M.σe2 • M.V⁻¹ := by
-    have h : M.V⁻¹ * (M.σg2 • M.K + M.σe2 • 1) = M.V⁻¹ * (M.σg2 • M.K) + M.σe2 • M.V⁻¹ := by
-      rw [Matrix.mul_add, Matrix.mul_smul M.V⁻¹ M.σe2, Matrix.mul_one]
-    rw [show M.σg2 • M.K + M.σe2 • 1 = M.V from rfl, hWV] at h
-    rw [h]; abel
-  have hGW : (M.σg2 • M.K) * M.V⁻¹ = 1 - M.σe2 • M.V⁻¹ := by
-    have h : (M.σg2 • M.K + M.σe2 • 1) * M.V⁻¹ = (M.σg2 • M.K) * M.V⁻¹ + M.σe2 • M.V⁻¹ := by
-      rw [Matrix.add_mul, Matrix.smul_mul M.σe2 (1 : Matrix (Fin n) (Fin n) ℝ), Matrix.one_mul]
-    rw [show M.σg2 • M.K + M.σe2 • 1 = M.V from rfl, hVW] at h
-    rw [h]; abel
-  -- `σ_e² (R⁻¹ + G⁻¹) = 1 + σ_e² G⁻¹` and `G (1 + σ_e² G⁻¹) = V`
-  have hscale : ∀ {k : ℕ} (v w : Fin k → ℝ), M.σe2⁻¹ • v = M.σe2⁻¹ • w ↔ v = w := fun v w =>
-    ⟨fun h => smul_right_injective _ (inv_ne_zero hσ) h, fun h => h ▸ rfl⟩
-  have hblup : M.blup X y = (1 - M.σe2 • M.V⁻¹) *ᵥ (y - X *ᵥ M.gls X y) := by
-    rw [blup, mulVec_mulVec, hGW]
+  have hG : (M.σg2 • M.K).PosDef := hK.smul hg
+  have hR : (M.σe2 • (1 : Matrix (Fin n) (Fin n) ℝ)).PosDef :=
+    Matrix.PosDef.one.smul M.σe2_pos
+  have hV : MathlibExt.Biology.StatisticalGenetics.MixedModel.phenCov
+      (1 : Matrix (Fin n) (Fin n) ℝ) (M.σg2 • M.K) (M.σe2 • 1) = M.V := by
+    simp [MathlibExt.Biology.StatisticalGenetics.MixedModel.phenCov, V,
+      Matrix.transpose_one]
+  have hX' : IsUnit (Xᵀ *
+      (MathlibExt.Biology.StatisticalGenetics.MixedModel.phenCov
+        (1 : Matrix (Fin n) (Fin n) ℝ) (M.σg2 • M.K) (M.σe2 • 1))⁻¹ * X) := by
+    rw [hV]
+    exact (Matrix.isUnit_iff_isUnit_det _).mpr (isUnit_det_S M hX)
+  have hgen := MathlibExt.Biology.StatisticalGenetics.MixedModel.isMMESolution_iff_gls
+    (X := X) (Z := (1 : Matrix (Fin n) (Fin n) ℝ)) (G := M.σg2 • M.K)
+    (R := M.σe2 • 1) hG hR hX' y β g
+  rw [hV] at hgen
+  have hgls : MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix X M.V *ᵥ y =
+      M.gls X y := by
+    simp [MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix, gls,
+      Matrix.mulVec_mulVec]
+  have hblup : ((M.σg2 • M.K) * (1 : Matrix (Fin n) (Fin n) ℝ)ᵀ * M.V⁻¹) *ᵥ
+      (y - X *ᵥ M.gls X y) = M.blup X y := by
+    simp [blup, Matrix.mulVec_mulVec, Matrix.transpose_one]
+  show MathlibExt.Biology.StatisticalGenetics.MixedModel.IsMMESolution X 1 (M.σg2 • M.K)
+      (M.σe2 • 1) y β g ↔ β = M.gls X y ∧ g = M.blup X y
+  rw [hgen]
   constructor
-  · rintro ⟨h1, h2⟩
-    rw [← smul_add, hscale] at h1
-    -- second equation, multiplied by `σ_e² G`
-    have h2' : X *ᵥ β + g + M.σe2 • ((M.σg2 • M.K)⁻¹ *ᵥ g) = y := by
-      have h := congrArg (fun v => M.σe2 • v) h2
-      simp only [smul_add, add_mulVec, smul_mulVec M.σe2⁻¹ (1 : Matrix (Fin n) (Fin n) ℝ),
-        one_mulVec, smul_smul, mul_inv_cancel₀ hσ, one_smul] at h
-      rw [← h]; abel
-    have hGG : (M.σg2 • M.K) *ᵥ ((M.σg2 • M.K)⁻¹ *ᵥ g) = g := by
-      rw [mulVec_mulVec, mul_nonsing_inv _ hGdet, one_mulVec]
-    have e2 : M.V *ᵥ g = (M.σg2 • M.K) *ᵥ (y - X *ᵥ β) := by
-      have h := congrArg (fun v => (M.σg2 • M.K) *ᵥ v) h2'
-      simp only [mulVec_add, mulVec_smul, hGG] at h
-      rw [show M.V = M.σg2 • M.K + M.σe2 • 1 from rfl, add_mulVec,
-        smul_mulVec M.σe2 (1 : Matrix (Fin n) (Fin n) ℝ), one_mulVec, mulVec_sub, ← h]
-      abel
-    have hg' : g = (1 - M.σe2 • M.V⁻¹) *ᵥ (y - X *ᵥ β) := by
-      rw [← hWG, ← mulVec_mulVec, ← e2, mulVec_mulVec, hWV, one_mulVec]
-    have hres : y - X *ᵥ β - g = M.σe2 • (M.V⁻¹ *ᵥ (y - X *ᵥ β)) := by
-      rw [hg', sub_mulVec, one_mulVec, smul_mulVec]; abel
-    have hn : Xᵀ *ᵥ (M.V⁻¹ *ᵥ (y - X *ᵥ β)) = 0 := by
-      have h : Xᵀ *ᵥ (y - X *ᵥ β - g) = 0 := by
-        rw [mulVec_sub, mulVec_sub, ← h1]; abel
-      rw [hres, mulVec_smul] at h
-      exact (smul_eq_zero.mp h).resolve_left hσ
-    have hβ : β = M.gls X y := by
-      have hS : (Xᵀ * M.V⁻¹ * X) *ᵥ β = Xᵀ *ᵥ (M.V⁻¹ *ᵥ y) := by
-        rw [mulVec_sub, mulVec_sub, sub_eq_zero] at hn
-        rw [hn, mulVec_mulVec, mulVec_mulVec]
-      rw [gls, ← hS, mulVec_mulVec, nonsing_inv_mul _ (isUnit_det_S M hX), one_mulVec]
-    subst hβ
-    exact ⟨rfl, hg'.trans hblup.symm⟩
-  · rintro ⟨rfl, rfl⟩
-    have hn := normal_eq M hX y
+  · rintro ⟨hβ, hg'⟩
+    rw [hgls] at hβ
+    refine ⟨hβ, ?_⟩
+    rw [hβ] at hg'
+    rw [hg', hblup]
+  · rintro ⟨hβ, hg'⟩
     refine ⟨?_, ?_⟩
-    · rw [← smul_add, hscale, hblup, sub_mulVec, one_mulVec, smul_mulVec, mulVec_sub,
-        mulVec_smul, hn, smul_zero, sub_zero, mulVec_sub]
-      abel
-    · have hGg : (M.σg2 • M.K)⁻¹ *ᵥ M.blup X y = M.V⁻¹ *ᵥ (y - X *ᵥ M.gls X y) := by
-        rw [blup, mulVec_mulVec, nonsing_inv_mul _ hGdet, one_mulVec]
-      rw [add_mulVec, smul_mulVec, one_mulVec, hGg, hblup, sub_mulVec, one_mulVec, smul_mulVec,
-        smul_sub, smul_smul, inv_mul_cancel₀ hσ, one_smul, smul_sub]
-      abel
+    · rw [hβ, hgls]
+    · rw [hg', hβ, hblup]
 
 end Model
 
