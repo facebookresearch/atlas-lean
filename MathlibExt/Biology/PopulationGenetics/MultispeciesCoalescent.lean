@@ -53,9 +53,13 @@ random-joining factors of the statements below are computed exactly by kernel ev
 
 ## Main results
 
-* `SpeciesTree`, `exitLaw`, `branchStep`, `geneTreeProb`: the multispecies coalescent;
-  `geneTreeProb_true`: it is a probability law, using `sum_tavareProb` (Tavaré's
-  probabilities from `m ≥ 1` lineages sum to one).
+* `SpeciesTree`, `exitLaw`, `branchStep`, `geneTreeProb`: the multispecies coalescent.
+  Branch lengths are arbitrary reals in the type, so `geneTreeProb` is a signed weight in
+  general; on species trees with nonnegative branch lengths (`SpeciesTree.NonnegLengths`) it is
+  a probability law on gene trees: `geneTreeProb_nonneg`, `geneTreeProb_or` (additivity on
+  disjoint events), `geneTreeProb_true` (total weight one, for every tree) and
+  `geneTreeProb_le_one`, using `sum_tavareProb` (Tavaré's probabilities from `m ≥ 1` lineages
+  sum to one) and `tavareProb_nonneg` (they are nonnegative for `t ≥ 0`).
 * `geneTreeProb_triple_matching`, `geneTreeProb_triple_cherry_02`, `geneTreeProb_triple_cherry_12`,
   `triple_no_anomaly`: three species.
 * `geneTreeProb_caterpillar_matching`, `geneTreeProb_caterpillar_AC_BD`,
@@ -117,7 +121,8 @@ sister population. The length stored at the root node is not used: the root popu
 until all lineages have coalesced. Leaf branch lengths are not recorded, because one gene
 lineage is sampled per species and a single lineage cannot coalesce. A species tree on the
 species `Fin n` labels each species by exactly one leaf; the type does not enforce this, and
-the theorems below are about concrete trees with this property. -/
+the theorems below are about concrete trees with this property. The type accepts any real
+branch length; the probabilistic statements assume nonnegative lengths (`NonnegLengths`). -/
 inductive SpeciesTree (n : ℕ) where
   /-- The species `i`. -/
   | leaf : Fin n → SpeciesTree n
@@ -127,6 +132,13 @@ inductive SpeciesTree (n : ℕ) where
 namespace SpeciesTree
 
 variable {n : ℕ}
+
+/-- Every branch length of the species tree, including the unused one stored at the root, is
+nonnegative. On such trees `geneTreeProb` is a probability law; for a negative length it is
+only a signed weight. -/
+def NonnegLengths : SpeciesTree n → Prop
+  | leaf _ => True
+  | node l r t => l.NonnegLengths ∧ r.NonnegLengths ∧ 0 ≤ t
 
 /-- The species below a node. -/
 def taxa : SpeciesTree n → Finset (Fin n)
@@ -219,6 +231,27 @@ theorem sum_tavareProb {m : ℕ} (hm : 1 ≤ m) (t : ℝ) :
   rw [hI, Finset.sum_map, ← hi]
   simp
 
+private theorem wfLineageMatrix_pow_nonneg (n M k : ℕ) (i j : Fin (n + 1)) :
+    0 ≤ (wfLineageMatrix n M ^ k) i j := by
+  induction k generalizing j with
+  | zero => rw [pow_zero, Matrix.one_apply]; split_ifs <;> norm_num
+  | succ k ih =>
+    rw [pow_succ, Matrix.mul_apply]
+    exact Finset.sum_nonneg fun l _ => mul_nonneg (ih l) (by
+      simp only [wfLineageMatrix, Matrix.of_apply, wfLineageProb]; positivity)
+
+/-- **Tavaré's probabilities are nonnegative** for `t ≥ 0`: `exp (t • G)` is the entrywise limit
+of powers of the Wright–Fisher transition matrix (`tendsto_wfLineageMatrix_pow_floor`), whose
+entries are nonnegative. (For `t < 0` they can be negative or exceed one.) -/
+theorem tavareProb_nonneg {m j : ℕ} (hj : j ∈ Icc 1 m) {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ tavareProb m j t := by
+  obtain ⟨hj1, hjm⟩ := mem_Icc.1 hj
+  have hlim := tendsto_pi_nhds.1 (tendsto_pi_nhds.1 (tendsto_wfLineageMatrix_pow_floor m ht)
+    (Fin.last m)) ⟨j, by omega⟩
+  have h := ge_of_tendsto' hlim fun M => wfLineageMatrix_pow_nonneg m M _ _ _
+  rw [exp_blockCountingGenerator_apply m t _ _ hj1 (Fin.le_last _)] at h
+  simpa using h
+
 /-! ### Coalescence inside one population -/
 
 variable {n : ℕ}
@@ -275,7 +308,10 @@ def exitLaw : SpeciesTree n → (ℕ → List (Finset (Fin n)) → Finset (Finse
 sampled per species: the probability that the gene tree, given by its set of clusters, lies in
 the event `E`. Below the root, each branch population runs Kingman's coalescent for the
 branch length (`branchStep`); in the root population all remaining lineages coalesce by
-random joining. -/
+random joining. The definition accepts any real branch lengths; it is a probability law on
+species trees with nonnegative branch lengths (`geneTreeProb_nonneg`, `geneTreeProb_or`,
+`geneTreeProb_true`), and only a signed weight otherwise (with internal branch `-1`, the
+matching three-species gene tree gets `1 - (2/3) e < 0`). -/
 def geneTreeProb (T : SpeciesTree n) (E : Finset (Finset (Fin n)) → Prop) [DecidablePred E] :
     ℝ :=
   match T with
@@ -305,8 +341,9 @@ theorem exitLaw_eq_const (T : SpeciesTree n) (c : ℝ)
     rw [integral_congr_ae (Filter.Eventually.of_forall fun h => hk j _ _ (mem_Icc.1 hj).1),
       integral_const, probReal_univ, one_smul]
 
-/-- **The multispecies coalescent is a probability law**: for every species tree, the event
-"any gene tree" has probability one (an identity for every real branch length). -/
+/-- **Normalization**: for every species tree, the event "any gene tree" has weight one (an
+identity for every real branch length). With `geneTreeProb_nonneg` and `geneTreeProb_or` this
+makes `geneTreeProb T` a probability law when `T.NonnegLengths`. -/
 theorem geneTreeProb_true (T : SpeciesTree n) : geneTreeProb T (fun _ => True) = 1 := by
   cases T with
   | leaf i => simp [geneTreeProb]
@@ -314,6 +351,44 @@ theorem geneTreeProb_true (T : SpeciesTree n) : geneTreeProb T (fun _ => True) =
     simp only [geneTreeProb, ite_true]
     exact exitLaw_eq_const l 1 _ fun ml bl al _ => exitLaw_eq_const r 1 _ fun mr br ar _ => by
       rw [integral_const, probReal_univ, one_smul]
+
+/-- An event containing every gene tree has weight one, for every species tree. -/
+theorem geneTreeProb_eq_one (T : SpeciesTree n) (E : Finset (Finset (Fin n)) → Prop)
+    [DecidablePred E] (hE : ∀ G, E G) : geneTreeProb T E = 1 := by
+  have hi : ∀ G, (if E G then (1 : ℝ) else 0) = 1 := fun G => ite_eq_left (hE G)
+  cases T with
+  | leaf i => simp only [geneTreeProb, hi]
+  | node l r t =>
+    simp only [geneTreeProb, hi]
+    exact exitLaw_eq_const l 1 _ fun _ _ _ _ => exitLaw_eq_const r 1 _ fun _ _ _ _ => by
+      rw [integral_const, probReal_univ, one_smul]
+
+/-- On a species tree with nonnegative branch lengths, `exitLaw` of a continuation that is
+nonnegative whenever at least one lineage exits is nonnegative (Tavaré's probabilities are
+nonnegative, `tavareProb_nonneg`). -/
+theorem exitLaw_nonneg : ∀ (T : SpeciesTree n), T.NonnegLengths →
+    ∀ k : ℕ → List (Finset (Fin n)) → Finset (Finset (Fin n)) → ℝ,
+      (∀ m bs acc, 1 ≤ m → 0 ≤ k m bs acc) → 0 ≤ exitLaw T k
+  | .leaf _, _, _, hk => hk 1 _ _ le_rfl
+  | .node l r t, ⟨hl, hr, ht⟩, k, hk => by
+    refine exitLaw_nonneg l hl _ fun ml bl al _ => exitLaw_nonneg r hr _ fun mr br ar _ => ?_
+    rw [branchStep]
+    exact sum_nonneg fun j hj => mul_nonneg (tavareProb_nonneg hj ht)
+      (integral_nonneg fun _ => hk j _ _ (mem_Icc.1 hj).1)
+
+/-- **Gene-tree probabilities are nonnegative** on species trees with nonnegative branch
+lengths. (For a negative branch length they need not be.) -/
+theorem geneTreeProb_nonneg {T : SpeciesTree n} (hT : T.NonnegLengths)
+    (E : Finset (Finset (Fin n)) → Prop) [DecidablePred E] : 0 ≤ geneTreeProb T E := by
+  cases T with
+  | leaf i =>
+    simp only [geneTreeProb]
+    exact ite_nonneg zero_le_one le_rfl
+  | node l r t =>
+    obtain ⟨hl, hr, -⟩ := hT
+    simp only [geneTreeProb]
+    exact exitLaw_nonneg l hl _ fun _ _ _ _ => exitLaw_nonneg r hr _ fun _ _ _ _ =>
+      integral_nonneg fun _ => ite_nonneg zero_le_one le_rfl
 
 /-! ### Evaluating random-joining expectations -/
 
@@ -351,6 +426,42 @@ private theorem integral_randomJoining_finsetSum {ι : Type*} (m : ℕ) (s : Fin
 private theorem integral_randomJoining_add (m : ℕ) (f g : RankedHistory m → ℝ) :
     ∫ h, f h + g h ∂randomJoining m = ∫ h, f h ∂randomJoining m + ∫ h, g h ∂randomJoining m :=
   integral_add .of_finite .of_finite
+
+/-- `exitLaw` is additive in the continuation. -/
+theorem exitLaw_add (T : SpeciesTree n)
+    (k₁ k₂ : ℕ → List (Finset (Fin n)) → Finset (Finset (Fin n)) → ℝ) :
+    exitLaw T (fun m bs acc => k₁ m bs acc + k₂ m bs acc) = exitLaw T k₁ + exitLaw T k₂ := by
+  induction T generalizing k₁ k₂ with
+  | leaf i => rfl
+  | node l r t ihl ihr =>
+    have hb : ∀ m bs acc, branchStep t m bs acc (fun m bs acc => k₁ m bs acc + k₂ m bs acc) =
+        branchStep t m bs acc k₁ + branchStep t m bs acc k₂ := fun m bs acc => by
+      simp only [branchStep, integral_randomJoining_add, mul_add, sum_add_distrib]
+    simp only [exitLaw, hb, ihr, ihl]
+
+/-- **Additivity**: the probabilities of two disjoint events of gene trees add up. With
+`geneTreeProb_nonneg` and `geneTreeProb_true`, `geneTreeProb T` is a probability law when
+`T.NonnegLengths`. -/
+theorem geneTreeProb_or (T : SpeciesTree n) (E F : Finset (Finset (Fin n)) → Prop)
+    [DecidablePred E] [DecidablePred F] (hEF : ∀ G, E G → ¬ F G) :
+    geneTreeProb T (fun G => E G ∨ F G) = geneTreeProb T E + geneTreeProb T F := by
+  have hi : ∀ G, (if E G ∨ F G then (1 : ℝ) else 0) =
+      (if E G then 1 else 0) + (if F G then 1 else 0) := by
+    intro G
+    by_cases hE : E G
+    · simp [hE, hEF G hE]
+    · simp [hE]
+  cases T with
+  | leaf i => simp only [geneTreeProb, hi]
+  | node l r t => simp only [geneTreeProb, hi, integral_randomJoining_add, exitLaw_add]
+
+/-- On a species tree with nonnegative branch lengths, every gene-tree probability is at most
+one. -/
+theorem geneTreeProb_le_one {T : SpeciesTree n} (hT : T.NonnegLengths)
+    (E : Finset (Finset (Fin n)) → Prop) [DecidablePred E] : geneTreeProb T E ≤ 1 := by
+  have h := geneTreeProb_or T E (fun G => ¬ E G) fun _ hE hnE => hnE hE
+  rw [geneTreeProb_eq_one T _ fun G => em (E G)] at h
+  linarith [geneTreeProb_nonneg hT fun G => ¬ E G]
 
 private theorem sum_Icc_one_two (f : ℕ → ℝ) : ∑ j ∈ Icc 1 2, f j = f 1 + f 2 := by
   rw [show Icc 1 2 = {1, 2} by decide, sum_pair (by decide)]
@@ -425,24 +536,6 @@ theorem tavareProb_three_one (t : ℝ) :
     tavareProb 3 1 t = 1 - 3 / 2 * Real.exp (-t) + 1 / 2 * Real.exp (-(3 * t)) := by
   simp [tavareProb, Finset.sum_Icc_succ_top, Nat.ascFactorial, Nat.descFactorial]
   ring_nf
-
-private theorem tavareProb_nonneg_of_le_three {m j : ℕ} (hm : m ≤ 3) (hj : j ∈ Icc 1 m) {t : ℝ}
-    (ht : 0 ≤ t) : 0 ≤ tavareProb m j t := by
-  have h1 : Real.exp (-t) ≤ 1 := by simpa using Real.exp_le_exp.mpr (show -t ≤ 0 by linarith)
-  have h3 : Real.exp (-(3 * t)) ≤ Real.exp (-t) := Real.exp_le_exp.mpr (by linarith)
-  have h0 : 0 < Real.exp (-t) := Real.exp_pos _
-  have h0' : 0 < Real.exp (-(3 * t)) := Real.exp_pos _
-  have e3 : Real.exp (-(3 * t)) = Real.exp (-t) ^ 3 := by
-    rw [← Real.exp_nat_mul]; ring_nf
-  obtain ⟨hj1, hj2⟩ := mem_Icc.1 hj
-  interval_cases m <;> interval_cases j
-  · simp [tavareProb]
-  · rw [tavareProb_two_one]; linarith
-  · rw [tavareProb_two_two]; positivity
-  · rw [tavareProb_three_one, e3]
-    nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.2 h1) (sub_nonneg.2 h1)) h0.le]
-  · rw [tavareProb_three_two]; linarith
-  · rw [tavareProb_three_three]; positivity
 
 /-! ### Three species -/
 
@@ -812,10 +905,10 @@ theorem caterpillar_le_matching {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (G : F
       geneTreeProb (caterpillar x y) (· = caterpillarTree 0 1 2 3) := by
   simp only [geneTreeProb, caterpillar, exitLaw, branchStep, Nat.reduceAdd]
   refine sum_le_sum fun j hj => mul_le_mul_of_nonneg_left ?_
-    (tavareProb_nonneg_of_le_three (by norm_num) hj hy)
+    (tavareProb_nonneg hj hy)
   refine integral_mono .of_finite .of_finite fun h => ?_
   refine sum_le_sum fun j' hj' => mul_le_mul_of_nonneg_left ?_
-    (tavareProb_nonneg_of_le_three (by simp at hj; omega) hj' hx)
+    (tavareProb_nonneg hj' hx)
   refine integral_integral_ite_le _ _ _ IsBalancedGeneTree ?_ hG
   simp only [mem_Icc] at hj hj'
   rcases (show j = 1 ∨ j = 2 by omega) with rfl | rfl
@@ -864,10 +957,10 @@ theorem balanced_no_anomaly {y₁ y₂ : ℝ} (hy₁ : 0 ≤ y₁) (hy₂ : 0 �
       geneTreeProb (balanced y₁ y₂) (· = balancedTree 0 1 2 3) := by
   simp only [geneTreeProb, balanced, exitLaw, branchStep, Nat.reduceAdd]
   refine sum_le_sum fun j hj => mul_le_mul_of_nonneg_left ?_
-    (tavareProb_nonneg_of_le_three (by norm_num) hj hy₁)
+    (tavareProb_nonneg hj hy₁)
   refine integral_mono .of_finite .of_finite fun h => ?_
   refine sum_le_sum fun j' hj' => mul_le_mul_of_nonneg_left ?_
-    (tavareProb_nonneg_of_le_three (by norm_num) hj' hy₂)
+    (tavareProb_nonneg hj' hy₂)
   refine integral_mono .of_finite .of_finite fun h' => ?_
   refine integral_ite_le _ _ _ (fun _ => False) ?_ not_false
   simp only [not_false_eq_true, forall_const]

@@ -57,10 +57,23 @@ example : ∀ h : RankedHistory 3, (mergeAlong ((List.finRange 3).map fun j => {
 example : geneTreeProb (.leaf 0 : SpeciesTree 1) (· = {{0}}) = 1 := by
   simp [geneTreeProb]
 
-/-- The law is a probability for any species tree, e.g. a five-species tree. -/
+/-- The weights of all gene trees sum to one for any species tree, e.g. a five-species tree. -/
 example : geneTreeProb (.node (.node (.leaf 0) (.leaf 1) 1)
     (.node (.leaf 2) (.node (.leaf 3) (.leaf 4) 2) 3) 0 : SpeciesTree 5) (fun _ => True) = 1 :=
   geneTreeProb_true _
+
+/-- With nonnegative branch lengths every gene-tree probability lies in `[0, 1]`. -/
+example {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (G : Finset (Finset (Fin 4))) :
+    0 ≤ geneTreeProb (caterpillar x y) (· = G) ∧ geneTreeProb (caterpillar x y) (· = G) ≤ 1 := by
+  have hT : (caterpillar x y).NonnegLengths :=
+    ⟨⟨⟨trivial, trivial, hy⟩, trivial, hx⟩, trivial, le_rfl⟩
+  exact ⟨geneTreeProb_nonneg hT _, geneTreeProb_le_one hT _⟩
+
+/-- Disjoint events add: the matching gene tree or `((A, B), (C, D))`. -/
+example (x y : ℝ) : geneTreeProb (caterpillar x y)
+    (fun G => G = caterpillarTree 0 1 2 3 ∨ G = balancedTree 0 1 2 3) = drF x y + drH x y := by
+  rw [geneTreeProb_or _ _ _ (fun G h h' => by subst h; revert h'; decide +kernel),
+    geneTreeProb_caterpillar_matching, geneTreeProb_caterpillar_AB_CD]
 
 /-- The three unrooted quartets on the caterpillar have total probability one. -/
 example (x y : ℝ) : geneTreeProb (caterpillar x y) (DisplaysSplit 0 1) +
@@ -187,6 +200,13 @@ example : (randomJoining 3).real {h | IsClade h univ} = 1 := by
 example : 1 < tavareProb 2 2 (-1) := by
   rw [tavareProb_two_two, neg_neg]
   simpa only [Real.exp_zero] using Real.exp_lt_exp.mpr (one_pos (α := ℝ))
+
+/-- Outside `NonnegLengths`, `geneTreeProb` is only a signed weight: with internal branch `-1`
+the matching three-species gene tree gets `1 - (2/3) e < 0`. -/
+example : geneTreeProb (triple (-1)) (· = tripleTree {0, 1}) < 0 := by
+  rw [geneTreeProb_triple_matching, neg_neg]
+  have := Real.add_one_lt_exp (show (1 : ℝ) ≠ 0 by norm_num)
+  linarith
 
 /-- At `x = 0` the denominator of `a(x)` vanishes and Lean's `a / 0 = 0` gives the junk value
 `a(0) = log (2/3)`; the anomaly-zone theorem assumes `x > 0`. -/
