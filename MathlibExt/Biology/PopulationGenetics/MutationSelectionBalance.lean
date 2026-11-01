@@ -257,15 +257,18 @@ theorem diploidStep_mult_fixed {s U : ℝ} (hs : s ≠ 0) (hU : U ≠ 1) :
   field_simp
   ring
 
-/-- At the multiplicative equilibrium the mean fitness is `(1 - U)²`, independent of `s`. -/
-theorem meanFitness_mult_at_equilibrium {s : ℝ} (hs : s ≠ 0) (U : ℝ) :
+/-- At the multiplicative equilibrium the mean fitness is `(1 - U)²`, independent of `s`.
+Requires `U ≠ 1`, so that `U / s` is genuinely a fixed point (`diploidStep_mult_fixed`):
+for `U = 1` the point `U / s` is not an equilibrium. -/
+theorem meanFitness_mult_at_equilibrium {s : ℝ} (hs : s ≠ 0) (hU : U ≠ 1) (U : ℝ) :
     meanFitness s (2 * s - s ^ 2) (U / s) = (1 - U) ^ 2 := by
   rw [meanFitness_mult]; field_simp
 
-/-- **Haldane–Muller load**: `1 - w̄ = 2U - U²` at the multiplicative equilibrium. -/
-theorem load_mult_at_equilibrium {s : ℝ} (hs : s ≠ 0) (U : ℝ) :
+/-- **Haldane–Muller load**: `1 - w̄ = 2U - U²` at the multiplicative equilibrium
+(`U ≠ 1`, so `U / s` is a fixed point). -/
+theorem load_mult_at_equilibrium {s : ℝ} (hs : s ≠ 0) (hU : U ≠ 1) (U : ℝ) :
     1 - meanFitness s (2 * s - s ^ 2) (U / s) = 2 * U - U ^ 2 := by
-  rw [meanFitness_mult_at_equilibrium hs]; ring
+  rw [meanFitness_mult_at_equilibrium hs hU]; ring
 
 /-- Mean fitness is positive for `0 ≤ q < 1` and `s, t ≤ 1` (nonnegative fitnesses). -/
 theorem meanFitness_pos {s t q : ℝ} (hs : s ≤ 1) (ht : t ≤ 1) (hq0 : 0 ≤ q) (hq1 : q < 1) :

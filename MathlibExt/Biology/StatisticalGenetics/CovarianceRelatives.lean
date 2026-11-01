@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import MathlibExt.Biology.StatisticalGenetics.FisherDecomposition
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.BigOperators
@@ -28,6 +29,10 @@ symmetric genotypic values `g a b`, under random union of gametes (Hardy–Weinb
 average effects `α a = E[g(a, B)] - μ` and dominance deviations
 `δ a b = g a b - μ - α a - α b` give the orthogonal decomposition `V_G = V_A + V_D` with
 `V_A = 2 E α²` and `V_D = E δ²`, and the additive part is the least-squares additive fit.
+The one-locus Fisher identities below (centring, orthogonality, V_G = V_A + V_D,
+least squares) are the bundled-model specializations of FisherDecomposition;
+this file proves only the genuinely new IBD and phantom-heritability results on top.
+
 Two relatives that share `0`, `1`, or `2` alleles identical by descent with probabilities
 `k₀, k₁, k₂` (non-inbred, `k₀ + k₁ + k₂ = 1`) have genetic covariance
 `(k₁ / 2 + k₂) V_A + k₂ V_D = 2φ V_A + Δ V_D`.
@@ -116,26 +121,14 @@ def varD : ℝ := ∑ a, ∑ b, m.p a * m.p b * m.delta a b ^ 2
 
 /-- Average effects are centred: `∑ p_a α_a = 0`. -/
 theorem sum_p_alpha : ∑ a, m.p a * m.alpha a = 0 := by
-  classical
-  unfold alpha
-  simp only [mul_sub, sum_sub_distrib, ← sum_mul, m.sum_p, one_mul]
-  unfold mean
-  apply sub_eq_zero.mpr
-  apply sum_congr rfl
-  intro a _
-  rw [mul_sum]
-  apply sum_congr rfl
-  intro b _
-  ring
+  simpa only [alpha, mean, FisherDecomposition.avgEffect, FisherDecomposition.meanValue]
+    using FisherDecomposition.sum_mul_avgEffect m.sum_p m.g
 
 /-- Dominance deviations are orthogonal to every allele: `∑_b p_b δ_{ab} = 0`. -/
 theorem sum_p_delta (a : A) : ∑ b, m.p b * m.delta a b = 0 := by
-  classical
-  unfold delta
-  simp only [mul_sub, sum_sub_distrib, ← sum_mul, m.sum_p, one_mul,
-    m.sum_p_alpha]
-  unfold alpha
-  ring
+  simpa only [delta, alpha, mean, FisherDecomposition.domDev, FisherDecomposition.avgEffect,
+    FisherDecomposition.meanValue]
+    using FisherDecomposition.sum_mul_domDev_right m.sum_p m.g a
 
 private def expect {A : Type*} [Fintype A] (m : LocusModel A)
     (f : A → A → ℝ) : ℝ := ∑ a, ∑ b, m.p a * m.p b * f a b
@@ -182,67 +175,12 @@ private theorem expect_const {A : Type*} [Fintype A] (m : LocusModel A)
   rw [expect_left]
   simp only [← sum_mul, m.sum_p, one_mul]
 
-private theorem delta_symm {A : Type*} [Fintype A] (m : LocusModel A)
-    (a b : A) : m.delta a b = m.delta b a := by
-  unfold delta
-  rw [m.g_symm a b]
-  ring
-
-private theorem expect_delta_left {A : Type*} [Fintype A] (m : LocusModel A)
-    (f : A → ℝ) : expect m (fun a b ↦ m.delta a b * f a) = 0 := by
-  unfold expect
-  apply sum_eq_zero
-  intro a _
-  calc
-    (∑ b, m.p a * m.p b * (m.delta a b * f a)) =
-        (m.p a * f a) * ∑ b, m.p b * m.delta a b := by
-      rw [mul_sum]
-      apply sum_congr rfl
-      intro b _
-      ring
-    _ = 0 := by rw [m.sum_p_delta, mul_zero]
-
-private theorem expect_delta_right {A : Type*} [Fintype A] (m : LocusModel A)
-    (f : A → ℝ) : expect m (fun a b ↦ m.delta a b * f b) = 0 := by
-  unfold expect
-  rw [sum_comm]
-  convert expect_delta_left m f using 1
-  unfold expect
-  apply sum_congr rfl
-  intro a _
-  apply sum_congr rfl
-  intro b _
-  dsimp only
-  rw [delta_symm m b a]
-  ring
-
-private theorem expect_delta_additive {A : Type*} [Fintype A] (m : LocusModel A)
-    (r : ℝ) (f : A → ℝ) :
-    expect m (fun a b ↦ m.delta a b * (r + f a + f b)) = 0 := by
-  simp only [mul_add, expect_add, expect_delta_left, expect_delta_right]
-  simp only [add_zero]
-
-/-- **Fisher's decomposition** of the genetic variance: `V_G = V_A + V_D`. -/
+/-- **Fisher decomposition** of the genetic variance: `V_G = V_A + V_D`. -/
 theorem varG_eq : m.varG = m.varA + m.varD := by
-  have expansion : m.varG =
-      expect m (fun a _ ↦ m.alpha a ^ 2) + expect m (fun _ b ↦ m.alpha b ^ 2) +
-      expect m (fun a b ↦ m.delta a b ^ 2) +
-      2 * expect m (fun a b ↦ m.alpha a * m.alpha b) +
-      2 * expect m (fun a b ↦ m.delta a b * (0 + m.alpha a + m.alpha b)) := by
-    rw [← expect_mul, ← expect_mul, ← expect_add, ← expect_add, ← expect_add,
-      ← expect_add]
-    unfold varG expect
-    apply sum_congr rfl
-    intro a _
-    apply sum_congr rfl
-    intro b _
-    unfold delta
-    ring
-  rw [expect_left, expect_right, expect_product, m.sum_p_alpha,
-    expect_delta_additive] at expansion
-  change m.varG = 2 * (∑ a, m.p a * m.alpha a ^ 2) +
-    expect m (fun a b ↦ m.delta a b ^ 2)
-  linarith
+  simpa only [varG, varA, varD, mean, alpha, delta, FisherDecomposition.genVar,
+    FisherDecomposition.addVar, FisherDecomposition.domVar, FisherDecomposition.meanValue,
+    FisherDecomposition.avgEffect, FisherDecomposition.domDev]
+    using FisherDecomposition.genVar_eq_addVar_add_domVar m.sum_p m.g_symm
 
 /-- The additive variance is nonnegative. -/
 theorem varA_nonneg : 0 ≤ m.varA := by
@@ -254,33 +192,14 @@ theorem varD_nonneg : 0 ≤ m.varD := by
   exact sum_nonneg fun a _ ↦ sum_nonneg fun b _ ↦
     mul_nonneg (mul_nonneg (m.p_nonneg a) (m.p_nonneg b)) (sq_nonneg _)
 
-/-- **The additive fit is least squares** (Fisher's definition of average effects): every
+/-- **The additive fit is least squares** (Fisher definition of average effects): every
 additive fit `c + h a + h b` has mean squared error at least `V_D`, the error of
 `μ + α a + α b`. -/
 theorem varD_le (c : ℝ) (h : A → ℝ) :
     m.varD ≤ ∑ a, ∑ b, m.p a * m.p b * (m.g a b - c - h a - h b) ^ 2 := by
-  let e := fun a b ↦ (m.mean - c) + (m.alpha a - h a) + (m.alpha b - h b)
-  have expansion :
-      expect m (fun a b ↦ (m.g a b - c - h a - h b) ^ 2) =
-      m.varD + 2 * expect m (fun a b ↦ m.delta a b * e a b) +
-      expect m (fun a b ↦ e a b ^ 2) := by
-    change _ = expect m (fun a b ↦ m.delta a b ^ 2) + _ + _
-    rw [← expect_mul, ← expect_add, ← expect_add]
-    unfold expect
-    apply sum_congr rfl
-    intro a _
-    apply sum_congr rfl
-    intro b _
-    dsimp [e, delta]
-    ring
-  have orth : expect m (fun a b ↦ m.delta a b * e a b) = 0 :=
-    expect_delta_additive m (m.mean - c) (fun a ↦ m.alpha a - h a)
-  rw [orth, mul_zero, add_zero] at expansion
-  have nonneg : 0 ≤ expect m (fun a b ↦ e a b ^ 2) :=
-    sum_nonneg fun a _ ↦ sum_nonneg fun b _ ↦
-      mul_nonneg (mul_nonneg (m.p_nonneg a) (m.p_nonneg b)) (sq_nonneg _)
-  change m.varD ≤ expect m (fun a b ↦ (m.g a b - c - h a - h b) ^ 2)
-  linarith
+  simpa only [varD, delta, alpha, mean, FisherDecomposition.domVar,
+    FisherDecomposition.domDev, FisherDecomposition.avgEffect, FisherDecomposition.meanValue]
+    using FisherDecomposition.domVar_le_sum_sq m.p_nonneg m.sum_p m.g_symm c h
 
 /-- The mean product of genotypic values of two non-inbred relatives that share `0`, `1`, `2`
 alleles identical by descent with probabilities `k₀, k₁, k₂`: given the IBD state, the
@@ -556,4 +475,3 @@ theorem falconer_eq_of_locus (C : ℝ) :
 end LocusModel
 
 end MathlibExt.Biology.StatisticalGenetics.CovarianceRelatives
-
