@@ -50,9 +50,10 @@ example : coxScore T₀ δ₀ (groupIndicator g₀) 0 = 1 / 2 := by
     filter_g₀_one]
   norm_num [groupIndicator, g₀]
 
-/-- The log-rank variance `1·1/2² + 0·1/1² = 1/4` is the Cox information at `β = 0`. -/
+/-- The Breslow information `1·1/2² + 0·1/1² = 1/4` is the Cox information at `β = 0`
+(event times here are distinct, so it also equals the log-rank variance). -/
 example : coxInformation T₀ δ₀ (groupIndicator g₀) 0 = 1 / 4 := by
-  rw [coxInformation_zero, logRankVariance, filter_δ₀, Fin.sum_univ_two]
+  rw [coxInformation_zero, breslowInformation, filter_δ₀, Fin.sum_univ_two]
   simp only [numAtRisk, numAtRiskIn, riskSet_T₀_zero, riskSet_T₀_one, filter_g₀_univ,
     filter_g₀_one]
   norm_num

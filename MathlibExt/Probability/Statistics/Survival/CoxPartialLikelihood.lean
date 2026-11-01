@@ -40,10 +40,14 @@ risk set at its time (Breslow 1974), which is Cox's formula when the event times
 * **The log-rank test is the score test** (Mantel 1966; Cox 1972): for a group
   indicator `zᵢ = 1` (group 1) or `0`, `coxScore_zero` gives `ℓ'(0) = O - E`, the observed minus
   the expected number of group-1 events, `∑_{i : δᵢ} (zᵢ - n₁(Tᵢ) / n(Tᵢ))`, and
-  `coxInformation_zero` gives `-ℓ''(0) = ∑_{i : δᵢ} n₁ n₀ / n²` at the risk sets of the events.
-  When the event times are distinct this is Mantel's hypergeometric variance
+  `coxInformation_zero` gives `-ℓ''(0) = ∑_{i : δᵢ} n₁ n₀ / n²` at the risk sets of the events,
+  the Breslow information (`breslowInformation`).
+  When the event times are distinct this equals Mantel's hypergeometric variance
   `∑ dᵢ n₁ n₀ (n - dᵢ) / (n² (n - 1))` with `dᵢ = 1`; with ties the Breslow information differs
-  from the hypergeometric variance, which this file does not cover.
+  from the hypergeometric variance, which this file does not cover. In particular this
+  quantity must not be called the (tied) log-rank variance: for one tied risk set with
+  `n = 4`, `n₁ = 2` and `d = 2` events it gives `1 / 2`, while the hypergeometric log-rank
+  variance is `1 / 3`.
 
 ## References
 
@@ -221,8 +225,13 @@ noncomputable def observedMinusExpected (T : Fin n → ℝ) (δ : Fin n → Bool
     ℝ :=
   ∑ i with δ i = true, (groupIndicator g i - (numAtRiskIn T g i : ℝ) / numAtRisk T i)
 
-/-- The log-rank variance `∑_{i : δᵢ} n₁ n₀ / n²` at the risk sets of the events. -/
-noncomputable def logRankVariance (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → Bool) : ℝ :=
+/-- The Breslow (Cox) information `∑_{i : δᵢ} n₁ n₀ / n²` at the risk sets of the events.
+This is `-ℓ''(0)` for a group indicator, not the tied log-rank variance: for one tied
+risk set with `n = 4`, `n₁ = 2` and `d = 2` events it gives `1 / 2`, while the
+hypergeometric log-rank variance is `1 / 3`. It equals the log-rank variance only when
+the event times are distinct (so each risk set contributes at most one event). -/
+noncomputable def breslowInformation (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → Bool) :
+    ℝ :=
   ∑ i with δ i = true,
     (numAtRiskIn T g i : ℝ) * ((numAtRisk T i : ℝ) - numAtRiskIn T g i) / (numAtRisk T i) ^ 2
 
@@ -232,9 +241,10 @@ theorem coxScore_zero (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → B
   refine sum_congr rfl fun i _ => ?_
   simp [riskMean, numAtRiskIn, numAtRisk, groupIndicator, sum_boole]
 
-/-- **The Cox information at `β = 0` is the log-rank variance** `∑ n₁ n₀ / n²`. -/
+/-- **The Cox information at `β = 0` is the Breslow information** `∑ n₁ n₀ / n²`
+(not the tied log-rank variance; see `breslowInformation`). -/
 theorem coxInformation_zero (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → Bool) :
-    coxInformation T δ (groupIndicator g) 0 = logRankVariance T δ g := by
+    coxInformation T δ (groupIndicator g) 0 = breslowInformation T δ g := by
   refine sum_congr rfl fun i _ => ?_
   have hn : (0 : ℝ) < #(riskSet T i) := by exact_mod_cast (riskSet_nonempty T i).card_pos
   have hsq : ∀ l, groupIndicator g l ^ 2 = groupIndicator g l := fun l => by
