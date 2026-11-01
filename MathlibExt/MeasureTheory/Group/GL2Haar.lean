@@ -47,10 +47,10 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.Transvection
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Group
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Group
+import Mathlib.Tactic.Ring
 public import Mathlib.Topology.Algebra.Group.Units
 
 import MathlibExt.MeasureTheory.Measure.IsInvInvariant
