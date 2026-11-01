@@ -1,0 +1,309 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+public import Mathlib.MeasureTheory.Measure.WithDensity
+import Mathlib.MeasureTheory.Constructions.Polish.StronglyMeasurable
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
+import Mathlib.MeasureTheory.Function.SimpleFuncDenseLp
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+
+/-!
+# Sufficient σ-algebras and the factorization criterion (dominated case)
+
+Let `P : Θ → Measure Ω` be a family of probability measures on `(Ω, m₀)`. A sub-σ-algebra
+`m ≤ m₀` is *sufficient* for the family if every conditional probability given `m` has a
+version that does not depend on the parameter: for every `m₀`-measurable set `s` there is an
+`m`-measurable `f` with `f = P_θ[1_s | m]` `P_θ`-almost everywhere for every `θ`
+(`IsSufficient`). A statistic `T : Ω → τ` is sufficient when the σ-algebra `comap T` it
+generates is.
+
+This file proves:
+
+* the common version extends from indicators to every measurable function that is integrable
+  under all the measures of the family (`IsSufficient.exists_common_condExp`), which is the
+  form the Rao–Blackwell theorem uses;
+* the sufficiency half of the Halmos–Savage factorization theorem: if `P θ = g_θ · ν` with
+  `g_θ` measurable for `m` and `ν` σ-finite on `m`, then `m` is sufficient
+  (`isSufficient_of_withDensity`); in the statistic form, densities
+  `dP_θ/dμ = g_θ(T) · h` make `T` sufficient (`isSufficient_comap_of_factorization`).
+
+The necessity half (sufficiency implies a factorization, for a dominated family) is not
+proved here. The discrete factorization theorem, with both directions, is
+`MathlibExt.Probability.Statistics.Sufficiency.isSufficientPMF_iff_exists_factorization`.
+
+## Main results
+
+* `IsSufficient.exists_common_condExp`
+* `isSufficient_of_withDensity`
+* `isSufficient_comap_of_factorization`
+
+## References
+
+* P. R. Halmos and L. J. Savage, *Application of the Radon–Nikodym theorem to the theory of
+  sufficient statistics*, Ann. Math. Statist. 20 (1949), 225–241.
+* E. L. Lehmann and J. P. Romano, *Testing Statistical Hypotheses*, 3rd ed., Springer (2005),
+  Chapter 2.
+-/
+
+@[expose] public section
+
+namespace MathlibExt.Probability.Statistics.Sufficiency
+
+open MeasureTheory Filter Topology
+open scoped ENNReal
+
+variable {Ω Θ : Type*}
+
+/-- A sub-σ-algebra `m` is *sufficient* for the family of measures `P` on `(Ω, m₀)` if for
+every `m₀`-measurable set `s` one `m`-measurable function is a version of the conditional
+probability `P_θ[1_s | m]` under every `P θ`. The results below take every `P θ` finite (or a
+probability measure), where `P_θ[· | m]` is the genuine conditional expectation. -/
+def IsSufficient (m : MeasurableSpace Ω) {m₀ : MeasurableSpace Ω}
+    (P : Θ → Measure[m₀] Ω) : Prop :=
+  ∀ s, MeasurableSet[m₀] s → ∃ f : Ω → ℝ, StronglyMeasurable[m] f ∧
+    ∀ θ, f =ᵐ[P θ] (P θ)[s.indicator (fun _ => (1 : ℝ)) | m]
+
+/-- Monotone convergence for conditional expectations under one finite measure. -/
+private theorem ae_tendsto_condExp_of_monotone {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+    {μ : Measure[m₀] Ω} [IsFiniteMeasure μ] {s : ℕ → Ω → ℝ} {W : Ω → ℝ}
+    (hs : ∀ n, Integrable (s n) μ) (hW : Integrable W μ) (hmono : ∀ ω, Monotone fun n => s n ω)
+    (hlim : ∀ ω, Tendsto (fun n => s n ω) atTop (𝓝 (W ω))) :
+    ∀ᵐ ω ∂μ, Tendsto (fun n => μ[s n | m] ω) atTop (𝓝 (μ[W | m] ω)) := by
+  have hle : ∀ n ω, s n ω ≤ W ω := fun n ω => (hmono ω).ge_of_tendsto (hlim ω) n
+  have hstep : ∀ᵐ ω ∂μ, ∀ n, μ[s n | m] ω ≤ μ[s (n + 1) | m] ω :=
+    ae_all_iff.2 fun n => condExp_mono (hs n) (hs (n + 1))
+      (ae_of_all _ fun ω => hmono ω n.le_succ)
+  have hbd : ∀ᵐ ω ∂μ, ∀ n, μ[s n | m] ω ≤ μ[W | m] ω :=
+    ae_all_iff.2 fun n => condExp_mono (hs n) hW (ae_of_all _ fun ω => hle n ω)
+  set ℓ : Ω → ℝ := fun ω => ⨆ n, μ[s n | m] ω with hℓ
+  have hgmono : ∀ᵐ ω ∂μ, Monotone fun n => μ[s n | m] ω :=
+    hstep.mono fun ω h => monotone_nat_of_le_succ h
+  have htend : ∀ᵐ ω ∂μ, Tendsto (fun n => μ[s n | m] ω) atTop (𝓝 (ℓ ω)) := by
+    filter_upwards [hgmono, hbd] with ω h1 h2
+    exact tendsto_atTop_ciSup h1 ⟨_, Set.forall_mem_range.2 h2⟩
+  have hℓle : ℓ ≤ᵐ[μ] μ[W | m] := by
+    filter_upwards [hbd] with ω h
+    exact ciSup_le h
+  have hℓge : ∀ᵐ ω ∂μ, μ[s 0 | m] ω ≤ ℓ ω := by
+    filter_upwards [hgmono, hbd] with ω h1 h2
+    exact le_ciSup ⟨_, Set.forall_mem_range.2 h2⟩ 0
+  have hℓm : AEStronglyMeasurable ℓ μ :=
+    aestronglyMeasurable_of_tendsto_ae atTop
+      (fun n => integrable_condExp.aestronglyMeasurable) htend
+  have hℓint : Integrable ℓ μ := by
+    refine Integrable.mono' ((integrable_condExp (m := m) (f := s 0)).abs.add
+      (integrable_condExp (m := m) (f := W)).abs) hℓm ?_
+    filter_upwards [hℓle, hℓge] with ω h1 h2
+    simp only [Real.norm_eq_abs, Pi.add_apply]
+    rw [abs_le]
+    constructor <;> linarith [abs_nonneg (μ[s 0 | m] ω), abs_nonneg (μ[W | m] ω),
+      le_abs_self (μ[W | m] ω), neg_abs_le (μ[s 0 | m] ω)]
+  have hint_eq : ∫ ω, ℓ ω ∂μ = ∫ ω, μ[W | m] ω ∂μ := by
+    have h1 := integral_tendsto_of_tendsto_of_monotone (fun n => integrable_condExp) hℓint
+      hgmono htend
+    have h2 : Tendsto (fun n => ∫ ω, μ[s n | m] ω ∂μ) atTop (𝓝 (∫ ω, μ[W | m] ω ∂μ)) := by
+      simp_rw [integral_condExp hm]
+      exact integral_tendsto_of_tendsto_of_monotone hs hW (ae_of_all _ hmono) (ae_of_all _ hlim)
+    exact tendsto_nhds_unique h1 h2
+  have hEq : ℓ =ᵐ[μ] μ[W | m] := (integral_eq_iff_of_ae_le hℓint integrable_condExp hℓle).1 hint_eq
+  filter_upwards [htend, hEq] with ω h1 h2
+  rwa [← h2]
+
+/-- Simple functions have a common version under a sufficient σ-algebra. -/
+private theorem IsSufficient.exists_common_condExp_simpleFunc {m m₀ : MeasurableSpace Ω}
+    {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)] (hP : IsSufficient m P)
+    (f : @SimpleFunc Ω m₀ ℝ) :
+    ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[f | m] := by
+  induction f using SimpleFunc.induction with
+  | @const c S hS =>
+    obtain ⟨v, hv, hvθ⟩ := hP S hS
+    refine ⟨c • v, hv.const_smul c, fun θ => ?_⟩
+    have hfun : ⇑(SimpleFunc.piecewise S hS (SimpleFunc.const Ω c) (SimpleFunc.const Ω 0)) =
+        c • S.indicator (fun _ => (1 : ℝ)) := by
+      ext ω
+      by_cases h : ω ∈ S <;> simp [h]
+    rw [hfun]
+    filter_upwards [hvθ θ, condExp_smul (μ := P θ) c (S.indicator fun _ => (1 : ℝ)) m]
+      with ω h1 h2
+    rw [h2, Pi.smul_apply, Pi.smul_apply, h1]
+  | @add f g _ hf hg =>
+    obtain ⟨v, hv, hvθ⟩ := hf
+    obtain ⟨w, hw, hwθ⟩ := hg
+    refine ⟨v + w, hv.add hw, fun θ => ?_⟩
+    rw [SimpleFunc.coe_add]
+    filter_upwards [hvθ θ, hwθ θ, condExp_add (μ := P θ)
+      (SimpleFunc.integrable_of_isFiniteMeasure f) (SimpleFunc.integrable_of_isFiniteMeasure g) m]
+      with ω h1 h2 h3
+    rw [h3, Pi.add_apply, Pi.add_apply, h1, h2]
+
+/-- Nonnegative case of `IsSufficient.exists_common_condExp`. -/
+private theorem IsSufficient.exists_common_condExp_of_nonneg {m m₀ : MeasurableSpace Ω}
+    (hm : m ≤ m₀) {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)]
+    (hP : IsSufficient m P) {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW0 : ∀ ω, 0 ≤ W ω)
+    (hW : ∀ θ, Integrable W (P θ)) :
+    ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[W | m] := by
+  set F : Ω → ℝ≥0∞ := fun ω => ENNReal.ofReal (W ω) with hF
+  have hFm : Measurable F := hWm.ennreal_ofReal
+  set s : ℕ → @SimpleFunc Ω m₀ ℝ := fun n => (SimpleFunc.eapprox F n).map ENNReal.toReal
+  have hs_apply : ∀ n ω, s n ω = (SimpleFunc.eapprox F n ω).toReal := fun n ω => rfl
+  have hmono : ∀ ω, Monotone fun n => s n ω := fun ω a b hab => by
+    simp only [hs_apply]
+    exact ENNReal.toReal_mono (SimpleFunc.eapprox_lt_top F b ω).ne
+      (SimpleFunc.monotone_eapprox F hab ω)
+  have hlim : ∀ ω, Tendsto (fun n => s n ω) atTop (𝓝 (W ω)) := fun ω => by
+    have h1 : Tendsto (fun n => SimpleFunc.eapprox F n ω) atTop (𝓝 (F ω)) := by
+      rw [← SimpleFunc.iSup_eapprox_apply hFm ω]
+      exact tendsto_atTop_iSup fun a b hab => SimpleFunc.monotone_eapprox F hab ω
+    have h2 : Tendsto (fun n => (SimpleFunc.eapprox F n ω).toReal) atTop (𝓝 (F ω).toReal) :=
+      (ENNReal.tendsto_toReal ENNReal.ofReal_ne_top).comp h1
+    have hFω : (F ω).toReal = W ω := ENNReal.toReal_ofReal (hW0 ω)
+    rw [hFω] at h2
+    exact h2
+  choose v hv hvθ using fun n => hP.exists_common_condExp_simpleFunc (s n)
+  have hη : StronglyMeasurable[m] fun ω => limUnder atTop fun n => v n ω :=
+    @StronglyMeasurable.limUnder ℕ Ω ℝ m _ _ atTop _ v _ _ hv
+  refine ⟨fun ω => limUnder atTop fun n => v n ω, hη, fun θ => ?_⟩
+  have hconv := ae_tendsto_condExp_of_monotone hm (μ := P θ)
+    (fun n => SimpleFunc.integrable_of_isFiniteMeasure (s n)) (hW θ) hmono hlim
+  filter_upwards [hconv, ae_all_iff.2 fun n => hvθ n θ] with ω h1 h2
+  exact (h1.congr fun n => (h2 n).symm).limUnder_eq
+
+/-- If `m` is sufficient for a family of probability measures, every `m₀`-measurable real
+function `W` that is integrable under all the measures has one `m`-measurable version of the
+conditional expectation `P_θ[W | m]` for every `θ`. (Measurability of `W` itself, not only
+under each `P θ`, is what lets one approximating sequence serve every parameter.) -/
+theorem IsSufficient.exists_common_condExp {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+    {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)] (hP : IsSufficient m P)
+    {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW : ∀ θ, Integrable W (P θ)) :
+    ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[W | m] := by
+  obtain ⟨η₁, hη₁, h₁⟩ := hP.exists_common_condExp_of_nonneg hm (W := fun ω => max (W ω) 0)
+    (hWm.max measurable_const) (fun ω => le_max_right _ _) fun θ => (hW θ).pos_part
+  obtain ⟨η₂, hη₂, h₂⟩ := hP.exists_common_condExp_of_nonneg hm (W := fun ω => max (-W ω) 0)
+    (hWm.neg.max measurable_const) (fun ω => le_max_right _ _) fun θ => (hW θ).neg_part
+  refine ⟨η₁ - η₂, hη₁.sub hη₂, fun θ => ?_⟩
+  have hW' : W = (fun ω => max (W ω) 0) - fun ω => max (-W ω) 0 := by
+    ext ω
+    simp
+  rw [hW']
+  filter_upwards [h₁ θ, h₂ θ, condExp_sub (μ := P θ) (hW θ).pos_part (hW θ).neg_part m]
+    with ω e₁ e₂ e₃
+  rw [e₃, Pi.sub_apply, Pi.sub_apply, e₁, e₂]
+
+/-- Finite case: for a finite `ν` and an `m`-measurable density `Z` with finite total mass,
+`ν[1_s | m]` is a version of `(Z · ν)[1_s | m]`. -/
+private theorem condExp_indicator_ae_eq_withDensity {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+    (ν : Measure[m₀] Ω) [IsFiniteMeasure ν] {Z : Ω → ℝ≥0∞} (hZ : Measurable[m] Z)
+    [IsFiniteMeasure (ν.withDensity Z)] {s : Set Ω} (hs : MeasurableSet[m₀] s) :
+    ν[s.indicator (fun _ => (1 : ℝ)) | m] =ᵐ[ν.withDensity Z]
+      (ν.withDensity Z)[s.indicator (fun _ => (1 : ℝ)) | m] := by
+  set P := ν.withDensity Z with hP
+  set F := ν[s.indicator (fun _ => (1 : ℝ)) | m] with hF
+  have hZ0 : Measurable Z := hZ.mono hm le_rfl
+  have hac : P ≪ ν := withDensity_absolutelyContinuous ν Z
+  have hZint : ∫⁻ ω, Z ω ∂ν ≠ ∞ := by
+    rw [← setLIntegral_univ, ← withDensity_apply _ MeasurableSet.univ]
+    exact measure_ne_top _ _
+  have hZtop : ∀ᵐ ω ∂ν, Z ω < ∞ := ae_lt_top hZ0 hZint
+  set ζ : Ω → ℝ := fun ω => (Z ω).toReal with hζ
+  have hζm : StronglyMeasurable[m] ζ := hZ.ennreal_toReal.stronglyMeasurable
+  have hζint : Integrable ζ ν := integrable_toReal_of_lintegral_ne_top hZ0.aemeasurable hZint
+  have hind : Integrable (s.indicator fun _ => (1 : ℝ)) ν := (integrable_const 1).indicator hs
+  have hFbdd : ∀ᵐ ω ∂ν, |F ω| ≤ (1 : ℝ) := by
+    refine ae_bdd_abs_condExp_of_ae_bdd_abs (Filter.Eventually.of_forall fun ω => ?_)
+    by_cases h : ω ∈ s <;> simp [h]
+  have hFm : AEStronglyMeasurable F P :=
+    (stronglyMeasurable_condExp.mono hm).aestronglyMeasurable
+  have hFint : Integrable F P :=
+    Integrable.of_bound hFm 1 (Filter.Eventually.mono (hac.ae_le hFbdd) fun ω h => by
+      simpa [Real.norm_eq_abs] using h)
+  refine ae_eq_condExp_of_forall_setIntegral_eq hm ((integrable_const 1).indicator hs)
+    (fun A _ _ => hFint.integrableOn) (fun A hA _ => ?_)
+    (stronglyMeasurable_condExp.aestronglyMeasurable)
+  · have hA0 : MeasurableSet[m₀] A := hm A hA
+    have hAζ : StronglyMeasurable[m] (A.indicator ζ) := hζm.indicator hA
+    have hprod : (A.indicator ζ) * (s.indicator fun _ => (1 : ℝ)) =
+        s.indicator (A.indicator ζ) := by
+      ext ω
+      by_cases h : ω ∈ s <;> simp [h]
+    have hprodint : Integrable ((A.indicator ζ) * (s.indicator fun _ => (1 : ℝ))) ν := by
+      rw [hprod]
+      exact (hζint.indicator hA0).indicator hs
+    have hpull := condExp_mul_of_stronglyMeasurable_left hAζ hprodint hind
+    have hl : ∫ ω in A, F ω ∂P = ∫ ω, ((A.indicator ζ) * F) ω ∂ν := by
+      rw [hP, setIntegral_withDensity_eq_setIntegral_toReal_smul hZ0 (ae_restrict_of_ae hZtop)
+        F hA0, ← integral_indicator hA0]
+      congr 1
+      ext ω
+      by_cases h : ω ∈ A <;> simp [h, hζ]
+    have hr : ∫ ω in A, s.indicator (fun _ => (1 : ℝ)) ω ∂P =
+        ∫ ω, ((A.indicator ζ) * (s.indicator fun _ => (1 : ℝ))) ω ∂ν := by
+      rw [hP, setIntegral_withDensity_eq_setIntegral_toReal_smul hZ0 (ae_restrict_of_ae hZtop)
+        _ hA0, ← integral_indicator hA0]
+      congr 1
+      ext ω
+      by_cases h : ω ∈ A <;> simp [h, hζ]
+    rw [hl, hr, ← integral_condExp hm (f := (A.indicator ζ) * (s.indicator fun _ => (1 : ℝ)))]
+    exact (integral_congr_ae hpull).symm
+
+/-- **Factorization implies sufficiency** (Halmos–Savage, the sufficiency half). If every
+`P θ` has a density `g θ` with respect to one measure `ν` that is σ-finite on `m`, and each
+`g θ` is `m`-measurable, then `m` is sufficient for `P`. -/
+theorem isSufficient_of_withDensity {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+    (ν : Measure[m₀] Ω) [SigmaFinite (ν.trim hm)] {P : Θ → Measure[m₀] Ω}
+    [∀ θ, IsFiniteMeasure (P θ)] (g : Θ → Ω → ℝ≥0∞) (hg : ∀ θ, Measurable[m] (g θ))
+    (hP : ∀ θ, P θ = ν.withDensity (g θ)) : IsSufficient m P := by
+  obtain ⟨w, hw0, hwm, hwint⟩ :=
+    @exists_pos_lintegral_lt_of_sigmaFinite Ω m (ν.trim hm) _ 1 one_ne_zero
+  have hwm' : Measurable[m] fun ω => (w ω : ℝ≥0∞) := hwm.coe_nnreal_ennreal
+  have hwint' : ∫⁻ ω, (w ω : ℝ≥0∞) ∂ν ≠ ∞ := by
+    rw [← lintegral_trim hm hwm']
+    exact (hwint.trans ENNReal.one_lt_top).ne
+  set ν' := ν.withDensity fun ω => (w ω : ℝ≥0∞) with hν'
+  have : IsFiniteMeasure ν' := isFiniteMeasure_withDensity hwint'
+  have hZm : ∀ θ, Measurable[m] fun ω => g θ ω / w ω := fun θ => (hg θ).div hwm'
+  have hP' : ∀ θ, P θ = ν'.withDensity fun ω => g θ ω / w ω := by
+    intro θ
+    rw [hP θ, hν', ← withDensity_mul ν (hwm'.mono hm le_rfl) ((hZm θ).mono hm le_rfl)]
+    congr 1
+    ext ω
+    simp only [Pi.mul_apply]
+    rw [ENNReal.mul_div_cancel (by simpa using (hw0 ω).ne') ENNReal.coe_ne_top]
+  intro s hs
+  refine ⟨ν'[s.indicator (fun _ => (1 : ℝ)) | m], stronglyMeasurable_condExp, fun θ => ?_⟩
+  have : IsFiniteMeasure (ν'.withDensity fun ω => g θ ω / w ω) := by
+    rw [← hP' θ]
+    infer_instance
+  rw [hP' θ]
+  exact condExp_indicator_ae_eq_withDensity hm ν' (hZm θ) hs
+
+/-- **Factorization criterion, sufficiency direction, for a statistic.** If
+`dP_θ/dμ = g_θ(T) · h` with `g_θ` and `h` measurable and `h · μ` σ-finite on the σ-algebra
+generated by `T`, then `T` is sufficient for `P`.
+
+Source: Halmos and Savage (1949); Lehmann–Romano, Chapter 2. -/
+theorem isSufficient_comap_of_factorization {τ : Type*} [MeasurableSpace τ]
+    {m₀ : MeasurableSpace Ω} {T : Ω → τ} (hT : Measurable T) (μ : Measure[m₀] Ω)
+    {P : Θ → Measure[m₀] Ω} [∀ θ, IsFiniteMeasure (P θ)] (g : Θ → τ → ℝ≥0∞)
+    (hg : ∀ θ, Measurable (g θ)) (h : Ω → ℝ≥0∞) (hh : Measurable h)
+    [SigmaFinite ((μ.withDensity h).trim hT.comap_le)]
+    (hP : ∀ θ, P θ = μ.withDensity (fun ω => g θ (T ω) * h ω)) :
+    IsSufficient (MeasurableSpace.comap T ‹MeasurableSpace τ›) P := by
+  have hgT : ∀ θ, Measurable[MeasurableSpace.comap T ‹_›] fun ω => g θ (T ω) :=
+    fun θ => (hg θ).comp (comap_measurable T)
+  refine isSufficient_of_withDensity hT.comap_le (μ.withDensity h) (fun θ ω => g θ (T ω)) hgT
+    fun θ => ?_
+  rw [hP θ, ← withDensity_mul μ (g := fun ω => g θ (T ω)) hh ((hg θ).comp hT)]
+  congr 1
+  ext ω
+  exact mul_comm _ _
+
+end MathlibExt.Probability.Statistics.Sufficiency
