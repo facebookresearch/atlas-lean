@@ -33,8 +33,9 @@ numbers (one entry per pair of leaf occurrences).
   `L(T) = ∑_{i<j} 2^{1-τ_ij} d_T(i, j)` (`UTree.bmeLength_pathLength`). It holds for all real edge
   lengths, not only nonnegative ones.
 * The **balanced minimum-evolution length** of a topology `T` for an arbitrary dissimilarity `d`
-  (Desper and Gascuel 2002) is the same linear form `∑_{i<j} 2^{1-τ_ij} d(i, j)`
-  (`UTree.bmeLength`); by Pauplin's formula it is the tree length whenever `d` is the path-length
+  (Desper and Gascuel 2002) is the symmetrized linear form
+  `∑_{i<j} 2^{1-τ_ij} (d(i, j) + d(j, i)) / 2` (`UTree.bmeLength`), which is the usual form when
+  `d` is symmetric; by Pauplin's formula it is the tree length whenever `d` is the path-length
   metric of `T` (`UTree.bmeLength_eq_length`).
 * The **Kraft equality**: for every leaf `i`, `∑_{j ≠ i} 2^{1-τ_ij} = 1`
   (`UTree.kraft_leaf`), from Kraft's equality `∑ 2^{-depth} = 1` for the leaves of a rooted
@@ -329,10 +330,12 @@ def pairs (T : UTree X) : List (X × X × ℝ × ℕ) :=
       T.right.leaves.map fun q => (p.1, q.1, p.2.1 + T.len + q.2.1, p.2.2 + q.2.2 + 1)
 
 /-- The **balanced minimum-evolution length** of the topology of `T` for a dissimilarity `d`
-(Desper and Gascuel 2002): `∑_{i<j} 2^{1-τ_ij} d(i, j)`. It depends on `T` only through the
-topological distances `τ_ij`. -/
+(Desper and Gascuel 2002): `∑_{i<j} 2^{1-τ_ij} (d(i, j) + d(j, i)) / 2`. It depends on `T`
+only through the topological distances `τ_ij`. Each term is symmetrized, so the value does
+not depend on the orientation `T.pairs` happens to assign to a pair: swapping the children of
+a node, or the two sides of the root edge, leaves `bmeLength` unchanged. -/
 noncomputable def bmeLength (T : UTree X) (d : X → X → ℝ) : ℝ :=
-  (T.pairs.map fun p => pauplinCoeff p.2.2.2 * d p.1 p.2.1).sum
+  (T.pairs.map fun p => pauplinCoeff p.2.2.2 * (d p.1 p.2.1 + d p.2.1 p.1) / 2).sum
 
 /-- **Pauplin's formula** (Pauplin 2000): the total edge length of a binary tree with real edge
 lengths is `∑_{i<j} 2^{1-τ_ij} d_T(i, j)`, the sum over pairs of leaves of the path length
@@ -365,12 +368,14 @@ theorem bmeLength_pathLength (T : UTree X) :
   linarith
 
 /-- **The balanced minimum-evolution length of a tree metric is the tree length**: if `d` is the
-path-length dissimilarity of `T` on its leaves, `bmeLength T d = length T`. -/
+path-length dissimilarity of `T` on its leaves and `d` is symmetric, `bmeLength T d = length T`.
+Symmetry is needed because `bmeLength` averages the two orientations of each pair. -/
 theorem bmeLength_eq_length (T : UTree X) (d : X → X → ℝ)
-    (hd : ∀ p ∈ T.pairs, d p.1 p.2.1 = p.2.2.1) : T.bmeLength d = T.length := by
+    (hd : ∀ p ∈ T.pairs, d p.1 p.2.1 = p.2.2.1)
+    (hsym : ∀ x y, d x y = d y x) : T.bmeLength d = T.length := by
   rw [← bmeLength_pathLength, bmeLength]
   congr 1
-  exact List.map_congr_left fun p hp => by rw [hd p hp]
+  exact List.map_congr_left fun p hp => by rw [hd p hp, hsym p.2.1 p.1, hd p hp]; ring
 
 /-- **Kraft equality** for unrooted binary trees: for every leaf `i` of a tree with distinct leaf
 labels, `∑_{j ≠ i} 2^{1-τ_ij} = 1`. -/

@@ -61,11 +61,13 @@ example : quartet.bmeLength quartetDist = 15 := by
 -- The theorem gives the same value.
 example : quartet.bmeLength quartetDist = quartet.length := by
   apply UTree.bmeLength_eq_length
-  intro p hp
-  simp only [quartet, UTree.pairs, RTree.pairs, RTree.leaves, List.map, List.flatMap_cons,
-    List.flatMap_nil, List.append_nil, List.nil_append, List.cons_append, List.mem_cons,
-    List.not_mem_nil, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num [quartetDist]
+  · intro p hp
+    simp only [quartet, UTree.pairs, RTree.pairs, RTree.leaves, List.map, List.flatMap_cons,
+      List.flatMap_nil, List.append_nil, List.nil_append, List.cons_append, List.mem_cons,
+      List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num [quartetDist]
+  · intro x y
+    fin_cases x <;> fin_cases y <;> simp [quartetDist]
 
 -- Kraft at leaf `0`: `1/2 + 1/4 + 1/4 = 1`, directly and by the theorem.
 example : (quartet.pairs.map fun p =>
@@ -99,5 +101,33 @@ example : (UTree.pairs (⟨.node (-1) (.leaf (0 : Fin 3)) 2 (.leaf 1), 3, .leaf 
 -- metric of the same topology with pendant edges `1/2` and internal edge `0`, of length `2`.
 example : quartet.bmeLength (fun _ _ => 1) = 2 := by
   norm_num [UTree.bmeLength, quartet, UTree.pairs, RTree.pairs, RTree.leaves, pauplinCoeff]
+
+/-- An asymmetric dissimilarity on the quartet leaves, for the orientation-invariance tests:
+`d i j = i + 2 * j`, so `d 0 1 = 2` but `d 1 0 = 1`. -/
+noncomputable def asymDist : Fin 4 → Fin 4 → ℝ := fun x y => (x.val : ℝ) + 2 * (y.val : ℝ)
+
+/-- The quartet with the two sides of the root edge swapped: the same unrooted topology, with
+every cross pair listed in the opposite orientation. -/
+noncomputable def quartetSwapped : UTree (Fin 4) := ⟨quartet.right, quartet.len, quartet.left⟩
+
+/-- The quartet with the children of the `(0, 1)` cherry swapped: the same unrooted topology,
+with the cherry pair listed as `(1, 0)`. -/
+noncomputable def quartetCherrySwapped : UTree (Fin 4) :=
+  ⟨.node 2 (.leaf (1 : Fin 4)) 1 (.leaf 0), 3, .node 4 (.leaf 2) 5 (.leaf 3)⟩
+
+-- Orientation invariance: `bmeLength` of the `asymDist` dissimilarity is `9` on the quartet,
+-- and reparsing the same topology with swapped sides or a swapped cherry does not change it.
+-- Without symmetrization the two parses give different values.
+example : quartet.bmeLength asymDist = 9 := by
+  norm_num [UTree.bmeLength, quartet, UTree.pairs, RTree.pairs, RTree.leaves, pauplinCoeff,
+    asymDist]
+
+example : quartet.bmeLength asymDist = quartetSwapped.bmeLength asymDist := by
+  norm_num [UTree.bmeLength, quartet, quartetSwapped, UTree.pairs, RTree.pairs, RTree.leaves,
+    pauplinCoeff, asymDist]
+
+example : quartet.bmeLength asymDist = quartetCherrySwapped.bmeLength asymDist := by
+  norm_num [UTree.bmeLength, quartet, quartetCherrySwapped, UTree.pairs, RTree.pairs,
+    RTree.leaves, pauplinCoeff, asymDist]
 
 end MathlibExt.Biology.Phylogenetics.BalancedMinimumEvolution
