@@ -28,6 +28,19 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            (recovery from a push followed by a PR-creation failure); a
            branch with no PR and a different tree fails visibly for a human.
            No auto-merge: a human merges after CI green plus repairs.
+  validate-prepared
+           Trusted-script revalidation of a prepared tree after overlay,
+           run in the publish job BEFORE the App token is minted (and
+           again inside finish). The prepare job executes the newly
+           tagged Lake code, which can rewrite any working-tree file,
+           so filename-only staged-tree checks are not enough: this
+           semantically revalidates every prepared file (manifest,
+           lakefile, pin-policy, docs, migration ledgers) against the
+           trusted base tree and the live tags, with a read-only token.
+  merge-group-pr
+           Parse a merge-group head ref (gh-readonly-queue/<branch>/
+           pr-<number>-...) to its PR number, for the guard's merge_group
+           run (see bump-guard.yml).
   guard    Run on every PR touching (or renaming) any file, from trusted
            base code (pull_request_target). Validates a pin-change PR
            without building it or running any PR code. Adapted from
@@ -461,6 +474,18 @@ def _pr_is_bot_only(commits: list[dict], total: int | None) -> bool:
         return False
     authors = {(c.get("author") or {}).get("login", "") for c in commits}
     return bool(authors) and all(a.endswith("[bot]") for a in authors)
+
+
+def parse_merge_group_head_ref(head_ref: str) -> int | None:
+    """PR number from a merge-group head ref, or None if unparseable.
+
+    Merge-group head refs look like
+    ``gh-readonly-queue/main/pr-123-abcdef...``. A plain ``pr-123``
+    also parses. Anything else returns None so the caller fails
+    closed instead of guarding the wrong PR.
+    """
+    match = re.search(r"(?:^|/)pr-(\d+)(?:-|$)", head_ref or "")
+    return int(match.group(1)) if match else None
 
 
 def toolchain_tag(root: Path) -> str:
@@ -898,6 +923,148 @@ def cmd_prepare(args: argparse.Namespace) -> int:
     return 0
 
 
+def _git_show(root: Path, rel: str) -> str:
+    """Unstripped contents of ``rel`` at HEAD (the trusted base tree)."""
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{rel}"], cwd=root, text=True,
+        capture_output=True, check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"git show HEAD:{rel} failed: {result.stderr.strip()}"
+        )
+    return result.stdout
+
+
+def validate_prepared_contents(
+    client: GitHub, root: Path, config: dict, target: str, *, allow_rc: bool,
+    base_files: dict[str, str] | None = None,
+) -> list[str]:
+    """Semantic problems in a prepared tree at ``target``, or [].
+
+    Every prepared file is revalidated against the trusted base tree
+    (``base_files`` when given, else ``git show HEAD:<path>``) and
+    the live tags, using the same checks the guard applies to a PR:
+    the manifest (direct + transitive, against the base manifest),
+    the lakefile (only pinned revs may differ from base), the
+    pin-policy file, the doc replacements, and the migration-ledger
+    pins/hashes. A compromised prepare step that rewrites a
+    whitelisted file to arbitrary contents fails here, before any
+    write credential exists, even though the filenames are unchanged.
+    """
+    problems: list[str] = []
+    if not is_version_tag(target, allow_rc=allow_rc):
+        return [f"target {target!r} is not a version tag"]
+    try:
+        prepared_tag = current_tag(root, config)
+    except ValueError as exc:
+        return [str(exc)]
+    if prepared_tag != target:
+        problems.append(
+            f"prepared tree is at {prepared_tag} not {target}; "
+            "run prepare first on the same checkout"
+        )
+        return problems
+    try:
+        shas = resolve_shas(client, config, target)
+    except ValueError as exc:
+        return problems + [str(exc)]
+
+    def base_text(rel: str) -> str:
+        if base_files is not None and rel in base_files:
+            return base_files[rel]
+        return _git_show(root, rel)
+
+    # Manifest: direct + transitive entries, against the base manifest.
+    try:
+        base_manifest = json.loads(base_text("lake-manifest.json"))
+        problems.extend(
+            verify_manifest(client, root, config, target, base_manifest)
+        )
+    except (ValueError, RuntimeError, json.JSONDecodeError, OSError) as exc:
+        problems.append(f"manifest validation failed: {exc}")
+
+    # Lakefile: only the pinned revs may differ from the base file.
+    try:
+        base_doc = tomllib.loads(base_text("lakefile.toml"))
+        prepared_doc = load_lakefile(root)
+        if normalized_lakefile(prepared_doc, config, target) != (
+            normalized_lakefile(base_doc, config, target)
+        ):
+            problems.append(
+                "lakefile.toml differs from base outside the pinned revs"
+            )
+    except (ValueError, RuntimeError, OSError) as exc:
+        problems.append(f"lakefile validation failed: {exc}")
+
+    # Pin-policy file: exactly the base file with the new tag/SHAs.
+    pin_policy = config.get("pin_policy")
+    if pin_policy:
+        try:
+            expected = apply_replacements_to_text(
+                base_text(pin_policy["path"]),
+                pin_policy["replacements"], target, shas,
+            )
+            prepared = (root / pin_policy["path"]).read_text(encoding="utf-8")
+            if prepared != expected:
+                problems.append(
+                    f"{pin_policy['path']} does not match the base file "
+                    "with the new tag/SHAs applied"
+                )
+        except (ValueError, RuntimeError, OSError) as exc:
+            problems.append(f"pin-policy validation failed: {exc}")
+
+    # Doc replacements: group by path, apply in order to the base text.
+    by_path: dict[str, list[dict]] = {}
+    for entry in config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    for path, entries in by_path.items():
+        try:
+            expected = base_text(path)
+            for entry in entries:
+                expected = apply_replacements_to_text(
+                    expected, [entry], target, shas
+                )
+            prepared = (root / path).read_text(encoding="utf-8")
+            if prepared != expected:
+                problems.append(
+                    f"{path} does not match the base file with the "
+                    "new tag applied"
+                )
+        except (ValueError, RuntimeError, OSError) as exc:
+            problems.append(f"doc validation failed for {path}: {exc}")
+
+    # Migration ledgers: pin-consistent with the prepared manifest.
+    ledgers = config.get("migration_ledgers") or []
+    if ledgers:
+        try:
+            ledger_rel, checks_rel = _migration_ledger_paths(config)
+            prepared_manifest = load_manifest(root)
+            prepared_mathlib = next(
+                p["rev"] for p in prepared_manifest["packages"]
+                if p["name"] == "mathlib"
+            )
+            prepared_ledger = json.loads(
+                (root / ledger_rel).read_text(encoding="utf-8"))
+            prepared_checks = json.loads(
+                (root / checks_rel).read_text(encoding="utf-8"))
+            problems.extend(check_migration_ledger_pins(
+                prepared_ledger, prepared_checks,
+                mathlib_sha=prepared_mathlib,
+                lean_tag=f"leanprover/lean4:{target}",
+            ))
+        except (ValueError, RuntimeError, OSError, json.JSONDecodeError,
+                KeyError, StopIteration) as exc:
+            problems.append(f"migration ledgers are inconsistent: {exc}")
+
+    # The target must still exist with a published Mathlib cache.
+    mathlib = next(d for d in config["deps"] if d["name"] == "mathlib")
+    sha = client.tag_sha(mathlib["repo"], target)
+    if sha and client.successful_master_build_run(mathlib["repo"], sha) is None:
+        problems.append(f"mathlib {target} has no successful master-push build")
+    return problems
+
+
 def validate_prepared_tree(
     client: GitHub, root: Path, config: dict, target: str, *, allow_rc: bool
 ) -> str:
@@ -911,12 +1078,14 @@ def validate_prepared_tree(
             f"prepared tree is at {current_tag(root, config)} not {target}; "
             "run prepare first on the same checkout"
         )
-    resolve_shas(client, config, target)
-    mathlib = next(d for d in config["deps"] if d["name"] == "mathlib")
-    sha = client.tag_sha(mathlib["repo"], target)
-    if sha and client.successful_master_build_run(mathlib["repo"], sha) is None:
-        raise ValueError(f"mathlib {target} has no successful master-push build")
-    head_toolchain = run(["git", "show", "HEAD:lean-toolchain"]).strip()
+    problems = validate_prepared_contents(
+        client, root, config, target, allow_rc=allow_rc
+    )
+    if problems:
+        raise ValueError(
+            "prepared tree validation failed: " + "; ".join(problems)
+        )
+    head_toolchain = _git_show(root, "lean-toolchain").strip()
     prefix = "leanprover/lean4:"
     if not head_toolchain.startswith(prefix):
         raise ValueError(f"unexpected HEAD lean-toolchain: {head_toolchain!r}")
@@ -1060,6 +1229,42 @@ def cmd_finish(args: argparse.Namespace) -> int:
             print(f"closed superseded bot-only bump PR #{pr['number']}")
         else:
             print(f"leaving {head} (#{pr['number']}) alone: it has non-bot commits")
+    return 0
+
+
+def cmd_validate_prepared(args: argparse.Namespace) -> int:
+    """Revalidate an overlaid prepared tree before any write credential."""
+    root = Path.cwd()
+    config = load_config(root)
+    client = GitHub()
+    target = args.target
+    try:
+        problems = validate_prepared_contents(
+            client, root, config, target, allow_rc=args.allow_rc
+        )
+    except (ValueError, RuntimeError) as exc:
+        print(f"validate-prepared: FAIL - {exc}", file=sys.stderr)
+        return 2
+    if problems:
+        print("validate-prepared: FAIL - prepared tree validation failed:")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    print(f"validate-prepared: OK - prepared tree for {target} revalidated")
+    return 0
+
+
+def cmd_merge_group_pr(args: argparse.Namespace) -> int:
+    """Print the PR number for a merge-group head ref, or fail closed."""
+    number = parse_merge_group_head_ref(args.head_ref)
+    if number is None:
+        print(
+            f"merge-group-pr: FAIL - cannot parse PR number from "
+            f"{args.head_ref!r}",
+            file=sys.stderr,
+        )
+        return 1
+    print(number)
     return 0
 
 
@@ -1278,6 +1483,17 @@ def main(argv: list[str] | None = None) -> int:
     p_finish.add_argument("target")
     p_finish.add_argument("--allow-rc", action="store_true")
     p_finish.set_defaults(func=cmd_finish)
+    p_validate = sub.add_parser(
+        "validate-prepared",
+        help="semantically revalidate an overlaid prepared tree (before minting any write credential)")
+    p_validate.add_argument("target")
+    p_validate.add_argument("--allow-rc", action="store_true")
+    p_validate.set_defaults(func=cmd_validate_prepared)
+    p_mg = sub.add_parser(
+        "merge-group-pr",
+        help="print the PR number for a merge-group head ref")
+    p_mg.add_argument("head_ref")
+    p_mg.set_defaults(func=cmd_merge_group_pr)
     p_guard = sub.add_parser("guard", help="validate a pin-change PR")
     p_guard.add_argument("--base", required=True)
     p_guard.add_argument("--merge-base", required=True)

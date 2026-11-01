@@ -15,14 +15,21 @@ name: Bump pinned Lean/Mathlib release
 # `publish` via an artifact, and records the exact commit it prepared
 # from (`base_sha`). `publish` checks out that exact commit (never the
 # then-current default branch), verifies HEAD is that commit, verifies
-# the staged tree holds only the prepared files, overlays it, and only
-# then mints the write-capable App token for `finish` (commit, push via
-# an explicit push URL, PR creation). Building from the prepare base
-# SHA means a default-branch change between `prepare` and `publish`
-# cannot silently revert a prepared file: the prepared files are applied
-# to the tree they were prepared from, and merging the resulting branch
-# is a 3-way merge that keeps the default branch's newer changes (or
-# conflicts for a human to repair if they touch the same lines).
+# the staged tree holds only the prepared files (filenames only),
+# overlays it, then semantically revalidates every prepared file with
+# the trusted script and the read-only token (`validate-prepared`:
+# manifest, lakefile, pin-policy, docs, migration ledgers against the
+# base tree and live tags), and only then mints the write-capable App
+# token for `finish` (commit, push via an explicit push URL, PR
+# creation). The filename check alone is not enough: the prepare job
+# executes the newly tagged Lake code, which can rewrite any file,
+# including a whitelisted one, to arbitrary contents. Building from the
+# prepare base SHA means a default-branch change between `prepare` and
+# `publish` cannot silently revert a prepared file: the prepared files
+# are applied to the tree they were prepared from, and merging the
+# resulting branch is a 3-way merge that keeps the default branch's
+# newer changes (or conflicts for a human to repair if they touch the
+# same lines).
 # The checkout never persists any token. Dispatch inputs and job outputs
 # travel through environment variables, never interpolated into shell
 # programs, and `prepare`/`finish` revalidate the target against the live
@@ -204,13 +211,29 @@ jobs:
 
       # The artifact carries only the whitelisted prepared files (see
       # stage-prepared); refuse to continue if it holds anything else,
-      # then overlay it onto this fresh checkout. The default token stays
-      # read-only: all writes below use the App token.
+      # then overlay it onto this fresh checkout. This is a
+      # filename-only check: the next step revalidates contents.
       - name: Verify and overlay prepared tree
         run: |
           set -euo pipefail
           python3 scripts/bump/pinned_bump.py verify-staged --dir prepared-tree
           cp -R prepared-tree/. .
+
+      # Semantic revalidation with the trusted script from this fresh
+      # checkout (never code from the artifact) and the read-only
+      # default token, BEFORE the App token is minted. A compromised
+      # prepare step could have rewritten a whitelisted file to
+      # arbitrary contents without changing its name; this fails that.
+      - name: Validate prepared tree contents before minting write credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py validate-prepared "$TARGET" "${ARGS[@]+${ARGS[@]}}"
 
       - name: Require bump App credentials
         run: |

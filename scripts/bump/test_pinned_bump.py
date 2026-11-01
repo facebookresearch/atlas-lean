@@ -5,6 +5,7 @@ python3 scripts/bump/test_pinned_bump.py
 
 import hashlib
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -515,6 +516,200 @@ class PreparedFilesTests(unittest.TestCase):
                 self.assertEqual(pinned_bump.cmd_verify_staged(vargs), 1)
             finally:
                 os.chdir(old_cwd)
+
+
+class ValidatePreparedTests(unittest.TestCase):
+    OLD = SHAS[("leanprover-community/mathlib4", "v4.35.0")]
+    NEW = SHAS[("leanprover-community/mathlib4", "v4.36.0")]
+
+    def _setup(self, tmp):
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        real_config = load_config(repo_root)
+        base = Path(tmp) / "base"
+        prepared = Path(tmp) / "prepared"
+        base.mkdir()
+        write_tree(base, "v4.35.0")
+        write_migration_ledgers(
+            base, mathlib_sha=self.OLD, lean_tag="leanprover/lean4:v4.35.0")
+        with open(base / "README.md", "a", encoding="utf-8") as f:
+            f.write("https://github.com/leanprover/lean4/releases/tag/v4.35.0\n")
+        (base / "scripts").mkdir()
+        (base / real_config["pin_policy"]["path"]).write_text(
+            (repo_root / real_config["pin_policy"]["path"]).read_text())
+        shutil.copytree(base, prepared)
+        shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")]
+                for d in real_config["deps"]}
+        pinned_bump.apply_pin_edits(
+            prepared, real_config, "v4.35.0", "v4.36.0", shas)
+        # Simulate `lake update` in prepare: it rewrites the direct
+        # manifest entries to the new rev/inputRev; apply_pin_edits
+        # does not touch the manifest.
+        manifest_path = prepared / "lake-manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        for pkg in manifest["packages"]:
+            if not pkg.get("inherited"):
+                pkg["rev"] = shas[pkg["name"]]
+                pkg["inputRev"] = "v4.36.0"
+        manifest_path.write_text(json.dumps(manifest, indent=1))
+        base_files = {
+            rel: (base / rel).read_text(encoding="utf-8")
+            for rel in ["lake-manifest.json", "lakefile.toml", "README.md",
+                        real_config["pin_policy"]["path"]]
+        }
+        upstream = {}
+        for dep in CONFIG["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = (
+                upstream_manifest(["batteries", "Qq"]))
+        client = FakeGitHub(
+            tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
+                "leanprover/lean4", "leanprover-community/mathlib4",
+                "leanprover/cslib"]},
+            upstream=upstream)
+        return prepared, real_config, base_files, client
+
+    def test_valid_prepared_tree_passes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            self.assertEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+    def test_pin_policy_tamper_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            path = prepared / config["pin_policy"]["path"]
+            shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")]
+                    for d in config["deps"]}
+            path.write_text(path.read_text().replace(shas["mathlib"], "0" * 40))
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+    def test_manifest_tamper_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            path = prepared / "lake-manifest.json"
+            manifest = json.loads(path.read_text())
+            for pkg in manifest["packages"]:
+                if pkg.get("inherited"):
+                    pkg["rev"] = "d" * 40
+            path.write_text(json.dumps(manifest, indent=1))
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+    def test_doc_tamper_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            path = prepared / "README.md"
+            path.write_text(path.read_text().replace("v4.36.0", "v4.35.0"))
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+    def test_stale_ledger_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            write_migration_ledgers(
+                prepared, mathlib_sha=self.OLD,
+                lean_tag="leanprover/lean4:v4.35.0")
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+
+class ValidatePreparedGitTests(unittest.TestCase):
+    """cmd_validate_prepared end-to-end via git HEAD as the base tree."""
+
+    def _repo(self, tmp, *, tamper=False):
+        import os
+        import subprocess
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        real_config = load_config(repo_root)
+        root = Path(tmp)
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.name", "t"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.email", "t@t"], cwd=root, check=True)
+        write_tree(root, "v4.35.0")
+        write_migration_ledgers(
+            root, mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
+            lean_tag="leanprover/lean4:v4.35.0")
+        with open(root / "README.md", "a", encoding="utf-8") as f:
+            f.write("https://github.com/leanprover/lean4/releases/tag/v4.35.0\n")
+        (root / "scripts").mkdir()
+        (root / real_config["pin_policy"]["path"]).write_text(
+            (repo_root / real_config["pin_policy"]["path"]).read_text())
+        subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+        subprocess.run(["git", "commit", "-qm", "base"], cwd=root, check=True)
+        shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")]
+                for d in real_config["deps"]}
+        pinned_bump.apply_pin_edits(root, real_config, "v4.35.0", "v4.36.0", shas)
+        manifest_path = root / "lake-manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        for pkg in manifest["packages"]:
+            if not pkg.get("inherited"):
+                pkg["rev"] = shas[pkg["name"]]
+                pkg["inputRev"] = "v4.36.0"
+        manifest_path.write_text(json.dumps(manifest, indent=1))
+        if tamper:
+            path = root / real_config["pin_policy"]["path"]
+            path.write_text(
+                path.read_text().replace(shas["mathlib"], "0" * 40))
+        upstream = {}
+        for dep in CONFIG["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = (
+                upstream_manifest(["batteries", "Qq"]))
+        client = FakeGitHub(
+            tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
+                "leanprover/lean4", "leanprover-community/mathlib4",
+                "leanprover/cslib"]},
+            upstream=upstream)
+        return root, client
+
+    def test_validate_prepared_cli_passes_and_fails_tamper(self):
+        import os
+        for tamper, expected in [(False, 0), (True, 1)]:
+            with tempfile.TemporaryDirectory() as tmp:
+                root, client = self._repo(tmp, tamper=tamper)
+                import pinned_bump as module
+                real_github = module.GitHub
+                module.GitHub = lambda: client
+                old_cwd = os.getcwd()
+                os.chdir(root)
+                try:
+                    args = type("A", (), {
+                        "target": "v4.36.0", "allow_rc": False,
+                    })()
+                    self.assertEqual(module.cmd_validate_prepared(args), expected)
+                finally:
+                    os.chdir(old_cwd)
+                    module.GitHub = real_github
+
+
+class MergeGroupTests(unittest.TestCase):
+    def test_parses_merge_group_head_ref(self):
+        self.assertEqual(
+            pinned_bump.parse_merge_group_head_ref(
+                "gh-readonly-queue/main/pr-928-abcdef"),
+            928)
+        self.assertEqual(
+            pinned_bump.parse_merge_group_head_ref("pr-123"), 123)
+
+    def test_unparseable_head_ref_fails_closed(self):
+        self.assertIsNone(pinned_bump.parse_merge_group_head_ref("main"))
+        self.assertIsNone(pinned_bump.parse_merge_group_head_ref(
+            "gh-readonly-queue/main/pr-abc"))
+        self.assertIsNone(pinned_bump.parse_merge_group_head_ref(""))
 
 
 class MigrationLedgerTests(unittest.TestCase):

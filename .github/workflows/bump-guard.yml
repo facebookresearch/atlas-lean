@@ -10,20 +10,34 @@ name: Bump guard
 # bounded file list) and on `edited` (a base retarget emits `edited`,
 # not `synchronize`, and must revalidate against the new base).
 # See scripts/bump/pinned_bump.py (guard).
+#
+# Base advance: a pull_request_target run does NOT rerun when the base
+# branch advances, so a still-green guard can go stale (two bump PRs
+# pass against the same base; the older one merges after the newer and
+# downgrades the pins). This workflow therefore also runs on
+# merge_group, revalidating the PR against the merge group's current
+# base before it can merge via the merge queue. The merge-group run
+# checks out the merge group's base SHA, so the guard script it runs
+# is trusted base code, not merge-group tree code. This only helps
+# when the repo uses the merge queue for these PRs; a repo merging
+# directly should additionally enable "Require branches to be up to
+# date before merging" in branch protection.
 
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
+  merge_group:
 
 permissions:
   contents: read
   pull-requests: read
 
-# github.ref is the base ref under pull_request_target, so key the
-# concurrency group by PR number: one PR's activity must not cancel
+# github.ref is the base ref under pull_request_target, and the merge
+# group ref under merge_group, so key the concurrency group by PR
+# number / merge-group head ref: one PR's activity must not cancel
 # another PR's guard run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.merge_group.head_ref || github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -31,17 +45,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # Trusted base code only: the PR's base ref under
+      # pull_request_target, the merge group's base SHA under
+      # merge_group. Never check out the PR / merge-group tree here:
+      # that tree can contain PR-modified guard code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.ref }}
           persist-credentials: false
 
       - name: Validate pin change against base
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          MERGE_GROUP_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          MERGE_GROUP_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+          MERGE_GROUP_HEAD_REF: ${{ github.event.merge_group.head_ref }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/guard/base /tmp/guard/merge-base /tmp/guard/pr
@@ -49,7 +71,38 @@ jobs:
           # so download it too (from the base checkout's config: a PR cannot
           # change the config, it is a guard file).
           PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print((c.get("pin_policy") or {}).get("path", ""))')"
+          # The guard validates the pin-coupled migration ledgers, so
+          # download them too for every tree; a tree that predates them
+          # (contents API 404) legitimately has no ledger files.
+          LEDGER_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print(" ".join(c.get("migration_ledgers") or []))')"
+          if [ "$EVENT_NAME" = "merge_group" ]; then
+            BASE_REF="$MERGE_GROUP_BASE_SHA"
+            HEAD_SHA="$MERGE_GROUP_HEAD_SHA"
+            PR_NUMBER="$(python3 scripts/bump/pinned_bump.py merge-group-pr "$MERGE_GROUP_HEAD_REF")"
+          else
+            BASE_REF="$PR_BASE_REF"
+            HEAD_SHA="$PR_HEAD_SHA"
+          fi
           MERGE_BASE_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
+          # Download one file into one guard tree. Required files fail
+          # closed on any API error; ledger files tolerate a 404
+          # (the tree predates the ledgers) and fail on any other error.
+          download_one() {
+            _dir="$1"; _ref="$2"; _file="$3"; _required="$4"
+            mkdir -p "/tmp/guard/${_dir}/$(dirname "$_file")"
+            _err="$(mktemp)"
+            if gh api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" --jq '.content' 2>"$_err" | base64 -d > "/tmp/guard/${_dir}/${_file}"; then
+              rm -f "$_err"
+              return 0
+            fi
+            if [ "$_required" = "false" ] && grep -qi "404\|not found" "$_err"; then
+              rm -f "$_err" "/tmp/guard/${_dir}/${_file}"
+              return 0
+            fi
+            cat "$_err" >&2
+            rm -f "$_err"
+            return 1
+          }
           for dir in base merge-base pr; do
             case "$dir" in
               base) REF="$BASE_REF" ;;
@@ -59,9 +112,10 @@ jobs:
             FILES="lean-toolchain lakefile.toml lake-manifest.json"
             if [ -n "$PIN_POLICY_PATH" ]; then FILES="$FILES $PIN_POLICY_PATH"; fi
             for file in $FILES; do
-              mkdir -p "/tmp/guard/${dir}/$(dirname "$file")"
-              gh api "repos/${GITHUB_REPOSITORY}/contents/${file}?ref=${REF}" --jq '.content' \
-                | base64 -d > "/tmp/guard/${dir}/${file}"
+              download_one "$dir" "$REF" "$file" true
+            done
+            for file in $LEDGER_PATHS; do
+              download_one "$dir" "$REF" "$file" false
             done
           done
           # Paginated REST file list: `gh pr view --json files` caps at 100.
