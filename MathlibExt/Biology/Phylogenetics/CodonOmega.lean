@@ -172,7 +172,7 @@ theorem gyRate_of_ne {i j : ι} (h : i ≠ j) :
 matrix. -/
 theorem isRateMatrix_gyRate {π : ι → ℝ} (hπ : ∀ i, 0 ≤ π i) {κ ω : ℝ} (hκ : 0 ≤ κ)
     (hω : 0 ≤ ω) : IsRateMatrix (gyRate π nuc aa κ ω) := by
-  refine isRateMatrix_gtrRate hπ fun i j => ?_
+  refine isRateMatrix_gtrRate hπ fun i j _ => ?_
   simp only [gyExchange, Matrix.of_apply]
   split_ifs <;> positivity
 
