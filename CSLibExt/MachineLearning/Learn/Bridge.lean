@@ -18,6 +18,8 @@ set_option autoImplicit false
 
 namespace CSLibExt.MachineLearning.Learn
 
+open scoped Matrix
+
 /-!
 # LEARN bridge (Weeks 3-4 core, 90-day plan #4 LEARN)
 
@@ -55,11 +57,10 @@ theorem perceptron_mistake_bound {ι K : Type*} [Fintype ι] [CommRing K]
     [LinearOrder K] [IsStrictOrderedRing K] {u : ι → K} {γ R : K}
     (xs : List ((ι → K) × Bool))
     (hsep : ∀ e ∈ xs,
-      γ ≤ Cslib.MachineLearning.Perceptron.sign e.2 *
-        Matrix.dotProduct u e.1)
-    (hR : ∀ e ∈ xs, Matrix.dotProduct e.1 e.1 ≤ R ^ 2) (hγ : 0 < γ) :
+      γ ≤ Cslib.MachineLearning.Perceptron.sign e.2 * (u ⬝ᵥ e.1))
+    (hR : ∀ e ∈ xs, e.1 ⬝ᵥ e.1 ≤ R ^ 2) (hγ : 0 < γ) :
     ((Cslib.MachineLearning.Perceptron.run 0 0 xs).2 : K) * γ ^ 2 ≤
-      Matrix.dotProduct u u * R ^ 2 :=
+      u ⬝ᵥ u * R ^ 2 :=
   Cslib.MachineLearning.Perceptron.mistakes_mul_sq_le xs hsep hR hγ
 
 /-- AdaBoost training error: at most `exp (-2 γ² T)` after `T` rounds
