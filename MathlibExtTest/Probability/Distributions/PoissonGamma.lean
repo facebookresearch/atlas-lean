@@ -33,7 +33,7 @@ example : (poissonMeasure 2).real (Set.Iic 0) = exp (-2) := by
 /-- Poisson–Gamma duality at `k = 0`: the exponential law of rate `r` has tail `e^{-r x}`. -/
 example {r x : ℝ} (hr : 0 < r) (hx : 0 ≤ x) :
     (gammaMeasure ((0 : ℕ) + 1) r).real (Ioi x) = exp (-(r * x)) := by
-  rw [gammaMeasure_real_Ioi 0 hr hx, poissonCDF_zero_right]
+  rw [gammaMeasure_real_Ioi_poissonCDF 0 hr hx, poissonCDF_zero_right]
 
 /-- Monotone in `k` and in the mean, on concrete points. -/
 example : poissonCDF 1 2 < poissonCDF 1 3 ∧ poissonCDF 2 3 < poissonCDF 1 3 :=

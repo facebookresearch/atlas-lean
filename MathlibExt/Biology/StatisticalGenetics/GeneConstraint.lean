@@ -96,7 +96,7 @@ theorem gammaMeasure_real_Iic_oeUpper {α E : ℝ} (hα0 : 0 < α) (hα1 : α < 
   have := isProbabilityMeasure_gammaMeasure (a := (o : ℝ) + 1) (by positivity) hE
   have hu := garwoodUpper_pos hα0 hα1 o
   rw [← compl_Ioi, probReal_compl_eq_one_sub measurableSet_Ioi, oeUpper,
-    gammaMeasure_real_Ioi o hE (div_nonneg hu.le hE.le), mul_div_cancel₀ _ hE.ne',
+    gammaMeasure_real_Ioi_poissonCDF o hE (div_nonneg hu.le hE.le), mul_div_cancel₀ _ hE.ne',
     poissonCDF_garwoodUpper hα0 hα1]
 
 /-- **Exact coverage**: for every true ratio `γ ≥ 0` and `E > 0`, when `o ~ Poisson(γ E)`,

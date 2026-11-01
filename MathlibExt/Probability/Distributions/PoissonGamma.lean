@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Probability.Distributions.Gamma
+public import MathlibExt.Probability.Distributions.GammaMoments
 
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
@@ -27,8 +28,9 @@ for every mean.
 
 * `poissonMeasure_real_Iic`: `F_k(r)` is the distribution function of `poissonMeasure r`.
 * `hasDerivAt_poissonCDF`: `∂_x F_k(x) = -e^{-x} x^k / (k!)`.
-* `gammaMeasure_real_Ioi`: **Poisson–Gamma duality** with Mathlib's Gamma law of shape `k + 1`
-  and rate `r`: `P(Gamma(k + 1, r) > x) = F_k(r x)` for `0 < r`, `0 ≤ x`.
+* `gammaMeasure_real_Ioi_poissonCDF`: **Poisson–Gamma duality** with Mathlib's Gamma law of
+  shape `k + 1` and rate `r`: `P(Gamma(k + 1, r) > x) = F_k(r x)` for `0 < r`, `0 ≤ x`
+  (a corollary of `gammaMeasure_real_Ioi_natCast_add_one` in `GammaMoments`).
 * `poissonCDF_strictAntiOn`, `poissonCDF_lt_poissonCDF_succ`, `tendsto_poissonCDF_atTop`:
   monotonicity in the mean and in `k`, and the limit `0` as the mean grows.
 * `garwoodUpper`: the bound `u_α(k) = sup {x ≥ 0 | α ≤ F_k(x)}`; `poissonCDF_garwoodUpper`
@@ -119,43 +121,15 @@ theorem continuous_poissonCDF (k : ℕ) : Continuous fun x => poissonCDF x k := 
   exact continuous_iff_continuousAt.mpr fun x => (hasDerivAt_poissonCDF k x).continuousAt
 
 /-- **Poisson–Gamma duality**: the Gamma law of shape `k + 1` and rate `r` (Mathlib's
-`gammaMeasure`) has upper tail `P(Gamma(k + 1, r) > x) = F_k(r x)`. -/
-theorem gammaMeasure_real_Ioi (k : ℕ) {r x : ℝ} (hr : 0 < r) (hx : 0 ≤ x) :
+`gammaMeasure`) has upper tail `P(Gamma(k + 1, r) > x) = F_k(r x)`. This is the Erlang tail
+`gammaMeasure_real_Ioi_natCast_add_one` in `GammaMoments`, rewritten with the definition of
+`poissonCDF`. -/
+theorem gammaMeasure_real_Ioi_poissonCDF (k : ℕ) {r x : ℝ} (hr : 0 < r) (hx : 0 ≤ x) :
     (gammaMeasure (k + 1) r).real (Ioi x) = poissonCDF (r * x) k := by
-  have ha : 0 < (k : ℝ) + 1 := by positivity
-  have hdensity (t : ℝ) (ht : 0 ≤ t) :
-      gammaPDFReal (k + 1) r t = r * (exp (-(r * t)) * (r * t) ^ k / (k ! : ℝ)) := by
-    rw [gammaPDFReal, ite_eq_left ht, Real.Gamma_nat_eq_factorial, add_sub_cancel_right,
-      ← Nat.cast_succ, Real.rpow_natCast, Real.rpow_natCast, pow_succ, mul_pow]
-    ring
-  have hderiv (t : ℝ) (ht : t ∈ Ioi x) :
-      HasDerivAt (fun y => -poissonCDF (r * y) k) (gammaPDFReal (k + 1) r t) t := by
-    rw [hdensity t (hx.trans ht.le)]
-    convert ((hasDerivAt_poissonCDF k (r * t)).comp t
-      ((hasDerivAt_id t).const_mul r)).neg using 1
-    · rfl
-    · ring
-  have hlim : Tendsto (fun t => poissonCDF (r * t) k) atTop (𝓝 0) := by
-    have hm : Tendsto (fun t : ℝ => r * t) atTop atTop :=
-      tendsto_id.const_mul_atTop hr
-    unfold poissonCDF
-    have hz : (0 : ℝ) = ∑ j ∈ Finset.range (k + 1), (0 : ℝ) := by simp
-    rw [hz]
-    apply tendsto_finsetSum
-    intro j _
-    simpa only [Function.comp_def, zero_div, mul_comm] using
-      ((Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero j).comp hm).div_const (j ! : ℝ)
-  have hcont : ContinuousWithinAt (fun t => -poissonCDF (r * t) k) (Ici x) x :=
-    ((continuous_poissonCDF k).comp (continuous_const.mul continuous_id)).neg
-      |>.continuousAt.continuousWithinAt
-  rw [gammaMeasure, measureReal_def, withDensity_apply _ measurableSet_Ioi]
-  change (∫⁻ t in Ioi x, ENNReal.ofReal (gammaPDFReal (k + 1) r t)).toReal = _
-  rw [← integral_eq_lintegral_of_nonneg_ae
-    (ae_of_all _ (gammaPDFReal_nonneg ha hr))
-    (stronglyMeasurable_gammaPDFReal (k + 1) r).aestronglyMeasurable]
-  simpa only [neg_zero, sub_neg_eq_add, zero_add] using
-    integral_Ioi_of_hasDerivAt_of_nonneg hcont hderiv
-      (fun t _ => gammaPDFReal_nonneg ha hr t) hlim.neg
+  rw [gammaMeasure_real_Ioi_natCast_add_one k hr hx]
+  simp only [poissonCDF, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [mul_div_assoc]
 
 /-- The distribution function is strictly decreasing in the mean on `[0, ∞)`. -/
 theorem poissonCDF_strictAntiOn (k : ℕ) : StrictAntiOn (fun x => poissonCDF x k) (Ici 0) := by
