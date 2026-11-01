@@ -20,6 +20,11 @@ public import MathlibExt.MeasureTheory.Function.SimpleFuncUniformApprox
 * The `ε = ⊤` branch of the uniform lemma, for the constant function `1`.
 * The `B = 0` case: for the zero function, the uniform bound holds with
   error `< 1`.
+* The bundled statement for the constant function `2`, with its uniform
+  part giving error `< 1 / 2` on the whole domain.
+* Monotone approximation of the unbounded function `n ↦ n`: the uniform
+  error bound still holds on the bounded set `{a | a ≤ 2}`.
+* Monotone approximation of the zero function is identically zero.
 -/
 
 open MathlibExt.MeasureTheory.Function.SimpleFuncUniformApprox
