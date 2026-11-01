@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import CSLibExt.Bioinformatics.Motifs.PWM
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Order.Fin.Basic
@@ -28,9 +29,10 @@ windows starting at `0, …, m`, and only positions `< m + w` are read.
 ## Main results
 
 * `conv_eq_pwmScore`: the response at window `i` is the PWM score
-  `∑ k, W k (x (i + k))` of the window.
-* `pwmScore_logOdds`: for a log-odds filter `W k b = log (P k b / q b)` the score is the log
-  likelihood ratio of the window under the motif model `P` against the background `q`.
+  `∑ k, W k (x (i + k))` of the window, using `Cslib.Bioinformatics.Motifs.PWM.score`
+  (no parallel PWM API is defined here).
+* Log-odds filters: the score is the log likelihood ratio, by
+  `Cslib.Bioinformatics.Motifs.PWM.score_logOdds`.
 * `le_maxPool`, `exists_eq_maxPool`: max pooling returns the best PWM hit over all windows;
   `maxPool_relu`: with a bias and a ReLU before pooling, the output is
   `max (maxPool + β) 0`.
@@ -67,28 +69,13 @@ encoded sequence `x` at the window starting at `i`:
 def conv (W : Fin w → σ → ℝ) (x : ℕ → σ) (i : ℕ) : ℝ :=
   ∑ k : Fin w, ∑ b, W k b * oneHot (x (i + k)) b
 
-/-- The position weight matrix score `∑ k, W k (u k)` of a word `u` of length `w`. -/
-def pwmScore (W : Fin w → σ → ℝ) (u : Fin w → σ) : ℝ := ∑ k, W k (u k)
-
 /-- The window of length `w` of `x` starting at `i`. -/
 def window (x : ℕ → σ) (i : ℕ) : Fin w → σ := fun k => x (i + k)
 
 /-- **The convolution response is the PWM score of the window.** -/
 theorem conv_eq_pwmScore (W : Fin w → σ → ℝ) (x : ℕ → σ) (i : ℕ) :
-    conv W x i = pwmScore W (window x i) := by
-  simp [conv, pwmScore, window, oneHot]
-
-omit [Fintype σ] [DecidableEq σ] in
-/-- **A log-odds filter scores the log likelihood ratio**: if `W k b = log (P k b / q b)` with
-positive motif probabilities `P` and background probabilities `q`, the PWM score of a word `u` is
-`log (∏ k, P k (u k) / ∏ k, q (u k))`. -/
-theorem pwmScore_logOdds {P : Fin w → σ → ℝ} {q : σ → ℝ} (hP : ∀ k b, 0 < P k b)
-    (hq : ∀ b, 0 < q b) (u : Fin w → σ) :
-    pwmScore (fun k b => log (P k b / q b)) u = log ((∏ k, P k (u k)) / ∏ k, q (u k)) := by
-  rw [log_div (prod_pos fun k _ => hP k (u k)).ne' (prod_pos fun k _ => hq (u k)).ne',
-    log_prod (fun k _ => (hP k (u k)).ne'), log_prod (fun k _ => (hq (u k)).ne'),
-    pwmScore, ← sum_sub_distrib]
-  exact sum_congr rfl fun k _ => log_div (hP k (u k)).ne' (hq (u k)).ne'
+    conv W x i = Cslib.Bioinformatics.Motifs.PWM.score W (window x i) := by
+  simp [conv, Cslib.Bioinformatics.Motifs.PWM.score, window, oneHot]
 
 /-- **Global max pooling** over the `m + 1` windows of a sequence of length `m + w`. -/
 def maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) : ℝ :=
@@ -96,13 +83,13 @@ def maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) : ℝ :=
 
 /-- Every window's PWM score is at most the max-pooled output. -/
 theorem le_maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) {m i : ℕ} (hi : i ≤ m) :
-    pwmScore W (window x i) ≤ maxPool W x m := by
+    Cslib.Bioinformatics.Motifs.PWM.score W (window x i) ≤ maxPool W x m := by
   rw [← conv_eq_pwmScore]
   exact le_sup' (conv W x) (mem_range.2 (Nat.lt_succ_of_le hi))
 
 /-- **Max pooling returns the best PWM hit**: some window attains the max-pooled output. -/
 theorem exists_eq_maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) :
-    ∃ i ≤ m, pwmScore W (window x i) = maxPool W x m := by
+    ∃ i ≤ m, Cslib.Bioinformatics.Motifs.PWM.score W (window x i) = maxPool W x m := by
   obtain ⟨i, hi, h⟩ := exists_mem_eq_sup' (nonempty_range_add_one (n := m)) (conv W x)
   exact ⟨i, Nat.lt_succ_iff.1 (mem_range.1 hi), by rw [← conv_eq_pwmScore, maxPool, h]⟩
 
@@ -145,7 +132,7 @@ its response at window `i ≤ m` is the response of `W` on the reverse complemen
 theorem conv_rcFilter (W : Fin w → σ → ℝ) (x : ℕ → σ) {m i : ℕ} (hi : i ≤ m) :
     conv (rcFilter comp W) x i = conv W (rcSeq comp (m + w) x) (m - i) := by
   rw [conv_eq_pwmScore, conv_eq_pwmScore]
-  simp only [pwmScore, window, rcFilter, rcSeq]
+  simp only [Cslib.Bioinformatics.Motifs.PWM.score, window, rcFilter, rcSeq]
   rw [← Equiv.sum_comp (Fin.revPerm (n := w))]
   refine sum_congr rfl fun k _ => ?_
   simp only [Fin.revPerm_apply, Fin.rev_rev, Fin.val_rev]

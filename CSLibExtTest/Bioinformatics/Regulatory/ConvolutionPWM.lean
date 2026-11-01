@@ -32,11 +32,11 @@ def acgt : ℕ → Fin 4 := fun j => if h : j < 4 then ⟨j, h⟩ else 0
 
 example : conv wCG acgt 1 = 4 := by
   rw [conv_eq_pwmScore]
-  norm_num [pwmScore, window, wCG, acgt, Fin.sum_univ_two]
+  norm_num [Cslib.Bioinformatics.Motifs.PWM.score, window, wCG, acgt, Fin.sum_univ_two]
 
 example : conv wCG acgt 0 = -2 := by
   rw [conv_eq_pwmScore]
-  norm_num [pwmScore, window, wCG, acgt, Fin.sum_univ_two]
+  norm_num [Cslib.Bioinformatics.Motifs.PWM.score, window, wCG, acgt, Fin.sum_univ_two]
 
 /-- The one-hot response, from the definition of the convolution. -/
 example : conv wCG acgt 2 = -2 := by
@@ -48,7 +48,7 @@ example : 4 ≤ maxPool wCG acgt 2 := by
   have h := le_maxPool wCG acgt (m := 2) (i := 1) (by norm_num)
   rw [← conv_eq_pwmScore] at h
   have : conv wCG acgt 1 = 4 := by
-    rw [conv_eq_pwmScore]; norm_num [pwmScore, window, wCG, acgt, Fin.sum_univ_two]
+    rw [conv_eq_pwmScore]; norm_num [Cslib.Bioinformatics.Motifs.PWM.score, window, wCG, acgt, Fin.sum_univ_two]
   linarith
 
 /-- The pooled ReLU output with bias `β` is `max (maxPool + β) 0`. -/

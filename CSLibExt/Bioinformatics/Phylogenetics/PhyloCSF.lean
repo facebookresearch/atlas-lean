@@ -79,11 +79,25 @@ likelihoods. -/
 noncomputable def alignLik (t : Tree L S ℝ) (π : S → ℝ) (A : Fin m → L → S) : ℝ :=
   ∏ k, siteLik t π (A k)
 
-/-- **The PhyloCSF score**: the sum over the columns of the log-likelihood ratio of the coding
-model `(tC, πC)` against the non-coding model `(tN, πN)`. -/
+/-- **The PhyloCSF score** (natural-log scale): the sum over the columns of the
+log-likelihood ratio of the coding model `(tC, πC)` against the non-coding model
+`(tN, πN)`. The published PhyloCSF score is reported in decibans; see `score_decibans`
+for the conversion. Thresholds for this `score` are in natural-log units. -/
 noncomputable def score (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S ℝ) (πN : S → ℝ)
     (A : Fin m → L → S) : ℝ :=
   ∑ k, log (siteLik tC πC (A k) / siteLik tN πN (A k))
+
+/-- **The published PhyloCSF score in decibans**: `10 * log₁₀(L_C / L_N)`, i.e.
+`(10 / log 10) * score`, since `log₁₀ x = log x / log 10`. -/
+noncomputable def score_decibans (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S ℝ) (πN : S → ℝ)
+    (A : Fin m → L → S) : ℝ :=
+  (10 / log 10) * score tC πC tN πN A
+
+/-- Decibans are the natural-log score rescaled by `10 / log 10`. -/
+theorem score_decibans_eq (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S ℝ) (πN : S → ℝ)
+    (A : Fin m → L → S) :
+    score_decibans tC πC tN πN A = (10 / log 10) * score tC πC tN πN A :=
+  rfl
 
 /-- Each site likelihood is computed by Felsenstein's pruning algorithm. -/
 theorem siteLik_eq_sum_prune (t : Tree L S ℝ) (π : S → ℝ) (col : L → S) :
