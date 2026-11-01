@@ -170,12 +170,14 @@ theorem hasDerivAt_integral {k : n → ℝ} (hk : ∀ x u, k ⬝ᵥ S.field x u 
 end LinearSystem
 
 /-- **Integral feedback gives robust perfect adaptation** (nonlinear form). Let `F p` be the
-vector field and `y p` the output of a system with parameters `p`, and let `z` have derivative
-`z' x` with `z' x (F p x) = y p x` for all `p`, `x` (so `ż = y` along every trajectory, for
+vector field and `y p` the output of a system with parameters `p`, and let `z` be a
+differentiable state function with derivative `z' x` satisfying
+`z' x (F p x) = y p x` for all `p`, `x` (so `ż = y` along every trajectory, for
 every parameter). Then the output vanishes at every equilibrium of every `F p`. -/
 theorem output_eq_zero_of_integral_feedback {P E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] (F : P → E → E) (y : P → E → ℝ) (z' : E → E →L[ℝ] ℝ)
-    (h : ∀ p x, z' x (F p x) = y p x) {p : P} {x : E} (hx : F p x = 0) : y p x = 0 := by
+    [NormedSpace ℝ E] (F : P → E → E) (y : P → E → ℝ) (z : E → ℝ) (z' : E → E →L[ℝ] ℝ)
+    (h : ∀ p x, z' x (F p x) = y p x) (_hz : ∀ x, HasFDerivAt z (z' x) x)
+    {p : P} {x : E} (hx : F p x = 0) : y p x = 0 := by
   rw [← h, hx, map_zero]
 
 end MathlibExt.Biology.Dynamics.IntegralFeedback

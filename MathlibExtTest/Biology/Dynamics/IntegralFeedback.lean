@@ -60,4 +60,10 @@ example : ¬ leaky.HasIntegralFeedback := fun h ↦ by
 
 example : IsUnit leaky.A.det := by simp [leaky]
 
+/-- The nonlinear theorem applies with a genuine differentiable `z`: the zero
+field has every point as an equilibrium and the zero output. -/
+example (p : Unit) (x : ℝ) (hx : (fun _ _ : ℝ => (0 : ℝ)) p x = 0) : (0 : ℝ) = 0 :=
+  output_eq_zero_of_integral_feedback (fun _ _ => (0 : ℝ)) (fun _ _ => (0 : ℝ))
+    (fun _ => (0 : ℝ)) (fun _ => 0) (fun _ _ => rfl) (fun _ => hasFDerivAt_const _ _) hx
+
 end MathlibExtTest.Biology.Dynamics.IntegralFeedback
