@@ -256,8 +256,9 @@ lemma condNorm_univ (μ : ConfigSpace E → ℝ) (η : ConfigSpace E) :
     exact hne (funext fun e => hag e (Finset.mem_univ e))
   · intro h; exact absurd (Finset.mem_univ η) h
 
-/-- The arithmetic code prefix after `t` bits: the left endpoint of the interval
-determined by the first `t` conditional probabilities. -/
+/-- The arithmetic code prefix after `t` bits: the partial Boolean configuration
+obtained by thresholding the first `t` conditional probabilities. It is a
+configuration in `ConfigSpace E`, not a real-valued interval endpoint. -/
 noncomputable def codePrefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u : Fin n → ℝ) : ℕ → ConfigSpace E
   | 0 => fun _ => false
@@ -307,7 +308,9 @@ lemma codePrefix_agree_codeMap (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin 
   unfold codeMap
   exact (codePrefix_stable μ σ hσ u m n hm e he).symm
 
-/-- The threshold (right endpoint) of the code interval. -/
+/-- The interval split point of the code interval: the left endpoint of the
+`Set.Ico (thr μ σ x t) 1` interval for a true bit, and the right endpoint of the
+`Set.Ico 0 (thr μ σ x t)` interval for a false bit. -/
 noncomputable def thr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E) (x : ConfigSpace E)
     (t : Fin n) : ℝ :=
   condProbClosed μ (prefixSet σ (t : ℕ)) x (σ t)

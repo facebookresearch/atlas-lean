@@ -10,7 +10,7 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLTwoBit
 
 /-!
-# Tests for the exact two-bit KKL checks
+# Tests for the exact two-bit KKL checks (plus the one-bit dictator check)
 
 Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLTwoBit`:
 
@@ -19,7 +19,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedKKLTwoBit`:
   `pbkt_OR_totalInfl` at `p = 1/2` and `p = 3/4`;
 * `pbkt_twoBit_atom_numeric` at `x = 1/2`: `2 · 3/16 · log 2 ≤ 1`;
 * the headlines `pbkt_OR_kkl_two` at `p = 1/2` and `pbkt_AND_kkl_two` at `p = 3/4`, with the
-  exact values substituted, and `pbkt_dictator_kkl_two` at `p = 1/3`.
+  exact values substituted, and `pbkt_dictator_kkl_one` (one-bit dictator) at `p = 1/3`.
 -/
 
 @[expose] public section
@@ -70,6 +70,6 @@ example : 2 * var (bernoulliWeight (1 / 3))
       (fun ω : ConfigSpace (Fin 1) => if ω 0 then (1 : ℝ) else 0))
     ≤ totalInfl (bernoulliWeight (1 / 3))
       (fun ω : ConfigSpace (Fin 1) => if ω 0 then (1 : ℝ) else 0) :=
-  pbkt_dictator_kkl_two (by norm_num) (by norm_num)
+  pbkt_dictator_kkl_one (by norm_num) (by norm_num)
 
 end StatMechTest.BooleanFunctions

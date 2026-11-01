@@ -14,9 +14,10 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.SummedBKKKLWitness
 /-!
 # The KKL inequality checked exactly on two-bit functions
 
-Exact expectations, variances and influences for the two-bit OR, AND and dictator
-functions, verifying the KKL inequality at `n = 2` for every `p`
-(`pbkt_OR_kkl_two`, `pbkt_AND_kkl_two`, `pbkt_dictator_kkl_two`). These are the base
+Exact expectations, variances and influences for the two-bit OR and AND functions,
+verifying the KKL inequality at `n = 2` for every `p`
+(`pbkt_OR_kkl_two`, `pbkt_AND_kkl_two`), plus the one-bit dictator check
+(`pbkt_dictator_kkl_one`, on `ConfigSpace (Fin 1)`). These are the base
 cases the tensorization arguments build on.
 
 ## Main definitions
@@ -25,7 +26,8 @@ cases the tensorization arguments build on.
 
 ## Main results
 
-* `pbkt_OR_kkl_two`, `pbkt_AND_kkl_two`, `pbkt_dictator_kkl_two`: KKL at `n = 2`.
+* `pbkt_OR_kkl_two`, `pbkt_AND_kkl_two`: KKL at `n = 2`.
+* `pbkt_dictator_kkl_one`: KKL for the one-bit dictator.
 -/
 
 
@@ -225,8 +227,8 @@ theorem pbkt_AND_kkl_two {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
   rw [pbkt_AND_var, pbkt_AND_maxInfl, pbkt_AND_totalInfl]
   exact pbkt_twoBit_atom_numeric hp0 hp1
 
-/-- The KKL inequality holds for the two-bit dictator at every `p`. -/
-theorem pbkt_dictator_kkl_two {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+/-- The KKL inequality holds for the one-bit dictator at every `p`. -/
+theorem pbkt_dictator_kkl_one {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     2 * OSSS.var (OSSS.bernoulliWeight p)
           (fun ω : ConfigSpace (Fin 1) => if ω 0 then (1 : ℝ) else 0)
         * Real.log (1 / maxInfl (OSSS.bernoulliWeight p)
