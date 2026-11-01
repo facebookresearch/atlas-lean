@@ -1,0 +1,19 @@
+{
+  "toolchain_repo": "leanprover/lean4",
+  "deps": [
+    {"name": "mathlib", "repo": "leanprover-community/mathlib4"},
+    {"name": "cslib", "repo": "leanprover/cslib"}
+  ],
+  "doc_replacements": [
+    {
+      "path": "README.md",
+      "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
+      "replacement": "Lean-{target}"
+    },
+    {
+      "path": "README.md",
+      "pattern": "lean4/releases/tag/v[0-9]+\\.[0-9]+\\.[0-9]+",
+      "replacement": "lean4/releases/tag/{target}"
+    }
+  ]
+}

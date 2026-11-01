@@ -1,0 +1,63 @@
+name: Bump guard
+
+# Validate any PR that touches the Lean/Mathlib pin files. Runs on
+# pull_request_target so the guard script is always the trusted base
+# version, never PR-modified code; it reads the PR's pin files as data
+# via the API and runs no PR code. Fails the PR when the pin change is
+# not a forward move to a single final release tag shared by every
+# pinned dependency, with a manifest exactly derived from those tags.
+# See scripts/bump/pinned_bump.py (guard).
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "lean-toolchain"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: false
+
+      - name: Validate pin change against base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/guard/base /tmp/guard/merge-base /tmp/guard/pr
+          MERGE_BASE_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
+          for dir in base merge-base pr; do
+            case "$dir" in
+              base) REF="$BASE_REF" ;;
+              merge-base) REF="$MERGE_BASE_SHA" ;;
+              pr) REF="$HEAD_SHA" ;;
+            esac
+            for file in lean-toolchain lakefile.toml lake-manifest.json; do
+              gh api "repos/${GITHUB_REPOSITORY}/contents/${file}?ref=${REF}" --jq '.content' \
+                | base64 -d > "/tmp/guard/${dir}/${file}"
+            done
+          done
+          gh pr view "$PR_NUMBER" --json files --jq '.files[].path' > /tmp/guard/changed.txt
+          python3 scripts/bump/pinned_bump.py guard \
+            --base /tmp/guard/base \
+            --merge-base /tmp/guard/merge-base \
+            --pr /tmp/guard/pr \
+            --changed-files /tmp/guard/changed.txt
