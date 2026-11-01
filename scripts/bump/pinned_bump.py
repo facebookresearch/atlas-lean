@@ -127,17 +127,34 @@ def _is_existing_bump_pr(pr: dict, repo: str, branch: str) -> bool:
     )
 
 
-def _is_superseded_candidate(pr: dict, repo: str, branch: str) -> bool:
-    """True if `pr` is a same-repo bump PR on an older target branch: the
-    head repository must match, so a fork PR reusing a `bump-pinned/`
-    branch name is never closed as superseded."""
+def _is_superseded_candidate(pr: dict, repo: str, branch: str, target: str) -> bool:
+    """True if `pr` is a same-repo bump PR on a strictly older target branch
+    than `target`: the head repository must match, so a fork PR reusing a
+    `bump-pinned/` branch name is never closed as superseded, and a PR for a
+    newer (or unparseable) target is never closed when this run publishes an
+    older manual target."""
     head = pr.get("head") or {}
     ref = head.get("ref", "")
-    return (
+    if not (
         ref.startswith("bump-pinned/")
         and ref != branch
         and (head.get("repo") or {}).get("full_name") == repo
-    )
+    ):
+        return False
+    try:
+        return version_key(ref[len("bump-pinned/"):]) < version_key(target)
+    except ValueError:
+        return False
+
+
+def _pr_is_bot_only(commits: list[dict], total: int | None) -> bool:
+    """True if every fetched commit is bot-authored. Fails closed: if the
+    PR reports more commits than were fetched, a later human repair commit
+    may have been omitted, so the PR is not treated as bot-only."""
+    if isinstance(total, int) and total > len(commits):
+        return False
+    authors = {(c.get("author") or {}).get("login", "") for c in commits}
+    return bool(authors) and all(a.endswith("[bot]") for a in authors)
 
 
 def toolchain_tag(root: Path) -> str:
@@ -230,7 +247,19 @@ class GitHub:
     def pr_commits(self, number: int) -> list[dict]:
         if not self.repo:
             return []
-        return self.api(f"repos/{self.repo}/pulls/{number}/commits?per_page=100")
+        commits: list[dict] = []
+        page = 1
+        while True:
+            batch = self.api(
+                f"repos/{self.repo}/pulls/{number}/commits?per_page=100&page={page}"
+            )
+            if not isinstance(batch, list):
+                break
+            commits.extend(batch)
+            if len(batch) < 100:
+                break
+            page += 1
+        return commits
 
     def close_pr(self, number: int, comment: str) -> None:
         if not self.repo:
@@ -693,12 +722,18 @@ def cmd_finish(args: argparse.Namespace) -> int:
     # Close superseded bot-only bump PRs for older targets, only now that
     # the new PR exists. A PR with human repair commits is never closed here.
     for pr in client.open_prs():
-        if not _is_superseded_candidate(pr, client.repo, branch):
+        if not _is_superseded_candidate(pr, client.repo, branch, target):
             continue
         head = (pr.get("head") or {}).get("ref", "")
         commits = client.pr_commits(pr["number"])
-        authors = {(c.get("author") or {}).get("login", "") for c in commits}
-        if authors and all(a.endswith("[bot]") for a in authors):
+        total = pr.get("commits")
+        if isinstance(total, int) and total > len(commits):
+            print(
+                f"leaving {head} (#{pr['number']}) alone: fetched "
+                f"{len(commits)} of {total} commits; failing closed"
+            )
+            continue
+        if _pr_is_bot_only(commits, total if isinstance(total, int) else None):
             client.close_pr(
                 pr["number"],
                 f"Superseded by the bump to {target}: this PR is bot-only, "

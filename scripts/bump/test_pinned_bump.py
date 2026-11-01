@@ -385,16 +385,68 @@ class ForkPrTests(unittest.TestCase):
         branch = "bump-pinned/v4.36.0"
         self.assertTrue(pinned_bump._is_superseded_candidate(
             self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.35.0"),
-            "example/repo", branch))
+            "example/repo", branch, "v4.36.0"))
         self.assertFalse(pinned_bump._is_superseded_candidate(
             self._pr(head_repo="fork/repo", head_ref="bump-pinned/v4.35.0"),
-            "example/repo", branch))
+            "example/repo", branch, "v4.36.0"))
         self.assertFalse(pinned_bump._is_superseded_candidate(
             self._pr(head_repo="example/repo", head_ref=branch),
-            "example/repo", branch))
+            "example/repo", branch, "v4.36.0"))
         self.assertFalse(pinned_bump._is_superseded_candidate(
             self._pr(head_repo="example/repo", head_ref="some-feature"),
-            "example/repo", branch))
+            "example/repo", branch, "v4.36.0"))
+
+    def test_superseded_candidate_requires_strictly_older_target(self):
+        branch = "bump-pinned/v4.36.0"
+        # A newer open bump PR must never be closed when this run publishes
+        # an older manual target.
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.37.0"),
+            "example/repo", branch, "v4.36.0"))
+        # An unparseable branch suffix is not a superseded target.
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/not-a-tag"),
+            "example/repo", branch, "v4.36.0"))
+        # The same target on another branch is not strictly older.
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.36.0"),
+            "example/repo", "bump-pinned/v4.36.0-other", "v4.36.0"))
+
+    def test_bot_only_fails_closed_on_partial_commit_fetch(self):
+        bot = [{"author": {"login": "bump-bot[bot]"}}]
+        self.assertTrue(pinned_bump._pr_is_bot_only(bot, 1))
+        self.assertTrue(pinned_bump._pr_is_bot_only(bot, None))
+        # The PR reports more commits than were fetched: a human repair
+        # commit may have been omitted, so this is not bot-only.
+        self.assertFalse(pinned_bump._pr_is_bot_only(bot, 101))
+        self.assertFalse(pinned_bump._pr_is_bot_only(
+            bot + [{"author": {"login": "akiezun"}}], 2))
+        self.assertFalse(pinned_bump._pr_is_bot_only([], None))
+
+    def test_pr_commits_paginates(self):
+        pages = {
+            1: [{"author": {"login": "bump-bot[bot]"}}] * 100,
+            2: [{"author": {"login": "bump-bot[bot]"}}],
+            3: [],
+        }
+
+        class PagingGitHub(pinned_bump.GitHub):
+            def __init__(self):
+                super().__init__(repo="example/repo")
+                self.paths = []
+
+            def api(self, path):
+                self.paths.append(path)
+                import re as _re
+                page = int(_re.search(r"[?&]page=(\d+)", path).group(1))
+                return pages[page]
+
+        client = PagingGitHub()
+        self.assertEqual(len(client.pr_commits(123)), 101)
+        self.assertEqual(
+            client.paths,
+            ["repos/example/repo/pulls/123/commits?per_page=100&page=1",
+             "repos/example/repo/pulls/123/commits?per_page=100&page=2"])
 
 
 class PrepareBaseTests(unittest.TestCase):
