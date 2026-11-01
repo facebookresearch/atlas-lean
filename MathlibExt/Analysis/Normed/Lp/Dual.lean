@@ -20,9 +20,11 @@ For `1 ≤ p < ∞` and `q` the Hölder conjugate of `p`, the continuous dual of
 `ℓ^p(ι, 𝕜)` is isometrically isomorphic to `ℓ^q(ι, 𝕜)`. The isomorphism sends
 `a ∈ ℓ^q` to the functional `x ↦ ∑' i, a i * x i`.
 
-This is the sequence-space form of the duality theorem for `L^p` spaces; it is the
-companion in the `v1` Functional Analysis book of the Hölder and Minkowski
-inequalities and of the definition of the `L^p` norm (April 6, 2021 section).
+This is the sequence-space (counting-measure) form of the duality theorem for
+`L^p` spaces (Rudin, *Real and Complex Analysis*, Theorem 6.16). The `v1`
+Functional Analysis book's Hölder and Minkowski inequalities and its definition
+of the `L^p` norm (April 6, 2021 section) are only motivation for the statement;
+that book does not contain this duality theorem.
 Mathlib provides the pairing in one direction (`lp.dualPairing`, with the norm bound
 `lp.norm_dualPairing`) but not surjectivity or the isometry, which are proved here.
 The heart of the proof is the coefficient estimate: given `Φ` in the dual, the
@@ -35,6 +37,11 @@ with the usual test vector `conj (a i) * |a i| ^ (q - 2)` on finite subsets.
 * `lpDualEquiv` : the isometric isomorphism `ℓ^q ≃ₗᵢ[𝕜] (ℓ^p →L[𝕜] 𝕜)`.
 * `lpDualPairing_apply` : the pairing is given by `∑' i, a i * x i`.
 * `lpDualPairing_norm` : the pairing is norm-preserving.
+
+## References
+
+* W. Rudin, *Real and Complex Analysis*, 3rd ed., McGraw-Hill, 1987, Theorem 6.16.
+  The theorem is stated for `L^p(μ)`; `ℓ^p` is the counting-measure case.
 -/
 
 @[expose] public section

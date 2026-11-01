@@ -63,6 +63,16 @@ example : (lpDualPairing (𝕜 := ℝ) (ι := ℕ) (p := 1) (q := ⊤))
     rw [lp.single_apply_ne _ _ _ hj]
     simp
 
+-- The `p = 1`, `q = ⊤` endpoint: the pairing is norm-preserving. This
+-- instantiates `lpDualPairing_norm` (hence the endpoint branch of `exists_coeff`)
+-- at the endpoint, unlike the pairing-value test above.
+example : ‖lpDualPairing (𝕜 := ℝ) (ι := ℕ) (p := 1) (q := ⊤)
+    (lp.single ⊤ 0 (2 : ℝ))‖ = 2 := by
+  rw [lpDualPairing_norm (by simp : (1 : ℝ≥0∞) ≠ ⊤),
+    lp.norm_single (by simp : (0 : ℝ≥0∞) < ⊤)]
+  rw [Real.norm_eq_abs]
+  norm_num
+
 -- The complex `ℓ²` case: the pairing is `(3 : ℂ) * I`.
 example : (lpDualPairing (𝕜 := ℂ) (ι := ℕ) (p := 2) (q := 2))
     (lp.single 2 0 (3 : ℂ)) (lp.single 2 0 (Complex.I : ℂ)) = 3 * Complex.I := by
