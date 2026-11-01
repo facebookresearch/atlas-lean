@@ -1341,7 +1341,10 @@ private theorem wittMultihomogeneousComponent_eq_span (K : Type) [Field K] {r : 
     rw [← hdegree]
     exact wittLyndonBracket_isMonomial K w hw
 
-/-- Witt's formula for the dimension of a multihomogeneous component of a free Lie algebra. -/
+/-- **Dimension of a multihomogeneous component of a free Lie algebra.** Let $K$ be a field and
+let $n_1, \dots, n_r$ be natural numbers with $n_1 + \dots + n_r > 0$. Then the multihomogeneous
+component of multidegree $(n_1, \dots, n_r)$ of the free Lie algebra over $K$ on $r$ generators
+has dimension over $K$ equal to Witt's multigraded value $M(n_1, \dots, n_r)$. -/
 theorem finrank_freeLieMultihomogeneousComponent
     (K : Type) [Field K] {r : ℕ} (degree : Fin r → ℕ)
     (hdegree : 0 < ∑ i, degree i) :
@@ -1351,21 +1354,20 @@ theorem finrank_freeLieMultihomogeneousComponent
     finrank_span_eq_card (wittLyndonFamily_linearIndependent K degree)]
   exact card_lyndonWordsOfContent_eq_wittMultigradedValue degree hdegree
 
-/-- Witt's multigraded dimension formula for free Lie algebras: the
-multihomogeneous component of multidegree `(n_1, ..., n_r)` of the free Lie
-algebra has dimension `M(n_1, ..., n_r)`. The component is imported from
-`MathlibExt.Algebra.Lie.FreeLieMultihomogeneousComponent` and the value `M`
-from `MathlibExt.Algebra.Lie.WittMultigradedValue`.
+/-- **Witt's multigraded dimension formula.** Let $K$ be a field, let $r > 0$, and let
+$n_1, \dots, n_r$ be natural numbers with $n_1 + \dots + n_r > 0$. Then the multihomogeneous
+component of multidegree $(n_1, \dots, n_r)$ of the free Lie algebra over $K$ on $r$ generators
+has dimension over $K$ equal to Witt's multigraded value $M(n_1, \dots, n_r)$.
+
+Proof: The Lyndon-word basis identifies the component with the Lyndon words of
+the prescribed content, which are counted by Möbius inversion.
+
+Proves `Wanted` entry `witt_multigraded_dimension_formula`.
 
 Source: Pieter Moree, *Convoluted Convolved Fibonacci Numbers*, Journal of
 Integer Sequences 7 (2004), Article 04.2.2, Witt's formula paragraph,
 lines 621–628,
 <https://cs.uwaterloo.ca/journals/JIS/VOL7/Moree/moree12.tex>.
-
-Proves `Wanted` entry `witt_multigraded_dimension_formula`.
-
-Proof: The Lyndon-word basis identifies the component with the Lyndon words of
-the prescribed content, which are counted by Möbius inversion.
 -/
 theorem witt_multigraded_dimension_formula
     (K : Type) [Field K] (r : ℕ) (hr : 0 < r)

@@ -28,32 +28,57 @@ namespace MathlibExt.Algebra.RealZerosParityChangeBoundWanted
 
 /-! Source record `AMR-021-0014`. -/
 
-/-- The differences `c̃_k = (k+1)a_k² - k·a_{k-1}·a_{k+1}`. -/
+/-- **Newton-type coefficient differences.** For a real polynomial $f = \sum_k a_k x^k$ and a
+natural number $k$, $\tilde c_k(f) = (k+1)\,a_k^2 - k\,a_{k-1}a_{k+1}$, where $a_j = 0$ for $j$
+above the degree of $f$; for $k = 0$ the second term vanishes, so $\tilde c_0(f) = a_0^2$. -/
 def cTilde (f : Polynomial ℝ) (k : ℕ) : ℝ :=
   ((k + 1 : ℕ) : ℝ) * (f.coeff k) ^ 2 -
     (k : ℝ) * f.coeff (k - 1) * f.coeff (k + 1)
 
-/-- Indices with positive `c̃`, in increasing order. -/
+/-- **Indices with positive Newton-type difference.** For a real polynomial
+$f = a_0 + a_1 x + \dots + a_n x^n$ of degree $n$ (with $n = 0$ for $f = 0$), set $a_{n+1} = 0$,
+$\tilde c_0(f) = a_0^2$ and $\tilde c_k(f) = (k+1)\,a_k^2 - k\,a_{k-1}a_{k+1}$ for $1 \le k \le n$.
+This is the list of the indices $k \in \{0, \dots, n\}$ with $\tilde c_k(f) > 0$, in increasing
+order. -/
 noncomputable def posIndices (f : Polynomial ℝ) : List ℕ :=
   ((Finset.range (f.natDegree + 1)).filter (fun k => 0 < cTilde f k)).sort (· ≤ ·)
 
-/-- Number of parity changes in the index sequence. -/
+/-- **Parity changes of the positive-difference indices.** For a real polynomial
+$f = a_0 + a_1 x + \dots + a_n x^n$ of degree $n$ (with $n = 0$ for $f = 0$), set $a_{n+1} = 0$,
+$\tilde c_0(f) = a_0^2$ and $\tilde c_k(f) = (k+1)\,a_k^2 - k\,a_{k-1}a_{k+1}$ for $1 \le k \le n$.
+Let $k_1 < k_2 < \dots < k_m$ be the indices $k \le n$ with $\tilde c_k(f) > 0$. Then $v(f)$ is the
+number of $i < m$ such that $k_i$ and $k_{i+1}$ have different parities. -/
 noncomputable def vVal (f : Polynomial ℝ) : ℕ :=
   ((posIndices f).zip ((posIndices f).drop 1)).countP
     (fun p => p.1 % 2 ≠ p.2 % 2)
 
-/-- [AMR-021-0014] A real polynomial with positive coefficients has at most
-`v(f)` distinct real zeros. -/
+/-- **Parity-change bound on real zeros (conjecture).** For a real polynomial
+$f = a_0 + a_1 x + \dots + a_n x^n$ of degree $n$, set $a_{n+1} = 0$, $\tilde c_0(f) = a_0^2$ and
+$\tilde c_k(f) = (k+1)\,a_k^2 - k\,a_{k-1}a_{k+1}$ for $1 \le k \le n$, and let $v(f)$ be the
+number of parity changes between consecutive terms of the increasing list of indices $k \le n$
+with $\tilde c_k(f) > 0$. The conjecture asserts that every such $f$ with $a_k > 0$ for all
+$0 \le k \le n$ has at most $v(f)$ distinct real zeros.
+
+Source: AMR-021-0014. -/
 def conjecture : Prop :=
   ∀ f : Polynomial ℝ,
     (∀ k ∈ Finset.range (f.natDegree + 1), 0 < f.coeff k) →
     Set.ncard {x : ℝ | f.eval x = 0} ≤ vVal f
 
 /--
-Resolved false: Katkova, Shapiro and Vishnyakova (arXiv:2403.12200, Sec. 5) disprove Conjecture
-9 via iterated primitives Q_n of an explicit Q_15. Splitting the repeated root also refutes this
-entry's distinct-zero reading: ∏_{j<23}(x+1+j/10^4)(38x²−199x+363) has 23 distinct real zeros
-and v = 21. Source: Olga Katkova, Boris Shapiro and Anna Vishnyakova, In search of Newton-type
+**The parity-change bound on real zeros is false.** For a real polynomial
+$f = a_0 + a_1 x + \dots + a_n x^n$ of degree $n$, set $a_{n+1} = 0$, $\tilde c_0(f) = a_0^2$ and
+$\tilde c_k(f) = (k+1)\,a_k^2 - k\,a_{k-1}a_{k+1}$ for $1 \le k \le n$, and let $v(f)$ be the
+number of parity changes between consecutive terms of the increasing list of indices $k \le n$
+with $\tilde c_k(f) > 0$. There is such an $f$ with $a_k > 0$ for all $0 \le k \le n$ whose number
+of distinct real zeros exceeds $v(f)$.
+
+Katkova, Shapiro and Vishnyakova (Sec. 5) disprove Conjecture 9 via iterated primitives $Q_n$ of
+an explicit $Q_{15}$. Splitting the repeated root also refutes the distinct-zero reading used
+here: $\prod_{j<23}(x+1+j/10^4)\,(38x^2-199x+363)$ has positive coefficients, 23 distinct real
+zeros and $v = 21$.
+
+Source: Olga Katkova, Boris Shapiro and Anna Vishnyakova, In search of Newton-type
 inequalities, arXiv:2403.12200 (2024), https://arxiv.org/abs/2403.12200. Moved from
 `OpenConjectures/Algebra/RealZerosParityChangeBound`.
 -/
