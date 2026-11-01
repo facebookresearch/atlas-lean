@@ -16,7 +16,8 @@ For the Fisher–KPP equation `∂u/∂t = D ∂²u/∂x² + r u (1 - u)` with `
 **Kolmogorov–Petrovsky–Piskunov theorem (existence part).** For every `c ≥ 2 √(r D)` there is a
 front of speed `c`, and it is strictly decreasing. Together with
 `MathlibExt.Biology.Dynamics.FisherKPP.not_isFront_of_sq_lt` (no front when `c² < 4 r D`), this
-makes `2 √(r D)` the minimal front speed. The classical proof is a phase-plane argument: in the
+makes `2 √(r D)` the minimal front speed among nonnegative speeds. The squared bound alone
+only gives `|c| ≥ 2 √(r D)`; negative speeds are not addressed here. The classical proof is a phase-plane argument: in the
 `(U, U')` plane the saddle `(1, 0)` has an unstable manifold that enters the triangular trapping
 region `{0 ≤ U ≤ 1, -μ U ≤ U' ≤ 0}` with `μ = c / (2D)`, which it can leave only through the
 stable node (or degenerate node at `c = 2 √(r D)`) `(0, 0)`. Uniqueness of the front up to

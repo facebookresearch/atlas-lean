@@ -37,11 +37,13 @@ and a *front* is a profile with `0 < U < 1`, `U → 1` at `-∞` and `U → 0` a
 
 * `hasDerivAt_wave_t`, `hasDerivAt_wave_x`, `hasDerivAt_wave_xx`: a wave profile gives a
   solution `u(x, t) = U(x - c t)` of the PDE.
-* `not_eventually_pos_of_sq_lt`: **no front below the minimal speed** (Murray, *Mathematical
+* `not_eventually_pos_of_sq_lt`: **no front with `c² < 4 r D`** (Murray, *Mathematical
   Biology I*, Section 13.2): if `c² < 4 r D`, a profile that tends to `0` at `+∞` cannot stay
   positive near `+∞`. The proof writes `U = e^{-c z / (2D)} w`, so that
   `D w'' + (r (1 - U) - c² / (4 D)) w = 0`, and compares `w` with a sine (Sturm), which forces a
-  sign change of `w`. Hence `not_isFront_of_sq_lt`: fronts need `c ≥ 2 √(r D)`.
+  sign change of `w`. Hence `not_isFront_of_sq_lt`: fronts of nonnegative speed need
+  `c ≥ 2 √(r D)`. The squared bound alone only gives `|c| ≥ 2 √(r D)`; negative speeds are
+  not addressed here.
 * `isFront_azWave`: **the Ablowitz–Zeppetella explicit front**: for every `C > 0`,
   `U(z) = (1 + C exp (z √(r / (6 D))))⁻²` is a front of speed `c = 5 √(r D / 6)`, which exceeds
   the minimal speed `2 √(r D)`. With `D = r = 1` this is the wave `(1 + C e^{z/√6})⁻²` of speed
@@ -112,8 +114,9 @@ theorem hasDerivAt_wave_xx (h : IsWaveProfile D r c U U') (hD : D ≠ 0) (x t : 
 
 end PDE
 
-/-- **No traveling wave below the minimal speed**: if `D, r > 0` and `c² < 4 r D`, a wave profile
-tending to `0` at `+∞` is not eventually positive. -/
+/-- **No traveling wave with `c² < 4 r D`**: if `D, r > 0` and `c² < 4 r D`, a wave profile
+tending to `0` at `+∞` is not eventually positive. (This excludes `|c| < 2 √(r D)`, not
+`c < 2 √(r D)` for negative `c`.) -/
 theorem not_eventually_pos_of_sq_lt {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (hc : c ^ 2 < 4 * r * D) (hU : IsWaveProfile D r c U U') (hlim : Tendsto U atTop (𝓝 0)) :
     ¬ ∀ᶠ z in atTop, 0 < U z := by
