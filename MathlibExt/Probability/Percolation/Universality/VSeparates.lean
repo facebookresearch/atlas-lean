@@ -1,0 +1,128 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
+public import MathlibExt.Probability.Percolation.RSW.Defs
+
+/-!
+# Left–right paths cross every column
+
+A walk in `ℤ²` from the column `{x_0 = α}` to the column `{x_0 = β}` visits every column
+`{x_0 = k}` with `α ≤ k < β` (in fact `k ≤ β`); in particular every open crossing of a rectangle
+meets every intermediate column. Walks in an induced open subgraph are transported to walks in
+the lattice for this purpose.
+
+## Main definitions
+
+* `StatMech.Universality.projHom`: the inclusion of the open subgraph induced on `R` into `ℤ²`.
+* `StatMech.Universality.liftWalk`: a walk in the induced open subgraph, viewed in `ℤ²`.
+* `StatMech.Universality.colLeq`: the half-plane `{x_0 ≤ k}`.
+
+## Main results
+
+* `StatMech.Universality.hwalk_meets_column`: a lattice walk from column `α` to column `β` meets
+  column `k` for `α ≤ k < β`.
+* `StatMech.Universality.boxCrossing_meets_column`: the same for open walks inside a rectangle.
+-/
+
+@[expose] public section
+
+open Set SimpleGraph
+
+namespace StatMech
+
+namespace Universality
+
+open StatMech.Lattice
+open StatMech.RSW.Box
+
+/-- The graph homomorphism from the open subgraph induced on `R` to the lattice `ℤ²`
+(forgetting `R`). -/
+def projHom (ω : ConfigSpace (Sym2 (Site 2))) (R : Set (Site 2)) :
+    (openSubgraphInduce 2 ω R) →g (hypercubicLattice 2) where
+  toFun := fun v => (v : Site 2)
+  map_rel' := by
+    intro a b hab
+    simp only [openSubgraphInduce_adj] at hab
+    exact openSubgraph_le ω hab
+
+/-- A walk in the open subgraph induced on `R`, mapped to a walk in the lattice `ℤ²`. -/
+def liftWalk (ω : ConfigSpace (Sym2 (Site 2))) (R : Set (Site 2)) {x y : R}
+    (w : (openSubgraphInduce 2 ω R).Walk x y) :
+    (hypercubicLattice 2).Walk (x : Site 2) (y : Site 2) :=
+  w.map (projHom ω R)
+
+theorem liftWalk_support_mem (ω : ConfigSpace (Sym2 (Site 2))) (R : Set (Site 2))
+    {x y : R} (w : (openSubgraphInduce 2 ω R).Walk x y) {z : Site 2}
+    (hz : z ∈ (liftWalk ω R w).support) :
+    ∃ (z' : R), z' ∈ w.support ∧ (z' : Site 2) = z := by
+  have hsupp := SimpleGraph.Walk.support_map (projHom ω R) w
+  obtain ⟨z', hz'_mem, hz'_eq⟩ := (List.mem_map).mp (hsupp ▸ hz)
+  exact ⟨z', hz'_mem, hz'_eq⟩
+
+/-- The half-plane `{z ∈ ℤ² : z_0 ≤ k}`. -/
+def colLeq (k : ℤ) : Set (Site 2) := {z | z 0 ≤ k}
+
+@[simp] theorem mem_colLeq (k : ℤ) (z : Site 2) : z ∈ colLeq k ↔ z 0 ≤ k := Iff.rfl
+
+theorem exists_bdEdge_colLeq {k α β : ℤ} {x y : Site 2}
+    (hx : x 0 = α) (hy : y 0 = β) (hk1 : α ≤ k) (hk2 : k < β)
+    (w : (hypercubicLattice 2).Walk x y) :
+    ∃ e ∈ w.edges, bdEdge (colLeq k) e := by
+  classical
+  have hodd : ¬ Even (crossCount (colLeq k) w) := by
+    rw [crossCount_parity]
+    intro h
+    have hxT : x ∈ colLeq k := by rw [mem_colLeq, hx]; omega
+    have hyT : y ∉ colLeq k := by rw [mem_colLeq, hy]; omega
+    exact hyT (h.mp hxT)
+  by_contra hcon
+  apply hodd
+  have hz : crossCount (colLeq k) w = 0 := by
+    rw [crossCount, List.countP_eq_zero]
+    intro e he
+    simp only [decide_eq_true_eq]
+    exact fun hb => hcon ⟨e, he, hb⟩
+  rw [hz]
+  exact ⟨0, rfl⟩
+
+theorem hwalk_meets_column {k α β : ℤ} {x y : Site 2}
+    (hx : x 0 = α) (hy : y 0 = β) (hk1 : α ≤ k) (hk2 : k < β)
+    (w : (hypercubicLattice 2).Walk x y) :
+    ∃ z ∈ w.support, z 0 = k := by
+  obtain ⟨e, hemem, hebd⟩ := exists_bdEdge_colLeq hx hy hk1 hk2 w
+  induction e with
+  | h u v =>
+    rw [bdEdge_mk] at hebd
+    have hadj := w.adj_of_mem_edges hemem
+    rw [hypercubicLattice_adj, Fin.sum_univ_two] at hadj
+    simp only [mem_colLeq] at hebd
+    have hu : u ∈ w.support := w.fst_mem_support_of_mem_edges hemem
+    have hv : v ∈ w.support := w.snd_mem_support_of_mem_edges hemem
+    by_cases huk : u 0 ≤ k
+    · have hvk : ¬ v 0 ≤ k := by rw [← hebd]; exact huk
+      have hdiff : (u 0 - v 0).natAbs ≤ 1 := by omega
+      exact ⟨u, hu, by omega⟩
+    · have hvk : v 0 ≤ k := by by_contra hc; exact huk (hebd.mpr hc)
+      have hdiff : (u 0 - v 0).natAbs ≤ 1 := by omega
+      exact ⟨v, hv, by omega⟩
+
+theorem boxCrossing_meets_column (ω : ConfigSpace (Sym2 (Site 2)))
+    {α β c d k : ℤ} (hk1 : α ≤ k) (hk2 : k < β)
+    {x y : rect α β c d} (hx0 : (x : Site 2) 0 = α) (hy0 : (y : Site 2) 0 = β)
+    (w : (openSubgraphInduce 2 ω (rect α β c d)).Walk x y) :
+    ∃ z ∈ w.support, (z : Site 2) 0 = k := by
+  obtain ⟨zs, hzsmem, hzscol⟩ :=
+    hwalk_meets_column hx0 hy0 hk1 hk2 (liftWalk ω (rect α β c d) w)
+  obtain ⟨z, hz_mem, hz_eq⟩ := liftWalk_support_mem ω (rect α β c d) w hzsmem
+  exact ⟨z, hz_mem, by rw [hz_eq]; exact hzscol⟩
+
+end Universality
+
+end StatMech
