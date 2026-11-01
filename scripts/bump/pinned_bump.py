@@ -214,9 +214,11 @@ def check_migration_ledger_pins(
     """Pin-consistency problems for a (ledger, checks) pair at the given
     expected pins, mirroring the pin checks in
     check_algebra_notes_migration.py. Returns [] when the pair is
-    consistent. This checks pins and content hashes, not whether the
-    named Mathlib APIs still exist at the new pin; that is covered by
-    the bump PR's Lean build."""
+    consistent. This checks pins and content hashes only, not whether the
+    named Mathlib APIs still exist at the new pin; that is checked
+    separately by verify_apis_exist_at_pin (a pin pointer is not audit
+    evidence that the API still exists, and the repo's Lean build does
+    not reference these JSON pointers at all)."""
     problems: list[str] = []
     try:
         pins = ledger["pins"]
@@ -276,6 +278,165 @@ def check_migration_ledger_pins(
     return problems
 
 
+def expected_repinned_ledgers(
+    ledger: dict, checks: dict, *, old_mathlib: str, old_lean: str,
+    new_mathlib: str, new_lean: str,
+) -> tuple[dict, dict]:
+    """The intended (ledger, checks) pair after re-pinning a base pair.
+
+    Only the pins, the Mathlib.* API revisions, and the hashes that bind
+    those fields move; every other field (records, migration status,
+    gates, legacy declarations, ...) is copied verbatim from the base
+    pair. The result is the exact expected content for a re-pinned pair,
+    so validating a prepared/guarded pair means comparing it to this
+    derivation, not just re-checking pins/hashes (which would accept a
+    pair with replaced records or a changed migration status as long as
+    the pin fields were kept). Raises ValueError when the base pair is
+    inconsistent at the old pins or the derived pair is inconsistent at
+    the new pins.
+    """
+    pre = check_migration_ledger_pins(
+        ledger, checks, mathlib_sha=old_mathlib, lean_tag=old_lean
+    )
+    if pre:
+        raise ValueError(
+            "cannot re-pin migration ledgers: base pair is inconsistent: "
+            + "; ".join(pre)
+        )
+    if old_mathlib == new_mathlib and old_lean == new_lean:
+        return copy.deepcopy(ledger), copy.deepcopy(checks)
+    new_ledger = copy.deepcopy(ledger)
+    new_ledger["pins"] = {"mathlib": new_mathlib, "lean": new_lean}
+    mathlib_apis = [
+        api for api in new_ledger.get("destination_apis", [])
+        if api.get("module", "").startswith("Mathlib.")
+    ]
+    for api in mathlib_apis:
+        api["revision"] = new_mathlib
+    new_checks = copy.deepcopy(checks)
+    mathlib_triage = [
+        api for api in new_checks.get("triage_apis", [])
+        if api.get("module", "").startswith("Mathlib.")
+    ]
+    for api in mathlib_triage:
+        api["revision"] = new_mathlib
+        api["row_content_sha256"] = _row_content_sha256(api)
+    for source in new_checks.get("triage_sources", []):
+        source.update(_lane_content_fingerprints(
+            source["lane"], new_checks.get("triage", []),
+            new_checks.get("triage_apis", []),
+        ))
+    new_checks["identity_sha256"] = _ledger_identity_sha256(new_ledger)
+    post = check_migration_ledger_pins(
+        new_ledger, new_checks, mathlib_sha=new_mathlib, lean_tag=new_lean
+    )
+    if post:
+        raise ValueError(
+            "cannot re-pin migration ledgers: derived pair is inconsistent: "
+            + "; ".join(post)
+        )
+    return new_ledger, new_checks
+
+
+def check_ledgers_match_expected(
+    prepared_ledger: dict, prepared_checks: dict, *, base_ledger: dict,
+    base_checks: dict, old_mathlib: str, old_lean: str, new_mathlib: str,
+    new_lean: str,
+) -> list[str]:
+    """Problems when a candidate (ledger, checks) pair is not exactly the
+    re-pinned derivation of the base pair. Parsed-JSON (structural)
+    equality: formatting may differ, content may not. Any change outside
+    the pin/API-revision/hash updates -- replaced records, a changed
+    migration status, edited gates, ... -- is a problem, even when the
+    pin fields and hashes are self-consistent."""
+    try:
+        expected_ledger, expected_checks = expected_repinned_ledgers(
+            base_ledger, base_checks, old_mathlib=old_mathlib,
+            old_lean=old_lean, new_mathlib=new_mathlib, new_lean=new_lean,
+        )
+    except ValueError as exc:
+        return [f"cannot derive expected migration ledgers from base: {exc}"]
+    problems: list[str] = []
+    if prepared_ledger != expected_ledger:
+        problems.append(
+            "migration ledger differs from the base ledger with only the "
+            "pin/API-revision/hash updates applied (a non-pin field changed)"
+        )
+    if prepared_checks != expected_checks:
+        problems.append(
+            "migration checks differ from the base checks with only the "
+            "pin/API-revision/hash updates applied (a non-pin field changed)"
+        )
+    return problems
+
+
+_DECL_RE = re.compile(
+    r"\b(?:theorem|lemma|def|abbrev|irreducible_def|structure|class|inductive|axiom|constant|opaque"
+    # Instances may carry a parenthesized priority before the name:
+    # `instance (priority := 100) uniqueFactorizationMonoid : ...`.
+    r"|instance(?:\s*\([^)]*\))*)"
+    r"\s+([A-Za-z_][\w\'.]*)"
+)
+
+
+def _declared_short_names(source: str) -> set[str]:
+    """Short (last-component) names declared in Lean source text."""
+    return {name.split(".")[-1] for name in _DECL_RE.findall(source)}
+
+
+def verify_apis_exist_at_pin(
+    client, ledger: dict, checks: dict, *, mathlib_sha: str,
+    mathlib_repo: str,
+) -> list[str]:
+    """Problems for Mathlib.* destination/triage APIs that no longer name
+    a declaration in their listed module file at ``mathlib_sha``.
+
+    The ledger's ``revision`` fields are pin pointers for unverified
+    candidates (scope ``unverified``, per the ledger README), not audit
+    evidence: advancing them to a new SHA must not record a candidate
+    whose API was removed or renamed at that SHA. Each listed module
+    file is fetched at the exact SHA and the API's short name must be
+    declared in it. This is source-declaration evidence at the pinned
+    SHA, not a compiler proof (a same-named declaration or a docstring
+    mention passes); it fails closed on any fetch error. MathlibExt.*
+    APIs are not advanced by a bump -- they stay at the frozen base --
+    so they are not checked here. Unnamed instances (``name`` is null)
+    are checked only for module-file existence.
+    """
+    wanted: dict[str, list[str | None]] = {}
+    for api in ledger.get("destination_apis", []):
+        module = api.get("module", "")
+        if module.startswith("Mathlib."):
+            wanted.setdefault(module, []).append(api.get("name"))
+    for api in checks.get("triage_apis", []):
+        module = api.get("module", "")
+        if module.startswith("Mathlib."):
+            wanted.setdefault(module, []).append(api.get("name"))
+    problems: list[str] = []
+    for module in sorted(wanted):
+        path = module.replace(".", "/") + ".lean"
+        try:
+            source = client.contents(mathlib_repo, path, mathlib_sha).decode(
+                "utf-8", errors="replace"
+            )
+        except Exception as exc:  # noqa: BLE001 - fail closed on any fetch error
+            problems.append(
+                f"cannot fetch {module} at {mathlib_sha}: {exc}"
+            )
+            continue
+        declared = _declared_short_names(source)
+        for name in wanted[module]:
+            if name is None:
+                continue
+            short = name.split(".")[-1]
+            if short not in declared:
+                problems.append(
+                    f"Mathlib API {name} is not declared in {module} at "
+                    f"{mathlib_sha} (removed or renamed upstream)"
+                )
+    return problems
+
+
 def _swap_once(text: str, needle: str, replacement: str, *, expected: int, label: str) -> str:
     count = text.count(needle)
     if count != expected:
@@ -307,6 +468,11 @@ def repin_migration_ledgers(
     textual (same-length SHA/tag swaps plus hash swaps), so the ledgers'
     committed formatting is unchanged; the result is re-parsed and
     re-checked against the new pins before returning.
+
+    Advancing the revisions is a pin-pointer update only: whether the
+    APIs still exist at the new SHA is verified separately by
+    verify_apis_exist_at_pin in prepare / validate / guard, never by
+    this rewrite.
     """
     ledger_path = root / ledger_rel
     checks_path = root / checks_rel
@@ -326,38 +492,20 @@ def repin_migration_ledgers(
     if not new_mathlib or not SHA_RE.fullmatch(new_mathlib):
         raise ValueError("cannot re-pin migration ledgers: missing/invalid mathlib SHA")
     new_lean = f"leanprover/lean4:{target}"
-    pre = check_migration_ledger_pins(
-        ledger, checks, mathlib_sha=old_mathlib, lean_tag=old_lean
+    new_ledger, new_checks = expected_repinned_ledgers(
+        ledger, checks, old_mathlib=old_mathlib, old_lean=old_lean,
+        new_mathlib=new_mathlib, new_lean=new_lean,
     )
-    if pre:
-        raise ValueError(
-            "cannot re-pin migration ledgers: pre-bump pair is inconsistent: "
-            + "; ".join(pre)
-        )
     if old_mathlib == new_mathlib and old_lean == new_lean:
         return []
-    new_ledger = copy.deepcopy(ledger)
-    new_ledger["pins"] = {"mathlib": new_mathlib, "lean": new_lean}
     mathlib_apis = [
         api for api in new_ledger.get("destination_apis", [])
         if api.get("module", "").startswith("Mathlib.")
     ]
-    for api in mathlib_apis:
-        api["revision"] = new_mathlib
-    new_checks = copy.deepcopy(checks)
     mathlib_triage = [
         api for api in new_checks.get("triage_apis", [])
         if api.get("module", "").startswith("Mathlib.")
     ]
-    for api in mathlib_triage:
-        api["revision"] = new_mathlib
-        api["row_content_sha256"] = _row_content_sha256(api)
-    for source in new_checks.get("triage_sources", []):
-        source.update(_lane_content_fingerprints(
-            source["lane"], new_checks.get("triage", []),
-            new_checks.get("triage_apis", []),
-        ))
-    new_checks["identity_sha256"] = _ledger_identity_sha256(new_ledger)
     new_ledger_text = _swap_once(
         ledger_text, f'"mathlib":"{old_mathlib}"', f'"mathlib":"{new_mathlib}"',
         expected=1, label="pins.mathlib occurrences",
@@ -911,11 +1059,28 @@ def cmd_prepare(args: argparse.Namespace) -> int:
         print(f"edited: {', '.join(changed)}")
         run(["lake", "update"], cwd=root)
         problems = verify_manifest(client, root, config, target, base_manifest)
+        ledgers = config.get("migration_ledgers") or []
+        if ledgers:
+            ledger_rel, checks_rel = _migration_ledger_paths(config)
+            prepared_ledger = json.loads(
+                (root / ledger_rel).read_text(encoding="utf-8"))
+            prepared_checks = json.loads(
+                (root / checks_rel).read_text(encoding="utf-8"))
+            mathlib = next(
+                d for d in config["deps"] if d["name"] == "mathlib")
+            try:
+                problems.extend(verify_apis_exist_at_pin(
+                    client, prepared_ledger, prepared_checks,
+                    mathlib_sha=shas["mathlib"],
+                    mathlib_repo=mathlib["repo"],
+                ))
+            except Exception as exc:  # noqa: BLE001 - fail closed on any verification error
+                problems.append(f"migration API existence check failed: {exc}")
     except (ValueError, RuntimeError) as exc:
         print(f"prepare: FAIL - {exc}", file=sys.stderr)
         return 1
     if problems:
-        print("prepare: FAIL - manifest verification failed after lake update:")
+        print("prepare: FAIL - verification failed after lake update:")
         for problem in problems:
             print(f"  - {problem}")
         return 1
@@ -947,8 +1112,9 @@ def validate_prepared_contents(
     the live tags, using the same checks the guard applies to a PR:
     the manifest (direct + transitive, against the base manifest),
     the lakefile (only pinned revs may differ from base), the
-    pin-policy file, the doc replacements, and the migration-ledger
-    pins/hashes. A compromised prepare step that rewrites a
+    pin-policy file, the doc replacements, and the migration ledgers
+    (exactly the base pair re-pinned, plus Mathlib API existence at
+    the prepared SHA). A compromised prepare step that rewrites a
     whitelisted file to arbitrary contents fails here, before any
     write credential exists, even though the filenames are unchanged.
     """
@@ -1034,7 +1200,12 @@ def validate_prepared_contents(
         except (ValueError, RuntimeError, OSError) as exc:
             problems.append(f"doc validation failed for {path}: {exc}")
 
-    # Migration ledgers: pin-consistent with the prepared manifest.
+    # Migration ledgers: exactly the base pair re-pinned to the prepared
+    # manifest pins -- a pin-consistent pair with replaced records or a
+    # changed migration status must fail here -- and every Mathlib API
+    # pointer must still name a declaration at the prepared Mathlib SHA.
+    # The base pair comes from the trusted base tree, like the manifest
+    # and lakefile above; the base manifest/toolchain give the old pins.
     ledgers = config.get("migration_ledgers") or []
     if ledgers:
         try:
@@ -1048,11 +1219,31 @@ def validate_prepared_contents(
                 (root / ledger_rel).read_text(encoding="utf-8"))
             prepared_checks = json.loads(
                 (root / checks_rel).read_text(encoding="utf-8"))
-            problems.extend(check_migration_ledger_pins(
+            base_ledger = json.loads(base_text(ledger_rel))
+            base_checks = json.loads(base_text(checks_rel))
+            base_manifest_obj = json.loads(base_text("lake-manifest.json"))
+            base_mathlib = next(
+                p["rev"] for p in base_manifest_obj["packages"]
+                if p["name"] == "mathlib"
+            )
+            base_toolchain = base_text("lean-toolchain").strip()
+            problems.extend(check_ledgers_match_expected(
                 prepared_ledger, prepared_checks,
-                mathlib_sha=prepared_mathlib,
-                lean_tag=f"leanprover/lean4:{target}",
+                base_ledger=base_ledger, base_checks=base_checks,
+                old_mathlib=base_mathlib, old_lean=base_toolchain,
+                new_mathlib=prepared_mathlib,
+                new_lean=f"leanprover/lean4:{target}",
             ))
+            mathlib_dep = next(
+                d for d in config["deps"] if d["name"] == "mathlib")
+            try:
+                problems.extend(verify_apis_exist_at_pin(
+                    client, prepared_ledger, prepared_checks,
+                    mathlib_sha=prepared_mathlib,
+                    mathlib_repo=mathlib_dep["repo"],
+                ))
+            except Exception as exc:  # noqa: BLE001 - fail closed
+                problems.append(f"migration API existence check failed: {exc}")
         except (ValueError, RuntimeError, OSError, json.JSONDecodeError,
                 KeyError, StopIteration) as exc:
             problems.append(f"migration ledgers are inconsistent: {exc}")
@@ -1412,8 +1603,13 @@ def cmd_guard(args: argparse.Namespace) -> int:
         except (ValueError, OSError) as exc:
             problems.append(f"pin-policy check failed: {exc}")
     # Migration ledgers: if either tree carries them, the PR tree's pair
-    # must be consistent with the PR's own manifest/toolchain pins, or
-    # the bump PR leaves the migration validator failing on stale pins.
+    # must be exactly the base pair re-pinned to the PR's pins -- a
+    # pin-consistent pair with replaced records or a changed migration
+    # status must fail here, not just a stale-pin pair -- and every
+    # Mathlib API pointer must still name a declaration at the PR's
+    # Mathlib SHA. Otherwise the bump PR leaves the migration validator
+    # failing on stale pins, or records audit pointers that no longer
+    # name an upstream declaration.
     ledger_rel, checks_rel = _migration_ledger_paths(config)
     if (
         (base / ledger_rel).is_file() or (pr / ledger_rel).is_file()
@@ -1426,10 +1622,34 @@ def cmd_guard(args: argparse.Namespace) -> int:
             )
             pr_ledger = json.loads((pr / ledger_rel).read_text(encoding="utf-8"))
             pr_checks = json.loads((pr / checks_rel).read_text(encoding="utf-8"))
-            problems.extend(check_migration_ledger_pins(
+            base_manifest_for_ledgers = load_manifest(base)
+            base_mathlib = next(
+                p["rev"] for p in base_manifest_for_ledgers["packages"]
+                if p["name"] == "mathlib"
+            )
+            base_toolchain = (base / "lean-toolchain").read_text(
+                encoding="utf-8").strip()
+            base_ledger = json.loads(
+                (base / ledger_rel).read_text(encoding="utf-8"))
+            base_checks = json.loads(
+                (base / checks_rel).read_text(encoding="utf-8"))
+            problems.extend(check_ledgers_match_expected(
                 pr_ledger, pr_checks,
-                mathlib_sha=pr_mathlib, lean_tag=f"leanprover/lean4:{pr_tag}",
+                base_ledger=base_ledger, base_checks=base_checks,
+                old_mathlib=base_mathlib, old_lean=base_toolchain,
+                new_mathlib=pr_mathlib,
+                new_lean=f"leanprover/lean4:{pr_tag}",
             ))
+            mathlib_dep = next(
+                d for d in config["deps"] if d["name"] == "mathlib")
+            try:
+                problems.extend(verify_apis_exist_at_pin(
+                    client, pr_ledger, pr_checks,
+                    mathlib_sha=pr_mathlib,
+                    mathlib_repo=mathlib_dep["repo"],
+                ))
+            except Exception as exc:  # noqa: BLE001 - fail closed
+                problems.append(f"migration API existence check failed: {exc}")
         except (OSError, json.JSONDecodeError, KeyError, StopIteration, ValueError) as exc:
             problems.append(f"migration ledgers are unreadable or inconsistent: {exc}")
     _ = merge_base

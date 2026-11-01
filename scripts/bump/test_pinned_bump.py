@@ -67,11 +67,15 @@ def upstream_manifest(names):
 
 
 class FakeGitHub(GitHub):
-    def __init__(self, *, tags, run_id=123, upstream=None):
+    def __init__(self, *, tags, run_id=123, upstream=None, module_sources=None):
         super().__init__(repo="example/repo")
         self._tags = tags
         self._run_id = run_id
         self._upstream = upstream or {}
+        # (slug, path) -> source bytes, for Mathlib module files fetched
+        # by the API-existence check (ref is ignored: the fixture APIs
+        # are the same names at both SHAs).
+        self._module_sources = module_sources or {}
 
     def tags(self, slug):
         return [{"name": t, "commit": {"sha": SHAS[(slug, t)]}} for t in self._tags.get(slug, [])]
@@ -83,6 +87,8 @@ class FakeGitHub(GitHub):
         return self._run_id
 
     def contents(self, slug, path, ref):
+        if (slug, path) in self._module_sources:
+            return self._module_sources[(slug, path)]
         return json.dumps(self._upstream[(slug, ref)]).encode()
 
     def open_prs(self):
@@ -93,6 +99,12 @@ class FakeGitHub(GitHub):
 
     def close_pr(self, number, comment):
         raise AssertionError("close_pr should not be called in these tests")
+
+
+MODULE_SOURCES = {
+    ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+        b"theorem N1 : True := trivial\n",
+}
 
 
 def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitive=False):
@@ -341,7 +353,8 @@ class GuardTests(unittest.TestCase):
                 manifest["packages"][0] = dict(
                     manifest["packages"][0], rev="d" * 40)
             upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = manifest
-        client = FakeGitHub(tags={}, upstream=upstream)
+        client = FakeGitHub(
+            tags={}, upstream=upstream, module_sources=MODULE_SOURCES)
         if missing_toolchain_tag:
             orig_tag_sha = client.tag_sha
             client.tag_sha = lambda slug, tag: (
@@ -368,6 +381,16 @@ class GuardTests(unittest.TestCase):
                 write_migration_ledgers(
                     pr, mathlib_sha=pr_sha,
                     lean_tag=f"leanprover/lean4:{pr_tag}")
+                if migration == "forged":
+                    # Exact re-pin of the base pair, plus a forged
+                    # non-pin field: pin-consistent, but not the
+                    # derived pair, so the guard must fail.
+                    ledger_path = pr / "blueprint/migrations/AlgebraNotes.json"
+                    ledger = json.loads(ledger_path.read_text())
+                    ledger["records"] = []
+                    ledger_path.write_text(
+                        json.dumps(ledger, sort_keys=True,
+                                   separators=(",", ":")), encoding="utf-8")
             # The guard loads the checked-in config, which carries a
             # pin_policy for check_lake_surface.py: give base/pr the real
             # file at the old pins, and the PR the file with the new
@@ -458,6 +481,9 @@ class GuardTests(unittest.TestCase):
 
     def test_guard_passes_repinned_migration_ledgers(self):
         self.assertEqual(self._run_guard(migration="repinned"), 0)
+
+    def test_guard_fails_forged_ledger_records(self):
+        self.assertEqual(self._run_guard(migration="forged"), 1)
 
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(
@@ -554,6 +580,9 @@ class ValidatePreparedTests(unittest.TestCase):
         base_files = {
             rel: (base / rel).read_text(encoding="utf-8")
             for rel in ["lake-manifest.json", "lakefile.toml", "README.md",
+                        "lean-toolchain",
+                        "blueprint/migrations/AlgebraNotes.json",
+                        "blueprint/migrations/AlgebraNotesChecks.json",
                         real_config["pin_policy"]["path"]]
         }
         upstream = {}
@@ -564,7 +593,7 @@ class ValidatePreparedTests(unittest.TestCase):
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
                 "leanprover/cslib"]},
-            upstream=upstream)
+            upstream=upstream, module_sources=MODULE_SOURCES)
         return prepared, real_config, base_files, client
 
     def test_valid_prepared_tree_passes(self):
@@ -627,6 +656,36 @@ class ValidatePreparedTests(unittest.TestCase):
                     base_files=base_files),
                 [])
 
+    def test_forged_ledger_records_fail(self):
+        # Pin-consistent (same pins/hashes) but with replaced records:
+        # the exact-derived-content check must fail it.
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            path = prepared / "blueprint/migrations/AlgebraNotes.json"
+            ledger = json.loads(path.read_text())
+            ledger["records"] = []
+            path.write_text(json.dumps(
+                ledger, sort_keys=True, separators=(",", ":")),
+                encoding="utf-8")
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
+    def test_missing_api_at_new_pin_fails(self):
+        # The re-pinned pointers advance, but Mathlib/Foo.lean at the
+        # new SHA no longer declares N1: the existence check must fail.
+        with tempfile.TemporaryDirectory() as tmp:
+            prepared, config, base_files, client = self._setup(tmp)
+            client.contents = lambda slug, path, ref: (
+                b"theorem Other : True := trivial\n")
+            self.assertNotEqual(
+                pinned_bump.validate_prepared_contents(
+                    client, prepared, config, "v4.36.0", allow_rc=False,
+                    base_files=base_files),
+                [])
+
 
 class ValidatePreparedGitTests(unittest.TestCase):
     """cmd_validate_prepared end-to-end via git HEAD as the base tree."""
@@ -673,7 +732,7 @@ class ValidatePreparedGitTests(unittest.TestCase):
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
                 "leanprover/cslib"]},
-            upstream=upstream)
+            upstream=upstream, module_sources=MODULE_SOURCES)
         return root, client
 
     def test_validate_prepared_cli_passes_and_fails_tamper(self):
@@ -764,6 +823,33 @@ class MigrationLedgerTests(unittest.TestCase):
                 f'"revision":"{self.OLD}"', f'"revision":"{self.NEW}"')
             self.assertEqual(ledger_path.read_text(), expected_ledger_text)
 
+    def test_exact_check_accepts_derived_pair(self):
+        base_ledger, base_checks = migration_fixture(
+            mathlib_sha=self.OLD, lean_tag="leanprover/lean4:v4.35.0")
+        expected_ledger, expected_checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        self.assertEqual(
+            pinned_bump.check_ledgers_match_expected(
+                expected_ledger, expected_checks,
+                base_ledger=base_ledger, base_checks=base_checks,
+                old_mathlib=self.OLD, old_lean="leanprover/lean4:v4.35.0",
+                new_mathlib=self.NEW, new_lean="leanprover/lean4:v4.36.0"),
+            [])
+
+    def test_exact_check_rejects_changed_migration_status(self):
+        base_ledger, base_checks = migration_fixture(
+            mathlib_sha=self.OLD, lean_tag="leanprover/lean4:v4.35.0")
+        expected_ledger, expected_checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        expected_ledger = dict(expected_ledger, migration="complete")
+        self.assertNotEqual(
+            pinned_bump.check_ledgers_match_expected(
+                expected_ledger, expected_checks,
+                base_ledger=base_ledger, base_checks=base_checks,
+                old_mathlib=self.OLD, old_lean="leanprover/lean4:v4.35.0",
+                new_mathlib=self.NEW, new_lean="leanprover/lean4:v4.36.0"),
+            [])
+
     def test_repin_refuses_stale_pre_bump_pair(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = self._tree(tmp)
@@ -811,6 +897,69 @@ class MigrationLedgerTests(unittest.TestCase):
                 (root / "blueprint/migrations/AlgebraNotes.json").read_text())
             self.assertEqual(ledger["pins"]["mathlib"], self.NEW)
             self.assertEqual(pinned_bump.current_tag(root, config), "v4.36.0")
+
+
+class ApiExistenceTests(unittest.TestCase):
+    OLD = SHAS[("leanprover-community/mathlib4", "v4.35.0")]
+    NEW = SHAS[("leanprover-community/mathlib4", "v4.36.0")]
+
+    def _client(self, sources):
+        class C:
+            def contents(self, slug, path, ref):
+                if (slug, path) in sources:
+                    return sources[(slug, path)]
+                raise RuntimeError(f"not found: {slug} {path}@{ref}")
+        return C()
+
+    def test_passes_when_apis_declared(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        client = self._client({
+            ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+                b"theorem N1 : True := trivial\n",
+        })
+        self.assertEqual(pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4"), [])
+
+    def test_fails_when_api_renamed_away(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        client = self._client({
+            ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+                b"theorem Other : True := trivial\n",
+        })
+        problems = pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4")
+        self.assertTrue(any("N1" in p for p in problems), problems)
+
+    def test_fails_closed_when_module_fetch_fails(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        client = self._client({})
+        problems = pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4")
+        self.assertTrue(any("cannot fetch" in p for p in problems), problems)
+
+    def test_unnamed_instance_needs_only_module_file(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        checks["triage_apis"].append({
+            "id": "lane:anon", "lane": "lane", "name": None,
+            "kind": "unnamed_instance", "module": "Mathlib.Bar",
+            "revision": self.NEW, "row_content_sha256": "0" * 64,
+        })
+        client = self._client({
+            ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+                b"theorem N1 : True := trivial\n",
+            ("leanprover-community/mathlib4", "Mathlib/Bar.lean"):
+                b"-- no named declarations here\n",
+        })
+        self.assertEqual(pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4"), [])
 
 
 class ForkPrTests(unittest.TestCase):
