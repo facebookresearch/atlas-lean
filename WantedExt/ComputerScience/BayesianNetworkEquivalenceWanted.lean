@@ -53,6 +53,7 @@ def IsVStructure (Pa : V → Finset V) (u w z : V) : Prop :=
 same skeleton and the same v-structures (Markov equivalent by Verma and Pearl) are connected by
 a sequence of covered-edge reversals. -/
 public theorem_wanted reflTransGen_coveredReversal_of_markovEquivalent [DecidableEq V]
+    [Finite V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (h' : IsAcyclic Pa')
     (hskel : ∀ u w, Adjacent Pa u w ↔ Adjacent Pa' u w)
     (hv : ∀ u w z, IsVStructure Pa u w z ↔ IsVStructure Pa' u w z) :

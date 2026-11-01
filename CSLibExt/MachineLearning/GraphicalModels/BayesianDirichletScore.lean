@@ -35,8 +35,9 @@ the closed form `∏_j Γ(α_j)/Γ(α_j + N_j) ∏_k Γ(α_jk + N_jk)/Γ(α_jk)`
 and of Heckerman, Geiger and Chickering. The network score `bdScore` is the product of the
 family scores (decomposability).
 
-**BDe.** Heckerman, Geiger and Chickering take `α c = ess · p(c)`, where `p` is a prior joint
-distribution on complete cases and `ess > 0` an equivalent sample size (`bdeHyper`).
+**BDe.** Heckerman, Geiger and Chickering take `α c = ess · p(c)`, where `p` is a weight
+function on complete cases — a prior joint distribution when `∑ x, p x = 1` — and `ess > 0`
+an equivalent sample size (`bdeHyper`).
 
 ## Main results
 
@@ -54,7 +55,7 @@ distribution on complete cases and `ess > 0` an equivalent sample size (`bdeHype
   so does any sequence of covered-edge reversals.
 
 Chickering's theorem that any two Markov-equivalent DAGs are connected by covered-edge
-reversals is stated in `WantedExt/MachineLearning/GraphicalModels/CoveredEdgeWanted.lean`;
+reversals is stated in `WantedExt/ComputerScience/BayesianNetworkEquivalenceWanted.lean`;
 together with `bdeScore_eq_of_reflTransGen` it gives the score equivalence of BDe.
 Acyclicity of `Pa` is not needed for the identities proved here.
 
@@ -200,15 +201,19 @@ theorem seqProb_eq_bdScore [Fintype V] (Pa : V → Finset V)
   rw [seqProb, ← mul_one (seqProbAfter Pa α [] D), ← h0, seqProbAfter_mul_bdScore,
     List.nil_append]
 
-/-- BDe hyperparameters (Heckerman, Geiger and Chickering): `ess` times the prior probability
-`∑_{x ↦ c} p x` of the configuration `c` of `S`. -/
+/-- BDe hyperparameters (Heckerman, Geiger and Chickering): `ess` times the weight
+`∑_{x ↦ c} p x` of the configuration `c` of `S`. When `∑ x, p x = 1`, `p` is a prior joint
+distribution and this is the prior probability of `c`. -/
 noncomputable def bdeHyper [Fintype V] (p : ((v : V) → σ v) → ℝ) (ess : ℝ) (S : Finset V)
     (c : Config σ S) : ℝ :=
   ess * ∑ x with S.restrict x = c, p x
 
 /-- The (unnormalized) marginal likelihood of the data restricted to the variables `S` under
-the BDe Dirichlet prior on the joint values of `S`. The normalizing factor
-`1 / rising ess D.length` is the same for every `S` and is omitted. -/
+the BDe Dirichlet prior on the joint values of `S`. `p` is treated as generalized weights
+here: the total Dirichlet mass over configurations is `ess * ∑ x, p x`, so the omitted
+normalizing factor is `1 / rising (ess * ∑ x, p x) D.length`, the same for every `S`. When
+`p` is normalized (`∑ x, p x = 1`) this is `1 / rising ess D.length`, and `p` is a prior
+joint distribution. -/
 noncomputable def margLik [Fintype V] (p : ((v : V) → σ v) → ℝ) (ess : ℝ)
     (D : List ((v : V) → σ v)) (S : Finset V) : ℝ :=
   ∏ c : Config σ S, rising (bdeHyper p ess S c) (count D S c)
@@ -250,8 +255,8 @@ def CoveredReversal (Pa Pa' : V → Finset V) : Prop :=
   ∃ x y, x ≠ y ∧ Pa y = insert x (Pa x) ∧
     Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x))
 
-/-- **Covered-edge reversal preserves the BDe score** (for a positive prior and positive
-equivalent sample size). -/
+/-- **Covered-edge reversal preserves the BDe score** (for a positive weight function `p` —
+a prior when `∑ x, p x = 1` — and positive equivalent sample size). -/
 theorem bdeScore_coveredReversal [Fintype V] [∀ v, Nonempty (σ v)]
     (p : ((v : V) → σ v) → ℝ) (hp : ∀ x, 0 < p x) {ess : ℝ} (hess : 0 < ess)
     (D : List ((v : V) → σ v)) {Pa Pa' : V → Finset V} (h : CoveredReversal Pa Pa') :
