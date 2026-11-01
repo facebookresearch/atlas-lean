@@ -42,9 +42,10 @@ prefix. Values live in `WithTop ℝ` (`⊤` when no structure is possible).
 * `existsUnique_closing_pair`: every pair of a structure is either an exterior branch or a
   branch of exactly one pair, so each pair is shared by the loop it closes and exactly one
   enclosing loop (possibly the exterior loop).
-* `existsUnique_loop_of_pos`: every position lies in the exterior loop or in the loop closed by
-  exactly one pair; with the previous result, the loops (one per pair, plus the exterior loop)
-  decompose the structure uniquely.
+* `existsUnique_loop_of_pos`: every position has a unique innermost strict container
+  (or lies strictly inside no pair). This is an innermost-container assignment, not
+  loop membership: pair endpoints are excluded from the loop they close, so it does
+  not decompose positions into loops. The pair-side decomposition is the previous item.
 * `loopEnergy_eq_hairpin`, `loopEnergy_eq_interior`, `loopEnergy_eq_multiloop`: the energy of
   the loop closed by a pair, by number of branches.
 * `zukerMFE_eq_inf`: Zuker's recursion computes the minimum free energy over all secondary
