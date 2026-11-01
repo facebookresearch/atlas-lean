@@ -266,8 +266,9 @@ lemma limitState_isInfiniteVolumeState
     InfiniteVolumeState ρ (limitState ρ) :=
   (exists_infiniteVolumeState ρ).choose_spec
 
-/-- The plus state: a weak subsequential limit of the plus-boundary box measures. Its convergence
-along the full sequence is proved separately. -/
+/-- The plus state: a weak subsequential limit of the plus-boundary box measures.
+Full-sequence convergence is not claimed here: the library only provides this state as a
+chosen subsequential limit (see `plusState_isInfiniteVolumeState`). -/
 noncomputable def plusState (d : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   limitState (fun n => plusMeasure d n β h)
