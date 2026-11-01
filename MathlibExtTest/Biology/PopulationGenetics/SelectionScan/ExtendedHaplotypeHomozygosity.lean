@@ -70,42 +70,68 @@ example : ehh hap {0} 2 = 0 := ehh_eq_zero_of_card_le_one hap (by decide) 2
 
 /-! ### Relative EHH
 
-`C = {0, 1}` is a perfectly homozygous pair at radius `2`; in `D = {0, 1, 3}` only the pair
-`(0, 1)` shares its window, so `EHH(D) = 1/3` and the relative EHH is `3`. -/
+`C = {0, 1}` and `D = {2, 3, 4}` are disjoint complementary carrier groups in a
+five-haplotype sample: `C` carries one core allele, `D` carries the other. In `C` the pair
+shares its window, so the core-labelled EHH is `1`; in `D` only the pair `(2, 3)` shares its
+window, so the core-labelled EHH is `1/3` and the relative EHH is `3`. -/
 
-example : ehh hap {0, 1} 2 = 1 := by
-  have h : concordantPairs hap {0, 1} 2 = 2 := by decide
-  rw [ehh, h]
-  norm_num [show ({0, 1} : Finset (Fin 4)).card = 2 by decide]
+/-- Five-haplotype sample for relative EHH: only haplotype `4` differs at site `1`. -/
+def hap5 : Fin 5 → ℕ → Bool := fun i k => decide (k = 1 ∧ i = 4)
 
-example : ehh hap {0, 1, 3} 2 = 1 / 3 := by
-  have h : concordantPairs hap {0, 1, 3} 2 = 2 := by decide
-  rw [ehh, h]
-  norm_num [show ({0, 1, 3} : Finset (Fin 4)).card = 3 by decide]
+/-- Core alleles for the five-haplotype sample: `{0, 1}` carry one allele, `{2, 3, 4}`
+carry the other. -/
+def core5 : Fin 5 → Bool := fun i => decide (2 ≤ i)
 
-example : rehh hap {0, 1} {0, 1, 3} 2 = 3 := by
-  have hC : ehh hap {0, 1} 2 = 1 := by
-    have h : concordantPairs hap {0, 1} 2 = 2 := by decide
-    rw [ehh, h]
-    norm_num [show ({0, 1} : Finset (Fin 4)).card = 2 by decide]
-  have hD : ehh hap {0, 1, 3} 2 = 1 / 3 := by
-    have h : concordantPairs hap {0, 1, 3} 2 = 2 := by decide
-    rw [ehh, h]
-    norm_num [show ({0, 1, 3} : Finset (Fin 4)).card = 3 by decide]
+example : ehhCore core5 hap5 {0, 1} 2 = 1 := by
+  have h : concordantPairsCore core5 hap5 {0, 1} 2 = 2 := by decide
+  rw [ehhCore, h]
+  norm_num [show ({0, 1} : Finset (Fin 5)).card = 2 by decide]
+
+example : ehhCore core5 hap5 {2, 3, 4} 2 = 1 / 3 := by
+  have h : concordantPairsCore core5 hap5 {2, 3, 4} 2 = 2 := by decide
+  rw [ehhCore, h]
+  norm_num [show ({2, 3, 4} : Finset (Fin 5)).card = 3 by decide]
+
+example : rehh core5 hap5 {0, 1} {2, 3, 4} 2 = 3 := by
+  have hC : ehhCore core5 hap5 {0, 1} 2 = 1 := by
+    have h : concordantPairsCore core5 hap5 {0, 1} 2 = 2 := by decide
+    rw [ehhCore, h]
+    norm_num [show ({0, 1} : Finset (Fin 5)).card = 2 by decide]
+  have hD : ehhCore core5 hap5 {2, 3, 4} 2 = 1 / 3 := by
+    have h : concordantPairsCore core5 hap5 {2, 3, 4} 2 = 2 := by decide
+    rw [ehhCore, h]
+    norm_num [show ({2, 3, 4} : Finset (Fin 5)).card = 3 by decide]
   rw [rehh, hC, hD]
   norm_num
 
-example : 1 < rehh hap {0, 1} {0, 1, 3} 2 := by
-  have hD : ehh hap {0, 1, 3} 2 = 1 / 3 := by
-    have h : concordantPairs hap {0, 1, 3} 2 = 2 := by decide
-    rw [ehh, h]
-    norm_num [show ({0, 1, 3} : Finset (Fin 4)).card = 3 by decide]
-  have hC : ehh hap {0, 1} 2 = 1 := by
-    have h : concordantPairs hap {0, 1} 2 = 2 := by decide
-    rw [ehh, h]
-    norm_num [show ({0, 1} : Finset (Fin 4)).card = 2 by decide]
-  rw [one_lt_rehh_iff hap {0, 1} {0, 1, 3} (by rw [hD]; norm_num), hC, hD]
+example : 1 < rehh core5 hap5 {0, 1} {2, 3, 4} 2 := by
+  have hD : ehhCore core5 hap5 {2, 3, 4} 2 = 1 / 3 := by
+    have h : concordantPairsCore core5 hap5 {2, 3, 4} 2 = 2 := by decide
+    rw [ehhCore, h]
+    norm_num [show ({2, 3, 4} : Finset (Fin 5)).card = 3 by decide]
+  have hC : ehhCore core5 hap5 {0, 1} 2 = 1 := by
+    have h : concordantPairsCore core5 hap5 {0, 1} 2 = 2 := by decide
+    rw [ehhCore, h]
+    norm_num [show ({0, 1} : Finset (Fin 5)).card = 2 by decide]
+  rw [one_lt_rehh_iff core5 hap5 {0, 1} {2, 3, 4} (by rw [hD]; norm_num), hC, hD]
   norm_num
+
+/-- Cross-core pairs are never concordant: two haplotypes with identical (constant) windows
+but different core alleles have core-labelled EHH `0`, where plain `ehh` would give `1`. -/
+example : ehhCore (fun i : Fin 4 => decide (i = 0)) (fun _ _ => false)
+    ({0, 1} : Finset (Fin 4)) 2 = 0 := by
+  have h : concordantPairsCore (fun i : Fin 4 => decide (i = 0)) (fun _ _ => false)
+      ({0, 1} : Finset (Fin 4)) 2 = 0 := by decide
+  rw [ehhCore, h]
+  norm_num [show ({0, 1} : Finset (Fin 4)).card = 2 by decide]
+
+/-- With a constant core allele, core-labelled EHH agrees with plain EHH on the same sample. -/
+example : ehhCore (fun _ : Fin 4 => false) (fun _ _ => false)
+    ({0, 1} : Finset (Fin 4)) 2 = 1 := by
+  have h : concordantPairsCore (fun _ : Fin 4 => false) (fun _ _ => false)
+      ({0, 1} : Finset (Fin 4)) 2 = 2 := by decide
+  rw [ehhCore, h]
+  norm_num [show ({0, 1} : Finset (Fin 4)).card = 2 by decide]
 
 /-! ### The neutral no-recombination probability -/
 

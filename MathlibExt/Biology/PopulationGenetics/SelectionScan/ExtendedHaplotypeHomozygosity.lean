@@ -48,8 +48,10 @@ onto an identical haplotype, or by coalescing back).
 * `ehh_eq_sum_counts`: `EHH(d) = ∑_t c_t (c_t - 1) / (#C (#C - 1))`, the sampling-without-
   replacement homozygosity of the partition of `C` into window types.
 * `ehh_eq_zero_of_card_le_one`: the junk value `0` returned outside the domain `2 ≤ #C`.
-* `rehh`, `one_lt_rehh_iff`: the relative EHH of Sabeti et al.'s long-range haplotype test
-  exceeds `1` exactly when the core allele has the larger EHH.
+* `ehhCore`, `rehh`, `one_lt_rehh_iff`: the relative EHH of Sabeti et al.'s long-range haplotype test
+  exceeds `1` exactly when the core allele has the larger EHH. The denominator uses
+  `ehhCore`, which counts only pairs sharing a core allele, so two haplotypes carrying
+  different core alleles are never concordant even when their outward windows match.
 * `integral_pairNoRecomb`: `E[exp (-(ρ d) T₂)] = (1 + ρ d)⁻¹` for `T₂` exponential of rate `1`,
   with `pairNoRecomb_le_one` and `pairNoRecomb_antitone` the corresponding bound and decay.
 
@@ -221,17 +223,39 @@ theorem ehh_eq_sum_counts (h : ι → ℕ → α) (C : Finset ι) (d : ℕ) :
   push_cast [Nat.cast_sub hc1]
   ring
 
-/-- Relative extended haplotype homozygosity: the EHH of the core-allele carriers `C` divided
-by the EHH of the complementary set `D` of haplotypes carrying the other core alleles. This is
-the statistic of the long-range haplotype test (Sabeti et al. 2002). It is a junk value `0`
-when the denominator vanishes; `one_lt_rehh_iff` assumes a positive denominator. -/
-noncomputable def rehh (h : ι → ℕ → α) (C D : Finset ι) (d : ℕ) : ℝ :=
-  ehh h C d / ehh h D d
+/-- The number of ordered pairs of distinct haplotypes of `C` whose core alleles (under
+`core`) agree and whose windows of radius `d` agree. The extended haplotype includes the
+core, so pairs carrying different core alleles are never concordant, even when their
+outward windows match. -/
+def concordantPairsCore {β : Type*} [DecidableEq β] (core : ι → β) (h : ι → ℕ → α)
+    (C : Finset ι) (d : ℕ) : ℕ :=
+  ((C ×ˢ C).filter fun p =>
+    p.1 ≠ p.2 ∧ core p.1 = core p.2 ∧ window h d p.1 = window h d p.2).card
+
+/-- Extended haplotype homozygosity with core-allele labels: the probability that two
+distinct haplotypes drawn from `C` without replacement share both their core allele and
+their window of radius `d`. For a set `C` of carriers of a single core allele this is the
+same count as `ehh`; for a pooled set `D` carrying several core alleles it excludes the
+cross-core pairs that plain `ehh` would wrongly count as concordant. -/
+noncomputable def ehhCore {β : Type*} [DecidableEq β] (core : ι → β) (h : ι → ℕ → α)
+    (C : Finset ι) (d : ℕ) : ℝ :=
+  (concordantPairsCore core h C d : ℝ) / ((C.card : ℝ) * ((C.card : ℝ) - 1))
+
+/-- Relative extended haplotype homozygosity: the core-labelled EHH of the core-allele
+carriers `C` divided by the core-labelled EHH of the pooled set `D` of haplotypes carrying
+the other core alleles. The denominator counts only pairs sharing a core allele, so
+cross-core pairs never inflate it. This is the statistic of the long-range haplotype test
+(Sabeti et al. 2002). It is a junk value `0` when the denominator vanishes;
+`one_lt_rehh_iff` assumes a positive denominator. -/
+noncomputable def rehh {β : Type*} [DecidableEq β] (core : ι → β) (h : ι → ℕ → α)
+    (C D : Finset ι) (d : ℕ) : ℝ :=
+  ehhCore core h C d / ehhCore core h D d
 
 /-- With a positive reference EHH, the relative EHH exceeds `1` exactly when the core allele's
 haplotypes are the more homozygous ones. -/
-theorem one_lt_rehh_iff (h : ι → ℕ → α) (C D : Finset ι) {d : ℕ} (hD : 0 < ehh h D d) :
-    1 < rehh h C D d ↔ ehh h D d < ehh h C d := by
+theorem one_lt_rehh_iff {β : Type*} [DecidableEq β] (core : ι → β) (h : ι → ℕ → α)
+    (C D : Finset ι) {d : ℕ} (hD : 0 < ehhCore core h D d) :
+    1 < rehh core h C D d ↔ ehhCore core h D d < ehhCore core h C d := by
   rw [rehh, one_lt_div hD]
 
 end Sample
