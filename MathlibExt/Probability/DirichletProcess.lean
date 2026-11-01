@@ -67,8 +67,8 @@ The Dirichlet process (`StickBreakingProcess.IsDirichlet`: proportions i.i.d. `B
   measure `H`; `dirichletProcess α hα H`, the law of `G` as a measure on `Measure X`, with its
   mean `lintegral_dirichletProcess_apply`.
 
-Along the way: `integral_sq_betaMeasure_one` and `integral_one_sub_sq_betaMeasure_one`, the
-second moments `E[x²]` and `E[(1 - x)²]` of `Beta(1, α)`.
+Along the way: `integral_one_sub_sq_betaMeasure_one`, the second moment `E[(1 - x)²]`
+of `Beta(1, α)` (the `E[x²]` case is the general `integral_sq_betaMeasure`).
 
 ## Not covered
 
@@ -645,28 +645,6 @@ private theorem integrable_betaMeasure_of_bound {a b : ℝ} (ha : 0 < a) (hb : 0
   filter_upwards [ae_mem_Icc_betaMeasure a b] with x hx
   exact (Real.norm_eq_abs _).trans_le (hC x hx)
 
-/-- The second moment of `Beta(1, α)`: `E[x²] = 2 / ((1 + α) (2 + α))`. -/
-theorem integral_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
-    ∫ x, x ^ 2 ∂betaMeasure 1 α = 2 / ((1 + α) * (2 + α)) := by
-  have h1 := integral_id_betaMeasure zero_lt_one hα
-  have h2 : ∫ x, 2 * x * (1 - x) ∂betaMeasure 1 α =
-      2 * 1 * α / ((1 + α) * (1 + α + 1)) := by
-    have h := integral_mul_one_sub_betaMeasure zero_lt_one hα
-    rw [show (fun x : ℝ ↦ 2 * x * (1 - x)) = fun x => 2 * (x * (1 - x)) by ext; ring,
-      integral_const_mul, h]
-    ring
-  have i1 : Integrable (fun x : ℝ ↦ x) (betaMeasure 1 α) :=
-    integrable_betaMeasure_of_bound zero_lt_one hα measurable_id (C := 1) fun x hx ↦ by
-      rw [abs_le]; constructor <;> linarith [hx.1, hx.2]
-  have i2 : Integrable (fun x : ℝ ↦ 2 * x * (1 - x) / 2) (betaMeasure 1 α) :=
-    (integrable_betaMeasure_of_bound zero_lt_one hα (by fun_prop) (C := 2) fun x hx ↦ by
-      rw [abs_le]; constructor <;> nlinarith [hx.1, hx.2]).div_const 2
-  rw [show (fun x : ℝ ↦ x ^ 2) = fun x ↦ x - 2 * x * (1 - x) / 2 by ext; ring,
-    integral_sub i1 i2, integral_div, h1, h2]
-  have : (0 : ℝ) < 1 + α := by linarith
-  field_simp
-  ring
-
 /-- `E[(1 - x)²] = α / (α + 2)` under `Beta(1, α)`. -/
 theorem integral_one_sub_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
     ∫ x, (1 - x) ^ 2 ∂betaMeasure 1 α = α / (α + 2) := by
@@ -688,7 +666,11 @@ theorem integral_one_sub_sq_betaMeasure_one {α : ℝ} (hα : 0 < α) :
     congr 1
     ext x
     ring
-  rw [e, h1, integral_sq_betaMeasure_one hα, integral_const, probReal_univ, smul_eq_mul, one_mul]
+  have hsq : ∫ x, x ^ 2 ∂betaMeasure 1 α = 2 / ((1 + α) * (2 + α)) := by
+    have h := integral_sq_betaMeasure zero_lt_one hα
+    rw [show (1 : ℝ) * (1 + 1) = 2 by norm_num, show (1 : ℝ) + α + 1 = 2 + α by ring] at h
+    exact h
+  rw [e, h1, hsq, integral_const, probReal_univ, smul_eq_mul, one_mul]
   have : (0 : ℝ) < 1 + α := by linarith
   field_simp
   ring
@@ -750,7 +732,11 @@ theorem sumSqWeight_eq [IsProbabilityMeasure μ] (hP : P.IsDirichlet α) :
   set r : ℝ := α / (α + 2)
   have hsq : ∀ k, μ[fun ω ↦ P.β k ω ^ 2] = c := fun k ↦ by
     have := (hP.hasLaw_β k).integral_comp (f := fun x : ℝ ↦ x ^ 2) (by fun_prop)
-    exact this.trans (integral_sq_betaMeasure_one hα)
+    have hsq2 : ∫ x, x ^ 2 ∂betaMeasure 1 α = 2 / ((1 + α) * (2 + α)) := by
+      have h := integral_sq_betaMeasure zero_lt_one hα
+      rw [show (1 : ℝ) * (1 + 1) = 2 by norm_num, show (1 : ℝ) + α + 1 = 2 + α by ring] at h
+      exact h
+    exact this.trans hsq2
   have hsq' : ∀ k, μ[fun ω ↦ (1 - P.β k ω) ^ 2] = r := fun k ↦ by
     have := (hP.hasLaw_β k).integral_comp (f := fun x : ℝ ↦ (1 - x) ^ 2) (by fun_prop)
     exact this.trans (integral_one_sub_sq_betaMeasure_one hα)
