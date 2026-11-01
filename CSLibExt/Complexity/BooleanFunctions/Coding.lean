@@ -58,8 +58,8 @@ noncomputable def condProbBit (μ : ConfigSpace E → ℝ) (F : Finset E)
     (η : ConfigSpace E) (e : E) (b : Bool) : ℝ :=
   (∑ ω, if (Agree F η ω ∧ ω e = b) then μ ω else 0) / condNorm μ F η
 
-/-- The conditional probability that the configuration agrees with `η` on `F`,
-normalized over all extensions. -/
+/-- The conditional probability that coordinate `e` is closed (`false`), given
+that the configuration agrees with `η` on `F`. -/
 noncomputable def condProbClosed (μ : ConfigSpace E → ℝ) (F : Finset E)
     (η : ConfigSpace E) (e : E) : ℝ :=
   condProbBit μ F η e false

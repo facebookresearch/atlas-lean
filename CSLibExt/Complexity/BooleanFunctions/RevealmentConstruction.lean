@@ -18,8 +18,9 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 
 Building a decision tree from a guard/step state machine (`buildTree`, `runState`) with
 its evaluation and invariant lemmas; the abstract reachability relation (`ReachOpen`,
-`ConnOpenSet`); the geometric exploration tree (`exploreTree`) that discovers the open
-connected component of a set, with a revealment bound (`reveal_exploreTree_le`); and the
+`ConnOpenSet`); the geometric exploration tree (`exploreTree`), a single-pass exploration
+from a starting set that is sound but not complete in general, with a revealment bound
+(`reveal_exploreTree_le`); and the
 lattice instance (`ConnectedToSet`, `liftCfg`) connecting abstract reachability to
 connectivity in the `d`-dimensional lattice.
 
@@ -95,7 +96,10 @@ theorem mem_queried_buildTree {State : Type*} (guard : State → E → Bool)
       · rw [ite_eq_right hg] at hi
         exact ih σ hσ hi
 
-/-- Run a guard/step state machine on a configuration to a fixpoint state. -/
+/-- Run a guard/step state machine on a configuration in a single pass over the
+supplied list. This does not in general reach a fixpoint: a second pass can add
+more, for example on a path `0 — 1 — 2` starting from `{2}` and scanning the open
+edges in order `[0 — 1, 1 — 2]`. -/
 def runState {State : Type*} (guard : State → E → Bool) (step : State → E → Bool → State)
     (ω : ConfigSpace E) : List E → State → State
   | [], σ => σ
@@ -210,7 +214,10 @@ theorem geomInv_step (endU endV : E → V) (ω : ConfigSpace E) (B : Set V)
     · exact hInv x hx
   · simp only [Bool.not_eq_true] at hb; rw [hb]; simpa using hInv
 
-/-- The geometric exploration tree discovering the open connected component. -/
+/-- The geometric exploration tree: a single-pass exploration from the initial
+discovered set. It is sound (every discovered vertex is connected to `B`, via
+`geomInv`) but does not in general discover the whole open connected component;
+completeness is the subject of `TreeComplete`, not this tree. -/
 def exploreTree (endU endV : E → V) (base : Finset V → Bool)
     (l : List E) (disc₀ : Finset V) : DecisionTree E :=
   buildTree (geomGuard endU endV) (geomStep endU endV) base l disc₀
