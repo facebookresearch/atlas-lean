@@ -100,11 +100,23 @@ def paVal (k : Fin n) (x : Fin n → α) : b.pa k → α :=
   fun j => x (Fin.castLE k.2.le j)
 
 /-- **The intervention `do(X_k = a)`**: the mechanism of node `k` is replaced by the point mass
-at `a`; every other node keeps its parents and its table. (The parents of `k` are kept as a
-`Finset`, but the new table of `k` does not depend on them.) -/
+at `a`, and all incoming arrows to `k` are deleted (its parent set becomes `∅`); every other
+node keeps its parents and its table. (The new table of `k` is the point mass on the empty
+parent set; the tables of the other nodes are transported along the equality of their
+parent sets.) -/
 noncomputable def intervene (k : Fin n) (a : α) : BayesNet α n where
-  pa := b.pa
-  cpt j z := if j = k then StdSimplex.single a else b.cpt j z
+  pa j := if j = k then ∅ else b.pa j
+  cpt j z := if h : j = k then StdSimplex.single a
+    else b.cpt j fun i => z ⟨i.1, by rw [if_neg h]; exact i.2⟩
+
+/-- The parents of the intervened node are deleted. -/
+theorem intervene_pa_self (k : Fin n) (a : α) : (b.intervene k a).pa k = ∅ := by
+  simp [intervene]
+
+/-- The parents of every other node are unchanged by the intervention. -/
+theorem intervene_pa_of_ne {j k : Fin n} (hj : j ≠ k) (a : α) :
+    (b.intervene k a).pa j = b.pa j := by
+  simp [intervene, hj]
 
 /-- **The truncated factorization** (Pearl 2009, eq. (3.10)): after `do(X_k = a)` the joint is
 the product of the tables of all nodes other than `k` on assignments with `x_k = a`, and `0`
@@ -137,16 +149,16 @@ private lemma toChain_intervene_joint (k : Fin n) (a : α) :
 theorem sum_paVal_intervene [Fintype α] [DecidableEq α] (k : Fin n) (a : α)
     (z : b.pa k → α) :
     ∑ x with b.paVal k x = z, (b.intervene k a).joint x = ∑ x with b.paVal k x = z, b.joint x := by
-  have hmarg : ∀ b' : BayesNet α n, b'.pa = b.pa →
+  have hmarg : ∀ b' : BayesNet α n,
       ∑ x with b.paVal k x = z, b'.joint x =
         ∑ y : Fin k → α, (if (fun j : b.pa k => y j) = z then 1 else 0) * b'.toChain.joint k y := by
-    intro b' _
+    intro b'
     rw [← chain_sum_mul_joint_castLE b'.toChain _ n k.2.le, sum_filter]
     refine sum_congr rfl fun x _ => ?_
     change (if b.paVal k x = z then b'.joint x else 0) =
       (if b.paVal k x = z then 1 else 0) * b'.toChain.joint n x
     split_ifs <;> simp [joint]
-  rw [hmarg (b.intervene k a) rfl, hmarg b rfl, toChain_intervene_joint]
+  rw [hmarg (b.intervene k a), hmarg b, toChain_intervene_joint]
 
 private lemma joint_eq_intervene_mul (k : Fin n) (a : α) {x : Fin n → α}
     (hx : x k = a) :

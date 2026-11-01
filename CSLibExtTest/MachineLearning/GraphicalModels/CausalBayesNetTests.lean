@@ -73,6 +73,16 @@ example : (confNet.intervene 1 true).joint ![true, true, true] = 9 / 20 := by
   simp [confNet, BayesNet.paVal, coin_true]
   norm_num
 
+/-- Intervention deletes the incoming edges of the intervened node and keeps the other
+edges: `do(X = true)` removes `Z → X` but keeps `Z → Y` and `X → Y`. -/
+example : ¬ (confNet.intervene 1 true).Edge 0 1 ∧
+    (confNet.intervene 1 true).Edge 0 2 ∧ (confNet.intervene 1 true).Edge 1 2 := by
+  refine ⟨?_, ?_, ?_⟩
+  · rintro ⟨-, hm⟩
+    simp [BayesNet.intervene] at hm
+  · exact ⟨by decide, by simp [BayesNet.intervene]⟩
+  · exact ⟨by decide, by simp [BayesNet.intervene]⟩
+
 /-- **Non-vacuity** of the adjustment theorem: every table of `confNet` gives `X = true`
 positive probability, so `E[f | do(X = true)]` is given by adjusting for `Z`. -/
 example (f : (Fin 3 → Bool) → ℝ) :
