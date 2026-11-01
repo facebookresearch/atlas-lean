@@ -272,10 +272,13 @@ theorem backwardSearch_iff_prefix (t P : List α) (r : ℕ) (hr : r < t.length +
   exact prefix_map_sentinel _ _ _
 
 /-- The occurrences of `P` reported by the FM-index: the suffix-array entries
-`SA[sp], …, SA[ep - 1]` of the backward-search interval. -/
+`SA[sp], …, SA[ep - 1]` of the backward-search interval. The BWT and the interval are
+bound once with `let` and reused, so one query builds the BWT and runs the backward search
+once, not three times. -/
 def occurrences (t P : List α) : List ℕ :=
-  ((suffixArray (withSentinel t)).drop (backwardSearch (bwt t) P).1).take
-    ((backwardSearch (bwt t) P).2 - (backwardSearch (bwt t) P).1)
+  let L := bwt t
+  let interval := backwardSearch L P
+  ((suffixArray (withSentinel t)).drop interval.1).take (interval.2 - interval.1)
 
 /-- **The reported positions are exactly the occurrences**: `i` is reported for `P` exactly when
 `i ≤ |t|` and `P` is a prefix of `t.drop i` (the empty pattern occurs at all `|t| + 1`
