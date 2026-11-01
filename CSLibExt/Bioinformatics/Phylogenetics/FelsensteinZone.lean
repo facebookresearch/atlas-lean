@@ -12,6 +12,7 @@ public import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoining
 public import CSLibExt.Bioinformatics.Phylogenetics.Parsimony
 public import CSLibExt.MachineLearning.Sampling.MonteCarlo
 public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
+import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoiningRobustness
 
 /-!
 # The pulley principle, LogDet distances, the Felsenstein zone, and consistency of NJ
@@ -54,10 +55,12 @@ to the matrix of length `t₁ + ⋯ + t_k` (`jcPath_eq`), so the JC-corrected di
 probability of two leaves is `μ` times their path length (`jcDistance_jcPath`). With independent
 sites, the empirical p-distances converge almost surely (strong law), hence so do the corrected
 distances; if neighbor joining recovers the tree from every dissimilarity within a radius
-`r > 0` of the scaled tree metric (for `μ > 0`, Atteson's theorem gives `r = μ m / 2` for the
-shortest internal edge length `m`; it is not proved in this library), then almost surely every
-complete run of neighbor joining on the corrected empirical distances returns the true splits
-for all long enough alignments (`ae_eventually_njRun_splits_jcHat`).
+`r > 0` of the scaled tree metric, then almost surely every complete run of neighbor joining on
+the corrected empirical distances returns the true splits for all long enough alignments
+(`ae_eventually_njRun_splits_jcHat`). For `μ > 0` and internal edge lengths at least `m > 0`,
+Atteson's theorem (`njRun_splits_of_abs_sub_lt` in `NeighborJoiningRobustness.lean`) gives the
+radius `r = μ m / 2` (`njRecoversWithin_of_le`), so the consistency holds unconditionally
+(`ae_eventually_njRun_splits_jcHat_of_le`).
 
 ## Main results
 
@@ -67,6 +70,8 @@ for all long enough alignments (`ae_eventually_njRun_splits_jcHat`).
   Felsenstein zone and the inconsistency of parsimony.
 * `jcDistance_jcPath`, `ae_eventually_njRun_splits_jcHat`: JC-corrected distances are path
   lengths, and neighbor joining on them is statistically consistent given a robustness radius.
+* `njRecoversWithin_of_le`, `ae_eventually_njRun_splits_jcHat_of_le`: Atteson's radius, and the
+  unconditional consistency of neighbor joining under Jukes–Cantor.
 
 ## References
 
@@ -642,8 +647,8 @@ noncomputable def jcHat {X : Type*} (seq : ℕ → X → Fin 4) (n : ℕ) (x y :
 /-- Neighbor joining **recovers the tree within radius `r`** of the dissimilarity `d`: every
 complete run of neighbor joining on a symmetric dissimilarity `D` with zero diagonal and
 `|D x y - d x y| < r` for distinct taxa forms exactly the splits of the internal edges of
-`(G, ι)`. Atteson's theorem (not proved in this library) gives this for the path-length metric
-of a binary phylogenetic tree with `r` half the shortest internal edge length. -/
+`(G, ι)`. Atteson's theorem gives this for the path-length metric of a binary phylogenetic tree
+with `r` half the shortest internal edge length (`njRecoversWithin_of_le`). -/
 def NJRecoversWithin {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} (G : SimpleGraph V)
     (ι : X → V) (d : X → X → ℝ) (r : ℝ) : Prop :=
   ∀ D : X → X → ℝ, (∀ x y, D x y = D y x) → (∀ x, D x x = 0) →
@@ -758,6 +763,54 @@ theorem ae_eventually_njRun_splits_jcHat {X : Type*} [DecidableEq X] [Fintype X]
   · unfold jcHat pHat
     rw [Finset.sum_congr rfl fun i _ => if_congr eq_comm rfl rfl]
   · simp [jcHat, pHat, jcDistance]
+
+
+/-- **Atteson's radius for the scaled tree metric.** Let `d` be the path-length metric of a
+binary phylogenetic `X`-tree `(G, ι)` with positive edge lengths `w` whose internal edges (no
+taxon at either end) have length at least `m`. For `μ > 0`, neighbor joining recovers the tree
+within radius `μ m / 2` of the scaled metric `μ d`. This is `njRun_splits_of_abs_sub_lt`
+(Atteson 1999) for the edge lengths `μ w`. -/
+theorem njRecoversWithin_of_le {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} [Fintype V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V} (hT : IsBinaryPhylogeneticTree G ι)
+    {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e) {d : X → X → ℝ}
+    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
+    {μ m : ℝ} (hμ : 0 < μ)
+    (hm : ∀ a b, G.Adj a b → a ∉ Set.range ι → b ∉ Set.range ι → m ≤ w s(a, b)) :
+    NJRecoversWithin G ι (fun x y => μ * d x y) (μ * m / 2) := by
+  intro D hsymm h0 hDd S Dc C hrun hS A
+  refine njRun_splits_of_abs_sub_lt hT (w := fun e => μ * w e)
+    (fun e he => mul_pos hμ (hw e he)) (d := fun x y => μ * d x y) (fun x y p hp => ?_)
+    (μ := μ * m) (fun a b h ha hb => mul_le_mul_of_nonneg_left (hm a b h ha hb) hμ.le)
+    hsymm h0 hDd hrun hS A
+  rw [hd x y p hp, List.sum_map_mul_left]
+
+/-- **Statistical consistency of neighbor joining under Jukes–Cantor** (Saitou & Nei 1987;
+Atteson 1999), without a robustness hypothesis. Let `(G, ι)` be a binary phylogenetic `X`-tree
+with path-length metric `d` for positive edge lengths `w`, whose internal edges have length at
+least `m > 0`, and let the sites be pairwise independent and identically distributed, with the
+two-leaf marginals of the JC model with rate `μ > 0` and uniform root. Then almost surely, for
+all long enough alignments, every complete run of neighbor joining on the JC-corrected
+empirical distances returns exactly the splits of the internal edges of the tree. -/
+theorem ae_eventually_njRun_splits_jcHat_of_le {X : Type*} [DecidableEq X] [Fintype X]
+    {V : Type*} [Fintype V] {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V}
+    (hT : IsBinaryPhylogeneticTree G ι) {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e)
+    {d : X → X → ℝ}
+    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
+    {μ m : ℝ} (hμ : 0 < μ) (hm0 : 0 < m)
+    (hm : ∀ a b, G.Adj a b → a ∉ Set.range ι → b ∉ Set.range ι → m ≤ w s(a, b))
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    (site : ℕ → Ω → X → Fin 4) (hmeas : ∀ i, Measurable (site i))
+    (hident : ∀ i, IdentDistrib (site i) (site 0) P P)
+    (hindep : Pairwise fun i j => IndepFun (site i) (site j) P)
+    (hpair : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → ∀ i j,
+      P.real {ω | site 0 ω x = i ∧ site 0 ω y = j} = jcPath μ (p.edges.map w) i j / 4) :
+    ∀ᵐ ω ∂P, ∀ᶠ n in atTop, ∀ S Dc C, NJRun (jcHat (fun i => site i ω) n) S Dc C →
+      S.card ≤ 3 → ∀ A : Finset X,
+        ((A ∈ C ∨ univ \ A ∈ C) ↔
+          ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
+            ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a) :=
+  ae_eventually_njRun_splits_jcHat hT hd (by positivity) (njRecoversWithin_of_le hT hw hd hμ hm)
+    site hmeas hident hindep hpair
 
 end NJ
 
