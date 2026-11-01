@@ -357,7 +357,7 @@ private lemma card_noSuccessor {G L N : ℕ} (hL : L ≤ G) (j : Fin N) :
 reads, the number of start tuples in which read `j` has no successor is
 `N * G * (G - (L - 1)) ^ (N - 1)`. This counts no-successor reads, not island ends:
 a start tuple can have several no-successor reads in one island. -/
-theorem sum_card_noSuccessor {G L N : ℕ} (hL : L ≤ G) (_hG : 0 < G) :
+theorem sum_card_noSuccessor {G L N : ℕ} (hL : L ≤ G) :
     ∑ j : Fin N, (Finset.univ.filter fun starts : Fin N → Fin G =>
         NoSuccessor L starts j).card = N * G * (G - (L - 1)) ^ (N - 1) := by
   simp_rw [card_noSuccessor hL]
@@ -374,7 +374,7 @@ theorem expected_noSuccessor {G L N : ℕ} (hG : 0 < G) (hL : L ≤ G) :
   have hG' : (G : ℝ) ≠ 0 := by exact_mod_cast hG.ne'
   have hL1 : L - 1 ≤ G := (Nat.sub_le L 1).trans hL
   simp only [uniformProb, ← Finset.sum_div]
-  rw [← Nat.cast_sum, sum_card_noSuccessor hL hG]
+  rw [← Nat.cast_sum, sum_card_noSuccessor hL]
   rcases Nat.eq_zero_or_pos N with hN | hN
   · subst hN
     simp
