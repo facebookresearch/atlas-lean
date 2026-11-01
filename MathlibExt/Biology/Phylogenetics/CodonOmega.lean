@@ -27,7 +27,8 @@ frequencies `π` and exchangeability
 * times `κ` if that change is a transition;
 * times `ω` if it changes the amino acid (nonsynonymous).
 
-At stationarity the rates of synonymous and nonsynonymous substitutions per codon are
+At stationarity (so `∑ i, π i = 1`) the rates of synonymous and nonsynonymous
+substitutions per codon are
 `ρ_S(ω) = ∑_{i ≠ j, aa i = aa j} π_i Q_ij` and `ρ_N(ω) = ∑_{aa i ≠ aa j} π_i Q_ij`. Only the
 nonsynonymous exchangeabilities involve `ω`, so `ρ_S(ω) = ρ_S(1)` and `ρ_N(ω) = ω ρ_N(1)`.
 
@@ -41,8 +42,13 @@ substitutions along a branch of length `t` are `t` times these rates (not proved
 ratio is the same for every branch length. Consistency of the Nei–Gojobori counting estimator
 is not covered.
 
-The parameter domain is `π_i ≥ 0`, `κ ≥ 0`, `ω ≥ 0`; the algebraic identities hold for all
-real `κ`, `ω`, `π`.
+The biological parameter domain is `π_i ≥ 0`, `∑ i, π i = 1`, `κ ≥ 0`, `ω ≥ 0`.
+`synRate` and `nonsynRate` are the stationary substitution rates only under the
+normalization `∑ i, π i = 1`: for unnormalized weights with `Z = ∑ i, π i`, the
+rates computed from `π` are `Z ^ 2` times the rates for the normalized distribution
+`π / Z` (both the weight `π_i` and the rate matrix built from `π` scale by `Z`).
+The algebraic identities below (`synRate_eq`, `nonsynRate_eq`, `dN_div_dS`, …)
+hold for arbitrary real `κ`, `ω`, `π` and do not need normalization.
 
 ## Main results
 
@@ -134,12 +140,14 @@ def gyRate (π : ι → ℝ) (nuc : ι → Codon) (aa : ι → α) (κ ω : ℝ)
   gtrRate π (gyExchange nuc aa κ ω)
 
 /-- The stationary **rate of synonymous substitutions** per codon,
-`ρ_S = ∑_{i ≠ j, aa i = aa j} π_i Q_ij`. -/
+`ρ_S = ∑_{i ≠ j, aa i = aa j} π_i Q_ij`. This is the stationary rate when
+`∑ i, π i = 1`; for unnormalized weights it is scaled by `(∑ i, π i) ^ 2`. -/
 def synRate (π : ι → ℝ) (nuc : ι → Codon) (aa : ι → α) (κ ω : ℝ) : ℝ :=
   ∑ i, ∑ j ∈ univ.filter fun j => j ≠ i ∧ aa j = aa i, π i * gyRate π nuc aa κ ω i j
 
 /-- The stationary **rate of nonsynonymous substitutions** per codon,
-`ρ_N = ∑_{aa i ≠ aa j} π_i Q_ij`. -/
+`ρ_N = ∑_{aa i ≠ aa j} π_i Q_ij`. This is the stationary rate when
+`∑ i, π i = 1`; for unnormalized weights it is scaled by `(∑ i, π i) ^ 2`. -/
 def nonsynRate (π : ι → ℝ) (nuc : ι → Codon) (aa : ι → α) (κ ω : ℝ) : ℝ :=
   ∑ i, ∑ j ∈ univ.filter fun j => aa j ≠ aa i, π i * gyRate π nuc aa κ ω i j
 
