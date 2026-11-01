@@ -293,6 +293,26 @@ class SelectTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 select_target(client, root, CONFIG, manual="v4.36.0-rc1", allow_rc=False)
 
+    def test_allow_rc_requires_explicit_rc_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_tree(root, "v4.35.0")
+            client = FakeGitHub(tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
+                "leanprover/lean4", "leanprover-community/mathlib4",
+                "leanprover/cslib"]})
+            # Auto-selection with --allow-rc must not pick a final release
+            # (finish would then publish it on an -rc branch).
+            target, _, _ = select_target(client, root, CONFIG, allow_rc=True)
+            self.assertEqual(target, "")
+            # A final target with --allow-rc is not an explicit -rc target.
+            with self.assertRaises(ValueError):
+                select_target(client, root, CONFIG, manual="v4.36.0", allow_rc=True)
+
+    def test_bump_branch_uses_target_syntax_not_allow_rc(self):
+        self.assertEqual(pinned_bump.bump_branch("v4.36.0"), "bump-pinned/v4.36.0")
+        self.assertEqual(pinned_bump.bump_branch("v4.36.0-rc1"),
+                         "bump-pinned-rc/v4.36.0-rc1")
+
 
 class EditTests(unittest.TestCase):
     def test_apply_pin_edits(self):
@@ -933,6 +953,51 @@ class ApiExistenceTests(unittest.TestCase):
             client, ledger, checks, mathlib_sha=self.NEW,
             mathlib_repo="leanprover-community/mathlib4")
         self.assertTrue(any("N1" in p for p in problems), problems)
+
+    def test_fails_when_api_only_in_comment(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        client = self._client({
+            ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+                b"-- theorem N1 : True := trivial\n",
+        })
+        problems = pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4")
+        self.assertTrue(any("N1" in p for p in problems), problems)
+
+    def test_fails_when_api_in_wrong_namespace(self):
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        # The ledger wants N1 in Mathlib.Foo; a declaration of Other.N1
+        # (qualified, or N1 under `namespace Other`) is not it.
+        for source in (
+            b"theorem Other.N1 : True := trivial\n",
+            b"namespace Other\ntheorem N1 : True := trivial\nend Other\n",
+        ):
+            client = self._client({
+                ("leanprover-community/mathlib4", "Mathlib/Foo.lean"): source,
+            })
+            problems = pinned_bump.verify_apis_exist_at_pin(
+                client, ledger, checks, mathlib_sha=self.NEW,
+                mathlib_repo="leanprover-community/mathlib4")
+            self.assertTrue(any("N1" in p for p in problems), (source, problems))
+
+    def test_passes_when_api_declared_under_matching_namespace(self):
+        # Fixture API is bare "N1"; a module declaring it as N1 under no
+        # namespace passes, and a qualified ledger name passes when the
+        # namespace matches. Use a qualified ledger entry for the latter.
+        ledger, checks = migration_fixture(
+            mathlib_sha=self.NEW, lean_tag="leanprover/lean4:v4.36.0")
+        ledger["destination_apis"][0]["name"] = "Wanted.N1"
+        checks["triage_apis"][0]["name"] = "Wanted.N1"
+        client = self._client({
+            ("leanprover-community/mathlib4", "Mathlib/Foo.lean"):
+                b"namespace Wanted\ntheorem N1 : True := trivial\nend Wanted\n",
+        })
+        self.assertEqual(pinned_bump.verify_apis_exist_at_pin(
+            client, ledger, checks, mathlib_sha=self.NEW,
+            mathlib_repo="leanprover-community/mathlib4"), [])
 
     def test_fails_closed_when_module_fetch_fails(self):
         ledger, checks = migration_fixture(

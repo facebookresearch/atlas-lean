@@ -60,7 +60,6 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           MERGE_GROUP_BASE_SHA: ${{ github.event.merge_group.base_sha }}
           MERGE_GROUP_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
-          MERGE_GROUP_HEAD_REF: ${{ github.event.merge_group.head_ref }}
           PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -78,7 +77,6 @@ jobs:
           if [ "$EVENT_NAME" = "merge_group" ]; then
             BASE_REF="$MERGE_GROUP_BASE_SHA"
             HEAD_SHA="$MERGE_GROUP_HEAD_SHA"
-            PR_NUMBER="$(python3 scripts/bump/pinned_bump.py merge-group-pr "$MERGE_GROUP_HEAD_REF")"
           else
             BASE_REF="$PR_BASE_REF"
             HEAD_SHA="$PR_HEAD_SHA"
@@ -118,19 +116,39 @@ jobs:
               download_one "$dir" "$REF" "$file" false
             done
           done
-          # Paginated REST file list: `gh pr view --json files` caps at 100.
-          # Include previous_filename so renaming a protected file (guard
-          # workflow/script/config) cannot hide its original name, and
-          # fail closed if the entry count disagrees with changed_files.
-          EXPECTED_COUNT="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq '.changed_files')"
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
-            --jq '.[] | .filename' > /tmp/guard/filenames.txt
-          ENTRY_COUNT="$(wc -l < /tmp/guard/filenames.txt | tr -d ' ')"
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
-            --jq '.[] | select(.previous_filename != null) | .previous_filename' >> /tmp/guard/filenames.txt
-          if [ "$ENTRY_COUNT" != "$EXPECTED_COUNT" ]; then
-            echo "::error::changed-file enumeration is incomplete (got $ENTRY_COUNT entries, PR reports $EXPECTED_COUNT); failing closed."
-            exit 1
+          if [ "$EVENT_NAME" = "merge_group" ]; then
+            # Merge group: derive the changed-file list from the complete
+            # base-to-group diff. A merge group can hold several PRs, so a
+            # list taken from the single PR parsed from the head ref would
+            # omit pin/guard changes from the other grouped PRs and let the
+            # guard validate the combined tree against an incomplete file
+            # list. Include previous_filename so renaming a protected file
+            # cannot hide its original name. The compare API caps files at
+            # 300, so hitting the cap fails closed as possibly truncated.
+            gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" \
+              --jq '.files[] | .filename' > /tmp/guard/filenames.txt
+            ENTRY_COUNT="$(wc -l < /tmp/guard/filenames.txt | tr -d ' ')"
+            gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" \
+              --jq '.files[] | select(.previous_filename != null) | .previous_filename' >> /tmp/guard/filenames.txt
+            if [ "$ENTRY_COUNT" -ge 300 ]; then
+              echo "::error::changed-file enumeration may be truncated at the compare API cap of 300 files; failing closed."
+              exit 1
+            fi
+          else
+            # Paginated REST file list: `gh pr view --json files` caps at 100.
+            # Include previous_filename so renaming a protected file (guard
+            # workflow/script/config) cannot hide its original name, and
+            # fail closed if the entry count disagrees with changed_files.
+            EXPECTED_COUNT="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq '.changed_files')"
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+              --jq '.[] | .filename' > /tmp/guard/filenames.txt
+            ENTRY_COUNT="$(wc -l < /tmp/guard/filenames.txt | tr -d ' ')"
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+              --jq '.[] | select(.previous_filename != null) | .previous_filename' >> /tmp/guard/filenames.txt
+            if [ "$ENTRY_COUNT" != "$EXPECTED_COUNT" ]; then
+              echo "::error::changed-file enumeration is incomplete (got $ENTRY_COUNT entries, PR reports $EXPECTED_COUNT); failing closed."
+              exit 1
+            fi
           fi
           cp /tmp/guard/filenames.txt /tmp/guard/changed.txt
           python3 scripts/bump/pinned_bump.py guard \

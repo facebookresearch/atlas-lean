@@ -39,8 +39,12 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            trusted base tree and the live tags, with a read-only token.
   merge-group-pr
            Parse a merge-group head ref (gh-readonly-queue/<branch>/
-           pr-<number>-...) to its PR number, for the guard's merge_group
-           run (see bump-guard.yml).
+           pr-<number>-...) to its PR number. Legacy helper retained for
+           compatibility; the guard's merge_group run no longer uses it --
+           it derives the changed-file list from the complete base-to-group
+           compare diff instead (see bump-guard.yml), so a merge group
+           holding several PRs cannot hide a pin/guard change from a PR
+           other than the first one parsed from the head ref.
   guard    Run on every PR touching (or renaming) any file, from trusted
            base code (pull_request_target). Validates a pin-change PR
            without building it or running any PR code. Adapted from
@@ -105,6 +109,32 @@ def is_final(tag: str) -> bool:
 
 def is_version_tag(tag: str, *, allow_rc: bool) -> bool:
     return is_final(tag) or (allow_rc and RC_RE.match(tag) is not None)
+
+
+def bump_branch(target: str) -> str:
+    """Branch for a bump PR, chosen from the target's syntax, never from
+    the --allow-rc flag: an -rc target goes on bump-pinned-rc/, every
+    other version tag on bump-pinned/. Deriving the branch from the flag
+    published a final release onto an -rc branch whenever --allow-rc
+    was set with an empty (auto-selected, final) target."""
+    if RC_RE.fullmatch(target):
+        return f"bump-pinned-rc/{target}"
+    return f"bump-pinned/{target}"
+
+
+def _require_explicit_rc_target(target: str, *, allow_rc: bool) -> None:
+    """Fail when --allow-rc is set without an explicit -rc target.
+
+    --allow-rc is permission to accept one explicitly named -rc target,
+    not a mode: with an empty target the selector would otherwise pick
+    the newest final release, and with a final target the run would
+    publish a final release as if it were a preview."""
+    if allow_rc and RC_RE.fullmatch(target) is None:
+        raise ValueError(
+            "--allow-rc requires an explicit -rc target "
+            f"(got {target!r}); auto-selection and final targets do not "
+            "go on an -rc branch"
+        )
 
 
 def load_config(root: Path) -> dict:
@@ -370,18 +400,128 @@ def check_ledgers_match_expected(
     return problems
 
 
-_DECL_RE = re.compile(
-    r"\b(?:theorem|lemma|def|abbrev|irreducible_def|structure|class|inductive|axiom|constant|opaque"
+def _strip_lean_comments_and_strings(source: str) -> str:
+    """Source with comments and string/char literals blanked (newlines kept).
+
+    A `-- theorem N1` line, a `/- theorem N1 -/` block, or a string
+    containing that text is not a declaration. Block comments nest in
+    Lean. A `'` is a char literal only when it matches `'x'` / `'\\n'`
+    etc.; a trailing prime in `smul_tmul'` is part of the identifier
+    and is left alone."""
+    out: list[str] = []
+    i, n = 0, len(source)
+    while i < n:
+        ch, nxt = source[i], source[i + 1] if i + 1 < n else ""
+        if ch == '"':
+            out.append(" ")
+            i += 1
+            while i < n and source[i] != '"':
+                if source[i] == "\\" and i + 1 < n:
+                    out.append("\n" if source[i] == "\n" else " ")
+                    i += 1
+                    out.append("\n" if source[i] == "\n" else " ")
+                    i += 1
+                    continue
+                out.append("\n" if source[i] == "\n" else " ")
+                i += 1
+            if i < n:
+                out.append(" ")
+                i += 1
+            continue
+        if ch == "'" and re.match(r"'(?:\\.|[^'\\])'", source[i:]):
+            out.append("   " if source[i + 1] != "\\" else "    ")
+            i += 3 if source[i + 1] != "\\" else 4
+            continue
+        if ch == "-" and nxt == "-":
+            while i < n and source[i] != "\n":
+                out.append(" ")
+                i += 1
+            continue
+        if ch == "/" and nxt == "-":
+            depth = 1
+            out.append("  ")
+            i += 2
+            while i < n and depth > 0:
+                if source[i] == "/" and i + 1 < n and source[i + 1] == "-":
+                    depth += 1
+                    out.append("  ")
+                    i += 2
+                elif source[i] == "-" and i + 1 < n and source[i + 1] == "/":
+                    depth -= 1
+                    out.append("  ")
+                    i += 2
+                else:
+                    out.append("\n" if source[i] == "\n" else " ")
+                    i += 1
+            continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+# One token scanner, in source order, so `namespace` / `end` / `section`
+# / `mutual` blocks nest correctly around the declarations inside them.
+_TOKEN_RE = re.compile(
+    # namespace / end arguments stay on the same line: `\s+` would let a
+    # bare `end` at end-of-line swallow the next line's `end` as its
+    # argument (`end\nend Wanted` -> endname "end").
+    r"\bnamespace[ \t]+(?P<ns>[A-Za-z_][\w\'.]*)"
+    r"|\bsection\b"
+    r"|\bmutual\b"
+    r"|\bend(?:[ \t]+(?P<endname>[A-Za-z_][\w\'.]*))?"
+    r"|\b(?:theorem|lemma|def|abbrev|irreducible_def|structure|class|inductive|axiom|constant|opaque"
     # Instances may carry a parenthesized priority before the name:
     # `instance (priority := 100) uniqueFactorizationMonoid : ...`.
     r"|instance(?:\s*\([^)]*\))*)"
-    r"\s+([A-Za-z_][\w\'.]*)"
+    r"\s+(?P<decl>[A-Za-z_][\w\'.]*)"
 )
+
+
+def _declared_qualified_names(source: str) -> set[str]:
+    """Fully qualified names declared in Lean source text.
+
+    `theorem N1` inside `namespace Wanted` declares `Wanted.N1`, not
+    `N1`; `theorem Other.N1` at top level declares `Other.N1`, not
+    `Wanted.N1`. Matching on short names let either pass for a ledger
+    pointer to `Wanted.N1`. A `_root_.`-prefixed name is absolute and
+    ignores the enclosing namespace; other names are prefixed with the
+    enclosing namespace path, as Lean resolves them."""
+    cleaned = _strip_lean_comments_and_strings(source)
+    # Each block is ("namespace", components) or ("section", []).
+    blocks: list[tuple[str, list[str]]] = []
+    declared: set[str] = set()
+    for match in _TOKEN_RE.finditer(cleaned):
+        if match.group("ns") is not None:
+            blocks.append(("namespace", match.group("ns").split(".")))
+        elif match.group("endname") is not None:
+            endname = match.group("endname")
+            for idx in range(len(blocks) - 1, -1, -1):
+                if blocks[idx][0] == "namespace" and ".".join(blocks[idx][1]) == endname:
+                    del blocks[idx:]
+                    break
+            else:
+                if blocks and blocks[-1][0] == "section":
+                    blocks.pop()
+        elif match.group(0) in ("section", "mutual"):
+            blocks.append(("section", []))
+        elif match.group(0).strip() == "end" or match.group(0) == "end":
+            if blocks:
+                blocks.pop()
+        elif match.group("decl") is not None:
+            name = match.group("decl")
+            if name.startswith("_root_."):
+                declared.add(name[len("_root_."):])
+            else:
+                prefix = [c for _, comps in blocks for c in comps]
+                declared.add(".".join(prefix + [name]) if prefix else name)
+        # Bare `end` is matched by the `end` alternative above with no
+        # endname; it falls into the `match.group(0) == "end"` branch.
+    return declared
 
 
 def _declared_short_names(source: str) -> set[str]:
     """Short (last-component) names declared in Lean source text."""
-    return {name.split(".")[-1] for name in _DECL_RE.findall(source)}
+    return {name.split(".")[-1] for name in _declared_qualified_names(source)}
 
 
 def verify_apis_exist_at_pin(
@@ -395,13 +535,17 @@ def verify_apis_exist_at_pin(
     candidates (scope ``unverified``, per the ledger README), not audit
     evidence: advancing them to a new SHA must not record a candidate
     whose API was removed or renamed at that SHA. Each listed module
-    file is fetched at the exact SHA and the API's short name must be
-    declared in it. This is source-declaration evidence at the pinned
-    SHA, not a compiler proof (a same-named declaration or a docstring
-    mention passes); it fails closed on any fetch error. MathlibExt.*
-    APIs are not advanced by a bump -- they stay at the frozen base --
-    so they are not checked here. Unnamed instances (``name`` is null)
-    are checked only for module-file existence.
+    file is fetched at the exact SHA and the API's fully qualified name
+    must be declared in it, with comments/strings stripped and the
+    enclosing `namespace` blocks tracked: `Wanted.N1` passes on
+    `namespace Wanted` + `theorem N1`, but not on `Other.N1`, on
+    `namespace Other` + `theorem N1`, or on a comment mentioning it.
+    This is source-declaration evidence at the pinned SHA, not a
+    compiler proof (a same-named declaration still passes); it fails
+    closed on any fetch error. MathlibExt.* APIs are not advanced by a
+    bump -- they stay at the frozen base -- so they are not checked
+    here. Unnamed instances (``name`` is null) are checked only for
+    module-file existence.
     """
     wanted: dict[str, list[str | None]] = {}
     for api in ledger.get("destination_apis", []):
@@ -424,12 +568,11 @@ def verify_apis_exist_at_pin(
                 f"cannot fetch {module} at {mathlib_sha}: {exc}"
             )
             continue
-        declared = _declared_short_names(source)
+        declared = _declared_qualified_names(source)
         for name in wanted[module]:
             if name is None:
                 continue
-            short = name.split(".")[-1]
-            if short not in declared:
+            if name not in declared:
                 problems.append(
                     f"Mathlib API {name} is not declared in {module} at "
                     f"{mathlib_sha} (removed or renamed upstream)"
@@ -755,6 +898,14 @@ def select_target(
     *, manual: str = "", allow_rc: bool = False,
 ) -> tuple[str, int | None, str]:
     """Return (target, mathlib_run_id, reason). Empty target means no-op."""
+    if allow_rc and not manual:
+        return (
+            "", None,
+            "--allow-rc requires an explicit -rc target; auto-selection "
+            "only picks final releases",
+        )
+    if allow_rc and manual:
+        _require_explicit_rc_target(manual, allow_rc=allow_rc)
     current = current_tag(root, config)
     slugs = [config["toolchain_repo"]] + [dep["repo"] for dep in config["deps"]]
     tags_by_slug: dict[str, list[str]] = {}
@@ -1119,6 +1270,12 @@ def validate_prepared_contents(
     write credential exists, even though the filenames are unchanged.
     """
     problems: list[str] = []
+    if allow_rc and RC_RE.fullmatch(target) is None:
+        return [
+            "--allow-rc requires an explicit -rc target "
+            f"(got {target!r}); auto-selection and final targets do not "
+            "go on an -rc branch"
+        ]
     if not is_version_tag(target, allow_rc=allow_rc):
         return [f"target {target!r} is not a version tag"]
     try:
@@ -1317,7 +1474,7 @@ def cmd_finish(args: argparse.Namespace) -> int:
     except (ValueError, RuntimeError) as exc:
         print(f"finish: FAIL - {exc}", file=sys.stderr)
         return 2
-    branch = f"bump-pinned-rc/{target}" if args.allow_rc else f"bump-pinned/{target}"
+    branch = bump_branch(target)
     # If an open PR already points at this branch, leave it alone: it may
     # hold human repair commits. Only a PR from this repo targeting main
     # counts: a fork can reuse the predictable branch name.
