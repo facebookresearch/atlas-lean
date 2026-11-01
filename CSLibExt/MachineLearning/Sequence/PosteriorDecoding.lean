@@ -54,7 +54,7 @@ set_option autoImplicit false
 
 namespace Cslib.MachineLearning.Sequence.HiddenMarkov
 
-variable {O K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {n : ℕ}
+variable {O K : Type*} [Semifield K] [LinearOrder K] {n : ℕ}
   (x : ℕ → O) (g : HMM (Fin n) O K)
 
 /-- **Posterior decoding**: at each time `t ≤ T`, a state of largest posterior
@@ -62,13 +62,12 @@ variable {O K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {n : �
 def posteriorPath [NeZero n] (T : ℕ) : Fin (T + 1) → Fin n :=
   fun t => argmaxFin fun s => smoothed x g t (T - t) s
 
-omit [IsStrictOrderedRing K] in
 /-- The posterior path picks a state of largest posterior at each time. -/
 theorem smoothed_le_posteriorPath [NeZero n] (T : ℕ) (t : Fin (T + 1)) (s : Fin n) :
     smoothed x g t (T - t) s ≤ smoothed x g t (T - t) (posteriorPath x g T t) :=
   le_argmaxFin _ s
 
-omit [LinearOrder K] [IsStrictOrderedRing K] in
+omit [LinearOrder K] in
 /-- The posterior of state `s` at time `t ≤ T`, as a sum over the paths of length `T + 1`: the
 total weight of the paths through `s` at time `t` over the likelihood. -/
 theorem smoothed_eq_sum_pathProb (T : ℕ) (t : Fin (T + 1)) (s : Fin n) :

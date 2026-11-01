@@ -28,7 +28,10 @@ Both are instances of one dynamic program. An `AlignmentAutomaton` reads an alig
 column, carrying a control state `q : Q` (for a pair HMM, the previous HMM state; for a profile
 HMM, `ProfileHMM.lean`, the previous state and the current model node): each column has a
 weight given the control state, and the alignment ends with a final weight. `sumDP` peels the
-first column (three cases, like Needleman–Wunsch), and `maxDP` takes the largest of the three.
+first column (three cases, like Needleman–Wunsch), and `maxDP` takes the largest of the three
+products of a column weight with a recursively computed value. That is the largest alignment
+weight only under nonnegative weights (see `alignWeight_le_maxDP`): with a negative column
+weight, multiplying by the recursively chosen suffix maximum can reverse the order.
 
 ## Main results
 
@@ -36,8 +39,10 @@ first column (three cases, like Needleman–Wunsch), and `maxDP` takes the large
   sequence over `α` with a sequence over `β` exactly once (`alignmentsOf_eq_alignments`: on one
   alphabet it is `Cslib.Algorithms.Lean.alignments`).
 * `sumDP_eq_sum`: **the sum recursion is the sum over all alignments** of the alignment weights.
-* `alignWeight_le_maxDP`, `exists_alignWeight_eq_maxDP`: **the max recursion is the largest
-  alignment weight**, attained (nonnegative weights in a linearly ordered semiring).
+* `alignWeight_le_maxDP`, `exists_alignWeight_eq_maxDP`: under nonnegative weights in a
+  linearly ordered semiring, the max recursion is the largest alignment weight
+  (`alignWeight_le_maxDP`) and is attained (`exists_alignWeight_eq_maxDP`). Without
+  nonnegativity the recursion is only the value of the recursively chosen alignment.
 * `sumDP_cons_cons`, `maxDP_cons_cons` (and the boundary cases): the recursions in
   first-column form.
 * `PairHMM.likelihood_eq_sum`, `PairHMM.alignProb_le_viterbi`,
@@ -364,8 +369,10 @@ def maxDPAux : ℕ → Q → List α → List β → R
         (M.weight q (some a, none) * maxDPAux n (M.next q (some a, none)) xs (b :: ys)))
         (M.weight q (none, some b) * maxDPAux n (M.next q (none, some b)) (a :: xs) ys)
 
-/-- The largest weight of an alignment of `xs` and `ys` read from control state `q`, by the
-first-column recursion (`alignWeight_le_maxDP`, `exists_alignWeight_eq_maxDP`). -/
+/-- The max-recursion value of an alignment of `xs` and `ys` read from control state `q`, by
+the first-column recursion (`alignWeight_le_maxDP`, `exists_alignWeight_eq_maxDP`). It is the
+largest alignment weight only when the weights are nonnegative; in general it is the value of
+the recursively chosen alignment. -/
 def maxDP (q : Q) (xs : List α) (ys : List β) : R :=
   maxDPAux M (xs.length + ys.length + 1) q xs ys
 
@@ -592,7 +599,9 @@ section Viterbi
 
 variable [Semiring R] [LinearOrder R] (h : PairHMM α R)
 
-/-- The Viterbi value of a pair HMM: the largest joint weight of `xs`, `ys` and an alignment. -/
+/-- The Viterbi value of a pair HMM: the max-recursion value for `xs`, `ys`. It is the
+largest joint weight over alignments when the HMM weights are nonnegative
+(see `alignProb_le_viterbi`). -/
 def viterbi (xs ys : List α) : R := h.toAutomaton.maxDP none xs ys
 
 /-- Nonnegative transition weights into emitting states and nonnegative emission weights (the

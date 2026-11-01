@@ -72,6 +72,18 @@ example (z : Fin 2 → Fin 3) :
     expectedCorrect obs cex 1 z ≤ expectedCorrect obs cex 1 (posteriorPath obs cex 1) :=
   expectedCorrect_le_posteriorPath obs cex 1 z
 
+/-- Posterior decoding over `NNReal`: a semifield that is not a field. -/
+def nnrealHMM : HMM (Fin 1) Unit NNReal where
+  init _ := 1
+  trans _ _ := 1
+  emit _ _ := 1
+
+example (z : Fin 2 → Fin 1) :
+    expectedCorrect (fun _ => ()) nnrealHMM 1 z ≤
+      expectedCorrect (fun _ => ()) nnrealHMM 1
+        (posteriorPath (fun _ => ()) nnrealHMM 1) :=
+  expectedCorrect_le_posteriorPath (fun _ => ()) nnrealHMM 1 z
+
 /-- Boundary: with likelihood `0` (an impossible observation), all posteriors are `0`, so
 `expectedCorrect` is `0` (the `x / 0 = 0` convention), not an expectation. -/
 example : expectedCorrect obs
