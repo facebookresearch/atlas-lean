@@ -12,6 +12,7 @@ public import MathlibExt.Biology.Phylogenetics.TreeCount
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import MathlibExt.Combinatorics.SimpleGraph.ConnectedParent
 
 /-!
 # Counting unrooted binary phylogenetic trees
@@ -376,7 +377,7 @@ private theorem equiv_of_clusterFinset_eq {α : Type u} [DecidableEq α] (s : Pl
           (.rel _ _ (.root _ _))
 
 /-- The members of a binary hierarchy below a member form a binary hierarchy. -/
-private theorem isBinaryHierarchy_filter {α : Type u} [DecidableEq α] {S D : Finset α}
+theorem isBinaryHierarchy_filter {α : Type u} [DecidableEq α] {S D : Finset α}
     {H : Finset (Finset α)} (hH : IsBinaryHierarchy S H) (hD : D ∈ H) :
     IsBinaryHierarchy D (H.filter (· ⊆ D)) := by
   obtain ⟨-, hsub, hsing, hlam, hsplit⟩ := hH
@@ -505,20 +506,6 @@ private theorem beyond_trans {V : Type} {G : SimpleGraph V} (hG : G.Connected) {
   have := hG.dist_triangle (u := s) (v := u) (w := w)
   omega
 
-private theorem exists_parent {V : Type} {G : SimpleGraph V} (hG : G.Connected) {s v : V}
-    (hv : v ≠ s) : ∃ p, G.Adj v p ∧ G.dist s p + 1 = G.dist s v := by
-  obtain ⟨q, hq⟩ := hG.exists_walk_length_eq_dist v s
-  cases q with
-  | nil => exact absurd rfl hv
-  | @cons _ c _ h q' =>
-    refine ⟨c, h, ?_⟩
-    have h1 := SimpleGraph.dist_le q'
-    have h2 := (SimpleGraph.dist_eq_one_iff_adj.mpr h)
-    have h3 := hG.dist_triangle (u := v) (v := c) (w := s)
-    simp only [SimpleGraph.Walk.length_cons] at hq
-    rw [SimpleGraph.dist_comm (u := s), SimpleGraph.dist_comm (u := s)]
-    omega
-
 private theorem parent_unique {V : Type} {G : SimpleGraph V} (hG : G.IsTree) {s v p₁ p₂ : V}
     (h₁ : G.Adj v p₁) (h₂ : G.Adj v p₂) (hd₁ : G.dist s p₁ + 1 = G.dist s v)
     (hd₂ : G.dist s p₂ + 1 = G.dist s v) : p₁ = p₂ := by
@@ -596,7 +583,7 @@ private theorem exists_ancestor {V : Type} {G : SimpleGraph V} (hG : G.Connected
     intro y hy k hk
     rcases Nat.lt_or_ge k (n + 1) with hk' | hk'
     · have hys : y ≠ s := by rintro rfl; simp at hy
-      obtain ⟨p, hp, hdp⟩ := exists_parent hG hys
+      obtain ⟨p, hp, hdp⟩ := SimpleGraph.exists_parent hG hys
       obtain ⟨z, hz, hzb⟩ := ih p (by omega) k (by omega)
       refine ⟨z, hz, beyond_trans hG hzb ?_⟩
       unfold Beyond
@@ -679,7 +666,7 @@ private theorem adj_unique_of_degree_one {V : Type} [Fintype V] {G : SimpleGraph
 private theorem no_child_of_leaf {V : Type} [Fintype V] {G : SimpleGraph V}
     [DecidableRel G.Adj] (hG : G.IsTree) {s v c : V} (hv : G.degree v = 1) (hvs : v ≠ s)
     (hc : G.Adj v c) (hd : G.dist s c = G.dist s v + 1) : False := by
-  obtain ⟨p, hp, hdp⟩ := exists_parent hG.connected hvs
+  obtain ⟨p, hp, hdp⟩ := SimpleGraph.exists_parent hG.connected hvs
   have := adj_unique_of_degree_one hv hc hp
   subst this
   omega
@@ -692,7 +679,7 @@ private theorem two_children {V : Type} [Fintype V] {G : SimpleGraph V}
       G.dist s c₂ = G.dist s v + 1 ∧
       ∀ c, G.Adj v c → G.dist s c = G.dist s v + 1 → c = c₁ ∨ c = c₂ := by
   classical
-  obtain ⟨p, hp, hdp⟩ := exists_parent hG.connected hvs
+  obtain ⟨p, hp, hdp⟩ := SimpleGraph.exists_parent hG.connected hvs
   have hpm : p ∈ G.neighborFinset v := (G.mem_neighborFinset v p).mpr hp
   have hcard : ((G.neighborFinset v).erase p).card = 2 := by
     rw [Finset.card_erase_of_mem hpm, SimpleGraph.card_neighborFinset_eq_degree, hv]
