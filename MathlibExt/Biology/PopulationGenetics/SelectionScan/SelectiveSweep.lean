@@ -237,12 +237,6 @@ noncomputable def ihh (r T : ℝ) : ℝ := ∫ d in Ioi (0 : ℝ), sweepEhh r T 
 one-sided integrals in the two chromosome directions. -/
 noncomputable def ihh_twoSided (r T : ℝ) : ℝ := 2 * ihh r T
 
-/-- In the star-genealogy model the two-sided integrated haplotype homozygosity is
-`1 / (r T)`. -/
-theorem ihh_twoSided_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh_twoSided r T = (r * T)⁻¹ := by
-  rw [ihh_twoSided, ihh_eq hr hT, show (2 : ℝ) * r * T = 2 * (r * T) by ring, mul_inv,
-    ← mul_assoc, mul_inv_cancel₀ two_ne_zero, one_mul]
-
 /-- In the star-genealogy model the one-sided integrated haplotype homozygosity is
 `1 / (2 r T)`. -/
 theorem ihh_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh r T = (2 * r * T)⁻¹ := by
@@ -254,6 +248,12 @@ theorem ihh_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh r T = (2 * r * T)⁻�
   rw [ihh, setIntegral_congr_fun measurableSet_Ioi hcongr,
     integral_comp_mul_left_Ioi (fun y : ℝ => exp (-y)) 0 hb, mul_zero,
     integral_exp_neg_Ioi_zero, smul_eq_mul, mul_one]
+
+/-- In the star-genealogy model the two-sided integrated haplotype homozygosity is
+`1 / (r T)`. -/
+theorem ihh_twoSided_eq {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : ihh_twoSided r T = (r * T)⁻¹ := by
+  rw [ihh_twoSided, ihh_eq hr hT, show (2 : ℝ) * r * T = 2 * (r * T) by ring, mul_inv,
+    ← mul_assoc, mul_inv_cancel₀ two_ne_zero, one_mul]
 
 theorem ihh_pos {r T : ℝ} (hr : 0 < r) (hT : 0 < T) : 0 < ihh r T := by
   rw [ihh_eq hr hT]
