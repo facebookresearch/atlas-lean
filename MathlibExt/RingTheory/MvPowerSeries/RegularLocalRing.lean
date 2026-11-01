@@ -34,7 +34,7 @@ public import MathlibExt.RingTheory.PowerSeries.RegularLocalRing
 public import Mathlib.RingTheory.MvPowerSeries.Equiv
 
 /-!
-# Multivariable power series over a discrete valuation ring are regular local
+# Multivariable power series over a regular local ring are regular local
 
 By induction on the number of variables, using the identification of
 `MvPowerSeries (Fin (n + 1)) 𝓞` with power series over
@@ -44,13 +44,13 @@ local ring are regular local.
 
 @[expose] public section
 
-/-- Multivariable power series over a discrete valuation ring form a
-regular local ring. -/
-theorem IsRegularLocalRing.mvPowerSeries_fin (𝓞 : Type*) [CommRing 𝓞] [IsDomain 𝓞]
-    [IsDiscreteValuationRing 𝓞] (n : ℕ) : IsRegularLocalRing (MvPowerSeries (Fin n) 𝓞) := by
+/-- Multivariable power series over a regular local ring form a
+regular local ring. The discrete-valuation-ring case follows by typeclass
+inference, since a DVR is a regular local ring. -/
+theorem IsRegularLocalRing.mvPowerSeries_fin (𝓞 : Type*) [CommRing 𝓞]
+    [IsRegularLocalRing 𝓞] (n : ℕ) : IsRegularLocalRing (MvPowerSeries (Fin n) 𝓞) := by
   induction n with
   | zero =>
-    haveI : IsRegularLocalRing 𝓞 := inferInstance
     exact IsRegularLocalRing.of_ringEquiv (MvPowerSeries.isEmptyEquiv (Fin 0) 𝓞).toRingEquiv.symm
   | succ n ih =>
     haveI := ih

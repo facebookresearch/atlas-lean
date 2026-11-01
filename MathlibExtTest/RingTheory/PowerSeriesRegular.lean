@@ -14,6 +14,11 @@ public import MathlibExt.RingTheory.MvPowerSeries.RegularLocalRing
 
 open PowerSeries
 
+example (𝓞 : Type*) [CommRing 𝓞] [IsRegularLocalRing 𝓞] (n : ℕ) :
+    IsRegularLocalRing (MvPowerSeries (Fin n) 𝓞) :=
+  IsRegularLocalRing.mvPowerSeries_fin 𝓞 n
+
+/-- The DVR case is the general statement specialized by typeclass inference. -/
 example (𝓞 : Type*) [CommRing 𝓞] [IsDomain 𝓞] [IsDiscreteValuationRing 𝓞] (n : ℕ) :
     IsRegularLocalRing (MvPowerSeries (Fin n) 𝓞) :=
   IsRegularLocalRing.mvPowerSeries_fin 𝓞 n
