@@ -22,7 +22,7 @@ Patterson et al. (2012, section "Admixture graph fitting") fit an admixture grap
 f-statistics predicted by the graph:
 
 * eq. (6): `S1(g) = -½ (g - f)ᵀ Q⁻¹ (g - f)`, an approximate log-likelihood (`scoreS1`);
-* eq. (7): `S2(g) = -½ ∑ᵢ (gᵢ - fᵢ)² / (Qᵢᵢ + λ)`, a least-squares variant with a small
+* eq. (7): `S2(g) = -∑ᵢ (gᵢ - fᵢ)² / (Qᵢᵢ + λ)`, a least-squares variant with a small
   constant `λ` (`scoreS2`).
 
 The paper notes that `S2` is not basis independent, and that for fixed admixture weights both
@@ -39,7 +39,7 @@ these facts:
   `ℓ ↦ S1(B ℓ)` (`scoreS1_le_of_normal_eq`); it is the unique maximizer when `B` has full column
   rank (`eq_of_scoreS1_eq`), and then `ℓ̂ = (Bᵀ Q⁻¹ B)⁻¹ Bᵀ Q⁻¹ f`
   (`isUnit_det_gram`, `normal_eq_gls`);
-* `S2` is `S1` with `Q` replaced by the diagonal matrix of the `Qᵢᵢ + λ`
+* `S2` is twice `S1` with `Q` replaced by the diagonal matrix of the `Qᵢᵢ + λ`
   (`scoreS2_eq_scoreS1_diagonal`), so the same results give weighted least squares.
 
 Not covered: the nonnegativity constraint on edge lengths that the software imposes
@@ -68,10 +68,10 @@ predicted statistics `g` against estimated statistics `f` with error covariance 
 noncomputable def scoreS1 [DecidableEq ι] (Q : Matrix ι ι ℝ) (f g : ι → ℝ) : ℝ :=
   -(1 / 2) * ((g - f) ⬝ᵥ (Q⁻¹ *ᵥ (g - f)))
 
-/-- The least-squares qpGraph score `S2(g) = -½ ∑ᵢ (gᵢ - fᵢ)² / (Qᵢᵢ + λ)` (Patterson et al.
+/-- The least-squares qpGraph score `S2(g) = -∑ᵢ (gᵢ - fᵢ)² / (Qᵢᵢ + λ)` (Patterson et al.
 2012, eq. 7). A term with `Qᵢᵢ + λ = 0` is `0` by the convention `x / 0 = 0`. -/
 noncomputable def scoreS2 (Q : Matrix ι ι ℝ) (lam : ℝ) (f g : ι → ℝ) : ℝ :=
-  -(1 / 2) * ∑ i, (g i - f i) ^ 2 / (Q i i + lam)
+  -∑ i, (g i - f i) ^ 2 / (Q i i + lam)
 
 private theorem mulVec_dotProduct {κ : Type*} [Fintype κ] (A : Matrix ι κ ℝ) (v : κ → ℝ)
     (u : ι → ℝ) : (A *ᵥ v) ⬝ᵥ u = v ⬝ᵥ (Aᵀ *ᵥ u) := by
@@ -98,22 +98,26 @@ theorem exists_scoreS2_basis_change_ne :
   refine ⟨1, !![1, 1; 0, 1], 0, ![1, 0], PosDef.one, by simp [det_fin_two_of], fun lam => ?_⟩
   simp [scoreS2, mulVec, dotProduct, Matrix.mul_apply, Fin.sum_univ_two]
 
-/-- `S2` is `S1` with the covariance replaced by the diagonal matrix of the `Qᵢᵢ + λ`, when these
-are nonzero. -/
+/-- `S2` is twice `S1` with the covariance replaced by the diagonal matrix of the
+`Qᵢᵢ + λ`, when these are nonzero. -/
 theorem scoreS2_eq_scoreS1_diagonal [DecidableEq ι] (Q : Matrix ι ι ℝ) (lam : ℝ)
     (h : ∀ i, Q i i + lam ≠ 0)
-    (f g : ι → ℝ) : scoreS2 Q lam f g = scoreS1 (diagonal fun i => Q i i + lam) f g := by
+    (f g : ι → ℝ) :
+    scoreS2 Q lam f g = 2 * scoreS1 (diagonal fun i => Q i i + lam) f g := by
   have hinv : (diagonal fun i => Q i i + lam)⁻¹ = diagonal fun i => (Q i i + lam)⁻¹ := by
     refine inv_eq_left_inv ?_
     rw [diagonal_mul_diagonal]
     convert diagonal_one with i
     exact inv_mul_cancel₀ (h i)
+  have hdot : (g - f) ⬝ᵥ ((diagonal fun i => Q i i + lam)⁻¹ *ᵥ (g - f)) =
+      ∑ i, (g i - f i) ^ 2 / (Q i i + lam) := by
+    rw [hinv]
+    simp only [dotProduct, mulVec_diagonal, Pi.sub_apply]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    field_simp [h i]
   unfold scoreS2 scoreS1
-  rw [hinv]
-  congr 1
-  simp only [dotProduct, mulVec_diagonal, Pi.sub_apply]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  field_simp [h i]
+  rw [hdot]
+  ring
 
 /-- The qpGraph design matrix of basis statistics `f4 (A i) (B i) (C i) (D i)` for lineage
 weights `w`: entry `(i, e)` is `(w Aᵢ e - w Bᵢ e) * (w Cᵢ e - w Dᵢ e)`. -/

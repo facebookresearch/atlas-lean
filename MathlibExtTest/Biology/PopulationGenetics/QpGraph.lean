@@ -24,7 +24,7 @@ example : scoreS1 (1 : Matrix (Fin 2) (Fin 2) ℝ) ![1, 3] ![2, 2] = -1 := by
   norm_num
 
 /-- `S2` with `Q = 1` and `λ = 1`. -/
-example : scoreS2 (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 ![1, 3] ![2, 2] = -1 / 2 := by
+example : scoreS2 (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 ![1, 3] ![2, 2] = -1 := by
   simp [scoreS2, Fin.sum_univ_two]
   norm_num
 
