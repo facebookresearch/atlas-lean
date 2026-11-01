@@ -11,7 +11,7 @@ module
 public import MathlibExt.Probability.StochasticOrder.StrassenFinite
 
 /-!
-# Tests for `MathlibExt.Probability.StochasticOrder.StrassenFull`
+# Tests for `MathlibExt.Probability.StochasticOrder.StrassenFinite`
 
 * `StatMech.exists_monotoneCoupling_of_stochasticallyDominated` (Strassen's theorem for
   configurations on a finite set): applied to `δ_⊥ ≼ δ_⊤` on `Fin 2` (domination proved directly)
@@ -24,7 +24,7 @@ public import MathlibExt.Probability.StochasticOrder.StrassenFinite
 
 @[expose] public section
 
-namespace MathlibExtTest.StatMech.Probability.StochasticOrder.StrassenFull
+namespace MathlibExtTest.StatMech.Probability.StochasticOrder.StrassenFinite
 
 open MeasureTheory
 open _root_.StatMech _root_.StatMech.Transport
@@ -104,4 +104,4 @@ example : ∃ c : OrderPairs Bool → ℝ, (∀ q, 0 ≤ c q) ∧
   simp [δf, δt] at h1 h2
   linarith
 
-end MathlibExtTest.StatMech.Probability.StochasticOrder.StrassenFull
+end MathlibExtTest.StatMech.Probability.StochasticOrder.StrassenFinite

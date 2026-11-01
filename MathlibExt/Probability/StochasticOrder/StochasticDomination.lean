@@ -29,7 +29,7 @@ comparison inequalities and in the monotone construction of infinite-volume limi
 
 Strassen's theorem, which characterizes `≼` by monotone couplings, is in
 `MathlibExt.Probability.StochasticOrder.Strassen` and
-`MathlibExt.Probability.StochasticOrder.StrassenFull`.
+`MathlibExt.Probability.StochasticOrder.StrassenFinite`.
 
 ## References
 
