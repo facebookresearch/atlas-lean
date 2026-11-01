@@ -31,9 +31,10 @@ together, as the single edge of the unrooted tree.
 
 ## Main results
 
-* `blsAlg_eq_bls`: the one-pass post-order algorithm `blsAlg` (each subtree returns its number of
-  marked leaves and its partial score; an edge counts iff the number of marked leaves below it is
-  strictly between `0` and the total) computes the BLS, for trees with distinct leaf labels.
+* `blsAlg_eq_bls`: the two-pass algorithm `blsAlg` (a first pass counts the marked leaves;
+  a post-order pass then returns each subtree's number of marked leaves and its partial score,
+  and an edge counts iff the number of marked leaves below it is strictly between `0` and the
+  total) computes the BLS, for trees with distinct leaf labels.
 * `bls_mono`: with nonnegative branch lengths the BLS is monotone in `S`.
 * `bls_empty`, `bls_singleton`: the BLS of zero or one species is `0`.
 * `bls_leaves`: the BLS of all species is the total branch length.
@@ -43,9 +44,10 @@ together, as the single edge of the unrooted tree.
 
 ## Cost model
 
-`blsGo` visits every node once and does a constant number of additions and comparisons per node,
-so `blsAlg` runs in time linear in the size of the tree (plus the cost of the membership tests
-`l ∈ S` at the leaves).
+`blsAlg` is two-pass: `markedCount` traverses the whole tree once, then `blsGo` traverses it
+again, visiting every node once and doing a constant number of additions and comparisons per
+node, so `blsAlg` runs in time linear in the size of the tree (plus the cost of the membership
+tests `l ∈ S` at the leaves).
 
 ## References
 
