@@ -37,6 +37,13 @@ Beta(α + k, β + m) density`.
 All statements assume `α, β > 0`. Outside that range `betaMeasure α β` is not a probability
 measure and `beta α β` may vanish, so the identities are not claimed there.
 
+## Provenance
+
+The proof of `betaPDFReal_mul_pow` and the adjacent recurrence are closely adapted from the
+existing formalization in `CSLibExt/MachineLearning/Bayesian/BetaBinomial.lean` (same
+`betaPDFReal_mul_pow` statement and density computation, there in the beta-binomial /
+conjugacy development).
+
 ## References
 
 * N. L. Johnson, S. Kotz and N. Balakrishnan, *Continuous Univariate Distributions*, vol. 2,

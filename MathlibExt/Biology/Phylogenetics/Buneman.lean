@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import MathlibExt.Combinatorics.SimpleGraph.WalkPath
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Ring
@@ -71,22 +72,6 @@ def IsTreeMetric {X : Type*} (d : X → X → ℝ) : Prop :=
 def FourPointCondition {X : Type*} (d : X → X → ℝ) : Prop :=
   ∀ x y z t, d x y + d z t ≤ max (d x z + d y t) (d x t + d y z)
 
-/-- Two paths that meet only at their common endpoint `m` concatenate to a path. -/
-theorem isPath_append_of_isPath {V : Type*} {G : SimpleGraph V} {u m v : V}
-    {p : G.Walk u m} {q : G.Walk m v} (hp : p.IsPath) (hq : q.IsPath)
-    (hi : ∀ a ∈ p.support, a ∈ q.support → a = m) : (p.append q).IsPath := by
-  apply SimpleGraph.Walk.IsPath.mk'
-  rw [SimpleGraph.Walk.support_append]
-  apply List.nodup_append.mpr
-  refine ⟨hp.support_nodup, hq.support_nodup.tail, ?_⟩
-  intro a ha b hb hab
-  subst b
-  have ham := hi a ha (List.mem_of_mem_tail hb)
-  subst a
-  have hn := hq.support_nodup
-  rw [← q.cons_tail_support, List.nodup_cons] at hn
-  exact hn.1 hb
-
 private theorem first_hit {V : Type*} {G : SimpleGraph V} {u v : V}
     (p : G.Walk u v) (hp : p.IsPath) (S : Set V) (hv : v ∈ S) :
     ∃ m ∈ S, ∃ a : G.Walk u m, a.IsPath ∧ a.support ⊆ p.support ∧
@@ -134,12 +119,12 @@ private theorem crossing_paths {V : Type*} {G : SimpleGraph V} (hG : G.IsTree)
   let px := p.takeUntil m hm
   let pz := p.dropUntil m hm
   have hxt : (px.append c.reverse).IsPath :=
-    isPath_append_of_isPath (hp.takeUntil hm) hc.reverse (by
+    SimpleGraph.Walk.isPath_append_of_isPath (hp.takeUntil hm) hc.reverse (by
       intro v hvx hvc
       apply hci v (by simpa using hvc)
       exact p.support_takeUntil_subset_support hm hvx)
   have hyz : (b.append pz).IsPath :=
-    isPath_append_of_isPath hb (hp.dropUntil hm) (by
+    SimpleGraph.Walk.isPath_append_of_isPath hb (hp.dropUntil hm) (by
       intro v hvb hvz
       exact hbi v hvb (p.support_dropUntil_subset_support hm hvz))
   have er : r = px.append c.reverse :=
