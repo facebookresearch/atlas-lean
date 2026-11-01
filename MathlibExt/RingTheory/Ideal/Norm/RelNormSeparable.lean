@@ -24,8 +24,9 @@ fraction-field extension is separable.
 
 This is Theorem 6.10 of ATLAS `NumberTheoryI` (Section 6.2), stated there in the
 `AKLB` setting (`B` the integral closure of `A` in a finite separable extension).
-The version proved here is more general: `S` need not be the integral closure of
-`R` in anything. Mathlib already has the Galois version
+The version proved here avoids an explicit ambient-field/integral-closure
+presentation: `S` is not required to be exhibited as the integral closure of
+`R` in a field. Mathlib already has the Galois version
 `Ideal.relNorm_eq_pow_of_isPrime_isGalois` and, under a perfect base fraction-field
 hypothesis, `Ideal.relNorm_eq_pow_of_isMaximal`. The separable version is obtained
 by replaying the normal-closure argument of `Ideal.relNorm_eq_pow_of_isMaximal`
