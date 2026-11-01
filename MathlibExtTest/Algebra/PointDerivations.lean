@@ -77,3 +77,11 @@ example :
         (evalDerivativeAtPoint 2)).1 X = 6 := by
   norm_num [Algebra.PointDerivations.map_apply_coe, scale, evalDerivativeAtPoint,
     evalDerivativeAt]
+
+/-- `map_comp` is universe-polymorphic in the third coefficient module: the
+target of `ψ` may live in a strictly larger universe than the source modules. -/
+example (M'' : Type 1) [AddCommGroup M''] [Module ℚ M''] (ψ : ℚ →ₗ[ℚ] M'') :
+    Algebra.PointDerivations.map (aeval 2) (ψ.comp (scale 2)) (evalDerivativeAtPoint 2) =
+      Algebra.PointDerivations.map (aeval 2) ψ
+        (Algebra.PointDerivations.map (aeval 2) (scale 2) (evalDerivativeAtPoint 2)) :=
+  Algebra.PointDerivations.map_comp (aeval 2) (scale 2) ψ (evalDerivativeAtPoint 2)

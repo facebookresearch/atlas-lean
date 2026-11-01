@@ -39,7 +39,7 @@ of `algebraMap k A`.
 
 @[expose] public section
 
-universe u v w w'
+universe u v w w' w''
 
 namespace Algebra
 
@@ -97,7 +97,7 @@ theorem map_id (ev : A →ₐ[k] k) (D : ↥(PointDerivations k A ev M)) :
     map ev (LinearMap.id : M →ₗ[k] M) D = D := by
   ext a; rfl
 
-theorem map_comp {M'' : Type w} [AddCommGroup M''] [Module k M''] (ev : A →ₐ[k] k)
+theorem map_comp {M'' : Type w''} [AddCommGroup M''] [Module k M''] (ev : A →ₐ[k] k)
     (φ : M →ₗ[k] M') (ψ : M' →ₗ[k] M'') (D : ↥(PointDerivations k A ev M)) :
     map ev (ψ.comp φ) D = map ev ψ (map ev φ D) := by
   ext a; rfl
