@@ -40,10 +40,11 @@ starting at `s` covers the `L` bases `s, s + 1, …, s + L - 1 (mod G)` (`Covers
   (with `L` fixed and genome lengths `G_N ≥ L`), the uncovered probability tends to `e^{-c}`.
 * `tendsto_uniformProb_depth`: **the depth tends to Poisson(`c`)**: probability of depth `k`
   tends to `e^{-c} c^k / k.factorial`.
-* `sum_card_noSuccessor`: **expected number of island ends** (exact, `L ≤ G`): the
-  expected number of reads with no other read starting in the next `L - 1` positions is
-  `N (1 - (L - 1) / G) ^ (N - 1)`, given as the count `N G (G - (L - 1)) ^ (N - 1)` over all
-  `G ^ N` start tuples.
+* `sum_card_noSuccessor`: **count of no-successor reads** (exact, `L ≤ G`): the
+  number of pairs `(j, starts)` with read `j` having no successor is
+  `N G (G - (L - 1)) ^ (N - 1)` over all `G ^ N` start tuples.
+* `expected_noSuccessor`: the normalized form, for `0 < G`: the expected number of
+  no-successor reads is `N (1 - (L - 1) / G) ^ (N - 1)`.
 
 `uniformProb_eq_uniformOfFinset` identifies the normalized count with the probability under
 Mathlib's uniform law `Measure.uniformOfFinset` on start tuples.
@@ -257,8 +258,10 @@ theorem tendsto_uniformProb_depth (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L ≤
     ProbabilityTheory.tendsto_choose_mul_pow_of_tendsto_mul_atTop k hp
 
 /-- Read `j` has no successor when no other read starts in the `L - 1` positions after it,
-`starts j + 1, …, starts j + L - 1 (mod G)`: in Lander and Waterman's terms read `j` ends an
-island (reads starting at the same position are not successors of each other). -/
+`starts j + 1, …, starts j + L - 1 (mod G)` (reads starting at the same position are not
+successors of each other). In Lander and Waterman's terms such a read is counted as ending
+an island, but several no-successor reads can lie in one island, so this is not the island
+count. -/
 def NoSuccessor {G N : ℕ} (L : ℕ) (starts : Fin N → Fin G) (j : Fin N) : Prop :=
   ∀ j' ≠ j, ¬ (0 < ((starts j').val + G - (starts j).val) % G ∧
     ((starts j').val + G - (starts j).val) % G < L)
@@ -350,14 +353,39 @@ private lemma card_noSuccessor {G L N : ℕ} (hL : L ≤ G) (j : Fin N) :
   simp_rw [hf]
   simp
 
-/-- **Expected number of island ends (exact)**: for `L ≤ G`, summed over the
+/-- **Count of no-successor reads (exact)**: for `L ≤ G`, summed over the
 reads, the number of start tuples in which read `j` has no successor is
-`N * G * (G - (L - 1)) ^ (N - 1)`; dividing by `G ^ N`, the expected number of reads ending an
-island is `N (1 - (L - 1) / G) ^ (N - 1)`. -/
-theorem sum_card_noSuccessor {G L N : ℕ} (hL : L ≤ G) :
+`N * G * (G - (L - 1)) ^ (N - 1)`. This counts no-successor reads, not island ends:
+a start tuple can have several no-successor reads in one island. -/
+theorem sum_card_noSuccessor {G L N : ℕ} (hL : L ≤ G) (_hG : 0 < G) :
     ∑ j : Fin N, (Finset.univ.filter fun starts : Fin N → Fin G =>
         NoSuccessor L starts j).card = N * G * (G - (L - 1)) ^ (N - 1) := by
   simp_rw [card_noSuccessor hL]
   simp [Nat.mul_assoc]
+
+/-- **Expected number of no-successor reads (exact)**: for `0 < G` and `L ≤ G`, the
+expected number of reads with no successor is `N (1 - (L - 1) / G) ^ (N - 1)`.
+The `0 < G` hypothesis is essential: at `G = 0` the normalized expression would be
+`N` while the actual expectation is `0`. -/
+theorem expected_noSuccessor {G L N : ℕ} (hG : 0 < G) (hL : L ≤ G) :
+    ∑ j : Fin N, uniformProb (Finset.univ.filter fun starts : Fin N → Fin G =>
+        NoSuccessor L starts j) =
+      (N : ℝ) * (1 - ((L - 1 : ℕ) : ℝ) / G) ^ (N - 1) := by
+  have hG' : (G : ℝ) ≠ 0 := by exact_mod_cast hG.ne'
+  have hL1 : L - 1 ≤ G := (Nat.sub_le L 1).trans hL
+  simp only [uniformProb, ← Finset.sum_div]
+  rw [sum_card_noSuccessor hL hG]
+  rcases Nat.eq_zero_or_pos N with hN | hN
+  · subst hN
+    simp
+  · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hN
+    simp only [Nat.add_sub_cancel]
+    have hcast : ((G - (L - 1) : ℕ) : ℝ) = (G : ℝ) - ((L - 1 : ℕ) : ℝ) :=
+      Nat.cast_sub hL1
+    have h1 : (1 : ℝ) - ((L - 1 : ℕ) : ℝ) / G =
+        ((G : ℝ) - ((L - 1 : ℕ) : ℝ)) / G := by field_simp
+    rw [Nat.cast_pow, Nat.cast_mul, Nat.cast_mul, hcast, h1, div_pow, pow_succ]
+    field_simp
+    ring
 
 end Cslib.Bioinformatics.Assembly.LanderWaterman

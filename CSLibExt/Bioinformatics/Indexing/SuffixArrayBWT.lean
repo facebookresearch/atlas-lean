@@ -429,10 +429,11 @@ private theorem succ_mod_of_ne_zero (m s : ℕ) (h : (m + 1) % s ≠ 0) :
       apply h
       rw [show m % s + 1 = s by omega, Nat.mod_self]
 
-/-- **Locate takes at most `s - 1` steps**: if every row whose text position is a multiple of
-`s` is sampled, then from row `r ≤ |t|` locate makes at most `SA[r] mod s` LF steps (for any
-amount of fuel `k`). -/
-theorem locateSteps_le (t : List α) (sample : ℕ → Option ℕ) (s : ℕ)
+/-- **Locate takes at most `s - 1` steps**: for `0 < s`, if every row whose text position is
+a multiple of `s` is sampled, then from row `r ≤ |t|` locate makes at most `SA[r] mod s` LF
+steps (for any amount of fuel `k`). At `s = 0` the `s - 1` bound would be `0` while the
+proof only gives `SA[r] mod 0 = SA[r]` steps. -/
+theorem locateSteps_le (t : List α) (sample : ℕ → Option ℕ) (s : ℕ) (_hs : 0 < s)
     (hsample : ∀ r, r < t.length + 1 → (suffixArray (withSentinel t)).getD r 0 % s = 0 →
       (sample r).isSome) :
     ∀ k r, r < t.length + 1 →

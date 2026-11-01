@@ -16,7 +16,7 @@ public meta import CSLibExt.Bioinformatics.Assembly.LanderWaterman
 
 Executed fixtures: exhaustive counts over all `5 ^ 3 = 125` start tuples of `N = 3` reads of length
 `L = 2` on a circular genome of length `G = 5` (uncovered base `3 ^ 3 = 27`; depth law
-`27, 54, 36, 8`; island ends `3 * 5 * 4 ^ 2 = 240`) and the boundary `L = G` (every base covered);
+`27, 54, 36, 8`; no-successor reads `3 * 5 * 4 ^ 2 = 240`) and the boundary `L = G` (every base covered);
 the junk regime `L > G`, outside the hypothesis `L ≤ G`, where the count formula fails. Also a
 non-vacuity witness for the hypotheses of the limit theorems: `G N = 2 (N + 1)`, `L = 2`, so
 `N L / G N = N / (N + 1) → 1`.
@@ -36,8 +36,8 @@ open Filter Topology
 #guard (∑ j : Fin 3, (Finset.univ.filter fun s : Fin 3 → Fin 5 => NoSuccessor 2 s j).card) = 240
 -- `L = G`: every read covers every base.
 #guard (Finset.univ.filter fun s : Fin 2 → Fin 4 => ∀ j, ¬ Covers 4 4 (s j) 1).card = 0
--- Outside `L ≤ G` the island count formula fails: here `G - (L - 1) = 0`, but tuples with all
--- reads at one position have no successors.
+-- Outside `L ≤ G` the no-successor count formula fails: here `G - (L - 1) = 0`, but
+-- tuples with all reads at one position have no successors.
 #guard (∑ j : Fin 2, (Finset.univ.filter fun s : Fin 2 → Fin 3 => NoSuccessor 5 s j).card) = 6
 
 /-- The exact laws, instantiated. -/
