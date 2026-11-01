@@ -198,27 +198,21 @@ section AxiomAudit
 
 /-- info: 'StatMech.Walls.bc12_canonicalTrif_discharges_boxReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc12_canonicalTrif_discharges_boxReach
 
 /-- info: 'StatMech.Walls.bc12_boxOriginReach_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc12_boxOriginReach_of_trifurcation
 
 /-- info: 'StatMech.Walls.bc12_originRewiring_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc12_originRewiring_of_trifurcation
 
 /-- info: 'StatMech.Walls.bc12_burtonKeane_uniqueness_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs(whitespace := lax) in
-#print axioms bc12_burtonKeane_uniqueness_of_trifurcation
 
 /-- info: 'StatMech.Walls.bc12_origin_openIncidence_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc12_origin_openIncidence_of_trifurcation
 
 /-- info: 'StatMech.Walls.bc12_isolated_origin_not_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc12_isolated_origin_not_trifurcation
 
 end AxiomAudit
 

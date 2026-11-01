@@ -43,4 +43,14 @@ example (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) (h : bau_ArmSubforestData
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard 2 R :=
   bsg_status.2.2.2.2.1 ω L R h
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/GnSpanningTreeRay.lean`: diagnostics belong in tests, not in production modules.
+#check @bsg_Gn_le_lattice
+#print axioms StatMech.Walls.bsg_Gn_le_lattice
+#print axioms StatMech.Walls.bsg_GnTreeRay_reaches_boundary
+#print axioms StatMech.Walls.bsg_status
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GnSpanningTreeRay

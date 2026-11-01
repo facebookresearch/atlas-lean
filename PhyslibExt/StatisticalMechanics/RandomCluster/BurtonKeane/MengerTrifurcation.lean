@@ -160,31 +160,24 @@ section AxiomAudit
 
 /-- info: 'StatMech.Walls.bc21_mengerCore_of_canonicalTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_mengerCore_of_canonicalTrifurcation
 
 /-- info: 'StatMech.Walls.bc21_mengerCore_of_originBranchSurvivalCut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_mengerCore_of_originBranchSurvivalCut
 
 /-- info: 'StatMech.Walls.bc21_originBranchSurvivalCut_of_canonicalTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs(whitespace := lax) in
-#print axioms bc21_originBranchSurvivalCut_of_canonicalTrifurcation
 
 /-- info: 'StatMech.Walls.bc21_arm_infinite_removeOrigin' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_arm_infinite_removeOrigin
 
 /-- info: 'StatMech.Walls.bc21_mengerRoutingCover_of_boxTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_mengerRoutingCover_of_boxTrifurcation
 
 /-- info: 'StatMech.Walls.bc21_threeRay_trif_at_origin' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_threeRay_trif_at_origin
 
 /-- info: 'StatMech.Walls.bc21_originBranchSurvivalCut_nonvacuous' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc21_originBranchSurvivalCut_nonvacuous
 
 end AxiomAudit
 

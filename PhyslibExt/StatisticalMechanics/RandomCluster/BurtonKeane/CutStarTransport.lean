@@ -66,7 +66,6 @@ instance bfct_restrict_decAdj {V : Type*} (G : SimpleGraph V) [DecidableRel G.Ad
     (a b : {v // v ∈ S}) : (bfct_restrict G S).Adj a b ↔ G.Adj (a : V) (b : V) :=
   Iff.rfl
 
-#check @bfct_restrict
 
 /-- The inclusion of the restriction with `t` deleted into `G` with `t` deleted. -/
 def bfct_delHom {V : Type*} (G : SimpleGraph V) (S : Finset V) (t : {v // v ∈ S}) :
@@ -88,7 +87,6 @@ lemma bfct_cut_transport {V : Type*} {G : SimpleGraph V} {S : Finset V} {t a b :
     ¬ (bkg_deleteVertex (bfct_restrict G S) t).Reachable a b :=
   fun hr => h (bfct_reach_transport hr)
 
-#check @bfct_cut_transport
 
 set_option linter.unusedDecidableInType false in
 lemma bfct_count {V : Type*} [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -108,7 +106,6 @@ lemma bfct_count {V : Type*} [DecidableEq V] (G : SimpleGraph V) [DecidableRel G
   exact ⟨a₁, a₂, a₃, hn₁, hn₂, hn₃,
     bfct_cut_transport hs₁₂, bfct_cut_transport hs₁₃, bfct_cut_transport hs₂₃⟩
 
-#check @bfct_count
 
 lemma bfct_hub_cut_of_separation {V : Type*} {G : SimpleGraph V} {S : Finset V} (hub : {v // v ∈ S})
     {w₁ w₂ w₃ : V} (hw₁ : w₁ ∈ S) (hw₂ : w₂ ∈ S) (hw₃ : w₃ ∈ S)
@@ -167,7 +164,6 @@ lemma bfct_transport_witness :
     change ¬ (bkg_deleteVertex bfct_star (0 : Fin 4)).Reachable 1 2
     exact bfct_star_cut)
 
-#check @bfct_transport_witness
 
 lemma bfct_status :
     (∀ {V : Type} {G : SimpleGraph V} {S : Finset V} {t a b : {v // v ∈ S}},
@@ -193,14 +189,5 @@ lemma bfct_status :
     exact bfct_count G S hTH hT f hf hcut B hleaf
   · intro ω L h; exact bgf2_trif_separation h
 
-#check @bfct_status
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bfct_restrict
-#print axioms StatMech.Walls.bfct_cut_transport
-#print axioms StatMech.Walls.bfct_count
-#print axioms StatMech.Walls.bfct_hub_cut_of_separation
-#print axioms StatMech.Walls.bfct_origin_feed
-#print axioms StatMech.Walls.bfct_transport_witness
-#print axioms StatMech.Walls.bfct_status

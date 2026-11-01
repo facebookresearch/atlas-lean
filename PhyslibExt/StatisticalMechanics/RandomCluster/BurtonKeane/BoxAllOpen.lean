@@ -70,9 +70,6 @@ lemma bao_box_internallyConnected {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ}
     Lattice.Connected 2 ω x y :=
   bff_allOpen_box_connected h.2 hx hy
 
-#check @bao_AllOpenTrif
-#check @bao_allOpenTrif_imp_bc67
-#check @bao_box_internallyConnected
 
 /-! ## B. The single-box configuration -/
 
@@ -166,7 +163,6 @@ lemma bao_allOpen_not_frees_bridge {L : ℕ} (hL : 1 ≤ L) :
   rw [bc57_pt_snd, bc57_pt_snd] at this
   exact one_ne_zero this
 
-#check @bao_allOpen_not_frees_bridge
 
 lemma bao_status {L : ℕ} (hL : 1 ≤ L) :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))), bao_AllOpenTrif ω L →
@@ -180,12 +176,5 @@ lemma bao_status {L : ℕ} (hL : 1 ≤ L) :
    bao_allOpen_not_frees_bridge hL,
    fun p hp1 hp0 hdata => StatMech.Walls.bfa_bk_of_classicalForest p hp1 hp0 hdata⟩
 
-#check @bao_status
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bao_allOpenTrif_imp_bc67
-#print axioms StatMech.Walls.bao_box_internallyConnected
-#print axioms StatMech.Walls.bao_allOpen_not_frees_bridge
-#print axioms StatMech.Walls.bfa_bk_of_classicalForest
-#print axioms StatMech.Walls.bao_status

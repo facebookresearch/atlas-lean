@@ -147,7 +147,6 @@ lemma bgf2_boxCentre_connected {L : ℕ} {c : Site 2} {ω : ConfigSpace (Sym2 (S
   have h := bgf2_mix_conn hopen ha hb 2 le_rfl
   rwa [mixSite_full] at h
 
-#check @bgf2_boxCentre_connected
 
 /-! ## B. Blocks and centres -/
 
@@ -191,7 +190,6 @@ lemma bgf2_indexAllOpen_connected {L : ℕ} {ω : ConfigSpace (Sym2 (Site 2))} {
   · exact bgf2_idx_iff_inBox.mp ha
   · exact bgf2_idx_iff_inBox.mp hb
 
-#check @bgf2_indexAllOpen_connected
 
 /-! ## C. The contraction -/
 
@@ -214,7 +212,6 @@ def bgf2_Gf (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) : SimpleGraph (Site 2) 
       u ≠ v ∧ ∃ a b : Site 2, bgf2_q ω L a = u ∧ bgf2_q ω L b = v ∧ (openSubgraph 2 ω).Adj a b :=
   Iff.rfl
 
-#check @bgf2_Gf
 
 lemma bgf2_q_eq_connected {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ} {a b : Site 2}
     (h : bgf2_q ω L a = bgf2_q ω L b) : Connected 2 ω a b := by
@@ -273,7 +270,6 @@ lemma bgf2_faithful (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (a b : Site 2) 
   · intro h; exact bgf2_connected_of_reach_aux h a b rfl rfl
   · exact bgf2_reach_of_connected
 
-#check @bgf2_faithful
 
 /-! ## D. Removing the origin block -/
 
@@ -376,7 +372,6 @@ lemma bgf2_cut_connected_of_reach_aux {ω : ConfigSpace (Sym2 (Site 2))} {L : �
     have h3 : Connected 2 (removeSites (bc61_boxAround 2 L 0) ω) b' b := ih b' b hb' hb hzne hv
     exact (h1.trans h2).trans h3
 
-#check @bgf2_cut_connected_of_reach_aux
 
 lemma bgf2_trif_separation {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ} (h : bao_AllOpenTrif ω L) :
     ∃ w₁ w₂ w₃ : Site 2,
@@ -404,9 +399,6 @@ lemma bgf2_trif_separation {ω : ConfigSpace (Sym2 (Site 2))} {L : ℕ} (h : bao
     exact hcut₂₃ ((bc67_Gn_deletion_eq_removeSites ω L 0 a₂ a₃).mpr
       (bgf2_cut_connected_of_reach_aux h0 hr a₂ a₃ rfl rfl hne₂ hne₃))
 
-#check @bgf2_trif_separation
-
-#check @StatMech.Walls.bcv_trif_degree_ge_three
 
 /-! ## E. The single-box configuration -/
 
@@ -459,9 +451,6 @@ lemma bgf2_onlyBox0_box_connected {L : ℕ} {a b : Site 2}
     Connected 2 (bao_onlyBox0 L) a b :=
   bgf2_indexAllOpen_connected bgf2_onlyBox0_hub_merged ha hb
 
-#check @bgf2_onlyBox0_not_merged
-#check @bgf2_onlyBox0_not_identified
-#check @bgf2_onlyBox0_box_connected
 
 lemma bgf2_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (a b : Site 2),
@@ -476,14 +465,5 @@ lemma bgf2_status :
    fun _ω _L h => bgf2_trif_separation h,
    fun _L hL => bgf2_onlyBox0_not_merged hL⟩
 
-#check @bgf2_status
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bgf2_boxCentre_connected
-#print axioms StatMech.Walls.bgf2_faithful
-#print axioms StatMech.Walls.bgf2_cut_connected_of_reach_aux
-#print axioms StatMech.Walls.bgf2_trif_separation
-#print axioms StatMech.Walls.bcv_trif_degree_ge_three
-#print axioms StatMech.Walls.bgf2_onlyBox0_not_merged
-#print axioms StatMech.Walls.bgf2_onlyBox0_not_identified

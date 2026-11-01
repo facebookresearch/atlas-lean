@@ -110,8 +110,6 @@ lemma bri_branchRay_reaches_boundary (T : SimpleGraph (Site d)) [LocallyFinite T
   obtain ⟨k, hk⟩ := bar_ray_crosses_boundary r hinj hlat R hR h0box
   exact ⟨r, hr0, hinj, hadj, havoid, ⟨k, hk⟩⟩
 
-#check @bri_treeRay_reaches_boundary
-#check @bri_branchRay_reaches_boundary
 
 /-- The first `N` edges of the ray `r`. -/
 def bri_rayEdges {V : Type*} (r : ℕ → V) (N : ℕ) : Set (Sym2 V) :=
@@ -170,9 +168,6 @@ lemma bri_twoHub_witness :
 lemma bri_twoHub_count :
     ({0, 1} : Finset (Fin 7)).card ≤ ({2, 3, 5, 6} : Finset (Fin 7)).card := by decide
 
-#check @bri_rayGraph_le
-#check @bri_union_le_acyclic
-#check bri_twoHub_witness
 
 /-! ## B. Summary -/
 

@@ -41,4 +41,20 @@ example (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ) (h : bao_AllOpenTrif ω L) 
     (hx : x ∈ box 2 L) (hy : y ∈ box 2 L) : Lattice.Connected 2 ω x y :=
   bao_box_internallyConnected h hx hy
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/BoxAllOpen.lean`: diagnostics belong in tests, not in production modules.
+#check @bao_AllOpenTrif
+#check @bao_allOpenTrif_imp_bc67
+#check @bao_box_internallyConnected
+#check @bao_allOpen_not_frees_bridge
+#check @bao_status
+#print axioms StatMech.Walls.bao_allOpenTrif_imp_bc67
+#print axioms StatMech.Walls.bao_box_internallyConnected
+#print axioms StatMech.Walls.bao_allOpen_not_frees_bridge
+#print axioms StatMech.Walls.bfa_bk_of_classicalForest
+#print axioms StatMech.Walls.bao_status
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.BoxAllOpen

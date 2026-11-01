@@ -50,4 +50,22 @@ example : (bfct_restrict bfct_star bfct_starS).Adj ⟨0, by decide⟩ ⟨1, by d
     bfct_star.Adj 0 1 :=
   bfct_restrict_adj _ _ _ _
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/CutStarTransport.lean`: diagnostics belong in tests, not in production modules.
+#check @bfct_restrict
+#check @bfct_cut_transport
+#check @bfct_count
+#check @bfct_transport_witness
+#check @bfct_status
+#print axioms StatMech.Walls.bfct_restrict
+#print axioms StatMech.Walls.bfct_cut_transport
+#print axioms StatMech.Walls.bfct_count
+#print axioms StatMech.Walls.bfct_hub_cut_of_separation
+#print axioms StatMech.Walls.bfct_origin_feed
+#print axioms StatMech.Walls.bfct_transport_witness
+#print axioms StatMech.Walls.bfct_status
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CutStarTransport

@@ -65,7 +65,6 @@ namespace StatMech.Walls
 
 open StatMech.Percolation
 
-#check @bau_bk_of_subforestData
 
 /-! ## A. Results -/
 
@@ -114,7 +113,6 @@ lemma bfin_datum_of_noTrif (ω : ConfigSpace (Sym2 (Site 2))) (L R : ℕ) (hR : 
   · intro y hy htri; exact absurd htri (hno y hy)
   · intro v hv; exact absurd (hmemBd v) hv
 
-#check @bfin_datum_of_noTrif
 
 /-- Every contracted-lattice trifurcation has three coarse neighbours that are pairwise disconnected
 after it is deleted. -/
@@ -158,6 +156,3 @@ lemma bfin_status :
   · intro ω L R h; exact bca_datum_implies_count ω L R h
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bfin_datum_of_noTrif
-#print axioms StatMech.Walls.bfin_status

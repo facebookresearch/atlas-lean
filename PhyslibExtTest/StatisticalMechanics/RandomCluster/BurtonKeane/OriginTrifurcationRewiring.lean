@@ -42,4 +42,16 @@ example (n : ℕ) (h : bc12_BoxOriginTrifurcation 2 n) (ω : ConfigSpace (Sym2 (
     (hω : ω ∈ threeMeetBox 2 n) : IsCanonicalTrifurcation 2 ω 0 :=
   h ω hω
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/OriginTrifurcationRewiring.lean`: diagnostics belong in tests, not in production modules.
+#print axioms bc12_canonicalTrif_discharges_boxReach
+#print axioms bc12_boxOriginReach_of_trifurcation
+#print axioms bc12_originRewiring_of_trifurcation
+#print axioms bc12_burtonKeane_uniqueness_of_trifurcation
+#print axioms bc12_origin_openIncidence_of_trifurcation
+#print axioms bc12_isolated_origin_not_trifurcation
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.OriginTrifurcationRewiring

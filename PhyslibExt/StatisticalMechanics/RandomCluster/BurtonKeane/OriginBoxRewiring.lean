@@ -177,19 +177,15 @@ section AxiomAudit
 
 /-- info: 'StatMech.Walls.bc9_originRewiring_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_originRewiring_of_boxOriginReach
 
 /-- info: 'StatMech.Walls.bc9_canonicalTrif_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_canonicalTrif_of_boxOriginReach
 
 /-- info: 'StatMech.Walls.bc9_burtonKeane_uniqueness_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_burtonKeane_uniqueness_of_boxOriginReach
 
 /-- info: 'StatMech.Walls.bc9_boxOriginReach_of_reach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_boxOriginReach_of_reach
 
 end AxiomAudit
 

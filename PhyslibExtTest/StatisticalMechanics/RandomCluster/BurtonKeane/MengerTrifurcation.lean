@@ -44,4 +44,17 @@ example : MengerCore threeRayConfig :=
 example : ∃ ω : ConfigSpace (Sym2 (Site 2)), MengerCore ω :=
   bc21_mengerCore_nonvacuous
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/MengerTrifurcation.lean`: diagnostics belong in tests, not in production modules.
+#print axioms bc21_mengerCore_of_canonicalTrifurcation
+#print axioms bc21_mengerCore_of_originBranchSurvivalCut
+#print axioms bc21_originBranchSurvivalCut_of_canonicalTrifurcation
+#print axioms bc21_arm_infinite_removeOrigin
+#print axioms bc21_mengerRoutingCover_of_boxTrifurcation
+#print axioms bc21_threeRay_trif_at_origin
+#print axioms bc21_originBranchSurvivalCut_nonvacuous
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.MengerTrifurcation

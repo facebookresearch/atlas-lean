@@ -112,11 +112,9 @@ section AxiomAudit
 
 /-- info: 'StatMech.Walls.bc9_distinctCutClusters' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_distinctCutClusters
 
 /-- info: 'StatMech.Walls.bc9_threeArms_pairwiseNoMerge' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9_threeArms_pairwiseNoMerge
 
 end AxiomAudit
 

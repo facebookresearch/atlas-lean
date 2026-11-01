@@ -71,7 +71,6 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-#check @bfin_SuperCutBridge
 
 /-! ## A. Definitions -/
 
@@ -112,7 +111,6 @@ lemma bsc_boxCentre_zero (d L : ℕ) : bsc_IsBoxCentre L (0 : Site d) := by
     simp only [bgn_idx, Pi.zero_apply] at this
     exact (bsc_ediv_zero_iff).mp this
 
-#check @bsc_boxCentre_zero
 
 lemma bsc_box_isolated {L : ℕ} {y a : Site d} (ω : ConfigSpace (Sym2 (Site d)))
     (ha : a ∈ bc61_boxAround d L y) (w : Site d) :
@@ -163,8 +161,6 @@ lemma bsc_superReach_of_siteConn {L : ℕ} {y : Site d} {ω : ConfigSpace (Sym2 
         ⟨⟨hxz, x, z, rfl, rfl, hωopen⟩, hxne, hzne⟩
       exact hedge.reachable
 
-#check @bsc_hub_adj_armImage
-#check @bsc_superReach_of_siteConn
 
 lemma bsc_ediv_eq_iff {L : ℕ} {a m : ℤ} :
     (a + (L : ℤ)) / (2 * (L : ℤ) + 1) = m ↔ (a - (2 * (L : ℤ) + 1) * m).natAbs ≤ L := by
@@ -240,7 +236,6 @@ lemma bsc_arm_ray_infinite {L : ℕ} {y a : Site d} {ω : ConfigSpace (Sym2 (Sit
     exact Set.mem_biUnion ⟨x, hx, rfl⟩ rfl
   exact Set.Finite.subset (hfin.biUnion (fun j _ => bsc_fiber_finite L j)) hsub
 
-#check @bsc_arm_ray_infinite
 
 /-- Sites in the same coarse box, other than that of `y`, are connected after removing the box of
 `y`. -/
@@ -320,8 +315,6 @@ lemma bsc_bfin_SuperCutBridge_of_hyp (ω : ConfigSpace (Sym2 (Site 2))) (L : ℕ
   obtain ⟨hy, hint⟩ := H y htri
   exact bsc_bridge_of_internalConn hy hint htri
 
-#check @bsc_siteConn_of_superReach
-#check @bsc_bfin_SuperCutBridge_of_hyp
 
 lemma bsc_upperLines_forward {L : ℕ} (hL : 3 ≤ L) :
     ∃ w₁ w₂ w₃ : Site 2,
@@ -342,7 +335,6 @@ lemma bsc_upperLines_forward {L : ℕ} (hL : 3 ≤ L) :
     ⟨hadj₁, hadj₂, hadj₃⟩,
     ⟨bsc_arm_ray_infinite hy hf₁, bsc_arm_ray_infinite hy hf₂, bsc_arm_ray_infinite hy hf₃⟩⟩
 
-#check @bsc_upperLines_forward
 
 /-! ## C. Summary -/
 
@@ -361,15 +353,5 @@ lemma bsc_status {L : ℕ} (hL : 3 ≤ L) :
       bfin_SuperCutBridge ω L) := by
   exact ⟨bsc_upperLines_forward hL, fun ω H => bsc_bfin_SuperCutBridge_of_hyp ω L H⟩
 
-#check @bsc_status
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bsc_hub_adj_armImage
-#print axioms StatMech.Walls.bsc_arm_ray_infinite
-#print axioms StatMech.Walls.bsc_superReach_of_siteConn
-#print axioms StatMech.Walls.bsc_siteConn_of_superReach
-#print axioms StatMech.Walls.bsc_bridge_of_internalConn
-#print axioms StatMech.Walls.bsc_bfin_SuperCutBridge_of_hyp
-#print axioms StatMech.Walls.bsc_upperLines_forward
-#print axioms StatMech.Walls.bsc_status

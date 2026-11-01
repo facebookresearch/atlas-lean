@@ -136,7 +136,6 @@ lemma bsg_Gn_le_lattice (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) :
     · exact hpos
   omega
 
-#check @bsg_Gn_le_lattice
 
 lemma bsg_GnTreeRay_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ)
     (T : SimpleGraph (Site d)) [LocallyFinite T] (hT : T ≤ bgn_Gn ω L)
@@ -188,7 +187,3 @@ lemma bsg_status :
   · intro p hp1 hp0 hdata; exact bau_bk_of_subforestData p hp1 hp0 hdata
 
 end StatMech.Walls
-
-#print axioms StatMech.Walls.bsg_Gn_le_lattice
-#print axioms StatMech.Walls.bsg_GnTreeRay_reaches_boundary
-#print axioms StatMech.Walls.bsg_status

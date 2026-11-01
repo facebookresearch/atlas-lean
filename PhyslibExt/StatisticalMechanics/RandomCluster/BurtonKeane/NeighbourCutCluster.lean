@@ -124,19 +124,15 @@ section AxiomAudit
 
 /-- info: 'StatMech.Walls.bc9nbr_adj_survives_origin_cut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9nbr_adj_survives_origin_cut
 
 /-- info: 'StatMech.Walls.bc9nbr_origin_neighbour_of_connected' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9nbr_origin_neighbour_of_connected
 
 /-- info: 'StatMech.Walls.bc9nbr_mem_neighbour_cutCluster' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9nbr_mem_neighbour_cutCluster
 
 /-- info: 'StatMech.Walls.bc9nbr_mem_neighbour_cutCluster_strong' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
-#print axioms bc9nbr_mem_neighbour_cutCluster_strong
 
 end AxiomAudit
 

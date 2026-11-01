@@ -104,12 +104,5 @@ lemma bff_genuine_trif_with_non_allOpen_box {L : ℕ} (hL : 3 ≤ L) :
   ⟨bc67_upperLines_is_G_n_trifurcation hL,
    bff_upperLines_box_not_allOpen (le_trans (by norm_num) hL)⟩
 
-#check @bff_allOpen_box_connected
-#check @bff_upperLines_box_not_allOpen
-#check @bff_genuine_trif_with_non_allOpen_box
-
-#print axioms bff_genuine_trif_with_non_allOpen_box
-#print axioms bff_allOpen_box_connected
-#print axioms bff_upperLines_box_not_allOpen
 
 end StatMech.Walls

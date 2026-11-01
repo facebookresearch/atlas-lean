@@ -36,4 +36,14 @@ example (n : ℕ) (h : bc9_BoxOriginReach 2 n) (ω : ConfigSpace (Sym2 (Site 2))
       IsCanonicalTrifurcation 2 (forceOpenFinset W ω) 0 :=
   bc9_canonicalTrif_of_boxOriginReach n h ω hω
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/OriginBoxRewiring.lean`: diagnostics belong in tests, not in production modules.
+#print axioms bc9_originRewiring_of_boxOriginReach
+#print axioms bc9_canonicalTrif_of_boxOriginReach
+#print axioms bc9_burtonKeane_uniqueness_of_boxOriginReach
+#print axioms bc9_boxOriginReach_of_reach
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.OriginBoxRewiring

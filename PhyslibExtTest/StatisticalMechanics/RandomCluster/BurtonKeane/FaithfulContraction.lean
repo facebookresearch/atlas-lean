@@ -66,4 +66,28 @@ example : bgf2_q (bao_onlyBox0 1) 1 (bc57_pt (2 * ((1 : ℕ) : ℤ) + 1) 0)
     ≠ bgf2_q (bao_onlyBox0 1) 1 (bc57_pt (2 * ((1 : ℕ) : ℤ) + 1) 1) :=
   bgf2_onlyBox0_not_identified le_rfl
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/FaithfulContraction.lean`: diagnostics belong in tests, not in production modules.
+#check @bgf2_boxCentre_connected
+#check @bgf2_indexAllOpen_connected
+#check @bgf2_Gf
+#check @bgf2_faithful
+#check @bgf2_cut_connected_of_reach_aux
+#check @bgf2_trif_separation
+#check @StatMech.Walls.bcv_trif_degree_ge_three
+#check @bgf2_onlyBox0_not_merged
+#check @bgf2_onlyBox0_not_identified
+#check @bgf2_onlyBox0_box_connected
+#check @bgf2_status
+#print axioms StatMech.Walls.bgf2_boxCentre_connected
+#print axioms StatMech.Walls.bgf2_faithful
+#print axioms StatMech.Walls.bgf2_cut_connected_of_reach_aux
+#print axioms StatMech.Walls.bgf2_trif_separation
+#print axioms StatMech.Walls.bcv_trif_degree_ge_three
+#print axioms StatMech.Walls.bgf2_onlyBox0_not_merged
+#print axioms StatMech.Walls.bgf2_onlyBox0_not_identified
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.FaithfulContraction

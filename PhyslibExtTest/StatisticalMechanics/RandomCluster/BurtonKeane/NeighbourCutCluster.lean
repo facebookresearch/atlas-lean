@@ -43,4 +43,14 @@ example : ∃ n, (openSubgraph 2 ω₁).Adj 0 n ∧ ![1, 0] ∈ cluster 2 (remov
 example : ∃ n, (openSubgraph 2 ω₁).Adj 0 n ∧ ![1, 0] ∈ cluster 2 (removeSite 0 ω₁) n :=
   bc9nbr_mem_neighbour_cutCluster _ e₀_ne (IsOpenEdge.connected ω₁_adj)
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/NeighbourCutCluster.lean`: diagnostics belong in tests, not in production modules.
+#print axioms bc9nbr_adj_survives_origin_cut
+#print axioms bc9nbr_origin_neighbour_of_connected
+#print axioms bc9nbr_mem_neighbour_cutCluster
+#print axioms bc9nbr_mem_neighbour_cutCluster_strong
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourCutCluster

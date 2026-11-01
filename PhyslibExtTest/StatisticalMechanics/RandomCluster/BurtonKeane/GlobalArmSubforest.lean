@@ -66,4 +66,14 @@ example (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     bernoulliProductMeasure (E := Sym2 (Site 2)) p hp1 (atLeastTwoInfinite 2) = 0 :=
   bfin_status.1 p hp1 hp0 h
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/GlobalArmSubforest.lean`: diagnostics belong in tests, not in production modules.
+#check @bau_bk_of_subforestData
+#check @bfin_datum_of_noTrif
+#print axioms StatMech.Walls.bfin_datum_of_noTrif
+#print axioms StatMech.Walls.bfin_status
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalArmSubforest

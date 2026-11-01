@@ -46,4 +46,16 @@ example : Connected 2 open2 0 ![1, 1] :=
   bff_allOpen_box_connected (n := 1) (fun _ _ => rfl) (by simp [box])
     (by simp [box, Fin.forall_fin_two])
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/FaithfulBoxAllOpen.lean`: diagnostics belong in tests, not in production modules.
+#check @bff_allOpen_box_connected
+#check @bff_upperLines_box_not_allOpen
+#check @bff_genuine_trif_with_non_allOpen_box
+#print axioms bff_genuine_trif_with_non_allOpen_box
+#print axioms bff_allOpen_box_connected
+#print axioms bff_upperLines_box_not_allOpen
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.FaithfulBoxAllOpen

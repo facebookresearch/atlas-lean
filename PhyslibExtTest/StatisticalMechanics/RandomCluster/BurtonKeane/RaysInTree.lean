@@ -45,4 +45,15 @@ example {V : Type*} (T : SimpleGraph V) (r : ℕ → V) (N : ℕ) (h : ∀ k, T.
     bri_rayGraph r N ≤ T :=
   bri_rayGraph_le T r N h
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/RaysInTree.lean`: diagnostics belong in tests, not in production modules.
+#check @bri_treeRay_reaches_boundary
+#check @bri_branchRay_reaches_boundary
+#check @bri_rayGraph_le
+#check @bri_union_le_acyclic
+#check bri_twoHub_witness
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.RaysInTree

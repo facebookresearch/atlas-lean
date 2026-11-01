@@ -66,4 +66,12 @@ example (n : ℕ) : (fun _ => false) ∉ threeMeetBox d n := fun h => by
   rw [removeSite_closed, cluster_closed] at h1
   exact h1 (Set.finite_singleton x₁)
 
+
+/-! ## Diagnostics moved from the production module -/
+
+-- The `#check` / `#print axioms` commands below were moved here from
+-- `StatisticalMechanics/RandomCluster/BurtonKeane/ThreeDistinctCutClusters.lean`: diagnostics belong in tests, not in production modules.
+#print axioms bc9_distinctCutClusters
+#print axioms bc9_threeArms_pairwiseNoMerge
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDistinctCutClusters
