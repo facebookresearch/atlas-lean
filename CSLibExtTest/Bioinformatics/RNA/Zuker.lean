@@ -102,8 +102,9 @@ example (E : LoopEnergy) : loopEnergy E P₁ (0, 10) = E.multiA + E.multiB * 2 +
   rw [loopEnergy_eq_multiloop E (by rw [h]; decide), h]
   norm_num
 
--- Non-vacuity of the minimum: with a negative hairpin energy the minimum free energy is
--- negative, attained by the single pair `(0, 8)`.
+-- Non-vacuity of the minimum: with a negative hairpin energy the single pair `(0, 8)`
+-- witnesses negativity (an upper bound on the minimum free energy; this example does not
+-- show that single pair attains the minimum, e.g. `P₀` has lower energy).
 example : zukerMFE wcP 3 s₀ { E₀ with hairpin := fun _ _ => -1 } ≤ ((-1 : ℝ) : WithTop ℝ) := by
   have hS : IsStructure wcP 3 s₀ {(0, 8)} :=
     ⟨by decide, by change ∀ p ∈ ({(0, 8)} : Finset (ℕ × ℕ)), CanPair wcP s₀ p.1 p.2; decide,

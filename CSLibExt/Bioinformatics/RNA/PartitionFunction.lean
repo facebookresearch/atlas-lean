@@ -62,8 +62,8 @@ innermost enclosing pair `(a, b)`. Dividing by `Z` gives the base-pair probabili
 
 The energy model here is additive over base pairs (any position-dependent weight `w i j`, so
 any base-pair-dependent energy). McCaskill's paper uses the loop (nearest-neighbor) energy model;
-its loop decomposition and Zuker's minimum free energy algorithm for that model are stated, not
-proved, in `WantedExt.Bioinformatics.RNA.ZukerWanted`. The Stein–Waterman closed form for `m = 1`
+its loop decomposition and Zuker's minimum free energy algorithm for that model are proved
+in `CSLibExt.Bioinformatics.RNA.Zuker`. The Stein–Waterman closed form for `m = 1`
 is not formalized; only the recursion.
 
 ## Main results

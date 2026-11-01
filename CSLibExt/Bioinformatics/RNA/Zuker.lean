@@ -489,12 +489,15 @@ private theorem branches_eq_exteriorBranches_filter (P : Finset (ℕ × ℕ)) (p
 
 end Locality
 
-/-- **Every position lies in exactly one loop**: a position `x` either lies strictly inside no
-pair (it is in the exterior loop) or lies in the loop closed by exactly one pair `p`, the one
-with `p.1 < x < p.2` such that no branch of `p` has `x` strictly inside it. For an unpaired
-position this is the unique loop containing it. For an endpoint of a pair `q` it is the loop of
-which `q` is a branch; the same base also closes the loop of `q`, as in the usual convention
-that a base pair is shared by two loops (see `existsUnique_closing_pair`). -/
+/-- **Every position has a unique innermost strict container** (not loop membership): a
+position `x` either lies strictly inside no pair, or there is a unique pair `p` with
+`p.1 < x < p.2` such that no branch of `p` has `x` strictly inside it. This is an
+innermost-container assignment, not the conventional loop decomposition of positions:
+endpoints are excluded from the loop they close (a position `x = q.1` or `x = q.2` is
+assigned to the loop of which `q` is a branch, never to the loop closed by `q`), and no
+`x < s.length` hypothesis is assumed, so positions outside the sequence fall in the
+first (exterior) case. In particular do not read this as saying loops uniquely decompose
+positions; see `existsUnique_closing_pair` for the closing-pair side of the convention. -/
 theorem existsUnique_loop_of_pos (P : Finset (ℕ × ℕ)) (hP : IsStructure pair m s P) (x : ℕ) :
     (∀ p ∈ P, ¬ (p.1 < x ∧ x < p.2)) ∨
       ∃! p, p ∈ P ∧ (p.1 < x ∧ x < p.2) ∧ ∀ q ∈ branches P p, ¬ (q.1 < x ∧ x < q.2) := by
