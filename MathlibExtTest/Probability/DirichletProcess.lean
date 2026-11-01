@@ -146,7 +146,9 @@ example : Var[fun p ↦ ((sethuraman 1 one_pos coin).G p {true}).toReal;
   simp [sethuraman, coin, measureReal_def]
   norm_num
 
-/-- Two draws from `DP(1, H)` pick the same atom with probability `1/2`. -/
+/-- Two draws from `DP(1, H)` pick the same latent stick piece with probability `1/2`.
+(With the base measure `Measure.dirac true` every draw has atom value `true`, so this is
+not the probability that two observed draws have the same atom value.) -/
 example : (sethuraman 1 one_pos (Measure.dirac true)).sumSqWeight = ENNReal.ofReal (1 / 2) := by
   rw [(StickBreakingProcess.isDirichlet_sethuraman 1 one_pos _).sumSqWeight_eq]
   norm_num
