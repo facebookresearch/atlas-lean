@@ -18,7 +18,7 @@ namespace MathlibExtTest.Probability.Distributions.CochranTheorem
 
 /-- `Z² ~ χ²₁` for a standard normal `Z`. -/
 example : (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 :=
-  gaussianReal_map_sq_eq_chiSquareMeasure
+  gaussianReal_map_sq
 
 /-- Three independent standard normal coordinates: `Z₀² + Z₂² ~ χ²₂`. -/
 example : (Measure.pi fun _ : Fin 3 => gaussianReal 0 1).map

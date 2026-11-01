@@ -48,7 +48,8 @@ root maximizes the likelihood the statistic is the supremum form `2 (sup_θ ℓ�
 
 ## Main results
 
-* `ProbabilityTheory.gaussianReal_map_sq`: `(N(0, 1)).map (x ↦ x²) = χ²₁`.
+* `ProbabilityTheory.gaussianReal_map_sq` (in `Distributions.ChiSquare`, reused here):
+  `(N(0, 1)).map (x ↦ x²) = χ²₁`.
 * `ProbabilityTheory.gaussianReal_map_sq_div`: `(N(0, v)).map (x ↦ x² / v) = χ²₁` for `v ≠ 0`.
 * `ProbabilityTheory.gaussianReal_map_max_zero_sq`:
   `(N(0, 1)).map (x ↦ max x 0 ²) = ½ δ₀ + ½ χ²₁`.
@@ -86,49 +87,6 @@ open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal
 
 namespace ProbabilityTheory
-
-/-- **The square of a standard normal variable is chi-square with one degree of freedom**, as
-an identity of measures on `ℝ`. -/
-theorem gaussianReal_map_sq :
-    (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 := by
-  set μ := (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) with hμ
-  have : IsProbabilityMeasure (chiSquareMeasure 1) := isProbabilityMeasure_chiSquareMeasure one_pos
-  set S : Set ℂ := {z | z.re ∈ Set.Ioo (-(1 / 4 : ℝ)) (1 / 4)} with hS
-  have h1 : Set.Ioo (-(1 / 4 : ℝ)) (1 / 4) ⊆ interior (integrableExpSet id μ) :=
-    Ioo_subset_interior_integrableExpSet_map_sq_stdGaussian (by norm_num) (by norm_num)
-  have h2 : Set.Ioo (-(1 / 4 : ℝ)) (1 / 4) ⊆
-      interior (integrableExpSet id (chiSquareMeasure 1)) :=
-    Ioo_subset_interior_integrableExpSet_chiSquareMeasure one_pos (by norm_num) (by norm_num)
-  have hF : AnalyticOnNhd ℂ (complexMGF id μ) S :=
-    analyticOnNhd_complexMGF.mono fun z hz => h1 hz
-  have hG : AnalyticOnNhd ℂ (complexMGF id (chiSquareMeasure 1)) S :=
-    analyticOnNhd_complexMGF.mono fun z hz => h2 hz
-  have hconv : Convex ℝ S := (convex_Ioo _ _).linear_preimage Complex.reLm
-  -- the two complex MGFs agree on the strip, by analytic continuation from the reals
-  have heq : Set.EqOn (complexMGF id μ) (complexMGF id (chiSquareMeasure 1)) S := by
-    refine hF.eqOn_of_preconnected_of_frequently_eq hG hconv.isPreconnected (z₀ := 0)
-      (by simp [hS]) ?_
-    have h_real : ∃ᶠ (x : ℝ) in 𝓝[≠] (0 : ℝ),
-        complexMGF id μ x = complexMGF id (chiSquareMeasure 1) x := by
-      have hev : ∀ᶠ x in 𝓝[≠] (0 : ℝ), x < 1 / 2 :=
-        nhdsWithin_le_nhds (Iio_mem_nhds (by norm_num))
-      refine (hev.mono fun x hx => ?_).frequently
-      rw [complexMGF_ofReal, complexMGF_ofReal, hμ, mgf_id_map_sq_stdGaussian,
-        ← mgf_gammaMeasure_half_half_eq_sqrt hx, chiSquareMeasure]
-      norm_num
-    rw [frequently_iff_seq_forall] at h_real ⊢
-    obtain ⟨xs, hx_tendsto, hx_eq⟩ := h_real
-    refine ⟨fun n => xs n, ?_, fun n => ?_⟩
-    · rw [tendsto_nhdsWithin_iff] at hx_tendsto ⊢
-      constructor
-      · rw [Complex.ofReal_zero.symm, Filter.tendsto_ofReal_iff]
-        exact hx_tendsto.1
-      · simpa using hx_tendsto.2
-    · exact hx_eq n
-  apply Measure.ext_of_charFun
-  funext t
-  rw [← complexMGF_id_mul_I, ← complexMGF_id_mul_I]
-  exact heq (by simp [hS])
 
 /-- A centered Gaussian is the image of the standard one under `x ↦ √v x`. -/
 private theorem gaussianReal_zero_eq_map_mul (v : ℝ≥0) :

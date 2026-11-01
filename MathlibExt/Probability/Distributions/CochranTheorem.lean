@@ -11,7 +11,7 @@ module
 public import MathlibExt.Probability.Distributions.ChiSquare
 public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import MathlibExt.Probability.Statistics.MetaAnalysis
+import MathlibExt.Probability.Distributions.Gamma
 
 /-!
 # Cochran's theorem on Gaussian quadratic forms
@@ -32,7 +32,7 @@ at `0`; this is why every statement assumes a positive dimension or rank.
 
 ## Main results
 
-* `gaussianReal_map_sq_eq_chiSquareMeasure`: `Z² ~ χ²₁` for `Z ~ N(0, 1)`.
+* `gaussianReal_map_sq` (in `Distributions.ChiSquare`): `Z² ~ χ²₁` for `Z ~ N(0, 1)`.
 * `pi_gaussianReal_map_sum_sq`: for independent standard normal coordinates, `∑_{i ∈ s} Zᵢ²`
   is chi-square with `|s|` degrees of freedom (`s ≠ ∅`).
 * `stdGaussian_map_sum_sq_inner`: the same in the coordinates of any orthonormal basis.
@@ -75,21 +75,9 @@ private theorem mgf_chiSquareMeasure_eq_pow {p : ℕ} (hp : 0 < p) (t : ℝ) :
     refine mgf_undef fun hi => ?_
     have hmem : t ∈ integrableExpSet id (chiSquareMeasure p) := hi
     rw [chiSquareMeasure,
-      MathlibExt.Probability.Statistics.MetaAnalysis.integrableExpSet_gammaMeasure
+      ProbabilityTheory.integrableExpSet_gammaMeasure
         (by positivity) (by norm_num)] at hmem
     exact absurd hmem (not_lt.2 ht)
-
-/-- The square of a standard normal variable has the chi-square law with one degree of
-freedom. -/
-theorem gaussianReal_map_sq_eq_chiSquareMeasure :
-    (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 := by
-  have := isProbabilityMeasure_chiSquareMeasure one_pos
-  refine MathlibExt.Probability.Statistics.MetaAnalysis.eq_gammaMeasure_of_mgf_eq
-    (by norm_num) (by norm_num) ?_
-  funext t
-  rw [mgf_map (by fun_prop) (by fun_prop), ← chiSquareMeasure, mgf_chiSquareMeasure_eq_pow one_pos,
-    pow_one]
-  exact mgf_sq_stdGaussian t
 
 /-- For independent standard normal coordinates, the sum of the squares of the coordinates in a
 nonempty finite set `s` has the chi-square law with `|s|` degrees of freedom. -/
@@ -97,7 +85,7 @@ theorem pi_gaussianReal_map_sum_sq {ι : Type*} [Fintype ι] {s : Finset ι} (hs
     (Measure.pi fun _ : ι => gaussianReal 0 1).map (fun x => ∑ i ∈ s, x i ^ 2) =
       chiSquareMeasure s.card := by
   have := isProbabilityMeasure_chiSquareMeasure hs.card_pos
-  refine MathlibExt.Probability.Statistics.MetaAnalysis.eq_gammaMeasure_of_mgf_eq
+  refine ProbabilityTheory.eq_gammaMeasure_of_mgf_eq
     (by have := hs.card_pos; positivity) (by norm_num) ?_
   funext t
   rw [← chiSquareMeasure, mgf_chiSquareMeasure_eq_pow hs.card_pos,
