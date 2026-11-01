@@ -45,6 +45,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/guard/base /tmp/guard/merge-base /tmp/guard/pr
+          # The guard reads the configured pin-policy file from both trees,
+          # so download it too (from the base checkout's config: a PR cannot
+          # change the config, it is a guard file).
+          PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print((c.get("pin_policy") or {}).get("path", ""))')"
           MERGE_BASE_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
           for dir in base merge-base pr; do
             case "$dir" in
@@ -52,7 +56,10 @@ jobs:
               merge-base) REF="$MERGE_BASE_SHA" ;;
               pr) REF="$HEAD_SHA" ;;
             esac
-            for file in lean-toolchain lakefile.toml lake-manifest.json; do
+            FILES="lean-toolchain lakefile.toml lake-manifest.json"
+            if [ -n "$PIN_POLICY_PATH" ]; then FILES="$FILES $PIN_POLICY_PATH"; fi
+            for file in $FILES; do
+              mkdir -p "/tmp/guard/${dir}/$(dirname "$file")"
               gh api "repos/${GITHUB_REPOSITORY}/contents/${file}?ref=${REF}" --jq '.content' \
                 | base64 -d > "/tmp/guard/${dir}/${file}"
             done

@@ -315,6 +315,80 @@ class GuardTests(unittest.TestCase):
         self.assertIn("f" * 40, out)
 
 
+class PreparedFilesTests(unittest.TestCase):
+    def test_prepared_files(self):
+        self.assertEqual(
+            pinned_bump.prepared_files(CONFIG),
+            ["README.md", "lake-manifest.json", "lakefile.toml", "lean-toolchain"],
+        )
+        config = dict(CONFIG, pin_policy={"path": "scripts/check_lake_surface.py"})
+        self.assertIn("scripts/check_lake_surface.py", pinned_bump.prepared_files(config))
+
+    def test_stage_and_verify_prepared(self):
+        import os
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        real_config = load_config(repo_root)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for rel in ["lean-toolchain", "lakefile.toml", "lake-manifest.json",
+                        "README.md"]:
+                (root / rel).write_text("placeholder\n")
+            (root / "scripts").mkdir()
+            (root / "scripts/check_lake_surface.py").write_text("placeholder\n")
+            old_cwd = os.getcwd()
+            os.chdir(root)
+            try:
+                args = type("A", (), {"dest": str(root / "staged")})()
+                self.assertEqual(pinned_bump.cmd_stage_prepared(args), 0)
+                vargs = type("A", (), {"dir": str(root / "staged")})()
+                self.assertEqual(pinned_bump.cmd_verify_staged(vargs), 0)
+                (root / "staged" / "evil.py").write_text("x\n")
+                self.assertEqual(pinned_bump.cmd_verify_staged(vargs), 1)
+                (root / "staged" / "evil.py").unlink()
+                (root / "staged" / "README.md").unlink()
+                self.assertEqual(pinned_bump.cmd_verify_staged(vargs), 1)
+            finally:
+                os.chdir(old_cwd)
+
+
+class ForkPrTests(unittest.TestCase):
+    def _pr(self, *, head_repo, head_ref, base_ref="main"):
+        return {
+            "head": {"ref": head_ref, "repo": {"full_name": head_repo}},
+            "base": {"ref": base_ref},
+        }
+
+    def test_existing_bump_pr_requires_same_repo_and_main(self):
+        branch = "bump-pinned/v4.36.0"
+        self.assertTrue(pinned_bump._is_existing_bump_pr(
+            self._pr(head_repo="example/repo", head_ref=branch),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_existing_bump_pr(
+            self._pr(head_repo="fork/repo", head_ref=branch),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_existing_bump_pr(
+            self._pr(head_repo="example/repo", head_ref=branch, base_ref="develop"),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_existing_bump_pr(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.35.0"),
+            "example/repo", branch))
+
+    def test_superseded_candidate_ignores_forks_and_current_branch(self):
+        branch = "bump-pinned/v4.36.0"
+        self.assertTrue(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="bump-pinned/v4.35.0"),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="fork/repo", head_ref="bump-pinned/v4.35.0"),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref=branch),
+            "example/repo", branch))
+        self.assertFalse(pinned_bump._is_superseded_candidate(
+            self._pr(head_repo="example/repo", head_ref="some-feature"),
+            "example/repo", branch))
+
+
 class ConfigTests(unittest.TestCase):
     def test_checked_in_config_matches_this_repo(self):
         config = load_config(Path(__file__).resolve().parent.parent.parent)

@@ -9,17 +9,20 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            never sees the App secret. Adapted from TauCeti's select/publish
            split: the selector cannot push, the publisher never executes
            upstream code.
-  prepare  Read-only-token only (github.token). Revalidate the selected
-           target, apply the tag to lean-toolchain, lakefile.toml,
-           README/BACKPORTS version lines and the pin-policy constants
-           (atlas check_lake_surface.py), run `lake update`, and verify the
+  prepare  Read-only job (its default token is read-only, and the App
+           token is never minted there). Revalidate the selected target,
+           apply the tag to lean-toolchain, lakefile.toml, README/BACKPORTS
+           version lines and the pin-policy constants (atlas
+           check_lake_surface.py), run `lake update`, and verify the
            manifest. Writes only the working tree; commits nothing, pushes
-           nothing, opens nothing. The write-capable App token is minted
-           only after this step finishes, so `lake update` (which executes
-           the newly tagged Lean/Lake) never sees it.
-  finish   App-token only. Commit the prepared tree, push it via an
-           explicit push URL (the checkout never persists the App token),
-           and open the bump PR. Reconciles an existing branch: an open PR
+           nothing, opens nothing, so `lake update` (which executes the
+           newly tagged Lean/Lake) never sees a write-capable token.
+           Hands only the prepared files (`prepared_files`) to the publish
+           job via an artifact.
+  finish   App-token only, on a fresh checkout whose default token stays
+           read-only, with the verified staged tree overlaid. Commit the
+           prepared tree, push it via an explicit push URL (the checkout
+           never persists the App token), and open the bump PR. Reconciles an existing branch: an open PR
            on it means leave it alone; a branch with no PR and a tree
            identical to the prepared tree means create the missing PR
            (recovery from a push followed by a PR-creation failure); a
@@ -52,6 +55,7 @@ import copy
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -97,6 +101,43 @@ def load_config(root: Path) -> dict:
         if not dep.get("name") or not dep.get("repo"):
             raise ValueError(f"bad dep entry in {path}: {dep!r}")
     return config
+
+
+def prepared_files(config: dict) -> list[str]:
+    """Files the prepare step may hand to the publish step: the pin files
+    plus the configured doc + pin-policy files. Everything else in the
+    working tree (`.git`, Lake build outputs) stays behind."""
+    files = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
+    files += [entry["path"] for entry in config.get("doc_replacements", [])]
+    if config.get("pin_policy"):
+        files.append(config["pin_policy"]["path"])
+    return sorted(set(files))
+
+
+def _is_existing_bump_pr(pr: dict, repo: str, branch: str) -> bool:
+    """True if `pr` is this repo's bump PR on `branch` targeting main. A fork
+    can use the predictable branch name `bump-pinned/<target>`, so the head
+    repository (and the base branch) must match before the workflow treats
+    a PR as its own."""
+    head = pr.get("head") or {}
+    return (
+        head.get("ref") == branch
+        and (head.get("repo") or {}).get("full_name") == repo
+        and (pr.get("base") or {}).get("ref") == "main"
+    )
+
+
+def _is_superseded_candidate(pr: dict, repo: str, branch: str) -> bool:
+    """True if `pr` is a same-repo bump PR on an older target branch: the
+    head repository must match, so a fork PR reusing a `bump-pinned/`
+    branch name is never closed as superseded."""
+    head = pr.get("head") or {}
+    ref = head.get("ref", "")
+    return (
+        ref.startswith("bump-pinned/")
+        and ref != branch
+        and (head.get("repo") or {}).get("full_name") == repo
+    )
 
 
 def toolchain_tag(root: Path) -> str:
@@ -552,9 +593,10 @@ def cmd_finish(args: argparse.Namespace) -> int:
         return 2
     branch = f"bump-pinned-rc/{target}" if args.allow_rc else f"bump-pinned/{target}"
     # If an open PR already points at this branch, leave it alone: it may
-    # hold human repair commits.
+    # hold human repair commits. Only a PR from this repo targeting main
+    # counts: a fork can reuse the predictable branch name.
     for pr in client.open_prs():
-        if (pr.get("head") or {}).get("ref") == branch:
+        if _is_existing_bump_pr(pr, client.repo, branch):
             print(f"open bump PR #{pr['number']} already exists on {branch}; leaving it alone")
             return 0
     bot_name = os.environ.get("BUMP_BOT_NAME") or "bump-pinned-release[bot]"
@@ -564,11 +606,7 @@ def cmd_finish(args: argparse.Namespace) -> int:
     try:
         run(["git", "config", "user.name", bot_name])
         run(["git", "config", "user.email", bot_email])
-        changed = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
-        for entry in config.get("doc_replacements", []):
-            changed.append(entry["path"])
-        if config.get("pin_policy"):
-            changed.append(config["pin_policy"]["path"])
+        changed = prepared_files(config)
         if run(["git", "status", "--porcelain"]):
             run(["git", "add"] + sorted(set(changed)))
             run(["git", "commit", "-m", f"Bump pinned Lean/Mathlib to {target}"])
@@ -636,9 +674,9 @@ def cmd_finish(args: argparse.Namespace) -> int:
     # Close superseded bot-only bump PRs for older targets, only now that
     # the new PR exists. A PR with human repair commits is never closed here.
     for pr in client.open_prs():
-        head = (pr.get("head") or {}).get("ref", "")
-        if not head.startswith("bump-pinned/") or head == branch:
+        if not _is_superseded_candidate(pr, client.repo, branch):
             continue
+        head = (pr.get("head") or {}).get("ref", "")
         commits = client.pr_commits(pr["number"])
         authors = {(c.get("author") or {}).get("login", "") for c in commits}
         if authors and all(a.endswith("[bot]") for a in authors):
@@ -650,6 +688,46 @@ def cmd_finish(args: argparse.Namespace) -> int:
             print(f"closed superseded bot-only bump PR #{pr['number']}")
         else:
             print(f"leaving {head} (#{pr['number']}) alone: it has non-bot commits")
+    return 0
+
+
+def cmd_stage_prepared(args: argparse.Namespace) -> int:
+    """Copy the prepared files into an artifact staging directory."""
+    root = Path.cwd()
+    config = load_config(root)
+    dest = Path(args.dest)
+    for rel in prepared_files(config):
+        src = root / rel
+        if not src.is_file():
+            print(f"stage-prepared: FAIL - {rel} is missing", file=sys.stderr)
+            return 1
+        target = dest / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, target)
+    print(f"stage-prepared: OK - staged {len(prepared_files(config))} files to {dest}")
+    return 0
+
+
+def cmd_verify_staged(args: argparse.Namespace) -> int:
+    """Refuse a staged tree containing anything outside the prepared-file
+    whitelist (or missing a whitelisted file)."""
+    config = load_config(Path.cwd())
+    allowed = set(prepared_files(config))
+    staged_dir = Path(args.dir)
+    staged = {
+        str(p.relative_to(staged_dir))
+        for p in staged_dir.rglob("*")
+        if p.is_file()
+    }
+    extra = sorted(staged - allowed)
+    missing = sorted(allowed - staged)
+    if extra or missing:
+        if extra:
+            print(f"verify-staged: FAIL - unexpected files: {extra}", file=sys.stderr)
+        if missing:
+            print(f"verify-staged: FAIL - missing files: {missing}", file=sys.stderr)
+        return 1
+    print(f"verify-staged: OK - staged tree holds only the {len(allowed)} prepared files")
     return 0
 
 
@@ -792,6 +870,16 @@ def main(argv: list[str] | None = None) -> int:
     p_prepare.add_argument("target")
     p_prepare.add_argument("--allow-rc", action="store_true")
     p_prepare.set_defaults(func=cmd_prepare)
+    p_stage = sub.add_parser(
+        "stage-prepared",
+        help="stage the prepared files into a directory for transfer to the publish job")
+    p_stage.add_argument("--dest", required=True)
+    p_stage.set_defaults(func=cmd_stage_prepared)
+    p_verify = sub.add_parser(
+        "verify-staged",
+        help="verify a staged tree holds only the prepared files")
+    p_verify.add_argument("--dir", required=True)
+    p_verify.set_defaults(func=cmd_verify_staged)
     p_finish = sub.add_parser(
         "finish", help="commit, push, and open the PR for a prepared tree (App token)")
     p_finish.add_argument("target")
