@@ -21,8 +21,8 @@ Partial-correctness Hoare triples, proved for skip / assignment /
 sequencing / if / while. The while rule is induction on the `BigStep`
 derivation with the loop invariant generalized.
 
-VC generation (symbolic evaluation of these rules into verification
-conditions) is the Weeks 5-8 deliverable; binary search is its demo.
+VC generation (weakest preconditions) is in `VC.lean`; binary search
+is its demo.
 -/
 
 /-- Partial-correctness Hoare triple: every terminating run from `P`
@@ -61,29 +61,29 @@ theorem hoare_if {P Q : State → Prop} {b : BExp} {c₁ c₂ : Stmt} :
   | ifTrue hb h₁' => exact h₁ _ _ ⟨hP, hb⟩ h₁'
   | ifFalse hb h₂' => exact h₂ _ _ ⟨hP, hb⟩ h₂'
 
-/-- While rule: invariant `P` holds at entry and is preserved by the
-body, so it holds at exit together with `¬ b`. Proved by induction on
-the `BigStep` derivation, with the loop identified by an equality
-hypothesis so the recursor's non-while cases are discharged by
-constructor clash. -/
-theorem hoare_while {P : State → Prop} {b : BExp} {c : Stmt} :
-    Hoare (fun s => P s ∧ beval b s) c P →
-      Hoare P (.while b c) (fun s => P s ∧ ¬ beval b s) := by
+/-- While rule: the annotated invariant `I` holds at entry and is
+preserved by the body, so it holds at exit together with `¬ b`.
+Proved by induction on the `BigStep` derivation, with the loop
+identified by an equality hypothesis so the recursor's non-while
+cases are discharged by constructor clash. -/
+theorem hoare_while {I : State → Prop} {b : BExp} {c : Stmt} :
+    Hoare (fun s => I s ∧ beval b s) c I →
+      Hoare I (.while b I c) (fun s => I s ∧ ¬ beval b s) := by
   intro hbody s s' hP h
   have key : ∀ {c' : Stmt} {s s' : State}, BigStep c' s s' →
-      ∀ (b : BExp) (c₀ : Stmt), c' = .while b c₀ →
-        Hoare (fun s => P s ∧ beval b s) c₀ P → P s → P s' ∧ ¬ beval b s' := by
+      ∀ (b : BExp) (I : State → Prop) (c₀ : Stmt), c' = .while b I c₀ →
+        Hoare (fun s => I s ∧ beval b s) c₀ I → I s → I s' ∧ ¬ beval b s' := by
     intro c' s s' h
     induction h with
-    | skip => intro _ _ heq _ _; cases heq
-    | assign => intro _ _ heq _ _; cases heq
-    | seq _ _ _ _ => intro _ _ heq _ _; cases heq
-    | ifTrue _ _ _ => intro _ _ heq _ _; cases heq
-    | ifFalse _ _ _ => intro _ _ heq _ _; cases heq
-    | whileFalse hn => intro _ _ heq _ hP; cases heq; exact ⟨hP, hn⟩
+    | skip => intro _ _ _ heq _ _; cases heq
+    | assign => intro _ _ _ heq _ _; cases heq
+    | seq _ _ _ _ => intro _ _ _ heq _ _; cases heq
+    | ifTrue _ _ _ => intro _ _ _ heq _ _; cases heq
+    | ifFalse _ _ _ => intro _ _ _ heq _ _; cases heq
+    | whileFalse hn => intro _ _ _ heq _ hP; cases heq; exact ⟨hP, hn⟩
     | whileTrue hb h₁ _ _ ih₂ =>
-        intro _ _ heq hbody' hP; cases heq
-        exact ih₂ _ _ rfl hbody' (hbody' _ _ ⟨hP, hb⟩ h₁)
-  exact key h _ _ rfl hbody hP
+        intro _ _ _ heq hbody' hP; cases heq
+        exact ih₂ _ _ _ rfl hbody' (hbody' _ _ ⟨hP, hb⟩ h₁)
+  exact key h _ _ _ rfl hbody hP
 
 end CSLibExt.Languages.MiniImp
