@@ -69,6 +69,11 @@ example : xpehh (ihh 1 1) (ihh 1 2) = log 2 := by
   rw [xpehh_ihh one_pos one_pos (by norm_num)]
   norm_num
 
+/-- Negative inputs use Mathlib's totalization of `Real.log`, not a zero junk value:
+`xpehh (-2) 1 = log 2`. -/
+example : xpehh (-2) 1 = log 2 := by
+  rw [xpehh, Real.log_neg_eq_log, Real.log_one, sub_zero]
+
 #print axioms IsExchangeablePair.map_sub_neg
 #print axioms IsExchangeablePair.measure_abs_sub
 #print axioms measure_le_xpehh

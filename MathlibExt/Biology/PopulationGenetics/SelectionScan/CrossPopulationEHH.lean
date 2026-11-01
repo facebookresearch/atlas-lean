@@ -17,14 +17,17 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 /-!
 # Cross-population haplotype statistics and their exchangeability symmetry
 
-The cross-population extended haplotype homozygosity score (XP-EHH, Sabeti et al. 2007) and
-the relative extended haplotype homozygosity of the long-range haplotype test (Sabeti et al.
-2002) are both log ratios of two haplotype-homozygosity statistics: two populations for
-XP-EHH, the two core alleles for the long-range haplotype test.
+The cross-population extended haplotype homozygosity score (XP-EHH, Sabeti et al. 2007) is a
+log ratio of two haplotype-homozygosity statistics, one per population, while the relative
+extended haplotype homozygosity of the long-range haplotype test (Sabeti et al. 2002) is the
+plain (unlogged) ratio of the two core-allele homozygosities.
 
-The null hypothesis of both tests is that the two groups being compared are *exchangeable*:
-the joint law of the pair of statistics is invariant under swapping them. This file proves
-that exchangeability alone — no model of the genealogy, no distributional assumption — forces
+Exchangeability is an additional calibration assumption, stronger than — not identical
+to — the ordinary neutral null of these tests: two neutral populations can have different
+demographic histories or sample sizes, and the two carrier groups can have different allele
+frequencies, so their joint law need not be swap-invariant. An exchangeable pair is one
+whose joint law is invariant under swapping the two statistics. This file proves that
+exchangeability alone — no model of the genealogy, no distributional assumption — forces
 the log ratio to have a symmetric law, so the two tails of the test carry exactly the same
 probability, and gives the resulting equal-tail identities.
 
@@ -65,7 +68,8 @@ namespace MathlibExt.Biology.PopulationGenetics.SelectionScan
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X Y : Ω → ℝ}
 
 /-- The pair of statistics `(X, Y)` is exchangeable under `μ`: the joint law is unchanged by
-swapping the two coordinates. This is the null hypothesis of a two-group haplotype test.
+swapping the two coordinates. This is an additional calibration assumption for a two-group
+haplotype test, stronger than the ordinary neutral null.
 Defined as `IdentDistrib` of the two orderings, so the measurability of the joint laws is
 part of the hypothesis rather than restored separately in each theorem. -/
 def IsExchangeablePair (μ : Measure Ω) (X Y : Ω → ℝ) : Prop :=
@@ -163,8 +167,9 @@ end IsExchangeablePair
 
 /-- The cross-population extended haplotype homozygosity score (Sabeti et al. 2007): the log
 ratio of the integrated haplotype homozygosities of the same core region in two populations.
-Both arguments must be positive for the score to be meaningful; `Real.log` returns the junk
-value `0` at `0` and at negative arguments. -/
+Both arguments must be positive for the score to be meaningful. Outside that domain
+`Real.log` is totalized by Mathlib, not by the stated junk value: `Real.log 0 = 0` and
+`Real.log (-x) = Real.log x`, so for example `xpehh (-2) 1 = log 2`. -/
 noncomputable def xpehh (iA iB : ℝ) : ℝ := log iA - log iB
 
 /-- XP-EHH computed from two star-genealogy sweep models with the same recombination rate is
@@ -175,7 +180,7 @@ theorem xpehh_ihh {r T₁ T₂ : ℝ} (hr : 0 < r) (h₁ : 0 < T₁) (h₂ : 0 <
   congr 1
   field_simp
 
-/-- Under the exchangeability null, the XP-EHH score has a symmetric law: the two tails of the
+/-- Under exchangeability, the XP-EHH score has a symmetric law: the two tails of the
 two-sided test carry the same probability. -/
 theorem measure_le_xpehh {I₁ I₂ : Ω → ℝ} (h : IsExchangeablePair μ I₁ I₂) (h₁ : Measurable I₁)
     (h₂ : Measurable I₂) (t : ℝ) :

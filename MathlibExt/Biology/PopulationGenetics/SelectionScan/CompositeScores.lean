@@ -31,8 +31,9 @@ a strictly increasing function of the score, so ranking sites by CMS and by post
 probability agree.
 
 **SweepFinder (Kim and Stephan 2002; Nielsen et al. 2005).** A sweep at position `x` of
-strength `α > 0` leaves a lineage at position `y` unaffected with probability
-`exp (-α |y - x|)`, so the frequency spectrum at `y` is the mixture of the neutral spectrum
+strength `α > 0` leaves a lineage at position `y` unaffected (escaped) with probability
+`1 - exp (-α |y - x|)`, i.e. `escapeProb α x y`; `exp (-α |y - x|)` is the probability of
+remaining linked to the sweep. So the frequency spectrum at `y` is the mixture of the neutral spectrum
 with weight `escapeProb α x y` and the swept spectrum with the complementary weight. We prove
 that the sweep parameters are identified by these per-site laws: distinct pairs `(x, α)` give
 distinct escape functions, a mixture of two distinct laws determines its weight, and
