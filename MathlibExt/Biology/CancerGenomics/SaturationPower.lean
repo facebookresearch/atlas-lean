@@ -72,17 +72,6 @@ noncomputable def lawrenceP0 (μ fg L : ℝ) : ℝ := 1 - (1 - μ * fg) ^ (3 * L
 above background, with miss rate `m` (Lawrence et al. 2014). -/
 def lawrenceP1 (p₀ r m : ℝ) : ℝ := p₀ + r * (1 - m)
 
-private theorem pmf_nonneg (n i : ℕ) {p : ℝ} (hp : 0 ≤ p) (hp' : p ≤ 1) :
-    0 ≤ binomPmf n p i := by
-  unfold binomPmf
-  exact mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg hp _))
-    (pow_nonneg (sub_nonneg.mpr hp') _)
-
-private theorem pmf_sum (n : ℕ) (p : ℝ) :
-    ∑ i ∈ range (n + 1), binomPmf n p i = 1 := by
-  have h := congrArg (Polynomial.eval p) (bernsteinPolynomial.sum ℝ n)
-  simpa [Polynomial.eval_finsetSum, bernsteinPolynomial, binomPmf] using h
-
 private theorem pmf_variance (n : ℕ) (p : ℝ) :
     ∑ i ∈ range (n + 1), ((i : ℝ) - n * p) ^ 2 * binomPmf n p i =
       n * p * (1 - p) := by
@@ -101,10 +90,10 @@ private theorem concentration (n : ℕ) {p d : ℝ} (hn : 0 < n) (hp : 0 ≤ p)
     calc
       _ = ∑ i ∈ s, ((n : ℝ) * d) ^ 2 * binomPmf n p i := mul_sum _ _ _
       _ ≤ ∑ i ∈ s, ((i : ℝ) - n * p) ^ 2 * binomPmf n p i :=
-        sum_le_sum fun i hi => mul_le_mul_of_nonneg_right (hdev i hi) (pmf_nonneg n i hp hp')
+        sum_le_sum fun i hi => mul_le_mul_of_nonneg_right (hdev i hi) (binomPmf_nonneg hp hp') i
       _ ≤ ∑ i ∈ range (n + 1), ((i : ℝ) - n * p) ^ 2 * binomPmf n p i :=
         sum_le_sum_of_subset_of_nonneg hs fun i _ _ =>
-          mul_nonneg (sq_nonneg _) (pmf_nonneg n i hp hp')
+          mul_nonneg (sq_nonneg _) (binomPmf_nonneg hp hp') i
       _ = n * p * (1 - p) := pmf_variance n p
   have hquot : (n : ℝ) * p * (1 - p) / ((n : ℝ) * d) ^ 2 =
       (p * (1 - p) / d ^ 2) / n := by
@@ -147,8 +136,8 @@ private theorem power_le_one (n : ℕ) (p₀ γ : ℝ) {p₁ : ℝ} (hp : 0 ≤ 
   classical
   calc
     _ ≤ ∑ i ∈ range (n + 1), binomPmf n p₁ i :=
-      sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun i _ _ => pmf_nonneg n i hp hp'
-    _ = 1 := pmf_sum n p₁
+      sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun i _ _ => binomPmf_nonneg hp hp' i
+    _ = 1 := sum_binomPmf n p₁
 
 private theorem power_lower (n : ℕ) {p₀ p₁ c γ : ℝ} (hn : 0 < n) (hp₀ : 0 ≤ p₀)
     (hp₀' : p₀ ≤ 1) (hp₁ : 0 ≤ p₁) (hp₁' : p₁ ≤ 1) (hc₀ : p₀ < c) (hc₁ : c < p₁)
@@ -162,10 +151,10 @@ private theorem power_lower (n : ℕ) {p₀ p₁ c γ : ℝ} (hn : 0 < n) (hp₀
     exact mem_filter.mpr ⟨hi, (tail_bound n i hn hp₀ hp₀' hc₀ hic).trans hlevel⟩
   have hsum : (∑ i ∈ range (n + 1) with (n : ℝ) * c ≤ ((i : ℕ) : ℝ), binomPmf n p₁ i) +
       (∑ i ∈ range (n + 1) with ¬(n : ℝ) * c ≤ ((i : ℕ) : ℝ), binomPmf n p₁ i) = 1 := by
-    rw [sum_filter_add_sum_filter_not, pmf_sum]
+    rw [sum_filter_add_sum_filter_not, sum_binomPmf]
   have hhigh : (∑ i ∈ range (n + 1) with (n : ℝ) * c ≤ ((i : ℕ) : ℝ), binomPmf n p₁ i) ≤
       saturationPower n p₀ p₁ γ :=
-    sum_le_sum_of_subset_of_nonneg hsubset fun i _ _ => pmf_nonneg n i hp₁ hp₁'
+    sum_le_sum_of_subset_of_nonneg hsubset fun i _ _ => binomPmf_nonneg hp₁ hp₁' i
   have hlow := lower_bound n hn hp₁ hp₁' hc₁
   linarith
 
