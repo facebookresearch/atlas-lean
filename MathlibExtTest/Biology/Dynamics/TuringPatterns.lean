@@ -45,6 +45,11 @@ example (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv : ℝ) : modeMatrix J du dv 0 = 
 example : neumannWavenumber 1 2 = 2 * Real.pi := by
   norm_num [neumannWavenumber]
 
+/-- Zero-length edge case: at `L = 0` the totalized division collapses every
+labeled Neumann mode to the homogeneous mode. -/
+example (n : ℕ) : neumannWavenumber 0 n = 0 := by
+  simp [neumannWavenumber]
+
 /-- **Non-vacuity witness for the linearized system.** With `J = diag(2, -1)`, `d_u = d_v = 1`
 and `k = 1`, the mode matrix is `diag(1, -2)`; the Fourier mode with `μ = 1`, `v = (1, 0)` solves
 `w_t = D w_xx + J w` and grows, so mode `1` is unstable. -/

@@ -166,7 +166,9 @@ noncomputable def bandLower (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv : ℝ) : ℝ
 noncomputable def bandUpper (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv : ℝ) : ℝ :=
   (dv * J 0 0 + du * J 1 1 + Real.sqrt (bandDiscriminant J du dv)) / (2 * du * dv)
 
-/-- The Neumann wavenumber `k_n = n π / L` of the mode `cos(n π x / L)` on `[0, L]`. -/
+/-- The Neumann wavenumber `k_n = n π / L` of the mode `cos(n π x / L)` on `[0, L]`.
+Meaningful only for `0 < L`; at `L = 0` the totalized division gives `0`, so every
+labeled Neumann mode collapses to the homogeneous mode. -/
 noncomputable def neumannWavenumber (L : ℝ) (n : ℕ) : ℝ :=
   n * Real.pi / L
 
@@ -505,7 +507,7 @@ theorem exists_isUnstableMode_iff {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
 /-- Under Turing's criterion the critical wavenumber `k_c = √(k_c²)` is itself unstable (and
 `0 < k_c²`). -/
 theorem isUnstableMode_sqrt_criticalWavenumberSq {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
-    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0)
+    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0) (_hdet : 0 < J.det)
     (h : 2 * Real.sqrt (du * dv * J.det) < dv * J 0 0 + du * J 1 1) :
     0 < criticalWavenumberSq J du dv ∧
       IsUnstableMode J du dv (Real.sqrt (criticalWavenumberSq J du dv)) := by
@@ -640,7 +642,7 @@ theorem hasDerivAt_fourierMode_neumannWavenumber {L : ℝ} (hL : L ≠ 0) (n : �
 `d_u, d_v > 0`, mode `n` is unstable iff `k_n² = (n π / L)²` lies in the unstable band
 `(q₋, q₊)` (which requires a positive discriminant). -/
 theorem isUnstableMode_neumannWavenumber_iff {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
-    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0) (n : ℕ) :
+    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0) (_hL : 0 < L) (n : ℕ) :
     IsUnstableMode J du dv (neumannWavenumber L n) ↔
       0 < bandDiscriminant J du dv ∧ bandLower J du dv < (n * Real.pi / L) ^ 2 ∧
         (n * Real.pi / L) ^ 2 < bandUpper J du dv := by
@@ -696,7 +698,7 @@ theorem not_isUnstableMode_neumannWavenumber_of_le {J : Matrix (Fin 2) (Fin 2) �
     ¬ IsUnstableMode J du dv (neumannWavenumber L n) := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simpa [neumannWavenumber] using not_isUnstableMode_zero htr hdet du dv
-  · rw [isUnstableMode_neumannWavenumber_iff hdu hdv htr]
+  · rw [isUnstableMode_neumannWavenumber_iff hdu hdv htr hL]
     rintro ⟨-, -, hlt⟩
     have h1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
     have hpl : 0 < Real.pi / L := div_pos Real.pi_pos hL
@@ -751,7 +753,7 @@ theorem exists_neumann_mem_band {qlo qhi : ℝ} (hlt : qlo < qhi) (hpos : 0 < qh
 /-- **Large domains pattern.** Under Turing's criterion, every long enough interval `[0, L]` has
 an unstable Neumann mode. -/
 theorem exists_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
-    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0)
+    (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0) (_hdet : 0 < J.det)
     (h : 2 * Real.sqrt (du * dv * J.det) < dv * J 0 0 + du * J 1 1) :
     ∃ L₀ : ℝ, 0 < L₀ ∧ ∀ L, L₀ ≤ L → ∃ n : ℕ, IsUnstableMode J du dv (neumannWavenumber L n) := by
   obtain ⟨hS, hsq⟩ := two_mul_sqrt_lt_iff.1 h
@@ -768,8 +770,9 @@ theorem exists_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ}
     exact div_pos (by linarith) hp
   obtain ⟨L₀, hL₀, hL⟩ := exists_neumann_mem_band hlt hpos
   refine ⟨L₀, hL₀, fun L hL₀L => ?_⟩
+  have hLpos : 0 < L := lt_of_lt_of_le hL₀ hL₀L
   obtain ⟨n, h1, h2⟩ := hL L hL₀L
-  exact ⟨n, (isUnstableMode_neumannWavenumber_iff hdu hdv htr n).2 ⟨hΔ, h1, h2⟩⟩
+  exact ⟨n, (isUnstableMode_neumannWavenumber_iff hdu hdv htr hLpos n).2 ⟨hΔ, h1, h2⟩⟩
 
 /-! ### Schnakenberg kinetics -/
 
