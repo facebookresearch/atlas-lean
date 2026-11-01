@@ -50,7 +50,7 @@ All algebraic identities below hold for every real `c` and `π`; probabilistic m
 * `isRateMatrix_equalInputRate`: for `κ ≥ 0`, `π ≥ 0`, `∑ π = 1`, the generator is a rate
   matrix.
 * `ctmcTransition_equalInputRate`: `exp (t • κ (𝟙 πᵀ - 1)) = K (e^{-κ t})` for all real
-  `t`, `κ`; hence the semigroup law `ctmcTransition_equalInputRate_add`.
+  `t`, `κ`; hence the semigroup law `stickyKernel_exp_add`.
 * `tendsto_stickyKernel_atTop`, `tendsto_stickyKernel_nhds_zero`: as `t → ∞` (`κ > 0`) the
   kernel tends to `𝟙 πᵀ`; as `t → 0` it tends to the identity.
 * `covariance_stickyKernel`: for a stationary pair `(X, Y)` with joint law `π i K i j`,
