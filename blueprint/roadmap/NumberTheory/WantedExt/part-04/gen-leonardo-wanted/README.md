@@ -1,0 +1,16 @@
+# Gen Leonardo Wanted
+
+- [Gen Leonardo](gen-leonardo.md)
+- [Gen Leonardo two](gen-leonardo-two.md)
+- [Gen Leonardo eq leonardo PK one](gen-leonardo-eq-leonardo-pk-one.md)
+- [Gen Leonardo Companion](gen-leonardo-companion.md)
+- [Gen Leonardo Companion one](gen-leonardo-companion-one.md)
+- [Gen Leonardo mul companion](gen-leonardo-mul-companion.md)
+- [Gen Leonardo cross](gen-leonardo-cross.md)
+- [Gen Leonardo sq sub sq](gen-leonardo-sq-sub-sq.md)
+- [Gen Leonardo shift](gen-leonardo-shift.md)
+- [Gen Leonardo sq sum diff](gen-leonardo-sq-sum-diff.md)
+- [Gen Leonardo binomial sum](gen-leonardo-binomial-sum.md)
+- [Gen Leonardo binomial sum two mul](gen-leonardo-binomial-sum-two-mul.md)
+- [Gen Leonardo binomial alternating](gen-leonardo-binomial-alternating.md)
+- [Gen Leonardo binomial steps](gen-leonardo-binomial-steps.md)

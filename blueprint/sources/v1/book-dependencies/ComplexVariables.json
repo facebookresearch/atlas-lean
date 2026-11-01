@@ -1,0 +1,168 @@
+{
+ "book": "ComplexVariables",
+ "source": "MIT OCW 18.112 Functions of a Complex Variable (Fall 2008), Remarks on Lectures 1-20 and 23 (text/lecture*.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 15,
+   "to": 13,
+   "evidence": "lecture13.txt:26",
+   "quote": "such that ζ � 0",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 14,
+   "evidence": "lecture13.txt:27",
+   "quote": "if � is simply connected then",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 16,
+   "evidence": "lecture13.txt:88",
+   "quote": "By (1),",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 13,
+   "evidence": "lecture13.txt:31",
+   "quote": "where ζ � 0 with respect to �.",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 17,
+   "evidence": "lecture13.txt:73",
+   "quote": "is holomorphic on D (even �).",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 20,
+   "evidence": "lecture13.txt:82",
+   "quote": "By Liouville’s Theorem, h � 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 16,
+   "to": 21,
+   "evidence": "lecture13.txt:78",
+   "quote": "Claim 3: h � 0, so (1) holds.",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 11,
+   "evidence": "lecture13.txt:45",
+   "quote": "Then by Theorem 8",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 14,
+   "evidence": "lecture14.txt:56",
+   "quote": "nected (the complement is",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 15,
+   "evidence": "lecture14.txt:59",
+   "quote": "of this region is 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "lecture14.txt:34",
+   "quote": "f (z) dz = Resz=aj f (z).",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 17,
+   "evidence": "lecture13.txt:62",
+   "quote": "h(z) = g(z, �) d�, z ∩ �;",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 16,
+   "evidence": "lecture13.txt:78",
+   "quote": "so (1) holds.",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "lecture13.txt:78",
+   "quote": "Claim 3: h � 0",
+   "kind": "statement"
+  },
+  {
+   "from": 22,
+   "to": 19,
+   "evidence": "lecture14.txt:110",
+   "quote": "By theorem 17�, the integral is the sum of the residues",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "lecture14.txt:149",
+   "quote": "1 g�(z)Ng = dz 2πi γ g(z)",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 14,
+   "evidence": "lecture16.txt:22",
+   "quote": "If � is simply connected and u harmonic in �",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 24,
+   "evidence": "lecture16.txt:22",
+   "quote": "If � is simply connected and u harmonic in �",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 24,
+   "evidence": "lecture16.txt:51",
+   "quote": "If u is harmonic in �",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 24,
+   "evidence": "lecture16.txt:56",
+   "quote": "If u is harmonic in �, and",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 24,
+   "evidence": "lecture16.txt:105",
+   "quote": "Then u is harmonic, and",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 11,
+   "evidence": "lecture17.txt:33",
+   "quote": "By (29) on p.126,",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 16,
+   "evidence": "lecture19.txt:26",
+   "quote": "By Cauchy’s formula for f ≤ F,",
+   "kind": "proof"
+  }
+ ]
+}

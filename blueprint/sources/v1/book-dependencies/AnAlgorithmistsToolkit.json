@@ -1,0 +1,1337 @@
+{
+ "book": "AnAlgorithmistsToolkit",
+ "source": "MIT 18.409 An Algorithmist's Toolkit (Fall 2009, J. Kelner) scribe notes mit18_409f09_scribe1-25.txt plus Spielman supplementary notes mit18_409f09_spiel_lec2/4/7.txt (PDF text)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 1,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe1.txt:14",
+   "quote": "If v and w are eigenvectors of M with",
+   "kind": "statement"
+  },
+  {
+   "from": 2,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe1.txt:23",
+   "quote": "We call the span of the eigenvectors with the same eigenvalue an eigenspace.",
+   "kind": "statement"
+  },
+  {
+   "from": 5,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe1.txt:105",
+   "quote": "Order the eigenvalues so λ1 ≤ ... ≤ λn, with corresponding eigenvectors",
+   "kind": "statement"
+  },
+  {
+   "from": 8,
+   "to": 6,
+   "evidence": "mit18_409f09_scribe2.txt:28",
+   "quote": "and so by the ﬁrst remark:",
+   "kind": "proof"
+  },
+  {
+   "from": 8,
+   "to": 7,
+   "evidence": "mit18_409f09_scribe2.txt:26",
+   "quote": "By the second remark,",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:37",
+   "quote": "If LG has eigenvectors v1,...,vn with eigenvalues λ1,...,λn",
+   "kind": "statement"
+  },
+  {
+   "from": 9,
+   "to": 8,
+   "evidence": "mit18_409f09_scribe2.txt:42",
+   "quote": "Proof By the previous lemma,",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:80",
+   "quote": "all eigenvalues λi ≥ 0",
+   "kind": "statement"
+  },
+  {
+   "from": 11,
+   "to": 1,
+   "evidence": "mit18_409f09_scribe2.txt:81",
+   "quote": "consider the matrix M in its eigenbasis, that is M = QT ΛQ",
+   "kind": "proof"
+  },
+  {
+   "from": 11,
+   "to": 10,
+   "evidence": "mit18_409f09_scribe2.txt:80",
+   "quote": "Lemma 7 M is PSD",
+   "kind": "statement"
+  },
+  {
+   "from": 12,
+   "to": 1,
+   "evidence": "mit18_409f09_scribe2.txt:87",
+   "quote": "recall that M can be diagonalized as",
+   "kind": "proof"
+  },
+  {
+   "from": 12,
+   "to": 10,
+   "evidence": "mit18_409f09_scribe2.txt:83",
+   "quote": "Lemma 8 (PSD Matrix Decomposition) M is PSD",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "mit18_409f09_scribe2.txt:131",
+   "quote": "Lemma 10 LG = �T �.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 10,
+   "evidence": "mit18_409f09_scribe2.txt:149",
+   "quote": "This gives another proof that L is PSD.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 13,
+   "evidence": "mit18_409f09_scribe2.txt:147",
+   "quote": "x T LGx = ||�x||2",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 15,
+   "evidence": "mit18_409f09_scribe2.txt:153",
+   "quote": "x T LGx = (xi − xj )2 = 0.",
+   "kind": "proof"
+  },
+  {
+   "from": 17,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:157",
+   "quote": "Corollary 13 If G is connected, λ2 > 0.",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:166",
+   "quote": "has eigenvalue 0",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 2,
+   "evidence": "mit18_409f09_scribe2.txt:167",
+   "quote": "associated eigenspace",
+   "kind": "statement"
+  },
+  {
+   "from": 19,
+   "to": 17,
+   "evidence": "mit18_409f09_scribe2.txt:168",
+   "quote": "By corollary 13, we conclude that eigenvalue 0 has multiplicity 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:173",
+   "quote": "The Laplacian for the ring graph Rn on n vertices has eigenvectors",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:187",
+   "quote": "has the same eigenvalues as",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 1,
+   "evidence": "mit18_409f09_scribe2.txt:229",
+   "quote": "zk is in the span of xk and yk. Hence, zk is an eigenvector",
+   "kind": "proof"
+  },
+  {
+   "from": 21,
+   "to": 20,
+   "evidence": "mit18_409f09_scribe2.txt:230",
+   "quote": "2 − 2 cos(2πk/n) by lemma 16.",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:252",
+   "quote": "If LG has eigenvectors v1,...,vn with eigenvalues λ1,...,λn",
+   "kind": "statement"
+  },
+  {
+   "from": 23,
+   "to": 6,
+   "evidence": "mit18_409f09_scribe2.txt:261",
+   "quote": "Lemmas 1 and 3 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 8,
+   "evidence": "mit18_409f09_scribe2.txt:261",
+   "quote": "Lemmas 1 and 3 we have",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "mit18_409f09_scribe2.txt:253",
+   "quote": "then LG×H has",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:267",
+   "quote": "Gn,m has eigenvectors and eigenvalues completely determined by those of Pn and Pm",
+   "kind": "statement"
+  },
+  {
+   "from": 24,
+   "to": 22,
+   "evidence": "mit18_409f09_scribe2.txt:267",
+   "quote": "Corollary 20 Gn,m has eigenvectors",
+   "kind": "statement"
+  },
+  {
+   "from": 25,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:319",
+   "quote": "and Laplacian LG with eigenvalues λi,",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:323",
+   "quote": "Lemma 22 (Bounds on λ2 and λn) Given λi and di as above,",
+   "kind": "statement"
+  },
+  {
+   "from": 26,
+   "to": 5,
+   "evidence": "mit18_409f09_scribe2.txt:335",
+   "quote": "By the previous slide and the fact that λ1 = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 26,
+   "to": 25,
+   "evidence": "mit18_409f09_scribe2.txt:335",
+   "quote": "By the previous slide and the fact that λ1 = 0",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:339",
+   "quote": "xT Ax λ1 = min x T Ax",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 1,
+   "evidence": "mit18_409f09_scribe2.txt:343",
+   "quote": "We consider the diagonalization A = QT ΛQ.",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe2.txt:352",
+   "quote": "λ1 =\t 0 v1 = 1",
+   "kind": "statement"
+  },
+  {
+   "from": 28,
+   "to": 5,
+   "evidence": "mit18_409f09_scribe3.txt:53",
+   "quote": "know that the smallest eigenvalue is λ1 =0 with eigenvector v1 = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "mit18_409f09_scribe3.txt:53",
+   "quote": "By the Courant-Fischer Formula,",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe3.txt:53",
+   "quote": "know that the smallest eigenvalue is λ1 =0",
+   "kind": "statement"
+  },
+  {
+   "from": 29,
+   "to": 5,
+   "evidence": "mit18_409f09_scribe3.txt:53",
+   "quote": "know that the smallest eigenvalue is λ1 =0 with eigenvector v1 = 1.",
+   "kind": "proof"
+  },
+  {
+   "from": 29,
+   "to": 27,
+   "evidence": "mit18_409f09_scribe3.txt:53",
+   "quote": "By the Courant-Fischer Formula,",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe3.txt:228",
+   "quote": "≤ λ2 ≤ 2φ(G),2dmax",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 19,
+   "evidence": "mit18_409f09_scribe3.txt:197",
+   "quote": "the Laplacian of the complete graph Kn with eigenvalue n (as we saw in Lecture 2)",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 28,
+   "evidence": "mit18_409f09_scribe3.txt:198",
+   "quote": "Rayleigh quotient,",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 30,
+   "evidence": "mit18_409f09_scribe3.txt:228",
+   "quote": "≤ λ2 ≤ 2φ(G),2dmax",
+   "kind": "statement"
+  },
+  {
+   "from": 31,
+   "to": 32,
+   "evidence": "mit18_409f09_scribe3.txt:254",
+   "quote": "it not only implies Cheeger’s inequality by taking x = v2",
+   "kind": "proof"
+  },
+  {
+   "from": 31,
+   "to": 35,
+   "evidence": "mit18_409f09_scribe3.txt:370",
+   "quote": "we apply the main lemma (Lemma 8)",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 30,
+   "evidence": "mit18_409f09_scribe3.txt:252",
+   "quote": "φ({1,...,i })2",
+   "kind": "statement"
+  },
+  {
+   "from": 32,
+   "to": 33,
+   "evidence": "mit18_409f09_scribe3.txt:404",
+   "quote": "T Lx yT Ly",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 34,
+   "evidence": "mit18_409f09_scribe3.txt:404",
+   "quote": "(i,j)∈E (i,j)∈Ex ≥ min",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 35,
+   "evidence": "mit18_409f09_scribe3.txt:370",
+   "quote": "we apply the main lemma (Lemma 8)",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 15,
+   "evidence": "mit18_409f09_scribe3.txt:268",
+   "quote": "the numerators are equal by the operation of the Laplacian,",
+   "kind": "proof"
+  },
+  {
+   "from": 34,
+   "to": 33,
+   "evidence": "mit18_409f09_scribe3.txt:278",
+   "quote": "(i,j)∈E (yi − yj )2 (i,j)∈E′ (yi − yj )2",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 30,
+   "evidence": "mit18_409f09_scribe3.txt:327",
+   "quote": "|zi − zj |≥ φ |zi|.",
+   "kind": "statement"
+  },
+  {
+   "from": 35,
+   "to": 34,
+   "evidence": "mit18_409f09_scribe3.txt:326",
+   "quote": "(i,j)∈E′−",
+   "kind": "statement"
+  },
+  {
+   "from": 37,
+   "to": 36,
+   "evidence": "mit18_409f09_scribe4.txt:51",
+   "quote": "Claim 2 W · π = π.",
+   "kind": "statement"
+  },
+  {
+   "from": 38,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe4.txt:77",
+   "quote": "Claim 3 The matrices N and W have the same eigenvalues and related eigenvectors.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe6.txt:46",
+   "quote": "second largest eigenvalue of the M associated with G.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 41,
+   "evidence": "mit18_409f09_scribe6.txt:56",
+   "quote": "Recall from our earlier lecture on random walks that",
+   "kind": "proof"
+  },
+  {
+   "from": 39,
+   "to": 44,
+   "evidence": "mit18_409f09_scribe6.txt:45",
+   "quote": "where δ is the diameter of G",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 46,
+   "evidence": "mit18_409f09_scribe6.txt:46",
+   "quote": "second largest eigenvalue of the M associated with G.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 55,
+   "evidence": "mit18_409f09_scribe6.txt:58",
+   "quote": "Since G is regular, d(v)= d for all vertices",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 36,
+   "evidence": "mit18_409f09_scribe4.txt:114",
+   "quote": "‖pt − π‖2 ≤ (1 − λ)t",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 36,
+   "evidence": "mit18_409f09_scribe4.txt:143",
+   "quote": "|pt(v) − π(v)|≤ (1 − λ)t",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 3,
+   "evidence": "mit18_409f09_scribe6.txt:32",
+   "quote": "where A is the graph’s adjacency matrix",
+   "kind": "statement"
+  },
+  {
+   "from": 50,
+   "to": 49,
+   "evidence": "mit18_409f09_scribe5.txt:169",
+   "quote": "By Lemma 6, every partial matching in Mk−1 has",
+   "kind": "proof"
+  },
+  {
+   "from": 51,
+   "to": 42,
+   "evidence": "mit18_409f09_scribe5.txt:184",
+   "quote": "Let G = (V,E) be a graph for which we wish to bound Φ(G).",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 42,
+   "evidence": "mit18_409f09_scribe5.txt:274",
+   "quote": "Theorem 12 The conductance of our graph has the following bound",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 51,
+   "evidence": "mit18_409f09_scribe5.txt:281",
+   "quote": "By Lemma 8, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 52,
+   "evidence": "mit18_409f09_scribe5.txt:281",
+   "quote": "As shown in Lemma 10",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 53,
+   "evidence": "mit18_409f09_scribe5.txt:283",
+   "quote": "showed in Lemma 11",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 71,
+   "evidence": "mit18_409f09_scribe7.txt:135",
+   "quote": "This last lemma guarantees that the algorithm converges in O(log n) steps",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe6.txt:97",
+   "quote": "|p(μi)| < 1 for all i ≥ 2",
+   "kind": "statement"
+  },
+  {
+   "from": 58,
+   "to": 1,
+   "evidence": "mit18_409f09_scribe6.txt:100",
+   "quote": "can write down any matrix, M, as the following:",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 44,
+   "evidence": "mit18_409f09_scribe6.txt:98",
+   "quote": "δ ≤ k",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 30,
+   "evidence": "mit18_409f09_scribe6.txt:239",
+   "quote": "is expander family if φ(G) ≥ c′",
+   "kind": "statement"
+  },
+  {
+   "from": 61,
+   "to": 31,
+   "evidence": "mit18_409f09_scribe6.txt:231",
+   "quote": "The other side of Cheeger’s inequality says",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 60,
+   "evidence": "mit18_409f09_scribe7.txt:222",
+   "quote": "Claim 9 For all x and t, It(x) ≤ It−1(x).",
+   "kind": "statement"
+  },
+  {
+   "from": 62,
+   "to": 72,
+   "evidence": "mit18_409f09_scribe7.txt:236",
+   "quote": "where the last inequality follows from the previous claim.",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe6.txt:264",
+   "quote": "e(S, T ) − d|S||T | μ2",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 3,
+   "evidence": "mit18_409f09_scribe6.txt:273",
+   "quote": "edges between sets S and T as e(S, T )= xT Ay",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 64,
+   "evidence": "mit18_409f09_scribe6.txt:273",
+   "quote": "edges between sets S and T as e(S, T )= xT Ay",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe6.txt:329",
+   "quote": "N(X) ≥ d2|X|μ2 +( d2 − μ2)|X|/n",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 63,
+   "evidence": "mit18_409f09_scribe6.txt:337",
+   "quote": "you can just plug the above into the expander mixing lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 56,
+   "evidence": "mit18_409f09_scribe7.txt:98",
+   "quote": "the graph induced by S ∪ T is an (α, β)-expander by construction",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 69,
+   "evidence": "mit18_409f09_scribe7.txt:99",
+   "quote": "by Hall’s theorem, there is a perfect matching between S and T",
+   "kind": "proof"
+  },
+  {
+   "from": 70,
+   "to": 56,
+   "evidence": "mit18_409f09_scribe7.txt:123",
+   "quote": "Since the graph induced by S ∪ T is a (α, β)-expander, |A ∪ B|≥ β|S|.",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 70,
+   "evidence": "mit18_409f09_scribe7.txt:131",
+   "quote": "Given the above lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 60,
+   "evidence": "mit18_409f09_scribe7.txt:215",
+   "quote": "ciρ(ei) ≤ I ci",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 60,
+   "evidence": "mit18_409f09_scribe7.txt:240",
+   "quote": "It(x) ≤ It−1(x − 2φGx)+ It−1(x +2 φGx)",
+   "kind": "statement"
+  },
+  {
+   "from": 73,
+   "to": 72,
+   "evidence": "mit18_409f09_scribe7.txt:271",
+   "quote": "using Claim 8, we can obtain the following weaker bound:",
+   "kind": "proof"
+  },
+  {
+   "from": 74,
+   "to": 60,
+   "evidence": "mit18_409f09_scribe7.txt:283",
+   "quote": "It(x) ≤ min( x, 2m − x) 1 − φ2",
+   "kind": "statement"
+  },
+  {
+   "from": 74,
+   "to": 73,
+   "evidence": "mit18_409f09_scribe7.txt:297",
+   "quote": "are concave and the previous theorem, we have:",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 36,
+   "evidence": "mit18_409f09_scribe7.txt:302",
+   "quote": "p t(w) − π(w)",
+   "kind": "statement"
+  },
+  {
+   "from": 75,
+   "to": 74,
+   "evidence": "mit18_409f09_scribe7.txt:300",
+   "quote": "From here, we can derive the following Corollary:",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 42,
+   "evidence": "mit18_409f09_scribe8.txt:61",
+   "quote": "is the conductance of the cut (W, W )",
+   "kind": "statement"
+  },
+  {
+   "from": 76,
+   "to": 74,
+   "evidence": "mit18_409f09_scribe8.txt:57",
+   "quote": "obtain the following corollary from the",
+   "kind": "proof"
+  },
+  {
+   "from": 78,
+   "to": 77,
+   "evidence": "mit18_409f09_scribe8.txt:141",
+   "quote": "By Proposition 2, the equation has a unique solution",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 77,
+   "evidence": "mit18_409f09_scribe8.txt:150",
+   "quote": "By Proposition 2, the equation has a unique solution",
+   "kind": "proof"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "mit18_409f09_scribe8.txt:173",
+   "quote": "Proof By Proposition 3, it",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 81,
+   "evidence": "mit18_409f09_scribe8.txt:191",
+   "quote": "By Proposition 6, ||r||1 decreases at each iteration",
+   "kind": "proof"
+  },
+  {
+   "from": 87,
+   "to": 86,
+   "evidence": "mit18_409f09_scribe9.txt:141",
+   "quote": "say that G ≽ H if LG ≽ LH",
+   "kind": "statement"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "mit18_409f09_scribe9.txt:143",
+   "quote": "Then, G ≽ H",
+   "kind": "statement"
+  },
+  {
+   "from": 89,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:104",
+   "quote": "The Minkowski functional of an origin symmetric convex body C",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:138",
+   "quote": "origin-symmetric convex body K, d(K, Bn) ≤√n",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 96,
+   "evidence": "mit18_409f09_scribe11.txt:138",
+   "quote": "origin-symmetric convex body K, d(K, Bn) ≤√n",
+   "kind": "statement"
+  },
+  {
+   "from": 90,
+   "to": 97,
+   "evidence": "mit18_409f09_scribe12.txt:95",
+   "quote": "Note that Theorem 4 easily follows from Theorem 5.",
+   "kind": "proof"
+  },
+  {
+   "from": 93,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:50",
+   "quote": "The polar of a convex body C is given by",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:82",
+   "quote": "Theorem 4 Let K be a convex body. Then K∗∗ = K.",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 93,
+   "evidence": "mit18_409f09_scribe11.txt:82",
+   "quote": "Theorem 4 Let K be a convex body. Then K∗∗ = K.",
+   "kind": "statement"
+  },
+  {
+   "from": 95,
+   "to": 98,
+   "evidence": "mit18_409f09_scribe11.txt:87",
+   "quote": "the separating hyperplane theorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 96,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:127",
+   "quote": "Let K and L be two convex bodies.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:154",
+   "quote": "Let K be an origin-symmetric convex body.",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 93,
+   "evidence": "mit18_409f09_scribe11.txt:181",
+   "quote": "ui · k ≤ 1. Hence ui ∈ K∗.",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 98,
+   "evidence": "mit18_409f09_scribe11.txt:225",
+   "quote": "Hence, there must be a separating hyperplane H in the space of matrices",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe11.txt:67",
+   "quote": "If K is a convex body and p is a point not contained in",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "mit18_409f09_scribe13.txt:11",
+   "quote": "(Vol(A ⊕ B))1/n ≥ (Vol(A))1/n + (Vol(B))1/n.",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe13.txt:89",
+   "quote": "Let K be a convex body, and let vK (t) be",
+   "kind": "statement"
+  },
+  {
+   "from": 101,
+   "to": 100,
+   "evidence": "mit18_409f09_scribe13.txt:98",
+   "quote": "by applying the version of Brunn-Minkowski inequality",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 99,
+   "evidence": "mit18_409f09_scribe13.txt:121",
+   "quote": "Vol(K ⊕ ϵB2 n)",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe13.txt:135",
+   "quote": "For any convex body K, with n-dimensional volume V (K)",
+   "kind": "statement"
+  },
+  {
+   "from": 103,
+   "to": 100,
+   "evidence": "mit18_409f09_scribe13.txt:140",
+   "quote": "By applying the Brunn-Minkowski inequality, we have the following:",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 102,
+   "evidence": "mit18_409f09_scribe13.txt:136",
+   "quote": "face area S(K),",
+   "kind": "statement"
+  },
+  {
+   "from": 104,
+   "to": 99,
+   "evidence": "mit18_409f09_scribe12.txt:201",
+   "quote": "Fact 7 Vol(A ⊕ B) ≥ max{Vol(A), Vol(B)}",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 99,
+   "evidence": "mit18_409f09_scribe12.txt:205",
+   "quote": "Fact 8 Vol(A ⊕ B) ≥ Vol(A)+V ol(B)",
+   "kind": "statement"
+  },
+  {
+   "from": 106,
+   "to": 99,
+   "evidence": "mit18_409f09_scribe12.txt:225",
+   "quote": "Vol(A ⊕ B)1/n ≥ Vol(A)1/n + Vol(B)1/n.",
+   "kind": "statement"
+  },
+  {
+   "from": 108,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe13.txt:183",
+   "quote": "Let K be a convex body, and divide it into K1 and K2",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe13.txt:194",
+   "quote": "Lemma 7 K’ is convex.",
+   "kind": "statement"
+  },
+  {
+   "from": 109,
+   "to": 100,
+   "evidence": "mit18_409f09_scribe13.txt:197",
+   "quote": "By applying Brunn-Minkowski inequality, we get that",
+   "kind": "proof"
+  },
+  {
+   "from": 109,
+   "to": 101,
+   "evidence": "mit18_409f09_scribe13.txt:197",
+   "quote": "is a concave function in t.",
+   "kind": "proof"
+  },
+  {
+   "from": 110,
+   "to": 107,
+   "evidence": "mit18_409f09_scribe13.txt:207",
+   "quote": "Now by Lemma 5, the centroid of C′ must lie in",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 100,
+   "evidence": "mit18_409f09_scribe16.txt:124",
+   "quote": "Brunn-Minkowski,",
+   "kind": "proof"
+  },
+  {
+   "from": 116,
+   "to": 117,
+   "evidence": "mit18_409f09_scribe16.txt:122",
+   "quote": "by the deﬁnition of modulus of convexity",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 115,
+   "evidence": "mit18_409f09_scribe17.txt:25",
+   "quote": "f : X→ Rk is 1-Lipschitz",
+   "kind": "statement"
+  },
+  {
+   "from": 120,
+   "to": 118,
+   "evidence": "mit18_409f09_scribe17.txt:60",
+   "quote": "We use Lemma 3 and plug in t = εM3",
+   "kind": "proof"
+  },
+  {
+   "from": 120,
+   "to": 119,
+   "evidence": "mit18_409f09_scribe17.txt:47",
+   "quote": "with high probability L is a (1 +ε)-embedding of X into Rk",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:28",
+   "quote": "For any full rank lattice L and measurable set S ⊆ Rn with Vol(S) > det(L),",
+   "kind": "statement"
+  },
+  {
+   "from": 121,
+   "to": 130,
+   "evidence": "mit18_409f09_scribe18.txt:94",
+   "quote": "x + P (B) to be {x + y : y ∈ P (B)}",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe19.txt:28",
+   "quote": "For any full rank lattice L and measurable set S ⊆ Rn with Vol(S) > det(L),",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe17.txt:146",
+   "quote": "origin-symmetric convex body has a section within distance 1 +ε",
+   "kind": "statement"
+  },
+  {
+   "from": 122,
+   "to": 96,
+   "evidence": "mit18_409f09_scribe17.txt:146",
+   "quote": "origin-symmetric convex body has a section within distance 1 +ε",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe19.txt:31",
+   "quote": "If L is a full rank lattice, and S any centrally-symmetric convex",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 121,
+   "evidence": "mit18_409f09_scribe19.txt:34",
+   "quote": "apply Blichﬁeld’s theorem to conclude",
+   "kind": "proof"
+  },
+  {
+   "from": 123,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:31",
+   "quote": "If L is a full rank lattice, and S any centrally-symmetric convex",
+   "kind": "statement"
+  },
+  {
+   "from": 123,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe19.txt:32",
+   "quote": "set of volume greater than 2n · det(L), then K contains a nonzero point of L.",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 123,
+   "evidence": "mit18_409f09_scribe19.txt:46",
+   "quote": "so the ball contains a nonzero lattice vector",
+   "kind": "proof"
+  },
+  {
+   "from": 124,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:42",
+   "quote": "Corollary 3 For any full-rank lattice L,",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe19.txt:43",
+   "quote": "λ1(L) ≤ n · (det L)1/n.",
+   "kind": "statement"
+  },
+  {
+   "from": 124,
+   "to": 139,
+   "evidence": "mit18_409f09_scribe19.txt:43",
+   "quote": "λ1(L) ≤ n · (det L)1/n.",
+   "kind": "statement"
+  },
+  {
+   "from": 125,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:115",
+   "quote": "For any nonzero b ∈ L(B)",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:128",
+   "quote": "A reduced basis for a 2-dimensional lattice",
+   "kind": "statement"
+  },
+  {
+   "from": 126,
+   "to": 139,
+   "evidence": "mit18_409f09_scribe19.txt:128",
+   "quote": "two successive minima of L.",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe19.txt:163",
+   "quote": "be a basis for a lattice L",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe20.txt:47",
+   "quote": "be a basis for a lattice L",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:34",
+   "quote": "Let Λ be a rank n full-rank lattice and B an invertible n × n matrix.",
+   "kind": "statement"
+  },
+  {
+   "from": 131,
+   "to": 130,
+   "evidence": "mit18_409f09_scribe18.txt:35",
+   "quote": "P (B) ∩ Λ = {0}",
+   "kind": "statement"
+  },
+  {
+   "from": 132,
+   "to": 47,
+   "evidence": "mit18_409f09_scribe18.txt:42",
+   "quote": "all entries are integer and det(U) = ±1.",
+   "kind": "statement"
+  },
+  {
+   "from": 133,
+   "to": 132,
+   "evidence": "mit18_409f09_scribe18.txt:43",
+   "quote": "U−1 is unimodular.",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:46",
+   "quote": "are equivalent bases if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 134,
+   "to": 132,
+   "evidence": "mit18_409f09_scribe18.txt:46",
+   "quote": "B2 = B1U for some unimodular",
+   "kind": "statement"
+  },
+  {
+   "from": 135,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:52",
+   "quote": "Nonsingular matrices B1,B2 are equivalent if and only if",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 47,
+   "evidence": "mit18_409f09_scribe18.txt:61",
+   "quote": "det(L) = |det(B)|",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:59",
+   "quote": "Let L = L(B) be a lattice of rank n.",
+   "kind": "statement"
+  },
+  {
+   "from": 136,
+   "to": 130,
+   "evidence": "mit18_409f09_scribe18.txt:60",
+   "quote": "as the n-dimensional volume of P (B)",
+   "kind": "statement"
+  },
+  {
+   "from": 137,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:68",
+   "quote": "The dual Λ∗ of lattice Λ is",
+   "kind": "statement"
+  },
+  {
+   "from": 139,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:82",
+   "quote": "The ith successive minimum of lattice Λ, λi(Λ),",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:87",
+   "quote": "For any full-rank lattice Λ",
+   "kind": "statement"
+  },
+  {
+   "from": 140,
+   "to": 130,
+   "evidence": "mit18_409f09_scribe18.txt:94",
+   "quote": "x + P (B) to be {x + y : y ∈ P (B)}",
+   "kind": "proof"
+  },
+  {
+   "from": 140,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe18.txt:87",
+   "quote": "with vol(S) > det(Λ)",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 92,
+   "evidence": "mit18_409f09_scribe18.txt:104",
+   "quote": "Any centrally-symmetric convex set S with",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe18.txt:104",
+   "quote": "Let Λ be a full-rank lattice of rank n.",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe18.txt:105",
+   "quote": "vol(S) > 2ndet(Λ) contains a nonzero lattice point.",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 140,
+   "evidence": "mit18_409f09_scribe18.txt:100",
+   "quote": "As a corollary of Blichﬁeld’s theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe21.txt:117",
+   "quote": "is the absolute value of its largest eigenvalue",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 125,
+   "evidence": "mit18_409f09_scribe20.txt:91",
+   "quote": "Recall that ∀b ∈ L, ||b|| ≥ mini ||b∗||.",
+   "kind": "proof"
+  },
+  {
+   "from": 143,
+   "to": 127,
+   "evidence": "mit18_409f09_scribe20.txt:84",
+   "quote": "If b1,...,b n is a reduced basis, then ||b1|| ≤ 2 λ1(L).",
+   "kind": "statement"
+  },
+  {
+   "from": 143,
+   "to": 139,
+   "evidence": "mit18_409f09_scribe20.txt:84",
+   "quote": "If b1,...,b n is a reduced basis, then ||b1|| ≤ 2 λ1(L).",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 145,
+   "evidence": "mit18_409f09_scribe20.txt:202",
+   "quote": "Applying Lemma 4 gives us a point y ∈ L",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 146,
+   "evidence": "mit18_409f09_scribe20.txt:207",
+   "quote": "From Lemma 5 the distance between two adjacent hyperplanes is at least",
+   "kind": "proof"
+  },
+  {
+   "from": 145,
+   "to": 129,
+   "evidence": "mit18_409f09_scribe20.txt:193",
+   "quote": "a lattice point y such that",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 127,
+   "evidence": "mit18_409f09_scribe20.txt:196",
+   "quote": "Lemma 5 For a reduced basis b1,...,b n ordered as above,",
+   "kind": "statement"
+  },
+  {
+   "from": 146,
+   "to": 136,
+   "evidence": "mit18_409f09_scribe20.txt:198",
+   "quote": "||bi|| ≤ 2n(n−1)/4det(L).",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 142,
+   "evidence": "mit18_409f09_scribe21.txt:119",
+   "quote": "Observe that it follows from the deﬁnition that (in the symmetric case)",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe21.txt:222",
+   "quote": "If the current error vector ei is an eigenvector of A,",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 0,
+   "evidence": "mit18_409f09_scribe21.txt:252",
+   "quote": "basis of A with corresponding eigenvalues λj",
+   "kind": "statement"
+  },
+  {
+   "from": 150,
+   "to": 149,
+   "evidence": "mit18_409f09_scribe21.txt:254",
+   "quote": "||ei+1||2 = ||ei||2 1 − (∑ ξ2λ3)(∑ ξ2λj ) . (10)A A",
+   "kind": "statement"
+  },
+  {
+   "from": 151,
+   "to": 86,
+   "evidence": "mit18_409f09_scribe23.txt:95",
+   "quote": "edges such that LH ≼ LG ≼ (n/t)LH , independent of m.",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 87,
+   "evidence": "mit18_409f09_scribe23.txt:109",
+   "quote": "Eu,v ≼ kPu,v.",
+   "kind": "statement"
+  },
+  {
+   "from": 157,
+   "to": 156,
+   "evidence": "mit18_409f09_scribe24.txt:96",
+   "quote": "M(Dt,jt) M(i, jt)t=1",
+   "kind": "statement"
+  }
+ ]
+}

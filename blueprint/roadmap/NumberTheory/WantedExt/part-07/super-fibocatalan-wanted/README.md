@@ -1,0 +1,17 @@
+# Super Fibocatalan Wanted
+
+- [Fibo Catalan](fibo-catalan.md)
+- [Fibonomial](fibonomial.md)
+- [Corollary 5](super-fibonacci-catalan-is-pos-int.md)
+- [Lemma 6](fib-mul-sub-mul.md)
+- [Theorem 7](fibo-catalan-identity.md)
+- [Corollary 8](fib-mul-factorial-quotient-eq-and-is-int.md)
+- [Lucas Poly](lucas-poly.md)
+- [Lucas Factorial](lucas-factorial.md)
+- [Lucas KDiv Factorial](lucas-kdiv-factorial.md)
+- [Theorem 3](exists-nonneg-poly-super-lucas-catalan.md)
+- [Theorem 4](exists-nonneg-poly-generalized-lucas-cat.md)
+- [Lemma 10](lucas-poly-mul-sub-mul.md)
+- [Theorem 11](lucas-catalan-identity-mul-factorial.md)
+- [Corollary 12](exists-nonneg-poly-lucas-quotient.md)
+- [Theorem 13](exists-nonneg-poly-k-div-lucas-catalan.md)

@@ -1,0 +1,18 @@
+# Part 2 of 2
+
+- [Theorem 8](not-kl-deficient-perfect-with-two-pow-mu.md)
+- [Theorem 9](not-is-near-fperfect-two-pow-mul-prime.md)
+- [Theorem 10](not-is-klnear-perfect-two-two-pow-mul.md)
+- [Theorem 11](not-kl-near-perfect-with-two-pow-mul.md)
+- [Theorem 12](is-deficient-fperfect-two-mul-prime-pow.md)
+- [Theorem 13](not-is-near-fperfect-two-mul-prime-pow.md)
+- [Theorem 14](is-klnear-perfect-one-two-mul-prime-pow.md)
+- [Theorem 14](kl-near-perfect-with-two-mul-prime-pow-i.md)
+- [Theorem 15](not-is-near-fperfect-two-pow-mul-prime-p.md)
+- [Theorem 16](not-is-deficient-fk-perfect-prime-pow-mu.md)
+- [Theorem 17](not-is-near-fk-perfect-prime-pow-mul.md)
+- [Theorem 18](not-is-deficient-fk-perfect-two-mul-pow.md)
+- [Theorem 19](not-is-deficient-fk-perfect-pow-mul-pow.md)
+- [Theorem 20](not-is-near-fk-perfect-pow-mul-pow.md)
+- [Theorem 21](not-is-deficient-fk-perfect-prod-primes.md)
+- [Theorem 22](not-is-near-fk-perfect-prod-primes.md)

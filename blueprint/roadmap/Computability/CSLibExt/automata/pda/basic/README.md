@@ -1,0 +1,18 @@
+# Basic
+
+- [PDA](pda.md)
+- [Config](config.md)
+- [Step](step.md)
+- [Derives](derives.md)
+- [Append input stack](append-input-stack.md)
+- [Finitely Supported](finitely-supported.md)
+- [Init Config](init-config.md)
+- [Accepts](accepts.md)
+- [Closed Under](closed-under.md)
+- [Lift Stack](lift-stack.md)
+- [Restrict](restrict.md)
+- [Mem restrict step](mem-restrict-step.md)
+- [Derives val of derives restrict](derives-val-of-derives-restrict.md)
+- [Stack subset of derives](stack-subset-of-derives.md)
+- [Derives restrict of derives](derives-restrict-of-derives.md)
+- [Accepts restrict](accepts-restrict.md)

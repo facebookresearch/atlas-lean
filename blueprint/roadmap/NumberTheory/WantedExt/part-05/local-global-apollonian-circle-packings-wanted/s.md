@@ -1,0 +1,18 @@
+---
+declaration: abbrev
+origin: cited
+statement: formalized
+lean: MathlibExt.NumberTheory.LocalGlobalApollonianCirclePackingsWanted.LocalGlobalApollonianCirclePackings.S₁
+---
+
+# S₁
+
+One of the generators of the Apollonian group; see the start of Section 3 of the paper.
+
+## Depends on
+
+This node has no prerequisites.
+
+## Sources
+
+- [WantedExt, WantedExt.NumberTheory.LocalGlobalApollonianCirclePackingsWanted](../../../../../sources/v2/WantedExt.md)

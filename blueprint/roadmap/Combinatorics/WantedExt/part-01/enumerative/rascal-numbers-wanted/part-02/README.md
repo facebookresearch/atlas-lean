@@ -1,0 +1,18 @@
+# Part 2 of 2
+
+- [Theorem 12](sum-neg-one-pow-choose-rascal-z.md)
+- [Theorem 13](sum-rascal-z-alternating-odd.md)
+- [Theorem 13](sum-rascal-z-alternating-even.md)
+- [Theorem 14](prod-rascal-z-sub-one-eq-sum.md)
+- [Theorem 14](prod-rascal-z-sub-one-eq-factorial-mul.md)
+- [Corollary 15](factorial-sq-mul-choose-eq-prod.md)
+- [Lemma 16](ascent-seq-avoid-form.md)
+- [Theorem 17](apk-card-succ-eq-rascal-z.md)
+- [Theorem 18](rascal-gen-z-fleron.md)
+- [Theorem 19](rascal-gen-eq-sum.md)
+- [Theorem 20](sum-rascal-gen-row.md)
+- [Corollary 21](sum-rascal-gen-four-mul-add-three.md)
+- [Corollary 22](iterate-forward-diff-sum-rascal-gen.md)
+- [Theorem 23](sum-rascal-gen-alternating-odd.md)
+- [Theorem 23](sum-rascal-gen-alternating-even.md)
+- [Theorem 24](rascal-gen-eq-card-subset.md)

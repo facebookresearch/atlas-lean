@@ -1,0 +1,15 @@
+# Bit Ops
+
+- [Is Bit](is-bit.md)
+- [Bit Of](bit-of.md)
+- [Is Bit Block](is-bit-block.md)
+- [Ends Bit Block](ends-bit-block.md)
+- [Move B](move-b.md)
+- [Move B run](move-b-run.md)
+- [Cmp B](cmp-b.md)
+- [Distinct4](distinct4.md)
+- [Cmp B prefix](cmp-b-prefix.md)
+- [Cmp B last](cmp-b-last.md)
+- [Comparison](cmp-b-run.md)
+- [Take eq map](take-eq-map.md)
+- [Restoring after `cmpB`](move-b-restore.md)

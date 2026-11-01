@@ -1,0 +1,15 @@
+# Ideal Class
+
+- [Of Coefficients](of-coefficients.md)
+- [Of Coefficients apply](of-coefficients-apply.md)
+- [Of Coefficients pos Def](of-coefficients-pos-def.md)
+- [Imaginary Root](imaginary-root.md)
+- [Imaginary Root sq](imaginary-root-sq.md)
+- [Imaginary Root is Integral](imaginary-root-is-integral.md)
+- [Imaginary Root not mem bot](imaginary-root-not-mem-bot.md)
+- [Imaginary Quadratic Field](imaginary-quadratic-field.md)
+- [Imaginary Quadratic Field finrank](imaginary-quadratic-field-finrank.md)
+- [Form Generator is Integral](form-generator-is-integral.md)
+- [Form Ideal](form-ideal.md)
+- [Form Ideal ne zero](form-ideal-ne-zero.md)
+- [Class Of Form](class-of-form.md)

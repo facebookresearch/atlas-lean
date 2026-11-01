@@ -1,0 +1,1372 @@
+{
+ "book": "ProbabilisticMethodsInCombinatorics",
+ "source": "Yufei Zhao, Probabilistic Methods in Combinatorics, MIT 18.226 lecture notes (Fall 2022, MIT OCW), converted to text: text/mit18_226_f22_lec_full.txt",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 4,
+   "to": 3,
+   "evidence": "mit18_226_f22_lec_full.txt:329",
+   "quote": "So the local lemma applies provided that",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 6,
+   "evidence": "mit18_226_f22_lec_full.txt:379",
+   "quote": "Sperner’s theorem follows since",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 11,
+   "evidence": "mit18_226_f22_lec_full.txt:611",
+   "quote": "Recall from Theorem 1.3.3 that there exists a non-2-colorable",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 12,
+   "evidence": "mit18_226_f22_lec_full.txt:613",
+   "quote": "Putting these bounds together:",
+   "kind": "proof"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "mit18_226_f22_lec_full.txt:612",
+   "quote": "Thusch(𝐾𝑛,𝑛) >(1−𝑜(1)) log2𝑛.",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 18,
+   "evidence": "mit18_226_f22_lec_full.txt:813",
+   "quote": "By taking the complement of the graph, independent sets become cliques",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 19,
+   "evidence": "mit18_226_f22_lec_full.txt:842",
+   "quote": "by Corollary 2.3.5",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 22,
+   "evidence": "mit18_226_f22_lec_full.txt:911",
+   "quote": "bysampling 5verticesinsteadof4initsproof",
+   "kind": "proof"
+  },
+  {
+   "from": 33,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:1289",
+   "quote": "By Markov’s inequality",
+   "kind": "proof"
+  },
+  {
+   "from": 36,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:1479",
+   "quote": "Thus, by Markov’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:1516",
+   "quote": "By Markov’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:1514",
+   "quote": "Let𝑋 be a random variable with mean𝜇 and variance𝜎2.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:1532",
+   "quote": "P(𝑋 = 0)≤ Var𝑋(E𝑋)2.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 38,
+   "evidence": "mit18_226_f22_lec_full.txt:1533",
+   "quote": "By Chebyshev inequality, writing𝜇=E𝑋,",
+   "kind": "proof"
+  },
+  {
+   "from": 40,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:1536",
+   "quote": "IfE𝑋 >0and Var𝑋 =𝑜(E𝑋)2",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:1600",
+   "quote": "Cov[𝑋𝑇1,𝑋𝑇2]=E[𝑋𝑇1𝑋𝑇2]− E[𝑋𝑇1]E[𝑋𝑇2]",
+   "kind": "proof"
+  },
+  {
+   "from": 41,
+   "to": 40,
+   "evidence": "mit18_226_f22_lec_full.txt:1618",
+   "quote": "and hence𝑋 >0 whp by Corollary 4.1.8.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:1707",
+   "quote": "Cov[𝑋𝑖,𝑋 𝑗]=E[𝑋𝑖𝑋𝑗]− E[𝑋𝑖]E[𝑋𝑗]≤ E[𝑋𝑖𝑋𝑗]",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 40,
+   "evidence": "mit18_226_f22_lec_full.txt:1725",
+   "quote": "Recall from Corollary 4.1.8 thatE𝑋 > 0 and Var𝑋 = 𝑜(E𝑋)2 imply",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:1738",
+   "quote": "and thus𝑋 = 0whp by Markov’s inequality.",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 44,
+   "evidence": "mit18_226_f22_lec_full.txt:1756",
+   "quote": "Thus𝑋 >0 whp by Lemma 4.2.4.",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 43,
+   "evidence": "mit18_226_f22_lec_full.txt:1795",
+   "quote": "Then𝑝=𝑛−1/𝑚(𝐻) is a threshold",
+   "kind": "statement"
+  },
+  {
+   "from": 46,
+   "to": 44,
+   "evidence": "mit18_226_f22_lec_full.txt:1818",
+   "quote": "So Lemma 4.2.4 yields the result.",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 47,
+   "evidence": "mit18_226_f22_lec_full.txt:1927",
+   "quote": "Every sequence of nontrivial monotone properties has a threshold.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "mit18_226_f22_lec_full.txt:1939",
+   "quote": "is a continuous strictly increasing",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 50,
+   "evidence": "mit18_226_f22_lec_full.txt:1965",
+   "quote": "applying Lemma 4.3.7 with𝑝= 𝑝𝑐",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 48,
+   "evidence": "mit18_226_f22_lec_full.txt:1937",
+   "quote": "by Theorem 4.3.5",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 46,
+   "evidence": "mit18_226_f22_lec_full.txt:2131",
+   "quote": "In the last section, we derived that the property of containing some fixed𝐻 has",
+   "kind": "proof"
+  },
+  {
+   "from": 52,
+   "to": 51,
+   "evidence": "mit18_226_f22_lec_full.txt:2135",
+   "quote": "Suppose𝑟(𝑛) is a coarse threshold of some graph property.",
+   "kind": "statement"
+  },
+  {
+   "from": 55,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:2212",
+   "quote": "The first claim follows from Markov’s inequality",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 44,
+   "evidence": "mit18_226_f22_lec_full.txt:2234",
+   "quote": "It then follows from Lemma 4.2.4 that𝑋 >0",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 55,
+   "evidence": "mit18_226_f22_lec_full.txt:2244",
+   "quote": "ByTheorem4.4.2,thecliquenumber",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:2338",
+   "quote": "Also, Var𝑋𝑝 =E[𝑋𝑝]−( E𝑋𝑝)2",
+   "kind": "proof"
+  },
+  {
+   "from": 57,
+   "to": 38,
+   "evidence": "mit18_226_f22_lec_full.txt:2351",
+   "quote": "Thus by Chebyshev’s inequality, for every constant𝜆 >0,",
+   "kind": "proof"
+  },
+  {
+   "from": 58,
+   "to": 37,
+   "evidence": "mit18_226_f22_lec_full.txt:2368",
+   "quote": "and Var𝑋𝑛→∞ as𝑛→∞",
+   "kind": "statement"
+  },
+  {
+   "from": 59,
+   "to": 58,
+   "evidence": "mit18_226_f22_lec_full.txt:2429",
+   "quote": "pendent Bernoulli random variables with divergent variance satisfies the central limit",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 60,
+   "evidence": "mit18_226_f22_lec_full.txt:2432",
+   "quote": "It suffices to show that for every fixed𝑘,E[e𝑋𝑘]∼ E[e𝑌𝑘].",
+   "kind": "proof"
+  },
+  {
+   "from": 62,
+   "to": 38,
+   "evidence": "mit18_226_f22_lec_full.txt:2474",
+   "quote": "By Chebyshev’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 63,
+   "evidence": "mit18_226_f22_lec_full.txt:2553",
+   "quote": "theorem (Theorem 4.6.4).",
+   "kind": "proof"
+  },
+  {
+   "from": 65,
+   "to": 38,
+   "evidence": "mit18_226_f22_lec_full.txt:2581",
+   "quote": "By Chebyshev’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 66,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:2757",
+   "quote": "By Markov’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 67,
+   "to": 66,
+   "evidence": "mit18_226_f22_lec_full.txt:2781",
+   "quote": "With𝑆𝑛 as before, for any𝜆≥ 0,",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 66,
+   "evidence": "mit18_226_f22_lec_full.txt:2849",
+   "quote": "in absolute value is, by Chernoff bound, less than",
+   "kind": "proof"
+  },
+  {
+   "from": 75,
+   "to": 68,
+   "evidence": "mit18_226_f22_lec_full.txt:2977",
+   "quote": "ApplyingChernoffboundintheformofTheorem5.0.5",
+   "kind": "proof"
+  },
+  {
+   "from": 77,
+   "to": 66,
+   "evidence": "mit18_226_f22_lec_full.txt:3050",
+   "quote": "By Chernoff bound, for fixed𝑡-vertex subset𝑆",
+   "kind": "proof"
+  },
+  {
+   "from": 79,
+   "to": 78,
+   "evidence": "mit18_226_f22_lec_full.txt:3157",
+   "quote": "𝐴𝑖 is independent from all{𝐴𝑗 : 𝑗 ∉ 𝑁(𝑖)∪{ 𝑖}}",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 78,
+   "evidence": "mit18_226_f22_lec_full.txt:3195",
+   "quote": "Supposethateach 𝐴𝑖 isindependent",
+   "kind": "statement"
+  },
+  {
+   "from": 80,
+   "to": 81,
+   "evidence": "mit18_226_f22_lec_full.txt:3219",
+   "quote": "so the hypothesis of general local lemma holds.",
+   "kind": "proof"
+  },
+  {
+   "from": 81,
+   "to": 78,
+   "evidence": "mit18_226_f22_lec_full.txt:3202",
+   "quote": "let𝑁(𝑖) be such that𝐴𝑖 is independent",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 81,
+   "evidence": "mit18_226_f22_lec_full.txt:3223",
+   "quote": "In the setup of Theorem 6.1.9",
+   "kind": "statement"
+  },
+  {
+   "from": 83,
+   "to": 80,
+   "evidence": "mit18_226_f22_lec_full.txt:3312",
+   "quote": "and𝑒(𝑑+ 1)𝑝≤ 1, so the local",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 83,
+   "evidence": "mit18_226_f22_lec_full.txt:3317",
+   "quote": "Everyedgeintersects ≤𝑑=𝑘(𝑘−1)otheredges.",
+   "kind": "proof"
+  },
+  {
+   "from": 85,
+   "to": 82,
+   "evidence": "mit18_226_f22_lec_full.txt:3341",
+   "quote": "ThusbyCorollary6.1.10onecanavoidallevents",
+   "kind": "proof"
+  },
+  {
+   "from": 86,
+   "to": 80,
+   "evidence": "mit18_226_f22_lec_full.txt:3352",
+   "quote": "From a vanilla application of the symmetric local lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 88,
+   "to": 80,
+   "evidence": "mit18_226_f22_lec_full.txt:3406",
+   "quote": "The symmetric local lemma tells us that it is",
+   "kind": "proof"
+  },
+  {
+   "from": 88,
+   "to": 87,
+   "evidence": "mit18_226_f22_lec_full.txt:3407",
+   "quote": "By the compactness argument, it",
+   "kind": "proof"
+  },
+  {
+   "from": 89,
+   "to": 81,
+   "evidence": "mit18_226_f22_lec_full.txt:3420",
+   "quote": "Recallthatintheasymmetriclocallemma(Theorem6.1.9)",
+   "kind": "proof"
+  },
+  {
+   "from": 89,
+   "to": 87,
+   "evidence": "mit18_226_f22_lec_full.txt:3416",
+   "quote": "By the compactness argument, it",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 86,
+   "evidence": "mit18_226_f22_lec_full.txt:3525",
+   "quote": "ItthenfollowsbyTheorem6.2.6(locallemma+compactness",
+   "kind": "proof"
+  },
+  {
+   "from": 90,
+   "to": 91,
+   "evidence": "mit18_226_f22_lec_full.txt:3517",
+   "quote": "connectedregionsbytheearlierlemma",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 80,
+   "evidence": "mit18_226_f22_lec_full.txt:3569",
+   "quote": "so the local lemma implies the with probability no",
+   "kind": "proof"
+  },
+  {
+   "from": 94,
+   "to": 93,
+   "evidence": "mit18_226_f22_lec_full.txt:3585",
+   "quote": "Andthenwecanapplytheprevioustheorem.",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 79,
+   "evidence": "mit18_226_f22_lec_full.txt:3618",
+   "quote": "we actually have an even smaller valid dependency",
+   "kind": "proof"
+  },
+  {
+   "from": 95,
+   "to": 80,
+   "evidence": "mit18_226_f22_lec_full.txt:3631",
+   "quote": "So we are done by the local lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "mit18_226_f22_lec_full.txt:3673",
+   "quote": "Intheprevioustheorem,if |𝑁(𝑖)|≤𝑑andP(𝐴𝑖)≤ 𝑝forevery𝑖∈[ 𝑛]",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 98,
+   "evidence": "mit18_226_f22_lec_full.txt:3708",
+   "quote": "In Setup 6.5.4, let𝐹0 be a matching in𝐾𝑋,𝑌",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 96,
+   "evidence": "mit18_226_f22_lec_full.txt:3749",
+   "quote": "in the lopsided local lemma to obtain the conclusion",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 98,
+   "evidence": "mit18_226_f22_lec_full.txt:3745",
+   "quote": "In the random injection model, let𝑋 =𝑌 =[𝑛].",
+   "kind": "proof"
+  },
+  {
+   "from": 100,
+   "to": 99,
+   "evidence": "mit18_226_f22_lec_full.txt:3747",
+   "quote": "Note that the canonical negative dependency graph is empty since",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 97,
+   "evidence": "mit18_226_f22_lec_full.txt:3816",
+   "quote": "We can now apply the symmetric lopsided local lemma",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 98,
+   "evidence": "mit18_226_f22_lec_full.txt:3792",
+   "quote": "In Setup 6.5.4, the random injection model,",
+   "kind": "proof"
+  },
+  {
+   "from": 103,
+   "to": 99,
+   "evidence": "mit18_226_f22_lec_full.txt:3796",
+   "quote": "The canonical negative dependency graph is obtained by joining an edge between two",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 106,
+   "evidence": "mit18_226_f22_lec_full.txt:3970",
+   "quote": "𝑚𝑛+𝑂(𝑚), where𝑛 is the number of variables and𝑚 is the number of clauses.",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 107,
+   "evidence": "mit18_226_f22_lec_full.txt:3971",
+   "quote": "proves the correctness of the algorithm (Theorem 6.6.6).",
+   "kind": "proof"
+  },
+  {
+   "from": 108,
+   "to": 109,
+   "evidence": "mit18_226_f22_lec_full.txt:4188",
+   "quote": "This version of Harris inequality implies the earlier version by setting",
+   "kind": "proof"
+  },
+  {
+   "from": 110,
+   "to": 108,
+   "evidence": "mit18_226_f22_lec_full.txt:4225",
+   "quote": "For the last inequality we apply the Harris",
+   "kind": "proof"
+  },
+  {
+   "from": 111,
+   "to": 110,
+   "evidence": "mit18_226_f22_lec_full.txt:4242",
+   "quote": "So by Harris’ inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 114,
+   "to": 110,
+   "evidence": "mit18_226_f22_lec_full.txt:4511",
+   "quote": "inequality (Corollary 7.1.6),",
+   "kind": "proof"
+  },
+  {
+   "from": 115,
+   "to": 114,
+   "evidence": "mit18_226_f22_lec_full.txt:4549",
+   "quote": "in which case Janson inequality I (Theorem 8.1.2 and",
+   "kind": "proof"
+  },
+  {
+   "from": 117,
+   "to": 114,
+   "evidence": "mit18_226_f22_lec_full.txt:4577",
+   "quote": "TheproofideaistoapplyingthefirstJansoninequalityonarandomlysampledsubset",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 115,
+   "evidence": "mit18_226_f22_lec_full.txt:4634",
+   "quote": "We summarize the results below",
+   "kind": "proof"
+  },
+  {
+   "from": 118,
+   "to": 117,
+   "evidence": "mit18_226_f22_lec_full.txt:4628",
+   "quote": "Janson inequality II tells us",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:4686",
+   "quote": "By Markov’s inequality,",
+   "kind": "proof"
+  },
+  {
+   "from": 119,
+   "to": 114,
+   "evidence": "mit18_226_f22_lec_full.txt:4717",
+   "quote": "Then Janson inequality I applied to𝑌 gives",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 56,
+   "evidence": "mit18_226_f22_lec_full.txt:4810",
+   "quote": "We saw that, with probability1−𝑜(1), the clique number is concentrated",
+   "kind": "proof"
+  },
+  {
+   "from": 121,
+   "to": 122,
+   "evidence": "mit18_226_f22_lec_full.txt:4878",
+   "quote": "By Lemma 8.3.3, for",
+   "kind": "proof"
+  },
+  {
+   "from": 122,
+   "to": 18,
+   "evidence": "mit18_226_f22_lec_full.txt:5258",
+   "quote": "RecalltheCaro–Weiinequality(Corollary2.3.5)",
+   "kind": "proof"
+  },
+  {
+   "from": 122,
+   "to": 117,
+   "evidence": "mit18_226_f22_lec_full.txt:4857",
+   "quote": "and we can apply Janson inequality II:",
+   "kind": "proof"
+  },
+  {
+   "from": 122,
+   "to": 123,
+   "evidence": "mit18_226_f22_lec_full.txt:5246",
+   "quote": "So by the bounded differences inequality, for𝐺∼𝐺(𝑛, 1/2),",
+   "kind": "proof"
+  },
+  {
+   "from": 124,
+   "to": 128,
+   "evidence": "mit18_226_f22_lec_full.txt:5193",
+   "quote": "thatthehypothesisofTheorem9.2.9issatisfied.",
+   "kind": "proof"
+  },
+  {
+   "from": 126,
+   "to": 125,
+   "evidence": "mit18_226_f22_lec_full.txt:5077",
+   "quote": "be a martingale satisfying",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 125,
+   "evidence": "mit18_226_f22_lec_full.txt:5086",
+   "quote": "be a martingale satisfying",
+   "kind": "statement"
+  },
+  {
+   "from": 127,
+   "to": 128,
+   "evidence": "mit18_226_f22_lec_full.txt:5132",
+   "quote": "Theorem 9.2.8is a special case ofTheorem 9.2.9",
+   "kind": "proof"
+  },
+  {
+   "from": 128,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:5182",
+   "quote": "By Markov,",
+   "kind": "proof"
+  },
+  {
+   "from": 128,
+   "to": 125,
+   "evidence": "mit18_226_f22_lec_full.txt:5107",
+   "quote": "Consider a Doob martingale",
+   "kind": "statement"
+  },
+  {
+   "from": 128,
+   "to": 129,
+   "evidence": "mit18_226_f22_lec_full.txt:5165",
+   "quote": "So Lemma 9.2.12 gives",
+   "kind": "proof"
+  },
+  {
+   "from": 130,
+   "to": 124,
+   "evidence": "mit18_226_f22_lec_full.txt:5216",
+   "quote": "Theorem 9.1.3 implies the",
+   "kind": "proof"
+  },
+  {
+   "from": 131,
+   "to": 123,
+   "evidence": "mit18_226_f22_lec_full.txt:5323",
+   "quote": "by applying Theorem 9.1.1 with respect to vertex-exposure",
+   "kind": "proof"
+  },
+  {
+   "from": 135,
+   "to": 66,
+   "evidence": "mit18_226_f22_lec_full.txt:5461",
+   "quote": "by the Chernoff bound.",
+   "kind": "proof"
+  },
+  {
+   "from": 135,
+   "to": 134,
+   "evidence": "mit18_226_f22_lec_full.txt:5459",
+   "quote": "Harper’s theorem (Theorem 9.4.3),",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 123,
+   "evidence": "mit18_226_f22_lec_full.txt:5485",
+   "quote": "Applying the bounded differences inequality, Theorem 9.1.1,",
+   "kind": "proof"
+  },
+  {
+   "from": 136,
+   "to": 135,
+   "evidence": "mit18_226_f22_lec_full.txt:5477",
+   "quote": "Applying Theorem 9.4.5 to𝐴′",
+   "kind": "proof"
+  },
+  {
+   "from": 138,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:5524",
+   "quote": "is 1-Lipschitz",
+   "kind": "statement"
+  },
+  {
+   "from": 141,
+   "to": 139,
+   "evidence": "mit18_226_f22_lec_full.txt:5599",
+   "quote": "Combiningtheabovetwotheorems,wededucethefollowingconcentrationofmeasure",
+   "kind": "proof"
+  },
+  {
+   "from": 141,
+   "to": 140,
+   "evidence": "mit18_226_f22_lec_full.txt:5599",
+   "quote": "Combiningtheabovetwotheorems,wededucethefollowingconcentrationofmeasure",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:5615",
+   "quote": "is a 1-Lipschitz measurable",
+   "kind": "statement"
+  },
+  {
+   "from": 142,
+   "to": 139,
+   "evidence": "mit18_226_f22_lec_full.txt:5599",
+   "quote": "Combiningtheabovetwotheorems,wededucethefollowingconcentrationofmeasure",
+   "kind": "proof"
+  },
+  {
+   "from": 142,
+   "to": 140,
+   "evidence": "mit18_226_f22_lec_full.txt:5599",
+   "quote": "Combiningtheabovetwotheorems,wededucethefollowingconcentrationofmeasure",
+   "kind": "proof"
+  },
+  {
+   "from": 144,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:5642",
+   "quote": "Ris1-Lipschitz",
+   "kind": "statement"
+  },
+  {
+   "from": 144,
+   "to": 143,
+   "evidence": "mit18_226_f22_lec_full.txt:5640",
+   "quote": "whichhasGaussianmeasure ≥ 1−𝑒−𝑡2/2. Thus:",
+   "kind": "proof"
+  },
+  {
+   "from": 146,
+   "to": 145,
+   "evidence": "mit18_226_f22_lec_full.txt:5710",
+   "quote": "Median vs. mean for subGaussian distributions",
+   "kind": "statement"
+  },
+  {
+   "from": 147,
+   "to": 148,
+   "evidence": "mit18_226_f22_lec_full.txt:5798",
+   "quote": "has the same distribution as𝑌 in the lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 142,
+   "evidence": "mit18_226_f22_lec_full.txt:5808",
+   "quote": "By Lévy’s concentration measure",
+   "kind": "proof"
+  },
+  {
+   "from": 148,
+   "to": 146,
+   "evidence": "mit18_226_f22_lec_full.txt:5811",
+   "quote": "The result then follows by Lemma 9.4.20",
+   "kind": "proof"
+  },
+  {
+   "from": 149,
+   "to": 147,
+   "evidence": "mit18_226_f22_lec_full.txt:5824",
+   "quote": "Applying Theorem 9.4.22 a regular simplex",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 145,
+   "evidence": "mit18_226_f22_lec_full.txt:5960",
+   "quote": "is𝑂(1)-subGaussian, which immediately",
+   "kind": "proof"
+  },
+  {
+   "from": 150,
+   "to": 153,
+   "evidence": "mit18_226_f22_lec_full.txt:5959",
+   "quote": "Theorem 9.5.2 then follows. Indeed, Corollary 9.5.8 shows",
+   "kind": "proof"
+  },
+  {
+   "from": 152,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:5932",
+   "quote": "be a convex and 1-Lipschitz function",
+   "kind": "statement"
+  },
+  {
+   "from": 152,
+   "to": 151,
+   "evidence": "mit18_226_f22_lec_full.txt:5938",
+   "quote": "Corollary 9.5.6: take 𝐴 = {𝑥 : 𝑓(𝑥) ≤𝑟}.",
+   "kind": "proof"
+  },
+  {
+   "from": 153,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:5951",
+   "quote": "be a convex and 1-Lipschitz function",
+   "kind": "statement"
+  },
+  {
+   "from": 153,
+   "to": 152,
+   "evidence": "mit18_226_f22_lec_full.txt:5954",
+   "quote": "in Corollary 9.5.6 yields",
+   "kind": "proof"
+  },
+  {
+   "from": 156,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:6035",
+   "quote": "is a convex 1-Lipschitz",
+   "kind": "statement"
+  },
+  {
+   "from": 156,
+   "to": 154,
+   "evidence": "mit18_226_f22_lec_full.txt:6015",
+   "quote": "Let us see how Talagrand’s inequality recovers a more general form",
+   "kind": "proof"
+  },
+  {
+   "from": 157,
+   "to": 154,
+   "evidence": "mit18_226_f22_lec_full.txt:6079",
+   "quote": "And hence by Talagrand’s inequality Theorem 9.5.11,",
+   "kind": "proof"
+  },
+  {
+   "from": 158,
+   "to": 157,
+   "evidence": "mit18_226_f22_lec_full.txt:6098",
+   "quote": "We shall verify the hypotheses of Theorem 9.5.14.",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:6178",
+   "quote": "1-Lipschitz with respect to Hamming distance",
+   "kind": "statement"
+  },
+  {
+   "from": 160,
+   "to": 154,
+   "evidence": "mit18_226_f22_lec_full.txt:6190",
+   "quote": "by Talagrand’s inequality (Theorem 9.5.11).",
+   "kind": "proof"
+  },
+  {
+   "from": 160,
+   "to": 159,
+   "evidence": "mit18_226_f22_lec_full.txt:6178",
+   "quote": "is 𝑠-",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:6193",
+   "quote": "1-Lipschitz with respect to Hamming distance",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 159,
+   "evidence": "mit18_226_f22_lec_full.txt:6193",
+   "quote": "is𝑟-certifiable",
+   "kind": "statement"
+  },
+  {
+   "from": 161,
+   "to": 160,
+   "evidence": "mit18_226_f22_lec_full.txt:6205",
+   "quote": "Applying the previous theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 159,
+   "evidence": "mit18_226_f22_lec_full.txt:6229",
+   "quote": "Then𝑓≥𝑟 is𝑟-certifiable.",
+   "kind": "proof"
+  },
+  {
+   "from": 162,
+   "to": 161,
+   "evidence": "mit18_226_f22_lec_full.txt:6228",
+   "quote": "We can apply the above corollary to[0, 1]𝑛",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 127,
+   "evidence": "mit18_226_f22_lec_full.txt:6364",
+   "quote": "Now we apply Azuma’s inequality (Theorem 9.2.8).",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 137,
+   "evidence": "mit18_226_f22_lec_full.txt:6342",
+   "quote": "-Lipschitz with respect to Hamming distance.",
+   "kind": "proof"
+  },
+  {
+   "from": 163,
+   "to": 145,
+   "evidence": "mit18_226_f22_lec_full.txt:6287",
+   "quote": "-subGaussian about its mean.",
+   "kind": "statement"
+  },
+  {
+   "from": 163,
+   "to": 164,
+   "evidence": "mit18_226_f22_lec_full.txt:6354",
+   "quote": "and applying the previous lemma, we find that",
+   "kind": "proof"
+  },
+  {
+   "from": 165,
+   "to": 145,
+   "evidence": "mit18_226_f22_lec_full.txt:6377",
+   "quote": "is𝑂(1)-subGaussian about its mean.",
+   "kind": "statement"
+  },
+  {
+   "from": 165,
+   "to": 157,
+   "evidence": "mit18_226_f22_lec_full.txt:6442",
+   "quote": "Using Talagrand’s inequality in the form of Theorem 9.5.14",
+   "kind": "proof"
+  },
+  {
+   "from": 167,
+   "to": 166,
+   "evidence": "mit18_226_f22_lec_full.txt:6404",
+   "quote": "is Hölder continuous with exponent1/2.",
+   "kind": "statement"
+  },
+  {
+   "from": 168,
+   "to": 167,
+   "evidence": "mit18_226_f22_lec_full.txt:6430",
+   "quote": "Hölder continuous with exponent1/2, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 169,
+   "to": 168,
+   "evidence": "mit18_226_f22_lec_full.txt:6458",
+   "quote": "Lemma 9.6.9, the space-filling curve heuristic.",
+   "kind": "proof"
+  },
+  {
+   "from": 171,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6649",
+   "quote": "𝐻(𝑋)≤ log2| support(𝑋)|,",
+   "kind": "statement"
+  },
+  {
+   "from": 172,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6678",
+   "quote": "𝐻(𝑋,𝑌)=𝐻(𝑋)+ 𝐻(𝑌).",
+   "kind": "statement"
+  },
+  {
+   "from": 173,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6706",
+   "quote": ":=E𝑦[𝐻(𝑋|𝑌 =𝑦)]",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6729",
+   "quote": "𝐻(𝑋,𝑌)=𝐻(𝑋)+ 𝐻(𝑌|𝑋)",
+   "kind": "statement"
+  },
+  {
+   "from": 174,
+   "to": 173,
+   "evidence": "mit18_226_f22_lec_full.txt:6729",
+   "quote": "𝐻(𝑋,𝑌)=𝐻(𝑋)+ 𝐻(𝑌|𝑋)",
+   "kind": "statement"
+  },
+  {
+   "from": 175,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6760",
+   "quote": "𝐻(𝑋,𝑌)≤ 𝐻(𝑋)+ 𝐻(𝑌), and more generally,",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6800",
+   "quote": "𝐻(𝑋|𝑌)≤ 𝐻(𝑋) and more generally,",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 173,
+   "evidence": "mit18_226_f22_lec_full.txt:6800",
+   "quote": "𝐻(𝑋|𝑌)≤ 𝐻(𝑋) and more generally,",
+   "kind": "statement"
+  },
+  {
+   "from": 176,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:6802",
+   "quote": "By chain rule and subadditivity, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 176,
+   "to": 175,
+   "evidence": "mit18_226_f22_lec_full.txt:6802",
+   "quote": "By chain rule and subadditivity, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 177,
+   "to": 32,
+   "evidence": "mit18_226_f22_lec_full.txt:6832",
+   "quote": "applying Markov’s inequality to the moment generating function:",
+   "kind": "proof"
+  },
+  {
+   "from": 177,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:6825",
+   "quote": "≤ 2𝐻(𝑘/𝑛)𝑛=",
+   "kind": "statement"
+  },
+  {
+   "from": 177,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:6850",
+   "quote": "=𝐻(𝑋1,...,𝑋 𝑛)≤ 𝐻(𝑋1)+···+ 𝐻(𝑋𝑛).",
+   "kind": "proof"
+  },
+  {
+   "from": 177,
+   "to": 175,
+   "evidence": "mit18_226_f22_lec_full.txt:6850",
+   "quote": "=𝐻(𝑋1,...,𝑋 𝑛)≤ 𝐻(𝑋1)+···+ 𝐻(𝑋𝑛).",
+   "kind": "proof"
+  },
+  {
+   "from": 178,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:6930",
+   "quote": "and the uniform bound gives",
+   "kind": "proof"
+  },
+  {
+   "from": 178,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:6925",
+   "quote": "the chain rule gives",
+   "kind": "proof"
+  },
+  {
+   "from": 179,
+   "to": 178,
+   "evidence": "mit18_226_f22_lec_full.txt:6959",
+   "quote": "Brégman’stheoremimpliesthestatementforbipar-",
+   "kind": "proof"
+  },
+  {
+   "from": 180,
+   "to": 181,
+   "evidence": "mit18_226_f22_lec_full.txt:6997",
+   "quote": "Theorem 10.2.4 then follows by applying the above bound",
+   "kind": "proof"
+  },
+  {
+   "from": 181,
+   "to": 178,
+   "evidence": "mit18_226_f22_lec_full.txt:6988",
+   "quote": "So by Brégman’s theorem, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 184,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7051",
+   "quote": "By the uniform bound, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 184,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7044",
+   "quote": "By the chain rule,",
+   "kind": "proof"
+  },
+  {
+   "from": 184,
+   "to": 183,
+   "evidence": "mit18_226_f22_lec_full.txt:7025",
+   "quote": "The number of Steiner triple systems on𝑛 labeled vertices is at most",
+   "kind": "statement"
+  },
+  {
+   "from": 186,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7279",
+   "quote": "≤log2|support(𝑋)| = log2𝑣(𝐺).",
+   "kind": "proof"
+  },
+  {
+   "from": 186,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7273",
+   "quote": "[chain rule]",
+   "kind": "proof"
+  },
+  {
+   "from": 186,
+   "to": 185,
+   "evidence": "mit18_226_f22_lec_full.txt:7252",
+   "quote": "Sidorenko’s conjecture holds if𝐹 is a three-edge path.",
+   "kind": "statement"
+  },
+  {
+   "from": 187,
+   "to": 185,
+   "evidence": "mit18_226_f22_lec_full.txt:7286",
+   "quote": "Sidorenko’s conjecture holds if𝐹 is a tree.",
+   "kind": "statement"
+  },
+  {
+   "from": 188,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7317",
+   "quote": "[prev. ineq. and uniform bound]",
+   "kind": "proof"
+  },
+  {
+   "from": 188,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7314",
+   "quote": "[chain rule]",
+   "kind": "proof"
+  },
+  {
+   "from": 188,
+   "to": 185,
+   "evidence": "mit18_226_f22_lec_full.txt:7293",
+   "quote": "Sidorenko’s conjecture holds for all complete bipartite graphs.",
+   "kind": "statement"
+  },
+  {
+   "from": 189,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7360",
+   "quote": "We can apply the uniform support bound on the remaining terms.",
+   "kind": "proof"
+  },
+  {
+   "from": 189,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7347",
+   "quote": "[chain rule]",
+   "kind": "proof"
+  },
+  {
+   "from": 189,
+   "to": 185,
+   "evidence": "mit18_226_f22_lec_full.txt:7326",
+   "quote": "Sidorenko’s conjecture holds for a bipartite graph",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:7378",
+   "quote": "2𝐻(𝑋,𝑌,𝑍 )≤ 𝐻(𝑋,𝑌)+ 𝐻(𝑋,𝑍)+ 𝐻(𝑌,𝑍)",
+   "kind": "statement"
+  },
+  {
+   "from": 190,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7379",
+   "quote": "Using the chain rule and conditioning dropping, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 190,
+   "to": 176,
+   "evidence": "mit18_226_f22_lec_full.txt:7379",
+   "quote": "Using the chain rule and conditioning dropping, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 191,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7401",
+   "quote": "≤ log2𝜋𝑥𝑦(𝑆)+ log2𝜋𝑥𝑧(𝑆)+ log2𝜋𝑦𝑧(𝑆).",
+   "kind": "proof"
+  },
+  {
+   "from": 191,
+   "to": 190,
+   "evidence": "mit18_226_f22_lec_full.txt:7395",
+   "quote": "first let us use Shearer’s inequality to prove a discrete version.",
+   "kind": "proof"
+  },
+  {
+   "from": 192,
+   "to": 191,
+   "evidence": "mit18_226_f22_lec_full.txt:7402",
+   "quote": "By approximating a body using cubes, we can deduce the following corollary.",
+   "kind": "proof"
+  },
+  {
+   "from": 193,
+   "to": 170,
+   "evidence": "mit18_226_f22_lec_full.txt:7411",
+   "quote": "𝑘𝐻(𝑋1,...,𝑋 𝑛)≤",
+   "kind": "statement"
+  },
+  {
+   "from": 194,
+   "to": 193,
+   "evidence": "mit18_226_f22_lec_full.txt:7417",
+   "quote": "Like earlier, we can deduce an inequality about sizes of projections.",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7439",
+   "quote": "be a random vector corresponding to a uniform element ofF. Then",
+   "kind": "proof"
+  },
+  {
+   "from": 195,
+   "to": 193,
+   "evidence": "mit18_226_f22_lec_full.txt:7440",
+   "quote": "𝑘 log2|F| =𝑘𝐻(𝑋1,...,𝑋 𝑛)≤",
+   "kind": "proof"
+  },
+  {
+   "from": 196,
+   "to": 195,
+   "evidence": "mit18_226_f22_lec_full.txt:7487",
+   "quote": "lary 10.4.7, we find that",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 171,
+   "evidence": "mit18_226_f22_lec_full.txt:7551",
+   "quote": "[uniform bound]",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 174,
+   "evidence": "mit18_226_f22_lec_full.txt:7525",
+   "quote": "[chain rule]",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 176,
+   "evidence": "mit18_226_f22_lec_full.txt:7570",
+   "quote": "[drop conditioning]",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 190,
+   "evidence": "mit18_226_f22_lec_full.txt:7527",
+   "quote": "[Shearer]",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 193,
+   "evidence": "mit18_226_f22_lec_full.txt:7563",
+   "quote": "[Shearer]",
+   "kind": "proof"
+  },
+  {
+   "from": 197,
+   "to": 198,
+   "evidence": "mit18_226_f22_lec_full.txt:7587",
+   "quote": "Once we have the lemma, Theorem 10.4.12 then reduces to the bipartite case",
+   "kind": "proof"
+  },
+  {
+   "from": 201,
+   "to": 202,
+   "evidence": "mit18_226_f22_lec_full.txt:7805",
+   "quote": "LetC be produced by Theorem 11.1.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 206,
+   "to": 70,
+   "evidence": "mit18_226_f22_lec_full.txt:7861",
+   "quote": "of the Chernoff bound,",
+   "kind": "proof"
+  },
+  {
+   "from": 206,
+   "to": 202,
+   "evidence": "mit18_226_f22_lec_full.txt:7855",
+   "quote": "graphs in Theorem 11.1.1.",
+   "kind": "proof"
+  },
+  {
+   "from": 209,
+   "to": 207,
+   "evidence": "mit18_226_f22_lec_full.txt:8031",
+   "quote": "so that we can apply the graph container lemma to𝐺.",
+   "kind": "proof"
+  }
+ ]
+}

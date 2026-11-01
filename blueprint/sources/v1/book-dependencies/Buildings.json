@@ -1,0 +1,301 @@
+{
+ "book": "Buildings",
+ "source": "Paul Garrett, Buildings and Classical Groups (full book PDF converted to text: text/book.txt)",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 2,
+   "to": 4,
+   "evidence": "book.txt:885",
+   "quote": "Letv≤w and take s∈S. Then either vs≤w orvs≤ws",
+   "kind": "statement"
+  },
+  {
+   "from": 6,
+   "to": 2,
+   "evidence": "book.txt:945",
+   "quote": "We apply the previous proposition to obtain either",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 4,
+   "evidence": "book.txt:923",
+   "quote": "Then v≤ w if and only if v can be obtained as a subexpression",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 4,
+   "evidence": "book.txt:965",
+   "quote": "Let v <w in W . Then there are elements w1,... ,w n in W",
+   "kind": "statement"
+  },
+  {
+   "from": 7,
+   "to": 6,
+   "evidence": "book.txt:970",
+   "quote": "The theorem implies that v is a",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 0,
+   "evidence": "book.txt:1987",
+   "quote": "then swt = w. This was proven earlier as an easy",
+   "kind": "proof"
+  },
+  {
+   "from": 9,
+   "to": 3,
+   "evidence": "book.txt:1928",
+   "quote": "the pair ( W,S ) satisﬁes the Deletion Condition, so is a Coxeter",
+   "kind": "proof"
+  },
+  {
+   "from": 10,
+   "to": 16,
+   "evidence": "book.txt:2317",
+   "quote": "The link of a simplex in a thick building is itself a thick",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 13,
+   "evidence": "book.txt:2845",
+   "quote": "The proposition assures that W ′ contains",
+   "kind": "proof"
+  },
+  {
+   "from": 18,
+   "to": 25,
+   "evidence": "book.txt:3582",
+   "quote": "This ﬁnishes the proof of commutativity, and thus of the theorem on generic",
+   "kind": "proof"
+  },
+  {
+   "from": 20,
+   "to": 14,
+   "evidence": "book.txt:3230",
+   "quote": "Each special subgroup is its own normalizer in G, and no two of",
+   "kind": "proof"
+  },
+  {
+   "from": 22,
+   "to": 18,
+   "evidence": "book.txt:3437",
+   "quote": "Granting the theorem, for given data we deﬁne the generic algebra",
+   "kind": "statement"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "book.txt:4274",
+   "quote": "let v be a non-zero isotropic vector, and by the previous",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 26,
+   "evidence": "book.txt:4381",
+   "quote": "We saw in the previous section that U can be orthogonally decomposed",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 27,
+   "evidence": "book.txt:4351",
+   "quote": "Let X = X +⊕H with H hyperbolic and X + anisotropic",
+   "kind": "proof"
+  },
+  {
+   "from": 28,
+   "to": 29,
+   "evidence": "book.txt:4364",
+   "quote": "In the situation of the last lemma, we write X =X +⊕H1 andY =Y +⊕H2",
+   "kind": "proof"
+  },
+  {
+   "from": 30,
+   "to": 28,
+   "evidence": "book.txt:4430",
+   "quote": "Invoking Witt’s theorem, there is hm in the isometry group of V so that",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 41,
+   "evidence": "book.txt:8274",
+   "quote": "The Coxeter matrix of Wso is positive-deﬁnite, by the corollary to the",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "book.txt:8257",
+   "quote": "The Tits’ cone U is convex (13.1), so E∩U is convex.",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 45,
+   "evidence": "book.txt:8412",
+   "quote": "Then the assertion follows from the proposition.",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 44,
+   "evidence": "book.txt:8414",
+   "quote": "tioned in the previous corollary, is the canonical metric on the aﬃne Coxeter",
+   "kind": "statement"
+  },
+  {
+   "from": 47,
+   "to": 44,
+   "evidence": "book.txt:8585",
+   "quote": "The fact from (13.7) mentioned above shows that this f must give rise to an",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 46,
+   "evidence": "book.txt:8580",
+   "quote": "where dA(, ) is the canonical metric (13.7) on A.",
+   "kind": "statement"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "book.txt:9044",
+   "quote": "K stabilizes the set Kx, which by the proposition is a bounded subset of",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 50,
+   "evidence": "book.txt:9039",
+   "quote": "The negative curvature inequality assures that the hypotheses",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 46,
+   "evidence": "book.txt:8690",
+   "quote": "building with canonical metric d =dX",
+   "kind": "statement"
+  },
+  {
+   "from": 54,
+   "to": 55,
+   "evidence": "book.txt:9566",
+   "quote": "Now we prove the theorem. From the lemma, if f (Y )",
+   "kind": "proof"
+  },
+  {
+   "from": 55,
+   "to": 53,
+   "evidence": "book.txt:9517",
+   "quote": "ρ =ρD;A,C =jB◦ρB,D",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 57,
+   "evidence": "book.txt:10329",
+   "quote": "In the half-apartment where λ is bounded (whether from above or",
+   "kind": "proof"
+  },
+  {
+   "from": 61,
+   "to": 60,
+   "evidence": "book.txt:10858",
+   "quote": "building X∞ to be a simplicial complex, invoking the criterion (3.1) for a",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 9,
+   "evidence": "book.txt:11056",
+   "quote": "since every pair of adjacent chambers in a Coxeter",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 11,
+   "evidence": "book.txt:11098",
+   "quote": "building axioms are all label-preserving (4.4.)",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 44,
+   "evidence": "book.txt:11049",
+   "quote": "From the discussion of the canonical metric on aﬃne Coxeter complexes",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 62,
+   "evidence": "book.txt:11054",
+   "quote": "little proposition,|f| gives a well-deﬁned map on points in|X∞|.",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 66,
+   "evidence": "book.txt:11665",
+   "quote": "Invoking the proposition, we can",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 67,
+   "evidence": "book.txt:11633",
+   "quote": "With the hypothesis that B is compact and open in G, the",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 67,
+   "evidence": "book.txt:11679",
+   "quote": "IfB is compact and open in G, then any apartment systemA",
+   "kind": "statement"
+  },
+  {
+   "from": 66,
+   "to": 67,
+   "evidence": "book.txt:11612",
+   "quote": "of Y is open and compact in G.",
+   "kind": "statement"
+  },
+  {
+   "from": 71,
+   "to": 64,
+   "evidence": "book.txt:12807",
+   "quote": "transitive with the maximal apartment system (17.7.)",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 65,
+   "evidence": "book.txt:12794",
+   "quote": "And as noted in (17.7) the proposition has a corollary bearing upon the",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 71,
+   "evidence": "book.txt:12798",
+   "quote": "By its deﬁnition, the strong transitivity implies ordinary",
+   "kind": "proof"
+  },
+  {
+   "from": 73,
+   "to": 69,
+   "evidence": "book.txt:13179",
+   "quote": "Thus, by Hensel’s Lemma (18.3), there is a root in k off (α) = 0.",
+   "kind": "proof"
+  }
+ ]
+}

@@ -1,0 +1,602 @@
+{
+ "book": "ProjectionTheory",
+ "source": "MIT 18.156 Projection Theory (Spring 2025) complete lecture notes, LaTeX source mit18_156_s25_lec_full.tex",
+ "method": "Extracted from the source text by one agent and checked edge by edge by a second; rejected edges are dropped.",
+ "edges": [
+  {
+   "from": 0,
+   "to": 45,
+   "evidence": "mit18_156_s25_lec_full.tex:1842",
+   "quote": "Note that the Szemerédi–Trotter theorem implies the ST projection theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 5,
+   "to": 6,
+   "evidence": "mit18_156_s25_lec_full.tex:390",
+   "quote": "Using Lemma \\ref{orth}, we can bound the $L^2$ norm of $f_h$:",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 8,
+   "evidence": "mit18_156_s25_lec_full.tex:481",
+   "quote": "By Plancherel, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 6,
+   "to": 9,
+   "evidence": "mit18_156_s25_lec_full.tex:485",
+   "quote": "But by Lemma \\ref{Phat}, the support of $\\hat L_1$ is $L_1^\\perp$",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 11,
+   "evidence": "mit18_156_s25_lec_full.tex:688",
+   "quote": "Thus, by theorem \\ref{doubling couting},",
+   "kind": "proof"
+  },
+  {
+   "from": 13,
+   "to": 12,
+   "evidence": "mit18_156_s25_lec_full.tex:682",
+   "quote": "If \\textbf{SETUP} $X$, $D$ has Hausdorff spacing then",
+   "kind": "statement"
+  },
+  {
+   "from": 14,
+   "to": 12,
+   "evidence": "mit18_156_s25_lec_full.tex:702",
+   "quote": "If $\\R$-SETUP and $X,D$ has Hausdorff spacing.",
+   "kind": "statement"
+  },
+  {
+   "from": 15,
+   "to": 12,
+   "evidence": "mit18_156_s25_lec_full.tex:708",
+   "quote": "If SETUP, $X$ and $D$ has Hausdorff spacing",
+   "kind": "statement"
+  },
+  {
+   "from": 16,
+   "to": 7,
+   "evidence": "mit18_156_s25_lec_full.tex:716",
+   "quote": "$f=f_0+f_1$ so $\\spp \\hat{f}_0=\\{0\\}$, $\\spp \\hat{f}_h=\\{0\\}^c$.",
+   "kind": "statement"
+  },
+  {
+   "from": 17,
+   "to": 18,
+   "evidence": "mit18_156_s25_lec_full.tex:775",
+   "quote": "\\sum_{T_1 \\sim_r T_2} \\langle \\phi_{T_1,r}, \\phi_{T_2,r}\\rangle + neglible",
+   "kind": "proof"
+  },
+  {
+   "from": 19,
+   "to": 7,
+   "evidence": "mit18_156_s25_lec_full.tex:798",
+   "quote": "as $f = f_0 + f_h$, where $f_0 = \\frac{|\\LL|}{q}$, $f_0$ is orthogonal to $f_h$",
+   "kind": "statement"
+  },
+  {
+   "from": 20,
+   "to": 16,
+   "evidence": "mit18_156_s25_lec_full.tex:805",
+   "quote": "We have $||f||^2_{L^2} \\lesssim |\\LL| q + |\\LL|^2$.",
+   "kind": "statement"
+  },
+  {
+   "from": 21,
+   "to": 18,
+   "evidence": "mit18_156_s25_lec_full.tex:775",
+   "quote": "\\sum_{T_1 \\sim_r T_2} \\langle \\phi_{T_1,r}, \\phi_{T_2,r}\\rangle + neglible",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 10,
+   "evidence": "mit18_156_s25_lec_full.tex:973",
+   "quote": "First we will use the fact that $\\spp \\hat{f_r} \\subset B_{1/r}$ to get",
+   "kind": "proof"
+  },
+  {
+   "from": 23,
+   "to": 17,
+   "evidence": "mit18_156_s25_lec_full.tex:986",
+   "quote": "\\lesssim r^{-2} N_{X} (r) \\int |f_r|^2 \\lesssim \\frac{R |\\TT| N_{\\TT} (r) N_{X} (r)}{r^3}",
+   "kind": "proof"
+  },
+  {
+   "from": 24,
+   "to": 26,
+   "evidence": "mit18_156_s25_lec_full.tex:1183",
+   "quote": "We plug in Corollary $4$ and get",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 22,
+   "evidence": "mit18_156_s25_lec_full.tex:1404",
+   "quote": "The distance between any two distinct points in $Q_M$ is $\\gtrsim \\frac{1}{M^2} \\geq \\frac{1}{N}$",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 28,
+   "evidence": "mit18_156_s25_lec_full.tex:1263",
+   "quote": "Now let us write the left hand side of the Linnik's inequality using the \\textit{Dictionary} lemma:",
+   "kind": "proof"
+  },
+  {
+   "from": 25,
+   "to": 30,
+   "evidence": "mit18_156_s25_lec_full.tex:1267",
+   "quote": "\\sum_{\\substack{\\alpha \\neq 0 \\\\ \\alpha \\in \\ZZ_p}} \\Big| \\widehat{\\pi_pf_H} (\\alpha) \\Big|^2",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 25,
+   "evidence": "mit18_156_s25_lec_full.tex:1149",
+   "quote": "But we can upper bound the former by our Theorem:",
+   "kind": "proof"
+  },
+  {
+   "from": 27,
+   "to": 26,
+   "evidence": "mit18_156_s25_lec_full.tex:1151",
+   "quote": "\\text{Avg}_{p \\in P_{N^{1/2}}} || (\\pi_p f)_H ||_{L^2} ^2 \\lessapprox \\dfrac{N}{(N^{1/2})^2}",
+   "kind": "proof"
+  },
+  {
+   "from": 32,
+   "to": 31,
+   "evidence": "mit18_156_s25_lec_full.tex:1482",
+   "quote": "Using the dictionary lemma, we now relate $\\|f\\|_{L^2}$ with $\\pi_\\theta f$.",
+   "kind": "proof"
+  },
+  {
+   "from": 35,
+   "to": 43,
+   "evidence": "mit18_156_s25_lec_full.tex:1715",
+   "quote": "We can then apply the theorem above for each pair of intervals.",
+   "kind": "proof"
+  },
+  {
+   "from": 38,
+   "to": 36,
+   "evidence": "mit18_156_s25_lec_full.tex:1605",
+   "quote": "If $f, g : \\mathbb{N} \\to \\mathbb{C}$, then $\\pi_q(f *_M g) = \\pi_q f *_M \\pi_q g$.",
+   "kind": "statement"
+  },
+  {
+   "from": 39,
+   "to": 36,
+   "evidence": "mit18_156_s25_lec_full.tex:1636",
+   "quote": "\\lVert f *_M g \\rVert_{L^\\infty(\\mathbb{Z}_q^*)} \\le \\lVert f \\rVert_{L^2} \\lVert g \\rVert_{L^2}.",
+   "kind": "statement"
+  },
+  {
+   "from": 41,
+   "to": 36,
+   "evidence": "mit18_156_s25_lec_full.tex:1652",
+   "quote": "(f^* *_M g^*)_h = f^*_h *_M g_h^*.",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 36,
+   "evidence": "mit18_156_s25_lec_full.tex:1658",
+   "quote": "\\lVert (\\pi_q(f*_M g))^*_h \\rVert_{L^\\infty}",
+   "kind": "statement"
+  },
+  {
+   "from": 42,
+   "to": 38,
+   "evidence": "mit18_156_s25_lec_full.tex:1662",
+   "quote": "By Lemma 1 then Lemma 4,",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 39,
+   "evidence": "mit18_156_s25_lec_full.tex:1666",
+   "quote": "Then using Lemma 2 and Lemma 3, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 40,
+   "evidence": "mit18_156_s25_lec_full.tex:1666",
+   "quote": "Then using Lemma 2 and Lemma 3, we get",
+   "kind": "proof"
+  },
+  {
+   "from": 42,
+   "to": 41,
+   "evidence": "mit18_156_s25_lec_full.tex:1662",
+   "quote": "By Lemma 1 then Lemma 4,",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 25,
+   "evidence": "mit18_156_s25_lec_full.tex:1687",
+   "quote": "We apply the proposition, Cauchy-Schwarz, and then the large sieve:",
+   "kind": "proof"
+  },
+  {
+   "from": 43,
+   "to": 36,
+   "evidence": "mit18_156_s25_lec_full.tex:1681",
+   "quote": "then $f *_M g : [N] \\to \\mathbb{C}$, where $N = N_1 N_2$",
+   "kind": "statement"
+  },
+  {
+   "from": 43,
+   "to": 42,
+   "evidence": "mit18_156_s25_lec_full.tex:1687",
+   "quote": "We apply the proposition, Cauchy-Schwarz, and then the large sieve:",
+   "kind": "proof"
+  },
+  {
+   "from": 44,
+   "to": 45,
+   "evidence": "mit18_156_s25_lec_full.tex:1842",
+   "quote": "Note that the Szemerédi–Trotter theorem implies the ST projection theorem",
+   "kind": "proof"
+  },
+  {
+   "from": 45,
+   "to": 47,
+   "evidence": "mit18_156_s25_lec_full.tex:1952",
+   "quote": "Then using the cell decomposition lemma, define $X_i = X \\cap O_i$.",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 55,
+   "evidence": "mit18_156_s25_lec_full.tex:2279",
+   "quote": "Then the Ruzsa triangle inequality (on $\\F_p$ as a multiplicative set) implies",
+   "kind": "proof"
+  },
+  {
+   "from": 46,
+   "to": 57,
+   "evidence": "mit18_156_s25_lec_full.tex:2277",
+   "quote": "Then Plunnecke's inequality implies",
+   "kind": "proof"
+  },
+  {
+   "from": 47,
+   "to": 51,
+   "evidence": "mit18_156_s25_lec_full.tex:2062",
+   "quote": "define $p_k$ to be the polynomial of degree $D_k$ with $D^2 \\sim 2^{k}$ such that $p_k$ bisects all",
+   "kind": "proof"
+  },
+  {
+   "from": 49,
+   "to": 48,
+   "evidence": "mit18_156_s25_lec_full.tex:2012",
+   "quote": "$f$ is antipodal, so it has a zero.",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 48,
+   "evidence": "mit18_156_s25_lec_full.tex:2031",
+   "quote": "Then by the Borsuk Ulam theorem the conclusion follows.",
+   "kind": "proof"
+  },
+  {
+   "from": 50,
+   "to": 49,
+   "evidence": "mit18_156_s25_lec_full.tex:2018",
+   "quote": "We use the same setup as the ham sandwich theorem",
+   "kind": "statement"
+  },
+  {
+   "from": 51,
+   "to": 50,
+   "evidence": "mit18_156_s25_lec_full.tex:2046",
+   "quote": "Then by the Polynomial Ham Sandwich theorem the $N_\\epsilon(s_i)$ can all bisected",
+   "kind": "proof"
+  },
+  {
+   "from": 54,
+   "to": 53,
+   "evidence": "mit18_156_s25_lec_full.tex:2234",
+   "quote": "There is a meaningful bound if $K=|A|^\\delta$ for some $\\delta>0$.",
+   "kind": "statement"
+  },
+  {
+   "from": 56,
+   "to": 46,
+   "evidence": "mit18_156_s25_lec_full.tex:2298",
+   "quote": "Apply Lemma \\ref{lem:2} many times.",
+   "kind": "proof"
+  },
+  {
+   "from": 56,
+   "to": 61,
+   "evidence": "mit18_156_s25_lec_full.tex:2295",
+   "quote": "we have $|\\poly_K(A)|\\geq p^t$.",
+   "kind": "statement"
+  },
+  {
+   "from": 57,
+   "to": 55,
+   "evidence": "mit18_156_s25_lec_full.tex:2333",
+   "quote": "Now, Ruzsa's triangle inequality implies",
+   "kind": "proof"
+  },
+  {
+   "from": 59,
+   "to": 70,
+   "evidence": "mit18_156_s25_lec_full.tex:2672",
+   "quote": "choices for $a_2$ such that $(a, a_2)$ is $\\epsilon$-bad.",
+   "kind": "statement"
+  },
+  {
+   "from": 63,
+   "to": 57,
+   "evidence": "mit18_156_s25_lec_full.tex:2487",
+   "quote": "where we used Pl\\\"unnecke-Ruzsa to bound $|A'-A'|$.",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 65,
+   "evidence": "mit18_156_s25_lec_full.tex:2473",
+   "quote": "Fix some $t_1 \\in D \\setminus \\{0,\\infty\\}$ and apply BSG",
+   "kind": "proof"
+  },
+  {
+   "from": 63,
+   "to": 71,
+   "evidence": "mit18_156_s25_lec_full.tex:2491",
+   "quote": "by Theorem 12.1. A contradiction if $\\epsilon$ is sufficiently small",
+   "kind": "proof"
+  },
+  {
+   "from": 64,
+   "to": 63,
+   "evidence": "mit18_156_s25_lec_full.tex:2533",
+   "quote": "With the same setting of BKT, there exists $t \\in D$",
+   "kind": "statement"
+  },
+  {
+   "from": 65,
+   "to": 69,
+   "evidence": "mit18_156_s25_lec_full.tex:2590",
+   "quote": "The BSG theorem is proved by combining Lemma \\ref{lem:bsg_additive_lemma} and the Key Lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 68,
+   "to": 69,
+   "evidence": "mit18_156_s25_lec_full.tex:2590",
+   "quote": "The BSG theorem is proved by combining Lemma \\ref{lem:bsg_additive_lemma} and the Key Lemma.",
+   "kind": "proof"
+  },
+  {
+   "from": 69,
+   "to": 59,
+   "evidence": "mit18_156_s25_lec_full.tex:2688",
+   "quote": "Choose $A' \\subset A$ be the $A_2$ of Lemma 2.",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 56,
+   "evidence": "mit18_156_s25_lec_full.tex:2405",
+   "quote": "By lemma \\ref{sumprod}, there exists $K(s_A,s_D)$",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 62,
+   "evidence": "mit18_156_s25_lec_full.tex:2405",
+   "quote": "By double counting there exists $u \\in poly_k(D)$",
+   "kind": "proof"
+  },
+  {
+   "from": 71,
+   "to": 72,
+   "evidence": "mit18_156_s25_lec_full.tex:2405",
+   "quote": "then the contagious structure says that",
+   "kind": "proof"
+  },
+  {
+   "from": 72,
+   "to": 55,
+   "evidence": "mit18_156_s25_lec_full.tex:2362",
+   "quote": "$\\bar{A}=A$ in Rusza's inequality, so",
+   "kind": "proof"
+  },
+  {
+   "from": 76,
+   "to": 74,
+   "evidence": "mit18_156_s25_lec_full.tex:2947",
+   "quote": "Then there exists a subset $Y \\subset X$ such that $Y$ is $(\\Delta,m)$-uniform",
+   "kind": "statement"
+  },
+  {
+   "from": 82,
+   "to": 79,
+   "evidence": "mit18_156_s25_lec_full.tex:3657",
+   "quote": "\\lessapprox \\frac{p^{-3}T^2}{T^2}=p^{-3}",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 87,
+   "evidence": "mit18_156_s25_lec_full.tex:3655",
+   "quote": "By the vague statement and Lemmas~\\ref{lem-B_T}, \\ref{lem-Gamma_pcap B_T}, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 82,
+   "to": 88,
+   "evidence": "mit18_156_s25_lec_full.tex:3655",
+   "quote": "By the vague statement and Lemmas~\\ref{lem-B_T}, \\ref{lem-Gamma_pcap B_T}, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 79,
+   "evidence": "mit18_156_s25_lec_full.tex:3657",
+   "quote": "\\lessapprox \\frac{p^{-3}T^2}{T^2}=p^{-3}",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 87,
+   "evidence": "mit18_156_s25_lec_full.tex:3655",
+   "quote": "By the vague statement and Lemmas~\\ref{lem-B_T}, \\ref{lem-Gamma_pcap B_T}, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 83,
+   "to": 88,
+   "evidence": "mit18_156_s25_lec_full.tex:3655",
+   "quote": "By the vague statement and Lemmas~\\ref{lem-B_T}, \\ref{lem-Gamma_pcap B_T}, we have",
+   "kind": "proof"
+  },
+  {
+   "from": 84,
+   "to": 77,
+   "evidence": "mit18_156_s25_lec_full.tex:3286",
+   "quote": "Applying Proposition \\ref{l2_sigma_1} and Cauchy Schwartz gives the upper bound",
+   "kind": "proof"
+  },
+  {
+   "from": 85,
+   "to": 86,
+   "evidence": "mit18_156_s25_lec_full.tex:3561",
+   "quote": "By Lemma~\\ref{lem-rep}, we have $\\operatorname{dim}(V)\\ge \\frac{p-1}{2}$",
+   "kind": "proof"
+  },
+  {
+   "from": 92,
+   "to": 91,
+   "evidence": "mit18_156_s25_lec_full.tex:3935",
+   "quote": "\\gtrsim \\delta^{-1}Avg_t|f_t X_j|_\\delta \\gtrsim \\delta^{-1}|X_j|_\\delta^{1/2}",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 89,
+   "evidence": "mit18_156_s25_lec_full.tex:4185",
+   "quote": "Theorem \\ref{thmOSeps} tells us that if $0 < s < \\min(u,1)$ then",
+   "kind": "proof"
+  },
+  {
+   "from": 97,
+   "to": 96,
+   "evidence": "mit18_156_s25_lec_full.tex:4162",
+   "quote": "let $E$ be a $(\\delta, u, C)$ set in the plane",
+   "kind": "statement"
+  },
+  {
+   "from": 97,
+   "to": 99,
+   "evidence": "mit18_156_s25_lec_full.tex:4215",
+   "quote": "we can then apply Lemma \\ref{lembootstrap} repeatedly.",
+   "kind": "proof"
+  },
+  {
+   "from": 98,
+   "to": 95,
+   "evidence": "mit18_156_s25_lec_full.tex:4140",
+   "quote": "On the other hand, the Szemeredi Trotter theorem tells us that",
+   "kind": "proof"
+  },
+  {
+   "from": 99,
+   "to": 74,
+   "evidence": "mit18_156_s25_lec_full.tex:4212",
+   "quote": "if a typical set $L_{x,E}$ is uniform and $(\\delta, s, C)$",
+   "kind": "statement"
+  },
+  {
+   "from": 99,
+   "to": 96,
+   "evidence": "mit18_156_s25_lec_full.tex:4212",
+   "quote": "if a typical set $L_{x,E}$ is uniform and $(\\delta, s, C)$",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 74,
+   "evidence": "mit18_156_s25_lec_full.tex:4270",
+   "quote": "with $\\mathbb{T}_X$ uniform",
+   "kind": "statement"
+  },
+  {
+   "from": 100,
+   "to": 96,
+   "evidence": "mit18_156_s25_lec_full.tex:4270",
+   "quote": "If $E \\subset \\R^2$ is a $(\\delta, t, C)$-set",
+   "kind": "statement"
+  },
+  {
+   "from": 102,
+   "to": 103,
+   "evidence": "mit18_156_s25_lec_full.tex:4352",
+   "quote": "Then we can use the submultiplicative lemma many times to get",
+   "kind": "proof"
+  },
+  {
+   "from": 102,
+   "to": 105,
+   "evidence": "mit18_156_s25_lec_full.tex:4406",
+   "quote": "Given this lemma,  a simple iteration argument shows that",
+   "kind": "proof"
+  },
+  {
+   "from": 104,
+   "to": 101,
+   "evidence": "mit18_156_s25_lec_full.tex:4386",
+   "quote": "R_{AD, proj}(\\delta) \\lessapprox R_{AD, proj}(\\delta_1) R_{AD, proj}(\\delta_2).",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 57,
+   "evidence": "mit18_156_s25_lec_full.tex:4442",
+   "quote": "At this point,  we can use Plunnecke-Ruzsa to get stronger inequalities",
+   "kind": "proof"
+  },
+  {
+   "from": 105,
+   "to": 101,
+   "evidence": "mit18_156_s25_lec_full.tex:4402",
+   "quote": "R_{AD, proj}(\\delta) \\lesssim \\delta^\\epsilon R_{AD, proj}(\\delta^{1/2})^2.",
+   "kind": "statement"
+  },
+  {
+   "from": 105,
+   "to": 106,
+   "evidence": "mit18_156_s25_lec_full.tex:4473",
+   "quote": "Using the ABC sum product theorem and some computation",
+   "kind": "proof"
+  },
+  {
+   "from": 106,
+   "to": 96,
+   "evidence": "mit18_156_s25_lec_full.tex:4451",
+   "quote": "$A$ is a $(\\rho, a)$-set with $|A| \\sim \\rho^{-a}$.",
+   "kind": "statement"
+  },
+  {
+   "from": 107,
+   "to": 110,
+   "evidence": "mit18_156_s25_lec_full.tex:4635",
+   "quote": "we can dyadically sum over $\\tilde{R}$ and apply Lemma \\ref{twoends}.",
+   "kind": "proof"
+  }
+ ]
+}

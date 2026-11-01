@@ -1,0 +1,16 @@
+# Schur Siegel Smyth
+
+- [Conjugates](conjugates.md)
+- [Degree](degree.md)
+- [Trace](trace.md)
+- [Absolute Trace](absolute-trace.md)
+- [Is Totally Positive](is-totally-positive.md)
+- [Trace pos re](trace-pos-re.md)
+- [Trace im eq zero](trace-im-eq-zero.md)
+- [Absolute Trace pos](absolute-trace-pos.md)
+- [Minpoly rat one eq](minpoly-rat-one-eq.md)
+- [Is Totally Positive one](is-totally-positive-one.md)
+- [Is Admissible](is-admissible.md)
+- [Schur Siegel Smyth Constant](schur-siegel-smyth-constant.md)
+- [Coe le schur Siegel Smyth Constant](coe-le-schur-siegel-smyth-constant.md)
+- [Schur Siegel Smyth Constant le iff](schur-siegel-smyth-constant-le-iff.md)

@@ -1,0 +1,17 @@
+# Part 2 of 2
+
+- [Parent before child](parent-before-child.md)
+- [Child before parent postorder](child-before-parent-postorder.md)
+- [Decreasing Finish](decreasing-finish.md)
+- [Parent before child decreasing Finish](parent-before-child-decreasing-finish.md)
+- [Mem decreasing Finish iff reachable](mem-decreasing-finish-iff-reachable.md)
+- [Decreasing Finish nodup](decreasing-finish-nodup.md)
+- [Parent chain reaches root](parent-chain-reaches-root.md)
+- [Parent relation acyclic](parent-relation-acyclic.md)
+- [Forest Root mem roots](forest-root-mem-roots.md)
+- [Dfs All](dfs-all.md)
+- [Mem dfs All preorder](mem-dfs-all-preorder.md)
+- [Mem dfs All postorder](mem-dfs-all-postorder.md)
+- [Decreasing Finish All](decreasing-finish-all.md)
+- [Mem decreasing Finish All](mem-decreasing-finish-all.md)
+- [Decreasing Finish All nodup](decreasing-finish-all-nodup.md)

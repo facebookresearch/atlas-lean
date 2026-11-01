@@ -1,0 +1,17 @@
+# Longest Increasing Subsequence
+
+- [Is LISLength](is-lislength.md)
+- [Is LISCell](is-liscell.md)
+- [Max Above](max-above.md)
+- [Lis Table](lis-table.md)
+- [Max Entry](max-entry.md)
+- [Longest Increasing Subsequence](longest-increasing-subsequence.md)
+- [Max Above time](max-above-time.md)
+- [Longest Increasing Subsequence time](longest-increasing-subsequence-time.md)
+- [Exists suffix of cons sublist](exists-suffix-of-cons-sublist.md)
+- [LISTable Spec](listable-spec.md)
+- [Is LISCell max Above](is-liscell-max-above.md)
+- [Longest Increasing Subsequence spec](longest-increasing-subsequence-spec.md)
+- [Is LISLength longest Increasing Subsequence](is-lislength-longest-increasing-subseque.md)
+- [Unique](unique.md)
+- [Length longest Increasing Subsequence eq iff](length-longest-increasing-subsequence-eq.md)

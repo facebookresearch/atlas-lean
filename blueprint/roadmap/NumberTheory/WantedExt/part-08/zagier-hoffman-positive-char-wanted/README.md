@@ -1,0 +1,15 @@
+# Zagier Hoffman Positive Char Wanted
+
+- [Monic Strict Anti Nat Degree](monic-strict-anti-nat-degree.md)
+- [Ζ A](a.md)
+- [𝔖 w](w.md)
+- [Ζ A weight](a-weight.md)
+- [𝒵](untitled.md)
+- [𝒯 aux](aux.md)
+- [𝒯](untitled-2.md)
+- [𝒯0 aux](0-aux.md)
+- [𝒯0](0.md)
+- [D](d.md)
+- [Theorem A](theorem-a.md)
+- [Theorem B](theorem-b.md)
+- [Theorem D](theorem-d.md)
