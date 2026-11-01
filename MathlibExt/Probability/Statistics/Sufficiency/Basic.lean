@@ -63,14 +63,18 @@ open scoped ENNReal
 
 variable {Ω Θ : Type*}
 
-/-- A sub-σ-algebra `m` is *sufficient* for the family of measures `P` on `(Ω, m₀)` if for
-every `m₀`-measurable set `s` one `m`-measurable function is a version of the conditional
-probability `P_θ[1_s | m]` under every `P θ`. The results below take every `P θ` finite (or a
-probability measure), where `P_θ[· | m]` is the genuine conditional expectation. -/
+/-- A sub-σ-algebra `m` is *sufficient* for the family of measures `P` on `(Ω, m₀)` if
+`m ≤ m₀`, every `P θ` is finite, and for every `m₀`-measurable set `s` one `m`-measurable
+function is a version of the conditional probability `P_θ[1_s | m]` under every `P θ`.
+Bundling `m ≤ m₀` and finiteness into the predicate means an `IsSufficient` hypothesis
+itself represents a sufficient sub-σ-algebra for statistical laws: the conditional
+expectations it mentions are genuine, not Mathlib's totalized fallback on unrelated
+σ-algebras or infinite measures. -/
 def IsSufficient (m : MeasurableSpace Ω) {m₀ : MeasurableSpace Ω}
     (P : Θ → Measure[m₀] Ω) : Prop :=
-  ∀ s, MeasurableSet[m₀] s → ∃ f : Ω → ℝ, StronglyMeasurable[m] f ∧
-    ∀ θ, f =ᵐ[P θ] (P θ)[s.indicator (fun _ => (1 : ℝ)) | m]
+  m ≤ m₀ ∧ (∀ θ, IsFiniteMeasure (P θ)) ∧
+    ∀ s, MeasurableSet[m₀] s → ∃ f : Ω → ℝ, StronglyMeasurable[m] f ∧
+      ∀ θ, f =ᵐ[P θ] (P θ)[s.indicator (fun _ => (1 : ℝ)) | m]
 
 /-- Monotone convergence for conditional expectations under one finite measure. -/
 private theorem ae_tendsto_condExp_of_monotone {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
@@ -125,7 +129,7 @@ private theorem IsSufficient.exists_common_condExp_simpleFunc {m m₀ : Measurab
     ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[f | m] := by
   induction f using SimpleFunc.induction with
   | @const c S hS =>
-    obtain ⟨v, hv, hvθ⟩ := hP S hS
+    obtain ⟨v, hv, hvθ⟩ := hP.2.2 S hS
     refine ⟨c • v, hv.const_smul c, fun θ => ?_⟩
     have hfun : ⇑(SimpleFunc.piecewise S hS (SimpleFunc.const Ω c) (SimpleFunc.const Ω 0)) =
         c • S.indicator (fun _ => (1 : ℝ)) := by
@@ -147,7 +151,7 @@ private theorem IsSufficient.exists_common_condExp_simpleFunc {m m₀ : Measurab
 
 /-- Nonnegative case of `IsSufficient.exists_common_condExp`. -/
 private theorem IsSufficient.exists_common_condExp_of_nonneg {m m₀ : MeasurableSpace Ω}
-    (hm : m ≤ m₀) {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)]
+    {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)]
     (hP : IsSufficient m P) {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW0 : ∀ ω, 0 ≤ W ω)
     (hW : ∀ θ, Integrable W (P θ)) :
     ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[W | m] := by
@@ -172,7 +176,7 @@ private theorem IsSufficient.exists_common_condExp_of_nonneg {m m₀ : Measurabl
   have hη : StronglyMeasurable[m] fun ω => limUnder atTop fun n => v n ω :=
     @StronglyMeasurable.limUnder ℕ Ω ℝ m _ _ atTop _ v _ _ hv
   refine ⟨fun ω => limUnder atTop fun n => v n ω, hη, fun θ => ?_⟩
-  have hconv := ae_tendsto_condExp_of_monotone hm (μ := P θ)
+  have hconv := ae_tendsto_condExp_of_monotone hP.1 (μ := P θ)
     (fun n => SimpleFunc.integrable_of_isFiniteMeasure (s n)) (hW θ) hmono hlim
   filter_upwards [hconv, ae_all_iff.2 fun n => hvθ n θ] with ω h1 h2
   exact (h1.congr fun n => (h2 n).symm).limUnder_eq
@@ -181,13 +185,13 @@ private theorem IsSufficient.exists_common_condExp_of_nonneg {m m₀ : Measurabl
 function `W` that is integrable under all the measures has one `m`-measurable version of the
 conditional expectation `P_θ[W | m]` for every `θ`. (Measurability of `W` itself, not only
 under each `P θ`, is what lets one approximating sequence serve every parameter.) -/
-theorem IsSufficient.exists_common_condExp {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+theorem IsSufficient.exists_common_condExp {m m₀ : MeasurableSpace Ω}
     {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)] (hP : IsSufficient m P)
     {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW : ∀ θ, Integrable W (P θ)) :
     ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ ∀ θ, η =ᵐ[P θ] (P θ)[W | m] := by
-  obtain ⟨η₁, hη₁, h₁⟩ := hP.exists_common_condExp_of_nonneg hm (W := fun ω => max (W ω) 0)
+  obtain ⟨η₁, hη₁, h₁⟩ := hP.exists_common_condExp_of_nonneg (W := fun ω => max (W ω) 0)
     (hWm.max measurable_const) (fun ω => le_max_right _ _) fun θ => (hW θ).pos_part
-  obtain ⟨η₂, hη₂, h₂⟩ := hP.exists_common_condExp_of_nonneg hm (W := fun ω => max (-W ω) 0)
+  obtain ⟨η₂, hη₂, h₂⟩ := hP.exists_common_condExp_of_nonneg (W := fun ω => max (-W ω) 0)
     (hWm.neg.max measurable_const) (fun ω => le_max_right _ _) fun θ => (hW θ).neg_part
   refine ⟨η₁ - η₂, hη₁.sub hη₂, fun θ => ?_⟩
   have hW' : W = (fun ω => max (W ω) 0) - fun ω => max (-W ω) 0 := by
@@ -277,8 +281,8 @@ theorem isSufficient_of_withDensity {m m₀ : MeasurableSpace Ω} (hm : m ≤ m�
     ext ω
     simp only [Pi.mul_apply]
     rw [ENNReal.mul_div_cancel (by simpa using (hw0 ω).ne') ENNReal.coe_ne_top]
-  intro s hs
-  refine ⟨ν'[s.indicator (fun _ => (1 : ℝ)) | m], stronglyMeasurable_condExp, fun θ => ?_⟩
+  refine ⟨hm, fun θ => inferInstance, fun s hs =>
+    ⟨ν'[s.indicator (fun _ => (1 : ℝ)) | m], stronglyMeasurable_condExp, fun θ => ?_⟩⟩
   have : IsFiniteMeasure (ν'.withDensity fun ω => g θ ω / w ω) := by
     rw [← hP' θ]
     infer_instance

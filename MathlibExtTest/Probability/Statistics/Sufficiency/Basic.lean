@@ -20,16 +20,17 @@ namespace MathlibExtTest.Probability.Statistics.Sufficiency.Basic
 (the indicator itself is a common version). -/
 example {Ω Θ : Type*} [m₀ : MeasurableSpace Ω] (P : Θ → Measure Ω)
     [∀ θ, IsProbabilityMeasure (P θ)] : IsSufficient m₀ P := by
-  intro s hs
+  refine ⟨le_rfl, fun θ => inferInstance, fun s hs => ?_⟩
   have hsm : StronglyMeasurable[m₀] (s.indicator fun _ => (1 : ℝ)) :=
     (stronglyMeasurable_const.indicator hs)
   refine ⟨s.indicator fun _ => (1 : ℝ), hsm, fun θ => ?_⟩
   rw [condExp_of_stronglyMeasurable le_rfl hsm ((integrable_const 1).indicator hs)]
 
-/-- A family with one law: every sub-σ-algebra is sufficient. -/
-example {Ω Θ : Type*} {m m₀ : MeasurableSpace Ω} (μ : Measure[m₀] Ω) :
-    IsSufficient m (fun _ : Θ => μ) := fun s _ =>
-  ⟨μ[s.indicator fun _ => (1 : ℝ) | m], stronglyMeasurable_condExp, fun _ => .rfl⟩
+/-- A family with one finite law: every sub-σ-algebra of `m₀` is sufficient. -/
+example {Ω Θ : Type*} {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀) (μ : Measure[m₀] Ω)
+    [IsFiniteMeasure μ] :
+    IsSufficient m (fun _ : Θ => μ) := ⟨hm, fun _ => inferInstance, fun s _ =>
+  ⟨μ[s.indicator fun _ => (1 : ℝ) | m], stronglyMeasurable_condExp, fun _ => .rfl⟩⟩
 
 /-- The two point masses on `Bool`. -/
 noncomputable def diracs (b : Bool) : Measure Bool := Measure.dirac b
@@ -42,7 +43,7 @@ instance (b : Bool) : IsProbabilityMeasure (diracs b) := by
 `P_b(true | ⊥)` would be a constant equal to both `1` and `0`. -/
 theorem not_isSufficient_bot : ¬ IsSufficient ⊥ diracs := by
   intro h
-  obtain ⟨f, hf, hfθ⟩ := h {true} (measurableSet_singleton true)
+  obtain ⟨f, hf, hfθ⟩ := h.2.2 {true} (measurableSet_singleton true)
   obtain ⟨c, hc⟩ := stronglyMeasurable_bot_iff.mp hf
   subst hc
   have h1 := hfθ true

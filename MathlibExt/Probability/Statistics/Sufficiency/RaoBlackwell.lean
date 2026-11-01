@@ -188,7 +188,7 @@ the same mean as `W` under every `θ` and no larger risk under every loss `ℓ �
 in the estimate (for which `ℓ θ ∘ W` is integrable).
 
 Source: Rao (1945); Blackwell (1947); Casella–Berger, Section 7.3. -/
-theorem IsSufficient.raoBlackwell {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀)
+theorem IsSufficient.raoBlackwell {m m₀ : MeasurableSpace Ω}
     {P : Θ → Measure[m₀] Ω} [∀ θ, IsProbabilityMeasure (P θ)] (hP : IsSufficient m P)
     {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW : ∀ θ, Integrable W (P θ)) :
     ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ (∀ θ, η =ᵐ[P θ] (P θ)[W | m]) ∧
@@ -196,12 +196,12 @@ theorem IsSufficient.raoBlackwell {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀
       ∀ ℓ : Θ → ℝ → ℝ, ∀ θ, ConvexOn ℝ Set.univ (ℓ θ) →
         Integrable (fun ω => ℓ θ (W ω)) (P θ) →
         ∫ ω, ℓ θ (η ω) ∂P θ ≤ ∫ ω, ℓ θ (W ω) ∂P θ := by
-  obtain ⟨η, hηm, hη⟩ := hP.exists_common_condExp hm hWm hW
+  obtain ⟨η, hηm, hη⟩ := hP.exists_common_condExp hWm hW
   refine ⟨η, hηm, hη, fun θ => ?_, fun ℓ θ hℓ hℓW => ?_⟩
-  · rw [integral_congr_ae (hη θ), integral_condExp hm]
+  · rw [integral_congr_ae (hη θ), integral_condExp hP.1]
   · calc ∫ ω, ℓ θ (η ω) ∂P θ = ∫ ω, ℓ θ ((P θ)[W | m] ω) ∂P θ :=
           integral_congr_ae ((hη θ).fun_comp (ℓ θ))
-      _ ≤ ∫ ω, ℓ θ (W ω) ∂P θ := integral_comp_condExp_le hm (P θ) hℓ (hW θ) hℓW
+      _ ≤ ∫ ω, ℓ θ (W ω) ∂P θ := integral_comp_condExp_le hP.1 (P θ) hℓ (hW θ) hℓW
 
 /-- **The Rao–Blackwell theorem for a sufficient statistic.** If the statistic `T` is
 sufficient for `P` and `W` is a measurable estimator with finite second moment under every
@@ -219,7 +219,7 @@ theorem raoBlackwell_comap {τ : Type*} [MeasurableSpace τ] {m₀ : MeasurableS
         ∫ ω, (φ (T ω) - tgt θ) ^ 2 ∂P θ + ∫ ω, (W ω - φ (T ω)) ^ 2 ∂P θ := by
   have hm := hT.comap_le
   obtain ⟨η, hηm, hη⟩ :=
-    hP.exists_common_condExp hm hWm fun θ => (hW θ).integrable one_le_two
+    hP.exists_common_condExp hWm fun θ => (hW θ).integrable one_le_two
   obtain ⟨φ, hφ, rfl⟩ := hηm.exists_eq_measurable_comp
   refine ⟨φ, hφ.measurable, hη, fun θ => ?_, fun θ => ?_⟩
   · change ∫ ω, (φ ∘ T) ω ∂P θ = _

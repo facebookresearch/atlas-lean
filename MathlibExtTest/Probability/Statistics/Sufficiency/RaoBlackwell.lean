@@ -48,10 +48,10 @@ sub-σ-algebra, so the Rao–Blackwell estimator is `μ[W | m]` itself. -/
 example {Ω : Type*} {m m₀ : MeasurableSpace Ω} (hm : m ≤ m₀) (μ : Measure[m₀] Ω)
     [IsProbabilityMeasure μ] {W : Ω → ℝ} (hWm : Measurable[m₀] W) (hW : Integrable W μ) :
     ∃ η : Ω → ℝ, StronglyMeasurable[m] η ∧ η =ᵐ[μ] μ[W | m] ∧ ∫ ω, η ω ∂μ = ∫ ω, W ω ∂μ := by
-  have hP : IsSufficient m (fun _ : Unit => μ) := fun s _ =>
-    ⟨μ[s.indicator fun _ => (1 : ℝ) | m], stronglyMeasurable_condExp, fun _ => .rfl⟩
+  have hP : IsSufficient m (fun _ : Unit => μ) := ⟨hm, fun _ => inferInstance, fun s _ =>
+    ⟨μ[s.indicator fun _ => (1 : ℝ) | m], stronglyMeasurable_condExp, fun _ => .rfl⟩⟩
   obtain ⟨η, hη, hver, hmean, -⟩ :=
-    IsSufficient.raoBlackwell hm hP hWm (fun _ => hW)
+    IsSufficient.raoBlackwell hP hWm (fun _ => hW)
   exact ⟨η, hη, hver (), hmean ()⟩
 
 end MathlibExtTest.Probability.Statistics.Sufficiency.RaoBlackwell
