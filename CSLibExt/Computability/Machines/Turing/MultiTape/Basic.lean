@@ -57,16 +57,23 @@ variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
 
 /-! ### Machines from transition functions -/
 
-/-- The successor of `cfg` under the transition function `tr`: a halted configuration is fixed,
-and a running one applies the action that `tr` selects for its state and the symbols under its
-heads. -/
+/-- **Successor under a transition function.** Let $\delta$ be a transition function of a
+multi-tape Turing machine with $k$ work tapes, assigning an action to each state, input symbol
+and tuple of $k$ work tape symbols, where a symbol may be blank. The successor of a configuration
+$c$ under $\delta$ is $c$ itself if $c$ is halted, and otherwise the configuration obtained by
+applying to $c$ the action $\delta(q, a, b)$, where $q$ is the state of $c$, $a$ the symbol under
+its input head and $b$ the symbols under its work tape heads. -/
 def stepWith (tr : State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State)
     (cfg : Cfg k Symbol State input) : Cfg k Symbol State input :=
   match cfg.state with
   | none => cfg
   | some q => (tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
 
-/-- The step of the machine `ofTr q₀ tr` is `stepWith tr`. -/
+/-- **Step of a machine given by a transition function.** Let $M$ be the deterministic multi-tape
+Turing machine with initial state $q_0$ and transition function $\delta$. For every configuration
+$c$, the step of $M$ from $c$ is the successor of $c$ under $\delta$: $c$ itself if $c$ is halted,
+and otherwise the result of applying to $c$ the action that $\delta$ selects for the state of $c$
+and the symbols under its input and work tape heads. -/
 theorem step_ofTr (q₀ : State)
     (tr : State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State)
     (cfg : Cfg k Symbol State input) : (MultiTapeTM.ofTr q₀ tr).step cfg = stepWith tr cfg := by
@@ -74,7 +81,15 @@ theorem step_ofTr (q₀ : State)
   | none => rw [MultiTapeTM.step_of_halt h]; simp [stepWith, h]
   | some q => rw [MultiTapeTM.step_of_state h, MultiTapeTM.tr_ofTr]; simp [stepWith, h]
 
-/-- The runs of the machine `ofTr q₀ tr` iterate `stepWith tr`. -/
+/-- **Runs of a machine given by a transition function.** Let $\delta$ be a transition function
+that assigns an action to every state, symbol or blank read on the input tape, and tuple of
+symbols or blanks read on the work tapes, and let $M$ be the deterministic multi-tape Turing
+machine with initial state $q_0$ and transition function $\delta$. Let $S_\delta$ be the map on
+configurations that fixes every halted configuration and sends a running configuration in state
+$q$ to the result of applying to it the action that $\delta$ selects for $q$ and the symbols or
+blanks under its heads. For every configuration $c$ and every $t \in \mathbb{N}$, the run of $M$
+from $c$ is in configuration $S_\delta^t(c)$ after $t$ steps, where $S_\delta^t$ is the $t$-fold
+iterate of $S_\delta$. -/
 theorem runFrom_ofTr (q₀ : State)
     (tr : State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State)
     (cfg : Cfg k Symbol State input) (t : ℕ) :
@@ -87,8 +102,9 @@ theorem runFrom_ofTr (q₀ : State)
 
 variable {tm : MultiTapeTM k Symbol State}
 
-/-- **Step determinism.** A configuration of a deterministic machine has at most one successor
-under the step relation inherited from `MultiTapeNTM`. -/
+/-- **Step determinism.** Let $M$ be a deterministic multi-tape Turing machine, with the one-step
+relation it inherits as a nondeterministic machine. If a configuration $c$ steps to both $c_1$
+and $c_2$, then $c_1 = c_2$. -/
 theorem step_deterministic {c c₁ c₂ : Cfg k Symbol State input} (h₁ : tm.Step c c₁)
     (h₂ : tm.Step c c₂) : c₁ = c₂ :=
   (MultiTapeTM.step_iff.mp h₁).symm.trans (MultiTapeTM.step_iff.mp h₂)
@@ -96,32 +112,40 @@ theorem step_deterministic {c c₁ c₂ : Cfg k Symbol State input} (h₁ : tm.S
 @[simp]
 theorem runFrom_zero (cfg : Cfg k Symbol State input) : tm.runFrom cfg 0 = cfg := rfl
 
-/-- One step, then the rest of the run. -/
+/-- **Peeling off the first step of a run.** For a configuration $c$ of a deterministic
+multi-tape Turing machine and every $t \in \mathbb{N}$, the run from $c$ after $t + 1$ steps is in
+the same configuration as the run from the successor of $c$ after $t$ steps. -/
 theorem runFrom_succ' (cfg : Cfg k Symbol State input) (t : ℕ) :
     tm.runFrom cfg (t + 1) = tm.runFrom (tm.step cfg) t := by
   rw [Nat.add_comm, MultiTapeTM.runFrom_add]
   rfl
 
-/-- A halted configuration is fixed by every run. -/
+/-- **Halted configurations are fixed.** If a configuration $c$ of a deterministic multi-tape
+Turing machine is halted, then for every $t \in \mathbb{N}$ the run from $c$ is in configuration
+$c$ after $t$ steps. -/
 theorem runFrom_of_halted {cfg : Cfg k Symbol State input} (h : cfg.Halted) (t : ℕ) :
     tm.runFrom cfg t = cfg :=
   MultiTapeTM.runFrom_eq_of_halt tm cfg (Nat.zero_le t) h
 
-/-- Halting persists along a run. -/
+/-- **Halting persists along a run.** For a configuration $c$ of a deterministic multi-tape Turing
+machine and steps $s \le t$, if the run from $c$ is halted after $s$ steps, then it is halted after
+$t$ steps. -/
 theorem halted_runFrom_mono {cfg : Cfg k Symbol State input} {s t : ℕ} (hst : s ≤ t)
     (h : (tm.runFrom cfg s).Halted) : (tm.runFrom cfg t).Halted := by
   rwa [MultiTapeTM.runFrom_eq_of_halt tm cfg hst h]
 
 /-! ### The halting step -/
 
-/-- A machine halts at step `0` exactly from a halted configuration. -/
+/-- **Halting at step zero.** A deterministic multi-tape Turing machine started in a
+configuration $c$ halts at step $0$ if and only if $c$ is halted. -/
 @[simp]
 theorem haltsAt_zero_iff {cfg : Cfg k Symbol State input} : tm.HaltsAt cfg 0 ↔ cfg.Halted :=
   ⟨fun h ↦ h.halted, fun h ↦ ⟨h, fun _ hs ↦ absurd hs (Nat.not_lt_zero _)⟩⟩
 
-/-- **Run composition for halting.** If the run from `cfg` is still running for the first `m`
-steps and the run from the configuration reached after `m` steps halts at step `n`, then the run
-from `cfg` halts at step `m + n`. -/
+/-- **Run composition for halting.** Let $c$ be a configuration of a deterministic multi-tape
+Turing machine and let $m, n \in \mathbb{N}$. If the run from $c$ is not halted after any $s < m$
+steps, and the run from the configuration reached after $m$ steps halts at step $n$ (it is halted
+after $n$ steps and not halted after fewer), then the run from $c$ halts at step $m + n$. -/
 theorem haltsAt_add {cfg : Cfg k Symbol State input} {m n : ℕ}
     (hm : ∀ s < m, ¬(tm.runFrom cfg s).Halted) (hn : tm.HaltsAt (tm.runFrom cfg m) n) :
     tm.HaltsAt cfg (m + n) := by
@@ -132,8 +156,10 @@ theorem haltsAt_add {cfg : Cfg k Symbol State input} {m n : ℕ}
     rw [MultiTapeTM.runFrom_add]
     exact hn.not_halted (by omega)
 
-/-- If the run from `cfg` halts at step `m + n`, the run from the configuration reached after `m`
-steps halts at step `n`. -/
+/-- **Halting step after a run prefix.** Let $M$ be a deterministic multi-tape Turing machine,
+$c$ a configuration of $M$ and $m, n$ natural numbers. If $M$ started in $c$ halts at step
+$m + n$, that is, it is halted after $m + n$ steps and not halted after any fewer, then $M$
+started in the configuration reached from $c$ after $m$ steps halts at step $n$. -/
 theorem HaltsAt.runFrom {cfg : Cfg k Symbol State input} {m n : ℕ}
     (h : tm.HaltsAt cfg (m + n)) : tm.HaltsAt (tm.runFrom cfg m) n := by
   refine ⟨by rw [← MultiTapeTM.runFrom_add]; exact h.halted, fun s hs ↦ ?_⟩
@@ -142,14 +168,17 @@ theorem HaltsAt.runFrom {cfg : Cfg k Symbol State input} {m n : ℕ}
 
 /-! ### Time bounds and outputs -/
 
-/-- A deterministic machine that runs in time `t` on `input` is halted after `t` steps. -/
+/-- **A time bound forces halting.** If a deterministic multi-tape Turing machine runs in time $t$
+on input $w$, then the run from the initial configuration on $w$ is halted after $t$ steps. -/
 theorem halted_runFrom_of_runsInTime {t : ℕ} (h : tm.RunsInTime input t) :
     (tm.runFrom (tm.initCfg input) t).Halted := by
   have hp := h (MultiTapeNTM.ComputationPath.ofDeterministic tm input t) le_rfl
   rwa [MultiTapeTM.computationPath_last_eq_runFrom] at hp
 
-/-- For a deterministic machine, running in time `t` on `input` means being halted after `t`
-steps. -/
+/-- **Time bounds of deterministic machines.** Let $M$ be a deterministic multi-tape Turing
+machine, $w$ an input and $t$ a natural number. Then $M$ runs in time $t$ on $w$, that is, every
+computation path of $M$ on $w$ with at least $t$ steps ends in a halted configuration, if and only
+if $M$ started in its initial configuration on $w$ is halted after $t$ steps. -/
 theorem runsInTime_iff_halted {t : ℕ} :
     tm.RunsInTime input t ↔ (tm.runFrom (tm.initCfg input) t).Halted :=
   ⟨halted_runFrom_of_runsInTime, MultiTapeTM.runsInTime_of_halted⟩
@@ -163,7 +192,10 @@ theorem computes_unique {o₁ o₂ : List Symbol} (h₁ : tm.Computes input o₁
   · rw [← ho₁, ← ho₂, MultiTapeTM.runFrom_eq_of_halt tm _ hu hh₁]
   · rw [← ho₁, ← ho₂, MultiTapeTM.runFrom_eq_of_halt tm _ hu hh₂]
 
-/-- A machine computes `o` on `input` iff it halts at some step with output `o`. -/
+/-- **Computing an output means halting with it.** A deterministic multi-tape Turing machine
+computes the output $o$ on input $w$ if and only if there is a step $t$ at which the run from the
+initial configuration on $w$ halts (it is halted after $t$ steps and not halted after any $s < t$
+steps) and the configuration it reaches after $t$ steps has output tape $o$. -/
 theorem computes_iff_exists_haltsAt {o : List Symbol} :
     tm.Computes input o ↔
       ∃ t, tm.HaltsAt (tm.initCfg input) t ∧ (tm.runFrom (tm.initCfg input) t).output = o := by
@@ -174,8 +206,9 @@ theorem computes_iff_exists_haltsAt {o : List Symbol} :
   · rintro ⟨t, ht, ho⟩
     exact ⟨t, ht.halted, ho⟩
 
-/-- Under a time bound `t`, a deterministic machine computes exactly the output of its
-configuration after `t` steps. -/
+/-- **Output at a time bound.** If a deterministic multi-tape Turing machine runs in time $t$ on
+input $w$, then for every word $o$ the machine computes $o$ on $w$ if and only if the
+configuration reached from the initial configuration on $w$ after $t$ steps has output tape $o$. -/
 theorem computes_iff_output_of_runsInTime {t : ℕ} (h : tm.RunsInTime input t)
     {o : List Symbol} :
     tm.Computes input o ↔ (tm.runFrom (tm.initCfg input) t).output = o :=

@@ -67,8 +67,8 @@ variable {k : ℕ}
 
 /-! ### Coding actions -/
 
-/-- Code a head move as a number, inverting `decodeMove`: left is `0`, stay is `1`, right is
-`2`. -/
+/-- **Coding head moves.** A head move is coded as a natural number: left is $0$, stay is $1$
+and right is $2$. Decoding a move code recovers the move. -/
 def encodeMove : SignType → ℕ
   | .neg => 0
   | .zero => 1
@@ -78,14 +78,22 @@ def encodeMove : SignType → ℕ
 theorem decodeMove_encodeMove (m : SignType) : decodeMove (encodeMove m) = m := by
   cases m <;> rfl
 
-/-- Code an action of a binary machine, numbering its successor state by `e`. -/
+/-- **Coding an action.** Let $e : Q \to \mathbb{N}$ number the states $Q$ of a binary multi-tape
+machine with $k$ work tapes. The coded action of an action $a$ of the machine under $e$ records as
+its input-head move the code of the input-head move of $a$ (left $0$, stay $1$, right $2$); for
+each work tape it records what $a$ writes there and the code of the head move of $a$ there; it
+records the output bit of $a$, if any; and its next state is $e(q)$ when $a$ enters the state $q$,
+and it halts when $a$ halts. -/
 def encodeAction {State : Type*} (e : State → ℕ) (a : Action k Bool State) : CodeAction k where
   inputMove := encodeMove a.inputTape
   work i := ((a.workTapes i).1, encodeMove (a.workTapes i).2)
   out := a.output
   next := a.state.map e
 
-/-- A coded action stands for the action it codes, with its successor state numbered. -/
+/-- **Decoding the coding of an action.** Let $Q$ be a type, $e : Q \to \mathbb{N}$ a map and $a$
+an action of a binary machine with $k$ work tapes and states in $Q$. The action that the coded
+action of $a$, with its successor state numbered by $e$, stands for is $a$ with its successor
+state relabelled by $e$. -/
 theorem toAction_encodeAction {State : Type*} (e : State → ℕ) (a : Action k Bool State) :
     (encodeAction e a).toAction = relabelAction e a := by
   cases a
@@ -95,7 +103,9 @@ namespace Code
 
 /-! ### The finite-state machine of a code -/
 
-/-- A strict upper bound on the states of a code. -/
+/-- **State bound of a code.** The states of a code $c$ are the initial state $0$ and every
+successor state named in its table. The state bound of $c$ is one more than the largest of them;
+it is a strict upper bound on the states of $c$. -/
 def stateBound (c : Code k) : ℕ := c.states.sup id + 1
 
 theorem lt_stateBound (c : Code k) {q : ℕ} (h : q ∈ c.states) : q < c.stateBound :=
@@ -103,21 +113,33 @@ theorem lt_stateBound (c : Code k) {q : ℕ} (h : q ∈ c.states) : q < c.stateB
 
 theorem zero_lt_stateBound (c : Code k) : 0 < c.stateBound := Nat.succ_pos _
 
-/-- A number as a state below `N`, if it is one. -/
+/-- **A number as a bounded state.** For natural numbers $N$ and $q$, this is $q$ as an element
+of $\{0, \dots, N - 1\}$ if $q < N$, and no value otherwise. -/
 def finState (N q : ℕ) : Option (Fin N) := if h : q < N then some ⟨q, h⟩ else none
 
-/-- The transition function of a code on the states below `c.stateBound`. -/
+/-- **Transition function of a code on bounded states.** Let $c$ be a code with $k$ work tapes
+and let $N$ be its state bound. For a state $q < N$, a symbol $a$ under the input head and
+symbols $w$ under the $k$ work heads (each a bit or blank), this is the action of $c$ at
+$(q, a, w)$ with the same input-head move, work-tape writes and moves, and output, and with its
+successor state read as a state below $N$; a successor state that is not below $N$ is replaced
+by halting. -/
 def finTr (c : Code k) (q : Fin c.stateBound) (a : Option Bool) (w : Fin k → Option Bool) :
     Action k Bool (Fin c.stateBound) :=
   ⟨(c.tr q a w).inputTape, (c.tr q a w).workTapes, (c.tr q a w).output,
     (c.tr q a w).state.bind (finState c.stateBound)⟩
 
-/-- **The finite-state machine of a code**: the machine of `c` with its states restricted to
-`Fin c.stateBound`. -/
+/-- **The finite-state machine of a code.** For a code $c$ with $k$ work tapes and state bound
+$N$, this is the binary machine with $k$ work tapes and states $0, 1, \dots, N - 1$ that starts
+in state $0$ and, in a state $q < N$ reading $a$ under the input head and $w$ under the work
+heads, takes the action of $c$ at $(q, a, w)$, with a successor state not below $N$ replaced by
+halting. Since every state the machine of $c$ can enter is below $N$, it is the machine of $c$
+with its states restricted to those below $N$. -/
 noncomputable def toFinTM (c : Code k) : MultiTapeTM k Bool (Fin c.stateBound) :=
   MultiTapeTM.ofTr ⟨0, c.zero_lt_stateBound⟩ c.finTr
 
-/-- The machine of a code simulates its finite-state machine up to the relabelling `Fin.val`. -/
+/-- **A code's machine simulates its finite-state machine.** For every code $c$, the machine of
+$c$ simulates the finite-state machine of $c$ up to the relabelling that sends each state
+$q < N$, where $N$ is the state bound of $c$, to the natural number $q$. -/
 theorem isRelabelling_toFinTM (c : Code k) : IsRelabelling Fin.val c.toFinTM c.toTM where
   q₀ := rfl
   tr q a w := by
@@ -131,8 +153,12 @@ theorem isRelabelling_toFinTM (c : Code k) : IsRelabelling Fin.val c.toFinTM c.t
         simp [finState, c.lt_stateBound hq']
     simp only [finTr, relabelAction, hs]
 
-/-- **Codes land in CSLib's classes.** A function computed by the machine of a code within some
-time and space bounds is computable within them by a binary machine with finitely many states. -/
+/-- **Computation by a code is finite-state computation.** Let $c$ be a code with $k$ work tapes,
+let $g : \alpha \to \beta$ be a function, let inputs in $\alpha$ and outputs in $\beta$ be encoded
+by injective maps into binary words, and let $t, s : \alpha \to \mathbb{N}$. If the machine of $c$,
+started on the encoding of any input $x$, halts with the encoding of $g(x)$ as output, halts
+within $t(x)$ steps, and visits at most $s(x)$ work-tape cells, then some binary multi-tape
+machine with finitely many states computes $g$ within the same bounds in the same sense. -/
 theorem computableInTimeAndSpace {α β : Type*} {g : α → β} {encIn : α ↪ List Bool}
     {encOut : β ↪ List Bool} {t s : α → ℕ} (c : Code k)
     (h : c.toTM.ComputesFunInTimeAndSpace encIn encOut g t s) :
@@ -140,8 +166,12 @@ theorem computableInTimeAndSpace {α β : Type*} {g : α → β} {encIn : α ↪
   ⟨k, Fin c.stateBound, inferInstance, c.toFinTM,
     c.isRelabelling_toFinTM.computesFunInTimeAndSpace_iff.mp h⟩
 
-/-- **Codes land in `DecidableInTimeAndSpace`.** A language decided by the machine of a code
-within some time and space bounds is decidable within them. -/
+/-- **Deciding by a code is finite-state decidability.** Let $c$ be a code with $k$ work tapes,
+let $L$ be a set of binary words, and let $t$ and $s$ map binary words to natural numbers. If
+the machine of $c$ decides $L$, that is, started on any binary word $w$ it halts with the one-bit
+output $\mathrm{true}$ if $w \in L$ and $\mathrm{false}$ otherwise, and if on every binary word
+$w$ it halts within $t(w)$ steps and visits at most $s(w)$ work-tape cells, then some binary
+multi-tape machine with finitely many states decides $L$ within the same bounds. -/
 theorem decidableInTimeAndSpace {L : Set (List Bool)} {t s : List Bool → ℕ} (c : Code k)
     (hd : Decides c.toTM L) (ht : ∀ w, c.toTM.RunsInTime w (t w))
     (hs : ∀ w, c.toTM.RunsInSpace w (s w)) :
@@ -166,15 +196,26 @@ private theorem lookup_map_of_injective {ι κ β : Type*} [DecidableEq κ] {g :
       rw [List.map_cons, List.lookup, hne]
       exact lookup_map_of_injective hg v (List.mem_of_ne_of_mem hxy hx)
 
-/-- **The code of a finite-state binary machine**: its transition table over all states and
-symbols under the heads, with states numbered by `e`. It denotes `tm` when `e` is injective and
-sends the initial state to `0` (`isRelabelling_ofTM`). -/
+/-- **The code of a finite-state binary machine.** Let $M$ be a machine over the binary alphabet
+with $k$ work tapes and a finite set of states $Q$, and let $e : Q \to \mathbb{N}$. The code of
+$M$ with states numbered by $e$ has one table entry for each state $q \in Q$, symbol $a$ under
+the input head and symbols $w$ under the $k$ work heads (each a bit or blank): its key is
+$(e(q), a, w)$ and its value is the coded action of $M$ in state $q$ reading $a$ and $w$, with
+the successor state numbered by $e$. The entries are listed in an unspecified order.
+
+When $e$ is injective and sends the initial state of $M$ to $0$, the machine of this code
+simulates $M$ up to the relabelling $e$. -/
 noncomputable def ofTM {State : Type*} [Fintype State] (tm : MultiTapeTM k Bool State)
     (e : State → ℕ) : Code k :=
   ⟨(Finset.univ : Finset (State × Option Bool × (Fin k → Option Bool))).toList.map
     fun x ↦ ((e x.1, x.2.1, x.2.2), encodeAction e (tm.tr x.1 x.2.1 x.2.2))⟩
 
-/-- Under an injective numbering, the code of `tm` takes the coded action of `tm`. -/
+/-- **The code of a machine takes its coded actions.** Let $M$ be a binary multi-tape machine
+with $k$ work tapes and a finite set of states $Q$, and let $e : Q \to \mathbb{N}$ be injective.
+For every state $q \in Q$, every symbol $a$ under the input head and every tuple $w$ of symbols
+under the $k$ work heads (each a bit or blank), the coded action of the code of $M$ under $e$ at
+state $e(q)$ and symbols $a$, $w$ is the coding, with successor states numbered by $e$, of the
+action of $M$ in state $q$ on $a$ and $w$. -/
 theorem act_ofTM {State : Type*} [Fintype State] (tm : MultiTapeTM k Bool State) {e : State → ℕ}
     (he : Function.Injective e) (q : State) (a : Option Bool) (w : Fin k → Option Bool) :
     (ofTM tm e).act (e q) a w = encodeAction e (tm.tr q a w) := by
@@ -189,8 +230,10 @@ theorem act_ofTM {State : Type*} [Fintype State] (tm : MultiTapeTM k Bool State)
     (x := (q, a, w)) (Finset.mem_toList.mpr (Finset.mem_univ _))]
   rfl
 
-/-- **The code of a machine simulates it.** For an injective numbering `e` of the states of `tm`
-with `e tm.q₀ = 0`, the machine of `ofTM tm e` simulates `tm` up to the relabelling `e`. -/
+/-- **The code of a machine simulates it.** Let $M$ be a machine over the binary alphabet with
+$k$ work tapes, a finite set of states $Q$ and initial state $q_0$, and let $e : Q \to \mathbb{N}$
+be injective with $e(q_0) = 0$. Then the machine of the code of $M$ with states numbered by $e$
+simulates $M$ up to the relabelling $e$. -/
 theorem isRelabelling_ofTM {State : Type*} [Fintype State] (tm : MultiTapeTM k Bool State)
     {e : State → ℕ} (he : Function.Injective e) (h₀ : e tm.q₀ = 0) :
     IsRelabelling e tm (ofTM tm e).toTM where
@@ -198,7 +241,8 @@ theorem isRelabelling_ofTM {State : Type*} [Fintype State] (tm : MultiTapeTM k B
   tr q a w := by
     rw [toTM, MultiTapeTM.tr_ofTr, tr, act_ofTM tm he, toAction_encodeAction]
 
-/-- A finite type has an injective numbering by `ℕ` sending a chosen element to `0`. -/
+/-- **Numbering a finite type from a chosen element.** For every finite type $Q$ and every
+$q_0 \in Q$ there is an injective map $e : Q \to \mathbb{N}$ with $e(q_0) = 0$. -/
 theorem exists_injective_nat_eq_zero {State : Type*} [Finite State] (q₀ : State) :
     ∃ e : State → ℕ, Function.Injective e ∧ e q₀ = 0 := by
   obtain ⟨n, ⟨σ⟩⟩ := Finite.exists_equiv_fin State
@@ -218,9 +262,13 @@ end Code
 
 /-! ### The classes over codes -/
 
-/-- **Computability over codes.** A function is computable within some time and space bounds by
-a binary machine with finitely many states iff it is computed within them by the machine of a
-code. -/
+/-- **Computability over codes.** Let $g : \alpha \to \beta$ be a function, let inputs in $\alpha$
+and outputs in $\beta$ be encoded by injective maps into binary words, and let
+$t, s : \alpha \to \mathbb{N}$. Say a machine computes $g$ within $t$ and $s$ when, started on the
+encoding of any input $x$, it halts with the encoding of $g(x)$ as output, halts within $t(x)$
+steps, and visits at most $s(x)$ work-tape cells. Then some binary multi-tape machine with
+finitely many states computes $g$ within $t$ and $s$ if and only if, for some number $k$ of work
+tapes, the machine of some code with $k$ work tapes computes $g$ within $t$ and $s$. -/
 theorem computableInTimeAndSpace_iff_exists_code {α β : Type*} {g : α → β}
     {encIn : α ↪ List Bool} {encOut : β ↪ List Bool} {t s : α → ℕ} :
     MultiTapeTM.ComputableInTimeAndSpace g encIn encOut t s ↔
@@ -232,8 +280,13 @@ theorem computableInTimeAndSpace_iff_exists_code {α β : Type*} {g : α → β}
   · rintro ⟨k, c, h⟩
     exact c.computableInTimeAndSpace h
 
-/-- **Decidability over codes.** A language over `Bool` is decidable within some time and space
-bounds iff the machine of some code decides it within them. -/
+/-- **Decidability over codes.** Let $L$ be a set of binary words and let $t$ and $s$ map binary
+words to natural numbers. Say a machine decides $L$ within $t$ and $s$ when, started on any
+binary word $w$, it halts with the one-bit output $\mathrm{true}$ if $w \in L$ and
+$\mathrm{false}$ otherwise, halts within $t(w)$ steps, and visits at most $s(w)$ work-tape cells.
+Then some binary multi-tape machine with finitely many states decides $L$ within $t$ and $s$ if
+and only if, for some number $k$ of work tapes, the machine of some code with $k$ work tapes
+decides $L$ within $t$ and $s$. -/
 theorem decidableInTimeAndSpace_iff_exists_code {L : Set (List Bool)} {t s : List Bool → ℕ} :
     MultiTapeTM.DecidableInTimeAndSpace L (Function.Embedding.refl _) t s ↔
       ∃ (k : ℕ) (c : Code k), Decides c.toTM L ∧ (∀ w, c.toTM.RunsInTime w (t w)) ∧
@@ -247,7 +300,11 @@ theorem decidableInTimeAndSpace_iff_exists_code {L : Set (List Bool)} {t s : Lis
   · rintro ⟨k, c, hd, ht, hs⟩
     exact decidableInTimeAndSpace_iff.mp (c.decidableInTimeAndSpace hd ht hs)
 
-/-- `DTIME` over codes. -/
+/-- **DTIME over codes.** For every $t : \mathbb{N} \to \mathbb{N}$ and every language $L$ of
+binary words, $L \in \mathsf{DTIME}(t)$ if and only if there are natural numbers $c_1, c_2, k$
+and a code $c$ with $k$ work tapes such that the machine of $c$ decides $L$, on every input $w$
+runs in time $c_1 t(|w|) + c_2$, and for some $s : \mathbb{N} \to \mathbb{N}$ on every input
+$w$ runs in space $s(|w|)$. -/
 theorem mem_DTIME_iff_exists_code {t : ℕ → ℕ} {L : Set (List Bool)} :
     L ∈ DTIME t ↔ ∃ (c₁ c₂ k : ℕ) (c : Code k), Decides c.toTM L ∧
       TimeBoundedBy c.toTM (fun n ↦ c₁ * t n + c₂) ∧ ∃ s, SpaceBoundedBy c.toTM s := by
@@ -258,7 +315,11 @@ theorem mem_DTIME_iff_exists_code {t : ℕ → ℕ} {L : Set (List Bool)} :
   · rintro ⟨c₁, c₂, k, c, hd, ht, s, hs⟩
     exact ⟨c₁, c₂, s, c.decidableInTimeAndSpace hd ht hs⟩
 
-/-- `DSPACE` over codes. -/
+/-- **DSPACE over codes.** For every $s : \mathbb{N} \to \mathbb{N}$ and every language $L$ of
+binary words, $L \in \mathsf{DSPACE}(s)$ if and only if there are natural numbers $c_1, c_2, k$
+and a code $c$ with $k$ work tapes such that the machine of $c$ decides $L$, on every input $w$
+runs in space $c_1 s(|w|) + c_2$, and for some $t : \mathbb{N} \to \mathbb{N}$ on every input
+$w$ runs in time $t(|w|)$. -/
 theorem mem_DSPACE_iff_exists_code {s : ℕ → ℕ} {L : Set (List Bool)} :
     L ∈ DSPACE s ↔ ∃ (c₁ c₂ k : ℕ) (c : Code k), Decides c.toTM L ∧
       SpaceBoundedBy c.toTM (fun n ↦ c₁ * s n + c₂) ∧ ∃ t, TimeBoundedBy c.toTM t := by
