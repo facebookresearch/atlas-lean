@@ -94,34 +94,6 @@ def vgc_VarPowerCore (q : ℝ) : Prop :=
                     ^ (u / (2 - u))
                   * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)))
 
-theorem vgc_varPowerCore_c0 {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
-    {u : ℝ} (hu0 : 0 < u) (_hu1 : u < 1) :
-    OSSS.expect (OSSS.bernoulliWeight p)
-        (fun ω => if (fun _ => false : ConfigSpace E → Bool) ω then (1 : ℝ) else 0)
-      * (1 - OSSS.expect (OSSS.bernoulliWeight p)
-          (fun ω => if (fun _ => false : ConfigSpace E → Bool) ω then (1 : ℝ) else 0))
-      ≤ (u / (4 + 2 * u))
-        * ((ptn_sigma p) ^ 2
-          * ((maxInfl (OSSS.bernoulliWeight p)
-              (fun ω => if (fun _ => false : ConfigSpace E → Bool) ω then (1 : ℝ) else 0))
-              ^ (u / (2 - u))
-            * totalInfl (OSSS.bernoulliWeight p)
-                (fun ω => if (fun _ => false : ConfigSpace E → Bool) ω then (1 : ℝ) else 0))) := by
-  set f0 : ConfigSpace E → Bool := fun _ => false with hf0
-  have hf0zero : (fun ω => if f0 ω then (1 : ℝ) else 0) = (fun _ : ConfigSpace E => (0 : ℝ)) := by
-    funext ω; rw [hf0]; simp
-  have hμ0 : OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if f0 ω then (1 : ℝ) else 0) = 0 := by
-    rw [hf0zero]; unfold OSSS.expect; simp
-  rw [hμ0]
-  simp only [sub_zero, zero_mul]
-  have hδnn : 0 ≤ maxInfl (OSSS.bernoulliWeight p) (fun ω => if f0 ω then (1 : ℝ) else 0) :=
-    kkl_maxInfl_nonneg (OSSS.bernoulliWeight_isProbWeight hp0.le hp1.le) _
-  have hTnn : 0 ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if f0 ω then (1 : ℝ) else 0) :=
-    kkl_totalInfl_nonneg (OSSS.bernoulliWeight_isProbWeight hp0.le hp1.le) _
-  have h4u : (0 : ℝ) ≤ u / (4 + 2 * u) := by positivity
-  positivity
-
 theorem vgc_poincare_is_delta0_instance {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) :
     OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)

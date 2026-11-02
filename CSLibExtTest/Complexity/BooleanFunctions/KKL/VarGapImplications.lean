@@ -18,7 +18,6 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapImplications`:
 * the hypothesis `maxInfl = 0` of `vgc_totalInfl_zero_of_maxInfl_zero` and
   `vgc_var_zero_of_maxInfl_zero` is proved for the constant-false function on two
   variables, and both conclusions are derived from it;
-* `vgc_varPowerCore_c0` at `p = 1/2`, `u = 1/2` on two variables;
 * `vgc_poincare_is_delta0_instance` on the one-variable dictator (`p(1-p) ≤ p(1-p)`) and
   `vgc_gap_vanishes_at_p_half`.
 
@@ -43,19 +42,6 @@ example : OSSS.expect (OSSS.bernoulliWeight (1 / 3))
     * (1 - OSSS.expect (OSSS.bernoulliWeight (1 / 3))
       (fun ω => if (fun _ => false : ConfigSpace (Fin 2) → Bool) ω then (1 : ℝ) else 0)) = 0 :=
   vgc_var_zero_of_maxInfl_zero (by norm_num) (by norm_num) _ (maxInfl_constFalse _)
-
-example : OSSS.expect (OSSS.bernoulliWeight (1 / 2))
-      (fun ω => if (fun _ => false : ConfigSpace (Fin 2) → Bool) ω then (1 : ℝ) else 0)
-    * (1 - OSSS.expect (OSSS.bernoulliWeight (1 / 2))
-      (fun ω => if (fun _ => false : ConfigSpace (Fin 2) → Bool) ω then (1 : ℝ) else 0))
-    ≤ ((1 / 2) / (4 + 2 * (1 / 2)))
-      * ((ptn_sigma (1 / 2)) ^ 2
-        * ((maxInfl (OSSS.bernoulliWeight (1 / 2))
-            (fun ω => if (fun _ => false : ConfigSpace (Fin 2) → Bool) ω then (1 : ℝ) else 0))
-            ^ ((1 / 2 : ℝ) / (2 - 1 / 2))
-          * totalInfl (OSSS.bernoulliWeight (1 / 2))
-            (fun ω => if (fun _ => false : ConfigSpace (Fin 2) → Bool) ω then (1 : ℝ) else 0))) :=
-  vgc_varPowerCore_c0 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- `vgc_poincare_is_delta0_instance` on the dictator: `p(1-p) ≤ p(1-p) · 1`. -/
 example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) : p * (1 - p) ≤ p * (1 - p) * 1 := by
