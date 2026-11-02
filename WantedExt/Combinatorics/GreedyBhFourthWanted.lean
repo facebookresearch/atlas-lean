@@ -31,32 +31,37 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.GreedyBhFourthWanted
 
-/-- `a` is the next greedy choice after the finite set `A`: it is
-greater than every element of `A`, adjoining it preserves the
-`B_h` property, and no smaller integer greater than every element
-of `A` has that property. -/
+/-- **Next term of a greedy $B_h$-set.** Let $h$ and $a$ be natural numbers and $A$ a set of natural
+numbers. Then $a$ is the next greedy $B_h$ choice after $A$ if $a$ is greater than every element
+of $A$, the set $A \cup \{a\}$ is a $B_h$-set, and for every natural number $b < a$ that is
+greater than every element of $A$, the set $A \cup \{b\}$ is not a $B_h$-set. -/
 def IsNextGreedyBh (h : ℕ) (A : Set ℕ) (a : ℕ) : Prop :=
   (∀ x ∈ A, x < a) ∧ AdditiveCombinatorics.IsBhSet (insert a A) h ∧
     ∀ b : ℕ, (∀ x ∈ A, x < b) → b < a →
       ¬AdditiveCombinatorics.IsBhSet (insert b A) h
 
-/-- `a` is the fourth positive element `a₄(h)` of the greedy
-`B_h`-set, with the preceding greedy stages and their known values
-spelled out. -/
+/-- **Fourth positive term of the greedy $B_h$-set.** For natural numbers $h$ and $a$, we say that
+$a$ is the fourth positive element $a_4(h)$ of the greedy $B_h$-set if $1$ is the next greedy
+$B_h$ choice after $\{0\}$, $h + 1$ is the next greedy $B_h$ choice after $\{0, 1\}$,
+$h^2 + h + 1$ is the next greedy $B_h$ choice after $\{0, 1, h + 1\}$, and $a$ is the next
+greedy $B_h$ choice after $\{0, 1, h + 1, h^2 + h + 1\}$. -/
 def IsFourthGreedyBh (h a : ℕ) : Prop :=
   IsNextGreedyBh h {0} 1 ∧
     IsNextGreedyBh h {0, 1} (h + 1) ∧
     IsNextGreedyBh h {0, 1, h + 1} (h ^ 2 + h + 1) ∧
     IsNextGreedyBh h {0, 1, h + 1, h ^ 2 + h + 1} a
 
-/-- The piecewise value in the paper. The divisions are exact in
-the parity cases shown. -/
+/-- **Quasipolynomial for the fourth greedy $B_h$ term.** For a natural number $h$, the value
+$v(h)$ is $(h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and $(h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
+
+Both numerators are even, so the divisions are exact. -/
 def fourthValue (h : ℕ) : ℕ :=
   if Odd h then (h ^ 3 + 3 * h ^ 2 + 3 * h + 1) / 2
   else (h ^ 3 + 2 * h ^ 2 + 3 * h + 2) / 2
 
-/-- Nathanson and O'Bryant's Theorem 1: the fourth positive greedy
-`B_h` term is the displayed quasipolynomial.
+/-- **Formula for the fourth greedy $B_h$ term.** For every integer $h \ge 1$, the fourth positive
+element $a_4(h)$ of the greedy $B_h$-set is $(h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
+$(h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
 
 Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
 Element in the Greedy `B_h`-Set", Theorem 1. -/
@@ -64,9 +69,10 @@ theorem_wanted isFourthGreedyBh_fourthValue
     (h : ℕ) (hh : 0 < h) :
     IsFourthGreedyBh h (fourthValue h)
 
-/-- Nathanson and O'Bryant's Lemma 2 (their TeX label
-`Bhlemma1`): the displayed lower bound for the fourth greedy term,
-for `h ≥ 2`.
+/-- **Lower bound for the fourth greedy $B_h$ term.** Let $h$ and $a$ be natural numbers with
+$h \ge 2$. If $a$ is the fourth positive element $a_4(h)$ of the greedy $B_h$-set, then
+$a \ge v(h)$, where $v(h) = (h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
+$v(h) = (h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
 
 Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
 Element in the Greedy `B_h`-Set", Lemma 2. -/
@@ -74,9 +80,10 @@ theorem_wanted fourthValue_le_of_isFourthGreedyBh
     (h a : ℕ) (hh : 2 ≤ h) (ha : IsFourthGreedyBh h a) :
     fourthValue h ≤ a
 
-/-- Nathanson and O'Bryant's Lemma 3 (their TeX label
-`Bhlemma2`): the displayed upper bound for the fourth greedy term,
-for positive `h`.
+/-- **Upper bound for the fourth greedy $B_h$ term.** Let $h$ and $a$ be natural numbers with
+$h \ge 1$. If $a$ is the fourth positive element $a_4(h)$ of the greedy $B_h$-set, then
+$a \le v(h)$, where $v(h) = (h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
+$v(h) = (h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
 
 Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
 Element in the Greedy `B_h`-Set", Lemma 3. -/

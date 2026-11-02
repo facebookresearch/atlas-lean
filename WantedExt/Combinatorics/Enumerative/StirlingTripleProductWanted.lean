@@ -28,8 +28,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 2.1: for positive integers `n ≥ p` and `j`,
-`{p+j, j}{n+j, p+j}/{n+j, j} ≥ C(n, p) ≥ [p+j, j][n+j, p+j]/[n+j, j]`.
+/-- **Triple products of Stirling numbers bracket the binomial coefficient.** Let $n$, $p$ and
+$j$ be positive integers with $p \le n$. Write $S(m, i)$ for the Stirling number of the second
+kind (the number of partitions of an $m$-element set into $i$ nonempty blocks) and $c(m, i)$ for
+the unsigned Stirling number of the first kind (the number of permutations of $m$ elements with
+exactly $i$ cycles). Then, as rational numbers,
+$\frac{c(p + j, j)\, c(n + j, p + j)}{c(n + j, j)} \le \binom{n}{p} \le
+\frac{S(p + j, j)\, S(n + j, p + j)}{S(n + j, j)}$.
 
 Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
 Article A108, Theorem 2.1 (`integers-2026-A108-thm-2-1`). -/
@@ -41,7 +46,11 @@ public theorem_wanted stirling_triple_ratio_bounds_choose {n p j : ℕ} (hp : 0 
       (Nat.stirlingFirst (p + j) j : ℚ) * Nat.stirlingFirst (n + j) (p + j) /
           Nat.stirlingFirst (n + j) j ≤ (n.choose p : ℚ)
 
-/-- Lemma 2.1: for integers `0 < k ≤ n`, `n {n, n-k} > (n - 2k) {n+1, n+1-k}`.
+/-- **Gy's inequality for Stirling numbers of the second kind.** Let $n$ and $k$ be natural
+numbers with $0 < k \le n$, and write $S(m, i)$ for the Stirling number of the second kind, the
+number of partitions of an $m$-element set into $i$ nonempty blocks. Then
+$(n - 2k)\,S(n + 1, n + 1 - k) < n\,S(n, n - k)$, where the left side is computed in the
+integers, so that $n - 2k$ may be negative.
 
 Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
 Article A108, Lemma 2.1 (`integers-2026-A108-lem-2-1`). -/
@@ -49,11 +58,14 @@ public theorem_wanted mul_stirlingSecond_sub_gt {n k : ℕ} (hk : 0 < k) (hkn : 
     ((n : ℤ) - 2 * k) * Nat.stirlingSecond (n + 1) (n + 1 - k) <
       (n : ℤ) * Nat.stirlingSecond n (n - k)
 
-/-- Theorem 3.1, log-concave case: let `n, p, j` be positive integers, two of which equal `1`,
-and `x_k` (`k ≥ 1`) a log-concave sequence of positive reals. Then
-`e_n(x_{n+p+j}) e_p(x_{p+j}) / (e_n(x_{n+p+j-1}) e_p(x_{p+j-1})) ≥
-e_{n+p}(x_{n+p+j}) / e_{n+p}(x_{n+p+j-1})` and
-`h_n(x_{p+j+1}) h_p(x_{j+1}) / (h_n(x_{p+j}) h_p(x_j)) ≤ h_{n+p}(x_{j+1}) / h_{n+p}(x_j)`.
+/-- **Gy's triple-ratio inequalities for log-concave sequences.** Let $n$, $p$ and $j$ be
+positive integers, at least two of which equal $1$, and let $x_1, x_2, \dots$ be positive reals
+with $x_{k-1} x_{k+1} \le x_k^2$ for all $k \ge 2$. For $m \ge 0$ write $e_i(m)$ and $h_i(m)$ for
+the elementary and the complete homogeneous symmetric polynomials of degree $i$ evaluated at
+$(x_1, \dots, x_m)$, and put $N = n + p + j$. Then
+$$\frac{e_{n+p}(N)}{e_{n+p}(N-1)} \le \frac{e_n(N)}{e_n(N-1)} \cdot \frac{e_p(p+j)}{e_p(p+j-1)}$$
+and
+$$\frac{h_n(p+j+1)}{h_n(p+j)} \cdot \frac{h_p(j+1)}{h_p(j)} \le \frac{h_{n+p}(j+1)}{h_{n+p}(j)}.$$
 
 Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
 Article A108, Theorem 3.1 (`integers-2026-A108-thm-3-1`). -/
@@ -86,8 +98,14 @@ public theorem_wanted symm_triple_ratio_of_logConcave (x : ℕ → ℝ)
         MvPolynomial.eval (fun i : Fin j => x ((i : ℕ) + 1))
           (MvPolynomial.hsymm (Fin j) ℝ (n + p))
 
-/-- Theorem 3.1, log-convex case: under the hypotheses of `symm_triple_ratio_of_logConcave`
-with `x` log-convex instead of log-concave, both inequalities are reversed.
+/-- **Gy's triple-ratio inequalities for log-convex sequences.** Let $n$, $p$ and $j$ be
+positive integers, at least two of which equal $1$, and let $x_1, x_2, \dots$ be positive reals
+with $x_k^2 \le x_{k-1} x_{k+1}$ for all $k \ge 2$. For $m \ge 0$ write $e_i(m)$ and $h_i(m)$ for
+the elementary and the complete homogeneous symmetric polynomials of degree $i$ evaluated at
+$(x_1, \dots, x_m)$, and put $N = n + p + j$. Then
+$$\frac{e_n(N)}{e_n(N-1)} \cdot \frac{e_p(p+j)}{e_p(p+j-1)} \le \frac{e_{n+p}(N)}{e_{n+p}(N-1)}$$
+and
+$$\frac{h_{n+p}(j+1)}{h_{n+p}(j)} \le \frac{h_n(p+j+1)}{h_n(p+j)} \cdot \frac{h_p(j+1)}{h_p(j)}.$$
 
 Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
 Article A108, Theorem 3.1 (`integers-2026-A108-thm-3-1`). -/

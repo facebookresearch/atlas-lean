@@ -57,22 +57,43 @@ open Filter
 
 open scoped RealInnerProductSpace
 
-/-- A set of unit vectors in `d`-dimensional euclidean space with pairwise inner product `±α`.
-See the third paragraph of the introduction. -/
+/-- **Equiangular systems of unit vectors.** For a real number $\alpha$ and a natural number $d$,
+an equiangular system with inner product $\pm\alpha$ in $\mathbb{R}^d$ is a set of unit vectors in
+$d$-dimensional Euclidean space such that any two distinct vectors $x$ and $y$ in it satisfy
+$|\langle x, y \rangle| = \alpha$.
+
+Source: Z. Jiang, J. Tidor, Y. Yao, S. Zhang, and Y. Zhao, `Equiangular lines with a fixed angle`,
+Annals of Math, 194 (3) 2021, third paragraph of the introduction. -/
 structure EquiangularLines (α : ℝ) (d : ℕ) where
   /-- The set of unit vectors in `d`-dimensional Euclidean space. -/
   carrier : Set (EuclideanSpace ℝ (Fin d))
   norm : ∀ x ∈ carrier, ‖x‖ = 1
   angle : carrier.Pairwise fun x y ↦ |⟪x, y⟫| = α
 
-/-- The maximum number of lines in `d`-dimensional euclidean space through the origin with
-pairwise angle `arccos(α)`. See the third paragraph of the introduction. We take the
-supremum in `ℕ` here. Note that the carrier sets `E.carrier` are bounded above since
-`N_α(d) ≤ binom(d+1,2)` by Gerzon (also mentioned in the introduction). -/
+/-- **Maximum number of equiangular lines.** For a real number $\alpha$ and a natural number $d$,
+$N_\alpha(d)$ is the supremum, taken in $\mathbb{N}$, of the cardinalities of the equiangular
+systems of unit vectors in $\mathbb{R}^d$ with inner product $\pm\alpha$. Here an infinite set
+counts as having cardinality $0$, and a set of natural numbers that is not bounded above has
+supremum $0$.
+
+For $0 \le \alpha < 1$ these cardinalities are at most $\binom{d+1}{2}$ by Gerzon's bound, and a
+system contains at most one of $x$ and $-x$, so $N_\alpha(d)$ is the maximum number of lines
+through the origin in $\mathbb{R}^d$ with pairwise angle $\arccos \alpha$.
+
+Source: Z. Jiang, J. Tidor, Y. Yao, S. Zhang, and Y. Zhao, `Equiangular lines with a fixed angle`,
+Annals of Math, 194 (3) 2021, third paragraph of the introduction. -/
 noncomputable def N (α : ℝ) (d : ℕ) : ℕ := ⨆ E : EquiangularLines α d, E.carrier.ncard
 
 open Classical in
-/-- The spectral radius order of a positive real number. See Definition 1.1. -/
+/-- **Spectral radius order.** For a real number $\lambda$, the spectral radius order
+$k(\lambda) \in \mathbb{N} \cup \{\infty\}$ is the least natural number $k$ such that some simple
+graph on $k$ vertices has an adjacency matrix with spectral radius $\max(\lambda, 0)$, and
+$k(\lambda) = \infty$ if there is no such graph.
+
+The source defines $k(\lambda)$ only for $\lambda > 0$, where $\max(\lambda, 0) = \lambda$.
+
+Source: Z. Jiang, J. Tidor, Y. Yao, S. Zhang, and Y. Zhao, `Equiangular lines with a fixed angle`,
+Annals of Math, 194 (3) 2021, Definition 1.1. -/
 noncomputable def spectralRadiusOrder (lambda : ℝ) : ℕ∞ :=
   ⨅ k ∈ {k : ℕ | ∃ G : SimpleGraph (Fin k), spectralRadius ℝ (G.adjMatrix ℝ) = .ofReal lambda}, k
 
@@ -83,12 +104,14 @@ and divisions below are not pathological.
 -/
 
 /--
-Statement of Theorem 1.2 (Main theorem):
+**Equiangular lines with a fixed angle.** Fix a real number $\alpha$ with $0 < \alpha < 1$, let
+$\lambda = (1 - \alpha)/(2\alpha)$ and let $k = k(\lambda)$ be the spectral radius order of
+$\lambda$. Let $N_\alpha(d)$ be the maximum number of equiangular lines in $\mathbb{R}^d$ with
+common angle $\arccos \alpha$. Then:
+(a) if $k < \infty$, then $N_\alpha(d) = \lfloor k(d - 1)/(k - 1) \rfloor$ for all sufficiently
+large $d$;
+(b) if $k = \infty$, then $N_\alpha(d) = d + o(d)$ as $d \to \infty$.
 
-Fix `α ∈ (0, 1)`. Let `λ = (1 − α)/(2α)` and `k = k(λ)` be its spectral radius order.
-The maximum number `N_α(d)` of equiangular lines in `ℝᵈ` with common angle `arccos α` satisfies
-(a) `N_α(d) = ⌊k(d − 1)/(k − 1)⌋` for all sufficiently large `d > d₀(α)` if `k < ∞`;
-(b) `N_α(d) = d + o(d)` as `d → ∞` if `k = ∞`.
 Source: Z. Jiang, J. Tidor, Y. Yao, S. Zhang, and Y. Zhao, `Equiangular lines with a fixed angle`, Annals of Math, 194 (3) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-3-EquiangularLinesFixedAngle.lean Via leanprover/lean-eval@38361be, problem `annals_equiangular_lines_fixed_angle`.
 -/
 public theorem_wanted theorem_1_2 (α : ℝ) (hα : α ∈ Set.Ioo 0 1) :

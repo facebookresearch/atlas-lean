@@ -15,12 +15,12 @@ public import Batteries.Util.ProofWanted
 
 namespace MetaMathlibExt
 
-/-- Robertson–Seymour graph minors theorem (statement `robertson-seymour-s1` in the
-supplied source): the minor relation (`MetaMathlibExt.IsMinor` on bundled finite
-simple graphs) is a partial order on finite graphs up to graph isomorphism
-(mutual minors are isomorphic), and every minor-closed family `F` of finite graphs
-is characterized by a finite set of forbidden minors: `G` is in `F` iff no
-forbidden minor is a minor of `G`.
+/-- **Robertson–Seymour theorem.** Let $F$ be a family of finite simple graphs that is closed
+under taking minors: whenever $G \in F$ and $H$ is a minor of $G$, also $H \in F$. Then any two
+finite graphs that are minors of each other are isomorphic, and there is a finite set $O$ of
+finite graphs such that a finite graph $G$ belongs to $F$ if and only if no graph in $O$ is a
+minor of $G$.
+
 Stable source: https://en.wikipedia.org/wiki/Robertson%E2%80%93Seymour_theorem. -/
 theorem_wanted robertson_seymour
     (F : Set FinGraph)

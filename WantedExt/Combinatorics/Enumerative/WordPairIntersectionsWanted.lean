@@ -35,10 +35,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 1: for `n, r ≥ 1`, the number of non-intersecting pairs of words of lengths `n` and `r`
-over `[k]` is `[x^n y^r] f_k(x, y)` for both closed forms
-`f_k = ∑_{j=1}^{k-1} C(k, j) j! x^j / ∏_{i=1}^{j} (1 - i x) · (k-j)y / (1 - (k-j)y)
-= ∑_{n ≥ 1} ∑_{j=1}^{k-1} C(k, j) j! S_{n,j} x^n (k-j)y / (1 - (k-j)y)`.
+/-- **Non-intersecting pairs of words.** Fix natural numbers $k$, $n \ge 1$ and $r \ge 1$, and call
+a pair of words over an alphabet of $k$ letters non-intersecting when no letter occurs in both.
+Write $[x^m] F$ for the coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$ and
+$S(m, j)$ for the Stirling numbers of the second kind. Let $N$ be the number of non-intersecting
+pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$. Then
+$N = \sum_{j=1}^{k-1} \binom{k}{j} \,
+[x^n]\Bigl(j! \, x^j \bigl(\prod_{i=1}^{j} (1 - i x)\bigr)^{-1}\Bigr) \,
+[x^r]\bigl((k-j) x \, (1 - (k-j) x)^{-1}\bigr)$
+and
+$N = \sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \,
+[x^r]\bigl((k-j) x \, (1 - (k-j) x)^{-1}\bigr)$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Theorem 1 (`integers-2024-A107-thm-1`). -/
@@ -51,9 +58,15 @@ public theorem_wanted nonIntersectingWordPairs_card_eq_coeff (k n r : ℕ) (hn :
         ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j *
           coeff r (((k - j : ℕ) : ℚ⟦X⟧) * X * (1 - ((k - j : ℕ) : ℚ⟦X⟧) * X)⁻¹)
 
-/-- Corollary 1: the generating function of non-intersecting pairs of words of the same length
-`n ≥ 1` over `[k]` is `g_k(x) = ∑_{n ≥ 1} ∑_{j=1}^{k-1} C(k, j) j! S_{n,j} (k-j)^n x^n` (the
-`n = 0` coefficient is `0` on both sides: the empty pair is not counted).
+/-- **Generating function of non-intersecting pairs of words of equal length.** Let $k$ be a
+natural number, let $S(n, j)$ denote the Stirling numbers of the second kind, and for $n \ge 1$ let
+$h(n)$ be the number of pairs $(u, v)$ of words of length $n$ over an alphabet of $k$ letters such
+that no letter occurs in both. Then, as formal power series over $\mathbb{Q}$,
+$\sum_{n \ge 1} h(n) x^n = \sum_{n \ge 0} \sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \,
+(k-j)^n x^n$.
+
+The constant term on the right is $0$ because $S(0, j) = 0$ for $j \ge 1$: the empty pair is not
+counted.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Corollary 1 (`integers-2024-A107-cor-1`). -/
@@ -63,8 +76,10 @@ public theorem_wanted nonIntersectingWordPairs_sameLength_generatingFunction (k 
       PowerSeries.mk fun n => ∑ j ∈ Finset.Icc 1 (k - 1),
         (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n
 
-/-- Corollary 2: for `n ≥ 1`, the number of non-intersecting pairs of words of length `n` over
-`[k]` is `h_k(n) = ∑_{j=1}^{k-1} C(k, j) j! S_{n,j} (k-j)^n`.
+/-- **Non-intersecting pairs of words of equal length.** Let $S(n, j)$ denote the Stirling numbers
+of the second kind. For natural numbers $k$ and $n \ge 1$, the number of pairs $(u, v)$ of words
+of length $n$ over an alphabet of $k$ letters such that no letter occurs in both $u$ and $v$ is
+$\sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \, (k-j)^n$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Corollary 2 (`integers-2024-A107-cor-2`). -/
@@ -73,9 +88,13 @@ public theorem_wanted nonIntersectingWordPairs_sameLength_card (k n : ℕ) (hn :
         Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
       ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * j.factorial * Nat.stirlingSecond n j * (k - j) ^ n
 
-/-- Theorem 2: for `n, r ≥ 1` and every `q`, the sum of `q^{overlap}` over all pairs of words of
-lengths `n` and `r` over `[k]` is `[x^n y^r] P(x, y, q; k)` with
-`P = ∑_{j=1}^{k} C(k, j) (qj + k - j)y / (1 - (qj + k - j)y) ∑_{n ≥ 1} j! S_{n,j} x^n`.
+/-- **Overlap statistic on pairs of words.** Fix natural numbers $k$, $n \ge 1$, $r \ge 1$ and a
+rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
+$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Write $[x^m] F$ for the
+coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$, $S(m, j)$ for the Stirling
+numbers of the second kind, and $c_j = qj + k - j$. Then the sum of $q^{\text{overlap}}$ over all
+pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$ equals
+$\sum_{j=1}^{k} \binom{k}{j} \, [x^r]\bigl(c_j x \, (1 - c_j x)^{-1}\bigr) \, j! \, S(n, j)$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Theorem 2 (`integers-2024-A107-thm-2`). -/
@@ -87,9 +106,11 @@ public theorem_wanted wordPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n
           (1 - PowerSeries.C (q * j + (k - j : ℕ)) * X)⁻¹) *
         (j.factorial * Nat.stirlingSecond n j)
 
-/-- Corollary 3: for `n ≥ 1` and every `q`, the sum of `q^{overlap}` over pairs of words of equal
-length `n` over `[k]` (the coefficient of `x^{2n}` in `P(x, q; k)`) is
-`∑_{j=1}^{k} C(k, j) j! S_{n,j} (qj + k - j)^n`.
+/-- **Overlap statistic on pairs of words of equal length.** Fix natural numbers $k$ and $n \ge 1$
+and a rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
+$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Let $S(n, j)$ denote the
+Stirling numbers of the second kind. Then the sum of $q^{\text{overlap}}$ over all pairs $(u, v)$
+of words of length $n$ equals $\sum_{j=1}^{k} \binom{k}{j} \, j! \, S(n, j) \, (qj + k - j)^n$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Corollary 3 (`integers-2024-A107-cor-3`). -/
@@ -99,9 +120,12 @@ public theorem_wanted wordPairs_sameLength_overlap_sum (k n : ℕ) (hn : 1 ≤ n
       ∑ j ∈ Finset.Icc 1 k,
         (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * (q * j + (k - j : ℕ)) ^ n
 
-/-- Theorem 3: for `n, r ≥ 1`, the number of non-intersecting pairs of weakly decreasing words of
-lengths `n` and `r` over `[k]` is `[x^n y^r] f_{w,k}(x, y)` with
-`f_{w,k} = ∑_{j=1}^{k-1} C(k, j) x^j (1-x)^{-j} ((1-y)^{-(k-j)} - 1)`.
+/-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
+$r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
+formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words
+over this alphabet, $u$ of length $n$ and $v$ of length $r$, such that no letter occurs in both is
+$\sum_{j=1}^{k-1} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\bigl((1-x)^{-(k-j)} - 1\bigr)$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Theorem 3 (`integers-2024-A107-thm-3`). -/
@@ -112,9 +136,13 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_card_eq_coeff (k n r 
       ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
         coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 : ℚ⟦X⟧))
 
-/-- Corollary 4: the generating function of non-intersecting pairs of non-empty weakly decreasing
-words over `[k]` (`x`, `y` marking the two lengths) is
-`f_{w,k}(x, y) = (x/(1-x) + 1/(1-y))^k - (1/(1-x))^k - (1/(1-y))^k + 1`.
+/-- **Generating function of non-intersecting pairs of weakly decreasing words.** Let $k$ be a
+natural number and order an alphabet of $k$ letters. In the ring of formal power series in $x$
+and $y$ over $\mathbb{Q}$ let
+$f(x, y) = \bigl(x (1-x)^{-1} + (1-y)^{-1}\bigr)^k - (1-x)^{-k} - (1-y)^{-k} + 1$.
+Then for all natural numbers $n$ and $r$, the coefficient of $x^n y^r$ in $f$ is $0$ if $n = 0$
+or $r = 0$, and otherwise equals the number of pairs $(u, v)$ of weakly decreasing words over this
+alphabet, $u$ of length $n$ and $v$ of length $r$, such that no letter occurs in both.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Corollary 4 (`integers-2024-A107-cor-4`). -/
@@ -127,9 +155,10 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_generatingFunction (k
           Fin k))).filter fun p => Antitone p.1 ∧ Antitone p.2 ∧
           Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) else 0
 
-/-- Corollary 5: for `n ≥ 1`, the number of non-intersecting pairs of weakly decreasing words of
-length `n` over `[k]` is `∑_{j=1}^{k-1} C(k, j) C(n-1, j-1) C(n+k-j-1, n)` (the `z^n` coefficient
-of the paper's generating function).
+/-- **Non-intersecting pairs of weakly decreasing words of equal length.** For natural numbers $k$
+and $n \ge 1$, the number of pairs $(u, v)$ of weakly decreasing words of length $n$ over an
+ordered alphabet of $k$ letters such that no letter occurs in both is
+$\sum_{j=1}^{k-1} \binom{k}{j} \binom{n-1}{j-1} \binom{n+k-j-1}{n}$.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Corollary 5 (`integers-2024-A107-cor-5`). -/
@@ -138,13 +167,21 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_sameLength_card (k n 
         Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
       ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * (n - 1).choose (j - 1) * (n + k - j - 1).choose n
 
-/-- Theorem 4, with the sum over `j` running to `k`: for `n, r ≥ 1` and every `q`, the sum of
-`q^{overlap}` over pairs of weakly decreasing words of lengths `n` and `r` over `[k]` is
-`[x^n y^r] g_{w,k}(x, y, q)` for both forms
-`g_{w,k} = ∑_{j=1}^{k} C(k, j) x^j (1-x)^{-j} ((1-y)^{-(k-j)} - 1 + (1-y)^{-(k-j)} ∑_{r ≥ 1} C(r+j-1, r) q^r y^r)
-= ∑_{j=1}^{k} C(k, j) x^j (1-x)^{-j} (-1 + (1-y)^{-(k-j)} (1-qy)^{-j})`. The printed upper limit
-`k - 1` omits the pairs whose first word uses all `k` letters (`j = k`, which Theorem 2 includes):
-for `k = 1`, `n = r = 1` the only pair `(1, 1)` contributes `q`, while the printed sum is empty.
+/-- **Overlap statistic on pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$,
+$r \ge 1$ and a rational number $q$, and order an alphabet of $k$ letters. For words $u$ and $v$
+over this alphabet, the overlap of $(u, v)$ is the number of positions of $v$ whose letter occurs
+in $u$. Write $[x^m] F$ for the coefficient of $x^m$ in a formal power series $F$ over
+$\mathbb{Q}$. Let $T$ be the sum of $q^{\text{overlap}}$ over all pairs $(u, v)$ of weakly
+decreasing words, $u$ of length $n$ and $v$ of length $r$. Then
+$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\Bigl((1-x)^{-(k-j)} - 1 + (1-x)^{-(k-j)} \sum_{m \ge 1} \binom{m+j-1}{m} q^m x^m\Bigr)$
+and
+$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\bigl(-1 + (1-x)^{-(k-j)} (1 - qx)^{-j}\bigr)$.
+
+The paper prints these sums over $j$ with upper limit $k - 1$, which omits the pairs whose first
+word uses all $k$ letters ($j = k$, which Theorem 2 includes): for $k = 1$ and $n = r = 1$ the
+only pair contributes $q$, while the printed sum is empty.
 
 Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
 Article A107, Theorem 4 (`integers-2024-A107-thm-4`). -/

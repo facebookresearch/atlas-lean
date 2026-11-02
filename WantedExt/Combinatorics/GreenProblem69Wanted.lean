@@ -20,22 +20,31 @@ public import Batteries.Util.ProofWanted
 namespace MathlibExt.Combinatorics.GreenProblem69Wanted
 
 /-! Source record `UM-00000157-Q001`. -/
-/-- The cube `{0, 1}^n ⊆ 𝔽₃^n`. -/
+/-- **The standard cube in $\mathbb{F}_3^n$.** For $n \in \mathbb{N}$, the standard cube is the set
+$\{0, 1\}^n \subseteq \mathbb{F}_3^n$ of vectors each of whose coordinates is $0$ or $1$. -/
 def cubeOrigin (n : ℕ) : Set (Fin n → ZMod 3) :=
   { x | ∀ i : Fin n, x i = 0 ∨ x i = 1 }
 
-/-- A cube: the image of `{0, 1}^n` under a linear automorphism of `𝔽₃^n`. -/
+/-- **Cubes in $\mathbb{F}_3^n$.** A set $A \subseteq \mathbb{F}_3^n$ is a cube if there is an
+$\mathbb{F}_3$-linear automorphism $e$ of $\mathbb{F}_3^n$ with $A = e(\{0, 1\}^n)$, the image of
+the standard cube $\{0, 1\}^n$ under $e$. -/
 def IsCube (n : ℕ) (A : Set (Fin n → ZMod 3)) : Prop :=
   ∃ e : (Fin n → ZMod 3) ≃ₗ[ZMod 3] (Fin n → ZMod 3),
     A = Set.image (e : (Fin n → ZMod 3) → (Fin n → ZMod 3)) (cubeOrigin n)
 
-/-- The sumset `A_1 + ⋯ + A_100` is all of `𝔽₃^n`. -/
+/-- **A sumset of $100$ sets equal to $\mathbb{F}_3^n$.** For sets
+$A_1, \dots, A_{100} \subseteq \mathbb{F}_3^n$, the property that every $v \in \mathbb{F}_3^n$ can
+be written as $v = a_1 + \dots + a_{100}$ with $a_i \in A_i$ for each $i$, that is,
+$A_1 + \dots + A_{100} = \mathbb{F}_3^n$. -/
 def SumsetEqUniv (n : ℕ) (A : Fin 100 → Set (Fin n → ZMod 3)) : Prop :=
   ∀ v : Fin n → ZMod 3,
     ∃ a : Fin 100 → Fin n → ZMod 3,
       (∀ i, a i ∈ A i) ∧ v = Finset.sum (Finset.univ : Finset (Fin 100)) a
 
-/-- For every `n ≥ 1`, the sum of any 100 cubes in `𝔽₃^n` is all of `𝔽₃^n`. -/
+/-- **Green's problem on sums of $100$ cubes in $\mathbb{F}_3^n$.** The statement that for every
+$n \ge 1$ and every family $A_1, \dots, A_{100}$ of cubes in $\mathbb{F}_3^n$ (not necessarily
+distinct), that is, images of $\{0, 1\}^n$ under linear automorphisms of $\mathbb{F}_3^n$, the
+sumset $A_1 + \dots + A_{100}$ is all of $\mathbb{F}_3^n$. -/
 def conjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n →
     ∀ (A : Fin 100 → Set (Fin n → ZMod 3)),
@@ -44,11 +53,17 @@ def conjecture : Prop :=
 -- Carried source audit `UM-00000157-Q001` (see the Moved/ record).
 
 /--
-Resolved true: Solved: Yang Yu (arXiv:2510.01300v2) proves that over Z_3 the union of any four
-linear bases is an additive basis, so any four cubes (images of {0,1}^n under linear
-automorphisms) already sum to F_3^n, and the remaining summands can be taken to be 0. Ben
-Green's author-maintained 100 Open Problems (December 2025) marks this problem, current Problem
-26, Solved on that basis; the analogue over F_p remains open. Source: Yang Yu, The Permanent
+**Any $100$ cubes sum to all of $\mathbb{F}_3^n$.** For every $n \ge 1$ and every family
+$A_1, \dots, A_{100}$ of cubes in $\mathbb{F}_3^n$ (not necessarily distinct), that is, images
+of $\{0, 1\}^n$ under linear automorphisms of $\mathbb{F}_3^n$, the sumset
+$A_1 + \dots + A_{100}$ is all of $\mathbb{F}_3^n$.
+
+Yang Yu proves that over $\mathbb{F}_3$ the union of any four linear bases is an additive basis,
+so any four cubes already sum to $\mathbb{F}_3^n$, and the remaining summands can be taken to be
+$0$. Ben Green's author-maintained 100 Open Problems (December 2025) marks this problem, current
+Problem 26, solved on that basis; the analogue over $\mathbb{F}_p$ remains open.
+
+Source: Yang Yu, The Permanent
 Rank of a Matrix (Part Three) Note on the Additive Basis Conjecture, arXiv:2510.01300v2,
 https://arxiv.org/abs/2510.01300v2. Moved from `OpenConjectures/Combinatorics/GreenProblem69`.
 -/
