@@ -16,6 +16,7 @@ import Mathlib.Probability.Moments.ComplexMGF
 public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Moments.IntegrableExpMul
+public import Mathlib.RingTheory.Polynomial.Pochhammer
 
 open MeasureTheory Set Filter Topology
 
@@ -246,6 +247,100 @@ theorem Ioo_subset_interior_integrableExpSet_gammaMeasure {a r ε : ℝ}
   apply hIio
   simp only [mem_Iio]
   linarith
+
+
+/-- Generic Gamma moments and integrals (moved here from the negative
+binomial development, which uses them for the Gamma–Poisson mixture). -/
+
+/-- `Γ(a + k) = a⁽ᵏ⁾ Γ(a)` for `a > 0`. -/
+lemma Gamma_add_nat_eq {a : ℝ} (ha : 0 < a) (k : ℕ) :
+    Real.Gamma (a + k) = (Polynomial.ascPochhammer ℝ k).eval a * Real.Gamma a := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [Nat.cast_succ, ← add_assoc, Real.Gamma_add_one (by positivity), ih,
+      Polynomial.ascPochhammer_succ_eval]
+    ring
+
+/-- `rᵏ r^(a - 1) = r^(a + k - 1)` for `r ≥ 0` and `a > 0`. -/
+lemma pow_mul_rpow_sub_one {r a : ℝ} (hr : 0 ≤ r) (ha : 0 < a) (k : ℕ) :
+    r ^ k * r ^ (a - 1) = r ^ (a + k - 1) := by
+  rcases hr.eq_or_lt with rfl | hr
+  · rcases k with _ | k
+    · simp
+    · rw [zero_pow (Nat.succ_ne_zero k), zero_mul, Real.zero_rpow]
+      push_cast
+      linarith
+  · rw [← Real.rpow_natCast, ← Real.rpow_add hr]
+    ring_nf
+
+/-- The Gamma law is concentrated on `[0, ∞)`. -/
+theorem ae_nonneg_gammaMeasure (a b : ℝ) : ∀ᵐ x ∂gammaMeasure a b, 0 ≤ x := by
+  rw [gammaMeasure, ae_withDensity_iff (measurable_gammaPDF a b)]
+  refine ae_of_all _ fun x hx => ?_
+  by_contra h
+  exact hx (by simp [gammaPDF, gammaPDFReal, h])
+
+/-- The Gamma density times `x ^ k e^{-c x}` is the indicator of `[0, ∞)` of an explicit
+function. -/
+private lemma gammaPDF_smul_eq_indicator {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (k : ℕ) (x : ℝ) :
+    (gammaPDF a b x).toReal • (x ^ k * Real.exp (-(c * x))) =
+      Set.indicator (Set.Ici 0)
+        (fun x => b ^ a / Real.Gamma a * x ^ (a - 1) * Real.exp (-(b * x)) * (x ^ k * Real.exp (-(c * x)))) x := by
+  rw [toReal_gammaPDF ha hb, smul_eq_mul, gammaPDFReal, Set.indicator]
+  by_cases hx : 0 ≤ x <;> simp [hx]
+
+/-- On `(0, ∞)` the integrand is `bᵃ / Γ(a) · x^(a + k - 1) e^{-(b + c) x}`. -/
+private lemma gamma_integrand_eq {a b c x : ℝ} (ha : 0 < a) (hx : 0 < x) (k : ℕ) :
+    b ^ a / Real.Gamma a * x ^ (a - 1) * Real.exp (-(b * x)) * (x ^ k * Real.exp (-(c * x))) =
+      b ^ a / Real.Gamma a * (x ^ ((a + k) - 1) * Real.exp (-((b + c) * x))) := by
+  rw [← pow_mul_rpow_sub_one hx.le ha k,
+    show -((b + c) * x) = -(b * x) + -(c * x) by ring, Real.exp_add]
+  ring
+
+/-- For `a, b > 0` and `c ≥ 0`, `x ↦ x ^ k e^{-c x}` is integrable for `Gamma(a, b)`. -/
+theorem integrable_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hc : 0 ≤ c) (k : ℕ) :
+    Integrable (fun x => x ^ k * Real.exp (-(c * x))) (gammaMeasure a b) := by
+  rw [integrable_gammaMeasure_iff, funext (gammaPDF_smul_eq_indicator ha hb k),
+    integrable_indicator_iff measurableSet_Ici, integrableOn_Ici_iff_integrableOn_Ioi]
+  have h := (integrableOn_rpow_mul_exp_neg_mul_Ioi (a := a + k) (s := b + c) (by positivity)
+    (by linarith)).const_mul (b ^ a / Real.Gamma a)
+  exact IntegrableOn.congr_fun h (fun x hx => (gamma_integrand_eq ha hx k).symm)
+    measurableSet_Ioi
+
+/-- **Gamma integrals.** For shape `a > 0`, rate `b > 0` and `c ≥ 0`,
+`∫ x ^ k e^{-c x} dGamma(a, b) = a⁽ᵏ⁾ bᵃ / (b + c) ^ (a + k)`. -/
+theorem integral_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hc : 0 ≤ c) (k : ℕ) :
+    ∫ x, x ^ k * Real.exp (-(c * x)) ∂gammaMeasure a b =
+      (Polynomial.ascPochhammer ℝ k).eval a * b ^ a / (b + c) ^ (a + k) := by
+  have hbc : 0 < b + c := by linarith
+  rw [integral_gammaMeasure_eq_integral_smul, funext (gammaPDF_smul_eq_indicator ha hb k),
+    integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi,
+    setIntegral_congr_fun measurableSet_Ioi (fun x hx => gamma_integrand_eq ha hx k),
+    integral_const_mul, Real.integral_rpow_mul_exp_neg_mul_Ioi (by positivity) hbc,
+    Gamma_add_nat_eq ha, Real.div_rpow zero_le_one hbc.le, Real.one_rpow]
+  have hG : Real.Gamma a ≠ 0 := (Real.Gamma_pos_of_pos ha).ne'
+  have : (b + c) ^ (a + k) ≠ 0 := (Real.rpow_pos_of_pos hbc _).ne'
+  field_simp
+
+-- The mean (`integral_id_gammaMeasure`) and second moment (`integral_sq_gammaMeasure`) live
+-- in `MathlibExt.Probability.Distributions.GammaMoments`; they are not redeclared here.
+
+/-- `x ↦ x` is integrable for `Gamma(a, b)`. -/
+theorem integrable_id_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    Integrable id (gammaMeasure a b) := by
+  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 1
+  simp only [pow_one, zero_mul, neg_zero, Real.exp_zero, mul_one] at h
+  exact h
+
+/-- `x ↦ x²` is integrable for `Gamma(a, b)`. -/
+theorem integrable_sq_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    Integrable (fun x => x ^ 2) (gammaMeasure a b) := by
+  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 2
+  simp only [zero_mul, neg_zero, Real.exp_zero, mul_one] at h
+  exact h
 
 theorem not_integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
     (ht : r ≤ t) : ¬ Integrable (fun x : ℝ => Real.exp (t * x)) (gammaMeasure a r) := by
