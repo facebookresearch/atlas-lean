@@ -53,8 +53,8 @@ set_option autoImplicit false
 def Group.Coherent (G : Type*) [Group G] : Prop :=
   ∀ H : Subgroup G, H.FG → Group.IsFinitelyPresented H
 
-/-- A semiring is (left) coherent if all of its finitely generated (left) ideals are
-finitely presented. -/
+/-- **Coherent ring.** A semiring $R$ is (left) coherent if every finitely generated left ideal
+of $R$ is finitely presented as an $R$-module. -/
 def Ring.Coherent (R : Type*) [Semiring R] : Prop :=
   ∀ I : Ideal R, I.FG → Module.FinitePresentation R I
 
@@ -65,10 +65,10 @@ def Group.OneRelator.{u} (G : Type u) [Group G] : Prop :=
 namespace OnCoherenceOfOneRelatorGroups
 
 /--
-Statement of Theorem 1.1:
+**Jaikin-Zapirain–Linton theorem: one-relator groups are coherent.** Let $G$ be a one-relator
+group and $K$ a field. Then $G$ is a coherent group and the group algebra $K[G]$ is a (left)
+coherent ring.
 
-Let `G` be a one-relator group and `K` be an arbitrary field.
-Then `G` is a coherent group and the group algebra `K[G]` is a coherent ring.
 Source: A. Jaikin-Zapirain and M. Linton, `On the coherence of one-relator groups and their group algebras`, Annals of Math, 201 (3) 2025. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2025-201-3-OnCoherenceOfOneRelatorGroups.lean Via leanprover/lean-eval@38361be, problem `annals_on_coherence_of_one_relator_groups`.
 -/
 public theorem_wanted theorem_1_1 (G K : Type*) [Group G] [Field K] (hG : Group.OneRelator G) :

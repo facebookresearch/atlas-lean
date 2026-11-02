@@ -39,29 +39,40 @@ the members not containing `g` below the intersection of those containing it), s
 is never vacuous.
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
+/-- **Locally finite group.** A group $G$ is locally finite when every subgroup of $G$ generated
+by finitely many elements is finite. -/
 def IsLocallyFinite (G : Type*) [Group G] : Prop :=
   ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
 
-/-- `S` is a composition series of `G` in Kurosh's sense: a chain of subgroups containing `1` and
-`G`, closed under arbitrary unions (suprema) and intersections (infima), such that for every jump
-`A < B` of the chain (no member strictly between) `A` is normal in `B` and `B / A` is simple. -/
+/-- **Composition series in Kurosh's sense.** A set $S$ of subgroups of a group $G$ is a
+composition series of $G$ when it contains the trivial subgroup and $G$, it is totally ordered by
+inclusion, it contains the join and the intersection of every subset of $S$, and for every jump
+$A < B$ of $S$ (members $A \subsetneq B$ of $S$ with no member of $S$ strictly between them) $A$
+is normal in $B$ and the quotient $B / A$ is a simple group. -/
 def IsCompositionSeries {G : Type*} [Group G] (S : Set (Subgroup G)) : Prop :=
   ⊥ ∈ S ∧ ⊤ ∈ S ∧ IsChain (· ≤ ·) S ∧ (∀ T ⊆ S, sSup T ∈ S) ∧ (∀ T ⊆ S, sInf T ∈ S) ∧
     ∀ A ∈ S, ∀ B ∈ S, A < B → (∀ C ∈ S, ¬ (A < C ∧ C < B)) →
       ∃ _ : (A.subgroupOf B).Normal, IsSimpleGroup (B ⧸ A.subgroupOf B)
 
-/-- Kourovka 11.108 (R. Phillips): every locally finite simple group is absolutely simple: its only
-composition series is `{1, G}`. -/
+/-- **Absolute simplicity of locally finite simple groups (Kourovka 11.108).** The statement,
+asked by R. Phillips, that every locally finite simple group $G$ is absolutely simple: every
+composition series of $G$ in Kurosh's sense consists of the trivial subgroup and $G$ alone. -/
 def locallyFiniteSimpleIsAbsolutelySimple : Prop :=
   ∀ (G : Type) [Group G], IsLocallyFinite G → IsSimpleGroup G →
     ∀ S : Set (Subgroup G), IsCompositionSeries S → S = {⊥, ⊤}
 
 /--
-Resolved false: the Kourovka Archive answers 11.108 "No, not every", citing Meierfrankenfeld (1995),
-whose Section 6 constructs countable locally finite simple groups `G` that are not absolutely
-simple, with an ascending series `M₁ ⊴ M₂ ⊴ ⋯` of proper subgroups whose union is `G`: some locally
-finite simple group has a composition series other than `{1, G}`. Source: E. I. Khukhro and V. D.
+**Locally finite simple groups need not be absolutely simple.** There is a locally finite simple
+group $G$ with a composition series, in Kurosh's sense, other than the series consisting of the
+trivial subgroup and $G$ alone. That is, the statement of Kourovka Problem 11.108, that every
+locally finite simple group is absolutely simple, is false.
+
+The Kourovka Archive answers 11.108 "No, not every", citing Meierfrankenfeld (1995), whose
+Section 6 constructs countable locally finite simple groups $G$ that are not absolutely simple,
+with an ascending series $M_1 \trianglelefteq M_2 \trianglelefteq \cdots$ of proper subgroups
+whose union is $G$.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.108 (R. Phillips); resolution: U.
 Meierfrankenfeld, Non-finitary locally finite simple groups, in: Proc. Int. Conf. Finite and Locally

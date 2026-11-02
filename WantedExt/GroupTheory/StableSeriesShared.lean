@@ -25,8 +25,10 @@ public import Mathlib.LinearAlgebra.DFinsupp
 
 namespace MathlibExt.GroupTheory.StableSeriesShared
 
-/-- A set `S` of linear automorphisms of `V` is stable: there is a finite chain of subspaces
-`0 = W₀ ≤ W₁ ≤ ⋯ ≤ W_m = V` with `g w - w ∈ W_i` for all `g ∈ S` and `w ∈ W_{i+1}`. -/
+/-- **Stable sets of linear automorphisms.** Let $V$ be a vector space over a field $K$. A set $S$
+of $K$-linear automorphisms of $V$ is stable when there are a natural number $m$ and subspaces
+$0 = W_0 \le W_1 \le \cdots \le W_m = V$ of $V$ such that $g(w) - w \in W_i$ for every $i < m$,
+every $g \in S$ and every $w \in W_{i+1}$. -/
 def HasStableSeries {K V : Type} [Field K] [AddCommGroup V] [Module K V]
     (S : Set (V ≃ₗ[K] V)) : Prop :=
   ∃ (m : ℕ) (W : Fin (m + 1) → Submodule K V), W 0 = ⊥ ∧ W (Fin.last m) = ⊤ ∧

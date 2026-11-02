@@ -37,22 +37,30 @@ record UM-00701404 (`KOU-17.102`), dataset ulamai/UnsolvedMath v1.8.0.
 
 open scoped Pointwise
 
-/-- Subsets `A, B` of a group are separated (I. V. Protasov): there is an infinite set `X` with
-`1 ∈ X`, `X = X⁻¹` and `XAX ∩ B = ∅`. -/
+/-- **Separated subsets of a group.** Two subsets $A$ and $B$ of a group $G$ are separated, in the
+sense of I. V. Protasov, when there is an infinite subset $X \subseteq G$ with $1 \in X$,
+$X^{-1} = X$ and $XAX \cap B = \emptyset$, where $XAX = \{x a y : x, y \in X,\ a \in A\}$. -/
 def AreSeparated {G : Type*} [Group G] (A B : Set G) : Prop :=
   ∃ X : Set G, X.Infinite ∧ (1 : G) ∈ X ∧ X⁻¹ = X ∧ Disjoint (X * A * X) B
 
-/-- Kourovka 17.102 (I. V. Protasov): in every infinite group `G`, any two disjoint subsets `A, B`
-with `|A| < |G|` and `|B| < |G|` are separated. -/
+/-- **Separation of small disjoint subsets of infinite groups (Kourovka 17.102).** The statement,
+posed by I. V. Protasov, that for every infinite group $G$ and all disjoint subsets
+$A, B \subseteq G$ with $|A| < |G|$ and $|B| < |G|$, the sets $A$ and $B$ are separated. -/
 def smallDisjointSubsetsSeparated : Prop :=
   ∀ (G : Type) [Group G] [Infinite G] (A B : Set G), Disjoint A B →
     Cardinal.mk A < Cardinal.mk G → Cardinal.mk B < Cardinal.mk G → AreSeparated A B
 
 /--
-Resolved false: Wan (Theorem 1.1) gives an infinite group `G` with disjoint subsets `A, B`, `|A|,
-|B| < |G|`, that are not separated: `G = Sym(ℕ)` and `A ⊔ B` is the set of transpositions, split by
-a graph on `ℕ` with trivial automorphism group, so that `|A| = |B| = ℵ₀ < 2^ℵ₀`. The Kourovka
-Notebook (21st issue) answers 17.102 "No, not always". Source: E. I. Khukhro and V. D. Mazurov
+**Small disjoint subsets of an infinite group need not be separated.** There exist an infinite
+group $G$ and disjoint subsets $A, B \subseteq G$ with $|A| < |G|$ and $|B| < |G|$ such that $A$
+and $B$ are not separated. That is, the statement of Kourovka Problem 17.102 is false.
+
+Resolved false: Wan (Theorem 1.1) takes $G = \mathrm{Sym}(\mathbb{N})$ and splits the set of
+transpositions into $A$ and $B$ using a graph on $\mathbb{N}$ with trivial automorphism group, so
+that $|A| = |B| = \aleph_0 < 2^{\aleph_0}$. The Kourovka Notebook (21st issue) answers 17.102
+"No, not always".
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 17.102 (I. V. Protasov); resolution: S. Wan, Counterexamples to Problem 17.102 of
 The Kourovka Notebook, preprint, arXiv:2608.00504 (2026), Theorem 1.1 (an infinite group G with

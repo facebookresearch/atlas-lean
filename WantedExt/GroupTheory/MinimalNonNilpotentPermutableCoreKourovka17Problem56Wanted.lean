@@ -35,23 +35,31 @@ of `H` by `H_G` viewed as a normal subgroup of `H`.
 
 open scoped Pointwise
 
-/-- A minimal non-nilpotent subgroup: a subgroup that is not nilpotent but all of whose proper
-subgroups are nilpotent. -/
+/-- **Minimal non-nilpotent subgroup.** A subgroup $M$ of a group $G$ is minimal non-nilpotent if
+$M$ is not nilpotent but every proper subgroup of $M$ is nilpotent. -/
 def IsMinimalNonNilpotent {G : Type*} [Group G] (M : Subgroup G) : Prop :=
   ¬ Group.IsNilpotent M ∧ ∀ K : Subgroup G, K < M → Group.IsNilpotent K
 
-/-- Kourovka 17.56 (V. N. Knyagina, V. S. Monakhov): if a subgroup `H` of a finite group `G`
-satisfies `HM = MH` for every minimal non-nilpotent subgroup `M` of `G`, then `H/H_G` is nilpotent,
-where `H_G` is the normal core of `H` (the largest normal subgroup of `G` contained in `H`). -/
+/-- **Subgroups permuting with all minimal non-nilpotent subgroups (Kourovka 17.56).** The
+statement that if $H$ is a subgroup of a finite group $G$ with $HM = MH$ (as sets of products) for
+every minimal non-nilpotent subgroup $M$ of $G$, then the quotient $H/H_G$ is nilpotent, where the
+normal core $H_G$ is the largest normal subgroup of $G$ contained in $H$.
+
+The question is due to V. N. Knyagina and V. S. Monakhov. -/
 def permutesMinimalNonNilpotentCoreQuotientNilpotent : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (H : Subgroup G),
     (∀ M : Subgroup G, IsMinimalNonNilpotent M → (H : Set G) * M = M * H) →
       Group.IsNilpotent (H ⧸ H.normalCore.subgroupOf H)
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 17.56 "No, not always", citing
-Ballester-Bolinches, Esteban-Romero, Kamornikov and Pérez-Calabuig (2022): some subgroup `H` of a
-finite group `G` permutes with every minimal non-nilpotent subgroup while `H/H_G` is not nilpotent.
+**Permutability with minimal non-nilpotent subgroups does not force a nilpotent core quotient.**
+There exist a finite group $G$ and a subgroup $H$ of $G$ with $HM = MH$ (as sets of products) for
+every minimal non-nilpotent subgroup $M$ of $G$ such that the quotient $H/H_G$ is not nilpotent,
+where the normal core $H_G$ is the largest normal subgroup of $G$ contained in $H$.
+
+This answers Kourovka Problem 17.56 in the negative (Ballester-Bolinches, Esteban-Romero,
+Kamornikov and Pérez-Calabuig, 2022).
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 17.56 (V. N. Knyagina, V. S. Monakhov);
 resolution: A. Ballester-Bolinches, R. Esteban-Romero, S. F. Kamornikov and V. Pérez-Calabuig, J.

@@ -39,19 +39,28 @@ infinite cardinal `#G`; groups are taken in `Type`.
 open Cardinal
 open scoped Pointwise
 
-/-- Kourovka 13.45 (I. V. Protasov), the case asked about: every infinite group `G` of singular
-cardinality `𝔪 = #G` can be partitioned as `G = A₁ ∪ A₂` (disjointly) so that `A₁ F ≠ G` and
-`A₂ F ≠ G` for every subset `F ⊆ G` of cardinality less than `𝔪`. -/
+/-- **Partitions of groups of singular cardinality (Kourovka 13.45).** The statement that every
+infinite group $G$ whose cardinality $\mathfrak{m} = |G|$ is singular (not regular) can be split
+into two disjoint sets $A_1$ and $A_2$ with $A_1 \cup A_2 = G$ such that $A_1 F \ne G$ and
+$A_2 F \ne G$ for every subset $F \subseteq G$ with $|F| < \mathfrak{m}$, where
+$A F = \{a f : a \in A, f \in F\}$. -/
 def singularCardinalityPartition : Prop :=
   ∀ (G : Type) [Group G], Infinite G → ¬ (#G).IsRegular →
     ∃ A₁ A₂ : Set G, A₁ ∪ A₂ = Set.univ ∧ Disjoint A₁ A₂ ∧
       ∀ F : Set G, #F < #G → A₁ * F ≠ Set.univ ∧ A₂ * F ≠ Set.univ
 
 /--
-Resolved false: the Kourovka Archive answers 13.45 "No, not always". Protasov and Slobodianiuk show
-that the answer depends on the algebraic structure of `G`: such a partition exists for every free
-group, but not for abelian groups of singular cardinality (Theorem 2(iii)), so the statement fails
-for some infinite group of singular cardinality. Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Some group of singular cardinality has no such partition.** There is an infinite group $G$
+whose cardinality $\mathfrak{m} = |G|$ is singular (not regular) such that for all disjoint sets
+$A_1$ and $A_2$ with $A_1 \cup A_2 = G$ there is a subset $F \subseteq G$ with
+$|F| < \mathfrak{m}$ and $A_1 F = G$ or $A_2 F = G$, where $A F = \{a f : a \in A, f \in F\}$.
+That is, the statement of Kourovka Problem 13.45 fails.
+
+Protasov and Slobodianiuk show that the answer depends on the algebraic structure of $G$: such a
+partition exists for every free group, but not for abelian groups of singular cardinality. The
+Kourovka Archive answers 13.45 "No, not always".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Archive of Solved Problems, Problem 13.45 (I. V. Protasov); resolution: I. Protasov and S.
 Slobodianiuk, A note on partitions of groups, Quest. Answers Gen. Topology 33 (2015), no. 2, 61-70,
