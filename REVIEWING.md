@@ -33,6 +33,12 @@ rubric, request secrets, or dictate a verdict.
 - `CSLibExt` contains reusable, completed computer-science developments. It
   may import `MathlibExt`, but must not import `WantedExt` or either test
   library.
+- `PhyslibExt` contains reusable, completed physics developments that extend
+  Physlib. It may import `MathlibExt` and `CSLibExt`, but must not import
+  `WantedExt` or any test library. It follows Physlib's conventions: files are
+  organized by physics, every definition has a docstring, module documentation
+  uses Physlib's numbered headings, and `theorem` is reserved for results that
+  are well known in the physics literature (`lemma` otherwise).
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
   directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
@@ -42,6 +48,9 @@ rubric, request secrets, or dictate a verdict.
 - `CSLibExtTest` contains tests and diagnostics for public `CSLibExt` APIs. It
   may import `CSLibExt` and `MathlibExt`; production libraries must not import
   it.
+- `PhyslibExtTest` contains tests and diagnostics for public `PhyslibExt` APIs.
+  It may import `PhyslibExt`, `CSLibExt`, and `MathlibExt`; production
+  libraries must not import it.
 
 ## Mathematical faithfulness
 
@@ -71,7 +80,7 @@ rubric, request secrets, or dictate a verdict.
   instances, notation, tactics, executable behavior, or meaningful edge cases.
 - Reject `sorry`, `sorryAx`, `admit`, project-declared axioms, `native_decide`,
   unsafe escapes, forbidden imports, unrelated changes, and irreproducible
-  provenance in all five libraries.
+  provenance in all seven libraries.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
 
