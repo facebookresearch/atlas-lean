@@ -16,23 +16,26 @@ public import MathlibExt.Probability.Hypercontractivity.PBiasedHCLib
 # Wiring the sharp-threshold argument: exponent ranges and the remaining goal
 
 The master estimate's `q`-value, the fact that the forward exponent range `[2, 4]` and
-the master range `(1, 2]` meet only at `2` (`stw_ranges_meet_only_at_two`), the variance
-coefficient gap (equality iff `p = 1/2`), and the conditional chain from the remaining
-goal `stw_RemainingGoal` (which is exactly `∀ p ∈ (1/2, q), PBiasedHCLib p`) to
-rho-optimise and sharp threshold. Status: the remaining goal is refuted for `q > 9/10`
-(`dtpc_remainingGoal_false`); it holds for the empty window `q ≤ 1/2`
-(`stw_RemainingGoal_empty_window`). The final verdict `stw_verdict` combines the pieces.
+the master range `(1, 2]` meet only at `2` (`stw_ranges_meet_only_at_two`), and the
+variance coefficient gap (equality iff `p = 1/2`). Status: the remaining goal
+`stw_RemainingGoal` (which is exactly `∀ p ∈ (1/2, q), PBiasedHCLib p`) is refuted
+for `q > 9/10` (`dtpc_remainingGoal_false`), and `PBiasedHCLib p` fails for every
+`p > 1/2` (see `HCTensorLib` for the cubic-term argument), so the remaining goal
+holds on no nonempty window; it holds for the empty window `q ≤ 1/2`
+(`stw_RemainingGoal_empty_window`). The conditional chain from the remaining goal
+to rho-optimise and sharp threshold was removed with the window route in
+`HCTensorLib`. The final verdict `stw_verdict` combines the pieces.
 
 ## Main definitions
 
 * `stw_RemainingGoal`: the remaining goal over a window `(1/2, q)`, definitionally
-  `∀ p ∈ Ioo (1/2) q, PBiasedHCLib p`; false for `q > 9/10`.
+  `∀ p ∈ Ioo (1/2) q, PBiasedHCLib p`; false for `q > 9/10`, and holding on no
+  nonempty window since `PBiasedHCLib p` fails for every `p > 1/2`.
 
 ## Main results
 
 * `stw_ranges_meet_only_at_two`, `stw_variance_coeff_gap`,
   `stw_coeff_gap_eq_iff_half`: exponent and coefficient gap computations.
-* `stw_rhoOptimise_of_lib`, `stw_sharpThreshold_of_lib`: the conditional chain.
 * `stw_verdict`: the combined verdict.
 -/
 
@@ -101,23 +104,6 @@ theorem stw_kkl_logGain_half {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty
 (`dtpc_remainingGoal_false`); holds for the empty window `q ≤ 1/2`. -/
 def stw_RemainingGoal (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p
-
-theorem stw_rhoOptimise_of_lib {q : ℝ} (H : stw_RemainingGoal q) :
-    ptn_RhoOptimise q :=
-  htl_rhoOptimise_of_lib H
-
-theorem stw_sharpThreshold_of_lib {q : ℝ} (hq1 : q ≤ 1)
-    (H : stw_RemainingGoal q)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
-    (A : Set (ConfigSpace E)) [DecidablePred (· ∈ A)] (hA : IsIncreasing A)
-    {v₀ L : ℝ} (hq : (1 : ℝ) / 2 ≤ q) (hv0 : 0 ≤ v₀) (hL : 0 ≤ L)
-    (hhalf : StatMech.prob (1 / 2) A = 1 / 2)
-    (hvar : ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q),
-      v₀ ≤ StatMech.prob p A * (1 - StatMech.prob p A))
-    (hLL' : ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q),
-      L ≤ StatMech.TwoDim.kklw_logMaxInfl p A) :
-    1 / 2 + (2 * v₀ * L) * (q - 1 / 2) ≤ StatMech.prob q A :=
-  htl_sharpThreshold hq1 H A hA hq hv0 hL hhalf hvar hLL'
 
 theorem stw_RemainingGoal_empty_window {q : ℝ} (hq : q ≤ 1 / 2) : stw_RemainingGoal q := by
   intro p hp
