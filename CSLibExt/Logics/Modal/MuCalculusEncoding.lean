@@ -50,8 +50,7 @@ namespace MuFormula
 variable {Atom : Type u}
 
 /-- A formula is closed at depth `d` when every free de Bruijn variable is `< d`:
-each binder (including `μ` / `ν`, as well as `□` / `◇`, which do not bind) shifts the
-depth. -/
+only `μ` / `ν` increase the depth; `□` / `◇` do not bind variables and preserve it. -/
 def ClosedAt : ℕ → MuFormula Atom → Prop
   | _, .atom _ => True
   | _, .natom _ => True
