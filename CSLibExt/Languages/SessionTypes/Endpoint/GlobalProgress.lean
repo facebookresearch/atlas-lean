@@ -1,0 +1,68 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import CSLibExt.Languages.SessionTypes.Endpoint.FrontierProgress
+public import CSLibExt.Languages.SessionTypes.Endpoint.RankedReduction
+
+/-!
+# Global process-level progress of finite ranked networks
+
+Normalization and the minimum-ranked complementary guards are derived inside
+these proofs. There is no caller frontier, readiness or progress assumption.
+-/
+
+@[expose] public section
+
+namespace Cslib.SessionTypes.Endpoint
+
+open PiCalculus
+
+private theorem normal_progress {n : Nat} {Δ : Context} {p : Proc}
+    (hn : FrontierNormal p) (ht : RankedType n Δ p) (hb : Balanced Δ) :
+    Cong p .nil ∨ ∃ q, PiCalculus.Step p q := by
+  induction hn generalizing n Δ with
+  | frontier hf => exact hf.progress ht hb
+  | nu hn ih =>
+    obtain ⟨c, hbody⟩ := ht.nu_inv
+    rcases ih hbody (hb.bind c) with hc | ⟨q, hs⟩
+    · exact Or.inl (Cong.trans (Cong.nu_cong hc) Cong.nu_nil)
+    · exact Or.inr ⟨.nu q, PiCalculus.Step.nu hs⟩
+
+/-- Global progress at ANY balanced interface, including disconnected networks.
+All private channels are tracked through the derived restriction tower.
+Completion means process congruence to nil, not completion of the interface. -/
+theorem RankedType.progress_balanced {n : Nat} {Δ : Context} {p : Proc}
+    (h : RankedType n Δ p) (hb : Balanced Δ) :
+    Cong p .nil ∨ ∃ q, PiCalculus.Step p q := by
+  obtain ⟨r, hc, ht, hn⟩ := h.frontier_normal
+  rcases normal_progress hn ht hb with hnil | ⟨q, hs⟩
+  · exact Or.inl (Cong.trans hc hnil)
+  · exact Or.inr ⟨q, PiCalculus.Step.cong hc hs (Cong.refl _)⟩
+
+/-- A closed finite ranked network is completed or takes an ACTUAL canonical
+step. Ambient passive-name depth is arbitrary; no readiness witness is supplied. -/
+theorem RankedType.progress_empty {n : Nat} {p : Proc} (h : RankedType n ∅ p) :
+    Cong p .nil ∨ ∃ q, PiCalculus.Step p q := h.progress_balanced balanced_empty
+
+/-- Every state reached by finitely many actual canonical steps retains exact
+empty-interface ranked typing. This is preservation, not finite termination. -/
+theorem RankedType.reachable_empty {n : Nat} {p q : Proc} (h : RankedType n ∅ p)
+    (hr : Relation.ReflTransGen PiCalculus.Step p q) : RankedType n ∅ q := by
+  induction hr with
+  | refl => exact h
+  | tail hr hs ih => exact ih.subject_reduction_empty hs
+
+/-- Global progress holds at every finite reachable state of a closed ranked
+network. No fairness, eventual liveness or recursive termination is asserted. -/
+theorem RankedType.reachable_progress {n : Nat} {p q : Proc} (h : RankedType n ∅ p)
+    (hr : Relation.ReflTransGen PiCalculus.Step p q) :
+    Cong q .nil ∨ ∃ r, PiCalculus.Step q r := (h.reachable_empty hr).progress_empty
+
+end Cslib.SessionTypes.Endpoint
