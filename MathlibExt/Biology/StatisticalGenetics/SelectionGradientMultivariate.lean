@@ -34,8 +34,8 @@ logarithm, nonzero mean fitness.
 
 ## Main results
 
-* `hasGradientAt_meanFitness`: `∇_μ w̄(μ) = P⁻¹ 𝔼[W z · (z - μ)]`.
-* `selectionDifferential_eq`: **Lande's equation** `S = P ∇_μ log w̄(μ)`.
+* `hasGradientAt_meanFitnessMV`: `∇_μ w̄(μ) = P⁻¹ 𝔼[W z · (z - μ)]`.
+* `selectionDifferentialMV_eq`: **Lande's equation** `S = P ∇_μ log w̄(μ)`.
 
 ## References
 
