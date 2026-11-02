@@ -20,6 +20,13 @@ No typing constructor contains a transition, progress proof or liveness oracle.
 `finite_completion` constructs a finite path of actual communication steps;
 `represent_steps` transports the path to the existing π reduction relation.
 These are not deadlock-freedom claims for arbitrary well-typed π processes.
+
+The binary protocol discipline is grounded in Honda, Vasconcelos and Kubo
+(ESOP 1998; DOI 10.1007/BFb0053567), as mapped in the directory `README.md`.
+Their Theorem 5.4 concerns structural invariance, subject reduction and
+interaction-error exclusion, not unrestricted deadlock freedom.
+`SingleChannel` and the finite completion result are project-authored
+structural qualifications, not a port of that source theorem.
 -/
 
 @[expose] public section

@@ -18,6 +18,13 @@ head guards, using precisely π substitution. `represent_step` proves this is
 an existing π reduction, including the reversed output/input orientation.
 Preservation is for these communication contractions, not all reductions
 modulo arbitrary π structural congruence.
+
+The data synchronization/substitution shape corresponds to §2.3 `[Com]` of
+Honda, Vasconcelos and Kubo (ESOP 1998; DOI 10.1007/BFb0053567). Here the
+payload is one already available passive name; there is no expression
+sort/evaluation judgment or delegation rule. This is not the source's
+translation into asynchronous π or its full subject-reduction theorem.
+The directory `README.md` documents the precise restricted projection.
 -/
 
 @[expose] public section

@@ -13,10 +13,38 @@ public import CSLibExt.Languages.PiCalculus.Scoping
 /-!
 # Finite sessions with unrestricted name data
 
-This project-authored fragment types existing π processes, rather than
-introducing another process syntax. Session subjects are constant channels;
-received names are passive data that can be forwarded, not delegated linear
-capabilities. Threads are sequential. Protocols have no recursion or choice.
+This is an original restricted, sort-erased model of binary sessions on the
+existing π syntax, not a formalization of the complete session calculus.
+Its send/receive/end sequencing and duality are grounded in Honda, Vasconcelos
+and Kubo, *Language primitives and type discipline for structured
+communication-based programming*, ESOP 1998, LNCS 1381, pp. 122–138:
+https://doi.org/10.1007/BFb0053567.
+
+The primary manuscript inspected is linked in this directory's `README.md`.
+Its §5, Definitions 5.1–5.3 and Figure 1 (manuscript pp. 11–13) distinguish
+shared-name/data sorting from linear channel typing. The local rule mapping is:
+
+* `HasType.nil` retains `[Inact]`'s completed `1` case as `end`, omitting the
+  source's composed-channel `⊥` case.
+* `HasType.out` retains `[Send]`'s channel-head advancement, but fixes one
+  passive-name payload and replaces the source's sort judgment by scoping.
+  Only constant subjects are admitted; this is not `[Thr]` delegation.
+* `HasType.inp` retains `[Rcv]`'s continuation advancement and received-variable
+  binding. Here binding increases de Bruijn depth, not a typed sorting, and
+  it introduces no linear endpoint capability.
+
+`Context` is total per-thread bookkeeping, not the source's finite partial
+sorting or channel map; absence and completion are conflated as `end`, and
+`HasType.finite_support` establishes finite active support for derivations.
+There is no source `[Conc]` context-composition algebra. The pair judgment
+uses pointwise duality rather than composing channel maps with `⊥`.
+
+Session subjects are constant channels; received names are unrestricted
+passive data that can be forwarded, not delegated linear capabilities.
+Threads are sequential and protocols have no recursion or choice. Initiation,
+restriction, branching, delegation, parallel typing and recursive typing rules
+from the source are omitted. Equivalence to its full typing derivations is
+not proved. `README.md` records each rule and representation difference.
 Dual typing alone does not imply progress for threads owning several channels.
 -/
 
