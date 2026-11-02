@@ -817,7 +817,6 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Probability/StrassenFinite.lean` | `MathlibExt.Probability.StochasticOrder.StrassenFiniteCoupling` |
 | `Atlas/StatisticalMechanics/Code/Probability/TwoPointLSI.lean` | `MathlibExt.Probability.Hypercontractivity.TwoPointLSI` |
 | `Atlas/StatisticalMechanics/Code/RSW/BoxCrossing.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossing` |
-| `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossingCapstone` |
 | `Atlas/StatisticalMechanics/Code/RSW/Continuity.lean` | `MathlibExt.Probability.Percolation.RSW.Continuity` |
 | `Atlas/StatisticalMechanics/Code/RSW/ExpDecayUpgrade.lean` | `MathlibExt.Probability.Percolation.RSW.ExpDecayUpgrade` |
 | `Atlas/StatisticalMechanics/Code/RSW/OneArm.lean` | `MathlibExt.Probability.Percolation.RSW.OneArm` |
@@ -892,10 +891,10 @@ say exactly what is proved.
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
 modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
 counted once, under the first category that applies in the order below. The tables below
-account for 655 first-round rows and 202 second-round rows (one source,
+account for 655 first-round rows and 201 second-round rows (one source,
 `Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
-definition ported in the second), 1 deleted module, and the categories below: 655 + 202 - 1
-(duplicate) + 1 (deleted) + 6,113 (categories) = 6,970 distinct source modules accounted for,
+definition ported in the second), 2 deleted modules, and the categories below: 655 + 201 - 1
+(duplicate) + 2 (deleted) + 6,113 (categories) = 6,970 distinct source modules accounted for,
 which is every source `.lean` file. The earlier draft claimed 238 second-round rows
 and 6,970 source modules in total; that did not reconcile with the tables. The 36-module gap
 is now reconciled by a per-directory residual audit (total files per directory minus `Check*`
@@ -997,6 +996,11 @@ until then they are counted here, not in the physics remainder and not in the un
   in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
+- `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
+  capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
+  beyond assuming the result; the module was removed during cleanup. The underlying RSW
+  comparison material remains in `MathlibExt.Probability.Percolation.RSW.BoxCrossing` and
+  `MathlibExt.Probability.Percolation.RSW.P5Equivalences`.
 - First round: no ported module was deleted as a whole. Two pairs of source files were merged into
   one module each, and both sources of each pair appear in the first-round table:
   - `Code/FK/EdgeConfigZ.lean` and `Code/Walls/fkc_rqbulkfraction.lean` →
