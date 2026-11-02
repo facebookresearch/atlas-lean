@@ -14,7 +14,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PoincareAp
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PoincareApp`
 
-* `fk_poincare_covSum_ge` on the complete graph on `Fin 2` at `p = 1/2`, `q = 2`, for the
+* `fk_poincare_indicator` on the complete graph on `Fin 2` at `p = 1/2`, `q = 2`, for the
   explicit increasing event "edge `s(0, 1)` is open";
 * `poincare_covSum_indicator_ge` for the FK mass on `K₂` (positivity, normalization and the FKG
   lattice condition supplied by the library), same event;
@@ -44,8 +44,8 @@ example :
         * (1 - FK.fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2 edgeOpen)
       ≤ ∑ e, FK.fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
           (edgeOpen.indicator (fun _ => (1 : ℝ))) (FK.coord e) :=
-  MonotonicFK.fk_poincare_covSum_ge ⊤ (by norm_num) (by norm_num) (by norm_num)
-    isIncreasing_edgeOpen
+  MonotonicFK.fk_poincare_indicator ⊤ (by norm_num) (by norm_num) (by norm_num)
+    edgeOpen isIncreasing_edgeOpen
 
 -- The abstract indicator bound, instantiated at the FK mass on `K₂`.
 example :

@@ -15,8 +15,9 @@ public import PhyslibExt.CondensedMatter.IsingModel.CorrelationRatio
 # The support-ordered backbone selector and its compatibility with subgraphs
 
 The backbone selector that picks the backbone path with lexicographically least vertex sequence,
-the backbone weight `shb_rhoSupport` it defines, the sum rule (P1), and a reduction of the chain
-rule (P2) to a resummation identity.
+the backbone weight `shb_rhoSupport` it defines, and the sum rule (P1). The chain rule (P2) is
+not proved here: an earlier conditional form took the P2 equality itself, with denominators
+cleared, as its hypothesis, so it assumed the result rather than proving it.
 
 ## i. Overview
 
@@ -31,9 +32,7 @@ backbone is `p`, and `shb_rhoSupport` divides it by the sourceless partition fun
 Headline fidelity:
 - `shb_backboneSelectSupport_mapLe` and `shb_P1_support` (the sum rule
   `⟨σ_x σ_y⟩ = ∑_p ρ(p)`, for `β ≥ 0`, `J ≥ 0`, `x ≠ y`) are proved unconditionally.
-- `shb_P2_support_of_complementResummation` (the chain rule
-  `ρ_G(p₁₂) = ρ_G(p₁) ρ_H(p₂)`) is conditional on `hresum : shb_P2ComplementResummation …`. The
-  chain rule (P2) is not proved for this or any other selector.
+- The chain rule (P2) `ρ_G(p₁₂) = ρ_G(p₁) ρ_H(p₂)` is not proved for this or any other selector.
 
 ## ii. Key results
 
@@ -41,8 +40,6 @@ Headline fidelity:
 - `shb_backboneSelectSupport_mapLe` : selection commutes with inclusion of a supporting subgraph
 - `shb_rhoSupport` : the support-ordered backbone weight
 - `shb_P1_support` : the sum rule P1 (unconditional)
-- `shb_P2_support_of_complementResummation` : the chain rule P2, conditional on
-  `shb_P2ComplementResummation`
 
 ## iii. Table of contents
 
@@ -50,7 +47,6 @@ Headline fidelity:
 - B. Restriction of backbones to a supporting subgraph
 - C. Compatibility of the selector with subgraphs
 - D. The backbone weight and the sum rule
-- E. The chain rule from a resummation identity
 
 ## iv. References
 
@@ -343,36 +339,5 @@ theorem shb_P1_support
     shb_currentSum_eq_sum_backboneNumSupport G β J hβ hJ hxy]
   unfold shb_rhoSupport
   rw [Finset.sum_div]
-
-/-! ## E. The chain rule from a resummation identity -/
-
-/-- The resummation identity behind the chain rule:
-`N_G(p₁₂) Z_H = N_G(p₁) N_H(p₂)`, with `N` the backbone numerator and `Z` the sourceless partition
-function. -/
-def shb_P2ComplementResummation
-    (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
-    (β : ℝ) (J : Sym2 V → ℝ) {x z u : V}
-    (p₁₂ : G.Path x z) (p₁ : G.Path x u) (p₂ : H.Path u z) : Prop :=
-  shb_backboneNumSupport G β J x z p₁₂ * currentSum H β J ∅ =
-    shb_backboneNumSupport G β J x u p₁ *
-      shb_backboneNumSupport H β J u z p₂
-
-/-- The chain rule P2 `ρ_G(p₁₂) = ρ_G(p₁) ρ_H(p₂)`, conditional on the resummation identity
-`shb_P2ComplementResummation`. -/
-theorem shb_P2_support_of_complementResummation
-    (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
-    (β : ℝ) (J : Sym2 V → ℝ) {x z u : V}
-    (p₁₂ : G.Path x z) (p₁ : G.Path x u) (p₂ : H.Path u z)
-    (hresum : shb_P2ComplementResummation G H β J p₁₂ p₁ p₂) :
-    shb_rhoSupport G β J x z p₁₂ =
-      shb_rhoSupport G β J x u p₁ * shb_rhoSupport H β J u z p₂ := by
-  have hZG : currentSum G β J ∅ ≠ 0 :=
-    ne_of_gt (StatMech.Ising.acr_currentSum_empty_pos G β J)
-  have hZH : currentSum H β J ∅ ≠ 0 :=
-    ne_of_gt (StatMech.Ising.acr_currentSum_empty_pos H β J)
-  unfold shb_P2ComplementResummation at hresum
-  unfold shb_rhoSupport
-  field_simp [hZG, hZH]
-  exact hresum
 
 end StatMech.Sharpness

@@ -13,6 +13,7 @@ public import CSLibExt.Complexity.BooleanFunctions.SharpnessFK
 public import MathlibExt.Probability.OSSS.Integration
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2Sharp
+public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.PoincareApp
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 
 /-!
@@ -23,7 +24,8 @@ integration, and the mean-field lower bound, for the random-cluster model on a f
 
 ## i. Overview
 
-`fk_poincare_indicator` (`θ(1 - θ) ≤ ∑ Cov`, `q ≥ 1`) is unconditional. `fk_differential_inequality`
+`MonotonicFK.fk_poincare_indicator` (`θ(1 - θ) ≤ ∑ Cov`, `q ≥ 1`, in `PoincareApp`) is
+unconditional. `fk_differential_inequality`
 is conditional on `hbridge`, which says the covariance sum over all pairs equals the sum over edges
 of `G`. `fk_subcritical_decay` integrates a supplied differential inequality `hdi` with `θ ≤ 1 - κ`
 to get exponential decay. `fk_sharpness_both` adds the mean-field bound from supplied limits `hTβ`,
@@ -32,7 +34,8 @@ to get exponential decay. `fk_sharpness_both` adds the mean-field bound from sup
 
 ## ii. Key results
 
-- `fk_poincare_indicator`: Poincaré inequality for increasing indicators (unconditional).
+- `MonotonicFK.fk_poincare_indicator` (in `PoincareApp`): Poincaré inequality for increasing
+  indicators (unconditional), reused here rather than duplicated.
 - `fk_q2_crossing_decay_poincare`: `θ(a) ≤ exp(-4κ(b - a))` at `q = 2`, conditional on `hbridge` and
   `hθub`.
 - `fk_sharpness_both`: decay and mean-field bounds, conditional on the supplied differential
@@ -77,24 +80,6 @@ lemma lind_var_indicator {μ : ConfigSpace (Sym2 V) → ℝ}
     intro ω _
     rcases hf ω with h | h <;> simp only [h] <;> ring
   rw [hsq]; ring
-
-/-- Poincaré inequality for increasing indicators (unconditional). -/
-theorem fk_poincare_indicator (G : SimpleGraph V) [DecidableRel G.Adj]
-    {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A) :
-    fkProbOf G p q A * (1 - fkProbOf G p q A)
-      ≤ ∑ e, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
-  classical
-  have hvar := Lindeberg.fk_monotonic_poincare G hp hp1 hq
-    (f := A.indicator (fun _ => (1 : ℝ)))
-    (hA.indicator_monotone)
-    (fun ω => Set.indicator_nonneg (fun _ _ => zero_le_one) ω)
-    (fun ω => by rw [Set.indicator_apply]; split_ifs <;> norm_num)
-  rwa [lind_var_indicator (A.indicator (fun _ => (1 : ℝ)))
-      (fun ω => by
-        by_cases h : ω ∈ A
-        · right; rw [Set.indicator_of_mem h]
-        · left; rw [Set.indicator_of_notMem h])] at hvar
 
 lemma fk_differential_inequality (G : SimpleGraph V) [DecidableRel G.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

@@ -60,20 +60,6 @@ variable {d : ℕ}
 
 /-! ## A. Leaf injections and connected forests -/
 
-set_option linter.unusedDecidableInType false in
-/-- Same statement as `bc65_connectedForest_of_forestData`; kept because TrifSuperVertex uses it. -/
-lemma bc66_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (W : Type) [Fintype W] [Nonempty W] [DecidableEq W]
-    (G : SimpleGraph W) [DecidableRel G.Adj] (ιT : Site d → W) (lamL : W → Site d)
-    (hacyc : G.IsAcyclic) (hmin : ∀ v, 1 ≤ G.degree v)
-    (hdeg3 : ∀ y, y ∈ box d R → bc61_IsCoarseTrifurcation ω L y → 3 ≤ G.degree (ιT y))
-    (hιinj : ∀ y, y ∈ box d R → bc61_IsCoarseTrifurcation ω L y → ∀ z, z ∈ box d R →
-      bc61_IsCoarseTrifurcation ω L z → ιT y = ιT z → y = z)
-    (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
-    (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
-    bc65_ConnectedCoarseForest ω L R :=
-  bc65_connectedForest_of_forestData ω L R W G ιT lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
-
 lemma bc66_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 1 ≤ R → ∀ (y a : Site d), a ∈ box d R →
       (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite →

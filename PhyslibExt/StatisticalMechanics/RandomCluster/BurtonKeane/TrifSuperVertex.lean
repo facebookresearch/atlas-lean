@@ -168,7 +168,7 @@ lemma bc67_Gn_armForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R : 
     (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
     bc65_ConnectedCoarseForest ω L R := by
-  refine bc66_connectedForest_of_forestData ω L R W G ιU lamL hacyc hmin ?_ ?_ hlammap hlaminj
+  refine bc65_connectedForest_of_forestData ω L R W G ιU lamL hacyc hmin ?_ ?_ hlammap hlaminj
   · intro y hybox htri
     exact hdeg3 y hybox ((bc67_coarseTrif_is_G_n_trifurcation ω L y).mp htri)
   · intro y hybox htri z hzbox htriz hyz

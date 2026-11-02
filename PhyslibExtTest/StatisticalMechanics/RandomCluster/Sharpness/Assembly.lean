@@ -15,7 +15,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Assembly
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.Assembly`
 
 * `lind_var_indicator` for the constant indicator `1` under the random-cluster mass on `K₂`;
-* `fk_poincare_indicator` (unconditional) on `K₂` at `p = 1/2`, `q = 2` for the increasing event
+* `MonotonicFK.fk_poincare_indicator` (unconditional) on `K₂` at `p = 1/2`, `q = 2` for the increasing event
   "edge `s(0, 1)` is open";
 * `fk_q2_crossing_decay_poincare`, conditional on `hbridge` and `hθub`, applied on `K₂`;
 * `fk_sharpness_both`, the conditional decay and mean-field bounds, stated as a term.
@@ -42,7 +42,7 @@ example :
           {ω | ω (s(0, 1) : Sym2 (Fin 2)) = true})
       ≤ ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
           ({ω | ω (s(0, 1) : Sym2 (Fin 2)) = true}.indicator (fun _ => (1 : ℝ))) (FK.coord e) :=
-  fk_poincare_indicator ⊤ (by norm_num) (by norm_num) (by norm_num) _
+  MonotonicFK.fk_poincare_indicator ⊤ (by norm_num) (by norm_num) (by norm_num) _
     (fun a b hab ha => by
       have h := hab s(0, 1)
       rw [show a s(0, 1) = true from ha] at h

@@ -15,8 +15,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLe
 # Tests for `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector`
 
 * `shb_P1_support` (the sum rule P1, unconditional) on `K₂` at `β = J = 1`;
-* `shb_backboneSelectSupport_mapLe` applied to a current supported on the subgraph;
-* `shb_P2_support_of_complementResummation` applied under its resummation hypothesis.
+* `shb_backboneSelectSupport_mapLe` applied to a current supported on the subgraph.
 -/
 
 @[expose] public section
@@ -41,12 +40,5 @@ example {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V] {H G : SimpleGra
     Option.map (shb_pathMapLe hHG) (shb_backboneSelectSupport H n x y) =
       shb_backboneSelectSupport G n x y :=
   shb_backboneSelectSupport_mapLe hHG n hn x y
-
--- The chain rule under the complement resummation.
-example {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V] (G H : SimpleGraph V) (β : ℝ)
-    (J : Sym2 V → ℝ) {x z u : V} (p₁₂ : G.Path x z) (p₁ : G.Path x u) (p₂ : H.Path u z)
-    (h : shb_P2ComplementResummation G H β J p₁₂ p₁ p₂) :
-    shb_rhoSupport G β J x z p₁₂ = shb_rhoSupport G β J x u p₁ * shb_rhoSupport H β J u z p₂ :=
-  shb_P2_support_of_complementResummation G H β J p₁₂ p₁ p₂ h
 
 end PhyslibExtTest.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector

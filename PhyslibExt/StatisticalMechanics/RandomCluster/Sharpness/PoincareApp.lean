@@ -19,14 +19,14 @@ For an increasing event under an FKG measure, `θ(1 - θ) ≤ ∑ Cov(1_A, ω_e)
 ## i. Overview
 
 The variance of an indicator is `θ(1 - θ)`; the Poincaré inequality of `Lindeberg` then gives
-`poincare_covSum_indicator_ge` and its random-cluster case `fk_poincare_covSum_ge` (`q ≥ 1`).
-Unconditional. `fk_poincare_covSum_ge` has the same statement as `Assembly.fk_poincare_indicator`;
-no module imports both, so it is reported as a duplicate.
+`poincare_covSum_indicator_ge` and its random-cluster case `fk_poincare_indicator` (`q ≥ 1`).
+Unconditional. `fk_poincare_indicator` is the single canonical random-cluster Poincaré
+statement: `Assembly` and its consumers use this declaration rather than a second copy.
 
 ## ii. Key results
 
 - `poincare_covSum_indicator_ge`: `θ(1 - θ) ≤ ∑ Cov` for increasing events under FKG measures.
-- `fk_poincare_covSum_ge`: the random-cluster case.
+- `fk_poincare_indicator`: the random-cluster case, the canonical statement used by `Assembly`.
 
 ## iii. Table of contents
 
@@ -120,8 +120,10 @@ lemma lindebergCov_fkMass_coord (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) (e 
   unfold Lindeberg.cov Lindeberg.mean fkMass FK.fkCov FK.fkMean
   rw [hcoord]
 
-lemma fk_poincare_covSum_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    {A : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) :
+/-- Poincaré inequality for increasing indicators (unconditional): the canonical
+random-cluster statement, used by `Assembly` and its consumers. -/
+theorem fk_poincare_indicator {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+    (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A) :
     FK.fkProbOf G p q A * (1 - FK.fkProbOf G p q A)
       ≤ ∑ e, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq

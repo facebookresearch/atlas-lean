@@ -106,7 +106,7 @@ lemma ofa_summary (G : SimpleGraph V) [DecidableRel G.Adj]
     (fkProbOf G a 2 A * (1 - fkProbOf G a 2 A)
         ≤ ∑ e, fkCov G a 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
     ∧ (fkProbOf G a 2 A ≤ Real.exp (-(4 * κ * (b - a)))) :=
-  ⟨StatMech.OSSS.fk_poincare_indicator G ha0 (by linarith) (by norm_num : (1 : ℝ) ≤ 2) A hA,
+  ⟨StatMech.OSSS.MonotonicFK.fk_poincare_indicator G ha0 (by linarith) (by norm_num : (1 : ℝ) ≤ 2) A hA,
    StatMech.OSSS.fk_q2_crossing_decay_poincare G A hA a b κ hab ha0 hb1 hκ hbridge hθub⟩
 
 end OSFKAssemblyClose
