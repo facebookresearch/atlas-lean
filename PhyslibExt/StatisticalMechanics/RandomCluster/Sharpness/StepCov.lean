@@ -590,7 +590,7 @@ lemma mean_step_witness :
   rw [← Finset.mul_sum, muU_sum_one, mul_one]
 
 /-- Refutation of the one-copy step bound. -/
-theorem stepCovBound_no_factor_false :
+lemma stepCovBound_no_factor_false :
     ¬ LindebergTree.StepCovBound muU Tw fAvg := by
   intro hSCB
   have h := hSCB 0 false

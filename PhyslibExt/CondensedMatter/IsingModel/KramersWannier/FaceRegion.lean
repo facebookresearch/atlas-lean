@@ -311,7 +311,7 @@ lemma fwr_shiftSquare_nonedge_right :
 
 /-- `PrimalWalkBoundsRegion` is false: no set of sites has the edges of `ceo_shiftSquare` as its
 boundary-edge set. -/
-theorem fwr_primalWalkBoundsRegion_false : ¬ PrimalWalkBoundsRegion := by
+lemma fwr_primalWalkBoundsRegion_false : ¬ PrimalWalkBoundsRegion := by
   intro h
   obtain ⟨S, hS⟩ := h ceo_shiftSquare
   have hadj_ab : (hypercubicLattice 2).Adj (![0, 1] : Site 2) (![1, 1] : Site 2) := ceo_uv_adj

@@ -4939,7 +4939,7 @@ crossing and a dual vertical crossing of the same rectangle (with `4 * B` paddin
 so their probabilities cannot both tend to one. Unconditional; this is a reductio step of
 Sheffield's argument excluding coexistence of primal and dual infinite clusters (S. Sheffield,
 *Random Surfaces*, Astérisque 304 (2005), Ch. 9). -/
-theorem PeriodicPlanarDualPair.PointwiseRecursiveRectangleArrayCertificate.false
+lemma PeriodicPlanarDualPair.PointwiseRecursiveRectangleArrayCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (raw : D.PointwiseRecursiveRectangleArrayCertificate mu) : False := by
@@ -5448,7 +5448,7 @@ structure PeriodicPlanarDualPair.ComplementaryCrossNestedLimitCertificate
 
 /-- No probability measure carries a complementary cross-nested limit certificate (planar duality
 between primal and dual crossings). Unconditional reductio step. -/
-theorem PeriodicPlanarDualPair.ComplementaryCrossNestedLimitCertificate.false
+lemma PeriodicPlanarDualPair.ComplementaryCrossNestedLimitCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.ComplementaryCrossNestedLimitCertificate mu) : False := by
@@ -6477,7 +6477,7 @@ lemma PeriodicPlanarDualPair.finiteStripArmArrays_reframedCarriedDual_false
 /-- Under FKG for the primal and dual measures, a primal and a dual carried cross-nested array with
 the listed nesting of frames cannot coexist. Conditional on FKG of `mu` and of `D.dualMeasure
 mu`. -/
-theorem PeriodicPlanarDualPair.carriedCrossNestedArrays_false
+lemma PeriodicPlanarDualPair.carriedCrossNestedArrays_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hFKGDual : IsFKG (D.dualMeasure mu))
@@ -9083,7 +9083,7 @@ structure PeriodicPlanarDualPair.PaddedPairedAdjacentTransition
 
 /-- A padded paired adjacent transition with padding at least `4 * B` and nondegenerate rectangles
 does not exist. Unconditional reductio step (it uses only planar duality of crossings). -/
-theorem PeriodicPlanarDualPair.PaddedPairedAdjacentTransition.false
+lemma PeriodicPlanarDualPair.PaddedPairedAdjacentTransition.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {step pad : Nat -> Int}

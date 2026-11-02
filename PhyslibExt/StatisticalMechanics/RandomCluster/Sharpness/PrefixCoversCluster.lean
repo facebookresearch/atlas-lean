@@ -219,7 +219,7 @@ lemma frontierConn_clusterOrder (endU endV : E → V) (B C : Set V) (n : ℕ)
 open Classical in
 omit [DecidableEq V] in
 /-- The covering property fails for some edge. -/
-theorem not_forall_prefixCoversCluster {n : ℕ} (σ : Fin n ≃ E) (endU endV : E → V)
+lemma not_forall_prefixCoversCluster {n : ℕ} (σ : Fin n ≃ E) (endU endV : E → V)
     (B : Set V) (h2 : 2 ≤ (Finset.univ.filter (TopIncident endU endV B)).card) :
     ¬ (∀ e : E, PrefixCoversCluster σ endU endV B e) := by
   classical

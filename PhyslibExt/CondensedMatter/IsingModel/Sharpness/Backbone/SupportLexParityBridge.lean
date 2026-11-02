@@ -218,7 +218,7 @@ lemma shbK4DirectRho_cast (E : Finset shbK4Edge) (t : ℚ) :
     shbK4DirectFiberMass_cast, shbK4VacuumMass_cast]
 
 /-- The parity-model counterexample to domain monotonicity, over `ℝ`. -/
-theorem shb_supportLex_realParity_P3_counterexample :
+lemma shb_supportLex_realParity_P3_counterexample :
     shbK4DirectRhoPolynomial shbK4H (2 / 3) <
       shbK4DirectRhoPolynomial shbK4G (2 / 3) := by
   have h := shb_supportLex_edgeDomain_P3_counterexample
@@ -272,7 +272,7 @@ lemma shbK4DirectRhoSeries_eq_polynomial
 
 /-- Domain monotonicity fails for the current-series direct-path weight on `K₄ \ 12 ⊆ K₄` at
 `x = artanh (2/3)`. -/
-theorem shb_supportLex_series_P3_counterexample :
+lemma shb_supportLex_series_P3_counterexample :
     shbK4DirectRhoSeries shbK4H (Real.artanh (2 / 3)) <
       shbK4DirectRhoSeries shbK4G (Real.artanh (2 / 3)) := by
   rw [shbK4DirectRhoSeries_eq_polynomial,

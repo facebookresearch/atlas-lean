@@ -406,7 +406,7 @@ theorem shbK4_rhoSupport_eq_directRhoSeries
 
 /-- Domain monotonicity fails for the literal support-ordered backbone weight:
 `ρ_{K₄ \ 12}(0 → 3) < ρ_{K₄}(0 → 3)` at `β = artanh (2/3)`, `J ≡ 1`. -/
-theorem shb_supportLex_literal_P3_counterexample :
+lemma shb_supportLex_literal_P3_counterexample :
     shb_rhoSupport (shbK4Graph shbK4H) (Real.artanh (2 / 3))
         (fun _ ↦ 1) 0 3 (shbK4DirectPath shbK4H (by decide)) <
       shb_rhoSupport (shbK4Graph shbK4G) (Real.artanh (2 / 3))

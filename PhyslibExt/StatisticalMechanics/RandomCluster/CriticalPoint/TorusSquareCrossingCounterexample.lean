@@ -128,7 +128,7 @@ lemma torusSquareShiftCounterexample_dual_vertical
   simp at hcode
 
 /-- Refutation of the exact duality. -/
-theorem torus_concreteSquareCrossing_duality_iff_false
+lemma torus_concreteSquareCrossing_duality_iff_false
     (L : ℕ) [Fact (2 < L)] :
     ¬ ∀ omega : TorusAmbientConfig L,
       ¬ torusSquareHorizontalCrossing L 1 omega ↔

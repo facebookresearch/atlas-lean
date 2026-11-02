@@ -52,7 +52,7 @@ namespace StatMech.Sharpness
 
 /-- The domain-resummation inequality fails for the direct path of `K₄ \ 12 ⊆ K₄` at
 `β = artanh (2/3)`, `J ≡ 1`. -/
-theorem shb_supportLex_literal_domainResummation_counterexample :
+lemma shb_supportLex_literal_domainResummation_counterexample :
     ¬shb_P3DomainResummation
       (shbK4Graph shbK4H) (shbK4Graph shbK4G)
       (shbK4Graph_mono shbK4H_subset_shbK4G)
@@ -83,4 +83,3 @@ theorem shb_no_universal_supportLex_P3 :
   exact (not_le_of_gt shb_supportLex_literal_P3_counterexample) hle
 
 end StatMech.Sharpness
-

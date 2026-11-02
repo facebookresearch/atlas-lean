@@ -266,7 +266,7 @@ def psr_witnessEndU : Fin 3 → Fin 4 := ![1, 0, 2]
 def psr_witnessEndV : Fin 3 → Fin 4 := ![2, 1, 3]
 
 /-- Refutation of the first-edge frontier connection. -/
-theorem psr_frontierConn_first_false_concrete (σ : Fin 3 ≃ Fin 3) (he₀ : (σ.symm 0 : ℕ) = 0) :
+lemma psr_frontierConn_first_false_concrete (σ : Fin 3 ≃ Fin 3) (he₀ : (σ.symm 0 : ℕ) = 0) :
     ¬ FrontierConn σ
         (indicatorConn psr_witnessEndU psr_witnessEndV ({0} : Set (Fin 4)) ({3} : Set (Fin 4)))
         psr_witnessEndU psr_witnessEndV ({0} : Set (Fin 4)) (0 : Fin 3) := by

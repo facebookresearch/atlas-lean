@@ -213,7 +213,7 @@ private lemma osp_map_not_count :
   exact le_antisymm hle1 hle2
 
 /-- Naive gluing fails. -/
-theorem osp_naive_per_partition_glue_false :
+lemma osp_naive_per_partition_glue_false :
     ¬ (∀ {Ω β : Type} [MeasurableSpace Ω] [MeasurableSpace β] (μ : Measure Ω) (ν : Measure β)
         (h₀ h₁ : Ω → β) (p : Ω → Prop) [DecidablePred p]
         (_h0 : MeasurePreserving h₀ μ ν) (_h1 : MeasurePreserving h₁ μ ν)

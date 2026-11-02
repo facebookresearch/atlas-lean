@@ -151,4 +151,3 @@ theorem bbe_backbone_exists_toggle (G : SimpleGraph V) [DecidableRel G.Adj]
 end Ising
 
 end StatMech
-

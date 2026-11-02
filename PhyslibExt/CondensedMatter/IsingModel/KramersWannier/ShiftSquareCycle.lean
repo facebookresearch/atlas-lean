@@ -103,7 +103,7 @@ lemma ceo_shiftSquare_crossEdge_count_zero :
   simp [SimpleGraph.Walk.edges_cons, jec_hsegRight, jec_vsegUp, List.count]
 
 /-- `rpc_CrossEdgeOddIffOnWalk` fails for the loop. -/
-theorem ceo_shiftSquare_residue_false : ¬ rpc_CrossEdgeOddIffOnWalk ceo_shiftSquare := by
+lemma ceo_shiftSquare_residue_false : ¬ rpc_CrossEdgeOddIffOnWalk ceo_shiftSquare := by
   intro h
   have hodd := (h ceo_uv_adj).mpr ceo_shiftSquare_edge_mem
   rw [ceo_shiftSquare_crossEdge_count_zero] at hodd
@@ -139,7 +139,7 @@ lemma ceo_shiftSquare_not_bdEdge :
   simp
 
 /-- `kwc_PrimalWalkLeftRegionMatch` is false: the loop `ceo_shiftSquare` is a counterexample. -/
-theorem ceo_primalWalkLeftRegionMatch_false : ¬ kwc_PrimalWalkLeftRegionMatch := by
+lemma ceo_primalWalkLeftRegionMatch_false : ¬ kwc_PrimalWalkLeftRegionMatch := by
   intro h
   have := (h ceo_shiftSquare ceo_uv_adj).mp (List.mem_toFinset.mpr ceo_shiftSquare_edge_mem)
   exact ceo_shiftSquare_not_bdEdge this

@@ -39,11 +39,12 @@ Fidelity of the headlines. None of the results computes a critical point from th
   the algebraic duality of `CriticalAlgebra`.
 - `triangular_hexagonal_critical_of_phase_inputs` (`q ≥ 1`) is conditional on: both critical
   points in `(0, 1)`, `OffCriticalSharpness` for both lattices, `DualSubcriticalCoverage`,
-  `DualNoCoexistence`, `TriangularCriticalPhaseBoundary` (assumes the triangular critical value),
-  `SubcriticalTwoPointExponentialDecay` on the triangular lattice, and
-  `TriHexSubcriticalDecayTransfer`. Its two decay conclusions are the decay hypothesis itself and
-  the transfer hypothesis applied to it (circular); the only derived content is the duality
+  `DualNoCoexistence`, and `TriangularCriticalPhaseBoundary` (assumes the triangular critical
+  value). It takes and returns no decay statements: the only derived content is the duality
   relation of the critical points and the hexagonal cubic at `p_c(hex)`.
+- `triHexCriticalConclusion_of_exactDualThreshold` likewise returns only the two critical
+  cubics; decay transfer is a separate statement (`TriHexSubcriticalDecayTransfer`, see
+  `DecayTransport`) and is never packaged as a conclusion of a critical-point theorem.
 - `triHexCriticalPolynomials_one_of_starTriangle_of_dualThreshold` (`q = 1`) assumes the
   bond-percolation star–triangle equation at `pcTri`, which is equivalent to its first conclusion.
 - `measurableSet_twoPointEvent`, the bounds on `wiredTwoPointProbability` and
@@ -55,8 +56,8 @@ Fidelity of the headlines. None of the results computes a critical point from th
 - `triHexCriticalPolynomials_of_dualThreshold_of_triangularPhase` : critical cubics at both
   thresholds. Conditional (assumes the triangular critical value, see above).
 - `triangular_hexagonal_critical_of_phase_inputs` : the critical-point assembly. Conditional on
-  sharpness, coverage, no coexistence, the triangular critical value, triangular decay and decay
-  transfer; decay conclusions circular.
+  sharpness, coverage, no coexistence and the triangular critical value; returns only the two
+  critical cubics, no decay conclusions.
 
 ## iii. Table of contents
 
@@ -310,27 +311,24 @@ def TriHexSubcriticalDecayTransfer (q pcTri pcHex : ℝ) : Prop :=
   SubcriticalTwoPointExponentialDecay triangular q pcTri →
     SubcriticalTwoPointExponentialDecay hexagonal q pcHex
 
+/-- Critical cubics at the dual thresholds from the triangular phase boundary. Returns only
+the genuinely derived content (the two cubics); decay statements are neither assumed nor
+concluded here. -/
 lemma triHexCriticalConclusion_of_exactDualThreshold
     {q pcTri pcHex : ℝ}
     (hq : 0 < q)
     (hpcTri : pcTri ∈ Ioo (0 : ℝ) 1)
     (hdual : dualParam pcTri q = pcHex)
-    (hphase : TriangularCriticalPhaseBoundary q pcTri)
-    (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q pcTri)
-    (hdecayTransfer : TriHexSubcriticalDecayTransfer q pcTri pcHex) :
-    (triangularFKCriticalPolynomial q (fkEdgeOdds pcTri) = 0 ∧
-      hexagonalFKCriticalPolynomial q (fkEdgeOdds pcHex) = 0) ∧
-      SubcriticalTwoPointExponentialDecay triangular q pcTri ∧
-      SubcriticalTwoPointExponentialDecay hexagonal q pcHex := by
-  exact ⟨triHexCriticalPolynomials_of_dualThreshold_of_triangularPhase
-      hq hpcTri hdual hphase,
-    hdecayTri, hdecayTransfer hdecayTri⟩
+    (hphase : TriangularCriticalPhaseBoundary q pcTri) :
+    triangularFKCriticalPolynomial q (fkEdgeOdds pcTri) = 0 ∧
+      hexagonalFKCriticalPolynomial q (fkEdgeOdds pcHex) = 0 :=
+  triHexCriticalPolynomials_of_dualThreshold_of_triangularPhase
+    hq hpcTri hdual hphase
 
 /-- Critical points of the triangular and hexagonal random-cluster models from phase inputs (`q ≥
-1`): under off-critical sharpness, dual coverage, no coexistence, the triangular phase boundary,
-triangular subcritical decay and decay transfer, both critical cubics vanish and both lattices have
-subcritical decay. Conditional: the triangular critical value is assumed (`hphase`) and the decay
-conclusions restate hypotheses (Grimmett, *The Random-Cluster Model*, §6.6). -/
+1`): under off-critical sharpness, dual coverage, no coexistence and the triangular phase boundary,
+both critical cubics vanish. Conditional: the triangular critical value is assumed (`hphase`).
+No decay statements are assumed or concluded (Grimmett, *The Random-Cluster Model*, §6.6). -/
 theorem triangular_hexagonal_critical_of_phase_inputs
     {q : ℝ}
     (hq : 1 ≤ q)
@@ -349,25 +347,17 @@ theorem triangular_hexagonal_critical_of_phase_inputs
       (fun p => triangular.wiredPercolates p q)
       (fun p => hexagonal.wiredPercolates p q) q)
     (hphase : TriangularCriticalPhaseBoundary q
-      (triangular.criticalPoint q))
-    (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q
-      (triangular.criticalPoint q))
-    (hdecayTransfer : TriHexSubcriticalDecayTransfer q
-      (triangular.criticalPoint q) (hexagonal.criticalPoint q)) :
-    (triangularFKCriticalPolynomial q
+      (triangular.criticalPoint q)) :
+    triangularFKCriticalPolynomial q
         (fkEdgeOdds (triangular.criticalPoint q)) = 0 ∧
       hexagonalFKCriticalPolynomial q
-        (fkEdgeOdds (hexagonal.criticalPoint q)) = 0) ∧
-      SubcriticalTwoPointExponentialDecay triangular q
-        (triangular.criticalPoint q) ∧
-      SubcriticalTwoPointExponentialDecay hexagonal q
-        (hexagonal.criticalPoint q) := by
+        (fkEdgeOdds (hexagonal.criticalPoint q)) = 0 := by
   have hq0 : 0 < q := zero_lt_one.trans_le hq
   have hrelation :=
     triangular.dualCritical_relation_of_sharpness_noCoexistence hexagonal
       hpcTri hpcHex hq0 hsharpTri hsharpHex hcoverage hnoCoexistence
   exact triHexCriticalConclusion_of_exactDualThreshold hq0 hpcTri
-    hrelation.1 hphase hdecayTri hdecayTransfer
+    hrelation.1 hphase
 
 /-! ## D. Bond percolation at `q = 1` -/
 

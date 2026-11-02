@@ -197,7 +197,7 @@ lemma shbK4_rhos_at_two_thirds :
 
 /-- Domain monotonicity fails for the support-ordered backbone weight in the parity model:
 `ρ_{K₄ \ 12}(2/3) < ρ_{K₄}(2/3)`. -/
-theorem shb_supportLex_edgeDomain_P3_counterexample :
+lemma shb_supportLex_edgeDomain_P3_counterexample :
     shbK4DirectRho shbK4H (2 / 3) < shbK4DirectRho shbK4G (2 / 3) := by
   rw [shbK4_rhos_at_two_thirds.1, shbK4_rhos_at_two_thirds.2]
   norm_num

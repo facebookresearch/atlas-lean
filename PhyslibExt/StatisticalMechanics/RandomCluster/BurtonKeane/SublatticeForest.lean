@@ -125,4 +125,3 @@ lemma bc108_status :
   · intro ω L R h; exact bc108_separatedCount_le_of_globalForest ω L R h
 
 end StatMech.Walls
-

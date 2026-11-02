@@ -118,7 +118,7 @@ lemma jbw_hardGap_iff_windingBody {a : Site 2} (Vc : (hypercubicLattice 2).Walk 
     exact ⟨fun hadj he => (h hadj).mp he, fun hadj hb => (h hadj).mpr hb⟩
 
 /-- Summary: a vertex cut is not even, and face-region separation gives reachability. -/
-theorem jbw_jed_insufficient :
+lemma jbw_jed_insufficient :
     (¬ Even (jce_degree (jbw_bdEdgeSet jbw_singleton) ![(1 : ℤ), 0])) ∧
     (∀ (H : SimpleGraph (Site 2)), H.edgeSet.Finite → ∀ (p q f0 g0 : Site 2),
         (hypercubicLattice 2).Adj p q → s(p, q) ∉ H.edgeSet →

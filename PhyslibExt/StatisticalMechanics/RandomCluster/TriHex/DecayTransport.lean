@@ -31,11 +31,11 @@ supplied by `CoarseGeometry` through `hexToTriAnchor`, so the probability compar
 
 Fidelity: `TriHexGlobalProbabilityComparison` (domination of hexagonal by triangular two-point
 functions at some subcritical triangular parameter) is an assumption that is not proved anywhere
-in the library. The critical conclusions `triHexCriticalConclusion_of_exactDualThreshold_of_…`
-are conditional on it (or on `TriHexGlobalTwoPointComparison`), on
-`TriangularCriticalPhaseBoundary` (which assumes the triangular critical value, see
-`CriticalReduction`) and on triangular subcritical decay, which is also returned unchanged as a
-conclusion.
+in the library. It is used only for the decay transfer
+`TriHexSubcriticalDecayTransfer`, never for critical-point conclusions: the critical cubics are
+already `triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which needs no
+comparison and no decay input, so no `…_of_globalComparison` / `…_of_probabilityComparison`
+wrapper packaging decay conclusions is kept here.
 
 ## ii. Key results
 
@@ -43,9 +43,6 @@ conclusion.
   Unconditional.
 - `triHexSubcriticalDecayTransfer_of_probabilityComparison` : triangular-to-hexagonal decay
   transfer. Conditional on `TriHexGlobalProbabilityComparison`.
-- `triHexCriticalConclusion_of_exactDualThreshold_of_probabilityComparison` : critical cubics and
-  decay on both lattices. Conditional on the probability comparison, the triangular phase boundary
-  (the triangular critical value) and triangular decay.
 
 ## iii. Table of contents
 
@@ -164,41 +161,10 @@ lemma triHexSubcriticalDecayTransfer_of_probabilityComparison
   triHexSubcriticalDecayTransfer_of_globalComparison
     (triHexGlobalTwoPointComparison_of_probabilityComparison hprob)
 
-lemma triHexCriticalConclusion_of_exactDualThreshold_of_globalComparison
-    {q pcTri pcHex : Real}
-    (hq : 0 < q)
-    (hpcTri : pcTri ∈ Ioo (0 : Real) 1)
-    (hdual : BeffaraDC.dualParam pcTri q = pcHex)
-    (hphase : TriangularCriticalPhaseBoundary q pcTri)
-    (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q pcTri)
-    (hcompare : TriHexGlobalTwoPointComparison q pcTri pcHex) :
-    (FK.TriHex.triangularFKCriticalPolynomial q
-          (FK.TriHex.fkEdgeOdds pcTri) = 0 ∧
-        FK.TriHex.hexagonalFKCriticalPolynomial q
-          (FK.TriHex.fkEdgeOdds pcHex) = 0) ∧
-      SubcriticalTwoPointExponentialDecay triangular q pcTri ∧
-      SubcriticalTwoPointExponentialDecay hexagonal q pcHex := by
-  exact triHexCriticalConclusion_of_exactDualThreshold hq hpcTri hdual
-    hphase hdecayTri
-    (triHexSubcriticalDecayTransfer_of_globalComparison hcompare)
-
-lemma triHexCriticalConclusion_of_exactDualThreshold_of_probabilityComparison
-    {q pcTri pcHex : Real}
-    (hq : 0 < q)
-    (hpcTri : pcTri ∈ Ioo (0 : Real) 1)
-    (hdual : BeffaraDC.dualParam pcTri q = pcHex)
-    (hphase : TriangularCriticalPhaseBoundary q pcTri)
-    (hdecayTri : SubcriticalTwoPointExponentialDecay triangular q pcTri)
-    (hprob : TriHexGlobalProbabilityComparison q pcTri pcHex) :
-    (FK.TriHex.triangularFKCriticalPolynomial q
-          (FK.TriHex.fkEdgeOdds pcTri) = 0 ∧
-        FK.TriHex.hexagonalFKCriticalPolynomial q
-          (FK.TriHex.fkEdgeOdds pcHex) = 0) ∧
-      SubcriticalTwoPointExponentialDecay triangular q pcTri ∧
-      SubcriticalTwoPointExponentialDecay hexagonal q pcHex := by
-  exact triHexCriticalConclusion_of_exactDualThreshold hq hpcTri hdual
-    hphase hdecayTri
-    (triHexSubcriticalDecayTransfer_of_probabilityComparison hprob)
+/-- No critical-conclusion wrappers are kept here: the critical cubics are already
+`triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which needs neither a
+two-point comparison nor a decay hypothesis. Packaging the decay hypothesis as a conclusion
+of a critical-point theorem was circular, and is removed rather than narrowed. -/
 
 end PeriodicPlanar
 end FK

@@ -79,7 +79,7 @@ variable {V : Type*} [DecidableEq V]
 
 omit [DecidableEq V] [Fintype E] in
 /-- Refutation of the frontier-connection hypothesis. -/
-theorem frf_familyFrontierConn_false {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
+lemma frf_familyFrontierConn_false {κ : Type*} {nE : ℕ} (σf : κ → (Fin nE ≃ E))
     (f : ConfigSpace E → ℝ) (endU endV : E → V) (B : κ → Set V)
     (k₀ : κ) {e₀ : E} (he₀ : ((σf k₀).symm e₀ : ℕ) = 0)
     (X : ConfigSpace E) (hnc : ∃ w, f w ≠ f X)
