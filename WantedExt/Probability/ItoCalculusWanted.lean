@@ -142,9 +142,12 @@ public theorem_wanted itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpa
       ∫⁻ ω, ‖itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω‖ₑ ^ 2 ∂P =
         ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P
 
-/-- **Continuous modification.** The Itô integral admits a version with continuous paths,
-indistinguishable from it: there is a process `J` with continuous paths such that almost surely
-`J t = ∫_0^t H dB` for every `t` simultaneously. -/
+/-- **Continuous modification.** The Itô integral admits a modification with continuous paths:
+there is a process `J` with continuous paths such that `J t = ∫_0^t H dB` almost surely for each
+`t` (Karatzas–Shreve 1991, Section 3.2). `ProbabilityTheory.itoIntegral` chooses its version
+separately at each time, so it is only determined up to a null set that may depend on `t`; the
+statement therefore asks for a modification rather than for a process indistinguishable from
+this particular choice. Any two continuous modifications are indistinguishable. -/
 public theorem_wanted itoIntegral_continuous_modification {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
     (hBF : Adapted F B)
@@ -153,7 +156,7 @@ public theorem_wanted itoIntegral_continuous_modification {Ω : Type*} {mΩ : Me
     {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H)
     (hH2 : ∀ t : ℝ≥0, ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
     ∃ J : ℝ≥0 → Ω → ℝ, (∀ ω, Continuous fun t ↦ J t ω) ∧
-      ∀ᵐ ω ∂P, ∀ t, J t ω = itoIntegral P F B H t ω
+      ∀ t, J t =ᵐ[P] itoIntegral P F B H t
 
 /-- **Itô's formula** for Brownian motion: for `f` of class `C²` with bounded `f'` and `f''`,
 `f(B t) = f(B 0) + ∫_0^t f'(B u) dB u + (1/2) ∫_0^t f''(B u) du` almost surely
