@@ -20,8 +20,8 @@ Module under test: `Sheffield.DeepConnectorCageSchedule` in
 * Refutation: `PeriodicPlanarDualPair.false_of_forall_symmetricBandDeepConnectorCageCertificate`
   shows that no dual pair has a symmetric-band cage certificate for every band and row pair
   (the negation of `hcage`, for any `B ≥ 0` and base vertex).
-* `PeriodicPlanarDualPair.SymmetricBandDeepConnectorCageCertificate` and the two vacuous
-  consequences elaborate (check-only).
+* The two vacuous headline wrappers that assumed a certificate family were removed;
+  the certificate, its refutation, and the single-certificate disjointness lemma remain.
 -/
 
 @[expose] public section
@@ -43,12 +43,6 @@ example (D : PeriodicPlanarDualPair P Pdual) (rPrimal Rdeep rDual : ℝ) (x0 : V
       PeriodicPlanarDualPair.SymmetricBandDeepConnectorCageCertificate D 0 rPrimal Rdeep rDual
         band width L U) :=
   ⟨PeriodicPlanarDualPair.false_of_forall_symmetricBandDeepConnectorCageCertificate D le_rfl x0⟩
-
-open PeriodicPlanarDualPair in
-example := @complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages
-
-open PeriodicPlanarDualPair in
-example := @freeBufferedInfiniteVolume_complementaryDual_rightHalfPlane_zero_of_symmetricBandCages
 
 end DeepConnectorCageSchedule
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield

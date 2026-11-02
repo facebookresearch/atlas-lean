@@ -33,7 +33,8 @@ Headline fidelity: both hypotheses are false.
 - `kwc_PrimalWalkLeftRegionMatch` is refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`
   (ShiftSquareCycle).
 
-So `kwc_primalWalkBoundsRegion_of_leftRegionMatch` is vacuous. The walk lemmas in section A are
+The false-to-false helper `kwc_primalWalkBoundsRegion_of_leftRegionMatch` was removed; the
+direct refutation is `ceo_primalWalkLeftRegionMatch_false`. The walk lemmas in section A are
 unconditional.
 
 ## ii. Key results
@@ -112,14 +113,6 @@ def kwc_PrimalWalkLeftRegionMatch : Prop :=
   ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a),
     ∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
       (s(u, v) ∈ Vc.edges.toFinset ↔ bdEdge (jec_leftRegion Vc) s(u, v))
-
-/-- `kwc_PrimalWalkLeftRegionMatch` implies `PrimalWalkBoundsRegion`. Vacuous: the hypothesis is
-false. -/
-lemma kwc_primalWalkBoundsRegion_of_leftRegionMatch
-    (hmatch : kwc_PrimalWalkLeftRegionMatch) :
-    PrimalWalkBoundsRegion := by
-  intro a Vc
-  exact ⟨jec_leftRegion Vc, fun h => hmatch Vc h⟩
 
 /-- The trivial closed walk has empty edge set, the boundary of the empty set. -/
 lemma kwc_primalWalkBoundsRegion_nil_case {a : Site 2} :

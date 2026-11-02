@@ -29,9 +29,8 @@ disjoint from the dual band event (hypothesis `hdisjoint`). Hence
 `complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows` is conditional on
 `hdisjoint` for every band and every admissible `L, U, width`. That hypothesis is a strong
 planar-topology statement (all source rows, all widths); it is not proved here and no Lean
-refutation is known. The only caller,
-`complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages`, derives it from a
-certificate family that is refuted in Lean (see `Sheffield.DeepConnectorCageSchedule`).
+refutation is known. The cage-certificate caller that derived it from a certificate family
+was removed: that family is refuted in Lean (see `Sheffield.DeepConnectorCageSchedule`).
 
 ## ii. Key results
 

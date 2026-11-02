@@ -14,8 +14,9 @@ public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion
 /-!
 # Tests for `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion`
 
-* `fwr_primalWalkBoundsRegion_false` refutes `PrimalWalkBoundsRegion`, and hence (with
-  `kwc_primalWalkBoundsRegion_of_leftRegionMatch`) `kwc_PrimalWalkLeftRegionMatch`;
+* `fwr_primalWalkBoundsRegion_false` refutes `PrimalWalkBoundsRegion`, and
+  `ceo_primalWalkLeftRegionMatch_false` refutes `kwc_PrimalWalkLeftRegionMatch` directly
+  (the false-to-false helper `kwc_primalWalkBoundsRegion_of_leftRegionMatch` was removed);
 * `fwr_faceCutFlip` and `fwr_faceCutMatch_nil` on the adjacent faces `(0, 1)` and `(1, 1)`;
 * `fwr_primalWalkBoundsFaceRegion` holds unconditionally.
 -/
@@ -30,8 +31,7 @@ open _root_.StatMech _root_.StatMech.Walls _root_.StatMech.Lattice
 example : ¬ PrimalWalkBoundsRegion := fwr_primalWalkBoundsRegion_false
 
 -- So is the stronger inside-region matching.
-example : ¬ kwc_PrimalWalkLeftRegionMatch := fun h =>
-  fwr_primalWalkBoundsRegion_false (kwc_primalWalkBoundsRegion_of_leftRegionMatch h)
+example : ¬ kwc_PrimalWalkLeftRegionMatch := ceo_primalWalkLeftRegionMatch_false
 
 -- The face-region parity flip for the shifted unit-square loop and two adjacent faces.
 example : (fwr_faceInside ceo_shiftSquare ![0, 1] ↔ ¬ fwr_faceInside ceo_shiftSquare ![1, 1]) ↔

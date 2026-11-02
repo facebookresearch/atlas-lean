@@ -14,12 +14,11 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSel
 /-!
 # Tests for `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching`
 
-* on one vertex (`Fin 1`) every current is sourceless, so the selector selecting the empty word
-  everywhere is a `shb_CurrentDynamicSelector` (the structure is inhabited there; it is empty on
-  two or more vertices, see `ActualSelectorObstruction`);
-* `shb_CurrentDynamicSelector.actualMass_eq_generated` and
-  `shb_currentDynamicSelector_actualMass_active` applied under the switching law;
+* on one vertex (`Fin 1`) every current is sourceless;
 * `shb_activeSegmentFiberMass_eq_segmentNum` (unconditional).
+
+The vacuous selector API (`shb_CurrentDynamicSelector`, its switching law, and the actual
+fiber mass identities) was removed; its tests were removed with it.
 -/
 
 @[expose] public section
@@ -42,29 +41,6 @@ theorem sources_fin1 (G : SimpleGraph (Fin 1)) [DecidableRel G.Adj] (n : Current
     induction e using Sym2.ind with
     | _ a b => simp [Subsingleton.elim a b]
   simp [sources, incidentFlux, hG]
-
-/-- The selector on one vertex that always selects the empty word. -/
-noncomputable def unitSelector : shb_CurrentDynamicSelector (V := Fin 1) where
-  sourceClass _ _ := ∅
-  select _ _ := []
-  sourceClass_nil _ := rfl
-  sources_eq_sourceClass_of_select _ _ _ _ := sources_fin1 _ _
-  select_nil_of_sources_empty _ _ _ := rfl
-  select_ne_cons_of_not_active _ _ _ _ _ := (List.cons_ne_nil _ _).symm
-
--- Under the switching law, the actual fiber mass is the generated one.
-example (β : ℝ) (J : Sym2 (Fin 1) → ℝ) (h : unitSelector.SwitchingLaw β J) :
-    unitSelector.actualMass β J = shb_generatedExplorationFiberMass β J :=
-  unitSelector.actualMass_eq_generated β J h
-
--- The active cut resummation identity under the switching law.
-example {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V] (S : shb_CurrentDynamicSelector)
-    (β : ℝ) (J : Sym2 V → ℝ) (h : S.SwitchingLaw β J) (d : shb_ExplorationDomain V)
-    (s : shb_ExplorationSegment V) (ss : List (shb_ExplorationSegment V)) (hs : s ∈ d.active) :
-    S.actualMass β J d (s :: ss) *
-        currentSum (shb_BackboneExplorationDomain.advance d s).graph β J ∅ =
-      shb_segmentNum β J d s * S.actualMass β J (shb_BackboneExplorationDomain.advance d s) ss :=
-  shb_currentDynamicSelector_actualMass_active S β J h d s ss hs
 
 -- The active segment fiber mass is the segment numerator.
 example {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V] (β : ℝ) (J : Sym2 V → ℝ)

@@ -17,8 +17,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.BondwiseO
 * `shb_bondwiseOrderedTests` on the order `[1, 2, 3]`: the test at a bond reads the bond
   (`test_apply`), and an accepted bond lies in its determined cut (`accepted_mem_determinedCut`);
 * `selects_iff_of_agreeOn_determinedTrace` for two configurations that agree everywhere;
-* `bondwiseP2Reindex_isEmpty_of_path_source_ne_empty`: a bondwise reindexing with nonempty path
-  source `{0}` does not exist (refutation of the vacuous route).
+* The bondwise reindexing route was removed with the vacuous selector API.
 -/
 
 @[expose] public section
@@ -49,15 +48,5 @@ example {D B : Type*} [DecidableEq B] (X : shb_DynamicEdgeExploration D B) (ω :
     (word : List B) :
     X.Selects (fun _ b => ω b) d word ↔ X.Selects (fun _ b => ω b) d word :=
   X.selects_iff_of_agreeOn_determinedTrace ω ω d word fun _ _ => rfl
-
--- No bondwise reindexing with a nonempty path source.
-example {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V] [Nonempty V] {D : Type*}
-    (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D) (accepted : Sym2 V)
-    (suffix : List (Sym2 V)) (bit : ℕ → Bool) (A : Finset V) (S : shb_CurrentDynamicSelector)
-    (β : ℝ) (J : Sym2 V → ℝ) (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
-    (ss : List (shb_ExplorationSegment V)) (v : V) :
-    IsEmpty (BondwiseP2Reindex X x accepted suffix bit A {v} S β J d s ss) :=
-  bondwiseP2Reindex_isEmpty_of_path_source_ne_empty X x accepted suffix bit A {v} S β J d s ss
-    (Finset.singleton_ne_empty v)
 
 end PhyslibExtTest.CondensedMatter.IsingModel.Sharpness.Backbone.BondwiseOrderedExploration

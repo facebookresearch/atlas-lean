@@ -10,7 +10,6 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelector
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCut
-public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching
 
 /-!
 # Bondwise ordered explorations and suffix toggles
@@ -33,20 +32,14 @@ determined cut of the accepted bond, `SuffixFresh`), the suffix selection event 
 outside the cut, and edge-copy toggles in the cut preserve raw fiber masses
 (`rawFiberMass_eq_of_bondwiseSuffixToggle`).
 
-`BondwiseP2Reindex` bundles the data needed to turn this into the active cut resummation
-identity for a current dynamic selector: a choice of path copies with sources `C` in the cut and
-two reindexings of the two sides as raw fiber mass sums.
+The bondwise reindexing route to the active cut resummation identity was removed together with
+the vacuous current-dynamic-selector API: it quantified over a selector structure that is empty
+when `V` has two distinct vertices, and its reindexing forced `C = ∅`, whereas the backbone
+toggle needs path copies with nonempty sources.
 
 Headline fidelity:
 - `rawFiberMass_eq_of_bondwiseDeterminedToggle` and `rawFiberMass_eq_of_bondwiseSuffixToggle`
   are proved under the premises `hPsrc`, `hPcut` (and `hQ`, respectively `hfresh`).
-- `actualMass_active_of_bondwiseSuffixToggle` is conditional on a selector
-  `S : shb_CurrentDynamicSelector` and a reindexing `R : BondwiseP2Reindex …`. It is vacuous:
-  `shb_CurrentDynamicSelector` is empty when `V` has two distinct vertices
-  (`shb_CurrentDynamicSelector_isEmpty_of_exists_ne`), and `BondwiseP2Reindex` forces `C = ∅`
-  (`BondwiseP2Reindex.path_source_eq_empty`; empty for `C ≠ ∅` by
-  `bondwiseP2Reindex_isEmpty_of_path_source_ne_empty`), whereas the backbone toggle needs path
-  copies with nonempty sources.
 
 ## ii. Key results
 
@@ -55,15 +48,12 @@ Headline fidelity:
   the determined trace (unconditional)
 - `BackboneDeterminedCutSwitching.rawFiberMass_eq_of_bondwiseSuffixToggle` : suffix events are
   toggle invariant (premises `hfresh`, `hPsrc`, `hPcut`)
-- `BackboneDeterminedCutSwitching.actualMass_active_of_bondwiseSuffixToggle` : the active cut
-  resummation identity from a bondwise reindexing (vacuous, see above)
 
 ## iii. Table of contents
 
 - A. One-bond ordered local tests
 - B. Dynamic explorations as ordered local explorations
 - C. Flux bit configurations and suffix events
-- D. The bondwise reindexing
 
 ## iv. References
 
@@ -352,103 +342,6 @@ lemma rawFiberMass_eq_of_bondwiseSuffixToggle
   exact bondwiseSuffixEvent_fluxEventOutsideCut G X d accepted suffix
     hfresh bit m
 
-/-! ## D. The bondwise reindexing -/
-
-/-- Data reducing the active cut resummation identity to suffix toggles: path copies with sources
-`C` in the determined cut for every flux, and reindexings of both sides as raw fiber mass sums.
-It forces `C = ∅` (`BondwiseP2Reindex.path_source_eq_empty`). -/
-structure BondwiseP2Reindex
-    (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
-    (accepted : Sym2 V) (suffix : List (Sym2 V))
-    (bit : Nat -> Bool) (A C : Finset V)
-    (S : shb_CurrentDynamicSelector (V := V))
-    (beta : Real) (J : Sym2 V -> Real)
-    (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
-    (ss : List (shb_ExplorationSegment V)) where
-  pathCopies : ∀ m : d.graph.edgeFinset -> Nat,
-    Finset (FluxEdgeCopy.Copy d.graph m)
-  path_sources : ∀ (m : d.graph.edgeFinset -> Nat),
-    RandomCurrent.sources (endsM d.graph m) (pathCopies m) = C
-  path_supported : ∀ (m : d.graph.edgeFinset -> Nat),
-    SupportedInCut d.graph m
-      ((X.bondwiseOrdered.tests x).determinedCut accepted) (pathCopies m)
-  left_reindex :
-    S.actualMass beta J d (s :: ss) *
-        currentSum (shb_BackboneExplorationDomain.advance d s).graph
-          beta J ∅ =
-      ∑' m : d.graph.edgeFinset -> Nat,
-        rawFiberMass d.graph beta J m A
-          (BondwiseSuffixEvent d.graph X (X.advance x accepted) suffix bit)
-  right_reindex :
-    shb_segmentNum beta J d s *
-        S.actualMass beta J
-          (shb_BackboneExplorationDomain.advance d s) ss =
-      ∑' m : d.graph.edgeFinset -> Nat,
-        rawFiberMass d.graph beta J m (A ∆ C)
-          (BondwiseSuffixEvent d.graph X (X.advance x accepted) suffix bit)
-
-/-- A bondwise reindexing forces `C = ∅`: at the zero flux there are no copies. -/
-lemma BondwiseP2Reindex.path_source_eq_empty
-    (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
-    (accepted : Sym2 V) (suffix : List (Sym2 V))
-    (bit : Nat -> Bool) (A C : Finset V)
-    (S : shb_CurrentDynamicSelector (V := V))
-    (beta : Real) (J : Sym2 V -> Real)
-    (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
-    (ss : List (shb_ExplorationSegment V))
-    (R : BondwiseP2Reindex X x accepted suffix bit A C S beta J d s ss) :
-    C = ∅ := by
-  let m0 : d.graph.edgeFinset -> Nat := fun _ => 0
-  have hcopies : R.pathCopies m0 = ∅ := by
-    ext i
-    exact Fin.elim0 i.2
-  calc
-    C = RandomCurrent.sources (endsM d.graph m0) (R.pathCopies m0) :=
-      (R.path_sources m0).symm
-    _ = RandomCurrent.sources (endsM d.graph m0) ∅ := by rw [hcopies]
-    _ = ∅ := by
-      ext v
-      simp [RandomCurrent.mem_sources, RandomCurrent.degK]
-
-/-- There is no bondwise reindexing with `C ≠ ∅`. -/
-lemma bondwiseP2Reindex_isEmpty_of_path_source_ne_empty
-    (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
-    (accepted : Sym2 V) (suffix : List (Sym2 V))
-    (bit : Nat -> Bool) (A C : Finset V)
-    (S : shb_CurrentDynamicSelector (V := V))
-    (beta : Real) (J : Sym2 V -> Real)
-    (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
-    (ss : List (shb_ExplorationSegment V)) (hC : C ≠ ∅) :
-    IsEmpty
-      (BondwiseP2Reindex X x accepted suffix bit A C S beta J d s ss) := by
-  constructor
-  intro R
-  exact hC R.path_source_eq_empty
-
-/-- The active cut resummation identity for a current dynamic selector from a bondwise reindexing.
-Vacuous: no selector exists when `V` has two distinct vertices, and a reindexing forces `C = ∅`. -/
-lemma actualMass_active_of_bondwiseSuffixToggle
-    (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
-    (accepted : Sym2 V) (suffix : List (Sym2 V))
-    (hfresh : SuffixFresh X x accepted suffix)
-    (bit : Nat -> Bool) (A C : Finset V)
-    (S : shb_CurrentDynamicSelector (V := V))
-    (beta : Real) (J : Sym2 V -> Real)
-    (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
-    (ss : List (shb_ExplorationSegment V))
-    (R : BondwiseP2Reindex X x accepted suffix bit A C S beta J d s ss) :
-    S.actualMass beta J d (s :: ss) *
-        currentSum (shb_BackboneExplorationDomain.advance d s).graph
-          beta J ∅ =
-      shb_segmentNum beta J d s *
-        S.actualMass beta J
-          (shb_BackboneExplorationDomain.advance d s) ss := by
-  rw [R.left_reindex, R.right_reindex]
-  apply tsum_congr
-  intro m
-  exact rawFiberMass_eq_of_bondwiseSuffixToggle d.graph X x accepted
-    suffix hfresh bit beta J m A C (R.pathCopies m)
-    (R.path_sources m) (R.path_supported m)
 
 end BackboneDeterminedCutSwitching
 

@@ -8,42 +8,34 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelectorAdmissible
 
 /-!
-# Current dynamic selectors do not exist
+# Single-edge graph and edge-copy multiplicities
 
-The structure `shb_CurrentDynamicSelector` is empty as soon as `V` has two distinct vertices, so
-every result quantifying over current dynamic selectors is vacuous. Also an edge-copy
-multiplicity identity for a single edge at `β = J = 1`.
+The single-edge graph, its flux sources, and an edge-copy multiplicity identity for a single
+edge at `β = J = 1`.
 
 ## i. Overview
 
-Take the single-edge graph on `x ≠ y` with no active segments and the current with multiplicity
-one on the edge. Its sources are `{x, y}`, nonempty. A current dynamic selector must select either
-the empty word, whose source class is empty, or a word starting with a segment, which must be
-active; both are impossible. This refutes the axioms of `shb_CurrentDynamicSelector`
-(`shb_CurrentDynamicSelector_isEmpty_of_exists_ne`; for `V = Bool`,
-`shb_no_CurrentDynamicSelector_bool`).
-
-The last lemmas compute single-edge weights at `β = J = 1`: `w(0) w(2) = 1/2` and
+The lemmas compute single-edge weights at `β = J = 1`: `w(0) w(2) = 1/2` and
 `w(1) w(1) = 1`, so splitting two copies of an edge between two currents is weighted with
 multiplicity two (`shb_singleEdge_edgeCopyMultiplicity_two`).
+
+The current-dynamic-selector emptiness section was removed together with the vacuous selector
+API: the selector structure is empty when `V` has two distinct vertices, so no result
+quantifying over it was retained.
 
 All results are proved unconditionally.
 
 ## ii. Key results
 
-- `shb_CurrentDynamicSelector_isEmpty_of_exists_ne` : no current dynamic selector exists when `V`
-  has two distinct vertices
-- `shb_no_CurrentDynamicSelector_bool` : the case `V = Bool`
 - `shb_singleEdge_edgeCopyMultiplicity_two` : `2 w(0) w(2) = w(1) w(1)` on a single edge
 
 ## iii. Table of contents
 
 - A. The single-edge graph
-- B. Emptiness of current dynamic selectors
-- C. Edge-copy multiplicities on a single edge
+- B. Edge-copy multiplicities on a single edge
 
 ## iv. References
 
@@ -138,35 +130,7 @@ lemma shb_singleEdgeFlux_sources_ne_empty {x y : V} (hxy : x ≠ y) :
   rw [hs] at hx
   simp at hx
 
-/-! ## B. Emptiness of current dynamic selectors -/
-
-/-- There is no current dynamic selector when `V` has two distinct vertices: the single-edge
-current on a domain without active segments has nonempty sources, so it can select neither the
-empty word nor a word starting with a segment. -/
-theorem shb_CurrentDynamicSelector_isEmpty_of_exists_ne
-    (hne : ∃ x : V, ∃ y : V, x ≠ y) :
-    IsEmpty (shb_CurrentDynamicSelector (V := V)) := by
-  constructor
-  intro S
-  obtain ⟨x, y, hxy⟩ := hne
-  let d := shb_emptyActiveSingleEdgeDomain x y
-  let m := shb_singleEdgeFlux x y
-  cases hword : S.select d m with
-  | nil =>
-      have hs := S.sources_eq_sourceClass_of_select d m [] hword
-      rw [S.sourceClass_nil d] at hs
-      exact shb_singleEdgeFlux_sources_ne_empty hxy hs
-  | cons s ss =>
-      have hsInactive : s ∉ d.active := by simp [d, shb_emptyActiveSingleEdgeDomain]
-      exact S.select_ne_cons_of_not_active d s ss m hsInactive hword
-
-/-- There is no current dynamic selector on `Bool`. -/
-lemma shb_no_CurrentDynamicSelector_bool :
-    IsEmpty (shb_CurrentDynamicSelector (V := Bool)) := by
-  apply shb_CurrentDynamicSelector_isEmpty_of_exists_ne
-  exact ⟨false, true, by decide⟩
-
-/-! ## C. Edge-copy multiplicities on a single edge -/
+/-! ## B. Edge-copy multiplicities on a single edge -/
 
 /-- The current with constant multiplicity `k` on the single edge. -/
 def shb_singleEdgeConstantFlux (x y : V) (k : Nat) :

@@ -24,29 +24,27 @@ A `SymmetricBandDeepConnectorCageCertificate` records the cage parameters and th
 and inequalities needed by
 `finiteDeepOpenExitedJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage`; its
 `disjoint_boundaryBand` gives the disjointness hypothesis of
-`complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows`. The two headline results
-assume a certificate for every band and every admissible source row `L` (hypothesis `hcage`).
+`complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows`.
 
-Vacuity. `hcage` cannot hold when `0 ≤ B` and `V` is nonempty: placing a single source vertex
-at height `≥ 0` in the deep half-plane, the certificate fields `lowerSources` and `rectBottom`
-force its height below `-band ≤ 0`. This is proved in Lean as
-`PeriodicPlanarDualPair.false_of_forall_symmetricBandDeepConnectorCageCertificate`. Both headline
-results assume `0 < B` and a measure with a unique infinite cluster (so `V` is nonempty), hence
-they are vacuous.
+Vacuity. A certificate family for every band and every admissible source row `L`
+(hypothesis `hcage`) cannot hold when `0 ≤ B` and `V` is nonempty: placing a single source
+vertex at height `≥ 0` in the deep half-plane, the certificate fields `lowerSources` and
+`rectBottom` force its height below `-band ≤ 0`. This is proved in Lean as
+`PeriodicPlanarDualPair.false_of_forall_symmetricBandDeepConnectorCageCertificate`. The two
+headline wrappers that assumed `hcage` were therefore removed as vacuous; the certificate,
+its refutation, and the single-certificate disjointness lemma are retained.
 
 ## ii. Key results
 
 - `PeriodicPlanarDualPair.SymmetricBandDeepConnectorCageCertificate`.
 - `PeriodicPlanarDualPair.false_of_forall_symmetricBandDeepConnectorCageCertificate` : the
   certificate family is empty (refutation of `hcage`).
-- `complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages`,
-  `freeBufferedInfiniteVolume_complementaryDual_rightHalfPlane_zero_of_symmetricBandCages` :
-  vacuous (hypothesis `hcage` refuted).
+- `PeriodicPlanarDualPair.SymmetricBandDeepConnectorCageCertificate.disjoint_boundaryBand` :
+  a single cage certificate gives the disjointness hypothesis of the separated-rows result.
 
 ## iii. Table of contents
 
 - A. Cage certificates
-- B. The dual half-plane from cage certificates
 
 ## iv. References
 
@@ -115,8 +113,7 @@ structure SymmetricBandDeepConnectorCageCertificate
   rectBottom : C ≤ -(band : Real)
   rectTop : (band : Real) ≤ D0
 
-/-- The cage-certificate family assumed by
-`complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages` does not exist when
+/-- No cage-certificate family covers every band and source row when
 `0 ≤ B` and `V` is nonempty: for a source vertex at height `≥ 0` in the deep half-plane,
 `lowerSources` and `rectBottom` force its height below `C - 4 * B ≤ -band ≤ 0`. -/
 lemma false_of_forall_symmetricBandDeepConnectorCageCertificate
@@ -191,102 +188,6 @@ lemma SymmetricBandDeepConnectorCageCertificate.disjoint_boundaryBand
       hBpos hBp hBd cert.dual_left_lt_right cert.rightWidth
         cert.bottomGap cert.topGap cert.rootRight cert.rootBottom
         cert.rootTop cert.rectBottom cert.rectTop hsubset
-
-/-! ## B. The dual half-plane from cage certificates -/
-
-/-- No dual infinite cluster in `{x ≥ rDual}`, given cage certificates for every band and source
-row. Vacuous: the hypothesis `hcage` is refuted by
-`false_of_forall_symmetricBandDeepConnectorCageCertificate`. -/
-lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages
-    (D : PeriodicPlanarDualPair P Pdual)
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
-    (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
-    (hdualUnique : D.dualMeasure mu
-      {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
-    {B : Real} (hBpos : 0 < B)
-    (hBp : ∀ {v w : V} (hvw : P.graph.Adj v w) (t) (i : Fin 2),
-      |D.primalEmbedding.coordinates
-        (D.primalEmbedding.edgeArc hvw t -
-          D.primalEmbedding.vertex v) i| ≤ B)
-    (hBd : ∀ {v w : W} (hvw : Pdual.graph.Adj v w) (t) (i : Fin 2),
-      |D.dualEmbedding.coordinates
-        (D.dualEmbedding.edgeArc hvw t -
-          D.dualEmbedding.vertex v) i| ≤ B)
-    (rDual : Real) {rPrimal Rdeep : Real} (hrR : rPrimal ≤ Rdeep)
-    (hcage : ∀ (band : Nat) (L U : Finset V) (width : Nat),
-      (L : Set V) ⊆
-          D.primalEmbedding.rightHalfPlaneVertices Rdeep →
-      (U : Set V) ⊆
-          D.primalEmbedding.rightHalfPlaneVertices Rdeep →
-      U = L.image
-          (P.shift (verticalShift (1 + 2 * (band : Int)))) →
-      SymmetricBandDeepConnectorCageCertificate D
-        B rPrimal Rdeep rDual band width L U) :
-    D.dualMeasure mu
-      (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
-  apply D.complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows
-    mu hFKG hTI hunique hdualErgodic hdualUnique rDual hrR
-      (fun band => -(band : Real)) (fun band => 2 * (band : Int))
-  intro band L U width hL hU htranslate
-  have hcert := hcage band L U width hL hU (by
-    simpa only [mul_comm] using htranslate)
-  have hdisjoint := hcert.disjoint_boundaryBand hBpos hBp hBd
-  have hheight : (-(band : Real)) + (2 * (band : Int) : Int) =
-      (band : Real) := by
-    push_cast
-    ring
-  simpa only [hheight] using hdisjoint
-
-/-- The previous statement for the free buffered infinite-volume FK measure with coexisting unique
-clusters. Vacuous: the hypothesis `hcage` is refuted by
-`false_of_forall_symmetricBandDeepConnectorCageCertificate`. -/
-lemma freeBufferedInfiniteVolume_complementaryDual_rightHalfPlane_zero_of_symmetricBandCages
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    (hcommon :
-      let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-      mu D.commonUniqueInfiniteClusterEvent = 1)
-    {B : Real} (hBpos : 0 < B)
-    (hBp : ∀ {v w : V} (hvw : P.graph.Adj v w) (t) (i : Fin 2),
-      |D.primalEmbedding.coordinates
-        (D.primalEmbedding.edgeArc hvw t -
-          D.primalEmbedding.vertex v) i| ≤ B)
-    (hBd : ∀ {v w : W} (hvw : Pdual.graph.Adj v w) (t) (i : Fin 2),
-      |D.dualEmbedding.coordinates
-        (D.dualEmbedding.edgeArc hvw t -
-          D.dualEmbedding.vertex v) i| ≤ B)
-    (rDual : Real) {rPrimal Rdeep : Real} (hrR : rPrimal ≤ Rdeep)
-    (hcage : ∀ (band : Nat) (L U : Finset V) (width : Nat),
-      (L : Set V) ⊆
-          D.primalEmbedding.rightHalfPlaneVertices Rdeep →
-      (U : Set V) ⊆
-          D.primalEmbedding.rightHalfPlaneVertices Rdeep →
-      U = L.image
-          (P.shift (verticalShift (1 + 2 * (band : Int)))) →
-      SymmetricBandDeepConnectorCageCertificate D
-        B rPrimal Rdeep rDual band width L U) :
-    let mu : Measure (ConfigSpace (Sym2 V)) :=
-      P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    D.dualMeasure mu
-      (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
-  let mu : Measure (ConfigSpace (Sym2 V)) :=
-    P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-  let : IsProbabilityMeasure mu := inferInstance
-  have hFKG : IsFKG mu :=
-    P.freeBufferedInfiniteVolume_isFKG hp hp1 hq
-  have hTI : P.IsTranslationInvariant mu :=
-    P.freeBufferedInfiniteVolume_isTranslationInvariant hp hp1 hq
-  have hunique := D.primalUnique_measure_eq_one_of_common mu hcommon
-  have hdualUnique := D.dualUnique_measure_eq_one_of_common mu hcommon
-  have hergodic :=
-    D.primalEmbedding.freeBufferedInfiniteVolume_isErgodic hp hp1 hq
-  have hdualErgodic := D.dualMeasure_isErgodic mu hergodic
-  exact D.complementaryDual_rightHalfPlane_measure_eq_zero_of_symmetricBandCages
-    mu hFKG hTI hunique hdualErgodic hdualUnique hBpos hBp hBd
-      rDual hrR hcage
 
 end PeriodicPlanarDualPair
 
