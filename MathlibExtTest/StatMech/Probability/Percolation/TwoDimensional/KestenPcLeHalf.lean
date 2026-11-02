@@ -8,11 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf
+public import MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf
 public import Mathlib.Tactic
 
 /-!
-# Tests for `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf`
+# Tests for `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf`
 
 * `kesten_pc_le_half` for the step crossing function `cross p n = 0` for `p < 1/2` and `1/2`
   for `p ≥ 1/2`: `hmono` and `hdualHalf` are proved, and `hdecayToZero` reduces to the
@@ -27,7 +27,7 @@ open Filter
 open scoped NNReal Topology
 open StatMech StatMech.Percolation StatMech.TwoDim
 
-namespace MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.KestenPcEqHalf
+namespace MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.KestenPcLeHalf
 
 /-- The step crossing function: `0` below `1/2`, `1/2` from `1/2` on. -/
 noncomputable def crossStep : ℝ≥0 → ℕ → ℝ := fun p _ => if p < 1 / 2 then 0 else 1 / 2
@@ -59,4 +59,4 @@ example
     pc 2 ≤ (1 / 2 : ℝ≥0) :=
   kesten_pc_le_half crossStep crossStep_mono crossStep_half (crossStep_decay hno)
 
-end MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.KestenPcEqHalf
+end MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.KestenPcLeHalf

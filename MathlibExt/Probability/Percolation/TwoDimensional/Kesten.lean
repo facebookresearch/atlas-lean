@@ -29,7 +29,7 @@ That work belongs in `WantedExt`, not in this conditional reduction.
 
 Sharpness is now proved (`StatMech.Percolation.sharp_phase_transition`); the form without
 `hsharp`, `hsub` is `StatMech.TwoDim.kesten_pc_le_half`
-in `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf`.
+in `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf`.
 
 ## Main results
 

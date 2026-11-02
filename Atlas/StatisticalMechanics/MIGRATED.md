@@ -848,7 +848,7 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/SLE/StandardBrownianLaw.lean` | `MathlibExt.Probability.BrownianMotion.StandardBrownianLaw` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/Kesten.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.Kesten` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/KestenCrossingDecay.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenCrossingDecay` |
-| `Atlas/StatisticalMechanics/Code/TwoDim/KestenUncond.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/KestenUncond.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/SelfDualDichotomy.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SelfDualDichotomy` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/SharpThreshold.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SharpThreshold` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/ZhangClose.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.ZhangFourSides` |

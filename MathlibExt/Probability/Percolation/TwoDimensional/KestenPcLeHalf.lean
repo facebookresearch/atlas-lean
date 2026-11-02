@@ -12,10 +12,11 @@ public import MathlibExt.Probability.Percolation.TildePc
 public import MathlibExt.Probability.Percolation.TwoDimensional.Kesten
 
 /-!
-# Kesten's theorem `p_c(ℤ²) = 1/2` from a self-dual crossing function
+# Conditional upper half of Kesten's theorem, `p_c(ℤ²) ≤ 1/2`
 
 Kesten's theorem states that the critical probability of bond percolation on `ℤ²` is `1/2`. This
-file reduces it to properties of a crossing function `cross : ℝ≥0 → ℕ → ℝ`, using the sharpness
+file proves only its conditional upper half, reducing it to properties of a crossing function
+`cross : ℝ≥0 → ℕ → ℝ`, using the sharpness
 of the phase transition (`StatMech.Percolation.sharp_phase_transition`, proved in the library):
 below `p̃_c = p_c` the one-arm probability decays exponentially.
 
@@ -23,8 +24,8 @@ below `p̃_c = p_c` the one-arm probability decays exponentially.
   `p = 1/2`, and tends to `0` whenever the one-arm probability decays exponentially, then no
   `p > 1/2` lies below `p̃_c`.
 
-The name `KestenPcEqHalf` refers to the use of the proved sharpness theorem instead of a sharpness
-hypothesis; the statement is **not** unconditional: it takes `cross` and the hypotheses
+The module name `KestenPcLeHalf` records that only the upper bound is proved here. The
+statement is **not** unconditional: it takes `cross` and the hypotheses
 `hmono`, `hdualHalf`, `hdecayToZero`. There is no lower-half (`1/2 ≤ p_c`) or combined
 `p_c(2) = 1/2` capstone here: an earlier combined capstone used hypotheses equivalent to
 Harris's theorem `θ(1/2) = 0` and was removed.
