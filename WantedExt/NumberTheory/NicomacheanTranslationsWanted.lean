@@ -32,16 +32,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Nicomachean defect `ν(a_1, …, a_n) = (∑ a_i)^2 - ∑ a_i^3`.
+/-- **Nicomachean defect.** For a finite sequence $\sigma = (a_1, \ldots, a_n)$ of elements of a
+commutative ring, the Nicomachean defect of $\sigma$ is
+$\nu(\sigma) = \left(\sum_{i=1}^n a_i\right)^2 - \sum_{i=1}^n a_i^3$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 1. -/
 def nicomacheanNu {R : Type*} [CommRing R] (σ : List R) : R :=
   σ.sum ^ 2 - (σ.map (· ^ 3)).sum
 
-/-- `ν(1, 2, 3, 4) = 0`, `ν(1, 2) = 0`, `ν(3, 3, 3) = 0`, and the paper's
-`ν(1, 2, 2, 3, 4, x, 6, 8) = (5 - x)(x - 4)(8 + x)` at `x = 5` (value `0`) and `x = 6`
-(value `-28`).
+/-- **Examples of the Nicomachean defect.** For the Nicomachean defect $\nu$ of a sequence of
+integers, $\nu(1, 2, 3, 4) = 0$, $\nu(1, 2) = 0$, $\nu(3, 3, 3) = 0$,
+$\nu(1, 2, 2, 3, 4, 5, 6, 8) = 0$ and $\nu(1, 2, 2, 3, 4, 6, 6, 8) = -28$.
+
+The last two are the values at $x = 5$ and $x = 6$ of the paper's identity
+$\nu(1, 2, 2, 3, 4, x, 6, 8) = (5 - x)(x - 4)(8 + x)$; the identity itself is not stated here.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 1. -/
@@ -52,17 +57,24 @@ theorem nicomacheanNu_examples :
       nicomacheanNu ([1, 2, 2, 3, 4, 6, 6, 8] : List ℤ) = -28 := by
   decide
 
-/-- The second factor `α(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as` of
-`ν(S_m)` in the paper's (`nusm`), where `S_m` joins `n` copies of `n` with the arithmetic
-progressions `S, S + n, …, S + mn`, `S = (a, a + s, …, a + (n-1)s)`.
+/-- **The Nicomachean progression factor.** For rational numbers $n$, $s$ and $a$, define
+
+$$\alpha(n, s, a) = 2n^2 + na - a^2 + \frac{n(n-1)(s - s^2)}{2} - (n-1)as.$$
+
+This is the second factor of $\nu(S_m)$, where
+$\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ is the Nicomachean defect,
+$S = (a, a + s, \dots, a + (n-1)s)$, and $S_m$ joins $n$ copies of $n$ with the translated
+progressions $S, S + n, \dots, S + mn$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 6, equation (nusm). -/
 def nicomacheanAlpha (n s a : ℚ) : ℚ :=
   2 * n ^ 2 + n * a - a ^ 2 + n * (n - 1) * (s - s ^ 2) / 2 - (n - 1) * a * s
 
-/-- The paper's specializations: `α(n, 1, a) = 2n^2 + a - a^2`,
-`α(n, 2, a) = n^2 + (1 - a)n - a^2 + 2a`, and `α(n, 3, a) = -(a + n - 3)(a + n)`.
+/-- **Specializations of the Nicomachean factor at $s = 1, 2, 3$.** Let
+$\alpha(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as$. For all rational numbers $n$
+and $a$, $\alpha(n, 1, a) = 2n^2 + a - a^2$, $\alpha(n, 2, a) = n^2 + (1 - a)n - a^2 + 2a$ and
+$\alpha(n, 3, a) = -(a + n - 3)(a + n)$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 6. -/
@@ -72,12 +84,22 @@ theorem nicomacheanAlpha_one_two_three (n a : ℚ) :
       nicomacheanAlpha n 3 a = -(a + n - 3) * (a + n) := by
   refine ⟨?_, ?_, ?_⟩ <;> · unfold nicomacheanAlpha; ring
 
-/-- Let `t(2, m) = (3(m^2 - 6m - 3) + √(3(m-1)^2(35m^2 + 34m + 11)))/24` and let `s(2, m)` be the
-other root (minus sign before the square root). The second differences of `t(2, m)` converge to
-`(3 + √105)/12`, those of `s(2, m)` converge to its conjugate `(3 - √105)/12`, and for
-`A = (1, 2, …, m)` the second differences of the right-most real root of `t ↦ ν(A^2 + t)` converge
-to `(3 + √105)/12`. Here `A^2 = (ij : 1 ≤ i, j ≤ m)` is the paper's sequential (bag) product and
-`A^2 + t` translates every entry by `t`.
+/-- **Second differences of roots of translated Nicomachean bag squares.** Write
+$\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ for the Nicomachean defect
+of a finite sequence. For natural numbers $m$ let
+
+$$t(m) = \frac{3(m^2 - 6m - 3) + \sqrt{3(m-1)^2(35m^2 + 34m + 11)}}{24},$$
+
+$$s(m) = \frac{3(m^2 - 6m - 3) - \sqrt{3(m-1)^2(35m^2 + 34m + 11)}}{24},$$
+
+let $A_m^2$ be the sequence of the $m^2$ products $ij$ with $1 \le i, j \le m$ (the bag square of
+$(1, 2, \dots, m)$), let $A_m^2 + x$ be the sequence obtained by adding $x$ to every entry, and let
+$\rho(m)$ be the supremum of the set of real $x$ with $\nu(A_m^2 + x) = 0$. Then, as $m \to \infty$,
+the second differences $t(m+2) - 2t(m+1) + t(m)$ and $\rho(m+2) - 2\rho(m+1) + \rho(m)$ converge
+to $(3 + \sqrt{105})/12$, and $s(m+2) - 2s(m+1) + s(m)$ converges to $(3 - \sqrt{105})/12$.
+
+For $m \ge 1$, $\nu(A_m^2 + x)$ is a cubic polynomial in $x$ with leading coefficient $-m^2$, so
+$\rho(m)$ is its largest real root.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 1
@@ -95,8 +117,11 @@ public theorem_wanted nicomachean_bagSquare_root_secondDifference_tendsto :
         (𝓝 ((3 - Real.sqrt 105) / 12)) ∧
       Tendsto (fun m => ρ (m + 2) - 2 * ρ (m + 1) + ρ m) atTop (𝓝 ((3 + Real.sqrt 105) / 12))
 
-/-- There are sequences `σ` of positive rationals with `ν(σ) = 0` containing non-integers `p/q` in
-lowest terms with `q` arbitrarily large: for every `Q` some entry has denominator `> Q`.
+/-- **Nicomachean sequences of rationals with large denominators.** Write
+$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
+of a finite sequence. For every natural number $Q$ there is a finite sequence $\sigma$ of positive
+rational numbers with $\nu(\sigma) = 0$ having an entry whose denominator in lowest terms is
+greater than $Q$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 3
@@ -104,8 +129,11 @@ Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 3
 public theorem_wanted exists_pos_rat_nicomacheanNu_eq_zero_large_den (Q : ℕ) :
     ∃ σ : List ℚ, (∀ x ∈ σ, 0 < x) ∧ nicomacheanNu σ = 0 ∧ ∃ x ∈ σ, Q < x.den
 
-/-- For every `ε > 0` there are sequences of positive integers with `ν = 0` having exactly two
-distinct entries `a < b` such that the largest gap `b - a` divided by the length exceeds `1 - ε`.
+/-- **Two-valued Nicomachean sequences with a large gap.** Write
+$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
+of a finite sequence. For every real $\varepsilon > 0$ there are integers $0 < a < b$ and a finite
+sequence $\sigma$ whose entries all equal $a$ or $b$, in which both $a$ and $b$ occur, such that
+$\nu(\sigma) = 0$ and $(b - a)/L > 1 - \varepsilon$, where $L$ is the length of $\sigma$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 4
@@ -114,11 +142,25 @@ public theorem_wanted exists_two_valued_nicomachean_large_gap {ε : ℝ} (hε : 
     ∃ a b : ℤ, 0 < a ∧ a < b ∧ ∃ σ : List ℤ, (∀ x ∈ σ, x = a ∨ x = b) ∧ a ∈ σ ∧ b ∈ σ ∧
       nicomacheanNu σ = 0 ∧ 1 - ε < ((b - a : ℤ) : ℝ) / σ.length
 
-/-- The sequences `(1, 2, …, j, j + 1, m, m, …, m)` (`m` repeated `2j` times) with `j, m ≥ 1` and
-`ν = 0`: the `j`'s, in increasing order, have generating function
-`(x^4 + x^3 - 19x^2 - 5x - 2)/((x - 1)(1 - 6x + x^2)(1 + 6x + x^2))`, and the corresponding
-`m = j + √(2j^2 + 3j + 2)` (the positive root of `ν = 0` in `m`) have generating function
-`6(1 + x)^2/((1 - x)(1 - 6x + x^2)(1 + 6x + x^2))`; both stated with denominators cleared.
+/-- **Generating functions for run-and-repeat Nicomachean sequences.** For integers $j, m \ge 1$
+let $\sigma(j, m)$ be the integer sequence $(1, 2, \ldots, j + 1, m, \ldots, m)$ in which $m$ is
+repeated $2j$ times, and let $\nu$ denote the Nicomachean defect. Call $j \ge 1$ admissible if
+$\nu(\sigma(j, m)) = 0$ for some integer $m \ge 1$, let $j_k$ be the $k$-th smallest admissible
+integer (counting from $k = 0$), and let $m_k = j_k + \lfloor \sqrt{2j_k^2 + 3j_k + 2} \rfloor$.
+Then $\nu(\sigma(j_k, m_k)) = 0$ for every $k$, and in the ring of formal power series over
+$\mathbb{Z}$
+$$
+(X - 1)(1 - 6X + X^2)(1 + 6X + X^2) \sum_{k \ge 0} j_k X^k = X^4 + X^3 - 19X^2 - 5X - 2
+$$
+and
+$$
+(1 - X)(1 - 6X + X^2)(1 + 6X + X^2) \sum_{k \ge 0} m_k X^k = 6(1 + X)^2.
+$$
+
+For admissible $j$ the square root is an integer and $m = j + \sqrt{2j^2 + 3j + 2}$ is the
+positive root of $\nu(\sigma(j, m)) = 0$ in $m$, so these say that $(j_k)$ and $(m_k)$ have the
+generating functions $(x^4 + x^3 - 19x^2 - 5x - 2)/((x - 1)(1 - 6x + x^2)(1 + 6x + x^2))$ and
+$6(1 + x)^2/((1 - x)(1 - 6x + x^2)(1 + 6x + x^2))$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 5
@@ -136,9 +178,12 @@ public theorem_wanted nicomachean_run_repeat_generatingFunctions :
       (1 - X) * (1 - 6 * X + X ^ 2) * (1 + 6 * X + X ^ 2) * PowerSeries.mk (fun k => (M k : ℤ)) =
         6 * (1 + X) ^ 2
 
-/-- There are sequences of positive integers with `ν = 0` in which the gap between the two
-largest entries is arbitrarily large: the maximum `b` occurs once and exceeds every other entry by
-more than `G`.
+/-- **Nicomachean sequences with a large gap at the top.** Write
+$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
+of a finite sequence. For every natural number $G$ there is a finite sequence $\sigma$ of
+positive integers with $\nu(\sigma) = 0$ and entries $a < b$ of $\sigma$ such that $b$ is the
+largest entry of $\sigma$ and occurs exactly once, every entry other than $b$ is at most $a$, and
+$b - a > G$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 6
@@ -147,10 +192,13 @@ public theorem_wanted exists_nicomachean_large_top_gap (G : ℕ) :
     ∃ σ : List ℤ, (∀ x ∈ σ, 0 < x) ∧ nicomacheanNu σ = 0 ∧ ∃ a ∈ σ, ∃ b ∈ σ,
       σ.count b = 1 ∧ (∀ x ∈ σ, x ≤ b) ∧ a < b ∧ (∀ x ∈ σ, x ≠ b → x ≤ a) ∧ (G : ℤ) < b - a
 
-/-- For every `N` there is a sequence `σ` of positive algebraic integers of `ℚ(√5)` (the ring
-`ℤ[φ]`, numbers `p + qφ`, `p, q ∈ ℤ`) with `ν(σ) = 0`, more than half of whose entries are
-irrational, containing `(1/φ)^n` for `1 ≤ n ≤ N`. "More than half irrational" is stated as a
-sublist of irrational entries longer than half of `σ`.
+/-- **Golden-ratio sequences with vanishing Nicomachean defect.** Let $\varphi = (1 + \sqrt 5)/2$
+be the golden ratio and write
+$\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ for the Nicomachean defect
+of a finite sequence of real numbers. For every natural number $N$ there is a finite sequence
+$\sigma$ of positive real numbers, each of the form $p + q\varphi$ with $p, q \in \mathbb{Z}$, such
+that $\nu(\sigma) = 0$, $\sigma$ contains $\varphi^{-n}$ for every $1 \le n \le N$, and $\sigma$ has
+a subsequence of irrational entries whose length is more than half the length of $\sigma$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 7
@@ -160,10 +208,12 @@ public theorem_wanted exists_goldenRatio_nicomachean_sequence (N : ℕ) :
       (∃ τ : List ℝ, τ.Sublist σ ∧ σ.length < 2 * τ.length ∧ ∀ x ∈ τ, Irrational x) ∧
       nicomacheanNu σ = 0 ∧ ∀ n ∈ Finset.Icc 1 N, Real.goldenRatio⁻¹ ^ n ∈ σ
 
-/-- Adjoin nonzero reals `x_1, x_2, …` (here `x 0, x 1, …`) to a finite real sequence
-`(a_1, …, a_n)`, with `x_j ≠ -x_{j-1}`, so that every resulting sequence
-`(a_1, …, a_n, x_1, …, x_l)`, `l ≥ 1`, has `ν = 0`. Then `x_2, x_3, …` is an arithmetic
-progression with difference `1`.
+/-- **Adjoined Nicomachean sequences are eventually arithmetic progressions.** Write
+$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
+of a finite sequence. Let $(a_1, \dots, a_n)$ be a finite, possibly empty, sequence of real numbers
+and let $x_1, x_2, x_3, \dots$ be nonzero real numbers with $x_{j+1} \ne -x_j$ for every $j \ge 1$.
+If $\nu(a_1, \dots, a_n, x_1, \dots, x_l) = 0$ for every $l \ge 1$, then $x_{j+1} = x_j + 1$ for
+every $j \ge 2$; that is, $x_2, x_3, \dots$ is an arithmetic progression with difference $1$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 8
@@ -173,11 +223,16 @@ public theorem_wanted nicomachean_adjoined_arithmeticProgression (a : List ℝ) 
     (hν : ∀ l, nicomacheanNu (a ++ (List.range (l + 1)).map x) = 0) :
     ∀ j, 1 ≤ j → x (j + 1) = x j + 1
 
-/-- For `n ≥ 1`: (`s = 1`) `α(n, 1, a)` is divisible by `a - h` for some positive integer `h`
-(i.e. `α(n, 1, h) = 0`) if and only if `n^2` is a triangular number `k(k+1)/2`; (`s = 2`)
-`α(n, 2, a)` has a positive integer root `h` if and only if `n = F_{2k}` with `k ≥ 1`, and then
-`h = F_{2k-1} + 1`. Divisibility by `a - h` is read through the factor theorem. The case `n = 0`
-(no progression) is excluded: `α(0, 2, a)` has the root `2`.
+/-- **Positive integer roots of the Nicomachean factor for $s = 1, 2$.** Let
+$\alpha(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as$ and let $F_0 = 0$, $F_1 = 1$,
+$F_{k+2} = F_{k+1} + F_k$ be the Fibonacci numbers. Let $n \ge 1$ be a natural number. Then
+$\alpha(n, 1, h) = 0$ for some positive integer $h$ if and only if $2n^2 = k(k+1)$ for some natural
+number $k$, that is, $n^2$ is a triangular number; $\alpha(n, 2, h) = 0$ for some positive integer
+$h$ if and only if $n = F_{2k}$ for some $k \ge 1$; and if $n = F_{2k}$ with $k \ge 1$, then every
+positive integer $h$ with $\alpha(n, 2, h) = 0$ equals $F_{2k-1} + 1$.
+
+By the factor theorem, $\alpha(n, s, h) = 0$ says that $a - h$ divides $\alpha(n, s, a)$ as a
+polynomial in $a$. The case $n = 0$ is excluded: $\alpha(0, 2, a)$ has the root $2$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 9
@@ -188,10 +243,17 @@ public theorem_wanted nicomacheanAlpha_posIntRoot_iff {n : ℕ} (hn : 1 ≤ n) :
       ∀ k h : ℕ, 1 ≤ k → n = Nat.fib (2 * k) → 0 < h → nicomacheanAlpha n 2 h = 0 →
         h = Nat.fib (2 * k - 1) + 1
 
-/-- For every `N` there are `N` distinct sequences (as multisets) of positive integers with
-`ν(σ) = 0` whose adjoined polynomials `ν(σ; a, b)` share the same quadratic factor: for a common
-`c` (the sum of the entries) every `ν(σ; a, b) = -(a + b)(a^2 - ab + b^2 - a - b - 2c)`.
-Positivity of the entries, the paper's setting, excludes trivial families such as `(k, -k, 1)`.
+/-- **Nicomachean families sharing a quadratic factor.** Write
+$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
+of a finite sequence. For every natural number $N$ there are finite sequences
+$\sigma_1, \dots, \sigma_N$ of positive integers, pairwise distinct as multisets, and an integer
+$c$ such that for every $i$ we have $\nu(\sigma_i) = 0$ and, for all integers $a$ and $b$, the
+sequence $(\sigma_i, a, b)$ obtained by appending $a$ and $b$ to $\sigma_i$ satisfies
+$\nu(\sigma_i, a, b) = -(a + b)(a^2 - ab + b^2 - a - b - 2c)$.
+
+Since $\nu(\sigma_i) = 0$, the identity forces $c$ to be the sum of the entries of every
+$\sigma_i$. Positivity of the entries, the paper's setting, excludes trivial families such as
+$(k, -k, 1)$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 12

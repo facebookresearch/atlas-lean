@@ -21,12 +21,14 @@ namespace MathlibExt.NumberTheory.NonSquarefreeBaseTwoPseudoprimeWanted
 
 /-! Source record `UnsolvedMath GUY-A12a` (numeric id `1875`), "Square Pseudoprimes". -/
 
-/-- Guy reports 54 non-squarefree base-two pseudoprimes up to `10 ^ 13`, all
-multiples of `1093 ^ 2` or `3511 ^ 2`, and asks whether there are any other
-"square psp"s. Here "square psp" means a non-squarefree base-two pseudoprime,
-not a number that is itself a perfect square. Guy poses this as a question, so
-the statement below is the affirmative existence form (a witness beyond
-`10 ^ 13`) without predicting its polarity. -/
+/-- **Guy's question on non-squarefree base-two pseudoprimes beyond $10^{13}$.** The statement
+that there is a natural number $n > 10^{13}$ that is a Fermat pseudoprime to base $2$ (a
+composite number $n > 1$ with $n \mid 2^{n-1} - 1$) and is not squarefree.
+
+Guy reports 54 non-squarefree base-two pseudoprimes up to $10^{13}$, all multiples of $1093^2$ or
+$3511^2$, and asks whether there are any other "square psp"s. Here "square psp" means a
+non-squarefree base-two pseudoprime, not a number that is itself a perfect square. Guy poses this
+as a question; this is its affirmative existence form, which does not predict the answer. -/
 def conjecture : Prop :=
   ∃ n : ℕ,
     Nat.FermatPsp n 2 ∧
@@ -34,9 +36,13 @@ def conjecture : Prop :=
     10 ^ 13 < n
 
 /--
-Resolved true: OEIS A158358 gives the witness 10063351640161 > 10^13, with factorization 73 ·
-257 · 449 · 1093², so a non-squarefree base-two pseudoprime beyond 10^13 exists. Source: OEIS
-A158358, nonsquarefree Poulet numbers, https://oeis.org/A158358. Moved from
+**A non-squarefree base-two pseudoprime beyond $10^{13}$ exists.** There is a natural number
+$n > 10^{13}$ that is a Fermat pseudoprime to base $2$ (a composite number $n > 1$ with
+$n \mid 2^{n-1} - 1$) and is not squarefree.
+
+OEIS A158358 gives the witness $n = 10063351640161 = 73 \cdot 257 \cdot 449 \cdot 1093^2$.
+
+Source: OEIS A158358, nonsquarefree Poulet numbers, https://oeis.org/A158358. Moved from
 `OpenConjectures/NumberTheory/NonSquarefreeBaseTwoPseudoprime`.
 -/
 public theorem_wanted conjecture_holds : conjecture

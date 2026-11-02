@@ -55,8 +55,9 @@ Category-(b) candidate from §139 of the Knill survey.
 
 open scoped WeierstrassCurve
 
-/-- The **Mazur class**: isomorphic to `ℤ/n` (`n ∈ {1,…,10,12}`) or
-`ℤ/2 × ℤ/2m` (`m ∈ {1,2,3,4}`). -/
+/-- **The Mazur class of abelian groups.** An abelian group $T$ is in the Mazur class when it is
+isomorphic to $\mathbb{Z}/n\mathbb{Z}$ for some $n \in \{1, 2, \ldots, 10, 12\}$, or to
+$\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2m\mathbb{Z}$ for some $m \in \{1, 2, 3, 4\}$. -/
 def IsInMazurClass (T : Type*) [AddCommGroup T] : Prop :=
   (∃ n ∈ ({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12} : Finset ℕ),
       Nonempty (T ≃+ ZMod n)) ∨
@@ -65,7 +66,13 @@ def IsInMazurClass (T : Type*) [AddCommGroup T] : Prop :=
 
 /- **Mazur's torsion theorem.** The torsion subgroup of `E(ℚ)` lies in the
 Mazur class. -/
-/-- Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS 47 (1977). Knill, *Some fundamental theorems in mathematics*, §139. Via leanprover/lean-eval@38361be, problem `mazur_torsion`. -/
+/-- **Mazur's torsion theorem.** Let $E$ be an elliptic curve over $\mathbb{Q}$, given by a
+Weierstrass equation. The torsion subgroup of the group $E(\mathbb{Q})$ of rational points of $E$
+is in the Mazur class: it is isomorphic to $\mathbb{Z}/n\mathbb{Z}$ for some
+$n \in \{1, 2, \ldots, 10, 12\}$, or to $\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2m\mathbb{Z}$ for
+some $m \in \{1, 2, 3, 4\}$.
+
+Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS 47 (1977). Knill, *Some fundamental theorems in mathematics*, §139. Via leanprover/lean-eval@38361be, problem `mazur_torsion`. -/
 public theorem_wanted mazur_torsion (E : WeierstrassCurve ℚ) [E.IsElliptic] :
     IsInMazurClass ↥(AddCommGroup.torsion (WeierstrassCurve.Affine.Point E))
 

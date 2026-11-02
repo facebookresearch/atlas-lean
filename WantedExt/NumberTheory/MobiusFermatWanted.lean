@@ -39,16 +39,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Fermat unit function `u_M`: `u_M l = 1` when `l = 2 ^ n - 1` for some `n ≥ 1`, and
-`u_M l = 0` otherwise. A positive `l` is of this form exactly when `l + 1` is a power of two,
-i.e. when `2 ^ Nat.log 2 (l + 1) = l + 1`.
+/-- **Fermat unit function.** The Fermat unit function $u_M$ is the integer-valued arithmetic
+function with $u_M(l) = 1$ when $l = 2^n - 1$ for some integer $n \ge 1$, and $u_M(l) = 0$
+otherwise (in particular $u_M(0) = 0$). Equivalently, $u_M(l) = 1$ exactly when $l \ge 1$ and
+$l + 1$ is a power of $2$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, equation (7). -/
 def fermatUnitFunction : ArithmeticFunction ℤ :=
   ⟨fun l => if l ≠ 0 ∧ 2 ^ Nat.log 2 (l + 1) = l + 1 then 1 else 0, by simp⟩
 
-/-- `u_M` takes the value `1` at every Fermat number `2 ^ n - 1` with `n ≥ 1`.
+/-- **The Fermat unit function at $2^n - 1$.** For every integer $n \ge 1$, the Fermat unit
+function $u_M$ satisfies $u_M(2^n - 1) = 1$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, equation (7). -/
@@ -63,7 +65,8 @@ theorem fermatUnitFunction_two_pow_sub_one {n : ℕ} (hn : 1 ≤ n) :
   rw [hs, Nat.log_pow (by norm_num)]
   exact ite_eq_left_of_eq_true _ _ (eq_true ⟨by omega, rfl⟩)
 
-/-- Small values of `u_M`: `u_M 1 = u_M 3 = u_M 7 = u_M 63 = 1` and `u_M 2 = u_M 9 = 0`.
+/-- **Small values of the Fermat unit function.** The Fermat unit function $u_M$ satisfies
+$u_M(1) = u_M(3) = u_M(7) = u_M(63) = 1$ and $u_M(2) = u_M(9) = 0$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, equation (7). -/
@@ -72,8 +75,17 @@ theorem fermatUnitFunction_small_values :
       fermatUnitFunction 63 = 1 ∧ fermatUnitFunction 2 = 0 ∧ fermatUnitFunction 9 = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Proposition 2: `μ_M 1 = 1`, `Λ_M 1 = 0`, and `μ_M l = Λ_M l = 0` when `l` is not in the
-Fermat semigroup `M_P`.
+/-- **The Möbius–Fermat and von Mangoldt–Fermat functions at $1$ and off the Fermat
+semigroup.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Let $\Lambda_M = \mu_M * u_M'$, computed with real values, where
+$u_M'(l) = u_M(l) \log l$.
+Then $\mu_M(1) = 1$ and $\Lambda_M(1) = 0$, and $\mu_M(l) = \Lambda_M(l) = 0$ for every natural
+number $l$ outside the Fermat semigroup, the multiplicative submonoid of $\mathbb{N}$ generated
+by the numbers $2^n - 1$ with $n \ge 2$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 2. -/
@@ -86,10 +98,18 @@ public theorem_wanted mobiusFermat_one_and_vanishing (μ : ArithmeticFunction �
           ((μ : ArithmeticFunction ℝ) * (fermatUnitFunction : ArithmeticFunction ℝ).pmul log) l
             = 0
 
-/-- Proposition 4: if `l = ∏ M_{n_i} ^ {m_i}` is factored as in (4) (distinct indices `n_i ≥ 2`,
-`n_i ≠ 6`) and either `3 = M 2` and `7 = M 3` do not both occur or `3` occurs to the first power,
-then `μ_M l = (-1) ^ r * r! / (m_1! ⋯ m_k!)` with `r = m_1 + ⋯ + m_k`. The side condition is
-written `f 2 ≤ 1 ∨ f 3 = 0`.
+/-- **Multinomial formula for the Möbius–Fermat function.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Let $n_1, \dots, n_k$ be finitely many (possibly no) distinct integers with $n_i \ge 2$ and
+$n_i \ne 6$, let $m_1, \dots, m_k \ge 1$ be integers, and put
+$l = \prod_{i=1}^{k} (2^{n_i} - 1)^{m_i}$ and
+$r = m_1 + \dots + m_k$. Suppose that $2$ is not among the $n_i$ or has exponent $1$, or that $3$
+is not among the $n_i$; that is, the factor $3 = 2^2 - 1$ occurs at most to the first power or
+the factor $7 = 2^3 - 1$ does not occur. Then, as rational numbers,
+$\mu_M(l) = (-1)^r \, r! / (m_1! \cdots m_k!)$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 4. -/
@@ -100,8 +120,15 @@ public theorem_wanted mobiusFermat_eq_multinomial (μ : ArithmeticFunction ℤ)
       (-1) ^ (f.sum fun _ m => m) * ((f.sum fun _ m => m).factorial : ℚ) /
         (f.prod fun _ m => (m.factorial : ℚ))
 
-/-- Proposition 5: under the hypotheses of Proposition 4,
-`Λ_M l = (-1) ^ (r - 1) * (r - 1)! / (m_1! ⋯ m_k!) * log l` with `r = m_1 + ⋯ + m_k`.
+/-- **Multinomial formula for the von Mangoldt–Fermat function.** Let $u_M$ be the Fermat unit
+function, and let $\mu$ be an integer-valued arithmetic function with $\mu * u_M = \varepsilon$,
+where $*$ is Dirichlet convolution and $\varepsilon$ is its identity (so $\mu$ is the
+Möbius–Fermat function $\mu_M$). Let $\Lambda_M = \mu * u'_M$, computed with real values, where
+$u'_M(l) = u_M(l) \log l$. Let $f : \mathbb{N} \to \mathbb{N}$ be finitely supported, with
+$n \ge 2$ and $n \ne 6$ for every $n$ such that $f(n) \ne 0$, and with $f(2) \le 1$ or $f(3) = 0$.
+Put $l = \prod_n (2^n - 1)^{f(n)}$ and $r = \sum_n f(n)$. Then
+$$\Lambda_M(l) = (-1)^{r - 1} \frac{(r - 1)!}{\prod_n f(n)!} \log l,$$
+where $r - 1$ is read as $0$ when $r = 0$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 5. -/
@@ -114,10 +141,18 @@ public theorem_wanted vonMangoldtFermat_eq_multinomial (μ : ArithmeticFunction 
         (f.prod fun _ m => (m.factorial : ℝ)) *
         Real.log (f.prod fun n m => (2 ^ n - 1) ^ m : ℕ)
 
-/-- Proposition 6: for `l = 3 ^ m₁ * 7 ^ m₂ * ∏ M_{n_j} ^ {m_j}` factored as in (5) (distinct
-indices `n_j ≥ 4`, `n_j ≠ 6`), `μ_M l * (m_3! ⋯ m_k!)` equals `μ_M (3 ^ m₁ * 7 ^ m₂ * ∏_{n ∈ T} M n)`
-for any set `T` of `m_3 + ⋯ + m_k` distinct admissible indices; in particular the latter value
-does not depend on the choice of `T` (the paper's `μ̃_M (m₁, m₂, J)`).
+/-- **Reduction of the Möbius–Fermat function to distinct factors.** Let $u_M$ be the Fermat
+unit function and let $\mu_M$ be an integer-valued arithmetic function with
+$\mu_M * u_M = \varepsilon$, where $*$ is Dirichlet convolution and $\varepsilon$ is its
+identity, with $\varepsilon(1) = 1$ and $\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the
+Dirichlet inverse of $u_M$, the Möbius–Fermat function.
+Let $m_1, m_2 \ge 0$ be integers, let $n_3, \dots, n_k$ be finitely many (possibly no) distinct
+integers with $n_j \ge 4$ and $n_j \ne 6$, let $m_3, \dots, m_k \ge 1$ be integers, and put
+$l = 3^{m_1} 7^{m_2} \prod_{j=3}^{k} (2^{n_j} - 1)^{m_j}$.
+Then for every finite set $T$ of integers $n \ge 4$ with $n \ne 6$ and
+$|T| = m_3 + \dots + m_k$,
+$$\mu_M(l) \, m_3! \cdots m_k! = \mu_M\Big(3^{m_1} 7^{m_2} \prod_{n \in T} (2^n - 1)\Big).$$
+In particular the right-hand side does not depend on the choice of $T$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 6. -/
@@ -128,9 +163,17 @@ public theorem_wanted mobiusFermat_mul_factorial_eq_squarefree_part (μ : Arithm
     μ (3 ^ m₁ * 7 ^ m₂ * f.prod fun n m => (2 ^ n - 1) ^ m) * (f.prod fun _ m => (m.factorial : ℤ)) =
       μ (3 ^ m₁ * 7 ^ m₂ * ∏ n ∈ T, (2 ^ n - 1))
 
-/-- Proposition 7, equations (18) and (19): for `m n : ℕ`,
-`μ_M (3 ^ m * 7 ^ n) = (-1) ^ (m + n) * ∑_{j=0}^{min(⌊m/2⌋, n)} C(n, j) * C(m + n - 2j, m - 2j)`,
-and the same sum equals `∑_j (m + n - 2j)! / ((m - 2j)! (n - j)! j!)`.
+/-- **The Möbius–Fermat function at $3^m 7^n$.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Then for all integers $m, n \ge 0$,
+$$\mu_M(3^m 7^n) = (-1)^{m+n} \sum_{j=0}^{\min(\lfloor m/2 \rfloor, n)}
+\binom{n}{j} \binom{m + n - 2j}{m - 2j},$$
+and, as rational numbers,
+$$\mu_M(3^m 7^n) = (-1)^{m+n} \sum_{j=0}^{\min(\lfloor m/2 \rfloor, n)}
+\frac{(m + n - 2j)!}{(m - 2j)! \, (n - j)! \, j!}.$$
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 7. -/
@@ -144,9 +187,17 @@ public theorem_wanted mobiusFermat_three_pow_mul_seven_pow (μ : ArithmeticFunct
           ((m + n - 2 * j).factorial : ℚ) /
             ((m - 2 * j).factorial * (n - j).factorial * j.factorial)
 
-/-- Proposition 8: for a Fermat number `q = 2 ^ t - 1` with `t ≥ 4`, `t ≠ 6` (so `q ≠ 3, 7, 63`)
-and `m n k : ℕ`, `μ_M (3 ^ m * 7 ^ n * q ^ k) = (-1) ^ (m + n + k) *
-∑_{j=0}^{min(⌊m/2⌋, n)} (m + n - 2j + k)! / ((m - 2j)! (n - j)! j! k!)`.
+/-- **The Möbius–Fermat function at $3^m 7^n q^k$.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Let $t \ge 4$ be an integer with $t \ne 6$ and put $q = 2^t - 1$. Then for all integers
+$m, n, k \ge 0$, as rational numbers,
+$$\mu_M(3^m 7^n q^k) = (-1)^{m+n+k} \sum_{j=0}^{\min(\lfloor m/2 \rfloor, n)}
+\frac{(m + n - 2j + k)!}{(m - 2j)! \, (n - j)! \, j! \, k!}.$$
+
+The conditions on $t$ exclude $q = 1, 3, 7, 63$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Proposition 8. -/
@@ -157,9 +208,17 @@ public theorem_wanted mobiusFermat_three_pow_mul_seven_pow_mul_pow (μ : Arithme
         ((m + n - 2 * j + k).factorial : ℚ) /
           ((m - 2 * j).factorial * (n - j).factorial * j.factorial * k.factorial)
 
-/-- Theorem 9 (closed form of `μ_M`): for `l = 3 ^ m₁ * 7 ^ m₂ * ∏ M_{n_j} ^ {m_j}` factored as in
-(5) (distinct indices `n_j ≥ 4`, `n_j ≠ 6`) and `r = m₁ + m₂ + m_3 + ⋯ + m_k`,
-`μ_M l = (-1) ^ r * ∑_{j=0}^{min(⌊m₁/2⌋, m₂)} (r - 2j)! / ((m₁ - 2j)! (m₂ - j)! j! m_3! ⋯ m_k!)`.
+/-- **Closed form of the Möbius–Fermat function.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Let $m_1, m_2 \ge 0$ be integers, let $n_3, \dots, n_k$ be finitely many (possibly no) distinct
+integers with $n_j \ge 4$ and $n_j \ne 6$, let $m_3, \dots, m_k \ge 1$ be integers, and put
+$l = 3^{m_1} 7^{m_2} \prod_{j=3}^{k} (2^{n_j} - 1)^{m_j}$ and
+$r = m_1 + m_2 + m_3 + \dots + m_k$. Then, as rational numbers,
+$$\mu_M(l) = (-1)^r \sum_{j=0}^{\min(\lfloor m_1/2 \rfloor, m_2)}
+\frac{(r - 2j)!}{(m_1 - 2j)! \, (m_2 - j)! \, j! \, m_3! \cdots m_k!}.$$
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Theorem 9. -/
@@ -173,9 +232,21 @@ public theorem_wanted mobiusFermat_closed_form (μ : ArithmeticFunction ℤ)
             ((m₁ - 2 * j).factorial * (m₂ - j).factorial * j.factorial *
               f.prod fun _ m => (m.factorial : ℚ))
 
-/-- Theorem 10 (closed form of `Λ_M`): with `l` and `r` as in Theorem 9,
-`Λ_M l = (-1) ^ (r - 1) * ∑_{j=0}^{min(⌊m₁/2⌋, m₂)} (r - 2j - 1)! /
-((m₁ - 2j)! (m₂ - j)! j! m_3! ⋯ m_k!) * log l`. (For `l = 1` both sides vanish.)
+/-- **Closed form of the von Mangoldt–Fermat function.** Let $u_M$ be the Fermat unit function
+and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
+$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
+$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
+Möbius–Fermat function.
+Let $\Lambda_M = \mu_M * u_M'$, computed with real values, where
+$u_M'(l) = u_M(l) \log l$.
+Let $m_1, m_2 \ge 0$ be integers, let $n_3, \dots, n_k$ be finitely many (possibly no) distinct
+integers with $n_j \ge 4$ and $n_j \ne 6$, let $m_3, \dots, m_k \ge 1$ be integers, and put
+$l = 3^{m_1} 7^{m_2} \prod_{j=3}^{k} (2^{n_j} - 1)^{m_j}$ and
+$r = m_1 + m_2 + m_3 + \dots + m_k$. Then
+$$\Lambda_M(l) = (-1)^{r-1} \Big(\sum_{j=0}^{\min(\lfloor m_1/2 \rfloor, m_2)}
+\frac{(r - 2j - 1)!}{(m_1 - 2j)! \, (m_2 - j)! \, j! \, m_3! \cdots m_k!}\Big) \log l.$$
+When $r = 0$, that is $l = 1$, both sides are $0$: on the right, $r - 1$ and $r - 2j - 1$ are
+read as $0$ and $\log 1 = 0$.
 
 Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
 Function*, INTEGERS 26 (2026), Article A106, Theorem 10. -/
