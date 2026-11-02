@@ -39,6 +39,66 @@ instance (b : Bool) : IsProbabilityMeasure (diracs b) := by
   unfold diracs
   infer_instance
 
+/-- The `θ`-independent second-coin density factor: the second coin is always fair. -/
+def secondCoinDensity : (Bool × Bool) → ℝ≥0∞ := fun _ => 1 / 2
+
+/-- The first-coin density factor: the first coin lands on `θ` with probability `3 / 4`. -/
+def firstCoinDensity (θ : Bool) (t : Bool) : ℝ≥0∞ := if t = θ then 3 / 4 else 1 / 4
+
+/-- The two-coin family: first coin biased towards `θ`, second coin fair, as a density
+with respect to counting measure. -/
+noncomputable def twoCoinFamily (θ : Bool) : Measure (Bool × Bool) :=
+  Measure.count.withDensity fun ω => firstCoinDensity θ (Prod.fst ω) * secondCoinDensity ω
+
+theorem measurable_firstCoinDensity (θ : Bool) : Measurable (firstCoinDensity θ) := by
+  intro _ _
+  trivial
+
+theorem measurable_secondCoinDensity : Measurable secondCoinDensity := by
+  intro _ _
+  trivial
+
+instance (θ : Bool) : IsFiniteMeasure (twoCoinFamily θ) := by
+  refine ⟨?_⟩
+  rw [twoCoinFamily, Measure.withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+    lintegral_count, tsum_fintype, ENNReal.lt_top_iff_ne_top]
+  apply Finset.sum_ne_top
+  intro ω _
+  by_cases h : Prod.fst ω = θ <;> simp [h, firstCoinDensity, secondCoinDensity]
+
+instance : IsFiniteMeasure (Measure.count.withDensity secondCoinDensity) := by
+  refine ⟨?_⟩
+  rw [Measure.withDensity_apply _ MeasurableSet.univ, setLIntegral_univ, lintegral_count,
+    tsum_fintype, ENNReal.lt_top_iff_ne_top]
+  apply Finset.sum_ne_top
+  intro _ _
+  simp [secondCoinDensity]
+
+/-- The first coin is sufficient for the two-coin family, via the σ-algebra form of the
+factorization criterion: the density factors through `Prod.fst` against the fair
+second-coin base measure. -/
+example : IsSufficient (MeasurableSpace.comap Prod.fst inferInstance) twoCoinFamily := by
+  refine isSufficient_of_withDensity le_top (Measure.count.withDensity secondCoinDensity)
+    (fun θ ω => firstCoinDensity θ (Prod.fst ω)) ?_ ?_
+  · intro θ
+    exact (measurable_firstCoinDensity θ).comp (comap_measurable Prod.fst)
+  · intro θ
+    rw [twoCoinFamily, withDensity_mul Measure.count measurable_secondCoinDensity
+      ((measurable_firstCoinDensity θ).comp measurable_fst)]
+    congr 1
+    ext ω
+    rw [Pi.mul_apply, mul_comm]
+
+/-- The first coin is sufficient for the two-coin family, via the statistic form of the
+factorization criterion: the density is `g θ (Prod.fst ω) * h ω` with `h` independent
+of `θ`. -/
+example : IsSufficient (MeasurableSpace.comap Prod.fst inferInstance) twoCoinFamily := by
+  refine isSufficient_comap_of_factorization_of_sigmaFinite_trim measurable_fst Measure.count
+    firstCoinDensity (fun θ => measurable_firstCoinDensity θ) secondCoinDensity
+    measurable_secondCoinDensity ?_
+  intro θ
+  rfl
+
 /-- The trivial σ-algebra is not sufficient for `{δ_true, δ_false}`: a common version of
 `P_b(true | ⊥)` would be a constant equal to both `1` and `0`. -/
 theorem not_isSufficient_bot : ¬ IsSufficient ⊥ diracs := by
