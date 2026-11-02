@@ -21,8 +21,6 @@ orbit turns by exactly one full revolution: its total signed turning is `4` or `
 (`TurningIsFullRevolution`). This file collects the forms of that statement available for star
 hulls; none of them is an unconditional proof.
 
-* `shu_turningIsFullRevolution_of_saturating` assumes `bpc_BalanceSaturatingContraction`, which is
-  false (`not_bpc_BalanceSaturatingContraction`), so it is vacuous.
 * `shu_turningIsFullRevolution_of_eulerCharOne` assumes `EulerCharOne`, which for orbits of length
   at least three is equivalent to the conclusion (`shu_eulerCharOne_iff_balanceIsFour` together
   with `simplePolygonCornerBalance_iff`), so it is a restatement.
@@ -36,8 +34,6 @@ witness from a leftmost leftward vertical step.
 
 ## Main results
 
-* `StatMech.Lattice.shu_turningIsFullRevolution_of_saturating`: Umlaufsatz for star hull orbits
-  under the (false) saturated contraction hypothesis.
 * `StatMech.Lattice.shu_turningIsFullRevolution_of_eulerCharOne`: Umlaufsatz for star hull orbits
   under the equivalent hypothesis `EulerCharOne`.
 * `StatMech.Lattice.shu_starHull_mpl_isCycle`: face loops of boundary orbits of star hulls of
@@ -64,21 +60,6 @@ theorem shu_starHull_mpl_isCycle (K : Set (Site 2)) (hK : K.Finite)
     (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e}) :
     (mpl_orbitLoop (ndt_StarHull K) a).IsCycle :=
   shw_starHull_mpl_isCycle K a (shp_starHull_period_ge_three K hK a)
-
-/-- Hopf's Umlaufsatz for boundary orbits of star hulls, conditional form: under
-`bpc_BalanceSaturatingContraction`, every boundary orbit of the star hull of a finite nonempty set
-turns by `±4` quarter turns.
-
-The literature statement (H. Hopf, 1935, discrete form) holds for every orbit whose face loop is a
-simple cycle, hence for all boundary orbits of star hulls of finite sets, including orbits around
-holes. Here, however, the hypothesis `bpc_BalanceSaturatingContraction` is false
-(`not_bpc_BalanceSaturatingContraction`), so this theorem is vacuous. -/
-theorem shu_turningIsFullRevolution_of_saturating (K : Set (Site 2)) (hK : K.Finite)
-    (hne : K.Nonempty) (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e})
-    (hsat : bpc_BalanceSaturatingContraction) :
-    TurningIsFullRevolution (ndt_StarHull K) a :=
-  bpc_totalTurn_eq_four_of_saturating K (starHull_finite K hK) (hne.mono (ndt_subset_starHull K))
-    a hsat
 
 /-- Hopf's Umlaufsatz for boundary orbits of star hulls, `EulerCharOne` form: if the boundary orbit
 of the star hull of a finite set has Euler characteristic one in the sense of `EulerCharOne`

@@ -30,8 +30,8 @@ boundary dart of it, can be replaced by a strictly smaller nonempty finite set w
 of the same corner balance. By strong induction from the single-cell case it would force every
 boundary orbit of every finite nonempty set to have corner balance `-4`. That is false: the inner
 orbit around a one-cell hole has corner balance `+4`. So `BalancePreservingContraction` is false
-(`StatMech.Lattice.not_balancePreservingContraction`) and the results below that assume it are
-vacuous.
+(`StatMech.Lattice.not_balancePreservingContraction` in
+`CornerBalanceUnprobedSite.lean`); no theorem in this library assumes it.
 
 ## Main definitions
 
@@ -53,9 +53,6 @@ vacuous.
   `StatMech.Lattice.cornerBalance_trans`: translation invariance.
 * `StatMech.Lattice.unitCell_cornerBalance`, `StatMech.Lattice.singleton_cornerBalance`: every
   boundary orbit of a single cell has corner balance `-4`.
-* `StatMech.Lattice.turningIsFullRevolution_of_contraction`: under
-  `BalancePreservingContraction`, every boundary orbit of a finite nonempty set makes a full
-  revolution (vacuous, since the hypothesis is false).
 -/
 
 @[expose] public section
@@ -697,57 +694,17 @@ theorem singleton_balanceIsFour (v : Site 2)
 boundary dart `a` of `K`, there is a strictly smaller nonempty finite set `K'` with a boundary dart
 `a'` of the same corner balance.
 
-This hypothesis is false (`StatMech.Lattice.not_balancePreservingContraction`): by strong
-induction from single cells it would force corner balance `-4` on every boundary orbit of every
-finite nonempty set, but the inner orbit around a one-cell hole (the four neighbours of a site) has
-corner balance `+4`. Every statement assuming it is vacuous. -/
+This hypothesis is false (`StatMech.Lattice.not_balancePreservingContraction`, proved in
+`CornerBalanceUnprobedSite.lean`): by strong induction from single cells it would force corner
+balance `-4` on every boundary orbit of every finite nonempty set, but the inner orbit around a
+one-cell hole (the four neighbours of a site) has corner balance `+4`. It is kept only as the
+subject of that refutation; no theorem assumes it. -/
 def BalancePreservingContraction : Prop :=
   ∀ (K : Set (Site 2)), K.Finite → 2 ≤ K.ncard →
     ∀ (a : {e : Dart // IsBoundaryDart K e}),
       ∃ (K' : Set (Site 2)) (_ : K'.Finite) (_ : K'.Nonempty)
         (a' : {e : Dart // IsBoundaryDart K' e}),
         K'.ncard < K.ncard ∧ cornerBalance K' a' = cornerBalance K a
-
-/-- Under `BalancePreservingContraction`, every boundary orbit of a finite nonempty set has corner
-balance `±4`. The hypothesis `BalancePreservingContraction` is false (see
-`StatMech.Lattice.not_balancePreservingContraction`), so this statement is vacuous. -/
-theorem balanceIsFour_of_contraction (hcontr : BalancePreservingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) : BalanceIsFour K a := by
-  generalize hn : K.ncard = n
-  induction n using Nat.strong_induction_on generalizing K with
-  | _ n IH =>
-    subst hn
-    rcases Nat.lt_or_ge K.ncard 2 with hlt | hge
-    · have h1 : K.ncard = 1 := by
-        have hpos : 0 < K.ncard := (Set.ncard_pos hK).mpr hne
-        omega
-      obtain ⟨v, hv⟩ := Set.ncard_eq_one.mp h1
-      subst hv
-      exact singleton_balanceIsFour v a
-    · obtain ⟨K', hK', hne', a', hlt, hbal⟩ := hcontr K hK hge a
-      have hIH := IH K'.ncard hlt K' hK' hne' a' rfl
-      unfold BalanceIsFour at hIH ⊢
-      rw [← hbal]; exact hIH
-
-/-- Under `BalancePreservingContraction`, every boundary orbit of a finite nonempty set satisfies
-`SimplePolygonCornerBalance`. The hypothesis `BalancePreservingContraction` is false (see
-`StatMech.Lattice.not_balancePreservingContraction`), so this statement is vacuous. -/
-theorem simplePolygonCornerBalance_of_contraction (hcontr : BalancePreservingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) : SimplePolygonCornerBalance K a :=
-  (balanceIsFour_iff_simplePolygon K a).mp (balanceIsFour_of_contraction hcontr K hK hne a)
-
-/-- Under `BalancePreservingContraction`, every boundary orbit of a finite nonempty set makes a full
-revolution (a conditional Umlaufsatz; see
-`StatMech.Onsager.GeneralUmlaufsatz.turnSum_eq_four_or_neg_four` for the unconditional
-Umlaufsatz of simple closed lattice walks). The hypothesis `BalancePreservingContraction` is false
-(see `StatMech.Lattice.not_balancePreservingContraction`), so this statement is vacuous. -/
-theorem turningIsFullRevolution_of_contraction (hcontr : BalancePreservingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) : TurningIsFullRevolution K a :=
-  turningIsFullRevolution_of_simplePolygon K a
-    (simplePolygonCornerBalance_of_contraction hcontr K hK hne a)
 
 /-- The boundary orbit of the unit cell has corner balance `±4`. -/
 theorem unitCell_balanceIsFour : BalanceIsFour unitCell ucBase :=

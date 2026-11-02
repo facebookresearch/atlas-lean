@@ -18,10 +18,7 @@ the orbit visits every face at most once per period (`usc_FaceMultiplicityOne`),
 one period are distinct, so the number of faces visited equals the orbit period. Star hulls
 (`ndt_StarHull`) have this property for every boundary orbit.
 
-The file also records that the total turning of every boundary orbit of a single cell is `±4`,
-and the conditional full-revolution statements for star hulls that assume
-`BalancePreservingContraction`. That hypothesis is false
-(`StatMech.Lattice.not_balancePreservingContraction`), so those statements are vacuous.
+The file also records that the total turning of every boundary orbit of a single cell is `±4`.
 
 ## Main results
 
@@ -80,16 +77,6 @@ theorem gbe_singleton_totalTurn_eq_four (v : Site 2)
   unfold BalanceIsFour at h
   rw [cornerBalance_eq_totalTurnZ] at h
   exact h
-
-/-- Under `BalancePreservingContraction`, every boundary orbit of a finite nonempty star hull
-makes a full revolution. The hypothesis `BalancePreservingContraction` is false (see
-`StatMech.Lattice.not_balancePreservingContraction`), so this statement is vacuous. -/
-theorem gbe_totalTurn_eq_four_of_contraction (K : Set (Site 2))
-    (hSK : (ndt_StarHull K).Finite) (hne : (ndt_StarHull K).Nonempty)
-    (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e})
-    (hcontr : BalancePreservingContraction) :
-    TurningIsFullRevolution (ndt_StarHull K) a :=
-  turningIsFullRevolution_of_contraction hcontr (ndt_StarHull K) hSK hne a
 
 end Lattice
 

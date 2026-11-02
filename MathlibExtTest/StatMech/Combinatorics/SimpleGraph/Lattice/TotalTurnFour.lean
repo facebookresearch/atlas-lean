@@ -16,8 +16,8 @@ public import Mathlib
 
 * `ttf_totalTurn_eq_four_of_winds` and `ttf_winds_iff` for every boundary orbit of the star hull
   of a set, as an equivalence instance; `ttf_eulerCharOne_iff_winds` under period `≥ 3`.
-* `ttf_totalTurn_eq_four_of_balancePreservingContraction` is not instantiated (its hypothesis is
-  refuted by `not_balancePreservingContraction`).
+* The conditional `ttf_totalTurn_eq_four_of_balancePreservingContraction` was removed: its
+  hypothesis is refuted by `not_balancePreservingContraction`.
 -/
 
 @[expose] public section

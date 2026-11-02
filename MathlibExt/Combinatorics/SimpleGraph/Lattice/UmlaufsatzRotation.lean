@@ -25,12 +25,11 @@ This file proves:
   boundary orbits and preserves period, corner counts and total turn;
 * the base cases (unit cell, horizontal and vertical domino).
 
-The general statement is derived from `bpc_BalanceSaturatingContraction`, which is false
-(`not_bpc_BalanceSaturatingContraction`). The general theorems below (`uc_turningIsFullRevolution`,
-`uc_totalTurn_eq_four`, `uc_totalTurnAngle_eq_two_pi`, `uc_generalFullRevolution_of_saturating`,
-`uc_generalEulerCharOne_of_saturating`) are therefore vacuous, and the lattice Umlaufsatz for
-general finite sets is not proved here. Only the base cases and the reductions are genuine results.
-The Umlaufsatz for simple closed lattice walks given by direction sequences is proved
+The lattice Umlaufsatz for general finite sets is not proved here: the only earlier derivation
+went through the contraction hypothesis `bpc_BalanceSaturatingContraction`, which is false
+(`not_bpc_BalanceSaturatingContraction` in `CornerBalanceUnprobedSite.lean`), and those
+conditional theorems have been removed. Only the base cases and the reductions are genuine
+results. The Umlaufsatz for simple closed lattice walks given by direction sequences is proved
 unconditionally as `turnSum_eq_four_or_neg_four`; transferring it to boundary orbits would need the
 face loop of the orbit to be a simple closed walk without U-turns.
 
@@ -53,8 +52,6 @@ face loop of the orbit to be a simple closed walk without U-turns.
   `StatMech.Lattice.uc_domino_totalTurnAngle_eq_two_pi`,
   `StatMech.Lattice.uc_verticalDomino_totalTurn_eq_four`,
   `StatMech.Lattice.uc_verticalDomino_eulerCharOne`: the base cases.
-* `StatMech.Lattice.uc_turningIsFullRevolution`, `StatMech.Lattice.uc_totalTurn_eq_four`: the
-  lattice Umlaufsatz under the false hypothesis `bpc_BalanceSaturatingContraction` (vacuous).
 
 ## References
 
@@ -117,30 +114,6 @@ theorem uc_winds_iff (K : Set (Site 2)) (a : {e : Dart // IsBoundaryDart K e}) :
   · rintro ⟨hmax, hmin⟩; exact uc_totalTurn_eq_four_of_winds K a hmax hmin
   · exact uc_winds_of_totalTurn_eq_four K a
 
-/-- Lattice Umlaufsatz (Hopf's rotation index theorem for lattice contours): every boundary orbit
-of a finite nonempty set of sites has total turn `±4`, assuming `bpc_BalanceSaturatingContraction`.
-Vacuous: the hypothesis `bpc_BalanceSaturatingContraction` is refuted by
-`not_bpc_BalanceSaturatingContraction`, so this does not prove the lattice Umlaufsatz. See also
-`turnSum_eq_four_or_neg_four` (H. Hopf, *Über die Drehung der Tangenten und Sehnen ebener Kurven*,
-1935), the unconditional statement for simple closed lattice walks. -/
-theorem uc_turningIsFullRevolution (hsat : bpc_BalanceSaturatingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) :
-    TurningIsFullRevolution K a :=
-  turningIsFullRevolution_of_contraction
-    (bpc_balancePreservingContraction_of_saturating hsat) K hK hne a
-
-/-- Lattice Umlaufsatz in explicit form: the total turn of every boundary orbit of a finite
-nonempty set is `4` or `-4`, assuming `bpc_BalanceSaturatingContraction`. Vacuous: the hypothesis
-`bpc_BalanceSaturatingContraction` is refuted by `not_bpc_BalanceSaturatingContraction`, so this
-does not prove the lattice Umlaufsatz. -/
-theorem uc_totalTurn_eq_four (hsat : bpc_BalanceSaturatingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) :
-    totalTurnZ K a.1 (dartOrbitPeriod K a) = 4 ∨
-      totalTurnZ K a.1 (dartOrbitPeriod K a) = -4 :=
-  uc_turningIsFullRevolution hsat K hK hne a
-
 open Real in
 /-- Total turn `±4` is equivalent to total turning angle `±2π`. -/
 theorem uc_totalTurnAngle_eq_two_pi_iff (K : Set (Site 2))
@@ -168,18 +141,6 @@ theorem uc_totalTurnAngle_eq_two_pi_iff (K : Set (Site 2))
   · rintro (h | h)
     · left; rw [h]; push_cast; ring
     · right; rw [h]; push_cast; ring
-
-open Real in
-/-- Lattice Umlaufsatz in angle form: total turning angle `±2π`, assuming
-`bpc_BalanceSaturatingContraction`. Vacuous: the hypothesis `bpc_BalanceSaturatingContraction` is
-refuted by `not_bpc_BalanceSaturatingContraction`, so this does not prove the lattice Umlaufsatz.
--/
-theorem uc_totalTurnAngle_eq_two_pi (hsat : bpc_BalanceSaturatingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) :
-    totalTurnAngle K a.1 (dartOrbitPeriod K a) = 2 * Real.pi ∨
-      totalTurnAngle K a.1 (dartOrbitPeriod K a) = -(2 * Real.pi) :=
-  (uc_totalTurnAngle_eq_two_pi_iff K a).mpr (uc_totalTurn_eq_four hsat K hK hne a)
 
 open Real in
 /-- The unit-cell orbit has total turning angle `±2π` (in fact `-2π`). -/
@@ -446,35 +407,16 @@ theorem uc_verticalDomino_totalTurnAngle_eq_two_pi :
   · right; rw [h]; push_cast; ring
 
 /-- The lattice Umlaufsatz for all finite nonempty sets: every boundary orbit has total turn `±4`.
-Not proved in this library (the only derivation, `uc_generalFullRevolution_of_saturating`, uses a
-false hypothesis). -/
+Not proved in this library. -/
 def uc_GeneralFullRevolution : Prop :=
   ∀ (K : Set (Site 2)), K.Finite → K.Nonempty →
     ∀ (a : {e : Dart // IsBoundaryDart K e}), TurningIsFullRevolution K a
 
 /-- Every boundary orbit of every finite nonempty set satisfies `EulerCharOne`. Not proved in this
-library (the only derivation, `uc_generalEulerCharOne_of_saturating`, uses a false hypothesis). -/
+library. -/
 def uc_GeneralEulerCharOne : Prop :=
   ∀ (K : Set (Site 2)), K.Finite → K.Nonempty →
     ∀ (a : {e : Dart // IsBoundaryDart K e}), EulerCharOne K a
-
-/-- `uc_GeneralFullRevolution` from `bpc_BalanceSaturatingContraction`. Vacuous: the hypothesis
-`bpc_BalanceSaturatingContraction` is refuted by `not_bpc_BalanceSaturatingContraction`, so this
-does not prove the lattice Umlaufsatz. -/
-theorem uc_generalFullRevolution_of_saturating (hsat : bpc_BalanceSaturatingContraction) :
-    uc_GeneralFullRevolution :=
-  fun K hK hne a => uc_turningIsFullRevolution hsat K hK hne a
-
-/-- `uc_GeneralEulerCharOne` from `bpc_BalanceSaturatingContraction`. Vacuous: the hypothesis
-`bpc_BalanceSaturatingContraction` is refuted by `not_bpc_BalanceSaturatingContraction`, so this
-does not prove the lattice Umlaufsatz. -/
-theorem uc_generalEulerCharOne_of_saturating (hsat : bpc_BalanceSaturatingContraction) :
-    uc_GeneralEulerCharOne := by
-  intro K hK hne a
-  have hrev : TurningIsFullRevolution K a := uc_turningIsFullRevolution hsat K hK hne a
-  have hp : 3 ≤ dartOrbitPeriod K a := by
-    have := orbitPeriod_ge_four_of_fullRevolution K a hrev; omega
-  exact (eulerCharOne_iff_turningIsFullRevolution K a hp).mpr hrev
 
 /-- The vertical domino orbit satisfies `EulerCharOne`. -/
 theorem uc_verticalDomino_eulerCharOne :

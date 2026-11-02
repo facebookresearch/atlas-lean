@@ -16,17 +16,14 @@ Let `K` be a finite set of sites of `ℤ²` and `a` a boundary dart of `K`. The 
 `dartNext K` looks at two sites beside each dart (the site diagonally ahead and the site beside the
 tail), so the boundary orbit of `a` and its corner balance (right turns minus left turns over one
 period) depend on `K` only through the sites the orbit probes. Removing a site of `K` outside this
-footprint leaves the orbit and its corner balance unchanged. Hence the contraction property
-`BalancePreservingContraction` (every finite `K` with at least two sites has a strictly smaller
-set with an orbit of the same corner balance) reduces to the saturated case
-`bpc_BalanceSaturatingContraction`, where every site of `K` lies in the footprint.
+footprint leaves the orbit and its corner balance unchanged.
 
-Both properties are false. Under `BalancePreservingContraction`, induction on the number of sites
-forces every boundary orbit of every finite nonempty set to have corner balance `-4`, the value for
-a single site. The four lattice neighbours of the origin form a set with a hole; the orbit running
-around the hole turns the same way at every step, so its corner balance is its (positive) period.
-Every statement that takes `BalancePreservingContraction` or `bpc_BalanceSaturatingContraction` as
-a hypothesis is therefore vacuous.
+Both contraction properties below are false. Under `BalancePreservingContraction`, induction on
+the number of sites would force every boundary orbit of every finite nonempty set to have corner
+balance `-4`, the value for a single site. The four lattice neighbours of the origin form a set
+with a hole; the orbit running around the hole turns the same way at every step, so its corner
+balance is its (positive) period. The refutations at the end of this file prove that; no theorem
+in this library assumes either contraction property.
 
 ## Main definitions
 
@@ -43,10 +40,6 @@ a hypothesis is therefore vacuous.
   corner balance of the orbit.
 * `StatMech.Lattice.bpc_contraction_of_not_saturating`: a site of `K` outside the footprint can be
   removed without changing the corner balance.
-* `StatMech.Lattice.bpc_balancePreservingContraction_of_saturating`: the saturated case implies
-  `BalancePreservingContraction`.
-* `StatMech.Lattice.cornerBalance_eq_neg_four_of_contraction`: `BalancePreservingContraction`
-  forces corner balance `-4` on every orbit.
 * `StatMech.Lattice.bpc_holeRing_cornerBalance`: the orbit around the hole of `bpc_holeRing` has
   positive corner balance.
 * `StatMech.Lattice.not_balancePreservingContraction`,
@@ -257,28 +250,6 @@ def bpc_BalanceSaturatingContraction : Prop :=
         (a' : {e : Dart // IsBoundaryDart K' e}),
         K'.ncard < K.ncard ∧ cornerBalance K' a' = cornerBalance K a
 
-/-- The saturated contraction property implies `BalancePreservingContraction`: unsaturated sets
-contract by removing a site outside the footprint. -/
-theorem bpc_balancePreservingContraction_of_saturating
-    (h : bpc_BalanceSaturatingContraction) : BalancePreservingContraction := by
-  intro K hK hge a
-  by_cases hsat : K ⊆ bpc_orbitFootprint K a
-  · exact h K hK hge a hsat
-  · rw [Set.not_subset] at hsat
-    obtain ⟨c, hcK, hc⟩ := hsat
-    exact bpc_contraction_of_not_saturating K hK a c hcK hc
-
-/-- Total turn `±4` (one full revolution) for every boundary orbit of a finite nonempty star hull,
-assuming `bpc_BalanceSaturatingContraction`. Vacuous: its hypothesis
-`bpc_BalanceSaturatingContraction` is refuted by `not_bpc_BalanceSaturatingContraction`. -/
-theorem bpc_totalTurn_eq_four_of_saturating (K : Set (Site 2))
-    (hSK : (ndt_StarHull K).Finite) (hne : (ndt_StarHull K).Nonempty)
-    (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e})
-    (hsat : bpc_BalanceSaturatingContraction) :
-    TurningIsFullRevolution (ndt_StarHull K) a :=
-  gbe_totalTurn_eq_four_of_contraction K hSK hne a
-    (bpc_balancePreservingContraction_of_saturating hsat)
-
 /-- The corner balance of the domino orbit is `-4`. -/
 theorem bpc_domino_cornerBalance : cornerBalance domino dmBase = -4 := by
   rw [cornerBalance_eq_totalTurnZ]
@@ -317,25 +288,6 @@ theorem bpc_domino_balanceSaturatingContraction_witness :
       rw [funext_iff, Fin.forall_fin_two] at hcon; norm_num at hcon
     omega
   · rw [bpc_domino_cornerBalance, unitCell_cornerBalance ucBase (Or.inl rfl)]
-
-/-- Under `BalancePreservingContraction`, every boundary orbit of every finite nonempty set has
-corner balance `-4`: contract down to a single site, whose orbit has corner balance `-4`, keeping
-the corner balance fixed along the way. -/
-theorem cornerBalance_eq_neg_four_of_contraction (hcontr : BalancePreservingContraction)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) : cornerBalance K a = -4 := by
-  generalize hn : K.ncard = n
-  induction n using Nat.strong_induction_on generalizing K with
-  | _ n IH =>
-    subst hn
-    rcases Nat.lt_or_ge K.ncard 2 with hlt | hge
-    · have h1 : K.ncard = 1 := by
-        have hpos : 0 < K.ncard := (Set.ncard_pos hK).mpr hne
-        omega
-      obtain ⟨v, rfl⟩ := Set.ncard_eq_one.mp h1
-      exact singleton_cornerBalance v a
-    · obtain ⟨K', hK', hne', a', hlt, hbal⟩ := hcontr K hK hge a
-      rw [← hbal]; exact IH K'.ncard hlt K' hK' hne' a' rfl
 
 /-- The four lattice neighbours `(±1, 0)`, `(0, ±1)` of the origin: a set with a one-site hole. -/
 noncomputable def bpc_holeRing : Set (Site 2) := {![1, 0], ![0, 1], ![-1, 0], ![0, -1]}
@@ -413,17 +365,44 @@ theorem bpc_holeRing_cornerBalance : 0 < cornerBalance bpc_holeRing bpc_holeBase
   exact_mod_cast dartOrbitPeriod_pos bpc_holeRing bpc_holeRing_finite bpc_holeBase
 
 /-- `BalancePreservingContraction` is false: it would force corner balance `-4` on the orbit around
-the hole of `bpc_holeRing`, whose corner balance is positive. -/
+the hole of `bpc_holeRing`, whose corner balance is positive. The induction below is the
+`BalancePreservingContraction`-implies-`-4` argument, inlined so that no exported theorem assumes
+the refuted hypothesis. -/
 theorem not_balancePreservingContraction : ¬ BalancePreservingContraction := by
   intro h
-  have h1 := cornerBalance_eq_neg_four_of_contraction h bpc_holeRing bpc_holeRing_finite
+  have key : ∀ (K : Set (Site 2)), K.Finite → K.Nonempty →
+      ∀ (a : {e : Dart // IsBoundaryDart K e}), cornerBalance K a = -4 := by
+    intro K hK hne a
+    generalize hn : K.ncard = n
+    induction n using Nat.strong_induction_on generalizing K with
+    | _ n IH =>
+      subst hn
+      rcases Nat.lt_or_ge K.ncard 2 with hlt | hge
+      · have h1 : K.ncard = 1 := by
+          have hpos : 0 < K.ncard := (Set.ncard_pos hK).mpr hne
+          omega
+        obtain ⟨v, rfl⟩ := Set.ncard_eq_one.mp h1
+        exact singleton_cornerBalance v a
+      · obtain ⟨K', hK', hne', a', hlt, hbal⟩ := h K hK hge a
+        rw [← hbal]; exact IH K'.ncard hlt K' hK' hne' a' rfl
+  have h1 := key bpc_holeRing bpc_holeRing_finite
     ⟨![1, 0], by unfold bpc_holeRing; simp⟩ bpc_holeBase
   have h2 := bpc_holeRing_cornerBalance
   omega
 
-/-- `bpc_BalanceSaturatingContraction` is false, since it implies `BalancePreservingContraction`. -/
-theorem not_bpc_BalanceSaturatingContraction : ¬ bpc_BalanceSaturatingContraction :=
-  fun h => not_balancePreservingContraction (bpc_balancePreservingContraction_of_saturating h)
+/-- `bpc_BalanceSaturatingContraction` is false: saturated sets contract by the saturated
+property itself, and unsaturated sets contract by removing a site outside the footprint
+(`bpc_contraction_of_not_saturating`), so the saturated property would imply
+`BalancePreservingContraction`, which is false. -/
+theorem not_bpc_BalanceSaturatingContraction : ¬ bpc_BalanceSaturatingContraction := by
+  intro hsat
+  apply not_balancePreservingContraction
+  intro K hK hge a
+  by_cases hsat' : K ⊆ bpc_orbitFootprint K a
+  · exact hsat K hK hge a hsat'
+  · rw [Set.not_subset] at hsat'
+    obtain ⟨c, hcK, hc⟩ := hsat'
+    exact bpc_contraction_of_not_saturating K hK a c hcK hc
 
 end Lattice
 

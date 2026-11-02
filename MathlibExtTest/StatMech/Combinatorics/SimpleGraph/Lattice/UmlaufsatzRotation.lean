@@ -17,8 +17,8 @@ public import Mathlib
 * `uc_unitCell_totalTurnAngle_eq_two_pi`, `uc_verticalDomino_eulerCharOne`.
 * `uc_winds_iff` on the unit cell: both winding bounds hold (total turn `-4`).
 * `uc_totalTurnZ_rot`: rotation invariance on the unit cell.
-* The vacuous headlines (`uc_turningIsFullRevolution`, `uc_totalTurn_eq_four`, ...) are not
-  instantiated: their hypothesis is refuted (`not_bpc_BalanceSaturatingContraction`).
+* The conditional headlines (`uc_turningIsFullRevolution`, `uc_totalTurn_eq_four`, ...) were
+  removed: their hypothesis is refuted (`not_bpc_BalanceSaturatingContraction`).
 -/
 
 @[expose] public section
