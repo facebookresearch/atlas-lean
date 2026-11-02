@@ -9,7 +9,6 @@ module
 
 public import MathlibExt.Probability.Percolation.SharpnessTheorem
 public import MathlibExt.Probability.Percolation.TildePc
-public import MathlibExt.Probability.Percolation.TwoDimensional.Kesten
 
 /-!
 # Conditional upper half of Kesten's theorem, `p_c(ℤ²) ≤ 1/2`
