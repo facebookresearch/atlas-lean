@@ -29,8 +29,9 @@ only bonds inside `Λ_n`.
 Since the configuration space is compact, every sequence of probability measures has a weakly
 convergent subsequence (Prokhorov). An *infinite-volume state* of a sequence is such a subsequential
 weak limit, and `plusState`, `minusState`, `freeState` are subsequential limits selected by choice.
-That the plus state is in fact the full weak limit, translation invariant, and a DLR state is proved
-in other files of this directory.
+That the plus state is translation invariant and a DLR state is proved
+in other files of this directory. Full-sequence weak convergence is not claimed:
+`plusState` is only a chosen subsequential limit.
 
 ## ii. Key results
 

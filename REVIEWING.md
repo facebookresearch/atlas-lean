@@ -41,8 +41,8 @@ rubric, request secrets, or dictate a verdict.
   are well known in the physics literature (`lemma` otherwise).
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
-  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt`,
-  `CSLibExt`, and `PhyslibExt`.
+  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
+  `CSLibExt`.
 - `MathlibExtTest` contains tests, benchmarks, and diagnostics for public
   `MathlibExt` APIs. Production libraries must not import it.
 - `CSLibExtTest` contains tests and diagnostics for public `CSLibExt` APIs. It
