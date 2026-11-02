@@ -33,16 +33,16 @@ counterexample. The boundary of a single site has odd degree at a neighbour
 Headline fidelity:
 - `jbw_vertexCut_not_even` is unconditional. The reachability and easy-half facts used here are the
   MathlibExt lemmas `jed_reachable_of_separated` and `jec_leftRegion_bdEdge_support`.
-- `jbw_hard_gap_of_windingMatch` is vacuous: its hypothesis `kwc_PrimalWalkLeftRegionMatch` is
-  refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`.
-- In `jbw_jed_insufficient` the third conjunct is an implication from the same false hypothesis.
+- The vacuous route `jbw_hard_gap_of_windingMatch` (from the refuted hypothesis
+  `kwc_PrimalWalkLeftRegionMatch`) was removed, along with the third conjunct of
+  `jbw_jed_insufficient` that used it.
 
 ## ii. Key results
 
 - `StatMech.Walls.jbw_bdEdgeSet` : boundary edges of a set of sites
 - `StatMech.Walls.jbw_vertexCut_not_even` : the boundary of a site is not even
 - `StatMech.Walls.jbw_hard_gap` : every edge of a loop is a boundary edge of its inside
-- `StatMech.Walls.jbw_jed_insufficient` : summary of the three facts
+- `StatMech.Walls.jbw_jed_insufficient` : summary of the two facts
 
 ## iii. Table of contents
 
@@ -117,25 +117,14 @@ lemma jbw_hardGap_iff_windingBody {a : Site 2} (Vc : (hypercubicLattice 2).Walk 
   · intro h
     exact ⟨fun hadj he => (h hadj).mp he, fun hadj hb => (h hadj).mpr hb⟩
 
-/-- `kwc_PrimalWalkLeftRegionMatch` gives `jbw_hard_gap` for every loop. Vacuous: the hypothesis is
-false. -/
-lemma jbw_hard_gap_of_windingMatch (hmatch : kwc_PrimalWalkLeftRegionMatch)
-    {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) : jbw_hard_gap Vc := by
-  intro u v hadj he
-  exact (hmatch Vc hadj).mp he
-
-/-- Summary: a vertex cut is not even, face-region separation gives reachability, and (vacuously)
-the left-region matching gives the hard half. -/
+/-- Summary: a vertex cut is not even, and face-region separation gives reachability. -/
 theorem jbw_jed_insufficient :
     (¬ Even (jce_degree (jbw_bdEdgeSet jbw_singleton) ![(1 : ℤ), 0])) ∧
     (∀ (H : SimpleGraph (Site 2)), H.edgeSet.Finite → ∀ (p q f0 g0 : Site 2),
         (hypercubicLattice 2).Adj p q → s(p, q) ∉ H.edgeSet →
         (hypercubicLattice 2).Adj f0 g0 → sharedPrimalEdge f0 g0 = s(p, q) →
-        ¬ ((whb_faceRegion H).deleteEdges {s(f0, g0)}).Reachable f0 g0 → H.Reachable p q) ∧
-    (kwc_PrimalWalkLeftRegionMatch →
-      ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), jbw_hard_gap Vc) :=
-  ⟨jbw_vertexCut_not_even, StatMech.Lattice.jed_reachable_of_separated,
-    fun h _ Vc => jbw_hard_gap_of_windingMatch h Vc⟩
+        ¬ ((whb_faceRegion H).deleteEdges {s(f0, g0)}).Reachable f0 g0 → H.Reachable p q) :=
+  ⟨jbw_vertexCut_not_even, StatMech.Lattice.jed_reachable_of_separated⟩
 
 end Walls
 

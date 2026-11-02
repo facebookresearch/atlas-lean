@@ -26,8 +26,7 @@ take the RSW seeds (`hseed`, `h2box`, `hband`, `hrefl`), positive association `h
 and further supplied inputs. `kbw_kesten_square_faithful` gives `criticalProbability 2 = 1/2` from
 `hpa`, measurability, `h2box` and the input `hCorLowerBound : BXP → no percolation at 1/2`.
 `kbw_criticalProbability_le_half_square_faithful` (`p_c ≤ 1/2`) needs only measurability hypotheses.
-`kbw_halfMeasure_eq_rba` is now `halfMeasure = halfMeasure`: the duplicate measure it related was
-deleted, so it is vacuous and kept only for continuity.
+The tautological `kbw_halfMeasure_eq_rba` (`halfMeasure = halfMeasure`) was deleted.
 
 ## ii. Key results
 
@@ -56,10 +55,6 @@ namespace Universality
 open StatMech.Lattice StatMech.RSW.Box
 
 /-! ## A. Kesten's theorem -/
-
-/-- Vacuous: the measure this related to `halfMeasure` was an identical duplicate and has been
-  deleted, so the statement is `halfMeasure = halfMeasure`. -/
-lemma kbw_halfMeasure_eq_rba : halfMeasure = halfMeasure := rfl
 
 lemma kbw_kesten_bxp_supplied
     {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}

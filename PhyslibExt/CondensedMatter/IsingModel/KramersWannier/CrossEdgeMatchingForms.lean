@@ -36,9 +36,9 @@ the edges of `Vc`. The latter splits into `jbw_hard_gap Vc` and its converse.
 Headline fidelity:
 - The equivalences `dow_bridge_iff_crossEdge_mem_iff_shared_mem`,
   `dow_bridge_iff_bdEdge_shared_mem` and `dow_bridge_iff_hardGap_and_reverse` are unconditional.
-- `dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse` is vacuous. Its hypothesis `hnd` (every
-  closed walk has no repeated edges) is false: a walk that goes along an edge and back repeats it.
-  Its conclusion is refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`.
+- The vacuous route `dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse` was removed: its
+  hypothesis `hnd` (every closed walk has no repeated edges) is false, and its conclusion is
+  refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`.
 
 ## ii. Key results
 
@@ -147,19 +147,6 @@ lemma dow_bridge_of_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2)
       bdEdge (jec_leftRegion Vc) s(u, v) → s(u, v) ∈ Vc.edges) :
     rpc_CrossEdgeOddIffOnWalk Vc :=
   (dow_bridge_iff_hardGap_and_reverse Vc hnd).mpr ⟨hhard, hrev⟩
-
-/-- Assembling the two inclusions for all closed walks gives `kwc_PrimalWalkLeftRegionMatch`.
-Vacuous: the hypothesis `hnd` (no closed walk repeats an edge) is false, and the conclusion is
-refuted by `ceo_primalWalkLeftRegionMatch_false`. -/
-lemma dow_primalWalkLeftRegionMatch_of_hardGap_and_reverse
-    (hnd : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), Vc.edges.Nodup)
-    (hhard : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), jbw_hard_gap Vc)
-    (hrev : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) {u v : Site 2},
-      (hypercubicLattice 2).Adj u v →
-      bdEdge (jec_leftRegion Vc) s(u, v) → s(u, v) ∈ Vc.edges) :
-    kwc_PrimalWalkLeftRegionMatch :=
-  rpc_primalWalkLeftRegionMatch_of_bridge (fun Vc =>
-    dow_bridge_of_hardGap_and_reverse Vc (hnd Vc) (hhard Vc) (fun hadj => hrev Vc hadj))
 
 /-- For the unit-square loop and the edge `(0, 1)`–`(1, 1)`, odd crossing-edge count and
 boundary-edge membership agree. -/

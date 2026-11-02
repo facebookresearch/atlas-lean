@@ -18,7 +18,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Kesten
   `p_c(ℤ²) ≤ 1/2` unconditionally;
 * `kbw_kesten_square_faithful` reduced to its three genuine inputs (positive association, the RSW
   `2n × n` bound and `BXP → θ(1/2) = 0`), measurability supplied;
-* `kbw_halfMeasure_eq_rba` (now `rfl`).
+* `halfMeasure = halfMeasure` by `rfl`.
 -/
 
 @[expose] public section
@@ -49,7 +49,7 @@ example (hpa : PositivelyAssociated halfMeasure)
     (fun _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
     (fun _ _ => measurableSet_horizontalCrossingEvent _ _ _ _) h2box hCor
 
--- The continuity lemma is reflexivity.
-example : halfMeasure = halfMeasure := kbw_halfMeasure_eq_rba
+-- Reflexivity.
+example : halfMeasure = halfMeasure := rfl
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.CriticalPoint.KestenBXP

@@ -22,11 +22,10 @@ walks.
 ## i. Overview
 
 Under `crossEdge`, the pullback of the edges of a closed lattice walk `W` is the edge set of the
-rotated walk `W.map rot90Iso.symm`. Hence `PrimalWalkBoundsRegion` (the edge set of every closed
-lattice walk is a boundary-edge set `bdEdge S`) implies `LatticeDualWalkHasBdEdgeRegion` for
-`Gd = ℤ²` and therefore `DualWalkBoundsRegion`. The stronger `kwc_PrimalWalkLeftRegionMatch`
+rotated walk `W.map rot90Iso.symm`. The stronger `kwc_PrimalWalkLeftRegionMatch`
 (the edge set of every closed walk is the boundary of its own inside region) implies
-`PrimalWalkBoundsRegion`.
+`PrimalWalkBoundsRegion`. The vacuous reductions from `PrimalWalkBoundsRegion` to the
+dual-walk region property were removed.
 
 Headline fidelity: both hypotheses are false.
 - `PrimalWalkBoundsRegion` is refuted by `StatMech.Walls.fwr_primalWalkBoundsRegion_false`
@@ -34,15 +33,13 @@ Headline fidelity: both hypotheses are false.
 - `kwc_PrimalWalkLeftRegionMatch` is refuted by `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`
   (ShiftSquareCycle).
 
-So `kwc_latticeDualWalkHasBdEdgeRegion_of_primal`, `kwc_dualWalkBoundsRegion_of_primal` and
-`kwc_primalWalkBoundsRegion_of_leftRegionMatch` are vacuous. The walk lemmas in section A are
+So `kwc_primalWalkBoundsRegion_of_leftRegionMatch` is vacuous. The walk lemmas in section A are
 unconditional.
 
 ## ii. Key results
 
 - `StatMech.Walls.kwc_pullback_eq_mapped_edges` : the `crossEdge` pullback is a rotated walk
 - `StatMech.Walls.PrimalWalkBoundsRegion` : the (false) primal region-boundary property
-- `StatMech.Walls.kwc_dualWalkBoundsRegion_of_primal` : the reduction (vacuous)
 - `StatMech.Walls.kwc_PrimalWalkLeftRegionMatch` : the (false) inside-region matching property
 
 ## iii. Table of contents
@@ -108,25 +105,6 @@ def PrimalWalkBoundsRegion : Prop :=
   ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a), ∃ S : Set (Site 2),
     ∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
       (s(u, v) ∈ Vc.edges.toFinset ↔ bdEdge S s(u, v))
-
-/-- `PrimalWalkBoundsRegion` implies `LatticeDualWalkHasBdEdgeRegion` for `ℤ²`. Vacuous: the
-hypothesis is false. -/
-lemma kwc_latticeDualWalkHasBdEdgeRegion_of_primal
-    (hprimal : PrimalWalkBoundsRegion) :
-    LatticeDualWalkHasBdEdgeRegion (hypercubicLattice 2) := by
-  intro w W
-  obtain ⟨S, hS⟩ := hprimal (W.map rot90Iso.symm.toHom)
-  refine ⟨S, ?_⟩
-  intro u v huv
-  rw [kwc_pullback_eq_mapped_edges W]
-  exact hS huv
-
-/-- `PrimalWalkBoundsRegion` implies the region-boundary property of closed dual walks on `ℤ²`.
-Vacuous: the hypothesis is false (`fwr_primalWalkBoundsRegion_false`). -/
-theorem kwc_dualWalkBoundsRegion_of_primal (hprimal : PrimalWalkBoundsRegion) :
-    DualWalkBoundsRegion (hypercubicLattice 2) (hypercubicLattice 2) crossEdge :=
-  dualWalkBoundsRegion_lattice_of_bdEdgeMatch
-    (kwc_latticeDualWalkHasBdEdgeRegion_of_primal hprimal)
 
 /-- The edge set of every closed walk of `ℤ²` is the boundary-edge set of its inside region
 `jec_leftRegion`. This is false (`ceo_primalWalkLeftRegionMatch_false`). -/

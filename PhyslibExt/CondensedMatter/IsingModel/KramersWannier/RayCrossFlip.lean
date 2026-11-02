@@ -40,7 +40,7 @@ Headline fidelity:
 - `rpc_crossFlip`, `rpc_horizontalFlip_iff`, `rpc_verticalFlip_iff` and the unit-square example
   are unconditional.
 - `rpc_leftRegion_bdEdge_iff` is conditional on `rpc_CrossEdgeOddIffOnWalk Vc`.
-- `rpc_primalWalkLeftRegionMatch_of_bridge` is vacuous: its conclusion
+- The vacuous route `rpc_primalWalkLeftRegionMatch_of_bridge` was removed: its conclusion
   `kwc_PrimalWalkLeftRegionMatch` is refuted by
   `StatMech.Walls.ceo_primalWalkLeftRegionMatch_false`, so its hypothesis
   (`rpc_CrossEdgeOddIffOnWalk` for every closed walk) is false.
@@ -372,17 +372,6 @@ lemma rpc_leftRegion_bdEdge_iff {a : Site 2} (Vc : (hypercubicLattice 2).Walk a 
     bdEdge (jec_leftRegion Vc) s(u, v) ↔ s(u, v) ∈ Vc.edges := by
   rw [rpc_crossFlip Vc hadj]
   exact hbridge hadj
-
-/-- `rpc_CrossEdgeOddIffOnWalk` for every closed walk implies `kwc_PrimalWalkLeftRegionMatch`.
-Vacuous: the conclusion is refuted by `ceo_primalWalkLeftRegionMatch_false`, so the hypothesis is
-false. -/
-lemma rpc_primalWalkLeftRegionMatch_of_bridge
-    (hbridge : ∀ {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a),
-      rpc_CrossEdgeOddIffOnWalk Vc) :
-    kwc_PrimalWalkLeftRegionMatch := by
-  intro a Vc u v hadj
-  rw [List.mem_toFinset]
-  exact ((rpc_leftRegion_bdEdge_iff Vc (hbridge Vc) hadj).symm)
 
 /-- The edge from `(0, 1)` to `(1, 1)` is a boundary edge of the inside of the unit-square loop. -/
 theorem rpc_unitSquare_flip :

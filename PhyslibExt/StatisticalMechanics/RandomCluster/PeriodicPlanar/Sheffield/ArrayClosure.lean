@@ -15,7 +15,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 
 Crossing bounds from carried boundary components, recursive choice of boundary-band scales,
 and the rectangle-array contradictions that rule out a common unique infinite primal and dual
-cluster, the last of them only under a hypothesis equivalent to the conclusion.
+cluster.
 
 ## i. Overview
 
@@ -49,19 +49,11 @@ exclusion from planar duality for embeddings with edge arcs bounded by `B`.
 
 Headline fidelity, read from the statements:
 
-- `PeriodicPlanarDualPair.commonUnique_ne_one_of_recursiveArrayCertificate_imp`,
-  `…_of_macroArray`, `…_of_boundaryScoreArray` : the free buffered infinite-volume FK measure
-  does not give probability `1` to a common unique infinite primal and dual cluster. **The
-  hypothesis `harray` is equivalent to the conclusion.** It reads "if the common uniqueness
-  event has probability `1`, then a certificate exists", and every certificate is refuted:
-  `RecursiveRectangleArrayCertificate.false` and `MacroArrayCertificate.false` show these
-  structures are empty for every probability measure, and `TwoLevelBoundaryScoreArray.false`
-  shows that structure is empty for every FKG probability measure (the free buffered measure is
-  FKG under common uniqueness, `freeBufferedInfiniteVolume_sheffieldData_of_common`). So
-  `harray` holds exactly when the measure of the event is not `1`; the three results prove
-  nothing beyond restating their hypothesis. The certificate structures (and
-  `PointwiseMacroArrayCertificate`, refuted by `PointwiseMacroArrayCertificate.false`) are
-  vacuous hypothesis predicates.
+- The certificate structures (`RecursiveRectangleArrayCertificate`, `MacroArrayCertificate`,
+  `TwoLevelBoundaryScoreArray`, and `PointwiseMacroArrayCertificate`) are refuted by their
+  `.false` lemmas: they are empty for every (FKG) probability measure. The circular
+  `commonUnique_ne_one_of_…` wrappers that restated a certificate hypothesis as the
+  non-coexistence conclusion were removed.
 - `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` : proved unconditionally
   from its stated hypotheses (real analysis only).
 - `PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits` : proved;
@@ -3240,26 +3232,6 @@ lemma PeriodicPlanarDualPair.RecursiveRectangleArrayCertificate.false
     data.a data.b data.c data.d data.K data.spanX data.spanY
     data.verticalStart data.horizontalEnd data.primalAdjacent data.dualLevels
 
-/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
-by `RecursiveRectangleArrayCertificate.false`, so `harray` says exactly that the common uniqueness
-event does not have probability `1`. This result only restates its hypothesis. -/
-theorem
-    PeriodicPlanarDualPair.commonUnique_ne_one_of_recursiveArrayCertificate_imp
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    (harray :
-      let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-      mu D.commonUniqueInfiniteClusterEvent = 1 →
-        Nonempty (D.RecursiveRectangleArrayCertificate mu)) :
-    let mu : Measure (ConfigSpace (Sym2 V)) :=
-      P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    mu D.commonUniqueInfiniteClusterEvent ≠ 1 := by
-  dsimp only
-  intro hcommon
-  obtain ⟨data⟩ := harray hcommon
-  exact data.false D _
-
 /-- A rectangle array on the macroscopic coordinates `sheffieldMacroArrayCoordinates`. Empty for
 every probability measure (`MacroArrayCertificate.false`). -/
 structure PeriodicPlanarDualPair.MacroArrayCertificate
@@ -3361,25 +3333,6 @@ lemma PeriodicPlanarDualPair.MacroArrayCertificate.false
       ring
   · intro k hk
     simpa only [a, b, c, d, q] using data.dualLevels k hk
-
-/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
-by `MacroArrayCertificate.false`, so `harray` says exactly that the common uniqueness event does not
-have probability `1`. This result only restates its hypothesis. -/
-theorem PeriodicPlanarDualPair.commonUnique_ne_one_of_macroArrayCertificate_imp
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    (harray :
-      let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-      mu D.commonUniqueInfiniteClusterEvent = 1 →
-        Nonempty (D.MacroArrayCertificate mu)) :
-    let mu : Measure (ConfigSpace (Sym2 V)) :=
-      P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    mu D.commonUniqueInfiniteClusterEvent ≠ 1 := by
-  dsimp only
-  intro hcommon
-  obtain ⟨data⟩ := harray hcommon
-  exact data.false D _
 
 /-- A macro-array certificate with crossing limits required only level by level. Empty for every
 probability measure (`PointwiseMacroArrayCertificate.false`). -/
@@ -3702,28 +3655,5 @@ lemma PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false
     primalAdjacent := data.primalAdjacent
     dualLevel0 := data.dualLevel0
     dualLevel1 := data.dualLevel1 }
-
-/-- The hypothesis `harray` is equivalent to the conclusion: the certificate it produces is refuted
-by `TwoLevelBoundaryScoreArray.false`, so `harray` says exactly that the common uniqueness event
-does not have probability `1`. FKG of the measure is supplied by
-`freeBufferedInfiniteVolume_sheffieldData_of_common`. This result only restates its hypothesis. -/
-theorem
-PeriodicPlanarDualPair.commonUnique_ne_one_of_boundaryScoreArray_imp
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
-    (harray :
-      let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-      mu D.commonUniqueInfiniteClusterEvent = 1 →
-        ∃ B : Real, Nonempty (D.TwoLevelBoundaryScoreArray mu B)) :
-    let mu : Measure (ConfigSpace (Sym2 V)) :=
-      P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    mu D.commonUniqueInfiniteClusterEvent ≠ 1 := by
-  dsimp only
-  intro hcommon
-  have hdata := D.freeBufferedInfiniteVolume_sheffieldData_of_common
-    hp hp1 hq hcommon
-  obtain ⟨B, ⟨data⟩⟩ := harray hcommon
-  exact data.false D _ hdata.1
 
 end StatMech.FK.PeriodicPlanar

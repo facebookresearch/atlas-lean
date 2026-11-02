@@ -17,7 +17,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.ShiftSquareCy
 * `ceo_shiftSquare` has no repeated edges;
 * `ceo_shiftSquare_residue_false` refutes `rpc_CrossEdgeOddIffOnWalk ceo_shiftSquare`;
 * `ceo_primalWalkLeftRegionMatch_false` refutes `kwc_PrimalWalkLeftRegionMatch`, and with it the
-  hypothesis of `rpc_primalWalkLeftRegionMatch_of_bridge`.
+  hypothesis that `rpc_CrossEdgeOddIffOnWalk` holds for every closed walk.
 -/
 
 @[expose] public section

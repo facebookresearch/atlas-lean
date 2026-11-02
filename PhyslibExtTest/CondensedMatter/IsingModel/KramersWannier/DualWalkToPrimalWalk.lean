@@ -15,10 +15,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPri
 # Tests for `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk`
 
 * `kwc_pullback_eq_mapped_edges` on the empty walk at the origin;
-* `kwc_primalWalkBoundsRegion_nil_case`: the empty walk bounds a region;
-* the reductions `kwc_primalWalkBoundsRegion_of_leftRegionMatch` and
-  `kwc_dualWalkBoundsRegion_of_primal` compose (both hypotheses are refuted downstream, in
-  `FaceRegion` and `ShiftSquareCycle`).
+* `kwc_primalWalkBoundsRegion_nil_case`: the empty walk bounds a region.
 -/
 
 @[expose] public section
@@ -40,10 +37,5 @@ example : ∃ S : Set (Site 2), ∀ {u v : Site 2}, (hypercubicLattice 2).Adj u 
     (s(u, v) ∈ (SimpleGraph.Walk.nil : (hypercubicLattice 2).Walk (0 : Site 2) 0).edges.toFinset ↔
       bdEdge S s(u, v)) :=
   kwc_primalWalkBoundsRegion_nil_case
-
--- The two reductions compose.
-example (h : kwc_PrimalWalkLeftRegionMatch) :
-    Ising.DualWalkBoundsRegion (hypercubicLattice 2) (hypercubicLattice 2) crossEdge :=
-  kwc_dualWalkBoundsRegion_of_primal (kwc_primalWalkBoundsRegion_of_leftRegionMatch h)
 
 end PhyslibExtTest.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk
