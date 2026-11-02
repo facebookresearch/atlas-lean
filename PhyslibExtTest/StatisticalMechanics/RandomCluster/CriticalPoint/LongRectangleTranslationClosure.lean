@@ -35,8 +35,8 @@ instance : Fact (2 < 3) := ⟨by norm_num⟩
 attribute [local instance] thinTranslationClosureCounterexample_eightFact
 
 -- The coarse cover by the translation closure fails at `(8, 2, 1)`.
-example : ¬ BdcTorusWindingToThinCover 8 2 1
-    (bdcTorusThinCrossingTranslationClosureEvent 8 2 1) :=
+example : ¬ ∀ omega ∈ bdcTorusThinCrossingTranslationClosureEvent 8 2 1,
+    bdcTorusThinCrossing 8 2 1 omega :=
   not_translationClosure_coarseCover_two_one
 
 -- A thin crossing lies in its translation closure.

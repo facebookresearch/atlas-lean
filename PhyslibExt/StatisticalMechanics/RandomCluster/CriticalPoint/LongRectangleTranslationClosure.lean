@@ -21,8 +21,8 @@ by coarse thin crossings.
 
 Closing the thin-crossing event under torus translations gives an event described by `L² · 2α³`
 translated long rectangles. `not_translationClosure_coarseCover_two_one` is a Lean-checked
-refutation: for `L = 8`, `α = 2`, `n = 1` the translation-closure event does NOT satisfy
-`BdcTorusWindingToThinCover`, via the explicit configuration
+refutation: for `L = 8`, `α = 2`, `n = 1` not every configuration in the translation-closure
+event has a thin crossing, via the explicit configuration
 `thinTranslationClosureCounterexampleConfig`. Covers of that shape are therefore unavailable without
 changing the geometry.
 
@@ -30,7 +30,8 @@ changing the geometry.
 
 - `bdcTorusThinCrossingTranslationClosure_iff_pullback_mem_finiteExpanded`: finite description of
   the closure.
-- `not_translationClosure_coarseCover_two_one`: refutation of the coarse cover at `(8, 2, 1)`.
+- `not_translationClosure_coarseCover_two_one`: refutation of the coarse cover at `(8, 2, 1)`: some
+  configuration in the translation-closure event has no thin crossing.
 
 ## iii. Table of contents
 
@@ -582,13 +583,14 @@ lemma thinTranslationClosureCounterexample_closure_not_coarse :
   ⟨thinTranslationClosureCounterexample_mem_closure,
     thinTranslationClosureCounterexample_not_coarse⟩
 
-/-- Refutation of the coarse cover at `(8, 2, 1)`. -/
+/-- Refutation of the coarse cover at `(8, 2, 1)`: some configuration in the
+translation-closure event has no thin crossing. -/
 lemma not_translationClosure_coarseCover_two_one :
-    ¬ BdcTorusWindingToThinCover 8 2 1
-      (bdcTorusThinCrossingTranslationClosureEvent 8 2 1) := by
+    ¬ ∀ omega ∈ bdcTorusThinCrossingTranslationClosureEvent 8 2 1,
+      bdcTorusThinCrossing 8 2 1 omega := by
   intro h
   exact thinTranslationClosureCounterexample_not_coarse
-    (h.toThin thinTranslationClosureCounterexampleConfig
+    (h thinTranslationClosureCounterexampleConfig
       thinTranslationClosureCounterexample_mem_closure)
 
 end StatMech.BeffaraDC

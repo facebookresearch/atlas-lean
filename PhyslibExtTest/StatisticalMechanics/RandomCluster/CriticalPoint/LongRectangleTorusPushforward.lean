@@ -18,8 +18,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.LongRe
 On the `3 × 3` torus at `p = 1/2`, `q = 2`:
 * `torusAmbientMeasure_positivelyAssociated` (FKG) and the probability-measure instance;
 * `torusPlanarPushforward_allShiftInvariant`;
-* `bdcLongRectangle_polynomial_deficit_of_torusCover` fully instantiated: the thin cover is the
-  thin-crossing set itself and `c = 1`, `ε = 0` makes the winding hypothesis trivial.
+* `bdcLongRectangle_polynomial_deficit_of_torusCover` fully instantiated: `W` is the
+  thin-crossing set itself, whose lift is in the union, and `c = 1`, `ε = 0`.
 -/
 
 @[expose] public section
@@ -54,7 +54,8 @@ example := torusPlanarPushforward_allShiftInvariant 3 hp hp1 hq
 -- The long-rectangle deficit bound for the pushforward, with all hypotheses discharged.
 example := bdcLongRectangle_polynomial_deficit_of_torusCover 3 hp hp1 hq (by norm_num)
   (alpha := 1) (n := 1) one_pos le_rfl {omega | bdcTorusThinCrossing 3 1 1 omega}
-  ⟨fun _ h => h⟩ (c := 1) (epsilon := 0) zero_le_one (by simp)
+  (bdcTorusThinCrossing_planarLift_subset_longRectangleUnion 3 1 1)
+  (c := 1) (epsilon := 0) zero_le_one (by simp)
 
 end LongRectangleTorusPushforward
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.CriticalPoint

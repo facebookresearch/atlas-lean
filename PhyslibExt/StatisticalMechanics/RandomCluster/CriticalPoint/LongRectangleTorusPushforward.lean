@@ -23,15 +23,16 @@ planar configurations, which is translation invariant and positively associated.
 log-supermodular for `q ≥ 1`, so it is positively associated. The pushforward
 `torusPlanarPushforward` along the planar pullback is positively associated and invariant under
 every lattice translation. The long-rectangle polynomial deficit therefore applies to it
-(`bdcLongRectangle_polynomial_deficit_of_torusCover`), conditional on a thin cover of the winding
-event. The other results are unconditional.
+(`bdcLongRectangle_polynomial_deficit_of_torusCover`), conditional on the planar lift of
+a set `W` of torus configurations being contained in the long-rectangle union. The other
+results are unconditional.
 
 ## ii. Key results
 
 - `torusAmbientMeasure_positivelyAssociated`: FKG for the torus measure (`q ≥ 1`).
 - `torusPlanarPushforward_allShiftInvariant`: the planar pushforward is translation invariant.
 - `bdcLongRectangle_polynomial_deficit_of_torusCover`: polynomial deficit for the pushforward,
-  conditional on a thin cover.
+  conditional on the planar lift of `W` lying in the long-rectangle union.
 
 ## iii. Table of contents
 
@@ -577,7 +578,7 @@ lemma bdcLongRectangle_polynomial_deficit_of_torusCover
     (hp : 0 < p) (hp1 : p < 1) (hq0 : 0 < q) (hq : 1 ≤ q)
     {alpha n : ℕ} (ha : 0 < alpha) (hn : 1 ≤ n)
     (W : Set (TorusAmbientConfig L))
-    (hcover : BdcTorusWindingToThinCover L alpha n W)
+    (hsub : bdcTorusPlanarLiftEvent L W ⊆ bdcLongRectangleUnion alpha n)
     {c epsilon : ℝ} (hc : 0 ≤ c)
     (hW : 1 - (torusAmbientMeasure L hp hp1 hq0).real W ≤
       c * (n : ℝ) ^ (-epsilon)) :
@@ -591,7 +592,7 @@ lemma bdcLongRectangle_polynomial_deficit_of_torusCover
       L hp hp1 hq0 hq)
     (torusPlanarPushforward_allShiftInvariant L hp hp1 hq0)
     ha hn (bdcTorusPlanarLiftEvent L W)
-    hcover.planarLift_subset_longRectangleUnion hc
+    hsub hc
   simpa only [torusPlanarPushforward_real_planarLiftEvent_apply]
     using hW
 

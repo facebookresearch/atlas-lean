@@ -74,13 +74,6 @@ lemma bc66_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R
     bc65_ConnectedCoarseForest ω L R :=
   bc65_connectedForest_of_forestData ω L R W G ιT lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
 
-/-- Same statement as `bc63_coarseArm_reaches_boundary`; kept because TrifSuperVertex uses it. -/
-lemma bc66_coarse_armReaching_unconditional (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (hR : 1 ≤ R) (y a : Site d) (habox : a ∈ box d R)
-    (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
-    ∃ z ∈ vertexBoundary d R, Connected d (removeSites (bc61_boxAround d L y) ω) a z :=
-  StatMech.Walls.bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf
-
 lemma bc66_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 1 ≤ R → ∀ (y a : Site d), a ∈ box d R →
       (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite →
@@ -100,7 +93,7 @@ lemma bc66_status :
           (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro ω L R hR y a habox hinf
-    exact bc66_coarse_armReaching_unconditional ω L R hR y a habox hinf
+    exact StatMech.Walls.bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf
   · intro L hL
     exact StatMech.Walls.bc61_wholeBox_severs_upperLines hL
   · intro V _ _ G _ hacyc hmin

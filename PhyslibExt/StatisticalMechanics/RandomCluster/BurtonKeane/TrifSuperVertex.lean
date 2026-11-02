@@ -145,7 +145,7 @@ lemma bc67_Gn_arm_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ
     (y a : Site d) (habox : a ∈ box d R)
     (hinf : (cluster d (removeSites (bc61_boxAround d L y) ω) a).Infinite) :
     ∃ z ∈ vertexBoundary d R, (bc67_contractedLattice ω L y).Reachable a z := by
-  obtain ⟨z, hz, hconn⟩ := bc66_coarse_armReaching_unconditional ω L R hR y a habox hinf
+  obtain ⟨z, hz, hconn⟩ := bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf
   exact ⟨z, hz, (bc67_Gn_deletion_eq_removeSites ω L y a z).mpr hconn⟩
 
 lemma bc67_Gn_singleVertex_trifurcation_degree (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ)

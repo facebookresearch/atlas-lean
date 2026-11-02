@@ -17,7 +17,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusW
 
 * `windingThinCounterexample_winding_not_thin`: the explicit `8 × 8` configuration winds vertically
   but has no thin crossing;
-* `not_bdcTorusVerticalWindingThinCover_two_one`: the thin-cover hypothesis is refuted at
+* `not_bdcTorusVerticalWindingThinCover_two_one`: the thin-cover claim is refuted at
   `(alpha, n) = (2, 1)`;
 * `windingThinCounterexample_exists_missing` at `a = 0`, `c = 4`.
 
@@ -39,8 +39,10 @@ example : bdcTorusVerticalWinding 8 windingThinCounterexampleConfig ∧
     ¬ bdcTorusThinCrossing 8 2 1 windingThinCounterexampleConfig :=
   windingThinCounterexample_winding_not_thin
 
--- The thin-cover hypothesis at `(2, 1)` is false.
-example : ¬ BdcTorusVerticalWindingThinCover 2 1 := not_bdcTorusVerticalWindingThinCover_two_one
+-- The thin-cover claim at `(2, 1)` is false: a winding configuration has no thin crossing.
+example : ¬ ∀ omega ∈ {omega : TorusAmbientConfig 8 | bdcTorusVerticalWinding 8 omega},
+    bdcTorusThinCrossing 8 2 1 omega :=
+  not_bdcTorusVerticalWindingThinCover_two_one
 
 -- A missing cut row in the window starting at column `0`, rows `4..7`.
 example := windingThinCounterexample_exists_missing 0 4 le_rfl (by norm_num) (Or.inr rfl)

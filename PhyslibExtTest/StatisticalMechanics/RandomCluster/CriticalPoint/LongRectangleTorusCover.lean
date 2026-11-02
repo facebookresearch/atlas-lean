@@ -18,9 +18,8 @@ On the `3 × 3` torus:
 * `torusReduceSite_add_period_x` at the origin;
 * `torusPlanarPullback_injective`;
 * `torusSquareHorizontalCrossing_period_false`: no configuration crosses a full period square;
-* `bdcTorusThinCrossing_planarLift_subset_longRectangleUnion` at `alpha = n = 1`, and the thin
-  cover structure `BdcTorusWindingToThinCover` is satisfiable (by the thin-crossing set itself),
-  so `planarLift_subset_longRectangleUnion` applies.
+* `bdcTorusThinCrossing_planarLift_subset_longRectangleUnion` at `alpha = n = 1`: the
+  thin-crossing set lifts into the long-rectangle union.
 -/
 
 @[expose] public section
@@ -45,12 +44,5 @@ example (omega : TorusAmbientConfig 3) : ¬ torusSquareHorizontalCrossing 3 3 om
 
 -- Thin crossings lift into the long-rectangle union.
 example := bdcTorusThinCrossing_planarLift_subset_longRectangleUnion 3 1 1
-
-/-- The thin-crossing set is covered by thin crossings. -/
-theorem thinCover : BdcTorusWindingToThinCover 3 1 1 {omega | bdcTorusThinCrossing 3 1 1 omega} :=
-  ⟨fun _ h => h⟩
-
--- The conditional lift applies to a satisfiable cover.
-example := thinCover.planarLift_subset_longRectangleUnion
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.CriticalPoint.LongRectangleTorusCover

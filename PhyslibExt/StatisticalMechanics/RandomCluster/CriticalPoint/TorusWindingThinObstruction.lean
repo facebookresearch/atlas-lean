@@ -22,12 +22,14 @@ crossing, refuting the thin-cover hypothesis at `(α, n) = (2, 1)`.
 (`windingThinCounterexample_winds`), but every thin rectangle misses a cut row
 (`windingThinCounterexample_exists_missing`), so it has no thin crossing.
 `not_bdcTorusVerticalWindingThinCover_two_one` is a Lean-checked refutation of
-`BdcTorusVerticalWindingThinCover 2 1`.
+the claim that every vertically winding configuration on the `8`-torus has a thin
+crossing at `(α, n) = (2, 1)`.
 
 ## ii. Key results
 
 - `windingThinCounterexample_winding_not_thin`: winding but no thin crossing.
-- `not_bdcTorusVerticalWindingThinCover_two_one`: refutation of the thin cover at `(2, 1)`.
+- `not_bdcTorusVerticalWindingThinCover_two_one`: refutation of the thin cover at `(2, 1)`: a
+  vertically winding configuration with no thin crossing.
 
 ## iii. Table of contents
 
@@ -291,11 +293,13 @@ lemma windingThinCounterexample_winding_not_thin :
       ¬ bdcTorusThinCrossing 8 2 1 windingThinCounterexampleConfig :=
   ⟨windingThinCounterexample_winds, windingThinCounterexample_not_thin⟩
 
-/-- Refutation of the thin cover at `(2, 1)`. -/
+/-- Refutation of the thin cover at `(2, 1)`: some vertically winding configuration
+on the `8`-torus has no thin crossing. -/
 lemma not_bdcTorusVerticalWindingThinCover_two_one :
-    ¬ BdcTorusVerticalWindingThinCover 2 1 := by
+    ¬ ∀ omega ∈ {omega : TorusAmbientConfig 8 | bdcTorusVerticalWinding 8 omega},
+      bdcTorusThinCrossing 8 2 1 omega := by
   intro h
   exact windingThinCounterexample_not_thin
-    (h.toThin windingThinCounterexampleConfig windingThinCounterexample_winds)
+    (h windingThinCounterexampleConfig windingThinCounterexample_winds)
 
 end StatMech.BeffaraDC

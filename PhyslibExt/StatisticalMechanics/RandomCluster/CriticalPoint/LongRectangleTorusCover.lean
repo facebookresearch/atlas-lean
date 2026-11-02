@@ -21,22 +21,23 @@ through the planar pullback of torus configurations.
 
 The planar pullback of a torus configuration is periodic and injective. A vertical winding of the
 torus cannot be read off a single period square (`torusSquareHorizontalCrossing_period_false`). A
-thin-crossing cover `BdcTorusWindingToThinCover` turns windings into crossings of the long
-rectangles, so the planar lift of the winding event is contained in the long-rectangle union. That
-containment is conditional on the cover hypothesis; `LongRectangleTranslationClosure` refutes the
-cover for the translation-closure event at `L = 8`.
+The planar lift of the thin-crossing set is contained in the long-rectangle union
+(`bdcTorusThinCrossing_planarLift_subset_longRectangleUnion`). There is no thin-cover
+wrapper: a structure stating that every configuration in a set has a thin crossing would
+be tautological as a cover hypothesis, since it is equivalent to the containment it is
+meant to prove. `LongRectangleTranslationClosure` shows the translation-closure event at
+`L = 8` is not covered by thin crossings.
 
 ## ii. Key results
 
 - `torusPlanarPullback_injective`: the pullback is injective.
-- `BdcTorusWindingToThinCover.planarLift_subset_longRectangleUnion`: windings lift into the union,
-  given a thin cover.
+- `bdcTorusThinCrossing_planarLift_subset_longRectangleUnion`: the thin-crossing set lifts
+  into the long-rectangle union.
 
 ## iii. Table of contents
 
 - A. Periodicity of the planar pullback
 - B. Windings and thin crossings
-- C. Thin covers
 
 ## iv. References
 
@@ -197,38 +198,5 @@ lemma bdcTorusThinCrossing_planarLift_subset_longRectangleUnion
   rintro eta ⟨omega, homega, rfl⟩
   exact (bdcTorusThinCrossing_iff_pullback_mem_union
     L alpha n omega).mp homega
-
-/-! ## C. Thin covers -/
-
-/-- A cover hypothesis: every configuration in `W` has a thin crossing. -/
-structure BdcTorusWindingToThinCover
-    (L alpha n : ℕ) [Fact (2 < L)]
-    (W : Set (TorusAmbientConfig L)) : Prop where
-  toThin : ∀ omega, omega ∈ W → bdcTorusThinCrossing L alpha n omega
-
-lemma BdcTorusWindingToThinCover.planarLift_subset_longRectangleUnion
-    {L alpha n : ℕ} [Fact (2 < L)]
-    {W : Set (TorusAmbientConfig L)}
-    (h : BdcTorusWindingToThinCover L alpha n W) :
-    bdcTorusPlanarLiftEvent L W ⊆ bdcLongRectangleUnion alpha n := by
-  rintro eta ⟨omega, homega, rfl⟩
-  exact (bdcTorusThinCrossing_iff_pullback_mem_union
-    L alpha n omega).mp (h.toThin omega homega)
-
-/-- The thin-cover hypothesis for the vertical-winding event at the long-rectangle period. -/
-abbrev BdcTorusVerticalWindingThinCover
-    (alpha n : ℕ) [Fact (2 < bdcLongRectanglePeriod alpha n)] :=
-  BdcTorusWindingToThinCover (bdcLongRectanglePeriod alpha n) alpha n
-    {omega |
-      bdcTorusVerticalWinding (bdcLongRectanglePeriod alpha n) omega}
-
-lemma bdcTorusVerticalWinding_planarLift_subset_longRectangleUnion
-    {alpha n : ℕ} [Fact (2 < bdcLongRectanglePeriod alpha n)]
-    (h : BdcTorusVerticalWindingThinCover alpha n) :
-    bdcTorusPlanarLiftEvent (bdcLongRectanglePeriod alpha n)
-        {omega |
-          bdcTorusVerticalWinding (bdcLongRectanglePeriod alpha n) omega} ⊆
-      bdcLongRectangleUnion alpha n :=
-  h.planarLift_subset_longRectangleUnion
 
 end StatMech.BeffaraDC

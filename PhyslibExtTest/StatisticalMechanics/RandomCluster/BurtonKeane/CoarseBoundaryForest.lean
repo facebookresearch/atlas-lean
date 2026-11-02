@@ -18,7 +18,7 @@ In the plane:
 * `bc66_status` gives the upper lines as a coarse trifurcation at `L = 3`;
 * its leaf-count clause applies to the explicit caterpillar tree `bc65_cat2G`;
 * its last clause gives disjoint boxes and an upper-lines connection at `L = 3`;
-* `bc66_coarse_armReaching_unconditional` applies to the upper-lines right arm.
+* `bc63_coarseArm_reaches_boundary` applies to the upper-lines right arm.
 -/
 
 @[expose] public section
@@ -49,7 +49,7 @@ example : Disjoint (bc61_boxAround 2 3 (0 : Site 2))
 example : ∃ z ∈ vertexBoundary 2 4,
     Connected 2 (removeSites (bc61_boxAround 2 3 0) bc60_upperLines)
       (bc57_pt (((3 : ℕ) : ℤ) + 1) 1) z :=
-  bc66_coarse_armReaching_unconditional bc60_upperLines 3 4 (by norm_num) 0 _
+  bc63_coarseArm_reaches_boundary bc60_upperLines 3 4 (by norm_num) 0 _
     (by simp [box, Fin.forall_fin_two, bc57_pt]) (bc61_upperLines_rightArm_infinite le_rfl)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryForest
