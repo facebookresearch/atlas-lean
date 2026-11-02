@@ -895,11 +895,17 @@ counted once, under the first category that applies in the order below. The tabl
 account for 655 first-round rows and 202 second-round rows (one source,
 `Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
 definition ported in the second), 1 deleted module, and the categories below: 655 + 202 - 1
-(duplicate) + 1 (deleted) + 6,077 (categories) = 6,934 distinct source modules accounted for.
-The earlier draft claimed 238 second-round rows
-and 6,970 source modules in total; that did not reconcile with the tables, and the remaining
-36-module gap is an open reconciliation item: do not treat the coverage as complete until the
-missing 36 source modules are either added as rows or accounted for in the categories.
+(duplicate) + 1 (deleted) + 6,113 (categories) = 6,970 distinct source modules accounted for,
+which is every source `.lean` file. The earlier draft claimed 238 second-round rows
+and 6,970 source modules in total; that did not reconcile with the tables. The 36-module gap
+is now reconciled by a per-directory residual audit (total files per directory minus `Check*`
+files, ported rows, and the category counts): the gap was 27 modules in `Probability`, 1 in
+`TwoDim`, and 8 in `OSSS`. The `Probability` physics row is the single file
+`MeasurableFKGClosure.lean` (362 lines), so the other 27 `Probability` files are unused; the
+`TwoDim` physics row is the four Zhang files (3,138 lines), so `NearHalfKKLWire.lean` is
+unused. The 8 `OSSS` modules are listed separately below as an unclassified remainder: their
+aggregate lines are determined (3,752), but the ledger's counts do not determine their
+physics/unused split, so no per-file assignment is guessed here.
 
 ### Physics remainder (636 modules, 299,048 lines)
 
@@ -953,7 +959,7 @@ physics remainder imports.
 | `Universality` | 425 | 303,540 |
 | `Walls` | 609 | 203,612 |
 
-### Unused modules in the physics areas (339 modules, 129,039 lines)
+### Unused modules in the physics areas (367 modules, 139,022 lines)
 
 These modules sit in physics directories but are imported by no ported module and no module of the
 physics remainder. They are used only by `Check*` files, frontier files or each other, or by nothing
@@ -971,6 +977,19 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
 | `RSW` | 3 | 973 |
 | `SLE` | 5 | 1,115 |
 | `Sharpness` | 4 | 1,301 |
+| `Probability` | 27 | 9,756 |
+| `TwoDim` | 1 | 227 |
+
+### Unclassified `OSSS` remainder (8 modules, 3,752 lines)
+
+`OSSS/` has 98 non-ported, non-`Check*` modules, while the physics remainder counts 81
+(40,089 lines) and the unused table above counts 9 (4,948 lines): 98 − 81 − 9 = 8 modules,
+with 48,789 − 40,089 − 4,948 = 3,752 lines, are in neither category. These 8 are accounted
+for in the totals above but their physics/unused split is not determined by the ledger's
+counts (several partitions of the `OSSS` candidates satisfy the module counts, the line
+totals, and import-closure), so this ledger does not guess a per-file assignment. Classify
+them by content (whether the `PhyslibExt` physics development needs them) in a follow-up;
+until then they are counted here, not in the physics remainder and not in the unused table.
 
 ### Ported, then deleted
 

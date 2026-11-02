@@ -320,14 +320,6 @@ theorem eaw_windingSaturatingWitness_of_residue (hres : eaw_LoopWindsRegion) :
   obtain ⟨hp, hnp, hint⟩ := hres K hK hge a hsat
   exact eaw_windingWitness_of_cycle_interior K a hp hnp hint
 
-/-- Under `eaw_LoopWindsRegion`, every boundary orbit of a finite nonempty star hull has a winding
-witness. Vacuous: the hypothesis is false (`not_eaw_LoopWindsRegion`). -/
-theorem eaw_starHull_windingWitness_of_residue (hres : eaw_LoopWindsRegion)
-    (K : Set (Site 2)) (hSK : (ndt_StarHull K).Finite) (hne : (ndt_StarHull K).Nonempty)
-    (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e}) :
-    wei_WindingWitness (ndt_StarHull K) a :=
-  wei_starHull_windingWitness_of_residue (eaw_windingSaturatingWitness_of_residue hres) K hSK hne a
-
 /-- The ray count of a site `z` with respect to the face loop of the unit cell orbit. -/
 theorem eaw_unitCell_rayCount_eq (z : Site 2) :
     jec_rayCount z (mpl_orbitLoop unitCell ucBase)
