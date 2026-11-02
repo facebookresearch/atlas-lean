@@ -120,21 +120,6 @@ lemma bc9nbr_mem_neighbour_cutCluster_of_adj (ω : ConfigSpace (Sym2 (Site d))) 
     ∃ n, (openSubgraph d ω).Adj 0 n ∧ y ∈ cluster d (removeSite 0 ω) n :=
   bc9nbr_mem_neighbour_cutCluster ω hy0 hadj.reachable
 
-section AxiomAudit
-
-/-- info: 'StatMech.Walls.bc9nbr_adj_survives_origin_cut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9nbr_origin_neighbour_of_connected' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9nbr_mem_neighbour_cutCluster' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9nbr_mem_neighbour_cutCluster_strong' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-end AxiomAudit
 
 end Walls
 

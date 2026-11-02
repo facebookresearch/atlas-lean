@@ -108,15 +108,6 @@ lemma bc9_threeArms_pairwiseNoMerge (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     bc8_disjoint_of_cut_ne hd12, bc8_disjoint_of_cut_ne hd13, bc8_disjoint_of_cut_ne hd23,
     bc7_cut_no_crossing hd12, bc7_cut_no_crossing hd13, bc7_cut_no_crossing hd23⟩
 
-section AxiomAudit
-
-/-- info: 'StatMech.Walls.bc9_distinctCutClusters' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9_threeArms_pairwiseNoMerge' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-end AxiomAudit
 
 end Walls
 

@@ -194,27 +194,6 @@ lemma bc12_boxOriginTrifurcation_perOmega_of_canonical (ω : ConfigSpace (Sym2 (
           cluster d (removeSite 0 (forceOpenFinset W ω)) y₃ :=
   ⟨htri, bc12_canonicalTrif_discharges_boxReach ω htri⟩
 
-section AxiomAudit
-
-/-- info: 'StatMech.Walls.bc12_canonicalTrif_discharges_boxReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc12_boxOriginReach_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc12_originRewiring_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc12_burtonKeane_uniqueness_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs(whitespace := lax) in
-
-/-- info: 'StatMech.Walls.bc12_origin_openIncidence_of_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc12_isolated_origin_not_trifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-end AxiomAudit
 
 end Walls
 

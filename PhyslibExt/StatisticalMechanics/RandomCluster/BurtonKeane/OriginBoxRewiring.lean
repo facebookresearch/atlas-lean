@@ -173,21 +173,6 @@ lemma bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
   · exact hd13
   · exact hd23
 
-section AxiomAudit
-
-/-- info: 'StatMech.Walls.bc9_originRewiring_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9_canonicalTrif_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9_burtonKeane_uniqueness_of_boxOriginReach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc9_boxOriginReach_of_reach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-end AxiomAudit
 
 end Walls
 

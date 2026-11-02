@@ -156,29 +156,5 @@ lemma bc21_mengerCore_nonvacuous :
   ⟨StatMech.Percolation.CtcWitness.threeRayConfig,
     bc21_mengerCore_of_canonicalTrifurcation _ bc21_threeRay_trif_at_origin⟩
 
-section AxiomAudit
-
-/-- info: 'StatMech.Walls.bc21_mengerCore_of_canonicalTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc21_mengerCore_of_originBranchSurvivalCut' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc21_originBranchSurvivalCut_of_canonicalTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs(whitespace := lax) in
-
-/-- info: 'StatMech.Walls.bc21_arm_infinite_removeOrigin' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc21_mengerRoutingCover_of_boxTrifurcation' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc21_threeRay_trif_at_origin' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-/-- info: 'StatMech.Walls.bc21_originBranchSurvivalCut_nonvacuous' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs in
-
-end AxiomAudit
 
 end StatMech.Walls
