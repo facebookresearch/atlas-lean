@@ -1746,4 +1746,12 @@ theorem randomJoining_isClade {m : ℕ} (S : Finset (Fin m)) (hS : 1 ≤ S.card)
   push_cast at this
   linarith
 
+/-- The case `m ≤ 5` of `randomJoining_isClade`. -/
+@[deprecated "Use `randomJoining_isClade`." (since := "2026-11-02")]
+theorem randomJoining_isClade_of_le_five {m : ℕ} (_hm : m ≤ 5) (S : Finset (Fin m))
+    (hS : 1 ≤ S.card) (hSm : S.card < m) :
+    (randomJoining m).real {h | IsClade h S} =
+      2 * m / (S.card * (S.card + 1) * (m.choose S.card : ℝ)) :=
+  randomJoining_isClade S hS hSm
+
 end MathlibExt.Biology.PopulationGenetics.MultispeciesCoalescent

@@ -1058,6 +1058,13 @@ theorem exists_sizeFn_eq_Ico (h : PiecewiseHistory K) (hK : 0 < K) {s : ℝ} (hs
   · refine ⟨1, one_pos, fun r hr => ?_⟩
     rw [h.sizeFn_eq hj (h1.trans hr.1) fun hk' => absurd hk' hk, h.sizeFn_eq hj h1 h2]
 
+/-- The two-piece case of `exists_ne_firstCoalMean_eq_of_lt`. -/
+@[deprecated "Use `exists_ne_firstCoalMean_eq_of_lt 2`." (since := "2026-11-02")]
+theorem exists_ne_firstCoalMean_eq_two :
+    ∃ h h' : PiecewiseHistory 2, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
+      ∀ m ∈ Icc 2 3, firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m :=
+  exists_ne_firstCoalMean_eq_of_lt 2 le_rfl
+
 end PiecewiseHistory
 
 /-- Only the values on `[0, ∞)` enter the first-coalescence times. -/
