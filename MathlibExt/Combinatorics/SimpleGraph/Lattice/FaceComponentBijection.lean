@@ -153,11 +153,6 @@ theorem fcb_offComplComponentCount_eq_faceCount {a : Site 2} (Vc : (hypercubicLa
   rw [fcb_two_components_of_sides Vc hxin hxoff hyout hyoff hin hout,
     jcs_cycle_faceCount_eq_two c hc]
 
-/-- If every inside site is off `Vc` and one component off `Vc` covers the inside, any two
-inside sites off `Vc` are joined by a lattice path avoiding `Vc`. The hypothesis `hoff` (every
-inside site is off `Vc`) holds only when the inside is empty: a nonempty inside contains a
-vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty inside this
-statement is vacuous. -/
 theorem fcb_inside_conn_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     {sIn : Site 2} (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn) :
@@ -178,10 +173,6 @@ theorem fcb_outside_conn_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk
   have hconn : (offSupport Vc).Reachable s t := ((hubOut s hs).symm).trans (hubOut t ht)
   exact offSupport_reachable_to_offSupportWalk Vc hconn hsoff
 
-/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
-holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
-holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
-Do not use it for new code. -/
 theorem fcb_offComplComponentCount_eq_two_of_covers {a : Site 2}
     (Vc : (hypercubicLattice 2).Walk a a)
     (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
@@ -207,10 +198,6 @@ def fcb_OffComplJordanRegion {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) 
         s ∉ Vc.support → t ∉ Vc.support →
         ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support)
 
-/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
-holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
-holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
-Do not use it for new code. -/
 theorem fcb_offComplJordanRegion_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)

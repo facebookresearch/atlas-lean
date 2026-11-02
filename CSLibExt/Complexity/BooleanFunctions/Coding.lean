@@ -52,8 +52,8 @@ open OSSS.Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The conditional probability that the bit at `e` equals the value it takes in `η`,
-given the configuration agrees with `η` on `F`. -/
+/-- The conditional probability that coordinate `e` equals `b`,
+conditioned on agreement with `η` over `F`. -/
 noncomputable def condProbBit (μ : ConfigSpace E → ℝ) (F : Finset E)
     (η : ConfigSpace E) (e : E) (b : Bool) : ℝ :=
   (∑ ω, if (Agree F η ω ∧ ω e = b) then μ ω else 0) / condNorm μ F η

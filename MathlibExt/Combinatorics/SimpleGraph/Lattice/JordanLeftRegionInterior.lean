@@ -16,25 +16,18 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitExteriorEven
 
 Lattice paths that avoid a closed walk `Vc` never change the parity of the ray count, so they stay
 inside or outside `jec_leftRegion Vc`; such paths survive the removal of the boundary edges of the
-inside. The same statements are specialized to the face loop of a boundary orbit.
-
-Connectivity of the outside by paths avoiding `Vc` never holds, because some vertex of `Vc` is
-outside (`StatMech.Lattice.oc_not_hOutOff`); connectivity of a nonempty inside by such paths never
-holds either (`StatMech.Lattice.oc_not_hInOff`).
+inside. If the inside and the outside are each connected by paths avoiding `Vc`, the cut lattice has
+exactly two components. The same statements are specialized to the face loop of a boundary orbit.
 
 ## Main results
 
 * `StatMech.Lattice.jlri_sameRegion_along_offSupport_walk`: paths off `Vc` stay on one side.
 * `StatMech.Lattice.jlri_no_bdEdge_off_support`: an edge with both endpoints off `Vc` is not a
   boundary edge of the inside.
-* `StatMech.Lattice.jlri_offSupport_walk_in_barrier`: a path off `Vc` is a path in the cut
-  lattice.
-* Compatibility declarations `StatMech.Lattice.jlri_outside_reachable_of_offSupport`,
-  `StatMech.Lattice.jlri_two_components_of_offSupport_connected`, and
-  `StatMech.Lattice.jlri_minimalLoop_two_components`: retained for existing users. Their
-  off-walk connectivity hypotheses never hold jointly: `hOutOff` is impossible
-  (`StatMech.Lattice.oc_not_hOutOff`) and `hInOff` is impossible for a nonempty inside
-  (`StatMech.Lattice.oc_not_hInOff`). Do not use them for new code.
+* `StatMech.Lattice.jlri_two_components_of_offSupport_connected`: if both sides are connected off
+  `Vc`, the cut lattice has two components.
+* `StatMech.Lattice.jlri_minimalLoop_two_components`: the same for the face loop of a boundary
+  orbit.
 -/
 
 @[expose] public section
@@ -88,10 +81,6 @@ theorem jlri_offSupport_walk_in_barrier {a : Site 2} (Vc : (hypercubicLattice 2)
       exact hp z (by rw [SimpleGraph.Walk.support_cons]; exact List.mem_cons_of_mem _ hz)
     exact (jlri_offSupport_adj_in_barrier Vc hadj hu hw).reachable.trans (ih htail)
 
-/-- If any two inside sites are joined by a lattice path avoiding `Vc` (`hInOff`), they are
-connected in the lattice cut along the boundary edges of the inside. The hypothesis `hInOff`
-holds only when the inside is empty: taking `s = t` it puts every inside site off `Vc`, which
-fails for a nonempty inside (`StatMech.Lattice.oc_not_hInOff`). -/
 theorem jlri_inside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hInOff : ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
         ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support) :
@@ -101,9 +90,6 @@ theorem jlri_inside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattic
   obtain ⟨p, hp⟩ := hInOff s t hs ht
   exact jlri_offSupport_walk_in_barrier Vc p hp
 
-/-- Compatibility declaration, retained for existing users. The hypothesis `hOutOff` never
-holds (`StatMech.Lattice.oc_not_hOutOff`), so this statement is vacuous. Do not use it for
-new code. -/
 theorem jlri_outside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hOutOff : ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
         ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support) :
@@ -113,10 +99,6 @@ theorem jlri_outside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLatti
   obtain ⟨p, hp⟩ := hOutOff s t hs ht
   exact jlri_offSupport_walk_in_barrier Vc p hp
 
-/-- Compatibility declaration, retained for existing users. Its hypotheses never hold
-jointly: `hOutOff` is impossible (`StatMech.Lattice.oc_not_hOutOff`) and `hInOff` is
-impossible for a nonempty inside (`StatMech.Lattice.oc_not_hInOff`). Do not use it for
-new code. -/
 theorem jlri_two_components_of_offSupport_connected {a : Site 2}
     (Vc : (hypercubicLattice 2).Walk a a)
     {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
@@ -148,10 +130,6 @@ theorem jlri_minimalLoop_offSupport_walk_in_barrier (K : Set (Site 2))
     (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).Reachable x y :=
   jlri_offSupport_walk_in_barrier (mpl_orbitLoop K a) p hp
 
-/-- Compatibility declaration, retained for existing users. Its hypotheses never hold
-jointly: the outside-connectivity hypothesis is impossible
-(`StatMech.Lattice.oc_not_hOutOff`) and the inside-connectivity hypothesis is impossible
-for a nonempty inside (`StatMech.Lattice.oc_not_hInOff`). Do not use it for new code. -/
 theorem jlri_minimalLoop_two_components (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e})
     {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))

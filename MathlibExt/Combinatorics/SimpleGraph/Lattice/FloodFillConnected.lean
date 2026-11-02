@@ -14,9 +14,9 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanLeftRegionInter
 # Flood fills avoiding a set of sites
 
 The flood fill of a seed avoiding a set `B` is the set of sites reachable from the seed by lattice
-paths that avoid `B`. A flood fill avoiding `B` lies off `B` and is connected in the lattice with
-`B` removed. Neither the inside nor the outside of a closed walk is ever the flood fill, avoiding
-the walk, of a site off the walk: the outside, and the inside when nonempty, meet the walk.
+paths that avoid `B`. When the inside or the outside of a closed walk is such a flood fill (with `B`
+the vertices of the walk), it is connected off the walk, which gives the two-component conclusions
+of `InsideConnected` and `EulerGeometricFaces`.
 
 ## Main definitions
 
@@ -29,11 +29,8 @@ the walk, of a site off the walk: the outside, and the inside when nonempty, mee
 * `StatMech.Lattice.ffc_reachable_iff_offSupportWalk`: reachability avoiding `B` is the existence of
   a lattice path avoiding `B`.
 * `StatMech.Lattice.ffc_floodFill_step`: flood fills are closed under lattice steps avoiding `B`.
-* `StatMech.Lattice.ffc_side_reachable_of_eq_floodFill`: a set equal to a flood fill avoiding the
-  walk is connected in the cut lattice.
-* `StatMech.Lattice.ffc_leftRegion_ne_floodFill`,
-  `StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`: the inside and the outside of a closed walk
-  are never such flood fills.
+* `StatMech.Lattice.ffc_two_components_of_floodFill`: if the inside and outside of a closed walk are
+  flood fills, the cut lattice has two components.
 -/
 
 @[expose] public section
@@ -124,14 +121,6 @@ theorem ffc_floodFill_offSupport {B : Set (Site 2)} {seed : Site 2} (hseed : see
   obtain ⟨w⟩ := hz
   exact ffc_offSupportWalk_support w hseed z w.end_mem_support
 
-/-- A removed site is isolated in the lattice with the sites of `B` removed. -/
-theorem oc_ffc_reachable_eq_of_mem {B : Set (Site 2)} {x y : Site 2} (hx : x ∈ B)
-    (h : (ffc_offSupportLattice B).Reachable x y) : x = y := by
-  obtain ⟨w⟩ := h
-  cases w with
-  | nil => rfl
-  | cons hadj _ => exact absurd hx hadj.2.1
-
 theorem ffc_floodFill_reachable_offSupportLattice {B : Set (Site 2)} {seed : Site 2}
     {x y : Site 2} (hx : x ∈ ffc_floodFill B seed) (hy : y ∈ ffc_floodFill B seed) :
     (ffc_offSupportLattice B).Reachable x y := by
@@ -186,9 +175,6 @@ theorem ffc_side_reachable_of_eq_floodFill {a : Site 2} (Vc : (hypercubicLattice
     (latticeMinusBarrier (jec_leftRegion Vc)).Reachable x y :=
   ffc_floodFill_reachable_in_barrier Vc hseed (hT ▸ hx) (hT ▸ hy)
 
-/-- Compatibility declaration, retained for existing users. Its `hInside` hypothesis never
-holds for a site off the walk (`StatMech.Lattice.ffc_leftRegion_ne_floodFill`). Do not use
-it for new code. -/
 theorem ffc_floodFill_inside_connected {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∉ Vc.support)
     (hInside : jec_leftRegion Vc = ffc_floodFill {z | z ∈ Vc.support} seed)
@@ -196,9 +182,6 @@ theorem ffc_floodFill_inside_connected {a : Site 2} (Vc : (hypercubicLattice 2).
     (latticeMinusBarrier (jec_leftRegion Vc)).Reachable x y :=
   ffc_side_reachable_of_eq_floodFill Vc hseed hInside hx hy
 
-/-- Compatibility declaration, retained for existing users. Its `hOutside` hypothesis never
-holds for a site off the walk (`StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`). Do
-not use it for new code. -/
 theorem ffc_floodFill_outside_connected {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∉ Vc.support)
     (hOutside : (jec_leftRegion Vc)ᶜ = ffc_floodFill {z | z ∈ Vc.support} seed)
@@ -206,9 +189,6 @@ theorem ffc_floodFill_outside_connected {a : Site 2} (Vc : (hypercubicLattice 2)
     (latticeMinusBarrier (jec_leftRegion Vc)).Reachable x y :=
   ffc_side_reachable_of_eq_floodFill Vc hseed hOutside hx hy
 
-/-- Compatibility declaration, retained for existing users. Its `hInside` hypothesis never
-holds for a site off the walk (`StatMech.Lattice.ffc_leftRegion_ne_floodFill`). Do not use
-it for new code. -/
 theorem ffc_hInOff_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∉ Vc.support)
     (hInside : jec_leftRegion Vc = ffc_floodFill {z | z ∈ Vc.support} seed) :
@@ -217,9 +197,6 @@ theorem ffc_hInOff_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a 
   intro s t hs ht
   exact ffc_floodFill_path_connected_offSupport hseed (hInside ▸ hs) (hInside ▸ ht)
 
-/-- Compatibility declaration, retained for existing users. Its `hOutside` hypothesis never
-holds for a site off the walk (`StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`). Do
-not use it for new code. -/
 theorem ffc_hOutOff_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∉ Vc.support)
     (hOutside : (jec_leftRegion Vc)ᶜ = ffc_floodFill {z | z ∈ Vc.support} seed) :
@@ -230,10 +207,6 @@ theorem ffc_hOutOff_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a
   have ht' : t ∈ (jec_leftRegion Vc)ᶜ := ht
   exact ffc_floodFill_path_connected_offSupport hseed (hOutside ▸ hs') (hOutside ▸ ht')
 
-/-- Compatibility declaration, retained for existing users. Its `hInside` / `hOutside`
-hypotheses never hold for sites off the walk
-(`StatMech.Lattice.ffc_leftRegion_ne_floodFill`,
-`StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`). Do not use it for new code. -/
 theorem ffc_two_components_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
     (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
@@ -245,10 +218,6 @@ theorem ffc_two_components_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2)
     (ffc_hInOff_of_floodFill Vc hsIn hInside)
     (ffc_hOutOff_of_floodFill Vc hsOut hOutside)
 
-/-- Compatibility declaration, retained for existing users. Its `hInside` / `hOutside`
-hypotheses never hold for sites off the walk
-(`StatMech.Lattice.ffc_leftRegion_ne_floodFill`,
-`StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`). Do not use it for new code. -/
 theorem ffc_egf_LoopFloodFill_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {xIn yOut : Site 2} (hxIn : xIn ∈ jec_leftRegion Vc) (hyOut : yOut ∉ jec_leftRegion Vc)
     {sIn sOut : Site 2} (hsIn : sIn ∉ Vc.support) (hsOut : sOut ∉ Vc.support)
@@ -261,10 +230,6 @@ theorem ffc_egf_LoopFloodFill_of_floodFill {a : Site 2} (Vc : (hypercubicLattice
   · intro p q hp hq
     exact ffc_floodFill_outside_connected Vc hsOut hOutside hp hq
 
-/-- Compatibility declaration, retained for existing users. Its `hInside` / `hOutside`
-hypotheses never hold for sites off the walk
-(`StatMech.Lattice.ffc_leftRegion_ne_floodFill`,
-`StatMech.Lattice.ffc_compl_leftRegion_ne_floodFill`). Do not use it for new code. -/
 theorem ffc_egf_loop_two_components_of_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {xIn yOut : Site 2} (hxIn : xIn ∈ jec_leftRegion Vc) (hyOut : yOut ∉ jec_leftRegion Vc)
     {sIn sOut : Site 2} (hsIn : sIn ∉ Vc.support) (hsOut : sOut ∉ Vc.support)
@@ -273,29 +238,6 @@ theorem ffc_egf_loop_two_components_of_floodFill {a : Site 2} (Vc : (hypercubicL
     Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 :=
   egf_loop_two_components Vc
     (ffc_egf_LoopFloodFill_of_floodFill Vc hxIn hyOut hsIn hsOut hInside hOutside)
-
-/-- The inside of a closed walk is never the flood fill, avoiding the walk, of a site off the walk.
-The flood fill contains its seed, so the inside would be nonempty and lie entirely off the walk,
-contradicting `StatMech.Lattice.oc_leftRegion_meets_support`. -/
-theorem ffc_leftRegion_ne_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseed : seed ∉ Vc.support) :
-    jec_leftRegion Vc ≠ ffc_floodFill {z | z ∈ Vc.support} seed := by
-  intro h
-  have hmem : seed ∈ jec_leftRegion Vc := h ▸ ffc_seed_mem_floodFill _ seed
-  obtain ⟨s, hs, hsupp⟩ := oc_leftRegion_meets_support Vc hmem
-  rw [h] at hs
-  exact ffc_floodFill_offSupport (B := {z | z ∈ Vc.support}) hseed hs hsupp
-
-/-- The outside of a closed walk is never the flood fill, avoiding the walk, of a site off the walk:
-the flood fill lies off the walk, but some vertex of the walk is outside
-(`StatMech.Lattice.oc_not_forall_outside_offSupport`). -/
-theorem ffc_compl_leftRegion_ne_floodFill {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseed : seed ∉ Vc.support) :
-    (jec_leftRegion Vc)ᶜ ≠ ffc_floodFill {z | z ∈ Vc.support} seed := by
-  intro h
-  refine oc_not_forall_outside_offSupport Vc fun s hs => ?_
-  have hs' : s ∈ ffc_floodFill {z | z ∈ Vc.support} seed := h ▸ hs
-  exact ffc_floodFill_offSupport (B := {z | z ∈ Vc.support}) hseed hs'
 
 end Lattice
 
