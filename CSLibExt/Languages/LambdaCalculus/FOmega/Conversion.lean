@@ -13,6 +13,13 @@ public import CSLibExt.Languages.LambdaCalculus.FOmega.KindSemantics
 
 Conversion is the equivalence/congruence closure of type-operator beta,
 not equality of semantic interpretations or an assumed conversion oracle.
+
+The standard equational type theory is described by Robert Atkey,
+*Relational Parametricity for Higher Kinds* (CSL 2012), Section 2, pp. 48-49,
+https://doi.org/10.4230/LIPIcs.CSL.2012.46.
+That formulation includes beta and eta; this project deliberately retains
+only beta and its equivalence/congruence closure. It does not provide an
+eta law, normalization theorem or decidable conversion procedure.
 -/
 
 @[expose] public section

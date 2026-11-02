@@ -14,6 +14,19 @@ public import Mathlib.Data.List.Defs
 An ordered kind telescope uses the newest variable at its head. Kinding and
 scope are indices; no malformed operator application is representable.
 This is the project-authored pure Fω presentation, not the bounded Fsub syntax.
+
+The kinds and type constructors follow the standard Fω rules in Atkey's
+Section 2, Figure 1, and Pierce's Chapters 29-30. Here named variables and
+extrinsic kinding are replaced by intrinsically kinded de Bruijn syntax.
+The continuation uses beta-only type conversion, not Atkey's beta-eta theory;
+no additional data kinds, subtyping or recursion are included.
+
+## References
+
+* Benjamin C. Pierce, *Types and Programming Languages*, MIT Press (2002),
+  Chapters 29, "Type Operators and Kinding", and 30, "Higher-Order Polymorphism".
+* Robert Atkey, *Relational Parametricity for Higher Kinds*, CSL 2012,
+  pp. 46-61, Section 2. https://doi.org/10.4230/LIPIcs.CSL.2012.46.
 -/
 
 @[expose] public section

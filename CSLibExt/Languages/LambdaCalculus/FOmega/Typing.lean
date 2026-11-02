@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.FOmega.Terms
+public import CSLibExt.Languages.LambdaCalculus.FOmega.Conversion
 
 /-! # Pure Fω typing with proved type-beta conversion
 

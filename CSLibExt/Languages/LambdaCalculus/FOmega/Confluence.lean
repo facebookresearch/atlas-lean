@@ -15,6 +15,14 @@ public import Cslib.Foundations.Relation.Confluence
 Parallel reduction contracts any set of type-beta redexes. Complete
 development proves its diamond property; confluence is not assumed and
 normalization or decidability of conversion is not claimed.
+
+A reference for parallel beta reduction is M. Takahashi,
+*Parallel Reductions in λ-Calculus*, *Information and Computation*
+118(1), pp. 120-127 (1995), https://doi.org/10.1006/inco.1995.1057.
+This original proof uses kind-indexed operators
+and adds congruence for term-arrow types and universal binders. It proves the
+complete-development triangle and Church-Rosser for beta only, without eta
+or a termination premise; no external confluence theorem for Fω is assumed.
 -/
 
 @[expose] public section

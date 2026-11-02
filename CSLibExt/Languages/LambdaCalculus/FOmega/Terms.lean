@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import CSLibExt.Languages.LambdaCalculus.FOmega.Confluence
+public import CSLibExt.Languages.LambdaCalculus.FOmega.Syntax
 public import CSLibExt.Languages.LambdaCalculus.SystemF.Syntax
 
 /-! # Scoped pure Fω terms

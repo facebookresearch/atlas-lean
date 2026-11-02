@@ -15,6 +15,15 @@ public import CSLibExt.Languages.LambdaCalculus.SystemF.Relations
 The carrier is exactly System F's arbitrary beta-invariant binary relations.
 At higher kinds it is the full function space over those carriers; universal
 binders quantify all such kinded values. No new term model or relation is used.
+
+The primary higher-kind parametricity reference is Robert Atkey,
+*Relational Parametricity for Higher Kinds* (CSL 2012), Sections 3.2-3.5,
+https://doi.org/10.4230/LIPIcs.CSL.2012.46.
+Atkey interprets kinds as reflexive graphs over sets, with distinguished
+identity-preserving relation transformers. Here the interpretation instead
+uses binary predicates on one fixed syntactic beta-conversion model and
+functions over those predicates. It does not construct Atkey's reflexive-graph
+model, assert identity extension, or quantify over all set-valued types.
 -/
 
 @[expose] public section

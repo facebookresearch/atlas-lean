@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.FOmega.Typing
+public import CSLibExt.Languages.LambdaCalculus.FOmega.Confluence
 
 /-! # Conversion-aware weak call-by-value safety for pure Fω
 

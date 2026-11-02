@@ -16,6 +16,14 @@ public import CSLibExt.Languages.LambdaCalculus.FOmega.RelationalTypes
 The fundamental theorem covers all six typing rules, arbitrary values at every
 kind, and two independently chosen related term environments. Type conversion
 uses proved operator-beta soundness; it is not a semantic or typing assumption.
+
+Robert Atkey's *Relational Parametricity for Higher Kinds* (CSL 2012),
+Theorem 3, is the primary higher-kind abstraction-theorem reference:
+https://doi.org/10.4230/LIPIcs.CSL.2012.46.
+Our project-authored theorem concerns typed syntax in the fixed beta-invariant
+term model of `RelationalTypes`, not the paper's CIC/reflexive-graph denotations.
+Its consumers assert beta conversion of erasures, not eta equations,
+normalization, identity extension or categorical initiality.
 -/
 
 @[expose] public section
