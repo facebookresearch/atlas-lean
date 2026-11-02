@@ -39,7 +39,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Double-index identity `U_{2n} = U_n V_n`.
+/-- **Doubling formula $U_{2n} = U_n V_n$ for Lucas sequences.** Let $P$ and $Q$ be integers with
+$Q \ne 0$, and let $U$ and $V$ be the Lucas sequences $U(P, Q)$ and $V(P, Q)$. Then
+$U_{2n} = U_n V_n$ for every natural number $n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Proposition 2.3 (i) (`integers-2025-A107-prop-2-3`). -/
@@ -47,8 +49,10 @@ public theorem_wanted lucasU_two_mul_eq_lucasU_mul_lucasV
     (L : LucasSequenceParams) (n : ℕ) :
     lucasU L (2 * n) = lucasU L n * lucasV L n
 
-/-- Divisibility: if `m ∣ n` then `U_m ∣ U_n`, and if moreover `n/m` is odd then
-`V_m ∣ V_n`.
+/-- **Divisibility of Lucas sequences at divisible indices.** Let $U = U(P, Q)$ and
+$V = V(P, Q)$ be the Lucas sequences with integer parameters $P$ and $Q \ne 0$, and let $m$ and
+$n$ be natural numbers with $m \mid n$. Then $U_m \mid U_n$, and if moreover $n/m$ is odd, then
+$V_m \mid V_n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Proposition 2.3 (iii), (iv)
@@ -57,7 +61,9 @@ public theorem_wanted lucasU_dvd_and_lucasV_dvd_of_dvd
     (L : LucasSequenceParams) (m n : ℕ) (h : m ∣ n) :
     lucasU L m ∣ lucasU L n ∧ (Odd (n / m) → lucasV L m ∣ lucasV L n)
 
-/-- `P ∣ U_{2n}` for every `n`, and `P ∣ V_n` for every odd `n`.
+/-- **$P$ divides $U_{2n}$, and $V_n$ for odd $n$.** Let $P$ and $Q$ be integers with $Q \ne 0$,
+and let $U$ and $V$ be the Lucas sequences $U(P, Q)$ and $V(P, Q)$. Then $P \mid U_{2n}$ for every
+natural number $n$, and $P \mid V_n$ for every odd natural number $n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Proposition 2.3 (v), (vi)
@@ -66,8 +72,9 @@ public theorem_wanted p_dvd_lucasU_two_mul_and_lucasV_of_odd
     (L : LucasSequenceParams) :
     (∀ n : ℕ, L.p ∣ lucasU L (2 * n)) ∧ ∀ n : ℕ, Odd n → L.p ∣ lucasV L n
 
-/-- Changing the sign of `P`: `U_n(-P, Q) = (-1)^{n+1} U_n(P, Q)` and
-`V_n(-P, Q) = (-1)^n V_n(P, Q)`.
+/-- **Lucas sequences under negation of the first parameter.** For integers $P$ and $Q \ne 0$ and
+every natural number $n$, the Lucas sequences $U$ and $V$ satisfy
+$U_n(-P, Q) = (-1)^{n+1} U_n(P, Q)$ and $V_n(-P, Q) = (-1)^n V_n(P, Q)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Proposition 2.3 (vii), (viii)
@@ -77,8 +84,10 @@ public theorem_wanted lucasU_lucasV_neg_p
     lucasU ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ (n + 1) * lucasU L n ∧
       lucasV ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ n * lucasV L n
 
-/-- Let `W` satisfy the Lucas recursion `W_{n+2} = P W_{n+1} - Q W_n`. If `m ∣ U_t` and
-`gcd(m, Q) = 1`, then `W_{n+t} ≡ U_{t+1} W_n (mod m)` for all `n ≥ 0`.
+/-- **Shift congruence for the Lucas recurrence.** Let $U = U(P, Q)$ be the Lucas sequence with
+integer parameters $P$ and $Q \ne 0$, and let $(W_n)_{n \ge 0}$ be a sequence of integers with
+$W_{n+2} = P W_{n+1} - Q W_n$ for every $n \ge 0$. If $t \ge 0$ and $m$ are integers with
+$m \mid U_t$ and $\gcd(m, Q) = 1$, then $W_{n+t} \equiv U_{t+1} W_n \pmod{m}$ for every $n \ge 0$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.5 (`integers-2025-A107-lem-2-5`). -/
@@ -88,8 +97,10 @@ public theorem_wanted lucas_recurrence_add_modEq_of_dvd_lucasU
     (t : ℕ) (m : ℤ) (ht : m ∣ lucasU L t) (hm : Int.gcd m L.q = 1) (n : ℕ) :
     W (n + t) ≡ lucasU L (t + 1) * W n [ZMOD m]
 
-/-- Let `gcd(P, Q) = 1` and let `p` be a prime with `p^i ∥ P`, `i ≥ 1`. Then for every
-positive `n`, `p^{i+1} ∣ U_{2n}` if and only if `p ∣ n`.
+/-- **When $p^{i+1}$ divides $U_{2n}$, for a prime power $p^i$ exactly dividing $P$.** Let $P$ and
+$Q$ be coprime integers with $Q \ne 0$, and let $U_n$ be the Lucas sequence $U(P, Q)$. Let $p$ be
+a prime and $i \ge 1$ such that $p^i \mid P$ and $p^{i+1} \nmid P$. Then for every positive
+integer $n$, $p^{i+1} \mid U_{2n}$ if and only if $p \mid n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.6, first claim
@@ -101,8 +112,9 @@ public theorem_wanted prime_pow_succ_dvd_lucasU_two_mul_iff
     (n : ℕ) (hn : 0 < n) :
     (p : ℤ) ^ (i + 1) ∣ lucasU L (2 * n) ↔ p ∣ n
 
-/-- Let `gcd(P, Q) = 1` and `P ≠ 0`. If `n` is a positive integer with `gcd(n, P) = 1`,
-then `gcd(U_{2n}/P, P) = 1`.
+/-- **Coprimality of $U_{2n}/P$ and $P$.** Let $P$ and $Q$ be integers with $Q \ne 0$, $P \ne 0$
+and $\gcd(P, Q) = 1$, and let $(U_n)$ be the Lucas sequence $U(P, Q)$. If $n$ is a positive
+integer with $\gcd(n, P) = 1$, then $\gcd(U_{2n}/P, P) = 1$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.6, "in particular" claim
@@ -112,11 +124,16 @@ public theorem_wanted gcd_lucasU_two_mul_div_p_eq_one
     (n : ℕ) (hn : 0 < n) (hnP : Int.gcd n L.p = 1) :
     Int.gcd (lucasU L (2 * n) / L.p) L.p = 1
 
-/-- Behaviour of `U(P, Q)` modulo `2` when `2 ∤ gcd(P, Q)`: `U` is periodic modulo `2`
-from `n = 1` on (not from `n = 0` in general: `P = 1`, `Q = 2` gives `U ≡ 0, 1, 1, 1, …`); if `P` is
-odd and `Q` even then `U_n` is odd for `n ≥ 1`; if `P` is even and
-`Q` odd then `2 ∣ U_n ↔ 2 ∣ n` and `2 ∣ D`; if `P` and `Q` are odd then
-`2 ∣ U_n ↔ 3 ∣ n`.
+/-- **Lucas sequences modulo 2.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
+$P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $2 \nmid \gcd(P, Q)$. Then $U$ is periodic
+modulo $2$ from index $1$ on: there is $k > 0$ with $U_{n+k} \equiv U_n \pmod 2$ for every
+$n \ge 1$. If $P$ is odd and $Q$ is even, then $U_n$ is odd for every $n \ge 1$. If $P$ is even
+and $Q$ is odd, then for every $n \ge 0$, $2 \mid U_n$ if and only if $2 \mid n$; moreover
+$2 \mid D$. If $P$ and $Q$ are both odd, then for every $n \ge 0$, $2 \mid U_n$ if and only if
+$3 \mid n$.
+
+The periodicity need not start at $n = 0$: for $P = 1$ and $Q = 2$, $U$ is $0, 1, 1, 1, \dots$
+modulo $2$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.7 (`integers-2025-A107-lem-2-7`). -/
@@ -128,12 +145,18 @@ public theorem_wanted lucasU_mod_two
         (∀ n, 2 ∣ lucasU L n ↔ 2 ∣ n) ∧ 2 ∣ L.p ^ 2 - 4 * L.q) ∧
       (Odd L.p → Odd L.q → ∀ n, 2 ∣ lucasU L n ↔ 3 ∣ n)
 
-/-- Behaviour of `U(P, Q)` modulo `3` when `3 ∤ gcd(P, Q)`: `U` is periodic modulo `3`
-from `n = 1` on (not from `n = 0` in general: `P = 1`, `Q = 3` gives `U ≡ 0, 1, 1, 1, …`); if
-`3 ∣ Q` then `3 ∤ U_n` for `n ≥ 1`; if `3 ∣ P` then `3 ∣ U_n ↔ 2 ∣ n`;
-if `3 ∤ P` and `Q ≡ -1 (mod 3)` then `3 ∣ U_n ↔ 4 ∣ n`; if `3 ∤ P` and `Q ≡ 1 (mod 3)`
-then `3 ∣ U_n ↔ 3 ∣ n` and `3 ∣ D`. The source's values `ρ(3) = 2, 4, 3` of the rank of
-apparition are the least positive indices these equivalences give.
+/-- **Lucas sequences modulo 3.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
+$P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $3 \nmid \gcd(P, Q)$. Then $U$ is periodic
+modulo $3$ from index $1$ on: there is $k > 0$ with $U_{n+k} \equiv U_n \pmod 3$ for every
+$n \ge 1$. If $3 \mid Q$, then $3 \nmid U_n$ for every $n \ge 1$. If $3 \mid P$, then for every
+$n \ge 0$, $3 \mid U_n$ if and only if $2 \mid n$. If $3 \nmid P$ and $Q \equiv -1 \pmod 3$,
+then for every $n \ge 0$, $3 \mid U_n$ if and only if $4 \mid n$. If $3 \nmid P$ and
+$Q \equiv 1 \pmod 3$, then for every $n \ge 0$, $3 \mid U_n$ if and only if $3 \mid n$; moreover
+$3 \mid D$.
+
+The periodicity need not start at $n = 0$: for $P = 1$ and $Q = 3$, $U$ is $0, 1, 1, 1, \dots$
+modulo $3$. The source's values $\rho(3) = 2, 4, 3$ of the rank of apparition are the least
+positive indices these equivalences give.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.8 (`integers-2025-A107-lem-2-8`). -/
@@ -146,9 +169,14 @@ public theorem_wanted lucasU_mod_three
       (¬ 3 ∣ L.p → L.q ≡ 1 [ZMOD 3] →
         (∀ n, 3 ∣ lucasU L n ↔ 3 ∣ n) ∧ 3 ∣ L.p ^ 2 - 4 * L.q)
 
-/-- For nondegenerate `U(P, Q)`, `V(P, Q)` with `D > 0`: `|U_n|` is strictly increasing
-for `n ≥ 2` and `|V_n|` for `n ≥ 1`; if `P > 0` then `U_n > 0` for `n ≥ 1` and `V_n > 0`
-for `n ≥ 0`; and `|U_3| ≥ 3` unless `|P| = -Q = 1`.
+/-- **Growth and positivity of Lucas sequences with positive discriminant.** Let $P, Q$ be
+integers with $P \neq 0$, $Q \neq 0$ and $D = P^2 - 4Q > 0$, and let $U = U(P, Q)$ and
+$V = V(P, Q)$ be the Lucas sequences. Then $|U_n| < |U_{n+1}|$ for every $n \ge 2$ and
+$|V_n| < |V_{n+1}|$ for every $n \ge 1$; if $P > 0$, then $U_n > 0$ for every $n \ge 1$ and
+$V_n > 0$ for every $n \ge 0$; and $|U_3| \ge 3$ unless $|P| = 1$ and $Q = -1$.
+
+When $Q \neq 0$ and $D > 0$, the condition $P \neq 0$ is equivalent to the pair $(P, Q)$ being
+nondegenerate (Theorem 2.1 of the source).
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 2.9 (`integers-2025-A107-lem-2-9`). -/
@@ -159,8 +187,9 @@ public theorem_wanted lucas_abs_strictMono_of_discr_pos
       (0 < L.p → (∀ n, 1 ≤ n → 0 < lucasU L n) ∧ ∀ n, 0 < lucasV L n) ∧
       (¬ (|L.p| = 1 ∧ L.q = -1) → 3 ≤ |lucasU L 3|)
 
-/-- For nondegenerate `U(P, Q)` with `D > 0` and `n ≥ 3`, the rank of apparition of
-`U_n` is `n`: `U_n` divides no `U_k` with `0 < k < n`.
+/-- **$U_n$ divides none of $U_1, \dots, U_{n-1}$.** Let $P$ and $Q$ be integers with $P \ne 0$,
+$Q \ne 0$ and $D = P^2 - 4Q > 0$, and let $U_n$ be the Lucas sequence $U(P, Q)$. Then for every
+$n \ge 3$ and every $k$ with $0 < k < n$, $U_n$ does not divide $U_k$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Corollary 2.10 (`integers-2025-A107-cor-2-10`). -/
@@ -169,8 +198,9 @@ public theorem_wanted not_lucasU_dvd_lucasU_of_lt
     (n : ℕ) (hn : 3 ≤ n) (k : ℕ) (hk0 : 0 < k) (hkn : k < n) :
     ¬ lucasU L n ∣ lucasU L k
 
-/-- If `gcd(P, Q) = 1` then `gcd(P, D) ∣ 4`, and `gcd(P, D') = 1` for every odd
-divisor `D'` of `D = P² - 4Q`.
+/-- **Common divisors of $P$ and the discriminant.** Let $P$ and $Q$ be coprime integers and let
+$D = P^2 - 4Q$. Then $\gcd(P, D)$ divides $4$, and $\gcd(P, D') = 1$ for every odd integer $D'$
+dividing $D$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 4.9 (`integers-2025-A107-lem-4-9`). -/
@@ -179,9 +209,10 @@ public theorem_wanted gcd_p_discr_dvd_four
     (Int.gcd P (P ^ 2 - 4 * Q) : ℤ) ∣ 4 ∧
       ∀ D' : ℤ, Odd D' → D' ∣ P ^ 2 - 4 * Q → Int.gcd P D' = 1
 
-/-- Let `gcd(P, Q) = 1`, `P ≠ 0`, and let `m` be odd with `gcd(m, PQD) = 1` and
-`3 ∤ m` when `P ≡ Q ≡ 1 (mod 2)`. Then `N₁ = U_m` and `N₂ = U_{2m}/P` are odd and
-coprime to `D`.
+/-- **Parity of $U_m$ and $U_{2m}/P$ and their coprimality to $D$.** Let $P$ and $Q$ be coprime
+integers with $P \ne 0$ and $Q \ne 0$, let $U_n$ be the Lucas sequence $U(P, Q)$, and let
+$D = P^2 - 4Q$. Let $m$ be an odd natural number with $\gcd(m, PQD) = 1$, and with $3 \nmid m$ if
+$P$ and $Q$ are both odd. Then $U_m$ and $U_{2m}/P$ are odd, and each of them is coprime to $D$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 4.10 (`integers-2025-A107-lem-4-10`). -/
@@ -193,9 +224,14 @@ public theorem_wanted odd_lucasU_coprime_discr
       Int.gcd (lucasU L m) (L.p ^ 2 - 4 * L.q) = 1 ∧
       Int.gcd (lucasU L (2 * m) / L.p) (L.p ^ 2 - 4 * L.q) = 1
 
-/-- For nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and `D > 0`, and odd `m ≥ 5`:
-if `m` is composite then `U_m` is composite, and `U_{2m}/P` is always composite
-(an integer `N` is composite when `|N| > 1` and `|N|` is not prime).
+/-- **Composite terms of Lucas sequences with positive discriminant.** Let $U = U(P, Q)$ be the
+Lucas sequence with integer parameters $P \ne 0$ and $Q \ne 0$ such that $\gcd(P, Q) = 1$ and
+$D = P^2 - 4Q > 0$, and let $m \ge 5$ be an odd integer. If $m$ is not prime, then $U_m$ is
+composite; and $U_{2m}/P$ is always composite. Here an integer $N$ is composite when $|N| > 1$
+and $|N|$ is not prime.
+
+Since $D > 0$, the conditions $P \ne 0$ and $Q \ne 0$ say that $U$ is nondegenerate. The quotient
+$U_{2m}/P$ is an integer because $P \mid U_{2m}$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Corollary 4.2 (`integers-2025-A107-cor-4-2`). -/
@@ -205,11 +241,17 @@ public theorem_wanted lucasU_composite_of_discr_pos
     (¬ m.Prime → 1 < (lucasU L m).natAbs ∧ ¬ (lucasU L m).natAbs.Prime) ∧
       (1 < (lucasU L (2 * m) / L.p).natAbs ∧ ¬ (lucasU L (2 * m) / L.p).natAbs.Prime)
 
-/-- Let `U(P, Q)` be nondegenerate with `gcd(P, Q) = 1` and `D > 0`, and let `m > 1` be
-odd with `gcd(m, PQD) = 1` and `3 ∤ m` when `P ≡ Q ≡ 1 (mod 2)`. Then `N₁ = U_m` and
-`N₂ = U_{2m}/P` are positive, odd, and `gcd(N₁N₂, PQD) = 1`; if `m` is composite both are
-composite; and `(D/m) = (D/N₁) = (D/N₂)` (Jacobi symbols) whenever `P` is odd, or
-`P ≡ 0 (mod 4)` and `Q ≡ -1 (mod 4)`, or `P ≡ 2 (mod 4)` and `Q ≡ -1 (mod 8)`.
+/-- **Pseudoprime candidates from a Lucas sequence.** Let $U = U(P, Q)$ be the Lucas sequence with
+integer parameters $P \ne 0$ and $Q \ne 0$ such that $\gcd(P, Q) = 1$ and $D = P^2 - 4Q > 0$.
+Let $m > 1$ be an odd integer with $\gcd(m, PQD) = 1$, and assume $3 \nmid m$ when $P$ and $Q$
+are both odd. Put $N_1 = U_m$ and $N_2 = U_{2m}/P$. Then $N_1$ and $N_2$ are positive and odd,
+and $\gcd(N_1 N_2, PQD) = 1$. If $m$ is not prime, then $N_1$ and $N_2$ are composite, that is,
+$|N_i| > 1$ and $|N_i|$ is not prime for $i = 1, 2$. If $P$ is odd, or $P \equiv 0 \pmod 4$ and
+$Q \equiv -1 \pmod 4$, or $P \equiv 2 \pmod 4$ and $Q \equiv -1 \pmod 8$, then the Jacobi
+symbols satisfy $(D/m) = (D/|N_1|) = (D/|N_2|)$.
+
+Since $D > 0$, the conditions $P \ne 0$ and $Q \ne 0$ say that $U$ is nondegenerate. The quotient
+$U_{2m}/P$ is an integer because $P \mid U_{2m}$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Lemma 6.1 (`integers-2025-A107-lem-6-1`). -/
@@ -234,17 +276,18 @@ public theorem_wanted lucasU_pseudoprime_candidates_jacobiSym
             jacobiSym (L.p ^ 2 - 4 * L.q) (lucasU L (2 * m) / L.p).natAbs)
 
 
-/-- Degenerate Lucas sequences: let `α, β ∈ ℂ` be the roots of `x² - Px + Q` (so `α + β = P`,
-`αβ = Q`), `D = P² - 4Q`, and `U`, `V` the sequences with `U_0 = 0`, `U_1 = 1`, `V_0 = 2`,
-`V_1 = P` and `W_{n+2} = P W_{n+1} - Q W_n`. If the pair is degenerate (`Q = 0`, or `α/β` is a
-root of unity), then one of: (i) `Q = 0`, `D = P²`, `U_n = P^{n-1}`, `V_n = P^n` for `n ≥ 1`;
-or, for some nonzero integer `M`, (ii) `α/β = 1`, `P = 2M`, `Q = M²`, `D = 0`;
-(iii) `α/β = -1`, `P = 0`, `Q = M`, `D = -4M`; (iv) `α/β` a primitive cube root of unity,
-`P = M`, `Q = M²`, `D = -3M²`; (v) a primitive fourth root, `P = 2M`, `Q = 2M²`,
-`D = -4M²`; (vi) a primitive sixth root, `P = 3M`, `Q = 3M²`, `D = -3M²`. Degeneracy is
-taken in the theorem's own sense (`Q = 0` or `α/β` a root of unity, Mathlib's
-`IsOfFinOrder`); `U` is given by `IsLucasSequenceFirstKind P Q` and `V` by its recurrence,
-because `MetaMathlibExt.LucasSequenceParams` requires `Q ≠ 0`.
+/-- **Classification of degenerate Lucas sequences.** Let $P, Q$ be integers, let
+$\alpha, \beta \in \mathbb{C}$ satisfy $\alpha + \beta = P$ and $\alpha\beta = Q$ (so they are the
+roots of $x^2 - Px + Q$), and let $D = P^2 - 4Q$. Let $(u_n)$ be the Lucas sequence of the first
+kind with parameters $P, Q$, and let $(v_n)$ be the integer sequence with $v_0 = 2$, $v_1 = P$ and
+$v_{n+2} = P v_{n+1} - Q v_n$ for all $n$. Suppose that $Q = 0$ or that $\alpha/\beta$ is a root
+of unity. Then either (i) $Q = 0$, $D = P^2$, and $u_n = P^{n-1}$ and $v_n = P^n$ for every
+$n \ge 1$; or there is a nonzero integer $M$ such that one of the following holds:
+(ii) $\alpha/\beta = 1$, $P = 2M$, $Q = M^2$ and $D = 0$;
+(iii) $\alpha/\beta = -1$, $P = 0$, $Q = M$ and $D = -4M$;
+(iv) $\alpha/\beta$ is a primitive cube root of unity, $P = M$, $Q = M^2$ and $D = -3M^2$;
+(v) $\alpha/\beta$ is a primitive fourth root of unity, $P = 2M$, $Q = 2M^2$ and $D = -4M^2$;
+(vi) $\alpha/\beta$ is a primitive sixth root of unity, $P = 3M$, $Q = 3M^2$ and $D = -3M^2$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 2.1 (`integers-2025-A107-thm-2-1`). -/
@@ -264,16 +307,23 @@ public theorem_wanted lucas_degenerate_cases (P Q : ℤ) (α β : ℂ) (hsum : �
 
 The definitions below follow Section 2 and Definitions 3.1–3.13 of the source. -/
 
-/-- The rank of appearance `ρ(m)` of `m` in `U(P, Q)`: the least positive `r` with `m ∣ U_r`
-(the source assumes `gcd(m, Q) = 1`, under which it exists). When no positive `r` has
-`m ∣ U_r`, `sInf` makes this `0`; lack of coprimality alone does not force that.
+/-- **Rank of appearance in a Lucas sequence.** Let $U = U(P, Q)$ be the Lucas sequence with
+integer parameters $P$ and $Q \ne 0$. The rank of appearance $\rho(m)$ of a natural number $m$ in
+$U$ is the least positive integer $r$ with $m \mid U_r$; when no positive $r$ has $m \mid U_r$,
+$\rho(m) = 0$.
+
+When $m \ge 1$ and $\gcd(m, Q) = 1$, such an $r$ always exists (the source defines $\rho(m)$ only
+in this case); it can also exist when $\gcd(m, Q) \ne 1$. For $m = 0$ it need not exist even when
+$\gcd(0, Q) = |Q| = 1$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Section 2. -/
 public noncomputable def lucasRankOfAppearance (L : LucasSequenceParams) (m : ℕ) : ℕ :=
   sInf {r : ℕ | 0 < r ∧ (m : ℤ) ∣ lucasU L r}
 
-/-- `ρ(m) ≤ r` whenever `0 < r` and `m ∣ U_r`.
+/-- **Rank of appearance is at most any positive index of divisibility.** Let $P, Q$ be integers
+with $Q \neq 0$, let $U = U(P, Q)$ be the Lucas sequence, and write $\rho(m)$ for the rank of
+appearance of a natural number $m$ in $U$. If $r > 0$ and $m \mid U_r$, then $\rho(m) \le r$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Section 2 (definition of `ρ` as a least index). -/
@@ -281,8 +331,12 @@ public theorem lucasRankOfAppearance_le_of_dvd (L : LucasSequenceParams) {m r : 
     (hr : 0 < r) (hm : (m : ℤ) ∣ lucasU L r) : lucasRankOfAppearance L m ≤ r :=
   Nat.sInf_le ⟨hr, hm⟩
 
-/-- Specification of `ρ(m)`: when some positive `r` has `m ∣ U_r`, `ρ(m)` is itself positive
-and `m ∣ U_{ρ(m)}`; with `lucasRankOfAppearance_le_of_dvd` it is the least such index.
+/-- **The rank of appearance in a Lucas sequence is attained.** Let $U = U(P, Q)$ be a Lucas
+sequence and $m$ a natural number. If $m \mid U_r$ for some positive integer $r$, then the rank of
+appearance $\rho(m)$ of $m$ in $U$ is positive and $m \mid U_{\rho(m)}$.
+
+Together with the bound $\rho(m) \le r$ for every positive $r$ with $m \mid U_r$, this makes
+$\rho(m)$ the least such index.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Section 2 (definition of `ρ` as a least index). -/
@@ -291,7 +345,8 @@ public theorem lucasRankOfAppearance_spec (L : LucasSequenceParams) {m : ℕ}
     0 < lucasRankOfAppearance L m ∧ (m : ℤ) ∣ lucasU L (lucasRankOfAppearance L m) :=
   Nat.sInf_mem h
 
-/-- `ρ(1) = 1`.
+/-- **Rank of appearance of $1$.** For all integers $P, Q$ with $Q \neq 0$, the rank of
+appearance of $1$ in the Lucas sequence $U(P, Q)$ is $1$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Section 2 (definition of `ρ`). -/
@@ -301,16 +356,19 @@ public theorem lucasRankOfAppearance_one (L : LucasSequenceParams) :
     ⟨Nat.one_pos, by simp⟩
   exact le_antisymm (Nat.sInf_le hmem) (Nat.sInf_mem ⟨1, hmem⟩).1
 
-/-- The index `N - (D/N)` of congruences (3.1) and (3.4), with `(D/N)` the Jacobi symbol (as a
-natural number; it is positive for the odd `N > 1` coprime to `D` that the source considers).
+/-- **Index of the Lucas pseudoprime congruences.** Let $P, Q$ be integers with $Q \neq 0$ and
+$D = P^2 - 4Q$. For a natural number $N$, the index is $N - (D/N)$, where $(D/N)$ is the Jacobi
+symbol, replaced by $0$ when this difference is negative. For $N > 1$ the difference is positive.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, congruences (3.1), (3.4). -/
 public def lucasPseudoprimeIndex (L : LucasSequenceParams) (N : ℕ) : ℕ :=
   ((N : ℤ) - jacobiSym (L.p ^ 2 - 4 * L.q) N).toNat
 
-/-- Lucas pseudoprime with parameters `P, Q`: a positive odd composite `N` with
-`gcd(N, QD) = 1` and `U_{N-(D/N)} ≡ 0 (mod N)`.
+/-- **Lucas pseudoprimes.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$ be the Lucas
+sequence of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a Lucas pseudoprime with
+parameters $P, Q$ if $N$ is odd and composite, $\gcd(N, QD) = 1$ and $N$ divides
+$U_{N - (D/N)}$, where $(D/N)$ is the Jacobi symbol.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.1. -/
@@ -318,8 +376,10 @@ public def IsLucasPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
   Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
     (N : ℤ) ∣ lucasU L (lucasPseudoprimeIndex L N)
 
-/-- Lucas pseudoprime of the second kind: positive odd composite `N`, `gcd(N, QD) = 1`,
-`U_N ≡ (D/N) (mod N)`.
+/-- **Lucas pseudoprimes of the second kind.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$
+be the Lucas sequence of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a Lucas
+pseudoprime of the second kind with parameters $P, Q$ if $N$ is odd and composite,
+$\gcd(N, QD) = 1$ and $U_N \equiv (D/N) \pmod{N}$, where $(D/N)$ is the Jacobi symbol.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.2. -/
@@ -327,7 +387,10 @@ public def IsLucasPseudoprimeSecondKind (L : LucasSequenceParams) (N : ℕ) : Pr
   Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
     lucasU L N ≡ jacobiSym (L.p ^ 2 - 4 * L.q) N [ZMOD N]
 
-/-- Dickson pseudoprime: positive odd composite `N`, `gcd(N, QD) = 1`, `V_N ≡ P (mod N)`.
+/-- **Dickson pseudoprimes.** Let $P$ and $Q \ne 0$ be integers with discriminant
+$D = P^2 - 4Q$, and let $(V_n)$ be the companion Lucas sequence $V(P, Q)$. A natural number $N$
+is a Dickson pseudoprime with parameters $P$ and $Q$ if $N$ is odd, $N > 1$, $N$ is not prime,
+$\gcd(N, QD) = 1$, and $V_N \equiv P \pmod N$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.3. -/
@@ -335,8 +398,11 @@ public def IsDicksonPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
   Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
     lucasV L N ≡ L.p [ZMOD N]
 
-/-- Dickson pseudoprime of the second kind: positive odd composite `N`, `gcd(N, QD) = 1`,
-`V_{N-(D/N)} ≡ 2Q^{(1-(D/N))/2} (mod N)`.
+/-- **Dickson pseudoprimes of the second kind.** Let $P$ and $Q \ne 0$ be integers with
+discriminant $D = P^2 - 4Q$, and let $(V_n)$ be the companion Lucas sequence $V(P, Q)$. A
+natural number $N$ is a Dickson pseudoprime of the second kind with parameters $P$ and $Q$ if
+$N$ is odd, $N > 1$, $N$ is not prime, $\gcd(N, QD) = 1$, and
+$V_{N - (D/N)} \equiv 2Q^{(1 - (D/N))/2} \pmod N$, where $(D/N)$ is the Jacobi symbol.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.4. -/
@@ -345,9 +411,17 @@ public def IsDicksonPseudoprimeSecondKind (L : LucasSequenceParams) (N : ℕ) : 
     lucasV L (lucasPseudoprimeIndex L N) ≡
       2 * L.q ^ ((1 - jacobiSym (L.p ^ 2 - 4 * L.q) N) / 2).toNat [ZMOD N]
 
-/-- Frobenius pseudoprime with parameters `P, Q` in the source's sense (congruences
-(3.1)–(3.4) and `gcd(N, PQD) = 1`; not Grantham's polynomial notion
-`Nat.IsFrobeniusPseudoprime`).
+/-- **Frobenius pseudoprime for Lucas parameters.** Let $U$ and $V$ be the Lucas sequences with
+integer parameters $P$ and $Q \neq 0$, and let $D = P^2 - 4Q$. A natural number $N$ is a
+Frobenius pseudoprime with parameters $P, Q$ when $\gcd(N, PQD) = 1$ and $N$ is a Lucas
+pseudoprime, a Lucas pseudoprime of the second kind, a Dickson pseudoprime and a Dickson
+pseudoprime of the second kind with parameters $P, Q$. Equivalently, $\gcd(N, PQD) = 1$, $N$ is
+odd and composite, and, writing $\varepsilon = (D/N)$ for the Jacobi symbol, $N$ satisfies the
+congruences $U_{N-\varepsilon} \equiv 0$, $U_N \equiv \varepsilon$, $V_N \equiv P$ and
+$V_{N-\varepsilon} \equiv 2Q^{(1-\varepsilon)/2}$ modulo $N$.
+
+This is the notion of the source, not Grantham's Frobenius pseudoprime defined through quotient
+rings of polynomials.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.5. -/
@@ -356,17 +430,23 @@ public def IsLucasFrobeniusPseudoprime (L : LucasSequenceParams) (N : ℕ) : Pro
     IsLucasPseudoprimeSecondKind L N ∧ IsDicksonPseudoprime L N ∧
       IsDicksonPseudoprimeSecondKind L N
 
-/-- Euler pseudoprime to the base `a`: odd composite `N`, `gcd(a, N) = 1`, and
-`a^{(N-1)/2} ≡ (a/N) (mod N)`. The source states the definition for positive odd `a` and applies
-it to the base `Q` (for example `Q = -1` in Remark 3.8); here `a` is any integer.
+/-- **Euler pseudoprime.** Let $a$ be an integer. A natural number $N$ is an Euler pseudoprime to
+the base $a$ when $N$ is odd and composite, $\gcd(a, N) = 1$, and
+$a^{(N-1)/2} \equiv (a/N) \pmod N$, where $(a/N)$ is the Jacobi symbol.
+
+The source states the definition for positive odd $a$ and applies it to the base $Q$ (for
+example $Q = -1$ in Remark 3.8); here $a$ is any integer.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.7. -/
 public def IsEulerPseudoprime (a : ℤ) (N : ℕ) : Prop :=
   Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd a N = 1 ∧ a ^ ((N - 1) / 2) ≡ jacobiSym a N [ZMOD N]
 
-/-- Euler–Lucas pseudoprime: odd composite `N`, `gcd(N, QD) = 1`, and
-`U_{(N-(D/N))/2} ≡ 0` if `(Q/N) = 1`, `V_{(N-(D/N))/2} ≡ 0` if `(Q/N) = -1` (mod `N`).
+/-- **Euler–Lucas pseudoprime.** Let $U$ and $V$ be the Lucas sequences with integer parameters
+$P$ and $Q \neq 0$, and let $D = P^2 - 4Q$. A natural number $N$ is an Euler–Lucas pseudoprime
+with parameters $P, Q$ when $N$ is odd and composite, $\gcd(N, QD) = 1$, and, writing
+$\varepsilon = (D/N)$ for the Jacobi symbol, $N \mid U_{(N-\varepsilon)/2}$ if the Jacobi symbol
+$(Q/N)$ equals $1$, and $N \mid V_{(N-\varepsilon)/2}$ if $(Q/N) = -1$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.9. -/
@@ -375,8 +455,11 @@ public def IsEulerLucasPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
     (jacobiSym L.q N = 1 → (N : ℤ) ∣ lucasU L (lucasPseudoprimeIndex L N / 2)) ∧
     (jacobiSym L.q N = -1 → (N : ℤ) ∣ lucasV L (lucasPseudoprimeIndex L N / 2))
 
-/-- Strong Lucas pseudoprime: odd composite `N`, `gcd(N, QD) = 1`, `N - (D/N) = 2^s d` with `d`
-odd, and `U_d ≡ 0` or `V_{2^r d} ≡ 0 (mod N)` for some `0 ≤ r < s`.
+/-- **Strong Lucas pseudoprimes.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$ and $V_n$ be
+the Lucas sequences of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a strong Lucas
+pseudoprime with parameters $P, Q$ if $N$ is odd and composite, $\gcd(N, QD) = 1$, and, writing
+$N - (D/N) = 2^s d$ with $d$ odd, where $(D/N)$ is the Jacobi symbol, either $N \mid U_d$ or
+$N \mid V_{2^r d}$ for some $r$ with $0 \le r < s$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.10. -/
@@ -385,9 +468,13 @@ public def IsStrongLucasPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :
     ∃ s d : ℕ, Odd d ∧ lucasPseudoprimeIndex L N = 2 ^ s * d ∧
       ((N : ℤ) ∣ lucasU L d ∨ ∃ r < s, (N : ℤ) ∣ lucasV L (2 ^ r * d))
 
-/-- Super pseudoprime of type `S`: odd composite `N`, `gcd(N, QD) = 1`, every divisor `> 1` of
-`N` prime or of type `S` (super Lucas, super strong Lucas, super Frobenius pseudoprimes for
-`S = IsLucasPseudoprime L`, `IsStrongLucasPseudoprime L`, `IsLucasFrobeniusPseudoprime L`).
+/-- **Super pseudoprime.** Let $P, Q$ be integers with $Q \neq 0$, let $D = P^2 - 4Q$, and let $S$
+be a property of natural numbers. A natural number $N$ is a super pseudoprime of type $S$ with
+parameters $(P, Q)$ when $N$ is odd, $N > 1$, $N$ is not prime, $\gcd(N, QD) = 1$, and every
+divisor $d > 1$ of $N$ is prime or has property $S$.
+
+Taking for $S$ the property of being a Lucas, strong Lucas or Frobenius pseudoprime with
+parameters $(P, Q)$ gives the super Lucas, super strong Lucas and super Frobenius pseudoprimes.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.13. -/
@@ -395,7 +482,11 @@ public def IsSuperPseudoprime (L : LucasSequenceParams) (S : ℕ → Prop) (N : 
   Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
     ∀ d : ℕ, d ∣ N → 1 < d → d.Prime ∨ S d
 
-/-- `9` is a Lucas pseudoprime with `(P, Q) = (1, 5)` (`D = -19`, `U_8 = -279`).
+/-- **$9$ is a Lucas pseudoprime for $(P, Q) = (1, 5)$.** The number $9$ is a Lucas pseudoprime
+with parameters $P = 1$ and $Q = 5$.
+
+Here the discriminant is $D = P^2 - 4Q = -19$, the Jacobi symbol $(D/9)$ is $1$, and $9$
+divides $U_8 = -279$, where $U_n$ is the Lucas sequence of $(1, 5)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.1 (example). -/
@@ -406,7 +497,11 @@ public theorem isLucasPseudoprime_one_five_nine :
   simp only [lucasPseudoprimeIndex, hj]
   decide
 
-/-- `9` is a strong Lucas pseudoprime with `(P, Q) = (1, 5)`: `8 = 2^3 · 1` and `V_2 = -9`.
+/-- **$9$ is a strong Lucas pseudoprime for $(P, Q) = (1, 5)$.** The number $9$ is a strong
+Lucas pseudoprime with parameters $P = 1$ and $Q = 5$.
+
+Here $D = P^2 - 4Q = -19$, the Jacobi symbol $(D/9)$ is $1$, $9 - (D/9) = 8 = 2^3 \cdot 1$, and
+$9$ divides $V_2 = -9$, where $V_n$ is the companion Lucas sequence of $(1, 5)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.10 (example). -/
@@ -418,7 +513,10 @@ public theorem isStrongLucasPseudoprime_one_five_nine :
   simp only [lucasPseudoprimeIndex, hj]
   decide
 
-/-- `9` is an Euler–Lucas pseudoprime with `(P, Q) = (1, 5)`: `(5/9) = 1` and `U_4 = -9`.
+/-- **9 is an Euler–Lucas pseudoprime for P = 1, Q = 5.** For the Lucas sequences $U$ and $V$
+with parameters $P = 1$ and $Q = 5$, the number $9$ is an Euler–Lucas pseudoprime.
+
+Here $D = P^2 - 4Q = -19$, the Jacobi symbols $(D/9)$ and $(5/9)$ both equal $1$, and $U_4 = -9$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.9 (example). -/
@@ -432,7 +530,8 @@ public theorem isEulerLucasPseudoprime_one_five_nine :
   · simp only [hq] at h
     norm_num at h
 
-/-- `9` is a Frobenius pseudoprime with `(P, Q) = (4, -1)` (`D = 20`).
+/-- **9 is a Frobenius pseudoprime for P = 4, Q = -1.** For the Lucas sequences with parameters
+$P = 4$ and $Q = -1$, so that $D = P^2 - 4Q = 20$, the number $9$ is a Frobenius pseudoprime.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.5 (example). -/
@@ -446,7 +545,8 @@ public theorem isLucasFrobeniusPseudoprime_four_neg_one_nine :
   simp only [lucasPseudoprimeIndex, hj] <;> decide
 
 set_option exponentiation.threshold 300 in
-/-- `561` is an Euler pseudoprime to the base `2`.
+/-- **561 is an Euler pseudoprime to the base 2.** The composite number $561 = 3 \cdot 11 \cdot 17$
+is an Euler pseudoprime to the base $2$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.7 (example). -/
@@ -456,8 +556,9 @@ public theorem isEulerPseudoprime_two_561 : IsEulerPseudoprime 2 561 := by
   rw [hj]
   decide
 
-/-- `9` is a super Lucas pseudoprime with `(P, Q) = (1, 5)`: its divisors `3` and `9` are a
-prime and a Lucas pseudoprime.
+/-- **$9$ is a super Lucas pseudoprime for $(P, Q) = (1, 5)$.** The number $9$ is a super Lucas
+pseudoprime with parameters $P = 1$, $Q = 5$: its divisors greater than $1$ are $3$, a prime, and
+$9$, a Lucas pseudoprime with these parameters.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Definition 3.13 (example). -/
@@ -473,16 +574,25 @@ public theorem isSuperPseudoprime_one_five_nine :
 
 /-! ### Statements -/
 
-/-- Properties of the rank of appearance `ρ`, for any `U(P, Q)` (`Q ≠ 0`), positive `r, s` and
-primes `p`: (i) if `gcd(r, Q) = 1` then `r ∣ U_s ↔ ρ(r) ∣ s`; (ii) odd `p ∤ Q` divides
-`U_{p-(D/p)}`; (iii) `p ∣ D`, `p ∤ Q` gives `ρ(p) = p`; (iv) for `p ∤ 2QD`,
-`p ∣ U_{(p-(D/p))/2} ↔ (Q/p) = 1` (the source omits "`p ∣`"); (v) for odd `p ∤ Q` with
-`ρ(p^k) = ρ(p) ≠ ρ(p^{k+1})`, `ρ(p^j) = p^{max(j-k,0)} ρ(p)` for `j ≥ 1` (false for `p = 2`:
-`(P, Q) = (1, -1)` has `ρ(2) = 3`, `ρ(4) = 6`, `ρ(8) = 6 ≠ 12`); (vi) `gcd(rs, Q) = 1`,
-`r ∣ s` give `ρ(r) ∣ ρ(s)`; (vii) `gcd(P, Q) = 1` gives `gcd(U_r, U_s) = |U_{gcd(r,s)}|`;
-(viii) `gcd(r, s) = gcd(rs, Q) = 1` gives `ρ(rs) = lcm(ρ(r), ρ(s))`; (ix) `gcd(P, Q) = 1`,
-`p ∣ Q` give `p ∤ U_n` for `n ≥ 1`; (x) `gcd(P, Q) = 1` and odd `p ∤ Q` give
-`p ≡ (D/p) (mod ρ(p))`.
+/-- **Properties of the rank of appearance in a Lucas sequence.** Let $U = U(P, Q)$ be the Lucas
+sequence with integer parameters $P$ and $Q \ne 0$, let $D = P^2 - 4Q$, let $\rho(m)$ be the rank
+of appearance of $m$ in $U$, and write $(a/n)$ for the Jacobi symbol. Let $r$ and $s$ range over
+positive integers and $p$ over primes. Then:
+(i) if $\gcd(r, Q) = 1$, then $r \mid U_s$ if and only if $\rho(r) \mid s$;
+(ii) if $p$ is odd and $p \nmid Q$, then $p \mid U_{p - (D/p)}$;
+(iii) if $p \mid D$ and $p \nmid Q$, then $\rho(p) = p$;
+(iv) if $p \nmid 2QD$, then $p \mid U_{(p - (D/p))/2}$ if and only if $(Q/p) = 1$;
+(v) if $p$ is odd, $p \nmid Q$, and $k \ge 0$ satisfies $\rho(p^k) = \rho(p)$ and
+$\rho(p^{k+1}) \ne \rho(p)$, then $\rho(p^j) = p^{\max(j - k, 0)} \rho(p)$ for every $j \ge 1$;
+(vi) if $\gcd(rs, Q) = 1$ and $r \mid s$, then $\rho(r) \mid \rho(s)$;
+(vii) if $\gcd(P, Q) = 1$, then $\gcd(U_r, U_s) = |U_{\gcd(r, s)}|$;
+(viii) if $\gcd(r, s) = 1$ and $\gcd(rs, Q) = 1$, then
+$\rho(rs) = \operatorname{lcm}(\rho(r), \rho(s))$;
+(ix) if $\gcd(P, Q) = 1$ and $p \mid Q$, then $p \nmid U_n$ for every $n \ge 1$;
+(x) if $\gcd(P, Q) = 1$, $p$ is odd and $p \nmid Q$, then $p \equiv (D/p) \pmod{\rho(p)}$.
+
+Part (v) fails for $p = 2$: for $(P, Q) = (1, -1)$ one has $\rho(2) = 3$, $\rho(4) = 6$ and
+$\rho(8) = 6 \ne 12$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 2.4 (`integers-2025-A107-thm-2-4`). -/
@@ -513,7 +623,9 @@ public theorem_wanted lucasRankOfAppearance_properties (L : LucasSequenceParams)
     (Int.gcd L.p L.q = 1 → ∀ p : ℕ, p.Prime → p ≠ 2 → ¬ (p : ℤ) ∣ L.q →
       (p : ℤ) ≡ jacobiSym (L.p ^ 2 - 4 * L.q) p [ZMOD lucasRankOfAppearance L p])
 
-/-- A strong Lucas pseudoprime is an Euler–Lucas pseudoprime.
+/-- **Strong Lucas pseudoprimes are Euler–Lucas pseudoprimes.** Let $P$ and $Q \ne 0$ be
+integers. Every strong Lucas pseudoprime with parameters $P$ and $Q$ is an Euler–Lucas
+pseudoprime with parameters $P$ and $Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.12 (`integers-2025-A107-thm-3-12`). -/
@@ -521,11 +633,17 @@ public theorem_wanted isEulerLucasPseudoprime_of_isStrongLucasPseudoprime
     (L : LucasSequenceParams) (N : ℕ) (h : IsStrongLucasPseudoprime L N) :
     IsEulerLucasPseudoprime L N
 
-/-- For nondegenerate `U(P, Q)` and a Lucas pseudoprime `N` with `gcd(N, PQD) = 1`: every prime
-power `p^k ∥ N` has `ρ(p^k) = ρ(p)`, and `N` is a strong Lucas pseudoprime iff the `2`-adic
-valuations `ν₂(ρ(p))` agree for all primes `p ∣ N`. The source prints `ρ(p_i^{k_i}) = p_i`,
-which is false: `(P, Q) = (1, -1)`, `N = 323 = 17 · 19` has `ρ(17) = 9`, `ρ(19) = 18`; the
-statement uses `ρ(p_i)`, as in Theorems 3.16 and 3.17.
+/-- **Strong Lucas pseudoprimes via the $2$-adic valuation of ranks.** Let $P, Q$ be integers
+such that the Lucas pair $(P, Q)$ is nondegenerate, let $D = P^2 - 4Q$, and let $\rho(m)$ be the
+rank of appearance of $m$ in the Lucas sequence $U(P, Q)$. Let $N$ be a Lucas pseudoprime with
+parameters $P, Q$ such that $\gcd(N, PQD) = 1$. Then $\rho(p^k) = \rho(p)$ for every prime $p$
+dividing $N$, where $p^k$ is the exact power of $p$ dividing $N$; and $N$ is a strong Lucas
+pseudoprime with parameters $P, Q$ if and only if the $2$-adic valuations $\nu_2(\rho(p))$ are
+equal for all primes $p$ dividing $N$.
+
+The source prints $\rho(p_i^{k_i}) = p_i$, which is false: for $(P, Q) = (1, -1)$ and
+$N = 323 = 17 \cdot 19$ one has $\rho(17) = 9$ and $\rho(19) = 18$. The statement uses
+$\rho(p_i)$, as in Theorems 3.16 and 3.17.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.14 (`integers-2025-A107-thm-3-14`). -/
@@ -538,8 +656,10 @@ public theorem_wanted isStrongLucasPseudoprime_iff_padicValNat_two_eq
     (IsStrongLucasPseudoprime L N ↔ ∀ p ∈ N.primeFactors, ∀ q ∈ N.primeFactors,
       padicValNat 2 (lucasRankOfAppearance L p) = padicValNat 2 (lucasRankOfAppearance L q))
 
-/-- For nondegenerate `U(P, Q)`, a Lucas pseudoprime `N` with `ρ(N)` odd is a strong Lucas
-pseudoprime.
+/-- **Lucas pseudoprimes of odd rank are strong.** Let $P, Q$ be integers such that the Lucas
+pair $(P, Q)$ is nondegenerate, and let $\rho(N)$ be the rank of appearance of $N$ in the Lucas
+sequence $U(P, Q)$. If $N$ is a Lucas pseudoprime with parameters $P, Q$ and $\rho(N)$ is odd,
+then $N$ is a strong Lucas pseudoprime with parameters $P, Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Corollary 3.15 (`integers-2025-A107-cor-3-15`). -/
@@ -548,10 +668,14 @@ public theorem_wanted isStrongLucasPseudoprime_of_odd_lucasRankOfAppearance
     (hN : IsLucasPseudoprime L N)
     (hodd : Odd (lucasRankOfAppearance L N)) : IsStrongLucasPseudoprime L N
 
-/-- For nondegenerate `U(P, Q)`, let `N = ∏ p^{k_p}` be odd composite with `gcd(N, QD) = 1`, and
-for each prime `p ∣ N` let `m_p ≥ k_p` satisfy `ρ(p^{m_p}) = ρ(p) ≠ ρ(p^{m_p+1})`. With
-`h = lcm_{p ∣ N} ρ(p)`: `ρ(N) = h`, and `N` is a super Lucas pseudoprime iff
-`p ≡ (D/p) (mod h)` for every prime `p ∣ N`.
+/-- **Rank of appearance and super Lucas pseudoprimes.** Let $P, Q$ be integers with $Q \neq 0$
+such that the pair $(P, Q)$ is nondegenerate, let $D = P^2 - 4Q$, and write $\rho(m)$ for the rank
+of appearance of $m$ in the Lucas sequence $U(P, Q)$. Let $N > 1$ be an odd number that is not
+prime, with $\gcd(N, QD) = 1$, and for each prime $p \mid N$ let $k_p$ be the exponent of $p$ in
+$N$ and let $m_p \ge k_p$ satisfy $\rho(p^{m_p}) = \rho(p)$ and $\rho(p^{m_p + 1}) \neq \rho(p)$.
+Let $h$ be the least common multiple of the $\rho(p)$ over the primes $p \mid N$. Then
+$\rho(N) = h$, and $N$ is a super Lucas pseudoprime with parameters $(P, Q)$ if and only if
+$p \equiv (D/p) \pmod h$ for every prime $p \mid N$, where $(D/p)$ is the Jacobi symbol.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.16 (`integers-2025-A107-thm-3-16`). -/
@@ -568,9 +692,13 @@ public theorem_wanted lucasRankOfAppearance_eq_lcm_and_isSuperPseudoprime_iff
       (p : ℤ) ≡ jacobiSym (L.p ^ 2 - 4 * L.q) p
         [ZMOD ((N.primeFactors.lcm (lucasRankOfAppearance L) : ℕ) : ℤ)])
 
-/-- For nondegenerate `U(P, Q)` and odd composite `N` with `gcd(N, PQD) = 1` such that
-`ρ(p^{k_p}) = ρ(p)` for every `p^{k_p} ∥ N` and all `ρ(p)`, `p ∣ N`, are equal: `N` is a super
-strong Lucas pseudoprime, and a super Frobenius pseudoprime when `Q = ±1`.
+/-- **Super strong Lucas pseudoprimes from equal ranks of appearance.** Let $P, Q$ be integers
+with $Q \neq 0$ such that the pair $(P, Q)$ is nondegenerate, let $D = P^2 - 4Q$, and write
+$\rho(m)$ for the rank of appearance of $m$ in the Lucas sequence $U(P, Q)$. Let $N > 1$ be an
+odd number that is not prime, with $\gcd(N, PQD) = 1$, such that for every prime $p \mid N$,
+with $p^{k}$ the exact power of $p$ dividing $N$, $\rho(p^{k}) = \rho(p)$, and $\rho(p) = \rho(q)$
+for all primes $p, q \mid N$. Then $N$ is a super strong Lucas pseudoprime with parameters
+$(P, Q)$, and if $Q = \pm 1$ it is also a super Frobenius pseudoprime with parameters $(P, Q)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.17 (`integers-2025-A107-thm-3-17`). -/
@@ -584,9 +712,12 @@ public theorem_wanted isSuperPseudoprime_of_lucasRankOfAppearance_eq
     IsSuperPseudoprime L (IsStrongLucasPseudoprime L) N ∧
       (L.q = 1 ∨ L.q = -1 → IsSuperPseudoprime L (IsLucasFrobeniusPseudoprime L) N)
 
-/-- For nondegenerate `U(P, Q)`, an Euler–Lucas pseudoprime `N` that is an Euler pseudoprime to
-the base `Q`, with `gcd(N, PQD) = 1`, is a Frobenius pseudoprime (the base `Q` is any nonzero
-integer; the source's Definition 3.7 is stated for positive odd bases).
+/-- **From Euler–Lucas to Frobenius pseudoprimes.** Let $P$ and $Q \neq 0$ be integers forming a
+nondegenerate Lucas pair, and let $D = P^2 - 4Q$. If $N$ is an Euler–Lucas pseudoprime with
+parameters $P, Q$ and an Euler pseudoprime to the base $Q$, and $\gcd(N, PQD) = 1$, then $N$ is a
+Frobenius pseudoprime with parameters $P, Q$.
+
+The base $Q$ is any nonzero integer; the source's Definition 3.7 is stated for positive odd bases.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.18 (`integers-2025-A107-thm-3-18`). -/
@@ -596,8 +727,10 @@ public theorem_wanted isLucasFrobeniusPseudoprime_of_isEulerLucasPseudoprime
     (hcop : Int.gcd N (L.p * L.q * (L.p ^ 2 - 4 * L.q)) = 1) :
     IsLucasFrobeniusPseudoprime L N
 
-/-- For nondegenerate `U(P, Q)` with `Q = ±1`, a strong Lucas pseudoprime `N` with
-`gcd(N, PD) = 1` is a Frobenius pseudoprime.
+/-- **From strong Lucas to Frobenius pseudoprimes when Q = ±1.** Let $P$ and $Q$ be integers
+forming a nondegenerate Lucas pair with $Q = 1$ or $Q = -1$, and let $D = P^2 - 4Q$. If $N$ is a
+strong Lucas pseudoprime with parameters $P, Q$ and $\gcd(N, PD) = 1$, then $N$ is a Frobenius
+pseudoprime with parameters $P, Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 3.19 (`integers-2025-A107-thm-3-19`). -/
@@ -607,8 +740,10 @@ public theorem_wanted isLucasFrobeniusPseudoprime_of_isStrongLucasPseudoprime
     (hcop : Int.gcd N (L.p * (L.p ^ 2 - 4 * L.q)) = 1) (h : IsStrongLucasPseudoprime L N) :
     IsLucasFrobeniusPseudoprime L N
 
-/-- Carmichael: for nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and `D > 0`, `U_n` has a
-primitive prime divisor (a prime `p` with `ρ(p) = n`) for every `n ≥ 1` outside `{1, 2, 6, 12}`.
+/-- **Carmichael's primitive divisor theorem.** Let $P$ and $Q$ be coprime integers forming a
+nondegenerate Lucas pair with discriminant $D = P^2 - 4Q > 0$, and let $(U_n)$ be the Lucas
+sequence $U(P, Q)$. Then for every $n \ge 1$ with $n \notin \{1, 2, 6, 12\}$, the term $U_n$ has
+a primitive prime divisor: a prime $p$ that divides $U_n$ but divides no $U_s$ with $1 \le s < n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 4.1 (`integers-2025-A107-thm-4-1`). -/
@@ -617,8 +752,11 @@ public theorem_wanted exists_isPrimitivePrimeDivisor_lucasU_of_discr_pos
     (hD : 0 < L.p ^ 2 - 4 * L.q) (n : ℕ) (hn : 1 ≤ n) (hn' : n ∉ ({1, 2, 6, 12} : Finset ℕ)) :
     ∃ p : ℕ, IntegerSequence.IsPrimitivePrimeDivisor (lucasU L) n p
 
-/-- Bilu–Hanrot–Voutier: for nondegenerate `U(P, Q)` with `gcd(P, Q) = 1`, `U_n` has a primitive
-prime divisor for every `n ≥ 1` outside `{1, …, 8, 10, 12, 13, 18, 30}`.
+/-- **Bilu–Hanrot–Voutier theorem for Lucas sequences.** Let $P$ and $Q$ be coprime integers
+forming a nondegenerate Lucas pair, and let $(U_n)$ be the Lucas sequence $U(P, Q)$. Then for
+every $n \ge 1$ with $n \notin \{1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 18, 30\}$, the term $U_n$
+has a primitive prime divisor: a prime $p$ that divides $U_n$ but divides no $U_s$ with
+$1 \le s < n$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 4.3 (`integers-2025-A107-thm-4-3`). -/
@@ -628,8 +766,10 @@ public theorem_wanted exists_isPrimitivePrimeDivisor_lucasU
     (hn' : n ∉ ({1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 18, 30} : Finset ℕ)) :
     ∃ p : ℕ, IntegerSequence.IsPrimitivePrimeDivisor (lucasU L) n p
 
-/-- Rotkiewicz: for nondegenerate `U(P, Q)` with `Q = ±1`, infinitely many products `p₁p₂` of
-distinct odd primes are both strong Lucas and Frobenius pseudoprimes.
+/-- **Rotkiewicz: strong Lucas and Frobenius pseudoprimes with two prime factors.** Let $P$ and
+$Q$ be integers forming a nondegenerate Lucas pair with $Q = \pm 1$. Then infinitely many
+products $N = p_1 p_2$ of two distinct odd primes $p_1$ and $p_2$ are both strong Lucas
+pseudoprimes and Frobenius pseudoprimes with parameters $P$ and $Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 4.5 (`integers-2025-A107-thm-4-5`). -/
@@ -638,8 +778,10 @@ public theorem_wanted infinite_strong_frobenius_pseudoprimes_two_primes
     {N : ℕ | (∃ p₁ p₂ : ℕ, p₁.Prime ∧ p₂.Prime ∧ p₁ ≠ p₂ ∧ Odd p₁ ∧ Odd p₂ ∧ N = p₁ * p₂) ∧
       IsStrongLucasPseudoprime L N ∧ IsLucasFrobeniusPseudoprime L N}.Infinite
 
-/-- Rotkiewicz: for nondegenerate `U(P, Q)` with `Q = ±1` and coprime positive `a, b`, the
-progression `ax + b` contains infinitely many Frobenius pseudoprimes.
+/-- **Rotkiewicz: Frobenius pseudoprimes in arithmetic progressions.** Let $P$ and $Q$ be
+integers forming a nondegenerate Lucas pair with $Q = \pm 1$, and let $a$ and $b$ be coprime
+positive integers. Then infinitely many natural numbers $N \equiv b \pmod a$ are Frobenius
+pseudoprimes with parameters $P$ and $Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 4.6 (`integers-2025-A107-thm-4-6`). -/
@@ -648,9 +790,11 @@ public theorem_wanted infinite_frobenius_pseudoprimes_modEq
     (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (hab : Nat.Coprime a b) :
     {N : ℕ | N ≡ b [MOD a] ∧ IsLucasFrobeniusPseudoprime L N}.Infinite
 
-/-- For nondegenerate `U(P, Q)` and odd `N > 1` with `gcd(N, QD) = 1`, each of the Lucas,
-Lucas second-kind, Dickson, Dickson second-kind and Frobenius pseudoprime properties holds for
-`(P, Q)` iff it holds for `(-P, Q)`.
+/-- **Lucas-type pseudoprime properties are unchanged by $P \mapsto -P$.** Let $P$ and $Q$ be
+integers such that the Lucas pair $(P, Q)$ is nondegenerate, let $D = P^2 - 4Q$, and let $N > 1$
+be an odd natural number with $\gcd(N, QD) = 1$. Then $N$ is a Lucas pseudoprime for $(P, Q)$ if
+and only if it is one for $(-P, Q)$, and the same holds for Lucas pseudoprimes of the second
+kind, Dickson pseudoprimes, Dickson pseudoprimes of the second kind, and Frobenius pseudoprimes.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 4.7 (`integers-2025-A107-thm-4-7`). -/
@@ -666,9 +810,11 @@ public theorem_wanted pseudoprime_iff_neg_p
       IsDicksonPseudoprimeSecondKind ⟨-L.p, L.q, L.q_ne_zero⟩ N) ∧
     (IsLucasFrobeniusPseudoprime L N ↔ IsLucasFrobeniusPseudoprime ⟨-L.p, L.q, L.q_ne_zero⟩ N)
 
-/-- For nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and a prime `p ≥ 5` with `gcd(p, PQD) = 1`:
-if `N₁ = |U_p|` is composite then it is a super strong Lucas pseudoprime, and also a super
-Frobenius pseudoprime when `Q = ±1`.
+/-- **Composite terms $|U_p|$ are super strong Lucas pseudoprimes.** Let $P, Q$ be integers with
+$\gcd(P, Q) = 1$ such that the Lucas pair $(P, Q)$ is nondegenerate, let $U_n$ be the Lucas
+sequence of $(P, Q)$ and let $D = P^2 - 4Q$. Let $p \ge 5$ be a prime with $\gcd(p, PQD) = 1$
+such that $|U_p|$ is composite. Then $|U_p|$ is a super strong Lucas pseudoprime with parameters
+$P, Q$, and if $Q = \pm 1$ it is also a super Frobenius pseudoprime with parameters $P, Q$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 5.1, first two sentences
@@ -681,14 +827,26 @@ public theorem_wanted isSuperPseudoprime_natAbs_lucasU_prime
       (L.q = 1 ∨ L.q = -1 →
         IsSuperPseudoprime L (IsLucasFrobeniusPseudoprime L) (lucasU L p).natAbs)
 
-/-- Compositeness criteria for `|U_p|` (same hypotheses as Theorem 5.1): (i) if `Q` is a perfect
-square and `D > 0`, `|U_p|` is composite with at least two distinct prime factors; (ii) if `2p+1`
-is prime, `|U_p| > 2p+1` and `(D/(2p+1)) = (Q/(2p+1)) = 1`, then `2p+1 ∣ |U_p|`; when `D > 0`
-these Jacobi conditions force `|U_p| > 2p+1` unless `(p, P, Q) = (5, ±1, -2)`, and when `D < 0`
-some `C₁` gives `|U_p| > 2p+1` for all primes `p ≥ C₁`; (iii) if `2p-1` is prime,
-`|U_p| > 2p-1`, `(D/(2p-1)) = -1` and `(Q/(2p-1)) = 1`, then `2p-1 ∣ |U_p|`; when `D > 0` these
-conditions force `|U_p| > 2p-1` unless `(p, P, Q) = (7, ±1, -1)`, and when `D < 0` some `C₂`
-gives `|U_p| > 2p+1` for all primes `p ≥ C₂` (as printed).
+/-- **Compositeness criteria for $|U_p|$.** Let $P$ and $Q$ be coprime integers such that the
+Lucas pair $(P, Q)$ is nondegenerate, let $U_n$ be the Lucas sequence $U(P, Q)$, let
+$D = P^2 - 4Q$, and write $\left(\frac{a}{b}\right)$ for the Jacobi symbol. Call a prime $p$
+admissible if $p \ge 5$ and $\gcd(p, PQD) = 1$. Then the following hold.
+
+First, if $Q$ is the square of an integer and $D > 0$, then for every admissible prime $p$, $|U_p|$
+is greater than $1$, is not prime, and has at least two distinct prime factors.
+
+Second, let $p$ be an admissible prime such that $2p + 1$ is prime and
+$\left(\frac{D}{2p+1}\right) = \left(\frac{Q}{2p+1}\right) = 1$. Then $2p + 1 \mid |U_p|$ if
+$|U_p| > 2p + 1$; and if $D > 0$, then $|U_p| > 2p + 1$ unless $p = 5$, $|P| = 1$ and $Q = -2$.
+
+Third, if $D < 0$, there is a constant $C$ such that $|U_p| > 2p + 1$ for every prime $p \ge C$.
+
+Fourth, let $p$ be an admissible prime such that $2p - 1$ is prime,
+$\left(\frac{D}{2p-1}\right) = -1$ and $\left(\frac{Q}{2p-1}\right) = 1$. Then $2p - 1 \mid |U_p|$
+if $|U_p| > 2p - 1$; and if $D > 0$, then $|U_p| > 2p - 1$ unless $p = 7$, $|P| = 1$ and $Q = -1$.
+
+The source states the bound for $D < 0$ in both parts (ii) and (iii) of Theorem 5.1, as printed
+with $2p + 1$ in each; the third claim above is that bound.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 5.1 (i)–(iii) (`integers-2025-A107-thm-5-1`). -/
@@ -713,16 +871,23 @@ public theorem_wanted natAbs_lucasU_prime_composite_criteria
           (0 < L.p ^ 2 - 4 * L.q → ¬ (p = 7 ∧ |L.p| = 1 ∧ L.q = -1) →
             2 * p - 1 < (lucasU L p).natAbs))
 
-/-- Composition construction: let `U(P₁, Q₁)` be nondegenerate with `gcd(P₁, Q₁) = 1` and
-discriminant `D₁`, `k ≥ 2` with `gcd(D₁, k) = 1`, and `P = ±V_k(P₁, Q₁)`, `Q = Q₁^k`. Then
-`gcd(P, Q) = 1`, `U(P, Q)` is nondegenerate with `D = D₁ U_k(P₁, Q₁)²`, and for a prime
-`p ∤ kD₁` with `gcd(p, PQD) = 1` (the standing hypothesis of Theorem 5.1), `p ≥ 5` if `D > 0`,
-`p ≥ 11` if `D < 0`, and `p ≠ 13` if `(P₁, Q₁) = (±1, 2)`, `|U_p(P, Q)|` is a super strong
-Lucas pseudoprime (super Frobenius if `Q₁ = ±1`) with at least `τ(k) ≥ 2^{ω(k)}` divisors. The
-source writes the exclusion as "`p ≠ 13` if `P = ±1`, `Q = 2`", which is vacuous for `Q = Q₁^k`,
-`k ≥ 2`; read for `(P, Q)` it fails: `(P₁, Q₁, k) = (1, 2, 2)` gives `(P, Q) = (∓3, 4)` and
-`|U_13(3, 4)| = 181`, a prime. Without `gcd(p, PQD) = 1` it fails as well:
-`(P₁, Q₁, k, p) = (-3, -1, 3, 5)` gives `D = 1300` and `5 ∣ U_5(±36, -1)`.
+/-- **Super strong Lucas pseudoprimes from composed Lucas pairs.** Let $P_1, Q_1$ be integers
+with $\gcd(P_1, Q_1) = 1$ such that the Lucas pair $(P_1, Q_1)$ is nondegenerate, with Lucas
+sequences $U_n(P_1, Q_1)$, $V_n(P_1, Q_1)$ and discriminant $D_1 = P_1^2 - 4Q_1$. Let $k \ge 2$
+with $\gcd(D_1, k) = 1$, let $\varepsilon = \pm 1$, and let $P = \varepsilon V_k(P_1, Q_1)$,
+$Q = Q_1^k$ and $D = P^2 - 4Q$. Let $p$ be a prime with $p \nmid k D_1$ and $\gcd(p, PQD) = 1$,
+such that $p \ge 5$ if $D > 0$, $p \ge 11$ if $D < 0$, and $p \ne 13$ if $|P_1| = 1$ and
+$Q_1 = 2$. Then $\gcd(P, Q) = 1$, the Lucas pair $(P, Q)$ is nondegenerate,
+$D = D_1 U_k(P_1, Q_1)^2$, and $|U_p(P, Q)|$ is a super strong Lucas pseudoprime with parameters
+$P, Q$; if moreover $Q_1 = \pm 1$, it is also a super Frobenius pseudoprime with parameters
+$P, Q$. Finally, $2^{\omega(k)} \le \tau(k) \le \tau(|U_p(P, Q)|)$, where $\omega(k)$ is the
+number of distinct prime factors of $k$ and $\tau(n)$ is the number of positive divisors of $n$.
+
+The source writes the exclusion as "$p \ne 13$ if $P = \pm 1$, $Q = 2$", which is vacuous for
+$Q = Q_1^k$ with $k \ge 2$; read for $(P, Q)$ it fails: $(P_1, Q_1, k) = (1, 2, 2)$ gives
+$(P, Q) = (\mp 3, 4)$ and $|U_{13}(3, 4)| = 181$, a prime. Without $\gcd(p, PQD) = 1$, the
+standing hypothesis of Theorem 5.1, it fails as well: $(P_1, Q_1, k, p) = (-3, -1, 3, 5)$ gives
+$D = 1300$ and $5 \mid U_5(\pm 36, -1)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 5.1 (iv) (`integers-2025-A107-thm-5-1`). -/
@@ -744,11 +909,16 @@ public theorem_wanted isSuperPseudoprime_natAbs_lucasU_prime_of_lucasV
       2 ^ k.primeFactors.card ≤ k.divisors.card ∧
       k.divisors.card ≤ (lucasU L p).natAbs.divisors.card
 
-/-- For nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and a prime `p ≥ 5` with
-`gcd(p, PQD) = 1`, `N₂ = |U_{2p}/P|` is a super Lucas pseudoprime unless `(p, P, Q)` is
-`(5, ±1, 2)`, `(5, ±1, 3)`, `(5, ±2, 3)`, `(5, ±12, 55)` or `(13, ±1, 2)`; in those cases
-`|U_10(±1, 2)| = 11`, `|U_10(±1, 3)| = 31`, `|U_10(±2, 3)/2| = 11`, `|U_10(±12, 55)/12| = 3739`,
-`|U_26(±1, 2)| = 181`, all primes.
+/-- **Super Lucas pseudoprimes of the form $|U_{2p}/P|$.** Let $P, Q$ be integers with $Q \neq 0$
+such that the pair $(P, Q)$ is nondegenerate and $\gcd(P, Q) = 1$, let $D = P^2 - 4Q$, and let
+$U = U(P, Q)$ be the Lucas sequence. Let $p \ge 5$ be a prime with $\gcd(p, PQD) = 1$ such that
+$(p, |P|, Q)$ is none of $(5, 1, 2)$, $(5, 1, 3)$, $(5, 2, 3)$, $(5, 12, 55)$ and $(13, 1, 2)$.
+Then $|U_{2p}/P|$, with $U_{2p}/P$ the integer quotient, is a super Lucas pseudoprime with
+parameters $(P, Q)$. Moreover, for $\varepsilon = \pm 1$ the Lucas sequences of the excluded
+parameters satisfy $|U_{10}(\varepsilon, 2)| = 11$, $|U_{10}(\varepsilon, 3)| = 31$,
+$|U_{10}(2\varepsilon, 3)/(2\varepsilon)| = 11$,
+$|U_{10}(12\varepsilon, 55)/(12\varepsilon)| = 3739$ and $|U_{26}(\varepsilon, 2)| = 181$, and
+$11$, $31$, $3739$ and $181$ are prime.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 5.3 (`integers-2025-A107-thm-5-3`). -/
@@ -767,11 +937,15 @@ public theorem_wanted isSuperPseudoprime_natAbs_lucasU_two_mul_prime_div
       (lucasU ⟨ε, 2, by decide⟩ 26).natAbs = 181 ∧
       Nat.Prime 11 ∧ Nat.Prime 31 ∧ Nat.Prime 3739 ∧ Nat.Prime 181
 
-/-- For nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and `D > 0`, let `m ≥ 5` be an odd prime or
-a Lucas pseudoprime of the second kind with `gcd(m, PQD) = 1` and `3 ∤ m` if `P ≡ Q ≡ 1
-(mod 2)`, and `N₁ = U_m` (composite if `m` is prime). Then `N₁` is a strong Lucas pseudoprime if
-`P` is odd, or `P ≡ 0 (mod 4)` and `Q ≡ -1 (mod 4)`, or `P ≡ 2 (mod 4)` and `Q ≡ -1 (mod 8)`
-(`N₁ = |U_m|`, positive by Lemma 6.1).
+/-- **Strong Lucas pseudoprimes among the terms $|U_m|$.** Let $P, Q$ be integers with
+$\gcd(P, Q) = 1$ such that the Lucas pair $(P, Q)$ is nondegenerate and $D = P^2 - 4Q > 0$, and
+let $U_n$ be the Lucas sequence of $(P, Q)$. Suppose that $P$ is odd, or $P \equiv 0 \pmod 4$ and
+$Q \equiv -1 \pmod 4$, or $P \equiv 2 \pmod 4$ and $Q \equiv -1 \pmod 8$. Let $m \ge 5$ be an
+odd prime or a Lucas pseudoprime of the second kind with parameters $P, Q$, such that
+$\gcd(m, PQD) = 1$, such that $3 \nmid m$ if $P$ and $Q$ are both odd, and such that $|U_m|$ is
+not prime if $m$ is prime. Then $|U_m|$ is a strong Lucas pseudoprime with parameters $P, Q$.
+
+The source states the result for $N_1 = U_m$, which is positive by its Lemma 6.1.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.2 (`integers-2025-A107-thm-6-2`). -/
@@ -785,11 +959,14 @@ public theorem_wanted isStrongLucasPseudoprime_natAbs_lucasU
       (L.p ≡ 2 [ZMOD 4] ∧ L.q ≡ -1 [ZMOD 8])) :
     IsStrongLucasPseudoprime L (lucasU L m).natAbs
 
-/-- For nondegenerate `U(P, Q)` with `Q = ±1` (so `D > 0`), let `m ≥ 5` be an odd prime or a
-Lucas pseudoprime of the second kind with `gcd(m, PD) = 1` and `3 ∤ m` if `P` is odd, and
-`N₁ = U_m`. Then `gcd(N₁, PD) = 1` and `3 ∤ N₁` if `P` is odd; and if `N₁` is composite when `m`
-is prime and `Q = -1`, then `N₁` is a strong Lucas and a Frobenius pseudoprime when `P` is odd,
-or `P` is even and `Q = -1`.
+/-- **$|U_m|$ is a strong Lucas and Frobenius pseudoprime when $Q = \pm 1$.** Let $P$ and $Q$ be
+integers with $Q = 1$ or $Q = -1$ such that the Lucas pair $(P, Q)$ is nondegenerate, let $U_n$
+be the Lucas sequence $U(P, Q)$, and let $D = P^2 - 4Q$. Let $m \ge 5$ be either an odd prime or
+a Lucas pseudoprime of the second kind for $(P, Q)$, with $\gcd(m, PD) = 1$ and with $3 \nmid m$
+if $P$ is odd. Then $D > 0$, $\gcd(U_m, PD) = 1$, and $3 \nmid U_m$ if $P$ is odd. Suppose
+moreover that $|U_m|$ is not prime whenever $m$ is prime and $Q = -1$, and that $P$ is odd, or
+$P$ is even and $Q = -1$. Then $|U_m|$ is both a strong Lucas pseudoprime and a Frobenius
+pseudoprime for $(P, Q)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.3 (`integers-2025-A107-thm-6-3`). -/
@@ -805,10 +982,16 @@ public theorem_wanted lucasU_strong_frobenius_of_q_eq_one_or_neg_one
           IsStrongLucasPseudoprime L (lucasU L m).natAbs ∧
             IsLucasFrobeniusPseudoprime L (lucasU L m).natAbs)
 
-/-- For nondegenerate `U(P, Q)` with `gcd(P, Q) = 1` and `D > 0`, let `m ≥ 5` be an odd prime or
-a Frobenius pseudoprime with `gcd(m, PQD) = 1` and `3 ∤ m` if `P ≡ Q ≡ 1 (mod 2)`. Then
-`N₂ = U_{2m}/P` is a Lucas pseudoprime if `P` is odd, or `P ≡ 0 (mod 4)` and `Q ≡ -1 (mod 4)`,
-or `P ≡ 2 (mod 4)` and `Q ≡ -1 (mod 8)` (`N₂ = |U_{2m}/P|`, positive by Lemma 6.1).
+/-- **Lucas pseudoprimes from even-index Lucas terms divided by P.** Let $U$ be the Lucas sequence
+with parameters $P$ and $Q$ forming a nondegenerate Lucas pair, with $\gcd(P, Q) = 1$ and
+$D = P^2 - 4Q > 0$. Let $m \ge 5$ be either an odd prime or a Frobenius pseudoprime with
+parameters $P, Q$, such that $\gcd(m, PQD) = 1$, and $3 \nmid m$ if $P$ and $Q$ are both odd.
+Suppose that $P$ is odd, or $P \equiv 0 \pmod 4$ and $Q \equiv -1 \pmod 4$, or
+$P \equiv 2 \pmod 4$ and $Q \equiv -1 \pmod 8$. Then $N_2 = |U_{2m}/P|$ is a Lucas pseudoprime
+with parameters $P, Q$.
+
+Here $U_{2m}/P$ is the integer quotient, exact because $P \mid U_{2m}$; by Lemma 6.1 it is
+positive, so $N_2 = U_{2m}/P$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.5 (`integers-2025-A107-thm-6-5`). -/
@@ -822,10 +1005,12 @@ public theorem_wanted isLucasPseudoprime_natAbs_lucasU_two_mul_div
       (L.p ≡ 2 [ZMOD 4] ∧ L.q ≡ -1 [ZMOD 8])) :
     IsLucasPseudoprime L (lucasU L (2 * m) / L.p).natAbs
 
-/-- For nondegenerate `U(P, Q)` with `Q = ±1` (so `D > 0`), let `m ≥ 5` be an odd prime or a
-Lucas pseudoprime with `gcd(m, PD) = 1` and `3 ∤ m` if `P` is odd, and `N₂ = U_{2m}/P`. Then
-`gcd(N₂, PD) = 1`, `3 ∤ N₂` if `P` is odd, and `N₂` is a Lucas pseudoprime if `P` is odd, or `P`
-is even and `Q = -1`.
+/-- **$|U_{2m}/P|$ is a Lucas pseudoprime when $Q = \pm 1$.** Let $P$ and $Q$ be integers with
+$Q = 1$ or $Q = -1$ such that the Lucas pair $(P, Q)$ is nondegenerate, let $U_n$ be the Lucas
+sequence $U(P, Q)$, and let $D = P^2 - 4Q$. Let $m \ge 5$ be either an odd prime or a Lucas
+pseudoprime for $(P, Q)$, with $\gcd(m, PD) = 1$ and with $3 \nmid m$ if $P$ is odd, and put
+$N_2 = U_{2m}/P$. Then $D > 0$, $\gcd(N_2, PD) = 1$, and $3 \nmid N_2$ if $P$ is odd; and if $P$
+is odd, or $P$ is even and $Q = -1$, then $|N_2|$ is a Lucas pseudoprime for $(P, Q)$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.6 (`integers-2025-A107-thm-6-6`). -/
@@ -840,9 +1025,14 @@ public theorem_wanted lucasU_two_mul_div_isLucasPseudoprime_of_q_eq_one_or_neg_o
       (Odd L.p ∨ (Even L.p ∧ L.q = -1) →
         IsLucasPseudoprime L (lucasU L (2 * m) / L.p).natAbs)
 
-/-- For `U(P, Q)` with `Q = ±1`, let `N` be a Lucas pseudoprime with `gcd(N, D) = 1` that is not a
-strong Lucas pseudoprime, and `2^k ∥ ρ(N)`. If `Q = -1`, `N` is a Frobenius pseudoprime iff
-`N ≡ (D/N) (mod 2^{k+1})` and `(D/N) = 1`; if `Q = 1`, iff `N ≡ (D/N) (mod 2^{k+1})`.
+/-- **Frobenius criterion for Lucas pseudoprimes that are not strong.** Let $U$ be the Lucas
+sequence with parameters $P$ and $Q$, where $Q = 1$ or $Q = -1$, and let $D = P^2 - 4Q$. Let $N$
+be a Lucas pseudoprime with parameters $P, Q$ such that $\gcd(N, D) = 1$ and $N$ is not a strong
+Lucas pseudoprime, let $\rho(N)$ be the rank of appearance of $N$ in $U$, and let $k$ be a natural
+number with $2^k \mid \rho(N)$ and $2^{k+1} \nmid \rho(N)$. Write $(D/N)$ for the Jacobi symbol.
+If $Q = -1$, then $N$ is a Frobenius pseudoprime with parameters $P, Q$ if and only if
+$N \equiv (D/N) \pmod{2^{k+1}}$ and $(D/N) = 1$. If $Q = 1$, then $N$ is a Frobenius pseudoprime
+with parameters $P, Q$ if and only if $N \equiv (D/N) \pmod{2^{k+1}}$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.9 (`integers-2025-A107-thm-6-9`). -/
@@ -856,11 +1046,17 @@ public theorem_wanted isLucasFrobeniusPseudoprime_iff_of_not_isStrongLucasPseudo
     (L.q = 1 → (IsLucasFrobeniusPseudoprime L N ↔
       (N : ℤ) ≡ jacobiSym (L.p ^ 2 - 4 * L.q) N [ZMOD 2 ^ (k + 1)]))
 
-/-- For nondegenerate `U(P, Q)` with `Q = ±1` (so `D > 0`), let `m ≥ 5` be an odd prime or a
-Lucas pseudoprime with `gcd(m, PD) = 1` and `3 ∤ m` if `P` is odd, `N₂ = U_{2m}/P`, and suppose
-`P` is odd, or `P` is even and `Q = -1`. Then `N₂` is a Lucas pseudoprime, and `N₂` is a
-Frobenius pseudoprime iff: `m ≡ (D/m) (mod 6)` and `(D/m) = 1` (`P` odd, `Q = -1`);
-`m ≡ (D/m) (mod 6)` (`P` odd, `Q = 1`); `m ≡ (D/m) (mod 4)` and `(D/m) = 1` (`P` even, `Q = -1`).
+/-- **When $|U_{2m}/P|$ is a Frobenius pseudoprime, for $Q = \pm 1$.** Let $P$ and $Q$ be integers
+with $Q = 1$ or $Q = -1$ such that the Lucas pair $(P, Q)$ is nondegenerate, let $U_n$ be the
+Lucas sequence $U(P, Q)$, and let $D = P^2 - 4Q$. Let $m \ge 5$ be either an odd prime or a Lucas
+pseudoprime for $(P, Q)$, with $\gcd(m, PD) = 1$ and with $3 \nmid m$ if $P$ is odd, and write
+$\left(\frac{D}{m}\right)$ for the Jacobi symbol. Suppose that $P$ is odd, or $P$ is even and
+$Q = -1$, and put $N_2 = |U_{2m}/P|$. Then $D > 0$ and $N_2$ is a Lucas pseudoprime for $(P, Q)$.
+Moreover, $N_2$ is a Frobenius pseudoprime for $(P, Q)$ if and only if:
+$m \equiv \left(\frac{D}{m}\right) \pmod 6$ and $\left(\frac{D}{m}\right) = 1$, when $P$ is odd
+and $Q = -1$; $m \equiv \left(\frac{D}{m}\right) \pmod 6$, when $P$ is odd and $Q = 1$; and
+$m \equiv \left(\frac{D}{m}\right) \pmod 4$ and $\left(\frac{D}{m}\right) = 1$, when $P$ is even
+and $Q = -1$.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
 INTEGERS 25 (2025), Article A107, Theorem 6.10 (`integers-2025-A107-thm-6-10`). -/
@@ -883,10 +1079,15 @@ public theorem_wanted lucasU_two_mul_div_isLucasFrobeniusPseudoprime_iff
         (m : ℤ) ≡ jacobiSym (L.p ^ 2 - 4 * L.q) m [ZMOD 4] ∧
           jacobiSym (L.p ^ 2 - 4 * L.q) m = 1))
 
-/-- For nondegenerate `U(P, Q)` with `Q = ±1` and `P` odd if `Q = 1`, there are infinitely many
-Lucas pseudoprimes `U_{2m}/P` (`m` an odd prime or a Lucas pseudoprime) that are Frobenius
-pseudoprimes and infinitely many that are not. Nondegeneracy is added (the record omits it):
-`(P, Q) = (1, 1)` has `U = 0, 1, 1, 0, -1, -1, …`, so `U_{2m}/P ∈ {0, ±1}` is never a
+/-- **Frobenius and non-Frobenius pseudoprimes of the form $U_{2m}/P$.** Let $P$ and $Q$ be
+integers forming a nondegenerate Lucas pair with $Q = \pm 1$, with $P$ odd if $Q = 1$, and let
+$(U_n)$ be the Lucas sequence $U(P, Q)$. Call $m$ admissible if it is an odd prime or a Lucas
+pseudoprime with parameters $P$ and $Q$. Then infinitely many natural numbers $N = |U_{2m}/P|$
+with $m$ admissible are both Lucas pseudoprimes and Frobenius pseudoprimes with parameters $P$
+and $Q$, and infinitely many such $N$ are Lucas pseudoprimes but not Frobenius pseudoprimes.
+
+Nondegeneracy is assumed explicitly, and the statement fails without it: for $(P, Q) = (1, 1)$
+the sequence $U$ runs $0, 1, 1, 0, -1, -1, \dots$, so $U_{2m}/P \in \{0, \pm 1\}$ is never a
 pseudoprime.
 
 Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,

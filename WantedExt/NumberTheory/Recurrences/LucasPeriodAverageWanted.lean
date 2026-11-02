@@ -46,12 +46,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The (least) period `π_U(m)` of the Lucas sequence `U(a, b)` modulo `m`: the minimal period
-of `(0, 1)` under the step `(x, y) ↦ (y, a * y + b * x)` on `ZMod m × ZMod m`, that is, the
-least positive `r` with `U r ≡ 0` and `U (r + 1) ≡ 1` modulo `m` (equation (1.11)). For
-`m > 0` it is `0` exactly when `U` is not purely periodic modulo `m`, i.e. when
-`gcd(m, b) > 1` (Remark 1.1); at `m = 0` the step acts on `ZMod 0 = ℤ` and the value carries
-no meaning for the paper (for Fibonacci it is `0` although `gcd(0, 1) = 1`).
+/-- **Period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and a natural
+number $m$, the least period $\pi_U(m)$ of $U$ modulo $m$ is the minimal period of the pair
+$(0, 1)$ under the map $(x, y) \mapsto (y, P y - Q x)$ on pairs of residues modulo $m$, that is,
+the least $r > 0$ with $U_r \equiv 0 \pmod m$ and $U_{r+1} \equiv 1 \pmod m$, and $0$ if there
+is no such $r$.
+
+For $m > 0$, $\pi_U(m) = 0$ exactly when $U$ is not purely periodic modulo $m$, that is, when
+$\gcd(m, Q) > 1$. For $m = 0$ the residues are integers and the congruences are equalities; this
+value has no meaning in the paper (for the Fibonacci sequence it is $0$).
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, equation
@@ -61,9 +64,12 @@ noncomputable def lucasUPeriod (params : LucasSequenceParams) (m : ℕ) : ℕ :=
     (fun x : ZMod m × ZMod m => (x.2, (params.p : ZMod m) * x.2 - (params.q : ZMod m) * x.1))
     (0, 1)
 
-/-- The (least) restricted period `ρ_U(m)` of `U(a, b)` modulo `m`: the least positive `s`
-with `U s ≡ 0` and `U (s + 1) ≡ M` modulo `m` for a multiplier `M` coprime to `m`
-(equation (1.12)); `U (s + 1)` is then the multiplier `M_U(m)`.
+/-- **Restricted period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and
+a natural number $m$, the least restricted period $\rho_U(m)$ of $U$ modulo $m$ is the least
+$s > 0$ such that $m \mid U_s$ and $U_{s+1}$ is coprime to $m$, and $0$ if there is no such $s$.
+
+In the paper's terms, $U_{s+1} \equiv M \pmod m$ for a multiplier $M$ coprime to $m$; for
+$s = \rho_U(m)$ this $U_{s+1}$ is the multiplier $M_U(m)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, equations
@@ -71,22 +77,35 @@ Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, eq
 noncomputable def lucasURestrictedPeriod (params : LucasSequenceParams) (m : ℕ) : ℕ :=
   sInf {s : ℕ | 0 < s ∧ (m : ℤ) ∣ lucasU params s ∧ IsCoprime (lucasU params (s + 1)) (m : ℤ)}
 
-/-- The set `S(U)` of positive integers `n` with `gcd(n, b) = 1` and `π_U(n) ∣ n`.
+/-- **Moduli divisible by their Lucas period.** For the Lucas sequence $U$ with integer
+parameters $P$ and $Q \ne 0$ ($U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$), $S(U)$ is
+the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo
+$n$ divides $n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
 def lucasPeriodSet (params : LucasSequenceParams) : Set ℕ :=
   {n | 0 < n ∧ IsCoprime (n : ℤ) params.q ∧ lucasUPeriod params n ∣ n}
 
-/-- The set `S'(U)` of `n ∈ S(U)` with `B_U(n) ≡ 0 (mod n)`, i.e. `A_U(n)` an integer.
+/-- **Average set of a Lucas sequence.** Let $U$ be the Lucas sequence with parameters $P$ and
+$Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and let $S(U)$ be the
+set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo $n$
+divides $n$. The average set $S'(U)$ is the set of $n \in S(U)$ with $n \mid U_1 + \dots + U_n$,
+that is, those $n \in S(U)$ for which the average $(U_1 + \dots + U_n)/n$ is an integer.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
 def lucasAverageSet (params : LucasSequenceParams) : Set ℕ :=
   {n | n ∈ lucasPeriodSet params ∧ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i}
 
-/-- "`A_W(n)` is an integer for all recurrences `W(a, b)`": every integer sequence `w`
-satisfying `w (k + 2) = a * w (k + 1) + b * w k` has `n ∣ w 1 + ⋯ + w n`.
+/-- **Integral averages of all recurrences.** For integers $P$ and $Q \ne 0$ and a natural number
+$n$, the property that $n$ has integral averages means that every integer sequence
+$(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies
+$n \mid w_1 + \dots + w_n$; for $n > 0$ this says that the average
+$A_W(n) = (w_1 + \dots + w_n)/n$ is an integer.
+
+In the paper's notation $a = P$ and $b = -Q$, so the recurrence reads
+$w_{k+2} = a w_{k+1} + b w_k$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 2 (definition of
@@ -95,14 +114,16 @@ def lucasAllAveragesIntegral (params : LucasSequenceParams) (n : ℕ) : Prop :=
   ∀ w : ℕ → ℤ, (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
     (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, w i
 
-/-- `π_U(1) = 1`.
+/-- **Period of a Lucas sequence modulo 1.** For every Lucas sequence $U = U(P, Q)$, the least
+period $\pi_U(1)$ of $U$ modulo $1$ equals $1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.4 (ix). -/
 theorem lucasUPeriod_one (params : LucasSequenceParams) : lucasUPeriod params 1 = 1 :=
   Function.minimalPeriod_eq_one_iff_isFixedPt.mpr (Subsingleton.elim _ _)
 
-/-- The Fibonacci sequence has period `3` modulo `2`.
+/-- **Period of the Fibonacci sequence modulo 2.** The Fibonacci sequence, that is, the Lucas
+sequence with parameters $(P, Q) = (1, -1)$, has period $3$ modulo $2$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.4 (i)
@@ -116,7 +137,8 @@ theorem lucasUPeriod_fibonacciLucasParams_two : lucasUPeriod fibonacciLucasParam
     have := congrArg Prod.fst h
     simp at this
 
-/-- `ρ_U(1) = 1`.
+/-- **Restricted period of a Lucas sequence modulo 1.** For every Lucas sequence $U = U(P, Q)$,
+the least restricted period $\rho_U(1)$ of $U$ modulo $1$ equals $1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.4 (ix). -/
@@ -127,7 +149,8 @@ theorem lucasURestrictedPeriod_one (params : LucasSequenceParams) :
     ⟨Nat.one_pos, by simp, by simp [isCoprime_one_right]⟩
   exact le_antisymm (Nat.sInf_le h1) (Nat.sInf_mem ⟨1, h1⟩).1
 
-/-- The Fibonacci sequence has restricted period `3` modulo `2` (`F 3 = 2`).
+/-- **Restricted period of the Fibonacci sequence modulo 2.** The least restricted period
+modulo $2$ of the Fibonacci sequence $F = U(1, -1)$ equals $3$ (note $F_3 = 2$).
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, equation (1.12). -/
@@ -150,14 +173,18 @@ theorem lucasURestrictedPeriod_fibonacciLucasParams_two :
   generalize sInf S = k at hpos hdvd hlt'
   interval_cases k <;> simp [hU] at hdvd
 
-/-- `1 ∈ S(U)`.
+/-- **The Lucas period set contains $1$.** For all integers $P, Q$ with $Q \ne 0$, the number $1$
+lies in the Lucas period set $S(U)$ of $U = U(P, Q)$: the set of positive integers $n$ coprime to
+$Q$ whose period $\pi_U(n)$ modulo $n$ divides $n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
 theorem one_mem_lucasPeriodSet (params : LucasSequenceParams) : 1 ∈ lucasPeriodSet params :=
   ⟨Nat.one_pos, by simp [isCoprime_one_left], by simp [lucasUPeriod_one]⟩
 
-/-- `1 ∈ S'(U)`.
+/-- **The Lucas average set contains $1$.** For all integers $P, Q$ with $Q \ne 0$, the number $1$
+lies in the Lucas average set $S'(U)$ of $U = U(P, Q)$: the set of $n$ in the Lucas period set
+$S(U)$ with $n \mid U_1 + \dots + U_n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
@@ -165,14 +192,19 @@ theorem one_mem_lucasAverageSet (params : LucasSequenceParams) :
     1 ∈ lucasAverageSet params :=
   ⟨one_mem_lucasPeriodSet params, by simp⟩
 
-/-- The set `T(U)` of positive integers `n` coprime to `b` with `n ∣ U n`.
+/-- **Index-divisible set of a Lucas sequence.** Let $U = U(P, Q)$ be the Lucas sequence with
+integer parameters $P$ and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$ (the paper's $U(a, b)$ with $a = P$ and $b = -Q$). The set $T(U)$
+consists of the positive integers $n$ with $\gcd(n, Q) = 1$ and $n \mid U_n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
 def lucasIndexDivisibleSet (params : LucasSequenceParams) : Set ℕ :=
   {n | 0 < n ∧ IsCoprime (n : ℤ) params.q ∧ (n : ℤ) ∣ lucasU params n}
 
-/-- `1 ∈ T(U)`.
+/-- **The index-divisible set of a Lucas sequence contains $1$.** For all integers $P, Q$ with
+$Q \ne 0$, the number $1$ lies in the set $T(U)$ of positive integers $n$ coprime to $Q$ with
+$n \mid U_n$, where $U = U(P, Q)$ is their Lucas sequence.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
@@ -180,7 +212,9 @@ theorem one_mem_lucasIndexDivisibleSet (params : LucasSequenceParams) :
     1 ∈ lucasIndexDivisibleSet params :=
   ⟨Nat.one_pos, by simp [isCoprime_one_left], by simp⟩
 
-/-- `A_W(1) = W 1` is an integer for every recurrence.
+/-- **The average at $n = 1$ is integral.** For integers $P$ and $Q \ne 0$, every integer
+sequence $(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies $1 \mid w_1$;
+that is, the average $A_W(1) = w_1$ is an integer.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 2. -/
@@ -188,9 +222,10 @@ theorem lucasAllAveragesIntegral_one (params : LucasSequenceParams) :
     lucasAllAveragesIntegral params 1 :=
   fun _ _ => by simp
 
-/-- Lemma 1.1: `U (2 n) = U n * V n`, `U (2 n + 1) = b * U n ^ 2 + U (n + 1) ^ 2`, and
-`U m ∣ U n` whenever `m ∣ n`. The record's trailing expository text on pure periodicity is not
-part of the lemma.
+/-- **Doubling formulas and divisibility for Lucas sequences.** Let $U$ and $V$ be the Lucas
+sequences with integer parameters $P$ and $Q \neq 0$. Then $U_{2n} = U_n V_n$ and
+$U_{2n+1} = -Q U_n^2 + U_{n+1}^2$ for every natural number $n$, and $U_m \mid U_n$ for all
+natural numbers $m$ and $n$ with $m \mid n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Lemma 1.1
@@ -201,11 +236,12 @@ public theorem_wanted lucasU_two_mul_and_lucasU_dvd (params : LucasSequenceParam
       -params.q * lucasU params n ^ 2 + lucasU params (n + 1) ^ 2) ∧
     (∀ m n, m ∣ n → lucasU params m ∣ lucasU params n)
 
-/-- Theorem 1.1: if `gcd(m, b) = 1` then `U(a, b)` is purely periodic modulo `m`, `π_U(m)` is
-a period of every recurrence `W(a, b)` modulo `m`, and `ρ_U(m)` is a restricted period of every
-`W(a, b)` modulo `m` (with the multiplier `U (ρ_U(m) + 1)`). "General period" replaces the
-paper's divisibilities `π_W(m) ∣ π_U(m)` and `ρ_W(m) ∣ ρ_U(m)`, which are equivalent by Remark
-1.2.
+/-- **Periods of second-order recurrences modulo $m$.** Let $U$ be the Lucas sequence with
+integer parameters $P$ and $Q \neq 0$, let $m$ be a positive integer with $\gcd(m, Q) = 1$, and
+write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Then
+$\pi(m) > 0$ and $\rho(m) > 0$, and every integer sequence $w$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies $w_{n + \pi(m)} \equiv w_n \pmod m$ and
+$w_{n + \rho(m)} \equiv U_{\rho(m) + 1} w_n \pmod m$ for every natural number $n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.1
@@ -218,9 +254,14 @@ public theorem_wanted lucasUPeriod_isPeriod_of_secondOrder (params : LucasSequen
     (∀ n, w (n + lucasURestrictedPeriod params m) ≡
       lucasU params (lucasURestrictedPeriod params m + 1) * w n [ZMOD m])
 
-/-- Theorem 1.2: for `gcd(m n, b) = 1`, `π_U(lcm(m, n)) = lcm(π_U(m), π_U(n))` and
-`ρ_U(lcm(m, n)) = lcm(ρ_U(m), ρ_U(n))` (1.17), and the same for the iterates
-`π_U^i` and `ρ_U^i` (1.18), where `π_U^0(m) = m` and `π_U^(i+1)(m) = π_U(π_U^i(m))`.
+/-- **Periods of Lucas sequences modulo a least common multiple.** Let $U$ be the Lucas sequence
+with integer parameters $P$ and $Q \neq 0$, and write $\pi(m)$ and $\rho(m)$ for its period and
+restricted period modulo $m$. Let $m$ and $n$ be positive integers with $\gcd(mn, Q) = 1$. Then
+$\pi(\operatorname{lcm}(m, n)) = \operatorname{lcm}(\pi(m), \pi(n))$ and
+$\rho(\operatorname{lcm}(m, n)) = \operatorname{lcm}(\rho(m), \rho(n))$, and for every $i \ge 1$
+the $i$-fold iterates $\pi^i$ and $\rho^i$ of the maps $k \mapsto \pi(k)$ and $k \mapsto \rho(k)$
+satisfy $\pi^i(\operatorname{lcm}(m, n)) = \operatorname{lcm}(\pi^i(m), \pi^i(n))$ and
+$\rho^i(\operatorname{lcm}(m, n)) = \operatorname{lcm}(\rho^i(m), \rho^i(n))$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.2
@@ -238,11 +279,19 @@ public theorem_wanted lucasUPeriod_lcm (params : LucasSequenceParams) (m n : ℕ
           Nat.lcm ((lucasURestrictedPeriod params)^[i] m)
             ((lucasURestrictedPeriod params)^[i] n)
 
-/-- Theorem 1.3 (ii)-(ix): closed forms of the degenerate recurrences with `b = ±1` or
-`(a, b) = (±1, 0)`, for the pairs `(0, 1)`, `(0, -1)`, `(1, -1)`, `(-1, -1)`, `(2, -1)`,
-`(-2, -1)`, `(1, 0)`, `(-1, 0)`. Part (i) (the list of degenerate pairs) and the root and
-discriminant values in (vi)-(vii) are not formalized. The recurrences are written directly,
-since `b = 0` is outside `LucasSequenceParams`.
+/-- **Closed forms of eight degenerate second-order recurrences.** For every integer sequence
+$(w_j)_{j \ge 0}$ and every $n \in \mathbb{N}$: if $w_{j+2} = w_j$ for all $j$, then
+$w_{2n} = w_0$ and $w_{2n+1} = w_1$; if $w_{j+2} = -w_j$ for all $j$, then $w_{4n} = w_0$,
+$w_{4n+1} = w_1$, $w_{4n+2} = -w_0$ and $w_{4n+3} = -w_1$; if $w_{j+2} = w_{j+1} - w_j$ for all
+$j$, then $w_{6n} = w_0$, $w_{6n+1} = w_1$, $w_{6n+2} = w_1 - w_0$, $w_{6n+3} = -w_0$,
+$w_{6n+4} = -w_1$ and $w_{6n+5} = w_0 - w_1$; if $w_{j+2} = -w_{j+1} - w_j$ for all $j$, then
+$w_{3n} = w_0$, $w_{3n+1} = w_1$ and $w_{3n+2} = -w_1 - w_0$; if $w_{j+2} = 2 w_{j+1} - w_j$ for
+all $j$, then $w_n = n w_1 - (n - 1) w_0$; if $w_{j+2} = -2 w_{j+1} - w_j$ for all $j$, then
+$w_n = (-1)^{n+1} (n w_1 + (n - 1) w_0)$; if $w_{j+2} = w_{j+1}$ for all $j$ and $n \ge 1$, then
+$w_n = w_1$; and if $w_{j+2} = -w_{j+1}$ for all $j$ and $n \ge 1$, then $w_n = (-1)^{n+1} w_1$.
+
+In the paper's notation $W_{j+2} = a W_{j+1} + b W_j$ these are the pairs $(a, b) = (0, 1)$,
+$(0, -1)$, $(1, -1)$, $(-1, -1)$, $(2, -1)$, $(-2, -1)$, $(1, 0)$ and $(-1, 0)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.3
@@ -266,13 +315,23 @@ public theorem_wanted degenerate_secondOrder_closedForms :
     (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1)) →
       ∀ n, 1 ≤ n → w n = (-1) ^ (n + 1) * w 1)
 
-/-- Theorem 2.1: sums of the degenerate recurrences of Theorem 1.3. For `(a, b) = (0, 1)`,
-`B_U(n) = ⌈n / 2⌉` and all `A_W(n)` are integers iff `n = 1`; for `(0, -1)`, `(1, -1)`,
-`(-1, -1)`, `(-1, 0)`, `B_W` vanishes at multiples of `4`, `6`, `3`, `2`; for `(2, -1)`,
-`2 B_W(n) = (W 1 - W 0) n (n + 1) + 2 W 0 n`, all `A_W(n)` are integers iff `n` is odd, and
-`B_W(2 n - 1) = (2 n - 1) (n (W 1 - W 0) + W 0)`; for `(-2, -1)`,
-`B_U(n) = (-1) ^ (n + 1) ⌈n / 2⌉` and all `A_W(n)` are integers iff `n = 1`; for `(1, 0)`,
-`B_W(n) = n W 1`. The statements `A_W(kn) = 0` are the vanishing sums.
+/-- **Sums of eight degenerate second-order recurrences.** For an integer sequence
+$(w_j)_{j \ge 0}$ write $B_w(n) = w_1 + \dots + w_n$. Let $u$ be the sequence with $u_0 = 0$,
+$u_1 = 1$ and $u_{j+2} = u_j$, and $v$ the sequence with $v_0 = 0$, $v_1 = 1$ and
+$v_{j+2} = -2 v_{j+1} - v_j$. For every $n \ge 1$: $B_u(n) = \lfloor (n + 1) / 2 \rfloor$ and
+$B_v(n) = (-1)^{n+1} \lfloor (n + 1) / 2 \rfloor$; $n$ divides $B_w(n)$ for every integer
+sequence $w$ with $w_{j+2} = w_j$ if and only if $n = 1$; $n$ divides $B_w(n)$ for every integer
+sequence $w$ with $w_{j+2} = 2 w_{j+1} - w_j$ if and only if $n$ is odd; and $n$ divides
+$B_w(n)$ for every integer sequence $w$ with $w_{j+2} = -2 w_{j+1} - w_j$ if and only if
+$n = 1$. For every integer sequence $w$ and every $n \in \mathbb{N}$: if $w_{j+2} = -w_j$ for all
+$j$, then $B_w(4n) = 0$; if $w_{j+2} = w_{j+1} - w_j$ for all $j$, then $B_w(6n) = 0$; if
+$w_{j+2} = -w_{j+1} - w_j$ for all $j$, then $B_w(3n) = 0$; if $w_{j+2} = w_{j+1}$ for all $j$,
+then $B_w(n) = n w_1$; if $w_{j+2} = -w_{j+1}$ for all $j$, then $B_w(2n) = 0$; and if
+$w_{j+2} = 2 w_{j+1} - w_j$ for all $j$, then $2 B_w(n) = (w_1 - w_0) n (n + 1) + 2 w_0 n$ and,
+when $n \ge 1$, $B_w(2n - 1) = (2n - 1)(n (w_1 - w_0) + w_0)$.
+
+In the paper's notation $W_{j+2} = a W_{j+1} + b W_j$ these are the pairs $(a, b) = (0, 1)$,
+$(0, -1)$, $(1, -1)$, $(-1, -1)$, $(2, -1)$, $(-2, -1)$, $(1, 0)$ and $(-1, 0)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.1
@@ -297,12 +356,23 @@ public theorem_wanted degenerate_secondOrder_sums :
     (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w (k + 1)) → ∀ n : ℕ, ∑ i ∈ Finset.Icc 1 n, w i = n * w 1) ∧
     (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1)) → ∀ n, ∑ i ∈ Finset.Icc 1 (2 * n), w i = 0)
 
-/-- Theorem 2.2 (i) and the formula (2.2) of part (ii): for `b D ≠ 0`, if `a + b - 1 ≠ 0`
-then `(a + b - 1) B_W(n) = J(n) := W (n + 1) - W 1 + b (W n - W 0)`, and `n ∣ J(r)` whenever
-`gcd(n, b) = 1` and `π_U(n) ∣ r`; if `a + b - 1 = 0` then
-`(-b - 1) B_W(n) = (W 1 - W 0) U (n + 1) - n (W 1 + b W 0) + W 0 - W 1`. The congruence
-`K(s) ≡ 0 (mod n)` claimed in part (ii) is false as printed and omitted: for
-`(a, b) = (-6, 7)`, `W = U`, `n = 3`, one has `gcd(3, 7) = 1`, `π_U(3) = 2`, and `K(2) = 40`.
+/-- **Sum formula for second-order recurrences.** Let $P, Q$ be integers with $Q \ne 0$ and
+$P^2 - 4Q \ne 0$, let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and let
+$w$ be an integer sequence with $w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$. For $n \ge 0$
+let $B(n) = w_1 + \dots + w_n$, and for $n > 0$ let $\pi_U(n)$ be the period of $U$ modulo $n$:
+the least $r > 0$ with $U_r \equiv 0$ and $U_{r+1} \equiv 1 \pmod n$, or $0$ if there is none.
+If $a + b - 1 \ne 0$, then for every $n \ge 0$
+
+$$(a + b - 1) B(n) = w_{n+1} - w_1 + b (w_n - w_0),$$
+
+and for every $n > 0$ coprime to $b$ and every $r \ge 0$ divisible by $\pi_U(n)$, $n$ divides
+$w_{r+1} - w_1 + b (w_r - w_0)$. If $a + b - 1 = 0$, then for every $n \ge 0$
+
+$$(-b - 1) B(n) = (w_1 - w_0) U_{n+1} - n (w_1 + b w_0) + w_0 - w_1.$$
+
+The congruence $K(s) \equiv 0 \pmod n$ claimed in part (ii) of the source, for the source's
+quantity $K(s)$, is false as printed and is omitted: for $(a, b) = (-6, 7)$, $w = U$ and $n = 3$
+one has $\gcd(3, 7) = 1$ and $\pi_U(3) = 2$, but $K(2) = 40$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.2
@@ -319,8 +389,11 @@ public theorem_wanted secondOrder_sum_formula (params : LucasSequenceParams)
       ∀ n : ℕ, (params.q - 1) * ∑ i ∈ Finset.Icc 1 n, w i =
         (w 1 - w 0) * lucasU params (n + 1) - n * (w 1 - params.q * w 0) + w 0 - w 1)
 
-/-- Corollary 2.1: for `b ≠ 0`, `(a + b - 1) B_U(n) = U (n + 1) - 1 + b U n` if
-`a + b - 1 ≠ 0`, and `(-b - 1) B_U(n) = U (n + 1) - 1 - n` if `a + b - 1 = 0`.
+/-- **Sum of the first $n$ terms of a Lucas sequence.** Let $U$ be the Lucas sequence
+$U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with integer parameters $P$ and $Q \ne 0$,
+and let $B(n) = U_1 + \cdots + U_n$. For every $n \ge 0$: if $P - Q - 1 \ne 0$, then
+$(P - Q - 1) B(n) = U_{n+1} - 1 - Q U_n$; if $P - Q - 1 = 0$, then
+$(Q - 1) B(n) = U_{n+1} - 1 - n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.1
@@ -332,11 +405,17 @@ public theorem_wanted lucasU_sum_formula (params : LucasSequenceParams) (n : ℕ
     (params.p - params.q - 1 = 0 →
       (params.q - 1) * ∑ i ∈ Finset.Icc 1 n, lucasU params i = lucasU params (n + 1) - 1 - n)
 
-/-- Corollary 2.2 (i): if `a + b - 1 ≠ 0`, `gcd(n, b (a + b - 1)) = 1` and `π_U(n) ∣ r`, then
-`U` is purely periodic modulo `n` and `B_W(r) ≡ 0 (mod n)` for all recurrences `W(a, b)`.
-`b ≠ 0` is built into `LucasSequenceParams` (for `b = 0` the hypothesis forces `n = 1`).
-Part (ii) is false as printed and omitted: for `(a, b) = (-6, 7)` (so `a + b - 1 = 0`),
-`n = 3` has `gcd(3, 7 · (-8)) = 1` and `π_U(3) = 2`, but `B_U(2) = 1 - 6 = -5`.
+/-- **Sums of a second-order recurrence over whole periods.** Let $P, Q$ be integers with $Q \ne 0$,
+let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and suppose
+$a + b - 1 \ne 0$. Let $n > 0$ be coprime to $b(a + b - 1)$, and let $\pi_U(n)$ be the period of
+$U$ modulo $n$: the least $r > 0$ with $U_r \equiv 0$ and $U_{r+1} \equiv 1 \pmod n$, or $0$ if
+there is none. Then $\pi_U(n) > 0$, and for every $r \ge 0$ divisible by $\pi_U(n)$ and every
+integer sequence $w$ with $w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$, $n$ divides
+$w_1 + \dots + w_r$.
+
+Part (ii) of the corollary is false as printed and is omitted: for $(a, b) = (-6, 7)$, so that
+$a + b - 1 = 0$, the number $n = 3$ is coprime to $7 \cdot (-8)$ and $\pi_U(3) = 2$, but
+$U_1 + U_2 = 1 - 6 = -5$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.2
@@ -349,9 +428,14 @@ public theorem_wanted secondOrder_sum_dvd_of_period_dvd (params : LucasSequenceP
       (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
       (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 r, w i
 
-/-- Theorem 2.3: if `n ∈ S(U)` and the prime `ℓ` divides `n`, then `ℓ n ∈ S(U)`; if moreover
-`a + b - 1 ≠ 0` and `gcd(a + b - 1, n) = 1`, or `a + b - 1 = 0` and `gcd(-b - 1, n) = 1`,
-then `ℓ n ∈ S'(U)` and `A_W(ℓ n)` is an integer for all recurrences `W(a, b)`.
+/-- **Multiplying a member of $S(U)$ by one of its prime factors.** Let $P, Q$ be integers with
+$Q \ne 0$, let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and let $S(U)$ be
+the set of positive integers $n$ coprime to $Q$ whose period $\pi_U(n)$ modulo $n$ divides $n$. If
+$n \in S(U)$ and $\ell$ is a prime dividing $n$, then $\ell n \in S(U)$. If moreover
+$a + b - 1 \ne 0$ and $\gcd(a + b - 1, n) = 1$, or $a + b - 1 = 0$ and $\gcd(-b - 1, n) = 1$, then
+$\ell n$ lies in $S'(U)$, the set of $t \in S(U)$ with $t \mid U_1 + \dots + U_t$, and $\ell n$
+divides $w_1 + \dots + w_{\ell n}$ for every integer sequence $w$ with
+$w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.3
@@ -363,9 +447,14 @@ public theorem_wanted prime_mul_mem_lucasPeriodSet (params : LucasSequenceParams
         (params.p - params.q - 1 = 0 ∧ IsCoprime (params.q - 1) (n : ℤ)) →
       ℓ * n ∈ lucasAverageSet params ∧ lucasAllAveragesIntegral params (ℓ * n))
 
-/-- Corollary 2.3: if `n ∈ S(U)` and every prime divisor of `m` divides `n`, then
-`m n ∈ S(U)`; under the coprimality condition of Theorem 2.3 also `m n ∈ S'(U)` and `A_W(m n)`
-is an integer for all recurrences `W(a, b)`.
+/-- **Multiplying a member of $S(U)$ by a number with no new prime factors.** Let $P, Q$ be
+integers with $Q \ne 0$, let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and
+let $S(U)$ be the set of positive integers $n$ coprime to $Q$ whose period $\pi_U(n)$ modulo $n$
+divides $n$. Let $m > 0$ and $n \in S(U)$ be such that every prime divisor of $m$ divides $n$.
+Then $m n \in S(U)$. If moreover $a + b - 1 \ne 0$ and $\gcd(a + b - 1, n) = 1$, or $a + b - 1 = 0$
+and $\gcd(-b - 1, n) = 1$, then $m n$ lies in $S'(U)$, the set of $t \in S(U)$ with
+$t \mid U_1 + \dots + U_t$, and $m n$ divides $w_1 + \dots + w_{mn}$ for every integer sequence
+$w$ with $w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.3
@@ -378,11 +467,22 @@ public theorem_wanted mul_mem_lucasPeriodSet_of_primeFactors (params : LucasSequ
         (params.p - params.q - 1 = 0 ∧ IsCoprime (params.q - 1) (n : ℤ)) →
       m * n ∈ lucasAverageSet params ∧ lucasAllAveragesIntegral params (m * n))
 
-/-- Theorem 2.4: `S(U)` is closed under `lcm` and products; under the coprimality condition
-for `m n`, all of `m`, `n`, `lcm(m, n)`, `m n` lie in `S'(U)` with integral averages for all
-`W(a, b)`. In particular, if `C(r)`, the least multiple of `r` in `S(U)`, exists and satisfies
-the coprimality condition, then `C'(r) = C(r)` (the least multiple of `r` in `S'(U)`) and
-`A_W(C(r))` is an integer for all `W(a, b)`.
+/-- **Closure of the period set under lcm and products.** Let $U$ be the Lucas sequence with
+parameters $P$ and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$. Let
+$S(U)$ be the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$
+modulo $n$ divides $n$, and let $S'(U)$ be the set of $n \in S(U)$ with
+$n \mid U_1 + \dots + U_n$. Say that a natural number $x$ has integral averages if
+$x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$, and that $x$ satisfies the coprimality condition if
+either $P - Q - 1 \ne 0$ and $\gcd(P - Q - 1, x) = 1$, or $P - Q - 1 = 0$ and
+$\gcd(Q - 1, x) = 1$. Then for all $m, n \in S(U)$, both $\operatorname{lcm}(m, n)$ and $mn$ lie
+in $S(U)$, and if $mn$ satisfies the coprimality condition, then each of $m$, $n$,
+$\operatorname{lcm}(m, n)$ and $mn$ lies in $S'(U)$ and has integral averages. Moreover, for every
+positive integer $r$ and every $c$, if $c$ is the least element of $S(U)$ divisible by $r$ and $c$
+satisfies the coprimality condition, then $c$ is also the least element of $S'(U)$ divisible by
+$r$, and $c$ has integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so $P - Q - 1 = a + b - 1$ and $Q - 1 = -b - 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.4
@@ -399,9 +499,15 @@ public theorem_wanted lcm_mem_lucasPeriodSet (params : LucasSequenceParams) :
           (params.p - params.q - 1 = 0 ∧ IsCoprime (params.q - 1) (c : ℤ))) →
       IsLeast {x | r ∣ x ∧ x ∈ lucasAverageSet params} c ∧ lucasAllAveragesIntegral params c)
 
-/-- Theorem 2.5: if `m, n ∈ S'(U)` and `m ∣ r`, then `B_U(r) ≡ 0 (mod m)`,
-`lcm(m, n) ∈ S'(U)`, `A_W(m)`, `A_W(n)`, `A_W(lcm(m, n))` are integers for all `W(a, b)`, and
-`B_W(r) ≡ 0 (mod m)` for all `W(a, b)`.
+/-- **The average set is closed under lcm.** Let $P$ and $Q \ne 0$ be integers and $U$ the Lucas
+sequence given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$. Let $S'(U)$ be the set
+of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo $n$ divides
+$n$ and $n \mid U_1 + \dots + U_n$, and say that a natural number $x$ has integral averages if
+$x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Let $m, n \in S'(U)$ and let $r$ be a natural number
+divisible by $m$. Then $m \mid U_1 + \dots + U_r$, $\operatorname{lcm}(m, n) \in S'(U)$, each of
+$m$, $n$ and $\operatorname{lcm}(m, n)$ has integral averages, and $m \mid w_1 + \dots + w_r$ for
+every integer sequence $(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.5
@@ -415,8 +521,9 @@ public theorem_wanted lcm_mem_lucasAverageSet (params : LucasSequenceParams) (m 
     ∀ w : ℕ → ℤ, (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
       (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 r, w i
 
-/-- Theorem 2.6: for `a = 1`, `b ≠ 0` and `gcd(n, b) = 1`, `B_U(n) ≡ 0 (mod n)` if and only if
-`U (n + 2) ≡ 1 (mod n)`.
+/-- **Divisibility of Lucas sums when $P = 1$.** Let $U$ be the Lucas sequence $U_0 = 0$,
+$U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $P = 1$ and $Q \ne 0$. For every positive integer
+$n$ coprime to $Q$, $n \mid U_1 + \cdots + U_n$ if and only if $U_{n+2} \equiv 1 \pmod n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.6
@@ -425,10 +532,17 @@ public theorem_wanted lucasU_sum_dvd_iff_of_p_eq_one (params : LucasSequencePara
     (hp : params.p = 1) (n : ℕ) (hn : 0 < n) (hnb : IsCoprime (n : ℤ) params.q) :
     (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i ↔ lucasU params (n + 2) ≡ 1 [ZMOD n]
 
-/-- Theorem 2.7: suppose every recurrence `W(a, b)` is purely periodic modulo `n` from the term
-`W 1` on with period dividing `n` (that is, `W (k + n) ≡ W k (mod n)` for `k ≥ 1`), and
-`A_W(n)` is an integer for all `W(a, b)`. If `m ∈ S'(U)`, then `A_W(lcm(m, n))` is an integer
-for all `W(a, b)`.
+/-- **Integral averages extend to least common multiples.** Let $U$ be the Lucas sequence with
+parameters $P$ and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and
+let $S'(U)$ be the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of
+$U$ modulo $n$ divides $n$ and $n \mid U_1 + \dots + U_n$. Call an integer sequence
+$(w_k)_{k \ge 0}$ a recurrence if $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$, and say that a
+natural number $x$ has integral averages if $x \mid w_1 + \dots + w_x$ for every recurrence $w$.
+Let $n > 0$ be such that every recurrence $w$ satisfies $w_{k+n} \equiv w_k \pmod n$ for all
+$k \ge 1$, and suppose $n$ has integral averages. Then $\operatorname{lcm}(m, n)$ has integral
+averages for every $m \in S'(U)$.
+
+In the paper's notation $a = P$ and $b = -Q$, and the recurrences are the sequences $W(a, b)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.7
@@ -440,8 +554,16 @@ public theorem_wanted lucasAllAveragesIntegral_lcm (params : LucasSequenceParams
     (havg : lucasAllAveragesIntegral params n) (hm : m ∈ lucasAverageSet params) :
     lucasAllAveragesIntegral params (Nat.lcm m n)
 
-/-- Theorem 2.10: let `n > 1` and `m ∈ S'(U)`. If `n ∣ b` and `a ≡ 1 (mod n)`, or `n` is even,
-`n ∣ b` and `a ≡ -1 (mod n)`, then `A_W(n)` and `A_W(m n)` are integers for all `W(a, b)`.
+/-- **Integral averages when $n$ divides $Q$.** Let $U$ be the Lucas sequence with parameters $P$
+and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and let $S'(U)$ be
+the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo $n$
+divides $n$ and $n \mid U_1 + \dots + U_n$. Say that a natural number $x$ has integral averages
+if $x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Let $n > 1$ divide $Q$, and suppose that either
+$P \equiv 1 \pmod n$, or $n$ is even and $P \equiv -1 \pmod n$. Then for every $m \in S'(U)$,
+both $n$ and $mn$ have integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so $n \mid Q$ is the paper's $n \mid b$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.10
@@ -462,8 +584,11 @@ public theorem_wanted not_dvd_lucasU_sum_of_gcd (params : LucasSequenceParams)
     (hn : 1 < Nat.gcd n (Int.gcd params.p params.q)) :
     ¬ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i
 
-/-- Theorem 2.14: for nondegenerate `U(a, b)` with `a` even and `b` odd, `B_U(n)` is odd and
-`A_U(n)` is not an integer when `n ≡ 2 (mod 4)`, and `C(2 ^ k) = 2 ^ k` for `k ≥ 0`.
+/-- **Lucas sums and powers of two for even $P$ and odd $Q$.** Let $U$ be the Lucas sequence
+$U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $(P, Q)$ nondegenerate, $P$ even and
+$Q$ odd, and let $S$ be the set of positive integers $m$ coprime to $Q$ such that the period of
+$U$ modulo $m$ divides $m$. If $n \equiv 2 \pmod 4$, then $U_1 + \cdots + U_n$ is odd and not
+divisible by $n$. For every $k \ge 0$, $2^k$ is the least element of $S$ divisible by $2^k$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.14
@@ -474,10 +599,21 @@ public theorem_wanted lucasU_sum_odd_of_even_p (params : LucasSequenceParams)
       ¬ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i) ∧
     ∀ k, IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k)
 
-/-- Theorem 2.15: for nondegenerate `U(a, b)` with `a ≡ 2 (mod 4)` and `b ≡ 1 (mod 4)`:
-`2 ^ i ∈ S(U)` for `i ≥ 1`; `B_U(n) ≡ 0 (mod 2 ^ k)` when `2 ^ k ∥ n` with `k ≥ 2`;
-`C'(2) = 4` while `C(2) = 2`; `C'(2 ^ k) = C(2 ^ k) = 2 ^ k` and all `A_W(2 ^ k)` are integers
-for `k ≥ 2`.
+/-- **Powers of two when $P \equiv 2$ and $-Q \equiv 1 \pmod 4$.** Let $P$ and $Q \ne 0$ be
+integers forming a nondegenerate Lucas pair with $P \equiv 2 \pmod 4$ and $-Q \equiv 1 \pmod 4$,
+and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Let $S(U)$ be the set of positive integers $n$ coprime to $Q$ such
+that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$, let $S'(U)$ be the set of $n \in S(U)$
+with $n \mid U_1 + \dots + U_n$, and say that a natural number $x$ has integral averages if
+$x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Then $2^i \in S(U)$ for every $i \ge 1$; for every
+$k \ge 2$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$, one has
+$2^k \mid U_1 + \dots + U_n$; the least even element of $S'(U)$ is $4$, while the least even
+element of $S(U)$ is $2$; and for every $k \ge 2$, $2^k$ is the least multiple of $2^k$ in
+$S'(U)$ and in $S(U)$, and $2^k$ has integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 2$ and
+$b \equiv 1 \pmod 4$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.15
@@ -494,9 +630,17 @@ public theorem_wanted lucasAverageSet_two_pow_of_p_two_mod_four (params : LucasS
       IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k) ∧
       lucasAllAveragesIntegral params (2 ^ k)
 
-/-- Theorem 2.16: for nondegenerate `U(a, b)` with `a ≡ 0 (mod 4)` and `b ≡ 1 (mod 4)`:
-`B_U(n) ≢ 0 (mod 2 ^ k)` when `2 ^ k ∥ n` with `k ≥ 1`, so `C'(n)` does not exist for even
-`n`, and `A_U(m)` is an integer only if `m` is odd.
+/-- **Lucas sums not divisible by $2^k$ when $P \equiv 0$ and $-Q \equiv 1 \pmod 4$.** Let $P$
+and $Q \ne 0$ be integers forming a nondegenerate Lucas pair with $P \equiv 0 \pmod 4$ and
+$-Q \equiv 1 \pmod 4$, and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Let $S'(U)$ be the set of positive integers $n$ coprime to $Q$
+such that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$ and $n \mid U_1 + \dots + U_n$.
+Then for every $k \ge 1$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$,
+$2^k$ does not divide $U_1 + \dots + U_n$; for every even $n > 0$, no element of $S'(U)$ is
+divisible by $n$; and every positive integer $m$ with $m \mid U_1 + \dots + U_m$ is odd.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 0$ and
+$b \equiv 1 \pmod 4$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.16
@@ -509,10 +653,21 @@ public theorem_wanted lucasU_sum_not_dvd_of_p_zero_mod_four (params : LucasSeque
     (∀ n, 0 < n → Even n → ¬ ∃ x, n ∣ x ∧ x ∈ lucasAverageSet params) ∧
     ∀ m : ℕ, 0 < m → (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 m, lucasU params i → Odd m
 
-/-- Theorem 2.17: for nondegenerate `U(a, b)` with `a ≡ 0 (mod 4)` and `b ≡ -1 (mod 4)`:
-`2 ^ i ∈ S(U)` for `i ≥ 1`; `B_U(n) ≡ 0 (mod 2 ^ k)` when `2 ^ k ∥ n` with `k ≥ 2`;
-`C'(2) = 4` while `C(2) = 2`; `C'(2 ^ k) = C(2 ^ k) = 2 ^ k` and all `A_W(2 ^ k)` are integers
-for `k ≥ 2`.
+/-- **Powers of two when $P \equiv 0$ and $-Q \equiv -1 \pmod 4$.** Let $P$ and $Q \ne 0$ be
+integers forming a nondegenerate Lucas pair with $P \equiv 0 \pmod 4$ and $-Q \equiv -1 \pmod 4$,
+and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Let $S(U)$ be the set of positive integers $n$ coprime to $Q$ such
+that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$, let $S'(U)$ be the set of $n \in S(U)$
+with $n \mid U_1 + \dots + U_n$, and say that a natural number $x$ has integral averages if
+$x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Then $2^i \in S(U)$ for every $i \ge 1$; for every
+$k \ge 2$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$, one has
+$2^k \mid U_1 + \dots + U_n$; the least even element of $S'(U)$ is $4$, while the least even
+element of $S(U)$ is $2$; and for every $k \ge 2$, $2^k$ is the least multiple of $2^k$ in
+$S'(U)$ and in $S(U)$, and $2^k$ has integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 0$ and
+$b \equiv -1 \pmod 4$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.17
@@ -529,9 +684,17 @@ public theorem_wanted lucasAverageSet_two_pow_of_p_zero_mod_four (params : Lucas
       IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k) ∧
       lucasAllAveragesIntegral params (2 ^ k)
 
-/-- Theorem 2.18: for nondegenerate `U(a, b)` with `a ≡ 2 (mod 4)` and `b ≡ -1 (mod 4)`:
-`B_U(n) ≢ 0 (mod 2 ^ k)` when `2 ^ k ∥ n` with `k ≥ 1`, so `C'(n)` does not exist for even
-`n`, and `A_U(n)` is an integer only if `n` is odd.
+/-- **Lucas sums not divisible by $2^k$ when $P \equiv 2$ and $-Q \equiv -1 \pmod 4$.** Let $P$
+and $Q \ne 0$ be integers forming a nondegenerate Lucas pair with $P \equiv 2 \pmod 4$ and
+$-Q \equiv -1 \pmod 4$, and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Let $S'(U)$ be the set of positive integers $n$ coprime to $Q$
+such that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$ and $n \mid U_1 + \dots + U_n$.
+Then for every $k \ge 1$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$,
+$2^k$ does not divide $U_1 + \dots + U_n$; for every even $n > 0$, no element of $S'(U)$ is
+divisible by $n$; and every positive integer $m$ with $m \mid U_1 + \dots + U_m$ is odd.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 2$ and
+$b \equiv -1 \pmod 4$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.18
@@ -544,10 +707,13 @@ public theorem_wanted lucasU_sum_not_dvd_of_p_two_mod_four (params : LucasSequen
     (∀ n, 0 < n → Even n → ¬ ∃ x, n ∣ x ∧ x ∈ lucasAverageSet params) ∧
     ∀ m : ℕ, 0 < m → (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 m, lucasU params i → Odd m
 
-/-- Theorem 3.1 (Wyler): for nondegenerate `U(a, b)` and `m ≥ 2` with `gcd(m, b) = 1`, let
-`h = ord_m(-b)`, `ρ = ρ_U(m)`, `π = π_U(m)` and `H = lcm(h, ρ)`. Then `π = H` or `π = 2 H`.
-If `m = ℓ ^ i` for an odd prime `ℓ` and `i ≥ 1`, then `π = 2 H` when the `2`-adic valuations of
-`h` and `ρ` differ, and `π = H` when they are equal and positive.
+/-- **Wyler's theorem on the period of a Lucas sequence.** Let $U$ be the Lucas sequence with
+integer parameters $P$ and $Q$, where the pair $(P, Q)$ is nondegenerate, and write $\pi(m)$ and
+$\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Let $m \ge 2$ with
+$\gcd(m, Q) = 1$, let $h$ be the multiplicative order of $Q$ modulo $m$, and put
+$H = \operatorname{lcm}(h, \rho(m))$. Then $\pi(m) = H$ or $\pi(m) = 2H$. If moreover
+$m = \ell^i$ for an odd prime $\ell$ and some $i \ge 1$, then $\pi(m) = 2H$ when the $2$-adic
+valuations of $h$ and $\rho(m)$ differ, and $\pi(m) = H$ when they are equal and positive.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 3.1
@@ -570,10 +736,13 @@ public theorem_wanted lucasUPeriod_eq_lcm_orderOf (params : LucasSequenceParams)
         lucasUPeriod params m =
           Nat.lcm (orderOf (params.q : ZMod m)) (lucasURestrictedPeriod params m))
 
-/-- Corollary 3.1 (i)-(iii): for nondegenerate `U(a, 1)` and `m ≥ 2`, with `π = π_U(m)`,
-`ρ = ρ_U(m)` and `E = π / ρ`: `E ∈ {1, 2, 4}`; if `m = ℓ ^ i` with `ℓ` an odd prime and
-`i ≥ 1`, then `E = 1`, `2`, `4` according as `ρ ≡ 2 (mod 4)`, `ρ ≡ 0 (mod 4)`, `ρ` odd; and `π`
-is even unless `m = 2` and `a` is odd. Part (iv), about `L(m)`, is not formalized.
+/-- **Period and restricted period of Lucas sequences with $Q = -1$.** Let $U$ be the Lucas
+sequence with integer parameters $P$ and $Q = -1$, where the pair $(P, Q)$ is nondegenerate, and
+write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Let
+$m \ge 2$. Then $\pi(m)$ equals $\rho(m)$, $2\rho(m)$ or $4\rho(m)$. If $m = \ell^i$ for an odd
+prime $\ell$ and some $i \ge 1$, then $\pi(m) = \rho(m)$ when $\rho(m) \equiv 2 \pmod 4$,
+$\pi(m) = 2\rho(m)$ when $\rho(m) \equiv 0 \pmod 4$, and $\pi(m) = 4\rho(m)$ when $\rho(m)$ is
+odd. Finally, $\pi(m)$ is even unless $m = 2$ and $P$ is odd.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 3.1
@@ -592,9 +761,11 @@ public theorem_wanted lucasUPeriod_of_q_eq_neg_one (params : LucasSequenceParams
           lucasUPeriod params m = 4 * lucasURestrictedPeriod params m)) ∧
     (¬ (m = 2 ∧ Odd params.p) → Even (lucasUPeriod params m))
 
-/-- Corollary 3.2: for nondegenerate `U(a, -1)` and `m ≥ 2`, `E_U(m) = π_U(m) / ρ_U(m)` is
-`1` or `2`, and if `m = ℓ ^ i` with `ℓ` an odd prime, `i ≥ 1` and `ρ_U(m)` even, then
-`E_U(m) = 2`. Part (ii)(b) (`E = 1` or `2` when `ρ` is odd) is the case of part (i).
+/-- **Period and restricted period of Lucas sequences with $Q = 1$.** Let $U$ be the Lucas
+sequence with integer parameters $P$ and $Q = 1$, where the pair $(P, Q)$ is nondegenerate, and
+write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Let
+$m \ge 2$. Then $\pi(m) = \rho(m)$ or $\pi(m) = 2\rho(m)$, and if $m = \ell^i$ for an odd prime
+$\ell$ and some $i \ge 1$ and $\rho(m)$ is even, then $\pi(m) = 2\rho(m)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 3.2
@@ -607,11 +778,17 @@ public theorem_wanted lucasUPeriod_of_q_eq_one (params : LucasSequenceParams)
       Even (lucasURestrictedPeriod params m) →
         lucasUPeriod params m = 2 * lucasURestrictedPeriod params m
 
-/-- Theorem 3.2: let `b = ±1` and let the prime `ℓ` divide `D`. If `b = 1` then `ℓ = 2` or
-`ℓ ≡ 1 (mod 4)`. If `b = -1` then `a ≡ ±2 (mod ℓ)`; if `a ≡ 2 (mod ℓ)` then
-`E_U(ℓ ^ i) = 1` for `i ≥ 1`, and if `a ≡ -2 (mod ℓ)` and `ℓ > 2` then `E_U(ℓ ^ i) = 2`.
-The `a ≡ 2 (mod ℓ)` claim is restricted to odd `ℓ`: it is false as printed for `ℓ = 2`, e.g.
-`(a, b) = (4, -1)` has `D = 12`, `a ≡ 2 (mod 2)`, but `π_U(4) = 4` and `ρ_U(4) = 2`.
+/-- **Primes dividing the discriminant when $Q = \pm 1$.** Let $U = U(P, Q)$ be a Lucas sequence
+and let $\ell$ be a prime dividing its discriminant $D = P^2 - 4Q$. Write $\pi_U(m)$ and
+$\rho_U(m)$ for the least period and the least restricted period of $U$ modulo $m$. If $Q = -1$,
+then $\ell = 2$ or $\ell \equiv 1 \pmod 4$. If $Q = 1$, then $P \equiv 2 \pmod \ell$ or
+$P \equiv -2 \pmod \ell$; moreover, if $\ell > 2$ and $P \equiv 2 \pmod \ell$, then
+$\pi_U(\ell^i) = \rho_U(\ell^i)$ for every $i \ge 1$, and if $\ell > 2$ and
+$P \equiv -2 \pmod \ell$, then $\pi_U(\ell^i) = 2 \rho_U(\ell^i)$ for every $i \ge 1$.
+
+In the paper's notation $W(n + 2) = a W(n + 1) + b W(n)$ one has $a = P$ and $b = -Q$. The
+restriction to $\ell > 2$ in the case $P \equiv 2 \pmod \ell$ is needed: for $(P, Q) = (4, 1)$
+one has $D = 12$ and $P \equiv 2 \pmod 2$, but $\pi_U(4) = 4$ and $\rho_U(4) = 2$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 3.2
@@ -626,11 +803,12 @@ public theorem_wanted lucasUPeriod_prime_dvd_discr (params : LucasSequenceParams
       (params.p ≡ -2 [ZMOD ℓ] → 2 < ℓ → ∀ i, 1 ≤ i →
         lucasUPeriod params (ℓ ^ i) = 2 * lucasURestrictedPeriod params (ℓ ^ i)))
 
-/-- Theorem 3.3: for nondegenerate `U(a, b) = U(-b + 1, b)` with `b ≠ ±1`, the discriminant is
-`D = (-b - 1) ^ 2`, `U n = ((-b) ^ n - 1) / (-b - 1)` (roots `-b` and `1`),
-`U (n + 1) = (-b) U n + 1`, `U i ≡ 1 (mod b)` for `i ≥ 1`, and for `gcd(n, b) = 1`,
-`E_U(n) = 1`, i.e. `π_U(n) = ρ_U(n)`. The root identification is stated through the closed
-form.
+/-- **Lucas sequences with $P = Q + 1$.** Let $U$ be the Lucas sequence with integer parameters
+$P$ and $Q$, where $P = Q + 1$, $Q \neq \pm 1$ and the pair $(P, Q)$ is nondegenerate, and write
+$\pi(n)$ and $\rho(n)$ for the period and the restricted period of $U$ modulo $n$. Then
+$P^2 - 4Q = (Q - 1)^2$; for every natural number $n$, $(Q - 1) U_n = Q^n - 1$ and
+$U_{n+1} = Q U_n + 1$; $U_i \equiv 1 \pmod Q$ for every $i \ge 1$; and $\pi(n) = \rho(n)$ for
+every positive integer $n$ with $\gcd(n, Q) = 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 3.3
@@ -645,13 +823,16 @@ public theorem_wanted lucasUPeriod_eq_restricted_of_p_eq_q_add_one
     ∀ n : ℕ, 0 < n → IsCoprime (n : ℤ) params.q →
       lucasUPeriod params n = lucasURestrictedPeriod params n
 
-/-- Theorem 3.4: for nondegenerate `U(a, b) = U(b - 1, b)` with `b ≠ ±1`, the discriminant is
-`D = (b + 1) ^ 2`, `U n = (b ^ n - (-1) ^ n) / (b + 1)` (roots `b` and `-1`),
-`U (n + 1) = b U n + (-1) ^ n`, and for `gcd(n, b) = 1`: if `ρ_U(n)` is even then
-`π_U(n) = ρ_U(n)` and the multiplier `M_U(n) = U (ρ_U(n) + 1) ≡ 1 (mod n)`; if `ρ_U(n)` is odd
-and `n > 1` then `π_U(n) = 2 ρ_U(n)` and `M_U(n) ≡ -1 (mod n)`; and `π_U(n)` is even for
-`n > 1`. The hypothesis `n > 1` in the odd case is added: as printed the claim fails at `n = 1`,
-where `ρ_U(1) = π_U(1) = 1` (Theorem 1.4 (ix)).
+/-- **Lucas sequences with $P = -Q - 1$.** Let $U$ be the Lucas sequence with integer parameters
+$P$ and $Q$, where $P = -Q - 1$, $Q \neq \pm 1$ and the pair $(P, Q)$ is nondegenerate, and write
+$\pi(n)$ and $\rho(n)$ for the period and the restricted period of $U$ modulo $n$. Then
+$P^2 - 4Q = (Q - 1)^2$, and for every natural number $n$,
+$(1 - Q) U_n = (-Q)^n - (-1)^n$ and $U_{n+1} = -Q U_n + (-1)^n$. Moreover, for every positive
+integer $n$ with $\gcd(n, Q) = 1$: if $\rho(n)$ is even, then $\pi(n) = \rho(n)$ and
+$U_{\rho(n)+1} \equiv 1 \pmod n$; if $n > 1$ and $\rho(n)$ is odd, then $\pi(n) = 2\rho(n)$ and
+$U_{\rho(n)+1} \equiv -1 \pmod n$; and if $n > 1$, then $\pi(n)$ is even.
+
+The hypothesis $n > 1$ in the odd case is needed: for $n = 1$ one has $\rho(1) = \pi(1) = 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 3.4
@@ -671,10 +852,11 @@ public theorem_wanted lucasUPeriod_of_p_eq_neg_q_sub_one
         lucasU params (lucasURestrictedPeriod params n + 1) ≡ -1 [ZMOD n]) ∧
       (1 < n → Even (lucasUPeriod params n))
 
-/-- Lemma 2.1: for nondegenerate `U(a, b)`, an odd prime `ℓ` with `ℓ ^ e ∥ a` (`e ≥ 1`) and
-`b ≡ 1 (mod ℓ ^ (e + 1))`, one has `ℓ ^ e ∥ a + b - 1`, and `B_U(2 m ℓ ^ i) ≡ 0 (mod ℓ ^ i)`
-for `m ≥ 1` and `i ≥ 1`. The paper's hypothesis `a + b - 1 ≠ 0` is implied by the others and
-is dropped; `a ≠ 0` is part of nondegeneracy.
+/-- **Prime-power divisibility of Lucas sums.** Let $U$ be the Lucas sequence $U_0 = 0$,
+$U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $(P, Q)$ nondegenerate. Let $\ell$ be an odd prime
+and $e \ge 1$ with $\ell^e \mid P$, $\ell^{e+1} \nmid P$ and $Q \equiv -1 \pmod{\ell^{e+1}}$.
+Then $\ell^e \mid P - Q - 1$ and $\ell^{e+1} \nmid P - Q - 1$, and
+$\ell^i \mid U_1 + U_2 + \cdots + U_{2m\ell^i}$ for all $m \ge 1$ and $i \ge 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Lemma 2.1
@@ -688,13 +870,19 @@ public theorem_wanted lucasU_sum_two_mul_prime_pow_dvd (params : LucasSequencePa
     ∀ m i : ℕ, 1 ≤ m → 1 ≤ i →
       (ℓ : ℤ) ^ i ∣ ∑ k ∈ Finset.Icc 1 (2 * m * ℓ ^ i), lucasU params k
 
-/-- Theorem 2.12: for nondegenerate `U(a, b)` with `b (a + b - 1) ≠ 0`, `n ∈ S(U)` and `A_W(n)`
-is an integer for all `W(a, b)` in the cases (`i, j ≥ 0`): (i) `a ≡ ±1`, `b ≡ 1 (mod 6)`,
-`n = 1` or `n = 2 ^ (i + 3) 3 ^ (j + 1)`; (ii) `a ≡ 1`, `b ≡ -1 (mod 6)`, `n = 1` or
-`n = 2 ^ (i + 1) 3 ^ (j + 1)`; (iii) `a ≡ 3`, `b ≡ -1 (mod 6)`, `n = 1` or
-`n = 2 ^ (i + 2) 3 ^ (j + 1)`; (iv) `a ≡ 3 (mod 6)`, `3 ^ e ∥ a` with `e ≥ 1`,
-`b ≡ 1 (mod 2 · 3 ^ (e + 1))`, `n = 1` or `n = 2 ^ (i + 1) 3 ^ (j + 1)`. The paper's
-`rad(n) ∣ 6` is implied by the displayed forms of `n`.
+/-- **Members of $S(U)$ of the form $2^i 3^j$.** Let $P, Q$ be integers with $Q \ne 0$ such that
+the Lucas pair $(P, Q)$ is nondegenerate, let $U = U(P, Q)$ be its Lucas sequence, write $a = P$
+and $b = -Q$, and suppose $a + b - 1 \ne 0$. Call a positive integer $n$ good if $n$ lies in the
+Lucas period set $S(U)$ (the positive integers $n$ coprime to $Q$ whose period $\pi_U(n)$ modulo
+$n$ divides $n$) and $n$ divides $w_1 + \dots + w_n$ for every integer sequence $w$ with
+$w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$. Then, for all integers $i, j \ge 0$: (i) if
+$a \equiv \pm 1$ and $b \equiv 1 \pmod 6$, then $1$ and $2^{i+3} 3^{j+1}$ are good; (ii) if
+$a \equiv 1$ and $b \equiv -1 \pmod 6$, then $1$ and $2^{i+1} 3^{j+1}$ are good; (iii) if
+$a \equiv 3$ and $b \equiv -1 \pmod 6$, then $1$ and $2^{i+2} 3^{j+1}$ are good; (iv) if $e \ge 1$,
+$a \equiv 3 \pmod 6$, $3^e$ divides $a$ but $3^{e+1}$ does not, and
+$b \equiv 1 \pmod{2 \cdot 3^{e+1}}$, then $1$ and $2^{i+1} 3^{j+1}$ are good.
+
+The paper's condition $\operatorname{rad}(n) \mid 6$ is implied by these forms of $n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.12
@@ -715,10 +903,16 @@ public theorem_wanted mem_lucasPeriodSet_of_two_three_smooth (params : LucasSequ
       ∀ n, (n = 1 ∨ ∃ i j : ℕ, n = 2 ^ (i + 1) * 3 ^ (j + 1)) →
         n ∈ lucasPeriodSet params ∧ lucasAllAveragesIntegral params n)
 
-/-- Theorem 2.19: for nondegenerate `U(a, b)` with `a + b - 1 ≠ 0` and odd `n` with
-`a ≡ 2`, `b ≡ -1 (mod rad(n))`: `rad(n) ∣ D`, `C'(n) = C(n) = n`, and `A_W(n)` is an integer
-for all `W(a, b)`. Congruences modulo `rad(n)` are stated prime by prime (equivalent by the
-Chinese remainder theorem), and `C`, `C'` as `IsLeast`.
+/-- **Odd moduli in the average set when $P \equiv 2$ and $Q \equiv 1$.** Let $(P, Q)$ be a
+nondegenerate Lucas pair with $P - Q - 1 \ne 0$, Lucas sequence $U$, period set $S(U)$ and average
+set $S'(U)$. Let $n \ge 1$ be odd, and suppose that $P \equiv 2$ and $Q \equiv 1 \pmod{\ell}$ for
+every prime $\ell$ dividing $n$. Then every prime dividing $n$ divides $P^2 - 4Q$, $n$ is the
+least element of $S'(U)$ divisible by $n$ and the least element of $S(U)$ divisible by $n$, and
+$n$ divides $w_1 + \dots + w_n$ for every integer sequence $w$ with
+$w_{j+2} = P w_{j+1} - Q w_j$ for all $j$.
+
+In the paper's notation $a = P$ and $b = -Q$: the hypotheses read $a + b - 1 \ne 0$, $a \equiv 2$
+and $b \equiv -1 \pmod{\operatorname{rad}(n)}$, and $P^2 - 4Q$ is the discriminant $D = a^2 + 4b$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.19
@@ -732,13 +926,20 @@ public theorem_wanted isLeast_lucasAverageSet_of_odd (params : LucasSequencePara
     IsLeast {x | n ∣ x ∧ x ∈ lucasAverageSet params} n ∧
     IsLeast {x | n ∣ x ∧ x ∈ lucasPeriodSet params} n ∧ lucasAllAveragesIntegral params n
 
-/-- Theorem 2.20: for nondegenerate `U(a, b)` with `a + b - 1 ≠ 0`, `n = 2 ^ k n₁` with
-`k ≥ 1`, odd `n₁ > 1`, `a` even, `a ≡ -2 (mod rad(n₁))` and `b ≡ -1 (mod 4 rad(n₁))`:
-`rad(n₁) ∣ D` and `C(n) = n`; if `a ≡ 2 (mod 4)` then `C'(n)` does not exist; if
-`a ≡ 0 (mod 4)` then `C'(n) = 2 n` with `A_W(2 n)` integral when `n ≡ 2 (mod 4)`, and
-`C'(n) = n` with `A_W(n)` integral when `n ≡ 0 (mod 4)`. The paper's "for all recurrences
-`W(a, -1)`" is read as `W(a, b)`, the recurrences of the theorem's sequence. Congruences
-modulo `rad(n₁)` are stated prime by prime.
+/-- **Least multiples of $2^k n_1$ in the period set for even $P$.** Let $U$ be the Lucas sequence
+$U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with nondegenerate parameters
+$P, Q \in \mathbb{Z}$. Let $S$ be the set of positive integers $m$ coprime to $Q$ such that the
+period of $U$ modulo $m$ divides $m$, and let $S'$ be the set of $m \in S$ with
+$m \mid U_1 + \cdots + U_m$. Call $m$ *integral for all recurrences* if every integer sequence
+$w$ with $w_{j+2} = P w_{j+1} - Q w_j$ for all $j \ge 0$ satisfies $m \mid w_1 + \cdots + w_m$.
+
+Suppose $P - Q - 1 \ne 0$, $P$ is even and $Q \equiv 1 \pmod 4$. Let $n = 2^k n_1$ with
+$k \ge 1$ and $n_1 > 1$ odd, and suppose $P \equiv -2$ and $Q \equiv 1$ modulo every prime
+dividing $n_1$. Then every prime dividing $n_1$ divides $P^2 - 4Q$, and $n$ is the least element
+of $S$ divisible by $n$. If $P \equiv 2 \pmod 4$, no element of $S'$ is divisible by $n$. If
+$P \equiv 0 \pmod 4$, then for $k = 1$ the least element of $S'$ divisible by $n$ is $2n$, and
+$2n$ is integral for all recurrences; for $k \ge 2$ the least element of $S'$ divisible by $n$
+is $n$, and $n$ is integral for all recurrences.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.20
@@ -758,8 +959,15 @@ public theorem_wanted lucasPeriodSet_isLeast_of_even_p (params : LucasSequencePa
       (2 ≤ k → IsLeast {x | 2 ^ k * n₁ ∣ x ∧ x ∈ lucasAverageSet params} (2 ^ k * n₁) ∧
         lucasAllAveragesIntegral params (2 ^ k * n₁)))
 
-/-- Theorem 2.21: for nondegenerate `U(a, b)` and `n` with `6 ∣ n`, `a ≡ 1` and
-`b ≡ -1 (mod rad(n))`: `C'(n) = C(n) = n` and `A_W(n)` is an integer for all `W(a, b)`.
+/-- **Multiples of $6$ in the average set when $P \equiv 1$ and $Q \equiv 1$.** Let $(P, Q)$ be a
+nondegenerate Lucas pair with Lucas sequence $U$, period set $S(U)$ and average set $S'(U)$. Let
+$n \ge 1$ be divisible by $6$, and suppose that $P \equiv 1$ and $Q \equiv 1 \pmod{\ell}$ for
+every prime $\ell$ dividing $n$. Then $n$ is the least element of $S'(U)$ divisible by $n$ and the
+least element of $S(U)$ divisible by $n$, and $n$ divides $w_1 + \dots + w_n$ for every integer
+sequence $w$ with $w_{j+2} = P w_{j+1} - Q w_j$ for all $j$.
+
+In the paper's notation $a = P$ and $b = -Q$, and the hypotheses read $a \equiv 1$ and
+$b \equiv -1 \pmod{\operatorname{rad}(n)}$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.21
@@ -770,8 +978,15 @@ public theorem_wanted isLeast_lucasAverageSet_of_six_dvd (params : LucasSequence
     IsLeast {x | n ∣ x ∧ x ∈ lucasAverageSet params} n ∧
     IsLeast {x | n ∣ x ∧ x ∈ lucasPeriodSet params} n ∧ lucasAllAveragesIntegral params n
 
-/-- Theorem 2.22: for nondegenerate `U(a, b)` and `n` with `3 ∣ n`, `a ≡ -1` and
-`b ≡ -1 (mod rad(n))`: `C'(n) = C(n) = n` and `A_W(n)` is an integer for all `W(a, b)`.
+/-- **Multiples of $3$ in the average set when $P \equiv -1$ and $Q \equiv 1$.** Let $(P, Q)$ be a
+nondegenerate Lucas pair with Lucas sequence $U$, period set $S(U)$ and average set $S'(U)$. Let
+$n \ge 1$ be divisible by $3$, and suppose that $P \equiv -1$ and $Q \equiv 1 \pmod{\ell}$ for
+every prime $\ell$ dividing $n$. Then $n$ is the least element of $S'(U)$ divisible by $n$ and the
+least element of $S(U)$ divisible by $n$, and $n$ divides $w_1 + \dots + w_n$ for every integer
+sequence $w$ with $w_{j+2} = P w_{j+1} - Q w_j$ for all $j$.
+
+In the paper's notation $a = P$ and $b = -Q$, and the hypotheses read $a \equiv -1$ and
+$b \equiv -1 \pmod{\operatorname{rad}(n)}$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.22
@@ -782,9 +997,16 @@ public theorem_wanted isLeast_lucasAverageSet_of_three_dvd (params : LucasSequen
     IsLeast {x | n ∣ x ∧ x ∈ lucasAverageSet params} n ∧
     IsLeast {x | n ∣ x ∧ x ∈ lucasPeriodSet params} n ∧ lucasAllAveragesIntegral params n
 
-/-- Theorem 2.23: for nondegenerate `U(a, b)` and `n = 2 ^ k n₁` with `k ≥ 2`, `n₁` odd,
-`a ≡ 0` and `b ≡ -1 (mod 4 rad(n₁))`: `C'(n) = C(n) = n` and `A_W(n)` is an integer for all
-`W(a, b)`. The modulus `4 rad(n₁)` is split into `4` and the primes of `n₁`.
+/-- **Multiples of $4$ in the average set when $P \equiv 0$ and $Q \equiv 1$.** Let $(P, Q)$ be a
+nondegenerate Lucas pair with Lucas sequence $U$, period set $S(U)$ and average set $S'(U)$. Let
+$k \ge 2$, let $n_1$ be odd and put $n = 2^k n_1$. Suppose that $P \equiv 0$ and
+$Q \equiv 1 \pmod 4$, and that $P \equiv 0$ and $Q \equiv 1 \pmod{\ell}$ for every prime $\ell$
+dividing $n_1$. Then $n$ is the least element of $S'(U)$ divisible by $n$ and the least element
+of $S(U)$ divisible by $n$, and $n$ divides $w_1 + \dots + w_n$ for every integer sequence $w$
+with $w_{j+2} = P w_{j+1} - Q w_j$ for all $j$.
+
+In the paper's notation $a = P$ and $b = -Q$, and the hypotheses read $a \equiv 0$ and
+$b \equiv -1 \pmod{4 \operatorname{rad}(n_1)}$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.23
@@ -797,7 +1019,12 @@ public theorem_wanted isLeast_lucasAverageSet_of_four_dvd (params : LucasSequenc
     IsLeast {x | 2 ^ k * n₁ ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k * n₁) ∧
     lucasAllAveragesIntegral params (2 ^ k * n₁)
 
-/-- Theorem 4.2: for nondegenerate `U(a, b)` with `a = -b + 1`, `S(U) = T(U)`.
+/-- **Period set equals index-divisible set for nondegenerate $U(P, Q)$ with $P = Q + 1$.** Let
+$U = U(P, Q)$ be a nondegenerate Lucas sequence with integer parameters $P$ and $Q \ne 0$ and
+$P = Q + 1$ (in the paper's notation $U(a, b)$ with $a = P$ and $b = -Q$, this is $a = -b + 1$).
+Then $S(U) = T(U)$, where $S(U)$ is the set of positive integers $n$ with $\gcd(n, Q) = 1$ and
+$\pi_U(n) \mid n$, $\pi_U(n)$ being the period of $U$ modulo $n$, and $T(U)$ is the set of
+positive integers $n$ with $\gcd(n, Q) = 1$ and $n \mid U_n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 4.2
@@ -806,9 +1033,16 @@ public theorem_wanted lucasPeriodSet_eq_lucasIndexDivisibleSet (params : LucasSe
     (hnd : IsNondegenerateLucasPair params.p params.q) (hp : params.p = params.q + 1) :
     lucasPeriodSet params = lucasIndexDivisibleSet params
 
-/-- `LucasPeriodOrbitCloses params n k`: the iterated periods `π_U^i(n)` (with `π_U^0(n) = n`)
-are coprime to `b` for `0 ≤ i ≤ k`, and `π_U^(k+1)(n) = π_U^j(n)` for some `j ≤ k`. The least such
-`k` is the paper's `ω(n)`, and "`ω(n)` exists" is `∃ k, LucasPeriodOrbitCloses params n k`.
+/-- **Closing of the period orbit.** Let $U = U(P, Q)$ be the Lucas sequence with integer
+parameters $P$ and $Q \ne 0$ (the paper's $U(a, b)$ with $a = P$ and $b = -Q$). For $m \ge 0$ let
+$\pi_U(m)$ be the least $r > 0$ with $U_r \equiv 0$ and $U_{r+1} \equiv 1 \pmod m$ (congruence
+modulo $0$ being equality), or $0$ if there is none, and let $\pi_U^i$ be its $i$-th iterate, with
+$\pi_U^0(n) = n$. For natural numbers $n$ and $k$, the period orbit of $n$ closes at step $k$ when
+$\pi_U^i(n)$ is coprime to $Q$ for every $0 \le i \le k$ and $\pi_U^{k+1}(n) = \pi_U^j(n)$ for
+some $j \le k$.
+
+The least such $k$ is the paper's $\omega(n)$, and "$\omega(n)$ exists" means that the period
+orbit of $n$ closes at some step.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.4. -/
@@ -816,16 +1050,26 @@ def LucasPeriodOrbitCloses (params : LucasSequenceParams) (n k : ℕ) : Prop :=
   (∃ j ≤ k, (lucasUPeriod params)^[k + 1] n = (lucasUPeriod params)^[j] n) ∧
     ∀ i ≤ k, IsCoprime (((lucasUPeriod params)^[i] n : ℕ) : ℤ) params.q
 
-/-- The index `ω(n)`: the least `k` with `LucasPeriodOrbitCloses params n k` (`0` when no such
-`k` exists).
+/-- **The orbit index $\omega(n)$.** For a Lucas sequence $U = U(P, Q)$ and a natural number $n$,
+$\omega(n)$ is the least natural number $k$ such that the period orbit of $n$ closes at step $k$,
+and $\omega(n) = 0$ when there is no such $k$. Here $\pi_U(m)$ is the period of $U$ modulo $m$,
+$\pi_U^i$ is its $i$-th iterate with $\pi_U^0(n) = n$, and the orbit of $n$ closes at step $k$
+when $\pi_U^i(n)$ is coprime to $Q$ for all $i \le k$ and $\pi_U^{k+1}(n) = \pi_U^j(n)$ for some
+$j \le k$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.4. -/
 noncomputable def lucasPeriodOrbitIndex (params : LucasSequenceParams) (n : ℕ) : ℕ :=
   sInf {k | LucasPeriodOrbitCloses params n k}
 
-/-- `L(n) = lcm(π_U^0(n), π_U^1(n), …, π_U^ω(n)(n))`, equation (2.14). It is meaningful when
-`ω(n)` exists.
+/-- **The orbit lcm $L(n)$.** For a Lucas sequence $U = U(P, Q)$ and a natural number $n$, let
+$\pi_U(m)$ be the period of $U$ modulo $m$, with iterates $\pi_U^i$ and $\pi_U^0(n) = n$, and let
+$\omega(n)$ be the orbit index of $n$ (the least step at which the period orbit of $n$ closes, or
+$0$ if there is none). Then $L(n)$ is defined by
+
+$$L(n) = \operatorname{lcm}\bigl(\pi_U^0(n), \pi_U^1(n), \ldots, \pi_U^{\omega(n)}(n)\bigr).$$
+
+It is meaningful when $\omega(n)$ exists.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.8, equation
@@ -833,7 +1077,10 @@ Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.8, 
 noncomputable def lucasPeriodOrbitLcm (params : LucasSequenceParams) (n : ℕ) : ℕ :=
   (Finset.range (lucasPeriodOrbitIndex params n + 1)).lcm fun i => (lucasUPeriod params)^[i] n
 
-/-- The orbit of `1` closes at once: `π_U(1) = 1`.
+/-- **The period orbit of $1$ closes at step $0$.** For every Lucas sequence $U = U(P, Q)$, let
+$\pi_U(m)$ be the period of $U$ modulo $m$ and $\pi_U^i$ its $i$-th iterate, with
+$\pi_U^0(n) = n$. Then the period orbit of $1$ closes at step $0$: $1$ is coprime to $Q$ and
+$\pi_U^1(1) = \pi_U^0(1)$, that is, $\pi_U(1) = 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.4 and Theorem 1.4
@@ -844,7 +1091,8 @@ theorem lucasPeriodOrbitCloses_one_zero (params : LucasSequenceParams) :
     obtain rfl : i = 0 := Nat.le_zero.mp hi
     simp [isCoprime_one_left]⟩
 
-/-- `ω(1) = 0`.
+/-- **The orbit index of $1$ is zero.** For every Lucas sequence $U = U(P, Q)$, the orbit index
+of $1$ is $\omega(1) = 0$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.4. -/
@@ -852,7 +1100,11 @@ theorem lucasPeriodOrbitIndex_one (params : LucasSequenceParams) :
     lucasPeriodOrbitIndex params 1 = 0 :=
   Nat.le_zero.mp (Nat.sInf_le (lucasPeriodOrbitCloses_one_zero params))
 
-/-- `L(1) = 1`.
+/-- **The orbit lcm of $1$ is $1$.** For every Lucas sequence $U = U(P, Q)$ with integer
+parameters $P$ and $Q \ne 0$, $L(1) = 1$, where
+$L(n) = \operatorname{lcm}(\pi_U^0(n), \dots, \pi_U^{\omega(n)}(n))$ is the lcm of the iterates
+$\pi_U^i(n)$ of the period map $\pi_U$ of $U$, with $\pi_U^0(n) = n$, up to the orbit index
+$\omega(n)$ of $n$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, equation (2.14). -/
@@ -860,7 +1112,13 @@ theorem lucasPeriodOrbitLcm_one (params : LucasSequenceParams) :
     lucasPeriodOrbitLcm params 1 = 1 := by
   simp [lucasPeriodOrbitLcm, lucasPeriodOrbitIndex_one]
 
-/-- `n ∣ L(n)` (Remark 2.6).
+/-- **$n$ divides $L(n)$.** Let $P, Q$ be integers with $Q \ne 0$ and $U$ the Lucas sequence with
+$U_0 = 0$, $U_1 = 1$ and $U_{j+2} = P U_{j+1} - Q U_j$. For $m \in \mathbb{N}$ let $\pi_U(m)$ be
+the least $r \ge 1$ with $U_r \equiv 0$ and $U_{r+1} \equiv 1 \pmod m$, or $0$ if there is none,
+and let $\pi_U^i$ be its $i$-th iterate, so that $\pi_U^0(m) = m$. Let $\omega(n)$ be the least
+$k$ such that $\pi_U^i(n)$ is coprime to $Q$ for all $i \le k$ and $\pi_U^{k+1}(n) = \pi_U^j(n)$
+for some $j \le k$, or $0$ if there is no such $k$. Then every $n \in \mathbb{N}$ divides
+$L(n) = \operatorname{lcm}(\pi_U^0(n), \pi_U^1(n), \dots, \pi_U^{\omega(n)}(n))$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.6. -/
@@ -869,19 +1127,34 @@ theorem dvd_lucasPeriodOrbitLcm (params : LucasSequenceParams) (n : ℕ) :
   Finset.dvd_lcm (f := fun i => (lucasUPeriod params)^[i] n)
     (Finset.mem_range.2 (Nat.succ_pos _))
 
-/-- Theorem 1.4: for nondegenerate `U(a, b)` and a prime `p`, writing `E_U(p) = π_U(p) / ρ_U(p)`:
-(i) if `p ∤ 2 b D` then `ρ_U(p) > 1`, `ρ_U(p) ∣ p - (D / p)`, `ρ_U(p) ∣ π_U(p)` and
-`E_U(p) ∣ p - 1`; if `p = 2 ∤ b D` then `π_U(2) = 3`; (ii) if `p ∤ 2 b D` then
-`ρ_U(p) ∣ (p - (D / p)) / 2` iff `(-b / p) = 1`; (iii) if `p ∤ b`, `p ∣ D` then `ρ_U(p) = p` and
-`π_U(p) ∣ p (p - 1)`; (iv) if `p ∤ 2 b` and `(D / p) = 1` then `π_U(p) ∣ p - 1`; (v) if `p ∤ 2 b`
-and `(D / p) = -1` then `π_U(p) ∣ p ^ 2 - 1` and every prime factor `ℓ` of `π_U(p)` has
-`ℓ ≤ (p + 1) / 2`; (vi) if `p ∤ b`, `p ∣ D` then the largest prime factor of `π_U(p)` is `p`;
-(vii)-(viii) for `p ∤ b`, the largest `c` (resp. `e`) with `ρ_U(p ^ c) = ρ_U(p)` (resp.
-`π_U(p ^ e) = π_U(p)`) exists and gives `ρ_U(p ^ i) = p ^ max(i - c, 0) ρ_U(p)` (resp. the same
-for `π_U`) for `i ≥ 1` when `p ^ c ≠ 2`, and `ρ_U(2 ^ i) = 2 ^ max(i + 1 - d, 1) ρ_U(2)` for
-`i ≥ 2` with `d` the largest index with `ρ_U(2 ^ d) = ρ_U(4)` when `p ^ c = 2`; (ix)
-`ρ_U(1) = π_U(1) = 1`. Legendre symbols are `jacobiSym`; `-b = Q`. The claim
-`E_U(p) ∣ p - 1`, printed under "if `p ≥ 2`", is stated under the hypothesis `p ∤ 2 b D` of (i).
+/-- **Periods of a Lucas sequence modulo a prime.** Let $U = U(P, Q)$ be a nondegenerate Lucas
+sequence with discriminant $D = P^2 - 4Q$, and let $p$ be a prime. Write $\pi_U(m)$ and
+$\rho_U(m)$ for the least period and the least restricted period of $U$ modulo $m$, and
+$\left(\frac{x}{p}\right)$ for the Jacobi symbol.
+(i) If $p \nmid 2QD$, then $\rho_U(p) > 1$, $\rho_U(p) \mid p - \left(\frac{D}{p}\right)$,
+$\rho_U(p) \mid \pi_U(p)$ and $\pi_U(p) / \rho_U(p) \mid p - 1$; if $p = 2$ and $2 \nmid QD$,
+then $\pi_U(2) = 3$.
+(ii) If $p \nmid 2QD$, then $\rho_U(p) \mid \left(p - \left(\frac{D}{p}\right)\right) / 2$ if and
+only if $\left(\frac{Q}{p}\right) = 1$.
+(iii) If $p \nmid Q$ and $p \mid D$, then $\rho_U(p) = p$ and $\pi_U(p) \mid p (p - 1)$.
+(iv) If $p \nmid 2Q$ and $\left(\frac{D}{p}\right) = 1$, then $\pi_U(p) \mid p - 1$.
+(v) If $p \nmid 2Q$ and $\left(\frac{D}{p}\right) = -1$, then $\pi_U(p) \mid p^2 - 1$ and every
+prime factor $\ell$ of $\pi_U(p)$ satisfies $2 \ell \le p + 1$.
+(vi) If $p \nmid Q$ and $p \mid D$, then $p \mid \pi_U(p)$ and every prime factor of $\pi_U(p)$
+is at most $p$.
+(vii) If $p \nmid Q$, there is a largest $c \ge 1$ with $\rho_U(p^c) = \rho_U(p)$. If
+$p^c \ne 2$, then $\rho_U(p^i) = p^{\max(i - c, 0)} \rho_U(p)$ for every $i \ge 1$. If
+$p^c = 2$, there is a largest $d \ge 2$ with $\rho_U(2^d) = \rho_U(4)$, and
+$\rho_U(2^i) = 2^{\max(i + 1 - d, 1)} \rho_U(2)$ for every $i \ge 2$.
+(viii) If $p \nmid Q$, there is a largest $e \ge 1$ with $\pi_U(p^e) = \pi_U(p)$. If
+$p^e \ne 2$, then $\pi_U(p^i) = p^{\max(i - e, 0)} \pi_U(p)$ for every $i \ge 1$. If
+$p^e = 2$, there is a largest $g \ge 2$ with $\pi_U(2^g) = \pi_U(4)$, and
+$\pi_U(2^i) = 2^{\max(i + 1 - g, 1)} \pi_U(2)$ for every $i \ge 2$.
+(ix) $\rho_U(1) = \pi_U(1) = 1$.
+
+In the paper's notation $W(n + 2) = a W(n + 1) + b W(n)$ one has $a = P$ and $b = -Q$. The claim
+$\pi_U(p) / \rho_U(p) \mid p - 1$, printed under "if $p \ge 2$", is stated here under the
+hypothesis $p \nmid 2QD$ of (i).
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.4
@@ -928,17 +1201,21 @@ public theorem_wanted lucasUPeriod_prime_properties (params : LucasSequenceParam
             2 ^ max (i + 1 - g) 1 * lucasUPeriod params 2)) ∧
     lucasURestrictedPeriod params 1 = 1 ∧ lucasUPeriod params 1 = 1
 
-/-- Theorem 1.5: for nondegenerate `U(a, b)` and a prime `p` with `p ∤ b` and `p ∣ D`, writing
-`E_U(p) = π_U(p) / ρ_U(p)`: (i) `ρ_U(p) = p` and each residue modulo `p` appears exactly
-`E_U(p)` times among `U 0, …, U (π_U(p) - 1)`; (ii) for `p ≥ 5`, `i ≥ 1`: `ρ_U(p ^ i) = p ^ i`,
-`π_U(p ^ i) = p ^ i E_U(p)`, and each residue modulo `p ^ i` appears exactly `E_U(p)` times in a
-least period; (iii) for `p = 2`: `a` is even, `ρ_U(2 ^ i) = 2 ^ i` if `a ≡ 2 (mod 4)`, and if also
-`b ≡ -1 (mod 4)` each residue modulo `2 ^ i` appears once; (iv) for `p = 3`:
-`3 ∣ U 3 = a ^ 2 + b`, and if `9 ∤ a ^ 2 + b` then `ρ_U(3 ^ i) = 3 ^ i` with each residue modulo
-`3 ^ i` appearing `E_U(3)` times; (v) for `p = 2`, `ν₂(a) = c ≥ 2`:
-`ρ_U(2 ^ i) = 2 ^ max(i + 1 - c, 1)`; (vi) for `p = 3`, `ν₃(a ^ 2 + b) = d ≥ 2`:
-`ρ_U(3 ^ i) = 3 ^ max(i + 1 - d, 1)`. The paper's hypothesis `p ∤ gcd(a, b)` follows from
-`p ∤ b` and is dropped; `a ^ 2 + b = P ^ 2 - Q`.
+/-- **Uniform distribution of Lucas sequences modulo primes dividing the discriminant.** Let $U$
+be the Lucas sequence with integer parameters $P$ and $Q$, where the pair $(P, Q)$ is
+nondegenerate, and write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$
+modulo $m$; for a positive integer $N$ and a residue $r$ modulo $N$, let $c_N(r)$ be the number of
+$k < \pi(N)$ with $U_k \equiv r \pmod N$. Let $p$ be a prime with $p \nmid Q$ and
+$p \mid P^2 - 4Q$, and put $E = \lfloor \pi(p) / \rho(p) \rfloor$. Then: (i) $\rho(p) = p$,
+$\rho(p) \mid \pi(p)$, and $c_p(r) = E$ for every residue $r$ modulo $p$; (ii) if $p \ge 5$, then
+for every $i \ge 1$, $\rho(p^i) = p^i$, $\pi(p^i) = p^i E$, and $c_{p^i}(r) = E$ for every residue
+$r$ modulo $p^i$; (iii) if $p = 2$, then $P$ is even, and if moreover $P \equiv 2 \pmod 4$, then
+for every $i \ge 1$, $\rho(2^i) = 2^i$, and if in addition $Q \equiv 1 \pmod 4$, then
+$c_{2^i}(r) = 1$ for every residue $r$ modulo $2^i$; (iv) if $p = 3$, then $3 \mid P^2 - Q$, and
+if $9 \nmid P^2 - Q$, then for every $i \ge 1$, $\rho(3^i) = 3^i$ and $c_{3^i}(r) = E$ for every
+residue $r$ modulo $3^i$; (v) if $p = 2$ and the $2$-adic valuation of $P$ is $e \ge 2$, then
+$\rho(2^i) = 2^{\max(i + 1 - e, 1)}$ for every $i \ge 1$; (vi) if $p = 3$ and the $3$-adic
+valuation of $P^2 - Q$ is $d \ge 2$, then $\rho(3^i) = 3^{\max(i + 1 - d, 1)}$ for every $i \ge 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.5
@@ -976,11 +1253,23 @@ public theorem_wanted lucasU_uniform_of_prime_dvd_discr (params : LucasSequenceP
     (p = 3 → ∀ d, 2 ≤ d → padicValInt 3 (params.p ^ 2 - params.q) = d → ∀ i, 1 ≤ i →
       lucasURestrictedPeriod params (3 ^ i) = 3 ^ max (i + 1 - d) 1)
 
-/-- Theorem 2.8: if `gcd(n, b) = 1` and `ω(n)` exists, then `C(n)` exists and equals `L(n)`.
-Further, whenever `C(n) = c` exists and `a + b - 1 ≠ 0` with `gcd(c, a + b - 1) = 1`, or
-`a + b - 1 = 0` with `gcd(c, -b - 1) = 1`, then `C'(n) = c` and `A_W(c)` is an integer for all
-`W(a, b)`. `gcd(n, b) = 1` is the `i = 0` case of `LucasPeriodOrbitCloses`; `C`, `C'` are stated
-as `IsLeast`.
+/-- **Least multiples in $S(U)$ and the orbit lcm $L(n)$.** Let $P$ and $Q \ne 0$ be integers and
+$U$ the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$. Let
+$\pi_U(m)$ be the period of $U$ modulo $m$ and $\pi_U^i$ its $i$-th iterate, with
+$\pi_U^0(m) = m$. Let $S(U)$ be the set of positive integers $m$ coprime to $Q$ with
+$\pi_U(m) \mid m$, let $S'(U)$ be the set of $m \in S(U)$ with $m \mid U_1 + \dots + U_m$, and
+say that a natural number $x$ has integral averages if $x \mid w_1 + \dots + w_x$ for every
+integer sequence $(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Let $n > 0$.
+If the period orbit of $n$ closes at some step $k$, meaning that $\pi_U^i(n)$ is coprime to $Q$
+for all $i \le k$ and $\pi_U^{k+1}(n) = \pi_U^j(n)$ for some $j \le k$, then the least element of
+$S(U)$ divisible by $n$ is $L(n) = \operatorname{lcm}(\pi_U^0(n), \dots, \pi_U^{\omega(n)}(n))$,
+where $\omega(n)$ is the least such $k$. Moreover, if $c$ is the least element of $S(U)$
+divisible by $n$, and either $P - Q - 1 \ne 0$ and $\gcd(c, P - Q - 1) = 1$, or $P - Q - 1 = 0$
+and $\gcd(c, Q - 1) = 1$, then $c$ is also the least element of $S'(U)$ divisible by $n$, and $c$
+has integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so $P - Q - 1 = a + b - 1$ and $Q - 1 = -b - 1$;
+the paper's hypothesis $\gcd(n, b) = 1$ is the case $i = 0$ of the closing condition.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.8
@@ -994,13 +1283,24 @@ public theorem_wanted isLeast_lucasPeriodSet_eq_lucasPeriodOrbitLcm
           (params.p - params.q - 1 = 0 ∧ IsCoprime (c : ℤ) (params.q - 1))) →
       IsLeast {x | n ∣ x ∧ x ∈ lucasAverageSet params} c ∧ lucasAllAveragesIntegral params c
 
-/-- Corollary 2.4: (i) if `ω(n)` exists and `m ∣ n`, then `ω(m)` exists and `L(m) ∣ L(n)`;
-(ii) if `ω(n)` exists and `g ∣ π_U^i(n)`, then `ω(g)` exists and `L(g) ∣ L(n)`; (iii) if
-`gcd(r, s) = 1` and `ω(r)`, `ω(s)` exist, then `ω(r s)` exists and
-`L(r s) = lcm(L(r), L(s))`; (iv) if `p` is prime, `ω(p)` exists and `i ≥ 1`, then `ω(p ^ i)`
-exists and `L(p ^ i) = lcm(p ^ i, L(p))`. The coprimality to `b` of `n`, `r`, `s`, `p` is part of
-the existence of `ω`; existence of `ω(g)` in (ii) and of `ω(r s)` in (iii) is implicit in the
-paper's statements about `L(g)` and `L(r s)`.
+/-- **Divisibility and multiplicativity of the orbit lcm.** Let $P$ and $Q \ne 0$ be integers and
+$U$ the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$. Let
+$\pi_U(m)$ be the period of $U$ modulo $m$ and $\pi_U^i$ its $i$-th iterate, with
+$\pi_U^0(m) = m$. Say that $\omega(m)$ exists if the period orbit of $m$ closes at some step $k$,
+meaning that $\pi_U^i(m)$ is coprime to $Q$ for all $i \le k$ and $\pi_U^{k+1}(m) = \pi_U^j(m)$
+for some $j \le k$; then $\omega(m)$ is the least such $k$ and
+$L(m) = \operatorname{lcm}(\pi_U^0(m), \dots, \pi_U^{\omega(m)}(m))$. Then:
+(i) if $n > 0$, $\omega(n)$ exists and $m \mid n$, then $\omega(m)$ exists and $L(m) \mid L(n)$;
+(ii) if $n > 0$, $g > 0$, $\omega(n)$ exists and $g \mid \pi_U^i(n)$ for some $i$, then
+$\omega(g)$ exists and $L(g) \mid L(n)$;
+(iii) if $r, s > 0$ are coprime and $\omega(r)$ and $\omega(s)$ exist, then $\omega(rs)$ exists
+and $L(rs) = \operatorname{lcm}(L(r), L(s))$;
+(iv) if $p$ is prime, $i \ge 1$ and $\omega(p)$ exists, then $\omega(p^i)$ exists and
+$L(p^i) = \operatorname{lcm}(p^i, L(p))$.
+
+In the paper's notation $b = -Q$. The coprimality to $b$ of $n$, $r$, $s$ and $p$ is part of the
+existence of $\omega$; the existence of $\omega(g)$ in (ii) and of $\omega(rs)$ in (iii) is
+implicit in the paper's statements about $L(g)$ and $L(rs)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.4
@@ -1022,18 +1322,36 @@ public theorem_wanted lucasPeriodOrbitLcm_dvd_of_dvd (params : LucasSequencePara
       (∃ k, LucasPeriodOrbitCloses params (p ^ i) k) ∧
         lucasPeriodOrbitLcm params (p ^ i) = Nat.lcm (p ^ i) (lucasPeriodOrbitLcm params p)
 
-/-- Theorem 2.9: `L(2)` and `L(3)`. (i) for `a`, `b` odd, `L(2)` exists iff `gcd(b, 3) = 1`;
-(ii) for `a` even, `L(2)` exists iff `b` is odd; (iii) `L(3) = 3` or `6 ∣ L(3)` when it exists;
-(iv) `L(3) = 3` iff `a ≡ b ≡ -1 (mod 3)`; (v) `6 ∣ L(3)` iff `gcd(b, 6) = 1` and not both
-`a ≡ -1 (mod 3)`, `b ≡ -1 (mod 6)`; (vi) `a` even, `b` odd give `L(2) = 2`; (vii)
-`a ≡ ±1`, `b ≡ 1 (mod 6)` give `L(2) = L(3) = 24`; (viii) `a ≡ 1`, `b ≡ -1` or `a ≡ 3`,
-`b ≡ 1 (mod 6)` give `L(2) = L(3) = 6`; (ix) `a ≡ b ≡ -1 (mod 6)` give `L(2) = 6`, `L(3) = 3`;
-(x) `a ≡ 0 (mod 6)` gives `L(3) = 6` for `b ≡ 1` and `L(3) = 12` for `b ≡ -1 (mod 6)`; (xi)
-`a ≡ 3`, `b ≡ -1 (mod 6)` give `L(2) = L(3) = 12`; (xii) `a ≡ ±2`, `b ≡ 1 (mod 6)` give
-`L(3) = 24`, and `a ≡ -2`, `b ≡ -1 (mod 6)` give `L(3) = 6`; (xiii) if `rad(n) ∣ 6` and `L(n)`
-exists then `rad(L(n)) ∣ 6`. "`L(m)` exists" means `ω(m)` exists. The second half of (xii) is
-false as printed for `a ≡ 2 (mod 6)` and is restricted to `a ≡ -2 (mod 6)`: for
-`(a, b) = (2, 5)` (nondegenerate) one has `π_U(3) = 3`, so `L(3) = 3`, in line with (iv).
+/-- **The orbit lcms $L(2)$ and $L(3)$.** Let $P$ and $Q \ne 0$ be integers, write $a = P$ and
+$b = -Q$, and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Let $\pi_U(m)$ be the period of $U$ modulo $m$ and $\pi_U^i$ its
+$i$-th iterate, with $\pi_U^0(m) = m$. Say that $L(m)$ exists if the period orbit of $m$ closes at
+some step $k$, meaning that $\pi_U^i(m)$ is coprime to $Q$ for all $i \le k$ and
+$\pi_U^{k+1}(m) = \pi_U^j(m)$ for some $j \le k$; then, with $\omega(m)$ the least such $k$,
+$L(m) = \operatorname{lcm}(\pi_U^0(m), \dots, \pi_U^{\omega(m)}(m))$. Then:
+(i) if $a$ and $b$ are odd, then $L(2)$ exists if and only if $\gcd(b, 3) = 1$;
+(ii) if $a$ is even, then $L(2)$ exists if and only if $b$ is odd;
+(iii) if $L(3)$ exists, then $L(3) = 3$ or $6 \mid L(3)$;
+(iv) $L(3)$ exists and equals $3$ if and only if $a \equiv b \equiv -1 \pmod 3$;
+(v) $L(3)$ exists and is divisible by $6$ if and only if $\gcd(b, 6) = 1$ and not both
+$a \equiv -1 \pmod 3$ and $b \equiv -1 \pmod 6$;
+(vi) if $a$ is even and $b$ is odd, then $L(2)$ exists and $L(2) = 2$.
+In each of the following cases, with all congruences modulo $6$, every $L(m)$ named exists and
+has the given value:
+(vii) if $a \equiv \pm 1$ and $b \equiv 1$, then $L(2) = L(3) = 24$;
+(viii) if $a \equiv 1$ and $b \equiv -1$, or $a \equiv 3$ and $b \equiv 1$, then
+$L(2) = L(3) = 6$;
+(ix) if $a \equiv -1$ and $b \equiv -1$, then $L(2) = 6$ and $L(3) = 3$;
+(x) if $a \equiv 0$, then $L(3) = 6$ when $b \equiv 1$, and $L(3) = 12$ when $b \equiv -1$;
+(xi) if $a \equiv 3$ and $b \equiv -1$, then $L(2) = L(3) = 12$;
+(xii) if $a \equiv \pm 2$ and $b \equiv 1$, then $L(3) = 24$, and if $a \equiv -2$ and
+$b \equiv -1$, then $L(3) = 6$.
+Finally, (xiii) if $n > 0$, every prime factor of $n$ divides $6$ and $L(n)$ exists, then every
+prime factor of $L(n)$ divides $6$.
+
+The second half of (xii) is false as printed in the paper for $a \equiv 2 \pmod 6$ and is
+restricted here to $a \equiv -2 \pmod 6$: for $(a, b) = (2, 5)$, a nondegenerate pair, one has
+$\pi_U(3) = 3$, so $L(3) = 3$, in line with (iv).
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.9
@@ -1075,14 +1393,28 @@ public theorem_wanted lucasPeriodOrbitLcm_two_three (params : LucasSequenceParam
       (∃ k, LucasPeriodOrbitCloses params n k) →
       ∀ ℓ : ℕ, ℓ.Prime → ℓ ∣ lucasPeriodOrbitLcm params n → ℓ ∣ 6
 
-/-- Theorem 2.11: for nondegenerate `U(a, b)`, `C(1) = 1`. If `Q(b) ≥ 5` (the least prime factor
-of `b`, with `Q(±1) = 1`), then `C(n)` exists for `n ≥ 2` with `P(n) < Q(b)` (`P` the largest
-prime factor); if moreover `gcd(C(n), a + b - 1) = 1`, then `A_W(C(n))` is an integer for all
-`W(a, b)`, and the same holds when `a + b - 1 ≠ 0`, `Q(a + b - 1) ≥ 5` and
-`P(n) < Q(b (a + b - 1))`. If `b = ±1` then `C(n)` exists for all `n`, and for
-`(a, b) ∈ {(1, 1), (-1, 1), (3, -1)}` `A_W(C(n))` is an integer for all `n` and all `W(a, b)`.
-`P(n) < Q(r)` is "every prime factor of `n` is below every prime factor of `r`"; the claims for
-`b = ±1` are stated without `Q(b) ≥ 5`, which they contradict under the convention `Q(±1) = 1`.
+/-- **Least multiples in $S(U)$ for nondegenerate $U(P, Q)$.** Let $P$ and $Q \ne 0$ be integers
+forming a nondegenerate Lucas pair, and let $U$ be the Lucas sequence given by $U_0 = 0$,
+$U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$. Let $S(U)$ be the set of positive integers $n$
+coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$, and say that a
+natural number $x$ has integral averages if $x \mid w_1 + \dots + w_x$ for every integer sequence
+$(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Then $1$ is the least element
+of $S(U)$ divisible by $1$, that is, the least element of $S(U)$. If $Q \ne \pm 1$ and every prime
+factor of $Q$ is at least $5$, then: every $n \ge 2$ whose prime factors are all smaller than
+every prime factor of $Q$ divides some element of $S(U)$; for every $n > 0$ whose prime factors
+are all smaller than every prime factor of $Q$, if $c$ is the least element of $S(U)$ divisible
+by $n$ and $\gcd(c, P - Q - 1) = 1$, then $c$ has integral averages; and if moreover
+$P - Q - 1 \notin \{-1, 0, 1\}$ and every prime factor of $P - Q - 1$ is at least $5$, then for
+every $n > 0$ whose prime factors are all smaller than every prime factor of $Q (P - Q - 1)$, the
+least element of $S(U)$ divisible by $n$, if it exists, has integral averages. If $Q = \pm 1$,
+then every $n > 0$ divides some element of $S(U)$. If $(P, Q)$ is $(1, -1)$, $(-1, -1)$ or
+$(3, 1)$, then for every $n > 0$ the least element of $S(U)$ divisible by $n$, if it exists, has
+integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so $P - Q - 1 = a + b - 1$. The claims for
+$b = \pm 1$ are stated without the hypothesis that the least prime factor of $b$ is at least $5$,
+which they would contradict under the paper's convention that the least prime factor of $\pm 1$
+is $1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.11
@@ -1112,13 +1444,21 @@ public theorem_wanted exists_lucasPeriodSet_multiple (params : LucasSequencePara
       ∀ n c : ℕ, 0 < n → IsLeast {x | n ∣ x ∧ x ∈ lucasPeriodSet params} c →
         lucasAllAveragesIntegral params c)
 
-/-- Corollary 2.5: for `U(a, 1)` (`D = a ^ 2 + 4`) and `q > 1` with `Q(q) ≥ 5` and
-`rad(q) ∣ D`, `n ∈ S'(U)` and `A_W(n)` is an integer for all `W(a, 1)` when (`i, j ≥ 0`):
-(i) `a ≡ ±1 (mod 6)`, `n = 2 ^ (i + 3) 3 ^ (j + 1) q`; (ii) `a ≡ 3 (mod 6)`,
-`n = 2 ^ (i + 1) 3 ^ (j + 1)` or `n = 2 ^ (i + 2) 3 ^ (j + 1) q`; (iii) `a ≡ ±2 (mod 12)`,
-`n = 2 ^ (i + 2) q` or `n = 2 ^ (i + 3) 3 ^ (j + 1) q`; (iv) `a ≡ ±6 (mod 12)`,
-`n = 2 ^ (i + 2) 3 ^ j q`. `q ≠ 1` is the convention `Q(1) = 1`; the paper's `n > 1` and
-`rad(n) ∣ 6 D` follow from the displayed forms.
+/-- **Integral averages for $U(P, -1)$.** Let $U = U(P, Q)$ be a Lucas sequence with $Q = -1$,
+so that its discriminant is $D = P^2 + 4$, and let $\pi_U(n)$ be the least period of $U$ modulo
+$n$. Call a natural number $n$ good if $n$ lies in the set $S'(U)$ of positive integers $n$
+coprime to $Q$ with $\pi_U(n) \mid n$ and $n \mid U_1 + \dots + U_n$, and every integer sequence
+$w$ with $w_{k+2} = P w_{k+1} + w_k$ for all $k$ satisfies $n \mid w_1 + \dots + w_n$. Let
+$t \ne 1$ be a natural number all of whose prime factors are at least $5$ and divide $D$, and let
+$i, j \ge 0$.
+(i) If $P \equiv \pm 1 \pmod 6$, then $2^{i+3} 3^{j+1} t$ is good.
+(ii) If $P \equiv 3 \pmod 6$, then $2^{i+1} 3^{j+1}$ and $2^{i+2} 3^{j+1} t$ are good.
+(iii) If $P \equiv \pm 2 \pmod{12}$, then $2^{i+2} t$ and $2^{i+3} 3^{j+1} t$ are good.
+(iv) If $P \equiv 6 \pmod{12}$, then $2^{i+2} 3^j t$ is good.
+
+In the paper's notation $W(n + 2) = a W(n + 1) + b W(n)$ one has $a = P$ and $b = -Q = 1$, and
+the paper's $q$ is $t$. The paper's conditions $n > 1$ and $\operatorname{rad}(n) \mid 6 D$
+follow from the displayed forms.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.5
@@ -1143,15 +1483,23 @@ public theorem_wanted mem_lucasAverageSet_of_q_eq_neg_one (params : LucasSequenc
       2 ^ (i + 2) * 3 ^ j * t ∈ lucasAverageSet params ∧
       lucasAllAveragesIntegral params (2 ^ (i + 2) * 3 ^ j * t))
 
-/-- Corollary 2.6: for nondegenerate `U(a, -1)` (`D = (a - 2) (a + 2)`), `n ∈ S'(U)` and
-`A_W(n)` is an integer for all `W(a, -1)` when (`i, j ≥ 0`): (i) `n = q₁ > 1` odd with
-`rad(q₁) ∣ a - 2`; (ii) `a ≡ ±1 (mod 6)`, `n = 2 ^ (i + 1) 3 ^ (j + 1) q₂`; (iii)
-`a ≡ 3 (mod 6)`, `n = 2 ^ (i + 2) 3 ^ (j + 1) q₂`; (iv) `a ≡ 0 (mod 4)`, `n = 2 ^ (i + 2) q₃`;
-(v) `a ≡ 0 (mod 12)`, `n = 2 ^ (i + 2) 3 ^ (j + 1) q₂`; here `q₂ ≠ 1` is odd with `Q(q₂) ≥ 5`,
-`rad(q₂) ∣ D`, and `q₃` is odd with `rad(q₃) ∣ D`. The paper's "for all recurrences `W(a, 1)`"
-is read as `W(a, -1)`, the recurrences of `U(a, -1)` (Theorem 2.5); as printed it is false:
-for `a = 5`, `n = q₁ = 3` and `W = U(5, 1)`, `W 1 + W 2 + W 3 = 1 + 5 + 26 = 32`, which `3`
-does not divide. The condition `a ≠ 0, ±1, ±2` of (i) is nondegeneracy.
+/-- **Integral averages for $U(P, 1)$.** Let $U = U(P, Q)$ be a nondegenerate Lucas sequence with
+$Q = 1$, so that its discriminant is $D = P^2 - 4$, and let $\pi_U(n)$ be the least period of $U$
+modulo $n$. Call a natural number $n$ good if $n$ lies in the set $S'(U)$ of positive integers
+$n$ coprime to $Q$ with $\pi_U(n) \mid n$ and $n \mid U_1 + \dots + U_n$, and every integer
+sequence $w$ with $w_{k+2} = P w_{k+1} - w_k$ for all $k$ satisfies $n \mid w_1 + \dots + w_n$.
+(i) Every odd $t > 1$ all of whose prime factors divide $P - 2$ is good.
+(ii) Let $t \ne 1$ be odd with all prime factors at least $5$ and dividing $D$, and let
+$i, j \ge 0$. If $P \equiv \pm 1 \pmod 6$, then $2^{i+1} 3^{j+1} t$ is good; if
+$P \equiv 3 \pmod 6$ or $P \equiv 0 \pmod{12}$, then $2^{i+2} 3^{j+1} t$ is good.
+(iii) If $P \equiv 0 \pmod 4$, $t$ is odd with all prime factors dividing $D$, and $i \ge 0$,
+then $2^{i+2} t$ is good.
+
+In the paper's notation $W(n + 2) = a W(n + 1) + b W(n)$ one has $a = P$ and $b = -Q = -1$. The
+paper's "for all recurrences $W(a, 1)$" is read as $W(a, -1)$, the recurrences of $U(a, -1)$
+(Theorem 2.5); as printed it is false: for $a = 5$, $n = 3$ and $W = U(5, 1)$ in the paper's
+notation, $W_1 + W_2 + W_3 = 1 + 5 + 26 = 32$, which $3$ does not divide. The paper's condition
+$a \ne 0, \pm 1, \pm 2$ in (i) is nondegeneracy.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.6
@@ -1176,17 +1524,37 @@ public theorem_wanted mem_lucasAverageSet_of_q_eq_one (params : LucasSequencePar
       2 ^ (i + 2) * t ∈ lucasAverageSet params ∧
       lucasAllAveragesIntegral params (2 ^ (i + 2) * t)
 
-/-- Theorem 2.24: for nondegenerate `U(a, 1)`: (i) `C(n) = L(n)` exists for all `n ≥ 1`;
-`C(n)` is even and `L(2) ∣ C(n)` for `n > 1`; `π_U(n)` is even for `n ≥ 3`, and `π_U(2)` is even
-if `a` is even. (ii) For odd `a`, `C'(n) = C(n)` with `A_W(C(n))` integral for all `W(a, 1)`;
-`L(2) = 24` if `a ≡ ±1 (mod 6)` and `L(2) = 6` if `a ≡ 3 (mod 6)`. (iii) For `a ≡ 2 (mod 4)`,
-`C'(n) = C(n)` with `A_W(C(n))` integral unless `C(n) ≡ 2 (mod 4)`, in which case
-`C'(n) = 2 C(n)` with `A_W(2 C(n))` integral; `L(2) = 2`. (iv) For `a ≡ 0 (mod 4)` and `n ≥ 2`,
-`n ∉ S'(U)` and `C'(n)` does not exist; `B_U(n) ≢ 0 (mod n)` for even `n`; `A_U(n)` is an
-integer only for odd `n`. The case split in (iii) is printed on `n` ("`n` odd or `4 ∣ n`" versus
-"`n ≡ 2 (mod 4)`") and is false in that form: for `a = 6`, `n = 3` one has `C(3) = 6` but
-`C'(3) = 12`, and for `a = 2`, `n = 6`, `C(6) = 24 = C'(6)`. The paper's proof ((5.6), (5.7))
-splits on `2 ^ k ∥ C(n)`, which is the reading formalized.
+/-- **Least period and average multiples for $Q = -1$.** Let $U$ be the Lucas sequence
+$U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $Q = -1$ and $(P, Q)$ nondegenerate.
+Write $\pi(m)$ for the period of $U$ modulo $m$ and $\pi^i$ for the $i$-th iterate of $\pi$
+($\pi^0(m) = m$). Let $S$ be the set of positive integers $m$ coprime to $Q$ with
+$\pi(m) \mid m$, and $S'$ the set of $m \in S$ with $m \mid U_1 + \cdots + U_m$. Say the orbit
+of $n$ closes at $k$ if $\pi^i(n)$ is coprime to $Q$ for all $i \le k$ and
+$\pi^{k+1}(n) = \pi^j(n)$ for some $j \le k$; let $\omega(n)$ be the least such $k$ ($0$ if
+there is none) and $L(n) = \operatorname{lcm}(\pi^0(n), \pi^1(n), \dots, \pi^{\omega(n)}(n))$.
+Call $m$ *integral for all recurrences* if every integer sequence $w$ with
+$w_{j+2} = P w_{j+1} - Q w_j$ for all $j \ge 0$ satisfies $m \mid w_1 + \cdots + w_m$. Then:
+
+(i) for every $n \ge 1$ the orbit of $n$ closes at some $k$, and $L(n)$ is the least element of
+$S$ divisible by $n$; for every $n > 1$, $L(n)$ is even and $L(2) \mid L(n)$; $\pi(n)$ is even
+for every $n \ge 3$; and $\pi(2)$ is even if $P$ is even;
+
+(ii) if $P$ is odd, then for every $n \ge 1$ the least element of $S'$ divisible by $n$ is
+$L(n)$, and $L(n)$ is integral for all recurrences; moreover $L(2) = 24$ if
+$P \equiv \pm 1 \pmod 6$, and $L(2) = 6$ if $P \equiv 3 \pmod 6$;
+
+(iii) if $P \equiv 2 \pmod 4$, then $L(2) = 2$, and for every $n \ge 1$: if
+$L(n) \not\equiv 2 \pmod 4$, the least element of $S'$ divisible by $n$ is $L(n)$ and $L(n)$ is
+integral for all recurrences; if $L(n) \equiv 2 \pmod 4$, the least element of $S'$ divisible
+by $n$ is $2L(n)$ and $2L(n)$ is integral for all recurrences;
+
+(iv) if $P \equiv 0 \pmod 4$, then for every $n \ge 2$, $n \notin S'$ and no element of $S'$ is
+divisible by $n$; $n \nmid U_1 + \cdots + U_n$ for every even $n \ge 1$; and every $n \ge 1$
+with $n \mid U_1 + \cdots + U_n$ is odd.
+
+The case split in (iii) is on $L(n)$ modulo $4$, not on $n$ modulo $4$: for $P = 6$ and $n = 3$
+the least element of $S$ divisible by $3$ is $6$, while the least element of $S'$ divisible by
+$3$ is $12$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.24
@@ -1219,15 +1587,30 @@ public theorem_wanted lucasPeriodSet_of_q_eq_neg_one (params : LucasSequencePara
       (∀ n : ℕ, 0 < n → Even n → ¬ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i) ∧
       ∀ n : ℕ, 0 < n → (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i → Odd n)
 
-/-- Theorem 2.25: for nondegenerate `U(a, -1)` (`D = (a - 2) (a + 2)`): (i) `C(n)` exists for all
-`n ≥ 1`, and for `n > 1`, `C(n) > 1` and `C(n)` shares a prime with `6 D`; (ii) for odd `n₁` with
-`rad(n₁) ∣ a - 2`, `C(n₁) = n₁ = C'(n₁)` and `A_W(n₁)` is an integer for all `W(a, -1)`; if
-`C(n)` is odd then `n` is odd, `C'(n) = C(n)` and `A_W(C(n))` is integral; (iii) for odd `a`,
-`C'(n) = C(n)` and `A_W(C(n))` is integral; (iv) for `a ≡ 0 (mod 4)`, `C'(n) = 2 C(n)` with
-`A_W(2 C(n))` integral if `C(n) ≡ 2 (mod 4)`, and `C'(n) = C(n)` with `A_W(C(n))` integral if
-`4 ∣ C(n)`; (v) for `a ≡ 2 (mod 4)`, `C'(n)` does not exist when `C(n)` is even, in particular
-when `n` is even or `gcd(n, a + 2) > 1`. The paper's decomposition `n = 2 ^ k n₁ n₂` serves only
-to name `n₁`; `a ≠ 0, ±1, ±2` is nondegeneracy.
+/-- **Least period and average multiples for $Q = 1$.** Let $U$ be the Lucas sequence
+$U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $Q = 1$ and $(P, Q)$ nondegenerate. Let
+$S$ be the set of positive integers $m$ coprime to $Q$ such that the period of $U$ modulo $m$
+divides $m$, and $S'$ the set of $m \in S$ with $m \mid U_1 + \cdots + U_m$. For $n \ge 1$ let
+$C(n)$ and $C'(n)$ be the least elements of $S$ and of $S'$ divisible by $n$, when they exist.
+Call $m$ *integral for all recurrences* if every integer sequence $w$ with
+$w_{j+2} = P w_{j+1} - Q w_j$ for all $j \ge 0$ satisfies $m \mid w_1 + \cdots + w_m$. Then:
+
+(i) $C(n)$ exists for every $n \ge 1$, and for $n > 1$ one has $C(n) > 1$ and some prime divides
+both $C(n)$ and $6(P^2 - 4)$;
+
+(ii) if $n_1$ is odd and every prime dividing $n_1$ divides $P - 2$, then
+$C(n_1) = C'(n_1) = n_1$ and $n_1$ is integral for all recurrences; and if $n \ge 1$ and $C(n)$
+is odd, then $n$ is odd, $C'(n) = C(n)$, and $C(n)$ is integral for all recurrences;
+
+(iii) if $P$ is odd, then for every $n \ge 1$, $C'(n) = C(n)$ and $C(n)$ is integral for all
+recurrences;
+
+(iv) if $P \equiv 0 \pmod 4$ and $n \ge 1$, then $C'(n) = 2C(n)$ and $2C(n)$ is integral for
+all recurrences when $C(n) \equiv 2 \pmod 4$, and $C'(n) = C(n)$ and $C(n)$ is integral for all
+recurrences when $4 \mid C(n)$;
+
+(v) if $P \equiv 2 \pmod 4$ and $n \ge 1$, then $C'(n)$ does not exist when $C(n)$ is even, and
+it does not exist when $n$ is even or $\gcd(n, P + 2) > 1$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.25
@@ -1258,16 +1641,27 @@ public theorem_wanted lucasPeriodSet_of_q_eq_one (params : LucasSequenceParams)
     (params.p ≡ 2 [ZMOD 4] → ∀ n : ℕ, 0 < n → (Even n ∨ 1 < Int.gcd n (params.p + 2)) →
       ¬ ∃ x, n ∣ x ∧ x ∈ lucasAverageSet params)
 
-/-- Theorem 2.26: for nondegenerate `U(a, -a + 1)` (roots `a - 1` and `1`,
-`D = (a - 2) ^ 2`): (i) `E_U(n) = 1` when `gcd(n, b) = 1`; (ii) if `n ∣ b` and `m ∈ S'(U)` then
-`A_W(m n)` is an integer for all `W(a, -a + 1)`; (iii) `S(U) = T(U)`; (iv) for odd `a`,
-`S'(U) = S(U) = T(U)`, `A_W(n)` is integral for `n ∈ S(U)` and for `n ∣ b`, and for `a = 3`,
-`D = 1` and `S(U) = {1}`; (v) for even `a`, `n ∈ S'(U)` iff `n` is odd and `n ∈ S(U)`, `A_W(n)`
-is integral for odd `n ∈ S(U)`, and if `a = 2 + 2 ^ k` with `k ≥ 1` then `n ∉ S'(U)` for
-`n > 1`. In the repository convention `a = -b + 1` is `P = Q + 1`; `a ≠ 0, 1, 2` follows from
-nondegeneracy. The extracted "`a = 2 + 2k`" is read as `a = 2 + 2 ^ k` (the exponent is set as a
-superscript in the paper); the linear reading is false: for `a = 8` (`b = -7`) one has
-`π_U(3) = 3` and `3 ∣ B_U(3) = 1 + 8 + 57 = 66`, so `3 ∈ S'(U)`.
+/-- **Period and average sets when $P = Q + 1$.** Let $P$ and $Q \ne 0$ be integers forming a
+nondegenerate Lucas pair with $P = Q + 1$, so that the roots of $x^2 - Px + Q$ are $Q$ and $1$,
+and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Write $\pi_U(n)$ for the period of $U$ modulo $n$, $\rho_U(n)$ for
+the least $s > 0$ with $n \mid U_s$ and $U_{s+1}$ coprime to $n$, $S(U)$ for the set of positive
+integers $n$ coprime to $Q$ with $\pi_U(n) \mid n$, $S'(U)$ for the set of $n \in S(U)$ with
+$n \mid U_1 + \dots + U_n$, and $T(U)$ for the set of positive integers $n$ coprime to $Q$ with
+$n \mid U_n$. Say that a natural number $x$ has integral averages if $x \mid w_1 + \dots + w_x$
+for every integer sequence $(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$.
+Then $\pi_U(n) = \rho_U(n)$ for every $n > 0$ coprime to $Q$; $mn$ has integral averages for all
+$n > 0$ dividing $Q$ and all $m \in S'(U)$; and $S(U) = T(U)$. If $P$ is odd, then
+$S'(U) = S(U)$, every $n \in S(U)$ and every $n > 0$ dividing $Q$ has integral averages, and if
+moreover $P = 3$, then $P^2 - 4Q = 1$ and $S(U) = \{1\}$. If $P$ is even, then $S'(U)$ consists
+of the odd elements of $S(U)$, every odd $n \in S(U)$ has integral averages, and if
+$P = 2 + 2^k$ for some $k \ge 1$, then no $n > 1$ lies in $S'(U)$.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypothesis is $b = -a + 1$, and the paper's
+$E_U(n) = 1$ is $\pi_U(n) = \rho_U(n)$; the paper's conditions $a \ne 0, 1, 2$ follow from
+nondegeneracy. The paper's condition on even $a$ is read as $a = 2 + 2^k$ (the exponent is set as
+a superscript); the linear reading $a = 2 + 2k$ is false: for $a = 8$ ($b = -7$) one has
+$\pi_U(3) = 3$ and $3 \mid U_1 + U_2 + U_3 = 1 + 8 + 57 = 66$, so $3 \in S'(U)$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.26
@@ -1289,13 +1683,22 @@ public theorem_wanted lucasAverageSet_of_p_eq_q_add_one (params : LucasSequenceP
       (∀ k : ℕ, 1 ≤ k → params.p = 2 + 2 ^ k → ∀ n, 1 < n → n ∉ lucasAverageSet params) ∧
       ∀ n, Odd n → n ∈ lucasPeriodSet params → lucasAllAveragesIntegral params n)
 
-/-- Theorem 2.27: for nondegenerate `U(b - 1, b)` (roots `b` and `-1`, `D = (b + 1) ^ 2`):
-`π_U(n)` is even for `n > 1` with `gcd(n, b) = 1`; (i) if `b` and `n` are even and `n ∣ b`, then
-`A_W(n)` is an integer for all `W(b - 1, b)`; (ii) if `a` is even, `n > 1` and `n ∈ S(U)`, then
-`A_U(n)` is not an integer, so `S'(U) = {1}`, and `S(U) = {1}` if `a` is odd; (iii) if `a` is odd,
-then `b` is even, and for even `m ∣ b` and `t ∈ T(U)`, `t` is odd and `A_W(m t)` is an integer
-for all `W(b - 1, b)`. In the repository convention `a = b - 1` is `P = -Q - 1`;
-`a ≠ 0, -1, -2` follows from nondegeneracy.
+/-- **Period and average sets when $P = -Q - 1$.** Let $P$ and $Q \ne 0$ be integers forming a
+nondegenerate Lucas pair with $P = -Q - 1$, so that the roots of $x^2 - Px + Q$ are $-Q$ and $-1$,
+and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
+$U_{k+2} = P U_{k+1} - Q U_k$. Write $\pi_U(n)$ for the period of $U$ modulo $n$, $S(U)$ for the
+set of positive integers $n$ coprime to $Q$ with $\pi_U(n) \mid n$, $S'(U)$ for the set of
+$n \in S(U)$ with $n \mid U_1 + \dots + U_n$, and $T(U)$ for the set of positive integers $n$
+coprime to $Q$ with $n \mid U_n$. Say that a natural number $x$ has integral averages if
+$x \mid w_1 + \dots + w_x$ for every integer sequence $(w_k)_{k \ge 0}$ with
+$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$. Then $\pi_U(n)$ is even for every $n > 1$ coprime to
+$Q$; if $Q$ is even, every even natural number $n$ dividing $Q$ has integral averages; if $P$ is
+even, then $n \nmid U_1 + \dots + U_n$ for every $n > 1$ in $S(U)$, and $S'(U) = \{1\}$; and if
+$P$ is odd, then $S(U) = \{1\}$, $Q$ is even, and for every even $m$ dividing $Q$ and every
+$t \in T(U)$, $t$ is odd and $mt$ has integral averages.
+
+In the paper's notation $a = P$ and $b = -Q$, so the hypothesis is $a = b - 1$; the paper's
+conditions $a \ne 0, -1, -2$ follow from nondegeneracy.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.27
@@ -1311,11 +1714,18 @@ public theorem_wanted lucasAverageSet_of_p_eq_neg_q_sub_one (params : LucasSeque
     (Odd params.p → Even params.q ∧ ∀ m t : ℕ, Even m → (m : ℤ) ∣ params.q →
       t ∈ lucasIndexDivisibleSet params → Odd t ∧ lucasAllAveragesIntegral params (m * t))
 
-/-- Theorem 4.1 (Smyth): for nondegenerate `U(a, b)` with `gcd(a, b) = 1`, let the admissible
-`q₀` be `1`, together with `6` if `a ≡ 3`, `b ≡ ±1 (mod 6)`, and `12` if `a ≡ ±1`,
-`b ≡ 1 (mod 6)`. Then each admissible `q₀ ∈ T(U)`; `n ∈ T(U)` iff `n = q₀ q₁ ⋯ q_r` for an
-admissible `q₀` and primes `q_i ∣ D U_(q₀ ⋯ q_(i-1))` (repetitions allowed); every prefix
-product `q₀ ⋯ q_i` of such a chain lies in `T(U)`; and if `D = 1` then `T(U) = {1}`.
+/-- **Smyth's description of the indices $n$ with $n \mid U_n$.** Let $P, Q$ be coprime integers
+with $Q \ne 0$ such that the Lucas pair $(P, Q)$ is nondegenerate, let $U = U(P, Q)$ be its Lucas
+sequence, write $a = P$, $b = -Q$ (so that $U_{k+2} = a U_{k+1} + b U_k$) and $D = P^2 - 4Q$, and
+let $T(U)$ be the set of positive integers $n$ coprime to $Q$ with $n \mid U_n$. Call $q_0$
+admissible if $q_0 = 1$, or $q_0 = 6$ with $a \equiv 3$ and $b \equiv \pm 1 \pmod 6$, or
+$q_0 = 12$ with $a \equiv \pm 1$ and $b \equiv 1 \pmod 6$. Call a finite list of primes
+$q_1, \dots, q_r$ ($r \ge 0$, repetitions allowed) a chain from $q_0$ if
+$q_i \mid D \, U_{q_0 q_1 \cdots q_{i-1}}$ for each $i$. Then every admissible $q_0$ lies in
+$T(U)$; a natural number $n$ lies in $T(U)$ if and only if $n = q_0 q_1 \cdots q_r$ for some
+admissible $q_0$ and some chain $q_1, \dots, q_r$ from $q_0$; for every admissible $q_0$ and every
+chain $q_1, \dots, q_r$ from $q_0$, each product $q_0 q_1 \cdots q_i$ with $0 \le i \le r$ lies in
+$T(U)$; and if $D = 1$, then $T(U) = \{1\}$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 4.1
@@ -1334,21 +1744,26 @@ public theorem_wanted mem_lucasIndexDivisibleSet_iff_chain (params : LucasSequen
       q₀ * (qs.take i).prod ∈ lucasIndexDivisibleSet params) ∧
     (params.p ^ 2 - 4 * params.q = 1 → ∀ n, n ∈ lucasIndexDivisibleSet params ↔ n = 1)
 
-/-- Theorem 4.3, the parts on `E_U(p)` and on `s₀`: for nondegenerate `U(a, b)` with `b = ±1`, or
-`b` odd and `a = b - 1`, `E_U(p) = π_U(p) / ρ_U(p)` divides `4` if `b = 1` and `2` otherwise, for
-primes `p ∤ b` (where `E_U(p)` is defined). Let the admissible `s₀` be `1`, together with `6` if
-`a ≡ 3 (mod 6)`, `b = 1` or `a ≡ ±1 (mod 6)`, `b = -1`; `24` if `a ≡ ±1 (mod 6)`, `b = 1`; `12`
-if `a ≡ 3 (mod 6)`, `b = -1`; `2` if `b` is odd and `a = b - 1`. Then each admissible
-`s₀ ∈ S(U)`.
+/-- **Period quotients and seeds of $S(U)$.** Let $U = U(P, Q)$ be a nondegenerate Lucas
+sequence with $Q = -1$, or $Q = 1$, or $Q$ odd and $P = -Q - 1$. Write $\pi_U(m)$ and
+$\rho_U(m)$ for the least period and the least restricted period of $U$ modulo $m$, and $S(U)$
+for the set of positive integers $n$ coprime to $Q$ with $\pi_U(n) \mid n$. For every prime
+$p \nmid Q$, $\rho_U(p)$ divides $\pi_U(p)$, and the quotient $\pi_U(p) / \rho_U(p)$ divides $4$
+if $Q = -1$ and divides $2$ if $Q \ne -1$. Moreover, each of the following numbers $s_0$ lies in
+$S(U)$: $s_0 = 1$; $s_0 = 6$ if $P \equiv 3 \pmod 6$ and $Q = -1$, or if $P \equiv \pm 1 \pmod 6$
+and $Q = 1$; $s_0 = 24$ if $P \equiv \pm 1 \pmod 6$ and $Q = -1$; $s_0 = 12$ if
+$P \equiv 3 \pmod 6$ and $Q = 1$; $s_0 = 2$ if $Q$ is odd and $P = -Q - 1$.
 
-The characterization of `S(U)` by chains `n₀ = s₀`, `n_i = n_(i-1) s_i 2 ^ ε(s_i)` (primes
-`s_i ∣ D U_(n_(i-1))`, `ε(s_i) = max(ν₂(π_U(s_i)) - ν₂(n_(i-1)), 0)`) is false as printed in both
-directions and is omitted. For `(a, b) = (-10, -1)` only `s₀ = 1` is admissible and
-`π_U(2) = 2`, so `2 ∈ S(U)`, but the only chain that could end at `2` has `s₁ = 2`, and then
-`ε(2) = ν₂(π_U(2)) = 1` gives `n₁ = 4`. For `(a, b) = (-11, -1)` (`D = 117`) the chain `s₀ = 1`,
-`s₁ = 13`,
-`s₂ = 53 ∣ U 13 = 2862615066961` gives `ε(53) = ν₂(26) = 1` and `n₂ = 1378`, while
-`π_U(1378) = 78 ∤ 1378`.
+In the paper's notation $W(n + 2) = a W(n + 1) + b W(n)$ one has $a = P$ and $b = -Q$. The
+paper also characterizes $S(U)$ by chains $n_0 = s_0$, $n_i = n_{i-1} s_i 2^{\varepsilon(s_i)}$
+with primes $s_i \mid D U_{n_{i-1}}$, where $D = P^2 - 4Q$ and
+$\varepsilon(s_i) = \max(\nu_2(\pi_U(s_i)) - \nu_2(n_{i-1}), 0)$; that characterization is
+false as printed in both directions and is omitted. For $(P, Q) = (-10, 1)$ only $s_0 = 1$ is
+admissible and $\pi_U(2) = 2$, so $2 \in S(U)$, but the only chain that could end at $2$ has
+$s_1 = 2$, and then $\varepsilon(2) = \nu_2(\pi_U(2)) = 1$ gives $n_1 = 4$. For
+$(P, Q) = (-11, 1)$, where $D = 117$, the chain $s_0 = 1$, $s_1 = 13$,
+$s_2 = 53 \mid U_{13} = 2862615066961$ gives $\varepsilon(53) = \nu_2(26) = 1$ and
+$n_2 = 1378$, while $\pi_U(1378) = 78 \nmid 1378$.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 4.3

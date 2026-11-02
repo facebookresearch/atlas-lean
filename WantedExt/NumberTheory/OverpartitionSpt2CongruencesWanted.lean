@@ -28,8 +28,10 @@ open QPochhammer
 
 @[expose] public section
 
-/-- Contribution of one overpartition to `spt2‾`: if its smallest part `s` is even and `s` is
-not overlined, the number of copies of `s`; otherwise `0` (also for the empty overpartition).
+/-- **Smallest-even-part contribution of an overpartition.** For an overpartition $O$ of $n$,
+let $s$ be the smallest part of $O$. The contribution of $O$ is the number of copies of $s$ in
+$O$ if $s$ is even and not overlined, and $0$ otherwise; the empty overpartition, which has no
+smallest part, contributes $0$.
 
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1 (definition of `spt2‾(n)`). -/
 public def overpartitionSpt2Contribution {n : ℕ} (O : Nat.Overpartition n) : ℕ :=
@@ -39,15 +41,22 @@ public def overpartitionSpt2Contribution {n : ℕ} (O : Nat.Overpartition n) : �
   else
     0
 
-/-- `spt2‾(n)`: the number of smallest parts in the overpartitions of `n` whose smallest part is
-even and not overlined. The paper's example gives `spt2‾(4) = 3` (from `4` and `2 + 2`; `2̄ + 2`
-does not count); the values for `n = 0, …, 8` are `0, 0, 1, 0, 3, 2, 6, 6, 15`.
+/-- **Number of smallest even parts in overpartitions.** For a natural number $n$,
+$\overline{\mathrm{spt2}}(n)$ is the number of smallest parts in the overpartitions of $n$ whose
+smallest part is even and not overlined: the sum, over all overpartitions $O$ of $n$, of the
+smallest-even-part contribution of $O$, which is the number of copies of the smallest part $s$
+of $O$ when $s$ is even and not overlined, and $0$ otherwise (in particular when $O$ is empty).
+For example $\overline{\mathrm{spt2}}(4) = 3$, from $4$ and $2 + 2$, while $\overline{2} + 2$
+does not count; the values for $n = 0, \dots, 8$ are $0, 0, 1, 0, 3, 2, 6, 6, 15$.
 
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public def overpartitionSpt2 (n : ℕ) : ℕ :=
   ∑ O : Nat.Overpartition n, overpartitionSpt2Contribution O
 
-/-- `spt2‾(0) = 0`: the empty overpartition has no smallest part.
+/-- **$\overline{\mathrm{spt2}}$ vanishes at zero.** Let $\overline{\mathrm{spt2}}(n)$ be the
+number of smallest parts in the overpartitions of $n$ whose smallest part is even and not
+overlined. Then $\overline{\mathrm{spt2}}(0) = 0$: the only overpartition of $0$ is empty and has
+no smallest part.
 
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public theorem overpartitionSpt2_zero : overpartitionSpt2 0 = 0 := by
@@ -58,7 +67,9 @@ public theorem overpartitionSpt2_zero : overpartitionSpt2 0 = 0 := by
       absurd (Multiset.le_sum_of_mem ha) (by have := O.toPartition.parts_pos ha; omega)
   simp [overpartitionSpt2Contribution]
 
-/-- An overpartition whose smallest part is odd contributes nothing to `spt2‾`.
+/-- **Overpartitions with odd smallest part contribute nothing.** If $O$ is an overpartition of
+$n$ with at least one part and the smallest part of $O$ is odd, then the smallest-even-part
+contribution of $O$ is $0$.
 
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public theorem overpartitionSpt2Contribution_eq_zero_of_odd {n : ℕ} (O : Nat.Overpartition n)
@@ -68,10 +79,11 @@ public theorem overpartitionSpt2Contribution_eq_zero_of_odd {n : ℕ} (O : Nat.O
   simp [overpartitionSpt2Contribution, h, Nat.not_even_iff_odd.mpr hodd]
 
 /--
-For every natural `n`, the three clauses state respectively that
-`overpartitionSpt2 (36 * n + 30)`, `overpartitionSpt2 (48 * n + 34)`, and
-`overpartitionSpt2 (72 * n + 42)` have remainder zero modulo four. Natural-number remainder
-equalities encode the paper's congruences; there is no other deviation.
+**Three congruences modulo 4 for $\overline{\mathrm{spt2}}$.** Let $\overline{\mathrm{spt2}}(n)$
+be the number of smallest parts in the overpartitions of $n$ whose smallest part is even and not
+overlined. For every natural number $n$, each of $\overline{\mathrm{spt2}}(36n + 30)$,
+$\overline{\mathrm{spt2}}(48n + 34)$ and $\overline{\mathrm{spt2}}(72n + 42)$ is divisible by $4$.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Theorem 1.
 -/
@@ -81,12 +93,14 @@ public theorem_wanted overpartitionSpt2_basic_congruences (n : ℕ) :
       overpartitionSpt2 (72 * n + 42) % 4 = 0
 
 /--
-For all natural `j` and `n`, the six clauses state the modulo-four vanishing of
-`overpartitionSpt2` at, in order, `2^(j+4) n + 7·2^(j+1)`,
-`2^(j+2)·9 n + 15·2^(j+1)`, `2^(j+4)·3 n + 17·2^(j+1)`,
-`2^(j+3)·9 n + 21·2^(j+1)`, `2^(j+4)·5 n + 17·2^(j+1)`, and
-`2^(j+4)·5 n + 33·2^(j+1)`. Natural-number remainder equalities encode congruence modulo
-four; there is no other deviation.
+**Congruences modulo 4 for $\overline{\mathrm{spt2}}$ along powers of 2.** Let
+$\overline{\mathrm{spt2}}(N)$ be the number of smallest parts in the overpartitions of $N$ whose
+smallest part is even and not overlined. For all natural numbers $j$ and $n$,
+$\overline{\mathrm{spt2}}(N)$ is divisible by $4$ for each of the six values
+$N = 2^{j+4} n + 7 \cdot 2^{j+1}$, $N = 2^{j+2} \cdot 9 n + 15 \cdot 2^{j+1}$,
+$N = 2^{j+4} \cdot 3 n + 17 \cdot 2^{j+1}$, $N = 2^{j+3} \cdot 9 n + 21 \cdot 2^{j+1}$,
+$N = 2^{j+4} \cdot 5 n + 17 \cdot 2^{j+1}$ and $N = 2^{j+4} \cdot 5 n + 33 \cdot 2^{j+1}$.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Theorem 2.
 -/
@@ -99,11 +113,12 @@ public theorem_wanted overpartitionSpt2_dyadic_congruences (j n : ℕ) :
       overpartitionSpt2 (2 ^ (j + 4) * 5 * n + 33 * 2 ^ (j + 1)) % 4 = 0
 
 /--
-If `p` is prime, `3 < p`, and its remainder modulo eight is five or seven, then for every
-natural `k` and `m` with `p ∤ m`, `overpartitionSpt2` at
-`32 * p^(2*k+1) * m + 24 * p^(2*k+2)` has remainder zero modulo four. The paper's congruence
-and nondivisibility are represented by natural-number remainder and divisibility predicates;
-there is no other deviation.
+**Congruences modulo 4 for $\overline{\mathrm{spt2}}$ at primes $p \equiv 5, 7 \pmod 8$.** Let
+$\overline{\mathrm{spt2}}(N)$ be the number of smallest parts in the overpartitions of $N$ whose
+smallest part is even and not overlined. Let $p > 3$ be a prime with $p \equiv 5 \pmod 8$ or
+$p \equiv 7 \pmod 8$. Then for all natural numbers $k$ and $m$ with $p \nmid m$, the number
+$\overline{\mathrm{spt2}}(32 p^{2k+1} m + 24 p^{2k+2})$ is divisible by $4$.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Theorem 3.
 -/
@@ -113,9 +128,11 @@ public theorem_wanted overpartitionSpt2_prime_congruence
     overpartitionSpt2 (32 * p ^ (2 * k + 1) * m + 24 * p ^ (2 * k + 2)) % 4 = 0
 
 /--
-For every complex `q` of norm less than one, this is the first 2-dissection:
-`f₁² = f₂ f₈⁵/(f₄² f₁₆²) - 2q f₂ f₁₆²/f₈`. Every `f_k` is expanded as
-`qPochhammerInfRaw (q ^ k) (q ^ k)`; this expansion is the only notational deviation.
+**2-dissection of the square of Euler's product.** Let $q$ be a complex number with $|q| < 1$,
+and for $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$ be the
+raw infinite q-Pochhammer product. Then
+$$f_1^2 = \frac{f_2 f_8^5}{f_4^2 f_{16}^2} - 2q \frac{f_2 f_{16}^2}{f_8}.$$
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 1.
 -/
@@ -130,9 +147,11 @@ public theorem_wanted qPochhammer_two_dissection_square (q : ℂ) (hq : ‖q‖ 
         qPochhammerInfRaw (q ^ 8) (q ^ 8)
 
 /--
-For every complex `q` of norm less than one, this is the reciprocal-square 2-dissection:
-`1/f₁² = f₈⁵/(f₂⁵ f₁₆²) + 2q f₄² f₁₆²/(f₂⁵ f₈)`. Every `f_k` is expanded as
-`qPochhammerInfRaw (q ^ k) (q ^ k)`; this expansion is the only notational deviation.
+**2-dissection of the reciprocal square of Euler's product.** Let $q$ be a complex number with
+$|q| < 1$, and for $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$
+be the raw infinite q-Pochhammer product. Then
+$$\frac{1}{f_1^2} = \frac{f_8^5}{f_2^5 f_{16}^2} + 2q \frac{f_4^2 f_{16}^2}{f_2^5 f_8}.$$
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 1.
 -/
@@ -147,9 +166,14 @@ public theorem_wanted qPochhammer_two_dissection_inverse_square (q : ℂ) (hq : 
             qPochhammerInfRaw (q ^ 8) (q ^ 8))
 
 /--
-For every complex `q` of norm less than one, this is the cubic 3-dissection:
-`f₁³ = f₆ f₉⁶/(f₃ f₁₈³) + 4q³ f₃² f₁₈⁶/(f₆² f₉³) - 3q f₉³`. Every `f_k` is
-expanded as `qPochhammerInfRaw (q ^ k) (q ^ k)`; this is the only notational deviation.
+**The 3-dissection of $f_1^3$ for complex $q$.** Let $q$ be a complex number with $|q| < 1$, and
+for $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$ be the raw infinite
+q-Pochhammer product with $a = q^k$ and base $q^k$. Then
+
+$$
+f_1^3 = \frac{f_6 f_9^6}{f_3 f_{18}^3} + 4 q^3 \frac{f_3^2 f_{18}^6}{f_6^2 f_9^3} - 3 q f_9^3.
+$$
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 2.
 -/
@@ -166,10 +190,15 @@ public theorem_wanted qPochhammer_three_dissection_cube (q : ℂ) (hq : ‖q‖ 
       3 * q * qPochhammerInfRaw (q ^ 9) (q ^ 9) ^ 3
 
 /--
-For every complex `q` of norm less than one, this 3-dissection states
-`f₄/f₁ = f₁₂ f₁₈⁴/(f₃³ f₃₆²) + q f₆² f₉³ f₃₆/(f₃⁴ f₁₈²) +
-2q² f₆ f₁₈ f₃₆/f₃³`. Every `f_k` is expanded as
-`qPochhammerInfRaw (q ^ k) (q ^ k)`; this is the only notational deviation.
+**The 3-dissection of $f_4/f_1$ for complex $q$.** Let $q$ be a complex number with $|q| < 1$,
+and for $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$ be the raw
+infinite q-Pochhammer product with $a = q^k$ and base $q^k$. Then
+
+$$
+\frac{f_4}{f_1} = \frac{f_{12} f_{18}^4}{f_3^3 f_{36}^2} +
+q \frac{f_6^2 f_9^3 f_{36}}{f_3^4 f_{18}^2} + 2 q^2 \frac{f_6 f_{18} f_{36}}{f_3^3}.
+$$
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 2.
 -/
@@ -190,9 +219,14 @@ public theorem_wanted qPochhammer_three_dissection_ratio_four_one (q : ℂ) (hq 
         qPochhammerInfRaw (q ^ 3) (q ^ 3) ^ 3
 
 /--
-For every complex `q` of norm less than one, this 3-dissection states
-`f₁ f₂ = f₆ f₉⁴/(f₃ f₁₈²) - q f₉ f₁₈ - 2q² f₃ f₁₈⁴/(f₆ f₉²)`. Every `f_k`
-is expanded as `qPochhammerInfRaw (q ^ k) (q ^ k)`; this is the only notational deviation.
+**The 3-dissection of $f_1 f_2$ for complex $q$.** Let $q$ be a complex number with $|q| < 1$,
+and for $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$ be the raw
+infinite q-Pochhammer product with $a = q^k$ and base $q^k$. Then
+
+$$
+f_1 f_2 = \frac{f_6 f_9^4}{f_3 f_{18}^2} - q f_9 f_{18} - 2 q^2 \frac{f_3 f_{18}^4}{f_6 f_9^2}.
+$$
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 2.
 -/
@@ -210,10 +244,15 @@ public theorem_wanted qPochhammer_three_dissection_product_one_two (q : ℂ) (hq
           qPochhammerInfRaw (q ^ 9) (q ^ 9) ^ 2)
 
 /--
-For every complex `q` of norm less than one, the product form
-`f₂²/f₁` of Ramanujan's `ψ(q)` equals `f₆ f₉²/(f₃ f₁₈) + q f₁₈²/f₉`.
-Both the left-hand product substitution for `ψ` and every `f_k` expansion are explicit; these
-are the only notational deviations.
+**3-dissection of the product form of Ramanujan's psi function.** Let $q$ be a complex number
+with $|q| < 1$, and for $k \ge 1$ let
+$f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$ be the raw infinite
+q-Pochhammer product. Then
+$$\frac{f_2^2}{f_1} = \frac{f_6 f_9^2}{f_3 f_{18}} + q \frac{f_{18}^2}{f_9}.$$
+
+Here $f_2^2/f_1$ is the product form of Ramanujan's theta function
+$\psi(q) = \sum_{n \ge 0} q^{n(n+1)/2}$.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 3.
 -/
@@ -227,10 +266,16 @@ public theorem_wanted ramanujanPsi_three_dissection (q : ℂ) (hq : ‖q‖ < 1)
         qPochhammerInfRaw (q ^ 9) (q ^ 9)
 
 /--
-For every complex `q` of norm less than one, the product form `f₁ f₄/f₂` of Ramanujan's
-`ψ(-q)` equals `f₃ f₁₂ f₁₈⁵/(f₆² f₉² f₃₆²) - q f₉ f₃₆/f₁₈`.
-Both the left-hand product substitution for `ψ(-q)` and every `f_k` expansion are explicit;
-these are the only notational deviations.
+**3-dissection of the product form of Ramanujan's psi function at negated argument.** Let $q$ be
+a complex number with $|q| < 1$, and for $k \ge 1$ let
+$f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$ be the raw infinite
+q-Pochhammer product. Then
+$$\frac{f_1 f_4}{f_2} = \frac{f_3 f_{12} f_{18}^5}{f_6^2 f_9^2 f_{36}^2} -
+q \frac{f_9 f_{36}}{f_{18}}.$$
+
+Here $f_1 f_4/f_2$ is the product form of $\psi(-q)$, where
+$\psi(q) = \sum_{n \ge 0} q^{n(n+1)/2}$ is Ramanujan's theta function.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 4.
 -/
@@ -248,9 +293,15 @@ public theorem_wanted ramanujanPsi_neg_dissection (q : ℂ) (hq : ‖q‖ < 1) :
         qPochhammerInfRaw (q ^ 18) (q ^ 18)
 
 /--
-For every complex `q` of norm less than one, the product form `f₁²/f₂` of Ramanujan's
-`φ(-q)` equals `f₉²/f₁₈ - 2q f₃ f₁₈²/(f₆ f₉)`. Both the left-hand product substitution
-for `φ(-q)` and every `f_k` expansion are explicit; these are the only notational deviations.
+**3-dissection of the product form of Ramanujan's phi function at negated argument.** Let $q$ be
+a complex number with $|q| < 1$, and for $k \ge 1$ let
+$f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$ be the raw infinite
+q-Pochhammer product. Then
+$$\frac{f_1^2}{f_2} = \frac{f_9^2}{f_{18}} - 2q \frac{f_3 f_{18}^2}{f_6 f_9}.$$
+
+Here $f_1^2/f_2$ is the product form of $\varphi(-q)$, where
+$\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ is Ramanujan's theta function.
+
 Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
 Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 5.
 -/

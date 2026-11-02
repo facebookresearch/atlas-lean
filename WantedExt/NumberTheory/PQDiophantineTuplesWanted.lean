@@ -32,16 +32,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `s` is an `S`-Diophantine tuple: its elements are positive and, for distinct `a, b ∈ s`,
-every prime factor of `a * b + 1` lies in `S`. A tuple `(a₁, …, aₘ)` of distinct positive
-integers is encoded by the finset of its entries, of cardinality `m`.
+/-- **$S$-Diophantine tuples.** Let $S$ be a finite set of natural numbers. A finite set $s$ of
+natural numbers is an $S$-Diophantine tuple if all its elements are positive and, for all
+distinct $a, b \in s$, every prime factor of $ab + 1$ lies in $S$. A tuple $(a_1, \dots, a_m)$ of
+distinct positive integers is encoded by the set of its entries, which has $m$ elements.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Section 1 (definition of `S`-Diophantine `m`-tuples). -/
 def IsSDiophantineTuple (S s : Finset ℕ) : Prop :=
   (∀ a ∈ s, 0 < a) ∧ ∀ a ∈ s, ∀ b ∈ s, a ≠ b → (a * b + 1).primeFactors ⊆ S
 
-/-- `(1, 3)` is a `{2}`-Diophantine pair: `1 * 3 + 1 = 2 ^ 2`.
+/-- **$(1, 3)$ is a $\{2\}$-Diophantine pair.** The set $\{1, 3\}$ is a $\{2\}$-Diophantine
+tuple, since $1 \cdot 3 + 1 = 2^2$.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Section 1 (definition of `S`-Diophantine `m`-tuples). -/
@@ -55,8 +57,9 @@ theorem isSDiophantineTuple_two_one_three : IsSDiophantineTuple {2} {1, 3} := by
   · rw [show 3 * 1 + 1 = 2 ^ 2 from rfl, Nat.primeFactors_prime_pow (by norm_num) Nat.prime_two]
   · exact absurd rfl hab
 
-/-- `(1, 3, 8)` is a `{2, 3, 5}`-Diophantine triple: `1 * 3 + 1 = 2 ^ 2`,
-`1 * 8 + 1 = 3 ^ 2`, `3 * 8 + 1 = 5 ^ 2`.
+/-- **$(1, 3, 8)$ is a $\{2, 3, 5\}$-Diophantine triple.** The set $\{1, 3, 8\}$ is a
+$\{2, 3, 5\}$-Diophantine tuple, since $1 \cdot 3 + 1 = 2^2$, $1 \cdot 8 + 1 = 3^2$ and
+$3 \cdot 8 + 1 = 5^2$.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Section 1 (definition of `S`-Diophantine `m`-tuples). -/
@@ -78,8 +81,10 @@ theorem isSDiophantineTuple_two_three_five_one_three_eight :
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     first | exact absurd rfl hab | exact h4 | exact h9 | exact h25
 
-/-- If `a < b < c` are positive integers, then `ac + 1` does not divide `bc + 1`. The paper
-states this for `S`-Diophantine triples; the `S`-unit hypothesis is not needed.
+/-- **$ac + 1$ does not divide $bc + 1$.** If $a < b < c$ are positive integers, then $ac + 1$
+does not divide $bc + 1$.
+
+The source states this for $S$-Diophantine triples; that hypothesis is not needed.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 1, quoting Szalay and Ziegler (2013), Lemma 2.1
@@ -87,11 +92,15 @@ INTEGERS 25 (2025), Article A92, Lemma 1, quoting Szalay and Ziegler (2013), Lem
 public theorem_wanted not_mul_add_one_dvd_mul_add_one {a b c : ℕ} (ha : 0 < a) (hab : a < b)
     (hbc : b < c) : ¬(a * c + 1 ∣ b * c + 1)
 
-/-- For every prime `ℓ` and all `a, b, c, d`, with `vᵢ = padicValNat ℓ sᵢ`, the smallest value
-in each of `(v₂, v₃, v₄, v₅)`, `(v₁, v₂, v₅, v₆)`, `(v₁, v₃, v₄, v₆)` is attained at least twice
-(that is, the two smallest coincide). Taking `ℓ = p` and `ℓ = q` gives the paper's statements
-for the `α`'s and `β`'s; the `S`-Diophantine hypothesis is not needed, since the proof uses
-only the identities `abcd = (s₁ - 1)(s₆ - 1) = (s₂ - 1)(s₅ - 1) = (s₃ - 1)(s₄ - 1)`.
+/-- **The two smallest valuations coincide.** Let $\ell$ be a prime and $a, b, c, d$ natural
+numbers. Put $s_1 = ab + 1$, $s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$,
+$s_6 = cd + 1$, and let $v_i$ be the $\ell$-adic valuation of $s_i$. Then in each of the tuples
+$(v_2, v_3, v_4, v_5)$, $(v_1, v_2, v_5, v_6)$ and $(v_1, v_3, v_4, v_6)$ the minimum value occurs
+at two different positions.
+
+Taking $\ell = p$ and $\ell = q$ gives the source's statements for the exponents of a
+$\{p, q\}$-Diophantine quadruple. No Diophantine hypothesis is needed: the proof uses only the
+identities $abcd = (s_1 - 1)(s_6 - 1) = (s_2 - 1)(s_5 - 1) = (s_3 - 1)(s_4 - 1)$.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 2, quoting Szalay and Ziegler (2013), Proposition 1
@@ -104,11 +113,13 @@ public theorem_wanted padicValNat_two_smallest_eq {ℓ : ℕ} (hℓ : ℓ.Prime)
     minTwice ![v 1, v 2, v 3, v 4] ∧ minTwice ![v 0, v 1, v 4, v 5] ∧
       minTwice ![v 0, v 2, v 3, v 5]
 
-/-- With `s₁, …, s₆` as above, `a` divides
-`gcd((s₂ - s₁) / gcd(s₂, s₁), (s₃ - s₁) / gcd(s₃, s₁), (s₃ - s₂) / gcd(s₃, s₂))`, and similarly
-`b`, `c`, `d` divide the corresponding gcds built from `(s₁, s₄, s₅)`, `(s₂, s₄, s₆)`,
-`(s₃, s₅, s₆)`. Stated in `ℤ` for all natural `a, b, c, d`; the `S`-Diophantine hypothesis is
-not needed.
+/-- **$a$, $b$, $c$, $d$ divide gcds of reduced differences.** Let $a, b, c, d$ be natural numbers
+and put $s_1 = ab + 1$, $s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$,
+$s_6 = cd + 1$. For indices $i, j$ let $t_{ij}$ be the integer $(s_j - s_i) / \gcd(s_j, s_i)$.
+Then $a \mid \gcd(t_{12}, t_{13}, t_{23})$, $b \mid \gcd(t_{14}, t_{15}, t_{45})$,
+$c \mid \gcd(t_{24}, t_{26}, t_{46})$ and $d \mid \gcd(t_{35}, t_{36}, t_{56})$ in $\mathbb{Z}$.
+
+The source assumes that $\{a, b, c, d\}$ is $S$-Diophantine; that hypothesis is not needed.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 3, quoting Szalay and Ziegler (2013), Lemma 3
@@ -121,11 +132,13 @@ public theorem_wanted dvd_gcd_sub_div_gcd (a b c d : ℕ) :
       (c : ℤ) ∣ gcd (gcd (t 1 3) (t 1 5)) (t 3 5) ∧
       (d : ℤ) ∣ gcd (gcd (t 2 4) (t 2 5)) (t 4 5)
 
-/-- Let `p ≠ q` be odd primes and `a < b < c < d` positive integers. Then there are no
-exponents with `ab + 1 = q ^ β₁`, `bc + 1 = p ^ α₄ q ^ β₄`, `ac + 1 = p ^ α₂`,
-`bd + 1 = p ^ α₅`, `ad + 1 = p ^ α₃ q ^ β₃`, `cd + 1 = q ^ β₆`. (Such a system would make
-`(a, b, c, d)` a `{p, q}`-Diophantine quadruple, so positivity of `a` replaces that
-hypothesis.)
+/-- **The Szalay–Ziegler system (4) has no solutions.** Let $p \ne q$ be odd primes and let
+$a, b, c, d$ be integers with $0 < a < b < c < d$. Then there are no natural numbers
+$\beta_1, \alpha_4, \beta_4, \alpha_2, \alpha_5, \alpha_3, \beta_3, \beta_6$ with
+$ab + 1 = q^{\beta_1}$, $bc + 1 = p^{\alpha_4} q^{\beta_4}$, $ac + 1 = p^{\alpha_2}$,
+$bd + 1 = p^{\alpha_5}$, $ad + 1 = p^{\alpha_3} q^{\beta_3}$ and $cd + 1 = q^{\beta_6}$.
+
+Any solution would make $\{a, b, c, d\}$ a $\{p, q\}$-Diophantine quadruple.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 4, System (4), quoting Szalay and Ziegler, INTEGERS 13
@@ -137,12 +150,21 @@ public theorem_wanted not_exists_sDiophantine_system_four {p q a b c d : ℕ} (h
       a * c + 1 = p ^ α₂ ∧ b * d + 1 = p ^ α₅ ∧ a * d + 1 = p ^ α₃ * q ^ β₃ ∧
       c * d + 1 = q ^ β₆
 
-/-- Let `p ≠ q` be primes with `p ≡ 3 (mod 4)` and let `a < b < c < d` form a
-`{p, q}`-Diophantine quadruple. Then the exponents satisfy one of the four cases of Table 1:
-(I) `0 = α₁ = α₆ < α₄ = α₅ < α₂ < α₃`, `β₁ = β₂ = β₃ < β₄ < β₅ < β₆`;
-(II) `0 = α₁ = α₆ < α₂ = α₅ < α₃, α₄`, `β₃ = β₄ < β₁ = β₂ < β₅ < β₆`;
-(III) `0 = α₂ = α₅ < α₁ = α₃ ≤ α₄ < α₆`, `β₁ = β₆ < β₃ = β₄ < β₂ < β₅`;
-(IV) `0 = α₃ = α₄ < α₁ = α₂ < α₅ < α₆`, `β₁ = β₆ < β₂ = β₅ < β₃, β₄`.
+/-- **Exponent cases for $\{p, q\}$-Diophantine quadruples with $p \equiv 3 \pmod 4$.** Let
+$p \ne q$ be primes with $p \equiv 3 \pmod 4$, and let $a < b < c < d$ be natural numbers such
+that $\{a, b, c, d\}$ is a $\{p, q\}$-Diophantine tuple. Write $s_1, \dots, s_6$ for
+$ab + 1, ac + 1, ad + 1, bc + 1, bd + 1, cd + 1$, and let $\alpha_i$ and $\beta_i$ be the
+exponents of $p$ and $q$ in the prime factorization of $s_i$. Then one of the following holds:
+(I) $0 = \alpha_1 = \alpha_6 < \alpha_4 = \alpha_5 < \alpha_2 < \alpha_3$ and
+$\beta_1 = \beta_2 = \beta_3 < \beta_4 < \beta_5 < \beta_6$;
+(II) $0 = \alpha_1 = \alpha_6 < \alpha_2 = \alpha_5$, $\alpha_5 < \alpha_3$, $\alpha_5 < \alpha_4$
+and $\beta_3 = \beta_4 < \beta_1 = \beta_2 < \beta_5 < \beta_6$;
+(III) $0 = \alpha_2 = \alpha_5 < \alpha_1 = \alpha_3 \le \alpha_4 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_3 = \beta_4 < \beta_2 < \beta_5$;
+(IV) $0 = \alpha_3 = \alpha_4 < \alpha_1 = \alpha_2 < \alpha_5 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_2 = \beta_5$, $\beta_5 < \beta_3$, $\beta_5 < \beta_4$.
+
+These are the four cases of Table 1 of the source.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 5 and Table 1, quoting Ziegler, Glas. Mat. 54 (2019),
@@ -171,8 +193,9 @@ public theorem_wanted sDiophantine_quadruple_exponent_cases {p q a b c d : ℕ} 
       (α₃ = 0 ∧ α₄ = 0 ∧ 0 < α₁ ∧ α₁ = α₂ ∧ α₂ < α₅ ∧ α₅ < α₆ ∧
         β₁ = β₆ ∧ β₆ < β₂ ∧ β₂ = β₅ ∧ β₅ < β₃ ∧ β₅ < β₄)
 
-/-- If `S = {p, q}` consists of two distinct primes, at least one congruent to `3` modulo `4`,
-then no `S`-Diophantine quadruple exists.
+/-- **No $\{p, q\}$-Diophantine quadruple when $p$ or $q$ is $3$ modulo $4$.** Let $p \ne q$ be
+primes with $p \equiv 3 \pmod 4$ or $q \equiv 3 \pmod 4$. Then no four-element set of natural
+numbers is a $\{p, q\}$-Diophantine tuple; that is, there is no $\{p, q\}$-Diophantine quadruple.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Theorem 1 (`integers-2025-A92-thm-1`). -/
@@ -180,7 +203,9 @@ public theorem_wanted not_exists_sDiophantine_quadruple_of_mod_four_eq_three {p 
     (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) (h3 : p % 4 = 3 ∨ q % 4 = 3) :
     ¬∃ s : Finset ℕ, s.card = 4 ∧ IsSDiophantineTuple {p, q} s
 
-/-- For primes `p < q`, no `{p, q}`-Diophantine quintuple exists.
+/-- **There is no $\{p, q\}$-Diophantine quintuple.** Let $p < q$ be primes. Then no five-element
+set of natural numbers is a $\{p, q\}$-Diophantine tuple; that is, there is no
+$\{p, q\}$-Diophantine quintuple.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Theorem 2 (`integers-2025-A92-thm-2`). -/
@@ -189,11 +214,15 @@ public theorem_wanted not_exists_sDiophantine_quintuple {p q : ℕ} (hp : p.Prim
     ¬∃ s : Finset ℕ, s.card = 5 ∧ IsSDiophantineTuple {p, q} s
 
 
-/-- **Lemma 6**: under the standing assumptions of Section 3 (`p ≡ 3 (mod 4)` with `p ≥ 7`,
-`q ≡ 1 (mod 4)`), if a `{p, q}`-Diophantine quadruple `a < b < c < d` is in Case III of Table 1
-(see `sDiophantine_quadruple_exponent_cases`) with `α, β > 0` (assumed in the proof via Lemma 4),
-then `d < 1.03 q^{2(β' - β)}` and
-`b < 1.03 q^{β' - β}`, where `β = β₁ = β₆` and `β' = β₃ = β₄` (the abbreviations of the proof).
+/-- **Bounds in Case III for $\{p, q\}$-Diophantine quadruples.** Let $p$ and $q$ be primes with
+$p \equiv 3 \pmod 4$, $p \ge 7$ and $q \equiv 1 \pmod 4$, and let $a < b < c < d$ be natural
+numbers such that $\{a, b, c, d\}$ is a $\{p, q\}$-Diophantine tuple. Put $s_1 = ab + 1$,
+$s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$, $s_6 = cd + 1$, and let
+$\alpha_i$ and $\beta_i$ be the $p$-adic and $q$-adic valuations of $s_i$. Suppose that
+$0 = \alpha_2 = \alpha_5 < \alpha_1 = \alpha_3 \le \alpha_4 < \alpha_6$ and
+$0 < \beta_1 = \beta_6 < \beta_3 = \beta_4 < \beta_2 < \beta_5$ (Case III of Table 1, with
+$\beta_1 > 0$). Then, with $\beta = \beta_1$ and $\beta' = \beta_3$, we have
+$d < 1.03\, q^{2(\beta' - \beta)}$ and $b < 1.03\, q^{\beta' - \beta}$.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 6 (`integers-2025-A92-lem-6`). -/
@@ -213,11 +242,17 @@ public theorem_wanted sDiophantine_quadruple_caseIII_bounds {p q a b c d : ℕ} 
     let β' := padicValNat q (a * d + 1)
     (d : ℝ) < 103 / 100 * (q : ℝ) ^ (2 * (β' - β)) ∧ (b : ℝ) < 103 / 100 * (q : ℝ) ^ (β' - β)
 
-/-- **Lemma 7**: under the standing assumptions of Section 3 (`p ≡ 3 (mod 4)` with `p ≥ 7`,
-`q ≡ 1 (mod 4)`), if a `{p, q}`-Diophantine quadruple `a < b < c < d` is in Case IV of Table 1
-(see `sDiophantine_quadruple_exponent_cases`) with `α, β > 0` (assumed in the proof via Lemma 4),
-then `b < 1.042 q^{β' - β}`, where
-`β = β₁ = β₆` and `β' = β₂ = β₅` (the abbreviations of the proof).
+/-- **Bound on $b$ in Case IV for $\{p, q\}$-Diophantine quadruples.** Let $p$ and $q$ be
+primes with $p \equiv 3 \pmod 4$, $p \ge 7$ and $q \equiv 1 \pmod 4$, and let $a < b < c < d$
+be natural numbers such that $\{a, b, c, d\}$ is a $\{p, q\}$-Diophantine tuple. Write
+$s_1, \dots, s_6$ for $ab + 1, ac + 1, ad + 1, bc + 1, bd + 1, cd + 1$, and let $\alpha_i$ and
+$\beta_i$ be the exponents of $p$ and $q$ in the prime factorization of $s_i$. Suppose that
+$0 = \alpha_3 = \alpha_4 < \alpha_1 = \alpha_2 < \alpha_5 < \alpha_6$ and
+$0 < \beta_1 = \beta_6 < \beta_2 = \beta_5$, $\beta_5 < \beta_3$, $\beta_5 < \beta_4$. Then
+$b < 1.042 \, q^{\beta_2 - \beta_1}$.
+
+The assumptions on the exponents are Case IV of Table 1 of the source together with
+$\beta_1 > 0$.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Lemma 7 (`integers-2025-A92-lem-7`). -/
@@ -237,11 +272,29 @@ public theorem_wanted sDiophantine_quadruple_caseIV_bound {p q a b c d : ℕ} (h
     let β' := padicValNat q (a * c + 1)
     (b : ℝ) < 1042 / 1000 * (q : ℝ) ^ (β' - β)
 
-/-- **Proposition 1**: let `p ≠ q` be primes and `a < b < c < d` a `{p, q}`-Diophantine
-quadruple, with `s₁, …, s₆ = ab + 1, ac + 1, ad + 1, bc + 1, bd + 1, cd + 1`,
-`αᵢ = v_p(sᵢ)` and `βᵢ = v_q(sᵢ)`. Then one of the 14 cases of Table 2 holds. An entry such as
-`α₁ = α₂ = α₃ < α₄, α₆ < α₅` is read as `α₃ < α₄`, `α₃ < α₆`, `α₄ < α₅`, `α₆ < α₅`; Cases
-VIII-XIV are Cases I-VII with `α` and `β` exchanged.
+/-- **The fourteen exponent cases for $\{p, q\}$-Diophantine quadruples.** Let $p \ne q$ be
+primes and let $a < b < c < d$ be natural numbers such that $\{a, b, c, d\}$ is a
+$\{p, q\}$-Diophantine tuple. Write $s_1, \dots, s_6$ for
+$ab + 1, ac + 1, ad + 1, bc + 1, bd + 1, cd + 1$, and let $\alpha_i$ and $\beta_i$ be the
+exponents of $p$ and $q$ in the prime factorization of $s_i$. Then one of the following
+fourteen cases holds:
+(I) $\alpha_1 = \alpha_2 = \alpha_3 < \alpha_4 < \alpha_5$, $\alpha_3 < \alpha_6 < \alpha_5$,
+$\beta_1 = \beta_4 = \beta_5 < \beta_2 < \beta_3$ and $\beta_5 < \beta_6 < \beta_3$;
+(II) $\alpha_1 = \alpha_2 = \alpha_3 < \alpha_4 < \alpha_5 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_4 = \beta_5 < \beta_2 < \beta_3$;
+(III) $\alpha_1 = \alpha_6 < \alpha_2 = \alpha_3 < \alpha_4 < \alpha_5$ and
+$\beta_1 = \beta_4 = \beta_5 < \beta_2 < \beta_3 < \beta_6$;
+(IV) $\alpha_2 = \alpha_5 < \alpha_1 = \alpha_3 < \alpha_4 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_3 = \beta_4 < \beta_2 < \beta_5$;
+(V) $\alpha_2 = \alpha_5 < \alpha_1 = \alpha_4 < \alpha_3 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_3 = \beta_4 < \beta_2 < \beta_5$;
+(VI) $\alpha_1 = \alpha_6 < \alpha_2 = \alpha_5$, $\alpha_5 < \alpha_3$, $\alpha_5 < \alpha_4$ and
+$\beta_3 = \beta_4 < \beta_1 = \beta_2 < \beta_5 < \beta_6$;
+(VII) $\alpha_2 = \alpha_5 < \alpha_3 = \alpha_4 < \alpha_1 < \alpha_6$ and
+$\beta_1 = \beta_6 < \beta_3 = \beta_4 < \beta_2 < \beta_5$;
+(VIII)-(XIV) the conditions of (I)-(VII) with $\alpha_i$ and $\beta_i$ exchanged for every $i$.
+
+These are the cases of Table 2 of the source.
 
 Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
 INTEGERS 25 (2025), Article A92, Proposition 1 and Table 2 (`integers-2025-A92-prop-1`). -/

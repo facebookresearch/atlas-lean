@@ -25,8 +25,10 @@ undefined index (a nonpositive index when `pad = false`, or an index not yet com
 be computed, and the sequence stops there: it "dies" (unpadded) or "ends" (padded).
 -/
 
-/-- The value at index `j` of the sequence whose first terms are `xs = #[B(1), …, B(m)]`:
-`xs[j - 1]` for `1 ≤ j ≤ m`, `0` for `j ≤ 0` when `pad`, and undefined otherwise.
+/-- **Value of a partially computed sequence at an index.** Given computed terms
+$B(1), \dots, B(m)$, a choice of whether the sequence is padded, and an integer $j$, the value
+at index $j$ is $B(j)$ when $1 \le j \le m$, is $0$ when $j \le 0$ and the sequence is padded,
+and is undefined otherwise (for $j \le 0$ in the unpadded case, and for $j > m$).
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1
@@ -34,8 +36,11 @@ Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Sec
 def threeTermHofstadterLookup (pad : Bool) (xs : Array ℤ) (j : ℤ) : Option ℤ :=
   if j ≤ 0 then (if pad then some 0 else none) else xs[(j - 1).toNat]?
 
-/-- The next term `B(m + 1) = B(m+1 - B(m)) + B(m+1 - B(m-1)) + B(m+1 - B(m-2))` after
-`xs = #[B(1), …, B(m)]`, or `none` when it references an undefined index.
+/-- **Next term of the three-term Hofstadter-like recurrence.** Given computed terms
+$B(1), \dots, B(m)$, padded with $0$ at nonpositive indices or not, the next term is
+$B(m + 1) = B(m + 1 - B(m)) + B(m + 1 - B(m - 1)) + B(m + 1 - B(m - 2))$. It is undefined
+when one of the values it uses, $B(m)$, $B(m - 1)$, $B(m - 2)$ or one of the three summands,
+sits at an undefined index: a nonpositive index in the unpadded case, or an index above $m$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -48,8 +53,12 @@ def threeTermHofstadterNext (pad : Bool) (xs : Array ℤ) : Option ℤ :=
   (threeTermHofstadterLookup pad xs (n - b₂)).bind fun v₂ =>
   (threeTermHofstadterLookup pad xs (n - b₃)).map fun v₃ => v₁ + v₂ + v₃
 
-/-- Extend the computed terms `xs` by the next `k` terms of the recurrence (tail-recursive,
-appending in place), or `none` if the sequence stops earlier.
+/-- **Computing further terms of a three-term Hofstadter-like sequence.** Given terms
+$B(1), \dots, B(m)$, padded with $0$ at nonpositive indices or not, and a natural number $k$,
+this is the list $B(1), \dots, B(m + k)$ obtained by computing $B(m + 1), \dots, B(m + k)$ one
+after another from $B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$. It is undefined if
+one of these terms cannot be computed because the formula refers to an undefined index (a
+nonpositive index in the unpadded case, or an index not yet computed).
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -60,17 +69,31 @@ def threeTermHofstadterExtend (pad : Bool) : ℕ → Array ℤ → Option (Array
     | none => none
     | some v => threeTermHofstadterExtend pad k (xs.push v)
 
-/-- The initial conditions followed by the next `k` terms of the recurrence, or `none` if
-the sequence stops earlier.
+/-- **Initial segment of a three-term Hofstadter-like sequence.** Let $x_1, \dots, x_m$ be
+integers ($m \ge 0$) and let $B$ be the padded or the unpadded three-term Hofstadter-like sequence
+with initial conditions $x_1, \dots, x_m$: $B(i) = x_i$ for $1 \le i \le m$, the padded sequence
+has $B(i) = 0$ for every $i \le 0$ while the unpadded one is undefined there, and for $n > m$
+$$B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3)),$$
+which is defined only when every value of $B$ on the right-hand side is defined and the indices
+$n - B(n-1)$, $n - B(n-2)$, $n - B(n-3)$ are less than $n$. For a natural number $k$, the
+initial segment is the list $B(1), \dots, B(m + k)$, the initial conditions followed by the next
+$k$ terms; it is undefined when one of $B(m + 1), \dots, B(m + k)$ is undefined.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
 def threeTermHofstadterPrefix (pad : Bool) (init : List ℤ) (k : ℕ) : Option (Array ℤ) :=
   threeTermHofstadterExtend pad k init.toArray
 
-/-- The term `B(j)` of the sequence with initial conditions `init`, or `none` if the
-sequence stops before index `j`. Index `0` follows `threeTermHofstadterLookup`: it is `0`
-when `pad` and undefined otherwise.
+/-- **Three-term Hofstadter-like sequence.** Let $x_1, \dots, x_m$ be integers ($m \ge 0$), the
+initial conditions, and choose whether the sequence is padded. The sequence $B$ has $B(i) = x_i$
+for $1 \le i \le m$; the padded sequence has $B(i) = 0$ for every integer $i \le 0$, while the
+unpadded one is undefined at every $i \le 0$. For $n > m$,
+$$B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3)),$$
+which is defined only when every value of $B$ on the right-hand side is defined and the indices
+$n - B(n-1)$, $n - B(n-2)$, $n - B(n-3)$ are less than $n$; once a term is undefined, the
+sequence stops and every later term is undefined. The term at a natural number index $j$ is
+$B(j)$ when this is defined and undefined otherwise; in particular the term at index $0$ is $0$
+for the padded sequence and undefined for the unpadded one.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -78,8 +101,13 @@ def threeTermHofstadterTerm (pad : Bool) (init : List ℤ) (j : ℕ) : Option �
   (threeTermHofstadterPrefix pad init (j - init.length)).bind fun xs =>
     threeTermHofstadterLookup pad xs j
 
-/-- The sequence with initial conditions `init` has exactly `T` terms: its first `T` terms
-exist and the term at index `T + 1` cannot be computed.
+/-- **Exact length of a three-term Hofstadter-like sequence.** Take integer initial conditions
+$B(1), \dots, B(m)$, and either pad the sequence with $B(n) = 0$ for every $n \le 0$ or leave it
+unpadded. Continue it by $B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$ for $n > m$,
+where a term cannot be computed if this formula refers to an undefined index: a nonpositive
+index in the unpadded case, or an index not yet computed. For a natural number $T$, the
+sequence has exactly $T$ terms when $T \ge m$, the terms $B(1), \dots, B(T)$ can all be
+computed, and $B(T + 1)$ cannot.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1
@@ -88,7 +116,11 @@ def ThreeTermHofstadterEndsAfter (pad : Bool) (init : List ℤ) (T : ℕ) : Prop
   ∃ xs, threeTermHofstadterPrefix pad init (T - init.length) = some xs ∧ xs.size = T ∧
     threeTermHofstadterNext pad xs = none
 
-/-- The initial conditions are the first terms.
+/-- **The initial conditions are the first terms.** Let $x_1, \dots, x_m$ be integers and let $j$
+be a natural number with $j \le m$. For the padded or the unpadded three-term Hofstadter-like
+sequence with initial conditions $x_1, \dots, x_m$, the term at index $j$ equals the lookup of
+index $j$ in $x_1, \dots, x_m$: it is $x_j$ if $j \ge 1$, and if $j = 0$ it is $0$ for the
+padded sequence and undefined for the unpadded one.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -98,7 +130,9 @@ theorem threeTermHofstadterTerm_of_le_length (pad : Bool) (init : List ℤ) {j :
   simp [threeTermHofstadterTerm, threeTermHofstadterPrefix, Nat.sub_eq_zero_of_le hj,
     threeTermHofstadterExtend]
 
-/-- Index `0` is `0` in the padded sequence and undefined in the unpadded one.
+/-- **Index zero of the sequence started at 5.** For the three-term Hofstadter-like sequence with
+the single initial condition $5$, the term at index $0$ is defined and equals $0$ when the
+sequence is padded, and it is undefined when the sequence is unpadded.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -106,8 +140,9 @@ theorem threeTermHofstadterTerm_zero :
     threeTermHofstadterTerm true [5] 0 = some 0 ∧ threeTermHofstadterTerm false [5] 0 = none := by
   decide
 
-/-- The `B`-sequence `⟨1, 2, 3, 4, 5⟩` continues with `B(6) = 1 + 2 + 3 = 6` and
-`B(7) = B(1) + B(2) + B(3) = 6`.
+/-- **Sixth and seventh terms of the sequence started at 1, 2, 3, 4, 5.** For the unpadded
+three-term Hofstadter-like sequence $B$ with initial conditions $1, 2, 3, 4, 5$, the terms $B(6)$
+and $B(7)$ are defined, with $B(6) = B(1) + B(2) + B(3) = 6$ and $B(7) = B(1) + B(2) + B(3) = 6$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1. -/
@@ -116,7 +151,11 @@ theorem threeTermHofstadterTerm_bSequence_six_seven :
       threeTermHofstadterTerm false [1, 2, 3, 4, 5] 7 = some 6 := by
   decide
 
-/-- `B_3 = ⟨1, 2, 3⟩` has `B_3(4) = 6` and then dies: it has exactly four terms.
+/-- **The sequence from $1, 2, 3$ dies after four terms.** Run the recurrence
+$B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$ from the initial conditions
+$B(1) = 1$, $B(2) = 2$, $B(3) = 3$ without padding, so that a term whose recurrence refers to a
+nonpositive index, or to an index not yet computed, cannot be computed. Then the sequence has
+exactly four terms: $B(4)$ can be computed and $B(5)$ cannot.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, proof of
@@ -125,8 +164,12 @@ theorem threeTermHofstadterEndsAfter_one_two_three :
     ThreeTermHofstadterEndsAfter false [1, 2, 3] 4 :=
   ⟨#[1, 2, 3, 6], rfl, rfl, by decide⟩
 
-/-- For `N = 3`, `N = 4` or `N ≥ 10`, the sequence `B_N` with initial conditions
-`⟨1, 2, …, N⟩` (no padding) dies.
+/-- **Death of the unpadded sequence from $1, \dots, N$ for $N = 3$, $4$ or $N \ge 10$.** Let
+$N$ be a natural number with $N = 3$, $N = 4$ or $N \ge 10$, and let $B_N$ be the sequence with
+initial conditions $B_N(i) = i$ for $1 \le i \le N$, continued without padding by the recurrence
+$B_N(n) = B_N(n - B_N(n-1)) + B_N(n - B_N(n-2)) + B_N(n - B_N(n-3))$. Then $B_N$ dies: there is
+a natural number $T$ such that $B_N(1), \dots, B_N(T)$ can be computed and $B_N(T + 1)$ cannot,
+because the recurrence refers to a nonpositive index or to an index not yet computed.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Theorem 1
@@ -134,8 +177,11 @@ Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, The
 public theorem_wanted threeTermHofstadter_linear_dies {N : ℕ} (hN : N = 3 ∨ N = 4 ∨ 10 ≤ N) :
     ∃ T, ThreeTermHofstadterEndsAfter false ((List.range N).map fun i : ℕ => (i : ℤ) + 1) T
 
-/-- For `N ≥ 14`, the sequence `B_N` with initial conditions `⟨1, 2, …, N⟩` has exactly
-`N + 24` terms.
+/-- **Length of the unpadded sequence from $1, \dots, N$.** For every natural number $N \ge 14$,
+the sequence $B_N$ with initial conditions $B_N(i) = i$ for $1 \le i \le N$, continued without
+padding by the recurrence $B_N(n) = B_N(n - B_N(n-1)) + B_N(n - B_N(n-2)) + B_N(n - B_N(n-3))$,
+has exactly $N + 24$ terms: $B_N(1), \dots, B_N(N + 24)$ can be computed and $B_N(N + 25)$
+cannot, because the recurrence refers to a nonpositive index or to an index not yet computed.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Theorem 1
@@ -143,12 +189,13 @@ Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, The
 public theorem_wanted threeTermHofstadter_linear_length {N : ℕ} (hN : 14 ≤ N) :
     ThreeTermHofstadterEndsAfter false ((List.range N).map fun i : ℕ => (i : ℤ) + 1) (N + 24)
 
-/-- For `N ≥ 72`, the padded sequence `B_{N̄}` with initial conditions
-`⟨0̄; 1, 2, …, N⟩` follows the period-`7` pattern
-`B(N+7k) = 7k+2`, `B(N+7k+1) = N+7k+2`, `B(N+7k+2) = N+7k+4`, `B(N+7k+3) = 7`,
-`B(N+7k+4) = 2N+2k+45`, `B(N+7k+5) = 2N+k-7`, `B(N+7k+6) = N-2` (`k ≥ 1`) from index
-`N + 67` through index `2N + ν`, where `ν = -1, -2, -2, -2, 2, 1, 0` for
-`N ≡ 0, 1, …, 6 (mod 7)`.
+/-- **Period-seven pattern of the padded sequence from $1, \dots, N$.** Let $N \ge 72$ be a
+natural number, and let $B$ be the sequence with $B(n) = 0$ for $n \le 0$ and $B(i) = i$ for
+$1 \le i \le N$, continued by the recurrence $B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$.
+Let $\nu = -1, -2, -2, -2, 2, 1, 0$ according as $N \equiv 0, 1, 2, 3, 4, 5, 6 \pmod 7$. Then
+for all natural numbers $k \ge 1$ and $r < 7$ with $N + 67 \le N + 7k + r \le 2N + \nu$, the
+term $B(N + 7k + r)$ can be computed, and it equals $7k + 2$, $N + 7k + 2$, $N + 7k + 4$, $7$,
+$2N + 2k + 45$, $2N + k - 7$ or $N - 2$ according as $r = 0, 1, 2, 3, 4, 5$ or $6$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Theorem 2
@@ -160,10 +207,13 @@ public theorem_wanted threeTermHofstadter_padded_linear_period_seven {N : ℕ} (
       some ([7 * k + 2, N + 7 * k + 2, N + 7 * k + 4, 7, 2 * N + 2 * k + 45, 2 * N + k - 7,
         N - 2].getD r 0 : ℤ)
 
-/-- The padded sequence `B_{N̄}` with initial conditions `⟨0̄; 1, 2, …, N⟩` ends after
-`2N + e` terms once `N ≥ t`, where for `N ≡ 0, 1, …, 6 (mod 7)` the thresholds are
-`t = 196, 2087, 3201, 4315, 200, 32478, 118` and the offsets are
-`e = 27, 254, 524, 560, 20, 4547, 9`.
+/-- **Length of the padded sequence from $1, \dots, N$.** Let $N$ be a natural number, and let
+$t = 196, 2087, 3201, 4315, 200, 32478, 118$ and $e = 27, 254, 524, 560, 20, 4547, 9$
+according as $N \equiv 0, 1, 2, 3, 4, 5, 6 \pmod 7$. Let $B$ be the sequence with $B(n) = 0$
+for $n \le 0$ and $B(i) = i$ for $1 \le i \le N$, continued by the recurrence
+$B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$. If $N \ge t$, then $B$ ends after
+exactly $2N + e$ terms: $B(1), \dots, B(2N + e)$ can be computed and $B(2N + e + 1)$ cannot,
+because the recurrence refers to an index not yet computed.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Theorem 2
@@ -173,13 +223,18 @@ public theorem_wanted threeTermHofstadter_padded_linear_endsAfter {N : ℕ}
     ThreeTermHofstadterEndsAfter true ((List.range N).map fun i : ℕ => (i : ℤ) + 1)
       (2 * N + [27, 254, 524, 560, 20, 4547, 9].getD (N % 7) 0)
 
-/-- Seven-cycle lemma. Let `K ≥ 7`, `c ≥ 1`, `0 ≤ γ ≤ 6`, `L = K - 7c - γ ≥ 0`,
-`M = K + L + 5`, and let `λ ≥ -2c + (2, 1, 4, 3, 2, 1, 0)_γ` and `μ ≥ -c + (0, 0, 3, 2, 1, 0, -1)_γ`.
-For arbitrary integers `a_1, …, a_L`, the padded sequence with initial conditions
-`⟨0̄; 1, 2, …, K, 6, a_1, …, a_L, 2K+λ-2, 2K+μ-1, K-2⟩` satisfies
-`B(M+7k) = L+7k+7`, `B(M+7k+1) = M+7k+2`, `B(M+7k+2) = M+7k+4`, `B(M+7k+3) = 7`,
-`B(M+7k+4) = 2K+2k+λ`, `B(M+7k+5) = 2K+k+μ`, `B(M+7k+6) = K-2` from index `M - 3` through
-index `2K + ν`, `ν = (-2, -2, 2, 1, 0, -1, -2)_γ`.
+/-- **Seven-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K$, $c$ and
+$\gamma$ be natural numbers with $K \ge 7$, $c \ge 1$, $\gamma \le 6$ and $7c + \gamma \le K$, and
+put $L = K - 7c - \gamma$ and $M = K + L + 5$. For a tuple $(t_0, \dots, t_6)$ write
+$(t_0, \dots, t_6)_\gamma$ for its entry $t_\gamma$. Let $\lambda$ and $\mu$ be integers with
+$\lambda \ge -2c + (2, 1, 4, 3, 2, 1, 0)_\gamma$ and $\mu \ge -c + (0, 0, 3, 2, 1, 0, -1)_\gamma$,
+and put $\nu = (-2, -2, 2, 1, 0, -1, -2)_\gamma$. Let $a_1, \dots, a_L$ be arbitrary integers and
+let $B$ be the padded three-term Hofstadter-like sequence with initial conditions
+$1, 2, \dots, K, 6, a_1, \dots, a_L, 2K + \lambda - 2, 2K + \mu - 1, K - 2$. Then for every
+integer $k$ and every $r \in \{0, 1, \dots, 6\}$ with $M - 3 \le M + 7k + r \le 2K + \nu$, the
+term $B(M + 7k + r)$ is defined, and these terms are $B(M + 7k) = L + 7k + 7$,
+$B(M + 7k + 1) = M + 7k + 2$, $B(M + 7k + 2) = M + 7k + 4$, $B(M + 7k + 3) = 7$,
+$B(M + 7k + 4) = 2K + 2k + \lambda$, $B(M + 7k + 5) = 2K + k + \mu$ and $B(M + 7k + 6) = K - 2$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 3
@@ -200,9 +255,11 @@ public theorem_wanted threeTermHofstadter_sevenCycle {K c γ : ℕ} (hK : 7 ≤ 
         ((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) + 7 * k + 4, 7, 2 * K + 2 * k + lam, 2 * K + k + mu,
         K - 2].getD r 0)
 
-/-- Two-cycle lemma. Let `K ≥ 1` and `M ≥ K + 5`. For arbitrary integers `a_1, …, a_K`, the
-padded sequence with initial conditions `⟨0̄; a_1, …, a_K, 2, M, 2⟩` satisfies
-`B(K+2k+1) = 2` for all `k ≥ 0` and `B(K+2k) = 2^(k-1) M` for all `k ≥ 1` (forever).
+/-- **Two-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$ be a natural
+number, let $M$ be an integer with $M \ge K + 5$, let $a_1, \dots, a_K$ be arbitrary integers,
+and let $B$ be the padded three-term Hofstadter-like sequence with initial conditions
+$a_1, \dots, a_K, 2, M, 2$. Then for every natural number $k$ the term $B(K + 2k + 1)$ is defined
+and equals $2$, and for every $k \ge 1$ the term $B(K + 2k)$ is defined and equals $2^{k-1} M$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 4,
@@ -213,10 +270,15 @@ public theorem_wanted threeTermHofstadter_twoCycle {K : ℕ} (hK : 1 ≤ K) {M :
       (1 ≤ k → threeTermHofstadterTerm true (a ++ [2, M, 2]) (K + 2 * k) =
         some (2 ^ (k - 1) * M))
 
-/-- Five-cycle lemma. Let `K ≥ 3` and `μ ≥ 1`. For arbitrary integers `a_4, …, a_K`, the
-padded sequence with initial conditions `⟨0̄; 1, 2, 3, a_4, …, a_K, K+μ, 3, K+3, K+μ+1, 5⟩`
-satisfies `B(K+5k) = 5`, `B(K+5k+1) = K+3k+μ`, `B(K+5k+2) = 3`, `B(K+5k+3) = K+5k+3`,
-`B(K+5k+4) = K+3k+μ+1` from index `K + 1` through index `K + ⌊(5μ - 15)/2⌋`.
+/-- **Five-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 3$ be a
+natural number, $\mu \ge 1$ an integer, and $a_4, \dots, a_K$ arbitrary integers. Let $B$ be
+the sequence given by $B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$, padded with
+$B(n) = 0$ for $n \le 0$, with initial conditions
+$1, 2, 3, a_4, \dots, a_K, K + \mu, 3, K + 3, K + \mu + 1, 5$ at the indices $1, \dots, K + 5$.
+Then for all natural numbers $k$ and $r < 5$ with
+$K + 1 \le K + 5k + r \le K + \lfloor (5\mu - 15)/2 \rfloor$, the term $B(K + 5k + r)$ can be
+computed, and it equals $5$, $K + 3k + \mu$, $3$, $K + 5k + 3$ or $K + 3k + \mu + 1$ according
+as $r = 0, 1, 2, 3$ or $4$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 5,
@@ -228,15 +290,19 @@ public theorem_wanted threeTermHofstadter_fiveCycle {K : ℕ} (hK : 3 ≤ K) {mu
         (K + 5 * k + r) =
       some ([5, K + 3 * k + mu, 3, K + 5 * k + 3, K + 3 * k + mu + 1].getD r 0 : ℤ)
 
-/-- Second sixteen-cycle lemma. Let `K, λ, μ₁, μ₂, γ₁, γ₂, γ₃` be positive integers with
-`λ > 31 + K` and `μ₁, μ₂, γ₁, γ₂, γ₃ > λ`. For arbitrary integers `a_1, …, a_K`, the padded
-sequence with initial conditions
-`⟨0̄; a_1, …, a_K, 16, μ₂, 7, γ₂, λ, 16, λ, 16, μ₁, 10, γ₃, μ₂, 7, λ, 16, γ₁⟩` satisfies, from
-index `K + 1` through index `λ`, `B(K+16k) = μ₁ 2^k + γ₁ - 2μ₁`, `B(K+16k+1) = 16`,
-`B(K+16k+2) = μ₂ 2^k`, `B(K+16k+3) = 7`, `B(K+16k+4) = 7k + γ₂`, `B(K+16k+5) = λ`,
-`B(K+16k+6) = 16`, `B(K+16k+7) = λ`, `B(K+16k+8) = 16`, `B(K+16k+9) = μ₁ 2^k`,
-`B(K+16k+10) = 10`, `B(K+16k+11) = 16k + γ₃`, `B(K+16k+12) = μ₂ 2^k`, `B(K+16k+13) = 7`,
-`B(K+16k+14) = λ`, `B(K+16k+15) = 16`.
+/-- **Second sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$
+be a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma_1$, $\gamma_2$, $\gamma_3$ be
+integers with $\lambda > 31 + K$ and $\mu_1, \mu_2, \gamma_1, \gamma_2, \gamma_3 > \lambda$. Let
+$a_1, \dots, a_K$ be arbitrary integers and let $B$ be the padded three-term Hofstadter-like
+sequence with initial conditions $a_1, \dots, a_K, 16, \mu_2, 7, \gamma_2, \lambda, 16, \lambda,
+16, \mu_1, 10, \gamma_3, \mu_2, 7, \lambda, 16, \gamma_1$. Then for all natural numbers $k$ and
+$r \le 15$ with $K + 1 \le K + 16k + r \le \lambda$, the term $B(K + 16k + r)$ is defined, and
+these terms are $B(K + 16k) = \mu_1 2^k + \gamma_1 - 2\mu_1$, $B(K + 16k + 1) = 16$,
+$B(K + 16k + 2) = \mu_2 2^k$, $B(K + 16k + 3) = 7$, $B(K + 16k + 4) = 7k + \gamma_2$,
+$B(K + 16k + 5) = \lambda$, $B(K + 16k + 6) = 16$, $B(K + 16k + 7) = \lambda$,
+$B(K + 16k + 8) = 16$, $B(K + 16k + 9) = \mu_1 2^k$, $B(K + 16k + 10) = 10$,
+$B(K + 16k + 11) = 16k + \gamma_3$, $B(K + 16k + 12) = \mu_2 2^k$, $B(K + 16k + 13) = 7$,
+$B(K + 16k + 14) = \lambda$ and $B(K + 16k + 15) = 16$.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 7,
@@ -252,16 +318,23 @@ public theorem_wanted threeTermHofstadter_sixteenCycle_two {K : ℕ} (hK : 1 ≤
       some ([mu₁ * 2 ^ k + ga₁ - 2 * mu₁, 16, mu₂ * 2 ^ k, 7, 7 * k + ga₂, lam, 16, lam, 16,
         mu₁ * 2 ^ k, 10, 16 * k + ga₃, mu₂ * 2 ^ k, 7, lam, 16].getD r 0)
 
-/-- First sixteen-cycle lemma. Let `K, λ, μ₁, μ₂, γ` be positive integers with `λ > 31 + K` and
-`μ₁, μ₂, γ > λ`. For arbitrary integers `a_1, …, a_K`, the padded sequence with initial
-conditions `⟨0̄; a_1, …, a_K, λ, 7, μ₂, 16, μ₂, 16, μ₁, λ, 7, μ₂, 16, 2μ₂, 16, μ₂, 25, γ, λ, 7⟩`
-satisfies, from index `K + 1` through index `λ`, `B(K+16k) = μ₁ 2^{k-1} + γ - μ₁`,
-`B(K+16k+1) = λ`, `B(K+16k+2) = 7`, `B(K+16k+3) = μ₂ 2^k`, `B(K+16k+4) = 16`,
-`B(K+16k+5) = μ₂ 2^k`, `B(K+16k+6) = 16`, `B(K+16k+7) = μ₁ 2^k`, `B(K+16k+8) = λ`,
-`B(K+16k+9) = 7`, `B(K+16k+10) = μ₂ 2^k`, `B(K+16k+11) = 16`, `B(K+16k+12) = μ₂ 2^{k+1}`,
-`B(K+16k+13) = 16`, `B(K+16k+14) = μ₂ 2^k`, `B(K+16k+15) = 25`.
-Corrected: the paper prints `B(K+16k+12) = μ₂ 2^k`, which contradicts its own initial value
-`B(K+12) = 2μ₂`; the exponent `k+1` matches the initial conditions and every later term.
+/-- **First sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$ be
+a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma$ be integers with $\lambda > 31 + K$
+and $\mu_1, \mu_2, \gamma > \lambda$. Let $a_1, \dots, a_K$ be arbitrary integers and let $B$ be
+the padded three-term Hofstadter-like sequence with initial conditions
+$a_1, \dots, a_K, \lambda, 7, \mu_2, 16, \mu_2, 16, \mu_1, \lambda, 7, \mu_2, 16, 2\mu_2, 16,
+\mu_2, 25, \gamma, \lambda, 7$. Then for all natural numbers $k$ and $r \le 15$ with
+$K + 1 \le K + 16k + r \le \lambda$, the term $B(K + 16k + r)$ is defined, and these terms are
+$B(K + 16k) = \mu_1 2^{k-1} + \gamma - \mu_1$, $B(K + 16k + 1) = \lambda$, $B(K + 16k + 2) = 7$,
+$B(K + 16k + 3) = \mu_2 2^k$, $B(K + 16k + 4) = 16$, $B(K + 16k + 5) = \mu_2 2^k$,
+$B(K + 16k + 6) = 16$, $B(K + 16k + 7) = \mu_1 2^k$, $B(K + 16k + 8) = \lambda$,
+$B(K + 16k + 9) = 7$, $B(K + 16k + 10) = \mu_2 2^k$, $B(K + 16k + 11) = 16$,
+$B(K + 16k + 12) = \mu_2 2^{k+1}$, $B(K + 16k + 13) = 16$, $B(K + 16k + 14) = \mu_2 2^k$ and
+$B(K + 16k + 15) = 25$.
+
+Corrected: the paper prints $B(K + 16k + 12) = \mu_2 2^k$, which contradicts its own initial
+value $B(K + 12) = 2\mu_2$; the exponent $k + 1$ matches the initial conditions and every later
+term.
 
 Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
 Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 6,
