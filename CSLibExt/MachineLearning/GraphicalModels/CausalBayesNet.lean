@@ -132,7 +132,7 @@ theorem joint_intervene [DecidableEq α] (k : Fin n) (a : α) (x : Fin n → α)
     simp [intervene, ne_of_mem_erase hj]
     rfl
   rw [hrest]
-  simp only [intervene, ite_true]
+  simp only [intervene, dite_true]
   split_ifs with h
   · simp [StdSimplex.single, h]
   · simp [StdSimplex.single, Ne.symm h]

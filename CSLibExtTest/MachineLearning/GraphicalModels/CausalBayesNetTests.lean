@@ -78,10 +78,10 @@ edges: `do(X = true)` removes `Z → X` but keeps `Z → Y` and `X → Y`. -/
 example : ¬ (confNet.intervene 1 true).Edge 0 1 ∧
     (confNet.intervene 1 true).Edge 0 2 ∧ (confNet.intervene 1 true).Edge 1 2 := by
   refine ⟨?_, ?_, ?_⟩
-  · rintro ⟨-, hm⟩
+  · rintro ⟨_, hm⟩
     simp [BayesNet.intervene] at hm
-  · exact ⟨by decide, by simp [BayesNet.intervene]⟩
-  · exact ⟨by decide, by simp [BayesNet.intervene]⟩
+  · exact ⟨by decide, by simp [BayesNet.intervene, confNet]⟩
+  · exact ⟨by decide, by simp [BayesNet.intervene, confNet]⟩
 
 /-- **Non-vacuity** of the adjustment theorem: every table of `confNet` gives `X = true`
 positive probability, so `E[f | do(X = true)]` is given by adjusting for `Z`. -/
