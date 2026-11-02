@@ -50,7 +50,6 @@ example (n : ℕ) (h : bc12_BoxOriginTrifurcation 2 n) (ω : ConfigSpace (Sym2 (
 #print axioms bc12_canonicalTrif_discharges_boxReach
 #print axioms bc12_boxOriginReach_of_trifurcation
 #print axioms bc12_originRewiring_of_trifurcation
-#print axioms bc12_burtonKeane_uniqueness_of_trifurcation
 #print axioms bc12_origin_openIncidence_of_trifurcation
 #print axioms bc12_isolated_origin_not_trifurcation
 

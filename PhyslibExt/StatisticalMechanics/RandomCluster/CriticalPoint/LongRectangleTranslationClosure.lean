@@ -583,7 +583,7 @@ lemma thinTranslationClosureCounterexample_closure_not_coarse :
     thinTranslationClosureCounterexample_not_coarse⟩
 
 /-- Refutation of the coarse cover at `(8, 2, 1)`. -/
-theorem not_translationClosure_coarseCover_two_one :
+lemma not_translationClosure_coarseCover_two_one :
     ¬ BdcTorusWindingToThinCover 8 2 1
       (bdcTorusThinCrossingTranslationClosureEvent 8 2 1) := by
   intro h

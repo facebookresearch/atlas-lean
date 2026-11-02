@@ -14,6 +14,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterR
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedPathChain
 public import MathlibExt.Combinatorics.SimpleGraph.Menger.MengerSplice
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForceMonotone
 
@@ -38,6 +39,10 @@ The Burton–Keane theorem that combined this with the counting hypotheses of
 ## ii. Key results
 
 - `cnp_clusterReachesRay_of_clusterMeetsCorridor` : ray reaching from meeting the corridor.
+
+Removed: `cnp_mouth_connected_corridorCell` and `cnp_cut_someAxis_reach_of_infinite`, which
+duplicated `bc2_forcedPathConn` (in `ForcedPathChain`) and `bc_cutUnbounded_coord` (in
+`CutUnboundedCoordinate`). Callers use the canonical lemmas.
 
 ## iii. Table of contents
 
@@ -66,15 +71,6 @@ variable {d : ℕ}
 
 /-! ## A. The corridor mouth -/
 
-/-- Same statement as `bc2_forcedPathConn`; kept because `ForcedPathChain` is not imported by all
-its
-users. -/
-lemma cnp_mouth_connected_corridorCell (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ)
-    (m : ℕ) (hm1 : 1 ≤ m) (hmL : m ≤ L + 1) :
-    Connected d (removeSite 0 (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω))
-      (hrHD_rayPt j 1) (hrHD_rayPt j (m : ℤ)) :=
-  mco_corridorVert_connected ω j (L + 1) m hm1 hmL
-
 lemma cnp_removeSite_le (ω : ConfigSpace (Sym2 (Site d))) (z : Site d) :
     removeSite z ω ≤ ω := by
   intro e
@@ -102,7 +98,7 @@ lemma cnp_axisRoutingPremise_of_clusterMeetsCorridor (ω : ConfigSpace (Sym2 (Si
   have hmeet' : Connected d (removeSite 0 ω') x (hrHD_rayPt j (m : ℤ)) :=
     connected_mono hle hmeet
   have hcorr : Connected d (removeSite 0 ω') (hrHD_rayPt j 1) (hrHD_rayPt j (m : ℤ)) :=
-    cnp_mouth_connected_corridorCell ω j L m hm1 hmL
+    Walls.bc2_forcedPathConn ω j L m hm1 hmL
   have hcut : Connected d (removeSite 0 ω') x (hrHD_rayPt j 1) := hmeet'.trans hcorr.symm
   have hnear : Connected d ω' x (hrHD_rayPt j 1) :=
     connected_mono (cnp_removeSite_le ω' 0) hcut
@@ -166,14 +162,6 @@ lemma cnp_clusterMeetsCorridor_neighbour (ω : ConfigSpace (Sym2 (Site d))) (j :
   have h := cnp_clusterMeetsCorridor_corridorCell ω j L 1 le_rfl (by omega) (by
     simpa using hinf)
   simpa using h
-
-/-- Same statement as `bc_cutUnbounded_coord`; kept because `CutUnboundedCoordinate` is not imported
-by
-all its users. -/
-lemma cnp_cut_someAxis_reach_of_infinite (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (hinf : (cluster d (removeSite 0 ω) x).Infinite) (n : ℕ) :
-    ∃ y, (∃ i : Fin d, n < (y i).natAbs) ∧ Connected d (removeSite 0 ω) x y :=
-  crr_infinite_reaches_far_coord (removeSite 0 ω) x hinf n
 
 end Percolation
 

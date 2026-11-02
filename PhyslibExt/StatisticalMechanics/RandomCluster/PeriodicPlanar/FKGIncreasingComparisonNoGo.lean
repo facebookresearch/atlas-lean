@@ -121,7 +121,7 @@ lemma aspectOrientationCounterexample_isFKG :
 
 /-- No-go: it is false that every FKG measure satisfies `μ.real A ≤ μ.real B` for all measurable
 increasing events `A` and `B`. -/
-theorem not_fkg_implies_increasing_event_orientation_comparison :
+lemma not_fkg_implies_increasing_event_orientation_comparison :
     ¬ (∀ (mu : Measure (ConfigSpace (Sym2 (Fin 2)))), IsFKG mu →
       ∀ A B : Set (ConfigSpace (Sym2 (Fin 2))),
         MeasurableSet A → MeasurableSet B →

@@ -17,8 +17,11 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneZeroOrOne
 # The merge geometry for Burton–Keane
 
 Two infinite clusters meeting a box give a merge witness, so the merge geometry hypothesis of the
-Burton–Keane argument always holds; with the trifurcation count this gives the Burton–Keane
-conclusion.
+Burton–Keane argument always holds.
+
+Removed: `burton_keane_uniqueness_full`, the Burton–Keane conclusion from a configuration-wide
+trifurcation count. Its counting hypotheses are jointly unsatisfiable for `d ≥ 1`
+(`tfc_not_hbound_hdens`), so the counting route was vacuous in the physical domain.
 
 ## i. Overview
 
@@ -27,26 +30,17 @@ radius `n`; it is contained in the merge witness for the box edges. If `N = k �
 some box has `twoMeetBox` of positive probability, which discharges the merge geometry hypothesis
 (`hmergeGeom_discharged`).
 
-`burton_keane_uniqueness_full` combines this with the trifurcation count: a bound
-`Tcount d ω n ≤ bdry n` for every configuration with `bdry n / |Λₙ| → 0`, and the trifurcation step.
-From these, `P(trifurcation at 0) = 0`, `N ≠ ⊤` almost surely, and the merge argument gives the
-conclusion.
-
 **Fidelity.** `IsTrifurcation` lets an arm neighbour equal the centre, so every site of a line
-configuration is a trifurcation and `Tcount` equals the volume. The counting hypotheses of
-`burton_keane_uniqueness_full` are therefore unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), and
-the theorem has content only for `d = 0`.
+configuration is a trifurcation and `Tcount` equals the volume. A configuration-wide trifurcation
+count bound of order `o(|Λₙ|)` is therefore unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`).
 
 ## ii. Key results
 
 - `hmergeGeom_discharged` : the merge geometry hypothesis holds.
-- `burton_keane_uniqueness_full` : the Burton–Keane conclusion from the counting hypotheses (content
-  only for `d = 0`).
 
 ## iii. Table of contents
 
 - A. Two clusters meeting a box
-- B. The Burton–Keane conclusion
 
 ## iv. References
 
@@ -130,61 +124,6 @@ lemma hmergeGeom_discharged
   obtain ⟨n, hpos⟩ := exists_twoMeetBox_pos μ hk2 hk
   refine ⟨boxEdges d n, lt_of_lt_of_le hpos ?_⟩
   exact measure_mono (twoMeetBox_subset_mergeWitness n k)
-
-/-! ## B. The Burton–Keane conclusion -/
-
-/-- Burton–Keane conclusion from the counting hypotheses: for an ergodic measure with finite energy,
-a
-bound `Tcount d ω n ≤ bdry n` for every configuration with `bdry n / |Λₙ| → 0`, and the trifurcation
-step, a.s. `N ∈ {0, 1}`. The counting hypotheses are unsatisfiable for `d ≥ 1`
-(`tfc_not_hbound_hdens`), so the statement has content only for `d = 0`. -/
-lemma burton_keane_uniqueness_full
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | IsTrifurcation d ω 0}) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-  have hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ := herg.1
-  -- Step 1: `|Λₙ| · P(trifurcation at 0) = E[Tₙ] ≤ bdry n`, and `bdry n / |Λₙ| → 0`.
-  have htri0 : μ {ω | IsTrifurcation d ω 0} = 0 := by
-    set P := (μ {ω | IsTrifurcation d ω 0}).toReal with hP
-    have hle : ∀ n, ((boxFinsetBK d n).card : ℝ) * P ≤ bdry n := by
-      intro n
-      have h1 : (boxFinsetBK d n).card • μ {ω | IsTrifurcation d ω 0} ≤ (bdry n : ℝ≥0∞) := by
-        rw [← expected_Tcount μ hinv n]
-        calc ∫⁻ ω, (Tcount d ω n : ℝ≥0∞) ∂μ ≤ ∫⁻ _, (bdry n : ℝ≥0∞) ∂μ :=
-              lintegral_mono fun ω => Nat.cast_le.mpr (hbound ω n)
-          _ = bdry n := by simp
-      have h2 := ENNReal.toReal_mono (by simp) h1
-      rw [nsmul_eq_mul, ENNReal.toReal_mul] at h2
-      simpa [hP] using h2
-    have hPle : ∀ n, P ≤ (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ) := fun n => by
-      rw [le_div_iff₀ (by exact_mod_cast hvol n)]
-      linarith [hle n]
-    have hP0 : P = 0 :=
-      le_antisymm (ge_of_tendsto hdens (Filter.Eventually.of_forall hPle)) ENNReal.toReal_nonneg
-    exact ((ENNReal.toReal_eq_zero_iff _).mp hP0).resolve_right (measure_ne_top _ _)
-  -- Step 2: the number of infinite clusters is a.s. not `⊤`.
-  have hkne_top : ∀ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 → k ≠ ⊤ := by
-    rintro k hk rfl
-    have hpos := htrif (by rw [hk]; exact one_pos)
-    rw [htri0] at hpos
-    exact lt_irrefl _ hpos
-  -- Step 3: the merge argument.
-  have hmerge : μ (atLeastTwoInfinite d) = 0 :=
-    merge_event_null μ herg hfe hkne_top
-      (fun k hk2 hktop hk => hmergeGeom_discharged μ k hk2 hktop hk)
-  exact ⟨numInfiniteClusters_zero_or_one μ herg hmerge, hmerge,
-    infiniteCluster_unique_ae μ herg hmerge⟩
 
 end Percolation
 

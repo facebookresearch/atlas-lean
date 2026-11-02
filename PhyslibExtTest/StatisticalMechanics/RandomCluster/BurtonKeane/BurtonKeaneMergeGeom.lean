@@ -16,7 +16,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKe
 
 * `twoMeetBox_subset_mergeWitness` at explicit sizes;
 * `iEqLevel_subset_iUnion_twoMeetBox` at `k = 2`;
-* `hmergeGeom_discharged` and `burton_keane_uniqueness_full` checked by type.
+* `hmergeGeom_discharged` checked by type.
+* Removed: `burton_keane_uniqueness_full` was deleted as vacuous (its counting hypotheses are jointly unsatisfiable for `d ≥ 1`).
 -/
 
 @[expose] public section
@@ -35,8 +36,7 @@ example : {ω : ConfigSpace (Sym2 (Site 2)) | numInfiniteClusters 2 ω = 2} ⊆
     ⋃ n, twoMeetBox 2 n 2 :=
   iEqLevel_subset_iUnion_twoMeetBox le_rfl
 
--- The merge geometry and the full uniqueness theorem, by type.
+-- The merge geometry, by type.
 example := @hmergeGeom_discharged
-example := @burton_keane_uniqueness_full
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom

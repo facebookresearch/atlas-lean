@@ -33,9 +33,9 @@ corridor along `G` avoiding the origin. Precursors are measurable, so a countabl
 `DisjointCorridorRouting ω` packages corridors into three disjoint closed regions and gives such
 covers.
 
-**Fidelity.** `burton_keane_uniqueness_corridorCover` and `burton_keane_uniqueness_disjointRouting`
-also assume the counting hypotheses of `burton_keane_uniqueness_full`, which are unsatisfiable for
-`d ≥ 1` (`tfc_not_hbound_hdens`), so they have content only for `d = 0`.
+Removed: `burton_keane_uniqueness_corridorCover` and `burton_keane_uniqueness_disjointRouting`,
+which combined the corridor route with the counting hypotheses. Those hypotheses are
+unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), so the capstones were vacuous.
 
 ## ii. Key results
 
@@ -363,50 +363,6 @@ lemma corridorCover_of_routing {n : ℕ}
       S₁ S₂ S₃ hm1 hm2 hm3 hcl1 hcl2 hcl3 hd12 hd13 hd23
   simp only [Set.mem_iUnion]
   exact ⟨a₁, a₂, a₃, G, hworks⟩
-
-/-- Burton–Keane conclusion from corridor covers of every box and the counting hypotheses of
-`burton_keane_uniqueness_full`. Those hypotheses are unsatisfiable for `d ≥ 1`
-(`tfc_not_hbound_hdens`), so the statement has content only for `d = 0`. -/
-lemma burton_keane_uniqueness_corridorCover
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hcorr : ∀ n : ℕ, threeMeetBox d n ⊆
-      ⋃ (a₁ : Site d) (a₂ : Site d) (a₃ : Site d) (G : Finset (Sym2 (Site d))),
-        CorridorWorks a₁ a₂ a₃ G) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_trif_route μ herg hfe bdry hbound hvol hdens
-    (hroute_of_corridorCover μ hfe hcorr)
-
-/-- Burton–Keane conclusion from disjoint corridor routing in every box and the counting hypotheses
-of
-`burton_keane_uniqueness_full`. Those hypotheses are unsatisfiable for `d ≥ 1`, so the statement has
-content only for `d = 0`. -/
-lemma burton_keane_uniqueness_disjointRouting
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hroute : ∀ (n : ℕ) (ω : ConfigSpace (Sym2 (Site d))),
-      ω ∈ threeMeetBox d n → DisjointCorridorRouting ω) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_corridorCover μ herg hfe bdry hbound hvol hdens
-    (fun n => corridorCover_of_routing (fun ω hω => hroute n ω hω))
 
 end DisjointPaths
 

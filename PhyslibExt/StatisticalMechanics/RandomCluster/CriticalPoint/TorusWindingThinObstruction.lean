@@ -292,7 +292,7 @@ lemma windingThinCounterexample_winding_not_thin :
   ⟨windingThinCounterexample_winds, windingThinCounterexample_not_thin⟩
 
 /-- Refutation of the thin cover at `(2, 1)`. -/
-theorem not_bdcTorusVerticalWindingThinCover_two_one :
+lemma not_bdcTorusVerticalWindingThinCover_two_one :
     ¬ BdcTorusVerticalWindingThinCover 2 1 := by
   intro h
   exact windingThinCounterexample_not_thin

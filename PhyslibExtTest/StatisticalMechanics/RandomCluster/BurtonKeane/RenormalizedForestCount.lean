@@ -17,9 +17,10 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Renormal
 * `bc25_bridge_nonvacuous`: some configuration of `ℤ²` has a coarse trifurcation at scale zero,
   which `bc25_isTrifurcation_of_coarseTrif_zero` turns into a trifurcation at the origin;
 * `bc25_Tcount_zero_le_box` applied;
-* refutation: the forest hypothesis `∀ ω n, 1 ≤ n → aed_GlobalForestArms ω n` of
-  `bc25_burton_keane_uniqueness_of_forest` is false for `d ≥ 1` (via
-  `aed_Tcount_le_boundary_of_globalForestArms` and `tfc_not_forall_Tcount_le_boundary`).
+* refutation: the forest hypothesis `∀ ω n, 1 ≤ n → aed_GlobalForestArms ω n` formerly
+  carried (unused) by `bc25_burton_keane_uniqueness_of_forest` is false for `d ≥ 1` (via
+  `aed_Tcount_le_boundary_of_globalForestArms` and `tfc_not_forall_Tcount_le_boundary`); the
+  renamed lemma `numInfiniteClusters_le_one_of_ergodic_mergeNull` no longer takes it.
 -/
 
 @[expose] public section

@@ -30,13 +30,12 @@ conclusion.
 Three distinct open neighbours of the origin with infinite, pairwise distinct clusters in
 `removeSite 0 ω` form a canonical trifurcation at the origin. `bc8_OriginRewiring d n` asks that
 every configuration of `threeMeetBox d n` become such a configuration after forcing a finite set of
-edges avoiding the origin. It gives corridor covers of `threeMeetBox`, the route for measures with
-finite energy, and the Burton–Keane conclusion. Three non-crossing arms give a canonical
-trifurcation.
+edges avoiding the origin. It gives corridor covers of `threeMeetBox` and the route for measures
+with finite energy. Three non-crossing arms give a canonical trifurcation.
 
-**Fidelity.** `bc8_burtonKeane_uniqueness_of_originRewiring` also assumes the counting hypotheses of
-`burton_keane_uniqueness_full`, which are unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), so it
-has content only for `d = 0`.
+Removed: `bc8_burtonKeane_uniqueness_of_originRewiring`, a Burton–Keane capstone combining origin
+rewiring with the counting hypotheses. Those hypotheses are unsatisfiable for `d ≥ 1`
+(`tfc_not_hbound_hdens`), so the capstone was vacuous.
 
 ## ii. Key results
 
@@ -184,26 +183,6 @@ lemma bc8_hroute_of_originRewiring
     ∀ n : ℕ, 0 < μ (threeMeetBox d n) →
       ∃ a₁ a₂ a₃ : Site d, 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃) :=
   hroute_of_corridorCover μ hfe (fun n => bc8_threeMeetBox_subset_corridorCover n (hrw n))
-
-/-- Burton–Keane conclusion from origin rewiring in every box and the counting hypotheses of
-`burton_keane_uniqueness_full`. Those hypotheses are unsatisfiable for `d ≥ 1`
-(`tfc_not_hbound_hdens`), so the statement has content only for `d = 0`. -/
-lemma bc8_burtonKeane_uniqueness_of_originRewiring
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hrw : ∀ n : ℕ, bc8_OriginRewiring d n) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_trif_route μ herg hfe bdry hbound hvol hdens
-    (bc8_hroute_of_originRewiring μ hfe hrw)
 
 lemma bc8_threeArmsNoCrossing_isCanonical (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     (hω : ω ∈ threeMeetBox d n) :

@@ -16,7 +16,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Canonica
 
 * `bc8_arm_ne_of_cut_ne` and `bc8_isCanonicalTrifurcation_of_originSplits` in conditional form;
 * `bc8_threeArmsNoCrossing_isCanonical` at `n = 2` in `ℤ²`;
-* `bc8_burtonKeane_uniqueness_of_originRewiring` checked by type.
+* Removed: `bc8_burtonKeane_uniqueness_of_originRewiring` was deleted as vacuous (its counting hypotheses are jointly unsatisfiable for `d ≥ 1`).
 -/
 
 @[expose] public section
@@ -46,7 +46,5 @@ example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d)))
 example (ω : ConfigSpace (Sym2 (Site 2))) (hω : ω ∈ threeMeetBox 2 2) :=
   bc8_threeArmsNoCrossing_isCanonical 2 ω hω
 
--- The origin-rewiring uniqueness theorem, by type.
-example := @bc8_burtonKeane_uniqueness_of_originRewiring
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalOriginRewiring

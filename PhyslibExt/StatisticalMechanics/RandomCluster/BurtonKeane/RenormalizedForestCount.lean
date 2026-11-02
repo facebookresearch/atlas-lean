@@ -29,9 +29,14 @@ count, and uniqueness follows from ergodicity and the merge condition alone.
 
 For `L = 0` the coarse box is a single site, and a coarse trifurcation at the origin is a
 trifurcation. Global forest arms (`aed_GlobalForestArms`) bound `Tcount` by the boundary size for `n
-≥ 1`, and the count at `n = 0` is at most the volume. `bc25_burton_keane_uniqueness_of_forest`
-concludes at most one infinite cluster from ergodicity and `μ(at least two infinite clusters) = 0`;
-its forest and density hypotheses are not used.
+≥ 1`, and the count at `n = 0` is at most the volume.
+
+`numInfiniteClusters_le_one_of_ergodic_mergeNull` concludes at most one infinite cluster from
+ergodicity and `μ(at least two infinite clusters) = 0` alone. An earlier version of this lemma
+(`bc25_burton_keane_uniqueness_of_forest`) also took forest, density, and trifurcation hypotheses
+that its proof never used; the forest hypothesis is known to be impossible for every `d ≥ 1`
+(the accompanying test derives its negation), so those premises were removed and the lemma renamed
+to state the ergodicity/merge result it actually proves.
 
 No certificate of this kind can hold for every configuration: each one yields the
 trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
@@ -44,7 +49,7 @@ configuration by configuration; the deterministic counting bound is the reusable
 - `bc25_isTrifurcation_of_coarseTrif_zero` : coarse trifurcations at scale zero are trifurcations
 - `StatMech.Percolation.aed_Tcount_le_boundary_of_globalForestArms` (in `ArmEndDisjoint`) : global
   forest arms bound the count
-- `bc25_burton_keane_uniqueness_of_forest` : uniqueness from ergodicity and the merge condition
+- `numInfiniteClusters_le_one_of_ergodic_mergeNull` : at most one infinite cluster from ergodicity and the merge condition
 
 ## iii. Table of contents
 
@@ -108,15 +113,9 @@ lemma bc25_Tcount_zero_le_box (ω : ConfigSpace (Sym2 (Site d))) :
   unfold Tcount
   exact Finset.card_filter_le _ _
 
-lemma bc25_burton_keane_uniqueness_of_forest
+lemma numInfiniteClusters_le_one_of_ergodic_mergeNull
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (_hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → aed_GlobalForestArms ω n)
-    (_hdens : Filter.Tendsto
-      (fun n => (boxSV_boundaryCard d n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (_htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | IsTrifurcation d ω 0})
     (hmerge : μ (atLeastTwoInfinite d) = 0) :
     ∃ k : ℕ∞, k ≤ 1 ∧ μ {ω | numInfiniteClusters d ω = k} = 1
       ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 := by

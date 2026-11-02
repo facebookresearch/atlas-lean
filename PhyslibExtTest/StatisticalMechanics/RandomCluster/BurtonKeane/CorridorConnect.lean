@@ -15,8 +15,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Corridor
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConnect`
 
 In the plane:
-* `cnp_mouth_connected_corridorCell`: after forcing the axis-`0` corridor and removing the origin,
-  the mouth is connected to the corridor cell at distance `2` (all-closed configuration);
+* `bc2_forcedPathConn` (canonical, in `ForcedPathChain`): after forcing the axis-`0` corridor and
+  removing the origin, the mouth is connected to the corridor cell at distance `2`
+  (all-closed configuration). The former duplicate `cnp_mouth_connected_corridorCell` was removed;
 * `cnp_removeSite_le` for the all-open configuration;
 * `cnp_clusterMeetsCorridor_neighbour` and `cnp_clusterReachesRay_of_clusterMeetsCorridor` in
   conditional form.
@@ -28,6 +29,7 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.Corridor
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation
+open _root_.StatMech.Walls
 
 /-- The all-closed configuration of the planar lattice. -/
 def closed2 : ConfigSpace (Sym2 (Site 2)) := fun _ => false
@@ -35,7 +37,7 @@ def closed2 : ConfigSpace (Sym2 (Site 2)) := fun _ => false
 -- The corridor mouth is connected to the corridor cell at distance `2`.
 example : Connected 2 (removeSite 0 (forceOpenFinset (hrHD_corridorEdges (0 : Fin 2) (3 + 1))
     closed2)) (hrHD_rayPt 0 1) (hrHD_rayPt 0 ((2 : ℕ) : ℤ)) :=
-  cnp_mouth_connected_corridorCell closed2 0 3 2 (by norm_num) (by norm_num)
+  bc2_forcedPathConn closed2 0 3 2 (by norm_num) (by norm_num)
 
 -- Removing a site only closes edges.
 example : removeSite (0 : Site 2) (fun _ => true) ≤ fun _ => true :=

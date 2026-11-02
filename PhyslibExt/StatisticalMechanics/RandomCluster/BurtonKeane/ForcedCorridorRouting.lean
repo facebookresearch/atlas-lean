@@ -34,9 +34,9 @@ infinite cut clusters at the far ends and separated mouths. It gives distinct-cl
 its box version `bc2_BoxForcedCorridorRouting` gives corridor covers of `threeMeetBox`. Neighbour
 witnesses with separated cut clusters give it with lengths `0`.
 
-**Fidelity.** `bc2_burtonKeane_uniqueness_of_box` also assumes the counting hypotheses of
-`burton_keane_uniqueness_full`, which are unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), so it
-has content only for `d = 0`.
+Removed: `bc2_burtonKeane_uniqueness_of_box`, which combined forced corridor routing with the
+counting hypotheses. Those hypotheses are unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`),
+so the capstone was vacuous.
 
 ## ii. Key results
 
@@ -144,26 +144,6 @@ lemma bc2_corridorCover_of_box {n : ℕ} (h : bc2_BoxForcedCorridorRouting d n) 
         CorridorWorks a₁ a₂ a₃ G :=
   csc_corridorCover_of_distinctClusters
     (fun ω hω => bc2_csc_of_forcedCorridorRouting ω (h ω hω))
-
-/-- Burton–Keane conclusion from forced corridor routing in every box and the counting hypotheses of
-`burton_keane_uniqueness_full`. Those hypotheses are unsatisfiable for `d ≥ 1`
-(`tfc_not_hbound_hdens`), so the statement has content only for `d = 0`. -/
-lemma bc2_burtonKeane_uniqueness_of_box
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hroute : ∀ n : ℕ, bc2_BoxForcedCorridorRouting d n) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_corridorCover μ herg hfe bdry hbound hvol hdens
-    (fun n => bc2_corridorCover_of_box (hroute n))
 
 /-! ## C. Neighbour witnesses -/
 

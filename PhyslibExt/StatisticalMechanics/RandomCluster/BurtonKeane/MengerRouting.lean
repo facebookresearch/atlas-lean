@@ -36,8 +36,9 @@ for a core in every configuration with three distinct infinite clusters meeting 
   are disjoint
 - `mng_disjointRouting_of_mengerCore` : a Menger core gives disjoint routing
 - `mng_corridorCover_of_mengerCover` : the routing cover gives the corridor cover
-- `mng_burton_keane_uniqueness_mengerCover` : uniqueness from the routing cover and a
-  configuration-wide trifurcation bound
+Removed: `mng_burton_keane_uniqueness_mengerCover`, which combined the routing cover with a
+configuration-wide trifurcation bound. That bound together with the density hypothesis is
+unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), so the capstone was vacuous.
 
 ## iii. Table of contents
 
@@ -146,26 +147,6 @@ lemma mng_corridorCover_of_mengerCover {n : ℕ} (hcov : MengerRoutingCover d n)
       ⋃ (a₁ : Site d) (a₂ : Site d) (a₃ : Site d) (G : Finset (Sym2 (Site d))),
         CorridorWorks a₁ a₂ a₃ G :=
   corridorCover_of_routing (fun ω hω => mng_disjointRouting d n hcov ω hω)
-
-/-- Burton–Keane uniqueness from a Menger routing cover. The configuration-wide trifurcation bound
-`hbound` together with `hdens` is unsatisfiable when `d ≥ 1` (`tfc_not_hbound_hdens`), so the
-statement is vacuous for `d ≥ 1`. -/
-theorem mng_burton_keane_uniqueness_mengerCover
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hcov : ∀ n : ℕ, MengerRoutingCover d n) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_corridorCover μ herg hfe bdry hbound hvol hdens
-    (fun n => mng_corridorCover_of_mengerCover (hcov n))
 
 end DisjointPaths
 

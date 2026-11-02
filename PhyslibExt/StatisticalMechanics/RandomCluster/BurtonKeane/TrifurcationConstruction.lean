@@ -28,7 +28,9 @@ distinct infinite clusters of `removeSite 0 ω`. Opening the three edges at the 
 origin a trifurcation (`precursor_subset_force_trif`), and under finite-energy merging a
 positive-probability precursor gives a positive-probability trifurcation. `threeMeetBox d n` is the
 event that three distinct infinite clusters meet `B_n`; their union over `n` contains `N = ∞`.
-`burton_keane_uniqueness_trif_route` combines this with the counting route.
+Removed: `burton_keane_uniqueness_trif_route`, which combined the precursor route with the
+counting route. Its counting hypotheses are jointly unsatisfiable for `d ≥ 1`
+(`tfc_not_hbound_hdens`), so the route was vacuous in the physical domain.
 
 ## ii. Key results
 
@@ -36,8 +38,6 @@ event that three distinct infinite clusters meet `B_n`; their union over `n` con
 - `trif_pos_of_precursor_pos` : positive precursor probability gives positive trifurcation
   probability
 - `iEqTop_subset_iUnion_threeMeetBox` : `N = ∞` is covered by the events `threeMeetBox d n`
-- `burton_keane_uniqueness_trif_route` : uniqueness from routing and a trifurcation bound for every
-  configuration
 
 ## iii. Table of contents
 
@@ -228,28 +228,6 @@ lemma htrif_discharged
   obtain ⟨n, hn⟩ := exists_threeMeetBox_pos μ htop
   obtain ⟨a₁, a₂, a₃, hpre⟩ := hroute n hn
   exact trif_pos_of_precursor_pos μ hfe a₁ a₂ a₃ hpre
-
-/-- Burton–Keane uniqueness from a precursor route and a trifurcation count (Burton and Keane,
-*Density and uniqueness in percolation*, 1989). For `d ≥ 1` the hypotheses `hbound` and `hdens`
-cannot hold together (`tfc_not_hbound_hdens`): with the trifurcation notion `IsTrifurcation` no
-configuration-wide bound of order `o(|B_n|)` exists. -/
-theorem burton_keane_uniqueness_trif_route
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hroute : ∀ n : ℕ, 0 < μ (threeMeetBox d n) →
-      ∃ a₁ a₂ a₃ : Site d, 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  burton_keane_uniqueness_full μ herg hfe bdry hbound hvol hdens
-    (htrif_discharged μ hfe hroute)
 
 end Percolation
 

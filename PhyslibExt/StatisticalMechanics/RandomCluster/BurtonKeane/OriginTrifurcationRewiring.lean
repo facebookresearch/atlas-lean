@@ -32,7 +32,9 @@ is never a trifurcation, so the condition fails as soon as such a configuration 
 ## ii. Key results
 
 - `bc12_canonicalTrif_discharges_boxReach` : a canonical trifurcation gives box origin reach
-- `bc12_burtonKeane_uniqueness_of_trifurcation` : the uniqueness statement under the box condition
+Removed: `bc12_burtonKeane_uniqueness_of_trifurcation`, a Burton–Keane capstone combining the box
+trifurcation condition with the counting hypotheses. Those hypotheses are unsatisfiable for
+`d ≥ 1` (`tfc_not_hbound_hdens`), so the capstone was vacuous.
 - `bc12_isolated_origin_not_trifurcation` : an isolated origin is not a trifurcation
 
 ## iii. Table of contents
@@ -124,23 +126,6 @@ lemma bc12_canonicalTrif_of_trifurcation (n : ℕ) (h : bc12_BoxOriginTrifurcati
       IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
   bc9_canonicalTrif_of_boxOriginReach n (bc12_boxOriginReach_of_trifurcation n h) ω hω
 
-lemma bc12_burtonKeane_uniqueness_of_trifurcation
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hr : ∀ n : ℕ, bc12_BoxOriginTrifurcation d n) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc9_burtonKeane_uniqueness_of_boxOriginReach μ herg hfe bdry hbound hvol hdens
-    (fun n => bc12_boxOriginReach_of_trifurcation n (hr n))
-
 lemma bc12_origin_openIncidence_of_trifurcation (ω : ConfigSpace (Sym2 (Site d)))
     (htri : IsCanonicalTrifurcation d ω 0) (W : Finset (Sym2 (Site d)))
     (_hW0 : ∀ e ∈ W, (0 : Site d) ∉ e) :
@@ -193,7 +178,6 @@ lemma bc12_boxOriginTrifurcation_perOmega_of_canonical (ω : ConfigSpace (Sym2 (
         cluster d (removeSite 0 (forceOpenFinset W ω)) y₂ ≠
           cluster d (removeSite 0 (forceOpenFinset W ω)) y₃ :=
   ⟨htri, bc12_canonicalTrif_discharges_boxReach ω htri⟩
-
 
 end Walls
 

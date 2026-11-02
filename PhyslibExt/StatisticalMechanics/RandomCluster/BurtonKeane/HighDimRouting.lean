@@ -28,8 +28,7 @@ infinite clusters to a trifurcation precursor.
 `0` to `L e_j`. Segments along distinct axes meet only at the origin. If every configuration with
 three distinct infinite clusters meeting `B_n` can be completed by finitely many opened edges to a
 neighbour trifurcation precursor (`hrHD_DisjointRouting`), finite-energy merging gives positive
-probability of a trifurcation precursor, and the counting route of
-`burton_keane_uniqueness_trif_route` applies.
+probability of a trifurcation precursor.
 
 ## ii. Key results
 
@@ -37,8 +36,10 @@ probability of a trifurcation precursor, and the counting route of
 - `hrHD_corridor_connected_one_to_L` : an opened corridor connects `e_j` to `L e_j`
 - `hrHD_route_of_routing` : disjoint routing gives the trifurcation route
 - `hrHD_exists_three_independent_axes` : `d ≥ 3` provides three distinct axes
-- `hrHD_burton_keane_uniqueness_dim_ge_three` : uniqueness from disjoint routing and a
-  configuration-wide trifurcation bound
+Removed: `hrHD_burton_keane_uniqueness_dim_ge_three`, a Burton–Keane capstone combining
+disjoint routing with a configuration-wide trifurcation bound. That bound together with the
+density hypothesis is unsatisfiable for `d ≥ 1` (`tfc_not_hbound_hdens`), so the capstone was
+vacuous.
 
 ## iii. Table of contents
 
@@ -270,30 +271,6 @@ lemma hrHD_axis_corridor_branches
   · exact ⟨hrHD_corridor_connected_one_to_L ω j₁ L hL,
       hrHD_corridor_connected_one_to_L ω j₂ L hL,
       hrHD_corridor_connected_one_to_L ω j₃ L hL⟩
-
-/-- Burton–Keane uniqueness in dimension `d ≥ 3` from disjoint routing (Burton and Keane, *Density
-and uniqueness in percolation*, 1989). The hypotheses `hbound` (a trifurcation bound for every
-configuration) and `hdens` (bound over volume tends to `0`) cannot both hold when `d ≥ 1`: see
-`tfc_not_hbound_hdens`. So the statement is vacuous. -/
-theorem hrHD_burton_keane_uniqueness_dim_ge_three
-    (hd : 3 ≤ d)
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
-    (∃ j₁ j₂ j₃ : Fin d, j₁ ≠ j₂ ∧ j₁ ≠ j₃ ∧ j₂ ≠ j₃) ∧
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  ⟨hrHD_exists_three_independent_axes hd,
-    burton_keane_uniqueness_trif_route μ herg hfe bdry hbound hvol hdens
-      (hrHD_route_of_routing μ hfe hrt)⟩
 
 end Percolation
 

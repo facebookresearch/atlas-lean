@@ -36,7 +36,9 @@ canonical trifurcation at the origin with positive probability.
 - `bc9_originRewiring_of_boxOriginReach` : box origin reach gives origin rewiring
 - `bc9_canonicalTrif_of_boxOriginReach` : a canonical trifurcation at the origin with positive
   probability
-- `bc9_burtonKeane_uniqueness_of_boxOriginReach` : the corresponding uniqueness statement
+Removed: `bc9_burtonKeane_uniqueness_of_boxOriginReach`, a Burton–Keane capstone combining box
+origin reach with the counting hypotheses. Those hypotheses are unsatisfiable for `d ≥ 1`
+(`tfc_not_hbound_hdens`), so the capstone was vacuous.
 
 ## iii. Table of contents
 
@@ -119,23 +121,6 @@ lemma bc9_canonicalTrif_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n)
       IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
   bc8_canonicalTrif_of_originRewiring n (bc9_originRewiring_of_boxOriginReach n h) ω hω
 
-lemma bc9_burtonKeane_uniqueness_of_boxOriginReach
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Filter.Tendsto
-      (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
-      Filter.atTop (nhds 0))
-    (hr : ∀ n : ℕ, bc9_BoxOriginReach d n) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc8_burtonKeane_uniqueness_of_originRewiring μ herg hfe bdry hbound hvol hdens
-    (fun n => bc9_originRewiring_of_boxOriginReach n (hr n))
-
 lemma bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
     {y₁ y₂ y₃ : Site d} (hy1 : y₁ ≠ 0) (hy2 : y₂ ≠ 0) (hy3 : y₃ ≠ 0)
     (hc1 : Connected d ω 0 y₁) (hc2 : Connected d ω 0 y₂) (hc3 : Connected d ω 0 y₃)
@@ -172,7 +157,6 @@ lemma bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))
   · exact hd12
   · exact hd13
   · exact hd23
-
 
 end Walls
 
