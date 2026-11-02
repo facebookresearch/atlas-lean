@@ -35,11 +35,17 @@ open scoped CslibStlc
 
 universe u
 
-/-- Lambda abstractions are the values of the pure calculus. -/
+/-- **Values of STLC.** A term of type $A$ in a context $\Gamma$ is a value exactly when it is a
+lambda abstraction. -/
 inductive Value {Base : Type u} : {Γ : List (Ty Base)} → {A : Ty Base} → Tm Γ A → Prop where
   | lam {A B : Ty Base} {Γ : List (Ty Base)} (body : Tm (A :: Γ) B) : Value (.lam body)
 
-/-- Left-to-right call-by-value reduction. -/
+/-- **Small-step call-by-value reduction in STLC.** One-step reduction on terms of type $A$ in a
+context $\Gamma$ is the least relation closed under three left-to-right call-by-value rules: if
+$f$ reduces to $f'$, then the application $f\,a$ reduces to $f'\,a$; if $f$ is a value and $a$
+reduces to $a'$, then $f\,a$ reduces to $f\,a'$; and if $a$ is a value, then the application of
+the abstraction of $b$ to $a$ reduces to $b[a]$, the result of substituting $a$ for the newest
+free variable of $b$. -/
 inductive Step {Base : Type u} : {Γ : List (Ty Base)} → {A : Ty Base} →
     Tm Γ A → Tm Γ A → Prop where
   | appFun {A B : Ty Base} {Γ : List (Ty Base)} {f f' : Tm Γ (A ⇒ B)} {a : Tm Γ A} :
@@ -67,19 +73,23 @@ end Value
 
 namespace Step
 
-/-- Values cannot reduce. -/
+/-- **Values are irreducible.** If a term $t$ of type $A$ in a context $\Gamma$ is a value, then
+there is no term $t'$ to which $t$ reduces in one call-by-value step. -/
 theorem value_irreducible {t t' : Tm Γ A} (hv : Value t) : ¬ t ⟶ₛ t' := by
   intro hs
   cases hv
   cases hs
 
-/-- A closed function value is necessarily a lambda abstraction. -/
+/-- **Canonical forms for closed function values.** If a term $f$ of function type
+$A \Rightarrow B$ in the empty context is a value, then $f$ is a lambda abstraction: there is a
+term $b$ of type $B$ in the one-variable context $[A]$ such that $f$ is the abstraction of $b$. -/
 theorem closed_function_value_is_lam {f : Tm [] (A ⇒ B)} (hv : Value f) :
     ∃ body : Tm [A] B, f = .lam body := by
   cases hv with
   | lam body => exact ⟨body, rfl⟩
 
-/-- A closed well-typed term is a value or can take a step. -/
+/-- **Progress for closed STLC terms.** Every term $t$ of type $A$ in the empty context is
+either a value or reduces in one call-by-value step to some term $t'$. -/
 theorem progress : {A : Ty Base} → (t : Tm [] A) → Value t ∨ ∃ t', t ⟶ₛ t'
   | _, .var x => nomatch x
   | _, .lam body => Or.inl (.lam body)
@@ -91,7 +101,9 @@ theorem progress : {A : Ty Base} → (t : Tm [] A) → Value t ∨ ∃ t', t ⟶
         · exact Or.inr ⟨.app f a', .appArg hvf hsa⟩
       · exact Or.inr ⟨.app f' a, .appFun hsf⟩
 
-/-- Call-by-value reduction is deterministic. -/
+/-- **Small-step call-by-value reduction in STLC is deterministic.** For terms $t$, $t_1$,
+$t_2$ of type $A$ in a context $\Gamma$, if $t$ reduces in one call-by-value step both to $t_1$
+and to $t_2$, then $t_1 = t_2$. -/
 theorem deterministic {t t₁ t₂ : Tm Γ A} (h₁ : t ⟶ₛ t₁) (h₂ : t ⟶ₛ t₂) : t₁ = t₂ := by
   induction h₁ with
   | @appFun A B Γ f f' a hstep ih =>
@@ -110,10 +122,13 @@ theorem deterministic {t t₁ t₂ : Tm Γ A} (h₁ : t ⟶ₛ t₁) (h₂ : t �
       | appArg _ hstep => exact (value_irreducible hva hstep).elim
       | beta _ => rfl
 
-/-- A term is in normal form when it has no outgoing reduction. -/
+/-- **Normal forms for call-by-value reduction in STLC.** A term $t$ of type $A$ in a context
+$\Gamma$ is in normal form when there is no term $t'$ such that $t$ reduces to $t'$ in one
+call-by-value step. -/
 def NormalForm (t : Tm Γ A) : Prop := ∀ t', ¬t ⟶ₛ t'
 
-/-- For closed well-typed terms, normal forms are exactly values. -/
+/-- **Closed normal forms are exactly the values.** A term $t$ of type $A$ in the empty context
+is in normal form, that is, has no call-by-value reduction step, if and only if it is a value. -/
 theorem closed_normalForm_iff_value (t : Tm [] A) : NormalForm t ↔ Value t := by
   constructor
   · intro hnormal
@@ -125,7 +140,8 @@ theorem closed_normalForm_iff_value (t : Tm [] A) : NormalForm t ↔ Value t := 
 
 end Step
 
-/-- Reflexive transitive closure of evaluation. -/
+/-- **Multi-step call-by-value reduction in STLC.** For terms of type $A$ in a context $\Gamma$,
+multi-step reduction is the reflexive transitive closure of one-step call-by-value reduction. -/
 abbrev Steps {Base : Type u} {Γ : List (Ty Base)} {A : Ty Base} :=
   Relation.ReflTransGen (@Step Base Γ A)
 

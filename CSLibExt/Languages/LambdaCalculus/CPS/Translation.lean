@@ -51,13 +51,16 @@ universe u v
 
 variable {Base : Type u}
 
-/-- The call-by-value CPS translation of types, for answer type `R`. -/
+/-- **Call-by-value CPS translation of types.** For a fixed answer type $R$, the translation
+$\overline{A}$ of a simple type $A$ is defined by recursion on $A$: $\overline{b} = b$ for a base
+type $b$, and $\overline{A \to B} = \overline{A} \to ((\overline{B} \to R) \to R)$. -/
 def cpsTy (R : Ty Base) : Ty Base → Ty Base
   | .base b => .base b
   | .arr A B => cpsTy R A ⇒ ((cpsTy R B ⇒ R) ⇒ R)
 
-/-- The type of CPS computations returning a value of type `A`:
-`(⟦A⟧ → R) → R`. -/
+/-- **CPS computation type.** For an answer type $R$ and a simple type $A$, the type of CPS
+computations returning a value of type $A$ is $(\overline{A} \to R) \to R$, where $\overline{A}$
+is the call-by-value CPS translation of $A$ for answer type $R$. -/
 abbrev compTy (R : Ty Base) (A : Ty Base) : Ty Base :=
   (cpsTy R A ⇒ R) ⇒ R
 
@@ -68,14 +71,23 @@ abbrev compTy (R : Ty Base) (A : Ty Base) : Ty Base :=
 
 variable (R : Ty Base)
 
-/-- The translation of a variable: the same position in the translated
-context. -/
+/-- **CPS translation of variables.** Fix an answer type $R$ and write $\overline{A}$ for the
+call-by-value CPS translation of a type $A$. A de Bruijn variable of type $A$ in a context
+$A_1, \ldots, A_n$ is sent to the variable at the same position in the translated context
+$\overline{A_1}, \ldots, \overline{A_n}$, which has type $\overline{A}$. -/
 def cpsVar : {Γ : List (Ty Base)} → {A : Ty Base} →
     Var Γ A → Var (Γ.map (cpsTy R)) (cpsTy R A)
   | _, _, .zero => .zero
   | _, _, .succ x => .succ (cpsVar x)
 
-/-- The call-by-value CPS translation of terms. -/
+/-- **Call-by-value CPS translation of terms.** Fix an answer type $R$ and write $\overline{A}$
+for the call-by-value CPS translation of a type $A$ and $\overline{\Gamma}$ for the context
+obtained by translating each type of a context $\Gamma$. A term $M$ of type $A$ in context
+$\Gamma$ is sent to a term $\overline{M}$ of type $(\overline{A} \to R) \to R$ in context
+$\overline{\Gamma}$, defined by recursion on $M$ by $\overline{x} = \lambda k.\,k\,x$,
+$\overline{\lambda x.\,M} = \lambda k.\,k\,(\lambda x.\,\overline{M})$ and
+$\overline{M\,N} = \lambda k.\,\overline{M}\,(\lambda m.\,\overline{N}\,(\lambda n.\,m\,n\,k))$,
+where $k$, $m$ and $n$ are fresh variables. -/
 def cps : {Γ : List (Ty Base)} → {A : Ty Base} →
     Tm Γ A → Tm (Γ.map (cpsTy R)) (compTy R A)
   | _, _, .var x => .lam (.app (.var .zero) (.var (.succ (cpsVar R x))))
@@ -113,10 +125,13 @@ end Equations
 
 variable {I : Base → Type v}
 
-/-- The logical relation between direct-style values of type `A` and values of
-the CPS type `⟦A⟧`: equality at base types; at function types, related
-arguments give a CPS function that passes a related result to every
-continuation. -/
+/-- **Logical relation for the CPS translation.** Fix an answer type $R$ and an interpretation
+$I$ of the base types; write $D(A)$ for the set interpreting a simple type $A$ under $I$ and
+$\overline{A}$ for the call-by-value CPS translation of $A$. The relation $a \sim_A a'$ between
+$a \in D(A)$ and $a' \in D(\overline{A})$ is defined by recursion on $A$: at a base type $b$,
+$a \sim_b a'$ means $a = a'$; at a function type, $f \sim_{A \to B} f'$ means that for all
+$a \sim_A a'$ there is a $b' \in D(\overline{B})$ with $f(a) \sim_B b'$ and $f'(a')(k) = k(b')$
+for every continuation $k \in D(\overline{B} \to R)$. -/
 def Rel (I : Base → Type v) : (A : Ty Base) → Ty.denote I A → Ty.denote I (cpsTy R A) → Prop
   | .base _, a, a' => a = a'
   | .arr A B, f, f' => ∀ a a', Rel I A a a' →
@@ -130,7 +145,12 @@ theorem rel_arr (A B : Ty Base) (f : Ty.denote I (A ⇒ B))
     Rel R I (A ⇒ B) f f' ↔ ∀ a a', Rel R I A a a' →
       ∃ b', Rel R I B (f a) b' ∧ ∀ k, f' a' k = k b' := Iff.rfl
 
-/-- Environments related variable by variable. -/
+/-- **Related environments.** Fix an answer type $R$ and an interpretation $I$ of the base types,
+and write $\overline{\Gamma}$ for the context obtained by translating each type of a context
+$\Gamma$ by the call-by-value CPS translation. An environment $\eta$ for $\Gamma$ and an
+environment $\eta'$ for $\overline{\Gamma}$ are related when, for every variable $x$ of type $A$
+in $\Gamma$, the value $\eta(x)$ is related at type $A$, by the CPS logical relation, to the value
+that $\eta'$ assigns to the variable at the same position in $\overline{\Gamma}$. -/
 def EnvRel {Γ : List (Ty Base)} (η : Env I Γ) (η' : Env I (Γ.map (cpsTy R))) : Prop :=
   ∀ {A} (x : Var Γ A), Rel R I A (η x) (η' (cpsVar R x))
 
@@ -143,9 +163,14 @@ theorem EnvRel.cons {Γ : List (Ty Base)} {A : Ty Base} {η : Env I Γ}
   | zero => exact ha
   | succ x => exact hη x
 
-/-- Denotational correctness of the CPS translation (Meyer–Wand): in related
-environments, the translation of `t` applied to any continuation `k` is `k v'`
-for a single value `v'` related to the denotation of `t`. -/
+/-- **Denotational correctness of the CPS translation (Meyer–Wand).** Fix an answer type $R$
+and an interpretation $I$ of the base types; write $D(A)$ for the set interpreting a type $A$,
+$\overline{A}$, $\overline{\Gamma}$ and $\overline{t}$ for the call-by-value CPS translations of
+types, contexts and terms, and $[t]_\eta$ for the denotation of a term $t$ in an environment
+$\eta$. Let $t$ be a term of type $A$ in context $\Gamma$, and let $\eta$ and $\eta'$ be related
+environments for $\Gamma$ and $\overline{\Gamma}$. Then there is a value $v' \in D(\overline{A})$,
+related to $[t]_\eta$ by the CPS logical relation at $A$, such that $[\overline{t}]_{\eta'}(k) =
+k(v')$ for every continuation $k \colon D(\overline{A}) \to D(R)$. -/
 theorem cps_correct {Γ : List (Ty Base)} {A : Ty Base} (t : Tm Γ A) {η : Env I Γ}
     {η' : Env I (Γ.map (cpsTy R))} (hη : EnvRel R η η') :
     ∃ v', Rel R I A (Tm.denote I t η) v' ∧
@@ -174,8 +199,13 @@ theorem cps_correct {Γ : List (Ty Base)} {A : Ty Base} (t : Tm Γ A) {η : Env 
         exact congrFun (hwa m) _
       exact hstep.trans ((hfk _).trans ((hak _).trans (hbk k)))
 
-/-- At a base type the relation is equality, so the CPS translation of a term
-of base type passes exactly the term's value to the continuation. -/
+/-- **CPS translation at a base type.** Fix an answer type $R$ and an interpretation $I$ of the
+base types; write $D(A)$ for the set interpreting a type $A$, $\overline{\Gamma}$ and
+$\overline{t}$ for the call-by-value CPS translations of contexts and terms, and $[t]_\eta$ for
+the denotation of a term $t$ in an environment $\eta$. Let $t$ be a term of base type $b$ in
+context $\Gamma$, and let $\eta$ and $\eta'$ be related environments for $\Gamma$ and
+$\overline{\Gamma}$. Then $[\overline{t}]_{\eta'}(k) = k([t]_\eta)$ for every continuation
+$k \colon I(b) \to D(R)$. -/
 theorem cps_denote_base {Γ : List (Ty Base)} {b : Base} (t : Tm Γ (.base b))
     {η : Env I Γ} {η' : Env I (Γ.map (cpsTy R))} (hη : EnvRel R η η')
     (k : Ty.denote I (cpsTy R (.base b) ⇒ R)) :
@@ -184,8 +214,12 @@ theorem cps_denote_base {Γ : List (Ty Base)} {b : Base} (t : Tm Γ (.base b))
   rw [hk k]
   exact congrArg k hv.symm
 
-/-- With the answer type equal to the term's base type, running the CPS
-translation with the identity continuation returns the term's value. -/
+/-- **CPS translation at a base type with the identity continuation.** Fix an interpretation $I$
+of the base types, let $t$ be a term of base type $b$ in context $\Gamma$, and take the answer
+type to be $b$; write $\overline{\Gamma}$ and $\overline{t}$ for the call-by-value CPS
+translations of $\Gamma$ and $t$, and $[t]_\eta$ for the denotation of $t$ in an environment
+$\eta$. If $\eta$ and $\eta'$ are related environments for $\Gamma$ and $\overline{\Gamma}$, then
+$[\overline{t}]_{\eta'}(\mathrm{id}) = [t]_\eta$, where $\mathrm{id}$ is the identity on $I(b)$. -/
 theorem cps_denote_base_id {Γ : List (Ty Base)} {b : Base} (t : Tm Γ (.base b))
     {η : Env I Γ} {η' : Env I (Γ.map (cpsTy (.base b)))} (hη : EnvRel (.base b) η η') :
     Tm.denote I (cps (.base b) t) η' id = Tm.denote I t η :=

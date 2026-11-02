@@ -37,8 +37,12 @@ expressions. Subtraction is truncated natural subtraction, as in `AExp.sub`.
 
 namespace Cslib.IMP.StackMachine
 
-/-- Instructions of the stack machine. Jump targets are absolute program
-counters. -/
+/-- **Stack machine instructions.** An instruction of the stack machine is one of
+$\mathsf{push}\ n$, $\mathsf{load}\ x$ and $\mathsf{store}\ x$ for natural numbers $n$ and $x$;
+the arithmetic instructions $\mathsf{add}$, $\mathsf{sub}$ and $\mathsf{mul}$; the comparison and
+Boolean instructions $\mathsf{eq}$, $\mathsf{le}$, $\mathsf{not}$ and $\mathsf{and}$; and the
+jumps $\mathsf{jump}\ t$ and $\mathsf{jumpIfZero}\ t$ for a natural number $t$. Jump targets are
+absolute program counters. -/
 inductive Instr where
   | push (n : Nat)
   | load (x : Nat)
@@ -54,13 +58,35 @@ inductive Instr where
   | jumpIfZero (target : Nat)
   deriving DecidableEq, Repr
 
-/-- Machine configuration: program counter, stack (head is top), state. -/
+/-- **Stack machine configurations.** A configuration of the stack machine is a triple
+$(pc, \sigma, s)$ of a program counter $pc \in \mathbb{N}$, a stack $\sigma$, which is a finite list
+of natural numbers whose head is the top of the stack, and a state $s$ assigning a natural number
+to each variable. -/
 abbrev Config := Nat × List Nat × State
 
-/-- Single execution steps of the stack machine running `prog`. Each step
-fetches the instruction at the current program counter. For binary
-instructions the top of the stack `a` is the right operand and the value
-below it `b` is the left operand. -/
+/-- **Step relation of the stack machine.** Let $P$ be a program, that is a list of instructions,
+and write $a :: \sigma$ for the stack with top $a$ above the stack $\sigma$. A configuration
+$(pc, \sigma, s)$ steps to a configuration $c'$ under $P$ exactly when $pc < |P|$ and, for the
+instruction at position $pc$ of $P$ (counted from $0$), one of the following holds, where
+$s[x \mapsto v]$ is the state $s$ with variable $x$ set to $v$.
+
+- $\mathsf{push}\ n$: $c' = (pc + 1, n :: \sigma, s)$.
+- $\mathsf{load}\ x$: $c' = (pc + 1, s(x) :: \sigma, s)$.
+- $\mathsf{store}\ x$: $\sigma = v :: \tau$ and $c' = (pc + 1, \tau, s[x \mapsto v])$.
+- $\mathsf{add}$, $\mathsf{sub}$, $\mathsf{mul}$: $\sigma = a :: b :: \tau$ and
+  $c' = (pc + 1, r :: \tau, s)$, where $r$ is $b + a$, $\max(b - a, 0)$ or $b \cdot a$ respectively.
+- $\mathsf{eq}$, $\mathsf{le}$: $\sigma = a :: b :: \tau$ and $c' = (pc + 1, r :: \tau, s)$,
+  where $r$ is $1$ if $b = a$, respectively $b \le a$, and $r = 0$ otherwise.
+- $\mathsf{not}$: $\sigma = a :: \tau$ and $c' = (pc + 1, r :: \tau, s)$, where $r = 1$ if $a = 0$
+  and $r = 0$ otherwise.
+- $\mathsf{and}$: $\sigma = a :: b :: \tau$ and $c' = (pc + 1, r :: \tau, s)$, where $r = 1$ if
+  $b \ne 0$ and $a \ne 0$, and $r = 0$ otherwise.
+- $\mathsf{jump}\ t$: $c' = (t, \sigma, s)$.
+- $\mathsf{jumpIfZero}\ t$: either $\sigma = 0 :: \tau$ and $c' = (t, \tau, s)$, or
+  $\sigma = (n + 1) :: \tau$ for some $n$ and $c' = (pc + 1, \tau, s)$.
+
+For binary instructions the top of the stack $a$ is thus the right operand and the value below it
+$b$ is the left operand. -/
 inductive Step (prog : List Instr) : Config → Config → Prop
   | push {pc n : Nat} {stack : List Nat} {s : State}
       (hfetch : prog[pc]? = some (.push n)) :
@@ -106,19 +132,26 @@ inductive Step (prog : List Instr) : Config → Config → Prop
       (hfetch : prog[pc]? = some (.jumpIfZero target)) :
       Step prog (pc, (n + 1) :: stack, s) (pc + 1, stack, s)
 
-/-- Finite sequences of machine steps. -/
+/-- **Multi-step execution of the stack machine.** For a program $P$, the multi-step relation on
+configurations is the reflexive transitive closure of the step relation of the stack machine
+running $P$: it relates $c$ to $c'$ when $c'$ is obtained from $c$ by zero or more steps. -/
 abbrev Steps (prog : List Instr) : Config → Config → Prop :=
   Relation.ReflTransGen (Step prog)
 
-/-- The machine step relation is deterministic: the fetched instruction and
-the shape of the stack determine the next configuration. -/
+/-- **Determinism of the stack machine.** For every program $P$, the step relation of the stack
+machine running $P$ is deterministic: if a configuration $x$ steps to $y$ and to $z$, then
+$y = z$. The fetched instruction and the shape of the stack determine the next configuration. -/
 theorem Step.deterministic {prog : List Instr} {x y z : Config}
     (h1 : Step prog x y) (h2 : Step prog x z) : y = z := by
   cases h1 <;> cases h2 <;> simp_all
 
-/-- No step is possible once the program counter reaches or passes the end
-of the program, since the fetch fails. This justifies calling the program
-counter `codeLength c` the halt address of `compile c 0`. -/
+/-- **No step past the end of the program.** Let $P$ be a program, that is a list of instructions,
+and let $(pc, \sigma, s)$ be a configuration with $|P| \le pc$. Then the stack machine running $P$
+has no step from $(pc, \sigma, s)$ to any configuration, since there is no instruction at
+position $pc$ to fetch.
+
+Hence the length of the code compiled from a command at base address $0$ is a halt address for
+that code. -/
 theorem no_step_of_length_le {prog : List Instr} {pc : Nat} {stack : List Nat}
     {s : State} (h : prog.length ≤ pc) (y : Config) :
     ¬ Step prog (pc, stack, s) y := by
@@ -126,7 +159,12 @@ theorem no_step_of_length_le {prog : List Instr} {pc : Nat} {stack : List Nat}
   have hnone : prog[pc]? = none := List.getElem?_eq_none_iff.mpr h
   cases hstep <;> simp_all
 
-/-- Number of instructions generated for an arithmetic expression. -/
+/-- **Instruction count of an arithmetic expression.** The instruction count $\ell(a)$ of an
+arithmetic expression $a$ is defined by recursion on $a$: a constant or a variable has count $1$,
+and if $a$ is the sum, difference or product of $a_1$ and $a_2$, then
+$\ell(a) = \ell(a_1) + \ell(a_2) + 1$.
+
+It is the number of stack-machine instructions generated when $a$ is compiled. -/
 def alen : AExp → Nat
   | .const _ => 1
   | .var _ => 1
@@ -134,7 +172,13 @@ def alen : AExp → Nat
   | .sub left right => alen left + alen right + 1
   | .mul left right => alen left + alen right + 1
 
-/-- Number of instructions generated for a Boolean expression. -/
+/-- **Instruction count of a Boolean expression.** The instruction count $\ell(b)$ of a Boolean
+expression $b$ is defined by recursion on $b$, using the instruction count $\ell(a)$ of
+arithmetic expressions $a$: a truth value has count $1$; the tests $a_1 = a_2$ and $a_1 \le a_2$
+have count $\ell(a_1) + \ell(a_2) + 1$; the negation of $b_1$ has count $\ell(b_1) + 1$; and the
+conjunction of $b_1$ and $b_2$ has count $\ell(b_1) + \ell(b_2) + 1$.
+
+It is the number of stack-machine instructions generated when $b$ is compiled. -/
 def blen : BExp → Nat
   | .truth _ => 1
   | .eq left right => alen left + alen right + 1
@@ -142,7 +186,15 @@ def blen : BExp → Nat
   | .not body => blen body + 1
   | .and left right => blen left + blen right + 1
 
-/-- Number of instructions generated for a command. -/
+/-- **Instruction count of a command.** The instruction count $\ell(c)$ of an IMP command $c$ is
+defined by recursion on $c$, using the instruction counts $\ell(a)$ and $\ell(b)$ of arithmetic
+and Boolean expressions: $\ell(\mathbf{skip}) = 0$; $\ell(x := a) = \ell(a) + 1$;
+$\ell(c_1; c_2) = \ell(c_1) + \ell(c_2)$;
+$\ell(\mathbf{if}\ b\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2) =
+\ell(b) + 1 + \ell(c_1) + 1 + \ell(c_2)$;
+and $\ell(\mathbf{while}\ b\ \mathbf{do}\ c_1) = \ell(b) + 1 + \ell(c_1) + 1$.
+
+It is the number of stack-machine instructions generated when $c$ is compiled. -/
 def codeLength : Cmd → Nat
   | .skip => 0
   | .assign _ value => alen value + 1
@@ -151,7 +203,13 @@ def codeLength : Cmd → Nat
       blen guard + 1 + codeLength thenBranch + 1 + codeLength elseBranch
   | .while guard body => blen guard + 1 + codeLength body + 1
 
-/-- Compile an arithmetic expression, leaving its value on top of the stack. -/
+/-- **Compilation of arithmetic expressions.** The compiled code of an arithmetic expression is
+the list of stack-machine instructions defined by recursion: a constant $n$ compiles to the
+single instruction push $n$, a variable $x$ to the single instruction load $x$, and the sum,
+difference or product of $a_1$ and $a_2$ to the code of $a_1$, then the code of $a_2$, then the
+single instruction add, sub or mul respectively.
+
+Running this code leaves the value of the expression on top of the stack. -/
 def compileA : AExp → List Instr
   | .const value => [.push value]
   | .var name => [.load name]
@@ -159,8 +217,15 @@ def compileA : AExp → List Instr
   | .sub left right => compileA left ++ compileA right ++ [.sub]
   | .mul left right => compileA left ++ compileA right ++ [.mul]
 
-/-- Compile a Boolean expression, leaving `1` (true) or `0` (false) on top of
-the stack. -/
+/-- **Compilation of Boolean expressions.** The compiled code of a Boolean expression is the list
+of stack-machine instructions defined by recursion, using the compiled code of arithmetic
+expressions: the truth value true compiles to the single instruction push $1$ and false to push
+$0$; the test $a_1 = a_2$ (respectively $a_1 \le a_2$) compiles to the code of $a_1$, then the
+code of $a_2$, then the equality (respectively order) test instruction; the negation of $b_1$
+compiles to the code of $b_1$ followed by the negation instruction; and the conjunction of $b_1$
+and $b_2$ compiles to the code of $b_1$, then the code of $b_2$, then the conjunction instruction.
+
+Running this code leaves $1$ (true) or $0$ (false) on top of the stack. -/
 def compileB : BExp → List Instr
   | .truth value => [.push (cond value 1 0)]
   | .eq left right => compileA left ++ compileA right ++ [.eqI]
@@ -168,8 +233,16 @@ def compileB : BExp → List Instr
   | .not body => compileB body ++ [.notI]
   | .and left right => compileB left ++ compileB right ++ [.andI]
 
-/-- Compile a command at a base program counter. Jump targets are absolute,
-so the base is threaded through sequencing using `codeLength`. -/
+/-- **Compilation of commands.** The compiled code $C_p(c)$ of an IMP command $c$ at base program
+counter $p$ is the list of stack-machine instructions defined by recursion on $c$, where jump
+targets are absolute program counters and $\ell$ denotes instruction counts:
+$C_p(\mathbf{skip})$ is empty; $C_p(x := a)$ is the code of $a$ followed by the instruction
+store $x$; $C_p(c_1; c_2)$ is $C_p(c_1)$ followed by $C_{p + \ell(c_1)}(c_2)$. For the
+conditional $\mathbf{if}\ b\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2$, put $q = p + \ell(b) + 1$
+and $r = q + \ell(c_1) + 1$; its code is the code of $b$, then jump-if-zero to $r$, then
+$C_q(c_1)$, then jump to $r + \ell(c_2)$, then $C_r(c_2)$. For the loop
+$\mathbf{while}\ b\ \mathbf{do}\ c_1$, put $q = p + \ell(b) + 1$; its code is the code of $b$,
+then jump-if-zero to $q + \ell(c_1) + 1$, then $C_q(c_1)$, then jump to $p$. -/
 def compile : Cmd → Nat → List Instr
   | .skip, _ => []
   | .assign name value, _ => compileA value ++ [.store name]
@@ -210,8 +283,10 @@ theorem compile_length (c : Cmd) (pc : Nat) :
       simp [compile, codeLength, List.length_append, compileB_length, ihBody]
       omega
 
-/-- Fetching inside an embedded code segment: the instruction at offset `i`
-of `seg` is found at `before.length + i` in the whole program. -/
+/-- **Fetching from an embedded code segment.** Let $B$, $S$ and $A$ be lists of instructions and
+let $i < |S|$ be a natural number. Then the instruction at position $|B| + i$ of the concatenation
+$B\,S\,A$ of the three lists equals the instruction at position $i$ of $S$, positions being
+counted from $0$. -/
 theorem fetch_segment {before seg after : List Instr} {i : Nat}
     (hi : i < seg.length) :
     (before ++ seg ++ after)[before.length + i]? = seg[i]? := by
@@ -279,8 +354,13 @@ private theorem compile_while_fetch_jump {b : BExp} {c : Cmd} {pc : Nat} :
     omega
   exact fetch_append_cons hk
 
-/-- Compiled arithmetic code, run inside any surrounding program, pushes the
-value of the expression and otherwise leaves the stack and state unchanged. -/
+/-- **Compiled arithmetic code pushes the value of the expression.** Let $a$ be an arithmetic
+expression with compiled code $C(a)$ and instruction count $\ell(a)$, let $P$ and $Q$ be lists of
+instructions, $\sigma$ a stack and $s$ a state, and write $|P|$ for the length of $P$. The stack
+machine running the program $P \, C(a) \, Q$ (the concatenation of $P$, $C(a)$ and $Q$) goes in
+finitely many steps from program counter $|P|$, stack $\sigma$ and state $s$ to program counter
+$|P| + \ell(a)$, the stack obtained from $\sigma$ by pushing the value of $a$ in $s$, and the
+same state $s$. -/
 theorem compileA_runs {a : AExp} {before after : List Instr} {stack : List Nat}
     {s : State} :
     Steps (before ++ compileA a ++ after) (before.length, stack, s)
@@ -437,9 +517,13 @@ private theorem cond_eval_and {l r : BExp} {s : State} :
       (if cond (l.eval s) 1 0 ≠ 0 ∧ cond (r.eval s) 1 0 ≠ 0 then 1 else 0) := by
   cases hl : l.eval s <;> cases hr : r.eval s <;> simp [BExp.eval, hl, hr]
 
-/-- Compiled Boolean code, run inside any surrounding program, pushes `1` if
-the expression evaluates to `true` and `0` otherwise, leaving the rest of
-the stack and the state unchanged. -/
+/-- **Compiled Boolean code pushes the truth value of the expression.** Let $b$ be a Boolean
+expression with compiled code $C(b)$ and instruction count $\ell(b)$, let $P$ and $Q$ be lists of
+instructions, $\sigma$ a stack and $s$ a state, and write $|P|$ for the length of $P$. The stack
+machine running the program $P \, C(b) \, Q$ (the concatenation of $P$, $C(b)$ and $Q$) goes in
+finitely many steps from program counter $|P|$, stack $\sigma$ and state $s$ to program counter
+$|P| + \ell(b)$, the stack obtained from $\sigma$ by pushing $1$ if $b$ evaluates to true in $s$
+and $0$ otherwise, and the same state $s$. -/
 theorem compileB_runs {b : BExp} {before after : List Instr} {stack : List Nat}
     {s : State} :
     Steps (before ++ compileB b ++ after) (before.length, stack, s)
@@ -598,11 +682,13 @@ theorem compileB_runs {b : BExp} {before after : List Instr} {stack : List Nat}
         cond_eval_and]
       exact (hL.trans hR).trans (Relation.ReflTransGen.single hstep)
 
-/-- Compiled command code, run inside any surrounding program, simulates a
-big-step execution: it ends just past the compiled segment with the stack
-restored and the state updated as in the big-step derivation. The proof is
-by induction on the derivation, so that both the body and the remaining
-loop are available in the `whileTrue` case. -/
+/-- **Compiled command code simulates big-step execution.** Let $c$ be a command and $s$, $s'$
+states such that $c$ run from $s$ terminates in $s'$ under the big-step semantics. Let $P$ and
+$Q$ be lists of instructions, $\sigma$ a stack, $|P|$ the length of $P$, $C_p(c)$ the compiled
+code of $c$ at base program counter $p$, and $\ell(c)$ the instruction count of $c$. Then the
+stack machine running the program $P \, C_{|P|}(c) \, Q$ (the concatenation of $P$,
+$C_{|P|}(c)$ and $Q$) goes in finitely many steps from program counter $|P|$, stack $\sigma$ and
+state $s$ to program counter $|P| + \ell(c)$, the same stack $\sigma$ and state $s'$. -/
 theorem compile_runs {c : Cmd} {s s' : State} (h : BigStep c s s')
     {before after : List Instr} {stack : List Nat} :
     Steps (before ++ compile c before.length ++ after) (before.length, stack, s)
@@ -852,11 +938,15 @@ theorem compile_runs {c : Cmd} {s s' : State} (h : BigStep c s s')
       exact (((hB.trans (Relation.ReflTransGen.single hstepB)).trans hBody).trans
         (Relation.ReflTransGen.single hstepJ)).trans hLoop
 
-/-- Forward compilation correctness: every terminating big-step execution is
-simulated by the compiled code, which reaches the halt program counter
-`codeLength c` (where no further step is possible, by `no_step_of_length_le`
-together with `compile_length`) with the same final state and an empty
-stack. The converse simulation is not claimed. -/
+/-- **Correctness of compilation to the stack machine.** Let $c$ be a command and $s$, $s'$ states
+such that $c$ run from $s$ terminates in $s'$ under the big-step semantics. Let $C_0(c)$ be the
+compiled code of $c$ at base program counter $0$ and $\ell(c)$ the instruction count of $c$.
+Then the stack machine running $C_0(c)$ goes in finitely many steps from program counter $0$,
+the empty stack and state $s$ to program counter $\ell(c)$, the empty stack and state $s'$.
+
+Since $C_0(c)$ has exactly $\ell(c)$ instructions, no step is possible at program counter
+$\ell(c)$, so the machine halts there. Only this forward simulation is claimed, not its
+converse. -/
 theorem compile_correct {c : Cmd} {s s' : State} (h : BigStep c s s') :
     Steps (compile c 0) (0, [], s) (codeLength c, [], s') := by
   simpa using compile_runs h (before := []) (after := []) (stack := [])

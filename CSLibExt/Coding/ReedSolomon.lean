@@ -67,16 +67,23 @@ variable {F : Type*} [Field F] {n k e : ℕ}
 
 /-! ### The code -/
 
-/-- The Reed-Solomon **encoder**: evaluate the message polynomial at the points. -/
+/-- **Reed-Solomon encoder.** For a field $F$ and points $\alpha_0, \dots, \alpha_{n-1} \in F$,
+the encoding of a polynomial $p \in F[X]$ is the word $(p(\alpha_0), \dots, p(\alpha_{n-1}))$
+in $F^n$. -/
 noncomputable def encode (α : Fin n → F) (p : F[X]) : Fin n → F := fun i ↦ p.eval (α i)
 
-/-- The encoder as a linear map. -/
+/-- **Reed-Solomon encoder as a linear map.** For a field $F$ and points
+$\alpha_0, \dots, \alpha_{n-1} \in F$, the $F$-linear map $F[X] \to F^n$ sending a polynomial
+$p$ to $(p(\alpha_0), \dots, p(\alpha_{n-1}))$. -/
 noncomputable def encodeLin (α : Fin n → F) : F[X] →ₗ[F] (Fin n → F) where
   toFun := encode α
   map_add' p q := funext fun i ↦ eval_add
   map_smul' c p := funext fun i ↦ by simp [encode, smul_eq_C_mul]
 
-/-- The **Reed-Solomon code**: the encodings of the polynomials of degree less than `k`. -/
+/-- **Reed-Solomon code.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in F$ and
+let $k$ be a natural number. The Reed-Solomon code $\mathrm{RS}(\alpha, k)$ is the linear code
+of length $n$ over $F$ consisting of the words $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ for the
+polynomials $p \in F[X]$ of degree less than $k$. -/
 noncomputable def code (α : Fin n → F) (k : ℕ) : LinearCode F (Fin n) :=
   (degreeLT F k).map (encodeLin α)
 
@@ -95,7 +102,9 @@ theorem encode_mem_code (α : Fin n → F) {p : F[X]} (hp : p.degree < k) : enco
 
 variable [DecidableEq F]
 
-/-- A nonzero polynomial vanishes at no more of the (distinct) points than its degree. -/
+/-- **Root count at distinct points.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1}$
+be pairwise distinct elements of $F$, and let $p \in F[X]$ be a nonzero polynomial. Then the
+number of indices $i < n$ with $p(\alpha_i) = 0$ is at most the degree of $p$. -/
 theorem card_eval_eq_zero_le {α : Fin n → F} (hα : Function.Injective α) {p : F[X]}
     (hp : p ≠ 0) : #{i | p.eval (α i) = 0} ≤ p.natDegree := by
   classical
@@ -119,7 +128,10 @@ theorem hammingNorm_encode (α : Fin n → F) (p : F[X]) :
     congr 1
   omega
 
-/-- A nonzero codeword has weight at least `n - k + 1`. -/
+/-- **Nonzero Reed-Solomon codewords are heavy.** Let $F$ be a field, let $\alpha_0, \dots,
+\alpha_{n-1} \in F$ be pairwise distinct and let $k \le n$. For every nonzero polynomial
+$p \in F[X]$ of degree less than $k$, the encoding $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ has at
+least $n - k + 1$ nonzero coordinates. -/
 theorem le_hammingNorm_encode {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n)
     {p : F[X]} (hp : p ≠ 0) (hdeg : p.degree < k) : n - k + 1 ≤ hammingNorm (encode α p) := by
   have h1 := card_eval_eq_zero_le hα hp
@@ -128,7 +140,10 @@ theorem le_hammingNorm_encode {α : Fin n → F} (hα : Function.Injective α) (
   omega
 
 omit [DecidableEq F] in
-/-- For `k ≤ n` the encoder is injective on polynomials of degree less than `k`. -/
+/-- **The Reed-Solomon encoder is injective on low-degree polynomials.** Let $F$ be a field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $k \le n$. If two polynomials
+$p, q \in F[X]$ of degree less than $k$ satisfy $p(\alpha_i) = q(\alpha_i)$ for every $i < n$,
+then $p = q$. -/
 theorem injOn_encode {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) :
     Set.InjOn (encode α) (degreeLT F k : Set F[X]) := by
   classical
@@ -142,7 +157,9 @@ theorem injOn_encode {α : Fin n → F} (hα : Function.Injective α) (hkn : k �
   omega
 
 omit [DecidableEq F] in
-/-- The Reed-Solomon code has dimension `k`. -/
+/-- **Dimension of a Reed-Solomon code.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in
+F$ be pairwise distinct and let $k \le n$. The Reed-Solomon code of the points $\alpha$ with
+parameter $k$ has dimension $k$ over $F$. -/
 theorem finrank_code {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) :
     finrank F (code α k) = k := by
   have hinj : Function.Injective ((encodeLin α).domRestrict (degreeLT F k)) := by
@@ -151,7 +168,10 @@ theorem finrank_code {α : Fin n → F} (hα : Function.Injective α) (hkn : k �
   rw [code, ← LinearMap.range_domRestrict, LinearMap.finrank_range_of_inj hinj,
     (degreeLTEquiv F k).finrank_eq, finrank_fin_fun]
 
-/-- Every nonzero codeword has weight at least `n - k + 1`. -/
+/-- **Lower bound on the minimum distance of a Reed-Solomon code.** Let $F$ be a field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $k \in \mathbb{N}$. The
+Reed-Solomon code of the points $\alpha$ with parameter $k$ has minimum distance at least
+$\max(n - k, 0) + 1$. -/
 theorem le_minDist_code {α : Fin n → F} (hα : Function.Injective α) :
     ((n - k + 1 : ℕ) : ℕ∞) ≤ (code α k).minDist := by
   by_cases hkn : k ≤ n
@@ -163,7 +183,12 @@ theorem le_minDist_code {α : Fin n → F} (hα : Function.Injective α) :
   · rw [show n - k + 1 = 1 by omega]
     exact_mod_cast one_le_minDist (code α k)
 
-/-- The codeword of `∏_{j < k - 1} (X - αⱼ)` has weight at most `n - k + 1`. -/
+/-- **A low-weight Reed-Solomon codeword.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1}
+\in F$ (not necessarily distinct) and let $1 \le k \le n$. There is a nonzero polynomial
+$p \in F[X]$ of degree less than $k$ whose encoding $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ has at
+most $n - k + 1$ nonzero coordinates.
+
+One such polynomial is $\prod_{j < k - 1} (X - \alpha_j)$. -/
 theorem exists_codeword_hammingNorm_le (α : Fin n → F) (hk : 1 ≤ k) (hkn : k ≤ n) :
     ∃ p : F[X], p ≠ 0 ∧ p.degree < k ∧ hammingNorm (encode α p) ≤ n - k + 1 := by
   set T : Finset (Fin n) := {j | j.val < k - 1} with hT
@@ -190,9 +215,13 @@ theorem exists_codeword_hammingNorm_le (α : Fin n → F) (hk : 1 ≤ k) (hkn : 
     rw [hammingNorm_encode]
     omega
 
-/-- **Reed-Solomon codes are MDS**: for `1 ≤ k ≤ n`, over any field, the minimum distance is
-exactly `n - k + 1`. The lower bound counts roots; the upper bound is attained by the codeword
-of `∏_{j < k - 1} (X - αⱼ)`. -/
+/-- **Reed-Solomon codes are MDS.** Let $F$ be a field (not necessarily finite), let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $1 \le k \le n$. The
+Reed-Solomon code of the points $\alpha$ with parameter $k$ has minimum distance exactly
+$n - k + 1$.
+
+The lower bound counts roots; the upper bound is attained by the encoding of
+$\prod_{j < k - 1} (X - \alpha_j)$. -/
 theorem minDist_code {α : Fin n → F} (hα : Function.Injective α) (hk : 1 ≤ k) (hkn : k ≤ n) :
     (code α k).minDist = (n - k + 1 : ℕ) := by
   refine le_antisymm ?_ (le_minDist_code hα)
@@ -206,9 +235,13 @@ theorem minDist_code {α : Fin n → F} (hα : Function.Injective α) (hk : 1 �
         minDist_le (encode_mem_code α hdeg) (code α k).zero_mem hne
     _ ≤ (n - k + 1 : ℕ) := by rw [hammingDist_zero_right]; exact_mod_cast hnorm
 
-/-- **The Singleton bound is tight**: over a finite field, the Singleton bound for linear codes
-(`minDist_le_of_ne_bot`, from MathlibExt's Singleton bound) and the root-count lower bound meet,
-`d = n - dim C + 1`. -/
+/-- **Reed-Solomon codes meet the Singleton bound.** Let $F$ be a finite field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $1 \le k \le n$. The
+Reed-Solomon code $C$ of the points $\alpha$ with parameter $k$ has minimum distance
+$d = n - \dim C + 1$, so the Singleton bound $d \le n - \dim C + 1$ for linear codes holds with
+equality.
+
+The upper bound is the Singleton bound for linear codes; the lower bound counts roots. -/
 theorem minDist_code_eq_singleton [Finite F] {α : Fin n → F} (hα : Function.Injective α)
     (hk : 1 ≤ k) (hkn : k ≤ n) :
     (code α k).minDist = (n - finrank F (code α k) + 1 : ℕ) := by
@@ -225,13 +258,19 @@ theorem minDist_code_eq_singleton [Finite F] {α : Fin n → F} (hα : Function.
 
 /-! ### Berlekamp-Welch decoding -/
 
-/-- `(Q, E)` solves the **Berlekamp-Welch key equations** for the received word `y`: `E` is monic
-of degree `e`, `Q` has degree less than `e + k`, and `Q(αᵢ) = yᵢ E(αᵢ)` at every point. -/
+/-- **Berlekamp-Welch key equations.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in
+F$, let $k, e \in \mathbb{N}$ and let $y \in F^n$ be a received word. A pair of polynomials
+$(Q, E)$ over $F$ solves the key equations for $y$ when $E$ is monic of degree $e$, $Q$ has degree
+less than $e + k$, and $Q(\alpha_i) = y_i E(\alpha_i)$ for every $i < n$. -/
 def IsKeySolution (α : Fin n → F) (k e : ℕ) (y : Fin n → F) (Q E : F[X]) : Prop :=
   E.Monic ∧ E.natDegree = e ∧ Q.degree < (e + k : ℕ) ∧ ∀ i, Q.eval (α i) = y i * E.eval (α i)
 
-/-- **The key equations are solvable** when `y` is within distance `e` of a codeword: take the
-error locator polynomial, padded to degree `e`, and `Q = p E`. -/
+/-- **The key equations are solvable.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in
+F$ and let $p \in F[X]$ have degree less than $k$. If a received word $y \in F^n$ differs from the
+encoding $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ in at most $e$ coordinates, then the
+Berlekamp-Welch key equations for $y$ with parameters $k$ and $e$ have a solution $(Q, E)$.
+
+A solution is the error locator polynomial, padded to degree $e$, together with $Q = pE$. -/
 theorem exists_isKeySolution (α : Fin n → F) {p : F[X]} (hp : p.degree < k) {y : Fin n → F}
     (he : hammingDist y (encode α p) ≤ e) : ∃ Q E, IsKeySolution α k e y Q E := by
   set S : Finset (Fin n) := {i | y i ≠ encode α p i} with hS
@@ -258,10 +297,15 @@ theorem exists_isKeySolution (α : Fin n → F) {p : F[X]} (hp : p.degree < k) {
     · simp only [hS, mem_filter, mem_univ, true_and, not_not] at hi
       rw [hi, encode]
 
-/-- **Every solution of the key equations reveals the message**: if `y` is within distance `e` of
-the encoding of `p` and `2e + k ≤ n`, then any solution `(Q, E)` has `Q = p E`. The difference
-`Q - p E` has degree less than `e + k` and vanishes at the at least `n - e ≥ e + k` error-free
-points. -/
+/-- **Every solution of the key equations reveals the message.** Let $F$ be a field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $k, e$ be natural numbers
+with $2e + k \le n$. Let $p \in F[X]$ have degree less than $k$, and let $y \in F^n$ be
+within Hamming distance $e$ of $(p(\alpha_0), \dots, p(\alpha_{n-1}))$. If $(Q, E)$ solves
+the key equations for $y$ ($E$ is monic of degree $e$, $\deg Q < e + k$, and
+$Q(\alpha_i) = y_i E(\alpha_i)$ for all $i < n$), then $Q = pE$.
+
+The difference $Q - pE$ has degree less than $e + k$ and vanishes at the at least
+$n - e \ge e + k$ error-free points. -/
 theorem eq_mul_of_isKeySolution {α : Fin n → F} (hα : Function.Injective α) (h2e : 2 * e + k ≤ n)
     {p : F[X]} (hp : p.degree < k) {y : Fin n → F} (he : hammingDist y (encode α p) ≤ e)
     {Q E : F[X]} (hsol : IsKeySolution α k e y Q E) : Q = p * E := by
@@ -293,16 +337,26 @@ theorem eq_mul_of_isKeySolution {α : Fin n → F} (hα : Function.Injective α)
   have := (card_le_card hsub).trans (card_eval_eq_zero_le hα hR0)
   omega
 
-/-- The quotient `Q /ₘ E` of any solution of the key equations is the transmitted polynomial. -/
+/-- **The quotient of a key-equation solution is the message.** Let $F$ be a field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $k, e$ be natural numbers
+with $2e + k \le n$. Let $p \in F[X]$ have degree less than $k$, and let $y \in F^n$ be
+within Hamming distance $e$ of $(p(\alpha_0), \dots, p(\alpha_{n-1}))$. If $(Q, E)$ solves
+the key equations for $y$ ($E$ is monic of degree $e$, $\deg Q < e + k$, and
+$Q(\alpha_i) = y_i E(\alpha_i)$ for all $i < n$), then the quotient of $Q$ by $E$ is $p$. -/
 theorem divByMonic_eq_of_isKeySolution {α : Fin n → F} (hα : Function.Injective α)
     (h2e : 2 * e + k ≤ n) {p : F[X]} (hp : p.degree < k) {y : Fin n → F}
     (he : hammingDist y (encode α p) ≤ e) {Q E : F[X]} (hsol : IsKeySolution α k e y Q E) :
     Q /ₘ E = p := by
   rw [eq_mul_of_isKeySolution hα h2e hp he hsol, mul_comm, mul_divByMonic_cancel_left _ hsol.1]
 
-/-- A **solver for the key equations**: it returns a solution whenever one exists. (The key
-equations are a linear system in the coefficients of `Q` and of `E`; Gaussian elimination is a
-solver.) -/
+/-- **Solver for the key equations.** For a field $F$, points $\alpha_0, \dots, \alpha_{n-1} \in F$
+and parameters $k, e \in \mathbb{N}$, a solver for the Berlekamp-Welch key equations is a
+procedure that takes a received word $y \in F^n$ and either returns a pair of polynomials
+$(Q, E)$ over $F$ or reports failure, such that every returned pair solves the key equations for
+$y$, and a pair is returned whenever the key equations for $y$ have a solution.
+
+(The key equations are a linear system in the coefficients of $Q$ and of $E$; Gaussian
+elimination is a solver.) -/
 structure KeySolver (α : Fin n → F) (k e : ℕ) where
   /-- The solving procedure. -/
   solve : (Fin n → F) → Option (F[X] × F[X])
@@ -311,7 +365,11 @@ structure KeySolver (α : Fin n → F) (k e : ℕ) where
   /-- A solution is returned whenever one exists. -/
   complete : ∀ y, (∃ Q E, IsKeySolution α k e y Q E) → (solve y).isSome
 
-/-- A key-equation solver by choice. -/
+/-- **A key-equation solver by choice.** For points $\alpha_0, \dots, \alpha_{n-1}$ in a field
+$F$ and natural numbers $k$ and $e$, this is the solver for the key equations that, on a received
+word $y \in F^n$, returns a pair $(Q, E)$ of polynomials solving the key equations for $y$ (that
+is, $E$ is monic of degree $e$, $\deg Q < e + k$ and $Q(\alpha_i) = y_i E(\alpha_i)$ for all $i$),
+picked by the axiom of choice, whenever such a pair exists, and reports failure otherwise. -/
 noncomputable def KeySolver.ofChoice (α : Fin n → F) (k e : ℕ) : KeySolver α k e where
   solve y := by
     classical
@@ -326,18 +384,27 @@ noncomputable def KeySolver.ofChoice (α : Fin n → F) (k e : ℕ) : KeySolver 
     classical
     simp [hex]
 
-/-- The **Berlekamp-Welch decoder**: solve the key equations, divide `Q` by `E`, and accept the
-quotient only if it has degree less than `k` and its encoding is within distance `e` of `y`
-(otherwise report failure, `none`). The decoder is a specification over Mathlib's noncomputable
-polynomials; its only nontrivial step is the solver. -/
+/-- **Berlekamp-Welch decoder.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in F$,
+let $k, e$ be natural numbers and let $S$ be a solver for the key equations with error budget
+$e$. On a received word $y \in F^n$ the decoder runs $S$ on $y$ and reports failure if $S$
+returns nothing. If $S$ returns a pair $(Q, E)$ (the solver guarantees that $E$ is monic),
+let $q$ be the quotient of $Q$ by $E$; the decoder returns $q$ if $q$ has degree less than $k$
+and the Hamming distance between $y$ and $(q(\alpha_0), \dots, q(\alpha_{n-1}))$ is at most
+$e$, and reports failure otherwise.
+
+Its only nontrivial step is the solver. -/
 noncomputable def decode {α : Fin n → F} (S : KeySolver α k e) (y : Fin n → F) : Option F[X] :=
   (S.solve y).bind fun QE ↦
     if (QE.1 /ₘ QE.2).degree < k ∧ hammingDist y (encode α (QE.1 /ₘ QE.2)) ≤ e then
       some (QE.1 /ₘ QE.2)
     else none
 
-/-- **What the decoder returns**: within the unique-decoding regime `2e + k ≤ n`, the decoder
-returns `p` iff `p` has degree less than `k` and its encoding is within distance `e` of `y`. -/
+/-- **What the decoder returns.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in F$
+be pairwise distinct, let $k, e$ be natural numbers with $2e + k \le n$ (the unique-decoding
+regime), and let $S$ be a solver for the key equations with error budget $e$. For every
+polynomial $p \in F[X]$ and every received word $y \in F^n$, the Berlekamp-Welch decoder with
+solver $S$ returns $p$ on $y$ if and only if $p$ has degree less than $k$ and the Hamming
+distance between $y$ and $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ is at most $e$. -/
 theorem decode_eq_some_iff {α : Fin n → F} (hα : Function.Injective α) (h2e : 2 * e + k ≤ n)
     (S : KeySolver α k e) {p : F[X]} {y : Fin n → F} :
     decode S y = some p ↔ p.degree < k ∧ hammingDist y (encode α p) ≤ e := by
@@ -354,8 +421,12 @@ theorem decode_eq_some_iff {α : Fin n → F} (hα : Function.Injective α) (h2e
     have hdiv := divByMonic_eq_of_isKeySolution hα h2e hp he (S.sound y QE hQE)
     simp only [decode, hQE, Option.bind_some, hdiv, hp, he, and_self, ↓reduceIte]
 
-/-- The decoder fails (`none`) iff no polynomial of degree less than `k` has its encoding within
-distance `e` of `y`. -/
+/-- **The decoder fails exactly when no codeword is close.** Let $F$ be a field, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct, let $k, e$ be natural numbers
+with $2e + k \le n$, and let $S$ be a solver for the key equations with error budget $e$.
+For every received word $y \in F^n$, the Berlekamp-Welch decoder with solver $S$ reports
+failure on $y$ if and only if, for every polynomial $p \in F[X]$ of degree less than $k$, the
+Hamming distance between $y$ and $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ is greater than $e$. -/
 theorem decode_eq_none_iff {α : Fin n → F} (hα : Function.Injective α) (h2e : 2 * e + k ≤ n)
     (S : KeySolver α k e) {y : Fin n → F} :
     decode S y = none ↔ ∀ p : F[X], p.degree < k → e < hammingDist y (encode α p) := by
@@ -372,8 +443,13 @@ theorem decode_eq_none_iff {α : Fin n → F} (hα : Function.Injective α) (h2e
       obtain ⟨hp, he⟩ := (decode_eq_some_iff hα h2e S).mp hd
       exact absurd he (not_le.mpr (h p hp))
 
-/-- **Berlekamp-Welch corrects every error of weight at most `⌊(n - k)/2⌋`**: run with that error
-budget and any key-equation solver, the decoder returns the transmitted polynomial. -/
+/-- **Berlekamp-Welch corrects every error of weight at most $\lfloor (n-k)/2 \rfloor$.** Let
+$F$ be a field, let $\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct, let $k \le n$,
+put $t = \lfloor (n-k)/2 \rfloor$, and let $S$ be a solver for the key equations with error
+budget $t$. For every polynomial $p \in F[X]$ of degree less than $k$ and every error word
+$\varepsilon \in F^n$ with at most $t$ nonzero entries, the Berlekamp-Welch decoder with
+solver $S$, run on the received word
+$(p(\alpha_0) + \varepsilon_0, \dots, p(\alpha_{n-1}) + \varepsilon_{n-1})$, returns $p$. -/
 theorem decode_encode_add {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n)
     (S : KeySolver α k ((n - k) / 2)) {p : F[X]} (hp : p.degree < k) {err : Fin n → F}
     (herr : hammingNorm err ≤ (n - k) / 2) : decode S (encode α p + err) = some p := by
