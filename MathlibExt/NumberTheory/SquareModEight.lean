@@ -25,7 +25,8 @@ modulo 16 according to the residue modulo 8.
 
 namespace Nat
 
-/-- Natural squares mod 8 are `0`, `1`, or `4`. -/
+/-- **Squares of natural numbers modulo 8.** For every natural number $r$, the remainder of $r^2$
+on division by $8$ is $0$, $1$ or $4$. -/
 theorem sq_mod_eight (r : ℕ) :
     r ^ 2 % 8 = 0 ∨ r ^ 2 % 8 = 1 ∨ r ^ 2 % 8 = 4 := by
   have h8 : r % 8 = 0 ∨ r % 8 = 1 ∨ r % 8 = 2 ∨ r % 8 = 3 ∨
@@ -33,21 +34,25 @@ theorem sq_mod_eight (r : ℕ) :
   rcases h8 with h | h | h | h | h | h | h | h <;>
     rw [pow_two, Nat.mul_mod, h] <;> decide
 
-/-- A natural number congruent to `3` mod 8 is not a square. -/
+/-- **Numbers congruent to 3 mod 8 are not squares.** If a natural number $n$ satisfies
+$n \equiv 3 \pmod 8$, then $n$ is not the square of a natural number. -/
 theorem not_isSquare_of_mod_eight_eq_three {n : ℕ} (h : n % 8 = 3) : ¬ IsSquare n := by
   rintro ⟨r, rfl⟩
   have hr := sq_mod_eight r
   rw [pow_two] at hr
   omega
 
-/-- A natural number congruent to `6` mod 8 is not a square. -/
+/-- **Numbers congruent to 6 mod 8 are not squares.** If a natural number $n$ satisfies
+$n \equiv 6 \pmod 8$, then $n$ is not the square of a natural number. -/
 theorem not_isSquare_of_mod_eight_eq_six {n : ℕ} (h : n % 8 = 6) : ¬ IsSquare n := by
   rintro ⟨r, rfl⟩
   have hr := sq_mod_eight r
   rw [pow_two] at hr
   omega
 
-/-- If `N ≡ 6 mod 8` and `k ^ 2 < N`, then `N - k ^ 2` is not a square. -/
+/-- **A number that is 6 mod 8 minus a smaller square is not a square.** Let $N$ and $k$ be
+natural numbers with $N \equiv 6 \pmod 8$ and $k^2 < N$. Then $N - k^2$ is not the square of a
+natural number. -/
 theorem not_isSquare_sub_sq_of_mod_eight_eq_six {N k : ℕ} (hN : N % 8 = 6)
     (hk : k ^ 2 < N) : ¬ IsSquare (N - k ^ 2) := by
   rintro ⟨j, hj⟩
@@ -65,8 +70,8 @@ theorem not_isSquare_sub_sq_of_mod_eight_eq_six {N k : ℕ} (hN : N % 8 = 6)
   rcases hk8 with hk8 | hk8 | hk8 <;> rcases hj8 with hj8 | hj8 | hj8 <;>
     rw [hk8, hj8] at hmod <;> norm_num at hmod
 
-/-- The square of an odd `k` is `1` mod 16 when `k ≡ ±1 mod 8` and `9` mod 16 when
-`k ≡ ±3 mod 8`. -/
+/-- **Odd squares modulo 16.** For every odd natural number $k$, either $k^2 \equiv 1 \pmod{16}$
+and $k \equiv 1$ or $7 \pmod 8$, or $k^2 \equiv 9 \pmod{16}$ and $k \equiv 3$ or $5 \pmod 8$. -/
 theorem sq_mod_sixteen_of_odd (k : ℕ) (hk : Odd k) :
     (k ^ 2 % 16 = 1 ∧ (k % 8 = 1 ∨ k % 8 = 7)) ∨
     (k ^ 2 % 16 = 9 ∧ (k % 8 = 3 ∨ k % 8 = 5)) := by
@@ -85,7 +90,8 @@ end Nat
 
 namespace Int
 
-/-- Integer squares mod 8 are `0`, `1`, or `4`. -/
+/-- **Squares of integers modulo 8.** For every integer $x$, the remainder of $x^2$ on division
+by $8$, taken in $\{0, 1, \dots, 7\}$, is $0$, $1$ or $4$. -/
 theorem sq_emod_eight (x : ℤ) :
     x ^ 2 % 8 = 0 ∨ x ^ 2 % 8 = 1 ∨ x ^ 2 % 8 = 4 := by
   have h8 : x % 8 = 0 ∨ x % 8 = 1 ∨ x % 8 = 2 ∨ x % 8 = 3 ∨

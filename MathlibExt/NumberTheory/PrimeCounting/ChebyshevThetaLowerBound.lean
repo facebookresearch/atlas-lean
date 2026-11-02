@@ -314,8 +314,9 @@ private theorem meta_finite (x : ℝ) (h3 : 3 ≤ x) (h300 : x < 300) :
 section
 namespace MetaMathlibExt
 
-/-- Chebyshev's lower bound for the first Chebyshev function: `ϑ(x) > x/3`
-for `x ≥ 3`.
+/-- **Chebyshev's lower bound for the theta function.** Let $\theta(x) = \sum_{p \le x} \log p$, the
+sum running over primes, be the first Chebyshev function. Then $\theta(x) > x/3$ for every real
+$x \ge 3$.
 
 Source: Sadegh Nazardonyavi and Semyon Yakubovich, "Extremely Abundant
 Numbers", Journal of Integer Sequences 17 (2014), Corollary

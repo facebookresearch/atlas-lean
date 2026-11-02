@@ -120,8 +120,16 @@ private def fiberEquiv (k : ℕ) : {p : ℕ × ℕ // p.1 + p.2 = k} ≃ Fin (k 
     obtain ⟨j, hj⟩ := j
     rfl
 
-/-- `ramanujan_part1_ch3_entry1_corollary1_binomial_series` without the hypothesis that `∑ Q k * z ^
-  k` has a positive radius of convergence. -/
+/-- **Ramanujan's binomial series transformation without the radius hypothesis.** Let $n$ and $x$
+be complex numbers with $|x| < 1$, write $(n)_k = n(n-1)\cdots(n-k+1)$ for the falling factorial
+(with $(n)_0 = 1$), and let $Q_0, Q_1, Q_2, \ldots$ be complex numbers such that the double series
+$$\sum_{j, m \ge 0} \frac{Q_j\, (n)_{j+m}\, x^{j+m}}{m!}$$
+is absolutely summable. Then the series
+$$\sum_{k=0}^{\infty} \Bigl(\sum_{j=0}^{k} \frac{Q_j}{(k-j)!}\Bigr) (n)_k\, x^k$$
+and
+$$\sum_{k=0}^{\infty} Q_k\, (n)_k\, x^k\, (1 + x)^{n-k}$$
+converge unconditionally to the same sum, where $(1 + x)^{n-k} = e^{(n-k) \log(1+x)}$ with the
+principal branch of the logarithm. -/
 theorem ramanujan_part1_ch3_entry1_corollary1_binomial_series_general (n x : ℂ)
     (Q : ℕ → ℂ)
         (hx : ‖x‖ < 1)
@@ -216,7 +224,20 @@ theorem ramanujan_part1_ch3_entry1_corollary1_binomial_series_general (n x : ℂ
     exact hsumF.hasSum.prod_fiberwise hfib
 
 set_option linter.unusedVariables false in
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 1, Corollary 1, printed p.
+/-- **Ramanujan's binomial series transformation (Chapter 3, Entry 1, Corollary 1).** Let $n$ and
+$x$ be complex numbers with $|x| < 1$, write $(n)_k = n(n-1)\cdots(n-k+1)$ for the falling
+factorial (with $(n)_0 = 1$), and let $Q_0, Q_1, Q_2, \ldots$ be complex numbers such that, for
+some $R > 0$, the power series $\sum_k Q_k z^k$ converges absolutely for every complex $z$ with
+$|z| < R$. Suppose that the double series
+$$\sum_{j, m \ge 0} \frac{Q_j\, (n)_{j+m}\, x^{j+m}}{m!}$$
+is absolutely summable. Then the series
+$$\sum_{k=0}^{\infty} \Bigl(\sum_{j=0}^{k} \frac{Q_j}{(k-j)!}\Bigr) (n)_k\, x^k$$
+and
+$$\sum_{k=0}^{\infty} Q_k\, (n)_k\, x^k\, (1 + x)^{n-k}$$
+converge unconditionally to the same sum, where $(1 + x)^{n-k} = e^{(n-k) \log(1+x)}$ with the
+principal branch of the logarithm.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 1, Corollary 1, printed p.
     45 / PDF p. 55.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry1_corollary1_binomial_series`.
 -/

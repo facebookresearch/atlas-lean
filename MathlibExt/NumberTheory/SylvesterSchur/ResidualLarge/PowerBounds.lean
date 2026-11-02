@@ -36,8 +36,8 @@ namespace Internal
 private lemma four_pow_eq_two_pow_two_mul (n : ℕ) : 4 ^ n = 2 ^ (2 * n) := by
   rw [show 4 = 2 ^ 2 by norm_num, ← pow_mul]
 
-/-- A coarse exponential upper bound used to absorb a factor of `n` in large residual
-estimates. -/
+/-- **A linear bound by a power of four.** For every natural number $n \ge 512$,
+$n \le 4^{\lfloor n/128 \rfloor + 1}$. -/
 lemma self_le_four_pow_div_one_twenty_eight_add_one {n : ℕ} (hn : 512 ≤ n) :
     n ≤ 4 ^ (n / 128 + 1) := by
   let m := n / 128
@@ -59,7 +59,8 @@ lemma self_le_four_pow_div_one_twenty_eight_add_one {n : ℕ} (hn : 512 ≤ n) :
           _ = 4 ^ (m + 1 + 1) := by ring
   exact hnlt.le.trans (hmul_general m hm4)
 
-/-- A binary-to-ternary comparison used to convert powers of `2` into powers of `3`. -/
+/-- **Powers of two against powers of three.** For every natural number $n$,
+$2^{19 \lfloor n/12 \rfloor} \le 3^{n}$. -/
 lemma two_pow_nineteen_mul_div_twelve_le_three_pow (n : ℕ) :
     2 ^ (19 * (n / 12)) ≤ 3 ^ n := by
   let m := n / 12
@@ -76,8 +77,9 @@ lemma two_pow_nineteen_mul_div_twelve_le_three_pow (n : ℕ) :
     _ = 3 ^ (12 * m) := by rw [pow_mul]
     _ ≤ 3 ^ n := Nat.pow_le_pow_right (by norm_num : 0 < 3) hm
 
-/-- The power comparison used after the central-offset residual estimate has been reduced to
-exponents. -/
+/-- **A power comparison for the central-offset estimate.** Let $D$, $E$, $i$, $n$ be natural
+numbers with $2D + i + 2E < 19 \lfloor i/12 \rfloor + 2n$. Then
+$4^{D} \cdot 2^{i} \cdot 4^{E} < 3^{i} \cdot 4^{n}$. -/
 lemma four_pow_mul_two_pow_mul_four_pow_lt_three_pow_mul_four_pow
     {D E i n : ℕ} (hexp : 2 * D + i + 2 * E < 19 * (i / 12) + 2 * n) :
     4 ^ D * (2 ^ i * 4 ^ E) < 3 ^ i * 4 ^ n := by

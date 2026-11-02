@@ -114,9 +114,10 @@ private theorem thue_ne (n a x y : ℤ) (N : ℕ)
       exact eq_zero_of_dvd_of_abs_lt hdx (by rw [habsn]; exact hxN)
     · exact h
 
-/-- Thue's lemma without a lower bound on `a`: for `n > 1` and `a` coprime to `n` there are
-nonzero `x`, `y` with `|x|, |y| < √n` and `x ≡ a * y [ZMOD n]`. `thue_lemma` is the
-source-shaped form. -/
+/-- **Thue's lemma, general form.** Let $a$ and $n$ be integers with $n > 1$ and
+$\gcd(a, n) = 1$. Then there exist nonzero integers $x$ and $y$ with $|x| < \sqrt{n}$,
+$|y| < \sqrt{n}$ and $x \equiv a y \pmod{n}$. Unlike the source form of Thue's lemma, no lower
+bound on $a$ is assumed. -/
 theorem thue_lemma_general (a n : ℤ) (hn : 1 < n) (hcop : Int.gcd a n = 1) :
     ∃ x y : ℤ,
       (0 : ℤ) < |x| ∧ (|x| : ℝ) < Real.sqrt (n : ℝ) ∧
@@ -271,8 +272,13 @@ theorem thue_lemma_general (a n : ℤ) (hn : 1 < n) (hcop : Int.gcd a n = 1) :
 
 set_option linter.unusedVariables false in
 /--
-Thue's lemma: coprime integers `a`, `n > 1` have nonzero bounded `x`, `y`
-with `x ≡ a * y [ZMOD n]`.
+**Thue's lemma.** Let $a$ and $n$ be integers with $a > 1$, $n > 1$ and $\gcd(a, n) = 1$. Then
+there exist nonzero integers $x$ and $y$ with $|x| < \sqrt{n}$, $|y| < \sqrt{n}$ and
+$x \equiv a y \pmod{n}$.
+
+The hypothesis $a > 1$ follows the source and is not needed for the conclusion.
+
+Proves `Wanted` entry `thue_lemma`.
 
 Source: Bencheng Li, Steven J. Miller, Tudor Popescu, Daniel Sarnecki, and
 Nawapan Wattanawanichkul, "Modeling Random Walks to Infinity on Primes in
@@ -281,12 +287,6 @@ Lemma [Thue's lemma] (label `lem:thue's`), lines 217–218,
 <https://cs.uwaterloo.ca/journals/JIS/VOL25/Miller/miller11.tex>.
 Original: V. Shoup, "A Computational Introduction to Number Theory and
 Algebra", Cambridge University Press, 2005, p. 43.
-
-Both representatives are
-nonzero with `|x|, |y| < √n`, matching the source bounds exactly.
-It follows from `thue_lemma_general`; the hypothesis `ha` is unused and keeps the source's
-shape.
-Proves `Wanted` entry `thue_lemma`.
 -/
 theorem thue_lemma (a n : ℤ) (ha : 1 < a) (hn : 1 < n)
     (hcop : Int.gcd a n = 1) :

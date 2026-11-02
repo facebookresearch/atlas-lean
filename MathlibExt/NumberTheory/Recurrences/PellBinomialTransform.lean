@@ -583,19 +583,21 @@ private theorem kron_sum_closed (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
     _ = ((2 + s) ^ n - (2 - s) ^ n) / (2 * s) := by rw [hV]
 
 /--
-The binomial transform of the Pell numbers equals the stated Kronecker-symbol
-sum: `∑_i C(n,i) P_i = ∑_k (k/8) C(2n,n+k)`.
+**Binomial transform of the Pell numbers.** Let $P \colon \mathbb{N} \to \mathbb{Z}$ satisfy
+$P_0 = 0$, $P_1 = 1$ and $P_{n+2} = 2 P_{n+1} + P_n$ for every $n$, so that $P_n$ is the
+$n$-th Pell number. Then for every natural number $n$,
+$$\sum_{i=0}^{n} \binom{n}{i} P_i = \sum_{k=0}^{n} \left(\frac{k}{8}\right) \binom{2n}{n+k},$$
+where $\left(\frac{k}{8}\right)$ is the Kronecker symbol: it is $0$ for even $k$, $1$ for
+$k \equiv \pm 1 \pmod 8$ and $-1$ for $k \equiv \pm 3 \pmod 8$.
+
+Both sides give $0, 1, 4, 14, 48, 164, \dots$ (OEIS A007070) for $n = 0, \dots, 5$.
+
+Proves `Wanted` entry `pell_binomial_transform`.
 
 Source: Greg Dresden and Yike Li, "Periodic Weighted Sums of Binomial
 Coefficients," Journal of Integer Sequences 26 (2023), Article 23.8.7,
 Corollary (equation e.12), lines 369–379,
 https://cs.uwaterloo.ca/journals/JIS/VOL26/Dresden/dresden26.tex
-
-The Kronecker symbol `(k/8)` is spelled out via `k mod 8`: even `k` gives `0`,
-`k ≡ ±1` gives `1`, `k ≡ ±3` gives `-1`. The Pell sequence is pinned by its
-initial values and recurrence; both sides give `0, 1, 4, 14, 48, 164, ...`
-(A007070) at `n = 0..5`, verified through `n = 7`.
-Proves `Wanted` entry `pell_binomial_transform`.
 -/
 theorem pell_binomial_transform
     (P : ℕ → ℤ) (h0 : P 0 = 0) (h1 : P 1 = 1)

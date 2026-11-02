@@ -362,8 +362,9 @@ private theorem fib_mul_prime_eq (m p : ℕ) (hm : 1 ≤ m) (hp : Nat.Prime p)
   obtain ⟨W, hW⟩ := htail
   exact ⟨W, by rw [hW, hf0, hf1]; ring⟩
 
-/-- Fibonacci lifting-the-exponent formula: for an odd prime p dividing F_m (m ≥ 1)
-and j ≥ 1, v_p(F_{m·j}) = v_p(F_m) + v_p(j). -/
+/-- **Lifting the exponent for Fibonacci numbers.** Let $p$ be an odd prime and $m \ge 1$ an
+integer such that $p$ divides the Fibonacci number $F_m$, and write $v_p$ for the $p$-adic
+valuation. Then $v_p(F_{mj}) = v_p(F_m) + v_p(j)$ for every integer $j \ge 1$. -/
 theorem padicValNat_fib_mul (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
     (m : ℕ) (hm : 1 ≤ m) (hdvd : p ∣ Nat.fib m) (j : ℕ) (hj : 1 ≤ j) :
     padicValNat p (Nat.fib (m * j)) = padicValNat p (Nat.fib m) + padicValNat p j := by
@@ -573,23 +574,17 @@ private theorem padicValNat_fib_prod_prime_pow_split (p a b : ℕ) [Fact (Nat.Pr
   have hN10 := padicValNat_factorial_add_pow_mul p a (p ^ a / z) ((p ^ (b - a) - 1) / z) hAlt
   rw [h9b, h9a, h9d, hsplit, hB, hN10]
   ring
-/-- Zero-valued branch (first branch) of the JIS corrected Fibonacci
-specialization: for a prime `p ≠ 2, 5` and `0 < a ≤ b`, if `p ≡ ±1 (mod 5)`
-or `a, b` have equal parity, then the `p`-adic valuation of the Fibonomial
-`{p^b choose p^a}_F` is `0`.
-
-This is the Fibonacci specialization only, not the unreproduced general
-Ballot (Lucasnomial) theorem. The source's separate odd-`a` branch needs a
-rank-of-appearance witness; that hypothesis is absent here because this
-zero-valued branch does not use it.
-
-Each `∏ i ∈ Finset.range n, Nat.fib (i + 1)` runs over `i = 0, …, n - 1`,
-hence equals the Fibonacci-factorial product `F₁⋯Fₙ`; the Fibonomial is the
-quotient `F_{p^b}! / (F_{p^a}! * F_{p^b - p^a}!)` under `ℕ` division.
-
-Source: Phunphayap–Pongsriiam, Example `rem18`, equation `eq1remark2`.
+/-- **Vanishing $p$-adic valuation of Fibonomial coefficients at prime powers.** Let $p$ be a
+prime with $p \ne 2$ and $p \ne 5$, and let $a, b$ be integers with $0 < a \le b$ such that
+$p \equiv \pm 1 \pmod 5$ or $a \equiv b \pmod 2$. Write $F_n$ for the $n$-th Fibonacci number
+and $F_n! = F_1 F_2 \cdots F_n$ for the Fibonacci factorial, with $F_0! = 1$. Then the $p$-adic
+valuation of the Fibonomial coefficient
+$$\binom{p^b}{p^a}_F = \frac{F_{p^b}!}{F_{p^a}! \, F_{p^b - p^a}!},$$
+where the quotient is taken by division of natural numbers, is $0$.
 
 Proves `Wanted` entry `fibonomial_primePower_padicVal_eq_zero`.
+
+Source: Phunphayap–Pongsriiam, Example `rem18`, equation `eq1remark2`.
 -/
 theorem fibonomial_primePower_padicVal_eq_zero
     (p a b : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hp5 : p ≠ 5)

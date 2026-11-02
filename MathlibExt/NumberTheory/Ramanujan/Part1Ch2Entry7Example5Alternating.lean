@@ -150,7 +150,11 @@ private lemma err_tendsto : Filter.Tendsto
       _ ≤ 1 / ((N : ℝ) + 1) := harg
   · exact tendsto_one_div_add_atTop_nhds_zero_nat
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Alternating series of arctangents of 2/k² (Entry 7, Example 5).** The series
+$$\sum_{n=0}^{\infty} (-1)^n \arctan \frac{2}{(n + 1)^2}$$
+converges absolutely and its sum is $\pi/4$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     7, Example 5, printed p. 37 / PDF p. 47.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry7_example5_alternating`.
 -/

@@ -1277,17 +1277,19 @@ private theorem smallCases_witness (n : ℕ) (hn : 7 ≤ n) (hle : n ≤ 69)
   · refine primDiv_of_witness 68 67 ?_ ?_ ?_ ?_ ?_ <;> decide
   · refine primDiv_of_witness 69 137 ?_ ?_ ?_ ?_ ?_ <;> decide
 
-/-- Fibonacci corollary of Carmichael's theorem, as invoked in Haojie Hong,
-*On big primitive divisors of Fibonacci numbers*, arXiv:2312.04354v1,
-`bigPFn.tex` lines 153–158 (<https://arxiv.org/abs/2312.04354>):
-with `α = (1+√5)/2`, `β = (1-√5)/2` and `uₙ = Fₙ = Nat.fib n` (so `(α-β)² = 5`),
-`Fₙ` has a primitive divisor for `n ≥ 7` and `n ≠ 12`, i.e. there exists a
-prime `p` such that `LucasSequence.IsPrimitiveDivisor (fun k => (Nat.fib k : Int)) 5 n p`.
-This is the Fibonacci specialization of Carmichael's broader theorem on general
-Lucas sequences (R. D. Carmichael, *On the numerical factors of the arithmetic
-forms αⁿ±βⁿ*, Ann. of Math. (2) 15 (1913), 30–70).
+/-- **Primitive divisors of Fibonacci numbers.** Write $F_j$ for the $j$-th Fibonacci number.
+For every natural number $n \ge 7$ with $n \ne 12$, $F_n$ has a primitive divisor with respect
+to the discriminant $5$: there is a prime $p$ that divides $F_n$ but does not divide
+$5 F_1 F_2 \cdots F_{n-1}$.
 
-Proves `Wanted` entry `exists_isPrimitiveDivisor_fib`. -/
+This is the Fibonacci case of Carmichael's theorem on Lucas sequences, with
+$\alpha = (1 + \sqrt{5})/2$ and $\beta = (1 - \sqrt{5})/2$, so that $(\alpha - \beta)^2 = 5$.
+
+Proves `Wanted` entry `exists_isPrimitiveDivisor_fib`.
+
+Source: Haojie Hong, *On big primitive divisors of Fibonacci numbers*, arXiv:2312.04354v1,
+`bigPFn.tex` lines 153–158 (<https://arxiv.org/abs/2312.04354>); R. D. Carmichael, *On the
+numerical factors of the arithmetic forms αⁿ±βⁿ*, Ann. of Math. (2) 15 (1913), 30–70. -/
 theorem exists_isPrimitiveDivisor_fib {n : Nat} (hn : 7 ≤ n) (hne : n ≠ 12) :
     ∃ p, LucasSequence.IsPrimitiveDivisor (fun k => (Nat.fib k : Int)) (5 : Int) n p := by
   by_cases h69 : n ≤ 69

@@ -23,15 +23,15 @@ author manuscript `arXiv:1702.01627v2`, Section 2, line 259.
 
 namespace BinaryQuadraticForm
 
-/-- Gauss reducedness for the integral binary quadratic form
-`a*x^2 + b*x*y + c*y^2` in the strict source convention:
+/-- **Gauss-reduced binary quadratic forms.** The integral binary quadratic form
+$a x^2 + b x y + c y^2$ is Gauss reduced when $a > 0$, its discriminant $b^2 - 4ac$ is negative,
+$|b| \le a \le c$, and $b \ge 0$ whenever $|b| = a$ or $a = c$.
 
-`IsGaussReduced a b c` holds iff `0 < a`, `discrim a b c < 0`,
-`|b| ≤ a`, `a ≤ c`, and `(|b| = a ∨ a = c) → 0 ≤ b`.
+For example, $x^2 - x y + y^2$ is positive definite and satisfies $|b| \le a \le c$, but it is not
+reduced, because $|b| = a$ and $b < 0$.
 
-This is Mortenson `arXiv:1702.01627v2` Section 2 line 259. In particular
-`(1,-1,1)` is positive definite and satisfies the loose inequalities but
-is not reduced because the tie-break requires `b ≥ 0`. -/
+Source: Mortenson, *A Kronecker-type identity*, Bull. LMS 49 (2017), arXiv:1702.01627v2,
+Section 2, line 259. -/
 def IsGaussReduced (a b c : ℤ) : Prop :=
   0 < a ∧ discrim a b c < 0 ∧ |b| ≤ a ∧ a ≤ c ∧
     ((|b| = a ∨ a = c) → 0 ≤ b)

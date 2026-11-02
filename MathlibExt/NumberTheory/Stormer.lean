@@ -542,9 +542,10 @@ private theorem exists_pell_rad_of_smooth (y n : ℕ) (hy : 2 ≤ y) (hn0 : 0 < 
     have hg2 : g ∣ g ^ 2 := ⟨g, by ring⟩
     rw [hD_def]
     exact dvd_mul_of_dvd_right (dvd_trans hqg hg2) a
-/-- Stormer's theorem (stormer-s1): for each fixed smoothness bound `y ≥ 2`, there are only
-finitely many pairs of consecutive positive integers both of which are `y`-smooth
-(all prime factors `≤ y`), witnessed by an explicit finite bound `S`.
+/-- **Størmer's theorem.** For every natural number $y \ge 2$, there is a finite set $S$ of
+pairs of natural numbers such that, for every positive integer $n$ such that all prime factors
+of $n$ and all prime factors of $n + 1$ are at most $y$, the pair $(n, n + 1)$ lies in $S$.
+
 Source: https://en.wikipedia.org/wiki/St%C3%B8rmer%27s_theorem.
 
 Proves `Wanted` entry `stormer_theorem`.

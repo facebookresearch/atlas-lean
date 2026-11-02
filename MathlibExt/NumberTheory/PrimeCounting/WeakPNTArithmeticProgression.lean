@@ -682,7 +682,11 @@ private lemma wpa_tendsto_integral_psi_sub_div_sq {q : ℕ} [NeZero q]
     (fun x hx => (wpa_integral_psi_sub_div_sq_eq b x hx).symm)
   exact Filter.Tendsto.congr' hev hcomp
 
-/-- The real-variable prime number theorem in a residue class for `ψ`. -/
+/-- **Prime number theorem for Chebyshev's function in a reduced residue class.** Let $q \ge 1$
+be an integer, let $b$ be a unit of $\mathbb{Z}/q\mathbb{Z}$, let $\Lambda$ be the von Mangoldt
+function and let $\varphi$ be Euler's totient function. For real $x$ let $\psi(x; q, b)$ be the
+sum of $\Lambda(n)$ over the integers $1 \le n \le x$ with $n \equiv b \pmod{q}$. Then
+$\psi(x; q, b)/x \to 1/\varphi(q)$ as the real number $x$ tends to infinity. -/
 public lemma tendsto_psiResidueClass_div_self {q : ℕ} [NeZero q]
     (b : ZMod q) (hb : IsUnit b) :
     Filter.Tendsto (fun x : ℝ => psiResidueClass b x / x) Filter.atTop
@@ -717,9 +721,14 @@ public lemma tendsto_psiResidueClass_div_self {q : ℕ} [NeZero q]
   have hmul := hlim1.const_mul ((q.totient : ℝ)⁻¹)
   simpa using hmul
 
-/-- Mertens' theorem in arithmetic progressions: the reciprocal sum of the
-von Mangoldt function over a reduced residue class equals `(log x) / φ(q)` up to
-a bounded error. -/
+/-- **Mertens' theorem in arithmetic progressions.** Let $q \ge 1$ be an integer, let $b$ be a
+unit of $\mathbb{Z}/q\mathbb{Z}$, let $\Lambda$ be the von Mangoldt function and let $\varphi$ be
+Euler's totient function. There is a real constant $C$ such that for every real $x \ge 1$,
+$$
+\left| \sum_{\substack{1 \le n \le x \\ n \equiv b \pmod{q}}} \frac{\Lambda(n)}{n} -
+\frac{\log x}{\varphi(q)} \right| \le C.
+$$
+-/
 public lemma exists_abs_sum_residueClass_div_sub_log_le {q : ℕ} [NeZero q]
     (b : ZMod q) (hb : IsUnit b) :
     ∃ C : ℝ, ∀ x : ℝ, 1 ≤ x →
@@ -988,16 +997,23 @@ end Chebyshev
 namespace Chebyshev
 
 /--
-For a reduced residue class `a` modulo `q`, the average of the von Mangoldt function over
-`n ≡ a (mod q)` tends to `1 / φ(q)`. Source: the proved theorem
+**Weak prime number theorem in arithmetic progressions.** Let $q$ and $a$ be natural numbers with
+$a < q$ and $\gcd(a, q) = 1$, let $\Lambda$ be the von Mangoldt function and let $\varphi$ be
+Euler's totient function. Then, as $N \to \infty$ through the natural numbers,
+$$
+\frac{1}{N} \sum_{\substack{0 \le n < N \\ n \equiv a \pmod{q}}} \Lambda(n) \to
+\frac{1}{\varphi(q)}.
+$$
+
+Proves `Wanted` entry `weakPNT_arithmeticProgression`.
+
+Source: the proved theorem
 `PrimeNumberTheoremAnd.WeakPNT_AP` in
 [PrimeNumberTheoremAnd](https://github.com/AlexKontorovich/PrimeNumberTheoremAnd), revision
 `be5e07e04cde20c5ceabf63759bd097a9c88173f`, and its use in
 [arXiv:2608.24035](https://arxiv.org/abs/2608.24035). Lean preserves the source's natural
 representative and half-open `Finset.range` normalization, while omitting the redundant assumption
 `1 ≤ q`, which follows from `a < q`.
-
-Proves `Wanted` entry `weakPNT_arithmeticProgression`.
 -/
 public theorem weakPNT_arithmeticProgression {q a : ℕ}
     (ha : Nat.Coprime a q) (ha_lt : a < q) :

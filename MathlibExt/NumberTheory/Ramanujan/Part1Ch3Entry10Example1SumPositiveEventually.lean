@@ -25,10 +25,13 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry10Example1SumPositiveEventually
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 1, printed p.
-    64 / PDF p. 74.
+/-- **Eventual positivity of the square-root Poisson series.** For all sufficiently large
+real $x$, the sum $\sum_{k=1}^{\infty} x^k \sqrt{k} / k!$ is strictly positive.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry10_example1_sum_positive_eventually`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 1, printed p.
+    64 / PDF p. 74.
 -/
 theorem ramanujan_part1_ch3_entry10_example1_sum_positive_eventually :
     ∀ᶠ (x : ℝ) in Filter.atTop, 0 < ∑' (j : ℕ), x ^ (j + 1) * Real.sqrt (↑(j + 1)) /

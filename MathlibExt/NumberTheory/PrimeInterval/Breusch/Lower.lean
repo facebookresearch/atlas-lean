@@ -34,7 +34,8 @@ bound `logF9`, following the `k = 9`, `Q = 210` case of Breusch's argument.
 namespace MathlibExt.NumberTheory.BreuschWanted.Internal
 
 -- exp(u) ≤ 1/(1-u) for u ∈ [0,1), via termwise series comparison.
-/-- Exponential upper bound `exp u ≤ 1 / (1 - u)` on `[0, 1)`. -/
+/-- **Exponential bound by the geometric series.** For every real number $u$ with $0 \le u < 1$,
+$e^u \le \frac{1}{1 - u}$. -/
 lemma exp_le_inv_one_sub {u : ℝ} (h0 : 0 ≤ u) (h1 : u < 1) :
     Real.exp u ≤ 1 / (1 - u) := by
   have hsum : Summable (fun k : ℕ => u ^ k / Nat.factorial k) :=
@@ -56,7 +57,7 @@ lemma exp_le_inv_one_sub {u : ℝ} (h0 : 0 ≤ u) (h1 : u < 1) :
         rw [tsum_geometric_of_lt_one h0 h1, one_div]
 
 -- 1 - 1/t ≤ log t for t ≥ 1.
-/-- Logarithm lower bound `1 - 1 / t ≤ log t` for `t ≥ 1`. -/
+/-- **Logarithm is at least 1 − 1/t.** For every real number $t \ge 1$, $1 - 1/t \le \log t$. -/
 lemma one_sub_inv_le_log {t : ℝ} (ht : 1 ≤ t) : 1 - 1 / t ≤ Real.log t := by
   have ht0 : (0 : ℝ) < t := lt_of_lt_of_le zero_lt_one ht
   rw [Real.le_log_iff_exp_le ht0]
@@ -77,7 +78,8 @@ lemma one_sub_inv_le_log {t : ℝ} (ht : 1 ≤ t) : 1 - 1 / t ≤ Real.log t := 
     _ = t := by rw [hu]; field_simp; ring
 
 -- Weak Stirling lower bound: n^n e^{-n+1} ≤ n!.
-/-- Weak Stirling lower bound `n ^ n * exp (-n + 1) ≤ n!`. -/
+/-- **Weak Stirling lower bound for factorials.** For every natural number $n \ge 1$,
+$n^n e^{1-n} \le n!$. -/
 lemma stirling_lower {n : ℕ} (hn : 1 ≤ n) :
     (n : ℝ) ^ n * Real.exp (-(n : ℝ) + 1) ≤ (Nat.factorial n : ℝ) := by
   induction n, hn using Nat.le_induction with
@@ -137,7 +139,8 @@ lemma stirling_lower {n : ℕ} (hn : 1 ≤ n) :
           ring
 
 -- Weak Stirling upper bound: n! ≤ n^{n+1} e^{-n+1}.
-/-- Weak Stirling upper bound `n! ≤ n ^ (n + 1) * exp (-n + 1)`. -/
+/-- **Weak Stirling upper bound for factorials.** For every natural number $n \ge 1$,
+$n! \le n^{n+1} e^{1-n}$. -/
 lemma stirling_upper {n : ℕ} (hn : 1 ≤ n) :
     (Nat.factorial n : ℝ) ≤ (n : ℝ) ^ (n + 1) * Real.exp (-(n : ℝ) + 1) := by
   induction n, hn using Nat.le_induction with
@@ -198,32 +201,51 @@ lemma stirling_upper {n : ℕ} (hn : 1 ≤ n) :
 
 open Nat Finset
 
-/-- Scaled factorial argument `10 * n * (Q9 / m)`. -/
+/-- **Scaled factorial argument $N_{10}$.** Let $Q_9 = 2 \cdot 3 \cdot 5 \cdot 7 = 210$. For
+natural numbers $m$ and $n$, $N_{10}(m, n)$ is the natural number $10 n \lfloor Q_9 / m \rfloor$,
+where $\lfloor Q_9 / 0 \rfloor$ is taken to be $0$. -/
 def N10m (m n : ℕ) : ℕ := 10 * n * (Q9 / m)
-/-- Scaled factorial argument `9 * n * (Q9 / m)`. -/
+/-- **Scaled factorial argument N₉.** For natural numbers $m$ and $n$,
+$N_9(m, n) = 9n \lfloor Q_9 / m \rfloor$, where $Q_9 = 210$ and $\lfloor Q_9 / m \rfloor$ is the
+quotient of natural-number division, taken to be $0$ when $m = 0$. -/
 def N9m (m n : ℕ) : ℕ := 9 * n * (Q9 / m)
-/-- Scaled factorial argument `n * (Q9 / m)`. -/
+/-- **Scaled factorial argument $N_1$.** Let $Q_9 = 2 \cdot 3 \cdot 5 \cdot 7 = 210$. For natural
+numbers $m$ and $n$, $N_1(m, n)$ is the natural number $n \lfloor Q_9 / m \rfloor$, where
+$\lfloor Q_9 / 0 \rfloor$ is taken to be $0$. -/
 def N1m (m n : ℕ) : ℕ := n * (Q9 / m)
 
-/-- Binomial factor `(N10m)! / ((N9m)! * (N1m)!)`. -/
+/-- **Binomial factor ratio₉.** For natural numbers $m$ and $n$,
+$\mathrm{ratio}_9(m, n) = N_{10}(m, n)! / (N_9(m, n)! \cdot N_1(m, n)!)$, with natural-number
+division, where $N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$ and $Q_9 = 210$
+(the quotient $\lfloor Q_9 / m \rfloor$ is taken to be $0$ when $m = 0$). -/
 def ratio9 (m n : ℕ) : ℕ := (N10m m n)! / ((N9m m n)! * (N1m m n)!)
 
-/-- Logarithm of the Möbius-weighted product `F_9(n)`. -/
+/-- **Logarithm of Breusch's product $F_9(n)$.** Let $w_9$ be the table of divisors $d$ of
+$Q_9 = 210$ paired with their Möbius values $\varepsilon$. For a natural number $n$, writing
+$k_d = 210/d$,
+$$\log F_9(n) = \sum_{(d, \varepsilon) \in w_9}
+\varepsilon \log \frac{(10 n k_d)!}{(9 n k_d)!\,(n k_d)!}.$$
+
+This is the logarithm of the Möbius-weighted product $F_9(n)$ in Breusch's argument. -/
 noncomputable def logF9 (n : ℕ) : ℝ :=
   w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℝ) * Real.log ((ratio9 q.1 n : ℕ) : ℝ))
 
-/-- `Q9` is positive. -/
+/-- **Q₉ is positive.** The truncation modulus $Q_9$ of the $k = 9$ case satisfies $0 < Q_9$. -/
 lemma Q9_pos : 0 < Q9 := by unfold Q9; norm_num
-/-- `Q9 = 210`. -/
+/-- **Value of Q₉.** The truncation modulus $Q_9 = 2 \cdot 3 \cdot 5 \cdot 7$ of the $k = 9$ case
+equals $210$. -/
 lemma Q9_eq : Q9 = 210 := rfl
 
-/-- `Q9 / m ≥ 1` for `1 ≤ m` dividing `Q9`. -/
+/-- **Quotients of Q₉ by its divisors are positive.** For every natural number $m \ge 1$ dividing
+$Q_9 = 210$, the quotient $Q_9 / m$ is at least $1$. -/
 lemma Q9div_pos {m : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) : 1 ≤ Q9 / m := by
   have hle : m ≤ Q9 := Nat.le_of_dvd Q9_pos hd
   have hpos : 0 < Q9 / m := Nat.div_pos hle (by omega)
   omega
 
-/-- `N10m` is positive for `n ≥ 1` and `m ∣ Q9`. -/
+/-- **Positivity of the scaled factorial argument $N_{10}$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_{10}(m, n) = 10 n \lfloor Q_9 / m \rfloor$. If $n \ge 1$, $m \ge 1$
+and $m$ divides $Q_9$, then $N_{10}(m, n) \ge 1$. -/
 lemma N10_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     1 ≤ N10m m n := by
   have hqm := Q9div_pos hm1 hd
@@ -232,7 +254,9 @@ lemma N10_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
   calc (1:ℕ) = 1*1*1 := by norm_num
     _ ≤ 10*n*(Q9/m) := Nat.mul_le_mul (Nat.mul_le_mul h10 hn) hqm
 
-/-- `N9m` is positive for `n ≥ 1` and `m ∣ Q9`. -/
+/-- **Positivity of the scaled argument N₉.** For natural numbers $m$ and $n$ with $n \ge 1$,
+$m \ge 1$ and $m$ dividing $Q_9 = 210$, the scaled factorial argument
+$N_9(m, n) = 9n \lfloor Q_9 / m \rfloor$ satisfies $N_9(m, n) \ge 1$. -/
 lemma N9_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     1 ≤ N9m m n := by
   have hqm := Q9div_pos hm1 hd
@@ -241,7 +265,9 @@ lemma N9_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
   calc (1:ℕ) = 1*1*1 := by norm_num
     _ ≤ 9*n*(Q9/m) := Nat.mul_le_mul (Nat.mul_le_mul h9 hn) hqm
 
-/-- `N1m` is positive for `n ≥ 1` and `m ∣ Q9`. -/
+/-- **Positivity of the scaled factorial argument $N_1$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_1(m, n) = n \lfloor Q_9 / m \rfloor$. If $n \ge 1$, $m \ge 1$ and $m$
+divides $Q_9$, then $N_1(m, n) \ge 1$. -/
 lemma N1_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     1 ≤ N1m m n := by
   have hqm := Q9div_pos hm1 hd
@@ -249,14 +275,19 @@ lemma N1_pos {m n : ℕ} (hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
   calc (1:ℕ) = 1*1 := by norm_num
     _ ≤ n*(Q9/m) := Nat.mul_le_mul hn hqm
 
-/-- `N10m m n ≤ 10 * Q9 * n`. -/
+/-- **Upper bound for the scaled factorial argument $N_{10}$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_{10}(m, n) = 10 n \lfloor Q_9 / m \rfloor$, where
+$\lfloor Q_9 / 0 \rfloor$ is taken to be $0$. Then $N_{10}(m, n) \le 10 Q_9 n$ for all natural
+numbers $m$ and $n$. -/
 lemma N10_le {m n : ℕ} : N10m m n ≤ 10 * Q9 * n := by
   unfold N10m
   have hqm : Q9 / m ≤ Q9 := Nat.div_le_self _ _
   calc 10*n*(Q9/m) ≤ 10*n*Q9 := by gcongr
     _ = 10*Q9*n := by ring
 
-/-- `N9m m n ≤ 10 * Q9 * n`. -/
+/-- **Upper bound for the scaled factorial argument $N_9$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_9(m, n) = 9 n \lfloor Q_9 / m \rfloor$, where $\lfloor Q_9 / 0 \rfloor$
+is taken to be $0$. Then $N_9(m, n) \le 10 Q_9 n$ for all natural numbers $m$ and $n$. -/
 lemma N9_le {m n : ℕ} : N9m m n ≤ 10 * Q9 * n := by
   unfold N9m
   have hqm : Q9 / m ≤ Q9 := Nat.div_le_self _ _
@@ -270,7 +301,9 @@ lemma N9_le {m n : ℕ} : N9m m n ≤ 10 * Q9 * n := by
     exact e2
   exact le_trans h1 h2
 
-/-- `N1m m n ≤ 10 * Q9 * n`. -/
+/-- **Upper bound for the scaled factorial argument $N_1$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_1(m, n) = n \lfloor Q_9 / m \rfloor$, where $\lfloor Q_9 / 0 \rfloor$
+is taken to be $0$. Then $N_1(m, n) \le 10 Q_9 n$ for all natural numbers $m$ and $n$. -/
 lemma N1_le {m n : ℕ} : N1m m n ≤ 10 * Q9 * n := by
   unfold N1m
   have hqm : Q9 / m ≤ Q9 := Nat.div_le_self _ _
@@ -282,7 +315,9 @@ lemma N1_le {m n : ℕ} : N1m m n ≤ 10 * Q9 * n := by
   exact le_trans h1 h2
 
 -- N10 = N9 + N1 (needs m ∣ Q for the division to distribute).
-/-- `N10m = N9m + N1m` when `m ∣ Q9`. -/
+/-- **N₁₀ splits as N₉ + N₁.** For natural numbers $m$ and $n$ with $m \ge 1$ and $m$ dividing
+$Q_9 = 210$, write $N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$. Then
+$N_{10}(m, n) = N_9(m, n) + N_1(m, n)$. -/
 lemma Nadd9 {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     N10m m n = N9m m n + N1m m n := by
   obtain ⟨k, hk⟩ := hd
@@ -292,21 +327,28 @@ lemma Nadd9 {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
   rw [hqm]
   ring
 
-/-- The denominator of `ratio9` divides its numerator. -/
+/-- **Factorial divisibility behind ratio₉.** For natural numbers $m$ and $n$ with $m \ge 1$ and
+$m$ dividing $Q_9 = 210$, write $N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$.
+Then $N_9(m, n)! \cdot N_1(m, n)!$ divides $N_{10}(m, n)!$. -/
 lemma ratio9_dvd (m n : ℕ) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     (N9m m n)! * (N1m m n)! ∣ (N10m m n)! := by
   have h := Nadd9 (n := n) hm1 hd
   have e := Nat.factorial_mul_factorial_dvd_factorial_add (N9m m n) (N1m m n)
   rwa [← h] at e
 
-/-- `ratio9` is positive. -/
+/-- **Positivity of ratio₉.** For natural numbers $m$ and $n$ with $n \ge 1$, $m \ge 1$ and $m$
+dividing $Q_9 = 210$, the binomial factor
+$\mathrm{ratio}_9(m, n) = N_{10}(m, n)! / (N_9(m, n)! \cdot N_1(m, n)!)$ is positive, where
+$N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$. -/
 lemma ratio9_pos (m n : ℕ) (_hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     0 < ratio9 m n := by
   unfold ratio9
   apply Nat.div_pos (Nat.le_of_dvd (Nat.factorial_pos _) (ratio9_dvd m n hm1 hd))
   positivity
 
-/-- Logarithm of `ratio9` as a difference of log-factorials. -/
+/-- **Logarithm of the binomial factor.** Let $m$ and $n$ be natural numbers with $n \ge 1$,
+$m \ge 1$ and $m \mid 210$, and put $k = 210/m$. Then
+$$\log \frac{(10nk)!}{(9nk)!\,(nk)!} = \log (10nk)! - \log (9nk)! - \log (nk)!.$$ -/
 lemma log_ratio9 (m n : ℕ) (_hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     Real.log ((ratio9 m n : ℕ) : ℝ)
       = Real.log (((N10m m n)!) : ℝ) - Real.log (((N9m m n)!) : ℝ)
@@ -324,7 +366,10 @@ lemma log_ratio9 (m n : ℕ) (_hn : 1 ≤ n) (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     (by positivity)]
   ring
 
-/-- Möbius reciprocal sum over `w9` equals `8 / 35`. -/
+/-- **Möbius reciprocal sum over the divisors of 210, in the rationals.** Let $w_9$ be the
+table of pairs $(d, \mu(d))$, where $d$ runs over the divisors of $210$ and $\mu$ is the Möbius
+function. Then the sum of $\mu(d)/d$ over the pairs of $w_9$, computed in $\mathbb{Q}$, is
+$8/35$; that is, $\sum_{d \mid 210} \mu(d)/d = 8/35$. -/
 lemma w9_mu_sum_Q : w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℚ) / (q.1 : ℚ)) = 8/35 := by
   have hlist :
       (w9.map (fun q : ℕ × ℤ => (q.2 : ℚ) / (q.1 : ℚ))).sum = 8 / 35 := by
@@ -334,7 +379,10 @@ lemma w9_mu_sum_Q : w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℚ) / (q.1 : 
   rw [← map_sum_toFinset w9 w9_nodup]
   exact hlist
 
-/-- Real form of the Möbius reciprocal sum. -/
+/-- **Möbius reciprocal sum over the divisors of 210, in the reals.** Let $w_9$ be the
+table of pairs $(d, \mu(d))$, where $d$ runs over the divisors of $210$ and $\mu$ is the Möbius
+function. Then the sum of $\mu(d)/d$ over the pairs of $w_9$, computed in $\mathbb{R}$, is
+$8/35$; that is, $\sum_{d \mid 210} \mu(d)/d = 8/35$. -/
 lemma w9_mu_sum_R : w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℝ) / (q.1 : ℝ)) = 8/35 := by
   have h := w9_mu_sum_Q
   have hcast : ((w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℚ) / (q.1 : ℚ)) : ℚ) : ℝ)
@@ -347,7 +395,8 @@ lemma w9_mu_sum_R : w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℝ) / (q.1 : 
   exact hcast.symm
 
 -- Log-form Stirling bounds.
-/-- Log-factorial lower bound from Stirling. -/
+/-- **Lower bound for $\log N!$.** For every natural number $N \ge 1$,
+$N \log N - N + 1 \le \log N!$. -/
 lemma log_fact_lower {N : ℕ} (hN : 1 ≤ N) :
     (N : ℝ) * Real.log (N : ℝ) - (N : ℝ) + 1 ≤ Real.log ((N ! : ℕ) : ℝ) := by
   have hN0 : (0:ℝ) < (N:ℝ) := by exact_mod_cast (show 0 < N by omega)
@@ -357,7 +406,8 @@ lemma log_fact_lower {N : ℕ} (hN : 1 ≤ N) :
   rw [Real.log_mul (by positivity) (by positivity), Real.log_pow, Real.log_exp] at hlog
   linarith [hlog]
 
-/-- Log-factorial upper bound from Stirling. -/
+/-- **Upper bound for $\log N!$.** For every natural number $N \ge 1$,
+$\log N! \le (N + 1) \log N - N + 1$. -/
 lemma log_fact_upper {N : ℕ} (hN : 1 ≤ N) :
     Real.log ((N ! : ℕ) : ℝ) ≤ ((N : ℝ)+1) * Real.log (N : ℝ) - (N : ℝ) + 1 := by
   have hN0 : (0:ℝ) < (N:ℝ) := by exact_mod_cast (show 0 < N by omega)
@@ -368,10 +418,18 @@ lemma log_fact_upper {N : ℕ} (hN : 1 ≤ N) :
   push_cast at hlog
   linarith [hlog]
 
-/-- Main Stirling term `x * log x - x`. -/
+/-- **Main Stirling term.** For a real number $x$, $f_{\mathrm{main}}(x) = x \log x - x$.
+
+This is the main term of Stirling's approximation to $\log x!$. -/
 noncomputable def fmain (x : ℝ) : ℝ := x * Real.log x - x
 
-/-- Single-term lower bound for `logF9`. -/
+/-- **Termwise Stirling lower bound in Breusch's argument.** Let $(d, \varepsilon)$ be a pair in
+the Möbius divisor table $W_9$ for $Q_9 = 210$ and let $n \ge 1$ be a natural number. Write
+$q = \lfloor Q_9 / d \rfloor$ for the natural-number quotient, and let $A = N_{10}(d, n) = 10nq$,
+$B = N_9(d, n) = 9nq$ and $C = N_1(d, n) = nq$ be the scaled factorial arguments and
+$f_{\mathrm{main}}(x) = x \log x - x$ the main Stirling term. Then
+$\varepsilon (\log A! - \log B! - \log C!) \ge \varepsilon (f_{\mathrm{main}}(A) -
+f_{\mathrm{main}}(B) - f_{\mathrm{main}}(C)) - (1 + \log A + \log B + \log C)$. -/
 lemma logF9_term_lower (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) (hn : 1 ≤ n) :
     (q.2 : ℝ) * (Real.log (((N10m q.1 n)!) : ℝ) - Real.log (((N9m q.1 n)!) : ℝ)
       - Real.log (((N1m q.1 n)!) : ℝ))
@@ -406,16 +464,28 @@ lemma logF9_term_lower (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) (hn : 1 ≤ n)
     rw [hmu]
     linarith [sAU, sBL, sCL, hB0, hC0]
 
-/-- Divisors of `Q9` divide multiples of multiples of `Q9`. -/
+/-- **Divisors of 210 divide multiples of 210.** Let $w_9$ be the table of divisors $d$ of
+$Q_9 = 210$ paired with their Möbius values. If $C$ is a natural number with $Q_9 \mid C$, then
+for every pair $(d, \varepsilon)$ in $w_9$ and every natural number $n$, $d \mid C n$. -/
 lemma CNdvd9 (C : ℕ) (hC : Q9 ∣ C) (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) :
     q.1 ∣ C * n :=
   dvd_trans (w9_dvd q hq) (dvd_trans hC (Nat.dvd_mul_right C n))
 
-/-- Constant error term from `log q.1` in the `Z9` computation. -/
+/-- **The constant $K_9$.** Let $w_9$ be the table of divisors $d$ of $Q_9 = 210$ paired with
+their Möbius values $\varepsilon$. Then
+$$K_9 = \sum_{(d, \varepsilon) \in w_9} \frac{\varepsilon \log d}{d}.$$
+
+It comes from the $\log d$ terms in the closed form of
+$\sum_{(d, \varepsilon) \in w_9} \varepsilon f(N/d)$ with $f(x) = x \log x - x$, for $N$ a
+multiple of $210$. -/
 noncomputable def K9 : ℝ :=
   w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℝ) * Real.log (q.1 : ℝ) / (q.1 : ℝ))
 
-/-- Closed form for the weighted `fmain` sum at scale `C * n`. -/
+/-- **Closed form of the Möbius-weighted main-term sum.** Let $w_9$ be the table of pairs
+$(d, \mu(d))$ for the divisors $d$ of $210$, let $f(x) = x \log x - x$, and let
+$K_9 = \sum_{(d, \mu(d)) \in w_9} \mu(d) \log d / d$. For natural numbers $C > 0$ and $n \ge 1$
+with $210 \mid C$, writing $N = Cn$ (so that $N/d$ is an integer for each $d$ in $w_9$), we have
+$\sum_{(d, \mu(d)) \in w_9} \mu(d) f(N/d) = \frac{8}{35} N (\log N - 1) - K_9 N$. -/
 lemma Z9_value (C n : ℕ) (hC0 : 0 < C) (hn : 1 ≤ n) (hC : Q9 ∣ C) :
     w9.toFinset.sum (fun q : ℕ × ℤ => (q.2 : ℝ) * fmain (((C*n/q.1 : ℕ)) : ℝ))
     = (8/35) * ((C*n : ℕ):ℝ) * (Real.log ((C*n : ℕ):ℝ) - 1)
@@ -453,28 +523,39 @@ lemma Z9_value (C n : ℕ) (hC0 : 0 < C) (hn : 1 ≤ n) (hC : Q9 ∣ C) :
   rw [hA, hB, hC]
   ring
 
-/-- `N10m m n = 10 * Q9 * n / m` when `m ∣ Q9`. -/
+/-- **Exact formula for the scaled factorial argument $N_{10}$.** Let $Q_9 = 210$ and, for
+natural numbers $m$ and $n$, let $N_{10}(m, n) = 10 n \lfloor Q_9 / m \rfloor$. If $m \ge 1$ and
+$m$ divides $Q_9$, then $N_{10}(m, n) = \lfloor 10 Q_9 n / m \rfloor$. -/
 lemma N10_eq {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) : N10m m n = 10*Q9*n/m := by
   obtain ⟨k, hk⟩ := hd
   unfold N10m
   have hqm : Q9/m = k := by rw [hk, Nat.mul_div_cancel_left _ hm1]
   rw [hqm, hk, show 10*(m*k)*n = m*(10*n*k) by ring, Nat.mul_div_cancel_left _ hm1]
 
-/-- `N9m m n = 9 * Q9 * n / m` when `m ∣ Q9`. -/
+/-- **Exact formula for the scaled factorial argument $N_9$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_9(m, n) = 9 n \lfloor Q_9 / m \rfloor$. If $m \ge 1$ and $m$ divides
+$Q_9$, then $N_9(m, n) = \lfloor 9 Q_9 n / m \rfloor$. -/
 lemma N9_eq {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) : N9m m n = 9*Q9*n/m := by
   obtain ⟨k, hk⟩ := hd
   unfold N9m
   have hqm : Q9/m = k := by rw [hk, Nat.mul_div_cancel_left _ hm1]
   rw [hqm, hk, show 9*(m*k)*n = m*(9*n*k) by ring, Nat.mul_div_cancel_left _ hm1]
 
-/-- `N1m m n = Q9 * n / m` when `m ∣ Q9`. -/
+/-- **Exact formula for the scaled factorial argument $N_1$.** Let $Q_9 = 210$ and, for natural
+numbers $m$ and $n$, let $N_1(m, n) = n \lfloor Q_9 / m \rfloor$. If $m \ge 1$ and $m$ divides
+$Q_9$, then $N_1(m, n) = \lfloor Q_9 n / m \rfloor$. -/
 lemma N1_eq {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) : N1m m n = Q9*n/m := by
   obtain ⟨k, hk⟩ := hd
   unfold N1m
   have hqm : Q9/m = k := by rw [hk, Nat.mul_div_cancel_left _ hm1]
   rw [hqm, hk, show (m*k)*n = m*(n*k) by ring, Nat.mul_div_cancel_left _ hm1]
 
-/-- Combined `10 - 9 - 1` main term `48 * n * (10 * log 10 - 9 * log 9)`. -/
+/-- **Combined main term of the Möbius-weighted Stirling sums.** Let $w_9$ be the table of
+pairs $(d, \mu(d))$ for the divisors $d$ of $210$, and let $f(x) = x \log x - x$. For every
+natural number $n \ge 1$, writing $N = 210n$ (so that $N/d$ is an integer for each $d$ in
+$w_9$), we have
+$\sum_{(d, \mu(d)) \in w_9} \mu(d) \bigl(f(10N/d) - f(9N/d) - f(N/d)\bigr) =
+48 n (10 \log 10 - 9 \log 9)$. -/
 lemma Z9_combined (n : ℕ) (hn : 1 ≤ n) :
     w9.toFinset.sum (fun q : ℕ×ℤ => (q.2:ℝ) * (fmain (((10*Q9*n/q.1:ℕ)):ℝ)
       - fmain (((9*Q9*n/q.1:ℕ)):ℝ) - fmain (((Q9*n/q.1:ℕ)):ℝ)))
@@ -504,7 +585,12 @@ lemma Z9_combined (n : ℕ) (hn : 1 ≤ n) :
   push_cast
   ring_nf
 
-/-- Lower bound for `logF9 n` with explicit error terms. -/
+/-- **Lower bound for $\log F_9(n)$.** Let $w_9$ be the table of divisors $d$ of $Q_9 = 210$
+paired with their Möbius values $\varepsilon$, and for a natural number $n$ let
+$$\log F_9(n) = \sum_{(d, \varepsilon) \in w_9}
+\varepsilon \log \frac{(10 n k_d)!}{(9 n k_d)!\,(n k_d)!}, \qquad k_d = 210/d.$$
+Then for every natural number $n \ge 1$,
+$$48 n (10 \log 10 - 9 \log 9) - 16 - 48 \log(2100 n) \le \log F_9(n).$$ -/
 lemma logF9_lower (n : ℕ) (hn : 1 ≤ n) :
     48 * (n:ℝ) * (10 * Real.log 10 - 9 * Real.log 9) - 16
       - 48 * Real.log ((2100*n:ℕ):ℝ) ≤ logF9 n := by

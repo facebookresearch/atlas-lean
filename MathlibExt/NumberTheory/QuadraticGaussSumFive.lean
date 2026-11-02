@@ -38,8 +38,8 @@ scoped instance : Fact (Nat.Prime 5) := ⟨by decide⟩
 
 open scoped MetaMathlibExt
 
-/-- Quadratic Gauss sum `g(k; 5)` for `k : ℤ`: the sum over `n = 0, ..., 4` of
-`Complex.exp (2 * Real.pi * Complex.I * k * n ^ 2 / 5)`. -/
+/-- **Quadratic Gauss sum modulo $5$.** For an integer $k$, the quadratic Gauss sum $g(k; 5)$ is
+the complex number $g(k; 5) = \sum_{n=0}^{4} e^{2\pi i k n^2 / 5}$. -/
 public noncomputable def quadraticGaussSum5 (k : ℤ) : ℂ :=
   Finset.sum (Finset.range 5) (fun n =>
     Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (k : ℂ) * (n : ℂ) ^ 2 / 5))
@@ -544,10 +544,12 @@ private lemma case4 :
   rw [leg4, sum4]
   simp
 
-/-- Evaluation of the quadratic Gauss sum at `5`: for `k` not a multiple of `5`,
-`g(k; 5)` equals the Legendre symbol `(k / 5)` times `√5`. This is the classical
-evaluation recorded (citing Berndt, Evans, and Williams, Theorem 1.5.2) in
-Dresden–Li, Journal of Integer Sequences 26 (2023). -/
+/-- **Evaluation of the quadratic Gauss sum modulo $5$.** For every integer $k$ not divisible by
+$5$, the quadratic Gauss sum $g(k; 5) = \sum_{n=0}^{4} e^{2\pi i k n^2 / 5}$ equals
+$\left(\frac{k}{5}\right)\sqrt{5}$, where $\left(\frac{k}{5}\right)$ is the Legendre symbol.
+
+Source: the classical evaluation recorded in Dresden–Li, Journal of Integer Sequences 26 (2023),
+citing Berndt, Evans, and Williams, Theorem 1.5.2. -/
 public theorem quadraticGaussSum5_eval (k : ℤ) (hk : ¬ (5 : ℤ) ∣ k) :
     quadraticGaussSum5 k =
       ((legendreSym 5 k : ℤ) : ℂ) * ((Real.sqrt 5 : ℝ) : ℂ) := by

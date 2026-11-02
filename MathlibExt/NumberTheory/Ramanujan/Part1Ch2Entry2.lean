@@ -137,15 +137,22 @@ private lemma entry2_aux_all : ∀ n : ℕ,
     rw [b1, b2, b3]
     linear_combination ih - hpf
 
-/-- `ramanujan_part1_ch2_entry2` without the hypothesis `0 < n`; the statement also holds at `n =
-  0`. -/
+/-- **Ramanujan's identity for $\sum_{k=1}^{2n+1} 1/(n+k)$, including $n = 0$.** For every
+natural number $n$,
+$$\sum_{k=1}^{2n+1} \frac{1}{n+k} = 1 + 2 \sum_{k=1}^{n} \frac{1}{(3k)^3 - 3k}.$$
+
+This is Ramanujan's Entry 2 of Chapter 2 without the hypothesis $n \ge 1$; at $n = 0$ both sides
+are $1$. -/
 theorem ramanujan_part1_ch2_entry2_general (n : ℕ) :
     (∑ k ∈ Finset.Icc 1 (2 * n + 1), (1 : ℝ) / ((n : ℝ) + (k : ℝ))) =
     1 + 2 * ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((3 * (k : ℝ)) ^ 3 - 3 * (k : ℝ)) := by
   exact entry2_aux_all n
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's identity for $\sum_{k=1}^{2n+1} 1/(n+k)$.** For every positive integer $n$,
+$$\sum_{k=1}^{2n+1} \frac{1}{n+k} = 1 + 2 \sum_{k=1}^{n} \frac{1}{(3k)^3 - 3k}.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     2, formula (2.1), printed p. 27 / PDF p. 37.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry2`.
 -/

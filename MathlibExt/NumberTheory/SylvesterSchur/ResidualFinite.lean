@@ -101,8 +101,11 @@ private lemma three_pow_mul_four_pow_lt_mul_two_pow_mul_choose_three_mul
         Nat.mul_le_mul_left n (three_pow_mul_centralBinom_le_two_pow_mul_choose_three_mul n)
   exact hmul.trans_le hupper
 
-/-- In the first residual range, the scaled ternary lower bound contradicts the
-three-layer Erdős upper bound unless `Nat.choose N r` has a prime divisor above `r`. -/
+/-- **A numerical criterion for a prime divisor of $\binom{N}{r}$ above $r$ when $N \ge 3r$.**
+Let $N$ and $r$ be natural numbers with $r \ge 4$ and $3r \le N$, and let
+$e = r + \lfloor \sqrt{N} \rfloor + \lfloor N^{1/3} \rfloor \cdot \lfloor \log_2 N \rfloor$. If
+$r \cdot 2^r \cdot (3r)^r \cdot 4^e < 3^r \cdot 4^r \cdot N^r$, then some prime $p$ with $r < p$
+divides $\binom{N}{r}$. -/
 lemma exists_prime_dvd_choose_of_scaled_ternary_erdos_layers_bound {N r : ℕ}
     (hr : 4 ≤ r) (hrN : 3 * r ≤ N)
     (hbound :
@@ -137,8 +140,12 @@ lemma exists_prime_dvd_choose_of_scaled_ternary_erdos_layers_bound {N r : ℕ}
       hchoose_scaled.trans <| Nat.mul_le_mul_left ((3 * r) ^ r) hchoose_upper
   exact (not_lt_of_ge (le_of_lt (hcentral_scaled.trans_le hupper_scaled))) hbound
 
-/-- In the central residual range, the offset central-binomial lower bound contradicts
-the `N / 3` first-layer estimate unless a large prime divides `Nat.choose N r`. -/
+/-- **A numerical criterion for a prime divisor of $\binom{N}{r}$ above $r$ when $N = 2r + i$.**
+Let $r$, $i$ and $N$ be natural numbers with $r \ge 4$, $i \le r$, $N = 2r + i$ and $N \ge 6$. For a
+natural number $n$ write $n\#$ for the product of the primes $p \le n$. Let
+$L = \lfloor \log_2 N \rfloor$, let $a_0 = \lfloor N/3 \rfloor\#$ and
+$a_j = \lfloor N^{1/(j+1)} \rfloor\#$ for $j \ge 1$, and put $P = \prod_{j=0}^{L-1} a_j$. If
+$r \cdot 2^i \cdot P < 3^i \cdot 4^r$, then some prime $p$ with $r < p$ divides $\binom{N}{r}$. -/
 lemma exists_prime_dvd_choose_of_central_offset_erdos_div_three_layers_bound
     {N r i : ℕ} (hr : 4 ≤ r) (hi : i ≤ r) (hN : N = 2 * r + i) (hN6 : 6 ≤ N)
     (hbound :
@@ -179,8 +186,10 @@ lemma exists_prime_dvd_choose_of_central_offset_erdos_div_three_layers_bound
     Nat.mul_le_mul_left r (Nat.mul_le_mul_left (2 ^ i) hchoose_upper)
   exact (not_lt_of_ge (le_of_lt (hlower.trans_le hupper_mul))) hbound
 
-/-- Small central-offset cases for `Nat.choose (2 * n + 2) n`, handled by an
-explicit short prime-gap certificate. -/
+/-- **A prime divisor of $\binom{2n+2}{n}$ above $n$ for small $n$.** For every natural number
+$n$ with $7 \le n < 512$, some prime $p$ with $n < p$ divides $\binom{2n+2}{n}$.
+
+These cases are handled by an explicit short prime-gap certificate. -/
 lemma exists_prime_dvd_choose_two_mul_add_two_small {n : ℕ} (hn7 : 7 ≤ n)
     (hnlt : n < 512) :
     ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ Nat.choose (2 * n + 2) n := by
@@ -465,8 +474,11 @@ private lemma exists_prime_near_of_ge_forty_one_lt_1291 {k : ℕ}
   · exact exists_prime_near_mid_range_high (by omega) hk997
   exact exists_prime_near_mid_range_top (by omega) hklt
 
-/-- For `7 ≤ n < 38` and `k < 100`, a small prime-gap table supplies a block term
-with a prime divisor greater than `n`. -/
+/-- **A block term with a large prime factor, small range.** Let $n$ and $k$ be natural numbers
+with $7 \le n < 38$ and $n + 3 \le k < 100$. Then there are a natural number $i < n$ and a
+prime $p > n$ such that $p$ divides $k + i$.
+
+The witness comes from a table of prime gaps. -/
 lemma second_residual_tiny_has_large_prime_factor {n k : ℕ}
     (hn7 : 7 ≤ n) (hnlt : n < 38) (hklo : n + 3 ≤ k) (hklt : k < 100) :
     ∃ i < n, ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ k + i := by
@@ -483,8 +495,11 @@ lemma second_residual_tiny_has_large_prime_factor {n k : ℕ}
     exists_prime_near_six_of_ge_ten_lt_100_ne_ninety (by omega) hklt hk90
   exact exists_large_prime_factor_in_block_of_prime_near (by omega) hklo hp hkp hp_le
 
-/-- For `38 ≤ n < 945` and `k < 1291`, a prime-gap table supplies a block term
-with a prime divisor greater than `n`. -/
+/-- **A block term with a large prime factor, middle range.** Let $n$ and $k$ be natural numbers
+with $38 \le n < 945$ and $n + 3 \le k < 1291$. Then there are a natural number $i < n$ and a
+prime $p > n$ such that $p$ divides $k + i$.
+
+The witness comes from a table of prime gaps. -/
 lemma second_residual_mid_has_large_prime_factor {n k : ℕ}
     (hn38 : 38 ≤ n) (hnlt : n < 945) (hklo : n + 3 ≤ k) (hklt : k < 1291) :
     ∃ i < n, ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ k + i := by

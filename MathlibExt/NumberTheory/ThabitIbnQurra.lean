@@ -137,16 +137,19 @@ private theorem thabit_sigma_targets (n p q r : ℕ) (hn : 2 ≤ n)
   · rw [hr1, hpow_n, hpqr]
     ring
 
-/-- Thabit ibn Qurra's theorem (statement thabit-s1): for `n ≥ 2` with
-`p = 3 * 2 ^ n - 1`, `q = 3 * 2 ^ (n - 1) - 1`, `r = 9 * 2 ^ (2 * n - 1) - 1`
-all prime, `2 ^ n * p * q` and `2 ^ n * r` are distinct amicable numbers.
-Source: https://en.wikipedia.org/wiki/Amicable_numbers#Th%C4%81bit_ibn_Qurra_theorem
+/-- **Thābit ibn Qurra's theorem.** Let $n \ge 2$ be a natural number and put $p = 3 \cdot 2^n - 1$,
+$q = 3 \cdot 2^{n-1} - 1$ and $r = 9 \cdot 2^{2n-1} - 1$. If $p$, $q$ and $r$ are all prime, then
+$2^n p q < 2^n r$, the sum of the proper divisors of $2^n p q$ equals $2^n r$, and the sum of the
+proper divisors of $2^n r$ equals $2^n p q$; that is, $2^n p q$ and $2^n r$ are distinct amicable
+numbers.
 
 Proves `Wanted` entry `thabit_ibn_qurra`.
 
 Proof: Following Thabit ibn Qurra's construction as recorded in Dickson, *History of the Theory
 of Numbers*, Vol. I, Ch. I, p. 39, and the cited Wikipedia account, compute full divisor sums by
 multiplicativity and recover the proper-divisor sums by subtracting each number.
+
+Source: https://en.wikipedia.org/wiki/Amicable_numbers#Th%C4%81bit_ibn_Qurra_theorem
 -/
 theorem thabit_ibn_qurra :
     ∀ (n p q r : ℕ), 2 ≤ n →

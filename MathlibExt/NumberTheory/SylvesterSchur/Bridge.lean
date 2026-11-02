@@ -38,8 +38,10 @@ open scoped BigOperators
 
 open Finset Nat
 
-/-- If a prime `n < p` divides one term in the `n`-term block starting at `k`, then it
-divides the corresponding binomial coefficient. -/
+/-- **Large prime divisors of a block term divide the binomial coefficient.** Let $n$, $k$ and
+$j$ be natural numbers with $j < n$, and let $p$ be a prime with $p > n$. If $p$ divides
+$k + j$, one of the $n$ consecutive integers $k, \dots, k+n-1$, then $p$ divides
+$\binom{k+n-1}{n}$. -/
 theorem prime_dvd_choose_of_dvd_consecutive {n k p j : ℕ} (hp : p.Prime) (hp_gt : n < p)
     (hj : j < n) (hdvd : p ∣ k + j) :
     p ∣ Nat.choose (k + n - 1) n := by
@@ -52,8 +54,9 @@ theorem prime_dvd_choose_of_dvd_consecutive {n k p j : ℕ} (hp : p.Prime) (hp_g
   rw [← hprod_eq_range, hprod_eq] at hp_dvd_prod
   exact (hp.coprime_factorial_of_lt hp_gt).dvd_of_dvd_mul_left hp_dvd_prod
 
-/-- If a prime `n < p` divides `Nat.choose (k+n-1) n`, then it divides some term
-`k+i` in the corresponding `n`-term block. -/
+/-- **Prime divisors of the block binomial coefficient divide a block term.** Let $n$ and $k$ be
+natural numbers and let $p$ be a prime. If $p$ divides $\binom{k+n-1}{n}$, then $p$ divides
+$k + i$ for some $i$ with $0 \le i < n$. -/
 theorem exists_dvd_consecutive_of_prime_dvd_choose (n k p : ℕ) (hp : p.Prime)
     (hp_dvd : p ∣ Nat.choose (k + n - 1) n) :
     ∃ i < n, p ∣ k + i := by
@@ -67,8 +70,9 @@ theorem exists_dvd_consecutive_of_prime_dvd_choose (n k p : ℕ) (hp : p.Prime)
   rw [hp.prime.dvd_finsetProd_iff] at hp_dvd_prod
   simpa [Finset.mem_range] using hp_dvd_prod
 
-/-- A large prime divisor of the relevant binomial coefficient gives a large prime divisor in
-the consecutive block. -/
+/-- **From a large prime divisor of the binomial coefficient to one in the block.** Let $n$ and
+$k$ be natural numbers. If some prime $p > n$ divides $\binom{k+n-1}{n}$, then some prime
+$p > n$ divides one of the integers $k + i$ with $0 \le i < n$. -/
 theorem consecutive_of_exists_prime_dvd_choose {n k : ℕ}
     (hbin : ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ Nat.choose (k + n - 1) n) :
     ∃ i < n, ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ k + i := by
