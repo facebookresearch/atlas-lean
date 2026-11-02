@@ -35,10 +35,14 @@ all `C` (the problem asks for a single `ε`); only the implied constant `c` and 
 depend on `C`. Stevens and de Zeeuw's Corollary 12 gives `ε = 1/8` for every `C`.
 -/
 
-/-- Bourgain's question (AIM, Recent trends in additive combinatorics, Problem 3.1) answered by
-`f(x, y) = x² + xy`: there is one exponent `ε > 0` such that for every `C ≥ 1` there are `c > 0`
-and `p₀` such that for every prime `p ≥ p₀` and all `A, B ⊆ 𝔽_p` with `√p / C ≤ |A|, |B| ≤ C √p`,
-the set `f(A × B) = {a² + ab : a ∈ A, b ∈ B}` has at least `c p^{1/2 + ε}` elements. -/
+/-- **Bourgain's expander property for x² + xy.** The statement that there is a real
+$\varepsilon > 0$ such that for every real $C \ge 1$ there are a real $c > 0$ and a natural number
+$p_0$ such that for every prime $p \ge p_0$ and all sets $A, B \subseteq \mathbb{F}_p$ with
+$\sqrt{p}/C \le |A| \le C\sqrt{p}$ and $\sqrt{p}/C \le |B| \le C\sqrt{p}$, the set
+$\{a^2 + ab : a \in A,\ b \in B\}$ has at least $c\, p^{1/2 + \varepsilon}$ elements.
+
+This says that $f(x, y) = x^2 + xy$ answers Bourgain's question (AIM, Recent trends in additive
+combinatorics, Problem 3.1). -/
 def bourgainExpanderSquarePlusProduct : Prop :=
   ∃ ε : ℝ, 0 < ε ∧ ∀ C : ℝ, 1 ≤ C → ∃ c : ℝ, 0 < c ∧ ∃ p₀ : ℕ, ∀ p : ℕ, p.Prime → p₀ ≤ p →
     ∀ A B : Finset (ZMod p),
@@ -47,11 +51,21 @@ def bourgainExpanderSquarePlusProduct : Prop :=
       c * (p : ℝ) ^ ((1 : ℝ) / 2 + ε) ≤ ((A ×ˢ B).image fun x => x.1 ^ 2 + x.1 * x.2).card
 
 /--
-Resolved true with `f(x, y) = x² + xy`: Bourgain proved that `|f(A, B)| ≳ p^ε` for some `ε > δ`
-whenever `|A| ∼ |B| ∼ p^δ`, `0 < δ < 1` (as Shen recalls; `δ = 1/2` is the AIM question). Stevens
-and de Zeeuw (Corollary 12) later gave an explicit exponent: `|f(A, B)| ≫ min{|A|^{1/2} |B|^{3/4},
-|B|²}` for `A ≠ {0}` and `|A|² |B| ≪ p²`, which for `|A|, |B|` between `p^{1/2} / C` and `C p^{1/2}`
-is `≫_C p^{5/8}`: `ε = 1/8` for every `C`. Source: AIM workshop Recent trends in additive
+**x² + xy is an explicit expander over prime fields.** Bourgain's expander property for
+$f(x, y) = x^2 + xy$ holds: there is a real $\varepsilon > 0$ such that for every real $C \ge 1$
+there are a real $c > 0$ and a natural number $p_0$ such that for every prime $p \ge p_0$ and all
+sets $A, B \subseteq \mathbb{F}_p$ with $\sqrt{p}/C \le |A| \le C\sqrt{p}$ and
+$\sqrt{p}/C \le |B| \le C\sqrt{p}$, the set
+$f(A, B) = \{a^2 + ab : a \in A,\ b \in B\}$ has at least $c\, p^{1/2 + \varepsilon}$ elements.
+
+Bourgain proved that $|f(A, B)| \gtrsim p^{\eta}$ for some $\eta > \delta$ whenever
+$|A| \sim |B| \sim p^{\delta}$ with $0 < \delta < 1$ (as Shen recalls; $\delta = 1/2$ is the AIM
+question). Stevens and de Zeeuw (Corollary 12) later gave an explicit exponent:
+$|f(A, B)| \gg \min\{|A|^{1/2} |B|^{3/4}, |B|^2\}$ for $A \ne \{0\}$ and $|A|^2 |B| \ll p^2$,
+which for $|A|, |B|$ between $p^{1/2}/C$ and $C p^{1/2}$ is $\gg_C p^{5/8}$, so
+$\varepsilon = 1/8$ works for every $C$.
+
+Source: AIM workshop Recent trends in additive
 combinatorics (2004), problem list collected by E. Croot and V. F. Lev,
 https://aimath.org/WWN/additivecomb/additivecomb.pdf, Problem 3.1 (J. Bourgain); resolution: J.
 Bourgain, More on the sum-product phenomenon in prime fields and its applications, Int. J. Number

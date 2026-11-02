@@ -56,18 +56,27 @@ Category-(b) candidate from §168 of the Knill survey.
 open Matrix
 open scoped BigOperators
 
-/-- Partial sum of row `i` up through column `k`. -/
+/-- **Row partial sums of a matrix.** For an $n \times n$ integer matrix $A$ and indices
+$i, k \in \{0, \dots, n-1\}$, the row partial sum of $A$ at $(i, k)$ is the sum of the entries of
+row $i$ in columns $0$ through $k$, that is, $\sum_{j \le k} A_{ij}$. -/
 def rowPartialSum {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) (i k : Fin n) : ℤ :=
   Finset.sum (Finset.univ.filter (fun j : Fin n => j ≤ k)) (fun j => A i j)
 
-/-- Partial sum of column `j` up through row `k`. -/
+/-- **Column partial sums of a matrix.** For an $n \times n$ integer matrix $A$ and indices
+$j, k \in \{0, \dots, n-1\}$, the column partial sum of $A$ at $(j, k)$ is the sum of the entries
+of column $j$ in rows $0$ through $k$, that is, $\sum_{i \le k} A_{ij}$. -/
 def colPartialSum {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) (j k : Fin n) : ℤ :=
   Finset.sum (Finset.univ.filter (fun i : Fin n => i ≤ k)) (fun i => A i j)
 
-/-- A permitted partial sum value for an ASM. -/
+/-- **Integers equal to zero or one.** An integer $a$ is zero or one when $a = 0$ or $a = 1$. These
+are the values allowed for the partial sums of an alternating sign matrix. -/
 def IsZeroOrOne (a : ℤ) : Prop := a = 0 ∨ a = 1
 
-/-- An `n × n` alternating sign matrix (via the partial-sum characterisation). -/
+/-- **Alternating sign matrices.** An $n \times n$ integer matrix $A$ is an alternating sign matrix
+when every entry of $A$ is $-1$, $0$ or $1$; for all indices $i, k$ the row partial sum
+$\sum_{j \le k} A_{ij}$ is $0$ or $1$; for all indices $j, k$ the column partial sum
+$\sum_{i \le k} A_{ij}$ is $0$ or $1$; every row of $A$ sums to $1$; and every column of $A$
+sums to $1$. -/
 def IsAlternatingSignMatrix {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) : Prop :=
   (∀ i j, A i j = -1 ∨ A i j = 0 ∨ A i j = 1) ∧
   (∀ i k, IsZeroOrOne (rowPartialSum A i k)) ∧
@@ -75,18 +84,25 @@ def IsAlternatingSignMatrix {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) : Prop :=
   (∀ i, ∑ j, A i j = 1) ∧
   (∀ j, ∑ i, A i j = 1)
 
-/-- The type of `n × n` alternating sign matrices. -/
+/-- **Alternating sign matrices of size $n$.** For a natural number $n$, this is the collection of
+all $n \times n$ integer matrices that are alternating sign matrices. -/
 abbrev ASMatrix (n : ℕ) :=
   { A : Matrix (Fin n) (Fin n) ℤ // IsAlternatingSignMatrix A }
 
-/-- The Robbins / ASM product in `ℚ`. -/
+/-- **The Robbins product.** For a natural number $n$, the Robbins product is the rational number
+$$\prod_{k=0}^{n-1} \frac{(3k+1)!}{(n+k)!},$$
+an empty product, equal to $1$, when $n = 0$. -/
 def robbinsProduct (n : ℕ) : ℚ :=
   Finset.prod (Finset.range n)
     (fun k => (Nat.factorial (3 * k + 1) : ℚ) / (Nat.factorial (n + k) : ℚ))
 
 /- **Alternating sign matrix theorem.** The number of `n × n` ASMs equals the
 Robbins product. -/
-/-- Source: D. Zeilberger (1996); G. Kuperberg (1996). Knill, §168. Via leanprover/lean-eval@38361be, problem `alternating_sign_matrix_count`. -/
+/-- **Alternating sign matrix theorem.** For every natural number $n$, the number of
+$n \times n$ alternating sign matrices equals the Robbins product
+$\prod_{k=0}^{n-1} \frac{(3k+1)!}{(n+k)!}$.
+
+Source: D. Zeilberger (1996); G. Kuperberg (1996). Knill, §168. Via leanprover/lean-eval@38361be, problem `alternating_sign_matrix_count`. -/
 public theorem_wanted alternating_sign_matrix_count (n : ℕ) :
     (Nat.card (ASMatrix n) : ℚ) = robbinsProduct n
 
