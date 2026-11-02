@@ -48,9 +48,7 @@ Section 3.2); the extension is `MathlibExt.Probability.ItoIntegral`.
   `E[(∫_0^t H dB) (∫_0^t K dB)] = E ∫_0^t H_u K_u du` for two elementary integrands with possibly
   different partitions.
 * `ElementaryIntegrand.martingale_itoIntegral`: `t ↦ ∫_0^t H dB` is an `F`-martingale.
-* `IsPreBrownianReal.integral_sub_sq`, `integral_mul_sub_eq_zero`, `integral_mul_sub_sq`: the
-  moment identities `E[(B v - B r)²] = v - r`, `E[Z (B v - B r)] = 0` and
-  `E[Z (B v - B r)²] = E[Z] (v - r)` for `F r`-measurable `Z`.
+* `IsPreBrownianReal.integral_sub_sq`: the moment identity `E[(B v - B r)²] = v - r`.
 
 ## References
 
@@ -114,11 +112,11 @@ private theorem indepFun_of_le {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B 
   exact (hφ.comp (comap_measurable _)).comap_le
 
 
-/-- A factor known at time `r` times a later Brownian increment has mean zero:
-`E[Z (B v - B r)] = 0` for `r ≤ v` and `F r`-measurable `Z`, when the increment is independent of
-`F r`. No integrability hypothesis on `Z` is needed: independence factorizes the integral for
-all measurable factors. -/
-theorem integral_mul_sub_eq_zero {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
+/-- A factor known at time `r` times a later Brownian increment: `∫ Z (B v - B r) dP = 0` for
+`r ≤ v` and `F r`-measurable `Z`, when the increment is independent of `F r`. For a
+non-integrable `Z` both sides are Lean's junk value `0`, so this is a mean-zero statement only
+for integrable products; the proofs below apply it only to bounded factors times increments. -/
+private theorem integral_mul_sub_eq_zero {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P) {r v : ℝ≥0} (hrv : r ≤ v) {Z : Ω → ℝ} (hZ : Measurable[F r] Z) :
@@ -133,9 +131,10 @@ theorem integral_mul_sub_eq_zero {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
   exact hmul.trans (by rw [hmean, mul_zero])
 
 /-- A factor known at time `r` times a squared later Brownian increment:
-`E[Z (B v - B r)²] = E[Z] (v - r)` for `r ≤ v` and `F r`-measurable `Z`, when the increment is
-independent of `F r`. -/
-theorem integral_mul_sub_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
+`∫ Z (B v - B r)² dP = (∫ Z dP) (v - r)` for `r ≤ v` and `F r`-measurable `Z`, when the
+increment is independent of `F r`. As above, this is a moment identity only for integrable `Z`;
+the proofs below apply it only to bounded `Z`. -/
+private theorem integral_mul_sub_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P) {r v : ℝ≥0} (hrv : r ≤ v) {Z : Ω → ℝ} (hZ : Measurable[F r] Z) :

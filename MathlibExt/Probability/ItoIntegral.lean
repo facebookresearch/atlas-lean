@@ -31,7 +31,9 @@ of an approximating sequence a Cauchy sequence in `L²(P)` and shows that the li
 on the sequence.
 
 An integrand is *Itô-approximable on `[0, t]`* (`ProbabilityTheory.IsItoApproximable`) if it is
-jointly measurable and such an approximating sequence exists. For other integrands the definition
+jointly measurable on `(0, t] × Ω` and such an approximating sequence exists. Both conditions
+only involve the values of the integrand at times in `(0, t]`, so the integral at time `t` does
+not depend on the integrand at time `0` or after `t`. For other integrands the definition
 returns `0`; every result below assumes approximability (or proves it, as for elementary and
 continuous deterministic integrands). That every progressive square-integrable integrand is
 Itô-approximable (Karatzas–Shreve 1991, Lemma 3.2.4 and Proposition 3.2.6) is not proved here.
@@ -43,6 +45,7 @@ Brownian motion with respect to a filtration `F` is spelled out by hypotheses:
 ## Main definitions
 
 * `ProbabilityTheory.integrandDist P H K t`: the squared `L²(P ⊗ du)` distance on `(0, t] × Ω`.
+* `ProbabilityTheory.restrictIoc H t`: `H` with its values at times outside `(0, t]` set to `0`.
 * `ProbabilityTheory.IsItoApproximable P F H t`: `H` is an `L²(P ⊗ du)`-limit of elementary
   integrands on `(0, t] × Ω`.
 * `ProbabilityTheory.itoIntegralL2 P F B H t`: the Itô integral as an element of `L²(P)`.
@@ -53,6 +56,8 @@ Brownian motion with respect to a filtration `F` is spelled out by hypotheses:
 
 * `ProbabilityTheory.tendsto_toL2_itoIntegral`: the elementary integrals of *any* approximating
   sequence converge in `L²(P)` to the Itô integral.
+* `ProbabilityTheory.itoIntegralL2_congr`: the Itô integral at time `t` only depends on the
+  integrand at times in `(0, t]`.
 * `ProbabilityTheory.itoIntegral_indicator_Ioc`: the Itô integral of `ξ 1_{(a, b]}` is
   `ξ (B (b ∧ t) - B (a ∧ t))`.
 * `ProbabilityTheory.lintegral_itoIntegral_sq`: the **Itô isometry**
@@ -87,11 +92,17 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 noncomputable def integrandDist (P : Measure Ω) (H K : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) : ℝ≥0∞ :=
   ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω - K u.toNNReal ω‖ₑ ^ 2) ∂P
 
+/-- The process `H` with its values at times outside `(0, t]` set to `0`. Only the values at
+times in `(0, t]` enter the Itô integral at time `t`. -/
+noncomputable def restrictIoc (H : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) (u : ℝ≥0) (ω : Ω) : ℝ :=
+  (Set.Ioc 0 t).indicator (fun v ↦ H v ω) u
+
 /-- A process `H` is **Itô-approximable on `[0, t]`** for the filtration `F` if it is jointly
-measurable and is the `L²(P ⊗ du)`-limit on `(0, t] × Ω` of elementary integrands. -/
+measurable on `(0, t] × Ω` and is the `L²(P ⊗ du)`-limit on `(0, t] × Ω` of elementary
+integrands. Neither condition involves the values of `H` at time `0` or after `t`. -/
 def IsItoApproximable (P : Measure Ω) (F : Filtration ℝ≥0 mΩ) (H : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) :
     Prop :=
-  Measurable (fun p : ℝ × Ω ↦ H p.1.toNNReal p.2) ∧
+  Measurable (fun p : ℝ × Ω ↦ restrictIoc H t p.1.toNNReal p.2) ∧
     ∃ Hn : ℕ → ElementaryIntegrand F,
       Tendsto (fun n ↦ integrandDist P (Hn n).toProcess H t) atTop (𝓝 0)
 
@@ -127,6 +138,61 @@ theorem itoIntegral_ae_eq (P : Measure Ω) (F : Filtration ℝ≥0 mΩ) (B H : �
   · exact h.ae_eq_mk.symm
   · rfl
 
+
+private theorem toNNReal_mem_Ioc {u : ℝ} {t : ℝ≥0} (hu : u ∈ Set.Ioc (0 : ℝ) t) :
+    u.toNNReal ∈ Set.Ioc 0 t :=
+  ⟨Real.toNNReal_pos.2 hu.1, Real.toNNReal_le_iff_le_coe.2 hu.2⟩
+
+/-- Restricting a jointly measurable process to the times `(0, t]` keeps it jointly
+measurable. -/
+theorem measurable_restrictIoc {H : ℝ≥0 → Ω → ℝ}
+    (hH : Measurable fun p : ℝ × Ω ↦ H p.1.toNNReal p.2) (t : ℝ≥0) :
+    Measurable fun p : ℝ × Ω ↦ restrictIoc H t p.1.toNNReal p.2 := by
+  have : (fun p : ℝ × Ω ↦ restrictIoc H t p.1.toNNReal p.2) =
+      ((fun p : ℝ × Ω ↦ p.1.toNNReal) ⁻¹' Set.Ioc 0 t).indicator
+        (fun p ↦ H p.1.toNNReal p.2) := by
+    funext p
+    by_cases h : p.1.toNNReal ∈ Set.Ioc 0 t
+    · rw [restrictIoc, Set.indicator_of_mem h, Set.indicator_of_mem (by exact h)]
+    · rw [restrictIoc, Set.indicator_of_notMem h, Set.indicator_of_notMem (by exact h)]
+  rw [this]
+  exact hH.indicator (measurableSet_Ioc.preimage (measurable_real_toNNReal.comp measurable_fst))
+
+theorem restrictIoc_restrictIoc_of_le (H : ℝ≥0 → Ω → ℝ) {s t : ℝ≥0} (hst : s ≤ t) :
+    restrictIoc (restrictIoc H t) s = restrictIoc H s := by
+  funext u ω
+  simp only [restrictIoc]
+  by_cases hu : u ∈ Set.Ioc 0 s
+  · simp [Set.indicator_of_mem hu, Set.indicator_of_mem (Set.Ioc_subset_Ioc_right hst hu)]
+  · simp [Set.indicator_of_notMem hu]
+
+/-- `integrandDist P X Y t` only depends on `X` and `Y` at times in `(0, t]`. -/
+theorem integrandDist_restrictIoc (P : Measure Ω) (X Y : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) :
+    integrandDist P (restrictIoc X t) (restrictIoc Y t) t = integrandDist P X Y t := by
+  refine lintegral_congr fun ω ↦ setLIntegral_congr_fun measurableSet_Ioc fun u hu ↦ ?_
+  rw [restrictIoc, restrictIoc, Set.indicator_of_mem (toNNReal_mem_Ioc hu),
+    Set.indicator_of_mem (toNNReal_mem_Ioc hu)]
+
+theorem restrictIoc_congr {H K : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
+    (hHK : ∀ u ∈ Set.Ioc 0 t, ∀ ω, H u ω = K u ω) : restrictIoc H t = restrictIoc K t := by
+  funext u ω
+  by_cases hu : u ∈ Set.Ioc 0 t
+  · simp [restrictIoc, Set.indicator_of_mem hu, hHK u hu ω]
+  · simp [restrictIoc, Set.indicator_of_notMem hu]
+
+private theorem integrandDist_congr_right {P : Measure Ω} {X H K : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
+    (hHK : ∀ u ∈ Set.Ioc 0 t, ∀ ω, H u ω = K u ω) :
+    integrandDist P X K t = integrandDist P X H t := by
+  rw [← integrandDist_restrictIoc, ← restrictIoc_congr hHK, integrandDist_restrictIoc]
+
+/-- **Locality of approximability.** Itô-approximability on `[0, t]` only depends on the
+integrand at times in `(0, t]`. -/
+theorem IsItoApproximable.congr {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {H K : ℝ≥0 → Ω → ℝ}
+    {t : ℝ≥0} (h : IsItoApproximable P F H t) (hHK : ∀ u ∈ Set.Ioc 0 t, ∀ ω, H u ω = K u ω) :
+    IsItoApproximable P F K t := by
+  obtain ⟨hm, Kn, hK⟩ := h
+  refine ⟨by rw [← restrictIoc_congr hHK]; exact hm, Kn, ?_⟩
+  simpa only [integrandDist_congr_right hHK] using hK
 
 private theorem integrable_intervalIntegral {P : Measure Ω} [IsFiniteMeasure P] {f : ℝ → Ω → ℝ}
     (hf : Measurable fun p : ℝ × Ω ↦ f p.1 p.2) {C : ℝ} (hC : ∀ u ω, |f u ω| ≤ C) (t : ℝ≥0) :
@@ -387,7 +453,7 @@ private theorem tendsto_dist_toL2 {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} 
     (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P) {H : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
-    (hH : Measurable fun p : ℝ × Ω ↦ H p.1.toNNReal p.2) {ι : Type*} {l : Filter ι}
+    (hH : Measurable fun p : ℝ × Ω ↦ restrictIoc H t p.1.toNNReal p.2) {ι : Type*} {l : Filter ι}
     {A C : ι → ElementaryIntegrand F}
     (hA : Tendsto (fun i ↦ integrandDist P (A i).toProcess H t) l (𝓝 0))
     (hC : Tendsto (fun i ↦ integrandDist P (C i).toProcess H t) l (𝓝 0)) :
@@ -400,18 +466,22 @@ private theorem tendsto_dist_toL2 {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} 
       (ENNReal.Tendsto.const_mul hC (Or.inr ENNReal.ofNat_ne_top))
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hup (fun _ ↦ bot_le)
     fun i ↦ ?_
-  rw [← ElementaryIntegrand.integrandDist_eq_dist_sq _ _ hB hBF hInd t]
-  exact integrandDist_le (A i).measurable_toProcess (C i).measurable_toProcess hH t
+  rw [← ElementaryIntegrand.integrandDist_eq_dist_sq _ _ hB hBF hInd t,
+    ← integrandDist_restrictIoc, ← integrandDist_restrictIoc P (A i).toProcess,
+    ← integrandDist_restrictIoc P (C i).toProcess]
+  exact integrandDist_le (measurable_restrictIoc (A i).measurable_toProcess t)
+    (measurable_restrictIoc (C i).measurable_toProcess t) hH t
 
 /-- **The Itô integral is well defined.** For a pre-Brownian motion `B` adapted to `F` with
-increments independent of the past, a jointly measurable `H`, and *any* sequence of elementary
-integrands `Kn` converging to `H` in `L²(P ⊗ du)` on `(0, t] × Ω`, the elementary Itô integrals
-of `Kn` converge in `L²(P)` to `itoIntegralL2 P F B H t`. -/
+increments independent of the past, an `H` jointly measurable on `(0, t] × Ω`, and *any*
+sequence of elementary integrands `Kn` converging to `H` in `L²(P ⊗ du)` on `(0, t] × Ω`, the
+elementary Itô integrals of `Kn` converge in `L²(P)` to `itoIntegralL2 P F B H t`. -/
 theorem tendsto_toL2_itoIntegral {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P) {H : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
-    (hH : Measurable fun p : ℝ × Ω ↦ H p.1.toNNReal p.2) {Kn : ℕ → ElementaryIntegrand F}
+    (hH : Measurable fun p : ℝ × Ω ↦ restrictIoc H t p.1.toNNReal p.2)
+    {Kn : ℕ → ElementaryIntegrand F}
     (hK : Tendsto (fun n ↦ integrandDist P (Kn n).toProcess H t) atTop (𝓝 0)) :
     Tendsto (fun n ↦ toL2 P ((Kn n).itoIntegral B t)) atTop (𝓝 (itoIntegralL2 P F B H t)) := by
   have happ : IsItoApproximable P F H t := ⟨hH, Kn, hK⟩
@@ -426,10 +496,27 @@ theorem tendsto_toL2_itoIntegral {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
   rw [heq]
   exact hlim.congr_dist (tendsto_dist_toL2 hB hBF hInd hH hHn hK)
 
+/-- **Locality of the Itô integral.** The Itô integral at time `t` only depends on the integrand
+at times in `(0, t]`. -/
+theorem itoIntegralL2_congr {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P) {H K : ℝ≥0 → Ω → ℝ} {t : ℝ≥0} (hHK : ∀ u ∈ Set.Ioc 0 t, ∀ ω, H u ω = K u ω) :
+    itoIntegralL2 P F B H t = itoIntegralL2 P F B K t := by
+  by_cases h : IsItoApproximable P F H t
+  · obtain ⟨hm', -, -⟩ := h.congr hHK
+    obtain ⟨hm, Kn, hK⟩ := h
+    exact tendsto_nhds_unique (tendsto_toL2_itoIntegral hB hBF hInd hm hK)
+      (tendsto_toL2_itoIntegral hB hBF hInd hm'
+        (by simpa only [integrandDist_congr_right hHK] using hK))
+  · have h' : ¬ IsItoApproximable P F K t := fun hK ↦
+      h (hK.congr fun u hu ω ↦ (hHK u hu ω).symm)
+    simp [itoIntegralL2, h, h']
+
 /-- An elementary integrand is Itô-approximable on every `[0, t]` (by itself). -/
 theorem isItoApproximable_toProcess {F : Filtration ℝ≥0 mΩ} (P : Measure Ω)
     (K : ElementaryIntegrand F) (t : ℝ≥0) : IsItoApproximable P F K.toProcess t :=
-  ⟨K.measurable_toProcess, fun _ ↦ K, by simp [integrandDist]⟩
+  ⟨measurable_restrictIoc K.measurable_toProcess t, fun _ ↦ K, by simp [integrandDist]⟩
 
 /-- On an elementary integrand, the Itô integral agrees almost surely with the elementary Itô
 integral. -/
@@ -439,8 +526,9 @@ theorem itoIntegral_toProcess_ae_eq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω
       (F s) P) (K : ElementaryIntegrand F) (t : ℝ≥0) :
     itoIntegral P F B K.toProcess t =ᵐ[P] K.itoIntegral B t := by
   have h0 : integrandDist P K.toProcess K.toProcess t = 0 := by simp [integrandDist]
-  have hlim := tendsto_toL2_itoIntegral hB hBF hInd K.measurable_toProcess
-    (Kn := fun _ ↦ K) (by rw [h0]; exact tendsto_const_nhds)
+  have hlim := tendsto_toL2_itoIntegral hB hBF hInd
+    (measurable_restrictIoc K.measurable_toProcess t) (Kn := fun _ ↦ K)
+    (by rw [h0]; exact tendsto_const_nhds)
   have heq := tendsto_nhds_unique tendsto_const_nhds hlim
   have hK := K.memLp_itoIntegral hB t
   refine (itoIntegral_ae_eq P F B K.toProcess t).trans ?_
@@ -571,7 +659,7 @@ theorem itoIntegral_deterministic_eq {F : Filtration ℝ≥0 mΩ} {P : Measure �
   have hHm : Measurable fun p : ℝ × Ω ↦ (fun u _ ↦ g u : ℝ≥0 → Ω → ℝ) p.1.toNNReal p.2 :=
     (hg.continuous.measurable.comp (NNReal.continuous_coe.measurable.comp
       measurable_real_toNNReal)).comp measurable_fst
-  have hlim := tendsto_toL2_itoIntegral hpre hBF hInd hHm
+  have hlim := tendsto_toL2_itoIntegral hpre hBF hInd (measurable_restrictIoc hHm t)
     (tendsto_integrandDist_riemann (F := F) (P := P) hg.continuous t)
   obtain ⟨ns, hns_mono, hns⟩ := (tendstoInMeasure_of_tendsto_Lp hlim).exists_seq_tendsto_ae
   have hrep : ∀ n, (toL2 P ((ElementaryIntegrand.riemann F g t n).itoIntegral B t) : Ω → ℝ)
@@ -647,7 +735,10 @@ theorem martingale_itoIntegral {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B 
     tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hK (fun _ ↦ bot_le)
       fun _ ↦ integrandDist_mono_time hst
   have hlt := tendsto_toL2_itoIntegral hB hBF hInd hHm hK
-  have hls := tendsto_toL2_itoIntegral hB hBF hInd hHm hKs
+  have hHms : Measurable fun p : ℝ × Ω ↦ restrictIoc H s p.1.toNNReal p.2 := by
+    rw [← restrictIoc_restrictIoc_of_le H hst]
+    exact measurable_restrictIoc hHm s
+  have hls := tendsto_toL2_itoIntegral hB hBF hInd hHms hKs
   set CE := condExpL2 ℝ ℝ (μ := P) (F.le s)
   have hce : Tendsto (fun n ↦ ((CE (toL2 P ((Kn n).itoIntegral B t)) : Lp ℝ 2 P))) atTop
       (𝓝 (CE (itoIntegralL2 P F B H t) : Lp ℝ 2 P)) :=
@@ -673,7 +764,7 @@ theorem martingale_itoIntegral {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {B 
   rw [Lp.toLp_coeFn _ hL, hCE]
   exact (itoIntegral_ae_eq P F B H s).symm
 
-private theorem integrandDist_eq_eLpNorm_sq {P : Measure Ω} [IsFiniteMeasure P]
+private theorem integrandDist_eq_eLpNorm_sq_aux {P : Measure Ω} [IsFiniteMeasure P]
     {X Y : ℝ≥0 → Ω → ℝ} (hX : Measurable fun p : ℝ × Ω ↦ X p.1.toNNReal p.2)
     (hY : Measurable fun p : ℝ × Ω ↦ Y p.1.toNNReal p.2) (t : ℝ≥0) :
     integrandDist P X Y t = eLpNorm (fun p : Ω × ℝ ↦ X p.2.toNNReal p.1 - Y p.2.toNNReal p.1) 2
@@ -685,6 +776,28 @@ private theorem integrandDist_eq_eLpNorm_sq {P : Measure Ω} [IsFiniteMeasure P]
   simp only [NNReal.coe_ofNat, ENNReal.rpow_two, ENNReal.coe_ofNat] at h
   rw [h, lintegral_prod _ (hm.enorm.pow_const 2).aemeasurable]
   rfl
+
+private theorem integrandDist_eq_eLpNorm_sq {P : Measure Ω} [IsFiniteMeasure P]
+    {X Y : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
+    (hX : Measurable fun p : ℝ × Ω ↦ restrictIoc X t p.1.toNNReal p.2)
+    (hY : Measurable fun p : ℝ × Ω ↦ restrictIoc Y t p.1.toNNReal p.2) :
+    integrandDist P X Y t = eLpNorm (fun p : Ω × ℝ ↦ X p.2.toNNReal p.1 - Y p.2.toNNReal p.1) 2
+      (P.prod (volume.restrict (Set.Ioc (0 : ℝ) t))) ^ 2 := by
+  rw [← integrandDist_restrictIoc, integrandDist_eq_eLpNorm_sq_aux hX hY t]
+  congr 1
+  refine eLpNorm_congr_ae ?_
+  have hnull : P.prod (volume.restrict (Set.Ioc (0 : ℝ) t))
+      (Set.univ ×ˢ (Set.Ioc (0 : ℝ) t)ᶜ) = 0 := by
+    rw [Measure.prod_prod, Measure.restrict_apply measurableSet_Ioc.compl, Set.compl_inter_self,
+      measure_empty, mul_zero]
+  have hae : ∀ᵐ p ∂(P.prod (volume.restrict (Set.Ioc (0 : ℝ) t))), p.2 ∈ Set.Ioc (0 : ℝ) t := by
+    rw [ae_iff]
+    refine measure_mono_null ?_ hnull
+    intro p hp
+    exact ⟨Set.mem_univ p.1, hp⟩
+  filter_upwards [hae] with p hp
+  rw [restrictIoc, restrictIoc, Set.indicator_of_mem (toNNReal_mem_Ioc hp),
+    Set.indicator_of_mem (toNNReal_mem_Ioc hp)]
 
 /-- The empty elementary integrand (no intervals). -/
 private def zeroIntegrand (F : Filtration ℝ≥0 mΩ) : ElementaryIntegrand F where
@@ -723,8 +836,8 @@ theorem lintegral_itoIntegral_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
       eLpNorm (fun p : Ω × ℝ ↦ (Kn n).toProcess p.2.toNNReal p.1) 2 μ' ^ 2 := by
     intro n
     have h := ElementaryIntegrand.integrandDist_eq_dist_sq (Kn n) (zeroIntegrand F) hB hBF hInd t
-    rw [hZI, dist_zero_right, hZ, integrandDist_eq_eLpNorm_sq (Kn n).measurable_toProcess h0m]
-      at h
+    rw [hZI, dist_zero_right, hZ, integrandDist_eq_eLpNorm_sq
+      (measurable_restrictIoc (Kn n).measurable_toProcess t) (measurable_restrictIoc h0m t)] at h
     simpa using h.symm
   have hfin : ∀ n, eLpNorm (fun p : Ω × ℝ ↦ (Kn n).toProcess p.2.toNNReal p.1) 2 μ' ≠ ⊤ := by
     intro n h
@@ -737,7 +850,7 @@ theorem lintegral_itoIntegral_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
   have he : Tendsto e atTop (𝓝 0) := by
     have h2 : Tendsto (fun n ↦ e n ^ 2) atTop (𝓝 0) := by
       refine hK.congr fun n ↦ ?_
-      exact integrandDist_eq_eLpNorm_sq (Kn n).measurable_toProcess hHm t
+      exact integrandDist_eq_eLpNorm_sq (measurable_restrictIoc (Kn n).measurable_toProcess t) hHm
     have key : ∀ x : ℝ≥0∞, (x ^ 2) ^ ((2 : ℝ)⁻¹) = x := fun x ↦ by
       simpa using ENNReal.pow_rpow_inv_natCast (n := 2) two_ne_zero x
     have := (ENNReal.continuous_rpow_const (y := (2 : ℝ)⁻¹)).tendsto 0 |>.comp h2
@@ -792,7 +905,8 @@ theorem lintegral_itoIntegral_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
     filter_upwards [itoIntegral_ae_eq P F B H t] with ω hω
     rw [hω, Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hrhs : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P = NH ^ 2 := by
-    have := integrandDist_eq_eLpNorm_sq (P := P) (Y := fun _ _ ↦ 0) hHm h0m t
+    have := integrandDist_eq_eLpNorm_sq (P := P) (Y := fun _ _ ↦ 0) hHm
+      (measurable_restrictIoc h0m t)
     simpa [integrandDist, NH, μ'] using this
   rw [hlhs, hrhs, hEq]
 

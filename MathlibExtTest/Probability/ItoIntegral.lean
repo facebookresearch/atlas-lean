@@ -80,6 +80,22 @@ example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     Martingale (itoIntegral P F B (one12 F).toProcess) F P :=
   martingale_itoIntegral hB hBF hInd fun t ↦ isItoApproximable_toProcess P _ t
 
+/-- Locality: changing an integrand at time `0` and after time `t`, here to an arbitrary
+(possibly non-measurable) `G`, keeps it Itô-approximable on `[0, t]` with the same integral. -/
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P) (G : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) :
+    IsItoApproximable P F
+        (fun u ω ↦ if u ∈ Set.Ioc 0 t then (one12 F).toProcess u ω else G u ω) t ∧
+      itoIntegralL2 P F B
+          (fun u ω ↦ if u ∈ Set.Ioc 0 t then (one12 F).toProcess u ω else G u ω) t =
+        itoIntegralL2 P F B (one12 F).toProcess t := by
+  have hHK : ∀ u ∈ Set.Ioc 0 t, ∀ ω, (one12 F).toProcess u ω =
+      (fun u ω ↦ if u ∈ Set.Ioc 0 t then (one12 F).toProcess u ω else G u ω) u ω :=
+    fun u hu ω ↦ by simp [hu]
+  exact ⟨(isItoApproximable_toProcess P _ t).congr hHK,
+    (itoIntegralL2_congr hB hBF hInd hHK).symm⟩
+
 /-- Junk value: on an integrand that is not Itô-approximable, `itoIntegralL2` is `0`. -/
 example (H : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) (h : ¬ IsItoApproximable P F H t) :
     itoIntegralL2 P F B H t = 0 := by
