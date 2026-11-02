@@ -67,15 +67,18 @@ namespace StochasticMatrix
 
 variable {M : ℕ}
 
-/-- The product of forward transition probabilities along a path: for a list
-of states `[x₀, x₁, …, xₖ]`, returns `∏ᵢ P(xᵢ, xᵢ₊₁)` as a real number.
-Empty and singleton lists give `1`. -/
+/-- **Forward path product.** For a stochastic matrix $P$ and a path of states
+$x_0, x_1, \dots, x_k$, the path product is the real number
+$\prod_{i=0}^{k-1} P(x_i, x_{i+1})$, the product of the forward transition probabilities along
+the path. For the empty path and for a path consisting of a single state it is $1$. -/
 def listPathProduct (P : StochasticMatrix M) : List (Fin (M + 1)) → ℝ
   | [] => 1
   | [_] => 1
   | a :: b :: rest => P.prob a b * listPathProduct P (b :: rest)
 
-/-- The forward path product is always nonnegative. -/
+/-- **Path products are nonnegative.** Let $P$ be a stochastic matrix on the states
+$\{0, \dots, M\}$. For every path (finite list of states), the product of the forward transition
+probabilities $P(x, y)$ over consecutive states $x, y$ along the path is nonnegative. -/
 lemma listPathProduct_nonneg (P : StochasticMatrix M) (path : List (Fin (M + 1))) :
     0 ≤ listPathProduct P path := by
   induction path with
@@ -86,15 +89,21 @@ lemma listPathProduct_nonneg (P : StochasticMatrix M) (path : List (Fin (M + 1))
     | cons b rest =>
       show 0 ≤ P.prob a b * listPathProduct P (b :: rest)
       exact mul_nonneg (P.nonneg a b) ih
-/-- The product of ratios `P(xᵢ, xᵢ₊₁) / P(xᵢ₊₁, xᵢ)` along a path.
-This is the quantity that defines the "cycle weight" used to construct a
-reversible measure from Kolmogorov's cycle condition. -/
+/-- **Ratio product along a path.** For a stochastic matrix $P$ and a path of states
+$x_0, x_1, \dots, x_k$, the ratio product is the real number
+$\prod_{i=0}^{k-1} \frac{P(x_i, x_{i+1})}{P(x_{i+1}, x_i)}$, where a quotient with
+denominator $0$ is taken to be $0$. For the empty path and for a path consisting of a single
+state it is $1$.
+
+This is the quantity that defines the "cycle weight" used to construct a reversible measure
+from Kolmogorov's cycle condition. -/
 noncomputable def listRatioProduct (P : StochasticMatrix M) : List (Fin (M + 1)) → ℝ
   | [] => 1
   | [_] => 1
   | a :: b :: rest => (P.prob a b / P.prob b a) * listRatioProduct P (b :: rest)
 
-/-- The ratio product is always nonnegative. -/
+/-- **The ratio product is nonnegative.** For a stochastic matrix $P$, the ratio product along
+every path of states is nonnegative. -/
 lemma listRatioProduct_nonneg (P : StochasticMatrix M) (path : List (Fin (M + 1))) :
     0 ≤ listRatioProduct P path := by
   induction path with
@@ -105,9 +114,9 @@ lemma listRatioProduct_nonneg (P : StochasticMatrix M) (path : List (Fin (M + 1)
     | cons b rest =>
       show 0 ≤ (P.prob a b / P.prob b a) * listRatioProduct P (b :: rest)
       exact mul_nonneg (div_nonneg (P.nonneg a b) (P.nonneg b a)) ih
-/-- If the forward `listPathProduct` along a path is positive and the
-transition probabilities have symmetric support, then the corresponding
-`listRatioProduct` is also positive. -/
+/-- **Positive paths have positive ratio product.** Let $P$ be a stochastic matrix such that
+$P(x, y) > 0$ implies $P(y, x) > 0$ for all states $x$ and $y$. If the forward path product
+along a path of states is positive, then the ratio product along that path is positive. -/
 lemma listRatioProduct_pos_of_listPathProduct_pos (P : StochasticMatrix M)
     (hsymm : ∀ x y : Fin (M + 1), P.prob x y > 0 → P.prob y x > 0)
     (path : List (Fin (M + 1))) (h : 0 < listPathProduct P path) :
@@ -125,9 +134,11 @@ lemma listRatioProduct_pos_of_listPathProduct_pos (P : StochasticMatrix M)
       have h_tail : 0 < listPathProduct P (b :: rest) :=
         pos_of_mul_pos_right hP (P.nonneg a b)
       exact mul_pos (div_pos hPab hPba) (ih h_tail)
-/-- If `P.matPow n i j > 0`, then there is an actual path from `i` to `j` (a list of states
-starting at `i` and ending at `j`) along which the product of transition probabilities is
-positive. -/
+/-- **Paths from positive matrix powers.** Let $P$ be a stochastic matrix on the states
+$\{0, \dots, M\}$. If $n > 0$ and the $(i, j)$ entry of the $n$-th matrix power $P^n$ is positive,
+then there is a path from $i$ to $j$ (a finite list of states starting at $i$ and ending at $j$)
+along which the product of the transition probabilities $P(x, y)$ over consecutive states $x, y$
+is positive. -/
 lemma exists_path_of_matPow_pos (P : StochasticMatrix M) :
     ∀ (n : ℕ) (i j : Fin (M + 1)), 0 < n → 0 < P.matPow n i j →
     ∃ path : List (Fin (M + 1)),
@@ -165,8 +176,10 @@ lemma exists_path_of_matPow_pos (P : StochasticMatrix M) :
         · simp only [listPathProduct]
           exact mul_pos (hPim) hprod
 
-/-- For an irreducible chain, between any two states `i, j` there exists a finite path
-from `i` to `j` along which the product of transition probabilities is strictly positive. -/
+/-- **Irreducible chains have positive paths.** Let $P$ be an irreducible stochastic matrix on the
+states $\{0, \dots, M\}$. For any two states $i, j$ there is a path from $i$ to $j$ (a finite list
+of states starting at $i$ and ending at $j$) along which the product of the transition
+probabilities $P(x, y)$ over consecutive states $x, y$ is strictly positive. -/
 theorem IsIrreducible.exists_path {P : StochasticMatrix M} (hirr : P.IsIrreducible)
     (i j : Fin (M + 1)) :
     ∃ path : List (Fin (M + 1)),
@@ -174,7 +187,10 @@ theorem IsIrreducible.exists_path {P : StochasticMatrix M} (hirr : P.IsIrreducib
   obtain ⟨n, hn_pos, hn⟩ := hirr i j
   exact exists_path_of_matPow_pos P n i j hn_pos hn
 
-/-- Unfolding of `listRatioProduct` on a list of the form `c 0 :: List.ofFn (c ∘ Fin.succ)`. -/
+/-- **First step of the ratio product.** Let $P$ be a stochastic matrix, $n$ a natural number
+and $c_0, c_1, \dots, c_{n+1}$ states. Then the ratio product along $c_0, c_1, \dots, c_{n+1}$
+equals $\frac{P(c_0, c_1)}{P(c_1, c_0)}$ times the ratio product along $c_1, \dots, c_{n+1}$,
+where a quotient with denominator $0$ is taken to be $0$. -/
 lemma listRatioProduct_cons_ofFn (P : StochasticMatrix M) (n : ℕ)
     (c : Fin (n + 2) → Fin (M + 1)) :
     listRatioProduct P (c 0 :: List.ofFn (fun i : Fin (n + 1) => c i.succ)) =
@@ -184,8 +200,10 @@ lemma listRatioProduct_cons_ofFn (P : StochasticMatrix M) (n : ℕ)
          c (Fin.succ 0) :: List.ofFn (fun i : Fin n => c i.succ.succ) from List.ofFn_succ,
       show (1 : Fin (n + 2)) = Fin.succ (0 : Fin (n + 1)) from rfl]; rfl
 
-/-- `listRatioProduct` along `List.ofFn c` is the finite product of ratios
-`P(c iₖ, c iₖ₊₁) / P(c iₖ₊₁, c iₖ)` indexed by `i : Fin n`. -/
+/-- **The ratio product as a finite product.** Let $P$ be a stochastic matrix, $n$ a natural
+number and $c_0, c_1, \dots, c_n$ states. Then the ratio product along $c_0, c_1, \dots, c_n$
+equals $\prod_{i=0}^{n-1} \frac{P(c_i, c_{i+1})}{P(c_{i+1}, c_i)}$, where a quotient with
+denominator $0$ is taken to be $0$. -/
 lemma listRatioProduct_ofFn (P : StochasticMatrix M) :
     ∀ (n : ℕ) (c : Fin (n + 1) → Fin (M + 1)),
     listRatioProduct P (List.ofFn c) =
@@ -198,9 +216,10 @@ lemma listRatioProduct_ofFn (P : StochasticMatrix M) :
     rw [show List.ofFn c = c 0 :: List.ofFn (fun i : Fin (k + 1) => c i.succ) from List.ofFn_succ,
         listRatioProduct_cons_ofFn, ih (fun i => c i.succ), Fin.prod_univ_succ]; rfl
 
-/-- Under Kolmogorov's cycle condition, the ratio product along any closed
-loop (a path whose first and last elements coincide and whose reverse edges
-all have positive probability) is equal to `1`. -/
+/-- **The ratio product around a loop is one.** Let $P$ be a stochastic matrix satisfying
+Kolmogorov's cycle condition, and let $x_0, x_1, \dots, x_n$ be a path of states with
+$n \ge 1$ and $x_0 = x_n$ such that $P(x_{i+1}, x_i) > 0$ for every $i < n$. Then the ratio
+product along $x_0, x_1, \dots, x_n$ equals $1$. -/
 lemma listRatioProduct_cycle_eq_one (P : StochasticMatrix M)
     (hcycle : P.KolmogorovCycleCondition)
     (path : List (Fin (M + 1))) (hlen : 2 ≤ path.length) (hne : path ≠ [])
@@ -234,18 +253,22 @@ lemma listRatioProduct_cycle_eq_one (P : StochasticMatrix M)
   have hfwd_eq := hcycle.cycle_prod n c hloop_fin hbwd_pos
   rw [path_eq, listRatioProduct_ofFn, Finset.prod_div_distrib, hfwd_eq]
   exact div_self (ne_of_gt hbwd_pos)
-/-- The **cycle weight** of state `j` relative to a reference state `i₀`:
-defined as the `listRatioProduct` along some (classically chosen)
-positive-probability path from `i₀` to `j`. For chains satisfying
-Kolmogorov's cycle condition this value is path-independent
-(`cycleWeight_path_independent`) and yields the unique-up-to-scaling
-reversible measure. -/
+/-- **Cycle weight.** Let $P$ be an irreducible stochastic matrix on the states
+$\{0, \dots, M\}$ and fix a reference state $i_0$. The cycle weight of a state $j$ relative to
+$i_0$ is the product of the ratios $P(x, y) / P(y, x)$ over consecutive states $x, y$ along a
+path (a finite list of states) from $i_0$ to $j$ whose product of transition probabilities
+$P(x, y)$ over consecutive states is positive, where a ratio with $P(y, x) = 0$ counts as $0$;
+such a path exists by irreducibility, and one is fixed by choice.
+
+For chains satisfying Kolmogorov's cycle condition this value does not depend on the chosen path,
+and the weights give a reversible measure. -/
 noncomputable def cycleWeight (P : StochasticMatrix M) (hirr : P.IsIrreducible)
     (i₀ : Fin (M + 1)) (j : Fin (M + 1)) : ℝ :=
   listRatioProduct P (Classical.choose (hirr.exists_path i₀ j))
-/-- `listRatioProduct` is multiplicative when concatenating two paths that share an endpoint:
-joining `l1` with `l2.tail` (so the join point isn't duplicated) gives the product of the
-ratio products of `l1` and `l2`. -/
+/-- **Ratio product of joined paths.** Let $P$ be a stochastic matrix and let $x_0, \dots, x_k$
+and $y_0, \dots, y_l$ be paths of states with $x_k = y_0$. Then the ratio product along the
+joined path $x_0, \dots, x_k, y_1, \dots, y_l$ equals the ratio product along
+$x_0, \dots, x_k$ times the ratio product along $y_0, \dots, y_l$. -/
 lemma listRatioProduct_append (P : StochasticMatrix M) :
     ∀ (l1 l2 : List (Fin (M + 1))) (hne1 : l1 ≠ []) (hne2 : l2 ≠ []),
     l1.getLast hne1 = l2.head hne2 →
@@ -277,8 +300,11 @@ lemma listRatioProduct_append (P : StochasticMatrix M) :
             listRatioProduct P (b :: rest) * listRatioProduct P l2
       rw [ih_eq, mul_assoc]
 
-/-- If the path product along a list `l` is positive, then every consecutive transition
-probability `P(l[i], l[i+1])` along `l` is positive. -/
+/-- **Positive path products have positive steps.** Let $P$ be a stochastic matrix on the states
+$\{0, \dots, M\}$, and let $l$ be a path (a finite list of states) whose $i$-th state, counting
+from $0$, is $l_i$. If the product of the transition probabilities $P(x, y)$ over consecutive
+states $x, y$ along $l$ is positive, then $P(l_i, l_{i+1}) > 0$ for every $i$ such that $i + 1$
+is less than the length of $l$. -/
 lemma listPathProduct_pos_implies_transitions (P : StochasticMatrix M)
     (l : List (Fin (M + 1))) (hpos : 0 < listPathProduct P l)
     (i : ℕ) (hi : i + 1 < l.length) :
@@ -298,8 +324,11 @@ lemma listPathProduct_pos_implies_transitions (P : StochasticMatrix M)
       | zero => exact hPab
       | succ i => exact ih h_tail i (by simp only [List.length] at hi ⊢; omega)
 
-/-- If two paths `l1, l2` each have positive path product and share an endpoint, then their
-join `l1 ++ l2.tail` also has positive path product. -/
+/-- **Joining positive paths.** Let $P$ be a stochastic matrix on the states $\{0, \dots, M\}$,
+and let $l_1, l_2$ be nonempty paths (finite lists of states) such that the last state of $l_1$
+is the first state of $l_2$. If the products of the transition probabilities $P(x, y)$ over
+consecutive states $x, y$ along $l_1$ and along $l_2$ are both positive, then so is the product
+along the path that follows $l_1$ and then $l_2$ with its first state removed. -/
 lemma listPathProduct_append_pos (P : StochasticMatrix M)
     (l1 l2 : List (Fin (M + 1))) (hne1 : l1 ≠ []) (hne2 : l2 ≠ [])
     (hjoin : l1.getLast hne1 = l2.head hne2)
@@ -331,9 +360,14 @@ lemma listPathProduct_append_pos (P : StochasticMatrix M)
         pos_of_mul_pos_right h1 (P.nonneg a b)
       exact mul_pos hPab (ih htne hjoin' h_tail)
 
-/-- **Path independence of cycle weight.** Under Kolmogorov's cycle condition, any two
-positive-probability paths from `i₀` to `j` yield the same `listRatioProduct`. This is the
-key step that makes `cycleWeight` well-defined and ultimately produces a reversible measure. -/
+/-- **Path independence of cycle weight.** Let $P$ be an irreducible stochastic matrix on the
+states $\{0, \dots, M\}$ satisfying Kolmogorov's cycle condition, and let $i_0, j$ be states. If
+two paths (finite lists of states) both start at $i_0$, end at $j$, and have positive product of
+the transition probabilities $P(x, y)$ over consecutive states $x, y$, then the products of the
+ratios $P(x, y) / P(y, x)$ over consecutive states $x, y$ along the two paths are equal.
+
+This is the key step that makes the cycle weight well-defined and ultimately produces a
+reversible measure. -/
 theorem cycleWeight_path_independent (P : StochasticMatrix M)
     (hcycle : P.KolmogorovCycleCondition) (hirr : P.IsIrreducible) (i₀ j : Fin (M + 1))
     (path1 path2 : List (Fin (M + 1)))
@@ -441,8 +475,10 @@ theorem cycleWeight_path_independent (P : StochasticMatrix M)
         simp [listRatioProduct]
     rw [hp_ratio, hp3_ratio, mul_one]
 
-/-- Recursion for `listRatioProduct` when appending a single state `j` at the end of a
-nonempty path: the new ratio product equals the old one times the ratio for the new edge. -/
+/-- **Ratio product after appending a state.** Let $P$ be a stochastic matrix,
+$x_0, \dots, x_k$ a path of states and $j$ a state. Then the ratio product along
+$x_0, \dots, x_k, j$ equals the ratio product along $x_0, \dots, x_k$ times
+$\frac{P(x_k, j)}{P(j, x_k)}$, where a quotient with denominator $0$ is taken to be $0$. -/
 lemma listRatioProduct_snoc (P : StochasticMatrix M) :
     ∀ (path : List (Fin (M + 1))) (j : Fin (M + 1)) (hne : path ≠ []),
     listRatioProduct P (path ++ [j]) =
@@ -477,9 +513,10 @@ lemma listRatioProduct_snoc (P : StochasticMatrix M) :
       simp only [List.getLast_cons htail_ne]
       ring
 
-/-- Extending the path by one positive-probability transition `i → j` multiplies the cycle
-weight by `P(i,j) / P(j,i)`. Equivalently, `cycleWeight i₀ j = cycleWeight i₀ i · P(i,j)/P(j,i)`
-whenever `P(i,j) > 0`. -/
+/-- **Cycle weights along a positive transition.** Let $P$ be an irreducible stochastic matrix on
+the states $\{0, \dots, M\}$ satisfying Kolmogorov's cycle condition, fix a reference state
+$i_0$, and write $w(j)$ for the cycle weight of a state $j$ relative to $i_0$. If $i, j$ are
+states with $P(i, j) > 0$, then $w(i) \cdot P(i, j) / P(j, i) = w(j)$. -/
 lemma cycleWeight_extend (P : StochasticMatrix M)
     (hcycle : P.KolmogorovCycleCondition) (hirr : P.IsIrreducible)
     (i₀ i j : Fin (M + 1)) (hPij : 0 < P.prob i j) :
@@ -546,8 +583,10 @@ lemma cycleWeight_extend (P : StochasticMatrix M)
   exact cycleWeight_path_independent P hcycle hirr i₀ j ext_path path_j
     hhead_ext hlast_ext hhead_j hlast_j hprod_ext hprod_j
 
-/-- The cycle weights satisfy the **detailed balance** equations with `P`:
-`cycleWeight(i) · P(i,j) = cycleWeight(j) · P(j,i)` for all states `i, j`. -/
+/-- **Detailed balance for cycle weights.** Let $P$ be an irreducible stochastic matrix on the
+states $\{0, \dots, M\}$ satisfying Kolmogorov's cycle condition, fix a reference state $i_0$,
+and write $w(j)$ for the cycle weight of a state $j$ relative to $i_0$. Then for all states
+$i, j$ we have $w(i) \cdot P(i, j) = w(j) \cdot P(j, i)$. -/
 theorem cycleWeight_detailed_balance (P : StochasticMatrix M)
     (hcycle : P.KolmogorovCycleCondition) (hirr : P.IsIrreducible)
     (i₀ i j : Fin (M + 1)) :

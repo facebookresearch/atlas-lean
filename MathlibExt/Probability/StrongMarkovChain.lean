@@ -54,21 +54,28 @@ open MathlibExt.Probability.MarkovPropertyChain
 
 namespace MathlibExt.Probability.StrongMarkovChain
 
-/-- Shift a path `ω : ℕ → S` by the stopping time `T ω`: the resulting path at index `k`
-is `ω (T ω + k)`. -/
+/-- **Path shifted by a random time.** For a type $S$ and a function
+$T : (\mathbb{N} \to S) \to \mathbb{N}$ (typically a stopping time), the shift by $T$ sends a path
+$\omega : \mathbb{N} \to S$ to the path $k \mapsto \omega(T(\omega) + k)$. -/
 def stoppedPathShift {S : Type*} (T : (ℕ → S) → ℕ) : (ℕ → S) → (ℕ → S) :=
   fun ω k => ω (T ω + k)
 
-/-- On the event `{T ω = n}`, the stopping-time shift coincides with the fixed shift by
-`n`: `stoppedPathShift T ω = shiftPath n ω`. -/
+/-- **The shift by a random time agrees with the fixed shift on its level set.** Let $S$ be a
+type, let $T : (\mathbb{N} \to S) \to \mathbb{N}$ and $n \in \mathbb{N}$, and let
+$\omega : \mathbb{N} \to S$ be a path with $T(\omega) = n$. Then the path $\omega$ shifted by $T$,
+namely $k \mapsto \omega(T(\omega) + k)$, equals the path $\omega$ shifted by $n$, namely
+$k \mapsto \omega(n + k)$. -/
 theorem stoppedPathShift_eq_shiftPath_on_eq {S : Type*}
     (T : (ℕ → S) → ℕ) (n : ℕ) (ω : ℕ → S) (h : T ω = n) :
     stoppedPathShift T ω = shiftPath n ω := by
   ext k
   simp [stoppedPathShift, shiftPath, h]
 
-/-- If `f =ᵐ g` on each fiber `{T = n}` of an `ℕ`-valued measurable function `T`, then
-`f =ᵐ g` on the whole space. -/
+/-- **A.e. equality from a.e. equality on the fibers of a natural-valued function.** Let $\mu$
+be a measure on a measurable space $\Omega$, let $T : \Omega \to \mathbb{N}$ be a function whose
+fibers $\{T = n\}$, $n \in \mathbb{N}$, are all measurable, and let $f, g : \Omega \to \mathbb{R}$.
+If for every $n \in \mathbb{N}$ we have $f = g$ almost everywhere with respect to the restriction
+of $\mu$ to $\{T = n\}$, then $f = g$ $\mu$-almost everywhere. -/
 lemma ae_eq_of_ae_eq_restrict_fibers {Ω : Type*} {m0 : MeasurableSpace Ω}
     (T : Ω → ℕ) (μ : @Measure Ω m0)
     (f g : Ω → ℝ)
@@ -94,7 +101,12 @@ private lemma measurable_stopped_family {Ω : Type*} [MeasurableSpace Ω]
     measurable_from_prod_countable_right hu
   exact hu_joint.comp ((WithTop.measurable_untopA.comp hτ).prodMk measurable_id)
 
-/-- A.e. equality on every finite fiber, together with a.e. finiteness, gives global a.e. equality. -/
+/-- **A.e. equality from a.e. equality on the finite fibers.** Let $\mu$ be a measure on a
+measurable space $\Omega$, let $\tau : \Omega \to \mathbb{N} \cup \{\infty\}$ satisfy
+$\tau \ne \infty$ $\mu$-almost everywhere and have every fiber $\{\tau = n\}$, $n \in \mathbb{N}$,
+measurable, and let $f, g : \Omega \to \mathbb{R}$. If for every $n \in \mathbb{N}$ we have
+$f = g$ almost everywhere with respect to the restriction of $\mu$ to $\{\tau = n\}$, then
+$f = g$ $\mu$-almost everywhere. -/
 lemma ae_eq_of_ae_eq_restrict_finite_fibers {Ω : Type*} [MeasurableSpace Ω]
     (τ : Ω → WithTop ℕ) (μ : Measure Ω) (f g : Ω → ℝ)
     (hfinite : ∀ᵐ ω ∂μ, τ ω ≠ ⊤)
@@ -155,10 +167,23 @@ private lemma condExp_stopped_family {Ω : Type*} [MeasurableSpace Ω]
     (hlocal.trans (hfixed_s.trans hlast))
 
 
-/-- **Strong Markov property for a.s.-finite stopping times** (Lecture 31).
-The time may equal infinity on a null set. Mathlib's `stoppedValue` evaluates through its
-measurable finite projection; its choice on the infinite event is immaterial to this a.e.
-equality. Conditioning uses the sigma algebra of the original WithTop-valued stopping time. -/
+/-- **Strong Markov property for a.s.-finite stopping times.** Let $S$ be a nonempty standard
+Borel space, $\mu$ a finite measure on $S$, $\kappa$ a Markov kernel on $S$, and $P_\mu$ the law
+on the path space $S^{\mathbb{N}}$ of the Markov chain with initial distribution $\mu$ and
+transition kernel $\kappa$. For $x \in S$ write $E_x$ for the expectation under the chain started
+from $x$, and for a path $\omega$ and $n \in \mathbb{N}$ write $\theta_n \omega$ for the shifted
+path $k \mapsto \omega(n + k)$. Let $T : S^{\mathbb{N}} \to \mathbb{N} \cup \{\infty\}$ be a
+stopping time for the path filtration, with $\sigma$-algebra $\mathcal{F}_T$, such that
+$T \ne \infty$ $P_\mu$-almost surely, and let $Y_n : S^{\mathbb{N}} \to \mathbb{R}$, for
+$n \in \mathbb{N}$, be measurable functions with $|Y_n(\omega)| \le C$ for a single constant $C$
+and all $n$ and $\omega$. Then the conditional expectation under $P_\mu$ given $\mathcal{F}_T$ of
+$\omega \mapsto Y_{T(\omega)}(\theta_{T(\omega)} \omega)$ equals
+$\omega \mapsto E_{\omega(T(\omega))}[Y_{T(\omega)}]$ $P_\mu$-almost surely.
+
+On the null event $\{T = \infty\}$ both sides are evaluated at the same unspecified finite time,
+which does not affect the almost-sure equality.
+
+Source: Theory of Probability, Lecture 31 (strong Markov property). -/
 theorem strong_markov_chain_ae_finite
     (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
     (μ : Measure S) [IsFiniteMeasure μ]
@@ -185,8 +210,20 @@ theorem strong_markov_chain_ae_finite
     exact markov_property_full S μ κ (Y n) (hY_meas n)
       (by obtain ⟨C, hC⟩ := hY_bdd; exact ⟨C, fun ω => hC n ω⟩) n
 
-/-- The everywhere-finite specialization of `strong_markov_chain_ae_finite`.
-This retains the original usable natural-valued stopping-time interface. -/
+/-- **Strong Markov property for everywhere-finite stopping times.** Let $S$ be a nonempty
+standard Borel space, $\mu$ a finite measure on $S$, $\kappa$ a Markov kernel on $S$, and $P_\mu$
+the law on the path space $S^{\mathbb{N}}$ of the Markov chain with initial distribution $\mu$ and
+transition kernel $\kappa$; for $x \in S$ write $E_x$ for the expectation under the chain started
+from $x$. Let $T : S^{\mathbb{N}} \to \mathbb{N}$ be a stopping time for the path filtration, with
+$\sigma$-algebra $\mathcal{F}_T$, and let $Y_n : S^{\mathbb{N}} \to \mathbb{R}$, for
+$n \in \mathbb{N}$, be measurable functions with $|Y_n(\omega)| \le C$ for a single constant $C$
+and all $n$ and $\omega$. Write $\theta_T \omega$ for the path $\omega$ shifted by $T$, namely
+$k \mapsto \omega(T(\omega) + k)$. Then the conditional expectation under $P_\mu$ given
+$\mathcal{F}_T$ of $\omega \mapsto Y_{T(\omega)}(\theta_T \omega)$ equals
+$\omega \mapsto E_{\omega(T(\omega))}[Y_{T(\omega)}]$ $P_\mu$-almost surely.
+
+This is the special case of the strong Markov property for a.s.-finite stopping times in which
+the time is finite everywhere. -/
 theorem strong_markov_chain
     (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
     (μ : Measure S) [IsFiniteMeasure μ]

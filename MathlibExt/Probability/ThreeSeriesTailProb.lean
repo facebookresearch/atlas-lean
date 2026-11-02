@@ -38,15 +38,17 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- **Kolmogorov three-series theorem, necessity, first series.**
-If the partial sums of an independent sequence `Xₙ` of real random
-variables converge almost surely, then for every `A > 0` the tail
-probabilities are summable: `∑'ₙ μ {ω | A < |Xₙ ω|} < ⊤`.
+/-- **Kolmogorov three-series theorem, necessity, first series.** Let $(X_n)_{n \ge 0}$ be a
+sequence of independent measurable real random variables on a probability space
+$(\Omega, \mu)$ whose partial sums converge almost surely: there is a function
+$S : \Omega \to \mathbb{R}$ such that $\sum_{i < n} X_i(\omega) \to S(\omega)$ as $n \to \infty$
+for $\mu$-almost every $\omega$. Then for every $A > 0$ the tail probabilities are summable:
+$\sum_n \mu(\{\omega : |X_n(\omega)| > A\}) < \infty$.
 
-Proof: argue by contradiction via the second Borel–Cantelli lemma. If
-the tail probabilities summed to `⊤`, the events `{|Xₙ| > A}` would
-occur infinitely often with probability one; but a.s. convergence of
-the partial sums forces `Xₙ → 0` a.s., hence eventually `|Xₙ| ≤ A`. -/
+Proof: argue by contradiction via the second Borel–Cantelli lemma. If the tail probabilities
+summed to $\infty$, the events $\{|X_n| > A\}$ would occur infinitely often with probability
+one; but almost-sure convergence of the partial sums forces $X_n \to 0$ almost surely, hence
+eventually $|X_n| \le A$. -/
 theorem summable_tail_prob_of_ae_tendsto [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ} (hX_meas : ∀ n, Measurable (X n))
     (hX_indep : iIndepFun X μ) {A : ℝ} (hA : A > 0)
@@ -101,9 +103,11 @@ theorem summable_tail_prob_of_ae_tendsto [IsProbabilityMeasure μ]
   rw [h_freq_zero] at h_limsup
   exact absurd h_limsup (by norm_num)
 
-/-- **Contrapositive:** if for some `A > 0` the tail probabilities
-`∑'ₙ μ {ω | A < |Xₙ ω|}` sum to `⊤`, then the partial sums of the
-independent sequence `Xₙ` cannot converge almost surely. -/
+/-- **Divergent tail probabilities prevent almost-sure convergence of partial sums.** Let
+$(X_n)_{n \ge 0}$ be a sequence of independent measurable real random variables on a probability
+space $(\Omega, \mu)$, and let $A > 0$. If $\sum_n \mu(\{\omega : |X_n(\omega)| > A\}) = \infty$,
+then there is no function $S : \Omega \to \mathbb{R}$ such that, for $\mu$-almost every $\omega$,
+the partial sums $\sum_{i < n} X_i(\omega)$ converge to $S(\omega)$ as $n \to \infty$. -/
 theorem not_ae_tendsto_partial_sum_of_tsum_tail_prob_eq_top
     [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ} (hX_meas : ∀ n, Measurable (X n))

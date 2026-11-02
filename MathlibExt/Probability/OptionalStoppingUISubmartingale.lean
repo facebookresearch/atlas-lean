@@ -317,10 +317,11 @@ private theorem uniformIntegrable_stoppedProcess_predictablePart
       _ ≤ ENNReal.ofReal (2 * (C : ℝ)) := hSupLe
       _ = ((Real.toNNReal (2 * (C : ℝ)) : ℝ≥0) : ℝ≥0∞) := rfl
 
-/-- **General optional stopping, uniform integrability preservation:**
-if `f` is a uniformly integrable submartingale and `τ` is any stopping
-time (possibly infinite), then the stopped process `n ↦ f_{τ ∧ n}` is
-uniformly integrable. -/
+/-- **General optional stopping, uniform integrability preservation.** Let $\mu$ be a
+probability measure and let $(f_n)_{n \in \mathbb{N}}$ be a real-valued submartingale with
+respect to a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$ that is uniformly integrable. Then
+for every stopping time $\tau$ with values in $\mathbb{N} \cup \{\infty\}$, the stopped process
+$(f_{\tau \wedge n})_{n \in \mathbb{N}}$ is uniformly integrable. -/
 theorem Submartingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
     (hsub : Submartingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :
@@ -352,9 +353,14 @@ theorem Submartingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
           eLpNorm (stoppedProcess (predictablePart f ℱ μ) τ n) 1 μ := eLpNorm_add_le le_rfl
     _ ≤ (CM : ℝ≥0∞) + (CA : ℝ≥0∞) := add_le_add (hCM n) (hCA n)
 
-/-- **General optional stopping, expectation inequality:** if `f` is a
-uniformly integrable submartingale and `τ` is any stopping time
-(possibly infinite), then `∫ f 0 ≤ ∫ f_τ ≤ ∫ f_∞`. -/
+/-- **General optional stopping, expectation inequality.** Let $\mu$ be a probability measure,
+let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration and let $(f_n)_{n \in \mathbb{N}}$ be a
+real-valued submartingale with respect to $(\mathcal{F}_n)$ that is uniformly integrable. Let
+$f_\infty$ be the limit process of $f$ (its almost-everywhere limit, by the martingale
+convergence theorem). Then for every stopping time $\tau$ with values in
+$\mathbb{N} \cup \{\infty\}$, the value $f_\tau$ of $f$ at $\tau$ (at points where
+$\tau = \infty$ it is $\lim_n f_n$) satisfies
+$\int f_0 \, d\mu \le \int f_\tau \, d\mu \le \int f_\infty \, d\mu$. -/
 theorem Submartingale.integral_stoppedValueAtTop_of_uniformIntegrable
     (hsub : Submartingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :

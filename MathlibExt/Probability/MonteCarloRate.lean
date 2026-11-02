@@ -19,10 +19,16 @@ open scoped BigOperators ENNReal
 
 namespace MathlibExt.Probability
 
-/-- For independent identically distributed square-integrable samples, the
-variance of the sample mean is the single-sample variance divided by the
-sample size. Square-integrability is required only of `X 0`; identical distribution transfers
-it to every sample. -/
+/-- **Variance of the sample mean of i.i.d. samples.** Let $X_0, X_1, X_2, \dots$ be real-valued
+random variables on a measure space $(\Omega, \mu)$ that are mutually independent and each have
+the same distribution as $X_0$, and suppose $X_0$ is square-integrable. Then for every integer
+$n \ge 1$, with variances taken with respect to $\mu$,
+$$
+\operatorname{Var}\Big(\frac{1}{n} \sum_{i=0}^{n-1} X_i\Big) = \frac{\operatorname{Var}(X_0)}{n}.
+$$
+
+Square-integrability is required only of $X_0$; identical distribution transfers it to every
+sample. -/
 theorem variance_sample_mean_of_iid
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     (X : ℕ → Ω → ℝ)

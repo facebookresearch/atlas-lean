@@ -71,11 +71,15 @@ private lemma coe_untopA_eq (a : ℕ∞) (ha : a ≠ ⊤) : (↑(a.untopA) : ℕ
   simp only [WithTop.untopA, WithTop.untopD, WithTop.recTopCoe]
   rfl
 
-/-- **Bounded optional stopping, conditional form.** If `f` is a submartingale
-and `L ≤ M` are stopping times with `M` bounded above by a finite `N`, then
-the stopped value at `L` is almost surely at most the conditional expectation
-of the stopped value at `M` given the σ-algebra `ℱ_L` of the earlier stopping
-time. -/
+/-- **Bounded optional stopping, conditional form.** Let $\mu$ be a measure on a measurable
+space $\Omega$, let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration such that $\mu$ is
+σ-finite on every $\mathcal{F}_n$, and let $(f_n)_{n \in \mathbb{N}}$ be a real-valued
+submartingale with respect to $(\mathcal{F}_n)$ and $\mu$. Let $L$ and $M$ be stopping times
+with values in $\mathbb{N} \cup \{\infty\}$ such that $L(\omega) \le M(\omega) \le N$ for every
+$\omega$, for some $N \in \mathbb{N}$, and suppose that $\mu$ is σ-finite on the σ-algebra
+$\mathcal{F}_L$ of events $A$ with $A \cap \{L \le n\} \in \mathcal{F}_n$ for every $n$. Write
+$f_L(\omega) = f_{L(\omega)}(\omega)$ and $f_M(\omega) = f_{M(\omega)}(\omega)$ for the stopped
+values. Then $f_L \le \mathbb{E}_\mu[f_M \mid \mathcal{F}_L]$ holds $\mu$-almost everywhere. -/
 theorem Submartingale.stoppedValue_le_condExp_stoppedValue
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     {ℱ : Filtration ℕ m0}
@@ -131,11 +135,18 @@ theorem Submartingale.stoppedValue_le_condExp_stoppedValue
   rw [h_sv_eq]
   exact hω _ (coe_untopA_eq _ (hL_ne_top ω)).symm
 
-/-- **Bounded optional stopping, conditional form, supermartingale dual.**
-If `f` is a supermartingale and `L ≤ M` are stopping times with `M` bounded,
-then the conditional expectation of the stopped value at `M` given `ℱ_L` is
-almost surely at most the stopped value at `L`. This follows from the
-submartingale version applied to `-f`. -/
+/-- **Bounded optional stopping, conditional form, supermartingale dual.** Let $\mu$ be a
+measure on a measurable space $\Omega$, let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration
+such that $\mu$ is σ-finite on every $\mathcal{F}_n$, and let $(f_n)_{n \in \mathbb{N}}$ be a
+real-valued supermartingale with respect to $(\mathcal{F}_n)$ and $\mu$. Let $L$ and $M$ be
+stopping times with values in $\mathbb{N} \cup \{\infty\}$ such that
+$L(\omega) \le M(\omega) \le N$ for every $\omega$, for some $N \in \mathbb{N}$, and suppose
+that $\mu$ is σ-finite on the σ-algebra $\mathcal{F}_L$ of events $A$ with
+$A \cap \{L \le n\} \in \mathcal{F}_n$ for every $n$. Write $f_L(\omega) = f_{L(\omega)}(\omega)$
+and $f_M(\omega) = f_{M(\omega)}(\omega)$ for the stopped values. Then
+$\mathbb{E}_\mu[f_M \mid \mathcal{F}_L] \le f_L$ holds $\mu$-almost everywhere.
+
+This follows from the submartingale version applied to $-f$. -/
 theorem Supermartingale.condExp_stoppedValue_le_stoppedValue
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     {ℱ : Filtration ℕ m0}

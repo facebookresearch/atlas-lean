@@ -87,35 +87,42 @@ through monotonicity of measures, and are retained as stronger corollaries.
   there (under v1's definition, no good rate function on `ℝ` exists).
 -/
 
-/-- A **rate function** `I : X → [0, ∞]` is, by definition, a
-lower-semicontinuous function. This is the basic regularity hypothesis
-used in the formulation of a large deviation principle. -/
+/-- **Rate function.** Let $X$ be a topological space. A rate function on $X$ is a lower
+semicontinuous function $I : X \to [0, \infty]$.
+
+This is the basic regularity hypothesis used in the formulation of a large deviation principle. -/
 structure IsRateFunction {X : Type*} [TopologicalSpace X] (I : X → ℝ≥0∞) : Prop where
   lowerSemicontinuous : LowerSemicontinuous I
 
-/-- A **good rate function** is a rate function whose finite sub-level
-sets `{x | I x ≤ a}` are all compact. This is the
-corrected form of v1's definition: v1 quantified over all
-`a : ℝ≥0∞`, including `a = ⊤`, which forces the whole space to be
-compact and makes the definition vacuous on non-compact spaces. -/
+/-- **Good rate function.** Let $X$ be a topological space. A function $I : X \to [0, \infty]$ is a
+good rate function if it is a rate function and, for every real number $a \ge 0$, the sub-level
+set $\{x \in X : I(x) \le a\}$ is compact.
+
+Compactness is required only at finite levels: the sub-level set at level $\infty$ is all of $X$,
+so requiring it as well would force $X$ itself to be compact. -/
 structure IsGoodRateFunction {X : Type*} [TopologicalSpace X] (I : X → ℝ≥0∞) : Prop
     extends IsRateFunction I where
   isCompact_levelSet : ∀ a : ℝ, IsCompact {x | I x ≤ ENNReal.ofReal a}
 
-/-- A **convex rate function** on a real vector space is a rate
-function `I` that is convex: `I(ax + by) ≤ a · I(x) + b · I(y)` for
-all `x, y ∈ X` and all weights `a, b ≥ 0` with `a + b = 1`. -/
+/-- **Convex rate function.** Let $X$ be a real vector space carrying a topology (no compatibility
+between the topology and the linear structure is assumed). A function $I : X \to [0, \infty]$ is a
+convex rate function if it is a rate function and $I(ax + by) \le a I(x) + b I(y)$ for all
+$x, y \in X$ and all real numbers $a, b \ge 0$ with $a + b = 1$. -/
 structure IsConvexRateFunction {X : Type*} [TopologicalSpace X] [AddCommMonoid X]
     [Module ℝ X] (I : X → ℝ≥0∞) : Prop extends IsRateFunction I where
   convex : ∀ ⦃x y : X⦄, ∀ ⦃a b : ℝ⦄, 0 ≤ a → 0 ≤ b → a + b = 1 →
     I (a • x + b • y) ≤ ENNReal.ofReal a * I x + ENNReal.ofReal b * I y
 
-/-- A sequence of measures `μ : ℕ → Measure X` **satisfies the large
-deviation principle** with rate function `I : X → [0, ∞]` and speed
-`n` if `I` is a rate function and the following asymptotic bounds
-hold: a `liminf` lower bound over open sets `U` and a `limsup` upper
-bound over closed sets `F`. `OpensMeasurableSpace X` ensures that these sets
-are measurable in the measure space used by `μ`. -/
+/-- **Large deviation principle for a sequence of measures.** Let $X$ be a topological space with
+a $\sigma$-algebra containing every open set, let $(\mu_n)_{n \in \mathbb{N}}$ be a sequence of
+measures on $X$, and let $I : X \to [0, \infty]$. The sequence $(\mu_n)$ satisfies the large
+deviation principle with rate function $I$ and speed $n$ if $I$ is a rate function, every open
+set $U \subseteq X$ satisfies
+$$\liminf_{n \to \infty} \frac{1}{n} \log \mu_n(U) \ge -\inf_{x \in U} I(x),$$
+and every closed set $F \subseteq X$ satisfies
+$$\limsup_{n \to \infty} \frac{1}{n} \log \mu_n(F) \le -\inf_{x \in F} I(x).$$
+Here $\log 0 = -\infty$, an infimum over the empty set is $\infty$, and the limits are taken in
+the extended reals. -/
 structure SatisfiesLDP {X : Type*} [TopologicalSpace X] [MeasurableSpace X]
     [OpensMeasurableSpace X] (μ : ℕ → Measure X) (I : X → ℝ≥0∞) : Prop where
   isRateFunction : IsRateFunction I
@@ -126,12 +133,14 @@ structure SatisfiesLDP {X : Type*} [TopologicalSpace X] [MeasurableSpace X]
     limsup (fun n => ((n : ℕ) : EReal)⁻¹ * ENNReal.log (μ n F)) atTop ≤
       - (⨅ x ∈ F, (I x : EReal))
 
-/-- A good rate function is a rate function. -/
+/-- **Good rate functions are rate functions.** Every good rate function on a topological space
+is a rate function. -/
 theorem IsGoodRateFunction.isRateFunction {X : Type*} [TopologicalSpace X]
     {I : X → ℝ≥0∞} (h : IsGoodRateFunction I) : IsRateFunction I :=
   h.toIsRateFunction
 
-/-- A convex rate function is a rate function. -/
+/-- **Convex rate functions are rate functions.** Every convex rate function on a real vector space
+with a topology is a rate function. -/
 theorem IsConvexRateFunction.isRateFunction {X : Type*} [TopologicalSpace X]
     [AddCommMonoid X] [Module ℝ X] {I : X → ℝ≥0∞} (h : IsConvexRateFunction I) :
     IsRateFunction I :=
@@ -139,8 +148,15 @@ theorem IsConvexRateFunction.isRateFunction {X : Type*} [TopologicalSpace X]
 
 variable {X : Type*} [TopologicalSpace X] [MeasurableSpace X]
 
-/-- The LDP lower bound for an arbitrary set `Γ`, with its interior in
-place of the open set: `-inf_{interior Γ} I ≤ liminf (1/n) log μₙ(Γ)`. -/
+/-- **Large deviation lower bound for arbitrary sets.** Let $X$ be a topological space with a
+$\sigma$-algebra in which every open set is measurable, and let $(\mu_n)_{n \in \mathbb{N}}$ be
+measures on $X$ satisfying the large deviation principle with rate function
+$I : X \to [0, \infty]$. Then for every set $\Gamma \subseteq X$, not necessarily measurable (for
+non-measurable $\Gamma$, $\mu_n(\Gamma)$ is its outer measure), with interior $\Gamma^\circ$,
+
+$$-\inf_{x \in \Gamma^\circ} I(x) \le \liminf_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma),$$
+
+computed in the extended reals with $\log 0 = -\infty$. -/
 theorem SatisfiesLDP.borel_lower_bound [OpensMeasurableSpace X]
     {μ : ℕ → Measure X} {I : X → ℝ≥0∞}
     (h : SatisfiesLDP μ I) (Γ : Set X) :
@@ -154,8 +170,15 @@ theorem SatisfiesLDP.borel_lower_bound [OpensMeasurableSpace X]
   · exact ENNReal.log_monotone (measure_mono interior_subset)
   · exact EReal.inv_nonneg_of_nonneg (by exact_mod_cast Nat.zero_le n)
 
-/-- The LDP upper bound for an arbitrary set `Γ`, with its closure in
-place of the closed set: `limsup (1/n) log μₙ(Γ) ≤ -inf_{closure Γ} I`. -/
+/-- **Large deviation upper bound for arbitrary sets.** Let $X$ be a topological space with a
+$\sigma$-algebra in which every open set is measurable, and let $(\mu_n)_{n \in \mathbb{N}}$ be
+measures on $X$ satisfying the large deviation principle with rate function
+$I : X \to [0, \infty]$. Then for every set $\Gamma \subseteq X$, not necessarily measurable (for
+non-measurable $\Gamma$, $\mu_n(\Gamma)$ is its outer measure), with closure $\overline{\Gamma}$,
+
+$$\limsup_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma) \le -\inf_{x \in \overline{\Gamma}} I(x),$$
+
+computed in the extended reals with $\log 0 = -\infty$. -/
 theorem SatisfiesLDP.borel_upper_bound [OpensMeasurableSpace X]
     {μ : ℕ → Measure X} {I : X → ℝ≥0∞}
     (h : SatisfiesLDP μ I) (Γ : Set X) :
@@ -169,8 +192,21 @@ theorem SatisfiesLDP.borel_upper_bound [OpensMeasurableSpace X]
   · exact ENNReal.log_monotone (measure_mono subset_closure)
   · exact EReal.inv_nonneg_of_nonneg (by exact_mod_cast Nat.zero_le n)
 
-/-- The LDP bounds hold for an arbitrary set `Γ` by monotonicity.
-This stronger all-set corollary includes the textbook measurable/Borel-set form. -/
+/-- **Large deviation bounds for arbitrary sets.** Let $X$ be a topological space with a
+$\sigma$-algebra in which every open set is measurable, and let $(\mu_n)_{n \in \mathbb{N}}$ be
+measures on $X$ satisfying the large deviation principle with rate function
+$I : X \to [0, \infty]$. Then for every set $\Gamma \subseteq X$, not necessarily measurable (for
+non-measurable $\Gamma$, $\mu_n(\Gamma)$ is its outer measure), with interior $\Gamma^\circ$ and
+closure $\overline{\Gamma}$, both
+
+$$-\inf_{x \in \Gamma^\circ} I(x) \le \liminf_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma)$$
+
+and
+
+$$\limsup_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma) \le -\inf_{x \in \overline{\Gamma}} I(x)$$
+
+hold, computed in the extended reals with $\log 0 = -\infty$. In particular the bounds hold for
+every Borel set $\Gamma$. -/
 theorem SatisfiesLDP.borel_bounds [OpensMeasurableSpace X]
     {μ : ℕ → Measure X} {I : X → ℝ≥0∞}
     (h : SatisfiesLDP μ I) (Γ : Set X) :
@@ -180,10 +216,19 @@ theorem SatisfiesLDP.borel_bounds [OpensMeasurableSpace X]
         - (⨅ x ∈ closure Γ, (I x : EReal)) :=
   ⟨h.borel_lower_bound Γ, h.borel_upper_bound Γ⟩
 
-/-- Conversely, bounds for measurable sets imply the open/closed form.
-Open and closed sets are measurable by `OpensMeasurableSpace X`, and their
-interior/closure equals the set itself. On a Borel space this is the
-textbook Borel-set converse. -/
+/-- **Large deviation principle from bounds on measurable sets.** Let $X$ be a topological space
+with a $\sigma$-algebra containing every open set, let $(\mu_n)_{n \in \mathbb{N}}$ be a sequence
+of measures on $X$, and let $I$ be a rate function on $X$. Suppose that every measurable set
+$\Gamma \subseteq X$, with interior $\Gamma^\circ$ and closure $\overline{\Gamma}$, satisfies
+$$\liminf_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma) \ge -\inf_{x \in \Gamma^\circ} I(x)$$
+and
+$$\limsup_{n \to \infty} \frac{1}{n} \log \mu_n(\Gamma) \le -\inf_{x \in \overline{\Gamma}} I(x),$$
+where $\log 0 = -\infty$, an infimum over the empty set is $\infty$, and the limits are taken in
+the extended reals. Then $(\mu_n)$ satisfies the large deviation principle with rate function $I$.
+
+Open and closed sets are measurable and equal to their interior and closure respectively, so the
+hypothesis contains the open-set and closed-set bounds. On a Borel space this is the textbook
+Borel-set converse. -/
 theorem satisfiesLDP_of_borel_bounds [OpensMeasurableSpace X]
     {μ : ℕ → Measure X} {I : X → ℝ≥0∞}
     (hRate : IsRateFunction I)
@@ -200,24 +245,28 @@ theorem satisfiesLDP_of_borel_bounds [OpensMeasurableSpace X]
     rwa [hF.closure_eq] at hF'
 
 omit [TopologicalSpace X] [MeasurableSpace X] in
-/-- The rate function of a Dirac mass at `x₀`: `0` at `x₀` and `∞`
-elsewhere. -/
+/-- **Rate function of a Dirac mass.** For a point $x_0$ of a set $X$, the Dirac rate function
+at $x_0$ is the function $X \to [0, \infty]$ that equals $0$ at $x_0$ and $\infty$ at every other
+point. -/
 noncomputable def diracRate (x₀ : X) : X → ℝ≥0∞ :=
   Set.indicator {x₀}ᶜ (fun _ => (⊤ : ℝ≥0∞))
 
 omit [TopologicalSpace X] [MeasurableSpace X] in
-/-- The Dirac rate function vanishes at its center. -/
+/-- **The Dirac rate function vanishes at its center.** For every point $x_0$ of a set $X$, the
+Dirac rate function at $x_0$ takes the value $0$ at $x_0$. -/
 lemma diracRate_apply_self (x₀ : X) : diracRate x₀ x₀ = 0 := by
   simp [diracRate]
 
 omit [TopologicalSpace X] [MeasurableSpace X] in
-/-- The Dirac rate function is infinite away from its center. -/
+/-- **The Dirac rate function is infinite away from its center.** For points $x \ne x_0$ of a set
+$X$, the Dirac rate function at $x_0$ takes the value $\infty$ at $x$. -/
 lemma diracRate_apply_of_ne {x₀ x : X} (h : x ≠ x₀) : diracRate x₀ x = ⊤ := by
   simp [diracRate, h]
 
 omit [TopologicalSpace X] [MeasurableSpace X] in
-/-- The infimum of the Dirac rate function over a set containing the
-center is `0`. -/
+/-- **Infimum of the Dirac rate function over a set containing the center.** For a point $x_0$ of
+a set $X$ and a subset $s \subseteq X$ with $x_0 \in s$, the infimum over $x \in s$ of the Dirac
+rate function at $x_0$, evaluated at $x$, is $0$. -/
 lemma iInf_diracRate_of_mem {x₀ : X} {s : Set X} (h : x₀ ∈ s) :
     (⨅ x ∈ s, ((diracRate x₀ x : ℝ≥0∞) : EReal)) = 0 := by
   apply le_antisymm _ _
@@ -228,8 +277,9 @@ lemma iInf_diracRate_of_mem {x₀ : X} {s : Set X} (h : x₀ ∈ s) :
     exact EReal.coe_ennreal_nonneg _
 
 omit [TopologicalSpace X] [MeasurableSpace X] in
-/-- The infimum of the Dirac rate function over a set not containing
-the center is `∞`. -/
+/-- **Infimum of the Dirac rate function over a set avoiding the center.** For a point $x_0$ of a
+set $X$ and a subset $s \subseteq X$ with $x_0 \notin s$, the infimum over $x \in s$ of the Dirac
+rate function at $x_0$, evaluated at $x$, is $\infty$. -/
 lemma iInf_diracRate_of_notMem {x₀ : X} {s : Set X} (h : x₀ ∉ s) :
     (⨅ x ∈ s, ((diracRate x₀ x : ℝ≥0∞) : EReal)) = ⊤ := by
   apply le_antisymm le_top
@@ -239,15 +289,19 @@ lemma iInf_diracRate_of_notMem {x₀ : X} {s : Set X} (h : x₀ ∉ s) :
   rw [diracRate_apply_of_ne hne, EReal.coe_ennreal_top]
 
 omit [TopologicalSpace X] in
-/-- The LDP term for a Dirac mass vanishes on a set containing the
-center. -/
+/-- **Log-scaled Dirac mass of a set containing the center.** Let $X$ be a measurable space, let
+$\delta_{x_0}$ be the Dirac measure at a point $x_0 \in X$, and let $s \subseteq X$ be a set with
+$x_0 \in s$. Then $\frac{1}{n} \log \delta_{x_0}(s) = 0$ in the extended reals for every natural
+number $n$, the factor $1/n$ being read as $0$ when $n = 0$. -/
 lemma dirac_ldp_term_eq_zero_of_mem {x₀ : X} {s : Set X} (h : x₀ ∈ s) (n : ℕ) :
     ((n : ℕ) : EReal)⁻¹ * ENNReal.log (Measure.dirac x₀ s) = 0 := by
   rw [Measure.dirac_apply_of_mem h, ENNReal.log_one, mul_zero]
 
 omit [TopologicalSpace X] in
-/-- The LDP term for a Dirac mass is `⊥` away from the center, for
-`n ≥ 1`. -/
+/-- **Log-scaled Dirac mass of a set avoiding the center.** Let $X$ be a measurable space in which
+every singleton is measurable, let $\delta_{x_0}$ be the Dirac measure at a point $x_0 \in X$, and
+let $s \subseteq X$ be a set with $x_0 \notin s$. Then for every natural number $n \ge 1$,
+$\frac{1}{n} \log \delta_{x_0}(s) = -\infty$ in the extended reals, with $\log 0 = -\infty$. -/
 lemma dirac_ldp_term_eq_bot_of_notMem [MeasurableSingletonClass X] {x₀ : X} {s : Set X}
     (h : x₀ ∉ s) {n : ℕ}
     (hn : 1 ≤ n) : ((n : ℕ) : EReal)⁻¹ * ENNReal.log (Measure.dirac x₀ s) = ⊥ := by
@@ -259,9 +313,13 @@ lemma dirac_ldp_term_eq_bot_of_notMem [MeasurableSingletonClass X] {x₀ : X} {s
   apply EReal.inv_pos_of_pos_ne_top _ (EReal.natCast_ne_top n)
   exact_mod_cast Nat.cast_pos.mpr (Nat.lt_of_lt_of_le zero_lt_one hn)
 
-/-- A Dirac mass satisfies the large deviation principle with its
-Dirac rate function: the mass `1` stays at `x₀`, so the exponential
-cost of a set is `0` if it contains `x₀` and `∞` otherwise. -/
+/-- **Large deviation principle for a Dirac mass.** Let $X$ be a $T_1$ topological space equipped
+with its Borel $\sigma$-algebra, and let $x_0 \in X$. The constant sequence of measures
+$\mu_n = \delta_{x_0}$ satisfies the large deviation principle with the Dirac rate function of
+$x_0$, which is $0$ at $x_0$ and $\infty$ elsewhere.
+
+Indeed, the mass $1$ stays at $x_0$, so the exponential cost of a set is $0$ if it contains $x_0$
+and $\infty$ otherwise. -/
 theorem satisfiesLDP_dirac [BorelSpace X] [T1Space X] (x₀ : X) :
     SatisfiesLDP (fun _ => Measure.dirac x₀) (diracRate x₀) := by
   refine ⟨⟨?_⟩, ?_, ?_⟩
@@ -322,10 +380,11 @@ theorem satisfiesLDP_dirac [BorelSpace X] [T1Space X] (x₀ : X) :
         exact limsup_const ⊥
       rw [iInf_diracRate_of_notMem hx, EReal.neg_top, hlim]
 
-/-- `x ↦ ENNReal.ofReal |x|` is a good rate function on `ℝ`: it is
-continuous, hence lower semicontinuous, and its finite sub-level sets
-are closed intervals (or the singleton `{0}` for a negative level),
-hence compact. -/
+/-- **The absolute value is a good rate function.** The function $x \mapsto |x|$, viewed as a map
+$\mathbb{R} \to [0, \infty]$, is a good rate function on $\mathbb{R}$.
+
+It is continuous, hence lower semicontinuous, and its sub-level sets at finite levels are closed
+intervals (or the singleton $\{0\}$ for a negative level), hence compact. -/
 theorem isGoodRateFunction_abs :
     IsGoodRateFunction (fun x : ℝ => ENNReal.ofReal |x|) := by
   refine ⟨⟨?_⟩, ?_⟩

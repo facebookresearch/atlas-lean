@@ -37,8 +37,13 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- **The Paley-Zygmund Inequality**: If `Z ≥ 0` is a random variable with finite variance, and if
-`0 ≤ θ ≤ 1`, then `P(Z > θ * EZ) ≥ (1-θ)^2 (EZ)^2/E(Z^2)`.
+/-- **The Paley–Zygmund inequality.** Let $Z$ be a real random variable on a probability space with
+probability measure $\mathbb{P}$, such that $Z \ge 0$ almost surely and $\mathbb{E}[Z^2] < \infty$,
+and let $\theta$ be a real number with $0 \le \theta \le 1$. Then
+$$(1-\theta)^2 (\mathbb{E}[Z])^2 \le \mathbb{E}[Z^2] \, \mathbb{P}(Z > \theta \, \mathbb{E}[Z]).$$
+
+When $\mathbb{E}[Z^2] > 0$, this says
+$\mathbb{P}(Z > \theta \, \mathbb{E}[Z]) \ge (1 - \theta)^2 (\mathbb{E}[Z])^2 / \mathbb{E}[Z^2]$.
 -/
 theorem paley_zygmund [IsProbabilityMeasure μ] {Z : Ω → ℝ} (hZ_nn : 0 ≤ᵐ[μ] Z) (hZ2 : MemLp Z 2 μ)
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) :

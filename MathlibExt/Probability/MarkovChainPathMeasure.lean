@@ -135,7 +135,10 @@ lemma dropHist_comp_IicProdIoc (a b : ℕ) :
     show a + (i : ℕ) = a + b + 1
     omega
 
-/-- Compatibility name for the canonical lifted transition kernel. -/
+/-- **Lifted transition kernel on histories.** For a kernel $\kappa$ on $S$ and $n \in \mathbb{N}$,
+this is the kernel from histories $(x_0, \dots, x_n)$ of states in $S$, indexed by
+$\{0, \dots, n\}$, to $S$ that sends $(x_0, \dots, x_n)$ to $\kappa(x_n, \cdot)$. It is the
+Markov lift kernel of $\kappa$ at $n$. -/
 noncomputable abbrev markovLiftKernel (κ : Kernel S S) (n : ℕ) :
     Kernel ((_i : ↥(Finset.Iic n)) → S) S :=
   MathlibExt.Probability.MarkovChainConstruction.markovLiftKernel κ n
@@ -150,7 +153,15 @@ omit [MeasurableSpace S] in
 lemma dropHist_last (a b : ℕ) (z : Π _i : ↥(Finset.Iic (a + b)), S) :
     (dropHist a b z) ⟨b, Finset.mem_Iic.mpr le_rfl⟩ = z ⟨a + b, Finset.mem_Iic.mpr le_rfl⟩ := rfl
 
-/-- One-step shift for `partialTraj` (measure form). -/
+/-- **One-step shift of a Markov partial trajectory.** Let $\kappa$ be a Markov kernel on a
+measurable space $S$, let $a, b \in \mathbb{N}$ and let $z = (z_0, \dots, z_{a+b})$ be a history
+in $S^{\{0, \dots, a+b\}}$. Let $\mu_z$ be the one-step partial trajectory of the lifted kernel
+of $\kappa$ from time $a + b$ to time $a + b + 1$ started at $z$, that is, the law of
+$(z_0, \dots, z_{a+b}, X)$ where $X$ has law $\kappa(z_{a+b})$. Then the image of $\mu_z$ under
+the map $(y_0, \dots, y_{a+b+1}) \mapsto (y_a, \dots, y_{a+b+1})$ that drops the first $a$
+coordinates equals the one-step partial trajectory of the lifted kernel from time $b$ to time
+$b + 1$ started at $(z_a, \dots, z_{a+b})$, that is, the law of $(z_a, \dots, z_{a+b}, X')$ where
+$X'$ has law $\kappa(z_{a+b})$. -/
 theorem partialTraj_succ_map_drop {a b : ℕ} (z : Π _i : ↥(Finset.Iic (a + b)), S) :
     ((partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) (a + b) (a + b + 1)) z).map (dropHist a (b + 1))
     = partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) b (b + 1) (dropHist a b z) := by
@@ -176,7 +187,9 @@ theorem partialTraj_succ_map_drop {a b : ℕ} (z : Π _i : ↥(Finset.Iic (a + b
     Measure.map_map (measurable_reindexIoc a b) (MeasurableEquiv.piSingleton (X := fun _ : ℕ => S) (a + b)).measurable,
     reindexIoc_comp_piSingleton, dropHist_last]
 
-/-- The last-coordinate history of `x₀`. -/
+/-- **Last-coordinate history.** For $a \in \mathbb{N}$ and a history $x = (x_0, \dots, x_a)$ of
+states in $S$, indexed by $\{0, \dots, a\}$, the last-coordinate history of $x$ is the history
+indexed by $\{0\}$ whose only entry is $x_a$. -/
 def lastHist (a : ℕ) (x₀ : Π _i : ↥(Finset.Iic a), S) : Π _i : ↥(Finset.Iic 0), S :=
   fun _i => x₀ ⟨a, Finset.mem_Iic.mpr le_rfl⟩
 
@@ -184,7 +197,13 @@ lemma measurable_lastHist (a : ℕ) : Measurable (lastHist (S := S) a) := by
   apply Measurable.of_eval; intro i
   exact measurable_pi_apply (⟨a, Finset.mem_Iic.mpr le_rfl⟩ : ↥(Finset.Iic a))
 
-/-- Kernel form of the one-step shift. -/
+/-- **One-step shift of the partial trajectory kernel.** Let $\kappa$ be a Markov kernel on $S$
+and $a, b \in \mathbb{N}$. For a history $z = (z_0, \dots, z_{a+b})$ of states in $S$, extend
+$z$ by one step, drawing $z_{a+b+1}$ from $\kappa(z_{a+b}, \cdot)$, and then keep the entries
+at times $a, \dots, a + b + 1$, reindexed as $0, \dots, b + 1$. The law of the result equals
+the law obtained by first keeping the entries of $z$ at times $a, \dots, a + b$, reindexed as
+$0, \dots, b$, and then extending that history by one step in the same way. This holds as an
+identity of kernels in $z$. -/
 theorem partialTraj_succ_map_drop_kernel {a b : ℕ} :
     (partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) (a + b) (a + b + 1)).map (dropHist a (b + 1))
       = partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) b (b + 1) ∘ₖ
@@ -201,8 +220,15 @@ theorem partialTraj_succ_map_drop_kernel {a b : ℕ} :
   rw [hL, hR]
   exact partialTraj_succ_map_drop κ z
 
-/-- Finite-dimensional distributions of the shifted trajectory depend only on the
-last coordinate of the initial history. -/
+/-- **Shifted finite-dimensional distributions.** Let $\kappa$ be a Markov kernel on $S$ and
+$a, b \in \mathbb{N}$. For a history $x = (x_0, \dots, x_a)$ of states in $S$, let $Q_x$ be the
+law of the history $(X_0, \dots, X_{a+b})$ that equals $x$ at times $0, \dots, a$ and then draws
+each next state from $\kappa$ applied to the current state (the Ionescu–Tulcea partial
+trajectory from time $a$ to time $a + b$). Then the image of $Q_x$ under
+$(X_0, \dots, X_{a+b}) \mapsto (X_a, \dots, X_{a+b})$, with the times reindexed as
+$0, \dots, b$, equals the law of $(X_0, \dots, X_b)$ under the partial trajectory from time $0$
+to time $b$ started from the one-entry history $(x_a)$. This holds as an identity of kernels
+in $x$. -/
 theorem partialTraj_map_drop {a b : ℕ} :
     (partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) a (a + b)).map (dropHist a b)
       = partialTraj (X := fun _ : ℕ => S) (markovLiftKernel κ) 0 b ∘ₖ
@@ -241,7 +267,8 @@ theorem partialTraj_map_drop {a b : ℕ} :
     rw [← Kernel.comp_assoc]
     rw [partialTraj_comp_partialTraj (Nat.zero_le b) (Nat.le_succ b)]
 
-/-- The shift on path space. -/
+/-- **Time shift on path space.** Let $S$ be a set and $n \in \mathbb{N}$. The time-$n$ shift on
+the path space $S^{\mathbb{N}}$ sends a path $\omega$ to the path $k \mapsto \omega_{n+k}$. -/
 def shiftPath (n : ℕ) : (ℕ → S) → (ℕ → S) :=
   fun ω k => ω (n + k)
 
@@ -250,14 +277,25 @@ lemma measurable_shiftPath (n : ℕ) : Measurable (shiftPath (S := S) n) := by
   exact measurable_pi_apply (n + k)
 
 omit [MeasurableSpace S] in
-/-- Finite restrictions of the shifted trajectory. -/
+/-- **Finite restrictions of the shifted path.** For all $n, b \in \mathbb{N}$ and every path
+$\omega : \mathbb{N} \to S$, let $\theta_n \omega$ be the shifted path, $(\theta_n \omega)_k =
+\omega_{n+k}$. The restriction of $\theta_n \omega$ to the times $0, \dots, b$ equals the
+restriction of $\omega$ to the times $0, \dots, n + b$ with its entries at times $n, \dots, n + b$
+kept and reindexed as $0, \dots, b$; that is, it is the tuple
+$(\omega_n, \omega_{n+1}, \dots, \omega_{n+b})$. -/
 lemma frestrictLe_comp_shiftPath (n b : ℕ) :
     (Preorder.frestrictLe (π := fun _ : ℕ => S) b) ∘ (shiftPath (S := S) n)
       = (dropHist n b) ∘ (Preorder.frestrictLe (π := fun _ : ℕ => S) (n + b)) := by
   funext ω i
   rfl
 
-/-- The law of the shifted trajectory depends only on the last coordinate. -/
+/-- **The shifted trajectory of a Markov chain restarts from its last state.** Let $\kappa$ be a
+Markov kernel on a measurable space $S$, let $n \in \mathbb{N}$ and let
+$x = (x_0, \dots, x_n) \in S^{\{0, \dots, n\}}$. Let $P_x$ be the trajectory measure on
+$S^{\mathbb{N}}$ of the lifted kernel of $\kappa$ started at time $n$ from the history $x$, and
+let $P_{x_n}$ be the trajectory measure of the lifted kernel started at time $0$ from the
+one-point history $x_n$. Then the image of $P_x$ under the time-$n$ shift
+$\omega \mapsto (k \mapsto \omega_{n+k})$ equals $P_{x_n}$. -/
 theorem traj_map_shiftPath_eq {n : ℕ} (x₀ : Π _i : ↥(Finset.Iic n), S) :
     (Kernel.traj (X := fun _ : ℕ => S) (markovLiftKernel κ) n x₀).map (shiftPath n)
       = Kernel.traj (X := fun _ : ℕ => S) (markovLiftKernel κ) 0 (lastHist n x₀) := by
@@ -310,8 +348,10 @@ theorem traj_map_shiftPath_eq {n : ℕ} (x₀ : Π _i : ↥(Finset.Iic n), S) :
   exact (hT.unique hM).symm
 
 
-/-- The canonical filtration on the path space `ℕ → S`: at time `n` it is the
-σ-algebra generated by the coordinate maps `ω ↦ ω i` for `i ≤ n`. -/
+/-- **Path filtration.** Let $S$ be a measurable space. The path filtration on the path space
+$S^{\mathbb{N}}$ is the filtration indexed by $\mathbb{N}$, relative to the product σ-algebra,
+whose σ-algebra at time $n$ is the one generated by the coordinate maps $\omega \mapsto \omega_i$
+for $i \le n$. -/
 noncomputable def pathFiltration (S : Type*) [MeasurableSpace S] :
     Filtration ℕ
       (m := MeasurableSpace.pi (m := fun _ : ℕ => (inferInstance : MeasurableSpace S))) where
@@ -320,13 +360,21 @@ noncomputable def pathFiltration (S : Type*) [MeasurableSpace S] :
   mono' i j hij := iSup_mono fun k => iSup_mono' fun hk => ⟨hk.trans hij, le_rfl⟩
   le' n := iSup_le fun k => iSup_le fun _ => (measurable_pi_apply k).comap_le
 
-/-- Each level of the `pathFiltration` is contained in the product σ-algebra on `ℕ → S`. -/
+/-- **The path filtration is contained in the product σ-algebra.** Let $S$ be a measurable space.
+For every $n \in \mathbb{N}$, the $n$-th σ-algebra of the path filtration on $S^{\mathbb{N}}$,
+generated by the coordinate maps $\omega \mapsto \omega_i$ for $i \le n$, is contained in the
+product σ-algebra on $S^{\mathbb{N}}$. -/
 lemma pathFiltration_le_pi (S : Type*) [MeasurableSpace S] (n : ℕ) :
     pathFiltration S n ≤ MeasurableSpace.pi := by
   exact (pathFiltration S).le' n
 
-/-- The law on path space of the Markov chain with initial distribution `μ` and
-transition kernel `κ`. -/
+/-- **Markov chain path measure.** For a measure $\mu$ on $S$ and a Markov kernel $\kappa$ on
+$S$, the path measure $P_\mu$ is the measure on $S^{\mathbb{N}}$, with the product
+$\sigma$-algebra, obtained by integrating against $\mu(dx)$ the Ionescu–Tulcea trajectory
+measure that starts at $x$ at time $0$ and draws each next state from $\kappa$ applied to the
+current state. It is the Markov chain measure of $\kappa$ and $\mu$; when $\mu$ is a
+probability measure it is the law on path space of the Markov chain with initial distribution
+$\mu$ and transition kernel $\kappa$. -/
 noncomputable abbrev MarkovChainPathMeasure
     (S : Type*) [MeasurableSpace S]
     (μ : Measure S) (κ : Kernel S S) [IsMarkovKernel κ] :
@@ -342,13 +390,20 @@ noncomputable instance MarkovChainPathMeasure.isFiniteMeasure
     MathlibExt.Probability.MarkovChainConstruction.markovChainMeasure Kernel.trajMeasure
   infer_instance
 
-/-- The expectation `E_x Y` of a path functional `Y` under the chain started from `x`. -/
+/-- **Expectation under the chain started from a point.** For a Markov kernel $\kappa$ on $S$,
+a function $Y : S^{\mathbb{N}} \to \mathbb{R}$ of paths and a state $x \in S$, the expectation
+$E_x Y$ is the integral of $Y$ against the Markov chain path measure with transition kernel
+$\kappa$ and initial distribution the Dirac measure at $x$. -/
 noncomputable def markovExpectation
     (S : Type*) [MeasurableSpace S]
     (κ : Kernel S S) [IsMarkovKernel κ] (Y : (ℕ → S) → ℝ) (x : S) : ℝ :=
   ∫ ω, Y ω ∂(MarkovChainPathMeasure S (Measure.dirac x) κ)
 
-/-- The map `x ↦ E_x Y` is measurable. -/
+/-- **Measurability of the Markov expectation.** Let $S$ be a nonempty standard Borel space,
+$\kappa$ a Markov kernel on $S$, and $Y : S^{\mathbb{N}} \to \mathbb{R}$ a bounded function,
+measurable for the product $\sigma$-algebra. Then the map $x \mapsto E_x Y$, sending a state
+$x$ to the expectation of $Y$ under the Markov chain with transition kernel $\kappa$ started
+from $x$, is measurable. -/
 theorem measurable_markovExpectation
     (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
     (κ : Kernel S S) [IsMarkovKernel κ]
@@ -368,8 +423,12 @@ theorem measurable_markovExpectation
     funext hfun]
   exact (hY_meas.stronglyMeasurable.integral_kernel).measurable.comp e.symm.measurable
 
-/-- The path measure with Dirac initial law is the trajectory kernel at the
-singleton history. -/
+/-- **Path measure from a point as a trajectory measure.** Let $\kappa$ be a Markov kernel on
+$S$, $n \in \mathbb{N}$, and $x = (x_0, \dots, x_n)$ a history of states in $S$. The law on path
+space of the Markov chain with transition kernel $\kappa$ and initial distribution the Dirac
+measure at $x_n$ equals the Ionescu–Tulcea trajectory measure on $S^{\mathbb{N}}$ started at
+time $0$ from the one-entry history $(x_n)$ (the last-coordinate history of $x$), in which each
+next state is drawn from $\kappa$ applied to the current state. -/
 theorem MarkovChainPathMeasure_dirac_eq_traj {n : ℕ} (x₀ : Π _i : ↥(Finset.Iic n), S) :
     MarkovChainPathMeasure S (Measure.dirac (x₀ ⟨n, Finset.mem_Iic.mpr le_rfl⟩)) κ
       = Kernel.traj (X := fun _ : ℕ => S) (markovLiftKernel κ) 0 (lastHist n x₀) := by
@@ -388,10 +447,18 @@ theorem MarkovChainPathMeasure_dirac_eq_traj {n : ℕ} (x₀ : Π _i : ↥(Finse
       = Kernel.traj (X := fun _ : ℕ => S) (markovLiftKernel κ) 0 (lastHist n x₀)
   exact Measure.dirac_bind (Kernel.measurable _) _
 
-/-- **Integral of a shifted path functional.** The integral of `Y` composed with
-the time-`n` shift against the trajectory measure started from a history `x₀`
-equals the integral of `Y` against the path measure started from the last
-coordinate of `x₀`. -/
+/-- **Integral of a shifted path functional.** Let $S$ be a nonempty standard Borel space,
+$\kappa$ a Markov kernel on $S$, and $Y : S^{\mathbb{N}} \to \mathbb{R}$ a bounded function,
+measurable for the product $\sigma$-algebra. Fix $n \in \mathbb{N}$ and a history
+$x = (x_0, \dots, x_n)$ of states in $S$, and let $P_{n,x}$ be the Ionescu–Tulcea trajectory
+measure on $S^{\mathbb{N}}$ that equals $x$ at times $0, \dots, n$ and afterwards draws each
+next state from $\kappa$ applied to the current state. Then
+$$\int Y(\theta_n \omega) \, dP_{n,x}(\omega) = \int Y \, dP_{\delta_{x_n}},$$
+where $(\theta_n \omega)_k = \omega_{n+k}$ is the time-$n$ shift and $P_{\delta_{x_n}}$ is the
+law on path space of the Markov chain with transition kernel $\kappa$ and initial distribution
+the Dirac measure at $x_n$.
+
+The statement also takes a finite measure $\mu$ on $S$, which does not appear in it. -/
 theorem integral_shiftPath_traj_eq_markovExpectation
     (S : Type*) [MeasurableSpace S] [StandardBorelSpace S] [Nonempty S]
     (μ : Measure S) [IsFiniteMeasure μ]

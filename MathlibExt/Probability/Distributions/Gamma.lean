@@ -53,8 +53,11 @@ theorem integrable_gammaMeasure_iff {a r : ℝ} {E : Type*}
   exact (integrable_withDensity_iff_integrable_smul' (measurable_gammaPDF a r)
     (ae_of_all _ fun _ => gammaPDF_lt_top a r _))
 
-/-- Scaled gamma integrand is integrable on `Ioi 0`. This generalizes
-`Real.GammaIntegral_convergent` (rate `1`) to any positive rate `s`. -/
+/-- **Integrability of the scaled gamma integrand.** For real numbers $a > 0$ and $s > 0$, the
+function $x \mapsto x^{a-1} e^{-sx}$ is Lebesgue integrable on the open half-line $(0, \infty)$.
+
+This generalizes the convergence of the integral $\int_0^\infty x^{a-1} e^{-x} \, dx$ defining
+$\Gamma(a)$, which is the case $s = 1$. -/
 theorem integrableOn_rpow_mul_exp_neg_mul_Ioi {a s : ℝ} (ha : 0 < a)
     (hs : 0 < s) :
     IntegrableOn (fun x : ℝ => x ^ (a - 1) * Real.exp (-(s * x))) (Ioi 0) := by
@@ -85,7 +88,9 @@ theorem integrableOn_rpow_mul_exp_neg_mul_Ioi {a s : ℝ} (ha : 0 < a)
   refine hconst.congr_fun (fun x hx => ?_) measurableSet_Ioi
   exact (hfactor x hx).symm
 
-/-- Exponential moments of a gamma law exist below the rate. -/
+/-- **Exponential moments of the gamma distribution.** Let $a > 0$ and $r > 0$. For every real
+$t < r$, the function $x \mapsto e^{tx}$ is integrable with respect to the gamma distribution with
+shape $a$ and rate $r$. -/
 theorem integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
     (ht : t < r) :
     Integrable (fun x : ℝ => Real.exp (t * x)) (gammaMeasure a r) := by
@@ -143,7 +148,9 @@ theorem integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
       exact hmul
     exact hIci.congr_fun hcongr measurableSet_Ici
 
-/-- MGF of a gamma law below the rate. -/
+/-- **Moment generating function of the gamma distribution.** Let $a > 0$ and $r > 0$, and let
+$X$ have the gamma distribution with shape $a$ and rate $r$. For every real $t < r$, the moment
+generating function of $X$ at $t$ is $\mathbb{E}[e^{tX}] = \left(\frac{r}{r - t}\right)^a$. -/
 theorem mgf_gammaMeasure_of_lt {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
     (ht : t < r) :
     mgf id (gammaMeasure a r) t = (r / (r - t)) ^ a := by
@@ -223,8 +230,10 @@ theorem mgf_gammaMeasure_of_lt {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
         rw [hIio_zero, zero_add, hIci_eq]
     _ = (r / (r - t)) ^ a := hIoi_val
 
-/-- Below the rate, exponential moments exist; hence `Iio r` lies in the
-integrability set for MGF uniqueness. -/
+/-- **Half-line of exponential integrability for the gamma distribution.** Let $a > 0$ and
+$r > 0$, and let $S$ be the set of real $t$ such that $x \mapsto e^{tx}$ is integrable with respect
+to the gamma distribution with shape $a$ and rate $r$. Then the half-line $(-\infty, r)$ is
+contained in $S$. -/
 theorem Iio_subset_integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a)
     (hr : 0 < r) :
     Iio r ⊆ integrableExpSet id (gammaMeasure a r) := by
@@ -233,8 +242,13 @@ theorem Iio_subset_integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a)
   simp only [integrableExpSet, mem_ofPred_eq, id_eq]
   exact integrable_exp_mul_gammaMeasure ha hr ht
 
-/-- A symmetric interval around zero lies in the interior of the gamma
-integrability set, as required by `measure_eq_of_mgf_eqOn_Ioo`. -/
+/-- **A neighbourhood of zero of exponential integrability for the gamma distribution.** Let
+$a > 0$, $r > 0$ and $0 < \varepsilon < r$, and let $S$ be the set of real $t$ such that
+$x \mapsto e^{tx}$ is integrable with respect to the gamma distribution with shape $a$ and rate
+$r$. Then the interval $(-\varepsilon, \varepsilon)$ is contained in the interior of $S$.
+
+This is the form of hypothesis used to identify a distribution from its moment generating
+function on such an interval. -/
 theorem Ioo_subset_interior_integrableExpSet_gammaMeasure {a r ε : ℝ}
     (ha : 0 < a) (hr : 0 < r) (hε : 0 < ε) (hεr : ε < r) :
     Ioo (-ε) ε ⊆ interior (integrableExpSet id (gammaMeasure a r)) := by
