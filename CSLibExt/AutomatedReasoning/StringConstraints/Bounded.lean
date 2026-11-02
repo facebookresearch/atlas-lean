@@ -23,17 +23,26 @@ Bound the length of every string variable, then the search space is
 finite. This module formalizes that bounded-search idea as a classical
 specification (HAMPI itself reduces to bit-vector constraints rather
 than enumerating) and proves it sound and complete, together with the
-exact number of candidate assignments it checks.
+total (worst-case) size of the candidate search space.
 
 `boundedSatSpec vs φ B` enumerates every assignment of the variables in
 `vs` to words of length at most `B` and checks `φ` on each one.
 
 ## Cost model
 
-Cost is stated as the exact number of candidate assignments
-(`assignLists_length`): `(∑_{n ≤ B} |Σ|^n) ^ |vs|`. This is a
+Cost is stated as the total (worst-case) size of the candidate search
+space (`assignLists_length`): `(∑_{n ≤ B} |Σ|^n) ^ |vs|`. This is a
 combinatorial count of the enumeration, not a `TimeM` time bound;
-`TimeM` accounting for the checker is future work.
+`TimeM` accounting for the checker is future work. It is an upper bound
+on the number of candidates actually checked: `List.any` stops at the
+first satisfying candidate, so a satisfiable instance may check fewer.
+It is the number of distinct assignments only when `vs` has no
+duplicates: when `vs` contains a duplicate, distinct association lists
+can denote the same assignment through `getVal` (the first entry for a
+variable shadows later ones). Under `vs.Nodup` there is no shadowing:
+`assignLists_getVal_injective` shows the lookup function determines the
+association list, so the enumerated lists are in bijection with the
+assignments on `vs`.
 
 The enumeration functions are `noncomputable` because enumerating an
 arbitrary `Fintype` uses choice (`Finset.toList`); the content is the
@@ -47,7 +56,10 @@ once, so the search does not repeat candidate assignments.
 
 - `boundedSatSpec_iff`: soundness and completeness of the bounded-search
   specification.
-- `assignLists_length`: the exact candidate count.
+- `assignLists_length`: the total (worst-case) size of the candidate
+  search space.
+- `assignLists_getVal_injective`: under `vs.Nodup`, distinct enumerated
+  association lists denote distinct assignments.
 - `wordsUpTo_length`: the number of words of length at most `B` is
   `∑_{n ≤ B} |Σ|^n`.
 
@@ -297,8 +309,10 @@ theorem mem_assignLists {vs : List V} {l : List (V × List α)} {B : ℕ} :
           rw [List.mem_map]
           exact ⟨w, mem_wordsUpTo.mpr hw, rfl⟩⟩
 
-/-- Counting the assignment enumeration: the exact number of candidate
-assignments is `(wordsUpToCount B) ^ |vs|`. -/
+/-- Counting the assignment enumeration: the total (worst-case) size of
+the candidate search space is `(wordsUpToCount B) ^ |vs|`. This counts
+enumerated association lists; see the cost model in the module header
+for when it coincides with the number of distinct assignments. -/
 theorem assignLists_length (vs : List V) (B : ℕ) :
     (assignLists (α := α) vs B).length
       = (wordsUpToCount (α := α) B) ^ vs.length := by
@@ -325,6 +339,68 @@ theorem assignLists_length (vs : List V) (B : ℕ) :
     simp only [List.length_cons, pow_succ]
 
 end Assignments
+
+section Uniqueness
+
+variable {α : Type*} {V : Type*} [Fintype α] [DecidableEq V]
+
+/-- Under `vs.Nodup`, an enumerated association list is recovered from its
+lookup function: there is no duplicate key for `getVal` to shadow, so
+the list is exactly the association list built from its own lookups. -/
+theorem assignLists_eq_map_getVal {vs : List V} {l : List (V × List α)} {B : ℕ}
+    (hl : l ∈ assignLists vs B) (hvs : vs.Nodup) :
+    l = vs.map (fun i => (i, getVal l i)) := by
+  induction vs generalizing l with
+  | nil =>
+    have hl0 : l = [] := List.map_eq_nil_iff.mp (mem_assignLists.mp hl).1
+    simp [hl0]
+  | cons i vs ih =>
+    obtain ⟨hni, hvs'⟩ := List.nodup_cons.mp hvs
+    obtain ⟨hkeys, hvals⟩ := mem_assignLists.mp hl
+    cases l with
+    | nil => simp at hkeys
+    | cons p l' =>
+      obtain ⟨j, w⟩ := p
+      simp only [List.map_cons, List.cons.injEq] at hkeys
+      obtain ⟨rfl, hkeys'⟩ := hkeys
+      have hl' : l' ∈ assignLists vs B :=
+        mem_assignLists.mpr ⟨hkeys',
+          fun w' hw' => hvals w' (List.mem_cons_of_mem w hw')⟩
+      have ih' := ih hl' hvs'
+      have hget : ∀ k ∈ vs, getVal ((i, w) :: l') k = getVal l' k := by
+        intro k hk
+        have hki : k ≠ i := by
+          intro h
+          subst h
+          exact hni hk
+        change (if k = i then w else getVal l' k) = getVal l' k
+        rw [if_neg hki]
+      have hhead : getVal ((i, w) :: l') i = w := by
+        change (if i = i then w else getVal l' i) = w
+        rw [if_pos rfl]
+      have hmap : vs.map (fun k => (k, getVal l' k))
+          = vs.map (fun k => (k, getVal ((i, w) :: l') k)) :=
+        List.map_congr_left (fun k hk => by rw [hget k hk])
+      calc (i, w) :: l'
+          = (i, w) :: vs.map (fun k => (k, getVal l' k)) := by
+            congr 1
+            exact ih'
+        _ = (i :: vs).map (fun k => (k, getVal ((i, w) :: l') k)) := by
+          simp only [List.map_cons]
+          rw [hhead, hmap]
+
+/-- Under `vs.Nodup`, distinct enumerated association lists denote
+distinct assignments: if two enumerated lists agree as lookup functions
+on `vs`, they are the same list. Without `Nodup` this fails, since a
+duplicate key lets a later entry be shadowed by an earlier one. -/
+theorem assignLists_getVal_injective {vs : List V} {B : ℕ} (hvs : vs.Nodup)
+    {l₁ l₂ : List (V × List α)} (h₁ : l₁ ∈ assignLists vs B)
+    (h₂ : l₂ ∈ assignLists vs B)
+    (h : ∀ i ∈ vs, getVal l₁ i = getVal l₂ i) : l₁ = l₂ := by
+  rw [assignLists_eq_map_getVal h₁ hvs, assignLists_eq_map_getVal h₂ hvs]
+  exact List.map_congr_left (fun i hi => by rw [h i hi])
+
+end Uniqueness
 
 section Specification
 

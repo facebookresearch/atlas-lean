@@ -25,9 +25,10 @@ formalized here; the cited algorithms are background.
 
 ## Main results
 
-- `levi`: Levi's lemma.
-- `levi_of_le`: the length-directed form: when the left factor is no
-  longer than the other, the split is determined.
+- `levi_of_le`: the length-directed form of Levi's lemma: when the left
+  factor is no longer than the other, the split is determined. The
+  general form is Mathlib's `List.append_eq_append_iff`; no parallel
+  public wrapper is kept.
 
 Cancellation of a common prefix or suffix is Mathlib's
 `List.append_cancel_left` / `List.append_cancel_right`; no wrappers are
@@ -51,17 +52,12 @@ namespace Cslib.AutomatedReasoning.StringConstraints
 
 variable {α : Type*}
 
-/-- **Levi's lemma**: from `u ++ v = x ++ y`, either `x` starts with
-`u` (and the remainders match) or `u` starts with `x`. -/
-theorem levi {u v x y : List α} (h : u ++ v = x ++ y) :
-    (∃ w, x = u ++ w ∧ v = w ++ y) ∨ (∃ w, u = x ++ w ∧ y = w ++ v) :=
-  List.append_eq_append_iff.mp h
-
 /-- Length-directed Levi's lemma: if `u` is no longer than `x`, then
-`x` splits as `u ++ w` and the remainders satisfy `v = w ++ y`. -/
+`x` splits as `u ++ w` and the remainders satisfy `v = w ++ y`. The
+general form is Mathlib's `List.append_eq_append_iff`, used directly. -/
 theorem levi_of_le {u v x y : List α} (h : u ++ v = x ++ y)
     (hle : u.length ≤ x.length) : ∃ w, x = u ++ w ∧ v = w ++ y := by
-  rcases levi h with ⟨w, hx, hv⟩ | ⟨w, hu, hy⟩
+  rcases List.append_eq_append_iff.mp h with ⟨w, hx, hv⟩ | ⟨w, hu, hy⟩
   · exact ⟨w, hx, hv⟩
   · have hw : w = [] := by
       have hlen : u.length = x.length + w.length := by rw [hu, List.length_append]

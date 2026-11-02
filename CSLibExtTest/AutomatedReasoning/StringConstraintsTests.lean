@@ -118,7 +118,7 @@ example : ∃ σ : ℕ → List Bool, (∀ i, (σ i).length ≤ 1) ∧
 /-- Levi's lemma on a concrete split: the second disjunct holds with `w = [2]`. -/
 example : (∃ w : List ℕ, [1] = [1, 2] ++ w ∧ [3] = w ++ [2, 3]) ∨
     (∃ w : List ℕ, [1, 2] = [1] ++ w ∧ [2, 3] = w ++ [3]) :=
-  levi (by rfl)
+  List.append_eq_append_iff.mp (show [1, 2] ++ [3] = [1] ++ [2, 3] by rfl)
 
 /-- A `mem` atom: `[true]` belongs to the regex `char true`. -/
 example : Sat (fun _ : Fin 1 => [true])
