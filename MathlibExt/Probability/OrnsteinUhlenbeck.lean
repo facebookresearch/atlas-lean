@@ -28,9 +28,8 @@ The **Ornstein–Uhlenbeck (OU) process** with mean-reversion rate `θ > 0` and 
 proves the pathwise form of the Langevin equation for a continuous driving path.
 
 Pinned Mathlib has Brownian motion (finite-dimensional laws, `IsPreBrownianReal`) but no
-stochastic integral and no SDE theory, so the Itô-integral form of the solution, the Itô isometry
-and Itô's formula are recorded as wanted statements in
-`WantedExt.Probability.ItoCalculusWanted`.
+stochastic integral or SDE theory. This repository develops the Itô integral, its algebraic and
+path-regularity properties, and Itô's formula in `MathlibExt.Probability`.
 
 ## Main definitions
 
@@ -77,10 +76,9 @@ and Itô's formula are recorded as wanted statements in
   on the domain `θ > 0`, `0 ≤ s ≤ t`.
 * The predicates fix the finite-dimensional laws only (as `IsPreBrownianReal` does); path
   continuity is not part of them.
-* Not covered: the Itô-integral solution formula `X t = e^{-θt} X 0 + σ ∫_0^t e^{-θ(t-s)} dW_s`,
-  and the fact that `ouPathSolution` driven by a Brownian path is an OU process (it needs the
-  Gaussianity of pathwise integrals of a Gaussian process); both are stated in
-  `WantedExt.Probability.ItoCalculusWanted`.
+* The Itô-integral solution formula is proved in `MathlibExt.Probability.ItoIntegral`.
+  `MathlibExt.Probability.OrnsteinUhlenbeckSDE` proves that `ouPathSolution` driven by a Brownian
+  motion is an OU process, for both the zero and independent stationary Gaussian starts.
 
 ## References
 
