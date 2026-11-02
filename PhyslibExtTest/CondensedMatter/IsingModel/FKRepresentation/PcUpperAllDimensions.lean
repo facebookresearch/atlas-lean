@@ -17,7 +17,8 @@ public import PhyslibExt.CondensedMatter.IsingModel.FKRepresentation.PcUpperAllD
   together with `fkPc_pos_of_two_le` the bounds `0 < p_c(2, 2) < 1`;
 * `ising_phase_transition_of_two_le` at `d = 2` and `d = 3`: both phases occur, i.e.
   there is `β > 0` with `m*(β) = 0` and `β` with `m*(β) > 0`;
-* `isingBetaC_eq_fkPc_of_two_le` at `d = 2` and `d = 3`, with the consequence `0 < β_c`, and the
+* `isingFK_betaC_eq_fkPc_of_two_le` (sup-based) and `isingBetaC_eq_fkPc_of_two_le` (public
+  `Ising.betaC`) at `d = 2` and `d = 3`, with the consequence `0 < β_c`, and the
   agreement of `β_c` with the critical point of `ising_transition_at_fkPc_of_two_le`.
 -/
 
@@ -52,22 +53,36 @@ example : (∃ β, 0 < β ∧ magnetization 3 β = 0) ∧ ∃ β, 0 < magnetizat
   exact ⟨⟨βc / 2, by linarith, hlow _ (by linarith) (by linarith)⟩,
     ⟨βc + 1, hhigh _ (by linarith)⟩⟩
 
--- The Ising critical point of `ℤ²` is the image of the FK critical point.
+-- The Ising critical point of `ℤ²` is the image of the FK critical point (sup version).
 example : betaC (magnetization 2) = -(1 / 2) * Real.log (1 - fkPc 2 2) :=
-  isingBetaC_eq_fkPc_of_two_le le_rfl
+  isingFK_betaC_eq_fkPc_of_two_le le_rfl
 
--- The Ising critical point of `ℤ³` is the image of the FK critical point.
+-- The Ising critical point of `ℤ³` is the image of the FK critical point (sup version).
 example : isingBetaC 3 = -(1 / 2) * Real.log (1 - fkPc 3 2) :=
+  isingFK_betaC_eq_fkPc_of_two_le (by norm_num)
+
+-- The public critical point `Ising.betaC` of `ℤ³` is the image of the FK critical point.
+example : _root_.StatMech.Ising.betaC 3 = -(1 / 2) * Real.log (1 - fkPc 3 2) :=
   isingBetaC_eq_fkPc_of_two_le (by norm_num)
+
+-- The public critical point of `ℤ²` agrees with the sup-based one.
+example : _root_.StatMech.Ising.betaC 2 = betaC (magnetization 2) :=
+  ising_betaC_eq_sup_betaC_of_two_le le_rfl
 
 -- Consequence: the Ising critical point of `ℤ²` is positive.
 example : 0 < betaC (magnetization 2) := by
+  rw [isingFK_betaC_eq_fkPc_of_two_le le_rfl, ← pToBeta_two]
+  exact Ising.pToBeta_two_pos (fkPc_pos_of_two_le le_rfl (by norm_num))
+    (fkPc_lt_one_of_two_le le_rfl (by norm_num))
+
+-- Consequence: the public critical point of `ℤ²` is positive.
+example : 0 < _root_.StatMech.Ising.betaC 2 := by
   rw [isingBetaC_eq_fkPc_of_two_le le_rfl, ← pToBeta_two]
   exact Ising.pToBeta_two_pos (fkPc_pos_of_two_le le_rfl (by norm_num))
     (fkPc_lt_one_of_two_le le_rfl (by norm_num))
 
 -- `β_c` is the point where the magnetization switches on, as in the transition statement.
 example : betaC (magnetization 2) = pToBeta 2 (fkPc 2 2) := by
-  rw [isingBetaC_eq_fkPc_of_two_le le_rfl, pToBeta_two]
+  rw [isingFK_betaC_eq_fkPc_of_two_le le_rfl, pToBeta_two]
 
 end PhyslibExtTest.CondensedMatter.IsingModel.FKRepresentation.PcUpperAllDimensions
