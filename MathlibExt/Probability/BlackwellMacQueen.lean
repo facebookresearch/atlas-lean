@@ -543,34 +543,6 @@ theorem measurableSet_tiePartition_eq [MeasurableSingletonClass X]
   · simp only [hij, iff_false]
     exact (heq i j).compl
 
-/-- One seating multiplies the Chinese restaurant law by the seating probability. -/
-private theorem crpProb_seat' {θ : ℝ} (hθ : 0 < θ) {n : ℕ}
-    (π : Finpartition (univ : Finset (Fin n))) (c : Option π.parts) :
-    crpProb θ (seat π c) = crpProb θ π * seatWeight θ π c := by
-  have h : crp θ hθ (n + 1) (seat π c) = crp θ hθ n π * ENNReal.ofReal (seatWeight θ π c) := by
-    change ((crp θ hθ n).bind (crpStep θ hθ)) (seat π c) = _
-    rw [PMF.bind_apply, tsum_fintype, sum_eq_single π]
-    · congr 1
-      rw [crpStep, PMF.map_apply, tsum_fintype, sum_eq_single c]
-      · simp [seatChoice]
-      · intro c' _ hc'
-        split_ifs with h
-        · exact absurd (seat_injective π h).symm hc'
-        · rfl
-      · simp
-    · intro π' _ hπ'
-      rw [crpStep, PMF.map_apply, tsum_fintype, sum_eq_zero, mul_zero]
-      intro c' _
-      split_ifs with h
-      · refine absurd ?_ hπ'
-        rw [← comap_castSucc_seat π c, h, comap_castSucc_seat]
-      · rfl
-    · simp
-  have h' := congrArg ENNReal.toReal h
-  rw [crp_toReal, ENNReal.toReal_mul, crp_toReal,
-    ENNReal.toReal_ofReal (seatWeight_nonneg hθ π c)] at h'
-  exact h'
-
 omit [MeasurableSpace X] in
 open scoped Classical in
 private theorem card_filter_eq_part {n : ℕ} (xs : Fin n → X) (i : Fin n) :
@@ -654,7 +626,7 @@ theorem blackwellMacQueen_tiePartition [MeasurableSingletonClass X]
         apply h
         rw [← comap_castSucc_tiePartition_snoc xs x, hx, comap_castSucc_seat]
     simp_rw [hpt]
-    rw [lintegral_indicator_const (measurableSet_tiePartition_eq _), ih, crpProb_seat' hα,
+    rw [lintegral_indicator_const (measurableSet_tiePartition_eq _), ih, crpProb_seat hα,
       ENNReal.ofReal_mul (by rw [← crp_toReal hα]; exact ENNReal.toReal_nonneg), mul_comm]
 
 /-- **Moments of the Dirichlet process for at most two draws**: for `n ≤ 2`,
