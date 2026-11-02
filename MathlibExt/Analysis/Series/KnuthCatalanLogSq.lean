@@ -1756,9 +1756,11 @@ private lemma canonical_term_eq_source (n : ℕ) (x : ℝ) :
     ← sum_inv_eq_harmonic_cast (n + 1)]
 
 /--
-Knuth's identity for central binomial coefficients and harmonic numbers, stated with the
-standard `Nat.centralBinom` and `harmonic` APIs.
-This is the canonical form of `knuth_catalan_log_sq` below.
+**Knuth's identity in harmonic-number notation.** Let $x$ be a real number with
+$|x| \le 1/4$. Write $H_k = \sum_{j=1}^{k} \frac{1}{j}$ for the $k$-th harmonic number and $C_n$
+for the $n$-th Catalan number. Then the series
+$$\sum_{n=1}^{\infty} \binom{2n}{n} \left(H_{2n-1} - H_n\right) \frac{x^n}{n}$$
+converges absolutely, and its sum is $\left(\log \sum_{n=0}^{\infty} C_n x^n\right)^2$.
 -/
 theorem knuth_catalan_log_sq_canonical (x : ℝ) (hx : |x| ≤ 1 / 4) :
   HasSum
@@ -1771,13 +1773,17 @@ theorem knuth_catalan_log_sq_canonical (x : ℝ) (hx : |x| ≤ 1 / 4) :
   · exact (boundary_HasSum x heq).congr_fun (fun n => canonical_term_eq_source n x)
 
 /--
-Knuth's identity for central binomial coefficients and harmonic numbers.
+**Knuth's identity for central binomial coefficients and harmonic numbers.** Let $x$ be a real
+number with $|x| \le 1/4$, and let $C_n$ denote the $n$-th Catalan number. Then the series
+$$\sum_{n=1}^{\infty} \binom{2n}{n}
+\left(\sum_{j=1}^{2n-1} \frac{1}{j} - \sum_{j=1}^{n} \frac{1}{j}\right) \frac{x^n}{n}$$
+converges absolutely, and its sum is $\left(\log \sum_{n=0}^{\infty} C_n x^n\right)^2$.
+
+Proves `Wanted` entry `knuth_catalan_log_sq`.
 
 Source: Hongwei Chen, "Interesting Series Associated with Central Binomial Coefficients, Catalan
 Numbers and Harmonic Numbers", Journal of Integer Sequences 19 (2016), Article 16.1.5, Theorem
 `eq:k_gf`, lines 229-234, <https://cs.uwaterloo.ca/journals/JIS/VOL19/Chen/chen21.tex>.
-
-Proves `Wanted` entry `knuth_catalan_log_sq`.
 -/
 theorem knuth_catalan_log_sq (x : ℝ) (hx : |x| ≤ 1 / 4) :
   HasSum

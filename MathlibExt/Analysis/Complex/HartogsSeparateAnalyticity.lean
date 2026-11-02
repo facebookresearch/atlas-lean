@@ -43,8 +43,11 @@ open Set Metric Filter ContinuousLinearMap
 open MeasureTheory
 open scoped Topology
 
-/-- The positive logarithm of the norm of a holomorphic function satisfies the circle
-sub-mean-value inequality. -/
+/-- **Sub-mean-value inequality for the positive logarithm of a holomorphic function.** Let
+$c \in \mathbb{C}$, $R > 0$ and let $f : \mathbb{C} \to \mathbb{C}$ be analytic at every point of
+the closed disc $|z - c| \le R$. Then
+$$\log^+ |f(c)| \le \frac{1}{2\pi} \int_0^{2\pi} \log^+ |f(c + R e^{i\theta})| \, d\theta,$$
+where $\log^+ t = \max(0, \log t)$. -/
 theorem hartogs_posLog_norm_le_circleAverage {c : ℂ} {R : ℝ} {f : ℂ → ℂ}
     (hR : 0 < R) (hf : AnalyticOnNhd ℂ f (Metric.closedBall c R)) :
     Real.posLog ‖f c‖ ≤ Real.circleAverage (fun z ↦ Real.posLog ‖f z‖) c R := by
@@ -146,8 +149,12 @@ private theorem continuousAt_of_hartogs_bound
   change A * (‖p.1‖ + ‖p.2‖) < ε
   nlinarith
 
-/-- A separately holomorphic function whose values are bounded on the product of the unit
-balls is jointly complex differentiable at the center. -/
+/-- **Osgood's lemma at the origin.** Let $E$ be a complex normed space and let $f(z, w)$ be a
+complex-valued function of $z \in E$ and $w \in \mathbb{C}$ such that $z \mapsto f(z, w)$ is
+complex differentiable on all of $E$ for every $w \in \mathbb{C}$ and $w \mapsto f(z, w)$ is
+complex differentiable on all of $\mathbb{C}$ for every $z \in E$. If there is a real number $M$
+with $|f(z, w)| \le M$ whenever $\|z\| \le 1$ and $|w| \le 1$, then $f$, as a function on
+$E \times \mathbb{C}$, is complex differentiable at $(0, 0)$. -/
 theorem differentiableAt_uncurry_of_separately_differentiable_of_bounded
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : E → ℂ → ℂ} {M : ℝ}
@@ -373,8 +380,14 @@ theorem differentiableAt_uncurry_of_separately_differentiable_of_bounded
     (Eventually.of_forall fun p ↦ (hf₂ p.1 p.2).hasFDerivAt)
     hf₁c hf₂c).differentiableAt
 
-/-- A separately holomorphic function that is bounded on a product of open neighborhoods is
-jointly complex differentiable at every point of that product. -/
+/-- **Osgood's lemma for functions bounded on open sets.** Let $E$ be a complex normed space and
+let $f(z, w)$ be a complex-valued function of $z \in E$ and $w \in \mathbb{C}$ such that
+$z \mapsto f(z, w)$ is complex differentiable on all of $E$ for every $w \in \mathbb{C}$ and
+$w \mapsto f(z, w)$ is complex differentiable on all of $\mathbb{C}$ for every $z \in E$. Let
+$U \subseteq E$ and $V \subseteq \mathbb{C}$ be open sets and $M$ a real number with
+$|f(z, w)| \le M$ for all $z \in U$ and $w \in V$. Then $f$, as a function on
+$E \times \mathbb{C}$, is complex differentiable at every point $(z_0, w_0)$ with $z_0 \in U$ and
+$w_0 \in V$. -/
 theorem differentiableAt_uncurry_of_separately_differentiable_of_locally_bounded
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : E → ℂ → ℂ} {U : Set E} {V : Set ℂ} {M : ℝ}
@@ -439,8 +452,16 @@ theorem differentiableAt_uncurry_of_separately_differentiable_of_locally_bounded
   rw [← IsScalarTower.smul_assoc]
   simp [Algebra.smul_def, hrz.ne']
 
-/-- On a bounded product, the Cauchy coefficients in the scalar variable are holomorphic in the
-finite-dimensional block variable on a smaller ball. -/
+/-- **Holomorphic dependence of Cauchy coefficients on a parameter.** Let $E$ be a
+finite-dimensional complex normed space, let $z_0 \in E$, $w_0 \in \mathbb{C}$, $A > 0$, $B > 0$
+and $M \in \mathbb{R}$, and let $f(z, w)$ be a complex-valued function of $z \in E$ and
+$w \in \mathbb{C}$ such that $z \mapsto f(z, w)$ is complex differentiable on all of $E$ for every
+$w$ and $w \mapsto f(z, w)$ is complex differentiable on all of $\mathbb{C}$ for every $z$.
+Suppose $|f(z, w)| \le M$ whenever $\|z - z_0\| \le A$ and $|w - w_0| \le B$. Then for every
+$k \in \mathbb{N}$ the $k$-th Cauchy coefficient of $f(z, \cdot)$ about $w_0$ on the circle of
+radius $B/2$,
+$$a_k(z) = \frac{1}{2\pi i} \oint_{|w - w_0| = B/2} \frac{f(z, w)}{(w - w_0)^{k+1}} \, dw,$$
+is a complex differentiable function of $z$ on the open ball $\|z - z_0\| < A/2$. -/
 theorem differentiableOn_cauchyCoefficient_of_separately_differentiable_of_bounded
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [FiniteDimensional ℂ E]
     {f : E → ℂ → ℂ} {z₀ : E} {w₀ : ℂ} {A B M : ℝ}
@@ -669,8 +690,13 @@ theorem differentiableOn_cauchyCoefficient_of_separately_differentiable_of_bound
   rw [hbJ] at hab
   exact hJ.congr hab
 
-/-- Cauchy's estimate for a scalar Taylor coefficient, stated for Mathlib's
-`cauchyPowerSeries`. -/
+/-- **Cauchy's estimate for Taylor coefficients.** Let $f : \mathbb{C} \to \mathbb{C}$ be
+complex differentiable on all of $\mathbb{C}$, let $c \in \mathbb{C}$, $R > 0$ and
+$M \in \mathbb{R}$ with $|f(z)| \le M$ for all $z$ with $|z - c| = R$. Then for every
+$k \in \mathbb{N}$ the $k$-th coefficient of the Cauchy power series of $f$ about $c$ on the
+circle of radius $R$,
+$$a_k = \frac{1}{2\pi i} \oint_{|w - c| = R} \frac{f(w)}{(w - c)^{k+1}} \, dw,$$
+satisfies $|a_k| \le M R^{-k}$. -/
 theorem norm_cauchyCoefficient_le
     {f : ℂ → ℂ} {c : ℂ} {R M : ℝ}
     (hR : 0 < R) (hf : Differentiable ℂ f)
@@ -871,7 +897,17 @@ private lemma disk_submean {u : ℂ → ℝ} (hu : Continuous u)
   rw [diskIntegral_add_center u c R] at h
   simpa [v, Complex.volume_closedBall] using h
 
-/-- The iterated solid-polydisc integral over equal coordinate radii. -/
+/-- **Iterated integral over a polydisc.** For $n \in \mathbb{N}$, a function
+$u : \mathbb{C}^n \to \mathbb{R}$, a centre $c \in \mathbb{C}^n$ and a radius $R \in \mathbb{R}$,
+the iterated polydisc integral $I(u, c, R)$ is defined by recursion on $n$. For $n = 0$ it is
+$u(c)$. For $n = m + 1$, writing $c = (c_0, c_1, \dots, c_m)$, it is
+$$I(u, c, R) = \int_{|z - c_0| \le R} I\big(u(z, \cdot), (c_1, \dots, c_m), R\big) \, dz,$$
+where $u(z, \cdot)$ is the function $y \mapsto u(z, y)$ on $\mathbb{C}^m$ and $dz$ is Lebesgue
+measure on $\mathbb{C}$. Thus, for $c = (c_0, \dots, c_{n-1})$ and $D_j$ the closed disc
+$|z - c_j| \le R$,
+$$I(u, c, R) = \int_{D_0} \cdots \int_{D_{n-1}} u(z_0, \dots, z_{n-1}) \, dz_{n-1} \cdots dz_0.$$
+
+Each integral is a Bochner integral, taken to be $0$ when the integrand is not integrable. -/
 noncomputable def hartogsPolydiscIntegral : {n : ℕ} →
     ((Fin n → ℂ) → ℝ) → (Fin n → ℂ) → ℝ → ℝ
   | 0, u, c, _ => u c
@@ -934,8 +970,15 @@ private theorem continuous_hartogsPolydiscIntegral_param
           fun_prop
       · exact isCompact_closedBall (0 : ℂ) R
 
-/-- Iterating the circle sub-mean inequality gives the corresponding inequality for the
-solid polydisc average. -/
+/-- **Sub-mean-value inequality on a polydisc.** Let $n \in \mathbb{N}$, let
+$u : \mathbb{C}^n \to \mathbb{R}$ be continuous, let $c \in \mathbb{C}^n$ and $R > 0$. Write
+$\overline{P}(c, R) = \{x \in \mathbb{C}^n : |x_j - c_j| \le R \text{ for all } j\}$ for the
+closed polydisc, and for $x \in \mathbb{C}^n$ and $w \in \mathbb{C}$ write $x_{j \leftarrow w}$
+for $x$ with its $j$-th coordinate replaced by $w$. Suppose that for every
+$x \in \overline{P}(c, R)$, every coordinate $j$ and every $r$ with $0 < r \le R$,
+$$u(x) \le \frac{1}{2\pi} \int_0^{2\pi} u(x_{j \leftarrow x_j + r e^{i\theta}}) \, d\theta.$$
+Then $(\pi R^2)^n \, u(c) \le I(u, c, R)$, where $\pi R^2$ is the area of a disc of radius $R$
+and $I(u, c, R)$ is the iterated polydisc integral of $u$ about $c$ with radius $R$. -/
 theorem hartogsPolydisc_submean
     {n : ℕ} {u : (Fin n → ℂ) → ℝ} (hu : Continuous u)
     {c : Fin n → ℂ} {R : ℝ} (hR : 0 < R)
@@ -1330,8 +1373,19 @@ private theorem hartogs_eventually_uniform_of_submean_global
     (hmean.trans hnested).trans_lt hk
   exact (lt_of_mul_lt_mul_left hlt hV.le).le
 
-/-- Hartogs' lemma: locally bounded nonnegative sub-mean functions that converge pointwise to
-zero converge uniformly on a smaller concentric polydisc. -/
+/-- **Hartogs' lemma for sub-mean-value functions.** Let $n \in \mathbb{N}$, $c \in \mathbb{C}^n$,
+$R > 0$ and $C \ge 0$. For $\rho \ge 0$ write
+$\overline{P}(c, \rho) = \{x \in \mathbb{C}^n : |x_j - c_j| \le \rho \text{ for all } j\}$ for the
+closed polydisc, and for $x \in \mathbb{C}^n$ and $w \in \mathbb{C}$ write $x_{j \leftarrow w}$
+for $x$ with its $j$-th coordinate replaced by $w$. Let $(u_k)_{k \in \mathbb{N}}$ be real-valued
+functions on $\mathbb{C}^n$ such that each $u_k$ is continuous on $\overline{P}(c, R)$,
+$0 \le u_k(x) \le C$ for all $k$ and all $x \in \overline{P}(c, R)$, and $u_k(x) \to 0$ as
+$k \to \infty$ for every $x \in \overline{P}(c, R)$. Suppose moreover that for every $k$, every
+$x \in \overline{P}(c, R)$, every coordinate $j$ and every $r > 0$ such that
+$x_{j \leftarrow z} \in \overline{P}(c, R)$ for all $z$ with $|z - x_j| \le r$,
+$$u_k(x) \le \frac{1}{2\pi} \int_0^{2\pi} u_k(x_{j \leftarrow x_j + r e^{i\theta}}) \, d\theta.$$
+Then for every $\varepsilon > 0$ there is $K$ such that $u_k(x) \le \varepsilon$ for all
+$k \ge K$ and all $x \in \overline{P}(c, R/4)$. -/
 theorem hartogs_eventually_uniform_of_submean
     {n : ℕ} {u : ℕ → (Fin n → ℂ) → ℝ}
     {c : Fin n → ℂ} {R C : ℝ}
@@ -1780,16 +1834,23 @@ private theorem hartogs_euclidean_of_pi {n : ℕ}
   rw [e.symm_apply_apply]
 
 /--
-If `f : ℂⁿ → ℂ` is entire in each variable separately via `Function.update` slices, then `f` is
-jointly `Differentiable ℂ` on `ℂⁿ`. Source: Hartogs separate analyticity (Osgood–Hartogs); see
-Hörmander; Lean is scalar-valued entire separately holomorphic via Function.update slices implies
-jointly Differentiable ℂ, finite-dimensional ℂⁿ specialization.
+**Hartogs' theorem on separate analyticity.** Let $n \in \mathbb{N}$ and let
+$f : \mathbb{C}^n \to \mathbb{C}$ be such that for every point $x \in \mathbb{C}^n$ and every
+coordinate $i$, the function $z \mapsto f(x_1, \dots, x_{i-1}, z, x_{i+1}, \dots, x_n)$ is
+complex differentiable on all of $\mathbb{C}$. Then $f$ is complex differentiable on all of
+$\mathbb{C}^n$.
+
+No continuity or boundedness of $f$ is assumed.
 
 Proves `Wanted` entry `hartogs_separate_analyticity`.
 
-Proof: induction on the number of variables. Baire category gives a polydisc where `f` is
+Proof: induction on the number of variables. Baire category gives a polydisc where $f$ is
 bounded, where Osgood's lemma makes it holomorphic; Hartogs' lemma on sub-mean-value functions
 then makes the Cauchy expansion in the last variable converge locally uniformly.
+
+Source: Hartogs separate analyticity (Osgood–Hartogs); see
+Hörmander; Lean is scalar-valued entire separately holomorphic via Function.update slices implies
+jointly Differentiable ℂ, finite-dimensional ℂⁿ specialization.
 -/
 theorem hartogs_separate_analyticity
     {n : ℕ}

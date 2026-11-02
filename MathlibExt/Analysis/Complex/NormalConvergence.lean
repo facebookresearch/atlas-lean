@@ -29,7 +29,12 @@ normally convergent series of holomorphic functions.
 
 open Set Metric Filter Topology ENNReal
 
-/-- Normal convergence makes the real-valued sequence of sup norms summable. -/
+/-- **Normal convergence gives summable real sup norms.** Let $E$ be a seminormed additive
+commutative group, $S$ a subset of a type $X$ and $f_n \colon X \to E$ for $n \in \mathbb{N}$.
+If the series $\sum_n f_n$ converges normally on $S$, that is
+$\sum_n \sup_{x \in S} \|f_n(x)\| < \infty$ with the suprema taken in $[0, \infty]$, then the
+sequence of sup norms $\left(\sup_{x \in S} \|f_n(x)\|\right)_n$, viewed as real numbers, is
+summable. -/
 theorem ConvergesNormallyOn.summable_toReal_supNormOn
     {X E : Type*} [SeminormedAddCommGroup E]
     {f : ℕ → X → E} {S : Set X}
@@ -37,7 +42,11 @@ theorem ConvergesNormallyOn.summable_toReal_supNormOn
     Summable (fun n => (supNormOn (f n) S).toReal) :=
   ENNReal.summable_toReal hf
 
-/-- Normal convergence implies pointwise absolute convergence on the domain. -/
+/-- **Normal convergence implies pointwise absolute convergence.** Let $E$ be a seminormed
+additive commutative group, $S$ a subset of a type $X$ and $f_n \colon X \to E$ for
+$n \in \mathbb{N}$. If the series $\sum_n f_n$ converges normally on $S$, that is
+$\sum_n \sup_{x \in S} \|f_n(x)\| < \infty$ with the suprema taken in $[0, \infty]$, then for
+every $x \in S$ the series $\sum_n \|f_n(x)\|$ is summable. -/
 theorem ConvergesNormallyOn.summable_norm
     {X E : Type*} [SeminormedAddCommGroup E]
     {f : Nat → X → E} {S : Set X} (hf : ConvergesNormallyOn f S)
@@ -49,7 +58,11 @@ theorem ConvergesNormallyOn.summable_norm
       exact le_iSup (fun y : S => ENNReal.ofReal ‖f n ↑y‖) ⟨x, hx⟩)
     hsum
 
-/-- Local normal convergence implies pointwise absolute convergence on the domain. -/
+/-- **Local normal convergence implies pointwise absolute convergence.** Let $E$ be a seminormed
+additive commutative group, $S$ a subset of a topological space $X$ and $f_n \colon X \to E$ for
+$n \in \mathbb{N}$. If the series $\sum_n f_n$ converges locally normally on $S$, that is every
+$x \in S$ has a neighbourhood $U$ with $\sum_n \sup_{y \in U \cap S} \|f_n(y)\| < \infty$ (suprema
+taken in $[0, \infty]$), then for every $x \in S$ the series $\sum_n \|f_n(x)\|$ is summable. -/
 theorem ConvergesLocallyNormallyOn.summable_norm
     {X E : Type*} [TopologicalSpace X] [SeminormedAddCommGroup E]
     {f : Nat → X → E} {S : Set X} (hf : ConvergesLocallyNormallyOn f S)
@@ -58,7 +71,12 @@ theorem ConvergesLocallyNormallyOn.summable_norm
   have hxU : x ∈ U := mem_of_mem_nhds hU
   exact hnormal.summable_norm ⟨hxU, hx⟩
 
-/-- A normally convergent series converges uniformly to its pointwise sum. -/
+/-- **Weierstrass M-test: normal convergence implies uniform convergence.** Let $E$ be a complete
+normed additive commutative group, $S$ a subset of a type $X$ and $f_n \colon X \to E$ for
+$n \in \mathbb{N}$. If the series $\sum_n f_n$ converges normally on $S$, that is
+$\sum_n \sup_{x \in S} \|f_n(x)\| < \infty$ with the suprema taken in $[0, \infty]$, then the
+partial sums $x \mapsto \sum_{n < N} f_n(x)$ converge uniformly on $S$, as $N \to \infty$, to
+the pointwise sum $x \mapsto \sum_{n=0}^{\infty} f_n(x)$. -/
 theorem ConvergesNormallyOn.tendstoUniformlyOn_tsum_nat
     {X E : Type*} [NormedAddCommGroup E] [CompleteSpace E]
     {f : ℕ → X → E} {S : Set X}
@@ -75,7 +93,12 @@ theorem ConvergesNormallyOn.tendstoUniformlyOn_tsum_nat
   exact (ENNReal.ofReal_le_iff_le_toReal
     (ENNReal.ne_top_of_tsum_ne_top hf n)).mp hle
 
-/-- The derivative series of a locally normally convergent holomorphic series is locally normal. -/
+/-- **Derivative series of a locally normally convergent holomorphic series.** Let $E$ be a
+normed space over $\mathbb{C}$, $S \subseteq \mathbb{C}$ an open set and $f_n \colon \mathbb{C}
+\to E$ for $n \in \mathbb{N}$ functions that are complex differentiable on $S$. If the series
+$\sum_n f_n$ converges locally normally on $S$, that is every $z \in S$ has a neighbourhood $U$
+with $\sum_n \sup_{w \in U \cap S} \|f_n(w)\| < \infty$ (suprema taken in $[0, \infty]$), then
+the series of derivatives $\sum_n f_n'$ also converges locally normally on $S$. -/
 theorem ConvergesLocallyNormallyOn.deriv
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : ℕ → ℂ → E} {S : Set ℂ}
@@ -137,7 +160,13 @@ theorem ConvergesLocallyNormallyOn.deriv
     fun n => le_trans (supNormOn_mono Set.inter_subset_left _) (hderiv_sup n)
   exact ne_top_of_le_ne_top hsum (ENNReal.tsum_le_tsum hderiv_sup')
 
-/-- A locally normally convergent series converges locally uniformly to its pointwise sum. -/
+/-- **Local normal convergence implies locally uniform convergence.** Let $E$ be a complete
+normed additive commutative group, $S$ a subset of a topological space $X$ and
+$f_n \colon X \to E$ for $n \in \mathbb{N}$. If the series $\sum_n f_n$ converges locally
+normally on $S$, that is every $x \in S$ has a neighbourhood $U$ with
+$\sum_n \sup_{y \in U \cap S} \|f_n(y)\| < \infty$ (suprema taken in $[0, \infty]$), then the
+partial sums $x \mapsto \sum_{n < N} f_n(x)$ converge locally uniformly on $S$, as
+$N \to \infty$, to the pointwise sum $x \mapsto \sum_{n=0}^{\infty} f_n(x)$. -/
 theorem ConvergesLocallyNormallyOn.tendstoLocallyUniformlyOn_tsum_nat
     {X E : Type*} [TopologicalSpace X] [NormedAddCommGroup E] [CompleteSpace E]
     {f : Nat → X → E} {S : Set X} (hf : ConvergesLocallyNormallyOn f S) :
@@ -150,7 +179,13 @@ theorem ConvergesLocallyNormallyOn.tendstoLocallyUniformlyOn_tsum_nat
   refine ⟨U ∩ S, ?_, hnormal.tendstoUniformlyOn_tsum_nat⟩
   simpa only [inter_comm] using inter_mem_nhdsWithin S hU
 
-/-- A locally normally convergent holomorphic series may be differentiated termwise. -/
+/-- **Termwise differentiation of locally normally convergent holomorphic series.** Let $E$ be a
+complete normed space over $\mathbb{C}$, $S \subseteq \mathbb{C}$ an open set and
+$f_n \colon \mathbb{C} \to E$ for $n \in \mathbb{N}$ functions that are complex differentiable
+on $S$. If the series $\sum_n f_n$ converges locally normally on $S$, that is every $z \in S$
+has a neighbourhood $U$ with $\sum_n \sup_{w \in U \cap S} \|f_n(w)\| < \infty$ (suprema taken
+in $[0, \infty]$), then for every $z \in S$ the function $w \mapsto \sum_{n=0}^{\infty} f_n(w)$
+has derivative $\sum_{n=0}^{\infty} f_n'(z)$ at $z$. -/
 theorem ConvergesLocallyNormallyOn.hasDerivAt_tsum
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     {f : Nat → Complex → E} {S : Set Complex} {z : Complex}

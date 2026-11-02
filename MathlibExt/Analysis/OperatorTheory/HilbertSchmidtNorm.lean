@@ -43,18 +43,24 @@ open scoped BigOperators ENNReal
 
 namespace MathlibExt.Analysis.OperatorTheory.HilbertSchmidtNorm
 
-/-- The squared Hilbert–Schmidt norm of `T` computed in the family `u`, as an extended
-nonnegative real: `∑' n, ‖T (u n)‖ ^ 2` in `ℝ≥0∞`. It is `⊤` exactly when the series of
-squares diverges. -/
+/-- **Squared Hilbert–Schmidt norm in a family.** Let $H$ be a real inner product space, let
+$T : H \to H$ be a continuous linear operator and let $(u_n)_{n \in \mathbb{N}}$ be a sequence in
+$H$. The squared Hilbert–Schmidt norm of $T$ in the family $(u_n)$ is the extended nonnegative
+real $\sum_{n=0}^{\infty} \|T u_n\|^2$, the sum being taken in $[0, \infty]$. It is $\infty$
+exactly when the real series $\sum_n \|T u_n\|^2$ diverges. -/
 noncomputable def hsNormSq
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
     (T : H →L[ℝ] H) (u : ℕ → H) : ℝ≥0∞ :=
   ∑' n : ℕ, ENNReal.ofReal (‖T (u n)‖ ^ 2)
 
-/-- The Hilbert–Schmidt norm of `T` computed in the family `u`, as an extended nonnegative
-real: the square root of `hsNormSq T u` in `ℝ≥0∞`. In particular it is `⊤` for operators
-that are not Hilbert–Schmidt in the family `u` (for example the identity operator with `u`
-an orthonormal basis indexed by `ℕ`), never `0` by default of summability. -/
+/-- **Extended Hilbert–Schmidt norm in a family.** Let $H$ be a real inner product space, let
+$T : H \to H$ be a continuous linear operator and let $(u_n)_{n \in \mathbb{N}}$ be a sequence in
+$H$. The Hilbert–Schmidt norm of $T$ in the family $(u_n)$ is the square root, taken in
+$[0, \infty]$ with $\sqrt{\infty} = \infty$, of the squared Hilbert–Schmidt norm
+$\sum_{n=0}^{\infty} \|T u_n\|^2 \in [0, \infty]$.
+
+In particular it is $\infty$, not $0$, when the series $\sum_n \|T u_n\|^2$ diverges, for example
+for the identity operator when $(u_n)$ is an orthonormal basis of $H$ indexed by $\mathbb{N}$. -/
 noncomputable def hsENNNorm
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
     (T : H →L[ℝ] H) (u : ℕ → H) : ℝ≥0∞ :=

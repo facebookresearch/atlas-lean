@@ -52,45 +52,64 @@ open scoped BoundedContinuousFunction Topology
 
 noncomputable section
 
-/-- The domain of the Volterra operator: bounded continuous real functions on `[0, 1]`. -/
+/-- **The domain of the Volterra operator.** The space on which the Volterra operator acts is the
+space of bounded continuous real functions on $[0, 1]$, with the sup norm. -/
 abbrev VolterraSpace := Set.Icc (0 : ℝ) 1 →ᵇ ℝ
 
-/-- Clamp a real number into `[0, 1]`. -/
+/-- **Clamping to the unit interval.** For a real number $t$, its clamp to the unit interval is
+$\max(0, \min(t, 1))$, regarded as a point of $[0, 1]$. -/
 def clamp01 (t : ℝ) : Set.Icc (0 : ℝ) 1 :=
   ⟨max 0 (min t 1), le_max_left _ _, max_le zero_le_one (min_le_right _ _)⟩
 
-/-- Extend a function on `[0, 1]` to `ℝ` by clamping the argument; this is the
-continuous extension used to write `(Vf)(x)` as an interval integral over `ℝ`. -/
+/-- **Extension by clamping.** For a bounded continuous real function $f$ on $[0, 1]$, its
+extension to $\mathbb{R}$ is the function $t \mapsto f(\max(0, \min(t, 1)))$.
+
+This continuous extension is used to write $(Vf)(x)$, for $V$ the Volterra operator, as an
+interval integral over $\mathbb{R}$. -/
 def volterraExtend (f : VolterraSpace) : ℝ → ℝ :=
   fun t => f (clamp01 t)
 
-/-- The clamped extension is continuous. -/
+/-- **The clamped extension is continuous.** For every bounded continuous real function $f$ on
+$[0, 1]$, its extension $t \mapsto f(\max(0, \min(t, 1)))$ to $\mathbb{R}$ by clamping is
+continuous on $\mathbb{R}$. -/
 theorem volterraExtend_continuous (f : VolterraSpace) :
     Continuous (volterraExtend f) :=
   f.continuous.comp
     ((continuous_const.max (continuous_id.min continuous_const)).subtype_mk
       (fun _ => ⟨le_max_left _ _, max_le zero_le_one (min_le_right _ _)⟩))
 
-/-- On `[0, 1]` the clamped extension agrees with the original function. -/
+/-- **The clamped extension agrees with the original function on the unit interval.** For
+every bounded continuous real function $f$ on $[0, 1]$ and every real $t$ with $0 \le t \le 1$,
+the extension $s \mapsto f(\max(0, \min(s, 1)))$ of $f$ to $\mathbb{R}$ takes the value
+$f(t)$ at $t$. -/
 theorem volterraExtend_apply_of_mem {f : VolterraSpace} {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     volterraExtend f t = f ⟨t, ht⟩ := by
   have hclamp : max 0 (min t 1) = t := by
     rw [min_eq_left ht.2, max_eq_right ht.1]
   simp [volterraExtend, clamp01, hclamp]
 
-/-- The clamped extension is bounded by the sup norm of the original function. -/
+/-- **The clamped extension is bounded by the sup norm.** For every bounded continuous real
+function $f$ on $[0, 1]$ and every real $t$, the extension of $f$ to $\mathbb{R}$ by clamping
+satisfies $|f(\max(0, \min(t, 1)))| \le \|f\|_\infty$, where
+$\|f\|_\infty = \sup_{x \in [0, 1]} |f(x)|$ is the sup norm of $f$. -/
 theorem norm_volterraExtend_le (f : VolterraSpace) (t : ℝ) :
     ‖volterraExtend f t‖ ≤ ‖f‖ :=
   f.norm_coe_le_norm _
 
-/-- The primitive of the clamped extension is continuous in the upper endpoint. -/
+/-- **Continuity of the Volterra primitive.** For every bounded continuous real function $f$ on
+$[0, 1]$, the function $x \mapsto \int_0^x \tilde f(t)\,dt$ on $[0, 1]$ is continuous, where
+$\tilde f(t) = f(\max(0, \min(t, 1)))$ is the extension of $f$ to $\mathbb{R}$ by clamping the
+argument into $[0, 1]$. -/
 theorem volterraPrimitive_continuous (f : VolterraSpace) :
     Continuous (fun x : Set.Icc (0 : ℝ) 1 => ∫ t in (0 : ℝ)..(x : ℝ), volterraExtend f t) :=
   (intervalIntegral.continuous_primitive
     (fun a b => (volterraExtend_continuous f).intervalIntegrable a b)
     (0 : ℝ)).comp continuous_subtype_val
 
-/-- The primitive of the clamped extension is bounded by the sup norm. -/
+/-- **Sup-norm bound for the Volterra primitive.** For every bounded continuous real function $f$
+on $[0, 1]$ and every $x \in [0, 1]$, $\left|\int_0^x \tilde f(t)\,dt\right| \le \|f\|$, where
+$\|f\|$ is the sup norm of $f$ and $\tilde f(t) = f(\max(0, \min(t, 1)))$ is the extension of
+$f$ to $\mathbb{R}$ by clamping the argument into $[0, 1]$. -/
 theorem volterraPrimitive_norm_le (f : VolterraSpace) (x : Set.Icc (0 : ℝ) 1) :
     ‖∫ t in (0 : ℝ)..(x : ℝ), volterraExtend f t‖ ≤ ‖f‖ := by
   have hx0 : (0 : ℝ) ≤ (x : ℝ) := x.2.1
@@ -112,7 +131,9 @@ theorem volterraPrimitive_norm_le (f : VolterraSpace) (x : Set.Icc (0 : ℝ) 1) 
           mul_le_mul_of_nonneg_right hx1 (norm_nonneg _)
         simpa using this
 
-/-- The Volterra operator as a linear map. -/
+/-- **The Volterra operator as a linear map.** The real-linear map $V$ on the space of bounded
+continuous real functions on $[0, 1]$ given by $(Vf)(x) = \int_0^x f(t)\,dt$ for
+$x \in [0, 1]$. -/
 noncomputable def volterraLinearMap : VolterraSpace →ₗ[ℝ] VolterraSpace where
   toFun f :=
     BoundedContinuousFunction.ofNormedAddCommGroup
@@ -142,29 +163,39 @@ noncomputable def volterraLinearMap : VolterraSpace →ₗ[ℝ] VolterraSpace wh
     rw [intervalIntegral.integral_smul]
     rfl
 
-/-- The Volterra operator is bounded by `1` on the unit ball. -/
+/-- **Sup-norm bound for the Volterra linear map.** For every bounded continuous real function
+$f$ on $[0, 1]$, the Volterra linear map $V$ satisfies $\|Vf\| \le 1 \cdot \|f\|$, where
+$\|\cdot\|$ is the sup norm. -/
 theorem volterraLinearMap_norm_le (f : VolterraSpace) :
     ‖volterraLinearMap f‖ ≤ 1 * ‖f‖ := by
   rw [one_mul]
   exact BoundedContinuousFunction.norm_ofNormedAddCommGroup_le
     (volterraPrimitive_continuous f) (norm_nonneg f) (volterraPrimitive_norm_le f)
 
-/-- The Volterra operator `(Vf)(x) = ∫₀ˣ f(t) dt` as a bounded operator on `C([0, 1], ℝ)`. -/
+/-- **The Volterra operator.** The bounded real-linear operator $V$ on the space of bounded
+continuous real functions on $[0, 1]$ (equivalently $C([0, 1], \mathbb{R})$ with the sup norm)
+given by $(Vf)(x) = \int_0^x f(t)\,dt$ for $x \in [0, 1]$. -/
 noncomputable def volterraOperator : VolterraSpace →L[ℝ] VolterraSpace :=
   volterraLinearMap.mkContinuous 1 volterraLinearMap_norm_le
 
-/-- Evaluation formula for the Volterra operator. -/
+/-- **Evaluation formula for the Volterra operator.** For every bounded continuous real function
+$f$ on $[0, 1]$ and every $x \in [0, 1]$, the Volterra operator $V$ satisfies
+$(Vf)(x) = \int_0^x \tilde f(t)\,dt$, where $\tilde f(t) = f(\max(0, \min(t, 1)))$ is the
+extension of $f$ to $\mathbb{R}$ by clamping the argument into $[0, 1]$. -/
 theorem volterraOperator_apply (f : VolterraSpace) (x : Set.Icc (0 : ℝ) 1) :
     (volterraOperator f) x = ∫ t in (0 : ℝ)..(x : ℝ), volterraExtend f t :=
   rfl
 
-/-- The Volterra operator vanishes at `0`. -/
+/-- **Volterra integrals vanish at the left endpoint.** For every bounded continuous real function
+$f$ on $[0, 1]$, the Volterra operator $V$ satisfies $(Vf)(0) = 0$. -/
 theorem volterraOperator_apply_zero (f : VolterraSpace) :
     (volterraOperator f) ⟨0, le_refl 0, zero_le_one⟩ = 0 := by
   rw [volterraOperator_apply]
   simp
 
-/-- Operator-norm bound for the Volterra operator. -/
+/-- **The Volterra operator has norm at most one.** The Volterra operator $V$,
+$(Vf)(x) = \int_0^x f(t)\,dt$, acting on the space of bounded continuous real functions on
+$[0, 1]$ with the sup norm, has operator norm $\|V\| \le 1$. -/
 theorem norm_volterraOperator_le_one : ‖volterraOperator‖ ≤ 1 :=
   LinearMap.mkContinuous_norm_le _ zero_le_one volterraLinearMap_norm_le
 
@@ -189,7 +220,10 @@ private theorem integral_pow_Icc_zero (n : ℕ) (x : ℝ) :
   simp only [zero_pow (Nat.succ_ne_zero n), mul_zero, sub_zero]
   rw [one_div, inv_mul_eq_div]
 
-/-- Pointwise factorial bound for the powers of the Volterra operator. -/
+/-- **Pointwise factorial bound for powers of the Volterra operator.** Let $V$ be the Volterra
+operator $(Vf)(x) = \int_0^x f(t)\,dt$ on the space of bounded continuous real functions on
+$[0, 1]$. For every natural number $n$, every such function $f$ and every $x \in [0, 1]$,
+$|(V^n f)(x)| \le \frac{x^n}{n!} \|f\|_\infty$, where $\|f\|_\infty$ is the sup norm of $f$. -/
 theorem pow_volterraOperator_apply_norm_le (n : ℕ) (f : VolterraSpace)
     (x : Set.Icc (0 : ℝ) 1) :
     ‖((volterraOperator ^ n) f) x‖ ≤ ((x : ℝ) ^ n / (Nat.factorial n)) * ‖f‖ := by
@@ -226,7 +260,10 @@ theorem pow_volterraOperator_apply_norm_le (n : ℕ) (f : VolterraSpace)
           rw [intervalIntegral.integral_const_mul, integral_pow_Icc_zero n (x : ℝ), hcast]
           field_simp
 
-/-- Factorial bound for the operator norm of the powers of the Volterra operator. -/
+/-- **Factorial bound for powers of the Volterra operator.** Let $V$ be the Volterra operator
+$(Vf)(x) = \int_0^x f(t)\,dt$ on the space of bounded continuous real functions on $[0, 1]$
+with the sup norm. For every natural number $n$, the operator norm of $V^n$ satisfies
+$\|V^n\| \le 1/n!$. -/
 theorem norm_volterraOperator_pow_le (n : ℕ) : ‖volterraOperator ^ n‖ ≤ 1 / (Nat.factorial n) := by
   apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
   intro f
@@ -379,9 +416,12 @@ private theorem volterraNeumann_apply {z : ℝ} (hz : z ≠ 0) (g : VolterraSpac
   simpa using
     tsum_sub_succ_eq (summable_neumann_terms z g) (tendsto_neumann_terms z g)
 
-/-- Every nonzero real is in the resolvent set of the Volterra operator:
-`algebraMap z - V` is a unit because it is bijective, with inverse given by
-the function-level Neumann series. -/
+/-- **Nonzero reals lie in the resolvent set of the Volterra operator.** For every nonzero real
+$z$, $z$ lies in the real resolvent set of the Volterra operator $V$: the bounded operator
+$z - V$ is invertible.
+
+The operator $z - V$ is bijective, with inverse given by the Neumann series
+$g \mapsto \sum_{n \ge 0} z^{-(n+1)} V^n g$. -/
 theorem volterraOperator_mem_resolventSet_of_ne_zero {z : ℝ} (hz : z ≠ 0) :
     z ∈ resolventSet ℝ volterraOperator := by
   rw [spectrum.mem_resolventSet_iff, ContinuousLinearMap.isUnit_iff_bijective]
@@ -392,7 +432,11 @@ theorem volterraOperator_mem_resolventSet_of_ne_zero {z : ℝ} (hz : z ≠ 0) :
   rw [huv] at h1
   exact h1.symm.trans h2
 
-/-- The Volterra operator is not a unit: every `Vf` vanishes at `0`. -/
+/-- **The Volterra operator is not invertible.** The Volterra operator $V$,
+$(Vf)(x) = \int_0^x f(t)\,dt$, on the space of bounded continuous real functions on $[0, 1]$ is
+not a unit in the algebra of bounded linear operators on that space.
+
+The reason is that $(Vf)(0) = 0$ for every $f$, so $V$ is not surjective. -/
 theorem not_isUnit_volterraOperator : ¬ IsUnit volterraOperator := by
   intro h
   have hbij := ContinuousLinearMap.isUnit_iff_bijective.mp h
@@ -414,7 +458,10 @@ theorem volterraOperator_spectrum : spectrum ℝ volterraOperator = {0} := by
     rw [h, spectrum.zero_mem_iff]
     exact not_isUnit_volterraOperator
 
-/-- The spectral radius of the Volterra operator is `0`: it is quasinilpotent. -/
+/-- **The spectral radius of the Volterra operator is zero.** Let $V$ be the Volterra operator
+$(Vf)(x) = \int_0^x f(t)\,dt$ on the space of bounded continuous real functions on $[0, 1]$.
+Its spectral radius over the real scalars, the supremum of $|z|$ over real $z$ in the spectrum
+of $V$, is $0$. -/
 theorem spectralRadius_volterraOperator : spectralRadius ℝ volterraOperator = 0 := by
   rw [spectralRadius_eq_of_unital (𝕜 := ℝ) volterraOperator, volterraOperator_spectrum]
   simp

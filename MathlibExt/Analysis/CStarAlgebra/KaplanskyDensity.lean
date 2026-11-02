@@ -32,7 +32,10 @@ namespace MathlibExt.Analysis.CStarAlgebra.KaplanskyDensityWanted
 
 universe u
 
-/-- Conversion from SOT operators `H →Lₚₜ[ℂ] H` to bounded operators `H →L[ℂ] H`. -/
+/-- **Strong-operator operators as bounded operators.** For a complex Hilbert space $H$, this
+sends a bounded linear operator on $H$, viewed in the space of operators with the strong operator
+topology (pointwise convergence on $H$), to the same operator viewed in $B(H)$ with the operator
+norm. It is the identity on underlying maps. -/
 noncomputable abbrev toBounded {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] (x : H →Lₚₜ[ℂ] H) : H →L[ℂ] H :=
   (ContinuousLinearMap.toUniformConvergenceCLM (RingHom.id ℂ) H {s : Set H | Finite s}).symm x
@@ -1696,14 +1699,19 @@ private theorem kapGamma_maps (S : StarSubalgebra ℂ (H →L[ℂ] H))
 end KapGamma
 
 /--
-For a complex Hilbert space `H` and unital `∗`-subalgebra `S ⊆ B(H)`, the SOT-closure of its
-operator-norm unit ball equals the unit ball of its SOT-closure, with norm and membership read via
-`toBounded` and closure taken in `H →Lₚₜ[ℂ] H`. Source: Kaplansky density theorem, I. Kaplansky,
+**Kaplansky density theorem.** Let $H$ be a complex Hilbert space and let $S$ be a unital
+$*$-subalgebra of the algebra $B(H)$ of bounded operators on $H$, with operator norm $\|\cdot\|$.
+Take closures in the strong operator topology on $B(H)$, the topology of pointwise convergence on
+$H$, and write $\overline{S}$ for the strong closure of $S$. Then the strong closure of the unit
+ball $\{x \in S : \|x\| \le 1\}$ of $S$ equals the unit ball $\{y \in \overline{S} : \|y\| \le 1\}$
+of $\overline{S}$.
+
+Proves `Wanted` entry `kaplansky_density_theorem`.
+
+Source: Kaplansky density theorem, I. Kaplansky,
 Pacific J. Math. 1 (1951), 227–232; see Takesaki, Theory of Operator Algebras I, Density Theorem
 and Kadison–Ringrose Vol I; Lean is SOT-closure equality of unit balls via toBounded conversion,
 full infinite-dimensional form.
-
-Proves `Wanted` entry `kaplansky_density_theorem`.
 -/
 public theorem kaplansky_density_theorem
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

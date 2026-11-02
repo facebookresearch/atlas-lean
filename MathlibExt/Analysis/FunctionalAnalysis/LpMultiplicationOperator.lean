@@ -58,8 +58,10 @@ open scoped ENNReal
 
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α} [SigmaFinite μ]
 
-/-- The essential range of `φ` with respect to `μ`: the set of `z` such that
-`φ` comes arbitrarily close to `z` on sets of positive measure. -/
+/-- **Essential range.** Let $\mu$ be a measure on a measurable space $\alpha$ and let
+$\varphi : \alpha \to \mathbb{C}$. The essential range of $\varphi$ with respect to $\mu$ is the
+set of $z \in \mathbb{C}$ such that $\mu(\{x \in \alpha : |\varphi(x) - z| < \varepsilon\}) > 0$
+for every $\varepsilon > 0$. -/
 def essentialRange (φ : α → ℂ) (μ : Measure α) : Set ℂ :=
   {z | ∀ ε > 0, 0 < μ (φ ⁻¹' Metric.ball z ε)}
 
@@ -69,7 +71,10 @@ theorem mem_essentialRange {φ : α → ℂ} {z : ℂ} :
   Iff.rfl
 
 omit [SigmaFinite μ] in
-/-- The essential range depends only on the almost-everywhere class of `φ`. -/
+/-- **The essential range is invariant under almost-everywhere equality.** Let $\mu$ be a
+measure on a measurable space $\alpha$ and let $\varphi, \psi : \alpha \to \mathbb{C}$. If
+$\varphi = \psi$ $\mu$-almost everywhere, then $\varphi$ and $\psi$ have the same essential range
+with respect to $\mu$. -/
 theorem essentialRange_congr_ae {φ ψ : α → ℂ} (h : φ =ᵐ[μ] ψ) :
     essentialRange φ μ = essentialRange ψ μ := by
   ext z
@@ -88,8 +93,11 @@ theorem essentialRange_congr_ae {φ ψ : α → ℂ} (h : φ =ᵐ[μ] ψ) :
     exact hz ε hε
 
 omit [SigmaFinite μ] in
-/-- A point outside the essential range is bounded away from the values of `φ`
-on a set of full measure. -/
+/-- **Points outside the essential range.** Let $\mu$ be a measure on a measurable space $\alpha$,
+let $\varphi : \alpha \to \mathbb{C}$ and let $z \in \mathbb{C}$. Then $z$ is not in the essential
+range of $\varphi$ with respect to $\mu$ if and only if there is $\varepsilon > 0$ such that the
+preimage under $\varphi$ of the open ball
+$B(z, \varepsilon) = \{w \in \mathbb{C} : |w - z| < \varepsilon\}$ has $\mu$-measure zero. -/
 theorem not_mem_essentialRange_iff {φ : α → ℂ} {z : ℂ} :
     z ∉ essentialRange φ μ ↔ ∃ ε > 0, μ (φ ⁻¹' Metric.ball z ε) = 0 := by
   simp only [essentialRange, Set.mem_ofPred_eq, not_forall, not_lt]
@@ -100,8 +108,9 @@ theorem not_mem_essentialRange_iff {φ : α → ℂ} {z : ℂ} :
     exact ⟨ε, hε, by rw [h]⟩
 
 omit [SigmaFinite μ] in
-/-- The essential range of a constant function is the singleton of the constant,
-provided the whole space has positive measure. -/
+/-- **Essential range of a constant function.** Let $\mu$ be a measure on a measurable space
+$\alpha$ with $\mu(\alpha) \neq 0$, and let $c \in \mathbb{C}$. Then the essential range of the
+constant function $x \mapsto c$ with respect to $\mu$ is $\{c\}$. -/
 theorem essentialRange_const {c : ℂ} (hμ : μ univ ≠ 0) :
     essentialRange (fun _ => c) μ = {c} := by
   ext z
@@ -123,8 +132,10 @@ theorem essentialRange_const {c : ℂ} (hμ : μ univ ≠ 0) :
     rw [huniv]
     exact pos_iff_ne_zero.mpr hμ
 
-/-- For counting measure on a finite type with measurable singletons, the
-essential range is the range. -/
+/-- **Essential range for counting measure on a finite type.** Let $\alpha$ be a finite type
+with a measurable structure in which singletons are measurable, and let
+$\varphi : \alpha \to \mathbb{C}$. Then the essential range of $\varphi$ with respect to counting
+measure on $\alpha$ is the range $\varphi(\alpha)$. -/
 theorem essentialRange_count_eq_range [Finite α] [MeasurableSingletonClass α]
     (φ : α → ℂ) :
     essentialRange φ (Measure.count : Measure α) = Set.range φ := by
@@ -159,14 +170,21 @@ theorem essentialRange_count_eq_range [Finite α] [MeasurableSingletonClass α]
           MeasureTheory.measure_mono hsub
 
 omit [SigmaFinite μ] in
-/-- A constant function is essentially bounded. -/
+/-- **Constant functions are essentially bounded.** Let $\mu$ be a measure on a measurable space
+$\alpha$ and let $c \in \mathbb{C}$. The constant function $x \mapsto c$ belongs to
+$\mathcal{L}^\infty(\mu)$: it is almost everywhere strongly measurable and essentially
+bounded. -/
 theorem memLp_const_top (c : ℂ) : MemLp (fun _ => c) ∞ μ := by
   apply memLp_top_of_bound aestronglyMeasurable_const ‖c‖
   filter_upwards with x
   exact le_refl _
 
 omit [SigmaFinite μ] in
-/-- Multiplying an `L²` function by an essentially bounded function stays in `L²`. -/
+/-- **An essentially bounded multiple of an $L^2$ function is in $L^2$.** Let $\mu$ be a measure
+on a measurable space $\alpha$, let $\varphi \colon \alpha \to \mathbb{C}$ be an essentially
+bounded, almost everywhere strongly measurable function, and let $f \in L^2(\mu)$. Then the
+pointwise product $x \mapsto \varphi(x) f(x)$, formed with a representative of $f$, belongs
+to $\mathcal{L}^2(\mu)$: it is almost everywhere strongly measurable and square integrable. -/
 theorem memLp_mul_of_memLp_top {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
     (f : Lp ℂ 2 μ) : MemLp (fun x => φ x * f x) 2 μ := by
   have hle : eLpNorm (fun x => φ x * f x) 2 μ ≤
@@ -180,7 +198,11 @@ theorem memLp_mul_of_memLp_top {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
   rw [one_mul]
   exact ENNReal.mul_lt_top hφ.eLpNorm_lt_top (Lp.memLp f).eLpNorm_lt_top
 
-/-- The multiplication operator `M_φ` on `L²(μ)`: `M_φ f = φ * f`. -/
+/-- **Multiplication operator on $L^2$.** Let $\mu$ be a measure on a measurable space $\alpha$
+and let $\varphi \colon \alpha \to \mathbb{C}$ be an essentially bounded, almost everywhere
+strongly measurable function. The multiplication operator $M_\varphi$ is the continuous
+$\mathbb{C}$-linear operator on $L^2(\mu)$ that sends $f$ to the class of the pointwise product
+$x \mapsto \varphi(x) f(x)$. -/
 noncomputable def lpMulCLM (φ : α → ℂ) (hφ : MemLp φ ∞ μ) :
     Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ :=
   LinearMap.mkContinuous
@@ -241,8 +263,11 @@ theorem lpMulCLM_apply {φ : α → ℂ} (hφ : MemLp φ ∞ μ) (f : Lp ℂ 2 �
   exact MemLp.coeFn_toLp (memLp_mul_of_memLp_top hφ f)
 
 omit [SigmaFinite μ] in
-/-- The multiplication operator depends only on the almost-everywhere class of
-the multiplier. -/
+/-- **Multiplication operators with almost everywhere equal multipliers coincide.** Let $\mu$ be
+a measure on a measurable space $\alpha$ and let $\varphi, \psi \colon \alpha \to \mathbb{C}$ be
+essentially bounded, almost everywhere strongly measurable functions. If $\varphi = \psi$
+$\mu$-almost everywhere, then the multiplication operators $M_\varphi$ and $M_\psi$ on
+$L^2(\mu)$ are equal. -/
 theorem lpMulCLM_congr_ae {φ ψ : α → ℂ} (h : φ =ᵐ[μ] ψ) (hφ : MemLp φ ∞ μ)
     (hψ : MemLp ψ ∞ μ) : lpMulCLM φ hφ = lpMulCLM ψ hψ := by
   ext f
@@ -251,7 +276,9 @@ theorem lpMulCLM_congr_ae {φ ψ : α → ℂ} (h : φ =ᵐ[μ] ψ) (hφ : MemLp
     rw [hx, hx2])
 
 omit [SigmaFinite μ] in
-/-- Multiplication by the constant function `c` is scalar multiplication by `c`. -/
+/-- **Multiplication by a constant function on $L^2$.** Let $\mu$ be a measure on a measurable
+space $\alpha$ and let $c \in \mathbb{C}$. The multiplication operator on $L^2(\mu)$ by the
+constant function $x \mapsto c$ sends every $f \in L^2(\mu)$ to the scalar multiple $c f$. -/
 theorem lpMulCLM_const_apply (c : ℂ) (f : Lp ℂ 2 μ) :
     lpMulCLM (fun _ => c) (memLp_const_top c) f = c • f := by
   apply Lp.ext
@@ -259,7 +286,9 @@ theorem lpMulCLM_const_apply (c : ℂ) (f : Lp ℂ 2 μ) :
   rw [hx1, hx2, Pi.smul_apply, smul_eq_mul]
 
 omit [SigmaFinite μ] in
-/-- Multiplication by the constant function `1` is the identity. -/
+/-- **Multiplication by one is the identity.** Let $\mu$ be a measure on a measurable space
+$\alpha$. The multiplication operator on $L^2(\mu)$ by the constant function $1$ is the
+identity operator. -/
 theorem lpMulCLM_one : lpMulCLM (fun _ : α => (1 : ℂ)) (memLp_const_top (1 : ℂ))
     = (1 : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) := by
   ext f
@@ -267,7 +296,14 @@ theorem lpMulCLM_one : lpMulCLM (fun _ : α => (1 : ℂ)) (memLp_const_top (1 : 
   simp
 
 omit [SigmaFinite μ] in
-/-- The product law for multiplication operators. -/
+/-- **Product of multiplication operators.** Let $\mu$ be a measure on a measurable space
+$\alpha$ and, for an essentially bounded, almost everywhere strongly measurable function
+$\chi \colon \alpha \to \mathbb{C}$, let $M_\chi$ be the multiplication operator
+$f \mapsto \chi f$ on $L^2(\mu)$. Let $\varphi, \psi \colon \alpha \to \mathbb{C}$ be essentially
+bounded, almost everywhere strongly measurable functions such that the pointwise product
+$\varphi\psi \colon x \mapsto \varphi(x)\psi(x)$ is also essentially bounded and almost
+everywhere strongly measurable. Then $M_{\varphi\psi} = M_\varphi M_\psi$, where the right side
+is the composition of operators. -/
 theorem lpMulCLM_mul {φ ψ : α → ℂ} (hφ : MemLp φ ∞ μ) (hψ : MemLp ψ ∞ μ)
     (hφψ : MemLp (fun x => φ x * ψ x) ∞ μ) :
     lpMulCLM (fun x => φ x * ψ x) hφψ = lpMulCLM φ hφ * lpMulCLM ψ hψ := by
@@ -279,8 +315,12 @@ theorem lpMulCLM_mul {φ ψ : α → ℂ} (hφ : MemLp φ ∞ μ) (hψ : MemLp �
   rw [hx1, hx3, hx2, mul_assoc]
 
 omit [SigmaFinite μ] in
-/-- Subtracting the multiplication operator from a scalar is multiplication by
-the pointwise difference. -/
+/-- **Shifting a multiplication operator by a scalar.** Let $\mu$ be a measure on a measurable
+space $\alpha$, let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, let
+$z \in \mathbb{C}$, and suppose the function $x \mapsto z - \varphi(x)$ is also in
+$L^\infty(\mu)$. For $\psi \in L^\infty(\mu)$ write $M_\psi$ for the multiplication operator
+$f \mapsto \psi f$ on $L^2(\mu)$. Then $z I - M_\varphi = M_{z - \varphi}$, where $I$ is the
+identity operator on $L^2(\mu)$. -/
 theorem algebraMap_sub_lpMulCLM {φ : α → ℂ} (hφ : MemLp φ ∞ μ) (z : ℂ)
     (h : MemLp (fun x => z - φ x) ∞ μ) :
     algebraMap ℂ (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) z - lpMulCLM φ hφ =
@@ -296,15 +336,23 @@ theorem algebraMap_sub_lpMulCLM {φ : α → ℂ} (hφ : MemLp φ ∞ μ) (z : �
   rw [hx1, hAlg, Pi.sub_apply, hx2, Pi.smul_apply, smul_eq_mul, hx3, hx4, sub_mul]
 
 omit [SigmaFinite μ] in
-/-- Every essentially bounded function has a measurable representative in the
-same almost-everywhere class (hence with the same multiplication operator). -/
+/-- **Measurable representatives of essentially bounded functions.** Let $\mu$ be a measure on a
+measurable space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, that
+is, $\mu$-almost everywhere strongly measurable and essentially bounded. Then there is a measurable
+$\psi : \alpha \to \mathbb{C}$ such that $\varphi = \psi$ $\mu$-almost everywhere and $\psi$ is in
+$L^\infty(\mu)$.
+
+In particular $\varphi$ and $\psi$ define the same multiplication operator on $L^2(\mu)$. -/
 theorem exists_measurable_memLp {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
     ∃ ψ : α → ℂ, Measurable ψ ∧ φ =ᵐ[μ] ψ ∧ MemLp ψ ∞ μ := by
   obtain ⟨ψ, hψ, hψae⟩ := hφ.aestronglyMeasurable
   exact ⟨ψ, hψ.measurable, hψae, MemLp.ae_eq hψae hφ⟩
 
 omit [SigmaFinite μ] in
-/-- Almost everywhere, `‖φ x‖` is at most the essential supremum norm. -/
+/-- **Pointwise bound by the essential supremum norm.** Let $\mu$ be a measure on a measurable
+space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, that is,
+$\mu$-almost everywhere strongly measurable and essentially bounded. Then
+$|\varphi(x)| \le \|\varphi\|_{L^\infty(\mu)}$ for $\mu$-almost every $x \in \alpha$. -/
 theorem ae_norm_le_eLpNorm_top {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
     ∀ᵐ x ∂μ, ‖φ x‖ ≤ (eLpNorm φ ∞ μ).toReal := by
   have h := ae_le_eLpNormEssSup (f := φ) (μ := μ)
@@ -315,8 +363,11 @@ theorem ae_norm_le_eLpNorm_top {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
   simpa using hx2
 
 omit [SigmaFinite μ] in
-/-- A pointwise almost-everywhere bound on the multiplier bounds the operator
-applied to any vector. -/
+/-- **Almost everywhere bound for a multiplication operator.** Let $\mu$ be a measure on a
+measurable space $\alpha$, let $\varphi \colon \alpha \to \mathbb{C}$ be an essentially
+bounded, almost everywhere strongly measurable function, and let $M_\varphi$ be the
+multiplication operator on $L^2(\mu)$. If $C$ is a real number with $|\varphi(x)| \le C$ for
+$\mu$-almost every $x$, then $\|M_\varphi f\| \le C \|f\|$ for every $f \in L^2(\mu)$. -/
 theorem norm_lpMulCLM_apply_le_of_ae_bound {φ : α → ℂ} (hφ : MemLp φ ∞ μ) {C : ℝ}
     (f : Lp ℂ 2 μ) (hC : ∀ᵐ x ∂μ, ‖φ x‖ ≤ C) :
     ‖lpMulCLM φ hφ f‖ ≤ C * ‖f‖ := by
@@ -326,8 +377,12 @@ theorem norm_lpMulCLM_apply_le_of_ae_bound {φ : α → ℂ} (hφ : MemLp φ ∞
   exact mul_le_mul_of_nonneg_right hCx (norm_nonneg _)
 
 omit [SigmaFinite μ] in
-/-- A bound on the multiplier that holds almost everywhere on the support of `f`
-bounds the operator applied to `f`. -/
+/-- **Bound for a multiplication operator on the support of a vector.** Let $\mu$ be a measure
+on a measurable space $\alpha$, let $\varphi \colon \alpha \to \mathbb{C}$ be an essentially
+bounded, almost everywhere strongly measurable function, and let $M_\varphi$ be the
+multiplication operator on $L^2(\mu)$. If $C$ is a real number and $f \in L^2(\mu)$ is such
+that, for $\mu$-almost every $x$, either $|\varphi(x)| \le C$ or $f(x) = 0$, then
+$\|M_\varphi f\| \le C \|f\|$. -/
 theorem norm_lpMulCLM_apply_le_of_ae_support {φ : α → ℂ} (hφ : MemLp φ ∞ μ) {C : ℝ}
     (f : Lp ℂ 2 μ) (hC : ∀ᵐ x ∂μ, ‖φ x‖ ≤ C ∨ f x = 0) :
     ‖lpMulCLM φ hφ f‖ ≤ C * ‖f‖ := by
@@ -339,8 +394,12 @@ theorem norm_lpMulCLM_apply_le_of_ae_support {φ : α → ℂ} (hφ : MemLp φ �
   · rw [h0, norm_zero, mul_zero, mul_zero]
 
 omit [SigmaFinite μ] in
-/-- A pointwise almost-everywhere lower bound on the multiplier, tested on a unit
-vector, lower-bounds the operator norm. -/
+/-- **Lower bound for the norm of a multiplication operator.** Let $\mu$ be a measure on a
+measurable space $\alpha$, let $\varphi \colon \alpha \to \mathbb{C}$ be an essentially
+bounded, almost everywhere strongly measurable function, and let $M_\varphi$ be the
+multiplication operator $f \mapsto \varphi f$ on $L^2(\mu)$. If $C \ge 0$ is a real number and
+$f \in L^2(\mu)$ satisfies $\|f\| = 1$ and $C\,|f(x)| \le |\varphi(x)|\,|f(x)|$ for
+$\mu$-almost every $x$, then $C \le \|M_\varphi\|$. -/
 theorem le_norm_lpMulCLM_of_ae_le {φ : α → ℂ} (hφ : MemLp φ ∞ μ) {C : ℝ}
     (hC0 : 0 ≤ C) {f : Lp ℂ 2 μ} (hf : ‖f‖ = 1)
     (h : ∀ᵐ x ∂μ, C * ‖f x‖ ≤ ‖φ x‖ * ‖f x‖) : C ≤ ‖lpMulCLM φ hφ‖ := by
@@ -362,7 +421,10 @@ theorem le_norm_lpMulCLM_of_ae_le {φ : α → ℂ} (hφ : MemLp φ ∞ μ) {C :
   exact h1.trans h3
 
 omit [SigmaFinite μ] in
-/-- The operator norm is at most the essential supremum norm of the multiplier. -/
+/-- **Norm bound for multiplication operators on L².** Let $\mu$ be a measure on a measurable
+space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, with essential
+supremum norm $\|\varphi\|_\infty$. Then the multiplication operator $M_\varphi$ on the complex
+space $L^2(\mu)$ has operator norm $\|M_\varphi\| \le \|\varphi\|_\infty$. -/
 theorem norm_lpMulCLM_le {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
     ‖lpMulCLM φ hφ‖ ≤ (eLpNorm φ ∞ μ).toReal := by
   refine ContinuousLinearMap.opNorm_le_bound (lpMulCLM φ hφ)
@@ -371,9 +433,11 @@ theorem norm_lpMulCLM_le {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
   exact norm_lpMulCLM_apply_le_of_ae_bound hφ f (ae_norm_le_eLpNorm_top hφ)
 
 omit [SigmaFinite μ] in
-/-- A normalized indicator of a set of finite positive measure: a unit vector
-supported on the set, used as a test vector for the norm, spectrum, and
-eigenvalue arguments. -/
+/-- **Normalized indicator of a set of finite positive measure.** Let $\mu$ be a measure on a
+measurable space $\alpha$ and let $t \subseteq \alpha$ be a measurable set with
+$0 < \mu(t) < \infty$. Then there is $u \in L^2(\mu)$ (complex valued) with $\|u\| = 1$ such that
+$u(x) = \mu(t)^{-1/2}$ for $\mu$-almost every $x \in t$ and $u(x) = 0$ for $\mu$-almost every
+$x \notin t$. -/
 theorem exists_unit_vector {t : Set α} (ht : MeasurableSet t) (hμt : μ t ≠ ∞)
     (hpos : 0 < μ t) :
     ∃ u : Lp ℂ 2 μ, ‖u‖ = 1 ∧
@@ -404,8 +468,11 @@ theorem exists_unit_vector {t : Set α} (ht : MeasurableSet t) (hμt : μ t ≠ 
     rw [hx]
     simp only [Pi.smul_apply, smul_eq_mul, hnotx hxt, mul_zero]
 
-/-- The operator norm equals the essential supremum norm, for a measurable
-multiplier. -/
+/-- **Norm of an L² multiplication operator with measurable multiplier.** Let $\mu$ be a
+$\sigma$-finite measure on a measurable space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$
+be a measurable function in $L^\infty(\mu)$, with essential supremum norm $\|\varphi\|_\infty$.
+Then the multiplication operator $M_\varphi$ on the complex space $L^2(\mu)$ has operator norm
+$\|M_\varphi\| = \|\varphi\|_\infty$. -/
 theorem norm_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
     (hφm : Measurable φ) : ‖lpMulCLM φ hφ‖ = (eLpNorm φ ∞ μ).toReal := by
   apply le_antisymm (norm_lpMulCLM_le hφ)
@@ -449,14 +516,21 @@ theorem norm_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
       simp
   exact not_lt_of_ge hle hCgt
 
-/-- The operator norm equals the essential supremum norm of the multiplier. -/
+/-- **Norm of a multiplication operator on L².** Let $\mu$ be a $\sigma$-finite measure on a
+measurable space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, with
+essential supremum norm $\|\varphi\|_\infty$. Then the multiplication operator $M_\varphi$ on the
+complex space $L^2(\mu)$ has operator norm $\|M_\varphi\| = \|\varphi\|_\infty$. -/
 theorem norm_lpMulCLM {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
     ‖lpMulCLM φ hφ‖ = (eLpNorm φ ∞ μ).toReal := by
   obtain ⟨ψ, hψmeas, hψae, hψ⟩ := exists_measurable_memLp hφ
   rw [lpMulCLM_congr_ae hψae hφ hψ, eLpNorm_congr_ae hψae]
   exact norm_lpMulCLM_of_measurable hψ hψmeas
 
-/-- The spectrum is the essential range, for a measurable multiplier. -/
+/-- **Spectrum of an L² multiplication operator with measurable multiplier.** Let $\mu$ be a
+$\sigma$-finite measure on a measurable space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$
+be a measurable function in $L^\infty(\mu)$. Then the spectrum of the multiplication operator
+$M_\varphi$, as an element of the complex algebra of bounded operators on $L^2(\mu)$, equals the
+essential range of $\varphi$ with respect to $\mu$. -/
 theorem spectrum_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
     (hφm : Measurable φ) : spectrum ℂ (lpMulCLM φ hφ) = essentialRange φ μ := by
   ext z
@@ -569,15 +643,21 @@ theorem spectrum_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ
               rw [mul_one_div, div_self h1.ne']
       exact not_lt_of_ge (hbound n) hlt
 
-/-- The spectrum of the multiplication operator is the essential range of the
-multiplier. -/
+/-- **Spectrum of a multiplication operator on L².** Let $\mu$ be a $\sigma$-finite measure on a
+measurable space $\alpha$ and let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$. Then the
+spectrum of the multiplication operator $M_\varphi$, as an element of the complex algebra of
+bounded operators on $L^2(\mu)$, equals the essential range of $\varphi$ with respect to $\mu$. -/
 theorem spectrum_lpMulCLM {φ : α → ℂ} (hφ : MemLp φ ∞ μ) :
     spectrum ℂ (lpMulCLM φ hφ) = essentialRange φ μ := by
   obtain ⟨ψ, hψmeas, hψae, hψ⟩ := exists_measurable_memLp hφ
   rw [lpMulCLM_congr_ae hψae hφ hψ, essentialRange_congr_ae hψae]
   exact spectrum_lpMulCLM_of_measurable hψ hψmeas
 
-/-- The eigenvalue criterion, for a measurable multiplier. -/
+/-- **Eigenvalues of a multiplication operator on $L^2$, measurable multiplier.** Let $\mu$ be a
+$\sigma$-finite measure on a measurable space $\alpha$, let $\varphi : \alpha \to \mathbb{C}$ be
+measurable and in $L^\infty(\mu)$, and let $M_\varphi$ be the multiplication operator
+$f \mapsto \varphi f$ on $L^2(\mu)$. Then $z \in \mathbb{C}$ is an eigenvalue of $M_\varphi$ if and
+only if $\mu(\{x \in \alpha : \varphi(x) = z\}) > 0$. -/
 theorem hasEigenvalue_lpMulCLM_iff_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ)
     (hφm : Measurable φ) (z : ℂ) :
     Module.End.HasEigenvalue (lpMulCLM φ hφ : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ) z ↔
@@ -631,8 +711,11 @@ theorem hasEigenvalue_lpMulCLM_iff_of_measurable {φ : α → ℂ} (hφ : MemLp 
       rw [hu0, norm_zero] at hu_norm
       exact zero_ne_one hu_norm
 
-/-- `z` is an eigenvalue of the multiplication operator exactly when the level
-set `{x | φ x = z}` has positive measure. -/
+/-- **Eigenvalues of a multiplication operator on $L^2$.** Let $\mu$ be a $\sigma$-finite measure
+on a measurable space $\alpha$, let $\varphi : \alpha \to \mathbb{C}$ be in $L^\infty(\mu)$, and let
+$M_\varphi$ be the multiplication operator $f \mapsto \varphi f$ on $L^2(\mu)$. Then
+$z \in \mathbb{C}$ is an eigenvalue of $M_\varphi$ if and only if
+$\mu(\{x \in \alpha : \varphi(x) = z\}) > 0$. -/
 theorem hasEigenvalue_lpMulCLM_iff {φ : α → ℂ} (hφ : MemLp φ ∞ μ) (z : ℂ) :
     Module.End.HasEigenvalue (lpMulCLM φ hφ : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ) z ↔
       0 < μ {x | φ x = z} := by

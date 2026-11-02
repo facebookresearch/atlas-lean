@@ -39,30 +39,41 @@ open MeasureTheory AddCircle Finset Filter Complex
 
 namespace AddCircle
 
-/-- The `N`-th partial Fourier sum of a function `f : AddCircle T → ℂ`, defined as
-`S_N f(x) = ∑_{n = -N}^{N} ĉ_n(f) · fourier n x`, where `ĉ_n(f) = fourierCoeff f n`. -/
+/-- **Partial Fourier sums.** Let $T > 0$ and $f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$. For
+$N \in \mathbb{N}$, the $N$-th partial Fourier sum of $f$ is the function
+$$S_N f(x) = \sum_{n=-N}^{N} \hat f(n)\, e_n(x),$$
+where $e_n(x) = e^{2\pi i n x / T}$ is the $n$-th Fourier character and
+$\hat f(n) = \int_{\mathbb{R}/T\mathbb{Z}} e_{-n}(t)\, f(t)\, dt$ is the $n$-th Fourier coefficient,
+the integral taken against the Haar probability measure on the circle. -/
 noncomputable def partialFourierSum (f : AddCircle T → ℂ) (N : ℕ) :
     AddCircle T → ℂ :=
   fun x => ∑ n ∈ Finset.Icc (-(N : ℤ)) (N : ℤ), fourierCoeff f n • fourier n x
 
-/-- The `N`-th Cesàro–Fourier mean of `f`, given by
-`σ_N f(x) = (N+1)⁻¹ • ∑_{k=0}^{N} S_k f(x)`,
-where `S_k f` is the `k`-th partial Fourier sum. -/
+/-- **Cesàro–Fourier means.** Let $T > 0$ and $f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$. For
+$N \in \mathbb{N}$, the $N$-th Cesàro–Fourier mean of $f$ is the average of its first $N + 1$
+partial Fourier sums,
+$$\sigma_N f(x) = \frac{1}{N+1} \sum_{k=0}^{N} S_k f(x),$$
+where $S_k f$ is the $k$-th partial Fourier sum of $f$. -/
 noncomputable def cesaroFourierMean (f : AddCircle T → ℂ) (N : ℕ) :
     AddCircle T → ℂ :=
   fun x => ((N : ℂ) + 1)⁻¹ • ∑ k ∈ range (N + 1), partialFourierSum f k x
 
 set_option linter.unusedSectionVars false in
-/-- Reversed form of `fourier_neg_mul_fourier_eq`:
-`fourier n (x - t) = fourier (-n) t * fourier n x`. Convenient orientation
-for the convolution computation. -/
+/-- **Fourier characters at a difference.** Let $T > 0$ and for $n \in \mathbb{Z}$ let
+$e_n(x) = e^{2\pi i n x / T}$ be the $n$-th Fourier character on $\mathbb{R}/T\mathbb{Z}$. Then
+for every $n \in \mathbb{Z}$ and all $x, t \in \mathbb{R}/T\mathbb{Z}$,
+$e_n(x - t) = e_{-n}(t)\, e_n(x)$. -/
 lemma fourier_sub_eq (n : ℤ) (x t : AddCircle T) :
     (fourier n (x - t) : ℂ) = (fourier (-n) t : ℂ) * (fourier n x : ℂ) :=
   (fourier_neg_mul_fourier_eq n x t).symm
 
-/-- If `f` is integrable on `AddCircle T`, then `t ↦ fourier n t • f(x - t)` is
-also integrable; a routine integrability lemma needed to interchange sums and
-integrals in the convolution computation. -/
+/-- **Integrability of a function twisted by a Fourier character.** Let $T > 0$ and let
+$f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ be integrable with respect to the Haar probability
+measure on the circle. Then for every $n \in \mathbb{Z}$ and every $x \in \mathbb{R}/T\mathbb{Z}$,
+the function $t \mapsto e^{2\pi i n t / T} f(x - t)$ is integrable with respect to the same
+measure.
+
+This is used to interchange sums and integrals in the convolution computation. -/
 lemma fourier_smul_integrable (f : AddCircle T → ℂ) (hf : Integrable f haarAddCircle)
     (n : ℤ) (x : AddCircle T) :
     Integrable (fun t => (fourier n t : ℂ) • f (x - t)) haarAddCircle := by
@@ -70,10 +81,16 @@ lemma fourier_smul_integrable (f : AddCircle T → ℂ) (hf : Integrable f haarA
   exact (hf.comp_sub_left x).bdd_mul (map_continuous (fourier n)).aestronglyMeasurable
     (ae_of_all _ fun t => by rw [fourier_apply, Circle.norm_coe])
 
-/-- Convolution-with-a-mode identity: for integrable `f`,
-`∫ fourier n t • f(x - t) dt = ĉ_n(f) • fourier n x`. This says that the
-`n`-th term of the partial Fourier sum at `x` is the convolution of `f` with the
-Fourier character `fourier n`. -/
+/-- **Convolution of a function with a Fourier character.** Let $T > 0$, let
+$f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ be integrable with respect to the Haar probability
+measure $dt$ on the circle, for $n \in \mathbb{Z}$ let $e_n(x) = e^{2\pi i n x / T}$ be the
+$n$-th Fourier character, and let $\hat f(n) = \int_{\mathbb{R}/T\mathbb{Z}} e_{-n}(t)\, f(t)\, dt$
+be the $n$-th Fourier coefficient of $f$. Then for every $n \in \mathbb{Z}$ and every
+$x \in \mathbb{R}/T\mathbb{Z}$,
+$$\int_{\mathbb{R}/T\mathbb{Z}} e_n(t)\, f(x - t)\, dt = \hat f(n)\, e_n(x).$$
+
+Thus the $n$-th term of the partial Fourier sum of $f$ at $x$ is the convolution of $f$ with
+the Fourier character $e_n$. -/
 theorem fourier_integral_convolution (f : AddCircle T → ℂ)
     (_hf : Integrable f haarAddCircle) (n : ℤ) (x : AddCircle T) :
     ∫ t : AddCircle T, (fourier n t : ℂ) • f (x - t) ∂haarAddCircle =
@@ -95,10 +112,15 @@ theorem fourier_integral_convolution (f : AddCircle T → ℂ)
   rw [integral_smul_const]
   rfl
 
-/-- The Cesàro–Fourier mean as a convolution against the Fejér kernel:
-`σ_N f(x) = ∫_{AddCircle T} K_N(t) • f(x - t) dt`,
-valid for any integrable `f`. This is the bridge from the abstract definition of
-`σ_N f` to the kernel-theoretic analysis underlying Fejér's theorem. -/
+/-- **Cesàro–Fourier means are convolutions with the Fejér kernel.** Let $T > 0$ and let
+$f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ be integrable with respect to the Haar probability
+measure $dt$ on the circle. Then for every $N \in \mathbb{N}$ and every
+$x \in \mathbb{R}/T\mathbb{Z}$, the $N$-th Cesàro–Fourier mean of $f$ satisfies
+$$\sigma_N f(x) = \int_{\mathbb{R}/T\mathbb{Z}} K_N(t)\, f(x - t)\, dt,$$
+where $K_N$ is the $N$-th Fejér kernel.
+
+This is the bridge from the definition of $\sigma_N f$ to the kernel-theoretic analysis
+underlying Fejér's theorem. -/
 theorem cesaroMean_eq_fejer_convolution (f : AddCircle T → ℂ)
     (hf : Integrable f haarAddCircle) (N : ℕ) (x : AddCircle T) :
     cesaroFourierMean f N x =
@@ -138,9 +160,13 @@ theorem cesaroMean_eq_fejer_convolution (f : AddCircle T → ℂ)
   congr 1; ext n
   exact (fourier_integral_convolution f hf n x).symm
 
-/-- Since `K_N ≥ 0`, its `L¹` norm coincides with its integral:
-`∫ ‖K_N(t)‖ dt = 1`. Used to control the convolution `‖K_N * (f - f(x - ·))‖` in
-the proof of Fejér's theorem. -/
+/-- **The Fejér kernel has $L^1$ norm one.** Let $T > 0$. For every $N \in \mathbb{N}$, the
+$N$-th Fejér kernel $K_N$ on $\mathbb{R}/T\mathbb{Z}$ satisfies
+$$\int_{\mathbb{R}/T\mathbb{Z}} |K_N(t)|\, dt = 1,$$
+where $dt$ is the Haar probability measure on the circle.
+
+Since $K_N \ge 0$, this is the normalization $\int K_N = 1$; it is used to control
+convolutions with $K_N$ in the proof of Fejér's theorem. -/
 theorem integral_norm_fejerKernel (N : ℕ) :
     ∫ t : AddCircle T, ‖fejerKernel N t‖ ∂haarAddCircle = 1 := by
   have h_eq : ∀ t : AddCircle T, ‖fejerKernel N t‖ = (fejerKernel N t).re := by

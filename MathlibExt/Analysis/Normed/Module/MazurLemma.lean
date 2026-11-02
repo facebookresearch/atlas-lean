@@ -45,8 +45,12 @@ open Set Filter Topology
 variable {𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [Module ℝ E] [IsScalarTower ℝ 𝕜 E]
 
-/-- **Mazur's lemma, hull form.** A weak limit lies in the norm closure
-of the real convex hull of any tail of the sequence. -/
+/-- **Mazur's lemma, hull form.** Let $E$ be a normed space over $\mathbb{K}$, where $\mathbb{K}$
+is $\mathbb{R}$ or $\mathbb{C}$, regarded also as a real vector space by restricting scalars. If
+a sequence $(u_n)_{n \in \mathbb{N}}$ in $E$ converges to $x \in E$ in the weak topology of $E$
+(the topology induced by the continuous $\mathbb{K}$-linear functionals on $E$), then for every
+$N \in \mathbb{N}$ the point $x$ lies in the norm closure of the real convex hull of the tail
+$\{u_n : n \ge N\}$. -/
 theorem mem_closure_convexHull_of_tendsto_weakSpace {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x)))
     (N : ℕ) :
@@ -67,17 +71,25 @@ theorem mem_closure_convexHull_of_tendsto_weakSpace {u : ℕ → E} {x : E}
   have hyeq : y = x := (toWeakSpace 𝕜 E).injective hyx
   rwa [hyeq] at hy
 
-/-- **Mazur's lemma, hull form for the whole sequence.** A weak limit lies
-in the norm closure of the real convex hull of the range. -/
+/-- **Mazur's lemma, hull form for the whole sequence.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, regarded also as a real vector
+space by restricting scalars. If a sequence $(u_n)_{n \in \mathbb{N}}$ in $E$ converges to
+$x \in E$ in the weak topology of $E$ (the topology induced by the continuous $\mathbb{K}$-linear
+functionals on $E$), then $x$ lies in the norm closure of the real convex hull of the set
+$\{u_n : n \in \mathbb{N}\}$. -/
 theorem mem_closure_convexHull_range_of_tendsto_weakSpace {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :
     x ∈ closure (convexHull ℝ (Set.range u)) := by
   simpa using mem_closure_convexHull_of_tendsto_weakSpace h 0
 
-/-- **Mazur's lemma, explicit finite convex combinations.** If `u`
-converges weakly to `x`, then for every tail index `N` and every
-`ε > 0` there is a finite real convex combination of terms `u (n i)`
-with `n i ≥ N` whose distance to `x` is less than `ε`. -/
+/-- **Mazur's lemma, explicit finite convex combinations.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, regarded also as a real vector
+space by restricting scalars. If a sequence $(u_n)_{n \in \mathbb{N}}$ in $E$ converges to
+$x \in E$ in the weak topology of $E$ (the topology induced by the continuous $\mathbb{K}$-linear
+functionals on $E$), then for every $N \in \mathbb{N}$ and every real $\varepsilon > 0$ there are
+a finite index set $I$, real weights $w_i \ge 0$ with $\sum_{i \in I} w_i = 1$ and natural
+numbers $n_i \ge N$ for $i \in I$ such that
+$\left\| \sum_{i \in I} w_i u_{n_i} - x \right\| < \varepsilon$. -/
 theorem exists_finite_convex_combination_norm_sub_lt_of_tendsto_weakSpace
     {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x)))
@@ -100,9 +112,13 @@ theorem exists_finite_convex_combination_norm_sub_lt_of_tendsto_weakSpace
   rw [hsum', ← dist_eq_norm, dist_comm]
   exact hyx
 
-/-- **Mazur's lemma in the textbook phrasing.** If `f (u n) → f x` for
-every continuous linear functional `f`, then finite real convex
-combinations of tail terms approximate `x` in norm. -/
+/-- **Mazur's lemma in the textbook phrasing.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, regarded also as a real vector space by
+restricting scalars. Let $(u_n)_{n \in \mathbb{N}}$ be a sequence in $E$ and $x \in E$ such that
+$f(u_n) \to f(x)$ for every continuous $\mathbb{K}$-linear functional $f \colon E \to \mathbb{K}$.
+Then for every $N \in \mathbb{N}$ and every real $\varepsilon > 0$ there are a finite index set
+$I$, real weights $w_i \ge 0$ with $\sum_{i \in I} w_i = 1$ and natural numbers $n_i \ge N$ for
+$i \in I$ such that $\left\| \sum_{i \in I} w_i u_{n_i} - x \right\| < \varepsilon$. -/
 theorem exists_finite_convex_combination_norm_sub_lt_of_forall_tendsto
     {u : ℕ → E} {x : E}
     (h : ∀ f : StrongDual 𝕜 E,

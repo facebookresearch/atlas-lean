@@ -176,9 +176,10 @@ private theorem norm_compression_le {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
   rw [Submodule.inf_orthogonal_eq_bot] at hvbot
   exact hv_ne ((Submodule.mem_bot 𝕜).mp hvbot)
 
-/-- **Finite-rank approximation of compact self-adjoint operators.** For
-every `ε > 0` there is a self-adjoint operator `F` of finite rank with
-`‖T - F‖ ≤ ε`. -/
+/-- **Finite-rank approximation of compact self-adjoint operators.** Let $T$ be a compact
+self-adjoint operator on a Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$. For every
+$\varepsilon > 0$ there is a bounded self-adjoint operator $F$ on $H$ with finite-dimensional
+range such that $\|T - F\| \le \varepsilon$. -/
 theorem exists_finiteRank_approx {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     (hc : IsCompactOperator (T : H → H)) {ε : ℝ} (hε : 0 < ε) :
     ∃ F : H →L[𝕜] H, IsSelfAdjoint F ∧

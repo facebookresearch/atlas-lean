@@ -53,9 +53,12 @@ universe u
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
 
-/-- **An orthonormal family in a separable space is countable.**
-Distinct orthonormal vectors are at distance `√2`, so the open balls of
-radius `1 / 2` around them are pairwise disjoint. -/
+/-- **An orthonormal family in a separable space is countable.** Let $H$ be a separable inner
+product space over $\mathbb{R}$ or $\mathbb{C}$. If $(v_i)_{i \in \iota}$ is an orthonormal family
+in $H$, then the index set $\iota$ is countable.
+
+Distinct orthonormal vectors are at distance $\sqrt{2}$, so the open balls of radius $1/2$ around
+them are pairwise disjoint. -/
 theorem countable_of_orthonormal [SeparableSpace H] {ι : Type*} {v : ι → H}
     (hv : Orthonormal 𝕜 v) : Countable ι := by
   have hdist : ∀ {i j : ι}, i ≠ j → (1 : ℝ) ≤ dist (v i) (v j) := by
@@ -78,11 +81,9 @@ theorem countable_of_orthonormal [SeparableSpace H] {ι : Type*} {v : ι → H}
   · intro i
     exact ⟨v i, mem_ball_self (by norm_num : (0 : ℝ) < 1 / 2)⟩
 
-/-- **A separable Hilbert space admits a countable Hilbert basis.**
-There is a countable index type carrying a Hilbert basis of `H`. In
-particular, combined with `HilbertBasis.repr`, this is the step the book's
-`ℓ²` theorem needs: a separable (infinite-dimensional) Hilbert space has a
-countable orthonormal basis, hence is isometrically isomorphic to `ℓ²`. -/
+/-- **A separable Hilbert space admits a countable Hilbert basis.** Let $H$ be a separable Hilbert
+space over $\mathbb{R}$ or $\mathbb{C}$. Then $H$ has a Hilbert basis $(e_i)_{i \in \iota}$ (an
+orthonormal family whose linear span is dense in $H$) indexed by a countable set $\iota$. -/
 theorem exists_countable_hilbertBasis [CompleteSpace H] [SeparableSpace H] :
     ∃ (ι : Type u) (_ : Countable ι), Nonempty (HilbertBasis ι 𝕜 H) := by
   obtain ⟨w, b, _⟩ := exists_hilbertBasis 𝕜 H

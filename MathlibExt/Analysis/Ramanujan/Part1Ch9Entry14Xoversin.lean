@@ -50,7 +50,9 @@ def chapter9OddClausen (m : ℕ) (x : ℝ) : ℝ :=
   else if m = 1 then -(1 / 2 : ℝ) * Real.log |Real.tan (x / 2)|
   else ∑' k : ℕ, chapter9OddClausenTerm m x k
 
-/-- Norm bound for the odd Clausen summand. -/
+/-- **Bound on the terms of the odd Clausen series.** For integers $m, k \ge 0$ let $s_m = \sin$ if
+$m$ is even and $s_m = \cos$ if $m$ is odd. Then for all integers $m, k \ge 0$ and every real $x$,
+$$\left| \frac{s_m((2k+1)x)}{(2k+1)^m} \right| \le \frac{1}{(2k+1)^m}.$$ -/
 theorem chapter9OddClausenTerm_norm_bound (m : ℕ) (x : ℝ) (k : ℕ) :
     ‖chapter9OddClausenTerm m x k‖ ≤ 1 / (((2 * k + 1 : ℕ) : ℝ) ^ m) := by
   have hpos : (0 : ℝ) < (((2 * k + 1 : ℕ) : ℝ) ^ m) := by positivity
@@ -71,7 +73,9 @@ private theorem helper_chi_summable (n : ℕ) (hn : 1 ≤ n) :
     omega
   simpa [Function.comp_def] using hbase.comp_injective hinj
 
-/-- The odd Clausen series is summable for `2 ≤ m`. -/
+/-- **Summability of the odd Clausen series for $m \ge 2$.** Let $m \ge 2$ be an integer, and let
+$s_m = \sin$ if $m$ is even and $s_m = \cos$ if $m$ is odd. Then for every real $x$ the series
+$\sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$ is summable. -/
 theorem chapter9OddClausenTerm_summable_of_two_le (m : ℕ) (x : ℝ) (hm : 2 ≤ m) :
     Summable (chapter9OddClausenTerm m x) := by
   have hbase : Summable (fun k : ℕ => 1 / (((2 * k + 1 : ℕ) : ℝ) ^ m)) := by
@@ -84,16 +88,27 @@ theorem chapter9OddClausenTerm_summable_of_two_le (m : ℕ) (x : ℝ) (hm : 2 �
     simpa [Function.comp_def] using hfull.comp_injective hinj
   exact Summable.of_norm_bounded hbase (chapter9OddClausenTerm_norm_bound m x)
 
-/-- `chapter9OddClausen` at `m = 0` vanishes. -/
+/-- **The odd Clausen function vanishes at $m = 0$.** For an integer $m \ge 0$ let $s_m = \sin$ if
+$m$ is even and $s_m = \cos$ if $m$ is odd. The odd Clausen functions $O_m$, for integers
+$m \ge 0$, are given by $O_1(x) = -\tfrac{1}{2} \log|\tan(x/2)|$, by
+$O_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$ for $m \ge 2$, and at $m = 0$ by zero: for every
+real $x$, $O_0(x) = 0$. -/
 theorem chapter9OddClausen_zero (x : ℝ) : chapter9OddClausen 0 x = 0 := by
   rfl
 
-/-- `chapter9OddClausen` at `m = 1` is the log-tangent closed form. -/
+/-- **The odd Clausen function at $m = 1$.** For an integer $m \ge 0$ let $s_m = \sin$ if $m$ is
+even and $s_m = \cos$ if $m$ is odd. The odd Clausen functions $O_m$, for integers $m \ge 0$, are
+given by $O_0 = 0$, by $O_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$ for $m \ge 2$, and at
+$m = 1$ by a closed form: for every real $x$, $O_1(x) = -\tfrac{1}{2} \log|\tan(x/2)|$. -/
 theorem chapter9OddClausen_one (x : ℝ) :
     chapter9OddClausen 1 x = -(1 / 2 : ℝ) * Real.log |Real.tan (x / 2)| := by
   rfl
 
-/-- `chapter9OddClausen` for `2 ≤ m` is the odd Clausen series. -/
+/-- **The odd Clausen function as a series for $m \ge 2$.** For an integer $m \ge 0$ let
+$s_m = \sin$ if $m$ is even and $s_m = \cos$ if $m$ is odd. For real $x$, the odd Clausen
+function $O_m(x)$ is $0$ if $m = 0$, is $-\tfrac{1}{2} \log|\tan(x/2)|$ if $m = 1$, and is
+otherwise given by a series: for every integer $m \ge 2$ and every real $x$,
+$O_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$. -/
 theorem chapter9OddClausen_of_two_le (m : ℕ) (x : ℝ) (hm : 2 ≤ m) :
     chapter9OddClausen m x = ∑' k : ℕ, chapter9OddClausenTerm m x k := by
   unfold chapter9OddClausen
@@ -298,7 +313,10 @@ private lemma xs_even_clausen_term_eq (m : ℕ) (x : ℝ) (k : ℕ) :
   unfold chapter9ClausenTerm
   split_ifs <;> rw [harg, hden] <;> ring
 
-/-- The odd Clausen function is the odd-frequency part of `chapter9Clausen` for `2 ≤ m`. -/
+/-- **Odd-frequency part of a Clausen series for $m \ge 2$.** Let $m \ge 2$ be an integer, and let
+$s_m = \sin$ if $m$ is even and $s_m = \cos$ if $m$ is odd. For real $x$ write
+$C_m(x) = \sum_{k \ge 1} s_m(kx)/k^m$ and $O_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$. Then
+for every real $x$, $O_m(x) = C_m(x) - 2^{-m} C_m(2x)$. -/
 theorem chapter9OddClausen_eq_clausen_sub_of_two_le (m : ℕ) (x : ℝ) (hm : 2 ≤ m) :
     chapter9OddClausen m x = chapter9Clausen m x -
       (1 / (2 : ℝ) ^ m) * chapter9Clausen m (2 * x) := by
@@ -374,7 +392,12 @@ private lemma xs_odd_clausen_one_eq (x : ℝ) (hx0 : x ≠ 0)
   rw [htan, Real.log_div hA hC, hprod, Real.log_mul hA hC]
   ring
 
-/-- The odd Clausen function is the odd-frequency part of `chapter9Clausen` on `(-π, π)`. -/
+/-- **Odd-frequency part of a Clausen function for $0 < |x| < \pi$.** For real $x$ let
+$C_1(x) = -\log|2 \sin(x/2)|$ and $O_1(x) = -\tfrac{1}{2} \log|\tan(x/2)|$. For an integer
+$m \ge 2$, let $s_m = \sin$ if $m$ is even and $s_m = \cos$ if $m$ is odd, and let
+$C_m(x) = \sum_{k \ge 1} s_m(kx)/k^m$ and $O_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$. Then
+for every integer $m \ge 1$ and every real $x$ with $x \ne 0$ and $|x| < \pi$,
+$O_m(x) = C_m(x) - 2^{-m} C_m(2x)$. -/
 theorem chapter9OddClausen_eq_clausen_sub (m : ℕ) (x : ℝ) (hm : 1 ≤ m)
     (hx0 : x ≠ 0) (hx : |x| < Real.pi) :
     chapter9OddClausen m x = chapter9Clausen m x -
@@ -485,7 +508,9 @@ private lemma xs_zeta_re (m : ℕ) (hm : 2 ≤ m) :
   rw [tsum_congr hterm] at hre
   exact hre.symm
 
-/-- The odd-denominator zeta sum is the Dirichlet chi value at an integer `m ≥ 2`. -/
+/-- **Odd reciprocal power sums in terms of $\zeta$.** For every integer $m \ge 2$,
+$$\sum_{k \ge 0} \frac{1}{(2k+1)^m} = \left(1 - \frac{1}{2^m}\right) \operatorname{Re} \zeta(m),$$
+where $\zeta$ is the Riemann zeta function. -/
 theorem chapter9ChiAtOne_eq_zeta (m : ℕ) (hm : 2 ≤ m) :
     chapter9ChiAtOne m =
       (1 - 1 / (2 : ℝ) ^ m) * (riemannZeta (m : ℂ)).re := by
@@ -706,13 +731,25 @@ private lemma xs_integral_formula (n : ℕ) (x : ℝ) (hn : 1 ≤ n)
             x ^ (n - j) * chapter9OddClausen (j + 1) x := by
       rfl
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **Entry 14 of Chapter 9: the integral of $u^n / (2 \sin u)$.** For an integer $m \ge 2$ write
+$\lambda(m) = \sum_{k \ge 0} (2k+1)^{-m}$. For real $x$ let
+$C_1(x) = -\tfrac{1}{2} \log|\tan(x/2)|$, and for an integer $m \ge 2$ let $s_m = \sin$ if $m$ is
+even and $s_m = \cos$ if $m$ is odd, and let $C_m(x) = \sum_{k \ge 0} s_m((2k+1)x)/(2k+1)^m$. Let
+$n \ge 1$ be an integer and $x$ a real number with $x \ne 0$ and $|x| < \pi$. Then
+$u \mapsto u^n / (2 \sin u)$ is integrable on the interval between $0$ and $x$; the series
+defining $\lambda(n+1)$ is summable; the partial sums $\sum_{k < N} \cos((2k+1)x)/(2k+1)$ tend
+to $C_1(x)$ as $N \to \infty$; for every integer $m$ with $2 \le m \le n+1$ the series defining
+$C_m(x)$ is summable; and
+$$\int_0^x \frac{u^n}{2 \sin u}\,du = \cos\frac{n\pi}{2}\, n!\, \lambda(n+1) -
+\sum_{j=0}^{n} (-1)^{j(j+1)/2} \frac{n!}{(n-j)!}\, x^{n-j}\, C_{j+1}(x).$$
+
+The proof subtracts a scaled copy of Entry 13 at $2x$ from Entry 13 at $x$ and splits the zeta and
+Clausen series into even and odd frequencies, following Berndt and Lewin, *Polylogarithms and
+Associated Functions*, Chapter 4.
 
 Proves `Wanted` entry `ramanujan_part1_ch9_entry14_xoversin`.
 
-Proof: Subtracts a scaled Entry 13 identity at `2x` from the identity at `x`, then
-splits the zeta and Clausen series into even and odd frequencies, following Berndt
-and Lewin, *Polylogarithms and Associated Functions*, Chapter 4.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry14_xoversin (n : ℕ) (x : ℝ)
     (hn : 1 ≤ n) (hx0 : x ≠ 0) (hx : |x| < Real.pi) :

@@ -65,50 +65,72 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {ι : Type*} [Fintype ι]
 
-/-- A finite family `f` in a Hilbert space is a frame with frame bounds `A`
-and `B` if the squared norms of the inner products `⟪f i, x⟫_𝕜` are comparable
-to `‖x‖²`, uniformly in `x`. -/
+/-- **Finite frame.** Let $E$ be an inner product space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$. A finite family $(f_i)_{i \in \iota}$ in $E$ is a frame with frame bounds
+$A, B \in \mathbb{R}$ if $A > 0$, $B > 0$ and, for every $x \in E$,
+$A \|x\|^2 \le \sum_{i \in \iota} |\langle f_i, x \rangle|^2 \le B \|x\|^2$. -/
 def IsFrame (f : ι → E) (A B : ℝ) : Prop :=
   0 < A ∧ 0 < B ∧ ∀ x : E,
     A * ‖x‖ ^ 2 ≤ ∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 ∧ ∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 ≤ B * ‖x‖ ^ 2
 
-/-- The lower frame bound is positive. -/
+/-- **The lower frame bound is positive.** Let $E$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. If a finite family $(f_i)_{i \in \iota}$ in $E$ is a
+frame with frame bounds $A$ and $B$, then $A > 0$. -/
 theorem IsFrame.pos_left {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) : 0 < A :=
   hf.1
 
-/-- The upper frame bound is positive. -/
+/-- **The upper frame bound is positive.** If a finite family $(f_i)_{i \in \iota}$ in an inner
+product space $E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$) is a frame with frame bounds $A$
+and $B$, then $0 < B$. -/
 theorem IsFrame.pos_right {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) : 0 < B :=
   hf.2.1
 
-/-- The lower frame inequality. -/
+/-- **Lower frame inequality.** Let $E$ be an inner product space over $\mathbb{K} = \mathbb{R}$
+or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite frame in $E$ with frame bounds $A$ and
+$B$. Then $A \|x\|^2 \le \sum_{i \in \iota} |\langle f_i, x \rangle|^2$ for every $x \in E$. -/
 theorem IsFrame.lower {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) (x : E) :
     A * ‖x‖ ^ 2 ≤ ∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 :=
   (hf.2.2 x).1
 
-/-- The upper frame inequality. -/
+/-- **Upper frame inequality.** If a finite family $(f_i)_{i \in \iota}$ in an inner product space
+$E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$) is a frame with frame bounds $A$ and $B$, then
+$\sum_{i} |\langle f_i, x \rangle|^2 \le B \|x\|^2$ for every $x \in E$. -/
 theorem IsFrame.upper {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) (x : E) :
     ∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 ≤ B * ‖x‖ ^ 2 :=
   (hf.2.2 x).2
 
-/-- The frame operator of a finite family: `S x = ∑ i, ⟪f i, x⟫_𝕜 • f i`. -/
+/-- **Frame operator.** For a finite family $(f_i)_{i \in \iota}$ in an inner product space $E$
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, the frame operator is the bounded linear operator
+$S \colon E \to E$ given by $S x = \sum_{i \in \iota} \langle f_i, x \rangle f_i$, the sum of the
+rank-one operators $x \mapsto \langle f_i, x \rangle f_i$. The inner product is conjugate-linear
+in its first argument. -/
 noncomputable def frameOperator (f : ι → E) : E →L[𝕜] E :=
   ∑ i, rankOne 𝕜 (f i) (f i)
 
-/-- The frame operator applied to a vector. -/
+/-- **Frame operator formula.** For a finite family $(f_i)_{i \in \iota}$ in an inner product
+space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, the frame operator $S$ of the family
+satisfies $S x = \sum_{i \in \iota} \langle f_i, x \rangle f_i$ for every $x \in E$, where the
+inner product is conjugate-linear in its first argument. -/
 theorem frameOperator_apply (f : ι → E) (x : E) :
     frameOperator (𝕜 := 𝕜) f x = ∑ i, ⟪f i, x⟫_𝕜 • f i := by
   simp [frameOperator]
 
-/-- The inner product of the frame operator with a second vector, expanded in
-the frame coefficients. -/
+/-- **Inner product against the frame operator.** Let $E$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with inner product conjugate-linear in the first
+argument, and let $S$ be the frame operator of a finite family $(f_i)_{i \in \iota}$ in $E$. Then
+$\langle S x, y \rangle = \sum_{i \in \iota} \overline{\langle f_i, x \rangle} \,
+\langle f_i, y \rangle$ for all $x, y \in E$. -/
 theorem inner_frameOperator_apply (f : ι → E) (x y : E) :
     ⟪frameOperator (𝕜 := 𝕜) f x, y⟫_𝕜
       = ∑ i, (starRingEnd 𝕜) ⟪f i, x⟫_𝕜 * ⟪f i, y⟫_𝕜 := by
   rw [frameOperator_apply, sum_inner]
   exact Finset.sum_congr rfl fun i _ => inner_smul_left _ _ _
 
-/-- The frame operator is determined by the frame coefficients:
-`⟪S x, x⟫_𝕜` is the sum of the squared coefficient norms. -/
+/-- **Quadratic form of the frame operator.** Let $S$ be the frame operator of a finite family
+$(f_i)_{i \in \iota}$ in an inner product space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$.
+For every $x \in E$,
+$\langle S x, x \rangle = \sum_{i \in \iota} |\langle f_i, x \rangle|^2$; the right side is a
+real number, viewed as an element of $\mathbb{K}$. -/
 theorem inner_frameOperator_apply_self (f : ι → E) (x : E) :
     ⟪frameOperator (𝕜 := 𝕜) f x, x⟫_𝕜
       = ((∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 : ℝ) : 𝕜) := by
@@ -116,15 +138,22 @@ theorem inner_frameOperator_apply_self (f : ι → E) (x : E) :
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [RCLike.conj_mul, RCLike.ofReal_pow]
 
-/-- The real part of `⟪S x, x⟫_𝕜` is the sum of the squared coefficient norms. -/
+/-- **Real part of the frame quadratic form.** Let $(f_i)_{i \in \iota}$ be a finite family in an
+inner product space $E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$), with frame operator $S$.
+For every $x \in E$,
+$\operatorname{Re} \langle S x, x \rangle = \sum_{i} |\langle f_i, x \rangle|^2$. -/
 theorem re_inner_frameOperator_apply_self (f : ι → E) (x : E) :
     RCLike.re ⟪frameOperator (𝕜 := 𝕜) f x, x⟫_𝕜 = ∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2 := by
   rw [inner_frameOperator_apply_self]
   simp
 
-/-- Cauchy-Schwarz for the frame coefficients: the squared norm of the
-sum of coefficient products is bounded by the product of the sums of
-squared coefficient norms. -/
+/-- **Cauchy–Schwarz bound for the frame operator.** Let $(f_i)_{i \in \iota}$ be a finite family in
+an inner product space $E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$), with frame operator
+$S$. For all $x, y \in E$,
+$$
+|\langle S x, y \rangle|^2 \le \Big(\sum_{i} |\langle f_i, x \rangle|^2\Big)
+\Big(\sum_{i} |\langle f_i, y \rangle|^2\Big).
+$$ -/
 theorem sq_norm_inner_frameOperator_apply_le (f : ι → E) (x y : E) :
     ‖⟪frameOperator (𝕜 := 𝕜) f x, y⟫_𝕜‖ ^ 2
       ≤ (∑ i, ‖⟪f i, x⟫_𝕜‖ ^ 2) * (∑ i, ‖⟪f i, y⟫_𝕜‖ ^ 2) := by
@@ -140,14 +169,19 @@ theorem sq_norm_inner_frameOperator_apply_le (f : ι → E) (x y : E) :
 
 variable [CompleteSpace E]
 
-/-- The frame operator is self-adjoint. -/
+/-- **The frame operator is self-adjoint.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. For every finite family $(f_i)_{i \in \iota}$ in $E$,
+not necessarily a frame, the frame operator of $(f_i)_{i \in \iota}$ is self-adjoint. -/
 theorem isSelfAdjoint_frameOperator (f : ι → E) :
     IsSelfAdjoint (frameOperator (𝕜 := 𝕜) f) := by
   rw [IsSelfAdjoint, star_eq_adjoint]
   simp [frameOperator, map_sum]
 
 omit [CompleteSpace E] in
-/-- The frame operator is bounded below by the lower frame bound. -/
+/-- **The frame operator is bounded below.** Let $E$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite frame in $E$
+with frame bounds $A$ and $B$ and frame operator $S$. Then $A \|x\| \le \|S x\|$ for every
+$x \in E$. -/
 theorem le_norm_frameOperator_apply {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B)
     (x : E) : A * ‖x‖ ≤ ‖frameOperator (𝕜 := 𝕜) f x‖ := by
   rcases eq_or_ne x 0 with rfl | hx
@@ -164,9 +198,13 @@ theorem le_norm_frameOperator_apply {f : ι → E} {A B : ℝ} (hf : IsFrame (�
     exact h1
   exact le_of_mul_le_mul_right h2 hxpos
 
-/-- The frame operator of a frame is a unit: it is bounded below and
-self-adjoint, so it is injective with closed range whose orthogonal complement
-is trivial. -/
+/-- **The frame operator of a frame is invertible.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite frame in $E$
+with frame bounds $A$ and $B$. Then its frame operator $S$ is a unit in the algebra of bounded
+linear operators on $E$, that is, $S$ has a bounded linear two-sided inverse.
+
+The operator $S$ is bounded below and self-adjoint, so it is injective with closed range whose
+orthogonal complement is trivial. -/
 theorem isUnit_frameOperator {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) :
     IsUnit (frameOperator (𝕜 := 𝕜) f) := by
   set S := frameOperator (𝕜 := 𝕜) f with hS
@@ -216,8 +254,10 @@ theorem isUnit_frameOperator {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := �
   exact ContinuousLinearMap.isUnit_iff_bijective.mpr ⟨hinj, hsurj⟩
 
 omit [CompleteSpace E] in
-/-- The operator norm of the frame operator is at most the upper frame
-bound. -/
+/-- **The frame operator has norm at most the upper frame bound.** Let $E$ be an inner product
+space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite
+frame in $E$ with frame bounds $A$ and $B$ and frame operator $S$. Then the operator norm of $S$
+satisfies $\|S\| \le B$. -/
 theorem norm_frameOperator_le {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) :
     ‖frameOperator (𝕜 := 𝕜) f‖ ≤ B := by
   refine opNorm_le_bound (frameOperator (𝕜 := 𝕜) f) hf.pos_right.le fun x => ?_
@@ -250,12 +290,18 @@ theorem norm_frameOperator_le {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 
       _ = (B * ‖x‖) ^ 2 * ‖frameOperator (𝕜 := 𝕜) f x‖ ^ 2 := by ring
   exact le_of_sq_le_sq hle2 (mul_nonneg hf.pos_right.le (norm_nonneg _))
 
-/-- The inverse of the frame operator, as a bounded operator. -/
+/-- **Inverse frame operator.** Let $(f_i)_{i \in \iota}$, with $\iota$ finite, be a frame with
+bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. Its frame
+operator $S$ is invertible in the algebra of bounded linear operators on $E$, and the inverse
+frame operator $S^{-1}$ is its inverse there. -/
 noncomputable def frameOperatorInv {f : ι → E} {A B : ℝ}
     (hf : IsFrame (𝕜 := 𝕜) f A B) : E →L[𝕜] E :=
   ↑(IsUnit.unit (isUnit_frameOperator hf))⁻¹
 
-/-- The frame operator composed with its inverse is the identity. -/
+/-- **The inverse frame operator is a right inverse.** Let $(f_i)_{i \in \iota}$, with $\iota$
+finite, be a frame with bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, with frame operator $S$ and inverse frame operator $S^{-1}$. Then
+$S \circ S^{-1}$ is the identity operator on $E$. -/
 theorem frameOperator_comp_frameOperatorInv {f : ι → E} {A B : ℝ}
     (hf : IsFrame (𝕜 := 𝕜) f A B) :
     frameOperator (𝕜 := 𝕜) f ∘L frameOperatorInv hf = 1 := by
@@ -266,7 +312,10 @@ theorem frameOperator_comp_frameOperatorInv {f : ι → E} {A B : ℝ}
   show frameOperator (𝕜 := 𝕜) f ∘L (↑(u⁻¹) : E →L[𝕜] E) = 1
   rw [← hu, ← ContinuousLinearMap.mul_def, ← Units.val_mul, mul_inv_cancel, Units.val_one]
 
-/-- The inverse of the frame operator composed with it is the identity. -/
+/-- **The inverse frame operator is a left inverse.** Let $(f_i)_{i \in \iota}$, with $\iota$
+finite, be a frame with bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, with frame operator $S$ and inverse frame operator $S^{-1}$. Then
+$S^{-1} \circ S$ is the identity operator on $E$. -/
 theorem frameOperatorInv_comp_frameOperator {f : ι → E} {A B : ℝ}
     (hf : IsFrame (𝕜 := 𝕜) f A B) :
     frameOperatorInv hf ∘L frameOperator (𝕜 := 𝕜) f = 1 := by
@@ -277,7 +326,10 @@ theorem frameOperatorInv_comp_frameOperator {f : ι → E} {A B : ℝ}
   show (↑(u⁻¹) : E →L[𝕜] E) ∘L frameOperator (𝕜 := 𝕜) f = 1
   rw [← hu, ← ContinuousLinearMap.mul_def, ← Units.val_mul, inv_mul_cancel, Units.val_one]
 
-/-- The inverse of the frame operator is self-adjoint. -/
+/-- **The inverse frame operator is self-adjoint.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite frame in $E$
+with frame bounds $A$ and $B$. Then the inverse $S^{-1}$ of its frame operator $S$ is
+self-adjoint. -/
 theorem isSelfAdjoint_frameOperatorInv {f : ι → E} {A B : ℝ}
     (hf : IsFrame (𝕜 := 𝕜) f A B) : IsSelfAdjoint (frameOperatorInv hf) := by
   rw [IsSelfAdjoint, star_eq_adjoint]
@@ -301,8 +353,10 @@ theorem isSelfAdjoint_frameOperatorInv {f : ι → E} {A B : ℝ}
     _ = 1 ∘L frameOperatorInv hf := by rw [h1]
     _ = frameOperatorInv hf := by rw [ContinuousLinearMap.one_def, ContinuousLinearMap.id_comp]
 
-/-- The frame reconstruction formula: every vector is the sum of its frame
-coefficients against the dual frame. -/
+/-- **Frame reconstruction formula.** Let $(f_i)_{i \in \iota}$, with $\iota$ finite, be a frame
+with bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, and
+let $S^{-1}$ be the inverse of its frame operator. Then every $x \in E$ satisfies
+$x = \sum_{i \in \iota} \langle f_i, S^{-1} x \rangle f_i$. -/
 theorem frame_reconstruction {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B)
     (x : E) :
     ∑ i, ⟪f i, frameOperatorInv hf x⟫_𝕜 • f i = x := by
@@ -312,13 +366,18 @@ theorem frame_reconstruction {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := �
   rw [← frameOperator_apply (𝕜 := 𝕜) f (frameOperatorInv hf x)]
   exact h
 
-/-- The canonical dual frame: the image of the frame under the inverse
-frame operator. -/
+/-- **Canonical dual frame.** Let $(f_i)_{i \in \iota}$, with $\iota$ finite, be a frame with
+bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, and let
+$S^{-1}$ be the inverse of its frame operator. The canonical dual frame is the family
+$(S^{-1} f_i)_{i \in \iota}$. -/
 noncomputable def dualFrame {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B)
     (i : ι) : E :=
   frameOperatorInv hf (f i)
 
-/-- The frame operator of the dual frame is the inverse frame operator. -/
+/-- **Frame operator of the canonical dual frame.** Let $(f_i)_{i \in \iota}$, with $\iota$
+finite, be a frame with bounds $A$ and $B$ in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, and let $S^{-1}$ be the inverse of its frame operator. Then the frame operator of
+the canonical dual frame $(S^{-1} f_i)_{i \in \iota}$ is $S^{-1}$. -/
 theorem frameOperator_dualFrame {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) :
     frameOperator (𝕜 := 𝕜) (dualFrame hf) = frameOperatorInv hf := by
   ext y
@@ -338,8 +397,10 @@ theorem frameOperator_dualFrame {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 :
   rw [← ContinuousLinearMap.comp_apply, frameOperator_comp_frameOperatorInv]
   rfl
 
-/-- The canonical dual frame is a frame, with reciprocal bounds `1 / B` and
-`1 / A`. -/
+/-- **The canonical dual frame is a frame.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $(f_i)_{i \in \iota}$ be a finite frame in $E$
+with frame bounds $A$ and $B$ and frame operator $S$. Then the canonical dual frame
+$(S^{-1} f_i)_{i \in \iota}$ is a frame with lower frame bound $1/B$ and upper frame bound $1/A$. -/
 theorem isFrame_dualFrame {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜) f A B) :
     IsFrame (𝕜 := 𝕜) (dualFrame hf) (1 / B) (1 / A) := by
   refine ⟨one_div_pos.mpr hf.pos_right, one_div_pos.mpr hf.pos_left, fun x => ?_⟩
@@ -433,7 +494,10 @@ theorem isFrame_dualFrame {f : ι → E} {A B : ℝ} (hf : IsFrame (𝕜 := 𝕜
   · rw [hsum, hQ]
     exact hupper
 
-/-- A tight frame, one whose bounds agree, has frame operator `A • 1`. -/
+/-- **Tight frames have scalar frame operator.** Let $(f_i)_{i \in \iota}$, with $\iota$
+finite, be a frame in a Hilbert space $E$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ whose lower
+and upper frame bounds are both equal to $A$. Then its frame operator is $S = A \cdot I$, where $I$
+is the identity operator on $E$. -/
 theorem frameOperator_eq_smul_one_of_isTightFrame {f : ι → E} {A : ℝ}
     (hf : IsFrame (𝕜 := 𝕜) f A A) :
     frameOperator (𝕜 := 𝕜) f = (A : 𝕜) • (1 : E →L[𝕜] E) := by

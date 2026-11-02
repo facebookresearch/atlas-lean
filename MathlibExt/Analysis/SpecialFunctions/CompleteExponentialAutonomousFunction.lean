@@ -26,12 +26,13 @@ open scoped BigOperators
 
 namespace MetaMathlibExt
 
-/-- Complete Bell polynomial family `B n`, as used in source statement
-`jis_4e6064ed86b521df4a4febe5` (concept `jis_sem_2f450d618ad4cc4cadb7505f`).
+/-- **Complete Bell polynomials.** For a sequence $x = (x_0, x_1, x_2, \dots)$ of complex numbers,
+the complete Bell polynomials $B_n(x)$ are defined by $B_0(x) = 1$ and, for every $m \ge 0$,
+$B_{m+1}(x) = \sum_{i=0}^{m} \binom{m}{i} B_{m-i}(x) \, x_i$.
 
-`B 0` is `1`, and `B (m + 1)` applied to `x : Nat → Complex` (with `x i`
-standing for `y_{i+1}`) is
-`∑ i ∈ Finset.range (m + 1), C(m, i) * B (m - i) x * x i`. -/
+Writing $x_i = y_{i+1}$, this is the usual recurrence for $B_{m+1}(y_1, \dots, y_{m+1})$.
+
+Source: statement `jis_4e6064ed86b521df4a4febe5` (concept `jis_sem_2f450d618ad4cc4cadb7505f`). -/
 noncomputable def completeBellPolynomial (n : Nat) (x : Nat → Complex) : Complex :=
   Nat.strongRecOn (motive := fun _ => (Nat → Complex) → Complex) n
     (fun m ih x =>
@@ -60,15 +61,14 @@ theorem completeBellPolynomial_two (x : ℕ → ℂ) :
   rw [Nat.strongRecOn_eq]
   simp only [one_mul]
 
-/-- N-th complete exponential autonomous function of order `k` (`k ≥ 1`), with
-parameter `a : Complex` and variables `x = (x₁, …, xₖ)`, as specified in source
-statement `jis_4e6064ed86b521df4a4febe5` (concept `jis_sem_2f450d618ad4cc4cadb7505f`).
+/-- **Complete exponential autonomous functions.** Let $k \ge 1$, $a \in \mathbb{C}$ and
+$x_0, \dots, x_{k-1} \in \mathbb{C}$. The complete exponential autonomous function of order $k$
+with parameter $a$ and variables $x$ is the sequence $f_0, f_1, f_2, \dots$ of complex numbers
+given by $f_n = x_n$ for $n < k$, $f_k = a e^{x_0}$, and $f_n = a e^{x_0} B_{n-k}(y)$ for
+$n > k$, where $B_{n-k}$ is the complete Bell polynomial and $y$ is the sequence with
+$y_i = f_{i+1}$ (so only $f_1, \dots, f_{n-k}$ enter).
 
-Initial values: `f 0 = x 0` through `f (k - 1) = x (k - 1)`, `f k = a * exp (x 0)`.
-Recurrence: for `n > k`, with `m = n - k ≥ 1`,
-`f n = a * exp (x 0) * B m (f 1, …, f m)`, where `B` is the complete Bell
-polynomial family `completeBellPolynomial` (argument `i : Nat` standing for
-`f (i + 1)`). -/
+Source: statement `jis_4e6064ed86b521df4a4febe5` (concept `jis_sem_2f450d618ad4cc4cadb7505f`). -/
 noncomputable def completeExponentialAutonomousFunction (k : Nat) (hk : 0 < k)
     (a : Complex) (x : Fin k → Complex) : Nat → Complex :=
   fun N =>

@@ -31,9 +31,15 @@ one. Existence and uniqueness are proved separately in
 
 namespace Real
 
-/-- `IsDickmanDeBruijn ρ` says that `ρ` is the Dickman–de Bruijn function, extended by zero to
-negative inputs. Continuity is asserted only on the original nonnegative domain, since the total
-zero extension is discontinuous at zero. -/
+/-- **Dickman–de Bruijn functions.** A function $\rho : \mathbb{R} \to \mathbb{R}$ is a
+Dickman–de Bruijn function if $\rho(u) = 0$ for every real $u < 0$, $\rho$ maps $[0, \infty)$
+into $[0, 1]$, $\rho$ is continuous on $[0, \infty)$, $\rho(u) = 1$ for every $u \in [0, 1]$,
+and for every real $u > 1$ the function $\rho$ is differentiable at $u$ with
+$u \rho'(u) + \rho(u - 1) = 0$.
+
+These conditions describe the Dickman–de Bruijn function, extended by zero to negative inputs.
+Continuity is asserted only on the original nonnegative domain, since the total zero extension
+is discontinuous at zero. -/
 def IsDickmanDeBruijn (ρ : ℝ → ℝ) : Prop :=
   (∀ u, u < 0 → ρ u = 0) ∧
     Set.MapsTo ρ (Set.Ici (0 : ℝ)) (Set.Icc (0 : ℝ) 1) ∧
@@ -41,54 +47,73 @@ def IsDickmanDeBruijn (ρ : ℝ → ℝ) : Prop :=
     (∀ u ∈ Set.Icc (0 : ℝ) 1, ρ u = 1) ∧
     ∀ u, 1 < u → DifferentiableAt ℝ ρ u ∧ u * deriv ρ u + ρ (u - 1) = 0
 
-/-- A Dickman–de Bruijn function vanishes at negative arguments. -/
+/-- **The Dickman–de Bruijn function vanishes on the negative reals.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $\rho(u) = 0$ for every
+real $u < 0$. -/
 lemma IsDickmanDeBruijn.eq_zero_of_neg {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : u < 0) : ρ u = 0 :=
   h.1 u hu
 
-/-- A Dickman–de Bruijn function maps nonnegative inputs into `[0, 1]`. -/
+/-- **Range of the Dickman–de Bruijn function on the nonnegative reals.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $0 \le \rho(u) \le 1$
+for every real $u \ge 0$. -/
 lemma IsDickmanDeBruijn.mapsTo_Ici_Icc {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) :
     Set.MapsTo ρ (Set.Ici (0 : ℝ)) (Set.Icc (0 : ℝ) 1) :=
   h.2.1
 
-/-- A Dickman–de Bruijn function is continuous on the nonnegative reals. -/
+/-- **Continuity of the Dickman–de Bruijn function on the nonnegative reals.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $\rho$ is continuous on
+$[0, \infty)$. -/
 lemma IsDickmanDeBruijn.continuousOn_Ici {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) : ContinuousOn ρ (Set.Ici (0 : ℝ)) :=
   h.2.2.1
 
-/-- A Dickman–de Bruijn function equals one on `[0, 1]`. -/
+/-- **The Dickman–de Bruijn function equals one on the unit interval.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $\rho(u) = 1$ for every
+$u \in [0, 1]$. -/
 lemma IsDickmanDeBruijn.eq_one_of_mem_Icc {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : u ∈ Set.Icc (0 : ℝ) 1) : ρ u = 1 :=
   h.2.2.2.1 u hu
 
-/-- Inequality form of the normalization of a Dickman–de Bruijn function on `[0, 1]`. -/
+/-- **Normalization of the Dickman–de Bruijn function, inequality form.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function and $u$ is a real number with
+$0 \le u$ and $u \le 1$, then $\rho(u) = 1$. -/
 lemma IsDickmanDeBruijn.eq_one_of_nonneg_of_le_one {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (h0 : 0 ≤ u) (h1 : u ≤ 1) : ρ u = 1 :=
   h.eq_one_of_mem_Icc ⟨h0, h1⟩
 
-/-- A Dickman–de Bruijn function is differentiable above one. -/
+/-- **Differentiability of the Dickman–de Bruijn function above one.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $\rho$ is differentiable
+at every real $u > 1$. -/
 lemma IsDickmanDeBruijn.differentiableAt_of_one_lt {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : 1 < u) : DifferentiableAt ℝ ρ u :=
   (h.2.2.2.2 u hu).1
 
-/-- The Dickman–de Bruijn delay differential equation above one. -/
+/-- **Delay differential equation of the Dickman–de Bruijn function.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then
+$u \rho'(u) + \rho(u - 1) = 0$ for every real $u > 1$. -/
 lemma IsDickmanDeBruijn.delay_eq {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : 1 < u) :
     u * deriv ρ u + ρ (u - 1) = 0 :=
   (h.2.2.2.2 u hu).2
 
-/-- A Dickman–de Bruijn function is nonnegative at nonnegative arguments. -/
+/-- **Nonnegativity of the Dickman–de Bruijn function.** If $\rho : \mathbb{R} \to \mathbb{R}$
+is a Dickman–de Bruijn function, then $\rho(u) \ge 0$ for every real $u \ge 0$. -/
 lemma IsDickmanDeBruijn.nonneg_of_nonneg {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : 0 ≤ u) : 0 ≤ ρ u :=
   (h.mapsTo_Ici_Icc hu).1
 
-/-- A Dickman–de Bruijn function is at most one at nonnegative arguments. -/
+/-- **Upper bound one for the Dickman–de Bruijn function on the nonnegative reals.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function, then $\rho(u) \le 1$
+for every real $u \ge 0$. -/
 lemma IsDickmanDeBruijn.le_one_of_nonneg {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : 0 ≤ u) : ρ u ≤ 1 :=
   (h.mapsTo_Ici_Icc hu).2
 
-/-- The range bound for a Dickman–de Bruijn function at a nonnegative argument. -/
+/-- **Pointwise range bound for the Dickman–de Bruijn function.** If
+$\rho : \mathbb{R} \to \mathbb{R}$ is a Dickman–de Bruijn function and $u \ge 0$ is real, then
+$\rho(u) \in [0, 1]$. -/
 lemma IsDickmanDeBruijn.mem_Icc_of_nonneg {ρ : ℝ → ℝ}
     (h : IsDickmanDeBruijn ρ) {u : ℝ} (hu : 0 ≤ u) : ρ u ∈ Set.Icc (0 : ℝ) 1 :=
   h.mapsTo_Ici_Icc hu

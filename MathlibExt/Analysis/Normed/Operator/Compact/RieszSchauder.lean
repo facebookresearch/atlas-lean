@@ -43,10 +43,13 @@ variable {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E] [Normed
   [CompleteSpace E]
 variable {T : E →L[𝕜] E} {μ : 𝕜}
 
-/-- **Riesz–Schauder theorem, kernel part.** For a compact operator `T` on a Banach
-space and `μ ≠ 0`, the kernel of `μ • 1 - T` is finite-dimensional. The proof
-is the standard restriction trick: `T` preserves the kernel, and there it agrees
-with `μ • 1`, so the identity on the kernel is compact. -/
+/-- **Riesz–Schauder theorem, kernel part.** Let $E$ be a Banach space over $\mathbb{R}$ or
+$\mathbb{C}$, let $T : E \to E$ be a compact bounded linear operator, let $\mu \neq 0$ be a
+scalar and let $I$ be the identity of $E$. Then the kernel of $\mu I - T$ is
+finite-dimensional.
+
+The proof is the standard restriction trick: $T$ maps the kernel of $\mu I - T$ into itself and
+agrees with $\mu I$ there, so the identity of the kernel is a compact operator. -/
 theorem finiteDimensional_ker (hT : IsCompactOperator T) (hμ : μ ≠ 0) :
     FiniteDimensional 𝕜 (LinearMap.ker ((μ • 1 - T : E →L[𝕜] E).toLinearMap)) := by
   classical
@@ -78,9 +81,13 @@ theorem finiteDimensional_ker (hT : IsCompactOperator T) (hμ : μ ≠ 0) :
   exact FiniteDimensional.of_isCompactOperator_id hcomp
 
 omit [CompleteSpace E] in
-/-- A finite-dimensional subspace of a normed space is topologically complemented:
-there is a continuous projection onto it. The projection is built from a basis,
-with the coordinate functionals extended to the whole space by Hahn–Banach. -/
+/-- **Continuous projection onto a finite-dimensional subspace.** Let $E$ be a normed space
+over $\mathbb{R}$ or $\mathbb{C}$ and let $K$ be a finite-dimensional subspace of $E$. Then
+there is a continuous linear map $P : E \to E$ such that $P x = x$ for every $x \in K$ and
+$P x \in K$ for every $x \in E$.
+
+The projection is built from a basis of $K$, with the coordinate functionals extended to all
+of $E$ by Hahn–Banach. -/
 theorem exists_continuous_projection (K : Submodule 𝕜 E) [FiniteDimensional 𝕜 K] :
     ∃ P : E →L[𝕜] E, (∀ x ∈ K, P x = x) ∧ ∀ x, P x ∈ K := by
   classical
@@ -108,11 +115,12 @@ theorem exists_continuous_projection (K : Submodule 𝕜 E) [FiniteDimensional �
     rw [ContinuousLinearMap.smulRight_apply]
     exact Submodule.smul_mem K _ (b i).2
 
-/-- **Riesz–Schauder theorem, range part.** For a compact operator `T` on a Banach
-space and `μ ≠ 0`, the range of `μ • 1 - T` is closed. The proof restricts
-`μ • 1 - T` to a closed complement of its kernel, where it is bounded below:
-a sequence argument using compactness of `T` shows the restriction is
-antilipschitz, hence its range is closed. -/
+/-- **Riesz–Schauder theorem, range part.** Let $E$ be a Banach space over $\mathbb{R}$ or
+$\mathbb{C}$, let $T : E \to E$ be a compact bounded linear operator, let $\mu \neq 0$ be a
+scalar and let $I$ be the identity of $E$. Then the range of $\mu I - T$ is closed in $E$.
+
+The proof restricts $\mu I - T$ to a closed complement of its kernel, where a sequence argument
+using compactness of $T$ shows that it is bounded below, hence has closed range. -/
 theorem isClosed_range_smul_one_sub (hT : IsCompactOperator T) (hμ : μ ≠ 0) :
     IsClosed (LinearMap.range ((μ • 1 - T : E →L[𝕜] E).toLinearMap) : Set E) := by
   classical
@@ -214,11 +222,10 @@ theorem isClosed_range_smul_one_sub (hT : IsCompactOperator T) (hμ : μ ≠ 0) 
   rw [hrange, LinearMap.coe_range]
   exact hK'.isClosed_range SC.uniformContinuous
 
-/-- **Fredholm alternative, Riesz–Schauder form.** For a compact operator `T` on a
-Banach space and `μ ≠ 0`, either `μ • 1 - T` is bijective, or its kernel is
-nontrivial and finite-dimensional and its range is closed. The bijective case
-is Mathlib's Fredholm alternative; the kernel and range statements are the two
-lemmas above. -/
+/-- **Fredholm alternative, Riesz–Schauder form.** Let $E$ be a Banach space over $\mathbb{R}$
+or $\mathbb{C}$, let $T : E \to E$ be a compact bounded linear operator, let $\mu \neq 0$ be a
+scalar and let $I$ be the identity of $E$. Then either $\mu I - T$ is bijective, or the kernel
+of $\mu I - T$ is nonzero and finite-dimensional and the range of $\mu I - T$ is closed. -/
 theorem fredholm_alternative (hT : IsCompactOperator T) (hμ : μ ≠ 0) :
     Function.Bijective (μ • 1 - T : E →L[𝕜] E) ∨
       (LinearMap.ker ((μ • 1 - T : E →L[𝕜] E).toLinearMap) ≠ ⊥ ∧

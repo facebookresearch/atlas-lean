@@ -53,7 +53,10 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
 omit [CompleteSpace H] in
-/-- The kernel of `μ • 1 - T` is the eigenspace of `T` for the eigenvalue `μ`. -/
+/-- **The kernel of a scalar minus an operator is an eigenspace.** Let $H$ be an inner product
+space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a bounded linear operator on $H$,
+let $I$ be the identity of $H$, and let $\mu \in \mathbb{K}$. Then the kernel of $\mu I - T$
+equals the eigenspace $\{x \in H : T x = \mu x\}$ of $T$ for $\mu$. -/
 theorem ker_smul_id_sub_eq_eigenspace (T : H →L[𝕜] H) (μ : 𝕜) :
     LinearMap.ker (μ • (ContinuousLinearMap.id 𝕜 H) - T).toLinearMap =
       Module.End.eigenspace (T.toLinearMap) μ := by
@@ -61,11 +64,11 @@ theorem ker_smul_id_sub_eq_eigenspace (T : H →L[𝕜] H) (μ : 𝕜) :
   simp [Module.End.eigenspace, LinearMap.mem_ker, sub_eq_zero]
   exact ⟨Eq.symm, Eq.symm⟩
 
-/-- **Fredholm alternative for compact self-adjoint operators.**
-Let `T` be a compact self-adjoint operator on a Hilbert space `H` and let
-`μ ≠ 0`. Then `Range (μ • 1 - T) = (ker (μ • 1 - T))ᗮ`, and either
-`μ • 1 - T` is bijective, or its kernel is nontrivial and
-finite-dimensional. -/
+/-- **Fredholm alternative for compact self-adjoint operators.** Let $H$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact self-adjoint bounded operator on
+$H$, let $I$ be the identity of $H$, and let $\mu \in \mathbb{K}$ with $\mu \neq 0$. Then the range
+of $\mu I - T$ equals the orthogonal complement $(\ker(\mu I - T))^\perp$ of its kernel, and either
+$\mu I - T$ is bijective, or its kernel is nonzero and finite-dimensional. -/
 theorem fredholm_alternative_of_isCompactOperator_isSelfAdjoint
     {T : H →L[𝕜] H} (hT : IsCompactOperator (T : H → H)) (hsa : IsSelfAdjoint T)
     {μ : 𝕜} (hμ : μ ≠ 0) :
@@ -151,8 +154,10 @@ theorem fredholm_alternative_of_isCompactOperator_isSelfAdjoint
         Submodule.bot_orthogonal_eq_top],
       Or.inl hbij⟩
 
-/-- **Closed range.** For a compact self-adjoint operator `T` and `μ ≠ 0`,
-the range of `μ • 1 - T` is closed (it equals `(ker (μ • 1 - T))ᗮ`). -/
+/-- **Closed range for compact self-adjoint perturbations of nonzero scalars.** Let $H$ be a
+Hilbert space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact self-adjoint
+bounded operator on $H$, let $I$ be the identity of $H$, and let $\mu \in \mathbb{K}$ with
+$\mu \neq 0$. Then the range of $\mu I - T$ is a closed subset of $H$. -/
 theorem isClosed_range_smul_id_sub_of_isCompactOperator_isSelfAdjoint
     {T : H →L[𝕜] H} (hT : IsCompactOperator (T : H → H)) (hsa : IsSelfAdjoint T)
     {μ : 𝕜} (hμ : μ ≠ 0) :
@@ -160,12 +165,14 @@ theorem isClosed_range_smul_id_sub_of_isCompactOperator_isSelfAdjoint
   rw [(fredholm_alternative_of_isCompactOperator_isSelfAdjoint hT hsa hμ).1]
   exact Submodule.isClosed_orthogonal _
 
-/-- **Fredholm alternative, `T - μ • 1` form.** Let `T` be a compact
-self-adjoint operator on a Hilbert space `H` and let `μ ≠ 0`. Then
-`Range (T - μ • 1) = (ker (T - μ • 1))ᗮ`, and either `T - μ • 1` is
-bijective, or its kernel is nontrivial and finite-dimensional. This is the
-sign-flipped form of the `μ • 1 - T` statement above, matching the book's
-`Range (A - λ)` phrasing. -/
+/-- **Fredholm alternative for compact self-adjoint operators, operator-minus-scalar form.**
+Let $H$ be a Hilbert space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact
+self-adjoint bounded operator on $H$, let $I$ be the identity of $H$, and let $\mu \in \mathbb{K}$
+with $\mu \neq 0$. Then the range of $T - \mu I$ equals the orthogonal complement
+$(\ker(T - \mu I))^\perp$ of its kernel, and either $T - \mu I$ is bijective, or its kernel is
+nonzero and finite-dimensional.
+
+This differs from the $\mu I - T$ form of the Fredholm alternative only by a sign. -/
 theorem fredholm_alternative_sub_of_isCompactOperator_isSelfAdjoint
     {T : H →L[𝕜] H} (hT : IsCompactOperator (T : H → H)) (hsa : IsSelfAdjoint T)
     {μ : 𝕜} (hμ : μ ≠ 0) :

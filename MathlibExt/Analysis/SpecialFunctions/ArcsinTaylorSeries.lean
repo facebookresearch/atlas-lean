@@ -97,24 +97,42 @@ private lemma rawTerm_norm_le (t : ℝ) (ht : ‖t‖ ≤ 1) (k : ℕ) :
       _ ≤ 1 / (((k : ℝ) + 1) ^ 2) :=
           one_div_le_one_div_of_le hqpos hbase
 
-/-- The central-binomial coefficient `C(2n,n) / 4^n`. -/
+/-- **Normalized central binomial coefficient.** For a natural number $n$, the normalized central
+binomial coefficient is the real number $c_n = \binom{2n}{n}/2^{2n} = \binom{2n}{n}/4^n$. -/
 def centralBinomialCoeff (n : ℕ) : ℝ :=
   (Nat.choose (2 * n) n : ℝ) / (2 : ℝ) ^ (2 * n)
 
-/-- The normalized central-binomial coefficients are nonnegative. -/
+/-- **Normalized central binomial coefficients are nonnegative.** For every natural number $n$,
+$0 \le \binom{2n}{n}/4^n$. -/
 lemma centralBinomialCoeff_nonneg (n : ℕ) : 0 ≤ centralBinomialCoeff n := by
   unfold centralBinomialCoeff
   positivity
 
-/-- The normalized central-binomial coefficients are at most one. -/
+/-- **Normalized central binomial coefficients are at most one.** For every natural number $n$,
+$\binom{2n}{n}/4^n \le 1$. -/
 lemma centralBinomialCoeff_le_one (n : ℕ) : centralBinomialCoeff n ≤ 1 :=
   centralBinomial_div_pow_le_one n
 
-/-- The central-binomial Taylor series for `Real.arcsin`. -/
+/-- **Arcsine Taylor series.** Let $c_n = \binom{2n}{n}/4^n$. For real $t$, the arcsine Taylor
+series is
+
+$$S(t) = \sum_{n=0}^{\infty} \frac{c_n\, t^{2n+1}}{2n+1},$$
+
+with the convention that the sum is $0$ when the series is not summable.
+-/
 def arcsinSeries (t : ℝ) : ℝ :=
   ∑' n : ℕ, centralBinomialCoeff n * t ^ (2 * n + 1) / ((2 * n + 1 : ℕ) : ℝ)
 
-/-- The termwise integral of `arcsinSeries t / t`, normalized to vanish at zero. -/
+/-- **Integrated arcsine series.** Let $c_n = \binom{2n}{n}/4^n$. For real $t$, the integrated
+arcsine series is
+
+$$F(t) = \sum_{n=0}^{\infty} \frac{c_n\, t^{2n+1}}{(2n+1)^2},$$
+
+with the convention that the sum is $0$ when the series is not summable.
+
+Each term is the antiderivative vanishing at $0$ of the corresponding term $c_n t^{2n}/(2n+1)$
+of $S(t)/t$, where $S(t) = \sum_{n \ge 0} c_n t^{2n+1}/(2n+1)$ is the arcsine Taylor series.
+-/
 def arcsinIntegralSeries (t : ℝ) : ℝ :=
   ∑' n : ℕ, centralBinomialCoeff n * t ^ (2 * n + 1) / ((2 * n + 1 : ℕ) : ℝ) ^ 2
 
@@ -326,7 +344,10 @@ private lemma arcsinSeries_hasDerivAt_sqrt {y : ℝ} (hy : ‖y‖ < 1) :
   rw [hsum.tsum_eq] at hder
   exact hder
 
-/-- The central-binomial Taylor series equals `Real.arcsin` on `(-1, 1)`. -/
+/-- **Taylor series of the arcsine.** For every real $t$ with $|t| < 1$,
+
+$$\arcsin t = \sum_{n=0}^{\infty} \frac{\binom{2n}{n}}{4^n} \cdot \frac{t^{2n+1}}{2n+1}.$$
+-/
 theorem arcsinSeries_eq_arcsin :
     Set.EqOn arcsinSeries Real.arcsin (Set.Ioo (-1 : ℝ) 1) := by
   have hopen : IsOpen (Set.Ioo (-1 : ℝ) 1) := isOpen_Ioo
@@ -371,7 +392,11 @@ private lemma arcsinIntegralSeries_term_hasDerivAt (n : ℕ) (t : ℝ) :
     field_simp
   rwa [hsimp] at hdiv
 
-/-- Rewrites a term of `arcsinIntegralSeries` without the normalized coefficient. -/
+/-- **Terms of the integrated arcsine series.** Let $c_n = \binom{2n}{n}/4^n$ be the normalized
+central binomial coefficient. For every natural number $n$ and every real $t$,
+
+$$\frac{c_n\, t^{2n+1}}{(2n+1)^2} = \frac{\binom{2n}{n}\, t^{2n+1}}{2^{2n}\,(2n+1)^2}.$$
+-/
 lemma arcsinIntegralSeries_term_eq (n : ℕ) (t : ℝ) :
     centralBinomialCoeff n * t ^ (2 * n + 1) / ((2 * n + 1 : ℕ) : ℝ) ^ 2
       = (Nat.choose (2 * n) n : ℝ) * t ^ (2 * n + 1) /
@@ -379,14 +404,18 @@ lemma arcsinIntegralSeries_term_eq (n : ℕ) (t : ℝ) :
   unfold centralBinomialCoeff
   field_simp
 
-/-- Uniform summable bound for the terms of `arcsinIntegralSeries` on `[-1, 1]`. -/
+/-- **Bound on the terms of the integrated arcsine series.** Write $c_k = \binom{2k}{k}/4^k$ for
+the normalized central binomial coefficient. For every real number $t$ with $|t| \le 1$ and every
+natural number $k$, $\left|\frac{c_k\, t^{2k+1}}{(2k+1)^2}\right| \le \frac{1}{(k+1)^2}$. -/
 lemma norm_arcsinIntegralSeries_term_le (t : ℝ) (ht : ‖t‖ ≤ 1) (k : ℕ) :
     ‖centralBinomialCoeff k * t ^ (2 * k + 1) / ((2 * k + 1 : ℕ) : ℝ) ^ 2‖ ≤
       (1 : ℝ) / (((k : ℝ) + 1) ^ 2) := by
   rw [arcsinIntegralSeries_term_eq]
   exact rawTerm_norm_le t ht k
 
-/-- The terms defining `arcsinIntegralSeries` are summable on the closed unit interval. -/
+/-- **Summability of the integrated arcsine series.** Write $c_n = \binom{2n}{n}/4^n$ for the
+normalized central binomial coefficient. For every real number $t$ with $|t| \le 1$, the series
+$\sum_{n=0}^{\infty} \frac{c_n\, t^{2n+1}}{(2n+1)^2}$ converges absolutely. -/
 theorem summable_arcsinIntegralSeries_term (t : ℝ) (ht : ‖t‖ ≤ 1) :
     Summable (fun n : ℕ =>
       centralBinomialCoeff n * t ^ (2 * n + 1) / ((2 * n + 1 : ℕ) : ℝ) ^ 2) := by
@@ -394,7 +423,8 @@ theorem summable_arcsinIntegralSeries_term (t : ℝ) (ht : ‖t‖ ≤ 1) :
   exact Summable.of_nonneg_of_le (fun n => norm_nonneg _)
     (fun n => norm_arcsinIntegralSeries_term_le t ht n) summable_one_div_nat_add_one_sq
 
-/-- The integrated arcsine series vanishes at zero. -/
+/-- **The integrated arcsine series vanishes at the origin.** The integrated arcsine series
+$F(t) = \sum_{n \ge 0} \binom{2n}{n} 4^{-n}\, t^{2n+1}/(2n+1)^2$ satisfies $F(0) = 0$. -/
 @[simp] theorem arcsinIntegralSeries_zero : arcsinIntegralSeries 0 = 0 := by
   unfold arcsinIntegralSeries
   have hzero : (fun n : ℕ => centralBinomialCoeff n * (0 : ℝ) ^ (2 * n + 1) /
@@ -405,7 +435,9 @@ theorem summable_arcsinIntegralSeries_term (t : ℝ) (ht : ‖t‖ ≤ 1) :
     simp
   rw [hzero, tsum_zero]
 
-/-- The integrated arcsine series is continuous on the closed interval `[-1, 1]`. -/
+/-- **Continuity of the integrated arcsine series.** The integrated arcsine series
+$F(t) = \sum_{n \ge 0} \binom{2n}{n} 4^{-n}\, t^{2n+1}/(2n+1)^2$ is continuous on the closed
+interval $[-1, 1]$. -/
 theorem continuousOn_arcsinIntegralSeries :
     ContinuousOn arcsinIntegralSeries (Set.Icc (-1 : ℝ) 1) := by
   apply continuousOn_tsum (fun n => ?_) summable_one_div_nat_add_one_sq (fun n x hx => ?_)
@@ -492,7 +524,9 @@ private lemma norm_lt_one_mem_Ioo (y : ℝ) (hy : ‖y‖ < 1) : y ∈ Set.Ioo (
   rw [Set.mem_Ioo]
   constructor <;> linarith [hy.1, hy.2]
 
-/-- The terms defining `arcsinSeries` are summable in the open unit interval. -/
+/-- **Summability of the arcsine series.** Write $c_n = \binom{2n}{n}/4^n$ for the normalized
+central binomial coefficient. For every real number $y$ with $|y| < 1$, the series
+$\sum_{n=0}^{\infty} \frac{c_n\, y^{2n+1}}{2n+1}$ converges absolutely. -/
 theorem summable_arcsinSeries_term {y : ℝ} (hy : ‖y‖ < 1) :
     Summable (fun n : ℕ => centralBinomialCoeff n * y ^ (2 * n + 1) / ((2 * n + 1 : ℕ) : ℝ)) := by
   have hr1 : (‖y‖ + 1) / 2 < 1 := by
@@ -540,8 +574,10 @@ theorem summable_arcsinSeries_term {y : ℝ} (hy : ‖y‖ < 1) :
             _ = ((((‖y‖ + 1) / 2) ^ 2) ^ n) := by
               exact pow_mul _ 2 n
 
-/-- The derivative of the integrated arcsine series is `Real.arcsin y / y`
-for nonzero `y` in the open unit interval. -/
+/-- **Derivative of the integrated arcsine series.** Let
+$F(t) = \sum_{n \ge 0} \binom{2n}{n} 4^{-n}\, t^{2n+1}/(2n+1)^2$ be the integrated arcsine
+series. For every real $y$ with $|y| < 1$ and $y \neq 0$, $F$ is differentiable at $y$ with
+$F'(y) = \arcsin(y)/y$. -/
 theorem hasDerivAt_arcsinIntegralSeries {y : ℝ} (hy : ‖y‖ < 1) (hy0 : y ≠ 0) :
     HasDerivAt arcsinIntegralSeries (Real.arcsin y / y) y := by
   have hr1 : (‖y‖ + 1) / 2 < 1 := by

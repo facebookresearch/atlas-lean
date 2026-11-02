@@ -83,13 +83,18 @@ def chapter8UnitPow (x : ℂ) (u : ℝ) : ℂ :=
 def chapter8UnitPowRatio (x : ℂ) (u : ℝ) : ℂ :=
   chapter8UnitPow x u / (1 + chapter8UnitPow x u)
 
-/-- The wishlist digamma is the canonical `Complex.digamma`. -/
+/-- **Digamma as the logarithmic derivative of Gamma (Chapter 8, Entry 9).** For every complex
+number $z$, $\Gamma'(z)/\Gamma(z) = \psi(z)$, where $\Gamma'$ is the complex derivative of the
+Gamma function and $\psi$ is the digamma function. At the poles of $\Gamma$ both sides are $0$ by
+convention. -/
 theorem chapter8Digamma_eq_digamma (z : ℂ) :
     chapter8Digamma z = Complex.digamma z := by
   unfold chapter8Digamma
   rw [Complex.digamma_def, logDeriv_apply]
 
-/-- On `(0, ∞)` the unit power is the standard `Complex.cpow`. -/
+/-- **The Entry 9 power function on positive reals (Chapter 8).** For a complex number $x$ and a
+real number $u$, let $p_x(u) = e^{x \log\lvert u\rvert}$ if $u \ne 0$ and $p_x(0) = 0$. If $u > 0$,
+then $p_x(u) = u^x$, the principal complex power of $u$. -/
 theorem chapter8UnitPow_eq_cpow (x : ℂ) (u : ℝ) (hu : 0 < u) :
     chapter8UnitPow x u = (u : ℂ) ^ x := by
   have hune : u ≠ 0 := ne_of_gt hu
@@ -1797,9 +1802,17 @@ private theorem entry9_hkey_all {x : ℂ} (hx : 0 < x.re) :
   simp only at hFG
   exact hFG.symm
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
+/-- **Ramanujan's integral for the digamma function (Chapter 8, Entry 9).** Let $x$ be a complex
+number with $\operatorname{Re} x > 0$, and for real $u$ write $u^x = e^{x \log u}$ if $u > 0$ and
+$0^x = 0$. Let $\psi$ be the digamma function. Then $x \ne 0$; the function
+$u \mapsto u^x/(1 + u^x)$ is integrable on $[0, 1]$; $1 + u^x \ne 0$ for every $u \in [0, 1]$;
+$\Gamma(1/(2x) + 1) \ne 0$ and $\Gamma(1/x + 1) \ne 0$; and
+$$
+\psi\Bigl(\frac{1}{2x} + 1\Bigr) = \psi\Bigl(\frac{1}{x} + 1\Bigr) - \log 2 +
+x \int_0^1 \frac{u^x}{1 + u^x}\,du.
+$$
 
-Canonical-`Complex.digamma` form of `ramanujan_part1_ch8_entry9_qgamma`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
 -/
 theorem ramanujan_part1_ch8_entry9_qgamma_digamma (x : ℂ) (hx : 0 < x.re) :
     x ≠ 0 ∧
@@ -1828,9 +1841,17 @@ theorem ramanujan_part1_ch8_entry9_qgamma_digamma (x : ℂ) (hx : 0 < x.re) :
     rw [hdup, hlog2]
     linear_combination hkey
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
+/-- **Ramanujan's integral for $\Gamma'/\Gamma$ (Chapter 8, Entry 9).** Let $x$ be a complex number
+with $\operatorname{Re} x > 0$, and for real $u$ write $u^x = e^{x \log u}$ if $u > 0$ and
+$0^x = 0$. Write $\Gamma'$ for the complex derivative of the Gamma function. Then $x \ne 0$; the
+function $u \mapsto u^x/(1 + u^x)$ is integrable on $[0, 1]$; $1 + u^x \ne 0$ for every
+$u \in [0, 1]$; $\Gamma(1/(2x) + 1) \ne 0$ and $\Gamma(1/x + 1) \ne 0$; and
+$$
+\frac{\Gamma'}{\Gamma}\Bigl(\frac{1}{2x} + 1\Bigr) =
+\frac{\Gamma'}{\Gamma}\Bigl(\frac{1}{x} + 1\Bigr) - \log 2 + x \int_0^1 \frac{u^x}{1 + u^x}\,du.
+$$
 
-Proves `Wanted` entry `ramanujan_part1_ch8_entry9_qgamma`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
 -/
 theorem ramanujan_part1_ch8_entry9_qgamma (x : ℂ) (hx : 0 < x.re) :
     x ≠ 0 ∧

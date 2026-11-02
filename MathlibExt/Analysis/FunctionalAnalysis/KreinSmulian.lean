@@ -791,12 +791,16 @@ private lemma ks_zero_notMem_closure {𝕜 : Type*} [RCLike 𝕜] {E : Type*}
   linarith
 
 /--
-For a Banach space over `ℝ` or `ℂ` and `C ⊆ WeakDual 𝕜 E` convex over `ℝ`, `C` is weak-star closed
-iff for every `r > 0` the intersection with each norm ball is weak-star closed. Source: M. Krein
-and V. Smulian, Ann. of Math. 41 (1940) 556-583; Dunford-Schwartz I; Lean states `RCLike` Banach
-case with `Convex ℝ s` and closedBall intersections.
+**Krein–Smulian theorem.** Let $E$ be a Banach space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, and let $C$ be a subset of its dual $E^*$ that is convex over $\mathbb{R}$. Then $C$
+is weak-star closed if and only if, for every $r > 0$, the set
+$\{\varphi \in C : \|\varphi\| \le r\}$ is weak-star closed.
 
-Proves `Wanted` entry `krein_smulian`. -/
+Proves `Wanted` entry `krein_smulian`.
+
+Source: M. Krein
+and V. Smulian, Ann. of Math. 41 (1940) 556-583; Dunford-Schwartz I; Lean states `RCLike` Banach
+case with `Convex ℝ s` and closedBall intersections. -/
 theorem krein_smulian
     {𝕜 : Type*} [RCLike 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace E]

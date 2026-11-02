@@ -66,7 +66,10 @@ open MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The geometric vector `(1, c, c², …)` is in `ℓ²` when `‖c‖ < 1`. -/
+/-- **Geometric sequences with ratio of norm less than one are square-summable.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let $c \in \mathbb{K}$ with $\|c\| < 1$. Then
+the sequence $(c^i)_{i \in \mathbb{N}}$ lies in $\ell^2$, that is,
+$\sum_{i} \|c^i\|^2 < \infty$. -/
 theorem memℓp_geometric {c : 𝕜} (hc : ‖c‖ < 1) : Memℓp (fun i : ℕ => c ^ i) 2 := by
   apply memℓp_gen
   have hsq : ‖c‖ ^ 2 < 1 := (sq_lt_one_iff₀ (norm_nonneg _)).mpr hc
@@ -80,24 +83,33 @@ theorem memℓp_geometric {c : 𝕜} (hc : ‖c‖ < 1) : Memℓp (fun i : ℕ =
   rw [heq]
   exact hsum
 
-/-- The geometric vector `(1, c, c², …)` in `ℓ²(ℕ, 𝕜)`, for `‖c‖ < 1`. -/
+/-- **Geometric vector.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let
+$c \in \mathbb{K}$ with $\|c\| < 1$. The geometric vector of $c$ is the sequence
+$(1, c, c^2, \dots)$, that is $i \mapsto c^i$, regarded as an element of the Hilbert space
+$\ell^2(\mathbb{N}, \mathbb{K})$ of square-summable sequences. -/
 noncomputable def geometricVec {c : 𝕜} (hc : ‖c‖ < 1) : ℓ²(ℕ, 𝕜) :=
   ⟨fun i => c ^ i, memℓp_geometric hc⟩
 
-/-- Pointwise action of the geometric vector. -/
+/-- **Coordinates of the geometric vector.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and
+let $c \in \mathbb{K}$ with $\|c\| < 1$. For every $i \in \mathbb{N}$, the $i$-th coordinate of
+the geometric vector of $c$ in $\ell^2(\mathbb{N}, \mathbb{K})$ is $c^i$. -/
 theorem geometricVec_apply {c : 𝕜} (hc : ‖c‖ < 1) (i : ℕ) :
     geometricVec hc i = c ^ i :=
   rfl
 
-/-- The geometric vector is nonzero: its `0`-th coordinate is `1`. -/
+/-- **The geometric vector is nonzero.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let
+$c \in \mathbb{K}$ with $\|c\| < 1$. The geometric vector $(1, c, c^2, \dots)$ in
+$\ell^2(\mathbb{N}, \mathbb{K})$ is nonzero, since its $0$-th coordinate is $1$. -/
 theorem geometricVec_ne_zero {c : 𝕜} (hc : ‖c‖ < 1) : geometricVec hc ≠ 0 := by
   intro h
   have h0 := congr_fun (congr_arg (fun z : ℓ²(ℕ, 𝕜) => (z : ℕ → 𝕜)) h) 0
   rw [geometricVec_apply] at h0
   simp at h0
 
-/-- The geometric vector is an eigenvector of the backward shift:
-`B v = c • v`. -/
+/-- **Backward shift of the geometric vector.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
+and let $c \in \mathbb{K}$ with $\|c\| < 1$. Let $v = (1, c, c^2, \dots)$ be the geometric vector
+of $c$ in $\ell^2(\mathbb{N}, \mathbb{K})$ and let $B$ be the backward shift on
+$\ell^2(\mathbb{N}, \mathbb{K})$. Then $Bv = c\,v$. -/
 theorem backwardCLM_geometricVec {c : 𝕜} (hc : ‖c‖ < 1) :
     backwardCLM (geometricVec hc) = c • geometricVec hc := by
   apply lp.ext
@@ -105,22 +117,33 @@ theorem backwardCLM_geometricVec {c : 𝕜} (hc : ‖c‖ < 1) :
   simp only [backwardCLM_apply, backwardFun_apply, geometricVec_apply,
     lp.coeFn_smul, Pi.smul_apply, smul_eq_mul, pow_succ']
 
-/-- The operator norm of the identity on `ℓ²(ℕ, 𝕜)` is at most `1`. -/
+/-- **The identity on ℓ²(ℕ) has norm at most one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. The operator norm of the identity operator on $\ell^2(\mathbb{N}, \mathbb{K})$ is
+at most $1$. -/
 theorem norm_one_le : ‖(1 : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜))‖ ≤ 1 :=
   ContinuousLinearMap.opNorm_le_bound _ (by norm_num : (0 : ℝ) ≤ 1)
     (fun x => by simp [one_apply_eq_self])
-/-- Applying `μ • 1 - T` to a vector, where `μ • 1` is the scalar
-operator from the algebra structure on continuous linear maps. -/
+/-- **Applying a scalar operator minus an operator on ℓ²(ℕ).** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, let $T$ be a bounded linear operator on $\ell^2(\mathbb{N}, \mathbb{K})$, let
+$\mu \in \mathbb{K}$, and let $\mu I$ be the image of $\mu$ under the algebra map from $\mathbb{K}$
+into the bounded operators, i.e. $\mu$ times the identity $I$. Then $(\mu I - T)x = \mu x - Tx$
+for every $x \in \ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem algebraMap_sub_apply (T : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜)) (μ : 𝕜)
     (x : ℓ²(ℕ, 𝕜)) :
     (algebraMap 𝕜 (ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜)) μ - T) x = μ • x - T x := by
   rw [Algebra.algebraMap_eq_smul_one]
   simp only [sub_apply, smul_apply, one_apply_eq_self]
 
-/-- Every point of the open unit ball is in the spectrum of the
-unilateral shift: if `μ • 1 - S` were a unit, it would be surjective, but
-pairing `(μ • 1 - S) x = v` against the geometric eigenvector `v` of
-`B` with eigenvalue `star μ` gives `‖v‖² = 0`. -/
+/-- **The open unit ball lies in the spectrum of the unilateral shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $S$ be the unilateral shift on
+$\ell^2(\mathbb{N}, \mathbb{K})$. Every $\mu \in \mathbb{K}$ with $\|\mu\| < 1$ lies in the
+spectrum of $S$ in the algebra of bounded operators on $\ell^2(\mathbb{N}, \mathbb{K})$.
+
+Indeed, write $I$ for the identity operator. If $\mu I - S$ were invertible it would be
+surjective, so $(\mu I - S)x = v$ for some $x$, where $v = (1, \bar\mu, \bar\mu^2, \dots)$ is the
+geometric vector of the conjugate $\bar\mu$. Since the adjoint of $S$ is the backward shift $B$
+and $Bv = \bar\mu v$, pairing $(\mu I - S)x = v$ with $v$ gives $\|v\|^2 = 0$, contradicting
+$v \neq 0$. -/
 theorem mem_spectrum_shiftCLM_of_norm_lt {μ : 𝕜} (hμ : ‖μ‖ < 1) :
     μ ∈ spectrum 𝕜 (shiftCLM (𝕜 := 𝕜)) := by
   have hc : ‖star μ‖ < 1 := by rwa [norm_star]
@@ -141,9 +164,13 @@ theorem mem_spectrum_shiftCLM_of_norm_lt {μ : 𝕜} (hμ : ‖μ‖ < 1) :
   exact geometricVec_ne_zero hc
     (inner_self_eq_zero.mp (hinner.symm.trans hLHS))
 
-/-- Every point of the open unit ball is in the spectrum of the
-backward shift: the geometric vector is in the kernel of `μ • 1 - B`,
-so `μ • 1 - B` is not injective, hence not a unit. -/
+/-- **The open unit ball lies in the spectrum of the backward shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $B$ be the backward shift on $\ell^2(\mathbb{N}, \mathbb{K})$.
+Every $\mu \in \mathbb{K}$ with $\|\mu\| < 1$ lies in the spectrum of $B$ in the algebra of
+bounded operators on $\ell^2(\mathbb{N}, \mathbb{K})$.
+
+Indeed, writing $I$ for the identity operator, the geometric vector $(1, \mu, \mu^2, \dots)$ lies
+in the kernel of $\mu I - B$, so $\mu I - B$ is not injective, hence not invertible. -/
 theorem mem_spectrum_backwardCLM_of_norm_lt {μ : 𝕜} (hμ : ‖μ‖ < 1) :
     μ ∈ spectrum 𝕜 (backwardCLM (𝕜 := 𝕜)) := by
   rw [spectrum.mem_iff]
@@ -156,7 +183,9 @@ theorem mem_spectrum_backwardCLM_of_norm_lt {μ : 𝕜} (hμ : ‖μ‖ < 1) :
     rw [algebraMap_sub_apply, backwardCLM_geometricVec hμ, sub_self]
   exact geometricVec_ne_zero hμ (hinj (by rw [hmap, map_zero]))
 
-/-- The spectrum of the unilateral shift is the closed unit ball. -/
+/-- **Spectrum of the unilateral shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+The spectrum over $\mathbb{K}$ of the unilateral shift on $\ell^2(\mathbb{N}, \mathbb{K})$
+is the closed unit ball $\{\mu \in \mathbb{K} : |\mu| \le 1\}$ of $\mathbb{K}$. -/
 theorem spectrum_shiftCLM :
     spectrum 𝕜 (shiftCLM (𝕜 := 𝕜)) = Metric.closedBall 0 1 := by
   apply Subset.antisymm
@@ -176,7 +205,10 @@ theorem spectrum_shiftCLM :
     exact mem_spectrum_shiftCLM_of_norm_lt (by
       simpa [Metric.mem_ball, dist_eq_norm] using hμ)
 
-/-- The spectrum of the backward shift is the closed unit ball. -/
+/-- **Spectrum of the backward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+spectrum of the backward shift on $\ell^2(\mathbb{N}, \mathbb{K})$, in the algebra of bounded
+operators, is the closed unit ball $\{\mu \in \mathbb{K} : \|\mu\| \le 1\}$: the closed unit
+disc when $\mathbb{K} = \mathbb{C}$ and the interval $[-1, 1]$ when $\mathbb{K} = \mathbb{R}$. -/
 theorem spectrum_backwardCLM :
     spectrum 𝕜 (backwardCLM (𝕜 := 𝕜)) = Metric.closedBall 0 1 := by
   apply Subset.antisymm

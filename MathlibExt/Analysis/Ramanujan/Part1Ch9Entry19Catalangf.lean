@@ -1595,9 +1595,13 @@ private theorem chap9D_eq_zero {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4
     | inr hden =>
       exact absurd hden hne
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **The central binomial series in $\cos x$ plus that in $\sin x$.** Let $x$ be a real number
+with $0 \le x \le \pi/4$. Then $2\cos x > 0$, the series
+$C(x) = \sum_{k=0}^{\infty} \binom{2k}{k} \frac{\cos^{2k+1} x + \sin^{2k+1} x}
+{2^{2k} (2k+1)^2}$ and $T(x) = \sum_{k=0}^{\infty} (-1)^k \frac{\tan^{2k+1} x}{(2k+1)^2}$ are
+both summable, and $C(x) = \frac{\pi}{2} \log(2\cos x) + T(x)$.
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry19_catalangf`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry19_catalangf (x : ℝ)
     (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :
