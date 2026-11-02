@@ -14,9 +14,9 @@ public import Mathlib
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.P5Equivalences`
 
-* All four components of `rp5_p5_equiv` for the constant model `μ ξ n S = ν R n S = 1/2`, which
-  satisfies every hypothesis (`hcmp`, `hglue`, `hchain`, `htwo`); `rp5_P5a`, `rp5_P5b` and `P5`
-  hold for it.
+* All three components of `rp5_p5_equiv` for the constant model `μ ξ n S = ν R n S = 1/2`, which
+  satisfies every hypothesis (`hcmp`, `hglue`, `hchain`); `rp5_P5a`, `rp5_P5b` and `P5`
+  hold for it. No `P5 ↔ P5c` component is claimed.
 * `rp5_p5b_p5_upper` for the same constant model.
 -/
 
@@ -35,20 +35,15 @@ theorem half_P5b : rp5_P5b (fun _ => half) := fun _ _ => ⟨1 / 2, by norm_num, 
 
 theorem half_P5 : P5 half := fun _ _ => ⟨1 / 2, by norm_num, fun _ => le_rfl⟩
 
-theorem half_htwo : ∀ α : ℝ, 0 < α → ∃ c : ℝ, 0 < c ∧ ∀ (_ : Unit) (n : ℕ),
-    c ≤ half n (boxCrossingEvent α n) ∧ half n (boxCrossingEvent α n) ≤ 1 - c :=
-  fun _ _ => ⟨1 / 2, by norm_num, fun _ _ => by simp only [half]; norm_num⟩
-
 theorem half_equiv :
     (P5 half ↔ rp5_P5a half) ∧ (rp5_P5a half → rp5_P5b (fun _ => half)) ∧
-      (rp5_P5b (fun _ => half) → P5 half) ∧ (P5 half ↔ P5c (fun (_ : Unit) => half)) :=
+      (rp5_P5b (fun _ => half) → P5 half) :=
   rp5_p5_equiv (Ξ := Unit) (μ := fun _ => half) (ν := fun _ => half) ()
-    (fun _ _ => le_rfl) (fun _ => by simp only [half]; norm_num) (fun _ _ => le_rfl) half_htwo
+    (fun _ _ => le_rfl) (fun _ => by simp only [half]; norm_num) (fun _ _ => le_rfl)
 
 example : P5 half ↔ rp5_P5a half := half_equiv.1
 example : rp5_P5b (fun _ => half) := half_equiv.2.1 half_P5a
-example : P5 half := half_equiv.2.2.1 half_P5b
-example : P5c (fun (_ : Unit) => half) := half_equiv.2.2.2.mp half_P5
+example : P5 half := half_equiv.2.2 half_P5b
 
 example : ∀ n : ℕ, half n (boxCrossingEvent 2 n) ≤ 1 - 1 / 2 :=
   rp5_p5b_p5_upper (compl := half) (by norm_num) (fun _ => by simp only [half]; norm_num)

@@ -31,8 +31,10 @@ conditions) is proved here.
 
 ## Main results
 
-* `StatMech.RSW.Box.rp5_p5_equiv`: under the hypotheses `hcmp`, `hglue`, `hchain`, `htwo`,
-  `P5 ↔ P5a`, `P5a → P5b`, `P5b → P5` and `P5 ↔ P5c`.
+* `StatMech.RSW.Box.rp5_p5_equiv`: under the hypotheses `hcmp`, `hglue`, `hchain`,
+  `P5 ↔ P5a`, `P5a → P5b` and `P5b → P5`. No `P5 ↔ P5c` component is claimed: the
+  two-sided form `P5c` is defined in `Defs`, and `P5c.p5` gives `P5c → P5`, but an
+  equivalence would need non-circular comparison hypotheses, which are not proved here.
 
 ## Implementation notes
 
@@ -133,22 +135,15 @@ theorem rp5_p5b_p5_upper
   have hd := hdual n
   linarith
 
-/-- `P5c` from its own defining property: the hypothesis `hlower` is `P5c μ` unfolded. -/
-theorem rp5_p5_p5c
-    {Ξ : Type*} {μ : Ξ → ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
-    (hlower : ∀ α : ℝ, 0 < α → ∃ c : ℝ, 0 < c ∧ ∀ (ξ : Ξ) (n : ℕ),
-      c ≤ μ ξ n (boxCrossingEvent α n) ∧ μ ξ n (boxCrossingEvent α n) ≤ 1 - c) :
-    P5c μ := hlower
-
-/-- Abstract form of the equivalence of the box-crossing properties `P5`, `P5a`, `P5b`, `P5c`
-(Duminil-Copin–Tassion). For set functions `μ ξ n`, `ν R n` it gives `P5 ↔ P5a`, `P5a → P5b`,
-`P5b → P5` and `P5 ↔ P5c` for the base point `ξ₀`.
+/-- Abstract form of the equivalence of the box-crossing properties `P5`, `P5a`, `P5b`
+(Duminil-Copin–Tassion). For set functions `μ ξ n`, `ν R n` it gives `P5 ↔ P5a`, `P5a → P5b`
+and `P5b → P5` for the base point `ξ₀`.
 
 The hypotheses carry the content: `hcmp` (boundary-condition comparison), `hglue` (four
-crossings make a circuit), `hchain` (a circuit bound for crossings of every aspect ratio, with one
-constant for all `α`; not satisfied by genuine Bernoulli measures with `0 < p < 1`, see the module
-docstring) and `htwo`. The hypothesis `htwo` *is* `P5c μ`, so the last component `P5 ↔ P5c` is
-immediate and carries no information. -/
+crossings make a circuit) and `hchain` (a circuit bound for crossings of every aspect ratio, with
+one constant for all `α`; not satisfied by genuine Bernoulli measures with `0 < p < 1`, see the
+module docstring). No `P5 ↔ P5c` component is included: the only hypothesis that would prove it
+is `P5c μ` itself, which would make the component circular. -/
 theorem rp5_p5_equiv
     {Ξ : Type*} (ξ₀ : Ξ)
     {μ : Ξ → ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
@@ -157,22 +152,17 @@ theorem rp5_p5_equiv
     (hglue : ∀ n : ℕ,
       (μ ξ₀ n (boxCrossingEvent 10 n)) ^ 4 ≤ μ ξ₀ n (annulusEvent n))
     (hchain : ∀ (α : ℝ) (n : ℕ),
-      ν 2 n (annulusEvent n) ≤ μ ξ₀ n (boxCrossingEvent α n))
-    (htwo : ∀ α : ℝ, 0 < α → ∃ c : ℝ, 0 < c ∧ ∀ (ξ : Ξ) (n : ℕ),
-      c ≤ μ ξ n (boxCrossingEvent α n) ∧ μ ξ n (boxCrossingEvent α n) ≤ 1 - c) :
+      ν 2 n (annulusEvent n) ≤ μ ξ₀ n (boxCrossingEvent α n)) :
     (P5 (μ ξ₀) ↔ rp5_P5a (μ ξ₀)) ∧
     (rp5_P5a (μ ξ₀) → rp5_P5b ν) ∧
-    (rp5_P5b ν → P5 (μ ξ₀)) ∧
-    (P5 (μ ξ₀) ↔ P5c μ) := by
-  refine ⟨⟨?_, ?_⟩, ?_, ?_, ⟨?_, ?_⟩⟩
+    (rp5_P5b ν → P5 (μ ξ₀)) := by
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
   · intro h; exact rp5_p5_p5a hglue h
   · intro h
     have hb : rp5_P5b ν := rp5_p5a_p5b hcmp h
     exact rp5_p5b_p5_lower hchain hb
   · intro h; exact rp5_p5a_p5b hcmp h
   · intro h; exact rp5_p5b_p5_lower hchain h
-  · intro _; exact rp5_p5_p5c htwo
-  · intro h; exact h.p5 ξ₀
 
 end Box
 
