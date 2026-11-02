@@ -23,12 +23,11 @@ below `p̃_c = p_c` the one-arm probability decays exponentially.
   `p = 1/2`, and tends to `0` whenever the one-arm probability decays exponentially, then no
   `p > 1/2` lies below `p̃_c`.
 
-The lower half / equality capstones were removed: they rested on `hpercToOne`, which together
-with `hdualHalf` is equivalent to `θ(1/2) = 0`, so they assumed Harris's theorem.
-
 The name `KestenPcEqHalf` refers to the use of the proved sharpness theorem instead of a sharpness
 hypothesis; the statement is **not** unconditional: it takes `cross` and the hypotheses
-`hmono`, `hdualHalf`, `hdecayToZero`.
+`hmono`, `hdualHalf`, `hdecayToZero`. There is no lower-half (`1/2 ≤ p_c`) or combined
+`p_c(2) = 1/2` capstone here: an earlier combined capstone used hypotheses equivalent to
+Harris's theorem `θ(1/2) = 0` and was removed.
 
 ## Main results
 
@@ -38,10 +37,9 @@ hypothesis; the statement is **not** unconditional: it takes `cross` and the hyp
 
 Since `cross` is arbitrary, the hypotheses are close to the conclusion: with
 `cross p n = 1/2` for `p ≤ 1/2` and `1` for `p > 1/2`, `hmono` and `hdualHalf` hold and
-`hdecayToZero` says that the one-arm probability does not decay exponentially for `p > 1/2`.
-No instance of `cross` is constructed in the library. For the intended instance
-(`cross p n` the probability of a left–right crossing of an `(n + 1) × n` rectangle) the
-missing inputs are:
+`hdecayToZero` says that the one-arm probability does not decay exponentially for `p > 1/2`. No
+instance of `cross` is constructed in the library. For the intended instance (`cross p n` the
+probability of a left–right crossing of an `(n + 1) × n` rectangle) the missing inputs are:
 
 * `hdualHalf`: self-duality of that rectangle at `p = 1/2` (the planar-duality dichotomy);
 * `hmono`: monotonicity of an increasing event in `p` (standard coupling);

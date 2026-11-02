@@ -21,10 +21,13 @@ gives a crossing in `dualConfig ω`.
 
 The barrier graph lives in the rotated square `rect (-n) 0 0 n`, which meets `rect 0 n 0 n` only
 in the column `x = 0`. Consequently a *barrier route* (a barrier walk from the bottom to the top
-side of `rect 0 n 0 n` inside that square, `dcw_BarrierRoute`) is very restrictive: the
-hypothesis that a barrier route exists whenever there is no horizontal crossing is false for
-every `n ≥ 2` (`bcc_square_dichotomy_hyp_false`), so no square-dichotomy theorem is exported
-from this file. The rotated-square version is `dcp_DualCutConnectsRot`.
+side of `rect 0 n 0 n` inside that square, `dcw_BarrierRoute`) is very restrictive. A former
+`dcw_square_dichotomy` theorem, stating a same-box dichotomy from "a barrier route whenever there
+is no horizontal crossing", was removed: that hypothesis is false for every `n ≥ 2`
+(`bcc_square_dichotomy_hyp_false`), and the stated conclusion itself is false at `n = 2`
+(`bcc_dichotomy_false`), because `dualConfig` is the dual only up to a quarter turn. Only the
+barrier-route machinery and the counterexamples are retained. The rotated-square version is
+`dcp_DualCutConnectsRot`.
 
 ## Main definitions
 

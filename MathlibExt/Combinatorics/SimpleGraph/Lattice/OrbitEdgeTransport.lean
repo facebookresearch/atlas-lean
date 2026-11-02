@@ -31,7 +31,7 @@ face-boundary graph.
 
 * `StatMech.Lattice.icb_not_unitEdgeTransport_of_finite`: `UnitEdgeOrbitTransport K` is false for
   every finite nonempty `K`.
-* `StatMech.Lattice.icb_exitFaces_reachable_of_interfaceConnected`: for the origin cluster, under
+* `StatMech.Lattice.icb_exitFaces_reachable_of_traceSurjective`: for the origin cluster, under
   `InterfaceConnected` and with both exit heads outside a box containing the cluster, the two exit
   faces are connected in the face-boundary graph (via `exitDart_sameOrbit_of_far`).
 -/
@@ -134,7 +134,7 @@ theorem icb_not_unitEdgeTransport_of_finite (K : Set (Site 2)) (hK : K.Finite)
 /-- Under the hypotheses of `exitDart_sameOrbit_of_far`, the upper face of the right
 exit and the lower face of the left exit are connected in the face-boundary graph of the origin
 cluster. -/
-theorem icb_exitFaces_reachable_of_interfaceConnected (hfin : (cluster 2 ω (origin 2)).Finite)
+theorem icb_exitFaces_reachable_of_traceSurjective (hfin : (cluster 2 ω (origin 2)).Finite)
     (hsurj : InterfaceConnected (cluster 2 ω (origin 2)))
     (R : ℕ) (hR : cluster 2 ω (origin 2) ⊆ box 2 R)
     (hr : (exitDart (ω := ω) hfin).head ∈ exterior 2 R)

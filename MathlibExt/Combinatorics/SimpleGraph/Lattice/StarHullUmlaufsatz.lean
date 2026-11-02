@@ -21,6 +21,11 @@ orbit turns by exactly one full revolution: its total signed turning is `4` or `
 (`TurningIsFullRevolution`). This file collects the forms of that statement available for star
 hulls; none of them is an unconditional proof.
 
+The former `shu_turningIsFullRevolution_of_eulerCharOne` was removed: it assumed `EulerCharOne`,
+which for orbits of length at least three is equivalent to the conclusion
+(`shu_eulerCharOne_iff_balanceIsFour` together with `simplePolygonCornerBalance_iff`), so it was
+a restatement rather than a mathematical result.
+
 An unconditional discrete Umlaufsatz for simple closed lattice walks, stated for direction
 sequences, is `StatMech.Onsager.GeneralUmlaufsatz.turnSum_eq_four_or_neg_four`; it is not connected
 to boundary orbits here.

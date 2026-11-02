@@ -15,10 +15,9 @@ public import MathlibExt.Probability.Percolation.Universality.PlanarDualCutConne
 `dualConfig ω` declares an edge `e` open when its inverse quarter turn `crossEdge.symm e` is closed
 in `ω`. It is the dual configuration only up to a rotation about the origin, so a crossing of
 `rect 0 n 0 n` in `dualConfig ω` is not a dual crossing of the same square. This file shows that
-the naive dichotomy built on it is false, and that the barrier-route hypothesis that a barrier
-route exists whenever there is no horizontal crossing cannot hold for every configuration
-once `n ≥ 2` (a square-dichotomy theorem with that hypothesis was removed from
-`DualCircuitToWalk`).
+the naive dichotomy built on it is false, and that the barrier-route hypothesis of the former
+`dcw_square_dichotomy` (removed from `DualCircuitToWalk`) cannot hold for every configuration
+once `n ≥ 2`.
 
 It also sets up the dual analogue of the left-reach set: the sites joined to the bottom side by a
 path open in `dualConfig ω` inside the square, and its separation property.
@@ -37,8 +36,8 @@ path open in `dualConfig ω` inside the square, and its separation property.
   implies a vertical crossing in `dualConfig ω`" fails (witness `bcc_wallCfg`).
 * `StatMech.Universality.bcc_barrierRoute_false`: for `n ≥ 2` the all-closed configuration has no
   barrier route in the sense of `dcw_BarrierRoute`.
-* `StatMech.Universality.bcc_square_dichotomy_hyp_false`: for `n ≥ 2` the barrier-route
-  hypothesis of the removed square-dichotomy statement is false.
+* `StatMech.Universality.bcc_square_dichotomy_hyp_false`: for `n ≥ 2` the hypothesis of the
+  former `dcw_square_dichotomy` is false.
 * `StatMech.Universality.bcc_dualReach_separates`: without a vertical crossing in `dualConfig ω`,
   the dual bottom-reach set separates the bottom side from the top side.
 -/
@@ -263,8 +262,8 @@ theorem bcc_barrierRoute_false (n : ℤ) (hn : 2 ≤ n) : ¬ dcw_BarrierRoute bc
   have hsnd := bcc_barrier_walk_snd_le c (by rw [hp0]; norm_num) q₀ c.end_mem_support
   omega
 
-/-- The barrier-route hypothesis of the removed square-dichotomy statement is false for
-every `n ≥ 2`: the all-closed configuration has no horizontal crossing and no barrier route. -/
+/-- The hypothesis of the former `dcw_square_dichotomy` is false for every `n ≥ 2`: the all-closed
+configuration has no horizontal crossing and no barrier route. -/
 theorem bcc_square_dichotomy_hyp_false (n : ℤ) (hn : 2 ≤ n) :
     ¬ ∀ ω : ConfigSpace (Sym2 (Site 2)),
       ¬ HorizontalCrossing ω 0 n 0 n → dcw_BarrierRoute ω n :=

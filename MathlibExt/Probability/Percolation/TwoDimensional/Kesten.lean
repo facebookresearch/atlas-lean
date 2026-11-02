@@ -11,31 +11,29 @@ public import MathlibExt.Probability.Percolation.SharpnessFromInputs
 public import MathlibExt.Probability.Percolation.TildePc
 
 /-!
-# Kesten's theorem from a self-dual crossing function, with sharpness as a hypothesis
+# Upper half of Kesten's theorem from sharpness hypotheses
 
-Harris's theorem `θ(1/2) = 0` for bond percolation on `ℤ²` gives `p_c ≥ 1/2`. This file proves
-the propositional step from a *crossing function* `cross : ℝ≥0 → ℕ → ℝ`: if `cross (1/2) n = 1/2`
-for all `n` (self-duality of the `n × (n + 1)` rectangle crossing) and positive percolation at
-`1/2` would force `cross (1/2) n → 1`, then `θ(1/2) = 0`.
+Kesten's theorem states that the critical probability of bond percolation on `ℤ²` is `1/2`.
+This file proves only the upper half `p_c(2) ≤ 1/2`, conditional on sharpness of the phase
+transition taken as the hypotheses `hsharp` (`p̃_c = p_c`) and `hsub` (exponential decay of the
+one-arm probability on `p̃_c`'s defining set), plus properties of an abstract crossing function
+`cross : ℝ≥0 → ℕ → ℝ`.
 
-`cross` is an arbitrary function, so these hypotheses carry all the content: given
-`hdualHalf`, the hypothesis `hpercToOne` holds if and only if `θ(1/2) = 0`. The results here are
-reductions, not proofs of Harris's theorem.
-
-## Main results
-
-* `StatMech.TwoDim.pc_le_half`: `p_c(2) ≤ 1/2`, taking sharpness of the phase transition as
-  the hypotheses `hsharp`, `hsub`.
+It does **not** prove the lower half `1/2 ≤ p_c(2)` (Harris's theorem `θ(1/2) = 0`). An earlier
+version of this file stated that lower half and the combined `p_c(2) = 1/2` from hypotheses
+(`hdualHalf`, `hpercToOne`) that together are equivalent to `θ(1/2) = 0`; those capstones were
+removed because they assumed the substantive content under another name. The missing concrete
+input is a proof of the Harris–Zhang argument for an actual rectangle-crossing probability:
+`cross` must be bound to that probability, and self-duality plus `θ(1/2) = 0` proved for it.
+That work belongs in `WantedExt`, not in this conditional reduction.
 
 Sharpness is now proved (`StatMech.Percolation.sharp_phase_transition`); the form without
 `hsharp`, `hsub` is `StatMech.TwoDim.kesten_pc_le_half`
 in `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf`.
 
-The conditional Harris / lower-half capstones (`theta_half_eq_zero`, `half_le_pc`,
-`pc_eq_half` and, in `KestenPcEqHalf`, `kesten_pc_eq_half`) were removed: their
-`hdualHalf` + `hpercToOne` hypotheses are together equivalent to `θ(1/2) = 0`, so they
-assumed the conclusion instead of proving Harris's theorem. The missing concrete crossing
-result belongs in `WantedExt`.
+## Main results
+
+* `StatMech.TwoDim.pc_le_half`: `p_c(2) ≤ 1/2`, taking sharpness as hypotheses.
 
 ## References
 
