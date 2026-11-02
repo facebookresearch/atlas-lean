@@ -49,12 +49,20 @@ position. The three decision problems below are the standard ones:
   edges, a valuation `worldVals` listing the atoms true at each world) and a
   start world, every infinite path from the start satisfies the formula at
   position `0`. The path turns the structure's valuation into a word valuation.
+  The structure is required to be *total*: every world has a successor world.
+  Without totality the path quantification would be vacuous at deadlocks
+  (for example `n = 1`, no edges, `φ = .bot` would pass, although the standard
+  model-checking problem assumes total transition systems).
 
 Each problem is stated as a decision problem over bitstrings: the input decodes
-to a formula code (see `Cslib.Modal.LinearMuCalculus.linearMuCode`), plus the
-finite structure for model checking. The PSPACE-completeness statement is the
-standard formulation: membership in `PSPACE` plus hardness for each of the three
-problems (Vardi, POPL 1988).
+to a formula's token list (see
+`Cslib.Modal.LinearMuCalculus.linearMuTokens`), plus the finite structure for
+model checking. The token encoding is polynomial-size: one token per
+connective, so the input length is linear in formula size. This is the
+encoding the cited PSPACE-completeness result is about; the Cantor-paired Nat
+code `linearMuCode` has exponential binary length and is not used here. The
+PSPACE-completeness statement is the standard formulation: membership in
+`PSPACE` plus hardness for each of the three problems (Vardi, POPL 1988).
 -/
 
 /-- A closed linear μ-calculus formula is satisfiable: some word and position
@@ -81,13 +89,13 @@ def linearMuModelCheck (edges : List (ℕ × ℕ)) (worldVal : ℕ → ℕ → P
 
 open Classical in
 /-- Satisfiability of the linear μ-calculus as a decision problem over bitstrings:
-the input decodes to a formula code, which decodes to a formula; the answer is
-whether that formula is closed and satisfiable. -/
+the input decodes to a formula token list, which decodes to a formula; the answer
+is whether that formula is closed and satisfiable. -/
 noncomputable def linearMuSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ) x with
-  | some c =>
-    match Cslib.Modal.LinearMuCalculus.linearMuDecode c with
+  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List ℕ) x with
+  | some toks =>
+    match Cslib.Modal.LinearMuCalculus.linearMuDecodeList toks with
     | some φ =>
       if Cslib.Modal.LinearMuCalculus.LinearMuFormula.Closed φ ∧ linearMuSat φ
       then true else false
@@ -98,9 +106,9 @@ open Classical in
 /-- Validity of the linear μ-calculus as a decision problem over bitstrings. -/
 noncomputable def linearMuValidDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ) x with
-  | some c =>
-    match Cslib.Modal.LinearMuCalculus.linearMuDecode c with
+  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List ℕ) x with
+  | some toks =>
+    match Cslib.Modal.LinearMuCalculus.linearMuDecodeList toks with
     | some φ =>
       if Cslib.Modal.LinearMuCalculus.LinearMuFormula.Closed φ ∧ linearMuValid φ
       then true else false
@@ -109,19 +117,21 @@ noncomputable def linearMuValidDec :
 
 open Classical in
 /-- Model checking of the linear μ-calculus as a decision problem over bitstrings:
-the input decodes to `(n, edges, worldVals, start, code)`, where `worldVals`
+the input decodes to `(n, edges, worldVals, start, tokens)`, where `worldVals`
 lists, per world, the atoms true at that world; the answer is whether the
-decoded formula is closed, the structure is well-formed, and every path from
-`start` satisfies the formula. -/
+decoded formula is closed, the structure is well-formed and total (every world
+has a successor world, so the path quantification is not vacuous at deadlocks),
+and every path from `start` satisfies the formula. -/
 noncomputable def linearMuModelCheckDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ℕ × List (ℕ × ℕ) × List (List ℕ) × ℕ × ℕ) x with
-  | some (n, edges, worldVals, start, c) =>
-    match Cslib.Modal.LinearMuCalculus.linearMuDecode c with
+      (α := ℕ × List (ℕ × ℕ) × List (List ℕ) × ℕ × List ℕ) x with
+  | some (n, edges, worldVals, start, toks) =>
+    match Cslib.Modal.LinearMuCalculus.linearMuDecodeList toks with
     | some φ =>
       if Cslib.Modal.LinearMuCalculus.LinearMuFormula.Closed φ ∧ start < n ∧
           (∀ e ∈ edges, e.1 < n ∧ e.2 < n) ∧
+          (∀ w, w < n → ∃ v, v < n ∧ (w, v) ∈ edges) ∧
           linearMuModelCheck edges (fun w a => a ∈ worldVals.getD w []) start φ
       then true else false
     | none => false

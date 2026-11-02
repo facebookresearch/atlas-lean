@@ -13,9 +13,11 @@ public import CSLibExt.Logics.Modal.MuCalculusEncoding
 /-!
 # Modal μ-calculus encoding tests
 
-Closed checks: decoding inverts encoding on a concrete formula, the encoding
-is injective, `EF` is closed, and a closed formula's denotation does not
-depend on the environment. Axiom audit follows.
+Closed checks: decoding inverts encoding on a concrete formula, for both the
+Nat code and the token-list encoding (whose `box^3` example uses 4 tokens,
+not an exponentially long code), the encoding is injective, `EF` is closed,
+and a closed formula's denotation does not depend on the environment. Axiom
+audit follows.
 -/
 
 namespace CSLibExtTest.Logics.Modal.MuCalculusEncoding
@@ -32,6 +34,15 @@ example : muDecode (muCode (.mu (.or (.atom 0) (.dia (.var 0))) : MuFormula ℕ)
 
 example : Function.Injective muCode := muCode_injective
 
+example : muDecodeList
+      (muTokens (.box (.box (.box (.atom 0))) : MuFormula ℕ)) =
+    some (.box (.box (.box (.atom 0)))) :=
+  muDecodeList_muTokens _
+
+/-- `box^3 (atom 0)` uses 4 tokens: token length is linear, not exponential. -/
+example : (muTokens (.box (.box (.box (.atom 0))) : MuFormula ℕ)).length = 4 :=
+  rfl
+
 example : MuFormula.ClosedAt 0 (EF ()) := ⟨True.intro, Nat.zero_lt_one⟩
 
 example (env env' : ℕ → Fin 2 → Prop) (h : ∀ n, n < 0 → env n = env' n) :
@@ -39,6 +50,7 @@ example (env env' : ℕ → Fin 2 → Prop) (h : ∀ n, n < 0 → env n = env' n
   sat_closed_env chain2 (EF ()) 0 ⟨True.intro, Nat.zero_lt_one⟩ h
 
 #print axioms muDecode_muCode
+#print axioms muDecodeList_muTokens
 #print axioms sat_closed_env
 
 end CSLibExtTest.Logics.Modal.MuCalculusEncoding

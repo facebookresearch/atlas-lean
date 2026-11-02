@@ -38,12 +38,16 @@ open MetaMathlibExt.ComplexityTheory
 
 A closed μ-calculus formula over `ℕ` atoms is *satisfiable* when some Kripke model has a
 world satisfying it under the empty environment. `muSat` quantifies over all Kripke
-models (worlds ranging over an arbitrary type); the decision problem takes a formula
-code (see `Cslib.Modal.MuCalculus.muCode`) decoded from the input bitstring and answers
-whether the decoded formula is closed and satisfiable. The EXPTIME-completeness
-statement below is the standard formulation of this fact: membership in `EXP`
-(Kozen's tableau / automata upper bound) plus hardness, i.e. every `EXP` language
-reduces to it (Emerson–Jutla's alternating-tree-automata lower bound).
+models (worlds ranging over an arbitrary type); the decision problem takes a formula's
+token list (see `Cslib.Modal.MuCalculus.muTokens`) decoded from the input bitstring
+and answers whether the decoded formula is closed and satisfiable. The token
+encoding is polynomial-size: one token per connective, so the input length is
+linear in formula size. This is the encoding the cited EXPTIME-completeness result
+is about; the Cantor-paired Nat code `muCode` has exponential binary length and is
+not used here. The EXPTIME-completeness statement below is the standard formulation
+of this fact: membership in `EXP` (Kozen's tableau / automata upper bound) plus
+hardness, i.e. every `EXP` language reduces to it (Emerson–Jutla's
+alternating-tree-automata lower bound).
 -/
 
 /-- A closed μ-calculus formula is satisfiable: some Kripke model has a world
@@ -54,13 +58,13 @@ def muSat (φ : Cslib.Modal.MuCalculus.MuFormula ℕ) : Prop :=
 
 open Classical in
 /-- Satisfiability of the modal μ-calculus as a decision problem over bitstrings:
-the input decodes to a formula code, which decodes to a formula; the answer is
-whether that formula is closed and satisfiable. -/
+the input decodes to a formula token list, which decodes to a formula; the answer
+is whether that formula is closed and satisfiable. -/
 noncomputable def muCalculusSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ) x with
-  | some c =>
-    match Cslib.Modal.MuCalculus.muDecode c with
+  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List ℕ) x with
+  | some toks =>
+    match Cslib.Modal.MuCalculus.muDecodeList toks with
     | some φ =>
       if Cslib.Modal.MuCalculus.MuFormula.Closed φ ∧ muSat φ then true else false
     | none => false

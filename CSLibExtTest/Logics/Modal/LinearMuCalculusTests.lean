@@ -15,8 +15,9 @@ public import CSLibExt.Logics.Modal.LinearMuCalculus
 
 Closed checks: `F p` holds at `0` when `p` holds at position `2`;
 `G p` holds at `0` when `p` holds everywhere; decoding inverts encoding on a
-concrete formula; and a closed formula's denotation does not depend on the
-environment. Axiom audit follows.
+concrete formula, for both the Nat code and the token-list encoding (whose
+`next^3` example uses 4 tokens, not an exponentially long code); and a closed
+formula's denotation does not depend on the environment. Axiom audit follows.
 -/
 
 namespace CSLibExtTest.Logics.Modal.LinearMuCalculus
@@ -38,6 +39,16 @@ example : linearMuDecode
 
 example : Function.Injective linearMuCode := linearMuCode_injective
 
+example : linearMuDecodeList
+      (linearMuTokens (.next (.next (.next (.atom 0))) : LinearMuFormula ℕ)) =
+    some (.next (.next (.next (.atom 0)))) :=
+  linearMuDecodeList_tokens _
+
+/-- `next^3 (atom 0)` uses 4 tokens: token length is linear, not exponential. -/
+example : (linearMuTokens
+    (.next (.next (.next (.atom 0))) : LinearMuFormula ℕ)).length = 4 :=
+  rfl
+
 example (val : ℕ → Unit → Prop) (env env' : ℕ → ℕ → Prop)
     (h : ∀ n, n < 0 → env n = env' n) :
     sat val env (F ()) = sat val env' (F ()) :=
@@ -46,5 +57,6 @@ example (val : ℕ → Unit → Prop) (env env' : ℕ → ℕ → Prop)
 #print axioms F_iff
 #print axioms G_iff
 #print axioms linearMuDecode_linearMuCode
+#print axioms linearMuDecodeList_tokens
 
 end CSLibExtTest.Logics.Modal.LinearMuCalculus

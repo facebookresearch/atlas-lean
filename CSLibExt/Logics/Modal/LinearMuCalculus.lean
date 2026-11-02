@@ -39,8 +39,11 @@ Main results:
   `G p` holds at `n` iff `p` holds at every `m ≥ n`.
 * `sat_closed_env`: closed formulas do not depend on the environment.
 * `linearMuCode`, `linearMuCode_injective`: an injective encoding of
-  formulas with `ℕ` atoms as natural numbers, used for the complexity
-  statements in `WantedExt`.
+  formulas with `ℕ` atoms as natural numbers, kept as a Nat code only:
+  its binary length is exponential in formula size, so it is *not* used
+  for complexity statements.
+* `linearMuTokens`, `linearMuDecodeList`: a polynomial-size token-list
+  encoding of formulas, used for the complexity statements in `WantedExt`.
 -/
 
 @[expose] public section
@@ -609,7 +612,11 @@ end EventuallyAlways
 section Encoding
 
 /-- An injective encoding of linear μ-calculus formulas over `ℕ` atoms as
-natural numbers, via the Cantor pairing function `Nat.pair`. -/
+natural numbers, via the Cantor pairing function `Nat.pair`. This is a Nat
+code only, not a complexity input encoding: repeated pairing squares the
+code at every unary connective, so the binary length of the code of
+`next^d (atom 0)` doubles at each `next` and is exponential in `d`.
+Complexity statements use `linearMuTokens` / `linearMuDecodeList` instead. -/
 def linearMuCode : LinearMuFormula ℕ → ℕ
   | .atom a => Nat.pair 0 a
   | .natom a => Nat.pair 1 a
@@ -938,6 +945,168 @@ theorem linearMuDecodeFuel_linearMuCode : ∀ (φ : LinearMuFormula ℕ) (fuel :
 theorem linearMuDecode_linearMuCode (φ : LinearMuFormula ℕ) :
     linearMuDecode (linearMuCode φ) = some φ :=
   linearMuDecodeFuel_linearMuCode φ (linearMuCode φ) (linearDepth_le_code φ)
+
+/-- A polynomial-size token-list encoding of linear μ-calculus formulas over
+`ℕ` atoms, used for the complexity statements in `WantedExt`. Each connective
+contributes one tag token (`Nat.pair` of a small tag with `0`), and each atom
+or variable contributes one token `Nat.pair tag value`, whose binary size is
+`O(log value)`. The canonical bitstring encoding of a `List ℕ` delimits each
+token, so the bitstring for a formula has length linear in the number of
+connectives plus the total binary size of its atoms: `next^d (atom 0)` is
+encoded by exactly `d + 1` tokens, unlike its Cantor-paired `linearMuCode`,
+whose binary length is exponential in `d`. -/
+def linearMuTokens : LinearMuFormula ℕ → List ℕ
+  | .atom a => [Nat.pair 0 a]
+  | .natom a => [Nat.pair 1 a]
+  | .var n => [Nat.pair 2 n]
+  | .bot => [Nat.pair 3 0]
+  | .top => [Nat.pair 4 0]
+  | .and φ ψ => Nat.pair 5 0 :: linearMuTokens φ ++ linearMuTokens ψ
+  | .or φ ψ => Nat.pair 6 0 :: linearMuTokens φ ++ linearMuTokens ψ
+  | .next φ => Nat.pair 7 0 :: linearMuTokens φ
+  | .mu φ => Nat.pair 8 0 :: linearMuTokens φ
+  | .nu φ => Nat.pair 9 0 :: linearMuTokens φ
+
+/-- Fuelled parsing of a `linearMuTokens` token list back to a formula,
+returning the formula and the unconsumed suffix. The fuel bounds the
+recursion depth; `linearMuDecodeList` supplies fuel `l.length + 1`, which
+exceeds the token length of every formula encoded in `l`. -/
+def linearMuParseFuel : ℕ → List ℕ → Option (LinearMuFormula ℕ × List ℕ)
+  | 0, _ => none
+  | fuel + 1, xs =>
+    match xs with
+    | [] => none
+    | c :: rest =>
+      match Nat.unpair c with
+      | (0, a) => some (.atom a, rest)
+      | (1, a) => some (.natom a, rest)
+      | (2, n) => some (.var n, rest)
+      | (3, _) => some (.bot, rest)
+      | (4, _) => some (.top, rest)
+      | (5, _) =>
+        match linearMuParseFuel fuel rest with
+        | some (φ, rest₁) =>
+          match linearMuParseFuel fuel rest₁ with
+          | some (ψ, rest₂) => some (.and φ ψ, rest₂)
+          | none => none
+        | none => none
+      | (6, _) =>
+        match linearMuParseFuel fuel rest with
+        | some (φ, rest₁) =>
+          match linearMuParseFuel fuel rest₁ with
+          | some (ψ, rest₂) => some (.or φ ψ, rest₂)
+          | none => none
+        | none => none
+      | (7, _) =>
+        match linearMuParseFuel fuel rest with
+        | some (φ, rest₁) => some (.next φ, rest₁)
+        | none => none
+      | (8, _) =>
+        match linearMuParseFuel fuel rest with
+        | some (φ, rest₁) => some (.mu φ, rest₁)
+        | none => none
+      | (9, _) =>
+        match linearMuParseFuel fuel rest with
+        | some (φ, rest₁) => some (.nu φ, rest₁)
+        | none => none
+      | (_, _) => none
+
+/-- Decode a `linearMuTokens` token list back to the formula it encodes,
+rejecting trailing tokens. -/
+def linearMuDecodeList (l : List ℕ) : Option (LinearMuFormula ℕ) :=
+  match linearMuParseFuel (l.length + 1) l with
+  | some (φ, []) => some φ
+  | _ => none
+
+/-- Parsing inverts token encoding, with enough fuel. -/
+theorem linearMuParseFuel_tokens : ∀ (φ : LinearMuFormula ℕ) (rest : List ℕ) (fuel : ℕ),
+    (linearMuTokens φ).length ≤ fuel →
+    linearMuParseFuel (fuel + 1) (linearMuTokens φ ++ rest) = some (φ, rest) := by
+  intro φ
+  induction φ with
+  | atom a => intro rest fuel _; simp [linearMuParseFuel, linearMuTokens, Nat.unpair_pair]
+  | natom a => intro rest fuel _; simp [linearMuParseFuel, linearMuTokens, Nat.unpair_pair]
+  | var n => intro rest fuel _; simp [linearMuParseFuel, linearMuTokens, Nat.unpair_pair]
+  | bot => intro rest fuel _; simp [linearMuParseFuel, linearMuTokens, Nat.unpair_pair]
+  | top => intro rest fuel _; simp [linearMuParseFuel, linearMuTokens, Nat.unpair_pair]
+  | and φ ψ ihφ ihψ =>
+    intro rest fuel hfuel
+    cases fuel with
+    | zero =>
+      simp only [linearMuTokens, List.length_cons, List.length_nil,
+        List.length_append] at hfuel; omega
+    | succ fuel' =>
+      have hφ : (linearMuTokens φ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      have hψ : (linearMuTokens ψ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      unfold linearMuParseFuel
+      simp only [linearMuTokens, Nat.unpair_pair, List.cons_append, List.append_assoc,
+        List.nil_append, ihφ, ihψ, hφ, hψ]
+  | or φ ψ ihφ ihψ =>
+    intro rest fuel hfuel
+    cases fuel with
+    | zero =>
+      simp only [linearMuTokens, List.length_cons, List.length_nil,
+        List.length_append] at hfuel; omega
+    | succ fuel' =>
+      have hφ : (linearMuTokens φ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      have hψ : (linearMuTokens ψ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      unfold linearMuParseFuel
+      simp only [linearMuTokens, Nat.unpair_pair, List.cons_append, List.append_assoc,
+        List.nil_append, ihφ, ihψ, hφ, hψ]
+  | next φ ih =>
+    intro rest fuel hfuel
+    cases fuel with
+    | zero =>
+      simp only [linearMuTokens, List.length_cons, List.length_nil,
+        List.length_append] at hfuel; omega
+    | succ fuel' =>
+      have hφ : (linearMuTokens φ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      unfold linearMuParseFuel
+      simp only [linearMuTokens, Nat.unpair_pair, List.cons_append, List.append_assoc,
+        List.nil_append, ih, hφ]
+  | mu φ ih =>
+    intro rest fuel hfuel
+    cases fuel with
+    | zero =>
+      simp only [linearMuTokens, List.length_cons, List.length_nil,
+        List.length_append] at hfuel; omega
+    | succ fuel' =>
+      have hφ : (linearMuTokens φ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      unfold linearMuParseFuel
+      simp only [linearMuTokens, Nat.unpair_pair, List.cons_append, List.append_assoc,
+        List.nil_append, ih, hφ]
+  | nu φ ih =>
+    intro rest fuel hfuel
+    cases fuel with
+    | zero =>
+      simp only [linearMuTokens, List.length_cons, List.length_nil,
+        List.length_append] at hfuel; omega
+    | succ fuel' =>
+      have hφ : (linearMuTokens φ).length ≤ fuel' := by
+        simp only [linearMuTokens, List.length_cons, List.length_nil,
+          List.length_append] at hfuel; omega
+      unfold linearMuParseFuel
+      simp only [linearMuTokens, Nat.unpair_pair, List.cons_append, List.append_assoc,
+        List.nil_append, ih, hφ]
+
+/-- Decoding inverts token encoding. -/
+theorem linearMuDecodeList_tokens (φ : LinearMuFormula ℕ) :
+    linearMuDecodeList (linearMuTokens φ) = some φ := by
+  have h := linearMuParseFuel_tokens φ [] (linearMuTokens φ).length (le_refl _)
+  rw [List.append_nil] at h
+  simp [linearMuDecodeList, h]
 
 end Encoding
 
