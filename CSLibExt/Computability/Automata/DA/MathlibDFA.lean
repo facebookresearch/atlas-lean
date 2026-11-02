@@ -46,13 +46,17 @@ section Conversions
 
 variable {State Symbol : Type*}
 
-/-- An upstream finite-word deterministic automaton as a Mathlib `DFA`. -/
+/-- **CSLib automata as Mathlib DFAs.** A CSLib deterministic automaton $M$ on finite words is
+viewed as a Mathlib DFA with the same states, the same transition function, the same start state
+and the same set of accepting states as $M$. -/
 def toDFA (M : DA.FinAcc State Symbol) : DFA Symbol State where
   step := M.tr
   start := M.start
   accept := M.accept
 
-/-- A Mathlib `DFA` as an upstream finite-word deterministic automaton. -/
+/-- **Mathlib DFAs as CSLib automata.** A Mathlib DFA $M$ is viewed as a CSLib deterministic
+automaton on finite words with the same states, the same transition function, the same start state
+and the same set of accepting states as $M$. -/
 def ofDFA (M : DFA Symbol State) : DA.FinAcc State Symbol where
   tr := M.step
   start := M.start
@@ -70,7 +74,9 @@ theorem toDFA_evalFrom (M : DA.FinAcc State Symbol) (s : State) (xs : List Symbo
     M.toDFA.evalFrom s xs = M.mtr s xs :=
   rfl
 
-/-- An upstream automaton and its Mathlib form accept the same language. -/
+/-- **Converting a CSLib automaton to a Mathlib DFA preserves its language.** For every
+deterministic automaton $M$ on finite words, the DFA with the same states, transition function,
+start state and accepting states as $M$ accepts exactly the language of $M$. -/
 @[simp]
 theorem language_toDFA (M : DA.FinAcc State Symbol) :
     M.toDFA.accepts = Acceptor.language M :=
@@ -88,8 +94,11 @@ section Nerode
 
 variable {Symbol : Type} {l : Language Symbol}
 
-/-- The upstream Nerode congruence relates two words exactly when they have the same left
-quotient. -/
+/-- **The Nerode congruence relates words with equal left quotients.** Let $L$ be a language
+over an alphabet $\Sigma$ and let $x, y \in \Sigma^*$. Then $x$ and $y$ are related by the Nerode
+congruence of $L$, that is, $xz \in L \iff yz \in L$ for every word $z$, if and only if they are
+Nerode equivalent for $L$, that is, their left quotients $x^{-1}L = \{z : xz \in L\}$ and
+$y^{-1}L$ are equal. -/
 theorem nerodeCongruence_r_iff {x y : List Symbol} :
     l.NerodeCongruence.r x y ↔ nerodeRel l x y := by
   change (∀ z, x ++ z ∈ l ↔ y ++ z ∈ l) ↔ l.leftQuotient x = l.leftQuotient y
@@ -101,7 +110,11 @@ theorem nerodeCongruence_r_iff {x y : List Symbol} :
     change z ∈ l.leftQuotient x ↔ z ∈ l.leftQuotient y
     rw [h]
 
-/-- A Nerode class determines a residual language. -/
+/-- **The residual language of a Nerode class.** Let $L$ be a language over an alphabet
+$\Sigma$, and write $x^{-1}L = \{z : xz \in L\}$ for the left quotient of $L$ by a word $x$. This
+is the map from the classes of the Nerode congruence of $L$ to the set
+$\{w^{-1}L : w \in \Sigma^*\}$ of residual languages of $L$ that sends the class of each word $x$
+to $x^{-1}L$; it is well defined because Nerode-congruent words have the same left quotient. -/
 def nerodeResidual (l : Language Symbol) : l.NerodeQuotient → Set.range l.leftQuotient :=
   Quotient.lift (fun x => ⟨l.leftQuotient x, x, rfl⟩)
     (fun _ _ h => Subtype.ext (nerodeCongruence_r_iff.1 h))
@@ -119,8 +132,13 @@ theorem nerodeResidual_bijective : Function.Bijective (nerodeResidual l) := by
   · rintro ⟨L, x, rfl⟩
     exact ⟨⟦x⟧, rfl⟩
 
-/-- Upstream Nerode classes are the residual languages, the states of Mathlib's
-`Language.toDFA`. -/
+/-- **Nerode classes are the residual languages.** Let $L$ be a language over an alphabet
+$\Sigma$, and write $x^{-1}L = \{z : xz \in L\}$ for the left quotient of $L$ by a word $x$. This
+is the bijection from the classes of the Nerode congruence of $L$ onto the set
+$\{x^{-1}L : x \in \Sigma^*\}$ of residual languages of $L$ that sends the class of each word $x$
+to $x^{-1}L$.
+
+The residual languages are the states of Mathlib's residual-language DFA of $L$. -/
 noncomputable def nerodeQuotientEquivResidual (l : Language Symbol) :
     l.NerodeQuotient ≃ Set.range l.leftQuotient :=
   Equiv.ofBijective _ nerodeResidual_bijective
@@ -134,9 +152,15 @@ private theorem dfa_ext {α τ : Type*} {A B : DFA α τ} (h₁ : A.step = B.ste
   cases h₃
   rfl
 
-/-- **The upstream canonical automaton is Mathlib's.** Renaming the classes of
-`l.NerodeCongruenceDA` to the residual languages they determine gives exactly
-`Language.toDFA l`. -/
+/-- **The Nerode automaton is the residual-language automaton.** Let $L$ be a language over an
+alphabet $\Sigma$, and write $x^{-1}L = \{z : xz \in L\}$ for the left quotient of $L$ by a word
+$x$. Consider the canonical automaton of $L$ as a DFA: its states are the classes $[x]$ of the
+Nerode congruence of $L$, its start state is the class of the empty word, on a letter $a$ it goes
+from $[x]$ to $[xa]$, and its accepting states are the classes of words of $L$. Renaming each
+class $[x]$ to $x^{-1}L$ gives exactly Mathlib's residual-language DFA of $L$: its states are the
+residual languages $x^{-1}L$ for $x \in \Sigma^*$, its start state is $L$, on a letter $a$ it goes
+from $K$ to $a^{-1}K$, and its accepting states are the residual languages that contain the empty
+word. -/
 theorem reindex_nerodeCongruenceDA (l : Language Symbol) :
     DFA.reindex (nerodeQuotientEquivResidual l) (toDFA l.NerodeCongruenceDA) = l.toDFA := by
   have hsurj : ∀ q : Set.range l.leftQuotient, ∃ x : List Symbol,
@@ -166,8 +190,13 @@ theorem reindex_nerodeCongruenceDA (l : Language Symbol) :
     · intro hx
       exact ⟨x, hx, rfl⟩
 
-/-- Hence the upstream canonical automaton of the language of a DFA `M` is, after renaming,
-`Cslib.Language.minimizedDFA M`. -/
+/-- **The canonical automaton of a DFA's language is its minimized DFA.** Let $M$ be a DFA over
+an alphabet $\Sigma$ accepting the language $L$, and write $x^{-1}L = \{z : xz \in L\}$ for the
+left quotient of $L$ by a word $x$. Consider the canonical automaton of $L$ as a DFA: its states
+are the classes $[x]$ of the Nerode congruence of $L$, its start state is the class of the empty
+word, on a letter $a$ it goes from $[x]$ to $[xa]$, and its accepting states are the classes of
+words of $L$. Renaming each class $[x]$ to $x^{-1}L$, regarded as one of the languages accepted
+from the states of $M$ reachable from its start state, gives exactly the minimized DFA of $M$. -/
 theorem reindex_nerodeCongruenceDA_eq_minimizedDFA {State : Type*} (M : DFA Symbol State) :
     DFA.reindex ((nerodeQuotientEquivResidual M.accepts).trans
       (leftQuotientEquivReachableResiduals M)) (toDFA M.accepts.NerodeCongruenceDA) =
