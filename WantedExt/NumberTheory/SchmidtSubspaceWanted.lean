@@ -69,7 +69,20 @@ namespace NumberTheory.SchmidtSubspace
 In our statement, we use an arbitrary Fintype σ with at least two elements instead of
 `Fin n`, and use the fact that every proper subspace is contained in a codimension 1
 subspace, which is described by the vanishing of a linear form with coefficients in ℤ. -/
-/-- Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII. Via leanprover/lean-eval@38361be, problem `schmidt_subspace`. -/
+/-- **Schmidt's subspace theorem.** Let $\sigma$ be a finite set with at least two elements, and
+for $i \in \sigma$ let $L_i(x) = \sum_{j \in \sigma} a_{ij} x_j$ be linear forms whose
+coefficients $a_{ij} \in \mathbb{C}$ are algebraic over $\mathbb{Q}$ and whose coefficient
+vectors $(a_{ij})_{j \in \sigma}$ are linearly independent over $\mathbb{C}$. Let
+$\varepsilon > 0$ be real. Then there is a finite set $S$ of nonzero vectors in
+$\mathbb{Z}^\sigma$ such that every $x \in \mathbb{Z}^\sigma$ with
+$\left|\prod_{i \in \sigma} L_i(x)\right| < \|x\|^{-\varepsilon}$, where
+$\|x\| = \max_{j \in \sigma} |x_j|$, satisfies $\sum_{i \in \sigma} c_i x_i = 0$ for some $c \in S$.
+
+Every proper subspace of $\mathbb{Q}^\sigma$ lies in a hyperplane $\sum_i c_i x_i = 0$ with a
+nonzero integer vector $c$, so this is the usual form: these $x$ lie in finitely many proper
+subspaces.
+
+Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII. Via leanprover/lean-eval@38361be, problem `schmidt_subspace`. -/
 public theorem_wanted schmidt_subspace (σ : Type*) [Fintype σ] (hσ : 2 ≤ Fintype.card σ)
     (L : σ → σ → ℂ)
     (alg : ∀ i j, IsAlgebraic ℚ (L i j)) (ind : LinearIndependent ℂ L)

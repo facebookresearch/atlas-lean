@@ -15,9 +15,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Every odd integer `1 < n < 2^50` is a squarefree positive integer plus `2^k` with
-`1 ≤ k ≤ 13` (a finite verification of Erdős's conjecture; see
-`OpenConjectures/NumberTheory/ErdosProblem11` for the open statement over all odd `n`).
+/-- **Odd numbers $1 < n < 2^{50}$ are squarefree plus a power of two.** Every odd natural
+number $n$ with $1 < n < 2^{50}$ can be written as $n = s + 2^k$, where $s$ is a squarefree
+positive integer and $1 \le k \le 13$.
+
+This is a finite verification of a conjecture of Erdős, which is open for all odd $n$.
 
 Source: Christian Hercher, *On the Sum of a Squarefree Integer and a Power of Two*, Journal of Integer Sequences 28 (2025), Article 25.3.1, Theorem 5 (`jis-2025-25.3.1-thm-5`). -/
 public theorem_wanted exists_squarefree_add_two_pow_of_odd_lt_two_pow_fifty (n : ℕ) (h1 : 1 < n)

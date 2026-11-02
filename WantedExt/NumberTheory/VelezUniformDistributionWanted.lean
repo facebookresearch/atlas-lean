@@ -15,21 +15,19 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Subsequences of a second-order linear recurrence are again
-second-order: if `w (n + 2) = P * w (n + 1) - Q * w n` for all `n`,
-then for positive `t` and any shift `r` the subsequence
-`n ↦ w (t * n + r)` satisfies the recurrence with coefficients
-`V_t` and `Q ^ t`, and the discriminants are related by
-`V_t ^ 2 - 4 * Q ^ t = U_t ^ 2 * (P ^ 2 - 4 * Q)`, where `U` and `V`
-are the Lucas sequences `lucasU` and `lucasV` for the parameters.
+/-- **Subsequences of a second-order linear recurrence.** Let $(P, Q)$ be Lucas sequence
+parameters (integers with $Q \ne 0$), let $U_n$ and $V_n$ be the terms of the Lucas sequence
+$U(P, Q)$ and of the companion Lucas sequence $V(P, Q)$, and let $(w_n)_{n \ge 0}$ be an integer
+sequence with $w_{n+2} = P w_{n+1} - Q w_n$ for every natural number $n$. Then for all natural
+numbers $t > 0$ and $r$, the subsequence $w'_n = w_{tn + r}$ satisfies
+$w'_{n+2} = V_t w'_{n+1} - Q^t w'_n$ for every natural number $n$, and
+$V_t^2 - 4 Q^t = U_t^2 (P^2 - 4Q)$.
 
-The paper writes the recurrence as `w_{n+2} = a w_{n+1} + b w_n`
-with subsequence coefficients `a' = v_t(a, b)` and
-`b' = (-1) ^ (t + 1) * b ^ t` and discriminant
-`D(a, b) = a ^ 2 + 4 * b`; this is the same statement in the
-repository convention `P = a`, `Q = -b` (so `b' = -Q ^ t` in the
-`signed` position). The paper's sentence identifying the new
-characteristic roots as `α ^ t` and `β ^ t` is not formalized.
+The source writes the recurrence as $w_{n+2} = a w_{n+1} + b w_n$,
+with subsequence coefficients $a' = V_t$ and $b' = (-1)^{t+1} b^t$ and discriminant
+$D(a, b) = a^2 + 4b$; this is the statement above with $P = a$ and $Q = -b$. The source's
+identification of the characteristic roots of the new recurrence as $\alpha^t$ and $\beta^t$ is
+not part of this statement.
 
 Source: Somer and Křížek, *Generalization of a Theorem of Vélez on
 Uniform Distribution in Second-Order Linear Recurrences*, INTEGERS
