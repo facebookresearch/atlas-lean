@@ -22,29 +22,28 @@ below `p̃_c = p_c` the one-arm probability decays exponentially.
 * Upper half `p_c ≤ 1/2` (`kesten_pc_le_half`): if `cross` is monotone in `p`, equals `1/2` at
   `p = 1/2`, and tends to `0` whenever the one-arm probability decays exponentially, then no
   `p > 1/2` lies below `p̃_c`.
-* Lower half `1/2 ≤ p_c` (`StatMech.TwoDim.half_le_pc`, in `TwoDimensional.Kesten`).
+
+The lower half / equality capstones were removed: they rested on `hpercToOne`, which together
+with `hdualHalf` is equivalent to `θ(1/2) = 0`, so they assumed Harris's theorem.
 
 The name `KestenPcEqHalf` refers to the use of the proved sharpness theorem instead of a sharpness
-hypothesis; the statements are **not** unconditional: they take `cross` and the hypotheses
-`hmono`, `hdualHalf`, `hpercToOne`, `hdecayToZero`.
+hypothesis; the statement is **not** unconditional: it takes `cross` and the hypotheses
+`hmono`, `hdualHalf`, `hdecayToZero`.
 
 ## Main results
 
 * `StatMech.TwoDim.kesten_pc_le_half`: `p_c(2) ≤ 1/2`.
-* `StatMech.TwoDim.kesten_pc_eq_half`: `p_c(2) = 1/2`.
 
 ## Implementation notes
 
-Since `cross` is arbitrary, the hypotheses are close to the conclusion: given `hdualHalf`,
-`hpercToOne` is equivalent to `θ(1/2) = 0`; with `cross p n = 1/2` for `p ≤ 1/2` and `1` for
-`p > 1/2`, `hmono` and `hdualHalf` hold and `hdecayToZero` says that the one-arm probability does
-not decay exponentially for `p > 1/2`. No instance of `cross` is constructed in the library. For
-the intended instance (`cross p n` the probability of a left–right crossing of an `(n + 1) × n`
-rectangle) the missing inputs are:
+Since `cross` is arbitrary, the hypotheses are close to the conclusion: with
+`cross p n = 1/2` for `p ≤ 1/2` and `1` for `p > 1/2`, `hmono` and `hdualHalf` hold and
+`hdecayToZero` says that the one-arm probability does not decay exponentially for `p > 1/2`.
+No instance of `cross` is constructed in the library. For the intended instance
+(`cross p n` the probability of a left–right crossing of an `(n + 1) × n` rectangle) the
+missing inputs are:
 
 * `hdualHalf`: self-duality of that rectangle at `p = 1/2` (the planar-duality dichotomy);
-* `hpercToOne`: Harris's theorem `θ(1/2) = 0` (via Zhang's argument, cf.
-  `StatMech.TwoDim.kzh_corLowerBound`);
 * `hmono`: monotonicity of an increasing event in `p` (standard coupling);
 * `hdecayToZero`: a union bound over starting points of the crossing, as in
   `StatMech.TwoDim.kcd_horizontal_tendsto_zero_of_exp` (proved there for the square
@@ -99,31 +98,6 @@ theorem kesten_pc_le_half
       le_of_tendsto_of_tendsto tendsto_const_nhds hto0
         (Filter.Eventually.of_forall hge)
     norm_num at hlimge
-
-/-- **Kesten's theorem** `p_c(ℤ²) = 1/2` for bond percolation (Kesten, "The critical probability
-of bond percolation on the square lattice equals 1/2", 1980), conditional on a crossing function
-`cross` satisfying `hmono`, `hdualHalf`, `hpercToOne` and `hdecayToZero`.
-
-This is a reduction, not a proof of Kesten's theorem: `hdualHalf` and `hpercToOne` together are
-equivalent to `θ(1/2) = 0`, and the inputs still missing for a concrete crossing function are
-listed in the module docstring.
-
-See also `StatMech.Universality.kesten_pc_eq_half_of_bxp`, a different conditional form (stated
-for `criticalProbability`, with a self-dual box family, Zhang's lower bound and a sharp-threshold
-statement as hypotheses). -/
-theorem kesten_pc_eq_half (h12 : (1 / 2 : ℝ≥0) ≤ 1)
-    (cross : ℝ≥0 → ℕ → ℝ)
-    (hmono : ∀ n, ∀ p q : ℝ≥0, p ≤ q → cross p n ≤ cross q n)
-    (hdualHalf : ∀ n, cross (1 / 2) n = 1 / 2)
-    (hpercToOne : 0 < theta 2 (1 / 2) h12 →
-      Tendsto (cross (1 / 2)) atTop (𝓝 1))
-    (hdecayToZero : ∀ p : ℝ≥0, ∀ hp : p ≤ 1,
-        (∃ c > 0, ∃ C > 0, ∀ n, crossProb 2 p hp n ≤ C * Real.exp (-c * n)) →
-        Tendsto (cross p) atTop (𝓝 0)) :
-    pc 2 = (1 / 2 : ℝ≥0) :=
-  le_antisymm
-    (kesten_pc_le_half cross hmono hdualHalf hdecayToZero)
-    (half_le_pc h12 cross hdualHalf hpercToOne)
 
 end TwoDim
 

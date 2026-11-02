@@ -21,10 +21,10 @@ gives a crossing in `dualConfig ω`.
 
 The barrier graph lives in the rotated square `rect (-n) 0 0 n`, which meets `rect 0 n 0 n` only
 in the column `x = 0`. Consequently a *barrier route* (a barrier walk from the bottom to the top
-side of `rect 0 n 0 n` inside that square, `dcw_BarrierRoute`) is very restrictive, and the
-hypothesis of `dcw_square_dichotomy` (a barrier route whenever there is no horizontal crossing)
-is false for every `n ≥ 2` (`bcc_square_dichotomy_hyp_false`). The rotated-square version is
-`dcp_DualCutConnectsRot`.
+side of `rect 0 n 0 n` inside that square, `dcw_BarrierRoute`) is very restrictive: the
+hypothesis that a barrier route exists whenever there is no horizontal crossing is false for
+every `n ≥ 2` (`bcc_square_dichotomy_hyp_false`), so no square-dichotomy theorem is exported
+from this file. The rotated-square version is `dcp_DualCutConnectsRot`.
 
 ## Main definitions
 
@@ -176,22 +176,6 @@ theorem dcw_dualVerticalCrossing_of_route (ω : ConfigSpace (Sym2 (Site 2))) (n 
   refine ⟨⟨p₀, hp₀⟩, ⟨q₀, hq₀⟩, ?_⟩
   exact walk_induce_reachable (openSubgraph 2 (dualConfig ω)) (rect 0 n 0 n) c'
     hsuppbox (bottomSide_subset hp₀) (topSide_subset hq₀)
-
-/-- If every configuration without a horizontal crossing of `rect 0 n 0 n` has a barrier route,
-then every such configuration has a vertical crossing of the same square in `dualConfig ω`.
-
-This is **not** the box-crossing dichotomy. The hypothesis is false for every `n ≥ 2`
-(`bcc_square_dichotomy_hyp_false`), and for `n = 2` the conclusion itself is false
-(`bcc_dichotomy_false`), because `dualConfig` is the dual only up to a quarter turn. The statement
-is non-vacuous only for `n ≤ 1`. -/
-theorem dcw_square_dichotomy (n : ℤ)
-    (hroute : ∀ ω : ConfigSpace (Sym2 (Site 2)),
-      ¬ HorizontalCrossing ω 0 n 0 n → dcw_BarrierRoute ω n) :
-    (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ dualVerticalCrossingEvent 0 n 0 n := by
-  intro ω hω
-  rw [Set.mem_compl_iff, mem_horizontalCrossingEvent] at hω
-  rw [mem_dualVerticalCrossingEvent]
-  exact dcw_dualVerticalCrossing_of_route ω n (hroute ω hω)
 
 /-- Without a horizontal crossing of `rect 0 n 0 n` (`n ≥ 0`), some edge of the bottom row is a
 barrier edge: the first site `(k, 0)` outside the left-reach set and its left neighbor. -/
