@@ -30,15 +30,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A labeled directed graph, represented by its vertex and edge types together
-with source, target, and label maps. -/
+/-- **Labeled directed graph.** A labeled directed graph with vertex set $V$, edge set $E$ and
+label set $L$ consists of a source map $s : E \to V$, a target map $t : E \to V$ and a label
+map $\ell : E \to L$; the edge $e$ goes from $s(e)$ to $t(e)$ and carries the label $\ell(e)$.
+Loops and parallel edges are allowed. -/
 structure LabeledDigraph (V E L : Type _) where
   src : E → V
   tgt : E → V
   label : E → L
 
-/-- Extensionality for labeled digraphs: two bundles with the same source,
-target, and label maps are equal. -/
+/-- **Extensionality for labeled directed graphs.** Two labeled directed graphs $G$ and $H$
+with the same vertex set, edge set and label set are equal if they have the same source map,
+the same target map and the same label map. -/
 @[ext]
 theorem LabeledDigraph.ext {V E L : Type _} {G H : LabeledDigraph V E L}
     (hsrc : G.src = H.src) (htgt : G.tgt = H.tgt) (hlabel : G.label = H.label) :
@@ -47,8 +50,11 @@ theorem LabeledDigraph.ext {V E L : Type _} {G H : LabeledDigraph V E L}
   cases H
   simp_all
 
-/-- Restrict a labeled directed graph to the vertices satisfying `p`,
-keeping exactly the edges whose source and target both satisfy `p`. -/
+/-- **Restriction of a labeled directed graph.** Let $G$ be a labeled directed graph with
+vertex set $V$ and label set $L$, and let $p$ be a predicate on $V$. The restriction of $G$ to
+$p$ is the labeled directed graph with label set $L$ whose vertices are the vertices $v$ of $G$
+with $p(v)$, whose edges are the edges of $G$ whose source and target both satisfy $p$, and in
+which each edge has the same source, target and label as in $G$. -/
 def LabeledDigraph.restrict {V E L : Type _} (G : LabeledDigraph V E L)
     (p : V → Prop) :
     LabeledDigraph { v : V // p v } { e : E // p (G.src e) ∧ p (G.tgt e) } L where
@@ -56,21 +62,29 @@ def LabeledDigraph.restrict {V E L : Type _} (G : LabeledDigraph V E L)
   tgt e := ⟨G.tgt e.val, e.property.2⟩
   label e := G.label e.val
 
-/-- The source of a restricted edge: the ambient source, in the subtype. -/
+/-- **Source of an edge in a restriction.** Let $G$ be a labeled directed graph, $p$ a predicate
+on its vertices, and $e$ an edge of $G$ whose source and target satisfy $p$, viewed as an edge of
+the restriction of $G$ to $p$. The source of $e$ in the restriction, viewed as a vertex of $G$,
+is the source of $e$ in $G$. -/
 @[simp]
 theorem LabeledDigraph.restrict_src {V E L : Type _} (G : LabeledDigraph V E L)
     (p : V → Prop) (e : { e : E // p (G.src e) ∧ p (G.tgt e) }) :
     ((G.restrict p).src e).val = G.src e.val :=
   rfl
 
-/-- The target of a restricted edge: the ambient target, in the subtype. -/
+/-- **Target of an edge in a restriction.** Let $G$ be a labeled directed graph, $p$ a predicate
+on its vertices, and $e$ an edge of $G$ whose source and target satisfy $p$, viewed as an edge of
+the restriction of $G$ to $p$. The target of $e$ in the restriction, viewed as a vertex of $G$,
+is the target of $e$ in $G$. -/
 @[simp]
 theorem LabeledDigraph.restrict_tgt {V E L : Type _} (G : LabeledDigraph V E L)
     (p : V → Prop) (e : { e : E // p (G.src e) ∧ p (G.tgt e) }) :
     ((G.restrict p).tgt e).val = G.tgt e.val :=
   rfl
 
-/-- The label of a restricted edge is its ambient label. -/
+/-- **Label of an edge in a restriction.** Let $G$ be a labeled directed graph, $p$ a predicate
+on its vertices, and $e$ an edge of $G$ whose source and target satisfy $p$, viewed as an edge of
+the restriction of $G$ to $p$. The label of $e$ in the restriction is its label in $G$. -/
 @[simp]
 theorem LabeledDigraph.restrict_label {V E L : Type _} (G : LabeledDigraph V E L)
     (p : V → Prop) (e : { e : E // p (G.src e) ∧ p (G.tgt e) }) :

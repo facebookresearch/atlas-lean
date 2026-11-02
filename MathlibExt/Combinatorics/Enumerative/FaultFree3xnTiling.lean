@@ -28,15 +28,20 @@ This file proves the recurrence for vertical-fault-free tilings of a `3 × n` re
 squares and dominoes.
 -/
 
-/-- A cell of a `3 × n` rectangle, represented by its row and column. -/
+/-- **Cells of the $3 \times n$ rectangle.** A cell of the $3 \times n$ rectangle is a pair
+$(r, c)$ of a row $r \in \{0, 1, 2\}$ and a column $c \in \{0, \dots, n-1\}$. -/
 abbrev TilingCell (n : ℕ) := Fin 3 × Fin n
 
-/-- Two cells share an edge. -/
+/-- **Adjacent cells.** Two cells $x$ and $y$ of the $3 \times n$ rectangle are adjacent when they
+share an edge: they lie in the same row and their columns differ by $1$, or they lie in the same
+column and their rows differ by $1$. -/
 def TilingCell.Adjacent {n : ℕ} (x y : TilingCell n) : Prop :=
   (x.1 = y.1 ∧ (x.2.val + 1 = y.2.val ∨ y.2.val + 1 = x.2.val)) ∨
     (x.2 = y.2 ∧ (x.1.val + 1 = y.1.val ∨ y.1.val + 1 = x.1.val))
 
-/-- A tile is either one unit square or one domino joining adjacent cells. -/
+/-- **Square and domino tiles.** A set $d$ of cells of the $3 \times n$ rectangle is a
+square-or-domino tile when it consists of exactly one cell, or of exactly two cells that are
+adjacent. -/
 def IsSquareOrDomino {n : ℕ} (d : Finset (TilingCell n)) : Prop :=
   d.card = 1 ∨
     (d.card = 2 ∧ ∀ x ∈ d, ∀ y ∈ d, x ≠ y → TilingCell.Adjacent x y)
@@ -46,7 +51,9 @@ private theorem ff3_adjacent_comm {n : ℕ} {x y : TilingCell n} :
   simp only [TilingCell.Adjacent, eq_comm]
   tauto
 
-/-- A valid square-or-domino tile is exactly a singleton or an adjacent pair. -/
+/-- **Characterization of square and domino tiles.** A set $d$ of cells of the $3 \times n$
+rectangle is a square-or-domino tile if and only if either $d = \{x\}$ for some cell $x$, or
+$d = \{x, y\}$ for some distinct adjacent cells $x$ and $y$. -/
 public theorem isSquareOrDomino_iff {n : ℕ} (d : Finset (TilingCell n)) :
     IsSquareOrDomino d ↔
       (∃ x, d = {x}) ∨
@@ -68,14 +75,19 @@ public theorem isSquareOrDomino_iff {n : ℕ} (d : Finset (TilingCell n)) :
       · exact ff3_adjacent_comm.mp hadj
       · exact (hab rfl).elim
 
-/-- A square-and-domino tiling is a disjoint family of valid tiles covering
-every cell of the rectangle. -/
+/-- **Square-and-domino tilings.** A square-and-domino tiling of the $3 \times n$ rectangle is a
+finite family $T$ of sets of cells such that every member of $T$ is a square-or-domino tile (a
+single cell or two adjacent cells), any two distinct members of $T$ are disjoint, and every cell
+of the rectangle lies in some member of $T$. -/
 def IsSquareDominoTiling {n : ℕ} (T : Finset (Finset (TilingCell n))) : Prop :=
   (∀ d ∈ T, IsSquareOrDomino d) ∧
     (∀ d₁ ∈ T, ∀ d₂ ∈ T, d₁ ≠ d₂ → Disjoint d₁ d₂) ∧
       ∀ x : TilingCell n, ∃ d ∈ T, x ∈ d
 
-/-- A tiling is vertical-fault-free when every internal vertical boundary is
+/-- **Vertical-fault-free families.** A family $T$ of sets of cells of the $3 \times n$ rectangle,
+with columns numbered $0, \dots, n-1$, is vertical-fault-free when for every natural number $k$
+with $k + 1 < n$ some member of $T$ contains two cells of the same row lying in columns $k$ and
+$k + 1$. For a square-and-domino tiling this says that every internal vertical boundary is
 crossed by a horizontal domino. -/
 def IsVerticalFaultFree {n : ℕ} (T : Finset (Finset (TilingCell n))) : Prop :=
   ∀ k : ℕ, k + 1 < n →
@@ -1293,14 +1305,18 @@ private noncomputable def ff3CodePathEquiv :
                   ff3Path a (n + 1)) = ⟨p, (f, t)⟩
           rw [ff3_codeHeadFilling_cons, ff3_codeTail_cons, Equiv.apply_symm_apply] }
 
-/-- The actual number of vertical-fault-free square-and-domino tilings of a
-`3 × n` rectangle. -/
+/-- **Number of vertical-fault-free tilings of the $3 \times n$ rectangle.** For every natural
+number $n$, this is the number of square-and-domino tilings of the $3 \times n$ rectangle that
+are vertical-fault-free. -/
 noncomputable def verticalFaultFreeTilingCount (n : ℕ) : ℕ :=
   Nat.card {T : Finset (Finset (TilingCell n)) //
     IsSquareDominoTiling T ∧ IsVerticalFaultFree T}
 
-/-- `tilingCount n` is the paper's recurrence-defined sequence `V_n`.
-`tilingCount 0 = 0` is a dummy outside the paper's range `n ≥ 1`. -/
+/-- **Recurrence sequence for vertical-fault-free $3 \times n$ tilings.** The integer sequence
+$(V_n)_{n \ge 0}$ is defined by $V_0 = 0$, $V_1 = 3$, $V_2 = 13$, $V_3 = 26$, $V_4 = 66$,
+$V_5 = 154$, $V_6 = 380$ and $V_n = V_{n-1} + 4 V_{n-2} - V_{n-3} - V_{n-4}$ for $n \ge 7$.
+
+The value $V_0 = 0$ is a placeholder; the source considers only $n \ge 1$. -/
 def tilingCount : ℕ → ℤ
   | 0 => 0
   | 1 => 3
@@ -1358,21 +1374,23 @@ private theorem ff3_vertical_count_succ (n : ℕ) :
   | succ n => simpa [ff3ModelCount] using ff3_card_path_empty_succ n
 
 /--
-For `n ≥ 1`, the independently defined number of vertical-fault-free
-square-and-domino tilings equals the sequence with initial values
-`3, 13, 26, 66, 154, 380` and recurrence
-`V_n = V_{n-1} + 4 V_{n-2} - V_{n-3} - V_{n-4}`.
+**Recurrence for vertical-fault-free tilings of the $3 \times n$ rectangle.** For $n \ge 1$, let
+$V_n$ be the number of vertical-fault-free tilings of the $3 \times n$ rectangle by unit squares
+and dominoes. Then $V_1 = 3$, $V_2 = 13$, $V_3 = 26$, $V_4 = 66$, $V_5 = 154$, $V_6 = 380$, and
+$V_n = V_{n-1} + 4 V_{n-2} - V_{n-3} - V_{n-4}$ for every $n \ge 7$.
+
+Here $V_n$ counts the tilings directly; the recurrence is a theorem, not its definition.
+
+Proof: The count is encoded by a transfer matrix over column profiles. An annihilating
+polynomial for that matrix gives the recurrence after the six initial values.
+
+Proves `Wanted` entry `fault_free_3xn_tiling_recursion`.
 
 Source: Oluwatobi Jemima Alabi and Greg Dresden, "Fault-Free Tilings of
 the 3 × n Rectangle With Squares and Dominos," Journal of Integer
 Sequences 24 (2021), Article 21.1.2, theorem on vertical-fault-free `V_n`
 (unlabeled), lines 358–364,
 <https://cs.uwaterloo.ca/journals/JIS/VOL24/Dresden/dresden7.tex>.
-
-Proves `Wanted` entry `fault_free_3xn_tiling_recursion`.
-
-Proof: The count is encoded by a transfer matrix over column profiles. An annihilating
-polynomial for that matrix gives the recurrence after the six initial values.
 -/
 public theorem fault_free_3xn_tiling_recursion :
     ∀ n : ℕ, 1 ≤ n → (verticalFaultFreeTilingCount n : ℤ) = tilingCount n := by

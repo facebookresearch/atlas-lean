@@ -1738,12 +1738,11 @@ private theorem bwd_fwd_eq (m : ℕ) (M : (W4 □ pathGraph m).Subgraph)
   exact Subgraph.ext hverts hAdjEq
 
 /--
-The number of domino tilings, as perfect matchings, of `W_4 □ P_{n-1}`
-equals `Nat.fib n * pellNumber n` for `n ≥ 2`, with the Pell factor stated via
-the canonical `MetaMathlibExt.pellNumber` sequence.
-
-This is the `pellNumber` form of `boxProd_tiling_card_eq_fib_mul_pell`, which
-keeps the inline `Nat.rec` spelling of the Pell factor for the `Wanted` entry.
+**Sellers' domino tiling theorem.** Let $W_4$ be the complete graph $K_4$ with one edge
+removed and $P_{n-1}$ the path graph on $n - 1$ vertices. For every natural number $n \ge 2$,
+the number of perfect matchings (domino tilings) of the Cartesian product $W_4 \square P_{n-1}$
+equals $f_n p_n$, where $f_n$ is the $n$-th Fibonacci number ($f_0 = 0$, $f_1 = 1$) and $p_n$ is
+the $n$-th Pell number ($p_0 = 0$, $p_1 = 1$, $p_{k+2} = 2 p_{k+1} + p_k$).
 -/
 theorem boxProd_tiling_card_eq_fib_mul_pellNumber :
     ∀ (n : ℕ) (_hn : 2 ≤ n),
@@ -1778,22 +1777,20 @@ theorem boxProd_tiling_card_eq_fib_mul_pellNumber :
     _ = Fintype.card (Tiling m ∅) := Nat.card_eq_fintype_card
 
 /--
-The number of domino tilings, as perfect matchings, of `W_4 □ P_{n-1}`
-equals `f_n * p_n` for `n ≥ 2`.
+**Sellers' domino tiling theorem, recursive Pell form.** Let $W_4$ be the complete graph
+$K_4$ with one edge removed and $P_{n-1}$ the path graph on $n - 1$ vertices. For every natural
+number $n \ge 2$, the number of perfect matchings (domino tilings) of the Cartesian product
+$W_4 \square P_{n-1}$ equals $f_n p_n$, where $f_n$ is the $n$-th Fibonacci number
+($f_0 = 0$, $f_1 = 1$) and $p_n$ is defined by $p_0 = 0$, $p_1 = 1$ and
+$p_{k+2} = 2 p_{k+1} + p_k$.
+
+The Cartesian product $\square$ is the paper's $\times$, following Faase. The paper writes
+$c_n$ for this number of tilings; its values $c_2 = 2$, $c_3 = 10$, $c_4 = 36$ match $f_n p_n$.
 
 Source: James A. Sellers, "Domino Tilings and Products of Fibonacci and
 Pell Numbers," Journal of Integer Sequences 5 (2002), Article 02.1.2,
 Theorem (label mainresult), lines 105–108,
 https://cs.uwaterloo.ca/journals/JIS/VOL5/Sellers/sellers4.tex
-
-`W_4` is `K_4` minus one edge; `P_n` is the path graph on `n` vertices;
-`□` is the Cartesian product (the paper's `×`, following Faase).
-Fibonacci `f_1 = f_2 = 1` (lines 91–94) is `Nat.fib`; the Pell factor
-`p_1 = 1, p_2 = 2` (lines 96–99) is encoded inline by `Nat.rec` on pairs
-with base `(0, 1)`, so `p_0 = 0, p_1 = 1, p_2 = 2`.
-The paper's values `c_2 = 2, c_3 = 10, c_4 = 36` match `fib * pell`.
-
-Proves `Wanted` entry `boxProd_tiling_card_eq_fib_mul_pell`.
 -/
 theorem boxProd_tiling_card_eq_fib_mul_pell :
     ∀ (n : ℕ) (_hn : 2 ≤ n),

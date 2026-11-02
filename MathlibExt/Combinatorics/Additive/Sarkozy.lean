@@ -55,7 +55,9 @@ Records the Furstenberg–Sárközy theorem that positive upper density sets con
 elements differing by a nonzero square.
 -/
 
-/-- Number of elements of `A` in `Finset.range N`. -/
+/-- **Initial segment count.** For a set $A$ of natural numbers and a natural number $N$, the
+initial segment count of $A$ at $N$ is the number of elements of $A$ that are less than $N$, that
+is, $|A \cap \{0, 1, \dots, N - 1\}|$. -/
 noncomputable def initialSegmentCount (A : Set ℕ) (N : ℕ) : ℕ :=
   by classical exact ((Finset.range N).filter (fun n => n ∈ A)).card
 
@@ -1933,13 +1935,16 @@ private lemma sarkozy_fixed_inner_pos {H : Type*} [NormedAddCommGroup H]
     _ ≤ ‖p‖^2 := pow_le_pow_left₀ hδ.le hple 2
 
 /--
-If `A ⊆ ℕ` has positive upper density, witnessed by `δ > 0` with `δ * N ≤ |A ∩ range N|` for
-arbitrarily large `N`, then there are `a, b, k ∈ ℕ` with `a ∈ A`, `b ∈ A`, `0 < k`, `a < b`, and
-`b = a + k * k`. Source: A. Sárközy, Acta Math. Acad. Sci. Hungar. 31 (1978) and H. Furstenberg,
-J. Analyse Math. 31 (1977); Lean states positive upper density via `initialSegmentCount` with
-arbitrarily large N.
+**Furstenberg–Sárközy theorem.** Let $A$ be a set of natural numbers, and suppose there is a real
+number $\delta > 0$ such that for every natural number $M$ there is a natural number $N \ge M$
+with $\delta N \le |A \cap \{0, 1, \dots, N - 1\}|$. Then there are $a, b \in A$ and a natural
+number $k > 0$ with $a < b$ and $b = a + k^2$.
 
 Proves `Wanted` entry `furstenberg_sarkozy`.
+
+Source: A. Sárközy, Acta Math. Acad. Sci. Hungar. 31 (1978) and H. Furstenberg,
+J. Analyse Math. 31 (1977); Lean states positive upper density via `initialSegmentCount` with
+arbitrarily large N.
 -/
 public theorem furstenberg_sarkozy :
     ∀ A : Set ℕ,

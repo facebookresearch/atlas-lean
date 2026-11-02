@@ -39,9 +39,12 @@ namespace MetaMathlibExt
 def cayleyArc {G : Type*} [Mul G] (C : Set G) (x y : G) : Prop :=
   ∃ c ∈ C, x * c = y
 
-/-- Given a group G, and a subset C ⊆ G not containing the identity, the *Cayley digraph* is the
-directed graph X(G,C) whose vertices are the elements of G and for which there is a (Cayley) arc u →
-v whenever u, v ∈ G satisfy v = uc for some c ∈ C.
+/-- **Cayley digraph.** Let $G$ be a set with a binary operation written as multiplication,
+and let $C \subseteq G$. The *Cayley digraph* $X(G, C)$ is the directed graph whose vertices
+are the elements of $G$, with an arc $u \to v$ exactly when $v = uc$ for some $c \in C$.
+
+Usually $G$ is a group and $C$ does not contain the identity, so that $X(G, C)$ has no loops;
+neither condition is imposed here.
 -/
 def directedCayleyGraph {G : Type*} [Mul G] (S : Set G) : Digraph G where
   Adj := cayleyArc S

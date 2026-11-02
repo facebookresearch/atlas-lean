@@ -16,39 +16,59 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Generalized Stirling numbers of the first kind, after Carlitz and Broder,
-as recorded in Cereceda (arXiv:2401.13696v4, lines 132-142; Axioms 14 (2025), 746):
-`[n,m]_x = ∑_{i=0}^{n-m} choose (i+m) m * stirlingFirst n (i+m) * x^i`
-for `m ≤ n`, with `x` real. The definition below uses the displayed finite sum
-for every `n, m`; when `m > n`, `n - m + 1 = 1` and the single ordinary term
-vanishes, giving `0`. -/
+/-- **Generalized Stirling numbers of the first kind.** For natural numbers $n$, $m$ and a real
+number $x$, the generalized Stirling number of the first kind is
+
+$${n \brack m}_x = \sum_{i=0}^{n-m} \binom{i+m}{m} {n \brack i+m} x^i,$$
+
+where ${n \brack k}$ is the unsigned Stirling number of the first kind, the number of permutations
+of $n$ elements with exactly $k$ cycles. For $m > n$ the sum consists of the single term $i = 0$,
+which is ${n \brack m} = 0$, so ${n \brack m}_x = 0$.
+
+Source: Carlitz and Broder, as recorded in Cereceda, arXiv:2401.13696v4, lines 132-142;
+Axioms 14 (2025), 746. -/
 noncomputable def generalizedStirlingFirst (n m : ℕ) (x : ℝ) : ℝ :=
   Finset.sum (Finset.range (n - m + 1)) (fun i =>
     (Nat.choose (i + m) m : ℝ) * (Nat.stirlingFirst n (i + m) : ℝ) * x ^ i)
 
-/-- Generalized Stirling numbers of the second kind, after Carlitz and Broder,
-as recorded in Cereceda (arXiv:2401.13696v4, lines 132-142; Axioms 14 (2025), 746):
-`{n,m}_x = ∑_{i=0}^{n-m} choose n i * stirlingSecond (n-i) m * x^i`
-for `m ≤ n`, with `x` real. The definition below uses the displayed finite sum
-for every `n, m`; when `m > n`, `n - m + 1 = 1` and the single ordinary term
-vanishes, giving `0`. -/
+/-- **Generalized Stirling numbers of the second kind.** For natural numbers $n$, $m$ and a real
+number $x$, the generalized Stirling number of the second kind is
+
+$${n \brace m}_x = \sum_{i=0}^{n-m} \binom{n}{i} {n-i \brace m} x^i,$$
+
+where ${n \brace k}$ is the Stirling number of the second kind, the number of partitions of an
+$n$-element set into $k$ nonempty blocks. For $m > n$ the sum consists of the single term $i = 0$,
+which is $\binom{n}{0} {n \brace m} = 0$, so ${n \brace m}_x = 0$.
+
+Source: Carlitz and Broder, as recorded in Cereceda, arXiv:2401.13696v4, lines 132-142;
+Axioms 14 (2025), 746. -/
 noncomputable def generalizedStirlingSecond (n m : ℕ) (x : ℝ) : ℝ :=
   Finset.sum (Finset.range (n - m + 1)) (fun i =>
     (Nat.choose n i : ℝ) * (Nat.stirlingSecond (n - i) m : ℝ) * x ^ i)
 
-/-- Characterization of `generalizedStirlingFirst`: under `m ≤ n` it equals the
-exact source sum with coefficient `choose (i+m) m`, ordinary number
-`stirlingFirst n (i+m)`, and power `x^i`, including both endpoints `i = 0` and
-`i = n - m`. Source: Cereceda, arXiv:2401.13696v4, lines 132-142. -/
+/-- **Sum formula for generalized Stirling numbers of the first kind.** For natural numbers
+$m \le n$ and every real number $x$, the generalized Stirling number of the first kind satisfies
+
+$${n \brack m}_x = \sum_{i=0}^{n-m} \binom{i+m}{m} {n \brack i+m} x^i,$$
+
+where ${n \brack k}$ is the unsigned Stirling number of the first kind; the sum includes both
+endpoints $i = 0$ and $i = n - m$.
+
+Source: Cereceda, arXiv:2401.13696v4, lines 132-142. -/
 theorem generalizedStirlingFirst_eq_sum (n m : ℕ) (x : ℝ) (_h : m ≤ n) :
     generalizedStirlingFirst n m x =
       Finset.sum (Finset.range (n - m + 1)) (fun i =>
         (Nat.choose (i + m) m : ℝ) * (Nat.stirlingFirst n (i + m) : ℝ) * x ^ i) := rfl
 
-/-- Characterization of `generalizedStirlingSecond`: under `m ≤ n` it equals the
-exact source sum with coefficient `choose n i`, ordinary number
-`stirlingSecond (n-i) m`, and power `x^i`, including both endpoints `i = 0` and
-`i = n - m`. Source: Cereceda, arXiv:2401.13696v4, lines 132-142. -/
+/-- **Sum formula for generalized Stirling numbers of the second kind.** For natural numbers
+$m \le n$ and every real number $x$, the generalized Stirling number of the second kind satisfies
+
+$${n \brace m}_x = \sum_{i=0}^{n-m} \binom{n}{i} {n-i \brace m} x^i,$$
+
+where ${n \brace k}$ is the Stirling number of the second kind; the sum includes both endpoints
+$i = 0$ and $i = n - m$.
+
+Source: Cereceda, arXiv:2401.13696v4, lines 132-142. -/
 theorem generalizedStirlingSecond_eq_sum (n m : ℕ) (x : ℝ) (_h : m ≤ n) :
     generalizedStirlingSecond n m x =
       Finset.sum (Finset.range (n - m + 1)) (fun i =>

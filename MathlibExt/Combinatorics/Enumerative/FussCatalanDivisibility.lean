@@ -20,8 +20,11 @@ namespace MetaMathlibExt
 -/
 
 /--
-Classical case: for `a ≥ 2` and `n ≥ 1`, `(a-1)*n+1` divides `C(a*n, n)`,
-so the Fuss-Catalan numbers are integers.
+**Integrality of the Fuss–Catalan numbers.** For natural numbers $a \ge 2$ and $n \ge 1$, the
+integer $(a-1)n + 1$ divides the binomial coefficient $\binom{an}{n}$. Hence the Fuss–Catalan
+number $\frac{1}{(a-1)n+1}\binom{an}{n}$ is an integer.
+
+Proves `Wanted` entry `fuss_catalan_dvd_choose`.
 
 Source: Christian Ballot,
 "Lucasnomial Fuss-Catalan Numbers and Related Divisibility Questions,"
@@ -30,12 +33,6 @@ equation (label eq:FC), lines 115–117 (classical definition),
 line 127 (classical integrality recorded as known),
 Theorem (label thm:1), lines 516–521 (Lucasnomial generalization),
 https://cs.uwaterloo.ca/journals/JIS/VOL21/Ballot/ballot30.tex
-
-The `r = 1` case of eq:FC is `C(a*n,n)/((a-1)*n+1)`; the source proves
-integrality for the Lucasnomial family (Theorem thm:1) while the classical
-divisibility is cited as known. Verified computationally for `2 ≤ a ≤ 9`
-and `1 ≤ n ≤ 39`.
-Proves `Wanted` entry `fuss_catalan_dvd_choose`.
 -/
 theorem fuss_catalan_dvd_choose
     (a n : ℕ) (ha : 2 ≤ a) (hn : 1 ≤ n) :

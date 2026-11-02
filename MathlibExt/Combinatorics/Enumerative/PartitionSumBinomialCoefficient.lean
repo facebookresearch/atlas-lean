@@ -623,8 +623,12 @@ private lemma subset_sums (n m l : ℕ) :
     exact tgtTerm_zero n m l s hgt
 
 /--
-Unconditional partition-sum expansion of `Nat.choose (n * m) l`, valid for all
-`n m l : ℕ` including degenerate and out-of-range cases.
+**Partition-sum expansion of $\binom{nm}{l}$, unconditional form.** For all natural numbers $n$,
+$m$ and $l$, let $P$ be the set of tuples $s = (s_1, \dots, s_m)$ of natural numbers with
+$\sum_{j=1}^{m} j\,s_j = l$, and for $s \in P$ write $T_j(s) = s_{j+1} + \dots + s_m$. Then
+$$\binom{nm}{l} = \sum_{s \in P} \prod_{j=1}^{m} \binom{n - T_j(s)}{s_j} \binom{m}{j}^{s_j},$$
+where $n - T_j(s)$ is read as $0$ when $T_j(s) > n$. No positivity or range conditions on $n$,
+$m$ and $l$ are needed.
 -/
 theorem choose_mul_eq_partition_sum_unconditional
     (n m l : ℕ) :
@@ -649,14 +653,19 @@ theorem choose_mul_eq_partition_sum_unconditional
 
 set_option linter.unusedVariables false in
 /--
-Partition-sum expansion of the binomial coefficient `Nat.choose (n * m) l`.
+**Partition-sum expansion of $\binom{nm}{l}$.** Let $n$ and $m$ be positive natural numbers and
+let $l$ be a natural number with $1 \le l \le nm$. Let $P$ be the set of tuples
+$s = (s_1, \dots, s_m)$ of natural numbers with $\sum_{j=1}^{m} j\,s_j = l$, and for $s \in P$
+write $T_j(s) = s_{j+1} + \dots + s_m$. Then
+$$\binom{nm}{l} = \sum_{s \in P} \prod_{j=1}^{m} \binom{n - T_j(s)}{s_j} \binom{m}{j}^{s_j},$$
+where $n - T_j(s)$ is read as $0$ when $T_j(s) > n$.
 
-Jocelyn Quaintance and Harris Kwong, "Permutations and Combinations of Colored Multisets,"
+Proves `Wanted` entry `choose_mul_eq_partition_sum`.
+
+Source: Jocelyn Quaintance and Harris Kwong, "Permutations and Combinations of Colored Multisets,"
 Journal of Integer Sequences 13 (2010), Article 10.2.6,
 Theorem (label thm:1.2), lines 329–336.
 `https://cs.uwaterloo.ca/journals/JIS/VOL13/Kwong/kwong6.tex`
-
-Proves `Wanted` entry `choose_mul_eq_partition_sum`.
 -/
 theorem choose_mul_eq_partition_sum
     (n m l : ℕ) (hn : 0 < n) (hm : 0 < m) (hl : 0 < l)

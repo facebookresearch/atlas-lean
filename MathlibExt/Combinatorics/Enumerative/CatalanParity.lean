@@ -143,18 +143,18 @@ private lemma pow_two_of_digits_sum_eq_one (m : ℕ) (_hm : m ≠ 0)
   rw [Nat.ofDigits_digits] at hk
   exact ⟨k, hk⟩
 
-/-- Catalan parity characterization: `catalan n` is odd if and only if `n` is one
-less than a power of two, i.e. `∃ a : ℕ, n = 2 ^ a - 1`.
+/-- **Parity of Catalan numbers.** For every natural number $n$, the $n$th Catalan number $C_n$
+is odd if and only if $n = 2^a - 1$ for some natural number $a$.
 
-Authoritative source: Alon Regev, "The Central Component of a Triangulation",
+Proves `Wanted` entry `catalan_odd_iff`.
+
+Source: Alon Regev, "The Central Component of a Triangulation",
 Journal of Integer Sequences 16 (2013), Article 13.4.1, theorem `oddcats`,
 lines 132–147 of <https://cs.uwaterloo.ca/journals/JIS/VOL16/Regev/regev4.tex>.
 This entry records the displayed theorem statement. Lines 85–88 define `C_n`
 with the standard indexing used by Mathlib's `catalan`, so no index shift is
 required. The natural subtraction in `2 ^ a - 1` is safe because `2 ^ a` is
 positive. No parallel Catalan definition is introduced.
-
-Proves `Wanted` entry `catalan_odd_iff`.
 -/
 theorem catalan_odd_iff (n : ℕ) :
     Odd (catalan n) ↔ ∃ a : ℕ, n = 2 ^ a - 1 := by

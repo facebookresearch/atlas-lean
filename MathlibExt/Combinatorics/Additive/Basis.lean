@@ -36,23 +36,38 @@ namespace Set
 
 variable {M : Type*} [AddCommMonoid M]
 
-/-- `A` is an asymptotic additive basis of order `n` if every sufficiently large
-element is a sum of `n` elements of `A`. -/
+/-- **Asymptotic additive basis of order $n$.** Let $M$ be an additive commutative monoid,
+$A \subseteq M$ and $n$ a natural number. $A$ is an asymptotic additive basis of order $n$ if all
+but finitely many elements of $M$ are sums of exactly $n$ (not necessarily distinct) elements of
+$A$, that is, $M \setminus nA$ is finite, where $nA = \{a_1 + \dots + a_n : a_1, \dots, a_n \in A\}$
+and $0A = \{0\}$.
+
+For $M = \mathbb{N}$ this means that every sufficiently large natural number is such a sum. -/
 def IsAsymptoticAddBasisOfOrder (A : Set M) (n : ℕ) : Prop :=
   ∀ᶠ a in cofinite, a ∈ n • A
 
-/-- `A` is an exact additive basis of order `n` if every element is a sum of
-`n` elements of `A`. -/
+/-- **Exact additive basis of order $n$.** Let $M$ be an additive commutative monoid,
+$A \subseteq M$ and $n$ a natural number. $A$ is an exact additive basis of order $n$ if every
+element of $M$ is a sum of exactly $n$ (not necessarily distinct) elements of $A$, that is,
+$M = nA$, where $nA = \{a_1 + \dots + a_n : a_1, \dots, a_n \in A\}$ and $0A = \{0\}$. -/
 def IsAddBasisOfOrder (A : Set M) (n : ℕ) : Prop := ∀ a, a ∈ n • A
 
-/-- `A` is an asymptotic additive basis (of some finite order). -/
+/-- **Asymptotic additive basis.** A subset $A$ of an additive commutative monoid $M$ is an
+asymptotic additive basis if there is a natural number $n$ such that $A$ is an asymptotic additive
+basis of order $n$, that is, all but finitely many elements of $M$ are sums of exactly $n$ (not
+necessarily distinct) elements of $A$. -/
 def IsAsymptoticAddBasis (A : Set M) : Prop := ∃ n, A.IsAsymptoticAddBasisOfOrder n
 
-/-- `A` is a weak additive basis of order `n` if every element is a sum of at
-most `n` elements of `A`. -/
+/-- **Weak additive basis of order $n$.** Let $M$ be an additive commutative monoid,
+$A \subseteq M$ and $n$ a natural number. $A$ is a weak additive basis of order $n$ if every
+element of $M$ is a sum of at most $n$ (not necessarily distinct) elements of $A$, that is, lies
+in $mA$ for some $m \le n$, where $mA = \{a_1 + \dots + a_m : a_1, \dots, a_m \in A\}$ and
+$0A = \{0\}$. -/
 def IsWeakAddBasisOfOrder (A : Set M) (n : ℕ) : Prop := ∀ a, ∃ m ≤ n, a ∈ m • A
 
-/-- A weak additive basis of some order. -/
+/-- **Weak additive basis.** A subset $A$ of an additive commutative monoid $M$ is a weak additive
+basis if there is a natural number $n$ such that $A$ is a weak additive basis of order $n$, that
+is, every element of $M$ is a sum of at most $n$ (not necessarily distinct) elements of $A$. -/
 def IsWeakAddBasis (A : Set M) : Prop := ∃ n, A.IsWeakAddBasisOfOrder n
 
 end Set

@@ -39,23 +39,13 @@ namespace MetaMathlibExt
 
 -- Combinatorics 29: Lattice Path with Prescribed Steps
 
-/-- Let d∈ℕ, let D⊆ℤᵈ, and
-let p,q∈ℤᵈ. A lattice path from p to q
-with prescribed step set D is a finite sequence
+/-- **Lattice paths with prescribed steps.** Let $d \in \mathbb{N}$, let $D \subseteq \mathbb{Z}^d$
+and let $p, q \in \mathbb{Z}^d$. A lattice path from $p$ to $q$ with step set $D$ is a finite
+sequence $(v_0, v_1, \dots, v_m)$ of points of $\mathbb{Z}^d$, for some $m \in \mathbb{N}$, such
+that $v_0 = p$, $v_m = q$, and $v_i - v_{i-1} \in D$ for $1 \le i \le m$.
 
-  (v₀,v₁,…,vₘ)
-
-of points in ℤᵈ, for some m∈ℕ,
-such that
-
-  v₀=p,  vₘ=q,
-
-and
-
-  vᵢ-vᵢ₋₁∈ D (1≤ i≤ m).
-
-The case m=0 is the length-zero path and is allowed
-exactly when p=q.
+The case $m = 0$ is the path of length zero, which is a lattice path from $p$ to $q$ exactly when
+$p = q$.
 -/
 def LatticePath (d : ℕ)
     (D : Set (Fin d → ℤ))
@@ -69,43 +59,22 @@ def LatticePath (d : ℕ)
 
 -- Combinatorics 30: Fixed-Length Necklace
 
-/-- Let A be a set and let n∈ℕ. For n≥1,
-a word of length n over A is an ordered tuple
+/-- **Fixed-length necklaces.** Let $A$ be a set and let $n \in \mathbb{N}$. For $n \ge 1$, a word
+of length $n$ over $A$ is a tuple $(a_0, a_1, \dots, a_{n-1})$ of elements of $A$, and two words
+$(a_0, \dots, a_{n-1})$ and $(b_0, \dots, b_{n-1})$ are rotationally equivalent if there is an
+integer $r$ with $0 \le r < n$ such that $b_i = a_{(i+r) \bmod n}$ for $0 \le i < n$. A necklace of
+length $n$ over $A$ is an equivalence class of words of length $n$ under rotational equivalence.
+For $n = 0$ there is exactly one necklace over $A$, represented by the empty word.
 
-  a=(a₀,a₁,…,aₙ₋₁)
-
-of elements of A. Two words
-
-  a=(a₀,…,aₙ₋₁)
-
-and
-
-  b=(b₀,…,bₙ₋₁)
-
-are rotationally equivalent if there exists an integer r
-with 0≤ r<n such that
-
-  bᵢ=a_{(i+r)mod n} (0≤ i<n).
-
-A fixed-length necklace of length n over A is an
-equivalence class of words under rotational equivalence.
 Reflections are not identified.
-
-When n=0, there is exactly one necklace over A,
-represented by the empty word.
 -/
 def Necklace (A : Type*) (n : ℕ) :=
   {c : Cycle A // c.length = n}
 
 -- Combinatorics 54: Lucas Number Sequence
 
-/-- The Lucas number sequence (Lₙ)_{n≥ 0} is defined by
-
-  L₀=2,  L₁=1,
-
-and, for every n∈ℕ, by
-
-  Lₙ₊₂=Lₙ₊₁+Lₙ.
+/-- **Lucas number sequence.** The Lucas numbers $(L_n)_{n \ge 0}$ are the natural numbers
+defined by $L_0 = 2$, $L_1 = 1$, and $L_{n+2} = L_{n+1} + L_n$ for every $n \in \mathbb{N}$.
 -/
 def Nat.lucas : ℕ → ℕ
   | 0 => 2
@@ -114,20 +83,10 @@ def Nat.lucas : ℕ → ℕ
 
 -- Combinatorics 55: Motzkin Number Sequence
 
-/-- The Motzkin number sequence (Mₙ)_{n≥ 0} is
-defined by
-
-  M₀=1,
-
-and, for every n∈ℕ, by
-
-  Mₙ₊₁
-  =
-  Mₙ+∑ₖ₌₀ⁿ⁻¹MₖMₙ₋₁₋ₖ,
-
-where the sum is empty when n=0. Thus
-
-  M₀,M₁,M₂,M₃,…=1,1,2,4,….
+/-- **Motzkin number sequence.** The Motzkin numbers $(M_n)_{n \ge 0}$ are the natural numbers
+defined by $M_0 = 1$ and, for every $n \in \mathbb{N}$,
+$M_{n+1} = M_n + \sum_{k=0}^{n-1} M_k M_{n-1-k}$, where the sum is empty when $n = 0$. Thus
+$M_0, M_1, M_2, M_3 = 1, 1, 2, 4$.
 -/
 def Nat.motzkin : ℕ → ℕ
   | 0 => 1
@@ -139,21 +98,12 @@ def Nat.motzkin : ℕ → ℕ
 
 -- Combinatorics 56: Delannoy Numbers
 
-/-- For m,n∈ℕ, the Delannoy number D(m,n)
-is defined recursively by
+/-- **Delannoy numbers.** The Delannoy numbers $D(m,n)$, for $m, n \in \mathbb{N}$, are defined by
+$D(0,n) = 1$ and $D(m,0) = 1$ for all $m, n \in \mathbb{N}$, and
+$D(m+1,n+1) = D(m,n+1) + D(m+1,n) + D(m,n)$ for all $m, n \in \mathbb{N}$.
 
-  D(0,n)=1,  D(m,0)=1,
-
-and
-
-  D(m+1,n+1)
-  =
-  D(m,n+1)+D(m+1,n)+D(m,n).
-
-Equivalently, D(m,n) is the number of lattice paths
-from (0,0) to (m,n) using the steps
-
-  (1,0), (0,1), (1,1).
+Equivalently, $D(m,n)$ is the number of lattice paths from $(0,0)$ to $(m,n)$ with steps
+$(1,0)$, $(0,1)$ and $(1,1)$.
 -/
 def Nat.delannoy : ℕ → ℕ → ℕ
   | 0, _ => 1
@@ -205,10 +155,16 @@ determined by the endpoints. In particular
 the height never increases along a path.
 -/
 
-/-- A point of the quarter plane is a pair (a,b) with a,b∈ℤ_{≥ 0}, where a is the horizontal
-coordinate and b is the height. Let m∈ℤ_{≥ 0} and let p and q be points of the quarter plane.
+/-- **Southeast paths.** A point of the quarter plane is a pair $(a, b) \in \mathbb{N}^2$, with $a$
+the horizontal coordinate and $b$ the height. Let $p$ and $q$ be points of the quarter plane. A
+southeast path from $p$ to $q$ is a list $v = [v_0, v_1, \dots, v_m]$ of points of the quarter
+plane, for some $m \in \mathbb{N}$, with $v_0 = p$, $v_m = q$, and, for each $1 \le t \le m$,
+either $v_t = v_{t-1} + (1, 0)$ (an east step) or $v_{t-1} = v_t + (0, 1)$ (a south step).
 
-The full informal statement is in the module documentation directly above.
+For $m = 0$ the path is the single point $[p]$, which is a southeast path from $p$ to $q$ exactly
+when $p = q$. The empty list is not a southeast path. Writing $p = (a, b)$ and $q = (c, d)$, a
+southeast path from $p$ to $q$ exists exactly when $a \le c$ and $d \le b$, and then
+$m = (c - a) + (b - d)$.
 -/
 def SoutheastPath (p q : ℕ × ℕ) :=
   { l : List (ℕ × ℕ) //
@@ -219,34 +175,15 @@ def SoutheastPath (p q : ℕ × ℕ) :=
 -- Combinatorics 463: Southeast Path Weight
 
 
-/-- Let R be a commutative monoid, written
-multiplicatively, and let x=(xⱼ) be a
-family of elements of R indexed by
-j∈ℤ_{≥ 0}. Let p and q be
-points of the quarter plane and let
-v=[v₀,…,vₘ] be a southeast path
-from p to q.
+/-- **Weight of a southeast path.** Let $R$ be a commutative monoid, written multiplicatively, let
+$x = (x_j)_{j \in \mathbb{N}}$ be a family of elements of $R$, let $p, q \in \mathbb{N}^2$, and let
+$v = [v_0, \dots, v_m]$ be a southeast path from $p$ to $q$. For $1 \le t \le m$, the step from
+$v_{t-1}$ to $v_t$ has weight $w_t = x_j$ if it is an east step at height $j$, that is,
+$v_{t-1} = (a, j)$ and $v_t = (a+1, j)$, and weight $w_t = 1$ if it is a south step. The weight of
+$v$ is $\operatorname{wt}(v) = \prod_{t=1}^{m} w_t$.
 
-Every step of v is an east step or a south
-step. An east step leaves the height
-unchanged; if that common height is j,
-the step has weight xⱼ. A south step has
-weight 1. The weight of v is the product
-of the weights of its steps,
-
-  wt(v)=∏ₜ₌₁ᵐwₜ,
-
-where wₜ is the weight of the step from
-vₜ₋₁ to vₜ. Equivalently, it is the
-product of the xⱼ taken over the east
-steps of v, each east step contributing
-the height j at which it occurs.
-
-For m=0 the product is empty, so the
-one-point path [p] has weight 1. The
-same holds for a path all of whose steps are
-south steps. The weight depends only on the
-list v, not on p and q separately.
+For $m = 0$ the product is empty, so the one-point path $[p]$ has weight $1$; so does every path
+all of whose steps are south steps. The weight depends only on the list $v$.
 -/
 def SoutheastPath.weight {p q : ℕ × ℕ} {R : Type*}
     [CommMonoid R] (x : ℕ → R)
@@ -298,11 +235,14 @@ pᵢ=(βᵢ,γᵢ) and
 qᵢ=(αᵢ,δᵢ).
 -/
 
-/-- Let n∈ℤ_{≥ 0} and write [n]={1,…,n}, so that [0]=∅. A point of the quarter plane is a pair (a,b)
-of nonnegative integers, with a the horizontal coordinate and b the height. If n≥ 1, let p=[p₁,…,pₙ]
-and q=[q₁,…,qₙ] be tuples of points. If n=0, each is the empty tuple.
+/-- **Nonintersecting families of southeast paths.** Let $n \in \mathbb{N}$ and let
+$p_1, \dots, p_n$ and $q_1, \dots, q_n$ be points of $\mathbb{N}^2$. A family
+$L = (L_1, \dots, L_n)$, in which $L_i$ is a southeast path from $p_i$ to $q_i$ for each $i$, is
+nonintersecting when for all $i \ne j$ no point occurs both in $L_i$ and in $L_j$.
 
-The full informal statement is in the module documentation directly above.
+Endpoints count as points of a path, so two paths that meet only at a common endpoint do not
+form a nonintersecting family. Distinctness is of indices, not of paths: if $i \ne j$ and
+$L_i = L_j$, the family is not nonintersecting. For $n \le 1$ every family is nonintersecting.
 -/
 def IsNonintersectingPathFamily {n : ℕ}
     {p q : Fin n → ℕ × ℕ}
@@ -374,10 +314,17 @@ W(p,q)=0. For n=0 the empty tuple is the only n-path and
 W(p,q)=1.
 -/
 
-/-- For k∈ℤ_{≥ 0} write [k]={1,…,k}, so that [0]=∅. Let n∈ℤ_{≥ 0}. If n≥ 1, let p=[p₁,…,pₙ] and
-q=[q₁,…,qₙ] be tuples of points of ℤ_{≥ 0}². If n=0, each is the empty tuple.
+/-- **Weighted sum over nonintersecting path families.** Let $R$ be a commutative semiring, let
+$x = (x_j)_{j \in \mathbb{N}}$ be a family of elements of $R$, let $n \in \mathbb{N}$, and let
+$p = (p_1, \dots, p_n)$ and $q = (q_1, \dots, q_n)$ be tuples of points of $\mathbb{N}^2$. The
+nonintersecting path weight sum of type $(p, q)$ is
+$W(p, q) = \sum_L \prod_{i=1}^{n} \operatorname{wt}(L_i)$, the sum taken over all nonintersecting
+families $L = (L_1, \dots, L_n)$ in which $L_i$ is a southeast path from $p_i$ to $q_i$ for each
+$i$, where $\operatorname{wt}(L_i)$ is the weight of $L_i$ with respect to $x$.
 
-The full informal statement is in the module documentation directly above.
+There are only finitely many such families. If for some $i$ there is no southeast path from
+$p_i$ to $q_i$, then $W(p, q) = 0$. For $n = 0$ the empty family is the only one, and
+$W(p, q) = 1$.
 -/
 noncomputable def nonintersectingPathWeightSum {n : ℕ}
     {R : Type*} [CommSemiring R] (x : ℕ → R)
