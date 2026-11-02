@@ -44,8 +44,9 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.Digits.ReverseDivisorWanted
 
-/-- A *reverse divisor* is a positive integer whose
-decimal reversal is `k` times it for some `k ≥ 2`.
+/-- **Reverse divisor.** A natural number $n$ is a reverse divisor if $n > 0$ and there is a
+natural number $k \ge 2$ such that the decimal reversal of $n$ equals $kn$. Since $n > 0$, such a
+$k$ is unique; it is called the quotient of $n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -53,8 +54,9 @@ Section 1 (terminology). -/
 def IsReverseDivisor (n : ℕ) : Prop :=
   0 < n ∧ ∃ k : ℕ, 2 ≤ k ∧ Nat.reverseDigits 10 n = k * n
 
-/-- Characterization of `IsReverseDivisor` by its
-defining existential.
+/-- **Characterization of reverse divisors.** A natural number $n$ is a reverse divisor if and
+only if $n > 0$ and there is a natural number $k \ge 2$ such that the decimal reversal of $n$
+equals $kn$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -64,8 +66,8 @@ theorem isReverseDivisor_iff (n : ℕ) :
       0 < n ∧ ∃ k : ℕ, 2 ≤ k ∧ Nat.reverseDigits 10 n = k * n :=
   Iff.rfl
 
-/-- The property `P*`: `n` divides the decimal reversal
-of every multiple of `n`.
+/-- **Property $P^*$.** A natural number $n$ has property $P^*$ if $n$ divides the decimal
+reversal of every multiple of $n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -73,8 +75,8 @@ Section 2 (terminology). -/
 def HasPropertyPStar (n : ℕ) : Prop :=
   ∀ m : ℕ, n ∣ m → n ∣ Nat.reverseDigits 10 m
 
-/-- Characterization of `HasPropertyPStar` by its
-defining divisibility condition.
+/-- **Unfolding property $P^*$.** A natural number $n$ has property $P^*$ if and only if $n$
+divides the decimal reversal of every multiple of $n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -84,9 +86,8 @@ theorem hasPropertyPStar_iff (n : ℕ) :
       ∀ m : ℕ, n ∣ m → n ∣ Nat.reverseDigits 10 m :=
   Iff.rfl
 
-/-- **Theorem 3**: an integer `n ≥ 1` has the property
-`P*` if and only if `n` is one of the (positive)
-divisors of `99`.
+/-- **The positive integers with property $P^*$ are the divisors of $99$.** A natural number
+$n \ge 1$ has property $P^*$ if and only if $n$ divides $99$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -94,8 +95,7 @@ Theorem 3. -/
 theorem_wanted hasPropertyPStar_iff_dvd (n : ℕ) (hn : 1 ≤ n) :
     HasPropertyPStar n ↔ n ∣ 99
 
-/-- **Proposition 1**: the positive divisors of `99`
-have the property `P*`.
+/-- **Divisors of $99$ have property $P^*$.** Every divisor of $99$ has property $P^*$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -103,9 +103,8 @@ Proposition 1. -/
 theorem_wanted hasPropertyPStar_of_dvd (n : ℕ) (hn : n ∣ 99) :
     HasPropertyPStar n
 
-/-- **Proposition 2**: if an integer `n ≥ 1` is not
-coprime with `10`, then it does not have the property
-`P*`.
+/-- **Positive integers sharing a factor with $10$ lack property $P^*$.** If $n \ge 1$ is a
+natural number with $\gcd(n, 10) \ne 1$, then $n$ does not have the property $P^*$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -114,8 +113,9 @@ theorem_wanted not_hasPropertyPStar_of_not_coprime (n : ℕ)
     (hn : 1 ≤ n) (h : ¬ Nat.Coprime n 10) :
     ¬ HasPropertyPStar n
 
-/-- **Proposition 3**: no palindrome other than
-`1, 3, 9, 11, 33` and `99` has the property `P*`.
+/-- **Palindromes with property $P^*$.** Let $n \ge 1$ be a natural number that is a decimal
+palindrome, that is, whose decimal reversal equals $n$. If $n$ has the property $P^*$, then $n$
+is one of $1$, $3$, $9$, $11$, $33$ and $99$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -124,8 +124,8 @@ theorem_wanted palindrome_hasPropertyPStar (n : ℕ) (hn : 1 ≤ n)
     (hpal : Nat.reverseDigits 10 n = n) (h : HasPropertyPStar n) :
     n = 1 ∨ n = 3 ∨ n = 9 ∨ n = 11 ∨ n = 33 ∨ n = 99
 
-/-- **Theorem 1**, quotient classification: the quotient
-of a reverse divisor is either `4` or `9`.
+/-- **Reverse divisors have quotient $4$ or $9$.** If $n$ is a reverse divisor, then the decimal
+reversal of $n$ equals $4n$ or $9n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -134,10 +134,10 @@ theorem_wanted reverseDigits_eq_four_or_nine_mul (n : ℕ)
     (h : IsReverseDivisor n) :
     Nat.reverseDigits 10 n = 4 * n ∨ Nat.reverseDigits 10 n = 9 * n
 
-/-- **Theorem 1**, basic examples: for `k ≥ 2`, the
-`(k + 2)`-digit numbers `11 * (10^k - 1)` and
-`22 * (10^k - 1)` are reverse divisors with respective
-quotients `9` and `4`.
+/-- **Basic reverse divisors.** For every natural number $k \ge 2$, the numbers
+$11(10^k - 1)$ and $22(10^k - 1)$ both have exactly $k + 2$ decimal digits, the decimal
+reversal of $11(10^k - 1)$ equals $9 \cdot 11(10^k - 1)$, and the decimal reversal of
+$22(10^k - 1)$ equals $4 \cdot 22(10^k - 1)$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -150,8 +150,8 @@ theorem_wanted basic_reverseDivisors (k : ℕ) (hk : 2 ≤ k) :
       Nat.reverseDigits 10 (22 * (10 ^ k - 1)) =
         4 * (22 * (10 ^ k - 1))
 
-/-- **Theorem 1**, minimum size: no reverse divisor has
-fewer than four digits.
+/-- **Reverse divisors have at least four digits.** Every reverse divisor has at least four
+decimal digits.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -160,9 +160,9 @@ theorem_wanted four_le_length_digits (n : ℕ)
     (h : IsReverseDivisor n) :
     4 ≤ (Nat.digits 10 n).length
 
-/-- **Theorem 1**, uniqueness in small lengths: for
-`4`, `5`, `6` or `7` digits, the basic examples are the
-only reverse divisors.
+/-- **Reverse divisors with at most seven digits.** Let $n$ be a reverse divisor with $L$
+decimal digits, where $L \le 7$. Then $n = 11(10^{L-2} - 1)$ or $n = 22(10^{L-2} - 1)$, where
+$L - 2$ is read as $0$ when $L < 2$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -173,8 +173,8 @@ theorem_wanted eq_basic_of_length_le_seven (n : ℕ)
     n = 11 * (10 ^ ((Nat.digits 10 n).length - 2) - 1) ∨
       n = 22 * (10 ^ ((Nat.digits 10 n).length - 2) - 1)
 
-/-- **Lemma 1**: no reverse divisor with quotient `4`
-has the property `P*`.
+/-- **Reverse divisors with quotient $4$ lack property $P^*$.** If $n > 0$ is a natural number
+whose decimal reversal equals $4n$, then $n$ does not have the property $P^*$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -183,8 +183,11 @@ theorem_wanted not_hasPropertyPStar_of_quotient_four (n : ℕ)
     (hn : 0 < n) (h : Nat.reverseDigits 10 n = 4 * n) :
     ¬ HasPropertyPStar n
 
-/-- **Lemma 2**: no basic reverse divisor with quotient
-`9` has the property `P*`.
+/-- **For $k \ge 2$, the number $11 \cdot (10^k - 1)$ lacks property $P^*$.** For every natural
+number $k \ge 2$, the number $11 \cdot (10^k - 1)$ does not have the property $P^*$.
+
+In the source these numbers $1089, 10989, 109989, \dots$ are the basic reverse divisors with
+quotient $9$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -192,8 +195,8 @@ Lemma 2. -/
 theorem_wanted not_hasPropertyPStar_basic_nine (k : ℕ) (hk : 2 ≤ k) :
     ¬ HasPropertyPStar (11 * (10 ^ k - 1))
 
-/-- **Proposition 4**: no reverse divisor has the
-property `P*`.
+/-- **No reverse divisor has property $P^*$.** If $n$ is a reverse divisor, then $n$ does not have
+the property $P^*$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -202,11 +205,11 @@ theorem_wanted not_hasPropertyPStar_of_isReverseDivisor (n : ℕ)
     (h : IsReverseDivisor n) :
     ¬ HasPropertyPStar n
 
-/-- **Lemma 4**: the product of the integer consisting
-of `r` digits `9` followed by `89` with the integer
-consisting of `r + 2` digits `9` ends with `r` digits
-`0` followed by `11`; that is, it is congruent to `11`
-modulo `10^{r+2}`.
+/-- **A product congruent to $11$ modulo a power of ten.** For every natural number $r$, let
+$a = (10^r - 1) \cdot 100 + 89$, the integer whose decimal digits are $r$ nines followed by $89$,
+and let $b = 10^{r+2} - 1$, the integer whose decimal digits are $r + 2$ nines. Then the
+remainder of $ab$ modulo $10^{r+2}$ is $11$; that is, the last $r + 2$ decimal digits of $ab$ are
+$r$ zeros followed by $11$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -243,10 +246,9 @@ theorem mul_nines_modEq_eleven (r : ℕ) :
     Nat.mod_eq_of_lt (by omega : 11 < 10 ^ (r + 2))] at hmod
   exact hmod
 
-/-- **Proposition 5**: in base `B ≥ 2`, every positive
-divisor of `B^2 - 1` has the base-`B` property `P_B*`:
-it divides the base-`B` reversal of each of its
-multiples.
+/-- **In base $B$, divisors of $B^2 - 1$ divide reversals of their multiples.** Let $B \ge 2$ be
+a natural number and let $n$ be a natural number dividing $B^2 - 1$. Then $n$ divides the
+base-$B$ reversal of every multiple of $n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -255,9 +257,10 @@ theorem_wanted dvd_reverseDigits_of_dvd (B n : ℕ) (hB : 2 ≤ B)
     (hn : n ∣ B ^ 2 - 1) (m : ℕ) (hm : n ∣ m) :
     n ∣ Nat.reverseDigits B m
 
-/-- **Proposition 6**: if `10 ∤ n` and there exists
-`k₀ ≥ 1` with `n ∣ reverse(k₀ * n)`, then there are
-infinitely many `k ≥ 1` with `n ∣ reverse(k * n)`.
+/-- **Infinitely many multiples with divisible reversal.** Let $n$ be a natural number not
+divisible by $10$, and suppose that $n$ divides the decimal reversal of $k_0 n$ for some natural
+number $k_0 \ge 1$. Then there are infinitely many natural numbers $k \ge 1$ such that $n$
+divides the decimal reversal of $k n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",
@@ -268,10 +271,10 @@ theorem_wanted infinite_dvd_reverseDigits_mul (n : ℕ)
     Set.Infinite
       {k : ℕ | 1 ≤ k ∧ n ∣ Nat.reverseDigits 10 (k * n)}
 
-/-- **Proposition 6**, sufficient conditions: the
-hypothesis of Proposition 6 is satisfied if
-`gcd(n, 10) = 1`, or if `n` is a palindrome, or if `n`
-is a reverse divisor.
+/-- **Sufficient conditions for a multiple with divisible reversal.** Let $n$ be a natural
+number such that $\gcd(n, 10) = 1$, or $n$ equals its decimal reversal, or $n$ is a reverse
+divisor. Then there is a natural number $k_0 \ge 1$ such that $n$ divides the decimal reversal
+of $k_0 n$.
 
 Source: Mohamed Ayad and Rachid Bouchenna, "Which
 Integer Divides the Reverse of Any of Its Multiples?",

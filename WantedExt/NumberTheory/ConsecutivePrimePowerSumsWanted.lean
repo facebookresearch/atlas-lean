@@ -35,7 +35,10 @@ open Asymptotics Filter Finset
 
 @[expose] public section
 
-/-- Lemma 1: for `k > 1` and `m > 0`, `s_{k,m}(x) ≤ π((x/m)^{1/k})`.
+/-- **Counting sums of a fixed number of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
+be the primes. For natural numbers $k > 1$, $m > 0$ and $x$, the number of integers $n \le x$ of
+the form $n = p_{\ell+1}^k + p_{\ell+2}^k + \cdots + p_{\ell+m}^k$ for some $\ell \ge 0$ is at
+most $\pi(\lfloor (x/m)^{1/k} \rfloor)$, the number of primes up to $(x/m)^{1/k}$.
 
 Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
 Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Lemma 1 (quoted from
@@ -45,7 +48,11 @@ public theorem_wanted card_consecutivePrimePowerSums_length_le (k m x : ℕ) (hk
     {n : ℕ | n ≤ x ∧ ∃ l, n = ∑ i ∈ range m, Nat.nth Nat.Prime (l + i) ^ k}.ncard ≤
       Nat.primeCounting ⌊((x : ℝ) / m) ^ ((1 : ℝ) / k)⌋₊
 
-/-- Lemma 2: for `k > 1`, `M(x, k) ∼ (k + 1) x^{1/(k+1)} / (log x)^{k/(k+1)}` as `x → ∞`.
+/-- **Length of the longest sum of consecutive prime powers.** Let $p_1 < p_2 < \cdots$ be the
+primes, let $k > 1$ be a natural number, and for a natural number $x$ let $M(x, k)$ be the
+largest $m \le x$ with $p_1^k + p_2^k + \cdots + p_m^k \le x$. Then
+$M(x, k) \sim (k + 1)\, x^{1/(k+1)} / (\log x)^{k/(k+1)}$ (asymptotic equivalence) as $x \to \infty$
+through the natural numbers.
 
 Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
 Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Lemma 2
@@ -56,10 +63,13 @@ public theorem_wanted maxConsecutivePrimePowerSumLength_isEquivalent (k : ℕ) (
       fun x : ℕ => (k + 1) * (x : ℝ) ^ ((1 : ℝ) / (k + 1)) /
         Real.log x ^ ((k : ℝ) / (k + 1))
 
-/-- Theorem 1: for `k > 1`,
-`s_k(x) ≤ (1 + o(1)) c_k x^{2/(k+1)} / (log x)^{2k/(k+1)}` with
-`c_k = (k²/(k - 1)) (k + 1)^{1 - 1/k}`; the `1 + o(1)` is stated as: for every `ε > 0`, the bound
-with factor `1 + ε` holds for all sufficiently large `x`.
+/-- **Upper bound for the number of sums of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
+be the primes and let $k > 1$ be a natural number. For a natural number $x$ let $s_k(x)$ be the
+number of pairs $(\ell, m)$ of integers with $0 \le \ell < x$ and $1 \le m \le x$ such that
+$p_{\ell+1}^k + \cdots + p_{\ell+m}^k \le x$. Then for every real $\varepsilon > 0$, for all
+sufficiently large $x$,
+$s_k(x) \le (1 + \varepsilon)\, c_k\, x^{2/(k+1)} / (\log x)^{2k/(k+1)}$, where
+$c_k = \frac{k^2}{k-1} (k + 1)^{1 - 1/k}$.
 
 Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
 Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Theorem 1
@@ -72,11 +82,13 @@ public theorem_wanted card_consecutivePrimePowerSums_le (k : ℕ) (hk : 1 < k) (
         (1 + ε) * ((k ^ 2 / (k - 1) : ℝ) * ((k : ℝ) + 1) ^ (1 - (1 : ℝ) / k)) *
           ((x : ℝ) ^ ((2 : ℝ) / (k + 1)) / Real.log x ^ ((2 * k : ℝ) / (k + 1)))
 
-/-- Theorem 2: for `k > 1`,
-`s_k(x) ≥ M²/2 ≥ (1 + o(1)) (k + 1)² x^{2/(k+1)} / (2 (log x)^{2k/(k+1)})` with
-`M = M(x, k)`. The extraction lost the square on `M` (superscripts are flattened throughout the
-record). The `1 + o(1)` is stated as: for every `ε > 0`, the bound with factor `1 - ε` holds
-for all sufficiently large `x`.
+/-- **Lower bound for the number of sums of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
+be the primes and let $k > 1$ be a natural number. For a natural number $x$ let $s_k(x)$ be the
+number of pairs $(\ell, m)$ of integers with $0 \le \ell < x$ and $1 \le m \le x$ such that
+$p_{\ell+1}^k + \cdots + p_{\ell+m}^k \le x$, and let $M(x, k)$ be the largest $m \le x$ with
+$p_1^k + \cdots + p_m^k \le x$. Then $M(x, k)^2 / 2 \le s_k(x)$ for every $x$, and for every
+real $\varepsilon > 0$, for all sufficiently large $x$,
+$(1 - \varepsilon) (k + 1)^2 x^{2/(k+1)} / \bigl(2 (\log x)^{2k/(k+1)}\bigr) \le M(x, k)^2 / 2$.
 
 Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
 Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Theorem 2
