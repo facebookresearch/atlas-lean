@@ -64,8 +64,9 @@ port of their full calculi.
   numbers. Repeated use of the **same endpoint key** is exempt; its **opposite
   role** is not exempt even when the physical name is identical. An active
   endpoint being transferred is still owned before transfer and is included.
-  `RankedType` adds this order to every communication guard; its preservation
-  and global completed-or-Step theorem are proved below.
+  `RankedType` adds this order to every communication guard. Its Step
+  preservation at compatible interfaces and global completed-or-Step theorem
+  for balanced interfaces are proved below.
 * The initial typing fragment excludes `sum` and `repl` by a proved invariant
   under every existing `Cong`/`Step` constructor. This exclusion does not
   implement recursive processes. Recursive services must separately justify
@@ -113,10 +114,12 @@ protocol/ownership representation. In particular, the source's action-level
 priority discipline and two-endpoint restriction syntax are not identified
 with this refinement. `RankedType.cong_iff` now preserves the refinement under
 all canonical congruences, including completed-role scope reallocation and
-all four roles in nested restriction swapping. `RankedType.subject_reduction`
-now preserves this refinement across all canonical Steps with zero or one
-actual external dual-subject advancement; balanced and empty interface
-corollaries are proved. The private projection retains a real old-to-new
+all four roles in nested restriction swapping. For an initially compatible
+interface (`Compatible Δ`), `RankedType.subject_reduction` preserves this
+refinement and compatibility across every canonical Step, with zero or one
+actual external dual-subject advancement. The balanced corollary derives
+compatibility from `Balanced Δ`; the empty-interface corollary derives it
+from `balanced_empty`. The private projection retains a real old-to-new
 bound-pair `DualAdvance`, not merely an arbitrary equal-rank capability.
 Global ranked process-level progress is proved by `RankedType.progress_empty`:
 a closed finite ranked network is congruent to nil or has an actual canonical
@@ -149,7 +152,8 @@ processes or all PCP/Kobayashi-typable processes.
 The checked prerequisites include role/key identity, unique finite ownership,
 binder-aware typing transport, literal linear subject substitution with
 freshness derived from splitting, finite API bridges, graph unfolding/duality,
-and exact head-communication preservation for both message kinds. Consumers
+and exact head-communication preservation for both message kinds at compatible
+interfaces. Consumers
 exercise actual ν-bound synchronization and a connected three-thread delegated
 subject, nested capture, opposite-role aliases, the two-channel wait and a
 same-name opposite-role self-wait.
@@ -160,13 +164,20 @@ swap. Choice and replication are excluded by a property derived from this
 judgement; congruence for a future recursive-service judgement remains open.
 Faithful head results record the actual send head, payload kind and continuation;
 dual subject advancement preserves compatibility, balance and the key domain.
-`HasType.subject_reduction` covers every canonical `Step` constructor for this
-judgement: the residual external interface is unchanged or undergoes one actual
+`HasType.subject_reduction` requires a typed source and an initially compatible
+interface (`Compatible Δ`). For every canonical `Step`, it returns a typed
+residual with a compatible interface, unchanged or advanced by one actual
 `DualAdvance`, never an arbitrary map or a sequence of unobserved updates.
-Compatibility is preserved; balanced and empty external interfaces have their
-respective preservation corollaries. Internal communication may advance a
+The balanced corollary obtains compatibility from `Balanced Δ`; the
+empty-interface corollary uses `balanced_empty.compatible`. Internal communication may advance a
 ν-bound pair without changing the external interface. This is not subject
 reduction for a future recursive-service judgement.
+
+Compatibility is an additional interface hypothesis, not a consequence of
+plain or ranked typing. For example, singleton threads on opposite roles of
+one free physical name can have matching send/receive heads at ranks one and
+two. They are plain- and ranked-typable and can communicate, but their combined
+interface is incompatible because dual capabilities must have equal ranks.
 
 The following are **not established by those prerequisites**:
 

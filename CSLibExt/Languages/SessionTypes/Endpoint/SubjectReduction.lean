@@ -12,7 +12,7 @@ public import CSLibExt.Languages.SessionTypes.Endpoint.AdvanceProjection
 public import CSLibExt.Languages.SessionTypes.Endpoint.CongTyping
 
 /-!
-# Subject reduction for every canonical π reduction constructor
+# Subject reduction at compatible interfaces for every canonical π constructor
 -/
 
 @[expose] public section
@@ -63,8 +63,9 @@ theorem Compatible.bind {Δ : Context} (h : Compatible Δ) (c : Capability) :
       (Context.lookup_bind_outer (c := c) (e := d.opposite)).mp (he' ▸ hv)
     exact h d u v hu' hv'
 
-/-- All five canonical reduction constructors preserve typing with exactly
-one matched external subject-pair advancement or an unchanged interface when
+/-- From a typed source at an initially compatible interface, all five
+canonical reduction constructors preserve typing and compatibility, with one
+matched external subject-pair advancement or an unchanged interface when
 communication is private. No fragment or enabled-edge premise is required. -/
 theorem HasType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ p) (hco : Compatible Δ) (hs : PiCalculus.Step p q) :
@@ -106,8 +107,9 @@ theorem HasType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (HasType.cong_iff hq).mp hr, hc, he⟩
 
-/-- Balanced initial interfaces remain balanced after any canonical step,
-with the same exact zero-or-one external advancement evidence. -/
+/-- A typed source with a balanced initial interface retains typing and balance
+after any canonical step. Balance supplies the required compatibility; the
+exact zero-or-one external advancement evidence is retained. -/
 theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ p) (hb : Balanced Δ) (hs : PiCalculus.Step p q) :
     ∃ Ξ, HasType n Ξ q ∧ Balanced Ξ ∧ (Ξ = Δ ∨ DualAdvance Δ Ξ) := by
@@ -118,8 +120,9 @@ theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- A communication behind any number of restrictions cannot create an
-external endpoint in a network whose original interface is empty. -/
+/-- An empty-interface typed network retains empty-interface typing through
+any canonical step. The empty context is balanced, hence compatible, including
+communication behind restrictions and pre/post congruence. -/
 theorem HasType.subject_reduction_empty {n : Nat} {p q : Proc}
     (h : HasType n ∅ p) (hs : PiCalculus.Step p q) : HasType n ∅ q := by
   obtain ⟨Ξ, ht, hc, he⟩ := h.subject_reduction balanced_empty.compatible hs

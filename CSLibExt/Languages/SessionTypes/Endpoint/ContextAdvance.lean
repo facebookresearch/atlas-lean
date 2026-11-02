@@ -54,8 +54,9 @@ inductive DualAdvance : Context → Context → Prop where
       Δ.lookup e = some c → Δ.lookup e.opposite = some c.dual → SendsTo c s →
       DualAdvance Δ ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨c.rank, s.dual⟩)
 
-/-- The packed head result retains the literal send head, payload kind and
-continuation correspondence instead of hiding an unconstrained protocol. -/
+/-- For a typed opposite-head pair at an initially compatible interface,
+the packed result retains the literal send head, payload kind and continuation
+correspondence instead of hiding an unconstrained protocol. -/
 theorem HasType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
     {p q : Proc} (h : HasType n Δ (.par (.out a b p) (.inp a q)))
     (hco : Compatible Δ) :
@@ -116,8 +117,8 @@ theorem DualAdvance.mem_iff {Δ Ξ : Context} (h : DualAdvance Δ Ξ) (x : Key) 
     · intro hx
       exact Or.inr (Or.inr hx)
 
-/-- Updating both subjects to dual continuations preserves ordinary partial
-compatibility, independently of process typing or a reduction theorem. -/
+/-- From a compatible initial interface, updating both subjects to dual
+continuations preserves compatibility independently of process typing. -/
 theorem dual_update_compatible {Δ : Context} (h : Compatible Δ)
     (e : Key) (c : Capability) (s : Protocol) :
     Compatible ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨c.rank, s.dual⟩) := by
@@ -146,7 +147,8 @@ theorem dual_update_compatible {Δ : Context} (h : Compatible Δ)
       rw [dual_update_lookup_other Δ e x.opposite c s hxe hxp] at hv
       exact h x u v hu hv
 
-/-- A faithful matched update retains partial compatibility. -/
+/-- A faithful matched update retains compatibility if the initial
+interface is compatible. -/
 theorem DualAdvance.compatible {Δ Ξ : Context} (ha : DualAdvance Δ Ξ)
     (h : Compatible Δ) : Compatible Ξ := by
   cases ha with
@@ -179,13 +181,15 @@ theorem dual_update_balanced {Δ : Context} (h : Balanced Δ)
       rw [dual_update_lookup_other Δ e x.opposite c s hxe hxp]
       exact h x u hu
 
-/-- Faithful subject advancement retains a balanced external interface. -/
+/-- Faithful subject advancement retains balance if the initial external
+interface is balanced. -/
 theorem DualAdvance.balanced {Δ Ξ : Context} (ha : DualAdvance Δ Ξ)
     (h : Balanced Δ) : Balanced Ξ := by
   cases ha with
   | matched => exact dual_update_balanced h _ _ _
 
-/-- The detailed packed head result yields a faithful matched context update. -/
+/-- A typed opposite-head pair at an initially compatible interface yields
+a faithful matched update and a compatible typed residual via the packed result. -/
 theorem HasType.head_comm_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
     (h : HasType n Δ (.par (.out a b p) (.inp a q))) (hco : Compatible Δ) :
     ∃ Ξ, DualAdvance Δ Ξ ∧ HasType n Ξ (.par p (PiCalculus.subst q b)) ∧ Compatible Ξ := by

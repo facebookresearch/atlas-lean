@@ -11,7 +11,7 @@ module
 public import CSLibExt.Languages.SessionTypes.Endpoint.RankedCommunication
 
 /-!
-# Ranked subject reduction on every canonical π step
+# Ranked subject reduction on every canonical π step at compatible interfaces
 -/
 
 @[expose] public section
@@ -20,8 +20,9 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Every actual canonical step preserves the whole refinement and ordinary
-compatibility, with zero or one actual external matched subject advancement.
+/-- From a ranked-typed source with an initially compatible interface, every
+actual canonical step preserves the refinement and compatibility, with zero
+or one actual external matched subject advancement.
 Private head/continuation changes are derived from faithful bound projection. -/
 theorem RankedType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ p) (hco : Compatible Δ) (hs : PiCalculus.Step p q) :
@@ -63,7 +64,8 @@ theorem RankedType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (RankedType.cong_iff hq).mp hr, hc, he⟩
 
-/-- Full balance is preserved by the actual ranked step and its exact update. -/
+/-- For a ranked-typed source, initial balance supplies compatibility and is
+preserved by the actual canonical step and its exact update. -/
 theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ p) (hb : Balanced Δ) (hs : PiCalculus.Step p q) :
     ∃ Ξ, RankedType n Ξ q ∧ Balanced Ξ ∧ (Ξ = Δ ∨ DualAdvance Δ Ξ) := by
@@ -74,8 +76,9 @@ theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Pr
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- Private communication cannot create external ownership in a ranked closed
-interface, at any ambient depth and through arbitrary pre/post congruence. -/
+/-- Empty-interface ranked typing is preserved by any canonical step at any
+ambient depth and through pre/post congruence. The empty context supplies
+balance and therefore the required compatibility. -/
 theorem RankedType.subject_reduction_empty {n : Nat} {p q : Proc}
     (h : RankedType n ∅ p) (hs : PiCalculus.Step p q) : RankedType n ∅ q := by
   obtain ⟨Ξ, ht, hc, he⟩ := h.subject_reduction balanced_empty.compatible hs

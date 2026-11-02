@@ -12,7 +12,7 @@ public import CSLibExt.Languages.SessionTypes.Endpoint.Balance
 public import CSLibExt.Languages.SessionTypes.Endpoint.Substitution
 
 /-!
-# Literal communication preservation in finite polarized ownership
+# Literal communication preservation at compatible finite polarized interfaces
 
 The reductions use existing π Step and substitution. This module supplies
 the head-communication case used by the full canonical Step preservation
@@ -49,8 +49,9 @@ theorem passive_dual_head {c t : Capability} {s : Protocol}
   rw [Protocol.unfold_dual, hs]
   rfl
 
-/-- Passive head communication preserves the exact combined residual
-context, advancing the two complementary roles and no other capability. -/
+/-- At a compatible combined interface with the stated disjoint typed split
+and scoped passive payload, head communication advances the two complementary
+roles and no other capability in the exact residual context. -/
 theorem passive_head_preservation {n : Nat} {Δ Θ : Context} {e : Key}
     {c : Capability} {s : Protocol} {b : Name} {p q : Proc}
     (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -94,8 +95,8 @@ theorem endpoint_dual_head {c t : Capability} {r : Role} {k : Nat}
   rw [Protocol.unfold_dual, hs]
   rfl
 
-/-- Updating a completed protocol's peer rank is not progress; duality
-matches only the two communication heads, including the exact payload. -/
+/-- For disjoint owned same-name roles in a compatible combined interface,
+their capability ranks agree, as required by exact capability duality. -/
 theorem communicating_ranks_equal {Δ Θ : Context} {e d : Key}
     {c t : Capability} (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
     (ht : Θ.lookup d = some t) (hn : e.name = d.name)
@@ -104,8 +105,9 @@ theorem communicating_ranks_equal {Δ Θ : Context} {e d : Key}
   have hr : t.rank = c.dual.rank := congrArg Capability.rank he
   exact hr
 
-/-- Endpoint head communication transfers the payload role exactly once
-and preserves the combined residual context, advancing only the carrier pair. -/
+/-- At a compatible combined interface with the stated disjoint typed split,
+owned payload distinct from the carrier and scoped payload name, endpoint
+communication transfers the payload role once and advances only the carrier. -/
 theorem endpoint_head_preservation {n k : Nat} {Δ Θ : Context} {e d : Key}
     {c : Capability} {v s : Protocol} {p q : Proc}
     (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -141,8 +143,9 @@ theorem endpoint_head_preservation {n k : Nat} {Δ Θ : Context} {e d : Key}
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at htyped
     exact htyped
 
-/-- Direct opposite head communication in the existing π syntax preserves
-an exact residual ownership context, including endpoint delegation. -/
+/-- For a typed opposite-head pair at an initially compatible interface,
+direct communication in the existing π syntax yields an exact typed residual
+ownership context, including endpoint delegation. -/
 theorem HasType.head_comm_preservation {n : Nat} {Δ : Context} {a b : Name}
     {p q : Proc} (h : HasType n Δ (.par (.out a b p) (.inp a q)))
     (hco : Compatible Δ) :

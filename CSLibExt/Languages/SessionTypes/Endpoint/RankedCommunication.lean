@@ -12,7 +12,7 @@ public import CSLibExt.Languages.SessionTypes.Endpoint.RankedCong
 public import CSLibExt.Languages.SessionTypes.Endpoint.SubjectReduction
 
 /-!
-# Ranked substitution and literal communication preservation
+# Ranked substitution and literal communication at compatible interfaces
 -/
 
 @[expose] public section
@@ -73,8 +73,9 @@ theorem RankedType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hg hc hs hd he ha hb hp =>
     exact ⟨_, _, rfl, hc, hg, Or.inr ⟨_, _, _, _, rfl, hs, hd, he, hp⟩⟩
 
-/-- Passive head communication substitutes through the actual ranked input
-body; both residual components keep their original guard derivations. -/
+/-- With the stated disjoint ranked split, scoped passive payload and
+compatible combined interface, head communication substitutes through the
+ranked input body and retains both residual guard derivations. -/
 theorem ranked_passive_head {n : Nat} {Δ Θ : Context} {e : Key}
     {c : Capability} {s : Protocol} {b : Name} {p q : Proc}
     (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -106,8 +107,9 @@ theorem ranked_passive_head {n : Nat} {Δ Θ : Context} {e : Key}
     rw [hhead] at hu
     cases hu
 
-/-- Delegation uses ranked capture-safe received-subject substitution with
-freshness derived from the actual split; the combined payload value is retained. -/
+/-- With the stated disjoint ranked split, owned non-carrier scoped payload
+and compatible combined interface, delegation derives substitution freshness
+from that split and retains the combined payload value. -/
 theorem ranked_endpoint_head {n k : Nat} {Δ Θ : Context} {e d : Key}
     {c : Capability} {v s : Protocol} {p q : Proc}
     (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -142,8 +144,9 @@ theorem ranked_endpoint_head {n k : Nat} {Δ Θ : Context} {e d : Key}
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at htyped
     exact htyped
 
-/-- Ranked literal communication retains the actual old subject and dual
-peer heads, the payload metadata and its precise ranked continuation context. -/
+/-- A ranked-typed opposite-head pair at an initially compatible interface
+yields the actual subject/dual-peer heads, payload metadata and exact ranked
+continuation context after literal communication. -/
 theorem RankedType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
     {p q : Proc} (h : RankedType n Δ (.par (.out a b p) (.inp a q)))
     (hco : Compatible Δ) :
@@ -176,8 +179,9 @@ theorem RankedType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
     exact ⟨e, c, s, rfl, hwhole, hpeer, MatchedOutput.endpoint rfl hs hvwhole hne hpd,
       ranked_endpoint_head hd hc hs hv hne hp hi hb hco⟩
 
-/-- The ranked head result yields one faithful context update, not a typing
-witness manufactured by forgetting the refinement. -/
+/-- For a ranked-typed opposite-head pair at a compatible initial interface,
+the head result yields one faithful update and compatible ranked residual,
+not a typing witness manufactured by forgetting the refinement. -/
 theorem RankedType.head_comm_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
     (h : RankedType n Δ (.par (.out a b p) (.inp a q))) (hco : Compatible Δ) :
     ∃ Ξ, DualAdvance Δ Ξ ∧ RankedType n Ξ (.par p (PiCalculus.subst q b)) ∧ Compatible Ξ := by

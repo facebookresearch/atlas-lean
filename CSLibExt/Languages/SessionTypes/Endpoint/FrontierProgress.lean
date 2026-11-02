@@ -51,9 +51,9 @@ private theorem ranked_input_dual_send {n : Nat} {Δ : Context} {a : Name} {p : 
     rw [Protocol.unfold_dual, hs]
     rfl
 
-/-- Two actually typed disjoint same-name guard leaves must have opposite
-communication directions. The resulting Step is the canonical commSelect,
-possibly preceded by actual parallel commutation. -/
+/-- Given disjoint ranked-typed leaves with literal same-name input/output
+guard shapes and a compatible combined interface, their directions are opposite.
+The Step is canonical commSelect, possibly after parallel commutation. -/
 theorem same_name_guards_step {n : Nat} {Γ Θ : Context} {g h : Proc} {a : Name}
     (hg : RankedType n Γ g) (hh : RankedType n Θ h)
     (hd : Finmap.Disjoint Γ Θ) (hc : Compatible (Γ ∪ Θ))

@@ -35,7 +35,8 @@ private theorem normal_progress {n : Nat} {Δ : Context} {p : Proc}
     · exact Or.inl (Cong.trans (Cong.nu_cong hc) Cong.nu_nil)
     · exact Or.inr ⟨.nu q, PiCalculus.Step.nu hs⟩
 
-/-- Global progress at ANY balanced interface, including disconnected networks.
+/-- For a ranked-typed process at ANY balanced interface, global progress
+holds, including disconnected networks.
 All private channels are tracked through the derived restriction tower.
 Completion means process congruence to nil, not completion of the interface. -/
 theorem RankedType.progress_balanced {n : Nat} {Δ : Context} {p : Proc}
