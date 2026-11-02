@@ -18,7 +18,8 @@ public import Mathlib
   `V` from `(0, 0)` to `(0, 1)` and the horizontal crossing `H` from `(0, 0)` to `(1, 0)`: every
   hypothesis (including the four collar-meeting conditions) is discharged, so the theorem is
   nonvacuous.
-* `horizontalWallExtension_mem_support_iff`: the extension of `H` to columns `0, 1` contains `(1, 0)`.
+* `horizontalWallExtension_mem_support_iff`: the extension of `H` to columns `0, 1` contains
+  `(1, 0)`.
 -/
 
 @[expose] public section

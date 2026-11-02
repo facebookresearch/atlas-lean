@@ -15,8 +15,8 @@ public import Mathlib
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.RightStep`
 
 * `ecc_RightStep` holds for the one-vertex closed walk at the origin (through
-  `ecc_rightStep_of_rightDodge`), so `ecc_reaches_right_band` is nonvacuous: every outside off-walk site
-  reaches column `R + 1` off the walk.
+  `ecc_rightStep_of_rightDodge`), so `ecc_reaches_right_band` is nonvacuous: every outside off-walk
+  site reaches column `R + 1` off the walk.
 * `RightStepCounterexample` shows the property can fail for other walks.
 -/
 
