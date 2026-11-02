@@ -28,18 +28,23 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `c_{m,k}(ℓ)`: the number of `(m, k)`-`n`-colored compositions of `ℓ`, i.e. the sum over
-compositions of `ℓ` of the product of the parts at positions `≡ k (mod m)` (each such part `p`
-has `p` colors; the position of the `i`-th block, `0`-indexed, is `i + 1`). The paper takes
-`m ≥ 1`; the definition is total, and at `m = 0` (where `x % 0 = x`) it colors only the part at
-position exactly `k`. The statements below that vary `m` assume `1 ≤ m`.
+/-- **Positional colored compositions.** For natural numbers $m$, $k$ and $\ell$, $c_{m,k}(\ell)$
+is the number of $(m, k)$-colored compositions of $\ell$: compositions of $\ell$ in which every
+part whose position, counted from $1$, is congruent to $k$ modulo $m$ gets one of $p$ colors,
+where $p$ is the part, and the other parts are uncolored. Equivalently, $c_{m,k}(\ell)$ is the
+sum, over all compositions $(p_1, \dots, p_r)$ of $\ell$, of the product of the parts $p_i$ with
+$i \equiv k \pmod m$.
+
+The paper takes $m \ge 1$. For $m = 0$, congruence modulo $0$ is equality, so only the part at
+position exactly $k$ is colored.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Definition 1. -/
 public def positionalColoredCompositionCount (m k ℓ : ℕ) : ℕ :=
   ∑ c : Composition ℓ, (c.blocks.mapIdx fun i p => if (i + 1) % m = k % m then p else 1).prod
 
-/-- Characteristic value `c_{m,k}(0) = 1` (the empty composition).
+/-- **Colored compositions of zero.** For all natural numbers $m$ and $k$, $c_{m,k}(0) = 1$: the
+only composition of $0$ is the empty one.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Definition 1. -/
@@ -48,10 +53,15 @@ public theorem positionalColoredCompositionCount_zero (m k : ℕ) :
   have h : (Finset.univ : Finset (Composition 0)) = {Composition.ones 0} := by decide
   simp [positionalColoredCompositionCount, h, Composition.ones]
 
-/-- For `k ≥ 0`, the number of `n`-color compositions of `k` restricting the color `2` (a part
-`p ≥ 2` has the `p - 1` colors other than `2`, a part `1` its single color) equals the number
-`e(k)` of EVEN colored compositions of `k`. Stated for all `k ≥ 0` (both sides are `1` at
-`k = 0`); the paper says `k` positive.
+/-- **Avoiding color 2 counts even colored compositions.** For every $k \ge 0$, the number of
+$n$-color compositions of $k$ that do not use the color $2$ equals the number
+$e(k) = c_{2,0}(k)$ of even colored compositions of $k$, in which only the parts at even
+positions are colored. In such an $n$-color composition a part $p \ge 2$ has the $p - 1$ colors
+other than $2$ and a part $1$ has its single color, so their number is the sum, over all
+compositions $(p_1, \dots, p_r)$ of $k$, of $\prod_i q(p_i)$, where $q(1) = 1$ and
+$q(p) = p - 1$ for $p \ge 2$.
+
+The paper states this for positive $k$; at $k = 0$ both sides equal $1$.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 1 (`integers-2026-A49-thm-1`). -/
@@ -59,8 +69,11 @@ public theorem_wanted colorTwoRestrictedCompositions_eq_even (k : ℕ) :
     ∑ c : Composition k, (c.blocks.map fun p => if 2 ≤ p then p - 1 else p).prod =
       positionalColoredCompositionCount 2 0 k
 
-/-- For `k ≥ 1`, the number `o(k)` of ODD colored compositions of `k` equals the number of
-`C(n, 2)`-color compositions of `k + 1` (a part `p` has `C(p, 2)` colors).
+/-- **Odd colored compositions and binomial-color compositions.** For every $k \ge 1$, the number
+$o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
+are colored, equals the sum, over all compositions $(p_1, \dots, p_r)$ of $k + 1$, of
+$\prod_i \binom{p_i}{2}$; that is, the number of compositions of $k + 1$ in which a part $p$ has
+$\binom{p}{2}$ colors.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 2 (`integers-2026-A49-thm-2`). -/
@@ -68,8 +81,10 @@ public theorem_wanted odd_eq_choose_two_colorCompositions (k : ℕ) (hk : 1 ≤ 
     positionalColoredCompositionCount 2 1 k =
       ∑ c : Composition (k + 1), (c.blocks.map fun p => p.choose 2).prod
 
-/-- For `k ≥ 1`, the number `o(k)` of ODD colored compositions of `k` equals the number of
-ternary strings of length `k - 1` avoiding the factors `01` and `12`.
+/-- **Odd colored compositions and ternary strings.** For every $k \ge 1$, the number
+$o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
+are colored, equals the number of strings of length $k - 1$ over the alphabet $\{0, 1, 2\}$ that
+contain neither $01$ nor $12$ as two consecutive letters.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Corollary 1 (`integers-2026-A49-cor-1`). -/
@@ -77,9 +92,13 @@ public theorem_wanted odd_eq_ternaryStrings_avoiding (k : ℕ) (hk : 1 ≤ k) :
     positionalColoredCompositionCount 2 1 k =
       {w : List (Fin 3) | w.length = k - 1 ∧ ¬ [0, 1] <:+: w ∧ ¬ [1, 2] <:+: w}.ncard
 
-/-- For `k ≥ 0`, the number `e(k)` of EVEN colored compositions of `k` equals the number of
-ternary strings of length `k` avoiding the factors `01` and `12` that do not begin with `2` and
-do not end with `0`. Stated for all `k ≥ 0` (both sides are `1` at `k = 0`).
+/-- **Even colored compositions and ternary strings.** For every $k \ge 0$, the number
+$e(k) = c_{2,0}(k)$ of even colored compositions of $k$, in which only the parts at even
+positions are colored, equals the number of strings of length $k$ over the alphabet
+$\{0, 1, 2\}$ that contain neither $01$ nor $12$ as two consecutive letters, do not begin with
+$2$ and do not end with $0$.
+
+At $k = 0$ both sides equal $1$, the empty string being counted.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 3 (`integers-2026-A49-thm-3`). -/
@@ -88,9 +107,11 @@ public theorem_wanted even_eq_ternaryStrings_avoiding (k : ℕ) :
       {w : List (Fin 3) | w.length = k ∧ ¬ [0, 1] <:+: w ∧ ¬ [1, 2] <:+: w ∧
         w.head? ≠ some 2 ∧ w.getLast? ≠ some 0}.ncard
 
-/-- For `k ≥ 0`, `e(k + 1)` equals the sum over all binary strings of length `k` of the product
-of the lengths of their runs of `1`s (`true`s); the all-`0` string contributes the empty
-product `1`.
+/-- **Even colored compositions and runs in binary strings.** For every $k \ge 0$, the number
+$e(k + 1) = c_{2,0}(k + 1)$ of even colored compositions of $k + 1$, in which only the parts at
+even positions are colored, equals the sum, over all binary strings of length $k$, of the
+product of the lengths of the maximal runs of $1$s in the string; a string without a $1$
+contributes the empty product $1$.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 4 (`integers-2026-A49-thm-4`). -/
@@ -99,8 +120,10 @@ public theorem_wanted even_succ_eq_sum_runLength_prod (k : ℕ) :
       ∑ f : Fin k → Bool,
         ((((List.ofFn f).splitOn false).map List.length).filter (· ≠ 0)).prod
 
-/-- For `k ≥ 1`, `o(k)` equals the sum over the binary strings of length `k` that start with
-`1` (`true`) of the product of the lengths of their runs of `1`s.
+/-- **Odd colored compositions and runs in binary strings.** For every $k \ge 1$, the number
+$o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
+are colored, equals the sum, over the binary strings of length $k$ whose first letter is $1$, of
+the product of the lengths of the maximal runs of $1$s in the string.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 5 (`integers-2026-A49-thm-5`). -/
@@ -109,12 +132,15 @@ public theorem_wanted odd_eq_sum_runLength_prod (k : ℕ) (hk : 1 ≤ k) :
       ∑ f ∈ (Finset.univ : Finset (Fin k → Bool)).filter (fun f => (List.ofFn f).head? = some true),
         ((((List.ofFn f).splitOn false).map List.length).filter (· ≠ 0)).prod
 
-/-- For `ℓ ≥ 1` and `m ∤ k`, `c_{m,k+1}(ℓ + 1) = c_{m,k+1}(ℓ) + c_{m,k}(ℓ)`. Corrected reading:
-the printed hypotheses `k ≥ 1`, `ℓ ≥ 2`, `1 ≤ m ≤ ℓ - 1` admit `m ∣ k`, where the identity fails
-(`m = 1`, `k = 1`, `ℓ = 2`: `c_{1,2}(3) = 8` but `c_{1,2}(2) + c_{1,1}(2) = 6`); the paper's
-argument (remove a first part `1` or decrease the first part) needs the first part uncolored,
-i.e. `m ∤ k`, which is the hypothesis here (the identity holds for every `ℓ ≥ 1`). The
-paper's `1 ≤ m` is kept.
+/-- **A recurrence for positional colored compositions.** For natural numbers $m$, $k$ and $\ell$
+with $m \ge 1$, $m \nmid k$ and $\ell \ge 1$,
+$c_{m,k+1}(\ell + 1) = c_{m,k+1}(\ell) + c_{m,k}(\ell)$.
+
+The paper prints the hypotheses $k \ge 1$, $\ell \ge 2$ and $1 \le m \le \ell - 1$, which allow
+$m \mid k$; there the identity fails: for $m = 1$, $k = 1$ and $\ell = 2$ one has
+$c_{1,2}(3) = 8$ but $c_{1,2}(2) + c_{1,1}(2) = 6$. The paper's argument (remove a first part
+$1$ or decrease the first part) needs the first part to be uncolored, which is the condition
+$m \nmid k$.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 6 (`integers-2026-A49-thm-6`). -/
@@ -123,9 +149,13 @@ public theorem_wanted positionalColoredCompositionCount_succ (m k ℓ : ℕ) (hm
     positionalColoredCompositionCount m (k + 1) (ℓ + 1) =
       positionalColoredCompositionCount m (k + 1) ℓ + positionalColoredCompositionCount m k ℓ
 
-/-- For `k ≥ 0`, `e(k)` equals the number of permutations of `{1, …, k}` avoiding the patterns
-`321`, `2413` and `3142` (the `321`-avoiding separable permutations). Stated for all `k ≥ 0`
-(both sides are `1` at `k = 0`).
+/-- **Even colored compositions and 321-avoiding separable permutations.** For every $k \ge 0$,
+the number $e(k) = c_{2,0}(k)$ of even colored compositions of $k$, in which only the parts at
+even positions are colored, equals the number of permutations of $\{1, \dots, k\}$ that avoid
+the patterns $321$, $2413$ and $3142$, that is, the number of $321$-avoiding separable
+permutations of $\{1, \dots, k\}$.
+
+At $k = 0$ both sides equal $1$.
 
 Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
 (2026), Article A49, Theorem 7 (`integers-2026-A49-thm-7`). -/

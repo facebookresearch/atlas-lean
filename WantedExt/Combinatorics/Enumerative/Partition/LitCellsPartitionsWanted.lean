@@ -47,41 +47,50 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The parts of a partition listed in weakly decreasing order `x_1 ≥ x_2 ≥ ⋯`.
+/-- **Parts of a partition in decreasing order.** For a partition $p$ of $n$ with $\ell$ parts,
+this is the list $x_1 \ge x_2 \ge \cdots \ge x_\ell$ of the parts of $p$, each repeated according
+to its multiplicity, sorted in weakly decreasing order.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 1 (weakly decreasing bargraphs). -/
 public def decreasingParts {n : ℕ} (p : Nat.Partition n) : List ℕ :=
   p.parts.sort (· ≥ ·)
 
-/-- The number of lit cells of a partition drawn as a weakly increasing bargraph: the largest
-part plus the number of parts minus the number of distinct parts.
+/-- **Lit cells of a weakly increasing bargraph.** For a partition $p$ of $n$, the number of lit
+cells of $p$, drawn as a weakly increasing bargraph, is defined as the largest part of $p$ plus the
+number of parts of $p$ minus the number of distinct parts of $p$ (the largest part of the empty
+partition is $0$).
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 1. -/
 public def litCellsIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
   p.parts.sup + p.parts.card - p.parts.dedup.card
 
-/-- The number of lit nodes of a partition drawn as a weakly increasing Ferrers diagram of
-nodes: the largest part plus the number of parts minus one (`0` for the empty partition).
+/-- **Lit nodes of a partition.** The number of lit nodes of a partition $p$, drawn as a weakly
+increasing Ferrers diagram of nodes, is defined as the largest part of $p$ plus the number of
+parts of $p$ minus one; for the empty partition it is $0$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 2. -/
 public def litNodesIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
   p.parts.sup + p.parts.card - 1
 
-/-- The number of lit cells of a partition drawn as a weakly decreasing bargraph
-`x_1 ≥ x_2 ≥ ⋯`: `max_i (x_i + i - 1)`, the largest part of its image under Prodinger's
-bijection `x_i ↦ x_i + i - 1` (`0` for the empty partition).
+/-- **Lit cells of a weakly decreasing bargraph.** Let $p$ be a partition of $n$ with $\ell$
+parts $x_1 \ge x_2 \ge \cdots \ge x_\ell$. The number of lit cells of $p$, drawn as a weakly
+decreasing bargraph, is defined as $\max_{1 \le i \le \ell} (x_i + i - 1)$, and as $0$ when $p$
+has no parts. It is the largest part of the image of $p$ under Prodinger's bijection
+$x_i \mapsto x_i + i - 1$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 5. -/
 public def litCellsDecreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
   ((decreasingParts p).mapIdx fun i x => x + i).foldr max 0
 
-/-- The triangular `q`-binomial coefficient `t[r, s]`: the generating function of partitions
-with exactly `s` parts `x_1 ≥ ⋯ ≥ x_s` contained in the staircase with column heights
-`r, r - 1, …, r - s + 1`, i.e. `x_i + (i - 1) ≤ r` for `1 ≤ i ≤ s`.
+/-- **Triangular $q$-binomial coefficient.** For natural numbers $r$ and $s$, the triangular
+$q$-binomial coefficient $t[r, s] \in \mathbb{Z}[[q]]$ is the power series whose coefficient of
+$q^n$ is the number of partitions of $n$ with exactly $s$ parts $x_1 \ge \dots \ge x_s$ that fit
+in the staircase with column heights $r, r - 1, \dots, r - s + 1$, that is, with
+$x_i + (i - 1) \le r$ for $1 \le i \le s$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 4. -/
@@ -89,15 +98,18 @@ public noncomputable def triangularQBinomial (r s : ℕ) : ℤ⟦X⟧ :=
   mk fun n => ((Finset.univ.filter fun p : Nat.Partition n =>
     p.parts.card = s ∧ ∀ i < s, (decreasingParts p).getD i 0 + i ≤ r).card : ℤ)
 
-/-- `T_q(r) = ∑_{s=0}^{r} t[r, s]`, the generating function of partitions contained in the
-triangle `r, r - 1, …, 1`.
+/-- **Triangle partition series.** For a natural number $r$, the triangle partition series is the
+power series $T_q(r) = \sum_{s=0}^{r} t[r, s] \in \mathbb{Z}[[q]]$, where $t[r, s]$ is the
+triangular $q$-binomial coefficient. It is the generating function of partitions contained in the
+triangle with column heights $r, r - 1, \dots, 1$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public noncomputable def trianglePartitionSeries (r : ℕ) : ℤ⟦X⟧ :=
   ∑ s ∈ Finset.range (r + 1), triangularQBinomial r s
 
-/-- The one-part partition `(n)`, `n ≥ 1`, has `n` lit cells as a weakly increasing bargraph.
+/-- **Lit cells of a one-part increasing bargraph.** For every natural number $n \ge 1$, the
+partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly increasing bargraph.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit cells). -/
@@ -105,7 +117,8 @@ public theorem litCellsIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
     litCellsIncreasing (Nat.Partition.indiscrete n) = n := by
   simp [litCellsIncreasing, hn]
 
-/-- The one-part partition `(n)`, `n ≥ 1`, has `n` lit nodes.
+/-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
+partition $(n)$ of $n$ has exactly $n$ lit nodes.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit nodes). -/
@@ -113,7 +126,8 @@ public theorem litNodesIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
     litNodesIncreasing (Nat.Partition.indiscrete n) = n := by
   simp [litNodesIncreasing, hn]
 
-/-- The one-part partition `(n)`, `n ≥ 1`, has `n` lit cells as a weakly decreasing bargraph.
+/-- **Lit cells of a one-part decreasing bargraph.** For every natural number $n \ge 1$, the
+partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly decreasing bargraph.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 5 (lit cells of decreasing partitions). -/
@@ -121,7 +135,9 @@ public theorem litCellsDecreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
     litCellsDecreasing (Nat.Partition.indiscrete n) = n := by
   simp [litCellsDecreasing, decreasingParts, hn]
 
-/-- `t[r, 0] = 1`: only the empty partition has no parts.
+/-- **Triangular $q$-binomial coefficients with no parts.** For every natural number $r$, the
+triangular $q$-binomial coefficient satisfies $t[r, 0] = 1$: only the empty partition has no
+parts.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Section 4, initial conditions (10). -/
@@ -141,15 +157,22 @@ public theorem triangularQBinomial_zero_right (r : ℕ) : triangularQBinomial r 
     rw [h0, Multiset.sum_zero] at this
     exact h this.symm
 
-/-- `T_q(0) = 1`.
+/-- **Triangle partition series at zero.** The triangle partition series $T_q(r)$ at $r = 0$
+equals $1$, that is, $T_q(0) = 1$ in $\mathbb{Z}[[q]]$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public theorem trianglePartitionSeries_zero : trianglePartitionSeries 0 = 1 := by
   simp [trianglePartitionSeries, triangularQBinomial_zero_right]
 
-/-- The total number of lit cells over all weakly increasing partitions of `n` has generating
-function `2P(q) ∑_{i ≥ 1} q^i/(1 - q^i) - P(q) q/(1 - q) = P(q) ∑_{i ≥ 1} q^i(1 + q^i)/(1 - q^i)`.
+/-- **Generating function for lit cells of weakly increasing bargraphs.** Let
+$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
+$L(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
+lit cells over all partitions of $n$ drawn as weakly increasing bargraphs. Then
+$$L(q) = 2P(q) \sum_{i \ge 1} \frac{q^i}{1 - q^i} - P(q) \frac{q}{1 - q}$$
+and
+$$L(q) = P(q) \sum_{i \ge 1} \frac{q^i (1 + q^i)}{1 - q^i},$$
+where the sums converge coefficientwise.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 1, eq. (5)
@@ -162,8 +185,12 @@ public theorem_wanted litCellsIncreasing_generatingFunction :
       mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
         P * ∑' i : ℕ, X ^ (i + 1) * (1 + X ^ (i + 1)) * invOfUnit (1 - X ^ (i + 1)) 1
 
-/-- The total number of lit nodes over all weakly increasing partitions of `n` has generating
-function `1 + P(q) (∑_{i ≥ 1} 2q^i/(1 - q^i) - 1)`.
+/-- **Generating function for lit nodes of weakly increasing diagrams.** Let
+$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
+$N(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
+lit nodes over all partitions of $n$ drawn as weakly increasing Ferrers diagrams of nodes. Then
+$$N(q) = 1 + P(q) \Bigl(\sum_{i \ge 1} \frac{2q^i}{1 - q^i} - 1\Bigr),$$
+where the sum converges coefficientwise.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 2, eq. (7)
@@ -173,11 +200,15 @@ public theorem_wanted litNodesIncreasing_generatingFunction :
       1 + (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) *
         (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)
 
-/-- The recursion `t[r, s] = q^s ∑_{i=0}^{s} t[r - 1, i]` for `1 ≤ r` and `s ≤ r`, with the
-initial conditions `t[1, 1] = q`, `t[2, 1] = q(1 + q)`, `t[r, 0] = 1` and `t[r, s] = 0` for
-`s > r`. The recursion is stated for `s ≤ r` only: for `s > r` the left side is `0` while the
-right side is `q^s T_q(r - 1) ≠ 0` (e.g. `t[1, 2] = 0` but `q² (t[0, 0] + t[0, 1] + t[0, 2]) = q²`);
-the initial conditions cover `s > r`.
+/-- **Recursion for triangular $q$-binomial coefficients.** The triangular $q$-binomial
+coefficients $t[r, s] \in \mathbb{Z}[[q]]$ satisfy the recursion
+$t[r, s] = q^s \sum_{i=0}^{s} t[r - 1, i]$ for all natural numbers $r \ge 1$ and $s \le r$,
+together with the initial conditions $t[1, 1] = q$, $t[2, 1] = q(1 + q)$, $t[r, 0] = 1$ for
+every $r$, and $t[r, s] = 0$ whenever $r < s$.
+
+The recursion is stated for $s \le r$ only: for $s > r$ the left side is $0$, while the right
+side is $q^s \sum_{i=0}^{r-1} t[r - 1, i] \ne 0$; for example $t[1, 2] = 0$ but
+$q^2 (t[0, 0] + t[0, 1] + t[0, 2]) = q^2$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 3, eqs. (9), (10)
@@ -188,10 +219,16 @@ public theorem_wanted triangularQBinomial_recursion :
     triangularQBinomial 1 1 = X ∧ triangularQBinomial 2 1 = X * (1 + X) ∧
     (∀ r, triangularQBinomial r 0 = 1) ∧ ∀ r s, r < s → triangularQBinomial r s = 0
 
-/-- For `1 ≤ r` and `s ≤ r`,
-`t[r, s] = q^s [r + s - 1, s]_q - q^{s+1} ∑_{i=2}^{s} t[i - 1, i - 1] q^{i(r-i)} [r - 2i + 1 + s, s - i]_q`.
-The range `s ≤ r` is where every exponent and binomial index is a natural number (for `s > r`,
-`t[r, s] = 0` by the initial conditions (10)); `r ≥ 1` makes `r + s - 1` a natural number.
+/-- **Triangular $q$-binomial coefficients via Gaussian binomials.** For natural numbers $r$ and
+$s$ with $1 \le r$ and $s \le r$, the triangular $q$-binomial coefficient $t[r, s]$ satisfies
+$$
+t[r, s] = q^s \binom{r + s - 1}{s}_q - q^{s+1} \sum_{i=2}^{s} t[i - 1, i - 1] \,
+q^{i(r - i)} \binom{r + 1 + s - 2i}{s - i}_q
+$$
+in $\mathbb{Z}[[q]]$, where $\binom{M}{k}_q$ denotes the Gaussian binomial coefficient.
+
+In the range $s \le r$ every exponent and binomial index above is a natural number; for $s > r$
+one has $t[r, s] = 0$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 4, eq. (12)
@@ -203,9 +240,14 @@ public theorem_wanted triangularQBinomial_eq_gaussBinom_sub {r s : ℕ} (hr : 1 
         X ^ (s + 1) * ∑ i ∈ Finset.Icc 2 s, triangularQBinomial (i - 1) (i - 1) *
           X ^ (i * (r - i)) * MathlibExt.gaussBinom X (r + 1 + s - 2 * i) (s - i)
 
-/-- For `s ≤ k`, the generating function `lit[k, s]` of weakly decreasing partitions with at
-most `s + 1` parts and at most `k` lit cells is
-`∑_{i=0}^{s} t[s, i] q^{i(k-s)} [k + 1 - i, k - s]_q`.
+/-- **Lit cells of weakly decreasing partitions with few parts.** Let $k$ and $s$ be natural
+numbers with $s \le k$. Write $\binom{M}{m}_q$ for the Gaussian binomial coefficient, and $t[s, i]$
+for the triangular $q$-binomial coefficient: the generating function of partitions with exactly
+$i$ parts $x_1 \ge \cdots \ge x_i$ such that $x_j + j - 1 \le s$ for $1 \le j \le i$. Let
+$\mathrm{lit}[k, s] \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the
+number of partitions of $n$ with at most $s + 1$ parts and at most $k$ lit cells as weakly
+decreasing bargraphs. Then
+$$\mathrm{lit}[k, s] = \sum_{i=0}^{s} t[s, i] \, q^{i(k-s)} \binom{k + 1 - i}{k - s}_q.$$
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 5, eq. (13)
@@ -216,8 +258,14 @@ public theorem_wanted litCellsDecreasing_le_generatingFunction {k s : ℕ} (hsk 
       ∑ i ∈ Finset.range (s + 1), triangularQBinomial s i * X ^ (i * (k - s)) *
         MathlibExt.gaussBinom X (k + 1 - i) (k - s)
 
-/-- The total number of lit cells over all weakly decreasing partitions of `n` has generating
-function `L(q) = ∑_{k ≥ 0} (P(q) - T_q(k))` (a sum in the coefficientwise topology).
+/-- **Generating function for lit cells of weakly decreasing bargraphs.** Let
+$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, for $k \ge 0$ let $T_q(k)$
+be the generating function of partitions contained in the triangle with column heights
+$k, k - 1, \ldots, 1$ (so $T_q(0) = 1$), and let $L(q) \in \mathbb{Z}[[q]]$ be the power series
+whose coefficient of $q^n$ is the total number of lit cells over all partitions of $n$ drawn as
+weakly decreasing bargraphs. Then
+$$L(q) = \sum_{k \ge 0} \bigl(P(q) - T_q(k)\bigr),$$
+where the sum converges coefficientwise.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Theorem 1, eq. (16)
@@ -226,11 +274,20 @@ public theorem_wanted litCellsDecreasing_generatingFunction :
     mk (fun n => ∑ p : Nat.Partition n, (litCellsDecreasing p : ℤ)) =
       ∑' k : ℕ, ((mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) - trianglePartitionSeries k)
 
-/-- The total number of lit cells over the weakly decreasing partitions of `n` in which only
-the first column is lit, i.e. `x_i + i - 1 ≤ x_1` for all `i` (so the lit cells are the `x_1`
-cells of the first column), and whose first column has height `r + 1 ≥ 2`, has generating
-function `∑_{r ≥ 1} (r + 1) q^{r+1} T_q(r)`. The height condition is the range `r ≥ 1` of the
-paper's `T(u, q) = ∑_{r ≥ 1} u^{r+1} q^{r+1} T_q(r)`; it excludes only the partition `(1)`.
+/-- **Lit cells when only the first column is lit.** For a partition $p$ of $n$ with $\ell \ge 1$
+parts $x_1 \ge x_2 \ge \cdots \ge x_\ell$, say that only the first column of its weakly
+decreasing bargraph is lit when the number of lit cells of $p$ equals its largest part $x_1$,
+that is, when $x_i + i - 1 \le x_1$ for $1 \le i \le \ell$. Let $F(q) \in \mathbb{Z}[[q]]$ be
+the power series whose coefficient of $q^n$ is the sum of $x_1$ over the partitions of $n$ in
+which only the first column is lit and $x_1 \ge 2$. For $r \ge 0$ let $T_q(r)$ be the
+generating function of partitions contained in the triangle with column heights
+$r, r - 1, \ldots, 1$. Then
+$$F(q) = \sum_{r \ge 1} (r + 1) q^{r+1} T_q(r),$$
+where the sum converges coefficientwise.
+
+The condition $x_1 \ge 2$ is the range $r \ge 1$ of the paper's
+$T(u, q) = \sum_{r \ge 1} u^{r+1} q^{r+1} T_q(r)$; among the partitions in which only the first
+column is lit it excludes only $(1)$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
 Partitions*, INTEGERS 24 (2024), Article A56, Proposition 6 (`integers-2024-A56-prop-6`). -/

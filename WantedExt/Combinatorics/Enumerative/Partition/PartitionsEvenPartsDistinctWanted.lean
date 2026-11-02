@@ -17,10 +17,11 @@ namespace MetaMathlibExt
 @[expose] public section
 
 /--
-For every natural `n`, `ped(225n+43)`, `ped(225n+88)`, `ped(225n+133)`, and
-`ped(225n+223)` are each congruent to zero modulo `24`; the four clauses below encode
-the four progressions in that order, with `ped` represented by
-`distinctEvenPartsCount` and no deviation from the paper.
+**Congruences modulo 24 for partitions with distinct even parts.** Write $\mathrm{ped}(m)$ for the
+number of partitions of $m$ in which the even parts are distinct (odd parts may repeat). For every
+natural number $n$, each of $\mathrm{ped}(225n+43)$, $\mathrm{ped}(225n+88)$,
+$\mathrm{ped}(225n+133)$ and $\mathrm{ped}(225n+223)$ is congruent to $0$ modulo $24$.
+
 Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS 24 (2024), Article A79, Theorem 1.1.
 -/
 public theorem_wanted partitionsEvenPartsDistinct_mod24_progressions (n : ℕ) :
@@ -30,9 +31,17 @@ public theorem_wanted partitionsEvenPartsDistinct_mod24_progressions (n : ℕ) :
       Nat.ModEq 24 (distinctEvenPartsCount (225 * n + 223)) 0
 
 /--
-For naturals `k` and `n` with `k ≥ 1`, `ped(9n+7)` is congruent modulo `24` to
-`ped(9·5^(2k)n + (57·5^(2k) - 1)/8)`. The formal statement uses natural-number
-division; it is exact because `57·5^(2k) - 1` is divisible by `8`.
+**Power-of-five congruence modulo 24 for partitions with distinct even parts.** Write
+$\mathrm{ped}(m)$ for the number of partitions of $m$ in which the even parts are distinct (odd
+parts may repeat). For all natural numbers $k \ge 1$ and $n$,
+
+$$
+\mathrm{ped}(9n+7) \equiv \mathrm{ped}\left(9 \cdot 5^{2k} n + \frac{57 \cdot 5^{2k} - 1}{8}\right)
+  \pmod{24}.
+$$
+
+The quotient is exact, since $57 \cdot 5^{2k} - 1$ is divisible by $8$.
+
 Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS 24 (2024), Article A79, Theorem 1.1.
 -/
 public theorem_wanted partitionsEvenPartsDistinct_mod24_five_power

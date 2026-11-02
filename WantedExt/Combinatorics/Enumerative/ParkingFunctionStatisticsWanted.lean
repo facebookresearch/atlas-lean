@@ -108,12 +108,22 @@ set_option quotPrecheck false in
 local notation "IsTstarDstar" w:max =>
   ∃ k : ℕ, ∀ i, (i.val < k → w i = Ordering.eq) ∧ (k ≤ i.val → w i = Ordering.gt)
 
-/-- The descent generating function of parking functions: for each `n ≥ 1`,
-`∑_{α ∈ PF_n} y^{des α} = ∑_{j=0}^{n-1} d(n,j) y^j = ∑_{β ∈ PF↑_n} A_{M(β)}(y)`, where
-`A_{M(β)}(y) = ∑_π y^{des π}` over the multipermutations `π` of the entries of `β`. The
-printed middle sum starts at `j = 1`; it is read from `j = 0` (at `n = 1` the printed
-middle sum is `0` while the other two sides are `1`). At `n = 0` the left side is `1` (the empty
-function) and the middle sum is empty, so `n ≥ 1` is assumed, as in the paper.
+/-- **Descent generating function of parking functions.** Write a sequence of length $n$ as
+$(a_1, \dots, a_n)$; its descents are the $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$, and
+$\operatorname{des}$ is their number. A parking function $f$ of length $n$ is read as the sequence
+$a_j = f(j-1) + 1$. Let $PF_n$ be the set of parking functions of length $n$, $PF^{\uparrow}_n$
+the set of nondecreasing ones, and $d(n, j)$ the number of $\alpha \in PF_n$ with
+$\operatorname{des}(\alpha) = j$. For every $n \ge 1$, in the polynomial ring $\mathbb{N}[y]$,
+
+$$\sum_{\alpha \in PF_n} y^{\operatorname{des}(\alpha)} = \sum_{j=0}^{n-1} d(n, j)\, y^j =
+\sum_{\beta \in PF^{\uparrow}_n} \sum_{\pi} y^{\operatorname{des}(\pi)},$$
+
+where, for each $\beta$, $\pi$ runs over the rearrangements of $\beta$: the sequences of length
+$n$ with the same multiset of entries as $\beta$.
+
+The paper prints the middle sum from $j = 1$; it is read from $j = 0$ (at $n = 1$ the printed
+middle sum is $0$ while the other two sides are $1$). At $n = 0$ the left side is $1$ and the
+middle sum is empty, so $n \ge 1$ is assumed, as in the paper.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -131,8 +141,12 @@ public theorem_wanted parkingFunction_descent_genFun (n : ℕ) (hn : 1 ≤ n) :
         (fun w : Fin n → Fin n => Finset.univ.val.map w = Finset.univ.val.map β),
           (Polynomial.X : Polynomial ℕ) ^ (desSet w).card
 
-/-- `d(I;n) = a(J;n)` for `I ⊆ [n-1]` and `J = {n - i : i ∈ I}`, where `d` and `a` count
-parking functions with descent set, respectively ascent set, exactly the given set.
+/-- **Descent sets versus reflected ascent sets of parking functions.** Write a parking function
+$f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is
+the set of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$, and its ascent set the set of such $j$
+with $a_j < a_{j+1}$. For every $n$ and every $I \subseteq \{1, \dots, n-1\}$, let
+$J = \{n - i : i \in I\}$. Then the number of parking functions of length $n$ with descent set
+$I$ equals the number of parking functions of length $n$ with ascent set $J$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -143,8 +157,12 @@ public theorem_wanted parkingFunction_descentSet_card_eq_ascentSet_reflect (n : 
     ((pfSet n).filter (fun f => desSet f = I)).card =
       ((pfSet n).filter (fun f => ascSet f = I.image (fun i => n - i))).card
 
-/-- There is a bijection between parking functions with descent set `I` and parking
-functions with ascent set `I`, stated as equality of the two finite cardinalities.
+/-- **Descent sets and ascent sets of parking functions are equidistributed.** Write a parking
+function $f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its
+descent set is the set of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$, and its ascent set the
+set of such $j$ with $a_j < a_{j+1}$. For every $n$ and every $I \subseteq \{1, \dots, n-1\}$, the
+number of parking functions of length $n$ with descent set $I$ equals the number of parking
+functions of length $n$ with ascent set $I$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -155,8 +173,11 @@ public theorem_wanted parkingFunction_descentSet_card_eq_ascentSet (n : ℕ) (I 
     ((pfSet n).filter (fun f => desSet f = I)).card =
       ((pfSet n).filter (fun f => ascSet f = I)).card
 
-/-- Parking functions with descent set `I` and with descent set `J = {n - i : i ∈ I}` are
-equinumerous, `d(I;n) = d(J;n)`.
+/-- **Reflection symmetry of descent sets of parking functions.** Write a parking function $f$ of
+length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is the set
+of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$. For every $n$ and every
+$I \subseteq \{1, \dots, n-1\}$, let $J = \{n - i : i \in I\}$. Then the number of parking
+functions of length $n$ with descent set $I$ equals the number with descent set $J$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -167,8 +188,12 @@ public theorem_wanted parkingFunction_descentSet_card_reflect (n : ℕ) (I : Fin
     ((pfSet n).filter (fun f => desSet f = I)).card =
       ((pfSet n).filter (fun f => desSet f = I.image (fun i => n - i))).card
 
-/-- `∑_{β ∈ PF↑_n} d_{M(β)}(I) = d(I;n)`, where `d_{M(β)}(I)` counts words with letters the
-multiset of entries of `β` and descent set `I`.
+/-- **Counting parking functions with a given descent set by their content.** The descent set
+of a word $w = (w_1, \dots, w_n)$ is $\{i : 1 \le i \le n - 1,\ w_i > w_{i+1}\}$. Let
+$n \in \mathbb{N}$ and $I \subseteq \{1, \dots, n - 1\}$. Then the number of parking functions of
+length $n$ with descent set $I$ equals the sum, over the nondecreasing parking functions $\beta$
+of length $n$, of the number of words of length $n$ with descent set $I$ whose multiset of
+letters is the multiset of entries of $\beta$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -180,9 +205,15 @@ public theorem_wanted sum_ndpf_multisetDescent_eq (n : ℕ) (I : Finset ℕ)
         Finset.univ.val.map w = Finset.univ.val.map β ∧ desSet w = I)).card =
       ((pfSet n).filter (fun f => desSet f = I)).card
 
-/-- Recursion for `d(I;n)`: for nonempty `I ⊆ [n-1]` with `m = max I` and `I⁻ = I \ {m}`,
-`d(I;n) = ∑_{β ∈ PF↑_n} ∑_{X ∈ M(β,m)} d_X(I⁻;m) - d(I⁻;n)`, with `M(β,m)` the (distinct)
-sub-multisets of size `m` of the entries of `β`.
+/-- **Recursion for parking functions with a given descent set.** The descent set of a word
+$w = (w_1, \dots, w_\ell)$ is $\{i : 1 \le i \le \ell - 1,\ w_i > w_{i+1}\}$, and $d(J; n)$ denotes
+the number of parking functions of length $n$ with descent set $J$. Let $n \in \mathbb{N}$, let
+$I \subseteq \{1, \dots, n - 1\}$ be nonempty with largest element $m$, and let
+$I^- = I \setminus \{m\}$. Then
+$$d(I; n) = \sum_{\beta} \sum_{X} d_X(I^-) - d(I^-; n),$$
+where $\beta$ runs over the nondecreasing parking functions of length $n$, $X$ runs over the
+distinct sub-multisets of size $m$ of the multiset of entries of $\beta$, and $d_X(I^-)$ is the
+number of words of length $m$ whose multiset of letters is $X$ and whose descent set is $I^-$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -196,7 +227,10 @@ public theorem_wanted parkingFunction_descentSet_recursion (n : ℕ) (I : Finset
           Finset.univ.val.map w = X ∧ desSet w = I.erase (I.max' hne))).card : ℤ) -
       ((pfSet n).filter (fun f => desSet f = I.erase (I.max' hne))).card
 
-/-- For `n ≥ 1` and `0 ≤ k ≤ n - 1`, `d([k];n) = (1/n) C(n,k) C(2n-k, n-k-1)`.
+/-- **Parking functions with descent set $\{1, \dots, k\}$.** Let $n \ge 1$ and
+$0 \le k \le n - 1$. The number of parking functions $(a_1, \dots, a_n)$ of length $n$ whose descent
+set $\{i : 1 \le i \le n - 1,\ a_i > a_{i+1}\}$ is exactly $\{1, \dots, k\}$ (empty when $k = 0$)
+equals $\frac{1}{n}\binom{n}{k}\binom{2n-k}{n-k-1}$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -207,8 +241,11 @@ public theorem_wanted parkingFunction_descentSet_initial_card (n k : ℕ) (hn : 
     ((((pfSet n).filter (fun f => desSet f = Finset.Icc 1 k)).card : ℕ) : ℚ) =
       1 / n * (n.choose k : ℚ) * ((2 * n - k).choose (n - k - 1) : ℚ)
 
-/-- For `n ≥ 1`, the number of peakless-tieless parking functions of length `n` is the
-Catalan number `C_n`.
+/-- **Peakless-tieless parking functions are counted by the Catalan numbers.** Write a parking
+function $f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. It is
+peakless-tieless if there is no $j$ with $a_{j-1} < a_j > a_{j+1}$ (a peak) and no $j$ with
+$a_j = a_{j+1}$ (a tie). For every $n \ge 1$, the number of peakless-tieless parking functions of
+length $n$ is the Catalan number $C_n$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -217,9 +254,14 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Corollary 31
 public theorem_wanted card_peakless_tieless_parkingFunction (n : ℕ) (hn : 1 ≤ n) :
     (ptpfSet n).card = catalan n
 
-/-- For `1 ≤ i ≤ n`, the number of peakless-tieless parking functions of length `n` with
-last entry `a_n = i` is the Catalan-triangle entry `C_{n,i} = C(n+i-2, i-1) (n-i+1) / n`
-(OEIS A009766 `T(n-1, i-1)`, with the 1-based indexing of the paper's proof).
+/-- **Peakless-tieless parking functions by last entry.** Write a parking function $f$ of length
+$n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1 \in \{1, \dots, n\}$. It is
+peakless-tieless if there is no $j$ with $a_{j-1} < a_j > a_{j+1}$ (a peak) and no $j$ with
+$a_j = a_{j+1}$ (a tie). For natural numbers $i$ and $n$ with $1 \le i \le n$, the number of
+peakless-tieless parking functions of length $n$ with last entry $a_n = i$ is
+$$\binom{n+i-2}{i-1} \cdot \frac{n-i+1}{n}.$$
+
+This is the Catalan-triangle entry $T(n-1, i-1)$ of OEIS A009766.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -230,9 +272,15 @@ public theorem_wanted card_peakless_tieless_parkingFunction_last (n i : ℕ) (hi
     ((((ptpfSet n).filter (fun f => ∀ j : Fin n, j.val + 1 = n → (f j : ℕ) + 1 = i)).card :
       ℕ) : ℚ) = ((n + i - 2).choose (i - 1) : ℚ) * ((n - i + 1 : ℕ) : ℚ) / n
 
-/-- For `n ≥ 1`, the number of valleyless-tieless parking functions of length `n` is the
-Fine number `fineNumber (n + 1)` (OEIS A000957 at `n + 1`: `1, 2, 6, 18, 57, …`). The
-printed index `F_{n+2}` is off by one in the A000957 indexing the paper cites.
+/-- **Valleyless-tieless parking functions are counted by the Fine numbers.** Write a parking
+function $f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. It is
+valleyless-tieless if there is no $j$ with $a_{j-1} > a_j < a_{j+1}$ (a valley) and no $j$ with
+$a_j = a_{j+1}$ (a tie). For every $n \ge 1$, the number of valleyless-tieless parking functions
+of length $n$ is the Fine number $F(n+1)$, where the Fine numbers are indexed from $0$ with
+$F(0) = 1$; for $n = 1, \dots, 5$ these counts are $1, 2, 6, 18, 57$.
+
+In the offset-0 indexing of OEIS A000957 ($0, 1, 0, 1, 2, 6, 18, \dots$), $F(n+1)$ is the term
+of index $n + 2$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -241,9 +289,13 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 33
 public theorem_wanted card_valleyless_tieless_parkingFunction (n : ℕ) (hn : 1 ≤ n) :
     (((vtpfSet n).card : ℕ) : ℚ) = fineNumber (n + 1)
 
-/-- The map `(a_1, …, a_n) ↦ (1, a_1 + 1, …, a_n + 1)` is a bijection from `VTPF_n` onto
-the valleyless-tieless parking functions of length `n + 1` with `a_1 = 1` and
-`a_{n+1} > 1`.
+/-- **Prepending $1$ to valleyless-tieless parking functions.** Identify a parking function $f$
+of length $m$ with the word $(f(0) + 1, \dots, f(m-1) + 1)$. A word $(a_1, \dots, a_m)$ has a
+tie if $a_k = a_{k+1}$ for some $k$, and a valley if $a_{k-1} > a_k < a_{k+1}$ for some $k$;
+write $\mathrm{VTPF}_m$ for the set of parking functions of length $m$ with no ties and no
+valleys. For $n \ge 1$, the map $(a_1, \dots, a_n) \mapsto (1, a_1 + 1, \dots, a_n + 1)$ is a
+bijection from $\mathrm{VTPF}_n$ onto the set of $(b_1, \dots, b_{n+1}) \in \mathrm{VTPF}_{n+1}$
+with $b_1 = 1$ and $b_{n+1} > 1$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -260,9 +312,12 @@ set_option quotPrecheck false in
 local notation "ptpfEnds" m:max r:max =>
   ((ptpfSet m).filter (fun f => ∃ i j : Fin m, i.val = 0 ∧ j.val + 1 = m ∧ r (f i) (f j))).card
 
-/-- With `G_m`, `E_m`, `L_m` the peakless-tieless parking functions of length `m` with
-`a_1 > a_m`, `a_1 = a_m`, `a_1 < a_m` (so `G_1 = L_1 = ∅`, `E_1 = {(1)}`):
-`|E_{n+1}| = |L_n|` for `n ≥ 1` and `|G_{n+1}| = |L_{n+1}|` for `n ≥ 0`.
+/-- **First and last entries of peakless-tieless parking functions.** A parking function
+$(a_1, \dots, a_m)$ is peakless-tieless if $a_i \ne a_{i+1}$ for all $1 \le i \le m - 1$ and there
+is no $i$ with $a_{i-1} < a_i > a_{i+1}$. Let $G_m$, $E_m$ and $L_m$ be the sets of
+peakless-tieless parking functions of length $m$ with $a_1 > a_m$, $a_1 = a_m$ and $a_1 < a_m$,
+respectively. Then $|E_{n+1}| = |L_n|$ for every $n \ge 1$, and $|G_{n+1}| = |L_{n+1}|$ for every
+$n \ge 0$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -274,8 +329,13 @@ public theorem_wanted peakless_tieless_ends_card (n : ℕ) :
     ptpfEnds (n + 1) (fun a b : Fin (n + 1) => b < a) =
       ptpfEnds (n + 1) (fun a b : Fin (n + 1) => a < b)
 
-/-- For `n ≥ 0`, the number of peakless-tieless parking functions of length `n + 1` with
-`a_1 < a_{n+1}` is the Fine number `F_{n+1}` (OEIS A000957), `fineNumber (n + 1)`.
+/-- **Peakless-tieless parking functions with first entry below the last.** For every
+$n \in \mathbb{N}$, the number of parking functions $(a_1, \dots, a_{n+1})$ of length $n + 1$
+with no ties (no $i$ with $a_i = a_{i+1}$), no peaks (no $i$ with $a_{i-1} < a_i$ and
+$a_i > a_{i+1}$) and $a_1 < a_{n+1}$ is the Fine number $F(n + 1)$, indexed from $0$ so that
+$F(0) = 1$.
+
+In the indexing of OEIS A000957, $F(n + 1)$ is the term of index $n + 2$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -284,7 +344,10 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 41
 public theorem_wanted card_peakless_tieless_first_lt_last (n : ℕ) :
     ((ptpfEnds (n + 1) (fun a b : Fin (n + 1) => a < b) : ℕ) : ℚ) = fineNumber (n + 1)
 
-/-- For `n ≥ 1`, exactly one parking function of length `n` has no peaks and `n - 1` ties.
+/-- **Peakless parking functions with $n - 1$ ties.** For every $n \ge 1$, exactly one parking
+function $(a_1, \dots, a_n)$ of length $n$ has no peaks (no $i$ with $a_{i-1} < a_i$ and
+$a_i > a_{i+1}$) and exactly $n - 1$ ties (indices $i \in \{1, \dots, n - 1\}$ with
+$a_i = a_{i+1}$).
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -295,8 +358,12 @@ public theorem_wanted card_peakless_parkingFunction_max_ties (n : ℕ) (hn : 1 �
       (Finset.univ.filter (fun i : Fin n => ∃ j : Fin n, j.val = i.val + 1 ∧ f i = f j)).card =
         n - 1)).card = 1
 
-/-- Every word `w ∈ {A, D, T}^{n-1}` is the statistic encoding of some parking function of
-length `n`.
+/-- **Every statistic encoding comes from a parking function.** Write a parking function $f$ of
+length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its statistic encoding is
+the word $w_1 \cdots w_{n-1}$ over the letters $A$, $D$, $T$ with $w_j = A$ if $a_j < a_{j+1}$
+(an ascent), $w_j = D$ if $a_j > a_{j+1}$ (a descent) and $w_j = T$ if $a_j = a_{j+1}$ (a tie).
+For every natural number $n$, every word of length $n - 1$ over $A$, $D$, $T$ (the empty word
+when $n = 0$) is the statistic encoding of some parking function of length $n$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -305,8 +372,13 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 48
 public theorem_wanted exists_parkingFunction_statEnc (n : ℕ) (w : Fin (n - 1) → Ordering) :
     ∃ f : Fin n → Fin n, IsParkingFunction n f ∧ statEnc n f = w
 
-/-- If `α` is the unique parking function with statistic encoding `w`, then consecutive
-entries of `α` differ by at most one, and every value below a value of `α` also occurs.
+/-- **Uniquely encoded parking functions have steps of at most one and no gaps.** The statistic
+encoding of $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ is the word over $\{A, D, T\}$ whose
+letter at each position $0 \le i \le n - 2$ is $A$, $D$ or $T$ according as $f(i) < f(i+1)$,
+$f(i) > f(i+1)$ or $f(i) = f(i+1)$. Let $f$ be a parking function of length $n$ such that every
+parking function of length $n$ with the same statistic encoding equals $f$. Then
+$|f(i+1) - f(i)| \le 1$ for all $0 \le i \le n - 2$, and for all $q < p$ in $\{0, \dots, n-1\}$,
+if $p$ is a value of $f$ then so is $q$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -318,8 +390,14 @@ public theorem_wanted unique_statEnc_adjacent_and_downward_closed (n : ℕ)
     (∀ i j : Fin n, j.val = i.val + 1 → (f j : ℕ) ≤ f i + 1 ∧ (f i : ℕ) ≤ f j + 1) ∧
     ∀ p q : Fin n, q < p → (∃ i, f i = p) → ∃ i, f i = q
 
-/-- If `α` is the unique parking function with statistic encoding `w`, then the statistic
-encoding of the nondecreasing rearrangement `β` of `α` has the form `A*T*`.
+/-- **The sorted rearrangement of a uniquely encoded parking function.** The statistic encoding
+of $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ is the word over $\{A, D, T\}$ whose letter at
+each position $0 \le i \le n - 2$ is $A$, $D$ or $T$ according as $f(i) < f(i+1)$,
+$f(i) > f(i+1)$ or $f(i) = f(i+1)$. Let $f$ be a parking function of length $n$ such that every
+parking function of length $n$ with the same statistic encoding equals $f$, and let
+$\beta : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ be nondecreasing and take each value as often
+as $f$ does. Then the statistic encoding of $\beta$ consists of $A$'s followed by $T$'s (either
+block may be empty).
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -332,8 +410,14 @@ public theorem_wanted unique_statEnc_sorted_form (n : ℕ) (f : Fin n → Fin n)
     (hβf : Finset.univ.val.map β = Finset.univ.val.map f) :
     IsAstarTstar (statEnc n β)
 
-/-- If `α` is the unique parking function with its statistic encoding and
-`α_{i-1} > α_i = ⋯ = α_j < α_{j+1}` for some `i ≤ j`, then `α_i = ⋯ = α_j = 1`.
+/-- **Valley plateaus of a uniquely encoded parking function equal $1$.** For a map
+$g : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$, its statistic encoding is the word of length
+$n - 1$ whose $k$-th letter, for $1 \le k \le n - 1$, is $<$, $=$ or $>$ according as
+$g(k-1) < g(k)$, $g(k-1) = g(k)$ or $g(k-1) > g(k)$. Let $f$ be a parking function of length $n$
+such that every parking function of length $n$ with the same statistic encoding as $f$ equals
+$f$, and write $\alpha_k = f(k-1) + 1$ for $1 \le k \le n$. If $2 \le i \le j \le n - 1$,
+$\alpha_{i-1} > \alpha_i$, $\alpha_k = \alpha_i$ for every $k$ with $i \le k \le j$, and
+$\alpha_j < \alpha_{j+1}$, then $\alpha_k = 1$ for every $k$ with $i \le k \le j$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -346,8 +430,12 @@ public theorem_wanted unique_statEnc_valley_plateau_eq_one (n : ℕ) (f : Fin n 
     (hfa : f b < f a) (hconst : ∀ k : Fin n, b ≤ k → k ≤ c → f k = f b) (hfd : f c < f d) :
     ∀ k : Fin n, b ≤ k → k ≤ c → (f k : ℕ) = 0
 
-/-- A word `w ∈ {A, D, T}^{n-1}` is the statistic encoding of a unique parking function of
-length `n` if and only if `w ∈ {A*T*} ∪ {T*D*}`.
+/-- **Statistic encodings with a unique parking function.** The statistic encoding of a parking
+function $(a_1, \dots, a_n)$ is the word $w_1 \cdots w_{n-1}$ over $\{A, D, T\}$ with $w_i = A$ if
+$a_i < a_{i+1}$, $w_i = D$ if $a_i > a_{i+1}$ and $w_i = T$ if $a_i = a_{i+1}$. For every
+$n \in \mathbb{N}$, a word over $\{A, D, T\}$ with one letter for each $1 \le i \le n - 1$ is the
+statistic encoding of exactly one parking function of length $n$ if and only if it consists of
+$A$'s followed by $T$'s or of $T$'s followed by $D$'s (either block may be empty).
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -358,13 +446,16 @@ public theorem_wanted unique_parkingFunction_statEnc_iff (n : ℕ)
     (∃! f : Fin n → Fin n, IsParkingFunction n f ∧ statEnc n f = w) ↔
       (IsAstarTstar w) ∨ IsTstarDstar w
 
-/-- The paper's map `φ : PF↑_n → PTPF_n`: for `α = (a_1, …, a_n)`, list the tie set
-`Tie(α) = {j + 1 : a_j = a_{j+1}}` in decreasing order, followed by the value set `Val(α)` in
-increasing order. Zero-based: the tie `j + 1` (1-based position of the second entry of a tie)
-is the value `i : Fin n` for the zero-based position `i` with `f (i - 1) = f i`, and the values
-are those of `f` (both lists are read off `List.finRange n`, which is already ordered); the
-concatenated list has length `n` for nondecreasing `f` (the default `k` of `getD` is never used
-there).
+/-- **Tie-and-value map.** Let $n \in \mathbb{N}$ and $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$.
+The ties of $f$ are the positions $i \in \{1, \dots, n-1\}$ with $f(i-1) = f(i)$, and its values
+are the elements of the image of $f$. Form the list of the ties in decreasing order followed by
+the values in increasing order. Then $\varphi_n(f) : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ is the
+map whose value at $k$ is the entry of this list at position $k$ (counting from $0$), or $k$
+itself if the list has at most $k$ entries.
+
+For nondecreasing $f$ the list has exactly $n$ entries. In the paper's one-based notation,
+$\varphi$ sends $\alpha = (a_1, \dots, a_n)$ to its tie set $\{j + 1 : a_j = a_{j+1}\}$ in
+decreasing order followed by its value set in increasing order.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -377,8 +468,9 @@ public def peaklessTielessOfNondecreasing (n : ℕ) (f : Fin n → Fin n) : Fin 
       (List.finRange n).filter (fun v => (List.finRange n).any fun i =>
         Nat.beq (f i).val v.val)).getD k.val k
 
-/-- Example 4.3 of arXiv:2312.16786v1: `φ(1, 1, 2, 3, 4, 4) = (6, 2, 1, 2, 3, 4)` (zero-based
-values).
+/-- **Example of the tie-and-value map.** For $n = 6$, the tie-and-value map $\varphi$ sends
+$(0, 0, 1, 2, 3, 3)$ to $(5, 1, 0, 1, 2, 3)$; in the paper's one-based values this reads
+$\varphi(1, 1, 2, 3, 4, 4) = (6, 2, 1, 2, 3, 4)$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -389,8 +481,11 @@ public theorem peaklessTielessOfNondecreasing_example :
   funext k
   fin_cases k <;> rfl
 
-/-- The map `φ` is a well-defined bijection from the nondecreasing parking functions `PF↑_n`
-onto the peakless-tieless parking functions `PTPF_n`.
+/-- **Nondecreasing and peakless-tieless parking functions are in bijection.** For every
+$n \in \mathbb{N}$, the tie-and-value map $\varphi$ is a bijection from the nondecreasing parking
+functions of length $n$ onto the peakless-tieless parking functions of length $n$, that is, the
+parking functions $(a_1, \dots, a_n)$ with $a_i \ne a_{i+1}$ for all $1 \le i \le n - 1$ and no $i$
+with $a_{i-1} < a_i > a_{i+1}$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -399,14 +494,18 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 30
 public theorem_wanted peaklessTielessOfNondecreasing_bijOn (n : ℕ) :
     Set.BijOn (peaklessTielessOfNondecreasing n) ↑(ndpfSet n) ↑(ptpfSet n)
 
-/-- Fuel-bounded form of the paper's map `ν` (Definition `nu`) on words `x` over `ℕ`, given as
-lists: words of length at most `1` are fixed; otherwise, with `argmin`/`argmax` the (0-based)
-positions of the minimal/maximal letters, Case 1 (every `argmin` position is at least every
-`argmax` position) takes `i = max argmin`, `j = min argmax` and returns
-`ν(x_{<j}) x_i ν(x_{j<·<i}) x_j ν(x_{>i})`; Case 2 takes `i` the greatest `argmin` position
-below some `argmax` position, `j` the least `argmax` position above `i`, and returns
-`ν(x_{<i}) x_j ν(x_{i<·<j}) x_i ν(x_{>j})`. Every recursive call is on a strictly shorter word,
-so fuel `length x` suffices (`ascentToDescentRearrangement`).
+/-- **Fuel-bounded ascent-to-descent rearrangement.** For a fuel $N \in \mathbb{N}$ and a word
+$x = x_1 \cdots x_m$ over $\mathbb{N}$, the word $\nu_N(x)$ is defined by recursion on $N$:
+$\nu_0(x) = x$, and $\nu_{N+1}(x) = x$ when $m \le 1$. For $m \ge 2$, let $A$ be the set of
+positions of the least letter of $x$ and $B$ the set of positions of its greatest letter. If
+$b \le a$ for all $a \in A$ and $b \in B$ (Case 1), put $i = \max A$ and $j = \min B$; then
+$\nu_{N+1}(x) = \nu_N(x_1 \cdots x_{j-1})\, x_i\, \nu_N(x_{j+1} \cdots x_{i-1})\, x_j\,
+\nu_N(x_{i+1} \cdots x_m)$. Otherwise (Case 2), let $i$ be the greatest $a \in A$ such that
+$a < b$ for some $b \in B$, and $j$ the least $b \in B$ with $b > i$; then
+$\nu_{N+1}(x) = \nu_N(x_1 \cdots x_{i-1})\, x_j\, \nu_N(x_{i+1} \cdots x_{j-1})\, x_i\,
+\nu_N(x_{j+1} \cdots x_m)$.
+
+Every recursive call is on a strictly shorter word, so fuel $N = m$ never runs out.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -433,8 +532,11 @@ public def ascentToDescentRearrangementAux : ℕ → List ℕ → List ℕ
           ascentToDescentRearrangementAux fuel ((l.drop (i + 1)).take (j - i - 1)) ++
           [l.getD i 0] ++ ascentToDescentRearrangementAux fuel (l.drop (j + 1))
 
-/-- The paper's map `ν : 𝔖_n(y) → 𝔖_n(y)` (Definition `nu`) on words over `ℕ` written as lists;
-see `ascentToDescentRearrangementAux` for the two cases.
+/-- **Ascent-to-descent rearrangement.** For a word $x = x_1 \cdots x_m$ over $\mathbb{N}$, the
+ascent-to-descent rearrangement of $x$ is $\nu(x) = \nu_m(x)$, the fuel-bounded
+ascent-to-descent rearrangement $\nu_N(x)$ with fuel $N = m$, the length of $x$.
+
+Every recursive call of $\nu_N$ is on a strictly shorter word, so the fuel $m$ never runs out.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -443,7 +545,9 @@ Definition `nu` (Section 2). -/
 public def ascentToDescentRearrangement (x : List ℕ) : List ℕ :=
   ascentToDescentRearrangementAux x.length x
 
-/-- `ν` fixes words of length at most one.
+/-- **Words of length at most one are fixed by the ascent-to-descent rearrangement.** Every word
+$x$ over $\mathbb{N}$ of length at most $1$ satisfies $\nu(x) = x$, where $\nu$ is the
+ascent-to-descent rearrangement.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -456,8 +560,12 @@ public theorem ascentToDescentRearrangement_of_length_le_one {x : List ℕ} (hx 
   | zero => rfl
   | succ k => simp only [ascentToDescentRearrangementAux, hx, ↓reduceIte]
 
-/-- The paper's Example of Definition `nu`: `ν(1 4 1 3 4 3 1 2 1) = 4 1 4 3 1 1 2 1 3`, with the
-sub-steps `ν(1 4) = 4 1` (Case 2) and `ν(3 1 2 1) = 1 2 1 3` (Case 1).
+/-- **Example of the ascent-to-descent rearrangement.** The ascent-to-descent rearrangement $\nu$
+satisfies $\nu(1\,4\,1\,3\,4\,3\,1\,2\,1) = 4\,1\,4\,3\,1\,1\,2\,1\,3$, $\nu(1\,4) = 4\,1$ and
+$\nu(3\,1\,2\,1) = 1\,2\,1\,3$.
+
+The last two are the sub-steps of the first: $\nu(1\,4)$ falls under Case 2 of the definition
+and $\nu(3\,1\,2\,1)$ under Case 1.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -481,8 +589,12 @@ local notation "desList" x:max =>
   Finset.image (· + 1)
     ((Finset.range (List.length x - 1)).filter fun i => List.getD x (i + 1) 0 < List.getD x i 0)
 
-/-- For every word `x` over `ℕ` (so for every `x ∈ 𝔖_n(y)`, `y ∈ ℕ^n`),
-`Asc(x) = Des(ν(x))`.
+/-- **Ascents of a word are the descents of its rearrangement.** For a word
+$x = x_1 \cdots x_m$ over $\mathbb{N}$, let the ascent set $\mathrm{Asc}(x)$ be the set of
+$i \in \{1, \dots, m - 1\}$ with $x_i < x_{i+1}$, and the descent set $\mathrm{Des}(x)$ the set
+of $i \in \{1, \dots, m - 1\}$ with $x_i > x_{i+1}$. Then every word $x$ over $\mathbb{N}$
+satisfies $\mathrm{Asc}(x) = \mathrm{Des}(\nu(x))$, where $\nu$ is the ascent-to-descent
+rearrangement.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -491,8 +603,11 @@ Lemma 11 (`jis-2024-24.8.6-lem-11`). -/
 public theorem_wanted ascList_eq_desList_ascentToDescentRearrangement (x : List ℕ) :
     ascList x = desList (ascentToDescentRearrangement x)
 
-/-- The map `ν` is injective (on all words over `ℕ`; since `ν` rearranges letters, this is
-injectivity on each orbit `𝔖_n(y)`).
+/-- **The ascent-to-descent rearrangement is injective.** The ascent-to-descent rearrangement
+$\nu$ is injective on finite words over $\mathbb{N}$: if $\nu(x) = \nu(x')$, then $x = x'$.
+
+Since $\nu$ rearranges letters, this is the same as injectivity of $\nu$ on the rearrangements of
+each fixed word.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -501,8 +616,13 @@ Lemma 13 (`jis-2024-24.8.6-lem-13`). -/
 public theorem_wanted ascentToDescentRearrangement_injective :
     Function.Injective ascentToDescentRearrangement
 
-/-- For `y ∈ ℕ^n` (a list) and a set `I` of positions, `ν` restricts to a bijection from the
-rearrangements of `y` with ascent set `I` onto the rearrangements of `y` with descent set `I`.
+/-- **The ascent-to-descent rearrangement matches ascent and descent sets.** Let $y$ be a finite
+word over $\mathbb{N}$ and $I$ a finite set of natural numbers. For a word $x = x_1 \cdots x_m$,
+let the ascent set $\mathrm{Asc}(x)$ be the set of $i \in \{1, \dots, m - 1\}$ with
+$x_i < x_{i+1}$, and the descent set $\mathrm{Des}(x)$ the set of those $i$ with $x_i > x_{i+1}$.
+Then the ascent-to-descent rearrangement $\nu$ maps the set of rearrangements $x$ of $y$ with
+$\mathrm{Asc}(x) = I$ bijectively onto the set of rearrangements $x$ of $y$ with
+$\mathrm{Des}(x) = I$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -512,13 +632,20 @@ public theorem_wanted ascentToDescentRearrangement_bijOn (y : List ℕ) (I : Fin
     Set.BijOn ascentToDescentRearrangement {x | x.Perm y ∧ ascList x = I}
       {x | x.Perm y ∧ desList x = I}
 
-/-- Let `φ` send a valleyless-tieless parking function `v` of length `n + 1` with `a_1 = 1` and
-`a_{n+1} > 1` to `flick_i(v)`, where `i` is the unique position of its maximal entry and
-`flick_i(x) = (x_i, x_{i-1}, …, x_1, x_{n+1}, x_n, …, x_{i+1})`. Then `φ` is a bijection onto the
-peakless-tieless parking functions of length `n + 1` with `a_1 > a_{n+1}`. With 0-based position
-`p = i - 1`, entry `q` of `flick_i(v)` is `v_{p-q}` for `q ≤ p` and `v_{n+1+p-q}` otherwise. The
-record's domain condition `a_{i+1} > 1` is the paper's typo for `a_{n+1} > 1` (its domain in
-the same display).
+/-- **Flicking valleyless-tieless parking functions.** Identify a parking function $f$ of length
+$m$ with the word $(f(0) + 1, \dots, f(m-1) + 1)$. A word $(a_1, \dots, a_m)$ has a tie if
+$a_k = a_{k+1}$ for some $k$, a peak if $a_{k-1} < a_k > a_{k+1}$ for some $k$, and a valley if
+$a_{k-1} > a_k < a_{k+1}$ for some $k$. For $1 \le i \le m$, let
+$\mathrm{flick}_i(x_1, \dots, x_m) = (x_i, x_{i-1}, \dots, x_1, x_m, x_{m-1}, \dots, x_{i+1})$,
+the block $x_m, \dots, x_{i+1}$ being empty when $i = m$. Let $D$ be the set of parking
+functions $(a_1, \dots, a_{n+1})$ with no valleys and no ties such that $a_1 = 1$ and
+$a_{n+1} > 1$, and let $\varphi$ send $v \in D$ to $\mathrm{flick}_i(v)$, where $i$ is the
+position of the strictly largest entry of $v$. Then $\varphi$ is a bijection from $D$ onto the
+set of parking functions $(b_1, \dots, b_{n+1})$ with no peaks and no ties such that
+$b_1 > b_{n+1}$.
+
+The paper's domain condition $a_{i+1} > 1$ is a typo for $a_{n+1} > 1$, its domain in the same
+display.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -538,11 +665,16 @@ set_option quotPrecheck false in
 local notation "twoRowShape" n:max =>
   YoungDiagram.ofRowLens [n, n] (by simp [List.sortedGE_cons, List.sortedGE_nil])
 
-/-- Gudmundsson's bijection: for every `n` there is a bijection `f` from the Dyck words of
-semilength `n` onto the standard Young tableaux of shape `(n, n)` such that position `i` of `w`
-(1-based) carries `U` (respectively `D`) exactly when `i` is an entry of the first (respectively
-second) row of `f(w)`. Standard tableaux are the semistandard tableaux of shape `(n, n)` whose
-entries on the `2n` cells are distinct and lie in `[1, 2n]`.
+/-- **Gudmundsson's bijection between Dyck words and standard Young tableaux.** For every $n$
+there is a map $f$ from Dyck words to semistandard Young tableaux of the two-row shape $(n, n)$
+with the following two properties. First, for every Dyck word $w$ of semilength $n$ and every
+$i \ge 1$, if the $i$th letter of $w$ is an up step $U$ then $i$ is an entry of the first row of
+$f(w)$, and if it is a down step $D$ then $i$ is an entry of the second row. Second, $f$
+restricts to a bijection from the Dyck words of semilength $n$ onto the standard tableaux of
+shape $(n, n)$, that is, those whose $2n$ entries are distinct and lie in $\{1, \dots, 2n\}$.
+
+Since $f(w)$ is standard, $i$ lies in the first row of $f(w)$ exactly when the $i$th letter of $w$
+is $U$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -558,11 +690,14 @@ public theorem_wanted exists_dyckWord_standardYoungTableau_bijOn (n : ℕ) :
             ∀ c' ∈ twoRowShape n, T c.1 c.2 = T c'.1 c'.2 → c = c') ∧
           ∀ c ∈ twoRowShape n, 1 ≤ T c.1 c.2 ∧ T c.1 c.2 ≤ 2 * n}
 
-/-- For every `n` the map `g` sending a Dyck word `w` of semilength `n` to the sequence whose
-`i`th entry is one plus the number of `D`s before the `i`th `U` of `w` is a bijection onto the
-nondecreasing parking functions of length `n`. In the zero-based convention of this file,
-`g w i` is the number of `D`s before the `(i + 1)`st `U`: if the 0-based position `k` of `w`
-holds `U` and `i` letters `U` precede it, then `g w i` is the number of `D`s preceding it.
+/-- **Dyck words and nondecreasing parking functions.** For every $n$ there is a map $g$ from Dyck
+words to maps $\{0, \dots, n-1\} \to \{0, \dots, n-1\}$ such that, for every Dyck word $w$ of
+semilength $n$ and every $i < n$, $g(w)(i)$ is the number of down steps $D$ of $w$ before its
+$(i+1)$st up step $U$, and $g$ restricts to a bijection from the Dyck words of semilength $n$
+onto the nondecreasing parking functions of length $n$.
+
+With one-based entries, the $i$th entry of the parking function is one plus the number of $D$s
+before the $i$th $U$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
@@ -575,11 +710,15 @@ public theorem_wanted exists_dyckWord_nondecreasing_parkingFunction_bijOn (n : �
         ((g w i : Fin n) : ℕ) = (w.toList.take k).count DyckStep.D) ∧
       Set.BijOn g {w | w.semilength = n} ↑(ndpfSet n)
 
-/-- For `n ≥ 2`, the number of parking functions of length `n` with no peaks and exactly `n - 2`
-ties is `(n - 1) n`. The paper prints `n(n + 1)`, which contradicts its own table
-(`2, 6, 12, 20, 30` for `n = 2, …, 6`); its proof counts tuples with `i` leading ones followed by
-`n - i ≥ 1` copies of one value, so `1 ≤ i ≤ n - 1` and each monotone direction contributes
-`∑_{i=1}^{n-1} i`.
+/-- **Peakless parking functions with $n - 2$ ties.** For every $n \ge 2$, the number of parking
+functions $(a_1, \dots, a_n)$ of length $n$ that have no peaks (no $i$ with $a_{i-1} < a_i$ and
+$a_i > a_{i+1}$) and exactly $n - 2$ ties (indices $i \in \{1, \dots, n - 1\}$ with
+$a_i = a_{i+1}$) is $(n - 1)n$.
+
+The paper prints $n(n + 1)$, which contradicts its own table ($2, 6, 12, 20, 30$ for
+$n = 2, \dots, 6$); its proof counts tuples with $i$ leading ones followed by $n - i \ge 1$
+copies of one value, so $1 \le i \le n - 1$ and each monotone direction contributes
+$\sum_{i=1}^{n-1} i$.
 
 Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
 Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
