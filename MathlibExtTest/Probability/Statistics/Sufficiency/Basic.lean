@@ -13,6 +13,7 @@ public import MathlibExt.Probability.Statistics.Sufficiency.Basic
 @[expose] public section
 
 open MeasureTheory MathlibExt.Probability.Statistics.Sufficiency
+open scoped ENNReal
 
 namespace MathlibExtTest.Probability.Statistics.Sufficiency.Basic
 
@@ -40,37 +41,36 @@ instance (b : Bool) : IsProbabilityMeasure (diracs b) := by
   infer_instance
 
 /-- The `θ`-independent second-coin density factor: the second coin is always fair. -/
-def secondCoinDensity : (Bool × Bool) → ℝ≥0∞ := fun _ => 1 / 2
+noncomputable def secondCoinDensity : (Bool × Bool) → ℝ≥0∞ := fun _ => 1 / 2
 
 /-- The first-coin density factor: the first coin lands on `θ` with probability `3 / 4`. -/
-def firstCoinDensity (θ : Bool) (t : Bool) : ℝ≥0∞ := if t = θ then 3 / 4 else 1 / 4
+noncomputable def firstCoinDensity (θ : Bool) (t : Bool) : ℝ≥0∞ := if t = θ then 3 / 4 else 1 / 4
 
 /-- The two-coin family: first coin biased towards `θ`, second coin fair, as a density
 with respect to counting measure. -/
 noncomputable def twoCoinFamily (θ : Bool) : Measure (Bool × Bool) :=
   Measure.count.withDensity fun ω => firstCoinDensity θ (Prod.fst ω) * secondCoinDensity ω
 
-theorem measurable_firstCoinDensity (θ : Bool) : Measurable (firstCoinDensity θ) := by
-  intro _ _
-  trivial
+theorem measurable_firstCoinDensity (θ : Bool) : Measurable (firstCoinDensity θ) :=
+  measurable_of_countable _
 
-theorem measurable_secondCoinDensity : Measurable secondCoinDensity := by
-  intro _ _
-  trivial
+theorem measurable_secondCoinDensity : Measurable secondCoinDensity :=
+  measurable_of_countable _
 
 instance (θ : Bool) : IsFiniteMeasure (twoCoinFamily θ) := by
   refine ⟨?_⟩
-  rw [twoCoinFamily, Measure.withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
-    lintegral_count, tsum_fintype, ENNReal.lt_top_iff_ne_top]
-  apply Finset.sum_ne_top
+  rw [twoCoinFamily, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+    lintegral_count, tsum_fintype, lt_top_iff_ne_top]
+  apply ENNReal.sum_ne_top.2
   intro ω _
-  by_cases h : Prod.fst ω = θ <;> simp [h, firstCoinDensity, secondCoinDensity]
+  by_cases h : Prod.fst ω = θ <;>
+    simp [h, firstCoinDensity, secondCoinDensity, ENNReal.mul_eq_top, ENNReal.div_eq_top]
 
 instance : IsFiniteMeasure (Measure.count.withDensity secondCoinDensity) := by
   refine ⟨?_⟩
-  rw [Measure.withDensity_apply _ MeasurableSet.univ, setLIntegral_univ, lintegral_count,
-    tsum_fintype, ENNReal.lt_top_iff_ne_top]
-  apply Finset.sum_ne_top
+  rw [withDensity_apply _ MeasurableSet.univ, setLIntegral_univ, lintegral_count,
+    tsum_fintype, lt_top_iff_ne_top]
+  apply ENNReal.sum_ne_top.2
   intro _ _
   simp [secondCoinDensity]
 
@@ -78,13 +78,15 @@ instance : IsFiniteMeasure (Measure.count.withDensity secondCoinDensity) := by
 factorization criterion: the density factors through `Prod.fst` against the fair
 second-coin base measure. -/
 example : IsSufficient (MeasurableSpace.comap Prod.fst inferInstance) twoCoinFamily := by
-  refine isSufficient_of_withDensity le_top (Measure.count.withDensity secondCoinDensity)
+  refine isSufficient_of_withDensity measurable_fst.comap_le
+    (Measure.count.withDensity secondCoinDensity)
     (fun θ ω => firstCoinDensity θ (Prod.fst ω)) ?_ ?_
   · intro θ
     exact (measurable_firstCoinDensity θ).comp (comap_measurable Prod.fst)
   · intro θ
-    rw [twoCoinFamily, withDensity_mul Measure.count measurable_secondCoinDensity
-      ((measurable_firstCoinDensity θ).comp measurable_fst)]
+    rw [twoCoinFamily, ← withDensity_mul Measure.count (g := fun ω => firstCoinDensity θ ω.1)
+      measurable_secondCoinDensity
+      ((measurable_firstCoinDensity θ).comp (f := Prod.fst) measurable_fst)]
     congr 1
     ext ω
     rw [Pi.mul_apply, mul_comm]
