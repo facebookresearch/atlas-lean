@@ -51,11 +51,12 @@ Definition 1.3.1 and §3.2.2).
   `BayesNet.sum_intervene_joint_mul_of_pred_of_cpt_ne_zero`.
 * `BayesNet.DSeparated.symm`: d-separation is symmetric.
 
-The global Markov property (d-separation implies conditional independence), the general
-back-door adjustment (any `Z` meeting the back-door criterion, for example one containing
-descendants of the parents that are not descendants of the treatment, or nodes after the
-treatment in the order) and the front-door adjustment are stated in
-`WantedExt/Probability/CausalGraphicalWanted.lean`; the do-calculus is not covered.
+The global Markov property (d-separation implies conditional independence) is in
+`CSLibExt/MachineLearning/GraphicalModels/GlobalMarkov.lean`; the general back-door adjustment
+(any `Z` meeting the back-door criterion, for example one containing nodes after the treatment
+in the order) and the front-door adjustment are in
+`CSLibExt/MachineLearning/GraphicalModels/CausalAdjustment.lean`; the do-calculus is not
+covered.
 
 ## References
 
