@@ -25,8 +25,11 @@ pushforward imply weak convergence of the path laws in the uniform topology.
 The proof is the compactness and finite-dimensional identification argument
 used in Donsker's theorem: Prokhorov compactness gives a convergent further
 subsequence, while projective-limit uniqueness identifies its limit. This
-module uses the corresponding public Mathlib APIs directly and is independent
-of `MathlibExt.Probability.Donsker`.
+module uses the corresponding public Mathlib APIs directly.
+`MathlibExt.Probability.Donsker` imports this module, implements its `T = 1`
+extensionality theorem as a wrapper around the generalized result, and proves
+Donsker convergence through the criterion below, so the argument lives here
+only.
 -/
 
 @[expose] public section
