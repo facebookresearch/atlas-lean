@@ -56,8 +56,8 @@ inequality below clears the binomial denominators, so it can be stated
 entirely in `Nat`.
 -/
 
-/-- The number of independent `k`-element subsets of a finite matroid's
-ground set. -/
+/-- **Number of independent sets of a given size.** For a finite matroid $M$ and a natural
+number $k$, this is the number of independent sets of $M$ with exactly $k$ elements. -/
 noncomputable def independentSetCount {α : Type*} (M : Matroid α) [M.Finite]
     (k : ℕ) : ℕ :=
   {I ∈ Set.powersetCard α k | M.Indep I}.ncard
@@ -69,7 +69,14 @@ size `k` in a finite matroid on `n` elements, then
 `I k ^ 2 * k * (n - k) >= I (k - 1) * I (k + 1) * (k + 1) * (n - k + 1)`.
 
 Equivalently, `I k / n.choose k` is a log-concave sequence. -/
-/-- Source: P. Branden and J. Huh, 'Lorentzian polynomials', Ann. of Math. 192 (2020), 821-891, Theorem 4.14, https://doi.org/10.4007/annals.2020.192.3.4; independently N. Anari, K. Liu, S. Oveis Gharan, and C. Vinzant, 'Log-concave polynomials III: Mason's ultra-log-concavity conjecture for independent sets of matroids', https://arxiv.org/abs/1811.01600. Via leanprover/lean-eval@38361be, problem `strong_mason_conjecture`. -/
+/-- **The strong Mason conjecture.** Let $M$ be a finite matroid whose ground set has $n$
+elements, and for each $j$ let $I_j$ be the number of independent sets of $M$ with $j$ elements.
+Then for every natural number $k$ with $0 < k < n$,
+$$I_{k-1} \, I_{k+1} \, (k+1) \, (n-k+1) \le I_k^2 \, k \, (n-k).$$
+
+Equivalently, the sequence $I_k / \binom{n}{k}$ is log-concave for $0 \le k \le n$.
+
+Source: P. Branden and J. Huh, 'Lorentzian polynomials', Ann. of Math. 192 (2020), 821-891, Theorem 4.14, https://doi.org/10.4007/annals.2020.192.3.4; independently N. Anari, K. Liu, S. Oveis Gharan, and C. Vinzant, 'Log-concave polynomials III: Mason's ultra-log-concavity conjecture for independent sets of matroids', https://arxiv.org/abs/1811.01600. Via leanprover/lean-eval@38361be, problem `strong_mason_conjecture`. -/
 public theorem_wanted strong_mason_conjecture {α : Type*} (M : Matroid α) [M.Finite]
     (k : ℕ) (hk : 0 < k) (hkn : k < M.E.ncard) :
     independentSetCount M (k - 1) * independentSetCount M (k + 1) *

@@ -33,17 +33,27 @@ have exactly `l` elements, and `Set.IsAPOfLengthFree A l` says that `A` contains
 the formal-conjectures statement `ErdosProblems/966.lean` (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 966: for all `k, r ≥ 2` there is a set `A ⊆ ℕ` with no arithmetic progression of
-`k + 1` distinct terms such that every `r`-colouring of `A` has a monochromatic arithmetic
-progression of `k` distinct terms (`Set.IsAPOfLength`, `Set.IsAPOfLengthFree`, MathlibExt). -/
+/-- **Erdős Problem 966: progression-free sets that are Ramsey for shorter progressions.** This
+is the statement that for all natural numbers $k \ge 2$ and $r \ge 2$ there is a set $A$ of
+natural numbers that contains no arithmetic progression of $k + 1$ distinct terms and such that
+for every colouring $c$ of the natural numbers with $r$ colours there are a subset
+$t \subseteq A$ that is an arithmetic progression of $k$ distinct terms and a colour $i$ with
+$c(x) = i$ for every $x \in t$.
+
+Only the colours of elements of $A$ matter, so the colouring condition says that every
+colouring of $A$ with $r$ colours has a monochromatic progression of $k$ distinct terms. -/
 def progressionFreeRamseySet : Prop :=
   ∀ k r : ℕ, 2 ≤ k → 2 ≤ r → ∃ A : Set ℕ, A.IsAPOfLengthFree (k + 1) ∧
     ∀ c : ℕ → Fin r, ∃ t ⊆ A, t.IsAPOfLength k ∧ ∃ i : Fin r, ∀ x ∈ t, c x = i
 
 /--
-Resolved true: erdosproblems.com/966 lists the problem as proved (Lean), on the strength of a formal
-proof found with Aristotle and posted in the comments that constructs such sets for all `k, r ≥ 2`;
-Erdős had reported that Spencer had shown that such a sequence exists. Source: T. F. Bloom, Erdős
+**Erdős Problem 966 holds.** For all natural numbers $k \ge 2$ and $r \ge 2$ there is a set $A$
+of natural numbers that contains no arithmetic progression of $k + 1$ distinct terms and such
+that for every colouring $c$ of the natural numbers with $r$ colours there are a subset
+$t \subseteq A$ that is an arithmetic progression of $k$ distinct terms and a colour $i$ with
+$c(x) = i$ for every $x \in t$.
+
+Source: T. F. Bloom, Erdős
 Problems, Problem #966, https://www.erdosproblems.com/966 (status PROVED (LEAN)); resolution: formal
 proof linked from erdosproblems.com/966 (found with Aristotle, posted in the comment thread); P.
 Erdős, Problems and results in combinatorial number theory (1975), 295-310, reports that Spencer had

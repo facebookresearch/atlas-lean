@@ -56,9 +56,11 @@ open Filter
 open scoped Topology
 
 
-/-- The strong graph power on length-`k` words.  Two words are confusable
-when they are distinct and every coordinate is either equal or confusable in
-the base graph. -/
+/-- **Strong power of a graph.** Let $G$ be a simple graph with vertex set $V$ and let $k$ be a
+natural number. The $k$-th strong power $G^{\boxtimes k}$ is the simple graph whose vertices are
+the words $x = (x_1, \dots, x_k) \in V^k$ of length $k$, in which two words $x$ and $y$ are
+adjacent (confusable) when $x \neq y$ and for every $i$ either $x_i = y_i$ or $x_i$ and $y_i$ are
+adjacent in $G$. -/
 def strongPower {V : Type*} (G : SimpleGraph V) (k : ℕ) : SimpleGraph (Fin k → V) where
   Adj x y := x ≠ y ∧ ∀ i, x i = y i ∨ G.Adj (x i) (y i)
   symm.symm x y := by
@@ -66,8 +68,10 @@ def strongPower {V : Type*} (G : SimpleGraph V) (k : ℕ) : SimpleGraph (Fin k �
     exact ⟨hxy.symm, fun i => (hcoord i).imp Eq.symm SimpleGraph.Adj.symm⟩
   loopless := ⟨fun x h => h.1 rfl⟩
 
-/-- The Shannon capacity of `G` is `θ` if the normalized independence
-numbers of the strong powers tend to `θ`. -/
+/-- **Shannon capacity of a graph.** Let $G$ be a simple graph on a finite vertex set and let
+$\theta$ be a real number. For $k \ge 1$ let $G^{\boxtimes k}$ be the $k$-th strong power of $G$
+and $\alpha(G^{\boxtimes k})$ its independence number. The graph $G$ has Shannon capacity $\theta$
+when $\alpha(G^{\boxtimes k})^{1/k} \to \theta$ as $k \to \infty$. -/
 noncomputable def HasShannonCapacity {V : Type*} [Fintype V] (G : SimpleGraph V) (θ : ℝ) :
     Prop :=
   Tendsto
@@ -79,7 +83,12 @@ noncomputable def HasShannonCapacity {V : Type*} [Fintype V] (G : SimpleGraph V)
 
 /- **Lovász's theorem on Shannon capacity of the pentagon** (§238).
 The Shannon capacity of the five-cycle is `√5`. -/
-/-- Source: Knill, *Some fundamental theorems in mathematics*, §238. Via leanprover/lean-eval@38361be, problem `shannon_capacity_pentagon`. -/
+/-- **Lovász's theorem: the Shannon capacity of the pentagon.** The cycle graph $C_5$ on five
+vertices has Shannon capacity $\sqrt{5}$: writing $\alpha(C_5^{\boxtimes k})$ for the independence
+number of the $k$-th strong power of $C_5$, we have $\alpha(C_5^{\boxtimes k})^{1/k} \to \sqrt{5}$
+as $k \to \infty$.
+
+Source: Knill, *Some fundamental theorems in mathematics*, §238. Via leanprover/lean-eval@38361be, problem `shannon_capacity_pentagon`. -/
 public theorem_wanted shannon_capacity_pentagon :
     HasShannonCapacity (SimpleGraph.cycleGraph 5) (Real.sqrt 5)
 

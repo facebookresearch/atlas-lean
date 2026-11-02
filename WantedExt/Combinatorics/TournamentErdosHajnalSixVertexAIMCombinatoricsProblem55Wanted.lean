@@ -43,30 +43,48 @@ subtournament" is an injective map `Fin 6 → Fin n` preserving and reflecting a
 `n^ε` is the real power, so `n = 0` asks for nothing.
 -/
 
-/-- The reversed pairs of `T*` (`6 → 1`, `6 → 3`, `5 → 2`, `4 → 1`, relabelled to `Fin 6`). -/
+/-- **The backward arcs of $T^*$.** The list of ordered pairs $(5, 0)$, $(5, 2)$, $(4, 1)$,
+$(3, 0)$ of vertices in $\{0, \dots, 5\}$. These are the arcs of the six-vertex tournament $T^*$
+that go from a larger to a smaller vertex: $6 \to 1$, $6 \to 3$, $5 \to 2$ and $4 \to 1$ in the
+source's labelling $1, \dots, 6$, with every vertex lowered by one. -/
 def tStarBackArcs : List (Fin 6 × Fin 6) :=
   [(5, 0), (5, 2), (4, 1), (3, 0)]
 
-/-- The tournament `T*`: `i → j` iff `(i, j)` is a reversed pair, or `i < j` and `(j, i)` is not. -/
+/-- **The six-vertex tournament $T^*$.** The tournament $T^*$ is the relation on the vertex set
+$\{0, \dots, 5\}$ with an arc $i \to j$ if and only if either $(i, j)$ is one of the backward
+arcs $(5, 0)$, $(5, 2)$, $(4, 1)$, $(3, 0)$, or $i < j$ and $(j, i)$ is not a backward arc. -/
 def tStar (i j : Fin 6) : Prop :=
   (i, j) ∈ tStarBackArcs ∨ (i < j ∧ (j, i) ∉ tStarBackArcs)
 
-/-- The tournament `T` on `Fin n` contains `T*` as a subtournament. -/
+/-- **Containing $T^*$ as a subtournament.** A relation $T$ on the vertex set
+$\{0, \dots, n-1\}$ contains $T^*$ when there is an injective map $f$ from the vertex set
+$\{0, \dots, 5\}$ of $T^*$ to $\{0, \dots, n-1\}$ such that for all vertices $i, j$ of $T^*$,
+$i \to j$ in $T^*$ if and only if $T(f(i), f(j))$ holds. -/
 def ContainsTStar {n : ℕ} (T : Fin n → Fin n → Prop) : Prop :=
   ∃ f : Fin 6 → Fin n, Function.Injective f ∧ ∀ i j, tStar i j ↔ T (f i) (f j)
 
-/-- Problem 1.12: there is `ε > 0` such that every tournament on `n` vertices without `T*` has a
-transitive subtournament on at least `n^ε` vertices. -/
+/-- **The Erdős–Hajnal problem for the tournament $T^*$.** There is a real number
+$\varepsilon > 0$ such that for every natural number $n$ and every tournament $T$ on the vertex
+set $\{0, \dots, n-1\}$ that does not contain $T^*$ as a subtournament, there is a set $S$ of
+vertices on which $T$ is transitive with $|S| \ge n^{\varepsilon}$.
+
+This is Problem 1.12 of the AimPL problem list on graph Ramsey theory. -/
 def tStarErdosHajnal : Prop :=
   ∃ ε : ℝ, 0 < ε ∧ ∀ (n : ℕ) (T : Fin n → Fin n → Prop), IsTournament T → ¬ ContainsTStar T →
     ∃ S : Finset (Fin n), IsTransitiveOn T S ∧ (n : ℝ) ^ ε ≤ S.card
 
-/--
+/-- **Nguyen–Scott–Seymour: $T^*$ has the Erdős–Hajnal property.** There is a real number
+$\varepsilon > 0$ such that for every natural number $n$ and every tournament $T$ on the vertex
+set $\{0, \dots, n-1\}$ that does not contain $T^*$ as a subtournament, there is a set $S$ of
+vertices on which $T$ is transitive with $|S| \ge n^{\varepsilon}$.
+
 Resolved true: Nguyen, Scott and Seymour prove that every two-colourable tournament has the
 Erdős–Hajnal property, "which completes the verification of the conjecture for six-vertex
 tournaments"; Berger, Choromanski and Chudnovsky had proved it for every tournament on at most six
 vertices except `T*` (the remark recorded with the problem), and `T*` is two-colourable (`{1, 2, 3}`
-and `{4, 5, 6}` are transitive). Source: AimPL: Graph Ramsey Theory, Problem 1.12 [Maria
+and `{4, 5, 6}` are transitive).
+
+Source: AimPL: Graph Ramsey Theory, Problem 1.12 [Maria
 Chudnovsky], http://aimpl.org/graphramsey/1/; resolution: T. Nguyen, A. Scott and P. Seymour,
 Induced subgraph density. VI. Bounded VC-dimension, Adv. Math. 482 (2025), 110601, arXiv:2312.15572,
 abstract and introduction, https://arxiv.org/abs/2312.15572.

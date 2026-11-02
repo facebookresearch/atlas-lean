@@ -42,21 +42,35 @@ formal-conjectures has no statement of this problem.
 
 open Filter
 
-/-- The last question of Erdős Problem 1182, `F(n) / n → ∞`, where `F(n)` is the largest `m`
-such that every connected graph `G` on `n` vertices with at most `m` edges has
-`R(K₃, G) = 2n - 1`. Since this property is downward closed in `m`, `F(n) / n → ∞` says: for
-every `C`, for all sufficiently large `n`, every connected graph on `n` vertices with at most
-`C n` edges has `R(K₃, G) = 2n - 1`. -/
+/-- **Superlinear threshold for triangle-good graphs (Erdős Problem 1182).** The statement that for
+every real number $C$, for all sufficiently large natural numbers $n$, every connected graph $G$ on
+the vertex set $\{0, \dots, n - 1\}$ with at most $Cn$ edges has $R(K_3, G) = 2n - 1$. Here
+$R(K_3, G)$ is the Ramsey number of the pair: the least $N$ such that every graph on $N$ vertices
+contains a triangle or has a complement containing a copy of $G$.
+
+This is the last question of Erdős Problem 1182, whether $F(n) / n \to \infty$, where $F(n)$ is the
+largest $m$ such that every connected graph $G$ on $n$ vertices with at most $m$ edges has
+$R(K_3, G) = 2n - 1$; since this property is downward closed in $m$, the two forms agree. -/
 def triangleGoodnessSuperlinearThreshold : Prop :=
   ∀ C : ℝ, ∀ᶠ n : ℕ in atTop, ∀ G : SimpleGraph (Fin n), G.Connected →
     (G.edgeSet.ncard : ℝ) ≤ C * n →
     SimpleGraph.graphPairRamsey (⊤ : SimpleGraph (Fin 3)) G = 2 * n - 1
 
-/--
-Resolved false: Brandt proved `F(n) ≤ 84n`, so for every large `n` some connected graph with `n`
-vertices and at most `84n + 1` edges has `R(K₃, G) ≠ 2n - 1`; erdosproblems.com/1182 records that
-this resolves the final question in the negative (Brandt's 1996 preprint is unrefereed; the page
-accepts it). Source: T. F. Bloom, Erdős Problems, Problem #1182,
+/-- **No superlinear threshold for triangle-good graphs (Erdős Problem 1182).** It is not true
+that for every real number $C$, for all sufficiently large natural numbers $n$, every connected
+graph $G$ on the vertex set $\{0, \dots, n - 1\}$ with at most $Cn$ edges has
+$R(K_3, G) = 2n - 1$. Equivalently, there is a real number $C$ such that for infinitely many $n$
+some connected graph $G$ on $\{0, \dots, n - 1\}$ with at most $Cn$ edges has
+$R(K_3, G) \ne 2n - 1$. Here $R(K_3, G)$ is the Ramsey number of the pair: the least $N$ such
+that every graph on $N$ vertices contains a triangle or has a complement containing a copy of
+$G$, and $0$ if there is no such $N$.
+
+Brandt proved $F(n) \le 84n$, where $F(n)$ is the largest $m$ such that every connected graph on
+$n$ vertices with at most $m$ edges has $R(K_3, G) = 2n - 1$. So for all large $n$ some connected
+graph on $n$ vertices with at most $84n + 1$ edges has $R(K_3, G) \ne 2n - 1$, and the statement
+fails for $C = 85$. Brandt's 1996 preprint is unrefereed; erdosproblems.com/1182 accepts it.
+
+Source: T. F. Bloom, Erdős Problems, Problem #1182,
 https://www.erdosproblems.com/1182 (status OPEN); resolution: S. Brandt, Expanding graphs and
 Ramsey numbers, preprint, Serie A Mathematik, Freie Universität Berlin, 1996 (unrefereed; accepted
 on erdosproblems.com/1182), F(n) ≤ 84n, as recorded on erdosproblems.com/1182: 'The upper bound

@@ -34,28 +34,37 @@ formal-conjectures statement `ErdosProblems/447.lean` (equivalent; no code impor
 
 open Asymptotics
 
-/-- `F` is union-free: there are no distinct `A, B, C ∈ F` with `A ∪ B = C`. -/
+/-- **Union-free family.** A family $F$ of subsets of $\{0, \dots, n-1\}$ is union-free if there
+are no pairwise distinct $A, B, C \in F$ with $A \cup B = C$. -/
 def IsUnionFree {n : ℕ} (F : Finset (Finset (Fin n))) : Prop :=
   ∀ A ∈ F, ∀ B ∈ F, ∀ C ∈ F, A ≠ B → A ≠ C → B ≠ C → A ∪ B ≠ C
 
-/-- The largest size of a union-free family of subsets of `{0, …, n - 1}`. -/
+/-- **Maximum size of a union-free family.** For a natural number $n$, the largest size $|F|$ of a
+union-free family $F$ of subsets of $\{0, \dots, n-1\}$. -/
 noncomputable def maxUnionFreeSize (n : ℕ) : ℕ :=
   sSup {k : ℕ | ∃ F : Finset (Finset (Fin n)), IsUnionFree F ∧ F.card = k}
 
-/-- Erdős Problem 447, first question: union-free families of subsets of `[n]` have `o(2^n)`
-members. -/
+/-- **Erdős Problem 447, first question.** The assertion that the maximum size of a union-free
+family of subsets of $\{0, \dots, n-1\}$ is $o(2^n)$ as $n \to \infty$. -/
 def maxUnionFreeSizeLittleO : Prop :=
   (fun n : ℕ => (maxUnionFreeSize n : ℝ)) =o[Filter.atTop] fun n : ℕ => (2 : ℝ) ^ n
 
-/-- Erdős Problem 447, second question: union-free families of subsets of `[n]` have at most
-`(1 + o(1)) C(n, ⌊n/2⌋)` members. -/
+/-- **Erdős Problem 447, second question.** The assertion that, for every real $\varepsilon > 0$
+and all sufficiently large $n$, the maximum size of a union-free family of subsets of
+$\{0, \dots, n-1\}$ is at most $(1 + \varepsilon)\binom{n}{\lfloor n/2 \rfloor}$; that is, it is
+at most $(1 + o(1))\binom{n}{\lfloor n/2 \rfloor}$. -/
 def maxUnionFreeSizeCentralBinomial : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ᶠ n : ℕ in Filter.atTop,
     (maxUnionFreeSize n : ℝ) ≤ (1 + ε) * n.choose (n / 2)
 
 /--
-Resolved true: Kleitman's bound `|F| < (1 + o(1)) C(n, ⌊n/2⌋)` gives `|F| = o(2^n)`; Erdős reported
-an earlier unpublished proof of this by Sárközy and Szemerédi (erdosproblems.com/447). Source: T. F.
+**Union-free families have vanishing density (Erdős Problem 447).** The maximum size of a
+union-free family of subsets of $\{0, \dots, n-1\}$ is $o(2^n)$ as $n \to \infty$.
+
+This follows from Kleitman's bound $(1 + o(1))\binom{n}{\lfloor n/2 \rfloor}$; Erdős reported an
+earlier unpublished proof by Sárközy and Szemerédi.
+
+Source: T. F.
 Bloom, Erdős Problems, Problem #447, https://www.erdosproblems.com/447 (status PROVED (LEAN));
 resolution: D. Kleitman, Collections of subsets containing no two sets and their union, Proceedings
 of the LA Meeting AMS (1971), 153-155, |F| < (1 + o(1)) C(n, ⌊n/2⌋) (erdosproblems.com/447).
@@ -63,8 +72,12 @@ of the LA Meeting AMS (1971), 153-155, |F| < (1 + o(1)) C(n, ⌊n/2⌋) (erdospr
 public theorem_wanted maxUnionFreeSizeLittleO_holds : maxUnionFreeSizeLittleO
 
 /--
-Resolved true: Kleitman proved `|F| < (1 + o(1)) C(n, ⌊n/2⌋)` for union-free families
-(erdosproblems.com/447). Source: T. F. Bloom, Erdős Problems, Problem #447,
+**Kleitman's bound for union-free families (Erdős Problem 447).** For every real
+$\varepsilon > 0$ and all sufficiently large $n$, the maximum size of a union-free family of
+subsets of $\{0, \dots, n-1\}$ is at most $(1 + \varepsilon)\binom{n}{\lfloor n/2 \rfloor}$; that
+is, it is at most $(1 + o(1))\binom{n}{\lfloor n/2 \rfloor}$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #447,
 https://www.erdosproblems.com/447 (status PROVED (LEAN)); resolution: D. Kleitman, Collections of
 subsets containing no two sets and their union, Proceedings of the LA Meeting AMS (1971), 153-155,
 |F| < (1 + o(1)) C(n, ⌊n/2⌋) (erdosproblems.com/447).

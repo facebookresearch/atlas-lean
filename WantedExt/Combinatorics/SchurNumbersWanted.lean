@@ -46,53 +46,61 @@ namespace MathlibExt.Combinatorics.SchurNumbersWanted
 
 open Finset
 
-/-- Every `k`-colouring of `{1, …, N}` has a monochromatic solution to
-`x + y = z`, with `x = y` permitted (so these are the Schur numbers, not the
-weak Schur numbers). -/
+/-- **Schur forcing property.** For natural numbers $k$ and $N$, we say that $N$ forces a
+monochromatic Schur triple in $k$ colours when every colouring $c$ of the natural numbers with $k$
+colours has $x, y, z \in \{1, \dots, N\}$ with $x + y = z$ and $c(x) = c(y) = c(z)$.
+
+Solutions with $x = y$ count, so this property gives the Schur numbers, not the weak Schur
+numbers. -/
 def schurForces (k N : ℕ) : Prop :=
   ∀ c : ℕ → Fin k, ∃ x ∈ Icc 1 N, ∃ y ∈ Icc 1 N, ∃ z ∈ Icc 1 N,
     x + y = z ∧ c x = c y ∧ c y = c z
 
-/-- The Schur number `S(k)`: the largest `N` such that `{1, …, N}` splits into
-`k` sum-free parts (OEIS A045652), computed as one less than the least forcing
-`N` (OEIS A030126), and pinned to `0` at `k = 0`. -/
+/-- **Schur number.** For $k \ge 1$, the Schur number $S(k)$ is $N_0 - 1$, where $N_0$ is the
+least natural number $N$ that forces a monochromatic Schur triple in $k$ colours: every colouring
+$c$ of the natural numbers with $k$ colours has $x, y, z \in \{1, \dots, N\}$ with $x + y = z$ and
+$c(x) = c(y) = c(z)$. For $k = 0$, $S(0) = 0$.
+
+Such an $N_0$ exists by Schur's theorem, and $S(k)$ is the largest $N$ such that
+$\{1, \dots, N\}$ splits into $k$ sum-free parts, some possibly empty (OEIS A045652); the
+numbers $N_0 = S(k) + 1$ form OEIS A030126. -/
 noncomputable def schurNumber (k : ℕ) : ℕ :=
   if k < 1 then 0 else sInf {N | schurForces k N} - 1
 
-/-- `S(2) = 4`.
+/-- **The second Schur number.** The Schur number $S(2)$ equals $4$.
 
 Source: exhaustive check; OEIS A045652; listed in leansolving/SqueezeBench
 `SqueezeBench/Problems/Schur/README.md`. -/
 public theorem_wanted schurNumber_two : schurNumber 2 = 4
 
-/-- `S(3) = 13`.
+/-- **The third Schur number.** The Schur number $S(3)$ equals $13$.
 
 Source: exhaustive check; OEIS A045652; listed in SqueezeBench
 `SqueezeBench/Problems/Schur/README.md`. -/
 public theorem_wanted schurNumber_three : schurNumber 3 = 13
 
-/-- `S(4) = 44`.
+/-- **The fourth Schur number.** The Schur number $S(4)$ equals $44$.
 
 Source: S. W. Golomb and L. D. Baumert, *Backtrack programming*, J. ACM 12
 (1965), 516–524; OEIS A045652; listed in SqueezeBench
 `SqueezeBench/Problems/Schur/README.md`. -/
 public theorem_wanted schurNumber_four : schurNumber 4 = 44
 
-/-- `S(5) = 160`.
+/-- **The fifth Schur number.** The Schur number $S(5)$ equals $160$.
 
 Source: M. J. H. Heule, *Schur Number Five*, Proc. AAAI 2018, 6598–6606
 (arXiv:1711.08076), a DRAT-verified SAT proof; OEIS A045652; listed in
 SqueezeBench `SqueezeBench/Problems/Schur/README.md`. -/
 public theorem_wanted schurNumber_five : schurNumber 5 = 160
 
-/-- `S(6) ≥ 536`.
+/-- **Lower bound for the sixth Schur number.** The Schur number $S(6)$ is at least $536$.
 
 Source: H. Fredricksen and M. M. Sweet, *Symmetric sum-free partitions and
 lower bounds for Schur numbers*, Electron. J. Combin. 7 (2000), R32; listed in
 SqueezeBench `SqueezeBench/Problems/Schur/README.md`. -/
 public theorem_wanted le_schurNumber_six : 536 ≤ schurNumber 6
 
-/-- `S(6) ≤ 1836`.
+/-- **Upper bound for the sixth Schur number.** The Schur number $S(6)$ is at most $1836$.
 
 Source: the multicolour Ramsey bound `R₆(3) ≤ 1838` (S. P. Radziszowski,
 *Small Ramsey Numbers*, Electron. J. Combin. Dynamic Survey DS1) together with

@@ -34,12 +34,15 @@ Clause list from the source:
   consecutive cyclic entries yield each `k`-subset exactly once.
 -/
 
-/-- Universal cycle for the `k`-subsets of an `n`-set, in the sense of
-Chung/Diaconis/Graham as cited in Cooper, Combinatorial Problems I Like,
-Words and Codes bullet 78 [AMR-030-0078]: a cyclic sequence `c` of length
-`Nat.choose n k` over `Fin n` such that every block of `k` consecutive cyclic
-entries has cardinality `k` and every `k`-subset of `Fin n` occurs as such a
-block for exactly one starting position. -/
+/-- **Universal cycle for $k$-subsets.** For natural numbers $n$ and $k$, let $N = \binom{n}{k}$.
+A sequence $c_0, \dots, c_{N-1}$ of elements of $\{0, \dots, n-1\}$, read cyclically, is a
+universal cycle for the $k$-subsets of $\{0, \dots, n-1\}$ when, for every starting position
+$i < N$, the $k$ consecutive entries $c_i, c_{i+1}, \dots, c_{i+k-1}$ (indices taken modulo $N$)
+are pairwise distinct, and every $k$-element subset of $\{0, \dots, n-1\}$ is the set of these
+entries for exactly one starting position $i$.
+
+Source: Chung/Diaconis/Graham as cited in Cooper, Combinatorial Problems I Like,
+Words and Codes bullet 78 [AMR-030-0078]. -/
 def IsUniversalCycle (n k : ℕ) (c : Fin (Nat.choose n k) → Fin n) : Prop :=
   ∀ hpos : 0 < Nat.choose n k,
     (∀ i : Fin (Nat.choose n k),
@@ -52,21 +55,29 @@ def IsUniversalCycle (n k : ℕ) (c : Fin (Nat.choose n k) → Fin n) : Prop :=
             c ⟨(i.val + j.val) % Nat.choose n k,
               Nat.mod_lt (i.val + j.val) hpos⟩) = S
 
-/-- Chung/Diaconis/Graham universal-cycle conjecture as stated in Cooper,
-Combinatorial Problems I Like, Words and Codes bullet 78 [AMR-030-0078]:
-for each `k`, every sufficiently large `n` with `k ∣ Nat.choose (n - 1) (k - 1)`
-admits a universal cycle for the `k`-subsets of an `n`-set. -/
+/-- **Chung–Diaconis–Graham universal cycle conjecture.** The statement that for every natural
+number $k$ there is a natural number $N$ such that every $n \ge N$ for which $k$ divides
+$\binom{n-1}{k-1}$ admits a universal cycle for the $k$-subsets of $\{0, \dots, n-1\}$. Here
+$n - 1$ and $k - 1$ are truncated at $0$, so for $k = 0$ the divisibility condition reads
+$0 \mid 1$ and never holds.
+
+Source: Chung/Diaconis/Graham as cited in Cooper, Combinatorial Problems I Like,
+Words and Codes bullet 78 [AMR-030-0078]. -/
 def conjecture : Prop :=
   ∀ k : ℕ, ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
     k ∣ Nat.choose (n - 1) (k - 1) →
     ∃ c : Fin (Nat.choose n k) → Fin n, IsUniversalCycle n k c
 
-/--
-Resolved true: Resolved affirmatively: Glock, Joos, Kuehn and Osthus, Euler tours in
-hypergraphs, Combinatorica 40 (2020), Theorem 1.1 proves that for each fixed k >= 2 and all
-sufficiently large n satisfying k | C(n-1,k-1), the complete k-uniform hypergraph has a tight
-Euler tour, exactly the universal cycle encoded here; the k = 1 case is elementary and the k = 0
-branch is vacuous. Source: Stefan Glock, Felix Joos, Daniela Kühn, Deryk Osthus, Euler tours in
+/-- **Existence of universal cycles for $k$-subsets.** For every natural number $k$ there is a
+natural number $N$ such that for every $n \ge N$ for which $k$ divides $\binom{n-1}{k-1}$, there
+is a universal cycle for the $k$-subsets of $\{0, \dots, n-1\}$. Here $n - 1$ and $k - 1$ are
+truncated at $0$, so for $k = 0$ the divisibility condition reads $0 \mid 1$ and never holds.
+
+This is the Chung–Diaconis–Graham conjecture. Glock, Joos, Kühn and Osthus (Theorem 1.1)
+proved it for every $k \ge 2$ in the language of tight Euler tours of the complete
+$k$-uniform hypergraph; the case $k = 1$ is elementary.
+
+Source: Stefan Glock, Felix Joos, Daniela Kühn, Deryk Osthus, Euler tours in
 hypergraphs, Combinatorica 40 (2020), 679-690; arXiv:1808.07720,
 https://arxiv.org/abs/1808.07720. Moved from
 `OpenConjectures/Combinatorics/UniversalCycleSubsets`.
