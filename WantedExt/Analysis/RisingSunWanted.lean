@@ -57,19 +57,29 @@ Category-(b) candidate from §163 of the Knill survey.
 open Set MeasureTheory
 open scoped Topology
 
-/-- Points of `(a,b)` lower than some later point. -/
+/-- **Rising sun set.** For real numbers $a, b$ and a function
+$f : \mathbb{R} \to \mathbb{R}$, the rising sun set of $f$ on $(a, b)$ is the set of points
+$x \in (a, b)$ for which there is some $t$ with $x < t \le b$ and $f(x) < f(t)$. -/
 def risingSunSet (a b : ℝ) (f : ℝ → ℝ) : Set ℝ :=
   {x | x ∈ Ioo a b ∧ ∃ t ∈ Icc x b, x < t ∧ f x < f t}
 
-/-- A countable disjoint open-interval decomposition with the endpoint
-inequality `f(c_n) ≤ f(d_n)`. -/
+/-- **Rising sun decomposition.** A set $E \subseteq \mathbb{R}$ has a rising sun
+decomposition for a function $f : \mathbb{R} \to \mathbb{R}$ if there are sequences
+$(c_n)_{n \in \mathbb{N}}$ and $(d_n)_{n \in \mathbb{N}}$ of real numbers such that $E$ is the
+union of the open intervals $(c_n, d_n)$, these intervals are pairwise disjoint, and
+$f(c_n) \le f(d_n)$ for every $n$.
+
+No condition $c_n < d_n$ is imposed, so some of the intervals may be empty. -/
 def HasRisingSunDecomposition (E : Set ℝ) (f : ℝ → ℝ) : Prop :=
   ∃ c d : ℕ → ℝ,
     E = ⋃ n : ℕ, Ioo (c n) (d n) ∧
     (Set.PairwiseDisjoint (Set.univ : Set ℕ) fun n => Ioo (c n) (d n)) ∧
     ∀ n : ℕ, f (c n) ≤ f (d n)
 
-/-- The rising-sun property on `[a,b]`. -/
+/-- **Rising sun property.** Let $a, b$ be real numbers, let $f : \mathbb{R} \to \mathbb{R}$, and
+let $S$ be the rising sun set of $f$ on $(a, b)$. Then $f$ has the rising sun property on
+$[a, b]$ if $S$ is open, $S$ is empty if and only if $f$ is antitone (non-increasing) on
+$[a, b]$, and, whenever $S$ is nonempty, $S$ has a rising sun decomposition for $f$. -/
 def HasRisingSunProperty (a b : ℝ) (f : ℝ → ℝ) : Prop :=
   IsOpen (risingSunSet a b f) ∧
   (risingSunSet a b f = ∅ ↔ AntitoneOn f (Icc a b)) ∧
@@ -77,7 +87,11 @@ def HasRisingSunProperty (a b : ℝ) (f : ℝ → ℝ) : Prop :=
 
 /- **Riesz's rising sun lemma.** Every continuous real function on a compact
 interval has the rising-sun property. -/
-/-- Source: F. Riesz (1932). Knill, §163. Via leanprover/lean-eval@38361be, problem `rising_sun_lemma`. -/
+/-- **Riesz's rising sun lemma.** Let $a < b$ be real numbers and let
+$f : \mathbb{R} \to \mathbb{R}$ be continuous on $[a, b]$. Then $f$ has the rising sun property
+on $[a, b]$.
+
+Source: F. Riesz (1932). Knill, §163. Via leanprover/lean-eval@38361be, problem `rising_sun_lemma`. -/
 public theorem_wanted rising_sun_lemma {a b : ℝ} (hab : a < b) {f : ℝ → ℝ}
     (hf : ContinuousOn f (Icc a b)) :
     HasRisingSunProperty a b f

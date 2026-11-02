@@ -55,8 +55,10 @@ using `Submodule.ClosedComplemented`.
 
 open MeasureTheory Submodule
 
-/-- The boundary Hardy space `H^1`: those `L^1` functions whose negative Fourier
-coefficients vanish. -/
+/-- **The boundary Hardy space H¹.** Let $\mathbb{T} = \mathbb{R}/\mathbb{Z}$ carry its Haar
+measure normalized to total mass $1$. The Hardy space $H^1$ is the complex linear subspace of
+$L^1(\mathbb{T})$ consisting of those $f$ whose Fourier coefficients
+$\hat f(n) = \int_{\mathbb{T}} f(t) e^{-2\pi i n t} dt$ vanish for all integers $n < 0$. -/
 def H1 : Submodule ℂ (Lp ℂ 1 (AddCircle.haarAddCircle (T := 1))) where
   carrier := {f | ∀ n : ℤ, n < 0 → fourierCoeff f n = 0}
   zero_mem' := by simp [fourierCoeff]
@@ -72,7 +74,13 @@ def H1 : Submodule ℂ (Lp ℂ 1 (AddCircle.haarAddCircle (T := 1))) where
 
 /- There is no bounded projection from `L^1` onto `H^1`. In the language of
 topological vector spaces, `H^1` has no topological complement in `L^1`. -/
-/-- Source: D. J. Newman, 'The nonexistence of projections from L^1 to H^1', Proc. Amer. Math. Soc.; W. Rudin, Fourier Analysis on Groups; Yongxi Lin, Hardy Space and Hartogs Triangle, Theorem 2.8. Via leanprover/lean-eval@38361be, problem `H1_not_closedComplemented`. -/
+/-- **Newman's theorem: no bounded projection onto the Hardy space.** Let $L^1(\mathbb{T})$ be
+the space of integrable complex functions on the circle $\mathbb{T} = \mathbb{R}/\mathbb{Z}$ with
+its normalized Haar measure, and let $H^1 \subseteq L^1(\mathbb{T})$ be the boundary Hardy space.
+There is no continuous $\mathbb{C}$-linear map $\pi : L^1(\mathbb{T}) \to H^1$ with $\pi(f) = f$
+for every $f \in H^1$.
+
+Source: D. J. Newman, 'The nonexistence of projections from L^1 to H^1', Proc. Amer. Math. Soc.; W. Rudin, Fourier Analysis on Groups; Yongxi Lin, Hardy Space and Hartogs Triangle, Theorem 2.8. Via leanprover/lean-eval@38361be, problem `H1_not_closedComplemented`. -/
 public theorem_wanted H1_not_closedComplemented :
     ¬ H1.ClosedComplemented
 

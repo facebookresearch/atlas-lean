@@ -62,13 +62,19 @@ definitions here.
 
 open MeasureTheory Set
 
-/-- `Couplings P Q`: the probability measures on `X × Y` whose marginals are `P`
-on `X` and `Q` on `Y`. -/
+/-- **Couplings.** Let $X$ and $Y$ be measurable spaces, $P$ a measure on $X$ and $Q$ a measure
+on $Y$. A coupling of $P$ and $Q$ is a probability measure $\pi$ on $X \times Y$ whose marginals
+are $P$ and $Q$: the pushforward of $\pi$ under the projection $X \times Y \to X$ is $P$, and its
+pushforward under the projection $X \times Y \to Y$ is $Q$. The set of couplings is written
+$\Pi(P, Q)$. -/
 def Couplings {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     (P : Measure X) (Q : Measure Y) : Set (Measure (X × Y)) :=
   {π | IsProbabilityMeasure π ∧ π.fst = P ∧ π.snd = Q}
 
-/-- The Kantorovich functional `I(π) = ∫ c dπ` on measures over `X × Y`. -/
+/-- **Kantorovich cost.** Let $X$ and $Y$ be measurable spaces and
+$c \colon X \times Y \to [0, \infty]$ a cost function. The Kantorovich cost of a measure $\pi$ on
+$X \times Y$ is $I(\pi) = \int_{X \times Y} c \, d\pi \in [0, \infty]$, the Lebesgue integral of
+$c$ against $\pi$ (for a non-measurable $c$, the lower Lebesgue integral). -/
 noncomputable def kantorovichCost {X Y : Type*}
     [MeasurableSpace X] [MeasurableSpace Y]
     (c : X × Y → ENNReal) (π : Measure (X × Y)) : ENNReal :=
@@ -78,7 +84,14 @@ noncomputable def kantorovichCost {X Y : Type*}
 `(X, P)` and `(Y, Q)` and a continuous cost `c : X × Y → [0, ∞]`, the Kantorovich
 functional `I(π) = ∫ c dπ` attains its infimum on the set of couplings `Π(P, Q)`
 of `P` and `Q`. -/
-/-- Source: L. V. Kantorovich (1942), after G. Monge (1781). Listed as §73 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `monge_kantorovich`. -/
+/-- **Monge–Kantorovich existence theorem.** Let $X$ and $Y$ be Polish spaces with their Borel
+$\sigma$-algebras, let $P$ and $Q$ be probability measures on $X$ and $Y$, and let
+$c \colon X \times Y \to [0, \infty]$ be continuous. Then there is a coupling $\pi$ of $P$ and $Q$
+whose Kantorovich cost $\int c \, d\pi$ is at most the Kantorovich cost $\int c \, d\pi'$ of every
+coupling $\pi'$ of $P$ and $Q$: the Kantorovich cost attains its minimum on the set of couplings
+of $P$ and $Q$.
+
+Source: L. V. Kantorovich (1942), after G. Monge (1781). Listed as §73 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `monge_kantorovich`. -/
 public theorem_wanted monge_kantorovich_exists
     {X Y : Type*}
     [TopologicalSpace X] [PolishSpace X] [MeasurableSpace X] [BorelSpace X]

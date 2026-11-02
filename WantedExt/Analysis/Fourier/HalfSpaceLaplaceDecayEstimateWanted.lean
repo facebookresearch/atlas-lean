@@ -43,44 +43,43 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Fourier.HalfSpaceLaplaceDecayEstimateWanted
 
-/-- The Euclidean plane. -/
+/-- **The Euclidean plane.** The Euclidean plane $\mathbb{R}^2$ is the space of pairs of real
+numbers with the Euclidean inner product and norm. -/
 abbrev R2 : Type := EuclideanSpace ℝ (Fin 2)
-/-- Euclidean three-space. -/
+/-- **Euclidean three-space.** Euclidean three-space $\mathbb{R}^3$ is the space of triples of
+real numbers with the Euclidean inner product and norm. -/
 abbrev R3 : Type := EuclideanSpace ℝ (Fin 3)
 
-/-- The closed lower half-space `{p | p 2 ≤ 0}`. -/
+/-- **Closed lower half-space.** The closed lower half-space is the set of points
+$(p_1, p_2, p_3)$ of Euclidean three-space $\mathbb{R}^3$ with $p_3 \le 0$. -/
 abbrev LowerHalfSpace : Set R3 := {p : R3 | p 2 ≤ 0}
-/-- The open lower half-space `{p | p 2 < 0}`. -/
+/-- **Open lower half-space.** The open lower half-space is the set of points $(p_1, p_2, p_3)$
+of Euclidean three-space $\mathbb{R}^3$ with $p_3 < 0$. -/
 abbrev OpenLowerHalfSpace : Set R3 := {p : R3 | p 2 < 0}
 
-/-- The point `(x 0, x 1, z)` of three-space. -/
+/-- **Appending a third coordinate.** For a point $x = (x_1, x_2)$ of the Euclidean plane
+$\mathbb{R}^2$ and a real number $z$, this is the point $(x_1, x_2, z)$ of Euclidean three-space
+$\mathbb{R}^3$. -/
 noncomputable def point3 (x : R2) (z : ℝ) : R3 :=
   EuclideanSpace.single (0 : Fin 3) (x 0) +
     EuclideanSpace.single (1 : Fin 3) (x 1) +
       EuclideanSpace.single (2 : Fin 3) z
 
-/-- Let $\phi:\mathbb{R}^2\to\mathbb{R}$ be a Schwartz function. Consider the Laplace's equation in
-half space as follows,
-\[
-\left\{
-\begin{aligned}
-\Delta_{x,y,z}u(x,y,z) &= 0, && (x,y,z)\in \mathbb{R}^3_-:=\mathbb{R}^2\times[0,-\infty)\\
-u\big|_{z=0} &= \phi\\
-\lim_{z\to -\infty}\sup_{x,y\in\mathbb{R}}|u(x,y,z)| &= 0
-\end{aligned}
-\right.
-\]
-Prove that, there exists an constant $C(\phi)$, which depends on $\phi$, such that the following
-estimate holds,
-\[
-\forall z\in[0,-\infty),\ \sup_{x,y\in\mathbb{R}}|u(x,y,z)|\le C(\phi)(1+|z|)^{-1}.
-\]
+/-- **Decay of bounded harmonic extensions of Schwartz data in a half-space.** Write a point of
+$\mathbb{R}^3$ as $(x, z)$ with $x = (x_1, x_2) \in \mathbb{R}^2$ and $z \in \mathbb{R}$. Let
+$\phi : \mathbb{R}^2 \to \mathbb{R}$ be a Schwartz function and let
+$u : \mathbb{R}^3 \to \mathbb{R}$ be harmonic at every point of the open lower half-space
+$\{(x, z) : z < 0\}$, continuous on the closed lower half-space $\{(x, z) : z \le 0\}$ and bounded
+there, with $u(x, 0) = \phi(x)$ for every $x \in \mathbb{R}^2$. Suppose that $u(x, z) \to 0$ as
+$z \to -\infty$ uniformly in $x$: for every $\varepsilon > 0$ there is $z_0$ such that
+$|u(x, z)| < \varepsilon$ for all $z \le z_0$ and all $x \in \mathbb{R}^2$. Then there is a
+constant $C > 0$ such that $|u(x, z)| \le C (1 + |z|)^{-1}$ for all $z \le 0$ and all
+$x \in \mathbb{R}^2$.
 
-Lean variant: the source hypotheses do not force `u` to be bounded, and without that the decay bound
-fails (add to the Poisson extension of `φ` the harmonic function `Im G(x₁ + i z)` built from
-Newman's entire function `G`, which vanishes on `z = 0` and as `z → -∞` but is unbounded near the
-boundary); the standard implicit hypothesis `hu_bdd`, that `u` is bounded on the closed half-space,
-is added.
+Boundedness of $u$ is not among the hypotheses of the source problem, but the bound fails without
+it: adding to the Poisson extension of $\phi$ the harmonic function $\operatorname{Im} G(x_1 + iz)$
+built from Newman's entire function $G$, which vanishes on $z = 0$ and as $z \to -\infty$ but is
+unbounded near the boundary, gives a counterexample.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; Integral,
 integro-differential, and pseudodifferential operators),

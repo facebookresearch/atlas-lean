@@ -29,11 +29,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The fixed-point equation `(-2 + 2β + γ + (-1 + β + γ) η) / (3 - 2β + (2 - β) η) = η` has exactly
-the solutions `η = -1` and `η = (-2 + 2β + γ) / (2 - β)`: for real `β ≠ 2` and `γ`, and every real
-`η` at which the denominator is nonzero, the equation holds if and only if `η` is one of these two
-values. The hypotheses `β ≠ 2` (so that the second value is defined) and the nonzero denominator
-make the equation meaningful; the paper's further side conditions on `β, γ` are not used.
+/-- **Fixed points of a Moebius dual branch.** Let $\beta, \gamma, \eta$ be real numbers with
+$\beta \ne 2$ and $3 - 2\beta + (2 - \beta)\eta \ne 0$. Then
+$(-2 + 2\beta + \gamma + (-1 + \beta + \gamma)\eta)/(3 - 2\beta + (2 - \beta)\eta) = \eta$
+if and only if $\eta = -1$ or $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$.
+
+The paper's further side conditions on $\beta$ and $\gamma$ are not used.
 
 Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
 Article A17, Lemma 1 (`integers-2024-A17-lem-1`). -/
@@ -42,8 +43,13 @@ public theorem_wanted moebius_fixedPoint_eq_iff (β γ η : ℝ) (hβ : β ≠ 2
     (-2 + 2 * β + γ + (-1 + β + γ) * η) / (3 - 2 * β + (2 - β) * η) = η ↔
       η = -1 ∨ η = (-2 + 2 * β + γ) / (2 - β)
 
-/-- Lemma 2: the endpoint `η = -1` is impossible: for `α > 0`, `β < 1`, `δ ≥ 0`,
-`V^#_{βδ}(-1) ≠ V^#_{αδ}(-1)` (the equation would force `δ = -1`).
+/-- **Moebius dual branches disagree at −1.** Let $\alpha, \beta, \delta$ be real numbers with
+$\alpha > 0$, $\beta < 1$ and $\delta \ge 0$, and define the dual branches
+$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$ and
+$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$. Then $V^\#_{\beta\delta}(-1) \ne V^\#_{\alpha\delta}(-1)$.
+
+Equality would force $\delta = -1$.
 
 Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
 Article A17, Lemma 2 (`integers-2024-A17-lem-2`). -/
@@ -54,10 +60,23 @@ public theorem_wanted moebius_dual_endpoint_ne_neg_one (α β δ : ℝ) (hα : 0
       (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
     dualβδ (-1) ≠ dualαδ (-1)
 
-/-- Lemma 3 (the central equations): if `ξ` satisfies `V^#_{βγ} ξ = V^#_{βδ} ξ` and
-`V^#_{αδ} ξ = V^#_{αγ} ξ` (denominators nonzero), with `α > 0`, `β < 1`, `γ > -1`, `δ ≥ 0`, then
-`α + αδ + δ = β + γ + βδ`; if moreover `ξ = V^#_{αγ} η` for `η = (-2 + 2β + γ)/(2 - β)`, then
-`α²γ + α²γδ + 2α + β + βγ + 2α² + 2α²δ + 4αδ + 2αγδ = 2 + αγ² + 2γ + 2αβ + αγ + αβγ + αβγδ + 2αβδ`.
+/-- **Central equations for natural duals of Moebius maps.** Let $\alpha, \beta, \gamma, \delta$
+and $\xi$ be real numbers with $\alpha > 0$, $\beta < 1$, $\gamma > -1$ and $\delta \ge 0$. Define
+the dual branches
+$V^\#_{\alpha\gamma}(y) = (\gamma - 2\alpha - \alpha y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\beta\gamma}(y) = (2\beta + \gamma - 2 + (\beta + \gamma - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$ and
+$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$, and put $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$. Suppose that
+$3 - 2\beta + (2 - \beta)\xi \ne 0$, $2\alpha + 1 + \alpha\xi \ne 0$,
+$V^\#_{\beta\gamma}(\xi) = V^\#_{\beta\delta}(\xi)$ and
+$V^\#_{\alpha\delta}(\xi) = V^\#_{\alpha\gamma}(\xi)$. Then
+$\alpha + \alpha\delta + \delta = \beta + \gamma + \beta\delta$; and if moreover
+$2\alpha + 1 + \alpha\eta \ne 0$ and $\xi = V^\#_{\alpha\gamma}(\eta)$, then
+$\alpha^2\gamma + \alpha^2\gamma\delta + 2\alpha + \beta + \beta\gamma + 2\alpha^2 +
+2\alpha^2\delta + 4\alpha\delta + 2\alpha\gamma\delta = 2 + \alpha\gamma^2 + 2\gamma +
+2\alpha\beta + \alpha\gamma + \alpha\beta\gamma + \alpha\beta\gamma\delta + 2\alpha\beta\delta$.
 
 Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
 Article A17, Lemma 3 (`integers-2024-A17-lem-3`). -/
@@ -79,10 +98,22 @@ public theorem_wanted moebius_dual_central_equations (α β γ δ ξ : ℝ) (hα
               2 + α * γ ^ 2 + 2 * γ + 2 * α * β + α * γ + α * β * γ + α * β * γ * δ +
                 2 * α * β * δ)
 
-/-- Theorem 1 (algebraic form): a natural dual of `S ∘ T` is singular. With `η` the fixed point
-`(-2 + 2β + γ)/(2 - β)` of `V^#_{βγ}` (Lemmas 1 and 2) and `ξ = V^#_{αγ} η`, the endpoint
-equations `V^#_{βγ} ξ = V^#_{βδ} ξ` and `V^#_{αδ} ξ = V^#_{αγ} ξ` (denominators nonzero) force
-`ξ = η`, i.e. `B^#` is a single point.
+/-- **Singularity of natural duals of Moebius maps (algebraic form).** Let
+$\alpha, \beta, \gamma, \delta$ be real numbers with $\alpha > 0$, $\beta < 1$, $\gamma > -1$ and
+$\delta \ge 0$. Define the dual branches
+$V^\#_{\alpha\gamma}(y) = (\gamma - 2\alpha - \alpha y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\beta\gamma}(y) = (2\beta + \gamma - 2 + (\beta + \gamma - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$ and
+$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$, and put $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$ and
+$\xi = V^\#_{\alpha\gamma}(\eta)$. If $2\alpha + 1 + \alpha\eta \ne 0$,
+$3 - 2\beta + (2 - \beta)\xi \ne 0$, $2\alpha + 1 + \alpha\xi \ne 0$,
+$V^\#_{\beta\gamma}(\xi) = V^\#_{\beta\delta}(\xi)$ and
+$V^\#_{\alpha\delta}(\xi) = V^\#_{\alpha\gamma}(\xi)$, then $\xi = \eta$.
+
+Here $\eta$ is a fixed point of $V^\#_{\beta\gamma}$, and $\xi = \eta$ says that the natural dual
+$[\eta, \xi]$ reduces to a single point.
 
 Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
 Article A17, Theorem 1 (`integers-2024-A17-thm-1`). -/

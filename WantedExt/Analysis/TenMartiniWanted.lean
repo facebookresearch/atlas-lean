@@ -60,11 +60,17 @@ not rest on an existence hypothesis.
 
 open Set
 
-/-- The Hilbert space `l^2(Z)` of square-summable complex sequences. -/
+/-- **The sequence space $\ell^2(\mathbb{Z})$.** We write $\ell^2(\mathbb{Z})$ for the Hilbert
+space of square-summable sequences $(u_n)_{n \in \mathbb{Z}}$ of complex numbers. -/
 abbrev EllTwo : Type := lp (fun _ : ℤ => ℂ) 2
 
-/-- A bounded operator on `l^2(Z)` has the almost Mathieu coordinate formula
-with frequency `alpha`, coupling `lambda`, and phase `theta`. -/
+/-- **Almost Mathieu operator.** Let $\alpha$, $\lambda$ and $\theta$ be real numbers. A bounded
+complex-linear operator $H$ on $\ell^2(\mathbb{Z})$ is an almost Mathieu operator with frequency
+$\alpha$, coupling $\lambda$ and phase $\theta$ when, for every $u \in \ell^2(\mathbb{Z})$ and
+every $n \in \mathbb{Z}$,
+
+$$(Hu)(n) = u(n+1) + u(n-1) + 2\lambda \cos(2\pi(\theta + n\alpha))\, u(n).$$
+-/
 def IsAlmostMathieuOperator (α coupling θ : ℝ) (H : EllTwo →L[ℂ] EllTwo) : Prop :=
   ∀ (u : EllTwo) (n : ℤ),
     H u n =
@@ -75,7 +81,12 @@ def IsAlmostMathieuOperator (α coupling θ : ℝ) (H : EllTwo →L[ℂ] EllTwo)
 and nonzero coupling, the spectrum of the almost Mathieu operator is a
 Cantor set. Here this means nonempty, compact, perfect, and totally
 disconnected. -/
-/-- Source: A. Avila and S. Jitomirskaya, 'The Ten Martini Problem', Ann. of Math. 170 (2009), 303-342, https://doi.org/10.4007/annals.2009.170.303. Via leanprover/lean-eval@38361be, problem `ten_martini_problem`. -/
+/-- **Ten Martini theorem (Avila–Jitomirskaya).** Let $\alpha$, $\lambda$ and $\theta$ be real
+numbers with $\alpha$ irrational and $\lambda \neq 0$. Then there is an almost Mathieu operator $H$
+on $\ell^2(\mathbb{Z})$ with frequency $\alpha$, coupling $\lambda$ and phase $\theta$, and the
+spectrum of $H$ is nonempty, compact, perfect and totally disconnected, that is, a Cantor set.
+
+Source: A. Avila and S. Jitomirskaya, 'The Ten Martini Problem', Ann. of Math. 170 (2009), 303-342, https://doi.org/10.4007/annals.2009.170.303. Via leanprover/lean-eval@38361be, problem `ten_martini_problem`. -/
 public theorem_wanted ten_martini_problem (α coupling θ : ℝ)
     (hα : Irrational α) (hcoupling : coupling ≠ 0) :
     ∃ H : EllTwo →L[ℂ] EllTwo,

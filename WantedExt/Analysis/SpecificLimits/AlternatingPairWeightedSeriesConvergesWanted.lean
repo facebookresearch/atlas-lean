@@ -43,20 +43,11 @@ open Filter Topology
 
 namespace MathlibExt.Analysis.SpecificLimits.AlternatingPairWeightedSeriesConvergesWanted
 
-/-- Let $(\alpha,\beta)\in \R^{2}$. For $k\in\N$, set
-
-\[
-x_k :=
-\begin{cases}
-(\alpha,\beta), & k \text{ even},\\
-(\beta,\alpha), & k \text{ odd},
-\end{cases}
-\]
-and
-\[
-s_n := \sum_{k=1}^{n} k^{-2} x_k,\qquad n\in\N^\ast.
-\]
-Show that $(s_n)$ converges.
+/-- **Convergence of an alternating weighted series in the plane.** Let $\alpha$ and $\beta$ be
+real numbers. For $k \in \mathbb{N}$ let $x_k = (\alpha, \beta) \in \mathbb{R} \times \mathbb{R}$
+if $k$ is even and $x_k = (\beta, \alpha)$ if $k$ is odd. For $n \in \mathbb{N}$ let
+$s_n = \sum_{k=1}^{n} k^{-2} x_k$ (so $s_0 = 0$). Then the sequence $(s_n)$ converges in
+$\mathbb{R} \times \mathbb{R}$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Sequences, series, summability;
 Convergence and divergence of infinite limiting processes),

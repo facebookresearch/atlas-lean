@@ -24,12 +24,14 @@ open Polynomial
 
 variable {F : Type*} [Field F]
 
-/-- The finite continued fraction `[a₀, a₁, …, aₙ]` with polynomial partial
-quotients `aᵢ ∈ F[X]`, as a Mathlib generalized continued fraction over
-`RatFunc F` with all partial numerators `1`. Its `nums i` and `dens i` are the
-paper's partial numerators `Aᵢ` and partial denominators `Bᵢ`
-(`A₋₁ = 1`, `A₀ = a₀`, `Aᵢ₊₁ = aᵢ₊₁ Aᵢ + Aᵢ₋₁`, and likewise `Bᵢ` with
-`B₋₁ = 0`, `B₀ = 1`), and `convs i = Aᵢ / Bᵢ` is the `i`th convergent.
+/-- **Finite continued fraction with polynomial partial quotients.** Let $F$ be a field, let
+$a_0, a_1, a_2, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The continued
+fraction $[a_0; a_1, \ldots, a_n]$ is the generalized continued fraction over the field $F(X)$ of
+rational functions with integral part $a_0$ and, for $1 \le i \le n$, an $i$th term with partial
+numerator $1$ and partial denominator $a_i$; it has no further terms. For $i \ge 0$ write $A_i$
+and $B_i$ for the numerator and denominator of its $i$th convergent $A_i / B_i$. Thus, with
+$A_{-1} = 1$ and $B_{-1} = 0$, we have $A_0 = a_0$, $B_0 = 1$, and $A_{i+1} = a_{i+1} A_i + A_{i-1}$
+and $B_{i+1} = a_{i+1} B_i + B_{i-1}$ for $0 \le i < n$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -40,7 +42,9 @@ public noncomputable def polyContFract (a : ℕ → F[X]) (n : ℕ) :
     Stream'.Seq.ofList
       ((List.range n).map fun i => ⟨1, algebraMap F[X] (RatFunc F) (a (i + 1))⟩)⟩
 
-/-- The integral part of `polyContFract a n` is `a₀`.
+/-- **Integral part of a polynomial continued fraction.** Let $F$ be a field, let $n \in \mathbb N$,
+and let $a_0, a_1, \dots, a_n \in F[X]$. The integral part (head term) of the continued fraction
+$[a_0, a_1, \dots, a_n]$ over $F(X)$ is $a_0$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -48,8 +52,11 @@ Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
 public theorem polyContFract_h (a : ℕ → F[X]) (n : ℕ) :
     (polyContFract a n).h = algebraMap F[X] (RatFunc F) (a 0) := rfl
 
-/-- The `i`th term of `polyContFract a n` is `⟨1, aᵢ₊₁⟩` for `i < n` and absent
-afterwards.
+/-- **Terms of a polynomial continued fraction.** Let $F$ be a field, let $a_0, a_1, \ldots$ be
+polynomials in $F[X]$ and let $n \in \mathbb{N}$. For every $i \in \mathbb{N}$, the term of index
+$i$ (counting from $0$) of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is the
+pair with partial numerator $1$ and partial denominator $a_{i+1}$ if $i < n$, and does not exist
+if $i \ge n$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -60,7 +67,10 @@ public theorem polyContFract_s_get? (a : ℕ → F[X]) (n i : ℕ) :
   simp [polyContFract, Stream'.Seq.ofList_get?, List.getElem?_map]
   split_ifs <;> simp_all
 
-/-- `A₀ = a₀`.
+/-- **Zeroth convergent numerator of a polynomial continued fraction.** Let $F$ be a field,
+let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The numerator $A_0$
+of the zeroth convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is
+$a_0$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -69,7 +79,9 @@ public theorem polyContFract_nums_zero (a : ℕ → F[X]) (n : ℕ) :
     (polyContFract a n).nums 0 = algebraMap F[X] (RatFunc F) (a 0) := by
   simp [GenContFract.zeroth_num_eq_h, polyContFract_h]
 
-/-- `B₀ = 1`.
+/-- **Zeroth convergent denominator of a polynomial continued fraction.** Let $F$ be a field,
+let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The denominator $B_0$
+of the zeroth convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is $1$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -78,7 +90,10 @@ public theorem polyContFract_dens_zero (a : ℕ → F[X]) (n : ℕ) :
     (polyContFract a n).dens 0 = 1 := by
   simp [GenContFract.zeroth_den_eq_one]
 
-/-- `A₁ = a₁ a₀ + 1` when `n ≥ 1`.
+/-- **First convergent numerator of a polynomial continued fraction.** Let $F$ be a field,
+let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \ge 1$. The numerator $A_1$ of the
+first convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is
+$a_1 a_0 + 1$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -89,7 +104,9 @@ public theorem polyContFract_nums_one (a : ℕ → F[X]) {n : ℕ} (hn : 0 < n) 
     (by simp [polyContFract_s_get?, hn])]
   simp [polyContFract_h]
 
-/-- `B₁ = a₁` when `n ≥ 1`.
+/-- **First convergent denominator of a polynomial continued fraction.** Let $F$ be a field,
+let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \ge 1$. The denominator $B_1$ of the
+first convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is $a_1$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -99,12 +116,16 @@ public theorem polyContFract_dens_one (a : ℕ → F[X]) {n : ℕ} (hn : 0 < n) 
   rw [GenContFract.first_den_eq (gp := ⟨1, algebraMap F[X] (RatFunc F) (a 1)⟩)
     (by simp [polyContFract_s_get?, hn])]
 
-/-- Theorem 4: a finite regular continued fraction `[a₀, …, aₙ]`
-(`aᵢ ∈ F[X]` nonconstant for `i ≥ 1`) defines a path in the Farey graph `χ'`
-over `F` from its integral part `a₀` to its value, with the convergents as
-vertices: each convergent `Aᵢ / Bᵢ` is a vertex of `χ'` (`Bᵢ ≠ 0` and `Aᵢ`,
-`Bᵢ` coprime), and consecutive convergents are adjacent in `χ'`
-(`Aᵢ Bᵢ₋₁ - Aᵢ₋₁ Bᵢ ∈ F \ {0}`, i.e. a unit of `F[X]`).
+/-- **Convergents of a polynomial continued fraction form a Farey path.** Let $F$ be a field, let
+$n \in \mathbb N$, and let $a_0, a_1, \dots, a_n \in F[X]$ with $a_i$ nonconstant for
+$1 \le i \le n$. Write $A_i$ and $B_i$ for the numerator and the denominator of the $i$th
+convergent $A_i / B_i$ of the continued fraction $[a_0, a_1, \dots, a_n]$ over $F(X)$. Then for
+every $i \le n$, $A_i$ and $B_i$ are polynomials in $F[X]$, $B_i \ne 0$, and $A_i$ and $B_i$ are
+coprime in $F[X]$; and for $1 \le i \le n$, the polynomial $A_i B_{i-1} - A_{i-1} B_i$ is a unit
+of $F[X]$, that is, a nonzero constant.
+
+In the language of the paper, each convergent $A_i / B_i$ is a vertex of the Farey graph over $F$
+and consecutive convergents are adjacent in it.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -117,16 +138,20 @@ public theorem_wanted polyContFract_convergents_farey_path (a : ℕ → F[X]) (n
       B i ≠ 0 ∧ IsCoprime (A i) (B i) ∧
       (1 ≤ i → IsUnit (A i * B (i - 1) - A (i - 1) * B i))
 
-/-- Theorem 5: let `[a₀, …, aₙ]` (`n ≥ 1`) be a finite regular continued
-fraction with partial numerators and denominators `Aᵢ`, `Bᵢ ∈ F[X]`, and let
-`u / v` be adjacent to `Aₙ / Bₙ` in the Farey graph `χ'`
-(`u Bₙ - v Aₙ ∈ F \ {0}`) with `deg v > deg Bₙ`. Then
-`aₙ₊₁ = (v Aₙ₋₁ - u Bₙ₋₁) / (u Bₙ - v Aₙ)` is a nonconstant polynomial and the
-extended path defines the continued fraction `[a₀, …, aₙ, aₙ₊₁]` of `u / v`.
-Deviation: `n ≥ 1` (the case `n = 0` needs `A₋₁ = 1`, `B₋₁ = 0`); `deg vₙ` is
-stated as `deg Bₙ` (they agree since `Aₙ / Bₙ = uₙ / vₙ` in lowest terms);
-the membership `u / v ∈ χ'` (`u`, `v` coprime) is omitted since adjacency
-implies it.
+/-- **Extending a Farey path extends the continued fraction.** Let $F$ be a field, let $n \ge 1$,
+and let $a_0, a_1, \dots, a_n \in F[X]$ with $a_i$ nonconstant for $1 \le i \le n$. Let
+$A_0, \dots, A_n, B_0, \dots, B_n \in F[X]$ be such that, for every $i \le n$, $A_i$ and $B_i$ are
+the numerator and the denominator of the $i$th convergent of the continued fraction
+$[a_0, a_1, \dots, a_n]$ over $F(X)$. Let $u, v \in F[X]$ be such that $u B_n - v A_n$ is a unit
+of $F[X]$ (a nonzero constant) and $\deg B_n < \deg v$. Then there is a nonconstant polynomial
+$b \in F[X]$ such that, in $F(X)$,
+$$b = \frac{v A_{n-1} - u B_{n-1}}{u B_n - v A_n},$$
+and the $(n+1)$st convergent of the continued fraction $[a_0, a_1, \dots, a_n, b]$ equals $u/v$.
+
+Compared with the paper: the case $n = 0$, which needs $A_{-1} = 1$ and $B_{-1} = 0$, is excluded;
+the paper's degree condition on the reduced denominator of $A_n / B_n$ is stated with $B_n$ itself
+(the two agree, since $A_n / B_n$ is already in lowest terms); and the hypothesis that $u$ and $v$
+are coprime is omitted, since adjacency implies it.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -145,17 +170,22 @@ public theorem_wanted polyContFract_extend_farey_path (a : ℕ → F[X]) {n : �
       (polyContFract (Function.update a (n + 1) b) (n + 1)).convs (n + 1) =
         algebraMap F[X] (RatFunc F) u / algebraMap F[X] (RatFunc F) v
 
-/-- Theorem 6: let `v₀ = 1`, `u₀ ∈ F[X]`, and for `1 ≤ i ≤ n` let
-`uᵢ, vᵢ ∈ F[X]` with `deg vᵢ₋₁ < deg vᵢ` and
-`uᵢ vᵢ₋₁ - uᵢ₋₁ vᵢ = cᵢ ∈ F \ {0}`. With `a₀ = u₀`, `a₁ = c₁⁻¹ v₁`,
-`a₂ = -c₂⁻¹ c₁ (u₂ v₀ - u₀ v₂)` and, for `i ≥ 3`,
-`aᵢ = (-1)^(i+1) cᵢ⁻¹ cᵢ₋₁ cᵢ₋₂⁻² cᵢ₋₃² ⋯ c₁^(2(-1)^i) (uᵢ vᵢ₋₂ - uᵢ₋₂ vᵢ)`,
-the continued fraction `[a₀, …, aₙ]` is regular (`aᵢ` nonconstant for
-`i ≥ 1`), its value is `uₙ / vₙ`, each vertex `uᵢ / vᵢ` is its `i`th
-convergent, and `Aᵢ = tᵢ uᵢ`, `Bᵢ = tᵢ vᵢ` with
-`tᵢ = ± cᵢ⁻¹ cᵢ₋₁ cᵢ₋₂⁻¹ cᵢ₋₃ ⋯ c₁^((-1)^i)`, sign `+` for `i ≡ 0, 1 (mod 4)`
-and `-` for `i ≡ 2, 3 (mod 4)`. The paper's coprimality hypothesis
-`(uᵢ, vᵢ) = 1` is omitted: it follows from the determinant condition.
+/-- **Continued fraction along a Farey path of polynomials.** Let $F$ be a field, let
+$n \in \mathbb N$, let $u_i, v_i \in F[X]$ for $i \ge 0$, and let $c_i \in F$ for $i \ge 1$.
+Suppose that $v_0 = 1$ and that for $1 \le i \le n$ we have $c_i \ne 0$,
+$\deg v_{i-1} < \deg v_i$ and $u_i v_{i-1} - u_{i-1} v_i = c_i$. Let $a_0, a_1, \ldots \in F[X]$
+satisfy $a_0 = u_0$, $a_1 = c_1^{-1} v_1$, $a_2 = -c_2^{-1} c_1 (u_2 v_0 - u_0 v_2)$ and, for
+$3 \le i \le n$,
+$$a_i = (-1)^{i+1}c_i^{-1}c_{i-1}(u_i v_{i-2} - u_{i-2} v_i)\prod_{j=1}^{i-2} c_j^{2(-1)^{i-j+1}}.$$
+Then $a_i$ is nonconstant for $1 \le i \le n$. Moreover, for every $i \le n$ let
+$t_i = \varepsilon_i \prod_{j=1}^{i} c_j^{(-1)^{i-j+1}}$, where $\varepsilon_i = 1$ if
+$i \equiv 0, 1 \pmod 4$ and $\varepsilon_i = -1$ if $i \equiv 2, 3 \pmod 4$. Then the numerator
+$A_i$ and the denominator $B_i$ of the $i$th convergent of the continued fraction
+$[a_0; a_1, \ldots, a_n]$ over $F(X)$ are $A_i = t_i u_i$ and $B_i = t_i v_i$, and this
+convergent equals $u_i / v_i$.
+
+The paper's coprimality hypothesis $(u_i, v_i) = 1$ is omitted: it follows from the determinant
+condition.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -179,12 +209,17 @@ public theorem_wanted polyContFract_of_farey_path (u v : ℕ → F[X]) (c : ℕ 
         (polyContFract a n).convs i =
           algebraMap F[X] (RatFunc F) (u i) / algebraMap F[X] (RatFunc F) (v i)
 
-/-- Corollary 1: in the setting of Theorem 6 with `cᵢ = (-1)^(i-1)`, the path
-`u₀ / v₀ → ⋯ → uₙ / vₙ` defines the regular continued fraction of `uₙ / vₙ`
-with partial numerators `uᵢ`, partial denominators `vᵢ`, and partial quotients
-`aᵢ = (-1)^i (uᵢ vᵢ₋₂ - uᵢ₋₂ vᵢ)` (for `i = 1`, with `u₋₁ = 1`, `v₋₁ = 0`,
-this reads `a₁ = v₁`). The paper presents the corollaries for `F₂`, `F₃`; the
-statement holds verbatim over any field.
+/-- **Farey paths of polynomials with alternating determinants starting at 1.** Let $F$ be a
+field, let $n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$
+and that for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and
+$u_i v_{i-1} - u_{i-1} v_i = (-1)^{i-1}$. Let $a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$,
+$a_1 = v_1$ and $a_i = (-1)^i (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is
+nonconstant for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator
+$B_i$ of the $i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$
+are $A_i = u_i$ and $B_i = v_i$.
+
+The paper presents the corollaries for $\mathbb{F}_2$ and $\mathbb{F}_3$; the statement holds
+verbatim over any field.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -199,10 +234,14 @@ public theorem_wanted polyContFract_of_farey_path_det_neg_one_pow_pred
       ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (u i) ∧
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (v i)
 
-/-- Corollary 2: in the setting of Theorem 6 with `cᵢ = (-1)^i`, the path
-defines the regular continued fraction of `uₙ / vₙ` with partial numerators
-`(-1)^i uᵢ`, partial denominators `(-1)^i vᵢ`, and partial quotients
-`a₁ = -v₁`, `aᵢ = (-1)^i (uᵢ vᵢ₋₂ - uᵢ₋₂ vᵢ)` for `i ≥ 2`. Stated over any field.
+/-- **Farey paths of polynomials with alternating determinants starting at −1.** Let $F$ be a
+field, let $n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$
+and that for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and
+$u_i v_{i-1} - u_{i-1} v_i = (-1)^i$. Let $a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$,
+$a_1 = -v_1$ and $a_i = (-1)^i (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is
+nonconstant for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator
+$B_i$ of the $i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$
+are $A_i = (-1)^i u_i$ and $B_i = (-1)^i v_i$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -217,11 +256,15 @@ public theorem_wanted polyContFract_of_farey_path_det_neg_one_pow
       ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * u i) ∧
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * v i)
 
-/-- Corollary 3: in the setting of Theorem 6 with `cᵢ = 1`, the path defines
-the regular continued fraction of `uₙ / vₙ` with partial numerators and
-denominators `Aᵢ = ± uᵢ`, `Bᵢ = ± vᵢ` (sign `+` for `i ≡ 0, 1 (mod 4)`, `-` for
-`i ≡ 2, 3 (mod 4)`), and partial quotients `a₁ = v₁`,
-`aᵢ = (-1)^(i+1) (uᵢ vᵢ₋₂ - uᵢ₋₂ vᵢ)` for `i ≥ 2`. Stated over any field.
+/-- **Farey paths of polynomials with all determinants 1.** Let $F$ be a field, let
+$n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$ and that
+for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and $u_i v_{i-1} - u_{i-1} v_i = 1$. Let
+$a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$, $a_1 = v_1$ and
+$a_i = (-1)^{i+1} (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is nonconstant
+for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator $B_i$ of the
+$i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ are
+$A_i = \varepsilon_i u_i$ and $B_i = \varepsilon_i v_i$, where $\varepsilon_i = 1$ if
+$i \equiv 0, 1 \pmod 4$ and $\varepsilon_i = -1$ if $i \equiv 2, 3 \pmod 4$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -239,12 +282,15 @@ public theorem_wanted polyContFract_of_farey_path_det_one
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F)
           (C (if i % 4 = 0 ∨ i % 4 = 1 then 1 else -1) * v i)
 
-/-- Corollary 4: in the setting of Theorem 6 with `cᵢ = -1`, the path defines
-the regular continued fraction of `uₙ / vₙ` with partial numerators and
-denominators `Aᵢ = ± uᵢ`, `Bᵢ = ± vᵢ` (sign `+` for `i ≡ 0, 3 (mod 4)`, `-` for
-`i ≡ 1, 2 (mod 4)`), and partial quotients
-`aᵢ = (-1)^(i+1) (uᵢ vᵢ₋₂ - uᵢ₋₂ vᵢ)` (for `i = 1`, with `u₋₁ = 1`,
-`v₋₁ = 0`, this reads `a₁ = -v₁`). Stated over any field.
+/-- **Farey paths of polynomials with all determinants −1.** Let $F$ be a field, let
+$n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$ and that
+for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and $u_i v_{i-1} - u_{i-1} v_i = -1$. Let
+$a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$, $a_1 = -v_1$ and
+$a_i = (-1)^{i+1} (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is nonconstant
+for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator $B_i$ of the
+$i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ are
+$A_i = \varepsilon_i u_i$ and $B_i = \varepsilon_i v_i$, where $\varepsilon_i = 1$ if
+$i \equiv 0, 3 \pmod 4$ and $\varepsilon_i = -1$ if $i \equiv 1, 2 \pmod 4$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -262,9 +308,12 @@ public theorem_wanted polyContFract_of_farey_path_det_neg_one
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F)
           (C (if i % 4 = 0 ∨ i % 4 = 3 then 1 else -1) * v i)
 
-/-- The Farey series `𝓕ₙ` of order `n` over `F`: pairs `(u, v)` of polynomials,
-read as the fraction `u / v`, with `deg u < deg v ≤ n`, `u` and `v` coprime and
-`v` monic (so each fraction has exactly one such pair).
+/-- **Farey series over a field.** Let $F$ be a field and $n$ a natural number. The Farey series
+$\mathcal{F}_n$ of order $n$ over $F$ is the set of pairs $(u, v)$ of polynomials in $F[x]$, read
+as the fraction $u / v$, such that $\deg u < \deg v \le n$, $u$ and $v$ are coprime, and $v$ is
+monic. Here $\deg 0 = -\infty$, so $u = 0$ is allowed.
+
+Each fraction is thus represented by exactly one such pair.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -272,7 +321,9 @@ Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1 (quoted from [
 public def polyFareySeries (n : ℕ) : Set (F[X] × F[X]) :=
   {w | w.1.degree < w.2.degree ∧ w.2.natDegree ≤ n ∧ IsCoprime w.1 w.2 ∧ w.2.Monic}
 
-/-- The value `u / v ∈ F(x)` of a pair `(u, v)`.
+/-- **The fraction of a pair of polynomials.** Let $F$ be a field. The value of a pair $(u, v)$ of
+polynomials in $F[x]$ is the rational function $u / v$ in the field $F(x)$ of rational functions
+over $F$ (it is $0$ when $v = 0$).
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -280,7 +331,9 @@ Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1. -/
 public noncomputable def polyFrac (w : F[X] × F[X]) : RatFunc F :=
   algebraMap F[X] (RatFunc F) w.1 / algebraMap F[X] (RatFunc F) w.2
 
-/-- Characteristic member: `0 / 1 ∈ 𝓕ₙ` for every `n`.
+/-- **The fraction $0/1$ lies in every Farey series.** For every field $F$ and every natural number
+$n$, the pair $(0, 1)$, that is the fraction $0 / 1$, belongs to the Farey series $\mathcal{F}_n$
+of order $n$ over $F$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -289,7 +342,9 @@ public theorem zero_one_mem_polyFareySeries (n : ℕ) :
     ((0 : F[X]), (1 : F[X])) ∈ polyFareySeries n := by
   refine ⟨?_, ?_, isCoprime_zero_left.2 isUnit_one, monic_one⟩ <;> simp
 
-/-- Characteristic member: `1 / x ∈ 𝓕ₙ` for `n ≥ 1`.
+/-- **The fraction 1/X in the polynomial Farey series.** Let $F$ be a field. For every natural
+number $n \ge 1$, the pair $(1, X)$, that is, the fraction $1/X$, belongs to the Farey series
+$\mathcal F_n$ of order $n$ over $F$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -298,12 +353,17 @@ public theorem one_X_mem_polyFareySeries {n : ℕ} (hn : 1 ≤ n) :
     ((1 : F[X]), (X : F[X])) ∈ polyFareySeries n := by
   refine ⟨?_, ?_, isCoprime_one_left, monic_X⟩ <;> simp [hn]
 
-/-- `h / k` is a `deg k`-neighbour of `u / v` in `𝓕ₙ`: both fractions lie in `𝓕ₙ`,
-they are distinct as rational functions,
-and `|u/v - h/k| ≤ |u/v - h'/k'|` for every `h'/k' ∈ 𝓕ₙ` other than `u / v` with
-`deg k' = deg k`, where `|·|` is the degree valuation (`RatFunc.inftyValuation`).
-The fraction `u / v` itself is excluded from the comparison, as the paper's
-counts (Theorem 3 with `t = 0`, Figure 1) require.
+/-- **Degree neighbours in the polynomial Farey series.** Let $F$ be a field, let $n \in \mathbb N$,
+and let $\mathcal F_n$ be the Farey series of order $n$ over $F$. For pairs $(u, v)$ and $(h, k)$
+of polynomials over $F$, read as the fractions $u/v$ and $h/k$, the fraction $h/k$ is a
+$(\deg k)$-neighbour of $u/v$ in $\mathcal F_n$ when both fractions lie in $\mathcal F_n$,
+$h/k \ne u/v$ as rational functions, and $|u/v - h/k| \le |u/v - h'/k'|$ for every
+$h'/k' \in \mathcal F_n$ with $\deg k' = \deg k$ and $h'/k' \ne u/v$. Here $|\cdot|$ is the
+valuation of $F(X)$ at infinity, which orders nonzero rational functions $f/g$ by
+$\deg f - \deg g$ and puts $0$ below every nonzero value.
+
+The fraction $u/v$ itself is excluded from the comparison, as the paper's counts (Theorem 3 with
+$t = 0$, Figure 1) require.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -315,7 +375,9 @@ public def IsPolyFareyDegNeighbor [DecidableEq (RatFunc F)] (n : ℕ) (w z : F[X
     RatFunc.inftyValuation F (polyFrac w - polyFrac z) ≤
       RatFunc.inftyValuation F (polyFrac w - polyFrac z')
 
-/-- No fraction is a neighbour of itself.
+/-- **No fraction is its own degree neighbour.** Let $F$ be a field and let $n \in \mathbb N$. For
+every pair $(u, v)$ of polynomials over $F$, the fraction $u/v$ is not a $(\deg v)$-neighbour of
+itself in the Farey series $\mathcal F_n$ of order $n$ over $F$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -324,8 +386,11 @@ public theorem not_isPolyFareyDegNeighbor_self [DecidableEq (RatFunc F)] (n : �
     (w : F[X] × F[X]) : ¬ IsPolyFareyDegNeighbor n w w :=
   fun h => h.2.2.1 rfl
 
-/-- `u / v` and `h / k` in `𝓕ₙ` are neighbours: `u / v` is a `deg v`-neighbour of
-`h / k` and `h / k` is a `deg k`-neighbour of `u / v`.
+/-- **Neighbouring fractions in the polynomial Farey series.** Let $F$ be a field and let
+$n \in \mathbb N$. Two pairs $(u, v)$ and $(h, k)$ of polynomials over $F$, read as the fractions
+$u/v$ and $h/k$, are neighbours in the Farey series $\mathcal F_n$ of order $n$ over $F$ when
+$u/v$ is a $(\deg v)$-neighbour of $h/k$ in $\mathcal F_n$ and $h/k$ is a $(\deg k)$-neighbour of
+$u/v$ in $\mathcal F_n$. In particular, both fractions then lie in $\mathcal F_n$.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -334,9 +399,13 @@ public def ArePolyFareyNeighbors [DecidableEq (RatFunc F)] (n : ℕ) (w z : F[X]
     Prop :=
   IsPolyFareyDegNeighbor n z w ∧ IsPolyFareyDegNeighbor n w z
 
-/-- Theorem 2: two fractions `u / v`, `h / k` of `𝓕ₙ` are neighbours if and only if
-`deg (u k - h v) = 0`. Stated over any field (the paper, quoting [6], works over
-`𝔽_{p^r}`).
+/-- **Neighbour criterion for the polynomial Farey series.** Let $F$ be a field, let
+$n \in \mathbb N$, and let $(u, v)$ and $(h, k)$ be elements of the Farey series $\mathcal F_n$ of
+order $n$ over $F$, read as the fractions $u/v$ and $h/k$. Then $u/v$ and $h/k$ are neighbours in
+$\mathcal F_n$ if and only if the polynomial $uk - hv$ has degree $0$, that is, $uk - hv$ is a
+nonzero constant.
+
+The paper, quoting [6], works over $\mathbb F_{p^r}$; here the field $F$ is arbitrary.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
@@ -345,12 +414,17 @@ public theorem_wanted arePolyFareyNeighbors_iff [DecidableEq (RatFunc F)] (n : �
     {w z : F[X] × F[X]} (hw : w ∈ polyFareySeries n) (hz : z ∈ polyFareySeries n) :
     ArePolyFareyNeighbors n w z ↔ (w.1 * z.2 - z.1 * w.2).degree = 0
 
-/-- Theorem 3, over `𝔽_p`: if `u / v ∈ 𝓕ₙ` with `q = deg v ≥ 1`, then for every
-`t ≥ 0` with `q + t ≤ n`, `u / v` has exactly `(p - 1) p^t` neighbours `h / k` with
-`deg k = q + t`, and exactly one neighbour with `deg k < q`. Deviations: `t` is
-restricted to `q + t ≤ n` (there are no fractions of larger degree in `𝓕ₙ`); `q ≥ 1`
-is added (for `0 / 1` there is no neighbour of degree `< 0`); the field is the prime
-field, the case of the paper's count `(p - 1) p^t` and of its Example 2.
+/-- **Number of neighbours of a polynomial Farey fraction.** Let $p$ be a prime, let
+$n \in \mathbb{N}$, and let $u / v$ be a fraction of the Farey series $\mathcal{F}_n$ over
+$\mathbb{F}_p$ with $q = \deg v \ge 1$. Then for every $t \in \mathbb{N}$ with $q + t \le n$,
+exactly $(p - 1) p^t$ fractions $h / k \in \mathcal{F}_n$ with $\deg k = q + t$ are neighbours
+of $u / v$ in $\mathcal{F}_n$, and exactly one fraction $h / k \in \mathcal{F}_n$ with
+$\deg k < q$ is a neighbour of $u / v$ in $\mathcal{F}_n$.
+
+Compared with the paper, $t$ is restricted to $q + t \le n$ (there are no fractions of larger
+degree in $\mathcal{F}_n$), the hypothesis $q \ge 1$ is added (for $0 / 1$ there is no neighbour
+of degree less than $0$), and the field is the prime field $\mathbb{F}_p$, the case of the
+paper's count $(p - 1) p^t$ and of its Example 2.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of

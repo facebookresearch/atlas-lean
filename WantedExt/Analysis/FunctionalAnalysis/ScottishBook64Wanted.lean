@@ -20,11 +20,14 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook64Wanted
 
 /--
-Two convex bodies in a Banach space at positive distance from each other
-can be separated by a hyperplane: there is a nonzero continuous linear
-functional `F` and a constant `c` with `F ≤ c` on `A` and `c ≤ F` on
-`B`. A convex body here is a convex set that is closed, bounded, and
-has nonempty interior. Source: S. Mazur, Problem 64 of the Scottish
+**Separation of convex bodies at positive distance.** Let $E$ be a real Banach space and let
+$A, B \subseteq E$ be convex bodies, that is, convex, closed and bounded sets with nonempty
+interior. If there is $\varepsilon > 0$ with $\operatorname{dist}(a, b) \ge \varepsilon$ for all
+$a \in A$ and $b \in B$, then there are a nonzero continuous linear functional
+$F : E \to \mathbb{R}$ and a constant $c \in \mathbb{R}$ with $F(a) \le c$ for all $a \in A$
+and $c \le F(b)$ for all $b \in B$.
+
+Source: S. Mazur, Problem 64 of the Scottish
 Book; the theorem is true, as recorded in the typescript Ad 64
 (Eidelheit, January 11, 1936), which gives the stronger statement that
 separation holds even for non-disjoint bodies with no common interior

@@ -73,14 +73,17 @@ Three hypotheses beyond the classical Rokhlin lemma:
 
 open MeasureTheory Set
 
-/-- A `ℤᵈ`-action by measure-preserving maps is **free** (in the
-Ornstein–Weiss sense) if, for every nonzero translation `v`, the set
-of points fixed by `T v` has measure zero. -/
+/-- **Free $\mathbb{Z}^d$-action.** Let $d$ be a natural number, let $\mu$ be a measure on a
+measurable space $\Omega$, and let $T$ assign to each $v \in \mathbb{Z}^d$ a map
+$T_v \colon \Omega \to \Omega$. Then $T$ is free (in the Ornstein–Weiss sense) with respect to
+$\mu$ if, for every nonzero $v \in \mathbb{Z}^d$, the set of points $x \in \Omega$ with
+$T_v(x) = x$ has $\mu$-measure zero. -/
 def IsFreeAction {Ω : Type*} [MeasurableSpace Ω] {d : ℕ}
     (μ : Measure Ω) (T : (Fin d → ℤ) → Ω → Ω) : Prop :=
   ∀ v : Fin d → ℤ, v ≠ 0 → μ {x | T v x = x} = 0
 
-/-- The integer box `[0, N)ᵈ` as a `Finset` of `ℤᵈ` translations. -/
+/-- **Integer box.** For natural numbers $d$ and $N$, the integer box $[0, N)^d$ is the finite set
+of vectors $v \in \mathbb{Z}^d$ with $0 \le v_i < N$ for every coordinate $i$. -/
 noncomputable def boxShape (d N : ℕ) : Finset (Fin d → ℤ) :=
   Fintype.piFinset (fun _ : Fin d => Finset.Ico (0 : ℤ) (N : ℤ))
 
@@ -91,7 +94,17 @@ axiom), every box size `N ≥ 1`, and every `ε > 0`, there is a
 measurable base `B` such that the translates `T v '' B` for
 `v ∈ [0, N)ᵈ` are pairwise disjoint and their union has measure at
 least `1 − ε`. -/
-/-- Source: D. S. Ornstein and B. Weiss, *Entropy and isomorphism theorems for actions of amenable groups*, J. Anal. Math. 48 (1987), 1-141 — Theorem 5.2 establishes the multidimensional (and amenable-group) Rokhlin lemma. Listed as §109 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). No formalization found in any major prover. Via leanprover/lean-eval@38361be, problem `ornstein_weiss_rokhlin`. -/
+/-- **Ornstein–Weiss Rokhlin lemma for $\mathbb{Z}^d$-actions.** Let $d \ge 1$, let $\Omega$ be a
+standard Borel space with a probability measure $\mu$, and let $T$ assign to each
+$v \in \mathbb{Z}^d$ a map $T_v \colon \Omega \to \Omega$ such that $T_0$ is the identity,
+$T_{u + v} = T_u \circ T_v$ for all $u, v \in \mathbb{Z}^d$, every $T_v$ is measure preserving
+for $\mu$, and the action is free (for every $v \ne 0$ the set of fixed points of $T_v$ has
+$\mu$-measure zero). Then for every integer $N \ge 1$ and every $\varepsilon \in (0, \infty]$
+there is a measurable set $B \subseteq \Omega$ such that the images $T_v(B)$, for $v$ in the
+integer box $[0, N)^d$, are pairwise disjoint and their union has measure at least
+$1 - \varepsilon$.
+
+Source: D. S. Ornstein and B. Weiss, *Entropy and isomorphism theorems for actions of amenable groups*, J. Anal. Math. 48 (1987), 1-141 — Theorem 5.2 establishes the multidimensional (and amenable-group) Rokhlin lemma. Listed as §109 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). No formalization found in any major prover. Via leanprover/lean-eval@38361be, problem `ornstein_weiss_rokhlin`. -/
 public theorem_wanted ornstein_weiss_rokhlin {Ω : Type*} [MeasurableSpace Ω]
     [StandardBorelSpace Ω]
     {d : ℕ} (_hd : 1 ≤ d) (μ : Measure Ω) [IsProbabilityMeasure μ]

@@ -41,11 +41,11 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ConvexOnIffAboveTangentWanted
 
-/-- Suppose $X$ is an open convex subset of a Banach space $E$ and $f\in C^2(X,\mathbb R)$. Show
-these statements are equivalent:
-
-$f$ is convex;
-$f(x)\ge f(a)+\partial f(a)(x-a)$, for $a,x\in X$;
+/-- **Convexity via the tangent-plane inequality.** Let $E$ be a real Banach space, let
+$X \subseteq E$ be an open convex set, and let $f \colon E \to \mathbb{R}$ be twice continuously
+differentiable on $X$. Then $f$ is convex on $X$ if and only if
+$f(x) \ge f(a) + Df(a)(x - a)$ for all $a, x \in X$, where $Df(a)$ is the Fréchet derivative of
+$f$ at $a$ within $X$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functional analysis; Measures,
 integration, derivative, holomorphy), `benchmark/level1/ma_proofbench_l1_95.lean` at

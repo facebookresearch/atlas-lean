@@ -60,8 +60,9 @@ locally convex spaces.
 
 open Set Topology
 
-/-- The weak-star polar of a subset `s` of a real locally convex space `E`:
-the continuous functionals `φ` with `‖φ x‖ ≤ 1` for every `x ∈ s`. -/
+/-- **Weak-star polar.** For a real topological vector space $E$ and a subset $s \subseteq E$,
+the weak-star polar of $s$ is the set of continuous linear functionals $\varphi$ on $E$, viewed
+as elements of the weak dual of $E$, such that $|\varphi(x)| \le 1$ for every $x \in s$. -/
 def weakStarPolar (E : Type*) [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
     [ContinuousAdd E] [ContinuousSMul ℝ E] (s : Set E) : Set (WeakDual ℝ E) :=
   {φ | ∀ x ∈ s, ‖φ x‖ ≤ 1}
@@ -69,7 +70,12 @@ def weakStarPolar (E : Type*) [AddCommGroup E] [Module ℝ E] [TopologicalSpace 
 /- **Bourbaki's locally convex extension of Banach–Alaoglu** (§137). The
 weak-star polar of a zero-neighbourhood `U` in a real locally convex space `E`
 is weak-star compact. -/
-/-- Source: N. Bourbaki, Espaces vectoriels topologiques; the normed case is L. Alaoglu, Ann. of Math. 41 (1940). Listed as §137 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `banach_alaoglu_bourbaki`. -/
+/-- **Banach–Alaoglu–Bourbaki theorem.** Let $E$ be a real locally convex topological vector
+space and let $U$ be a neighbourhood of $0$ in $E$. Then the weak-star polar of $U$ is compact
+in the weak dual of $E$, that is, in the space of continuous linear functionals on $E$ with the
+weak-star topology.
+
+Source: N. Bourbaki, Espaces vectoriels topologiques; the normed case is L. Alaoglu, Ann. of Math. 41 (1940). Listed as §137 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `banach_alaoglu_bourbaki`. -/
 public theorem_wanted banach_alaoglu_bourbaki (E : Type*) [AddCommGroup E] [Module ℝ E]
     [TopologicalSpace E] [ContinuousAdd E] [ContinuousSMul ℝ E]
     [LocallyConvexSpace ℝ E] (U : Set E) (_hU : U ∈ 𝓝 (0 : E)) :

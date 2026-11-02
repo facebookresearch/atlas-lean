@@ -63,7 +63,12 @@ absolutely continuous with respect to Haar measure. The usual density
 formulation follows by applying the Radon–Nikodym theorem to this conclusion;
 the hypothesis transfers the Fourier-vanishing property to that density. This
 corollary is not part of the formal statement here. -/
-/-- Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators, Functions, and Systems: An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz. Via leanprover/lean-eval@38361be, problem `riesz_brothers_theorem`. -/
+/-- **F. and M. Riesz theorem.** Let $\mu$ be a complex Borel measure on the circle
+$\mathbb{T} = \mathbb{R}/\mathbb{Z}$. If $\int_{\mathbb{T}} e^{2\pi i n z} \, d\mu(z) = 0$ for
+every integer $n \ge 1$, then $\mu$ is absolutely continuous with respect to the Haar probability
+measure on $\mathbb{T}$.
+
+Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators, Functions, and Systems: An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz. Via leanprover/lean-eval@38361be, problem `riesz_brothers_theorem`. -/
 public theorem_wanted riesz_brothers_theorem (μ : ComplexMeasure UnitAddCircle)
     (hμ : ∀ n : ℕ, 1 ≤ n → ∫ᵛ z, fourier n z ∂[ContinuousLinearMap.mul ℝ ℂ; μ] = 0) :
     μ ≪ᵥ AddCircle.haarAddCircle.toENNRealVectorMeasure
