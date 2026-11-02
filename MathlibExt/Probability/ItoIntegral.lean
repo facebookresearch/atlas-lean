@@ -777,7 +777,9 @@ private theorem integrandDist_eq_eLpNorm_sq_aux {P : Measure Ω} [IsFiniteMeasur
   rw [h, lintegral_prod _ (hm.enorm.pow_const 2).aemeasurable]
   rfl
 
-private theorem integrandDist_eq_eLpNorm_sq {P : Measure Ω} [IsFiniteMeasure P]
+/-- The integrand distance on `(0, t]` is the square of the `L²` seminorm on
+`Ω × (0, t]`. -/
+theorem integrandDist_eq_eLpNorm_sq {P : Measure Ω} [IsFiniteMeasure P]
     {X Y : ℝ≥0 → Ω → ℝ} {t : ℝ≥0}
     (hX : Measurable fun p : ℝ × Ω ↦ restrictIoc X t p.1.toNNReal p.2)
     (hY : Measurable fun p : ℝ × Ω ↦ restrictIoc Y t p.1.toNNReal p.2) :
