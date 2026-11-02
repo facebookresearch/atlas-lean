@@ -99,10 +99,6 @@ lemma bc106_gnTrif_of_separated {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y 
     (h : bc106_SeparatedCoarseTrif ω L y) : bc67_IsGnTrifurcation ω L y :=
   bc67_gnTrif_of_coarseTrif ω L y h.1
 
-lemma bc106_ιU_injective_free {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
-    (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hyz : y = z) :
-    y = z := hyz
-
 lemma bc106_supervertex_sites_distinct {L : ℕ} {ω : ConfigSpace (Sym2 (Site d))} {y z : Site d}
     (hy : bc106_SeparatedCoarseTrif ω L y) (hz : bc106_SeparatedCoarseTrif ω L z) (hne : y ≠ z) :
     y ∈ bc61_boxAround d L y ∧ y ∉ bc61_boxAround d L z := by
