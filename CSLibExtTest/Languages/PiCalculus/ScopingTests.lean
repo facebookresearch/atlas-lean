@@ -80,8 +80,9 @@ theorem closed_lift_nested :
   apply liftProc_eq_of_closedAt
   simp [Proc.ClosedAt, Name.ClosedAt]
 
-/-- The sibling session's dot-notation call shape works at cutoff zero;
-no behavioural or contextual import is needed to infer the lifted name. -/
+/-- The source snapshot's cutoff-zero dot-notation call shape works
+without a behavioural or contextual import. Source details are in
+`docs/provenance/pi-scoping/manifest.json`. -/
 theorem session_lift_call {n : ℕ} {b : Name} (h : b.ClosedAt n) :
     (liftName 0 b).ClosedAt (n + 1) := h.lift
 

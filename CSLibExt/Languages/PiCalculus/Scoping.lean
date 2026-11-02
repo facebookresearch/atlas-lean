@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 /-
 Name-scoping transport is adapted from Meta's finite-session typing
-development in this project, under the same Meta license. The shared
-interface generalizes its name-lifting law to arbitrary cutoffs and retains
-its capture-avoiding name-substitution hypotheses. Process scoping and
+development in this project, under the same Meta license. The exact source
+is preserved in `docs/provenance/pi-scoping/finite-session-basic.lean.txt`;
+`docs/provenance/pi-scoping/manifest.json` records its origin path/revision,
+declaration locations, SHA-256, and the adaptations made here.
+The shared interface generalizes name lifting to arbitrary cutoffs and
+retains the source's name-substitution hypotheses. Process scoping and
 lifting-identity lemmas are shared with the π contextual theory.
 -/
 
