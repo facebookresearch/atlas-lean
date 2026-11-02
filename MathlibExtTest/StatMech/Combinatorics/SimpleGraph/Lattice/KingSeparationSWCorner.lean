@@ -14,7 +14,7 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSWCorne
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSWCorner`
 
 * `etp_fjord_nonvacuous`; `etp_EscapeWallThick` holds for the staircase walks.
-* `etp_noKingSeparation_of_fourThin` instantiated with `kda_stairDR`.
+* `ksc_kda_noKingSeparation`: the staircase `kda_stairDR` has no king separation.
 -/
 
 @[expose] public section
@@ -27,8 +27,6 @@ example : kns_KingSeparation sdc_fjord (![5, 1] : Site 2) ∧ kns_ThickPoint sdc
     etp_EscapeWallThick sdc_fjord (![5, 1] : Site 2) ∧ ¬ mci_FourThin sdc_fjord :=
   etp_fjord_nonvacuous
 
-example : ksc_NoKingSeparation kda_stairDR (![3, 1] : Site 2) :=
-  etp_noKingSeparation_of_fourThin kda_stairDR kda_mem_interior_31 kda_stairDR_fourThin
-    etp_kda_escapeWallThick
+example : ksc_NoKingSeparation kda_stairDR (![3, 1] : Site 2) := ksc_kda_noKingSeparation
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingSeparationSWCorner

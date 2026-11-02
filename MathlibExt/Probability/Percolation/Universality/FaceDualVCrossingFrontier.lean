@@ -176,13 +176,6 @@ theorem mbc_faceDualVCrossing_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n :
     pmd_FaceDualVCrossing ω n :=
   pmd_faceDualVCrossing_of_residue ω n (mbc_barrierConnectsRows_of_residue ω n hn hnoH hres)
 
-/-- Dichotomy form of `mbc_faceDualVCrossing_of_residue`: horizontal crossing or face-dual vertical
-crossing (the right disjunct always holds under the hypotheses). -/
-theorem mbc_exhaustivity_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) (hn : 0 ≤ n)
-    (hnoH : ¬ HorizontalCrossing ω 0 n 0 n) (hres : mbc_FrontierRungsConnect ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (mbc_faceDualVCrossing_of_residue ω n hn hnoH hres)
-
 /-- In the wall configuration every right frontier is in column `0`. -/
 theorem mbc_wall_rightFrontier_zero {c r : ℤ} (h : mbc_IsRightFrontier bcc_wallCfg 2 c r) :
     c = 0 := by

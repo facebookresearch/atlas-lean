@@ -13,7 +13,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationBottomW
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationBottomWall`
 
-* `ewt_fjord_nonvacuous`; `ewt_kingRowLinked_of_fourThin` instantiated with `ksd_stair`.
+* `ewt_fjord_nonvacuous`; the staircase `ksd_stair` is king row-linked from `(1, 1)`
+  via `ksc_kingRowLinked_of_noKingSeparation` and `ksc_ksd_noKingSeparation`.
 -/
 
 @[expose] public section
@@ -27,7 +28,6 @@ example : kns_KingSeparation sdc_fjord (![5, 1] : Site 2) ∧ kns_ThickPoint sdc
   ewt_fjord_nonvacuous
 
 example : mci_KingRowLinked ksd_stair (![1, 1] : Site 2) :=
-  ewt_kingRowLinked_of_fourThin ksd_stair ksd_mem_interior_11 ksd_stair_fourThin
-    ewt_ksd_bottomWallThick
+  ksc_kingRowLinked_of_noKingSeparation ksd_stair ksd_mem_interior_11 ksc_ksd_noKingSeparation
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingSeparationBottomWall

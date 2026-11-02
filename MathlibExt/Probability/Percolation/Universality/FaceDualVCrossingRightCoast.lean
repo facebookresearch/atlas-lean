@@ -196,14 +196,6 @@ theorem bac_faceDualVCrossing_of_rCoastConnected (ω : ConfigSpace (Sym2 (Site 2
   ccc_faceDualVCrossing_of_reachesBottom ω n hn hnoH
     (bac_reachesBottom_of_rCoastConnected ω n hn hnoH hres)
 
-/-- Dichotomy form of `bac_faceDualVCrossing_of_rCoastConnected` (the right disjunct always holds
-under the hypotheses). -/
-theorem bac_exhaustivity_of_rCoastConnected (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
-    (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
-    (hres : bac_RCoastConnected ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (bac_faceDualVCrossing_of_rCoastConnected ω n hn hnoH hres)
-
 /-- In the wall configuration the left cluster is column `0` of the box. -/
 theorem bac_wall_leftReach_iff {v : Site 2} (hv : v ∈ rect 0 2 0 2) :
     v ∈ bcd_leftReach bcc_wallCfg 2 ↔ v 0 = 0 := by

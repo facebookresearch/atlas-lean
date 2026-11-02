@@ -15,8 +15,8 @@ public import MathlibExt.Probability.Percolation.Universality.KestenHalf
 # Tests for `MathlibExt.Probability.Percolation.Universality.BXPTransfer`
 
 * `CrossingTransportData μ μ ρ ρ` holds for every measure (each crossing probability dominates
-  itself), so the hypotheses of `bxp_square_iff_triangular` are satisfiable; instantiated with the
-  critical point `(1/2, 1/2, 0)`.
+  itself), so the hypotheses of `bxp_square_iff_triangular_of_domination` are satisfiable.
+  No critical parameters are involved.
 * `boxCrossingInf_mono` and the bound `boxCrossingProbabilities ⊆ [0, 1]` for `halfMeasure`.
 -/
 
@@ -34,8 +34,7 @@ theorem transportData_refl (μ : Measure (ConfigSpace (Sym2 (Site 2)))) :
 
 example (μ : Measure (ConfigSpace (Sym2 (Site 2)))) :
     BoxCrossingProperty μ 2 ↔ BoxCrossingProperty μ 2 :=
-  bxp_square_iff_triangular (p0 := 1 / 2) (p1 := 1 / 2) (p2 := 0)
-    (by rw [isCriticalTri_iff]; norm_num) (transportData_refl μ)
+  bxp_square_iff_triangular_of_domination (transportData_refl μ)
 
 example : boxCrossingInf halfMeasure 2 0 ≤ boxCrossingInf halfMeasure 2 5 :=
   boxCrossingInf_mono halfMeasure 2 (by norm_num)

@@ -15,18 +15,14 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.FigureEightFourThin
 In a cycle every site has exactly two neighbors in the subgraph traced by the walk. For a
 four-thin cycle every lattice edge between walk sites is a walk edge, so each walk site has at
 most two lattice neighbors on the walk, and three lattice neighbors on the walk force a thick
-point. The figure-eight walk `wpc_fig8` is four-thin but not a cycle, so restricting the residual
-predicate to cycles (`pcy_CrossArcThick`) removes that counterexample.
-
-The reduction `pcy_noKingSeparation_of_fourThin_cycle` is still conditional. For a cycle,
-`pcy_CrossArcThick` is `cat_CrossArcThick`, which for a four-thin walk is equivalent to the
-conclusion `ksc_NoKingSeparation`. The target statement, that the interior of a four-thin simple
-lattice cycle is king-connected, is not proved here. Despite the file name, no Peierls-type
-counting argument appears in it.
+point. The figure-eight walk `wpc_fig8` is four-thin but not a cycle. The target statement, that the
+interior of a four-thin simple lattice cycle is king-connected, is not proved here: the
+conditional cycle theorems that restated it from `cat_CrossArcThick` were removed, since for a
+four-thin walk that predicate is equivalent to the conclusion. Despite the file name, no
+Peierls-type counting argument appears in it.
 
 ## Main definitions
 
-* `StatMech.Lattice.pcy_CrossArcThick Vc seed`: `cat_CrossArcThick` required only for cycles.
 * `StatMech.Lattice.pcy_fig8_A`, `StatMech.Lattice.pcy_fig8_B`: the two loops of `wpc_fig8`.
 
 ## Main results
@@ -34,11 +30,6 @@ counting argument appears in it.
 * `StatMech.Lattice.pcy_thickPoint_of_three_support_neighbors`,
   `StatMech.Lattice.pcy_le_two_support_neighbors`: neighbor counts on four-thin cycles.
 * `StatMech.Lattice.pcy_fig8_not_cycle`: the figure-eight walk is not a cycle.
-* `StatMech.Lattice.pcy_noKingSeparation_of_fourThin_cycle`,
-  `StatMech.Lattice.pcy_kingInteriorConnected_of_fourThin_cycle`: conditional on
-  `pcy_CrossArcThick`.
-* `StatMech.Lattice.pcy_fig8_structural_fix`: the figure-eight walk satisfies `pcy_CrossArcThick`
-  only because it is not a cycle.
 * `StatMech.Lattice.pcy_fjord_three_support_neighbors`: if the fjord were a cycle, its throat
   site `(3, 1)` would be a thick point.
 -/
@@ -169,58 +160,6 @@ theorem pcy_fig8_not_cycle : ¬ wpc_fig8.IsCycle := by
     SimpleGraph.Walk.end_mem_tail_support pcy_fig8_B_not_nil
   exact hdisj _ hA _ hB rfl
 
-/-- The residual hypothesis `cat_CrossArcThick`, required only when `Vc` is a cycle. -/
-def pcy_CrossArcThick {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) (seed : Site 2) : Prop :=
-  Vc.IsCycle → cat_CrossArcThick Vc seed
-
-/-- `cat_CrossArcThick` implies `pcy_CrossArcThick`. -/
-theorem pcy_crossArcThick_of_crossArcThick {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hcat : cat_CrossArcThick Vc seed) : pcy_CrossArcThick Vc seed :=
-  fun _ => hcat
-
-/-- A four-thin cycle satisfying `pcy_CrossArcThick` has no king separation from an interior seed.
-
-Conditional: for a cycle the hypothesis is `cat_CrossArcThick`, which for four-thin walks is
-equivalent to the conclusion. That the interior of every four-thin lattice cycle is king-connected
-is not proved here. -/
-theorem pcy_noKingSeparation_of_fourThin_cycle {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hcyc : Vc.IsCycle) (hseedI : seed ∈ jil_offSupportInterior Vc)
-    (hthin : mci_FourThin Vc) (hres : pcy_CrossArcThick Vc seed) :
-    ksc_NoKingSeparation Vc seed :=
-  cat_noKingSeparation_of_fourThin Vc hseedI hthin (hres hcyc)
-
-/-- A four-thin cycle satisfying `pcy_CrossArcThick` is king row-linked to an interior seed.
-Conditional, as `pcy_noKingSeparation_of_fourThin_cycle`. -/
-theorem pcy_kingRowLinked_of_fourThin_cycle {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hcyc : Vc.IsCycle) (hseedI : seed ∈ jil_offSupportInterior Vc)
-    (hthin : mci_FourThin Vc) (hres : pcy_CrossArcThick Vc seed) :
-    mci_KingRowLinked Vc seed :=
-  cat_kingRowLinked_of_fourThin Vc hseedI hthin (hres hcyc)
-
-/-- A four-thin cycle with nonempty interior satisfying `pcy_CrossArcThick` for every interior seed
-has a king-connected interior. Conditional, as `pcy_noKingSeparation_of_fourThin_cycle`. -/
-theorem pcy_kingInteriorConnected_of_fourThin_cycle {a : Site 2}
-    (Vc : (hypercubicLattice 2).Walk a a) {z₀ : Site 2} (hcyc : Vc.IsCycle)
-    (hz₀ : z₀ ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : ∀ seed ∈ jil_offSupportInterior Vc, pcy_CrossArcThick Vc seed) :
-    mci_KingInteriorConnected Vc :=
-  ⟨z₀, hz₀, pcy_kingRowLinked_of_fourThin_cycle Vc hcyc hz₀ hthin (hres z₀ hz₀)⟩
-
-/-- The figure-eight walk satisfies `pcy_CrossArcThick` vacuously, because it is not a cycle. -/
-theorem pcy_fig8_crossArcThick : pcy_CrossArcThick wpc_fig8 (![1, 1] : Site 2) :=
-  fun hcyc => absurd hcyc pcy_fig8_not_cycle
-
-/-- The figure-eight walk is four-thin, has a king separation and violates `cat_CrossArcThick`, but
-it is not a cycle and so satisfies `pcy_CrossArcThick`. -/
-theorem pcy_fig8_structural_fix :
-    ¬ cat_CrossArcThick wpc_fig8 (![1, 1] : Site 2) ∧
-    mci_FourThin wpc_fig8 ∧
-    ¬ ksc_NoKingSeparation wpc_fig8 (![1, 1] : Site 2) ∧
-    ¬ wpc_fig8.IsCycle ∧
-    pcy_CrossArcThick wpc_fig8 (![1, 1] : Site 2) :=
-  ⟨wpc_cat_crossArcThick_false, wpc_fig8_fourThin, wpc_not_noKingSeparation,
-   pcy_fig8_not_cycle, pcy_fig8_crossArcThick⟩
-
 theorem pcy_fjord_on_32 : (![3, 2] : Site 2) ∈ sdc_fjord.support := by
   unfold sdc_fjord
   simp only [SimpleGraph.Walk.mem_support_append_iff, SimpleGraph.Walk.support_copy,
@@ -269,18 +208,6 @@ theorem pcy_fjord_three_support_neighbors (hcyc : sdc_fjord.IsCycle) :
     (by intro h; have := congrFun h 1; simp at this)
     (by intro h; have := congrFun h 0; simp only [Matrix.cons_val_zero] at this; omega)
     (by intro h; have := congrFun h 0; simp only [Matrix.cons_val_zero] at this; omega)
-
-/-- The staircase walk `ksd_stair` satisfies `pcy_CrossArcThick` from `(1, 1)`. -/
-theorem pcy_ksd_crossArcThick : pcy_CrossArcThick ksd_stair (![1, 1] : Site 2) :=
-  pcy_crossArcThick_of_crossArcThick ksd_stair cat_ksd_crossArcThick
-
-/-- The staircase walk `kda_stairDR` satisfies `pcy_CrossArcThick` from `(3, 1)`. -/
-theorem pcy_kda_crossArcThick : pcy_CrossArcThick kda_stairDR (![3, 1] : Site 2) :=
-  pcy_crossArcThick_of_crossArcThick kda_stairDR cat_kda_crossArcThick
-
-/-- The fjord satisfies `pcy_CrossArcThick` from `(5, 1)`. -/
-theorem pcy_fjord_crossArcThick : pcy_CrossArcThick sdc_fjord (![5, 1] : Site 2) :=
-  pcy_crossArcThick_of_crossArcThick sdc_fjord cat_fjord_crossArcThick
 
 end Lattice
 

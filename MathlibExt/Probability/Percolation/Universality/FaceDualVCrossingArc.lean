@@ -141,13 +141,6 @@ theorem crc2_faceDualVCrossing_of_arc (ω : ConfigSpace (Sym2 (Site 2))) (n : �
   ccc_faceDualVCrossing_of_reachesBottom ω n hn hnoH
     (crc2_frontierReachesBottom_of_arc ω n hn hnoH harc)
 
-/-- Dichotomy form of `crc2_faceDualVCrossing_of_arc` (the right disjunct always holds under the
-hypotheses). -/
-theorem crc2_exhaustivity_of_arc (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ) (hn : 0 ≤ n)
-    (hnoH : ¬ HorizontalCrossing ω 0 n 0 n) (harc : crc2_FrontierArcReaches ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (crc2_faceDualVCrossing_of_arc ω n hn hnoH harc)
-
 /-- The arc condition holds for the wall configuration. -/
 theorem crc2_wall_frontierArcReaches : crc2_FrontierArcReaches bcc_wallCfg 2 :=
   crc2_arc_of_atom bcc_wallCfg 2 (by norm_num) ccc_wall_frontierReachesBottom

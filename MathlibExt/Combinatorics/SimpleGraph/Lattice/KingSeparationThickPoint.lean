@@ -23,10 +23,11 @@ four-thin walk has no king separation.
 The residual predicates in this chain are reductions, not theorems: for a four-thin walk and an
 interior seed, each of them is equivalent to `ksc_NoKingSeparation Vc seed` itself, because the
 conclusion of each predicate is a thick point (impossible for a four-thin walk) and
-`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The four-thin results below
-therefore restate the target conclusion rather than prove it. The fjord and staircase examples
-show the predicates are satisfiable; they do not show they hold for any four-thin walk with a
-king separation (they cannot).
+`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The conditional four-thin
+theorems that restated the target conclusion from these predicates were therefore removed;
+what remains here is the geometric corner analysis, the weakening from the previous
+predicate, and the fjord / staircase examples, which show the predicates are satisfiable
+without showing they hold for any four-thin walk with a king separation (they cannot).
 
 ## Main definitions
 
@@ -43,9 +44,6 @@ king separation (they cannot).
   `StatMech.Lattice.kns_kingSeparation_escape_structure`: the least escape site and its west and
   south neighbors on the walk.
 * `StatMech.Lattice.kns_row_complete`: a king-saturated set fills a horizontal off-walk run.
-* `StatMech.Lattice.kns_noKingSeparation_of_fourThin`,
-  `StatMech.Lattice.kns_kingRowLinked_of_fourThin`,
-  `StatMech.Lattice.kns_kingInteriorConnected_of_fourThin`: conditional on `kns_EscapeThickPoint`.
 * `StatMech.Lattice.kns_fjord_nonvacuous`: the fjord has a king separation and a thick point.
 -/
 
@@ -312,45 +310,12 @@ theorem kns_kingSeparation_escape_structure {a : Site 2} (Vc : (hypercubicLattic
     kns_escape_axials_onSupport Vc hsat hTsub hqI hqnT M hmin hqbox hWbox hSbox
   exact ⟨T, hseedT, hTsub, hsat, M, q, hqI, hqnT, hmin, hW, hSsup⟩
 
-/-- A four-thin closed walk satisfying `kns_EscapeThickPoint` has no king separation from an
-interior seed.
-
-Conditional: for four-thin walks the hypothesis `kns_EscapeThickPoint` is equivalent to the
-conclusion (see `kns_escapeThickPoint_of_noKingSeparation`). -/
-theorem kns_noKingSeparation_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : kns_EscapeThickPoint Vc seed) :
-    ksc_NoKingSeparation Vc seed := by
-  by_contra hns
-  have hsep := (kns_kingSeparation_iff_not_noKingSeparation Vc hseedI).mpr hns
-  obtain ⟨T, hseedT, hTsub, hsat, M, q, hqI, hqnT, hmin, hW, hSsup⟩ :=
-    kns_kingSeparation_escape_structure Vc hsep
-  have htp := hres T hseedT hTsub hsat M q hqI hqnT hmin hW hSsup
-  exact (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin
-
 /-- Without a king separation the residual hypothesis `kns_EscapeThickPoint` holds trivially. -/
 theorem kns_escapeThickPoint_of_noKingSeparation {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hns : ksc_NoKingSeparation Vc seed) :
     kns_EscapeThickPoint Vc seed := by
   intro T hseedT hTsub hsat M q hqI hqnT _hmin _hW _hSsup
   exact absurd (hns T hseedT hTsub hsat hqI) hqnT
-
-/-- A four-thin walk satisfying `kns_EscapeThickPoint` is king row-linked to an interior seed.
-Conditional, as `kns_noKingSeparation_of_fourThin`. -/
-theorem kns_kingRowLinked_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : kns_EscapeThickPoint Vc seed) :
-    mci_KingRowLinked Vc seed :=
-  ksc_kingRowLinked_of_noKingSeparation Vc hseedI
-    (kns_noKingSeparation_of_fourThin Vc hseedI hthin hres)
-
-/-- A four-thin walk with nonempty interior satisfying `kns_EscapeThickPoint` for every interior
-seed has a king-connected interior. Conditional, as `kns_noKingSeparation_of_fourThin`. -/
-theorem kns_kingInteriorConnected_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {z₀ : Site 2} (hz₀ : z₀ ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : ∀ seed ∈ jil_offSupportInterior Vc, kns_EscapeThickPoint Vc seed) :
-    mci_KingInteriorConnected Vc :=
-  ⟨z₀, hz₀, kns_kingRowLinked_of_fourThin Vc hz₀ hthin (hres z₀ hz₀)⟩
 
 /-- The fjord has a thick point: `(3, 1)` and `(4, 1)` lie on the walk but are not joined by a walk
 edge. -/

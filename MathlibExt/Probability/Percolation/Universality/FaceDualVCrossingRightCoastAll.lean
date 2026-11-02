@@ -207,14 +207,6 @@ theorem rcm_faceDualVCrossing_of_all (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ
     (hall : rcm_RCoastConnectedAll ω n) : pmd_FaceDualVCrossing ω n :=
   bac_faceDualVCrossing_of_rCoastConnected ω n hn hnoH (rcm_rCoastConnected_of_all ω n hnoH hall)
 
-/-- Dichotomy form of `rcm_faceDualVCrossing_of_all` (the right disjunct always holds under the
-hypotheses). -/
-theorem rcm_exhaustivity_of_all (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
-    (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
-    (hall : rcm_RCoastConnectedAll ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (rcm_faceDualVCrossing_of_all ω n hn hnoH hall)
-
 /-- `rcm_RCoastConnectedAll` holds for the wall configuration. -/
 theorem rcm_wall_RCoastConnectedAll : rcm_RCoastConnectedAll bcc_wallCfg 2 :=
   rcm_all_of_rCoastConnected bcc_wallCfg 2 (by norm_num) bcc_noH_wall bac_wall_rCoastConnected

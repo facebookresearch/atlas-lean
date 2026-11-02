@@ -17,9 +17,8 @@ public import Mathlib
 * For the wall configuration on `rect 0 2 0 2`: the left-reach set separates the sides
   (`jex_wall_separates`) and has a face-boundary cycle (`jex_wall_dualCircuit`).
 * `jex_edgeBoundary_nonempty` for the wall configuration, row `c = 1`.
-* `jex_exhaustivity_of_barrier` instantiated with the all-closed configuration on `rect 0 2 0 2`
-  (no horizontal crossing, `pdc_allClosed_noH`; a rotated-dual vertical crossing,
-  `bcc_dualVert_botCfg`). The theorem is trivial (`Or.inr`), as its docstring says.
+* The all-closed configuration on `rect 0 2 0 2` has no horizontal crossing
+  (`pdc_allClosed_noH`) and a rotated-dual vertical crossing (`bcc_dualVert_botCfg`).
 -/
 
 @[expose] public section
@@ -37,7 +36,6 @@ example : ∃ (u : Site 2) (cyc : (faceBoundaryGraph (bcd_leftReach bcc_wallCfg 
 example : (edgeBoundary 2 (bcd_leftReach bcc_wallCfg 2)).Nonempty :=
   jex_edgeBoundary_nonempty bcc_wallCfg (by norm_num) bcc_noH_wall (c := 1) (by norm_num) (by norm_num)
 
-example : HorizontalCrossing bcc_botCfg 0 2 0 2 ∨ DualVerticalCrossing bcc_botCfg 0 2 0 2 :=
-  jex_exhaustivity_of_barrier bcc_botCfg 2 (pdc_allClosed_noH 2 (by norm_num)) bcc_dualVert_botCfg
+example : DualVerticalCrossing bcc_botCfg 0 2 0 2 := bcc_dualVert_botCfg
 
 end MathlibExtTest.StatMech.Probability.Percolation.Universality.LeftReachJordanSeparation
