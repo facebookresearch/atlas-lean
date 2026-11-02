@@ -19,8 +19,9 @@ public import Mathlib
 * `zhg_side_tendsto_one`, `zhg_inter_tendsto_one`, `zhg_union_tendsto_one_of_merge` for constant
   families.
 * `zhg_union_of_geometricData` from `zhg_geometricData_satisfiable` under a Dirac measure.
-* The refutation `zhg_corLowerBound_hypotheses_false`, restated: the hypotheses of the vacuous
-  `zhg_corLowerBound` are contradictory. `zhg_corLowerBound` itself is not instantiated.
+* The refutation `zhg_corLowerBound_hypotheses_false`, restated: the hypotheses of a
+  `ZhangGeometricData`-based corollary are contradictory. The vacuous `zhg_corLowerBound`
+  itself was removed.
 -/
 
 @[expose] public section
