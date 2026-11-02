@@ -168,6 +168,36 @@ theorem hInOff_of_interiorHub {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support :=
   hInOff_of_offSupport_connected Vc hoff (inside_offSupport_connected_of_hub Vc hhub)
 
+/-- Compatibility declaration, retained for existing users. Its `hoff` hypothesis never
+holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`), so this statement is vacuous.
+Do not use it for new code. -/
+theorem hOutOff_of_exteriorHub {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+    (hoff : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
+    {d₀ : Site 2}
+    (hhub : ∀ s : Site 2, s ∉ jec_leftRegion Vc → (offSupport Vc).Reachable d₀ s) :
+    ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
+      ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
+  intro s t hs ht
+  have hconn : (offSupport Vc).Reachable s t := ((hhub s hs).symm).trans (hhub t ht)
+  exact offSupport_reachable_to_offSupportWalk Vc hconn (hoff s hs)
+
+/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
+holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
+holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
+Do not use it for new code. -/
+theorem two_components_of_hubs {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+    {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
+    (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
+    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
+    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
+    {c₀ d₀ : Site 2}
+    (hubIn : ∀ s : Site 2, s ∈ jec_leftRegion Vc → (offSupport Vc).Reachable c₀ s)
+    (hubOut : ∀ s : Site 2, s ∉ jec_leftRegion Vc → (offSupport Vc).Reachable d₀ s) :
+    Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 :=
+  jlri_two_components_of_offSupport_connected Vc hp hq
+    (hInOff_of_interiorHub Vc hoffIn hubIn)
+    (hOutOff_of_exteriorHub Vc hoffOut hubOut)
+
 theorem minimalLoop_inside_sameRegion_offSupport (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e}) {x y : Site 2}
     (h : (offSupport (mpl_orbitLoop K a)).Reachable x y) (hx : x ∉ (mpl_orbitLoop K a).support) :
@@ -188,6 +218,24 @@ theorem minimalLoop_hInOff_of_interiorHub (K : Set (Site 2))
       t ∈ jec_leftRegion (mpl_orbitLoop K a) →
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support :=
   hInOff_of_interiorHub (mpl_orbitLoop K a) hoff hhub
+
+/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
+holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
+holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
+Do not use it for new code. -/
+theorem minimalLoop_two_components_of_hubs (K : Set (Site 2))
+    (a : {e : Dart // IsBoundaryDart K e})
+    {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))
+    (hq : ∀ w ∈ (mpl_orbitLoop K a).support, w 0 ≤ q 0 - 1)
+    (hoffIn : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
+    (hoffOut : ∀ s ∉ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
+    {c₀ d₀ : Site 2}
+    (hubIn : ∀ s : Site 2, s ∈ jec_leftRegion (mpl_orbitLoop K a) →
+        (offSupport (mpl_orbitLoop K a)).Reachable c₀ s)
+    (hubOut : ∀ s : Site 2, s ∉ jec_leftRegion (mpl_orbitLoop K a) →
+        (offSupport (mpl_orbitLoop K a)).Reachable d₀ s) :
+    Nat.card (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).ConnectedComponent = 2 :=
+  two_components_of_hubs (mpl_orbitLoop K a) hp hq hoffIn hoffOut hubIn hubOut
 
 /-- The sites reachable from `seed` in the lattice with the vertices of `Vc` removed. -/
 def offSupportComponent {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) (seed : Site 2) :
@@ -264,6 +312,27 @@ theorem inside_offSupport_connected_of_covers {a : Site 2} (Vc : (hypercubicLatt
   intro s t hs ht
   exact ((interiorHub_of_covers Vc hcov s hs).symm).trans (interiorHub_of_covers Vc hcov t ht)
 
+/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
+holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
+holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
+Do not use it for new code. -/
+theorem two_components_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+    {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
+    (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
+    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
+    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
+    {sIn sOut : Site 2}
+    (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn)
+    (hcovOut : (jec_leftRegion Vc)ᶜ ⊆ offSupportComponent Vc sOut) :
+    Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 := by
+  refine jlri_two_components_of_offSupport_connected Vc hp hq
+    (hInOff_of_covers Vc hoffIn hcovIn) ?_
+  intro s t hs ht
+  have hubOut : ∀ r : Site 2, r ∉ jec_leftRegion Vc → (offSupport Vc).Reachable sOut r :=
+    fun r hr => (mem_offSupportComponent Vc).mp (hcovOut hr)
+  have hconn : (offSupport Vc).Reachable s t := ((hubOut s hs).symm).trans (hubOut t ht)
+  exact offSupport_reachable_to_offSupportWalk Vc hconn (hoffOut _ hs)
+
 theorem minimalLoop_offSupportComponent_subset_interior (K : Set (Site 2))
     (a : {e : Dart // IsBoundaryDart K e}) {seed : Site 2}
     (hseed : seed ∈ jec_leftRegion (mpl_orbitLoop K a))
@@ -285,6 +354,23 @@ theorem minimalLoop_hInOff_of_covers (K : Set (Site 2))
       ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support :=
   hInOff_of_covers (mpl_orbitLoop K a) hoff hcov
 
+/-- Compatibility declaration, retained for existing users. Its `hoffOut` hypothesis never
+holds (`StatMech.Lattice.oc_not_forall_outside_offSupport`) and its `hoffIn` hypothesis
+holds only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`).
+Do not use it for new code. -/
+theorem minimalLoop_two_components_of_covers (K : Set (Site 2))
+    (a : {e : Dart // IsBoundaryDart K e})
+    {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))
+    (hq : ∀ w ∈ (mpl_orbitLoop K a).support, w 0 ≤ q 0 - 1)
+    (hoffIn : ∀ s ∈ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
+    (hoffOut : ∀ s ∉ jec_leftRegion (mpl_orbitLoop K a), s ∉ (mpl_orbitLoop K a).support)
+    {sIn sOut : Site 2}
+    (hcovIn : jec_leftRegion (mpl_orbitLoop K a) ⊆ offSupportComponent (mpl_orbitLoop K a) sIn)
+    (hcovOut : (jec_leftRegion (mpl_orbitLoop K a))ᶜ ⊆
+        offSupportComponent (mpl_orbitLoop K a) sOut) :
+    Nat.card (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).ConnectedComponent = 2 :=
+  two_components_of_covers (mpl_orbitLoop K a) hp hq hoffIn hoffOut hcovIn hcovOut
+
 theorem inside_offSupport_connected_iff_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hseed : seed ∈ jec_leftRegion Vc) :
     (∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
@@ -295,6 +381,22 @@ theorem inside_offSupport_connected_iff_covers {a : Site 2} (Vc : (hypercubicLat
     exact (mem_offSupportComponent Vc).mpr (hconn seed z hseed hz)
   · intro hcov
     exact inside_offSupport_connected_of_covers Vc hcov
+
+/-- Compatibility declaration, retained for existing users. Its `hoff` hypothesis holds
+only when the inside is empty (`StatMech.Lattice.oc_leftRegion_meets_support`). Do not
+use it for new code. -/
+theorem hInOff_iff_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+    (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
+    {seed : Site 2} (hseed : seed ∈ jec_leftRegion Vc) :
+    (∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
+        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support)
+      ↔ jec_leftRegion Vc ⊆ offSupportComponent Vc seed := by
+  constructor
+  · intro hwalk z hz
+    obtain ⟨pw, hpw⟩ := hwalk seed z hseed hz
+    exact (mem_offSupportComponent Vc).mpr (offSupportWalk_to_offSupport_reachable Vc pw hpw)
+  · intro hcov
+    exact hInOff_of_covers Vc hoff hcov
 
 end Lattice
 
