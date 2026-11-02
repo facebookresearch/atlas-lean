@@ -31,16 +31,24 @@ Solymosi [So09d]. This module states the historical proposition but does not
 prove it; the stronger theorem and an external Lean proof are cited in the
 registry. -/
 
-/-- The historical sum-product growth question for small-doubling integer sets. -/
+/-- **Erdős Problem 818.** The statement that for every real $K > 0$ there are reals $C > 0$ and
+$c > 0$ such that every finite set $A$ of integers with $|A| \ge 2$ and $|A + A| \le K|A|$
+satisfies $c|A|^2 / (\log |A|)^C \le |A \cdot A|$. Here $A + A = \{a + b : a, b \in A\}$,
+$A \cdot A = \{ab : a, b \in A\}$ and $\log$ is the natural logarithm. -/
 def conjecture : Prop :=
   ∀ K : ℝ, 0 < K → ∃ C : ℝ, 0 < C ∧ ∃ c : ℝ, 0 < c ∧
     ∀ A : Finset ℤ, 2 ≤ A.card → ((A + A).card : ℝ) ≤ K * (A.card : ℝ) →
       c * (A.card : ℝ) ^ 2 / (Real.log (A.card : ℝ)) ^ C ≤ ((A * A).card : ℝ)
 
 /--
-Resolved true: Resolved externally by József Solymosi, who proved the stronger
-logarithmic-denominator bound. This repository records the historical proposition, not an
-internal proof. Source: József Solymosi, Bounding multiplicative energy by the sumset, Advances
+**Erdős Problem 818 is true.** For every real $K > 0$ there are reals $C > 0$ and $c > 0$ such
+that every finite set $A$ of integers with $|A| \ge 2$ and $|A + A| \le K|A|$ satisfies
+$c|A|^2 / (\log |A|)^C \le |A \cdot A|$. Here $A + A = \{a + b : a, b \in A\}$,
+$A \cdot A = \{ab : a, b \in A\}$ and $\log$ is the natural logarithm.
+
+József Solymosi proved a stronger bound, with a single logarithm in the denominator.
+
+Source: József Solymosi, Bounding multiplicative energy by the sumset, Advances
 in Mathematics 222 (2009), 402–408, https://doi.org/10.1016/j.aim.2009.04.006. Moved from
 `OpenConjectures/NumberTheory/ErdosProblem818`.
 -/

@@ -26,16 +26,18 @@ division. A Goormaghtigh number has two repunit representations of length at lea
 in distinct bases; a Goormaghtigh prime is a prime Goormaghtigh number.
 -/
 
-/-- The only solutions of the Goormaghtigh equation
-`(x^m - 1)/(x - 1) = (y^n - 1)/(y - 1)` with `y > x ≥ 2`, `n > 2`,
-`gcd(m - 1, n - 1) > 1` and `m ≤ 50` have `N = 31` or `N = 8191`.
+/-- **Goormaghtigh solutions with $\gcd(m - 1, n - 1) > 1$ and $m \le 50$.** Let $x, y, m, n$ be
+natural numbers with $2 \le x < y$, $n > 2$, $m \le 50$ and $\gcd(m - 1, n - 1) > 1$, and suppose
 
-The paper prints the side conditions of Equation (1) as `y > x ≥ 2`, `n > m > 2`; with
-`y > x` equal repunits force `m > n` (the paper's own solution `31 = f₅(2) = f₃(5)` has
-`m = 5 > n = 3`, and its algorithm takes `m > n`), so the printed `n > m` is read as
-`m > n`. That inequality follows from the other hypotheses and is not assumed. The paper
-quotes this as part of Theorem 4 of Bennett, Garbuz and Marten (2020); the algorithm and
-proof narrative in the extracted record are not part of the statement.
+$$N = \sum_{i=0}^{m-1} x^i = \sum_{i=0}^{n-1} y^i,$$
+
+that is, $N = (x^m - 1)/(x - 1) = (y^n - 1)/(y - 1)$. Then $N = 31$ or $N = 8191$.
+
+The paper prints the side conditions of its Equation (1) as $y > x \ge 2$ and $n > m > 2$. Since
+$y > x$, equal repunits force $m > n$ (the paper's own solution
+$31 = 1 + 2 + 4 + 8 + 16 = 1 + 5 + 25$ has $m = 5 > n = 3$), so the printed $n > m$ is read as
+$m > n$; that inequality follows from the other hypotheses and is not assumed. The paper quotes
+this result as part of Theorem 4 of Bennett, Garbuz and Marten (2020).
 
 Source: Jon Grantham, *No New Goormaghtigh Primes up to 10^700*, INTEGERS 24 (2024),
 Article A98, Theorem 1 (`integers-2024-A98-thm-1`). -/
@@ -45,13 +47,13 @@ public theorem_wanted goormaghtigh_eq_of_gcd_sub_one_gt_one_of_le_fifty
     (heq : ∑ i ∈ Finset.range m, x ^ i = ∑ i ∈ Finset.range n, y ^ i) :
     ∑ i ∈ Finset.range m, x ^ i = 31 ∨ ∑ i ∈ Finset.range m, x ^ i = 8191
 
-/-- There are no Goormaghtigh primes below `10^700` other than `31` and `8191`: a prime
-`p < 10^700` that is a repunit of length at least three in two distinct bases is `31`
-or `8191`.
+/-- **No Goormaghtigh primes below $10^{700}$ besides $31$ and $8191$.** Let $p$ be a prime with
+$p < 10^{700}$, and let $x, y, m, n$ be natural numbers with $2 \le x < y$ and $n \ge 3$ such that
 
-This is the headline result whose computation the extracted Theorem 1 record describes;
-the record's further remark (no new Goormaghtigh numbers below `10^700` with both
-exponents prime) is not formalized here.
+$$p = \sum_{i=0}^{m-1} x^i = \sum_{i=0}^{n-1} y^i,$$
+
+that is, $p$ is a repunit of length $m$ in base $x$ and of length $n$ in base $y$. Then $p = 31$
+or $p = 8191$.
 
 Source: Jon Grantham, *No New Goormaghtigh Primes up to 10^700*, INTEGERS 24 (2024),
 Article A98, Section 2, discussion following Theorem 1 (`integers-2024-A98-thm-1`). -/
@@ -61,13 +63,18 @@ public theorem_wanted goormaghtigh_prime_lt_ten_pow_seven_hundred
     (hpy : p = ∑ i ∈ Finset.range n, y ^ i) :
     p = 31 ∨ p = 8191
 
-/-- Assuming the abc conjecture, there are only finitely many Goormaghtigh numbers where
-neither representation has length three or four, i.e. finitely many `N` that are repunits
-of length at least five in two distinct bases.
+/-- **Under abc, finitely many Goormaghtigh numbers have both lengths at least five.** Assume the
+abc conjecture in the following form: for every real $\varepsilon > 0$, there are only finitely
+many triples $(a, b, c)$ of positive integers with $a + b = c$, $\gcd(a, b) = 1$ and
+$\operatorname{rad}(abc)^{1 + \varepsilon} \le c$, where $\operatorname{rad}(k)$ is the product of
+the distinct primes dividing $k$. Then there are only finitely many natural numbers $N$ for which
+there exist natural numbers $x, y, m, n$ with $2 \le x < y$ and $n \ge 5$ such that
 
-The abc conjecture is the hypothesis `habc`: for every `ε > 0`, only finitely many
-coprime positive triples `a + b = c` satisfy `rad(abc)^(1 + ε) ≤ c`. The paper states it
-for relatively prime integers; the positive-triple form used here is the standard
+$$N = \sum_{i=0}^{m-1} x^i = \sum_{i=0}^{n-1} y^i.$$
+
+Such an $N$ is a repunit of length $m$ in base $x$ and of length $n \ge 5$ in base $y$; since
+$x < y$, equality forces $m > n$, so both lengths are at least five. The paper states the abc
+conjecture for relatively prime integers; the positive-triple form used here is the standard
 equivalent one.
 
 Source: Jon Grantham, *No New Goormaghtigh Primes up to 10^700*, INTEGERS 24 (2024),
@@ -79,11 +86,14 @@ public theorem_wanted goormaghtigh_numbers_length_ge_five_finite_of_abc
     {N : ℕ | ∃ x y m n : ℕ, 2 ≤ x ∧ x < y ∧ 5 ≤ n ∧
       N = ∑ i ∈ Finset.range m, x ^ i ∧ N = ∑ i ∈ Finset.range n, y ^ i}.Finite
 
-/-- Assuming the abc conjecture, there are only finitely many Goormaghtigh primes, i.e.
-finitely many primes that are repunits of length at least three in two distinct bases.
+/-- **Under abc, there are only finitely many Goormaghtigh primes.** Assume the abc conjecture in
+the following form: for every real $\varepsilon > 0$, there are only finitely many triples
+$(a, b, c)$ of positive integers with $a + b = c$, $\gcd(a, b) = 1$ and
+$\operatorname{rad}(abc)^{1 + \varepsilon} \le c$, where $\operatorname{rad}(k)$ is the product of
+the distinct primes dividing $k$. Then there are only finitely many primes $p$ for which there
+exist natural numbers $x, y, m, n$ with $2 \le x < y$ and $n \ge 3$ such that
 
-The abc conjecture is the hypothesis `habc`, in the positive-triple form described for
-`goormaghtigh_numbers_length_ge_five_finite_of_abc`.
+$$p = \sum_{i=0}^{m-1} x^i = \sum_{i=0}^{n-1} y^i.$$
 
 Source: Jon Grantham, *No New Goormaghtigh Primes up to 10^700*, INTEGERS 24 (2024),
 Article A98, Corollary 1 (`integers-2024-A98-cor-1`). -/

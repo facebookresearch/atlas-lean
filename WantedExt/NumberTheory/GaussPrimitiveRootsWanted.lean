@@ -46,23 +46,34 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.GaussPrimitiveRootsWanted
 
-/-- The paper's `ord_n(a)`: the multiplicative order of the residue
-class of `a` in `(ZMod n)ˣ`, and `0` when `a` is not coprime to
-`n`. -/
+/-- **Multiplicative order modulo $n$.** For natural numbers $n$ and $a$,
+$\operatorname{ord}_n(a)$ is the multiplicative order of the residue class of $a$ in the
+unit group $(\mathbb{Z}/n\mathbb{Z})^\times$ when $a$ is coprime to $n$, and $0$
+otherwise. -/
 noncomputable def mulOrdMod (n a : ℕ) : ℕ :=
   if h : Nat.Coprime a n then orderOf (ZMod.unitOfCoprime a h) else 0
 
 
-/-- Reduction of units modulo `p^2` to units modulo `p`. -/
+/-- **Reduction of units modulo $p^2$ to units modulo $p$.** For a natural number $p$, this is
+the group homomorphism $(\mathbb{Z}/p^2\mathbb{Z})^\times \to (\mathbb{Z}/p\mathbb{Z})^\times$
+induced on units by the reduction ring homomorphism
+$\mathbb{Z}/p^2\mathbb{Z} \to \mathbb{Z}/p\mathbb{Z}$, which sends the class of $x$ modulo $p^2$ to
+the class of $x$ modulo $p$. -/
 def unitReduceSq (p : ℕ) : (ZMod (p ^ 2))ˣ →* (ZMod p)ˣ :=
   Units.map (ZMod.castHom (⟨p, by ring⟩ : p ∣ p ^ 2) (ZMod p)).toMonoidHom
 
-/-- The paper's fiber `P_a = {x ∈ (ℤ/p²ℤ)* : x ≡ a (mod p)}`. -/
+/-- **Fibers of reduction modulo $p$ on units modulo $p^2$.** For a natural number $p$ and a unit
+$a$ of $\mathbb{Z}/p^2\mathbb{Z}$, the fiber $P_a$ is the set of units $x$ of
+$\mathbb{Z}/p^2\mathbb{Z}$ with $x \equiv a \pmod p$, that is, the units whose image under the
+reduction map $(\mathbb{Z}/p^2\mathbb{Z})^\times \to (\mathbb{Z}/p\mathbb{Z})^\times$ equals the
+image of $a$. -/
 def liftFiber (p : ℕ) (a : (ZMod (p ^ 2))ˣ) : Set (ZMod (p ^ 2))ˣ :=
   {x | unitReduceSq p x = unitReduceSq p a}
 
-/-- **Lemma 1**: for `a` coprime to the odd prime `p` and any `k`,
-`ord_{p²}(a + kp) = ord_p(a)` or `p · ord_p(a)`.
+/-- **The order of $a + kp$ modulo $p^2$.** Let $p$ be an odd prime and let $a$ and $k$ be
+natural numbers with $a$ coprime to $p$. Writing $\operatorname{ord}_n(b)$ for the
+multiplicative order of $b$ modulo $n$, the order $\operatorname{ord}_{p^2}(a + kp)$ is
+either $\operatorname{ord}_p(a)$ or $p \cdot \operatorname{ord}_p(a)$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Lemma 1. -/
@@ -72,9 +83,10 @@ theorem_wanted order_add_mul_prime_eq_or_mul
     mulOrdMod (p ^ 2) (a + k * p) = mulOrdMod p a ∨
       mulOrdMod (p ^ 2) (a + k * p) = p * mulOrdMod p a
 
-/-- **Theorem 2**: for `a` coprime to the odd prime `p`, there
-exists a unique `m` modulo `p` such that
-`ord_{p²}(a + mp) = ord_p(a)`.
+/-- **Unique order-preserving lift modulo $p^2$.** Let $p$ be an odd prime and let $a$ be
+a natural number coprime to $p$. Writing $\operatorname{ord}_n(b)$ for the multiplicative
+order of $b$ modulo $n$, there is exactly one $m \in \{0, 1, \dots, p - 1\}$ such that
+$\operatorname{ord}_{p^2}(a + mp) = \operatorname{ord}_p(a)$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Theorem 2. -/
@@ -83,8 +95,10 @@ theorem_wanted existsUnique_order_add_mul_prime_eq
     (ha : Nat.Coprime a p) :
     ∃! m : ZMod p, mulOrdMod (p ^ 2) (a + m.val * p) = mulOrdMod p a
 
-/-- **Theorem 2**, fiber form: for every `P_a` there exists a
-unique `x ∈ P_a` such that `ord_{p²}(x) = ord_p(x)`.
+/-- **Unique order-preserving element of a fiber modulo $p^2$.** Let $p$ be an odd prime,
+let $x_0$ be a unit modulo $p^2$, and let $P_{x_0}$ be the set of units $x$ modulo $p^2$
+with $x \equiv x_0 \pmod p$. There is exactly one $x \in P_{x_0}$ whose multiplicative
+order modulo $p^2$ equals the multiplicative order of its reduction modulo $p$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Theorem 2. -/
@@ -92,9 +106,11 @@ theorem_wanted existsUnique_mem_liftFiber_order_eq
     (p : ℕ) (hp : p.Prime) (hpo : p ≠ 2) (x₀ : (ZMod (p ^ 2))ˣ) :
     ∃! x, x ∈ liftFiber p x₀ ∧ orderOf x = orderOf (unitReduceSq p x)
 
-/-- **Theorem 1** (Gauss): if `g` is a primitive root of the odd
-prime `p`, then there exists `k` such that `g + kp` is a primitive
-root of `p^ℓ` for all `ℓ ≥ 2`.
+/-- **Gauss's theorem on primitive roots modulo prime powers.** Let $p$ be an odd prime
+and let $g$ be a natural number that is a primitive root modulo $p$, where a primitive
+root modulo $n$ is a residue class modulo $n$ of multiplicative order $\varphi(n)$. Then
+there is a natural number $k$ such that $g + kp$ is a primitive root modulo $p^\ell$ for
+every $\ell \ge 2$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Theorem 1. -/
@@ -105,10 +121,12 @@ theorem_wanted exists_primitiveRoot_add_mul_prime_pow
       IsPrimitiveRoot (((g + k * p : ℕ) : ZMod (p ^ ℓ)))
         (Nat.totient (p ^ ℓ))
 
-/-- **Corollary 1**: if `g` is a primitive root of the odd prime
-`p`, then there exists a unique `m` modulo `p` such that `g + mp`
-is not a primitive root of `p²`, and `g + kp` is a primitive root
-of `p²` for every other `k` modulo `p`.
+/-- **Exactly one lift of a primitive root fails modulo $p^2$.** Let $p$ be an odd prime
+and let $g$ be a natural number that is a primitive root modulo $p$, where a primitive
+root modulo $n$ is a residue class modulo $n$ of multiplicative order $\varphi(n)$. Then
+there is exactly one $m \in \{0, 1, \dots, p - 1\}$ such that $g + mp$ is not a primitive
+root modulo $p^2$, and $g + kp$ is a primitive root modulo $p^2$ for every other
+$k \in \{0, 1, \dots, p - 1\}$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Corollary 1. -/
@@ -122,9 +140,11 @@ theorem_wanted existsUnique_not_primitiveRoot_add_mul_prime
           IsPrimitiveRoot (((g + k.val * p : ℕ) : ZMod (p ^ 2)))
             (Nat.totient (p ^ 2))
 
-/-- **Corollary 1**, fiber form: if `g` is a primitive root of the
-odd prime `p`, then there exists a unique `x ∈ P_g` such that
-`ord_{p²}(x) = p - 1`.
+/-- **The lift of order $p - 1$ of a primitive root.** Let $p$ be an odd prime and let
+$g$ be a natural number that is a primitive root modulo $p$, that is, a residue class
+modulo $p$ of multiplicative order $\varphi(p) = p - 1$. Let $P_g$ be the set of units
+$x$ modulo $p^2$ with $x \equiv g \pmod p$. Then exactly one $x \in P_g$ has
+multiplicative order $p - 1$ modulo $p^2$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Corollary 1. -/
@@ -136,9 +156,14 @@ theorem_wanted existsUnique_mem_liftFiber_order_eq_sub_one
           (hg.isUnit (Nat.totient_pos.mpr hp.pos).ne')).pow_right 2)) ∧
       orderOf x = p - 1
 
-/-- **Theorem 3**: if `g` is a primitive root of the odd prime `p`
-and `k ≢ 0 (mod p)`, then `g^p + kp` is a primitive root of `p^ℓ`
-for all `ℓ > 1`.
+/-- **Primitive roots modulo $p^\ell$ of the form $g^p + kp$.** Let $p$ be an odd prime and let
+$g$ be a natural number that is a primitive root modulo $p$. If $k$ is a natural number not
+divisible by $p$, then $g^p + kp$ is a primitive root modulo $p^\ell$ for every natural number
+$\ell > 1$.
+
+Here a natural number $a$ is a primitive root modulo $n$ when its residue class in
+$\mathbb{Z}/n\mathbb{Z}$ is a primitive $\varphi(n)$-th root of unity, where $\varphi$ is Euler's
+totient function.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Theorem 3. -/
@@ -150,8 +175,10 @@ theorem_wanted primitiveRoot_pow_add_mul_prime_pow
       IsPrimitiveRoot (((g ^ p + k * p : ℕ) : ZMod (p ^ ℓ)))
         (Nat.totient (p ^ ℓ))
 
-/-- **Lemma 3**: for any endomorphism `f` of `(ZMod (p^2))ˣ` and
-any `a`, `f '' P_a ⊆ P_{f a}`.
+/-- **Endomorphisms of the units modulo $p^2$ respect the fibers.** Let $p$ be an odd
+prime, let $f$ be a group endomorphism of $(\mathbb{Z}/p^2\mathbb{Z})^\times$, and let
+$a$ be a unit modulo $p^2$. Writing $P_b$ for the set of units $x$ modulo $p^2$ with
+$x \equiv b \pmod p$, the image of $P_a$ under $f$ is contained in $P_{f(a)}$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Lemma 3. -/
@@ -160,10 +187,11 @@ theorem_wanted monoidHom_image_liftFiber_subset
     (f : (ZMod (p ^ 2))ˣ →* (ZMod (p ^ 2))ˣ) (a : (ZMod (p ^ 2))ˣ) :
     f '' liftFiber p a ⊆ liftFiber p (f a)
 
-/-- **Lemma 4**: for `n` coprime to both the odd prime `p` and
-`ord_{p²}(a)`, the power map `x ↦ x^n` is injective on `P_a`,
-maps `P_a` onto `P_{a^n}`, and preserves the order of every
-element of `P_a`.
+/-- **Power maps on the fibers modulo $p^2$.** Let $p$ be an odd prime, let $a$ be a unit
+modulo $p^2$, and let $n$ be a natural number coprime to $p$ and to the multiplicative
+order of $a$. Writing $P_b$ for the set of units $x$ modulo $p^2$ with
+$x \equiv b \pmod p$, the map $x \mapsto x^n$ is injective on $P_a$, maps $P_a$ onto
+$P_{a^n}$, and preserves the multiplicative order of every element of $P_a$.
 
 Source: V. P. Ramesh and S. Sivakumar, "A Note on Gauss's Theorem
 on the Primitive Roots Modulo `p^ℓ`", Lemma 4. -/

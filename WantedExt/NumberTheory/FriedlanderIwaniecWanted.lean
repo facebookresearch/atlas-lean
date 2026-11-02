@@ -49,7 +49,10 @@ There are infinitely many primes of the form `a² + b⁴`.
 
 See <https://en.wikipedia.org/wiki/Friedlander%E2%80%93Iwaniec_theorem>.
 -/
-/-- Source: Friedlander, John, and Henryk Iwaniec. “The Polynomial X² + Y⁴ Captures Its Primes.” Annals of Mathematics, vol. 148, no. 3, 1998, pp. 945–1040. JSTOR, https://doi.org/10.2307/121034. Via leanprover/lean-eval@38361be, problem `friedlander_iwaniec`. -/
+/-- **Friedlander–Iwaniec theorem.** There are infinitely many primes $p$ of the form
+$p = a^2 + b^4$ with $a$ and $b$ natural numbers.
+
+Source: Friedlander, John, and Henryk Iwaniec. “The Polynomial X² + Y⁴ Captures Its Primes.” Annals of Mathematics, vol. 148, no. 3, 1998, pp. 945–1040. JSTOR, https://doi.org/10.2307/121034. Via leanprover/lean-eval@38361be, problem `friedlander_iwaniec`. -/
 public theorem_wanted friedlander_iwaniec : {p : ℕ | p.Prime ∧ ∃ a b, p = a ^ 2 + b ^ 4}.Infinite
 
 end NumberTheory.FriedlanderIwaniec

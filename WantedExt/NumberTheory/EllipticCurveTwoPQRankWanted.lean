@@ -33,9 +33,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Multivariable Hensel lemma over `ℤₚ`: if `f ∈ ℤₚ[x₁, …, xₙ]` and `a ∈ ℤₚⁿ` satisfy
-`ordₚ (f a) > 2 ordₚ ((∂f/∂xᵢ) a)` for some `i`, then `f = 0` has a solution in `ℤₚⁿ`. The
-valuation inequality is written with the `p`-adic norm as `‖f a‖ < ‖(∂f/∂xᵢ) a‖²`.
+/-- **Multivariable Hensel lemma over the p-adic integers.** Let $p$ be a prime, let
+$f \in \mathbb{Z}_p[x_1, \dots, x_n]$ and $a \in \mathbb{Z}_p^n$, and suppose that for some index
+$i$ the $p$-adic absolute values satisfy $|f(a)|_p < |(\partial f / \partial x_i)(a)|_p^2$, that
+is, $\operatorname{ord}_p f(a) > 2 \operatorname{ord}_p (\partial f / \partial x_i)(a)$. Then
+there is a point $x \in \mathbb{Z}_p^n$ with $f(x) = 0$.
 
 Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
 INTEGERS 26 (2026), Article A51, Lemma 1 (`integers-2026-A51-lem-1`), quoted there as Hensel's
@@ -46,10 +48,15 @@ public theorem_wanted exists_mvPolynomial_eval_eq_zero_of_norm_lt_norm_pderiv_sq
     (h : ‖MvPolynomial.eval a f‖ < ‖MvPolynomial.eval a (MvPolynomial.pderiv i f)‖ ^ 2) :
     ∃ x : Fin n → ℤ_[p], MvPolynomial.eval x f = 0
 
-/-- Theorem 1 (i): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over `ℚ`. Suppose
-`(p, q) ≡ (3, 3), (3, 5), (3, 7), (5, 5)` or `(5, 7) (mod 8)`, or `p ≡ 1 (mod 8)`,
-`q ≡ 3, 5, 7 (mod 8)` and `(p/q) = -1`. If the rank of `E(ℚ)` is odd (the parity conjecture for
-`E`), then the rank is `1`. The case with `p` and `q` interchanged is the same curve.
+/-- **Odd-rank curves y² = x³ − 2pqx: rank one cases.** Let $p \ne q$ be primes and let $E$ be
+the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$. Suppose that
+$(p \bmod 8, q \bmod 8)$ is one of $(3, 3)$, $(3, 5)$, $(3, 7)$, $(5, 5)$, $(5, 7)$, or that
+$p \equiv 1 \pmod 8$, $q \equiv 3, 5$ or $7 \pmod 8$ and the Legendre symbol
+$\left(\frac{p}{q}\right)$ equals $-1$. If the rank of the group $E(\mathbb{Q})$ of rational
+points is odd, then it equals $1$.
+
+The odd-rank hypothesis stands for the parity conjecture for $E$. The case with $p$ and $q$
+interchanged is the same curve.
 
 Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
 INTEGERS 26 (2026), Article A51, Theorem 1 (i) (`integers-2026-A51-thm-1`). -/
@@ -61,10 +68,14 @@ public theorem_wanted finrank_point_two_mul_mul_eq_one {p q : ℕ} (hp : p.Prime
     (hparity : Odd (Module.finrank ℤ E.toProjective.Point)) :
     Module.finrank ℤ E.toProjective.Point = 1
 
-/-- Theorem 1 (ii): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over `ℚ`. Suppose
-`(p, q) ≡ (1, 1) (mod 8)` and `(p/q) = -1`, or `(p, q) ≡ (7, 7) (mod 8)`, or `p ≡ 1 (mod 8)`,
-`q ≡ 3, 5, 7 (mod 8)` and `(p/q) = 1`. If the rank of `E(ℚ)` is odd (the parity conjecture for
-`E`), then the rank is `1` or `3`.
+/-- **Odd-rank curves y² = x³ − 2pqx: rank one or three cases.** Let $p \ne q$ be primes and let
+$E$ be the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$, and write
+$\left(\frac{p}{q}\right)$ for the Legendre symbol. Suppose that $p \equiv q \equiv 1 \pmod 8$
+and $\left(\frac{p}{q}\right) = -1$, or that $p \equiv q \equiv 7 \pmod 8$, or that
+$p \equiv 1 \pmod 8$, $q \equiv 3, 5$ or $7 \pmod 8$ and $\left(\frac{p}{q}\right) = 1$. If the
+rank of the group $E(\mathbb{Q})$ of rational points is odd, then it equals $1$ or $3$.
+
+The odd-rank hypothesis stands for the parity conjecture for $E$.
 
 Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
 INTEGERS 26 (2026), Article A51, Theorem 1 (ii) (`integers-2026-A51-thm-1`). -/
@@ -76,9 +87,12 @@ public theorem_wanted finrank_point_two_mul_mul_eq_one_or_three {p q : ℕ} (hp 
     (hparity : Odd (Module.finrank ℤ E.toProjective.Point)) :
     Module.finrank ℤ E.toProjective.Point = 1 ∨ Module.finrank ℤ E.toProjective.Point = 3
 
-/-- Theorem 1 (iii): let `p ≠ q` be primes with `p ≡ q ≡ 1 (mod 8)` and `(p/q) = 1`, and let
-`E : y² = x³ - 2pqx` over `ℚ`. If the rank of `E(ℚ)` is odd (the parity conjecture for `E`), then
-the rank is `1`, `3` or `5`.
+/-- **Odd-rank curves y² = x³ − 2pqx: rank one, three or five case.** Let $p \ne q$ be primes
+with $p \equiv q \equiv 1 \pmod 8$ and Legendre symbol $\left(\frac{p}{q}\right) = 1$, and let
+$E$ be the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$. If the rank of the group
+$E(\mathbb{Q})$ of rational points is odd, then it equals $1$, $3$ or $5$.
+
+The odd-rank hypothesis stands for the parity conjecture for $E$.
 
 Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
 INTEGERS 26 (2026), Article A51, Theorem 1 (iii) (`integers-2026-A51-thm-1`). -/
@@ -90,9 +104,12 @@ public theorem_wanted finrank_point_two_mul_mul_eq_one_or_three_or_five {p q : �
     Module.finrank ℤ E.toProjective.Point = 1 ∨ Module.finrank ℤ E.toProjective.Point = 3 ∨
       Module.finrank ℤ E.toProjective.Point = 5
 
-/-- Theorem 2, first part: if `p = 272r² + 120r + 9` and `q = 2p + 9 = 544r² + 240r + 27` are
-prime for a positive integer `r`, and the rank of `E(ℚ)` for `E : y² = x³ - 2pqx` is odd (the
-parity conjecture for `E`), then the rank is `3`.
+/-- **Odd-rank curves y² = x³ − 2pqx: a rank three family.** Let $r$ be a positive integer such
+that $p = 272r^2 + 120r + 9$ and $q = 2p + 9 = 544r^2 + 240r + 27$ are both prime, and let $E$
+be the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$. If the rank of the group
+$E(\mathbb{Q})$ of rational points is odd, then it equals $3$.
+
+The odd-rank hypothesis stands for the parity conjecture for $E$.
 
 Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
 INTEGERS 26 (2026), Article A51, Theorem 2 (`integers-2026-A51-thm-2`). -/

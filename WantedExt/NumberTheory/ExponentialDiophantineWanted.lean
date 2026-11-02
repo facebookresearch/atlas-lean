@@ -41,12 +41,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.ExponentialDiophantineWanted
 
-/-- **Theorem 6**: the Diophantine equation
-`p^x + (p + a)^y = z^2`, where `a ≡ 0 (mod 4)` and
-`a ≡ -1 (mod p)`, has no solution other than
-`(x, y, z) = (0, 1, √(p + a + 1))` when `p + a + 1` is a
-perfect square, provided `p ≠ 3` and `p`, `p + a` are
-both odd primes.
+/-- **Solutions of $p^x + (p + a)^y = z^2$ for odd primes $p$ and $p + a$.** Let $p$ be a
+prime with $p \ne 2$ and $p \ne 3$, and let $a$ be a natural number such that $p + a$ is
+prime, $a \equiv 0 \pmod 4$ and $p$ divides $a + 1$. If natural numbers $x$, $y$ and $z$
+satisfy $p^x + (p + a)^y = z^2$, then $x = 0$, $y = 1$ and $z^2 = p + a + 1$.
 
 Source: Shalini Choudhury and Naba Kanta Sarma, "On the
 Diophantine Equations `(p+a)^x + p^y = z^2` and
@@ -58,8 +56,8 @@ theorem_wanted pow_add_pow_eq_sq (p a x y z : ℕ)
     (hap : p ∣ a + 1) (h : p ^ x + (p + a) ^ y = z ^ 2) :
     x = 0 ∧ y = 1 ∧ z ^ 2 = p + a + 1
 
-/-- **Corollary 1**: the exponential Diophantine
-equation `19^x + 151^y = z^2` has no solution.
+/-- **$19^x + 151^y$ is never a perfect square.** For all natural numbers $x$, $y$ and $z$,
+$19^x + 151^y \ne z^2$.
 
 Source: Shalini Choudhury and Naba Kanta Sarma, "On the
 Diophantine Equations `(p+a)^x + p^y = z^2` and

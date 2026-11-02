@@ -27,29 +27,34 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The three consecutive triangular numbers `(t_n, t_{n+1}, t_{n+2})`, `t_n = n(n+1)/2`.
+/-- **Three consecutive triangular numbers.** For a natural number $n$, the triangular triple of
+$n$ is $(t_n, t_{n+1}, t_{n+2})$, where $t_m = m(m+1)/2$ is the $m$-th triangular number.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction. -/
 def triangularTriple (n : ℕ) : Fin 3 → ℕ :=
   ![n * (n + 1) / 2, (n + 1) * (n + 2) / 2, (n + 2) * (n + 3) / 2]
 
-/-- `triangularTriple 1 = (1, 3, 6)`.
+/-- **Triangular triple at $n = 1$.** The three consecutive triangular numbers
+$(t_1, t_2, t_3)$, where $t_m = m(m+1)/2$, are $(1, 3, 6)$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction. -/
 theorem triangularTriple_one : triangularTriple 1 = ![1, 3, 6] := by
   decide
 
-/-- The bounds `N_s^{even} = 6⌊√(s+1)⌋ - 6` (for even `n`) and
-`N_s^{odd} = 6⌊(√(4s+5) - 1)/2⌋ - 3` (for odd `n`), as integers.
+/-- **Triangular Frobenius threshold.** For natural numbers $n$ and $s$, the threshold $N_s$ is
+the integer $N_s^{\mathrm{even}} = 6\lfloor\sqrt{s+1}\rfloor - 6$ when $n$ is even and
+$N_s^{\mathrm{odd}} = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ when $n$ is odd.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, equation (4). -/
 def triangularFrobeniusBound (n s : ℕ) : ℤ :=
   if Even n then 6 * (Nat.sqrt (s + 1) : ℤ) - 6 else 6 * ((Nat.sqrt (4 * s + 5) - 1) / 2 : ℕ) - 3
 
-/-- `N_0^{even} = 0` and `N_0^{odd} = -3`.
+/-- **Triangular Frobenius threshold at $s = 0$.** At $s = 0$ the triangular Frobenius threshold
+$N_s$ equals $0$ for $n = 0$ (the even case, $N_0^{\mathrm{even}} = 6\lfloor\sqrt{1}\rfloor - 6$)
+and $-3$ for $n = 1$ (the odd case, $N_0^{\mathrm{odd}} = 6\lfloor(\sqrt{5} - 1)/2\rfloor - 3$).
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, equation (4). -/
@@ -57,18 +62,23 @@ theorem triangularFrobeniusBound_zero :
     triangularFrobeniusBound 0 0 = 0 ∧ triangularFrobeniusBound 1 0 = -3 := by
   decide +kernel
 
-/-- The integers `x_s` of the paper's Definition 1 for `s = k(k+1) + i`, `0 ≤ i ≤ 2k+1`:
-for even `n`, `x_s^{even} = i` (`i ≤ k`) or `i - k - 1` (`i > k`); for odd `n`, `x_s^{odd} = 2i`
-(`i ≤ k`) or `2(i - k) - 1` (`i > k`).
+/-- **The parameter $x_s$ of the triangular Frobenius formula.** For natural numbers $n$, $k$
+and $i$, let $x$ be $i$ if $i \le k$ and $i - k - 1$ if $i > k$ when $n$ is even, and $2i$ if
+$i \le k$ and $2(i - k) - 1$ if $i > k$ when $n$ is odd. For $s = k(k+1) + i$ with
+$0 \le i \le 2k+1$ this is the integer $x_s$ (written $x_s^{\mathrm{even}}$ or
+$x_s^{\mathrm{odd}}$ by the parity of $n$).
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Definition 1. -/
 def triangularFrobeniusX (n k i : ℕ) : ℕ :=
   if Even n then (if i ≤ k then i else i - k - 1) else (if i ≤ k then 2 * i else 2 * (i - k) - 1)
 
-/-- The integers `y_s` of the paper's Definition 1 for `s = k(k+1) + i`, `0 ≤ i ≤ 2k+1`:
-for even `n`, `y_s^{even} = 2(k - i)` (`i ≤ k`) or `4k - 2i + 3` (`i > k`); for odd `n`,
-`y_s^{odd} = k - i` (`i ≤ k`) or `2k - i + 1` (`i > k`).
+/-- **The parameter $y_s$ of the triangular Frobenius formula.** For natural numbers $n$, $k$
+and $i$, let $y$ be $2(k - i)$ if $i \le k$ and $4k + 3 - 2i$ if $i > k$ when $n$ is even, and
+$k - i$ if $i \le k$ and $2k + 1 - i$ if $i > k$ when $n$ is odd, where a difference that would
+be negative is replaced by $0$ (this happens only for $i > 2k + 1$). For $s = k(k+1) + i$ with
+$0 \le i \le 2k+1$ this is the integer $y_s$ (written $y_s^{\mathrm{even}}$ or
+$y_s^{\mathrm{odd}}$ by the parity of $n$).
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Definition 1. -/
@@ -76,8 +86,9 @@ def triangularFrobeniusY (n k i : ℕ) : ℕ :=
   if Even n then (if i ≤ k then 2 * (k - i) else 4 * k + 3 - 2 * i)
   else (if i ≤ k then k - i else 2 * k + 1 - i)
 
-/-- Table 2 entries at `s = 5 = 1·2 + 3`: `(x_5^{even}, y_5^{even}) = (1, 1)` and
-`(x_5^{odd}, y_5^{odd}) = (3, 0)`.
+/-- **Triangular Frobenius parameters at $s = 5$.** Take $k = 1$ and $i = 3$, so that
+$s = k(k+1) + i = 5$. Then $(x_s, y_s) = (1, 1)$ for $n = 0$ (the even case) and
+$(x_s, y_s) = (3, 0)$ for $n = 1$ (the odd case).
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Definition 1 and Table 2. -/
@@ -86,10 +97,12 @@ theorem triangularFrobeniusXY_five :
       (triangularFrobeniusX 1 1 3, triangularFrobeniusY 1 1 3) = (3, 0) := by
   decide
 
-/-- Beck and Kifer's reduction: for `A = (a₁, ℓa'₂, …, ℓa'_K)` of `K ≥ 2` positive integers with
-`gcd(A) = 1` and `gcd(a'₂, …, a'_K) = 1` (so `ℓ = gcd(a₂, …, a_K)`), and `s ≥ 0`,
-`g(A; s) = ℓ g(a₁, a'₂, …, a'_K; s) + a₁(ℓ - 1)`. The tail `(a'₂, …, a'_K)` is
-`a' : Fin (k + 1) → ℕ`, so the paper's arity is `K = k + 2` (Lean `k = 0` is two generators).
+/-- **Beck–Kifer reduction by a common factor of all generators but the first.** Let $K \ge 2$,
+let $a_1$ and $\ell$ be positive integers, and let $a'_2, \dots, a'_K$ be positive integers with
+$\gcd(a'_2, \dots, a'_K) = 1$ such that $\gcd(a_1, \ell a'_2, \dots, \ell a'_K) = 1$. Let $s$ be a
+natural number. If $g'$ is the generalized Frobenius number $g(a_1, a'_2, \dots, a'_K; s)$, then
+$\ell g' + a_1(\ell - 1)$ is the generalized Frobenius number
+$g(a_1, \ell a'_2, \dots, \ell a'_K; s)$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Lemma 1 (`integers-2026-A63-lem-1`), quoted from Beck
@@ -102,8 +115,13 @@ public theorem_wanted isGenFrobeniusNumber_cons_mul_of_gcd (k : ℕ) (a₁ ℓ :
     IsGenFrobeniusNumber (Fin.cons a₁ (fun i => ℓ * a' i) : Fin (k + 2) → ℕ) s
       (ℓ * g' + a₁ * ((ℓ : ℤ) - 1))
 
-/-- Splitting off the first generator: with `d₁ = gcd(t_{n+1}, t_{n+2})`, for `m ≥ 0`,
-`d(m; t_n, t_{n+1}/d₁, t_{n+2}/d₁) = ∑_{j=0}^{⌊m/t_n⌋} d(m - j t_n; t_{n+1}/d₁, t_{n+2}/d₁)`.
+/-- **Splitting off the first generator of the reduced triangular triple.** For a natural number
+$r$ write $t_r = r(r+1)/2$, and for an integer $m$ and natural numbers $a_1, \dots, a_k$ let
+$d(m; a_1, \dots, a_k)$ be the number of representations of $m$ by $(a_1, \dots, a_k)$. Let
+$n \ge 1$, $d_1 = \gcd(t_{n+1}, t_{n+2})$, $a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. Then for every
+natural number $m$,
+
+$$d(m; t_n, a, b) = \sum_{j=0}^{\lfloor m/t_n \rfloor} d(m - j t_n; a, b).$$
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Lemma 2 (`integers-2026-A63-lem-2`). -/
@@ -114,10 +132,13 @@ public theorem_wanted frobeniusRepCount_triangular_reduced_eq_sum (n : ℕ) (hn 
       ∑ j ∈ Finset.range (m / t n + 1),
         frobeniusRepCount ![t (n + 1) / d₁, t (n + 2) / d₁] ((m : ℤ) - j * t n)
 
-/-- For coprime positive `a, b`, `i, s ≥ 0`, a positive `c` divisible by `a` or by `b`, and
-`j ∈ ℤ`: `d(g(a, b; s) + jc; a, b) = i` if and only if
-`g(a, b; i - 1) < g(a, b; s) + jc ≤ g(a, b; i)`, with `g(a, b; -1) = -∞`. Here `G r` is
-`g(a, b; r)`.
+/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
+be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
+Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
+representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
+integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
+if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
+$g(a, b; i - 1) < g(a, b; s) + jc$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
@@ -128,8 +149,11 @@ public theorem_wanted frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb
     frobeniusRepCount ![a, b] (G s + j * c) = i ↔
       (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i
 
-/-- For coprime positive `a < b`, `s, k ≥ 0` and an integer `m > g(a, b; s) + ka`, every
-`j ≥ 0` has `d(m - ja; a, b) ≥ d(g(a, b; s) + (k - j)a; a, b)`.
+/-- **Representation counts above a shifted two-generator Frobenius number.** Let $a < b$ be
+coprime positive integers, let $s$ and $k$ be natural numbers, let $g$ be the generalized Frobenius
+number $g(a, b; s)$, and for an integer $m$ let $d(m; a, b)$ be the number of representations of
+$m$ by $(a, b)$. If $m$ is an integer with $m > g + ka$, then for every natural number $j$,
+$d(m - ja; a, b) \ge d(g + (k - j)a; a, b)$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Lemma 4 (`integers-2026-A63-lem-4`), quoted from
@@ -139,9 +163,15 @@ public theorem_wanted frobeniusRepCount_pair_sub_ge (a b : ℕ) (ha : 0 < a) (ha
     (hm : g + k * a < m) (j : ℕ) :
     frobeniusRepCount ![a, b] (g + ((k : ℤ) - j) * a) ≤ frobeniusRepCount ![a, b] (m - j * a)
 
-/-- For `s = k(k+1) + i` with `0 ≤ i ≤ 2k+1` and `n > N_s` (`N_s^{even}` or `N_s^{odd}` by the
-parity of `n`): with `d₁ = gcd(t_{n+1}, t_{n+2})`,
-`d(g(t_{n+1}/d₁, t_{n+2}/d₁; x_s) + y_s t_n; t_n, t_{n+1}/d₁, t_{n+2}/d₁) = s`.
+/-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
+natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$
+and put $s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
+$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
+let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
+$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
+$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
+$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. If $g$ is the generalized Frobenius number
+$g(a, b; x_s)$, then the number of representations of $g + y_s t_n$ by $(t_n, a, b)$ is $s$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Lemma 5 (`integers-2026-A63-lem-5`). -/
@@ -154,11 +184,14 @@ public theorem_wanted frobeniusRepCount_triangular_reduced_at_pair_frobenius (n 
       frobeniusRepCount ![t n, t (n + 1) / d₁, t (n + 2) / d₁]
           (g₂ + triangularFrobeniusY n k i * t n) = k * (k + 1) + i
 
-/-- Main formula: for all `s ≥ 0`, with `r = ⌊√s⌋`, `δ_s = 1` if `s ≥ r² + r` and `0` otherwise,
-`q_s = 2r + 2 + δ_s`, `c_s = s - r² - δ_s r`: (i) for even `n > 6⌊√(s+1)⌋ - 6`,
-`g(t_n, t_{n+1}, t_{n+2}; s) = (n+1)(n+2)(q_s n + 6c_s)/4 - 1`; (ii) for odd
-`n > 6⌊(√(4s+5) - 1)/2⌋ - 3`, `g(t_n, t_{n+1}, t_{n+2}; s) = (n+1)(n+2)(q_s n + 6c_s - 3δ_s)/4 - 1`.
-Stated as `4(g + 1) = …`.
+/-- **Generalized Frobenius numbers of three consecutive triangular numbers.** For a natural number
+$j$ write $t_j = j(j+1)/2$. Let $n$ and $s$ be natural numbers, let $r = \lfloor\sqrt{s}\rfloor$,
+let $\delta_s = 1$ if $s \ge r^2 + r$ and $\delta_s = 0$ otherwise, and put
+$q_s = 2r + 2 + \delta_s$ and $c_s = s - r^2 - \delta_s r$. Suppose that
+$n > 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and $n > 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$
+if $n$ is odd. Then the generalized Frobenius number $g$ of $(t_n, t_{n+1}, t_{n+2})$ at $s$ exists
+and satisfies $4(g + 1) = (n+1)(n+2)(q_s n + 6c_s)$ if $n$ is even and
+$4(g + 1) = (n+1)(n+2)(q_s n + 6c_s - 3\delta_s)$ if $n$ is odd.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Theorem 1 (`integers-2026-A63-thm-1`). -/
@@ -171,11 +204,16 @@ public theorem_wanted isGenFrobeniusNumber_triangularTriple (n s : ℕ)
     ∃ g : ℤ, IsGenFrobeniusNumber (triangularTriple n) s g ∧
       4 * (g + 1) = (n + 1) * (n + 2) * (q * n + 6 * c - if Even n then 0 else 3 * δ)
 
-/-- Komatsu's conjecture, made precise: for `s, n ≥ 0` with `n > N_{s+1}` (by parity), writing
-`g_s = g(t_n, t_{n+1}, t_{n+2}; s)` and `P = (n+1)(n+2)`: (i) if `s + 1` is neither `k²` nor
-`k(k+1)` for any `k ≥ 1`, then `g_{s+1} - g_s = 6P/4`; (ii) for even `n` and `s + 1 ∈ {k², k(k+1)}`,
-`g_{s+1} - g_s = (n - 6k + 6)P/4`; (iii) for odd `n`, `g_{s+1} - g_s = (n - 6k + 9)P/4` if
-`s + 1 = k²` and `(n - 6k + 3)P/4` if `s + 1 = k(k+1)`. Stated as `4(g_{s+1} - g_s) = …`.
+/-- **Komatsu's conjecture on generalized Frobenius numbers of triangular triples.** For a natural
+number $r$ write $t_r = r(r+1)/2$. Let $n$ and $s$ be natural numbers, let
+$N_{s+1} = 6\lfloor\sqrt{s+2}\rfloor - 6$ if $n$ is even and
+$N_{s+1} = 6\lfloor(\sqrt{4s+9} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_{s+1}$. Let
+$g_s$ and $g_{s+1}$ be the generalized Frobenius numbers of $(t_n, t_{n+1}, t_{n+2})$ at $s$ and at
+$s + 1$, and put $P = (n+1)(n+2)$. Then: (i) if $s + 1$ is neither $k^2$ nor $k(k+1)$ for any
+integer $k \ge 1$, then $4(g_{s+1} - g_s) = 6P$; (ii) if $n$ is even and $s + 1 = k^2$ or
+$s + 1 = k(k+1)$ for an integer $k \ge 1$, then $4(g_{s+1} - g_s) = (n - 6k + 6)P$; (iii) if $n$ is
+odd and $k \ge 1$ is an integer, then $4(g_{s+1} - g_s) = (n - 6k + 9)P$ when $s + 1 = k^2$, and
+$4(g_{s+1} - g_s) = (n - 6k + 3)P$ when $s + 1 = k(k+1)$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Theorem 2 (`integers-2026-A63-thm-2`). -/
@@ -191,10 +229,17 @@ public theorem_wanted isGenFrobeniusNumber_triangularTriple_succ_sub (n s : ℕ)
         (s + 1 = k * k → 4 * (g' - g) = ((n : ℤ) - 6 * k + 9) * ((n + 1) * (n + 2))) ∧
         (s + 1 = k * (k + 1) → 4 * (g' - g) = ((n : ℤ) - 6 * k + 3) * ((n + 1) * (n + 2))))
 
-/-- Reformulation via Definition 1: if `s ∈ {0, 1, 2}` or `s` is neither `k²` nor `k(k+1)` for any
-`k ≥ 1`, then for `n ≥ 2` with `n > N_s` (by parity), writing `s = k(k+1) + i`,
-`0 ≤ i ≤ 2k+1`: `g(t_n, t_{n+1}, t_{n+2}; s) = (n+1)(n+2)((2x_s + y_s + 3)n + 6x_s)/4 - 1` for even
-`n` and `(n+1)(n+2)((x_s + 2y_s + 3)n + 3(x_s - 1))/4 - 1` for odd `n`. Stated as `4(g + 1) = …`.
+/-- **Generalized Frobenius numbers of triangular triples in parametrized form.** For a natural
+number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$ and
+put $s = k(k+1) + i$. Suppose that $s \le 2$ or that $s$ is neither $m^2$ nor $m(m+1)$ for any
+integer $m \ge 1$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
+$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n \ge 2$ and $n > N_s$.
+For even $n$ let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and
+$(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if $i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if
+$i \le k$ and $(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Then the generalized Frobenius
+number $g$ of $(t_n, t_{n+1}, t_{n+2})$ at $s$ exists and satisfies
+$4(g + 1) = (n+1)(n+2)\bigl((2x_s + y_s + 3)n + 6x_s\bigr)$ if $n$ is even and
+$4(g + 1) = (n+1)(n+2)\bigl((x_s + 2y_s + 3)n + 3(x_s - 1)\bigr)$ if $n$ is odd.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Theorem 3 (`integers-2026-A63-thm-3`). -/
@@ -209,9 +254,16 @@ public theorem_wanted isGenFrobeniusNumber_triangularTriple_of_xy (n k i : ℕ)
       4 * (g + 1) = (n + 1) * (n + 2) *
         (if Even n then (2 * x + y + 3) * n + 6 * x else (x + 2 * y + 3) * n + 3 * (x - 1))
 
-/-- For `s = k(k+1) + i` with `0 ≤ i ≤ 2k+1` and `n > N_s` (by parity), with
-`d₁ = gcd(t_{n+1}, t_{n+2})`, `a = t_{n+1}/d₁`, `b = t_{n+2}/d₁`:
-`g(t_n, a, b; s) = g(a, b; x_s) + y_s t_n = (x_s + 1)ab - b - a + y_s t_n`.
+/-- **Generalized Frobenius numbers of the reduced triangular triple.** For a natural number $r$
+write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$ and put
+$s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
+$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
+let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
+$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
+$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
+$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. Then $(x_s + 1)ab - a - b$ is the generalized Frobenius
+number $g(a, b; x_s)$, and $(x_s + 1)ab - b - a + y_s t_n$ is the generalized Frobenius number
+$g(t_n, a, b; s)$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Theorem 4 (`integers-2026-A63-thm-4`). -/
@@ -227,13 +279,17 @@ public theorem_wanted isGenFrobeniusNumber_triangular_reduced (n k i : ℕ) (hi 
       IsGenFrobeniusNumber ![t n, t (n + 1) / d₁, t (n + 2) / d₁] (k * (k + 1) + i)
         ((x + 1) * a * b - b - a + triangularFrobeniusY n k i * t n)
 
-/-- Explicit values for `s = 11, …, 20`, each as `4(g + 1) = (n+1)(n+2) L`:
-`s = 11`: `L = 8n + 12` (`n = 12` or `n ≥ 14`); `s = 12`: `9n` (even `n ≥ 14`), `9n - 3`
-(odd `n ≥ 17`); `s = 13`: `9n + 6` (even `n ≥ 12`), `9n + 3` (odd `n ≥ 15`); `s = 14`: `9n + 12`
-(even `n ≥ 12`), `9n + 9` (odd `n ≥ 15`); `s = 15`: `9n + 18` (even `n ≥ 18`), `9n + 15`
-(odd `n ≥ 15`); `s = 16`: `10n` (`n = 17` or `n ≥ 19`); `s = 17`: `10n + 6` (`n = 15` or
-`n ≥ 17`); `s = 18`: `10n + 12` (`n = 17` or `n ≥ 19`); `s = 19`: `10n + 18` (`n = 20` or
-`n ≥ 22`); `s = 20`: `11n` (even `n ≥ 18`), `11n - 3` (odd `n ≥ 21`).
+/-- **Explicit generalized Frobenius numbers of triangular triples at levels 11 to 20.** For a
+natural number $r$ write $t_r = r(r+1)/2$. For a natural number $n$, a natural number $s$ and an
+integer $L$, say that $s$ has value $L$ when the generalized Frobenius number $g$ of
+$(t_n, t_{n+1}, t_{n+2})$ at $s$ exists and satisfies $4(g + 1) = (n+1)(n+2)L$. Then for every
+natural number $n$: $11$ has value $8n + 12$ if $n = 12$ or $n \ge 14$; $12$ has value $9n$ for
+even $n \ge 14$ and $9n - 3$ for odd $n \ge 17$; $13$ has value $9n + 6$ for even $n \ge 12$ and
+$9n + 3$ for odd $n \ge 15$; $14$ has value $9n + 12$ for even $n \ge 12$ and $9n + 9$ for odd
+$n \ge 15$; $15$ has value $9n + 18$ for even $n \ge 18$ and $9n + 15$ for odd $n \ge 15$; $16$
+has value $10n$ if $n = 17$ or $n \ge 19$; $17$ has value $10n + 6$ if $n = 15$ or $n \ge 17$; $18$
+has value $10n + 12$ if $n = 17$ or $n \ge 19$; $19$ has value $10n + 18$ if $n = 20$ or
+$n \ge 22$; $20$ has value $11n$ for even $n \ge 18$ and $11n - 3$ for odd $n \ge 21$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Corollary 1 (`integers-2026-A63-cor-1`). -/

@@ -23,8 +23,13 @@ open Filter MeasureTheory Set
 open scoped BigOperators Topology
 
 /--
-`watsonCosSum n ν` is the real finite sum from the paper: the index `l` runs from
-`1` through `n - 1`, and the summand is `cos (2πνl/n) / sin (πl/n)`.
+**Generalized Watson trigonometric sum.** For natural numbers $n$ and $\nu$, $C_n(\nu)$ is the real
+number
+$$
+C_n(\nu) = \sum_{l=1}^{n-1} \frac{\cos(2\pi\nu l/n)}{\sin(\pi l/n)}.
+$$
+For $n \le 1$ the sum is empty and $C_n(\nu) = 0$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, definition of `C_n(ν)`.
 -/
@@ -34,8 +39,13 @@ public noncomputable def watsonCosSum (n ν : ℕ) : ℝ :=
       (1 / Real.sin (Real.pi * (l : ℝ) / (n : ℝ)))
 
 /--
-`watsonAlternatingCosecantSum n` is the paper's particular sum `C_n`: the index
-`l` runs from `1` through `n - 1`, with summand `(-1)^(l+1) / sin (πl/n)`.
+**Watson's alternating cosecant sum.** For a natural number $n$, the alternating cosecant sum is
+the real number
+$$
+C_n = \sum_{l=1}^{n-1} \frac{(-1)^{l+1}}{\sin(\pi l / n)}.
+$$
+For $n \le 1$ the sum is empty and $C_n = 0$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, definition of `C_n`.
 -/
@@ -44,7 +54,9 @@ public noncomputable def watsonAlternatingCosecantSum (n : ℕ) : ℝ :=
     (-1 : ℝ) ^ (l + 1) * (1 / Real.sin (Real.pi * (l : ℝ) / (n : ℝ)))
 
 /--
-The characteristic value `C_2(1) = -1` fixes the cosine-sum convention.
+**Watson's cosine sum at $n = 2$, $\nu = 1$.** The cosine sum
+$C_n(\nu) = \sum_{l=1}^{n-1} \cos(2 \pi \nu l / n) / \sin(\pi l / n)$ satisfies $C_2(1) = -1$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, definition of `C_n(ν)`.
 -/
@@ -52,7 +64,9 @@ public theorem watsonCosSum_two_one : watsonCosSum 2 1 = -1 := by
   norm_num [watsonCosSum, Real.sin_pi_div_two]
 
 /--
-The characteristic value of the alternating cosecant sum at `n = 2` is `1`.
+**Watson's alternating cosecant sum at $n = 2$.** The alternating cosecant sum
+$C_2 = \sum_{l=1}^{1} (-1)^{l+1} / \sin(\pi l / 2)$ equals $1$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, definition of `C_n`.
 -/
@@ -60,9 +74,14 @@ public theorem watsonAlternatingCosecantSum_two : watsonAlternatingCosecantSum 2
   norm_num [watsonAlternatingCosecantSum, Real.sin_pi_div_two]
 
 /--
-`watsonOddCotangentDeriv r n ν` is the `(2r-1)`st derivative of cotangent,
-evaluated at `πν/n`, which is the paper's `ℋ_{2r-1}(ν/n)`. The unguarded
-`iteratedDeriv` is intentional because this is the prescribed derivative form.
+**Odd cotangent derivatives.** For natural numbers $r$, $n$ and $\nu$, $\mathcal{H}_{2r-1}(\nu/n)$
+is the real number $\cot^{(2r-1)}(\pi\nu/n)$, the $(2r-1)$st derivative of the cotangent function
+evaluated at $\pi\nu/n$. Here $2r - 1$ is computed in the natural numbers, so for $r = 0$ this is
+$\cot(\pi\nu/n)$ itself.
+
+The derivative is taken of the cotangent as a function on all of $\mathbb{R}$; the value is the
+classical one whenever $\pi\nu/n$ is not a multiple of $\pi$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, definition of `ℋ_{2r-1}`.
 -/
@@ -70,11 +89,22 @@ public noncomputable def watsonOddCotangentDeriv (r n ν : ℕ) : ℝ :=
   iteratedDeriv (2 * r - 1) Real.cot (Real.pi * (ν : ℝ) / (n : ℝ))
 
 /--
-Lemma 1 states both convergence and the four-digamma evaluation of the improper
-integral. Here `b` is positive real and `α, β` are complex. In addition to the
-printed condition `re (α + b - β) > 0`, the statement requires
-`re (α + b + β) > 0`; this is necessary because the integrand is even in `β`.
-Mathlib's `Complex.digamma` is used for `Ψ`.
+**Digamma evaluation of a hyperbolic Laplace integral.** Let $b > 0$ be a real number and let
+$\alpha, \beta$ be complex numbers with $\operatorname{Re}(\alpha + b - \beta) > 0$ and
+$\operatorname{Re}(\alpha + b + \beta) > 0$. Then the function
+$x \mapsto e^{-\alpha x} \cosh(\beta x) / \cosh(bx)$ is integrable on $(0, \infty)$, and, writing
+$\psi$ for the digamma function,
+$$
+\int_0^\infty \frac{e^{-\alpha x} \cosh(\beta x)}{\cosh(bx)} \, dx =
+\frac{1}{4b} \Bigl[ \psi\bigl(\tfrac34 + \tfrac{\alpha+\beta}{4b}\bigr) -
+\psi\bigl(\tfrac14 + \tfrac{\alpha-\beta}{4b}\bigr) +
+\psi\bigl(\tfrac34 + \tfrac{\alpha-\beta}{4b}\bigr) -
+\psi\bigl(\tfrac14 + \tfrac{\alpha+\beta}{4b}\bigr) \Bigr].
+$$
+
+The source prints only the condition $\operatorname{Re}(\alpha + b - \beta) > 0$; the condition
+$\operatorname{Re}(\alpha + b + \beta) > 0$ is also needed, since the integrand is even in $\beta$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Lemma 1.
 -/
@@ -97,9 +127,17 @@ public theorem_wanted watson_cosh_integral_digamma
             Complex.digamma ((1 / 4 : ℂ) + (α + β) / (4 * (b : ℂ))))
 
 /--
-One summand in the almost-asymptotic expansion of `watsonCosSum`. It explicitly
-casts the rational Bernoulli number `B_{2r}` to `ℝ` and writes
-`2^(1-2r)` as the reciprocal `1 / 2^(2r-1)`, avoiding a negative natural power.
+**Watson expansion terms.** For natural numbers $r$, $n$ and $\nu$, let $B_{2r}$ be the $2r$th
+Bernoulli number and let $\mathcal{H}_{2r-1}(\nu/n) = \cot^{(2r-1)}(\pi\nu/n)$ be the
+$(2r-1)$st derivative of the cotangent evaluated at $\pi\nu/n$. The $r$th Watson expansion term is
+the real number
+$$
+\Bigl(1 - \frac{1}{2^{2r-1}}\Bigr)
+\frac{\pi^{2r-1} B_{2r} \, \mathcal{H}_{2r-1}(\nu/n)}{(2r)! \, n^{2r-1}}.
+$$
+Here $2r - 1$ is computed in the natural numbers, so for $r = 0$ the factor $1 - 1/2^{2r-1}$ is $0$
+and the term vanishes.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 3 (printed as Theorem 4).
 -/
@@ -109,11 +147,23 @@ public noncomputable def watsonExpansionTerm (r n ν : ℕ) : ℝ :=
     ((Nat.factorial (2 * r) : ℝ) * (n : ℝ) ^ (2 * r - 1))
 
 /--
-Theorem 3 (printed as Theorem 4 in the source) gives the almost-asymptotic
-expansion for `C_n(ν)`. The hypotheses formalize `n,N ≥ 2` and the standing
-condition `1 ≤ ν ≤ n-1`; the existential `λ` is constrained by `0 < λ < 1`.
-The finite sum and final term respectively encode the terms through `N-1` and
-the `λ`-weighted `N`th remainder term.
+**Almost-asymptotic expansion of Watson's cosine sum.** Let $n \ge 2$, $N \ge 2$ and $\nu$ be
+natural numbers with $1 \le \nu \le n - 1$, and let
+$$
+C_n(\nu) = \sum_{l=1}^{n-1} \frac{\cos(2 \pi \nu l / n)}{\sin(\pi l / n)}.
+$$
+For $r \ge 1$ write
+$$
+T_r(n, \nu) = \frac{(1 - 2^{1-2r}) \, \pi^{2r-1} B_{2r} \, \cot^{(2r-1)}(\pi \nu / n)}
+{(2r)! \, n^{2r-1}},
+$$
+where $B_{2r}$ is the $2r$-th Bernoulli number and $\cot^{(2r-1)}$ is the $(2r-1)$-st derivative
+of the cotangent. Then there is a real number $\lambda$ with $0 < \lambda < 1$ such that
+$$
+C_n(\nu) = -\frac{2n}{\pi} \log\left(2 \sin\frac{\pi \nu}{n}\right) +
+2 \sum_{r=1}^{N-1} T_r(n, \nu) + 2 \lambda \, T_N(n, \nu).
+$$
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 3 (printed as Theorem 4).
 -/
@@ -128,8 +178,11 @@ public theorem_wanted watson_cos_sum_almost_asymptotic
           2 * remainder * watsonExpansionTerm N n ν
 
 /--
-The sign clause accompanying Theorem 3 says that every paper quantity
-`ℋ_{2r-1}(ν/n)` is negative when `r ≥ 1` and `1 ≤ ν ≤ n-1`.
+**The odd cotangent derivatives in Watson's expansion are negative.** Let $r$, $n$ and $\nu$ be
+natural numbers with $r \ge 1$ and $1 \le \nu \le n - 1$. Then
+$\mathcal{H}_{2r-1}(\nu/n) = \cot^{(2r-1)}(\pi\nu/n)$, the $(2r-1)$st derivative of the cotangent
+evaluated at $\pi\nu/n$, is strictly negative.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 3 (printed as Theorem 4).
 -/
@@ -138,9 +191,14 @@ public theorem_wanted watson_odd_cotangent_deriv_neg
     watsonOddCotangentDeriv r n ν < 0
 
 /--
-`watsonAlternatingMain N n` is the displayed main part of Corollary 2. It uses
-the square of the explicitly real-cast rational Bernoulli number and includes
-all terms indexed from `1` through `N-1`.
+**Main part of the asymptotic expansion of Watson's alternating cosecant sum.** For natural numbers
+$N$ and $n$, the main part is the real number
+$$
+M_N(n) = \frac{2 n \log 2}{\pi} + 2 \sum_{r=1}^{N-1}
+\frac{(-1)^{r+1} (2^{2r-1} - 1)(2^{2r} - 1) \pi^{2r-1} B_{2r}^2}{r \, (2r)! \, n^{2r-1}},
+$$
+where $B_{2r}$ is the $2r$-th Bernoulli number. For $N \le 1$ the sum is empty.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 2.
 -/
@@ -153,9 +211,19 @@ public noncomputable def watsonAlternatingMain (N n : ℕ) : ℝ :=
         ((r : ℝ) * (Nat.factorial (2 * r) : ℝ) * (n : ℝ) ^ (2 * r - 1)))
 
 /--
-Corollary 2 gives the complete asymptotic expansion for even `n`. For each fixed
-`N ≥ 2`, the error is bounded by `K / n^(2N-1)` for a nonnegative constant `K`;
-this reciprocal positive natural power is the formal version of `O(n^(1-2N))`.
+**Complete asymptotic expansion of Watson's alternating cosecant sum.** For natural numbers $N$
+and $n$ let $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$ and
+$$
+M_N(n) = \frac{2 n \log 2}{\pi} + 2 \sum_{r=1}^{N-1}
+\frac{(-1)^{r+1} (2^{2r-1} - 1)(2^{2r} - 1) \pi^{2r-1} B_{2r}^2}{r \, (2r)! \, n^{2r-1}},
+$$
+where $B_{2r}$ is the $2r$-th Bernoulli number. For every $N \ge 2$ there is a real constant
+$K \ge 0$ such that for every even $n \ge 2$,
+$$
+|C_n - M_N(n)| \le \frac{K}{n^{2N-1}}.
+$$
+In other words, $C_n = M_N(n) + O(n^{1-2N})$ as $n \to \infty$ through even values.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 2.
 -/
@@ -165,8 +233,11 @@ public theorem_wanted watson_alternating_complete_asymptotic (N : ℕ) (hN : 2 �
         K / (n : ℝ) ^ (2 * N - 1)
 
 /--
-The odd case of Corollary 2 states that the alternating cosecant sum vanishes.
-This declaration also supplies the identical odd-vanishing clause in Theorem 6.
+**Watson's alternating cosecant sum vanishes for odd $n$.** For every odd natural number $n$,
+$$
+\sum_{l=1}^{n-1} \frac{(-1)^{l+1}}{\sin(\pi l / n)} = 0.
+$$
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 2 and Theorem 6.
 -/
@@ -174,9 +245,16 @@ public theorem_wanted watson_alternating_odd_zero (n : ℕ) (hn : Odd n) :
     watsonAlternatingCosecantSum n = 0
 
 /--
-Theorem 6 bounds the alternating cosecant sum for every even `n ≥ 2` between
-the first three and the first two displayed asymptotic terms, respectively.
-The odd clause is stated once in `watson_alternating_odd_zero`.
+**Two-sided bounds for Watson's alternating cosecant sum.** For every even natural number
+$n \ge 2$, the alternating cosecant sum $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$
+satisfies the strict inequalities
+$$
+\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n} - \frac{7 \pi^3}{1440 n^3} < C_n <
+\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n}.
+$$
+The lower bound consists of the first three terms of the asymptotic expansion of $C_n$ and the
+upper bound of the first two.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 6 and Corollary 3.
 -/
@@ -189,9 +267,13 @@ public theorem_wanted watson_alternating_sharp_bounds
         2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ))
 
 /--
-Corollary 3 replaces the correction in Theorem 6 by decimal bounds: for every
-even `n ≥ 4`, `C_n` lies strictly between `2n log 2 / π + 0.252/n` and
-`2n log 2 / π + 0.262/n`.
+**Decimal bounds for Watson's alternating cosecant sum.** For every even natural number
+$n \ge 4$, the alternating cosecant sum $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$
+satisfies the strict inequalities
+$$
+\frac{2 n \log 2}{\pi} + \frac{0.252}{n} < C_n < \frac{2 n \log 2}{\pi} + \frac{0.262}{n}.
+$$
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 3.
 -/
@@ -203,8 +285,10 @@ public theorem_wanted watson_alternating_simple_bounds
         2 * (n : ℝ) * Real.log 2 / Real.pi + (0.262 : ℝ) / (n : ℝ)
 
 /--
-Corollary 4 states both sixth-multiple limits: along `n = 6m`, the cosine sum
-tends to zero for `ν = m = n/6` and for `ν = 5m = 5n/6`.
+**Vanishing limits of Watson's cosine sum at one sixth and five sixths.** For natural numbers
+$n$ and $\nu$ let $C_n(\nu) = \sum_{l=1}^{n-1} \cos(2 \pi \nu l / n) / \sin(\pi l / n)$. As
+$m \to \infty$ through the natural numbers, $C_{6m}(m) \to 0$ and $C_{6m}(5m) \to 0$.
+
 Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
 of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 4.
 -/

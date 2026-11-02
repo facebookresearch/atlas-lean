@@ -31,7 +31,11 @@ erdosproblems.com/728. The upstream `answer(True)` is dropped. Status:
 resolved true externally by Barreto and ChatGPT-5.2. This module states the
 result but does not prove it; a pinned external Lean proof is in the registry. -/
 
-/-- Factorial divisibility with `O(log n)` window. -/
+/-- **Erdős Problem 728.** The proposition that there is a real number $\delta > 0$ such that for
+every real number $\varepsilon$ with $0 < \varepsilon < \delta$ and all real numbers $C > 0$ and
+$C' > C$, there are natural numbers $a$, $b$ and $n \ge 1$ with $a > \varepsilon n$,
+$b > \varepsilon n$, $a! \, b! \mid n! \, (a + b - n)!$ and $n + C \log n < a + b < n + C' \log n$.
+-/
 def conjecture : Prop :=
   ∀ᶠ ε : ℝ in 𝓝[>] 0, ∀ C > (0 : ℝ), ∀ C' > C,
     ∃ a b n : ℕ,
@@ -43,8 +47,14 @@ def conjecture : Prop :=
       a + b < n + C' * Real.log n
 
 /--
-Resolved true: Resolved externally by Barreto and ChatGPT-5.2. This repository records the
-statement, not an internal proof; a pinned external Lean proof is cited below. Source: N.
+**Erdős Problem 728 holds.** There is a real number $\delta > 0$ such that for every real number
+$\varepsilon$ with $0 < \varepsilon < \delta$ and all real numbers $C > 0$ and $C' > C$, there are
+natural numbers $a$, $b$ and $n \ge 1$ with $a > \varepsilon n$, $b > \varepsilon n$,
+$a! \, b! \mid n! \, (a + b - n)!$ and $n + C \log n < a + b < n + C' \log n$.
+
+The statement was resolved in the affirmative by Barreto and ChatGPT-5.2.
+
+Source: N.
 Sothanaphan, Resolution of Erdős Problem #728: a writeup of Aristotle's Lean proof,
 arXiv:2601.07421 (2026), https://arxiv.org/abs/2601.07421. Moved from
 `OpenConjectures/NumberTheory/ErdosProblem728`.

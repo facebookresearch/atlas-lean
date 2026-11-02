@@ -57,10 +57,14 @@ namespace DirichletWeylBound
 open Complex
 
 /--
-Statement of Corollary 1.3:
+**Petrow–Young Weyl bound on the critical line.** For every real $\varepsilon > 0$ there is a
+real number $C$ such that for every cube-free natural number $q$ (that is, $q > 0$ and $p^3$ does
+not divide $q$ for any prime $p$), every primitive Dirichlet character $\chi$ modulo $q$ and
+every real $t$, the analytically continued Dirichlet $L$-function satisfies
+$$|L(1/2 + it, \chi)| \le C \, q^{1/6 + \varepsilon} (1 + |t|)^{1/6 + \varepsilon}.$$
 
-Suppose `χ` has cubefree conductor `q`. Then
-`|L(1/2 + it, χ)| ≪ q ^ (1/6 + ε) * (1 + |t|) ^ (1/6 + ε)`.
+This is Corollary 1.3 of the source.
+
 Source: I. Petrow and M. P. Young, `The Weyl bound for Dirichlet L-functions of cube-free conductor`, Annals of Math, 192 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-2-DirichletWeylBound.lean Via leanprover/lean-eval@38361be, problem `annals_dirichlet_weyl_bound`.
 -/
 public theorem_wanted corollary_1_3 (ε : ℝ) (hε : 0 < ε) : ∃ C : ℝ,
