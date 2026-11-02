@@ -36,9 +36,7 @@ Harris's theorem `θ(1/2) = 0` and was removed.
 
 ## Implementation notes
 
-Since `cross` is arbitrary, the hypotheses are close to the conclusion: with
-`cross p n = 1/2` for `p ≤ 1/2` and `1` for `p > 1/2`, `hmono` and `hdualHalf` hold and
-`hdecayToZero` says that the one-arm probability does not decay exponentially for `p > 1/2`. No
+Since `cross` is arbitrary, the hypotheses are close to the conclusion. No
 instance of `cross` is constructed in the library. For the intended instance (`cross p n` the
 probability of a left–right crossing of an `(n + 1) × n` rectangle) the missing inputs are:
 
