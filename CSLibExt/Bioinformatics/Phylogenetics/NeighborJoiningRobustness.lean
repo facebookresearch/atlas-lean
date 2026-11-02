@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoining
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Linarith
@@ -16,7 +17,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Robustness of neighbor joining: the cherry step
+# Robustness of neighbor joining: Atteson's theorem
 
 Neighbor joining (`NJRun` in `NeighborJoining.lean`) is exact on tree metrics: on the
 path-length metric `d` of a binary phylogenetic tree with positive edge lengths, every pair
@@ -25,19 +26,24 @@ showed that neighbor joining tolerates noise: if a dissimilarity `D` satisfies
 `|D x y - d x y| < μ / 2` for all taxa, where `μ` is the shortest internal edge length, then
 neighbor joining run on `D` returns the topology of the tree (its `ℓ∞` radius is `1/2`).
 
-This file proves the selection step of that theorem: under the perturbation bound, every pair
-of taxa minimizing the Q-criterion of `D` is a cherry of the tree. The induction over the
-whole run is recorded in
-`WantedExt/Biology/Phylogenetics/NeighborJoiningRobustnessWanted.lean`; it needs an invariant
-weaker than the `ℓ∞` bound, which the neighbor-joining update does not preserve in general
-(the new errors are only bounded by `3/2` times the old bound), such as the quartet
-consistency and quartet additivity conditions of Mihaescu, Levy and Pachter (2009).
+This file proves that theorem (`njRun_splits_of_abs_sub_lt`). The selection step: under the
+perturbation bound, every pair of taxa minimizing the Q-criterion of `D` is a cherry of the
+tree. The run: the neighbor-joining update does not preserve the `ℓ∞` bound (the new errors
+are only bounded by `3/2` times the old bound), so the bound is not carried along the run.
+Instead, up to row shifts `D s t + f s + f t`, which change every Q-value by the same amount
+(`qCriterion_eq_sub_of_shift`; Mihaescu, Levy and Pachter 2009, Lemma 4), the cluster
+dissimilarity of a run is the average of `D` over the two clusters for weights fixed by the run
+(`NJRun.exists_avg`). On a partition of the taxa into sides of the tree, the average of the tree
+metric is, up to row shifts, the tree metric of the split system induced on the clusters
+(`exists_splitSystem_of_partition`), whose internal splits are internal edges. Averages of
+errors below `μ / 2` stay below `μ / 2`, so the selection step for split systems applies at every
+join, and every join forms a side (`njRun_splits_of_join`).
 
 Only internal edges enter the bound: pendant edge lengths do not affect which pairs neighbor
 joining selects. The dissimilarity `D` is assumed symmetric with zero diagonal, as in the
 sources (the Q-criterion sums include the diagonal entries).
 
-## Proof outline
+## Proof outline of the selection step
 
 The tree metric is written as a sum over splits (`dist_eq_sum_darts`). For distinct taxa the
 Q-criterion differences are sums of four- and six-point terms:
@@ -63,6 +69,10 @@ the bounds here are carried out directly on the `ℓ∞` hypothesis.
   such a dissimilarity joins a cherry.
 * `exists_eq_pair_of_qCriterion_min_of_abs_sub_lt`: the same statement for compatible binary
   split systems.
+* `njRun_splits_of_abs_sub_lt`: **Atteson's theorem**: under the same bound, every complete run
+  of neighbor joining on `D` forms exactly the splits of the internal edges of the tree.
+* `NJRun.exists_avg`, `qCriterion_eq_sub_of_shift`: the averaging representation of a run and
+  the shifting lemma.
 
 ## References
 
@@ -915,5 +925,348 @@ theorem NJRun.exists_adj_adj_of_join_init_of_abs_sub_lt {V : Type*} [Fintype V]
   obtain ⟨u, hu⟩ := exists_adj_adj_of_qCriterion_min_of_abs_sub_lt hT hw hd hμ hDsymm hD0 hDd
     h4 hxy hmin
   exact ⟨x, y, u, rfl, rfl, hxy, hu⟩
+
+
+/-! ### The whole run -/
+
+/-- **Neighbor joining averages up to row shifts.** Along every run of neighbor joining on a
+symmetric dissimilarity `d` with zero diagonal there are weights `α s` (nonnegative, supported
+on `s`, summing to `1`) and row terms `κ s` such that the cluster dissimilarity vanishes on the
+diagonal and `D s t = ∑ x, ∑ y, α s x * α t y * d x y - κ s - κ t` for distinct current
+clusters. Joining `a, b` takes `α (a ∪ b) = (α a + α b) / 2` and
+`κ (a ∪ b) = (κ a + κ b + D a b) / 2`. -/
+theorem NJRun.exists_avg {d : X → X → ℝ} (hsymm : ∀ x y, d x y = d y x)
+    (h0 : ∀ x, d x x = 0) {S : Finset (Finset X)} {D : Finset X → Finset X → ℝ}
+    {C : Finset (Finset X)} (hrun : NJRun d S D C) :
+    ∃ (α : Finset X → X → ℝ) (κ : Finset X → ℝ),
+      (∀ s ∈ S, ∀ x, 0 ≤ α s x) ∧ (∀ s ∈ S, ∀ x, x ∉ s → α s x = 0) ∧
+      (∀ s ∈ S, ∑ x, α s x = 1) ∧ (∀ s ∈ S, D s s = 0) ∧
+      ∀ s ∈ S, ∀ t ∈ S, s ≠ t → D s t = ∑ x, ∑ y, α s x * α t y * d x y - κ s - κ t := by
+  classical
+  have avg_symm (p q : X → ℝ) :
+      (∑ x, ∑ y, p x * q y * d x y) = ∑ x, ∑ y, q x * p y * d x y := by
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl
+    intro y _
+    apply Finset.sum_congr rfl
+    intro x _
+    rw [hsymm x y]
+    ring
+  have avg_left (p q r : X → ℝ) :
+      (∑ x, ∑ y, (p x + q x) / 2 * r y * d x y) =
+        ((∑ x, ∑ y, p x * r y * d x y) +
+          ∑ x, ∑ y, q x * r y * d x y) / 2 := by
+    simp_rw [add_div, add_mul, div_mul_eq_mul_div]
+    simp only [Finset.sum_add_distrib, Finset.sum_div]
+  induction hrun with
+  | init =>
+    refine ⟨fun s x => if x ∈ s then 1 else 0, fun _ => 0, ?_, ?_, ?_, ?_, ?_⟩
+    · intro s _ x
+      change 0 ≤ if x ∈ s then (1 : ℝ) else 0
+      split_ifs <;> norm_num
+    · intro s _ x hx
+      simp [hx]
+    · intro s hs
+      obtain ⟨x, _, rfl⟩ := Finset.mem_image.mp hs
+      simp
+    · intro s hs
+      obtain ⟨x, _, rfl⟩ := Finset.mem_image.mp hs
+      simp [initialDist, h0]
+    · intro s hs t ht _
+      obtain ⟨x, _, rfl⟩ := Finset.mem_image.mp hs
+      obtain ⟨y, _, rfl⟩ := Finset.mem_image.mp ht
+      simp [initialDist, ite_mul, mul_ite]
+  | @join S D C a b _ _ ha hb _ _ ih =>
+    obtain ⟨α, κ, hnonneg, hsupp, hsum, hdiag, havg⟩ := ih
+    let α' : Finset X → X → ℝ :=
+      fun s x => if s = a ∪ b then (α a x + α b x) / 2 else α s x
+    let κ' : Finset X → ℝ :=
+      fun s => if s = a ∪ b then (κ a + κ b + D a b) / 2 else κ s
+    have old_mem {s : Finset X} (hs : s ∈ insert (a ∪ b) ((S.erase a).erase b))
+        (h : s ≠ a ∪ b) : s ∈ S ∧ s ≠ a ∧ s ≠ b := by
+      have he : s ∈ (S.erase a).erase b := (Finset.mem_insert.mp hs).resolve_left h
+      obtain ⟨hsb, hsa⟩ := Finset.mem_erase.mp he
+      obtain ⟨hsa, hs⟩ := Finset.mem_erase.mp hsa
+      exact ⟨hs, hsa, hsb⟩
+    have joined_avg {t : Finset X} (ht : t ∈ insert (a ∪ b) ((S.erase a).erase b))
+        (htu : t ≠ a ∪ b) :
+        (D a t + D b t - D a b) / 2 =
+          (∑ x, ∑ y, (α a x + α b x) / 2 * α t y * d x y) -
+            (κ a + κ b + D a b) / 2 - κ t := by
+      obtain ⟨ht, hta, htb⟩ := old_mem ht htu
+      rw [havg a ha t ht hta.symm, havg b hb t ht htb.symm, avg_left]
+      ring
+    refine ⟨α', κ', ?_, ?_, ?_, ?_, ?_⟩
+    · intro s hs x
+      by_cases hsu : s = a ∪ b
+      · simp only [α', hsu, ite_eq_left]
+        exact div_nonneg (add_nonneg (hnonneg a ha x) (hnonneg b hb x)) (by norm_num)
+      · simpa only [α', ite_eq_right hsu] using hnonneg s (old_mem hs hsu).1 x
+    · intro s hs x hx
+      by_cases hsu : s = a ∪ b
+      · have hxa : x ∉ a := fun h => hx (hsu ▸ Finset.mem_union_left b h)
+        have hxb : x ∉ b := fun h => hx (hsu ▸ Finset.mem_union_right a h)
+        simp [α', hsu, hsupp a ha x hxa, hsupp b hb x hxb]
+      · simpa only [α', ite_eq_right hsu] using hsupp s (old_mem hs hsu).1 x hx
+    · intro s hs
+      by_cases hsu : s = a ∪ b
+      · simp only [α', hsu, ite_eq_left]
+        rw [← Finset.sum_div, Finset.sum_add_distrib, hsum a ha, hsum b hb]
+        norm_num
+      · simpa only [α', ite_eq_right hsu] using hsum s (old_mem hs hsu).1
+    · intro s hs
+      by_cases hsu : s = a ∪ b
+      · simp [joinDist, hsu]
+      · simpa only [joinDist, ite_eq_right hsu] using hdiag s (old_mem hs hsu).1
+    · intro s hs t ht hst
+      by_cases hsu : s = a ∪ b
+      · subst s
+        have htu : t ≠ a ∪ b := Ne.symm hst
+        simpa [joinDist, α', κ', htu] using joined_avg ht htu
+      · by_cases htu : t = a ∪ b
+        · subst t
+          have heq := joined_avg hs hsu
+          rw [avg_symm] at heq
+          simpa [joinDist, α', κ', hsu] using heq.trans (by ring)
+        · simpa only [joinDist, α', κ', ite_eq_right hsu, ite_eq_right htu] using
+            havg s (old_mem hs hsu).1 t (old_mem ht htu).1 hst
+
+omit [Fintype X] [DecidableEq X] in
+/-- **The shifting lemma** (Mihaescu, Levy & Pachter 2009, Lemma 4): if `D'` agrees with `D` on
+the diagonal of `S` and `D' s t = D s t + f s + f t` for distinct `s, t ∈ S`, then the
+Q-criterion of every pair of distinct clusters drops by the same amount `2 ∑_{c ∈ S} f c`, so
+both have the same minimizing pairs. -/
+theorem qCriterion_eq_sub_of_shift (S : Finset (Finset X)) {D D' : Finset X → Finset X → ℝ}
+    (f : Finset X → ℝ) (hdiag : ∀ s ∈ S, D' s s = D s s)
+    (hoff : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → D' s t = D s t + f s + f t) {a b : Finset X}
+    (ha : a ∈ S) (hb : b ∈ S) (hab : a ≠ b) :
+    qCriterion S D' a b = qCriterion S D a b - 2 * ∑ c ∈ S, f c := by
+  classical
+  have h1card : 1 ≤ S.card := Finset.one_le_card.mpr ⟨a, ha⟩
+  have key : ∀ x ∈ S, ∑ c ∈ S, D' x c
+      = ∑ c ∈ S, D x c + ((S.card : ℝ) - 2) * f x + ∑ c ∈ S, f c := by
+    intro x hx
+    have hdiag_x : D' x x = D x x := hdiag x hx
+    have hcongr : ∑ c ∈ S.erase x, D' x c
+        = ∑ c ∈ S.erase x, (D x c + f x + f c) := by
+      apply Finset.sum_congr rfl
+      intro c hc
+      exact hoff x hx c (Finset.mem_of_mem_erase hc)
+        (Ne.symm (Finset.ne_of_mem_erase hc))
+    have hconst : ∑ c ∈ S.erase x, f x = ((S.erase x).card : ℝ) * f x := by
+      rw [Finset.sum_const, nsmul_eq_mul]
+    have hsplit : ∑ c ∈ S.erase x, (D x c + f x + f c)
+        = ∑ c ∈ S.erase x, D x c
+          + (((S.erase x).card : ℝ) * f x + ∑ c ∈ S.erase x, f c) := by
+      simp only [Finset.sum_add_distrib]
+      rw [hconst]
+      ring
+    have eD' : ∑ c ∈ S, D' x c
+        = D' x x + ∑ c ∈ S.erase x, D' x c :=
+      (Finset.add_sum_erase S _ hx).symm
+    have eD : ∑ c ∈ S, D x c
+        = D x x + ∑ c ∈ S.erase x, D x c :=
+      (Finset.add_sum_erase S _ hx).symm
+    have ef : ∑ c ∈ S, f c = f x + ∑ c ∈ S.erase x, f c :=
+      (Finset.add_sum_erase S _ hx).symm
+    have hcard : S.card = (S.erase x).card + 1 := by
+      have h2 := Finset.card_erase_of_mem hx
+      omega
+    have hcardR : (S.card : ℝ) = ((S.erase x).card : ℝ) + 1 := by
+      exact_mod_cast hcard
+    rw [eD', hcongr, hsplit, hdiag_x, eD, ef, hcardR]
+    ring
+  have hab' : D' a b = D a b + f a + f b := hoff a ha b hb hab
+  have sum_a := key a ha
+  have sum_b := key b hb
+  unfold qCriterion
+  rw [hab', sum_a, sum_b]
+  ring
+
+omit [DecidableEq X] in
+/-- A weighted average of entries each within `r` is within `r`. -/
+private lemma abs_sum_sum_mul_lt {s t : Finset X} {α β : X → ℝ} {E : X → X → ℝ} {r : ℝ}
+    (hα : ∀ x, 0 ≤ α x) (hβ : ∀ y, 0 ≤ β y) (hαs : ∀ x, x ∉ s → α x = 0)
+    (hβt : ∀ y, y ∉ t → β y = 0) (hα1 : ∑ x, α x = 1) (hβ1 : ∑ y, β y = 1)
+    (hE : ∀ x ∈ s, ∀ y ∈ t, |E x y| < r) :
+    |∑ x, ∑ y, α x * β y * E x y| < r := by
+  have hw : ∀ x y, 0 ≤ α x * β y := fun x y => mul_nonneg (hα x) (hβ y)
+  have hsum : ∑ x, ∑ y, α x * β y = 1 := by
+    have h := Finset.sum_mul_sum Finset.univ Finset.univ α β
+    rw [hα1, hβ1, one_mul] at h
+    exact h.symm
+  have hpos : ∃ x0 y0, 0 < α x0 * β y0 := by
+    by_contra h
+    push Not at h
+    have h0 : ∀ x y, α x * β y = 0 := fun x y => le_antisymm (h x y) (hw x y)
+    have h1 : ∑ x, ∑ y, α x * β y = 0 :=
+      Finset.sum_eq_zero (fun x _ => Finset.sum_eq_zero (fun y _ => h0 x y))
+    rw [hsum] at h1
+    exact one_ne_zero h1
+  obtain ⟨x0, y0, hpos⟩ := hpos
+  have hα0 : α x0 ≠ 0 := by
+    intro hcon
+    rw [hcon, zero_mul] at hpos
+    exact lt_irrefl 0 hpos
+  have hβ0 : β y0 ≠ 0 := by
+    intro hcon
+    rw [hcon, mul_zero] at hpos
+    exact lt_irrefl 0 hpos
+  have hx0 : x0 ∈ s := by
+    by_contra hcon
+    exact hα0 (hαs x0 hcon)
+  have hy0 : y0 ∈ t := by
+    by_contra hcon
+    exact hβ0 (hβt y0 hcon)
+  have hle : ∀ x y, (α x * β y) * |E x y| ≤ (α x * β y) * r := by
+    intro x y
+    by_cases hx : x ∈ s
+    · by_cases hy : y ∈ t
+      · exact mul_le_mul_of_nonneg_left (le_of_lt (hE x hx y hy)) (hw x y)
+      · have hβy : β y = 0 := hβt y hy
+        simp [hβy]
+    · have hαx : α x = 0 := hαs x hx
+      simp [hαx]
+  have hlt : (α x0 * β y0) * |E x0 y0| < (α x0 * β y0) * r :=
+    mul_lt_mul_of_pos_left (hE x0 hx0 y0 hy0) hpos
+  have hstrict : ∑ x, ∑ y, (α x * β y) * |E x y|
+      < ∑ x, ∑ y, (α x * β y) * r := by
+    apply Finset.sum_lt_sum (fun x _ => Finset.sum_le_sum (fun y _ => hle x y))
+    exact ⟨x0, Finset.mem_univ x0,
+      Finset.sum_lt_sum (fun y _ => hle x0 y) ⟨y0, Finset.mem_univ y0, hlt⟩⟩
+  have hR : ∑ x, ∑ y, (α x * β y) * r = r := by
+    have hmul : ∑ x, ∑ y, (α x * β y) * r
+        = (∑ x, ∑ y, α x * β y) * r := by
+      simp only [Finset.sum_mul]
+    rw [hmul, hsum, one_mul]
+  have habs : |∑ x, ∑ y, α x * β y * E x y|
+      ≤ ∑ x, ∑ y, (α x * β y) * |E x y| := by
+    calc |∑ x, ∑ y, α x * β y * E x y|
+        ≤ ∑ x, |∑ y, α x * β y * E x y| :=
+          Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ x, ∑ y, |(α x * β y) * E x y| :=
+          Finset.sum_le_sum (fun x _ => Finset.abs_sum_le_sum_abs _ _)
+      _ = ∑ x, ∑ y, (α x * β y) * |E x y| := by
+          apply Finset.sum_congr rfl
+          intro x _
+          apply Finset.sum_congr rfl
+          intro y _
+          rw [abs_mul, abs_of_nonneg (hw x y)]
+  rw [hR] at hstrict
+  exact lt_of_le_of_lt habs hstrict
+
+/-- **Atteson's theorem: neighbor joining has `ℓ∞` radius `1/2`** (Atteson 1999). Let `d` be
+the path-length metric of a binary phylogenetic `X`-tree `(G, ι)` with positive edge lengths
+`w`, let `μ` be a lower bound on the lengths of its internal edges (edges with no taxon at
+either end), and let `D` be a symmetric dissimilarity with zero diagonal such that
+`|D x y - d x y| < μ / 2` for all distinct taxa. Then every complete run of neighbor joining on
+`D` (stopped with at most three clusters) forms exactly the splits of the internal edges of the
+tree: a set of taxa `A` or its complement is a formed cluster if and only if `A` is the set of
+taxa on the `a`-side of an edge `{a, b}` with both endpoints internal.
+
+Source: Atteson (1999); stated as Theorem 2 of Mihaescu, Levy and Pachter (2009). `NJRun` uses
+the Studier–Keppler update. The proof was written for this formalization: up to row shifts,
+which do not change the pairs neighbor joining selects, the cluster dissimilarity of a run is an
+average of `D` (`NJRun.exists_avg`), so its errors against the tree metric of the current
+clusters stay below `μ / 2`, and the cherry step
+`exists_eq_pair_of_qCriterion_min_of_abs_sub_lt` applies at every join. -/
+theorem njRun_splits_of_abs_sub_lt {V : Type*} [Fintype V] {G : SimpleGraph V}
+    [DecidableRel G.Adj] {ι : X → V} (hT : IsBinaryPhylogeneticTree G ι) {w : Sym2 V → ℝ}
+    (hw : ∀ e ∈ G.edgeSet, 0 < w e) {d : X → X → ℝ}
+    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
+    {μ : ℝ} (hμ : ∀ a b, G.Adj a b → a ∉ Set.range ι → b ∉ Set.range ι → μ ≤ w s(a, b))
+    {D : X → X → ℝ} (hDsymm : ∀ x y, D x y = D y x) (hD0 : ∀ x, D x x = 0)
+    (hDd : ∀ x y, x ≠ y → |D x y - d x y| < μ / 2)
+    {S : Finset (Finset X)} {Dc : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
+    (hrun : NJRun D S Dc C) (hS : S.card ≤ 3) (A : Finset X) :
+    (A ∈ C ∨ univ \ A ∈ C) ↔
+      ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
+        ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a := by
+  refine njRun_splits_of_join hT (fun {S Dc C a b} hr hside hdisj hcover h4 ha hb hab hmin => ?_)
+    hrun hS A
+  classical
+  obtain ⟨α, κ, hα0, hαs, hα1, hdiag, hrep⟩ := NJRun.exists_avg hDsymm hD0 hr
+  obtain ⟨E, _, A', w', ρ, hw', hne, hcompl, hcompat, hbin, hsingle, hint, hpair, hdec⟩ :=
+    exists_splitSystem_of_partition hT hw hd hside hdisj hcover
+  -- the row terms of the tree metric, averaged
+  let ρbar : Finset X → ℝ := fun s => if h : s ∈ S then ∑ x, α s x * ρ ⟨s, h⟩ x else 0
+  -- the cluster dissimilarity shifted to the average of `D` minus the averaged row terms
+  let F : Finset X → Finset X → ℝ := fun s t =>
+    if s = t then 0 else ∑ x, ∑ y, α s x * α t y * D x y - ρbar s - ρbar t
+  let dY : {s // s ∈ S} → {s // s ∈ S} → ℝ := fun s t =>
+    (1 / 2) * ∑ e, w' e * (if (s ∈ A' e ↔ t ∈ A' e) then 0 else 1)
+  have hcardY : 4 ≤ Fintype.card {s // s ∈ S} := by
+    rw [Fintype.card_coe]; exact h4
+  have hμY : ∀ e, 2 ≤ (A' e).card → 2 ≤ (univ \ A' e).card → μ ≤ w' e := fun e h1 h2 => by
+    obtain ⟨u, v, huv, hu, hv, he⟩ := hint e h1 h2
+    rw [he]
+    exact hμ u v huv hu hv
+  have hFsymm : ∀ s t : {s // s ∈ S}, F s t = F t s := by
+    intro s t
+    by_cases h : (s : Finset X) = t
+    · simp [F, h]
+    · simp only [F, ite_eq_right h, ite_eq_right (Ne.symm h)]
+      rw [Finset.sum_comm]
+      simp only [hDsymm, mul_comm (α s _)]
+      ring
+  have hF0 : ∀ s : {s // s ∈ S}, F s s = 0 := fun s => by simp [F]
+  have hFd : ∀ s t : {s // s ∈ S}, s ≠ t → |F s t - dY s t| < μ / 2 := by
+    intro s t hst
+    have hst' : (s : Finset X) ≠ t := fun h => hst (Subtype.ext h)
+    have hρs : ρbar s = ∑ x, α s x * ρ s x := dite_eq_left s.2
+    have hρt : ρbar t = ∑ y, α t y * ρ t y := dite_eq_left t.2
+    have hFst : F s t = ∑ x, ∑ y, α s x * α t y * D x y - ρbar s - ρbar t := ite_eq_right hst'
+    have hpt : ∀ x y, α s x * α t y * d x y =
+        α s x * α t y * (dY s t + ρ s x + ρ t y) := by
+      intro x y
+      by_cases hx : x ∈ (s : Finset X)
+      · by_cases hy : y ∈ (t : Finset X)
+        · rw [hdec s t hst x hx y hy]
+        · rw [hαs t t.2 y hy]
+          ring
+      · rw [hαs s s.2 x hx]
+        ring
+    have hrow : ∀ x, ∑ y, α s x * α t y * (dY s t + ρ s x + ρ t y) =
+        α s x * (dY s t + ρ s x) + α s x * ∑ y, α t y * ρ t y := by
+      intro x
+      have h1 : ∀ y, α s x * α t y * (dY s t + ρ s x + ρ t y) =
+          α s x * (dY s t + ρ s x) * α t y + α s x * (α t y * ρ t y) := fun y => by ring
+      simp only [h1, Finset.sum_add_distrib, ← Finset.mul_sum, hα1 t t.2, mul_one]
+    have hsum : ∑ x, ∑ y, α s x * α t y * d x y = dY s t + ρbar s + ρbar t := by
+      rw [Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => hpt x y,
+        Finset.sum_congr rfl fun x _ => hrow x, hρs, hρt]
+      have h2 : ∀ x, α s x * (dY s t + ρ s x) + α s x * ∑ y, α t y * ρ t y =
+          dY s t * α s x + α s x * ρ s x + (∑ y, α t y * ρ t y) * α s x := fun x => by ring
+      rw [Finset.sum_congr rfl fun x _ => h2 x, Finset.sum_add_distrib, Finset.sum_add_distrib,
+        ← Finset.mul_sum, ← Finset.mul_sum, hα1 s s.2]
+      ring
+    have hdiff : F s t - dY s t = ∑ x, ∑ y, α s x * α t y * (D x y - d x y) := by
+      simp only [mul_sub, Finset.sum_sub_distrib]
+      rw [hsum, hFst]
+      ring
+    rw [hdiff]
+    exact abs_sum_sum_mul_lt (hα0 s s.2) (hα0 t t.2) (hαs s s.2) (hαs t t.2) (hα1 s s.2)
+      (hα1 t t.2) fun x hx y hy => hDd x y fun h =>
+        Finset.disjoint_left.mp (hdisj s s.2 t t.2 hst') hx (h ▸ hy)
+  have hQ : ∀ u v : {s // s ∈ S}, u ≠ v →
+      ((Fintype.card {s // s ∈ S} : ℝ) - 2) * F u v - ∑ z : {s // s ∈ S}, F u z -
+        ∑ z : {s // s ∈ S}, F v z = qCriterion S Dc u v - 2 * ∑ c ∈ S, (κ c - ρbar c) := by
+    intro u v huv
+    have h := qCriterion_eq_sub_of_shift S (D := Dc) (D' := F) (fun c => κ c - ρbar c)
+      (fun s hs => by simp [F, hdiag s hs])
+      (fun s hs t ht hst => by
+        simp only [F, ite_eq_right hst, hrep s hs t ht hst]
+        ring) u.2 v.2 (fun h => huv (Subtype.ext h))
+    rw [← h]
+    unfold qCriterion
+    rw [Fintype.card_coe, Finset.sum_coe_sort S (fun c => F u c),
+      Finset.sum_coe_sort S (fun c => F v c)]
+  obtain ⟨e, he⟩ := exists_eq_pair_of_qCriterion_min_of_abs_sub_lt A' w' hw' hne hcompl hcompat
+    hbin hsingle hcardY hμY (d := dY) (D := fun s t => F s t) (fun _ _ => rfl) hFsymm hF0 hFd
+    (x := ⟨a, ha⟩) (y := ⟨b, hb⟩) (fun h => hab (congrArg Subtype.val h))
+    (fun x' y' hxy' => by
+      rw [hQ _ _ (fun h => hab (congrArg Subtype.val h)), hQ x' y' hxy']
+      linarith [hmin x' x'.2 y' y'.2 (fun h => hxy' (Subtype.ext h))])
+  exact hpair e _ _ he
 
 end Cslib.Bioinformatics.Phylogenetics.NeighborJoining

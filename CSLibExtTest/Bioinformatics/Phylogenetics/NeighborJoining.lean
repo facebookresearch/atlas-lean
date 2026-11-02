@@ -19,7 +19,8 @@ import Mathlib.Tactic.NormNum
 * A non-vacuity witness: the quartet tree `01|23` (leaves `0, 1` on vertex `4`, leaves `2, 3`
   on vertex `5`) is a binary phylogenetic tree, and every edge-length function has a path-length
   metric satisfying the path hypothesis of `njRun_splits`.
-* The theorems instantiated on the quartet: sides of pendant edges, and the cherry lemma.
+* The theorems instantiated on the quartet: sides of pendant edges, the cherry lemma, and the
+  split system induced on a partition into sides.
 * Small evaluations of `initialDist`, `joinDist`, `qCriterion` and `splitGain`, including the
   values the definitions take outside their intended use.
 * Boundary: with three taxa no join is allowed, so a run stops at once.
@@ -129,6 +130,31 @@ example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d 
       b ∉ Set.range quartetLeaf ∧ ∀ x, x ∈ ({0, 1} : Finset (Fin 4)) ↔
         (quartet.deleteEdges {s(a, b)}).Reachable (quartetLeaf x) a :=
   njRun_splits quartet_isBinaryPhylogeneticTree hw hd hrun hS _
+
+/-- The singletons of the quartet are sides of edges, so `exists_splitSystem_of_partition`
+applies: the edges cutting no singleton (all of them) induce a split system on the clusters
+containing every trivial split. -/
+example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d : Fin 4 → Fin 4 → ℝ}
+    (hd : ∀ x y (p : quartet.Walk (quartetLeaf x) (quartetLeaf y)), p.IsPath →
+      d x y = (p.edges.map w).sum) :
+    ∃ (E : Type) (_ : Fintype E)
+      (A : E → Finset {s // s ∈ univ.image fun x : Fin 4 => ({x} : Finset (Fin 4))}),
+      ∀ s, ∃ e, A e = {s} := by
+  have hT := quartet_isBinaryPhylogeneticTree
+  have hside : ∀ s ∈ univ.image fun x : Fin 4 => ({x} : Finset (Fin 4)),
+      ∃ u v, quartet.Adj u v ∧ side quartet quartetLeaf u v = s := by
+    intro s hs
+    obtain ⟨x, -, rfl⟩ := mem_image.mp hs
+    have h1 : quartet.degree (quartetLeaf x) = 1 := (hT.2.2.1 _).mpr ⟨x, rfl⟩
+    obtain ⟨b, hb, -⟩ := (quartet.degree_eq_one_iff_existsUnique_adj).mp h1
+    exact ⟨quartetLeaf x, b, hb, side_leaf hT hb⟩
+  obtain ⟨E, hE, A, -, -, -, -, -, -, -, hsingle, -⟩ := exists_splitSystem_of_partition hT hw hd
+    hside (fun s hs t ht hst => by
+      obtain ⟨x, -, rfl⟩ := mem_image.mp hs
+      obtain ⟨y, -, rfl⟩ := mem_image.mp ht
+      exact disjoint_singleton.mpr fun h => hst (h ▸ rfl))
+    (fun x => ⟨{x}, mem_image_of_mem _ (mem_univ x), mem_singleton_self x⟩)
+  exact ⟨E, hE, A, hsingle⟩
 
 /-! ## Small evaluations -/
 

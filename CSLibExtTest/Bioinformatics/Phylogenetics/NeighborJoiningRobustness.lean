@@ -12,6 +12,7 @@ public import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoiningRobustness
 import Mathlib.Tactic.FinCases
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Robustness of neighbor joining: tests
@@ -22,7 +23,10 @@ import Mathlib.Tactic.NormNum
   hypotheses hold for a dissimilarity `D ≠ d` within `2/5` of the tree metric, a minimizer of
   the Q-criterion exists, and it is a side.
 * Boundary: the strict bound is needed. With errors of exactly `μ / 2`, the non-cherry pair
-  `0, 2` minimizes the Q-criterion.
+  `0, 2` minimizes the Q-criterion, and a complete run forms the cluster `{0, 2}`.
+* Atteson's theorem (`njRun_splits_of_abs_sub_lt`) instantiated on the quartet.
+* The neighbor-joining update can raise the error of a cluster to `3/2` of the input bound, the
+  shifting lemma on the initial singletons, and the averaging representation of a run.
 -/
 
 namespace Cslib.Bioinformatics.Phylogenetics.NeighborJoining
@@ -89,22 +93,10 @@ theorem quartet_isBinaryPhylogeneticTree : IsBinaryPhylogeneticTree quartet quar
     · decide
     · decide
 
-/-- The robust cherry lemma on the quartet: for every dissimilarity within half the internal
-edge length of a path-length metric, a pair minimizing the Q-criterion has a common
-neighbor. -/
-example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d : Fin 4 → Fin 4 → ℝ}
-    (hd : ∀ x y (p : quartet.Walk (quartetLeaf x) (quartetLeaf y)), p.IsPath →
-      d x y = (p.edges.map w).sum) {D : Fin 4 → Fin 4 → ℝ} (hDsymm : ∀ x y, D x y = D y x)
-    (hD0 : ∀ x, D x x = 0) (hDd : ∀ x y, x ≠ y → |D x y - d x y| < w s(4, 5) / 2)
-    {x y : Fin 4} (hxy : x ≠ y)
-    (hmin : ∀ a' ∈ univ.image (fun x => ({x} : Finset (Fin 4))),
-      ∀ b' ∈ univ.image (fun x => ({x} : Finset (Fin 4))), a' ≠ b' →
-        qCriterion (univ.image fun x => ({x} : Finset (Fin 4))) (initialDist D) {x} {y} ≤
-          qCriterion (univ.image fun x => ({x} : Finset (Fin 4))) (initialDist D) a' b') :
-    ∃ u, quartet.Adj (quartetLeaf x) u ∧ quartet.Adj (quartetLeaf y) u := by
-  refine exists_adj_adj_of_qCriterion_min_of_abs_sub_lt quartet_isBinaryPhylogeneticTree hw hd
-    (fun a b hab ha hb => ?_) hDsymm hD0 hDd (by simp) hxy hmin
-  -- the only internal edge of the quartet is `{4, 5}`
+/-- The only internal edge of the quartet is `{4, 5}`. -/
+lemma quartet_internal (w : Sym2 (Fin 6) → ℝ) : ∀ a b, quartet.Adj a b →
+    a ∉ Set.range quartetLeaf → b ∉ Set.range quartetLeaf → w s(4, 5) ≤ w s(a, b) := by
+  intro a b hab ha hb
   have ha' : a = 4 ∨ a = 5 := by
     fin_cases a
     · exact absurd ⟨0, rfl⟩ ha
@@ -126,6 +118,36 @@ example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d 
   · exact le_rfl
   · rw [Sym2.eq_swap]
   · exact absurd hab (by decide)
+
+/-- The robust cherry lemma on the quartet: for every dissimilarity within half the internal
+edge length of a path-length metric, a pair minimizing the Q-criterion has a common
+neighbor. -/
+example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d : Fin 4 → Fin 4 → ℝ}
+    (hd : ∀ x y (p : quartet.Walk (quartetLeaf x) (quartetLeaf y)), p.IsPath →
+      d x y = (p.edges.map w).sum) {D : Fin 4 → Fin 4 → ℝ} (hDsymm : ∀ x y, D x y = D y x)
+    (hD0 : ∀ x, D x x = 0) (hDd : ∀ x y, x ≠ y → |D x y - d x y| < w s(4, 5) / 2)
+    {x y : Fin 4} (hxy : x ≠ y)
+    (hmin : ∀ a' ∈ univ.image (fun x => ({x} : Finset (Fin 4))),
+      ∀ b' ∈ univ.image (fun x => ({x} : Finset (Fin 4))), a' ≠ b' →
+        qCriterion (univ.image fun x => ({x} : Finset (Fin 4))) (initialDist D) {x} {y} ≤
+          qCriterion (univ.image fun x => ({x} : Finset (Fin 4))) (initialDist D) a' b') :
+    ∃ u, quartet.Adj (quartetLeaf x) u ∧ quartet.Adj (quartetLeaf y) u :=
+  exists_adj_adj_of_qCriterion_min_of_abs_sub_lt quartet_isBinaryPhylogeneticTree hw hd
+    (quartet_internal w) hDsymm hD0 hDd (by simp) hxy hmin
+
+/-- **Atteson's theorem on the quartet**: on every dissimilarity within half the internal edge
+length of a path-length metric, a complete run of neighbor joining forms `{0, 1}` or its
+complement exactly when `{0, 1}` is the side of an internal edge. -/
+example {w : Sym2 (Fin 6) → ℝ} (hw : ∀ e ∈ quartet.edgeSet, 0 < w e) {d : Fin 4 → Fin 4 → ℝ}
+    (hd : ∀ x y (p : quartet.Walk (quartetLeaf x) (quartetLeaf y)), p.IsPath →
+      d x y = (p.edges.map w).sum) {D : Fin 4 → Fin 4 → ℝ} (hDsymm : ∀ x y, D x y = D y x)
+    (hD0 : ∀ x, D x x = 0) (hDd : ∀ x y, x ≠ y → |D x y - d x y| < w s(4, 5) / 2)
+    {S Dc C} (hrun : NJRun D S Dc C) (hS : S.card ≤ 3) :
+    ({0, 1} ∈ C ∨ univ \ {0, 1} ∈ C) ↔ ∃ a b, quartet.Adj a b ∧ a ∉ Set.range quartetLeaf ∧
+      b ∉ Set.range quartetLeaf ∧ ∀ x, x ∈ ({0, 1} : Finset (Fin 4)) ↔
+        (quartet.deleteEdges {s(a, b)}).Reachable (quartetLeaf x) a :=
+  njRun_splits_of_abs_sub_lt quartet_isBinaryPhylogeneticTree hw hd (quartet_internal w) hDsymm
+    hD0 hDd hrun hS _
 
 /-! ## A concrete split system -/
 
@@ -217,5 +239,58 @@ example : (∀ x y : Fin 4, x ≠ y → |quartetTie x y - quartetDist x y| ≤ 1
   · fin_cases x <;> fin_cases y <;> norm_num [quartetTie, quartetDist, abs_of_nonneg]
   · fin_cases x' <;> fin_cases y' <;>
       first | exact absurd rfl h | norm_num [quartetTie, Fin.sum_univ_four]
+
+
+/-- The Q-criterion of `quartetTie` on singletons is minimized by the non-cherry pair `0, 2`. -/
+lemma quartetTie_min (x' y' : Fin 4) (h : x' ≠ y') :
+    ((Fintype.card (Fin 4) : ℝ) - 2) * quartetTie 0 2 - ∑ z, quartetTie 0 z -
+        ∑ z, quartetTie 2 z ≤
+      ((Fintype.card (Fin 4) : ℝ) - 2) * quartetTie x' y' - ∑ z, quartetTie x' z -
+        ∑ z, quartetTie y' z := by
+  fin_cases x' <;> fin_cases y' <;>
+    first | exact absurd rfl h | norm_num [quartetTie, Fin.sum_univ_four]
+
+/-- **Boundary for the whole run.** With errors of exactly `μ / 2` a complete run of neighbor
+joining can form the cluster `{0, 2}`, which is not a split of the quartet: the strict bound in
+`njRun_splits_of_abs_sub_lt` cannot be relaxed. -/
+example : ∃ S Dc C, NJRun quartetTie S Dc C ∧ S.card ≤ 3 ∧ {0, 2} ∈ C ∧
+    ¬ ∃ e, quartetSplit e = {0, 2} := by
+  refine ⟨_, _, _, NJRun.join (a := {0}) (b := {2}) NJRun.init (by decide) (by simp) (by simp)
+    (by decide) ?_, by decide, by simp, by decide⟩
+  intro a' ha' b' hb' hab'
+  obtain ⟨x', -, rfl⟩ := mem_image.mp ha'
+  obtain ⟨y', -, rfl⟩ := mem_image.mp hb'
+  rw [qCriterion_singleton, qCriterion_singleton]
+  exact quartetTie_min x' y' (fun h => hab' (by rw [h]))
+
+/-! ## Why the run needs more than the `ℓ∞` bound -/
+
+/-- Errors `+ε` on the pairs `02`, `12` and `-ε` on `01` give the joined cluster `{0, 1}` an
+error of `3ε / 2` against the updated distances: the bound `μ / 2` is not an invariant of a run,
+which is why the proof of Atteson's theorem compares averages of the input instead. -/
+example (d E : Finset (Fin 3) → Finset (Fin 3) → ℝ) (ε : ℝ) (hac : E {0} {2} = ε)
+    (hbc : E {1} {2} = ε) (hab : E {0} {1} = -ε) :
+    joinDist (fun s t => d s t + E s t) {0} {1} ({0} ∪ {1}) {2} -
+      joinDist d {0} {1} ({0} ∪ {1}) {2} = 3 * ε / 2 := by
+  simp only [joinDist, show ({2} : Finset (Fin 3)) ≠ {0} ∪ {1} by decide, ite_true, ite_false,
+    hac, hbc, hab]
+  ring
+
+/-- Along every run on a symmetric dissimilarity with zero diagonal, the cluster dissimilarity
+vanishes on the diagonal and is an average of the input up to row terms. -/
+example {D : Fin 5 → Fin 5 → ℝ} (hs : ∀ x y, D x y = D y x) (h0 : ∀ x, D x x = 0)
+    {S Dc C} (h : NJRun D S Dc C) : ∀ s ∈ S, Dc s s = 0 := by
+  obtain ⟨_, _, -, -, -, h0', -⟩ := NJRun.exists_avg hs h0 h
+  exact h0'
+
+/-- The shifting lemma on the four initial singletons: shifting the off-diagonal entries by
+`f s + f t` lowers the Q-criterion of every pair by `2 ∑ f`. -/
+example (D : Finset (Fin 4) → Finset (Fin 4) → ℝ) (f : Finset (Fin 4) → ℝ) :
+    qCriterion (univ.image fun x => ({x} : Finset (Fin 4)))
+        (fun s t => if s = t then D s t else D s t + f s + f t) {0} {1} =
+      qCriterion (univ.image fun x => ({x} : Finset (Fin 4))) D {0} {1} -
+        2 * ∑ c ∈ univ.image (fun x => ({x} : Finset (Fin 4))), f c :=
+  qCriterion_eq_sub_of_shift _ f (fun _ _ => by simp) (fun _ _ _ _ h => by simp [h])
+    (by simp) (by simp) (by decide)
 
 end Cslib.Bioinformatics.Phylogenetics.NeighborJoining

@@ -77,4 +77,17 @@ def naiveCount (t P : List Char) : ℕ :=
     (decide ((backwardSearch (bwt banana) P).1 ≤ r ∧ r < (backwardSearch (bwt banana) P).2)) ==
       decide (P.map (↑) <+: (withSentinel banana).rotate ((sortedRotations banana).getD r 0))
 
+-- The basic facts about the transform, used by the suffix-array view.
+example (t : List Char) : (bwt t).length = t.length + 1 := length_bwt t
+
+#guard (bwt banana).length = 7
+
+example (t : List Char) : (sortedRotations t).Pairwise
+    (fun i j => (withSentinel t).rotate i ≤ (withSentinel t).rotate j) :=
+  pairwise_sortedRotations t
+
+-- The sentinel stops a match: `ab` is not a prefix of `a⊥b` although it is of `ab`.
+example : ¬ (['a', 'b'].map ((↑) : Char → WithBot Char) <+: ['a'].map (↑) ++ ⊥ :: ['b'].map (↑)) :=
+  by rw [map_coe_prefix_append_bot_cons_iff]; decide
+
 end Cslib.Bioinformatics.Indexing.BWT
