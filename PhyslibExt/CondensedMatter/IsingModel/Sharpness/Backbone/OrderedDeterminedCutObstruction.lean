@@ -66,7 +66,7 @@ lemma shb_supportLex_not_local_to_acceptedPath :
   decide
 
 /-- On `K₄`, selection of the direct edge `{0, 3}` is not a function of its presence. -/
-theorem shb_no_directEdge_local_characterization :
+lemma shb_no_directEdge_local_characterization :
     ¬∃ q : Bool -> Bool,
       ∀ A : Finset shbK4Edge,
         A ⊆ shbK4G -> shbK4Boundary A = {(0 : Fin 4), 3} ->

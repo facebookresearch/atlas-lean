@@ -855,7 +855,7 @@ lemma profile_cycle₀_odd_symmDiff_iff_not
 
 /-- No set of labeled copies of `superposition` toggles the residual-vacuum run to the lifted
 residual run `[12]`. -/
-theorem no_residualVacuum_suffix_covariance
+lemma no_residualVacuum_suffix_covariance
     (path : Finset (Copy domain.graph superposition)) :
     ¬ BondwiseRunToggleCovariance
       (residualVacuumRunSpec domain
@@ -985,7 +985,7 @@ lemma coordinatePairContributes
 
 /-- The canonical componentwise toggle of the two-edge selector does not exist on the
 path-plus-triangle domain, for `β > 0` and `J > 0`. -/
-theorem not_canonicalComponentwiseToggleExists
+lemma not_canonicalComponentwiseToggleExists
     (beta : Real) (J : Sym2 (Fin 6) → Real)
     (hbeta : 0 < beta) (hJ : ∀ g, 0 < J g) :
     ¬ (BackboneTwoEdgeBondProgram.selectorSpec

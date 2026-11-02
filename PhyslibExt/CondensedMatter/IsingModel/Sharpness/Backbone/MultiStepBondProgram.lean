@@ -619,7 +619,7 @@ lemma selectorRealization_designated_pair_fiber
 
 /-- The two-step program does not realize the one-step partial selector when a domain has a
 designated pair with active canonical segments. -/
-theorem intendedOneStepRealization_isEmpty_of_designated_pair
+lemma intendedOneStepRealization_isEmpty_of_designated_pair
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hpair : IsDesignatedPair d e f)
     (heactive : canonicalEdgeSegment d.graph e ∈ d.active)

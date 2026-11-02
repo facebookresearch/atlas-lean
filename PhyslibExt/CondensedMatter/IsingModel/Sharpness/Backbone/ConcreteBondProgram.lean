@@ -763,7 +763,7 @@ abbrev IntendedOneStepRealization :=
 
 /-- The concrete program does not realize the one-step partial selector if some current with sources
 has a chosen segment that is not a canonical edge segment. -/
-theorem intendedOneStepRealization_isEmpty_of_noncanonical_chosen
+lemma intendedOneStepRealization_isEmpty_of_noncanonical_chosen
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s : shb_ExplorationSegment V)
     (hsrc : sources d.graph (ofEdgeFun d.graph m) ≠ ∅)
@@ -826,7 +826,7 @@ lemma program_realizes_selectorSpec :
 
 /-- The concrete program does not realize a selector with a nonempty fiber on a word of length at
 least two. -/
-theorem program_not_realizes_of_two_segment_fiber
+lemma program_not_realizes_of_two_segment_fiber
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (s t : shb_ExplorationSegment V)

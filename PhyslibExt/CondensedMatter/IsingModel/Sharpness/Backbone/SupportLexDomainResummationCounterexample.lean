@@ -67,7 +67,7 @@ lemma shb_supportLex_literal_domainResummation_counterexample :
   exact (not_le_of_gt shb_supportLex_literal_P3_counterexample) hle
 
 /-- Domain monotonicity of the support-ordered backbone weight fails for some graphs on `Fin 4`. -/
-theorem shb_no_universal_supportLex_P3 :
+lemma shb_no_universal_supportLex_P3 :
     ¬(∀ (H G : SimpleGraph (Fin 4))
         [DecidableRel H.Adj] [DecidableRel G.Adj]
         (hHG : H ≤ G) (beta : Real) (J : Sym2 (Fin 4) -> Real)

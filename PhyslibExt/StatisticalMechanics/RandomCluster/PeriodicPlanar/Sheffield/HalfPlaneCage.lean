@@ -49,26 +49,16 @@ Headline fidelity:
   invariance, almost sure uniqueness and finite energy.
 - `infiniteOpenBoundaryConnection_measureReal_ge_mul` is conditional on FKG and almost sure
   uniqueness.
-- `complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion`,
-  `…_of_deepJoinedBand_exclusion` and `…_of_joinedBand_exclusion` are conditional on FKG,
-  translation invariance, primal and dual uniqueness, dual ergodicity and the geometric
-  hypothesis `hgeom` discussed below; they are vacuous wherever `hgeom` fails.
-
-The hypothesis `hgeom` of the three `complementaryDual_rightHalfPlane_measure_eq_zero_of_*`
-results asserts, for every admissible choice of source sets and strip width, that the primal
-joined arm event at `rPrimal` is disjoint from the event that the complementary dual
-half-plane `H_rDual` has an infinite dual cluster touching the boundary band `|y| ≤ n`. This is a
-deterministic statement about the dual pair and it appears to be false in general:
-- if `rDual < rPrimal - C` (with `C` depending on the edge-length bound of the embedding), the
-  configuration in which exactly the primal edges with both endpoints in `H_rPrimal` are open
-  lies in both events (all arms exist and merge inside a wide enough strip, while the dual edges
-  dual to the closed primal edges between `x = rDual` and `x = rPrimal` form an infinite dual
-  cluster of `H_rDual` touching the band);
-- if `rDual > rPrimal + C`, a configuration whose open primal edges are two thin arms hugging the
-  line `x = rPrimal` up to height above `n` and then running out to the sources also lies in both
-  events, since the dual band vertices are not enclosed by the arms.
-No concrete `PeriodicPlanarDualPair` exists in the library, so this is not refuted in Lean;
-the three results are documented as resting on an unverified, probably false, hypothesis.
+- The three `complementaryDual_rightHalfPlane_measure_eq_zero_of_*Band_exclusion` results
+  were removed: they rested on a geometric hypothesis `hgeom` asserting, for every admissible
+  choice of source sets and strip width, that the primal joined arm event at `rPrimal` is
+  disjoint from the event that the complementary dual half-plane `H_rDual` has an infinite
+  dual cluster touching the boundary band `|y| ≤ n`. That hypothesis appears false in
+  general: if `rDual < rPrimal - C`, the configuration in which exactly the primal edges with
+  both endpoints in `H_rPrimal` are open lies in both events; if `rDual > rPrimal + C`, a
+  configuration whose open primal edges are two thin arms hugging `x = rPrimal` and then
+  running out to the sources also lies in both events. No satisfiable, correctly scoped
+  geometric lemma replaces them yet.
 
 ## ii. Key results
 
@@ -79,8 +69,6 @@ the three results are documented as resting on an unverified, probably false, hy
 - `PeriodicPlanarDualPair.no_open_dual_escape_of_doublyAttached_subpaths`
 - `PeriodicPlanarDualPair.`
   `not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings`
-- `PeriodicPlanarDualPair.complementaryDual_rightHalfPlane_measure_eq_zero_of_joinedBand_exclusion`
-  (conditional on `hgeom`)
 
 ## iii. Table of contents
 
@@ -93,7 +81,7 @@ the three results are documented as resting on an unverified, probably false, hy
 - G. Joined arms with opened exit edges
 - H. Infinite clusters touching the half-plane boundary
 - I. No dual escape through a primal crosscut
-- J. Conditional exclusion of the complementary dual cluster
+- J. (Removed) Conditional exclusion of the complementary dual cluster
 - K. Open boundary connections and crossing events
 - L. Three crossings cage the dual half-plane cluster
 
@@ -2372,205 +2360,10 @@ lemma no_open_dual_escape_of_doublyAttached_subpaths
   exact Set.disjoint_left.1 hdisjoint
     ⟨v, rfl⟩ ⟨u, hphysical⟩
 
-/-! ## J. Conditional exclusion of the complementary dual cluster -/
+/-! ## J. (Removed) Conditional exclusion of the complementary dual cluster -/
 
-/-- Conditional: the dual half-plane `H_rDual` almost surely has no infinite dual cluster,
-assuming FKG, translation invariance, primal and dual uniqueness, dual ergodicity and the
-geometric exclusion hypothesis `hgeom` for ordered joined arms. `hgeom` appears false in
-general (see the module documentation), so this result may be vacuous. -/
-lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion
-    (D : PeriodicPlanarDualPair P Pdual)
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
-    (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
-    (hdualUnique : D.dualMeasure mu
-      {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
-    (rPrimal rDual R : Real) (hrR : rPrimal ≤ R) (buffer : Nat)
-    (hgeom : ∀ (n m : Nat) (L U : Finset V) (k : Nat),
-      n + buffer < m →
-      (L : Set V) ⊆ D.primalEmbedding.rightHalfPlaneVertices R →
-      U = L.image (P.shift (verticalShift (1 + 2 * (m : Int)))) →
-      (∀ x ∈ L, ∀ y ∈ U,
-        D.primalEmbedding.vertexCoord x 1 +
-            2 * (n + buffer : Nat) + 2 <
-          D.primalEmbedding.vertexCoord y 1) →
-      Disjoint
-        (D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-          (-(m : Real)) m k L U)
-        ((dualConfigEquiv D.edgeDual) ⁻¹'
-          D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
-            rDual (-(n : Real)) n)) :
-    D.dualMeasure mu
-      (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
-  let muDual := D.dualMeasure mu
-  let : IsProbabilityMeasure muDual := by
-    dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
-    exact (Measure.isProbabilityMeasure_map_iff
-      (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
-  rcases D.dualEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one
-      muDual hdualErgodic rDual with hzero | hone
-  · exact hzero
-  · have hboundaryOne :=
-      D.dualEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one
-        muDual hdualErgodic.1 hdualUnique rDual hone
-    obtain ⟨n, hbandPos⟩ :=
-      D.dualEmbedding.exists_positive_boundaryBandHasInfiniteCluster
-        muDual rDual hboundaryOne
-    let band := D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
-      rDual (-(n : Real)) n
-    let pulled := (dualConfigEquiv D.edgeDual) ⁻¹' band
-    have hbandMeas : MeasurableSet band :=
-      D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_measurableSet
-        rDual (-(n : Real)) n
-    have hpulledMeas : MeasurableSet pulled :=
-      (continuous_dualConfigEquiv D.edgeDual).measurable hbandMeas
-    have hpulledPos : 0 < mu.real pulled := by
-      rw [← D.dualMeasure_measureReal mu hbandMeas]
-      exact hbandPos
-    let epsilon : Real := mu.real pulled / 2
-    have hepsilon : 0 < epsilon := half_pos hpulledPos
-    obtain ⟨m, L, U, k, hm, hL, hU, horder, hjoined⟩ :=
-      D.primalEmbedding.exists_highProbability_ordered_finiteJoinedBoundaryArmEvent
-        mu hFKG hTI hunique hrR n buffer hepsilon
-    let joined := D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-      (-(m : Real)) m k L U
-    have hjdisjoint : Disjoint joined pulled := by
-      dsimp only [joined, pulled, band]
-      exact hgeom n m L U k hm hL hU horder
-    have hjMeas : MeasurableSet joined :=
-      D.primalEmbedding.finiteJoinedBoundaryArmEvent_measurableSet
-        rPrimal (-(m : Real)) m k L U
-    have hinter : joined ∩ pulled = ∅ :=
-      Set.disjoint_iff_inter_eq_empty.mp hjdisjoint
-    have hadd := measureReal_union_add_inter (μ := mu) hpulledMeas (s := joined)
-    rw [hinter] at hadd
-    simp only [measureReal_empty, add_zero] at hadd
-    have hunion : mu.real (joined ∪ pulled) ≤ 1 := measureReal_le_one
-    have hsum : mu.real joined + mu.real pulled ≤ 1 := by linarith
-    dsimp only [epsilon] at hjoined
-    have hjShape : mu.real joined = mu.real
-        (D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-          (-(m : Real)) m k L U) := rfl
-    rw [← hjShape] at hjoined
-    linarith
-
-/-- Conditional variant of
-`complementaryDual_rightHalfPlane_measure_eq_zero_of_orderedJoinedBand_exclusion` with a
-fixed margin between the band and the rays; rests on the same kind of hypothesis `hgeom`. -/
-lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclusion
-    (D : PeriodicPlanarDualPair P Pdual)
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
-    (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
-    (hdualUnique : D.dualMeasure mu
-      {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
-    (rPrimal rDual R : Real) (hrR : rPrimal ≤ R)
-    (margin : Nat) (hmargin : 0 < margin)
-    (hgeom : ∀ (n : Nat) (L U : Finset V) (k : Nat),
-      (L : Set V) ⊆ D.primalEmbedding.rightHalfPlaneVertices R →
-      U = L.image (P.shift
-        (verticalShift (1 + 2 * (n + margin : Nat)))) →
-      Disjoint
-        (D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-          (-(n + margin : Nat) : Real) (n + margin : Nat) k L U)
-        ((dualConfigEquiv D.edgeDual) ⁻¹'
-          D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
-            rDual (-(n : Real)) n)) :
-    D.dualMeasure mu
-      (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
-  let muDual := D.dualMeasure mu
-  let : IsProbabilityMeasure muDual := by
-    dsimp only [muDual, PeriodicPlanarDualPair.dualMeasure]
-    exact (Measure.isProbabilityMeasure_map_iff
-      (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
-  rcases D.dualEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one
-      muDual hdualErgodic rDual with hzero | hone
-  · exact hzero
-  · have hboundaryOne :=
-      D.dualEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one
-        muDual hdualErgodic.1 hdualUnique rDual hone
-    obtain ⟨n, hbandPos⟩ :=
-      D.dualEmbedding.exists_positive_boundaryBandHasInfiniteCluster
-        muDual rDual hboundaryOne
-    let band := D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
-      rDual (-(n : Real)) n
-    let pulled := (dualConfigEquiv D.edgeDual) ⁻¹' band
-    have hbandMeas : MeasurableSet band :=
-      D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster_measurableSet
-        rDual (-(n : Real)) n
-    have hpulledMeas : MeasurableSet pulled :=
-      (continuous_dualConfigEquiv D.edgeDual).measurable hbandMeas
-    have hpulledPos : 0 < mu.real pulled := by
-      rw [← D.dualMeasure_measureReal mu hbandMeas]
-      exact hbandPos
-    let epsilon : Real := mu.real pulled / 2
-    have hepsilon : 0 < epsilon := half_pos hpulledPos
-    let gap : Int := 2 * (n + margin : Nat)
-    have hgap : 0 < gap := by
-      dsimp only [gap]
-      positivity
-    obtain ⟨L, U, k, hL, hU, hjoined⟩ :=
-      D.primalEmbedding.exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin
-        mu hFKG hTI hunique hrR
-          (-(n + margin : Nat) : Real) gap hepsilon
-    let joined := D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-      (-(n + margin : Nat) : Real)
-      ((-(n + margin : Nat) : Real) + gap) k L U
-    have hgapEnd : ((-(n + margin : Nat) : Real) + gap) =
-        (n + margin : Nat) := by
-      dsimp only [gap]
-      norm_num
-      ring
-    have hjdisjoint : Disjoint joined pulled := by
-      dsimp only [joined, pulled, band]
-      rw [hgapEnd]
-      exact hgeom n L U k hL hU
-    have hjMeas : MeasurableSet joined :=
-      D.primalEmbedding.finiteJoinedBoundaryArmEvent_measurableSet
-        rPrimal (-(n + margin : Nat) : Real)
-          ((-(n + margin : Nat) : Real) + gap) k L U
-    have hinter : joined ∩ pulled = ∅ :=
-      Set.disjoint_iff_inter_eq_empty.mp hjdisjoint
-    have hadd := measureReal_union_add_inter (μ := mu) hpulledMeas (s := joined)
-    rw [hinter] at hadd
-    simp only [measureReal_empty, add_zero] at hadd
-    have hunion : mu.real (joined ∪ pulled) ≤ 1 := measureReal_le_one
-    have hsum : mu.real joined + mu.real pulled ≤ 1 := by linarith
-    dsimp only [epsilon] at hjoined
-    have hjShape : mu.real joined = mu.real
-        (D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-          (-(n + margin : Nat) : Real)
-          ((-(n + margin : Nat) : Real) + gap) k L U) := rfl
-    rw [← hjShape] at hjoined
-    linarith
-
-/-- Conditional variant with rays at heights `±(n + 1)` and `hgeom` required for all source sets;
-rests on the same kind of hypothesis `hgeom`. -/
-theorem complementaryDual_rightHalfPlane_measure_eq_zero_of_joinedBand_exclusion
-    (D : PeriodicPlanarDualPair P Pdual)
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
-    (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
-    (hdualUnique : D.dualMeasure mu
-      {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
-    (rPrimal rDual : Real)
-    (hgeom : ∀ (n : Nat) (L U : Finset V) (k : Nat),
-      Disjoint
-        (D.primalEmbedding.finiteJoinedBoundaryArmEvent rPrimal
-          (-(n + 1 : Nat) : Real) (n + 1 : Nat) k L U)
-        ((dualConfigEquiv D.edgeDual) ⁻¹'
-          D.dualEmbedding.rightHalfPlaneBoundaryBandHasInfiniteCluster
-            rDual (-(n : Real)) n)) :
-    D.dualMeasure mu
-      (D.dualEmbedding.rightHalfPlaneHasInfiniteCluster rDual) = 0 := by
-  apply D.complementaryDual_rightHalfPlane_measure_eq_zero_of_deepJoinedBand_exclusion
-    mu hFKG hTI hunique hdualErgodic hdualUnique
-      rPrimal rDual rPrimal le_rfl 1 (by norm_num)
-  intro n L U k _hL _hU
-  simpa using hgeom n L U k
+/-- The three `…_of_*Band_exclusion` results were removed: they rested on `hgeom`, which
+appears false in general (see the module documentation). -/
 
 end PeriodicPlanarDualPair
 

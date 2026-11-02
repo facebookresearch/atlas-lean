@@ -538,7 +538,7 @@ lemma not_program_complete_oddTrianglePair :
 
 /-- The current `01 + 12 + triangle` on the path-plus-triangle domain is not in the two-segment
 fiber of the exhaustive selector. -/
-theorem not_selectorSpec_fiber_oddTrianglePair :
+lemma not_selectorSpec_fiber_oddTrianglePair :
     ¬(selectorSpec (V := Fin 6)).toPartialSelector.Fiber domain
       [canonicalEdgeSegment domain.graph headEdge,
         canonicalEdgeSegment domain.graph suffixEdge]

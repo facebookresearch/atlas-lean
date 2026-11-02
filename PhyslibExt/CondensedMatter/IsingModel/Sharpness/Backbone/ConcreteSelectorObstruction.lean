@@ -190,7 +190,7 @@ lemma bondwiseCoordinateCertificate_isEmpty_of_contributes
 
 /-- There is no bondwise coordinate certificate when the actual mass on `s :: ss` is nonzero and the
 toggle source is nonempty. -/
-theorem bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero
+lemma bondwiseCoordinateCertificate_isEmpty_of_actualMass_ne_zero
     (X : shb_DynamicEdgeExploration D (Sym2 V)) (x : D)
     (accepted : Sym2 V)
     (suffix1 suffix2 : List (Sym2 V))
