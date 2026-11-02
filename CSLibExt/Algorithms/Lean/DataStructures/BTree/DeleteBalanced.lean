@@ -63,13 +63,16 @@ namespace BTree
 
 variable {α : Type u}
 
-/-- The number of keys stored at the root of a tree. -/
+/-- **Number of keys at the root of a B-tree.** For a raw B-tree $T$, this is the length of the
+key list stored at the root of $T$: the number of keys of $T$ if $T$ is a leaf, and the number of
+separator keys of $T$ if $T$ is an internal node. Keys in the children are not counted. -/
 public def keyCount : BTree α → Nat
   | .leaf keys => keys.length
   | .node keys _ => keys.length
 
-/-- Split a nonempty list into all but its last element and its last
-element. -/
+/-- **Splitting off the last element of a list.** For a nonempty list $l$, the result is the pair
+consisting of $l$ with its last element removed and the last element of $l$; for the empty list
+there is no result. -/
 def splitLast : List α → Option (List α × α)
   | [] => none
   | a :: l => some ((a :: l).dropLast, (a :: l).getLast (by simp))
@@ -95,11 +98,17 @@ private theorem splitLast_of_ne_nil {l : List α} (h : l ≠ []) :
   | nil => exact absurd rfl h
   | cons a l => exact ⟨_, _, rfl⟩
 
-/-- The greatest key of a tree, found by descending the rightmost spine:
-at each internal node, recurse into the last child only. Each step splits
-a child list of length at most `2 * t`, so on a valid tree this costs
-`O(t * height)`; it never materializes the flattening. The characterization
-as the last key of the flattening is `exists_maxKey_flatten` below. -/
+/-- **Rightmost key of a B-tree.** For a tree $T$, the rightmost key of $T$ is an optional key
+defined by descending the rightmost spine: for a leaf it is the last of its keys (none if the
+leaf has no keys); for an internal node with at least one child it is the rightmost key of its
+last child; for an internal node with no children it is the last of its separator keys (none
+if there are none).
+
+If $T$ satisfies the structural B-tree invariant for a minimum degree $t \ge 2$ and has at least
+one key at its root, the rightmost key exists and is the last key of the inorder flattening of
+$T$, so on an ordered tree it is the greatest key. Each step splits a child list of length at
+most $2t$, so on a valid tree of height $h$ the descent costs $O(t h)$, without computing the
+flattening. -/
 def maxKey : BTree α → Option α
   | .leaf keys => keys.getLast?
   | .node keys children =>
@@ -126,9 +135,15 @@ private theorem maxKey_node_some {keys : List α} {children : List (BTree α)}
   conv_lhs => rw [maxKey]
   rw [h]
 
-/-- The least key of a tree, found by descending the leftmost spine. The
-characterization as the first key of the flattening is
-`exists_minKey_flatten` below. -/
+/-- **Leftmost key of a B-tree.** For a tree $T$, the leftmost key of $T$ is an optional key
+defined by descending the leftmost spine: for a leaf it is the first of its keys (none if the
+leaf has no keys); for an internal node with at least one child it is the leftmost key of its
+first child; for an internal node with no children it is the first of its separator keys (none
+if there are none).
+
+If $T$ satisfies the structural B-tree invariant for a minimum degree $t \ge 2$ and has at least
+one key at its root, the leftmost key exists and is the first key of the inorder flattening of
+$T$, so on an ordered tree it is the least key. -/
 def minKey : BTree α → Option α
   | .leaf keys => keys.head?
   | .node keys children =>
@@ -145,29 +160,39 @@ private theorem minKey_node_cons {keys : List α} {child : BTree α}
     minKey (.node keys (child :: rest)) = minKey child :=
   rfl
 
-/-- Merge two trees of the same height and a separator key between them
-into a single node: the keys concatenate around the separator and the
-children concatenate. Used when both trees hold `t - 1` keys, so the
-result holds `2 * t - 1`. -/
+/-- **Merging two B-tree nodes around a separator.** Given a key $s$ and trees $L$ and $R$, the
+merge of $L$ and $R$ around $s$ is defined as follows. If $L$ and $R$ are leaves with key lists
+$k_1$ and $k_2$, it is the leaf with keys $k_1$, then $s$, then $k_2$. If $L$ and $R$ are internal
+nodes with key lists $k_1, k_2$ and child lists $c_1, c_2$, it is the internal node with keys
+$k_1$, then $s$, then $k_2$, and children $c_1$ followed by $c_2$. In every other case it is $L$.
+
+In deletion from a B-tree of minimum degree $t$, it is applied to two trees of the same height
+that each hold $t - 1$ keys at the root, so the merged node holds $2t - 1$ keys. -/
 def merge (sep : α) : BTree α → BTree α → BTree α
   | .leaf ks1, .leaf ks2 => .leaf (ks1 ++ sep :: ks2)
   | .node ks1 cs1, .node ks2 cs2 => .node (ks1 ++ sep :: ks2) (cs1 ++ cs2)
   | tree, _ => tree
 
-/-- Borrow for `child` from its right sibling: the separator `sep` moves
-down as the child's last key (with the sibling's first child), and the
-sibling's first key moves up as the new separator. Returns the new child,
-separator, and sibling. -/
+/-- **Borrowing a key from the right sibling.** Given a tree $c$ (the child), a separator key $k$
+and a tree $s$ (the right sibling) such that $c$ and $s$ are both leaves or both internal nodes,
+$s$ has at least one key, and, when they are internal nodes, $s$ has at least one child: $k$
+becomes the last key of $c$, the first key of $s$ is removed from $s$ and becomes the new
+separator, and, for internal nodes, the first child of $s$ is removed from $s$ and becomes the
+last child of $c$. The result is the triple of the new child, the new separator and the new
+sibling. In every other case the result is the unchanged triple $(c, k, s)$. -/
 def borrowRight : BTree α → α → BTree α → BTree α × α × BTree α
   | .leaf ks, sep, .leaf (s0 :: ss) => (.leaf (ks ++ [sep]), s0, .leaf ss)
   | .node ks cs, sep, .node (s0 :: ss) (sc0 :: scs) =>
       (.node (ks ++ [sep]) (cs ++ [sc0]), s0, .node ss scs)
   | child, sep, sib => (child, sep, sib)
 
-/-- Borrow for `child` from its left sibling: the separator `sep` moves
-down as the child's first key (with the sibling's last child), and the
-sibling's last key moves up as the new separator. Returns the new sibling,
-separator, and child. -/
+/-- **Borrowing a key from the left sibling.** Given a tree $s$ (the left sibling), a separator key
+$k$ and a tree $c$ (the child) such that $s$ and $c$ are both leaves or both internal nodes, $s$
+has at least one key, and, when they are internal nodes, $s$ has at least one child: the last key
+of $s$ is removed from $s$ and becomes the new separator, $k$ becomes the first key of $c$, and,
+for internal nodes, the last child of $s$ is removed from $s$ and becomes the first child of $c$.
+The result is the triple of the new sibling, the new separator and the new child. In every other
+case the result is the unchanged triple $(s, k, c)$. -/
 def borrowLeft : BTree α → α → BTree α → BTree α × α × BTree α
   | .leaf ks, sep, .leaf kc =>
       match splitLast ks with
@@ -180,15 +205,39 @@ def borrowLeft : BTree α → α → BTree α → BTree α × α × BTree α
       | _, _ => (.node ks cs, sep, .node kc cc)
   | sib, sep, child => (sib, sep, child)
 
-/-- Delete a key from the node with the given separator and child lists,
-where `delChild` deletes from a child (in `delH`, deletion at the next
-height down). Before descending into a child with fewer than `t` keys, the
-child is given a key by borrowing from an adjacent sibling or is merged
-with the separator and a sibling, so `delChild` is only ever applied to a
-tree holding at least `t` keys at its root (or to a merged tree). The walk
-goes from the left: a child that is not last borrows or merges on its
-right, and the last child borrows or merges on its left, where its left
-sibling and separator are in hand. -/
+/-- **Deletion within a B-tree node.** Let $D$ be an operation that deletes a key from a tree, let
+$t$ be a natural number, let $x$ be a key of a linearly ordered key type, and write $|c|$ for the
+number of keys stored at the root of a tree $c$. Deleting $x$ within a node with separator list
+$K$ and child list $C$, using $D$ on children, produces a new separator list and a new child list.
+Write $k$ for the first separator, $c$ for the first child, and $K'$ and $C'$ for the remaining
+separators and children.
+
+If $K$ is empty and $C$ is nonempty, $D$ deletes $x$ from the first child and nothing else
+changes; if both are empty, so is the result.
+
+If $x < k$ and either $|c| \ge t$ or $C'$ is empty, $D$ deletes $x$ from $c$. Otherwise let $s$
+be the first tree of $C'$. If $|s| \ge t$, borrowing for $c$ from its right sibling $s$ with
+separator $k$ gives $(c', k', s')$, which replace $c$, $k$ and $s$, and $D$ deletes $x$ from $c'$.
+If $|s| < t$, the trees $c$ and $s$ are merged with $k$ into one tree, which replaces $c$ and $s$,
+$k$ is dropped from the separators, and $D$ deletes $x$ from the merged tree.
+
+If $k < x$, $K'$ is empty and $C'$ consists of a single tree $l$: if $|l| \ge t$, $D$ deletes $x$
+from $l$; otherwise, if $|c| \ge t$, borrowing for $l$ from its left sibling $c$ with separator
+$k$ gives $(c', k', l')$, which replace $c$, $k$ and $l$, and $D$ deletes $x$ from $l'$;
+otherwise the result has no separators and a single child, obtained by applying $D$ to delete $x$
+from the merge of $c$ and $l$ with $k$. If $k < x$ and $K'$ is nonempty, $k$ and $c$ are kept
+and the deletion continues recursively within $K'$ and $C'$.
+
+If $x = k$ and $C'$ is nonempty with first tree $r$: if $|c| \ge t$, the key $p$ found by
+descending the rightmost spine of $c$ (following last children down to a leaf or to an internal
+node without children, and taking the last key there) replaces $k$ and $D$ deletes $p$ from $c$;
+otherwise, if $|r| \ge t$, the key $q$ found by descending the leftmost spine of $r$ (following
+first children in the same way and taking the first key there) replaces $k$ and $D$ deletes $q$
+from $r$; otherwise $c$ and $r$ are merged with $k$ into one tree, which replaces $c$ and $r$,
+$k$ is dropped from the separators, and $D$ deletes $x$ from the merged tree.
+
+In every remaining case (a shape of the separator and child lists not covered above, or a spine
+descent that ends at a node with no keys) the lists are returned unchanged. -/
 def delList [LinearOrder α] (delChild : α → BTree α → BTree α) (t : Nat)
     (x : α) : List α → List (BTree α) → List α × List (BTree α)
   | [], child :: children => ([], delChild x child :: children)
@@ -231,13 +280,15 @@ def delList [LinearOrder α] (delChild : α → BTree α → BTree α) (t : Nat)
         | [] => (key :: keys, child :: children)
   | keys, children => (keys, children)
 
-/-- Delete a key from a tree of the given height, by a top-down pass
-(with the two spine traversals in the separator case described in the
-module documentation): at a leaf erase the key, and at an internal node
-run `delList` with
-deletion at the children's height. Heights that do not match the shape of
-the tree fall back to leaf erasure or the identity; the specification
-`delH_spec` only covers matching heights. -/
+/-- **Height-indexed B-tree deletion.** Given a height $h$, a minimum degree $t$, a key $x$ of a
+linearly ordered key type and a tree $T$, the result is defined as follows. If $T$ is a leaf, the
+result is the leaf whose key list is that of $T$ with the first occurrence of $x$ erased,
+whatever $h$ is. If $T$ is an internal node and $h = 0$, the result is $T$. If $T$ is an internal
+node and $h = n + 1$, the result is the internal node whose separator and child lists are
+obtained by deletion of $x$ within the node of $T$ (with minimum degree $t$), where deletion from
+a child is height-indexed deletion with minimum degree $t$ at height $n$.
+
+The correctness specification only covers heights that match the shape of the tree. -/
 def delH [LinearOrder α] : Nat → Nat → α → BTree α → BTree α
   | 0, _, x, .leaf keys => .leaf (keys.erase x)
   | 0, _, _, .node keys children => .node keys children
@@ -246,9 +297,12 @@ def delH [LinearOrder α] : Nat → Nat → α → BTree α → BTree α
       match delList (delH h t) t x keys children with
       | (keys', children') => .node keys' children'
 
-/-- The height of a tree following first children: leaves have height `0`
-and an internal node is one taller than its first child. For a valid tree
-this is the height index of `Valid`/`ValidRoot`. -/
+/-- **Height of a B-tree along first children.** The height of a B-tree is computed by
+following first children: a leaf has height $0$, an internal node with no children has height
+$0$, and an internal node whose first child is $c$ has height one more than the height of $c$.
+
+If a tree satisfies the B-tree structural invariant (or the root invariant) at height $h$,
+then this height equals $h$. -/
 public def treeHeight : BTree α → Nat
   | .leaf _ => 0
   | .node _ children =>
@@ -256,10 +310,14 @@ public def treeHeight : BTree α → Nat
       | [] => 0
       | child :: _ => treeHeight child + 1
 
-/-- Delete a key from a B-tree of minimum degree `t` by a single top-down
-pass, collapsing the root when a root merge leaves it keyless with a
-single child. See the module documentation for the algorithm and its
-specifications. -/
+/-- **Top-down B-tree deletion.** Deleting a key $x$ of a linearly ordered key type from a tree $T$
+with minimum degree $t$ applies height-indexed deletion of $x$ with minimum degree $t$ to $T$ at
+the height of $T$, where the height of a leaf, or of an internal node without children, is $0$,
+and the height of any other internal node is one more than the height of its first child. If the
+outcome is an internal node with no keys and exactly one child, the result is that child;
+otherwise the result is the outcome itself.
+
+This follows the top-down deletion of CLRS Section 18.3. -/
 public def delete [LinearOrder α] (t : Nat) (x : α) (tree : BTree α) :
     BTree α :=
   match delH (treeHeight tree) t x tree with
@@ -1768,8 +1826,10 @@ private theorem flatten_delete_delH [LinearOrder α] {t : Nat} {x : α}
                   rw [e]
                   exact flatten_node_nil.symm
 
-/-- The flattening of a deletion from a B-tree is the erasure of the key
-from the flattening of the original tree. -/
+/-- **Deletion from a B-tree erases the key from its flattening.** Let $t \ge 2$ and let $T$ be a
+B-tree of minimum degree $t$ over a linearly ordered key type. For every key $x$, the inorder
+flattening of the tree obtained from $T$ by top-down deletion of $x$ with minimum degree $t$ is
+the flattening of $T$ with the first occurrence of $x$ removed (unchanged if $x$ does not occur). -/
 public theorem flatten_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) :
     flatten (delete t x tree) = (flatten tree).erase x := by
@@ -1787,8 +1847,12 @@ public theorem flatten_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
         exact Valid.node hlo hhi hlen hch
       exact (delH_spec ht _ hv' hOrd (fun _ _ _ => by omega) x).1
 
-/-- The result of a deletion from a root-valid tree is root-valid at the
-same height, or one less when a root merge collapsed the root. -/
+/-- **Top-down deletion lowers the height by at most one.** Let $t \ge 2$ and let $T$ be an
+ordered tree over a linearly ordered key type (its inorder flattening is strictly increasing)
+that satisfies the root invariant of B-trees of minimum degree $t$ at height $h$. For every key
+$x$, the tree obtained by deleting $x$ from $T$ with minimum degree $t$ satisfies the root
+invariant of minimum degree $t$ at height $h$ or at height $h - 1$, where $h - 1$ is truncated
+subtraction, so equal to $0$ when $h = 0$. -/
 public theorem delete_validRoot [LinearOrder α] {t height : Nat} (ht : 2 ≤ t)
     {x : α} {tree : BTree α} (hOrd : Ordered tree)
     (hv : ValidRoot t height tree) :
@@ -1861,7 +1925,9 @@ public theorem delete_validRoot [LinearOrder α] {t height : Nat} (ht : 2 ≤ t)
                               refine ValidRoot.node ?_ hhi1 hlen1 hch1
                               omega
 
-/-- The result of a deletion from a B-tree is a B-tree. -/
+/-- **Top-down deletion preserves the B-tree invariant.** Let $t \ge 2$ and let $T$ be a B-tree of
+minimum degree $t$ over a linearly ordered key type. For every key $x$, the tree obtained by
+deleting $x$ from $T$ with minimum degree $t$ is again a B-tree of minimum degree $t$. -/
 public theorem IsBTree.delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) : IsBTree t (delete t x tree) := by
   obtain ⟨-, hOrd, height, hroot⟩ := h
@@ -1874,20 +1940,27 @@ public theorem IsBTree.delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     · exact ⟨height, hv⟩
     · exact ⟨height - 1, hv⟩
 
-/-- Deletion preserves orderedness of the result. -/
+/-- **Deletion from a B-tree yields an ordered tree.** Let $t \ge 2$ and let $T$ be a B-tree of
+minimum degree $t$ over a linearly ordered key type. For every key $x$, the tree obtained from $T$
+by deleting $x$ (with minimum degree $t$) is ordered: its inorder flattening is strictly
+increasing. -/
 public theorem ordered_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) : Ordered (delete t x tree) :=
   (IsBTree.delete ht h).ordered
 
-/-- The result of a deletion is root-valid at some height: the height of
-the input or one less (see `delete_validRoot`). -/
+/-- **Top-down deletion yields a root-valid tree.** Let $t \ge 2$ and let $T$ be a B-tree of
+minimum degree $t$ over a linearly ordered key type. For every key $x$, the tree obtained by
+deleting $x$ from $T$ with minimum degree $t$ satisfies the root invariant of B-trees of minimum
+degree $t$ at some height. -/
 public theorem delete_validRoot_exists [LinearOrder α] {t : Nat} (ht : 2 ≤ t)
     {x : α} {tree : BTree α} (h : IsBTree t tree) :
     ∃ height, ValidRoot t height (delete t x tree) :=
   (IsBTree.delete ht h).exists_validRoot
 
-/-- A key is in the result of a deletion exactly when it was in the
-original tree and is not the deleted key. -/
+/-- **Membership after deletion from a B-tree.** Let $t \ge 2$ and let $T$ be a B-tree of minimum
+degree $t$ over a linearly ordered key type. For all keys $x$ and $y$, $y$ belongs to the tree
+obtained from $T$ by deleting $x$ (with minimum degree $t$) if and only if $y \ne x$ and $y$
+belongs to $T$. -/
 public theorem mem_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x y : α}
     {tree : BTree α} (h : IsBTree t tree) :
     y ∈ delete t x tree ↔ y ≠ x ∧ y ∈ tree := by
@@ -1901,21 +1974,28 @@ public theorem mem_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x y : α}
   · intro hy
     exact (List.mem_erase_of_ne hy.1).mpr hy.2
 
-/-- The deleted key is absent from the result. -/
+/-- **The deleted key is absent after deletion from a B-tree.** Let $t \ge 2$ and let $T$ be a
+B-tree of minimum degree $t$ over a linearly ordered key type. For every key $x$, $x$ does not
+belong to the tree obtained from $T$ by deleting $x$ (with minimum degree $t$). -/
 public theorem not_mem_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) : x ∉ delete t x tree := by
   rw [mem_delete ht h]
   exact fun hcon => hcon.1 rfl
 
-/-- Search in the result of a deletion agrees with membership in the
-original tree minus the deleted key. -/
+/-- **Search after top-down deletion.** Let $t \ge 2$ and let $T$ be a B-tree of minimum degree $t$
+over a linearly ordered key type. For all keys $x$ and $y$, searching for $y$ in the tree obtained
+by deleting $x$ from $T$ with minimum degree $t$ succeeds if and only if $y \ne x$ and $y$ is a
+key of $T$. -/
 public theorem contains_delete_iff [LinearOrder α] {t : Nat} (ht : 2 ≤ t)
     {x y : α} {tree : BTree α} (h : IsBTree t tree) :
     contains y (delete t x tree) = true ↔ y ≠ x ∧ y ∈ tree := by
   rw [contains_eq_true_iff (IsBTree.delete ht h), mem_delete ht h]
 
-/-- Deleting a key decreases the number of stored keys by one when the key
-was present, and leaves it unchanged otherwise. -/
+/-- **Deletion shortens the flattening by one exactly when the key is present.** Let $t \ge 2$,
+let $T$ be a B-tree of minimum degree $t$ over a linearly ordered key type, and let $x$ be a key.
+If $x$ occurs in the inorder flattening of $T$, the flattening of the tree obtained from $T$ by
+deleting $x$ (with minimum degree $t$) has length one less than the flattening of $T$; otherwise
+the two flattenings have the same length. -/
 public theorem flatten_length_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t)
     {x : α} {tree : BTree α} (h : IsBTree t tree) :
     (flatten (delete t x tree)).length =
@@ -1926,8 +2006,9 @@ public theorem flatten_length_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t)
   · rw [ite_eq_left hx, List.length_erase_of_mem hx]
   · rw [ite_eq_right hx, List.erase_of_not_mem hx]
 
-/-- Deleting the same key twice has the same flattening as deleting it
-once. -/
+/-- **Repeated top-down deletion.** Let $t \ge 2$ and let $T$ be a B-tree of minimum degree $t$
+over a linearly ordered key type. For every key $x$, deleting $x$ from $T$ twice with minimum
+degree $t$ gives a tree with the same inorder flattening as deleting $x$ from $T$ once. -/
 public theorem flatten_delete_delete [LinearOrder α] {t : Nat} (ht : 2 ≤ t)
     {x : α} {tree : BTree α} (h : IsBTree t tree) :
     flatten (delete t x (delete t x tree)) =

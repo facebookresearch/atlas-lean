@@ -59,9 +59,13 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean
 
-/-- A ball tree over points `Fin d → Int`: empty, a point leaf, or a node
-carrying a bounding sphere (center and squared-radius bound) over two
-children. -/
+/-- **Ball tree.** For a dimension $d$, a ball tree over the integer points $\mathbb{Z}^d$
+(functions $\{0, \dots, d-1\} \to \mathbb{Z}$) is either empty, a leaf holding one point,
+or a node holding a center point $c \in \mathbb{Z}^d$, a natural number $b$ (the squared-radius
+bound of the node's sphere) and two child ball trees.
+
+That the sphere around $c$ actually contains the points below the node is a separate validity
+invariant, not part of this definition. -/
 inductive BallTree (d : Nat) where
   | empty : BallTree d
   | leaf : (Fin d → Int) → BallTree d
@@ -71,14 +75,21 @@ namespace BallTree
 
 variable {d : Nat}
 
-/-- Accumulator traversal collecting the points of a tree in front of
-`acc`, from left to right, in linear time. -/
+/-- **Accumulating traversal of a ball tree.** For a ball tree $T$ and a list $A$ of points, the
+accumulating traversal returns $A$ when $T$ is empty, the point $p$ followed by $A$ when $T$ is a
+leaf holding $p$, and, when $T$ is a node with children $L$ and $R$, the accumulating traversal of
+$L$ whose accumulator is the accumulating traversal of $R$ with accumulator $A$.
+
+The result is the leaf points of $T$, from left to right, followed by $A$. -/
 def toListAux : BallTree d → List (Fin d → Int) → List (Fin d → Int)
   | .empty, acc => acc
   | .leaf p, acc => p :: acc
   | .node _ _ left right, acc => left.toListAux (right.toListAux acc)
 
-/-- The points stored in a tree, from left to right. -/
+/-- **Point list of a ball tree.** The point list of a ball tree is the list of the points held
+at its leaves, from left to right: the empty tree gives the empty list, a leaf holding $p$ gives
+the list $[p]$, and a node gives the point list of its left subtree followed by the point list of
+its right subtree. The centers stored at nodes are not included. -/
 def toList (t : BallTree d) : List (Fin d → Int) :=
   t.toListAux []
 
@@ -111,7 +122,9 @@ theorem toList_node (center : Fin d → Int) (bound : Nat)
     left.toListAux [] ++ right.toListAux []
   exact toListAux_append left (right.toListAux [])
 
-/-- The number of points stored in a tree. -/
+/-- **Size of a ball tree.** The size of a ball tree is the number of points held in its leaves:
+it is $0$ for the empty tree, $1$ for a leaf, and the sum of the sizes of the two children for a
+node; the center of a node is not counted. -/
 def size : BallTree d → Nat
   | .empty => 0
   | .leaf _ => 1
@@ -127,18 +140,20 @@ theorem length_toListAux (t : BallTree d) (acc : List (Fin d → Int)) :
       simp only [size]
       omega
 
-/-- The length of the point list is the size of the tree. -/
+/-- **Number of points of a ball tree.** For every ball tree $t$, the list of points stored in
+$t$, read from left to right, has length equal to the size of $t$. -/
 @[simp]
 theorem length_toList (t : BallTree d) : t.toList.length = t.size := by
   simp [toList, length_toListAux]
 
-/-- Squared Euclidean distance between two points, as a natural number:
-the sum over coordinates of `(p i - q i) ^ 2`, computed over the integers
-and converted to `Nat`. -/
+/-- **Squared Euclidean distance.** For points $p, q \in \mathbb{Z}^d$, the squared distance
+from $p$ to $q$ is the natural number $\sum_{i=0}^{d-1} (p_i - q_i)^2$, computed in
+$\mathbb{Z}$ and then converted to $\mathbb{N}$. -/
 def distSq (p q : Fin d → Int) : Nat :=
   (∑ i, (p i - q i) ^ 2).toNat
 
-/-- Squared distance is symmetric. -/
+/-- **Symmetry of squared distance.** For all points $p, q \in \mathbb{Z}^d$, the squared
+distance from $p$ to $q$ equals the squared distance from $q$ to $p$. -/
 theorem distSq_comm (p q : Fin d → Int) : distSq p q = distSq q p := by
   unfold distSq
   congr 1
@@ -150,10 +165,12 @@ private theorem sum_sq_nonneg (p q : Fin d → Int) :
     0 ≤ ∑ i, (p i - q i) ^ 2 :=
   Finset.sum_nonneg fun i _ => sq_nonneg (p i - q i)
 
-/-- A weak triangle inequality for squared distance, with the factor `2`
-coming from `(x + y) ^ 2 ≤ 2 * (x ^ 2 + y ^ 2)` coordinatewise. This is
-the estimate that makes bounding-sphere pruning sound without square
-roots. -/
+/-- **Relaxed triangle inequality for squared distance.** For all points
+$a, b, c \in \mathbb{Z}^d$, writing $\delta(x, y)$ for the squared distance from $x$ to $y$,
+we have $\delta(a, c) \le 2\,(\delta(a, b) + \delta(b, c))$.
+
+The factor $2$ comes from $(x + y)^2 \le 2(x^2 + y^2)$ applied coordinatewise. This is the
+estimate that makes bounding-sphere pruning sound without square roots. -/
 theorem distSq_le_two_mul (a b c : Fin d → Int) :
     distSq a c ≤ 2 * (distSq a b + distSq b c) := by
   have hInt : (∑ i, (a i - c i) ^ 2) ≤
@@ -172,9 +189,9 @@ theorem distSq_le_two_mul (a b c : Fin d → Int) :
   unfold distSq
   omega
 
-/-- The squared-radius bound for a sphere centered at `c` covering `pts`:
-the maximum squared distance from `c` to a point of `pts`, or `0` if `pts`
-is empty. -/
+/-- **Squared covering radius.** For a center $c \in \mathbb{Z}^d$ and a list $P$ of points of
+$\mathbb{Z}^d$, the squared covering radius of $P$ about $c$ is the largest squared distance from
+$c$ to a point of $P$, or $0$ if $P$ is empty. -/
 def radiusSq (c : Fin d → Int) (pts : List (Fin d → Int)) : Nat :=
   pts.foldl (fun acc p => max acc (distSq c p)) 0
 
@@ -200,18 +217,27 @@ private theorem foldl_radiusSq_spec (c : Fin d → Int) :
         · exact le_trans (le_max_right _ _) h.1
         · exact h.2 p hp
 
-/-- Every point of `pts` lies in the sphere computed by `radiusSq`. -/
+/-- **Points lie within the squared radius.** Let $c \in \mathbb{Z}^d$ and let $L$ be a list
+of points of $\mathbb{Z}^d$. For every point $p$ of $L$, the squared distance from $c$ to $p$
+is at most the squared radius of $L$ around $c$, the largest squared distance from $c$ to a
+point of $L$. -/
 theorem distSq_le_radiusSq {c p : Fin d → Int} {pts : List (Fin d → Int)}
     (hp : p ∈ pts) : distSq c p ≤ radiusSq c pts :=
   (foldl_radiusSq_spec c pts 0).2 p hp
 
-/--
-Accumulator similarity search: the points of the tree within squared
-distance `radius` of `query`, collected in front of `acc` in linear time.
-A node with center `c` and bound `bound` is pruned when
-`2 * (bound + radius) < distSq c query`, since by `distSq_le_two_mul` no
-point of the subtree can then lie within the query ball.
--/
+/-- **Accumulating ball-tree search.** Let $d$ be a dimension and write $\delta(x, y)$ for the
+squared distance from $x$ to $y$ in $\mathbb{Z}^d$. For a ball tree $T$ over $\mathbb{Z}^d$, a
+query point $q \in \mathbb{Z}^d$, a squared radius $r \in \mathbb{N}$ and a list $A$ of points,
+the accumulating search of $T$ for $q$ and $r$ with accumulator $A$ is $A$ when $T$ is empty;
+when $T$ is a leaf holding $p$, it is $p$ followed by $A$ if $\delta(q, p) \le r$ and $A$
+otherwise; when $T$ is a node with center $c$, squared-radius bound $b$ and children $L$ and $R$,
+it is $A$ if $2(b + r) < \delta(c, q)$, and otherwise the accumulating search of $L$ for $q$ and
+$r$ whose accumulator is the accumulating search of $R$ for $q$ and $r$ with accumulator $A$.
+
+When $T$ satisfies the bounding-sphere invariant, this pruning is sound by the relaxed triangle
+inequality $\delta(x, z) \le 2(\delta(x, y) + \delta(y, z))$ for all $x, y, z \in \mathbb{Z}^d$,
+and the result is the points of $T$ within squared distance $r$ of $q$, from left to right,
+followed by $A$. -/
 def searchAux : BallTree d → (Fin d → Int) → Nat →
     List (Fin d → Int) → List (Fin d → Int)
   | .empty, _, _, acc => acc
@@ -221,17 +247,20 @@ def searchAux : BallTree d → (Fin d → Int) → Nat →
       if 2 * (bound + radius) < distSq center query then acc
       else left.searchAux query radius (right.searchAux query radius acc)
 
-/-- Similarity search: the points of the tree within squared distance
-`radius` of `query`. -/
+/-- **Ball-tree similarity search.** The search of a ball tree $T$ for a query point
+$q \in \mathbb{Z}^d$ and a squared radius $r \in \mathbb{N}$ is the accumulating search of $T$ for
+$q$ and $r$ started with the empty accumulator.
+
+When $T$ satisfies the bounding-sphere invariant, the search lists exactly the points of $T$
+within squared distance $r$ of $q$, from left to right. -/
 def search (t : BallTree d) (query : Fin d → Int) (radius : Nat) :
     List (Fin d → Int) :=
   t.searchAux query radius []
 
-/--
-The bounding-sphere invariant: at a node with center `c` and squared-radius bound
-`bound`, every point in either subtree lies within squared distance
-`bound` of `c`.
--/
+/-- **Bounding-sphere invariant of a ball tree.** Validity of a ball tree is defined inductively:
+the empty tree and every leaf are valid, and a node with center $c$ and squared-radius bound $b$
+is valid when both of its subtrees are valid and every point in the point list of either subtree
+lies within squared Euclidean distance $b$ of $c$. -/
 inductive Valid : BallTree d → Prop where
   | empty : Valid .empty
   | leaf (p : Fin d → Int) : Valid (.leaf p)
@@ -279,8 +308,11 @@ theorem searchAux_eq_filter_append {t : BallTree d} (h : t.Valid)
           · simp [searchAux, hPrune, toList_node, List.filter_append,
               ihLeft hLeft, ihRight hRight, List.append_assoc]
 
-/-- The search of a valid tree is its point list filtered by the distance
-predicate; pruning against the bounding spheres loses no point. -/
+/-- **Ball-tree search is exact.** For every ball tree $T$ over $\mathbb{Z}^d$ satisfying the
+bounding-sphere invariant, every query point $q \in \mathbb{Z}^d$ and every $r \in \mathbb{N}$, the
+search of $T$ for $q$ and $r$ equals the list of points of $T$, from left to right, filtered to
+the points $p$ whose squared distance from $q$ is at most $r$, in their order. Pruning against
+the bounding spheres loses no point. -/
 theorem search_eq_filter {t : BallTree d} (h : t.Valid)
     (query : Fin d → Int) (radius : Nat) :
     t.search query radius =
@@ -288,7 +320,10 @@ theorem search_eq_filter {t : BallTree d} (h : t.Valid)
   rw [search, searchAux_eq_filter_append h]
   simp
 
-/-- Membership in the search of a valid tree, stated on its point list. -/
+/-- **Search of a valid ball tree.** Let $t$ be a ball tree satisfying the bounding-sphere
+invariant. For all $q, p \in \mathbb{Z}^d$ and every natural number $r$, $p$ is returned by the
+similarity search of $t$ with query $q$ and squared radius $r$ if and only if $p$ is one of the
+points stored in $t$ and the squared distance from $q$ to $p$ is at most $r$. -/
 theorem mem_search_iff {t : BallTree d} (h : t.Valid)
     {query p : Fin d → Int} {radius : Nat} :
     p ∈ t.search query radius ↔ p ∈ t.toList ∧ distSq query p ≤ radius := by
@@ -296,9 +331,13 @@ theorem mem_search_iff {t : BallTree d} (h : t.Valid)
   simp
 
 /--
-Builds a ball tree by recursive halving: the center is the first point,
-the bound is `radiusSq` over the whole list, and the children are built
-from the two halves of the list.
+**Building a ball tree by halving.** The ball tree built from a list of points of
+$\mathbb{Z}^d$ is defined by recursion on the list. The empty list gives the empty tree and a
+one-point list $[p]$ gives the leaf $p$. A list $L = [x_1, \dots, x_n]$ with $n \ge 2$ gives a
+node whose center is $x_1$, whose bound is the squared radius of $L$ around $x_1$ (the largest
+squared distance from $x_1$ to a point of $L$), whose left child is the tree built from the
+first $\lfloor n/2 \rfloor$ points of $L$, and whose right child is the tree built from the
+remaining points of $L$.
 -/
 def build : List (Fin d → Int) → BallTree d
   | [] => .empty
@@ -373,38 +412,48 @@ private theorem build_spec :
               apply List.Perm.trans (hLeft.2.append hRight.2)
               rw [List.take_append_drop]
 
-/-- A tree built by halving satisfies the bounding-sphere invariant. -/
+/-- **Ball trees built by halving are valid.** For every list of points in $\mathbb{Z}^d$, the
+ball tree built from it by recursive halving satisfies the bounding-sphere invariant. -/
 theorem valid_build (pts : List (Fin d → Int)) : (build pts).Valid :=
   (build_spec pts).1
 
-/-- The point list of a built tree is a permutation of the input. -/
+/-- **A built ball tree stores a permutation of its input.** For every list $P$ of points of
+$\mathbb{Z}^d$, the list of points of the ball tree built from $P$, from left to right, is a
+permutation of $P$. -/
 theorem toList_build_perm (pts : List (Fin d → Int)) :
     (build pts).toList.Perm pts :=
   (build_spec pts).2
 
-/-- Membership in the point list of a built tree is membership in the
-input. -/
+/-- **Points of a built ball tree.** For every list $L$ of points of $\mathbb{Z}^d$ and every
+point $p \in \mathbb{Z}^d$, $p$ is one of the points stored in the ball tree built from $L$ if
+and only if $p$ occurs in $L$. -/
 theorem mem_toList_build_iff (pts : List (Fin d → Int)) (p : Fin d → Int) :
     p ∈ (build pts).toList ↔ p ∈ pts :=
   (toList_build_perm pts).mem_iff
 
-/-- The size of a built tree is the number of input points. -/
+/-- **Size of a built ball tree.** For every list $P$ of points of $\mathbb{Z}^d$, the size of
+the ball tree built from $P$ equals the length of $P$, that is, the number of entries of $P$
+counted with repetition. -/
 @[simp]
 theorem size_build (pts : List (Fin d → Int)) :
     (build pts).size = pts.length := by
   rw [← length_toList]
   exact (toList_build_perm pts).length_eq
 
-/-- The search of a built tree is its point list filtered by the distance
-predicate. -/
+/-- **Ball-tree search of a built tree.** For every list $P$ of points of $\mathbb{Z}^d$, every
+query point $q \in \mathbb{Z}^d$ and every $r \in \mathbb{N}$, let $T$ be the ball tree built from
+$P$. The search of $T$ for $q$ and $r$ equals the list of points of $T$, from left to right,
+filtered to the points $p$ whose squared distance from $q$ is at most $r$, in their order. -/
 theorem search_build (pts : List (Fin d → Int)) (query : Fin d → Int)
     (radius : Nat) :
     (build pts).search query radius =
       (build pts).toList.filter (fun p => distSq query p ≤ radius) :=
   search_eq_filter (valid_build pts) query radius
 
-/-- The search of a built tree permutes the input filtered by the
-distance predicate. -/
+/-- **Ball-tree search of a built tree, up to order.** For every list $P$ of points of
+$\mathbb{Z}^d$, every query point $q \in \mathbb{Z}^d$ and every $r \in \mathbb{N}$, the search of
+the ball tree built from $P$ for $q$ and $r$ is a permutation of the sublist of $P$ consisting of
+the points $p$ whose squared distance from $q$ is at most $r$, kept with their multiplicities. -/
 theorem search_build_perm (pts : List (Fin d → Int)) (query : Fin d → Int)
     (radius : Nat) :
     ((build pts).search query radius).Perm
@@ -412,7 +461,10 @@ theorem search_build_perm (pts : List (Fin d → Int)) (query : Fin d → Int)
   rw [search_build]
   exact (toList_build_perm pts).filter _
 
-/-- Membership in the search of a built tree, stated on the input. -/
+/-- **Search of a built ball tree.** Let $L$ be a list of points of $\mathbb{Z}^d$, let
+$q, p \in \mathbb{Z}^d$ and let $r$ be a natural number. Then $p$ is returned by the similarity
+search with query $q$ and squared radius $r$ on the ball tree built from $L$ if and only if $p$
+occurs in $L$ and the squared distance from $q$ to $p$ is at most $r$. -/
 theorem mem_search_build_iff (pts : List (Fin d → Int))
     {query p : Fin d → Int} {radius : Nat} :
     p ∈ (build pts).search query radius ↔

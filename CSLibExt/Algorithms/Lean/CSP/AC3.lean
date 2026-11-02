@@ -53,8 +53,10 @@ namespace Cslib.Algorithms.Lean.ArcConsistency
 
 open Cslib.Algorithms.Lean
 
-/-- A binary constraint satisfaction problem: directed arcs and, for each arc `(x, y)`, the
-allowed value pairs `allowed x y a b`. -/
+/-- **Binary constraint satisfaction problem.** A binary constraint satisfaction problem with
+variables in $X$ and values in $D$ consists of a finite list of directed arcs $(x, y)$ with
+$x, y \in X$, and, for all variables $x, y$ and values $a, b \in D$, a Boolean saying whether the
+arc $(x, y)$ allows $x = a$ together with $y = b$. -/
 structure BinaryCSP (X D : Type*) where
   /-- The directed arcs. -/
   arcs : List (X × X)
@@ -63,28 +65,54 @@ structure BinaryCSP (X D : Type*) where
 
 variable {X D : Type*} [DecidableEq X] [DecidableEq D] (P : BinaryCSP X D)
 
-/-- A solution within the domains `dom`. -/
+/-- **Solution of a binary CSP within given domains.** Let $P$ be a binary constraint
+satisfaction problem with variables $X$ and values $D$, and give each variable $x$ a finite
+domain $\mathrm{dom}(x) \subseteq D$. An assignment $\sigma : X \to D$ is a solution of $P$ within
+$\mathrm{dom}$ when $\sigma(x) \in \mathrm{dom}(x)$ for every variable $x$ and, for every arc
+$(x, y)$ of $P$, the arc $(x, y)$ allows the pair $(\sigma(x), \sigma(y))$. -/
 def IsSolution (dom : X → Finset D) (σ : X → D) : Prop :=
   (∀ x, σ x ∈ dom x) ∧ ∀ e ∈ P.arcs, P.allowed e.1 e.2 (σ e.1) (σ e.2) = true
 
-/-- The arc `(x, y)` is consistent: every value of `x` has a support in the domain of `y`. -/
+/-- **Arc consistency.** Given a binary CSP $P$ and domains $\mathrm{dom}$, an arc $(x, y)$ is
+consistent when for every value $a \in \mathrm{dom}(x)$ there is a value $b \in \mathrm{dom}(y)$
+such that the arc $(x, y)$ allows $x = a$ together with $y = b$. -/
 def ArcConsistent (dom : X → Finset D) (e : X × X) : Prop :=
   ∀ a ∈ dom e.1, ∃ b ∈ dom e.2, P.allowed e.1 e.2 a b = true
 
-/-- Each constraint is given on both orientations of its arc, with the same allowed pairs. -/
+/-- **Symmetric binary CSP.** A binary constraint satisfaction problem is symmetric when, for
+all variables $x, y$ and values $a, b$, the constraint on the ordered pair $(x, y)$ allows
+$x = a$ together with $y = b$ exactly when the constraint on $(y, x)$ allows $y = b$ together
+with $x = a$.
+
+The condition concerns the allowed pairs for every ordered pair of variables; it does not
+require the reverse of a listed arc to be listed. -/
 def Symmetric : Prop := ∀ x y a b, P.allowed x y a b = P.allowed y x b a
 
-/-- Revise the arc `(x, y)`: the values of `x` with a support in the domain of `y`. -/
+/-- **Revision of an arc.** Let $P$ be a binary constraint satisfaction problem with values $D$,
+$\mathrm{dom}$ finite domains for its variables, and $x$, $y$ variables. The revision of the arc
+$(x, y)$ is the set of values $a \in \mathrm{dom}(x)$ that have a support in the domain of $y$:
+some $b \in \mathrm{dom}(y)$ such that the arc $(x, y)$ allows the pair $(a, b)$. -/
 def revise (dom : X → Finset D) (x y : X) : Finset D :=
   (dom x).filter fun a => ∃ b ∈ dom y, P.allowed x y a b = true
 
-/-- The number of arcs into `x`. -/
+/-- **In-degree of a variable.** For a binary constraint satisfaction problem $P$ and a variable
+$x$, the in-degree of $x$ is the number of arcs $(z, x)$ of $P$ ending at $x$, counted with
+multiplicity in the list of arcs of $P$. -/
 def indeg (x : X) : ℕ := (P.arcs.filter fun e => e.2 = x).length
 
-/-- The arcs queued after the domain of `x` shrank while revising `(x, y)`. -/
+/-- **Arcs requeued after a revision.** For a binary constraint satisfaction problem $P$ and
+variables $x$ and $y$, the arcs requeued after revising $(x, y)$ are the arcs $(z, x)$ of $P$
+with $z \neq y$, in their order in the list of arcs of $P$.
+
+AC-3 queues these arcs when revising $(x, y)$ shrinks the domain of $x$. -/
 def requeue (x y : X) : List (X × X) := P.arcs.filter fun e => e.2 = x ∧ e.1 ≠ y
 
-/-- The termination potential: queue length plus `∑ x, |dom x| · indeg x`. -/
+/-- **Termination potential of AC-3.** Let $P$ be a binary constraint satisfaction problem with
+finitely many variables, $\mathrm{dom}$ finite domains for its variables and $q$ a queue of arcs.
+The potential of $\mathrm{dom}$ and $q$ is
+$$|q| + \sum_{x} |\mathrm{dom}(x)| \cdot \mathrm{indeg}(x),$$
+where $|q|$ is the length of the queue, the sum runs over all variables $x$, and
+$\mathrm{indeg}(x)$ is the in-degree of $x$ in $P$. -/
 def potential [Fintype X] (dom : X → Finset D) (q : List (X × X)) : ℕ :=
   q.length + ∑ x, (dom x).card * indeg P x
 
@@ -103,7 +131,13 @@ theorem revise_subset (dom : X → Finset D) (x y : X) : revise P dom x y ⊆ do
   Finset.filter_subset _ _
 
 omit [DecidableEq D] in
-/-- A revision that shrinks the domain of `x` lowers the potential, even after requeueing. -/
+/-- **A shrinking revision lowers the potential.** Let $P$ be a binary constraint satisfaction
+problem with finitely many variables, $\mathrm{dom}$ finite domains for its variables, $x$ and
+$y$ variables and $q$ a queue of arcs. Suppose the revision $R$ of the arc $(x, y)$ with respect
+to $\mathrm{dom}$ differs from $\mathrm{dom}(x)$, and let $\mathrm{dom}'$ agree with
+$\mathrm{dom}$ except that $\mathrm{dom}'(x) = R$. Then the potential of $\mathrm{dom}'$ with the
+queue $q$ followed by the arcs requeued after revising $(x, y)$ is strictly less than the
+potential of $\mathrm{dom}$ with the queue $(x, y)$ followed by $q$. -/
 theorem potential_lt [Fintype X] (dom : X → Finset D) (x y : X) (q : List (X × X))
     (h : revise P dom x y ≠ dom x) :
     potential P (Function.update dom x (revise P dom x y)) (q ++ requeue P x y) <
@@ -126,7 +160,15 @@ theorem potential_lt [Fintype X] (dom : X → Finset D) (x y : X) (q : List (X �
     exact this
   omega
 
-/-- AC-3 from domains `dom` with the queue `q`; one unit per revision. -/
+/-- **The AC-3 algorithm.** Given a binary CSP $P$ with finitely many variables, domains
+$\mathrm{dom}$ and a queue $q$ of pairs of variables, AC-3 returns $\mathrm{dom}$ when $q$ is
+empty. Otherwise it removes the first pair $(x, y)$ of $q$ and revises it: the revised domain of
+$x$ consists of the values $a \in \mathrm{dom}(x)$ for which some $b \in \mathrm{dom}(y)$ has the
+arc $(x, y)$ allowing $x = a$ together with $y = b$. If the revised domain equals
+$\mathrm{dom}(x)$, AC-3 continues from $\mathrm{dom}$ with the rest of $q$; otherwise it replaces
+the domain of $x$ by the revised domain and continues with the rest of $q$ followed by the arcs
+$(z, x)$ of $P$ with $z \ne y$, in the order of the arc list of $P$. Each revision costs one unit
+of time. -/
 def ac3 [Fintype X] : (X → Finset D) → List (X × X) → TimeM ℕ (X → Finset D)
   | dom, [] => pure dom
   | dom, (x, y) :: q => do
@@ -138,12 +180,17 @@ decreasing_by
   · simp [potential]
   · exact potential_lt P dom x y q ‹_›
 
-/-- AC-3 on the whole problem: all arcs queued. -/
+/-- **AC-3 on the whole problem.** For a binary CSP $P$ with finitely many variables and
+domains $\mathrm{dom}$, AC-3 on the whole problem is AC-3 run from $\mathrm{dom}$ with the queue
+initialized to the arc list of $P$; it returns the final domains together with the number of
+revisions performed. -/
 def ac3All [Fintype X] (dom : X → Finset D) : TimeM ℕ (X → Finset D) := ac3 P dom P.arcs
 
 /-! ## Soundness -/
 
-/-- **Domains only shrink.** -/
+/-- **AC-3 only shrinks domains.** For a binary CSP $P$ with finitely many variables, domains
+$\mathrm{dom}$, a queue $q$ of pairs of variables and a variable $v$, the domain of $v$ returned
+by AC-3 run from $\mathrm{dom}$ with queue $q$ is a subset of $\mathrm{dom}(v)$. -/
 theorem ac3_subset [Fintype X] (dom : X → Finset D) (q : List (X × X)) (v : X) :
     (ac3 P dom q).ret v ⊆ dom v := by
   match q with
@@ -163,15 +210,20 @@ decreasing_by
   · exact potential_lt P dom x y q h
 
 omit [DecidableEq X] [DecidableEq D] in
-/-- A revision keeps every value of a solution. -/
+/-- **Revision keeps solution values.** Let $P$ be a binary constraint satisfaction problem,
+$\mathrm{dom}$ finite domains for its variables and $\sigma$ a solution of $P$ within
+$\mathrm{dom}$. For every arc $(x, y)$ of $P$, the value $\sigma(x)$ lies in the revision of the
+arc $(x, y)$ with respect to $\mathrm{dom}$. -/
 theorem mem_revise_of_isSolution {dom : X → Finset D} {σ : X → D} (hσ : IsSolution P dom σ)
     {x y : X} (he : (x, y) ∈ P.arcs) : σ x ∈ revise P dom x y := by
   unfold revise
   rw [Finset.mem_filter]
   exact ⟨hσ.1 x, σ y, hσ.1 y, hσ.2 _ he⟩
 
-/-- **No solution is lost**: every solution within `dom` stays within the final domains, when
-the queue holds arcs of the problem. -/
+/-- **No solution is lost.** Let $P$ be a binary constraint satisfaction problem with finitely
+many variables, $\mathrm{dom}$ finite domains for its variables, and $q$ a queue of arcs each of
+which is an arc of $P$. Then every solution $\sigma$ of $P$ within $\mathrm{dom}$ is also a
+solution of $P$ within the domains returned by AC-3 started from $\mathrm{dom}$ with queue $q$. -/
 theorem isSolution_ac3 [Fintype X] (dom : X → Finset D) (q : List (X × X))
     (hq : ∀ e ∈ q, e ∈ P.arcs)
     (σ : X → D) (hσ : IsSolution P dom σ) : IsSolution P (ac3 P dom q).ret σ := by
@@ -195,12 +247,18 @@ decreasing_by
   · simp [potential]
   · exact potential_lt P dom x y q h
 
-/-- Every solution within the initial domains lies within AC-3's domains. -/
+/-- **Solutions survive AC-3.** Let $P$ be a binary constraint satisfaction problem with
+finitely many variables and $\mathrm{dom}$ finite domains for its variables. If $\sigma$ is a
+solution of $P$ within $\mathrm{dom}$, then for every variable $v$ the value $\sigma(v)$ lies in
+the domain of $v$ returned by AC-3 run from $\mathrm{dom}$ with all arcs of $P$ queued. -/
 theorem mem_ac3_of_isSolution [Fintype X] {dom : X → Finset D} {σ : X → D} (hσ : IsSolution P dom σ)
     (v : X) : σ v ∈ (ac3All P dom).ret v :=
   (isSolution_ac3 P dom P.arcs (fun _ he => he) σ hσ).1 v
 
-/-- If AC-3 empties a domain, the problem has no solution. -/
+/-- **An emptied domain rules out solutions.** Let $P$ be a binary constraint satisfaction
+problem with finitely many variables and $\mathrm{dom}$ finite domains for its variables. If AC-3,
+run from $\mathrm{dom}$ with all arcs of $P$ queued, returns the empty domain for some variable
+$v$, then no assignment $\sigma$ is a solution of $P$ within $\mathrm{dom}$. -/
 theorem not_isSolution_of_ac3_eq_empty [Fintype X] {dom : X → Finset D} {v : X}
     (hv : (ac3All P dom).ret v = ∅) (σ : X → D) : ¬IsSolution P dom σ := fun hσ => by
   have := mem_ac3_of_isSolution P hσ v
@@ -210,8 +268,15 @@ theorem not_isSolution_of_ac3_eq_empty [Fintype X] {dom : X → Finset D} {v : X
 /-! ## Arc consistency of the result -/
 
 omit [DecidableEq D] in
-/-- One revision makes its arc consistent and keeps the arcs that were consistent and are not
-requeued. -/
+/-- **Arc consistency after one AC-3 revision.** Let $P$ be a binary CSP whose constraints are
+symmetric, that is the arc $(x, y)$ allows $(a, b)$ exactly when the arc $(y, x)$ allows $(b, a)$.
+Let $\mathrm{dom}$ be domains, let $x \ne y$ be variables, let $R$ be the set of values
+$a \in \mathrm{dom}(x)$ for which some $b \in \mathrm{dom}(y)$ has the arc $(x, y)$ allowing
+$x = a$ together with $y = b$, and let $\mathrm{dom}'$ be $\mathrm{dom}$ with the domain of $x$
+replaced by $R$. Let $e$ be an arc of $P$ with two distinct endpoints such that $e = (x, y)$ or
+$e$ is consistent with respect to $\mathrm{dom}$, and such that, if $R \ne \mathrm{dom}(x)$, then
+$e$ is not of the form $(z, x)$ with $z \ne y$. Then $e$ is consistent with respect to
+$\mathrm{dom}'$. -/
 theorem arcConsistent_step (hsym : Symmetric P) (dom : X → Finset D) (x y : X) (hxy : x ≠ y)
     (e : X × X) (hne : e.1 ≠ e.2)
     (he : e = (x, y) ∨ ArcConsistent P dom e)
@@ -248,8 +313,15 @@ theorem arcConsistent_step (hsym : Symmetric P) (dom : X → Finset D) (x y : X)
     · rw [Function.update_of_ne hv]
       exact he a ha
 
-/-- The invariant: every arc of the problem outside the queue stays consistent, and at the end
-the queue is empty. -/
+/-- **Arc consistency invariant of AC-3.** Let $P$ be a binary CSP with finitely many variables
+whose constraints are symmetric, that is the arc $(x, y)$ allows $(a, b)$ exactly when the arc
+$(y, x)$ allows $(b, a)$, and whose arcs all join two distinct variables. Let $\mathrm{dom}$ be
+domains and $q$ a queue whose entries are arcs of $P$, such that every arc of $P$ not in $q$ is
+consistent with respect to $\mathrm{dom}$. Then every arc of $P$ is consistent with respect to the
+domains returned by AC-3 run from $\mathrm{dom}$ with queue $q$.
+
+The invariant: every arc of the problem outside the queue stays consistent, and at the end the
+queue is empty. -/
 theorem arcConsistent_ac3_of_inv [Fintype X] (hsym : Symmetric P)
     (hdist : ∀ e ∈ P.arcs, e.1 ≠ e.2) (dom : X → Finset D) (q : List (X × X))
     (hq : ∀ e ∈ q, e ∈ P.arcs) (hinv : ∀ e ∈ P.arcs, e ∉ q → ArcConsistent P dom e) :
@@ -293,8 +365,13 @@ theorem arcConsistent_ac3 [Fintype X] (hsym : Symmetric P) (hdist : ∀ e ∈ P.
 
 /-! ## Termination bound -/
 
-/-- Each revision lowers the potential by at least `1`, so the revisions are at most the initial
-potential. -/
+/-- **AC-3 revisions are bounded by the potential.** For a binary CSP $P$ with finitely many
+variables, domains $\mathrm{dom}$ and a queue $q$ of pairs of variables, the number of revisions
+AC-3 performs from $\mathrm{dom}$ with queue $q$ is at most the potential
+$\ell + \sum_x |\mathrm{dom}(x)| \cdot \mathrm{indeg}(x)$, where $\ell$ is the length of $q$ and
+$\mathrm{indeg}(x)$ is the number of entries of the arc list of $P$ ending at $x$.
+
+Each revision lowers the potential by at least $1$. -/
 theorem ac3_time_le_potential [Fintype X] (dom : X → Finset D) (q : List (X × X)) :
     (ac3 P dom q).time ≤ potential P dom q := by
   match q with
@@ -315,8 +392,13 @@ decreasing_by
   · simp [potential]
   · exact potential_lt P dom x y q h
 
-/-- **Termination bound**: AC-3 performs at most `|arcs| + ∑ x, |dom x| · indeg x` revisions,
-`O(e d)` for `e` arcs and domains of size `d`. -/
+/-- **Bound on the number of AC-3 revisions.** For a binary CSP $P$ with finitely many variables
+and initial domains $\mathrm{dom}$, AC-3 run from $\mathrm{dom}$ with every arc of $P$ queued
+performs at most $m + \sum_x |\mathrm{dom}(x)| \cdot \mathrm{indeg}(x)$ revisions, where $m$ is
+the length of the arc list of $P$ and $\mathrm{indeg}(x)$ is the number of entries of that list
+ending at $x$.
+
+This is $O(e d)$ for $e$ arcs and domains of size $d$. -/
 theorem ac3_time_le [Fintype X] (dom : X → Finset D) :
     (ac3All P dom).time ≤ P.arcs.length + ∑ x, (dom x).card * indeg P x :=
   ac3_time_le_potential P dom P.arcs

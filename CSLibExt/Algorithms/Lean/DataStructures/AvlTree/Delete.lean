@@ -37,15 +37,21 @@ namespace AvlTree
 variable {α : Type u}
 
 /--
-The leftmost key of a tree, or the given default for the empty tree. For a
-nonempty tree the result does not depend on the default: see
-`inorder_eq_minD_cons_eraseMin`.
+**Leftmost key of a tree.** Given a default value $d$ and a binary tree $T$ with cached
+heights, the leftmost key of $T$ with default $d$ is $d$ when $T$ is empty; when $T$ has left
+subtree $L$ and root key $k$, it is the leftmost key of $L$ with default $k$. Thus for a
+nonempty tree it is the key of the node reached from the root by following left children as
+far as possible, and it does not depend on $d$.
 -/
 public def minD : α → Tree α → α
   | default, .empty => default
   | _, .node _ left key _ => minD key left
 
-/-- Remove the leftmost key of a tree, rebalancing on the way back up. -/
+/-- **Removing the leftmost key of an AVL tree.** For a tree $t$ with cached heights, the tree
+obtained by removing the leftmost key of $t$ is defined by recursion on $t$. The empty tree stays
+empty. A node whose left subtree is empty is replaced by its right subtree. A node with nonempty
+left subtree $l$, key $k$ and right subtree $r$ is replaced by $\mathrm{balance}(l', k, r)$, where
+$l'$ is $l$ with its leftmost key removed and $\mathrm{balance}$ is the AVL rebalancing function. -/
 public def eraseMin : Tree α → Tree α
   | .empty => .empty
   | .node _ left key right =>
@@ -53,14 +59,22 @@ public def eraseMin : Tree α → Tree α
       | .empty => right
       | .node _ _ _ _ => balance (eraseMin left) key right
 
-/-- `eraseMin` under the name used for the successor step of deletion. -/
+/-- **Minimum deletion in an AVL tree.** Minimum deletion maps a binary tree with cached heights to
+the tree obtained by removing its leftmost key and rebalancing on the way back up. It is the
+operation of removing the minimum, under the name used for the successor step of deletion, where a
+deleted node with two children is replaced by the minimum of its right subtree. -/
 public def deleteMin : Tree α → Tree α :=
   eraseMin
 
 /--
-Delete a key, rebalancing every node on the search path. A deleted node with
-two children takes the minimum key of its right subtree as its new key and
-deletes that minimum with `eraseMin`.
+**AVL tree deletion.** Let $\alpha$ be a linearly ordered type and $x \in \alpha$. Deleting $x$
+from a tree with cached heights is defined by recursion on the tree, where $\mathrm{balance}$
+denotes the AVL rebalancing function. The empty tree stays empty. For a node with left subtree
+$l$, key $k$ and right subtree $r$: if $x < k$, the result is $\mathrm{balance}(l', k, r)$, where
+$l'$ is $l$ with $x$ deleted; if $k < x$, the result is $\mathrm{balance}(l, k, r')$, where $r'$
+is $r$ with $x$ deleted; if $x = k$, the node is replaced by $r$ when $l$ is empty, by $l$ when
+$r$ is empty, and otherwise by $\mathrm{balance}(l, m, r'')$, where $m$ is the leftmost key of
+$r$ and $r''$ is $r$ with its leftmost key removed.
 -/
 public def erase [LinearOrder α] (x : α) : Tree α → Tree α
   | .empty => .empty
@@ -73,7 +87,9 @@ public def erase [LinearOrder α] (x : α) : Tree α → Tree α
         | _, .empty => left
         | _, _ => balance left (minD key right) (deleteMin right)
 
-/-- `erase` under its alternative name. -/
+/-- **AVL tree deletion under its alternative name.** For a linearly ordered type $\alpha$, a
+key $x \in \alpha$ and a tree $t$ with cached heights, $\mathrm{delete}(x, t)$ is defined to be
+$\mathrm{erase}(x, t)$, the AVL deletion of $x$ from $t$. -/
 public def delete [LinearOrder α] (x : α) (tree : Tree α) : Tree α :=
   erase x tree
 
@@ -163,7 +179,10 @@ private theorem eraseMin_node_node {cached cachedLeft : Nat} {key leftKey : α}
       balance (eraseMin (.node cachedLeft leftLeft leftKey leftRight)) key right := by
   simp [eraseMin]
 
-/-- The leftmost key of a nonempty tree is present in the tree. -/
+/--
+**The leftmost key lies in the tree.** For every nonempty binary tree $T$ with cached heights
+and every default value $d$, the leftmost key of $T$ computed with default $d$ occurs in $T$.
+-/
 public theorem minD_mem {default : α} {tree : Tree α} (hTree : tree ≠ .empty) :
     minD default tree ∈ tree := by
   induction tree generalizing default with
@@ -196,7 +215,11 @@ private theorem all_eraseMin {p : α → Prop} {tree : Tree α} (hTree : All p t
     All p (eraseMin tree) :=
   all_of_mem_subset (fun _ hy => mem_of_mem_eraseMin hy) hTree
 
-/-- Removing the minimum preserves correct cached heights. -/
+/-- **Removing the minimum keeps cached heights correct.** Let $t$ be a binary tree with a cached
+height at each node whose cached heights are correct: each node stores one more than the larger of
+the cached heights of its two subtrees, the empty tree having height $0$. Then the cached heights
+of the tree obtained from $t$ by removing its leftmost key, rebalancing on the way back up, are
+again correct. -/
 public theorem cacheCorrect_eraseMin {tree : Tree α} (hTree : CacheCorrect tree) :
     CacheCorrect (eraseMin tree) := by
   induction tree with
@@ -211,7 +234,9 @@ public theorem cacheCorrect_eraseMin {tree : Tree α} (hTree : CacheCorrect tree
       rw [eraseMin_node_node]
       exact cacheCorrect_balance (ihLeft hLeft) hRight
 
-/-- Removing the minimum never increases the height. -/
+/-- **Removing the leftmost key does not increase the height of an AVL tree.** If $t$ is a tree
+whose cached heights are correct, then the cached height of the tree obtained from $t$ by removing
+its leftmost key is at most the cached height of $t$. -/
 public theorem height_eraseMin_le {tree : Tree α} (hTree : CacheCorrect tree) :
     height (eraseMin tree) ≤ height tree := by
   induction tree with
@@ -234,7 +259,9 @@ public theorem height_eraseMin_le {tree : Tree α} (hTree : CacheCorrect tree) :
       simp only [height_node] at hCached hBound hIH ⊢
       omega
 
-/-- Removing the minimum shrinks the height of a balanced tree by at most one. -/
+/-- **Removing the leftmost key lowers the height of an AVL tree by at most one.** If $t$ is a
+tree whose cached heights are correct and which is balanced, then the cached height of $t$ is at
+most one more than the cached height of the tree obtained from $t$ by removing its leftmost key. -/
 public theorem le_height_eraseMin {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     height tree ≤ height (eraseMin tree) + 1 := by
@@ -259,7 +286,10 @@ public theorem le_height_eraseMin {tree : Tree α}
       simp only [height_node] at hCached hMax ⊢
       omega
 
-/-- Removing the minimum preserves the AVL balance invariant. -/
+/-- **Removing the minimum preserves AVL balance.** Let $t$ be a binary tree with a cached height
+at each node whose cached heights are correct, and which is balanced: at every node the cached
+heights of the two subtrees differ by at most one. Then the tree obtained from $t$ by removing its
+leftmost key, rebalancing on the way back up, is again balanced. -/
 public theorem balanced_eraseMin {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     Balanced (eraseMin tree) := by
@@ -285,7 +315,11 @@ public theorem balanced_eraseMin {tree : Tree α}
           le_height_eraseMin hCacheL hBalL
         omega
 
-/-- Removing the minimum preserves the search-tree ordering invariant. -/
+/--
+**Removing the leftmost key preserves search-tree order.** Let $T$ be a binary tree with cached
+heights over a linearly ordered type. If $T$ is ordered as a search tree, then so is the tree
+obtained from $T$ by removing its leftmost key and rebalancing on the way back up.
+-/
 public theorem ordered_eraseMin [LinearOrder α] {tree : Tree α}
     (hTree : Ordered tree) : Ordered (eraseMin tree) := by
   induction tree with
@@ -300,7 +334,12 @@ public theorem ordered_eraseMin [LinearOrder α] {tree : Tree α}
       rw [eraseMin_node_node]
       exact ordered_balance (ihLeft hOrdL) hOrdR (all_eraseMin hAllL) hAllR
 
-/-- Every remaining key of an ordered tree is larger than the removed minimum. -/
+/-- **Keys left after removing the minimum exceed it.** Let $t$ be a binary tree with keys from a
+linearly ordered type and a cached height at each node, and suppose $t$ is ordered: at every node,
+all keys in the left subtree are strictly smaller and all keys in the right subtree are strictly
+larger than the key at that node. Let $m$ be the leftmost key of $t$, or an arbitrary default
+value if $t$ is empty. Then every key of the tree obtained from $t$ by removing its leftmost key,
+rebalancing on the way back up, is strictly greater than $m$. -/
 public theorem all_minD_lt_eraseMin_of_ordered [LinearOrder α] {default : α} {tree : Tree α}
     (hTree : Ordered tree) : All (minD default tree < ·) (eraseMin tree) := by
   induction tree generalizing default with
@@ -321,7 +360,12 @@ public theorem all_minD_lt_eraseMin_of_ordered [LinearOrder α] {default : α} {
       refine all_balance (ihLeft (default := key) hOrdL) hMinKey ?_
       exact all_mono' (fun _ ha => lt_trans hMinKey ha) hAllR
 
-/-- The inorder traversal of a nonempty tree starts with its minimum. -/
+/-- **The inorder traversal begins with the leftmost key.** Let $t$ be a nonempty tree with
+cached heights and $m$ its leftmost key. Then the inorder traversal of $t$ is $m$ followed by the
+inorder traversal of the tree obtained from $t$ by removing its leftmost key.
+
+The leftmost key is computed by a function that takes a default value for the empty tree; the
+identity holds for every choice of default. -/
 public theorem inorder_eq_minD_cons_eraseMin {default : α} {tree : Tree α}
     (hTree : tree ≠ .empty) :
     inorder tree = minD default tree :: inorder (eraseMin tree) := by
@@ -361,7 +405,11 @@ private theorem erase_node_eq_both_node [LinearOrder α] {x key leftKey rightKey
         (eraseMin (.node cachedRight rightLeft rightKey rightRight)) := by
   simp [erase, deleteMin, hLeft, hRight]
 
-/-- Deletion preserves correct cached heights. -/
+/-- **Deletion keeps cached heights correct.** Let $t$ be a binary tree with keys from a linearly
+ordered type and a cached height at each node whose cached heights are correct: each node stores
+one more than the larger of the cached heights of its two subtrees, the empty tree having height
+$0$. Then for every key $x$, the cached heights of the tree obtained from $t$ by deleting $x$,
+rebalancing along the search path, are again correct. -/
 public theorem cacheCorrect_erase [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : CacheCorrect tree) : CacheCorrect (erase x tree) := by
   induction tree with
@@ -387,7 +435,9 @@ public theorem cacheCorrect_erase [LinearOrder α] {x : α} {tree : Tree α}
             rw [erase_node_eq_both_node hXLeft hXRight]
             exact cacheCorrect_balance hLeft (cacheCorrect_eraseMin hRight)
 
-/-- Deletion never increases the height. -/
+/-- **Deletion does not increase the height of an AVL tree.** Let $\alpha$ be a linearly ordered
+type, $x \in \alpha$, and $t$ a tree whose cached heights are correct. Then the cached height of
+the tree obtained by deleting $x$ from $t$ is at most the cached height of $t$. -/
 public theorem height_erase_le [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : CacheCorrect tree) : height (erase x tree) ≤ height tree := by
   induction tree with
@@ -436,7 +486,10 @@ public theorem height_erase_le [LinearOrder α] {x : α} {tree : Tree α}
             simp only [height_node] at hCached hBound hRightLe ⊢
             omega
 
-/-- Deletion shrinks the height of a balanced tree by at most one. -/
+/-- **Deletion lowers the height of an AVL tree by at most one.** Let $\alpha$ be a linearly
+ordered type, $x \in \alpha$, and $t$ a balanced tree whose cached heights are correct. Then the
+cached height of $t$ is at most one more than the cached height of the tree obtained by deleting
+$x$ from $t$. -/
 public theorem le_height_erase [LinearOrder α] {x : α} {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     height tree ≤ height (erase x tree) + 1 := by
@@ -485,7 +538,11 @@ public theorem le_height_erase [LinearOrder α] {x : α} {tree : Tree α}
             simp only [height_node] at hCached hMax ⊢
             omega
 
-/-- Deletion preserves the AVL balance invariant. -/
+/-- **Deletion preserves AVL balance.** Let $t$ be a binary tree with keys from a linearly ordered
+type and a cached height at each node, whose cached heights are correct, and which is balanced: at
+every node the cached heights of the two subtrees differ by at most one. Then for every key $x$,
+the tree obtained from $t$ by deleting $x$, rebalancing along the search path, is again balanced.
+-/
 public theorem balanced_erase [LinearOrder α] {x : α} {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     Balanced (erase x tree) := by
@@ -577,7 +634,12 @@ private theorem all_erase [LinearOrder α] {p : α → Prop} {x : α} {tree : Tr
     (hTree : All p tree) : All p (erase x tree) :=
   all_of_mem_subset (fun _ hy => mem_of_mem_erase hy) hTree
 
-/-- Deletion preserves the strict search-tree invariant. -/
+/--
+**AVL deletion preserves search-tree order.** Let $T$ be a binary tree with cached heights over
+a linearly ordered type, ordered as a search tree (every key in a left subtree is smaller, and
+every key in a right subtree is larger, than the key at the node). Then for every key $x$, the
+tree obtained by deleting $x$ from $T$ with rebalancing is again ordered as a search tree.
+-/
 public theorem ordered_erase [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : Ordered (erase x tree) := by
   induction tree with
@@ -627,7 +689,10 @@ private theorem list_erase_append_of_not_mem_right [LinearOrder α] {x : α}
   · rw [List.erase_append, ite_eq_right hxLeft, List.erase_of_not_mem hx,
       List.erase_of_not_mem hxLeft]
 
-/-- Deleting a key erases it from the inorder traversal of an ordered tree. -/
+/-- **Inorder traversal after AVL deletion.** Let $\alpha$ be a linearly ordered type,
+$x \in \alpha$, and $t$ an ordered tree. Then the inorder traversal of the tree obtained by
+deleting $x$ from $t$ is the inorder traversal of $t$ with the first occurrence of $x$ removed;
+if $x$ does not occur, the traversal is unchanged. -/
 public theorem inorder_erase [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : inorder (erase x tree) = (inorder tree).erase x := by
   induction tree with
@@ -696,7 +761,12 @@ private theorem mem_eraseMin_or_eq_minD {default y : α} {tree : Tree α}
     · exact Or.inr hyEq
     · exact Or.inl (mem_inorder.mp hyInorder)
 
-/-- Deletion keeps every key other than the deleted one, ordered or not. -/
+/--
+**AVL deletion keeps every other key.** Let $T$ be a binary tree with cached heights whose keys
+come from a linearly ordered type, and let $x$ and $y$ be keys with $y \ne x$. If $y$ occurs in
+$T$, then $y$ occurs in the tree obtained by deleting $x$ from $T$. No search-tree ordering of
+$T$ is assumed.
+-/
 public theorem mem_erase_of_mem [LinearOrder α] {x y : α} {tree : Tree α}
     (hy : y ∈ tree) (hxy : y ≠ x) : y ∈ erase x tree := by
   induction tree with
@@ -741,7 +811,11 @@ public theorem mem_erase_of_mem [LinearOrder α] {x y : α} {tree : Tree α}
               · exact Or.inr (Or.inr h)
               · exact Or.inr (Or.inl h)
 
-/-- The deleted key is absent after deletion from an ordered tree. -/
+/--
+**Deletion removes the deleted key from an ordered AVL tree.** Let $T$ be a binary tree with
+cached heights over a linearly ordered type, ordered as a search tree. Then for every key $x$,
+$x$ does not occur in the tree obtained by deleting $x$ from $T$.
+-/
 public theorem not_mem_erase_self [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : x ∉ erase x tree := by
   induction tree with
@@ -784,7 +858,13 @@ public theorem not_mem_erase_self [LinearOrder α] {x : α} {tree : Tree α}
             · exact lt_irrefl key
                 ((all_iff_forall_mem.mp hAllR) key (mem_of_mem_eraseMin hx))
 
-/-- Deletion from an ordered tree removes exactly the deleted key. -/
+/--
+**Keys of an ordered AVL tree after deletion.** Let $T$ be a binary tree with cached heights
+over a linearly ordered type, ordered as a search tree (every key in a left subtree is smaller,
+and every key in a right subtree is larger, than the key at the node). Then for all keys $x$
+and $y$, $y$ occurs in the tree obtained by deleting $x$ from $T$ if and only if $y$ occurs in
+$T$ and $y \ne x$.
+-/
 public theorem mem_erase [LinearOrder α] {x y : α} {tree : Tree α}
     (hTree : Ordered tree) : y ∈ erase x tree ↔ y ∈ tree ∧ y ≠ x := by
   constructor
@@ -797,39 +877,68 @@ public theorem mem_erase [LinearOrder α] {x y : α} {tree : Tree α}
 
 /-! ## The same results for `delete` and `deleteMin` -/
 
-/-- Deletion, under the name `delete`, preserves correct cached heights. -/
+/-- **Deleting a key keeps cached heights correct.** Let $t$ be a binary tree with keys from a
+linearly ordered type and a cached height at each node whose cached heights are correct: each node
+stores one more than the larger of the cached heights of its two subtrees, the empty tree having
+height $0$. Then for every key $x$, the cached heights of the tree obtained from $t$ by deleting
+$x$, rebalancing along the search path, are again correct. -/
 public theorem cacheCorrect_delete [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : CacheCorrect tree) : CacheCorrect (delete x tree) :=
   cacheCorrect_erase hTree
 
-/-- Deletion, under the name `delete`, preserves the balance invariant. -/
+/-- **Deleting a key preserves AVL balance.** Let $t$ be a binary tree with keys from a linearly
+ordered type and a cached height at each node, whose cached heights are correct, and which is
+balanced: at every node the cached heights of the two subtrees differ by at most one. Then for
+every key $x$, the tree obtained from $t$ by deleting $x$, rebalancing along the search path, is
+again balanced. -/
 public theorem balanced_delete [LinearOrder α] {x : α} {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     Balanced (delete x tree) :=
   balanced_erase hCache hBal
 
-/-- Deletion, under the name `delete`, preserves the ordering invariant. -/
+/--
+**Deleting a key from an ordered AVL tree keeps it ordered.** Let $T$ be a binary tree with
+cached heights over a linearly ordered type. If $T$ is ordered as a search tree, then for every
+key $x$ the tree obtained by deleting $x$ from $T$ with rebalancing is again ordered as a search
+tree.
+-/
 public theorem ordered_delete [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : Ordered (delete x tree) :=
   ordered_erase hTree
 
-/-- Deleting a key with `delete` erases it from the inorder traversal. -/
+/-- **Inorder traversal after AVL deletion, alternative name.** Let $\alpha$ be a linearly
+ordered type, $x \in \alpha$, and $t$ an ordered tree. Then the inorder traversal of
+$\mathrm{delete}(x, t)$, the AVL deletion of $x$ from $t$ under its alternative name, is the
+inorder traversal of $t$ with the first occurrence of $x$ removed; if $x$ does not occur, the
+traversal is unchanged. -/
 public theorem inorder_delete [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : inorder (delete x tree) = (inorder tree).erase x :=
   inorder_erase hTree
 
-/-- `deleteMin` preserves correct cached heights. -/
+/-- **Minimum deletion keeps cached heights correct.** Let $t$ be a binary tree with a cached height
+at each node whose cached heights are correct: each node stores one more than the larger of the
+cached heights of its two subtrees, the empty tree having height $0$. Then the cached heights of
+the tree obtained from $t$ by minimum deletion (removing its leftmost key, rebalancing on the way
+back up) are again correct. -/
 public theorem cacheCorrect_deleteMin {tree : Tree α} (hTree : CacheCorrect tree) :
     CacheCorrect (deleteMin tree) :=
   cacheCorrect_eraseMin hTree
 
-/-- `deleteMin` preserves the AVL balance invariant. -/
+/-- **Minimum deletion preserves AVL balance.** Let $t$ be a binary tree with a cached height at
+each node whose cached heights are correct, and which is balanced: at every node the cached heights
+of the two subtrees differ by at most one. Then the tree obtained from $t$ by minimum deletion
+(removing its leftmost key, rebalancing on the way back up) is again balanced. -/
 public theorem balanced_deleteMin {tree : Tree α}
     (hCache : CacheCorrect tree) (hBal : Balanced tree) :
     Balanced (deleteMin tree) :=
   balanced_eraseMin hCache hBal
 
-/-- `deleteMin` preserves the search-tree ordering invariant. -/
+/--
+**Successor-step minimum removal preserves search-tree order.** Let $T$ be a binary tree with
+cached heights over a linearly ordered type. If $T$ is ordered as a search tree, then so is the
+tree obtained by the minimum-removal step used for the successor in deletion, which removes the
+leftmost key of $T$ and rebalances on the way back up.
+-/
 public theorem ordered_deleteMin [LinearOrder α] {tree : Tree α}
     (hTree : Ordered tree) : Ordered (deleteMin tree) :=
   ordered_eraseMin hTree

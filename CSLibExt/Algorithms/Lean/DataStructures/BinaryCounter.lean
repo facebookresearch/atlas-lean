@@ -103,7 +103,11 @@ private lemma carry_time_replicate (k : Nat) : (carry (List.replicate k true)).t
   | zero => simp [carry]
   | succ k ih => simp [carry, List.replicate_succ, ih, Nat.add_comm]
 
-/-- Increment a low-first fixed-width counter, charging one tick per changed existing bit. -/
+/-- **Binary counter increment.** A $k$-bit counter is a vector $b = (b_0, \dots, b_{k-1})$ of bits
+stored lowest bit first. Incrementing $b$ changes the initial run of $1$ bits $b_0, \dots, b_{t-1}$
+to $0$ and then changes the first $0$ bit $b_t$, if there is one, to $1$; if every bit is $1$, all
+bits become $0$ and no new bit is added. The result is again a $k$-bit counter, and the cost of
+the increment is the number of bits changed, one unit per changed bit. -/
 public def increment {k : Nat} (bits : Vector Bool k) : TimeM Nat (Vector Bool k) :=
   let result := carry bits.toList
   ⟨⟨result.ret.toArray, by
@@ -114,48 +118,68 @@ private lemma increment_toList {k : Nat} (bits : Vector Bool k) :
     (increment bits).ret.toList = (carry bits.toList).ret := by
   simp only [increment, Vector.toList_mk]
 
-/-- Increment adds one to the unsigned value modulo the fixed width. -/
+/-- **Increment adds one with wraparound.** Let $b = (b_0, \dots, b_{k-1})$ be a $k$-bit counter
+stored lowest bit first, with bits $b_i \in \{0, 1\}$ and unsigned value
+$v(b) = \sum_{i < k} b_i 2^i$. If $b'$ is the counter returned by incrementing $b$, then
+$v(b') = (v(b) + 1) \bmod 2^k$. -/
 public theorem increment_value {k : Nat} (bits : Vector Bool k) :
     (BitVec.ofBoolListLE (increment bits).ret.toList).toNat =
       ((BitVec.ofBoolListLE bits.toList).toNat + 1) % 2 ^ k := by
   rw [increment_toList]
   simpa only [Vector.length_toList] using carry_value bits.toList
 
-/-- The exact increment cost is the initial one-prefix plus a first zero when present. -/
+/-- **Exact cost of an increment.** Let $b = (b_0, \dots, b_{k-1})$ be a $k$-bit counter stored
+lowest bit first, and let $t$ be the length of its initial run of $1$ bits, that is, the largest
+$t \le k$ with $b_0 = \dots = b_{t-1} = 1$. The cost of incrementing $b$ is $t + 1$ if $t < k$,
+and $t$ if $t = k$. -/
 public theorem increment_time {k : Nat} (bits : Vector Bool k) :
     (increment bits).time = (bits.toList.takeWhile id).length +
       if (bits.toList.takeWhile id).length < k then 1 else 0 := by
   simpa only [increment, Vector.length_toList] using carry_time_eq bits.toList
 
-/-- Increment changes at most the fixed number of existing bits. -/
+/-- **Increment costs at most the width.** For every $k$-bit counter $b$ (a vector of $k$ bits,
+lowest bit first), the cost of incrementing $b$ is at most $k$. -/
 public theorem increment_time_le {k : Nat} (bits : Vector Bool k) :
     (increment bits).time ≤ k := by
   simpa only [increment, Vector.length_toList] using carry_time_le bits.toList
 
-/-- Execute successive increments, each consuming the actual previous returned counter. -/
+/-- **Running the binary counter.** For a width $k$, a $k$-bit counter $b$ and $n \in \mathbb{N}$,
+the run of $n$ increments from $b$ is defined recursively. The run of $0$ increments returns $b$
+at cost zero. The run of $n + 1$ increments performs the run of $n$ increments, then increments
+the counter it returned and returns the result; its cost is the cost of the $n$-step run plus
+the cost of that increment. -/
 public def run {k : Nat} (bits : Vector Bool k) : Nat → TimeM Nat (Vector Bool k)
   | 0 => pure bits
   | n + 1 => do
       let previous ← run bits n
       increment previous
 
-/-- A zero-step run returns the full pure input, with zero accumulated cost. -/
+/-- **Running zero increments.** For every width $k$ and every $k$-bit counter $b$, running zero
+increments from $b$ returns $b$ unchanged at cost zero. -/
 public theorem run_zero {k : Nat} (bits : Vector Bool k) :
     run bits 0 = pure bits := by
   simp only [run]
 
-/-- A successor run returns the increment of its actual predecessor state. -/
+/-- **One more increment.** For every bit vector $b$ and every natural number $n$, the bit vector
+returned by running $n + 1$ increments from $b$ is the increment of the bit vector returned by
+running $n$ increments from $b$. -/
 public theorem run_ret_succ {k : Nat} (bits : Vector Bool k) (n : Nat) :
     (run bits (n + 1)).ret = (increment (run bits n).ret).ret := by
   simp only [run, TimeM.ret_bind]
 
-/-- A successor run adds the next increment cost to the actual accumulated cost. -/
+/-- **Cost recurrence for the binary counter run.** For every width $k$, every $k$-bit counter
+$b$ and every $n$, the cost of running $n + 1$ successive increments from $b$ equals the cost of
+running $n$ increments from $b$ plus the cost of incrementing the counter that the $n$-step run
+returns. -/
 public theorem run_time_succ {k : Nat} (bits : Vector Bool k) (n : Nat) :
     (run bits (n + 1)).time =
       (run bits n).time + (increment (run bits n).ret).time := by
   simp only [run, TimeM.time_bind]
 
-/-- An arbitrary initial unsigned value advances by the run length modulo the fixed width. -/
+/-- **Counter value after successive increments.** For every width $k$, every $k$-bit counter $b$
+and every $n$, let $v$ be the value of $b$ read as an unsigned binary number with the least
+significant bit first. After $n$ successive increments starting from $b$, the counter read the
+same way has value $(v + n) \bmod 2^k$. -/
 public theorem run_value {k : Nat} (bits : Vector Bool k) (n : Nat) :
     (BitVec.ofBoolListLE (run bits n).ret.toList).toNat =
       ((BitVec.ofBoolListLE bits.toList).toNat + n) % 2 ^ k := by
@@ -233,7 +257,11 @@ private lemma bitFlips_eq (k i n : Nat) (hi : i < k) : bitFlips k i n = n / 2 ^ 
     have lower : n / 2 ^ i ≤ (n + 1) / 2 ^ i := Nat.div_le_div_right (by omega)
     omega
 
-/-- Bit `i` changes exactly `n / 2 ^ i` times in an actual zero-start run. -/
+/-- **Flip counts of the individual bits.** Let $k$, $i$ and $n$ be natural numbers
+with $i < k$, and for each $t$ let $c_t$ be the bit vector returned by running $t$ increments
+from the all-false bit vector of width $k$. Then the number of $t < n$ such that the bit at
+position $i$ of $c_t$ (counting from the low-order bit, starting at $0$) differs from the bit at
+position $i$ of $c_{t+1}$ is $\lfloor n / 2^i \rfloor$. -/
 public theorem run_bit_flips (k i n : Nat) (hi : i < k) :
     ((List.range n).map fun t =>
       if (run (Vector.replicate k false) t).ret.toList.getD i false ≠
@@ -277,7 +305,8 @@ private lemma changedBits_indexed (before after : List Bool)
         List.sum_cons, List.getD_cons_zero]
       exact congrArg ((if a ≠ b then 1 else 0) + ·) (ih after lengths)
 
-/-- All-one input realizes the worst-case cost of one flip per existing bit. -/
+/-- **Incrementing the all-ones counter costs the full width.** For every $k$, the cost of
+incrementing the $k$-bit counter whose $k$ bits are all $1$ is exactly $k$. -/
 public theorem increment_time_replicate_true (k : Nat) :
     (increment (Vector.replicate k true)).time = k := by
   simpa only [increment, Vector.toList_replicate] using carry_time_replicate k
@@ -329,7 +358,9 @@ private lemma run_time_floorSum (k n : Nat) :
   intro i hi
   exact bitFlips_eq k i n (List.mem_range.mp hi)
 
-/-- The actual zero-start run cost is the sum of its existing bits' exact flip counts. -/
+/-- **Exact cost of increments from zero.** For all natural numbers $k$ and $n$, running
+$n$ increments from the all-false bit vector of width $k$ costs exactly
+$\sum_{i=0}^{k-1} \lfloor n / 2^i \rfloor$. -/
 public theorem run_time_eq (k n : Nat) :
     (run (Vector.replicate k false) n).time =
       ((List.range k).map fun i => n / 2 ^ i).sum := by
@@ -366,13 +397,17 @@ private lemma floorSum_ge (k n : Nat) (hk : 0 < k) : n ≤ floorSum k n := by
   | zero => omega
   | succ k => rw [floorSum_succ]; omega
 
-/-- A positive-length zero-start run costs strictly fewer than twice its length. -/
+/-- **Aggregate cost bound for the binary counter.** For every width $k$ and every $n > 0$,
+performing $n$ successive increments on the $k$-bit counter that starts with all bits zero
+costs strictly fewer than $2n$ bit changes in total. -/
 public theorem run_time_lt (k n : Nat) (hn : 0 < n) :
     (run (Vector.replicate k false) n).time < 2 * n := by
   rw [run_time_floorSum]
   exact floorSum_lt k n hn
 
-/-- A positive-width zero-start run costs at least its length. -/
+/-- **Lower bound on the cost of increments from zero.** For all natural numbers $k$
+and $n$ with $k > 0$, running $n$ increments from the all-false bit vector of width $k$
+costs at least $n$. -/
 public theorem run_time_ge (k n : Nat) (hk : 0 < k) :
     n ≤ (run (Vector.replicate k false) n).time := by
   rw [run_time_floorSum]
@@ -429,7 +464,9 @@ private lemma vector_eq_of_toList_eq {k : Nat} (left right : Vector Bool k)
     (h : left.toList = right.toList) : left = right := by
   exact Vector.toList_inj.mp h
 
-/-- Reset every set bit to false, charging one tick for each changed existing bit. -/
+/-- **Resetting a binary counter.** Resetting a bit vector $b$ of width $k$ returns the
+all-false bit vector of width $k$ and charges cost $1$ for each position of $b$ that holds
+true, that is, for each bit it changes from true to false. -/
 public def reset {k : Nat} (bits : Vector Bool k) : TimeM Nat (Vector Bool k) :=
   let result := resetBits bits.toList
   ⟨⟨result.ret.toArray, by
@@ -440,23 +477,28 @@ private lemma reset_toList_impl {k : Nat} (bits : Vector Bool k) :
     (reset bits).ret.toList = (resetBits bits.toList).ret := by
   simp only [reset, Vector.toList_mk]
 
-/-- Reset returns the all-false bit list at the original width. -/
+/-- **Reset returns the all-false counter.** For every bit vector $b$ of width $k$, the bits
+returned by resetting $b$ are, in order, $k$ copies of false. -/
 public theorem reset_toList {k : Nat} (bits : Vector Bool k) :
     (reset bits).ret.toList = List.replicate k false := by
   rw [reset_toList_impl, resetBits_ret, Vector.length_toList]
 
-/-- Reset refines the unsigned numeric constant zero. -/
+/-- **Reset yields the value zero.** For every bit vector $b$ of width $k$, the bits returned
+by resetting $b$, read low-order bit first as an unsigned binary numeral, have value $0$. -/
 public theorem reset_value {k : Nat} (bits : Vector Bool k) :
     (BitVec.ofBoolListLE (reset bits).ret.toList).toNat = 0 := by
   rw [reset_toList]
   exact ofBoolListLE_replicate_false k
 
-/-- The exact reset charge is the number of set input bits. -/
+/-- **Cost of resetting a binary counter.** For every bit vector $b$ of width $k$, the cost of
+resetting $b$ equals the number of positions of $b$ that hold true. -/
 public theorem reset_time {k : Nat} (bits : Vector Bool k) :
     (reset bits).time = (bits.toList.map Bool.toNat).sum := by
   simpa only [reset] using resetBits_time_sum bits.toList
 
-/-- The exact reset charge is the indexed Hamming difference of input and output. -/
+/-- **Reset cost is the Hamming distance.** Let $b = (b_0, \dots, b_{k-1})$ be a $k$-bit counter
+and $b' = (b'_0, \dots, b'_{k-1})$ the counter returned by resetting $b$. The cost of resetting
+$b$ equals the number of indices $i < k$ with $b_i \ne b'_i$. -/
 public theorem reset_time_changes {k : Nat} (bits : Vector Bool k) :
     (reset bits).time = ((List.range k).map fun i =>
       if bits.toList.getD i false ≠ (reset bits).ret.toList.getD i false
@@ -467,13 +509,15 @@ public theorem reset_time_changes {k : Nat} (bits : Vector Bool k) :
     changedBits_indexed bits.toList (resetBits bits.toList).ret
       (resetBits_length bits.toList).symm
 
-/-- Reset changes at most the fixed number of existing bits. -/
+/-- **Reset costs at most the width.** For every $k$-bit counter $b$ (a vector of $k$ bits), the
+cost of resetting $b$ is at most $k$. -/
 public theorem reset_time_le {k : Nat} (bits : Vector Bool k) :
     (reset bits).time ≤ k := by
   rw [reset_time]
   simpa only [Vector.length_toList] using boolSum_le_length bits.toList
 
-/-- Reset at width zero has zero flip charge. -/
+/-- **Resetting a width-zero counter costs nothing.** Resetting a bit vector of width $0$ has
+cost $0$. -/
 public theorem reset_time_zero_width (bits : Vector Bool 0) :
     (reset bits).time = 0 := by
   rw [reset_time]
@@ -481,25 +525,30 @@ public theorem reset_time_zero_width (bits : Vector Bool 0) :
     List.eq_nil_of_length_eq_zero (Vector.length_toList (xs := bits))
   simp [empty]
 
-/-- Resetting an all-false counter has zero flip charge. -/
+/-- **Resetting the all-false counter costs nothing.** For every width $k$, resetting the
+all-false bit vector of width $k$ has cost $0$. -/
 public theorem reset_time_replicate_false (k : Nat) :
     (reset (Vector.replicate k false)).time = 0 := by
   rw [reset_time, Vector.toList_replicate]
   simp
 
-/-- Resetting a reset counter preserves the complete returned vector. -/
+/-- **Reset is idempotent.** For every $k$-bit counter $b$, resetting the counter returned by
+resetting $b$ returns the same counter as resetting $b$ once. -/
 public theorem reset_ret_idempotent {k : Nat} (bits : Vector Bool k) :
     (reset (reset bits).ret).ret = (reset bits).ret := by
   apply vector_eq_of_toList_eq
   rw [reset_toList, reset_toList]
 
-/-- A second reset has zero flip charge. -/
+/-- **A second reset costs nothing.** For every $k$-bit counter $b$, resetting the counter
+returned by resetting $b$ has cost $0$. -/
 public theorem reset_time_after_reset {k : Nat} (bits : Vector Bool k) :
     (reset (reset bits).ret).time = 0 := by
   rw [reset_time, reset_toList]
   simp
 
-/-- Reset charge plus final one-bit potential equals the initial potential. -/
+/-- **Potential identity for reset.** For every $k$-bit counter $b$ (a vector of $k$ bits), the
+cost of resetting $b$ plus the number of $1$ bits in the returned counter equals the number of
+$1$ bits in $b$. -/
 public theorem reset_potential {k : Nat} (bits : Vector Bool k) :
     (reset bits).time + ((reset bits).ret.toList.map Bool.toNat).sum =
       (bits.toList.map Bool.toNat).sum := by

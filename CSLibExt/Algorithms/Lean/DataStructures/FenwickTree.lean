@@ -53,9 +53,11 @@ namespace Cslib.Algorithms.Lean
 universe u
 
 /--
-A Fenwick tree over `α`: the one-indexed interval-sum array, with an unused
-dummy entry at index `0`. The represented underlying array is not stored; see
-`FenwickTree.Valid`.
+**Fenwick tree.** A Fenwick tree (binary indexed tree) over a commutative additive monoid
+$\alpha$ is an array of elements of $\alpha$, read as one-indexed interval sums with an unused
+dummy entry at index $0$. The structure itself imposes no condition on the entries, and the
+underlying array it represents is not stored; the relation saying that a tree represents a
+given array is defined separately.
 -/
 public structure FenwickTree (α : Type u) [AddCommMonoid α] where
   /-- The one-indexed stored interval sums, with a dummy entry at index `0`,
@@ -77,7 +79,8 @@ private lemma lowbitAux_succ (fuel n : Nat) :
     lowbitAux (fuel + 1) n = if n % 2 = 1 then 1 else 2 * lowbitAux fuel (n / 2) :=
   rfl
 
-/-- The largest power of two dividing `n`, with `lowbit 0 = 0`. -/
+/-- **Lowest set bit.** For a natural number $n > 0$, $\operatorname{lowbit}(n)$ is the largest
+power of two dividing $n$; for $n = 0$ it is defined as $\operatorname{lowbit}(0) = 0$. -/
 public def lowbit (n : Nat) : Nat :=
   if n = 0 then 0 else lowbitAux n n
 
@@ -158,15 +161,19 @@ private lemma lowbitAux_odd (fuel : Nat) (n : Nat) (hn : 0 < n) (hlt : n < 2 ^ (
         rw [← Nat.div_div_eq_div_mul]
         exact ih (n / 2) (by omega) hlt2
 
-/-- `lowbit 0` is `0`. -/
+/-- **Lowbit of zero.** By convention, $\operatorname{lowbit}(0) = 0$. -/
 public theorem lowbit_zero : lowbit 0 = 0 := by rfl
 
-/-- `lowbit` is positive on positive inputs. -/
+/-- **The lowest set bit of a positive number is positive.** For every natural number $n > 0$,
+$\operatorname{lowbit}(n) > 0$, where $\operatorname{lowbit}(n)$ is the value of the lowest set
+bit of $n$ in binary. -/
 public theorem lowbit_pos {n : Nat} (hn : 0 < n) : 0 < lowbit n := by
   rw [lowbit_eq_aux (by omega)]
   exact lowbitAux_pos n n
 
-/-- `lowbit n` is at most `n`. -/
+/-- **The lowest set bit is at most the number.** For every natural number $n$,
+$\operatorname{lowbit}(n) \le n$, where $\operatorname{lowbit}(n)$ is the value of the lowest
+set bit of $n$ in binary (with $\operatorname{lowbit}(0) = 0$). -/
 public theorem lowbit_le (n : Nat) : lowbit n ≤ n := by
   cases n with
   | zero => exact Nat.le_refl 0
@@ -174,18 +181,23 @@ public theorem lowbit_le (n : Nat) : lowbit n ≤ n := by
       rw [lowbit_eq_aux (by omega)]
       exact lowbitAux_le _ _ (by omega)
 
-/-- `lowbit n` divides `n`. -/
+/-- **The lowest set bit divides the number.** For every natural number $n > 0$,
+$\operatorname{lowbit}(n)$ divides $n$, where $\operatorname{lowbit}(n)$ is the value of the
+lowest set bit of $n$ in binary. -/
 public theorem lowbit_dvd {n : Nat} (hn : 0 < n) : lowbit n ∣ n := by
   rw [lowbit_eq_aux (by omega)]
   exact lowbitAux_dvd n n
 
-/-- `lowbit n` is a power of two. -/
+/-- **The lowest set bit is a power of two.** For every natural number $n > 0$,
+$\operatorname{lowbit}(n)$ is a power of two: $\operatorname{lowbit}(n) = 2^k$ for some natural
+number $k$. -/
 public theorem lowbit_two_pow {n : Nat} (hn : 0 < n) : ∃ k, lowbit n = 2 ^ k := by
   rw [lowbit_eq_aux (by omega)]
   exact lowbitAux_two_pow n n
 
-/-- The quotient `n / lowbit n` is odd, so `lowbit n` is the largest power of two
-dividing `n`. -/
+/-- **Dividing out the lowest set bit leaves an odd number.** For every natural number $n > 0$,
+the quotient $n / \operatorname{lowbit}(n)$ is odd, where $\operatorname{lowbit}(n)$ is the
+value of the lowest set bit of $n$ in binary. -/
 public theorem lowbit_div_odd {n : Nat} (hn : 0 < n) : (n / lowbit n) % 2 = 1 := by
   rw [lowbit_eq_aux (by omega)]
   apply lowbitAux_odd n n hn
@@ -373,16 +385,23 @@ private lemma sum_map_getD_set {α : Type u} [AddCommMonoid α] (a : List α) (L
     by_cases h : x = i <;> simp [h]
   rw [hpoint, List.sum_map_add, sum_ite_eq L hL i δ]
 
-/-- The interval sum stored at one-indexed position `j`: the sum of the
-`lowbit j` entries of `arr` ending at position `j - 1`, with entries past the end
-reading as `0`. -/
+/-- **Fenwick-tree interval sum of a list.** For a list $a$ of elements of a commutative additive
+monoid $\alpha$ and a natural number $j$, the interval sum at the one-indexed position $j$ is
+the sum of the $\operatorname{lowbit}(j)$ entries of $a$ ending at zero-indexed position
+$j - 1$, where $\operatorname{lowbit}(j)$ is the largest power of two dividing $j$ (with
+$\operatorname{lowbit}(0) = 0$) and entries past the end of $a$ count as $0$. -/
 @[expose] public def blockSum {α : Type u} [AddCommMonoid α] (arr : List α) (j : Nat) : α :=
   ((List.range' (j - lowbit j) (lowbit j)).map (fun i => arr.getD i 0)).sum
 
-/-- Array-backed interval sum: like `blockSum`, but reads through an `Array`
-in constant time per entry instead of traversing a `List` per lookup. This
-is the version used by `build`, so construction takes `O(n log n)` reads
-rather than quadratic list indexing. -/
+/-- **Interval sum read from an array.** For an array $a$ of elements of a commutative additive
+monoid $\alpha$ and a natural number $j$, this is the sum of the $\operatorname{lowbit}(j)$
+entries of $a$ ending at zero-indexed position $j - 1$, where $\operatorname{lowbit}(j)$ is the
+largest power of two dividing $j$ (with $\operatorname{lowbit}(0) = 0$) and entries past the
+end of $a$ count as $0$.
+
+It has the same value as the list-based interval sum but reads each entry in constant time;
+Fenwick-tree construction uses it, so building takes $O(n \log n)$ reads rather than quadratic
+list indexing. -/
 @[expose] public def blockSumArray {α : Type u} [AddCommMonoid α]
     (arr : Array α) (j : Nat) : α :=
   ((List.range' (j - lowbit j) (lowbit j)).map (fun i => arr.getD i 0)).sum
@@ -423,21 +442,29 @@ private lemma array_getD_toArray {α : Type u} (l : List α) (i : Nat) (d : α) 
   rw [Array.getD_eq_getD_getElem?, List.getD_eq_getElem?_getD,
     List.getElem?_toArray]
 
-/-- The tree represents `arr`: the stored array has one dummy entry plus one
-entry per underlying element, and every stored entry equals its interval sum.
-The underlying array itself is not stored at runtime; it appears only in this
-specification relation. -/
+/-- **Fenwick tree representing a list.** A Fenwick tree $t$ over an additive commutative monoid
+represents a list $a$ of length $n$ when its stored array has length $n + 1$ (a dummy entry at
+index $0$ plus one entry per element of $a$) and, for every $j$ with $1 \le j \le n$, the stored
+entry at index $j$ equals the block sum of $a$ at $j$: the sum of the $\operatorname{lowbit}(j)$
+entries of $a$ ending at position $j - 1$ (positions counted from $0$), where
+$\operatorname{lowbit}(j)$ is the largest power of two dividing $j$.
+
+The underlying list itself is not stored at runtime; it appears only in this specification
+relation. -/
 @[expose] public def Valid {α : Type u} [AddCommMonoid α] (t : FenwickTree α)
     (arr : List α) : Prop :=
   t.bit.size = arr.length + 1 ∧
     ∀ j, 1 ≤ j → j ≤ arr.length → t.bit.getD j 0 = blockSum arr j
 
-/-- The number of underlying elements, read off the stored array in constant
-time. -/
+/-- **Size of a Fenwick tree.** The size of a Fenwick tree is the length of its stored array
+minus one, truncated at $0$; the one accounts for the dummy entry at index $0$. It is read off
+the stored array in constant time. -/
 public def size {α : Type u} [AddCommMonoid α] (t : FenwickTree α) : Nat :=
   t.bit.size - 1
 
-/-- A tree representing `arr` has size `arr.length`. -/
+/-- **A Fenwick tree has the length of the list it represents.** If a Fenwick tree $t$ over an
+additive commutative monoid represents a list $a$, then the size of $t$ equals the length of
+$a$. -/
 public theorem size_eq_length_of_valid {α : Type u} [AddCommMonoid α]
     {t : FenwickTree α} {arr : List α} (hv : Valid t arr) :
     t.size = arr.length := by
@@ -445,16 +472,23 @@ public theorem size_eq_length_of_valid {α : Type u} [AddCommMonoid α]
   rw [hv.1]
   exact Nat.add_sub_cancel _ _
 
-/-- Build a Fenwick tree representing the given array by computing every
-interval sum. The input is converted to an `Array` once, so each entry read
-is constant-time and construction is `O(n log n)`. -/
+/-- **Building a Fenwick tree from a list.** For a list $a$ of length $n$ over a commutative
+additive monoid $\alpha$, the Fenwick tree built from $a$ stores the array of length $n + 1$
+whose entry at index $0$ is $0$ and whose entry at each one-indexed position $j$ with
+$1 \le j \le n$ is the sum of the $\operatorname{lowbit}(j)$ entries of $a$ ending at
+zero-indexed position $j - 1$, where $\operatorname{lowbit}(j)$ is the largest power of two
+dividing $j$.
+
+The input is converted to an array once, so each entry read is constant-time and construction
+is $O(n \log n)$. -/
 public def build {α : Type u} [AddCommMonoid α] (arr : List α) : FenwickTree α where
   bit :=
     let a := arr.toArray
     (0 :: (List.range arr.length).map
       (fun i => blockSumArray a (i + 1))).toArray
 
-/-- The size of a built tree is the length of its input. -/
+/-- **Size of a built Fenwick tree.** For every list $a$ over an additive commutative monoid,
+the Fenwick tree built from $a$ has size equal to the length of $a$. -/
 public theorem size_build {α : Type u} [AddCommMonoid α] (arr : List α) :
     (build arr).size = arr.length := by
   show (build arr).bit.size - 1 = arr.length
@@ -470,7 +504,8 @@ private lemma blockSumArray_toArray {α : Type u} [AddCommMonoid α]
   intro i _
   exact array_getD_toArray arr i 0
 
-/-- `build` produces a tree representing its input. -/
+/-- **Building a Fenwick tree yields a valid representation.** For every list $a$ over an
+additive commutative monoid, the Fenwick tree built from $a$ represents $a$. -/
 public theorem valid_build {α : Type u} [AddCommMonoid α] (arr : List α) :
     Valid (build arr) arr := by
   refine ⟨by simp [build], ?_⟩
@@ -524,22 +559,28 @@ private lemma prefixAux_eq {α : Type u} [AddCommMonoid α] (bit : Array α)
           Nat.sub_sub_self (lowbit_le k)]
         exact add_comm _ _
 
-/-- The sum of the first `k` underlying entries, computed by walking the stored
-entries at `k, k - lowbit k, …` down to `0`. Indices past the end are clamped:
-querying at `k` greater than the size sums the whole represented array, just
-like `List.take`. -/
+/-- **Fenwick tree prefix sum.** Let $t$ be a Fenwick tree over an additive commutative monoid
+with $n$ underlying entries, let $k$ be a natural number and let $m = \min(k, n)$. The prefix sum
+of length $k$ of $t$ is the sum of the stored entries of $t$ at the positions $j_0 = m$,
+$j_{r+1} = j_r - \operatorname{lowbit}(j_r)$, taken for as long as $j_r > 0$.
+
+When $t$ represents a list, this is the sum of its first $m$ entries, so queries past the end
+are clamped. -/
 public def prefixSum {α : Type u} [AddCommMonoid α] (t : FenwickTree α) (k : Nat) :
     α :=
   prefixAux t.bit (min k t.size) (min k t.size)
 
-/-- The empty prefix sums to zero. -/
+/-- **The empty prefix sum is zero.** For every Fenwick tree $t$ over an additive commutative
+monoid, the prefix sum of length $0$ of $t$ is $0$. -/
 @[simp]
 public theorem prefixSum_zero {α : Type u} [AddCommMonoid α] (t : FenwickTree α) :
     prefixSum t 0 = 0 := by
   rfl
 
-/-- For every `k`, including values past the end, `prefixSum` agrees with the
-sum of the corresponding `List.take` of the represented array. -/
+/-- **Correctness of Fenwick tree prefix sums.** Let $t$ be a Fenwick tree representing a list $a$
+of elements of an additive commutative monoid. Then for every natural number $k$, including
+$k > |a|$, the prefix sum of length $k$ of $t$ equals the sum of the first $\min(k, |a|)$ entries
+of $a$. -/
 public theorem prefixSum_eq_take_sum {α : Type u} [AddCommMonoid α]
     (t : FenwickTree α) {arr : List α} (hv : Valid t arr) (k : Nat) :
     prefixSum t k = (arr.take k).sum := by
@@ -555,8 +596,9 @@ public theorem prefixSum_eq_take_sum {α : Type u} [AddCommMonoid α]
     rw [Nat.min_eq_right hle, List.take_of_length_le (Nat.le_refl _),
       List.take_of_length_le hle]
 
-/-- Prefix sums of a freshly built tree agree with the input array's prefix
-sums at every index. -/
+/-- **Prefix sums of a built Fenwick tree.** For every list $a$ of elements of an additive
+commutative monoid and every natural number $k$, the prefix sum of length $k$ of the Fenwick tree
+built from $a$ equals the sum of the first $\min(k, |a|)$ entries of $a$. -/
 public theorem prefixSum_build {α : Type u} [AddCommMonoid α] (arr : List α)
     (k : Nat) : prefixSum (build arr) k = (arr.take k).sum :=
   prefixSum_eq_take_sum (build arr) (valid_build arr) k
@@ -685,18 +727,26 @@ private lemma getD_foldl_addAt {α : Type u} [AddCommMonoid α] (bit : Array α)
       · simp [List.mem_cons, hx]
 
 /--
-Add `δ` to underlying entry `i` by walking `i + 1, j + lowbit j, …` and adding
-`δ` to exactly those stored entries; each write is constant-time only when
-the stored array is uniquely referenced, since a shared array is copied by
-the first persistent `Array.set`. An out-of-range
-`i` visits no index and leaves the tree unchanged. The walk is fuelled by the
-size, which always suffices because visited indices strictly increase.
+**Point update of a Fenwick tree.** Let $t$ be a Fenwick tree over a commutative additive
+monoid $\alpha$, let $n$ be its size (the length of its stored array minus one), let $i$ be a
+natural number and let $\delta \in \alpha$. Adding $\delta$ at underlying position $i$ adds
+$\delta$ to the stored entries at the one-indexed positions $j_1 = i + 1$ and
+$j_{k+1} = j_k + \operatorname{lowbit}(j_k)$, for as long as $j_k \le n$, where
+$\operatorname{lowbit}(j)$ is the largest power of two dividing $j$; every other stored entry
+is left unchanged. In particular, if $i \ge n$ the tree is unchanged.
+
+Each write is constant-time only when the stored array is uniquely referenced, since a shared
+array is copied by the first persistent write. The walk is fuelled by the size, which always
+suffices because the visited positions strictly increase.
 -/
 public def add {α : Type u} [AddCommMonoid α] (t : FenwickTree α) (i : Nat)
     (δ : α) : FenwickTree α where
   bit := (walk t.size t.size (i + 1)).foldl (fun b j => addAt b j δ) t.bit
 
-/-- A point update at an out-of-range position is the identity. -/
+/-- **Out-of-range point updates leave a Fenwick tree unchanged.** Let $t$ be a Fenwick tree
+over a commutative additive monoid $\alpha$, and let $n$ be its size (the length of its stored
+array minus one). For every natural number $i \ge n$ and every $\delta \in \alpha$, the point
+update of $t$ adding $\delta$ at position $i$ returns $t$ itself. -/
 public theorem add_eq_self_of_le {α : Type u} [AddCommMonoid α]
     (t : FenwickTree α) {i : Nat} (hi : t.size ≤ i) (δ : α) :
     add t i δ = t := by
@@ -739,8 +789,10 @@ private lemma getD_add_of_valid {α : Type u} [AddCommMonoid α]
   · rw [ite_eq_left hc, ite_eq_left (hiff.mpr hc)]
   · rw [ite_eq_right hc, ite_eq_right (fun h => hc (hiff.mp h))]
 
-/-- Point update at an in-range position moves the representation to the
-point-updated array. -/
+/-- **Point update preserves representation.** Let $t$ be a Fenwick tree over an additive
+commutative monoid that represents a list $a$ of length $n$. For every index $i < n$ (counting
+from $0$) and every element $\delta$, the tree obtained from $t$ by adding $\delta$ at position
+$i$ represents the list obtained from $a$ by replacing its entry $a_i$ with $a_i + \delta$. -/
 public theorem valid_add {α : Type u} [AddCommMonoid α] {t : FenwickTree α}
     {arr : List α} (hv : Valid t arr) {i : Nat} (hi : i < arr.length) (δ : α) :
     Valid (add t i δ) (arr.set i (arr.getD i 0 + δ)) := by
@@ -754,8 +806,12 @@ public theorem valid_add {α : Type u} [AddCommMonoid α] {t : FenwickTree α}
     rw [getD_add_of_valid ⟨hlen, hsum⟩ i δ hj1 hjlen, hsum j hj1 hjlen,
       blockSum_set arr hi δ j]
 
-/-- A point update changes exactly the prefix sums past the updated position,
-at every query index including past-the-end ones. -/
+/-- **Prefix sums after a point update.** Let $t$ be a Fenwick tree representing a list $a$ of
+elements of an additive commutative monoid, let $i < |a|$ be a position, let $\delta$ be an
+element of the monoid, and let $k$ be any natural number, possibly larger than $|a|$. Then the
+prefix sum of length $k$ of the tree obtained from $t$ by adding $\delta$ at position $i$ equals
+the prefix sum of length $k$ of $t$ plus $\delta$ if $i < k$, and equals the prefix sum of
+length $k$ of $t$ if $k \le i$. -/
 public theorem prefixSum_add {α : Type u} [AddCommMonoid α] {t : FenwickTree α}
     {arr : List α} (hv : Valid t arr) {i : Nat} (hi : i < arr.length) (δ : α)
     (k : Nat) :
@@ -764,17 +820,23 @@ public theorem prefixSum_add {α : Type u} [AddCommMonoid α] {t : FenwickTree �
     prefixSum_eq_take_sum t hv k]
   exact take_sum_set arr hi δ k
 
-/-- The sum of the underlying entries with indices in `[lo, hi)`, as a
-difference of prefix sums. This is the one operation that needs additive
-inverses. Reversed or empty ranges (`hi ≤ lo`) return `0`, matching the sum
-over the empty list interval `((arr.take hi).drop lo)`. -/
+/-- **Fenwick tree range sum.** For a Fenwick tree $t$ over an additive commutative group and
+natural numbers $\mathit{lo}$ and $\mathit{hi}$, the range sum of $t$ over
+$[\mathit{lo}, \mathit{hi})$ is $0$ if $\mathit{hi} \le \mathit{lo}$, and otherwise the prefix sum
+of length $\mathit{hi}$ of $t$ minus the prefix sum of length $\mathit{lo}$ of $t$.
+
+When $t$ represents a list, this is the sum of its entries with indices in
+$[\mathit{lo}, \mathit{hi})$. This is the only Fenwick tree operation that needs additive
+inverses. -/
 public def rangeSum {α : Type u} [AddCommGroup α] (t : FenwickTree α)
     (lo hi : Nat) : α :=
   if hi ≤ lo then 0 else prefixSum t hi - prefixSum t lo
 
-/-- `rangeSum` agrees with the sum of the represented array over `[lo, hi)`,
-with both ends clamped through `List.take`. This holds for every `lo` and
-`hi`: when `hi ≤ lo` both sides are `0`. -/
+/-- **Correctness of Fenwick tree range sums.** Let $t$ be a Fenwick tree representing a list
+$a = (a_0, \dots, a_{n-1})$ of elements of an additive commutative group. Then for all natural
+numbers $\mathit{lo}$ and $\mathit{hi}$, the range sum of $t$ over $[\mathit{lo}, \mathit{hi})$
+equals $\sum_{\mathit{lo} \le i < \min(\mathit{hi}, n)} a_i$; in particular it is $0$ when
+$\mathit{hi} \le \mathit{lo}$. -/
 public theorem rangeSum_eq {α : Type u} [AddCommGroup α] {t : FenwickTree α}
     {arr : List α} (hv : Valid t arr) (lo hi : Nat) :
     rangeSum t lo hi = ((arr.take hi).drop lo).sum := by
