@@ -21,8 +21,6 @@ Module under test: `Sheffield.CrossNestedEndpoint` in
   probability measure (`EndpointBridgedRectangleArrayCertificate.false`, stated as `IsEmpty`).
 * Refutation: `CrossNestedOutwardEndpointCertificate` is empty for every FKG, translation-invariant
   measure with a unique infinite cluster and translation-invariant dual image.
-* `PeriodicPlanarDualPair.crossNestedOutwardEndpointCertificate_hypothesis_iff` elaborates
-  (check-only).
 -/
 
 @[expose] public section
@@ -49,8 +47,6 @@ example (D : PeriodicPlanarDualPair P Pdual) (mu : Measure (ConfigSpace (Sym2 V)
   ⟨fun data => PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false D mu data hFKG
     hTI hunique hTIDual⟩
 
-open PeriodicPlanarDualPair in
-example := @crossNestedOutwardEndpointCertificate_hypothesis_iff
 
 end CrossNestedEndpoint
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield

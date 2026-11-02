@@ -33,10 +33,11 @@ Every trifurcation of `B_n` reaches the boundary through an infinite cluster
 (`tfc_trif_reaches_boundary`). An injective choice of connected boundary sites
 (`tfc_DistinctArmEnds`) bounds `Tcount` by `|∂B_n|`, and under translation invariance and ergodicity
 such a configuration-wide bound with `|∂B_n| = o(|B_n|)` would force `μ(0 is a trifurcation) = 0`
-and, through finite-energy merging, uniqueness (`tfc_burton_keane_uniqueness_full`,
-`tfc_burton_keane_bernoulli`).
+and, through finite-energy merging, uniqueness would follow. The counting-form
+Burton--Keane uniqueness statements were removed: their `hbound`/`hdens` hypotheses are
+jointly unsatisfiable (`tfc_not_hbound_hdens`), so they were vacuous.
 
-These uniqueness statements are vacuous. `IsTrifurcation` lets the centre itself be one of the three
+Those uniqueness statements were vacuous. `IsTrifurcation` lets the centre itself be one of the three
 separated sites, so in `tfc_lineConfig` (all edges in one coordinate direction open) every site is a
 trifurcation. Hence `tfc_DistinctArmEnds` fails for some configuration
 (`tfc_not_forall_distinctArmEnds`), the bound `Tcount ≤ |∂B_n|` fails
@@ -51,7 +52,9 @@ not have this defect.
 - `tfc_line_isTrifurcation` : every site of `tfc_lineConfig` is a trifurcation
 - `tfc_not_forall_distinctArmEnds` : distinct arm ends fail for some configuration
 - `tfc_not_hbound_hdens` : no configuration-wide bound of order `o(|B_n|)` exists
-- `tfc_burton_keane_bernoulli` : the conditional uniqueness statement, vacuous for `d ≥ 1`
+- (removed) `tfc_burton_keane_uniqueness_full` / `tfc_burton_keane_bernoulli` : the
+  counting-form uniqueness statements, removed because their hypotheses are jointly
+  unsatisfiable (`tfc_not_hbound_hdens`); the refutations below are retained
 
 ## iii. Table of contents
 
@@ -610,74 +613,6 @@ lemma tfc_not_hbound_hdens (hd : 1 ≤ d) (bdry : ℕ → ℕ)
   obtain ⟨n, h1, h2⟩ := (hlt.and hge).exists
   linarith
 
-/-- The counting form of the Burton–Keane theorem (Burton and Keane, *Density and uniqueness in
-percolation*, 1989): an ergodic measure with finite-energy merging, a configuration-wide
-trifurcation bound `hbound` with `bdry n = o(|B_n|)` and the trifurcation input `htrif` has at
-most one infinite cluster. For `d ≥ 1` the hypotheses `hbound` and `hdens` contradict each other
-(`tfc_not_hbound_hdens`), so the statement is vacuous. -/
-theorem tfc_burton_keane_uniqueness_full
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (herg : IsErgodic (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ)
-    (bdry : ℕ → ℕ)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n → Tcount d ω n ≤ bdry n)
-    (hvol : ∀ n, 0 < (boxFinsetBK d n).card)
-    (hdens : Tendsto (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ)) atTop (𝓝 0))
-    (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | IsTrifurcation d ω 0}) :
-    (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ μ (atLeastTwoInfinite d) = 0
-      ∧ μ {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-  have hkne_top : ∀ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 → k ≠ ⊤ := by
-    intro k hk
-    obtain ⟨k', hk'top, hk'⟩ :=
-      tfc_numInfiniteClusters_ae_const_ne_top μ herg bdry hbound hvol hdens htrif
-    intro hktop
-    have hsub : {ω | numInfiniteClusters d ω = k} ⊆ {ω | numInfiniteClusters d ω = k'}ᶜ := by
-      intro ω hω
-      simp only [Set.mem_ofPred_eq] at hω
-      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, hω]
-      intro h; exact hk'top (by rw [← h, hktop])
-    have hmk' : MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | numInfiniteClusters d ω = k'} := by
-      have heq : {ω : ConfigSpace (Sym2 (Site d)) | numInfiniteClusters d ω = k'}
-          = numInfiniteClusters d ⁻¹' {k'} := by ext ω; simp [Set.mem_preimage]
-      rw [heq]; exact measurable_numInfiniteClusters (MeasurableSet.of_discrete)
-    have hfull : μ {ω | numInfiniteClusters d ω = k'}ᶜ = 1 :=
-      le_antisymm prob_le_one (hk ▸ measure_mono hsub)
-    have hnull : μ {ω | numInfiniteClusters d ω = k'} = 0 :=
-      (prob_compl_eq_one_iff hmk').mp hfull
-    rw [hk'] at hnull
-    exact one_ne_zero hnull
-  have hmerge : μ (atLeastTwoInfinite d) = 0 :=
-    merge_event_null μ herg hfe hkne_top
-      (fun k hk2 hktop hk => hmergeGeom_discharged μ k hk2 hktop hk)
-  exact ⟨numInfiniteClusters_zero_or_one μ herg hmerge, hmerge,
-    infiniteCluster_unique_ae μ herg hmerge⟩
-
-/-- Burton–Keane uniqueness for Bernoulli bond percolation from distinct arm ends in every box. The
-hypothesis `hres` is false (`tfc_not_forall_distinctArmEnds`), so the statement is vacuous. -/
-theorem tfc_burton_keane_bernoulli (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hres : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      tfc_DistinctArmEnds ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | IsTrifurcation d ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  tfc_burton_keane_uniqueness_full (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n)
-    (fun ω n hn => tfc_Tcount_le_boundary_of_distinctArmEnds ω n (hres ω n hn))
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd)
-    htrif
 
 end Percolation
 

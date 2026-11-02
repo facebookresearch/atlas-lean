@@ -51,17 +51,10 @@ that two such one-sided selections need not combine.
 
 Headline fidelity, read from the statements:
 
-- `PeriodicPlanarDualPair.`
-  `commonUnique_ne_one_of_crossNestedEndpointCertificate`:
-  the free buffered infinite-volume FK measure (`0 < p < 1`, `q ≥ 1`) does not give probability
-  `1` to the common unique primal and dual infinite cluster event. **Circular: the hypothesis
-  `hcertificate` is equivalent to the conclusion**
-  (`crossNestedOutwardEndpointCertificate_hypothesis_iff`). Under common uniqueness the free
-  buffered measure satisfies FKG, translation invariance, uniqueness and dual translation
-  invariance (`freeBufferedInfiniteVolume_sheffieldData_of_common`), and for such measures every
-  `CrossNestedOutwardEndpointCertificate` is refuted by
-  `CrossNestedOutwardEndpointCertificate.false`. So `hcertificate` holds exactly when the measure
-  of the event is not `1`.
+- (removed) `PeriodicPlanarDualPair.`
+  `commonUnique_ne_one_of_crossNestedEndpointCertificate`: the circular result was removed;
+  its hypothesis was equivalent to its conclusion. The refutation
+  `CrossNestedOutwardEndpointCertificate.false` below is retained.
 - `PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false` : proved; the certificate
   structure is empty for every FKG, translation-invariant measure with a unique infinite cluster
   and translation-invariant dual image. It is a vacuous hypothesis predicate in that setting.
@@ -4973,53 +4966,11 @@ lemma PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false
 
 namespace PeriodicPlanarDualPair
 
-/-- The hypothesis `hcertificate` is equivalent to the conclusion
-(`crossNestedOutwardEndpointCertificate_hypothesis_iff`): the certificate it produces is refuted by
-`CrossNestedOutwardEndpointCertificate.false` (the model properties come from
-`freeBufferedInfiniteVolume_sheffieldData_of_common`), so `hcertificate` says exactly that the
-common uniqueness event does not have probability `1`. This result only restates its hypothesis. -/
-lemma
-commonUnique_ne_one_of_crossNestedEndpointCertificate
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
-    (hcertificate :
-      let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-      mu D.commonUniqueInfiniteClusterEvent = 1 ->
-        Nonempty (D.CrossNestedOutwardEndpointCertificate mu)) :
-    let mu : Measure (ConfigSpace (Sym2 V)) :=
-      P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    mu D.commonUniqueInfiniteClusterEvent ≠ 1 := by
-  dsimp only
-  intro hcommon
-  let : IsProbabilityMeasure
-      (D.dualMeasure
-        (P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq) :
-          Measure (ConfigSpace (Sym2 V)))) :=
-    (Measure.isProbabilityMeasure_map_iff
-      (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
-  have hmodel := D.freeBufferedInfiniteVolume_sheffieldData_of_common
-    hp hp1 hq hcommon
-  obtain ⟨data⟩ := hcertificate hcommon
-  exact data.false D _ hmodel.1 hmodel.2.1 hmodel.2.2.2.2.1
-    hmodel.2.2.2.1
-
-/-- The hypothesis of
-`commonUnique_ne_one_of_crossNestedEndpointCertificate`
-is equivalent to its conclusion, so that result is circular. -/
-lemma crossNestedOutwardEndpointCertificate_hypothesis_iff
-    (D : PeriodicPlanarDualPair P Pdual)
-    {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
-    (let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-     mu D.commonUniqueInfiniteClusterEvent = 1 ->
-        Nonempty (D.CrossNestedOutwardEndpointCertificate mu)) ↔
-    (let mu : Measure (ConfigSpace (Sym2 V)) :=
-        P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-     mu D.commonUniqueInfiniteClusterEvent ≠ 1) :=
-  ⟨commonUnique_ne_one_of_crossNestedEndpointCertificate
-      D hp hp1 hq, fun h hcommon => absurd hcommon h⟩
-
+/- The circular `commonUnique_ne_one_of_crossNestedEndpointCertificate` result was
+removed: its hypothesis is equivalent to its conclusion
+(`crossNestedOutwardEndpointCertificate_hypothesis_iff`), so it restated its hypothesis
+rather than proving a Sheffield theorem. The refutation
+`CrossNestedOutwardEndpointCertificate.false` above is retained. -/
 end PeriodicPlanarDualPair
 
 end StatMech.FK.PeriodicPlanar
