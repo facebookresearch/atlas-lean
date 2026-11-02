@@ -312,14 +312,6 @@ def eaw_LoopWindsRegion : Prop :=
       K ⊆ bpc_orbitFootprint K a →
       3 ≤ dartOrbitPeriod K a ∧ OrbitFaceNoPinch K a ∧ eaw_InteriorSubset K a
 
-/-- `eaw_LoopWindsRegion` implies `wei_WindingSaturatingWitness`. Both are false
-(`not_eaw_LoopWindsRegion`, `not_wei_WindingSaturatingWitness`). -/
-theorem eaw_windingSaturatingWitness_of_residue (hres : eaw_LoopWindsRegion) :
-    wei_WindingSaturatingWitness := by
-  intro K hK hge a hsat
-  obtain ⟨hp, hnp, hint⟩ := hres K hK hge a hsat
-  exact eaw_windingWitness_of_cycle_interior K a hp hnp hint
-
 /-- The ray count of a site `z` with respect to the face loop of the unit cell orbit. -/
 theorem eaw_unitCell_rayCount_eq (z : Site 2) :
     jec_rayCount z (mpl_orbitLoop unitCell ucBase)
@@ -370,8 +362,12 @@ theorem eaw_unitCell_loopWindsRegion :
 
 /-- `eaw_LoopWindsRegion` is false, since it implies the false statement
 `wei_WindingSaturatingWitness`. -/
-theorem not_eaw_LoopWindsRegion : ¬ eaw_LoopWindsRegion :=
-  fun h => not_wei_WindingSaturatingWitness (eaw_windingSaturatingWitness_of_residue h)
+theorem not_eaw_LoopWindsRegion : ¬ eaw_LoopWindsRegion := by
+  intro h
+  apply not_wei_WindingSaturatingWitness
+  intro K hK hge a hsat
+  obtain ⟨hp, hnp, hint⟩ := h K hK hge a hsat
+  exact eaw_windingWitness_of_cycle_interior K a hp hnp hint
 
 end Lattice
 
