@@ -23,10 +23,9 @@ The file also records which off-walk connectivity hypotheses about the even–od
 `jec_leftRegion Vc` can never hold. The inside and outside are defined for every site, including the
 vertices of `Vc` (a site `z` is labeled by the unit face with upper right corner `z`). A vertex of
 `Vc` in its leftmost column is always outside, and the inside, when nonempty, always contains a
-vertex of `Vc`. Hence "every outside site is off `Vc`", "every inside site is off `Vc`" (for a
-nonempty inside), and every hypothesis implying one of them (connectedness of the inside or of the
-outside by paths avoiding `Vc`, `oc_OutsideReachesExterior` for a walk inside the box,
-`oc_OutsideReachesTop`) are unsatisfiable.
+vertex of `Vc` (`oc_exists_support_not_leftRegion`, `oc_leftRegion_meets_support`, proved in
+`JordanExteriorClosure`). Hence the predicates `oc_OutsideReachesExterior` (for a walk inside the
+box) and `oc_OutsideReachesTop` of this file are unsatisfiable.
 
 ## Main definitions
 
@@ -41,11 +40,8 @@ outside by paths avoiding `Vc`, `oc_OutsideReachesExterior` for a walk inside th
 * `StatMech.Lattice.oc_reachesExterior_of_vertUpClear` and its three siblings: a clear straight
   segment to the exterior gives an escape.
 * `StatMech.Lattice.oc_reachesExterior_of_row_ge_R`: sites off `Vc` at height at least `R` escape.
-* `StatMech.Lattice.oc_exists_support_not_leftRegion`: some vertex of `Vc` is outside.
-* `StatMech.Lattice.oc_leftRegion_meets_support`: a nonempty inside contains a vertex of `Vc`.
-* `StatMech.Lattice.oc_not_hInOff`, `StatMech.Lattice.oc_not_hOutOff`,
-  `StatMech.Lattice.oc_not_outsideReachesExterior`, `StatMech.Lattice.oc_not_outsideReachesTop`:
-  the off-walk connectivity hypotheses above are unsatisfiable.
+* `StatMech.Lattice.oc_not_outsideReachesExterior`, `StatMech.Lattice.oc_not_outsideReachesTop`:
+  the two predicates above are unsatisfiable.
 -/
 
 @[expose] public section
@@ -267,95 +263,12 @@ theorem oc_colClear_reachesTop (Vc : (hypercubicLattice 2).Walk a a) (R : ℕ) {
   rw [hp, SimpleGraph.Walk.support_copy] at hu
   exact oc_vertUp_clear_of_colClear Vc R hcol u hu
 
-/-! ### Unsatisfiable off-walk hypotheses -/
+/-! ### Unsatisfiable off-walk hypotheses
 
-/-- A vertex of `Vc` in its leftmost column is outside `Vc`: no edge of `Vc` crosses the ray going
-left from it. -/
-theorem oc_exists_support_not_leftRegion (Vc : (hypercubicLattice 2).Walk a a) :
-    ∃ v ∈ Vc.support, v ∉ jec_leftRegion Vc ∧ ∀ p ∈ Vc.support, v 0 ≤ p 0 := by
-  classical
-  obtain ⟨v, hv, hmin⟩ := Vc.support.toFinset.exists_min_image (fun p => p 0)
-    ⟨a, by simp⟩
-  rw [List.mem_toFinset] at hv
-  refine ⟨v, hv, ?_, fun p hp => hmin p (by simpa using hp)⟩
-  rw [jec_mem_leftRegion, not_not,
-    jec_rayCount_eq_zero_of_right v Vc (fun p hp => hmin p (by simpa using hp))]
-  exact ⟨0, rfl⟩
-
-/-- Not every site outside a closed walk is off the walk. -/
-theorem oc_not_forall_outside_offSupport (Vc : (hypercubicLattice 2).Walk a a) :
-    ¬ ∀ s : Site 2, s ∉ jec_leftRegion Vc → s ∉ Vc.support := by
-  intro h
-  obtain ⟨v, hv, hout, -⟩ := oc_exists_support_not_leftRegion Vc
-  exact h v hout hv
-
-/-- A nonempty inside of a closed walk contains a vertex of the walk. Moving right from an inside
-site that is off the walk keeps the ray count, so if no inside site were on the walk, the whole row
-to the right of an inside site would be inside, contradicting that sites to the right of the walk
-are outside. -/
-theorem oc_leftRegion_meets_support (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
-    (hp : p ∈ jec_leftRegion Vc) : ∃ s ∈ jec_leftRegion Vc, s ∈ Vc.support := by
-  classical
-  by_contra hcon
-  push Not at hcon
-  have hstep : ∀ k : ℕ, (![p 0 + k, p 1] : Site 2) ∈ jec_leftRegion Vc := by
-    intro k
-    induction k with
-    | zero =>
-      have : (![p 0 + ((0 : ℕ) : ℤ), p 1] : Site 2) = p := by
-        ext i; fin_cases i <;> simp
-      rw [this]; exact hp
-    | succ k ih =>
-      have hoff := hcon _ ih
-      rw [jec_mem_leftRegion] at ih ⊢
-      rwa [jec_rayCount_horizontalStep (![p 0 + k, p 1] : Site 2) _ (by simp; ring) (by simp)
-        Vc hoff]
-  obtain ⟨M, hM⟩ := (Vc.support.toFinset.image (fun q => q 0)).bddAbove
-  have hfar : ∀ q ∈ Vc.support,
-      q 0 ≤ (![p 0 + ((M - p 0 + 1).toNat : ℕ), p 1] : Site 2) 0 - 1 := by
-    intro q hq
-    have hmem : q 0 ∈ (Vc.support.toFinset.image (fun q => q 0) : Set ℤ) := by
-      simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe, List.mem_toFinset]
-      exact ⟨q, hq, rfl⟩
-    have : q 0 ≤ M := hM hmem
-    simp only [Matrix.cons_val_zero]
-    omega
-  exact hstep _ (jec_ray_even_far Vc _ hfar)
-
-/-- If the inside of a closed walk is nonempty, not every inside site is off the walk. -/
-theorem oc_not_inside_offSupport (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
-    (hp : p ∈ jec_leftRegion Vc) : ¬ ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support := by
-  intro h
-  obtain ⟨s, hs, hsupp⟩ := oc_leftRegion_meets_support Vc hp
-  exact h s hs hsupp
-
-/-- A nonempty inside of a closed walk is never connected by lattice paths avoiding the walk
-(taking `s = t` would put every inside site off the walk). -/
-theorem oc_not_hInOff (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
-    (hp : ¬ Even (jec_rayCount p Vc)) :
-    ¬ ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
-        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
-  intro h
-  refine oc_not_inside_offSupport Vc (p := p) hp fun s hs => ?_
-  obtain ⟨pw, hpw⟩ := h s s hs hs
-  exact hpw s pw.start_mem_support
-
-/-- The outside of a closed walk is never connected by lattice paths avoiding the walk. -/
-theorem oc_not_hOutOff (Vc : (hypercubicLattice 2).Walk a a) :
-    ¬ ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
-        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
-  intro h
-  refine oc_not_forall_outside_offSupport Vc fun s hs => ?_
-  obtain ⟨pw, hpw⟩ := h s s hs hs
-  exact hpw s pw.start_mem_support
-
-/-- A removed site is isolated in the lattice with the sites of `B` removed. -/
-theorem oc_ffc_reachable_eq_of_mem {B : Set (Site 2)} {x y : Site 2} (hx : x ∈ B)
-    (h : (ffc_offSupportLattice B).Reachable x y) : x = y := by
-  obtain ⟨w⟩ := h
-  cases w with
-  | nil => rfl
-  | cons hadj _ => exact absurd hx hadj.2.1
+The refutations of the off-walk connectivity hypotheses for `jec_leftRegion`
+(`oc_exists_support_not_leftRegion`, `oc_leftRegion_meets_support`, `oc_not_hInOff`,
+`oc_not_hOutOff`, ...) live in `JordanExteriorClosure`, and `oc_ffc_reachable_eq_of_mem` in
+`FloodFillConnected`; this section applies them to the predicates of this file. -/
 
 /-- `StatMech.Lattice.oc_OutsideReachesExterior` never holds for a closed walk in the box. -/
 theorem oc_not_outsideReachesExterior (Vc : (hypercubicLattice 2).Walk a a) (R : ℕ)

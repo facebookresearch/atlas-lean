@@ -23,8 +23,6 @@ all boundary darts of a cluster.
 
 * `StatMech.Lattice.owr_leftRegion_subset_of_exterior`: under `hExt`, the winding region lies in
   `K`.
-* `StatMech.Lattice.owr_exists_not_exteriorHyp`: for finite nonempty `K`, `hExt` fails for the
-  leftward dart out of a leftmost site of `K`.
 * `StatMech.Lattice.owr_revMatch_of_inclusions`: if `K` equals the winding region, the reverse
   inclusion holds.
 * `StatMech.Lattice.owr_revMatch_of_winding`, `StatMech.Lattice.owr_orbitSeparates_of_winding`: the
@@ -58,30 +56,6 @@ theorem owr_leftRegion_subset_of_exterior (K : Set (Site 2)) (hK : K.Finite) (e 
   rw [jec_mem_leftRegion] at hz
   by_contra hzK
   exact hz (oee_outsideHalf_of_exteriorEq K hK e he hExt z hzK)
-
-/-- The exterior hypothesis `hExt` used in this file (every site outside `K` is joined, by a lattice
-path avoiding the support of the orbit loop of `e`, to a site weakly left of that loop) fails for
-some boundary dart of every finite nonempty `K`. Take `c ∈ K` with least first coordinate and `e`
-the dart from `c` to `c - (1,0)`: the face label `dartFace e = c - (1,1)` lies outside `K` and on
-the orbit loop of `e`, so no path from it avoids the loop. In particular `hExt` cannot hold for all
-boundary darts of a finite nonempty set. -/
-theorem owr_exists_not_exteriorHyp (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty) :
-    ∃ (e : Dart) (he : IsBoundaryDart K e),
-      ¬ ∀ z, z ∉ K → ∃ z0 : Site 2, ∃ p : (hypercubicLattice 2).Walk z z0,
-        (∀ w ∈ p.support, w ∉ (olb_orbitLoop K hK e he).support) ∧
-        (∀ q ∈ (olb_orbitLoop K hK e he).support, z0 0 ≤ q 0) := by
-  obtain ⟨c, hc, hmin⟩ := Set.exists_min_image K (fun z : Site 2 => z 0) hK hne
-  have hnot : ∀ z : Site 2, z 0 < c 0 → z ∉ K := fun z hz hzK =>
-    absurd (hmin z hzK) (not_le.mpr hz)
-  have hg : unitWt (![-1, 0] : Site 2) = 1 := by simp only [unitWt, Fin.sum_univ_two]; decide
-  have he : IsBoundaryDart K (mkDart c ![-1, 0] hg) :=
-    ⟨by rw [mkDart_tail]; exact hc, hnot _ (by simp)⟩
-  refine ⟨mkDart c ![-1, 0] hg, he, fun hExt => ?_⟩
-  have hface : dartFace (mkDart c ![-1, 0] hg) 0 = c 0 - 1 := by
-    rw [dartFace_of_dir_left _ (mkDart_dir _ _ _)]; simp
-  obtain ⟨z0, p, hp, -⟩ := hExt (dartFace (mkDart c ![-1, 0] hg))
-    (hnot _ (by rw [hface]; omega))
-  exact hp _ p.start_mem_support (olb_orbitLoop K hK _ he).start_mem_support
 
 /-- Let `L` be the inside (odd ray count) of a closed walk `Vc`. If `L ⊆ K` and no lattice edge
 joins a site of `L` to a site of `K` outside `L`, every boundary edge of `L` is a boundary edge of

@@ -40,6 +40,11 @@ set needed to glue RSW crossings (`StatMech.Lattice.jec_crossingArcSides`).
 * `StatMech.Lattice.jec_leftRegion_bdEdge_support`: boundary edges of the inside have an endpoint on
   the walk.
 * `StatMech.Lattice.jec_ray_even_far`: sites to the right of the whole walk are outside.
+* `StatMech.Lattice.oc_exists_support_not_leftRegion`,
+  `StatMech.Lattice.oc_leftRegion_meets_support`: some vertex of the walk is outside, and a
+  nonempty inside contains a vertex of the walk; hence
+  `StatMech.Lattice.oc_not_hInOff`, `StatMech.Lattice.oc_not_hOutOff`: neither side (the inside
+  when nonempty) is connected by paths avoiding the walk.
 * `StatMech.Lattice.jec_crossingArcSides`: `StatMech.Universality.CrossingArcSides` holds for every
   configuration and every rectangle with `α < β` and `c ≤ d`.
 * `StatMech.Lattice.jec_rsw_strip_glue`: the resulting strip-gluing inequality of the RSW argument.
@@ -678,6 +683,93 @@ theorem jec_rsw_strip_glue
   StatMech.Universality.rsw_strip_glue_of_crossingArcSides μ hpa ham hmm' hm'b
     (fun ω => jec_crossingArcSides ω hamL hcd)
     (fun ω => jec_crossingArcSides ω hmbR hcd)
+
+/-! ### Unsatisfiable off-walk hypotheses
+
+`jec_leftRegion Vc` gives a side to every site, including the vertices of `Vc`. A vertex of `Vc` in
+its leftmost column is outside, and a nonempty inside contains a vertex of `Vc`. Hence hypotheses
+saying that every outside site, or every inside site of a nonempty inside, is off `Vc` (and
+connectivity of either side by paths avoiding `Vc`) can never hold. -/
+
+/-- A vertex of `Vc` in its leftmost column is outside `Vc`: no edge of `Vc` crosses the ray going
+left from it. -/
+theorem oc_exists_support_not_leftRegion {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
+    ∃ v ∈ Vc.support, v ∉ jec_leftRegion Vc ∧ ∀ p ∈ Vc.support, v 0 ≤ p 0 := by
+  classical
+  obtain ⟨v, hv, hmin⟩ := Vc.support.toFinset.exists_min_image (fun p => p 0)
+    ⟨a, by simp⟩
+  rw [List.mem_toFinset] at hv
+  refine ⟨v, hv, ?_, fun p hp => hmin p (by simpa using hp)⟩
+  rw [jec_mem_leftRegion, not_not,
+    jec_rayCount_eq_zero_of_right v Vc (fun p hp => hmin p (by simpa using hp))]
+  exact ⟨0, rfl⟩
+
+/-- Not every site outside a closed walk is off the walk. -/
+theorem oc_not_forall_outside_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
+    ¬ ∀ s : Site 2, s ∉ jec_leftRegion Vc → s ∉ Vc.support := by
+  intro h
+  obtain ⟨v, hv, hout, -⟩ := oc_exists_support_not_leftRegion Vc
+  exact h v hout hv
+
+/-- A nonempty inside of a closed walk contains a vertex of the walk. Moving right from an inside
+site that is off the walk keeps the ray count, so if no inside site were on the walk, the whole row
+to the right of an inside site would be inside, contradicting that sites to the right of the walk
+are outside. -/
+theorem oc_leftRegion_meets_support {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
+    (hp : p ∈ jec_leftRegion Vc) : ∃ s ∈ jec_leftRegion Vc, s ∈ Vc.support := by
+  classical
+  by_contra hcon
+  push Not at hcon
+  have hstep : ∀ k : ℕ, (![p 0 + k, p 1] : Site 2) ∈ jec_leftRegion Vc := by
+    intro k
+    induction k with
+    | zero =>
+      have : (![p 0 + ((0 : ℕ) : ℤ), p 1] : Site 2) = p := by
+        ext i; fin_cases i <;> simp
+      rw [this]; exact hp
+    | succ k ih =>
+      have hoff := hcon _ ih
+      rw [jec_mem_leftRegion] at ih ⊢
+      rwa [jec_rayCount_horizontalStep (![p 0 + k, p 1] : Site 2) _ (by simp; ring) (by simp)
+        Vc hoff]
+  obtain ⟨M, hM⟩ := (Vc.support.toFinset.image (fun q => q 0)).bddAbove
+  have hfar : ∀ q ∈ Vc.support,
+      q 0 ≤ (![p 0 + ((M - p 0 + 1).toNat : ℕ), p 1] : Site 2) 0 - 1 := by
+    intro q hq
+    have hmem : q 0 ∈ (Vc.support.toFinset.image (fun q => q 0) : Set ℤ) := by
+      simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe, List.mem_toFinset]
+      exact ⟨q, hq, rfl⟩
+    have : q 0 ≤ M := hM hmem
+    simp only [Matrix.cons_val_zero]
+    omega
+  exact hstep _ (jec_ray_even_far Vc _ hfar)
+
+/-- If the inside of a closed walk is nonempty, not every inside site is off the walk. -/
+theorem oc_not_inside_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
+    (hp : p ∈ jec_leftRegion Vc) : ¬ ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support := by
+  intro h
+  obtain ⟨s, hs, hsupp⟩ := oc_leftRegion_meets_support Vc hp
+  exact h s hs hsupp
+
+/-- A nonempty inside of a closed walk is never connected by lattice paths avoiding the walk
+(taking `s = t` would put every inside site off the walk). -/
+theorem oc_not_hInOff {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) {p : Site 2}
+    (hp : ¬ Even (jec_rayCount p Vc)) :
+    ¬ ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
+        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
+  intro h
+  refine oc_not_inside_offSupport Vc (p := p) hp fun s hs => ?_
+  obtain ⟨pw, hpw⟩ := h s s hs hs
+  exact hpw s pw.start_mem_support
+
+/-- The outside of a closed walk is never connected by lattice paths avoiding the walk. -/
+theorem oc_not_hOutOff {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
+    ¬ ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
+        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support := by
+  intro h
+  refine oc_not_forall_outside_offSupport Vc fun s hs => ?_
+  obtain ⟨pw, hpw⟩ := h s s hs hs
+  exact hpw s pw.start_mem_support
 
 end Lattice
 

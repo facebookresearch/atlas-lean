@@ -94,6 +94,14 @@ theorem pbs_bdEdgeMatch_of_leftRegion_eq {K : Set (Site 2)} {a : Site 2}
     pww_BdEdgeMatch K Vc :=
   pbs_bdEdgeMatch_of_setIdentity Vc (Or.inl h)
 
+/-- If every site outside `K` escapes to the left of the orbit loop of `e` avoiding the loop
+(`hExt`), and every site of `K` reaches a fixed site `z0 ∈ K` of odd ray count avoiding the loop
+(`hInt`), then the boundary edges of `K` match those of the inside of the loop. The hypothesis
+`hExt` fails whenever some vertex of the orbit loop `olb_orbitLoop K hK e he` lies outside `K`:
+a path from that vertex starts on the loop. This happens for the leftward dart out of a site of
+`K` with least first coordinate, for every finite nonempty `K`
+(`StatMech.Lattice.owr_exists_not_exteriorHyp`), and for every boundary dart of a single site.
+Whether `hExt` can hold for some other dart is not settled, so the statement is kept. -/
 theorem pbs_bdEdgeMatch_of_winding (K : Set (Site 2)) (hK : K.Finite) (e : Dart)
     (he : IsBoundaryDart K e)
     (hExt : ∀ z, z ∉ K → ∃ z0 : Site 2, ∃ p : (hypercubicLattice 2).Walk z z0,
