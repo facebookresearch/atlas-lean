@@ -170,7 +170,7 @@ theorem fsc2_globalLSI {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (G : ConfigSpace E 
   set H := khc_reindex σ G with hH
   have hfin := gls_globalLSI hp0 hp1 H
   have hderiv : (∑ e' : Fin (Fintype.card E), OSSS.expect (OSSS.bernoulliWeight p)
-        (fun ω => (gls_deriv H e' ω) ^ 2))
+        (fun ω => (bph_deriv H e' ω) ^ 2))
       = ∑ e' : Fin (Fintype.card E), OSSS.expect (OSSS.bernoulliWeight p)
           (fun ω => (H (StatMech.setOpen e' ω) - H (StatMech.setClosed e' ω)) ^ 2) := by
     apply Finset.sum_congr rfl; intro e' _; rfl

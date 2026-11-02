@@ -14,21 +14,23 @@ public import CSLibExt.Complexity.BooleanFunctions.OSSS
 /-!
 # Revealment of a decision tree
 
-`revealment ν T e` is the probability that the decision tree `T` queries coordinate `e`
+`reveal ν T e` is the probability that the decision tree `T` queries coordinate `e`
 under the product weight `ν`. Summing over coordinates gives the expected number of
-distinct queried coordinates (`sum_revealment_eq_expect_card`); the sum is at most the depth
-(`sum_revealment_le_depth`); revealment is monotone under queried-implies hypotheses.
+distinct queried coordinates (`sum_reveal_eq_expect_card`); the sum is at most the depth
+(`sum_reveal_le_depth`); revealment is monotone under queried-implies hypotheses.
 
 ## Main definitions
 
-* `revealment`: the probability that a decision tree queries a coordinate.
 * `depth`: the depth of a decision tree.
+
+The revealment itself is `StatMech.OSSS.reveal` from `OSSS.lean`; this file states its
+summed and monotone bounds directly in terms of `reveal`.
 
 ## Main results
 
-* `sum_revealment_eq_expect_card`: summed revealment is the expected number of
+* `sum_reveal_eq_expect_card`: summed revealment is the expected number of
   distinct queried coordinates.
-* `sum_revealment_le_depth`: summed revealment is at most the depth.
+* `sum_reveal_le_depth`: summed revealment is at most the depth.
 -/
 
 
@@ -45,39 +47,25 @@ open DecisionTree
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The revealment of a decision tree at a coordinate: the probability, under the
-product weight `ν`, that the tree queries that coordinate. -/
-noncomputable def revealment (ν : E → Bool → ℝ) (T : DecisionTree E) (e : E) : ℝ :=
-  reveal ν T e
-
-@[simp] lemma revealment_eq_reveal (ν : E → Bool → ℝ) (T : DecisionTree E) (e : E) :
-    revealment ν T e = reveal ν T e := rfl
-
-lemma revealment_eq_prob_queried (ν : E → Bool → ℝ) (T : DecisionTree E) (e : E) :
-    revealment ν T e = expect ν (fun ω => if e ∈ T.queried ω then (1 : ℝ) else 0) := rfl
-
-lemma revealment_nonneg {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (T : DecisionTree E)
-    (e : E) : 0 ≤ revealment ν T e :=
-  reveal_nonneg hν T e
-
-lemma revealment_le_one {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (T : DecisionTree E)
-    (e : E) : revealment ν T e ≤ 1 := by
-  rw [revealment_eq_prob_queried]
-  calc expect ν (fun ω => if e ∈ T.queried ω then (1 : ℝ) else 0)
-      ≤ expect ν (fun _ => (1 : ℝ)) := by
-        apply expect_mono hν; intro ω; split <;> norm_num
-    _ = 1 := expect_one hν
-
 private lemma sum_indicator_mem_card (S : Finset E) :
     ∑ e, (if e ∈ S then (1 : ℝ) else 0) = (S.card : ℝ) := by
   rw [Finset.sum_boole]
   congr 1
   rw [Finset.filter_mem_eq_inter, Finset.univ_inter]
 
+/-- Revealment is at most `1`. -/
+theorem reveal_le_one {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (T : DecisionTree E)
+    (e : E) : reveal ν T e ≤ 1 := by
+  unfold reveal
+  calc expect ν (fun ω => if e ∈ T.queried ω then (1 : ℝ) else 0)
+      ≤ expect ν (fun _ => (1 : ℝ)) := by
+        apply expect_mono hν; intro ω; split <;> norm_num
+    _ = 1 := expect_one hν
+
 /-- Summed revealment equals the expected number of distinct queried coordinates. -/
-theorem sum_revealment_eq_expect_card (ν : E → Bool → ℝ) (T : DecisionTree E) :
-    ∑ e, revealment ν T e = expect ν (fun ω => ((T.queried ω).card : ℝ)) := by
-  simp only [revealment_eq_prob_queried, expect]
+theorem sum_reveal_eq_expect_card (ν : E → Bool → ℝ) (T : DecisionTree E) :
+    ∑ e, reveal ν T e = expect ν (fun ω => ((T.queried ω).card : ℝ)) := by
+  simp only [reveal, expect]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro ω _
@@ -103,10 +91,10 @@ lemma card_queried_le_depth (T : DecisionTree E) (ω : ConfigSpace E) :
         · simp only [he, Bool.false_eq_true, ite_false]; exact le_trans (IHf ω) (le_max_right _ _)
       omega
 
-theorem sum_revealment_le_depth {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
+theorem sum_reveal_le_depth {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (T : DecisionTree E) :
-    ∑ e, revealment ν T e ≤ (depth T : ℝ) := by
-  rw [sum_revealment_eq_expect_card]
+    ∑ e, reveal ν T e ≤ (depth T : ℝ) := by
+  rw [sum_reveal_eq_expect_card]
   rw [show ((depth T : ℝ)) = expect ν (fun _ => (depth T : ℝ)) from ?_]
   · apply expect_mono hν
     intro ω
@@ -115,27 +103,27 @@ theorem sum_revealment_le_depth {ν : E → Bool → ℝ} (hν : IsProbWeight ν
           = (fun ω => (depth T : ℝ) * (fun _ => (1 : ℝ)) ω) from by funext; simp]
     rw [expect_const_mul, expect_one hν, mul_one]
 
-theorem revealment_le_of_queried_imp {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
+theorem reveal_le_of_queried_imp {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (T : DecisionTree E) (e : E) (P : ConfigSpace E → Prop) [DecidablePred P]
     (h : ∀ ω, e ∈ T.queried ω → P ω) :
-    revealment ν T e ≤ expect ν (fun ω => if P ω then (1 : ℝ) else 0) := by
-  rw [revealment_eq_prob_queried]
+    reveal ν T e ≤ expect ν (fun ω => if P ω then (1 : ℝ) else 0) := by
+  unfold reveal
   apply expect_mono hν
   intro ω
   by_cases hq : e ∈ T.queried ω
   · rw [ite_eq_left hq, ite_eq_left (h ω hq)]
   · rw [ite_eq_right hq]; split <;> norm_num
 
-theorem revealment_le_of_queried_imp_or {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
+theorem reveal_le_of_queried_imp_or {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (T : DecisionTree E) (e : E) (P Q : ConfigSpace E → Prop)
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ ω, e ∈ T.queried ω → P ω ∨ Q ω) :
-    revealment ν T e
+    reveal ν T e
       ≤ expect ν (fun ω => if P ω then (1 : ℝ) else 0)
         + expect ν (fun ω => if Q ω then (1 : ℝ) else 0) := by
-  have hbound : revealment ν T e
+  have hbound : reveal ν T e
       ≤ expect ν (fun ω => (if P ω then (1 : ℝ) else 0) + (if Q ω then (1 : ℝ) else 0)) := by
-    rw [revealment_eq_prob_queried]
+    unfold reveal
     apply expect_mono hν
     intro ω
     by_cases hq : e ∈ T.queried ω
