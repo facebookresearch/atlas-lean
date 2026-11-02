@@ -39,14 +39,17 @@ open PowerSeries
 
 @[expose] public section
 
-/-- The number `dexc(w)` of double excedances, the `i` with `w⁻¹(i) < i < w(i)`.
+/-- **Number of double excedances.** For a permutation $w$ of $\{0, 1, \dots, n-1\}$, a double
+excedance of $w$ is a point $i$ with $w^{-1}(i) < i < w(i)$, and $\mathrm{dexc}(w)$ is the
+number of double excedances of $w$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Section 4. -/
 def doubleExcedanceCount {n : ℕ} (w : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i ↦ w⁻¹ i < i ∧ i < w i).card
 
-/-- The identity has no double excedances.
+/-- **The identity has no double excedances.** For every $n$, the identity permutation of
+$\{0, 1, \dots, n-1\}$ has no double excedances.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Section 4. -/
@@ -54,9 +57,12 @@ theorem doubleExcedanceCount_one (n : ℕ) :
     doubleExcedanceCount (1 : Equiv.Perm (Fin n)) = 0 := by
   simp [doubleExcedanceCount]
 
-/-- The generating function `𝒫(q, t; x, y; z) = ((x - y) / (x e^(yz) - y e^(xz)))^q e^((x+y)qtz)`
-of Equation (2), the `q`-th power taken by Mathlib's binomial series (the base has constant
-term `1` when `x ≠ y`).
+/-- **Generating function of the generalized Eulerian polynomials.** For rational numbers
+$q$, $t$, $x$, $y$ with $x \ne y$, this is the formal power series in $z$ over $\mathbb{Q}$
+$$\mathcal{P}(q, t; x, y; z) = \left(\frac{x - y}{x e^{yz} - y e^{xz}}\right)^q e^{(x+y)qtz}.$$
+Here the base has constant term $1$, and its $q$-th power is the binomial series
+$(1 + u)^q = \sum_{n \ge 0} \binom{q}{n} u^n$ with $u$ the base minus $1$. For $x = y$ the
+denominator is zero and the formula above does not apply.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5,
@@ -66,8 +72,14 @@ noncomputable def generalizedEulerianSeries (q t x y : ℚ) : PowerSeries ℚ :=
       (C (x - y) * (C x * rescale y (exp ℚ) - C y * rescale x (exp ℚ))⁻¹ - 1) *
     rescale ((x + y) * q * t) (exp ℚ)
 
-/-- The generalized Eulerian polynomial `P_n(q, t; x, y)`, `n!` times the coefficient of
-`z^n` in `𝒫(q, t; x, y; z)` (Equation (3)).
+/-- **Generalized Eulerian polynomials.** For rational numbers $q, t, x, y$ and $n \ge 0$, the
+generalized Eulerian polynomial $P_n(q, t; x, y)$ is $n!$ times the coefficient of $z^n$ in the
+formal power series over $\mathbb{Q}$
+$$\mathcal{P}(q, t; x, y; z) = \left(\frac{x - y}{x e^{yz} - y e^{xz}}\right)^q e^{(x + y) q t z},$$
+where the $q$-th power is the binomial series $(1 + u)^q = \sum_{k \ge 0} \binom{q}{k} u^k$
+applied to $u = \frac{x - y}{x e^{yz} - y e^{xz}} - 1$. When $x \ne y$ the quotient has constant
+term $1$, so $u$ has constant term $0$; for $x = y$ the formula is degenerate and the value of
+$P_n$ is a formal convention.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5,
@@ -75,8 +87,11 @@ Equation (3). -/
 noncomputable def generalizedEulerianP (q t x y : ℚ) (n : ℕ) : ℚ :=
   (n.factorial : ℚ) * coeff n (generalizedEulerianSeries q t x y)
 
-/-- For `q = 0` the generating function is `1`, so `P_n(0, t; x, y)` is `1` at `n = 0` and
-`0` otherwise.
+/-- **Generalized Eulerian polynomials with zero cycle weight.** For all rational numbers
+$t, x, y$ and every $n \ge 0$, the generalized Eulerian polynomial satisfies
+$P_0(0, t; x, y) = 1$ and $P_n(0, t; x, y) = 0$ for $n \ge 1$.
+
+Indeed, for $q = 0$ the generating function of the polynomials $P_n(0, t; x, y)$ is $1$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5,
@@ -93,9 +108,14 @@ theorem generalizedEulerianP_zero_left (t x y : ℚ) (n : ℕ) :
   rw [hb, hs, mul_zero, zero_mul, rescale_zero_apply]
   rcases n with _ | n <;> simp [coeff_one]
 
-/-- **Proposition 1.** For `x ≠ 1`, with `C_n(x) = ∑_{w an n-cycle} x^(exc w)`,
-`∑_{n ≥ 1} C_n(x) z^n / n! = z + ln((x - 1) / (x e^z - e^(xz)))`; the logarithm of a series
-with constant term `1` is Mathlib's `PowerSeries.logOf`.
+/-- **Exponential generating function of excedances over cyclic permutations.** Let $x \ne 1$ be
+a rational number. For $n \ge 1$ let $C_n(x) = \sum_{m=0}^{n} C_{n,m} x^m$, where the circular
+Eulerian number $C_{n,m}$ is the number of permutations $w$ of $\{0, 1, \dots, n-1\}$ whose points
+all lie in a single cycle and which have exactly $m$ excedances, that is, points $i$ with
+$w(i) > i$. Then, as formal power series in $z$ over $\mathbb{Q}$,
+$$\sum_{n \ge 1} C_n(x) \frac{z^n}{n!} = z + \log \frac{x - 1}{x e^z - e^{xz}},$$
+where the quotient has constant term $1$ and $\log$ is the formal logarithm of a power series
+with constant term $1$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1 (`jis-2024-24.1.5-prop-1`). -/
@@ -104,8 +124,16 @@ public theorem_wanted cyclicExcedanceEGF_eq (x : ℚ) (hx : x ≠ 1) :
         (∑ m ∈ Finset.range (n + 1), (circularEulerian n m : ℚ) * x ^ m) / (n.factorial : ℚ)) =
       X + logOf (C (x - 1) * (C x * exp ℚ - rescale x (exp ℚ))⁻¹)
 
-/-- **Theorem 2.** `P_n(q, t; x, y) = ∑_{w ∈ S_n} q^(cyc w) t^(fix w) x^(exc w) y^(exc w⁻¹)
-(x + y)^(fix w)`, for rational `q, t, x, y` with `x ≠ y`.
+/-- **Permutation expansion of the generalized Eulerian polynomials.** Let $P_n(q, t; x, y)$ be
+the generalized Eulerian polynomial and let $S_n$ be the set of permutations of
+$\{0, 1, \dots, n-1\}$. For $w \in S_n$ write $\mathrm{cyc}(w)$ for the number of cycles of $w$
+(fixed points counted as cycles), $\mathrm{fix}(w)$ for the number of fixed points of $w$, and
+$\mathrm{exc}(w)$ for the number of excedances of $w$, the points $i$ with $w(i) > i$. Then for
+all rational numbers $q, t, x, y$ with $x \ne y$ and every $n \ge 0$,
+$$
+P_n(q, t; x, y) = \sum_{w \in S_n} q^{\mathrm{cyc}(w)} t^{\mathrm{fix}(w)} x^{\mathrm{exc}(w)}
+y^{\mathrm{exc}(w^{-1})} (x + y)^{\mathrm{fix}(w)}.
+$$
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2 (`jis-2024-24.1.5-thm-2`). -/
@@ -116,11 +144,16 @@ public theorem_wanted generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x 
           x ^ excedanceCount n w * y ^ excedanceCount n w⁻¹ *
           (x + y) ^ Fintype.card (Function.fixedPoints w)
 
-/-- **Theorem 4.** The gamma coefficients `γ_{n,k}(q, t)` of
-`P_n(q, t; x, y) = ∑_{k ≤ n/2} γ_{n,k}(q, t) x^k y^k (x + y)^(n - 2k)` (Equation (6)) are
-polynomials in `q, t` with nonnegative integer coefficients: there are natural numbers
-`c k i j` with `γ_{n,k}(q, t) = ∑_{i, j ≤ n} c k i j q^i t^j` making Equation (6) hold for all
-rational `q, t, x, y` with `x ≠ y` (such `γ_{n,k}` are unique).
+/-- **The gamma coefficients of the generalized Eulerian polynomials have nonnegative integer
+coefficients.** Fix $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial.
+There are natural numbers $c_{k,i,j}$, for $k, i, j \ge 0$, such that, writing
+$\gamma_{n,k}(q, t) = \sum_{i=0}^{n} \sum_{j=0}^{n} c_{k,i,j} q^i t^j$, for all rational numbers
+$q, t, x, y$ with $x \ne y$,
+$$
+P_n(q, t; x, y) = \sum_{k=0}^{\lfloor n/2 \rfloor} \gamma_{n,k}(q, t) x^k y^k (x + y)^{n - 2k}.
+$$
+That is, the gamma coefficients $\gamma_{n,k}$ are polynomials in $q$ and $t$ with nonnegative
+integer coefficients.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4 (`jis-2024-24.1.5-thm-4`). -/
@@ -131,11 +164,13 @@ public theorem_wanted generalizedEulerianP_gamma_nonneg (n : ℕ) :
           (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
             (c k i j : ℚ) * q ^ i * t ^ j) * x ^ k * y ^ k * (x + y) ^ (n - 2 * k)
 
-/-- **Corollary 5.** For nonnegative integers `q, t`, `P_n(q, t; x) = P_n(q, t; x, 1)` is a
-unimodal polynomial in `x`: it agrees (for `x ≠ 1`) with a polynomial whose coefficient
-sequence weakly increases up to some index `m` and weakly decreases from `m` on. The paper's
-Corollary 5 asserts unimodality only ("`P_n(q,t;x)` is a unimodal polynomial in `x`"); symmetry
-is not part of it.
+/-- **Unimodality of the generalized Eulerian polynomials.** Let $P_n(q, t; x, y)$ be the
+generalized Eulerian polynomial. For all natural numbers $q$, $t$ and $n$ there are a polynomial
+$p$ with rational coefficients $p_0, p_1, p_2, \dots$ and an index $m$ such that
+$p(x) = P_n(q, t; x, 1)$ for every rational $x \ne 1$, $p_i \le p_{i+1}$ for every $i < m$, and
+$p_{i+1} \le p_i$ for every $i \ge m$. That is, $P_n(q, t; x, 1)$ is a unimodal polynomial in $x$.
+
+Only unimodality is asserted, not symmetry of the coefficients.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5 (`jis-2024-24.1.5-cor-5`). -/
@@ -144,11 +179,22 @@ public theorem_wanted generalizedEulerianP_unimodal (q t n : ℕ) :
       ∃ m : ℕ, (∀ i < m, p.coeff i ≤ p.coeff (i + 1)) ∧
         ∀ i, m ≤ i → p.coeff (i + 1) ≤ p.coeff i
 
-/-- **Theorem 7.** The gamma coefficients are
-`γ_{n,k}(q, t) = ∑_{w ∈ S_n, exc w = k, dexc w = 0} q^(cyc w) t^(fix w)`: Equation (6) holds
-with these coefficients (for rational `q, t, x, y`, `x ≠ y`), and each is
-`∑_{i, j ≤ n} γ_{n,k,i,j} q^i t^j` with `γ_{n,k,i,j}` the number of `w ∈ S_n` with `exc w = k`,
-`dexc w = 0`, `cyc w = i`, `fix w = j`.
+/-- **The gamma coefficients of the generalized Eulerian polynomials count permutations.** Fix
+$n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial. For a permutation $w$
+of $\{0, 1, \dots, n-1\}$ write $\mathrm{cyc}(w)$ for its number of cycles (fixed points counted
+as cycles), $\mathrm{fix}(w)$ for its number of fixed points, $\mathrm{exc}(w)$ for its number of
+excedances (points $i$ with $w(i) > i$) and $\mathrm{dexc}(w)$ for its number of double
+excedances. For $k \ge 0$ and rational $q, t$ let $\gamma_{n,k}(q, t)$ be the sum of
+$q^{\mathrm{cyc}(w)} t^{\mathrm{fix}(w)}$ over the permutations $w$ of $\{0, 1, \dots, n-1\}$
+with $\mathrm{exc}(w) = k$ and $\mathrm{dexc}(w) = 0$. Then for all rational $q, t, x, y$ with
+$x \ne y$,
+$$
+P_n(q, t; x, y) = \sum_{k=0}^{\lfloor n/2 \rfloor} \gamma_{n,k}(q, t) x^k y^k (x + y)^{n - 2k},
+$$
+and for every $k \ge 0$ and all rational $q, t$,
+$\gamma_{n,k}(q, t) = \sum_{i=0}^{n} \sum_{j=0}^{n} \gamma_{n,k,i,j} q^i t^j$, where
+$\gamma_{n,k,i,j}$ is the number of permutations $w$ of $\{0, 1, \dots, n-1\}$ with
+$\mathrm{exc}(w) = k$, $\mathrm{dexc}(w) = 0$, $\mathrm{cyc}(w) = i$ and $\mathrm{fix}(w) = j$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 7 (`jis-2024-24.1.5-thm-7`). -/
@@ -170,10 +216,17 @@ public theorem_wanted generalizedEulerianP_gamma_eq (n : ℕ) :
               cycleQuotientCount w = i ∧ Fintype.card (Function.fixedPoints w) = j)).card : ℚ) *
           q ^ i * t ^ j
 
-/-- **Corollary 8.** `P_{2n+1}(q, t; -1) = 0` and
-`(-1)^n P_{2n}(q, t; -1) = ∑_{w ∈ D_{2n}} q^(cyc w) (-1)^(n - exc w)
-= ∑_{w ∈ D_{2n}, exc w = n, dexc w = 0} q^(cyc w)`, where `P_m(q, t; -1) = P_m(q, t; -1, 1)` and
-`D_{2n}` is the set of derangements (`fix w = 0`); `(-1)^(n - exc w)` is an integer power.
+/-- **Generalized Eulerian polynomials at $x = -1$, $y = 1$.** Let $P_m(q, t; x, y)$ be the
+generalized Eulerian polynomial. For a permutation $w$ write $\mathrm{cyc}(w)$ for its number of
+cycles (fixed points counted as cycles), $\mathrm{exc}(w)$ for its number of excedances (points
+$i$ with $w(i) > i$) and $\mathrm{dexc}(w)$ for its number of double excedances, and let $D_{2n}$
+be the set of derangements (permutations without fixed points) of $\{0, 1, \dots, 2n-1\}$. Then
+for all rational numbers $q, t$ and every $n \ge 0$, $P_{2n+1}(q, t; -1, 1) = 0$ and
+$$
+(-1)^n P_{2n}(q, t; -1, 1) = \sum_{w \in D_{2n}} q^{\mathrm{cyc}(w)} (-1)^{n - \mathrm{exc}(w)}
+= \sum_{w \in D_{2n},\ \mathrm{exc}(w) = n,\ \mathrm{dexc}(w) = 0} q^{\mathrm{cyc}(w)},
+$$
+where the exponent $n - \mathrm{exc}(w)$ is an integer, possibly negative.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
 Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 8 (`jis-2024-24.1.5-cor-8`). -/
