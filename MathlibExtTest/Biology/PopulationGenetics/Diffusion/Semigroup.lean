@@ -28,6 +28,7 @@ open scoped unitInterval
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.Semigroup
 
 open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
+open MathlibExt.Biology.PopulationGenetics.Diffusion.ChainLimit
 open MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisherSemigroup
 
 /-- One-generation second moment of the frequency: `E_x[(X₁)^2] = x / M + (1 - 1/M) x²`. -/
@@ -49,6 +50,29 @@ example (M : ℕ) (hM : M ≠ 0) (x : I) :
 of the totalized `k / 0 = 0`. -/
 example (f : C(I, ℝ)) (x : I) : wfStep 0 f x = f 0 := by
   simp [wfStep_apply, bernsteinApproximation.apply, bernstein_apply, bernstein.z]
+
+/-- One neutral Wright–Fisher generation fixes the constant function one. Removing the public
+one-step unit theorem, or reversing its equality, breaks this consumer-level check. -/
+example (M : ℕ) : wfStep M 1 = 1 :=
+  wfStep_apply_one M
+
+/-- One neutral Wright–Fisher generation preserves the pointwise nonnegative cone. -/
+example (M : ℕ) {f : C(I, ℝ)} (hf : 0 ≤ f) : 0 ≤ wfStep M f :=
+  wfStep_nonneg M hf
+
+/-- The generic unital-power helper applies to the real neutral chain operator. -/
+example (M m : ℕ) : (wfStep M ^ m) 1 = 1 :=
+  ContinuousLinearMap.pow_apply_one (wfStep M) (wfStep_apply_one M) m
+
+/-- The generic positive-power helper applies to the real neutral chain operator. -/
+example (M m : ℕ) {f : C(I, ℝ)} (hf : 0 ≤ f) : 0 ≤ (wfStep M ^ m) f :=
+  ContinuousLinearMap.pow_nonneg (wfStep M) (fun h => wfStep_nonneg M h) m hf
+
+/-- Public one-generation monomial duality is available to downstream chain constructions. -/
+example (M n : ℕ) (hM : M ≠ 0) :
+    wfStep M ((X ^ n : ℝ[X]).toContinuousMapOn I) =
+      (∑ k ∈ Finset.range (n + 1), C (wfLineageProb M n k) * X ^ k).toContinuousMapOn I :=
+  wfStep_X_pow M n hM
 
 /-- The block-counting process with one lineage stays put: `P_t(1 → 1) = 1`. -/
 example (t : ℝ) : NormedSpace.exp (t • blockCountingGenerator 1) 1 1 = 1 := by
@@ -142,5 +166,55 @@ example (x : ℝ) : (polyGenerator (X ^ 2)).eval x = x * (1 - x) := by
 #print axioms tendsto_wfStep_pow_floor
 #print axioms wfSemigroup_add
 #print axioms tendsto_wfSemigroup_sub_div
+#print axioms ContinuousLinearMap.pow_apply_one
+#print axioms ContinuousLinearMap.pow_nonneg
+#print axioms cauchySeq_apply_of_dense
+#print axioms tendsto_apply_of_dense
+#print axioms dense_polynomialFunctions
+#print axioms floor_mul_eq_zero
+#print axioms wfStep_apply_one
+#print axioms wfStep_nonneg
+#print axioms wfStep_X_pow
+
+#check @Polynomial.toContinuousMapOnAlgHom
+#check @Polynomial.toContinuousMapOnAlgHom_apply
+#check @cauchySeq_apply_of_dense
+#check @tendsto_apply_of_dense
+#check @dense_polynomialFunctions
+#check @floor_mul_eq_zero
+#check @ContinuousLinearMap.pow_apply_one
+#check @ContinuousLinearMap.pow_nonneg
+#check @wfStep
+#check @wfStep_apply
+#check @norm_wfStep_le
+#check @wfStep_apply_one
+#check @wfStep_nonneg
+#check @norm_wfStep_pow_le
+#check @sum_binomial_mul_div_pow
+#check @integral_binomial_div_pow
+#check @wfStep_X_pow
+#check @wfStep_pow_X_pow
+#check @dualMomentPoly
+#check @polySemigroup
+#check @polySemigroup_X_pow
+#check @polySemigroup_zero
+#check @polySemigroup_add
+#check @polySemigroup_one
+#check @tendsto_wfStep_pow_floor_toContinuousMapOn
+#check @cauchySeq_wfStep_pow_floor
+#check @wfSemigroup
+#check @tendsto_wfStep_pow_floor
+#check @norm_wfSemigroup_le
+#check @wfSemigroup_toContinuousMapOn
+#check @wfSemigroup_of_nonpos
+#check @wfSemigroup_zero
+#check @wfSemigroup_X_pow
+#check @wfSemigroup_add
+#check @wfSemigroup_apply_one
+#check @wfSemigroup_nonneg
+#check @tendsto_wfSemigroup_nhdsGE_zero
+#check @polyGenerator
+#check @eval_polyGenerator
+#check @tendsto_wfSemigroup_sub_div
 
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.Semigroup
