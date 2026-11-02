@@ -180,7 +180,7 @@ root build.
 | `Atlas/StatisticalMechanics/Code/Onsager/WalkCrossing.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCrossing` |
 | `Atlas/StatisticalMechanics/Code/Onsager/WalkCrossingV.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCrossingV` |
 | `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeane.lean` | `MathlibExt.Probability.Percolation.InfiniteClusterCount` |
-| `Atlas/StatisticalMechanics/Code/Percolation/ClusterDualContour.lean` | removed during review (duplicate or vacuous) |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterDualContour.lean` | removed during review (duplicate or vacuous); its definition `DiscreteJordanSeparation` was ported in the second round (below) |
 | `Atlas/StatisticalMechanics/Code/Percolation/CylinderDerivative.lean` | `MathlibExt.Probability.Percolation.CylinderDerivative` |
 | `Atlas/StatisticalMechanics/Code/Percolation/DctDifferential.lean` | `MathlibExt.Probability.Percolation.DctDifferential` |
 | `Atlas/StatisticalMechanics/Code/Percolation/DctDifferentialFull.lean` | `MathlibExt.Probability.Percolation.ConnectionsInsideSet` |
@@ -674,3 +674,335 @@ root build.
 | `Atlas/StatisticalMechanics/Code/Walls/ghc_twicediff.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.MagnetizationSmooth` |
 | `Atlas/StatisticalMechanics/Code/Walls/ghc_urselleqgap.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.UrsellGap` |
 | `Atlas/StatisticalMechanics/Code/Walls/ghysupermult.lean` | `PhyslibExt.CondensedMatter.IsingModel.EdgeRemovalSupermult` |
+
+## MathlibExt (second round)
+
+The second round ported the mathematics and computer science that the physics remainder depends
+on, together with the modules they need. Duplicate and vacuous declarations were removed during the
+port. Several ported modules state conditional results or record refutations; their module docs
+say exactly what is proved.
+
+| Source file | Module |
+| --- | --- |
+| `Atlas/StatisticalMechanics/Code/Foundations/AeTailInvariant.lean` | `MathlibExt.Probability.Configuration.AeTailInvariant` |
+| `Atlas/StatisticalMechanics/Code/Foundations/Birkhoff.lean` | `MathlibExt.Dynamics.Ergodic.MaximalBirkhoff` |
+| `Atlas/StatisticalMechanics/Code/Foundations/BirkhoffErgodic.lean` | `MathlibExt.Dynamics.Ergodic.BirkhoffErgodic` |
+| `Atlas/StatisticalMechanics/Code/Foundations/EqualFiberHall.lean` | `MathlibExt.Combinatorics.Hall.EqualFiber` |
+| `Atlas/StatisticalMechanics/Code/Foundations/ErgodicStructure.lean` | `MathlibExt.Dynamics.Ergodic.ErgodicStructure` |
+| `Atlas/StatisticalMechanics/Code/Foundations/FiniteBidegreeHall.lean` | `MathlibExt.Combinatorics.Hall.FiniteBidegree` |
+| `Atlas/StatisticalMechanics/Code/Foundations/FiniteNonnegativeMatrixRate.lean` | `MathlibExt.Analysis.Matrix.FiniteNonnegativeMatrixRate` |
+| `Atlas/StatisticalMechanics/Code/Foundations/FractionalHall.lean` | `MathlibExt.Combinatorics.Hall.Fractional` |
+| `Atlas/StatisticalMechanics/Code/Foundations/TailSpecification.lean` | `MathlibExt.Probability.Configuration.TailSpecification` |
+| `Atlas/StatisticalMechanics/Code/Foundations/WeightedFiniteInjection.lean` | `MathlibExt.Algebra.BigOperators.WeightedFiniteInjection` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/BoxDownCompClose.lean` | `MathlibExt.Probability.CorrelationInequalities.BoxDownCompressionCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/PerOrbitCardClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerOrbitSlab` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/Reimer2000Close.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerSwapInjection` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerButterflyInjClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerButterflyCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerButterflyMonoRefute.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerButterflyMonoRefute` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerCompressionClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerCompressionMarginals` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerDoubleCoverClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerButterflyDoubleCover` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerIterationClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerSymmetricBoxCompression` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerPairWitnessClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerWeightInjection` |
+| `Atlas/StatisticalMechanics/Code/Inequalities/ReimerSwapInjClose.lean` | `MathlibExt.Probability.CorrelationInequalities.ReimerOrbitCount` |
+| `Atlas/StatisticalMechanics/Code/Lattice/AnchoredCycleClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitOrbitAnchoredCycle` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ArcExteriorClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ReachesExteriorConnected` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ArcMonotonise.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingVisitsRows` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ArcNoSeparation.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffSupportConnected` |
+| `Atlas/StatisticalMechanics/Code/Lattice/BalanceContraction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CornerBalanceOrbit` |
+| `Atlas/StatisticalMechanics/Code/Lattice/BalancePreservingContraction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CornerBalanceUnprobedSite` |
+| `Atlas/StatisticalMechanics/Code/Lattice/BdEdgeMatchClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.BdEdgeMatchFinite` |
+| `Atlas/StatisticalMechanics/Code/Lattice/CollaredWalkCrossing.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CollaredWalkCrossing` |
+| `Atlas/StatisticalMechanics/Code/Lattice/CrossArcThickClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSECorner` |
+| `Atlas/StatisticalMechanics/Code/Lattice/CycleLength.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CycleLength` |
+| `Atlas/StatisticalMechanics/Code/Lattice/EarContraction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.EarContraction` |
+| `Atlas/StatisticalMechanics/Code/Lattice/EarExistence.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExtremeCell` |
+| `Atlas/StatisticalMechanics/Code/Lattice/EnclosedAreaWitness.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.EnclosedAreaWitness` |
+| `Atlas/StatisticalMechanics/Code/Lattice/EscapeThickPointClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSWCorner` |
+| `Atlas/StatisticalMechanics/Code/Lattice/EscapeWallThickClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationBottomWall` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ExitDartsOrbit.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitDartsOrbit` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ExteriorConnected.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorConnected` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ExteriorConnectedDischarge.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorWindingWitness` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ExteriorCoveredClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RightStep` |
+| `Atlas/StatisticalMechanics/Code/Lattice/ExteriorDodgeClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RightStepCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Lattice/FacialSurjectivity.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FacialSurjectivity` |
+| `Atlas/StatisticalMechanics/Code/Lattice/FacialSurjectivityProve.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FacialDartSetsJordan` |
+| `Atlas/StatisticalMechanics/Code/Lattice/FiniteComplementConnected.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FarLeftWalk` |
+| `Atlas/StatisticalMechanics/Code/Lattice/GaussBonnet.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.GaussBonnet` |
+| `Atlas/StatisticalMechanics/Code/Lattice/GaussBonnetEar.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitFaceCount` |
+| `Atlas/StatisticalMechanics/Code/Lattice/GlobalThickPointClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationRunEnd` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InsideCoveringClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InterfaceConnectedBuild.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitEdgeTransport` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InterfaceConnectedGlobal.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitKingConnected` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InterfaceConnectedProof.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.InterfaceConnectedSingleton` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InteriorOrientation.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.InteriorOrientation` |
+| `Atlas/StatisticalMechanics/Code/Lattice/InteriorWindingClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FjordInteriorDisconnected` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanConvexBox.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingColumnArc` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanInteriorLib.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffSupportInterior` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanOrbitCycle.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSaturatedOrbitJordan` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanSeparationClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanSeparationConditional` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanSeparationFull.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RayParityBdEdgeMatch` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanSeparationProof.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitTailWindingWitness` |
+| `Atlas/StatisticalMechanics/Code/Lattice/JordanStripInduction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RowArcSeparatingSet` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingDescentAgnosticClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingDescentStepCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingFacts.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingFacts` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingInteriorFloodClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingInteriorDescent` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingNoSeparationClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationThickPoint` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingSegmentDownClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSegmentDownCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Lattice/KingStepConnectClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparation` |
+| `Atlas/StatisticalMechanics/Code/Lattice/LeafRemovableClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.LeafInsertionCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Lattice/LeftFenceAnchor.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.LeftFenceAnchor` |
+| `Atlas/StatisticalMechanics/Code/Lattice/LexMinOrientation.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.LexMinOrientation` |
+| `Atlas/StatisticalMechanics/Code/Lattice/MatchedConnectivityInterior.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingInteriorConnectivity` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OrbitCoversBoundary.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitCoversBoundary` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OrbitFillsWindingProof.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitFillsWinding` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OrbitSeparatesProof.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitWindingSeparates` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OrbitWindingRevMatchProof.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitWindingRevMatch` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OuterBoundarySingle.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitSeparates` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OutsideConnected.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkExteriorEscape` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OutsideCoveringClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.BeaconFloodFill` |
+| `Atlas/StatisticalMechanics/Code/Lattice/OutsideReachesClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffSupportExteriorCovered` |
+| `Atlas/StatisticalMechanics/Code/Lattice/PeierlsCycleClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationCycle` |
+| `Atlas/StatisticalMechanics/Code/Lattice/RayAlternation.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RayAlternation` |
+| `Atlas/StatisticalMechanics/Code/Lattice/RowLinkedClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.RowLinkedDescent` |
+| `Atlas/StatisticalMechanics/Code/Lattice/SegmentDownClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.SegmentDownCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StarHullFinite.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullFinite` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StarHullPeriod.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullPeriod` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StarHullTurning.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ConvexCornerCut` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StarHullUmlaufsatz.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullUmlaufsatz` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StarHullWinding.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullWinding` |
+| `Atlas/StatisticalMechanics/Code/Lattice/StraightWalk.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.StraightWalk` |
+| `Atlas/StatisticalMechanics/Code/Lattice/TotalTurnFour.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.TotalTurnFour` |
+| `Atlas/StatisticalMechanics/Code/Lattice/TreeNonBridgeProve.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.NonCutSiteInsertion` |
+| `Atlas/StatisticalMechanics/Code/Lattice/UmlaufsatzBaseCases.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.UmlaufsatzBaseCases` |
+| `Atlas/StatisticalMechanics/Code/Lattice/UmlaufsatzClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.UmlaufsatzRotation` |
+| `Atlas/StatisticalMechanics/Code/Lattice/UmlaufsatzEar.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.UmlaufsatzEar` |
+| `Atlas/StatisticalMechanics/Code/Lattice/WindingEarInduction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingEarInduction` |
+| `Atlas/StatisticalMechanics/Code/Lattice/WindingPinchClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FigureEightFourThin` |
+| `Atlas/StatisticalMechanics/Code/Lattice/WindingWitness.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitness` |
+| `Atlas/StatisticalMechanics/Code/Lattice/WindingWitnessClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitnessOfExterior` |
+| `Atlas/StatisticalMechanics/Code/Lattice/WindingWitnessClose2.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitOrbitWinds` |
+| `Atlas/StatisticalMechanics/Code/OSSS/BetaCMatch.lean` | `MathlibExt.Probability.OSSS.BetaCMatch` |
+| `Atlas/StatisticalMechanics/Code/OSSS/BetaThresholdBound.lean` | `MathlibExt.Probability.OSSS.BetaThresholdBound` |
+| `Atlas/StatisticalMechanics/Code/OSSS/FKSharpDiffIneq.lean` | `MathlibExt.Probability.OSSS.FKSharpDiffIneq` |
+| `Atlas/StatisticalMechanics/Code/OSSS/Integration.lean` | `MathlibExt.Probability.OSSS.Integration` |
+| `Atlas/StatisticalMechanics/Code/OSSS/IntegrationSubcritical.lean` | `MathlibExt.Probability.OSSS.IntegrationSubcritical` |
+| `Atlas/StatisticalMechanics/Code/OSSS/IntegrationSubcriticalAssembly.lean` | `MathlibExt.Probability.OSSS.IntegrationSubcriticalAssembly` |
+| `Atlas/StatisticalMechanics/Code/OSSS/Monotonic.lean` | `MathlibExt.Probability.OSSS.Monotonic` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RevealmentSum.lean` | `MathlibExt.Probability.OSSS.RevealmentSum` |
+| `Atlas/StatisticalMechanics/Code/OSSS/RussoPrefactor.lean` | `MathlibExt.Probability.OSSS.RussoPrefactor` |
+| `Atlas/StatisticalMechanics/Code/OSSS/WiredDenominatorArithmetic.lean` | `MathlibExt.Probability.OSSS.WiredDenominatorArithmetic` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterDualContour.lean` | `MathlibExt.Probability.Percolation.DiscreteJordanSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DiscreteJordanSeparationFalse.lean` | `MathlibExt.Probability.Percolation.DiscreteJordanSeparationFalse` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DiscreteJordanSeparationFix.lean` | `MathlibExt.Probability.Percolation.DiscreteJordanSeparationVariant` |
+| `Atlas/StatisticalMechanics/Code/Percolation/FarDartContour.lean` | `MathlibExt.Probability.Percolation.FarDartContour` |
+| `Atlas/StatisticalMechanics/Code/Percolation/FiniteTreeTripod.lean` | `MathlibExt.Combinatorics.SimpleGraph.TreeTripod` |
+| `Atlas/StatisticalMechanics/Code/Percolation/OutermostContour.lean` | `MathlibExt.Probability.Percolation.OutermostContour` |
+| `Atlas/StatisticalMechanics/Code/Percolation/PcFarContour.lean` | `MathlibExt.Probability.Percolation.PcFarContour` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RussoFormula.lean` | `MathlibExt.Probability.Percolation.RussoFormula` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TreeExteriorAmalgam.lean` | `MathlibExt.Combinatorics.SimpleGraph.TreeExteriorAmalgam` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TreePercolation.lean` | `MathlibExt.Probability.Percolation.TreePercolation` |
+| `Atlas/StatisticalMechanics/Code/Probability/AdaptiveFibreLower.lean` | `MathlibExt.Probability.OSSS.AdaptiveFibreLower` |
+| `Atlas/StatisticalMechanics/Code/Probability/AdaptiveFibreStep.lean` | `MathlibExt.Probability.OSSS.AdaptiveFibreStep` |
+| `Atlas/StatisticalMechanics/Code/Probability/BonamiVectorTwoPoint.lean` | `MathlibExt.Probability.Hypercontractivity.BonamiTensorStep` |
+| `Atlas/StatisticalMechanics/Code/Probability/ContinuousFKG.lean` | `MathlibExt.Probability.CorrelationInequalities.ContinuousFKG` |
+| `Atlas/StatisticalMechanics/Code/Probability/ContinuousFKGAdapter.lean` | `MathlibExt.Probability.CorrelationInequalities.ContinuousFKGAdapter` |
+| `Atlas/StatisticalMechanics/Code/Probability/FiniteExponentialRateComparison.lean` | `MathlibExt.Probability.Hypercontractivity.FiniteExponentialRateComparison` |
+| `Atlas/StatisticalMechanics/Code/Probability/FiniteWitnessInsertionIteration.lean` | `MathlibExt.Probability.Configuration.FiniteWitnessInsertionIteration` |
+| `Atlas/StatisticalMechanics/Code/Probability/FiniteWitnessUnionBound.lean` | `MathlibExt.Probability.Configuration.FiniteWitnessUnionBound` |
+| `Atlas/StatisticalMechanics/Code/Probability/HolleyFKG.lean` | `MathlibExt.Probability.CorrelationInequalities.HolleyFKG` |
+| `Atlas/StatisticalMechanics/Code/Probability/MaxFlowMenger.lean` | `MathlibExt.Combinatorics.SimpleGraph.Menger.LinkageSeparator` |
+| `Atlas/StatisticalMechanics/Code/Probability/MengerSplice.lean` | `MathlibExt.Combinatorics.SimpleGraph.Menger.MengerSplice` |
+| `Atlas/StatisticalMechanics/Code/Probability/PBiasedHCLib.lean` | `MathlibExt.Probability.Hypercontractivity.PBiasedHCLib` |
+| `Atlas/StatisticalMechanics/Code/Probability/RhoOptimiseEngine.lean` | `MathlibExt.Probability.Hypercontractivity.RhoOptimiseEngine` |
+| `Atlas/StatisticalMechanics/Code/Probability/StrassenFinite.lean` | `MathlibExt.Probability.StochasticOrder.StrassenFiniteCoupling` |
+| `Atlas/StatisticalMechanics/Code/Probability/TwoPointLSI.lean` | `MathlibExt.Probability.Hypercontractivity.TwoPointLSI` |
+| `Atlas/StatisticalMechanics/Code/RSW/BoxCrossing.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossing` |
+| `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossingCapstone` |
+| `Atlas/StatisticalMechanics/Code/RSW/Continuity.lean` | `MathlibExt.Probability.Percolation.RSW.Continuity` |
+| `Atlas/StatisticalMechanics/Code/RSW/ExpDecayUpgrade.lean` | `MathlibExt.Probability.Percolation.RSW.ExpDecayUpgrade` |
+| `Atlas/StatisticalMechanics/Code/RSW/OneArm.lean` | `MathlibExt.Probability.Percolation.RSW.OneArm` |
+| `Atlas/StatisticalMechanics/Code/RSW/P4ImpliesP5.lean` | `MathlibExt.Probability.Percolation.RSW.P4ImpliesP5` |
+| `Atlas/StatisticalMechanics/Code/RSW/P5Equivalences.lean` | `MathlibExt.Probability.Percolation.RSW.P5Equivalences` |
+| `Atlas/StatisticalMechanics/Code/RSW/Push.lean` | `MathlibExt.Probability.Percolation.RSW.Push` |
+| `Atlas/StatisticalMechanics/Code/RSW/Renorm.lean` | `MathlibExt.Probability.Percolation.RSW.Renorm` |
+| `Atlas/StatisticalMechanics/Code/RSW/SelfDuality.lean` | `MathlibExt.Probability.Percolation.RSW.SelfDuality` |
+| `Atlas/StatisticalMechanics/Code/RSW/StripCases.lean` | `MathlibExt.Probability.Percolation.RSW.StripCases` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianCompactCylinderIntersection.lean` | `MathlibExt.Probability.BrownianMotion.BrownianCompactCylinderIntersection` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianContinuousModification.lean` | `MathlibExt.Probability.BrownianMotion.BrownianContinuousModification` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianDyadicApproximation.lean` | `MathlibExt.Probability.BrownianMotion.BrownianDyadicApproximation` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianDyadicControl.lean` | `MathlibExt.Probability.BrownianMotion.BrownianDyadicControl` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianDyadicModulus.lean` | `MathlibExt.Probability.BrownianMotion.BrownianDyadicModulus` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianFiniteDimensional.lean` | `MathlibExt.Probability.BrownianMotion.BrownianFiniteDimensional` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianKolmogorovTail.lean` | `MathlibExt.Probability.BrownianMotion.BrownianKolmogorovTail` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianModificationLaw.lean` | `MathlibExt.Probability.BrownianMotion.BrownianModificationLaw` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianMomentBound.lean` | `MathlibExt.Probability.BrownianMotion.BrownianMomentBound` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianProductProcess.lean` | `MathlibExt.Probability.BrownianMotion.BrownianProductProcess` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianProjectiveContent.lean` | `MathlibExt.Probability.BrownianMotion.BrownianProjectiveContent` |
+| `Atlas/StatisticalMechanics/Code/SLE/BrownianProjectiveExtension.lean` | `MathlibExt.Probability.BrownianMotion.BrownianProjectiveExtension` |
+| `Atlas/StatisticalMechanics/Code/SLE/CanonicalBrownianLaw.lean` | `MathlibExt.Probability.BrownianMotion.CanonicalBrownianLaw` |
+| `Atlas/StatisticalMechanics/Code/SLE/CanonicalBrownianSLE.lean` | `MathlibExt.Probability.BrownianMotion.CanonicalBrownianSLE` |
+| `Atlas/StatisticalMechanics/Code/SLE/CapacityNonneg.lean` | `MathlibExt.Analysis.Complex.Loewner.CapacityNonneg` |
+| `Atlas/StatisticalMechanics/Code/SLE/CapacityProps.lean` | `MathlibExt.Analysis.Complex.Loewner.CapacityProps` |
+| `Atlas/StatisticalMechanics/Code/SLE/ChainCapacity.lean` | `MathlibExt.Analysis.Complex.Loewner.ChainCapacity` |
+| `Atlas/StatisticalMechanics/Code/SLE/LoewnerCapacity.lean` | `MathlibExt.Analysis.Complex.Loewner.LoewnerCapacity` |
+| `Atlas/StatisticalMechanics/Code/SLE/LoewnerHolomorphicDependence.lean` | `MathlibExt.Analysis.Complex.Loewner.LoewnerHolomorphicDependence` |
+| `Atlas/StatisticalMechanics/Code/SLE/StandardBrownianLaw.lean` | `MathlibExt.Probability.BrownianMotion.StandardBrownianLaw` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/Kesten.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.Kesten` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/KestenCrossingDecay.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenCrossingDecay` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/KestenUncond.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/SelfDualDichotomy.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SelfDualDichotomy` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/SharpThreshold.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SharpThreshold` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangClose.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.ZhangFourSides` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangLowerBound.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.ZhangLowerBound` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/ZhangRotSymmetry.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.ZhangRotSymmetry` |
+| `Atlas/StatisticalMechanics/Code/Universality/BXPAllAspect.lean` | `MathlibExt.Probability.Percolation.Universality.BXPAllAspect` |
+| `Atlas/StatisticalMechanics/Code/Universality/BXPFromRSW.lean` | `MathlibExt.Probability.Percolation.Universality.BXPFromRSW` |
+| `Atlas/StatisticalMechanics/Code/Universality/BXPTransfer.lean` | `MathlibExt.Probability.Percolation.Universality.BXPTransfer` |
+| `Atlas/StatisticalMechanics/Code/Universality/BoxArcConnectsClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingRightCoast` |
+| `Atlas/StatisticalMechanics/Code/Universality/BoxCrossingDichotomy.lean` | `MathlibExt.Probability.Percolation.Universality.BoxCrossingDichotomy` |
+| `Atlas/StatisticalMechanics/Code/Universality/BoxCrossingDichotomyClose.lean` | `MathlibExt.Probability.Percolation.Universality.RotatedDualCounterexamples` |
+| `Atlas/StatisticalMechanics/Code/Universality/CircuitReachClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingArc` |
+| `Atlas/StatisticalMechanics/Code/Universality/CoastlineAnchorClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingPinnedAnchor` |
+| `Atlas/StatisticalMechanics/Code/Universality/CoastlineContinuityClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingAnchor` |
+| `Atlas/StatisticalMechanics/Code/Universality/CrossingReflection.lean` | `MathlibExt.Probability.Percolation.Universality.CrossingReflection` |
+| `Atlas/StatisticalMechanics/Code/Universality/CrossingTranslationInvariance.lean` | `MathlibExt.Probability.Percolation.Universality.CrossingTranslationInvariance` |
+| `Atlas/StatisticalMechanics/Code/Universality/DualCircuitToWalk.lean` | `MathlibExt.Probability.Percolation.Universality.DualCircuitToWalk` |
+| `Atlas/StatisticalMechanics/Code/Universality/DualCutToPath.lean` | `MathlibExt.Probability.Percolation.Universality.DualCutToPath` |
+| `Atlas/StatisticalMechanics/Code/Universality/FaceDualDichotomy.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualDichotomy` |
+| `Atlas/StatisticalMechanics/Code/Universality/FrameChangeIso.lean` | `MathlibExt.Probability.Percolation.Universality.FrameChangeIso` |
+| `Atlas/StatisticalMechanics/Code/Universality/G3PercDualityFull.lean` | `MathlibExt.Probability.Percolation.Universality.DualConfigLaw` |
+| `Atlas/StatisticalMechanics/Code/Universality/JordanExhaustivityClose.lean` | `MathlibExt.Probability.Percolation.Universality.LeftReachJordanSeparation` |
+| `Atlas/StatisticalMechanics/Code/Universality/KestenAssembly.lean` | `MathlibExt.Probability.Percolation.Universality.KestenAssembly` |
+| `Atlas/StatisticalMechanics/Code/Universality/KestenHalf.lean` | `MathlibExt.Probability.Percolation.Universality.KestenHalf` |
+| `Atlas/StatisticalMechanics/Code/Universality/MengerBarrierClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingFrontier` |
+| `Atlas/StatisticalMechanics/Code/Universality/PlanarDualCutConnected.lean` | `MathlibExt.Probability.Percolation.Universality.PlanarDualCutConnected` |
+| `Atlas/StatisticalMechanics/Code/Universality/PlanarMengerDualityClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossing` |
+| `Atlas/StatisticalMechanics/Code/Universality/RCoastMengerClose.lean` | `MathlibExt.Probability.Percolation.Universality.FaceDualVCrossingRightCoastAll` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWAspectInduction.lean` | `MathlibExt.Probability.Percolation.Universality.RSWAspectInduction` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWBandBound.lean` | `MathlibExt.Probability.Percolation.Universality.RSWBandBound` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWBxpAssembly.lean` | `MathlibExt.Probability.Percolation.Universality.RSWBxpAssembly` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWConstantMaintenance.lean` | `MathlibExt.Probability.Percolation.Universality.RSWConstantMaintenance` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWDualVCrossingClose.lean` | `MathlibExt.Probability.Percolation.Universality.DualCrossingFrameCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Universality/RSWSqrtTrick.lean` | `MathlibExt.Probability.Percolation.Universality.RSWSqrtTrick` |
+| `Atlas/StatisticalMechanics/Code/Universality/STT.lean` | `MathlibExt.Probability.Percolation.Universality.STT` |
+| `Atlas/StatisticalMechanics/Code/Universality/STTTransport.lean` | `MathlibExt.Probability.Percolation.Universality.STTTransport` |
+
+## Not ported
+
+The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
+modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
+counted once, under the first category that applies in the order below. The tables below
+account for 655 first-round rows and 202 second-round rows (one source,
+`Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
+definition ported in the second), 1 deleted module, and the categories below: 655 + 202 - 1
+(duplicate) + 1 (deleted) + 6,113 (categories) = 6,970 distinct source modules accounted for,
+which is every source `.lean` file. The earlier draft claimed 238 second-round rows
+and 6,970 source modules in total; that did not reconcile with the tables. The 36-module gap
+is now reconciled by a per-directory residual audit (total files per directory minus `Check*`
+files, ported rows, and the category counts): the gap was 27 modules in `Probability`, 1 in
+`TwoDim`, and 8 in `OSSS`. The `Probability` physics row is the single file
+`MeasurableFKGClosure.lean` (362 lines), so the other 27 `Probability` files are unused; the
+`TwoDim` physics row is the four Zhang files (3,138 lines), so `NearHalfKKLWire.lean` is
+unused. The 8 `OSSS` modules are listed separately below as an unclassified remainder: their
+aggregate lines are determined (3,752), but the ledger's counts do not determine their
+physics/unused split, so no per-file assignment is guessed here.
+
+### Physics remainder (636 modules, 299,048 lines)
+
+These are the modules that the physics results (random-cluster/FK, Ising, sharpness, Onsager,
+Beffara–Duminil-Copin, and the physics-facing percolation, OSSS and wall modules) need, minus
+everything ported. They are left for a `PhyslibExt` follow-up. Every module they import is either
+ported (first or second round) or in this group, so the follow-up needs nothing from the categories
+further down.
+
+| Area | Modules | Lines |
+| --- | ---: | ---: |
+| `BeffaraDC` | 38 | 11,656 |
+| `FK` | 183 | 97,030 |
+| `FrontierA` | 3 | 583 |
+| `Ising` | 4 | 3,202 |
+| `OSSS` | 81 | 40,089 |
+| `Onsager` | 1 | 293 |
+| `Percolation` | 76 | 31,562 |
+| `Probability` | 1 | 362 |
+| `Sharpness` | 49 | 20,140 |
+| `TwoDim` | 4 | 3,138 |
+| `Universality` | 4 | 13,226 |
+| `Walls` | 192 | 77,767 |
+
+### `Check*` verification files (1,981 modules, 39,452 lines)
+
+These are scratch files (`Check*.lean`) that state or `#check` a result to confirm that it
+elaborates. They hold no reusable mathematics, and no ported module imports them.
+
+### Frontier and exploratory directories (2,087 modules, 1,025,815 lines)
+
+These are exploratory attempts on open or out-of-scope problems. No ported module and no module of
+the physics remainder imports them. The counts exclude `Check*` files and the 3 `FrontierA` modules
+that belong to the physics remainder.
+
+| Directory | Modules | Lines |
+| --- | ---: | ---: |
+| `FrontierA` | 1124 | 388,661 |
+| `FrontierB` | 114 | 37,779 |
+| `FrontierC` | 1 | 490 |
+| `FrontierD` | 738 | 256,394 |
+| `Exact3D` | 110 | 342,491 |
+
+### Unused scaffolding (1,034 modules, 507,152 lines)
+
+These are intermediate steps and alternative routes that no ported module and no module of the
+physics remainder imports.
+
+| Directory | Modules | Lines |
+| --- | ---: | ---: |
+| `Universality` | 425 | 303,540 |
+| `Walls` | 609 | 203,612 |
+
+### Unused modules in the physics areas (367 modules, 139,022 lines)
+
+These modules sit in physics directories but are imported by no ported module and no module of the
+physics remainder. They are used only by `Check*` files, frontier files or each other, or by nothing
+at all: superseded routes, conditional "close" files, and obstruction notes.
+
+| Directory | Modules | Lines |
+| --- | ---: | ---: |
+| `BeffaraDC` | 4 | 2,131 |
+| `FK` | 63 | 25,212 |
+| `Ising` | 187 | 72,329 |
+| `IsingFK` | 3 | 514 |
+| `Lattice` | 2 | 976 |
+| `OSSS` | 9 | 4,948 |
+| `Onsager` | 59 | 19,540 |
+| `RSW` | 3 | 973 |
+| `SLE` | 5 | 1,115 |
+| `Sharpness` | 4 | 1,301 |
+| `Probability` | 27 | 9,756 |
+| `TwoDim` | 1 | 227 |
+
+### Unclassified `OSSS` remainder (8 modules, 3,752 lines)
+
+`OSSS/` has 98 non-ported, non-`Check*` modules, while the physics remainder counts 81
+(40,089 lines) and the unused table above counts 9 (4,948 lines): 98 − 81 − 9 = 8 modules,
+with 48,789 − 40,089 − 4,948 = 3,752 lines, are in neither category. These 8 are accounted
+for in the totals above but their physics/unused split is not determined by the ledger's
+counts (several partitions of the `OSSS` candidates satisfy the module counts, the line
+totals, and import-closure), so this ledger does not guess a per-file assignment. Classify
+them by content (whether the `PhyslibExt` physics development needs them) in a follow-up;
+until then they are counted here, not in the physics remainder and not in the unused table.
+
+### Ported, then deleted
+
+- `Atlas/StatisticalMechanics/Code/Foundations/Kolmogorov.lean` (second round). Every declaration
+  in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
+  users, so the declarations were deleted and the empty module was removed. Use Mathlib's
+  `Measure.infinitePi` instead.
+- First round: no ported module was deleted as a whole. Two pairs of source files were merged into
+  one module each, and both sources of each pair appear in the first-round table:
+  - `Code/FK/EdgeConfigZ.lean` and `Code/Walls/fkc_rqbulkfraction.lean` →
+    `PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction`;
+  - `Code/Ising/EvenSubgraphDecomp.lean` and `Code/Ising/KWClosedWalkParity.lean` →
+    `PhyslibExt.CondensedMatter.IsingModel.KWClosedWalkParity`.
+- Declarations deleted inside surviving modules (duplicates of Mathlib or of earlier ports, and
+  declarations whose hypotheses were proved unsatisfiable) are listed in the pull-request
+  descriptions, not here.
