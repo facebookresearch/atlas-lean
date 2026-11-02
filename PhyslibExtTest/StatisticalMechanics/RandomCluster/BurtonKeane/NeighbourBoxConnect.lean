@@ -32,7 +32,7 @@ example : ¬ bc56_BoxClusterReachesNbr 2 3 :=
 
 -- The cluster condition holds at `(1, 0)` in the three-ray configuration.
 example : bc56_ClusterReachesNbr CtcWitness.threeRayConfig (CtcWitness.px 1) :=
-  bc99_status.2.2.2
+  bc99_status.2.2
 
 -- The reach condition gives box attachment data.
 example (n : ℕ) (h : bc56_BoxClusterReachesNbr 2 n) : tex_BoxAttachData 2 n :=

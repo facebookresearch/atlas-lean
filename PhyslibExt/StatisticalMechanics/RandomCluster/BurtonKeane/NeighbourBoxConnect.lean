@@ -28,7 +28,8 @@ condition fails in the plane.
 `bc56_BoxClusterReachesNbr d n` asks that three distinct infinite clusters meeting `B_n` reach three
 neighbours of the origin. It gives box attachment data and, with finite-energy merging, the
 trifurcation route. In `ℤ²` the condition fails for `n = 3`: in `bc60_upperLines` each cluster stays
-on its own line. So the uniqueness statement `bc99_bk_from_reachesNbr` is vacuous in `d = 2`.
+on its own line. So the uniqueness statement `bc99_bk_from_reachesNbr` is vacuous in `d = 2`, and
+`bc99_status` does not package that `d = 2` uniqueness implication.
 
 ## ii. Key results
 
@@ -141,17 +142,12 @@ lemma bc99_reachesNbr_nonvacuous :
 
 lemma bc99_status :
     (∀ (n : ℕ), bc56_BoxClusterReachesNbr 2 n → tex_BoxAttachData 2 n) ∧
-    (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
-      HasFiniteEnergyMerge μ → μ {ω | bc89_GenuineTrif 2 ω 0} = 0 →
-      (∀ n : ℕ, bc56_BoxClusterReachesNbr 2 n) →
-      μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
     (∀ (L : ℕ), 3 ≤ L →
       bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2) ∧
         ¬ bc56_BoxClusterReachesNbr 2 3) ∧
     bc56_ClusterReachesNbr CtcWitness.threeRayConfig (CtcWitness.px 1) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
   · intro n h; exact bc99_texBoxAttach_of_reachesNbr h
-  · intro μ _ hfe hprob0 h; exact bc99_bk_from_reachesNbr μ hfe hprob0 h
   · intro L hL; exact bc99_notFree_of_coarseTrif hL
   · exact bc99_reachesNbr_nonvacuous
 

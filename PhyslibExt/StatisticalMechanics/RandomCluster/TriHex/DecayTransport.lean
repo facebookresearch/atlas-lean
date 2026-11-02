@@ -32,10 +32,10 @@ supplied by `CoarseGeometry` through `hexToTriAnchor`, so the probability compar
 Fidelity: `TriHexGlobalProbabilityComparison` (domination of hexagonal by triangular two-point
 functions at some subcritical triangular parameter) is an assumption that is not proved anywhere
 in the library. It is used only for the decay transfer
-`TriHexSubcriticalDecayTransfer`, never for critical-point conclusions: the critical cubics are
-already `triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which needs no
-comparison and no decay input, so no `…_of_globalComparison` / `…_of_probabilityComparison`
-wrapper packaging decay conclusions is kept here.
+`TriHexSubcriticalDecayTransfer`, never for critical-point conclusions: the hexagonal critical
+cubic is already `triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which
+needs no comparison and no decay input, so no `…_of_globalComparison` /
+`…_of_probabilityComparison` wrapper packaging decay conclusions is kept here.
 
 ## ii. Key results
 
@@ -161,7 +161,7 @@ lemma triHexSubcriticalDecayTransfer_of_probabilityComparison
   triHexSubcriticalDecayTransfer_of_globalComparison
     (triHexGlobalTwoPointComparison_of_probabilityComparison hprob)
 
-/-- No critical-conclusion wrappers are kept here: the critical cubics are already
+/-- No critical-conclusion wrappers are kept here: the hexagonal critical cubic is already
 `triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which needs neither a
 two-point comparison nor a decay hypothesis. Packaging the decay hypothesis as a conclusion
 of a critical-point theorem was circular, and is removed rather than narrowed. -/
