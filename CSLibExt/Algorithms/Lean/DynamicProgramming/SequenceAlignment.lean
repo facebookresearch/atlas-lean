@@ -64,23 +64,33 @@ universe u
 
 variable {α : Type u}
 
-/-- An alignment of two sequences is a list of columns, each pairing an optional element
-of the first sequence with an optional element of the second. -/
+/-- **Alignment.** An alignment over an alphabet $\alpha$ is a finite list of columns, where
+each column is a pair $(u, v)$ and each of $u$ and $v$ is either a letter of $\alpha$ or a gap.
+
+Whether an alignment is valid for two given sequences is a separate condition. -/
 abbrev Alignment (α : Type*) := List (Option α × Option α)
 
-/-- An alignment is valid for `xs`, `ys` when it has no `(none, none)` column and its rows
-filter to `xs` and `ys`. -/
+/-- **Valid alignment of two sequences.** A list $A$ of columns, each a pair of optional letters,
+is an alignment of sequences $x$ and $y$ when no column has both entries empty, the letters
+present in the first entries of the columns, read in order, form $x$, and the letters present in
+the second entries, read in order, form $y$. -/
 def IsAlignment (A : Alignment α) (xs ys : List α) : Prop :=
   (∀ c ∈ A, c ≠ (none, none)) ∧ A.filterMap Prod.fst = xs ∧ A.filterMap Prod.snd = ys
 
-/-- The score of one alignment column. -/
+/-- **Score of an alignment column.** Given a substitution score $\sigma$, which assigns an
+integer $\sigma(a, b)$ to all letters $a, b \in \alpha$, and a gap score $g \in \mathbb{Z}$, a
+column pairing letters $a$ and $b$ scores $\sigma(a, b)$, a column pairing a letter with a gap
+(on either side) scores $g$, and a column with a gap on both sides scores $0$. -/
 def columnScore (σ : α → α → ℤ) (gap : ℤ) : Option α × Option α → ℤ
   | (some a, some b) => σ a b
   | (some _, none) => gap
   | (none, some _) => gap
   | (none, none) => 0
 
-/-- The score of an alignment: the sum of its column scores. -/
+/-- **Score of an alignment.** Given a substitution score $\sigma$, which assigns an integer
+$\sigma(a, b)$ to all letters $a, b \in \alpha$, and a gap score $g \in \mathbb{Z}$, the score of
+an alignment $A$ over $\alpha$ is the sum, over all columns of $A$, of the score of the column
+with respect to $\sigma$ and $g$. -/
 def alignmentScore (σ : α → α → ℤ) (gap : ℤ) (A : Alignment α) : ℤ :=
   (A.map (columnScore σ gap)).sum
 
@@ -90,8 +100,9 @@ theorem alignmentScore_append (σ : α → α → ℤ) (gap : ℤ) (A B : Alignm
     alignmentScore σ gap (A ++ B) = alignmentScore σ gap A + alignmentScore σ gap B := by
   simp [alignmentScore, List.map_append, List.sum_append]
 
-/-- Appending two valid alignments gives a valid alignment of the concatenated
-sequences. -/
+/-- **Concatenation of alignments.** If $A_1$ is an alignment of sequences $x_1$ and $y_1$, and
+$A_2$ is an alignment of sequences $x_2$ and $y_2$, then the concatenation of $A_1$ and $A_2$ is
+an alignment of the concatenation of $x_1$ and $x_2$ and the concatenation of $y_1$ and $y_2$. -/
 theorem isAlignment_append {A1 A2 : Alignment α} {xs1 ys1 xs2 ys2 : List α}
     (h1 : IsAlignment A1 xs1 ys1) (h2 : IsAlignment A2 xs2 ys2) :
     IsAlignment (A1 ++ A2) (xs1 ++ xs2) (ys1 ++ ys2) := by
@@ -110,11 +121,17 @@ section NeedlemanWunsch
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- The Needleman–Wunsch score, by fuel recursion on the total length. The fuel is the
-sum of the two lengths; the recursion below only calls itself on strictly shorter pairs.
-Exponential-time specification, not a memoized table (see the module cost model).
-Implementation detail: use `nwScore`, not this worker, which returns `0` on
-insufficient fuel. -/
+/-- **Fuel-bounded Needleman–Wunsch recursion.** Fix a substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$, and write $|x|$ for
+the length of a sequence $x$ and $ax$ for the sequence with first element $a$ followed by $x$.
+For a fuel $n \in \mathbb{N}$ and sequences $x, y$ over $\alpha$, the value
+$N_n(x, y) \in \mathbb{Z}$ is defined by $N_0(x, y) = 0$, by $N_{n+1}(x, y) = g\,|y|$ if $x$ is
+empty and $N_{n+1}(x, y) = g\,|x|$ if $y$ is empty, and by
+$$N_{n+1}(ax, by) = \max\bigl(N_n(x, y) + \sigma(a, b),\ N_n(x, by) + g,\ N_n(ax, y) + g\bigr).$$
+
+The Needleman–Wunsch score of $x$ and $y$ is $N_{|x|+|y|}(x, y)$; this fuel suffices because every
+recursive call shortens the pair. This is an exponential-time specification, not a memoized
+table. -/
 def nwScoreAux : ℕ → List α → List α → ℤ
   | 0, _, _ => 0
   | _ + 1, [], [] => 0
@@ -124,7 +141,17 @@ def nwScoreAux : ℕ → List α → List α → ℤ
       max (max (nwScoreAux n xs ys + σ a b) (nwScoreAux n xs (b :: ys) + gap))
         (nwScoreAux n (a :: xs) ys + gap)
 
-/-- The optimal global alignment score (Needleman–Wunsch). -/
+/-- **Needleman–Wunsch score.** Given a type $\alpha$, a substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$, the
+Needleman–Wunsch score $\mathrm{NW}(xs, ys)$ of two lists over $\alpha$ is defined by recursion
+on their total length: if one of the lists is empty, it is $g$ times the length of the other;
+and for lists $a\,xs$ and $b\,ys$ with heads $a$, $b$ and tails $xs$, $ys$,
+
+$$\mathrm{NW}(a\,xs, b\,ys) = \max\bigl(\mathrm{NW}(xs, ys) + \sigma(a, b),
+\ \mathrm{NW}(xs, b\,ys) + g,\ \mathrm{NW}(a\,xs, ys) + g\bigr).$$
+
+By the Needleman–Wunsch optimality theorem, this is the optimal global alignment score of the
+two lists. -/
 def nwScore (xs ys : List α) : ℤ := nwScoreAux σ gap (xs.length + ys.length) xs ys
 
 /-- Extra fuel does not change the score. -/
@@ -155,7 +182,10 @@ private theorem nwScoreAux_eq_of_le (m : ℕ) (xs ys : List α) (h : xs.length +
   | succ m hm ih =>
       rw [← ih, nwScoreAux_succ_of_le σ gap m xs ys hm]
 
-/-- Aligning anything with the empty sequence costs one gap per letter. -/
+/-- **Aligning the empty sequence with a sequence.** For every substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$, gap score $g \in \mathbb{Z}$ and sequence $y$ over
+$\alpha$ of length $|y|$, the Needleman–Wunsch score of the empty sequence and $y$ with respect to
+$\sigma$ and $g$ is $g\,|y|$: one gap per letter. -/
 theorem nwScore_nil_left (ys : List α) : nwScore σ gap [] ys = gap * ys.length := by
   cases ys with
   | nil => simp [nwScore, nwScoreAux]
@@ -167,7 +197,10 @@ theorem nwScore_nil_left (ys : List α) : nwScore σ gap [] ys = gap * ys.length
         | succ k => rw [← h]; rfl
       simpa [nwScore] using this
 
-/-- Aligning anything with the empty sequence costs one gap per letter. -/
+/-- **Aligning a sequence with the empty sequence.** For every substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$, gap score $g \in \mathbb{Z}$ and sequence $x$ over
+$\alpha$ of length $|x|$, the Needleman–Wunsch score of $x$ and the empty sequence with respect to
+$\sigma$ and $g$ is $g\,|x|$: one gap per letter. -/
 theorem nwScore_nil_right (xs : List α) : nwScore σ gap xs [] = gap * xs.length := by
   cases xs with
   | nil => simp [nwScore, nwScoreAux]
@@ -179,7 +212,13 @@ theorem nwScore_nil_right (xs : List α) : nwScore σ gap xs [] = gap * xs.lengt
         | succ k => rw [← h]; rfl
       simpa [nwScore] using this
 
-/-- **The Needleman–Wunsch recurrence.** -/
+/-- **The Needleman–Wunsch recurrence.** Let $\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a
+substitution score and $g \in \mathbb{Z}$ a gap score, and write $N(x, y)$ for the
+Needleman–Wunsch score of sequences $x, y$ over $\alpha$ with respect to $\sigma$ and $g$. For all
+letters $a, b \in \alpha$ and sequences $x, y$, writing $ax$ for the sequence with first element
+$a$ followed by $x$,
+$$N(ax, by) = \max\bigl(N(x, y) + \sigma(a, b),\ N(x, by) + g,\ N(ax, y) + g\bigr).$$
+-/
 theorem nwScore_eq (a b : α) (xs ys : List α) :
     nwScore σ gap (a :: xs) (b :: ys) =
       max (max (nwScore σ gap xs ys + σ a b) (nwScore σ gap xs (b :: ys) + gap))
@@ -210,8 +249,20 @@ section Alignments
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- All alignments of two sequences, by fuel recursion. Implementation detail: use
-`alignments`, not this worker, which returns `[]` on insufficient fuel. -/
+/-- **Fuel-bounded enumeration of alignments.** Given a fuel $n \in \mathbb{N}$ and sequences
+$x$ and $y$ over $\alpha$, this lists alignments column by column from the front. With fuel $0$
+the list is empty. With fuel $n + 1$: two empty sequences give the single empty alignment; if
+only $y$ is nonempty, with first letter $b$ and rest $y'$, each alignment of $x$ and $y'$ with
+fuel $n$ is preceded by the column pairing a gap with $b$; if only $x$ is nonempty, with first
+letter $a$ and rest $x'$, each alignment of $x'$ and $y$ with fuel $n$ is preceded by the
+column pairing $a$ with a gap; and if both are nonempty, $x$ with first letter $a$ and rest $x'$
+and $y$ with first letter $b$ and rest $y'$, the list consists of the alignments of $x'$ and
+$y'$ preceded by the column $(a, b)$, then those of $x'$ and $y$ preceded by the column pairing
+$a$ with a gap, then those of $x$ and $y'$ preceded by the column pairing a gap with $b$, each
+computed with fuel $n$.
+
+With fuel at least $|x| + |y| + 1$ the fuel never runs out before both sequences are used up;
+with less fuel some alignments are missing from the list. -/
 def alignmentsAux : ℕ → List α → List α → List (Alignment α)
   | 0, _, _ => []
   | _ + 1, [], [] => [[]]
@@ -222,7 +273,12 @@ def alignmentsAux : ℕ → List α → List α → List (Alignment α)
         (alignmentsAux n xs (b :: ys)).map (fun A => (some a, none) :: A) ++
         (alignmentsAux n (a :: xs) ys).map (fun A => (none, some b) :: A)
 
-/-- All alignments of two sequences. -/
+/-- **The list of all alignments.** For sequences $x$ and $y$ over $\alpha$, this is the list
+produced by the fuel-bounded enumeration of alignments of $x$ and $y$ with fuel
+$|x| + |y| + 1$.
+
+This fuel suffices: an alignment belongs to the list exactly when it is a valid alignment of
+$x$ and $y$. -/
 def alignments (xs ys : List α) : List (Alignment α) :=
   alignmentsAux (xs.length + ys.length + 1) xs ys
 
@@ -559,7 +615,9 @@ private theorem mem_alignments_aux : ∀ (n : ℕ) (xs ys : List α), xs.length 
                               simpa using h
                             exact this
 
-/-- Membership in the alignment list is exactly validity. -/
+/-- **The enumerated alignments are exactly the valid ones.** For sequences $x$ and $y$ and a
+list $A$ of columns, $A$ occurs in the enumerated list of all alignments of $x$ and $y$ if and
+only if $A$ is an alignment of $x$ and $y$. -/
 theorem mem_alignments (xs ys : List α) (A : Alignment α) :
     A ∈ alignments xs ys ↔ IsAlignment A xs ys := by
   unfold alignments
@@ -949,13 +1007,19 @@ private theorem exists_alignmentScore_eq_nwScore_aux : ∀ (n : ℕ) (xs ys : Li
                   rw [hsc, hscore]
                   omega
 
-/-- **Needleman–Wunsch is optimal**: every valid alignment scores at most `nwScore`. -/
+/-- **Needleman–Wunsch is optimal.** Let $\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a
+substitution score and $g \in \mathbb{Z}$ a gap score. For all sequences $x$ and $y$ over
+$\alpha$ and every valid alignment $A$ of $x$ and $y$, the score of $A$ with respect to
+$\sigma$ and $g$ is at most the Needleman–Wunsch score of $x$ and $y$. -/
 theorem alignmentScore_le_nwScore (xs ys : List α) (A : Alignment α)
     (hA : IsAlignment A xs ys) :
     alignmentScore σ gap A ≤ nwScore σ gap xs ys :=
   alignmentScore_le_nwScore_aux σ gap (xs.length + ys.length) xs ys le_rfl A hA
 
-/-- **Needleman–Wunsch is attained**: some valid alignment achieves `nwScore`. -/
+/-- **Needleman–Wunsch is attained.** Let $\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a
+substitution score and $g \in \mathbb{Z}$ a gap score. For all sequences $x$ and $y$ over
+$\alpha$ there is a valid alignment $A$ of $x$ and $y$ whose score with respect to $\sigma$ and
+$g$ equals the Needleman–Wunsch score of $x$ and $y$. -/
 theorem exists_alignmentScore_eq_nwScore (xs ys : List α) :
     ∃ A : Alignment α, IsAlignment A xs ys ∧ alignmentScore σ gap A = nwScore σ gap xs ys :=
   exists_alignmentScore_eq_nwScore_aux σ gap (xs.length + ys.length) xs ys le_rfl
@@ -966,10 +1030,15 @@ section SmithWaterman
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- The Smith–Waterman front score: like `nwScoreAux`, but with the `0` floor of local
-alignment. Front-peeling: the recursion drops heads. Exponential-time specification,
-not a memoized table (see the module cost model). Implementation detail: use
-`swCellScore`, not this worker, which returns `0` on insufficient fuel. -/
+/-- **Fuel-bounded Smith–Waterman recursion.** Fix a substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$, and write $ax$ for
+the sequence with first element $a$ followed by $x$. For a fuel $n \in \mathbb{N}$ and sequences
+$x, y$ over $\alpha$, the value $F_n(x, y) \in \mathbb{Z}$ is defined by $F_0(x, y) = 0$, by
+$F_{n+1}(x, y) = 0$ if $x$ or $y$ is empty, and by
+$$F_{n+1}(ax, by) = \max\bigl(0,\ F_n(x, y) + \sigma(a, b),\ F_n(x, by) + g,
+\ F_n(ax, y) + g\bigr).$$
+
+This is an exponential-time specification, not a memoized table. -/
 def swCellFront : ℕ → List α → List α → ℤ
   | 0, _, _ => 0
   | _ + 1, [], _ => 0
@@ -978,13 +1047,19 @@ def swCellFront : ℕ → List α → List α → ℤ
       max 0 (max (max (swCellFront n xs ys + σ a b) (swCellFront n xs (b :: ys) + gap))
         (swCellFront n (a :: xs) ys + gap))
 
-/-- The terminal Smith–Waterman cell (the `H(|xs|, |ys|)` entry of the DP table).
-Defined by front-peeling on reversed lists, so the recurrence peels the *last* elements of
-the original lists. For `gap ≤ 0` it is the optimal local alignment score of suffixes of
-`xs` and `ys` ending at the last elements (`swCellScore_eq_suffixMax`); for positive gaps
-it can be strictly smaller (one-letter lists with `σ = -100`, `gap = 1` give cell `1`
-while the two-gap alignment scores `2`). This is *not* the optimal local alignment score
-over all positions; that is `swScore`, the maximum of this cell over all prefix pairs. -/
+/-- **The terminal Smith–Waterman cell.** Given a substitution score $\sigma(a, b) \in \mathbb{Z}$
+for letters $a, b$ and a gap score $g \in \mathbb{Z}$, and writing $sc$ for a sequence $s$
+followed by a letter $c$, the terminal Smith–Waterman cell $H(x, y)$ of two sequences $x$ and
+$y$ is the integer defined by $H(x, y) = 0$ when $x$ or $y$ is empty, and
+$$H(xa, yb) = \max\bigl(0,\ H(x, y) + \sigma(a, b),\ H(x, yb) + g,\ H(xa, y) + g\bigr)$$
+for all sequences $x, y$ and letters $a, b$. It is the entry $H(|x|, |y|)$ of the
+Smith–Waterman dynamic-programming table.
+
+For $g \le 0$ it equals the maximum Needleman–Wunsch score over pairs of suffixes of $x$ and $y$;
+for $g > 0$ it can be strictly smaller (for one-letter sequences with $\sigma = -100$ and
+$g = 1$ the cell is $1$, while the alignment with two gap columns scores $2$). It is not the
+optimal local alignment score over all positions; that is the Smith–Waterman score, the maximum
+of this cell over all pairs of prefixes. -/
 def swCellScore (xs ys : List α) : ℤ :=
   swCellFront σ gap (xs.length + ys.length) xs.reverse ys.reverse
 
@@ -1032,7 +1107,9 @@ private theorem swCellFront_nonneg : ∀ (m : ℕ) (xs ys : List α), 0 ≤ swCe
               simp only [swCellFront]
               exact le_max_left 0 _
 
-/-- The Smith–Waterman score is nonnegative. -/
+/-- **The terminal Smith–Waterman cell is nonnegative.** For every substitution score $\sigma$,
+every gap score $g$ and all sequences $x$ and $y$, the terminal Smith–Waterman cell $H(x, y)$
+satisfies $H(x, y) \ge 0$. -/
 theorem swCellScore_nonneg (xs ys : List α) : 0 ≤ swCellScore σ gap xs ys :=
   swCellFront_nonneg σ gap _ _ _
 
@@ -1051,19 +1128,26 @@ private theorem swCellFront_nil_right (m : ℕ) (xs : List α) : swCellFront σ 
       | nil => simp [swCellFront]
       | cons a xs => simp [swCellFront]
 
-/-- Local alignment against the empty sequence scores `0`. -/
+/-- **The terminal cell vanishes when the first sequence is empty.** For a substitution score
+$\sigma$, a gap score $g$ and every sequence $y$, the terminal Smith–Waterman cell of the empty
+sequence and $y$ is $0$. -/
 theorem swCellScore_nil_left (ys : List α) : swCellScore σ gap [] ys = 0 := by
   unfold swCellScore
   simp only [List.length_nil, List.reverse_nil, Nat.zero_add]
   exact swCellFront_nil_left σ gap _ _
 
-/-- Local alignment against the empty sequence scores `0`. -/
+/-- **The terminal cell vanishes when the second sequence is empty.** For a substitution score
+$\sigma$, a gap score $g$ and every sequence $x$, the terminal Smith–Waterman cell of $x$ and the
+empty sequence is $0$. -/
 theorem swCellScore_nil_right (xs : List α) : swCellScore σ gap xs [] = 0 := by
   unfold swCellScore
   simp only [List.length_nil, List.reverse_nil, Nat.add_zero]
   exact swCellFront_nil_right σ gap _ _
 
-/-- **The Smith–Waterman recurrence**: the end-peeling recurrence. -/
+/-- **The Smith–Waterman recurrence.** Let $\sigma$ be a substitution score and $g$ a gap score,
+and for a sequence $s$ and a letter $c$ write $sc$ for $s$ followed by $c$. For all sequences
+$x$ and $y$ and all letters $a$ and $b$, the terminal Smith–Waterman cell $H$ satisfies
+$$H(xa, yb) = \max\bigl(0,\ H(x, y) + \sigma(a, b),\ H(x, yb) + g,\ H(xa, y) + g\bigr).$$ -/
 theorem swCellScore_eq (xs ys : List α) (a b : α) :
     swCellScore σ gap (xs ++ [a]) (ys ++ [b]) =
       max 0 (max (max (swCellScore σ gap xs ys + σ a b)
@@ -1102,7 +1186,9 @@ theorem swCellScore_eq (xs ys : List α) (a b : α) :
         (swCellFront σ gap (xs.length + ys.length + 1) (a :: xs.reverse) ys.reverse + gap)) := rfl
   rw [swCellScore, hrev1, hrev2, hlen, hunfold, e1, e2, e3]
 
-/-- A suffix of `xs ++ [a]` is either empty or a suffix of `xs` with `a` appended. -/
+/-- **Suffixes of a list with an element appended.** If $s$ is a suffix of the list obtained by
+appending an element $a$ at the end of a list $xs$, then either $s$ is empty, or there is a
+suffix $s'$ of $xs$ such that $s$ is $s'$ with $a$ appended at the end. -/
 theorem suffix_of_snoc {xs : List α} {a : α} {s : List α} (h : s <:+ xs ++ [a]) :
     s = [] ∨ ∃ s', s' <:+ xs ∧ s = s' ++ [a] := by
   obtain ⟨t, ht⟩ := h
@@ -1115,12 +1201,16 @@ theorem suffix_of_snoc {xs : List α} {a : α} {s : List α} (h : s <:+ xs ++ [a
     obtain ⟨ht', ha⟩ := List.append_inj' ht2 (by simp)
     exact ⟨s₀, ⟨t, ht'⟩, by rw [ha]⟩
 
-/-- Appending the same element preserves the suffix relation. -/
+/-- **Appending an element preserves suffixes.** If a list $s$ is a suffix of a list $xs$,
+then for every element $a$, the list $s$ with $a$ appended at the end is a suffix of $xs$ with
+$a$ appended at the end. -/
 theorem suffix_append_snoc {s xs : List α} {a : α} (h : s <:+ xs) : s ++ [a] <:+ xs ++ [a] := by
   obtain ⟨u, hu⟩ := h
   exact ⟨u, by rw [← hu, List.append_assoc]⟩
 
-/-- Reversing an alignment reverses the two sequences it aligns. -/
+/-- **Reversing an alignment.** For a list of columns $A$ and sequences $x$ and $y$, $A$ is an
+alignment of the reversal of $x$ and the reversal of $y$ if and only if the reversal of $A$ (its
+columns in reverse order) is an alignment of $x$ and $y$. -/
 theorem isAlignment_reverse {A : Alignment α} {xs ys : List α} :
     IsAlignment A xs.reverse ys.reverse ↔ IsAlignment A.reverse xs ys := by
   constructor
@@ -1137,7 +1227,9 @@ theorem isAlignment_reverse {A : Alignment α} {xs ys : List α} :
       rw [List.filterMap_reverse, List.reverse_reverse] at h3'
       exact h3'
 
-/-- Reversing an alignment preserves its score. -/
+/-- **Reversal preserves alignment score.** For every substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$, gap score $g \in \mathbb{Z}$ and alignment $A$, the
+alignment obtained by listing the columns of $A$ in reverse order has the same score as $A$. -/
 theorem alignmentScore_reverse (A : Alignment α) :
     alignmentScore σ gap A.reverse = alignmentScore σ gap A := by
   simp [alignmentScore, List.map_reverse, List.sum_reverse]
@@ -1157,7 +1249,13 @@ theorem nwScore_reverse (xs ys : List α) :
     rw [← hscore, ← alignmentScore_reverse σ gap A]
     exact alignmentScore_le_nwScore σ gap xs.reverse ys.reverse A.reverse hA'
 
-/-- **The Needleman–Wunsch recurrence, end-peeling.** -/
+/-- **The Needleman–Wunsch recurrence, end-peeling.** Let
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score and $g \in \mathbb{Z}$ a gap
+score, and write $N(x, y)$ for the Needleman–Wunsch score of sequences $x, y$ over $\alpha$ with
+respect to $\sigma$ and $g$. For all sequences $x, y$ and letters $a, b \in \alpha$, writing $xa$
+for the sequence $x$ followed by the letter $a$,
+$$N(xa, yb) = \max\bigl(N(x, y) + \sigma(a, b),\ N(x, yb) + g,\ N(xa, y) + g\bigr).$$
+-/
 theorem nwScore_snoc (xs ys : List α) (a b : α) :
     nwScore σ gap (xs ++ [a]) (ys ++ [b]) =
       max (max (nwScore σ gap xs ys + σ a b) (nwScore σ gap xs (ys ++ [b]) + gap))
@@ -1181,9 +1279,10 @@ theorem nwScore_snoc (xs ys : List α) (a b : α) :
 -- need no `DecidableEq` on the alphabet, so the characterizations below work over
 -- any type. Duplicates in the candidate lists do not affect a maximum.
 
-/-- Maximum of a list of integers, with floor `0` (the empty list folds to `0`).
-Internal helper for the candidate-list maxima; the public maxima are `suffixMax`,
-`localScore`, and `swScore`. -/
+/-- **Maximum of an integer list with floor zero.** For a list $l$ of integers, this is the
+largest of $0$ and the entries of $l$; in particular the empty list gives $0$.
+
+It is used to define the suffix maximum, the local score and the Smith–Waterman score. -/
 def listMax (xs : List ℤ) : ℤ := xs.foldr (max ·) 0
 
 private theorem listMax_le_of_all_le {xs : List ℤ} {y : ℤ}
@@ -1218,7 +1317,9 @@ private theorem listMax_mem {xs : List ℤ} : listMax xs ∈ 0 :: xs := by
     · rw [max_eq_left (le_of_not_ge h)]
       exact List.mem_cons_of_mem _ List.mem_cons_self
 
-/-- All suffix pairs of `xs` and `ys`, as a list of pairs. -/
+/-- **Pairs of suffixes.** For lists $xs$ and $ys$, the list of all pairs $(u, v)$ where $u$ is
+a suffix of $xs$ and $v$ is a suffix of $ys$, the empty lists and $xs$, $ys$ themselves
+included. -/
 def suffixPairs (xs ys : List α) : List (List α × List α) :=
   xs.tails.product ys.tails
 
@@ -1226,11 +1327,21 @@ theorem mem_suffixPairs {xs' ys' xs ys : List α} :
     (xs', ys') ∈ suffixPairs xs ys ↔ xs' <:+ xs ∧ ys' <:+ ys := by
   simp [suffixPairs, List.mem_tails]
 
-/-- The maximum Needleman–Wunsch score over all suffix pairs, as a list maximum. -/
+/-- **Suffix maximum of Needleman–Wunsch scores.** Given a substitution score $\sigma$ and an
+integer gap score $g$, the suffix maximum of lists $xs$ and $ys$ is the maximum of the
+Needleman–Wunsch scores of all pairs $(u, v)$ with $u$ a suffix of $xs$ and $v$ a suffix of
+$ys$.
+
+The maximum is taken with floor $0$, which changes nothing, since the pair of empty suffixes
+scores $0$. -/
 def suffixMax (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : ℤ :=
   listMax ((suffixPairs xs ys).map (fun p => nwScore σ gap p.1 p.2))
 
-/-- A suffix pair's score is at most the suffix maximum. -/
+/-- **Suffix pairs score at most the suffix maximum.** Let
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score and $g \in \mathbb{Z}$ a gap
+score. If $(x', y')$ is a suffix pair of sequences $x$ and $y$ over $\alpha$, that is, $x'$ is a
+suffix of $x$ and $y'$ is a suffix of $y$, then the Needleman–Wunsch score of $x'$ and $y'$ is at
+most the suffix maximum of $x$ and $y$, both with respect to $\sigma$ and $g$. -/
 theorem nwScore_le_suffixMax {xs' ys' xs ys : List α}
     (h : (xs', ys') ∈ suffixPairs xs ys) :
     nwScore σ gap xs' ys' ≤ suffixMax σ gap xs ys := by
@@ -1238,7 +1349,10 @@ theorem nwScore_le_suffixMax {xs' ys' xs ys : List α}
   apply le_listMax_of_mem
   exact List.mem_map_of_mem h
 
-/-- A bound on all suffix-pair scores bounds the suffix maximum. -/
+/-- **Upper bounds on the suffix maximum.** Let $\sigma$ be a substitution score, $g$ an integer
+gap score, $xs$ and $ys$ lists and $y$ an integer. If every pair $(u, v)$ with $u$ a suffix of
+$xs$ and $v$ a suffix of $ys$ has Needleman–Wunsch score at most $y$, then the maximum
+Needleman–Wunsch score over all such suffix pairs is at most $y$. -/
 theorem suffixMax_le {xs ys : List α} {y : ℤ}
     (h : ∀ p ∈ suffixPairs xs ys, nwScore σ gap p.1 p.2 ≤ y) :
     suffixMax σ gap xs ys ≤ y := by
@@ -1252,7 +1366,11 @@ theorem suffixMax_le {xs ys : List α} {y : ℤ}
       (mem_suffixPairs.mpr ⟨List.nil_suffix (l := xs), List.nil_suffix (l := ys)⟩)
     simpa [nwScore_nil_left] using h0
 
-/-- The suffix maximum is attained by some suffix pair. -/
+/-- **The suffix maximum is attained.** For a substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$, a gap score $g \in \mathbb{Z}$ and sequences $x$
+and $y$ over $\alpha$, there is a suffix pair $(x', y')$ of $x$ and $y$, that is, a suffix $x'$
+of $x$ and a suffix $y'$ of $y$, whose Needleman–Wunsch score equals the suffix maximum of $x$
+and $y$. -/
 theorem exists_nwScore_eq_suffixMax (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     ∃ p ∈ suffixPairs xs ys, nwScore σ gap p.1 p.2 = suffixMax σ gap xs ys := by
   have hmem := listMax_mem
@@ -1268,14 +1386,20 @@ theorem exists_nwScore_eq_suffixMax (σ : α → α → ℤ) (gap : ℤ) (xs ys 
     obtain ⟨p, hp, hpEq⟩ := hmem
     exact ⟨p, hp, hpEq⟩
 
-/-- The suffix maximum is nonnegative: the empty pair scores `0`. -/
+/-- **The suffix maximum is nonnegative.** For every scoring function
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$, every gap score $g \in \mathbb{Z}$ and all lists
+$x$ and $y$ over $\alpha$, the suffix maximum of $x$ and $y$ (the largest Needleman–Wunsch score,
+under $\sigma$ and $g$, of a suffix of $x$ against a suffix of $y$) is at least $0$, since the
+pair of empty suffixes scores $0$. -/
 theorem zero_le_suffixMax (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     0 ≤ suffixMax σ gap xs ys :=
   nwScore_le_suffixMax σ gap
     (show ([], []) ∈ suffixPairs xs ys from
       mem_suffixPairs.mpr
         ⟨List.nil_suffix (l := xs), List.nil_suffix (l := ys)⟩)
-/-- Appending a gap column on the left preserves alignment validity. -/
+/-- **Extending an alignment by a letter of the first sequence.** If $A$ is an alignment of
+sequences $x$ and $y$ and $a$ is a letter, then $A$ followed by the column with $a$ in the
+first row and a gap in the second row is an alignment of $x$ followed by $a$ and of $y$. -/
 theorem isAlignment_append_some_none {A : Alignment α} {xs ys : List α} {a : α}
     (hA : IsAlignment A xs ys) :
     IsAlignment (A ++ [(some a, none)]) (xs ++ [a]) ys := by
@@ -1289,7 +1413,9 @@ theorem isAlignment_append_some_none {A : Alignment α} {xs ys : List α} {a : �
   · simp [List.filterMap_append, h2]
   · simp [List.filterMap_append, h3]
 
-/-- Appending a gap column on the right preserves alignment validity. -/
+/-- **Extending an alignment by a letter of the second sequence.** If $A$ is an alignment of
+sequences $x$ and $y$ and $b$ is a letter, then $A$ followed by the column with a gap in the
+first row and $b$ in the second row is an alignment of $x$ and of $y$ followed by $b$. -/
 theorem isAlignment_append_none_some {A : Alignment α} {xs ys : List α} {b : α}
     (hA : IsAlignment A xs ys) :
     IsAlignment (A ++ [(none, some b)]) xs (ys ++ [b]) := by
@@ -1303,7 +1429,14 @@ theorem isAlignment_append_none_some {A : Alignment α} {xs ys : List α} {b : �
   · simp [List.filterMap_append, h2]
   · simp [List.filterMap_append, h3]
 
-/-- Extending the first sequence by one element can only add a gap column. -/
+/-- **Appending to the first sequence loses at most one gap.** Let
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score, $g \in \mathbb{Z}$ a gap
+score, and write $N(x, y)$ for the Needleman–Wunsch score of sequences $x, y$ over $\alpha$ with
+respect to $\sigma$ and $g$. For all sequences $x, y$ and every letter $a \in \alpha$, writing
+$xa$ for $x$ with $a$ appended at the end, $N(x, y) + g \le N(xa, y)$.
+
+An optimal alignment of $x$ and $y$ followed by the gap column pairing $a$ with nothing is an
+alignment of $xa$ and $y$. -/
 theorem nwScore_le_nwScore_snoc_left (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) (a : α) :
     nwScore σ gap xs ys + gap ≤ nwScore σ gap (xs ++ [a]) ys := by
   obtain ⟨A, hA, hscore⟩ := exists_alignmentScore_eq_nwScore σ gap xs ys
@@ -1315,7 +1448,14 @@ theorem nwScore_le_nwScore_snoc_left (σ : α → α → ℤ) (gap : ℤ) (xs ys
   rw [← hsc]
   exact alignmentScore_le_nwScore σ gap (xs ++ [a]) ys (A ++ [(some a, none)]) hA'
 
-/-- Extending the second sequence by one element can only add a gap column. -/
+/-- **Appending to the second sequence loses at most one gap.** Let
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score, $g \in \mathbb{Z}$ a gap
+score, and write $N(x, y)$ for the Needleman–Wunsch score of sequences $x, y$ over $\alpha$ with
+respect to $\sigma$ and $g$. For all sequences $x, y$ and every letter $b \in \alpha$, writing
+$yb$ for $y$ with $b$ appended at the end, $N(x, y) + g \le N(x, yb)$.
+
+An optimal alignment of $x$ and $y$ followed by the gap column pairing nothing with $b$ is an
+alignment of $x$ and $yb$. -/
 theorem nwScore_le_nwScore_snoc_right (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) (b : α) :
     nwScore σ gap xs ys + gap ≤ nwScore σ gap xs (ys ++ [b]) := by
   obtain ⟨A, hA, hscore⟩ := exists_alignmentScore_eq_nwScore σ gap xs ys
@@ -1327,7 +1467,11 @@ theorem nwScore_le_nwScore_snoc_right (σ : α → α → ℤ) (gap : ℤ) (xs y
   rw [← hsc]
   exact alignmentScore_le_nwScore σ gap xs (ys ++ [b]) (A ++ [(none, some b)]) hA'
 
-/-- **Every suffix pair scores at most the Smith–Waterman score** (needs `gap ≤ 0`). -/
+/-- **Suffix pairs score at most the terminal Smith–Waterman cell.** Let
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score and $g \le 0$ a gap score. If
+$x'$ is a suffix of a sequence $x$ and $y'$ is a suffix of a sequence $y$ over $\alpha$, then the
+Needleman–Wunsch score of $x'$ and $y'$ is at most the terminal Smith–Waterman cell score of $x$
+and $y$, both with respect to $\sigma$ and $g$. -/
 theorem nwScore_le_swCellScore_of_suffix (hgap : gap ≤ 0) {xs' ys' xs ys : List α}
     (hxs : xs' <:+ xs) (hys : ys' <:+ ys) :
     nwScore σ gap xs' ys' ≤ swCellScore σ gap xs ys := by
@@ -1395,8 +1539,12 @@ theorem nwScore_le_swCellScore_of_suffix (hgap : gap ≤ 0) {xs' ys' xs ys : Lis
                   (le_max_right _ _)
   exact key2 (xs.length + ys.length) xs ys le_rfl hxs hys
 
-/-- **The terminal cell is at most the suffix maximum**, for every gap: only the
-reverse inequality needs `gap ≤ 0`. -/
+/-- **The terminal cell is at most the suffix maximum.** For every substitution score $\sigma$,
+every gap score $g$ of either sign and all sequences $x$ and $y$, the terminal Smith–Waterman
+cell $H(x, y)$ is at most the maximum Needleman–Wunsch score over all pairs of a suffix of $x$
+and a suffix of $y$.
+
+Only the reverse inequality needs $g \le 0$. -/
 theorem swCellScore_le_suffixMax (xs ys : List α) :
     swCellScore σ gap xs ys ≤ suffixMax σ gap xs ys := by
   have key : ∀ (n : ℕ) (xs ys : List α), xs.length + ys.length ≤ n →
@@ -1488,8 +1636,10 @@ theorem swCellScore_le_suffixMax (xs ys : List α) :
               exact le_trans (le_trans h1 hNW) hPair
   exact key (xs.length + ys.length) xs ys le_rfl
 
-/-- **Every suffix pair scores at most the Smith–Waterman score**, rephrased as a
-supremum bound (needs `gap ≤ 0`). -/
+/-- **The suffix maximum is at most the terminal Smith–Waterman cell.** Let $\sigma$ be a
+substitution score and $g \le 0$ an integer gap score. For all lists $xs$ and $ys$, the
+maximum Needleman–Wunsch score over all pairs of a suffix of $xs$ and a suffix of $ys$ is at
+most the terminal Smith–Waterman cell score of $xs$ and $ys$. -/
 theorem suffixMax_le_swCellScore (hgap : gap ≤ 0) (xs ys : List α) :
     suffixMax σ gap xs ys ≤ swCellScore σ gap xs ys := by
   apply suffixMax_le
@@ -1497,14 +1647,18 @@ theorem suffixMax_le_swCellScore (hgap : gap ≤ 0) (xs ys : List α) :
   rw [mem_suffixPairs] at hp
   exact nwScore_le_swCellScore_of_suffix σ gap hgap hp.1 hp.2
 
-/-- **Smith–Waterman equals the max Needleman–Wunsch score over suffix pairs**
-(needs `gap ≤ 0`). -/
+/-- **For nonpositive gaps, the terminal Smith–Waterman cell is the best suffix-pair score.**
+For a substitution score $\sigma$, a gap score $g \le 0$ and all sequences $x$ and $y$, the
+terminal Smith–Waterman cell $H(x, y)$ equals the maximum Needleman–Wunsch score over all pairs
+of a suffix of $x$ and a suffix of $y$ (the empty suffixes included). -/
 theorem swCellScore_eq_suffixMax (hgap : gap ≤ 0) (xs ys : List α) :
     swCellScore σ gap xs ys = suffixMax σ gap xs ys :=
   le_antisymm (swCellScore_le_suffixMax σ gap xs ys)
     (suffixMax_le_swCellScore σ gap hgap xs ys)
 
-/-- All prefix pairs of `xs` and `ys`, as a list of pairs. -/
+/-- **Pairs of prefixes.** For lists $xs$ and $ys$, the list of all pairs $(p, q)$ where $p$ is
+a prefix of $xs$ and $q$ is a prefix of $ys$, the empty lists and $xs$, $ys$ themselves
+included. -/
 def prefixPairs (xs ys : List α) : List (List α × List α) :=
   xs.inits.product ys.inits
 
@@ -1512,7 +1666,12 @@ theorem mem_prefixPairs {px py xs ys : List α} :
     (px, py) ∈ prefixPairs xs ys ↔ px <+: xs ∧ py <+: ys := by
   simp [prefixPairs, List.mem_inits]
 
-/-- All infix pairs of `xs` and `ys`, as suffixes of prefixes. -/
+/-- **Infix pairs.** For sequences $x$ and $y$ over $\alpha$, the list of infix pairs of $x$ and
+$y$ is obtained by going through each prefix $p$ of $x$ and each prefix $q$ of $y$ and, for each
+such $(p, q)$, listing all pairs $(x', y')$ of a suffix $x'$ of $p$ and a suffix $y'$ of $q$.
+
+So $(x', y')$ occurs in the list exactly when $x'$ is a contiguous block of $x$ and $y'$ is a
+contiguous block of $y$; a pair may occur more than once. -/
 def infixPairs (xs ys : List α) : List (List α × List α) :=
   (prefixPairs xs ys).flatMap (fun p => p.1.tails.product p.2.tails)
 
@@ -1535,11 +1694,18 @@ theorem mem_infixPairs {xs' ys' xs ys : List α} :
     · exact List.mem_product.mpr
         ⟨(List.mem_tails _ _).mpr h1, (List.mem_tails _ _).mpr h2⟩
 
-/-- The maximum Needleman–Wunsch score over all infix pairs: the local score. -/
+/-- **Local alignment score.** For an integer substitution score $\sigma$, an integer gap score
+$g$ and sequences $x$ and $y$, the local score of $x$ and $y$ is the maximum of the
+Needleman–Wunsch score of $(x', y')$ over all pairs of an infix $x'$ of $x$ and an infix $y'$ of
+$y$ (contiguous and possibly empty). -/
 def localScore (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : ℤ :=
   listMax ((infixPairs xs ys).map (fun p => nwScore σ gap p.1 p.2))
 
-/-- An infix pair's score is at most the local score. -/
+/-- **Infix pairs score at most the local score.** Let $\sigma : \alpha \to \alpha \to \mathbb{Z}$
+be a substitution score and $g \in \mathbb{Z}$ a gap score. If $(x', y')$ is an infix pair of
+sequences $x$ and $y$ over $\alpha$, that is, $x'$ is a suffix of a prefix of $x$ and $y'$ is a
+suffix of a prefix of $y$, then the Needleman–Wunsch score of $x'$ and $y'$ is at most the local
+score of $x$ and $y$, both with respect to $\sigma$ and $g$. -/
 theorem nwScore_le_localScore {xs' ys' xs ys : List α}
     (h : (xs', ys') ∈ infixPairs xs ys) :
     nwScore σ gap xs' ys' ≤ localScore σ gap xs ys := by
@@ -1547,7 +1713,10 @@ theorem nwScore_le_localScore {xs' ys' xs ys : List α}
   apply le_listMax_of_mem
   exact List.mem_map_of_mem h
 
-/-- A bound on all infix-pair scores bounds the local score. -/
+/-- **Upper bounds on the local score.** Let $\sigma$ be an integer substitution score, $g$ an
+integer gap score, $x$ and $y$ sequences and $c$ an integer. If the Needleman–Wunsch score of
+every pair $(x', y')$ with $x'$ an infix of $x$ and $y'$ an infix of $y$ is at most $c$, then the
+local score of $x$ and $y$ is at most $c$. -/
 theorem localScore_le {xs ys : List α} {y : ℤ}
     (h : ∀ p ∈ infixPairs xs ys, nwScore σ gap p.1 p.2 ≤ y) :
     localScore σ gap xs ys ≤ y := by
@@ -1562,13 +1731,19 @@ theorem localScore_le {xs ys : List α} {y : ℤ}
         List.nil_suffix (l := []), List.nil_suffix (l := [])⟩)
     simpa [nwScore_nil_left] using h0
 
-/-- **The Smith–Waterman score**: the maximum terminal-cell score over all pairs of
-prefixes. For `gap ≤ 0` this is the optimal local alignment score
-(`localScore_eq_swScore`); for positive gaps it can be smaller. -/
+/-- **The Smith–Waterman score.** Given a substitution score $\sigma$ and a gap score $g$, the
+Smith–Waterman score of two sequences $x$ and $y$ is the maximum of the terminal Smith–Waterman
+cell $H(p, q)$ over all pairs of a prefix $p$ of $x$ and a prefix $q$ of $y$ (the empty prefixes
+included).
+
+For $g \le 0$ this is the optimal local alignment score, the maximum Needleman–Wunsch score over
+pairs of infixes; for $g > 0$ it can be smaller. -/
 def swScore (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : ℤ :=
   listMax ((prefixPairs xs ys).map (fun p => swCellScore σ gap p.1 p.2))
 
-/-- A prefix pair's cell score is at most the Smith–Waterman score. -/
+/-- **Each prefix-pair cell is at most the Smith–Waterman score.** For a substitution score
+$\sigma$, a gap score $g$, sequences $x$ and $y$, a prefix $p$ of $x$ and a prefix $q$ of $y$,
+the terminal Smith–Waterman cell $H(p, q)$ is at most the Smith–Waterman score of $x$ and $y$. -/
 theorem swCellScore_le_swScore {px py xs ys : List α}
     (h : (px, py) ∈ prefixPairs xs ys) :
     swCellScore σ gap px py ≤ swScore σ gap xs ys := by
@@ -1576,7 +1751,10 @@ theorem swCellScore_le_swScore {px py xs ys : List α}
   apply le_listMax_of_mem
   exact List.mem_map_of_mem h
 
-/-- A bound on all prefix-pair cell scores bounds the Smith–Waterman score. -/
+/-- **Bounding the Smith–Waterman score by its cells.** For a substitution score $\sigma$, a gap
+score $g$, sequences $x$ and $y$ and an integer $c$, if the terminal Smith–Waterman cell $H(p, q)$
+is at most $c$ for every prefix $p$ of $x$ and every prefix $q$ of $y$, then the Smith–Waterman
+score of $x$ and $y$ is at most $c$. -/
 theorem swScore_le {xs ys : List α} {y : ℤ}
     (h : ∀ p ∈ prefixPairs xs ys, swCellScore σ gap p.1 p.2 ≤ y) :
     swScore σ gap xs ys ≤ y := by
@@ -1590,8 +1768,14 @@ theorem swScore_le {xs ys : List α} {y : ℤ}
       (mem_prefixPairs.mpr ⟨List.nil_prefix (l := xs), List.nil_prefix (l := ys)⟩)
     simpa [swCellScore_nil_left] using h0
 
-/-- **The local score equals the Smith–Waterman score** (needs `gap ≤ 0`): an infix
-is a suffix of a prefix, and the terminal cell is a max over suffixes. -/
+/-- **The local score equals the Smith–Waterman score.** Let $\sigma$ be an integer-valued
+substitution score on letters and let $g$ be an integer gap score with $g \le 0$. Then for all
+sequences $x$ and $y$, the local score of $x$ and $y$ (the maximum Needleman–Wunsch score over
+pairs of infixes) equals their Smith–Waterman score (the maximum terminal-cell score over pairs
+of prefixes).
+
+The proof uses that an infix is a suffix of a prefix and that the terminal cell is a maximum
+over pairs of suffixes. -/
 theorem localScore_eq_swScore (hgap : gap ≤ 0) (xs ys : List α) :
     localScore σ gap xs ys = swScore σ gap xs ys := by
   apply le_antisymm
