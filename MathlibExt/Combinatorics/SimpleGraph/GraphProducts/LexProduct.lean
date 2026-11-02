@@ -35,10 +35,10 @@ namespace MetaMathlibExt
 
 -- Combinatorics 3: Lexicographic product
 
-/-- Given graphs $X,Y$, the \emph{lexicographic product} $X[Y] of $X$ and $Y$ has as its vertices
-the set $V(X) \times V(Y)$ and an edge exists between $(x_1,y_1),(x_2,y_2) \in V(X) \times V(Y)$
-whenever $x_1 \sim_X x_2$ or $x_1 = x_2$ and $y_1 \sim_Y y_2$. (here $u \sim_G v$ indicates that $u$
-and $v$ are adjacent in $G$).
+/-- **Lexicographic product of graphs.** Given simple graphs $X$ and $Y$, the *lexicographic
+product* $X[Y]$ of $X$ and $Y$ is the simple graph with vertex set $V(X) \times V(Y)$ in which
+two vertices $(x_1, y_1)$ and $(x_2, y_2)$ are adjacent exactly when $x_1$ and $x_2$ are
+adjacent in $X$, or $x_1 = x_2$ and $y_1$ and $y_2$ are adjacent in $Y$.
 -/
 def _root_.SimpleGraph.lexProduct {V W : Type*} (G : SimpleGraph V) (H : SimpleGraph W) :
     SimpleGraph (V × W) :=

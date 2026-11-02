@@ -601,10 +601,12 @@ private theorem frucht_of_card_le_one {G : Type*} [Group G] [Fintype G]
   exact MulEquiv.ofUnique
 
 /--
-Every finite group is the automorphism group of a finite simple graph.
-Source: R. Frucht, Compositio Math. 6 (1939), 239-250.
+**Frucht's theorem.** Every finite group is isomorphic to the automorphism group of a finite simple
+graph.
 
 Proves `Wanted` entry `frucht`.
+
+Source: R. Frucht, Compositio Math. 6 (1939), 239-250.
 -/
 theorem frucht
     {G : Type*} [Group G] [Fintype G] [DecidableEq G] :

@@ -297,14 +297,17 @@ private lemma isolation_core {n : ℕ} (hn : 0 < n)
   rw [hCARD, ← hhalf]
   exact div_le_div_of_nonneg_right hGK (by positivity)
 
-/-- Isolation lemma (stable source: https://en.wikipedia.org/wiki/Isolation_lemma):
-a nonempty family `F` of subsets of `Fin n` with independent uniform weights in
-`{1, …, 2 * n}`, realized as `(w i).val + 1` for functions `Fin n → Fin (2 * n)`,
-has a unique minimum-weight member for at least half of all weight assignments;
-probability is the uniform counting (PMF) ratio over `Fin n → Fin (2 * n)`, and
-uniqueness is `Finset.card` of the argmin filter equal to `1`.
+/-- **Isolation lemma.** Let $n \ge 1$ and let $\mathcal{F}$ be a nonempty family of subsets of
+$\{0, 1, \dots, n - 1\}$. Assign each element $i$ a weight $w(i) \in \{1, 2, \dots, 2n\}$ and give
+a set $S$ the weight $w(S) = \sum_{i \in S} w(i)$. Then, among all $(2n)^n$ weight functions $w$,
+the fraction for which exactly one member of $\mathcal{F}$ has minimum weight is at least $1/2$.
+
+Equivalently, if the weights are chosen independently and uniformly at random, the
+minimum-weight member of $\mathcal{F}$ is unique with probability at least $1/2$.
 
 Proves `Wanted` entry `isolation_lemma`.
+
+Source: https://en.wikipedia.org/wiki/Isolation_lemma
 -/
 theorem isolation_lemma {n : ℕ} (hn : 0 < n)
     (F : Finset (Finset (Fin n))) (hF : F.Nonempty) :

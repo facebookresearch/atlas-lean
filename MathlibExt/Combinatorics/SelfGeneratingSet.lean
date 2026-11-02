@@ -34,31 +34,47 @@ Concept `jis_term_23e11a02338d8f3d91eda68b`; source statement
 `jis_b9342f43164eb6b4d229b602`.
 -/
 
-/-- Every generator in `F` strictly increases its argument. -/
+/-- **Strict growth of a set of generators.** A finite set $F$ of functions
+$\mathbb{N} \to \mathbb{N}$ has strict growth when $x < f(x)$ for every $f \in F$ and every
+$x \in \mathbb{N}$. -/
 def StrictGrowth (F : Finset (Nat → Nat)) : Prop :=
   ∀ f ∈ F, ∀ x, x < f x
 
-/-- `Gamma` contains `seed` and is closed under every generator in `F`. This is the source's
-`SG(seed, F)` condition. -/
+/-- **Self-generating sets.** Let $F$ be a finite set of functions $\mathbb{N} \to \mathbb{N}$
+and let $s \in \mathbb{N}$. A set $\Gamma \subseteq \mathbb{N}$ is self-generating for $s$ and $F$
+when $s \in \Gamma$ and $f(x) \in \Gamma$ for every $f \in F$ and every $x \in \Gamma$.
+
+The source writes this condition as $\mathrm{SG}(s, F)$. -/
 def SG (F : Finset (Nat → Nat)) (seed : Nat) (Gamma : Set Nat) : Prop :=
   seed ∈ Gamma ∧ ∀ f ∈ F, ∀ x ∈ Gamma, f x ∈ Gamma
 
-/-- The fixed-point characterization of the self-generating set: each element is either the seed
-or the image under a generator of an element already in the set. -/
+/-- **Fixed-point sets for a seed and generators.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ and let $s \in \mathbb{N}$. A set $C \subseteq \mathbb{N}$ is a
+fixed-point set for $F$ and $s$ when, for every $y \in \mathbb{N}$, $y \in C$ if and only if
+$y = s$ or $y = f(x)$ for some $f \in F$ and some $x \in C$; equivalently,
+$C = \{s\} \cup \bigcup_{f \in F} f(C)$. -/
 def FixedPoint (F : Finset (Nat → Nat)) (seed : Nat) (C : Set Nat) : Prop :=
   ∀ y, y ∈ C ↔ y = seed ∨ ∃ f ∈ F, ∃ x ∈ C, f x = y
 
-/-- Reachability from `seed` by a finite composition of generators in `F`. The constructor
-`seed_mem` represents the empty composition. -/
+/-- **Reachability from a seed by generators.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ and let $s \in \mathbb{N}$. Reachability from $s$ is the least
+predicate on $\mathbb{N}$ that holds at $s$ and holds at $f(w)$ whenever it holds at $w$ and
+$f \in F$. Thus $y$ is reachable exactly when $y = f_k(\cdots f_1(s) \cdots)$ for some $k \ge 0$
+and $f_1, \ldots, f_k \in F$; the case $k = 0$ is $s$ itself. -/
 inductive Gen (F : Finset (Nat → Nat)) (seed : Nat) : Nat → Prop where
   | seed_mem : Gen F seed seed
   | step (w : Nat) : Gen F seed w → ∀ f ∈ F, Gen F seed (f w)
 
-/-- The closure of `seed` under finite compositions of generators in `F`. -/
+/-- **Set generated from a seed.** For a finite set $F$ of functions $\mathbb{N} \to \mathbb{N}$
+and a seed $s \in \mathbb{N}$, the set generated from $s$ by $F$ consists of all numbers
+$f_k(\cdots f_1(s) \cdots)$ with $k \ge 0$ and $f_1, \dots, f_k \in F$; the case $k = 0$ gives
+$s$ itself. -/
 def GeneratedSet (F : Finset (Nat → Nat)) (seed : Nat) : Set Nat :=
   {y | Gen F seed y}
 
-/-- A fixed point satisfies the self-generating condition. -/
+/-- **Fixed-point sets are self-generating.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ and $s \in \mathbb{N}$. Every fixed-point set $C$ for $F$ and $s$ is
+self-generating: $s \in C$, and $f(x) \in C$ for every $f \in F$ and every $x \in C$. -/
 theorem fixedPoint_isSG {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     (hC : FixedPoint F seed C) : SG F seed C := by
   constructor
@@ -66,7 +82,9 @@ theorem fixedPoint_isSG {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
   · intro f hf x hx
     exact (hC (f x)).mpr (Or.inr ⟨f, hf, x, hx, rfl⟩)
 
-/-- The generated closure satisfies the self-generating condition. -/
+/-- **The generated set is self-generating.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ and $s \in \mathbb{N}$. The set generated from $s$ by $F$ contains $s$
+and is closed under every $f \in F$: if $x$ is in it and $f \in F$, then $f(x)$ is in it. -/
 theorem generated_isSG {F : Finset (Nat → Nat)} {seed : Nat} :
     SG F seed (GeneratedSet F seed) := by
   constructor
@@ -74,7 +92,11 @@ theorem generated_isSG {F : Finset (Nat → Nat)} {seed : Nat} :
   · intro f hf x hx
     exact Gen.step x hx f hf
 
-/-- The generated closure is contained in every self-generating set. -/
+/-- **The generated set lies in every self-generating set.** Let $F$ be a finite set of
+functions $\mathbb{N} \to \mathbb{N}$ and let $s \in \mathbb{N}$. If a set $G \subseteq \mathbb{N}$
+contains $s$ and satisfies $f(x) \in G$ for every $f \in F$ and every $x \in G$, then $G$ contains
+the set generated from $s$ by $F$, that is, every number obtained from $s$ by applying finitely
+many (possibly no) functions of $F$ in succession. -/
 theorem generated_le_of_sg {F : Finset (Nat → Nat)} {seed : Nat} {G : Set Nat}
     (hG : SG F seed G) : GeneratedSet F seed ⊆ G := by
   intro y hy
@@ -84,7 +106,12 @@ theorem generated_le_of_sg {F : Finset (Nat → Nat)} {seed : Nat} {G : Set Nat}
   | seed_mem => exact hG.1
   | step w _ f hf ih => exact hG.2 f hf w ih
 
-/-- The generated closure is a fixed point. This direction does not require strict growth. -/
+/-- **The generated set is a fixed-point set.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ and $s \in \mathbb{N}$, and let $\Gamma$ be the set generated from $s$
+by $F$. Then for every $y \in \mathbb{N}$, $y \in \Gamma$ if and only if $y = s$ or $y = f(x)$
+for some $f \in F$ and $x \in \Gamma$.
+
+This direction does not require the generators to be strictly increasing. -/
 theorem generated_fixedPoint {F : Finset (Nat → Nat)} {seed : Nat} :
     FixedPoint F seed (GeneratedSet F seed) := by
   intro y
@@ -105,8 +132,15 @@ theorem generated_fixedPoint {F : Finset (Nat → Nat)} {seed : Nat} :
       subst heq
       exact Gen.step x hxg f hf
 
-/-- Under strict growth, a fixed point is the generated closure. The proof uses strong induction:
-if a non-seed element is `f x`, then strict growth gives `x < f x`. -/
+/-- **Under strict growth, a fixed-point set is the generated set.** Let $F$ be a finite set of
+functions $\mathbb{N} \to \mathbb{N}$ with $x < f(x)$ for every $f \in F$ and every
+$x \in \mathbb{N}$, let $s \in \mathbb{N}$, and let $C \subseteq \mathbb{N}$ be a fixed-point set
+for $F$ and $s$: $y \in C$ exactly when $y = s$ or $y = f(x)$ for some $f \in F$ and $x \in C$.
+Then $C$ equals the set generated from $s$ by $F$, the numbers obtained from $s$ by applying
+finitely many functions of $F$.
+
+The proof is by strong induction: if an element of $C$ is $f(x)$ with $f \in F$ and $x \in C$,
+then strict growth gives $x < f(x)$. -/
 theorem fixedPoint_eq_generated {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     (hg : StrictGrowth F) (hC : FixedPoint F seed C) :
     C = GeneratedSet F seed := by
@@ -136,7 +170,10 @@ theorem fixedPoint_eq_generated {F : Finset (Nat → Nat)} {seed : Nat} {C : Set
   · intro hy
     exact generated_le_of_sg hSG hy
 
-/-- The generated closure is the intersection of all self-generating sets. -/
+/-- **The generated set is the intersection of all self-generating sets.** Let $F$ be a finite
+set of functions $\mathbb{N} \to \mathbb{N}$ and $s \in \mathbb{N}$. The set generated from $s$ by
+$F$ equals the intersection of all sets $G \subseteq \mathbb{N}$ that contain $s$ and are closed
+under every $f \in F$. -/
 theorem generated_eq_sInter {F : Finset (Nat → Nat)} {seed : Nat} :
     GeneratedSet F seed = Set.sInter {G | SG F seed G} := by
   apply Set.ext
@@ -153,13 +190,21 @@ theorem generated_eq_sInter {F : Finset (Nat → Nat)} {seed : Nat} :
     have hy' : ∀ G ∈ {G | SG F seed G}, y ∈ G := hy
     exact hy' _ hmem
 
-/-- Under strict growth, a fixed point is the intersection of all self-generating sets. -/
+/-- **Under strict growth, a fixed-point set is the intersection of all self-generating sets.**
+Let $F$ be a finite set of functions $\mathbb{N} \to \mathbb{N}$ with $x < f(x)$ for every
+$f \in F$ and every $x \in \mathbb{N}$, and let $s \in \mathbb{N}$. If $C$ is a fixed-point set for
+$F$ and $s$, then $C$ is the intersection of all sets $G \subseteq \mathbb{N}$ that contain $s$
+and are closed under every $f \in F$. -/
 theorem fixedPoint_eq_sInter {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     (hg : StrictGrowth F) (hC : FixedPoint F seed C) :
     C = Set.sInter {G | SG F seed G} := by
   rw [fixedPoint_eq_generated hg hC, generated_eq_sInter]
 
-/-- Under strict growth, a fixed point is the least self-generating set. -/
+/-- **Under strict growth, a fixed-point set is the least self-generating set.** Let $F$ be a
+finite set of functions $\mathbb{N} \to \mathbb{N}$ with $x < f(x)$ for every $f \in F$ and every
+$x \in \mathbb{N}$, and let $s \in \mathbb{N}$. If $C$ is a fixed-point set for $F$ and $s$, then
+$C$ contains $s$ and is closed under every $f \in F$, and $C \subseteq G$ for every set
+$G \subseteq \mathbb{N}$ that contains $s$ and is closed under every $f \in F$. -/
 theorem fixedPoint_isLeast {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     (hg : StrictGrowth F) (hC : FixedPoint F seed C) :
     SG F seed C ∧ ∀ G, SG F seed G → C ⊆ G := by
@@ -169,7 +214,11 @@ theorem fixedPoint_isLeast {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     rw [fixedPoint_eq_generated hg hC]
     exact generated_le_of_sg hG
 
-/-- Every least self-generating set is the generated closure. -/
+/-- **The least self-generating set is the generated set.** Let $F$ be a finite set of
+functions $\mathbb{N} \to \mathbb{N}$ and let $s \in \mathbb{N}$. Call a set
+$G \subseteq \mathbb{N}$ self-generating if $s \in G$ and $f(x) \in G$ for every $f \in F$ and
+every $x \in G$. If $C$ is self-generating and is contained in every self-generating set, then
+$C$ equals the set generated from $s$ by $F$. -/
 theorem isLeast_eq_generated {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Nat}
     (hC : SG F seed C) (hle : ∀ G, SG F seed G → C ⊆ G) :
     C = GeneratedSet F seed := by
@@ -181,7 +230,10 @@ theorem isLeast_eq_generated {F : Finset (Nat → Nat)} {seed : Nat} {C : Set Na
   · intro hy
     exact generated_le_of_sg hC hy
 
-/-- Under strict growth, the fixed-point self-generating set is unique. -/
+/-- **Under strict growth, fixed-point sets are unique.** Let $F$ be a finite set of functions
+$\mathbb{N} \to \mathbb{N}$ with $x < f(x)$ for every $f \in F$ and every $x \in \mathbb{N}$, and
+let $s \in \mathbb{N}$. If $C_1$ and $C_2$ are both fixed-point sets for $F$ and $s$, then
+$C_1 = C_2$. -/
 theorem fixedPoint_unique {F : Finset (Nat → Nat)} {seed : Nat} {C1 C2 : Set Nat}
     (hg : StrictGrowth F) (h1 : FixedPoint F seed C1)
     (h2 : FixedPoint F seed C2) : C1 = C2 := by

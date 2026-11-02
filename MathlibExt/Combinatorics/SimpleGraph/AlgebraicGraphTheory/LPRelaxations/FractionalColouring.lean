@@ -51,12 +51,16 @@ def FracColouring.weight {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGrap
     (c : FracColouring G) : ℝ :=
   ∑ s ∈ Finset.univ, c.w s
 
-/-- We will use ℐ(X) to denote the set of all independent sets of [a finite graph] X, and ℐ(X,u) to
-denote the independent sets that contain the vertex u. A *fractional colouring* of a graph X is a
-nonnegative real-valued function f on ℐ(X) such that for any vertex x of X, ∑_{S ∈ ℐ(X,x)} f(S) ≥ 1.
-The *weight* of a fractional chromatic colouring is the sum of all its values, and the
-\emph{fractional chromatic number χ^*(X) of the graph X is the infimum over weights of all possible
-fractional colourings.
+/-- **Fractional chromatic number.** Let $X$ be a graph with finite vertex set $V(X)$. A
+*fractional colouring* of $X$ assigns to each set $S$ of vertices of $X$ a real weight
+$f(S) \ge 0$, with $f(S) = 0$ unless $S$ is independent, such that $\sum_{S \ni x} f(S) \ge 1$
+for every vertex $x$ of $X$, the sum running over all sets of vertices containing $x$. The
+*weight* of $f$ is the sum of $f(S)$ over all sets $S$ of vertices of $X$. The *fractional
+chromatic number* $\chi^*(X)$ of $X$ is the infimum of the weights of all fractional colourings
+of $X$.
+
+Since $f$ vanishes off the independent sets, a fractional colouring is the same as a nonnegative
+function on the independent sets of $X$, and both sums run over independent sets only.
 -/
 noncomputable def _root_.SimpleGraph.fracChromaticNumber {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) : ℝ :=
@@ -64,8 +68,12 @@ noncomputable def _root_.SimpleGraph.fracChromaticNumber {V : Type*} [Fintype V]
 
 -- Combinatorics 438: Regular fractional colouring
 
-/-- A fractional colouring is *regular* if, for each vertex x of a finite graph X, we have ∑_{S ∈
-ℐ(X,x)} f(S) = 1, where ℐ(X,x) is the set of independent sets of X containing x.
+/-- **Regular fractional colouring.** Let $X$ be a finite simple graph. A fractional colouring
+of $X$ assigns to each set $S$ of vertices of $X$ a real weight $f(S) \ge 0$, with $f(S) = 0$
+unless $S$ is independent, such that $\sum_{S \ni x} f(S) \ge 1$ for every vertex $x$, the sum
+running over all sets of vertices containing $x$. The fractional colouring $f$ is *regular* if
+$\sum_{S \ni x} f(S) = 1$ for every vertex $x$ of $X$. Since $f$ vanishes off the independent
+sets, this is the sum of $f$ over the independent sets of $X$ containing $x$.
 -/
 def FracColouring.IsRegular {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
     (c : FracColouring G) : Prop :=

@@ -164,8 +164,9 @@ private lemma konig_hall_match {V : Type*} [DecidableEq V] {G : SimpleGraph V} {
   · exact Or.inl hxA
   · exact Or.inr (hrB hxr)
 
-/-- Kőnig's theorem for a bipartite simple graph on a `Finite` vertex type: there is a matching
-`M` and a vertex cover `C` with `M.edgeSet.ncard = C.ncard`. -/
+/-- **Kőnig's theorem on a finite vertex type.** Let $G$ be a bipartite simple graph on a finite
+vertex type $V$. Then there are a matching $M$ in $G$ and a vertex cover $C \subseteq V$ of $G$ such
+that the number of edges of $M$ equals the number of vertices in $C$. -/
 theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
     (hBip : G.IsBipartite) :
     ∃ (M : G.Subgraph) (C : Set V),
@@ -413,13 +414,15 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /--
-Kőnig's theorem (matching-cover equality, finite bipartite): every finite bipartite simple graph has
-a matching `M` and a vertex cover `C` with `M.edgeSet.ncard = C.ncard`.
+**Kőnig's theorem for finite bipartite graphs.** Every bipartite simple graph $G$ on a finite vertex
+type $V$ has a matching $M$ and a vertex cover $C \subseteq V$ such that the number of edges of $M$
+equals the number of vertices in $C$.
+
+Proves `Wanted` entry `konig_matching_cover`.
+
 Source: D. Kőnig (1931); J. Egerváry (1931) weighted form.
 It follows from `konig_matching_cover_general`; the instances `[DecidableEq V]` and
 `[DecidableRel G.Adj]` are unused and keep the source's shape.
-
-Proves `Wanted` entry `konig_matching_cover`.
 -/
 @[nolint unusedArguments]
 theorem konig_matching_cover {V : Type*} [Fintype V]

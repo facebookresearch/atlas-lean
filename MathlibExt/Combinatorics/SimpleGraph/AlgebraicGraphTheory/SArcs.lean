@@ -39,8 +39,9 @@ namespace MetaMathlibExt
 
 -- Combinatorics 11: $s$-arc
 
-/-- An *s-arc* in a graph is a sequence of vertices (v₀, …, vₛ) such that consecutive vertices are
-adjacent and vᵢ₋₁ ≠ vᵢ₊₁ when 0 < i < s.
+/-- **$s$-arc.** Let $X$ be a finite graph and $s$ a natural number. An *$s$-arc* in $X$ is a
+sequence $(v_0, \dots, v_s)$ of vertices of $X$ such that $v_{i-1}$ and $v_i$ are adjacent for
+$1 \le i \le s$, and $v_{i-1} \ne v_{i+1}$ for $0 < i < s$.
 -/
 structure _root_.SimpleGraph.SArc {V : Type*} [Fintype V] (G : SimpleGraph V) (s : ℕ) where
   vertices : Fin (s + 1) → V
@@ -50,14 +51,18 @@ structure _root_.SimpleGraph.SArc {V : Type*} [Fintype V] (G : SimpleGraph V) (s
 
 -- Combinatorics 12: $s$-arc transitive
 
-/-- A graph is *s-arc transitive* if its automorphism group is transitive on s-arcs. -/
+/-- **$s$-arc transitive graph.** A finite graph $G$ is $s$-arc transitive if its automorphism
+group acts transitively on its $s$-arcs: for any two $s$-arcs $(u_0, \dots, u_s)$ and
+$(v_0, \dots, v_s)$ of $G$ there is an automorphism $\varphi$ of $G$ with $\varphi(u_i) = v_i$
+for every $i \le s$. -/
 def SimpleGraph.IsSArcTransitive {V : Type*} [Fintype V] (G : SimpleGraph V) (s : ℕ) : Prop :=
   ∀ p q : G.SArc s, ∃ φ : G ≃g G, ∀ i, φ (p.vertices i) = q.vertices i
 
 -- Combinatorics 13: $s$-arc regular
 
-/-- A graph is *s-arc regular* if for any two s-arcs there is a unique aotmorphism mapping the first
-to the second.
+/-- **$s$-arc regular graph.** A finite graph $G$ is $s$-arc regular if it has at least one
+$s$-arc and, for any two $s$-arcs $(u_0, \dots, u_s)$ and $(v_0, \dots, v_s)$ of $G$, there is
+exactly one automorphism $\varphi$ of $G$ with $\varphi(u_i) = v_i$ for every $i \le s$.
 -/
 def SimpleGraph.IsSArcRegular {V : Type*} [Fintype V] (G : SimpleGraph V) (s : ℕ) : Prop :=
   Nonempty (G.SArc s) ∧
@@ -83,10 +88,13 @@ def _root_.SimpleGraph.SArc.follows {V : Type*} [Fintype V]
     {G : SimpleGraph V} {s : ℕ} (a b : G.SArc s) : Prop :=
   ∃ c : G.SArc (s + 1), c.head = a ∧ c.tail = b
 
-/-- If s ≥ 1 and α = (x₀, …, xₛ), we define its *head* to be the (s-1)-arc (x₁, …, xₛ) and its
-*tail* to be the (s-1)-arc (x₀, …, xₛ₋₁). If α and β are s-arcs we say that β *follows* α if there
-is an (s+1)-arc whose tail is α and whose head is β. We use X⁽ˢ⁾ to denote the directed graph with
-the s-arcs of X as its vertices, such that (α, β) is an arc if and only if β follows α.
+/-- **$s$-arc digraph.** Let $X$ be a finite graph and $s$ a natural number. For an
+$(s+1)$-arc $\gamma = (x_0, \dots, x_{s+1})$ of $X$, its *head* is the $s$-arc
+$(x_1, \dots, x_{s+1})$ and its *tail* is the $s$-arc $(x_0, \dots, x_s)$. If $\alpha$ and
+$\beta$ are $s$-arcs of $X$, then $\beta$ *follows* $\alpha$ if there is an $(s+1)$-arc of $X$
+whose tail is $\alpha$ and whose head is $\beta$. The *$s$-arc digraph* $X^{(s)}$ is the directed
+graph whose vertices are the $s$-arcs of $X$, with an arc from $\alpha$ to $\beta$ if and only if
+$\beta$ follows $\alpha$.
 -/
 def _root_.SimpleGraph.arcDigraph {V : Type*} [Fintype V]
     (G : SimpleGraph V) (s : ℕ) : Digraph (G.SArc s) where
