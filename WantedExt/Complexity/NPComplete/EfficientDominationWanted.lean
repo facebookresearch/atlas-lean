@@ -43,26 +43,38 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list. -/
+/-- **Efficient Domination instances.** An instance of EFFICIENT DOMINATION is a pair $(n, E)$
+of a natural number $n$, the number of vertices, and a list $E$ of pairs of natural numbers, the
+edges. -/
 abbrev EfficientDominationInstance := ℕ × List (ℕ × ℕ)
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
+/-- **Graph of an Efficient Domination instance.** For an instance $(n, E)$, its graph is the
+simple graph on the vertex set $\{0, \dots, n - 1\}$ in which distinct vertices $u$ and $v$ are
+adjacent when $(u, v)$ or $(v, u)$ belongs to $E$. -/
 def Graph (i : EfficientDominationInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2
 
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed Efficient Domination instances.** An instance $(n, E)$ is well formed when the
+list $E$ has no repeated entries and every pair $(a, b)$ in $E$ satisfies $a < n$, $b < n$ and
+$a \ne b$, and $(b, a)$ does not belong to $E$. -/
 def WellFormed (i : EfficientDominationInstance) : Prop :=
   i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
 
-/-- An efficient dominating set. -/
+/-- **Instances with an efficient dominating set.** An instance $(n, E)$ of EFFICIENT DOMINATION
+is feasible when its graph has an efficient dominating set (a perfect code): a set $S$ of
+vertices such that every vertex $v$ has exactly one vertex $u \in S$ with $u = v$ or $u$
+adjacent to $v$. -/
 def EfficientDominationFeasible
     (i : EfficientDominationInstance) : Prop :=
   ∃ S : Finset (Fin i.1),
     ∀ v : Fin i.1, ∃! u ∈ S, u = v ∨ (Graph i).Adj u v
 
 open Classical in
-/-- EFFICIENT DOMINATION (PERFECT CODE) as a decision problem over bitstrings. -/
+/-- **EFFICIENT DOMINATION (PERFECT CODE) as a decision problem.** The decision problem
+EFFICIENT DOMINATION accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding of instances, to an instance $(n, E)$ that is well formed and whose graph has
+an efficient dominating set. Bitstrings that do not decode to an instance are rejected. -/
 noncomputable def efficientDominationDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -70,7 +82,11 @@ noncomputable def efficientDominationDec :
   | some i => decide (WellFormed i ∧ EfficientDominationFeasible i)
   | none => false
 
-/-- **EFFICIENT DOMINATION (PERFECT CODE) is NP-complete.** Source: M. R. Garey and D. S.
+/-- **EFFICIENT DOMINATION (PERFECT CODE) is NP-complete.** The decision problem EFFICIENT
+DOMINATION belongs to NP, and every decision problem in NP reduces to it by a polynomial-time
+many-one reduction.
+
+Source: M. R. Garey and D. S.
 Johnson, *Computers and Intractability* (1979), EFFICIENT DOMINATION; D. G. Corneil and Y.
 Perl, "Clustering and domination in perfect graphs" (1984) and the perfect-code
 literature. -/

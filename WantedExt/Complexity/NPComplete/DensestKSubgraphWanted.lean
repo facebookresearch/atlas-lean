@@ -43,14 +43,25 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A densest-k-subgraph instance: vertex count, edge list, vertex count k, edge threshold m. -/
+/-- **Instances of DENSEST k-SUBGRAPH.** An instance of DENSEST k-SUBGRAPH is a quadruple
+$(n, E, k, m)$ consisting of a natural number $n$ (the number of vertices), a list $E$ of pairs
+of natural numbers (the edges), a natural number $k$ (the size of the vertex set sought) and a
+natural number $m$ (the edge threshold). -/
 abbrev DensestKSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed DENSEST k-SUBGRAPH instances.** An instance $(n, E, k, m)$ of DENSEST
+k-SUBGRAPH is well formed when the list $E$ has no repeated entries and every pair $(u, v)$ in
+$E$ satisfies $u < n$, $v < n$ and $u \ne v$, with the reversed pair $(v, u)$ not in $E$. -/
 def WellFormed (i : DensestKSubgraphInstance) : Prop :=
   i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1)
 
-/-- `k` vertices inducing at least `m` edges. -/
+/-- **Feasibility for DENSEST k-SUBGRAPH.** An instance $(n, E, k, m)$ of DENSEST k-SUBGRAPH is
+feasible when there are a finite set $S$ of exactly $k$ natural numbers, each less than $n$, and
+a sublist $E'$ of $E$ (obtained by deleting entries and keeping the order) with at least $m$
+entries such that both components of every pair in $E'$ lie in $S$.
+
+For a well-formed instance this says that some $k$ vertices of the graph of $E$ on $n$ vertices
+induce at least $m$ edges. -/
 def DensestKSubgraphFeasible
     (i : DensestKSubgraphInstance) : Prop :=
   ∃ S : Finset ℕ, (∀ v ∈ S, v < i.1) ∧ S.card = i.2.2.1 ∧
@@ -58,7 +69,10 @@ def DensestKSubgraphFeasible
       ∀ e ∈ E', e.1 ∈ S ∧ e.2 ∈ S
 
 open Classical in
-/-- DENSEST k-SUBGRAPH as a decision problem over bitstrings. -/
+/-- **DENSEST k-SUBGRAPH as a decision problem.** The decision problem DENSEST k-SUBGRAPH accepts
+a bitstring $x$ exactly when bitstring decoding of $x$ as a quadruple $(n, E, k, m)$ succeeds and
+returns an instance of DENSEST k-SUBGRAPH that is both well formed and feasible; every bitstring
+that does not decode is rejected. -/
 noncomputable def densestKSubgraphDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -66,7 +80,10 @@ noncomputable def densestKSubgraphDec :
   | some i => decide (WellFormed i ∧ DensestKSubgraphFeasible i)
   | none => false
 
-/-- **DENSEST k-SUBGRAPH is NP-complete.** Source: U. Feige, G. Kortsarz, and D. Peleg, "The
+/-- **DENSEST k-SUBGRAPH is NP-complete.** The decision problem DENSEST k-SUBGRAPH belongs to the
+class NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: U. Feige, G. Kortsarz, and D. Peleg, "The
 dense k-subgraph problem" (2001); M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), DENSEST k-SUBGRAPH. -/
 public theorem_wanted densestKSubgraph_npComplete :

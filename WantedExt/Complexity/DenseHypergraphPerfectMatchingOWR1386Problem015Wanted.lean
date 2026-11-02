@@ -37,11 +37,13 @@ language checks well-formedness, `k ∣ n` and the codegree condition and asks f
 open MetaMathlibExt.ComplexityTheory MetaMathlibExt.BitstringEncoding
 
 open Classical in
-/-- The decision problem `PM(k, c)` over bitstrings. An input decodes to `(n, E)`, a list `E` of
-edges of a `k`-uniform hypergraph `H` on `{0, …, n - 1}`; it is accepted iff every listed edge is
-a list of `k` distinct vertices below `n`, `k ∣ n`, every `(k - 1)`-set of vertices lies in at
-least `c n` edges (`δ_{k-1}(H) ≥ c n`), and `H` has a perfect matching (`n / k` pairwise disjoint
-edges). Inputs that do not decode are rejected. -/
+/-- **Perfect matching in uniform hypergraphs with a codegree condition.** For a natural number
+$k$ and a rational $c$, $\mathrm{PM}(k, c)$ is the decision problem on bitstrings that decodes an
+input as a pair $(n, E)$ of a natural number $n$ and a list $E$ of lists of natural numbers, and
+accepts it iff every list in $E$ consists of $k$ distinct vertices below $n$, $k \mid n$, every
+$(k-1)$-element subset of $\{0, \dots, n-1\}$ is contained in at least $cn$ edges of the
+hypergraph $H$ whose edges are the vertex sets of the lists in $E$, and $H$ has a perfect
+matching, that is, $n/k$ pairwise disjoint edges. Inputs that do not decode are rejected. -/
 noncomputable def perfectMatchingProblem (k : ℕ) (c : ℚ) : DecisionProblem := fun x =>
   match bitDecode (α := ℕ × List (List ℕ)) x with
   | some (n, E) =>
@@ -52,9 +54,14 @@ noncomputable def perfectMatchingProblem (k : ℕ) (c : ℚ) : DecisionProblem :
         ∃ M ⊆ edges, M.card = n / k ∧ (M : Set (Finset ℕ)).PairwiseDisjoint id)
   | none => false
 
-/-- Ruciński's question (Oberwolfach Combinatorics, Probability and Computing, 2006, Problem 5),
-answered: for `k ≥ 2` and rational `1 / k ≤ c < 1 / 2`, deciding whether a `k`-uniform hypergraph
-with `k ∣ n` and minimum codegree at least `c n` has a perfect matching is in `P`. -/
+/-- **Ruciński's question on perfect matchings in dense hypergraphs.** The statement that for every
+natural number $k \ge 2$ and every rational $c$ with $1/k \le c < 1/2$, the decision problem
+$\mathrm{PM}(k, c)$ is in the complexity class P. Here $\mathrm{PM}(k, c)$ accepts a list of edges
+of a $k$-uniform hypergraph $H$ on the vertices $0, \dots, n-1$ iff every edge consists of $k$
+distinct vertices below $n$, $k \mid n$, every $(k-1)$-element set of vertices lies in at least
+$cn$ edges of $H$, and $H$ has a perfect matching; inputs that do not decode are rejected. This is
+the positive answer to Ruciński's question (Oberwolfach Combinatorics, Probability and Computing,
+2006, Problem 5). -/
 def denseHypergraphPerfectMatchingInP : Prop :=
   ∀ (k : ℕ) (c : ℚ), 2 ≤ k → 1 / (k : ℚ) ≤ c → c < 1 / 2 → perfectMatchingProblem k c ∈ P
 

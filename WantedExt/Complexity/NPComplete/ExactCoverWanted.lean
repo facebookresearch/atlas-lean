@@ -41,21 +41,30 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An exact-cover instance: universe size, list of subsets. -/
+/-- **Instances of EXACT COVER.** An instance of EXACT COVER is a pair $(n, C)$ of a natural
+number $n$, the size of the universe $\{0, \dots, n - 1\}$, and a finite list $C$ of finite lists
+of natural numbers, the candidate subsets. That each entry of $C$ lists distinct elements of the
+universe is required by well-formedness, not by the type of instances. -/
 abbrev ExactCoverInstance := ℕ × List (List ℕ)
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed EXACT COVER instances.** An instance $(n, C)$ of EXACT COVER is well formed
+when every entry of $C$ is a list of pairwise distinct natural numbers, each less than $n$. -/
 def WellFormed (i : ExactCoverInstance) : Prop :=
   ∀ s ∈ i.2, s.Nodup ∧ ∀ x ∈ s, x < i.1
 
-/-- A subcollection covering every element exactly once. -/
+/-- **Feasible EXACT COVER instances.** An instance $(n, C)$ of EXACT COVER is feasible when $C$
+has a sublist $S$, obtained by deleting some entries of $C$, such that for every natural number
+$x < n$ there is exactly one list that occurs in $S$ and contains $x$. -/
 def ExactCoverFeasible
     (i : ExactCoverInstance) : Prop :=
   ∃ sub : List (List ℕ), sub.Sublist i.2 ∧
     ∀ x < i.1, ∃! s ∈ sub, x ∈ s
 
 open Classical in
-/-- EXACT COVER as a decision problem over bitstrings. -/
+/-- **EXACT COVER as a decision problem.** The decision problem EXACT COVER accepts a bitstring
+$x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs of a natural number
+and a list of lists of natural numbers, to an instance of EXACT COVER that is well formed and
+feasible; bitstrings that do not decode are rejected. -/
 noncomputable def exactCoverDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -63,7 +72,10 @@ noncomputable def exactCoverDec :
   | some i => decide (WellFormed i ∧ ExactCoverFeasible i)
   | none => false
 
-/-- **EXACT COVER is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **EXACT COVER is NP-complete.** The decision problem EXACT COVER is in NP, and every decision
+problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), EXACT COVER; R. M. Karp, "Reducibility among combinatorial
 problems" (1972). -/
 public theorem_wanted exactCover_npComplete :

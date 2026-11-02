@@ -44,14 +44,27 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A strip-packing instance: rectangles (width, height), strip width, height bound. -/
+/-- **Strip packing instances.** A strip packing instance is a triple $(R, W, H)$ consisting of a
+finite list $R = ((w_1, h_1), \dots, (w_n, h_n))$ of pairs of natural numbers, the widths and
+heights of the rectangles, a natural number $W$, the width of the strip, and a natural number $H$,
+the height bound. -/
 abbrev StripPackingInstance := List (ℕ × ℕ) × ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed strip packing instances.** A strip packing instance $(R, W, H)$ is well formed
+when every rectangle $(w, h)$ in the list $R$ has $w > 0$ and $h > 0$. -/
 def WellFormed (i : StripPackingInstance) : Prop :=
   ∀ r ∈ i.1, 0 < r.1 ∧ 0 < r.2
 
-/-- A non-overlapping placement inside the strip. -/
+/-- **Feasible strip packings.** A strip packing instance $(R, W, H)$ with
+$R = ((w_1, h_1), \dots, (w_n, h_n))$ is feasible when there are natural numbers
+$x_1, y_1, \dots, x_n, y_n$ such that $x_j + w_j \le W$ and $y_j + h_j \le H$ for every
+$1 \le j \le n$, and for all $1 \le a < b \le n$ at least one of $x_a + w_a \le x_b$,
+$x_b + w_b \le x_a$, $y_a + h_a \le y_b$ and $y_b + h_b \le y_a$ holds.
+
+That is, the unrotated rectangles with lower-left corners $(x_j, y_j)$, widths $w_j$ and heights
+$h_j$ lie in $[0, W] \times [0, H]$, and any two of them are separated by a vertical or a
+horizontal line. When all widths and heights are positive, the latter says that no two of the
+rectangles overlap in their interiors. -/
 def StripPackingFeasible
     (i : StripPackingInstance) : Prop :=
   ∃ placements : List (ℕ × ℕ), placements.length = i.1.length ∧
@@ -64,7 +77,10 @@ def StripPackingFeasible
       (placements.getD b (0, 0)).2 + (i.1.getD b (0, 0)).2 ≤ (placements.getD a (0, 0)).2
 
 open Classical in
-/-- STRIP PACKING as a decision problem over bitstrings. -/
+/-- **The STRIP PACKING decision problem.** STRIP PACKING is the decision problem that accepts a
+bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of strip packing
+instances, to a strip packing instance that is well formed and feasible. Bitstrings that do not
+decode to a strip packing instance are rejected. -/
 noncomputable def stripPackingDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -72,7 +88,10 @@ noncomputable def stripPackingDec :
   | some i => decide (WellFormed i ∧ StripPackingFeasible i)
   | none => false
 
-/-- **STRIP PACKING is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **STRIP PACKING is NP-complete.** The STRIP PACKING decision problem belongs to NP, and every
+decision problem $L$ in NP reduces to STRIP PACKING by a polynomial-time many-one reduction.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), STRIP PACKING (axis-aligned, no rotations). -/
 public theorem_wanted stripPacking_npComplete :
     stripPackingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

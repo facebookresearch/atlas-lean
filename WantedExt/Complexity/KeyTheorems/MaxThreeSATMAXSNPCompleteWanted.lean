@@ -56,15 +56,19 @@ completeness here is MAXSNP-completeness (membership in MAXSNP, hence in APX, pl
 every APX problem is not asserted.
 -/
 
-/-- The value of MAX-3SAT on instance `x` under assignment `a`: the number of
-satisfied clauses (`0` on malformed inputs, and `0` unless `a.length ≤ x.length`).
-The bound is the full input length, not the unary variable count `n`: assignments
-shorter than `n` and assignments much longer than `n` are both accepted, as long
-as they fit in `|x|` bits. The value depends only on the first `n` bits of `a`
-(the clause literals index variables `< n` and are evaluated with `getD`), so
-padding a solution with trailing bits does not change its value; this matches
-`feas_canonical`, under which every `a` with `a.length ≤ bound.eval |x|` (here
-`bound = X`) is feasible. -/
+/-- **The MAX-3SAT objective.** The value of MAX-3SAT on an instance $x$ under an assignment $a$,
+both bitstrings, is defined as follows. Suppose $x$ decodes, under the canonical bitstring
+encoding, to a pair $(u, \varphi)$ of a bitstring $u$ and a CNF formula $\varphi$, and suppose
+moreover that $|a| \le |x|$, that every literal of $\varphi$ has variable index less than $|u|$
+and that every clause of $\varphi$ has at most $3$ literals. Then the value is the number of
+clauses of $\varphi$, counted with multiplicity, that contain a literal $(v, b)$ with $a_v = b$,
+where $a_v$ is the bit of $a$ at position $v$ (counting from $0$), read as false when
+$v \ge |a|$. In every other case the value is $0$.
+
+The length of $u$ is the number of variables, so the value reads only $a_v$ for $v < |u|$:
+padding an assignment with trailing false bits, or padding an assignment of length at least
+$|u|$ with arbitrary trailing bits, does not change its value as long as its length stays at
+most $|x|$. -/
 def max3SATVal (x : List Bool) (a : List Bool) : ℚ :=
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
   | some (u, φ) =>
@@ -76,13 +80,19 @@ def max3SATVal (x : List Bool) (a : List Bool) : ℚ :=
     else 0
   | none => 0
 
-/-- A bundled NPO (NP optimization) problem: a value function with a polynomial-time
-feasibility predicate, a polynomial-time objective encoding, and a polynomial solution
-length bound. The objective is `0` on infeasible solutions and nonnegative everywhere.
-Every instance has a feasible solution (`feas_nonempty`): without this, completeness
-would be impossible, since an `L`-reduction to a problem with no feasible solutions
-on some instance would have to map a feasible target output back to a feasible
-source solution that does not exist. -/
+/-- **NPO problems.** An NPO (NP optimization) problem consists of a rational-valued value
+function $v$, a Boolean feasibility predicate $F$ and an objective encoding $e$, each taking an
+instance $x$ and a solution $s$ (both bitstrings), together with a polynomial $b$ with
+natural-number coefficients, such that the following hold. $F$ and $e$ are polynomial-time
+computable. For all $x$ and $s$, $e(x, s)$ is a triple $(\sigma, p, q)$ of a Boolean $\sigma$
+and natural numbers $p$ and $q$ with $q \ne 0$; if $s$ is feasible for $x$ (that is,
+$F(x, s)$ is true), then $v(x, s) = -p/q$ when $\sigma$ is true and $v(x, s) = p/q$ when
+$\sigma$ is false, and otherwise $v(x, s) = 0$; and $v(x, s) \ge 0$. Every feasible solution
+$s$ for $x$ has $|s| \le b(|x|)$, and every instance $x$ has a feasible solution.
+
+Feasible solutions on every instance are needed for completeness: an L-reduction to a problem
+with no feasible solutions on some instance would have to map a feasible target output back to
+a feasible source solution that does not exist. -/
 structure NPOProblem where
   /-- The objective value of solution `s` for instance `x`. -/
   val : List Bool → List Bool → ℚ
@@ -105,8 +115,13 @@ structure NPOProblem where
   den_ne : ∀ x s, (enc (x, s)).2.2 ≠ 0
   feas_nonempty : ∀ x, ∃ s, feas x s = true
 
-/-- The optimum of an NPO problem `M` on instance `x`, over feasible solutions of
-length at most the bound (enumerated as a take-prefix of a full-length bitstring). -/
+/-- **Optimum of an NPO problem.** The optimum of an NPO problem $M$, with value function $v$ and
+solution length bound $b$, on an instance $x$ is the maximum of $v(x, s)$ over all bitstrings $s$
+with $|s| \le b(|x|)$.
+
+Since every feasible solution has length at most $b(|x|)$, every instance has a feasible
+solution, and $v$ is nonnegative and equals $0$ on infeasible solutions, this is the maximum of
+$v(x, s)$ over the feasible solutions $s$ for $x$. -/
 noncomputable def optVal (M : NPOProblem) (x : List Bool) : ℚ :=
   Finset.max'
     ((Finset.range (M.bound.eval x.length + 1) ×ˢ (Finset.univ :
@@ -115,15 +130,25 @@ noncomputable def optVal (M : NPOProblem) (x : List Bool) : ℚ :=
     (Finset.image_nonempty.mpr ((Finset.nonempty_product.mpr
       ⟨⟨0, Finset.mem_range.mpr (Nat.succ_pos _)⟩, ⟨fun _ => false, Finset.mem_univ _⟩⟩)))
 
-/-- `APX`: an NPO problem with a polynomial-time constant-factor approximation whose
-output is feasible. -/
+/-- **Membership in APX.** An NPO problem $M$ is in APX when there are a rational number
+$\rho \ge 1$ and a polynomial-time computable map $A$ from bitstrings to bitstrings such that, for
+every instance $x$, the solution $A(x)$ is feasible for $x$ in $M$ and its value is at least
+$\mathrm{opt}_M(x) / \rho$, where $\mathrm{opt}_M(x)$ is the optimum of $M$ on $x$. -/
 def APX (M : NPOProblem) : Prop :=
   ∃ (ρ : ℚ) (A : List Bool → List Bool), 1 ≤ ρ ∧ IsPolyTime A ∧
     ∀ x, M.feas x (A x) = true ∧ M.val x (A x) ≥ optVal M x / ρ
 
-/-- `L`-reduction between NPO problems, in the sense of Papadimitriou-Yannakakis:
-polynomial-time maps `f` (instances) and `g` (solutions back) with constants `α, β`
-preserving optima up to `α` and gaps up to `β`. -/
+/-- **L-reductions.** Write $\mathrm{opt}_M(x)$ for the optimum of an NPO problem $M$ on an
+instance $x$ and $v_M(x, s)$ for the value of a solution $s$ for $x$. An NPO problem $M_1$
+L-reduces to an NPO problem $M_2$ when there are polynomial-time computable maps $f$, from
+bitstrings to bitstrings, and $g$, from pairs of bitstrings to bitstrings, and rational numbers
+$\alpha > 0$ and $\beta > 0$, such that for every instance $x$ the following hold. First,
+$\mathrm{opt}_{M_2}(f(x)) \le \alpha \, \mathrm{opt}_{M_1}(x)$. Second, for every solution $s$
+that is feasible for $f(x)$ in $M_2$, the solution $g(x, s)$ is feasible for $x$ in $M_1$ and
+$\mathrm{opt}_{M_1}(x) - v_{M_1}(x, g(x, s)) \le
+\beta \, (\mathrm{opt}_{M_2}(f(x)) - v_{M_2}(f(x), s))$.
+
+This is the L-reduction of Papadimitriou and Yannakakis, with polynomial-time maps $f$ and $g$. -/
 def LReduces (M₁ M₂ : NPOProblem) : Prop :=
   ∃ (f : List Bool → List Bool) (g : List Bool × List Bool → List Bool) (α β : ℚ),
     IsPolyTime f ∧ IsPolyTime g ∧ 0 < α ∧ 0 < β ∧
@@ -133,45 +158,24 @@ def LReduces (M₁ M₂ : NPOProblem) : Prop :=
         optVal M₁ x - M₁.val x (g (x, s₂)) ≤
           β * (optVal M₂ (f x) - M₂.val (f x) s₂)
 
-/-- `MAXSNP`: an NPO problem in the MAXSNP normal form (Papadimitriou-Yannakakis):
-the value is the number of satisfied constraint-windows, where each window is a list
-of at most `k` variable indices together with a pattern index, and a fixed finite
-family of patterns decides which assigned patterns satisfy each window. The family
-is a predicate `accepts : ℕ → List Bool → Bool` between pattern indices and the
-assignment restricted to a window; `patCount` bounds the indices. Crucially, the
-window list `windows x` depends only on the instance `x`, never on the candidate
-solution `s`: a witness that could inspect all of `s` before choosing the windows
-could emit arbitrarily many always-accepted empty windows and encode any
-polynomially bounded objective, far outside MAXSNP. Only the fixed predicates
-`accepts` inspect the selected bits of `s`. The counting equation `val_count`
-applies only to feasible solutions (`feas x s = true`): appending arbitrarily
-many `false` bits to a solution preserves every `s.getD v false` and hence the
-window count, so an unconditional equation would force every such extension to
-be feasible (via `val_eq`, since the value is positive) while `feas_len` rejects
-sufficiently long extensions, making every `MAXSNPProblem` identically zero.
-Feasibility is canonical, not an arbitrary predicate: `feas x s = true` iff
-`s` has length at most the bound, i.e. every bounded bitstring is a feasible
-solution (`feas_canonical`). An arbitrary poly-time `feas` would admit any
-total polynomially balanced search problem packaged with `val = 0` and
-`windows = []`, and the claimed `L`-reduction to an `APX` target would then
-compose the reduction, the target approximation algorithm, and the solution
-map into a poly-time solver for every such search problem, far stronger than
-Papadimitriou-Yannakakis `MAXSNP`-completeness. With canonical feasibility,
-the value is the fixed local window count on every bounded assignment, and
-the only remaining freedom is the local normal form (`windows`, `accepts`),
-as in the cited paper. The value on infeasible solutions is `0` by `val_eq`, and feasibility in
-the target bundle is exactly length at most `|x|` (see `max3SATVal`,
-whose window evaluation reads only the first `n` bits, so padded
-extensions of a solution have the same value). The window count
-is bounded by a
-polynomial in `|x|` (one polynomial for all `x`, per instance the bound is
-`q.eval x.length` for a fixed `q` in the `windows_len` field): standard MAXSNP
-normal forms sum over all fixed-arity tuples and can have polynomially many terms,
-e.g. counting accepted ordered pairs on a unary `n`-element instance has optimum
-`n ^ 2`, which a linear bound `|x| + 1` would exclude. The bound is the one
-implied by `windows_poly` (a polynomial-time function's output length is
-polynomially bounded in its input length); it is stated explicitly so the
-structure carries it. -/
+/-- **MAXSNP problems.** A MAXSNP problem, in the normal form of Papadimitriou and
+Yannakakis, is an NPO problem $M$, with value function $v$ and solution length bound $b$,
+together with natural numbers $k$ and $N$, a polynomial-time computable map $W$ sending each
+instance $x$ to a list $W(x)$ of windows, each a pair $(w, j)$ of a list
+$w = (w_1, \dots, w_m)$ of natural numbers (variable indices) and a natural number $j$ (a
+pattern index), and a function $\mathrm{acc}$ assigning a truth value to each pair of a natural
+number and a bitstring, such that the following hold. There is a polynomial $q$ with
+natural-number coefficients such that $W(x)$ has at most $q(|x|)$ entries for every instance
+$x$. Every window $(w, j)$ in $W(x)$ has $|w| \le k$ and $j < N$. A bitstring $s$ is a feasible
+solution for $x$ exactly when $|s| \le b(|x|)$. For every feasible solution $s$ for $x$, the
+value $v(x, s)$ is the number of entries $(w, j)$ of the list $W(x)$, counted with
+multiplicity, for which $\mathrm{acc}(j, (s_{w_1}, \dots, s_{w_m}))$ is true, where $s_i$ is
+the bit of $s$ at position $i$ (counting from $0$), read as false when $i \ge |s|$.
+
+The windows depend only on the instance, never on the candidate solution: only the fixed
+predicate $\mathrm{acc}$ inspects bits of the solution. The counting equation is required only
+for feasible solutions, because padding a solution with false bits preserves the window count
+while sufficiently long paddings are infeasible. -/
 structure MAXSNPProblem extends NPOProblem where
   /-- The maximum number of variables any single constraint window inspects. -/
   k : ℕ
@@ -190,11 +194,17 @@ structure MAXSNPProblem extends NPOProblem where
         accepts w.2 (w.1.map (fun v => s.getD v false)) = true)).length
   feas_canonical : ∀ x s, feas x s = (decide (s.length ≤ bound.eval x.length))
 
-/-- `MAXSNP`-completeness: in `MAXSNP`, and every `MAXSNP` problem `L`-reduces to it. -/
+/-- **MAXSNP-completeness.** A MAXSNP problem $M$ is MAXSNP-complete when its underlying NPO
+problem is in APX and, for every MAXSNP problem $M'$, the underlying NPO problem of $M'$
+L-reduces to the underlying NPO problem of $M$. -/
 def MAXSNPComplete (M : MAXSNPProblem) : Prop :=
   APX M.toNPOProblem ∧ ∀ M' : MAXSNPProblem, LReduces M'.toNPOProblem M.toNPOProblem
 
-/-- **MAX-3SAT is MAXSNP-complete.** Source: C. H. Papadimitriou and M.
+/-- **MAX-3SAT is MAXSNP-complete.** There is a MAXSNP problem whose value function is the
+MAX-3SAT value function and which is MAXSNP-complete: its underlying NPO problem is in APX, and
+the underlying NPO problem of every MAXSNP problem L-reduces to it.
+
+Source: C. H. Papadimitriou and M.
 Yannakakis, "Optimization, approximation, and complexity classes", Journal of Computer
 and System Sciences 43 (1991), 425-440. -/
 public theorem_wanted max_three_sat_maxsnp_complete :

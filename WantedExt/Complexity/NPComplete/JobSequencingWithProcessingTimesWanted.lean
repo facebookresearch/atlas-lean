@@ -43,10 +43,18 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A job-sequencing instance: jobs (processing time, deadline, profit), profit bound. -/
+/-- **Job-sequencing instances.** An instance of job sequencing with deadlines, processing times
+and profits is a pair $(J, K)$ of a finite list $J$ of jobs, each a triple $(p, d, w)$ of natural
+numbers giving its processing time $p$, deadline $d$ and profit $w$, and a natural number $K$,
+the profit bound. -/
 abbrev JobSequencingWithProcessingTimesInstance := List (ℕ × ℕ × ℕ) × ℕ
 
-/-- A job ordering meeting all deadlines of profit at least `K`. -/
+/-- **Feasible job-sequencing instances.** Let $(J, K)$ be a job-sequencing instance with jobs
+$J = (p_0, d_0, w_0), \dots, (p_{n-1}, d_{n-1}, w_{n-1})$. The instance is feasible when there
+are distinct indices $j_1, \dots, j_m < n$, for some $m \ge 0$, such that
+$w_{j_1} + \dots + w_{j_m} \ge K$ and, for every $t$ with $1 \le t \le m$,
+$p_{j_1} + \dots + p_{j_t} \le d_{j_t}$: the selected jobs, run one after another in this order
+from time $0$, each finish by their deadlines, and their total profit is at least $K$. -/
 def JobSequencingWithProcessingTimesFeasible
     (i : JobSequencingWithProcessingTimesInstance) : Prop :=
   ∃ order : List ℕ, order.Nodup ∧ (∀ j ∈ order, j < i.1.length) ∧
@@ -56,8 +64,10 @@ def JobSequencingWithProcessingTimesFeasible
         (i.1.getD (order.getD t 0) (0, 0, 0)).2.1
 
 open Classical in
-/-- JOB SEQUENCING WITH DEADLINES, PROCESSING TIMES, AND PROFITS as a decision problem over
-bitstrings. -/
+/-- **Job sequencing with deadlines, processing times and profits as a decision problem.** This
+decision problem accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding, to a job-sequencing instance that is feasible; bitstrings that do not decode to an
+instance are rejected. -/
 noncomputable def jobSequencingWithProcessingTimesDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -65,7 +75,12 @@ noncomputable def jobSequencingWithProcessingTimesDec :
   | some i => decide (JobSequencingWithProcessingTimesFeasible i)
   | none => false
 
-/-- **JOB SEQUENCING WITH DEADLINES, PROCESSING TIMES, AND PROFITS is NP-complete.** Source:
+/-- **JOB SEQUENCING WITH DEADLINES, PROCESSING TIMES, AND PROFITS is NP-complete.** The decision
+problem of job sequencing with deadlines, processing times and profits on bitstrings is
+NP-complete: it belongs to NP, and every decision problem in NP has a polynomial-time many-one
+reduction to it.
+
+Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), SEQUENCING WITH
 DEADLINES AND PROFITS (arbitrary processing times); R. M. Karp, "Reducibility among
 combinatorial problems" (1972). -/

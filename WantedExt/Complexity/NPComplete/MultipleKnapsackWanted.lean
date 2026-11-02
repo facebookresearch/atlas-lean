@@ -42,11 +42,18 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A multiple-knapsack instance: items as (weight, value) pairs, knapsack capacities, target
-value. -/
+/-- **Multiple-knapsack instances.** A multiple-knapsack instance consists of a finite list of
+items, each a pair $(w, v)$ of natural numbers giving its weight $w$ and value $v$, a finite list
+of natural-number knapsack capacities, and a natural-number target value. -/
 abbrev MultipleKnapsackInstance := List (ℕ × ℕ) × List ℕ × ℕ
 
-/-- An assignment fitting the knapsacks of total value at least the target. -/
+/-- **Feasible multiple-knapsack instances.** Let a multiple-knapsack instance have items
+$(w_0, v_0), \dots, (w_{k-1}, v_{k-1})$ (weight, value), knapsack capacities
+$c_0, \dots, c_{m-1}$ and target $V$. The instance is feasible when there are
+$a_0, \dots, a_{k-1} \in \{0, \dots, m\}$, where $a_j = b < m$ puts item $j$ in knapsack $b$
+and $a_j = m$ leaves item $j$ out, such that for every $b < m$ the total weight
+$\sum_{j : a_j = b} w_j$ is at most $c_b$, and the total value $\sum_{j : a_j < m} v_j$ is at
+least $V$. -/
 def MultipleKnapsackFeasible
     (i : MultipleKnapsackInstance) : Prop :=
   ∃ assign : List ℕ, assign.length = i.1.length ∧
@@ -59,7 +66,9 @@ def MultipleKnapsackFeasible
       if assign.getD j 0 < i.2.1.length then (i.1.getD j (0, 0)).2 else 0)
 
 open Classical in
-/-- MULTIPLE KNAPSACK as a decision problem over bitstrings. -/
+/-- **MULTIPLE KNAPSACK as a decision problem.** The decision problem MULTIPLE KNAPSACK accepts a
+bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a feasible
+multiple-knapsack instance. Bitstrings that do not decode are rejected. -/
 noncomputable def multipleKnapsackDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -67,7 +76,10 @@ noncomputable def multipleKnapsackDec :
   | some i => decide (MultipleKnapsackFeasible i)
   | none => false
 
-/-- **MULTIPLE KNAPSACK is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **MULTIPLE KNAPSACK is NP-complete.** The decision problem MULTIPLE KNAPSACK belongs to NP,
+and every decision problem in NP has a polynomial-time many-one reduction to MULTIPLE KNAPSACK.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability* (1979), MULTIPLE KNAPSACK. -/
 public theorem_wanted multipleKnapsack_npComplete :
     multipleKnapsackDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

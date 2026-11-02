@@ -42,14 +42,23 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A MIN-ONES 3-SAT instance: number of variables, 3-CNF formula, bound. -/
+/-- **MINIMUM ONES 3-SAT instances.** An instance of MINIMUM ONES 3-SAT is a triple
+$(n, \varphi, K)$ of a natural number $n$ (the number of variables), a CNF formula $\varphi$ and a
+natural number $K$ (the bound). No condition is placed on $\varphi$ here; clauses of exactly three
+literals are required separately, by well-formedness. -/
 abbrev MinOnesThreeSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed MINIMUM ONES 3-SAT instances.** A triple $(n, \varphi, K)$ of a natural number
+$n$, a CNF formula $\varphi$ and a natural number $K$ is well formed when every clause of $\varphi$
+is a list of exactly three literals and every literal of every clause has variable index less
+than $n$. -/
 def WellFormed (i : MinOnesThreeSatInstance) : Prop :=
   (∀ clause ∈ i.2.1, clause.length = 3 ∧ ∀ l ∈ clause, l.1 < i.1)
 
-/-- A satisfying assignment with at most `K` true variables. -/
+/-- **Feasible MINIMUM ONES 3-SAT instances.** A triple $(n, \varphi, K)$ of a natural number $n$,
+a CNF formula $\varphi$ and a natural number $K$ is feasible when there is an assignment of truth
+values to the variables $0, \dots, n-1$ that, with every variable $x \ge n$ set to false,
+satisfies $\varphi$ and sets at most $K$ of the variables $0, \dots, n-1$ to true. -/
 def MinOnesThreeSatFeasible
     (i : MinOnesThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
@@ -57,7 +66,12 @@ def MinOnesThreeSatFeasible
     (assign.filter (fun b => b)).length ≤ i.2.2
 
 open Classical in
-/-- MINIMUM ONES 3-SAT as a decision problem over bitstrings. -/
+/-- **The MINIMUM ONES 3-SAT decision problem.** MINIMUM ONES 3-SAT is the decision problem that
+accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a
+triple $(n, \varphi, K)$ of a natural number $n$, a CNF formula $\varphi$ and a natural number $K$
+such that every clause of $\varphi$ is a list of exactly three literals whose variables are all
+less than $n$, and some assignment of truth values to the variables $0, \dots, n-1$ satisfies
+$\varphi$ and sets at most $K$ of them to true. Every other bitstring is rejected. -/
 noncomputable def minOnesThreeSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -65,7 +79,17 @@ noncomputable def minOnesThreeSatDec :
   | some i => decide (WellFormed i ∧ MinOnesThreeSatFeasible i)
   | none => false
 
-/-- **MINIMUM ONES 3-SAT is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **MINIMUM ONES 3-SAT is NP-complete.** Let MINIMUM ONES 3-SAT be the decision problem that
+accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a
+triple $(n, \varphi, K)$ of a natural number $n$, a CNF formula $\varphi$ and a natural number $K$
+such that every clause of $\varphi$ is a list of exactly three literals whose variables are all
+less than $n$, and some assignment of truth values to the variables $0, \dots, n-1$ satisfies
+$\varphi$ and sets at most $K$ of them to true. Then MINIMUM ONES 3-SAT belongs to NP, and every
+decision problem $L$ in NP reduces to it by a polynomial-time many-one reduction: there is a
+polynomial-time computable map $f$ on bitstrings such that, for every bitstring $x$, $L$ accepts
+$x$ exactly when MINIMUM ONES 3-SAT accepts $f(x)$.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability: A Guide to the Theory of NP-Completeness* (1979), MINIMUM ONES 3-SAT. -/
 public theorem_wanted minOnesThreeSat_npComplete :
     minOnesThreeSatDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

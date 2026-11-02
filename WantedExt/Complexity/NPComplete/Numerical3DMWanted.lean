@@ -41,14 +41,22 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A numerical-3DM instance: lists A, B, C, common target. -/
+/-- **Numerical 3-dimensional matching instances.** An instance of NUMERICAL 3-DIMENSIONAL
+MATCHING is a quadruple $(A, B, C, t)$ of three finite lists $A$, $B$, $C$ of natural numbers
+and a natural number $t$, the target. -/
 abbrev Numerical3DMInstance := List ℕ × List ℕ × List ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed numerical 3-dimensional matching instances.** An instance $(A, B, C, t)$ of
+NUMERICAL 3-DIMENSIONAL MATCHING is well formed when the lists $B$ and $C$ have the same length
+as the list $A$. -/
 def WellFormed (i : Numerical3DMInstance) : Prop :=
   i.2.1.length = i.1.length ∧ i.2.2.1.length = i.1.length
 
-/-- Permutations matching all triples to the target. -/
+/-- **Feasible numerical 3-dimensional matching instances.** Let $(A, B, C, t)$ be an instance
+and let $n$ be the length of $A$, with lists indexed from $0$. The instance is feasible when
+there are permutations $p$ and $q$ of the numbers $0$ through $n-1$ such that
+$A_j + B_{p(j)} + C_{q(j)} = t$ for every $j < n$, where an entry of $B$ or $C$ at an index past
+the end of its list counts as $0$. -/
 def Numerical3DMFeasible
     (i : Numerical3DMInstance) : Prop :=
   ∃ p : List ℕ, p.Perm (List.range i.1.length) ∧
@@ -57,7 +65,13 @@ def Numerical3DMFeasible
       i.2.2.1.getD (q.getD j 0) 0 = i.2.2.2
 
 open Classical in
-/-- NUMERICAL 3-DIMENSIONAL MATCHING as a decision problem over bitstrings. -/
+/-- **NUMERICAL 3-DIMENSIONAL MATCHING as a decision problem.** The decision problem NUMERICAL
+3-DIMENSIONAL MATCHING accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding (natural numbers in binary), to an instance $(A, B, C, t)$ that is well
+formed and feasible: the lists $B$ and $C$ have the same length $n$ as the list $A$, and there
+are permutations $p$ and $q$ of the numbers $0$ through $n-1$ such that
+$A_j + B_{p(j)} + C_{q(j)} = t$ for every $j < n$, with lists indexed from $0$. Every other
+bitstring is rejected. -/
 noncomputable def numerical3DMDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -65,7 +79,11 @@ noncomputable def numerical3DMDec :
   | some i => decide (WellFormed i ∧ Numerical3DMFeasible i)
   | none => false
 
-/-- **NUMERICAL 3-DIMENSIONAL MATCHING is NP-complete.** Source: M. R. Garey and D. S.
+/-- **NUMERICAL 3-DIMENSIONAL MATCHING is NP-complete.** The decision problem NUMERICAL
+3-DIMENSIONAL MATCHING belongs to NP, and every decision problem in NP reduces to it by a
+polynomial-time many-one reduction.
+
+Source: M. R. Garey and D. S.
 Johnson, *Computers and Intractability* (1979), NUMERICAL 3-DIMENSIONAL MATCHING (strongly
 NP-complete). -/
 public theorem_wanted numerical3DM_npComplete :

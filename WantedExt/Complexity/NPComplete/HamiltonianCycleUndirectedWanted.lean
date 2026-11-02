@@ -45,25 +45,36 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list. -/
+/-- **Instances of HAMILTONIAN CYCLE (UNDIRECTED).** An instance of HAMILTONIAN CYCLE
+(UNDIRECTED) is a pair $(n, E)$ of a natural number $n$, the number of vertices, and a finite
+list $E$ of pairs of natural numbers, the edges. -/
 abbrev HamiltonianCycleUndirectedInstance := ℕ × List (ℕ × ℕ)
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
+/-- **Graph of a HAMILTONIAN CYCLE (UNDIRECTED) instance.** For an instance $(n, E)$, its graph
+is the simple graph on the vertices $\{0, \dots, n-1\}$ in which distinct vertices $i$ and $j$
+are adjacent when $(i, j)$ or $(j, i)$ belongs to $E$. -/
 def Graph (i : HamiltonianCycleUndirectedInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2
 
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed HAMILTONIAN CYCLE (UNDIRECTED) instances.** An instance $(n, E)$ is well formed
+when $0 < n$, the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies
+$u < n$, $v < n$ and $u \ne v$, and its reversal $(v, u)$ does not belong to $E$. -/
 def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
   0 < i.1 ∧ i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
 
-/-- A Hamiltonian cycle. -/
+/-- **Feasible HAMILTONIAN CYCLE (UNDIRECTED) instances.** An instance $(n, E)$ is feasible when
+$n \ge 3$ and its graph has a Hamiltonian cycle, that is, a cycle that visits every vertex exactly
+once. -/
 def HamiltonianCycleUndirectedFeasible
     (i : HamiltonianCycleUndirectedInstance) : Prop :=
   3 ≤ i.1 ∧ (Graph i).IsHamiltonian
 
 open Classical in
-/-- HAMILTONIAN CYCLE (UNDIRECTED) as a decision problem over bitstrings. -/
+/-- **HAMILTONIAN CYCLE (UNDIRECTED) as a decision problem.** The decision problem HAMILTONIAN
+CYCLE (UNDIRECTED) accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding, to a well-formed instance $(n, E)$ with $n \ge 3$ whose graph has a Hamiltonian cycle.
+It rejects every bitstring that does not decode to an instance. -/
 noncomputable def hamiltonianCycleUndirectedDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -71,7 +82,11 @@ noncomputable def hamiltonianCycleUndirectedDec :
   | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
   | none => false
 
-/-- **HAMILTONIAN CYCLE (UNDIRECTED) is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **HAMILTONIAN CYCLE (UNDIRECTED) is NP-complete.** The decision problem HAMILTONIAN CYCLE
+(UNDIRECTED) belongs to NP, and every decision problem in NP has a polynomial-time many-one
+reduction to it.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), HAMILTONIAN CIRCUIT; R. M. Karp, "Reducibility
 among combinatorial problems" (1972). -/
 public theorem_wanted hamiltonianCycleUndirected_npComplete :

@@ -43,14 +43,23 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A Minesweeper instance: row count, column count, clues (row, column, number). -/
+/-- **Minesweeper instances.** A Minesweeper instance consists of a number of rows $R$, a number of
+columns $C$ and a finite list of clues, where $R$ and $C$ are natural numbers and each clue is a
+triple $(r, c, k)$ of natural numbers giving a row $r$, a column $c$ and the number $k$ shown. -/
 abbrev MinesweeperInstance := ℕ × ℕ × List (ℕ × ℕ × ℕ)
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed Minesweeper instances.** A Minesweeper instance with $R$ rows, $C$ columns and a
+list of clues is well formed when every clue $(r, c, k)$ in the list satisfies $r < R$, $c < C$
+and $k \le 8$. -/
 def WellFormed (i : MinesweeperInstance) : Prop :=
   ∀ clue ∈ i.2.2, clue.1 < i.1 ∧ clue.2.1 < i.2.1 ∧ clue.2.2 ≤ 8
 
-/-- A mine placement consistent with all clues. -/
+/-- **Feasible Minesweeper instances.** Index rows and columns by natural numbers, and call a cell
+$(r', c') \ne (r, c)$ a neighbour of $(r, c)$ when $|r' - r| \le 1$ and $|c' - c| \le 1$. A
+Minesweeper instance with $R$ rows, $C$ columns and a list of clues is feasible when there is a
+finite set $M$ of cells $(r, c)$ with $r < R$ and $c < C$ (the mines) such that for every clue
+$(r, c, k)$ in the list the cell $(r, c)$ is not in $M$ and exactly $k$ cells of $M$ are
+neighbours of $(r, c)$. -/
 def MinesweeperFeasible
     (i : MinesweeperInstance) : Prop :=
   ∃ mines : List (ℕ × ℕ), mines.Nodup ∧ (∀ m ∈ mines, m.1 < i.1 ∧ m.2 < i.2.1) ∧
@@ -60,7 +69,11 @@ def MinesweeperFeasible
         !(m == (clue.1, clue.2.1))))).length = clue.2.2
 
 open Classical in
-/-- MINESWEEPER CONSISTENCY as a decision problem over bitstrings. -/
+/-- **Minesweeper consistency as a decision problem.** The Minesweeper consistency decision
+problem accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding,
+to a Minesweeper instance that is well formed and feasible, that is, admits a mine placement
+consistent with all of its clues. It rejects every bitstring that does not decode to a Minesweeper
+instance. -/
 noncomputable def minesweeperDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -68,7 +81,10 @@ noncomputable def minesweeperDec :
   | some i => decide (WellFormed i ∧ MinesweeperFeasible i)
   | none => false
 
-/-- **MINESWEEPER CONSISTENCY is NP-complete.** Source: R. Kaye, "Minesweeper is NP-complete"
+/-- **MINESWEEPER CONSISTENCY is NP-complete.** The Minesweeper consistency decision problem lies
+in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: R. Kaye, "Minesweeper is NP-complete"
 (2000). -/
 public theorem_wanted minesweeper_npComplete :
     minesweeperDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

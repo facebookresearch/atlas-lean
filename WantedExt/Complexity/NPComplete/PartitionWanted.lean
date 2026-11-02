@@ -41,16 +41,21 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A partition instance: a list of natural numbers. -/
+/-- **Instances of PARTITION.** An instance of PARTITION is a finite list of natural numbers. -/
 abbrev PartitionInstance := List ℕ
 
-/-- A sublist summing to half the total. -/
+/-- **Feasible PARTITION instances.** A list $a$ of natural numbers is a yes-instance of PARTITION
+when it has a subsequence $s$, not necessarily contiguous, such that twice the sum of $s$ equals
+the sum of $a$. -/
 def PartitionFeasible
     (i : PartitionInstance) : Prop :=
   ∃ s : List ℕ, s.Sublist i ∧ s.sum * 2 = i.sum
 
 open Classical in
-/-- PARTITION as a decision problem over bitstrings. -/
+/-- **PARTITION as a decision problem.** The decision problem PARTITION accepts a bitstring $x$
+exactly when $x$ decodes, under the canonical bitstring encoding, to a list $a$ of natural numbers
+that has a subsequence $s$, not necessarily contiguous, such that twice the sum of $s$ equals the
+sum of $a$. Bitstrings that do not decode to a list of natural numbers are rejected. -/
 noncomputable def partitionDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -58,7 +63,10 @@ noncomputable def partitionDec :
   | some i => decide (PartitionFeasible i)
   | none => false
 
-/-- **PARTITION is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **PARTITION is NP-complete.** The decision problem PARTITION lies in NP, and every decision
+problem in NP has a polynomial-time many-one reduction to PARTITION.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), PARTITION; R. M. Karp, "Reducibility among combinatorial problems"
 (1972). -/
 public theorem_wanted partition_npComplete :

@@ -42,17 +42,25 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A bin-packing instance: item sizes, bin capacity, number of bins. -/
+/-- **Bin packing instances.** An instance of BIN PACKING is a triple $(s, B, K)$ of a finite
+list $s$ of natural numbers (the item sizes), a natural number $B$ (the bin capacity) and a
+natural number $K$ (the number of bins). -/
 abbrev BinPackingInstance := List ℕ × ℕ × ℕ
 
-/-- A packing into at most `K` bins. -/
+/-- **Feasible bin packing instances.** An instance $(s, B, K)$ of BIN PACKING is feasible when
+there is a list of exactly $K$ bins, each a finite list of natural numbers with sum at most $B$,
+such that the concatenation of the bins is a permutation of $s$.
+
+Since bins may be empty, this says that the items fit into at most $K$ bins of capacity $B$. -/
 def BinPackingFeasible
     (i : BinPackingInstance) : Prop :=
   ∃ bins : List (List ℕ), bins.length = i.2.2 ∧ bins.flatten.Perm i.1 ∧
     ∀ bin ∈ bins, bin.sum ≤ i.2.1
 
 open Classical in
-/-- BIN PACKING as a decision problem over bitstrings. -/
+/-- **The bin packing decision problem.** BIN PACKING is the decision problem that accepts a
+bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of bin packing
+instances, to a feasible instance; it rejects every bitstring that fails to decode. -/
 noncomputable def binPackingDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -60,7 +68,10 @@ noncomputable def binPackingDec :
   | some i => decide (BinPackingFeasible i)
   | none => false
 
-/-- **BIN PACKING is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **BIN PACKING is NP-complete.** The bin packing decision problem belongs to NP, and every
+decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), BIN PACKING; D. S. Johnson, "Fast algorithms for bin packing"
 (1974). -/
 public theorem_wanted binPacking_npComplete :

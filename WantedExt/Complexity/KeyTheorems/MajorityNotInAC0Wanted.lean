@@ -36,7 +36,9 @@ The majority language is not in `AC0`: no polynomial-size, constant-depth, unbou
 AND/OR/NOT circuit family computes majority.
 -/
 
-/-- **Majority is not in AC0.** Source: M. Ajtai, "Σ₁¹-formulae on finite structures", Annals
+/-- **Majority is not in AC0.** The majority language is not in the class $\mathsf{AC}^0$.
+
+Source: M. Ajtai, "Σ₁¹-formulae on finite structures", Annals
 of Pure and Applied Logic 24 (1983), 1-48; J. Håstad, "Almost optimal lower bounds for
 small depth circuits" (STOC 1986). -/
 public theorem_wanted majority_not_in_ac0 :
