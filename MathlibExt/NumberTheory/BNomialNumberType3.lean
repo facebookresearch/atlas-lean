@@ -28,19 +28,26 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The digit in position `j` of a `b`-ary string, extended by zero to its right.
+/-- **Digits of a string extended by zero.** For a $b$-ary string $x = (x_0, \dots, x_{n-1})$ of
+length $n$, written from left to right, and a natural number $j$, this is the digit $x_j$ if
+$j < n$, and $0$ if $j \ge n$.
 
-Positions in `x` run from left to right, so `x 0` represents the source's leftmost digit
-`a_n`. In particular, position `n` represents the stipulated boundary digit `a_0 = 0`. -/
+Positions in $x$ run from left to right, so $x_0$ represents the source's leftmost digit $a_n$.
+In particular, position $n$ represents the stipulated boundary digit $a_0 = 0$. -/
 def bNomialDigitAtOrZero {n b : ℕ} (x : Fin n → Fin b) (j : ℕ) : ℕ :=
   if h : j < n then (x ⟨j, h⟩).val else 0
 
-/-- A position is indispensable when some nonempty constant run beginning there is followed
-on the right by a strictly smaller digit.
+/-- **Indispensable digits.** Let $x = (x_0, \dots, x_{n-1})$ be a $b$-ary string of length $n$,
+written from left to right, and extend it by zero on the right, setting $x_j = 0$ for $j \ge n$.
+A position $p < n$ is indispensable in $x$ when there is a natural number $r$ with
+$1 \le r \le n + 1 - p$ such that $x_{p+t} = x_p$ for every $t$ with $1 \le t < r$, and
+$x_{p+r} < x_p$. That is, some nonempty constant run of digits beginning at position $p$ is
+followed on the right by a strictly smaller digit.
 
-The paper prints the witness bound `r ≤ i + 1`, although only the boundary digit `a₀` is
-defined. With the right-zero extension above, that final nominal case is unsatisfiable and the
-predicate agrees with all source-defined cases. -/
+The paper writes the digit at position $p$ as $a_i$ with $i = n - p$ and prints the witness bound
+$r \le i + 1$, although only the boundary digit $a_0$ (position $n$) is defined. With the zero
+extension the final case $r = i + 1$ is unsatisfiable, so the predicate agrees with the source in
+every case the source defines. -/
 def IsBNomialIndispensableDigit {n b : ℕ} (x : Fin n → Fin b) (p : Fin n) : Prop :=
   ∃ r : Fin (n + 2),
     1 ≤ r.val ∧
@@ -56,13 +63,17 @@ instance decidablePredIsBNomialIndispensableDigit {n b : ℕ} (x : Fin n → Fin
   unfold IsBNomialIndispensableDigit
   infer_instance
 
-/-- The number `ι(x)` of indispensable digits in a finite `b`-ary string. -/
+/-- **Number of indispensable digits.** For a $b$-ary string $x$ of finite length, $\iota(x)$ is
+the number of positions of $x$ that are indispensable. -/
 def bNomialIndispensableDigitCount {n b : ℕ} (x : Fin n → Fin b) : ℕ :=
   Fintype.card { p : Fin n // IsBNomialIndispensableDigit x p }
 
-/-- The type-3 `b`-nomial number: the number of length-`n` `b`-ary strings with exactly
-`k` indispensable digits. The source convention at `n = 0` follows automatically: the
-value is one at `k = 0` and zero otherwise. -/
+/-- **Type-3 b-nomial numbers.** For a natural number $b \ge 2$, a natural number $n$ and an
+integer $k$, the type-3 $b$-nomial number is the number of $b$-ary strings $x$ of length $n$ with
+exactly $k$ indispensable digits, that is, with $\iota(x) = k$. In particular it is zero for
+$k < 0$.
+
+At $n = 0$ this gives the source convention: the value is one at $k = 0$ and zero otherwise. -/
 def bNomialNumberType3 (b : ℕ) (_hb : 2 ≤ b) (n : ℕ) (k : ℤ) : ℕ :=
   Fintype.card { x : Fin n → Fin b // (bNomialIndispensableDigitCount x : ℤ) = k }
 

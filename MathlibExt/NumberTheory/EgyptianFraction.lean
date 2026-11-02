@@ -44,30 +44,43 @@ open scoped BigOperators
 
 namespace EgyptianFraction
 
-/-- Membership in `𝓔ₙ^≤` from Kovač–Tang, lines 103–107:
-a tuple of natural numbers with `2 ≤ a₁ ≤ ⋯ ≤ aₙ`. -/
+/-- **Nondecreasing Egyptian denominator tuples.** A tuple $(a_1, \dots, a_n)$ of natural
+numbers lies in $\mathcal{E}_n^{\le}$ when $2 \le a_1 \le a_2 \le \dots \le a_n$, that is, every
+$a_i$ is at least $2$ and the tuple is nondecreasing.
+
+Source: Kovač–Tang, arXiv:2607.28387v2, lines 103–107. -/
 def IsNondecreasingEgyptian {n : ℕ} (a : Fin n → ℕ) : Prop :=
   (∀ i, 2 ≤ a i) ∧ Monotone a
 
-/-- Membership in `𝓔ₙ^<` from Kovač–Tang, lines 108–110:
-a tuple of natural numbers with `2 ≤ a₁ < ⋯ < aₙ`. -/
+/-- **Strictly increasing Egyptian denominator tuples.** A tuple $(a_1, \dots, a_n)$ of natural
+numbers lies in $\mathcal{E}_n^{<}$ when $2 \le a_1 < a_2 < \dots < a_n$, that is, every $a_i$ is
+at least $2$ and the tuple is strictly increasing.
+
+Source: Kovač–Tang, arXiv:2607.28387v2, lines 108–110. -/
 def IsStrictEgyptian {n : ℕ} (a : Fin n → ℕ) : Prop :=
   (∀ i, 2 ≤ a i) ∧ StrictMono a
 
-/-- A strict underapproximation by unit fractions whose denominators may repeat
-and are presented in nondecreasing order. This is the condition
-`(a₁,…,aₙ) ∈ 𝓔ₙ^≤` and `∑ 1/aᵢ < λ` from lines 113–120, together with
-`n ≥ 1` and `λ > 0` as in the paper's `ℕ = {1,2,…}` and `λ > 0` setup. -/
+/-- **Egyptian underapproximations with nondecreasing denominators.** Let $\lambda$ be a real
+number and $a = (a_1, \dots, a_n)$ a tuple of natural numbers. Then $a$ is a nondecreasing
+underapproximation of $\lambda$ when $n \ge 1$, $\lambda > 0$, $a$ lies in
+$\mathcal{E}_n^{\le}$ (that is, $2 \le a_1 \le \dots \le a_n$), and
+$\sum_{i=1}^{n} 1/a_i < \lambda$, the sum taken in the real numbers.
+
+Source: Kovač–Tang, arXiv:2607.28387v2, lines 113–120; $n \ge 1$ and $\lambda > 0$ follow the
+paper's conventions. -/
 def IsNondecreasingUnderapproximation {n : ℕ} (target : ℝ) (a : Fin n → ℕ) : Prop :=
   0 < n ∧
     0 < target ∧
     IsNondecreasingEgyptian a ∧
     ∑ i, ((a i : ℝ)⁻¹) < target
 
-/-- A strict underapproximation by distinct unit fractions, presented with
-strictly increasing denominators. This is the condition
-`(a₁,…,aₙ) ∈ 𝓔ₙ^<` and `∑ 1/aᵢ < λ` from lines 113–120, with `n ≥ 1`
-and `λ > 0`. -/
+/-- **Egyptian underapproximations with strictly increasing denominators.** Let $\lambda$ be a
+real number and $a = (a_1, \dots, a_n)$ a tuple of natural numbers. Then $a$ is a strict
+underapproximation of $\lambda$ when $n \ge 1$, $\lambda > 0$, $a$ lies in $\mathcal{E}_n^{<}$
+(that is, $2 \le a_1 < \dots < a_n$, so the unit fractions are distinct), and
+$\sum_{i=1}^{n} 1/a_i < \lambda$, the sum taken in the real numbers.
+
+Source: Kovač–Tang, arXiv:2607.28387v2, lines 113–120. -/
 def IsStrictUnderapproximation {n : ℕ} (target : ℝ) (a : Fin n → ℕ) : Prop :=
   0 < n ∧
     0 < target ∧
@@ -104,32 +117,46 @@ end IsStrictEgyptian
 
 namespace IsNondecreasingUnderapproximation
 
-/-- A nondecreasing underapproximation has at least one term (`n ≥ 1`). -/
+/-- **Nondecreasing underapproximations have at least one term.** Let $n$ be a natural number,
+$\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$ is a
+nondecreasing underapproximation of $\lambda$, then $n \ge 1$. -/
 theorem nonempty {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) : 0 < n :=
   h.1
 
-/-- The target of a nondecreasing underapproximation is positive. -/
+/-- **The target of a nondecreasing underapproximation is positive.** Let $n$ be a natural
+number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$
+is a nondecreasing underapproximation of $\lambda$, then $\lambda > 0$. -/
 theorem target_pos {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) : 0 < target :=
   h.2.1
 
-/-- The denominator tuple lies in `𝓔ₙ^≤`. -/
+/-- **Nondecreasing underapproximations have Egyptian denominator tuples.** If
+$a = (a_1, \dots, a_n)$ is a nondecreasing underapproximation of a real number $\lambda$, then
+$a$ lies in $\mathcal{E}_n^{\le}$, that is, $2 \le a_1 \le \dots \le a_n$. -/
 theorem isNondecreasingEgyptian {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) : IsNondecreasingEgyptian a :=
   h.2.2.1
 
-/-- Every denominator in a nondecreasing underapproximation is at least two. -/
+/-- **Denominators of a nondecreasing underapproximation are at least two.** Let $n$ be a
+natural number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If
+$(a_1, \dots, a_n)$ is a nondecreasing underapproximation of $\lambda$, then $a_i \ge 2$ for
+every $1 \le i \le n$. -/
 theorem denominator_ge_two {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) (i : Fin n) : 2 ≤ a i :=
   h.isNondecreasingEgyptian.1 i
 
-/-- The denominators of a nondecreasing underapproximation are monotone. -/
+/-- **Denominators of a nondecreasing underapproximation are nondecreasing.** Let $n$ be a
+natural number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If
+$(a_1, \dots, a_n)$ is a nondecreasing underapproximation of $\lambda$, then $a_i \le a_j$
+whenever $1 \le i \le j \le n$. -/
 theorem monotone {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) : Monotone a :=
   h.isNondecreasingEgyptian.2
 
-/-- The reciprocal sum of a nondecreasing underapproximation is below its target. -/
+/-- **A nondecreasing underapproximation stays below its target.** Let $n$ be a natural number,
+$\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$ is a
+nondecreasing underapproximation of $\lambda$, then $\sum_{i=1}^{n} 1/a_i < \lambda$. -/
 theorem sum_lt {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsNondecreasingUnderapproximation target a) :
     ∑ i, ((a i : ℝ)⁻¹) < target :=
@@ -139,41 +166,57 @@ end IsNondecreasingUnderapproximation
 
 namespace IsStrictUnderapproximation
 
-/-- A strict underapproximation has at least one term (`n ≥ 1`). -/
+/-- **Strict underapproximations have at least one term.** Let $n$ be a natural number,
+$\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$ is a
+strict underapproximation of $\lambda$, then $n \ge 1$. -/
 theorem nonempty {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) : 0 < n :=
   h.1
 
-/-- The target of a strict underapproximation is positive. -/
+/-- **The target of a strict underapproximation is positive.** Let $n$ be a natural number,
+$\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$ is a
+strict underapproximation of $\lambda$, then $\lambda > 0$. -/
 theorem target_pos {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) : 0 < target :=
   h.2.1
 
-/-- The denominator tuple lies in `𝓔ₙ^<`. -/
+/-- **Strict underapproximations have strictly increasing Egyptian denominators.** If
+$a = (a_1, \dots, a_n)$ is a strict underapproximation of a real number $\lambda$, then $a$ lies
+in $\mathcal{E}_n^{<}$, that is, $2 \le a_1 < \dots < a_n$. -/
 theorem isStrictEgyptian {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) : IsStrictEgyptian a :=
   h.2.2.1
 
-/-- Every denominator in a strict underapproximation is at least two. -/
+/-- **Denominators of a strict underapproximation are at least two.** Let $n$ be a natural
+number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$
+is a strict underapproximation of $\lambda$, then $a_i \ge 2$ for every $1 \le i \le n$. -/
 theorem denominator_ge_two {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) (i : Fin n) : 2 ≤ a i :=
   h.isStrictEgyptian.1 i
 
-/-- The denominators of a strict underapproximation are strictly monotone. -/
+/-- **Denominators of a strict underapproximation increase strictly.** Let $n$ be a natural
+number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$
+is a strict underapproximation of $\lambda$, then $a_i < a_j$ whenever $1 \le i < j \le n$. -/
 theorem strictMono {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) : StrictMono a :=
   h.isStrictEgyptian.2
 
-/-- The reciprocal sum of a strict underapproximation is below its target. -/
+/-- **A strict underapproximation stays below its target.** Let $n$ be a natural number,
+$\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$ is a
+strict underapproximation of $\lambda$, then $\sum_{i=1}^{n} 1/a_i < \lambda$, the sum taken in
+the real numbers. -/
 theorem sum_lt {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) :
     ∑ i, ((a i : ℝ)⁻¹) < target :=
   h.2.2.2
 
-/-- Every nondecreasing denominator tuple containing a strictly increasing one
-is itself nondecreasing; hence a strict underapproximation is also a
-nondecreasing underapproximation (paper's `𝓔ₙ^< ⊆ 𝓔ₙ^≤` together with the
-same sum bound). -/
+/-- **Strict underapproximations are nondecreasing underapproximations.** Let $n$ be a natural
+number, $\lambda$ a real number and $a_1, \dots, a_n$ natural numbers. If $(a_1, \dots, a_n)$
+is a strict underapproximation of $\lambda$, then it is also a nondecreasing
+underapproximation of $\lambda$.
+
+This is the inclusion of strictly increasing denominator tuples among nondecreasing ones,
+together with the same bound on the sum of reciprocals. -/
 theorem toIsNondecreasingUnderapproximation {n : ℕ} {target : ℝ} {a : Fin n → ℕ}
     (h : IsStrictUnderapproximation target a) :
     IsNondecreasingUnderapproximation target a :=

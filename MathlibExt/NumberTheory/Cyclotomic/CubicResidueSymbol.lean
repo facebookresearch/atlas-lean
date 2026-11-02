@@ -427,9 +427,13 @@ public lemma primeIdealValidCubicSymbol_characterization
       hNormCoprime ha c hMem hSpec
 
 open Classical in
-/-- Implementation detail: totalizes the prime-ideal symbol, returning `1` outside
-the source domain (nonprime `P`, `P = ⊥`, or norm not coprime to `3`). Prefer
-`primeIdealCubicSymbol`. -/
+/-- **Totalized prime-ideal cubic symbol.** Let $K$ be a number field that is the third
+cyclotomic extension of $\mathbb{Q}$, with ring of integers $\mathcal{O}_K$, let $\zeta \in K$ be
+a primitive cube root of unity and let $\omega$ be $\zeta$ regarded as an element of
+$\mathcal{O}_K$. For an ideal $P$ of $\mathcal{O}_K$ and $a \in \mathcal{O}_K$: if $P$ is a
+nonzero prime ideal whose absolute norm $N(P)$ is coprime to $3$, the value is $0$ when
+$a \in P$, and otherwise the unique $c \in \{1, \omega, \omega^2\}$ with
+$c \equiv a^{(N(P) - 1)/3} \pmod{P}$; for every other ideal $P$ the value is $1$. -/
 public noncomputable def primeIdealCubicSymbolFactorRaw
     {zeta : K}
     (hZeta : IsPrimitiveRoot zeta 3)
@@ -484,9 +488,12 @@ public lemma primeIdealCubicSymbolFactorRaw_eq_one_of_isPrime_of_bot
   simp [primeIdealCubicSymbolFactorRaw, hPprime, hNotBot]
 
 open Classical in
-/-- Implementation detail: totalizes zero denominators to `0` and ignores
-out-of-domain prime factors via the raw factor. Prefer `cubicResidueSymbol`
-with `IsCubicResidueDenominator`. -/
+/-- **Totalized cubic residue symbol.** Let $K$ be a number field that is the third cyclotomic
+extension of $\mathbb{Q}$, with ring of integers $\mathcal{O}_K$, and let $\zeta \in K$ be a
+primitive cube root of unity. For $a, n \in \mathcal{O}_K$, the value is $0$ if $n = 0$;
+otherwise it is the product, over the prime ideals $P$ in the factorization of the principal
+ideal $(n)$ counted with multiplicity, of the totalized prime-ideal cubic symbol of $a$ at $P$
+(which is $1$ unless $P$ is a nonzero prime ideal whose absolute norm is coprime to $3$). -/
 public noncomputable def cubicResidueSymbolRaw
     {zeta : K}
     (hZeta : IsPrimitiveRoot zeta 3)
@@ -643,7 +650,13 @@ public lemma cubicResidueSymbolRaw_prime_not_dvd
   · exact primeIdealValidCubicSymbol_spec hZeta _ _
       hSpanPrime hSpanNeBot hNormCop hNotMem
 
-/-- The cubic residue symbol of `a` at a prime ideal in the source domain. -/
+/-- **Cubic residue symbol at a prime ideal.** Let $K$ be a number field that is the third
+cyclotomic extension of $\mathbb{Q}$, with ring of integers $\mathcal{O}_K$, let $\zeta \in K$ be
+a primitive cube root of unity and let $\omega$ be $\zeta$ regarded as an element of
+$\mathcal{O}_K$. For a nonzero prime ideal $P$ of $\mathcal{O}_K$ whose absolute norm $N(P)$ is
+coprime to $3$ and for $a \in \mathcal{O}_K$, the cubic residue symbol $(a/P)_3$ is $0$ if
+$a \in P$, and otherwise the unique $c \in \{1, \omega, \omega^2\}$ with
+$c \equiv a^{(N(P) - 1)/3} \pmod{P}$. -/
 public noncomputable def primeIdealCubicSymbol
     {zeta : K}
     (hZeta : IsPrimitiveRoot zeta 3)
@@ -655,12 +668,24 @@ public noncomputable def primeIdealCubicSymbol
     NumberField.RingOfIntegers K :=
   primeIdealCubicSymbolFactorRaw hZeta P a
 
-/-- A nonzero denominator whose principal-ideal norm is coprime to `3`. -/
+/-- **Cubic residue denominators.** Let $K$ be a number field that is the third cyclotomic
+extension of $\mathbb{Q}$, with ring of integers $\mathcal{O}_K$. An element $n \in \mathcal{O}_K$
+is a cubic residue denominator when $n \neq 0$ and the absolute norm of the principal ideal
+$(n)$ is coprime to $3$. -/
 public def IsCubicResidueDenominator
     (n : NumberField.RingOfIntegers K) : Prop :=
   n ≠ 0 ∧ Nat.Coprime (Ideal.absNorm (Ideal.span {n})) 3
 
-/-- The cubic residue symbol of `a` modulo a denominator in the source domain. -/
+/-- **Cubic residue symbol modulo an element.** Let $K$ be a number field that is the third
+cyclotomic extension of $\mathbb{Q}$, with ring of integers $\mathcal{O}_K$, let $\zeta \in K$ be
+a primitive cube root of unity and let $\omega$ be $\zeta$ regarded as an element of
+$\mathcal{O}_K$. For $a \in \mathcal{O}_K$ and a cubic residue denominator $n$ (that is,
+$n \neq 0$ and the absolute norm of the principal ideal $(n)$ is coprime to $3$), the cubic
+residue symbol $(a/n)_3$ is the product, over the prime ideals $P$ in the factorization of $(n)$
+counted with multiplicity, of the value that is $0$ if $a \in P$ and otherwise the unique
+$c \in \{1, \omega, \omega^2\}$ with $c \equiv a^{(N(P) - 1)/3} \pmod{P}$, where $N(P)$ is the
+absolute norm of $P$. Each such $P$ is a nonzero prime ideal whose absolute norm is coprime
+to $3$. -/
 public noncomputable def cubicResidueSymbol
     {zeta : K}
     (hZeta : IsPrimitiveRoot zeta 3)

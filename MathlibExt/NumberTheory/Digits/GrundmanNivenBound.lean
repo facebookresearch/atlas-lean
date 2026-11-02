@@ -17,11 +17,15 @@ namespace MathlibExt.NumberTheory.Digits.GrundmanNivenBoundWanted
 
 section
 
-/-- Grundman consecutive `b`-Niven bound: for base `b ≥ 2` and start `a > 0`,
-some `i ≤ 2 * b` has `a + i` not divisible by its base-`b` digit sum, so no
-`2 * b + 1` consecutive positive integers beginning at `a` are all `b`-Niven.
-`Nat.digits b` supplies the base-`b` digits whose sum defines a `b`-Niven
-number. Source: Michael Gohn, Joshua Harrington, Sophia Lebiere, Hani Samamah,
+/-- **Grundman's bound on consecutive Niven numbers.** Let $b \ge 2$ and $a \ge 1$ be integers.
+Then for some $i$ with $0 \le i \le 2b$, the integer $a + i$ is not divisible by the sum of its
+base-$b$ digits. Equivalently, the $2b + 1$ consecutive integers $a, a + 1, \dots, a + 2b$ are not
+all $b$-Niven numbers, where a $b$-Niven number is a positive integer divisible by the sum of its
+base-$b$ digits.
+
+Proves `Wanted` entry `grundman_consecutive_niven_bound`.
+
+Source: Michael Gohn, Joshua Harrington, Sophia Lebiere, Hani Samamah,
 Kyla Shappell, and Tony W. H. Wong, "Arithmetic Progressions of b-Prodigious
 Numbers," Journal of Integer Sequences 25 (2022), Article 22.8.7, line 149,
 `https://cs.uwaterloo.ca/journals/JIS/VOL25/Wong/wong42.tex` (live source
@@ -30,8 +34,6 @@ exact line-149 SHA-256
 `93d551f5f24448b2ba0a54f1d28eadaa5c2ee800104778a7a18997c8b1980ef1`), citing as
 the original result Heidi Grundman, "Sequences of consecutive n-Niven numbers,"
 Fibonacci Quarterly 32 (1994), 174–175.
-
-Proves `Wanted` entry `grundman_consecutive_niven_bound`.
 -/
 theorem grundman_consecutive_niven_bound
     (b a : ℕ) (hb : 2 ≤ b) (ha : 0 < a) :

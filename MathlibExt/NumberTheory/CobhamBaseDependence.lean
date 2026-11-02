@@ -24,13 +24,14 @@ import Mathlib.Tactic
 
 namespace MetaMathlibExt
 
-/-- Two natural-number bases are multiplicatively independent when no two
-positive powers of them coincide. -/
+/-- **Multiplicatively independent bases.** Two natural numbers $k$ and $l$ are multiplicatively
+independent when $k^m \ne l^n$ for all positive natural numbers $m$ and $n$. -/
 def BasesMultiplicativelyIndependent (k l : ℕ) : Prop :=
   ∀ m n : ℕ, 0 < m → 0 < n → k ^ m ≠ l ^ n
 
-/-- A set of natural numbers is ultimately periodic if membership is periodic
-above some threshold, with a positive period. -/
+/-- **Ultimately periodic sets of natural numbers.** A set $S$ of natural numbers is ultimately
+periodic when there are natural numbers $N$ and $p > 0$ such that, for every $n \ge N$,
+$n \in S$ if and only if $n + p \in S$. -/
 def IsUltimatelyPeriodicSet (S : Set ℕ) : Prop :=
   ∃ N p : ℕ, 0 < p ∧ ∀ n : ℕ, N ≤ n → (n ∈ S ↔ n + p ∈ S)
 
@@ -650,17 +651,18 @@ private lemma cbd_ultimately_periodic {a b : ℕ} {S : Set ℕ}
     omega
   exact (hinduct k) u hu hk
 
-/-- Cobham's theorem: a set recognizable in one base and not ultimately
-periodic is not recognizable in a multiplicatively independent base.
+/-- **Cobham's theorem.** Let $k$ and $l$ be multiplicatively independent natural numbers with
+$l \ge 2$, and let $S$ be a set of natural numbers that is recognizable in base $k$ and is not
+ultimately periodic. Then $S$ is not recognizable in base $l$.
+
+Proves `Wanted` entry `cobham_base_dependence`.
+
+Source: proved via T. J. P. Krebs, *A more reasonable proof of Cobham's theorem*,
+arXiv:1801.06704, Section 3.
 
 Source: T. Kärki, A. Lacroix, and M. Rigo, *On the Recognizability of
 Self-Generating Sets*, especially the remark invoking Cobham's theorem:
 <https://cs.uwaterloo.ca/journals/JIS/VOL13/Rigo/rigo6.tex>.
-
-Proved via T. J. P. Krebs, *A more reasonable proof of Cobham's theorem*,
-arXiv:1801.06704, Section 3.
-
-Proves `Wanted` entry `cobham_base_dependence`.
 -/
 public theorem cobham_base_dependence {k l : ℕ} {S : Set ℕ}
     (hl : 2 ≤ l)
@@ -672,7 +674,9 @@ public theorem cobham_base_dependence {k l : ℕ} {S : Set ℕ}
   exact absurd (cbd_ultimately_periodic hrecognizable ⟨hl, hlR.2⟩
     (fun m n hm hn => hindependent m n hm hn)) haperiodic
 
-/-- The set-level and sequence-level notions of ultimate periodicity coincide. -/
+/-- **Ultimately periodic sets and their characteristic sequences.** A set $S$ of natural
+numbers is ultimately periodic if and only if its characteristic sequence $n \mapsto (n \in S)$,
+a sequence of truth values, is ultimately periodic. -/
 public theorem isUltimatelyPeriodicSet_iff_isUltimatelyPeriodic (S : Set ℕ) :
     IsUltimatelyPeriodicSet S ↔ IsUltimatelyPeriodic (fun n => n ∈ S) := by
   constructor
@@ -681,7 +685,10 @@ public theorem isUltimatelyPeriodicSet_iff_isUltimatelyPeriodic (S : Set ℕ) :
   · rintro ⟨p, N, hp, h⟩
     exact ⟨N, p, hp, fun n hn => Iff.symm (Eq.to_iff (h n hn))⟩
 
-/-- Cobham's theorem with aperiodicity stated for the characteristic sequence. -/
+/-- **Cobham's theorem for characteristic sequences.** Let $k$ and $l$ be multiplicatively
+independent natural numbers with $l \ge 2$, and let $S$ be a set of natural numbers that is
+recognizable in base $k$ and whose characteristic sequence $n \mapsto (n \in S)$, a sequence of
+truth values, is not ultimately periodic. Then $S$ is not recognizable in base $l$. -/
 public theorem cobham_base_dependence_isUltimatelyPeriodic {k l : ℕ} {S : Set ℕ}
     (hl : 2 ≤ l)
     (hindependent : BasesMultiplicativelyIndependent k l)

@@ -103,11 +103,13 @@ private lemma padicValRat_nonneg_of_sum_nonneg {p : ℕ} [Fact (Nat.Prime p)] {S
             padicValRat.min_le_padicValRat_add h0
 
 /--
-For `n ≥ 2`, the sum `∑_{ν=2}^n H_ν` of classical harmonic numbers is not
-an integer. The source proves this via its identity
-`∑_{ν=2}^n H_ν = (n+1)(H_n - 1)` (equation (1.2)), reducing to the
-non-integrality of `(n+1) * H_n`, in the spirit of Theisinger's theorem
-that `H_n` itself is never integral for `n > 1`.
+**Sums of harmonic numbers starting from the second are not integers.** For every natural number
+$n \ge 2$, the sum $\sum_{\nu=2}^{n} H_\nu$ is not an integer, where
+$H_\nu = \sum_{j=1}^{\nu} 1/j$ is the $\nu$-th harmonic number, viewed as a rational number.
+
+The source proves this via its identity $\sum_{\nu=2}^n H_\nu = (n+1)(H_n - 1)$ (equation (1.2)),
+reducing to the non-integrality of $(n+1) H_n$, in the spirit of Theisinger's theorem that $H_n$
+itself is never an integer for $n > 1$.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a Combinatorial
 Identity Involving Harmonic Numbers," Journal of Integer Sequences 29

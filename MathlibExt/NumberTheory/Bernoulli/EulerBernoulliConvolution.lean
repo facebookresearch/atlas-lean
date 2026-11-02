@@ -60,7 +60,11 @@ private theorem coeff_bernoulli_sq (k : ℕ) :
   rw [hchoose i hi2]
   field_simp
 
-/-- Euler convolution identity for Bernoulli numbers.
+/-- **Euler's convolution identity for Bernoulli numbers.** Let $B_j$ denote the $j$-th
+Bernoulli number, with $B_1 = -1/2$. For every natural number $n \ge 1$,
+$$\sum_{i=0}^{n} \binom{n}{i} B_i B_{n-i} = -n B_{n-1} - (n-1) B_n.$$
+
+Proves `Wanted` entry `euler_bernoulli_convolution`.
 
 Source: Ken Kamano, "Sums of Products of Bernoulli Numbers, Including
 Poly-Bernoulli Numbers," Journal of Integer Sequences 13 (2010),
@@ -68,18 +72,6 @@ Poly-Bernoulli Numbers," Journal of Integer Sequences 13 (2010),
 Exact source span: lines 98–104; full-file SHA-256
 `79c8704d7903524fdbe7553c7794f6062710b3f2c722eceb2715401659c869d6`;
 span SHA-256 `c6021b742947f7d2dd79387b89f2f146c19cd8310add80520069b7eaf2103fb5`.
-
-Stable concept id: `jis_grounded_d68f7d9a125a7c1b53cb901e`.
-Atomic task id: `jis_rank41_euler_bernoulli_general`.
-
-Uses the source convention `B₁ = -1/2`, matching Mathlib's `bernoulli : ℕ → ℚ`
-from `Mathlib.NumberTheory.Bernoulli`. The finite range `Finset.range (n + 1)`
-represents the inclusive source sum `i = 0, …, n`.
-
-Scope: this file states only the canonical general identity for `n ≥ 1`. It does
-not add the even-index specialization or any `bernoulli'` convention-transformed
-equivalent.
-Proves `Wanted` entry `euler_bernoulli_convolution`.
 -/
 theorem euler_bernoulli_convolution (n : ℕ) (hn : 1 ≤ n) :
     ∑ i ∈ Finset.range (n + 1), (n.choose i : ℚ) * bernoulli i * bernoulli (n - i) =

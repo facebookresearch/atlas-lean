@@ -25,7 +25,9 @@ namespace MetaMathlibExt
 open Real
 open scoped goldenRatio
 
-/-- `√5 ≠ 0`, for clearing Binet denominators. -/
+/-- **The square root of 5 is nonzero.** The real square root $\sqrt{5}$ is not equal to $0$.
+
+This is used to clear the denominators in Binet's formula. -/
 theorem sqrt5_ne : √5 ≠ (0 : ℝ) :=
   Real.sqrt_ne_zero'.mpr (by norm_num)
 
@@ -37,7 +39,9 @@ theorem cb_lucas_add_two (n : ℕ) :
     lucasNumber (n + 2) = lucasNumber (n + 1) + lucasNumber n := by
   simp [lucasNumber]
 
-/-- Binet's formula for the Lucas numbers. -/
+/-- **Binet's formula for the Lucas numbers.** For every natural number $n$,
+$\varphi^n + \psi^n = L_n$ as real numbers, where $\varphi = (1 + \sqrt{5})/2$ is the golden ratio,
+$\psi = (1 - \sqrt{5})/2$ is its conjugate, and $L_n$ is the $n$-th Lucas number. -/
 theorem cb_lucas_binet (n : ℕ) : φ ^ n + ψ ^ n = (lucasNumber n : ℝ) := by
   induction n using Nat.twoStepInduction with
   | zero =>
@@ -62,7 +66,10 @@ theorem cb_lucas_binet (n : ℕ) : φ ^ n + ψ ^ n = (lucasNumber n : ℝ) := by
         (cb_lucas_add_two n).symm
       rw [eα, eβ, key, ih1, ih2, ← Nat.cast_add, hL]
 
-/-- The real-valued binomial convolution identity, before descending to `ℚ`. -/
+/-- **Church–Bicknell convolution over the reals.** For every natural number $n$,
+$$\sum_{k=0}^{n} \binom{n}{k} F_k F_{n-k} = \frac{2^n L_n - 2}{5}$$
+holds as an identity of real numbers, where $F_k$ is the $k$-th Fibonacci number and $L_n$ is
+the $n$-th Lucas number. -/
 theorem cb_keyR (n : ℕ) :
     (∑ k ∈ Finset.range (n + 1),
       (Nat.choose n k : ℝ) * (Nat.fib k : ℝ) * (Nat.fib (n - k) : ℝ)) =
@@ -163,7 +170,10 @@ theorem cb_keyR (n : ℕ) :
   rw [hsum2, hL] at h2
   linear_combination h2
 
-/-- Church–Bicknell Fibonacci binomial convolution.
+/-- **Church–Bicknell Fibonacci binomial convolution.** For every natural number $n$,
+$$\sum_{k=0}^{n} \binom{n}{k} F_k F_{n-k} = \frac{2^n L_n - 2}{5}$$
+holds as an identity of rational numbers, where $F_k$ is the $k$-th Fibonacci number and $L_n$
+is the $n$-th Lucas number.
 
 Source: Ira M. Gessel and Ishan Kar, "Binomial Convolutions for Rational Power
 Series," Journal of Integer Sequences 27 (2024), Article 24.1.3, equation

@@ -15,39 +15,59 @@ public import MathlibExt.NumberTheory.MultipleZeta.Index
 
 namespace MetaMathlibExt.MultipleZeta
 
-/-- The generator `x` as a word. -/
+/-- **The letter $x$ as a word.** In the free monoid on the two letters $x$ and $y$, with $x$
+represented by the Boolean value false and $y$ by true, this is the word of length one
+consisting of the letter $x$. -/
 def xWord : FreeMonoid Bool := FreeMonoid.ofList [false]
 
-/-- The generator `y` as a word. -/
+/-- **The letter $y$ as a word.** In the free monoid on the two letters $x$ and $y$, this is the
+word of length one consisting of the single letter $y$.
+
+The letters are encoded as booleans, with $x$ as false and $y$ as true. -/
 def yWord : FreeMonoid Bool := FreeMonoid.ofList [true]
 
-/-- Positive entries of an index. -/
+/-- **Entries of an index as positive integers.** For an index $(k_1, \dots, k_r)$, this is the
+list $(k_1, \dots, k_r)$ of its entries in order, each regarded as a positive integer. -/
 def Index.pnatEntries : Index → List PNat
   | ⟨_, c⟩ => c.blocks.attach.map fun ⟨n, hm⟩ => ⟨n, c.blocks_pos hm⟩
 
-/-- Auxiliary product of Hoffman blocks for a list of `PNat`. -/
+/-- **Hoffman word of a list of positive integers.** For a finite list $(k_1, \dots, k_r)$ of
+positive integers, this is the word $z_{k_1} z_{k_2} \cdots z_{k_r}$ in the free monoid on the two
+letters $x$ and $y$, where $z_k = x^{k-1} y$ is the Hoffman block of $k$. The empty list gives the
+empty word. -/
 def zWordPNat (l : List PNat) : FreeMonoid Bool :=
   (l.map hoffmanBlock).prod
 
-/-- Hoffman word attached to an index, concatenation of blocks in source order. -/
+/-- **Hoffman word of an index.** For an index $\mathbf{k} = (k_1, \dots, k_r)$ of positive
+integers, the Hoffman word of $\mathbf{k}$ is $z_{k_1} z_{k_2} \cdots z_{k_r}$ in the free monoid on
+the two letters $x$ and $y$, where $z_k = x^{k-1} y$. The empty index gives the empty word. -/
 def zWord (idx : Index) : FreeMonoid Bool :=
   zWordPNat idx.pnatEntries
 
-/-- Monomial in the free algebra attached to an index. -/
+/-- **Hoffman monomial of an index.** For an index $\mathbf{k} = (k_1, \dots, k_r)$ of positive
+integers, this is the monomial $z_{k_1} z_{k_2} \cdots z_{k_r}$ with coefficient $1$ in the free
+associative algebra $\mathbb{Q}\langle x, y \rangle$ over $\mathbb{Q}$ on two noncommuting letters
+$x$ and $y$, where $z_k = x^{k-1} y$. In other words, it is the Hoffman word of $\mathbf{k}$ viewed
+as an element of $\mathbb{Q}\langle x, y \rangle$. The empty index gives $1$. -/
 noncomputable def zMonomial (idx : Index) : FreeAlgebra ℚ Bool :=
   (FreeAlgebra.equivMonoidAlgebraFreeMonoid :
       FreeAlgebra ℚ Bool ≃ₐ[ℚ] MonoidAlgebra ℚ (FreeMonoid Bool)).symm
     (MonoidAlgebra.single (zWord idx) 1)
 
-/-- Predicate for `H^1`: empty or ends in `y`. -/
+/-- **Words of $\mathfrak{H}^1$.** A word $w$ in the two letters $x$ and $y$ is an
+$\mathfrak{H}^1$-word when $w$ is empty or $w = uy$ for some word $u$, that is, when $w$ is
+empty or ends in $y$. -/
 def IsHOneWord (w : FreeMonoid Bool) : Prop :=
   w = 1 ∨ ∃ u : FreeMonoid Bool, w = u * yWord
 
-/-- Predicate for `H^0`: empty or begins in `x` and ends in `y`. -/
+/-- **Words of $\mathfrak{H}^0$.** A word $w$ in the two letters $x$ and $y$ is an
+$\mathfrak{H}^0$-word when $w$ is empty or $w = xuy$ for some word $u$, that is, when $w$ is
+empty or begins with $x$ and ends in $y$. -/
 def IsHZeroWord (w : FreeMonoid Bool) : Prop :=
   w = 1 ∨ ∃ u : FreeMonoid Bool, w = xWord * u * yWord
 
-/-- Word submonoid for `H^1`. -/
+/-- **The monoid of $\mathfrak{H}^1$-words.** This is the submonoid of the free monoid on the two
+letters $x$ and $y$ consisting of the words that are empty or end in $y$. -/
 def wordSubmonoidHOne : Submonoid (FreeMonoid Bool) where
   carrier := { w | IsHOneWord w }
   mul_mem' := by
@@ -61,7 +81,8 @@ def wordSubmonoidHOne : Submonoid (FreeMonoid Bool) where
       · exact Or.inr ⟨ua * yWord * ub, by simp [mul_assoc]⟩
   one_mem' := Or.inl rfl
 
-/-- Word submonoid for `H^0`. -/
+/-- **The monoid of $\mathfrak{H}^0$-words.** This is the submonoid of the free monoid on the two
+letters $x$ and $y$ consisting of the words that are empty or begin with $x$ and end in $y$. -/
 def wordSubmonoidHZero : Submonoid (FreeMonoid Bool) where
   carrier := { w | IsHZeroWord w }
   mul_mem' := by
@@ -94,13 +115,22 @@ theorem wordSubmonoidHZero_le_wordSubmonoidHOne :
   · exact Or.inl rfl
   · exact Or.inr ⟨xWord * u, by simp [mul_assoc]⟩
 
-/-- Subalgebra `H^1` of the free algebra. -/
+/-- **The subalgebra $\mathfrak{H}^1$.** Let $\mathbb{Q}\langle x, y\rangle$ be the free
+associative $\mathbb{Q}$-algebra on two letters $x$ and $y$, whose monomials are the words in
+$x$ and $y$. The subalgebra $\mathfrak{H}^1$ of $\mathbb{Q}\langle x, y\rangle$ is the
+$\mathbb{Q}$-linear span of the words that are empty or end in $y$; equivalently, it consists
+of the polynomials in which every word with nonzero coefficient is empty or ends in $y$. -/
 noncomputable def hOne : Subalgebra ℚ (FreeAlgebra ℚ Bool) :=
   ((MonoidAlgebra.mapDomainAlgHom ℚ ℚ wordSubmonoidHOne.subtype).range).comap
     (FreeAlgebra.equivMonoidAlgebraFreeMonoid :
       FreeAlgebra ℚ Bool ≃ₐ[ℚ] MonoidAlgebra ℚ (FreeMonoid Bool)).toAlgHom
 
-/-- Subalgebra `H^0` of the free algebra. -/
+/-- **The subalgebra $\mathfrak{H}^0$.** Let $\mathbb{Q}\langle x, y\rangle$ be the free
+associative $\mathbb{Q}$-algebra on two letters $x$ and $y$, whose monomials are the words in
+$x$ and $y$. The subalgebra $\mathfrak{H}^0$ of $\mathbb{Q}\langle x, y\rangle$ is the
+$\mathbb{Q}$-linear span of the words that are empty or begin with $x$ and end in $y$;
+equivalently, it consists of the polynomials in which every word with nonzero coefficient is
+empty or begins with $x$ and ends in $y$. -/
 noncomputable def hZero : Subalgebra ℚ (FreeAlgebra ℚ Bool) :=
   ((MonoidAlgebra.mapDomainAlgHom ℚ ℚ wordSubmonoidHZero.subtype).range).comap
     (FreeAlgebra.equivMonoidAlgebraFreeMonoid :
@@ -135,13 +165,13 @@ theorem pnatEntries_val (idx : Index) :
   change c.blocks.attach.map (fun x => x.1) = c.blocks
   exact List.attach_map_subtype_val c.blocks
 
-/-- Empty-or-admissible predicate for indices used in the algebraic `H^0` API.
-This avoids importing the later analytic series layer solely for its analogous
-depth-based predicate. -/
+/-- **Empty or admissible indices.** An index is empty-or-admissible when it is admissible, that
+is, nonempty with first entry at least $2$, or when it has no entries. -/
 def IsHZeroIndex (idx : Index) : Prop :=
   idx.IsAdmissible ∨ idx.entries = []
 
-/-- Indices whose Hoffman words belong to the `H^0` word subalgebra. -/
+/-- **The type of empty or admissible indices.** The type whose elements are the indices that
+are admissible, that is, nonempty with first entry at least $2$, or that have no entries. -/
 def HZeroIndex : Type := { idx : Index // IsHZeroIndex idx }
 
 theorem zWord_eq_one_of_entries_eq_nil (idx : Index) (h : idx.entries = []) :

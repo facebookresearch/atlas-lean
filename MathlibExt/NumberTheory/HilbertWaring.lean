@@ -3431,16 +3431,19 @@ private theorem hw_power_sumset_density_pos_of_fiber_bound (k C : ℕ) (hk : 2 �
   simpa only [A, s] using hinv.trans_le hlower
 
 /--
-For every `k ≥ 1` there exists `g : ℕ` such that every `n : ℕ` is a sum of `g` `k`th powers: `∃ x
-: Fin g → ℕ, n = ∑ i, (x i) ^ k`. Source: D. Hilbert, Beweis für die Darstellbarkeit der ganzen
-Zahlen durch eine feste Anzahl n-ter Potenzen (Waringsches Problem), Math. Ann. 67 (1909) 281–305;
-textbook in Vaughan, The Hardy-Littlewood Method; general includes minimal g(k).
+**Hilbert–Waring theorem.** For every integer $k \ge 1$ there is a natural number $g$ such that
+every natural number $n$ is a sum of $g$ $k$-th powers of natural numbers, that is,
+$n = x_1^k + \dots + x_g^k$ for some $x_1, \dots, x_g \in \mathbb{N}$.
 
 Proves `Wanted` entry `hilbert_waring`.
 
 Proof: We follow Linnik's elementary route as presented in Tim Jameson's notes: a mean-value
 estimate gives positive Schnirelmann density for a bounded power sumset, which is then an additive
 basis of finite order by Schnirelmann's inequality.
+
+Source: D. Hilbert, Beweis für die Darstellbarkeit der ganzen
+Zahlen durch eine feste Anzahl n-ter Potenzen (Waringsches Problem), Math. Ann. 67 (1909) 281–305;
+textbook in Vaughan, The Hardy-Littlewood Method; general includes minimal g(k).
 -/
 public theorem hilbert_waring :
     ∀ k : ℕ, 0 < k → ∃ g : ℕ, ∀ n : ℕ, ∃ x : Fin g → ℕ,
